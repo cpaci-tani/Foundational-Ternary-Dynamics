@@ -1,10 +1,12 @@
 # Domain Partition and Context Selection
 
-## Canonical replacement map and lattice formalization for the live consciousness layer
+## Canonical replacement map and lattice formalization for the reflexive-projection layer
 
-**Date:** April 11, 2026
-**Framework:** Foundational Ternary Dynamics v5.29
-**Status:** Foundational synthesis - canonical live replacement for the retired consciousness source file
+**Date:** April 11, 2026 (vocabulary refresh 2026-05-01)
+**Framework:** Foundational Ternary Dynamics v5.34
+**Status:** Foundational synthesis — canonical live replacement for the retired source file (formerly framed as "consciousness layer," now restated as the reflexive-projection layer per [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md))
+
+> **Vocabulary refresh (2026-05-01):** Domain Partition and Context Selection is structural; the mathematical content (lattice subalgebra decomposition, context-selection map, observable-algebra restriction) is reframe-stable. References to the "consciousness layer" are renamed to **reflexive-projection layer** per [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). The Domain A/B partition becomes a partition of the *observable algebra* (Domain A = phenomenal, externally measurable; Domain B = noumenal, requiring reflexive coupling). The "agent" of context selection is structurally a **reflexive site** in the lattice, not a conscious agent.
 
 ---
 

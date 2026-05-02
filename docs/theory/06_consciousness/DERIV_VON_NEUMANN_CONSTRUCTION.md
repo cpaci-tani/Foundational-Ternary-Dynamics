@@ -4,6 +4,7 @@
 
 **Status:** [THEOREM] on finite lattices (Type I at every L); [HYPOTHESIS] for any Type-III interpretation. The lattice is **undefined-boundary** (Axiom Zero), so the "infinite-volume Type III₁" classification is not a theorem about FTD-as-defined; it is a hypothesis about what an Araki–Woods inductive-limit scaffold *would* yield *if* assembled on a system of this kind.
 **Proof script:** `scripts/proofs/proof_von_neumann_type.py`
+**Vocabulary refresh:** 2026-05-01 — see [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). This derivation is purely operator-algebraic; "observable algebras" and "modular flows" are reframe-stable. References to consciousness in upstream docs are restated as **reflexive coupling between the system algebra and the observation-layer algebra**.
 
 ---
 

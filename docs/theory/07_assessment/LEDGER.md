@@ -408,6 +408,249 @@
 
 ---
 
+## Detail blocks for FTD-0060 → FTD-0121 (auto-populated 2026-05-01 audit pass)
+
+The detail-block series above stops at FTD-0059. The 2026-05-01 foundational
+audit flagged that ~60 quick-index rows lacked `### FTD-NNNN:` headers, so any
+paper citing rows ≥ FTD-0060 cited an index entry rather than a verified-source
+detail block. The blocks below close that gap with concise structured metadata.
+**The full evidence/argument prose for each row remains in the right-most cell
+of the quick-index table at the top of this file**; the blocks here exist so
+that any post-FTD-0059 row has a header anchor, an explicit `tag`,
+`proof_location`, `dependencies`, and `artifacts` field that paper drafts and
+downstream cites can reference.
+
+### FTD-0060: Baryon composition correction K_comp = m_e/π
+- **tag:** CLOSED NEGATIVE (2026-04-23) — numerical premise fails audit; no FTD-primitive mechanism produces 1/π naturally.
+- **proof_location:** `docs/theory/03_derivations/DERIV_KCOMP_CIRCLE_TO_SPHERE.md`
+- **claim impact:** Does NOT affect FTD-0016 (already [STRONGLY MOTIVATED CONJECTURE] without 1/π correction). 174-ppm m_p/m_e gap remains [OPEN].
+- **dependencies:** FTD-0016
+- **see quick-index row** for full numerical-audit table (proton/neutron/delta K/m_e values vs 1/π).
+
+### FTD-0061: b=2 block "natively instantiates Cl(3,0)" fermion-emergence claim
+- **tag:** CLOSED NEGATIVE (spontaneous + genesis+movement, 2026-04-24) / [CONJECTURE] (alternative-mechanism, narrowed)
+- **proof_location:** `docs/theory/09_mathematical/DERIV_WH_ALGEBRAIC_VS_CLIFFORD_NOGO.md` §7
+- **engine evidence:** `engine/tests/test_wh_clifford_anticommutator.cpp` (ctest `wh_clifford_anticommutator`)
+- **finding:** Walsh–Hadamard algebra on 2³ block ≅ ℝ⁸ (abelian); Cl(3,0) ≅ M₂(ℝ) ⊕ M₂(ℝ) (non-abelian). Anticommutator measured `{e_i, e_j} = 2·𝟙` for all pairs; fails Clifford off-diagonal.
+- **dependents:** FTD-0071, FTD-0072, FTD-0073, FTD-0074, FTD-0075 (full Phase-4 sweep).
+
+### FTD-0062: Topological-drag derivation α_FTD = λ₀/18 = 1/x₊
+- **tag:** CLOSED NEGATIVE as derivation (tautology, 2026-04-24)
+- **proof_location:** `docs/theory/09_mathematical/EXPLR_TOPOLOGICAL_DRAG_ALPHA.md`
+- **finding:** Definition `λ₀ ≡ 18/x₊` divided by 18 returns `1/x₊`; algebraically α=α. Engine-measured α∞ ≈ 3.6 αref further contradicts identification.
+- **claim impact:** FTD-0013 (x₊ ↔ 1/α) bridge unaffected; remains [STRONGLY MOTIVATED CONJECTURE].
+
+### FTD-0063: m_p/m_e 174-ppm gap = α/42 lattice self-energy
+- **tag:** CLOSED NEGATIVE as derivation (2026-04-24); 174-ppm gap itself remains [OPEN]
+- **proof_location:** `docs/theory/09_mathematical/EXPLR_ALPHA_OVER_42_MASS_GAP.md`
+- **finding:** Near-miss search; denominators 36–48 all in 150–200 ppm band; "first four Heegner integers {1,2,3,7}" drops sign and stops at index 4 — both target-driven. No one-loop diagram on Moore-18.
+- **dependents:** FTD-0016, FTD-0060.
+
+### FTD-0064: Bridge contract Gate 1 — state/flux dictionary with frozen scaling dimensions
+- **tag:** CLOSED POSITIVE (2026-04-24, P1.1 of EFT roadmap)
+- **proof_location:** `docs/theory/10_eft_program/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` § "Frozen scaling contract"
+- **content:** `[ρ]=L⁻³, [J]=L⁻², [j]=L⁻²T⁻¹, [A]=L⁻¹` under `a_phys ≡ ℓ_P`; Z-factors specified; zero-mode conventions for ρ/J/j/A/S_R fixed; QED-facing Z_Q, Z_A^QED remain [OPEN] (Gate 6/7).
+- **dependencies:** FTD-0059 (no-go theorem fixing a_phys ≡ ℓ_P).
+
+### FTD-0065: Bridge contract Gate 4 — Moore-26 transport ledger
+- **tag:** CLOSED POSITIVE (2026-04-24, P1.2)
+- **proof_location:** `engine/tests/test_native_engine_transport_flow.cpp`; `engine/src/eft/dual_cell_continuity.cpp::route_moore_current()`
+- **content:** NET-1..14 cover face + edge + 8 corner Moore routes + multi-tick + corner intervals; Ward residual < 1e-12 GPU; continuity Δρ + div I = S_R closes under b=2 blocking.
+
+### FTD-0066: Bridge contract Gate 5 — per-toggle reaction-aware Ward identity
+- **tag:** CLOSED POSITIVE (2026-04-24, P1.4)
+- **proof_location:** `engine/tests/test_native_engine_history_flow.cpp`, `test_native_engine_transport_flow.cpp`
+- **content:** Δ_t ρ + div j = S_R verified to 1e-12 for all reaction toggles (genesis, pair production, weak transmutation, annihilation-during-movement, movement/bounce). Multi-toggle closed by FTD-0067.
+
+### FTD-0067: Mixed-toggle multi-tick Ward + first non-Gaussian flow data
+- **tag:** CLOSED POSITIVE (2026-04-24, P1.3)
+- **proof_location:** `engine/tests/test_mixed_history_flow.cpp` (ctest `mixed_history_flow`)
+- **content:** 10 ticks at L=16 with genesis + pair_production + movement + forces; per-tick + accumulated Ward residual = 0; 72 reaction events. Non-Gaussian flow coefficients (C_L, K_T, Z_j, g_sJ) deferred to Phase-2.
+
+### FTD-0068: Bridge contract Gate 3 — complete d ≤ 6 operator basis
+- **tag:** CLOSED POSITIVE (2026-04-24, P1.5)
+- **proof_location:** `docs/theory/10_eft_program/SPEC_OPERATOR_BASIS_COMPLETE.md`
+- **content:** O_h-invariant, C-even, P-even local operators in (ρ, J, j, A) through D ≤ 6 enumerated (D=2 relevant, D=3 none, D=4 marginal × 4, D=5 irrelevant × 2, D=6 irrelevant × 6+). Marginal block = the four running couplings.
+
+### FTD-0069: Bridge contract Gate 2 — Langevin ensemble as nonlinear stationary generator
+- **tag:** CLOSED POSITIVE at ensemble-existence + equipartition-verification level (2026-04-24, P1.6)
+- **proof_location:** `docs/theory/10_eft_program/DERIV_FTD_NATIVE_LANGEVIN_ENSEMBLE.md`; `engine/tests/test_langevin_equipartition.cpp`
+- **content:** ⟨|w|²⟩ = 3T verified to 4% on GPU; OU stationary distribution exists/unique. Explicit ln Z beyond Gaussian sector and reflection-positivity remain [OPEN].
+- **dependencies:** FTD-0051.
+
+### FTD-0070: Phase-2 multi-scale RG flow — Gaussian fixed point at b ∈ {1,2,4,8}
+- **tag:** CLOSED POSITIVE / MEASURED on GPU (2026-04-24)
+- **proof_location:** `engine/tests/test_nonlinear_flow_multiscale.cpp`; `docs/theory/10_eft_program/DERIV_FTD_NATIVE_MULTISCALE_FLOW.md`
+- **content:** β-functions consistent with zero within 1σ at all scale crossings; β-magnitude decays geometrically (~0.4× per b-decade) — stable Gaussian IR attractor.
+- **status note:** With FTD-0064..FTD-0070 in place, all 6 Minimum Viable Real EFT items are closed at the native-branch level. **First Branch-A paper writable.**
+
+### FTD-0071: Phase-4 fermion-emergence alt-routes on 2³ block — universal Clifford falsification
+- **tag:** CLOSED NEGATIVE / MEASURED on GPU (2026-04-24)
+- **proof_location:** `engine/tests/test_wh_clifford_alt_routes.cpp`; `DERIV_WH_ALGEBRAIC_VS_CLIFFORD_NOGO.md §9`
+- **content:** Three alternative non-linearities (pair_production, weak_transmutation on dual substrate, velocity-driven movement+forces+genesis) all produce same `{e_i, e_j} = 2·𝟙` collapse. Combined with FTD-0061: fermion emergence on 2³ universally falsified.
+
+### FTD-0072: Phase-4c fermion-emergence on Moore-26/3³ — axial-dipole Clifford falsification
+- **tag:** CLOSED NEGATIVE / MEASURED (2026-04-24)
+- **proof_location:** `engine/tests/test_moore26_clifford_test.cpp`; `DERIV_WH_ALGEBRAIC_VS_CLIFFORD_NOGO.md §9`
+- **content:** 27-site block with axial sawtooth modes. `{e_i, e_j} ≈ (-1.33, -1.22)` on identity — same mode-erasure collapse as 2³, sign from dipole divergence.
+
+### FTD-0073: Phase-4e spin-field readout + mode-erasure capstone
+- **tag:** MIXED (MEASURED + THEOREM, 2026-04-24)
+- **proof_location:** `engine/tests/test_spin_field_clifford.cpp`; `docs/theory/09_mathematical/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md`
+- **content:** Spin-field gives non-trivial commutative bilinear `e_i² = X_i, {e_i, e_j} = X_i + X_j` (not Clifford). **Mode-erasure theorem:** site-local 0-form state-field readout cannot support Clifford on any finite block under pointwise-threshold dynamics. Converts FTD-0061+0071+0072 from empirical to structural [THEOREM].
+
+### FTD-0074: Phase-4f flux 1-form (link) readout — separable-tensor algebra
+- **tag:** CLOSED NEGATIVE for Clifford / MEASURED (2026-04-24)
+- **proof_location:** `engine/tests/test_flux_link_clifford.cpp`
+- **content:** `{L_f, L_g}` measured: -28·δ_fg diagonal, -14·(δ_f + δ_g) off-diagonal. Additive/separable, not Clifford-bilinear.
+
+### FTD-0075: Phase-4g flux propagator — long-range-ordered, neither bosonic nor fermionic
+- **tag:** MIXED / MEASURED (2026-04-24)
+- **proof_location:** `engine/tests/test_flux_propagator.cpp`
+- **content:** G∥(r) ≈ const for r ∈ [2, 16] (power-law fit α ≈ 0.012); ratio G_off/G∥ ≈ 0.10. Field is in condensed/long-range-ordered phase — not free propagating boson (1/r) or Dirac fermion (1/r²). Consistent with Phase-J ultralocality.
+
+### FTD-0076: Phase-4h material emergence — smallest spontaneous particle is a colored single-voxel quark
+- **tag:** CLOSED POSITIVE / MEASURED on GPU (2026-04-24)
+- **proof_location:** `engine/tests/test_smallest_particle_emergence.cpp`; `docs/theory/05_particles/DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md`
+- **content:** All six controlled genesis events produce colored single-voxel objects (color ∈ {R,G,B}, never 0). Engine genesis rule deterministically assigns color from dominant flux axis. Implies electrons are not spontaneously produced; m_e formula remains [SELECTION]/algebraic prediction.
+
+### FTD-0077: Phase-4i color binding + SU(3) structure + m_e promotion audit
+- **tag:** MIXED (MEASURED + audit, 2026-04-24)
+- **proof_location:** `engine/tests/test_color_binding_and_structure.cpp`; `docs/theory/05_particles/DERIV_COLOR_BINDING_STRUCTURE_AND_ME_STATUS.md`
+- **content:** RGB/RGG/RRR all bind (binding by same-sign + proximity, NOT SU(3) singlet). FTD color = C₃-symmetric discrete label, not SU(3) gauge charge. m_e factor audit: 3/6 components [THEOREM] (√(2π), 16, D=3); blockers: (a) exponent n=11 [SELECTION], (b) pole-mass blocked by FTD-0075. **m_e formula REMAINS [SELECTION].**
+
+### FTD-0078: Phenomenal/Noumenal Bridge foundation
+- **tag:** FOUNDATION (organizing principle; post-audit-corrected 2026-04-24)
+- **proof_location:** `docs/theory/02_foundations/FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md`
+- **content:** Two-layer ontology: phenomenal layer = 2³ block (Moore-18, ϖ ≈ 2.622), noumenal layer = 3³ block (Moore-26, G* ≈ 2.959). Initial 27/8 = 3.6× identification CLOSED NEGATIVE per FTD-0079.
+
+### FTD-0079: Watson integral W_Moore-18; bridge-ratio scan — universal 27/8 falsified
+- **tag:** CLOSED NEGATIVE (scalar bridge) / MEASURED (W_M18 value) (2026-04-24)
+- **proof_location:** `engine/tests/test_watson_integrals.cpp` (ctest `watson_integrals`)
+- **content:** W_M18/W_BCC = 0.913, /W_FCC = 0.944, /W_SC = 0.836; none match 27/8 or 2π/√3 or 26/18. No single scalar phenomenal/noumenal bridge factor exists.
+
+### FTD-0090: Ward-identity status — engine SOR vs matched-stencil CG
+- **tag:** MIXED — engine SOR [KNOWN-LIMITATION]; matched-stencil CG [MEASURED, target met] (2026-04-25)
+- **proof_location:** `docs/theory/07_assessment/AUDIT_WARD_IDENTITY.md`; `engine/tests/test_eft_ward_identity.cpp`, `test_eft_matched_poisson.cpp`
+- **content:** Engine `gauss_projection` (SOR, non-adjoint pair) saturates at ~1% of ‖J‖_max. Matched-stencil CG `matched_gauss_project` drives max|∇·J − ρ| ≤ 1e-8 (paper-grade). EFT manuscript must label which projector each Ward number is reported under.
+
+### FTD-0093: Mechanism C — g_c as bridge-operator eigenvalue on σ_BCC
+- **tag:** CLOSED NEGATIVE (D6 audit, GPU RTX 5090, 2026-04-27)
+- **proof_location:** `docs/theory/10_eft_program/AUDIT_BCC_SUBLATTICE_SPECTRUM.md`; `engine/tests/campaign_bcc_band_spectrum.cpp`
+- **prediction vs measured:** prediction 45.31; measured 11.76 ± 2.28 (L=24), 10.31 ± 4.24 (L=32), 15.24 ± 2.66 (L=48). Non-monotonic in L; falsifier verdict FAIL per pre-registered protocol.
+- **claim impact:** All three first-principles routes for g_c (Mechanisms A, B, C) now closed-negative; **g_c remains [PARAMETRIC]**. Master quadratic / G* / Watson identity untouched.
+- **dependencies:** FTD-0001, FTD-0013, FTD-0014, FTD-0028, FTD-0029, FTD-0031, FTD-0050, FTD-0051, FTD-0059.
+
+### FTD-0094: L2 candidate identity 2·m_e/α = 16G*²
+- **tag:** [PARAMETRIC] terminal demotion 2026-04-27 (FTD-0096 since CLOSED THEOREM-NEGATIVE 2026-04-28; demotion permanent)
+- **content:** Pattern is the substitution-identity failure mode CLAUDE.md prohibits. FTD-0097 look-elsewhere scan independently confirms the identity at chance-level on the methodological side.
+- **dependencies:** FTD-0001, FTD-0013, FTD-0015, FTD-0093, FTD-0095, FTD-0096.
+
+### FTD-0095: Bridge Functional ontology commitment
+- **tag:** [SELECTION] (2026-04-26)
+- **proof_location:** `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md`
+- **content:** Mass = value of functional `M : Couplings → ℝ` evaluated on root spectrum (x₊, x₋). Arithmetic-mean rule M = α·(x₊ + x₋)/2 remains [OPEN] sub-claim.
+- **dependencies:** FTD-0001, FTD-0028. **Dependents:** FTD-0094.
+
+### FTD-0096: μ-from-ℓ_P missing arrow
+- **tag:** **[CLOSED THEOREM-NEGATIVE]** (2026-04-28). Was [OPEN] (2026-04-26).
+- **proof_location:** `docs/theory/10_eft_program/THEOREM_MU_NO_GO_FTD0096.md`
+- **content:** Closure by extending FTD-0059 ring-algebra to mass dimension; rule-parameter constants (K_GENESIS, K_EVAP, K_drain, K_LANGEVIN_T) are dimensionless reals; same Claim C as FTD-0059 forces no mass-dimension element. **Calibration-interface theorem:** exactly two SI-dimensional calibrations (a_phys ≡ ℓ_P and K_B = m_e) are theorem-enforced as the irreducible minimum.
+- **dependencies:** FTD-0030, FTD-0041, FTD-0059, FTD-0093, FTD-0094, FTD-0097.
+
+### FTD-0097: Pre-registered look-elsewhere scan
+- **tag:** [MEASURED] (2026-04-27; verdict NULL REJECTED upward, catalog over-rich)
+- **proof_location:** `docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`; `tools/scan_look_elsewhere.py`; `engine/results/look_elsewhere_2026-04-27/`
+- **pre-registration:** `git tag preregister-look-elsewhere-scan-v1` against commit f11dcaa BEFORE run.
+- **content:** 671,574 monomials × 20 targets; 62 raw / 11 dedup hits at ε=10⁻⁴ vs Poisson null λ=4. χ²(df=19) = 470 raw / 38 dedup. **Confirms FTD-0094 [PARAMETRIC] from methodological side.**
+- **2026-05-01 polynomial-level extension:** 147,456 polynomials of form `x² − n·G*^p·x + m·G*^q`; **exactly 1 dual-matcher** (the master quadratic). **Hash-locked 2026-05-01:** `git tag hashlock-polynomial-scan-v1` against `f36b741` (retrospective lock, NOT pre-registration; flagged in audit).
+
+### FTD-0107: Emergent spectrum L-invariance at L ∈ {32, 64} (G1 measurement)
+- **tag:** [PARTIAL] (2026-04-27); G2 follow-up at L=128 completed 2026-04-28 (commits 33a6aba + 37be3d8).
+- **proof_location:** `docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`; `engine/tests/campaign_emergent_spectrum_2026-04-27.cpp`
+- **pre-registration:** `git tag preregister-emergent-spectrum-g1`, `preregister-emergent-spectrum-g2`.
+- **content:** Deterministic cluster counts L-invariant at L ∈ {32, 64}: 1 cluster from point injection (~25 voxels for ic1), 2 clusters from collision (~3-5 voxels for ic3); 5/5 seeds at both L. Most novel positive structural finding of the engine-as-instrument program.
+- **dependents:** FTD-0110.
+
+### FTD-0110: Cluster-size↔mass identification
+- **tag:** **[DERIVED]** at linear single-block level (k = 1/N_base = 1/4 from O_h rep theory, mult(A_{1g}) = 4 in 27-block, 2026-04-28); [PARTIAL · empirically verified at 5%] for multi-scale; **[STRONGLY MOTIVATED CONJECTURE]** for full nonlinear-regime SM-particle identification.
+- **proof_location:** `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`; `docs/theory/02_foundations/FOUND_MINIMUM_DIMENSIONS.md`; `engine/tests/test_emergent_ic1_topology.cpp` (T4/T5b/T6).
+- **content:** N(A) ≈ ¼·(A/K_GENESIS)². SM cross-checks: e (Δ=0%), μ (+1.1%), π (-2.0%), K (-10.2%), p (-15.0%). 5/5 seeds for each particle.
+- **mechanisms attempted (FTD-0119):** α (1/√d) FALSIFIED 2026-05-01 Phase B; Langevin-equipart (Phase C) FALSIFIED 2026-05-01; β (genesis-kink) and γ (Langevin amplitude-crossover at A* ≈ 13) remain candidates.
+- **dependencies:** FTD-0001, FTD-0014, FTD-0107.
+
+### FTD-0111: Harmonic invariant of master-quadratic (1+i)-tower (Theorem 8)
+- **tag:** **[THEOREM]** (2026-04-29)
+- **proof_location:** `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md`; `scripts/proofs/proof_harmonic_invariant_tower.py` (14/14 PASS at 50-digit precision)
+- **content:** M_k(x) := x² − 2^k G*^(k−2) x + 2^k G*^(k−1) for k ≥ 3. Theorem 1: harmonic identity 1/y₊ + 1/y₋ = 1 at every level. Theorem 2: discriminant factorization with A_k irrational for k ≥ 4 (Schneider–Chudnovsky transcendence). Closed-form α at k=4: α_tree = 1/(2G*) − √(4G*−1)/(4 G*^(3/2)).
+- **2026-05-01 Q1 — RANK-1 STRUCTURAL UNIQUENESS:** scanned 58 (m, k) pairs in natural Gaussian-integer-tower family; (m=2, k=4) is RANK 1 with 5-orders-of-magnitude gap to rank 2. Structurally forced within tower family.
+- **dependencies:** FTD-0001, FTD-0014.
+
+### FTD-0112: Field-theoretic characterization of Q(G*) (Theorem 9)
+- **tag:** **[THEOREM]** (2026-04-30, conditional on Chudnovsky 1976 algebraic independence of π and Γ(1/4) over ℚ)
+- **proof_location:** `SPEC_ALGEBRAIC_SPINE.md` §9
+- **content:** Q(G*) ⊂ Q(π, Γ(1/4)) and Q(G*) ∩ Q(π) = ℚ ("π-free"). Provides algebraic underpinning of G*/π asymmetry (FTD-0106). (1+i)-tower coefficients live in ℤ[2, G*] ⊂ Q(G*).
+- **dependencies:** FTD-0001, FTD-0002, FTD-0111.
+- **paper-A risk:** No automated verification script; narrative-only proof. Audit recommended `proof_field_theoretic_qgstar.py` before paper submission (now MC-T1.3 in `CHECKLIST_MATH_COMPLETE.md`).
+
+### FTD-0113: Retarded extension of Phase G — lattice retarded Green's function identity
+- **tag:** [DERIVED] (2026-04-30, subsidiary of FTD-0004)
+- **proof_location:** `docs/theory/03_derivations/DERIV_RETARDED_GREEN_LATTICE.md`; `scripts/proofs/proof_retarded_green_identity.py`
+- **content:** ∫₀^∞ α_r(r, t, L) dt = α_r(r, L) at every finite L; continuum limit α_r(r, t, ∞) = δ(t − r/c)/(2π) with universal amplitude 1/(2π).
+- **dependencies:** FTD-0004.
+
+### FTD-0114: Lattice Hodge duality / Bianchi identities exact
+- **tag:** [DERIVED] (2026-04-30, kinematic identity)
+- **proof_location:** `docs/theory/03_derivations/DERIV_LATTICE_HODGE_DUALITY.md`; `scripts/proofs/proof_lattice_hodge_duality.py`
+- **content:** d² = 0 identically: ∇·(∇×A) = 0 and ∇×(∇φ) = 0 exact at every site, no O(a²) error. Stencil-independent (entire G18 family).
+
+### FTD-0115: Lattice Liénard-Wiechert at uniform velocity
+- **tag:** [DERIVED] for closed-form at uniform v; general accelerating motion remains [OPEN] (MC-T4.4 in math-complete checklist)
+- **proof_location:** `docs/theory/03_derivations/DERIV_LATTICE_LIENARD_WIECHERT.md`; `scripts/proofs/proof_lattice_lienard_wiechert.py`
+- **content:** Substitution rule (c|k̂|)² → (c|k̂|)² − (k·v)² captures full Lorentz-boost content. **Lattice Cherenkov pole** at any v > 0. v_th ≈ 6.62% c_lat at L=16.
+
+### FTD-0116: G*² as FTD lattice Z-factor
+- **tag:** **[CLOSED NEGATIVE]** (2026-05-01 via Q4a numerical measurement)
+- **proof_location:** `docs/theory/09_mathematical/EXPLR_TWO_PI_GSTAR_CONNECTION.md`; `scripts/proofs/proof_z_factor_q4a.py`
+- **content:** Predicted Z_FTD = G*² ≈ 8.754. Measured Z_SC = 1.5879, Z_G18 = 1.9917 — off by ~4.4×. Root cause: spine §5 W₃ = G*²/(2π) is BCC-sublattice integral; engine gauss-projection runs on cubic G18, not BCC.
+- **what we keep:** the catch of FTD-0117 spine typo; clean separation of cubic-Watson vs BCC-Watson.
+
+### FTD-0117: Spine document G* formula and value typo
+- **tag:** **[BUG — RESOLVED]** (filed 2026-04-30, swept and resolved same day)
+- **commits:** 1fcd519 + sweep follow-up
+- **content:** SPEC_ALGEBRAIC_SPINE.md §1 had wrong formula (extra Γ(1/2)) and wrong value (2.622 instead of 2.9587 — confused with ϖ). Decisive verification: master quadratic gives x₊ = 137.036 ONLY at G* = 2.9587. Constants-sentinel sweep found 4 additional sites; all fixed. **No downstream code uses wrong value** (constants.py, engine, JS all correct).
+- **discovered during:** FTD-0116 Q4 work — AI agent was misled by the spine typo.
+
+### FTD-0118: Q3 + Q4 engine-stencil cross-checks
+- **tag:** [VERIFIED] (2026-05-01, engine-equivalent Python; live-engine C++ benchmark remains [OPEN])
+- **proof_location:** `scripts/proofs/proof_q3_q4_engine_stencil.py` (PASS/PASS at machine precision)
+- **content:** Q3: at L=16 on G18 stencil, retarded-static identity holds at machine precision. Q4: G_L^G18(0) = 0.302851, Z_G18 = 1.902870. Live-engine C++ benchmark (~1-2 days) remains [OPEN].
+- **dependencies:** FTD-0113, FTD-0114, FTD-0116.
+
+### FTD-0119: FTD-0110 nonlinear-bridge analysis
+- **tag:** [BRIDGE-ANALYZED] (2026-05-01); closure remains [OPEN] (MC-T3.1 in math-complete checklist)
+- **proof_location:** `docs/theory/03_derivations/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md`
+- **content:** Empirical k(A) ≈ ¼·(1 − 0.030·ln(A/2)) — logarithmic correction. Three candidates: (α) multi-block irrep leakage **FALSIFIED 2026-05-01 Phase B**; (β) genesis-kink — open; (γ) Langevin amplitude-crossover at A* ≈ 13 — open. Phase C tested Langevin-equipartition framework, also FALSIFIED. Both natural representation-theoretic frameworks fail.
+- **dependencies:** FTD-0107, FTD-0110, FTD-0084.
+- **honest meta-note:** failure path of the closure plan working as designed; CLAUDE.md anti-target discipline held.
+
+### FTD-0120: Maxwell-exploit thread closure — Q5/Q6/Q7/Q8
+- **tag:** [DERIVED] for Q6/Q7/Q8; [PARTIAL DERIVED] for Q5 (sinusoidal closed-form, general motion only formal expression) (2026-05-01)
+- **proof_location:** `docs/theory/03_derivations/DERIV_LATTICE_LW_EXTENSIONS.md`; `scripts/proofs/proof_lattice_cherenkov_rate.py`
+- **content:** Q6 lattice Cherenkov power closed form; Q7 extended-source LW via cluster form factor; Q5 sinusoidal Larmor via Bessel-function closed form; Q8 source-half audit verifies engine consistency. **Maxwell-exploit thread COMPLETE (all 8 sub-questions Q1-Q8 closed).**
+- **dependencies:** FTD-0113, FTD-0114, FTD-0115.
+
+### FTD-0121: Physics-bridge crystallization (synthesis)
+- **tag:** **[SYNTHESIS]** (2026-05-01 evening) — see CLAUDE.md tag table for definition.
+- **proof_location:** `docs/theory/01_reference/SPEC_PHYSICS_BRIDGE.md`
+- **content:** Three-tier: (1) Mathematical [THEOREM]: G*, master quadratic, harmonic-invariant tower (FTD-0111), Q(G*) (FTD-0112). (2) Empirical: x₊ = 1/α (1.26 ppm), x₋ = N_c (0.80%). (3) Structural-uniqueness: tower-scan rank-1 of 58 (commit 0074f92); polynomial-scan unique dual-matcher of 147,456 (commit f36b741). **Combined Bayes ~20,000:1 within natural FTD polynomial family.**
+- **bridge closure status:** "finished as much as current methods allow". x₊ = 1/α and x₋ = N_c remain formally [STRONGLY MOTIVATED CONJECTURE]. Multiple session-scale derivation routes attempted and closed-negative.
+- **paper-A risk RESOLVED:** polynomial-scan runner hash-locked via `git tag hashlock-polynomial-scan-v1` against commit f36b741 (audit 2026-05-01). Honest naming: `hashlock-` not `preregister-` (retrospective).
+- **dependencies:** FTD-0001, FTD-0002, FTD-0013, FTD-0014, FTD-0097, FTD-0111, FTD-0112, FTD-0117.
+- **cross-reference:** the path forward beyond [SYNTHESIS] is laid out in `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` (2026-05-01); the central foundational obstruction is item MC-T4.3 (non-action α-injection mechanism).
+
+---
+
 ## Maintenance log
 
 | Date | Change | By |

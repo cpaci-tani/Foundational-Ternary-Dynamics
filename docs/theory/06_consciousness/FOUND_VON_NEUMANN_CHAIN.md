@@ -2,10 +2,12 @@
 
 ## Algebraic Resolution of the Infinite Observer Problem
 
-**Date:** March 17, 2026
-**Framework:** Foundational Ternary Dynamics v5.28
+**Date:** March 17, 2026 (vocabulary refresh 2026-05-01)
+**Framework:** Foundational Ternary Dynamics v5.34
 **Status:** Formal synthesis with epistemic classification
-**Authors:** cpaci & Claude (Opus 4.6)
+**Authors:** cpaci & Claude
+
+> **Vocabulary refresh (2026-05-01):** The von Neumann chain resolution is purely structural — it depends on Type-III → Type-I descent terminating at the lattice's algebraic structure, not on the metaphysics of consciousness. "Observers" in this document are restated as **reflexive sites with observation-layer coupling** per [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). The infinite-regress is terminated by the **lattice's finite reflexive-coupling structure**, not by a special "ultimate observer." The resolution is algebra-side and reframe-stable.
 
 ---
 

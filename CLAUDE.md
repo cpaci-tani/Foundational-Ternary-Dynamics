@@ -254,6 +254,11 @@ History prior to 2026-04-19 contains 287 commits with `Co-Authored-By: Claude` l
 | **[IMPOSED]** | Parameter choice or model calibration | Note as input, not output |
 | **[EMERGENT]** | Behavior arising from dynamics (not designed in) | Verify in simulation |
 | **[OPEN]** | Unresolved question | Research opportunity |
+| **[STRONGLY MOTIVATED CONJECTURE]** | [CONJECTURE] with substantial structural and/or empirical evidence (e.g. structural-uniqueness scans, multi-route convergence, sub-ppm empirical match) but no derivation chain | Critique evidence; expect explicit Bayes-factor, uniqueness, or look-elsewhere argument |
+| **[PARAMETRIC]** | Standard physics formula filled with FTD constants; numbers fit but mechanism is borrowed | Treat as calibration input, not output |
+| **[SYNTHESIS]** | Cross-document integration of multiple lower-level claims into a single externally-defensible package; not a new theorem but a coherent re-statement of existing claims at their canonical tags | Verify component claims; check that synthesis does not silently promote tags |
+| **[CLOSED NEGATIVE]** | Hypothesis was tested and falsified; preserved for provenance to prevent re-attempt | Confirm closure evidence; cite to prevent zombie re-emergence |
+| **[DERIVED]** | Established from axioms or prior theorems by an explicit chain that the doc itself reproduces; weaker than [THEOREM] when the chain has non-trivial assumptions | Check the chain; flag any smuggled axioms |
 
 ---
 

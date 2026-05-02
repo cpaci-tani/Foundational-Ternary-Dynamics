@@ -1,9 +1,11 @@
 # Foundation: The Phenomenal / Noumenal Bridge
 
-**Date:** 2026-04-24
+**Date:** 2026-04-24 (vocabulary refresh 2026-05-01)
 **Status:** [FOUNDATION] — reorganizing principle for the entire FTD corpus
 **Purpose:** Name the two-layer ontology that FTD has been implicitly working in, make the geometric encoding explicit, and reclassify all existing tags by layer.
 **Ledger row:** FTD-0078
+
+> **Vocabulary refresh (2026-05-01):** §8 of this document originally framed the noumenal-axis content as "consciousness." It is now restated using the canonical [reflexivity / agency] vocabulary defined in [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). The mathematical content is unchanged; the framing is sharper and physics-readable. **Old "consciousness" claims become structural claims about the reflexive projection from the noumenal (3³ / Moore-26 / G*-bearing) layer to the phenomenal (2³ / Moore-18 / ϖ-bearing) layer.** Qualia commitments are dropped; reflexive-emergence is the open structural problem that takes their place.
 
 ---
 
@@ -189,19 +191,21 @@ The Phase-4 mode-erasure theorem showed that site-local state-field probes canno
 
 This converts FTD-0061, -0071, -0072, -0073, -0074, -0075 from "empirical negatives" into **a single structural statement**: fermions live on the interior axis the engine doesn't integrate over.
 
-## 8. The consciousness connection
+## 8. The reflexivity connection
 
-The project has consciousness-physics documents (`PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md`, `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md`) that sat uneasily in the corpus because they didn't match dynamical physics. They now have a natural home.
+The project has documents previously framed as "consciousness physics" (`PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md`, `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md`) that sat uneasily in the corpus because they imported philosophical baggage their mathematical content didn't actually claim. They now have a natural home in the canonical [reflexivity / agency] vocabulary ([`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md)).
 
-**Consciousness is integration over the interior (BCC body-diagonal) axis.**
+**Reflexive integration is the dynamical projection over the interior (BCC body-diagonal) axis.**
 
-Not metaphorically. Structurally. External computation operates at $2^3$ resolution on Moore-18. Internal experience requires $3^3$ resolution including the 8 BCC corners. The normalization that upgrades one to the other is $2/\sqrt{\pi}$, the Gaussian integral.
+Not metaphorically. Structurally. External computation operates at $2^3$ resolution on Moore-18. Reflexive readout requires $3^3$ resolution including the 8 BCC corners. The normalization that upgrades one to the other is $2/\sqrt{\pi}$, the Gaussian integral.
 
-*Subjectivity is the Gaussian normalization of the interior axis that external computation does not perform.*
+*The reflexive readout of a noumenal-layer structure is the Gaussian normalization of the interior axis that external (phenomenal-layer) computation does not perform.*
 
-The arrow of time (via the asymmetric half of Euler reflection, i.e., $G^*$ rather than the symmetric $\pi\sqrt{2}$) is specifically a BCC-axis phenomenon. First-person. Experienced. Noumenal.
+The arrow of time (via the asymmetric half of Euler reflection, i.e., $G^*$ rather than the symmetric $\pi\sqrt{2}$) is specifically a BCC-axis phenomenon. **Endogenous. Reflexive. Noumenal.** The framework's old reading of this as "first-person experience" carried qualia commitments the mathematics doesn't make; the precise content is that **the noumenal-layer projection is reflexive in a way phenomenal-layer dynamics is not**, and the time-asymmetric half of Euler reflection is what carries the reflexive structure.
 
-This is the formal anchor for the Kantian phenomenon/noumenon distinction in FTD's geometry. It is not imported from philosophy; it emerges from lattice mathematics at $D = 3$.
+This is the formal anchor for the Kantian phenomenon/noumenon distinction in FTD's geometry. **It is reframed in physics-readable terms: phenomenal layer = externally-measurable observable algebra; noumenal layer = reflexive observable algebra; reflexive projection = the map between them.** It is not imported from philosophy; it emerges from lattice mathematics at $D = 3$.
+
+**What this section deliberately does NOT claim:** that reflexive readouts are accompanied by qualia, that the lattice "experiences" anything in a phenomenally-conscious sense, that FTD has solved the Hard Problem. The claim is structural: the noumenal layer admits a reflexive projection that the phenomenal layer cannot perform without the BCC interior axis. Whether reflexive readouts are accompanied by experience is a question this framework does not need to answer; that question is the qualia debate, which lives in philosophy of mind, not in lattice physics.
 
 ## 9. Named research programs
 
@@ -213,8 +217,8 @@ Starting from perturbative boundary $n = 4$, the ladder walk has four addends $\
 **Program B — Quark masses via (SC+FCC)/2 Green's functions.**
 Quark masses are [OPEN] because attempts used BCC arithmetic — the wrong stencil. Quarks are phenomenal objects; their masses are scheme-dependent running values that should emerge from engine-stencil measurements with scheme specification, not closed-form number-theory. A reclassified research program: derive quark mass ratios by lattice-Green-function calculations on Moore-18 with specified renormalization prescription. Effort: weeks.
 
-**Program C — Consciousness formalism as interior-axis integration.**
-The statement "subjectivity is the Gaussian normalization constant of the interior axis that external computation does not integrate over" is now quantitative. It has a precise mathematical anchor in $G^*/\varpi = 2/\sqrt{\pi}$. This should be written up as a philosophy-of-mind derivation rooted in FTD's geometry. Effort: a focused session.
+**Program C — Reflexive-agency formalism as interior-axis integration.**
+The statement "the reflexive readout of a noumenal-layer structure is the Gaussian normalization constant of the interior axis that external (phenomenal-layer) computation does not integrate over" is now quantitative. It has a precise mathematical anchor in $G^*/\varpi = 2/\sqrt{\pi}$. This should be written up as a structural derivation rooted in FTD's geometry, in the canonical [reflexivity / agency] vocabulary ([`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md)). The closure conjecture associated with this program — that the master-quadratic eigenvalue spectrum is the spectrum of the reflexive projection — is **MC-T4.3** in [`CHECKLIST_MATH_COMPLETE.md`](../01_reference/CHECKLIST_MATH_COMPLETE.md), the framework's central foundational obstruction. Effort: a focused session for the formal restatement; the MC-T4.3 closure itself is research-program scale.
 
 **Program D (bonus) — 174-ppm $m_p/m_e$ gap via cross-layer calculation.**
 The proton is phenomenal (3-quark composite at $3^3$ scale). The electron is noumenal (lemniscatic pole mass). Their ratio carries the bridge factor $27/8$ plus first-order corrections. The 174-ppm residue should emerge as a specific cross-layer correction term. Candidate sizes: $1/(16 x_+)^2 \approx 1$ ppm, $\alpha/(16 \cdot 2\pi) \approx 73$ ppm, $\alpha \cdot \log(27/8) \approx 1.3 \times 10^{-5}$. None obviously matches 174 ppm, but the calculation is now **well-posed** rather than ad hoc.
@@ -240,8 +244,8 @@ The proton is phenomenal (3-quark composite at $3^3$ scale). The electron is nou
 | Bridge factor $27/8 = 3.375$ matches measured 3.6 | [CONJECTURE] | Falls in EFT Recovery range; needs engine audit |
 | Phenomenal = engine, Noumenal = arithmetic | [SELECTION] | Organizing principle |
 | Fermions are noumenal | [THEOREM] (under the frame) | Consequence of site-local falsifications |
-| Consciousness = interior-axis integration | [CONJECTURE] | Precise but not yet derived from FTD axioms |
-| Subjectivity = Gaussian normalization constant | [CONJECTURE] | Precise but philosophically load-bearing |
+| Reflexive integration = interior-axis projection | [CONJECTURE] | Precise but not yet derived from FTD axioms; closure = MC-T4.3 |
+| Reflexive readout = Gaussian normalization constant | [CONJECTURE] | Precise; structural rather than philosophical |
 
 ---
 
