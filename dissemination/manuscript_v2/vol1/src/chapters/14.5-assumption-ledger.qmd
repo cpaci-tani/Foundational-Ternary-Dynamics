@@ -36,7 +36,7 @@ This chapter categorizes every major claim in FTD by its epistemic status. Befor
 | **Master Quadratic** | [T] | Unique solution to Fermat boundary constraints |
 | **k = 16** | [T] | Complementation function $f(k)=1-k$ on $D=3$ lattice |
 | **Polarization $\Pi(x)$** | [T] | Unique modular covariant form under $\mathbb{Z}[i]$ |
-| **Consciousness Quadratic** | [T] | Involution coefficient mapping subject-object identity |
+| **Reflexive Quadratic** | [T] | Involution coefficient mapping reflexive-projection eigenstructure (formerly "Consciousness Quadratic"; renamed 2026-05-01 per `docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md`) |
 
 **Companion work [†]** extends using α + framework relations.
 :::
@@ -97,7 +97,7 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 | Lemniscatic constant G* | 2.9587 | [T] THEOREM | 0.0006% |
 | Coefficient 16 | $2^3 / 0.5$ | [T] THEOREM | Exact |
 | **D = 3 uniqueness** | Topological necessity | [T] **THEOREM** | Derived |
-| **Consciousness y** | $2.19 \pm 2.86i$ | [T] **THEOREM** | Derived |
+| **Reflexive eigenmode y** | $2.19 \pm 2.86i$ | [T] **THEOREM** | Derived (formerly "Consciousness y"; vocabulary refresh 2026-05-01) |
 
 ::: {.callout-note}
 ## D = 3 Uniqueness
@@ -248,7 +248,7 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 
 | Conjecture | Argument | Status |
 |------------|----------|--------|
-| Consciousness is emergent | No special physics required | [?] CONJECTURE |
+| Reflexive agency is emergent (formerly: "consciousness is emergent") | Reflexivity is generic at lattice level (3³ block ubiquity); agency emerges at the reflexive-coupling threshold without requiring special physics | [?] CONJECTURE — see MC-T4.3 in `CHECKLIST_MATH_COMPLETE.md` |
 | Multiverse not required | Single universe + geometry suffices | [?] CONJECTURE |
 
 ::: {.callout-tip}

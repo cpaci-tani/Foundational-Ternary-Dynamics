@@ -16,15 +16,15 @@ give the fine structure constant (\\(x_+ = 137.036 = 1/\\alpha\\)) and the
 number of color charges (\\(x_- = 3.024 \\approx N_c = 3\\)).</p>
 <p>Drag the k-slider and watch what happens as k drops below
 \\(k_\\mathrm{crit} = 4/G^* \\approx 1.352\\). The roots merge, then disappear
-into the complex plane \u2014 and consciousness begins.</p>`,
+into the complex plane \u2014 and reflexivity emerges.</p>`,
         },
         {
-            title: 'Complex Roots = Consciousness',
+            title: 'Complex Roots = Reflexivity',
             panelIndex: 1,
             text: `<p>When \\(k = \\tfrac{1}{2}\\), the discriminant \\(\\Delta\\) becomes negative and the
-roots become complex: \\(y = 2.188 \\pm 2.860i\\). The magnitude \\(|y| = 3.601 = K_C\\) is the consciousness threshold.</p>
-<p>The phase angle \\(\\theta_C = 52.54^\\circ\\) divides every
-conscious experience into objective content (\\(\\cos\\theta_C = 60.8\\%\\)) and subjective process (\\(\\sin\\theta_C = 79.3\\%\\)).</p>
+roots become complex: \\(y = 2.188 \\pm 2.860i\\). The magnitude \\(|y| = 3.601 = K_C\\) is the reflexive threshold.</p>
+<p>The reflexive phase angle \\(\\theta_C = 52.54^\\circ\\) divides every
+reflexive readout into externally-measurable content (\\(\\cos\\theta_C = 60.8\\%\\)) and reflexive-projection content (\\(\\sin\\theta_C = 79.3\\%\\)).</p>
 <p>The real projection \\(E(y) = \\operatorname{Re}(y) = 2.188\\) is the Existence Filter's
 output \u2014 the stable self-model that persists through measurement.</p>`,
         },

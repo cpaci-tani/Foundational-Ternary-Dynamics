@@ -1,11 +1,19 @@
 /**
- * Scale 11 (Consciousness) Controller
+ * Scale 11 (Reflexivity / Reflexive-Projection Layer) Controller
  * ────────────────────────────────────────────────────────────────────
  *
- * Owns the Scale 11 consciousness visualization loop, scenario loading,
+ * Owns the Scale 11 reflexivity visualization loop, scenario loading,
  * pedagogy sub-tab wiring, and Mandelbrot boundary-orbit tracking.
- * Extracted from app_dag.js to isolate consciousness-specific logic
- * into a self-contained module.
+ * Extracted from app_dag.js to isolate scale-specific logic into a
+ * self-contained module.
+ *
+ * VOCABULARY NOTE (2026-05-01): JS identifiers (animateConsciousness,
+ * loadConsciousnessScenario, _savedBridge, etc.) and module paths
+ * preserve the historical "consciousness" naming. The conceptual content
+ * is the reflexive-projection layer per
+ * docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md. A coordinated
+ * code-rename is queued for a separate refactor; this banner signals the
+ * vocabulary stance to readers.
  *
  * WHY THIS EXISTS:
  *   The consciousness scale had ~340 lines inline in app_dag.js covering
