@@ -99,8 +99,8 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Sakharov\'s three conditions (baryon number violation, C and CP violation, out-of-equilibrium) are necessary but not sufficient. The observed CP violation in the Standard Model is too small by many orders of magnitude to account for the observed asymmetry. New physics is required but not empirically found.',
                 ],
                 ftdAngle: [
-                    { tag: 'THEOREM', text: 'The Moore Layer Theorem produces matter-antimatter symmetry at the structural level: for every occupied +1 voxel there is a structurally equivalent -1 voxel. The absence of annihilation arises from voxel separation, not from a Sakharov-style dynamical asymmetry.' },
-                    { tag: 'CONJECTURE', text: 'The observed "matter dominance" is reinterpreted as an observer-selection effect within a co-located +/- partition — we inhabit the +1 sublattice and measure from it.' },
+                    { tag: 'SELECTION', text: 'The Moore Layer decomposition produces a +/− structural symmetry at the postulate level (s ∈ {−1, 0, +1}): for every occupied +1 voxel there is a structurally equivalent −1 voxel. This is a structural symmetry of the state space, not a derivation of why our observed sector lacks annihilation; that step is a separate argument.' },
+                    { tag: 'CONJECTURE', text: 'The observed "matter dominance" is reinterpreted as an observer-selection effect within a co-located +/− partition — we inhabit the +1 sublattice and measure from it.' },
                 ],
                 stillOpen: [
                     'FTD reframes the puzzle topologically but does not produce a quantitative matter-antimatter ratio to compare against the observed 10^-10 baryon-to-photon asymmetry.',
@@ -121,8 +121,8 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Mainstream cosmology adopts dark matter as a parametric addition — \\(\\Lambda\\)-CDM works phenomenologically but the underlying particle is unidentified. MOND and modified gravity theories capture some rotation curves but not cluster lensing. Nothing is satisfactory.',
                 ],
                 ftdAngle: [
-                    { tag: 'THEOREM', text: 'The Moore Layer decomposition of the 27-site neighborhood produces 17 states that do not participate in the electromagnetic sector. The structural ratio \\(17/27 \\approx 63\\%\\) is a count, not a fit.' },
-                    { tag: 'SELECTION', text: 'Dark matter is proposed to be the unexcited subset of the same lattice structure that produces visible matter — not a separate substance.' },
+                    { tag: 'SELECTION', text: 'The Moore Layer decomposition of the 27-site neighborhood identifies 17 states that, on the proposed identification, do not participate in the electromagnetic sector. The structural ratio \\(17/27 \\approx 63\\%\\) is a count of structural states; its identification with cosmological dark matter is a separate claim and does not match the Planck-2018 ratio (see still-open).' },
+                    { tag: 'CONJECTURE', text: 'Dark matter is proposed to be the unexcited subset of the same lattice structure that produces visible matter — not a separate substance.' },
                 ],
                 stillOpen: [
                     'The structural count \\(17/27 \\approx 63\\%\\) does not match the Planck 2018 observed ratio \\(\\Omega_\\mathrm{DM}/\\Omega_m \\approx 84\\%\\). The discrepancy is unresolved; no argument currently bridges the structural count to the cosmological measurement.',
@@ -166,8 +166,8 @@ export const FAQ_SECTIONS = Object.freeze([
                     'The two main responses are the multiverse/anthropic landscape (which makes no sharp predictions) and the search for a unique underlying theory (which has not been found). Neither is empirically decisive.',
                 ],
                 ftdAngle: [
-                    { tag: 'THEOREM', text: 'The fine-structure constant \\(\\alpha = 1/137.036\\) follows from D=3 and the lemniscate constant G* alone, with no free parameters. Verified to CODATA 2022 precision in the Verify panel.' },
-                    { tag: 'SELECTION', text: 'The Moore Layer Theorem constrains gauge groups, generation count, and dark-to-visible ratio from the neighborhood geometry alone.' },
+                    { tag: 'CONJECTURE', text: 'The master quadratic \\(x^2 - 16G^{*2}x + 16G^{*3} = 0\\) is a [THEOREM]; its larger root \\(x_+ \\approx 137.036\\) matches \\(1/\\alpha\\) to 1.26 ppm at tree level. The physical identification \\(x_+ = 1/\\alpha\\) is a [STRONGLY MOTIVATED CONJECTURE] supported by Bayes-factor and structural-uniqueness scans (\\(\\sim 4\\times 10^5\\):1) but no derivation chain from axioms to \\(\\alpha\\) currently exists.' },
+                    { tag: 'SELECTION', text: 'The Moore Layer decomposition motivates gauge-group structure, generation count, and a dark-state count from the neighborhood geometry. The argument is consistency-based, not a uniqueness theorem.' },
                     { tag: 'PARAMETRIC', text: 'Masses like \\(m_e\\) and \\(m_H\\) are computed by inserting FTD-derived \\(\\alpha\\) and integers into Standard-Model formulas; agreements are parametric, not first-principles predictions.' },
                 ],
                 stillOpen: [
@@ -190,7 +190,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Supersymmetry was the leading proposed solution but has not been observed at the LHC at accessible scales. Extra-dimensional, compositeness, and anthropic approaches each introduce new structure without decisive empirical support.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'In FTD the gravitational coupling \\(G_N = 1/(b_3 + N_c)^2\\) is set by the topology of the 27-site Moore cell, not by a dimensional fine-tuning.' },
+                    { tag: 'PARAMETRIC', text: 'In FTD the gravitational coupling \\(G_N = 1/(b_3 + N_c)^2\\) is fitted to the topology of the 27-site Moore cell. The numerical match works at the chosen normalisation; a uniqueness derivation that selects this specific functional form is not currently available.' },
                     { tag: 'CONJECTURE', text: 'Gravity\'s weakness is reinterpreted as a long-range relaxation of the flux field across many manifestation events — weakness is structural dilution, not a hierarchy of mass scales.' },
                 ],
                 stillOpen: [
@@ -212,8 +212,8 @@ export const FAQ_SECTIONS = Object.freeze([
                     'String theory requires supersymmetry and extra dimensions with no direct experimental test. Loop quantum gravity is background-independent but has not reproduced low-energy QFT cleanly. Causal dynamical triangulations and asymptotic safety each capture pieces. None is decisive.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'Both QM and GR are emergent from the same lattice dynamics: QM as the statistics of manifestation events on short scales, GR as the coarse-grained flux-field geometry on long scales.' },
-                    { tag: 'THEOREM', text: 'Full nonlinear Einstein equations reconstruct via Deser\'s iterative bootstrap from linear spin-2 flux modes on the lattice; benchmark at engine/tests/test_einstein_equations.cpp.' },
+                    { tag: 'SELECTION', text: 'Both QM and GR are framed as emergent from the same lattice dynamics: QM as the statistics of manifestation events on short scales, GR as the coarse-grained flux-field geometry on long scales.' },
+                    { tag: 'SELECTION', text: 'A Deser-iterative bootstrap from linear spin-2 flux modes to the nonlinear Einstein equations is presented; engine benchmarks (test_einstein_equations.cpp) report a 0.004% time-dilation match. The full derivation chain currently sits at [SELECTION] / [PARTIAL DERIVED] post-2026-04-19 reframe.' },
                     { tag: 'CONJECTURE', text: 'The UV divergences of naive quantum gravity are absent because the lattice is discrete by postulate — there is no continuum to renormalise over.' },
                 ],
                 stillOpen: [
@@ -257,8 +257,8 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Interpretations split sharply: Copenhagen drops counterfactual definiteness, Bohmian mechanics accepts nonlocal hidden variables at the cost of preferred frame, Many-Worlds retains locality at the cost of branching ontology. The physics is clear; the metaphysics is not.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'Bell violation \\(S = 2\\sqrt{2}\\) arises in FTD as a property of singlet states produced by void events — entangled pairs share a common manifestation history on the lattice.' },
-                    { tag: 'THEOREM', text: 'Tsirelson\'s bound emerges from the lattice emergence of quantum mechanics; five lemmas close the loop in DERIV_SINGLET_FROM_VOID_EVENT.md.' },
+                    { tag: 'SELECTION', text: 'Bell violation \\(S = 2\\sqrt{2}\\) is framed in FTD as a property of singlet states produced by void events — entangled pairs share a common manifestation history on the lattice.' },
+                    { tag: 'SELECTION', text: 'Tsirelson\'s bound is argued to emerge from the lattice emergence of quantum mechanics via a five-lemma chain in DERIV_SINGLET_FROM_VOID_EVENT.md; the substrate-to-aggregate transition (single-event \\(S \\le 2\\) to ensemble \\(S = 2\\sqrt{2}\\)) remains [OPEN].' },
                 ],
                 stillOpen: [
                     'The claim that void events produce singlet correlations depends on assumptions about the lattice history that are not uniquely fixed.',
@@ -279,8 +279,8 @@ export const FAQ_SECTIONS = Object.freeze([
                     'In string theory the dimension count is fixed by internal consistency (10 or 11) with 6 or 7 compactified. This explains the "mathematical" dimension but not why the large-scale physical dimension we observe is 3.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'D = 3 is not axiomatic in FTD: it is selected from first principles because only D=3 lattices admit the ternary-state symmetry along with the Moore-neighborhood geometry required for all other constants to derive consistently.' },
-                    { tag: 'THEOREM', text: 'Alternative dimensions break the master quadratic; this is verified in scripts/proofs/proof_master_verification.py.' },
+                    { tag: 'SELECTION', text: 'D = 3 is not axiomatic in FTD: it is selected via a consistency argument that D=3 lattices admit the ternary-state symmetry along with the Moore-neighborhood geometry the rest of the framework uses. The argument constrains but does not uniquely force D=3.' },
+                    { tag: 'SELECTION', text: 'Alternative dimensions break the master-quadratic structure (verified numerically in scripts/proofs/proof_master_verification.py); this rules out the specific D≠3 cases tested but does not constitute a uniqueness theorem over all alternative ontologies.' },
                 ],
                 stillOpen: [
                     'The selection argument constrains but does not exclude higher-dimensional ontologies that quotient down to D=3.',
@@ -376,7 +376,7 @@ export const FAQ_SECTIONS = Object.freeze([
                 ],
                 ftdAngle: [
                     { tag: 'SELECTION', text: 'Discreteness is primitive in FTD: the lattice and the ternary states are discrete by postulate. Integer-valued observables in the continuum limit are not a mystery — they are the original structure surviving coarse-graining.' },
-                    { tag: 'THEOREM', text: 'Specific integer ratios (3 generations, \\(N_c = 3\\) colors, \\(17/27\\) dark fraction, 3 spatial dimensions) fall out of the Moore Layer decomposition with no free parameters.' },
+                    { tag: 'SELECTION', text: 'Specific integer ratios (3 generations, \\(N_c = 3\\) colors, \\(17/27\\) structural dark-state fraction, 3 spatial dimensions) are read off the Moore Layer decomposition. The decomposition itself is structural; whether the framework uniquely selects each ratio (vs admits other decompositions) is a [SELECTION] argument, and the cosmological identification of \\(17/27\\) with \\(\\Omega_\\mathrm{DM}/\\Omega_m\\) is rejected by Planck 2018 (see dark-matter entry).' },
                 ],
                 stillOpen: [
                     'The postulate of discreteness is primitive; FTD does not argue that a strictly continuous ontology is impossible.',
