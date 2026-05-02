@@ -240,14 +240,16 @@ This is the same epistemic position as every effective field theory's matching t
 
 **Reference map.** The full dimensionless ↔ dimensional bridge — the seven algebraic-spine theorems, the four dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e), the three calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys = √3·ℓ_P/c`, `K_B = m_e`), and one worked dimensional application (m_e in MeV) — is catalogued in `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) and `docs/theory/01_reference/dimensional_map.json` (canonical data). When drafting papers or replying to reviewers about whether a claim is dimensionless or calibration-conditional, cite the map entry by id.
 
-### POSTULATE 3: Ternary States
-Each voxel v ∈ **L** has a state s(v,t) ∈ {-1, 0, +1} at each tick t.
+### POSTULATE 3: Ternary States (J-primary, s as manifestation)
+Each voxel v ∈ **L** carries a flux field J(v, t) ∈ ℝ³ (the dispositional layer) and a discrete state s(v, t) ∈ {−1, 0, +1} (the manifestation layer). **J is primary; s is the action of J via the Genesis threshold rule** (§3.3): when |J(v, t)| crosses the manifestation threshold K_B, the void voxel manifests as s = ±1 according to the sign of the flux divergence; otherwise s = 0. Thus s is not an independent field — it is the discrete observable layer that records when J's local intensity crosses K_B.
 
 | State | Label | Interpretation (Speculative) |
 |-------|-------|------------------------------|
-| 0 | Void | Unmanifested substrate |
-| +1 | Positive | Manifested entity (matter-like) |
-| -1 | Negative | Manifested entity (antimatter-like) |
+| 0 | Void | Unmanifested substrate (|J| < K_B) |
+| +1 | Positive | Manifested entity (matter-like; J crossed K_B with positive divergence) |
+| -1 | Negative | Manifested entity (antimatter-like; J crossed K_B with negative divergence) |
+
+**Why this is one postulate, not two:** the flux field J is the dispositional content of the void substrate (Postulate 1); the ternary state s is the manifestation projection of J via the Genesis rule. The graded-monism table below makes the dependence explicit. Treating s as primary and J as separate would double-count: J's existence is implicit in the void's dispositional character, and s is definitionally the threshold-projection of J, not an independent observable.
 
 ### The Void as Dispositional Substrate
 
