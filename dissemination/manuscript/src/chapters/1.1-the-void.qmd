@@ -102,7 +102,7 @@ The next chapter (@sec-first-division) examines the first division: the transiti
 ## Preview: Void Mitosis
 The void's self-division takes a specific geometric form—the **lemniscate** (∞). This figure-8 curve is not arbitrary; it is the minimal topology of self-reference. The void "observes itself" through this self-crossing structure, dividing into two potentialities (+1, -1) while remaining connected at the origin (0).
 
-Two different lemniscate forms—Bernoulli and Lemniscate-Alpha—both produce the same constant G* = 2.9587 to 5.45 ppm, establishing their **ontological equivalence**. From G*, all physics follows.
+Two different lemniscate forms—Bernoulli and Lemniscate-Alpha—both produce the same constant G* = 2.9587 to +6.41 ppm. The pre-registered rigidity scan (2026-05-01, FTD-0122) finds ~4.3% of natural Cayley-Dickson 5-harmonic curves admit comparable framework-integer-factorable matches, so the agreement is read as **[SELECTION] — one valid structural interpretation** rather than as a uniqueness theorem. From G*, the master quadratic generates the predictions explored in subsequent chapters.
 
 See @sec-first-division for the full treatment of void mitosis and pair production.
 :::
