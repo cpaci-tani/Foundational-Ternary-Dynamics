@@ -42,7 +42,7 @@
 | FTD-0012 | Discriminant trichotomy (bosons/critical/fermions) | THEOREM (algebra) / SELECTION (physical readings) | UNAFFECTED |
 | FTD-0013 | x₊ ↔ 1/α (1.26 ppm) | STRONGLY MOTIVATED CONJECTURE | RESOLVED (downgraded from THEOREM) |
 | FTD-0014 | x₋ ↔ N_c = 3 (0.80%) | STRONGLY MOTIVATED CONJECTURE | RESOLVED (downgraded from THEOREM) |
-| FTD-0015 | m_e = m_P · √(2π) · (16/3) · α¹¹ (0.19%) | STRONGLY MOTIVATED CONJECTURE | UNAFFECTED |
+| FTD-0015 | m_e = m_P · √(2π) · (16/3) · α¹¹ (0.19%) | STRONGLY MOTIVATED CONJECTURE; **2026-05-02 update: exponent n=11 promoted to [DERIVED] given multiset theorem (FTD-0084) + 2 SM-hierarchy SELECTIONs per MC-T3.2 closure** | UNAFFECTED |
 | FTD-0016 | m_p/m_e = N_eff/α + N_base·N_eff + N_c (174 ppm) | STRONGLY MOTIVATED CONJECTURE | UNAFFECTED |
 | FTD-0017 | Higgs mass m_H = (N_eff/α²)·m_e (0.24%) | STRUCTURALLY MOTIVATED PARAMETRIC | UNAFFECTED |
 | FTD-0018 | sin²θ_W = 3/13 | PARAMETRIC | RESOLVED (downgraded 2026-04-19) |
@@ -552,8 +552,8 @@ downstream cites can reference.
 
 ### FTD-0095: Bridge Functional ontology commitment
 - **tag:** [SELECTION] (2026-04-26)
-- **proof_location:** `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md`
-- **content:** Mass = value of functional `M : Couplings → ℝ` evaluated on root spectrum (x₊, x₋). Arithmetic-mean rule M = α·(x₊ + x₋)/2 remains [OPEN] sub-claim.
+- **proof_location:** `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md`; `scripts/proofs/proof_bridge_functional_arithmetic_mean.py` (MC-T3.4 investigation, 2026-05-02).
+- **content:** Mass = value of functional `M : Couplings → ℝ` evaluated on root spectrum (x₊, x₋). Arithmetic-mean rule M = α·(x₊ + x₋)/2 remains [OPEN] sub-claim. Investigation 2026-05-02: four candidate functionals (arithmetic, geometric, harmonic, quadratic mean) computed on (x_+, x_-); all give O(α·x_+) ≈ 1 with relative differences ~10–20%. FTD-0015 high-precision m_e formula uses ladder walk (different functional), so empirical discrimination via m_e fit not currently possible. Three closure routes (variational on σ_BCC, 't Hooft beable, Beilinson regulator) require research-program-scale machinery.
 - **dependencies:** FTD-0001, FTD-0028. **Dependents:** FTD-0094.
 
 ### FTD-0096: μ-from-ℓ_P missing arrow
@@ -581,6 +581,7 @@ downstream cites can reference.
 - **proof_location:** `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`; `docs/theory/02_foundations/FOUND_MINIMUM_DIMENSIONS.md`; `engine/tests/test_emergent_ic1_topology.cpp` (T4/T5b/T6).
 - **content:** N(A) ≈ ¼·(A/K_GENESIS)². SM cross-checks: e (Δ=0%), μ (+1.1%), π (-2.0%), K (-10.2%), p (-15.0%). 5/5 seeds for each particle.
 - **mechanisms attempted (FTD-0119):** α (1/√d) FALSIFIED 2026-05-01 Phase B; Langevin-equipart (Phase C) FALSIFIED 2026-05-01; β (genesis-kink) and γ (Langevin amplitude-crossover at A* ≈ 13) remain candidates.
+- **2026-05-02 MC-T3.1 investigation** (`scripts/proofs/proof_ftd0110_mechanism_gamma.py`): Mechanism γ A* ≈ 13 matches empirical drift onset (qualitative ✓), but naive predicted slope -1/A* ≈ -0.077 does NOT match empirical -0.030 (quantitative ✗). Discriminator experiments D3a-D3d identified for engine campaign (~2 weeks). Status: candidate, not confirmed.
 - **dependencies:** FTD-0001, FTD-0014, FTD-0107.
 
 ### FTD-0111: Harmonic invariant of master-quadratic (1+i)-tower (Theorem 8)
