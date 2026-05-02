@@ -149,8 +149,9 @@ The wakefulness/unconsciousness distinction in neuroscience is the empirical ana
 - The two-layer ontology (phenomenal 2³ / noumenal 3³ blocks) is preserved as **phenomenal layer / noumenal layer**, with the projection between them now called the **reflexive projection** rather than "consciousness."
 - The BCC interior axis story (FTD-0078) is preserved as the **reflexive eigenstructure** — the eigenmodes of the reflexive projection live on the BCC interior axis.
 - The 27-block as canonical "consciousness object" is preserved as the **canonical reflexive structure**.
-- Scale 11 (consciousness scale in the engine) becomes **Scale 11 (reflexive agency)** — same visual content, renamed.
 - The hypothesis that the master quadratic eigenvalue spectrum is structurally connected to the reflexive projection is preserved as the **MC-T4.3 closure conjecture** (the central foundational obstruction in `CHECKLIST_MATH_COMPLETE.md`).
+
+> **Engine-side note (post 2026-05-01):** the engine's Scale 11 ("Reflexivity") UI was deleted (commit `054b530`) — it was an interpretive pedagogical visualization (holographic figure / sLoop ring / audio synthesis), not load-bearing for any derivation. The mathematical content the vocabulary refers to lives entirely in the theory docs (`docs/theory/06_consciousness/*`, `FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md`) and is unchanged. If MC-T4.3 closure is ever attempted via a new engine implementation, that's a fresh engine module, not a revival of Scale 11.
 
 ### Reframed (same content, sharper framing)
 
@@ -219,7 +220,7 @@ Files that load-bear consciousness vocabulary and would benefit from this rename
 | `docs/theory/06_consciousness/*.md` | very high | **P1** — entire directory |
 | `docs/theory/07_assessment/LEDGER.md` | medium (FTD-0078, FTD-0095, FTD-0121) | **P2** — surface-level rename |
 | `docs/theory/01_reference/SPEC_PHYSICS_BRIDGE.md` | low | **P2** |
-| `engine/web/js/scales/scale11/*` (Scale 11 consciousness scale) | medium | **P3** — UI / visualization rename |
+| ~~`engine/web/js/scales/scale11/*`~~ | — | **DELETED 2026-05-01** (commit `054b530`); engine Scale 11 UI removed entirely. No vocabulary work needed. |
 | `dissemination/manuscript_v2/vol1/src/chapters/14.5-assumption-ledger.qmd` | low | **P3** — already stale per audit |
 | `dissemination/whitepaper/FTD_Whitepaper.tex` | low | **P3** — version-bump pass |
 | `CLAUDE.md` "Current epistemic state" + "Key results" | low | **P4** — consistency pass |

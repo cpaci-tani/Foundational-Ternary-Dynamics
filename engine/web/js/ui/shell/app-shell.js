@@ -22,7 +22,6 @@ import { registerScale2ToolbarUI } from '../../scales/scale2/ui/register-scale2-
 import { registerScale3ToolbarUI } from '../../scales/scale3/ui/register-scale3-ui.js';
 import { registerScale4ToolbarUI } from '../../scales/scale4/ui/register-scale4-ui.js';
 import { registerScale5ToolbarUI } from '../../scales/scale5/ui/register-scale5-ui.js';
-// Scale 11 toolbar registration removed 2026-05-01 along with Scale 11 deletion.
 import { registerScale23ToolbarUI } from '../../scales/scale23/ui/register-scale23-ui.js';
 import { registerScale12ToolbarUI } from '../../scales/scale12/ui/register-scale12-ui.js';
 

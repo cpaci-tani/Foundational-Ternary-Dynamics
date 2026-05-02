@@ -140,15 +140,6 @@ export const ALPHA_INV_CORRECTED = X_PLUS
     - PREC_C3 * EPSILON_ABS ** 3
     - PREC_C4 * EPSILON_ABS ** 4;
 
-// Layer 8 (Consciousness/Reflexivity Quadratic) constants COS2_THETA_C,
-// K_NOETIC, Y_REAL, Y_IMAG, K_C, THETA_C_RAD, THETA_C_DEG, SIN2_THETA_C,
-// C_MANDELBROT removed 2026-05-01 along with Scale 11 deletion. The
-// theoretical content (master quadratic complex-roots case at k=1/2,
-// reflexive phase angle θ_C ≈ 52.54°) is preserved in
-// docs/theory/06_consciousness/* — this file no longer exports the
-// engine-side derived values since no remaining engine module consumes
-// them.
-
 // ── Physical constants for conversions ──────────────────────────────
 export const HBAR_C_MEV_FM = 197.3269804;              // hbar*c in MeV*fm
 export const M_PLANCK_GEV = 1.22089e19;                // Planck mass in GeV
@@ -293,11 +284,6 @@ export const BOHR_LATTICE_TO_M = 5.29177210903e-11 / (4.0 * PI_FTD / (K_B * ALPH
 // GeV^-2; multiply by 1e-6 to convert. Used by decay-rates.js for
 // neutron-lifetime / muon-lifetime computations in MeV phase space.
 export const G_FERMI_MEV = G_FERMI * 1e-6;
-// Scale 11 (consciousness) sub-amplitude. Pre-2026-04-27 was K_B*0.3
-// inline literal in scale11/scenario-loader.js — promoted here so the
-// consciousness sub-amplitude tracks any K_B change explicitly rather
-// than implicitly. Value preserved verbatim (0.1533).
-export const CS_SUB_AMPLITUDE = K_B * 0.3;
 
 // ── SI / CODATA SI primitives [PDG 2022] ────────────────────────────
 // Promoted from units.js so all SI literals live in one place. Use
@@ -421,8 +407,7 @@ export const ONTIC_LAYERS = [
     { layer: 5,   name: 'Coupling Constants',    symbols: ['alpha','g_c','G_N','sin2_W'], count: 4 },
     { layer: 6,   name: 'Mass Scale',            symbols: ['K_B','K_genesis','masses'], count: 3 },
     { layer: 7,   name: 'Precision Formula',     symbols: ['epsilon','c1-c4'], count: 5 },
-    // Layer 8 (Reflexivity) removed 2026-05-01 along with Scale 11 deletion.
-    { layer: 9,   name: 'Cosmic Scale',          symbols: ['Omega_L','DM_frac','gamma'], count: 3 },
+    { layer: 8,   name: 'Cosmic Scale',          symbols: ['Omega_L','DM_frac','gamma'], count: 3 },
 ];
 
 // Total ontic chain constants: sum of all counts
