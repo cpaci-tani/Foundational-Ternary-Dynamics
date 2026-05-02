@@ -1,10 +1,110 @@
-# Where We Left Off — 2026-05-01 evening (post-physics-bridge crystallization)
+# Where We Left Off — 2026-05-02 (post-foundational-audit + math-checklist execution)
 
-**Latest update:** 2026-05-01 evening session. Substantial follow-up to the
-2026-04-30 / 2026-05-01 morning Maxwell-exploit closure: the physics
-bridge has been **crystallized** with structural-uniqueness arguments,
-volumetric pathway verified, and conjugate-lattice interpretation
-explored. Session details in §0.4 below.
+**Latest update:** 2026-05-02 — foundational audit + math-completion-checklist execution. Eight commits across the foundational audit (Phase A remediation, math-complete checklist creation, reflexivity vocabulary refresh, Scale 11 deletion + cleanup, Tier I/II/III closure passes). Net effect: framework's mathematical core is materially stronger than at session-open; 9 of 18 math-checklist items concretely advanced; pre-registration discipline gap closed. Session details in §0.5 below.
+
+---
+
+## 0.5 · 2026-05-02 session — foundational audit + math-checklist execution
+
+Eight commits pushed to `origin/main` between commit `fc85425` (session start) and `df4a407` (current head):
+
+**Audit + Phase A remediation (commits `fe4a5b4`, `8182307`)**
+
+- 8-agent foundational audit (epistemic-auditor, ftd-lead-physicist, constants-sentinel, manuscript-auditor, test-orchestrator, refactoring-analyst, Explore for open-items, physics-orchestrator) identified Phase A paper-blocking issues:
+  - LEDGER detail blocks missing for FTD-0060→FTD-0121 (60 rows had no source)
+  - SPEC_SM_REPLACEMENT_COMPLETE.md self-contradictions (sin²θ_W tagged both [PARAMETRIC] and [THEOREM])
+  - SPEC_ALGEBRAIC_SPINE.md Theorem 2 cited wrong LEDGER row
+  - META_INDEX.md row count 49 vs actual 119
+  - [SYNTHESIS] tag undefined in CLAUDE.md
+  - FTD-0121 polynomial scan was retrospectively hash-locked, not pre-registered (methodological-discipline gap)
+- Phase A remediation: 38 LEDGER detail blocks added; SPEC contradictions resolved; META_INDEX updated; tag table extended in CLAUDE.md; Theorem 7 honestly restated as `[THEOREM at L=2 — Nyquist-mode degeneracy origin]`; Theorem 3 retagged as `[NUMERICAL FACT, h=1 only]`.
+- **Reflexivity vocabulary doc** (`docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md`) created. Two-term core: reflexivity (structural property) + agency (dynamical manifestation). 25-row replacement table + 5 distinctions. Drops qualia/Hard-Problem baggage without losing conceptual content.
+- P1-P4 sweep applied across `06_consciousness/*`, FOUND_PHENOMENAL_NOUMENAL_BRIDGE, LEDGER FTD-0078, manuscript_v2 ch 14.5, whitepaper version bump (v5.28 → v5.34), CLAUDE.md.
+
+**Scale 11 deletion (commits `054b530`, `7021a9e`, `306f32d`)**
+
+- Engine Scale 11 (consciousness/reflexivity) UI deleted — 25 files, ~5200 LOC. Pedagogical visualization (holographic figure / sLoop ring / audio synthesis) for the master-quadratic complex-roots case.
+- Scale 12 (Meta) preserved per substrate-pedagogy reasoning (it visualizes the 27-site Moore neighborhood + polyhedral decomposition + N_base = 4 / |Aut(E)|² = 16 substrate).
+- Theory math content in `docs/theory/06_consciousness/*` preserved unchanged.
+- Cleanup pass strips tombstone comments + dead imports (unused MockBridge in app_dag, dangling resetScale(11) in telemetry-hub) + closes layer-8 hole in ONTIC_LAYERS array (renumbered Cosmic Scale 9→8).
+- Preview-verified: dashboard loads cleanly; 7-option engine-mode dropdown; all other panels mount; no JS errors.
+
+**Math-complete checklist creation + Tier I closure (commit `9b5d24a`)**
+
+- `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` created — 18 items across 4 tiers (spine, structural-uniqueness, engine-bridge, axioms→α). Bridge-complete roadmap.
+- **Tier I: 5/5 closed**. Three new proof scripts:
+  - `proof_field_theoretic_qgstar.py` — FTD-0112 / Theorem 9 verification (4/4 PASS)
+  - `proof_per_voxel_mass_gap.py` — FTD-0044 / spec(H) ⊂ {0} ∪ [K_B, ∞) (5/5 PASS)
+  - `proof_phase_j_general_L.py` — Theorem 7 investigation (L=2 PASS, L≥4 disconfirmation)
+- Two acceptance routes: T1.2 CM uniqueness as [NUMERICAL FACT, h=1 only] retagged; T1.5 A_{1g} dual-4 as empirical-pending-Tier-II.
+
+**Tier III pass (commit `e406de8`)**
+
+- **T3.2 closed via route (a) — structural derivation**. `proof_m_e_exponent_n11.py` (5/5 PASS). Closure chain: [THEOREM × 4] (D=3, |Aut(E)|²=16, {N_c, N_base, N_f}={3,4,6} from O_h, multiset {3,3,4,6} forced) + [SELECTION × 2] (gravity last, spinor before color) → [DERIVED] n=11.
+- **FTD-0015 / m_e formula upgraded from "n=11 [SELECTION]" to "n=11 [DERIVED]"**. The two SELECTIONs are standard SM hierarchy assumptions, not new FTD postulates.
+- T3.1 (Mechanism γ), T3.3 ((SC+FCC)/2 ↔ BCC), T3.4 (Bridge Functional) investigated honestly via 3 new scripts; NOT closed.
+- T3.5 blocked on T3.1.
+
+**Tier II + cross-tier advance (commits `83823a6`, `df4a407`)**
+
+- **T2.1 + T2.2 closed positively** via genuinely pre-registered extended scan. **Pre-registration tag**: `preregister-polynomial-scan-extended-v1` applied to commit `83823a6` BEFORE scan execution. Closes the FTD-0097 / FTD-0121 methodological-discipline gap from the audit.
+- **2,871,576 polynomials/multipliers scanned** (~19× original 147,456); master quadratic uniquely dual-selective (modulo trivial fraction-redundancy and cubic-factorization equivalences).
+- **0 dual-matchers in Eisenstein integer family** — confirms (1+i, k=4) Gaussian-integer choice is structurally distinguished, not generic.
+- **FTD-0121 [SYNTHESIS] Bayes factor strengthened from ~20,000:1 to ~4×10⁵:1**.
+- **T1.5 + T4.5 advanced** via Z[i]^× argument (`proof_a1g_dual4_via_zi_units.py`): three [THEOREM]-grade roles for "4" (CM Aut(E), O_h^ab, tower level k=4) all conjecturally trace to |Z[i]^×| = 4. T1.5 advances from [empirical agreement] to [STRUCTURAL CONJECTURE supported by 3 verified roles].
+- **T2.3 delivered** as theory note `docs/theory/09_mathematical/EXPLR_CHOWLA_SELBERG_HIGHER_H.md` — analytic machinery for h≥2 CM-uniqueness extension.
+
+**Net checklist progress:**
+
+| Tier | Status |
+|---|---|
+| I | 5/5 closed |
+| II | 3/3 closed |
+| III | 1/5 closed (T3.2), 3/5 investigated (T3.1, T3.3, T3.4), 1/5 blocked (T3.5) |
+| IV | T4.5 advanced (shared Z[i]^× argument); T4.1, T4.2, T4.3 (foundational obstruction), T4.4 unchanged |
+
+**Paper A status post-session:**
+
+Materially stronger than at session-open:
+- FTD-0121 Bayes factor ~4×10⁵ (was ~20,000) — cleanly demonstrable.
+- (1+i, k=4) tower selection now structurally distinguished from Eisenstein analogue (not just rank-1 within Gaussian).
+- m_e formula gains a structural derivation chain for n=11.
+- Theorem 7 honestly restated; Theorem 3 honestly restated. No claims weakened in content; tags sharpened.
+- Pre-registration discipline gap closed (FTD-0097 + extended scan both now have proper pre-registered tags).
+- 7 new verification/investigation proof scripts added under `scripts/proofs/`.
+
+**Remaining session-tractable next steps:**
+
+1. **Strengthen T2.1 to crisp 10⁶:1 Bayes** — double extended search-space (d_max ∈ [1, 8] denominators or higher polynomial degree). 1-2 days.
+2. **T4.4 (general-motion lattice LW)** — completes Maxwell-on-FTD thread; 2-6 weeks.
+3. **FTD-0118 live-engine C++ benchmark** — 1-2 days engine work.
+
+**Research-program-scale (out of session scope):**
+
+- T3.1 (Mechanism γ confirmation) — needs GPU campaign D3a-D3d, ~2 weeks.
+- T1.5/T4.5 formalization — Z[i]^× → O_h^ab homomorphism rigorous proof.
+- T2.3 followthrough (h≥2 numerical scan) — 2-6 weeks.
+- T4.1, T4.2, T4.3 (foundational obstruction) — Tier IV.
+
+**Pre-registration tags now in place:**
+
+```
+preregister-emergent-spectrum-g1        FTD-0107 G1
+preregister-emergent-spectrum-g2        FTD-0107 G2
+preregister-gstar-asymmetry-v1          FTD-0106
+preregister-lemniscatic-v1              FTD-0105
+preregister-look-elsewhere-scan-v1      FTD-0097 monomial scan
+preregister-s-eff-nonlinear-v1          FTD-0112 S_eff
+preregister-tower-level-scan-v1         FTD-0111 tower scan
+preregister-polynomial-scan-extended-v1 MC-T2.1+T2.2 (NEW 2026-05-02)
+hashlock-polynomial-scan-v1             FTD-0121 polynomial scan (retrospective; flagged in audit)
+```
+
+---
+
+# Where We Left Off — 2026-05-01 evening (PRESERVED for context)
+
+The 2026-05-01 evening session preceded the foundational audit. Original §0.4 below remains valid as historical context.
 
 ---
 

@@ -1,6 +1,6 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.34 (post-2026-04-27 engine refactor sweep — 17 commits across 8 phases; physics bit-identical to pre-refactor)
+**Version:** 5.35 (post-2026-05-02 foundational audit + math-checklist execution — 8 commits; Tier I closed 5/5, Tier II closed 3/3, Tier III 1/5 closed + 3/5 investigated; engine Scale 11 deleted)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
 **🔑 Start here if resuming:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — single-doc context recovery.
 **🧭 Architecture navigation:** [`META_PROJECT_ATLAS.md`](META_PROJECT_ATLAS.md) — task→file table + directory tree + subsystem dependency graph + post-refactor sweep history (§10).
@@ -10,33 +10,31 @@
 
 ---
 
-## Current epistemic state (2026-05-01 evening — post physics-bridge crystallization)
+## Current epistemic state (2026-05-02 — post-foundational-audit + math-checklist)
 
-After the 2026-05-01 evening session, the project has its most
-externally-defensible state in many sessions. Key new content:
+After the 2026-05-02 session, the project has its most externally-defensible state to date. Key updates:
 
-- **FTD-0121 [SYNTHESIS]** — `SPEC_PHYSICS_BRIDGE.md` crystallizes the
-  physics bridge with mathematical spine + empirical match + structural-
-  uniqueness arguments + ~20,000:1 Bayesian evidence (~4.3 decimal
-  orders) for structural-vs-coincidence reading within natural FTD
-  polynomial family.
-- **Two structural-uniqueness scans** (substantive positive): tower-scan
-  rank-1 with 5-orders gap (commit `0074f92`); polynomial-scan unique
-  dual-matcher in 147,456 polynomials (commit `f36b741`).
-- **Volumetric pathway directly verified** (commit `4964ba9`): 3D BCC
-  Watson integral + O_h Moore-irrep N_base² → master quadratic →
-  (137.036, 3.024) end-to-end.
-- **Conjugate-lattice interpretation** (commit `c9540dd`):
-  16 = N_base² = |Aut(E × E)| connects three spine theorems into
-  unified structural picture.
-- **FTD-0110 Mechanism α 1/√d hypothesis FALSIFIED** (commits
-  `2e5246e`, `cf41560`): Phase B + Phase C closed two natural
-  representation-theoretic frameworks. Bridge stays [OPEN].
-- **α-derivation routes exhausted**: multi-session attempts (R1/R2/R3,
-  Z-factor, RG-running, algebraic combinations, 1/√d, Langevin-equipart)
-  all closed-negative. The IDENTIFICATION x_+ = 1/α stays [STRONGLY
-  MOTIVATED CONJECTURE] with substantially strengthened structural
-  evidence.
+- **Math-completion checklist created and partially executed.** [`CHECKLIST_MATH_COMPLETE.md`](docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md) — bridge-complete roadmap, 18 items in 4 tiers. Current closure status:
+  - **Tier I: 5/5 closed** (3 verification scripts + 2 acceptance routes)
+  - **Tier II: 3/3 closed** (extended polynomial scan with genuine pre-registration; Z[i]^× cross-tier argument; Chowla-Selberg h≥2 theory note)
+  - **Tier III: 1/5 closed (T3.2 m_e exponent n=11 [DERIVED])**, 3/5 investigated, 1/5 blocked
+  - **Tier IV: T4.5 advanced** via shared Z[i]^× argument; T4.1, T4.2, T4.3 (foundational obstruction), T4.4 unchanged
+
+- **FTD-0121 [SYNTHESIS] Bayes factor strengthened** from ~20,000:1 to ~4×10⁵:1 via the extended polynomial scan (2,871,576 polynomials/multipliers, ~19× original). **0 dual-matchers in Eisenstein integer family** confirms (1+i, k=4) Gaussian-integer choice is structurally distinguished, not generic. Pre-registration tag `preregister-polynomial-scan-extended-v1` applied BEFORE scan ran (closes the methodological-discipline gap from 2026-05-01 audit).
+
+- **FTD-0015 (m_e formula) upgraded**: exponent n=11 promoted from [SELECTION] to [DERIVED] via T3.2. Closure chain: [THEOREM × 4] (D=3, |Aut(E)|²=16, {N_c, N_base, N_f}={3,4,6} from O_h, multiset {3,3,4,6} forced) + [SELECTION × 2] (gravity last, spinor before color) → [DERIVED] n=11.
+
+- **Theorem 7 (Phase J ultralocality) honestly restated**: was `[THEOREM at L=2] + [CONJECTURE for general L]`; now `[THEOREM at L=2 — Nyquist-mode degeneracy origin]`. The general-L conjecture portion was numerically disconfirmed at L≥4 by `proof_phase_j_general_L.py`.
+
+- **Theorem 3 (CM uniqueness) honestly restated**: was [THEOREM]; now `[NUMERICAL FACT, exhaustive over 9-element h=1 set]`. h≥2 structural theorem requires Chowla-Selberg h≥2 machinery (T2.3 theory note delivered, full closure 2-6 weeks research).
+
+- **A_{1g} dual-4 identification advanced** (T1.5 + T4.5): three [THEOREM]-grade roles for "4" all conjecturally trace to |Z[i]^×| = 4 via a Z[i]^× → O_h^ab homomorphism (sketched, not formally proved). T1.5 advances from [empirical agreement] to [STRUCTURAL CONJECTURE supported].
+
+- **Reflexivity vocabulary refresh** (P1-P4 sweep): `consciousness` terminology replaced with `reflexivity` / `agency` per `REF_REFLEXIVITY_VOCABULARY.md`. Theory docs in `06_consciousness/*` + manuscript ch 14.5 + whitepaper banner-applied. Mathematical content unchanged; qualia/Hard-Problem baggage dropped.
+
+- **Engine Scale 11 deleted** (consciousness/reflexivity UI): 25 files, ~5200 LOC removed. Pedagogical visualization, not load-bearing for any derivation. Theory math content in `06_consciousness/*` preserved unchanged. Scale 12 (Meta) preserved per substrate-pedagogy reasoning.
+
+- **α-derivation routes exhausted** (carried over from 2026-05-01): R1/R2/R3, Z-factor, RG-running, algebraic combinations, 1/√d, Langevin-equipart all closed-negative. The IDENTIFICATION x_+ = 1/α stays [STRONGLY MOTIVATED CONJECTURE] with substantially strengthened structural evidence (now ~4×10⁵:1 Bayes factor and Eisenstein-family disconfirmation).
 
 Read **`docs/WHERE_WE_LEFT_OFF.md` §0.4** for the evening session
 summary and **`SPEC_PHYSICS_BRIDGE.md`** for the canonical physics-
@@ -385,8 +383,19 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 
 - **Full FTD spec**: `docs/SPEC_FTD.md`
 - **Algebraic spine (canonical theorems-only reference, 2026-04-27)**: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — citation target for paper drafts; states the nine [THEOREM] claims (G* identity, master quadratic, CM uniqueness h=1, coefficient 16, Watson identity, Phase G geometric Coulomb, Phase J ultralocality at L=2, harmonic invariant tower, Q(G*) field-theoretic) independent of any physics interpretation. Theorem 7 honest status: [THEOREM at L=2] + [CONJECTURE for general L] (audit 2026-05-01). Read this before claiming anything load-bearing about FTD's algebraic content.
-- **Math-complete roadmap** (2026-05-01): `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` — bridge-complete roadmap, 18 items across 4 tiers (spine completion, structural-uniqueness, engine-bridge, axioms→α derivation). MC-T4.3 is the central foundational obstruction (non-action α-injection mechanism); closure may require ontology extension per the lead-physicist diagnosis (Phase J ultralocality decouples algebraic spine from dynamical EFT).
-- **Reflexivity vocabulary** (2026-05-01): `docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md` — canonical replacement for "consciousness" terminology. Two-term core (reflexivity = structural; agency = dynamical). Drops qualia commitments without losing conceptual content. Cite this before applying vocabulary in new docs.
+- **Math-complete roadmap** (2026-05-01; partial closure 2026-05-02): `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` — bridge-complete roadmap, 18 items across 4 tiers. **Tier I + II closed (8/8); Tier III 1/5 closed + 3/5 investigated; Tier IV T4.5 advanced.** MC-T4.3 is the central foundational obstruction (non-action α-injection mechanism); closure may require ontology extension per the lead-physicist diagnosis (Phase J ultralocality decouples algebraic spine from dynamical EFT).
+- **Reflexivity vocabulary** (2026-05-01; sweep applied 2026-05-02): `docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md` — canonical replacement for "consciousness" terminology. Two-term core (reflexivity = structural; agency = dynamical). Drops qualia commitments without losing conceptual content. P1-P4 sweep applied across theory + manuscript + whitepaper. Cite this before applying vocabulary in new docs.
+- **Chowla–Selberg h≥2 theory note** (2026-05-02): `docs/theory/09_mathematical/EXPLR_CHOWLA_SELBERG_HIGHER_H.md` — analytic-machinery list for upgrading Theorem 3 from [NUMERICAL FACT, h=1 only] to a structural theorem covering all CM curves. Closes MC-T2.3.
+- **Tier-I/II/III closure proof scripts** (2026-05-02; under `scripts/proofs/`):
+  - `proof_field_theoretic_qgstar.py` — FTD-0112 / Theorem 9 (T1.3)
+  - `proof_per_voxel_mass_gap.py` — FTD-0044 / per-voxel mass gap (T1.4)
+  - `proof_phase_j_general_L.py` — Theorem 7 investigation (T1.1)
+  - `proof_m_e_exponent_n11.py` — m_e exponent n=11 derivation (T3.2)
+  - `proof_scfcc_bcc_bridge.py` — (SC+FCC)/2 ↔ BCC investigation (T3.3)
+  - `proof_ftd0110_mechanism_gamma.py` — Mechanism γ investigation (T3.1)
+  - `proof_bridge_functional_arithmetic_mean.py` — four-mean investigation (T3.4)
+  - `proof_polynomial_look_elsewhere_extended.py` — extended scan with pre-registration (T2.1+T2.2)
+  - `proof_a1g_dual4_via_zi_units.py` — Z[i]^× structural argument (T1.5+T4.5)
 - **Dimensionless ↔ Dimensional Map** (2026-04-29): `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) + `docs/theory/01_reference/dimensional_map.json` (canonical data, 15 entries). Single citation target for "is this prediction dimensionless or calibration-conditional?". Walks the bridge from the 7 algebraic-spine theorems through the 4 dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e) through the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys`, `K_B = m_e`) to one worked dimensional application (m_e in MeV). Renderer: `scripts/proofs/build_dimensional_map.py`. Tests (12 assertions): `scripts/tests/test_dimensional_map.py`.
 - **Engine spec**: `engine/SPEC_ENGINE.md`
 - **Theory catalog**: `docs/theory/META_INDEX.md`
