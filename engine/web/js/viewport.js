@@ -918,24 +918,10 @@ export class Viewport {
         this.camera.near = 0.001;
         this.camera.updateProjectionMatrix();
 
-        // ── Consciousness mode: dark background, bloom, centered camera ──
-        if (mode === 'consciousness') {
-            this.scene.background = new THREE.Color(0x050510);
-            this._boundaryMode = 'origin';
-            this._buildBoundary(this._boundaryShape, 'origin');
-            hideAllOverlays();
-            // Camera: closer, centered at origin, wider FOV
-            this.camera.fov = 55;
-            this.camera.updateProjectionMatrix();
-            this.controls.target.set(0, 1, 0);
-            this.camera.position.set(8, 4, 8);
-            this.controls.update();
-            // Enable bloom
-            this.enablePostProcessing();
-            return;
-        }
-
-        // Leaving consciousness mode — restore defaults
+        // Consciousness-mode camera/post-processing block removed
+        // 2026-05-01 along with Scale 11 deletion. Defensive cleanup
+        // remains for any in-flight post-processing state from a prior
+        // session.
         if (this._usePostProcessing) {
             this.disablePostProcessing();
             this.scene.background = new THREE.Color(0x0f1729);
@@ -1005,9 +991,9 @@ export class Viewport {
         this._particleRenderer.applyParticleColors(data, typeMap);
     }
 
-    // ── Post-Processing (Consciousness Mode) ──────────────────────
+    // ── Post-Processing (defensive only — Scale 11/consciousness deleted 2026-05-01) ──
     // Phase 3a: extracted to viewport/scene-core.js. Thin delegators
-    // preserve the public API for adapters (scene-panel) and setEngineMode.
+    // preserve the public API for any caller that still calls in.
 
     enablePostProcessing() { this._sceneCore?.enablePostProcessing(); }
 

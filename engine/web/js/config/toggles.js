@@ -153,7 +153,8 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-seed-schwarzschild':       [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
     's0-seed-frw-patch':           [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
     's0-seed-gravitational-wave':  [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
-    // Consciousness — keep clean
+    // Self-reference / observation pedagogy seeds (live on Scale 0; the
+    // Scale 11 reflexivity-mode UI was deleted 2026-05-01)
     's0-seed-sloop':               [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement']],
     's0-seed-observer-cell':       [['genesis', false, 't-genesis']],
 

@@ -894,23 +894,6 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 tags: ['scales', 'cosmic'],
             },
             {
-                id: 'scale11',
-                title: 'Scale 11: Reflexivity',
-                shortTitle: 'Scale 11',
-                summary: 'Pedagogical reflexive-projection-layer presentation with figure and scenario controls.',
-                body: [
-                    'Scale 11 is the reflexivity-oriented teaching surface in the web engine. It has its own figures, scenarios, and explanatory framing. (Vocabulary refresh 2026-05-01: this scale was previously framed as the "consciousness scale"; the conceptual content is the reflexive-projection layer, see docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md.)',
-                    'Even if a learner never works through the full theory stack, this scale is useful for understanding how the engine packages conceptual material into guided visual surfaces.',
-                ],
-                bullets: [
-                    'Own scenario and figure controls.',
-                    'Pedagogy-heavy presentation layer.',
-                    'Focused on explanation as much as simulation.',
-                ],
-                notation: ['Scale 11'],
-                tags: ['scales', 'consciousness'],
-            },
-            {
                 id: 'meta-unit',
                 title: 'Meta / Existential Unit',
                 shortTitle: 'Meta',
@@ -1175,7 +1158,7 @@ const SCALE0_CATEGORY_GUIDES = Object.freeze({
             'Their math language is recursive closure, ring or loop structure, fixed-point behavior, and the extent to which a local pattern can sustain self-related organization.',
         ],
         notation: ['sLoop', 'fixed point', 'recursive closure'],
-        tags: ['observer', 'consciousness'],
+        tags: ['observer', 'reflexivity'],
     },
     'Field Configurations': {
         summary: 'Canonical field patterns used as clean mathematical initial conditions.',
@@ -1441,18 +1424,10 @@ const COSMIC_SCENARIO_GUIDES = Object.freeze({
     'cosmic-baryogenesis': 'Baryogenesis is the asymmetry story: how a tiny normalized excess can seed the later matter-dominated universe.',
 });
 
-const CONSCIOUSNESS_SCENARIO_GUIDES = Object.freeze({
-    'cs-threshold': 'Threshold Crossing is the discriminant lesson: the scenario is organized around when Δ_k changes sign and the root structure moves from real to complex.',
-    'cs-high-coupling': 'High Coupling is the “well above threshold” comparison case, where strong intensity and stabilized observer-like patterns are the main visual claim.',
-    'cs-self-ref': 'Self-Reference is the simplest sLoop fixed-point scenario, so recursive closure matters more than external forcing.',
-    'cs-nested-sloop': 'Nested sLoop adds recursion depth, turning one fixed-point story into a hierarchy of self-reference.',
-    'cs-chirality': 'Chirality Split is about left/right asymmetry and sector imbalance rather than simple magnitude increase.',
-    'cs-boundary-orbit': 'Boundary Orbit imports iterative-complex-dynamics language into the consciousness pedagogy surface via z → z² + c.',
-    'cs-entangled': 'Entangled Pair is the consciousness-side correlation case, tying observer-language framing to Bell-type structure.',
-    'cs-flow': 'Flow State is the outward-leaning phase regime: lower effective angle, fast coherent motion, and object-dominant dynamics.',
-    'cs-meditation': 'Meditation is the inward-leaning phase regime: higher effective angle, slower resonance, and subject-dominant balance.',
-    'cs-custom': 'Custom consciousness mode is the pedagogical sandbox for trying your own observer-oriented parameter mix.',
-});
+// Scale 11 (Consciousness/Reflexivity) scenario guides removed 2026-05-01
+// along with Scale 11 deletion. Empty const retained in case any
+// downstream code path still references the symbol.
+const CONSCIOUSNESS_SCENARIO_GUIDES = Object.freeze({});
 
 function buildScale0ScenarioEntry(scenario) {
     const categoryGuide = SCALE0_CATEGORY_GUIDES[scenario.category] || {
@@ -1742,47 +1717,10 @@ const COSMIC_SCENARIO_ENTRIES = Object.freeze([
     }),
 ));
 
-const CONSCIOUSNESS_SCENARIO_TITLES = Object.freeze({
-    'cs-threshold': 'Threshold Crossing',
-    'cs-high-coupling': 'High Coupling',
-    'cs-self-ref': 'Self-Reference',
-    'cs-nested-sloop': 'Nested sLoop',
-    'cs-chirality': 'Chirality Split',
-    'cs-boundary-orbit': 'Boundary Orbit',
-    'cs-entangled': 'Entangled Pair',
-    'cs-flow': 'Flow State',
-    'cs-meditation': 'Meditation',
-    'cs-custom': 'Custom (Manual)',
-});
-
-const CONSCIOUSNESS_SCENARIO_ENTRIES = Object.freeze(
-    Object.entries(CONSCIOUSNESS_SCENARIO_TITLES).map(([id, title]) =>
-        makeScenarioEntry({
-            id,
-            title: `${title} [Scale 11]`,
-            shortTitle: title,
-            scale: 'Scale 11 / Reflexivity',
-            summary: CS_SCENARIO_DESCRIPTIONS[id] || 'A reflexivity-mode pedagogical scenario.',
-            body: [
-                `${title} is a reflexivity-mode teaching scenario, so it should be read as a conceptual demonstration as much as a dynamical one.`,
-                CONSCIOUSNESS_SCENARIO_GUIDES[id],
-                'The math focus depends on the case: threshold discriminants, complex roots, self-reference fixed points, chirality, Bell correlations, or reflexive phase balance.',
-            ],
-            bullets: [
-                id === 'cs-custom' ? 'Custom scenario for user-defined pedagogical exploration.' : 'Best read together with the reflexivity description panel and figure selector.',
-            ],
-            notation: dedupe(
-                id === 'cs-threshold' ? ['\\(\\Delta_k\\)', '\\(K_C \\approx 3.60\\)', 'real → complex roots']
-                    : id.includes('sloop') ? ['x² = K(x − G*)', 'fixed point', 'recursive closure']
-                    : id === 'cs-boundary-orbit' ? ['z → z² + c', 'c = 1/G*']
-                    : id === 'cs-entangled' ? ['\\(S = 2\\sqrt{2}\\)', 'correlation']
-                    : id === 'cs-flow' || id === 'cs-meditation' ? ['θ', '52.54° threshold']
-                    : ['J(v,t)', '|J|', 'complexification'],
-            ),
-            tags: ['scale11', 'consciousness'],
-        }),
-    ),
-);
+// Scale 11 (Consciousness/Reflexivity) scenario titles + entries removed
+// 2026-05-01 along with Scale 11 deletion. Empty const retained for any
+// downstream code path that still references it.
+const CONSCIOUSNESS_SCENARIO_ENTRIES = Object.freeze([]);
 
 const SCENARIO_KB_SECTIONS = Object.freeze([
     {
@@ -1805,9 +1743,9 @@ const SCENARIO_KB_SECTIONS = Object.freeze([
     },
     {
         id: 'scenario-worlds',
-        title: 'Scenarios: Scales 4-5-11',
-        description: 'Planetary, cosmic, and consciousness-mode scenarios with their conceptual math framing.',
-        entries: [...PLANETARY_SCENARIO_ENTRIES, ...COSMIC_SCENARIO_ENTRIES, ...CONSCIOUSNESS_SCENARIO_ENTRIES],
+        title: 'Scenarios: Scales 4-5',
+        description: 'Planetary and cosmic scenarios with their conceptual math framing. (Scale 11 reflexivity-mode scenarios removed 2026-05-01.)',
+        entries: [...PLANETARY_SCENARIO_ENTRIES, ...COSMIC_SCENARIO_ENTRIES],
     },
 ]);
 

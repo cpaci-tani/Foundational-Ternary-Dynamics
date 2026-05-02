@@ -32,27 +32,27 @@ import * as Scale3Controller from './scales/scale3/controller.js';
 import * as Scale4Controller from './scales/scale4/controller.js';
 import * as Scale5Controller from './scales/scale5/controller.js';
 import * as Scale6Controller from './scales/scale6/controller.js';
-import * as Scale11Controller from './scales/scale11/controller.js';
+// Scale 11 (consciousness/reflexivity) deleted 2026-05-01 — see
+// REF_REFLEXIVITY_VOCABULARY.md for the vocabulary doc and theory-side
+// docs/theory/06_consciousness/* for the math (preserved). Engine
+// implementation removed because it was interpretive pedagogy, not
+// load-bearing for any derivation, and carried external-defensibility
+// risk for the algebraic-spine paper.
 import { OnticObservatory } from './ontic-observatory.js';
 // renderEnergyLevels, renderCrossSections, renderDecayRates, renderFcCard,
 // renderObserverCard, renderOnticHierarchy, renderInfoDynamics moved to
 // ui/app-ontic.js (Wave 2 ticket 7).
-import { TICK_PHASES, K_B, K_GENESIS, COS2_THETA_C, C_SPEED } from './constants.js';
-// K_C, Y_REAL, Y_IMAG, THETA_C_DEG, C_MANDELBROT moved to Scale11Controller
+import { TICK_PHASES, K_B, K_GENESIS, C_SPEED } from './constants.js';
+// COS2_THETA_C dropped along with Scale 11.
 // ALPHA, G_STAR, VARPI, X_PLUS, X_MINUS, ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS
 // now imported directly by ui/app-ontic.js.
 import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor } from './aggregation-bridge.js';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
 import { PETelemetryPanel } from './pe-telemetry.js';
-// ConsciousnessEngine moved to Scale11Controller
-import { addInfoTooltips } from './consciousness-pedagogy.js';
-// SCALE0_TOGGLES/SCALE2_TOGGLES/SCALE0_SCENARIO_OVERRIDES/LIGHT_SCENARIO_OVERRIDES
-// are now imported by the owning scale controllers (scale0 via ui/controls/wire.js).
-// CS_SCENARIO_DESCRIPTIONS moved to Scale11Controller
 import { initVerifyPanel } from './verify-panel/component.js';
 import { AppShell } from './ui/shell/app-shell.js';
-import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initConsciousnessPanel, initScenePanel } from './ui/panels/index.js';
+import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel } from './ui/panels/index.js';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
 import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js';
 import { initConservationMicropanel } from './scales/scale0/ui/overlays/conservation-micropanel.js';
@@ -66,7 +66,6 @@ debugLog('[FTD] App version 20260318a loaded (cache-busted)');
 // ── Application State ────────────────────────────────────────────────
 let _initialized = false;
 let bridge = null;
-// _savedBridge moved to Scale11Controller (bridge save/restore for consciousness mode)
 // DEBUG: expose bridge globally for console inspection
 Object.defineProperty(window, '_ftdBridge', { get() { return bridge; }, configurable: true });
 let viewport = null;
@@ -111,11 +110,10 @@ let fpsDisplay = 0;
 //   'molecules'     (Scale 3) — same AE engine, molecule scenarios + bonding
 //   'planetary'     (Scale 4) — N-body solar system (separate controller)
 //   'cosmic'        (Scale 5) — galaxy/cluster simulation (CosmicRenderer)
-//   'consciousness' (Scale 11) — flux-driven hologram visualization
 //   'meta'          (Scale 12) — 3^3 existential unit (MetaUnit)
+// Scale 11 ('consciousness'/'reflexivity') was deleted 2026-05-01.
 // Transitions: switchEngineMode() is the SOLE entry point for mode changes.
 let engineMode = 'lattice';
-// _csEngine, _csPedagogy, _csScenarioMeta, _mandelbrotZ_* moved to Scale11Controller
 let _aeInitialEnergy = null; // for AE energy drift tracking
 let _showBonds = true;
 let _showOrbitalClouds = true; // orbital electron clouds in AE mode
@@ -264,7 +262,6 @@ function applyReflectiveBoundary(on) {
  *   - PE telemetry, trail history, field grid cache
  *   - Viewport overlays (trails, element labels, field visualizations)
  */
-// wireConsciousnessSubTabs moved to Scale11Controller.wireSubTabs()
 
 // Reset simulation data caches (always on scenario change) but PRESERVE visual toggles
 function _resetSimCaches() {
@@ -513,10 +510,9 @@ async function init() {
     initP1ObservablesPanel();
     initConservationMicropanel();
     initSpectrumPanel();
-    initConsciousnessPanel();
     // Scene panel — curated render controls (FOV / exposure / bloom / fog / ...).
     // Scales 0–3 only (gated by panel-registry); unmounted cleanly when
-    // the user switches to a separate-renderer scale like 4/5/11.
+    // the user switches to a separate-renderer scale like 4/5/12.
     initScenePanel({
         panelArea: document.getElementById('panel-area'),
         viewport,
@@ -638,8 +634,6 @@ function animate(now) {
         Scale6Controller.updateMeta(_makeCtx(), 1 / 60);
     } else if (engineMode === 'cosmic') {
         Scale5Controller.animateCosmic(_makeCtx());
-    } else if (engineMode === 'consciousness') {
-        Scale11Controller.animateConsciousness(_makeScale11Ctx(), now);
     } else if (engineMode === 'atoms' || engineMode === 'molecules') {
         animateAE(now);
     } else if (engineMode === 'particles') {
@@ -700,22 +694,6 @@ function _buildScale2Ctx(now) {
     };
 }
 
-function _makeScale11Ctx() {
-    return {
-        get bridge() { return bridge; },
-        set bridge(v) { bridge = v; },
-        get viewport() { return viewport; },
-        get running() { return running; },
-        set running(v) { running = v; },
-        get ticksPerFrame() { return ticksPerFrame; },
-        get engineMode() { return engineMode; },
-        MockBridge,
-        _resetAllVisualState,
-        addInfoTooltips,
-        updatePlayButton,
-    };
-}
-
 function animatePE(now) {
     Scale1Controller.animatePE(_buildScale1Ctx(now));
 }
@@ -744,9 +722,7 @@ function wireToolbar() {
     document.getElementById('btn-step').addEventListener('click', () => {
         running = false;
         updatePlayButton();
-        if (engineMode === 'consciousness') {
-            Scale11Controller.step(_makeScale11Ctx());
-        } else if (engineMode === 'atoms' || engineMode === 'molecules') {
+        if (engineMode === 'atoms' || engineMode === 'molecules') {
             bridge.aeTick();
         } else if (engineMode === 'particles') {
             bridge.peTick();
@@ -770,8 +746,6 @@ function wireToolbar() {
             Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
         } else if (engineMode === 'meta') {
             Scale6Controller.loadMetaScenario(_makeCtx());
-        } else if (engineMode === 'consciousness') {
-            loadConsciousnessScenario(document.getElementById('cs-scenario-select').value);
         } else if (engineMode === 'molecules') {
             loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
         } else if (engineMode === 'atoms') {
@@ -845,36 +819,8 @@ function wireToolbar() {
         });
     }
 
-    // Consciousness scenario selector
-    const csSelect = document.getElementById('cs-scenario-select');
-    if (csSelect) {
-        csSelect.addEventListener('change', (e) => {
-            running = false;
-            updatePlayButton();
-            loadConsciousnessScenario(e.target.value);
-        });
-    }
-
-    // Consciousness figure type selector
-    const csFigure = document.getElementById('cs-figure-select');
-    if (csFigure) {
-        csFigure.addEventListener('change', (e) => {
-            Scale11Controller.setFigureType(e.target.value);
-        });
-    }
-
-    // Consciousness audio toggle
-    const csAudio = document.getElementById('cs-audio');
-    if (csAudio) {
-        csAudio.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                const scenarioName = Scale11Controller.getScenarioMeta()?.name || 'cs-custom';
-                Scale11Controller.enableAudio(scenarioName);
-            } else {
-                Scale11Controller.disableAudio();
-            }
-        });
-    }
+    // Scale 11 consciousness scenario / figure / audio selectors removed
+    // 2026-05-01 along with Scale 11 deletion.
 
     // Orbital cloud toggles (Scale 2 and Scale 3)
     const cloudToggle = document.getElementById('ae-show-clouds');
@@ -983,12 +929,6 @@ function wireTabs() {
         activeTab,
         onTabActivated: handlePanelActivated,
     });
-}
-
-// ── Consciousness Mode (Scale 11) — delegated to Scale11Controller ───
-
-function loadConsciousnessScenario(name) {
-    Scale11Controller.loadConsciousnessScenario(_makeScale11Ctx(), name);
 }
 
 // ── Controls Panel Wiring ────────────────────────────────────────────
@@ -1263,11 +1203,7 @@ function wireKeyboard() {
         togglePlay,
         toggleScenarioPlay,
         stepScenario: () => {
-            if (engineMode === 'consciousness') {
-                bridge.tick();
-                const fm = Scale0Controller.getFluxMock();
-                if (fm) fm.tick();
-            } else if (engineMode === 'atoms' || engineMode === 'molecules') {
+            if (engineMode === 'atoms' || engineMode === 'molecules') {
                 bridge.aeTick();
             } else if (engineMode === 'particles') {
                 bridge.peTick();
@@ -1276,9 +1212,7 @@ function wireKeyboard() {
             }
         },
         reloadScenario: () => {
-            if (engineMode === 'consciousness') {
-                loadConsciousnessScenario(document.getElementById('cs-scenario-select').value);
-            } else if (engineMode === 'molecules') {
+            if (engineMode === 'molecules') {
                 loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
             } else if (engineMode === 'atoms') {
                 loadAEScenario(document.getElementById('ae-scenario-select').value);
@@ -1491,12 +1425,11 @@ function switchEngineMode(mode) {
     app.classList.toggle('mode-atoms', mode === 'atoms');
     app.classList.toggle('mode-molecules', mode === 'molecules');
     app.classList.toggle('mode-planetary', mode === 'planetary');
-    app.classList.toggle('mode-consciousness', mode === 'consciousness');
     app.classList.toggle('mode-cosmic', mode === 'cosmic');
     app.classList.toggle('mode-meta', mode === 'meta');
 
     // If the active tab is hidden for this scale, fall back to Controls
-    const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', planetary: '4', cosmic: '5', meta: '12', consciousness: '11' }[mode];
+    const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', planetary: '4', cosmic: '5', meta: '12' }[mode];
     if (appShell) appShell.setActiveScale(scaleIndex);
     else app.setAttribute('data-active-scale', scaleIndex);
 
@@ -1517,11 +1450,6 @@ function switchEngineMode(mode) {
         if (gridBtn) gridBtn.classList.remove('active');
         const axesBtn = document.getElementById('toggle-axes');
         if (axesBtn) axesBtn.classList.remove('active');
-    }
-
-    // Cleanup consciousness engine when leaving Scale 11
-    if (mode !== 'consciousness') {
-        Scale11Controller.resetScale11(_makeScale11Ctx());
     }
 
     // Cleanup cosmic renderer when leaving Scale 5
@@ -1555,8 +1483,6 @@ function switchEngineMode(mode) {
         Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
     } else if (mode === 'meta') {
         Scale6Controller.loadMetaScenario(_makeCtx());
-    } else if (mode === 'consciousness') {
-        loadConsciousnessScenario(document.getElementById('cs-scenario-select')?.value || 'cs-threshold');
     }
 
     Scale0Controller.setLatticeNeedsUpload();
