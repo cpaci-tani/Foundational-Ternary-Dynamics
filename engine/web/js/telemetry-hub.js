@@ -70,7 +70,6 @@ export class TelemetryHub {
         this.s2  = { diag: null };  // also used for scale3
         this.s4  = { diag: null };
         this.s5  = { diag: null, cosmic: null };
-        // s11 (Scale 11 audit snapshot) removed 2026-05-01.
 
         // ── Scale 0 — Lattice / Flux ────────────────────
         // Core diagnostics (500-sample history)
@@ -146,10 +145,6 @@ export class TelemetryHub {
         this.csBodies = new RingBuffer(200);
         this.csHubble = new RingBuffer(200);
         this.csDM     = new RingBuffer(200);
-
-        // Scale 11 telemetry (csTheta/csIntensity/csFluxRatio) removed
-        // 2026-05-01 along with Scale 11 deletion.
-
     }
 
     // ── Scale 0 collection ──────────────────────────────────────────────────
@@ -318,9 +313,6 @@ export class TelemetryHub {
         return diag;
     }
 
-    // Scale 11 collection (collectScale11) removed 2026-05-01 along with
-    // Scale 11 deletion.
-
     // ── Derived metrics ─────────────────────────────────────────────────────
 
     /** Scale 0: particle composition ratios */
@@ -422,12 +414,11 @@ export class TelemetryHub {
                 for (const b of [this.csBodies, this.csHubble, this.csDM]) b.clear();
                 this.s5 = { diag: null, cosmic: null };
                 break;
-            // Scale 11 case removed 2026-05-01 along with Scale 11 deletion.
         }
     }
 
     resetAll() {
-        for (const scale of [0, 1, 2, 5, 11]) this.resetScale(scale);
+        for (const scale of [0, 1, 2, 5]) this.resetScale(scale);
     }
 }
 

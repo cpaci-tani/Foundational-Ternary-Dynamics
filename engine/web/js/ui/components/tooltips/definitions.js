@@ -50,8 +50,6 @@ const SELECTOR_TOOLTIPS = [
     ['label[for="cosmic-scenario-select"]', 'Scenario selector for the cosmic engine.'],
     ['#cosmic-camera-select', 'Switch between preset camera framings for the active cosmic scenario.'],
     ['label[for="cosmic-camera-select"]', 'Camera preset selector for the cosmic renderer.'],
-    // Scale 11 (consciousness/reflexivity) scenario / figure tooltips
-    // removed 2026-05-01 along with Scale 11 deletion.
     ['#bg-select', 'Choose the environment or panorama behind the simulation viewport.'],
     ['#boundary-select', 'Select the active simulation boundary geometry used for confinement and reflection.'],
     ['#toggle-axes', 'Show or hide the global axis indicator in the viewport.'],

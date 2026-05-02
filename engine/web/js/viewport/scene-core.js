@@ -69,9 +69,7 @@ export class ViewportSceneCore {
         this._voxelHighlight = null;
         this._symHighlights = null;
 
-        // Post-processing (lazy init; was used by the now-deleted Scale 11
-        // consciousness mode; retained as a public-API hook in case other
-        // modes ever opt into bloom).
+        // Post-processing (lazy init; public-API hook for any mode that opts into bloom).
         this._composer = null;
         this._bloomPass = null;
         this._usePostProcessing = false;

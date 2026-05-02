@@ -918,10 +918,7 @@ export class Viewport {
         this.camera.near = 0.001;
         this.camera.updateProjectionMatrix();
 
-        // Consciousness-mode camera/post-processing block removed
-        // 2026-05-01 along with Scale 11 deletion. Defensive cleanup
-        // remains for any in-flight post-processing state from a prior
-        // session.
+        // Defensive post-processing cleanup (no current scale uses it).
         if (this._usePostProcessing) {
             this.disablePostProcessing();
             this.scene.background = new THREE.Color(0x0f1729);
@@ -991,9 +988,9 @@ export class Viewport {
         this._particleRenderer.applyParticleColors(data, typeMap);
     }
 
-    // ── Post-Processing (defensive only — Scale 11/consciousness deleted 2026-05-01) ──
+    // ── Post-Processing ────────────────────────────────────────────
     // Phase 3a: extracted to viewport/scene-core.js. Thin delegators
-    // preserve the public API for any caller that still calls in.
+    // preserve the public API for any caller that opts into bloom.
 
     enablePostProcessing() { this._sceneCore?.enablePostProcessing(); }
 
