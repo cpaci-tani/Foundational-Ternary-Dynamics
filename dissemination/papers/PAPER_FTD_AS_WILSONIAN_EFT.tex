@@ -17,14 +17,16 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage[numbers,sort&compress]{natbib}
-\usepackage{siunitx}
+% siunitx removed (system MiKTeX bug; replaced \SI{N}{\percent} with N\% inline)
 \usepackage{subcaption}
+\usepackage[normalem]{ulem}  % \sout (strikethrough)
 
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 
 \newcommand{\alphaEM}{\alpha_{\mathrm{EM}}}
 \newcommand{\alphaREF}{\alpha_{\mathrm{ref}}}
 \newcommand{\alphaLargeL}{\alpha_{\mathrm{largeL}}}
+\newcommand{\Gstar}{G_{\!*}}
 \newcommand{\MeV}{\,\mathrm{MeV}}
 \newcommand{\GeV}{\,\mathrm{GeV}}
 \newcommand{\FTD}{\textsc{ftd}}
@@ -62,30 +64,30 @@ Standard-Model emergence tests (electroweak symmetry breaking cold-start,
 three-generation cold-start, and a large-L extrapolation scan of
 $\alpha_{\mathrm{eff}}$).
 
-The measurements yield partial successes and documented failures, all
-reported without post-hoc adjustment of the pre-registered expectations.
-Lorentz-covariance residuals reach \SI{0.4}{\percent} at $r \le 4$ lattice
-units and grow to \SI{5}{\percent} at $r = L/4$, consistent with the
+The measurements yield partial successes, documented failures, and one
+result that subsequent analysis (\S\ref{sec:phasef}) reframes from
+``QED-running'' to ``lattice Coulomb geometry,'' all reported without
+post-hoc adjustment of the pre-registered expectations.
+Lorentz-covariance residuals reach 0.4\% at $r \le 4$ lattice
+units and grow to 5\% at $r = L/4$, consistent with the
 cubic-lattice dispersion correction $\omega = 2c\sin(k/2) - c k \sim
 \mathcal{O}(k^2)$. Ward-identity closure is SOR-tolerance-limited at
-$\sim\!\SI{1}{\percent}$ of $|J|_{\max}$, traced to the engine's six
-Gauss-Seidel sweeps per tick rather than to any physics limitation. The
-measured coupling $\alpha_{\mathrm{eff}}$ varies with lattice size,
-exhibiting a negative-signed $\beta$ consistent with the
-asymptotic-freedom direction of textbook QED but with magnitude roughly
-$160\times$ the one-loop QED prediction --- a new quantitative
-prediction that can be falsified on larger lattices. Six operators give
-high-$R^2$ scaling-dimension fits but all cluster near $\Delta \approx
-0.5$ rather than the pre-registered naive-counting values $[2,5]$,
-attributed to a pulse-envelope artefact in the measurement scenario.
-Cold-start electroweak symmetry breaking is not observed at the lattice
-sizes tested ($L \le 16$); the Higgs vacuum expectation value remains
-[\textsc{imposed}] in the parametric-insertions catalogue. The 1/L²
-extrapolation of $\alpha_{\mathrm{eff}}(L)$ from $L \in
-\{32,48,64\}$ gives $\alphaLargeL = 0.021$, a factor of $2.9$ above the
-reference $\alphaREF = 1/137.036$ --- an improvement over the
-single-scale $L=64$ value but not yet at the pre-registered \SI{1}{\percent}
-precision.
+$\sim\!1\%$ of $|J|_{\max}$ in the production solver,
+later improved to $\le 10^{-8}$ on deep vacuum by a matched-stencil CG
+solver (\S\ref{sec:day2}). The measured ``$\alpha_{\mathrm{eff}}(L)$''
+plateau --- originally framed as a $\beta$-function running --- is
+re-identified in \S\ref{sec:phasef} as the periodic lattice Poisson
+Green's function $\alpha_r(r, L) = 2 r G_L(r)$ at $r/L \approx 0.31$, a
+zero-free-parameter prediction whose match to engine measurement is
+$R^2 = 1.0000$ in the Coulomb tail. The original ``$160 \times$ QED
+$\beta$'' claim is retracted: that channel carries no fine-structure
+content. Six operators give high-$R^2$ scaling-dimension fits but all
+cluster near $\Delta \approx 0.5$ rather than the pre-registered
+naive-counting values $[2,5]$, attributed to a pulse-envelope artefact
+in the measurement scenario. Cold-start electroweak symmetry breaking
+is not observed at the lattice sizes tested ($L \le 16$); the Higgs
+vacuum expectation value remains [\textsc{imposed}] in the
+parametric-insertions catalogue.
 
 The campaign ends with \FTD\ characterised as \emph{an emerging Wilsonian
 EFT}: the five-pillar checklist (Ward, Lorentz, RG, operator expansion,
@@ -102,9 +104,9 @@ amplitude threshold map locates a first-order condensation transition
 in (0.6,\,0.7) with spontaneous charge-sign selection above it; spectroscopy
 on the condensate gives clean mass gaps ($m \approx 0.18$ at amp$=0.80$)
 with two independent channels agreeing to 3\%; and Rutherford scattering
-reproduces the static V(r) $\alpha$-extraction exactly at small impact
-parameter, confirming the 5$\times$ ratio to $\alpha_{\text{ref}}$ as
-genuine engine physics rather than a methodology artefact.
+cross-checks the V(r) extraction at small impact parameter, returning
+the same lattice-Coulomb-geometry plateau (now interpreted per
+\S\ref{sec:phasef}) consistent with the static measurement.
 
 A Phase-F follow-up (\S\ref{sec:phasef}) unblocks the GPU build via
 WSL2 and runs a 4-point r-max sweep at L = 64, 128, 256, 384 under
@@ -112,8 +114,8 @@ consistent conditions (ticks = 150, same r/L $\approx 0.31$ slice), and
 a line-by-line audit of the extraction pipeline
 (\texttt{AUDIT\_ALPHA\_EXTRACTION.md}) followed by a Phase-G analytical
 resolution (\texttt{DERIV\_EMERGENT\_COULOMB\_GEOMETRIC.md}) establishes
-the honest interpretation. The measured $\alpha_r(r, L)$ is **not a
-coupling constant at all}: the engine's emergent-mode Gauss law is
+the honest interpretation. The measured $\alpha_r(r, L)$ is
+\emph{not a coupling constant at all}: the engine's emergent-mode Gauss law is
 $\nabla \cdot J = s$ with no coupling constant, so
 $\alpha_r(r, L) = 2 r G_L(r)$ is a parameter-free lattice-Green's-function
 prediction whose zero-free-parameter match to measurement is $R^2 =
@@ -132,14 +134,21 @@ whether FTD's dynamics can emergently reproduce $\alpha_{\text{ref}}$.
 
 Foundational Ternary Dynamics (\FTD) is a discrete lattice framework
 whose phenomenological outputs have been benchmarked against the Standard
-Model for three years \cite{FTDSpec, CompleteSM}. Its strongest claims ---
-the derivation of the fine-structure constant from a master quadratic
-\cite{AlphaDerivation}, the identification of $N_c = 3$ from topological
-invariants \cite{NcTopology}, the Moore-layer decomposition yielding
-three fermion generations \cite{MooreLayer} --- are theorems, verified
-numerically on pre-built scenarios. But the engine's \emph{dynamical}
-output had not, until this work, been tested against the Wilsonian
-five-pillar checklist that a proper effective field theory must satisfy:
+Model for three years \cite{FTDSpec, CompleteSM}. The framework's
+algebraic spine \cite{SpecAlgebraicSpine} contains nine theorems
+including the master quadratic
+$x^2 - 16\Gstar^2 x + 16\Gstar^3 = 0$ with $\Gstar = \Gamma(1/4)/\Gamma(3/4)$
+(\textsc{theorem}); the polynomial's larger root $x_+ \approx 137.036$
+matches CODATA $\alpha^{-1}$ to 1.26 ppm and the smaller root
+$x_- \approx 3.024$ matches $N_c = 3$ to $0.80\%$, with this
+identification carrying tag [\textsc{strongly motivated conjecture}]
+(not [\textsc{theorem}]) as supported by structural-uniqueness scans
+\cite{PaperA, PaperB} but lacking a derivation chain from axioms to
+the physical identification. The Moore-layer decomposition yielding
+three fermion generations \cite{MooreLayer} is at [\textsc{selection}].
+This paper does not address those algebraic / number-theoretic claims;
+its scope is the engine's \emph{dynamical} output and its standing as
+a Wilsonian effective field theory under the five-pillar checklist:
 a measured $\beta$-function, verified Ward identities, quantified
 Lorentz-covariance recovery, a classified operator basis, and a controlled
 large-L extrapolation.
@@ -224,11 +233,11 @@ $c = 1/\sqrt{3}$ and normalising each correlator to its $C(0)$ value,
 the two curves should collapse.
 
 \begin{finding}
-Residuals $|C_t(r/c) - C_s(r)| / |C_s(r)|$ are \SI{0.4}{\percent} at
-$r = 2$, \SI{0.8}{\percent} at $r = 4$, \SI{1.9}{\percent} at $r = 8$,
-rising to \SI{4.7}{\percent} at $r = 12$ and peaking near the
-$r = L/4 = 16$ zero-crossing. The pre-registered \SI{1}{\percent}
-target is met for $r \leq 4$; the growth to \SI{5}{\percent} at
+Residuals $|C_t(r/c) - C_s(r)| / |C_s(r)|$ are 0.4\% at
+$r = 2$, 0.8\% at $r = 4$, 1.9\% at $r = 8$,
+rising to 4.7\% at $r = 12$ and peaking near the
+$r = L/4 = 16$ zero-crossing. The pre-registered 1\%
+target is met for $r \leq 4$; the growth to 5\% at
 mid-$r$ is dominated by lattice-dispersion corrections
 $\omega / k - c \sim -(k/2)^2/6 \approx 1.3 \times 10^{-3}$
 plus time-integration error.
@@ -268,8 +277,8 @@ close the gap; the ticket is noted in \S\ref{sec:followup}.
 The composite Ward identity $\langle (\nabla\cdot\mathbf{J})(x)
 J^\nu(x+r) \rangle = \langle \rho(x) J^\nu(x+r) \rangle$ is satisfied
 with RMS residual $\sim 4 \times 10^{-4}$ across the canonical pair
-configuration --- within \SI{1000}{\percent} of the pre-registered
-\SI{0.1}{\percent} threshold.
+configuration --- within 1000\% of the pre-registered
+0.1\% threshold.
 
 \paragraph{Vertex Ward identity.} $\Gamma_\mu(p,p) = \partial\Sigma/
 \partial p^\mu$ is documented as [\textsc{open}]. The engine does not
@@ -320,13 +329,26 @@ g(\mathrm{scale})]/\ln 2$:
   \item Slope method: insufficient data.
 \end{itemize}
 
-\begin{finding}
-$\beta$ is negative, matching the asymptotic-freedom direction of
+\begin{finding}[retracted; see \S\ref{sec:phasef}]
+\sout{$\beta$ is negative, matching the asymptotic-freedom direction of
 textbook QED, but its magnitude is roughly $160\times$ the
 one-loop QED prediction. This is a new quantitative prediction:
 the \FTD\ lattice at $L = 64$ exhibits $\beta$ that runs $\sim\!160\times$
 faster than textbook QED, testable by repeating the measurement on
-a lattice where $r \gg \lambda_{\mathrm{Yukawa}}$ (i.e., $L \geq 128$).
+a lattice where $r \gg \lambda_{\mathrm{Yukawa}}$ (i.e., $L \geq 128$).}
+
+\textbf{Retraction note.} The Phase-F follow-up audit
+(\texttt{AUDIT\_ALPHA\_EXTRACTION.md}) and the Phase-G analytical
+resolution (\S\ref{sec:phasef},
+\texttt{DERIV\_EMERGENT\_COULOMB\_GEOMETRIC.md}) re-identify this
+``$\beta$-running'' as the periodic lattice Poisson Green's function
+$\alpha_r(r, L) = 2 r G_L(r)$, a zero-free-parameter geometric quantity
+with no fine-structure content and no QED-comparable running. The
+``$160\times$ QED'' framing is a category error, not a quantitative
+prediction. The native source/flux $\beta_{\mathcal{E}}$ measured on
+the Langevin + genesis ensemble (FTD-0070, Phase 2 closure of the
+bridge contract) is a separate, native-EFT observable, consistent with
+a Gaussian fixed point at $b \in \{1, 2, 4, 8\}$ within $1\sigma$.
 \end{finding}
 
 \subsection{Charge Conservation Under Blocking}
@@ -428,7 +450,7 @@ $\alphaLargeL$ & $= 0.0214$, $b = +10.9$ \\
 The 1/L² fit value $\alphaLargeL = 0.0214$ is a ratio of $2.94$ to
 $\alphaREF = 0.00730$, improving on the Phase-2C single-scale $L = 64$
 value ($0.033$, ratio $4.5$) but not yet at the pre-registered
-\SI{1}{\percent} precision. The $L = 48$ outlier destabilises the fit;
+1\% precision. The $L = 48$ outlier destabilises the fit;
 multi-seed statistics and power-of-2-only scans are needed to give an
 empirical residual band on $\alphaLargeL$.
 \end{finding}
@@ -519,7 +541,7 @@ engine-level changes outside this programme's scope.
 
 \paragraph{T2 multi-seed $\beta$ ensemble — measurement is seed-robust.}
 Four seeds (initial flux amplitudes $0.03, 0.05, 0.07, 0.10$) × three
-lattice sizes give $\alpha_{\mathrm{fit}}$ variation $\leq$ \SI{2.2}{\percent}.
+lattice sizes give $\alpha_{\mathrm{fit}}$ variation $\leq$ 2.2\%.
 The Phase-4C $L=48$ outlier is therefore NOT statistical noise; it is a
 real systematic attributable to the non-power-of-2 periodic-image
 structure of $L=48$. Future scans should use power-of-2 lattices only.
@@ -886,33 +908,74 @@ permille after 1 tick, 1\% after 500 ticks. Details in
 \section{Conclusion}
 \label{sec:conclusion}
 
-The EFT Recovery Program closes with a clean, honest characterisation:
-\FTD\ is an \emph{emerging} Wilsonian EFT. Five of five pre-registered
-measurement pillars produced finite, reproducible signals; none
-quantitatively matches textbook QED at the pre-registered tolerances.
-The qualitative agreement --- a negative-$\beta$ asymptotic-freedom-
-direction running, a Lorentz-covariant correlator collapse, operator-
-two-point fits that converge, and a 1/L² fit value that trends toward
-$\alphaREF$ as $L$ grows through the tested range --- establishes that
-the five-pillar checklist is not empty on this lattice. The quantitative
-gaps are attributed to
-(i) a 6-iteration SOR projection that limits gauge-invariance fidelity,
-(ii) a screening-length $\lambda \sim 10a$ that obscures the Coulomb-tail
-regime at the measurement scales tested, and (iii) a
-pulse-envelope artefact in the operator spectrum scenario. All three
-are software-tuning fixes, not physics limitations.
+The EFT Recovery Program closes with a Branch-A native effective field
+theory and a structurally clarified relationship to QED matching.
 
-No claim in the \FTD\ parametric-insertions catalogue is upgraded from
-[\textsc{imposed}] to [\textsc{derived}] by this campaign. Two new rows
-tag \emph{measured} phenomena ($\alpha$ running, operator $\Delta$) that
-were previously unmeasured. The catalogue remains honest --- the
-campaign did not retrofit the tags.
+\paragraph{Branch A (native source/flux EFT) --- complete at the
+minimum-viable level.}
+The five pre-registered measurement pillars produced finite,
+reproducible signals on the native FTD source/flux variables. Phase 1
+(field dictionary, action/measure, operator basis, blocking, Ward
+identities) and Phase 2 ($\beta$-function determination via flux-energy
+density across $b \in \{1, 2, 4, 8\}$) close at the level required by
+the bridge contract \texttt{SPEC\_FTD\_EFT\_BRIDGE\_CONTRACT.md}: the
+five gates 1--5 plus the Phase-2 measurement at $b = 8$ all PASS, with
+$|\beta_{\mathcal{E}}| \le 0.08$ per $b$-decade --- consistent with a
+Gaussian fixed point within $1\sigma$. Together these results establish
+that FTD defines a native source/flux EFT with a Coulomb-like
+long-distance response, transverse propagating modes, and measurable
+Wilsonian flow of four coupling coefficients $(C_L, K_T, Z_j, g_{sJ})$.
 
-The headline quantitative claim, that \FTD\ predicts $\beta_{\mathrm{measured}}
-\approx 160 \beta_{\mathrm{QED,1-loop}}$, is falsifiable. Either the
-follow-up $L = 128$ scan brings the ratio to $1 \pm 0.1$ --- recovering
-textbook QED --- or it does not, and the prediction stands as a
-concrete \FTD-specific deviation testable on bigger lattices.
+\paragraph{Branch B (QED matching) --- structurally decoupled.}
+The original framing of $\alpha_{\mathrm{eff}}(L)$ as a Wilsonian
+running has been retracted. Phase F + the post-audit
+\texttt{AUDIT\_ALPHA\_EXTRACTION.md} re-identifies the plateau as a
+zero-free-parameter periodic lattice Poisson Green's function
+$\alpha_r(r, L) = 2 r G_L(r)$ at $r/L \approx 0.31$
+($R^2 = 1.0000$ at $L = 384$, median $0.07\%$ residual; full reframe
+in \texttt{DERIV\_EMERGENT\_COULOMB\_GEOMETRIC.md}). The four
+pre-registered routes to derive $1/\alpha$ from the master quadratic
+(R1 transverse stiffness, R2 source-current normalisation, R3
+two-sector response eigenvalue, R4 projected Dirac) all closed
+negative under the current projected action. The lead-physicist
+diagnosis is that Phase J ultralocality structurally decouples the
+algebraic spine (master quadratic, $\Gstar$, CM-curve uniqueness)
+from the dynamical EFT: the action data does not contain the
+polynomial data. Closure of the QED-matching branch likely requires a
+non-action injection mechanism (boundary conditions, observable
+selection, quantization choice) and is not session-tractable.
+
+\paragraph{What is upgraded vs not upgraded.}
+No claim in the FTD parametric-insertions catalogue is upgraded from
+[\textsc{imposed}] to [\textsc{derived}] by this campaign. Two new
+rows tag \emph{measured} native-EFT phenomena (the $b$-decade
+$\beta_{\mathcal{E}}$ flow and operator scaling-dimension fits) that
+were previously unmeasured. The lattice-Coulomb-geometry plateau is
+correctly tagged [\textsc{derived}]\,--\,it is a closed-form lattice
+Green's function, not an empirical match. The catalogue is honest;
+the campaign did not retrofit tags.
+
+\paragraph{The empirical match $x_+ \approx 1/\alpha$.}
+The 1.26 ppm match between the master-quadratic root $x_+ \approx
+137.036$ and CODATA $\alpha^{-1}$ remains [\textsc{strongly motivated
+conjecture}]. The supporting structural evidence is now substantial:
+two independent pre-registered uniqueness scans return null at $h \ge
+2$ / Eisenstein
+(combined $\sim 4 \times 10^5\!:\!1$ Bayes weight; FTD-0121, FTD-0123),
+and the BCC complex-structure theorem
+(\texttt{DERIV\_BCC\_COMPLEX\_STRUCTURE.md}, FTD-0122) unifies two of
+the four order-four occurrences in cubic-lattice algebra via a natural
+$\mathbb{Z}[i]$-module structure. Empirical defensibility is high; a
+formal axioms-to-$\alpha$ derivation is structurally blocked, not
+merely unsolved.
+
+\paragraph{Net characterisation.}
+FTD is, on the present evidence, a native Wilsonian EFT with measured
+long-distance Coulomb-like response, transverse wave modes, native RG
+flow, and a structurally decoupled but empirically suggestive
+relationship to QED. The first publishable claim under the bridge
+contract is the native-EFT result, not an $\alpha$-derivation. That
+claim is what this paper supports.
 
 % ============================================================================
 \appendix
@@ -968,8 +1031,21 @@ namespaces, no regression to existing modules):
 \bibitem{CompleteSM} Complete Standard Model computation from FTD integers.
   \texttt{scripts/proofs/proof\_complete\_sm.py}, 2026.
 
-\bibitem{AlphaDerivation} Derivation of $\alpha$ from the master quadratic.
-  \texttt{docs/theory/03\_derivations/DERIV\_ALPHA\_FROM\_PHASE\_STRUCTURE.md}, 2026.
+\bibitem{AlphaDerivation} Master quadratic and the empirical
+  identification $1/x_+ \approx \alpha$.
+  \texttt{docs/theory/03\_derivations/DERIV\_MASTER\_QUADRATIC\_GAP\_EQUATION.md}, 2026.
+
+\bibitem{SpecAlgebraicSpine} Specification of FTD's nine algebraic-spine theorems.
+  \texttt{docs/theory/01\_reference/SPEC\_ALGEBRAIC\_SPINE.md}, 2026.
+
+\bibitem{PaperA} W.\ J.\ cpaci-tani III and C.\ Pacitanimulli,
+  \textit{A $\pi$-free generator of the lemniscatic field, with
+  applications to a closed-form quadratic for the fine-structure constant},
+  companion paper / preprint, 2026.
+
+\bibitem{PaperB} W.\ J.\ cpaci-tani III and C.\ Pacitanimulli,
+  \textit{A $\mathbb{Z}[i]$-module structure on body-centered-cubic
+  corners}, companion paper / preprint, 2026.
 
 \bibitem{NcTopology} $N_c = 3$ from topology: four independent routes.
   \texttt{docs/theory/03\_derivations/DERIV\_NC\_FROM\_TOPOLOGY.md}, 2026.
