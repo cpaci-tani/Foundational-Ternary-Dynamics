@@ -638,6 +638,14 @@ if(FTD_ENABLE_CUDA)
 
     add_executable(test_gpu_dissipation tests/test_gpu_dissipation_source.cpp)
     target_link_libraries(test_gpu_dissipation ftd_core ftd_cuda)
+
+    # Phase II.2-E: Wilson-Dirac CPU/GPU parity
+    # Note: ftd_core listed twice to satisfy gpu_engine.cu's DualCellContinuity
+    # reference; this minimal test does not pull in render_bridge transitively.
+    add_executable(test_wilson_dirac_cuda_parity tests/test_wilson_dirac_cuda_parity.cpp)
+    target_link_libraries(test_wilson_dirac_cuda_parity ftd_core ftd_cuda ftd_core)
+    add_test(NAME test_wilson_dirac_cuda_parity COMMAND test_wilson_dirac_cuda_parity)
+    set_tests_properties(test_wilson_dirac_cuda_parity PROPERTIES TIMEOUT 120)
 endif()
 
 # ============================================================================

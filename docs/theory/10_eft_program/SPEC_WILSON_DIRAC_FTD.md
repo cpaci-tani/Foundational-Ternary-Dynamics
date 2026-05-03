@@ -154,7 +154,7 @@ Before Phase II.3 starts, the implementation must pass:
 2. **Wilson term verification (II.2-B):** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion across the full Brillouin zone; doublers lifted to mass `~ 2r/a` at zone corners (≫ electron mass scale, decoupled). **STATUS: CLOSED 2026-05-03.**
 3. **Gauge link verification (II.2-C):** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice; eigenvalue spectrum matches Landau-level structure for free electron in B-field. **STATUS: CLOSED 2026-05-03** (via plaquette-flux + gauge-covariance tests; full Landau-level diagonalisation deferred to II.3 since per-state energies are the orbit observable, not a smoke-test).
 4. **Coupling consistency (II.2-D):** with `B = 0` and FTD flux-projection gauge field, `D_W` reduces to free Wilson-Dirac in the limit of negligible flux (gauge link → 1). **STATUS: CLOSED 2026-05-03.**
-5. **CPU/GPU parity (II.2-E):** golden-tick gate at single-tick precision (per ADR-0012); CUDA implementation produces bit-exact match to CPU implementation.
+5. **CPU/GPU parity (II.2-E):** golden-tick gate at single-tick precision (per ADR-0012); CUDA implementation produces bit-exact match to CPU implementation. **STATUS: CLOSED 2026-05-03.**
 
 Each validation gets its own internal pre-registration milestone before declaring Phase II.2 complete.
 
@@ -220,6 +220,35 @@ L=12. **R converges:**
 Identity-link sanity check `‖D_id ψ − D_free ψ‖ = 0` exactly at both
 targets. **Phase II.2-D CLOSED.** D_W is continuous in the gauge phase;
 trivial-link limit reproduces free Wilson-Dirac exactly.
+
+### II.2-E milestone result (2026-05-03)
+
+Implemented `engine/cuda/wilson_dirac_gpu.cu`,
+`engine/include/ftd/wilson_dirac_gpu.h`,
+`engine/tests/test_wilson_dirac_cuda_parity.cpp`. CUDA kernel is a
+line-for-line transcription of the CPU operator with the same constant
+shift `m + 3r/a`, same chiral-basis γ matrices, and the same X-major
+linear index `i = x·L² + y·L + z` (matching `cuda_index.cuh` per ADR-0007).
+
+**3/3 configurations PASS at both targets** (tolerance `1×10⁻¹²`):
+- L=8, identity links: worst per-site rel_err = `0.0` (exact match).
+- L=12, random U(1) links: worst per-site rel_err = `3.2×10⁻¹⁶` (WSL2),
+  `3.1×10⁻¹⁶` (Windows). One ulp at most.
+- L=16, twisted Landau gauge for uniform B in z: worst per-site rel_err
+  = `2.6×10⁻¹⁶` (WSL2), `2.8×10⁻¹⁶` (Windows).
+
+The kernel is bit-faithful to the CPU reference modulo IEEE-754
+round-off; FMA contraction differences are bounded by single-ulp on
+worst-case sites. **Phase II.2-E CLOSED.**
+
+### Phase II.2 status
+
+All 5 internal milestones (II.2-A through II.2-E) are CLOSED on 2026-05-03.
+The Wilson-Dirac matter-sector implementation is fully validated:
+operator, evolution, full-BZ spectrum, gauge-link integration, gauge
+covariance, plaquette flux for uniform B, ε → 0 limit consistency, and
+CPU/GPU bit-exact parity. **Phase II.2 CLOSED.** Phase II.3 (single-electron
+stable orbit in B-field) can begin.
 
 ## 9 · Open questions (acknowledged before implementation)
 
