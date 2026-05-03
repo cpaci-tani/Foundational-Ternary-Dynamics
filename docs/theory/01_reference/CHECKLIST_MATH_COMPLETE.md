@@ -178,9 +178,14 @@ The closures map to the realistic effort the Tier-III items required:
 - **Effort**: **M-RP** (3+ months — substantial GPU campaign + analysis pipeline).
 - **Risk**: high. May find the engine's running matches QED (would be a major positive result) OR diverges (would close another α-derivation route negative).
 
-### MC-T4.3 — Algebraic-spine ↔ dynamical-EFT non-action injection mechanism **[foundational obstruction]**
+### MC-T4.3 — Algebraic-spine ↔ dynamical-EFT non-action injection mechanism **[foundational obstruction — empirically reinforced 2026-05-03 evening]**
 - **Closes**: the central FTD claim — derives x_+ = 1/α from FTD axioms.
-- **Current status**: all natural action-level routes (R1/R2/R3 EFT, Z-factor, RG-running, 1/√d, Langevin-equipart, monomial scans) [CLOSED NEGATIVE]. Lead-physicist diagnosis: structural decoupling via Phase J ultralocality.
+- **Current status**: all natural action-level routes (R1/R2/R3 EFT, Z-factor, RG-running, 1/√d, Langevin-equipart, monomial scans) [CLOSED NEGATIVE]. Lead-physicist diagnosis: structural decoupling via Phase J ultralocality. **2026-05-03 evening update**: a fourth independent empirical confirmation has now been recorded. The convergent diagnostic now has four legs:
+  - **FTD-0004 (Phase G)**: V(r) is the lattice Poisson kernel — no fine-structure content in static V(r).
+  - **FTD-0005 (Phase J)**: partition function is ultralocal at L=2 — algebraic spine structurally decoupled from action.
+  - **FTD-0125 (Phase I, 2026-05-03 morning)**: engine V(r) does not carry G_C² — gauss-projection erases longitudinal G_C every tick.
+  - **FTD-0126 (Phase II, 2026-05-03 evening)**: classical Wilson-Dirac + fixed B-field measurement of a_e gives rel_err 683.95 vs Schwinger — no loop physics, Wilson-r artefact dominates. Pre-registered outcome C.
+  Each test attacks the same coupling injection from a structurally different angle (static V, partition function, dynamical V, matter-sector vertex). All four return the same answer: **the master-quadratic value α = 1/x_+ does NOT flow into engine matter-sector dynamical observables under any classical-gauge protocol tested**. This is now load-bearing empirical reinforcement of the structural-decoupling diagnosis, not just a theoretical conjecture.
 - **Exit criterion**: identification of a non-action mechanism that injects polynomial structure into the FTD observable spectrum. Three candidate classes:
   1. **Boundary-condition mechanism**: master quadratic emerges as a constraint on allowed boundary conditions for finite-L lattice rather than as a property of the action.
   2. **Observable-selection mechanism**: the polynomial structure lives in the *measurement* layer (which observables FTD permits) rather than in dynamics.
