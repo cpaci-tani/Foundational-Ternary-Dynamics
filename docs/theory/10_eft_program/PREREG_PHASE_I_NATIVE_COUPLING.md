@@ -107,16 +107,45 @@ Any change to any of these *after* running the measurement is a methodology viol
 
 The git tag `preregister-phase-i-native-coupling-v1` is applied to this commit BEFORE the measurement script runs.
 
-## 6 · Engine cross-check (deferred, scope-limited)
+## 6 · Engine cross-check — implementation 2026-05-03 (build complete; run deferred to WSL2)
 
-The Python FFT-based prediction is engine-equivalent (per FTD-0118 / Q3 precedent: the engine's gauss-projection step computes the lattice Poisson Green's function which is exactly what an FFT computes). It stands as authoritative for the canonical match.
+### Status
 
-A live-engine C++ cross-check would:
-1. Add a `wave_prop_only` toggle that disables gauss-projection during V(r) measurement
-2. Run benchmark_emergent_alpha at L ∈ {64, 128, 256, 384} with this toggle
-3. Compare measured V(r) to the Python prediction
+Implementation complete; awaiting WSL2 / GPU run for verification. Python predictor (`scripts/proofs/proof_phase_i_native_coupling.py`) stands as engine-equivalent per FTD-0118 / Q3-Q4 precedent.
 
-Effort estimate: 1-2 days WSL2/GPU work. Not session-tractable today; deferred per CLAUDE.md `feedback_use_wsl2_for_gpu` discipline.
+### Artifacts
+
+- `scripts/proofs/generate_phase_i_lattice_green_fixtures.py` — generates SC7 lattice Poisson Green's function fixtures at selected (L, r) pairs
+- `engine/tests/phase_i_green_fixtures.h` — auto-generated header with 8 fixtures (L ∈ {32, 64} × selected r)
+- `engine/tests/benchmark_phase_i_native_coupling.cpp` — C++ benchmark (~170 LOC) measuring `α_r(r,L)` in the wave-propagation channel and computing `g_engine²(r,L) := α_r / (2 r G_L(r))` for each fixture
+- CTest registration: `engine/CMakeLists.txt` line 713-714 (target `ftd_phase_i_native_coupling`)
+- Windows-native compile-check: PASS (commit follow-up to `0ea9d13`); executable at `engine/build/Release/ftd_phase_i_native_coupling.exe`
+
+### Pre-registered run protocol (hash-locked)
+
+```bash
+# WSL2 build + run (canonical per CLAUDE.md WSL2/GPU discipline):
+wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && \
+    cmake -S engine -B engine/build_wsl -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build engine/build_wsl --target ftd_phase_i_native_coupling -j 8 && \
+    engine/build_wsl/benchmark_phase_i_native_coupling 200"
+
+# Or via CTest:
+wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd/engine/build_wsl && \
+    ctest -R benchmark_phase_i_native_coupling --output-on-failure"
+```
+
+### Pre-registered pass criterion
+
+`g_engine²(L, r)` at every fixture must equal `1/x_+ = ALPHA_EFT` to relative tolerance `1e-3` (1000 ppm — generous; allows for finite equilibration tick count + finite-r convergence). Default `ticks=200`.
+
+If all 8 fixtures PASS: outcome A confirmed at the engine level. Promotes Phase I closure from "Python-equivalent verification" to "Python + engine-confirmed verification."
+
+If any fixture FAILS: investigate. Likely culprits in order of probability: (i) insufficient equilibration ticks (try `ticks=500`); (ii) finite-r boundary effect; (iii) actual physics surprise (would require LEDGER FTD-0125 update).
+
+### Why this is deferred to WSL2
+
+Per CLAUDE.md `Environment Notes`: "GPU execution MUST go through WSL2 Ubuntu-22.04, not Windows-native CUDA. Windows-native CUDA builds technically run but are pathologically slow." The benchmark uses `rb.run(ticks)` which is GPU-accelerated when CUDA is available. Windows-native CUDA may take 19+ minutes per measurement; WSL2/GPU should complete in <1 minute total. Scope discipline: defer.
 
 ## 7 · References
 
