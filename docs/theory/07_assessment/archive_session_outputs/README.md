@@ -8,12 +8,12 @@
 
 ## Contents
 
-### Resolved trackers (work queues now empty)
+### Deleted 2026-05-03 (resolved trackers — git history preserves them)
 
 | File | Original purpose | Resolution |
 |---|---|---|
-| `TRACKER_REFRAME_FLAGS.md` | 5 inline `[FLAG: re-derivation needed]` markers in EFT-program docs | All 5 RESOLVED 2026-04-19 (Session 2) — Restatement A on Flag 1, Restatement B on Flags 2-4, Path A retraction on Flag 5. |
-| `TRACKER_PDF_ONLY_PAPERS.md` | Triage of 13 PDF-only papers (no TeX source recoverable) | All 13 ARCHIVED 2026-04-19 (Session 3): 2 to `docs/papers/archive/retracted_under_reframe/`, 11 to `docs/papers/archive/pdf_only_no_source/`. |
+| ~~`TRACKER_REFRAME_FLAGS.md`~~ | 5 inline `[FLAG: re-derivation needed]` markers in EFT-program docs | All 5 RESOLVED 2026-04-19 (Session 2). File deleted 2026-05-03 in tracker consolidation. |
+| ~~`TRACKER_PDF_ONLY_PAPERS.md`~~ | Triage of 13 PDF-only papers | All 13 ARCHIVED 2026-04-19 (Session 3). File deleted 2026-05-03; live PDF-only status now in `dissemination/papers/INVENTORY.json`. |
 
 ### Session-specific audits (point-in-time deliverables)
 

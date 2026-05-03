@@ -122,7 +122,7 @@ Assign priority from both **score weakness** and **known blocker severity**.
 Escalate to `P0` or `P1` if any of these are true:
 
 - The weakness blocks release credibility or contributor trust.
-- The weakness is already backed by `P0` / `P1` items in `evaluation/ISSUE_TRACKER.md`.
+- The weakness is already a `[CRITICAL]` row in `docs/theory/07_assessment/AUDIT_WEAKNESSES_MASTER.md` or has an active `[OPEN]` entry in `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`.
 - The weakness causes public docs to mislead readers about current repo truth.
 - The weakness creates repeated maintenance churn across subsystems.
 
@@ -220,8 +220,8 @@ Every scorecard must include:
 Optional but recommended:
 
 - trend vs. previous scorecard
-- blocker IDs from `evaluation/ISSUE_TRACKER.md`
-- explicit “raise this score by doing X” note
+- open-item IDs from `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`
+- explicit "raise this score by doing X" note
 
 ---
 
@@ -250,8 +250,10 @@ When issuing a new scorecard:
 2. If weights or bands ever change, document the change in the scorecard itself and preserve comparability notes.
 3. Prefer updating the latest scorecard document over scattering health judgments across multiple files.
 4. Link each new scorecard to:
-   - [ISSUE_TRACKER.md](ISSUE_TRACKER.md)
    - [AUDIT_WEAKNESSES_MASTER.md](AUDIT_WEAKNESSES_MASTER.md)
+   - [../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md)
+   - [../docs/theory/07_assessment/LEDGER.md](../docs/theory/07_assessment/LEDGER.md)
+   - [../docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md](../docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md)
    - [../AUDIT_DOCUMENT_CLEANUP_LEDGER.md](../AUDIT_DOCUMENT_CLEANUP_LEDGER.md)
    - [../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 

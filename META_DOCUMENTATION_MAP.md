@@ -153,8 +153,7 @@ ftd/
 │   ├── expert_reviews/              # Expert reviews + physicist final report
 │   ├── findings/                    # Cross-cutting domain findings
 │   ├── AUDIT_UNRESOLVED_ISSUES.md   # Post-defense mandatory acknowledgments
-│   ├── AUDIT_WEAKNESSES_MASTER.md   # Master weakness compilation (18 agents)
-│   └── ISSUE_TRACKER.md             # 116 prioritized issues (12 P0, 35 P1)
+│   └── AUDIT_WEAKNESSES_MASTER.md   # Master weakness compilation (18 agents)
 │
 ├── dissemination/                   # Publication pipeline
 │   ├── manuscript/                  # Quarto manuscript (original)
