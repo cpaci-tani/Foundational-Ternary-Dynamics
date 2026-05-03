@@ -710,6 +710,8 @@ ftd_add_test(ftd_benchmark_engine_theory tests/benchmark_engine_theory.cpp
              CTEST_NAME benchmark_engine_theory TIMEOUT 1800)
 ftd_add_test(ftd_emergent_alpha tests/benchmark_emergent_alpha.cpp
              CTEST_NAME benchmark_emergent_alpha TIMEOUT 1800)
+ftd_add_test(ftd_phase_i_native_coupling tests/benchmark_phase_i_native_coupling.cpp
+             CTEST_NAME benchmark_phase_i_native_coupling TIMEOUT 1800)
 ftd_add_test(ftd_budget_equation tests/benchmark_budget_equation.cpp
              CTEST_NAME benchmark_budget_equation TIMEOUT 1800)
 ftd_add_test(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp
