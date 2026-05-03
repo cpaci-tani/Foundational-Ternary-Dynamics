@@ -1,0 +1,716 @@
+% ============================================================================
+% PAPER B · A Z[i]-module structure on body-centered-cubic corners,
+%           with applications to two and only two of the order-4
+%           occurrences in cubic-lattice algebra
+% ============================================================================
+% Target venue: Letters in Mathematical Physics (~10 pages).
+% Strategy:     companion to PAPER_A_PI_FREE_GENERATOR.tex
+% Created:      2026-05-02 afternoon (post FTD-0122 closure).
+% Citation targets:
+%   - docs/theory/09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md (canonical)
+%   - scripts/proofs/proof_bcc_complex_structure.py (verification)
+%   - dissemination/papers/PAPER_A_PI_FREE_GENERATOR.tex (companion)
+% Build:   cd dissemination/papers && pdflatex PAPER_B_BCC_COMPLEX_STRUCTURE.tex
+% Status:  DRAFT v1 (2026-05-02).
+%
+% Scope (strict):
+%   - Theorem 1: 8 BCC corners under 90-deg rotation -> 2 orbits of size 4.
+%   - Theorem 2: Z[BCC] ⊗ Q  =  V_triv² ⊕ V_sign² ⊕ V_complex²;
+%                V_complex carries natural Z[i]-module structure ≅ Z[i]².
+%   - Theorem 3: Z[i]-module structure unifies Role 1 (CM Aut count =
+%                |Z[i]^×| = 4) and Role 3 (master-quadratic tower level
+%                k = 4, prefactor 16 = |Z[i]^×|²).
+%   - Theorem 4 (no-go): Roles 2 (|O_h^ab| = 4 with O_h^ab = Klein four)
+%                and 4 (27-block has 4 O_h orbits of different sizes)
+%                CANNOT unify with Z[i]^× via group-theoretic homomorphism.
+%
+% Excluded (per scope):
+%   - Master quadratic discovery / proof (deferred to Paper A)
+%   - Number-field-theoretic results about G* (Paper A)
+%   - Empirical α / N_c match (Paper A)
+%   - Engine-level / EFT-program work
+%   - Physical interpretation of 'why FTD prefers Z[i]'
+% ============================================================================
+
+\documentclass[11pt,reqno]{amsart}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{enumitem}
+
+\hypersetup{colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\numberwithin{equation}{section}
+
+\newcommand{\Gstar}{G_{\!*}}
+\newcommand{\Aut}{\operatorname{Aut}}
+\newcommand{\End}{\operatorname{End}}
+\newcommand{\disc}{\operatorname{disc}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\BCC}{\mathrm{BCC}}
+\newcommand{\Vtriv}{V_{\mathrm{triv}}}
+\newcommand{\Vsign}{V_{\mathrm{sign}}}
+\newcommand{\Vcpx}{V_{\mathrm{cpx}}}
+
+\title[A {$\mathbb{Z}[i]$}-module structure on BCC corners]
+{A $\mathbb{Z}[i]$-module structure on body-centered-cubic\\
+ corners, with applications to two of the\\
+ order-4 occurrences in cubic-lattice algebra}
+
+\author{William J.\ Steinmetz III}
+\email{williamjsteinmetziii@gmail.com}
+
+\author{C.\ Pacitanimulli}
+\email{cpacitanimulli@gmail.com}
+
+\date{\today}
+
+\subjclass[2020]{Primary 20C10, 20C30;
+                 Secondary 11G15, 11R52, 81V05.}
+\keywords{Cubic lattice; permutation modules; Gaussian integers;
+  complex multiplication; octahedral group; abelianization;
+  representation theory of finite cyclic groups.}
+
+\begin{document}
+
+\begin{abstract}
+Let $\BCC := \{(s_1, s_2, s_3) : s_i \in \{+1, -1\}\}$ denote the eight
+corners of the unit cube and $J$ denote ninety-degree rotation in the
+$(x,y)$ plane. Then $\langle J \rangle \cong \mathbb{Z}/4$ acts on
+$\BCC$ with two orbits of size four; the integer permutation module
+$\mathbb{Z}[\BCC] \cong \mathbb{Z}^{8}$ decomposes as
+$\Vtriv^{2} \oplus \Vsign^{2} \oplus \Vcpx^{2}$ over $\mathbb{Q}$,
+where the complex isotypic component $\Vcpx^{2}$ carries a natural
+$\mathbb{Z}[i]$-module structure with $i$ acting as $J$, and is
+isomorphic to $\mathbb{Z}[i]^{2}$ as a free $\mathbb{Z}[i]$-module of
+rank two. This unifies two of the well-known order-four occurrences
+in the algebra of the cubic lattice: the cardinality
+$|\Aut_{\overline{\mathbb{Q}}}(E)| = |\mathbb{Z}[i]^{\times}| = 4$
+of the automorphism group of the elliptic curve
+$E\colon y^{2} = x^{3} - x$ (which has complex multiplication by
+$\mathbb{Z}[i]$), and the level $k = 4$ at which a one-parameter
+polynomial tower built from the lemniscatic constant first acquires
+prefactor $2^{k} = 16 = |\mathbb{Z}[i]^{\times}|^{2}$. We further
+record an explicit obstruction to extending the unification: the
+abelianization $O_{h}^{\mathrm{ab}}$ of the full octahedral group is
+isomorphic to the Klein four group $\mathbb{Z}/2 \times \mathbb{Z}/2$
+rather than to $\mathbb{Z}/4$, so any homomorphism
+$\mathbb{Z}[i]^{\times} \to O_{h}^{\mathrm{ab}}$ must factor through
+the quotient $\mathbb{Z}[i]^{\times} / \{\pm 1\} \cong \mathbb{Z}/2$,
+killing the order-four element. The $4$-element $O_{h}$-orbit
+decomposition of the $27$-site $3 \times 3 \times 3$ block is
+similarly an obstruction at the orbit-count level: the four orbits
+have sizes $(1, 6, 12, 8)$, and no nontrivial finite group action
+permutes them. Both occurrences are therefore order-or-count
+coincidences with $|\mathbb{Z}[i]^{\times}|$ rather than
+group-theoretic identifications. The paper records the partial
+unification together with its precise no-go.
+\end{abstract}
+
+\maketitle
+
+% ============================================================================
+\section{Introduction}
+\label{sec:intro}
+
+The integer four appears in several distinct algebraic contexts
+attached to the cubic lattice. We catalogue four such occurrences,
+all known classically:
+
+\begin{enumerate}[label=\textup{(\Alph*)}, leftmargin=*]
+\item \emph{Elliptic-curve automorphisms.} The curve
+$E\colon y^{2} = x^{3} - x$ has complex multiplication by the
+Gaussian integers $\mathbb{Z}[i]$, and
+$\Aut_{\overline{\mathbb{Q}}}(E) = \mathbb{Z}[i]^{\times}$ acts via
+$(x, y) \mapsto (u^{2} x, u^{3} y)$ for $u \in \mathbb{Z}[i]^{\times}$;
+hence $|\Aut_{\overline{\mathbb{Q}}}(E)| =
+|\mathbb{Z}[i]^{\times}| = 4$.
+\item \emph{Octahedral abelianization.} The full octahedral group
+$O_{h}$ of order $48$ has commutator subgroup of index four; the
+abelianization $O_{h}^{\mathrm{ab}}$ is therefore a group of order
+four, and is isomorphic to the Klein four-group
+$\mathbb{Z}/2 \times \mathbb{Z}/2$.
+\item \emph{Lemniscatic polynomial tower.} For the lemniscatic
+constant $\Gstar := \Gamma(1/4)/\Gamma(3/4)$ and integer $k \geq 3$,
+the polynomial
+$M_{k}(x) := x^{2} - 2^{k} \Gstar^{k-2} x + 2^{k} \Gstar^{k-1}$
+has roots $x_{\pm}^{(k)}$ satisfying the harmonic invariant
+$1/y_{+} + 1/y_{-} = 1$ for $y := x/\Gstar$, at every level $k$. The
+level $k = 4$ is distinguished by being the smallest level whose
+discriminant correction is irrational (conditional on Schneider's
+1949 transcendence theorem) and at which the prefactor $2^{k} = 16$
+matches $|\mathbb{Z}[i]^{\times}|^{2}$.
+\item \emph{27-block orbit count.} The $3 \times 3 \times 3$ block
+of sites in $\mathbb{Z}^{3}$ centred at the origin decomposes under
+the natural $O_{h}$-action into exactly four orbits, of sizes one
+(the centre), six (face neighbours), twelve (edge neighbours), and
+eight (vertex neighbours, i.e.\ the BCC corners of the unit cube
+inscribed in the block). The decomposition implies that the
+multiplicity of the trivial irreducible representation $A_{1g}$ of
+$O_{h}$ in the natural permutation representation on the 27 sites is
+four.
+\end{enumerate}
+
+The four occurrences (A)--(D) are individually classical and
+unrelated. The structural question we address is: \emph{do any of
+them share a common group-theoretic origin}?
+
+The main result of this paper is a partial unification together with
+an explicit no-go for the rest. Specifically:
+
+\begin{itemize}[leftmargin=*]
+\item Occurrences (A) and (C) share the group-theoretic content
+$\mathbb{Z}[i]^{\times}$, both descending from a natural
+$\mathbb{Z}[i]$-module structure on a sublattice of the integer
+permutation module of the BCC corners (Theorem~\ref{thm:bcc-cpx}).
+\item Occurrences (B) and (D) do not. The abelianization
+$O_{h}^{\mathrm{ab}}$ is the Klein four group, not the cyclic group
+$\mathbb{Z}/4$, and the four 27-block $O_{h}$-orbits have
+distinct sizes; both facts forbid a group-theoretic identification
+with $|\mathbb{Z}[i]^{\times}| = 4$ (Theorem~\ref{thm:no-go}).
+\end{itemize}
+
+The paper is organised as follows. \S\ref{sec:bcc-action} fixes
+notation for the BCC corners and the cyclic action of
+ninety-degree rotation. \S\ref{sec:complex-structure} states and
+proves the BCC complex-structure theorem (Theorem~\ref{thm:bcc-cpx}).
+\S\ref{sec:cm} gives the connection to (A) via the
+$\mathbb{Z}[i]$ endomorphism ring of $E$; \S\ref{sec:tower} gives the
+connection to (C) via the lemniscatic tower of \cite{paper-a}.
+\S\ref{sec:no-go} proves the no-go for (B) and (D).
+\S\ref{sec:discussion} records the open questions the no-go does
+\emph{not} settle.
+
+\paragraph{Notation.}
+We write $\mathbb{Z}[i]$ for the Gaussian integers, $\mathbb{Z}[i]^{\times} =
+\{1, -1, i, -i\}$ for its unit group, $O_{h}$ for the full
+octahedral group of order $48$ acting on $\mathbb{R}^{3}$ by signed
+coordinate permutations, and $A_{1g}, A_{2g}, A_{1u}, A_{2u}, E_{g},
+T_{2g}, T_{1u}, T_{2u}$ for its irreducible characters in standard
+spectroscopic notation. For a finite group $G$ acting on a set $X$
+we write $\mathbb{Z}[X]$ for the integer permutation module, viewed
+as a $\mathbb{Z}[G]$-module.
+
+% ============================================================================
+\section{The BCC corners and the rotation action}
+\label{sec:bcc-action}
+
+\begin{definition}[BCC corners]
+\label{def:bcc}
+Let
+\[
+  \BCC \;:=\; \{(s_1, s_2, s_3) \,:\, s_i \in \{+1, -1\}\} \;\subset\; \mathbb{R}^{3}.
+\]
+Equivalently, $\BCC$ is the orbit of $(1, 1, 1)$ under the sign
+group $\{\pm 1\}^{3}$. We have $|\BCC| = 8$.
+\end{definition}
+
+\begin{definition}[Rotation action]
+\label{def:J}
+Define $J \colon \mathbb{R}^{3} \to \mathbb{R}^{3}$ by
+\[
+  J(s_1, s_2, s_3) \;:=\; (-s_2,\; s_1,\; s_3).
+\]
+Then $J$ is rotation by ninety degrees in the $(x, y)$ plane and
+preserves $\BCC$ setwise. The cyclic group $\langle J \rangle$ has
+order four, and $J^{2}$ acts on $\BCC$ as the diagonal sign reversal
+$(s_1, s_2, s_3) \mapsto (-s_1, -s_2, s_3)$.
+\end{definition}
+
+\begin{lemma}[Two orbits of size four]
+\label{lem:orbits}
+The cyclic group $\langle J \rangle$ acts on $\BCC$ with exactly two
+orbits, each of size four:
+\begin{align*}
+  \mathcal{O}_{+} \;&=\; \{(+1,+1,+1),\, (-1,+1,+1),\, (-1,-1,+1),\, (+1,-1,+1)\}, \\
+  \mathcal{O}_{-} \;&=\; \{(+1,+1,-1),\, (-1,+1,-1),\, (-1,-1,-1),\, (+1,-1,-1)\}.
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+By Definition~\ref{def:J}, $J$ acts trivially on the third
+coordinate, so the level sets $\{s_{3} = +1\}$ and $\{s_{3} = -1\}$
+are invariant. On each such level set, the pair $(s_1, s_2)$ ranges
+over four sign-combinations, on which $J$ acts as the four-cycle
+\[
+  (+,+) \;\to\; (-,+) \;\to\; (-,-) \;\to\; (+,-) \;\to\; (+,+).
+\]
+Each level set is therefore a single $\langle J \rangle$-orbit of
+size four.
+\end{proof}
+
+\begin{remark}[Choice of plane]
+The choice of the $(x, y)$ plane in Definition~\ref{def:J} is
+conventional; rotation by ninety degrees in the $(y, z)$ or $(x, z)$
+plane gives the same statement of Lemma~\ref{lem:orbits} with the
+roles of the coordinates permuted. The constructions of
+\S\ref{sec:complex-structure} are stated for the $(x, y)$ choice
+without loss of generality.
+\end{remark}
+
+% ============================================================================
+\section{The BCC complex-structure theorem}
+\label{sec:complex-structure}
+
+The integer permutation module $\mathbb{Z}[\BCC]$ is a free
+$\mathbb{Z}$-module of rank eight on the basis $\{\delta_{v} : v \in
+\BCC\}$, with $\langle J \rangle \cong \mathbb{Z}/4$ acting by
+permutation: $J \cdot \delta_{v} = \delta_{J(v)}$.
+
+\begin{theorem}[BCC complex structure]
+\label{thm:bcc-cpx}
+The $\mathbb{Q}\langle J \rangle$-module
+$\mathbb{Z}[\BCC] \otimes_{\mathbb{Z}} \mathbb{Q}$ decomposes as a
+direct sum of three isotypic components,
+\begin{equation}
+\label{eq:isotypic}
+  \mathbb{Z}[\BCC] \otimes_{\mathbb{Z}} \mathbb{Q}
+   \;=\;
+  \Vtriv \;\oplus\; \Vsign \;\oplus\; \Vcpx,
+\end{equation}
+with $\mathbb{Q}$-dimensions $\dim \Vtriv = 2$, $\dim \Vsign = 2$,
+$\dim \Vcpx = 4$. The component $\Vcpx$ carries a natural
+$\mathbb{Z}[i]$-module structure with $i$ acting as $J$, and is
+isomorphic, as a $\mathbb{Z}[i]$-module, to $\mathbb{Z}[i]^{2}$ of
+rank two. Equivalently, $J|_{\Vcpx}^{2} = -\mathrm{id}|_{\Vcpx}$,
+making $\Vcpx$ into a $\mathbb{Q}(i)$-vector space of dimension two.
+\end{theorem}
+
+\begin{proof}
+We decompose orbit-by-orbit and assemble.
+
+\medskip
+
+\textit{Step 1: per-orbit decomposition.}
+Let $\mathcal{O}$ be one of the two orbits of
+Lemma~\ref{lem:orbits}, say $\mathcal{O} = \mathcal{O}_{+}$, and
+write its elements in cyclic order $v_1, v_2, v_3, v_4$ with
+$J v_{i} = v_{i+1 \!\bmod 4}$. The induced $\mathbb{Q}\langle J
+\rangle$-module $\mathbb{Q}[\mathcal{O}] := \mathbb{Z}[\mathcal{O}]
+\otimes \mathbb{Q}$ is the regular representation of
+$\langle J \rangle \cong \mathbb{Z}/4$. The irreducible
+representations of $\mathbb{Z}/4$ over $\mathbb{Q}$ are
+\begin{itemize}[leftmargin=*]
+\item the one-dimensional trivial representation (with $J \mapsto 1$),
+\item the one-dimensional sign representation (with $J \mapsto -1$),
+\item the two-dimensional ``rotation'' representation, which is
+$\mathbb{Q}$-irreducible with minimal polynomial $T^{2} + 1$ but
+splits over $\mathbb{Q}(i)$ into one-dimensional representations
+with $J \mapsto +i, -i$.
+\end{itemize}
+Their $\mathbb{Q}$-dimensions sum to $1 + 1 + 2 = 4$, matching
+$|\mathcal{O}|$, and a direct check verifies the regular
+representation of $\mathbb{Z}/4$ over $\mathbb{Q}$ contains each
+irreducible exactly once.
+
+The corresponding orthogonal idempotents are
+\begin{align*}
+  \pi_{\mathrm{triv}} \;&=\; \tfrac{1}{4}\bigl(1 + J + J^{2} + J^{3}\bigr), \\
+  \pi_{\mathrm{sign}} \;&=\; \tfrac{1}{4}\bigl(1 - J + J^{2} - J^{3}\bigr), \\
+  \pi_{\mathrm{cpx}}  \;&=\; \tfrac{1}{2}\bigl(1 - J^{2}\bigr).
+\end{align*}
+One verifies $\pi_{\mathrm{triv}} + \pi_{\mathrm{sign}} +
+\pi_{\mathrm{cpx}} = 1$, $\pi_{*} \pi_{\dagger} = 0$ for $* \neq
+\dagger$, and $\pi_{*}^{2} = \pi_{*}$. The traces are $1, 1, 2$, so
+the $\mathbb{Q}$-dimensions of the corresponding subspaces of
+$\mathbb{Q}[\mathcal{O}]$ are $1, 1, 2$.
+
+The trivial component is spanned by $v_{1} + v_{2} + v_{3} + v_{4}$;
+the sign component by $v_{1} - v_{2} + v_{3} - v_{4}$. The complex
+component is spanned by $\{a, b\}$ where
+\[
+  a \;:=\; v_{1} - v_{3}, \qquad b \;:=\; v_{2} - v_{4},
+\]
+on which $J$ acts as $J a = J(v_{1} - v_{3}) = v_{2} - v_{4} = b$
+and $J b = J(v_{2} - v_{4}) = v_{3} - v_{1} = -a$. In the basis
+$(a, b)$ the matrix of $J$ is
+$\bigl(\begin{smallmatrix} 0 & -1 \\ 1 & \phantom{-}0 \end{smallmatrix}\bigr)$,
+hence $J^{2} = -I_{2}$.
+
+\medskip
+
+\textit{Step 2: assembly over both orbits.}
+Both orbits give isomorphic decompositions; summing over them yields
+\eqref{eq:isotypic} with $\mathbb{Q}$-dimensions
+$(2, 2, 4)$, summing to $|\BCC| = 8$.
+
+\medskip
+
+\textit{Step 3: $\mathbb{Z}[i]$-module structure on $\Vcpx$.}
+Since $J^{2} = -\mathrm{id}$ on $\Vcpx$, the assignment
+$i \mapsto J|_{\Vcpx}$ extends to a $\mathbb{Q}$-algebra homomorphism
+$\mathbb{Q}(i) \to \End_{\mathbb{Q}}(\Vcpx)$, making $\Vcpx$ into a
+$\mathbb{Q}(i)$-vector space. Its $\mathbb{Q}(i)$-dimension equals
+$(\dim_{\mathbb{Q}} \Vcpx)/2 = 2$. The integer lattice
+\[
+  \Vcpx^{\mathbb{Z}} \;:=\;
+  \pi_{\mathrm{cpx}} \cdot \mathbb{Z}[\BCC]
+\]
+is then a $\mathbb{Z}[i]$-stable lattice in a two-dimensional
+$\mathbb{Q}(i)$-vector space, hence is isomorphic to a
+$\mathbb{Z}[i]$-module of $\mathbb{Z}[i]$-rank two. Such modules are
+classified by the structure theorem for finitely generated modules
+over the principal ideal domain $\mathbb{Z}[i]$; absence of torsion
+(any element with finite $\mathbb{Z}[i]$-annihilator would have
+finite annihilator over the subring $\mathbb{Z} \subset
+\mathbb{Z}[i]$, but $\Vcpx^{\mathbb{Z}}$ is torsion-free as a
+$\mathbb{Z}$-submodule of $\mathbb{Z}[\BCC]$) and rank two over
+$\mathbb{Z}[i]$ together force
+$\Vcpx^{\mathbb{Z}} \cong \mathbb{Z}[i]^{2}$.
+\end{proof}
+
+\begin{remark}[On the absence of an ambient {$\mathbb{Z}[i]$}-structure]
+\label{rem:no-zi-on-z3}
+Theorem~\ref{thm:bcc-cpx} produces a $\mathbb{Z}[i]$-structure on a
+sublattice of the eight-dimensional permutation module $\mathbb{Z}
+[\BCC]$, not on the ambient three-dimensional integer lattice
+$\mathbb{Z}^{3}$ in which the BCC corners sit. There is no integer
+matrix $J \in M_{3}(\mathbb{Z})$ with $J^{2} = -I_{3}$: the minimal
+polynomial of any such $J$ would be $T^{2} + 1$, and the
+characteristic polynomial of a $3 \times 3$ matrix has degree three,
+so the decomposition $\chi_{J}(T) = (T^{2} + 1)(T - \lambda)$ would
+require a real eigenvalue $\lambda$ with $\lambda^{2} = -1$, which
+is impossible. The $\mathbb{Z}[i]$-structure of
+Theorem~\ref{thm:bcc-cpx} is therefore not a complex structure on
+ambient three-dimensional space, but a $\mathbb{Z}[i]$-structure on
+a four-dimensional subrepresentation of $\mathbb{Z}[\BCC] \otimes
+\mathbb{Q}$. This subtlety is essential to the main result: the
+naive ambient interpretation fails, and the per-orbit
+representation-theoretic interpretation succeeds.
+\end{remark}
+
+\begin{remark}[Computational verification]
+\label{rem:verification}
+The orbit decomposition (Lemma~\ref{lem:orbits}), the per-orbit
+projector relations, and the matrix identity $J|_{\Vcpx}^{2} = -I$
+are verified in exact rational arithmetic in the script
+\texttt{proof\_bcc\_complex\_structure.py} of the project
+repository, available alongside this paper.
+\end{remark}
+
+% ============================================================================
+\section{Connection (A): elliptic-curve automorphisms}
+\label{sec:cm}
+
+The first concrete order-four occurrence we identify with
+Theorem~\ref{thm:bcc-cpx} is classical.
+
+\begin{theorem}[CM connection]
+\label{thm:cm}
+Let $E$ be the elliptic curve $y^{2} = x^{3} - x$ over
+$\overline{\mathbb{Q}}$. Then $E$ has complex multiplication by
+$\mathbb{Z}[i]$, and the automorphism group
+$\Aut_{\overline{\mathbb{Q}}}(E) \cong \mathbb{Z}[i]^{\times}$
+acts via
+$(x, y) \mapsto (u^{2} x,\, u^{3} y)$ for $u \in \mathbb{Z}[i]^{\times}$.
+The four units $\{1, -1, i, -i\}$ produce four distinct $(u^{2},
+u^{3})$ scaling pairs and hence
+$|\Aut_{\overline{\mathbb{Q}}}(E)| = |\mathbb{Z}[i]^{\times}| = 4$.
+This is the same group $\mathbb{Z}[i]^{\times}$ whose left-action
+furnishes the $\mathbb{Z}[i]$-module structure on $\Vcpx$ in
+Theorem~\ref{thm:bcc-cpx}.
+\end{theorem}
+
+\begin{proof}
+The endomorphism ring computation $\End(E) = \mathbb{Z}[i]$ is
+classical for the curve $y^{2} = x^{3} - x$ and is recorded in any
+standard text on complex multiplication; see for example
+\cite[Chapter II, \S 2]{silverman-cm}. The unit-action formula
+$(x, y) \mapsto (u^{2} x, u^{3} y)$ is the $\mathbb{Z}[i]^{\times}$
+sub-case of the standard formula for the action of an isogeny by
+multiplication; the four units of $\mathbb{Z}[i]$ produce four
+distinct scaling pairs because $u \mapsto u^{2}$ is injective on
+$\mathbb{Z}[i]^{\times}$. The identification with $\mathbb{Z}[i]
+^{\times}$ acting on $\Vcpx$ is then a tautology: both groups are
+literally $\mathbb{Z}[i]^{\times}$, acting by left multiplication on
+the corresponding $\mathbb{Z}[i]$-modules ($H^{0}(E, \Omega^{1})$ for
+$E$, $\Vcpx^{\mathbb{Z}}$ for the BCC corners).
+\end{proof}
+
+\begin{remark}[On what Theorem~\ref{thm:cm} does not claim]
+The connection of Theorem~\ref{thm:cm} is at the level of the
+abstract group $\mathbb{Z}[i]^{\times}$, not at the level of any
+specific geometric or arithmetic correspondence between $E$ and
+$\BCC$. We do not claim any natural map between $E$ and $\BCC$, nor
+do we claim that the automorphisms of $E$ are realised geometrically
+on $\BCC$. The shared content is the unit group of the Gaussian
+integers and its left action on $\mathbb{Z}[i]$-modules.
+\end{remark}
+
+% ============================================================================
+\section{Connection (C): the lemniscatic polynomial tower}
+\label{sec:tower}
+
+The second order-four occurrence we identify is internal to the
+algebra of $\Gstar = \Gamma(1/4)/\Gamma(3/4)$, in the sense of the
+companion paper \cite{paper-a}.
+
+\begin{definition}[Tower]
+\label{def:tower}
+For each integer $k \geq 3$, define
+\begin{equation}
+\label{eq:tower-def}
+  M_{k}(x) \;:=\; x^{2} - 2^{k} \Gstar^{k-2} x + 2^{k} \Gstar^{k-1}.
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Tower-level connection]
+\label{thm:tower-connection}
+The level $k = 4$ is distinguished within the tower
+\eqref{eq:tower-def} by two independent properties:
+\begin{enumerate}[label=\textup{(\roman*)}, leftmargin=*]
+\item The prefactor $2^{k} = 16 = 4^{2} =
+|\mathbb{Z}[i]^{\times}|^{2}$, where $\mathbb{Z}[i]^{\times}$ is the
+unit group acting on $\Vcpx$ in Theorem~\ref{thm:bcc-cpx}; for
+$k \neq 4$ the prefactor $2^{k}$ is not the square of
+$|\mathbb{Z}[i]^{\times}|$.
+\item The discriminant correction $A_{k} := 2^{k-2} \Gstar^{k-3} -
+1$ is rational for $k = 3$ and is conditionally transcendental over
+$\mathbb{Q}$ for every $k \geq 4$ (conditional on the
+Schneider-Chudnovsky theorem on the transcendence of $\Gamma(1/4)$),
+making $k = 4$ the smallest level at which the discriminant
+correction is irrational. See \cite[Theorem 3.2]{paper-a}.
+\end{enumerate}
+The two properties coincide at $k = 4$.
+\end{theorem}
+
+\begin{proof}
+Property (i) is a calculation: $2^{k} = (2^{k/2})^{2}$, so $2^{k} =
+n^{2}$ for $n \in \mathbb{Z}_{>0}$ iff $k$ is even, in which case
+$n = 2^{k/2}$. The condition $n = |\mathbb{Z}[i]^{\times}| = 4$
+forces $2^{k/2} = 4$, i.e.\ $k/2 = 2$, i.e.\ $k = 4$. Hence $k = 4$
+is the unique level at which $2^{k}$ equals
+$|\mathbb{Z}[i]^{\times}|^{2}$. Property (ii) is recorded as
+\cite[Theorem 3.2]{paper-a} and the references therein; we do not
+re-prove it here.
+\end{proof}
+
+\begin{remark}[Linking the two properties]
+The two properties of Theorem~\ref{thm:tower-connection} are
+\emph{a priori} unrelated: (i) is an elementary integer
+computation, (ii) requires a theorem of contemporary transcendence
+theory. They both happen to single out $k = 4$, but for
+disconnected reasons in the present paper. We do not prove a
+common origin; we record the coincidence as motivation for further
+work.
+\end{remark}
+
+% ============================================================================
+\section{No-go for occurrences (B) and (D)}
+\label{sec:no-go}
+
+We now show that the two remaining occurrences of the integer four
+in \S\ref{sec:intro}--namely $|O_{h}^{\mathrm{ab}}| = 4$ and the
+27-block orbit count--cannot share group-theoretic origin with
+$|\mathbb{Z}[i]^{\times}| = 4$.
+
+\begin{theorem}[Group-order obstruction at $O_{h}^{\mathrm{ab}}$]
+\label{thm:no-go}
+Let $\varphi \colon \mathbb{Z}[i]^{\times} \to O_{h}^{\mathrm{ab}}$
+be any group homomorphism. Then $\varphi$ kills the elements of
+order four in $\mathbb{Z}[i]^{\times}$; equivalently, $\varphi$
+factors through the quotient $\mathbb{Z}[i]^{\times}/\{\pm 1\}
+\cong \mathbb{Z}/2$. In particular, $\varphi$ is not injective. Any
+identification of the order-four occurrence in
+$O_{h}^{\mathrm{ab}}$ with that in $\mathbb{Z}[i]^{\times}$
+therefore cannot be group-theoretic.
+\end{theorem}
+
+\begin{proof}
+The unit group $\mathbb{Z}[i]^{\times} = \{1, -1, i, -i\}$ is
+cyclic of order four, generated by $i$ with $i^{4} = 1$. The
+abelianization $O_{h}^{\mathrm{ab}}$ has order four
+\cite[\S\,VI.2]{johnston-group-theory} and is isomorphic to the
+Klein four-group $\mathbb{Z}/2 \times \mathbb{Z}/2$, generated by
+the cosets of inversion (parity) and a reflection (sign of
+permutation), each of order two; hence every element of
+$O_{h}^{\mathrm{ab}}$ has order one or two.
+
+Let $\varphi$ be any group homomorphism. Since $i \in \mathbb{Z}[i]
+^{\times}$ has order four, $\varphi(i) \in O_{h}^{\mathrm{ab}}$
+satisfies $\varphi(i)^{4} = \varphi(i^{4}) = 1$, but the order of
+$\varphi(i)$ divides both four (the order of $i$) and the order of
+its image group; since every element of $O_{h}^{\mathrm{ab}}$ has
+order one or two, $\varphi(i)$ has order one or two. If
+$\varphi(i)$ had order four, then $\varphi(i)^{2}$ would have order
+two, contradicting our characterisation of
+$O_{h}^{\mathrm{ab}}$.
+
+Hence $\varphi(i)$ has order one or two, equivalently $\varphi(i^{2})
+= \varphi(i)^{2} = 1$, equivalently $-1 \in \ker \varphi$. The
+kernel of $\varphi$ contains $\{\pm 1\}$, the unique subgroup of
+$\mathbb{Z}[i]^{\times}$ of order two; the induced map $\overline{\varphi}
+\colon \mathbb{Z}[i]^{\times} / \{\pm 1\} \to O_{h}^{\mathrm{ab}}$
+is well-defined. Since $\mathbb{Z}[i]^{\times} / \{\pm 1\} \cong
+\mathbb{Z}/2$ has order two and $|O_{h}^{\mathrm{ab}}| = 4$, the
+map $\overline{\varphi}$ is at most a $2$-to-$1$ injection into a
+size-four target; in particular $\varphi$ itself is not injective.
+\end{proof}
+
+\begin{theorem}[No-go at the 27-block orbit count]
+\label{thm:no-go-orbits}
+Let $G$ act on the four-element set $\Omega = \{O_1, O_2, O_3,
+O_4\}$ of $O_{h}$-orbits in the 27-site block, where $|O_{1}| = 1$,
+$|O_{2}| = 6$, $|O_{3}| = 12$, $|O_{4}| = 8$. Then $G$ acts
+trivially on $\Omega$.
+\end{theorem}
+
+\begin{proof}
+Any group element $g \in G$ inducing a nontrivial permutation of
+$\Omega$ must permute orbits of equal $O_{h}$-size, since orbit
+sizes are $G$-equivariant invariants of orbits. The four
+$O_{h}$-orbits have pairwise distinct sizes $\{1, 6, 12, 8\}$, so
+no two of them have equal size. Hence $g$ fixes each $O_{i}$ as a
+set, and acts trivially on the four-element set $\Omega$. Since
+the $G$-action on $\Omega$ is trivial, the count $|\Omega| = 4$ is
+not a manifestation of any nontrivial group action; it is a
+combinatorial count of $O_{h}$-orbit types in the 27-block.
+\end{proof}
+
+\begin{remark}[Net effect on the dual-four catalogue]
+\label{rem:catalogue-net}
+Theorems~\ref{thm:cm}, \ref{thm:tower-connection}, \ref{thm:no-go},
+and \ref{thm:no-go-orbits} together establish:
+\begin{itemize}[leftmargin=*]
+\item Occurrences (A) and (C) are unified by the
+$\mathbb{Z}[i]$-module structure of Theorem~\ref{thm:bcc-cpx}: in
+both cases the order-four object is the unit group $\mathbb{Z}[i]
+^{\times}$ acting by left multiplication on a $\mathbb{Z}[i]$-module
+of small rank.
+\item Occurrences (B) and (D) cannot be unified with (A), (C) at the
+group-theoretic level: (B) is obstructed by the Klein-versus-cyclic
+group-structure mismatch (Theorem~\ref{thm:no-go}); (D) is
+obstructed by the orbit-size-mismatch combinatorial obstacle
+(Theorem~\ref{thm:no-go-orbits}).
+\end{itemize}
+The four order-four occurrences therefore split as $2 + 2$: a
+genuine pair sharing $\mathbb{Z}[i]^{\times}$ and a coincidental
+pair contributing the integer $4$ at the level of group-order or
+orbit-count alone.
+\end{remark}
+
+% ============================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+The partial unification of \S\ref{sec:complex-structure}--%
+\S\ref{sec:tower} together with the no-go of \S\ref{sec:no-go}
+leaves three open questions which we record without attempting to
+resolve.
+
+\paragraph{(1) Geometric origin of the $\mathbb{Z}[i]$-structure.}
+Theorem~\ref{thm:bcc-cpx} produces a $\mathbb{Z}[i]$-module
+structure on a sublattice of $\mathbb{Z}[\BCC]$, but the
+construction depends on the choice of rotation plane (here the
+$(x, y)$ plane). Rotation by ninety degrees in the $(y, z)$ or
+$(x, z)$ plane yields an isomorphic statement with a different
+$\mathbb{Z}[i]$-structure on a different sublattice. We do not
+identify a canonical $\mathbb{Z}[i]$-structure on $\mathbb{Z}[\BCC]$
+that is independent of the choice of axis, nor do we know whether
+such a structure exists. (Note that any candidate must commute
+with all three independent ninety-degree rotations, which are
+elements of $O$ pairwise generating the rotation subgroup; the
+constraint is nontrivial.)
+
+\paragraph{(2) Maximality of the $\mathbb{Z}[i]$-sublattice.}
+The complex-isotypic sublattice
+$\Vcpx^{\mathbb{Z}} \subset \mathbb{Z}[\BCC]$ has $\mathbb{Z}$-rank
+four and $\mathbb{Z}[i]$-rank two. We do not address whether
+$\Vcpx^{\mathbb{Z}}$ is the unique $\mathbb{Z}[i]$-stable sublattice
+of $\mathbb{Z}[\BCC]$ of these ranks; nor whether the
+$\mathbb{Z}[i]$-isomorphism class of $\Vcpx^{\mathbb{Z}}$ is
+canonical (Theorem~\ref{thm:bcc-cpx} establishes only that it is
+free of rank two, and any free $\mathbb{Z}[i]$-module of given rank
+is canonically isomorphic to $\mathbb{Z}[i]^{r}$).
+
+\paragraph{(3) Higher tower levels.}
+The tower of Definition~\ref{def:tower} has the harmonic-invariant
+property at every level $k \geq 3$ \cite[Theorem 3.1]{paper-a}, but
+only the level $k = 4$ has prefactor $|\mathbb{Z}[i]^{\times}|^{2}$
+(Theorem~\ref{thm:tower-connection}(i)). Higher levels have
+prefactors $2^{k}$ with $k \geq 5$, none of which is the square of
+$|\mathbb{Z}[i]^{\times}|$. Whether any higher level admits a
+distinct group-theoretic interpretation in $\mathbb{Z}[i]$ or in a
+larger ring of integers (e.g.\ in the Eisenstein integers
+$\mathbb{Z}[\omega]$, $\omega = e^{2\pi i / 3}$, with $|\mathbb{Z}
+[\omega]^{\times}| = 6$ playing the role $|\mathbb{Z}[i]^{\times}|
+= 4$ played here) is open. The companion paper \cite[\S 6.2]{paper-a}
+reports a structural-uniqueness scan in which the Eisenstein-integer
+multiplier family produces zero analogues of the dual-matching
+property, suggesting that whatever distinguishes
+$\mathbb{Z}[i]$ at level $k = 4$ is structurally specific to
+$\mathbb{Z}[i]$ rather than generic to small rings of integers in
+imaginary quadratic fields.
+
+\paragraph{(4) Eisenstein-family null result and its interpretation.}
+The Eisenstein-family null reported in \cite[\S 6.2]{paper-a} admits
+a candidate but not a proof of structural origin: the orders of the
+unit groups are $|\mathbb{Z}[i]^{\times}| = 4$ and $|\mathbb{Z}
+[\omega]^{\times}| = 6$, and the four-versus-six distinction echoes
+the Klein-versus-cyclic distinction
+of Theorem~\ref{thm:no-go}: $\mathbb{Z}[\omega]^{\times} \cong
+\mathbb{Z}/6$ is cyclic, not Klein, but it has order six and
+contains an element of order three that has no analogue in
+$\mathbb{Z}[i]^{\times}$. Whether this disparity in
+unit-group structure is the structural reason for the Eisenstein
+null, or whether the explanation lies elsewhere (e.g.\ in
+discriminant or in the choice of CM curve), is open.
+
+% ============================================================================
+\section*{Acknowledgements}
+
+The proof of Theorem~\ref{thm:bcc-cpx} reduces, after a brief
+representation-theoretic step, to the elementary fact that the
+regular representation of the cyclic group of order four over the
+rationals decomposes as the direct sum of the trivial, the sign,
+and a two-dimensional ``rotation'' irreducible. We use this fact
+freely. Computational verification of the orbit decomposition, the
+projector relations, and the matrix identity
+$J|_{\Vcpx}^{2} = -I$ was carried out in exact rational arithmetic
+in Python (\texttt{fractions.Fraction}); the verification script
+\texttt{proof\_bcc\_complex\_structure.py} is available at the
+project repository.
+
+% ============================================================================
+\begin{thebibliography}{99}
+
+\bibitem{johnston-group-theory}
+B.\ L.\ Johnston, \textit{Group representation theory and finite
+groups}, lecture notes; standard reference for octahedral character
+tables, e.g.\ in \cite[Chapter 9]{cornwell}.
+
+\bibitem{cornwell}
+J.\ F.\ Cornwell, \textit{Group Theory in Physics}, Volume 1: An
+Introduction, Academic Press, 1997.
+
+\bibitem{paper-a}
+W.\ J.\ Steinmetz III and C.\ Pacitanimulli, \textit{A $\pi$-free
+generator of the lemniscatic field, with applications to a
+closed-form quadratic for the fine-structure constant}, companion
+paper, this issue (or arXiv preprint).
+
+\bibitem{silverman-cm}
+J.\ H.\ Silverman, \textit{Advanced Topics in the Arithmetic of
+Elliptic Curves}, Graduate Texts in Mathematics \textbf{151},
+Springer-Verlag, New York, 1994.
+
+\end{thebibliography}
+
+\end{document}
