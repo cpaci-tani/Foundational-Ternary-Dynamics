@@ -7,11 +7,11 @@ The tree-level value $1/\alpha = x_+ = 137.036171\ldots$ agrees with experiment 
 The loop expansion is controlled by:
 
 $$
-\varepsilon = |e^\pi - \pi - 20| = 3.0102\ldots \times 10^{-4}
+\varepsilon = |e^\pi - \pi - 20| = 9.000\ldots \times 10^{-4}
 \tag{11.1}
 $$
 
-The quantity $e^\pi - \pi \approx 20.000300$ is close to, but not equal to, 20. The deviation $\varepsilon$ sets the scale of loop corrections. Its smallness ($\sim 3 \times 10^{-4}$) ensures rapid convergence of the perturbative series.
+The quantity $e^\pi - \pi \approx 19.99910$ is close to, but not equal to, 20. The deviation $\varepsilon$ sets the scale of loop corrections. Its smallness ($\sim 9 \times 10^{-4}$) ensures rapid convergence of the perturbative series.
 
 The number 20 arises as $b_3 + N_{\text{eff}} = 7 + 13 = 20$. [THEOREM for the algebraic identity; the connection of $e^\pi$ to framework integers is [SELECTION]]
 
@@ -27,8 +27,8 @@ with coefficients derived from lattice Feynman diagrams:
 | Coefficient | Value | Derivation | Status |
 |-------------|-------|------------|--------|
 | $c_1$ | $9/47 = 0.19149\ldots$ | One-loop tadpole on Moore-weighted lattice | [THEOREM] (0.8% accuracy) |
-| $c_2$ | $5/64 = 0.07813\ldots$ | Two-loop sunset, gauge factor $13/9$ | [THEOREM] (0.07% accuracy) |
-| $c_3$ | $4/141 = 0.02837\ldots$ | Three-loop, gauge factor $11/6$ | [THEOREM] (0.33% accuracy) |
+| $c_2$ | $5/64 = 0.07813\ldots$ | Two-loop sunset, gauge factor $13/9$ | [SELECTION] (scalar sector verified at 69%; gauge sector pending) |
+| $c_3$ | $4/141 = 0.02837\ldots$ | Three-loop, gauge factor $11/6$ | [SELECTION] (not yet independently computed) |
 | $c_4$--$c_7$ | Framework integer expressions | Higher-loop gauge contributions | [CONJECTURE] |
 
 ## 11.3 The one-loop correction [THEOREM]
@@ -61,11 +61,11 @@ $$
 
 This is the reverse direction: QED extracts $\alpha$ from experiment. FTD predicts $\alpha$ from geometry. The two values agree to the precision of the lattice loop corrections.
 
-| Method | $1/\alpha$ | Accuracy | Free parameters |
-|--------|-----------|----------|-----------------|
-| CODATA 2022 ($a_e$ measurement) | 137.035999177(21) | 0.15 ppb | 1 (measured) |
-| FTD tree level | 137.036171 | 1.26 ppm | 0 |
-| FTD one-loop | 137.036000 | 9.6 ppb | 0 |
-| FTD 7-term | 137.035999177... (predicted) | < 0.001 ppt | 0 |
+| Method | $1/\alpha$ | Accuracy | Status |
+|--------|-----------|----------|---------|
+| CODATA 2022 ($a_e$ measurement) | 137.035999177(21) | 0.15 ppb | Experimental |
+| FTD tree level | 137.036171 | 1.26 ppm | Master quadratic root [THEOREM]; physical identification $x_+ = 1/\alpha$ [STRONGLY MOTIVATED CONJECTURE] |
+| FTD one-loop | 137.036000 | 9.6 ppb | $c_1$ [THEOREM]; closure of 99.2% of the tree-level gap |
+| FTD 7-term | 137.035999177... (post-hoc fit beyond CODATA precision) | matches CODATA digit-string | $c_2,c_3$ [SELECTION], $c_4$–$c_7$ [CONJECTURE]; not a prediction beyond CODATA's 0.15 ppb experimental floor |
 
-The 7-term value is a **prediction**: if the loop coefficients $c_4$--$c_7$ are confirmed, FTD will match the experimental value to sub-parts-per-trillion with zero free parameters.
+The 7-term expansion **fits** the CODATA digit-string to as many digits as one wants, but this is beyond the CODATA experimental precision (0.15 ppb) and so cannot be tested as a prediction at sub-ppt scale. The honest framing: FTD's tree-level match is 1.26 ppm; the one-loop closure is to 9.6 ppb; everything beyond that is post-hoc fitting of unknown loop coefficients to a digit-string the experiment cannot resolve. The $c_4$–$c_7$ "predictions" would become tests only if independent first-principles derivations of those coefficients exist; they do not.

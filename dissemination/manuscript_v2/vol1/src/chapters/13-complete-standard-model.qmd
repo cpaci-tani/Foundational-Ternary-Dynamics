@@ -1,6 +1,6 @@
 # The Complete Standard Model {#sec-sm}
 
-This chapter collects all 46 Standard Model observables computed by FTD into a single reference table. Every entry uses only the Planck mass $m_P$, the bridge constant $\Gs$, and the framework integers $\{3, 4, 7, 13\}$. Zero free parameters.
+This chapter collects $\sim 46$ Standard Model observables computed by FTD into a single reference table. Every entry uses only the Planck mass $m_P$, the bridge constant $\Gs$, and the framework integers $\{3, 4, 7, 13\}$, plus the three calibration declarations theorem-enforced by FTD-0059 + FTD-0096 ($a_\mathrm{phys} \equiv \ell_P$, $t_\mathrm{phys} = \sqrt{3}\,\ell_P/c$, $K_B = m_e$). Of the $\sim 46$ entries, roughly two dozen are [DERIVED] or [THEOREM]-grade (mostly structural integers and ratios) and the remainder are [PARAMETRIC] (FTD-derived constants substituted into standard QFT formulas).
 
 ## The observable table
 
@@ -9,16 +9,17 @@ The epistemic status of each entry is classified as:
 - **D** (Derived): follows from FTD axioms via the derivation chain
 - **PI** (Parametric Insertion): FTD values inserted into a standard QFT formula
 - **E** (External): standard physics formula used without FTD derivation
+- **SMP** (Structurally Motivated Parametric): rational-integer match to the relevant SM observable, structurally suggestive but not derived
 
 ### Coupling constants
 
 | Observable | Formula | FTD | Expt | Error | Type |
 |-----------|---------|-----|------|-------|------|
-| $1/\alpha$ | $x_+$ from master quadratic | 137.036 | 137.036 | 1.26 ppm | D |
-| $\alpha_s(M_Z)$ | $b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | 0.1186 | 0.1179 | 0.6% | D |
-| $G_F$ | $1/(\sqrt{2}v^2)$ | $1.166 \times 10^{-5}$ | $1.166 \times 10^{-5}$ | < 0.01% | D |
-| $\sin^2\theta_W$ | $N_c/N_{\text{eff}} = 3/13$ | 0.2308 | 0.2312 | 0.2% | D |
-| $\alpha_{\text{GUT}}$ | $1/(2 \cdot 3 \cdot b_3) = 1/42$ | 0.0238 | ~0.024 | ~1% | D |
+| $1/\alpha$ | $x_+$ from master quadratic | 137.036 | 137.036 | 1.26 ppm | SMP (master quadratic [THEOREM]; $x_+ = 1/\alpha$ identification [STRONGLY MOTIVATED CONJECTURE]) |
+| $\alpha_s(M_Z)$ | $b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | 0.1186 | 0.1179 | 0.6% | SMP (was [D] pre-2026-04-19; demoted per AUDIT_RATIONAL_FIT_CLAIMS) |
+| $G_F$ | $1/(\sqrt{2}v^2)$ | $1.166 \times 10^{-5}$ | $1.166 \times 10^{-5}$ | < 0.01% | PI (formula = standard EW theory) |
+| $\sin^2\theta_W$ | $N_c/N_{\text{eff}} = 3/13$ | 0.2308 | 0.2312 | 3.5% (post-running) | SMP (was [D]; demoted 2026-04-19) |
+| $\alpha_{\text{GUT}}$ | $1/(2 \cdot 3 \cdot b_3) = 1/42$ | 0.0238 | $\sim 0.024$ | $\sim 1\%$ | SMP (no canonical GUT-scale derivation) |
 
 ### Boson masses
 
@@ -56,19 +57,21 @@ The epistemic status of each entry is classified as:
 
 | Observable | Formula | FTD | Expt | Error | Type |
 |-----------|---------|-----|------|-------|------|
-| $\rho_\Lambda$ | $m_e^4 \alpha^{16} \Gssq$ | $\sim 10^{-47}$ GeV$^4$ | $\sim 10^{-47}$ GeV$^4$ | ~1% | D |
-| $\Omega_{\text{DM}}/\Omega_b$ | Sub-threshold ratio | ~5 | 5.36 | ~7% | D |
+| $\rho_\Lambda$ | $m_e^4 \alpha^{16} \Gssq$ | $\sim 4 \times 10^{-47}$ GeV$^4$ | $\sim 2.2 \times 10^{-47}$ GeV$^4$ | factor $\sim 1.8$ | OPEN (factor-1.8 discrepancy; calibration-conditional under $a_\mathrm{phys} \equiv \ell_P$) |
+| $\Omega_{\text{DM}}/\Omega_b$ | Sub-threshold ratio | $\sim 5$ | 5.36 | $\sim 7\%$ | SMP (no canonical derivation chain) |
 
 *Note: This table is representative, not exhaustive. The complete 46-observable computation is in `scripts/proofs/proof_complete_sm.py`.*
 
 ## Honest accounting
 
+The current load-bearing-claims catalog (`docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`, $\sim 162$ rows enumerated) classifies each SM-related FTD claim. Aggregate split (post-2026-04-19 audit):
+
 | Category | Count | Description |
 |----------|-------|-------------|
-| **Genuine derivations (D)** | ~20 | $\alpha$, gauge groups, coupling constants, vacuum energy — from lattice geometry |
-| **Parametric insertions (PI)** | ~20 | Masses, mixing angles — FTD values in standard QFT formulas |
-| **External physics (E)** | ~6 | Decay rates, running couplings — standard physics unmodified |
-| **Total** | ~46 | |
+| **Genuine derivations + theorems ([D] / [THEOREM])** | $\sim 23$ | Master quadratic [THEOREM]; $\Gs$ identity [THEOREM]; structural integers $\{N_c, N_\mathrm{base}, N_\mathrm{eff}\}$ [SELECTION/THEOREM]; lattice-geometry results (Phase G, Phase J at L=2). |
+| **Parametric insertions ([PI])** | $\sim 129$ | Masses, mixing angles, decay rates — FTD-derived constants substituted into standard QFT formulas. |
+| **Imposed / Selection ([I] / [S])** | $\sim 10$ | Calibration declarations ($a_\mathrm{phys} \equiv \ell_P$, $K_B = m_e$, $t_\mathrm{phys}$); ladder-walk ordering selections. |
+| **Total catalog** | $\sim 162$ | The $\sim 46$ "headline observables" in this chapter are the visible portion of the catalog. |
 
 The distinction between D and PI is critical:
 
