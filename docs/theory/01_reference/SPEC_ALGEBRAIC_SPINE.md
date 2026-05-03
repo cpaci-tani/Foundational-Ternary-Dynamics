@@ -123,45 +123,47 @@ and x− ≈ N_c is recorded separately in §9.
 
 ---
 
-## 3 · Theorem 3 — CM curve uniqueness within class-number-1 fields
+## 3 · Theorem 3 — CM curve uniqueness (under the trivial-multiplier criterion)
 
-**Status.** **[NUMERICAL FACT, exhaustive over the 9-element h=1 set]**.
-Audit 2026-05-01 / Tier-I closure 2026-05-02 (see
-[`CHECKLIST_MATH_COMPLETE.md`](CHECKLIST_MATH_COMPLETE.md) MC-T1.2): the
-audit honestly reclassified this from [THEOREM] to [NUMERICAL FACT,
-h=1 only]. The original claim's content is unchanged; the status reflects
-that the proof is a finite numerical scan over 9 discriminants, not a
-structural theorem. Extension to class number h ≥ 2 (the structural
-version) is a separate open problem (Tier-I MC-T1.2 / Tier-II MC-T2.3 in
-the math-complete checklist) requiring extended Chowla–Selberg machinery.
+**Status.** **[NUMERICAL FACT, exhaustive across class numbers 1–4 with |d| ≤ 907; under the trivial-multiplier criterion declared below]**. Three measurements together establish the current scope:
+
+1. **Tier-I MC-T1.2 closure (2026-05-02 morning)**: honestly reclassified the original h=1 claim from [THEOREM] to [NUMERICAL FACT, h=1 only].
+2. **9-Heegner rigidity scan (2026-05-02 evening, FTD-0124)**: pre-registered scan over 9 Heegner × 19 framework-integer-factorable coefficients × 17 framework-integer targets × 2 roots = 5814 quadruples. **Under the trivial-multiplier criterion (q = 1, root = target directly): EXACTLY ONE strict (5.45 ppm) match in the 5814-grid — the canonical (d=−4, c=16, x_+, 1/α).** First quantitative rigidity confirmation at this strict criterion. **Under the rational-multiplier criterion (q ≤ 200, FC-factorable): 21 strict matches.** The two criteria yield different verdicts (criterion bifurcation; see §"What it does NOT claim").
+3. **Γ-product extension to classes 1–4 (2026-05-02 evening, FTD-0123)**: pre-registered scan over 63 fundamental discriminants spanning class numbers 1, 2, 3, 4 with |d| ≤ 907 using the Γ-product analogue `G^*_d := ∏ Γ(a/|d|)^{χ_d(a)}`. **Result: exactly one dual-matcher, d = −4. ZERO h ≥ 2 matchers.** Numerical net 7× larger than the original Heegner-only set; d=−4 structural privilege survives.
+
+**Criterion declaration (load-bearing, FTD-0124).** This theorem holds under the **trivial-multiplier criterion**: a "match" requires the natural root x_± of P_d(x) to equal the target dimensionless constant directly (q = 1 in the rational-multiplier search). The analogous statement under the **rational-multiplier criterion** (allow rescaling by any q ≤ 200 with framework-integer factorability) FAILS — 20 additional non-canonical matches exist in the 5814-grid. **Cite this criterion explicitly when invoking Theorem 3.**
 
 **Statement.** Let E_d denote the CM elliptic curve with complex
-multiplication by the ring of integers of ℚ(√−d) for d in the nine
-class-number-1 discriminants
+multiplication by the ring of integers of ℚ(√−d) for d a fundamental
+imaginary-quadratic discriminant. Construct the analogue of P(x)
+(Theorem 2) using the lemniscatic-analogue constant G*_d defined via
+the Γ-product `G*_d := ∏_{a=1}^{|d|−1} Γ(a/|d|)^{χ_d(a)}` (which
+reproduces canonical G* exactly at d = −4). Among the 63 fundamental
+discriminants checked (h ∈ {1, 2, 3, 4} with |d| ≤ 907), the
+discriminant d = −4 is the **unique** value for which both roots
+simultaneously match dimensionless physical constants under the
+trivial-multiplier criterion at master-quadratic precision (1.26 ppm
+on x_+ vs 1/α; 0.80% on x_− vs N_c).
 
-$$d \in \{-3, -4, -7, -8, -11, -19, -43, -67, -163\}.$$
+**Verification.** Three pre-registered exhaustive numerical scans:
+- `scripts/proofs/scan_cm_curves.py` (original h=1 over 9 Heegner)
+- `scripts/proofs/proof_chowla_selberg_higher_h_scan.py` (FTD-0123, classes 1–4 / 63 discriminants; pre-reg tag `preregister-chowla-selberg-higher-h-scan-v1`)
+- `docs/theory/10_eft_program/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `docs/theory/10_eft_program/AUDIT_HEEGNER_TOWER_RIGIDITY.md` (FTD-0124, full 5814-grid criterion-bifurcation analysis)
 
-Construct the analogue of P(x) (Theorem 2) using the lemniscatic
-constant G*_d associated with E_d (defined via the Γ-function ratio
-specific to ℚ(√−d)). Among the nine resulting polynomials P_d(x), the
-discriminant d = −4 is the unique value for which both roots
-simultaneously match dimensionless physical constants to permille
-precision.
+See also `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md` for context.
 
-**Verification.** Exhaustive numerical scan over all nine discriminants.
-See `scripts/proofs/scan_cm_curves.py` and
-`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`.
+**LEDGER:** FTD-0003 (quick-index entry, restated 2026-05-02); FTD-0123
+(Γ-product extension to h ≥ 2); FTD-0124 (rigidity-scan + criterion
+bifurcation finding).
 
-**LEDGER:** Implied by FTD-0001 + FTD-0014; not assigned its own row
-(audit-derived rather than independent claim).
+**Dependencies:** Theorems 1, 2; arithmetic of imaginary quadratic
+fields; Damerell-style identities at h ≥ 2 (theory note in
+`EXPLR_CHOWLA_SELBERG_HIGHER_H.md` for the proper analogue).
 
-**Dependencies:** Theorems 1, 2; arithmetic of class-number-1 imaginary
-quadratic fields.
-
-**What it does NOT claim.** Uniqueness extends to class-number ≥ 2;
-that is the structural version of this question and is [OPEN]
-(MC-T1.2 path (a) in the math-complete checklist). The numerical fact
-here is exhaustive only over the 9-element h=1 family.
+**What it does NOT claim.**
+- Uniqueness as a structural theorem (that is MC-T2.3 §4 item 4 and remains [OPEN]; closure requires a Galois-theoretic or unit-group argument that the d = −4 privilege has a structural origin).
+- Uniqueness under the rational-multiplier criterion. **20 non-canonical strict matches exist** in the FTD-0124 5814-grid under q ≤ 200 + FC-factorability. The cleanest non-canonical example: (d=−3, c=3, x_+, m_μ/m_e) at +0.908 ppm via multiplier 13³/(2·7²) = N_eff³/(2·b_3²) — every parameter a framework integer. This rational-multiplier reading is [SELECTION], not [THEOREM]; see SSB-3 (`DERIV_SPIN_STATISTICS_BRIDGE.md`) for an example where the framework already invokes a non-trivial multiplier (91/732) explicitly.
+- The full per-ideal-class Damerell formula at h ≥ 2 has not been used; FTD-0123 uses the Γ-product analogue G*_d. The full Damerell scan would multiply the search space by ~1.5× without changing the result type.
 
 ---
 

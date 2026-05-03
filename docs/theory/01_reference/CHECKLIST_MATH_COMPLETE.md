@@ -60,16 +60,16 @@
 - **Status**: structural lower-bound spec(H) ⊂ {0} ∪ [K_B, ∞) verified at every finite L tested. Mass gap Δ = K_B = m_e ≈ 0.511 MeV.
 - **Note**: this is the lower-bound half of FTD-0044. Full spec(H) ⊂ {0} ∪ [K_B, ∞) requires constructing the full Hamiltonian and diagonalizing, which is outside session scope; the lower bound is the substantive half of the mass-gap claim.
 
-### MC-T1.5 — Resolve A_{1g} dual-4 identification at structural level  **[ADVANCED 2026-05-02 to STRUCTURAL CONJECTURE supported]**
+### MC-T1.5 — Resolve A_{1g} dual-4 identification at structural level  **[ROLES 1+3 DERIVED 2026-05-02; ROLES 2+4 NO-GO via FTD-0122]**
 - **Closes**: a load-bearing structural claim in FTD-0110 + FTD-0111 link.
-- **Tier-I closure (2026-05-02 first pass)**: route (b) — `[OPEN; empirical agreement, structural identification not proven]`.
-- **Cross-tier advance (2026-05-02 second pass)**: structural argument via Z[i]^× unit group recorded in `scripts/proofs/proof_a1g_dual4_via_zi_units.py`. Three [THEOREM]-grade roles for "4" identified:
-  - Role 1 (CM theory): |Aut(E)| = 4 = |Z[i]^×| for E: y² = x³ − x.
-  - Role 2 (rep theory): |O_h^ab| = mult(A_{1g}) = 4 = number of 1-dim O_h irreps.
-  - Role 3 (tower): (1+i)-tower level k = 4 where 2^k = 16 = |Z[i]^×|².
-  Conjectural unification: all three trace to |Z[i]^×| = 4 via a Z[i]^× → O_h^ab homomorphism (sketched, not formally proved).
-- **Status**: **[STRUCTURAL CONJECTURE supported by 3 [THEOREM]-grade individual roles]** — net advance from `[empirical agreement]` to `[structurally-conjectural supported]`. Full closure to [THEOREM] requires formalizing the Z[i]^× → O_h^ab homomorphism (Tier-II/III research territory).
-- **Cross-link to MC-T4.5**: the same Z[i]^× argument provides a structural answer to "why level k=4 from N_base=4". See MC-T4.5 below.
+- **Tier-I closure (2026-05-02 morning)**: route (b) — `[OPEN; empirical agreement, structural identification not proven]`.
+- **Substantive closure (2026-05-02 afternoon, FTD-0122)**: BCC complex-structure theorem (`docs/theory/09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md`, `scripts/proofs/proof_bcc_complex_structure.py`). The 8 BCC corners under 90° rotation form 2 orbits of size 4; Z[BCC] ⊗ Q decomposes as `V_triv² ⊕ V_sign² ⊕ V_complex²`; V_complex carries natural Z[i]-module structure ≅ Z[i]² with i acting as 90°-rotation (J² = −I). **Roles 1 + 3 are DERIVED**:
+  - Role 1 (CM theory): `|Aut_{Q̄}(E)| = |Z[i]^×| = 4` for `E: y² = x³ − x` — the same Z[i]^× whose left-action gives the Z[i]-module structure on V_complex.
+  - Role 3 (tower): (1+i)-tower level k = 4 with prefactor `2^k = 16 = |Z[i]^×|²` — uniquely the Schneider-transcendence threshold AND the |Z[i]^×|²-matching level.
+- **Roles 2 + 4 NO-GO** (Paper B Theorem 6.1 + 6.2): the previously-claimed `Z[i]^× → O_h^ab` homomorphism cannot be injective. `Z[i]^× ≅ Z/4` is cyclic with an order-4 element; `O_h^ab ≅ Z/2 × Z/2` is Klein four with no order-4 element. Any homomorphism factors through `Z/2`, killing the order-4 element. The 27-block has 4 O_h-orbits of *different sizes* (1, 6, 12, 8), which cannot be permuted into each other by any nontrivial group action. Roles 2 and 4 are therefore order/count coincidences with `|Z[i]^×|`, not group-theoretic identifications.
+- **Net dual-4 framework**: 2-fold structural unification (Roles 1 + 3 via Z[i] complex structure on Z[BCC]) + 2 count coincidences (Roles 2 + 4) with explicit no-go.
+- **Predecessor (superseded)**: `scripts/proofs/proof_a1g_dual4_via_zi_units.py` (committed `df4a407` morning) deferred the unification to a "natural Z[i]-module structure on BCC" left informal. FTD-0122 formalizes that and explicitly disclaims the over-strong four-role unification.
+- **Cross-link to MC-T4.5**: same closure path; MC-T4.5 below has the matching status update.
 
 **Tier I closure (2026-05-02):** **5/5 items closed.** Two new verification scripts (`proof_field_theoretic_qgstar.py`, `proof_per_voxel_mass_gap.py`); one investigation script (`proof_phase_j_general_L.py`) that documents the actual L-dependence; three honest restatements (Theorems 3, 7 status sharpened; A_{1g} dual-4 acceptance recorded). Spine count of 9 theorems unchanged (Theorem 7 stays [THEOREM]; Theorem 3 demoted to [NUMERICAL FACT, h=1 only] which is honestly weaker but keeps the same content). **Paper A unaffected — remains publishable from the current spine + structural-uniqueness scans.**
 
