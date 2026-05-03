@@ -410,7 +410,6 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 
 ### 7.6 Misc status/meta files
 - `docs/theory/07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md` — 1.
-- `docs/theory/07_assessment/TRACKER_DOCUMENT_STATUS.md` — 1.
 - `docs/theory/META_INDEX.md` — 1.
 - `docs/reference/REF_EPISTEMIC_LABELS.md` — 2 (conventions, not physics).
 - `docs/internal/SPEC_CLAUDE.md` — 2 (internal).
@@ -558,7 +557,6 @@ Snapshot (2026-04-17, excluding `docs/theory/archive/` — see §10):
 | `engine/web/js/wasm-bridge-dag.js` | 1 |
 | `engine/include/ftd/dag_engine.h` | 1 |
 | `docs/theory/META_INDEX.md` | 1 |
-| `docs/theory/07_assessment/TRACKER_DOCUMENT_STATUS.md` | 1 |
 | `docs/theory/07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md` | 1 |
 | `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` | 1 |
 | `docs/theory/06_consciousness/FOUND_THE_EXISTENCE_FILTER.md` | 1 |
