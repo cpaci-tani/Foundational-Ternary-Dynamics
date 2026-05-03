@@ -3,7 +3,7 @@
 **Created:** 2026-05-01 (post-foundational-audit Phase A)
 **Tier I closed:** 2026-05-02 (5/5 items completed via mix of script + acceptance)
 **Tier III pass:** 2026-05-02 (1/5 closed [T3.2], 3/5 investigated-not-closed [T3.1/T3.3/T3.4], 1/5 blocked [T3.5]) — research-program nature of Tier III items confirmed
-**Tier II + cross-tier pass:** 2026-05-02 (T2.1+T2.2 closed positively via extended scan with genuine pre-registration; T1.5+T4.5 advanced to [STRUCTURAL CONJECTURE supported] via Z[i]^× unit-group argument; T2.3 theory note delivered; the Z[i]^× argument also weakens MC-T4.5 dependency on MC-T1.5 by sharing the same closure-conjecture)
+**Tier II + cross-tier pass:** 2026-05-02 (T2.1+T2.2 closed positively via extended scan with genuine pre-registration; T1.5+T4.5 advanced — afternoon update: T4.5 Roles 1 + 3 now [DERIVED] via the BCC complex-structure theorem (`DERIV_BCC_COMPLEX_STRUCTURE.md`); Roles 2 + 4 honest no-go from group-order obstruction (Z/4 ≠ Klein-four). T2.3 theory note delivered.)
 **Scope:** Bridge-complete — closes the algebraic spine in the strong sense AND the axioms→1/α derivation chain, including items that may have foundational obstructions in the current FTD ontology.
 **Authoritative status source:** [`07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) wins on any disagreement.
 **Audience:** Project owner + future AI agents resuming the project. Written to be picked up cold.
@@ -197,12 +197,14 @@ The closures map to the realistic effort the Tier-III items required:
 - **Effort**: **W-M** (2–6 weeks).
 - **Risk**: medium. Even continuum LW for general motion is not fully closed-form (it's an integral). The lattice case may inherit this limitation; the realistic exit criterion is "closed form for important cases (uniform v, sinusoidal, hyperbolic) plus formal expression for general motion."
 
-### MC-T4.5 — Why-level-k=4 selection from N_base = 4  **[ADVANCED 2026-05-02 to STRUCTURAL CONJECTURE supported]**
-- **Closes**: the selection of k=4 in the (1+i)-tower from FTD's structural primitives.
-- **Status**: Tower-scan rank-1 with 5-orders gap [STRUCTURAL UNIQUENESS DEMONSTRATED at FTD-0111]. **Cross-tier advance via MC-T1.5 Z[i]^× argument (`scripts/proofs/proof_a1g_dual4_via_zi_units.py`)**: both N_base = 4 (= |O_h^ab| = mult(A_{1g})) AND tower level k = 4 trace to |Z[i]^×| = 4 in the same Z[i]^× → O_h^ab homomorphism. The "why-level-k=4-from-N_base=4" question gets a structural answer: BOTH come from the unit group of the CM endomorphism ring Z[i].
-- **Dependencies**: MC-T1.5 closure (now ADVANCED, not closed; same Z[i]^× argument resolves both jointly).
-- **Effort to full [THEOREM]**: same as MC-T1.5 — formalize the Z[i]^× → O_h^ab homomorphism rigorously (Tier-II/III research).
-- **Risk**: medium. Z[i]^× argument is well-motivated; formalization is bookkeeping rather than new mathematics.
+### MC-T4.5 — Why-level-k=4 selection from N_base = 4  **[ROLES 1+3 DERIVED 2026-05-02 (afternoon); ROLES 2+4 NO-GO]**
+- **Closes**: the selection of k=4 in the (1+i)-tower master quadratic from FTD's structural primitives.
+- **Status**: Roles 1 (CM Aut count) and 3 (tower level) are now **[DERIVED]** via the BCC complex-structure theorem (`docs/theory/09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md`, `scripts/proofs/proof_bcc_complex_structure.py`). The 8 BCC corners under 90° (x,y)-rotation form 2 orbits of size 4; the integer permutation module Z[BCC] = Z⁸ decomposes over Q as `V_triv² ⊕ V_sign² ⊕ V_complex²`, and the complex isotypic carries a natural Z[i]-module structure ≅ Z[i]² with `i` acting as the 90° rotation. This unifies Roles 1 and 3 in a common Z[i]-structure.
+- **Reframe of earlier "Z[i]^× → O_h^ab homomorphism" claim**: that homomorphism does NOT exist as an injection. Z[i]^× ≅ Z/4 is cyclic; O_h^ab ≅ Z/2 × Z/2 is Klein four. Z/4 has an element of order 4 (`i`), but every element of Klein four has order ≤ 2 — so the only homomorphism `Z[i]^× → O_h^ab` factors through Z/2, killing the order-4 element. Roles 2 (O_h^ab) and 4 (27-block O_h orbit count = 4) are therefore **count coincidences with `|Z[i]^×|`, not group-theoretic identifications**. The honest dual-4 statement is: *partial 2-unification (Roles 1, 3 via Z[i]) + two count-only occurrences (Roles 2, 4)*.
+- **Predecessor `proof_a1g_dual4_via_zi_units.py`**: superseded by the BCC complex-structure theorem above. The predecessor verified the three roles individually but deferred the unification to a "natural Z[i]-module structure on BCC" left informal; the current closure formalises that and explicitly disclaims the over-strong four-role unification.
+- **Dependencies**: independent of MC-T1.5 (new closure path).
+- **Effort to full [THEOREM] for Roles 2 + 4**: blocked by the group-order obstruction. No effort estimate; the no-go is structural.
+- **Risk**: low for Roles 1 + 3 (already DERIVED). The Roles 2 + 4 obstruction is genuine and is reported honestly rather than worked around.
 
 **Tier IV total effort:** ~6–24 months for items 1, 2, 4, 5; **MC-T4.3 is foundational-obstruction class with no reliable timeline**.
 
@@ -263,7 +265,7 @@ The closures map to the realistic effort the Tier-III items required:
 | MC-T4.2 | Non-Gaussian EFT flow b ≥ 4 | IV | M-RP | high | partial |
 | MC-T4.3 | Non-action α-injection mechanism | IV | **FO** | very high | **yes — central** |
 | MC-T4.4 | General-motion lattice LW | IV | W-M | medium | no |
-| MC-T4.5 | Why-level-k=4 from N_base=4 | IV | M | medium | partial |
+| MC-T4.5 | Why-level-k=4 from N_base=4 | IV | — | low | **Roles 1+3 DERIVED; Roles 2+4 no-go** |
 
 **Total tractable effort (Tiers I–III, no MC-T4.3):** ~12–24 months small-team focused.
 **Total to bridge-complete (with MC-T4.3 closure):** **unbounded** — depends on ontology questions not currently posed.

@@ -28,7 +28,7 @@ After the 2026-05-02 session, the project has its most externally-defensible sta
 
 - **Theorem 3 (CM uniqueness) honestly restated**: was [THEOREM]; now `[NUMERICAL FACT, exhaustive over 9-element h=1 set]`. h≥2 structural theorem requires Chowla-Selberg h≥2 machinery (T2.3 theory note delivered, full closure 2-6 weeks research).
 
-- **A_{1g} dual-4 identification advanced** (T1.5 + T4.5): three [THEOREM]-grade roles for "4" all conjecturally trace to |Z[i]^×| = 4 via a Z[i]^× → O_h^ab homomorphism (sketched, not formally proved). T1.5 advances from [empirical agreement] to [STRUCTURAL CONJECTURE supported].
+- **Dual-4 unification sharpened** (T1.5 + T4.5; afternoon update FTD-0122): the BCC complex-structure theorem (`docs/theory/09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md`, `scripts/proofs/proof_bcc_complex_structure.py`) **DERIVES** the unification of Roles 1 (CM Aut count `|Aut(E)| = 4`) and 3 (tower level `k = 4`) via a natural Z[i]-module structure on the complex isotypic of `Z[BCC]`, isomorphic to `Z[i]²`. Roles 2 (`O_h^ab` = Klein four ≠ `Z[i]^×` = `Z/4`) and 4 (27-block has 4 O_h orbits of *different* sizes) are **honestly recorded as count coincidences with `|Z[i]^×|`, not group-theoretic identifications** — the previously-claimed `Z[i]^× → O_h^ab` homomorphism cannot be injective (Klein four has no order-4 element). Net: dual-4 = "2-fold structural unification (Roles 1+3) + 2 count coincidences (Roles 2+4)". This is the primary mathematical content for Paper B candidate.
 
 - **Reflexivity vocabulary refresh** (P1-P4 sweep): `consciousness` terminology replaced with `reflexivity` / `agency` per `REF_REFLEXIVITY_VOCABULARY.md`. Theory docs in `06_consciousness/*` + manuscript ch 14.5 + whitepaper banner-applied. Mathematical content unchanged; qualia/Hard-Problem baggage dropped.
 
@@ -395,7 +395,8 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
   - `proof_ftd0110_mechanism_gamma.py` — Mechanism γ investigation (T3.1)
   - `proof_bridge_functional_arithmetic_mean.py` — four-mean investigation (T3.4)
   - `proof_polynomial_look_elsewhere_extended.py` — extended scan with pre-registration (T2.1+T2.2)
-  - `proof_a1g_dual4_via_zi_units.py` — Z[i]^× structural argument (T1.5+T4.5)
+  - `proof_a1g_dual4_via_zi_units.py` — Z[i]^× structural argument (T1.5+T4.5; superseded 2026-05-02 afternoon by `proof_bcc_complex_structure.py`)
+  - `proof_bcc_complex_structure.py` — BCC complex-structure theorem (FTD-0122; T4.5 Roles 1+3 [DERIVED], Roles 2+4 [NO-GO])
 - **Dimensionless ↔ Dimensional Map** (2026-04-29): `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) + `docs/theory/01_reference/dimensional_map.json` (canonical data, 15 entries). Single citation target for "is this prediction dimensionless or calibration-conditional?". Walks the bridge from the 7 algebraic-spine theorems through the 4 dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e) through the 3 calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys`, `K_B = m_e`) to one worked dimensional application (m_e in MeV). Renderer: `scripts/proofs/build_dimensional_map.py`. Tests (12 assertions): `scripts/tests/test_dimensional_map.py`.
 - **Engine spec**: `engine/SPEC_ENGINE.md`
 - **Theory catalog**: `docs/theory/META_INDEX.md`
