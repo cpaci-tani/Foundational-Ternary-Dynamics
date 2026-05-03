@@ -1,7 +1,7 @@
 {
-  "generated": "2026-05-03T03:41:49.558770+00:00",
+  "generated": "2026-05-03T17:41:50.462519+00:00",
   "reframe_date": "2026-04-19",
-  "n_papers": 87,
+  "n_papers": 85,
   "rows": [
     {
       "stem": "ARCH_GEOMETRIC_STANDARD_MODEL",
@@ -775,23 +775,6 @@
       "notes": ""
     },
     {
-      "stem": "MASTER_ABSTRACT_CATALOG",
-      "title": null,
-      "tex": null,
-      "md": "docs/papers/MASTER_ABSTRACT_CATALOG.md",
-      "pdf": null,
-      "location_class": "legacy",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 0,
-      "last_modified": "2026-04-24T02:21:38.635314+00:00",
-      "epistemic_tier": 2,
-      "verdict": "KEEP",
-      "notes": ""
-    },
-    {
       "stem": "ON_THE_ONTIC_INCOMPLETENESS",
       "title": null,
       "tex": null,
@@ -1003,15 +986,13 @@
       "pdf": "docs/papers/PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY.pdf",
       "location_class": "draft-src",
       "post_reframe": true,
-      "anti_target_clean": false,
-      "anti_target_offenses": [
-        "on~\\eqref{eq:master} involves no free parameters: the coefficient $k = 16$ is the square of the cu"
-      ],
+      "anti_target_clean": true,
+      "anti_target_offenses": [],
       "has_source": true,
       "size_kb": 30,
-      "last_modified": "2026-04-20T03:09:17.840770+00:00",
-      "epistemic_tier": 3,
-      "verdict": "REVISE",
+      "last_modified": "2026-05-03T17:41:25.911630+00:00",
+      "epistemic_tier": 2,
+      "verdict": "KEEP",
       "notes": ""
     },
     {
@@ -1182,23 +1163,6 @@
       "last_modified": "2026-04-02T00:23:24.834408+00:00",
       "epistemic_tier": 4,
       "verdict": "RETIRE",
-      "notes": ""
-    },
-    {
-      "stem": "README",
-      "title": null,
-      "tex": null,
-      "md": "docs/papers/README.md",
-      "pdf": null,
-      "location_class": "legacy",
-      "post_reframe": true,
-      "anti_target_clean": true,
-      "anti_target_offenses": [],
-      "has_source": true,
-      "size_kb": 0,
-      "last_modified": "2026-04-20T03:14:23.562961+00:00",
-      "epistemic_tier": 2,
-      "verdict": "KEEP",
       "notes": ""
     },
     {

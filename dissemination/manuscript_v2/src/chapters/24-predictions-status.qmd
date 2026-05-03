@@ -12,14 +12,14 @@ This chapter collects all testable predictions of FTD, their current observation
 | $\alpha_s(M_Z)$ | 7/59 = 0.11864 | 0.1179(9) | 0.6% agreement |
 | $m_H$ | 125.69 GeV | 125.25(17) GeV | 0.35% agreement |
 | $m_p/m_e$ | 1836.47 | 1836.153 | 174 ppm agreement |
-| $\rho_\Lambda$ | $2.2 \times 10^{-47}$ GeV$^4$ | $2.17 \times 10^{-47}$ GeV$^4$ | ~1% agreement |
+| $\rho_\Lambda$ | $\sim 4 \times 10^{-47}$ GeV$^4$ (calibration-conditional under $a_\mathrm{phys} \equiv \ell_P$) | $\sim 2.2 \times 10^{-47}$ GeV$^4$ | factor $\sim 1.8$ discrepancy --- [OPEN], previously claimed "~1%" was incorrect |
 
 ## 24.2 Structural predictions
 
 | Prediction | FTD basis | Status |
 |-----------|-----------|--------|
-| Gauge group $U(1) \times SU(2) \times SU(3)$ | Moore decomposition | [THEOREM] --- matches SM |
-| Exactly 3 generations | $O_h$ representation theory | [THEOREM] --- matches SM |
+| Gauge group $U(1) \times SU(2) \times SU(3)$ | Moore decomposition | [SELECTION] --- the Moore decomposition motivates this gauge structure but does not constitute a uniqueness theorem; matches SM |
+| Exactly 3 generations | $O_h$ representation theory + structural integers | [SELECTION] --- structural argument, not derivation; matches SM |
 | No 4th generation | Moore decomposition exhausted at 3 | **Testable** --- no evidence for 4th gen |
 | Proton absolutely stable | $x_+ \cdot x_- = 16G^{*3} > 0$ | Consistent with bounds |
 | Dark matter is sub-threshold flux | $0 < |\mathbf{J}| < K_B$ | **Testable** --- predicts spherical, non-rotating DM halos |
@@ -33,7 +33,7 @@ This chapter collects all testable predictions of FTD, their current observation
 
 2. **4th fermion generation discovered.** The Moore Layer Theorem permits exactly 3 generations. A confirmed 4th generation would require revising the Moore decomposition.
 
-3. **Bell violations inconsistent with Hilbert space.** If Bell test results deviate from Tsirelson's bound $S = 2\sqrt{2}$ (i.e., post-quantum correlations are observed), the Hilbert space emergence is wrong.
+3. **Post-quantum Bell correlations.** Tsirelson's bound is $S = 2\sqrt{2}$ for any quantum-mechanical system. If Bell test results show genuinely post-quantum correlations ($S > 2\sqrt{2}$), then any framework whose emergent QM is described by a Hilbert-space structure --- FTD's included --- would need revision. Conversely, $S = 2\sqrt{2}$ is consistent with FTD (and with QM generally), not a discriminator.
 
 4. **Dark matter is pointlike.** If dark matter is confirmed as a new particle (e.g., WIMP detection, axion signal), the sub-threshold flux mechanism is falsified.
 
@@ -46,18 +46,18 @@ This chapter collects all testable predictions of FTD, their current observation
 
 | Test | Observations used | Result | Verdict |
 |------|-------------------|--------|---------|
-| $\alpha$ match | CODATA 2022 | 1.26 ppm (tree), 9.6 ppb (1-loop) | **PASS** |
-| Mass spectrum | PDG 2024 | 6 masses within 1% | **PASS** |
-| GR recovery | Mercury through LIGO | 10/10 tests matched | **PASS** |
-| SM gauge groups | LHC, neutrino experiments | $U(1) \times SU(2) \times SU(3)$ confirmed | **PASS** |
-| 3 generations | LEP $Z$-width | $N_\nu = 2.984 \pm 0.008$ | **PASS** |
-| No 4th gen | LHC direct search | No evidence | **PASS** |
-| Bell tests | Loophole-free (2015) | $S = 2.83 \pm 0.02$ | **PASS** (emergent) |
-| Proton decay | Super-K | $\tau_p > 10^{34}$ years | **COMPATIBLE** |
-| DM properties | Galaxy surveys | Halo geometry debated | **OPEN** |
-| Vacuum energy | Planck satellite | $\rho_\Lambda$ matched to 1% | **PASS** |
+| $\alpha$ match | CODATA 2022 | 1.26 ppm (tree-level master quadratic root) | **PASS** at the [STRONGLY MOTIVATED CONJECTURE] level; the identification $x_+ = 1/\alpha$ is not derived from axioms |
+| Mass spectrum | PDG 2024 | 6 masses within 1% | **PASS** at the [PARAMETRIC] level (FTD numbers in standard QFT formulas) |
+| GR recovery | Mercury through LIGO | 10/10 tests matched | **PASS** at the linear / Deser-bootstrap level [SELECTION] |
+| SM gauge groups | LHC, neutrino experiments | $U(1) \times SU(2) \times SU(3)$ structure | **PASS** at the [SELECTION] level (Moore decomposition motivates this structure but does not uniquely force it) |
+| 3 generations | LEP $Z$-width | $N_\nu = 2.984 \pm 0.008$ | **PASS** at the [SELECTION] level |
+| No 4th gen | LHC direct search | No evidence | **PASS** (consistent with structural-integer prediction) |
+| Bell tests | Loophole-free (2015) | $S = 2.83 \pm 0.02$ | **PASS** at the [SELECTION] level (Tsirelson bound consistent with FTD's lattice-emergent QM) |
+| Proton decay | Super-K | $\tau_p > 10^{34}$ years | **COMPATIBLE** (no tight FTD prediction at this scale) |
+| DM properties | Galaxy surveys | Halo geometry debated | **OPEN** (17/27 structural ratio does not match Planck $\Omega_\mathrm{DM}/\Omega_m \approx 84\%$) |
+| Vacuum energy | Planck satellite | factor $\sim 1.8$ discrepancy | **OPEN** (was previously claimed "1%" — incorrect; calibration-conditional) |
 
-**Score: 8 PASS, 1 COMPATIBLE, 1 OPEN** out of 10 major tests.
+**Score: 7 PASS at honestly-tagged levels, 1 COMPATIBLE, 2 OPEN** out of 10 major tests. PASS does not mean "FTD-derived"; it means "consistent with observation at the claim's actual epistemic tag." See `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md` for per-claim tag accounting.
 
 ## 24.5 What FTD does not predict
 

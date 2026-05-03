@@ -1,15 +1,15 @@
 # Paper Inventory — auto-generated database
 
-**Generated:** 2026-05-03 03:41 UTC  
+**Generated:** 2026-05-03 17:41 UTC  
 **Reframe date:** 2026-04-19  
-**Total papers:** 87
+**Total papers:** 85
 
 **Regenerate** with `python scripts/build_paper_inventory.py`.
 
 Per-row fields: KEEP/REVISE/RETIRE/ARCHIVED, tier 1-5, post-reframe Y/N, anti-target audit Y/N, source-availability Y/N. 
 Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF-only.
 
-## KEEP (12)
+## KEEP (11)
 
 | Stem | Tier | Loc | Reframe | A-T clean | Source | Title / Notes |
 |---|---|---|---|---|---|---|
@@ -18,19 +18,17 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 | DERIV_SOFTPLUS_RELU_DUALITY | 2 | draft-src | Y | ✓ | ✓ | -3emThe Softplus-ReLU Duality in $$-Symmetric Lattice Dynamics: From Finite-Temperature Ma |
 | FTD_Discrete_Continuous_Bridge | 2 | draft-src | Y | ✓ | ✓ | The Discrete--Continuous Bridge Through the Lemniscatic Lens: [6pt] An Analysis of $_n=0^1 |
 | FTD_Whitepaper | 2 | draft | Y | ✓ | ✓ | Foundational Ternary Dynamics 0.5em A Comprehensive Case for Validity 0.5em A Rigorous Mat |
-| MASTER_ABSTRACT_CATALOG | 2 | legacy | Y | ✓ | ✓ | — |
 | PAPER_2A_MASTER_QUADRATIC | 2 | draft-src | Y | ✓ | ✓ | — |
 | PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE | 2 | draft-src | Y | ✓ | ✓ | — |
 | PAPER_FTD_AS_WILSONIAN_EFT | 2 | active | Y | ✓ | ✓ | \ as a Wilsonian Effective Field Theory: Measured $$-Function, Ward Identities, Operator S |
+| PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY | 2 | draft-src | Y | ✓ | ✓ | Gauge Coupling Constants from Lattice Coordination Geometry |
 | PAPER_LIFECYCLE_SOFTPLUS | 2 | draft-src | Y | ✓ | ✓ | — |
 | PAPER_MASTER_QUADRATIC_FORMAL | 2 | draft-src | Y | ✓ | ✓ | The BCC Watson Reflection Bridge and the Master Quadratic |
-| README | 2 | legacy | Y | ✓ | ✓ | — |
 
-## REVISE (2)
+## REVISE (1)
 
 | Stem | Tier | Loc | Reframe | A-T clean | Source | Title / Notes |
 |---|---|---|---|---|---|---|
-| PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY | 3 | draft-src | Y | ✗ | ✓ | Gauge Coupling Constants from Lattice Coordination Geometry |
 | PAPER_MASTER_QUADRATIC_AND_BRIDGE | 3 | draft | Y | ✓ | ✓ | The Master Quadratic of Foundational Ternary Dynamics: Algebraic Spine, CM Uniqueness, and |
 
 ## RETIRE (43)
@@ -127,7 +125,3 @@ Tier 1 = bulletproof math theorems. Tier 5 = pre-reframe / closed-negative / PDF
 ### `FTD_One_Unit_Final` (RETIRE, tier 5)
 
   - `mass ratios. The formula has no free parameters \emph{within} SP5, but SP5 itself may encode its`
-
-### `PAPER_GAUGE_COUPLINGS_FROM_LATTICE_GEOMETRY` (REVISE, tier 3)
-
-  - `on~\eqref{eq:master} involves no free parameters: the coefficient $k = 16$ is the square of the cu`

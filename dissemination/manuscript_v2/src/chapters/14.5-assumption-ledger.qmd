@@ -41,7 +41,7 @@ This ledger was written for the v1 chapter structure. Chapter numbers should be 
 | **Master Quadratic** | [T] | Unique solution to Fermat boundary constraints |
 | **k = 16** | [T] | Complementation function $f(k)=1-k$ on $D=3$ lattice |
 | **Polarization $\Pi(x)$** | [T] | Unique modular covariant form under $\mathbb{Z}[i]$ |
-| **Consciousness Quadratic** | [T] | Involution coefficient mapping subject-object identity |
+| **Reflexive Quadratic** | [T] | Involution coefficient mapping subject-object identity. (Mathematical content [THEOREM]; "consciousness" interpretation reframed to "reflexivity" per `REF_REFLEXIVITY_VOCABULARY.md` 2026-05-01.) |
 
 **Companion work [†]** extends using α + framework relations.
 :::
@@ -54,15 +54,15 @@ This ledger was written for the v1 chapter structure. Chapter numbers should be 
 
 | # | Axiom | Status | Notes |
 |---|-------|--------|-------|
-| 1 | Space is a discrete 3D lattice | [T] **THEOREM** | Derived from stable relational embedding (see @sec-formal-logic) |
-| 2 | Time advances in discrete ticks | [A] AXIOM | Instantiates epistemic time |
-| 3 | Each cell has state ∈ {−1, 0, +1} | [T] **THEOREM** | Derived from EPL-ST necessity |
-| 4 | Updates are local (26-neighbor) | [A] AXIOM | Moore neighborhood |
-| 5 | Max speed = 1 cell/tick | [A] AXIOM | Causality preservation |
+| 1 | Space is a discrete 3D lattice (undefined-boundary, not $\mathbb{Z}^3$ totality) | [A] AXIOM (D=3 [SELECTION] per `FOUND_DIMENSIONAL_SELECTION.md` and `proof_master_verification.py`; uniqueness argument constrains but does not exclude all alternatives) | |
+| 2 | Time advances in discrete ticks | [A] AXIOM | |
+| 3 | Each voxel carries a flux $\mathbf{J} \in \mathbb{R}^3$ (dispositional) and a state $s \in \{-1,0,+1\}$ that is the manifestation projection of $\mathbf{J}$ via the Genesis threshold rule (J-primary; per MC-T4.1 reframe 2026-05-02 + SPEC_FTD §1.1 graded-monism table) | [A] AXIOM | $s$ is not an independent field — it is the discrete observable layer recording where $\|\mathbf{J}\|$ crosses $K_B$ |
+| 4 | Updates are local (26-neighbor Moore) | [A] AXIOM | |
+| 5 | Max speed = 1 cell/tick | [A] AXIOM | Causality preservation; lattice $c = 1/\sqrt{3}$ on the cubic lattice |
 
 ::: {.callout-note}
-## Ternary States: Theorem, Not Axiom
-The ternary state space {−1, 0, +1} was historically listed as an axiom, but is now understood as a **theorem** of Epistemic-Physical Logic (EPL-ST). The proof in @sec-formal-logic establishes that ternary valuation is the *necessary and sufficient* structure for any system admitting distinguishability. See the Ternary Valuation Theorem.
+## Ternary States: J-primary, $s$ as manifestation projection (post-2026-05-02 MC-T4.1 reframe)
+The ternary state space $\{-1, 0, +1\}$ has been clarified — it is not an independent axiom. Per `SPEC_FTD.md` §1.1 graded-monism table and Postulate 3 (rewritten 2026-05-02): the flux field $\mathbf{J}$ is the dispositional layer; the state $s$ is the *manifestation projection* of $\mathbf{J}$ via the Genesis threshold rule (when $\|\mathbf{J}\| > K_B$, manifestation occurs with sign of divergence). This makes "five postulates" a substantive parsimony claim: $s$ is definitionally derived from $\mathbf{J}$, not added.
 :::
 
 ### Core Definitions
@@ -83,7 +83,7 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 |----------|-------|--------|-------|-------|
 | C (speed of causality) | 1.0 | [A] AXIOM | Core | Defines units |
 | H (Planck resolution) | 1.0 | [A] AXIOM | Core | Defines units |
-| **ALPHA (fine structure)** | 0.00729 | [T] **THEOREM** | Core | From master quadratic (0.21 ppt precision) |
+| **ALPHA (fine structure)** | 0.00729 | [SMC] **STRONGLY MOTIVATED CONJECTURE** | Core | Master quadratic [THEOREM]; identification $x_+ = 1/\alpha$ has 1.26 ppm match + ~$4{\times}10^5$:1 Bayes weight (FTD-0121 + FTD-0122 + FTD-0123) but NO derivation chain from axioms. |
 | **KB (existence threshold)** | 0.511 | [†] **COMPANION** | Extended | $m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}$ |
 | **PHI (golden ratio)** | 1.618 | [†] **COMPANION** | Extended | Stability fixed point |
 | **GRAVITY_BIAS** | 0.01 | [†] **COMPANION** | Extended | $1/(b_3+N_c)^2$ Exactly |
@@ -97,12 +97,12 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 
 | Quantity | Formula/Value | Status | Accuracy |
 |----------|---------------|--------|----------|
-| Fine structure α | 1/137.036 | [T] THEOREM | **0.21 ppt** |
-| Number of colors N_c | 3.024 → 3 | [T] THEOREM | Exact |
-| Lemniscatic constant G* | 2.9587 | [T] THEOREM | 0.0006% |
-| Coefficient 16 | $2^3 / 0.5$ | [T] THEOREM | Exact |
-| **D = 3 uniqueness** | Topological necessity | [T] **THEOREM** | Derived |
-| **Consciousness y** | $2.19 \pm 2.86i$ | [T] **THEOREM** | Derived |
+| Fine structure α | 1/137.036 | [SMC] STRONGLY MOTIVATED CONJECTURE | 1.26 ppm tree-level match. ($c_4{-}c_7$ "0.21 ppt" expansion is a post-hoc fit beyond CODATA precision; not a prediction — see @sec-precision.) |
+| Number of colors N_c | 3.024 → 3 | [SMC] STRONGLY MOTIVATED CONJECTURE | 0.80% match; $x_- = N_c$ identification supported by structural-uniqueness scans (FTD-0121, FTD-0124) but not derived |
+| Lemniscatic constant G* | 2.9587 | [T] THEOREM | $G^* = \Gamma(1/4)/\Gamma(3/4)$; Euler reflection |
+| Coefficient 16 | $\|\mathrm{Aut}_{\bar{\mathbb{Q}}}(E)\|^2 = \|\mathbb{Z}[i]^\times\|^2$ for $E: y^2 = x^3 - x$ | [T] THEOREM (the equality 16 = $\|\mathrm{Aut}\|^2$); identification with master-quadratic prefactor [STRUCTURAL CONJECTURE supported by FTD-0122 BCC complex structure] |
+| **D = 3 uniqueness** | Topological necessity (4 routes) | [SELECTION] | The argument constrains but does not exclude all alternative ontologies; see `FOUND_DIMENSIONAL_SELECTION.md`. |
+| **Reflexive eigenmode $y$** | $2.19 \pm 2.86i$ (reflexive quadratic complex roots) | [T] THEOREM (algebraic content); reflexivity *interpretation* per `REF_REFLEXIVITY_VOCABULARY.md` is structural, not phenomenal |
 
 ::: {.callout-note}
 ## D = 3 Uniqueness
@@ -253,7 +253,7 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 
 | Conjecture | Argument | Status |
 |------------|----------|--------|
-| Consciousness is emergent | No special physics required | [?] CONJECTURE |
+| Reflexivity is emergent (the reflexive layer is a structural projection of the lattice, no qualia commitment) | No special physics required; per `REF_REFLEXIVITY_VOCABULARY.md` 2026-05-01 | [?] CONJECTURE |
 | Multiverse not required | Single universe + geometry suffices | [?] CONJECTURE |
 
 ::: {.callout-tip}
@@ -423,7 +423,7 @@ FTD achieves **foundational completeness** within its assumptions:
 
 | Category | Derived | Status |
 |----------|---------|--------|
-| Fine structure α | 1 | [T] 1.26 ppm base; **0.21 ppt** precision |
+| Fine structure α | 1 | [SMC] 1.26 ppm tree-level (master quadratic [THEOREM]; identification $x_+ = 1/\alpha$ [STRONGLY MOTIVATED CONJECTURE]) |
 | Color number N_c | 1 | [T] Exact (integer) |
 | Lemniscatic constant G* | 1 | [T] 0.0006% |
 | Coefficient 16 | 1 | [T] Exact (lattice DoF) |
@@ -467,7 +467,7 @@ FTD is a **structured framework** with clearly delineated scope:
 
 ### Core Paper Establishes
 - **4 theorems** (T1-T6): rigorous derivations from axioms
-- **Fine structure constant α** to 1.26 ppm (base); **0.21 ppt** (precision formula)
+- **Fine structure constant α** to 1.26 ppm (tree-level master-quadratic root match; the ε-expansion is post-hoc fitting beyond CODATA's 0.15 ppb experimental precision)
 - **Coefficient 16** from lattice degrees of freedom
 - **Selection Principles S1-S4**: argued but not uniquely proven
 
@@ -522,7 +522,7 @@ where:
 **Derivation:**
 $$j = (N_{\text{base}} \times N_c)^3 = (4 \times 3)^3 = 12^3 = 1728$$
 
-The j-invariant is not selected but **derived** from the requirement that it factor as a cube of framework integers.
+The j-invariant value $j = 1728 = 12^3$ is observed to factor as $(N_\mathrm{base} \cdot N_c)^3$. The "derivation from requirement that it factor as a cube of framework integers" is **circular** — the requirement is back-fit from the observation. Honest framing: $j = 1728$ is a structural feature of the canonical CM curve $E: y^2 = x^3 - x$ (classical CM theory), and its factorization $(4 \cdot 3)^3$ is suggestive of framework-integer involvement but is not derived in either direction.
 
 **Reference:** NUMBER_THEORY_CONNECTIONS.md, v5.3
 
@@ -560,42 +560,32 @@ This resolves the 10¹²³ cosmological constant problem.
 
 **Reference:** VACUUM_ENERGY_FORMULA.md, v5.5
 
-### Alpha Precision: 1.26 ppm → 0.21 ppt (v5.4)
+### Alpha Precision: 1.26 ppm tree-level (post-2026-04-19 honest accounting)
 
-**Previous status:** 1.26 ppm (parts per million) accuracy (from standard quadratic)
+**Status:** 1.26 ppm tree-level match. The master-quadratic identity $x^2 - 16G^{*2}x + 16G^{*3} = 0$ with $x_+ = 8G^{*2} + 4G^* \sqrt{4G^{*2} - G^*}$ is a [THEOREM]. Its match to CODATA $\alpha^{-1}$ at 1.26 ppm is empirically observed but the *physical identification* $x_+ = 1/\alpha$ is [STRONGLY MOTIVATED CONJECTURE]. The original "0.21 ppt" claim has been retracted: the $\varepsilon$-expansion is a post-hoc fit beyond CODATA's experimental precision (0.15 ppb), so additional digit-string agreement is not testable as a prediction. See @sec-precision and `docs/theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md`.
 
-**New status:** **0.21 ppt** (parts per trillion) accuracy (with ε expansion)
+### Summary of Upgrades (post-2026-04-19 audit + post-2026-05-02 tracker reconciliation)
 
-**Formula:**
-$$\frac{1}{\alpha} = x_+ + \frac{\varepsilon}{1111} = 137.036... + \frac{3}{1111}$$
-
-where ε = (N_eff - N_base)/N_c = 3.
-
-**Reference:** ALPHA_PRECISION_FORMULA.md, v5.4
-
-### Summary of Upgrades
-
-| Item | Previous | New | Version |
-|------|----------|-----|---------|
-| k = 16 | IMPOSED | **THEOREM** | v5.1 |
-| j = 1728 | SELECTION | **THEOREM** | v5.3 |
-| Framework integers | Assumed | **THEOREM** | v5.7 |
-| Vacuum energy ρ_Λ | OPEN | **THEOREM** (1.0%) | v5.5 |
-| Alpha precision | 1.26 ppm | **0.21 ppt** | v5.4 |
-| 70 ± 67 structure | Unknown | **VERIFIED** (Heegner) | v5.7 |
-| Riemann zeta ρ₁ | Unconnected | **VERIFIED** (0.15%) | v5.2 |
-| Mandelbrot duality | Unconnected | **PROVEN** (exact) | v5.6 |
+| Item | Previous claim | Current honest status |
+|------|----------|---------------|
+| k = 16 | "IMPOSED → THEOREM" v5.1 | The equality $16 = \|\mathrm{Aut}_{\bar{\mathbb{Q}}}(E)\|^2 = \|\mathbb{Z}[i]^\times\|^2$ is [THEOREM] (classical CM); the *identification* of this with the master-quadratic prefactor is [STRUCTURAL CONJECTURE supported by FTD-0122 BCC complex structure] |
+| j = 1728 | "SELECTION → THEOREM" v5.3 | Classical CM result for $E: y^2 = x^3 - x$. The factorization $1728 = (4 \cdot 3)^3$ is [STRUCTURAL OBSERVATION], not a derivation in either direction |
+| Framework integers | "Assumed → THEOREM" v5.7 | $\{N_c, N_\mathrm{base}, N_\mathrm{eff}\}$ have $O_h$-rep-theory derivations [THEOREM in part]; ladder ordering remains [SELECTION] |
+| Vacuum energy ρ_Λ | "OPEN → THEOREM (1.0%)" v5.5 | Reverted to OPEN. Factor-1.8 discrepancy vs Planck 2018; calibration-conditional. |
+| Alpha precision | "1.26 ppm → 0.21 ppt" v5.4 | 1.26 ppm tree-level (only); 0.21 ppt claim retracted as post-hoc fitting beyond CODATA precision |
+| 70 ± 67 structure | "VERIFIED (Heegner)" v5.7 | Conditional on FTD-0124 trivial-multiplier criterion; under rational-multiplier criterion, 21/5814 framework-integer-factorable matches exist (criterion bifurcation; see SPEC_ALGEBRAIC_SPINE Theorem 3) |
+| Riemann zeta ρ₁ | "VERIFIED (0.15%)" v5.2 | Numerical proximity; not connected to a derivation chain |
+| Mandelbrot duality | "PROVEN (exact)" v5.6 | Mathematical content (algebraic identity) [THEOREM]; physics interpretation [SELECTION] |
 
 ::: {.callout-note}
-## Framework Status (v5.8)
-With these upgrades, the FTD framework has:
-- **Zero** imposed parameters that remain unexplained
-- **All four** framework integers derived from division algebras
-- **k = 16** and **j = 1728** derived, not selected
-- **Vacuum energy** resolved to 1.0% accuracy
-- **Alpha** computed to sub-ppb precision
+## Framework Status (post-2026-05-03 honest accounting)
+The FTD framework has:
+- **Calibration declarations** ($a_\mathrm{phys} \equiv \ell_P$, $K_B = m_e$, $t_\mathrm{phys}$) explicitly stated; dimensional predictions are calibration-conditional, dimensionless ratios are calibration-independent.
+- **9 algebraic-spine theorems** + the BCC complex-structure theorem (Paper B Thm 3.1) — all proven, all with verification scripts at machine or arbitrary precision.
+- **Empirical match $x_+ = 1/\alpha$ at 1.26 ppm** [STRONGLY MOTIVATED CONJECTURE], backed by structural-uniqueness scans (~$4{\times}10^5$:1 Bayes weight) but lacking a derivation chain from axioms.
+- **The strongest possible claim** (axioms→α derivation) remains [OPEN]; lead-physicist diagnosis is structural decoupling via Phase J ultralocality.
 
-The framework is now **fully derived from first principles** within its stated axiom base.
+The framework is **NOT** "fully derived from first principles." It is a structurally-validated empirical match with a publication-grade mathematical core. See `docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md` for the canonical bedrock.
 :::
 
 ---

@@ -48,7 +48,7 @@
 // ================================================================
 namespace lem {
 constexpr double VARPI       = 2.6220575542921198;  // lemniscate half-period ϖ = Γ(1/4)²/(2√(2π))
-constexpr double G_STAR      = 2.9586751485490317;  // G* = ϖ/√PF = 2ϖ/√π
+constexpr double G_STAR      = 2.958675119188639;   // G* = Γ(1/4)/Γ(3/4) = 2ϖ/√π (canonical, matches scripts/constants.py and ontic/lemniscate.h)
 constexpr double PI_         = 3.14159265358979324;
 constexpr double FOUR_PI     = 4.0 * PI_;          // 12.566 — standard sphere
 constexpr double FOUR_VARPI  = 4.0 * VARPI;        // 10.488 — Candidate A
