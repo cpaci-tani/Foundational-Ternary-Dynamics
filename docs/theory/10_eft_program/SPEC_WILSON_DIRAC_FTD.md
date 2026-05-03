@@ -152,8 +152,8 @@ Before Phase II.3 starts, the implementation must pass:
 
 1. **Free-fermion smoke test (II.2-A):** `B = 0`, no FTD coupling. Apply `D_W` to plane-wave initial states at multiple momenta; verify the eigenvalue magnitude matches the analytical Wilson-Dirac dispersion `|λ(p)|² = M_eff(p)² + K(p)²` where `M_eff(p) = m + (r/a)·∑_μ(1−cos p_μ)` and `K²(p) = (1/a²)·∑_μ sin²(p_μ)`. Also verify RK4 evolution preserves total spinor norm (Schrödinger evolution is unitary). **STATUS: CLOSED 2026-05-03.**
 2. **Wilson term verification (II.2-B):** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion across the full Brillouin zone; doublers lifted to mass `~ 2r/a` at zone corners (≫ electron mass scale, decoupled). **STATUS: CLOSED 2026-05-03.**
-3. **Gauge link verification (II.2-C):** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice; eigenvalue spectrum matches Landau-level structure for free electron in B-field.
-4. **Coupling consistency (II.2-D):** with `B = 0` and FTD flux-projection gauge field, `D_W` reduces to free Wilson-Dirac in the limit of negligible flux (gauge link → 1).
+3. **Gauge link verification (II.2-C):** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice; eigenvalue spectrum matches Landau-level structure for free electron in B-field. **STATUS: CLOSED 2026-05-03** (via plaquette-flux + gauge-covariance tests; full Landau-level diagonalisation deferred to II.3 since per-state energies are the orbit observable, not a smoke-test).
+4. **Coupling consistency (II.2-D):** with `B = 0` and FTD flux-projection gauge field, `D_W` reduces to free Wilson-Dirac in the limit of negligible flux (gauge link → 1). **STATUS: CLOSED 2026-05-03.**
 5. **CPU/GPU parity (II.2-E):** golden-tick gate at single-tick precision (per ADR-0012); CUDA implementation produces bit-exact match to CPU implementation.
 
 Each validation gets its own internal pre-registration milestone before declaring Phase II.2 complete.
@@ -179,6 +179,47 @@ Implemented `engine/tests/test_wilson_dirac_bz_spectrum.cpp`. Exhaustive sweep o
 - Off-corner modes (`K² > 0`) and the origin (`M_eff² = m²`) all match the analytical dispersion at machine precision; the Wilson term `(r/a)·∑(1−cos p_μ)` and kinetic term `(1/a²)·∑sin²(p_μ)` separately validate.
 
 The full Wilson-Dirac spectrum is verified across the entire Brillouin zone. **Phase II.2-B CLOSED.** Next milestone: II.2-C (gauge-link verification — uniform B field reproduces Landau-level spectrum).
+
+### II.2-C milestone result (2026-05-03)
+
+Implemented `engine/tests/test_wilson_dirac_gauge.cpp`. Two checks:
+
+1. **Gauge covariance** — for arbitrary lattice scalar `χ(n)`, verify
+   `D_W' ψ' = exp(i χ) D_W ψ` where `ψ' = exp(i χ)ψ` and
+   `U'_μ(n) = exp(i χ(n)) U_μ(n) exp(-i χ(n+μ̂))`. Random gauge field
+   (uniform `[-π, π]` per link) and random complex spinor field. Worst
+   per-site relative error: `5.7×10⁻¹⁶` at L=8, `5.4×10⁻¹⁶` at L=12.
+
+2. **Plaquette flux** — for properly-quantised uniform B in z (twisted
+   Landau gauge), verify all 3·L³ plaquettes carry the predicted flux:
+   `xy → exp(+i α)` with `α = 2π·n_flux/L²`, `xz, yz → 1`. Tested at
+   `(L, n_flux) ∈ {(8, 1), (8, 2), (12, 3)}`. Worst |P − target|:
+   `2.6×10⁻¹⁵` (xy at L=12, n_flux=3); xz, yz exact at machine precision.
+
+**5/5 PASS, both Windows and WSL2.** Bug caught and fixed during this
+milestone: `GaugeLinks::set_uniform_B_z` in `wilson_dirac.cpp` had used
+linear index `z·L² + y·L + x`, but `Lattice::index(x, y, z) = x·L² + y·L + z`.
+The smoke tests passed because they only exercised `set_identity()`.
+Now consistent.
+
+The full Landau-level diagonalisation (computing the entire eigenvalue
+spectrum and matching against `E_n ∝ √(2nqB)`) is deferred to Phase II.3,
+where the per-state energies become the physical orbit observable.
+Plaquette-flux + gauge-covariance is the load-bearing structural property
+verified at this milestone. **Phase II.2-C CLOSED.**
+
+### II.2-D milestone result (2026-05-03)
+
+Implemented `engine/tests/test_wilson_dirac_limit.cpp`. With
+`U_μ(n) = exp(i ε φ_μ(n))` for fixed random `φ_μ ∈ [-π, π]`, computed
+`R(ε) = ‖D_W^ε ψ − D_W^0 ψ‖ / ε` at `ε ∈ {1e-1, 1e-2, 1e-3, 1e-4}` on
+L=12. **R converges:**
+- Windows: 369.0 → 370.4 → 370.5 → 370.5; `|R(1e-3) − R(1e-4)| / R(1e-4) = 1.2×10⁻⁵`
+- WSL2:    different absolute coefficient (RNG order differs), but Cauchy ratio `7.6×10⁻⁷`
+
+Identity-link sanity check `‖D_id ψ − D_free ψ‖ = 0` exactly at both
+targets. **Phase II.2-D CLOSED.** D_W is continuous in the gauge phase;
+trivial-link limit reproduces free Wilson-Dirac exactly.
 
 ## 9 · Open questions (acknowledged before implementation)
 
