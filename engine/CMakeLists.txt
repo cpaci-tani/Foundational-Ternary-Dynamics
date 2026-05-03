@@ -128,6 +128,7 @@ add_library(ftd_core
     src/scenarios/vacuum.cpp         # 15 s0-vacuum-* scenarios
     # R1-R5 modular extraction from render_bridge.cpp (2026-04-18)
     src/poisson_solvers.cpp          # R1: sor_sweep_18pt + gauss/coulomb/latency solvers
+    src/wilson_dirac.cpp             # Phase II.2: Wilson-Dirac matter sector (Branch-B)
     src/transmutation_phases.cpp     # R2: weak/pair-production/triad/proper-time
     src/energy_ledger_compute.cpp    # R3: per-tick conservation ledger
     src/diagnostics_compute.cpp      # R4: diagnostics / energy audit / EM fields / Poynting / entropy
@@ -712,6 +713,8 @@ ftd_add_test(ftd_emergent_alpha tests/benchmark_emergent_alpha.cpp
              CTEST_NAME benchmark_emergent_alpha TIMEOUT 1800)
 ftd_add_test(ftd_phase_i_native_coupling tests/benchmark_phase_i_native_coupling.cpp
              CTEST_NAME benchmark_phase_i_native_coupling TIMEOUT 1800)
+ftd_add_test(test_wilson_dirac_smoke tests/test_wilson_dirac_smoke.cpp
+             CTEST_NAME test_wilson_dirac_smoke TIMEOUT 60)
 ftd_add_test(ftd_budget_equation tests/benchmark_budget_equation.cpp
              CTEST_NAME benchmark_budget_equation TIMEOUT 1800)
 ftd_add_test(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp
