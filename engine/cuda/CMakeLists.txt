@@ -15,6 +15,7 @@ add_library(ftd_cuda STATIC
     kernels_forces.cu
     atom_engine_gpu.cu      # Wave 5.3 Phase 1: gpu::AtomEngineGpu pair-force kernel
     particle_engine_gpu.cu  # Wave 5.4 Phase 1: gpu::ParticleEngineGpu pair-force kernel
+    wilson_dirac_gpu.cu     # Phase II.2-E: Wilson-Dirac CPU/GPU parity kernel
 )
 
 target_include_directories(ftd_cuda PUBLIC
