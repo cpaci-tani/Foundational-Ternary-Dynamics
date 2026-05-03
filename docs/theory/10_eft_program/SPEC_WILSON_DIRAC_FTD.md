@@ -151,7 +151,7 @@ Standard lattice-QED CUDA pattern: one thread per lattice site, applies the Wils
 Before Phase II.3 starts, the implementation must pass:
 
 1. **Free-fermion smoke test (II.2-A):** `B = 0`, no FTD coupling. Apply `D_W` to plane-wave initial states at multiple momenta; verify the eigenvalue magnitude matches the analytical Wilson-Dirac dispersion `|λ(p)|² = M_eff(p)² + K(p)²` where `M_eff(p) = m + (r/a)·∑_μ(1−cos p_μ)` and `K²(p) = (1/a²)·∑_μ sin²(p_μ)`. Also verify RK4 evolution preserves total spinor norm (Schrödinger evolution is unitary). **STATUS: CLOSED 2026-05-03.**
-2. **Wilson term verification (II.2-B):** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion across the full Brillouin zone; doublers lifted to mass `~ 2r/a` at zone corners (≫ electron mass scale, decoupled).
+2. **Wilson term verification (II.2-B):** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion across the full Brillouin zone; doublers lifted to mass `~ 2r/a` at zone corners (≫ electron mass scale, decoupled). **STATUS: CLOSED 2026-05-03.**
 3. **Gauge link verification (II.2-C):** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice; eigenvalue spectrum matches Landau-level structure for free electron in B-field.
 4. **Coupling consistency (II.2-D):** with `B = 0` and FTD flux-projection gauge field, `D_W` reduces to free Wilson-Dirac in the limit of negligible flux (gauge link → 1).
 5. **CPU/GPU parity (II.2-E):** golden-tick gate at single-tick precision (per ADR-0012); CUDA implementation produces bit-exact match to CPU implementation.
@@ -168,6 +168,17 @@ Implemented `engine/include/ftd/wilson_dirac.h`, `engine/src/wilson_dirac.cpp`, 
 - CPU/WSL2 results bit-identical at every check.
 
 The free Wilson-Dirac operator and RK4 evolution are validated. **Phase II.2-A CLOSED.** Phase II.2-B (Wilson term verification across full BZ) is the next milestone.
+
+### II.2-B milestone result (2026-05-03)
+
+Implemented `engine/tests/test_wilson_dirac_bz_spectrum.cpp`. Exhaustive sweep over the full Brillouin zone at `L = 8`: every momentum mode `p_μ = 2π k_μ / L` with `k_μ ∈ {0, …, L−1}`, both spins. Total: `8³ × 2 = 1024` modes. Built and ran on Windows-native and WSL2.
+
+**1024/1024 modes PASS at both targets** (tolerance `1×10⁻¹⁰`):
+- Worst-case relative error: `1.091348×10⁻¹⁴` at mode `(k_x, k_y, k_z, s) = (0, 5, 0, 0)` — pure machine precision; bit-identical between Windows and WSL2.
+- BZ-corner mode `p = (π, π, π)` (`k = (4, 4, 4)`): measured `M_eff² = 42.250000`, exactly matching prediction `(m + 6r/a)² = 6.5² = 42.25`. `K² = 0` confirmed. **Doubler lifted from bare mass `m = 0.5` to effective mass `6.5` (factor 13×, ≫ electron-scale).** This is the load-bearing Wilson-term property: the spurious fermion partners at BZ corners are pushed out of the low-energy physical spectrum.
+- Off-corner modes (`K² > 0`) and the origin (`M_eff² = m²`) all match the analytical dispersion at machine precision; the Wilson term `(r/a)·∑(1−cos p_μ)` and kinetic term `(1/a²)·∑sin²(p_μ)` separately validate.
+
+The full Wilson-Dirac spectrum is verified across the entire Brillouin zone. **Phase II.2-B CLOSED.** Next milestone: II.2-C (gauge-link verification — uniform B field reproduces Landau-level spectrum).
 
 ## 9 · Open questions (acknowledged before implementation)
 
