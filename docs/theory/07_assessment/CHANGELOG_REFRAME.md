@@ -717,6 +717,89 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 ---
 
+## 2026-05-02 evening + 2026-05-03 — publication trio + tracker consolidation + 3 new LEDGER entries
+
+**Eleven commits since `a016994` morning session-close.** Major themes: (1) overclaim cleanup + MC-T4.1 reframe; (2) publication trio (Papers A v2, B v1, C revision); (3) three new LEDGER entries (FTD-0122 [DERIVED], FTD-0123 [NUMERICAL FACT], FTD-0124 [METHODOLOGICAL]); (4) canonical bedrock tracker + paper-inventory database; (5) tracker landscape consolidation (4 deletions).
+
+### Phase 4 — MC-T4.1 reframe (cc93c2d)
+
+- **RETAG**: MC-T4.1 in `CHECKLIST_MATH_COMPLETE.md` from "Severity-1 foundational gap" to "Severity-3 docs-alignment". Substantive ontology already establishes J-primary in `SPEC_FTD.md §1.1` graded-monism table; Genesis rule (line 422) makes the dependence operational.
+- **RESTATE**: `SPEC_FTD.md` Postulate 3 — adds explicit J-primary statement at the postulate level.
+
+### Phase 5 — Overclaim cleanup on public surfaces (be045b3)
+
+- **RESTATE**: `README.md` version bump 5.34 → 5.35; "Eight canonical theorems" → "Nine canonical theorems (3 and 7 hold under stated restrictions)".
+- **RESTATE**: `dissemination/manuscript_v2/src/preface.qmd` and `index.qmd` (and `vol1/` mirrors) — removed "zero free parameters", "Derives / Recovers / Resolves / Predicts" → tagged versions.
+- **RESTATE**: `engine/web/js/ui/components/faq/data.js` — 6 FAQ THEOREM tags downgraded. Browser preview verified.
+
+### Phase 6 — Paper A v2 (99a94c0)
+
+- **PROMOTE**: extended polynomial scan 147,456 → 2,871,576 polynomials/multipliers (~19.5×). Three extension directions (rational coefficients, cubic embeddings, Eisenstein-integer multipliers).
+- **NEW**: `scripts/proofs/proof_polynomial_look_elsewhere_extended.py` — pre-reg tag `preregister-polynomial-scan-extended-v1` BEFORE execution.
+- **RETAG**: FTD-0121 SYNTHESIS Bayes factor strengthened to ~4×10⁵:1; 0 Eisenstein-family dual-matchers confirms (1+i, k=4) Gaussian choice is structurally distinguished.
+
+### Phase 7 — FTD-0122 BCC complex-structure theorem (16b0d92)
+
+- **NEW**: `docs/theory/09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md` and `scripts/proofs/proof_bcc_complex_structure.py` (5/5 PASS in exact rationals).
+- **NEW LEDGER ROW**: FTD-0122 [DERIVED for Roles 1+3] + [NO-GO for Roles 2+4]. Z[BCC] ⊗ Q decomposes as `V_triv² ⊕ V_sign² ⊕ V_complex²`; V_complex carries natural Z[i]-module structure ≅ Z[i]². Unifies CM Aut count + tower level k=4 via Z[i]; honestly disclaims Roles 2 (O_h^ab Klein ≠ Z/4) + 4 (orbit-count, sizes (1,6,12,8)).
+- **RETAG**: MC-T4.5 in `CHECKLIST_MATH_COMPLETE.md` from [STRUCTURAL CONJECTURE supported] to **[Roles 1+3 DERIVED] + [Roles 2+4 NO-GO]**.
+- **SUPERSEDE**: `proof_a1g_dual4_via_zi_units.py` (committed `df4a407` morning) — its informal "natural Z[i]-module structure on BCC" deferral is now formalized; the over-strong four-role unification is explicitly disclaimed.
+
+### Phase 8 — Paper B v1 draft (93b34d6)
+
+- **NEW**: `dissemination/papers/PAPER_B_BCC_COMPLEX_STRUCTURE.tex` (7pp; LMP target). Companion to Paper A. Theorems 3.1 (BCC complex structure), 4.1 (CM connection / Role 1), 5.1 (tower-level / Role 3), 6.1 + 6.2 (no-go for Roles 2 + 4).
+
+### Phase 9 — FTD-0124 9-Heegner rigidity / criterion-bifurcation (64aa4a9)
+
+- **NEW**: `docs/theory/10_eft_program/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `AUDIT_HEEGNER_TOWER_RIGIDITY.md`.
+- **NEW LEDGER ROW**: FTD-0124 [NUMERICAL FACT + METHODOLOGICAL]. 5814-quadruple grid (9 Heegner × 19 coeff × 17 targets × 2 roots). Two criteria, two verdicts:
+  - Trivial-multiplier (q=1): EXACTLY ONE strict match (canonical d=−4, c=16, x_+, 1/α at +1.258 ppm). Theorem 3 STRONGLY CONFIRMED at this strict criterion.
+  - Rational-multiplier (q ≤ 200, FC-factorable): 21 strict matches. Theorem 3 FAILS at this looser criterion.
+- **METHODOLOGICAL FINDING**: framework currently applies BOTH criteria in different places without flagging the choice. F10 hygiene issue.
+
+### Phase 10 — FTD-0123 Chowla-Selberg h≥2 (fdb35fa)
+
+- **NEW**: `scripts/proofs/proof_chowla_selberg_higher_h_scan.py` — pre-reg tag `preregister-chowla-selberg-higher-h-scan-v1` BEFORE execution.
+- **NEW LEDGER ROW**: FTD-0123 [NUMERICAL FACT]. 63 fundamental discriminants spanning class numbers 1-4 (9 h=1 + 18 h=2 + 16 h=3 + 20 h=4) with |d| ≤ 907. Γ-product `G^*_d := ∏ Γ(a/|d|)^{χ_d(a)}` reproduces canonical G* exactly at d=−4. ZERO h ≥ 2 dual-matchers.
+- **RETAG**: FTD-0003 / Theorem 3 numerical net 7× larger; was [NUMERICAL FACT, h=1 only], now [NUMERICAL FACT, classes 1-4 with |d| ≤ 907 under trivial-multiplier criterion].
+- **CLOSE**: MC-T2.3 §4 item 3 (numerical scan across h ≥ 2). Item 4 (structural theorem) remains [OPEN].
+
+### Phase 11 — Paper C revision (9291b4d)
+
+- **RESTATE**: `dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex` (15pp). Abstract front + introduction + §3.2 finding block + conclusion all aligned with Phase-G reframe.
+- **RETRACT (in-paper)**: original "160× QED β" claim wrapped in `\sout` with explicit retraction note.
+- **RESTATE conclusion**: Branch-A native EFT [COMPLETE at minimum-viable level]; Branch-B QED matching [structurally decoupled]; empirical match [STRONGLY MOTIVATED CONJECTURE] backed by FTD-0121 + FTD-0123 + FTD-0122 evidence.
+- **ADD**: bibliography entries for `SpecAlgebraicSpine`, `PaperA`, `PaperB`.
+
+### Phase 12 — Paper inventory database (5cfd847)
+
+- **NEW**: `scripts/build_paper_inventory.py` (366 LOC) + `dissemination/papers/INVENTORY.json` + `INVENTORY.md`. 87-paper database with anti-target audit + heuristic tier + verdict.
+- Initial findings: KEEP 12, REVISE 2, RETIRE 43, ARCHIVED 30. Three anti-target offenders flagged.
+
+### Phase 13 — TRACKER_ONTIC_TRUTH (f2ce559)
+
+- **NEW**: `docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md` (canonical bedrock). 5-tier truth ranking; each row has unique `OT-N.M` ID + verification artifact.
+- **CLAUDE.md** updated: TRACKER_ONTIC_TRUTH.md is now the top-of-section pointer; "read this FIRST before defending any FTD math claim."
+
+### Phase 14 — Tracker consolidation (2b660aa)
+
+- **DELETE**: `TRACKER_DOCUMENT_STATUS.md` (April 11, 991 lines, pre-reframe).
+- **DELETE**: `evaluation/ISSUE_TRACKER.md` (March 15, 353 lines, pre-reframe).
+- **DELETE**: `archive_session_outputs/TRACKER_PDF_ONLY_PAPERS.md` (April 19, 95 lines; PDF-only status now in `INVENTORY.json`).
+- **DELETE**: `archive_session_outputs/TRACKER_REFRAME_FLAGS.md` (April 19, 60 lines; all 5 flags resolved).
+- **RESTATE**: 9 active reference docs repointed at the live trackers.
+
+### Net effect
+
+- **3 new LEDGER entries**: FTD-0122 [DERIVED], FTD-0123 [NUMERICAL FACT], FTD-0124 [METHODOLOGICAL].
+- **Publication trio ready** (Papers A, B, C build clean, anti-target audited).
+- **Canonical bedrock tracker** + 87-paper inventory database shipped.
+- **6 live trackers, 0 stale** (post-consolidation).
+- **MC-checklist current state**: Tier I 5/5 + Tier II 3/3 + Tier III 1/5 + Tier IV T4.5 Roles 1+3 [DERIVED] / Roles 2+4 [NO-GO]; T4.1 reframed.
+- **MC-T4.3 unchanged**: central foundational obstruction remains.
+
+---
+
 ## Maintenance footer
 
 Append-only. Next session header: `## YYYY-MM-DD — <session description>`.
