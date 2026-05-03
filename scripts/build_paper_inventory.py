@@ -81,7 +81,16 @@ NEGATION_WORDS = re.compile(
 
 
 def find_papers() -> list[Path]:
-    """Walk paper directories and return all .tex / .md / .pdf files (deduped by stem)."""
+    """Walk paper directories and return all .tex / .md / .pdf files (deduped by stem).
+
+    Excludes:
+      - meta-files that are not papers themselves: INVENTORY.md/json (would
+        self-trigger anti-target audit; this script generates these),
+        README.md, MASTER_ABSTRACT_CATALOG.md, DEPRECATED.md.
+    """
+    SELF_GENERATED = {"INVENTORY", "INVENTORY_OVERRIDES"}
+    NOT_PAPERS = {"README", "MASTER_ABSTRACT_CATALOG", "DEPRECATED"}
+    EXCLUDE_STEMS = SELF_GENERATED | NOT_PAPERS
     files: list[Path] = []
     for d in PAPER_DIRS:
         if not d.exists():
@@ -95,6 +104,9 @@ def find_papers() -> list[Path]:
                 continue
             # Skip generated build artifacts
             if any(s in p.name for s in (".aux", ".log", ".out", ".toc")):
+                continue
+            # Skip self-generated docs and non-paper meta-files
+            if p.stem in EXCLUDE_STEMS:
                 continue
             files.append(p)
     return files
