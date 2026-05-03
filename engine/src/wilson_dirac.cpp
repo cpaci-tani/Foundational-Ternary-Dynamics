@@ -115,10 +115,11 @@ void GaugeLinks::set_identity() {
 void GaugeLinks::set_uniform_B_z(double g_a_B0_a) {
     // Landau gauge: A_x(n) = -B0 * n_y * a, others zero.
     // Phase per link: phi_x(n) = a * g * A_x(n) = -g * a * B0 * n_y * a.
-    for (int z = 0; z < L; ++z) {
+    // Indexing matches Lattice::index(x, y, z) = x*L*L + y*L + z (x slowest).
+    for (int x = 0; x < L; ++x) {
         for (int y = 0; y < L; ++y) {
-            for (int x = 0; x < L; ++x) {
-                const std::size_t idx = static_cast<std::size_t>(z) * L * L + y * L + x;
+            for (int z = 0; z < L; ++z) {
+                const std::size_t idx = static_cast<std::size_t>(x) * L * L + y * L + z;
                 const double phi_x = -g_a_B0_a * static_cast<double>(y);
                 U[0][idx] = std::exp(cdouble{0, phi_x});
                 U[1][idx] = cdouble{1, 0};
