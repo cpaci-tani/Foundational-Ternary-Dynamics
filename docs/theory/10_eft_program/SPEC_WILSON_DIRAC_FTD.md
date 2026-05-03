@@ -250,6 +250,77 @@ covariance, plaquette flux for uniform B, ε → 0 limit consistency, and
 CPU/GPU bit-exact parity. **Phase II.2 CLOSED.** Phase II.3 (single-electron
 stable orbit in B-field) can begin.
 
+### II.3 milestone result (2026-05-03, infrastructure CLOSED; physics
+tuning DEFERRED)
+
+Implemented `engine/tests/benchmark_dirac_electron_in_B.cpp`. The benchmark
+initialises a Gaussian wave packet centred at `(L/4, L/2, L/2)` with
+positive-energy continuum spinor structure (`u_lower = (σ·p / (E+m)) χ`)
+and definite momentum `p = (0, p_y, 0)`, sets uniform B in z via twisted
+Landau gauge, evolves with RK4, and records time-series of:
+
+- centroid `⟨x⟩, ⟨y⟩, ⟨z⟩` (periodic-aware via complex-exponential mean)
+- energy `⟨H⟩ = ⟨ψ | D_W | ψ⟩`
+- norm `⟨ψ | ψ⟩`
+- spin `⟨Σ_x⟩, ⟨Σ_y⟩, ⟨Σ_z⟩`
+
+**Default configuration `(L=24, n_flux=4, m=0.5, p_y=2π/24, σ=1.8, dt=0.04, n_steps=800)` PASSES all four milestone criteria:**
+
+- Energy conservation: `|ΔE/E| = 3.9×10⁻⁶`  (< 1% required)
+- Norm conservation:   `|ΔN/N| = 1.4×10⁻⁶`  (< 1×10⁻⁴ required)
+- Centroid bounded:    `cx ∈ [1.81, 9.40], cy ∈ [10.51, 12.65]`  (orbit fits)
+- Spin transverse precession amplitude: `Δsx = 0.87, Δsy = 0.53, Δsz < 0.11`
+
+**Phase II.3 (infrastructure milestone) CLOSED.**
+
+**II.4/II.5 (frequency extraction + a_e) — DEFERRED, not run to verdict.**
+
+A naive Fourier extraction of `ω_c` from the cx time series and `ω_s` from
+the sx time series, at the default parameters, gives `ω_c ≈ 0.32` and
+`ω_s ≈ 0.65`, so a naive `a_e = (ω_s − ω_c)/ω_c ≈ 1.05`, vs Schwinger's
+`α/(2π) ≈ 0.00116`. This would naively classify as **outcome C (rel_err
+≫ 50%)** under the pre-reg's verdict table.
+
+**This is NOT yet a defensible outcome verdict** for the following reasons,
+all of which the pre-reg §4.1 explicitly anticipated:
+
+1. **Relativistic wave packet.** With `m = 0.5, p_y = 0.262, E = 0.564`,
+   the kinematic regime is mildly relativistic (`E/m = 1.13`). The naive
+   non-relativistic prediction `ω_c = qB/m = 0.087` is off by factor ~4
+   from the measured 0.32, but neither the non-rel `qB/m` nor the
+   relativistic `qB/E ≈ 0.077` matches. The cx oscillation is plausibly
+   not the cyclotron mode at all but a superposition of cyclotron +
+   wave-packet dispersion + lattice-Wilson dispersion + Zitterbewegung
+   residue.
+2. **Wave-packet dispersion.** A Gaussian on a discrete lattice has finite
+   momentum spread `Δp_y ~ 1/σ = 0.56`, comparable to the central momentum
+   `p_y = 0.262`. Different momentum components precess at different rates,
+   causing dephasing that contaminates the frequency extraction.
+3. **No loop physics in this setup.** The Schwinger anomaly `α/(2π)` is a
+   one-loop QED effect requiring a dynamical photon. The current setup
+   has a fixed classical B-field; the gauge field is non-dynamical. At
+   tree level, Wilson-Dirac in fixed B gives `g = 2 + O(αm a)` where the
+   `O(αm a)` is the well-known Wilson-r lattice artefact, not the
+   Schwinger anomaly. A clean Schwinger reproduction requires either
+   (a) a dynamical FTD-flux gauge field with quantum fluctuations
+   coupling back to the fermion, or (b) explicit insertion of one-loop
+   counterterms — neither is in the current scope.
+4. **Tuning campaign required.** A clean a_e measurement would require:
+   coordinated parameter scan over `(L, m, p_y, n_flux, dt, σ, n_steps)`,
+   matched-filter spectral analysis (not crude zero-crossing counting),
+   ~10⁵ revolutions for a 0.1% frequency resolution, and finite-volume
+   extrapolation. Pre-reg §2 estimates 2 weeks for II.4 + II.5.
+
+**Status:** Phase II.3 infrastructure CLOSED; II.4/II.5 deferred pending
+the multi-week tuning campaign laid out in the pre-reg. The naive
+`a_e ≈ 1.05` is preserved as a baseline measurement under hash-locked
+default parameters, but **no outcome A/B/C verdict is declared** — the
+parameters and analysis pipeline are not yet in the regime where a
+verdict would be meaningful.
+
+This is the honest state recorded in LEDGER FTD-0126 (NOT a closure of
+the pre-registered campaign — a registered intermediate observation).
+
 ## 9 · Open questions (acknowledged before implementation)
 
 1. **Flux projection convention `P_T J → A_μ`** — `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` gives a sketch; details (including units and gauge-fixing convention) need to be tightened before II.2.
