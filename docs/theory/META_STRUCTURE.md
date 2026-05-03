@@ -60,17 +60,17 @@ Move a theory doc to `archive/` when any of these become true:
 - it exists only for historical traceability
 - it still has value, but should no longer compete for canonical status
 
-If a document must remain in place temporarily for continuity, label it clearly as superseded in [META_INDEX.md](META_INDEX.md) and in [07_assessment/TRACKER_DOCUMENT_STATUS.md](07_assessment/TRACKER_DOCUMENT_STATUS.md).
+If a document must remain in place temporarily for continuity, label it clearly as superseded in [META_INDEX.md](META_INDEX.md).
 
 ---
 
 ## Maintenance Rules
 
 - Treat [META_INDEX.md](META_INDEX.md) as the curated navigation layer.
-- Treat [07_assessment/TRACKER_DOCUMENT_STATUS.md](07_assessment/TRACKER_DOCUMENT_STATUS.md) as the status-and-priority layer.
+- Treat [07_assessment/TRACKER_ONTIC_TRUTH.md](07_assessment/TRACKER_ONTIC_TRUTH.md) as the canonical bedrock truth tracker, [07_assessment/LEDGER.md](07_assessment/LEDGER.md) as the per-claim provenance layer, and [07_assessment/TRACKER_OPEN_ITEMS.md](07_assessment/TRACKER_OPEN_ITEMS.md) as the open-work queue.
 - Avoid brittle count claims inside category headings; counts drift faster than structure.
 - When a new active theory doc is added, update the catalog in the same change.
-- When a doc is superseded, update both the index entry and the status tracker in the same change.
+- When a doc is superseded, update the index entry in the same change.
 - Keep epistemic labeling explicit: theorem, selection, conjecture, imposed input, emergent behavior, or open question.
 
 ---

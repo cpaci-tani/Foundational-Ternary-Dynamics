@@ -100,8 +100,8 @@ When a public-facing document is added, renamed, or materially repurposed:
 
 - Update the relevant navigation doc in the same change:
   `META_DOCUMENTATION_MAP.md`, `META_PROJECT_ATLAS.md`, and any affected onboarding guide.
-- If the change affects theory categorization or status signaling, update:
-  `docs/theory/META_INDEX.md` and, when appropriate, `docs/theory/07_assessment/TRACKER_DOCUMENT_STATUS.md`.
+- If the change affects theory categorization, update `docs/theory/META_INDEX.md`.
+- If the change affects a load-bearing claim's tag, update `docs/theory/07_assessment/LEDGER.md` and (if the tag tier changes) `docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md`.
 - Prefer removing brittle hard-coded counts over leaving stale numbers in public docs.
 - Internal working docs in `docs/internal/` should remain clearly local-only unless explicitly promoted.
 
