@@ -1,6 +1,91 @@
-# Where We Left Off — 2026-05-03 (post-publication-trio + tracker consolidation)
+# Where We Left Off — 2026-05-03 evening (Phase II Wilson-Dirac CLOSED with outcome-C verdict)
 
-**Latest update:** 2026-05-03 — comprehensive status synthesis. Two intense days (5-02 morning + evening + 5-03) produced: 17 commits; the publication trio (Papers A, B, C); two new LEDGER entries (FTD-0122 BCC complex structure [DERIVED]; FTD-0123 Chowla-Selberg h≥2 [NUMERICAL FACT]; FTD-0124 9-Heegner rigidity / criterion-bifurcation [METHODOLOGICAL]); the canonical bedrock truth tracker (`TRACKER_ONTIC_TRUTH.md`); the 87-paper inventory database (`INVENTORY.json`); MC-T4.1 reframe (J-primary already in graded monism); manuscript v2 + FAQ overclaim cleanup; deletion of 4 stale trackers. Net effect: framework's mathematical core has its strongest external defense to date; 10 papers / ~100 sources triaged into KEEP/REVISE/RETIRE/ARCHIVED database; tracker landscape consolidated to 6 live trackers with non-overlapping scopes. Session details in §0.6 (today, 5-03) and §0.5 (5-02) below.
+**Latest update:** 2026-05-03 evening — Phase II Wilson-Dirac matter sector campaign **CLOSED** with **OUTCOME C: SCHWINGER MISS** (7 commits, `16b1b38` → `a9d7a1e`). Phase II.2 implementation reached 5/5 milestones at machine precision (CPU + WSL2/RTX 5090 bit-identical). Phase II.3-II.5 measurement closed with rel_err 683.95 vs Schwinger anomaly. **The headline empirical finding**: combined with Phase I (FTD-0125), we now have **two independent outcome-C verdicts** that the master-quadratic-derived coupling α=1/x_+ does NOT flow into engine matter-sector dynamical observables under any classical-gauge protocol tested. Combined with the prior Phase G (FTD-0004) and Phase J (FTD-0005) results, the **structural-decoupling pattern is now empirically robust across 4 independent tests**. The algebraic spine (FTD-0001/0002/0013/0014) is UNAFFECTED — what's been falsified is a specific dynamical mechanism, not the underlying theorems. Session details in §0.7 (this evening) and §0.6 (this morning) below.
+
+---
+
+## 0.7 · 2026-05-03 evening — Phase II Wilson-Dirac campaign closed with outcome-C verdict
+
+**Seven commits** since the morning state (`2b660aa`):
+
+| # | Commit | Headline |
+|---|---|---|
+| 1 | `16b1b38` | Phase II.2-A smoke test CLOSED (5/5 PASS at machine precision) — free Wilson-Dirac operator + RK4 norm conservation |
+| 2 | `c25077e` | Phase II.2-B full-BZ spectrum CLOSED (1024/1024 modes, BZ-corner doubler lifted m=0.5 → 6.5 = 13×) |
+| 3 | `c2ff5e2` | Phase II.2-C + II.2-D CLOSED — gauge covariance + plaquette flux + ε→0 limit consistency. Pre-existing `set_uniform_B_z` indexing bug caught (`z·L²+y·L+x` vs `Lattice::index = x·L²+y·L+z`) and fixed. |
+| 4 | `514cdb3` | Phase II.2-E CPU/GPU parity CLOSED (3/3 configs, worst rel_err 3.2e-16, single-ulp). **Phase II.2 fully closed at 5/5 milestones.** |
+| 5 | `6809952` | Phase II.3 single-electron orbit infrastructure CLOSED — energy 1.55e-6, norm 5.4e-7, transverse spin precession, centroid bounded. LEDGER FTD-0126 added (initially registered intermediate observation). |
+| 6 | `a9d7a1e` | Phase II.4 + II.5 measurement campaign CLOSED with **outcome-C verdict** — `scripts/proofs/proof_phase_ii_g_minus_2.py` extracts ω_s via FFT, computes a_e_lattice = 0.7955 vs Schwinger 0.001161 (rel_err 683.95). Diagnosis: tree-level Wilson-r artefact dominates; no dynamical photon → no loop physics → no Schwinger. |
+| 7 | (this commit) | Checklist updates + next-thread proposal |
+
+### What landed empirically
+
+**FTD-0126 [CLOSED — OUTCOME C]** entered LEDGER. The pre-registered campaign `preregister-phase-ii-wilson-dirac-g2-v1` met all four §7 closure criteria: (1) all five sub-phases ran, (2) outcome named with explicit numerical values, (3) LEDGER row extended, (4) git tag precedes verdict commit.
+
+**Measurement headline numbers** (hash-locked defaults: L=24, n_flux=4, m=1.0, σ=1.5, dt=0.04, p_y=0 stationary):
+
+| Quantity | Value |
+|---|---|
+| qB (per-plaquette flux) | 4.363×10⁻² |
+| ω_c_classical = qB/m | 4.363×10⁻² |
+| ω_s_measured (FFT peak, sx) | 7.834×10⁻² |
+| g_lattice / 2 | 1.7955 (Dirac=1; Schwinger=1.00116) |
+| a_e_lattice = ω_s/ω_c − 1 | 7.955×10⁻¹ |
+| a_e_Schwinger = α_FTD/(2π) | 1.161×10⁻³ |
+| **rel_err** | **683.95** |
+| Verdict | **C: SCHWINGER MISS** |
+
+### What this means structurally — the convergent diagnostic
+
+**Four independent tests now point to the same conclusion**: the FTD master-quadratic value `α = 1/x_+` does NOT flow into engine matter-sector dynamical observables under any classical-gauge-field protocol tested.
+
+| Test | Result | Diagnosis |
+|---|---|---|
+| **FTD-0004 (Phase G)** | V(r) is purely the lattice Poisson kernel | No fine-structure content in static V(r) |
+| **FTD-0005 (Phase J)** | Partition function is ultralocal at L=2 | Algebraic spine structurally decoupled from action |
+| **FTD-0125 (Phase I)** | Engine V(r) does not carry G_C² | Gauss-projection erases longitudinal G_C every tick |
+| **FTD-0126 (Phase II)** | Wilson-Dirac in fixed B → outcome C | No loop physics → Wilson-r artefact dominates |
+
+This is the substantive scientific finding of the day. The pattern is now empirically robust, not just theoretically motivated. **MC-T4.3** (the central foundational obstruction in the math-complete checklist) is reinforced as the genuine bottleneck: closing the algebraic-spine ↔ dynamical-EFT gap requires either a non-action mechanism (boundary conditions, observable selection, quantization choice) or accepting that FTD's epistemic ceiling on the dual-prediction is "structural-uniqueness-validated empirical match," not "first-principles derivation."
+
+### What is NOT falsified
+
+- FTD-0001 (master quadratic [THEOREM]) — unaffected
+- FTD-0002 (G\* identity [THEOREM]) — unaffected
+- FTD-0013 (x_+ = 1/α at 1.26 ppm [STRONGLY MOTIVATED CONJECTURE]) — same tag
+- FTD-0014 (x_− = N_c at 0.80% [STRONGLY MOTIVATED CONJECTURE]) — same tag
+- All 9 spine theorems — unaffected
+
+What was falsified is a *specific dynamical mechanism* (classical Wilson-Dirac + fixed B + α=1/x_+ → Schwinger anomaly to better than 50%), not the underlying algebraic theorems.
+
+### Engine state (post evening session)
+
+7 new files under `engine/`:
+- `engine/include/ftd/wilson_dirac.h` + `engine/src/wilson_dirac.cpp` — CPU implementation
+- `engine/cuda/wilson_dirac_gpu.cu` + `engine/include/ftd/wilson_dirac_gpu.h` — CUDA implementation
+- `engine/tests/test_wilson_dirac_smoke.cpp`, `test_wilson_dirac_bz_spectrum.cpp`, `test_wilson_dirac_gauge.cpp`, `test_wilson_dirac_limit.cpp` — 4 internal-pre-reg test suites
+- `engine/tests/test_wilson_dirac_cuda_parity.cpp` — CPU/GPU parity gate
+- `engine/tests/benchmark_dirac_electron_in_B.cpp` — single-electron orbit benchmark with shifted Landau gauge
+- `scripts/proofs/proof_phase_ii_g_minus_2.py` — Phase II.5 deliverable (a_e extraction + Schwinger comparison)
+
+All 5 II.2 milestone tests bit-identical between Windows-native and WSL2/RTX 5090. CTest registration in place. Pre-existing `set_uniform_B_z` indexing bug (latent since first commit, not caught by smoke tests) fixed during II.2-C.
+
+### MC-checklist closure delta vs morning state
+
+| Tier | Morning (post 2b660aa) | Evening (post a9d7a1e) |
+|---|---|---|
+| I (5) | 5/5 closed | 5/5 |
+| II (3) | 3/3 closed | 3/3 |
+| III (5) | 1/5 + 3/5 investigated + 1/5 blocked | unchanged |
+| IV (5) | T4.5 Roles 1+3 [DERIVED] + Roles 2+4 [NO-GO] | **T4.3 reinforced as foundational obstruction with 2nd independent empirical decoupling confirmation (FTD-0126 joins FTD-0125)** |
+
+No tier closures today. The progress is empirical, not algebraic — but the empirical convergence sharpens MC-T4.3 substantially.
+
+### Test state (2026-05-03 evening verified)
+
+- Engine: all 5 new Wilson-Dirac tests PASS at machine precision, CPU + WSL2 bit-identical.
+- Python: `proof_phase_ii_g_minus_2.py --run` produces verdict CSV-driven outcome C.
+- No regression in prior tests.
 
 ---
 
