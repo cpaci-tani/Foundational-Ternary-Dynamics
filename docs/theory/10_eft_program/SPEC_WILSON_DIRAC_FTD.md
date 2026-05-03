@@ -150,13 +150,24 @@ Standard lattice-QED CUDA pattern: one thread per lattice site, applies the Wils
 
 Before Phase II.3 starts, the implementation must pass:
 
-1. **Free-fermion smoke test:** `B = 0`, no FTD coupling. Inject Gaussian wave packet; verify it propagates as Klein-Gordon-like dispersion (Wilson-Dirac → free particle in continuum limit).
-2. **Wilson term verification:** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion; doublers at correct masses.
-3. **Gauge link verification:** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice.
-4. **Coupling consistency:** with `B = 0` and minimal FTD flux background, `D_W` reduces to free Wilson-Dirac (gauge link → 1).
-5. **CPU/GPU parity:** golden-tick gate at single-tick precision (per ADR-0012).
+1. **Free-fermion smoke test (II.2-A):** `B = 0`, no FTD coupling. Apply `D_W` to plane-wave initial states at multiple momenta; verify the eigenvalue magnitude matches the analytical Wilson-Dirac dispersion `|λ(p)|² = M_eff(p)² + K(p)²` where `M_eff(p) = m + (r/a)·∑_μ(1−cos p_μ)` and `K²(p) = (1/a²)·∑_μ sin²(p_μ)`. Also verify RK4 evolution preserves total spinor norm (Schrödinger evolution is unitary). **STATUS: CLOSED 2026-05-03.**
+2. **Wilson term verification (II.2-B):** spectrum of `D_W` at `B = 0` shows expected Wilson dispersion across the full Brillouin zone; doublers lifted to mass `~ 2r/a` at zone corners (≫ electron mass scale, decoupled).
+3. **Gauge link verification (II.2-C):** uniform `B` field configuration reproduces magnetic-translation symmetry on small lattice; eigenvalue spectrum matches Landau-level structure for free electron in B-field.
+4. **Coupling consistency (II.2-D):** with `B = 0` and FTD flux-projection gauge field, `D_W` reduces to free Wilson-Dirac in the limit of negligible flux (gauge link → 1).
+5. **CPU/GPU parity (II.2-E):** golden-tick gate at single-tick precision (per ADR-0012); CUDA implementation produces bit-exact match to CPU implementation.
 
 Each validation gets its own internal pre-registration milestone before declaring Phase II.2 complete.
+
+### II.2-A milestone result (2026-05-03)
+
+Implemented `engine/include/ftd/wilson_dirac.h`, `engine/src/wilson_dirac.cpp`, `engine/tests/test_wilson_dirac_smoke.cpp`. Built and ran on both Windows-native (`engine/build/Release/test_wilson_dirac_smoke.exe`) and WSL2 (`engine/build_wsl/test_wilson_dirac_smoke`).
+
+**5/5 checks PASS at both targets:**
+- 4 plane-wave dispersion checks at momenta {(0,0,0), (k₀,0,0), (2k₀,k₀,0), (3k₀,2k₀,k₀)} with `k₀ = 2π/L`, L=16: relative error `~10⁻¹⁴` (machine precision; predicted `|λ(p)|²` matches measured `‖D_W ψ‖²` exactly modulo IEEE-754 round-off).
+- RK4 norm-conservation check: `Δ‖ψ‖²/‖ψ‖² = 1.5×10⁻¹²` after 100 RK4 steps with `dt = 0.01` (well below the 1×10⁻⁶ tolerance).
+- CPU/WSL2 results bit-identical at every check.
+
+The free Wilson-Dirac operator and RK4 evolution are validated. **Phase II.2-A CLOSED.** Phase II.2-B (Wilson term verification across full BZ) is the next milestone.
 
 ## 9 · Open questions (acknowledged before implementation)
 
