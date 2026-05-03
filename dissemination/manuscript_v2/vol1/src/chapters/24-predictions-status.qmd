@@ -18,8 +18,8 @@ This chapter collects all testable predictions of FTD, their current observation
 
 | Prediction | FTD basis | Status |
 |-----------|-----------|--------|
-| Gauge group $U(1) \times SU(2) \times SU(3)$ | Moore decomposition | [THEOREM] --- matches SM |
-| Exactly 3 generations | $O_h$ representation theory | [THEOREM] --- matches SM |
+| Gauge group $U(1) \times SU(2) \times SU(3)$ | Moore decomposition | [SELECTION] --- the Moore decomposition motivates this gauge structure but does not constitute a uniqueness theorem; matches SM |
+| Exactly 3 generations | $O_h$ representation theory + structural integers | [SELECTION] --- structural argument, not derivation; matches SM |
 | No 4th generation | Moore decomposition exhausted at 3 | **Testable** --- no evidence for 4th gen |
 | Proton absolutely stable | $x_+ \cdot x_- = 16\Gscu > 0$ | Consistent with bounds |
 | Dark matter is sub-threshold flux | $0 < |\mathbf{J}| < K_B$ | **Testable** --- predicts spherical, non-rotating DM halos |
@@ -33,7 +33,7 @@ This chapter collects all testable predictions of FTD, their current observation
 
 2. **4th fermion generation discovered.** The Moore Layer Theorem permits exactly 3 generations. A confirmed 4th generation would require revising the Moore decomposition.
 
-3. **Bell violations inconsistent with Hilbert space.** If Bell test results deviate from Tsirelson's bound $S = 2\sqrt{2}$ (i.e., post-quantum correlations are observed), the Hilbert space emergence is wrong.
+3. **Post-quantum Bell correlations.** Tsirelson's bound is $S = 2\sqrt{2}$ for any quantum-mechanical system. If Bell test results show genuinely post-quantum correlations ($S > 2\sqrt{2}$), then any framework whose emergent QM is described by a Hilbert-space structure --- FTD's included --- would need revision. Conversely, $S = 2\sqrt{2}$ is consistent with FTD (and with QM generally), not a discriminator.
 
 4. **Dark matter is pointlike.** If dark matter is confirmed as a new particle (e.g., WIMP detection, axion signal), the sub-threshold flux mechanism is falsified.
 

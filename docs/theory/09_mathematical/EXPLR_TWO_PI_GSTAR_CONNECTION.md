@@ -108,13 +108,25 @@ a *derivation* of `G*` — it is just the Watson identity rearranged.
 
 ## 4 · Structural observation 3 — lemniscate-circle analogy
 
-The lemniscatic constant `G* = ϖ` plays for the lemniscate the role
+Two distinct constants are conventionally called "the lemniscate
+constant" in the literature, and they must be kept apart (per FTD-0117
+hygiene):
+
+- `ϖ ≈ 2.6221` (Bernoulli–Gauss): the half-arc-length / period of
+  the lemniscate, defined as `ϖ = Γ(1/4)²/(2√(2π))`.
+- `G* ≈ 2.9587` (FTD canonical): the Γ-function ratio
+  `G* = Γ(1/4)/Γ(3/4) = 2ϖ/√π`.
+
+These are *related* (G* = 2ϖ/√π) but **not equal**. This section's
+analogy concerns ϖ, the period; G* enters separately in §3 and §5.
+
+The lemniscate constant `ϖ` plays for the lemniscate the role
 that `π` plays for the circle (half-arc-length, period of the
 inverse function, etc.). One can write a naïve analogy:
 
 ```
 Circle period: 2π           ↔  Phase G "circular" amplitude: 1/(2π)
-Lemniscate period: 2G*      ↔  Phase G "lemniscatic" amplitude: 1/(2G*)?
+Lemniscate period: 2ϖ       ↔  candidate "lemniscatic" amplitude: 1/(2ϖ)?
 ```
 
 The candidate `1/(2G*) ≈ 0.1907` is the lemniscate-period analog of

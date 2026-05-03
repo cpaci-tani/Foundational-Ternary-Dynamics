@@ -134,7 +134,7 @@ The discrepancy is
 
 $$x_{+} - \alpha^{-1}_{\mathrm{exp}} = 0.000\,172\ldots, \tag{13}$$
 
-or 1.26 parts per million. The construction (8) involves no free parameters: the coefficient $k = 16$ is the square of the cuboctahedral vertex coordination number, and $G^{*}$ is a fixed transcendental constant.
+or 1.26 parts per million. The polynomial identity (8) is itself a [THEOREM]: its coefficient $k = 16 = |\mathrm{Aut}_{\bar{\mathbb{Q}}}(E)|^{2}$ is fixed by classical CM theory, and $G^{*} = \Gamma(1/4)/\Gamma(3/4)$ is a fixed transcendental constant. The *physical identification* $x_{+} = 1/\alpha$ is, however, a [STRONGLY MOTIVATED CONJECTURE], not a derivation: the 1.26 ppm match is empirical evidence supported by structural-uniqueness scans (combined Bayes factor $\sim 4 \times 10^{5}$:1 across two independent pre-registered scans, FTD-0121 + FTD-0123), but no derivation chain from FTD axioms to the value of $\alpha$ exists at present.
 
 ### 4.3 Remark on the Discrepancy
 

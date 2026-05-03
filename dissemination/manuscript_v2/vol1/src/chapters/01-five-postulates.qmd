@@ -15,8 +15,10 @@ Time advances in integer steps $t \in \mathbb{N}$. Each step is called a **tick*
 :::
 
 ::: {.callout-axiom}
-## Postulate 3: Ternary states
-Each voxel carries a state $s(v, t) \in \{-1, 0, +1\}$. These are the only ontic values. The state $s = 0$ is the **void**; $s = \pm 1$ are **manifestations** of opposite charge.
+## Postulate 3: Ternary states (J-primary; $s$ as manifestation projection)
+Each voxel carries a flux field $\mathbf{J}(v, t) \in \mathbb{R}^3$ (the dispositional layer) and a discrete state $s(v, t) \in \{-1, 0, +1\}$ (the manifestation layer). **$\mathbf{J}$ is primary; $s$ is the action of $\mathbf{J}$ via the Genesis threshold rule** (Postulate 6 / Genesis dynamics): when $\|\mathbf{J}(v, t)\|$ crosses the manifestation threshold $K_B$, the void voxel manifests as $s = \pm 1$ according to the sign of the flux divergence; otherwise $s = 0$. Thus $s$ is not an independent field — it is the discrete observable layer that records when $\mathbf{J}$'s local intensity crosses $K_B$. The state $s = 0$ is the **void** (substrate awaiting activation); $s = \pm 1$ are **manifestations** of opposite charge.
+
+**Why this is one postulate, not two:** the flux field $\mathbf{J}$ is the dispositional content of the void substrate (Postulate 1); the ternary state $s$ is the manifestation projection of $\mathbf{J}$ via the Genesis rule. Treating $s$ as primary and $\mathbf{J}$ as separate would double-count. (See `SPEC_FTD.md` §1.1 graded-monism table; the ontology was clarified 2026-05-02 in the MC-T4.1 reframe.)
 :::
 
 ::: {.callout-axiom}
