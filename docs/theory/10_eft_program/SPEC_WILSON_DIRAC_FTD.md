@@ -321,6 +321,117 @@ verdict would be meaningful.
 This is the honest state recorded in LEDGER FTD-0126 (NOT a closure of
 the pre-registered campaign — a registered intermediate observation).
 
+### II.4 + II.5 milestone result (2026-05-03, end-of-day extension)
+
+**Outcome verdict: C — SCHWINGER MISS.** Pre-registered campaign CLOSED.
+
+Implemented `scripts/proofs/proof_phase_ii_g_minus_2.py` per pre-reg §2
+(Phase II.5 deliverable). The script reads the orbit CSV produced by
+`benchmark_dirac_electron_in_B.cpp`, extracts ω_s from the sx time-series
+power spectrum (FFT), computes `a_e_lattice = ω_s / ω_c_classical − 1`
+with `ω_c_classical = qB/m`, and compares to Schwinger
+`α_FTD/(2π) ≈ 1.16×10⁻³` with `α_FTD = 1/x_+` from FTD-0125.
+
+**Measurement protocol** (committed pre-extraction): stationary electron
+configuration. Spin transverse to B (chi = (1, 1)/√2 = +x). Shifted
+Landau gauge with `A_x = 0` at the wave-packet centre, so canonical p=0
+implies kinetic p=0 — the centroid stays at `(L/2, L/2, L/2)` for all t
+(verified: cx, cy ranges both `[12.000, 12.000]` over 80 lattice times
+at L=24). Hash-locked defaults: L=24, n_flux=4, m=1.0, σ=1.5, steps=2000,
+dt=0.04. Energy conservation `|ΔE/E| = 1.8×10⁻⁵`, norm `1.4×10⁻⁵`.
+
+**Measured values:**
+
+- `qB = 2π · n_flux / L² = 4.363×10⁻²` (per-plaquette flux)
+- `ω_c_classical = qB / m = 4.363×10⁻²` (period 144 lattice times)
+- `ω_s_measured` (FFT peak power, sx): `7.834×10⁻²`
+- `g_lattice / 2 = ω_s / ω_c = 1.7955` ← Dirac value would give 1.0
+- `a_e_lattice = ω_s/ω_c − 1 = 7.955×10⁻¹`
+- `a_e_Schwinger = α_FTD/(2π) = 1.161×10⁻³`
+- **`rel_err = |a_lattice − a_Schwinger| / a_Schwinger = 683.95`**
+
+**Verdict:** rel_err ≫ 50% → **outcome C** per pre-reg §4 verdict table.
+The engine does NOT reproduce QED's tree-level Schwinger anomaly with
+the master-quadratic-derived coupling.
+
+**Diagnosis** (per pre-reg §4 outcome-C interpretations + this measurement):
+
+1. **No loop physics in the setup.** The Schwinger anomaly `α/(2π)` is a
+   one-loop QED effect requiring a dynamical photon. The current setup
+   uses a fixed classical B-field; the gauge link is non-dynamical (no
+   quantum fluctuation around the classical configuration). At tree
+   level the only g − 2 contribution is the well-known Wilson-r lattice
+   artefact, which scales as `O(qB · m · a²)` for small qB·a but
+   becomes O(1) at the engine-realistic parameters tested (qB · a = 0.044,
+   m · a = 1.0, with measured g/2 ≈ 1.80 putting the artefact at order
+   unity, not order α). The Wilson-r artefact regime, NOT the Schwinger
+   anomaly, dominates the measurement.
+2. **Wilson-Dirac discretization artefacts dominant at engine precision**
+   (pre-reg §4 outcome-C interpretation (i)). The measured `g ≈ 3.59` is
+   nowhere near `g = 2 + α/π ≈ 2.0023` (continuum QED), nor near `g = 2`
+   (continuum Dirac). The departure is roughly 80% of `g` itself, three
+   orders of magnitude larger than physical Schwinger. This is a
+   discretization signal, not a physical-anomaly signal.
+3. **FTD-native coupling does NOT play the role of QED α at the matter
+   sector** (pre-reg §4 outcome-C interpretation (iii)). The
+   master-quadratic value `α_FTD = 1/x_+` does not enter the lattice
+   QED matter sector at tree level in any way that reproduces the
+   one-loop Schwinger structure — consistent with the broader
+   structural-decoupling theme: Phase J ultralocality (FTD-0005),
+   Phase G geometric Coulomb (FTD-0004), Phase I gauss-projection
+   erasure (FTD-0125), and now Phase II Wilson-Dirac in fixed B all
+   show FTD's algebraic-spine values not flowing into the dynamical
+   sector measurements at coarse lattice. Each independent test
+   reaffirms the same diagnosis.
+
+**Top FFT modes** (for transparency; sx, ranked by power):
+
+| rank | ω | power | likely interpretation |
+|---|---|---|---|
+| 1 | 0.0783 | 386 | spin-precession-like (selected as ω_s) |
+| 2 | 0.157 | 120 | second harmonic / mode mixing |
+| 3 | 0.627 | 96 | LLL transition (≈ qB·6 / 1?) |
+| 4 | 1.097 | 75 | Zitterbewegung-like (≈ 2m + correction) |
+| 5 | 1.332 | 73 | upper Landau spectrum |
+
+The presence of multiple comparable-power modes confirms the wave-packet
+state is not a single eigenstate; the "ω_s" extracted is a spectral
+proxy, not a clean precession frequency.
+
+**What this DOES NOT mean.** The outcome-C verdict is not a falsification
+of FTD's algebraic spine: the master quadratic [THEOREM] FTD-0001, G\*
+identity FTD-0002, and the dual-prediction empirical match FTD-0013/0014
+remain at their established tags. What is falsified is the specific
+hypothesis that **classical Wilson-Dirac in a fixed B-field with α = 1/x_+
+reproduces the Schwinger one-loop anomaly to better than 50%**. This was
+the pre-reg's central conjecture. It is now empirically null.
+
+**What this DOES mean.** Combined with the prior Phase I outcome C
+(FTD-0125: V(r) does not carry G_C² under wave-prop+gauss-proj
+configuration), Phase II outcome C records the second independent
+empirical confirmation that the master-quadratic coupling does not
+flow into the engine's matter-sector dynamical observables in the
+direct way the dual-prediction conjecture would naively suggest.
+Both results are consistent with the broader Phase J ultralocality
+diagnosis: the algebraic spine is structurally **decoupled** from the
+engine's action-level dynamics.
+
+**Where to go from here** (research-program territory, not session
+tasks): (a) full one-loop lattice EFT with dynamical gauge field,
+(b) sparse-matrix diagonalization of `D_W(B)` to extract clean Landau
+levels and avoid wave-packet contamination, (c) reframe the matter
+sector to test a different observable (FTD-0120 transverse waves,
+FTD-0125 follow-up Ampère-Maxwell coupling). Each of these is a
+multi-week investigation in its own right.
+
+**Phase II campaign status: CLOSED with outcome C** at hash-locked
+default parameters. PREREG_PHASE_II_WILSON_DIRAC_G2.md tag retired
+to "campaign-completed" status (not retracted, not failed-incomplete —
+the pre-registration met all four §7 closure criteria: all five
+sub-phases ran, an outcome A/B/C/D was named with explicit numerics,
+LEDGER FTD-0126 was extended with the verdict, and the git tag
+precedes the verdict commit in history).
+
 ## 9 · Open questions (acknowledged before implementation)
 
 1. **Flux projection convention `P_T J → A_μ`** — `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` gives a sketch; details (including units and gauge-fixing convention) need to be tightened before II.2.

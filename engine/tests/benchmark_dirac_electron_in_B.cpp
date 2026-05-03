@@ -132,6 +132,8 @@ int main(int argc, char** argv) {
     // Default config tuned to satisfy II.3 milestone criteria (orbit fits in box,
     // energy + norm conserve, spin shows transverse precession). Best regime
     // found in 2026-05-03 sweep: L=24, n_flux=4, p_y_units=1, m=0.5, sigma=1.8.
+    // The shifted gauge has A_x = 0 at y=L/2, so p_y_units=0 produces a
+    // genuinely stationary electron (centroid at (L/2, L/2, L/2) for all t).
     int L = 24;
     int n_flux = 4;
     double m = 0.5;
@@ -165,6 +167,11 @@ int main(int argc, char** argv) {
               << "  sigma=" << sigma << "  p_y=" << p_y
               << "  steps=" << n_steps << "  dt=" << dt << "\n\n";
 
+    // Shifted Landau gauge A_x = -B(y - y0_gauge): A_x = 0 at y = y0_gauge,
+    // so a wave packet at y = y0_gauge with canonical p=0 has kinetic p=0
+    // (genuinely at rest). The plaquette flux is unchanged (gauge-invariant);
+    // the y-boundary twist is unchanged (topological).
+    const double y0_gauge = L * 0.5;
     Lattice lattice(L);
     GaugeLinks links(L);
     const double alpha = 2.0 * M_PI * static_cast<double>(n_flux) / (static_cast<double>(L) * L);
@@ -172,7 +179,7 @@ int main(int argc, char** argv) {
         for (int y = 0; y < L; ++y) {
             for (int z = 0; z < L; ++z) {
                 const std::size_t idx = static_cast<std::size_t>(lattice.index(x, y, z));
-                links.U[0][idx] = std::exp(cdouble{0, -alpha * static_cast<double>(y)});
+                links.U[0][idx] = std::exp(cdouble{0, -alpha * (static_cast<double>(y) - y0_gauge)});
                 links.U[1][idx] = (y == L - 1)
                     ? std::exp(cdouble{0, +alpha * static_cast<double>(x) * L})
                     : cdouble{1, 0};
@@ -181,8 +188,8 @@ int main(int argc, char** argv) {
         }
     }
 
-    // Initial state: Gaussian wave packet centred at (L/4, L/2, L/2), momentum
-    // (0, p_y, 0). For a Wilson-Dirac g-2 measurement we need:
+    // Initial state: Gaussian wave packet centred at (L/2, y0_gauge, L/2),
+    // momentum (0, p_y, 0). For a Wilson-Dirac g-2 measurement we need:
     //   (a) Spin transverse to B (i.e. in xy-plane) so precession is visible.
     //       Use chi = (1, 1)/sqrt(2), i.e. spin +x.
     //   (b) Lower components set to the positive-energy continuum form
@@ -190,8 +197,8 @@ int main(int argc, char** argv) {
     //       This suppresses Zitterbewegung (mixing with negative-energy modes).
     //   For p = (0, p_y, 0), sigma . p = p_y sigma_y; sigma_y (1, 1)/sqrt(2)
     //       = (1/sqrt(2)) (-i, i). So u_lower = (p_y/(E+m)) * (-i, i) / sqrt(2).
-    const double x0 = L * 0.25;
-    const double y0 = L * 0.5;
+    const double x0 = L * 0.5;
+    const double y0 = y0_gauge;
     const double z0 = L * 0.5;
 
     const double E_plane = std::sqrt(p_y * p_y + m * m);
