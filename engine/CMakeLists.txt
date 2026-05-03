@@ -717,6 +717,10 @@ ftd_add_test(test_wilson_dirac_smoke tests/test_wilson_dirac_smoke.cpp
              CTEST_NAME test_wilson_dirac_smoke TIMEOUT 60)
 ftd_add_test(test_wilson_dirac_bz_spectrum tests/test_wilson_dirac_bz_spectrum.cpp
              CTEST_NAME test_wilson_dirac_bz_spectrum TIMEOUT 120)
+ftd_add_test(test_wilson_dirac_gauge tests/test_wilson_dirac_gauge.cpp
+             CTEST_NAME test_wilson_dirac_gauge TIMEOUT 120)
+ftd_add_test(test_wilson_dirac_limit tests/test_wilson_dirac_limit.cpp
+             CTEST_NAME test_wilson_dirac_limit TIMEOUT 60)
 ftd_add_test(ftd_budget_equation tests/benchmark_budget_equation.cpp
              CTEST_NAME benchmark_budget_equation TIMEOUT 1800)
 ftd_add_test(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp
