@@ -147,6 +147,65 @@ If any fixture FAILS: investigate. Likely culprits in order of probability: (i) 
 
 Per CLAUDE.md `Environment Notes`: "GPU execution MUST go through WSL2 Ubuntu-22.04, not Windows-native CUDA. Windows-native CUDA builds technically run but are pathologically slow." The benchmark uses `rb.run(ticks)` which is GPU-accelerated when CUDA is available. Windows-native CUDA may take 19+ minutes per measurement; WSL2/GPU should complete in <1 minute total. Scope discipline: defer.
 
+## 6.5 · Postmortem (2026-05-03 evening, WSL2 GPU run completed)
+
+**Outcome: NOT-A. Pre-registered hypothesis falsified at all 8 fixtures.** Methodology held; no tolerance-tuning applied.
+
+### Run summary
+
+```
+WSL2 build: cmake -S engine -B engine/build_wsl -DCMAKE_BUILD_TYPE=Release
+            cmake --build engine/build_wsl --target ftd_phase_i_native_coupling
+Run:        engine/build_wsl/ftd_phase_i_native_coupling 200
+Result:     0 / 8 fixtures PASS
+```
+
+Measured `g_engine² := α_r / (2 r G_L(r))` ranged from **0.08 to 0.18** depending on `(L, r)` — varying with `r`, NOT the pre-registered constant `1/x_+ ≈ 0.0073`. Outcome **C** by the strict pre-reg criterion (g_engine² ≠ g_FTD² and g_engine² ≠ α).
+
+### Diagnosis
+
+Cross-checked the engine output against the existing `benchmark_emergent_alpha` E2 (`experiment_interaction_potential`) at L=64 using the same `configure_bare_lattice` setup. Both benchmarks produced **identical α_r values** (e.g. α_r = 0.0572 at L=64, r=4; α_r = 0.0533 at r=8). The numbers are real engine output, not a bug in my benchmark.
+
+**Root cause**: the engine's V(r) measurement in the `wave_propagation = true, coupling = true, gauss_projection = true, forces = false` configuration does NOT carry `G_C²` as a multiplicative prefactor.
+
+**Mechanism**:
+- The wave-propagation source coupling adds `δJ += G_C · ∇s` per tick. For static charges, `∇s` is a longitudinal vector (gradient of a scalar).
+- The `gauss_project` step (per `engine/src/poisson_solvers.cpp::sor_sweep_18pt`) enforces `∇·J = ρ` directly, independent of G_C, by adjusting the longitudinal part of J.
+- Result: every tick, the longitudinal G_C contribution from wave-propagation is overwritten by the gauss-projection constraint. The G_C-coupling-dependent part of the static response is erased.
+- What remains is the gauss-projected geometric kernel, which is Phase G's `2 r G_L(r)` — the lattice Poisson Green's function with no fine-structure content.
+
+### What was wrong with the pre-registration
+
+The pre-registered prediction `V_engine(r,L) = -G_C² · 2·G_L(r)` (PREREG §3.1) was incorrect. It assumed the engine's static V(r) is `G_C²` times the geometric kernel — i.e., that G_C flows linearly into the longitudinal response. The actual engine architecture has gauss-projection erasing this contribution.
+
+The Python predictor (`proof_phase_i_native_coupling.py`) returned outcome A trivially — it explicitly multiplied by G_C² and then divided by V_geom = -2·G_L(r), recovering G_C² by tautology. This was numerically self-consistent but did not reflect the actual engine dynamics. The Python predictor's "verification" did not test the engine; it tested its own assumption.
+
+### What this confirms about FTD's coupling channel
+
+**Phase G's "no fine-structure content in V(r)" interpretation is empirically REINFORCED.** The static V(r) channel really is geometric. The master-quadratic-derived `g_FTD²` does not propagate into V(r) under the gauss-projection-enabled configuration.
+
+This does not invalidate `g_FTD² := 1/x_+` as a [DERIVED] algebraic quantity — that derivation is fine. What it invalidates is the operational claim that the engine's static V(r) channel realizes this coupling.
+
+### Where the coupling DOES enter (open, not tested by Phase I)
+
+Three candidate channels remain to be tested:
+1. **Transverse wave modes / radiation** — Larmor / Cherenkov (FTD-0115, FTD-0120). The coupling enters here through the source vertex; gauss-projection does not touch transverse modes.
+2. **Ampère-Maxwell / B-field response** — magnetic response to current sources. Untested.
+3. **Matter-sector vertex** — Branch-B Wilson-Dirac fermion gauge coupling. This is exactly what `PREREG_PHASE_II_WILSON_DIRAC_G2.md` is set up to measure. The Phase II g-2 measurement IS the right test of whether `g_FTD²` plays the role of α at the matter sector.
+
+### Tag updates
+
+- `g_FTD² := 1/x_+` derivation: STAYS [DERIVED] (algebraic content unchanged)
+- Phase I engine cross-check: NOW [OUTCOME C — FALSIFIED on engine]
+- Phase G "geometric V(r)" interpretation: REINFORCED
+- LEDGER FTD-0125 entry updated to reflect the falsification
+
+### Methodological note
+
+This is exactly the pre-registration discipline working. We made a hypothesis, hash-locked it, ran the test, got an unexpected result, reported it honestly, did not tolerance-tune. The negative result is genuine information: the engine's V(r) channel is geometric in a stronger sense than I had appreciated.
+
+---
+
 ## 7 · References
 
 - `SPEC_ALGEBRAIC_SPINE.md` Theorem 2 (master quadratic)
