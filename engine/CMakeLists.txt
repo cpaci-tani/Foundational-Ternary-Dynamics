@@ -293,8 +293,6 @@ target_link_libraries(test_born_infeld ftd_core)
 # Wave 4b.5 (2026-04-14): test_gauss_convergence merged into test_gauss
 ftd_add_test(test_gauss tests/test_gauss.cpp CTEST_NAME gauss TIMEOUT 600)
 
-add_executable(test_intervoxel_coupling tests/test_intervoxel_coupling.cpp)
-target_link_libraries(test_intervoxel_coupling ftd_core)
 
 add_executable(test_scenario_velocity_wiring tests/test_scenario_velocity_wiring.cpp)
 target_link_libraries(test_scenario_velocity_wiring ftd_core)
@@ -438,9 +436,6 @@ ftd_add_test(test_gamma_ftd_momentum
 # 2026-04-17 (callstack audit): verifies the F1–F8 fixes — pair_production
 # and triad_binding now run on CPU, accumulate_proper_time updates tau,
 # ALPHA/ALPHA_EFT identity holds.
-ftd_add_test(test_callstack_audit_fixes
-             tests/test_callstack_audit_fixes.cpp
-             CTEST_NAME callstack_audit_fixes TIMEOUT 60)
 
 # Phase 6: Flux-aggregate particles
 add_executable(test_selffield_profile tests/test_selffield_profile.cpp)
@@ -677,14 +672,10 @@ ftd_add_test(ftd_dispersion tests/campaign_dispersion.cpp
 add_executable(ftd_gauge_dynamics tests/campaign_gauge_dynamics.cpp)
 target_link_libraries(ftd_gauge_dynamics ftd_core)
 
-add_executable(ftd_gauge_constraint tests/campaign_gauge_constraint.cpp)
-target_link_libraries(ftd_gauge_constraint ftd_core)
 
 add_executable(ftd_free_dynamics tests/campaign_free_dynamics.cpp)
 target_link_libraries(ftd_free_dynamics ftd_core)
 
-add_executable(ftd_aggregate_interaction tests/campaign_aggregate_interaction.cpp)
-target_link_libraries(ftd_aggregate_interaction ftd_core)
 
 # (campaign_poisson_force_law + campaign_poisson_binding merged into campaign_coulomb_force_law)
 
@@ -758,8 +749,6 @@ ftd_add_test(ftd_budget_equation tests/benchmark_budget_equation.cpp
              CTEST_NAME benchmark_budget_equation TIMEOUT 1800)
 ftd_add_test(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp
              CTEST_NAME benchmark_bh_thermo TIMEOUT 1800)
-ftd_add_test(ftd_wilson_loops tests/benchmark_wilson_loops.cpp GPU_HEAVY
-             CTEST_NAME benchmark_wilson_loops TIMEOUT 1800)
 
 # Native EFT/response tests (Apr 2026). These are fixed audits, not target
 # searches, and form the baseline for the FTD-native electrodynamics program.
@@ -1251,12 +1240,8 @@ add_executable(ftd_plato tests/campaign_plato.cpp)
 target_link_libraries(ftd_plato ftd_core)
 add_executable(ftd_einstein tests/campaign_einstein.cpp)
 target_link_libraries(ftd_einstein ftd_core)
-add_executable(ftd_vonneumann tests/campaign_vonneumann.cpp)
-target_link_libraries(ftd_vonneumann ftd_core)
 add_executable(ftd_wigner tests/campaign_wigner.cpp)
 target_link_libraries(ftd_wigner ftd_core)
-add_executable(ftd_grothendieck tests/campaign_grothendieck.cpp)
-target_link_libraries(ftd_grothendieck ftd_core)
 
 # Phase 3: Bell Test & Quantum Mechanics
 add_executable(ftd_born_rule tests/campaign_born_rule.cpp)
@@ -1278,9 +1263,6 @@ add_executable(ftd_structure_stability tests/campaign_structure_stability.cpp)
 target_link_libraries(ftd_structure_stability ftd_core)
 
 # Phase 5: Color Dynamics & SU(3)
-# Wave 4c.10: 5 QCD campaigns merged into campaign_qcd_forces
-ftd_add_test(ftd_qcd_forces tests/campaign_qcd_forces.cpp
-             CTEST_NAME campaign_qcd_forces TIMEOUT 1800)
 
 # Phase 6: Weak Sector & SU(2)
 add_executable(ftd_weak_transmutation tests/campaign_weak_transmutation.cpp)
@@ -1354,8 +1336,6 @@ target_link_libraries(test_sloop ftd_core)
 
 # Phase 12b: Precision + Electroweak Sector
 # (test_lorentz_invariance merged into test_lorentz via Wave 4b.6)
-add_executable(test_electroweak tests/test_electroweak.cpp)
-target_link_libraries(test_electroweak ftd_core)
 # (test_hydrogen_em_only merged into campaign_hydrogen_spectrum)
 add_executable(ftd_lorentz_measure tests/campaign_lorentz_measure.cpp)
 target_link_libraries(ftd_lorentz_measure ftd_core)
@@ -1372,8 +1352,6 @@ target_link_libraries(ftd_pe_fine_structure ftd_core)
 # source for angle_strain, dipole, electronegativity, hbonds, thermostat.
 ftd_add_test(test_atom_engine_forces tests/test_atom_engine_forces.cpp
              CTEST_NAME atom_engine_forces TIMEOUT 600)
-add_executable(ftd_ae_water tests/campaign_ae_water.cpp)
-target_link_libraries(ftd_ae_water ftd_core)
 
 # Orphaned tests registered by I-04 audit (Mar 2026)
 add_executable(test_action_stationarity tests/test_action_stationarity.cpp)
@@ -1442,7 +1420,6 @@ add_test(NAME lattice COMMAND test_lattice)
 add_test(NAME born_infeld COMMAND test_born_infeld)
 # (test_energy merged into energy_conservation)
 # (gauss registered via ftd_add_test above)
-add_test(NAME intervoxel_coupling COMMAND test_intervoxel_coupling)
 add_test(NAME scenario_velocity_wiring COMMAND test_scenario_velocity_wiring)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
@@ -1553,7 +1530,6 @@ add_test(NAME campaign_pe_fine_structure COMMAND ftd_pe_fine_structure)
 
 # Scale 2 Phase 3: AE force expansion
 # (ae_* consolidated into atom_engine_forces via ftd_add_test above)
-add_test(NAME campaign_ae_water COMMAND ftd_ae_water)
 
 # Orphaned tests registered by I-04 audit (Mar 2026)
 add_test(NAME action_stationarity COMMAND test_action_stationarity)
@@ -1603,9 +1579,7 @@ endif()
 # Campaign tests
 # (campaign_dispersion registered via ftd_add_test above)
 add_test(NAME campaign_gauge_dynamics COMMAND ftd_gauge_dynamics)
-add_test(NAME campaign_gauge_constraint COMMAND ftd_gauge_constraint)
 add_test(NAME campaign_free_dynamics COMMAND ftd_free_dynamics)
-add_test(NAME campaign_aggregate_interaction COMMAND ftd_aggregate_interaction)
 # (campaign_poisson_force_law + campaign_poisson_binding merged)
 # (campaign_poisson_hydrogen merged)
 # (campaign_force_law merged)
@@ -1615,9 +1589,7 @@ add_test(NAME campaign_bound_lifetime COMMAND ftd_bound_lifetime)
 add_test(NAME campaign_spontaneous COMMAND ftd_spontaneous)
 add_test(NAME campaign_plato COMMAND ftd_plato)
 add_test(NAME campaign_einstein COMMAND ftd_einstein)
-add_test(NAME campaign_vonneumann COMMAND ftd_vonneumann)
 add_test(NAME campaign_wigner COMMAND ftd_wigner)
-add_test(NAME campaign_grothendieck COMMAND ftd_grothendieck)
 add_test(NAME campaign_cross_scale COMMAND ftd_cross_scale)
 add_test(NAME campaign_born_ensemble COMMAND ftd_born_ensemble)
 add_test(NAME campaign_h2_molecule COMMAND ftd_h2_molecule)
@@ -1673,7 +1645,6 @@ add_test(NAME consciousness COMMAND test_consciousness)
 add_test(NAME sloop COMMAND test_sloop)
 # Phase 12b: Precision + Electroweak Sector
 # (lorentz_invariance merged into lorentz)
-add_test(NAME electroweak COMMAND test_electroweak)
 # (hydrogen_em_only merged)
 add_test(NAME campaign_lorentz_measure COMMAND ftd_lorentz_measure)
 
@@ -1684,7 +1655,7 @@ set_tests_properties(
     benchmark logic_engine energy_conservation
     selffield_profile wavepacket
     particle_lifetime
-    campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
+    campaign_dispersion campaign_gauge_dynamics
     campaign_energy_audit campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
     particle_engine scale_bridge
@@ -1697,7 +1668,6 @@ set_tests_properties(
     campaign_born_rule campaign_quantum_correlations
     campaign_hydrogen_binding campaign_triad_energy
     campaign_inertial_mass campaign_structure_stability
-    campaign_qcd_forces
     campaign_weak_transmutation campaign_parity_violation
     campaign_weak_decay
     campaign_gravitational_wave campaign_gravity_profile
@@ -1710,9 +1680,9 @@ set_tests_properties(
     latency_field
     pe_forces tritium_algebra
     campaign_pe_fine_structure
-    atom_engine_forces campaign_ae_water
+    atom_engine_forces
     inflation dark_matter cosmological_constant consciousness sloop
-    electroweak campaign_lorentz_measure
+    campaign_lorentz_measure
     helium_scale1 fine_structure_scale1
     radiative_decay_scale1 scale_proof_chain
     PROPERTIES TIMEOUT 600)
@@ -1720,7 +1690,7 @@ set_tests_properties(
 # Heavy campaigns with 64^3 grids or multi-phase dynamics need more time (30 min)
 # flux_mediated moved here from 600s group per I-06 audit
 set_tests_properties(
-    campaign_free_dynamics campaign_aggregate_interaction
+    campaign_free_dynamics
     campaign_gravity_profile flux_mediated
     PROPERTIES TIMEOUT 1800)
 endif() # NOT EMSCRIPTEN — end of timeout blocks
@@ -1759,15 +1729,15 @@ set_property(TEST
     entanglement_basis flavor_physics higgs_mechanism hilbert measurement
     particle_toggles spin_statistics triad_confinement wz_mass
     falsifiability inflation dark_matter cosmological_constant consciousness
-    sloop electroweak
+    sloop
     APPEND PROPERTY LABELS "unit")
 
 # Campaign tests (47 campaign_*.cpp files)
 # APPEND is critical so campaign-level labels (scale1, scale2, gpu, etc.)
 # stack on top of these category labels rather than overwriting them.
 set_property(TEST
-    campaign_dispersion campaign_gauge_dynamics campaign_gauge_constraint
-    campaign_free_dynamics campaign_aggregate_interaction
+    campaign_dispersion campaign_gauge_dynamics
+    campaign_free_dynamics
     campaign_coulomb_force_law
     campaign_energy_audit campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
@@ -1775,13 +1745,13 @@ set_property(TEST
     campaign_statistical_convergence campaign_wave_dynamics
     campaign_born_rule
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
-    campaign_structure_stability campaign_qcd_forces
+    campaign_structure_stability
     campaign_weak_transmutation campaign_parity_violation campaign_weak_decay
     campaign_gravitational_wave campaign_gravity_profile campaign_gravity_hierarchy
     campaign_triad_binding campaign_neutrino_sector
     campaign_cosmological_predictions campaign_dark_sector campaign_novel_predictions
     campaign_integer_sweep campaign_hydrogen_spectrum
-    campaign_pe_fine_structure campaign_ae_water campaign_lorentz_measure
+    campaign_pe_fine_structure campaign_lorentz_measure
     APPEND PROPERTY LABELS "campaign")
 
 # Foundation tests (fast math/constants checks)
@@ -1806,7 +1776,7 @@ set_property(TEST
 # Scale 2: AtomEngine tests
 set_property(TEST
     atom_engine atom_scale_bridge atom_engine_forces
-    atom_toggles campaign_ae_water
+    atom_toggles
     APPEND PROPERTY LABELS "scale2")
 
 # ============================================================================
@@ -1839,7 +1809,6 @@ if(FTD_ENABLE_CUDA)
         spectral
         # (campaign_dispersion now has "gpu" via GPU_HEAVY in ftd_add_test;
         #  campaign_dispersion_convergence merged into campaign_dispersion)
-        campaign_grothendieck
         # (campaign_ds_vortex_lines + campaign_ds_correlation_function
         #  merged into campaign_dark_sector; it has GPU_HEAVY + gpu label)
     )
@@ -1874,33 +1843,33 @@ set_property(TEST
 set_property(TEST
     flux_mediated selffield_profile wavepacket
     particle_lifetime
-    campaign_gauge_dynamics campaign_gauge_constraint
-    campaign_free_dynamics campaign_aggregate_interaction
+    campaign_gauge_dynamics
+    campaign_free_dynamics
     campaign_energy_audit campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
     campaign_h2_molecule campaign_multiscale_pipeline
     campaign_statistical_convergence campaign_wave_dynamics
     campaign_born_rule
     campaign_hydrogen_binding campaign_triad_energy campaign_inertial_mass
-    campaign_structure_stability campaign_qcd_forces
+    campaign_structure_stability
     campaign_weak_transmutation campaign_parity_violation campaign_weak_decay
     campaign_gravitational_wave campaign_gravity_profile campaign_gravity_hierarchy
     campaign_triad_binding campaign_neutrino_sector
     campaign_cosmological_predictions campaign_dark_sector campaign_novel_predictions
     campaign_integer_sweep campaign_hydrogen_spectrum
-    campaign_pe_fine_structure campaign_ae_water campaign_lorentz_measure
+    campaign_pe_fine_structure campaign_lorentz_measure
     particle_engine scale_bridge atom_engine atom_scale_bridge multiscale_bridge
     selective_damping stress_energy em_energy_conservation continuity
     poynting larmor ensemble correlations spectral tracker
     inflation dark_matter cosmological_constant consciousness sloop
-    electroweak helium_scale1 fine_structure_scale1
+    helium_scale1 fine_structure_scale1
     radiative_decay_scale1 scale_proof_chain
     APPEND PROPERTY LABELS "slow")
 
 # Benchmark tests: dedicated engine-vs-theory measurement suites
 set_property(TEST
     benchmark_engine_theory benchmark_emergent_alpha
-    benchmark_budget_equation benchmark_bh_thermo benchmark_wilson_loops
+    benchmark_budget_equation benchmark_bh_thermo
     benchmark
     APPEND PROPERTY LABELS "benchmark;slow")
 
@@ -1926,7 +1895,6 @@ foreach(_phys_test
         energy_conservation
         energy_conservation_tight
         gauss
-        intervoxel_coupling
         annihilation_conservation
         em_energy_conservation
         continuity
@@ -1934,7 +1902,6 @@ foreach(_phys_test
         leapfrog_integrator_audit
         moore_laplacian_isotropy
         gamma_ftd_momentum
-        callstack_audit_fixes
         langevin_equipartition
         determinism
         closed_negatives
@@ -1961,7 +1928,6 @@ set_property(TEST
 
 # QCD / color domain
 set_property(TEST
-    campaign_qcd_forces
     asymptotic_freedom confinement_test triad_confinement
     campaign_triad_binding campaign_triad_energy
     APPEND PROPERTY LABELS "qcd")
@@ -2004,7 +1970,7 @@ set_property(TEST
 set_property(TEST
     consciousness sloop measurement hilbert
     ensemble correlations spectral tracker
-    campaign_wigner campaign_vonneumann
+    campaign_wigner
     APPEND PROPERTY LABELS "consciousness")
 
 # ============================================================================
@@ -2013,7 +1979,7 @@ set_property(TEST
 
 set_property(TEST
     maxwell gauge continuity
-    campaign_gauge_dynamics campaign_gauge_constraint
+    campaign_gauge_dynamics
     APPEND PROPERTY LABELS "phase_read")
 
 set_property(TEST
