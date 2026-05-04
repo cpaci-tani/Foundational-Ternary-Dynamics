@@ -599,9 +599,12 @@ __global__ void color_force_kernel(
         if (r < 1.0) r = 1.0;
 
         // Color factor: same color → repulsive (+0.5), diff color → attractive (-1.0)
-        // Matches CPU sign convention in render_bridge.cpp
+        // Matches CPU sign convention in phase_forces.cpp:160.
+        // 2026-05-04: removed extra `&& ci > 0` guard. Pre-fix two
+        // colorless particles (color==0) got cf=-1.0 (attractive) on GPU
+        // but cf=+0.5 (repulsive) on CPU — exact sign disagreement.
         int8_t cj = color_arr[j];
-        double cf = (ci == cj && ci > 0) ? 0.5 : -1.0;
+        double cf = (ci == cj) ? 0.5 : -1.0;
 
         double as = alpha_s_lattice_d(r);
 
