@@ -245,10 +245,10 @@ This choice is tagged [SELECTION] -- it is the standard and most widely used res
 
 ## 4.4 Physical Interpretation in FTD [SELECTION]
 
-In FTD, the lattice is fundamental -- the lattice spacing $a = \ell_P$ is the Planck length, not a computational artifact. This gives the Wilson term a physical interpretation:
+In FTD, the lattice is fundamental as a *structural* commitment — the substrate is genuinely discrete, not a computational artifact. The lattice spacing $a$ is a *gauge choice* per FTD-0137 (`FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md`); under the default Planck-primary calibration ($a \equiv \ell_P$), the Wilson term acquires the physical interpretation below. Note that the dimensionless content (chiral anomaly survives, Wilson term suppression scales as $(E \cdot a)^2$) is *gauge-invariant*; only the absolute energy at which the suppression becomes interesting depends on the gauge declaration.
 
-- **Chiral symmetry is broken at the Planck scale.** This is not an approximation artifact but a prediction: at energies $E \sim E_{\text{Planck}}$, chiral symmetry is not a good symmetry.
-- **Chiral symmetry emerges at low energies.** At $E \ll E_{\text{Planck}}$ (all accessible scales), chiral symmetry is restored to arbitrary precision. The Wilson mass corrections are of order $(E/E_{\text{Planck}})^2 \sim 10^{-38}$ -- utterly undetectable.
+- **Chiral symmetry is broken at the substrate scale.** This is not an approximation artifact but a prediction: at energies probing the substrate scale, chiral symmetry is not a good symmetry. Under the Planck-primary calibration the substrate scale is $E_P \approx 1.22 \times 10^{19}$ GeV; under a different gauge declaration (e.g., hadronic-primary $a \equiv 1$ fm) the substrate scale shifts but the *qualitative* prediction stands.
+- **Chiral symmetry emerges at low energies.** At $E \ll 1/a$ (accessible scales for any reasonable gauge), chiral symmetry is restored to arbitrary precision. Under Planck-primary, the Wilson mass corrections are of order $(E/E_P)^2 \sim 10^{-38}$ — utterly undetectable.
 - **Analogy with Lorentz symmetry.** Just as Lorentz invariance is broken at the lattice scale but recovered in the continuum (CLAUDE.md, Section 14.2), chiral symmetry is broken at the lattice scale but recovered for all practical physics.
 
 ## 4.5 Alternative: Ginsparg-Wilson Fermions [OPEN]

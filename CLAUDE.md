@@ -1,6 +1,6 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.37 (post-2026-05-03 evening Phase II Wilson-Dirac campaign closure — 7 additional commits today; **FTD-0126 [CLOSED — OUTCOME C SCHWINGER MISS]** added to LEDGER; Phase II.2 implementation 5/5 milestones at machine precision (CPU + WSL2 bit-identical); Phase II.3-II.5 measurement campaign closed with rel_err 683.95 vs Schwinger; convergent structural-decoupling pattern now empirically robust across 4 independent tests (FTD-0004 Phase G + FTD-0005 Phase J + FTD-0125 Phase I + FTD-0126 Phase II) — the master-quadratic value α=1/x_+ does NOT flow into engine matter-sector dynamical observables under any classical-gauge protocol tested; algebraic spine UNAFFECTED)
+**Version:** 5.38 (post-2026-05-04 night Phase B cluster-persistence arc — 4 retractions in F1/F9 hygiene pattern + (a)+(b)+(c) closure under FTD-0136; **toggle interactions are non-linear under full physics** ("sum greater than parts" operationally confirmed at L=32); **two stability islands at A∈{9.0–9.5} and A=13.0** amid flooding regimes at L=64 full physics ([OBSERVATION], pre-registered falsification queued); **L=256 full-physics 3-axis spot check** via WSL2/CUDA (linear axis→color binding x→R y→G z→B sizes {1,2,3}, sub-saturation caveat); cross-L set-property holds: every (axis, L) under full physics returns a framework integer; SPEC §5.6.21–§5.6.27 documents full arc; LEDGER FTD-0136 carries provenance; **NO tag promotions, NO new claims, NO derivations**)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
 **🔑 Start here if resuming:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — single-doc context recovery.
 **🧭 Architecture navigation:** [`META_PROJECT_ATLAS.md`](META_PROJECT_ATLAS.md) — task→file table + directory tree + subsystem dependency graph + post-refactor sweep history (§10).
@@ -379,9 +379,9 @@ ftd/                                     # Project root
 | G* (lemniscatic) | 2.95868... | Γ(1/4)/Γ(3/4) |
 | α (fine structure) | 1/137.036 | Master quadratic x₊ |
 | N_c (colors) | 3 | Master quadratic x₋ |
-| K_B (manifestation) | 0.511 | m_e = m_P·√(2π)·(16/3)·α¹¹ |
+| K_B (manifestation) | 0.511 | m_e = m_P·√(2π)·(16/3)·α¹¹ (current calibration: K_B = m_e mass anchor; role-conflated with engine manifestation threshold — see FTD-0130) |
 | C_SPEED | 1/√3 | CFL stability on cubic lattice |
-| G_N (gravity) | 0.01 | 1/(b₃+N_c)² |
+| G_N (gravity) | 0.01 | 1/(b₃+N_c)² — **falsified as identification with physical G_N** (FTD-0131); substrate derivation gives instead the gravitational fine-structure ratio for one electron: α_G(e,e) = (m_e/m_P)² = (√(2π)·(16/3)·α¹¹)² ≈ 1.745×10⁻⁴⁵ (predicted, 0.38% match to measured 1.752×10⁻⁴⁵) — derived via Phase G + FTD-0015 + 2 flagged postulates; see `docs/theory/03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`. The "1/100" numerical coincidence has no substrate justification under any natural reading. |
 
 ### Engine Philosophy
 

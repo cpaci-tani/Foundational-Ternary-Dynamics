@@ -47,13 +47,13 @@ To convert dimensionless ratios into dimensionful quantities (GeV, kg, eV), one 
 
 No amount of pure mathematics can produce a number with units of energy. $\square$
 
-## 1.2 M_P as the Lattice Energy Scale [AXIOM]
+## 1.2 M_P as the Lattice Energy Scale [CALIBRATION DECLARATION; gauge per FTD-0137]
 
-In FTD, the lattice spacing is $a = \ell_P$ (Planck length). The Planck mass is:
+Under the Planck-primary calibration (FTD-0041), the lattice spacing is *declared* to be $a \equiv \ell_P$. The Planck mass is then:
 
 $$M_P = \sqrt{\frac{\hbar c}{G}} = \frac{\hbar c}{a} = 1.22089 \times 10^{19}\;\text{GeV}$$
 
-This is the energy associated with one lattice site — the "pixel energy" of the discrete spacetime. It is the **single dimensionful axiom** of FTD.
+This is the energy associated with one lattice site under the Planck-primary gauge — the "pixel energy" of the discrete spacetime *as declared*. It is the **single dimensionful calibration declaration** of FTD; per FTD-0137 (`FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md`), the lattice spacing is not derived from the FTD axioms (P1-P5) and the Planck-primary choice is one of four defensible gauge declarations. Under a different gauge (e.g., hadronic-primary $a \equiv 1$ fm) the lattice "pixel energy" would be $\hbar c / (1\,\text{fm}) \sim 200$ MeV instead. The dimensionless content of all derivations downstream is gauge-invariant; the absolute energy scale is gauge-conditional.
 
 **Status:** M_P is [AXIOM] — it is the necessary unit-setting input, irreducible by Theorem 1.1.
 

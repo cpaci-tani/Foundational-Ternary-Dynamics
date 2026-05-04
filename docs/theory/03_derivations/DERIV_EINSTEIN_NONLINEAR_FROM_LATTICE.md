@@ -36,7 +36,7 @@ where $\bar{h}_{\mu\nu} = h_{\mu\nu} - \frac{1}{2}\eta_{\mu\nu}h$ is the trace-r
 
 | Symbol | FTD Value | Origin |
 |--------|-----------|--------|
-| $G_N$ | $1/(b_3 + N_c)^2 = 0.01$ | Lattice coupling hierarchy [THEOREM] |
+| $G_N$ | $1/(b_3 + N_c)^2 = 0.01$ | **Engine-internal numerical parameter; NOT directly identified with physical G_N (FTD-0131 falsified this identification under all natural calibrations: factor 8×10¹⁹ off vs K_B=m_e, factor 300 off vs K_B=m_P, factor 6×10⁴² off vs α_G(e,e)). Substrate-derived gravitational coupling per FTD-0131 is `α_G(e,e) = (m_e/m_P)² ≈ 1.745×10⁻⁴⁵`. Tag downgraded from [THEOREM] to [SELECTION at SUBSTRATE level; ENGINE-INTERNAL at numerical level]. See `docs/theory/03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md` (FTD-0131) for the substrate derivation chain.** |
 | $T_{\mu\nu}$ | Noether current of flux Lagrangian | DERIV_QFT_GRT_BRIDGE [THEOREM] |
 | $c$ | $1/\sqrt{3}$ (lattice units) | CFL stability [THEOREM] |
 
@@ -207,7 +207,7 @@ The agreement between two independent routes is a non-trivial consistency check.
 | ID | Claim | Status | Key dependency |
 |----|-------|--------|---------------|
 | ENL-1 | Linearized EFE: $\Box\bar{h}_{\mu\nu} = -16\pi G_N T_{\mu\nu}$ | **[THEOREM]** | DERIV_RELATIVITY Thm 14.1 |
-| ENL-2 | $G_N = 1/(b_3 + N_c)^2 = 0.01$ | **[THEOREM]** | Coupling hierarchy |
+| ENL-2 | $G_N = 1/(b_3 + N_c)^2 = 0.01$ | **[SELECTION at SUBSTRATE level; ENGINE-INTERNAL at numerical level]** (downgraded from [THEOREM] 2026-05-03 night per FTD-0131 falsification: this identification with physical G_N is structurally inconsistent under all natural calibrations; substrate-derived gravity gives α_G(e,e) = (m_e/m_P)² ≈ 1.745×10⁻⁴⁵ instead) | Coupling hierarchy (engine-internal) |
 | ENL-3 | Gravitational stress-energy $t_{\mu\nu}^{\text{GR}}$ well-defined | **[THEOREM]** | Landau-Lifshitz formalism |
 | ENL-4 | Bootstrap converges for $G_N M / r < 1$ | **[THEOREM]** | Contraction mapping |
 | ENL-5 | Converged solution matches post-Newtonian expansion | **[THEOREM]** | Numerical verification |

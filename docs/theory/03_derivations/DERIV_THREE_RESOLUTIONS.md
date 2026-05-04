@@ -60,9 +60,9 @@ The one-loop running from the Planck scale ($\mu = E_P$) to the electron mass ($
 
 The RG running formula assumes a **continuum** between the UV cutoff and the IR scale. In this continuum, virtual excitations at every intermediate scale contribute to the running. The logarithmic running $\sim \ln(\mu^2/m_e^2)$ counts the number of scale decades between UV and IR.
 
-FTD has no continuum. The lattice IS the physics — not a regularization of a continuum theory (Axiom Zero, Section 1.1). There are no "intermediate scales" between lattice sites. The lattice spacing $a = 1$ (in Planck units) is the smallest possible distance. The next scale is $a = 2$ (two lattice spacings). There is no physics at $a = 1.5$.
+FTD has no continuum. The lattice IS the physics — not a regularization of a continuum theory (Axiom Zero, Section 1.1). There are no "intermediate scales" between lattice sites. The lattice spacing is *one voxel* — the smallest possible distance in the substrate's intrinsic units, with no physical scale fixed by the FTD axioms (per FTD-0137 / `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md`, the lattice spacing is a gauge degree of freedom). The next scale is two voxels. There is no physics at 1.5 voxels.
 
-**The self-consistency condition (gap equation) operates at a single scale: $a = 1$, the lattice spacing.** It asks: "what coupling makes this lattice self-consistent?" The answer is $\alpha = 1/x_+ = 1/137.036$. This is the coupling AT the lattice scale, and the lattice scale IS the Planck scale, and the Planck scale IS the fundamental scale of reality (because the lattice is reality).
+**The self-consistency condition (gap equation) operates at a single scale: one voxel, the lattice spacing.** It asks: "what coupling makes this lattice self-consistent?" The answer is $\alpha = 1/x_+ = 1/137.036$ — a *dimensionless* prediction, gauge-invariant under any choice of physical scale for one voxel. Under the Planck-primary calibration (FTD-0041 default), the substrate scale corresponds to the Planck scale; under a different gauge choice it corresponds to whatever physical scale is declared. The dimensionless content of the gap-equation result does not depend on the gauge.
 
 **What about the observed running of $\alpha$?**
 
