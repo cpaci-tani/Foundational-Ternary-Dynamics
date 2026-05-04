@@ -233,8 +233,22 @@ The propagation sweep is itself a substantial doc-edit job (~estimated 1–2 ses
 
 - `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` — defines MC-T4.3 (where this vocabulary is most load-bearing).
 - `docs/theory/02_foundations/FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md` — the existing-literature anchor for reflexive projection (currently called "consciousness").
-- `docs/theory/07_assessment/LEDGER.md` — FTD-0078 (phenomenal/noumenal bridge), FTD-0095 (Bridge Functional ontology), FTD-0121 (physics-bridge synthesis).
+- `docs/theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md` — grounds Postulate 3's `{−1, 0, +1}` values in Axiom 0 via `s = i²`; the `{s, 0, |s|}` notation makes the polarity-magnitude pairing of the dispositional/actual graded monism structurally visible (see §10.1 below).
+- `docs/theory/07_assessment/LEDGER.md` — FTD-0078 (phenomenal/noumenal bridge), FTD-0095 (Bridge Functional ontology), FTD-0121 (physics-bridge synthesis), FTD-0128 (Postulate 3 grounding via s = i²).
 - `CLAUDE.md` — "Two-layer ontology" passage establishes the framework's existing language; rename targets here are minimal.
+
+### 10.1 · Vocabulary for the state-field grounding (FTD-0128, 2026-05-03)
+
+The `{s, 0, |s|}` notation for the state field makes the polarity-magnitude pairing of the dispositional/actual graded monism structurally visible. Mapping onto the two-layer ontology:
+
+| aspect | dispositional layer (J, continuous) | actual layer (s, discrete) |
+|---|---|---|
+| polarity | continuous direction `Ĵ` | discrete sign `sign(s) ∈ {−, 0, +}` |
+| magnitude | continuous `\|J\|`, unbounded ("infinite potential" each voxel can carry) | unit magnitude `\|s\| ∈ {0, 1}`; the actual energy/potential content sits in `\|J\|` |
+| equilibrium | `J = 0` | `s = 0` |
+| algebraic substrate | `J ∈ ℝ³` (vector field, continuous phase content) | `s ∈ {i², 0, \|i²\|}` = `{−1, 0, +1}` (real projection of `Z[i]^× ∪ {0}`) |
+
+The state-field's specific values `{−1, 0, +1}` follow from Axiom 0 via `s = i²`; they are not independent postulates. See `FOUND_TERNARY_STATE_FROM_I.md` for the full grounding chain. The imaginary half `{i, −i}` of `Z[i]^×` is not discarded — it lives in the flux field's continuous phase content.
 
 ---
 
