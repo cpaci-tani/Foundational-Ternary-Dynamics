@@ -95,6 +95,19 @@ include(FtdAddTest)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+# ftd_eft — leaf library for EFT objects shared between ftd_core and ftd_cuda.
+# Solves a static-archive link-order issue (2026-05-03): gpu_engine.cu
+# (in libftd_cuda.a) calls DualCellContinuity::DualCellContinuity(int);
+# extracting the providing TU into a leaf library that BOTH ftd_core
+# and ftd_cuda PUBLIC-depend on guarantees libftd_eft.a appears AFTER
+# both consumers in the link line, satisfying gpu_engine's reference.
+# Replaces the manual `target_link_libraries(... ftd_core ftd_cuda ftd_core)`
+# workaround used for test_wilson_dirac_cuda_parity (commit 514cdb3).
+add_library(ftd_eft STATIC
+    src/eft/dual_cell_continuity.cpp
+)
+target_include_directories(ftd_eft PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
 # Core library
 add_library(ftd_core
     src/render_bridge.cpp
@@ -110,7 +123,7 @@ add_library(ftd_core
                                            # for Phase-2 lattice-measured β(g)
     src/eft/blocking.cpp                    # EFT Phase 2A: real-space block-spin transformation
     src/eft/dual_cell_blocking.cpp          # Native EFT: finite-volume source/flux blocking
-    src/eft/dual_cell_continuity.cpp        # Native EFT: finite-volume current/reaction blocking
+    # src/eft/dual_cell_continuity.cpp moved to ftd_eft (see above)
     src/eft/dual_cell_flow.cpp              # Native EFT: bare b=2 flow measurements
     src/csv_export.cpp     # RF-05: csv export bodies moved from csv_export.h
     src/constructors/constructors_core.cpp
@@ -160,6 +173,12 @@ target_include_directories(ftd_core PUBLIC
 if(OpenMP_CXX_FOUND)
     target_link_libraries(ftd_core PUBLIC OpenMP::OpenMP_CXX)
 endif()
+# Both ftd_core and ftd_cuda PUBLIC-depend on ftd_eft so libftd_eft.a appears
+# AFTER both consumers in the generated link line (CMake topological sort
+# places leaves last). This satisfies gpu_engine.cu's DualCellContinuity
+# reference at the linker's ftd_cuda → ftd_eft scan transition. See ftd_eft
+# definition above.
+target_link_libraries(ftd_core PUBLIC ftd_eft)
 if(FTD_ENABLE_CUDA)
     target_link_libraries(ftd_core PUBLIC ftd_cuda)
 endif()
@@ -640,10 +659,8 @@ if(FTD_ENABLE_CUDA)
     target_link_libraries(test_gpu_dissipation ftd_core ftd_cuda)
 
     # Phase II.2-E: Wilson-Dirac CPU/GPU parity
-    # Note: ftd_core listed twice to satisfy gpu_engine.cu's DualCellContinuity
-    # reference; this minimal test does not pull in render_bridge transitively.
     add_executable(test_wilson_dirac_cuda_parity tests/test_wilson_dirac_cuda_parity.cpp)
-    target_link_libraries(test_wilson_dirac_cuda_parity ftd_core ftd_cuda ftd_core)
+    target_link_libraries(test_wilson_dirac_cuda_parity ftd_core ftd_cuda)
     add_test(NAME test_wilson_dirac_cuda_parity COMMAND test_wilson_dirac_cuda_parity)
     set_tests_properties(test_wilson_dirac_cuda_parity PROPERTIES TIMEOUT 120)
 endif()
