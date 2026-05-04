@@ -658,7 +658,14 @@ static void section_thermostat() {
 
         double T_target = 0.1;
         ae.set_target_temperature(T_target);
-        ae.set_thermostat_tau(0.5);  // fast coupling
+        // Berendsen velocity rescaling is unstable for dt/tau >= 1: with
+        // dt = 1.0 (default), the previous tau = 0.5 gave dt/tau = 2,
+        // causing the integrator to oscillate between cold (T_init) and
+        // hot (≈ 2× T_target) on every tick. After an even number of
+        // ticks T_final ≡ T_initial → "no heating observed" was a test
+        // setup error, not an engine bug. tau = 4.0 → dt/tau = 0.25
+        // (well within stable region) → T converges to target.
+        ae.set_thermostat_tau(4.0);
         ae.toggles.ionic = false;
         ae.toggles.van_der_waals = false;
         ae.toggles.thermostat = true;
@@ -672,18 +679,7 @@ static void section_thermostat() {
         // Temperature should be closer to target
         double err0 = std::abs(d0.temperature - T_target);
         double err1 = std::abs(d1.temperature - T_target);
-        // 2026-05-03: SKIPPED — Berendsen thermostat heating path is
-        // currently inactive. With T_initial = 0.0024 and T_target = 0.1,
-        // expected lambda² >> 1 (heat-up) but observed lambda = 1 exactly:
-        // T_final = T_initial to all printed digits. Cooling (TH4) works
-        // correctly. Diagnostic temperature reported by AtomEngine differs
-        // from internally-computed thermostat temperature, suggesting a
-        // velocity-injection vs initial-velocity mismatch. Real engine
-        // bug; filed as follow-up. TH4 cooling + TH2/TH3/TH5 toggle
-        // semantics still verified.
-        // ftd::test::check("TH1: temperature moves toward target", err1 < err0);
-        (void)err0; (void)err1;
-        std::cout << "  (TH1 assertion skipped — see source for diagnosis)\n";
+        ftd::test::check("TH1: temperature moves toward target", err1 < err0);
     }
 
     // ---- TH2: Toggle OFF → no effect ----
