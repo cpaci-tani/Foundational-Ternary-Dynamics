@@ -119,7 +119,7 @@ $$\langle E_0 \rangle = \frac{1}{2} \int_{-\pi}^{\pi} \frac{dk_x}{2\pi} \int_{-\
 
 (in lattice units where $a = 1$, $\hbar = 1$).
 
-**In physical units** (restoring the lattice spacing $a = \ell_P$):
+**In physical units** (under the Planck-primary calibration $a \equiv \ell_P$ per FTD-0041; this is a gauge declaration per FTD-0137, not a derivation):
 
 $$\langle E_0 \rangle_\text{naive} = 0.8527 \times M_P \sim 10^{19}\;\text{GeV}$$
 

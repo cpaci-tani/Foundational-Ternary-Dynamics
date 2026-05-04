@@ -695,7 +695,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-30 | Manifestation = electroweak phase transition | [THEOREM] | $\mathcal{L}_{\text{RB}}$ + feedback dynamics |
 | SM-31 | $N_{\text{base}} = 2^{(D+1)/2} = 4$ | [SELECTION] | $D = 3$ + spinor dimension argument |
 | SM-32 | Mexican hat potential from BI + manifestation feedback | [SELECTION] | SM-30, Born-Infeld nonlinearity |
-| SM-33 | Hierarchy problem resolved by lattice UV cutoff | [SELECTION] | Physical cutoff at $a = \ell_P$ |
+| SM-33 | Hierarchy problem resolved by lattice UV cutoff | [SELECTION] | Physical cutoff at $a$ (= $\ell_P$ under Planck-primary calibration FTD-0041; gauge per FTD-0137) |
 | SM-34 | Substrate-to-aggregate transition yields $S > 2$ | [SELECTION] | Three-level hierarchy: L1=2, L2=sqrt(2), L3=2*sqrt(2); see [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md) |
 | SM-35 | Two-loop correction closes 1.26 ppm gap | [CONJECTURE] | Right magnitude; exact coefficient not computed |
 | SM-36 | Dark matter = sub-threshold flux, $\mathcal{L} = 0.75$ | [CONJECTURE] | Qualitative consistency only |

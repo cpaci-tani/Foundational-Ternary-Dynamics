@@ -682,20 +682,26 @@ Model and Gravity}
 \markright{A Discrete Ontology for the Standard Model and Gravity}
 
 This manuscript presents Foundational Ternary Dynamics (FTD): a
-computational framework that derives the Standard Model gauge groups,
-coupling constants, and particle masses from five postulates about a
-discrete cubic lattice.
+computational framework that motivates the Standard Model gauge groups
+and computes coupling constants and particle masses from five postulates
+about a discrete cubic lattice plus three explicit calibration
+declarations (\(a_\mathrm{phys} \equiv \ell_P\), \(t_\mathrm{phys}\),
+\(K_B = m_e\)).
 
-The framework postulates a three-dimensional integer lattice
-\(\mathbb{Z}^3\) where each site carries a ternary state
-\(s \in \{-1, 0, +1\}\) and a continuous flux vector
-\(\mathbf{J} \in \mathbb{R}^3\). From the lattice geometry alone ---
-specifically, the decomposition of the 26-neighbor Moore neighborhood
-into three sublattices (SC, FCC, BCC) --- the gauge group
-\(U(1) \times SU(2) \times SU(3)\), the fine structure constant
-\(\alpha = 1/137.036\) (to 1.26 ppm at tree level, 9.6 ppb with one-loop
-correction), and the complete mass spectrum emerge with zero free
-parameters.
+The framework postulates a three-dimensional cubic lattice
+(undefined-boundary, not \(\mathbb{Z}^3\) as completed totality) where
+each site carries a flux vector \(\mathbf{J} \in \mathbb{R}^3\) and a
+discrete state \(s \in \{-1, 0, +1\}\) that records when local flux
+density crosses the manifestation threshold \(K_B\). From the lattice
+geometry alone --- specifically, the decomposition of the 26-neighbor
+Moore neighborhood into three sublattices (SC, FCC, BCC) --- the
+gauge-group structure \(U(1) \times SU(2) \times SU(3)\) is motivated as
+a {[}SELECTION{]}, the master-quadratic root \(x_+ \approx 137.036\)
+matching \(1/\alpha\) to 1.26 ppm at tree level is a {[}STRONGLY
+MOTIVATED CONJECTURE{]} (the polynomial identity is a {[}THEOREM{]}; the
+physical identification has substantial structural-uniqueness evidence
+but no derivation chain), and the dimensionless mass ratios are
+computed; absolute masses are calibration-conditional.
 
 \subsection*{What this manuscript does}\label{what-this-manuscript-does}
 \addcontentsline{toc}{subsection}{What this manuscript does}
@@ -704,19 +710,26 @@ parameters.
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Derives} the Standard Model gauge groups from lattice geometry
-  (Book I)
+  \textbf{Motivates} the Standard Model gauge groups from lattice
+  geometry {[}SELECTION{]} (Book I)
 \item
-  \textbf{Computes} 46 observables with zero free parameters (Book II)
+  \textbf{Computes} \(\sim 46\) Standard Model observables; roughly two
+  dozen are {[}DERIVED{]} or {[}THEOREM{]}, the remainder are
+  {[}PARAMETRIC{]} (FTD-derived constants substituted into standard QFT
+  formulas) (Book II)
 \item
-  \textbf{Recovers} full nonlinear general relativity from discrete
-  dynamics (Book II)
+  \textbf{Reconstructs} linear spin-2 propagation on the lattice and
+  presents a Deser-iterative bootstrap to nonlinear Einstein equations
+  (currently {[}SELECTION{]} / {[}PARTIAL DERIVED{]}; see Ch. 15) (Book
+  II)
 \item
-  \textbf{Resolves} the measurement problem via algebraic type
-  transition (Book III)
+  \textbf{Frames} the measurement problem via algebraic type transition
+  (Type III\(_1\) to Type I) --- a structural framing, not a derivation
+  of qualia or a unique mechanism (Book III)
 \item
-  \textbf{Predicts} dark matter properties, vacuum energy, and proton
-  decay (Book III)
+  \textbf{Catalogs} dark-matter, vacuum-energy, and proton-decay claims
+  with their current tags (most {[}SELECTION{]} or {[}CONJECTURE{]};
+  predictions stated with falsification criteria) (Book III)
 \end{enumerate}
 
 \subsection*{What this manuscript does not
@@ -784,7 +797,7 @@ tracks every input.
   falsification criteria.
 \end{itemize}
 
-\textbf{Framework version:} 5.30 (April 2026)
+\textbf{Framework version:} 5.35 (May 2026)
 
 \bookmarksetup{startatroot}
 
@@ -797,24 +810,40 @@ This work began as a computational experiment: simulate a discrete
 lattice with ternary states and see what emerges. What emerged was
 unexpected.
 
-The 26-neighbor Moore neighborhood on \(\mathbb{Z}^3\) decomposes into
+The 26-neighbor Moore neighborhood on the cubic lattice decomposes into
 three sublattices --- simple cubic (6 face-adjacent), face-centered
 cubic (12 edge-adjacent), and body-centered cubic (8 corner-adjacent).
-Each sublattice excites a different number of flux components,
-generating exactly the Standard Model gauge group
-\(U(1) \times SU(2) \times SU(3)\). The BCC sublattice's eigenvalue ---
-a product of cosines, \(1 - \cos k_1 \cos k_2 \cos k_3\) --- connects
-through Watson's 1939 integral identity to the lemniscatic constant
-\(G^* = \Gamma(1/4)^2/(\sqrt{2}\pi)\). A self-consistency gap equation
-with coefficient 16 (the square of the CM curve automorphism count) then
-produces two roots: \(1/\alpha = 137.036\) and \(N_c = 3\). Everything
-else follows.
+Each sublattice excites a different number of flux components, with the
+resulting structure motivating the Standard Model gauge group
+\(U(1) \times SU(2) \times SU(3)\) (the structural derivation is a
+{[}SELECTION{]} argument, not a uniqueness theorem). The BCC
+sublattice's eigenvalue --- a product of cosines,
+\(1 - \cos k_1 \cos k_2 \cos k_3\) --- connects through Watson's 1939
+integral identity to the lemniscatic constant
+\(G^* = \Gamma(1/4)/\Gamma(3/4)\) (this is a {[}THEOREM{]}:
+\(W_3 = G^{*\,2}/(2\pi)\)). A self-consistency polynomial with
+coefficient 16 (the square of the CM-curve automorphism count) has two
+roots, \(x_+ \approx 137.036\) and \(x_- \approx 3.024\). The polynomial
+identity itself is a {[}THEOREM{]}; the physical identification
+\(x_+ = 1/\alpha\) and \(x_- \approx N_c\) is a {[}STRONGLY MOTIVATED
+CONJECTURE{]} (1.26 ppm and 0.80\% empirical match; supported by
+Bayes-factor and structural-uniqueness scans).
 
-The framework has five postulates, six derived constants, and zero free
-parameters. It computes 46 Standard Model observables, recovers the full
-nonlinear Einstein equations, and resolves the measurement problem
-through an algebraic type transition (Type III\(_1\) to Type I) that
-requires no external observer.
+The framework has five postulates and a derivation chain that produces
+six dimensionless constants from \(G^*\) alone (the dimensionless
+predictions: \(\alpha\), \(N_c\), lepton mass ratios, mixing ratios).
+Three calibration declarations (\(a_\mathrm{phys} \equiv \ell_P\),
+\(t_\mathrm{phys} = \sqrt{3}\,\ell_P/c\), \(K_B = m_e\)) are required to
+translate dimensionless ratios into dimensional units; predictions in
+absolute units are conditional on this calibration. Of the \(\sim 46\)
+Standard Model observables tracked in Book II, roughly two dozen are
+{[}DERIVED{]} or {[}THEOREM{]} (mostly structural integers and ratios)
+and the remainder are {[}PARAMETRIC{]} (FTD-derived constants
+substituted into standard QFT formulas). The full nonlinear
+Einstein-equation recovery and the measurement-problem framing via
+algebraic type transition (Type III\(_1\) to Type I) are presented at
+their currently-supported tags --- a structural framing rather than a
+complete derivation.
 
 This manuscript is written for working physicists. It assumes
 familiarity with quantum field theory, general relativity, and lattice
@@ -828,7 +857,7 @@ Whether it is the \emph{right} framework --- or merely a remarkably
 efficient parametrization --- is for the reader to judge. The
 falsification criteria are in Chapter 24.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Methodology}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Methodology}, bottomtitle=1mm, opacityback=0]
 
 This work was developed through computationally-guided mathematical
 discovery (CGMD): systematic lattice simulation revealing structural
@@ -3901,7 +3930,7 @@ power of a small number.
 \section{15.5 Scope limitation
 {[}SELECTION{]}}\label{scope-limitation-selection}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Honest limitation}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Honest limitation}, bottomtitle=1mm, opacityback=0]
 
 FTD recovers the Schwarzschild solution and all its observational
 consequences via the Sommerfeld-Schwarzschild identity. However, the
@@ -4777,7 +4806,7 @@ quantum state as ontologically fundamental, which FTD does not do.
 
 \chapter{Consciousness and Self-Reference}\label{sec-consciousness}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic notice}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic notice}, bottomtitle=1mm, opacityback=0]
 
 This chapter is \textbf{{[}CONJECTURE{]}} throughout. The mathematical
 structures are well-defined but their identification with consciousness
@@ -5215,7 +5244,7 @@ Dark matter is sub-threshold flux & \(0 < |\mathbf{J}| < K_B\) &
 
 \section{24.3 Falsification criteria}\label{falsification-criteria}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{What would kill FTD}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{What would kill FTD}, bottomtitle=1mm, opacityback=0]
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -5341,7 +5370,7 @@ structures.}
 
 \emph{``What persists through time''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Stability arises from geometry. Three particles in an equilateral
 triangle (a triad) form a structure that resists decay. This is how
@@ -5563,7 +5592,7 @@ of elements: all the atoms that can exist.
 
 \emph{``All the elements, from hydrogen to uranium and beyond''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 The periodic table is not arbitrary. Each element is a specific
 configuration of protons, neutrons, and electrons, with properties
@@ -5589,7 +5618,7 @@ in the story of cosmic evolution, from the first three minutes after the
 Big Bang to the stellar explosions that seeded your planet with
 complexity.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Historical Context}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Historical Context}, bottomtitle=1mm, opacityback=0]
 
 Dmitri Mendeleev published his periodic table in 1869, famously
 predicting undiscovered elements (gallium, scandium, germanium) from
@@ -5607,7 +5636,7 @@ The periodic table organizes elements by: - \textbf{Rows (periods)}:
 Shell being filled - \textbf{Columns (groups)}: Valence electron
 configuration - \textbf{Blocks}: Orbital type (s, p, d, f)
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Mass Units in This Chapter}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Mass Units in This Chapter}, bottomtitle=1mm, opacityback=0]
 
 Atomic masses are given in \textbf{atomic mass units (u)}, where 1 u =
 1/12 the mass of carbon-12 ≈ 931.5 MeV/c². The mass of a hydrogen atom
@@ -5796,7 +5825,7 @@ across space at 10\% the speed of light, incorporated into the cloud
 that became our solar system, and eventually found its way into
 \emph{you}. You are, quite literally, a walking supernova remnant.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Cosmic Origin of Blood}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Cosmic Origin of Blood}, bottomtitle=1mm, opacityback=0]
 
 Every breath you take, the iron in your hemoglobin carries oxygen from
 your lungs to your cells. That iron was forged in a stellar core over 5
@@ -5895,7 +5924,7 @@ The periodic table gives us atoms. Now we examine how electrons behave
 within atoms: orbitals, shells, and chemical reactivity in
 Chapter~\ref{sec-electron-dynamics}.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -5916,7 +5945,7 @@ Chapter~\ref{sec-electron-dynamics}.
 
 \emph{``How electrons orbit, bond, and determine chemistry''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Electron behavior follows simple rules: minimize energy, fill shells,
 share or transfer to achieve stability. All of chemistry flows from
@@ -5964,7 +5993,7 @@ L = \sqrt{\ell(\ell+1)} \hbar
 where \(\ell\) is the \textbf{azimuthal quantum number} (0, 1, 2,
 3\ldots{} for s, p, d, f orbitals respectively).
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Quantum Numbers}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Quantum Numbers}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -6139,7 +6168,7 @@ and radioactive decay.
 
 \emph{``Fusion, fission, and the power of the nucleus''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 The nucleus contains almost all of an atom's mass, bound by the strong
 force. When nuclei rearrange, they release or absorb enormous energy:
@@ -6201,7 +6230,7 @@ Where: - A = mass number (protons + neutrons) - Z = atomic number
 \subsection{FTD Relations for
 Coefficients}\label{ftd-relations-for-coefficients}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Relations}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Relations}, bottomtitle=1mm, opacityback=0]
 
 The formulas below express the semi-empirical mass formula coefficients
 using framework integers. These achieve \textless2\% accuracy but
@@ -6248,7 +6277,7 @@ Asymmetry (a\_A) & Pauli blocking & K\_B / N\_c & 23.2 & 23.29 &
 0.4\% \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Consistency, Not Derivation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Consistency, Not Derivation}, bottomtitle=1mm, opacityback=0]
 
 These relations achieve \textless2\% accuracy using the same integers
 (K\_B, α, N\_c, n\_eff) that appear in particle masses and coupling
@@ -6529,7 +6558,7 @@ chemistry: how atoms connect into molecules.
 
 \chapter{Chemical Bonds}\label{sec-chemical-bonds}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard chemistry context}. The content
 describes known chemical bonding principles for pedagogical
@@ -6545,7 +6574,7 @@ electron shell interactions.}
 
 \emph{``How atoms connect''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Atoms bond to achieve stability. Whether by giving, taking, or sharing
 electrons, the goal is always the same: complete shells.
@@ -6760,7 +6789,7 @@ Atoms bond into molecules. Now we explore the simplest molecules:
 diatomics and triatomics that make up our atmosphere and essential
 compounds in Chapter~\ref{sec-simple-molecules}.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -6779,7 +6808,7 @@ compounds in Chapter~\ref{sec-simple-molecules}.
 
 \chapter{Simple Molecules}\label{sec-simple-molecules}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard chemistry context}. The content
 describes known molecular structures for pedagogical completeness.
@@ -6790,7 +6819,7 @@ scale.
 
 \emph{``The building blocks of chemistry''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Simple molecules, just two or three atoms, make up our atmosphere, our
 water, and the gases we breathe. Complexity starts small.
@@ -7028,7 +7057,7 @@ life.
 
 \chapter{Complex Molecules}\label{sec-complex-molecules}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard organic chemistry context}. The
 content describes known molecular structures for pedagogical
@@ -7039,7 +7068,7 @@ axioms at this scale.
 
 \emph{``Organic chemistry and beyond''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Carbon's ability to form four bonds creates unlimited molecular
 possibilities. Add nitrogen, oxygen, and other atoms, and you have the
@@ -7264,7 +7293,7 @@ Next, we explore macromolecules: proteins, polymers, and DNA.
 
 \chapter{Macromolecules}\label{sec-macromolecules}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard biochemistry context}. The
 content describes known macromolecular structures for pedagogical
@@ -7275,7 +7304,7 @@ axioms at this scale.
 
 \emph{``The giants of the molecular world''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 From simple building blocks, enormous structures emerge. Proteins fold,
 DNA encodes, and polymers give materials their properties. Life is
@@ -7527,7 +7556,7 @@ transitions.
 
 \chapter{States of Matter}\label{sec-states-matter}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard thermodynamics context}. While
 FTD proposes a mechanism for emergent thermodynamics (see callout
@@ -7540,14 +7569,14 @@ derivations.
 
 \emph{``Solid, liquid, gas: and beyond''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 The same atoms behave completely differently depending on temperature
 and pressure. Phase is about motion, not identity.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Thermodynamics {[}CONJECTURE{]}}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Thermodynamics {[}CONJECTURE{]}}, bottomtitle=1mm, opacityback=0]
 
 Temperature, pressure, and phase are \emph{proposed} to emerge in FTD:
 
@@ -7732,7 +7761,7 @@ Temperature emerges from particle motion. In FTD, we define a
 T_{\text{proxy}} = \frac{\langle|\mathbf{J}|^2\rangle}{3N}
 \]
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Dimensional Analysis}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Dimensional Analysis}, bottomtitle=1mm, opacityback=0]
 
 In physical units, kinetic theory gives
 \(\frac{3}{2}k_B T = \frac{1}{2}m\langle v^2\rangle\), so
@@ -7806,7 +7835,7 @@ Map the conditions where different phases exist.
   \textbf{plasma}: Ionized gas
 \end{itemize}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Chapter Summary}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Chapter Summary}, bottomtitle=1mm, opacityback=0]
 
 \textbf{Matter exists in four primary phases}: solid (fixed positions,
 long-range order), liquid (touching but mobile, short-range order), gas
@@ -7826,7 +7855,7 @@ States exist in equilibrium under specific conditions. At the
 boundaries, transitions occur. Next, we explore phase transitions:
 melting, boiling, and more in Chapter~\ref{sec-phase-transitions}.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -7845,7 +7874,7 @@ melting, boiling, and more in Chapter~\ref{sec-phase-transitions}.
 
 \chapter{Phase Transitions}\label{sec-phase-transitions}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard thermodynamics context}. While
 FTD proposes mechanisms for phase transitions (see callout below),
@@ -7857,14 +7886,14 @@ described are {[}CONJECTURE{]}.
 
 \emph{``When matter transforms''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Phase transitions happen at specific conditions: the critical points
 where energy finally overcomes the forces holding a phase together.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Phase Transitions {[}CONJECTURE{]}}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Phase Transitions {[}CONJECTURE{]}}, bottomtitle=1mm, opacityback=0]
 
 Phase transitions in FTD are \emph{proposed} to arise from competition
 between flux gradients:
@@ -8104,7 +8133,7 @@ Electroweak & Higgs condensate forms & First-order \\
 QCD & Color confinement & Crossover \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Universal Physics}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Universal Physics}, bottomtitle=1mm, opacityback=0]
 
 The same mathematics describes ice melting and the electroweak
 transition: both involve an order parameter (flux configuration)
@@ -8180,7 +8209,7 @@ Normal phases cover most conditions. But at extremes, exotic states
 emerge: superconductors, superfluids, and more in
 Chapter~\ref{sec-exotic-states}.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -8199,7 +8228,7 @@ Chapter~\ref{sec-exotic-states}.
 
 \chapter{Exotic States}\label{sec-exotic-states}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard condensed matter context}. While
 FTD proposes mechanisms for exotic states (see callout below),
@@ -8211,7 +8240,7 @@ described are {[}CONJECTURE{]}.
 
 \emph{``When matter does the impossible''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 At extreme conditions (very cold, very dense, very hot) matter exhibits
 behaviors that defy everyday intuition. These exotic states reveal
@@ -8219,7 +8248,7 @@ quantum mechanics at macroscopic scales.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Exotic States {[}CONJECTURE{]}}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Exotic States {[}CONJECTURE{]}}, bottomtitle=1mm, opacityback=0]
 
 Exotic quantum phases are \emph{proposed} to emerge when flux behavior
 becomes macroscopically coherent:
@@ -8538,7 +8567,7 @@ biological structures.
 
 \chapter{Crystal Lattices}\label{sec-crystal-lattices}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard crystallography context}. While
 FTD proposes a mechanism for crystal structure (see callout below),
@@ -8550,7 +8579,7 @@ described are {[}CONJECTURE{]}.
 
 \emph{``Order in the solid state''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Crystals are not random: they follow strict geometric rules. Only 14
 fundamental lattice types exist in 3D, and all crystalline matter fits
@@ -8558,7 +8587,7 @@ into these patterns.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Crystal Structure {[}CONJECTURE{]}}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Crystal Structure {[}CONJECTURE{]}}, bottomtitle=1mm, opacityback=0]
 
 The 14 Bravais lattices are \emph{proposed} to emerge from FTD's
 discrete substrate:
@@ -8872,7 +8901,7 @@ materials: metals, insulators, and everything between.
 
 \chapter{Metals and Conductors}\label{sec-metals-conductors}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard solid-state physics context}.
 While FTD proposes a mechanism for metallic conduction (see callout
@@ -8884,7 +8913,7 @@ described are {[}CONJECTURE{]}.
 
 \emph{``The electron sea''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Metals conduct because their electrons are delocalized: not bound to
 individual atoms but free to flow throughout the material. The electron
@@ -8892,7 +8921,7 @@ sea explains all metallic properties.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Metallic Conduction {[}CONJECTURE{]}}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Metallic Conduction {[}CONJECTURE{]}}, bottomtitle=1mm, opacityback=0]
 
 The ``electron sea'' is \emph{proposed} to arise from FTD's flux
 structure:
@@ -9134,7 +9163,7 @@ are semiconductors: the basis of modern electronics.
 
 \chapter{Semiconductors}\label{sec-semiconductors}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard semiconductor physics context}.
 \textbf{No quantitative predictions} (band gaps, doping effects) are
@@ -9144,7 +9173,7 @@ derived from FTD axioms at this scale.
 
 \emph{``The foundation of computing''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Semiconductors can be switched between conducting and insulating. This
 controllability enables transistors, and transistors enable computers.
@@ -9413,7 +9442,7 @@ building blocks of life.
 
 \chapter{Biological Structures}\label{sec-biological-structures}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Pedagogical Context {[}NOT DERIVED FROM FTD{]}}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides \textbf{standard biochemistry/biophysics context}.
 While FTD proposes a mechanism for biological structure (see callout
@@ -9425,7 +9454,7 @@ described are {[}CONJECTURE{]}.
 
 \emph{``Life's building blocks''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Life builds with the same atoms as rocks and metals, but organizes them
 into self-replicating, energy-processing, information-storing
@@ -9433,7 +9462,7 @@ structures. The architecture of life is molecular.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Biological Structure {[}CONJECTURE{]}}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Proposes Biological Structure {[}CONJECTURE{]}}, bottomtitle=1mm, opacityback=0]
 
 Biological organization is \emph{proposed} to emerge from the same flux
 dynamics governing all matter:
@@ -9759,7 +9788,7 @@ materials, we now scale up to planetary bodies where gravity dominates.}
 
 \emph{``How worlds are born''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Planets form from the same process that governs all scales: matter
 following gravity gradients, accumulating until stable structures
@@ -9955,7 +9984,7 @@ this is \textbf{geodesic motion}:
 The Christoffel symbols Γ are determined by the metric derivatives:
 which come from the flux density profile.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Gravity as Geometry}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Gravity as Geometry}, bottomtitle=1mm, opacityback=0]
 
 FTD's flux gradients create an effective curved geometry. What looks
 like a force is actually motion along the straightest possible path
@@ -10097,7 +10126,7 @@ gases that surround worlds and enable life.
 
 \emph{``The breath of worlds''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 An atmosphere is a battle between gravity (holding gas in) and thermal
 energy (allowing escape). The winner determines whether a world can
@@ -10105,7 +10134,7 @@ support life.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Atmospheric Structure}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Atmospheric Structure}, bottomtitle=1mm, opacityback=0]
 
 Atmospheric layering emerges from flux dynamics in a gravitational
 field:
@@ -10383,7 +10412,7 @@ geology: the solid structure of worlds.
 
 \emph{``The solid foundation of worlds''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Planets are not static: their interiors churn, their surfaces crack, and
 their mountains rise over millions of years. Geology is planetary
@@ -10655,7 +10684,7 @@ magnetospheres: the invisible shields that protect worlds from space.
 
 \emph{``Invisible shields''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 A planet's magnetic field is its shield against the solar wind. Without
 one, atmospheres erode and surfaces are irradiated. Earth's
@@ -10931,7 +10960,7 @@ power solar systems: stars themselves.
 
 \emph{``From nebula to star''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Stars are born when gravity defeats pressure in molecular clouds. The
 same process that forms planets (accretion) operates at vastly larger
@@ -10939,7 +10968,7 @@ scales to ignite fusion.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Stellar Formation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Stellar Formation}, bottomtitle=1mm, opacityback=0]
 
 Stellar formation in FTD follows from flux dynamics at large scales:
 
@@ -11163,7 +11192,7 @@ complex processes of fragmentation, accretion, and disk formation that
 determine not just stellar properties but also the planets that may form
 alongside.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -11188,7 +11217,7 @@ alongside.
 
 \emph{``Where stars spend their lives''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 A main sequence star is a self-regulating fusion reactor: gravity
 squeezes, fusion pushes back. This equilibrium can last billions of
@@ -11455,7 +11484,7 @@ periodic table.
 
 \emph{``Forging the elements''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Every atom heavier than hydrogen was made inside a star. The carbon in
 your body, the iron in your blood: all forged in stellar cores and
@@ -11463,7 +11492,7 @@ scattered by explosions.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Nucleosynthesis}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Nucleosynthesis}, bottomtitle=1mm, opacityback=0]
 
 Element formation follows from flux dynamics at nuclear densities:
 
@@ -11711,7 +11740,7 @@ quietly, sometimes explosively. Next, we explore stellar death.
 
 \emph{``How stars end their lives''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 A star's mass determines its fate. Small stars fade quietly into white
 dwarfs. Massive stars explode as supernovae, seeding the universe with
@@ -11719,7 +11748,7 @@ heavy elements.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Stellar Death}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Stellar Death}, bottomtitle=1mm, opacityback=0]
 
 Stellar endpoints follow from the limits of flux support:
 
@@ -11932,7 +11961,7 @@ neutron stars, and black holes. Next, we explore these compact objects.
 
 \emph{``The endpoints of stellar evolution''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Gravity never gives up. White dwarfs, neutron stars, and black holes
 represent gravity's victory at progressively higher densities:
@@ -12182,7 +12211,7 @@ how galaxies form and evolve.
 
 \emph{``From seeds to spirals''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Galaxies form from tiny density fluctuations in the early universe,
 amplified by gravity over billions of years. Dark matter provides the
@@ -12190,7 +12219,7 @@ scaffolding.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Galaxy Formation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Galaxy Formation}, bottomtitle=1mm, opacityback=0]
 
 Galaxy formation emerges from the flux field's response to primordial
 perturbations:
@@ -12419,7 +12448,7 @@ more.
 
 \emph{``The cosmic menagerie''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Galaxies come in distinct types, but these are not fixed categories:
 they represent different evolutionary states, shaped by mergers,
@@ -12684,7 +12713,7 @@ cosmic neighborhood in detail.
 
 \emph{``Our cosmic home''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 We live inside a galaxy: a barred spiral of several hundred billion
 stars, with a supermassive black hole at its center. The Milky Way is
@@ -12692,7 +12721,7 @@ our address in the universe.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Galactic Structure}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{How FTD Produces Galactic Structure}, bottomtitle=1mm, opacityback=0]
 
 The Milky Way's structure emerges from flux dynamics at galactic scales:
 
@@ -12974,7 +13003,7 @@ transform. Next, we explore these cosmic collisions.
 
 \emph{``Cosmic collisions''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Galaxies do not just drift through space: they collide, merge, and
 transform each other. These interactions drive galaxy evolution and
@@ -13263,7 +13292,7 @@ cosmic realm: the large-scale structure of the universe itself.
 
 \emph{``The cosmic web''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Galaxies are not randomly scattered: they form a vast web of filaments,
 walls, and voids. This pattern is the largest structure in the universe,
@@ -13473,7 +13502,7 @@ mysterious substance that outweighs all visible matter.
 
 \emph{``The invisible scaffold''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Most of the matter in the universe is invisible. We know it exists
 because we see its gravitational effects, but we have never detected it
@@ -13481,7 +13510,7 @@ directly. Dark matter is the skeleton on which galaxies are built.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, bottomtitle=1mm, opacityback=0]
 
 Dark matter in FTD remains \textbf{{[}OPEN{]}}. The mechanisms proposed
 in this chapter are speculative interpretations, not derivations from
@@ -13661,7 +13690,7 @@ mass-energy content of the universe.
 In FTD, dark matter is not a new particle species: it is a property of
 the \textbf{self-field halo} surrounding every manifested particle.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, bottomtitle=1mm, opacityback=0]
 
 The self-field halo mechanism is \textbf{{[}SELECTION{]}} --- physically
 motivated and supported by engine simulation evidence, but not
@@ -13766,7 +13795,7 @@ For galactic halos (r \textasciitilde{} kpc):
 
 This matches observations!
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{A New Paradigm}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{A New Paradigm}, bottomtitle=1mm, opacityback=0]
 
 FTD suggests dark matter is not a particle to be discovered: it is a
 property of structured void. This explains why direct detection
@@ -13878,7 +13907,7 @@ This is precisely the mechanism FTD predicts: flux disturbances in the
 void can trigger manifestation transitions at \emph{distant} locations
 from the primary interaction.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Validation of FTD Detection Mechanism}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Validation of FTD Detection Mechanism}, bottomtitle=1mm, opacityback=0]
 
 The Migdal effect confirmation validates the core FTD prediction that
 sub-threshold interactions can produce observable signatures through
@@ -13974,7 +14003,7 @@ the universe's expansion: dark energy.
 
 \emph{``The accelerating expansion''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 The universe is not just expanding: it is accelerating. Something with
 negative pressure, filling all of space, is pushing the cosmos apart. We
@@ -14109,7 +14138,7 @@ Suppression}{The FTD Solution: \textbackslash alpha\^{}\{16\} Mode-Coupling Supp
 FTD provides a \textbf{physical derivation} of the cosmological constant
 that resolves the 122 orders of magnitude discrepancy.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Precise Formula vs.~Logarithmic Approximation}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Precise Formula vs.~Logarithmic Approximation}, bottomtitle=1mm, opacityback=0]
 
 The canonical FTD derivation (DERIV\_COSMOLOGICAL\_CONSTANT.md) gives
 the vacuum energy density:
@@ -14160,7 +14189,7 @@ Observed:
 
 \textbf{Agreement to 1.0\%!}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The 122 Orders of Magnitude Explained}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The 122 Orders of Magnitude Explained}, bottomtitle=1mm, opacityback=0]
 
 The cosmological constant is not unnaturally small: it is a 57th-order
 effect in the electromagnetic coupling. The Lemniscate-Alpha framework
@@ -14318,7 +14347,7 @@ the full history: the cosmological epochs from Big Bang to today.
 
 \emph{``The history of the universe''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 The universe has evolved through distinct eras, each with its own
 physics. From the Planck era to the present, we can trace 13.8 billion
@@ -14431,7 +14460,7 @@ n\_s (spectral index) & 0.9649 & 0.9649 ± 0.0042 \\
 r (tensor-to-scalar) & 0.0033 & \textless{} 0.06 \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Inflation {[}OPEN ISSUES{]}}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Inflation {[}OPEN ISSUES{]}}, bottomtitle=1mm, opacityback=0]
 
 The Starobinsky potential is \textbf{motivated by} the FTD action
 structure, but the derivation involves: 1. Integrating out sub-Planckian
@@ -14554,7 +14583,7 @@ Substituting:
 
 \[\eta \approx 6 \times 10^{-10}\]
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Baryogenesis}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Baryogenesis}, bottomtitle=1mm, opacityback=0]
 
 This mechanism \textbf{demonstrates} that FTD contains the necessary
 ingredients for baryogenesis: 1. CP violation from the CKM phase
@@ -14993,7 +15022,7 @@ flux density.}
 
 \emph{``Points of no return''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Black holes are not holes at all. They are regions where gravity has
 become so strong that nothing, not even light, can escape. They are the
@@ -15001,7 +15030,7 @@ ultimate expression of gravity's triumph.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Historical Context}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Historical Context}, bottomtitle=1mm, opacityback=0]
 
 John Michell (1784) and Pierre-Simon Laplace (1796) first conceived of
 ``dark stars'' with escape velocities exceeding light speed. Karl
@@ -15282,7 +15311,7 @@ entropy evolution during black hole evaporation.}
 evolution (see THEORETICAL\_FOUNDATIONS Part II for the argument). The
 Page curve follows automatically.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{No Information Loss}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{No Information Loss}, bottomtitle=1mm, opacityback=0]
 
 In FTD, the flux field's unitary evolution guarantees information
 preservation. The ``paradox'' arises only if you treat the horizon as a
@@ -15420,7 +15449,7 @@ understanding. What seemed like a fundamental conflict between gravity
 and quantum mechanics turns out to be a feature of how information is
 encoded and retrieved in a discrete lattice.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -15445,7 +15474,7 @@ encoded and retrieved in a discrete lattice.
 
 \emph{``Ripples in spacetime''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Insight}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Insight}, bottomtitle=1mm, opacityback=0]
 
 Gravitational waves, propagating disturbances in the spacetime metric,
 were predicted by general relativity (Einstein 1916) and first directly
@@ -15710,7 +15739,7 @@ particles also rain down from space: cosmic rays.
 
 \emph{``High-energy messengers''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 The universe is filled with speeding particles: some with energies far
 beyond what our accelerators achieve. Cosmic rays are messengers from
@@ -15977,7 +16006,7 @@ virtual particles everywhere. Next, we explore vacuum fluctuations.
 
 \emph{``The quantum foam''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Empty space is not empty. Quantum mechanics guarantees that even the
 vacuum churns with virtual particles, popping in and out of existence.
@@ -16221,7 +16250,7 @@ the nature of emergence.
 
 \emph{``What is it to be alive, precisely?''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Purpose of This Chapter}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Purpose of This Chapter}, bottomtitle=1mm, opacityback=0]
 
 This chapter provides an \textbf{operational definition of life} in FTD
 terms. We distinguish life from non-life using the framework's
@@ -16270,7 +16299,7 @@ DNA is one implementation of genetic memory. It is not the definition.
 
 \section{The FTD Definition of Life}\label{the-ftd-definition-of-life}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Definition: Life}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Definition: Life}, bottomtitle=1mm, opacityback=0]
 
 A \textbf{living system} is a spatially localized pattern of manifested
 states \(\{s(v)\}\) that:
@@ -16444,7 +16473,7 @@ Mule & Yes & Satisfies 1-3; hybrid origin does not negate life \\
 
 Putting it together:
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Definition (Formal)}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Definition (Formal)}, bottomtitle=1mm, opacityback=0]
 
 A configuration \(\Omega \subset \mathcal{L}\) is \textbf{living} at
 time \(t\) if:
@@ -16578,7 +16607,7 @@ self-organization to the mystery of awareness.
 
 \emph{``Order from chaos''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Complexity does not require a designer. Simple local rules, repeated
 endlessly, can create structures of breathtaking intricacy. The universe
@@ -16851,7 +16880,7 @@ to atoms to molecules to life) is an emergent phenomenon arising from
 levels below (see Ch. 21 for the formal treatment of consciousness as
 emergent self-organization).
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -16875,7 +16904,7 @@ emergent self-organization).
 
 \emph{``From molecule to mind, a continuous ladder''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Purpose of This Chapter}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Purpose of This Chapter}, bottomtitle=1mm, opacityback=0]
 
 This chapter establishes a \textbf{graded hierarchy of detection,
 response, and awareness} from the simplest molecular systems to
@@ -17347,7 +17376,7 @@ awareness (knowing that one will die)
 
 \section{The Complete Hierarchy}\label{the-complete-hierarchy}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The Ladder of Sentience}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The Ladder of Sentience}, bottomtitle=1mm, opacityback=0]
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1556}}
@@ -17526,7 +17555,7 @@ apex: consciousness as meta-sLoop (see Ch. 21 for the formal treatment).
 
 \emph{``The arrow of time''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Information is physical. Erasing a bit releases heat. Entropy measures
 what we do not know. The second law drives the universe toward
@@ -17634,7 +17663,7 @@ S_A = -\text{Tr}(\rho_A \ln \rho_A)
 
 where \(\rho_A = \text{Tr}_B(\rho_{AB})\) is the reduced density matrix.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{FTD Connection}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{FTD Connection}, bottomtitle=1mm, opacityback=0]
 
 In FTD, entangled pairs created via pair production have: - \textbf{Pure
 total state}: S\_vN(AB) = 0 - \textbf{Mixed subsystems}: S\_vN(A) =
@@ -17776,7 +17805,7 @@ endpoint. In cosmology, this is the \textbf{heat death} state:
 
 Maximum entropy, uniform distribution, no gradients.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The Arrow is Geometric}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The Arrow is Geometric}, bottomtitle=1mm, opacityback=0]
 
 The arrow of time is not a mystery to be explained: it is a
 \textbf{boundary condition} of the variational problem. Time's direction
@@ -17999,7 +18028,7 @@ order and chaos.
 
 \emph{``Emergence at all scales''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 The universe is not merely complicated: it is complex. Complexity means
 the whole has properties that no part possesses. From quarks to
@@ -18414,7 +18443,7 @@ anthropic window: why the universe allows observers at all.
 
 \emph{``Why these constants?''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 The universe's constants seem exquisitely tuned for complexity. Slight
 changes would yield sterile cosmos. This ``fine-tuning'' demands
@@ -18702,7 +18731,7 @@ down? Next, we explore heat death and the final state.
 
 \emph{``The final equilibrium''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 All processes require energy gradients. When the last gradient flattens,
 when the final star burns out, when everything reaches the same
@@ -19001,7 +19030,7 @@ different fates.
 
 \emph{``Other fates for the cosmos''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Heat death is not destiny's only option. Depending on dark energy's
 nature, the universe might end in fire (Big Rip), ice (Big Freeze), or
@@ -19296,7 +19325,7 @@ state. The ultimate return is to the Void itself.
 
 \emph{``Home''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Philosophical Reflection: Not Physics}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Philosophical Reflection: Not Physics}, bottomtitle=1mm, opacityback=0]
 
 This chapter presents \textbf{philosophical and metaphorical
 interpretations} of FTD's cosmological implications. The content here is
@@ -19308,7 +19337,7 @@ not scientific assertions and should not be read as such.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Reflection}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Reflection}, bottomtitle=1mm, opacityback=0]
 
 Within FTD's framework, the Void (state 0) represents the substrate of
 possibility. Metaphorically speaking, what manifests may return to this
@@ -19606,7 +19635,7 @@ it return.
 
 \emph{``The tuning of reality: constants organized by status''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Constants Are Derived}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Constants Are Derived}, bottomtitle=1mm, opacityback=0]
 
 The Lemniscate-Alpha program proposes a compact set of relations
 connecting many constants to four integers: b₃=7, N\_c=3, N\_eff=13,
@@ -19965,7 +19994,7 @@ Tau & 17×207 - 42 & 3477 & 3477.2 & 0.01\% \\
 \subsection{Quarks (ratios to
 electron)}\label{quarks-ratios-to-electron}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Fits}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Fits}, bottomtitle=1mm, opacityback=0]
 
 Unlike the lepton masses (pure integer arithmetic) and the proton mass
 (two independent paths via G*), these quark mass formulas are
@@ -20214,7 +20243,7 @@ k\_c × c\_cusp × G* & = 1 & exact \\
   Number of generations: exactly 3
 \end{itemize}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Related Topics}, bottomtitle=1mm, opacityback=0]
 
 \begin{itemize}
 \tightlist
@@ -20247,7 +20276,7 @@ k\_c × c\_cusp × G* & = 1 & exact \\
 
 \emph{``The mathematical foundation: from axioms to derivations''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Derivation Equations Added}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Derivation Equations Added}, bottomtitle=1mm, opacityback=0]
 
 This reference now includes the equations used throughout the
 Lemniscate-Alpha program and related chapters to connect Standard Model
@@ -20570,7 +20599,7 @@ Roots: \(\alpha = 1/137.036\) (larger), \(N_c = 3.024\) (smaller)
 
 \subsection{Fine Structure Constant}\label{fine-structure-constant}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Notation Clarification}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Notation Clarification}, bottomtitle=1mm, opacityback=0]
 
 The master quadratic yields \(x_+ = 137.036\) (the larger root), which
 is identified with \(1/\alpha\), not \(\alpha\) itself.
@@ -20884,7 +20913,7 @@ Momentum & \(\sum \vec{J} = \text{constant}\) \\
 Charge & \(\sum q = \text{constant}\) \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, bottomtitle=1mm, opacityback=0]
 
 Energy is proportional to flux magnitude \textbf{squared} (analogous to
 kinetic energy \(\propto v^2\)), while momentum is the vector sum of
@@ -20896,7 +20925,7 @@ flux.
 
 \emph{``The vocabulary of existence''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Reference Chapter}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Reference Chapter}, bottomtitle=1mm, opacityback=0]
 
 This glossary defines key terms used throughout the Foundational Ternary
 Dynamics framework, organized alphabetically.
@@ -21950,7 +21979,7 @@ UV & Ultraviolet \\
 \emph{``The complete bestiary: mass relations and numerical fits within
 the framework''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Masses Are Derived}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Major Update: Masses Are Derived}, bottomtitle=1mm, opacityback=0]
 
 This catalog compiles the mass relations used in the Lemniscate-Alpha
 program and companion material, using four integers: \(b_3=7\),
@@ -21966,7 +21995,7 @@ shown as ratios to electron mass \(m_e\) = 0.511 MeV/\(c^2\).
 Quarks are the fundamental constituents of hadrons. The catalog presents
 the framework's proposed mass relations in a uniform format.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Fits}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Numerical Fits}, bottomtitle=1mm, opacityback=0]
 
 Unlike lepton masses (which follow pure integer arithmetic: muon = 3×70
 - 3, tau = 17×207 - 42) and the proton mass (which has two independent
@@ -22237,7 +22266,7 @@ Role & Mass generation \\
 \section{Composite Particles:
 Baryons}\label{composite-particles-baryons}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Composite Particles}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status: Composite Particles}, bottomtitle=1mm, opacityback=0]
 
 \textbf{Nucleons (proton, neutron)} have framework derivations with
 sub-percent accuracy.
@@ -22281,7 +22310,7 @@ Neutron & \(m_p + (\varphi^2 - 12\alpha)\) & 1839.0 & 939.6 & 0.04\% \\
 Where T(10) = 55 is the 10th triangular number, and
 \((n-p)/m_e = \varphi^2 - 12\alpha = 2.53\).
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Two Paths to the Proton Mass}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Two Paths to the Proton Mass}, bottomtitle=1mm, opacityback=0]
 
 The proton mass has two independent formulas: the pure geometry path
 (\(6\pi^5 = 1836.118\), 0.002\% error) and the framework integer path
@@ -22693,7 +22722,7 @@ each derivation.
 \emph{``Intellectual honesty requires knowing what we assume, derive,
 and conjecture.''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Purpose of This Chapter}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Purpose of This Chapter}, bottomtitle=1mm, opacityback=0]
 
 This chapter categorizes every major claim in FTD by its epistemic
 status. Before accepting any claim, check here to see whether it is an
@@ -22702,7 +22731,7 @@ axiom (assumed), theorem (derived), emergence (simulated), or conjecture
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{V2 Restructure Notice}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{V2 Restructure Notice}, bottomtitle=1mm, opacityback=0]
 
 This ledger was written for the v1 chapter structure. Chapter numbers
 should be cross-referenced against the v2 restructured table of
@@ -22755,7 +22784,7 @@ argument \\
 investigation \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Core Paper vs.~Companion Work}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Core Paper vs.~Companion Work}, bottomtitle=1mm, opacityback=0]
 
 \textbf{Core paper (T1-T6)} establishes: lattice structure → elliptic
 fibration → CM selection → master quadratic → α = 1/137.036
@@ -22832,7 +22861,7 @@ neighborhood \\
 preservation \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Ternary States: Theorem, Not Axiom}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Ternary States: Theorem, Not Axiom}, bottomtitle=1mm, opacityback=0]
 
 The ternary state space \{−1, 0, +1\} was historically listed as an
 axiom, but is now understood as a \textbf{theorem} of Epistemic-Physical
@@ -22938,7 +22967,7 @@ Coefficient 16 & \(2^3 / 0.5\) & \hyperref[t]{T} THEOREM & Exact \\
 \textbf{THEOREM} & Derived \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{D = 3 Uniqueness}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{D = 3 Uniqueness}, bottomtitle=1mm, opacityback=0]
 
 \textbf{D = 3 Uniqueness (A1 → Derived)}: The three-dimensional lattice
 is no longer axiomatic but uniquely selected by 6 independent
@@ -23323,7 +23352,7 @@ Multiverse not required & Single universe + geometry suffices & {[}?{]}
 CONJECTURE \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Verified in Simulation}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Verified in Simulation}, bottomtitle=1mm, opacityback=0]
 
 The following items have been \textbf{verified in simulation}:
 
@@ -23373,7 +23402,7 @@ of framework integers; alternatives fail by 30-70\% & \hyperref[t]{T}
 \section{PHYS-QFT Critical Concerns: Resolution
 Status}\label{sec-phys-qft-resolution}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{TIER 2+ Verification Complete}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{TIER 2+ Verification Complete}, bottomtitle=1mm, opacityback=0]
 
 All three critical concerns raised by the PHYS-QFT expert reviewer have
 been resolved.
@@ -23667,7 +23696,7 @@ Conjectures & \textbf{2} & \\
 Open Questions & \textbf{0} & All resolved \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Foundational Completeness Status}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Foundational Completeness Status}, bottomtitle=1mm, opacityback=0]
 
 FTD achieves \textbf{foundational completeness} within its assumptions:
 
@@ -23737,7 +23766,7 @@ relations \\
 
 \section{Reading Guide}\label{reading-guide-1}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-tip-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{How to Use This Ledger}, leftrule=.75mm, colframe=quarto-callout-tip-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-tip-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-tip-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{How to Use This Ledger}, bottomtitle=1mm, opacityback=0]
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -23814,7 +23843,7 @@ we test.
 
 \section{Epistemic Upgrades (v5.1-v5.8)}\label{sec-epistemic-upgrades}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Status Changes January 2026}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Status Changes January 2026}, bottomtitle=1mm, opacityback=0]
 
 Several items previously marked as \hyperref[i]{I} IMPOSED or
 \hyperref[s]{S} SELECTION have been upgraded to \hyperref[t]{T} THEOREM
@@ -23943,7 +23972,7 @@ Riemann zeta ρ₁ & Unconnected & \textbf{VERIFIED} (0.15\%) & v5.2 \\
 Mandelbrot duality & Unconnected & \textbf{PROVEN} (exact) & v5.6 \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Framework Status (v5.8)}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Framework Status (v5.8)}, bottomtitle=1mm, opacityback=0]
 
 With these upgrades, the FTD framework has: - \textbf{Zero} imposed
 parameters that remain unexplained - \textbf{All four} framework
@@ -23970,7 +23999,7 @@ document:
 
 \emph{``A framework that determines itself''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 FTD's four framework integers \{7, 3, 13, 4\} are not arbitrary: they
 form a self-consistent solution within the framework's stated
@@ -23979,7 +24008,7 @@ that its inputs constrain one another.
 
 \end{tcolorbox}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Scope}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Scope}, bottomtitle=1mm, opacityback=0]
 
 This chapter presents both \textbf{core paper claims} and
 \textbf{extended claims}:
@@ -24216,7 +24245,7 @@ alternative integer choices typically violate one or more of:
 \section{Part II: The Strong CP Problem: Proposed Mechanism
 {[}†{]}}\label{part-ii-the-strong-cp-problem-proposed-mechanism}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Companion Work}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Companion Work}, bottomtitle=1mm, opacityback=0]
 
 This section extends beyond what the core paper establishes. The
 resolution of the Strong CP problem follows from discrete lattice
@@ -24274,7 +24303,7 @@ In continuous spacetime, θ can take any real value, and θ ≈ 0 requires
 fine-tuning. In the discrete lattice of FTD, θ ∈ 2πℤ is topologically
 quantized, so exp(iθ) = 1 always, and no fine-tuning is needed.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Strong CP: Proposed Mechanism {[}†{]}}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Strong CP: Proposed Mechanism {[}†{]}}, bottomtitle=1mm, opacityback=0]
 
 Companion-work claim {[}†{]}: In the discrete-lattice formulation used
 here, the topological structure can enforce θ = 0 (mod 2π) for the flux
@@ -24311,7 +24340,7 @@ flux oscillations, detectable by experiments like ADMX.
 \section{\texorpdfstring{Part III: Novel Predictions
 \hyperref[p]{P}}{Part III: Novel Predictions P}}\label{part-iii-novel-predictions-p}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Predictions (Falsifiable)}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Predictions (Falsifiable)}, bottomtitle=1mm, opacityback=0]
 
 The following predictions emerge from the broader FTD framework. Some
 follow directly from the core paper's discrete lattice structure; others
@@ -24528,7 +24557,7 @@ Axion mass & \textasciitilde6 μeV & Axion found at very different
 mass \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Scientific Status}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Scientific Status}, bottomtitle=1mm, opacityback=0]
 
 This is what makes FTD scientific: it makes specific predictions that
 can be wrong. The framework is not merely consistent: it is testable.
@@ -24640,7 +24669,7 @@ FTD}\label{sec-information-quantification}
 \emph{``To know is to constrain; to experience is to accumulate
 constraints''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Key Revelation}, bottomtitle=1mm, opacityback=0]
 
 Information is not substance: it is constraint on configuration space.
 We can quantify it using entropy measures. An sLoop's priors are its
@@ -24724,7 +24753,7 @@ The shared information between two regions \(A\) and \(B\):
 
 \textbf{Interpretation}: How much knowing \(A\) tells you about \(B\).
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Mutual Information is Symmetric}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Mutual Information is Symmetric}, bottomtitle=1mm, opacityback=0]
 
 \(I(A; B) = I(B; A)\)
 
@@ -24810,7 +24839,7 @@ The information content of the self-embedding \(\sigma\):
 
 The mutual information between the self-model and the actual substrate.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Three Information Types}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Three Information Types}, bottomtitle=1mm, opacityback=0]
 
 \begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
@@ -25008,7 +25037,7 @@ The \textbf{reflection bandwidth}:
 
 \[I(\sigma; o_\sigma) \leq C_{\text{reflection}}\]
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The sLoop Bottleneck}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The sLoop Bottleneck}, bottomtitle=1mm, opacityback=0]
 
 Consciousness is limited by reflection bandwidth. We cannot fully know
 ourselves because \(I_\sigma < I_\Omega\): the self-model is always a
@@ -25186,7 +25215,7 @@ bits/sec & \textasciitilde0.1 bits/sec & 10⁻⁶ \\
 \textbf{Conscious bandwidth}: \textasciitilde50 bits/sec \textbf{Overall
 compression}: \textasciitilde10⁻⁵
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The Consciousness Bottleneck}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{The Consciousness Bottleneck}, bottomtitle=1mm, opacityback=0]
 
 Only 1 in 100,000 bits of sensory input reaches conscious awareness. The
 vast majority is processed unconsciously, filtered, and discarded.
@@ -25524,7 +25553,7 @@ experience.
 \emph{``The integers are not arbitrary: they are fixed points of
 self-referential consistency.''}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Deep Mathematical Structure}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Deep Mathematical Structure}, bottomtitle=1mm, opacityback=0]
 
 The framework integers \{3, 4, 7, 13\} are not parameters: they are
 \textbf{structural necessities} arising from self-referential, bounded,
@@ -25597,7 +25626,7 @@ crossover point where both sequences meet (excluding trivial values).
 21, 34\ldots{} - Tribonacci: 0, 0, 1, 1, 2, 4, 7, \textbf{13}, 24,
 44\ldots{}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Theorem NTHR-4}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Theorem NTHR-4}, bottomtitle=1mm, opacityback=0]
 
 \(F_7 = T_7 = 13\) is the unique non-trivial crossover point of the
 Fibonacci and Tribonacci sequences. Therefore \(N_{\text{eff}} = 13\) is
@@ -25648,7 +25677,7 @@ Consequence}{Step 4: j = 1728 as Derived Consequence}}\label{step-4-j-1728-as-de
 This means \textbf{\(j = 1728\) is now DERIVED} from the integer values,
 not independently selected.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Theorem NTHR-1}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Theorem NTHR-1}, bottomtitle=1mm, opacityback=0]
 
 Given \(N_{\text{base}} = 4\) and \(N_c = 3\) (from the master
 quadratic), the j-invariant is uniquely determined as
@@ -25782,7 +25811,7 @@ Component & Value & Meaning \\
 This precision is comparable to the TRD base derivation of \(\alpha\)
 (1.26 ppm); the precision formula achieves \textbf{0.21 ppt}.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Python Verification}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Python Verification}, bottomtitle=1mm, opacityback=0]
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -26116,7 +26145,7 @@ In January 2025, astronomers announced the discovery of Cloud-9, a
 \textbf{first observation consistent with predictions} derived from the
 FTD framework.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Caution}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Caution}, bottomtitle=1mm, opacityback=0]
 
 ``Consistent with'' is not ``proven by.'' The observations described
 here are \textbf{compatible} with FTD predictions, but alternative
@@ -26226,7 +26255,7 @@ Near threshold mass & \textasciitilde{}\(5 \times 10^9\)
 \(M_\odot \approx M_{\text{crit}}\) & \textbf{CONSISTENT} \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Status}, bottomtitle=1mm, opacityback=0]
 
 \textbf{{[}CONSISTENT WITH OBSERVATION{]}}: Cloud-9 represents the first
 FTD prediction found to be consistent with independent astronomical
@@ -26409,7 +26438,7 @@ framework:
   measurement.
 \end{enumerate}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Note}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Note}, bottomtitle=1mm, opacityback=0]
 
 The Migdal effect was predicted by Arkady Migdal in 1941 but never
 directly observed until 2025. Its confirmation validates a key detection
@@ -26514,7 +26543,7 @@ bosons \\
 Fractionalized excitations & Manifestation transitions (s: 0 → ±1) \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Validation of Core Mechanism}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{Validation of Core Mechanism}, bottomtitle=1mm, opacityback=0]
 
 The quantum spin ice confirmation validates FTD's central claim:
 photon-like gauge bosons can \textbf{emerge} from discrete lattice
@@ -26578,7 +26607,7 @@ structure \\
 Currently decreasing & Void relaxation toward equilibrium \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Epistemic Status}, bottomtitle=1mm, opacityback=0]
 
 DESI's \(4.2\sigma\) evidence for evolving dark energy is
 \textbf{strongly consistent} with FTD's prediction that dark energy
@@ -26665,7 +26694,7 @@ S = 2.275 (exceeds classical bound) & ✓ Quantum bound accessible via
 substrate coupling \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-important-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{sLoop Mechanism Validated}, leftrule=.75mm, colframe=quarto-callout-important-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-important-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-important-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{sLoop Mechanism Validated}, bottomtitle=1mm, opacityback=0]
 
 This experiment directly supports FTD's interpretation: Bell violations
 are signatures of \textbf{ontological unity} in the void substrate, not
@@ -26756,7 +26785,7 @@ invariant \\
 First baryon observation & Validates mechanism for baryogenesis \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Baryogenesis Connection}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Baryogenesis Connection}, bottomtitle=1mm, opacityback=0]
 
 The Standard Model's CP violation is insufficient to explain the
 universe's matter-antimatter asymmetry. FTD derives
@@ -26851,7 +26880,7 @@ CP phase in composites only & ✓ No electron CP violation detected \\
 SM-compatible CP structure & ✓ Consistent with SM expectation \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Constraints on Extensions}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Constraints on Extensions}, bottomtitle=1mm, opacityback=0]
 
 The eEDM measurement \textbf{constrains} potential extensions to FTD.
 Any future FTD-derived prediction of \(d_e\) must satisfy
@@ -26902,7 +26931,7 @@ Tensor GW only & Gravity & ✅ Consistent (LIGO) \\
 \(N_c \approx 3\) & QCD & (consistent) \\
 \end{longtable}
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-note-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Epistemic Situation (Updated 2025)}, leftrule=.75mm, colframe=quarto-callout-note-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-note-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-note-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{The Epistemic Situation (Updated 2025)}, bottomtitle=1mm, opacityback=0]
 
 The year 2025 marks a qualitative transformation in FTD's empirical
 standing. What began as numerical coincidences has evolved into a
@@ -27015,7 +27044,7 @@ factor f} varies with environmental flux density, different measurement
 contexts would yield different lifetimes, not due to exotic physics, but
 due to context-dependent substrate coupling.
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, bottomtitle=1mm, opacityback=0]
 
 This interpretation is \textbf{speculative}. FTD does not yet provide a
 quantitative calculation of the expected discrepancy. The puzzle may be
@@ -27143,7 +27172,7 @@ If confirmed, this would mean: - No single ``proton radius'' exists -
 Different probes see different effective sizes - The flux distribution
 has multi-scale structure
 
-\begin{tcolorbox}[enhanced jigsaw, coltitle=black, colbacktitle=quarto-callout-warning-color!10!white, bottomtitle=1mm, opacityback=0, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, leftrule=.75mm, colframe=quarto-callout-warning-color-frame, opacitybacktitle=0.6, colback=white, arc=.35mm, breakable, toptitle=1mm, bottomrule=.15mm, left=2mm, titlerule=0mm, rightrule=.15mm, toprule=.15mm]
+\begin{tcolorbox}[enhanced jigsaw, left=2mm, coltitle=black, toprule=.15mm, colframe=quarto-callout-warning-color-frame, breakable, toptitle=1mm, arc=.35mm, colbacktitle=quarto-callout-warning-color!10!white, opacitybacktitle=0.6, rightrule=.15mm, titlerule=0mm, colback=white, leftrule=.75mm, bottomrule=.15mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{Epistemic Status}, bottomtitle=1mm, opacityback=0]
 
 This interpretation is \textbf{speculative}. FTD does not yet provide
 quantitative predictions for the flux distribution parameters. MUSE
