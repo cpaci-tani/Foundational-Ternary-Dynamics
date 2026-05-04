@@ -1,7 +1,7 @@
 # Derivation — Nonlinear-bridge closure for FTD-0110
 
-**Tag:** [DERIVED] for Bridge-I (pipeline `O_h`-equivariance) / [PARTIAL · single-block DERIVED, multi-scale OPEN] for Bridge-II
-**Date:** 2026-04-28
+**Tag:** [DERIVED] for Bridge-I as a **global** statement; **[FALSIFIED EMPIRICALLY]** for Bridge-I's local-block reading needed by Bridge-II / [CONDITIONAL · §3.1 single-block argument depends on a local-A_{1g} hypothesis the implementation does not satisfy] for Bridge-II
+**Date:** 2026-04-28 (original) · 2026-05-04 (Option A empirical update — see §5)
 **LEDGER row:** FTD-0110 (extended)
 **Companion:** [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) (the linear-level derivation of `k = 1/N_base = 1/4`)
 **Paper section:** `dissemination/papers/PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` §4 + §8
@@ -287,9 +287,64 @@ Independent of the analytical closure, the multi-scale cluster-size formula `N(A
 
 The Bridge-I argument is verifiable by:
 1. **Source audit** of the post-fix engine (`engine/src/render_bridge.cpp` for genesis/evaporation/Langevin steps; `engine/src/gauss_project.cpp` for projection): each step is voxel-local, voxel-parallel, voxel-independent-RNG. This audit was implicit in the LEDGER's FTD-0107 RE-MEASUREMENT note (2026-04-27); explicit completion is queued as a follow-up.
-2. **Empirical cross-check** of `A_{1g}`-energy fraction during steady-state runs: instrument the engine to log `⟨φ(t), P_{A_{1g}} φ(t)⟩` per snapshot; expected to remain ≈ 1 (relative to total energy excluding Langevin-thermal-bath contribution).
+2. **Empirical cross-check** of `A_{1g}`-energy fraction during steady-state runs: instrument the engine to log `⟨φ(t), P_{A_{1g}} φ(t)⟩` per snapshot.
 
-This second check is a discrete numerical experiment, not part of this derivation. It is queued as the next concrete engine-instrumentation task.
+### 5.1 · Status (updated 2026-05-04, Option A empirical campaign)
+
+The §5.2 instrument was built and run. The result is a substantive
+empirical finding that **demotes the Bridge-I claim's tag for the
+local-block measurement**:
+
+**Implementation:**
+- A_{1g} projector ([`engine/include/ftd/a1g_projector.h`](../../../engine/include/ftd/a1g_projector.h)) — 4-dim orbit-sum basis (centre + SC face + FCC edge + BCC corner) on the 27-block. 13/13 sanity checks pass: δ_centre→f=1, uniform→f=1, pure E_g face vector→f=0, random IID Gaussian→f=4/27=0.148, periodic-wrap correctness, etc. ([`engine/tests/test_a1g_projector.cpp`](../../../engine/tests/test_a1g_projector.cpp))
+- Per-toggle bisect ([`engine/tests/dump_a1g_decay.cpp`](../../../engine/tests/dump_a1g_decay.cpp)) at L=32, sub-genesis amplitude A=0.5·K_GENESIS, deterministic (no Langevin), 200 ticks, IC = δ_centre·A·ê_x.
+- Characterization regression test ([`engine/tests/test_a1g_bridge_i_empirical.cpp`](../../../engine/tests/test_a1g_bridge_i_empirical.cpp)).
+
+**Empirical result:**
+
+| Pipeline configuration | f_A1g(centre 27-block) over 200 ticks |
+|---|---|
+| wave only | 1.000000 (machine precision) |
+| wave + damping | 1.000000 |
+| wave + dual_substrate | 1.000000 |
+| wave + coupling | 1.000000 |
+| wave + **gauss_projection** | drops to 0.98 at t=1; drifts to 0.15 (≈ 4/27) by t≈100 |
+| full defaults | identical to wave + gauss alone |
+| GPU FFT Poisson, 6 SOR iters | bit-exact identical to 50 / 500 / 5000 SOR iters |
+
+**Mechanism diagnosis:**
+
+`gauss_projection` is the single source of local A_{1g} symmetry breaking. The diagnosis is *not* SOR convergence (the GPU uses an exact spectral Poisson via cuFFT and exhibits the same decay; CPU SOR with 5000 iters matches CPU SOR with 6 iters bit-exactly).
+
+The diagnosis is **non-locality of the Poisson convolution**. The argument in §2.4 establishes that the projector `P_div-free` is O_h-equivariant *globally* (it commutes with `ρ_27 ⊗ T_{1u}` on the full lattice). What it does **not** establish is local 27-block A_{1g} preservation: the non-local lattice Green's function distributes φ_pot across the entire lattice, and ∂_x of the resulting T_{1u}-along-x basis vectors (`ê_face,x`, `ê_edge_xy,x`, `ê_edge_xz,x`, `ê_corner,x`) generically has support on the centre 27-block that is **not** an A_{1g} orbit-sum (e.g. `∂_x ê_edge_xy,x` is supported only on `(c, c±1, c)` of the centre block — that's 2 of the 6 face voxels, with E_g and T_{2g} content).
+
+### 5.2 · Implication for Bridge-II
+
+Bridge-II's single-block argument in §3.1 invokes the **local** 27-block A_{1g} energy budget at the cluster centre to derive `N(A) ≈ A²/N_base`. The local A_{1g} preservation that Bridge-II relies on is **not what §2 actually proves** — §2 proves global equivariance, not local-block invariance.
+
+Therefore the cluster-size formula's structural origin is **not** captured by the §3.1 derivation. The empirical 5% SM-particle agreement (FTD-0110 T6/T7) is unaffected — that's a measurement, not a derivation — but its theoretical scaffold needs rebuilding.
+
+### 5.3 · Tag movement (post 2026-05-04)
+
+| Claim | Pre-2026-05-04 | Post-2026-05-04 |
+|---|---|---|
+| Bridge-I (global O_h-equivariance of `P_div-free`) | [DERIVED] | [DERIVED] (unchanged — global statement) |
+| Bridge-I (local 27-block A_{1g} preservation under full pipeline) | [implied by §2 argument] | **[FALSIFIED] empirically; not what §2 proves** |
+| Bridge-II single-block via local A_{1g} budget | [DERIVED] | **[CONDITIONAL on a local-A_{1g} hypothesis that the implementation does not satisfy]** |
+| Cluster-size formula `N(A) ≈ A²/N_base` (empirical) | [STRONGLY MOTIVATED CONJECTURE] | [STRONGLY MOTIVATED CONJECTURE] (unchanged — empirical fact stands) |
+| `k = 1/N_base = 1/4` coefficient origin | [DERIVED at full nonlinear pipeline level] | **[DERIVED at linear level only; nonlinear closure OPEN]** |
+
+### 5.4 · Forward research lines
+
+The empirical fact `N(A) ≈ A²/4` survives. The structural origin of `k=1/4` requires a different derivation that does **not** depend on local 27-block A_{1g} preservation. Three candidate routes:
+
+1. **Orbit-equipartition.** Total energy `A²` is conserved; under global O_h-equivariance of the lattice + thermalisation, energy distributes equally across the four `O_h`-orbits in the 27-block. Per-orbit energy `= A²/4`. Cluster fires at voxels where the per-orbit energy density exceeds `K_GENESIS²`. This invokes only global O_h-equivariance (which §2 *does* establish) and orbit-counting (`mult(A_{1g}, ρ_27) = N_orbits = 4` by Burnside).
+
+2. **Wavefront-shell geometry.** The Green's function for the 18-point Laplacian has known asymptotic form `G(r) ~ C/r`. The wavefront sweeps outward from `δ_centre · A`; cluster forms on the wavefront where amplitude exceeds `K_GENESIS`. The geometric cross-section gives `A²` scaling; the prefactor `1/4` is a specific lattice constant (related to the `4π` of 3D Coulomb).
+
+3. **Timescale separation.** Cluster formation completes by tick `~ 5–20` while the 27-block A_{1g}-decoherence (driven by gauss-mediated mode-mixing) takes ~50–100 ticks. During the cluster-formation window, f_A1g is still `≥ 0.9`, and the §3.1 single-block argument applies *approximately* over the formation window. This rescues the empirical 5% match without rescuing the [DERIVED] tag.
+
+Routes 1 and 2 each merit an independent derivation attempt; if either succeeds, FTD-0110's `k=1/4` is on a more robust footing than the original §3.1 argument provided. Route 3 is verifiable via direct measurement of cluster-formation timescale vs A_{1g}-decoherence timescale at canonical amplitudes.
 
 ---
 
