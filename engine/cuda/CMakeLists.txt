@@ -22,8 +22,13 @@ target_include_directories(ftd_cuda PUBLIC
     ${CMAKE_SOURCE_DIR}/include
 )
 
-# Link CUDA runtime libraries
+# Link CUDA runtime libraries.
+# ftd_eft provides DualCellContinuity (called from gpu_engine.cu's
+# continuity_step()). PUBLIC dep so libftd_eft.a appears in the link
+# line after libftd_cuda.a (CMake topological sort), satisfying
+# gpu_engine's reference. See engine/CMakeLists.txt ftd_eft block.
 target_link_libraries(ftd_cuda PUBLIC
+    ftd_eft
     CUDA::cudart
     CUDA::cufft
     CUDA::curand
