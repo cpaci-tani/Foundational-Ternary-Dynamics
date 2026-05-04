@@ -26,7 +26,7 @@ The lattice has a UV cutoff at the lattice spacing. The natural mass scale of th
 
 ### Factor 2: √(2π)
 
-The partition function Z(x) involves an exact Gaussian integral over the flux field J (see DERIV_MASTER_QUADRATIC_FROM_Z.md, Step 1). The Gaussian integral over a single real variable produces √(2π). This factor is the signature of the exact J-integration. [THEOREM]
+The partition function Z(x) involves an exact Gaussian integral over the flux field J (see DERIV_MASTER_QUADRATIC_FROM_Z.md, Step 1). The Gaussian integral over a single real variable produces √(2π). This factor is the signature of the exact J-integration. [SELECTION] (downgraded from [THEOREM] 2026-05-03 night per FTD-0133 audit; the cited DERIV_MASTER_QUADRATIC_FROM_Z.md derivation route was retracted as FTD-0032 on 2026-04-19, and even the retracted chain produced a *cancelling* 2π rather than a surviving √(2π); the √(2π) factor in m_e is more honestly read as inherited from `v = M_P·√(2π)·α^8` in HIGGS-4, which is itself [SELECTION]; the √(2π) cancels in the cleaner ratio `m_e/v = (16/3)·α³` whose exponent 3 = N_c is [DERIVED] post-MC-T3.2 closure)
 
 In the φ³ EFT (DERIV_PHI3_EXACT_EFT.md), the mass parameter m² = x₊ − x₋ = 134.012. The ratio √(2π)/m ≈ 0.217 sets the natural scale at which loop corrections become significant.
 
@@ -83,7 +83,7 @@ Each factor has a structural origin:
 | Component | Tag | Justification |
 |-----------|-----|---------------|
 | m_e = M_P · prefactor · α^n (dimensional form) | [IMPOSED] | Standard Planck-scale mass formula |
-| √(2π) from Gaussian J-integral | [THEOREM] | Exact integral, no approximation |
+| √(2π) from Gaussian J-integral | [SELECTION] | Originally tagged [THEOREM] citing DERIV_MASTER_QUADRATIC_FROM_Z.md Step 1; that document was RETRACTED as FTD-0032 (2026-04-19) and even its chain gave a *cancelling* 2π. The √(2π) factor is more honestly understood as inherited from `v = M_P·√(2π)·α^8` (HIGGS-4 [SELECTION]). Downgraded 2026-05-03 night per FTD-0133. |
 | 16 = |Aut(Eᵢ)|² from Faddeev-Popov | [THEOREM] | O_h gauge fixing on minimal torus |
 | 3 = D from |Aut|² = 2^D·(D−1)! | [THEOREM] | Algebraic uniqueness |
 | Exponent 11 from ladder position | [SELECTION] | Structural walk, not uniquely forced |

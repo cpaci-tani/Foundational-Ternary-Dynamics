@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Geometry of G* — Square Lattice and Figure-8 Lemniscate</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#fafaf7;color:#1a1a1a;font-family:Georgia,'Times New Roman',serif;padding:24px;line-height:1.5}
+h1{font-size:1.6em;font-weight:normal;text-align:center;margin-bottom:6px;letter-spacing:.01em}
+.subtitle{text-align:center;color:#555;font-size:.95em;margin-bottom:24px;font-style:italic}
+.container{max-width:1200px;margin:0 auto}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.panel{background:#fff;border:1px solid #ddd;border-radius:6px;padding:18px}
+.panel-title{font-size:1.05em;font-weight:bold;margin-bottom:6px;color:#222}
+.panel-subtitle{font-size:.85em;color:#666;margin-bottom:14px;font-style:italic}
+svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.controls{background:#fff;border:1px solid #ddd;border-radius:6px;padding:18px;margin-bottom:24px}
+.controls-row{display:flex;align-items:center;gap:14px;margin:10px 0;flex-wrap:wrap}
+.controls input[type=range]{flex:1;min-width:300px;accent-color:#222}
+.tau-display{font-family:'Computer Modern',Cambria,'Times New Roman',serif;font-size:1.2em;color:#222;min-width:140px;text-align:center}
+.tau-display .num{color:#a01010;font-weight:bold}
+.preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.preset{background:#f0ede5;border:1px solid #c8c2b0;color:#222;padding:5px 12px;border-radius:3px;cursor:pointer;font-size:.85em;font-family:Georgia,serif}
+.preset:hover{background:#e6e0d0}
+.preset.active{background:#fff8d0;border-color:#a08020;color:#604010;font-weight:bold}
+.symmetry-indicator{padding:8px 14px;border-radius:4px;font-size:.9em;font-weight:bold;text-align:center}
+.sym-yes{background:#e8f5d0;color:#406010;border:1px solid #80a040}
+.sym-no{background:#f5e0e0;color:#702020;border:1px solid #a05050}
+.connection{background:#fff;border:1px solid #ddd;border-radius:6px;padding:20px;margin-bottom:24px}
+.connection h3{font-size:1.05em;font-weight:bold;margin-bottom:10px;color:#222}
+.connection-grid{display:grid;grid-template-columns:1fr 60px 1fr;gap:14px;align-items:center;margin:14px 0}
+.conn-box{background:#f5f3ed;padding:12px;border-radius:4px;text-align:center;font-size:.9em}
+.conn-eq{text-align:center;font-size:1.3em;color:#666}
+.formula-block{background:#f5f3ed;padding:14px;margin:10px 0;border-left:3px solid #a08020;border-radius:0 4px 4px 0;font-size:.95em}
+.note{font-size:.85em;color:#555;margin-top:10px;font-style:italic}
+.value-line{font-family:Cambria,'Times New Roman',serif;margin:6px 0}
+.value-line .lhs{color:#444}
+.value-line .num{color:#a01010;font-weight:bold;font-family:'Courier New',monospace;font-size:1.05em}
+
+@media (max-width:840px){
+  .panels{grid-template-columns:1fr}
+  .connection-grid{grid-template-columns:1fr;gap:10px}
+  .conn-eq{transform:rotate(90deg)}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>The Geometry of G* &mdash; the Same Z/4 Symmetry, Three Times</h1>
+<p class="subtitle">G* is the analytic constant that registers the square-ness of one specific elliptic curve.<br>
+Three pictures of the same fact: a figure-8 in the plane, a square lattice in <span style="font-style:normal">ℂ</span>, an arc-length integral.</p>
+
+<!-- ────────────────────── TWO SYMMETRY PICTURES ────────────────────── -->
+<div class="panels">
+
+  <!-- LEFT: figure-8 lemniscate -->
+  <div class="panel">
+    <div class="panel-title">The lemniscate <span style="font-family:Cambria,serif">r² = cos(2θ)</span></div>
+    <div class="panel-subtitle">A figure-8 curve in the plane. 4-fold rotational symmetry: rotating by 90° maps the curve to itself, swapping the two lobes.</div>
+    <svg id="lemniscateSvg" viewBox="-160 -160 320 320" width="380" height="380"></svg>
+    <div class="note" style="text-align:center">
+      Arc length of <strong>one quarter</strong> (highlighted) =
+      <span class="num" style="color:#a01010;font-family:'Courier New',monospace">ϖ/2 ≈ 1.3110</span><br>
+      Total arc length = 2ϖ ≈ 5.2441
+    </div>
+  </div>
+
+  <!-- RIGHT: square lattice Z[i] -->
+  <div class="panel">
+    <div class="panel-title">The Gaussian-integer lattice <span style="font-family:Cambria,serif">ℤ[i] ⊂ ℂ</span></div>
+    <div class="panel-subtitle">Integers and i-multiples in the complex plane. The four units {1, i, −1, −i} are the corners of the unit square at the origin. Same 4-fold rotational symmetry: multiplication by i rotates by 90°.</div>
+    <svg id="latticeSvg" viewBox="-160 -160 320 320" width="380" height="380"></svg>
+    <div class="note" style="text-align:center">
+      The four units (red dots) are the orbit of <strong>1</strong> under multiplication by <strong>i</strong>:<br>
+      <span class="num" style="color:#a01010;font-family:Cambria,serif">1 → i → −1 → −i → 1</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ─────────────────────────── DEFORMATION SLIDER ─────────────────────────── -->
+<div class="controls">
+  <h3 style="font-size:1.05em;font-weight:bold;margin-bottom:10px">Deform the period lattice — only τ = i is square</h3>
+  <p style="font-size:.9em;color:#555;margin-bottom:12px">
+    Every elliptic curve over ℂ has a <em>period parallelogram</em> generated by 1 and a complex number τ with Im(τ) > 0.
+    The shape of this parallelogram determines the curve's symmetry. <strong>Almost all τ give a generic curve with only Z/2 symmetry (negation).</strong>
+    The single value <strong>τ = i</strong> gives the unique square parallelogram with full Z/4 symmetry — the lemniscatic case. G* lives only here.
+  </p>
+
+  <div class="controls-row">
+    <span class="tau-display">τ = <span class="num" id="tauDisplay">0.000 + 1.000i</span></span>
+    <span class="symmetry-indicator" id="symInd">Z/4 symmetric (square!)</span>
+  </div>
+  <div class="controls-row">
+    <label style="font-size:.85em;color:#444;width:100px">Re(τ):</label>
+    <input type="range" id="reSlider" min="-1" max="1" step="0.01" value="0">
+  </div>
+  <div class="controls-row">
+    <label style="font-size:.85em;color:#444;width:100px">Im(τ):</label>
+    <input type="range" id="imSlider" min="0.3" max="2.5" step="0.01" value="1">
+  </div>
+
+  <div class="preset-row">
+    <span class="preset active" onclick="setTau(0, 1)">τ = i (lemniscatic, square)</span>
+    <span class="preset" onclick="setTau(0, 1.732)">τ = i√3 (Eisenstein-adjacent)</span>
+    <span class="preset" onclick="setTau(0.5, 0.866)">τ = ω (Eisenstein, 60°)</span>
+    <span class="preset" onclick="setTau(0, 1.5)">τ = 1.5i (rectangular)</span>
+    <span class="preset" onclick="setTau(0.3, 1.2)">τ = 0.3 + 1.2i (oblique)</span>
+  </div>
+
+  <svg id="periodSvg" viewBox="-220 -200 440 400" width="540" height="490" style="display:block;margin:14px auto"></svg>
+  <div class="note" style="text-align:center">
+    Black dots: lattice points <span style="font-family:Cambria,serif">m + nτ</span> for m, n ∈ ℤ.
+    Shaded region: fundamental period parallelogram.
+    <strong style="color:#406010">Green:</strong> 90°-rotated copy of the parallelogram.<br>
+    The rotated copy coincides with the original <strong>iff</strong> τ = i.
+  </div>
+</div>
+
+<!-- ─────────────────────────── ARITHMETIC BRIDGE ─────────────────────────── -->
+<div class="connection">
+  <h3>The bridge: arc length = period = Γ(1/4)</h3>
+  <p style="font-size:.9em;color:#555">
+    The geometry on the left (figure-8 in the plane) and the geometry on the right (square lattice in ℂ) are the same elliptic curve seen two ways. The bridge is an integral.
+  </p>
+
+  <div class="formula-block" id="arcLengthFormula"></div>
+
+  <p style="font-size:.9em;color:#444;margin:10px 0">
+    Substitute u = sin(2θ) and apply the beta-function identity B(1/2, 1/4) = √π · Γ(1/4)/Γ(3/4):
+  </p>
+
+  <div class="formula-block" id="omegaFormula"></div>
+
+  <p style="font-size:.9em;color:#444;margin:10px 0">
+    The lemniscate constant ϖ is therefore literally a Γ(1/4) value. And G* is the same content, rescaled to be a clean ratio with no π:
+  </p>
+
+  <div class="formula-block" id="gStarFormula"></div>
+
+  <p style="font-size:.9em;color:#444;margin:10px 0">
+    <strong>What G* IS, geometrically:</strong>
+  </p>
+  <ul style="font-size:.92em;color:#333;line-height:1.7;margin-left:24px">
+    <li>The numerical signature of a torus whose period lattice is a perfect <strong>square</strong> (rather than a generic rectangle).</li>
+    <li>The arc-length-derived constant of the unique plane curve with full <strong>4-fold rotational symmetry</strong> in this analytic family (the figure-8 lemniscate).</li>
+    <li>The ratio of two specific Γ-values <strong>Γ(1/4)/Γ(3/4)</strong>, which by the reflection identity equals <strong>Γ(1/4)² / (π√2)</strong> — i.e., a square (the Γ(1/4)²) divided by a diagonal-times-side (the π√2).</li>
+  </ul>
+
+  <p style="font-size:.9em;color:#444;margin:14px 0 0">
+    Numerical anchors:
+  </p>
+  <div style="margin:8px 0">
+    <div class="value-line"><span class="lhs">ϖ (one quarter arc length × 2) = Γ(1/4)² / (2√(2π)) =</span> <span class="num">2.62205755429211...</span></div>
+    <div class="value-line"><span class="lhs">Γ(1/4) =</span> <span class="num">3.62560990822191...</span></div>
+    <div class="value-line"><span class="lhs">Γ(3/4) =</span> <span class="num">1.22541670246518...</span></div>
+    <div class="value-line"><span class="lhs">G* = Γ(1/4) / Γ(3/4) =</span> <span class="num">2.95867511918864...</span></div>
+  </div>
+</div>
+
+<!-- ─────────────────────────── WHY NOT MÖBIUS ─────────────────────────── -->
+<div class="connection">
+  <h3>Why this is not a Möbius strip</h3>
+  <p style="font-size:.92em;color:#333;line-height:1.7">
+    A Möbius strip has <strong>Z/2</strong> monodromy: walk around once, come back flipped. The geometric object underlying G* has <strong>Z/4</strong> monodromy: walk around once, you've rotated by 90°; four trips bring you back. Z/4 contains Z/2 as a subgroup, so the Möbius intuition catches the parity-flip piece (even ↔ odd Dirichlet character) but misses the 90°-rotation full structure.
+  </p>
+  <p style="font-size:.92em;color:#333;line-height:1.7;margin-top:10px">
+    Topologically the relevant manifold is a <strong>torus T²</strong> (orientable, two-sided), not a Möbius strip (non-orientable, one-sided). What's special is not the topology — every elliptic curve is a torus — but the <strong>geometry</strong> of which torus: this one has a square period lattice with a 90° rotational automorphism. That square-ness is what G* is the analytic shadow of.
+  </p>
+</div>
+
+</div>
+
+<script>
+// ═══════════════════════ Lanczos Γ(x) for reference values ═══════════════════════
+function gamma(x) {
+  const c = [
+    0.99999999999980993, 676.5203681218851, -1259.1392167224028,
+    771.32342877765313, -176.61502916214059, 12.507343278686905,
+    -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7
+  ];
+  if (x < 0.5) return Math.PI / (Math.sin(Math.PI * x) * gamma(1 - x));
+  x -= 1;
+  let a = c[0];
+  const t = x + 7.5;
+  for (let i = 1; i < 9; i++) a += c[i] / (x + i);
+  return Math.sqrt(2 * Math.PI) * Math.pow(t, x + 0.5) * Math.exp(-t) * a;
+}
+
+// ═══════════════════════ KaTeX-rendered formulas ═══════════════════════
+function renderFormulas() {
+  const arcSrc =
+    '\\text{(half-lemniscate arc length)}\\quad\\varpi = \\int_{-\\pi/4}^{\\pi/4}\\frac{d\\theta}{\\sqrt{\\cos(2\\theta)}}';
+  const omegaSrc =
+    '\\varpi = \\frac{1}{2}\\,B\\!\\left(\\tfrac{1}{2}, \\tfrac{1}{4}\\right) = \\frac{\\sqrt{\\pi}}{2}\\cdot\\frac{\\Gamma(1/4)}{\\Gamma(3/4)} = \\frac{\\Gamma(1/4)^2}{2\\sqrt{2\\pi}}';
+  const gStarSrc =
+    'G^* = \\frac{\\Gamma(1/4)}{\\Gamma(3/4)} = \\frac{\\Gamma(1/4)^2}{\\pi\\sqrt{2}} = \\frac{2\\sqrt{2}\\,\\varpi}{\\sqrt{\\pi}}';
+
+  katex.render(arcSrc, document.getElementById('arcLengthFormula'),
+    { displayMode: true, throwOnError: false });
+  katex.render(omegaSrc, document.getElementById('omegaFormula'),
+    { displayMode: true, throwOnError: false });
+  katex.render(gStarSrc, document.getElementById('gStarFormula'),
+    { displayMode: true, throwOnError: false });
+}
+
+// ═══════════════════════ The figure-8 lemniscate ═══════════════════════
+function drawLemniscate() {
+  const svg = document.getElementById('lemniscateSvg');
+  const xmlns = 'http://www.w3.org/2000/svg';
+  const scale = 110;  // pixels per unit r=1
+  // Helper: build SVG element
+  const E = (tag, attrs = {}, parent = svg) => {
+    const el = document.createElementNS(xmlns, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    parent.appendChild(el);
+    return el;
+  };
+
+  // Axes
+  E('line', { x1: -150, y1: 0, x2: 150, y2: 0, stroke: '#bbb', 'stroke-width': 0.6 });
+  E('line', { x1: 0, y1: -150, x2: 0, y2: 150, stroke: '#bbb', 'stroke-width': 0.6 });
+
+  // r² = cos(2θ): one lobe on the right (θ ∈ [-π/4, π/4]), one on left (θ ∈ [3π/4, 5π/4])
+  // We'll draw 4 quarters in 4 colors to make Z/4 visible.
+  const quarters = [
+    { range: [0, Math.PI / 4],          color: '#a01010', label: 'Q1' },
+    { range: [-Math.PI / 4, 0],         color: '#1080a0', label: 'Q2' },
+    { range: [3 * Math.PI / 4, Math.PI], color: '#a08020', label: 'Q3' },
+    { range: [-Math.PI, -3 * Math.PI / 4], color: '#608010', label: 'Q4' },
+  ];
+
+  for (const q of quarters) {
+    let pts = [];
+    const N = 80;
+    for (let i = 0; i <= N; i++) {
+      const t = q.range[0] + (q.range[1] - q.range[0]) * i / N;
+      const c = Math.cos(2 * t);
+      if (c < 0) continue;
+      const r = Math.sqrt(c);
+      const x = r * Math.cos(t) * scale;
+      const y = -r * Math.sin(t) * scale;  // SVG y is flipped
+      pts.push(`${x.toFixed(2)},${y.toFixed(2)}`);
+    }
+    if (pts.length === 0) continue;
+    const isHighlight = q.label === 'Q1';
+    E('polyline', {
+      points: pts.join(' '),
+      fill: 'none',
+      stroke: q.color,
+      'stroke-width': isHighlight ? 3.5 : 2,
+      'stroke-linecap': 'round'
+    });
+  }
+
+  // Highlight the highlighted quarter with shading
+  // Q1 region: from origin out along θ = 0 then around to θ = π/4 then back
+  let shadePts = ['0,0'];
+  for (let i = 0; i <= 60; i++) {
+    const t = Math.PI / 4 * i / 60;
+    const c = Math.cos(2 * t);
+    if (c < 0) continue;
+    const r = Math.sqrt(c);
+    shadePts.push(`${(r * Math.cos(t) * scale).toFixed(2)},${(-r * Math.sin(t) * scale).toFixed(2)}`);
+  }
+  shadePts.push('0,0');
+  E('polygon', { points: shadePts.join(' '), fill: '#a0101015', stroke: 'none' });
+
+  // 90° rotation arrow in center
+  E('path', {
+    d: `M 50 -25 A 35 35 0 0 1 25 -50`,
+    fill: 'none',
+    stroke: '#444',
+    'stroke-width': 1.5,
+    'marker-end': 'url(#arrowMarker)'
+  });
+  // marker for arrow
+  const defs = E('defs', {});
+  const marker = E('marker', {
+    id: 'arrowMarker', markerWidth: 8, markerHeight: 8, refX: 7, refY: 4, orient: 'auto'
+  }, defs);
+  E('path', { d: 'M0,0 L0,8 L7,4 z', fill: '#444' }, marker);
+
+  E('text', { x: 50, y: -52, 'font-family': 'Cambria,serif', 'font-size': 13, fill: '#444' })
+    .textContent = '×i  (90°)';
+
+  // Origin dot
+  E('circle', { cx: 0, cy: 0, r: 2.5, fill: '#222' });
+
+  // Axis labels
+  const txt = (x, y, s, opts = {}) => {
+    const t = E('text', {
+      x, y,
+      'font-family': 'Cambria,serif',
+      'font-size': 12,
+      fill: '#666',
+      'text-anchor': opts.anchor || 'middle',
+      ...opts
+    });
+    t.textContent = s;
+  };
+  txt(140, -4, 'x', { anchor: 'end' });
+  txt(6, -135, 'y', { anchor: 'start' });
+}
+
+// ═══════════════════════ The Z[i] lattice ═══════════════════════
+function drawLattice() {
+  const svg = document.getElementById('latticeSvg');
+  const xmlns = 'http://www.w3.org/2000/svg';
+  const scale = 50;  // pixels per unit
+  const E = (tag, attrs = {}, parent = svg) => {
+    const el = document.createElementNS(xmlns, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    parent.appendChild(el);
+    return el;
+  };
+
+  // Axes
+  E('line', { x1: -150, y1: 0, x2: 150, y2: 0, stroke: '#bbb', 'stroke-width': 0.6 });
+  E('line', { x1: 0, y1: -150, x2: 0, y2: 150, stroke: '#bbb', 'stroke-width': 0.6 });
+
+  // Lattice points (a + bi) for a,b ∈ {-3,...,3}
+  for (let a = -3; a <= 3; a++) {
+    for (let b = -3; b <= 3; b++) {
+      const x = a * scale;
+      const y = -b * scale;
+      const isUnit = (Math.abs(a) + Math.abs(b)) === 1;
+      E('circle', {
+        cx: x, cy: y,
+        r: isUnit ? 5 : 3,
+        fill: isUnit ? '#a01010' : '#222',
+        stroke: isUnit ? '#600' : 'none',
+        'stroke-width': isUnit ? 1.5 : 0
+      });
+    }
+  }
+
+  // Origin
+  E('circle', { cx: 0, cy: 0, r: 4, fill: '#fff', stroke: '#222', 'stroke-width': 1.5 });
+
+  // Unit square (1, i, -1, -i form a square at distance 1 from origin)
+  E('polygon', {
+    points: `${scale},0 0,${-scale} ${-scale},0 0,${scale}`,
+    fill: '#a0101015',
+    stroke: '#a01010',
+    'stroke-width': 1.5,
+    'stroke-dasharray': '4 3'
+  });
+
+  // 90° rotation arrow
+  E('path', {
+    d: `M 30 -18 A 25 25 0 0 1 18 -30`,
+    fill: 'none',
+    stroke: '#444',
+    'stroke-width': 1.5,
+    'marker-end': 'url(#arrowMarkerL)'
+  });
+  const defs = E('defs', {});
+  const marker = E('marker', {
+    id: 'arrowMarkerL', markerWidth: 8, markerHeight: 8, refX: 7, refY: 4, orient: 'auto'
+  }, defs);
+  E('path', { d: 'M0,0 L0,8 L7,4 z', fill: '#444' }, marker);
+
+  E('text', { x: 36, y: -36, 'font-family': 'Cambria,serif', 'font-size': 12, fill: '#444' })
+    .textContent = '×i';
+
+  // Labels for the 4 units
+  const labels = [
+    { v: '1', x: scale + 8, y: 5 },
+    { v: 'i', x: 5, y: -scale - 4 },
+    { v: '−1', x: -scale - 6, y: 5, anchor: 'end' },
+    { v: '−i', x: -3, y: scale + 14, anchor: 'end' },
+  ];
+  for (const l of labels) {
+    const t = E('text', {
+      x: l.x, y: l.y,
+      'font-family': 'Cambria,serif',
+      'font-size': 14,
+      fill: '#a01010',
+      'font-weight': 'bold',
+      'text-anchor': l.anchor || 'start'
+    });
+    t.textContent = l.v;
+  }
+
+  // Axis labels
+  E('text', {
+    x: 145, y: -5,
+    'font-family': 'Cambria,serif', 'font-size': 12, fill: '#666',
+    'text-anchor': 'end'
+  }).textContent = 'Re';
+  E('text', {
+    x: 5, y: -140,
+    'font-family': 'Cambria,serif', 'font-size': 12, fill: '#666'
+  }).textContent = 'Im';
+}
+
+// ═══════════════════════ Period parallelogram (interactive τ) ═══════════════════════
+function drawPeriod(tauRe, tauIm) {
+  const svg = document.getElementById('periodSvg');
+  // Clear
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  const xmlns = 'http://www.w3.org/2000/svg';
+  const scale = 50;
+  const E = (tag, attrs = {}, parent = svg) => {
+    const el = document.createElementNS(xmlns, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    parent.appendChild(el);
+    return el;
+  };
+
+  // Axes
+  E('line', { x1: -210, y1: 0, x2: 210, y2: 0, stroke: '#bbb', 'stroke-width': 0.6 });
+  E('line', { x1: 0, y1: -190, x2: 0, y2: 190, stroke: '#bbb', 'stroke-width': 0.6 });
+
+  // Lattice points m + n·τ for m,n ∈ {-3..3}
+  for (let m = -3; m <= 3; m++) {
+    for (let n = -3; n <= 3; n++) {
+      const re = m + n * tauRe;
+      const im = n * tauIm;
+      const x = re * scale;
+      const y = -im * scale;
+      if (Math.abs(x) > 200 || Math.abs(y) > 180) continue;
+      E('circle', { cx: x, cy: y, r: 2.5, fill: '#222' });
+    }
+  }
+
+  // Fundamental period parallelogram: vertices 0, 1, 1+τ, τ
+  const v0 = [0, 0];
+  const v1 = [scale, 0];
+  const v2 = [scale + tauRe * scale, -tauIm * scale];
+  const v3 = [tauRe * scale, -tauIm * scale];
+
+  E('polygon', {
+    points: `${v0[0]},${v0[1]} ${v1[0]},${v1[1]} ${v2[0]},${v2[1]} ${v3[0]},${v3[1]}`,
+    fill: '#a0101015',
+    stroke: '#a01010',
+    'stroke-width': 2
+  });
+
+  // 90°-rotated copy of parallelogram (i × parallelogram = rotate 90° CCW around origin)
+  // Apply (x, y) → (-y, x) in math coords; in SVG (with y flipped), this becomes
+  // (sx, sy) → (sy, sx)
+  const rotV1 = [-(-v1[1]), -v1[0]];   // tricky with SVG flip — recompute:
+  // In math coords: (re, im) → 90° rot becomes (-im, re).
+  // Math points: 0 → 0, 1 → i (re=0, im=1), 1+τ → ?, τ → ?
+  function rot(re, im) { return [-im, re]; }
+  const rv1m = rot(1, 0);             // → (0, 1) i.e. point i
+  const rv2m = rot(1 + tauRe, tauIm); // 1+τ rotated
+  const rv3m = rot(tauRe, tauIm);     // τ rotated
+  const toSvg = (re, im) => [re * scale, -im * scale];
+  const r0 = toSvg(0, 0);
+  const r1 = toSvg(rv1m[0], rv1m[1]);
+  const r2 = toSvg(rv2m[0], rv2m[1]);
+  const r3 = toSvg(rv3m[0], rv3m[1]);
+  E('polygon', {
+    points: `${r0[0]},${r0[1]} ${r1[0]},${r1[1]} ${r2[0]},${r2[1]} ${r3[0]},${r3[1]}`,
+    fill: '#40601020',
+    stroke: '#406010',
+    'stroke-width': 2,
+    'stroke-dasharray': '5 4'
+  });
+
+  // Mark vertices 1 and τ
+  E('circle', { cx: v1[0], cy: v1[1], r: 4.5, fill: '#a01010', stroke: '#600', 'stroke-width': 1 });
+  E('circle', { cx: v3[0], cy: v3[1], r: 4.5, fill: '#a01010', stroke: '#600', 'stroke-width': 1 });
+  E('circle', { cx: 0, cy: 0, r: 4.5, fill: '#fff', stroke: '#222', 'stroke-width': 1.5 });
+
+  // Labels
+  E('text', {
+    x: v1[0] + 8, y: v1[1] + 5,
+    'font-family': 'Cambria,serif', 'font-size': 14, fill: '#a01010', 'font-weight': 'bold'
+  }).textContent = '1';
+  E('text', {
+    x: v3[0] - 6, y: v3[1] - 6,
+    'font-family': 'Cambria,serif', 'font-size': 14, fill: '#a01010', 'font-weight': 'bold',
+    'text-anchor': 'end'
+  }).textContent = 'τ';
+
+  // Annotation: how close are red and green parallelograms?
+  // They coincide iff τ²·(1) = τ' giving square: equivalent to τ = i.
+  const dist = Math.sqrt((tauRe - 0) ** 2 + (tauIm - 1) ** 2);
+  const isSquare = dist < 0.01;
+
+  E('text', {
+    x: 0, y: 175,
+    'font-family': 'Cambria,serif', 'font-size': 13,
+    fill: isSquare ? '#406010' : '#702020',
+    'font-weight': 'bold',
+    'text-anchor': 'middle'
+  }).textContent = isSquare
+    ? '✓ Red = Green: τ = i, the square (lemniscatic) case'
+    : '✗ Red ≠ Green: parallelogram not invariant under 90° rotation';
+}
+
+// ═══════════════════════ Slider control ═══════════════════════
+function update() {
+  const re = parseFloat(document.getElementById('reSlider').value);
+  const im = parseFloat(document.getElementById('imSlider').value);
+  document.getElementById('tauDisplay').textContent =
+    `${re.toFixed(3)} + ${im.toFixed(3)}i`;
+
+  const dist = Math.sqrt(re ** 2 + (im - 1) ** 2);
+  const ind = document.getElementById('symInd');
+  if (dist < 0.01) {
+    ind.textContent = 'Z/4 symmetric (square — lemniscatic case)';
+    ind.className = 'symmetry-indicator sym-yes';
+  } else {
+    ind.textContent = `Z/2 only (generic) — distance from τ=i: ${dist.toFixed(3)}`;
+    ind.className = 'symmetry-indicator sym-no';
+  }
+
+  // Update preset highlight
+  const presets = document.querySelectorAll('.preset');
+  presets.forEach(p => p.classList.remove('active'));
+  const targets = [[0,1],[0,1.732],[0.5,0.866],[0,1.5],[0.3,1.2]];
+  targets.forEach((t, i) => {
+    if (Math.abs(re - t[0]) < 0.005 && Math.abs(im - t[1]) < 0.005) {
+      presets[i].classList.add('active');
+    }
+  });
+
+  drawPeriod(re, im);
+}
+
+function setTau(re, im) {
+  document.getElementById('reSlider').value = re;
+  document.getElementById('imSlider').value = im;
+  update();
+}
+
+// ═══════════════════════ Init ═══════════════════════
+document.getElementById('reSlider').addEventListener('input', update);
+document.getElementById('imSlider').addEventListener('input', update);
+
+function init() {
+  renderFormulas();
+  drawLemniscate();
+  drawLattice();
+  update();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>

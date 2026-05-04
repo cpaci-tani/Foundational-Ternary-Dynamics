@@ -87,6 +87,18 @@ nul
 *.tmp
 *.temp
 *~
+
+# Phase B engine test artifacts (root-level JSON outputs from dump_*.cpp / test_*.cpp;
+# regenerable by re-running the corresponding engine test target)
+/full_physics.json
+/full_physics_v2.json
+/full_amp_scan.json
+/full_l256.json
+/string_l128.json
+/string_verify.json
+/toggle_bisection.json
+/quark_viz_data.json
+/phase_b3_viz_data.json
 *.backup
 build_log.txt
 

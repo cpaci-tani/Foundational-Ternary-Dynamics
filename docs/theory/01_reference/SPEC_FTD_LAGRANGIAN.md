@@ -17,14 +17,14 @@
 >
 > The dynamics of $\mathbf{J}$ and $s$ are determined by the action principle (§3). The maximum propagation speed is $C = 1$ vertex per tick.
 
-> **Axiom 2 (The Scale).** One lattice spacing equals one Planck length: $a = \ell_P = \sqrt{\hbar G/c^3} = 1.616 \times 10^{-35}$ m. This identifies the Planck mass $M_P = \sqrt{\hbar c/G} = 1.221 \times 10^{19}$ GeV as the energy scale of the lattice.
+> **Calibration declaration (FTD-0041, gauge per FTD-0137).** One lattice spacing is *declared* to equal one Planck length: $a \equiv \ell_P = \sqrt{\hbar G/c^3} \approx 1.616 \times 10^{-35}$ m. This is **not an axiom** — the FTD postulates (P1-P5 in `SPEC_FTD.md`) do not specify a physical scale for one voxel; per FTD-0137, the lattice spacing is a **gauge degree of freedom** undetermined by the framework. The Planck-primary calibration is one of four defensible gauge choices (see `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` §4) and is retained as the default for backward compatibility. Under this gauge, the Planck mass $M_P = \sqrt{\hbar c/G} \approx 1.221 \times 10^{19}$ GeV becomes the natural mass scale.
 
-**Axiom count:** Two — one structural, one dimensional. No dimensionless free parameters.
+**Structural-axiom count:** One (the lattice + fields + locality content). Dimensional content enters through the calibration declaration above (gauge), not through additional axioms. No dimensionless free parameters.
 
-| Axiom | Content | What it provides |
+| Item | Content | What it provides |
 |-------|---------|-----------------|
 | Axiom 1 | Lattice + fields + locality | UV finiteness, Lorentz invariance (arbitrarily fine spacing), gauge structure |
-| Axiom 2 | $a = \ell_P$ | All dimensionful quantities (masses, lengths, energies) |
+| Calibration (gauge) | $a \equiv \ell_P$ (declared, not derived; FTD-0137) | Dimensional translation to SI units; dimensionless predictions are calibration-independent |
 
 ---
 
@@ -341,7 +341,7 @@ $$T^{\mu\nu} = (\partial^\mu J_a)(\partial^\nu J_a) - \eta^{\mu\nu}\mathcal{L}_\
 
 ## §7. Derived Constants
 
-All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined boundary), Axiom 2 ($a = \ell_P$), and the mathematical constant $\varpi$:
+All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined boundary), the calibration declaration $a \equiv \ell_P$ (gauge per FTD-0137; required for SI translation but not derived), and the mathematical constant $\varpi$:
 
 | Constant | Formula | Value | vs. Experiment | Tag |
 |----------|---------|-------|----------------|-----|
