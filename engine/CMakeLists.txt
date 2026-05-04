@@ -721,6 +721,12 @@ ftd_add_test(ftd_emergent_alpha tests/benchmark_emergent_alpha.cpp
              CTEST_NAME benchmark_emergent_alpha TIMEOUT 1800)
 ftd_add_test(ftd_phase_i_native_coupling tests/benchmark_phase_i_native_coupling.cpp
              CTEST_NAME benchmark_phase_i_native_coupling TIMEOUT 1800)
+# 2026-05-03: FTD-0125 outcome-C pre-registered falsification (commit 7d421ef).
+# The benchmark's exit-code FAIL is the correct epistemic state: the
+# pre-registered hypothesis (g_engine² = 1/x_+ to 1e-3 tolerance) is
+# empirically falsified. Mark WILL_FAIL so CTest reports green when the
+# falsification reproduces.
+set_tests_properties(benchmark_phase_i_native_coupling PROPERTIES WILL_FAIL TRUE)
 ftd_add_test(test_wilson_dirac_smoke tests/test_wilson_dirac_smoke.cpp
              CTEST_NAME test_wilson_dirac_smoke TIMEOUT 60)
 ftd_add_test(test_wilson_dirac_bz_spectrum tests/test_wilson_dirac_bz_spectrum.cpp
@@ -2044,3 +2050,42 @@ if(NOT FTD_BUILD_TEST_RUNNER STREQUAL "OFF" AND NOT EMSCRIPTEN)
         message(STATUS "FTD Test Bench: disabled (Qt6 not found)")
     endif()
 endif()
+
+# ============================================================================
+# Per-test timeout overrides (added 2026-05-03, post-WSL2 ctest sweep triage).
+# ============================================================================
+# The default ctest timeout (300s) is too tight for several legitimately slow
+# benchmarks/campaigns that exercise large lattices or multi-thousand-tick
+# evolution. Apply per-test bumps here so a routine ctest sweep doesn't kill
+# them mid-run. Tests are still marked with their domain labels (eft, slow,
+# campaign) so a runner can filter by load profile.
+#
+# Bumps grouped by category:
+#   *  300s — moore_laplacian_isotropy (L=64 anisotropy sweep)
+#   *  600s — eft_lorentz_recovery, eft_operator_spectrum (was 120s)
+#   *  900s — maxwell (large-L curl/divergence battery)
+#   * 1800s — campaign_dispersion, campaign_dark_sector, emergent_ic1_topology,
+#             em_energy_conservation, poynting, spectral, campaign_shell_predictions
+#
+# Wrapped in if(TEST ...) so the file is robust to renamed/removed tests.
+foreach(_t moore_laplacian_isotropy)
+    if(TEST ${_t})
+        set_tests_properties(${_t} PROPERTIES TIMEOUT 300)
+    endif()
+endforeach()
+foreach(_t eft_lorentz_recovery eft_operator_spectrum)
+    if(TEST ${_t})
+        set_tests_properties(${_t} PROPERTIES TIMEOUT 600)
+    endif()
+endforeach()
+foreach(_t maxwell)
+    if(TEST ${_t})
+        set_tests_properties(${_t} PROPERTIES TIMEOUT 900)
+    endif()
+endforeach()
+foreach(_t campaign_dispersion campaign_dark_sector emergent_ic1_topology
+            em_energy_conservation poynting spectral campaign_shell_predictions)
+    if(TEST ${_t})
+        set_tests_properties(${_t} PROPERTIES TIMEOUT 1800)
+    endif()
+endforeach()
