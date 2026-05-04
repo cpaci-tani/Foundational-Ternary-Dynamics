@@ -384,6 +384,61 @@ ftd_add_test(test_a5_stable_L64_confirm tests/test_a5_stable_L64_confirm.cpp)
 # Phase B.3 follow-up: search for stable clusters at FTD framework integers.
 ftd_add_test(test_framework_integer_clusters tests/test_framework_integer_clusters.cpp)
 
+# Phase B.3 resonance investigation: fine A-scan at L=32, L=48, L=64 to
+# map resonance windows and L-scaling.
+ftd_add_test(test_resonance_map_l32 tests/test_resonance_map_l32.cpp)
+ftd_add_test(test_resonance_map_l48 tests/test_resonance_map_l48.cpp)
+ftd_add_test(test_resonance_map_l64 tests/test_resonance_map_l64.cpp)
+
+# Phase B.3 RESONANCE: spatial geometry of the n=8 BCC-corner candidate.
+# Per savant-agent recommendation: does the n=8 stable cluster at A=5.75 actually
+# occupy BCC corner positions (8 corners of a sub-cube)?
+ftd_add_test(test_n8_spatial_geometry tests/test_n8_spatial_geometry.cpp)
+
+# Phase B.3 RESONANCE follow-up: direct O_h-symmetric injection at 8 BCC corner
+# positions. Tests whether engine PRESERVES O_h symmetry under direct construction.
+ftd_add_test(test_oh_symmetric_injection tests/test_oh_symmetric_injection.cpp)
+
+# Phase B.3 RESONANCE refinement: threshold-amplitude scan for O_h-symmetric
+# injection. Looking for the regime where 8 corners stay lit without cascade.
+ftd_add_test(test_oh_threshold_scan tests/test_oh_threshold_scan.cpp)
+
+# Phase B.3 RESONANCE final test: state-only (zero-flux) injection at 8 BCC
+# corners. Tests whether the bare configuration is a static bound state.
+ftd_add_test(test_oh_state_only_injection tests/test_oh_state_only_injection.cpp)
+
+# Visualization data dump (JSON for Python plotter)
+add_executable(dump_visualization_data tests/dump_visualization_data.cpp)
+target_link_libraries(dump_visualization_data ftd_core)
+
+# Quark/color visualization data dump
+add_executable(dump_quark_data tests/dump_quark_data.cpp)
+target_link_libraries(dump_quark_data ftd_core)
+
+# Multi-seed × multi-L string verification
+add_executable(dump_string_verification tests/dump_string_verification.cpp)
+target_link_libraries(dump_string_verification ftd_core)
+
+# L=128 critical falsifier
+add_executable(dump_string_l128 tests/dump_string_l128.cpp)
+target_link_libraries(dump_string_l128 ftd_core)
+
+# Complete-physics-lattice test (all FTD physics toggles ON)
+add_executable(dump_full_physics tests/dump_full_physics.cpp)
+target_link_libraries(dump_full_physics ftd_core)
+
+# Toggle bisection (which physics drives which feature)
+add_executable(dump_toggle_bisection tests/dump_toggle_bisection.cpp)
+target_link_libraries(dump_toggle_bisection ftd_core)
+
+# Multi-amplitude scan under full physics
+add_executable(dump_full_physics_amp_scan tests/dump_full_physics_amp_scan.cpp)
+target_link_libraries(dump_full_physics_amp_scan ftd_core)
+
+# L=256 full-physics spot check
+add_executable(dump_full_physics_l256 tests/dump_full_physics_l256.cpp)
+target_link_libraries(dump_full_physics_l256 ftd_core)
+
 # Lagrangian verification
 add_executable(test_born_infeld tests/test_born_infeld.cpp)
 target_link_libraries(test_born_infeld ftd_core)
@@ -2141,12 +2196,15 @@ endif()
 # Updated 2026-05-04 after second full-sweep observed timeouts at the
 # previous 300s/600s/900s/1800s settings on canonical WSL2 RTX 5090 GPU run.
 foreach(_t moore_laplacian_isotropy eft_lorentz_recovery eft_operator_spectrum
-            maxwell energy_conservation_tight)
+            energy_conservation_tight)
     if(TEST ${_t})
         set_tests_properties(${_t} PROPERTIES TIMEOUT 1800)
     endif()
 endforeach()
-foreach(_t campaign_dispersion campaign_dark_sector emergent_ic1_topology
+# maxwell + heavy GPU benchmarks: 3600s under -j4 contention.
+# Per-test single-runs are <1000s but parallel scheduling on shared
+# RTX 5090 stretches them well past 1800s.
+foreach(_t maxwell campaign_dispersion campaign_dark_sector emergent_ic1_topology
             em_energy_conservation poynting spectral campaign_shell_predictions)
     if(TEST ${_t})
         set_tests_properties(${_t} PROPERTIES TIMEOUT 3600)
