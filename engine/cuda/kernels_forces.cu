@@ -159,6 +159,7 @@ void ledger_route_moore_current(double* current_x,
 
 __global__ void phase_forces_kernel(
     const int8_t* __restrict__ state,
+    const uint8_t* __restrict__ locked,
     const double* __restrict__ phi_coulomb,
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
@@ -305,7 +306,14 @@ __global__ void phase_forces_kernel(
         fd_magnetic_z[i] = f_mag_z;
     }
 
-    // --- Update velocity ---
+    // --- Update velocity (skip locked particles) ---
+    // 2026-05-04: parity with CPU phase_forces.cpp:198 — locked
+    // particles get force_diag populated and accel_mag computed (above)
+    // but their velocity is NOT updated. Without this guard, locked
+    // particles' velocity drifted under Coulomb/Lorentz forces despite
+    // being structurally "fixed" — caught by test_logic_engine C7.
+    if (locked[i]) return;
+
     double old_vx = vel_x[i], old_vy = vel_y[i], old_vz = vel_z[i];
     vel_x[i] += fx * dt;
     vel_y[i] += fy * dt;
@@ -831,7 +839,7 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
 
     phase_forces_kernel<<<grid, block>>>(
-        bufs.d_state, bufs.d_phi_coulomb,
+        bufs.d_state, bufs.d_locked, bufs.d_phi_coulomb,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_accel_mag,
