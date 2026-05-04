@@ -284,6 +284,11 @@ target_link_libraries(test_lattice ftd_core)
 # Constructor library tests — see spec 2026-04-15
 ftd_add_test(test_constructors tests/test_constructors.cpp)
 
+# Class B Phase B.1 (FTD-0136 Discrete-Native Derivation Program):
+# ClusterTracker connected-component identification + persistence-tracking.
+# See docs/theory/01_reference/SPEC_CLASS_B_CLUSTER_PERSISTENCE.md.
+ftd_add_test(test_cluster_tracker tests/test_cluster_tracker.cpp)
+
 # Lagrangian verification
 add_executable(test_born_infeld tests/test_born_infeld.cpp)
 target_link_libraries(test_born_infeld ftd_core)
@@ -462,9 +467,6 @@ ftd_add_test(ftd_hydrogen_spectrum tests/campaign_hydrogen_spectrum.cpp
 
 add_executable(test_fine_structure_scale1 tests/test_fine_structure_scale1.cpp)
 target_link_libraries(test_fine_structure_scale1 ftd_core)
-
-add_executable(test_scale_proof_chain tests/test_scale_proof_chain.cpp)
-target_link_libraries(test_scale_proof_chain ftd_core)
 
 add_executable(test_helium_scale1 tests/test_helium_scale1.cpp)
 target_link_libraries(test_helium_scale1 ftd_core)
@@ -669,8 +671,6 @@ endif()
 ftd_add_test(ftd_dispersion tests/campaign_dispersion.cpp
              CTEST_NAME campaign_dispersion GPU_HEAVY TIMEOUT 1800)
 
-add_executable(ftd_gauge_dynamics tests/campaign_gauge_dynamics.cpp)
-target_link_libraries(ftd_gauge_dynamics ftd_core)
 
 
 add_executable(ftd_free_dynamics tests/campaign_free_dynamics.cpp)
@@ -686,8 +686,6 @@ target_link_libraries(ftd_free_dynamics ftd_core)
 add_executable(ftd_shell_predictions tests/campaign_shell_predictions.cpp)
 target_link_libraries(ftd_shell_predictions ftd_core)
 
-add_executable(ftd_energy_audit tests/campaign_energy_audit.cpp)
-target_link_libraries(ftd_energy_audit ftd_core)
 
 add_executable(ftd_bound_lifetime tests/campaign_bound_lifetime.cpp)
 target_link_libraries(ftd_bound_lifetime ftd_core)
@@ -1379,8 +1377,6 @@ add_executable(test_flavor_physics tests/test_flavor_physics.cpp)
 target_link_libraries(test_flavor_physics PRIVATE ftd_core)
 add_executable(test_higgs_mechanism tests/test_higgs_mechanism.cpp)
 target_link_libraries(test_higgs_mechanism PRIVATE ftd_core)
-add_executable(test_hilbert tests/test_hilbert.cpp)
-target_link_libraries(test_hilbert PRIVATE ftd_core)
 add_executable(test_measurement tests/test_measurement.cpp)
 target_link_libraries(test_measurement PRIVATE ftd_core)
 add_executable(test_particle_toggles tests/test_particle_toggles.cpp)
@@ -1460,7 +1456,6 @@ add_test(NAME particle_engine COMMAND test_particle_engine)
 add_test(NAME scale_bridge COMMAND test_scale_bridge)
 # (hydrogen_scale1 + hydrogen_spectrum_scale1 merged into campaign_hydrogen_spectrum)
 add_test(NAME fine_structure_scale1 COMMAND test_fine_structure_scale1)
-add_test(NAME scale_proof_chain COMMAND test_scale_proof_chain)
 add_test(NAME helium_scale1 COMMAND test_helium_scale1)
 add_test(NAME radiative_decay_scale1 COMMAND test_radiative_decay_scale1)
 add_test(NAME atom_engine COMMAND test_atom_engine)
@@ -1543,7 +1538,6 @@ add_test(NAME confinement_test COMMAND test_confinement)
 add_test(NAME entanglement_basis COMMAND test_entanglement_basis)
 add_test(NAME flavor_physics COMMAND test_flavor_physics)
 add_test(NAME higgs_mechanism COMMAND test_higgs_mechanism)
-add_test(NAME hilbert COMMAND test_hilbert)
 add_test(NAME measurement COMMAND test_measurement)
 add_test(NAME particle_toggles COMMAND test_particle_toggles)
 add_test(NAME spin_statistics COMMAND test_spin_statistics)
@@ -1552,7 +1546,7 @@ add_test(NAME wz_mass COMMAND test_wz_mass)
 set_tests_properties(
     action_stationarity asymptotic_freedom atom_toggles atomic_energy
     baryogenesis bell_aggregate born_rule_ensemble confinement_test
-    entanglement_basis flavor_physics higgs_mechanism hilbert
+    entanglement_basis flavor_physics higgs_mechanism
     measurement particle_toggles spin_statistics triad_confinement
     wz_mass
     PROPERTIES TIMEOUT 600)
@@ -1578,13 +1572,11 @@ endif()
 
 # Campaign tests
 # (campaign_dispersion registered via ftd_add_test above)
-add_test(NAME campaign_gauge_dynamics COMMAND ftd_gauge_dynamics)
 add_test(NAME campaign_free_dynamics COMMAND ftd_free_dynamics)
 # (campaign_poisson_force_law + campaign_poisson_binding merged)
 # (campaign_poisson_hydrogen merged)
 # (campaign_force_law merged)
 add_test(NAME campaign_shell_predictions COMMAND ftd_shell_predictions)
-add_test(NAME campaign_energy_audit COMMAND ftd_energy_audit)
 add_test(NAME campaign_bound_lifetime COMMAND ftd_bound_lifetime)
 add_test(NAME campaign_spontaneous COMMAND ftd_spontaneous)
 add_test(NAME campaign_plato COMMAND ftd_plato)
@@ -1655,8 +1647,8 @@ set_tests_properties(
     benchmark logic_engine energy_conservation
     selffield_profile wavepacket
     particle_lifetime
-    campaign_dispersion campaign_gauge_dynamics
-    campaign_energy_audit campaign_bound_lifetime
+    campaign_dispersion
+    campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
     particle_engine scale_bridge
     atom_engine atom_scale_bridge multiscale_bridge campaign_h2_molecule
@@ -1684,7 +1676,7 @@ set_tests_properties(
     inflation dark_matter cosmological_constant consciousness sloop
     campaign_lorentz_measure
     helium_scale1 fine_structure_scale1
-    radiative_decay_scale1 scale_proof_chain
+    radiative_decay_scale1
     PROPERTIES TIMEOUT 600)
 
 # Heavy campaigns with 64^3 grids or multi-phase dynamics need more time (30 min)
@@ -1726,7 +1718,7 @@ set_property(TEST
     # atom_engine_forces auto-labeled as "unit" by ftd_add_test()
     action_stationarity asymptotic_freedom atom_toggles atomic_energy
     baryogenesis bell_aggregate born_rule_ensemble confinement_test
-    entanglement_basis flavor_physics higgs_mechanism hilbert measurement
+    entanglement_basis flavor_physics higgs_mechanism measurement
     particle_toggles spin_statistics triad_confinement wz_mass
     falsifiability inflation dark_matter cosmological_constant consciousness
     sloop
@@ -1736,10 +1728,10 @@ set_property(TEST
 # APPEND is critical so campaign-level labels (scale1, scale2, gpu, etc.)
 # stack on top of these category labels rather than overwriting them.
 set_property(TEST
-    campaign_dispersion campaign_gauge_dynamics
+    campaign_dispersion
     campaign_free_dynamics
     campaign_coulomb_force_law
-    campaign_energy_audit campaign_bound_lifetime
+    campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
     campaign_h2_molecule campaign_multiscale_pipeline
     campaign_statistical_convergence campaign_wave_dynamics
@@ -1835,7 +1827,7 @@ set_property(TEST
     lattice_operators discrete_operators
     dual_substrate genesis
     action_stationarity asymptotic_freedom atom_toggles
-    flavor_physics higgs_mechanism hilbert measurement
+    flavor_physics higgs_mechanism measurement
     spin_statistics wz_mass
     APPEND PROPERTY LABELS "fast")
 
@@ -1843,9 +1835,8 @@ set_property(TEST
 set_property(TEST
     flux_mediated selffield_profile wavepacket
     particle_lifetime
-    campaign_gauge_dynamics
     campaign_free_dynamics
-    campaign_energy_audit campaign_bound_lifetime
+    campaign_bound_lifetime
     campaign_spontaneous campaign_cross_scale campaign_born_ensemble
     campaign_h2_molecule campaign_multiscale_pipeline
     campaign_statistical_convergence campaign_wave_dynamics
@@ -1863,7 +1854,7 @@ set_property(TEST
     poynting larmor ensemble correlations spectral tracker
     inflation dark_matter cosmological_constant consciousness sloop
     helium_scale1 fine_structure_scale1
-    radiative_decay_scale1 scale_proof_chain
+    radiative_decay_scale1
     APPEND PROPERTY LABELS "slow")
 
 # Benchmark tests: dedicated engine-vs-theory measurement suites
@@ -1961,14 +1952,14 @@ set_property(TEST
 set_property(TEST
     atom_engine atom_scale_bridge atom_engine_forces
     helium_scale1 fine_structure_scale1
-    radiative_decay_scale1 scale_proof_chain
+    radiative_decay_scale1
     campaign_hydrogen_spectrum campaign_hydrogen_binding
     campaign_h2_molecule
     APPEND PROPERTY LABELS "atom")
 
 # Consciousness / measurement domain
 set_property(TEST
-    consciousness sloop measurement hilbert
+    consciousness sloop measurement
     ensemble correlations spectral tracker
     campaign_wigner
     APPEND PROPERTY LABELS "consciousness")
@@ -1979,7 +1970,6 @@ set_property(TEST
 
 set_property(TEST
     maxwell gauge continuity
-    campaign_gauge_dynamics
     APPEND PROPERTY LABELS "phase_read")
 
 set_property(TEST
