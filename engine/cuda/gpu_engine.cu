@@ -449,13 +449,19 @@ void GpuEngine::push_to_device() {
 Diagnostics GpuEngine::diagnostics() {
     ensure_host_synced();
 
-    // Compute diagnostics on host (reuses RenderBridge logic)
+    // 2026-05-04 fix: parity with engine/src/diagnostics_compute.cpp:38.
+    // Pre-fix this used `flux.mag2() + wave_vel.mag2()` (no 0.5, no
+    // Born-Infeld). CPU diagnostic uses |born_infeld_core()| which is
+    // a non-trivial functional of flux, wave_vel, and latency. The two
+    // returned different total_energy values for the same scenario.
     Diagnostics d;
     d.tick = tick_;
     for (int i = 0; i < N_; ++i) {
         const auto& v = host_voxels_[i];
-        d.total_flux += v.flux.mag();
-        d.total_energy += v.flux.mag2() + v.wave_vel.mag2();
+        d.total_flux += v.density();                     // = flux.mag(), matches CPU
+        d.total_energy += std::abs(v.born_infeld_core()); // matches CPU
+        double bw = v.bandwidth_used();
+        if (bw > d.max_bandwidth) d.max_bandwidth = bw;
         if (v.state != 0) {
             d.manifested_count++;
             if (v.state > 0) d.positive_count++;
