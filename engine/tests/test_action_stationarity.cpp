@@ -179,10 +179,11 @@ int main() {
         ftd::LagrangianDiag lag = ftd::compute_lagrangian_diagnostics(rb);
         ftd::EnergyAudit ea = rb.energy_audit();
 
-        // field_kinetic_sum = Sigma 1/2|wave_vel|^2
-        // EnergyAudit::wave_energy = Sigma |wave_vel|^2 (no factor of 1/2)
-        // So: field_kinetic_sum * 2 = wave_energy
-        double lag_wave = lag.field_kinetic_sum * 2.0;
+        // field_kinetic_sum = Sigma 1/2|wave_vel|^2 (canonical ½·|·|²)
+        // EnergyAudit::wave_energy = Sigma 1/2|wave_vel|^2 (canonical ½·|·|²
+        // since 2026-04-27; GPU path also fixed 2026-05-03 in gpu_engine.cu)
+        // So: field_kinetic_sum = wave_energy directly (no factor of 2 needed).
+        double lag_wave = lag.field_kinetic_sum;
         double ea_wave = ea.wave_energy;
 
         double rel_err = (ea_wave > 1e-15)

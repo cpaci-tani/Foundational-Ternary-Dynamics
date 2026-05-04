@@ -6,8 +6,8 @@
  * This observable doesn't reduce voxels itself; it calls
  * state.energy_audit() which is the engine's canonical per-tick energy
  * book-keeping. Reported fields:
- *   - field_energy  (Σ|J|², same as TotalFieldEnergy but cached)
- *   - wave_energy
+ *   - field_energy  (Σ½|J|², same as TotalFieldEnergy but cached)
+ *   - wave_energy   (Σ½|wave_vel|²)
  *   - total_energy
  *
  * Useful for β-function extraction, where we want the engine's OWN
