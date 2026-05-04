@@ -289,6 +289,101 @@ ftd_add_test(test_constructors tests/test_constructors.cpp)
 # See docs/theory/01_reference/SPEC_CLASS_B_CLUSTER_PERSISTENCE.md.
 ftd_add_test(test_cluster_tracker tests/test_cluster_tracker.cpp)
 
+# Class B Phase B.2: quiescent persistence sanity test using engine + tracker.
+ftd_add_test(test_cluster_persistence_quiescent tests/test_cluster_persistence_quiescent.cpp)
+
+# Class B Phase B.2 diagnosis (a): alpha-sensitivity sweep to test whether
+# tracker identity-criterion is the cluster-decay bottleneck.
+ftd_add_test(test_cluster_persistence_alpha_sweep tests/test_cluster_persistence_alpha_sweep.cpp)
+
+# Class B Phase B.2 diagnosis (b): toggle-configuration sweep to test whether
+# FTD-0107 baseline (Langevin ON at small T) yields canonical persistence.
+ftd_add_test(test_cluster_persistence_toggle_sweep tests/test_cluster_persistence_toggle_sweep.cpp)
+
+# Class B Phase B.3 prep: exploratory Γ(T) scan to verify exponential decay
+# regime exists before launching a full pre-registered thermal campaign.
+ftd_add_test(test_cluster_gamma_t_exploratory tests/test_cluster_gamma_t_exploratory.cpp)
+
+# Class B Phase B.3 protocol candidate: position-fixed mask persistence —
+# avoids identity-tracking corruption from lattice flooding by measuring
+# fraction of original cluster voxels still manifested.
+ftd_add_test(test_cluster_mask_persistence tests/test_cluster_mask_persistence.cpp)
+
+# Class B Phase B.3 protocol: cooling-induced evaporation sweep. The mask-
+# persistence test revealed that engine evaporation is energy-suppressed
+# (high E -> low evap_prob), so cluster decay channel is COOLING, not heating.
+ftd_add_test(test_cluster_cooling_evap tests/test_cluster_cooling_evap.cpp)
+
+# Class B Phase B.3 protocol: active decay-channel sweep. Energy-based
+# protocols failed; this tests SM-decay-like channels (weak transmutation,
+# pair production, color/strong forces) for matrix-element-driven decay.
+ftd_add_test(test_cluster_decay_channels tests/test_cluster_decay_channels.cpp)
+
+# Class B Phase B.3 first deliverable: τ_e(A) curve via the resolved
+# protocol (engine defaults + mask persistence). Sweeps cluster amplitude
+# to extract dimensionless τ_e ratios for PDG comparison.
+ftd_add_test(test_cluster_tau_amplitude_sweep tests/test_cluster_tau_amplitude_sweep.cpp)
+
+# Class B Phase B.3 follow-up (α): identify stability threshold A_min(stable)
+# by refining the A-grid in the (10, 14)·K_GENESIS transition zone with
+# 3 seeds per A to check stochasticity.
+ftd_add_test(test_cluster_stability_threshold tests/test_cluster_stability_threshold.cpp)
+
+# Phase B.3: L-invariance of the death amplitudes A=10, A=11. If death
+# persists at L=64, the resonance is K_GENESIS-scale; if it shifts with L,
+# it's a lattice finite-size artifact.
+ftd_add_test(test_cluster_death_amps_L_invariance tests/test_cluster_death_amps_L_invariance.cpp)
+
+# Phase B.3 (α'): find the lightest L=32 stable amplitude — sweep A < 10
+# with 3 seeds per A. The lightest L-invariant stable A becomes the
+# candidate "lightest stable engine cluster" for FTD-0110 reconciliation.
+ftd_add_test(test_cluster_lightest_stable tests/test_cluster_lightest_stable.cpp)
+
+# Phase B.3 (α') L-invariance follow-up: spot-check L=64 stability of the
+# L=32 stable amps {7.0, 8.0, 9.0, 9.5}.
+ftd_add_test(test_cluster_lightest_stable_L64 tests/test_cluster_lightest_stable_L64.cpp)
+
+# Phase B.3 (β'): trace the A=10·K_GENESIS cascade collapse mechanism per-tick.
+# A=10 is the universal-death amplitude; what specifically triggers the
+# deterministic collapse?
+ftd_add_test(test_cluster_a10_cascade_trace tests/test_cluster_a10_cascade_trace.cpp)
+
+# Phase B.3 (β') refinement: centroid drift comparison A=10 vs A=8. If the
+# cluster centroid drifts during "death", the cluster is migrating not
+# decaying — major reframe of the persistence interpretation.
+ftd_add_test(test_cluster_a10_centroid_drift tests/test_cluster_a10_centroid_drift.cpp)
+
+# Phase B.3 (β''): search for a true BOUND-STATE regime by sweeping binding-
+# channel toggles. Triplet metric (n_total + centroid drift + rms_radius)
+# distinguishes soliton/flooding/bound/decay regimes.
+ftd_add_test(test_cluster_bound_state_search tests/test_cluster_bound_state_search.cpp)
+
+# Phase B.3 (γ''): characterize the A=10 soliton — velocity, direction
+# selection, conservation laws, amplitude dependence.
+ftd_add_test(test_a10_soliton_characterization tests/test_a10_soliton_characterization.cpp)
+
+# Phase B.3 (δ'''): refine the +color+triad A=7 quasi-bound configuration.
+# Multi-seed L=32 reproducibility check.
+ftd_add_test(test_color_triad_a7_multiseed tests/test_color_triad_a7_multiseed.cpp)
+
+# Phase B.3 (δ''') Test 3: amplitude scan with +color+triad at L=32.
+ftd_add_test(test_color_triad_amplitude_scan tests/test_color_triad_amplitude_scan.cpp)
+
+# Phase B.3 (δ''') Test 4: long-time evolution + flood-onset characterization.
+ftd_add_test(test_color_triad_flood_onset tests/test_color_triad_flood_onset.cpp)
+
+# Phase B.3 (δ''') Test 5: long-time stability of A=5, A=6 +color+triad solitons.
+ftd_add_test(test_color_triad_a5_a6_long tests/test_color_triad_a5_a6_long.cpp)
+
+# Phase B.3 Test 6: τ_bind systematic scan across (toggle, A) configurations.
+ftd_add_test(test_tau_bind_systematic tests/test_tau_bind_systematic.cpp)
+
+# Phase B.3 critical confirmation: L=64 verification of A=5 +color+triad STABLE.
+ftd_add_test(test_a5_stable_L64_confirm tests/test_a5_stable_L64_confirm.cpp)
+
+# Phase B.3 follow-up: search for stable clusters at FTD framework integers.
+ftd_add_test(test_framework_integer_clusters tests/test_framework_integer_clusters.cpp)
+
 # Lagrangian verification
 add_executable(test_born_infeld tests/test_born_infeld.cpp)
 target_link_libraries(test_born_infeld ftd_core)
@@ -2034,31 +2129,31 @@ endif()
 # campaign) so a runner can filter by load profile.
 #
 # Bumps grouped by category:
-#   *  300s — moore_laplacian_isotropy (L=64 anisotropy sweep)
-#   *  600s — eft_lorentz_recovery, eft_operator_spectrum (was 120s)
-#   *  900s — maxwell (large-L curl/divergence battery)
-#   * 1800s — campaign_dispersion, campaign_dark_sector, emergent_ic1_topology,
-#             em_energy_conservation, poynting, spectral, campaign_shell_predictions
+#   * 1800s — moore_laplacian_isotropy, eft_lorentz_recovery,
+#             eft_operator_spectrum, maxwell, energy_conservation_tight
+#   * 3600s — campaign_dispersion, campaign_dark_sector, emergent_ic1_topology,
+#             em_energy_conservation, poynting, spectral,
+#             campaign_shell_predictions (1800s wasn't enough on WSL2 GPU run)
+#   * 7200s — benchmark_alpha_convergence (L=384 GPU, 47-min average runtime)
+#   * 7200s — benchmark_alpha_scaling (long L-sweep)
 #
 # Wrapped in if(TEST ...) so the file is robust to renamed/removed tests.
-foreach(_t moore_laplacian_isotropy)
+# Updated 2026-05-04 after second full-sweep observed timeouts at the
+# previous 300s/600s/900s/1800s settings on canonical WSL2 RTX 5090 GPU run.
+foreach(_t moore_laplacian_isotropy eft_lorentz_recovery eft_operator_spectrum
+            maxwell energy_conservation_tight)
     if(TEST ${_t})
-        set_tests_properties(${_t} PROPERTIES TIMEOUT 300)
-    endif()
-endforeach()
-foreach(_t eft_lorentz_recovery eft_operator_spectrum)
-    if(TEST ${_t})
-        set_tests_properties(${_t} PROPERTIES TIMEOUT 600)
-    endif()
-endforeach()
-foreach(_t maxwell)
-    if(TEST ${_t})
-        set_tests_properties(${_t} PROPERTIES TIMEOUT 900)
+        set_tests_properties(${_t} PROPERTIES TIMEOUT 1800)
     endif()
 endforeach()
 foreach(_t campaign_dispersion campaign_dark_sector emergent_ic1_topology
             em_energy_conservation poynting spectral campaign_shell_predictions)
     if(TEST ${_t})
-        set_tests_properties(${_t} PROPERTIES TIMEOUT 1800)
+        set_tests_properties(${_t} PROPERTIES TIMEOUT 3600)
+    endif()
+endforeach()
+foreach(_t benchmark_alpha_convergence benchmark_alpha_scaling)
+    if(TEST ${_t})
+        set_tests_properties(${_t} PROPERTIES TIMEOUT 7200)
     endif()
 endforeach()

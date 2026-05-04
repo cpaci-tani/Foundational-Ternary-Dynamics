@@ -173,9 +173,14 @@ static void fea1_matches_direct() {
     obs.measure(p.state());
     const auto a = obs.result_host();
 
-    // Direct reduction
+    // Direct reduction — match the canonical ½·|·|² convention used by
+    // RenderBridge::energy_audit() (engine/src/diagnostics_compute.cpp:98)
+    // and TotalFieldEnergy. Pre-2026-05-03 this site dropped the ½ on the
+    // direct sum, giving a 2× mismatch with FieldEnergyAudit (which delegates
+    // to the engine audit and so includes the ½). Matching the canonical
+    // convention here keeps the test asserting "audit forwards correctly".
     double sum = 0.0;
-    for (const auto& v : p.state().voxels()) sum += v.flux.dot(v.flux);
+    for (const auto& v : p.state().voxels()) sum += 0.5 * v.flux.dot(v.flux);
     char buf[160];
     std::snprintf(buf, sizeof buf, "(audit=%.6e direct=%.6e rel=%.3e)",
                   a.field_energy, sum,

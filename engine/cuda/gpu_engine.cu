@@ -493,33 +493,41 @@ Diagnostics GpuEngine::diagnostics() {
 EnergyAudit GpuEngine::energy_audit() {
     ensure_host_synced();
 
+    // Match the canonical 1/2 |·|² convention used by
+    // engine/src/diagnostics_compute.cpp:98-99 (compute_energy_audit) and
+    // engine/web/js/bridge/mock-diagnostics.js. Pre-2026-05-03 this kernel
+    // dropped the 1/2 on every quadratic-energy diagnostic, making
+    // GpuEngine::energy_audit() report 2× the RenderBridge value for the
+    // same scenario — caught by test_gpu_parity GP2/GP3/GP4/GP5 all showing
+    // an exact 2:1 mismatch and test_wavepacket WP1/WP3 showing 50% of the
+    // expected K_B² normalization. Mirrors the same fix that was applied
+    // to compute_energy_audit on 2026-04-27.
     EnergyAudit ea;
     for (int i = 0; i < N_; ++i) {
         const auto& v = host_voxels_[i];
-        ea.field_energy += v.flux.mag2();
-        ea.wave_energy  += v.wave_vel.mag2();
+        ea.field_energy += 0.5 * v.flux.mag2();
+        ea.wave_energy  += 0.5 * v.wave_vel.mag2();
         if (v.state != 0) {
             ea.particle_ke += 0.5 * v.velocity.mag2();
             ea.manifested_count++;
             ea.charge_total += v.state;
         }
-        // Dual-substrate diagnostics
+        // Dual-substrate diagnostics — same 1/2 |·|² convention.
         if (toggles.dual_substrate) {
-            ea.E_L_total += v.flux_L.mag2();
-            ea.E_R_total += v.flux_R.mag2();
-            ea.wv_L_total += v.wave_vel_L.mag2();
-            ea.wv_R_total += v.wave_vel_R.mag2();
+            ea.E_L_total += 0.5 * v.flux_L.mag2();
+            ea.E_R_total += 0.5 * v.flux_R.mag2();
+            ea.wv_L_total += 0.5 * v.wave_vel_L.mag2();
+            ea.wv_R_total += 0.5 * v.wave_vel_R.mag2();
             ea.chirality_total += v.chirality_density();
         }
 
         // Strong field diagnostic
         if (toggles.color_forces || toggles.strong_force) {
-            ea.strong_energy += v.flux_strong.mag2();
+            ea.strong_energy += 0.5 * v.flux_strong.mag2();
         }
 
         // Weak field diagnostic
-        // Add to ledger
-        ea.weak_energy += v.flux_weak.mag2();
+        ea.weak_energy += 0.5 * v.flux_weak.mag2();
     }
     ea.total_energy = ea.field_energy + ea.wave_energy + ea.particle_ke;
     return ea;
