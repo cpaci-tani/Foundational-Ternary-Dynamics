@@ -486,9 +486,12 @@ __global__ void wave_update_kernel(
 
 __global__ void genesis_kernel(
     int8_t* __restrict__ state,
-    const double* __restrict__ flux_x,
-    const double* __restrict__ flux_y,
-    const double* __restrict__ flux_z,
+    double* __restrict__ flux_x,        // mutable: latent-heat drain (audit F4)
+    double* __restrict__ flux_y,
+    double* __restrict__ flux_z,
+    double* __restrict__ wave_vel_x,    // mutable: latent-heat drain (audit F4)
+    double* __restrict__ wave_vel_y,
+    double* __restrict__ wave_vel_z,
     const double* __restrict__ random,  // pre-generated uniform [0,1)
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
@@ -527,6 +530,25 @@ __global__ void genesis_kernel(
                        + (flux_z[zp] - flux_z[zm]));
 
     const int8_t new_state = (div > 0) ? 1 : -1;  // Matches CPU: strictly > 0 (not >=)
+
+    // Latent Heat of Manifestation: drain wave + flux energy at the
+    // manifesting site. Parity with CPU phase_write.cpp:269-273 (audit F4,
+    // 2026-05-04). Pre-fix the GPU created particles "for free" — no
+    // wave-energy or flux cost — breaking energy conservation at every
+    // genesis event. Drain factor K_GENESIS_KINETIC_DRAIN (= 0.5) on
+    // wave_vel; flux scaled by max(0, 1 - K_GENESIS/|J|) to reduce density
+    // at the new particle's site to the K_GENESIS threshold.
+    wave_vel_x[i] *= (1.0 - K_GENESIS_KINETIC_DRAIN);
+    wave_vel_y[i] *= (1.0 - K_GENESIS_KINETIC_DRAIN);
+    wave_vel_z[i] *= (1.0 - K_GENESIS_KINETIC_DRAIN);
+    double jmag = sqrt(fx*fx + fy*fy + fz*fz);
+    if (jmag > K_GENESIS_FLUX_EPSILON) {
+        double drain_scale = fmax(0.0, 1.0 - k_genesis / jmag);
+        flux_x[i] *= drain_scale;
+        flux_y[i] *= drain_scale;
+        flux_z[i] *= drain_scale;
+    }
+
     state[i] = new_state;
     if (ledger_reaction) {
         atomicAdd(&ledger_reaction[i], static_cast<int>(new_state));
@@ -669,6 +691,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         genesis_kernel<<<grid, block>>>(
             bufs.d_state,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
             bufs.d_random,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction,
@@ -677,16 +700,21 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         CUDA_CHECK(cudaGetLastError());
     }
 
-    // Evaporation
-    evaporation_kernel<<<grid, block>>>(
-        bufs.d_state,
-        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-        bufs.d_locked,
-        bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-        bufs.d_ledger_reaction,
-        L
-    );
+    // Evaporation — gate on do_genesis to match CPU phase_write.cpp:291.
+    // Pre-fix this ran every tick regardless of toggle; tests that disable
+    // genesis but pre-place particles saw GPU evaporate them while CPU
+    // preserved them. (Audit F6, 2026-05-04.)
+    if (do_genesis) {
+        evaporation_kernel<<<grid, block>>>(
+            bufs.d_state,
+            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+            bufs.d_locked,
+            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+            bufs.d_ledger_reaction,
+            L
+        );
+    }
     CUDA_CHECK(cudaGetLastError());
 }
 
@@ -733,6 +761,7 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
         genesis_kernel<<<grid, block>>>(
             bufs.d_state,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
             bufs.d_random,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction,
@@ -741,16 +770,21 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
         CUDA_CHECK(cudaGetLastError());
     }
 
-    // Evaporation
-    evaporation_kernel<<<grid, block>>>(
-        bufs.d_state,
-        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-        bufs.d_locked,
-        bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-        bufs.d_ledger_reaction,
-        L
-    );
+    // Evaporation — gate on do_genesis to match CPU phase_write.cpp:291.
+    // Pre-fix this ran every tick regardless of toggle; tests that disable
+    // genesis but pre-place particles saw GPU evaporate them while CPU
+    // preserved them. (Audit F6, 2026-05-04.)
+    if (do_genesis) {
+        evaporation_kernel<<<grid, block>>>(
+            bufs.d_state,
+            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+            bufs.d_locked,
+            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+            bufs.d_ledger_reaction,
+            L
+        );
+    }
     CUDA_CHECK(cudaGetLastError());
 }
 
