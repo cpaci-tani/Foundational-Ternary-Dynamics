@@ -1,13 +1,14 @@
 #pragma once
 /**
  * @file ftd/sim/observables/total_field_energy.h
- * @brief TotalFieldEnergy — sum of |J|² over all voxels.
+ * @brief TotalFieldEnergy — sum of ½|J|² over all voxels.
  *
  * This is the simplest possible scalar observable — a reduction of the
- * squared-flux magnitude summed over the entire lattice. Convention
- * matches RenderBridge::energy_audit().field_energy exactly (which
- * uses Σ|J|², without a 1/2 prefactor — the engine's internal
- * book-keeping convention).
+ * half-squared-flux magnitude summed over the entire lattice. Convention
+ * matches RenderBridge::energy_audit().field_energy exactly (which uses
+ * Σ½|J|² per the canonical ½·|·|² convention codified in
+ * engine/src/diagnostics_compute.cpp:98 on 2026-04-27 and propagated to
+ * GpuEngine::energy_audit on 2026-05-03).
  *
  * On GPU it will be a cub::DeviceReduce over d_flux_{x,y,z} arrays.
  */
@@ -20,7 +21,7 @@
 namespace ftd {
 namespace sim {
 
-/// Observable: total field energy Σ |J(x)|² summed over all voxels.
+/// Observable: total field energy Σ ½|J(x)|² summed over all voxels.
 /// Value type is double. History records (tick, energy) at every measure().
 ///
 /// The measure() implementation is backend-agnostic: it calls
@@ -35,7 +36,7 @@ public:
         const int N = static_cast<int>(vox.size());
         double sum = 0.0;
         for (int i = 0; i < N; ++i) {
-            sum += vox[i].flux.dot(vox[i].flux);
+            sum += 0.5 * vox[i].flux.dot(vox[i].flux);
         }
         last_value_ = sum;
         history_.emplace_back(state.tick(), sum);

@@ -1310,8 +1310,11 @@ static void test_bremsstrahlung() {
           "BREM-4: Static particles have bounded damping (field not fully destroyed)");
 
     // BREM-5: K_LARMOR constant verified
-    CHECK_CLOSE(K_LARMOR, 4.0 / (3.0 * K_B), 1e-6,
-                "BREM-5: K_LARMOR = 4/(3*K_B) verified");
+    // 2026-05-03: K_LARMOR was redefined to include N_EFF factor
+    // (engine/include/ftd/constants.h:275). The earlier `4/(3*K_B)`
+    // formula is now multiplied by N_EFF to capture per-DOF scaling.
+    CHECK_CLOSE(K_LARMOR, 4.0 * N_EFF / (3.0 * K_B), 1e-6,
+                "BREM-5: K_LARMOR = 4*N_EFF/(3*K_B) verified");
 
     // BREM-6: LARMOR_FLOOR constant verified
     CHECK_CLOSE(LARMOR_FLOOR, 0.01, 1e-6,
