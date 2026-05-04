@@ -30,6 +30,14 @@ void inject_flux_cpu(RenderBridge& rb, int x, int y, int z, const Vec3& flux_val
     // copy is avoided here — it triggered an unrelated runtime issue,
     // tracked separately if it recurs.
     gpu->toggles.dual_substrate = rb.toggles.dual_substrate;
+    // 2026-05-04 fix: must flush pending host-side voxel mutations to GPU
+    // BEFORE the GPU inject. Without this, callers that mix host-side
+    // mutations (`rb.voxels()[i].wave_vel = ...`) with `inject_flux` lose
+    // their host edits when mark_gpu_dirty fires below — the GPU becomes
+    // authoritative without ever seeing the host changes. test_maxwell
+    // M1b/M5a, test_poynting PV-2 all hit this race; their wave_vel
+    // initialisations were silently zeroed before tick 0.
+    rb.backend().flush_host_mutations();
     gpu->inject_flux(x, y, z, flux_val);
     rb.backend().mark_gpu_dirty();
     return;
