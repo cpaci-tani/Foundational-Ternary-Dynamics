@@ -139,14 +139,20 @@ static void test_coulomb_scattering() {
     rb.toggles.strong_force = false;
 
     int mid = L / 2;
-    // Source charge at center
+    // 2026-05-04: probe-particle measurement strategy. force_diag is
+    // populated only on manifested particles (phase_forces correctly
+    // skips state==0 voxels), so we need a probe particle at each probe_x
+    // to read the Coulomb force at that site. Use a SEPARATE RenderBridge
+    // per radius so probes don't interact with each other along the
+    // measurement axis. Each rb has source + one probe → single-pair
+    // Coulomb measurement.
+
+    // Source charge — re-injected via the existing rb only to keep the
+    // outer-scope rb's state consistent for the rest of the test
+    // (M_lattice analytical check uses rb.lattice()). Force readings come
+    // from per-radius rbs below.
     rb.inject_particle(mid, mid, mid, +1, Vec3(K_B, 0, 0), +1, 1);
 
-    // Run to establish Coulomb field
-    for (int t = 0; t < 100; ++t) rb.tick();
-    rb.sync_from_gpu();  // Ensure host voxels are up-to-date
-
-    // Measure Coulomb force at several distances along x-axis
     std::vector<int> radii = {4, 6, 8, 10, 12, 14};
     std::vector<double> forces;
     std::vector<double> log_r, log_f;
@@ -154,7 +160,20 @@ static void test_coulomb_scattering() {
     for (int r : radii) {
         int probe_x = mid + r;
         if (probe_x >= L) probe_x -= L;
-        auto fd = rb.force_diag_at(rb.lattice().index(probe_x, mid, mid));
+
+        // Per-radius RenderBridge: source at center, one probe at probe_x.
+        RenderBridge rb_r(L);
+        rb_r.toggles.enable_all();
+        rb_r.toggles.genesis = false;
+        rb_r.toggles.movement = false;
+        rb_r.toggles.color_forces = false;
+        rb_r.toggles.strong_force = false;
+        rb_r.inject_particle(mid, mid, mid, +1, Vec3(K_B, 0, 0), +1, 1);
+        rb_r.inject_particle(probe_x, mid, mid, +1, Vec3(K_B, 0, 0), +1, 1);
+        for (int t = 0; t < 100; ++t) rb_r.tick();
+        rb_r.sync_from_gpu();
+
+        auto fd = rb_r.force_diag_at(rb_r.lattice().index(probe_x, mid, mid));
         double f_mag = fd.f_coulomb.mag();
         forces.push_back(f_mag);
         if (f_mag > 1e-20) {
@@ -185,16 +204,9 @@ static void test_coulomb_scattering() {
     double M_lattice = -ALPHA / (2.0 * lambda_q);
     std::printf("  Lattice amplitude M(q=pi/4) = %.6e\n", M_lattice);
 
-    // 2026-05-03: SKIPPED SM2a/b/c — Coulomb force on locked-particle pair
-    // returns 0 on this measurement path (force-diag values aren't
-    // populated on locked voxels in the path-of-measurement here).
-    // The lattice-amplitude analytical M(q) check (SM2d) suffices for
-    // this campaign's documented purpose: showing the analytical Coulomb
-    // amplitude is non-trivial on the lattice. Filed as follow-up.
-    // CHECK(forces[0] > 0, "SM2a: Force at r=4 is positive (repulsive same-sign)");
-    // CHECK(forces[0] > forces.back(), "SM2b: Force decreases with distance");
-    // CHECK_RANGE(exponent, -3.0, -1.5, "SM2c: Force exponent near -2");
-    (void)forces; (void)exponent;
+    CHECK(forces[0] > 0, "SM2a: Force at r=4 is positive (repulsive same-sign)");
+    CHECK(forces[0] > forces.back(), "SM2b: Force decreases with distance");
+    CHECK_RANGE(exponent, -3.0, -1.5, "SM2c: Force exponent near -2");
     CHECK(std::fabs(M_lattice) > 0, "SM2d: Lattice amplitude nonzero");
 }
 
