@@ -167,10 +167,16 @@ int main() {
     {
         // The Larmor formula: larmor_mod = min(1, LARMOR_FLOOR + K_LARMOR * a²)
         // For small a: larmor_mod ≈ LARMOR_FLOOR + K_LARMOR * a²
-        // We verify the formula directly with known acceleration values
+        // We verify the formula directly with known acceleration values.
+        //
+        // Updated 2026-05-03: previous test used a=0.1, 0.2. With current
+        // K_LARMOR = 33.9, K_LARMOR * 0.04 = 1.36 — that exceeds 1.0 so
+        // `min(1, ...)` clamps and the a² scaling test no longer measures
+        // the underlying formula. Use smaller a values where the linear
+        // (unclamped) regime applies cleanly.
 
-        double a1 = 0.1;
-        double a2 = 0.2;
+        double a1 = 0.05;
+        double a2 = 0.10;
 
         double mod1 = std::min(1.0, ftd::LARMOR_FLOOR + ftd::K_LARMOR * a1 * a1);
         double mod2 = std::min(1.0, ftd::LARMOR_FLOOR + ftd::K_LARMOR * a2 * a2);
