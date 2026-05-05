@@ -6,6 +6,8 @@
 **LEDGER row:** filed under FTD-0136 program; specific instrument LEDGER row will land when first measurement campaign runs
 **Parent SPEC:** [`SPEC_DISCRETE_NATIVE_DERIVATION.md`](SPEC_DISCRETE_NATIVE_DERIVATION.md) §2.2
 
+> **NOTE (trim-the-fat round 4, commit `08c517e`):** §5.6 documents the full Phase B diagnostic arc with references to ~30 stepping-stone test files (`test_cluster_*`, `test_color_triad_*`, `test_resonance_map_*`, `test_n8_spatial_geometry`, `test_oh_*_injection`, `test_a10_soliton_characterization`, `test_a5_stable_L64_confirm`, `test_framework_integer_clusters`, `test_tau_bind_systematic`, `dump_string_*`, `dump_quark_data`, `dump_visualization_data`). **These files were deleted in commit `08c517e` after their findings were incorporated into the SPEC and LEDGER FTD-0136**; recover via `git log --diff-filter=D --follow -- engine/tests/<filename>.cpp` if needed. The load-bearing successor tests that remain in the active tree are `test_cluster_{tracker,persistence_quiescent,persistence_alpha_sweep,persistence_toggle_sweep,mask_persistence}` + `dump_{full_physics,full_physics_amp_scan,full_physics_l256,toggle_bisection}`. The §5.6 historical references are preserved in this SPEC for provenance and read order.
+
 ---
 
 ## 1. Scope
