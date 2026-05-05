@@ -182,7 +182,14 @@ void phase_forces_main_loop(RenderBridge& rb) {
       }
     }
 
-    Vec3 f_total = f_em + f_grav + f_lorentz + f_color;
+    // BH-F3 (2026-05-05): canonical accel_mag is the RAW force magnitude from
+    // EM + gravity + Lorentz only — Larmor radiation (the only consumer) is an
+    // electromagnetic phenomenon, so colour shouldn't contribute, and we want
+    // raw force not post-clamp realised |dv|/dt (which underestimates at the
+    // bandwidth edge). GPU phase_forces_kernel writes the same quantity on the
+    // same code path, so accel_mag is bit-exact CPU↔GPU at unit mass.
+    Vec3 f_em_grav_lorentz = f_em + f_grav + f_lorentz;
+    Vec3 f_total = f_em_grav_lorentz + f_color;
 
     // Store for diagnostics
     rb.force_diag_[i].f_coulomb = f_em;
@@ -191,8 +198,8 @@ void phase_forces_main_loop(RenderBridge& rb) {
     rb.force_diag_[i].f_magnetic = f_lorentz;
     rb.force_diag_[i].f_exchange = {};
 
-    // Record acceleration magnitude
-    v.accel_mag = f_total.mag();
+    // Record acceleration magnitude (EM + grav + Lorentz; colour excluded; see BH-F3)
+    v.accel_mag = f_em_grav_lorentz.mag();
 
     // Apply force (skip locked particles)
     if (!v.locked) {
