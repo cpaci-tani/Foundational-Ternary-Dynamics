@@ -300,128 +300,27 @@ ftd_add_test(test_cluster_persistence_alpha_sweep tests/test_cluster_persistence
 # FTD-0107 baseline (Langevin ON at small T) yields canonical persistence.
 ftd_add_test(test_cluster_persistence_toggle_sweep tests/test_cluster_persistence_toggle_sweep.cpp)
 
-# Class B Phase B.3 prep: exploratory Γ(T) scan to verify exponential decay
-# regime exists before launching a full pre-registered thermal campaign.
-ftd_add_test(test_cluster_gamma_t_exploratory tests/test_cluster_gamma_t_exploratory.cpp)
-
-# Class B Phase B.3 protocol candidate: position-fixed mask persistence —
+# Class B Phase B.3 protocol: position-fixed mask persistence —
 # avoids identity-tracking corruption from lattice flooding by measuring
 # fraction of original cluster voxels still manifested.
 ftd_add_test(test_cluster_mask_persistence tests/test_cluster_mask_persistence.cpp)
 
-# Class B Phase B.3 protocol: cooling-induced evaporation sweep. The mask-
-# persistence test revealed that engine evaporation is energy-suppressed
-# (high E -> low evap_prob), so cluster decay channel is COOLING, not heating.
-ftd_add_test(test_cluster_cooling_evap tests/test_cluster_cooling_evap.cpp)
-
-# Class B Phase B.3 protocol: active decay-channel sweep. Energy-based
-# protocols failed; this tests SM-decay-like channels (weak transmutation,
-# pair production, color/strong forces) for matrix-element-driven decay.
-ftd_add_test(test_cluster_decay_channels tests/test_cluster_decay_channels.cpp)
-
-# Class B Phase B.3 first deliverable: τ_e(A) curve via the resolved
-# protocol (engine defaults + mask persistence). Sweeps cluster amplitude
-# to extract dimensionless τ_e ratios for PDG comparison.
-ftd_add_test(test_cluster_tau_amplitude_sweep tests/test_cluster_tau_amplitude_sweep.cpp)
-
-# Class B Phase B.3 follow-up (α): identify stability threshold A_min(stable)
-# by refining the A-grid in the (10, 14)·K_GENESIS transition zone with
-# 3 seeds per A to check stochasticity.
-ftd_add_test(test_cluster_stability_threshold tests/test_cluster_stability_threshold.cpp)
-
-# Phase B.3: L-invariance of the death amplitudes A=10, A=11. If death
-# persists at L=64, the resonance is K_GENESIS-scale; if it shifts with L,
-# it's a lattice finite-size artifact.
-ftd_add_test(test_cluster_death_amps_L_invariance tests/test_cluster_death_amps_L_invariance.cpp)
-
-# Phase B.3 (α'): find the lightest L=32 stable amplitude — sweep A < 10
-# with 3 seeds per A. The lightest L-invariant stable A becomes the
-# candidate "lightest stable engine cluster" for FTD-0110 reconciliation.
-ftd_add_test(test_cluster_lightest_stable tests/test_cluster_lightest_stable.cpp)
-
-# Phase B.3 (α') L-invariance follow-up: spot-check L=64 stability of the
-# L=32 stable amps {7.0, 8.0, 9.0, 9.5}.
-ftd_add_test(test_cluster_lightest_stable_L64 tests/test_cluster_lightest_stable_L64.cpp)
-
-# Phase B.3 (β'): trace the A=10·K_GENESIS cascade collapse mechanism per-tick.
-# A=10 is the universal-death amplitude; what specifically triggers the
-# deterministic collapse?
-ftd_add_test(test_cluster_a10_cascade_trace tests/test_cluster_a10_cascade_trace.cpp)
-
-# Phase B.3 (β') refinement: centroid drift comparison A=10 vs A=8. If the
-# cluster centroid drifts during "death", the cluster is migrating not
-# decaying — major reframe of the persistence interpretation.
-ftd_add_test(test_cluster_a10_centroid_drift tests/test_cluster_a10_centroid_drift.cpp)
-
-# Phase B.3 (β''): search for a true BOUND-STATE regime by sweeping binding-
-# channel toggles. Triplet metric (n_total + centroid drift + rms_radius)
-# distinguishes soliton/flooding/bound/decay regimes.
-ftd_add_test(test_cluster_bound_state_search tests/test_cluster_bound_state_search.cpp)
-
-# Phase B.3 (γ''): characterize the A=10 soliton — velocity, direction
-# selection, conservation laws, amplitude dependence.
-ftd_add_test(test_a10_soliton_characterization tests/test_a10_soliton_characterization.cpp)
-
-# Phase B.3 (δ'''): refine the +color+triad A=7 quasi-bound configuration.
-# Multi-seed L=32 reproducibility check.
-ftd_add_test(test_color_triad_a7_multiseed tests/test_color_triad_a7_multiseed.cpp)
-
-# Phase B.3 (δ''') Test 3: amplitude scan with +color+triad at L=32.
-ftd_add_test(test_color_triad_amplitude_scan tests/test_color_triad_amplitude_scan.cpp)
-
-# Phase B.3 (δ''') Test 4: long-time evolution + flood-onset characterization.
-ftd_add_test(test_color_triad_flood_onset tests/test_color_triad_flood_onset.cpp)
-
-# Phase B.3 (δ''') Test 5: long-time stability of A=5, A=6 +color+triad solitons.
-ftd_add_test(test_color_triad_a5_a6_long tests/test_color_triad_a5_a6_long.cpp)
-
-# Phase B.3 Test 6: τ_bind systematic scan across (toggle, A) configurations.
-ftd_add_test(test_tau_bind_systematic tests/test_tau_bind_systematic.cpp)
-
-# Phase B.3 critical confirmation: L=64 verification of A=5 +color+triad STABLE.
-ftd_add_test(test_a5_stable_L64_confirm tests/test_a5_stable_L64_confirm.cpp)
-
-# Phase B.3 follow-up: search for stable clusters at FTD framework integers.
-ftd_add_test(test_framework_integer_clusters tests/test_framework_integer_clusters.cpp)
-
-# Phase B.3 resonance investigation: fine A-scan at L=32, L=48, L=64 to
-# map resonance windows and L-scaling.
-ftd_add_test(test_resonance_map_l32 tests/test_resonance_map_l32.cpp)
-ftd_add_test(test_resonance_map_l48 tests/test_resonance_map_l48.cpp)
-ftd_add_test(test_resonance_map_l64 tests/test_resonance_map_l64.cpp)
-
-# Phase B.3 RESONANCE: spatial geometry of the n=8 BCC-corner candidate.
-# Per savant-agent recommendation: does the n=8 stable cluster at A=5.75 actually
-# occupy BCC corner positions (8 corners of a sub-cube)?
-ftd_add_test(test_n8_spatial_geometry tests/test_n8_spatial_geometry.cpp)
-
-# Phase B.3 RESONANCE follow-up: direct O_h-symmetric injection at 8 BCC corner
-# positions. Tests whether engine PRESERVES O_h symmetry under direct construction.
-ftd_add_test(test_oh_symmetric_injection tests/test_oh_symmetric_injection.cpp)
-
-# Phase B.3 RESONANCE refinement: threshold-amplitude scan for O_h-symmetric
-# injection. Looking for the regime where 8 corners stay lit without cascade.
-ftd_add_test(test_oh_threshold_scan tests/test_oh_threshold_scan.cpp)
-
-# Phase B.3 RESONANCE final test: state-only (zero-flux) injection at 8 BCC
-# corners. Tests whether the bare configuration is a static bound state.
-ftd_add_test(test_oh_state_only_injection tests/test_oh_state_only_injection.cpp)
-
-# Visualization data dump (JSON for Python plotter)
-add_executable(dump_visualization_data tests/dump_visualization_data.cpp)
-target_link_libraries(dump_visualization_data ftd_core)
-
-# Quark/color visualization data dump
-add_executable(dump_quark_data tests/dump_quark_data.cpp)
-target_link_libraries(dump_quark_data ftd_core)
-
-# Multi-seed × multi-L string verification
-add_executable(dump_string_verification tests/dump_string_verification.cpp)
-target_link_libraries(dump_string_verification ftd_core)
-
-# L=128 critical falsifier
-add_executable(dump_string_l128 tests/dump_string_l128.cpp)
-target_link_libraries(dump_string_l128 ftd_core)
+# NOTE (2026-05-04 cleanup): the Phase B exploratory diagnostic-arc tests
+# (~26 files: test_cluster_gamma_t_exploratory, test_cluster_cooling_evap,
+# test_cluster_decay_channels, test_cluster_tau_amplitude_sweep,
+# test_cluster_stability_threshold, test_cluster_death_amps_L_invariance,
+# test_cluster_lightest_stable[_L64], test_cluster_a10_cascade_trace,
+# test_cluster_a10_centroid_drift, test_cluster_bound_state_search,
+# test_a10_soliton_characterization, test_color_triad_*, test_tau_bind_systematic,
+# test_a5_stable_L64_confirm, test_framework_integer_clusters,
+# test_resonance_map_l{32,48,64}, test_n8_spatial_geometry,
+# test_oh_{symmetric,threshold_scan,state_only}_injection,
+# dump_{visualization_data,quark_data,string_verification,string_l128})
+# were stepping stones in the FTD-0136 retraction-arc (4 retractions, R1–R4).
+# Provenance lives in LEDGER FTD-0136 + SPEC §5.6.1–§5.6.27. The load-bearing
+# successor tests are dump_full_physics{,_amp_scan,_l256} + dump_toggle_bisection
+# below. Diagnostic tests removed in commit following d40f879; recover via
+# git history if needed.
 
 # Complete-physics-lattice test (all FTD physics toggles ON)
 add_executable(dump_full_physics tests/dump_full_physics.cpp)
@@ -1510,6 +1409,8 @@ add_executable(test_a1g_bridge_i_empirical tests/test_a1g_bridge_i_empirical.cpp
 target_link_libraries(test_a1g_bridge_i_empirical PRIVATE ftd_core)
 add_executable(dump_a1g_decay tests/dump_a1g_decay.cpp)
 target_link_libraries(dump_a1g_decay PRIVATE ftd_core)
+add_executable(test_ftd0110_cluster_geometry tests/test_ftd0110_cluster_geometry.cpp)
+target_link_libraries(test_ftd0110_cluster_geometry PRIVATE ftd_core)
 add_executable(test_asymptotic_freedom tests/test_asymptotic_freedom.cpp)
 target_link_libraries(test_asymptotic_freedom PRIVATE ftd_core)
 add_executable(test_force_diag_parity tests/test_force_diag_parity.cpp)
