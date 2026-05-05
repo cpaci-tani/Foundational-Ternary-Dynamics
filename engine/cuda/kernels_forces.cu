@@ -161,6 +161,7 @@ __global__ void phase_forces_kernel(
     const int8_t* __restrict__ state,
     const uint8_t* __restrict__ locked,
     const double* __restrict__ phi_coulomb,
+    const double* __restrict__ latency,
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
@@ -339,26 +340,47 @@ __global__ void phase_forces_kernel(
     // unit mass at the same call site.
     accel_mag[i] = sqrt(fx*fx + fy*fy + fz*fz);
 
-    // --- Update velocity (skip locked particles) ---
-    // 2026-05-04: parity with CPU phase_forces.cpp:198 — locked
-    // particles get force_diag populated and accel_mag computed (above)
-    // but their velocity is NOT updated. Without this guard, locked
-    // particles' velocity drifted under Coulomb/Lorentz forces despite
-    // being structurally "fixed" — caught by test_logic_engine C7.
+    // --- γ_FTD momentum integration (BH-F2, 2026-05-05) ---
+    // Replaces the previous naive `vel += f*dt` followed by hard speed
+    // clamp `if (|v| > C) v *= C/|v|`. The clamp discarded energy and
+    // ignored the FTD bandwidth postulate v²/C² + L² < 1; this branch
+    // mirrors CPU phase_forces.cpp:204-253 byte-equivalently for the
+    // EM + grav + Lorentz force vector (color is added later by
+    // color_force_kernel and integrates non-relativistically — known
+    // limitation, parity is bit-exact only when color_forces is OFF
+    // or magnitudes are non-relativistic).
+    //
+    // Algebra (TRACKER §1.2):
+    //   γ_in = 1/√(1 − |v|²/C² − L²)
+    //   p    = γ_in · v + F · dt
+    //   v_new = p · C · √((1 − L²) / (C² + |p|²))
+    //
+    // Locked particles still get force_diag + accel_mag populated above
+    // but their velocity is NOT updated (parity with CPU phase_forces.cpp:205).
     if (locked[i]) return;
 
-    vel_x[i] += fx * dt;
-    vel_y[i] += fy * dt;
-    vel_z[i] += fz * dt;
+    const double C  = C_SPEED;
+    const double C2 = C * C;
+    const double Lt  = latency[i];          // 0 if latency_field off
+    const double L2  = Lt * Lt;
+    const double one_L2 = fmax(1.0 - L2, BANDWIDTH_FLOOR);
 
-    // Speed clamping (nothing outruns light)
-    double speed2 = vel_x[i]*vel_x[i] + vel_y[i]*vel_y[i] + vel_z[i]*vel_z[i];
-    if (speed2 > C_SPEED * C_SPEED) {
-        double scale = C_SPEED / sqrt(speed2);
-        vel_x[i] *= scale;
-        vel_y[i] *= scale;
-        vel_z[i] *= scale;
-    }
+    double vx = vel_x[i], vy = vel_y[i], vz = vel_z[i];
+    double v2 = vx*vx + vy*vy + vz*vz;
+    double budget = v2 / C2 + L2;
+    if (budget > 1.0 - BANDWIDTH_FLOOR) budget = 1.0 - BANDWIDTH_FLOOR;
+    const double gamma_in = 1.0 / sqrt(1.0 - budget);
+
+    // Reconstruct momentum, apply force, extract new velocity
+    double px = vx * gamma_in + fx * dt;
+    double py = vy * gamma_in + fy * dt;
+    double pz = vz * gamma_in + fz * dt;
+    const double p2 = px*px + py*py + pz*pz;
+    const double scale = C * sqrt(one_L2 / (C2 + p2));
+
+    vel_x[i] = px * scale;
+    vel_y[i] = py * scale;
+    vel_z[i] = pz * scale;
 }
 
 // ---------- Movement Kernel ----------
@@ -869,6 +891,7 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
 
     phase_forces_kernel<<<grid, block>>>(
         bufs.d_state, bufs.d_locked, bufs.d_phi_coulomb,
+        bufs.d_latency,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_accel_mag,
