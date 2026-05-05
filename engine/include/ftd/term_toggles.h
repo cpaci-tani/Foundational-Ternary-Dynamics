@@ -35,7 +35,8 @@ struct TermToggles {
     bool wave_propagation = true;   // phase_read: Laplacian wave equation
     bool coupling = true;           // phase_read: g_c * grad(s) source term
     bool damping = true;            // phase_write: energy dissipation
-    bool genesis = true;            // phase_write: manifestation + evaporation
+    bool genesis = true;            // phase_write: manifestation + evaporation (master)
+    bool evaporation = false;       // phase_write: evaporation alone (test isolation; OR'd with genesis)
     bool gauss_projection = true;   // gauss_project: div(J) = s constraint
     bool forces = true;             // phase_forces: field-mediated EM + gravity
     bool gravity = true;            // phase_forces: F = G_N·∇ρ gravitational force
@@ -120,7 +121,8 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"wave_propagation",   &TermToggles::wave_propagation,   true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read 18-pt Laplacian wave equation"},
     {"coupling",           &TermToggles::coupling,           true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-read state-flux coupling g_c*grad(s)"},
     {"damping",            &TermToggles::damping,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write exponential flux decay at rate alpha"},
-    {"genesis",            &TermToggles::genesis,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write manifestation + evaporation"},
+    {"genesis",            &TermToggles::genesis,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write manifestation + evaporation (master)"},
+    {"evaporation",        &TermToggles::evaporation,        false, true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-write evaporation alone (OR'd with genesis; test isolation)"},
     {"gauss_projection",   &TermToggles::gauss_projection,   true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Enforce div(J) = s constraint via SOR Poisson"},
     {"forces",             &TermToggles::forces,             true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Phase-forces master toggle (EM + gravity)"},
     {"gravity",            &TermToggles::gravity,            true,  true,  "",                 "",                 "", ToggleBackend::ANY, "Gravitational force F = G_N*grad(rho)"},

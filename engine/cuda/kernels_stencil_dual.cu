@@ -431,7 +431,7 @@ void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupli
 
 void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                               bool larmor_radiation, double damping_factor,
-                              bool do_genesis, double dt) {
+                              bool do_genesis, bool do_evaporation, double dt) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -478,16 +478,22 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
         CUDA_CHECK(cudaGetLastError());
     }
 
-    // Evaporation uses observable field (same as legacy). Defined in
-    // kernels_stencil_single.cu; forward-declared at the top of this TU.
-    evaporation_kernel<<<grid, block>>>(
-        bufs.d_state,
-        bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-        bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-        bufs.d_locked,
-        bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-        bufs.d_ledger_reaction, L
-    );
+    // Evaporation — gate on (do_genesis || do_evaporation) for parity with
+    // single-substrate launch_phase_write and CPU phase_write.cpp:291. Pre-fix
+    // this ran unconditionally on the dual path (the F6 single-substrate fix
+    // was not propagated here); fixed 2026-05-05 alongside the toggles.evaporation
+    // flag introduction. Evaporation uses observable field (same as legacy).
+    // Defined in kernels_stencil_single.cu; forward-declared at the top of this TU.
+    if (do_genesis || do_evaporation) {
+        evaporation_kernel<<<grid, block>>>(
+            bufs.d_state,
+            bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
+            bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
+            bufs.d_locked,
+            bufs.d_spin, bufs.d_color, bufs.d_particle_id,
+            bufs.d_ledger_reaction, L
+        );
+    }
     CUDA_CHECK(cudaGetLastError());
 }
 
