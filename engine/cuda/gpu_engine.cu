@@ -61,6 +61,7 @@ namespace ftd { namespace gpu { namespace kernels {
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
+                             bool emergent_forces,
                              bool gravity, bool lorentz_force, double dt);
     void launch_phase_movement(GpuBuffers& bufs, double dt);
     // Dual-substrate launchers
@@ -368,12 +369,17 @@ void GpuEngine::gpu_phase_forces() {
     // sensible default (CPU reads of those would return whatever the last
     // tick wrote — typically also zero).
     bufs_.reset_force_diag();
-    // Solve Coulomb potential first (if Poisson mode)
-    if (toggles.poisson_coulomb) {
+    // Solve Coulomb potential first (if Poisson mode and not emergent).
+    // emergent_forces and poisson_coulomb are mutually exclusive per
+    // toggles.validate(); the explicit && !emergent_forces guard mirrors
+    // CPU phase_forces_solve_potentials() and is robust to validate
+    // being silenced (e.g. WASM strict_validation=false path).
+    if (toggles.poisson_coulomb && !toggles.emergent_forces) {
         gpu_solve_coulomb();
     }
     kernels::launch_phase_forces(bufs_,
                                  toggles.poisson_coulomb,
+                                 toggles.emergent_forces,
                                  toggles.gravity,
                                  toggles.lorentz_force,
                                  dt_);

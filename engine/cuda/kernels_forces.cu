@@ -181,6 +181,7 @@ __global__ void phase_forces_kernel(
     double* __restrict__ fd_magnetic_y,
     double* __restrict__ fd_magnetic_z,
     bool poisson_coulomb,
+    bool emergent_forces,
     bool gravity,
     bool lorentz_force,
     double dt,
@@ -208,8 +209,30 @@ __global__ void phase_forces_kernel(
     int yp = idx3d_d(x,y+1,z,L), ym = idx3d_d(x,y-1,z,L);
     int zp = idx3d_d(x,y,z+1,L), zm = idx3d_d(x,y,z-1,L);
 
-    // --- Coulomb force ---
-    if (poisson_coulomb) {
+    // --- EM force: emergent / poisson / legacy gradient ---
+    // BH-F12 (2026-05-05): emergent_forces mode ported from CPU
+    // phase_forces.cpp:80-99. Mutually exclusive with poisson_coulomb
+    // (toggles.validate() rejects both true). Branch order matches CPU.
+    if (emergent_forces) {
+        // EFT mode: F = G_C * state * grad_t2(|J|). Tier-2 stencil reads
+        // r=2 face-neighbours to avoid self-field contamination from the
+        // particle's own r=1 wake. Coupling is G_C (one vertex coupling;
+        // the other G_C is already embedded in the wave-equation flux).
+        // alpha = G_C^2 emerges from the two-vertex Lagrangian.
+        int x2p = idx3d_d(x+2,y,z,L), x2m = idx3d_d(x-2,y,z,L);
+        int y2p = idx3d_d(x,y+2,z,L), y2m = idx3d_d(x,y-2,z,L);
+        int z2p = idx3d_d(x,y,z+2,L), z2m = idx3d_d(x,y,z-2,L);
+        auto density = [&](int j) -> double {
+            return sqrt(flux_x[j]*flux_x[j] + flux_y[j]*flux_y[j] + flux_z[j]*flux_z[j]);
+        };
+        double grad_x = GRAD_TIER2_SCALE * (density(x2p) - density(x2m));
+        double grad_y = GRAD_TIER2_SCALE * (density(y2p) - density(y2m));
+        double grad_z = GRAD_TIER2_SCALE * (density(z2p) - density(z2m));
+        f_em_x = G_C * s * grad_x;
+        f_em_y = G_C * s * grad_y;
+        f_em_z = G_C * s * grad_z;
+        fx += f_em_x; fy += f_em_y; fz += f_em_z;
+    } else if (poisson_coulomb) {
         // Poisson mode: F = -alpha * s * gradient(phi_coulomb)
         double grad_phi_x = GRAD_TIER1_SCALE * (phi_coulomb[xp] - phi_coulomb[xm]);
         double grad_phi_y = GRAD_TIER1_SCALE * (phi_coulomb[yp] - phi_coulomb[ym]);
@@ -838,6 +861,7 @@ __global__ void triad_detection_kernel(
 // ---------- Launcher Functions ----------
 
 void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
+                         bool emergent_forces,
                          bool gravity, bool lorentz_force, double dt) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
@@ -851,7 +875,7 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
         bufs.d_fd_coulomb_x,  bufs.d_fd_coulomb_y,  bufs.d_fd_coulomb_z,
         bufs.d_fd_gravity_x,  bufs.d_fd_gravity_y,  bufs.d_fd_gravity_z,
         bufs.d_fd_magnetic_x, bufs.d_fd_magnetic_y, bufs.d_fd_magnetic_z,
-        poisson_coulomb, gravity, lorentz_force, dt, L
+        poisson_coulomb, emergent_forces, gravity, lorentz_force, dt, L
     );
     CUDA_CHECK(cudaGetLastError());
 }
