@@ -1,5 +1,46 @@
 # Foundational Ternary Dynamics Changelog
 
+## Phase B cluster-persistence arc + trim-the-fat round 4 (May 4, 2026)
+
+A continuous diagnostic arc on cluster persistence under FTD-0136 (discrete-native
+derivation program). 4 retractions in F1/F9 hygiene pattern + (a)+(b)+(c)
+closure + 30-file cleanup.
+
+### Phase B diagnostic arc (SPEC §5.6.1–§5.6.27, LEDGER FTD-0136)
+
+- 4 retractions: R1 n=4=N_base falsified at L=64; R2 n=8=BCC-corner falsified
+  by spatial geometry; R3 O_h-symmetric injection floods at all 3 geometries;
+  R4 (partial) R-string=N_base under +color+triad falsified under full physics.
+- User methodological correction: "we need to do these experiments on a
+  complete physics lattice, not a stripped-down toggle subset" — now
+  established as canonical Phase B test methodology.
+
+### Closing tasks (a)+(b)+(c) under FTD-0136
+
+- (a) L=256 full-physics 3-axis spot check via WSL2/CUDA (~30 min on RTX 5090):
+  linear axis→color binding x→R n=1, y→G n=2, z→B n=3, all matter, no pair
+  production. Sub-saturation caveat (100 ticks vs 200 at smaller L).
+- (b) Amp scan at L=64 full physics (31 amplitudes): two stability islands
+  at A∈{9.0–9.5} (n∈{20,23}, pure-R, matter:anti≈7:3) and A=13.0 (n=34,
+  matter:anti=25:9≈7:3) embedded between flooding regimes filling ~90% of
+  the lattice. F1 hazard around A=13↔N_eff=13 explicitly flagged.
+- (c) Toggle bisection at L=32 (15 configs): clean attribution map.
+  pair_production and strong_force DECAY in isolation, SUSTAIN/DAMP under
+  full physics. Toggle interactions are non-linear; "sum greater than
+  parts" operationally confirmed.
+
+All findings tagged [OBSERVATION] only — no tag promotions, no derivations,
+no new claims. Pre-registered falsification protocol queued.
+
+### Trim-the-fat round 4 (commit `08c517e`)
+
+30 Phase B exploratory diagnostic-arc tests deleted (-5,397 LOC) after their
+findings were incorporated into LEDGER + SPEC. Provenance preserved via the
+LEDGER FTD-0136 row + SPEC §5.6.* historical references; recover via
+`git log --diff-filter=D --follow -- engine/tests/<filename>.cpp` if needed.
+Load-bearing keepers (9 files): cluster_tracker.h + 4 persistence sanity
+tests + 4 dump_full_physics* runners. All keepers build clean via WSL2/CUDA.
+
 ## Physics-bridge crystallization + structural-uniqueness scans (May 1, 2026 evening)
 
 A focused evening session producing 14 commits with substantive positive
