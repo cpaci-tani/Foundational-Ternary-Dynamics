@@ -99,10 +99,10 @@ void phase_forces_main_loop(RenderBridge& rb) {
       f_em = grad_rho_t2 * (G_C * v.state);
     } else if (rb.toggles.poisson_coulomb) {
       Vec3 grad_phi = rb.gradient_scalar(i, rb.phi_coulomb_);
-      f_em = grad_phi * (-ALPHA * v.state);       // ALPHA == ALPHA_EFT (G_C² identity)
+      f_em = grad_phi * (-ALPHA * v.state);
     } else {
       Vec3 grad_divJ = rb.gradient_divergence(i);
-      f_em = grad_divJ * (-ALPHA * v.state);       // ALPHA == ALPHA_EFT (G_C² identity)
+      f_em = grad_divJ * (-ALPHA * v.state);
     }
 
     // Gravitational force from density gradient
@@ -131,7 +131,7 @@ void phase_forces_main_loop(RenderBridge& rb) {
     Vec3 f_lorentz;
     if (rb.toggles.lorentz_force && v.speed() > EPSILON_MAG) {
       Vec3 B = rb.curl_flux(i);
-      f_lorentz = Vec3::cross(v.velocity, B) * (ALPHA * v.state);       // ALPHA == ALPHA_EFT
+      f_lorentz = Vec3::cross(v.velocity, B) * (ALPHA * v.state);
     }
 
     // ── Color force: pairwise SU(3)-inspired interaction ─────────────
