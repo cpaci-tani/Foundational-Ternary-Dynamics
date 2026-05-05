@@ -654,7 +654,7 @@ void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
 
 void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
-                        bool do_genesis, double dt,
+                        bool do_genesis, bool do_evaporation, double dt,
                         bool do_langevin, double langevin_gamma, double langevin_T,
                         uint8_t langevin_site_filter) {
     int L = bufs.L;
@@ -700,11 +700,13 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         CUDA_CHECK(cudaGetLastError());
     }
 
-    // Evaporation — gate on do_genesis to match CPU phase_write.cpp:291.
-    // Pre-fix this ran every tick regardless of toggle; tests that disable
-    // genesis but pre-place particles saw GPU evaporate them while CPU
-    // preserved them. (Audit F6, 2026-05-04.)
-    if (do_genesis) {
+    // Evaporation — gate on (do_genesis || do_evaporation). The genesis path
+    // implies evaporation by design (manifestation + evaporation are sister
+    // operations on a single threshold, see CPU phase_write.cpp:291). The
+    // do_evaporation flag lets tests exercise the evaporation path in
+    // isolation without enabling genesis. Pre-F6 this ran every tick
+    // regardless of toggle (audit F6, 2026-05-04).
+    if (do_genesis || do_evaporation) {
         evaporation_kernel<<<grid, block>>>(
             bufs.d_state,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
@@ -725,7 +727,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
 void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
                         bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
-                        bool do_genesis, double dt,
+                        bool do_genesis, bool do_evaporation, double dt,
                         bool do_langevin, double langevin_gamma, double langevin_T) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
@@ -770,11 +772,9 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
         CUDA_CHECK(cudaGetLastError());
     }
 
-    // Evaporation — gate on do_genesis to match CPU phase_write.cpp:291.
-    // Pre-fix this ran every tick regardless of toggle; tests that disable
-    // genesis but pre-place particles saw GPU evaporate them while CPU
-    // preserved them. (Audit F6, 2026-05-04.)
-    if (do_genesis) {
+    // Evaporation — gate on (do_genesis || do_evaporation). Same convention as
+    // launch_phase_write above; see comment there. (Audit F6, 2026-05-04.)
+    if (do_genesis || do_evaporation) {
         evaporation_kernel<<<grid, block>>>(
             bufs.d_state,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,

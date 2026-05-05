@@ -145,6 +145,13 @@ ftd::TermToggles toggles_with_no_state_extensions() {
   return toggles;
 }
 
+ftd::TermToggles toggles_with_evaporation_only() {
+  ftd::TermToggles toggles;
+  toggles.disable_all();
+  toggles.evaporation = true;
+  return toggles;
+}
+
 ftd::TermToggles toggles_with_pair_production_only() {
   ftd::TermToggles toggles;
   toggles.disable_all();
@@ -225,8 +232,12 @@ int main() {
     std::cout << "\n-- GCL-6: phase-write evaporation reaction --\n";
     std::vector<ftd::Voxel> voxels(static_cast<size_t>(L * L * L));
     place(voxels, L, 3, 3, 3, +1, {0, 0, 0});
+    // evaporation flag (introduced 2026-05-05) lets the test exercise the
+    // evaporation kernel in isolation without enabling genesis. Pre-flag this
+    // used toggles_with_no_state_extensions() and depended on a GPU bug
+    // (evaporation ignored its toggle gate); see callstack-audit BH-F6.
     check_ledger_matches("GCL-6 evaporation", voxels,
-                         toggles_with_no_state_extensions(), 0, 0, 1);
+                         toggles_with_evaporation_only(), 0, 0, 1);
   }
 
   {
@@ -250,6 +261,7 @@ int main() {
     std::cout << "\n-- GCL-9: RenderBridge exposes GPU ledger --\n";
     ftd::RenderBridge rb(L);
     rb.toggles.disable_all();
+    rb.toggles.evaporation = true;  // exercise evaporation in isolation (see GCL-6 comment)
     auto& v = rb.voxel_at(3, 3, 3);
     v.state = +1;
     v.particle_id = index(L, 3, 3, 3);
