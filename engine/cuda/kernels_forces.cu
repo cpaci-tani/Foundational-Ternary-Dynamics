@@ -306,6 +306,16 @@ __global__ void phase_forces_kernel(
         fd_magnetic_z[i] = f_mag_z;
     }
 
+    // BH-F3 (2026-05-05): record raw force magnitude (EM + grav + Lorentz)
+    // BEFORE the velocity update / clamp. Matches CPU phase_forces.cpp:195.
+    // Pre-fix this used post-clamp |dv|/dt which underestimated accel at the
+    // bandwidth edge and silently excluded color force on both backends.
+    // Color force is computed in color_force_kernel and intentionally NOT
+    // reflected here — Larmor radiation (the only consumer) is electromagnetic,
+    // so color shouldn't contribute. accel_mag is now bit-exact CPU↔GPU under
+    // unit mass at the same call site.
+    accel_mag[i] = sqrt(fx*fx + fy*fy + fz*fz);
+
     // --- Update velocity (skip locked particles) ---
     // 2026-05-04: parity with CPU phase_forces.cpp:198 — locked
     // particles get force_diag populated and accel_mag computed (above)
@@ -314,7 +324,6 @@ __global__ void phase_forces_kernel(
     // being structurally "fixed" — caught by test_logic_engine C7.
     if (locked[i]) return;
 
-    double old_vx = vel_x[i], old_vy = vel_y[i], old_vz = vel_z[i];
     vel_x[i] += fx * dt;
     vel_y[i] += fy * dt;
     vel_z[i] += fz * dt;
@@ -327,10 +336,6 @@ __global__ void phase_forces_kernel(
         vel_y[i] *= scale;
         vel_z[i] *= scale;
     }
-
-    // Store acceleration magnitude (for Larmor radiation)
-    double ax = vel_x[i] - old_vx, ay = vel_y[i] - old_vy, az = vel_z[i] - old_vz;
-    accel_mag[i] = sqrt(ax*ax + ay*ay + az*az) / dt;
 }
 
 // ---------- Movement Kernel ----------
