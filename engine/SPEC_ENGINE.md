@@ -3,7 +3,7 @@
 **Living document for AI agents and developers.**
 **Last updated:** 2026-04-27 (post 8-phase modular refactor sweep — see §"April 27, 2026 — Modular refactor sweep" below)
 **Engine version:** 2.17.0 (post-refactor: viewport + bridge + render_bridge + CUDA stencil all decomposed)
-**Test count:** 250+ C++ tests + 17 Playwright specs + 23 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+**Test count:** 257 C++ test source files (211 active CMake targets after 2026-05-04 trim-the-fat round 4) + 17 Playwright specs + 23 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
 
 ### April 27, 2026 — Modular refactor sweep (8 phases, 17 commits)
 
@@ -311,7 +311,7 @@ engine/
       scale5.json             # 4 cosmic scenarios + camera presets
       scale6.json             # Meta scenario + 13 toggle controls
   tests/
-    175+ test files           # All registered as CTests (170 CPU+GPU + 5 Five Minds campaigns)
+    257 test files            # 211 active CMake targets after 2026-05-04 trim-the-fat round 4
   wasm/
     ftd_wasm.cpp              # Emscripten Embind bindings -- full engine API (1512L)
     CMakeLists.txt            # WASM build rules (Emscripten-only)
