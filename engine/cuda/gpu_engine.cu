@@ -48,7 +48,7 @@ namespace ftd { namespace gpu { namespace kernels {
                             uint8_t bcc_stencil_mode);
     void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
-                            bool do_genesis, double dt,
+                            bool do_genesis, bool do_evaporation, double dt,
                             bool do_langevin, double langevin_gamma, double langevin_T,
                             uint8_t langevin_site_filter);
     void launch_gauss_project(GpuBuffers& bufs,
@@ -67,14 +67,14 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling);
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                                   bool larmor_radiation, double damping_factor,
-                                  bool do_genesis, double dt);
+                                  bool do_genesis, bool do_evaporation, double dt);
     void launch_gauss_sync_dual(GpuBuffers& bufs);
 
     // Fused wave update (single-substrate: replaces phase_read + phase_write)
     void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
                             bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
-                            bool do_genesis, double dt,
+                            bool do_genesis, bool do_evaporation, double dt,
                             bool do_langevin, double langevin_gamma, double langevin_T);
 
     // Extended physics launchers
@@ -277,6 +277,7 @@ void GpuEngine::gpu_phase_write() {
                                          toggles.larmor_radiation,
                                          damping,
                                          toggles.genesis,
+                                         toggles.evaporation,
                                          dt_);
     } else {
         kernels::launch_phase_write(bufs_,
@@ -285,6 +286,7 @@ void GpuEngine::gpu_phase_write() {
                                     toggles.larmor_radiation,
                                     damping,
                                     toggles.genesis,
+                                    toggles.evaporation,
                                     dt_,
                                     toggles.langevin,
                                     toggles.langevin_gamma,
@@ -324,6 +326,7 @@ void GpuEngine::gpu_wave_update() {
                                 toggles.larmor_radiation,
                                 damping,
                                 toggles.genesis,
+                                toggles.evaporation,
                                 dt_,
                                 toggles.langevin,
                                 toggles.langevin_gamma,

@@ -158,6 +158,7 @@ void phase_write_main_loop(RenderBridge& rb) {
       : 1.0 - DAMPING;
   const bool do_damping = rb.toggles.damping;
   const bool do_genesis = rb.toggles.genesis;
+  const bool do_evaporation = rb.toggles.evaporation;
   const bool selective = rb.toggles.selective_damping;
   const bool do_larmor = rb.toggles.larmor_radiation;
   const bool dual = rb.toggles.dual_substrate;
@@ -288,7 +289,7 @@ void phase_write_main_loop(RenderBridge& rb) {
       for (int n : nbrs)
         local_energy += rb.voxels_[n].flux.mag2() + rb.voxels_[n].wave_vel.mag2();
     }
-    if (do_genesis && v.state != 0 && !v.locked) {
+    if ((do_genesis || do_evaporation) && v.state != 0 && !v.locked) {
       double evap_prob = std::exp(-local_energy / (K_B * K_B));
       const std::uint64_t gseed =
           static_cast<std::uint64_t>(rb.toggles.langevin_seed);
