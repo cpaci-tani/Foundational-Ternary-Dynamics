@@ -286,9 +286,12 @@ __global__ void phase_write_kernel(
     bool do_langevin,
     double langevin_gamma,
     double langevin_T,
-    const double* __restrict__ langevin_noise,
     uint8_t langevin_site_filter,    // Cluster A FTD-0093: 0=SC, 1=BCC, 2=FCC, 3=ALL
-    int L
+    int L,
+    // BH-F9 (2026-05-05): Langevin noise via shared SplitMix64+Box-Muller.
+    // Replaces the d_langevin_noise buffer pre-filled by curandGenerateNormalDouble.
+    unsigned long long rng_seed,
+    int                tick
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -312,12 +315,18 @@ __global__ void phase_write_kernel(
 
     if (langevin_active) {
         // Ornstein-Uhlenbeck on wave_vel; replaces deterministic damping.
-        const int N = L * L * L;
         const double one_minus_gamma = 1.0 - langevin_gamma;
         const double sigma = sqrt(2.0 * langevin_gamma * langevin_T);
-        wv_x[i] = one_minus_gamma * wv_x[i] + sigma * langevin_noise[0*N + i];
-        wv_y[i] = one_minus_gamma * wv_y[i] + sigma * langevin_noise[1*N + i];
-        wv_z[i] = one_minus_gamma * wv_z[i] + sigma * langevin_noise[2*N + i];
+        // BH-F9: Box-Muller-derived N(0,1) per axis via SplitMix64.
+        const double nx = ::ftd::voxel_normal(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::LangevinNoiseX));
+        const double ny = ::ftd::voxel_normal(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::LangevinNoiseY));
+        const double nz = ::ftd::voxel_normal(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::LangevinNoiseZ));
+        wv_x[i] = one_minus_gamma * wv_x[i] + sigma * nx;
+        wv_y[i] = one_minus_gamma * wv_y[i] + sigma * ny;
+        wv_z[i] = one_minus_gamma * wv_z[i] + sigma * nz;
     } else if (do_damping) {
         const bool should_damp = !selective_damping || (near_particle[i] != 0);
         if (should_damp) {
@@ -363,8 +372,10 @@ __global__ void wave_update_kernel(
     bool do_langevin,
     double langevin_gamma,
     double langevin_T,
-    const double* __restrict__ langevin_noise,
-    int L
+    int L,
+    // BH-F9 (2026-05-05): Langevin noise via shared SplitMix64+Box-Muller.
+    unsigned long long rng_seed,
+    int                tick
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -457,12 +468,18 @@ __global__ void wave_update_kernel(
         // Ornstein-Uhlenbeck on wave_vel per-component. Replaces deterministic
         // damping. Field rescaling of J is NOT applied here (Langevin acts on
         // the "momentum" DoF; position J thermalizes via coupled dynamics).
-        const int N = L * L * L;
         const double one_minus_gamma = 1.0 - langevin_gamma;
         const double sigma = sqrt(2.0 * langevin_gamma * langevin_T);
-        wv_x[i] = one_minus_gamma * wv_x[i] + sigma * langevin_noise[0*N + i];
-        wv_y[i] = one_minus_gamma * wv_y[i] + sigma * langevin_noise[1*N + i];
-        wv_z[i] = one_minus_gamma * wv_z[i] + sigma * langevin_noise[2*N + i];
+        // BH-F9: Box-Muller-derived N(0,1) per axis via SplitMix64.
+        const double nx = ::ftd::voxel_normal(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::LangevinNoiseX));
+        const double ny = ::ftd::voxel_normal(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::LangevinNoiseY));
+        const double nz = ::ftd::voxel_normal(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::LangevinNoiseZ));
+        wv_x[i] = one_minus_gamma * wv_x[i] + sigma * nx;
+        wv_y[i] = one_minus_gamma * wv_y[i] + sigma * ny;
+        wv_z[i] = one_minus_gamma * wv_z[i] + sigma * nz;
     } else if (do_damping) {
         bool should_damp = !selective_damping || (near_particle[i] != 0);
         if (should_damp) {
@@ -493,13 +510,17 @@ __global__ void genesis_kernel(
     double* __restrict__ wave_vel_x,    // mutable: latent-heat drain (audit F4)
     double* __restrict__ wave_vel_y,
     double* __restrict__ wave_vel_z,
-    const double* __restrict__ random,  // pre-generated uniform [0,1)
     int8_t* __restrict__ spin,
     int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
     int* __restrict__ ledger_reaction,
     int next_pid,  // starting particle ID for this batch
-    int L
+    int L,
+    // BH-F5/F8/F9 (2026-05-05): per-voxel deterministic SplitMix64 RNG via
+    // shared engine/include/ftd/voxel_rng.h. Replaces the d_random buffer
+    // pre-filled by curandGenerateUniformDouble. Bit-exact CPU↔GPU.
+    unsigned long long rng_seed,
+    int                tick
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -519,7 +540,10 @@ __global__ void genesis_kernel(
     // p = 1 - exp(-(density - K_GENESIS) / K_B)
     double z_gen = density - k_genesis;
     double p = 1.0 - exp(-z_gen / K_B);
-    if (random[i] >= p) return;
+    // BH-F5 (2026-05-05): SplitMix64 stream replaces curand. Bit-exact CPU↔GPU.
+    double r = ::ftd::voxel_uniform(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::GenesisManifest));
+    if (r >= p) return;
 
     // Determine polarity from divergence sign
     int xp = idx3d(x+1,y,z,L), xm = idx3d(x-1,y,z,L);
@@ -568,8 +592,14 @@ __global__ void genesis_kernel(
         else if (acy >= acx)          spin[i] = (curl_y > 0) ? 1 : -1;
         else                          spin[i] = (curl_x > 0) ? 1 : -1;
     } else {
-        // Zero curl: assign +1 (deterministic fallback, matches CPU's random with seed)
-        spin[i] = 1;
+        // BH-F8 (2026-05-05): zero-curl spin fallback. CPU at
+        // phase_write.cpp:104-106 uses voxel_uniform(...) < 0.5 ? +1 : -1
+        // with VoxelRng::GenesisSpin = 2. Pre-fix the GPU assigned a
+        // deterministic +1 — divergent with CPU. Now both backends share the
+        // SplitMix64 stream and assign ±1 deterministically per (seed, voxel, tick).
+        double rs = ::ftd::voxel_uniform(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::GenesisSpin));
+        spin[i] = (rs < 0.5) ? 1 : -1;
     }
 
     // Assign color from dominant flux axis
@@ -657,7 +687,8 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
                         bool larmor_radiation, double damping_factor,
                         bool do_genesis, bool do_evaporation, double dt,
                         bool do_langevin, double langevin_gamma, double langevin_T,
-                        uint8_t langevin_site_filter) {
+                        uint8_t langevin_site_filter,
+                        unsigned long long rng_seed, int tick) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -680,23 +711,25 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         bufs.d_near_particle, bufs.d_near_accel,
         do_damping, selective_damping, larmor_radiation,
         damping_factor,
-        do_langevin, langevin_gamma, langevin_T, bufs.d_langevin_noise,
+        do_langevin, langevin_gamma, langevin_T,
         langevin_site_filter,
-        L
+        L,
+        rng_seed, tick
     );
     CUDA_CHECK(cudaGetLastError());
 
-    // Genesis (stochastic) — requires cuRAND pre-fill
+    // Genesis (stochastic) — BH-F5/F8/F9 (2026-05-05): SplitMix64 stream
+    // replaces the cuRAND pre-fill. Per-voxel deterministic via shared
+    // engine/include/ftd/voxel_rng.h. Bit-exact CPU↔GPU.
     if (do_genesis) {
-        // Random numbers are generated in gpu_engine.cu before calling this
         genesis_kernel<<<grid, block>>>(
             bufs.d_state,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-            bufs.d_random,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction,
-            0, L
+            0, L,
+            rng_seed, tick
         );
         CUDA_CHECK(cudaGetLastError());
     }
@@ -729,7 +762,8 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
                         bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
                         bool do_genesis, bool do_evaporation, double dt,
-                        bool do_langevin, double langevin_gamma, double langevin_T) {
+                        bool do_langevin, double langevin_gamma, double langevin_T,
+                        unsigned long long rng_seed, int tick) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -754,21 +788,23 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
         do_wave, do_coupling,
         do_damping, selective_damping, larmor_radiation,
         damping_factor,
-        do_langevin, langevin_gamma, langevin_T, bufs.d_langevin_noise,
-        L
+        do_langevin, langevin_gamma, langevin_T,
+        L,
+        rng_seed, tick
     );
     CUDA_CHECK(cudaGetLastError());
 
-    // Genesis (stochastic) — requires cuRAND pre-fill
+    // Genesis (stochastic) — BH-F5/F8/F9 (2026-05-05): SplitMix64 stream
+    // replaces cuRAND pre-fill. Bit-exact CPU↔GPU.
     if (do_genesis) {
         genesis_kernel<<<grid, block>>>(
             bufs.d_state,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
-            bufs.d_random,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction,
-            0, L
+            0, L,
+            rng_seed, tick
         );
         CUDA_CHECK(cudaGetLastError());
     }
