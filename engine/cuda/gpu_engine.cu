@@ -50,7 +50,8 @@ namespace ftd { namespace gpu { namespace kernels {
                             bool larmor_radiation, double damping_factor,
                             bool do_genesis, bool do_evaporation, double dt,
                             bool do_langevin, double langevin_gamma, double langevin_T,
-                            uint8_t langevin_site_filter);
+                            uint8_t langevin_site_filter,
+                            unsigned long long rng_seed, int tick);
     void launch_gauss_project(GpuBuffers& bufs,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
@@ -68,7 +69,8 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling);
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                                   bool larmor_radiation, double damping_factor,
-                                  bool do_genesis, bool do_evaporation, double dt);
+                                  bool do_genesis, bool do_evaporation, double dt,
+                                  unsigned long long rng_seed, int tick);
     void launch_gauss_sync_dual(GpuBuffers& bufs);
 
     // Fused wave update (single-substrate: replaces phase_read + phase_write)
@@ -76,7 +78,8 @@ namespace ftd { namespace gpu { namespace kernels {
                             bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
                             bool do_genesis, bool do_evaporation, double dt,
-                            bool do_langevin, double langevin_gamma, double langevin_T);
+                            bool do_langevin, double langevin_gamma, double langevin_T,
+                            unsigned long long rng_seed, int tick);
 
     // Extended physics launchers
     void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate);
@@ -252,21 +255,13 @@ void GpuEngine::gpu_phase_read() {
 }
 
 void GpuEngine::gpu_phase_write() {
-    // Generate random numbers for genesis (cuRAND fills d_random before kernels use it)
-    if (toggles.genesis) {
-        CURAND_CHECK(curandGenerateUniformDouble(rng_, bufs_.d_random, N_));
-    }
+    // BH-F5/F8/F9 (2026-05-05): cuRAND prefills removed. Genesis + Langevin
+    // now use deterministic SplitMix64 RNG (engine/include/ftd/voxel_rng.h)
+    // computed per-thread inside the kernel from (seed, voxel_idx, tick, salt).
+    // Bit-exact CPU↔GPU at unit mass.
 
-    // Langevin thermostat (FTD-0051). Generate 3N standard normals before the
-    // phase_write kernel consumes them. cuRAND requires even count for
-    // curandGenerateNormalDouble — 3N is even whenever N is even, which holds
-    // for any L >= 2. Uses the existing rng_ generator.
-    if (toggles.langevin && !toggles.dual_substrate) {
-        set_rng_seed(toggles.langevin_seed);
-        CURAND_CHECK(curandGenerateNormalDouble(
-            rng_, bufs_.d_langevin_noise, static_cast<size_t>(3) * N_,
-            /*mean=*/0.0, /*stddev=*/1.0));
-    }
+    const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
+    const int  tick     = static_cast<int>(tick_);
 
     double damping = 1.0 - ALPHA;
     if (toggles.dual_substrate) {
@@ -279,7 +274,8 @@ void GpuEngine::gpu_phase_write() {
                                          damping,
                                          toggles.genesis,
                                          toggles.evaporation,
-                                         dt_);
+                                         dt_,
+                                         rng_seed, tick);
     } else {
         kernels::launch_phase_write(bufs_,
                                     toggles.damping,
@@ -292,7 +288,8 @@ void GpuEngine::gpu_phase_write() {
                                     toggles.langevin,
                                     toggles.langevin_gamma,
                                     toggles.langevin_T,
-                                    static_cast<uint8_t>(toggles.langevin_site_filter));
+                                    static_cast<uint8_t>(toggles.langevin_site_filter),
+                                    rng_seed, tick);
     }
 
     // Step strong field stencil (Stella Octangula propagation)
@@ -313,10 +310,10 @@ void GpuEngine::gpu_phase_write() {
 // The safe split approach (gpu_phase_read + gpu_phase_write) is used instead.
 // Kept for reference only — do not call without implementing double-buffering.
 void GpuEngine::gpu_wave_update() {
-    // Generate random numbers for genesis (cuRAND fills d_random before kernels use it)
-    if (toggles.genesis) {
-        CURAND_CHECK(curandGenerateUniformDouble(rng_, bufs_.d_random, N_));
-    }
+    // BH-F5/F8/F9 (2026-05-05): cuRAND prefill removed. SplitMix64 RNG inside
+    // the kernel; bit-exact CPU↔GPU.
+    const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
+    const int  tick     = static_cast<int>(tick_);
 
     double damping = 1.0 - ALPHA;
     kernels::launch_wave_update(bufs_,
@@ -331,7 +328,8 @@ void GpuEngine::gpu_wave_update() {
                                 dt_,
                                 toggles.langevin,
                                 toggles.langevin_gamma,
-                                toggles.langevin_T);
+                                toggles.langevin_T,
+                                rng_seed, tick);
 }
 
 void GpuEngine::gpu_gauss_project() {
