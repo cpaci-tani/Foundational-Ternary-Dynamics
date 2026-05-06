@@ -30,6 +30,7 @@
 #include "ftd/sublattice.h"
 #include "ftd/field_operators.h"
 #include "ftd/bridge_rng.h"
+#include "ftd/voxel_rng.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -40,28 +41,14 @@
 
 namespace ftd {
 
-// Mirror of the enum in render_bridge.cpp — keeps salt domains stable
-// across the extraction. Values are part of the public RNG stream
-// definition; do not renumber.
-namespace {
-enum class VoxelRng : std::uint64_t {
-    GenesisManifest = 1,
-    GenesisSpin     = 2,
-    Evaporation     = 3,
-};
+// VoxelRng enum + voxel_uniform now live in `engine/include/ftd/voxel_rng.h`
+// (BH-F5/F8/F9 closure 2026-05-05). The shared header provides byte-equivalent
+// SplitMix64 streams to both CPU and GPU paths so per-voxel CPU↔GPU parity
+// holds bit-exactly under stochastic toggles. No behavior change in this
+// commit relative to the prior anonymous-namespace local definitions; the
+// arithmetic is identical (verified by golden hash bit-exactness).
 
-inline double voxel_uniform(std::uint64_t seed, int voxel_idx,
-                            int tick, std::uint64_t salt) {
-  std::uint64_t x = seed
-                  ^ (static_cast<std::uint64_t>(voxel_idx) * 0x9E3779B97F4A7C15ULL)
-                  ^ (static_cast<std::uint64_t>(tick)      * 0xBF58476D1CE4E5B9ULL)
-                  ^ (salt                                   * 0x94D049BB133111EBULL);
-  // SplitMix64 finalizer.
-  x = (x ^ (x >> 30)) * 0xBF58476D1CE4E5B9ULL;
-  x = (x ^ (x >> 27)) * 0x94D049BB133111EBULL;
-  x =  x ^ (x >> 31);
-  return (x >> 11) * (1.0 / 9007199254740992.0);
-}
+namespace {
 
 // RF-4 dedup: shared manifest body. Caller has already determined polarity
 // via either chirality density (dual) or flux divergence (single) and
