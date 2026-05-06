@@ -37,6 +37,18 @@ git tag -l <tag-name>            # tag listing
 The launcher script `engine/tools/run_emergent_spectrum_g1.sh` wraps
 the FTD-0107 invocation; see `commit a0983ca` for the script body.
 
+## R3a operator-mixing L-scan (2026-05-05; campaign queued)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0140** R3a operator-mixing L-scan | `preregister-operator-mixing-l-scan-v1` | `f3fa700` | `engine/build_wsl/campaign_operator_mixing_2026-04-26` | `--L <64\|96\|128> --b <2\|4> --inj-mult 1.0` (6 configs total) | `engine/results/operator_mixing_2026-05-05_l_scan/L<L>_b<b>/` | [`PREREG_OPERATOR_MIXING_L_SCAN_v1.md`](PREREG_OPERATOR_MIXING_L_SCAN_v1.md) (pre-reg) → `ANALYSIS_OPERATOR_MIXING_L_SCAN.md` (post-launch) |
+
+Pre-reg SHA256: `290005066803b2cada8be9820c50f35ef3f810ae61fba53d436d9a393a5c2f0d`.
+
+Backend anchor: HEAD `00f41fe` post BH-F5/F8/F9 RNG portability closure (commits `c1a4f88` + `c8e03a5`). Per-voxel CPU↔GPU bit-exact at unit mass under stochastic toggles. The campaign launches when GPU is clear (currently at 94% external contention; user picked "pre-register now, launch later" on 2026-05-05).
+
+When launching: confirm `git rev-list -n1 preregister-operator-mixing-l-scan-v1` resolves to `f3fa700` and that the campaign binary's commit-sha matches that anchor.
+
 ## Earlier campaigns (pre-2026-04-27, no pre-reg tag yet)
 
 These campaigns precede the pre-registration discipline (introduced
