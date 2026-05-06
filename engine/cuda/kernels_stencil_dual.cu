@@ -21,6 +21,7 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
+#include "ftd/voxel_rng.h"   // BH-F5/F8/F9 (2026-05-05): shared SplitMix64 RNG
 #include "kernels_stencil_common.cuh"   // wrap, idx3d, effective_damping, scale_field_pair
 #include <cuda_runtime.h>
 #include <cmath>
@@ -350,11 +351,13 @@ __global__ void genesis_dual_kernel(
     const double* __restrict__ fL_x, const double* __restrict__ fL_y, const double* __restrict__ fL_z,
     const double* __restrict__ fR_x, const double* __restrict__ fR_y, const double* __restrict__ fR_z,
     const double* __restrict__ obs_x, const double* __restrict__ obs_y, const double* __restrict__ obs_z,
-    const double* __restrict__ random,
     int8_t* __restrict__ spin, int8_t* __restrict__ color,
     int32_t* __restrict__ particle_id,
     int* __restrict__ ledger_reaction,
-    int L
+    int L,
+    // BH-F5/F8/F9 (2026-05-05): SplitMix64 RNG via shared voxel_rng.h.
+    unsigned long long rng_seed,
+    int                tick
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -373,7 +376,10 @@ __global__ void genesis_dual_kernel(
     // Exponential CDF genesis probability (matches CPU, dual-substrate)
     double z_gen = density - k_genesis;
     double p = 1.0 - exp(-z_gen / K_B);
-    if (random[i] >= p) return;
+    // BH-F5 (2026-05-05): SplitMix64 stream replaces curand. Bit-exact CPU↔GPU.
+    double r = ::ftd::voxel_uniform(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::GenesisManifest));
+    if (r >= p) return;
 
     // Polarity from chirality (|psi_L|^2 - |psi_R|^2)
     double psiL2 = fL_x[i]*fL_x[i] + fL_y[i]*fL_y[i];
@@ -399,6 +405,13 @@ __global__ void genesis_dual_kernel(
         double dominant = (fabs(curl_x) >= fabs(curl_y) && fabs(curl_x) >= fabs(curl_z)) ? curl_x
                         : (fabs(curl_y) >= fabs(curl_z)) ? curl_y : curl_z;
         spin[i] = (dominant > 0) ? 1 : -1;
+    } else {
+        // BH-F8 (2026-05-05): zero-curl spin fallback. Matches CPU
+        // phase_write.cpp:104-106 + the single-substrate genesis_kernel
+        // post-fix.
+        double rs = ::ftd::voxel_uniform(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::GenesisSpin));
+        spin[i] = (rs < 0.5) ? 1 : -1;
     }
 
     // Color from dominant observable axis
@@ -431,7 +444,8 @@ void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupli
 
 void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                               bool larmor_radiation, double damping_factor,
-                              bool do_genesis, bool do_evaporation, double dt) {
+                              bool do_genesis, bool do_evaporation, double dt,
+                              unsigned long long rng_seed, int tick) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -464,16 +478,17 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
     );
     CUDA_CHECK(cudaGetLastError());
 
-    // Dual genesis (chirality-based)
+    // Dual genesis (chirality-based) — BH-F5/F8/F9 (2026-05-05): SplitMix64
+    // stream replaces cuRAND pre-fill.
     if (do_genesis) {
         genesis_dual_kernel<<<grid, block>>>(
             bufs.d_state,
             bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
             bufs.d_flux_R_x, bufs.d_flux_R_y, bufs.d_flux_R_z,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-            bufs.d_random,
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
-            bufs.d_ledger_reaction, L
+            bufs.d_ledger_reaction, L,
+            rng_seed, tick
         );
         CUDA_CHECK(cudaGetLastError());
     }
