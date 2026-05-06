@@ -20,6 +20,7 @@
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
 #include "ftd/sublattice.h"   // N_FACE, N_EDGE, N_CORNER, W_SC_FACE, W_FCC_EDGE, W_BCC_CORNER
+#include "ftd/voxel_rng.h"    // BH-F5/F8/F9 (2026-05-05): shared SplitMix64 RNG
 #include "kernels_stencil_common.cuh"   // wrap, idx3d, effective_damping, scale_field_pair
 #include <cuda_runtime.h>
 #include <cmath>
