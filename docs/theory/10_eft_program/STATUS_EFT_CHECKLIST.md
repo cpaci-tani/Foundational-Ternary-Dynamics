@@ -33,8 +33,8 @@ FTD histories.
 - [x] Native dual-cell / finite-volume containers implemented.
 - [x] Engine flat indexing aligned across native continuity/blocking code.
 - [ ] Decide whether the formal master-quadratic paper's BCC/corner channel is part of the canonical field basis or a delayed/nonlinear sector.
-- [ ] Decide whether the canonical EFT field basis is collocated `(s,J)` or face-centered/dual-cell `J*`. **R2 deliverable: `DECISION_FIELD_BASIS.md` queued.**
-- [ ] Define the final minimal field tuple for nonlinear campaigns. **Coupled to the field-basis decision above.**
+- [x] Decide whether the canonical EFT field basis is collocated `(s,J)` or face-centered/dual-cell `J*`. **R2 closed 2026-05-05: `DECISION_FIELD_BASIS.md` picks collocated $(s, J)$ at lattice vertices. Field tuple $(s, J, v_\text{wave}, \mathcal{L})$.**
+- [x] Define the final minimal field tuple for nonlinear campaigns. **R2 closed 2026-05-05 (same DECISION).**
 
 ## 2. Native Kinematics And Constraints
 
@@ -44,8 +44,8 @@ FTD histories.
 - [x] Native b=2 blocking map implemented for density, reaction, and oriented currents.
 - [x] Dual-cell Gauss prototype implemented and tested.
 - [x] Moore-shell and source-core alternatives compared.
-- [ ] Resolve source-core compromise: skipped particle sites vs exact full-site `div J = s`. **R2 deliverable: bundled into `DECISION_GAUSS_REPRESENTATION.md`.**
-- [ ] Select production Gauss representation: collocated, source-core fork, or dual-cell face flux. **R2 deliverable: `DECISION_GAUSS_REPRESENTATION.md` queued. CPU SOR vs GPU cuFFT divergence already documented per CALLSTACK F6 in `engine/SPEC_ENGINE.md` §"FFT Poisson Solver" — the decision is which becomes canonical for $S_\text{eff}$ measurements.**
+- [x] Resolve source-core compromise: skipped particle sites vs exact full-site `div J = s`. **R2 closed 2026-05-05 (`DECISION_GAUSS_REPRESENTATION.md`): source-core fork remains as prototype path, not adopted; canonical enforcement is everywhere via cuFFT.**
+- [x] Select production Gauss representation: collocated, source-core fork, or dual-cell face flux. **R2 closed 2026-05-05: `DECISION_GAUSS_REPRESENTATION.md` picks collocated cuFFT (GPU production path) with residual ≤ 1e-8.**
 
 ## 3. Engine History Ledger
 
