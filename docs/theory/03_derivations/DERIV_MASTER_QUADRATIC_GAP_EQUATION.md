@@ -181,6 +181,50 @@ What it does **not** establish:
 
 ---
 
+## Part VII: Transfer-Matrix Interpretation [THEOREM, notational]
+
+**Added 2026-05-06 (FQCR integration).**
+
+The Finite Quarter-Conjugacy Recurrence framework (`SPEC_FQCR.md`) provides an **operator interpretation** of the master quadratic that complements the algebraic / number-theoretic framings of Parts I–IV. This is a notational identity, not a new physical claim.
+
+### VII.1 — The transfer matrix
+
+Define, for $N \ge 1$ and a real parameter $t$,
+
+$$ M_N(t) \;:=\; 16\,(G_N^*)^2 \begin{pmatrix} 1 & -\dfrac{R_N(t)}{16\,G_N^*} \\[4pt] 1 & 0 \end{pmatrix} $$
+
+where $G_N^*$ is the finite-N approximation to $G^*$ defined in `DERIV_GSTAR_FINITE_APPROX.md` and $R_N(t)$ is a finite renormalisation factor specified in `SPEC_FQCR.md` §3.3.
+
+### VII.2 — Characteristic polynomial = master quadratic
+
+By direct computation,
+
+$$ \det(x I - M_N(t)) \;=\; x^2 \;-\; 16\,(G_N^*)^2\,x \;+\; 16\,(G_N^*)^3\,R_N(t). $$
+
+**At $R_N(t) = 1$ and $N \to \infty$:** this reduces to
+
+$$ x^2 - 16\,G^{*2}\,x + 16\,G^{*3} = 0, $$
+
+which is **exactly** the master quadratic of Part I. The roots $x_+$ and $x_-$ are then the eigenvalues of $M_\infty(R = 1)$.
+
+### VII.3 — What this notational equivalence does and does NOT establish
+
+**Establishes:**
+
+- The master quadratic admits an operator interpretation as the spectrum of a finite 2×2 transfer matrix.
+- The "deformation parameter" $R_N(t)$ provides a structured family of polynomials sharing the master quadratic's algebraic shape; the canonical choice $R = 1$ recovers Theorem 2 exactly.
+- Within FQCR, the dominant root reading $x_+ = \lambda_\text{max}(M_\infty(1))$ gives a notational anchor for the [STRONGLY MOTIVATED CONJECTURE] $\alpha^{-1} = 1/x_+$ (FTD-0013) without changing its tag.
+
+**Does NOT establish:**
+
+- That the transfer-matrix structure is *unique* or *forced* — one can always wrap a quadratic into a 2×2 companion matrix; the FQCR construction makes a specific choice for the off-diagonal placement of $R_N$.
+- That $\alpha^{-1} = \lambda_\text{max}$ is *derived* — the physical identification stays at [STRONGLY MOTIVATED CONJECTURE] (FTD-0013), unchanged.
+- That the renormalisation $R_N(t)$'s specific form $1 + \lambda_N + A_N$ is *necessary* — the Model IV exponent quadruple $(4, 6; 3, 2)$ is at [SELECTION] pending the uniqueness scan in `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md` (FTD-0143).
+
+The operator interpretation is therefore complementary to the algebraic / number-theoretic provenance in Parts I–IV; it does not replace them.
+
+---
+
 ## References
 
 - DERIV_WATSON_GSTAR_IDENTITY.md — $W_3 = G^{*2}/(2\pi)$ and the Chowla–Selberg connection.
