@@ -527,6 +527,42 @@ above:
   monopoles in the 3-state framework), N_SUSY = 0 (no on-lattice
   superpartners), τ_proton = ∞ (pointwise charge conservation).
 
+### 10.X · FQCR subsidiaries to Theorems 1, 2, 8
+
+The Finite Quarter-Conjugacy Recurrence framework (FQCR; see
+`SPEC_FQCR.md`) lands several operator-theoretic readings of existing
+spine theorems. None of these introduce a 10th theorem — the spine
+count remains 9. Each lands as a subsidiary that adds an operator
+provenance chain alongside the existing algebraic / number-theoretic
+provenance.
+
+- **G\* via $\det_\zeta$ quarter-conjugacy bridge (FTD-0141, [THEOREM])** —
+  the bridge constant of Theorem 1 is the $\zeta$-regularized determinant
+  ratio of the quarter-twisted spectra $\{n + \tfrac{1}{4}\}_{n\ge 0}$ and
+  $\{n + \tfrac{3}{4}\}_{n\ge 0}$ arising from the conjugacy operator $J$
+  with $J^2 = -I$. Operator-theoretic provenance via Lerch's formula.
+  Complementary to FTD-0127's parity-twist (number-theoretic / L-function
+  lens). See `DERIV_GSTAR_QUARTER_CONJUGACY.md`.
+- **G\* as finite-N attractor (FTD-0142, [THEOREM])** — the finite product
+  $G_N^* = (N+1)^{-1/2} \prod_{n=0}^{N} (n+\tfrac{3}{4})/(n+\tfrac{1}{4})$
+  converges to $G^*$ at rate $|G_N^* - G^*| = O(1/N^2)$, empirical
+  $C \approx 0.046$. Discharges the `AUDIT_INFINITY_REFRAME.md` ε-L
+  obligation for $G^*$. Verified by `proof_fqcr_convergence.py`. See
+  `DERIV_GSTAR_FINITE_APPROX.md`.
+- **Master quadratic as transfer-matrix characteristic polynomial
+  ([THEOREM] notational)** — the FQCR transfer matrix $M_N(t)$ has
+  characteristic polynomial $x^2 - 16(G_N^*)^2 x + 16(G_N^*)^3 R_N(t) = 0$;
+  at $R_N = 1$ and $N \to \infty$ this is exactly Theorem 2. The operator
+  interpretation does not change Theorem 2's content, only adds an
+  operator framing. See `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` Part VII
+  and `SPEC_FQCR.md` Model V.
+- **Z\_4 unification candidate** — the conjugacy operator $J$ with
+  $J^2 = -I$ shares its $Z_4$ structural anchor with Theorem 8's
+  $(1+i)$-tower and with the $i$-cycle ontology in
+  `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md`. A future stylistic refactor
+  could group these under a unified "$Z_4$ algebraic-spine" subsection;
+  not done in the current spine version.
+
 ---
 
 ## 11 · The empirical observation (NOT a theorem — explicit boundary)
