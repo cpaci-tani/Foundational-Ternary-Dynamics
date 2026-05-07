@@ -4,7 +4,7 @@
 **Date:** 2026-05-06
 **Version:** 1.0
 **Status:** [REFERENCE] — capstone document for the FQCR framework. Per-element tags within (see §4 status table).
-**Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141, Model I), [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142, Model II), [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §10, [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [`DERIV_G_STAR_PARITY_TWIST.md`](../03_derivations/DERIV_G_STAR_PARITY_TWIST.md) (FTD-0127), [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143).
+**Companion docs:** [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/DERIV_GSTAR_QUARTER_CONJUGACY.md) (FTD-0141, Model I), [`DERIV_GSTAR_FINITE_APPROX.md`](../03_derivations/DERIV_GSTAR_FINITE_APPROX.md) (FTD-0142, Model II), [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §10, [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [`DERIV_G_STAR_PARITY_TWIST.md`](../03_derivations/DERIV_G_STAR_PARITY_TWIST.md) (FTD-0127), [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](../10_eft_program/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) (FTD-0143), [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md) (FTD-0144, curve-side trilogy bridge).
 **Verifier script:** [`scripts/proofs/proof_fqcr_convergence.py`](../../../scripts/proofs/proof_fqcr_convergence.py)
 
 The Finite Quarter-Conjugacy Recurrence (FQCR) is a five-model framework that:
@@ -152,6 +152,8 @@ with three additive terms:
 
 The choice of additive combination $R = 1 + \lambda + A$ specifically (vs other linear combinations of these primitives) is also a **[SELECTION]**.
 
+**Cross-reference (2026-05-07).** The compatibility paper of the QCR trilogy (see [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md)) defines the same coefficient $\kappa_N(t) = R_N(t)/(16 G_N^*)$ in its Definition 2.2; the symbol $R_N(t)$ in this document and in the compatibility paper is the same object. The trilogy itself does not commit to a specific decomposition $R = 1 + \lambda + A$; that choice remains an FQCR-internal [SELECTION] pending FTD-0143.
+
 ---
 
 ## §4 — Status table (per-element tags)
@@ -187,6 +189,7 @@ The choice of additive combination $R = 1 + \lambda + A$ specifically (vs other 
 | Theorem 9 (FTD-0112): $Q(G^*)$ field-theoretic | Unaffected; FQCR does not introduce new transcendentals. |
 | FTD-0127: parity-twist (L-function lens) | **Two readings of the same residue-class decomposition mod 4**, sharper than the original "complementary lenses" framing. The shifts $\{1/4, 3/4\}$ in FQCR are not free parameters — once $J^2 = -I$ is committed, the quarter-twisted boundary forces the spectral shifts to be the two non-trivial residue classes mod 4. After scaling by 4, $4 D_{1/4} = \{n \equiv 1\pmod 4\}$ and $4 D_{3/4} = \{n \equiv 3\pmod 4\}$; restricted to primes, these are the split and inert prime classes of $\mathbb{Z}[i]$ (Fermat's two-square theorem). FTD-0127 takes the parity-symmetric (sum/difference) combinations of the same Hurwitz components $\zeta_H(s, 1/4)$ and $\zeta_H(s, 3/4)$ that FQCR Model I works on directly. Unification one-line: $G^* = \exp[\zeta_H'(0, 1/4) - \zeta_H'(0, 3/4)] = \Gamma_\zeta(1/2)/\Gamma_{\chi_{-4}}(1/2) = \Gamma(1/4)/\Gamma(3/4)$. See `DERIV_GSTAR_QUARTER_CONJUGACY.md` §5 (revised 2026-05-06) for the full residue-class / Z[i]-prime-splitting derivation. |
 | FTD-0001/0013/0014 SMC chain | FQCR's Model V physical readout is exactly FTD-0013 restated in operator language; tag stays at SMC. No promotion. |
+| FTD-0144 (QCR trilogy bridge) | The compatibility paper supplies the curve-side geometric pairing for FQCR's branch-side recurrence, plus a concrete depth-4 five-harmonic numerical incarnation of FTD's $(1+i)$-tower (Theorem 8 / FTD-0111). Cross-confirms FQCR Models II–V at the formula level. Documented in [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md). No spine inflation; no tier promotion. |
 
 ### To FQCR's own derivation chain
 
