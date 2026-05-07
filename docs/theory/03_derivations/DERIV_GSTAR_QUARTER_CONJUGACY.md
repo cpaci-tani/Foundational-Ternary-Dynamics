@@ -156,7 +156,11 @@ The connection to prime splitting therefore runs through the *Euler factorizatio
 
 Stated honestly: **FQCR Model I is the operator-theoretic reading of the Hurwitz/$L$-function decomposition over the residue classes mod 4; FTD-0127 is the parity-symmetric reading of the same decomposition; the prime-splitting law of $\mathbb{Z}[i]$ is the arithmetic-geometric content underlying both readings, exposed via the Euler product of $L(s, \chi_{-4})$.**
 
-### §5.6 — Why this matters for the SMC chain $G^* \to $ master quadratic $\to \alpha$
+### §5.6 — Curve-side bridge (compatibility paper of QCR trilogy, 2026-05-07)
+
+The QCR trilogy's compatibility paper (see [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md), FTD-0144) supplies a **curve-side geometric pairing** for the algebraic recurrence developed in the QC-Recurrences paper. The pairing is a sector-coloring map $c : \mathcal{S}_N \to \{z_+(t), z_-(t)\}$ from radial-minima sectors of a dyadic Fourier curve to the two reciprocal projective branches of the symmetric form $u_{m+1} + u_{m-1} = s_N(t)\,u_m$. The trilogy cross-confirms FQCR Model II's finite-N formula at the equation level (compatibility paper Definition 2.1 = FTD-0142) and supplies a concrete depth-4 numerical incarnation of FTD's $(1+i)$-tower — exactly the dyadic frequency ladder $\{2^k : k = 0, \ldots, 4\}$ that Theorem 8 (FTD-0111) indexes. The depth-4 example exhibits a $6 = 2 \times 3$ sector structure (two reciprocal branch labels across three radial doublets) that is observed numerically and flagged interpretation-free; FTD documents the correspondence without promoting any reading. See `REF_QCR_TRILOGY_BRIDGE.md` §4 for the depth-4 mapping and §5.5 for the trilogy's own conjectures.
+
+### §5.7 — Why this matters for the SMC chain $G^* \to $ master quadratic $\to \alpha$
 
 Saying "$G^* = \Gamma(1/4)/\Gamma(3/4)$" makes the constant look like a near-arbitrary special-function combination. Saying "$G^*$ is the regularized asymmetry between the split and inert prime classes of $\mathbb{Z}[i]$" — equivalently, the regularized log-ratio of Hurwitz components for the two non-trivial residue classes mod 4 — places $G^*$ as **the natural arithmetic invariant of the smallest imaginary quadratic ring**. Through the master quadratic (Theorem 2 of the algebraic spine), the FQCR Model V identification $\alpha^{-1} = x_+$ then identifies the fine-structure constant with an algebraic combination of this arithmetic invariant.
 
