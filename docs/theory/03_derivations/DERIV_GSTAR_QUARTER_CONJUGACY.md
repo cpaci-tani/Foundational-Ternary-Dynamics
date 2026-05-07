@@ -92,24 +92,75 @@ By Theorem 1 of `SPEC_ALGEBRAIC_SPINE.md` (FTD-0001 [THEOREM]), $G^* = \Gamma(1/
 
 ---
 
-## §5 — Relation to FTD-0127 (parity-twist)
+## §5 — Relation to FTD-0127 (parity-twist) — two readings of the residue-class decomposition mod 4
 
-`DERIV_G_STAR_PARITY_TWIST.md` (FTD-0127, 2026-05-03) establishes that $G^*$ is the ratio of Archimedean Γ-factors at the critical-line center of the even-parity Riemann $\zeta$ vs the odd-parity Dirichlet $L(s, \chi_{-4})$. Operationally:
+The two derivations of $G^*$ are not merely complementary; they are **two readings of the same residue-class decomposition of $\mathbb{Z}_{>0}$ mod 4**, which is the same decomposition that controls the prime-splitting law of $\mathbb{Z}[i]$. This identification is sharper than the "complementary lenses" framing originally put in place; it is documented here in full.
 
-$$ G^* = \frac{\Gamma_\zeta(s)\big|_{s=1/2}}{\Gamma_{\chi_{-4}}(s)\big|_{s=1/2}} \quad \text{(parity-twist reading).} $$
+### §5.1 — The shifts $1/4$ and $3/4$ are residue classes, not free parameters
 
-This is the **L-function / number-theoretic lens** on $G^*$.
+Multiplying by 4, the quarter-twisted spectra of §2 become
 
-The present derivation establishes
+$$ 4\,D_{1/4} = \{1, 5, 9, 13, 17, 21, \ldots\} = \{n \in \mathbb{Z}_{>0} : n \equiv 1 \pmod 4\}, $$
 
-$$ G^* = \frac{\det_\zeta D_{3/4}}{\det_\zeta D_{1/4}} \quad \text{(quarter-conjugacy / operator-theoretic lens).} $$
+$$ 4\,D_{3/4} = \{3, 7, 11, 15, 19, 23, \ldots\} = \{n \in \mathbb{Z}_{>0} : n \equiv 3 \pmod 4\}. $$
 
-**These are complementary, not competing, derivations.** Both lenses bottom out at the same $\Gamma(1/4)/\Gamma(3/4)$ identity; they differ in *which structure* is taken as primary:
+These are **exactly the two non-trivial residue classes mod 4**. The shifts $\{1/4, 3/4\}$ aren't free parameters of the construction — they are forced by $J^2 = -I$, which fixes the eigenvalue phases of $\pm i$, which fixes the quarter-twisted boundary condition, which forces the spectral shifts to be $\{n + 1/4\}$ and $\{n + 3/4\}$. Once $J$ is committed to, the residue-class decomposition is a theorem of the construction.
 
-- FTD-0127: primary structure is the parity decomposition of $\zeta(s) = \sum 1/n^s$ vs $L(s, \chi_{-4}) = \sum \chi_{-4}(n)/n^s$, with the χ_{-4} character encoding $i$-tower phases.
-- This derivation: primary structure is the quarter-conjugacy operator $J$ with $J^2 = -I$, with the spectral-shift $\{1/4, 3/4\}$ inheriting the eigenvalue phases of $\pm i$.
+### §5.2 — Restricted to primes, these classes encode $\mathbb{Z}[i]$ splitting
 
-A fully unified treatment would link the χ_{-4} character to the $J$-action via $\chi_{-4}(n) = i^{n-1}$ (or equivalent), making explicit that the parity-twist and the quarter-conjugacy are two readings of the same $Z_4$ structure. That unification is left as a follow-up; the present derivation establishes the operator-theoretic provenance independently.
+By Fermat's two-square theorem (1640, proved by Euler 1747; equivalently, the prime-splitting law of $\mathbb{Z}[i]$ in modern Gaussian-integer language):
+
+| Rational prime $p$ | Behaviour in $\mathbb{Z}[i]$ | Residue class |
+|---|---|---|
+| $p = 2$ | **Ramified** ($p = -i\,(1+i)^2$) | $-$ |
+| $p \equiv 1 \pmod 4$ | **Split** ($p = \pi\,\bar\pi$ with $\pi, \bar\pi$ non-associate Gaussian primes; equivalently $p = a^2 + b^2$) | $4\,D_{1/4}$ |
+| $p \equiv 3 \pmod 4$ | **Inert** ($p$ stays prime in $\mathbb{Z}[i]$) | $4\,D_{3/4}$ |
+
+The prime members of $4\,D_{1/4}$ are exactly the split primes of $\mathbb{Z}[i]$. The prime members of $4\,D_{3/4}$ are exactly the inert primes. **The quarter-twisted spectra of FQCR Model I segregate, on the prime layer, the split and inert primes of the smallest imaginary quadratic ring.**
+
+### §5.3 — Hurwitz components and the Dirichlet L-function
+
+The standard relations between the Hurwitz components and the global L-functions are:
+
+$$ L(s, \chi_{-4}) \;=\; 4^{-s}\bigl[\zeta_H(s,\,1/4) - \zeta_H(s,\,3/4)\bigr], $$
+
+$$ \zeta(s)\,(1 - 2^{-s}) \;=\; 4^{-s}\bigl[\zeta_H(s,\,1/4) + \zeta_H(s,\,3/4)\bigr]. $$
+
+(The first follows from the definition $L(s, \chi_{-4}) = \sum_n \chi_{-4}(n)\,n^{-s}$ split into $n \equiv 1\;(4)$ and $n \equiv 3\;(4)$ subsums; the second from the analogous split of the odd-integer subsum of $\zeta$.) The Euler product
+
+$$ L(s, \chi_{-4}) \;=\; \prod_{p\,\equiv\,1\,(4)}(1 - p^{-s})^{-1} \cdot \prod_{p\,\equiv\,3\,(4)}(1 + p^{-s})^{-1} $$
+
+makes the prime-class structure explicit: split primes contribute $(1 - p^{-s})^{-1}$ and inert primes contribute $(1 + p^{-s})^{-1}$ — same arithmetic structure with a sign flip on the inert side.
+
+### §5.4 — Two readings, one decomposition
+
+Both derivations of $G^*$ are working in the same residue-class decomposition of $\mathbb{Z}_{>0}$ mod 4. They differ only in the **combination** of $\zeta_H(s, 1/4)$ and $\zeta_H(s, 3/4)$ each takes as primary:
+
+- **FTD-0127 parity-twist (`DERIV_G_STAR_PARITY_TWIST.md`):** primary objects are the **sum** ($\zeta(s)\cdot(1-2^{-s})$, even-parity, encodes "split + inert combined") and the **difference** ($L(s, \chi_{-4})$, odd-parity, encodes "split − inert"). $G^*$ emerges as the ratio of Archimedean Γ-factors at $s = 1/2$.
+
+- **FQCR Model I (this doc):** primary objects are the **individual Hurwitz components** $\zeta_H(s, 1/4)$ and $\zeta_H(s, 3/4)$. $G^*$ emerges as the ratio of $\zeta$-regularized determinants — equivalently, the ratio of $\exp[-\zeta_H'(0, 3/4)]$ to $\exp[-\zeta_H'(0, 1/4)]$, which is $\sqrt{2\pi}/\Gamma(3/4)$ over $\sqrt{2\pi}/\Gamma(1/4)$, with the $\sqrt{2\pi}$ canceling.
+
+The two derivations are **two views of the same arithmetic content**: FTD-0127 looks at parity-symmetric combinations of the Hurwitz components; FQCR Model I looks at the components themselves. They had to agree because they bottom out at the same Lerch evaluation $-\zeta_H'(0, a) = \log[\sqrt{2\pi}/\Gamma(a)]$.
+
+The unification one-line:
+
+> $$ G^* \;=\; \frac{\sqrt{2\pi}/\Gamma(3/4)}{\sqrt{2\pi}/\Gamma(1/4)} \;=\; \exp\!\bigl[\zeta_H'(0, 1/4) - \zeta_H'(0, 3/4)\bigr] \;=\; \frac{\Gamma_\zeta(1/2)}{\Gamma_{\chi_{-4}}(1/2)}. $$
+
+The middle expression is FQCR Model I; the right is FTD-0127; the left is the explicit Lerch evaluation. Identical content, three readings.
+
+### §5.5 — One subtlety: integers vs primes in the determinant
+
+The $\zeta$-regularized determinants in §4 evaluate over **all positive integers in each residue class**, not just primes. The prime-class structure (split/inert/ramified) lives in the **Euler product** of the underlying $L$-function, not directly in the determinant identity. Specifically, the Lerch evaluation $-\zeta'_H(0, a) = \log\Gamma(a) - \tfrac{1}{2}\log(2\pi)$ uses the analytic continuation of $\zeta_H(s, a)$ across the entire $s$-plane and evaluates a single derivative at $s = 0$; nothing in this calculation distinguishes prime from composite members of the residue class.
+
+The connection to prime splitting therefore runs through the *Euler factorization of the L-function whose Hurwitz components are these determinants*, not through a direct prime-restricted determinant identity. This is what makes the two derivations "two readings": they share the same Hurwitz-component primary data, but the route from those components to $G^*$ doesn't pass through prime-restriction.
+
+Stated honestly: **FQCR Model I is the operator-theoretic reading of the Hurwitz/$L$-function decomposition over the residue classes mod 4; FTD-0127 is the parity-symmetric reading of the same decomposition; the prime-splitting law of $\mathbb{Z}[i]$ is the arithmetic-geometric content underlying both readings, exposed via the Euler product of $L(s, \chi_{-4})$.**
+
+### §5.6 — Why this matters for the SMC chain $G^* \to $ master quadratic $\to \alpha$
+
+Saying "$G^* = \Gamma(1/4)/\Gamma(3/4)$" makes the constant look like a near-arbitrary special-function combination. Saying "$G^*$ is the regularized asymmetry between the split and inert prime classes of $\mathbb{Z}[i]$" — equivalently, the regularized log-ratio of Hurwitz components for the two non-trivial residue classes mod 4 — places $G^*$ as **the natural arithmetic invariant of the smallest imaginary quadratic ring**. Through the master quadratic (Theorem 2 of the algebraic spine), the FQCR Model V identification $\alpha^{-1} = x_+$ then identifies the fine-structure constant with an algebraic combination of this arithmetic invariant.
+
+This does not promote the SMC tag — the load-bearing physical claim still inherits FTD-0013's [STRONGLY MOTIVATED CONJECTURE] status. But it does **substantially raise the prior** on the SMC reading by tying $G^*$ to the structurally simplest CM ring's deepest arithmetic fact (Fermat's two-square theorem). This is consistent with the existing 9-Heegner-discriminant rigidity scan (FTD-0123/0124) which already showed $\mathbb{Z}[i]$ structurally privileged at the curve level — the present observation gives a deeper *why* via the residue-class character structure.
 
 ---
 
