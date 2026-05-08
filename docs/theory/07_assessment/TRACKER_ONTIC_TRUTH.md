@@ -187,6 +187,7 @@ This is what is publishable. This is what survives review. This is the truth.
 - [LEDGER.md](./LEDGER.md) — full provenance per claim, including closed-negative results
 - [CHECKLIST_MATH_COMPLETE.md](../01_reference/CHECKLIST_MATH_COMPLETE.md) — bridge-completeness roadmap
 - [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — the 9 [THEOREM]-grade entries with proofs
+- [SPEC_DOCTRINE_LEDGER.md](../01_reference/SPEC_DOCTRINE_LEDGER.md) — FTD/FQCR Doctrine Ledger v1.2 (2026-05-08, FTD-0145 SYNTHESIS): single-page status map rolling up T1–T5 tier assignments below alongside LEDGER and CATALOG tags. **Read this when navigating; come back here for atomic tier disputes.**
 - [SPEC_DIMENSIONAL_MAP.md](../01_reference/SPEC_DIMENSIONAL_MAP.md) — dimensionless ↔ dimensional bridge
 - [Paper A](../../../dissemination/papers/PAPER_A_PI_FREE_GENERATOR.tex) — π-free generator (T1.1, 1.2, 1.3, 2.2, 2.3, 3.3 incl Eisenstein null)
 - [Paper B](../../../dissemination/papers/PAPER_B_BCC_COMPLEX_STRUCTURE.tex) — BCC complex structure (T1.5, 1.6, 4.1)
