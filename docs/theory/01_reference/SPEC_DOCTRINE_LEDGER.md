@@ -2,13 +2,13 @@
 
 **Tag:** [REFERENCE] — single-page status map. Per-element tags within (see §0 status key + §13 audit).
 **Date:** 2026-05-08
-**Version:** 1.2 (closes Phase 1 of the compressed roadmap; Phase-2 hardening cross-linked to `CHECKLIST_MATH_COMPLETE.md`).
+**Version:** 1.2 (closes Phase 1 of the compressed roadmap; Phase-2 hardening cross-linked to `SPEC_OPEN_MATH_BY_SECTOR.md`).
 **LEDGER:** FTD-0145 [SYNTHESIS] — claim-aggregation roll-up; introduces no new theorems.
 **Companion docs:**
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical 9-theorem reference (theorem-only, physics-free)
 - [`SPEC_FQCR.md`](SPEC_FQCR.md) — FQCR capstone reference (Models I–V)
 - [`SPEC_PHYSICS_BRIDGE.md`](SPEC_PHYSICS_BRIDGE.md) — physics-bridge synthesis (FTD-0121, structural-uniqueness scans)
-- [`CHECKLIST_MATH_COMPLETE.md`](CHECKLIST_MATH_COMPLETE.md) — 18-item bridge-complete roadmap (Phase 2 hardening targets)
+- [`SPEC_OPEN_MATH_BY_SECTOR.md`](SPEC_OPEN_MATH_BY_SECTOR.md) — 18-item bridge-complete roadmap (Phase 2 hardening targets)
 - [`../07_assessment/TRACKER_ONTIC_TRUTH.md`](../07_assessment/TRACKER_ONTIC_TRUTH.md) — bedrock truth-tier tracker (T1–T5; OT-N.M IDs)
 - [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) — atomic per-claim provenance (FTD-NNNN IDs)
 
@@ -204,7 +204,7 @@ with `G_N* = (N+1)^{−1/2} · det L_{3/4,N} / det L_{1/4,N}` (Lerch's formula, 
 | Dirac Clifford square gives Pauli term `i q Σ^{μν} F_{μν}`            | **[OPEN — IMPORTED scaffold]**   | External Clifford structure. Cite FTD-0073 mode-erasure for the FTD-side obstruction.    |
 | Tree-level `g = 2`                                                   | **[OPEN — IMPORTED scaffold]**   | External QED, awaiting FTD-side derivation                                               |
 | One-loop `a^{(1)} = α_FQCR/(2π)`                                     | **[OPEN — IMPORTED bridge]**     | Requires `α_FQCR ↔ α` physical identification, which is itself FTD-0013 [STRONGLY MOTIVATED CONJECTURE]. Cannot be promoted above its dependencies. |
-| Full QED `g − 2` precision                                           | [OPEN]                           | MC-T4.4 in CHECKLIST_MATH_COMPLETE.md                                                    |
+| Full QED `g − 2` precision                                           | [OPEN]                           | MC-T4.4 in SPEC_OPEN_MATH_BY_SECTOR.md                                                    |
 
 ---
 
@@ -387,7 +387,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 
 | Priority | Hardening target                                  | Canonical anchor                                                        | Status                          |
 |----------|---------------------------------------------------|-------------------------------------------------------------------------|---------------------------------|
-| 1        | `R_N(t)` variational/operator derivation          | MC-T3.1 (`CHECKLIST_MATH_COMPLETE.md`); FTD-0143 PRE-REG                | NOT CLOSED, slope mismatch ~2.5×|
+| 1        | `R_N(t)` variational/operator derivation          | MC-T3.1 (`SPEC_OPEN_MATH_BY_SECTOR.md`); FTD-0143 PRE-REG                | NOT CLOSED, slope mismatch ~2.5×|
 | 2        | Activation kernels and beta coefficients          | MC-T3.5                                                                  | BLOCKED on T3.1                  |
 | 3        | Higgs residual curvature `χ_H`                    | NEW — no canonical anchor                                                | OPEN                             |
 | 4        | Flavor transfer matrices forcing depths           | NEW — no canonical anchor                                                | OPEN                             |
@@ -429,7 +429,7 @@ This is the strongest possible FTD self-claim. **Achievability is conditional on
 | §11         | LEDGER.md (FTD-0020 α_s; FTD-0025 confinement night-audit); standard QCD                            | FTD-0020, FTD-0025 (annotated 2026-05-03)                       | OT-5.2 (`x_- ↔ N_c`)         |
 | §12         | ../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md; SPEC_ALGEBRAIC_SPINE.md §6 (Phase G)              | **FTD-0131** (DERIVED, postulate-conditional), FTD-0004, FTD-0110, FTD-0015 | OT-1.4, OT-3.4         |
 | §13         | LEDGER.md (full); CATALOG_PARAMETRIC_INSERTIONS.md; TRACKER_ONTIC_TRUTH.md (T1–T5)                  | (roll-up)                                                      | (roll-up)                    |
-| §14         | CHECKLIST_MATH_COMPLETE.md (MC-T3.1, T3.5, T4.3, T4.4)                                              | (roadmap)                                                      | (roadmap)                    |
+| §14         | SPEC_OPEN_MATH_BY_SECTOR.md (MC-T3.1, T3.5, T4.3, T4.4)                                              | (roadmap)                                                      | (roadmap)                    |
 
 ---
 
