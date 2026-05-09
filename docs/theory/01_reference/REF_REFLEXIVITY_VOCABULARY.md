@@ -149,7 +149,7 @@ The wakefulness/unconsciousness distinction in neuroscience is the empirical ana
 - The two-layer ontology (phenomenal 2³ / noumenal 3³ blocks) is preserved as **phenomenal layer / noumenal layer**, with the projection between them now called the **reflexive projection** rather than "consciousness."
 - The BCC interior axis story (FTD-0078) is preserved as the **reflexive eigenstructure** — the eigenmodes of the reflexive projection live on the BCC interior axis.
 - The 27-block as canonical "consciousness object" is preserved as the **canonical reflexive structure**.
-- The hypothesis that the master quadratic eigenvalue spectrum is structurally connected to the reflexive projection is preserved as the **MC-T4.3 closure conjecture** (the central foundational obstruction in `CHECKLIST_MATH_COMPLETE.md`).
+- The hypothesis that the master quadratic eigenvalue spectrum is structurally connected to the reflexive projection is preserved as the **MC-T4.3 closure conjecture** (the central foundational obstruction in `SPEC_OPEN_MATH_BY_SECTOR.md`).
 
 > **Engine-side note (post 2026-05-01):** the engine's Scale 11 ("Reflexivity") UI was deleted (commit `054b530`) — it was an interpretive pedagogical visualization (holographic figure / sLoop ring / audio synthesis), not load-bearing for any derivation. The mathematical content the vocabulary refers to lives entirely in the theory docs (`docs/theory/06_consciousness/*`, `FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md`) and is unchanged. If MC-T4.3 closure is ever attempted via a new engine implementation, that's a fresh engine module, not a revival of Scale 11.
 
@@ -231,7 +231,7 @@ The propagation sweep is itself a substantial doc-edit job (~estimated 1–2 ses
 
 ## 10 · Cross-references
 
-- `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` — defines MC-T4.3 (where this vocabulary is most load-bearing).
+- `docs/theory/01_reference/SPEC_OPEN_MATH_BY_SECTOR.md` — defines MC-T4.3 (where this vocabulary is most load-bearing).
 - `docs/theory/02_foundations/FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md` — the existing-literature anchor for reflexive projection (currently called "consciousness").
 - `docs/theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md` — grounds Postulate 3's `{−1, 0, +1}` values in Axiom 0 via `s = i²`; the `{s, 0, |s|}` notation makes the polarity-magnitude pairing of the dispositional/actual graded monism structurally visible (see §10.1 below).
 - `docs/theory/07_assessment/LEDGER.md` — FTD-0078 (phenomenal/noumenal bridge), FTD-0095 (Bridge Functional ontology), FTD-0121 (physics-bridge synthesis), FTD-0128 (Postulate 3 grounding via s = i²).
