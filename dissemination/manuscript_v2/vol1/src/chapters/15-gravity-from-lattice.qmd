@@ -13,20 +13,25 @@ $$
 
 This is the FTD Lorentz factor $\gamma_{\text{FTD}} = 1/\sqrt{1 - v^2/c^2 - L^2}$, unifying inertial and gravitational effects in a single bandwidth constraint. When $L = 0$: standard special relativity. When $v = 0$: gravitational time dilation.
 
-**Mechanism B: Coulomb coupling (Newtonian gravity).**
-The gravitational constant is:
+**Mechanism B: Substrate-derived Newton coupling (FTD-0131).**
+The gravitational fine-structure constant for one electron emerges from the substrate as
 $$
-G_N = \frac{1}{(b_3 + N_c)^2} = \frac{1}{(7 + 3)^2} = \frac{1}{100}
+\alpha_G(e,e) = \left(\frac{m_e}{m_P}\right)^2 = \left[\sqrt{2\pi}\cdot\frac{16}{3}\cdot\alpha^{11}\right]^2 \approx 1.745 \times 10^{-45}
 \tag{15.2}
 $$
 
-in lattice units. The Newtonian potential:
+matching the measured value $1.752 \times 10^{-45}$ to **0.38%**. The derivation routes through FTD-0015's $\alpha^{11}$ mass formula plus two flagged postulates (gravitational coupling form $\rho_g = K_B^{\rm grav}\cdot\mathbb{1}_{\rm manifested}$ and linearized tick-rate response coefficient $2/c^2$). See [`docs/theory/03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`](https://github.com/) for the full chain. The Newtonian potential follows from Phase G's lattice Poisson Green's function (FTD-0004, [THEOREM]):
 $$
-\phi_G(r) = -\frac{G_N M}{r} = -\frac{M}{100r}
+\phi_G(r) = -\frac{G_N M}{r}
 \tag{15.3}
 $$
 
 The latency field $L^2 = 2|\phi_G|/c^2$ couples gravity to the Born-Infeld bandwidth.
+
+::: {.callout-warning}
+## Retraction (2026-05-08)
+Earlier versions of this chapter asserted $G_N = 1/(b_3+N_c)^2 = 1/100$ as a derived value. This identification is **[CLOSED NEGATIVE per FTD-0131]** --- it differs from physical $G_N$ by factors of $10^{20}$ to $10^{43}$ under any natural calibration. The substrate-derived prediction is $\alpha_G(e,e) = (m_e/m_P)^2$ as stated above; the "1/100" reading was a numerical coincidence with no substrate justification.
+:::
 
 ## The Sommerfeld-Schwarzschild identity [THEOREM]
 
@@ -47,7 +52,7 @@ This identity holds **only for $D = 3$** (@sec-d3, Constraint 4). In $D$ dimensi
 
 ## The GR scorecard [THEOREM for the Sommerfeld-Schwarzschild identity; SELECTION for the physical identifications in Mechanisms A and B]
 
-All entries below are [THEOREM] *given* the identifications in Mechanisms A (Born-Infeld kinematics) and B (Coulomb coupling with $G_N = 1/100$). The mechanisms themselves involve [SELECTION]-level identifications ($L^2 = 2G_NM/(rc^2)$, etc.).
+All entries below are [THEOREM] *given* the identifications in Mechanisms A (Born-Infeld kinematics) and B (substrate-derived Newton coupling per FTD-0131). The mechanisms themselves involve [SELECTION]-level identifications ($L^2 = 2G_NM/(rc^2)$, etc.) plus two flagged postulates in Mechanism B (FTD-0131).
 
 | Observation | GR prediction | FTD prediction | Status |
 |------------|--------------|----------------|--------|

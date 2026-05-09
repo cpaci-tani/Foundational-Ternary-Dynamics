@@ -8,7 +8,7 @@ This chapter collects all testable predictions of FTD, their current observation
 |-----------|-----------|-------------------|--------|
 | $1/\alpha$ (tree) | 137.036171 | 137.035999177(21) | 1.26 ppm agreement |
 | $1/\alpha$ (one-loop) | 137.036000 | 137.035999177(21) | 9.6 ppb agreement |
-| $\sin^2\theta_W$ | 3/13 = 0.23077 | 0.23122(4) | 0.2% agreement |
+| $\sin^2\theta_W$ | 3/13 = 0.23077 | 0.22290(30) | 3.5% off (PARAMETRIC, FTD-0018 demoted 2026-04-19) |
 | $\alpha_s(M_Z)$ | 7/59 = 0.11864 | 0.1179(9) | 0.6% agreement |
 | $m_H$ | 125.69 GeV | 125.25(17) GeV | 0.35% agreement |
 | $m_p/m_e$ | 1836.47 | 1836.153 | 174 ppm agreement |

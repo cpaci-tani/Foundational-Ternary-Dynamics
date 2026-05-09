@@ -336,7 +336,7 @@ const PARTICLES = [
         mass_mev: M_P_PHYS, charge: 1, spin: 0.5,
         color_charge: 'singlet', antiparticle: 'antiproton',
         composition: 'uud',
-        ftd_formula: 'm_e·(N_eff/α + T(b₃+N_c)) ≈ 1836.47·m_e',
+        ftd_formula: 'm_e·(N_eff/α + N_base·N_eff + N_c) ≈ 1836.47·m_e',
         ftd_accuracy: 0.017, ftd_status: 'derived',
         display_color: [0.95, 0.30, 0.30], display_size: 6
     },

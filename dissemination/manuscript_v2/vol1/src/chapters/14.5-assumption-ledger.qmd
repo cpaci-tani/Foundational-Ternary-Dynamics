@@ -81,7 +81,7 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 | **ALPHA (fine structure)** | 0.00729 | [SMC] **STRONGLY MOTIVATED CONJECTURE** | Core | Master quadratic [THEOREM]; identification $x_+ = 1/\alpha$ has 1.26 ppm match + ~$4{\times}10^5$:1 Bayes weight (FTD-0121 + FTD-0122 + FTD-0123) but NO derivation chain from axioms. |
 | **KB (existence threshold)** | 0.511 | [†] **COMPANION** | Extended | $m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}$ |
 | **PHI (golden ratio)** | 1.618 | [†] **COMPANION** | Extended | Stability fixed point |
-| **GRAVITY_BIAS** | 0.01 | [†] **COMPANION** | Extended | $1/(b_3+N_c)^2$ Exactly |
+| **α_G(e,e)** (gravitational fine-structure) | 1.745×10⁻⁴⁵ | [DERIVED, postulate-conditional] (FTD-0131) | Extended | $(m_e/m_P)^2 = [\sqrt{2\pi}\cdot(16/3)\cdot\alpha^{11}]^2$; 0.38% match to measured. Earlier `GRAVITY_BIAS = 0.01 = 1/(b_3+N_c)^2` is [CLOSED NEGATIVE per FTD-0131]. |
 | DECAY_RATE | 0.00729 | [†] **COMPANION** | Extended | Identified with α |
 
 ---
@@ -116,10 +116,9 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 
 | Quantity | Formula/Value | Status | Accuracy |
 |----------|---------------|--------|----------|
-| Weinberg angle sin²θ_W | 3/13 = 0.2308 | [†] COMPANION | 0.19% error |
-| Strong coupling α_s | 7/59 = 0.1186 | [†] COMPANION | 0.3σ |
-| Gravitational coupling | 0.01 | [†] COMPANION | Exact |
-| **Gravitational hierarchy α_G** | 5.91×10⁻³⁹ | [†] **COMPANION** | 0.06% |
+| Weinberg angle sin²θ_W | 3/13 = 0.2308 | [PARAMETRIC] (FTD-0018, demoted 2026-04-19) | 3.5% off CODATA 0.22290(30) |
+| Strong coupling α_s | 7/59 = 0.1186 | [PARAMETRIC] (FTD-0020, demoted 2026-04-19) | 0.3σ |
+| **Gravitational hierarchy α_G(e,e)** | 1.745×10⁻⁴⁵ | [DERIVED, postulate-conditional] (FTD-0131) | 0.38% |
 | Golden ratio φ | 1.6180 | [†] COMPANION | Exact |
 
 ### Lepton Masses [†]
@@ -324,7 +323,7 @@ The exponent 2 is uniquely selected by the convergence of four independent argum
 
 | Question | Status | Notes |
 |----------|--------|-------|
-| ~~Can GRAVITY_BIAS be derived?~~ | [V] RESOLVED | 1/(b₃+N_c)² = 0.01 exactly |
+| ~~Can GRAVITY_BIAS = 1/100 be derived?~~ | [CLOSED NEGATIVE per FTD-0131] | "1/100" framework-integer reading off by 10²⁰ to 10⁴³; substrate-derived α_G(e,e) = (m_e/m_P)² ≈ 1.745×10⁻⁴⁵ at 0.38% [DERIVED, postulate-conditional] |
 | ~~Why 3 generations?~~ | [V] RESOLVED | floor(N_c) = 3 from master quadratic |
 | ~~Can Λ be derived?~~ | [V] RESOLVED | α^57 = 10^-121.8 (0.16% error) |
 | ~~Is the Lemniscate-Alpha unique?~~ | [V] **RESOLVED (scoped)** | Unique within the stated constraint class: structure fixed by self-reference, coefficients encode framework integers |

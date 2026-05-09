@@ -115,21 +115,27 @@ $$
 | Derivation | (1+√(N_base+1))/2 |
 | Accuracy | **Exact** |
 
-### Gravity Bias (GRAVITY_BIAS)
+### Gravitational fine-structure (FTD-0131)
 
 $$
-G_{bias} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{100} = 0.01
+\alpha_G(e,e) = \left(\frac{m_e}{m_P}\right)^2 = \left[\sqrt{2\pi}\cdot\tfrac{16}{3}\cdot\alpha^{11}\right]^2 \approx 1.745 \times 10^{-45}
 $$
 
 | Property | Value |
 |----------|-------|
-| Symbol | G_bias |
-| Value | 0.01 |
-| Nature | [T+] **DERIVED** |
-| Derivation | 1/(b₃+N_c)² = 1/100 |
-| Accuracy | **Exact** |
+| Symbol | α_G(e,e) |
+| Value | 1.745 × 10⁻⁴⁵ |
+| Nature | [DERIVED, postulate-conditional] (FTD-0131) |
+| Derivation | Phase G + FTD-0015 + 2 flagged postulates |
+| Measured | 1.752 × 10⁻⁴⁵ |
+| Accuracy | **0.38%** |
 
-### Weinberg Angle
+::: {.callout-warning}
+## Earlier "Gravity Bias = 1/100" reading is closed-negative (FTD-0131)
+The framework-integer expression $G_N = 1/(b_3+N_c)^2 = 1/100$ was carried in earlier versions of this reference table. It is **[CLOSED NEGATIVE]** under any natural calibration (off by $10^{20}$ to $10^{43}$). Substrate-derived gravity uses the $\alpha^{11}$ hierarchy as shown above; the "1/100" identification has no substrate justification.
+:::
+
+### Weinberg Angle (sin²θ_W)
 
 $$
 \sin^2\theta_W = \frac{N_c}{N_{eff}} = \frac{3}{13} = 0.2308
@@ -139,9 +145,15 @@ $$
 |----------|-------|
 | Symbol | sin²θ_W |
 | Value | 0.2308 |
-| Nature | [T+] **DERIVED** |
-| Measured | 0.2312 |
-| Accuracy | **0.19%** |
+| Nature | **[PARAMETRIC]** (FTD-0018, demoted 2026-04-19) |
+| Measured (CODATA, M_Z) | 0.22290(30) |
+| Accuracy | **3.5% off** (rational fit, not a derivation) |
+| Note | Standard SU(5) GUT-lock value $\sin^2\theta_W^{\rm lock} = 3/8 = 0.375$ is a separate scale (unification, requires RG running to compare with M_Z); see `SPEC_DOCTRINE_LEDGER.md` §8 for the two-scale framing. |
+
+::: {.callout-warning}
+## Earlier "DERIVED at 0.19%" framing was wrong
+The previous tag `[T+] DERIVED` and accuracy `0.19%` are corrected per LEDGER FTD-0018 (downgrade 2026-04-19). The 3/13 fit is [PARAMETRIC] --- a rational coincidence at the master quadratic level, not a substrate derivation. The fit precision is 3.5% off CODATA 0.22290(30), not 0.19%.
+:::
 
 ### Strong Coupling Constant
 
@@ -347,7 +359,7 @@ H = 1.0                   # Planck resolution
 ALPHA = 1/137.036                          # From master quadratic
 KB = 70 * ALPHA                            # 70α = electron mass
 PHI = (1 + (N_BASE + 1)**0.5) / 2          # Golden ratio
-GRAVITY_BIAS = 1 / (B3 + NC)**2            # = 0.01 exactly
+# G_N: substrate-derived per FTD-0131 (α_G(e,e) = (m_e/m_P)²); legacy "GRAVITY_BIAS = 1/100" is CLOSED NEGATIVE
 DECAY_RATE = ALPHA                         # Entropy rate
 SIN2_THETA_W = NC / N_EFF                  # = 3/13
 ALPHA_S = B3 / (B3**2 + B3 + NC)           # = 7/59
@@ -365,9 +377,9 @@ ALPHA_S = B3 / (B3**2 + B3 + NC)           # = 7/59
 |----------|-------|----------|
 | $\alpha$ | 1/137.036 | 0.21 ppt (precision) |
 | $m_e$ | $70\alpha$ | 0.036% |
-| G | 1/100 | exact |
+| α_G(e,e) | 1.745×10⁻⁴⁵ | 0.38% (FTD-0131, postulate-conditional) |
 | $\phi$ | $(1+\sqrt{5})/2$ | exact |
-| $\sin^2\theta_W$ | 3/13 | 0.19% |
+| $\sin^2\theta_W$ | 3/13 | 3.5% off (PARAMETRIC, FTD-0018) |
 | $\alpha_s$ | 7/59 | 0.3σ |
 
 ### Novel Geometric
