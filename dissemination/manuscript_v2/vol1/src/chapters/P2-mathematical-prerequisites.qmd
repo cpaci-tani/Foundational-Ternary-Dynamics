@@ -133,5 +133,5 @@ connecting the BCC Green's function to the bridge constant.
 | $N_{\text{eff}}$ | Effective DOF | 13 | Ch. 10 |
 | $K$ | DOF coefficient | 16 | Ch. 8 |
 | $g_c$ | Coupling constant | $\sqrt{\alpha}$ | Ch. 14 |
-| $G_N$ | Gravitational constant | $1/(b_3+N_c)^2 = 1/100$ | Ch. 15 |
+| $\alpha_G(e,e)$ | Gravitational fine-structure (substrate-derived per FTD-0131) | $(m_e/m_P)^2 \approx 1.745 \times 10^{-45}$ | Ch. 15 |
 | $\gamma_{\text{FTD}}$ | FTD Lorentz factor | $1/\sqrt{1-v^2/c^2-L^2}$ | Ch. 15 |
