@@ -100,7 +100,7 @@ These are the load-bearing identifications between FTD's algebraic structure and
 - Z-factor reading (FTD-0116) — closed
 - RG-running, algebraic combinations, 1/√d, Langevin-equipart, monomial scans — all closed
 
-**Lead-physicist diagnosis**: Phase J ultralocality structurally decouples the algebraic spine from the dynamical EFT — action data does not contain polynomial data. Closure plausibly requires non-action injection mechanism (boundary conditions, observable selection, quantization choice) and may require ontology extension (sixth axiom). MC-T4.3 in `CHECKLIST_MATH_COMPLETE.md`.
+**Lead-physicist diagnosis**: Phase J ultralocality structurally decouples the algebraic spine from the dynamical EFT — action data does not contain polynomial data. Closure plausibly requires non-action injection mechanism (boundary conditions, observable selection, quantization choice) and may require ontology extension (sixth axiom). MC-T4.3 in `SPEC_OPEN_MATH_BY_SECTOR.md` §10.
 
 ---
 
@@ -141,7 +141,7 @@ When a claim's tier changes:
 
 1. Update this document **first** (the bedrock changes).
 2. Update [LEDGER.md](./LEDGER.md) entry to match.
-3. Update [CHECKLIST_MATH_COMPLETE.md](../01_reference/CHECKLIST_MATH_COMPLETE.md) if the claim is on the bridge-completeness checklist.
+3. Update [SPEC_OPEN_MATH_BY_SECTOR.md](../01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) if the claim is on the sector-organised research queue.
 4. Update [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md) if the claim is one of the 9 spine theorems.
 5. Re-run any verification script that backs the claim.
 6. Commit with message that names the tier change and the verification that backs it.
@@ -185,7 +185,7 @@ This is what is publishable. This is what survives review. This is the truth.
 ## Cross-references
 
 - [LEDGER.md](./LEDGER.md) — full provenance per claim, including closed-negative results
-- [CHECKLIST_MATH_COMPLETE.md](../01_reference/CHECKLIST_MATH_COMPLETE.md) — bridge-completeness roadmap
+- [SPEC_OPEN_MATH_BY_SECTOR.md](../01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) — sector-organised research-questions queue (replaces archived `CHECKLIST_MATH_COMPLETE.md`)
 - [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — the 9 [THEOREM]-grade entries with proofs
 - [SPEC_DOCTRINE_LEDGER.md](../01_reference/SPEC_DOCTRINE_LEDGER.md) — FTD/FQCR Doctrine Ledger v1.2 (2026-05-08, FTD-0145 SYNTHESIS): single-page status map rolling up T1–T5 tier assignments below alongside LEDGER and CATALOG tags. **Read this when navigating; come back here for atomic tier disputes.**
 - [SPEC_DIMENSIONAL_MAP.md](../01_reference/SPEC_DIMENSIONAL_MAP.md) — dimensionless ↔ dimensional bridge
