@@ -112,7 +112,7 @@ For constant `s`, fixed-point quadratic `z² − sz + 1 = 0` with reciprocal roo
 | `\|s\| < 2` reading as wave/phase regime                             | [SELECTION — physical identification] | Mode of FQCR finite trace; reading is interpretive                                  |
 | `s = 2` as null/inertial regime                                      | [SELECTION — physical identification] |                                                                                      |
 | `s > 2` as mass-gap / branch-selection regime                        | [SELECTION — physical identification] |                                                                                      |
-| `μ² := s − 2` (mass parameter from regime offset)                    | [SELECTION — bridge identification]   | Hardening target: cross-link to MC-T3.4 (Bridge Functional / four-mean variational).  |
+| `μ² := s − 2` (mass parameter from regime offset)                    | [SELECTION — bridge identification]   | Hardening target: substrate-derive a mass observable from the regime parameter `s`. Distinct from MC-T3.4 (Bridge Functional `M(x_+, x_-)` arithmetic-mean / FTD-0095) — both are mass-from-algebra identifications but use different algebraic input (regime parameter `s` here vs root pair `(x_+, x_-)` for MC-T3.4); no canonical cross-link. |
 
 ---
 
@@ -214,9 +214,9 @@ with `G_N* = (N+1)^{−1/2} · det L_{3/4,N} / det L_{1/4,N}` (Lerch's formula, 
 
 **Stiffness convention.** `X_2 = 4π/g_2²`, `X_Y = 4π/g_Y²`, `X_EM = X_2 + X_Y`.
 
-**Lock ratio at GUT scale (SU(5) prediction).** `X_2 : X_Y = 3 : 5` ⇒ `sin²θ_W^lock = 3/8 = 0.375`. This is the **standard SU(5) GUT-scale value at the unification scale**, *not* the M_Z physical value. Comparison to experiment requires RG running.
+**Lock ratio at GUT scale (SU(5) prediction).** `X_2 : X_Y = 3 : 5` ⇒ `sin²θ_W^lock = 3/8 = 0.375`. This is the **standard SU(5) GUT-scale value at the unification scale**, *not* the M_Z physical value. Comparison to experiment requires RG running. **Honest framing (W2.3 audit, 2026-05-08):** the 3:5 ratio is purely **imported** from standard SU(5) trace-normalisation (`5̄ = (3̄,1)_{1/3} ⊕ (1,2)_{−1/2}` forces the hypercharge trace) — no FTD substrate ingredient enters its derivation. The 3:5 → 3/8 step is therefore IMPORTED PHYSICS dressed in FTD vocabulary; cite FTD-0149 [IMPORTED] for the SU(5) trace-normalisation anchor.
 
-**RG running to M_Z.** Standard SM running takes `sin²θ_W^lock = 0.375` at `M_GUT` to `sin²θ_W ≈ 0.231` at `M_Z`. The substrate-derivation of the running coefficients (`b_Y = 41/6`, `b_2 = −19/6`) from FTD finite spectra is **[OPEN / HARDENING]** (cross-link MC-T3.5).
+**RG running to M_Z.** Standard SM running takes `sin²θ_W^lock = 0.375` at `M_GUT` to `sin²θ_W ≈ 0.231` at `M_Z`. The substrate-derivation of the running coefficients (`b_Y = 41/6`, `b_2 = −19/6`) from FTD finite spectra is **[OPEN / HARDENING]** (cross-link MC-T3.6, new ID 2026-05-08).
 
 **Canonical IR fit.** FTD-0018: `sin²θ_W = 3/13 = 0.2308` is **[PARAMETRIC]** at M_Z (downgraded 2026-04-19; 3.5% off experimental 0.2229). The 3/13 fit and the 3/8 GUT-scale value are **distinct claims at distinct scales**; they coexist in canon — neither subsumes the other.
 
@@ -226,12 +226,12 @@ with `G_N* = (N+1)^{−1/2} · det L_{3/4,N} / det L_{1/4,N}` (Lerch's formula, 
 | Z_6 center closure `Y_6 + 2r + 3w ≡ 0 mod 6`                         | [THEOREM within scaffold]        | Group-theoretic computation                                                              |
 | `Q = T_3 + Y`                                                        | [IMPORTED]                       | Standard SM                                                                              |
 | Stiffness convention `X_a = 4π/g_a²`                                 | [DEFINITION]                     |                                                                                          |
-| Lock ratio `X_2 : X_Y = 3 : 5` at GUT scale                          | [SELECTION — trace normalisation principle] | Standard SU(5) trace normalisation                                              |
-| `sin²θ_W^lock = 3/8` at GUT scale                                    | [THEOREM once 3:5 selected]      | Direct algebra: `g_Y²/(g_2² + g_Y²) = X_2/(X_Y + X_2) = 3/8`                            |
-| RG running of `sin²θ_W^lock` from GUT to M_Z                         | [OPEN / HARDENING]               | MC-T3.5; β-coefficient substrate-derivation [OPEN]                                       |
+| Lock ratio `X_2 : X_Y = 3 : 5` at GUT scale                          | **[IMPORTED]** (FTD-0149) — standard SU(5) trace normalisation | No FTD substrate ingredient enters; pure GUT-scale gauge-theory adoption |
+| `sin²θ_W^lock = 3/8` at GUT scale                                    | [THEOREM once 3:5 imported]      | Direct algebra: `g_Y²/(g_2² + g_Y²) = X_2/(X_Y + X_2) = 3/8`. Honest reading: `IMPORTED` content, not FTD content |
+| RG running of `sin²θ_W^lock` from GUT to M_Z                         | [OPEN / HARDENING]               | MC-T3.6 (β-coefficient substrate-derivation [OPEN]; new ID introduced 2026-05-08 to resolve W2.5 MC-T3.5 collision — old MC-T3.5 = FTD-0110 multi-scale boundary correction is sector-tracker §9, distinct research arc)                                       |
 | `sin²θ_W ≈ 3/13` at M_Z (canonical IR fit)                           | [PARAMETRIC]                     | LEDGER FTD-0018 (downgraded 2026-04-19); 3.5% off CODATA                                 |
 | Neutral-Higgs lock preserves `U(1)_EM`                               | [THEOREM within scaffold]        | Standard SM                                                                              |
-| Substrate-derivation of beta coefficients from finite spectra        | [OPEN / HARDENING]               | MC-T3.5 — blocked on T3.1                                                                |
+| Substrate-derivation of beta coefficients from finite spectra        | [OPEN / HARDENING]               | **MC-T3.6** (β-coefficient arc; new ID 2026-05-08 to resolve W2.5 collision; *not* the same arc as sector-tracker MC-T3.5 = FTD-0110 multi-scale boundary correction) |
 
 ---
 
@@ -324,7 +324,7 @@ These are **[CANDIDATE PRINCIPLE]** alternatives within the §14 Phase-3 program
 | `G_+(r) → 1/(4π r)` at large r (Phase G)                             | [THEOREM]                        | SPEC_ALGEBRAIC_SPINE.md §6 Theorem 6; OT-1.4; FTD-0004                                  |
 | Cluster mass `M = N · m_e` (linear regime)                            | [DERIVED at linear level]        | FTD-0110; OT-3.4                                                                        |
 | Schwarzschild leading-order `dτ/dT = 1 + 2φ_g/c²` recovered           | [DERIVED, conditional on 2 flagged postulates] | FTD-0131; DERIV_NEWTON_FROM_SUBSTRATE.md §1                                |
-| `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵`, 0.38% match                | [DERIVED, postulate-conditional] | FTD-0131; verified by `proof_newton_from_substrate.py`                                  |
+| `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵`, 0.38% match                | [STRONGLY MOTIVATED CONJECTURE] (floor inherited from FTD-0015) + [DERIVED chain] | FTD-0131; the 0.38% precision is squared FTD-0015 precision (mechanical, not new evidence); chain steps 1.1–1.5 are derived from substrate; 2 flagged postulates |
 | `G_N = 1/(b_3 + N_c)² = 1/100` framework-integer reading              | **[CLOSED NEGATIVE per FTD-0131]** | Off by `~10²⁰` to `~10⁴³` under any natural calibration                              |
 | Gravitational coupling form `ρ_g = K_B^grav · 1_manifested`           | [POSTULATE 1, flagged]           | DERIV_NEWTON_FROM_SUBSTRATE.md §1.2                                                      |
 | Linearized tick-rate response `tick = 1 + 2φ_g/c²`                    | [POSTULATE 2, flagged]           | Matches GR linearization; substrate-derivation [OPEN]                                    |
@@ -368,7 +368,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 ### §13.5 · Main hardening targets ([OPEN] research arcs)
 
 1. **Derive `R_N(t)` from a variational / operator principle** — MC-T3.1 (FTD-0110 nonlinear bridge, NOT CLOSED, ~2.5× slope mismatch); FTD-0143 uniqueness scan PRE-REGISTERED.
-2. **Derive activation kernels and beta coefficients from finite spectra** — MC-T3.5 (BLOCKED on T3.1).
+2. **Derive activation kernels and beta coefficients from finite spectra** — MC-T3.6 (new ID 2026-05-08; not the same arc as MC-T3.5 = FTD-0110 multi-scale boundary).
 3. **Derive Higgs residual curvature `χ_H`** — no canonical anchor.
 4. **Force flavor depth matrices from explicit transfer matrices** — no canonical anchor (depth matrices §10 [PARAMETRIC scaffold]).
 5. **Substrate-derive QCD trace-gap confinement** — FTD-0025 night-2026-05-03 audit recorded structural obstruction (no Phase-G analog for area-law behavior); the strong-sector substrate-derivation gap is real and structural.
@@ -388,7 +388,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 | Priority | Hardening target                                  | Canonical anchor                                                        | Status                          |
 |----------|---------------------------------------------------|-------------------------------------------------------------------------|---------------------------------|
 | 1        | `R_N(t)` variational/operator derivation          | MC-T3.1 (`SPEC_OPEN_MATH_BY_SECTOR.md`); FTD-0143 PRE-REG                | NOT CLOSED, slope mismatch ~2.5×|
-| 2        | Activation kernels and beta coefficients          | MC-T3.5                                                                  | BLOCKED on T3.1                  |
+| 2        | Activation kernels and beta coefficients          | MC-T3.6 (new ID 2026-05-08; β-coefficient arc separate from MC-T3.5 FTD-0110 multi-scale)                                                                  | OPEN                  |
 | 3        | Higgs residual curvature `χ_H`                    | NEW — no canonical anchor                                                | OPEN                             |
 | 4        | Flavor transfer matrices forcing depths           | NEW — no canonical anchor                                                | OPEN                             |
 | 5        | QCD trace-gap confinement substrate derivation    | FTD-0025 night-audit (2026-05-03); FTD-0131 cross-ref                    | OPEN, structural obstruction recognized |
@@ -427,7 +427,7 @@ This is the strongest possible FTD self-claim. **Achievability is conditional on
 | §9          | LEDGER.md (FTD-0017 Higgs)                                                                          | FTD-0017                                                       | (parametric)                 |
 | §10         | CATALOG_PARAMETRIC_INSERTIONS.md (flavor section)                                                   | (catalog rows)                                                 | (parametric scaffold)        |
 | §11         | LEDGER.md (FTD-0020 α_s; FTD-0025 confinement night-audit); standard QCD                            | FTD-0020, FTD-0025 (annotated 2026-05-03)                       | OT-5.2 (`x_- ↔ N_c`)         |
-| §12         | ../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md; SPEC_ALGEBRAIC_SPINE.md §6 (Phase G)              | **FTD-0131** (DERIVED, postulate-conditional), FTD-0004, FTD-0110, FTD-0015 | OT-1.4, OT-3.4         |
+| §12         | ../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md; SPEC_ALGEBRAIC_SPINE.md §6 (Phase G)              | **FTD-0131** ([SMC] for prediction inherited from FTD-0015 + [DERIVED chain]), FTD-0004, FTD-0110, FTD-0015 | OT-1.4, OT-3.4         |
 | §13         | LEDGER.md (full); CATALOG_PARAMETRIC_INSERTIONS.md; TRACKER_ONTIC_TRUTH.md (T1–T5)                  | (roll-up)                                                      | (roll-up)                    |
 | §14         | SPEC_OPEN_MATH_BY_SECTOR.md (MC-T3.1, T3.5, T4.3, T4.4)                                              | (roadmap)                                                      | (roadmap)                    |
 

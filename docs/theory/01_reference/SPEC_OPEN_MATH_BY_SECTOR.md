@@ -67,7 +67,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
 | MC-T1.1-ext | `L ≥ 3` ultralocality proof or disproof for matched-stencil with Gauss-constraint-allowed configurations | [OPEN] | W | — |
-| MC-T2.3-4 | Structural theorem for `d = −4` privilege beyond 63-discriminant numerical scan (CM-theory specialist; candidate routes: `\|Z[i]^×\| = 4` unit-group condition; analytical structure of `L(E, 1)` at `y² = x³ − x`; Galois-theoretic argument for `Q(i)` as unique CM field of disc −4) | [OPEN] | M (2–6 weeks specialist) | — |
+| MC-T2.3-4 | Structural theorem for `d = −4` privilege beyond 63-discriminant numerical scan. **Effort downgraded 2026-05-08 (W2.6 audit, M → D-W)**: FTD-0122 / OT-1.5 already established `Z[BCC] ⊗ Q ≅ V_triv² ⊕ V_sign² ⊕ V_complex²` with `V_complex` carrying natural `Z[i]`-module structure. Among class-number-1 imaginary-quadratic fields `{d=1,2,3,7,11,19,43,67,163}`, **only `d=4` (`Q(i)`) has `\|O^×\| = 4`** (others have order 2 or 6 (`Q(ω)`)). The closure is a one-page argument under the `\|Z[i]^×\| = 4` unit-group condition: `d = −4` is the unique CM ring whose unit group has order 4, and FTD-0122's complex structure on V_complex requires exactly this. Ancillary routes (`L(E, 1)` analytical structure, Galois-theoretic) remain optional. | [OPEN — D-W to write the 1-page note] | D-W | FTD-0122 (already closed) |
 | δ_c | `δ_c = x_- − N_c = 16G*³α − 3 ≈ 0.024` has no closed form. Three candidate expressions match only 0.65–5% (engine `ontic.h` Layer 4) | [OPEN] | W–M | — |
 
 **Closed (sector context):** Theorems 1–9 (FTD-0001, OT-1.1–1.8, 2.1–2.3, 4.1, 3.4 partial), MC-T1.1 (route b, Theorem 7 retagged `[THEOREM at L=2]`), MC-T1.2 (Theorem 3 retagged `[NUMERICAL FACT, h=1 only]`), MC-T1.3 (Q(G*) verification), MC-T1.4 (per-voxel mass gap), MC-T1.5 (BCC complex-structure Roles 1+3 [DERIVED]; Roles 2+4 NO-GO), MC-T2.1 + MC-T2.2 (extended polynomial scan, ~4×10⁵:1 Bayes), MC-T2.3 items 1–3 (63-disc Γ-product null at h ≥ 2).
@@ -106,11 +106,12 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** SU(2) × U(1) sector; electroweak symmetry breaking; Higgs mechanism; weak-sector masses.
 
-**Status snapshot:** Doctrine §8 establishes GUT-lock `sin²θ_W = 3/8` [SELECTION + THEOREM once 3:5 selected] (standard SU(5) trace-normalisation). Canonical IR fit `sin²θ_W ≈ 3/13` [PARAMETRIC, FTD-0018] (3.5% off CODATA 0.2229; demoted 2026-04-19). RG running between scales [OPEN/HARDENING]. Doctrine §9 `v = √2 m_t` [BORROWED EMPIRICAL] (textbook `y_t ≈ 1`, not novel). Higgs `χ_H = 2 − 3 Ξ_t + Ξ_bos` is scaffold; computation [OPEN].
+**Status snapshot:** Doctrine §8 establishes GUT-lock `sin²θ_W = 3/8` (standard SU(5) trace-normalisation; **3:5 ratio is [IMPORTED] per FTD-0149** — no FTD substrate ingredient enters; the 3/8 value is [THEOREM once 3:5 imported] but the IMPORT is doing the work, not FTD content). Canonical IR fit `sin²θ_W ≈ 3/13` [PARAMETRIC, FTD-0018] (3.5% off CODATA 0.22290(30); demoted 2026-04-19, M_Z scale annotated 2026-05-08 per FTD-0150). RG running between scales [OPEN/HARDENING]. Doctrine §9 `v = √2 m_t` [BORROWED EMPIRICAL] (textbook `y_t ≈ 1`, not novel). Higgs `χ_H = 2 − 3 Ξ_t + Ξ_bos` is scaffold; computation [OPEN].
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| §8-running | Substrate-derive β-coefficients `b_Y = 41/6`, `b_2 = −19/6` from finite spectra; cross to compute IR `sin²θ_W` from GUT-lock value 3/8 | [OPEN/HARDENING] | M–RP | — |
+| **MC-T3.6** | Substrate-derive β-coefficients `b_Y = 41/6`, `b_2 = −19/6` from finite spectra (RG running of `sin²θ_W^lock` from GUT to M_Z; the IR `sin²θ_W` should fall out from running the GUT-lock 3/8 — currently the IR fit FTD-0018 [PARAMETRIC] 3/13 is independent). New ID introduced 2026-05-08 to resolve W2.5 MC-T3.5 collision (old MC-T3.5 = §9 FTD-0110 multi-scale boundary correction) | [OPEN/HARDENING] | M–RP | — |
+| §8-running (alias of MC-T3.6) | Same as MC-T3.6 above; this row preserved as the doctrine §14 priority-2 cross-link target | [OPEN/HARDENING] | M–RP | MC-T3.6 |
 | §9-chiH | `χ_H` derivation from FTD substrate. No canonical anchor | [OPEN] | M | — |
 | Higgs-manif | `DERIV_HIGGS_FROM_MANIFESTATION.md` carries 3 [OPEN] (manifestation mechanism of EWSB) | [OPEN] | M | — |
 | SU(2)-weak | `DERIV_LATTICE_SU2_WEAK.md` carries 5 [OPEN] (chiral structure, left-handed doublets, weak mixing via ungerade sector) | [OPEN] | RP | — |
@@ -153,6 +154,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
 | §10-depths | Explicit transfer matrices forcing `N_E = diag(9,3,0)`, `N_U = diag(12,5,0)`, `N_D = diag(7,4,0)`. Currently no canonical derivation — reverse-engineered from mass-ratio fits | [OPEN] | M | — |
+| §10-depths-method | **Methodological honesty audit (added 2026-05-08).** The §10 depth matrices have **18 free integer slots** (9 in N_E∪N_U∪N_D + 9 per-fermion projection corrections C_F also tagged [PARAMETRIC]) — sufficient to fit any 3×3 hierarchy with 3 OOM spread. The "0" in third position is forced by `q*^0=1`, not by structure. The §10-depths target above is mis-framed as "find the matrices"; the actual methodological gap is **show this scaffold has predictive content beyond fit count**. Until a genuinely-predictive constraint (e.g., a transfer-matrix derivation that fixes ≥10 of 18 slots from substrate) is in hand, the [PARAMETRIC candidate scaffold] tag risks overstating the degree to which depth matrices are a substrate object vs a curve fit | [OPEN — methodological] | W (audit) + M (predictive constraint) | — |
 | me-prefactor | Substrate justification of FTD-0015 prefactor `√(2π)·(16/3)`. Promoting `α_G(e,e) ≈ 1.745 × 10⁻⁴⁵` from [DERIVED, postulate-conditional] to [DERIVED, axiom-conditional] requires this | [OPEN] | M–RP | — |
 | quark-mass | `DERIV_QUARK_MASSES_FROM_LATTICE.md` 5 [OPEN] (light-quark masses + CKM; top ≈ `v_Higgs` supports Yukawa-at-unity story; rest sketched only) | [OPEN] | RP | §10-depths |
 | quark-bridge | `proof_quark_masses_lattice.py` 3 [OPEN] (quark-electron mass bridge) | [OPEN] | M | — |
@@ -167,18 +169,18 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** Newtonian limit, Schwarzschild, full GR, lattice black holes.
 
-**Status snapshot:** **Partial closure 2026-05-03** (FTD-0131): `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵` matches measured to 0.38% [DERIVED, postulate-conditional]. Schwarzschild leading-order recovered via Phase G + cluster mass + linearized tick (2 flagged postulates). Framework-integer `G_N = 1/(b_3 + N_c)² = 1/100` reading [CLOSED NEGATIVE per FTD-0131] — off by `~10²⁰` to `~10⁴³` under any natural calibration.
+**Status snapshot:** **Partial closure 2026-05-03** (FTD-0131): `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵` matches measured to 0.38% as **[STRONGLY MOTIVATED CONJECTURE]** for the prediction (epistemic floor inherited from FTD-0015 [SMC] via `α_G = (m_e/m_P)²` tautology — the 0.38% precision is squared FTD-0015 precision, mechanical not new evidence) plus **[DERIVED]** for the chain steps that recover Schwarzschild leading-order from substrate (Phase G + cluster mass + linearized tick + 2 flagged postulates). Framework-integer `G_N = 1/(b_3 + N_c)² = 1/100` reading [CLOSED NEGATIVE per FTD-0131] — off by `~10²⁰` to `~10⁴³` under any natural calibration.
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| §12-postulates | Substrate-derive 2 flagged postulates of FTD-0131: (P1) gravitational coupling form `ρ_g = K_B^grav · 1_manifested`; (P2) linearized tick-rate response coefficient `2/c²`. Promotes `α_G` from [DERIVED, postulate-conditional] to [DERIVED, axiom-conditional] | [OPEN] | M | — |
+| §12-postulates | Substrate-derive 2 flagged postulates of FTD-0131: (P1) gravitational coupling form `ρ_g = K_B^grav · 1_manifested`; (P2) linearized tick-rate response coefficient `2/c²`. Closes the chain side; the prediction floor [SMC] still inherits from FTD-0015 via `α_G = (m_e/m_P)²` tautology (independent route would require deriving FTD-0015's `√(2π)·(16/3)` prefactor — see §5 me-prefactor) | [OPEN] | M | — |
 | §12-beyond-N | Beyond-leading-order GR: Mercury perihelion, light bending, gravitational waves (full nonlinear Einstein equations beyond Deser bootstrap [SELECTION, FTD-0026]) | [OPEN] | RP | §12-postulates |
 | §12-EP | Equivalence-principle analogue from substrate. No canonical anchor | [OPEN] | RP | — |
 | §12-mgcurv | Mass-gap to curvature source. No canonical anchor | [OPEN] | RP | — |
 | BH | `DERIV_LATTICE_BLACK_HOLES.md` 11 [OPEN] — **highest-density derivation cluster in repo**. Horizon thermodynamics, Hawking radiation lattice derivation, information paradox at discrete scale, Kerr-Newman generalisation | [OPEN] | RP | — |
 | MC-T4.4 | General-motion lattice Liénard-Wiechert: closed-form for general accelerating motion. Closed at uniform velocity [DERIVED]; sinusoidal Larmor case has Bessel infinite-series form (FTD-0120 Q5); general motion only formal Q5★ frequency-domain expression | [OPEN] | W–M | — |
 
-**Closed (sector context):** FTD-0004 Phase G geometric Coulomb [THEOREM]; FTD-0110 cluster mass [DERIVED at linear level]; FTD-0131 leading-order Newton [DERIVED, postulate-conditional]; FTD-0113 retarded Green identity [DERIVED]; FTD-0115 lattice Cherenkov closed at uniform velocity.
+**Closed (sector context):** FTD-0004 Phase G geometric Coulomb [THEOREM]; FTD-0110 cluster mass [DERIVED at linear level]; FTD-0131 leading-order Newton ([SMC] prediction floor inherited from FTD-0015; [DERIVED] chain steps); FTD-0113 retarded Green identity [DERIVED]; FTD-0115 lattice Cherenkov closed at uniform velocity.
 
 **Closed-negative — do not re-attempt:** FTD-0035 Mechanism γ gravitational `a_phys` derivation (closed 2026-04-19; calibration `a_phys ≡ ℓ_P` recommended); "1/100" framework-integer reading (FTD-0131).
 
@@ -212,6 +214,8 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 **Scope:** ΛCDM-relevant predictions; inflation; dark matter; cosmic structure.
 
 **Status snapshot:** Most cosmology predictions sit at [SELECTION] or [PARAMETRIC]. Per the 18-evaluation review (`AUDIT_WEAKNESSES_MASTER.md` W-COSMO 1–7): inflaton ad hoc; dark matter mechanism inconsistent; first-order EW transition assumed; `Λ = α^57` numerology without mechanism; no power spectrum/BAO predictions; NFW halo not derived.
+
+> **Imported-content audit note (2026-05-08, W2.7).** §8 is the **most W-CRIT-1-vulnerable sector in the framework**: every cosmology entry is standard ΛCDM apparatus filled with FTD numerology, with the least substrate-derivation backing of any sector. Specifically: `Λ = α^57` is paradigm circularity (an FTD constant raised to a power chosen to match observation, with no substrate constraint on the exponent); inflaton-as-mean-flux is identification without dynamics; dark matter "mechanism inconsistent" indicates the W-COSMO-2 finding has not been resolved; NFW halo not derived (NFW is a phenomenological fit, and FTD currently neither derives nor contests it); power spectrum + BAO predictions are absent. Compared to §1 (algebraic-spine; theorems-grade), §2 (EM/α; conjecture with structural-uniqueness backing), §6 (gravity; partial closure FTD-0131), §8 stands out as **the sector where the most external structure has been imported without substrate justification** — and per the §13 doctrine non-circularity audit, this concentrates W-CRIT-1 risk. Closing W-COSMO-1 through W-COSMO-6 would require a substantive cosmological substrate-derivation program of multi-month-RP scale; in the meantime, manuscript chapters citing cosmological predictions should explicitly distinguish "imported ΛCDM apparatus + FTD numerology" from "substrate-derived". Cross-link: AUDIT_WEAKNESSES_MASTER.md W-COSMO-1 through W-COSMO-7.
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
@@ -330,7 +334,8 @@ Effort: D (scan execution; analysis already templated).
 §9 engine ↔ algebra
    MC-T3.1      ── (no deps; supports MC-T3.5)
    MC-T3.4      ── (no deps)
-   MC-T3.5      ── BLOCKED on MC-T3.1
+   MC-T3.5      ── BLOCKED on MC-T3.1   [FTD-0110 multi-scale boundary correction; §9 engine-bridge]
+   MC-T3.6      ── (no deps)             [β-coefficient substrate-derivation; §3 EW; new ID 2026-05-08 per W2.5]
    L128-G2      ── (no deps)
    FTD-0110-NL  ── (no deps)
 
