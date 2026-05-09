@@ -122,10 +122,10 @@ $$
 
 ### Gravity
 $$
-\vec{F}_g = G_{bias} \times \nabla\bar{\rho}(x)
+\vec{F}_g = G_N \times \nabla\bar{\rho}(x)
 $$
 
-Where $\bar{\rho}$ is the neighborhood-averaged density.
+Where $\bar{\rho}$ is the neighborhood-averaged density and $G_N$ is Newton's constant. The substrate-derived gravitational fine-structure ratio for one electron is $\alpha_G(e,e) = (m_e/m_P)^2 \approx 1.745 \times 10^{-45}$ [DERIVED, postulate-conditional per FTD-0131]. Earlier "$G_{bias} = 1/100$" framework-integer reading is **[CLOSED NEGATIVE per FTD-0131]** (off by $10^{20}$ to $10^{43}$).
 
 ### Coulomb (Electric)
 $$
@@ -378,10 +378,12 @@ $$
 \alpha_s = \frac{b_3}{b_3^2 + b_3 + N_c} = \frac{7}{59} = 0.1186
 $$
 
-### Gravitational Coupling
+### Gravitational fine-structure (FTD-0131)
 $$
-G_{bias} = \frac{1}{(b_3 + N_c)^2} = \frac{1}{100} = 0.01
+\alpha_G(e,e) = \left(\frac{m_e}{m_P}\right)^2 = \left[\sqrt{2\pi}\cdot\tfrac{16}{3}\cdot\alpha^{11}\right]^2 \approx 1.745 \times 10^{-45}
 $$
+
+[DERIVED, postulate-conditional]; matches measured $1.752 \times 10^{-45}$ to 0.38%. The earlier $G_{bias} = 1/100$ identification is [CLOSED NEGATIVE per FTD-0131] under any natural calibration.
 
 ### Golden Ratio
 $$

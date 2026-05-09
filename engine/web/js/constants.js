@@ -95,7 +95,10 @@ export const DAMPING = ALPHA;                          // dissipation rate γ = 
 export const M_E       = K_B;                         // electron mass (MeV)
 export const MU_RATIO  = 3 * B_3 * (B_3 + N_C) - N_C;           // 207
 export const TAU_RATIO = (N_EFF + N_BASE) * MU_RATIO - 2 * N_C * B_3;  // 3477
-export const PROTON_RATIO = N_EFF / ALPHA + TAU_RATIO * (B_3 + N_C) / (N_EFF + B_3);
+// Canonical formula per FTD-0016: m_p/m_e = N_eff/α + N_base·N_eff + N_c (≈1836.47, 174 ppm to PDG)
+// Replaces 2026-pre-F9 erroneous expression `N_EFF/ALPHA + TAU_RATIO*(B_3+N_C)/(N_EFF+B_3)`
+// which gave 3519.97 (1.91× too large; produced negative dM in decay-rates.js).
+export const PROTON_RATIO = N_EFF / ALPHA + N_BASE * N_EFF + N_C;
 export const M_PROTON = K_B * PROTON_RATIO;
 export const R_BOHR   = 4.0 * PI_FTD / (K_B * ALPHA);  // Ontic-derived pi
 
