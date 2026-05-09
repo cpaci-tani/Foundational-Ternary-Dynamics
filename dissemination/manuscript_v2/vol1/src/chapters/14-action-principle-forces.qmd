@@ -94,7 +94,7 @@ $$
 \tag{14.9}
 $$
 
-The latency $L$ encodes the gravitational potential via $L^2 = 2G_N M / (rc^2)$ where $G_N = 1/(b_3 + N_c)^2 = 1/100$. [THEOREM for the mechanism; SELECTION for the $G_N$ identification]
+The latency $L$ encodes the gravitational potential via $L^2 = 2G_N M / (rc^2)$. The substrate-derived gravitational coupling is $\alpha_G(e,e) = (m_e/m_P)^2 \approx 1.745 \times 10^{-45}$ [DERIVED, postulate-conditional per FTD-0131]; the earlier framework-integer reading $G_N = 1/(b_3+N_c)^2 = 1/100$ is **[CLOSED NEGATIVE per FTD-0131]** (off by $10^{20}$ to $10^{43}$). See `15-gravity-from-lattice.qmd` Mechanism B and `DERIV_NEWTON_FROM_SUBSTRATE.md`.
 
 **Strong force.** From the BCC sublattice coupling ($k = 3$ components):
 $$

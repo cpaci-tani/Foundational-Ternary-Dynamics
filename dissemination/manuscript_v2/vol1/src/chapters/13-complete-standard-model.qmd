@@ -18,7 +18,7 @@ The epistemic status of each entry is classified as:
 | $1/\alpha$ | $x_+$ from master quadratic | 137.036 | 137.036 | 1.26 ppm | SMP (master quadratic [THEOREM]; $x_+ = 1/\alpha$ identification [STRONGLY MOTIVATED CONJECTURE]) |
 | $\alpha_s(M_Z)$ | $b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | 0.1186 | 0.1179 | 0.6% | SMP (was [D] pre-2026-04-19; demoted per AUDIT_RATIONAL_FIT_CLAIMS) |
 | $G_F$ | $1/(\sqrt{2}v^2)$ | $1.166 \times 10^{-5}$ | $1.166 \times 10^{-5}$ | < 0.01% | PI (formula = standard EW theory) |
-| $\sin^2\theta_W$ | $N_c/N_{\text{eff}} = 3/13$ | 0.2308 | 0.2312 | 3.5% (post-running) | SMP (was [D]; demoted 2026-04-19) |
+| $\sin^2\theta_W$ | $N_c/N_{\text{eff}} = 3/13$ | 0.2308 | 0.22290(30) | 3.5% off | [PARAMETRIC] (FTD-0018, demoted 2026-04-19) |
 | $\alpha_{\text{GUT}}$ | $1/(2 \cdot 3 \cdot b_3) = 1/42$ | 0.0238 | $\sim 0.024$ | $\sim 1\%$ | SMP (no canonical GUT-scale derivation) |
 
 ### Boson masses
