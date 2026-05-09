@@ -1,6 +1,6 @@
 # DERIV — Newton's law of gravity from FTD substrate
 
-**Tag:** [DERIVED] (with two stated postulates flagged below; closes FTD-0130 resolution-path-(a))
+**Tag:** [STRONGLY MOTIVATED CONJECTURE] for the prediction itself (epistemic floor inherited from FTD-0015 via `α_G = (m_e/m_P)²` tautology); [DERIVED] for the chain steps 1.1–1.5 that recover Schwarzschild leading-order from substrate. Two flagged postulates (gravitational coupling form, linearized tick coefficient `2/c²`). Closes FTD-0130 resolution-path-(a). **Honest reading**: the 0.38% precision match is the squared FTD-0015 precision (mechanical, not new evidence); the substrate-derivation content is in the chain, not in the numerical match.
 **Date:** 2026-05-03 late night
 **LEDGER:** FTD-0131
 **Verification script:** `scripts/proofs/proof_newton_from_substrate.py` (PASS, 0.38% precision)
