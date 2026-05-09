@@ -566,9 +566,12 @@ static void section_lorentz_invariance() {
 
 static void section_magnetic() {
     // Section 1: Curl operator
+    // F11 perf fix: force CPU. Triple-loop inject_flux fills all L³ voxels;
+    // on GPU each call triggers a full ~3MB host→device upload (push_to_device),
+    // making this O(L⁶) wall time. CPU completes in ms.
     {
         int L = 16;
-        ftd::RenderBridge rb(L);
+        ftd::RenderBridge rb(L); rb.force_cpu();
 
         for (int x = 0; x < L; ++x) {
             for (int y = 0; y < L; ++y) {
@@ -591,9 +594,12 @@ static void section_magnetic() {
     }
 
     // Section 2: Perpendicularity
+    // F11 perf fix: force CPU (see Section 1 note above). Without this, the
+    // 32³=32K inject_flux calls each push the full voxel array to GPU,
+    // causing test_lorentz to time out at default ctest 600s.
     {
         int L = 32;
-        ftd::RenderBridge rb(L);
+        ftd::RenderBridge rb(L); rb.force_cpu();
         int cx = L / 2;
 
         for (int x = 0; x < L; ++x) {
@@ -626,9 +632,10 @@ static void section_magnetic() {
     }
 
     // Section 3: Stationary
+    // F11 perf fix: force CPU (see Section 1 note). 32³ inject_flux loop.
     {
         int L = 32;
-        ftd::RenderBridge rb(L);
+        ftd::RenderBridge rb(L); rb.force_cpu();
         int cx = L / 2;
 
         for (int x = 0; x < L; ++x) {
@@ -656,9 +663,10 @@ static void section_magnetic() {
     }
 
     // Section 4: Velocity dependence
+    // F11 perf fix: force CPU (see Section 1 note). 16³ inject_flux loop.
     {
         int L = 16;
-        ftd::RenderBridge rb(L);
+        ftd::RenderBridge rb(L); rb.force_cpu();
         int cx = L / 2;
 
         for (int x = 0; x < L; ++x) {

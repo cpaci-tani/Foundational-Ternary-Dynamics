@@ -490,6 +490,12 @@ ftd_add_test(test_gamma_ftd_momentum
 # 2026-04-17 (callstack audit): verifies the F1–F8 fixes — pair_production
 # and triad_binding now run on CPU, accumulate_proper_time updates tau,
 # ALPHA/ALPHA_EFT identity holds.
+# 2026-05-09 F11.A-5: restored after F-trim-2 deletion (e8eb8e8) hid 4 real
+# regressions. Source recovered from git; if regressions persist after F11
+# physics fixes, this is the canary.
+ftd_add_test(test_callstack_audit_fixes
+             tests/test_callstack_audit_fixes.cpp
+             CTEST_NAME callstack_audit_fixes TIMEOUT 60)
 
 # Phase 6: Flux-aggregate particles
 add_executable(test_selffield_profile tests/test_selffield_profile.cpp)
