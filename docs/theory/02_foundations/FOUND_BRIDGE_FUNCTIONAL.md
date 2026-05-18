@@ -102,8 +102,8 @@ Until the [OPEN] in §2 closes, the slogan is provisional. Until then, the prior
 - `THEOREM_MOORE_LAYER_DECOMPOSITION.md` (FTD-0028): polyhedral decomposition that gives U(1) × SU(2) × SU(3) and the BCC sub-stencil.
 - `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`: master quadratic chain.
 - `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`: master quadratic algebraic identity.
-- `docs/theory/10_eft_program/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093, in flight): structural derivation attempt for the BCC bridge operator.
-- `docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093, in flight): falsifier.
+- `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093, closed negative): structural derivation attempt for the BCC bridge operator.
+- `docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093, closed negative): falsifier.
 - `docs/theory/10_eft_program/OPEN_MU_FROM_LP_MISSING_ARROW.md` (FTD-0096): the calibration-side broken arrow.
 
 ## 6 · What this document does NOT claim

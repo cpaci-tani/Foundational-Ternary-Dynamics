@@ -335,8 +335,8 @@
       "source_files": [
         "docs/SPEC_FTD.md",
         "docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md",
-        "docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md",
-        "docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md"
+        "docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md",
+        "docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md"
       ],
       "constants_py_ref": null,
       "lab_measurement": null,

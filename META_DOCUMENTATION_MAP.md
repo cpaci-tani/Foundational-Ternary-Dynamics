@@ -220,7 +220,7 @@ The current theory categories are:
 | [DERIV_DYNAMICAL_SM_EMERGENCE.md](docs/theory/10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md) | Phase 4 EWSB / 3-generation / continuum α scan |
 | [DERIV_GAP_CLOSURE.md](docs/theory/10_eft_program/DERIV_GAP_CLOSURE.md) | Post-campaign tickets T1-T5 (stencil mismatch, amp threshold, finite-size Yukawa, confinement operators) |
 | [DERIV_DAY2_CAMPAIGN.md](docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md) | Day-2 + Phase F: matched-stencil CG, EWSB threshold map, spectroscopy, Rutherford cross-check, 4-point continuum plateau (α_∞ ≈ 3.6× α_ref) |
-| [STATUS_CUDA_BUILD.md](docs/theory/10_eft_program/STATUS_CUDA_BUILD.md) | WSL2 + CUDA 13 build path (30× GPU speedup on RTX 5090) |
+| [STATUS_CUDA_BUILD.md](docs/internal/STATUS_CUDA_BUILD.md) | WSL2 + CUDA 13 build path (30× GPU speedup on RTX 5090) |
 | [PAPER_FTD_AS_WILSONIAN_EFT.tex](dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex) | Wilsonian-EFT manuscript |
 | [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) | ~162 SM quantities audited: ~23 derivations, ~129 parametric, ~10 imposed/selected |
 

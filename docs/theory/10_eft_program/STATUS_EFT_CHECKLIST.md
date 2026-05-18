@@ -6,7 +6,7 @@
 This checklist tracks what is required for FTD to count as a real, native EFT
 rather than a collection of projected continuum comparisons. It follows the
 current pivot documented in `INDEX_FTD_NATIVE_EFT.md` (R1 deliverable, 2026-05-05;
-supersedes `00_INDEX.md`): the projected `x_+` / QED-alpha RG interpretation is
+supersedes archived `archive/ARCH_00_INDEX_2026-04-27.md`): the projected `x_+` / QED-alpha RG interpretation is
 closed negative; the active program is the native finite-volume/blocking EFT of
 FTD histories.
 
@@ -89,7 +89,7 @@ FTD histories.
 - [x] Real engine histories can now be converted into native continuity ledgers.
 - [x] Full-tick GPU histories expose all currently known state-changing channels.
 - [~] Build systematic nonlinear b=2 flow campaigns from engine histories. **[PARTIAL] 2026-04-26 (FTD-0098)** — first nonlinear-flow campaign of this kind landed: `engine/tests/campaign_operator_mixing_2026-04-26.cpp` consumes the same Langevin+genesis ensemble as `test_nonlinear_flow_multiscale.cpp` and assembles M_ab(b=2). Pre-reg + analysis cited above.
-- [~] Add BCC/corner-channel observables motivated by `PAPER_MASTER_QUADRATIC_FORMAL.pdf`. **2026-04-26 — Cluster A engine build complete (`engine/include/ftd/sublattice.h`, `correlations.h`, `spectrum_extraction.h`, `term_toggles.h::bcc_stencil`, `campaign_bcc_band_spectrum.cpp`, all tests PASS); D2 protocol drafted (`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`); D1 derivation drafted (`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`, FTD-0093). Awaiting publication-grade run + D6 audit.**
+- [~] Add BCC/corner-channel observables motivated by `PAPER_MASTER_QUADRATIC_FORMAL.pdf`. **2026-04-26 — Cluster A engine build complete (`engine/include/ftd/sublattice.h`, `correlations.h`, `spectrum_extraction.h`, `term_toggles.h::bcc_stencil`, `campaign_bcc_band_spectrum.cpp`, all tests PASS); D2 protocol drafted (`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`); D1 derivation archived at `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` after FTD-0093 closure.**
 - [~] Measure operator mixing under blocking. **[PARTIAL] 2026-04-26 (FTD-0098)** — first measurement landed (5×5 reduced subspace after pre-registered s² degradation ladder; bootstrap-stderr-limited at this ensemble size; tag = [PARTIAL]). See FTD-0098.
 - [ ] Measure reaction-sector scaling.
 - [ ] Measure transport-sector scaling.
@@ -115,7 +115,7 @@ FTD histories.
 - [x] `K_B` status remains calibration/manifestation scale.
 - [x] Old physical RG reading of `x_+` closed negative.
 - [x] Alpha extraction tooling builds again.
-- [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **2026-04-26 — Mechanism A ruled out; Mechanism B closed negative 2026-04-25 (`DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C drafted as [CONJECTURE] (FTD-0093, `DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`). Awaiting D6 audit on `PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`. Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
+- [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **2026-04-27 — Mechanism A ruled out; Mechanism B closed negative (`archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C closed negative by D6 audit (`archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` + `AUDIT_BCC_SUBLATTICE_SPECTRUM.md`). Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
 - [~] Evaluate "G18 direct sector vs BCC/CM capacity matching" as a possible `g_c` mechanism, tagged [CONJECTURE] until derived. **2026-04-26 — predecessor reading of Mechanism C bridge-operator hypothesis (FTD-0093 §3 cites the BCC sub-stencil structural argument).**
 - [ ] Decide whether `coulomb_charge_coupling` is a measurement knob, calibration, or derived engine convention.
 - [ ] Separate dimensionless native couplings from physical-unit calibrations in all docs and APIs.
