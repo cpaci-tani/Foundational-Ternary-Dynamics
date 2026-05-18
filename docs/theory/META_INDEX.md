@@ -70,6 +70,7 @@ Start here for comprehensive overviews.
 | 1.20 | **[MAP_LAGRANGIAN_TO_ENGINE.md](01_reference/MAP_LAGRANGIAN_TO_ENGINE.md)** | **Lagrangian ↔ engine cross-reference (R1 of FTD-EFT roadmap, 2026-05-05)**: line-anchored mapping from `SPEC_FTD_LAGRANGIAN.md` §3 (3-term action + 6-engine decomposition) to `engine/src/lagrangian.cpp` and per-phase implementation files. Closes the long-standing force-dictionary unification gap. EL-residual diagnostics verified at machine epsilon |
 | 1.21 | **[SPEC_FQCR.md](01_reference/SPEC_FQCR.md)** | **Finite Quarter-Conjugacy Recurrence framework (FQCR, 2026-05-06, v1.0)**: 5-model framework. Model I — operator-theoretic provenance of $G^*$ via $\det_\zeta$ of quarter-twisted spectra [THEOREM, FTD-0141]. Model II — finite-N attractor $G_N^* \to G^*$ at $O(1/N^2)$ [THEOREM, FTD-0142]. Model III — recurrence Casimir + Möbius reduction [THEOREM]. Model IV — $(4,6;3,2)$ exponent ansatz [SELECTION pending FTD-0143 uniqueness scan]. Model V — master quadratic as transfer-matrix char poly [THEOREM notational; physical $\alpha^{-1} = \lambda_\text{max}$ stays SMC]. Subsidiary to spine Theorems 1, 2, 8 |
 | 1.22 | **[SPEC_DOCTRINE_LEDGER.md](01_reference/SPEC_DOCTRINE_LEDGER.md)** | **FTD/FQCR Doctrine Ledger v1.3 (2026-05-18, FTD-0145 [SYNTHESIS])**: single-page status map, 14 sections + non-circularity audit + compressed roadmap. Roll-up of `LEDGER.md` + `TRACKER_ONTIC_TRUTH.md` + `SPEC_ALGEBRAIC_SPINE.md` + `SPEC_FQCR.md` + `SPEC_OPEN_MATH_BY_SECTOR.md` tags. **Introduces no new theorems**; every claim points at a canonical source. **v1.3 physicist consolidation** from `complete_ftd_chain_v1.md` intake: FTD is defensible as a finite-invariant algebraic reconstruction program; `x_+ ↔ 1/α` remains [STRONGLY MOTIVATED CONJECTURE]; MC-T4.3 operational alpha-readout is the central physics bottleneck. §7 bivector/Dirac bridges [OPEN] per FTD-0073; §8 sin²θ_W at two scales (GUT-lock 3/8 [IMPORTED scaffold] + IR 3/13 [PARAMETRIC]); §10 flavor depth matrices [PARAMETRIC candidate scaffold]; §12 gravity cites FTD-0131 partial closure (`α_G(e,e)` to 0.38%). Read BEFORE planning hardening arcs |
+| 1.23 | **[SPEC_ALPHA_READOUT_CONTRACT.md](01_reference/SPEC_ALPHA_READOUT_CONTRACT.md)** | 🆕 **(2026-05-18, FTD-0152 [SYNTHESIS])** Alpha Readout Contract for MC-T4.3: defines what it would mean to "earn the map" from the algebraic spine to physical electromagnetic coupling. Requires any closure proposal to state `(P, A_obs, O_EM, R, C)` before target-checking; bans alpha/CODATA inputs, substitution identities, tunable alpha-equivalent parameters, and imported-QED masquerading as FTD derivation. Establishes ARC-0..ARC-3 status levels and selects observable-selection readout (ARC-B1) as the first proof obligation. **No tag promotion; `x_+ ↔ 1/α` remains [STRONGLY MOTIVATED CONJECTURE] until ARC-3 exists.** |
 
 ---
 
@@ -480,7 +481,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Open gaps:** [`SPEC_OPEN_MATH_BY_SECTOR.md` §2](01_reference/SPEC_OPEN_MATH_BY_SECTOR.md#2--electromagnetism--fine-structure-α).
 
-**Anchor refs:** `SPEC_PHYSICS_BRIDGE` (01_; FTD-0121 SYNTHESIS), `PHYS_QUADRATIC_APPLICATIONS` (01_), `SPEC_FTD_NATIVE_ELECTRODYNAMICS` (10_).
+**Anchor refs:** `SPEC_PHYSICS_BRIDGE` (01_; FTD-0121 SYNTHESIS), `SPEC_ALPHA_READOUT_CONTRACT` (01_; MC-T4.3 closure contract), `PHYS_QUADRATIC_APPLICATIONS` (01_), `SPEC_FTD_NATIVE_ELECTRODYNAMICS` (10_).
 
 **Derivations (03_):** `DERIV_ALPHA_FROM_PHASE_STRUCTURE`, `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE`, `DERIV_COULOMB_SCATTERING_AMPLITUDE`, `DERIV_DIRAC_FROM_MASTER_QUADRATIC`, `DERIV_EM_REGIMES_UNIFIED`, `DERIV_LATTICE_LIENARD_WIECHERT`, `DERIV_LATTICE_LW_EXTENSIONS`, `DERIV_LATTICE_QED_COMPLETE`, `DERIV_RETARDED_GREEN_LATTICE`.
 
@@ -610,7 +611,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 ### §12.10 — Cross-cutting / Foundational obstructions
 
-**Scope:** MC-T4.3 non-action α-injection mechanism (CENTRAL foundational obstruction); calibration interface (a_phys, K_B); Phase J ultralocality; structural-decoupling diagnosis; lattice ontology; framework-integer derivations; methodological challenges (W-CRIT-1, W-CRIT-2).
+**Scope:** MC-T4.3 operational alpha-readout mechanism (CENTRAL foundational obstruction; see `SPEC_ALPHA_READOUT_CONTRACT`); calibration interface (a_phys, K_B); Phase J ultralocality; structural-decoupling diagnosis; lattice ontology; framework-integer derivations; methodological challenges (W-CRIT-1, W-CRIT-2).
 
 **Open gaps:** [`SPEC_OPEN_MATH_BY_SECTOR.md` §10](01_reference/SPEC_OPEN_MATH_BY_SECTOR.md#10--cross-cutting--foundational-obstructions).
 
@@ -634,7 +635,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Scope:** Docs that span all 10 sectors (canonical specs, full-stack references, project-level catalogs, audits, trackers, changelogs). Listed here once instead of duplicated across sectors.
 
-**Top-level project specs (01_):** `SPEC_FTD_REFERENCE` (technical reference manual), `SPEC_FTD_COMPLETE_CHAIN` (i → α complete chain), `SPEC_FTD_COMPARATIVE_PHYSICS` (PF Atlas SM↔FTD), `SPEC_FTD_LAGRANGIAN` (minimal axiom set), `SPEC_SIX_ALGORITHMS` (6 algorithms of physics on a 3D grid), `SPEC_SM_REPLACEMENT_COMPLETE` (sector-by-sector SM derivation map), `SPEC_NOVEL_PREDICTIONS` (predictions catalog), `SPEC_DOCTRINE_LEDGER` (FTD-0145 SYNTHESIS; single-page status map), `SPEC_OPEN_MATH_BY_SECTOR` (FTD-0146 SYNTHESIS; sector-organised open-math queue).
+**Top-level project specs (01_):** `SPEC_FTD_REFERENCE` (technical reference manual), `SPEC_FTD_COMPLETE_CHAIN` (i → α complete chain), `SPEC_FTD_COMPARATIVE_PHYSICS` (PF Atlas SM↔FTD), `SPEC_FTD_LAGRANGIAN` (minimal axiom set), `SPEC_SIX_ALGORITHMS` (6 algorithms of physics on a 3D grid), `SPEC_SM_REPLACEMENT_COMPLETE` (sector-by-sector SM derivation map), `SPEC_NOVEL_PREDICTIONS` (predictions catalog), `SPEC_DOCTRINE_LEDGER` (FTD-0145 SYNTHESIS; single-page status map), `SPEC_OPEN_MATH_BY_SECTOR` (FTD-0146 SYNTHESIS; sector-organised open-math queue), `SPEC_ALPHA_READOUT_CONTRACT` (FTD-0152 SYNTHESIS; MC-T4.3 closure contract).
 
 **Status trackers (07_):** `LEDGER` (atomic per-claim provenance), `TRACKER_ONTIC_TRUTH` (T1–T5 bedrock), `TRACKER_OPEN_ITEMS` (atomic file-level [OPEN]), `CATALOG_PARAMETRIC_INSERTIONS` (~162 rows), `REF_CLAIMS_MATRIX`.
 
