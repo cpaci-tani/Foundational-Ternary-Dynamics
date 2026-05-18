@@ -133,7 +133,7 @@ The output is the list of currently-diverged files. Decide for each: which versi
 
 ## Reframe-deployment-specific addendum
 
-For any chapter edit made under the undefined-boundary reframe (per `docs/theory/07_assessment/CANONICAL_REFRAME.md`):
+For any chapter edit made under the undefined-boundary reframe (per `docs/theory/07_assessment/reframe_deployment/CANONICAL_REFRAME.md`):
 
 - Find every location of the chapter (manuscript v1 + manuscript_v2 src/chapters + vol1/vol2 if present).
 - Apply the same restatement to every location.

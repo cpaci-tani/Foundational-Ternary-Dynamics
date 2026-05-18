@@ -321,7 +321,7 @@ Only after that should a new fixed loop calculation be run.
 
 ## 2026-04-22 projected-Dirac follow-up
 
-`DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` records the next bridge span:
+`archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` records the next bridge span:
 
 ```text
 projected Dirac operator   partial candidate

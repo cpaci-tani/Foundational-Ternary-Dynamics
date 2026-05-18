@@ -2,7 +2,7 @@
 
 **Tag:** [PROTOCOL]
 **Date:** 2026-04-26
-**Implements:** Mechanism C falsifier (`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §6); subsidiary tests of L2 candidate identity (FTD-0094) and Bridge Functional ontology (FTD-0095, §2 [OPEN]).
+**Implements:** Mechanism C falsifier (`archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §6); subsidiary tests of L2 candidate identity (FTD-0094) and Bridge Functional ontology (FTD-0095, §2 [OPEN]).
 **Unblocked by:** FTD-0051 (Langevin thermostat infrastructure), Cluster A engine build (E1–E8 complete 2026-04-26).
 **Status:** Smoke test landed (`engine/tests/campaign_bcc_band_spectrum.cpp`); publication-grade run pending git tag `preregister-cluster-A-vN`.
 **Artifacts:**
@@ -259,7 +259,7 @@ JSON manifest (publication run, written separately):
 
 ## 9 · Cross-references
 
-- **D1 derivation:** `DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`
+- **D1 derivation:** `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`
 - **D6 results audit (post-run):** `AUDIT_BCC_SUBLATTICE_RESULTS.md`
 - **D5 look-elsewhere:** `PROTOCOL_LOOK_ELSEWHERE_SCAN.md` (cross-validation)
 - **AUDIT_LORENTZ_ANISOTROPY.md** (FTD-0092) — lattice anisotropy bound

@@ -1,8 +1,8 @@
 # FTD Theory Documentation Index
 
-**Framework:** Foundational Ternary Dynamics v5.34 (post-2026-05-01 physics-bridge synthesis + structural-uniqueness scans)
-**Date:** May 1, 2026
-**Status:** Curated catalog. **Single source of truth for claim status: [`07_assessment/LEDGER.md`](07_assessment/LEDGER.md)** (119 rows; detail blocks present for all load-bearing post-FTD-0059 rows as of 2026-05-01 audit pass; if LEDGER and individual docs disagree, LEDGER wins).
+**Framework:** Foundational Ternary Dynamics v5.40 (post-2026-05-08 FTD/FQCR doctrine-ledger + theory cleanup pass)
+**Date:** May 18, 2026
+**Status:** Curated catalog. **Single source of truth for claim status: [`07_assessment/LEDGER.md`](07_assessment/LEDGER.md)**; if LEDGER and individual docs disagree, LEDGER wins.
 **Single Source of Truth (spec):** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 **Foundational commitment (2026-04-19):** undefined-boundary lattice ontology — see [`07_assessment/AUDIT_INFINITY_REFRAME.md`](07_assessment/AUDIT_INFINITY_REFRAME.md) and [`07_assessment/reframe_deployment/CANONICAL_REFRAME.md`](07_assessment/reframe_deployment/CANONICAL_REFRAME.md).
 
@@ -13,7 +13,7 @@
 This index organizes the curated theory catalog into 10 logical categories (9 subdirectories + this file).
 Archived documents are in the `archive/` subdirectory.
 
-> **Cleanup note (2026-04-11):** Treat this file as a curated catalog, not a raw directory listing. The live filesystem currently contains more Markdown files in active theory directories than the indexed counts below because some superseded or historical-in-place documents remain outside `archive/` pending cleanup. See [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](../../AUDIT_DOCUMENT_CLEANUP_LEDGER.md) for the current reconciliation note.
+> **Cleanup note (2026-05-18):** Treat this file as a curated catalog, not a raw directory listing. Large active clusters such as `10_eft_program/` maintain their own sub-indexes (for example [`10_eft_program/INDEX_FTD_NATIVE_EFT.md`](10_eft_program/INDEX_FTD_NATIVE_EFT.md)); superseded or closed-negative documents should live under `archive/` or a local `archive/` subdirectory.
 
 ### Structural Guides
 
@@ -254,9 +254,9 @@ What is genuinely derived vs. claimed.
 | 10.13 | [DERIV_PARTITION_FUNCTION_L2.md](10_eft_program/DERIV_PARTITION_FUNCTION_L2.md) | ✅ **Phase J — explicit partition function (2026-04-19)** — first-ever explicit computation of FTD's partition function, on the minimal L=2 torus (8 voxels, 6561 configs, 1107 charge-neutral). Key finding: under the Gauss constraint ∇·J = s, the action `S_E = (c²/2)|∇J|² + g_c·s·(∇·J)` is **ultralocal in s** (Parseval: ∫\|∇J\|² = ∫s²). Two dipoles with different separations give IDENTICAL S_E (0.0 difference); the engine's Σ\|J\|² diagnostic does differentiate (Phase G Coulomb). Consequence: the FTD analytical action contains no Coulomb interaction between static charges, so classical extremisation cannot fix g_c. What the engine shows as Coulomb is from parallel diagnostics + separate Poisson solves, not from the action. Script: `scripts/proofs/partition_function_L2.py`. |
 | 7.12 | [AUDIT_RATIONAL_FIT_CLAIMS.md](07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md) | ✅ **Option 4 audit (2026-04-19)** — applied same rigidity method as master quadratic audit to 7 other [THEOREM]/[DERIVED] rational-integer claims. **7 claims downgraded**: sin²θ_W = 3/13 (3.5% error, [THEOREM] → [PARAMETRIC]), sin²θ_13 = 1/52 (12.6% error, [DERIVED] → [PARAMETRIC]), α_s = 7/59 (0.6% error, competitor 2/17 is tighter, [DERIVED] → [PARAMETRIC]), sin²θ_12/θ_23/Δm² (all 1-2.3% errors with multiple competitors → [STRUCTURALLY MOTIVATED PARAMETRIC]), m_e and m_p/m_e → [STRONGLY MOTIVATED CONJECTURE]. Firm [THEOREM] count drops from ~23 to ~5. Scripts: `audit_ratio_formulas.py`, `audit_electron_mass_formula.py`. |
 | 7.13 | [AUDIT_INFINITY_REFRAME.md](07_assessment/AUDIT_INFINITY_REFRAME.md) | ⚠️ **Foundational reframe (2026-04-19)** — shift from "completed-infinity" ontology (lattice = ℤ³ as totality) to "undefined-boundary" ontology (at every specified position, adjacent sites exist; no claimed global extent). Portfolio triage: ~5 firm [THEOREM]s SURVIVE (master quadratic algebra, CM uniqueness, Phase G/H/J finite-L results); ~12 docs need RESTATE (mechanical language edits); ~4 need RE-DERIVE (gap equation, path integral, Type III₁, Axiom Zero). "L → ∞ convergence" interpretation of the 3.6× EFT gap **was never well-posed** and is permanently refuted. New [OPEN]: lattice-to-physical-length conversion a_phys must be derived or declared empirical. |
-| 7.14 | [OPEN_A_PHYS_DERIVATION.md](10_eft_program/OPEN_A_PHYS_DERIVATION.md) | ✅ **[CLOSED NEGATIVE / RESOLVED-BY-CALIBRATION] (2026-04-19)** — Mechanisms α/β/γ all fail to deliver a first-principles `a_phys`. Disposition: declare `a_phys ≡ ℓ_P` in `SPEC_FTD.md` (LEDGER FTD-0030, FTD-0041). |
-| 7.15 | [DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md](10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md) | ❌ **Mechanism γ closed negative (2026-04-19)** — dimensional chain produces values that depend on which calibration is substituted; does not derive `a_phys` from axioms. Fallback (declare `a_phys ≡ ℓ_P`) adopted. |
-| 7.15b | [DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md](10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md) | ⚠️ **[RETRACTED 2026-04-23]** — originally tagged [THEOREM] with `a_phys ≈ 4.39 ℓ_P`. Retracted because the chain silently swaps the `K_B = m_e` calibration for `ℏ_lat = 1` and relabels the substitution as a theorem. Authoritative disposition is FTD-0030/0041 (calibration). File retained in place with retraction preamble for epistemic transparency. |
+| 7.14 | [OPEN_A_PHYS_DERIVATION.md](10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md) | ✅ **[CLOSED — RESOLVED BY THEOREM] (2026-04-23)** — Mechanisms α/β/γ/δ all fail for the same dimensional reason; superseded by `THEOREM_A_PHYS_NO_GO.md`. Archived as resolved provenance. |
+| 7.15 | [DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md](10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md) | ❌ **Mechanism γ closed negative (2026-04-19)** — dimensional chain produces values that depend on which calibration is substituted; does not derive `a_phys` from axioms. Archived as closed-negative provenance. |
+| 7.15b | [DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md](10_eft_program/archive/retracted/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md) | ⚠️ **[RETRACTED 2026-04-23]** — originally tagged [THEOREM] with `a_phys ≈ 4.39 ℓ_P`. Retracted because the chain silently swaps the `K_B = m_e` calibration for `ℏ_lat = 1` and relabels the substitution as a theorem. Archived as retraction provenance. |
 | 7.16 | [FOUND_AXIOM_ZERO.md](02_foundations/FOUND_AXIOM_ZERO.md) | 🔄 **Reframed (2026-04-19)** — position clause now states the undefined-boundary cubic graph directly (no completed-totality commitment); §3.2 / §4.2 / §4.3 restate the master quadratic as a pure algebraic identity rather than a "thermodynamic limit property." [SELECTION] tags around the gap-equation narrative withdrawn. Step 0 of the chain table now says "cubic lattice with no defined boundary." |
 | 7.17 | [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) | 🔄 **Rewritten (2026-04-19)** — title changed from "Lattice Gap Equation" to "Algebraic Identity and Physical Match." Document now presents the master quadratic as a pure algebraic object whose coefficient 16 has two independent finite-combinatorial routes (`|Aut(E)|² = 16`, `z_BCC × 2 = 16`); discriminant trichotomy preserved; physical identification x₊ ↔ 1/α, x₋ ↔ N_c is [STRONGLY MOTIVATED CONJECTURE] anchored on dual match + CM-curve uniqueness, not on a thermodynamic-limit derivation. |
 | 7.18 | [DERIV_VON_NEUMANN_CONSTRUCTION.md](06_consciousness/DERIV_VON_NEUMANN_CONSTRUCTION.md) | 🔄 **Type III₁ demoted to [HYPOTHESIS] (2026-04-19)** — every region the framework actually exhibits is Type I; the Araki-Woods Type III₁ classification is a property of an inductive-limit *scaffold* one applies to FTD, not of FTD-as-defined. Sections 5–6 restated accordingly; Section 7 numerical-verification rows tagged [HYPOTHESIS] (Scaffold) for the III₁ items; Section 8 epistemic accounting updated. |
@@ -385,6 +385,7 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 
 | Order | Document | Description |
 |-------|----------|-------------|
+| 10.0 | **[INDEX_FTD_NATIVE_EFT.md](10_eft_program/INDEX_FTD_NATIVE_EFT.md)** | **Canonical sub-index for `10_eft_program/` (2026-05-05)** — replaces archived `archive/ARCH_00_INDEX_2026-04-27.md`; categorised inventory for the large FTD-native EFT corpus, including specs, measurements, audits, protocols, pre-registrations, decisions, open items, theorems, and archived closed-negative routes. Read this before depth-first browsing the EFT directory. |
 | 10.1 | [SPEC_EFT_RECOVERY_PROGRAM.md](10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md) | **[REFERENCE]** Pre-registration spec: five-pillar EFT checklist (β, Ward, Lorentz, OPE, continuum), canonical reference regime (L=64, flux-pulse, seed 42), pass/fail criteria for every phase committed before any experiment runs |
 | 10.2 | [DERIV_SYMMETRY_RECOVERY.md](10_eft_program/DERIV_SYMMETRY_RECOVERY.md) | ✅ **Phase 1 complete (2026-04-19)** — rotational-anisotropy diagnostics, Lorentz correlator collapse (0.4-1.9% residual for r≤8 at L=64), Ward-identity closure (SOR-tolerance limited at ~1% of |J|); 3 CTests pass |
 | 10.3 | [DERIV_BETA_FUNCTION_MEASURED.md](10_eft_program/DERIV_BETA_FUNCTION_MEASURED.md) | ✅ **Phase 2 complete (2026-04-19)** — lattice-measured β(g) via 3-method extraction (slope/Yukawa/asymptotic) at L ∈ {16, 32, 64}; engine produces screened Coulomb with λ≈10.6 at L=64; β sign matches QED asymptotic freedom but magnitude 2-3 orders off; 4 CTests pass |
@@ -419,7 +420,6 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.32 | [OPEN_FTD_TO_EFT_MATCHING.md](10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md) | **EFT Matching:** Open questions |
 | 10.33 | [OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md](10_eft_program/archive/closed_negative/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md) | **Projected EFT Renormalization:** Open status |
 | 10.34 | [OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md](10_eft_program/OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md) | **Native Action or Measure:** Open questions |
-| 10.35 | [OPEN_FTD_TO_EFT_MATCHING.md](10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md) | **EFT Matching:** Open questions |
 | 10.35 | [EXPLR_SELF_DUAL_HALF_SHELL.md](10_eft_program/EXPLR_SELF_DUAL_HALF_SHELL.md) | **Self-Dual Half-Shell Exploration** |
 | 10.36 | [AUDIT_ALPHA_SCALING_L256.md](10_eft_program/AUDIT_ALPHA_SCALING_L256.md) | **Alpha Scaling L=256 Audit** |
 | 10.37 | [AUDIT_EFT_BCC_ORTHOGONALITY.md](10_eft_program/AUDIT_EFT_BCC_ORTHOGONALITY.md) | **EFT BCC Orthogonality Audit** |
@@ -515,7 +515,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Particles (05_):** `DERIV_COLOR_BINDING_STRUCTURE_AND_ME_STATUS`.
 
-**EFT program (10_):** `AUDIT_BCC_SUBLATTICE_SPECTRUM`, `DERIV_MECHANISM_B_GC_DERIVATION` (CLOSED NEGATIVE), `DERIV_MECHANISM_C_GC_BCC_BRIDGE` (CLOSED NEGATIVE), `OPEN_GC_FROM_FIRST_PRINCIPLES`, `PROTOCOL_BCC_SUBLATTICE_SPECTRUM`.
+**EFT program (10_):** `AUDIT_BCC_SUBLATTICE_SPECTRUM`, `OPEN_GC_FROM_FIRST_PRINCIPLES`, `PROTOCOL_BCC_SUBLATTICE_SPECTRUM`. Archived closures: `DERIV_MECHANISM_B_GC_DERIVATION`, `DERIV_MECHANISM_C_GC_BCC_BRIDGE`.
 
 ---
 
@@ -549,7 +549,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Mathematical (09_):** `EXPLR_COLLAPSE_GRAVITY_BRIDGE`.
 
-**EFT program (10_):** `DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT`, `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT` (CLOSED NEGATIVE), `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS`, `OPEN_A_PHYS_DERIVATION`, `THEOREM_A_PHYS_NO_GO`.
+**EFT program (10_):** `THEOREM_A_PHYS_NO_GO`. Archived supporting closures: `DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT`, `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT`, `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS`, `OPEN_A_PHYS_DERIVATION`.
 
 ---
 
@@ -617,13 +617,13 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Foundations (02_):** `FOUND_AXIOM_ZERO`, `FOUND_BLIND_DERIVATION_CHAIN`, `FOUND_DIMENSIONAL_COUNTING`, `FOUND_FORCE_STRUCTURE`, `FOUND_LATTICE_PHYSICS_INTUITIONS`, `FOUND_LATTICE_SPACING_GAUGE_FREEDOM`, `FOUND_META_PATTERNS`, `FOUND_MINIMAL_INSTANTIATED_UNIVERSE`, `FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS`, `FOUND_ONTOLOGICAL_GENESIS`, `FOUND_STRUCTURAL_DECOUPLING` (FTD-0129 SYNTHESIS), `FOUND_THE_FIRST_DISTINCTION`.
 
-**Derivations (03_):** `DERIV_BOTTOM_UP_PHYSICS`, `DERIV_DAMPING_RAYLEIGH`, `DERIV_FORCE_EMERGENCE`, `DERIV_HEAT_EQUATION_FROM_RATIO`, `DERIV_INTEGER_PHYSICAL_IDENTIFICATION`, `DERIV_KCOMP_CIRCLE_TO_SPHERE`, `DERIV_KCOMP_VOLUMETRIC_SHELL`, `DERIV_LATTICE_HODGE_DUALITY`, `DERIV_MOORE_GAUGE_STRUCTURE`, `DERIV_STATE_FLUX_COUPLING_DERIVATION`, `DERIV_THREE_RESOLUTIONS`, `DERIV_VARIATIONAL_PROOF`.
+**Derivations (03_):** `DERIV_BOTTOM_UP_PHYSICS`, `DERIV_DAMPING_RAYLEIGH`, `DERIV_FORCE_EMERGENCE`, `DERIV_HEAT_EQUATION_FROM_RATIO`, `DERIV_INTEGER_PHYSICAL_IDENTIFICATION`, `DERIV_KCOMP_VOLUMETRIC_SHELL`, `DERIV_LATTICE_HODGE_DUALITY`, `DERIV_MOORE_GAUGE_STRUCTURE`, `DERIV_STATE_FLUX_COUPLING_DERIVATION`, `DERIV_THREE_RESOLUTIONS`, `DERIV_VARIATIONAL_PROOF`. Archived closure: `ARCH_DERIV_KCOMP_CIRCLE_TO_SPHERE`.
 
 **Couplings (04_):** `DERIV_DISCRETE_CONTINUOUS_BRIDGE`, `EXPLR_A_OVER_D_AUDIT`.
 
 **Mathematical (09_):** `EXPLR_RELU_TYPE_TRANSITION`.
 
-**EFT program (10_):** `00_INDEX`, `DECISION_FIELD_BASIS`, `DECISION_GAUSS_REPRESENTATION`, `DERIV_DYNAMICAL_SM_EMERGENCE`, `OPEN_MU_FROM_LP_MISSING_ARROW`, `REF_PREREGISTER_MANIFEST`, `SPEC_EFT_RECOVERY_PROGRAM`, `SPEC_FTD_EFT_BRIDGE_CONTRACT`, `STATUS_EFT_CHECKLIST`, `THEOREM_BLOCKING_DIAGONAL_IDENTITIES`, `THEOREM_MU_NO_GO_FTD0096`.
+**EFT program (10_):** `DECISION_FIELD_BASIS`, `DECISION_GAUSS_REPRESENTATION`, `DERIV_DYNAMICAL_SM_EMERGENCE`, `OPEN_MU_FROM_LP_MISSING_ARROW`, `REF_PREREGISTER_MANIFEST`, `SPEC_EFT_RECOVERY_PROGRAM`, `SPEC_FTD_EFT_BRIDGE_CONTRACT`, `STATUS_EFT_CHECKLIST`, `THEOREM_BLOCKING_DIAGONAL_IDENTITIES`, `THEOREM_MU_NO_GO_FTD0096`. Archived superseded index: `ARCH_00_INDEX_2026-04-27`.
 
 **Assessment (07_):** `AUDIT_DUAL_SUBSTRATE_PROVENANCE`, `AUDIT_INFINITY_REFRAME`, `DERIV_INTEGER_UNIQUENESS`.
 

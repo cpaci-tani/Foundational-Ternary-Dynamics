@@ -164,7 +164,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 - **Value:** 1.616255e-35 m
 - **Tag:** `CALIBRATION`
 - **LEDGER:** [FTD-0030](../07_assessment/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/LEDGER.md#ftd-0059)
-- **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md`; `docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`; `docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`
+- **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`
 - **Calibration note:** FTD-0059 (no-go theorem, 2026-04-23): no length is expressible from Axiom-Zero invariants alone. Mechanisms α/β/γ/δ all closed negative. The Planck-length declaration is theorem-enforced as the irreducible minimum, not a convenience choice. ℓ_P value from CODATA 2022: ≈1.616255 × 10⁻³⁵ m.
 - **Notes:** First of two SI-dimensional calibrations theorem-enforced by FTD-0096.
 
