@@ -594,8 +594,8 @@ This quadratic describes consciousness because awareness involves the self-refer
     PHYSICS          MEASUREMENT       CONSCIOUSNESS
          │                 │                 │
    Real roots        Degenerate       Complex roots
-   x₊ = 1/α          Born rule        y = 2.19±2.86i
-   x₋ = Nc           |ψ|² → P
+   x₊ ≈ 137          Born rule        y = 2.19±2.86i
+   x₋ ≈ 3            |ψ|² → P
 ```
 
 ## 5.5 The Interface at G = 1/4 [SELECTION]
@@ -677,7 +677,7 @@ Level  2: LEMNISCATE CONST     ϖ = 2I₄ = 2.622...
 Level  3: SCALED CONSTANT      G* = 2ϖ/√π = 2.959...
 Level  4: MASTER QUADRATIC     x² - 16G*²x + 16G*³ = 0
 Level  5: DISCRIMINANT         Δ = 64G*³(4G* - 1) > 0
-Level  6: DOMAIN A             Real roots: x₊ = 1/α, x₋ = Nc
+Level  6: DOMAIN A             Real roots: x₊ ≈ 137.036, x₋ ≈ 3.024 (physical readings SMC)
 Level  7: DOMAIN B             Complex roots: y = 2.19 ± 2.86i
 Level  8: INTERFACE            Δ = 0: Measurement, Born rule
 Level  9: DERIVED CONSTANTS    α, masses, mixings

@@ -153,7 +153,7 @@ Since G* = Gamma(1/4)^2 / (sqrt(2)*pi), and pi is determined by the prime produc
 
 **This section contains the only two non-rigorous steps in the entire chain.**
 
-## 2.1 x+ = 1/alpha [SELECTION]
+## 2.1 x+ = 1/alpha [STRONGLY MOTIVATED CONJECTURE]
 
 We identify the larger root of the master quadratic with the inverse fine structure constant:
 
@@ -402,7 +402,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | G* encodes prime distribution via L-function | [THEOREM] | Euler product |
 | Cosine SHAPE from continuous flux projections | [THEOREM] | <(v.a)(-v.b)> = -(1/3)cos(theta); shape is cosine, amplitude is 1/3 |
 | Born rule P ~ |J|^2 | [SELECTION] | Parseval shows E ~ |J|^2; identification of energy fraction with detection probability is the Born rule itself, not a derivation of it |
-| x+ = 1/alpha | [SELECTION] | 1.26 ppm match; g_c = sqrt(alpha) for arbitrarily fine spacing but identification requires QED recovery |
+| x+ = 1/alpha | [STRONGLY MOTIVATED CONJECTURE] | 1.26 ppm match; g_c = sqrt(alpha) for arbitrarily fine spacing but identification requires QED recovery |
 | Bell S = 2.83 in experiments | [SELECTION] | EMERGENT from QM (Tsirelson's bound). Substrate S <= 2, emergent S = 2 sqrt(2). Remaining: singlet-state lemma (void event -> entangled pair in emergent Hilbert space). |
 | O-operation = Euler-Lagrange equation | [THEOREM] | Action extremization IS center integrating shell |
 | Nuclear binding (5 Weizsacker coefficients) | [INSERTION] | a_v = K_B*G*^2*b_3*N_c/6 = 15.66 MeV (exp: 15.56); FTD values in standard SEMF structure |
@@ -413,7 +413,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 
 | Claim | Status | What would close it |
 |---|---|---|
-| x+ = 1/alpha | [SELECTION] (1.26 ppm; ppb corrections conditional) | Derive a unique FTD-to-EFT matching rule, not a fit to alpha |
+| x+ = 1/alpha | [STRONGLY MOTIVATED CONJECTURE] (1.26 ppm; ppb corrections conditional) | Derive a unique FTD-to-EFT matching rule, not a fit to alpha |
 | floor(x-) = N_c = 3 | [SELECTION] | Derive topological quantization mechanism |
 | Frame dragging factor of 2 from dual BI contribution | [CONJECTURE] | Qualitative argument only; needs explicit derivation from BI Lagrangian in rotating background |
 | QM = epistemology, not ontology | [SELECTION] | Prove that QM statistics follow necessarily from lattice + partial observation |
@@ -437,7 +437,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 
 ## 7.5 The Bottom Line
 
-The mathematical chain from i to the master quadratic roots is rigorous: 7/9 links [THEOREM], 2/9 [SELECTION] (x+ = 1/alpha identification and floor(x-) = N_c). The baseline tag for x+ = 1/alpha remains **[SELECTION]** across this document. The continuum-limit argument in [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) is supporting context, but it does not by itself upgrade the alpha claim: the 2026-04-22 Structure-2 audit shows that a unique FTD-to-EFT matching rule is still required. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
+The mathematical chain from i to the master quadratic roots is rigorous: 7/9 links [THEOREM], 2/9 [STRONGLY MOTIVATED CONJECTURE] as physical identifications (x+ = 1/alpha and floor(x-) = N_c). The baseline tag for x+ = 1/alpha is **[STRONGLY MOTIVATED CONJECTURE]** across this document. The continuum-limit argument in [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) is supporting context, but it does not by itself upgrade the alpha claim: the 2026-04-22 Structure-2 audit shows that a unique FTD-to-EFT matching rule is still required. The GR recovery is nearly complete: 10/10 observations from two mechanisms (frame dragging factor-of-2 is [CONJECTURE]). The O-operation is identified with the Euler-Lagrange equation (mathematical identity). Nuclear binding matches experiment to 1-7% across 5 Weizsacker coefficients. Magic numbers 7/7 from D = 3.
 
 **The Bell violation (S = 2.83 vs lattice S <= 2) is now understood as EMERGENT** (April 11, 2026). S = 2 sqrt(2) follows from the QM that emerges from the lattice (Tsirelson's bound). The remaining target is the singlet-state lemma: void event -> maximally entangled pair in emergent Hilbert space. The Born rule (P ~ |J|^2) is [SELECTION] — Parseval gives E ~ |J|^2 but identifying energy fraction with detection probability is the Born rule itself.
 

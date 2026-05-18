@@ -337,7 +337,7 @@ Still open:
 **File:** `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md` — "Remains [OPEN]" section.
 
 ### 4.4 α lattice mechanism — **1 `[OPEN]`**
-**File:** `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md`. Step 3 (Z₄ symmetry selects this specific CM curve) and Step 8 (larger root = 1/α specifically) remain [SELECTION], not [THEOREM].
+**File:** `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md`. Step 3 (Z₄ symmetry selects this specific CM curve) and Step 8 (larger root = 1/α specifically) remain [STRONGLY MOTIVATED CONJECTURE], not [THEOREM].
 
 ### 4.5 L2 candidate identity 2·m_e/α = 16G*² — TRACKER-only `[CONJECTURE]` (LEDGER FTD-0094)
 Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-theoretic: `∀μ:MassUnit. (2·m_e/α)[μ]=16G*² ↔ μ=μ_FTD`. NOT promoted to LEDGER detail-row beyond the FTD-0094 quick-index entry. Mechanism C closed negative (FTD-0093), so this remains tracker-only / parametric per the 2026-04-25 roundtable verdict and the FTD-0094 quick-index disposition. See:

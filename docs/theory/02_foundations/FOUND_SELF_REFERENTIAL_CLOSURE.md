@@ -109,7 +109,7 @@ The recognition that self-referential closure IS the derivation principle — no
 | Watson identity | [THEOREM] (algebraic) + [SELECTION] (physical) | **[THEOREM]** | Not a coincidence — the lattice recognizing itself |
 | Coefficient 16 | [STRONGLY MOTIVATED] | **[THEOREM]** (self-referential) | Six routes converge because they describe one symmetry |
 | Gap equation | [THEOREM] + [SELECTION] | **[THEOREM]** (self-consistency) | Circularity is the derivation principle |
-| x₊ = 1/α | [SELECTION] | **[SELF-CONSISTENT]** | The unique fixed point of the lattice's self-reference |
+| x₊ = 1/α | [STRONGLY MOTIVATED CONJECTURE] | **[SMC / self-consistency evidence]** | Self-consistency motivates the bridge, but does not promote the physical identification to theorem-grade |
 
 The new epistemic tag **[SELF-CONSISTENT]** means: this result is determined by the condition that the system's output equals its input. It is not derived from external axioms (which would be [THEOREM]) nor chosen from alternatives (which would be [SELECTION]). It is the unique solution to a self-referential fixed-point equation.
 

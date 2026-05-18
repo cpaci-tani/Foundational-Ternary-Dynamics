@@ -171,8 +171,8 @@ I_4 = 1.311...
   -> G* = Gamma(1/4)/Gamma(3/4)      (the ratio form)
      = 2*sqrt(varpi * M)              (equivalent expression, M = varpi/pi)
   -> Master quadratic with k = 16
-  -> x_+ = 1/alpha = 137.036...      (fine structure constant)
-  -> x_- = N_c = 3.024...            (color charge number)
+  -> x_+ ≈ 137.036...                (SMC reading: 1/alpha)
+  -> x_- ≈ 3.024...                  (SMC reading: N_c)
 ```
 
 The complete 13-step chain is given in FOUND_BLIND_DERIVATION_CHAIN.md.

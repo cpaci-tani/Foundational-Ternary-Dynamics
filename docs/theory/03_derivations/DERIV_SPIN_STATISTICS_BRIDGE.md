@@ -7,7 +7,7 @@
 **Document Status:** Formal derivation — spin-statistics from lemniscate geometry
 **Epistemic Class:** [THEOREM] + [SELECTION] (see tags per section)
 
-> *"The curve that generates α IS the curve that generates spin. Both lemniscates loop — one by crossing itself, the other by winding twice — and those loopings are the 720° rotation that makes fermions fermions."*
+> *"The curve that supports the α bridge is also the curve that supports spin. Both lemniscates loop — one by crossing itself, the other by winding twice — and those loopings are the 720° rotation that makes fermions fermions."*
 
 ---
 
@@ -15,7 +15,7 @@
 
 - [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) — G* = ϖ/√(PF) factorization, PF notation, theta self-duality
 - [DERIV_QUANTUM_MECHANICS_RESOLVED.md](DERIV_QUANTUM_MECHANICS_RESOLVED.md) — §2.7 existing spin-statistics claim, First Distinction
-- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Constant chain γ → ϖ → M → π → G*
+- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
 - [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Lemniscate-Alpha: winding number, lobe structure, Z/6Z, Cayley-Dickson hierarchy
 - [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — 720° periodicity, void mitosis, two-lemniscate G* agreement (MIT-1/MIT-5)
 - [engine/include/ftd/ontic.h](../../engine/include/ftd/ontic.h) — Layer 2b (k_crit, emergence of i), Layer 3 (master quadratic)
@@ -513,7 +513,7 @@ The following remain to be formalized:
 
 - [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) — G* factorization, PF decomposition, theta self-duality
 - [DERIV_QUANTUM_MECHANICS_RESOLVED.md](DERIV_QUANTUM_MECHANICS_RESOLVED.md) — §2.7 Spin and Statistics
-- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Constant chain, lemniscate properties
+- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical constant atlas, lemniscate properties
 - [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Lemniscate-Alpha, Cayley-Dickson hierarchy, OT-7/OT-8
 - [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — Void mitosis, 720° periodicity, MIT-1/MIT-5
 - [engine/include/ftd/ontic.h](../../engine/include/ftd/ontic.h) — Ontic derivation chain (Layers 2b, 3)
