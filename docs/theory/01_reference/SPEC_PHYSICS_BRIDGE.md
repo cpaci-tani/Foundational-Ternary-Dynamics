@@ -4,7 +4,7 @@
 **Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constants (1/α, N_c) as it currently stands
 **Created:** 2026-05-01 evening (closing session on tractable open gaps)
 **Provenance:** Closes the "physics bridge" by making its logical structure crisp; consolidates `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` + `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` + `EXPLR_PATHS_TO_ALPHA.md` into a single reference position
-**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the 9 theorems); LEDGER FTD-0001/0013/0014 (the conjecture); FTD-0097 (look-elsewhere monomial); FTD-0117 (G\* notational fix)
+**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the 9 theorems); `SPEC_FQCR.md` (operator-theoretic restatement); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013/0014 (the conjecture); FTD-0097 (look-elsewhere monomial); FTD-0117 (G\* notational fix)
 
 ---
 
@@ -33,6 +33,15 @@ search spaces.
 
 This document crystallizes what's established, what's not, and what
 the bridge LOGICALLY SAYS.
+
+**2026-05-18 bridge audit update.** The status is sharper than the
+original synthesis: the algebraic/uniqueness layer is stronger
+(extended scan evidence now ~4×10^5:1 within the declared natural
+family), while the physical mechanism problem is narrower. The missing
+object is not "more algebraic evidence"; it is a non-action readout
+rule that maps the algebraic root/eigenvalue to an operational
+electromagnetic coupling without inserting α. This is MC-T4.3 in
+`SPEC_OPEN_MATH_BY_SECTOR.md`.
 
 ---
 
@@ -113,15 +122,20 @@ with m ∈ {1, 2, 4, 5, 8, 9, 10, 13, 16, 17, 18, 20} (smallest distinct
 norms) and k ∈ {3, 4, 5, 6, 7}: **(m=2, k=4) is rank 1 in closeness to
 1/α with a 5-orders-of-magnitude gap to rank 2**.
 
-**Polynomial-scan uniqueness** (`EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md`):
-among 147,456 polynomials of the form
+**Polynomial-scan uniqueness** (`EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md`,
+extended 2026-05-02):
+the original 147,456-polynomial scan was extended to 2,871,576
+polynomials/multipliers in the natural master-quadratic family,
+including rational-coefficient, cubic-embedding, and Eisenstein/Gaussian
+integer multiplier checks. The family includes polynomials of the form
 
 ```
 M_{n,p,m,q}(x) = x² − n · G*^p · x + m · G*^q
 ```
 
-with n, m ∈ [1, 64] and p, q ∈ [0, 5]: **exactly one matches BOTH x_+
-and x_- targets at MQ precision — the master quadratic itself**.
+with n, m ∈ [1, 64] and p, q ∈ [0, 5]. **Exactly one structure
+dual-matches BOTH x_+ and x_- at MQ precision — the master quadratic
+itself; the Eisenstein-integer family contributes 0 dual-matchers.**
 
 These uniqueness results are theorems within their explicit search
 spaces. Their interpretation is structural significance — see §3.
@@ -165,15 +179,16 @@ Combining the two uniqueness scans (this session, commits `0074f92` +
 | Search space | Bayes factor (structural / coincidence) |
 |---|---|
 | Tower scan (1-parameter, 58 candidates) | ~50× |
-| Polynomial scan (2-parameter, 147,456 candidates) | ~409× |
-| Combined (treating as independent search axes) | **~20,000×** |
+| Extended polynomial/multiplier scan (2,871,576 candidates) | **~4×10^5×** |
+| Combined current public figure | **~4×10^5×** |
 
-In log scale: **~4.3 decimal orders** of evidence for the structural
+In log scale: **~5.6 decimal orders** of evidence for the structural
 reading over a random-coincidence null, **WITHIN THE NATURAL FTD
 POLYNOMIAL FAMILY**.
 
-This is reasonably strong but not overwhelming. To exceed 10⁶× evidence
-(decisive), broader polynomial families would need to be scanned.
+This is strong but still not a derivation. To exceed 10^6× evidence
+(decisive under the current Bayesian convention), broader families or a
+non-statistical structural theorem would be needed.
 
 ### 3.2 · What the bridge LOGICALLY says
 
@@ -181,11 +196,13 @@ This is reasonably strong but not overwhelming. To exceed 10⁶× evidence
 
 > *Within FTD's natural polynomial complexity class (degree-2 polynomials
 > with coefficients in Z[1..64]·Q(G*)^[0..5]), the master quadratic is
-> the UNIQUE polynomial whose roots dual-match (1/α, N_c) at master-
-> quadratic precision. The polynomial form itself is forced by the spine
-> theorems (no free parameters). The empirical match is at 1.26 ppm and
-> 0.80%. The Bayesian strength of evidence for the structural reading
-> over random coincidence is ~20,000:1 within this family. The
+> the UNIQUE polynomial/root structure whose roots dual-match (1/α, N_c)
+> at master-quadratic precision, after the 2026-05-02 extended
+> polynomial/multiplier scan. The polynomial form itself is fixed by the
+> algebraic spine once G*, coefficient 16, and degree 2 are accepted.
+> The empirical match is at 1.26 ppm and 0.80%. The Bayesian strength
+> of evidence for the structural reading over random coincidence is
+> ~4×10^5:1 within this family. The
 > identification x_+ = 1/α and x_- = N_c remains formally [STRONGLY
 > MOTIVATED CONJECTURE] because no derivation chain from FTD axioms to
 > physical constants has been established despite multiple session-scale
@@ -212,13 +229,23 @@ established:
    - Algebraic combinations (`EXPLR_PATHS_TO_ALPHA.md` §2)
 
 2. **Decisive look-elsewhere argument.** Bayes factor exceeding 10⁶:1
-   in favor of structural reading. Current ~20,000:1 is informative
-   but not decisive. Broader polynomial families and tighter
-   tolerances would push this further.
+   in favor of structural reading. Current ~4×10^5:1 is strong but not
+   decisive. Broader polynomial families and tighter tolerances would
+   push this further. This route would strengthen the conjecture, not
+   convert it into a mechanism by itself.
 
 3. **Independent FTD route.** A different derivation of α from FTD
    that converges on x_+. Engine measurements (Rutherford α ≈ 0.042)
    are ~6× off from physical α; not converging.
+
+4. **Non-action readout rule (current best target).** Because the
+   action/EFT routes are closed-negative, a closure proof would likely
+   have to operate through a boundary condition, observable-selection
+   rule, quantization/readout rule, or discrete-native measurement
+   protocol. The rule must be stated without α as an input and must say
+   why the dominant master-quadratic/FQCR eigenvalue is the physical
+   electromagnetic coupling rather than merely a distinguished number.
+   This is the precise MC-T4.3 target.
 
 None of these is currently in hand. The bridge stays as crystallized
 in §3.2.
@@ -274,16 +301,17 @@ The "physics bridge" of FTD is:
 4. **A conjectural identification** linking 1 and 2, supported by 3
    but not formally derivable from current axioms.
 
-The bridge is **finished as much as current methods allow**. Further
-closure requires either a new theoretical mechanism (research program,
-not session task) or substantially broader statistical analysis (open
-follow-up).
+The bridge is **finished at the algebraic/structural-uniqueness layer**.
+Further closure is no longer a documentation problem. It requires a new
+theoretical mechanism, most plausibly MC-T4.3's non-action readout rule,
+or a discrete-native measurement program that bypasses imported
+continuous-QFT machinery while still comparing to measured physics.
 
 The framework's standing is:
 - **Mathematical core**: established at theorem grade, internally
   consistent, structurally rigid.
 - **Empirical match**: precise (1.26 ppm + 0.80%) and uniquely
-  selective within the natural family.
+  selective within the natural family (~4×10^5:1).
 - **Physical bridge**: open at the IDENTIFICATION level; closed at
   the structural-rigidity level.
 
@@ -321,14 +349,16 @@ the position synthesized from existing entries:
 theorems producing the master quadratic with computable roots ≈ 137.036
 and ≈ 3.024), an empirical observation (these roots match 1/α at 1.26
 ppm and N_c at 0.80%), a structural-uniqueness argument (the master
-quadratic is the unique dual-matcher in two natural search spaces with
-combined ~20,000:1 Bayes factor for structural over coincidence
+quadratic is the unique dual-matcher in the declared natural family
+with current ~4×10^5:1 Bayes evidence for structural over coincidence
 reading), and a conjectural identification linking the math to physics
 that remains [STRONGLY MOTIVATED CONJECTURE] absent a derivation chain
 from FTD axioms to physical constants. This is the bridge as currently
-finished — strong enough for external publication of the mathematical
-core (Paper A scope), not yet closed at the formal-derivation level
-(Paper A would frame it as conjecture, not theorem).**
+finished at the algebraic layer — strong enough for external publication
+of the mathematical core (Paper A scope), not yet closed at the
+formal-derivation level. The next mathematical target is MC-T4.3: a
+non-action readout/observable-selection rule that explains why the
+distinguished root is the physical electromagnetic coupling.**
 
 ---
 
