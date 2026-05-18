@@ -1,8 +1,8 @@
-# SPEC · FTD/FQCR Doctrine Ledger v1.2
+# SPEC · FTD/FQCR Doctrine Ledger v1.3
 
 **Tag:** [REFERENCE] — single-page status map. Per-element tags within (see §0 status key + §13 audit).
-**Date:** 2026-05-08
-**Version:** 1.2 (closes Phase 1 of the compressed roadmap; Phase-2 hardening cross-linked to `SPEC_OPEN_MATH_BY_SECTOR.md`).
+**Date:** 2026-05-18
+**Version:** 1.3 (physicist consolidation of `complete_ftd_chain_v1.md` intake; no tag promotion; Phase-2 hardening cross-linked to `SPEC_OPEN_MATH_BY_SECTOR.md`).
 **LEDGER:** FTD-0145 [SYNTHESIS] — claim-aggregation roll-up; introduces no new theorems.
 **Companion docs:**
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical 9-theorem reference (theorem-only, physics-free)
@@ -11,6 +11,7 @@
 - [`SPEC_OPEN_MATH_BY_SECTOR.md`](SPEC_OPEN_MATH_BY_SECTOR.md) — 18-item bridge-complete roadmap (Phase 2 hardening targets)
 - [`../07_assessment/TRACKER_ONTIC_TRUTH.md`](../07_assessment/TRACKER_ONTIC_TRUTH.md) — bedrock truth-tier tracker (T1–T5; OT-N.M IDs)
 - [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) — atomic per-claim provenance (FTD-NNNN IDs)
+- [`../07_assessment/AUDIT_COMPLETE_FTD_CHAIN_V1.md`](../07_assessment/AUDIT_COMPLETE_FTD_CHAIN_V1.md) — intake audit for the external `complete_ftd_chain_v1.md` synthesis draft
 
 ---
 
@@ -21,6 +22,8 @@
 **This document IS NOT:** a derivation, a new tracker tier, a replacement for `LEDGER.md` or `TRACKER_ONTIC_TRUTH.md`, or a vehicle for tag promotion. If a reader believes this document promotes a claim above its canonical tag, they have found a bug — please file an issue and cite the source row.
 
 **Why the doctrine exists.** FTD's canonical claim infrastructure has accumulated nine theorems, ~150 LEDGER rows, fifteen T1–T5 tracker entries, an 18-item math-completion checklist, and a five-model FQCR capstone. The doctrine compresses this into a single navigation surface that exposes which derivation chains are non-circular, which are imported scaffolding, and which are pending hardening. It prevents cycling — repeatedly re-litigating the same claim because the per-claim status was buried in a 700-line ledger.
+
+**v1.3 physicist consolidation.** The 2026-05-18 intake of `complete_ftd_chain_v1.md` adds no canonical claim and no new theorem. It sharpens the physics-facing reading: FTD is presently defensible as a finite-invariant algebraic reconstruction program whose strongest physical conjecture is the operational identification of the master-quadratic/FQCR dominant branch with the electromagnetic coupling. The mathematical object is solid; the physical readout is the open problem.
 
 ---
 
@@ -58,6 +61,20 @@ Earlier drafts of this doctrine used a parallel vocabulary. For continuity, the 
 | OPEN / HARDENING                | [OPEN]                                                                                                             |
 | REJECTED / TOO STRONG           | [CLOSED NEGATIVE]                                                                                                  |
 | CONDITIONAL THEOREM             | [THEOREM, conditional on X] (with X named)                                                                         |
+
+---
+
+### §0.3 · Physicist-facing consolidation from `complete_ftd_chain_v1.md`
+
+The useful content of the external chain draft is the following blackboard-safe posture:
+
+1. **Defensible core.** FTD has a finite algebraic spine: quarter conjugacy, `G*`, finite-N convergence, determinant-one recurrence, Casimir invariant, transfer-matrix restatement, and the master quadratic. These are mathematical claims with explicit proof anchors.
+2. **Defensible physical observation.** The master-quadratic roots land near `1/alpha` and `N_c` with strong structural-uniqueness evidence. This supports `[STRONGLY MOTIVATED CONJECTURE]`, not `[THEOREM]`.
+3. **Not yet defensible as derivation.** QED, Dirac, Standard Model, flavor, confinement, full gravity, Born-rule, and noetic/memory-clock layers do not currently follow from the FTD substrate. They are `[IMPORTED]`, `[PARAMETRIC]`, `[SELECTION]`, `[CONJECTURE]`, or `[OPEN]` as tagged below.
+4. **Physics bottleneck.** The central missing object is an operational readout rule: why the algebraically distinguished branch is the electromagnetic coupling measured by matter. This is MC-T4.3. More algebraic near-miss scanning is not the main path forward.
+5. **External claim discipline.** The strongest honest public sentence is: FTD constructs a rigid finite algebraic object whose dominant branch is a structurally unique candidate for `1/alpha`; it does not yet derive the physical coupling without an added readout principle.
+
+This subsection is a consolidation rule for future writing. It does not override any per-claim row below.
 
 ---
 
@@ -367,13 +384,13 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 
 ### §13.5 · Main hardening targets ([OPEN] research arcs)
 
-1. **Derive `R_N(t)` from a variational / operator principle** — MC-T3.1 (FTD-0110 nonlinear bridge, NOT CLOSED, ~2.5× slope mismatch); FTD-0143 uniqueness scan PRE-REGISTERED.
-2. **Derive activation kernels and beta coefficients from finite spectra** — MC-T3.6 (new ID 2026-05-08; not the same arc as MC-T3.5 = FTD-0110 multi-scale boundary).
-3. **Derive Higgs residual curvature `χ_H`** — no canonical anchor.
-4. **Force flavor depth matrices from explicit transfer matrices** — no canonical anchor (depth matrices §10 [PARAMETRIC scaffold]).
-5. **Substrate-derive QCD trace-gap confinement** — FTD-0025 night-2026-05-03 audit recorded structural obstruction (no Phase-G analog for area-law behavior); the strong-sector substrate-derivation gap is real and structural.
-6. **Build gravity as finite trace curvature** — partial closure FTD-0131 (`α_G` to 0.38%, 2 postulates flagged); remaining items (Newtonian limit beyond leading order, equivalence principle, mass-gap-to-curvature) [OPEN].
-7. **Non-action α-injection mechanism** — MC-T4.3, central foundational obstruction (Phase J ultralocality decouples algebraic spine from dynamical EFT). Lead-physicist diagnosis: closure may require ontology extension beyond the 5 axioms.
+1. **Non-action alpha-readout mechanism** — MC-T4.3, central foundational obstruction. The target is not another match to `1/alpha`; it is a rule that maps the algebraic/FQCR branch to an operational electromagnetic coupling measured by matter, without inserting alpha. Candidate classes: boundary-condition readout, observable-selection readout, quantization/readout rule, discrete-native measurement path. Lead-physicist diagnosis: closure may require ontology extension beyond the 5 axioms.
+2. **Derive `R_N(t)` from a variational / operator principle** — MC-T3.1 (FTD-0110 nonlinear bridge, NOT CLOSED, ~2.5× slope mismatch); FTD-0143 uniqueness scan PRE-REGISTERED. This is useful only if it feeds an operational readout or removes a selection from FQCR Model IV.
+3. **Derive activation kernels and beta coefficients from finite spectra** — MC-T3.6 (new ID 2026-05-08; not the same arc as MC-T3.5 = FTD-0110 multi-scale boundary).
+4. **Derive Higgs residual curvature `χ_H`** — no canonical anchor.
+5. **Force flavor depth matrices from explicit transfer matrices** — no canonical anchor (depth matrices §10 [PARAMETRIC scaffold]).
+6. **Substrate-derive QCD trace-gap confinement** — FTD-0025 night-2026-05-03 audit recorded structural obstruction (no Phase-G analog for area-law behavior); the strong-sector substrate-derivation gap is real and structural.
+7. **Build gravity as finite trace curvature** — partial closure FTD-0131 (`α_G` to 0.38%, 2 postulates flagged); remaining items (Newtonian limit beyond leading order, equivalence principle, mass-gap-to-curvature) [OPEN].
 
 ---
 
@@ -381,14 +398,15 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 
 ### Phase 1 — Doctrine ledger and audit (this document)
 
-**Status: COMPLETE.** This v1.2 document compresses FTD's claim infrastructure into a single navigation surface. Every claim is rolled up at canonical tag from `LEDGER.md`, `TRACKER_ONTIC_TRUTH.md`, `SPEC_ALGEBRAIC_SPINE.md`, `SPEC_FQCR.md`, or `CATALOG_PARAMETRIC_INSERTIONS.md`. The non-circularity audit (§13) reads out the four-layer structure (derived / selected / imported / numerical) without inventing new categories.
+**Status: COMPLETE.** This v1.3 document compresses FTD's claim infrastructure into a single navigation surface. Every claim is rolled up at canonical tag from `LEDGER.md`, `TRACKER_ONTIC_TRUTH.md`, `SPEC_ALGEBRAIC_SPINE.md`, `SPEC_FQCR.md`, `SPEC_OPEN_MATH_BY_SECTOR.md`, or `CATALOG_PARAMETRIC_INSERTIONS.md`. The non-circularity audit (§13) reads out the four-layer structure (derived / selected / imported / numerical) without inventing new categories. The 2026-05-18 physicist consolidation adds the operational-readout priority in §0.3 and §13.5 without changing any claim tag.
 
 ### Phase 2 — Hardening
 
 | Priority | Hardening target                                  | Canonical anchor                                                        | Status                          |
 |----------|---------------------------------------------------|-------------------------------------------------------------------------|---------------------------------|
-| 1        | `R_N(t)` variational/operator derivation          | MC-T3.1 (`SPEC_OPEN_MATH_BY_SECTOR.md`); FTD-0143 PRE-REG                | NOT CLOSED, slope mismatch ~2.5×|
-| 2        | Activation kernels and beta coefficients          | MC-T3.6 (new ID 2026-05-08; β-coefficient arc separate from MC-T3.5 FTD-0110 multi-scale)                                                                  | OPEN                  |
+| 0        | Operational alpha-readout mechanism               | MC-T4.3 (`SPEC_OPEN_MATH_BY_SECTOR.md` §10.1)                            | CENTRAL FOUNDATIONAL OBSTRUCTION |
+| 1        | `R_N(t)` variational/operator derivation          | MC-T3.1 (`SPEC_OPEN_MATH_BY_SECTOR.md`); FTD-0143 PRE-REG                | NOT CLOSED, slope mismatch ~2.5× |
+| 2        | Activation kernels and beta coefficients          | MC-T3.6 (new ID 2026-05-08; β-coefficient arc separate from MC-T3.5 FTD-0110 multi-scale) | OPEN |
 | 3        | Higgs residual curvature `χ_H`                    | NEW — no canonical anchor                                                | OPEN                             |
 | 4        | Flavor transfer matrices forcing depths           | NEW — no canonical anchor                                                | OPEN                             |
 | 5        | QCD trace-gap confinement substrate derivation    | FTD-0025 night-audit (2026-05-03); FTD-0131 cross-ref                    | OPEN, structural obstruction recognized |
@@ -408,7 +426,7 @@ Aspirational target: a compact object `T_FTD` (an extended operator stack in the
 
 `T_FTD ⇒ G*, α, q*, SU(3) × SU(2) × U(1), running, masses, flavor, confinement, curvature.`
 
-This is the strongest possible FTD self-claim. **Achievability is conditional on Phase 2 priority 5 (confinement substrate derivation, structurally obstructed) and the central foundational obstruction MC-T4.3 (non-action α-injection mechanism).** Honest assessment: closure may not be achievable without ontology extension beyond the 5 axioms. The framework's external defensibility is fully achievable without `T_FTD` closure; the strongest possible self-claim ("derived 1/α + entire SM") requires it.
+This is the strongest possible FTD self-claim. **Achievability is conditional on Phase 2 priority 0 (MC-T4.3 operational alpha-readout) and priority 5 (confinement substrate derivation, structurally obstructed).** Honest assessment: closure may not be achievable without ontology extension beyond the 5 axioms. The framework's external defensibility is fully achievable without `T_FTD` closure; the strongest possible self-claim ("derived 1/α + entire SM") requires it.
 
 ---
 
@@ -429,25 +447,25 @@ This is the strongest possible FTD self-claim. **Achievability is conditional on
 | §11         | LEDGER.md (FTD-0020 α_s; FTD-0025 confinement night-audit); standard QCD                            | FTD-0020, FTD-0025 (annotated 2026-05-03)                       | OT-5.2 (`x_- ↔ N_c`)         |
 | §12         | ../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md; SPEC_ALGEBRAIC_SPINE.md §6 (Phase G)              | **FTD-0131** ([SMC] for prediction inherited from FTD-0015 + [DERIVED chain]), FTD-0004, FTD-0110, FTD-0015 | OT-1.4, OT-3.4         |
 | §13         | LEDGER.md (full); CATALOG_PARAMETRIC_INSERTIONS.md; TRACKER_ONTIC_TRUTH.md (T1–T5)                  | (roll-up)                                                      | (roll-up)                    |
-| §14         | SPEC_OPEN_MATH_BY_SECTOR.md (MC-T3.1, T3.5, T4.3, T4.4)                                              | (roadmap)                                                      | (roadmap)                    |
+| §14         | SPEC_OPEN_MATH_BY_SECTOR.md (MC-T4.3, MC-T3.1, MC-T3.6, T4.4)                                        | (roadmap)                                                      | (roadmap)                    |
 
 ---
 
 # §16 · Refresh policy
 
-This v1.2 document is refreshed when:
+This v1.3 document is refreshed when:
 
 - A LEDGER row's tag changes for any claim cited in §1–§13.
 - `SPEC_ALGEBRAIC_SPINE.md` adds, removes, or retags a theorem.
 - `SPEC_FQCR.md` updates Models I–V (e.g., upon FTD-0143 scan execution → Model IV [SELECTION] upgrade or rejection).
 - A new partial closure lands in §7 (bivector / Dirac bridge), §9 (`χ_H`), §10 (depth matrices), §11 (confinement), or §12 (gravity beyond leading order).
 - `TRACKER_ONTIC_TRUTH.md` adds an OT-N.M entry that this doctrine should cross-reference.
-- Phase 2 priority 1–6 items (§14) close.
+- Phase 2 priority 0–6 items (§14) close.
 
-When refreshing, increment the `Version` line in the header (v1.2 → v1.3 etc.) and add a one-line entry to `LEDGER.md` row FTD-0145 noting what changed. **No tag promotion in this document is permitted without a corresponding canonical-source change.**
+When refreshing, increment the `Version` line in the header (v1.3 → v1.4 etc.) and add a one-line entry to `LEDGER.md` row FTD-0145 noting what changed. **No tag promotion in this document is permitted without a corresponding canonical-source change.**
 
 ---
 
 # §17 · Single-line summary
 
-**FTD's algebraic spine is nine theorems centered on `G* = Γ(1/4)/Γ(3/4) ≈ 2.9587`; the FQCR capstone (Models I–V) lands operator-theoretic provenance and the finite-N reframe-compatible restatement; the master quadratic's roots match `1/α` to 1.26 ppm and `N_c` to 0.80% as [STRONGLY MOTIVATED CONJECTURE]; gravity has a partial closure (`α_G(e,e) = (m_e/m_P)²` to 0.38%, FTD-0131, postulate-conditional); the §7 bivector/Dirac/QED bridge sector is [OPEN] pending a non-site-local construction compatible with FTD-0073's mode-erasure closure; §8's GUT-lock `sin²θ_W = 3/8` and IR `sin²θ_W = 3/13` [PARAMETRIC] coexist in canon at distinct scales; the central foundational obstruction (MC-T4.3, non-action α-injection mechanism) may require ontology extension beyond the 5 axioms.**
+**FTD's algebraic spine is nine theorems centered on `G* = Γ(1/4)/Γ(3/4) ≈ 2.9587`; the FQCR capstone (Models I–V) lands operator-theoretic provenance and the finite-N reframe-compatible restatement; the master quadratic's roots match `1/α` to 1.26 ppm and `N_c` to 0.80% as [STRONGLY MOTIVATED CONJECTURE]; the strongest physics-facing claim is therefore a rigid candidate readout, not a finished derivation; gravity has a partial closure (`α_G(e,e) = (m_e/m_P)²` to 0.38%, FTD-0131, postulate-conditional); the §7 bivector/Dirac/QED bridge sector is [OPEN] pending a non-site-local construction compatible with FTD-0073's mode-erasure closure; §8's GUT-lock `sin²θ_W = 3/8` and IR `sin²θ_W = 3/13` [PARAMETRIC] coexist in canon at distinct scales; the central foundational obstruction (MC-T4.3, operational alpha-readout mechanism) may require ontology extension beyond the 5 axioms.**
