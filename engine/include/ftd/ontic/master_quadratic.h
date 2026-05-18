@@ -30,14 +30,17 @@ namespace ontic {
 //   Proof 2: CM field Q(i) has degree 2 over Q; Schneider-Chudnovsky
 //            bounds algebraic relations to degree ≤ 2.
 //
-// WHY COEFFICIENT 16 [MOTIVATED — MATH_MASTER_QUADRATIC.md §4]:
-//   |Aut(E)|² = 4² = 16 where E: y²=x³-x has Aut = {1,-1,i,-i} ≅ Z₄.
+// WHY COEFFICIENT 16 [THEOREM — DERIV_MASTER_QUADRATIC_GAP_EQUATION.md §2.2]:
+//   Two independent finite-combinatorial routes:
+//     Route A: |Aut(E)|² = 4² = 16 where E: y²=x³-x has Aut = {1,-1,i,-i} ≅ Z₄.
+//     Route B: z_BCC × |non-void ternary states| = 8 × 2 = 16
+//              (BCC coordination on the Moore neighbourhood × {-1, +1}).
 //   Also: N_BASE² = 4², conductor/2 = 32/2 = 16, |Δ|/4 = 64/4 = 16.
-//   DOF counting in TEMPORAL GAUGE (the ontological gauge of FTD):
-//   FTD's flux J is a spatial 3-vector with no temporal component
-//   (Postulate 2: discrete time with global clock ≡ A₀ = 0).
-//   On the 2×2×2 torus: 24 total - 7 Gauss constraints - 1 pure gauge = 16.
-//   (Coulomb gauge gives 14, but temporal gauge is ontologically forced.)
+//
+//   (A historical Route C — temporal-gauge DOF count 24-7-1 = 16 on the
+//    2³ torus — was retracted as incorrect in 2026: proper Coulomb-gauge
+//    fixing on T³ gives 14, not 16. See AUDIT_MASTER_QUADRATIC.md and
+//    DERIV_MASTER_QUADRATIC_GAP_EQUATION.md §2.2 line 84.)
 //
 // LATTICE CONNECTION [THEOREM — DERIV_WATSON_GSTAR_IDENTITY.md]:
 //   x₊ + x₋ = 16G*² = 32πW₃ (Watson integral of the 3D cubic lattice)
@@ -86,10 +89,20 @@ inline constexpr double X_MINUS_PRECISION = COEFFICIENT * G_STAR * G_STAR * G_ST
 // Paper: "The Algebraic Identity of Two Substrates" (Montanez & Claude, 2026)
 //
 // Two substrates J_L, J_R with energies E_L, E_R satisfy:
-//   S = E_L + E_R = 16·G*²     [THEOREM — 16 DoF × G*² per DoF]
-//   P = E_L · E_R = 16·G*³     [PROPOSITION — spatiotemporal interaction]
+//   S = E_L + E_R = 16·G*²     [THEOREM — Vieta sum of the master quadratic]
+//   P = E_L · E_R = 16·G*³     [THEOREM — Vieta product of the master quadratic]
 //   D = E_L - E_R               (difference — matter sector)
 //   Identity: S² = D² + 4P      (algebraic identity, trivially true)
+//
+// PROVENANCE NOTE (2026-05-08 audit, AUDIT_DUAL_SUBSTRATE_PROVENANCE.md):
+//   The dual-substrate identity is the master quadratic in (S, P, δ)
+//   coordinates rather than (x_+, x_-) coordinates. It is NOT an
+//   independent derivation: the values S, P are forced by Vieta on the
+//   master quadratic; δ² = (4G*-1)/(4G*) is the algebraic dressing
+//   1 - 4P/S². The identity is interpretively useful (J_L ↔ J_R as CPT;
+//   chirality on the ±i eigenspaces of J), but EXPLR_GSTAR_FLUX_TIME §1's
+//   "five independent lines of evidence" framing reads as overclaim;
+//   "five readings of the same algebraic structure" is the honest form.
 //
 // The splitting parameter:
 //   δ² = (4G* - 1)/(4G*) = 1 - 1/(4G*) ≈ 0.91554
