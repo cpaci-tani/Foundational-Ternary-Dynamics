@@ -58,9 +58,9 @@ No claims should be promoted on the basis of this intake. The draft should be mi
 
 ## Integration Recommendation
 
-Do not add `complete_ftd_chain_v1.md` as a new canonical chain. Instead:
+Do not add `complete_ftd_chain_v1.md` as a new canonical chain. Integration status after the 2026-05-18 physicist consolidation:
 
-- Mine sections 0, 18, 19, 21, and 24 into a future `SPEC_DOCTRINE_LEDGER.md` v1.3 refresh.
+- Sections 0, 18, 19, 21, and 24 have been mined into `SPEC_DOCTRINE_LEDGER.md` v1.3 as a physicist-facing consolidation rule: finite algebraic core, strong but non-theorem alpha/N_c readout, and MC-T4.3 as the operational bottleneck.
 - Use sections 6-7 only after tag normalization against `SPEC_FQCR.md`.
 - Treat sections 8-16 as roadmap/scaffold material unless each claim is tied to an existing ledger entry.
 - Keep the downloaded file as external provenance unless the owner explicitly requests import or archival into the repository.
