@@ -679,6 +679,7 @@ downstream cites can reference.
 
 | Date | Change | By |
 |---|---|---|
+| 2026-05-18 | **FTD-0145 v1.3 refresh — physicist consolidation from `complete_ftd_chain_v1.md` intake.** `SPEC_DOCTRINE_LEDGER.md` now records the blackboard-safe posture: finite algebraic/invariant core; `x_+ ↔ 1/α` and `x_- ↔ N_c` stay [STRONGLY MOTIVATED CONJECTURE]; MC-T4.3 operational alpha-readout is the central physics bottleneck; QED/SM/flavor/confinement/full-gravity/noetic layers remain at their existing imported/parametric/selection/open tags. No new theorems and no claim promotion. | Codex. |
 | 2026-04-19 | Initial population. Captured 40 load-bearing claims with tag history through reframe cycle. | Session 1. |
 | 2026-04-19 | Session 2: FTD-0030 RESOLVED via SPEC_FTD calibration declaration; FTD-0034 RESOLVED via 5 FLAG restatements; new rows FTD-0041, 0042, 0043, 0044, 0045 added. | Session 2. |
 | 2026-04-19 | Session 3: FTD-0042 (YM) and FTD-0043 (NS) RETRACTED to archive; FTD-0044 (per-voxel mass gap survives) preserved in retracted-archive .tex; FTD-0046 (Thermodynamic_Limit) and FTD-0047 (Thermodynamic_Reflexion) RETRACTED with pdftotext extractions; FTD-0048 (11 other PDF-only papers) ARCHIVED; FTD-0049 (commit-attribution policy + 222-commit Co-Authored-By cleanup on main) NEW. | Session 3. |
