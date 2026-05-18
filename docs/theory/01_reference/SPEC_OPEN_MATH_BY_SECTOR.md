@@ -266,6 +266,26 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | W-CRIT-1 | **Circularity in framework integer identification.** Integers `{N_c=3, N_base=4, b_3=7, N_eff=13}` selected knowing target physics values. Constraint 11 of gtca: LEDGER tagging is not resolution. A reviewer who insists "you must derive these from axioms or the framework is empty" cannot be answered by current structural-uniqueness scans alone | [OPEN methodological] | (closes if MC-T4.3 closes) | MC-T4.3 |
 | W-CRIT-2 | **Master quadratic imposed not derived.** Same root cause as W-CRIT-1; OT-3.3 polynomial-shape uniqueness is structural-uniqueness evidence, not derivation | [OPEN methodological] | (closes if MC-T4.3 closes) | MC-T4.3 |
 
+## §10.1 · MC-T4.3 Candidate Mechanism Decomposition (2026-05-18)
+
+The central obstruction is now narrow enough to split into candidate
+mechanism classes. These are **not** claims and should not be cited as
+derivations. They are work packages for making "non-action injection"
+formal enough to fail or survive.
+
+| Candidate | Formal target | Immediate falsifier | Tag |
+|---|---|---|---|
+| **A. Boundary-condition readout** | Specify a finite/undefined-boundary condition on the FTD lattice whose self-consistency spectrum has the master-quadratic root as the unique admissible electromagnetic readout. The rule must be stated without `α` or CODATA constants. | The boundary rule either has a free tunable parameter equivalent to `α`, or admits multiple comparable roots/readouts. | [OPEN] |
+| **B. Observable-selection readout** | Define an FTD-native observable algebra or reflexive projection whose distinguished eigenmode is `x_+`, and show why that observable is what scattering/charge measurements access. | The selected observable is merely post-hoc, or cannot be tied to an operational measurement protocol. | [OPEN] |
+| **C. Quantization/readout rule** | Derive a discrete measurement rule that maps the FQCR/master-quadratic dominant eigenvalue to `g_c²` or `α` without passing through a continuous-QFT action. | The rule reduces to `g_c` insertion, imported QED normalization, or an already-closed topological/action route. | [OPEN] |
+| **D. Discrete-native measurement path** | Bypass continuous-QFT reconstruction and compare engine-native cluster interaction/lifetime/spectrum observables directly to measured quantities. | The engine observable is not L-stable, calibration-independent, or operationally tied to an experiment. | [OPEN] |
+
+**Closure criterion for all four:** a successful mechanism must (1) be
+stated before checking the target value, (2) avoid α as an input, (3)
+survive the structural-decoupling diagnostics in `FOUND_STRUCTURAL_DECOUPLING.md`,
+and (4) explain why the output is a physical electromagnetic coupling,
+not merely a distinguished algebraic number.
+
 **The 4-leg empirical diagnostic for MC-T4.3 (preserved for context):**
 
 | Test | Domain | Result |
