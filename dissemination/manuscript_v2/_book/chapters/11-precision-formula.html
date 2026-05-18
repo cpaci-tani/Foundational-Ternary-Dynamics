@@ -864,10 +864,10 @@ window.Quarto = {
 <h2 data-number="13.1" class="anchored" data-anchor-id="the-small-parameter-theorem"><span class="header-section-number">13.1</span> 11.1 The small parameter [THEOREM]</h2>
 <p>The loop expansion is controlled by:</p>
 <p><span class="math display">\[
-\varepsilon = |e^\pi - \pi - 20| = 3.0102\ldots \times 10^{-4}
+\varepsilon = |e^\pi - \pi - 20| = 9.000\ldots \times 10^{-4}
 \tag{11.1}
 \]</span></p>
-<p>The quantity <span class="math inline">\(e^\pi - \pi \approx 20.000300\)</span> is close to, but not equal to, 20. The deviation <span class="math inline">\(\varepsilon\)</span> sets the scale of loop corrections. Its smallness (<span class="math inline">\(\sim 3 \times 10^{-4}\)</span>) ensures rapid convergence of the perturbative series.</p>
+<p>The quantity <span class="math inline">\(e^\pi - \pi \approx 19.99910\)</span> is close to, but not equal to, 20. The deviation <span class="math inline">\(\varepsilon\)</span> sets the scale of loop corrections. Its smallness (<span class="math inline">\(\sim 9 \times 10^{-4}\)</span>) ensures rapid convergence of the perturbative series.</p>
 <p>The number 20 arises as <span class="math inline">\(b_3 + N_{\text{eff}} = 7 + 13 = 20\)</span>. [THEOREM for the algebraic identity; the connection of <span class="math inline">\(e^\pi\)</span> to framework integers is [SELECTION]]</p>
 </section>
 <section id="the-7-term-precision-formula-theorem-for-structure" class="level2" data-number="13.2">
@@ -903,13 +903,13 @@ window.Quarto = {
 <td><span class="math inline">\(c_2\)</span></td>
 <td><span class="math inline">\(5/64 = 0.07813\ldots\)</span></td>
 <td>Two-loop sunset, gauge factor <span class="math inline">\(13/9\)</span></td>
-<td>[THEOREM] (0.07% accuracy)</td>
+<td>[SELECTION] (scalar sector verified at 69%; gauge sector pending)</td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(c_3\)</span></td>
 <td><span class="math inline">\(4/141 = 0.02837\ldots\)</span></td>
 <td>Three-loop, gauge factor <span class="math inline">\(11/6\)</span></td>
-<td>[THEOREM] (0.33% accuracy)</td>
+<td>[SELECTION] (not yet independently computed)</td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(c_4\)</span>–<span class="math inline">\(c_7\)</span></td>
@@ -944,17 +944,17 @@ a_e = \frac{\alpha}{2\pi} - 0.32848\left(\frac{\alpha}{\pi}\right)^2 + \ldots
 <p>This is the reverse direction: QED extracts <span class="math inline">\(\alpha\)</span> from experiment. FTD predicts <span class="math inline">\(\alpha\)</span> from geometry. The two values agree to the precision of the lattice loop corrections.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 17%">
-<col style="width: 23%">
 <col style="width: 21%">
-<col style="width: 36%">
+<col style="width: 28%">
+<col style="width: 26%">
+<col style="width: 23%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
 <th><span class="math inline">\(1/\alpha\)</span></th>
 <th>Accuracy</th>
-<th>Free parameters</th>
+<th>Status</th>
 </tr>
 </thead>
 <tbody>
@@ -962,29 +962,29 @@ a_e = \frac{\alpha}{2\pi} - 0.32848\left(\frac{\alpha}{\pi}\right)^2 + \ldots
 <td>CODATA 2022 (<span class="math inline">\(a_e\)</span> measurement)</td>
 <td>137.035999177(21)</td>
 <td>0.15 ppb</td>
-<td>1 (measured)</td>
+<td>Experimental</td>
 </tr>
 <tr class="even">
 <td>FTD tree level</td>
 <td>137.036171</td>
 <td>1.26 ppm</td>
-<td>0</td>
+<td>Master quadratic root [THEOREM]; physical identification <span class="math inline">\(x_+ = 1/\alpha\)</span> [STRONGLY MOTIVATED CONJECTURE]</td>
 </tr>
 <tr class="odd">
 <td>FTD one-loop</td>
 <td>137.036000</td>
 <td>9.6 ppb</td>
-<td>0</td>
+<td><span class="math inline">\(c_1\)</span> [THEOREM]; closure of 99.2% of the tree-level gap</td>
 </tr>
 <tr class="even">
 <td>FTD 7-term</td>
-<td>137.035999177… (predicted)</td>
-<td>&lt; 0.001 ppt</td>
-<td>0</td>
+<td>137.035999177… (post-hoc fit beyond CODATA precision)</td>
+<td>matches CODATA digit-string</td>
+<td><span class="math inline">\(c_2,c_3\)</span> [SELECTION], <span class="math inline">\(c_4\)</span>–<span class="math inline">\(c_7\)</span> [CONJECTURE]; not a prediction beyond CODATA’s 0.15 ppb experimental floor</td>
 </tr>
 </tbody>
 </table>
-<p>The 7-term value is a <strong>prediction</strong>: if the loop coefficients <span class="math inline">\(c_4\)</span>–<span class="math inline">\(c_7\)</span> are confirmed, FTD will match the experimental value to sub-parts-per-trillion with zero free parameters.</p>
+<p>The 7-term expansion <strong>fits</strong> the CODATA digit-string to as many digits as one wants, but this is beyond the CODATA experimental precision (0.15 ppb) and so cannot be tested as a prediction at sub-ppt scale. The honest framing: FTD’s tree-level match is 1.26 ppm; the one-loop closure is to 9.6 ppb; everything beyond that is post-hoc fitting of unknown loop coefficients to a digit-string the experiment cannot resolve. The <span class="math inline">\(c_4\)</span>–<span class="math inline">\(c_7\)</span> “predictions” would become tests only if independent first-principles derivations of those coefficients exist; they do not.</p>
 
 
 </section>
