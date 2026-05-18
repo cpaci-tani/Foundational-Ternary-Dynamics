@@ -250,7 +250,7 @@ The second differences measure the "acceleration" of the walk. The walk starts f
 
 - **Deep hierarchy**: [FOUND_DEEP_HIERARCHY.md](FOUND_DEEP_HIERARCHY.md)
 - **Constant atlas**: [EXPLR_ONTIC_CONSTANT_ATLAS.md](../09_mathematical/EXPLR_ONTIC_CONSTANT_ATLAS.md)
-- **G* derivation**: [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
+- **G* historical provenance**: [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md); current status stack lives in SPEC_ALGEBRAIC_SPINE/SPEC_FQCR/TRACKER_ONTIC_TRUTH
 - **Dual substrate**: see `ontic.h` Layer 3b
 - **Numerical verification**: `scripts/exploration/explore_ladder_generating_rule.py`
 - **Algebraic proof of LGR-8**: `scripts/proofs/prove_dual_substrate_identity.py`
