@@ -14,7 +14,7 @@
 - [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) — Selection principles SP1-SP6 (Layer 2)
 - [PHYS_QUADRATIC_APPLICATIONS.md](../01_reference/PHYS_QUADRATIC_APPLICATIONS.md) — Physical correspondences (Layer 3, claims P-1 through P-15)
 - [DERIV_GSTAR_PF_BRIDGE.md](DERIV_GSTAR_PF_BRIDGE.md) — G* = ϖ/√(PF) decomposition, PF cancellation rule PF-1 through PF-8
-- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Constant chain γ → ϖ → M → π → G*
+- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
 - [DERIV_ALPHA_PRECISION_FORMULA.md](DERIV_ALPHA_PRECISION_FORMULA.md) — 4-term precision formula
 - [EXPLR_LOOP_GRID_DUALITY.md](../08_structural/EXPLR_LOOP_GRID_DUALITY.md) — Two-layer ontology (Loop vs Grid)
 - [EXPLR_TRIT_INFORMATION_THEORY.md](../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md) — Theta function identity TRIT-1
@@ -349,7 +349,7 @@ PF = pi/4 = 0.785                    G* = varpi/sqrt(PF) = 2.959
 | EM identification | x₊ → 1/α | [OBSERVED] (1.26 ppm) | MQ-O1 |
 | Color identification | floor(x₋) → N_c = 3 | [OBSERVED] (0.8%) | MQ-O2 |
 | Bridge gap | e^π - π - 20 → ε | [THEOREM] (arithmetic) | DCB-6 |
-| Precision | x₊, ε, c_i → 1/α | [THEOREM] (formula) | ALPHAP-1 |
+| Precision | x₊, ε, c_i → 1/α | [THEOREM] for the formula inside its ansatz; physical α identification/precision fit remains conjectural/post-hoc | ALPHAP-1 |
 | Theta identity | θ₃(e^{-π}) → G* | [THEOREM] (classical) | TRIT-1 |
 | AGM form | ϖ/M → G* | [THEOREM] (algebraic) | DCB-10 |
 
@@ -381,7 +381,7 @@ The complete bridge path is composed entirely of [THEOREM]-level steps, with two
 |----------|-------------------|-----------------|
 | [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | Parts V, VI, XIV, XIX | MQ-7, MQ-12, MQ-13, MQ-22 |
 | [DERIV_GSTAR_PF_BRIDGE.md](DERIV_GSTAR_PF_BRIDGE.md) | §§1-2, §8 | PF-1, PF-7 |
-| [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | §§3-4 | Constant chain, minimal generating set |
+| [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | §§3-4 | Historical constant atlas; minimal generating set is definitional/derived, not the canonical α chain |
 | [DERIV_ALPHA_PRECISION_FORMULA.md](DERIV_ALPHA_PRECISION_FORMULA.md) | Parts I-III | ALPHAP-1 through ALPHAP-7 |
 | [EXPLR_LOOP_GRID_DUALITY.md](../08_structural/EXPLR_LOOP_GRID_DUALITY.md) | §§2-4, §7 | Loop-Grid ontology, AGM reconciliation |
 | [EXPLR_TRIT_INFORMATION_THEORY.md](../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md) | §§1-2 | TRIT-1 (theta function identity) |

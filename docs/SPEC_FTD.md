@@ -11,7 +11,7 @@
 >
 > **🔑 CRITICAL NOTICE (2026-04-19, supplemental 2026-04-28):** This document's body predates the April 19 audit cycle and the 2026-04-28 FTD-0110 derivation. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination, and one [OPEN]/[CONJECTURE] item was promoted to [DERIVED at linear level]. Specifically:
 >
-> - **"C1 PROVEN: x₊ = 1/α via Complex Multiplication uniqueness"** → read as [STRONGLY MOTIVATED CONJECTURE]. The polynomial identity is proven; the physical identification is selection-level (1.26 ppm match, structurally unique but not dynamically derived).
+> - **"C1 PROVEN: x₊ = 1/α via Complex Multiplication uniqueness"** → read as [STRONGLY MOTIVATED CONJECTURE]. The polynomial identity is proven; the physical identification is an SMC bridge (1.26 ppm match, structurally unique but not dynamically derived).
 > - **"C2 PROVEN: x₋ → N_c = 3"** → read as [STRONGLY MOTIVATED CONJECTURE] (0.80% match, same epistemic tier).
 > - **sin²θ_W, sin²θ_13, α_s, PMNS angles** → downgraded to [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
 > - **"< 0.001 ppt with 7-term expansion"** framing → explicitly retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
@@ -36,9 +36,9 @@
 
 > **Major Update (v4.1)**: Full SM gauge group now derived: U(1) × SU(2) × SU(3).
 
-> **Major Update (v5.0 - Foundational Completeness)**: Seven theoretical gaps resolved within assumptions:
-> - **C1 PROVEN**: x₊ = 1/α via Complex Multiplication uniqueness (no longer conjecture)
-> - **C2 PROVEN**: x₋ → N_c = 3 via RG flow + topological quantization
+> **Major Update (v5.0 - Foundational Completeness)**: Historical status note; later audits reclassified several physical identifications:
+> - **C1 RECLASSIFIED**: x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE]. The polynomial/root algebra is theorem-level; the physical identification is not dynamically derived.
+> - **C2 RECLASSIFIED**: x₋ → N_c = 3 is [STRONGLY MOTIVATED CONJECTURE] as a master-quadratic root identification. Independent topology routes to N_c = 3 remain separately tagged in the ledger.
 > - **A1 DERIVED**: D = 3 is uniquely selected by atomic stability + gauge requirements (no longer axiom)
 > - **GR COMPLETE**: Einstein equations derived with correct 8πG coefficient
 > - **Inflation DERIVED**: n_s = 0.966, r = 0.022 (compatible with Planck)
@@ -50,7 +50,7 @@
 > **Major Update (v5.13-5.16)**: Extended ontological hierarchy (Levels -3 to 12), emergence of i, dimensional emergence (XY vs X+Y), and documentation consolidation. See docs/theory/ for theory documents.
 
 > **Major Update (v5.17 - Epistemic Reclassification)**: Honest accounting of prediction status:
-> - **~20 Genuine Derivations**: α, mass ratios, mixing angles from G* and integers {3,4,7,13}
+> - **~20 theorem/selection/conjecture chains**: algebraic spine results are theorem-level, while α/N_c physical identifications and many mass/flavor claims carry lower tags in the ledger
 > - **~50 Parametric Insertions**: FTD values inserted into standard physics formulas (decay rates, running couplings)
 > - **~50+ External Physics**: Standard Model mechanisms used without derivation (Fermi theory, HQET, ChPT)
 > - **~3-5 Explicit Inputs**: M_Planck, G_F, Λ_QCD, decay constants
@@ -747,7 +747,7 @@ $$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{N_{\text{base}}^2}{N_c} \cdot \alpha^{
 
 ## 7.4 The Lemniscatic Derivation
 
-The lemniscatic constant G* is now **derived from FTD axioms**, not merely observed.
+The lemniscatic constant G* has theorem-level mathematical provenance through the Gamma/FQCR/quarter-conjugacy chain. This supports the algebraic spine; it does **not** by itself derive the physical fine-structure constant from FTD axioms.
 
 **The lemniscatic constant** $G^* = \frac{\sqrt{2} \cdot \Gamma(1/4)^2}{2\pi} \approx 2.9587$ emerges from:
 
@@ -798,19 +798,19 @@ The coefficient 16 in the master quadratic is over-derived via four convergent r
 | Lattice DoF | 24 components − 7 Gauss constraints − 1 gauge freedom on 2×2×2 cube | 16 |
 | Lucas square | L₃² = 4² = 16; L₃ = 4 is the only non-trivial Lucas square | 16 |
 | Base squared | N_base² = 4² (dimensional closure) | 16 |
-| Precision formula | 4-term series matches CODATA α to < 0.001 ppt (see §16.2.1) | 16 |
+| Precision formula | Historical precision-fit evidence; not a derivation of coefficient 16 or α (see §16.2.1) | 16 |
 
-Over-derivation (multiple independent routes to the same value) indicates structural necessity, not coincidence.
+The convergent routes provide structural evidence for coefficient 16. They do not promote the physical identifications x₊ ↔ 1/α or x₋ ↔ N_c above their current ledger tags.
 
 ## 7.5 Derivation Summary
 
 | Claim | Status |
 |-------|--------|
-| G* produces 1/α to 1.26 ppm | ✅ Verified |
-| G* derived from FTD axioms | ✅ Derived (see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md) |
+| G* produces an x₊ root matching 1/α to 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] for the physical identification |
+| G* mathematical provenance | [THEOREM]-level within the algebraic spine; not an α derivation by itself |
 | Elliptic fibration from FTD | ✅ Proven (simulations/elliptic_fibration_proof.py) |
 | CM selection (j=1728) | ✅ Proven (simulations/cm_selection_proof.py) |
-| Coefficient 16 from lattice | ✅ Derived (simulations/coefficient_16_from_lattice.py) |
+| Coefficient 16 from lattice | Structurally motivated; exact status tracked in the algebraic-spine/ledger docs |
 | √2 from Gauss constraint | ✅ Derived (simulations/critical_coupling_selection.py) |
 
 For related theoretical context, see also [LEMNISCATE_HIERARCHY_WHITEPAPER.md](docs/theory/04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md).
@@ -1677,7 +1677,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? | ✅ **VERIFIED** | Wave isotropy, Coulomb isotropy, time dilation isotropy all confirmed |
 | OPEN.3 | Can U(1) gauge emergence be verified in simulation? | ✅ **VERIFIED** | 2 transverse modes, longitudinal suppressed <3% |
 | OPEN.4 | Can SU(3) color interpretation be made rigorous? | ✅ **VERIFIED** | N_c≈3.024 from geometry, color neutrality, confinement all confirmed |
-| OPEN.5 | Can coupling constants be derived within FTD assumptions? | ✅ **DERIVED** | G* = Γ(1/4)²/(√2·Γ(1/2)²) follows from FTD axioms (pi-free form); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md, simulations/ |
+| OPEN.5 | Can coupling constants be derived within FTD assumptions? | ⚠️ **[PARTIAL / SMC]** | Algebraic-spine constants have theorem-level provenance, but the physical coupling identifications (especially x₊ ↔ 1/α) remain [STRONGLY MOTIVATED CONJECTURE]. See SPEC_ALGEBRAIC_SPINE.md, SPEC_FQCR.md, TRACKER_ONTIC_TRUTH.md, and LEDGER.md. |
 | OPEN.6 | What is the testable difference between sLoop and superdeterminism? | ⬜ **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
 | OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? | ⬜ **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
 | OPEN.8 | Can particle masses be derived from FTD? | ✅ **DERIVED** | m_e = m_P √(2π) (16/3) α¹¹ (0.19% accuracy); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
@@ -1693,8 +1693,8 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.18 | Can GR be derived with correct coefficient? | ✅ **DERIVED (v5.0)** | R_μν - ½g_μν R = 8πG T_μν; coefficient from lattice geometry |
 | OPEN.19 | Can inflation observables be derived? | ✅ **DERIVED (v5.0)** | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |
 | OPEN.20 | Can baryogenesis be explained? | ✅ **DERIVED (v5.0)** | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
-| OPEN.21 | Is x₊ = 1/α a theorem or conjecture? | ✅ **PROVEN (v5.0)** | CM selection uniquely determines lemniscatic curve → master quadratic |
-| OPEN.22 | Is x₋ → N_c = 3 a theorem? | ✅ **PROVEN (v5.0)** | RG flow + topological quantization at confinement |
+| OPEN.21 | Is x₊ = 1/α a theorem or conjecture? | ⚠️ **[STRONGLY MOTIVATED CONJECTURE]** | Master-quadratic algebra is theorem-level; the physical identification x₊ ↔ 1/α is empirical/structural, not dynamically derived. |
+| OPEN.22 | Is x₋ → N_c = 3 a theorem? | ⚠️ **[STRONGLY MOTIVATED CONJECTURE]** | The small root is theorem-level as algebra; its N_c reading is an SMC bridge. Independent topology/RG arguments for N_c = 3 must be tracked separately. |
 
 See `packages/backend/simulation/open_question_tests.py` and `packages/backend/simulation/flavor_physics_tests.py` for simulation implementations.
 
@@ -1738,17 +1738,17 @@ A computational simulation based on:
 - ✅ **Bell locality**: Substrate gives S≤2 (expected for local axioms). Aggregate QM statistics (S>2) understood as ensemble property; emergence mechanism characterized as three-level observer hierarchy (April 2026); S = 2 sqrt(2) follows from Tsirelson's bound once QM emergence is established
 - ✅ **Born rule** (derived from flux concentration statistics)
 
-### Derived Constants (v5.0 - Complete)
-- ✅ **Fine structure constant α = 1/137.036** (PROVEN from CM selection; 1.26 ppm)
-- ✅ **Color charge number N_c = 3** (PROVEN via RG flow + topological quantization)
-- ✅ **Electron mass m_e = 0.511 MeV** (derived: m_e = m_P √(2π) (16/3) α¹¹; 0.19% accuracy)
-- ✅ **Tau mass m_τ = 1.777 GeV** (derived; 0.007% accuracy - best mass prediction)
-- ✅ **Proton mass m_p = 938.3 MeV** (derived; 0.017% accuracy)
-- ✅ **Higgs VEV v = 246 GeV** (derived: v = m_P √(2π) α⁸; 0.05% accuracy)
-- ✅ **CKM/PMNS matrices** (derived from flavor physics)
-- ✅ **CP violation δ = 66.8°** (derived from arctan(7/3); 2.1% accuracy)
-- ✅ **Neutrino masses** (derived from seesaw mechanism in FTD framework)
-- ✅ **Gravitational hierarchy α_G** (derived: 2π(16/3)²(n_eff+3/b_3)²α²⁰; 0.01% accuracy)
+### Constants and Phenomenology (historical v5.0 block; current tags live in LEDGER.md)
+- ⚠️ **Fine structure constant α = 1/137.036** ([STRONGLY MOTIVATED CONJECTURE] via x₊ identification; 1.26 ppm)
+- ⚠️ **Color charge number N_c = 3** ([STRONGLY MOTIVATED CONJECTURE] as x₋ identification; independent topology routes tracked separately)
+- ⚠️ **Electron mass m_e = 0.511 MeV** (selection/parametric chain depending on α; see LEDGER)
+- ⚠️ **Tau mass m_τ = 1.777 GeV** (selection/parametric chain; see LEDGER)
+- ⚠️ **Proton mass m_p = 938.3 MeV** (selection/parametric chain; see LEDGER)
+- ⚠️ **Higgs VEV v = 246 GeV** (structurally motivated parametric chain; see LEDGER)
+- ⚠️ **CKM/PMNS matrices** (flavor-physics claims require their local ledger tags)
+- ⚠️ **CP violation δ = 66.8°** (structural/selection status depends on local derivation)
+- ⚠️ **Neutrino masses** (uses seesaw mechanism in FTD framework; check local tag)
+- ⚠️ **Gravitational hierarchy α_G** (depends on α and framework integers; check local tag)
 
 ### Cosmology (v5.0 - New)
 - ✅ **Inflation spectral index n_s = 0.966** (0.2σ from Planck measurement)
@@ -1775,11 +1775,11 @@ A computational simulation based on:
 - ~~Gravity sector~~ ✅ **ADDRESSED (within assumptions)**
 - ~~Flavor physics (CKM, PMNS)~~ ✅ **ADDRESSED (within assumptions)**
 
-### Resolved in v5.0
+### Historical v5.0 Resolutions (reclassified by later audits)
 - ~~**Numerical value of G_N**~~ ✅ **DERIVED** — α_G = 2π(16/3)²(N_eff + 3/7)²α^20 gives 0.01% accuracy
 - ~~**Why a 3D discrete lattice exists**~~ ✅ **DERIVED (v5.0)** — D = 3 is uniquely selected (see §22.5.1)
-- ~~**C1: x₊ = 1/α**~~ ✅ **PROVEN** — CM selection uniqueness
-- ~~**C2: x₋ → N_c = 3**~~ ✅ **PROVEN** — RG flow + topological quantization
+- ~~**C1: x₊ = 1/α**~~ ⚠️ **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — CM/uniqueness evidence supports the bridge but does not derive the physical identification.
+- ~~**C2: x₋ → N_c = 3**~~ ⚠️ **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — root algebra and independent N_c arguments must remain separated.
 - ~~**GR with 8πG**~~ ✅ **DERIVED** — Einstein equations with correct coefficient
 - ~~**Inflation mechanism**~~ ✅ **DERIVED** — n_s = 0.966, r = 0.022
 - ~~**Baryogenesis**~~ ✅ **DERIVED** — η ~ 10⁻¹⁰

@@ -16,7 +16,7 @@
 
 ## Abstract
 
-The master quadratic x^2 - 16G*^2 x + 16G*^3 = 0 produces exactly two roots: x+ = 1/alpha = 137.036 (electromagnetic coupling) and x- = N_c_eff = 3.024 (color charge count). We show that all four fundamental forces of nature emerge from these two numbers through the dual substrate structure:
+The master quadratic x^2 - 16G*^2 x + 16G*^3 = 0 produces exactly two roots: x+ ≈ 137.036 and x- ≈ 3.024. Reading these as 1/alpha and N_c_eff is a [STRONGLY MOTIVATED CONJECTURE], so the force genealogy below is conditional on that bridge:
 
 - **Electromagnetism**: Transverse oscillations of J = J_L + J_R (coupling alpha, from x+)
 - **Strong force**: Internal orientation of J_R (coupling from x-, confined to 2.2% of flux)
@@ -143,13 +143,13 @@ In FTD, forces were **never separate**. They all derive from G* = 2.9587 through
 ```
     G* = 2.9587
      |
-     +-- x+ = 1/alpha = 137.036
+     +-- x+ ≈ 137.036  (SMC reading: 1/alpha)
      |    |
      |    +-- alpha^1:  EM (direct)
      |    +-- alpha^8:  Weak (after spinor step)
      |    +-- alpha^20: Gravity (after all DoF)
      |
-     +-- x- = N_c = 3.024
+     +-- x- ≈ 3.024    (SMC reading: N_c)
           |
           +-- Strong (confinement)
           +-- alpha_s running (b_3 = 7)
@@ -221,7 +221,7 @@ In D=3, these four mode types map exactly to the four forces. In D=2, the intern
 
 - **Ladder generating rule**: [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md)
 - **Deep hierarchy**: [FOUND_DEEP_HIERARCHY.md](FOUND_DEEP_HIERARCHY.md)
-- **G* derivation**: [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
+- **G* / ontic-chain status**: canonical theorem/status stack in [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md), [SPEC_FQCR.md](../01_reference/SPEC_FQCR.md), and [TRACKER_ONTIC_TRUTH.md](../07_assessment/TRACKER_ONTIC_TRUTH.md)
 - **SU(2) weak sector**: [DERIV_LATTICE_SU2_WEAK.md](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
 - **SU(3) gauge theory**: [DERIV_LATTICE_SU3_GAUGE.md](../03_derivations/DERIV_LATTICE_SU3_GAUGE.md)
 - **Numerical verification**: `scripts/exploration/explore_force_structure.py`

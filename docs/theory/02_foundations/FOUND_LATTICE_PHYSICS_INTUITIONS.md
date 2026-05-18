@@ -259,8 +259,8 @@ The chain from Z[i] to alpha, verified link by link:
 | 5 | Budget equation: x/K + G*/x = 1 | [THEOREM] | ~95% (exhaustion principle) |
 | 6 | Quadratic: x^2 - Kx + KG* = 0 | [THEOREM] | 100% (given 5) |
 | 7 | Roots: x+ = 137.036171, x- = 3.023964 | [THEOREM] | 100% |
-| 8 | x+ = 1/alpha (1.26 ppm, zero free parameters) | [SELECTION] | ~95% |
-| 9 | floor(x-) = N_c = 3 | [SELECTION] | ~80% |
+| 8 | x+ = 1/alpha (1.26 ppm, zero free parameters) | [STRONGLY MOTIVATED CONJECTURE] | ~95% |
+| 9 | floor(x-) = N_c = 3 | [STRONGLY MOTIVATED CONJECTURE] as root identification | ~80% |
 
 7/9 links [THEOREM]. The mathematical chain is rigorous. The physical identifications (Links 8-9) are motivated by the 1.26 ppm agreement but not derived from the lattice action.
 

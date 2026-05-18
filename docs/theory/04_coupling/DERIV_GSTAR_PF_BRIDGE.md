@@ -8,7 +8,7 @@
 **Standard:** Domain-by-domain algebraic reduction with three-layer epistemic separation
 
 **Depends on:**
-- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Constant chain γ → ϖ → M → π → G*
+- [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
 - [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) — Master quadratic and G* definition (Layer 1: pure mathematics)
 - [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) — Selection principles SP1-SP6 (Layer 2)
 - [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — Schwarzschild metric from lattice principles
@@ -465,7 +465,7 @@ The roots $x_+ \approx 137.036$ (→ 1/α) and $x_- \approx 3.024$ (→ N_c) are
 
 | Document | Relevant Content |
 |----------|-----------------|
-| [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Constant chain γ → ϖ → M → π → G*; ontological ordering |
+| [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas γ → ϖ → M → π → G*; ontological ordering |
 | [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | Master quadratic definition, coefficient 16, G* properties |
 | [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | Lattice availability f = 1 - r_s/r, holographic bound A_min, PF cancellation in §§12–13 |
 | [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) | G* and four forces, 137-lobe structure |

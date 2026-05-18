@@ -84,12 +84,12 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| **MC-T4.3** | **Non-action α-injection mechanism (CENTRAL).** Closure derives `x_+ = 1/α` from FTD axioms. All natural action-level routes [CLOSED NEGATIVE]. Three candidate non-action mechanisms named (boundary-condition / observable-selection / quantization-choice) — none formalised | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
+| **MC-T4.3** | **Non-action α-injection mechanism (CENTRAL).** A closure proof would have to derive the physical identification `x_+ = 1/α` from FTD structure rather than insert it. All natural action-level routes [CLOSED NEGATIVE]. Three candidate non-action mechanisms named (boundary-condition / observable-selection / quantization-choice) — none formalised | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
 | §7-bivector | Lorentzian signature from bivector duality on FTD lattice. Requires non-site-local Clifford construction compatible with FTD-0073 (site-local Clifford [CLOSED NEGATIVE] under pointwise-threshold dynamics) | [OPEN] | RP | — |
 | §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac (currently [OPEN — IMPORTED scaffold]) | [OPEN] | M | §7-bivector |
 | §7-loop | One-loop `a^{(1)} = α_FQCR/(2π)`. Requires `α_FQCR ↔ α` physical identification (= FTD-0013 [SMC]) | [OPEN] | RP | MC-T4.3 |
 | §7-qed | Full QED `g − 2` precision (= MC-T4.4 in old checklist) | [OPEN] | W–M | §7-dirac |
-| α-from-CM | `CONJ_ALPHA_FROM_CM.md` Step 3 (Z₄ symmetry selects this CM curve) and Step 8 (larger root = 1/α specifically) remain [SELECTION], not [THEOREM] | [OPEN] | RP | — |
+| α-from-CM | `CONJ_ALPHA_FROM_CM.md` Step 3 (Z₄ symmetry selects this CM curve) and Step 8 (larger root = 1/α specifically) remain [STRONGLY MOTIVATED CONJECTURE], not [THEOREM] | [OPEN] | RP | — |
 | Watson-G* | `DERIV_WATSON_GSTAR_IDENTITY.md` epilogue carries 1 [OPEN] | [OPEN] | W | — |
 | α-lattice | `DERIV_ALPHA_LATTICE_MECHANISM.md` Steps 3 + 8 selection issue (same as α-from-CM) | [OPEN] | M | α-from-CM |
 

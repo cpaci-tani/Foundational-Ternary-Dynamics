@@ -312,7 +312,7 @@ With n_DOF = 16, only the BCC Watson integral gives the correct gap equation coe
 
 K = 16 * 2pi * W_BCC = 16 * 2pi * G*^2/(2pi) = 16 G*^2
 
-This reproduces the master quadratic `x^2 - 16G*^2 x + 16G*^3 = 0` with roots x+ = 1/alpha = 137.036 and x- = N_c = 3.024.
+This reproduces the master quadratic `x^2 - 16G*^2 x + 16G*^3 = 0` with roots x+ ≈ 137.036 and x- ≈ 3.024. The physical readings x+ ↔ 1/alpha and x- ↔ N_c are [STRONGLY MOTIVATED CONJECTURE], not consequences of the Watson identity alone.
 
 ---
 
