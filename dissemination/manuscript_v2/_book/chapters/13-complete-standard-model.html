@@ -865,7 +865,7 @@ window.Quarto = {
 </header>
 
 
-<p>This chapter collects all 46 Standard Model observables computed by FTD into a single reference table. Every entry uses only the Planck mass <span class="math inline">\(m_P\)</span>, the bridge constant <span class="math inline">\(G^*\)</span>, and the framework integers <span class="math inline">\(\{3, 4, 7, 13\}\)</span>. Zero free parameters.</p>
+<p>This chapter collects <span class="math inline">\(\sim 46\)</span> Standard Model observables computed by FTD into a single reference table. Every entry uses only the Planck mass <span class="math inline">\(m_P\)</span>, the bridge constant <span class="math inline">\(G^*\)</span>, and the framework integers <span class="math inline">\(\{3, 4, 7, 13\}\)</span>, plus the three calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (<span class="math inline">\(a_\mathrm{phys} \equiv \ell_P\)</span>, <span class="math inline">\(t_\mathrm{phys} = \sqrt{3}\,\ell_P/c\)</span>, <span class="math inline">\(K_B = m_e\)</span>). Of the <span class="math inline">\(\sim 46\)</span> entries, roughly two dozen are [DERIVED] or [THEOREM]-grade (mostly structural integers and ratios) and the remainder are [PARAMETRIC] (FTD-derived constants substituted into standard QFT formulas).</p>
 <section id="the-observable-table" class="level2" data-number="15.1">
 <h2 data-number="15.1" class="anchored" data-anchor-id="the-observable-table"><span class="header-section-number">15.1</span> 13.1 The observable table</h2>
 <p>The epistemic status of each entry is classified as:</p>
@@ -873,6 +873,7 @@ window.Quarto = {
 <li><strong>D</strong> (Derived): follows from FTD axioms via the derivation chain</li>
 <li><strong>PI</strong> (Parametric Insertion): FTD values inserted into a standard QFT formula</li>
 <li><strong>E</strong> (External): standard physics formula used without FTD derivation</li>
+<li><strong>SMP</strong> (Structurally Motivated Parametric): rational-integer match to the relevant SM observable, structurally suggestive but not derived</li>
 </ul>
 <section id="coupling-constants" class="level3" data-number="15.1.1">
 <h3 data-number="15.1.1" class="anchored" data-anchor-id="coupling-constants"><span class="header-section-number">15.1.1</span> Coupling constants</h3>
@@ -902,7 +903,7 @@ window.Quarto = {
 <td>137.036</td>
 <td>137.036</td>
 <td>1.26 ppm</td>
-<td>D</td>
+<td>SMP (master quadratic [THEOREM]; <span class="math inline">\(x_+ = 1/\alpha\)</span> identification [STRONGLY MOTIVATED CONJECTURE])</td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\alpha_s(M_Z)\)</span></td>
@@ -910,7 +911,7 @@ window.Quarto = {
 <td>0.1186</td>
 <td>0.1179</td>
 <td>0.6%</td>
-<td>D</td>
+<td>SMP (was [D] pre-2026-04-19 audit; demoted per AUDIT_RATIONAL_FIT_CLAIMS — competitor <span class="math inline">\(2/17\)</span> is tighter)</td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(G_F\)</span></td>
@@ -918,23 +919,23 @@ window.Quarto = {
 <td><span class="math inline">\(1.166 \times 10^{-5}\)</span></td>
 <td><span class="math inline">\(1.166 \times 10^{-5}\)</span></td>
 <td>&lt; 0.01%</td>
-<td>D</td>
+<td>PI (formula = standard EW theory)</td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\sin^2\theta_W\)</span></td>
 <td><span class="math inline">\(N_c/N_{\text{eff}} = 3/13\)</span></td>
 <td>0.2308</td>
 <td>0.2312</td>
-<td>0.2%</td>
-<td>D</td>
+<td>3.5% (post-running)</td>
+<td>SMP (was [D]; demoted 2026-04-19)</td>
 </tr>
 <tr class="odd">
 <td><span class="math inline">\(\alpha_{\text{GUT}}\)</span></td>
 <td><span class="math inline">\(1/(2 \cdot 3 \cdot b_3) = 1/42\)</span></td>
 <td>0.0238</td>
-<td>~0.024</td>
-<td>~1%</td>
-<td>D</td>
+<td><span class="math inline">\(\sim 0.024\)</span></td>
+<td><span class="math inline">\(\sim 1\%\)</span></td>
+<td>SMP (no canonical GUT-scale derivation chain)</td>
 </tr>
 </tbody>
 </table>
@@ -1160,18 +1161,18 @@ window.Quarto = {
 <tr class="odd">
 <td><span class="math inline">\(\rho_\Lambda\)</span></td>
 <td><span class="math inline">\(m_e^4 \alpha^{16} G^{*2}\)</span></td>
-<td><span class="math inline">\(\sim 10^{-47}\)</span> GeV<span class="math inline">\(^4\)</span></td>
-<td><span class="math inline">\(\sim 10^{-47}\)</span> GeV<span class="math inline">\(^4\)</span></td>
-<td>~1%</td>
-<td>D</td>
+<td><span class="math inline">\(\sim 4 \times 10^{-47}\)</span> GeV<span class="math inline">\(^4\)</span></td>
+<td><span class="math inline">\(\sim 2.2 \times 10^{-47}\)</span> GeV<span class="math inline">\(^4\)</span></td>
+<td>factor <span class="math inline">\(\sim 1.8\)</span></td>
+<td>OPEN (factor-1.8 discrepancy; calibration-conditional under <span class="math inline">\(a_\mathrm{phys} \equiv \ell_P\)</span>)</td>
 </tr>
 <tr class="even">
 <td><span class="math inline">\(\Omega_{\text{DM}}/\Omega_b\)</span></td>
 <td>Sub-threshold ratio</td>
-<td>~5</td>
+<td><span class="math inline">\(\sim 5\)</span></td>
 <td>5.36</td>
-<td>~7%</td>
-<td>D</td>
+<td><span class="math inline">\(\sim 7\%\)</span></td>
+<td>SMP (no canonical derivation chain)</td>
 </tr>
 </tbody>
 </table>
@@ -1180,6 +1181,7 @@ window.Quarto = {
 </section>
 <section id="honest-accounting" class="level2" data-number="15.2">
 <h2 data-number="15.2" class="anchored" data-anchor-id="honest-accounting"><span class="header-section-number">15.2</span> 13.2 Honest accounting</h2>
+<p>The current load-bearing-claims catalog (<code>docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md</code>, <span class="math inline">\(\sim 162\)</span> rows enumerated) classifies each SM-related FTD claim. Aggregate split (post-2026-04-19 audit):</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -1195,24 +1197,24 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Genuine derivations (D)</strong></td>
-<td>~20</td>
-<td><span class="math inline">\(\alpha\)</span>, gauge groups, coupling constants, vacuum energy — from lattice geometry</td>
+<td><strong>Genuine derivations + theorems ([D] / [THEOREM])</strong></td>
+<td><span class="math inline">\(\sim 23\)</span></td>
+<td>Master quadratic [THEOREM]; <span class="math inline">\(G^*\)</span> identity [THEOREM]; structural integers <span class="math inline">\(\{N_c, N_\mathrm{base}, N_\mathrm{eff}\}\)</span> [SELECTION/THEOREM]; lattice-geometry results (Phase G, Phase J at L=2).</td>
 </tr>
 <tr class="even">
-<td><strong>Parametric insertions (PI)</strong></td>
-<td>~20</td>
-<td>Masses, mixing angles — FTD values in standard QFT formulas</td>
+<td><strong>Parametric insertions ([PI])</strong></td>
+<td><span class="math inline">\(\sim 129\)</span></td>
+<td>Masses, mixing angles, decay rates — FTD-derived constants substituted into standard QFT formulas.</td>
 </tr>
 <tr class="odd">
-<td><strong>External physics (E)</strong></td>
-<td>~6</td>
-<td>Decay rates, running couplings — standard physics unmodified</td>
+<td><strong>Imposed / Selection ([I] / [S])</strong></td>
+<td><span class="math inline">\(\sim 10\)</span></td>
+<td>Calibration declarations (<span class="math inline">\(a_\mathrm{phys} \equiv \ell_P\)</span>, <span class="math inline">\(K_B = m_e\)</span>, <span class="math inline">\(t_\mathrm{phys}\)</span>); ladder-walk ordering selections.</td>
 </tr>
 <tr class="even">
-<td><strong>Total</strong></td>
-<td>~46</td>
-<td></td>
+<td><strong>Total catalog</strong></td>
+<td><span class="math inline">\(\sim 162\)</span></td>
+<td>The <span class="math inline">\(\sim 46\)</span> “headline observables” in this chapter are the visible portion of the catalog.</td>
 </tr>
 </tbody>
 </table>
