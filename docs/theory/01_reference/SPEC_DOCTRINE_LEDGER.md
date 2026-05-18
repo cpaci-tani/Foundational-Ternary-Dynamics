@@ -7,6 +7,7 @@
 **Companion docs:**
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical 9-theorem reference (theorem-only, physics-free)
 - [`SPEC_FQCR.md`](SPEC_FQCR.md) — FQCR capstone reference (Models I–V)
+- [`SPEC_MATH_FIRST_ONTOLOGY.md`](SPEC_MATH_FIRST_ONTOLOGY.md) — canonical math-first ontology / readout ordering principle
 - [`SPEC_PHYSICS_BRIDGE.md`](SPEC_PHYSICS_BRIDGE.md) — physics-bridge synthesis (FTD-0121, structural-uniqueness scans)
 - [`SPEC_ALPHA_READOUT_CONTRACT.md`](SPEC_ALPHA_READOUT_CONTRACT.md) — MC-T4.3 operational-readout closure contract
 - [`SPEC_OPEN_MATH_BY_SECTOR.md`](SPEC_OPEN_MATH_BY_SECTOR.md) — 18-item bridge-complete roadmap (Phase 2 hardening targets)
@@ -24,7 +25,7 @@
 
 **Why the doctrine exists.** FTD's canonical claim infrastructure has accumulated nine theorems, ~150 LEDGER rows, fifteen T1–T5 tracker entries, an 18-item math-completion checklist, and a five-model FQCR capstone. The doctrine compresses this into a single navigation surface that exposes which derivation chains are non-circular, which are imported scaffolding, and which are pending hardening. It prevents cycling — repeatedly re-litigating the same claim because the per-claim status was buried in a 700-line ledger.
 
-**v1.3 physicist consolidation.** The 2026-05-18 intake of `complete_ftd_chain_v1.md` adds no canonical claim and no new theorem. It sharpens the physics-facing reading: FTD is presently defensible as a finite-invariant algebraic reconstruction program whose strongest physical conjecture is the operational identification of the master-quadratic/FQCR dominant branch with the electromagnetic coupling. The mathematical object is solid; the physical readout is the open problem.
+**v1.3 physicist consolidation.** The 2026-05-18 intake of `complete_ftd_chain_v1.md` adds no canonical claim and no new theorem. It sharpens the physics-facing reading: FTD is presently defensible as a finite-invariant algebraic reconstruction program whose strongest physical conjecture is the operational identification of the master-quadratic/FQCR dominant branch with the electromagnetic coupling. The mathematical object is solid; the physical readout is the open problem. `SPEC_MATH_FIRST_ONTOLOGY.md` now names this ordering explicitly: primitives -> invariants -> admissible readouts -> operational physics.
 
 ---
 
