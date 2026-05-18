@@ -9,6 +9,7 @@
 - [`SPEC_DOCTRINE_LEDGER.md`](SPEC_DOCTRINE_LEDGER.md) — single-page status map (closed + open)
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — 9-theorem canonical reference
 - [`SPEC_FQCR.md`](SPEC_FQCR.md) — FQCR Models I–V
+- [`SPEC_ALPHA_READOUT_CONTRACT.md`](SPEC_ALPHA_READOUT_CONTRACT.md) — MC-T4.3 closure contract / "earn the map" criteria
 - [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) — atomic per-claim provenance
 - [`../07_assessment/TRACKER_ONTIC_TRUTH.md`](../07_assessment/TRACKER_ONTIC_TRUTH.md) — T1–T5 tiers
 - [`../07_assessment/TRACKER_OPEN_ITEMS.md`](../07_assessment/TRACKER_OPEN_ITEMS.md) — atomic file-level `[OPEN]` markers (non-math TODOs)
@@ -84,7 +85,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| **MC-T4.3** | **Non-action α-injection mechanism (CENTRAL).** A closure proof would have to derive the physical identification `x_+ = 1/α` from FTD structure rather than insert it. All natural action-level routes [CLOSED NEGATIVE]. Three candidate non-action mechanisms named (boundary-condition / observable-selection / quantization-choice) — none formalised | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
+| **MC-T4.3** | **Operational alpha-readout mechanism (CENTRAL).** A closure proof would have to derive the physical identification `x_+ = 1/alpha` from FTD structure rather than insert it. All natural action-level routes [CLOSED NEGATIVE]. `SPEC_ALPHA_READOUT_CONTRACT.md` now formalizes the closure contract and four candidate classes (boundary-condition / observable-selection / quantization-readout / discrete-native measurement); ARC-B1 observable-selection is the first proof obligation | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
 | §7-bivector | Lorentzian signature from bivector duality on FTD lattice. Requires non-site-local Clifford construction compatible with FTD-0073 (site-local Clifford [CLOSED NEGATIVE] under pointwise-threshold dynamics) | [OPEN] | RP | — |
 | §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac (currently [OPEN — IMPORTED scaffold]) | [OPEN] | M | §7-bivector |
 | §7-loop | One-loop `a^{(1)} = α_FQCR/(2π)`. Requires `α_FQCR ↔ α` physical identification (= FTD-0013 [SMC]) | [OPEN] | RP | MC-T4.3 |
@@ -259,7 +260,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| **MC-T4.3** | **Algebraic-spine ↔ dynamical-EFT non-action injection mechanism. Central FTD claim.** Three candidate non-action mechanisms (boundary-condition / observable-selection / quantization-choice) named; none formalised. Prior on near-term closure: low | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
+| **MC-T4.3** | **Algebraic-spine ↔ physical electromagnetic readout mechanism. Central FTD claim.** `SPEC_ALPHA_READOUT_CONTRACT.md` formalizes the closure contract: specify `(P, A_obs, O_EM, R, C)` before target-checking; avoid alpha input; survive structural-decoupling diagnostics; explain why the output is an operational EM coupling rather than a distinguished number. Candidate mechanisms: boundary-condition / observable-selection / quantization-readout / discrete-native measurement. Prior on near-term closure: low | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
 | MC-T4.1 | Two-layer ontology axiomatization. **Reframed 2026-05-02 to documentation alignment** — substantive ontology already J-primary via SPEC_FTD.md §1.1 graded-monism table + Genesis rule. Postulate 3 textual update remaining | [OPEN — documentation] | D | — |
 | MC-T4.2 | Phase-2 EFT non-Gaussian flow at `b ≥ 4`. Gates 6/7 of bridge contract. Phase-2 b=4, b=8 measurements show Gaussian fixed point holding within 1σ; non-Gaussian mixing matrix uncomputed | [OPEN] | M–RP | — |
 | FTD-0096-mass | µ-from-ℓ_P missing arrow (mass-unit version): mass-unit derivation from `ℓ_P` without passing through `m_e`. The LENGTH analogue is [CLOSED THEOREM-NEGATIVE]; the MASS-UNIT version is still [OPEN] | [OPEN] | M | — |
@@ -271,7 +272,10 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 The central obstruction is now narrow enough to split into candidate
 mechanism classes. These are **not** claims and should not be cited as
 derivations. They are work packages for making "non-action injection"
-formal enough to fail or survive.
+formal enough to fail or survive. The controlling contract is
+`SPEC_ALPHA_READOUT_CONTRACT.md`: any proposed closure must define a
+pre-target tuple `(P, A_obs, O_EM, R, C)` and pass the hard exclusion
+rules before it can affect the `x_+ <-> 1/alpha` tag.
 
 | Candidate | Formal target | Immediate falsifier | Tag |
 |---|---|---|---|

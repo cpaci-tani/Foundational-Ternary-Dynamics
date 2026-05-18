@@ -8,6 +8,7 @@
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical 9-theorem reference (theorem-only, physics-free)
 - [`SPEC_FQCR.md`](SPEC_FQCR.md) — FQCR capstone reference (Models I–V)
 - [`SPEC_PHYSICS_BRIDGE.md`](SPEC_PHYSICS_BRIDGE.md) — physics-bridge synthesis (FTD-0121, structural-uniqueness scans)
+- [`SPEC_ALPHA_READOUT_CONTRACT.md`](SPEC_ALPHA_READOUT_CONTRACT.md) — MC-T4.3 operational-readout closure contract
 - [`SPEC_OPEN_MATH_BY_SECTOR.md`](SPEC_OPEN_MATH_BY_SECTOR.md) — 18-item bridge-complete roadmap (Phase 2 hardening targets)
 - [`../07_assessment/TRACKER_ONTIC_TRUTH.md`](../07_assessment/TRACKER_ONTIC_TRUTH.md) — bedrock truth-tier tracker (T1–T5; OT-N.M IDs)
 - [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) — atomic per-claim provenance (FTD-NNNN IDs)
@@ -384,7 +385,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 
 ### §13.5 · Main hardening targets ([OPEN] research arcs)
 
-1. **Non-action alpha-readout mechanism** — MC-T4.3, central foundational obstruction. The target is not another match to `1/alpha`; it is a rule that maps the algebraic/FQCR branch to an operational electromagnetic coupling measured by matter, without inserting alpha. Candidate classes: boundary-condition readout, observable-selection readout, quantization/readout rule, discrete-native measurement path. Lead-physicist diagnosis: closure may require ontology extension beyond the 5 axioms.
+1. **Non-action alpha-readout mechanism** — MC-T4.3, central foundational obstruction. The target is not another match to `1/alpha`; it is a rule that maps the algebraic/FQCR branch to an operational electromagnetic coupling measured by matter, without inserting alpha. `SPEC_ALPHA_READOUT_CONTRACT.md` defines the required tuple `(P, A_obs, O_EM, R, C)`, exclusion rules, and ARC-0 to ARC-3 status levels. Candidate classes: boundary-condition readout, observable-selection readout, quantization/readout rule, discrete-native measurement path. Lead-physicist diagnosis: closure may require ontology extension beyond the 5 axioms.
 2. **Derive `R_N(t)` from a variational / operator principle** — MC-T3.1 (FTD-0110 nonlinear bridge, NOT CLOSED, ~2.5× slope mismatch); FTD-0143 uniqueness scan PRE-REGISTERED. This is useful only if it feeds an operational readout or removes a selection from FQCR Model IV.
 3. **Derive activation kernels and beta coefficients from finite spectra** — MC-T3.6 (new ID 2026-05-08; not the same arc as MC-T3.5 = FTD-0110 multi-scale boundary).
 4. **Derive Higgs residual curvature `χ_H`** — no canonical anchor.

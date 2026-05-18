@@ -4,7 +4,7 @@
 **Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constants (1/α, N_c) as it currently stands
 **Created:** 2026-05-01 evening (closing session on tractable open gaps)
 **Provenance:** Closes the "physics bridge" by making its logical structure crisp; consolidates `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` + `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` + `EXPLR_PATHS_TO_ALPHA.md` into a single reference position
-**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the 9 theorems); `SPEC_FQCR.md` (operator-theoretic restatement); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013/0014 (the conjecture); FTD-0097 (look-elsewhere monomial); FTD-0117 (G\* notational fix)
+**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the 9 theorems); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013/0014 (the conjecture); FTD-0097 (look-elsewhere monomial); FTD-0117 (G\* notational fix)
 
 ---
 
@@ -245,7 +245,11 @@ established:
    protocol. The rule must be stated without α as an input and must say
    why the dominant master-quadratic/FQCR eigenvalue is the physical
    electromagnetic coupling rather than merely a distinguished number.
-   This is the precise MC-T4.3 target.
+   This is the precise MC-T4.3 target. The admissibility contract for
+   such a rule is now `SPEC_ALPHA_READOUT_CONTRACT.md`: state the
+   preparation, observable algebra, electromagnetic measurement
+   functional, readout map, and calibration discipline before checking
+   the physical target.
 
 None of these is currently in hand. The bridge stays as crystallized
 in §3.2.
