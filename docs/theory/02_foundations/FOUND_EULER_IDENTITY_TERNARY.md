@@ -260,7 +260,7 @@ Layer 2b sits between the Universal Operator (Layer 2) and the Master Quadratic 
 ```
 Layer 2:  G*, pi, PF, sqrt(G*)    <- G* = Gamma(1/4)/Gamma(3/4) exists
 Layer 2b: K_CRIT, X_BORN          <- i emerges from G* at k_crit = 4/G*
-Layer 3:  x_+ = 1/alpha, x_- = N_c  <- quadratic specialized to k = 16
+Layer 3:  x_+ ≈ 137.036, x_- ≈ 3.024  <- quadratic specialized to k = 16; physical readings are SMC
 ```
 
 This placement is logically necessary: i must be established before the master quadratic is specialized to particular k values, since k < k_crit cases produce complex roots.

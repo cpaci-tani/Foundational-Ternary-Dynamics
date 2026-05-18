@@ -313,7 +313,7 @@ Both computations are well-defined and numerically tractable. They are the next 
 This derivation depends on:
 - AUDIT_HIDDEN_SELECTIONS.md: SP1-SP5 definitions (especially SP3 for Route A)
 - AUDIT_SELF_CONSISTENCY.md: C1-C6 constraints (all still satisfied)
-- FOUND_ONTOLOGICAL_GENESIS.md: G* derivation, master quadratic
+- FOUND_ONTOLOGICAL_GENESIS.md: G* provenance/status context, master quadratic
 - DERIV_LATTICE_CHIRAL_ANOMALY.md: Anomalous U(1)_A removal (for Route B)
 - DERIV_HIGGS_FROM_MANIFESTATION.md: Higgs VEV v (for step 9)
 - DERIV_LATTICE_SU2_WEAK.md: sin^2(theta_W) = 3/13 (for step 10)
@@ -327,7 +327,7 @@ This derivation depends on:
 |----------|-----------------|
 | AUDIT_HIDDEN_SELECTIONS.md | SP1-SP5 definitions; SP3 (coefficient 16) is Route A input |
 | AUDIT_SELF_CONSISTENCY.md | C1-C6 constraints; all remain satisfied after integer reduction |
-| FOUND_ONTOLOGICAL_GENESIS.md | G* derivation; master quadratic; k_phys = 16 |
+| FOUND_ONTOLOGICAL_GENESIS.md | G* provenance/status context; master quadratic; k_phys = 16 |
 | DERIV_LATTICE_CHIRAL_ANOMALY.md | Anomalous U(1)_A; pi0 -> gamma gamma; baryogenesis |
 | DERIV_LATTICE_SU3_GAUGE.md | SU(3) gauge theory; beta function beta_0 = 7 = b_3 |
 | DERIV_HIGGS_FROM_MANIFESTATION.md | Higgs VEV v = 246 GeV |

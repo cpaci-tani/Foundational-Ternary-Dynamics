@@ -268,7 +268,7 @@ The roots are:
 | 7 | Coefficient 16 | [THEOREM] -- derived as z_BCC x 2 = 8 x 2 = 16 in FOUND_DIMENSIONAL_COUNTING.md Section 5.4; also |Aut(E)|^2 = 16 |
 | 8 | Master quadratic follows algebraically | [THEOREM given 6 and 7] |
 | 9 | Roots x_+ = 137.036, x_- = 3.024 | [THEOREM given 8] |
-| 10 | Physical identification x_+ = 1/alpha, x_- -> N_c | [SELECTION] |
+| 10 | Physical identification x_+ = 1/alpha, x_- -> N_c | [STRONGLY MOTIVATED CONJECTURE] |
 
 **Steps 0-5 are rock solid.** Steps 6-7 are the contested territory. Steps 8-9 are algebra. Step 10 is an identification, not a derivation.
 
@@ -417,9 +417,9 @@ The question is whether the construction is natural (each step forced by geometr
 
 - Steps 0-5 (lattice -> symmetry -> Watson integral -> lemniscatic modulus -> CM curve -> G\*) are **forced**. No choices are made. Any mathematician studying Z^3 would encounter these objects. [THEOREM]
 - Steps 6-7 (degree 2, coefficient 16): Degree 2 is argued via self-referential closure [SELECTION]. Coefficient 16 is now [THEOREM] via z_BCC x 2 = 16 (FOUND_DIMENSIONAL_COUNTING.md Section 5.4).
-- Step 10 (identification x_+ = 1/alpha) is **observed**, not derived. The numerical agreement is striking (1.26 ppm) but no dynamical mechanism produces alpha from the gap equation. [SELECTION]
+- Step 10 (identification x_+ = 1/alpha) is **observed**, not derived. The numerical agreement is striking (1.26 ppm) but no dynamical mechanism produces alpha from the gap equation. [STRONGLY MOTIVATED CONJECTURE]
 
-**Bottom line:** FTD has discovered a genuine mathematical connection between Z^3 lattice geometry and the number 137.036. Whether this connection has physical content -- whether it explains WHY alpha has this value -- depends on closing the gap at Steps 6-7. Until then, the connection is a provocation, not a proof.
+**Bottom line:** FTD has discovered a genuine mathematical connection between Z^3 lattice geometry and the number 137.036. Whether this connection has physical content -- whether it explains WHY alpha has this value -- depends on closing the physical-identification gap at Step 10. Until then, the connection is a provocation, not a proof.
 
 ---
 

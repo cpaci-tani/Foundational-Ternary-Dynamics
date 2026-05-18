@@ -171,7 +171,7 @@ x₋ = (-b - √D) / 2 = (140.0601 - 134.0122) / 2 = 3.0239639163
 - **x₊ = 137.0361714582** → 1/α (fine structure constant, 1.26 ppm accuracy)
 - **x₋ = 3.0239639163** → N_c (color charges via RG flow, 0.8% from 3)
 
-### Why x₊ = 1/α [SELECTION]
+### Why x₊ = 1/α [STRONGLY MOTIVATED CONJECTURE]
 The identification x₊ = 1/α depends on five selection principles (see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md)):
 1. **SP1**: CM preference for j = 1728 (selected, not uniquely forced)
 2. **SP2**: Lemniscatic curve selection among CM curves
@@ -524,9 +524,9 @@ m_p/m_e = n_eff/α + T(b_3+N_c) = 1836.47
 
 | ID | Conjecture | Previous | Current | Resolution | Depends On |
 |----|------------|----------|---------|------------|------------|
-| C1 | x₊ = 1/α | Conjecture | **[SELECTION]** | CM selection + quadratic form | SP1, SP2, SP3 |
+| C1 | x₊ = 1/α | Conjecture | **[STRONGLY MOTIVATED CONJECTURE]** | CM selection + quadratic form | SP1, SP2, SP3 |
 
-| C2 | x₋ → N_c = 3 | Conjecture | **[SELECTION]** | RG flow + confinement | SP3, empirical n_f = 6 |
+| C2 | x₋ → N_c = 3 | Conjecture | **[STRONGLY MOTIVATED CONJECTURE]** as root identification | RG flow + confinement | SP3, empirical n_f = 6 |
 | A1 | Why D = 3 | Axiom | **[SELECTION]** | Atomic stability + gauge + Fibonacci | Multiple sufficiency arguments |
 
 ### Previously Missing → Now COMPLETE

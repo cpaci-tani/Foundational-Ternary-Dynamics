@@ -651,7 +651,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | Master quadratic (16 algebraic forms) |
 | [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) | Master quadratic as domain connector |
 | [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) | $G^* = \varpi/\sqrt{\text{PF}}$ decomposition |
-| [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Constant chain $\gamma \to \varpi \to M \to \pi \to G^*$ |
+| [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas $\gamma \to \varpi \to M \to \pi \to G^*$; not the canonical $\alpha$ derivation chain |
 | [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) | 4-term precision formula |
 | [DERIV_LAMBDA_QCD_DERIVATION.md](../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | $\Lambda_{\text{QCD}}$ from dimensional transmutation |
 | [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | Honest derivation accounting |
@@ -666,8 +666,8 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-1 | $\mathcal{L}_{\text{RB}}$ reproduces v1.0 Klein-Gordon Lagrangian in weak-field limit | [THEOREM] | Taylor expansion (Theorem 3.1 of SPEC_FTD_LAGRANGIAN) |
 | SM-2 | $G^* = \varpi/\sqrt{\text{PF}}$ is the universal render bridge constant | [THEOREM] | Algebraic identity from $D = 3$ + $\varpi$ |
 | SM-3 | Master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ | [THEOREM] | SM-2, coefficient 16 from lattice DoF |
-| SM-4 | $x_+ = 1/\alpha$ (identification with fine structure constant) | [THEOREM] | SM-3 + CM selection (SP1-SP4) |
-| SM-5 | $x_- = 3.024$, $N_c = \lfloor x_- \rfloor = 3$ | [THEOREM] | SM-3 + RG flow argument |
+| SM-4 | $x_+ = 1/\alpha$ (identification with fine structure constant) | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013) | SM-3 + CM/uniqueness evidence; physical identification remains conjectural |
+| SM-5 | $x_- = 3.024$, $N_c = \lfloor x_- \rfloor = 3$ | [STRONGLY MOTIVATED CONJECTURE] as root identification (LEDGER FTD-0014) | SM-3 + RG/topology evidence; independent $N_c=3$ routes tracked separately |
 | SM-6 | Framework integers $\{3, 4, 7, 13\}$ are self-consistent | [THEOREM] | SM-5, AUDIT_SELF_CONSISTENCY |
 | SM-7 | U(1) gauge symmetry emerges from Gauss constraint | [THEOREM] | $\lambda_G \to \infty$ in $\mathcal{L}_{\text{RB}}$ |
 | SM-8 | SU(3) from flux triplet $(J_x, J_y, J_z)$ | [SELECTION] | $D = 3$ + complexification step |
@@ -679,7 +679,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-14 | $m_H = (N_{\text{eff}}/\alpha^2) \cdot m_e = 124.8$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0017) | SM-6, SM-12 |
 | SM-15 | $G_F = 1/(\sqrt{2}\,v^2)$ derived | [THEOREM] | SM-13 |
 | SM-16 | $M_W = 80.36$ GeV, $M_Z = 91.19$ GeV | [THEOREM] | SM-10, SM-13 |
-| SM-17 | $g_c = \sqrt{\alpha}$ | [THEOREM] | SM-4, action principle |
+| SM-17 | $g_c = \sqrt{\alpha}$ | [SELECTION / QED-facing correspondence] | Inherits SM-4; native FTD source-flux coupling is normalized separately |
 | SM-18 | $g - 2 = \alpha/(2\pi)$ from one-loop vertex correction | [THEOREM] | SM-7, SM-17, lattice Feynman rules |
 | SM-19 | QED beta function $\beta = 2\alpha^2/(3\pi)$ | [THEOREM] | SM-7, one-loop vacuum polarization |
 | SM-20 | QCD beta function $\beta_0 = 7$ | [THEOREM] | SM-5, SM-8 |

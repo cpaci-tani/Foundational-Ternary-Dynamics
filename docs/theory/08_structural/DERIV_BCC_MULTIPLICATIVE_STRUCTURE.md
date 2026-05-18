@@ -110,7 +110,7 @@ The gap equation `x^2 = K (x - G*)` with `K = n_DOF * 2pi * G_BCC(0)`:
 K = 16 * 2pi * G*^2 / (2pi) = 16 G*^2
 ```
 
-This is the master quadratic coefficient. With `K = 16 G*^2`, the roots are `x_+ = 1/alpha = 137.036` and `x_- = N_c = 3.024`.
+This is the master quadratic coefficient. With `K = 16 G*^2`, the roots are `x_+ ≈ 137.036` and `x_- ≈ 3.024`; the physical readings `x_+ ↔ 1/alpha` and `x_- ↔ N_c` remain [STRONGLY MOTIVATED CONJECTURE].
 
 No other sublattice's Watson integral produces this coefficient.
 

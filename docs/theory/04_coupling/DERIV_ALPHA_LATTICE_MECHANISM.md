@@ -11,7 +11,7 @@
 
 ## Abstract
 
-The identification x₊ = 1/α is classified as [SELECTION] (SP4) due to the absence of an unconditionally-derived physical mechanism connecting lemniscate geometry to electromagnetic coupling strength. Earlier drafts treated [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) as an upgrade path to conditional [THEOREM], but later audits showed that this imports standard lattice-QED machinery and does not uniquely select the FTD-to-EFT matching. The present status is more conservative: the arithmetic chain is strong, while the physical matching principle remains [OPEN]. This document traces the logical chain from the FTD lattice to the fine structure constant, showing that each step has existing support in the theory documents. The chain is:
+The identification x₊ = 1/α is classified as [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013) due to the absence of an unconditionally-derived physical mechanism connecting lemniscate geometry to electromagnetic coupling strength. Earlier drafts treated [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) as an upgrade path to conditional [THEOREM], but later audits showed that this imports standard lattice-QED machinery and does not uniquely select the FTD-to-EFT matching. The arithmetic chain is strong, while the physical matching principle remains conjectural. This document traces a supporting logical chain from the FTD lattice to the fine structure constant without promoting it to a derivation. The chain is:
 
 $$\mathbb{Z}^3 \;\xrightarrow{\text{geometry}}\; \text{cuboctahedron} \;\xrightarrow{\text{CM curve}}\; E: y^2 = x^3 - x \;\xrightarrow{\text{period}}\; G^* \;\xrightarrow{\text{self-consistency}}\; \alpha$$
 
@@ -139,11 +139,11 @@ This is analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c 
 | 5 | Self-referential closure | Degree 2 quadratic | Ternary constraint + CM field | [THEOREM] + [SELECTION] |
 | 6 | |Aut(E)|² | Coefficient 16 | Curve arithmetic | [MOTIVATED] |
 | 7 | Quadratic formula | x₊ = 137.036, x₋ = 3.024 | Algebra | [THEOREM] |
-| 8 | Force structure | x₊ = 1/α | EM as most direct coupling | [SELECTION] |
+| 8 | Force structure | x₊ = 1/α | EM as most direct coupling | [STRONGLY MOTIVATED CONJECTURE] |
 
-**What this chain accomplishes:** It traces a continuous logical path from the FTD lattice axiom (Z³) to the fine structure constant, through five intermediate results that are individually documented and verified. No step requires importing α from experiment.
+**What this chain accomplishes:** It traces a continuous supporting path from the FTD lattice axiom (Z³) to the fine structure bridge, through five intermediate results that are individually documented. It does not derive α from the lattice action.
 
-**What remains [OPEN]:** Step 3 (why the lattice's Z₄ symmetry selects this specific CM curve as physically relevant) and Step 8 (why the larger root specifically equals 1/α rather than some other physical constant) are [SELECTION] principles. The mechanism is traced but not uniquely forced.
+**What remains [OPEN]:** Step 3 (why the lattice's Z₄ symmetry selects this specific CM curve as physically relevant) and Step 8 (why the larger root specifically equals 1/α rather than some other physical constant) remain the active bridge gaps. The mechanism is traced but not uniquely forced.
 
 ---
 

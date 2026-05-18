@@ -33,7 +33,7 @@ The FTD derivation of α = 1/137.036 from G* is remarkable — but it involves s
    ↓
 6. Solve: x₊ = 137.036..., x₋ = 3.024...     ← MATHEMATICAL
    ↓
-7. x₊ = 1/α, x₋ → N_c = 3                    ← SELECTION (SP4); conditional-[THEOREM] upgrade via DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md
+7. x₊ ↔ 1/α, x₋ ↔ N_c = 3                    ← STRONGLY MOTIVATED CONJECTURE (SP4); continuum-QED route is supporting/historical, not a theorem upgrade
    See FOUND_FORCE_STRUCTURE.md §V (EM as most ontic)
    See EXPLR_GSTAR_FLUX_TIME.md (G* dimensional triad)
 ```
@@ -179,7 +179,7 @@ The evidence has strengthened substantially:
 
 1. **W₃ = G\*²/(2π)** [THEOREM] — G* is intrinsic to Z³, not externally imposed. The lattice's own Green's function IS G*. See DERIV_WATSON_GSTAR_IDENTITY.md.
 
-2. **1/α + N_c = 32πW₃** [THEOREM] — Both roots of the master quadratic are connected to the Watson integral. The sum of the electromagnetic and color couplings equals 32π times the lattice self-energy.
+2. **x₊ + x₋ = 32πW₃** [THEOREM] — Both master-quadratic roots are connected to the Watson integral. Reading this as `1/α + N_c` is conditional on the SMC physical identifications.
 
 3. **EM is the most direct force** [SELECTION] — Electromagnetism emerges at α¹ (no additional algebraic structure). Other forces require additional layers: weak at α⁸, gravity at α²⁰. See FOUND_FORCE_STRUCTURE.md §V.
 
@@ -299,7 +299,7 @@ This would test the framework's robustness.
 | SP1b: Curve governs physics | Periods → couplings | Watson-G* identity (W₃ = G*²/(2π)) | [SELECTION] |
 | SP2: Polynomial degree | Quadratic | Self-referential closure + CM field degree 2 | **[PARTIALLY RESOLVED]** |
 | SP3: Coefficient | 16 | Aut(E)² = Stab(O_h) = temporal gauge DOF | **[STRONGLY MOTIVATED]** |
-| SP4: Identification | x₊ = 1/α | Watson identity + force structure + 1/α+N_c=32πW₃ | **[SELECTION]** |
+| SP4: Identification | x₊ = 1/α | Watson identity + force structure + conditional `1/α+N_c=32πW₃` bridge | **[STRONGLY MOTIVATED CONJECTURE]** |
 | SP5: Integers | {3,4,7,13} | Cuboctahedral geometry in Z³ | **[PARTIALLY RESOLVED]** |
 
 ---
