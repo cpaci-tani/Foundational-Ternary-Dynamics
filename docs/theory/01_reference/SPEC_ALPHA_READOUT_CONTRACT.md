@@ -3,13 +3,15 @@
 **Tag:** [REFERENCE] / [OPEN PROGRAM]
 **Date:** 2026-05-18
 **LEDGER:** FTD-0152 [SYNTHESIS] - formalizes MC-T4.3 closure criteria; introduces no new theorem and promotes no claim.
-**Companion docs:** `SPEC_PHYSICS_BRIDGE.md`, `SPEC_FQCR.md`, `SPEC_DOCTRINE_LEDGER.md`, `SPEC_OPEN_MATH_BY_SECTOR.md`, `FOUND_STRUCTURAL_DECOUPLING.md`
+**Companion docs:** `SPEC_MATH_FIRST_ONTOLOGY.md`, `SPEC_PHYSICS_BRIDGE.md`, `SPEC_FQCR.md`, `SPEC_DOCTRINE_LEDGER.md`, `SPEC_OPEN_MATH_BY_SECTOR.md`, `FOUND_STRUCTURAL_DECOUPLING.md`
 
 ---
 
 ## 0. Purpose
 
 This document states what it would mean to "earn the map" from the FTD/FQCR algebraic spine to the physical electromagnetic coupling.
+
+It is the alpha-sector specialization of the math-first ontology in `SPEC_MATH_FIRST_ONTOLOGY.md`: finite invariant structure is primary, but physical constants require admissible operational readouts.
 
 The current canonical status is:
 

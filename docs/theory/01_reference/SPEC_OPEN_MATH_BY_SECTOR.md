@@ -9,6 +9,7 @@
 - [`SPEC_DOCTRINE_LEDGER.md`](SPEC_DOCTRINE_LEDGER.md) — single-page status map (closed + open)
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — 9-theorem canonical reference
 - [`SPEC_FQCR.md`](SPEC_FQCR.md) — FQCR Models I–V
+- [`SPEC_MATH_FIRST_ONTOLOGY.md`](SPEC_MATH_FIRST_ONTOLOGY.md) — primitives -> invariants -> readouts -> physics ordering principle
 - [`SPEC_ALPHA_READOUT_CONTRACT.md`](SPEC_ALPHA_READOUT_CONTRACT.md) — MC-T4.3 closure contract / "earn the map" criteria
 - [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) — atomic per-claim provenance
 - [`../07_assessment/TRACKER_ONTIC_TRUTH.md`](../07_assessment/TRACKER_ONTIC_TRUTH.md) — T1–T5 tiers
