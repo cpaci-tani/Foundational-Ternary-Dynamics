@@ -3,7 +3,7 @@
 **Tag:** [REFERENCE]
 **Date:** 2026-05-05 (Phase R1 of the FTD-EFT roadmap)
 **Status:** [REFERENCE] — categorised inventory of every document in `docs/theory/10_eft_program/` with current epistemic tags + dependencies.
-**Purpose:** Replace `00_INDEX.md` as the navigational entry point for the FTD-native EFT program. After the 2026-04-22 methodological pivot (QED-α projection closed-negative; FTD-native blocking EFT became the active program — see `OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`), the program accumulated ~105 documents across kinematic / dynamic / measurement / audit / decision / protocol / pre-registration / status / open / theorem / spec / analysis families. This INDEX makes that body legible without needing a depth-first scan.
+**Purpose:** Replace archived `archive/ARCH_00_INDEX_2026-04-27.md` as the navigational entry point for the FTD-native EFT program. After the 2026-04-22 methodological pivot (QED-α projection closed-negative; FTD-native blocking EFT became the active program — see `OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`), the program accumulated ~105 documents across kinematic / dynamic / measurement / audit / decision / protocol / pre-registration / status / open / theorem / spec / analysis families. This INDEX makes that body legible without needing a depth-first scan.
 
 > **How to use this document**:
 > 1. To find the canonical specification for a topic → look in **§2 SPEC** first.
@@ -108,7 +108,7 @@ Empirical results. Every entry corresponds to a CTest or campaign output.
 |---|---|---|---|---|
 | `AUDIT_ALPHA_EXTRACTION.md` | 2026-04-19 | [AUDIT] | Line-by-line audit of Phase F α extraction; resolves 1.8× residual as lattice-Coulomb geometry. | DERIV_EMERGENT_COULOMB_GEOMETRIC |
 | `AUDIT_ALPHA_SCALING_L256.md` | 2026-04-20 | [MEASURED] | T=0 α_eff scaling clean to L=256; thermal α extraction untractable. | Langevin-GPU validation |
-| `AUDIT_BCC_SUBLATTICE_SPECTRUM.md` | 2026-04-27 | [CLOSED NEGATIVE] | Mechanism C BCC ratio misses prediction 45.31 by ≥10σ at L∈{24,32,48}. | DERIV_MECHANISM_C_GC_BCC_BRIDGE |
+| `AUDIT_BCC_SUBLATTICE_SPECTRUM.md` | 2026-04-27 | [CLOSED NEGATIVE] | Mechanism C BCC ratio misses prediction 45.31 by ≥10σ at L∈{24,32,48}. | `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` |
 | `AUDIT_CONTINUUM_LIMIT.md` | 2026-04-27 | [PARTIAL] | Operator-mixing matrix convergence at L∈{16,32,64}; cond(S), eigenvalue positivity, RG semigroup tracked. | FTD-0098/0099 |
 | `AUDIT_EFT_BCC_ORTHOGONALITY.md` | 2026-04-20 | [AUDIT] | Link 8 BCC-orthogonality does not invalidate existing claims. | AUDIT_LINK8_CLOSURE |
 | `AUDIT_FTD0105_MATH_CHECK.md` | 2026-04-27 | [AUDIT] | Math audit of lemniscatic-replacement; holds with two corrigenda. | ANALYSIS_LEMNISCATIC_REPLACEMENT |
@@ -167,7 +167,7 @@ PROTOCOL_*.md = measurement specifications. PREREG_*.md = hash-locked pre-regist
 
 | File | Date | Status | Purpose |
 |---|---|---|---|
-| `OPEN_A_PHYS_DERIVATION.md` | 2026-04-23 | [CLOSED — RESOLVED] | Closed by no-go theorem; calibration only (see THEOREM_A_PHYS_NO_GO). |
+| `archive/resolved/OPEN_A_PHYS_DERIVATION.md` | 2026-04-23 | [CLOSED — RESOLVED] | Closed by no-go theorem; calibration only (see THEOREM_A_PHYS_NO_GO). |
 | `OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md` | 2026-04-23 | [OPEN] | Nonlinear effective action after blocking [OPEN]; linear form [SELECTION]. **Central R3 deliverable.** |
 | `OPEN_FTD_TO_EFT_BRIDGE_STATUS.md` | 2026-04-22 | [OPEN] | Bridge status: gates 1–7 summary; 1–4 [PARTIAL], 5–6 [PARTIAL], 7 [OPEN]. |
 | `OPEN_GC_FROM_FIRST_PRINCIPLES.md` | 2026-04-19 | [OPEN] | $g_c$ remains open after Mechanisms A–C closures; dimensionless origin unknown. |
@@ -192,11 +192,11 @@ PROTOCOL_*.md = measurement specifications. PREREG_*.md = hash-locked pre-regist
 
 | File | Date | Status | Purpose |
 |---|---|---|---|
-| `DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md` | 2026-04-23 | [CLOSED NEGATIVE] | $a_\text{phys}$ not derivable from information-density/CFL. |
-| `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` | 2026-04-19 | [CLOSED NEGATIVE] | Gravitational $a_\text{phys}$ mechanism closed. |
-| `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` | 2026-04-23 | **RETRACTED** | Calibration substitution, not derivation. |
-| `DERIV_MECHANISM_B_GC_DERIVATION.md` | 2026-04-25 | [CLOSED NEGATIVE] | $g_c$ matching procedure circular. |
-| `DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` | 2026-04-26 | [CONJECTURE → CLOSED NEGATIVE] | BCC bridge to $g_c$; closed by AUDIT_BCC_SUBLATTICE_SPECTRUM. |
+| `archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md` | 2026-04-23 | [CLOSED NEGATIVE] | $a_\text{phys}$ not derivable from information-density/CFL. |
+| `archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` | 2026-04-19 | [CLOSED NEGATIVE] | Gravitational $a_\text{phys}$ mechanism closed. |
+| `archive/retracted/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` | 2026-04-23 | **RETRACTED** | Calibration substitution, not derivation. |
+| `archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md` | 2026-04-25 | [CLOSED NEGATIVE] | $g_c$ matching procedure circular. |
+| `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` | 2026-04-26 | [CONJECTURE → CLOSED NEGATIVE] | BCC bridge to $g_c$; closed by AUDIT_BCC_SUBLATTICE_SPECTRUM. |
 
 ---
 
@@ -220,6 +220,12 @@ These docs are preserved to prevent zombie re-emergence of closed approaches. Do
 | `archive/.../DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` | [CLOSED NEGATIVE] | $x_+$ source-current normalization. |
 | `archive/.../OPEN_FTD_TO_EFT_MATCHING.md` | [CLOSED NEGATIVE] | FTD-→-EFT matching via projected lattice. |
 | `archive/.../OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` | [CLOSED NEGATIVE] | Projected EFT renormalization + α_observable. |
+| `archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md` | [CLOSED NEGATIVE] | $a_\text{phys}$ information-density/CFL route. |
+| `archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` | [CLOSED NEGATIVE] | $a_\text{phys}$ gravitational route. |
+| `archive/retracted/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` | [RETRACTED] | Calibration-substitution false positive. |
+| `archive/resolved/OPEN_A_PHYS_DERIVATION.md` | [CLOSED — RESOLVED] | $a_\text{phys}$ open problem closed by no-go theorem. |
+| `archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md` | [CLOSED NEGATIVE] | $g_c$ lattice-continuum matching route. |
+| `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` | [CLOSED NEGATIVE] | $g_c$ BCC bridge-operator route. |
 
 ---
 

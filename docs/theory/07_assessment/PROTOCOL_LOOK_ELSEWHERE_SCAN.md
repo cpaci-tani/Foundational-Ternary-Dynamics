@@ -233,7 +233,7 @@ The L2 identity (FTD-0094) status post-scan:
 - `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md` — the
   ~129 PARAMETRIC entries the scan is implicitly testing against.
 - `docs/theory/07_assessment/LEDGER.md` — claim base.
-- `docs/theory/10_eft_program/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093) — Mechanism C derivation.
+- `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093) — Mechanism C derivation.
 - `docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` — the
   D2 BCC measurement, whose results combine with this scan's outcome
   per the §7 verdict matrix.

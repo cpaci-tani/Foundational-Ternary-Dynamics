@@ -666,7 +666,7 @@ where $81 = 3^4$ is the correction term (also related to Fibonacci: $81 \approx 
 ::: {.callout-important}
 ## Epistemic Status — [CLOSED NEGATIVE 2026-04-23]
 
-The composition constant $K_{\text{comp}} = m_e/\pi$ does **not** reach the precision claimed in the table above. Direct numerical audit (see `docs/theory/03_derivations/DERIV_KCOMP_CIRCLE_TO_SPHERE.md` and LEDGER row FTD-0060):
+The composition constant $K_{\text{comp}} = m_e/\pi$ does **not** reach the precision claimed in the table above. Direct numerical audit (see `docs/theory/archive/ARCH_DERIV_KCOMP_CIRCLE_TO_SPHERE.md` and LEDGER row FTD-0060):
 
 - The offset needed to match the proton to experiment is $0.31532\, m_e$, not $0.31831\, m_e = m_e/\pi$. Gap: 0.95% (= **1.53 keV** residual in $M_p$, not 0.4 keV).
 - Neutron: needed offset $0.31479\, m_e$. Residual using $K = m_e/\pi$ is **1.80 keV**, not <1 eV.
@@ -676,7 +676,7 @@ No FTD-primitive mechanism (Moore-shell integration, three-quark worldline closu
 
 The underlying 174-ppm gap in $m_p/m_e = N_{\text{eff}}/\alpha + N_{\text{base}}\,N_{\text{eff}} + N_c$ remains genuinely [OPEN]. The Fibonacci-number appearances noted in the derivation are unexplained.
 
-The baryon formulas in this chapter should therefore be read as *fitting forms* with good approximate structure, not derivations; the precision figures in the Summary table are incorrect by ~3 orders of magnitude for the proton and neutron. See `DERIV_KCOMP_CIRCLE_TO_SPHERE.md` §2 for the full audit and §5 for recommended corrections.
+The baryon formulas in this chapter should therefore be read as *fitting forms* with good approximate structure, not derivations; the precision figures in the Summary table are incorrect by ~3 orders of magnitude for the proton and neutron. See `ARCH_DERIV_KCOMP_CIRCLE_TO_SPHERE.md` §2 for the full audit and §5 for recommended corrections.
 :::
 
 ### Numerical Verification of $K_{\text{comp}}$
