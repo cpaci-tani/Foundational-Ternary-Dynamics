@@ -27,6 +27,21 @@
 
 ---
 
+## Documentation Cleanup Discipline
+
+> **These rules are mandatory for AI cleanup work.** The goal is persistent consolidation, not one-off tidying that creates future drift.
+
+- **Preserve provenance; move, do not erase.** Superseded, retracted, resolved, and closed-negative theory documents should be archived with `git mv`, not deleted, unless the user explicitly asks for deletion.
+- **Keep active directories active.** Documents whose live status is `[CLOSED NEGATIVE]`, `[RETRACTED]`, or `[CLOSED -- RESOLVED]` should live under `docs/theory/archive/` or a local archive such as `docs/theory/10_eft_program/archive/{closed_negative,resolved,retracted}/`.
+- **Track cleanup provenance deliberately.** Theory archives used as canonical cleanup provenance must be tracked in git. The top-level `archive/` directory remains ignored. Local cleanup archives such as `docs/theory/10_eft_program/archive/**` are tracked wholesale; the broad `docs/theory/archive/` directory uses explicit `.gitignore` exceptions, so add a matching exception whenever a new canonical top-level archived file is introduced.
+- **Update all navigation layers in the same cleanup.** If a file is moved or status-changed, update the relevant index/tracker/spec references in the same commit: `docs/theory/META_INDEX.md`, local sub-indexes such as `docs/theory/10_eft_program/INDEX_FTD_NATIVE_EFT.md`, `docs/theory/07_assessment/LEDGER.md`, `TRACKER_OPEN_ITEMS.md`, and any project-level maps that link to the file.
+- **Open trackers must contain open work.** Do not leave closed, retracted, or resolved items counted as `[OPEN]`. Either remove them from `TRACKER_OPEN_ITEMS.md`, move them to a resolved/provenance tracker, or clearly mark them as "not counted as open" until a resolved tracker exists.
+- **Do not promote claims during cleanup.** Cleanup may clarify status, archive provenance, and align links; it must not upgrade epistemic tags or introduce new derivations without a separate audit.
+- **Verify before committing.** At minimum run `git diff --check` and `rg` for old active paths after any move. Use documentation/link checks only; do not run numerical near-miss or coincidence searches as part of cleanup.
+- **Commit cleanup in small coherent batches.** Prefer one commit per cleanup theme (archive tracking, tracker split, index reconciliation, sector consolidation) so future agents can audit the history.
+
+---
+
 ## What FTD Is
 
 A discrete computational framework for simulating physical systems from explicit postulates. The model postulates a 3D cubic lattice where each site ("voxel") occupies one of three states: void (0), positive (+1), or negative (−1). Dynamics proceed via local update rules within a 26-connected Moore neighborhood, with information propagating at maximum one lattice unit per discrete time step.
