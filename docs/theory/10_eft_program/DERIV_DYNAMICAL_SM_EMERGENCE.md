@@ -19,7 +19,7 @@
 >   takes definite values at each L (see Phase 4 results table). The 1/L² fit
 >   gives α_largeL ≈ 3.6 · α_ref. **Whether this large-L value matches α_ref
 >   is a calibration question conditional on `a_phys`, not a convergence
->   theorem.** See [OPEN_A_PHYS_DERIVATION.md](OPEN_A_PHYS_DERIVATION.md) for
+>   theorem.** See [OPEN_A_PHYS_DERIVATION.md](archive/resolved/OPEN_A_PHYS_DERIVATION.md) for
 >   the calibration framework. The 3.6× plateau in the EFT campaign is therefore
 >   a predicted consequence of the framework's current `a_phys` choice, not an
 >   unexplained anomaly. Under any specific calibration declaration (e.g.,

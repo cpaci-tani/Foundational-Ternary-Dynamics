@@ -4,7 +4,7 @@
 **Date:** 2026-04-23
 **LEDGER row:** FTD-0059
 **Dependencies:** Axiom Zero (Postulates 1–5), LEDGER FTD-0030 (a_phys resolved-by-calibration), FTD-0041 (a_phys ≡ ℓ_P declaration).
-**Supersedes status of:** `OPEN_A_PHYS_DERIVATION.md` (now [CLOSED — RESOLVED BY THEOREM]).
+**Supersedes status of:** `archive/resolved/OPEN_A_PHYS_DERIVATION.md` (now [CLOSED — RESOLVED BY THEOREM]).
 
 ---
 
@@ -60,7 +60,7 @@ Every dimensional FTD prediction is conditional on exactly **one calibration per
 - `c_lat = 1/√3 ↔ c_phys` promotes the length fix to a time fix.
 - `c² = E/M` promotes the mass fix to an energy fix.
 
-This is the calibration basis declared in `docs/SPEC_FTD.md` "LATTICE ↔ PHYSICAL CALIBRATION." Adding a third independent dimensional anchor (e.g., a separately-calibrated `ℏ`) would over-determine the system and must be checked for consistency with the two primary anchors — the retracted `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` failed this consistency check.
+This is the calibration basis declared in `docs/SPEC_FTD.md` "LATTICE ↔ PHYSICAL CALIBRATION." Adding a third independent dimensional anchor (e.g., a separately-calibrated `ℏ`) would over-determine the system and must be checked for consistency with the two primary anchors — the retracted `archive/retracted/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` failed this consistency check.
 
 ### 4.3 · Dimensionless predictions are the falsifiable spine
 
@@ -106,9 +106,9 @@ This is the same epistemic position occupied by every effective field theory at 
 
 ```
 docs/SPEC_FTD.md                                                   # LATTICE ↔ PHYSICAL CALIBRATION
-docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md  # Mechanism δ (closure)
-docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md  # Mechanism γ (closure)
-docs/theory/10_eft_program/OPEN_A_PHYS_DERIVATION.md                # closed open-problem doc
+docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md  # Mechanism δ (closure)
+docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md  # Mechanism γ (closure)
+docs/theory/10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md                # closed open-problem doc
 docs/theory/07_assessment/LEDGER.md                                 # FTD-0030, FTD-0041, FTD-0059
 docs/theory/02_foundations/FOUND_AXIOM_ZERO.md                      # Axiom Zero definition
 ```

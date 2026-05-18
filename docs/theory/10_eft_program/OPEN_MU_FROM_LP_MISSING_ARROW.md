@@ -192,12 +192,12 @@ move after the §4 ring-algebra extension.
 
 - `docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md` (FTD-0059) — the
   precedent no-go theorem for length.
-- `docs/theory/10_eft_program/OPEN_A_PHYS_DERIVATION.md` (FTD-0030, archived
+- `docs/theory/10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md` (FTD-0030, archived
   closed) — Mechanism α/β/γ/δ closure record for the length side.
 - `docs/SPEC_FTD.md` — calibration declaration block (mass-unit, a_phys, tick).
 - `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md` (FTD-0095) — the
   ontology side of L2 (mass-as-functional).
-- `docs/theory/10_eft_program/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093) —
+- `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093) —
   the derivation side of L2 (Mechanism C).
 - `docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093) —
   the falsifier.

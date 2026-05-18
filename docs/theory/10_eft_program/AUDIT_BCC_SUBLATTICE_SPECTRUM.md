@@ -4,7 +4,7 @@
 **Date:** 2026-04-27 (L=48 datapoint appended same-day)
 **Status:** D6 audit closure of [`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
 **Pre-registered prediction (FTD-0093 §3):** BCC sub-stencil two-state spectrum ratio λ₊/λ₋ ≈ 45.31 = X_PLUS/X_MINUS = 137.04/3.024
-**Companion docs:** [`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`](DERIV_MECHANISM_C_GC_BCC_BRIDGE.md), [`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
+**Companion docs:** [`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`](archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md), [`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md)
 
 ---
 
@@ -107,7 +107,7 @@ These are follow-up campaigns, not part of D6.
   - `engine/results/bcc_spectrum_2026-04-27/L32/{spectrum,stencil_aggregate,meta}.csv`
   - `engine/results/bcc_spectrum_2026-04-27/L48/{spectrum,stencil_aggregate,meta}.csv`
 - LEDGER updates: FTD-0093 → [CLOSED NEGATIVE]; FTD-0094 → [PARAMETRIC] (terminal demotion conditional on FTD-0096 OPEN)
-- DERIV: [`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`](DERIV_MECHANISM_C_GC_BCC_BRIDGE.md) — original conjecture document
+- DERIV: [`DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`](archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md) — original conjecture document
 
 ---
 

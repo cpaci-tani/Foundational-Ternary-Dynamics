@@ -115,11 +115,11 @@ The new native program changes the question. It asks for:
 | Structure-2 scalar gauge completion | `AUDIT_STRUCTURE2_WARD_VALIDATION.md` | Closed negative | Natural scalar cases S2-A through S2-E fail threshold |
 | Fermionic QED completion | `DERIV_LATTICE_QED_COMPLETE.md` | [SELECTION] | Fermion content and doubler handling are not forced by FTD axioms |
 | Projected matter/current coupling | `DERIV_PROJECTED_EFT_MATTER_COUPLING.md` | Partial native result | Native current/coupling dictionary survives; QED charge normalization closed negative under current action |
-| Projected Dirac operator and charge normalization | `DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` | Historical QED-facing candidate | Dirac candidate fixed symbolically; `e0^2 = 1/x_+` not derived |
-| Projected EFT renormalization and alpha observable | `OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` | Closed negative / superseded | Replaced by FTD-native electrodynamics target |
-| Projected stiffness route `K_T,0 = x_+` | `DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md` | Closed negative | Current action gives canonical transverse stiffness, not `x_+` |
-| Projected response-eigenvalue route | `DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md` | Closed negative under current action | Master quadratic has an algebraic matrix representation, but current projected EFT does not derive the two-sector response matrix |
-| Source-current normalization route `e0^2 = 1/x_+` | `DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` | Closed negative under current action | Ternary source transport fixes integer charge and current conservation, not the physical coupling magnitude |
+| Projected Dirac operator and charge normalization | `archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` | Historical QED-facing candidate | Dirac candidate fixed symbolically; `e0^2 = 1/x_+` not derived |
+| Projected EFT renormalization and alpha observable | `archive/closed_negative/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` | Closed negative / superseded | Replaced by FTD-native electrodynamics target |
+| Projected stiffness route `K_T,0 = x_+` | `archive/closed_negative/DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md` | Closed negative | Current action gives canonical transverse stiffness, not `x_+` |
+| Projected response-eigenvalue route | `archive/closed_negative/DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md` | Closed negative under current action | Master quadratic has an algebraic matrix representation, but current projected EFT does not derive the two-sector response matrix |
+| Source-current normalization route `e0^2 = 1/x_+` | `archive/closed_negative/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` | Closed negative under current action | Ternary source transport fixes integer charge and current conservation, not the physical coupling magnitude |
 | Regulator/counterterm prescription for QED alpha | `AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md`, FTD-0056 | Closed negative for old target | Unrenormalized BCC tadpole has no continuum limit |
 | Physical alpha observable | Coupling docs and audits | Superseded | QED alpha is now an external comparison, not the primary FTD observable |
 | FTD-native electrodynamics replacement | `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md`, `DERIV_FTD_NATIVE_RESPONSE_TUPLE.md`, `DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` | Active target | Native response observables replace QED alpha as the primary physics goal; bare canonical tuple is closed, native scale flow remains open |
@@ -184,7 +184,7 @@ The next useful work is theoretical, not computational:
 1. **State-to-field dictionary:** initial result recorded in `DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`. FTD naturally gives a signed source coupled to a physical vector flux.
 2. **Emergent U(1) projection:** initial result recorded in `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`. U(1)-like redundancy is best treated as an auxiliary-potential redundancy of transverse projected flux, not as a microscopic freedom of `J`.
 3. **Matter/current coupling:** initial result recorded in `DERIV_PROJECTED_EFT_MATTER_COUPLING.md`. Native matter is signed source/worldline matter; projected radiative coupling uses `j_T · A_T`; Dirac matter is the best QED-facing completion but remains selected.
-4. **Projected Dirac/charge normalization:** initial result recorded in `DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md`. Central-difference Dirac is the minimal symbolic candidate; ternary charge fixes integer `q`, not `e0`; after the stiffness, response-eigenvalue, and source-current attempts, `x_+` is arithmetic-only under the current projected action unless a new normalization theorem is supplied.
+4. **Projected Dirac/charge normalization:** initial result recorded in `archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md`. Central-difference Dirac is the minimal symbolic candidate; ternary charge fixes integer `q`, not `e0`; after the stiffness, response-eigenvalue, and source-current attempts, `x_+` is arithmetic-only under the current projected action unless a new normalization theorem is supplied.
 5. **Operator choice and renormalization prescription:** decide whether physical electromagnetism lives on the engine `(SC+FCC)/2` operator, the BCC arithmetic sector, or a derived composite, then state the allowed counterterms before computing loop corrections.
 6. **Only then rerun numerics:** fixed verification computations are allowed after the matching rule is written down.
 
@@ -242,7 +242,7 @@ The next bridge target is charge normalization and the projected Dirac operator.
 
 ### 2026-04-22 projected-Dirac result
 
-`DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` adds the charge gate:
+`archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` adds the charge gate:
 
 ```text
 q from ternary source alphabet        supported
@@ -255,7 +255,7 @@ The next bridge target is now the regulator/counterterm/observable gate.
 
 ### 2026-04-22 renormalization/observable gate
 
-`OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` reduces the remaining bridge to one precise decision:
+`archive/closed_negative/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` reduces the remaining bridge to one precise decision:
 
 ```text
 derive how x_+ enters the projected EFT:
@@ -269,7 +269,7 @@ No new alpha loop calculation should be classified as a framework prediction unt
 
 ### 2026-04-22 stiffness attempt
 
-`DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md` tests R1 and closes it negative under the current action:
+`archive/closed_negative/DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md` tests R1 and closes it negative under the current action:
 
 ```text
 native projected transverse stiffness K_T,0 = 1     supported
@@ -280,7 +280,7 @@ That left R3 as the next algebraically natural question, because the master quad
 
 ### 2026-04-22 response-eigenvalue attempt
 
-`DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md` tests R3 and closes it negative under the current projected action:
+`archive/closed_negative/DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md` tests R3 and closes it negative under the current projected action:
 
 ```text
 master quadratic as 2 x 2 characteristic polynomial       algebraically valid
@@ -297,7 +297,7 @@ R4. keep x_+ as arithmetic-only
 
 ### 2026-04-22 source-current normalization attempt
 
-`DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` tests R2 and closes it negative under the current projected action:
+`archive/closed_negative/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` tests R2 and closes it negative under the current projected action:
 
 ```text
 signed source alphabet                 supported

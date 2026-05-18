@@ -10,14 +10,14 @@
 >
 > **What (if anything) is worth preserving here.** The algebraic rearrangement in §2 is a legitimate dimensional-consistency exercise: *given* `c_lat = 1/√3`, `G_N(lat) = 0.01`, and **some** mass calibration, the three conversion factors are linked by one scalar equation. The number `√(100/(3√3)) ≈ 4.387` is the consistency ratio one gets *if* the mass calibration is fixed by `ℏ_lat = 1` instead of `K_B = m_e`. It is not Axiom-Zero-forced and should not be quoted as a prediction of the framework.
 >
-> **Disposition.** This file is retained in place for epistemic transparency (mirroring the ATTEMPT doc's own "retained for transparency" note). Do not cite §4 "Verdict" as current. If citing this file at all, cite this preamble and the closure in `OPEN_A_PHYS_DERIVATION.md` + LEDGER FTD-0030/0041.
+> **Disposition.** This file is retained in place for epistemic transparency (mirroring the ATTEMPT doc's own "retained for transparency" note). Do not cite §4 "Verdict" as current. If citing this file at all, cite this preamble and the closure in `../resolved/OPEN_A_PHYS_DERIVATION.md` + LEDGER FTD-0030/0041.
 
 ---
 
 <!-- ORIGINAL (RETRACTED) CONTENT BELOW — do not cite as current -->
 
-**Tag:** [THEOREM] — closes the load-bearing problem identified in `OPEN_A_PHYS_DERIVATION.md`.
-**Status:** **Complete**. Derives the physical length scale of one voxel ($a_{phys}$) strictly from Axiom-Zero combinatorics, without empirical parameter matching. Replaces the failed attempt documented in `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`.
+**Tag:** [THEOREM] — closes the load-bearing problem identified in `../resolved/OPEN_A_PHYS_DERIVATION.md`.
+**Status:** **Complete**. Derives the physical length scale of one voxel ($a_{phys}$) strictly from Axiom-Zero combinatorics, without empirical parameter matching. Replaces the failed attempt documented in `../closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`.
 
 ---
 

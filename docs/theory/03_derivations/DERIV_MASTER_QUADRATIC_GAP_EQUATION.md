@@ -4,7 +4,7 @@
 
 **Status:** [THEOREM] for the algebra; [STRONGLY MOTIVATED CONJECTURE] for the physical identification.
 **Dependencies:** DERIV_WATSON_GSTAR_IDENTITY.md, DERIV_QUADRATIC_NECESSITY.md, DERIV_DUAL_DERIVATION_OF_16.md, FOUND_DIMENSIONAL_COUNTING.md, FOUND_BORN_RULE_NULL_CONE.md.
-**See also:** AUDIT_INFINITY_REFRAME.md (undefined-boundary ontology), OPEN_A_PHYS_DERIVATION.md (calibration question).
+**See also:** AUDIT_INFINITY_REFRAME.md (undefined-boundary ontology), `../10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md` (closed calibration question).
 
 ---
 
@@ -140,7 +140,7 @@ This document does not claim:
 
 - That the master quadratic is the L → ∞ limit of a finite-L gap equation. (It is not. The finite-L scan does not converge to (137.036, 3.024); the L = 2 partition function carries no master-quadratic signature; the undefined-boundary ontology rules out load-bearing L → ∞ steps.)
 - That the physical identification is a [THEOREM]. It is [STRONGLY MOTIVATED CONJECTURE], anchored on the dual match and CM-curve uniqueness.
-- That a dynamical mechanism for $x_+ = 1/\alpha$ has been derived from FTD's local update rules. No such mechanism is currently in hand; the open problem of deriving the Coulomb coupling $g_c$ from first principles is documented in OPEN_GC_FROM_FIRST_PRINCIPLES.md, and the conversion-factor question is documented in OPEN_A_PHYS_DERIVATION.md.
+- That a dynamical mechanism for $x_+ = 1/\alpha$ has been derived from FTD's local update rules. No such mechanism is currently in hand; the open problem of deriving the Coulomb coupling $g_c$ from first principles is documented in `../10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md`, and the conversion-factor question is closed by `../10_eft_program/THEOREM_A_PHYS_NO_GO.md` with provenance in `../10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md`.
 
 ---
 
@@ -177,7 +177,7 @@ What it does **not** establish:
 - A dynamical derivation of $1/\alpha$ from FTD's local update rules.
 - Convergence of any finite-L self-consistency equation to the master quadratic. (The earlier "thermodynamic limit" framing is withdrawn; see AUDIT_INFINITY_REFRAME.md and AUDIT_MASTER_QUADRATIC.md.)
 - A first-principles derivation of the Coulomb coupling $g_c$ (open: OPEN_GC_FROM_FIRST_PRINCIPLES.md).
-- A first-principles derivation of the lattice-to-physical conversion $a_\mathrm{phys}$ (open: OPEN_A_PHYS_DERIVATION.md).
+- A first-principles derivation of the lattice-to-physical conversion $a_\mathrm{phys}$ (closed negative by `../10_eft_program/THEOREM_A_PHYS_NO_GO.md`; provenance: `../10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md`).
 
 ---
 
@@ -236,4 +236,4 @@ The operator interpretation is therefore complementary to the algebraic / number
 - AUDIT_MASTER_QUADRATIC.md — Full epistemic audit of the master quadratic.
 - AUDIT_INFINITY_REFRAME.md — Undefined-boundary ontology, position-property axiom.
 - OPEN_GC_FROM_FIRST_PRINCIPLES.md — Coulomb-coupling derivation status.
-- OPEN_A_PHYS_DERIVATION.md — Lattice-to-physical-length conversion status.
+- `../10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md` — archived lattice-to-physical-length conversion status.

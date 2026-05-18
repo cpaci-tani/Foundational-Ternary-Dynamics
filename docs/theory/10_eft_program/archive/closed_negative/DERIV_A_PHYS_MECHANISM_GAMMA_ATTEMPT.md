@@ -2,7 +2,7 @@
 
 > **[CLOSED NEGATIVE 2026-04-19]** — Mechanism γ does not deliver a first-principles `a_phys`. The framework's disposition is the fallback in §4: declare `a_phys ≡ ℓ_P` as a calibration. This declaration is now authoritative in `docs/SPEC_FTD.md` ("LATTICE ↔ PHYSICAL CALIBRATION") and recorded in `docs/theory/07_assessment/LEDGER.md` as rows **FTD-0030 (RESOLVED-BY-CALIBRATION)** and **FTD-0041 (CALIBRATION)**. See also `docs/WHERE_WE_LEFT_OFF.md` §4.
 >
-> **Note on a later document.** A file named `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` in this same directory claims to supersede this one with a `[THEOREM]` tag and `a_phys ≈ 4.39 ℓ_P`. That claim was **retracted on 2026-04-23** (see preamble in that file): its "derivation" silently swaps the `K_B = m_e` mass calibration for `ℏ_lat = 1`, which is the same class of calibration-shuffle this ATTEMPT document already identified (§2.3). The authoritative closure is the one in this document and in FTD-0030/0041, not the retracted SUCCESS claim.
+> **Note on a later document.** A file named `../retracted/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` claims to supersede this one with a `[THEOREM]` tag and `a_phys ≈ 4.39 ℓ_P`. That claim was **retracted on 2026-04-23** (see preamble in that file): its "derivation" silently swaps the `K_B = m_e` mass calibration for `ℏ_lat = 1`, which is the same class of calibration-shuffle this ATTEMPT document already identified (§2.3). The authoritative closure is the one in this document and in FTD-0030/0041, not the retracted SUCCESS claim.
 
 **Tag:** [CLOSED NEGATIVE] — no first-principles `a_phys`; reverts to calibration.
 **Status:** **Closed.** Fallback declared in `docs/SPEC_FTD.md` (2026-04-19).
@@ -95,7 +95,7 @@ Both "given"s are external to Axiom Zero. The chain converts one calibration int
 
 ## 4 · What this leaves
 
-Mechanism γ is **closed as a candidate first-principles derivation**. The honest disposition for `a_phys` therefore reverts to the fallback in [OPEN_A_PHYS_DERIVATION.md §4](OPEN_A_PHYS_DERIVATION.md): declare `a_phys` as a calibrated empirical parameter, name the matching observable used to fix it, and quote all dimensional predictions as conditional on the calibration.
+Mechanism γ is **closed as a candidate first-principles derivation**. The honest disposition for `a_phys` therefore reverts to the fallback in [OPEN_A_PHYS_DERIVATION.md §4](../resolved/OPEN_A_PHYS_DERIVATION.md): declare `a_phys` as a calibrated empirical parameter, name the matching observable used to fix it, and quote all dimensional predictions as conditional on the calibration.
 
 Three reasonable choices for the matching observable:
 
@@ -118,8 +118,8 @@ Working through the dimensional chain `G_N(phys) = G_N(lattice) · a_phys³ / (M
 ## 6 · Reproducibility
 
 ```
-docs/theory/10_eft_program/OPEN_A_PHYS_DERIVATION.md           # the open problem
-docs/theory/10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md   # this attempt
+docs/theory/10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md           # the open problem
+docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md   # this attempt
 engine/include/ftd/ontic/gauge_couplings.h                     # G_N(lattice) = 0.01 with TOY banner
 engine/include/ftd/constants.h                                 # K_B, ALPHA_G_APPROX
 ```

@@ -274,8 +274,8 @@ How the Moore-layer decomposition produces each gauge group's representations (v
 - `DERIV_OBSERVER_BELL_MECHANISM.md`.
 - `DERIV_SINGLET_FROM_VOID_EVENT.md`.
 
-### 2.13 Mechanism C — `g_c` from BCC bridge operator — **1 `[OPEN]`**
-**File:** `docs/theory/10_eft_program/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`. Successor to FTD-0031 / Mechanism-B closure (CLOSED NEGATIVE 2026-04-25). LEDGER row FTD-0093. Pre-registered prediction in `DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §5; falsifier in `PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` §3. Engine infrastructure (Cluster A build) wired and smoke-tested (campaign_bcc_band_spectrum). Awaiting publication-grade run + D6 audit. Closure conditional: [SELECTION] on PASS + circularity self-test (D1 §7) clean; otherwise [CLOSED NEGATIVE] mirroring Mechanism B closure.
+### 2.13 Mechanism C — `g_c` from BCC bridge operator — **CLOSED NEGATIVE (archived)**
+**File:** `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`. Successor to FTD-0031 / Mechanism-B closure. Closed negative by `docs/theory/10_eft_program/AUDIT_BCC_SUBLATTICE_SPECTRUM.md` and LEDGER row FTD-0093; no longer counted as an open item. The live `g_c` problem remains tracked through `docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md` and the native electrodynamics pivot in §4.2.
 
 ---
 
@@ -340,8 +340,8 @@ Still open:
 **File:** `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md`. Step 3 (Z₄ symmetry selects this specific CM curve) and Step 8 (larger root = 1/α specifically) remain [SELECTION], not [THEOREM].
 
 ### 4.5 L2 candidate identity 2·m_e/α = 16G*² — TRACKER-only `[CONJECTURE]` (LEDGER FTD-0094)
-Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-theoretic: `∀μ:MassUnit. (2·m_e/α)[μ]=16G*² ↔ μ=μ_FTD`. NOT promoted to LEDGER detail-row beyond the FTD-0094 quick-index entry until two conditions met: (a) Mechanism C closes positive (FTD-0093), (b) `PROTOCOL_BCC_SUBLATTICE_SPECTRUM` recovers the calibration-invariant ratio. Per the 2026-04-25 roundtable verdict: **TRACKER-only initially**. On NEGATIVE: terminal demotion to [PARAMETRIC]. See:
-- `docs/theory/10_eft_program/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §5 (calibration-invariant statement)
+Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-theoretic: `∀μ:MassUnit. (2·m_e/α)[μ]=16G*² ↔ μ=μ_FTD`. NOT promoted to LEDGER detail-row beyond the FTD-0094 quick-index entry. Mechanism C closed negative (FTD-0093), so this remains tracker-only / parametric per the 2026-04-25 roundtable verdict and the FTD-0094 quick-index disposition. See:
+- `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §5 (calibration-invariant statement)
 - `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md` (mass-as-functional reading)
 - `docs/theory/10_eft_program/OPEN_MU_FROM_LP_MISSING_ARROW.md` (type-theoretic version)
 
