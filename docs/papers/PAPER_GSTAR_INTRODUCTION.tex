@@ -44,9 +44,10 @@
 \renewcommand{\Im}{\mathrm{Im}}
 \renewcommand{\Re}{\mathrm{Re}}
 
-\title{The Algebraic and Analytic Faces of the Lemniscatic CM Constant:\\
-\large A Compendium of Identities Centered on
-$\Gs = \Gamma(1/4)/\Gamma(3/4)$ \\ and $\GG = 1/\AGM(1,\sqrt{2})$}
+\title{The Kronecker character $\chi_{-4}$ as the joint source of
+the lemniscatic identity algebra:\\
+\large a unified treatment of $\Gs = \Gamma(1/4)/\Gamma(3/4)$ and
+$\GG = 1/\AGM(1,\sqrt{2})$}
 
 \author{}
 \date{}
@@ -192,11 +193,25 @@ identities (\S\ref{sec:reflect}), the three equivalent definitions of $\Gs$
 the master quadratic (\S\ref{sec:masterq}), Beta integrals
 (\S\ref{sec:beta}), and the family $R_n$ (\S\ref{sec:family}).
 \S\ref{sec:watson}--\ref{sec:modforms} treat the analytic side: the Watson
-lattice identity (\S\ref{sec:watson}), the Dedekind eta function
-(\S\ref{sec:eta}), and modular forms at $\tau = i$ (\S\ref{sec:modforms}).
-\S\ref{sec:KZ} addresses the Kontsevich--Zagier period status of both
-constants. \S\ref{sec:transcendence} records the transcendence and algebraic
-independence. \S\ref{sec:open} states three open problems.
+lattice identity (\S\ref{sec:watson}), theta functions at $\tau = i$
+(\S\ref{sec:theta}), the Dedekind eta function (\S\ref{sec:eta}), and
+modular forms at $\tau = i$ (\S\ref{sec:modforms}, including the
+quasi-modular extension giving structural result~(I) of the abstract).
+\S\ref{sec:KZ} addresses the Kontsevich--Zagier period status;
+\S\ref{sec:transcendence} records transcendence and algebraic-independence
+status. \S\ref{sec:compendium} consolidates the dichotomy in a
+side-by-side compendium. \S\ref{sec:equianharmonic} develops the
+equianharmonic dichotomy at $\tau = \rho$, yielding structural
+result~(II) of the abstract. \S\ref{sec:character} presents the
+unifying $\chi_{-4}$ structure underlying both dichotomies, including
+the four-level projection theorem, three negative tests on the
+polynomial-assembly question, the asymptotic-regime analysis, the
+symmetric-algebra conjecture, and the ontological zero-point
+identification $\chi_{-4}(n) = \mathrm{Im}(i^{n})$.
+\S\ref{sec:open} states two open problems (KZ-strict status, cubic-AGM
+for $G_\rho$); \S\ref{sec:conjectures} states two algebraic-independence
+conjectures supported by high-precision PSLQ evidence
+($W^{(4)}_{\mathrm{BCC}}$, Catalan's constant).
 
 \section{The bridge $\Gs = 2\sqrt{\pi}\,\GG$}\label{sec:bridge}
 
@@ -565,11 +580,9 @@ $\infty$ & ($n - 2\gamma$) & ($\to R_n + 1/16$) & $1/16 = 0.06250$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-Under the physical identification $x_-(R_4) \leftrightarrow N_c$, this
-gives an algebraic reason for the slight excess
-$N_c \approx 3.024 > 3$: the master quadratic always overestimates $R_n$ by
-approximately $1/16$ asymptotically, and $R_4 = \Gs \approx 2.959$ is slightly
-under~$3$, so the sum $R_4 + 1/16 \approx 3.022$ lands near $3.024 = x_-(\Gs)$.
+The constant excess $x_-(R_n) - R_n \to 1/16$ as $n \to \infty$ is a
+structural feature of the family $x^2 - 16 R^2 x + 16 R^3 = 0$ and is
+independent of any physical interpretation of the roots.
 \end{remark}
 
 \section{The Watson lattice identity, in $\GG$}\label{sec:watson}
@@ -1537,19 +1550,21 @@ $16\,\Gss \in \R \setminus \overline\Q$ is transcendental \cite{chudnovsky1976},
 hence cannot be a Hecke eigenvalue at any prime.
 \end{remark}
 
-\begin{observation}[Locus of the math--physics gap]\label{obs:gap-localised}
-Combining (N1)--(N3) and Theorem~\ref{thm:character-unification}: the gap
-between $\chi_{-4}$-derived mathematical structure and the FTD physical
-identification $(x_+, x_-) \approx (\alpha^{-1}, N_c)$ is localised
-precisely at the \emph{assembly} step --- the choice of polynomial form
-$P_{\Gs}(x) = x^2 - 16\Gss x + 16\Gsss$ rather than $x^2 - 16{\Gs}^{a} x + 16{\Gs}^{b}$
-for any other $(a, b) \in \Z^2$. The integer coefficient $16$ and the
-constant $\Gs$ are both forced by $\chi_{-4}$. The exponent pair $(a, b)
-= (2, 3)$ is forced only by the structural requirement that the polynomial
-have two roots of distinct $\Gs$-homogeneity (see Proposition~\ref{prop:exponent-regimes}).
-A clean class-field-theoretic derivation of $(a, b) = (2, 3)$ from
-$\chi_{-4}$-internal data, if it exists, would be of independent
-arithmetic interest.
+\begin{observation}[Locus of the polynomial-assembly question]\label{obs:gap-localised}
+Combining (N1)--(N3) with Theorem~\ref{thm:character-unification}: the
+character $\chi_{-4}$ forces the integer coefficient
+$16 = |\Z[i]^{\times}|^{2}$ (lattice projection) and the variable $\Gs$
+(Chowla--Selberg projection), but does \emph{not} produce the polynomial
+form $P_{\Gs}(x) = x^{2} - 16\Gss x + 16\Gsss$ from CM-internal data.
+The remaining question is the choice of exponent pair $(a, b)$ in
+$x^{2} - 16{\Gs}^{a} x + 16{\Gs}^{b}$; among such choices, $(a, b) = (2, 3)$
+is uniquely characterised by the structural requirement
+(Proposition~\ref{prop:exponent-regimes} below) that the smaller root
+$x_{-}(R)$ acquire a non-vanishing constant additive shift as
+$R \to \infty$ with the polynomial degenerate to neither a linear identity
+nor a multiplicative scaling. A class-field-theoretic derivation of
+$(a, b) = (2, 3)$ from $\chi_{-4}$-internal data, if it exists, would be
+of independent arithmetic interest.
 \end{observation}
 
 \begin{conjecture}[Symmetric-algebra home of $(2, 3)$]\label{conj:sym-algebra-23}
@@ -1609,13 +1624,11 @@ period-algebra completion of $\mathrm{Sym}^{2} \oplus \mathrm{Sym}^{3}$.
 \end{remark}
 
 
-\subsection{The exponent pair $(2, 3)$ is uniquely picked out by joint root matching}\label{sec:23-unique}
+\subsection{Asymptotic regimes of the family $y^{2} - 16 R^{p} y + 16 R^{q} = 0$}\label{sec:23-unique}
 
-The negative result of \S\ref{sec:not-CM-derived} can be refined into a
-positive structural observation: while no CM-internal mechanism forces
-$(2, 3)$, the exponent pair is \emph{uniquely} determined by the
-requirement that \emph{both} roots of $P_{\Gs}$ simultaneously match the
-physical pair $(\alpha^{-1}, N_c)$.
+We give the precise structural characterisation of $(p, q) = (2, 3)$ as
+the unique exponent pair producing a non-vanishing constant additive
+shift on the smaller root.
 
 \begin{proposition}[Asymptotic regimes by exponent pair]\label{prop:exponent-regimes}
 For the family $y^2 - 16\,R^p\,y + 16\,R^q = 0$ with $R > 1/4$ and
@@ -1657,28 +1670,29 @@ $R^p$. Hence $q = p+1$ is necessary for $y_-(R) \to R$, and within that
 case $p = 2$ is the unique value yielding a non-vanishing constant shift.
 \end{proof}
 
-\begin{observation}[Joint matching uniquely fixes $(2, 3)$]\label{obs:23-joint-match}
-Numerical comparison at $R = \Gs$ across exponent pairs:
+\begin{observation}[Numerical roots across exponent pairs at $R = \Gs$]\label{obs:23-joint-match}
+The numerical roots $(y_+, y_-)$ of $y^{2} - 16 R^{p} y + 16 R^{q} = 0$
+evaluated at $R = \Gs$ for various exponent pairs:
 \begin{center}
-\begin{tabular}{lllll}
+\begin{tabular}{lll}
 \toprule
-$(p, q)$ & $y_+$ & $y_-$ & matches $\alpha^{-1} \approx 137.036$? & matches $N_c \approx 3$? \\
+$(p, q)$ & $y_+$ & $y_-$ \\
 \midrule
-$(2, 3)$ & $\mathbf{137.036}$ & $\mathbf{3.024}$ & \textbf{yes (1.3 ppm)} & \textbf{yes (0.8\%)} \\
-$(3, 4)$ & $411.4$            & $2.980$           & no                     & yes (0.7\%) \\
-$(4, 5)$ & $1223.1$           & $2.966$           & no                     & yes (1.1\%) \\
-$(1, 2)$ & $44.2$             & $3.171$           & no                     & no (5.7\%) \\
-$(2, 4)$ & $130.7$            & $9.38$            & no (4.6\%)            & no \\
-$(3, 3)$ & $413.4$            & $1.00$            & no                    & no \\
+$(2, 3)$ & $137.036\,\ldots$ & $3.024\,\ldots$ \\
+$(3, 4)$ & $411.4\,\ldots$   & $2.980\,\ldots$ \\
+$(4, 5)$ & $1223.1\,\ldots$  & $2.966\,\ldots$ \\
+$(1, 2)$ & $44.2\,\ldots$    & $3.171\,\ldots$ \\
+$(2, 4)$ & $130.7\,\ldots$   & $9.38\,\ldots$ \\
+$(3, 3)$ & $413.4\,\ldots$   & $1.00\,\ldots$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-Among exponent pairs with $|p|, |q| \leq 5$, only $(2, 3)$ produces a
-\emph{joint} match to the FTD pair $(\alpha^{-1}, N_c)$. The small-root
-match alone is achieved by several $(k, k+1)$ pairs (since $R \approx N_c$
-already, and the additive shift is small in every case); the large-root
-match to $\alpha^{-1}$ is satisfied uniquely by $(2, 3)$ because only at
-$p = 2$ does $y_+ \sim 16 R^p$ land at $16 \Gss \approx 140 - R \approx 137$.
+Among exponent pairs $(p, q) \in \Z^{2}$ with $|p|, |q| \leq 5$ and
+$q = p + 1$, the pair $(p, q) = (2, 3)$ produces the unique combination
+$(y_+, y_-) \approx (137, 3)$, with $y_+$ scaling as $16 R^{2}$ in the
+$p = 2$ case and $y_+$ scaling as $16 R^{p}$ (much larger) for $p \geq 3$.
+A physical interpretation of these numerical roots is given in the
+companion note \cite{paper-gstar-B}.
 \end{observation}
 
 \subsection{The ontological zero-point: $\chi_{-4}$ as the imaginary-part trace}\label{sec:zero-point}
