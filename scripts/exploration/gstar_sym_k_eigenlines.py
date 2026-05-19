@@ -17,8 +17,8 @@ import mpmath as mp
 mp.mp.dps = 80
 
 # Formal generators of H^1_dR(E_lemn) (Convention C1, C2 in conventions doc)
-omega = sp.Symbol('omega', commutative=True)
-eta = sp.Symbol('eta', commutative=True)
+omega = sp.Symbol('omega', commutative=True, real=True)
+eta = sp.Symbol('eta', commutative=True, real=True)
 i = sp.I  # Q[i] imaginary unit
 
 
@@ -57,3 +57,16 @@ def c_invariant_dim(k):
     Placeholder: actual implementation in Task 8.
     """
     raise NotImplementedError("c_invariant_dim implemented in Task 8")
+
+
+def c_action(x):
+    """Apply complex conjugation c on a Sym^k(H^1) (x) Q[i] element.
+
+    Per Convention C3: c acts only on the Q[i]-coefficients, conjugating them.
+    The Q-rational form generators omega, eta are c-fixed (declared real at the top of this module).
+
+    Implementation: SymPy's sp.conjugate respects the real= assumption on omega and eta,
+    so conjugate(omega) simplifies to omega and conjugate(eta) to eta, while complex
+    coefficients are conjugated as expected.
+    """
+    return sp.expand(sp.conjugate(x))
