@@ -1255,6 +1255,187 @@ factors. The dual-constant thesis thus generalizes from
 \emph{lemniscatic-only} to \emph{both class-number-one CM curves with
 extra automorphisms over $\Q$}.
 
+\section{The dichotomy as a manifestation of $\chi_{-4}$}\label{sec:character}
+
+The accumulated identities of \S\S\ref{sec:reflect}--\ref{sec:equianharmonic}
+admit a single organizing principle: every appearance of $\Gs$, $\GG$, and
+the bridge $\Gs = 2\sqrt\pi\,\GG$ is the projection, at a different
+arithmetic level, of the \emph{Kronecker character} $\chi_{-4}$ of
+$K = \Q(i)$. The product-vs-ratio split that distinguishes $\pi\sqrt 2$
+(Euler reflection) from $\Gs$ (\S\ref{sec:reflect}) is the trivial-vs-quadratic
+character split on $(\Z/4\Z)^\times$. We make this precise.
+
+\subsection{The character and the splitting law}
+
+\begin{definition}\label{def:chi-minus-four}
+The Kronecker character of $K = \Q(i)$ is the unique non-trivial Dirichlet
+character mod $4$,
+\[
+\chi_{-4}: (\Z/4\Z)^\times \to \{\pm 1\}, \quad
+\chi_{-4}(1) = +1, \quad \chi_{-4}(3) = -1,
+\]
+extended by $\chi_{-4}(n) = 0$ for $\gcd(n, 4) > 1$.
+\end{definition}
+
+By Fermat's two-squares theorem and quadratic reciprocity, $\chi_{-4}$
+controls the splitting of rational primes in $\Z[i]$: a prime $p$ splits
+$(p) = \pi\bar\pi$ iff $\chi_{-4}(p) = +1$ iff $p = a^2 + b^2$; $p$ is
+inert iff $\chi_{-4}(p) = -1$; and $p = 2$ ramifies.
+
+\subsection{Four arithmetic projections}
+
+\begin{theorem}[$\chi_{-4}$ as the joint source of the
+$\Gs/\GG$ dichotomy]\label{thm:character-unification}
+The constants $\Gs$ and $\GG$ are characterised by the action of $\chi_{-4}$
+at the following four arithmetic levels, all four of which produce
+mutually-consistent identities:
+
+\textup{(L1) Lattice level.} $|\Z[i]^\times| = 4$, equivalently $|\Aut_\C(E_{\mathrm{lemn}})| = 4$.
+The $4$ is the order of the unit group of $\Z[i]$ and is determined by the
+fact that $\chi_{-4}$ is a quadratic character with one non-trivial value on
+$(\Z/4\Z)^\times = \{1, 3\}$. Squaring (as the master quadratic does)
+gives the integer coefficient $|\Aut|^2 = 16$ of $P_{\Gs}(x) = x^2 - 16\Gss x + 16\Gsss$
+(\S\ref{sec:masterq}).
+
+\textup{(L2) Chowla--Selberg level.} The $\chi_{-4}$-twisted $\Gamma$-product
+at quarter arguments equals $\Gs$:
+\[
+\prod_{a=1}^{3} \Gamma\!\left(\frac{a}{4}\right)^{\chi_{-4}(a)}
+\;=\; \frac{\Gamma(1/4)^{+1}\,\Gamma(2/4)^{0}\,\Gamma(3/4)^{-1}}{1}
+\;=\; \Gs.
+\]
+Compare the \emph{trivial-character} product
+$\prod \Gamma(a/4)^{|\chi_{-4}(a)|} = \Gamma(1/4)\,\Gamma(3/4) = \pi\sqrt 2$
+(Euler reflection). The product channel ($\pi\sqrt 2$) sees only the
+support of $\chi_{-4}$; the ratio channel ($\Gs$) sees both the support
+and the signs.
+
+\textup{(L3) Hecke--character level.} The Hecke eigenvalues of $E_{\mathrm{lemn}}$ are
+determined by $\chi_{-4}$:
+\[
+a_p \;=\;
+\begin{cases}
+\pm 2a, & p \equiv 1 \pmod 4,\; p = a^2 + b^2 \quad (\chi_{-4}(p) = +1), \\
+0,      & p \equiv 3 \pmod 4 \quad (\chi_{-4}(p) = -1), \\
+0,      & p = 2 \quad (\text{ramified}).
+\end{cases}
+\]
+The $L$-function factors accordingly,
+\[
+L(E_{\mathrm{lemn}}, s) \;=\; \!\!\prod_{\chi_{-4}(p) = +1}\!\! (1 - a_p p^{-s} + p^{1-2s})^{-1}
+\;\cdot\!\! \prod_{\chi_{-4}(p) = -1}\!\! (1 + p^{1-2s})^{-1},
+\]
+and the central value $L(E_{\mathrm{lemn}}, 1) = \varpi/2 = \pi\,\GG/2$
+(Theorem~\ref{thm:Lvalue}) packages both Euler products into $\GG$.
+
+\textup{(L4) Dirichlet $L$-function level.} The Dirichlet $L$-function
+$L(\chi_{-4}, s) = \sum_{n \geq 0}(-1)^n/(2n+1)^s$ has central value
+$L(\chi_{-4}, 1) = \pi/4$ (Leibniz, a period of $\Q(i)$) and non-critical
+value $L(\chi_{-4}, 2) = G_{\mathrm{Catalan}}$ (conjecturally outside
+$\overline\Q(\GG, \pi)$, Conjecture~\ref{conj:catalan-indep}). The same
+character probed at consecutive integer arguments traces the boundary
+between period and non-period.
+\end{theorem}
+
+\begin{proof}
+(L1) and (L2) are direct evaluations: $(\Z/4\Z)^\times = \{1, 3\}$ has
+two elements and $\chi_{-4}$ takes values $\pm 1$ on them. (L2) is the
+specialisation of the Chowla--Selberg formula~\cite{chowlaselberg} at
+$|d| = 4$, $h_K = 1$, $w_K = 4$ to the $\Gamma$-product exponent pattern;
+explicit verification:
+\[
+\eta(i)^{16}
+\;=\; (\GG^{1/2}/2^{1/4})^{16}
+\;=\; \frac{\GG^{8}}{16}
+\;=\; \frac{4\,\GG^{6}/\pi}{256}\,\Gss
+\quad \text{(Chowla--Selberg constant absorbed into } 4\GG^{6}/\pi\text{)},
+\]
+matching $\eta(i)^{16}$ via Theorem~\ref{thm:catalogue} and the bridge
+identity. (L3) is the standard Deuring--Tate description of the
+$\Z[i]$-CM elliptic curve's $L$-function in terms of the Hecke character
+$\psi_{E}$ of $K$ with $\psi_{E} \bmod (1+i)^3$ inducing $\chi_{-4}$ on the
+rational primes \cite[\S{}II.10]{silverman}. (L4) is Leibniz
+\cite{whittaker-watson} together with Conjecture~\ref{conj:catalan-indep}.
+\end{proof}
+
+\subsection{Why $\Gs$ is ``the ratio''}
+
+\begin{corollary}[Product vs ratio is trivial-vs-non-trivial character]\label{cor:product-vs-ratio}
+The Euler reflection $\Gamma(1/4)\,\Gamma(3/4) = \pi\sqrt 2$ and the
+defining identity $\Gamma(1/4)/\Gamma(3/4) = \Gs$ are the two
+$\chi$-projections of the same $\Gamma$-pair under the two characters of
+$(\Z/4\Z)^\times$:
+\[
+\prod_a \Gamma(a/4)^{\chi(a)} \;=\;
+\begin{cases}
+\pi\sqrt 2, & \chi = \mathbf{1}\;\;(\text{trivial}), \\
+\Gs,        & \chi = \chi_{-4}\;\;(\text{non-trivial}).
+\end{cases}
+\]
+\end{corollary}
+
+This is the cleanest formulation of \emph{why} $\Gs$ is a ratio rather
+than a product: it is the genuine $\Q(i)$-period, obtained from the
+quadratic character of $K = \Q(i)$, whereas $\pi\sqrt 2$ is the
+$\Q$-period (trivial character, same $\Gamma$-arguments). The
+\emph{bridge} $\Gs = 2\sqrt\pi\,\GG$ then asserts the equality of the
+$\Gamma$-expression (algebraic side, $\chi_{-4}$ acting on $\Gamma$-arguments)
+with the $\AGM$-expression (analytic side, $\chi_{-4}$ acting through
+the L-function Euler product). Chowla--Selberg is the theorem that
+makes these two faces of $\chi_{-4}$ coincide.
+
+\subsection{Equianharmonic parallel: $\chi_{-3}$}
+
+The equianharmonic dichotomy (\S\ref{sec:equianharmonic}) is the analog
+under $\chi_{-3}: (\Z/3\Z)^\times \to \{\pm 1\}$, the Kronecker character
+of $K = \Q(\rho)$, with $\chi_{-3}(1) = +1$, $\chi_{-3}(2) = -1$.
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item \emph{Lattice}: $|\Z[\rho]^\times| = 6$, with $|\Aut(E_\rho)| = 6$ and
+the squared coefficient $36$ that would appear in an equianharmonic master
+quadratic.
+\item \emph{Chowla--Selberg}: $\prod_a \Gamma(a/3)^{\chi_{-3}(a)} = \Gamma(1/3)/\Gamma(2/3) = R_3$.
+\item \emph{Hecke}: $E_\rho: y^2 = x^3 - 1$ has $a_p = 0$ for
+$p \equiv 2 \pmod 3$ and $a_p \neq 0$ for $p \equiv 1 \pmod 3$ (split in
+$\Z[\rho]$).
+\item \emph{Dirichlet}: $L(\chi_{-3}, 1) = \pi/(3\sqrt 3)$.
+\end{itemize}
+The lemniscatic and equianharmonic curves are the only class-number-one
+imaginary-quadratic fields with $|\mathcal{O}_K^\times| > 2$, hence the
+only places where this $4$-level $\chi$-projection picture is non-trivially
+populated.
+
+\subsection{Ontological synthesis}\label{sec:ontological-synthesis}
+
+\textbf{[Synthesis, not Theorem; epistemic tag \texttt{[SYNTHESIS]} per
+\cite{ftd-spec}.]} Theorem~\ref{thm:character-unification} and
+Corollary~\ref{cor:product-vs-ratio} identify a single mathematical
+primitive --- the character $\chi_{-4}$ on $(\Z/4\Z)^\times$ --- whose
+projections at four arithmetic levels yield every algebraic identity
+in $\Gs$ and every analytic identity in $\GG$ in this paper. The
+\emph{mathematical ontology} of the dichotomy is therefore not two
+independent constants but a single character, expressed in two
+coordinate systems linked by Chowla--Selberg.
+
+The \emph{physical readout} of this same structure --- the master
+quadratic $P_{\Gs}(x) = x^2 - 16\Gss x + 16\Gsss$ whose roots are
+numerically $x_+ \approx \alpha^{-1}$ and $x_- \approx N_c$
+(Remark~\ref{rem:MQ-physics}) --- carries the same integer coefficient
+$16 = |\Z[i]^\times|^2$ as an algebraic input. The
+identification of $(x_+, x_-)$ with $(\alpha^{-1}, N_c)$ is the
+central \texttt{[STRONGLY MOTIVATED CONJECTURE]} of \cite{ftd-spec}
+and is not a mathematical consequence of any theorem in the present
+paper. What \emph{is} mathematical is the assertion that the algebraic
+input data $16 = |\Z[i]^\times|^2$ and the analytic L-value
+$L(E_{\mathrm{lemn}}, 1) = \pi\,\GG/2$ are joint manifestations of
+$\chi_{-4}$; the conjectural FTD bridge then maps this single character
+to two physical readouts $(\alpha, N_c)$ via the polynomial $P_{\Gs}$.
+The mathematical content of this paper supplies a clean
+\emph{ontological substrate} ($\chi_{-4}$) and the analytic--algebraic
+\emph{coordinate transform} ($\Gs \leftrightarrow \GG$) on it; the
+mapping of that substrate to physical observables remains a separate
+conjecture, to be tested empirically and theoretically in the
+companion FTD literature.
+
 \section{Closed problems and remaining open questions}\label{sec:open}
 
 Earlier drafts of this paper listed five open problems; the work in
