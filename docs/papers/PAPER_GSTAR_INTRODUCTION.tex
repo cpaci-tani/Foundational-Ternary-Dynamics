@@ -1373,6 +1373,31 @@ rational primes \cite[\S{}II.10]{silverman}. (L4) is Leibniz
 \cite{whittaker-watson} together with Conjecture~\ref{conj:catalan-indep}.
 \end{proof}
 
+\begin{remark}[The four levels form a motivic-weight tower]\label{rem:motivic-tower}
+The four projections (L1)--(L4) are not parallel: they form a filtered
+tower indexed by the motivic weight of the underlying object.
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item (L1) lives in motivic weight $0$ as $H^{0}$ of a point with
+$\Z[i]$-action; the cardinality $|\Aut|^{2} = 16$ is the squared order of
+the structure group.
+\item (L2) lives in motivic weight $1$ as the period of $H^{1}$ of a CM
+abelian variety, in $\Gamma$-form.
+\item (L3) lives in motivic weight $1$ as well, but at the $L$-function
+face --- it is the BSD-realised $L$-value of the same $H^{1}$, paired
+with (L2) by \emph{Deligne's period conjecture}
+\cite{deligne-periods}, which is proved unconditionally in the CM case
+(Blasius, Shimura, Anderson). The mutual consistency of (L2) and (L3) at
+$\tau = i$ is therefore a known theorem.
+\item (L4) lives in motivic weight $0$ of the base field --- it is the
+Tate motive twisted by $\chi_{-4}$, probed at $s = 1$ (critical, a
+period) versus $s = 2$ (non-critical, a regulator)
+\cite{beilinson-deligne}.
+\end{itemize}
+The unification of \S\ref{sec:character} is therefore not a coincidence
+to be discovered but a special case of the period--L-value compatibility
+established by Deligne's conjecture for CM motives.
+\end{remark}
+
 \subsection{Why $\Gs$ is ``the ratio''}
 
 \begin{corollary}[Product vs ratio is trivial-vs-non-trivial character]\label{cor:product-vs-ratio}
@@ -1398,6 +1423,38 @@ $\Gamma$-expression (algebraic side, $\chi_{-4}$ acting on $\Gamma$-arguments)
 with the $\AGM$-expression (analytic side, $\chi_{-4}$ acting through
 the L-function Euler product). Chowla--Selberg is the theorem that
 makes these two faces of $\chi_{-4}$ coincide.
+
+\begin{remark}[Hodge bidegree: $\pi\sqrt 2$ and $\Gs$ as $(\omega, \eta)$]\label{rem:hodge-bidegree}
+The product/ratio dichotomy of Corollary~\ref{cor:product-vs-ratio} is
+the Hodge-bidegree decomposition of the lemniscatic CM motive in
+disguise. The CM action of $\Z[i]$ splits the de~Rham realisation
+$H^{1}_{\mathrm{dR}}(E_{\mathrm{lemn}}) \otimes \C$ into two eigenlines
+under multiplication by $i$: one with eigenvalue $+i$ (the holomorphic
+piece, $H^{1, 0}$) and one with eigenvalue $-i$ (the antiholomorphic
+piece, $H^{0, 1}$). Pairing each eigenline against the integral homology
+cycles in $H_{1}(E, \Z)$ yields two periods:
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item the \emph{holomorphic period} $\omega = \int_\gamma dx/y = \Gs\sqrt{\pi}$
+(the $\Q(i)$-symmetric pairing, weighted by $\chi_{-4}$);
+\item the \emph{quasi-period} $\eta$ (the pairing on $H^{0,1}$, anti-symmetric
+under complex conjugation).
+\end{itemize}
+The Legendre period relation
+\[
+\omega_1 \eta_2 - \omega_2 \eta_1 \;=\; 2\pi i
+\]
+between the two periods evaluated on a symplectic basis of $H_{1}$
+specialises, at $\tau = i$, to the elliptic-integral product
+$K(1/\sqrt 2)\,E(1/\sqrt 2) = (\pi + \varpi^{2})/4$ recorded as
+Theorem~\ref{thm:elliptic}. Thus $\pi\sqrt 2$ and $\Gs$ are not two
+\emph{normalisations} of one constant but the two columns of the Hodge
+realisation of $H^{1}(E_{\mathrm{lemn}})$: $\pi\sqrt 2$ corresponds to
+the trivial-character / real-period column (the $\Q$-period of the
+underlying real abelian variety), while $\Gs$ corresponds to the
+$\chi_{-4}$-twisted / quasi-period column (the genuine $\Q(i)$-period).
+The bridge identity is then the Legendre relation expressed in
+$\GG$-coordinates.
+\end{remark}
 
 \subsection{Equianharmonic parallel: $\chi_{-3}$}
 
@@ -1987,6 +2044,13 @@ Trans.\ Amer.\ Math.\ Soc.\ \textbf{323} (1991), 691--701.
 A.~A.\ Beilinson and P.\ Deligne,
 \textit{Motivic interpretation of the Zagier conjecture on polylogarithms},
 in \emph{Motives}, Proc.\ Sympos.\ Pure Math.\ \textbf{55}, AMS, 1994.
+
+\bibitem{deligne-periods}
+P.\ Deligne,
+\textit{Valeurs de fonctions L et p\'eriodes d'int\'egrales},
+in \emph{Automorphic Forms, Representations and L-Functions},
+Proc.\ Sympos.\ Pure Math.\ \textbf{33}, Part 2, AMS, 1979, 313--346.
+Proved unconditionally for CM motives by Blasius, Shimura, and Anderson.
 
 \end{thebibliography}
 
