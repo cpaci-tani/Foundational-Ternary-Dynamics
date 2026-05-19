@@ -420,13 +420,12 @@ the master quadratic is intrinsically a $\Gs$ object.
 \end{observation}
 
 \begin{remark}[Numerical content of the roots]\label{rem:MQ-numerical}
-The numerical values $x_+ \approx 137.036$ and $x_- \approx 3.024$ are
-recorded here as numerical content of $P_{\Gs}$; their identification
-with physical observables and the resulting math--physics bridge are
-treated in a separate companion note \cite{paper-gstar-B} and lie
-outside the mathematical scope of the present paper. The transcendence
-and algebraic-independence implications of the roots are deferred to
-\S\ref{sec:transcendence}.
+The roots take the numerical values $x_+ \approx 137.036$ and
+$x_- \approx 3.024$. Their identification with physical observables
+and the resulting math--physics bridge lie outside the mathematical
+scope of the present paper; the companion note \cite{paper-gstar-B}
+treats those questions. The transcendence and algebraic-independence
+implications of the roots are addressed in \S\ref{sec:transcendence}.
 \end{remark}
 
 \section{Beta integrals at quarter arguments}\label{sec:beta}
@@ -675,17 +674,20 @@ under the modular transformation $\tau \mapsto -1/\tau$.
 \end{theorem}
 
 \begin{proof}
-The classical evaluations are
+The classical evaluations at $\tau = i$ are
 $\theta_3(0\,|\,i) = \pi^{1/4}/\Gamma(3/4)$ and
-$\theta_2(0\,|\,i) = \theta_4(0\,|\,i) = 2^{1/4}\pi^{1/4}\Gamma(3/4)/\sqrt{\pi}$
+$\theta_2(0\,|\,i) = \theta_4(0\,|\,i) = \pi^{1/4}/(2^{1/4}\,\Gamma(3/4))$
 (see e.g.\ \cite[\S{}21.5]{whittaker-watson} or \cite[Eq.~2.7.6]{borweinAGM}).
 Squaring $\theta_3$ and applying \eqref{eq:Gam34sq}:
 \[
-\theta_3(0\,|\,i)^2 = \frac{\sqrt\pi}{\Gamma(3/4)^2} = \frac{\sqrt\pi}{\pi\sqrt 2/\Gs} = \frac{\Gs}{\sqrt{2\pi}}.
+\theta_3(0\,|\,i)^2 = \frac{\sqrt\pi}{\Gamma(3/4)^2}
+                    = \frac{\sqrt\pi}{\pi\sqrt 2/\Gs}
+                    = \frac{\Gs}{\sqrt{2\pi}}.
 \]
 Using $\Gs = 2\sqrt\pi\,\GG$ from Theorem~\ref{thm:bridge}:
 $\theta_3(0\,|\,i)^2 = 2\sqrt\pi\,\GG/\sqrt{2\pi} = \sqrt 2\,\GG$.
-The values of $\theta_2$ and $\theta_4$ follow analogously.
+Similarly, $\theta_2(0\,|\,i)^2 = \theta_4(0\,|\,i)^2 = \sqrt{\pi}/(\sqrt 2\,\Gamma(3/4)^2)
+= \GG$ (the factor of $\sqrt 2$ relative to $\theta_3^2$).
 \end{proof}
 
 \begin{corollary}\label{cor:theta-higher}
@@ -783,10 +785,10 @@ Both sides positive, so the un-squared identity holds.
 
 \subsection{The first lemniscate constant as a Hecke $L$-value}\label{sec:Lvalue}
 
-\begin{theorem}[$L(E_{\mathrm{lemn}}, 1) = \varpi/2$]\label{thm:Lvalue}
+\begin{theorem}[$L(E_{\mathrm{lemn}}, 1) = \varpi/4$]\label{thm:Lvalue}
 For the lemniscatic elliptic curve $E: y^2 = x^3 - x$ over $\Q$:
 \[
-L(E, 1) \;=\; \frac{\varpi}{2} \;=\; \frac{\pi\,\GG}{2}.
+L(E, 1) \;=\; \frac{\varpi}{4} \;=\; \frac{\pi\,\GG}{4}.
 \]
 \end{theorem}
 
@@ -796,23 +798,27 @@ the bad prime $p = 2$ (Kodaira type III on the minimal model
 \cite[32.a3]{lmfdb}), and number of real connected components $c_\infty = 2$
 (the curve has two real ovals at $x \in [-1, 0]$ and $x \in [1, \infty)$).
 The torsion subgroup $E(\Q)_{\mathrm{tors}}$ is the rational 2-torsion of
-order $4$. The real period is
-$\Omega_E^+ = 2\int_1^\infty dx/\sqrt{x^3 - x}
-   = 2 \cdot \tfrac{\sqrt{\pi}}{2}\Gs = \Gs\sqrt{\pi} = 2\varpi = 2\pi\GG$.
-The Birch--Swinnerton-Dyer conjecture, known unconditionally
-for CM curves of rank $0$ by Coates--Wiles \cite{coates-wiles}, gives
+order $4$. The real period of the identity component is
+$\Omega^+ = 2\int_1^\infty dx/\sqrt{x^3 - x} = \Gs\sqrt{\pi} = 2\varpi = 2\pi\GG$;
+under the Cremona convention, the period that enters the BSD formula
+includes the contributions of all connected components, so we use
+$\Omega^+$ together with $c_\infty = 2$ but without separately
+multiplying by both. Equivalently, the full real period is
+$\Omega = c_\infty \cdot (\text{component volume}) = 2\varpi$.
+The Birch--Swinnerton-Dyer formula for the rank-$0$ CM case, known
+unconditionally by Rubin \cite{rubin1991} (building on Coates--Wiles
+\cite{coates-wiles}), gives
 \[
-L(E, 1) \;=\; \frac{\Omega_E^+ \cdot c_\infty \cdot \prod_p c_p \cdot |\Sha|}{|E(\Q)_{\mathrm{tors}}|^2}
-       \;=\; \frac{2\pi\GG \cdot 2 \cdot 2 \cdot 1}{16}
-       \;=\; \frac{\pi\GG}{2}
-       \;=\; \frac{\varpi}{2}.
+L(E, 1) \;=\; \frac{\Omega \cdot \prod_p c_p \cdot |\Sha|}{|E(\Q)_{\mathrm{tors}}|^2}
+       \;=\; \frac{2\varpi \cdot 2 \cdot 1}{16}
+       \;=\; \frac{\varpi}{4}.
 \]
 \end{proof}
 
 \begin{remark}
-The first lemniscate constant $A = \varpi/2 \approx 1.3110287\ldots$
-is therefore the central $L$-value of the lemniscatic curve. This is a
-direct Birch--Swinnerton-Dyer identity.
+The numerical value $L(E_{\mathrm{lemn}}, 1) = \varpi/4 \approx 0.6555144\ldots$
+agrees with the LMFDB tabulated value for curve $32.a3$ to all listed
+digits.
 \end{remark}
 
 \subsection{Complete elliptic integrals at $k = 1/\sqrt 2$}\label{sec:elliptic}
@@ -841,7 +847,10 @@ at the lemniscatic modulus, without reference to $\Gamma$ or the AGM.
 \end{corollary}
 
 \begin{proof}
-From Cor.~\ref{cor:eta-powers}, $4\eta(i)^4 = 4 \cdot {\GG}^2/2 = 2{\GG}^2 = W^{(3)}_{\mathrm{BCC}}$.
+From Theorem~\ref{thm:elliptic}, $K(1/\sqrt 2)\,E(1/\sqrt 2) = (\pi + \varpi^2)/4$
+with $\varpi = \pi\,\GG$, so $\varpi^2 = \pi^2\,\GG^2$ and
+$4\,K(1/\sqrt 2)\,E(1/\sqrt 2) = \pi + \pi^2\,\GG^2$. Solving for $\GG^2$
+gives the stated identity.
 \end{proof}
 
 \section{Modular forms at $\tau = i$, in $\GG$}\label{sec:modforms}
@@ -1137,7 +1146,7 @@ $\eta(i/2) = \sqrt 2\,\eta(2i)$ & Thm.~\ref{thm:eta-half-tower} (NEW) \\
 $\theta_2(0\,|\,i)^2 = \theta_4(0\,|\,i)^2 = \GG$ & Thm.~\ref{thm:theta-values} (NEW) \\
 $\theta_3(0\,|\,i)^2 = \sqrt 2\,\GG$ & Thm.~\ref{thm:theta-values} (NEW) \\
 $\lambda(i) = 1/2$ & classical, $= \GG^2/(2\GG^2)$ \\
-$L(E_{\mathrm{lemn}}, 1) = \varpi/2 = \pi\GG/2$ & Thm.~\ref{thm:Lvalue} (NEW) \\
+$L(E_{\mathrm{lemn}}, 1) = \varpi/4 = \pi\GG/4$ & Thm.~\ref{thm:Lvalue} (NEW) \\
 $K(1/\sqrt 2) = \pi\GG/\sqrt 2$ & Thm.~\ref{thm:elliptic} \\
 $E(1/\sqrt 2) = (\sqrt 2/4)(1/\GG + \pi\GG)$ & Thm.~\ref{thm:elliptic} (NEW) \\
 $K\,E = (\pi + \varpi^2)/4$ & Thm.~\ref{thm:elliptic} (NEW) \\
@@ -1242,7 +1251,7 @@ E_{14}(\rho) &= 0, \\
 \Delta(\rho) &= -\frac{G_\rho^{12}}{6912} \;=\; -\frac{G_\rho^{12}}{2^8 \cdot 27}.
 \end{align}
 The factor $6912 = 2^8 \cdot 27$ is the equianharmonic analog of the
-lemniscatic factor $64 = 2^6$ in $\Delta(i) = G_{\text{G}}^{12}/64$. The
+lemniscatic factor $64 = 2^6$ in $\Delta(i) = \GG^{12}/64$. The
 ratio $6912/64 = 108 = 4 \cdot 27$ reflects the discriminant ratio of the
 two CM fields.
 \end{theorem}
@@ -1297,14 +1306,14 @@ First Eisenstein with cusp form & $E_{12}(i) = (11907/691)\,\GG^{12}$ & $E_{12}(
 
 The structural parallel is exact in form, with $4 \leftrightarrow 6$
 swaps in the vanishing modulus and corresponding shifts in the bridge
-factors. The dual-constant thesis thus generalizes from
+factors. The dual-constant thesis thus generalises from
 \emph{lemniscatic-only} to \emph{both class-number-one CM curves with
 extra automorphisms over $\Q$}.
 
 \section{The dichotomy as a manifestation of $\chi_{-4}$}\label{sec:character}
 
 The accumulated identities of \S\S\ref{sec:reflect}--\ref{sec:equianharmonic}
-admit a single organizing principle: every appearance of $\Gs$, $\GG$, and
+admit a single organising principle: every appearance of $\Gs$, $\GG$, and
 the bridge $\Gs = 2\sqrt\pi\,\GG$ is the projection, at a different
 arithmetic level, of the \emph{Kronecker character} $\chi_{-4}$ of
 $K = \Q(i)$. The product-vs-ratio split that distinguishes $\pi\sqrt 2$
@@ -1371,7 +1380,7 @@ The $L$-function factors accordingly,
 L(E_{\mathrm{lemn}}, s) \;=\; \!\!\prod_{\chi_{-4}(p) = +1}\!\! (1 - a_p p^{-s} + p^{1-2s})^{-1}
 \;\cdot\!\! \prod_{\chi_{-4}(p) = -1}\!\! (1 + p^{1-2s})^{-1},
 \]
-and the central value $L(E_{\mathrm{lemn}}, 1) = \varpi/2 = \pi\,\GG/2$
+and the central value $L(E_{\mathrm{lemn}}, 1) = \varpi/4 = \pi\,\GG/4$
 (Theorem~\ref{thm:Lvalue}) packages both Euler products into $\GG$.
 
 \textup{(L4) Dirichlet $L$-function level.} The Dirichlet $L$-function
@@ -1831,6 +1840,25 @@ a period of $\Q(i)$), but $L(\chi_{-4}, 2) = G_{\mathrm{Catalan}}$ is
 non-critical and conjecturally not in the period ring of $\Q(i)$
 \cite{beilinson-deligne}.
 
+\section*{Closing remarks}
+
+The dichotomy of Observation~\ref{obs:dichotomy} originated as a
+bookkeeping convenience and emerged as the algebraic--analytic shadow of
+the Kronecker character $\chi_{-4}$ of $K = \Q(i)$. The compendium of
+\S\ref{sec:compendium} makes the discipline operational; \S\ref{sec:character}
+makes it structural. The two principal new results --- the polynomial-ring
+value algebra $\Q[\pi^{-1}, \GG^{4}]$ for quasi-modular forms at $\tau = i$
+(Theorem~\ref{thm:QM-algebra}) and the $m \mid k$ vanishing principle at
+class-number-one CM points with extra automorphisms (Theorem~\ref{thm:rho-vanishing}
+and its lemniscatic counterpart) --- are uniform statements that survive
+in the only two non-trivial cases over $\Q$, and reduce the bookkeeping
+of dozens of identities to a single character. What remains open is
+whether the polynomial-assembly question --- the source of the exponent
+pair $(2, 3)$ in the master quadratic $P_{\Gs}$ --- can be settled inside
+CM theory proper, or whether it requires the period-algebra completion
+conjectured in \S\ref{sec:not-CM-derived}. We leave that question to
+future work.
+
 \begin{thebibliography}{99}
 
 \bibitem{borweinAGM}
@@ -1868,6 +1896,12 @@ J.\ Reine Angew.\ Math.\ \textbf{227} (1967), 86--110.
 G.~V.\ Chudnovsky,
 \textit{Algebraic independence of constants connected with the exponential and elliptic functions},
 Dokl.\ Akad.\ Nauk Ukrain.\ SSR Ser.\ A (1976), 698--701.
+
+\bibitem{rubin1991}
+K.\ Rubin,
+\textit{The "main conjectures" of Iwasawa theory for imaginary quadratic fields},
+Inventiones Mathematicae \textbf{103} (1991), 25--68.
+(Provides the full BSD formula in the rank-$0$ CM case.)
 
 \bibitem{coates-wiles}
 J.\ Coates and A.\ Wiles,
