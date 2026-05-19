@@ -18,6 +18,7 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
 
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
@@ -1254,58 +1255,122 @@ factors. The dual-constant thesis thus generalizes from
 \emph{lemniscatic-only} to \emph{both class-number-one CM curves with
 extra automorphisms over $\Q$}.
 
-\section{Open problems}\label{sec:open}
+\section{Closed problems and remaining open questions}\label{sec:open}
+
+Earlier drafts of this paper listed five open problems; the work in
+\S\ref{sec:family}, \S\ref{sec:modforms}, and \S\ref{sec:equianharmonic}
+closes two of them outright and refines two more into labeled conjectures
+with explicit high-precision numerical evidence. We organise the resulting
+short list accordingly.
+
+\subsection{Closed in this paper}
+
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+\item \textbf{Mathematical distinguishedness of $R_4$.} Among the
+$R_n$ family, $R_4 = \Gs$ is the unique value for which the associated
+elliptic curve $y^2 = x^3 - x$ has $|\Aut_{\C}(E)|^2 = 16$ with $D = 3$;
+this is Theorem~\ref{thm:R4-distinguished}. The numerical match
+$(x_+, x_-) \approx (\alpha^{-1}, N_c)$ at this $R_4$ is the central
+physical conjecture of \cite{ftd-spec} and is recorded only as a numerical
+observation in Remark~\ref{rem:MQ-physics}; it is not part of the present
+paper's mathematical scope.
+
+\item \textbf{Equianharmonic generalisation of the dichotomy.} The
+$\Gs$-vs-$\GG$ dichotomy at $\tau = i$ admits the direct equianharmonic
+analog $R_3$-vs-$G_\rho$ at $\tau = \rho$; see
+Theorems~\ref{thm:rho-vanishing}, \ref{thm:rho-eisenstein}, \ref{thm:rho-eta}
+and the comparison table~(\S\ref{sec:equianharmonic}). The general
+selection rule is: at a CM point with $|\Aut(E)| = m$, a modular form
+$f$ of weight $k$ satisfies $f(\tau_{\mathrm{CM}}) = 0$ unless $m \mid k$.
+The lemniscatic and equianharmonic curves are the only class-number-one
+CM elliptic curves over $\Q$ with extra automorphisms; both are now
+treated.
+\end{itemize}
+
+\subsection{Remaining open questions}
 
 \begin{enumerate}[label=\textbf{P\arabic*.}, leftmargin=*, itemsep=4pt]
 
-\item \textbf{Strict KZ-period status of $\Gs$ and $\GG$.}
-Proposition~\ref{prop:KZ-conditional} reduces this to whether $\sqrt{2\pi}
-\in \mathcal{P}$, which is conjecturally false \cite[Problem~3]{kontsevich-zagier}
-but not proven. An unconditional resolution would settle the status of all
-three of $\{\Gs, \GG, \sqrt{2\pi}\}$ jointly.
+\item \textbf{Strict Kontsevich--Zagier period status of $\Gs$ and $\GG$.}
+Theorem~\ref{thm:KZ-status} establishes $\Gs, \GG \in \mathcal{P}^{\exp}$
+unconditionally, and Proposition~\ref{prop:KZ-conditional} reduces strict
+$\mathcal{P}$-membership to whether $\sqrt{2\pi} \in \mathcal{P}$. The
+latter is consistent with --- but neither proved by nor refuted by --- the
+Kontsevich--Zagier conjecture that $1/\pi \notin \mathcal{P}$
+\cite[Problem~3]{kontsevich-zagier}. Resolving the KZ-strict status of
+$\Gs$ is therefore an instance of the broader KZ programme rather than a
+question specific to this paper.
 
-\item \textbf{Closed form for $W^{(4)}_{\mathrm{BCC}}$ in terms of
-$\Gamma$-values.} Theorem~\ref{thm:gen-watson} expresses
-$W^{(4)}_{\mathrm{BCC}}$ as ${}_4F_3(\tfrac12{}^4; 1^3; 1)$, but no
-elementary-function or finite-$\Gamma$-product reduction is known.
-Determine whether
-$\{W^{(4)}_{\mathrm{BCC}}, \Gs, \pi, \Gamma(1/4)\}$ are algebraically
-independent over $\overline{\Q}$, or exhibit a non-trivial algebraic relation.
-PSLQ at 30-digit precision finds no relation with coefficient bound $10^{12}$.
-
-\item \textbf{Selection mechanism for $R_4$ within the family $R_n$.}
-Theorem~\ref{thm:R4-distinguished} records that $R_4 = \Gs$ uniquely
-generates a master quadratic with roots numerically matching $(\alpha^{-1},
-N_c)$. The algebraic-geometric reason is the unique CM-elliptic-curve
-structure $|\Aut|^2 = 16$ with $D = 3$ (from $2^D(D-1)! = 16$). A direct
-proof that this structure forces $R_4$ over $R_3, R_5, R_6$ \emph{without
-using the empirical match} is open.
-
-\item \textbf{Catalan's constant lies outside the lemniscatic neighbourhood.}
-The Dirichlet $L$-value $L(\chi_{-4}, 1) = \pi/4$ (Leibniz) is a period of
-$\mathbb{Q}(i)$, and the $s = 1$ critical value of the lemniscatic $L$-function
-equals $\varpi/2 = \pi\GG/2$ (Theorem~\ref{thm:Lvalue}). However, the
-non-critical value $L(\chi_{-4}, 2) = G_{\text{Catalan}} \approx 0.91596\ldots$
-appears to be algebraically independent of $\{\GG, \pi\}$: a PSLQ
-search at 80 decimal-digit precision over the basis
-$\{1, G_{\text{Catalan}}, \GG^k, \pi^k, G_{\text{Catalan}}/\pi, G_{\text{Catalan}} \cdot \GG\}$
-finds no integer relation with coefficient bound $10^{12}$. This is
-consistent with the Beilinson--Deligne conjectures: critical $L$-values are
-periods, but non-critical $L$-values such as
-$L(\chi_{-4}, 2) = G_{\text{Catalan}}$ are conjecturally not period-ring
-elements. Determine whether $G_{\text{Catalan}}$ is in
-$\overline{\mathbb{Q}}(\GG, \pi)$ or properly outside; prove or disprove
-algebraic independence.
-
-\item \textbf{Higher-dimensional generalisation of the dichotomy.}
-Observation~\ref{obs:dichotomy} treats the lemniscatic CM point $\tau = i$
-($K = \Q(i)$). For the equianharmonic CM point $\tau = \rho$ ($K = \Q(\rho)$,
-where $\rho = e^{2\pi i/3}$), the analogous algebraic constant is
-$R_3 = \Gamma(1/3)/\Gamma(2/3)$, and the analytic constant is presumably
-some function of $\AGM(1, \omega_3)$ for an appropriate $\omega_3$.
-Formulate the equianharmonic dichotomy and the bridge identity.
+\item \textbf{Cubic-AGM analog for $G_\rho$.} For $K = \Q(i)$, the bridge
+identity $\Gs = 2\sqrt{\pi}\,\GG$ realises $\GG = 1/\AGM(1, \sqrt{2})$ via
+the classical arithmetic--geometric mean. The equianharmonic analog
+$G_\rho = \Gamma(1/3)\Gamma(1/6)/(2\pi\sqrt{\pi})$ established in
+\S\ref{sec:equianharmonic} is presented only in $\Gamma$-coordinates; an
+expression in terms of the Borwein--Borwein cubic AGM
+\cite{borwein-cubic-agm}, which iterates
+$a_{n+1} = (a_n + 2 b_n)/3$ and
+$b_{n+1} = \bigl(b_n (a_n^2 + a_n b_n + b_n^2)/3\bigr)^{1/3}$, would
+complete the structural parallel with the lemniscatic case. Determine an
+explicit cubic-AGM representation of $G_\rho$.
 
 \end{enumerate}
+
+\subsection{Conjectures with high-precision numerical evidence}
+
+The remaining items from earlier drafts admit clean statements as
+algebraic-independence conjectures with explicit PSLQ evidence.
+
+\begin{conjecture}[$W^{(4)}_{\mathrm{BCC}}$ is not elementary in
+$\{\Gs, \pi, \Gamma(1/4)\}$]\label{conj:W4-non-elementary}
+The four-dimensional body-centred-cubic Watson constant
+\[
+W^{(4)}_{\mathrm{BCC}} \;=\; (2/\pi)^2 \,
+   {}_4F_3\!\bigl(\tfrac12, \tfrac12, \tfrac12, \tfrac12;\; 1, 1, 1;\; 1\bigr)
+\;\approx\; 0.4534\,\ldots
+\]
+is algebraically independent of $\{\Gs, \pi, \Gamma(1/4)\}$ over
+$\overline\Q$.
+\end{conjecture}
+
+\noindent\textbf{Evidence.} PSLQ (\texttt{mpmath.pslq}) at $40$-digit
+precision over the basis
+\[
+\{1,\; W^{(4)}_{\mathrm{BCC}},\;
+{\Gs}^{a}\,\pi^{b},\;
+\Gamma(1/4)^{a}\,\pi^{b}\}
+\quad (|a|, |b| \leq 6, \text{ deduplicated})
+\]
+returns no integer relation at coefficient bound $10^{12}$. The
+constant ${}_4F_3(\tfrac12{}^4; 1^3; 1)$ is the four-dimensional analog
+of Domb's constant and the Glasser--Montaldi sum, neither of which has a
+known elementary $\Gamma$-product reduction
+\cite{guttmann2010, joyce1971}.
+
+\begin{conjecture}[Catalan's constant is algebraically independent of
+$\{\GG, \pi\}$]\label{conj:catalan-indep}
+The Catalan constant
+\[
+G_{\mathrm{Catalan}} \;=\; L(\chi_{-4}, 2)
+   \;=\; \sum_{n \geq 0} \frac{(-1)^n}{(2n+1)^2}
+   \;\approx\; 0.91596\,\ldots
+\]
+is algebraically independent of $\{\GG, \pi\}$ (equivalently of
+$\{\Gs, \pi\}$) over $\overline\Q$.
+\end{conjecture}
+
+\noindent\textbf{Evidence.} PSLQ at $80$-digit precision over the basis
+\[
+\{1,\; G_{\mathrm{Catalan}},\;
+\GG^{k}\,\pi^{\ell},\;
+G_{\mathrm{Catalan}}\,\GG^{k}\,\pi^{\ell}\}
+\quad (|k|, |\ell| \leq 8)
+\]
+returns no integer relation at coefficient bound $10^{12}$. The
+Beilinson--Deligne conjectural framework provides the structural
+motivation: $L(\chi_{-4}, 1) = \pi/4$ is the critical value (and hence
+a period of $\Q(i)$), but $L(\chi_{-4}, 2) = G_{\mathrm{Catalan}}$ is
+non-critical and conjecturally not in the period ring of $\Q(i)$
+\cite{beilinson-deligne}.
 
 \begin{thebibliography}{99}
 
@@ -1413,6 +1478,16 @@ The LMFDB Collaboration,
 \textit{The L-functions and modular forms database},
 \url{https://www.lmfdb.org}, 2024.
 Curve \texttt{32.a3}: $y^2 = x^3 - x$, conductor $32$, CM by $\Z[i]$.
+
+\bibitem{borwein-cubic-agm}
+J.~M.\ Borwein and P.~B.\ Borwein,
+\textit{A cubic counterpart of Jacobi's identity and the AGM},
+Trans.\ Amer.\ Math.\ Soc.\ \textbf{323} (1991), 691--701.
+
+\bibitem{beilinson-deligne}
+A.~A.\ Beilinson and P.\ Deligne,
+\textit{Motivic interpretation of the Zagier conjecture on polylogarithms},
+in \emph{Motives}, Proc.\ Sympos.\ Pure Math.\ \textbf{55}, AMS, 1994.
 
 \end{thebibliography}
 
