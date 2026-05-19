@@ -1,0 +1,339 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{observation}{Observation}
+
+\newcommand{\Gs}{G^{*}}
+\newcommand{\Gss}{{G^{*}}^{2}}
+\newcommand{\Gsss}{{G^{*}}^{3}}
+\newcommand{\GG}{G_{\!\scriptscriptstyle\mathrm{G}}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Aut}{\mathrm{Aut}}
+
+\title{The master quadratic $P_{\Gs}$ as a math--physics bridge:
+$\chi_{-4}$, the ternary substrate, and the FTD identification}
+\author{}
+\date{2026-05-19}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The companion paper \cite{paper-gstar-A} establishes that the Kronecker
+character $\chi_{-4}$ of $K = \Q(i)$ generates the entire algebraic--analytic
+identity ring of the lemniscatic constant $\Gs = \Gamma(1/4)/\Gamma(3/4)$
+through four functorial projections (lattice, Chowla--Selberg, Hecke,
+Dirichlet), and that $\chi_{-4}(n) = \mathrm{Im}(i^{n})$ with value set
+$\{-1, 0, +1\}$. This companion note draws the consequences of those
+results for the math--physics bridge of the Foundational Ternary Dynamics
+(FTD) framework \cite{ftd-spec}, where the same set $\{-1, 0, +1\}$
+appears as the ternary voxel alphabet of a discrete physical substrate.
+Three structural observations are recorded, all explicitly tagged as
+synthesis rather than theorem: (i) the FTD voxel alphabet coincides as
+a set with the value set of $\chi_{-4}$, sourcing a candidate
+\emph{Gaussian-integer-module ontology}; (ii) the Born rule
+$\psi \mapsto |\psi|^{2}$ and the character $\chi_{-4}: i^{n} \mapsto
+\mathrm{Im}(i^{n})$ are the same arrow --- a real-coordinate projection
+of a complex object --- applied at different scopes; (iii) the FTD
+identification $(x_{+}, x_{-}) \approx (\alpha^{-1}, N_{c})$ of the
+roots of the master quadratic $P_{\Gs}(x) = x^{2} - 16\Gss x + 16\Gsss$
+with the fine-structure constant and the number of QCD colours requires
+exactly one bit of physical input --- the exponent-pair selector $(2, 3)$
+--- which is over-determined by joint root-matching. All mathematical
+content is taken from \cite{paper-gstar-A}; this companion contributes
+only the bridge interpretation, presented under the project's
+\texttt{[SYNTHESIS]} tag.
+\end{abstract}
+
+\section{Setting and scope}\label{sec:setting}
+
+We adopt the entire mathematical content of \cite{paper-gstar-A}
+without re-derivation. The constants in use are:
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item $\Gs = \Gamma(1/4)/\Gamma(3/4) \approx 2.9587$;
+\item $\GG = 1/\mathrm{AGM}(1, \sqrt{2}) \approx 0.8346$, with the bridge identity $\Gs = 2\sqrt{\pi}\,\GG$;
+\item $\chi_{-4}: (\Z/4\Z)^\times \to \{\pm 1\}$, the unique non-trivial Dirichlet character mod $4$;
+\item the master quadratic $P_{\Gs}(x) = x^{2} - 16\,\Gss\,x + 16\,\Gsss$, with integer coefficient $16 = |\Aut_\C(E_{\mathrm{lemn}})|^{2}$ and roots $x_{\pm}$ satisfying Vieta's identities $x_+ + x_- = 16\Gss$, $x_+ x_- = 16\Gsss$, $1/x_+ + 1/x_- = 1/\Gs$.
+\end{itemize}
+The mathematical paper \cite{paper-gstar-A} proves that $\chi_{-4}$
+admits the explicit form $\chi_{-4}(n) = \mathrm{Im}(i^{n}) = \sin(\pi n/2)$
+and that its value set is
+\[
+\{\chi_{-4}(n) : n \in \Z\} \;=\; \{i^{2},\, 0,\, |i^{2}|\} \;=\; \{-1, 0, +1\}.
+\]
+Numerical observation: the roots of $P_{\Gs}$ are
+$x_{+} \approx 137.036\ldots$ (matching the inverse fine-structure constant
+$\alpha^{-1}$ to 1.26~ppm) and $x_{-} \approx 3.024\ldots$ (matching
+the number of QCD colours $N_{c} = 3$ to 0.8\%). The Foundational
+Ternary Dynamics framework \cite{ftd-spec} posits the identification
+$(x_{+}, x_{-}) = (\alpha^{-1}, N_{c})$ as a strongly motivated
+conjecture.
+
+This note is the math--physics bridge: it draws structural consequences
+of the $\chi_{-4}$-unification of \cite{paper-gstar-A} for the FTD
+identification, without proving the identification itself. All
+load-bearing claims are tagged \texttt{[SYNTHESIS]} or \texttt{[STRONGLY
+MOTIVATED CONJECTURE]} as appropriate; no new mathematical theorem is
+claimed in this note.
+
+\section{The value-set coincidence and the Gaussian-integer-module ontology}\label{sec:ontology}
+
+\begin{observation}[Value-set coincidence]\label{obs:value-set-coincidence}
+\textbf{[Synthesis.]} Three independent starting points terminate at the
+same three-element set:
+\begin{enumerate}[label=\textup{(\arabic*)}, leftmargin=*, itemsep=2pt]
+\item the FTD physical primitive --- each lattice site $v$ takes a state
+$s_v \in \{-1, 0, +1\}$ encoding \emph{negative state}, \emph{void},
+\emph{positive state} \cite{ftd-spec};
+\item the value set of the unique non-trivial real Dirichlet character of
+conductor 4 \cite[\S 16]{paper-gstar-A};
+\item the closure of the imaginary-unit orbit $\{i^{n} : n \in \Z\}$
+under the imaginary-part map: $\{\mathrm{Im}(i^{0}), \mathrm{Im}(i^{1}),
+\mathrm{Im}(i^{2}), \mathrm{Im}(i^{3})\} = \{0, 1, 0, -1\}$.
+\end{enumerate}
+That these three sets coincide is a set-level identity, not yet a
+\emph{functorial} identification. Whether the FTD voxel alphabet
+\emph{arises from} the character $\chi_{-4}$, or only happens to share
+its value set, is a physical-modelling question that lies outside the
+scope of the mathematical paper.
+\end{observation}
+
+\begin{remark}[Candidate ontology: Z[i]-substrate realism]\label{rem:zi-substrate-realism}
+\textbf{[Synthesis.]} The value-set coincidence of
+Observation~\ref{obs:value-set-coincidence} suggests a working ontology
+in which the empirical universe is the real-coordinate readout of a
+$\Z[i]$-module structure. Layering the established FTD framework against
+this ontology:
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item voxels are positions in a $\Z[i]^d$-style lattice ($d = 3$ in current FTD);
+\item voxel states $s_v \in \{-1, 0, +1\}$ are the values
+$\mathrm{Im}(i^{\bullet})$ readouts of the unit group $\Z[i]^\times$;
+\item the flux field $J \in \R^3$ is the continuous real part of an
+underlying complex object;
+\item time is the order parameter of the cyclic action $\langle i \rangle$
+at long wavelength;
+\item the mass--length calibration $a_{\mathrm{phys}} \equiv \ell_P$ is
+the choice of unit on the $\Z[i]$-module;
+\item dimensionless physical constants ($\alpha$, $N_c$, mass ratios) are
+intrinsic invariants of the $\Z[i]$-module structure.
+\end{itemize}
+The ontological position is most accurately described as
+\emph{Eleatic structural realism, specialized to the Gaussian-integer
+module}: Eleatic because the substrate is a single algebraic object;
+structural realist because the entities are nodes in the structural
+network rather than independent objects; specialized because the
+particular structure is the maximal order of $\Q(i)$ rather than an
+arbitrary mathematical structure.
+\end{remark}
+
+\begin{remark}[Falsifiability]\label{rem:falsifiability}
+\textbf{[Synthesis.]} The $\Z[i]$-substrate ontology is empirically
+refutable: if experiment ever produced an observable that requires a
+$\Z[\rho]$-module structure (Eisenstein, sixfold) that cannot be
+embedded in a $\Z[i]$ ambient, or that requires
+$\Z[\sqrt{-2}]$ or $\Z[\sqrt{-7}]$ (other class-number-1 quadratic
+orders), the framework breaks. The position has therefore the
+falsifiability profile of a substantive empirical hypothesis, not a
+metaphysical claim.
+\end{remark}
+
+\section{The Born rule and $\chi_{-4}$ as the same arrow}\label{sec:born-rule-arrow}
+
+The deepest single structural connection that the $\chi_{-4}$-unification
+of \cite{paper-gstar-A} makes available is the identification of two
+distinct operations as instances of the same arrow.
+
+\begin{observation}[Born rule and $\chi_{-4}$ as the same arrow]\label{obs:born-arrow}
+\textbf{[Synthesis.]} The Born rule of quantum mechanics and the
+character $\chi_{-4}$ are formally the same projection applied to
+different complex objects:
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+\item \textbf{Born rule}: $\psi \in \C \;\mapsto\; |\psi|^{2} \in \R_{\geq 0}$,
+projecting a complex amplitude onto its real modulus.
+\item \textbf{Character $\chi_{-4}$}: $i^{n} \in \langle i\rangle \subset \C \;\mapsto\; \mathrm{Im}(i^{n}) \in \{-1, 0, +1\}$,
+projecting a complex unit onto its signed imaginary coordinate.
+\end{itemize}
+Both are functions of the form
+$(\text{complex structure}) \xrightarrow{(\text{single real coordinate})} \R$.
+The Born rule reads the modulus; $\chi_{-4}$ reads the imaginary part.
+They are dual projections from the same complex structure, both producing
+ternary or near-ternary outcomes precisely because the imaginary-part
+projection of the cyclic group $\langle i \rangle$ takes exactly three
+distinct values.
+\end{observation}
+
+\begin{remark}[Reflexive projection at three scopes]\label{rem:three-scopes}
+\textbf{[Synthesis.]} Under the FTD framework's identification of the
+voxel state field with the substrate's reflexive projection
+\cite[\S 06\_consciousness]{ftd-spec}, the same arrow applies at three
+nested scopes:
+\[
+\underbrace{\text{reflexive projection of substrate}}_{\text{FTD voxel state} \;=\; \mathrm{Im}(i^{\bullet})}
+\;\;\sim\;\;
+\underbrace{\text{measurement event of amplitude}}_{\text{Born rule outcome} \;=\; |\psi|^{2}}
+\;\;\sim\;\;
+\underbrace{\text{imaginary-part trace of unit orbit}}_{\chi_{-4}(n) = \mathrm{Im}(i^{n})}.
+\]
+The first and third are mathematically equivalent (the FTD voxel state
+field, viewed as a function on lattice sites with values in $\Z[i]^\times \cup \{0\}$
+read off through the imaginary-part map, is literally the character
+$\chi_{-4}$ on the angular index). The second is conjectured-structurally
+equivalent to the first via the FTD reflexivity ontology; this is the
+load-bearing physical conjecture and is tagged
+\texttt{[STRONGLY MOTIVATED CONJECTURE]} accordingly.
+\end{remark}
+
+\section{The master quadratic as the bridge}\label{sec:master-quadratic-bridge}
+
+The FTD bridge from $\chi_{-4}$-derived mathematics to physical observables
+runs through the master quadratic $P_{\Gs}$. We recall (from
+\cite[Theorem 16.x]{paper-gstar-A}) that $\chi_{-4}$ generates the
+integer coefficient $16 = |\Z[i]^\times|^{2}$ (lattice projection) and
+the constant $\Gs$ (Chowla--Selberg projection), but does \emph{not}
+generate the specific polynomial form $x^{2} - 16\Gss x + 16\Gsss$ from
+classical CM/Weber/Hecke machinery (the three negative tests of
+\cite[\S 16.6]{paper-gstar-A}).
+
+The exponent pair $(2, 3)$ on $\Gs$ in the polynomial coefficients is
+nevertheless \emph{uniquely picked out} by joint root-matching:
+
+\begin{observation}[Joint-matching uniqueness, restated from {\cite[\S 17.2]{paper-gstar-A}}]\label{obs:joint-matching-bridge}
+\textbf{[Synthesis.]} Among polynomial forms $y^{2} - 16 R^{p} y + 16 R^{q}$
+at $R = \Gs$ with $(p, q) \in \Z^{2}$, $|p|, |q| \leq 5$, only the pair
+$(p, q) = (2, 3)$ produces an ordered root pair $(y_{+}, y_{-})$ that
+simultaneously matches the FTD pair $(\alpha^{-1}, N_{c})$ to sub-percent
+precision. The match precision at $(2, 3)$ is $1.26$~ppm for $y_{+} =
+137.036$ and $0.8\%$ for $y_{-} = 3.024$. Other exponent pairs match
+one root but not both, or neither.
+\end{observation}
+
+\begin{remark}[Information-theoretic minimality of the FTD bridge]\label{rem:bridge-minimality}
+\textbf{[Synthesis.]} The FTD math--physics bridge requires exactly
+\emph{one bit} of input from the physical side --- the exponent-pair
+selector $(p, q) \in \{(2, 3), (3, 4), (4, 5), \ldots, (1, 2), (2, 4), \ldots\}$ ---
+and that bit is over-determined by joint matching to two distinct
+physical constants $(\alpha^{-1}, N_{c})$. Equivalently: the FTD master
+quadratic is the unique polynomial of the form $y^{2} - 16 R^{p} y + 16 R^{q}$
+at $R = \Gs$ whose ordered root pair $(y_{+}, y_{-})$ jointly matches
+$(\alpha^{-1}, N_{c})$ to sub-percent precision.
+
+This is not a derivation of the bridge --- the joint match itself is the
+input that selects $(p, q)$ --- but it is the cleanest available
+\emph{minimality statement}: the math--physics bridge in the FTD
+framework requires no parameters beyond the choice of one exponent
+pair, and the choice is over-determined (hence robust) against the joint
+match to two distinct physical constants.
+\end{remark}
+
+\begin{observation}[The locus of the math--physics gap]\label{obs:gap-locus}
+Combining \cite[\S 16.6]{paper-gstar-A} (no CM-internal source for $(2, 3)$)
+with Observation~\ref{obs:joint-matching-bridge} (joint match uniquely
+fixes $(2, 3)$): the gap between $\chi_{-4}$-derived mathematical
+structure and the FTD physical identification is localised precisely at
+the polynomial \emph{assembly} step. The integer coefficient $16$ and
+the constant $\Gs$ are both forced by $\chi_{-4}$. The exponent pair
+$(2, 3)$ is forced only by the joint physical-matching requirement.
+Closing this last gap --- if a clean derivation of $(2, 3)$ from
+$\chi_{-4}$-internal data exists --- would convert the FTD bridge from
+a two-arrow conjecture into a single-arrow theorem.
+\end{observation}
+
+\section{The full descent chain}\label{sec:descent}
+
+The cumulative content of \cite{paper-gstar-A} and this companion can be
+displayed as a single descent chain from physics to ontological bedrock:
+\[
+\begin{array}{c}
+\underbrace{(\alpha^{-1},\, N_{c})}_{\text{measured physical constants}} \\
+\Big\uparrow \text{\quad\texttt{[STRONGLY MOTIVATED CONJECTURE]}\quad (FTD bridge)} \\
+\underbrace{P_{\Gs}(x) = x^{2} - 16\Gss x + 16\Gsss}_{\text{master quadratic}} \\
+\Big\uparrow \text{\quad(2, 3) exponents: uniquely forced by joint root match \cite[\S 17.2]{paper-gstar-A}} \\
+\underbrace{\{16,\; \Gs\}}_{\text{building blocks}} \\
+\Big\uparrow \text{\quad four functorial projections \cite[Thm 16.x]{paper-gstar-A}} \\
+\underbrace{\chi_{-4}}_{\text{Kronecker character of } \Q(i)} \\
+\Big\uparrow \text{\quad imaginary-part trace}\;\; \chi_{-4}(n) = \mathrm{Im}(i^{n}) = \sin(\pi n/2) \\
+\underbrace{\{-1,\, 0,\, +1\}}_{\text{value set} \;=\; \text{FTD voxel alphabet (set-level)}} \\
+\Big\uparrow \text{\quad closure of }\langle i\rangle\text{-orbit under squaring \& modulus} \\
+\underbrace{i^{2} = -1}_{\text{ontological zero-point}}
+\end{array}
+\]
+Every arrow above the FTD bridge is established (theorem, observation,
+or honest conjecture) in \cite{paper-gstar-A}. The FTD bridge itself is
+the physical conjecture that this companion records under
+\texttt{[STRONGLY MOTIVATED CONJECTURE]}. Everything below the bridge is
+pure mathematics; the only place that requires physical input is the
+single bit of the exponent-pair selector.
+
+\section{Outlook}\label{sec:outlook}
+
+Two productive lines of work are identified by the descent chain.
+
+\textbf{Closing the bridge.} If a derivation of the exponent pair
+$(2, 3)$ from $\chi_{-4}$-internal data can be made rigorous --- the
+candidate framing in \cite[\S 16.6, Conjecture (Sym\textsuperscript{2}--Sym\textsuperscript{3})]{paper-gstar-A}
+is the most natural starting point --- the FTD bridge would become a
+single-arrow theorem rather than a two-arrow conjecture. This would
+not prove the empirical match to $(\alpha^{-1}, N_{c})$ (that remains an
+experimental fact about the universe), but it would localise the
+conjectural content to a single physical assertion: that the universe's
+electroweak and strong sectors are built from a $\Z[i]$-substrate.
+
+\textbf{Extending the bridge.} The current FTD identifications cover
+$\alpha$ and $N_{c}$. The Standard Model has additional dimensionless
+constants ($\sin^{2}\theta_{W}$, $m_{\mu}/m_{e}$, $m_{\tau}/m_{e}$,
+PMNS angles, etc.) which the FTD framework currently parameterises
+without first-principles derivation. The $\chi_{-4}$-unification suggests
+that further dimensionless invariants may be discoverable as roots of
+higher-rank master polynomials living in $\mathrm{Sym}^{\bullet}(H^{1}(E_{\mathrm{lemn}}))$,
+or as Hecke L-values of related CM elliptic curves. This is the natural
+program for extending the bridge from $(\alpha^{-1}, N_{c})$ to the full SM.
+
+A second-tier program suggested by the polymath synthesis of
+\cite[appendix]{paper-gstar-A} is the identification of the
+$\chi_{-3}$-side (equianharmonic, $|\Aut| = 6$) as the structural home
+of the QCD gauge structure, with $\chi_{-4}$ (lemniscatic) as the home
+of the electroweak structure. The Moore Layer Theorem of FTD
+\cite{ftd-spec} produces $U(1) \times SU(2) \times SU(3)$ from a
+27-block polyhedral decomposition; whether this can be reformulated as
+the joint action of $\chi_{-4}$ (giving $U(1)$ and part of $SU(2)$) and
+$\chi_{-3}$ (giving $SU(3)$ and the rest of $SU(2)$ via the
+Hurwitz-quaternion intersection $\mathbb{H} \supset \Z[i], \Z[\rho]$)
+is an open speculative direction worth investigating but not pursued
+here.
+
+\begin{thebibliography}{9}
+
+\bibitem{paper-gstar-A}
+C. Pacitanimulli,
+\textit{The algebraic and analytic faces of the lemniscatic CM constant
+$\Gs = \Gamma(1/4)/\Gamma(3/4)$: a $\chi_{-4}$-unified survey},
+manuscript, 2026.
+
+\bibitem{ftd-spec}
+C. Pacitanimulli et al.,
+\textit{Foundational Ternary Dynamics: specification and theoretical framework},
+project documentation, 2026.
+\url{https://github.com/[repository]/ftd/blob/main/docs/SPEC_FTD.md}.
+
+\end{thebibliography}
+
+\end{document}
