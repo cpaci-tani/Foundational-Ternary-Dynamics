@@ -110,3 +110,42 @@ def test_identity_I2_legendre_consistency():
 
     diff = abs(det - expected)
     assert diff < mp.mpf('1e-78'), f"Legendre det = {det}, expected {expected}, diff = {diff}"
+
+
+def test_identity_I3_sym_k_eigenlines():
+    """I3: For k in {2, 3, 4, 5}, Sym^k(H^1) has k+1 basis monomials, and the
+    Z[i]-eigenvalues form the sequence i^(2j-k) for j = 0, 1, ..., k.
+
+    Per Hypothesis H1 (pre-registered).
+
+    Note: sym_k_basis(k) returns (a, b) with a ascending from 0 to k (a == j),
+    so eigenvalue at index j is i^(a-b) = i^(j-(k-j)) = i^(2j-k).
+    The expected_eigenvalues lists below follow this ascending-a order.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    # Ascending-a order: eigenvalue at index j is i^(2j - k)
+    expected_eigenvalues = {
+        2: [sp.I**(-2), sp.I**0, sp.I**2],              # j=0,1,2 -> i^-2, 1, i^2
+        3: [sp.I**(-3), sp.I**(-1), sp.I**1, sp.I**3],  # j=0..3
+        4: [sp.I**(-4), sp.I**(-2), sp.I**0, sp.I**2, sp.I**4],
+        5: [sp.I**(-5), sp.I**(-3), sp.I**(-1), sp.I**1, sp.I**3, sp.I**5],
+    }
+
+    for k in [2, 3, 4, 5]:
+        basis = gse.sym_k_basis(k)
+        assert len(basis) == k + 1, f"Sym^{k} basis should have {k+1} elements, got {len(basis)}"
+
+        # Verify (a, b) pairs are in expected order (a ascending)
+        for j, (a, b) in enumerate(basis):
+            assert a + b == k, f"Basis element ({a}, {b}) does not satisfy a+b={k}"
+            assert a == j, f"Basis element index {j} should have a={j} (ascending), got a={a}"
+
+        # Verify Z[i]-eigenvalues match expected
+        computed = [gse.z_i_eigenvalue(a, b) for (a, b) in basis]
+        expected = [sp.simplify(ev) for ev in expected_eigenvalues[k]]
+        computed_simplified = [sp.simplify(ev) for ev in computed]
+        assert computed_simplified == expected, (
+            f"Sym^{k} eigenvalues: computed {computed_simplified}, expected {expected}"
+        )
