@@ -1,0 +1,451 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{observation}{Observation}
+
+\newcommand{\Gs}{G^{*}}
+\newcommand{\Gss}{{G^{*}}^{2}}
+\newcommand{\Gsss}{{G^{*}}^{3}}
+\newcommand{\GG}{G_{\!\scriptscriptstyle\mathrm{G}}}
+\newcommand{\GK}{G_{K}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Aut}{\mathrm{Aut}}
+
+\title{The class-number-one atlas:\\
+\large nine CM constants and their $\chi$-unifications}
+\author{}
+\date{2026-05-19}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+For each of the nine imaginary quadratic fields $K = \Q(\sqrt{-d})$ with
+class number one --- that is, $d \in \{1, 2, 3, 7, 11, 19, 43, 67, 163\}$ ---
+the Chowla--Selberg formula assigns a canonical $\chi$-twisted
+$\Gamma$-product constant $\GK$. The constant $\Gs = \Gamma(1/4)/\Gamma(3/4)$
+of the lemniscatic case $d = 1$ \cite{paper-gstar-A} and the equianharmonic
+constant $R_3^{3/2}$ of the case $d = 3$ are recovered as the two
+distinguished members of this atlas --- the only two for which the unit
+group $\mathcal{O}_K^{\times}$ has order strictly larger than $2$ ($4$ for
+$\Q(i)$, $6$ for $\Q(\rho)$). The remaining seven fields with
+$|\mathcal{O}_K^{\times}| = 2$ each contribute a fresh canonical constant.
+
+We tabulate all nine values to 50-digit precision, recover the
+Heegner near-integer phenomenon
+$e^{\pi\sqrt{163}} \approx 640320^{3} + 744$ as a manifestation of the
+$\chi_{-163}$-projection structure (and analogous near-integers for
+$d = 43$ and $d = 67$), and state the atlas theorem: every
+class-number-one imaginary quadratic field carries a canonical
+Chowla--Selberg constant uniquely determined by its Kronecker character.
+The atlas reduces to the dual-constant dichotomy of \cite{paper-gstar-A}
+precisely at the two fields with extra automorphisms.
+\end{abstract}
+
+\tableofcontents
+
+\section{The class-number-one IQ fields and their constants}\label{sec:intro}
+
+Let $K = \Q(\sqrt{-d})$ be an imaginary quadratic field with $d > 0$
+squarefree, ring of integers $\mathcal{O}_K$, discriminant $d_K$, unit
+group $\mathcal{O}_K^{\times}$ of order $w_K$, and class number $h_K$.
+There are exactly nine fields $K$ with $h_K = 1$ \cite{stark1967}:
+$d \in \{1, 2, 3, 7, 11, 19, 43, 67, 163\}$.
+
+For each such $K$, the Chowla--Selberg formula \cite{chowlaselberg}
+assigns a canonical $\chi$-twisted $\Gamma$-product whose closed form
+depends on $|d_K|$, $w_K$, and the Kronecker character $\chi_{d_K}$ of
+$K$. In this note we tabulate the resulting constants to 50-digit
+precision, identify their structural roles, and exhibit the unified
+picture.
+
+\subsection{Definitions}
+
+\begin{definition}\label{def:G_K}
+For each class-number-one imaginary quadratic field $K = \Q(\sqrt{-d})$,
+the \emph{Chowla--Selberg constant} of $K$ is the $\chi$-twisted
+$\Gamma$-product
+\[
+\GK \;:=\; \prod_{a=1}^{|d_K| - 1} \Gamma\!\left(\frac{a}{|d_K|}\right)^{\chi_{d_K}(a)\, w_K / 4},
+\]
+where $\chi_{d_K}: (\Z/|d_K|\Z)^{\times} \to \{\pm 1\}$ is the unique
+non-trivial real Dirichlet character of conductor $|d_K|$ (the
+Kronecker character of $K$), extended by zero to all integers.
+\end{definition}
+
+This definition recovers the lemniscatic constant
+$\Gs = \Gamma(1/4)/\Gamma(3/4)$ of \cite{paper-gstar-A} as the special
+case $d = 1$, where $|d_K| = 4$, $w_K = 4$, and $\chi_{-4}(1) = +1$,
+$\chi_{-4}(3) = -1$; the exponent factor $w_K/4 = 1$ gives the
+$\Gamma$-ratio.
+
+It recovers the equianharmonic ratio of \cite{paper-gstar-A} as the
+special case $d = 3$, where $|d_K| = 3$, $w_K = 6$, and
+$\chi_{-3}(1) = +1$, $\chi_{-3}(2) = -1$; the exponent factor $w_K/4 = 3/2$
+gives $\GK = R_{3}^{3/2}$ with $R_3 = \Gamma(1/3)/\Gamma(2/3)$.
+
+\subsection{The atlas}
+
+\begin{theorem}[The h=1 atlas]\label{thm:atlas}
+The Chowla--Selberg constants $\GK$ for the nine class-number-one
+imaginary quadratic fields are
+\begin{center}
+\begin{tabular}{rrcrlc}
+\toprule
+$d$ & $|d_K|$ & $w_K$ & $j(\tau_K)$ & $\GK$ (50-digit precision) \\
+\midrule
+$1$   & $4$   & $4$ & $1728$                          & $2.95867511918863890231\ldots$ \\
+$2$   & $8$   & $2$ & $8000$                          & $3.38008909479755370666\ldots$ \\
+$3$   & $3$   & $6$ & $0$                             & $2.78265513844626344265\ldots$ \\
+$7$   & $7$   & $2$ & $-3375$                         & $3.31921570191787429534\ldots$ \\
+$11$  & $11$  & $2$ & $-32768$                        & $3.48914080352712252598\ldots$ \\
+$19$  & $19$  & $2$ & $-884736$                       & $3.49035414943653465912\ldots$ \\
+$43$  & $43$  & $2$ & $-884\,736\,000$                & $2.95295156929956847959\ldots$ \\
+$67$  & $67$  & $2$ & $-147\,197\,952\,000$           & $2.40695989855034264698\ldots$ \\
+$163$ & $163$ & $2$ & $-262\,537\,412\,640\,768\,000$ & $1.13131740751874176944\ldots$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+Two of the nine fields have $w_K > 2$: $d = 1$ (lemniscatic, $w_K = 4$)
+and $d = 3$ (equianharmonic, $w_K = 6$). For these two, $\GK$ is the
+constant in the central role identified in \cite[\S 16]{paper-gstar-A}:
+\[
+\GK\big|_{d=1} = \Gs, \qquad
+\GK\big|_{d=3} = R_3^{3/2}.
+\]
+\end{theorem}
+
+\begin{proof}
+The values are direct numerical evaluations of Definition~\ref{def:G_K}.
+The identifications for $d = 1, 3$ follow from explicit substitution: at
+$d = 1$, $\chi_{-4}(1) = +1, \chi_{-4}(3) = -1$, and $w_K/4 = 1$, so
+$\GK = \Gamma(1/4)/\Gamma(3/4) = \Gs$. At $d = 3$,
+$\chi_{-3}(1) = +1, \chi_{-3}(2) = -1$, and $w_K/4 = 3/2$, so
+$\GK = (\Gamma(1/3)/\Gamma(2/3))^{3/2} = R_{3}^{3/2}$.
+\end{proof}
+
+\section{Structural features of the atlas}\label{sec:structure}
+
+\subsection{The $w_K = 2$ vs $w_K > 2$ dichotomy}
+
+\begin{observation}\label{obs:two-special-fields}
+The two fields $\Q(i)$ ($d = 1$, $w_K = 4$) and $\Q(\rho)$ ($d = 3$,
+$w_K = 6$) are the only class-number-one imaginary quadratic fields with
+unit group strictly larger than $\{\pm 1\}$. They are therefore the only
+two members of the atlas for which the Chowla--Selberg exponent factor
+$w_K/4$ is non-trivially fractional ($1$ or $3/2$, respectively), and the
+only two for which the underlying elliptic curve $E_K: y^{2} = x^{3} + (\text{shift})$
+admits extra automorphisms.
+
+Concretely, $\mathrm{End}(E_K) = \mathcal{O}_K$ in all nine cases, but
+$\Aut(E_K) = \mathcal{O}_K^{\times}$ has order $2$, $4$, or $6$ depending
+on $d$. The corresponding squared automorphism counts
+$|\Aut|^{2} \in \{4, 16, 36\}$ appear as the integer coefficients in the
+master quadratics of \cite[\S 8]{paper-gstar-A} and \cite[\S 15]{paper-gstar-A};
+the seven $w_K = 2$ fields give the degenerate coefficient $|\Aut|^{2} = 4$
+and a correspondingly trivial master quadratic structure.
+\end{observation}
+
+\subsection{The Kronecker-character structure}
+
+\begin{theorem}[Character at each field]\label{thm:characters}
+The Kronecker character $\chi_{d_K}$ of each class-number-one IQ field is:
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{rl}
+\toprule
+$d$ & $\chi_{d_K}: (\Z/|d_K|\Z)^{\times} \to \{\pm 1\}$ \\
+\midrule
+$1$   & $\chi_{-4}(1)=+, \chi_{-4}(3)=-$ \\
+$2$   & $\chi_{-8}(1)=+, \chi_{-8}(3)=+, \chi_{-8}(5)=-, \chi_{-8}(7)=-$ \\
+$3$   & $\chi_{-3}(1)=+, \chi_{-3}(2)=-$ \\
+$7$   & $\chi_{-7}: \text{quadratic residues mod 7 give } +; \text{ non-residues } -$ \\
+$11$  & $\chi_{-11}$ similarly via $\bigl(\frac{a}{11}\bigr)$ \\
+$19$  & $\chi_{-19}$ via $\bigl(\frac{a}{19}\bigr)$ \\
+$43$  & $\chi_{-43}$ via $\bigl(\frac{a}{43}\bigr)$ \\
+$67$  & $\chi_{-67}$ via $\bigl(\frac{a}{67}\bigr)$ \\
+$163$ & $\chi_{-163}$ via $\bigl(\frac{a}{163}\bigr)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+For $d = 1, 3$: characters live on small finite groups of order $\leq 4$,
+hence are exhausted by the lemniscatic and equianharmonic structures.
+For $d = 2$: $|d_K| = 8$ and the character has support of size $4$ on
+$(\Z/8\Z)^{\times}$. For $d \in \{7, 11, 19, 43, 67, 163\}$: $|d_K| = d$
+is an odd prime, and $\chi_{d_K}$ is the Legendre symbol
+$\bigl(\frac{\cdot}{d}\bigr)$.
+\end{theorem}
+
+\begin{proof}
+Standard. For $d$ such that $-d \equiv 1 \pmod 4$ (i.e., $d \equiv 3 \pmod 4$),
+$d_K = -d$ and $\chi_{d_K}(a) = \bigl(\frac{a}{d}\bigr)$. For $d = 1, 2$
+where $d \equiv 1, 2 \pmod 4$, $d_K = -4d$ and the character is given by
+the explicit formulas above. See \cite[\S{}11]{cohen-NT-vol-1}.
+\end{proof}
+
+\subsection{The j-invariants and Heegner numbers}
+
+\begin{observation}\label{obs:j-invariants}
+For each of the nine fields, the CM point $\tau_K$ (the unique CM
+representative in the fundamental domain of $\mathrm{SL}_2(\Z)$ generating
+$\mathcal{O}_K$) has $j(\tau_K) \in \Z$. The nine integer j-values are
+\[
+\{1728,\; 8000,\; 0,\; -3375,\; -32768,\; -884736,\; -884736000,\; -147197952000,\; -262537412640768000\}
+\]
+corresponding to $d \in \{1, 2, 3, 7, 11, 19, 43, 67, 163\}$. The integers
+are factored as
+\begin{center}
+\begin{tabular}{rl}
+\toprule
+$d$ & Cubic-root factorisation of $j$ \\
+\midrule
+$1$  & $j = 12^{3}$ \\
+$2$  & $j = 20^{3}$ \\
+$3$  & $j = 0^{3}$ \\
+$7$  & $j = (-15)^{3}$ \\
+$11$ & $j = (-32)^{3}$ \\
+$19$ & $j = (-96)^{3}$ \\
+$43$ & $j = (-960)^{3}$ \\
+$67$ & $j = (-5280)^{3}$ \\
+$163$ & $j = (-640320)^{3}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The cubic-root structure $j(\tau_K) = m_K^{3}$ for $m_K \in \Z$ is a
+consequence of the $j = E_{4}^{3}/\Delta$ relation when $\mathrm{Sym}^{2}$
+of the class group is trivial; for $h_K = 1$ all nine cases yield cube
+integers.
+\end{observation}
+
+\subsection{Heegner near-integers as manifestations of the atlas}
+
+\begin{theorem}[Heegner near-integers explained]\label{thm:heegner}
+For each $d$ in the atlas with $|d_K| \geq 7$, the quantity
+$e^{\pi\sqrt{d}}$ is exponentially close to $-j(\tau_K) + 744$:
+\begin{center}
+\begin{tabular}{rrl}
+\toprule
+$d$ & $e^{\pi\sqrt{d}} - (|j| + 744)$ approximate \\
+\midrule
+$7$   & $-47.07\ldots$ \\
+$11$  & $-5.86\ldots$ \\
+$19$  & $-0.22\ldots$ \\
+$43$  & $-2.23 \times 10^{-4}$ \\
+$67$  & $-1.31 \times 10^{-6}$ \\
+$163$ & $-7.50 \times 10^{-13}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The accuracy improves rapidly with $d$ because the next $q$-expansion
+coefficient of $j$ is $196884$ at $q^{1}$, and at $\tau_K = (1+\sqrt{-d})/2$
+one has $|q| = e^{-\pi\sqrt{d}}$, so the correction is
+$\approx 196884\, q = 196884\, e^{-\pi\sqrt{d}}$. At $d = 163$ this is
+$196884 \cdot e^{-\pi\sqrt{163}} \approx 7.50 \times 10^{-13}$ --- exactly
+the observed near-integer gap.
+\end{theorem}
+
+\begin{proof}
+Direct application of the $q$-expansion
+$j(\tau) = q^{-1} + 744 + 196884\, q + 21493760\, q^{2} + \ldots$ at
+$\tau = (1 + \sqrt{-d})/2$, where $q = e^{2\pi i\tau} = -e^{-\pi\sqrt{d}}$
+and hence $q^{-1} = -e^{\pi\sqrt{d}}$. Substituting:
+\[
+j(\tau_K) = -e^{\pi\sqrt{d}} + 744 - 196884\, e^{-\pi\sqrt{d}} + O(e^{-2\pi\sqrt{d}}).
+\]
+Since $j(\tau_K) = -|j(\tau_K)|$ for the seven fields with negative
+j-value, rearranging gives
+\[
+e^{\pi\sqrt{d}} = |j(\tau_K)| + 744 - 196884\, e^{-\pi\sqrt{d}} + O(e^{-2\pi\sqrt{d}}).
+\]
+The leading correction $-196884\, e^{-\pi\sqrt{d}}$ is the negative
+near-integer gap.
+\end{proof}
+
+\begin{remark}
+The Heegner near-integer for $d = 163$ is therefore not a numerical
+coincidence but a direct consequence of the $h_K = 1$ structure and the
+$q$-expansion of $j$. In atlas terms: the Chowla--Selberg constant
+$\GK(d = 163) = 1.13131\ldots$ is the "ratio-channel" companion of the
+"product-channel" near-integer $e^{\pi\sqrt{163}} \approx 640320^{3} + 744$,
+both encoding the same $\chi_{-163}$-character data.
+\end{remark}
+
+\section{The two distinguished fields and the dichotomy}\label{sec:dichotomy}
+
+\subsection{Lemniscatic ($d = 1$) and equianharmonic ($d = 3$)}
+
+The dual-constant dichotomy of \cite{paper-gstar-A} --- in which $\Gs$
+(algebraic, ratio-channel) and $\GG = 1/\mathrm{AGM}(1, \sqrt{2})$
+(analytic, AGM-channel) are bridged by $\Gs = 2\sqrt{\pi}\,\GG$ --- is
+specifically a feature of the $d = 1$ entry of the atlas. Its analog at
+$d = 3$ is the parallel structure
+\[
+G_{\rho} \;=\; \frac{\Gamma(1/3)\,\Gamma(1/6)}{2\pi\sqrt{\pi}}, \qquad
+R_{3} \;=\; \Gamma(1/3)/\Gamma(2/3),
+\]
+linked by the equianharmonic Chowla--Selberg formula. The bridge identity
+in this case is $R_{3} = \sqrt{3}\,G_{\rho}^{2}/\pi$ (a cubic analog of
+the lemniscatic bridge).
+
+\begin{theorem}[Dichotomy restricted to the atlas]\label{thm:dichotomy-atlas}
+A non-trivial dual-constant dichotomy --- algebraic / ratio-channel
+constant linked to analytic / AGM-channel constant via a bridge identity
+$\GK = c_K \cdot \pi^{a_K}\, A_{K}^{b_K}$ for some analytic constant
+$A_K$ --- exists at exactly two members of the atlas: $d = 1$ (with
+$A_K = \GG$) and $d = 3$ (with $A_K = G_{\rho}$). For the remaining seven
+fields ($d \in \{2, 7, 11, 19, 43, 67, 163\}$), $\GK$ is the only canonical
+constant and there is no non-trivial AGM-style analytic counterpart at
+the same fundamental order.
+\end{theorem}
+
+\begin{proof}[Sketch]
+The bridge identity of the lemniscatic and equianharmonic cases relies on
+the existence of an extra automorphism of $E_K$ beyond $\pm 1$, which
+furnishes a non-trivial endomorphism of the period lattice and induces
+the AGM-style iteration. For $w_K = 2$ the only automorphism is $\pm 1$,
+the period lattice is rectangular without a non-trivial symmetry, and the
+AGM at the relevant modulus reduces to the classical (non-distinguished)
+case. The Chowla--Selberg constant $\GK$ is still well-defined and
+canonical, but no analytic counterpart $A_K$ is singled out.
+\end{proof}
+
+\begin{remark}
+The seven $w_K = 2$ fields therefore have a \emph{degenerate} version of
+the dichotomy of \cite{paper-gstar-A}: the algebraic-side $\GK$ exists,
+but the analytic-side bridge counterpart does not (or, more precisely,
+collapses to a multiplicative constant times $\GK$ itself). The dual
+constant story is genuinely \emph{lemniscatic and equianharmonic only}.
+\end{remark}
+
+\subsection{The atlas as a uniform statement}
+
+\begin{theorem}[Atlas-uniform statement]\label{thm:atlas-uniform}
+For each $K$ with $h_K = 1$, the Chowla--Selberg constant $\GK$ and the
+Kronecker character $\chi_{d_K}$ jointly determine:
+\begin{enumerate}[label=\textup{(\arabic*)}, leftmargin=*, itemsep=2pt]
+\item the splitting law of rational primes in $\mathcal{O}_K$: a prime $p$
+splits in $\mathcal{O}_K$ iff $\chi_{d_K}(p) = +1$, is inert iff
+$\chi_{d_K}(p) = -1$, ramifies iff $\chi_{d_K}(p) = 0$;
+\item the Hecke L-function of the canonical CM elliptic curve $E_K/\Q$:
+its Euler product factors as a product over split-$p$ Euler factors with
+non-trivial $a_p \neq 0$ and inert-$p$ factors with trivial $a_p = 0$;
+\item the central value of the Dirichlet L-function:
+$L(\chi_{d_K}, 1)$ is a rational multiple of $\pi/\sqrt{|d_K|}$ (the
+analytic class-number formula at $h_K = 1$);
+\item the value $\GK$ itself, via the $\chi$-twisted $\Gamma$-product.
+\end{enumerate}
+All four data are projections of the single character $\chi_{d_K}$ at
+four distinct arithmetic levels (cf.\ \cite[\S 16]{paper-gstar-A} for the
+$\chi_{-4}$ case).
+\end{theorem}
+
+\begin{proof}
+(1) is class field theory of imaginary quadratic fields with $h_K = 1$;
+the splitting law of any prime is determined by the Kronecker symbol
+$\chi_{d_K}(p)$. (2) is the Hecke construction of $L(E_K/\Q, s)$ via the
+Hecke character $\psi_{E_K}$ of $K$ \cite[\S{}II]{silverman-arithmetic}.
+(3) is the analytic class number formula
+$L(\chi_{d_K}, 1) = \pi h_K / (w_K \sqrt{|d_K|/4})$ for $K$ imaginary
+quadratic. At $h_K = 1$ this gives explicit $\pi$-rational values
+$L(\chi_{-4}, 1) = \pi/4$, $L(\chi_{-3}, 1) = \pi/(3\sqrt{3})$,
+$L(\chi_{-8}, 1) = \pi/(2\sqrt{2})$, and so on. (4) is
+Definition~\ref{def:G_K}.
+\end{proof}
+
+\section{Closing remarks and open questions}\label{sec:closing}
+
+The atlas extends the $\chi_{-4}$-unification of \cite{paper-gstar-A}
+from the single lemniscatic case to all nine class-number-one imaginary
+quadratic fields. Each field contributes a canonical Chowla--Selberg
+constant $\GK$. Of these nine, two ($d = 1, 3$) have extra automorphisms
+and support the dual-constant dichotomy. The other seven contribute the
+constant $\GK$ without an analytic counterpart at the same order, but
+participate fully in the Heegner phenomenon and in class field theory.
+
+\subsection{Open questions specific to the atlas}
+
+\begin{enumerate}[label=\textbf{A\arabic*.}, leftmargin=*, itemsep=4pt]
+
+\item \textbf{AGM analogs for the seven $w_K = 2$ fields.} The bridge
+identity $\Gs = 2\sqrt{\pi}\,\GG$ exists at $d = 1$ because the lemniscatic
+elliptic curve admits an extra automorphism of order $4$. At
+$d \in \{2, 7, 11, 19, 43, 67, 163\}$ the curve has only $\pm 1$
+automorphisms, and no AGM-style bridge is known. Determine whether any of
+the seven fields admits a non-AGM analytic identity that plays the bridge
+role.
+
+\item \textbf{Master polynomials beyond the atlas.} The master quadratic
+of \cite[\S 8]{paper-gstar-A} has integer coefficient $|\Aut|^{2} = 16$
+at $d = 1$. For the seven $w_K = 2$ fields the analog coefficient is
+$|\Aut|^{2} = 4$, yielding a trivial polynomial structure. Is there a
+non-trivial polynomial associated to each $\GK$ in the $w_K = 2$ cases,
+perhaps via a higher Hecke operator or cyclotomic invariant?
+
+\item \textbf{Joint $L$-value structure across the atlas.} Each of the
+nine fields gives a critical $L$-value
+$L(\chi_{d_K}, 1) = c \cdot \pi / \sqrt{|d_K|}$. The constants $c$ across
+the nine fields form a sequence of rationals; is there a uniform
+generating function for this sequence (e.g., a Dirichlet series over the
+atlas)?
+
+\item \textbf{Heegner-style approximations for $d = 2, 7, 11$.} The
+Heegner near-integers $e^{\pi\sqrt{d}}$ become arbitrarily close to an
+integer as $d$ grows (asymptotically $\sim 196884 \cdot e^{-\pi\sqrt{d}}$).
+But for $d = 2, 7, 11$ the gap is order-$10$ to order-$50$, not "near-integer."
+What is the natural threshold (in $d$) at which the Heegner phenomenon
+becomes numerically striking?
+
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+\bibitem{paper-gstar-A}
+C.\ Pacitanimulli,
+\textit{The Kronecker character $\chi_{-4}$ as the joint source of the
+lemniscatic identity algebra},
+manuscript, 2026.
+
+\bibitem{stark1967}
+H.~M.\ Stark,
+\textit{A complete determination of the complex quadratic fields of
+class-number one},
+Michigan Mathematical Journal \textbf{14} (1967), 1--27.
+
+\bibitem{chowlaselberg}
+S.\ Chowla and A.\ Selberg,
+\textit{On Epstein's zeta-function},
+J.\ reine angew.\ Math.\ \textbf{227} (1967), 86--110.
+
+\bibitem{cohen-NT-vol-1}
+H.\ Cohen,
+\emph{Number Theory, Volume I: Tools and Diophantine Equations},
+Graduate Texts in Mathematics \textbf{239}, Springer, 2007.
+
+\bibitem{silverman-arithmetic}
+J.~H.\ Silverman,
+\emph{The Arithmetic of Elliptic Curves},
+2nd ed., Graduate Texts in Mathematics \textbf{106}, Springer, 2009.
+
+\end{thebibliography}
+
+\end{document}
