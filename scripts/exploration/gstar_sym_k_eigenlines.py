@@ -51,12 +51,42 @@ def phi_specialise(a, b, G_star_val, sqrt_pi_val):
     return (omega_val ** a) * (eta_val ** b)
 
 
-def c_invariant_dim(k):
-    """Dimension of Sym^k(H^1)^c over Q[i].
+def c_invariant_dim(k, z_i_eigenvalue=1):
+    """Dimension of (Sym^k(H^1)^c ∩ Z[i]-eigenline) over Q[i].
 
-    Placeholder: actual implementation in Task 8.
+    Args:
+      k: degree of the symmetric power.
+      z_i_eigenvalue: target Z[i]-eigenvalue (one of 1, sp.I, -1, -sp.I).
+        Defaults to 1 (the trivial eigenline).
+
+    Returns:
+      The Q[i]-dimension of the joint subspace.
+
+    Method:
+      For each basis monomial omega^a * eta^b in Sym^k, the Z[i]-eigenvalue is i^(a-b).
+      Count basis elements whose eigenvalue matches z_i_eigenvalue.
+      Per Convention C4, the c-invariance restricts coefficients to Q (not Q[i]),
+      but as a Q[i]-module the count of c-eligible monomials is the answer.
+
+      Implementation: a basis monomial is in the target eigenline iff
+        i^((a - b) mod 4) == z_i_eigenvalue.
+      Then the c-invariant Q[i]-dimension equals the number of such monomials whose
+      Q-rational presence is consistent (always 1 per monomial; the c-restriction
+      reduces the Q-rational structure but preserves Q[i]-rank-1 per eligible monomial).
     """
-    raise NotImplementedError("c_invariant_dim implemented in Task 8")
+    target_idx = None
+    for idx, val in enumerate([1, sp.I, -1, -sp.I]):
+        if sp.simplify(sp.I**idx - z_i_eigenvalue) == 0:
+            target_idx = idx
+            break
+    if target_idx is None:
+        raise ValueError(f"z_i_eigenvalue {z_i_eigenvalue} is not in {{1, i, -1, -i}}")
+
+    count = 0
+    for a, b in sym_k_basis(k):
+        if (a - b) % 4 == target_idx:
+            count += 1
+    return count
 
 
 def c_action(x):
