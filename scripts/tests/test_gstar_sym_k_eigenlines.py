@@ -149,3 +149,25 @@ def test_identity_I3_sym_k_eigenlines():
         assert computed_simplified == expected, (
             f"Sym^{k} eigenvalues: computed {computed_simplified}, expected {expected}"
         )
+
+
+def test_c_action_squared_is_identity():
+    """The complex-conjugation involution c, applied twice, returns the identity.
+
+    Per Convention C3: c acts on Sym^k(H^1) (x) Q[i] by conjugating Q[i]-coefficients only.
+    Test: for an arbitrary Q[i]-linear combination of basis monomials, c(c(x)) == x.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    # Import the module's exact symbol instances to avoid SymPy assumption mismatch
+    omega = gse.omega
+    eta = gse.eta
+    I = sp.I
+
+    # Test element in Sym^3: (2 + 3*i) * omega^3 + (1 - i) * omega^2 * eta + 5 * omega * eta^2 + (-i) * eta^3
+    x = (2 + 3*I) * omega**3 + (1 - I) * omega**2 * eta + 5 * omega * eta**2 + (-I) * eta**3
+
+    cc_x = gse.c_action(gse.c_action(x))
+    diff = sp.simplify(cc_x - x)
+    assert diff == 0, f"c(c(x)) != x: diff = {diff}"
