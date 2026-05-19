@@ -735,6 +735,21 @@ $\eta(-1/\tau) = \sqrt{-i\tau}\,\eta(\tau)$ at $\tau = 2i$ gives
 $\eta(i/2) = \sqrt 2\,\eta(2i)$.
 \end{proof}
 
+\begin{corollary}[A clean low-weight $\eta$-product identity]\label{cor:eta-low-weight}
+\[
+2\,\eta(2i)\,\eta(i/2)^{3} \;=\; \GG^{2}.
+\]
+\end{corollary}
+
+\begin{proof}
+Square both sides and use Theorem~\ref{thm:eta-half-tower}:
+$\bigl(2\,\eta(2i)\,\eta(i/2)^{3}\bigr)^{2}
+   = 4\,\eta(2i)^{2}\,\eta(i/2)^{6}
+   = 4 \cdot \GG/2^{5/4} \cdot \GG^{3}/2^{3/4}
+   = 4\,\GG^{4}/2^{2} = \GG^{4}$.
+Both sides positive, so the un-squared identity holds.
+\end{proof}
+
 \subsection{The first lemniscate constant as a Hecke $L$-value}\label{sec:Lvalue}
 
 \begin{theorem}[$L(E_{\mathrm{lemn}}, 1) = \varpi/2$]\label{thm:Lvalue}
@@ -1435,6 +1450,65 @@ The mathematical content of this paper supplies a clean
 mapping of that substrate to physical observables remains a separate
 conjecture, to be tested empirically and theoretically in the
 companion FTD literature.
+
+\subsection{Where the polynomial form $P_{\Gs}$ comes from --- and where it doesn't}\label{sec:not-CM-derived}
+
+Theorem~\ref{thm:character-unification} produces two ingredients of the
+master quadratic from $\chi_{-4}$:
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+\item the integer coefficient $16 = |\Z[i]^\times|^2$ (lattice projection of $\chi_{-4}$);
+\item the variable $\Gs$ (Chowla--Selberg projection of $\chi_{-4}$).
+\end{itemize}
+It does \emph{not} produce the specific polynomial form
+$x^2 - 16\Gss x + 16\Gsss$ --- i.e., the choice of exponents $2$ and $3$
+on $\Gs$ in the coefficients. We tested three structurally-motivated
+candidates for a $\chi_{-4}$-internal source of this polynomial form
+and report \emph{negative} results in all three cases.
+
+\begin{remark}[Three negative tests, summarised]\label{rem:three-negatives}
+\textup{(N1) Class polynomial.} The Hilbert class polynomial of the
+maximal order in $\Z[i]$ is $H_{-4}(x) = x - 1728$; that of the conductor-$2$
+order $\Z[2i]$ is $H_{-16}(x) = x - 287496$. Both are linear (class number $1$).
+The conductor-$3$ order has class number $2$ and gives a degree-$2$
+polynomial with rational coefficients, none of whose roots are
+$x_\pm(\Gs)$. \texttt{PSLQ} at $50$ digits over an extended basis of
+$j$-values and Weber invariants $f(i) = 2^{1/4}$, $f_1(i) = f_2(i) = 2^{1/8}$
+finds no nontrivial relation involving $16\Gss$ or $16\Gsss$.
+
+\textup{(N2) $\eta$-quotient.} \texttt{PSLQ} on the multiplicative basis
+$\{\log x_+, \log x_-, \log\Gs, \log\pi, \log 2, \log\GG,
+\log\eta(i), \log\eta(2i), \log\eta(i/2), \log\eta(4i)\}$ at $50$ digits
+finds no relation involving $\log x_+$ or $\log x_-$. (The search
+\emph{does} return the byproduct identity
+$2\,\eta(2i)\,\eta(i/2)^3 = \GG^2$ recorded as
+Corollary~\ref{cor:eta-low-weight}, confirming the search machinery is
+sensitive.) The asymptotic expansion of
+Proposition~\ref{prop:Rn-asymptotic} converges absolutely to $x_-(\Gs)$
+without collapsing to any finite $\eta$-quotient.
+
+\textup{(N3) Hecke eigenvalue.} The cusp-form space of weight $2$ and
+level $32 = N((1+i)^5)$ is $1$-dimensional, spanned by the eigenform
+$f_E$ associated to $E_{\mathrm{lemn}}$. Hecke eigenvalues are integers
+(e.g., $a_5 = -2, a_{13} = 6, a_{17} = 2$ \cite{lmfdb}). The constant
+$16\,\Gss \in \R \setminus \overline\Q$ is transcendental \cite{chudnovsky1976},
+hence cannot be a Hecke eigenvalue at any prime.
+\end{remark}
+
+\begin{observation}[Locus of the math--physics gap]\label{obs:gap-localised}
+Combining (N1)--(N3) and Theorem~\ref{thm:character-unification}: the gap
+between $\chi_{-4}$-derived mathematical structure and the FTD physical
+identification $(x_+, x_-) \approx (\alpha^{-1}, N_c)$ is localised
+precisely at the \emph{assembly} step --- the choice of polynomial form
+$P_{\Gs}(x) = x^2 - 16\Gss x + 16\Gsss$ rather than $x^2 - 16{\Gs}^{a} x + 16{\Gs}^{b}$
+for any other $(a, b) \in \Z^2$. The integer coefficient $16$ and the
+constant $\Gs$ are both forced by $\chi_{-4}$. The exponent pair $(a, b)
+= (2, 3)$ is forced only by the dimensional / Vieta requirement that
+$x_+ + x_-$ and $x_+ x_-$ have the right $\Gs$-homogeneity to make the
+roots dimensionless physical constants. Closing this last gap --- if a
+clean class-field-theoretic derivation of $(a, b) = (2, 3)$ exists ---
+would convert the FTD bridge from a two-arrow conjecture
+(\S\ref{sec:ontological-synthesis}) into a single-arrow one.
+\end{observation}
 
 \section{Closed problems and remaining open questions}\label{sec:open}
 
