@@ -51,8 +51,18 @@ def phi_specialise(a, b, G_star_val, sqrt_pi_val):
     return (omega_val ** a) * (eta_val ** b)
 
 
-def c_invariant_dim(k, z_i_eigenvalue=1):
-    """Dimension of (Sym^k(H^1)^c ∩ Z[i]-eigenline) over Q[i].
+def z_i_eigenline_dim(k, z_i_eigenvalue=1):
+    """Count of Sym^k(H^1) basis monomials with given Z[i]-eigenvalue.
+
+    For monomial omega^a * eta^b with a + b = k, the Z[i]-eigenvalue is i^(a-b).
+    This function counts how many such basis monomials match the target eigenvalue.
+
+    Connection to c-invariance:
+      Under Convention C3 (c acts on Q[i]-coefficients only, fixes omega and eta),
+      an element with Q-rational coefficients on a single eigenline is c-invariant.
+      Therefore for each basis monomial in the target eigenline, the c-invariant
+      Q-rational sub-line is 1-dimensional; the total Q-dimension of
+      Sym^k(H^1)^c ∩ (target Z[i]-eigenline) equals the count this function returns.
 
     Args:
       k: degree of the symmetric power.
@@ -60,19 +70,10 @@ def c_invariant_dim(k, z_i_eigenvalue=1):
         Defaults to 1 (the trivial eigenline).
 
     Returns:
-      The Q[i]-dimension of the joint subspace.
+      Integer count of basis monomials in the target Z[i]-eigenline.
 
-    Method:
-      For each basis monomial omega^a * eta^b in Sym^k, the Z[i]-eigenvalue is i^(a-b).
-      Count basis elements whose eigenvalue matches z_i_eigenvalue.
-      Per Convention C4, the c-invariance restricts coefficients to Q (not Q[i]),
-      but as a Q[i]-module the count of c-eligible monomials is the answer.
-
-      Implementation: a basis monomial is in the target eigenline iff
-        i^((a - b) mod 4) == z_i_eigenvalue.
-      Then the c-invariant Q[i]-dimension equals the number of such monomials whose
-      Q-rational presence is consistent (always 1 per monomial; the c-restriction
-      reduces the Q-rational structure but preserves Q[i]-rank-1 per eligible monomial).
+    Raises:
+      ValueError if z_i_eigenvalue is not in {1, i, -1, -i}.
     """
     target_idx = None
     for idx, val in enumerate([1, sp.I, -1, -sp.I]):
@@ -87,6 +88,10 @@ def c_invariant_dim(k, z_i_eigenvalue=1):
         if (a - b) % 4 == target_idx:
             count += 1
     return count
+
+
+# Backward-compatible alias (deprecated; will be removed in Phase 1)
+c_invariant_dim = z_i_eigenline_dim
 
 
 def c_action(x):
@@ -153,8 +158,8 @@ if __name__ == "__main__":
     print()
     print("Identity I4: c-invariant dimensions (joint Z[i]-trivial + c-inv)")
     for k in [2, 3, 4, 5]:
-        d_triv = c_invariant_dim(k, z_i_eigenvalue=1)
-        print(f"  dim_Q[i](Sym^{k}^c, Z[i]-eigenvalue=1) = {d_triv}")
+        d_triv = z_i_eigenline_dim(k, z_i_eigenvalue=1)
+        print(f"  Z[i]-eigenline basis count (Sym^{k}, eigenvalue=1) = {d_triv}")
     print()
     print("PHASE 0 INFRASTRUCTURE VERIFIED.")
     print("=" * 70)
