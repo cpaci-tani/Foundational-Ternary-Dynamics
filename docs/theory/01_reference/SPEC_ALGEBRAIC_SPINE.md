@@ -563,6 +563,47 @@ provenance.
   could group these under a unified "$Z_4$ algebraic-spine" subsection;
   not done in the current spine version.
 
+### 10.Y · G\* opus subsidiaries (2026-05-19)
+
+The G\* publication opus (Papers A/B/C/D/E in `docs/papers/`,
+~48 pages total) consolidates the algebraic spine into publication-ready
+mathematics. None of the opus results introduce a 10th theorem to this spine
+in the sense of new independent algebraic content; they refine and
+explicitly state material already covered by Theorems 1-9. Spine count remains 9.
+
+- **χ\_{-4} four-level unification (Paper A §16, [THEOREM], FTD-0163)** —
+  the Kronecker character $\chi_{-4}$ on $(\Z/4\Z)^\times$ generates the
+  entire $G^*/G_G$ identity algebra through four functorial projections
+  (lattice, Chowla-Selberg, Hecke, Dirichlet). Subsidiary to Theorems 1, 2, 9.
+  This is the explicit motivic-weight tower statement; consistency of the
+  four projections at $\tau = i$ is Deligne's period conjecture restricted to
+  the CM case (proved unconditionally; Blasius 1986, Anderson 1986, Shimura 1979).
+
+- **Sym²⊕Sym³ uniqueness of (2,3) (Paper A §16.5 Thm 16.5.1, [THEOREM], FTD-0175)** —
+  among leading-period polynomials $x^2 - 16\,G^{*a}\,x + 16\,G^{*b}$ with
+  $a < b$ positive integers, the pair $(a, b) = (2, 3)$ is uniquely minimal-$a$
+  satisfying integer prefactor 16 + roots-not-scalar-multiples + positive
+  discriminant. Closes the load-bearing combinatorial step of the original
+  Conjecture 16.5.1. Residual Conjecture 16.5.2 (full $\text{Sym}^a$ coefficients,
+  not just leading-period $\omega^a$) remains open. Subsidiary to Theorem 2.
+
+- **L(E\_lemn, 1) = ϖ/4 closed form (Paper A §11, [THEOREM], FTD-0159 corrected)** —
+  the central L-value of the lemniscatic curve has clean closed form
+  $L(E_{\mathrm{lemn}}, 1) = \varpi/4 = \pi G_G / 4 = G^* \sqrt{\pi}/8$
+  via BSD on CM rank-0 curves (Rubin 1991, Inventiones 103). **Errata note**:
+  earlier session work had ϖ/2 due to BSD-formula convention-mixing; the
+  factor-of-2 correction was caught by ivy-league CM-theorist red-team
+  (FTD-0174). Subsidiary to Theorem 1 (existence of clean Γ-product
+  closed forms) and Theorem 5 (Phase G geometric Coulomb at lattice scale).
+
+- **h=1 atlas + η-tower (Papers C, D, [THEOREM])** — extends the
+  lemniscatic structure to all nine class-number-one IQ fields via
+  $G_K = \prod \Gamma(a/|d_K|)^{\chi_{d_K}(a)\,w_K/4}$. The η-tower formula
+  $|\eta(\tau_K)|^{2 w_K} = G_K^{w_K}/(2\pi|d_K|)^{w_K/2}$ unifies the
+  Heegner near-integer phenomenon $e^{\pi\sqrt{163}} \approx 640320^3 + 744$
+  as a χ\_{-163}-projection. Subsidiary to Theorems 1-3 (extending the
+  CM-uniqueness theorem from a single field to the full atlas).
+
 ---
 
 ## 11 · The empirical observation (NOT a theorem — explicit boundary)
