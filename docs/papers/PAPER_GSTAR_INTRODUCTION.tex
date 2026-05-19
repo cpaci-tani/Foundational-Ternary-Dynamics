@@ -82,9 +82,24 @@ W^{(3)}_{\mathrm{BCC}} &= 2{\GG}^2 = 2/\AGM(1,\sqrt 2)^2, & W^{(D)}_{\mathrm{BCC
 the reflection-form identities $\Gamma(1/4)^2 = \pi\sqrt 2\,\Gs$ and
 $\Gamma(1/4)^4 = 2\pi^2\,\Gss$, and the master quadratic
 $x^2 - 16\,\Gss\,x + 16\,\Gsss = 0$ whose integer coefficient $16$ is
-the squared automorphism count of the lemniscatic curve. Every identity
-is traced to its earliest source; the systematic dual-constant
-presentation appears to be new.
+the squared automorphism count of the lemniscatic curve.
+
+Two structural results emerge: \textbf{(I)} the value algebra of
+quasi-modular forms at $\tau = i$ is the polynomial ring
+$\Q[\pi^{-1}, \GG^{4}]$ in two transcendentally independent generators
+under Chudnovsky's theorem, with $\pi^{-1}$ recording the quasi-modular
+anomaly and $\GG^{4}$ recording the modular weight; \textbf{(II)} the
+$m \mid k$ vanishing principle, stating that at a CM point with
+$|\Aut(E)| = m$ a modular form $f$ of weight $k$ satisfies
+$f(\tau_{\mathrm{CM}}) = 0$ unless $m \mid k$, holds in the only two
+non-trivial cases over $\Q$ (lemniscatic with $m = 4$, equianharmonic
+with $m = 6$). Every identity is traced to its earliest source; the
+systematic dual-constant presentation appears to be new.
+
+A companion note \cite{paper-gstar-B} draws the consequences of the
+$\chi_{-4}$-unification developed here for the Foundational Ternary
+Dynamics framework; the present paper does not depend on or address
+that framework.
 \end{abstract}
 
 \tableofcontents
@@ -327,8 +342,10 @@ exhibits the $\pi^{3/2}$ factor that characterises this quantity as
 
 \begin{proof}
 The integral evaluation $\omega_E = \Gamma(1/4)^2/\sqrt{2\pi}$ is classical;
-see \cite[\S 2.5]{borweinAGM}. The $\Gs$-form follows from \eqref{eq:Gam14sq}.
-The $\GG$-form follows from \eqref{eq:bridge}: $\Gs\sqrt\pi = 2\sqrt\pi\,\GG \cdot \sqrt\pi = 2\pi\GG$. Wait: $\Gs\sqrt\pi = (2\sqrt\pi\GG)\cdot\sqrt\pi = 2\pi\GG$. So $\omega_E = 2\pi\GG$ — actually this IS clean.
+see \cite[\S 2.5]{borweinAGM}. The $\Gs$-form follows from
+$\Gamma(1/4)^2 = \pi\sqrt 2\,\Gs$ (Lemma~\ref{lem:beta-quarter}).
+The $\GG$-form follows from the bridge identity $\Gs = 2\sqrt\pi\,\GG$:
+$\omega_E = \Gs\sqrt\pi = (2\sqrt\pi\,\GG)\,\sqrt\pi = 2\pi\,\GG$.
 \end{proof}
 
 \begin{observation}
@@ -387,26 +404,15 @@ This is the cleanest illustration of Observation~\ref{obs:dichotomy}:
 the master quadratic is intrinsically a $\Gs$ object.
 \end{observation}
 
-\begin{remark}[Numerical match to physical constants]\label{rem:MQ-physics}
-The numerical values $x_+ \approx 137.036$ and $x_- \approx 3.024$ match
-the inverse fine-structure constant $\alpha^{-1} \approx 137.036$ (to
-1.26~parts per million) and the number of QCD colors $N_c = 3$ (to 0.8\%).
-The pair-identification $(x_+, x_-) = (\alpha^{-1}, N_c)$ is the central
-conjecture of the Foundational Ternary Dynamics framework
-\cite{ftd-spec}. The transcendental match is suggestive but is not
-established by the present mathematical content; we record only the
-polynomial $P_{\!\Gs}$ and its algebraic structure. The transcendence and
-algebraic-independence implications are deferred to \S\ref{sec:transcendence}.
+\begin{remark}[Numerical content of the roots]\label{rem:MQ-numerical}
+The numerical values $x_+ \approx 137.036$ and $x_- \approx 3.024$ are
+recorded here as numerical content of $P_{\Gs}$; their identification
+with physical observables and the resulting math--physics bridge are
+treated in a separate companion note \cite{paper-gstar-B} and lie
+outside the mathematical scope of the present paper. The transcendence
+and algebraic-independence implications of the roots are deferred to
+\S\ref{sec:transcendence}.
 \end{remark}
-
-\begin{corollary}[Vieta in physical form]\label{cor:vieta-physical}
-Under the identification $x_+ = \alpha^{-1}$, $x_- = N_c$, the Vieta
-identities \eqref{eq:vieta} translate to
-\[
-\alpha + \frac{1}{N_c} \;=\; \frac{1}{\Gs}, \qquad
-\frac{1}{\alpha\,N_c} \;=\; 16\,\Gsss.
-\]
-\end{corollary}
 
 \section{Beta integrals at quarter arguments}\label{sec:beta}
 
@@ -466,36 +472,46 @@ $8$ & $6.9261841305\ldots$ & no CM curve \\
 \end{center}
 \end{proposition}
 
-\begin{theorem}[Distinguishedness of $R_4$]\label{thm:R4-distinguished}
-Among the $R_n$ family, $R_4 = \Gs$ is the unique value for which the
-master quadratic $x^2 - 16\,R_n^2\,x + 16\,R_n^3 = 0$ has roots that
-match small integers to high precision: $x_+(R_4) \approx 137.036
-\approx 1/\alpha$ (1.26 ppm), $x_-(R_4) \approx 3.024 \approx 3$ (0.8\%).
+\begin{theorem}[Algebraic distinguishedness of $R_4$]\label{thm:R4-distinguished}
+Among the $R_n$ family with $n \in \{2, 3, 4, 5, 6, 8, 12\}$, the value
+$R_4 = \Gs$ is the unique value such that $R_n$ is the gamma-ratio of a
+class-number-one CM elliptic curve over $\Q$ with $|\Aut_{\C}(E)|^{2} = 16$.
+The equianharmonic curve $E_\rho$ at $R_3$ (and its twist at $R_6$) has
+$|\Aut_{\C}(E_\rho)|^{2} = 36$; no other $R_n$ in the listed range
+corresponds to a CM elliptic curve with extra automorphisms.
 \end{theorem}
 
-\begin{proof}[Sketch]
-For other $R_n$, the corresponding $x_\pm(R_n)$ are not in measured
-proximity to either a known fundamental dimensionless constant or a
-small integer associated to a physical structure:
-\begin{itemize}[leftmargin=*, itemsep=2pt]
-\item $R_3$: $x_+ \approx 60.74$, $x_- \approx 2.43$ (no match).
-\item $R_5$: $x_+ \approx 246.43$, $x_- \approx 4.04$ (no match).
-\item $R_6$: $x_+ \approx 386.45$, $x_- \approx 4.86$ (no match).
-\end{itemize}
-The $R_4 = \Gs$ case is the unique CM-class-number-one elliptic curve with
-$|\Aut|^2 = 16$ and the matching numerical structure
-$(\alpha^{-1}, N_c)$. (We do not claim this is a proof of why $R_4$ should
-be selected; we record it as a structural fact about the family.)
+\begin{proof}
+Direct enumeration. The class-number-one imaginary-quadratic fields with
+unit group strictly larger than $\{\pm 1\}$ are exactly $\Q(i)$ (units of
+order $4$) and $\Q(\rho)$ (units of order $6$). These yield the
+lemniscatic curve $y^2 = x^3 - x$ over $\Q$, with $R_4 = \Gamma(1/4)/\Gamma(3/4)$
+and $|\Aut|^{2} = 16$, and the equianharmonic curve $y^2 = x^3 - 1$ (with
+twist $y^2 = x^3 + 1$), with $R_3 = \Gamma(1/3)/\Gamma(2/3)$ (resp.\ $R_6$)
+and $|\Aut|^{2} = 36$. For $n \in \{2, 5, 8, 12\}$, no CM elliptic curve
+over $\Q$ has $R_n$ as its gamma-ratio.
 \end{proof}
 
-\begin{remark}
-Theorem~\ref{thm:R4-distinguished} is the cleanest expression of why
-$\Gs$, among all $R_n$, deserves its own symbol: it is the unique member
-of the family that simultaneously (a) corresponds to a CM elliptic curve
-with $|\Aut|^2 = 16$ (the lemniscatic curve), and (b) generates a
-master quadratic with roots matching physically-measured constants. The
-algebraic and numerical distinguishedness coincide.
-\end{remark}
+\begin{observation}[Numerical content of the roots at $R_4$ and $R_3$]\label{obs:Rn-numerical}
+Numerical evaluation of $x_\pm(R_n) = (16 R_n^2 \pm \sqrt{(16 R_n^2)^2 - 64 R_n^3})/2$
+for the CM-relevant values $R_3, R_4, R_6$ yields:
+\[
+\begin{array}{lccc}
+\toprule
+n & R_n & x_+(R_n) & x_-(R_n) \\
+\midrule
+3 & 1.97836 & 138.894\,\ldots & 2.007\,\ldots \\
+4 & 2.95868\;(\Gs) & 137.036\,\ldots & 3.024\,\ldots \\
+6 & 4.93124 & 384.078\,\ldots & 4.995\,\ldots \\
+\bottomrule
+\end{array}
+\]
+(In rows $3, 6$ the polynomial coefficient is $16 R_n^2 / 16 R_n^3$ as in the
+lemniscatic case; the corresponding equianharmonic master quadratic
+$y^2 - 36 R_n^2 y + 36 R_n^3$ would have $|\Aut|^{2} = 36$ as its integer
+prefactor.) Their interpretation as physical observables is addressed in
+the companion note \cite{paper-gstar-B}.
+\end{observation}
 
 \begin{proposition}[Family-wide master-quadratic root asymptotic, with full expansion]\label{prop:Rn-asymptotic}
 For the master-quadratic family
@@ -583,10 +599,12 @@ both transcendentals.
 
 \begin{proof}
 The classical reduction \cite{watson1939} gives
-$W^{(3)}_{\mathrm{BCC}} = (4/\pi^2)\,K(1/\sqrt 2)^2$. Substitute
-$K(1/\sqrt 2) = \pi\,\GG\cdot(1/\sqrt 2) \cdot \sqrt 2 = \pi\,\GG/\sqrt 2 \cdot \sqrt 2 = \pi\GG$. Wait, we have $K(1/\sqrt 2) = \pi\GG/\sqrt 2$ from the AGM identity (proof of Theorem~\ref{thm:bridge}). Then
+$W^{(3)}_{\mathrm{BCC}} = (4/\pi^2)\,K(1/\sqrt 2)^2$.
+The AGM evaluation $K(1/\sqrt 2) = \pi\,\GG/\sqrt 2$ (Theorem~\ref{thm:elliptic})
+then yields
 \[
-W^{(3)}_{\mathrm{BCC}} \;=\; \frac{4}{\pi^2}\cdot\frac{\pi^2{\GG}^2}{2} \;=\; 2\,{\GG}^2. \qedhere
+W^{(3)}_{\mathrm{BCC}} \;=\; \frac{4}{\pi^2} \cdot \frac{\pi^2\,{\GG}^2}{2}
+                       \;=\; 2\,{\GG}^2. \qedhere
 \]
 \end{proof}
 
@@ -1476,38 +1494,6 @@ imaginary-quadratic fields with $|\mathcal{O}_K^\times| > 2$, hence the
 only places where this $4$-level $\chi$-projection picture is non-trivially
 populated.
 
-\subsection{Ontological synthesis}\label{sec:ontological-synthesis}
-
-\textbf{[Synthesis, not Theorem; epistemic tag \texttt{[SYNTHESIS]} per
-\cite{ftd-spec}.]} Theorem~\ref{thm:character-unification} and
-Corollary~\ref{cor:product-vs-ratio} identify a single mathematical
-primitive --- the character $\chi_{-4}$ on $(\Z/4\Z)^\times$ --- whose
-projections at four arithmetic levels yield every algebraic identity
-in $\Gs$ and every analytic identity in $\GG$ in this paper. The
-\emph{mathematical ontology} of the dichotomy is therefore not two
-independent constants but a single character, expressed in two
-coordinate systems linked by Chowla--Selberg.
-
-The \emph{physical readout} of this same structure --- the master
-quadratic $P_{\Gs}(x) = x^2 - 16\Gss x + 16\Gsss$ whose roots are
-numerically $x_+ \approx \alpha^{-1}$ and $x_- \approx N_c$
-(Remark~\ref{rem:MQ-physics}) --- carries the same integer coefficient
-$16 = |\Z[i]^\times|^2$ as an algebraic input. The
-identification of $(x_+, x_-)$ with $(\alpha^{-1}, N_c)$ is the
-central \texttt{[STRONGLY MOTIVATED CONJECTURE]} of \cite{ftd-spec}
-and is not a mathematical consequence of any theorem in the present
-paper. What \emph{is} mathematical is the assertion that the algebraic
-input data $16 = |\Z[i]^\times|^2$ and the analytic L-value
-$L(E_{\mathrm{lemn}}, 1) = \pi\,\GG/2$ are joint manifestations of
-$\chi_{-4}$; the conjectural FTD bridge then maps this single character
-to two physical readouts $(\alpha, N_c)$ via the polynomial $P_{\Gs}$.
-The mathematical content of this paper supplies a clean
-\emph{ontological substrate} ($\chi_{-4}$) and the analytic--algebraic
-\emph{coordinate transform} ($\Gs \leftrightarrow \GG$) on it; the
-mapping of that substrate to physical observables remains a separate
-conjecture, to be tested empirically and theoretically in the
-companion FTD literature.
-
 \subsection{Where the polynomial form $P_{\Gs}$ comes from --- and where it doesn't}\label{sec:not-CM-derived}
 
 Theorem~\ref{thm:character-unification} produces two ingredients of the
@@ -1559,27 +1545,30 @@ precisely at the \emph{assembly} step --- the choice of polynomial form
 $P_{\Gs}(x) = x^2 - 16\Gss x + 16\Gsss$ rather than $x^2 - 16{\Gs}^{a} x + 16{\Gs}^{b}$
 for any other $(a, b) \in \Z^2$. The integer coefficient $16$ and the
 constant $\Gs$ are both forced by $\chi_{-4}$. The exponent pair $(a, b)
-= (2, 3)$ is forced only by the dimensional / Vieta requirement that
-$x_+ + x_-$ and $x_+ x_-$ have the right $\Gs$-homogeneity to make the
-roots dimensionless physical constants. Closing this last gap --- if a
-clean class-field-theoretic derivation of $(a, b) = (2, 3)$ exists ---
-would convert the FTD bridge from a two-arrow conjecture
-(\S\ref{sec:ontological-synthesis}) into a single-arrow one.
+= (2, 3)$ is forced only by the structural requirement that the polynomial
+have two roots of distinct $\Gs$-homogeneity (see Proposition~\ref{prop:exponent-regimes}).
+A clean class-field-theoretic derivation of $(a, b) = (2, 3)$ from
+$\chi_{-4}$-internal data, if it exists, would be of independent
+arithmetic interest.
 \end{observation}
 
 \begin{conjecture}[Symmetric-algebra home of $(2, 3)$]\label{conj:sym-algebra-23}
 \textbf{[Structural conjecture; epistemic tag \texttt{[CONJECTURE]}.]}
-Under the period normalization $\omega = \Gs\sqrt{\pi}$ (the real period
-of $E_{\mathrm{lemn}}$, \S\ref{sec:Lvalue}), the coefficients of
-$P_{\Gs}$ admit the rewriting
+Working inside the \emph{period algebra} of $E_{\mathrm{lemn}}$ ---
+that is, the $\Q$-algebra generated by the periods of all
+$\mathrm{Sym}^{k} H^{1}(E_{\mathrm{lemn}})$ together with $\pi^{\pm 1/2}$
+arising from Legendre normalisations --- the coefficients of $P_{\Gs}$
+admit the period-form rewriting
 \[
-16\,\Gss \;=\; 16\,\omega^{2}/\pi \;\in\; \mathrm{Sym}^{2}\!\bigl(H^{1}(E_{\mathrm{lemn}})\bigr)/\pi, \qquad
-16\,\Gsss \;=\; 16\,\omega^{3}/\pi^{3/2} \;\in\; \mathrm{Sym}^{3}\!\bigl(H^{1}(E_{\mathrm{lemn}})\bigr)/\pi^{3/2}.
+16\,\Gss \;=\; 16\,\omega^{2}/\pi, \qquad
+16\,\Gsss \;=\; 16\,\omega^{3}/\pi^{3/2},
 \]
-Conjecturally, $P_{\Gs}$ is the minimal-degree polynomial with
-coefficients in distinct graded pieces $\mathrm{Sym}^{a}$ and
-$\mathrm{Sym}^{b}$ of $\mathrm{Sym}^{\bullet}(H^{1}(E_{\mathrm{lemn}}))$,
-$a < b$, such that:
+where $\omega = \Gs\sqrt{\pi}$ is the real period of $E_{\mathrm{lemn}}$
+(\S\ref{sec:Lvalue}). The integer powers $\omega^{2}$ and $\omega^{3}$
+are the natural periods of $\mathrm{Sym}^{2} H^{1}$ and
+$\mathrm{Sym}^{3} H^{1}$ respectively. Conjecturally, $P_{\Gs}$ is the
+minimal-degree polynomial whose coefficients sit at distinct symmetric
+powers $a < b$ of $H^{1}$ within the period algebra and satisfy:
 \begin{enumerate}[label=\textup{(\roman*)}, leftmargin=*, itemsep=2pt]
 \item the integer prefactor on each coefficient equals $|\Aut_\C(E)|^{2} = 16$;
 \item the two roots are distinct algebraic invariants of the motive
@@ -1587,31 +1576,36 @@ $H^{1}(E_{\mathrm{lemn}})$ (in particular, not multiples of each other
 or of a single period);
 \item the polynomial does not collapse to a linear identity.
 \end{enumerate}
-The exponent pair $(a, b) = (2, 3)$ is then the unique minimal choice:
+Among such pairs, $(a, b) = (2, 3)$ is the minimal choice:
 $\mathrm{Sym}^{1}$ collapses to a linear identity by~(iii); $\mathrm{Sym}^{2}$
 is the lowest non-trivial symmetric power; and $\mathrm{Sym}^{3}$ is the
 minimal next graded piece needed to supply a second free coefficient.
 \end{conjecture}
 
 \begin{remark}[Status of Conjecture~\ref{conj:sym-algebra-23}]\label{rem:sym-conj-status}
-This is a structural conjecture, not a theorem. A rigorous proof would
-require: (a) explicit identification of the period-algebra map
+This is a structural conjecture, not a theorem. The conjecture as
+stated is a uniqueness claim \emph{inside the period algebra}, not
+inside $\mathrm{Sym}^{\bullet}(H^{1})$ proper. The distinction is
+load-bearing: $\mathrm{Sym}^{\bullet}(H^{1})$ is a graded $\Q$-algebra
+in which $\omega^{2}/\pi$ does \emph{not} live --- the division by $\pi$
+takes us out of $\mathrm{Sym}^{2}$ and into a strictly larger object,
+namely the period algebra obtained by adjoining $\pi^{\pm 1/2}$ to the
+symmetric algebra (this is the non-homogeneous-bigrading obstacle).
+A rigorous proof of Conjecture~\ref{conj:sym-algebra-23} would require:
+(a) explicit identification of the period map
 $\mathrm{Sym}^{\bullet}(H^{1}) \otimes \Q[\pi^{\pm 1/2}] \to \C$
-specialising to $\omega^{k} \mapsto (\Gs\sqrt\pi)^{k}$; (b) a uniqueness
-argument that $P_{\Gs}$ is the unique element of the bigraded module
-satisfying conditions (i)--(iii); (c) reconciliation of the
-non-homogeneous bigrading (coefficients in different $\mathrm{Sym}^{k}$)
-with the standard motivic-weight formalism, possibly via a relative
-filtration. Each step is plausible but technical.
+specialising to $\omega^{k} \mapsto (\Gs\sqrt\pi)^{k}$;
+(b) a uniqueness argument in this enlarged algebra; and
+(c) reconciliation of the non-homogeneous bigrading with the
+motivic-weight formalism, possibly via a relative filtration.
+Each step is technically substantial, not cosmetic.
 
-If formalised, Conjecture~\ref{conj:sym-algebra-23} would convert the
-negative results (N1)--(N3) of Remark~\ref{rem:three-negatives} into a
-positive structural derivation: the $(2, 3)$ exponent pair is not
-derivable from CM theory \emph{proper} (Hecke, Weber, class polynomials)
-because the polynomial does not live in $H^{1}$ alone --- it lives in
-$\mathrm{Sym}^{2} \oplus \mathrm{Sym}^{3}$ of $H^{1}$, a strictly
-higher-graded object that requires the symmetric-algebra formalism
-rather than the first-cohomology formalism to articulate.
+If formalised, the conjecture would convert the negative results
+(N1)--(N3) of Remark~\ref{rem:three-negatives} into a positive
+structural derivation: the $(2, 3)$ exponent pair is not derivable from
+CM theory \emph{proper} (Hecke, Weber, class polynomials) because the
+polynomial does not live in $H^{1}$ alone, but rather in the
+period-algebra completion of $\mathrm{Sym}^{2} \oplus \mathrm{Sym}^{3}$.
 \end{remark}
 
 
@@ -1643,12 +1637,24 @@ Thus $(p, q) = (2, 3)$ is the unique exponent pair with $q = p+1$ and
 \end{proposition}
 
 \begin{proof}
-Apply the quadratic formula
-$y_- = (16 R^p)\bigl(1 - \sqrt{1 - 4 R^{q-2p}/(16 \cdot 16/16)}\bigr)/2 \cdot \cdots$
-(re-derive directly). For $q = p+1$, the discriminant inside the square
-root becomes $R^{p-1}/4$, and the Newton-binomial expansion of $\sqrt{1-x}$
-gives the stated correction. The leading correction is $R^{2-p}/16$,
-which is constant only when $p = 2$.
+The quadratic formula gives
+\[
+y_-(R) \;=\; 8\,R^p \;-\; \tfrac{1}{2}\sqrt{(16 R^p)^2 - 4\cdot 16 R^q}
+       \;=\; 8\,R^p\,\Bigl(1 - \sqrt{1 - R^{q - 2p}/4}\Bigr).
+\]
+For $q = p+1$, set $u = R^{q-2p}/4 = R^{1-p}/4$ and expand
+$\sqrt{1-u} = 1 - u/2 - u^2/8 - O(u^3)$:
+\[
+y_-(R) \;=\; 8\,R^p\,\bigl(u/2 + u^2/8 + O(u^3)\bigr)
+       \;=\; R \,+\, R^{2-p}/16 \,+\, O(R^{1-p}).
+\]
+The leading correction $R^{2-p}/16$ is constant (in $R$) iff $p = 2$,
+vanishing as $R \to \infty$ for $p \geq 3$. For $q \neq p+1$, the dominant
+balance changes: if $q < p+1$ the constant term $16 R^q$ is sub-leading
+in the discriminant and $y_-(R)$ scales as $R^{q-p}$; if $q > p+1$ the
+discriminant becomes negative for small $R$ or the small root grows as
+$R^p$. Hence $q = p+1$ is necessary for $y_-(R) \to R$, and within that
+case $p = 2$ is the unique value yielding a non-vanishing constant shift.
 \end{proof}
 
 \begin{observation}[Joint matching uniquely fixes $(2, 3)$]\label{obs:23-joint-match}
@@ -1674,28 +1680,6 @@ already, and the additive shift is small in every case); the large-root
 match to $\alpha^{-1}$ is satisfied uniquely by $(2, 3)$ because only at
 $p = 2$ does $y_+ \sim 16 R^p$ land at $16 \Gss \approx 140 - R \approx 137$.
 \end{observation}
-
-\begin{remark}[Sharpened locus of the math--physics conjecture]\label{rem:sharpened-locus}
-Observation~\ref{obs:23-joint-match} refines
-Observation~\ref{obs:gap-localised} substantially. The FTD bridge can
-now be stated in its minimal information-theoretic form:
-
-\textbf{The bridge requires one bit of input from the physical side ---}
-the choice of $(p, q) = (2, 3)$ among finitely many candidate exponent
-pairs --- \textbf{and that choice is uniquely fixed by the empirical
-constraint that \emph{both} roots simultaneously match physical
-constants}. Equivalently, the FTD master quadratic is the unique
-polynomial of the form $y^2 - 16 R^p y + 16 R^q$ at $R = \Gs$ whose
-ordered root pair $(y_+, y_-)$ jointly matches $(\alpha^{-1}, N_c)$ to
-sub-percent precision.
-
-This is not a derivation of the bridge --- the joint match itself is the
-input that selects $(p, q)$ --- but it is the cleanest available
-\emph{minimality statement}: the math--physics bridge in the FTD
-framework requires no parameters beyond the choice of one exponent
-pair, and the choice is over-determined (hence robust) against the joint
-match to two distinct physical constants.
-\end{remark}
 
 \subsection{The ontological zero-point: $\chi_{-4}$ as the imaginary-part trace}\label{sec:zero-point}
 
@@ -1732,40 +1716,6 @@ imaginary unit through the operations squaring ($i^{2} = -1$), zero
 ($0$), and modulus ($|i^{2}| = 1$).
 \end{corollary}
 
-\begin{remark}[Convergence with the FTD ternary substrate]\label{rem:ftd-ternary-convergence}
-\textbf{[Synthesis; epistemic tag \texttt{[SYNTHESIS]}.]} The set
-$\{-1, 0, +1\}$ of Corollary~\ref{cor:value-set} coincides as a set
-with the FTD ternary voxel alphabet of \cite{ftd-spec}, in which each
-lattice site $v$ takes a value $s_v \in \{-1, 0, +1\}$ encoding
-\emph{negative state}, \emph{void}, and \emph{positive state}
-respectively. Three independent starting points therefore terminate at
-the same three-element set:
-\begin{enumerate}[label=\textup{(\arabic*)}, leftmargin=*, itemsep=2pt]
-\item the FTD physical primitive (ternary voxel alphabet);
-\item the value set of the unique non-trivial real Dirichlet character
-of conductor 4 (the math primitive of \S\ref{sec:character});
-\item the closure of the imaginary-unit orbit under squaring and modulus
-(Corollary~\ref{cor:value-set}).
-\end{enumerate}
-That these three sets coincide is a set-level identity, not yet a
-\emph{functorial} identification: whether the FTD voxel alphabet
-\emph{arises from} the character $\chi_{-4}$, or only happens to share
-its value set, is a physical-modelling question that lies outside the
-scope of this paper. What this paper establishes is the lower half of a
-potential derivation chain
-\[
-\bigl(i^{2} = -1\bigr) \;\xrightarrow{\;\mathrm{Im}\circ(i^{\bullet})\;}\;
-\chi_{-4} \;\xrightarrow{\;\text{four projections}\;}\;
-\{16,\;\Gs\} \;\xrightarrow{\;(p,q) = (2,3)\;}\;
-P_{\Gs}(x).
-\]
-The first arrow is Proposition~\ref{prop:imaginary-trace}; the second is
-Theorem~\ref{thm:character-unification}; the third is the joint-matching
-selector of Observation~\ref{obs:23-joint-match}. The FTD physical
-identification of $P_{\Gs}$'s roots with $(\alpha^{-1}, N_c)$ then maps
-the entire chain to physical observables.
-\end{remark}
-
 \begin{observation}[Bedrock]\label{obs:bedrock}
 The smallest classical-mathematical structure from which the entire
 $\Gs/\GG$ identity ring of this paper is derivable is the pair
@@ -1780,70 +1730,9 @@ or dropping the algebraic structure (collapsing to set-theoretic
 content). The pair $(i, \mathbb{Z}/4\Z)$ is the irreducible substrate.
 \end{observation}
 
-\begin{remark}[The character and the Born rule are the same arrow at different scopes]\label{rem:character-born-rule}
-\textbf{[Synthesis; epistemic tag \texttt{[SYNTHESIS]}.]} Two distinct
-operations in the FTD framework are formally the same projection
-applied to different complex objects:
-\begin{itemize}[leftmargin=*, itemsep=4pt]
-\item \textbf{The Born rule of quantum mechanics}: $\psi \in \C \;\mapsto\; |\psi|^{2} \in \R_{\geq 0}$, projecting a complex amplitude onto its real modulus.
-\item \textbf{The character $\chi_{-4}$}: $i^{n} \in \langle i\rangle \subset \C \;\mapsto\; \mathrm{Im}(i^{n}) \in \{-1, 0, +1\}$, projecting a complex unit onto its signed imaginary coordinate.
-\end{itemize}
-Both are functions of the form
-$\mathrm{(complex \; structure)} \xrightarrow{\;\mathrm{single \; real \; coordinate}\;} \R$.
-The Born rule reads the modulus; $\chi_{-4}$ reads the imaginary part.
-They are dual projections from the same complex structure, both producing
-ternary or near-ternary outcomes precisely because the imaginary-part
-projection of the cyclic group $\langle i\rangle$ takes exactly three
-distinct values (Corollary~\ref{cor:value-set}).
+\section{Open problems}\label{sec:open}
 
-Under the FTD framework's identification of the voxel state field with the
-substrate's reflexive projection \cite[\S{06\_consciousness}]{ftd-spec},
-this gives a structural identification:
-\[
-\underbrace{\text{reflexive projection of substrate}}_{\text{FTD voxel state}} \;=\; \underbrace{\text{measurement event of amplitude}}_{\text{Born rule outcome}} \;=\; \underbrace{\text{imaginary-part trace of unit orbit}}_{\chi_{-4}(n) = \mathrm{Im}(i^{n})}.
-\]
-All three are the same operation --- the act of reading a single real
-coordinate off a $\Z[i]$-structured object --- applied at three different
-scopes (substrate, amplitude, character orbit). This connection is a
-synthesis observation across the present paper and the FTD framework,
-not a theorem of pure mathematics; it is recorded here because the
-ontological zero-point identification of Proposition~\ref{prop:imaginary-trace}
-and Corollary~\ref{cor:value-set} makes it naturally articulable.
-\end{remark}
-
-\section{Closed problems and remaining open questions}\label{sec:open}
-
-Earlier drafts of this paper listed five open problems; the work in
-\S\ref{sec:family}, \S\ref{sec:modforms}, and \S\ref{sec:equianharmonic}
-closes two of them outright and refines two more into labeled conjectures
-with explicit high-precision numerical evidence. We organise the resulting
-short list accordingly.
-
-\subsection{Closed in this paper}
-
-\begin{itemize}[leftmargin=*, itemsep=4pt]
-\item \textbf{Mathematical distinguishedness of $R_4$.} Among the
-$R_n$ family, $R_4 = \Gs$ is the unique value for which the associated
-elliptic curve $y^2 = x^3 - x$ has $|\Aut_{\C}(E)|^2 = 16$ with $D = 3$;
-this is Theorem~\ref{thm:R4-distinguished}. The numerical match
-$(x_+, x_-) \approx (\alpha^{-1}, N_c)$ at this $R_4$ is the central
-physical conjecture of \cite{ftd-spec} and is recorded only as a numerical
-observation in Remark~\ref{rem:MQ-physics}; it is not part of the present
-paper's mathematical scope.
-
-\item \textbf{Equianharmonic generalisation of the dichotomy.} The
-$\Gs$-vs-$\GG$ dichotomy at $\tau = i$ admits the direct equianharmonic
-analog $R_3$-vs-$G_\rho$ at $\tau = \rho$; see
-Theorems~\ref{thm:rho-vanishing}, \ref{thm:rho-eisenstein}, \ref{thm:rho-eta}
-and the comparison table~(\S\ref{sec:equianharmonic}). The general
-selection rule is: at a CM point with $|\Aut(E)| = m$, a modular form
-$f$ of weight $k$ satisfies $f(\tau_{\mathrm{CM}}) = 0$ unless $m \mid k$.
-The lemniscatic and equianharmonic curves are the only class-number-one
-CM elliptic curves over $\Q$ with extra automorphisms; both are now
-treated.
-\end{itemize}
-
-\subsection{Remaining open questions}
+Two open problems internal to the mathematical scope of this paper remain.
 
 \begin{enumerate}[label=\textbf{P\arabic*.}, leftmargin=*, itemsep=4pt]
 
@@ -1871,10 +1760,10 @@ explicit cubic-AGM representation of $G_\rho$.
 
 \end{enumerate}
 
-\subsection{Conjectures with high-precision numerical evidence}
+\section{Algebraic-independence conjectures with PSLQ evidence}\label{sec:conjectures}
 
-The remaining items from earlier drafts admit clean statements as
-algebraic-independence conjectures with explicit PSLQ evidence.
+Two further items remain naturally as labelled conjectures supported by
+high-precision PSLQ evidence.
 
 \begin{conjecture}[$W^{(4)}_{\mathrm{BCC}}$ is not elementary in
 $\{\Gs, \pi, \Gamma(1/4)\}$]\label{conj:W4-non-elementary}
@@ -1986,10 +1875,11 @@ F.\ Diamond and J.\ Shurman,
 \emph{A First Course in Modular Forms},
 Graduate Texts in Mathematics \textbf{228}, Springer, 2005.
 
-\bibitem{ftd-spec}
-C.\ Pacitanimulli (and contributors),
-\emph{Foundational Ternary Dynamics: Specification and Algebraic Spine},
-Project documentation, 2026.
+\bibitem{paper-gstar-B}
+C.\ Pacitanimulli,
+\textit{The master quadratic $P_{G^{*}}$ as a math--physics bridge:
+$\chi_{-4}$, the ternary substrate, and the FTD identification},
+companion note, 2026.
 
 \bibitem{gauss-werke}
 C.~F.\ Gauss,
@@ -2050,7 +1940,33 @@ P.\ Deligne,
 \textit{Valeurs de fonctions L et p\'eriodes d'int\'egrales},
 in \emph{Automorphic Forms, Representations and L-Functions},
 Proc.\ Sympos.\ Pure Math.\ \textbf{33}, Part 2, AMS, 1979, 313--346.
-Proved unconditionally for CM motives by Blasius, Shimura, and Anderson.
+
+\bibitem{blasius1986}
+D.\ Blasius,
+\textit{On the critical values of Hecke L-series},
+Annals of Mathematics \textbf{124} (1986), 23--63.
+(Proves Deligne's period conjecture for CM motives.)
+
+\bibitem{anderson1986}
+G.\ Anderson,
+\textit{Cyclotomy and an extension of the Taniyama group},
+Compositio Mathematica \textbf{57} (1986), 153--217.
+
+\bibitem{shimura1979}
+G.\ Shimura,
+\textit{Automorphic forms and the periods of abelian varieties},
+J.\ Math.\ Soc.\ Japan \textbf{31} (1979), 561--592.
+
+\bibitem{yui-zagier}
+N.\ Yui and D.\ Zagier,
+\textit{On the singular values of Weber modular functions},
+Mathematics of Computation \textbf{66} (1997), 1645--1662.
+(CM modular-form values at $\tau = i$ including $E_4(i) = 3\GG^4$.)
+
+\bibitem{villegas-zagier}
+F.\ Rodriguez Villegas and D.\ Zagier,
+\textit{Square roots of central values of Hecke L-series},
+in \emph{Advances in Number Theory}, Oxford Univ.\ Press, 1993, 81--90.
 
 \end{thebibliography}
 
