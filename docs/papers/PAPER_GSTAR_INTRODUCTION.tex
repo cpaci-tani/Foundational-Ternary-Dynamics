@@ -496,21 +496,39 @@ master quadratic with roots matching physically-measured constants. The
 algebraic and numerical distinguishedness coincide.
 \end{remark}
 
-\begin{proposition}[Family-wide master-quadratic root asymptotic]\label{prop:Rn-asymptotic}
+\begin{proposition}[Family-wide master-quadratic root asymptotic, with full expansion]\label{prop:Rn-asymptotic}
 For the master-quadratic family
-$x^2 - 16 R_n^2 x + 16 R_n^3 = 0$, the smaller root satisfies
+$x^2 - 16 R^2 x + 16 R^3 = 0$ with $R > 1/4$, the smaller root admits the
+absolutely convergent expansion
 \[
-x_-(R_n) \;=\; R_n \;+\; \frac{1}{16} \;+\; O(1/R_n) \qquad \text{as } n \to \infty.
+x_-(R) \;=\; \sum_{n=1}^\infty d_n\,R^{2-n}, \qquad
+d_n \;=\; \frac{\binom{2n}{n}}{(2n-1)\,2^{4n-3}},
 \]
-The larger root then satisfies $x_+(R_n) = 16 R_n^2 - R_n - 1/16 + O(1/R_n)$ by Vieta.
+giving explicit leading terms
+\[
+x_-(R) \;=\; R \;+\; \frac{1}{16} \;+\; \frac{1}{128\,R} \;+\; \frac{5}{4096\,R^2}
+            \;+\; \frac{7}{32768\,R^3} \;+\; O(R^{-4}).
+\]
+The larger root satisfies $x_+(R) = 16 R^2 - x_-(R)$ by Vieta, hence
+$x_+(R) = 16 R^2 - R - 1/16 - 1/(128R) - O(R^{-2})$.
 \end{proposition}
 
 \begin{proof}
-Apply the quadratic formula and rationalise:
-$x_- = 4 R_n^{3/2}/[2 R_n^{1/2} + \sqrt{4 R_n - 1}]$.
-Expanding $\sqrt{4 R_n - 1} = 2 R_n^{1/2}(1 - 1/(8 R_n) + O(R_n^{-2}))$,
-the denominator becomes $4 R_n^{1/2}(1 - 1/(16 R_n) + O(R_n^{-2}))$, so
-$x_- = R_n \cdot (1 + 1/(16 R_n) + O(R_n^{-2})) = R_n + 1/16 + O(1/R_n)$.
+Write the quadratic formula in the form
+$x_-(R) = 8 R^2\,\bigl(1 - \sqrt{1 - y}\bigr)$ with $y = 1/(4R) \in (0, 1)$.
+The Newton binomial expansion gives
+$1 - \sqrt{1 - y} = \sum_{n \geq 1} c_n'\, y^n$
+with $c_n' = \binom{2n}{n}/\bigl((2n-1)\,4^n\bigr)$ for $n \geq 1$, so
+\[
+x_-(R) \;=\; 8 R^2 \sum_{n \geq 1} \frac{c_n'}{(4R)^n}
+       \;=\; \sum_{n \geq 1} \frac{8\,c_n'}{4^n}\,R^{2-n}
+       \;=\; \sum_{n \geq 1} d_n\, R^{2-n},
+\]
+where $d_n := 8\,c_n'/4^n = \binom{2n}{n}/\bigl((2n-1)\,2^{4n-3}\bigr)$.
+Direct evaluation: $d_1 = 1$, $d_2 = 1/16$, $d_3 = 1/128$, $d_4 = 5/4096$,
+$d_5 = 7/32768$, recovering the leading $R$ and the four subsequent
+correction terms. Convergence for $4R > 1$ is by ratio test:
+$|d_{n+1}\,R^{-1}/d_n| \to 1/(4R) < 1$.
 \end{proof}
 
 \begin{remark}[Numerical verification across $R_n$]\label{rem:asym-numerics}
