@@ -21,3 +21,26 @@ def test_module_imports():
     assert hasattr(gse, 'z_i_eigenvalue'), "z_i_eigenvalue missing"
     assert hasattr(gse, 'phi_specialise'), "phi_specialise missing"
     assert hasattr(gse, 'c_invariant_dim'), "c_invariant_dim missing"
+
+
+def test_identity_I1():
+    """I1: Phi(omega^2) = G*^2 * pi, verified to 80 digits.
+
+    Per Convention C2: Phi(omega) = G* * sqrt(pi), so Phi(omega^2) = G*^2 * pi.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import mpmath as mp
+
+    mp.mp.dps = 80
+    G_star = mp.gamma(mp.mpf('0.25')) / mp.gamma(mp.mpf('0.75'))
+    sqrt_pi = mp.sqrt(mp.pi)
+
+    # Phi(omega^2) via the module
+    lhs = gse.phi_specialise(2, 0, G_star, sqrt_pi)
+
+    # Expected: G*^2 * pi
+    rhs = G_star**2 * mp.pi
+
+    # Both should agree to 80 digits (allow tolerance 10^-78 for floating slop)
+    diff = abs(lhs - rhs)
+    assert diff < mp.mpf('1e-78'), f"I1 fails: |lhs - rhs| = {diff}"
