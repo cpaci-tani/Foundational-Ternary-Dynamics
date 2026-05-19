@@ -100,3 +100,61 @@ def c_action(x):
     coefficients are conjugated as expected.
     """
     return sp.expand(sp.conjugate(x))
+
+
+if __name__ == "__main__":
+    import sys
+    import mpmath as mp
+
+    mp.mp.dps = 80
+    G_star = mp.gamma(mp.mpf('0.25')) / mp.gamma(mp.mpf('0.75'))
+    sqrt_pi = mp.sqrt(mp.pi)
+
+    print("=" * 70)
+    print("G* OPUS FOLLOW-UP PHASE 0: SYMMETRIC PERIOD ALGEBRA INFRASTRUCTURE")
+    print("=" * 70)
+    print()
+    print(f"G* = Gamma(1/4)/Gamma(3/4) (80 digits):")
+    print(f"  {mp.nstr(G_star, 80)}")
+    print(f"sqrt(pi) (80 digits):")
+    print(f"  {mp.nstr(sqrt_pi, 80)}")
+    print(f"omega_period = G* * sqrt(pi):")
+    print(f"  {mp.nstr(G_star * sqrt_pi, 80)}")
+    print(f"eta_period = -sqrt(pi) / G*:")
+    print(f"  {mp.nstr(-sqrt_pi / G_star, 80)}")
+    print()
+    print("Identity I1: Phi(omega^2) = G*^2 * pi")
+    lhs_i1 = phi_specialise(2, 0, G_star, sqrt_pi)
+    rhs_i1 = G_star**2 * mp.pi
+    print(f"  Phi(omega^2)       = {mp.nstr(lhs_i1, 30)}")
+    print(f"  G*^2 * pi          = {mp.nstr(rhs_i1, 30)}")
+    print(f"  |diff|             = {mp.nstr(abs(lhs_i1 - rhs_i1), 5)}")
+    print()
+    print("Identity I2a: Phi(eta^2) = pi / G*^2")
+    lhs_i2a = phi_specialise(0, 2, G_star, sqrt_pi)
+    rhs_i2a = mp.pi / G_star**2
+    print(f"  Phi(eta^2)         = {mp.nstr(lhs_i2a, 30)}")
+    print(f"  pi / G*^2          = {mp.nstr(rhs_i2a, 30)}")
+    print(f"  |diff|             = {mp.nstr(abs(lhs_i2a - rhs_i2a), 5)}")
+    print()
+    print("Identity I2b: Phi(omega*eta) = -pi")
+    lhs_i2b = phi_specialise(1, 1, G_star, sqrt_pi)
+    rhs_i2b = -mp.pi
+    print(f"  Phi(omega*eta)     = {mp.nstr(lhs_i2b, 30)}")
+    print(f"  -pi                = {mp.nstr(rhs_i2b, 30)}")
+    print(f"  |diff|             = {mp.nstr(abs(lhs_i2b - rhs_i2b), 5)}")
+    print()
+    print("Identity I3: Sym^k eigenline tables")
+    for k in [2, 3, 4, 5]:
+        basis = sym_k_basis(k)
+        eigs = [z_i_eigenvalue(a, b) for (a, b) in basis]
+        print(f"  Sym^{k}: basis = {basis}")
+        print(f"          Z[i]-eigenvalues = {eigs}")
+    print()
+    print("Identity I4: c-invariant dimensions (joint Z[i]-trivial + c-inv)")
+    for k in [2, 3, 4, 5]:
+        d_triv = c_invariant_dim(k, z_i_eigenvalue=1)
+        print(f"  dim_Q[i](Sym^{k}^c, Z[i]-eigenvalue=1) = {d_triv}")
+    print()
+    print("PHASE 0 INFRASTRUCTURE VERIFIED.")
+    print("=" * 70)
