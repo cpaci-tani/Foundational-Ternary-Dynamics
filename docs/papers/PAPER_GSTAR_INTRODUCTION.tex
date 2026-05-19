@@ -1510,6 +1510,54 @@ would convert the FTD bridge from a two-arrow conjecture
 (\S\ref{sec:ontological-synthesis}) into a single-arrow one.
 \end{observation}
 
+\begin{conjecture}[Symmetric-algebra home of $(2, 3)$]\label{conj:sym-algebra-23}
+\textbf{[Structural conjecture; epistemic tag \texttt{[CONJECTURE]}.]}
+Under the period normalization $\omega = \Gs\sqrt{\pi}$ (the real period
+of $E_{\mathrm{lemn}}$, \S\ref{sec:Lvalue}), the coefficients of
+$P_{\Gs}$ admit the rewriting
+\[
+16\,\Gss \;=\; 16\,\omega^{2}/\pi \;\in\; \mathrm{Sym}^{2}\!\bigl(H^{1}(E_{\mathrm{lemn}})\bigr)/\pi, \qquad
+16\,\Gsss \;=\; 16\,\omega^{3}/\pi^{3/2} \;\in\; \mathrm{Sym}^{3}\!\bigl(H^{1}(E_{\mathrm{lemn}})\bigr)/\pi^{3/2}.
+\]
+Conjecturally, $P_{\Gs}$ is the minimal-degree polynomial with
+coefficients in distinct graded pieces $\mathrm{Sym}^{a}$ and
+$\mathrm{Sym}^{b}$ of $\mathrm{Sym}^{\bullet}(H^{1}(E_{\mathrm{lemn}}))$,
+$a < b$, such that:
+\begin{enumerate}[label=\textup{(\roman*)}, leftmargin=*, itemsep=2pt]
+\item the integer prefactor on each coefficient equals $|\Aut_\C(E)|^{2} = 16$;
+\item the two roots are distinct algebraic invariants of the motive
+$H^{1}(E_{\mathrm{lemn}})$ (in particular, not multiples of each other
+or of a single period);
+\item the polynomial does not collapse to a linear identity.
+\end{enumerate}
+The exponent pair $(a, b) = (2, 3)$ is then the unique minimal choice:
+$\mathrm{Sym}^{1}$ collapses to a linear identity by~(iii); $\mathrm{Sym}^{2}$
+is the lowest non-trivial symmetric power; and $\mathrm{Sym}^{3}$ is the
+minimal next graded piece needed to supply a second free coefficient.
+\end{conjecture}
+
+\begin{remark}[Status of Conjecture~\ref{conj:sym-algebra-23}]\label{rem:sym-conj-status}
+This is a structural conjecture, not a theorem. A rigorous proof would
+require: (a) explicit identification of the period-algebra map
+$\mathrm{Sym}^{\bullet}(H^{1}) \otimes \Q[\pi^{\pm 1/2}] \to \C$
+specialising to $\omega^{k} \mapsto (\Gs\sqrt\pi)^{k}$; (b) a uniqueness
+argument that $P_{\Gs}$ is the unique element of the bigraded module
+satisfying conditions (i)--(iii); (c) reconciliation of the
+non-homogeneous bigrading (coefficients in different $\mathrm{Sym}^{k}$)
+with the standard motivic-weight formalism, possibly via a relative
+filtration. Each step is plausible but technical.
+
+If formalised, Conjecture~\ref{conj:sym-algebra-23} would convert the
+negative results (N1)--(N3) of Remark~\ref{rem:three-negatives} into a
+positive structural derivation: the $(2, 3)$ exponent pair is not
+derivable from CM theory \emph{proper} (Hecke, Weber, class polynomials)
+because the polynomial does not live in $H^{1}$ alone --- it lives in
+$\mathrm{Sym}^{2} \oplus \mathrm{Sym}^{3}$ of $H^{1}$, a strictly
+higher-graded object that requires the symmetric-algebra formalism
+rather than the first-cohomology formalism to articulate.
+\end{remark}
+
+
 \subsection{The exponent pair $(2, 3)$ is uniquely picked out by joint root matching}\label{sec:23-unique}
 
 The negative result of \S\ref{sec:not-CM-derived} can be refined into a
@@ -1674,6 +1722,37 @@ require either dropping the character (collapsing to trivial structure)
 or dropping the algebraic structure (collapsing to set-theoretic
 content). The pair $(i, \mathbb{Z}/4\Z)$ is the irreducible substrate.
 \end{observation}
+
+\begin{remark}[The character and the Born rule are the same arrow at different scopes]\label{rem:character-born-rule}
+\textbf{[Synthesis; epistemic tag \texttt{[SYNTHESIS]}.]} Two distinct
+operations in the FTD framework are formally the same projection
+applied to different complex objects:
+\begin{itemize}[leftmargin=*, itemsep=4pt]
+\item \textbf{The Born rule of quantum mechanics}: $\psi \in \C \;\mapsto\; |\psi|^{2} \in \R_{\geq 0}$, projecting a complex amplitude onto its real modulus.
+\item \textbf{The character $\chi_{-4}$}: $i^{n} \in \langle i\rangle \subset \C \;\mapsto\; \mathrm{Im}(i^{n}) \in \{-1, 0, +1\}$, projecting a complex unit onto its signed imaginary coordinate.
+\end{itemize}
+Both are functions of the form
+$\mathrm{(complex \; structure)} \xrightarrow{\;\mathrm{single \; real \; coordinate}\;} \R$.
+The Born rule reads the modulus; $\chi_{-4}$ reads the imaginary part.
+They are dual projections from the same complex structure, both producing
+ternary or near-ternary outcomes precisely because the imaginary-part
+projection of the cyclic group $\langle i\rangle$ takes exactly three
+distinct values (Corollary~\ref{cor:value-set}).
+
+Under the FTD framework's identification of the voxel state field with the
+substrate's reflexive projection \cite[\S{06\_consciousness}]{ftd-spec},
+this gives a structural identification:
+\[
+\underbrace{\text{reflexive projection of substrate}}_{\text{FTD voxel state}} \;=\; \underbrace{\text{measurement event of amplitude}}_{\text{Born rule outcome}} \;=\; \underbrace{\text{imaginary-part trace of unit orbit}}_{\chi_{-4}(n) = \mathrm{Im}(i^{n})}.
+\]
+All three are the same operation --- the act of reading a single real
+coordinate off a $\Z[i]$-structured object --- applied at three different
+scopes (substrate, amplitude, character orbit). This connection is a
+synthesis observation across the present paper and the FTD framework,
+not a theorem of pure mathematics; it is recorded here because the
+ontological zero-point identification of Proposition~\ref{prop:imaginary-trace}
+and Corollary~\ref{cor:value-set} makes it naturally articulable.
+\end{remark}
 
 \section{Closed problems and remaining open questions}\label{sec:open}
 
