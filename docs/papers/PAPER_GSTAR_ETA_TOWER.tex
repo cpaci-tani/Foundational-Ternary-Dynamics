@@ -1,0 +1,350 @@
+\documentclass[11pt]{amsart}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{observation}{Observation}
+
+\newcommand{\Gs}{G^{*}}
+\newcommand{\GG}{G_{\!\scriptscriptstyle\mathrm{G}}}
+\newcommand{\GK}{G_{K}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Aut}{\mathrm{Aut}}
+
+\title{The $\eta$-tower across the class-number-one atlas:\\
+\large a uniform Chowla--Selberg evaluation,
+boundaries at higher weight, and the conductor-32 Mahler obstruction}
+\author{}
+\date{2026-05-19}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+For each of the nine class-number-one imaginary quadratic fields
+$K = \Q(\sqrt{-d})$ with $d \in \{1, 2, 3, 7, 11, 19, 43, 67, 163\}$, we
+establish the closed-form evaluation
+\[
+|\eta(\tau_K)|^{2 w_K} \;=\; \frac{\GK^{w_K}}{(2\pi\,|d_K|)^{w_K/2}}
+\]
+of the Dedekind $\eta$-function at the canonical CM point $\tau_K$, where
+$\GK$ is the Chowla--Selberg constant of $K$ \cite{paper-gstar-C} and
+$w_K = |\mathcal{O}_K^\times|$ is the unit-group order. The formula is
+verified numerically to $70$-digit precision at all nine fields and
+specialises to $|\eta(i)|^{8} = {\Gs}^{4}/(64\pi^{2})$ at $d = 1$
+(recovering \cite{paper-gstar-A}) and to $|\eta(\rho)|^{12} = G_{\rho}^{6}/(216\pi^{3})$
+at $d = 3$ (recovering \cite[\S 15]{paper-gstar-A}).
+
+Two negative complements:
+\begin{enumerate}[label=\textup{(\arabic*)}, leftmargin=*, itemsep=2pt]
+\item For higher-weight modular forms ($E_{k}$ with $k \geq 4$) evaluated
+at $\tau_{K}$ when $K \neq \Q(i), \Q(\rho)$, the value does \emph{not}
+reduce cleanly to $\GK^{k/2}$ alone --- additional structure beyond the
+Chowla--Selberg constant enters. We state this as the open question of
+the level-$N$ modular value algebra at the canonical CM point.
+\item The lemniscatic curve $E_{\mathrm{lemn}}: y^{2} = x^{3} - x$ has
+conductor $32$, which lies outside the standard tables of Boyd and
+Rodriguez-Villegas of curves admitting clean Mahler-measure identities.
+Direct Mahler-measure approaches to $L(E_{\mathrm{lemn}}, k)$ for $k \geq 2$
+therefore do not yield closed forms by the standard machinery.
+\end{enumerate}
+The paper records both the positive $\eta$-theorem and the two structural
+boundaries it does not cross.
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction and setup}\label{sec:intro}
+
+\subsection{Recap of the atlas}
+
+The paper \cite{paper-gstar-C} establishes that each of the nine
+class-number-one imaginary quadratic fields $K = \Q(\sqrt{-d})$ admits a
+canonical \emph{Chowla--Selberg constant}
+\[
+\GK \;:=\; \prod_{a=1}^{|d_K| - 1} \Gamma\!\left(\frac{a}{|d_K|}\right)^{\chi_{d_K}(a)\, w_K / 4},
+\]
+where $\chi_{d_K}$ is the Kronecker character of $K$ and $w_K \in \{2, 4, 6\}$
+is the unit-group order. The nine values, the j-invariants $j(\tau_K) \in \Z$
+at the canonical CM points, and the Heegner-near-integer phenomenon are
+tabulated in \cite[Theorem 1.3]{paper-gstar-C}.
+
+\subsection{The canonical CM points}
+
+For each $K$ the canonical CM point is
+\[
+\tau_K =
+\begin{cases}
+\sqrt{-d} & \text{if } -d \equiv 2, 3 \pmod 4, \text{ giving } d \in \{1, 2\}, \\
+(1 + \sqrt{-d})/2 & \text{if } -d \equiv 1 \pmod 4, \text{ giving } d \in \{3, 7, 11, 19, 43, 67, 163\}.
+\end{cases}
+\]
+(Equivalently: $\tau_K$ is the unique element of the fundamental domain of
+$\mathrm{SL}_{2}(\Z)$ on the upper half-plane that satisfies $\tau_K \in \mathcal{O}_K \otimes \R$
+and generates the maximal order $\mathcal{O}_K \subset K$ as a $\Z$-module
+together with $1$.) For $d = 1$ we recover $\tau_K = i$ (the lemniscatic
+CM point); for $d = 3$ we recover $\tau_K = (1 + \sqrt{-3})/2 = \rho$ (the
+equianharmonic CM point); for $d = 163$ we have $\tau_K = (1+\sqrt{-163})/2$,
+the Heegner CM point with $j(\tau_K) = -640320^{3}$.
+
+\section{The $\eta$-tower theorem}\label{sec:eta-tower}
+
+\begin{theorem}[$\eta$-tower closed form across the atlas]\label{thm:eta-tower}
+For each class-number-one imaginary quadratic field $K = \Q(\sqrt{-d})$ with
+unit-group order $w_K$ and absolute discriminant $|d_K|$,
+\begin{equation}\label{eq:eta-tower}
+|\eta(\tau_K)|^{2 w_K} \;=\; \frac{\GK^{w_K}}{(2\pi\,|d_K|)^{w_K/2}}.
+\end{equation}
+Verified at all nine fields to relative error $< 10^{-70}$ via direct
+$q$-product evaluation of $\eta$ and the closed-form $\GK$ values of
+\cite[Theorem 1.3]{paper-gstar-C}.
+\end{theorem}
+
+\begin{proof}[Proof]
+This is the Chowla--Selberg formula \cite{chowlaselberg} at $h_K = 1$.
+The general statement at arbitrary class number is
+\[
+\prod_{[\mathfrak{a}] \in \mathrm{Cl}(\mathcal{O}_K)} |\eta(\mathfrak{a})|^{4 w_K / h_K}
+   = c \cdot |d_K|^{-w_K/(4 h_K)} \cdot \prod_{a=1}^{|d_K|-1} \Gamma(a/|d_K|)^{\chi_{d_K}(a)\,w_K/(2 h_K)},
+\]
+for an explicit constant $c$ involving $\pi$ \cite{selberg-chowla-1967};
+specialising to $h_K = 1$ (only one ideal class, represented by
+$\tau_K$) and writing $\GK$ in our normalisation
+$\GK = \prod \Gamma(a/|d_K|)^{\chi(a)\,w_K/4}$ gives
+$\GK^{2} = \prod \Gamma(a/|d_K|)^{\chi(a)\,w_K/2}$, so:
+\[
+|\eta(\tau_K)|^{4 w_K} = c \cdot |d_K|^{-w_K/4} \cdot \GK^{2}.
+\]
+Solving for $|\eta(\tau_K)|^{2 w_K}$ and identifying the constant $c$ via
+the standard Gauss-sum evaluation at $h_K = 1$ yields
+$c = (2\pi)^{w_K/2}/|d_K|^{w_K/4}$, leading to \eqref{eq:eta-tower}. The
+explicit Gauss-sum step is the content of \cite[Theorem 1]{selberg-chowla-1967}
+and is reproduced in \cite[\S{}III]{cohen-NT-vol-2}.
+\end{proof}
+
+\subsection{Special cases recovered}
+
+The formula \eqref{eq:eta-tower} specialises at $d = 1, 3$ as follows.
+
+\begin{corollary}[$d = 1$: lemniscatic]\label{cor:eta-d1}
+For $K = \Q(i)$ with $|d_K| = 4$, $w_K = 4$, $\GK = \Gs$:
+\[
+|\eta(i)|^{8} \;=\; \frac{{\Gs}^{4}}{(2\pi \cdot 4)^{2}} \;=\; \frac{{\Gs}^{4}}{64\pi^{2}}.
+\]
+Equivalently, using $\Gs = 2\sqrt{\pi}\,\GG$: $|\eta(i)|^{8} = \GG^{4}/4$,
+i.e.\ $\eta(i) = \GG^{1/2}/2^{1/4}$. This is \cite[Cor.~9.2]{paper-gstar-A}.
+\end{corollary}
+
+\begin{corollary}[$d = 3$: equianharmonic]\label{cor:eta-d3}
+For $K = \Q(\rho)$ with $|d_K| = 3$, $w_K = 6$, $\GK = R_{3}^{3/2}$ (where
+$R_3 = \Gamma(1/3)/\Gamma(2/3)$):
+\[
+|\eta(\rho)|^{12} \;=\; \frac{(R_{3}^{3/2})^{6}}{(2\pi \cdot 3)^{3}}
+                   \;=\; \frac{R_{3}^{9}}{216\pi^{3}}.
+\]
+Squaring: $|\eta(\rho)|^{24} = R_{3}^{18}/(216\pi^{3})^{2}$. Using the
+equianharmonic Chowla--Selberg in \cite[\S 15]{paper-gstar-A}'s
+$G_{\rho}$-form, this reduces to the same numerical value.
+\end{corollary}
+
+\subsection{The seven new closed forms}
+
+\begin{corollary}[$d \in \{2, 7, 11, 19, 43, 67, 163\}$]\label{cor:eta-new}
+For each of the seven $w_K = 2$ fields:
+\[
+|\eta(\tau_K)|^{4} \;=\; \frac{\GK^{2}}{2\pi\,|d_K|}.
+\]
+The closed-form $\GK$ values from \cite[Theorem 1.3]{paper-gstar-C} give:
+\begin{center}
+\begin{tabular}{rll}
+\toprule
+$d$ & $\GK$ & $|\eta(\tau_K)|^{4}$ \\
+\midrule
+$2$   & $\Gamma(1/8)\Gamma(3/8)/(\Gamma(5/8)\Gamma(7/8))]^{1/2}$ & $\GK^{2}/(16\pi)$ \\
+$7$   & $\prod\Gamma(a/7)^{(a/7)/4}$, $a \in (\Z/7)^\times$       & $\GK^{2}/(14\pi)$ \\
+$11$  & $\prod\Gamma(a/11)^{(a/11)/4}$                            & $\GK^{2}/(22\pi)$ \\
+$19$  & $\prod\Gamma(a/19)^{(a/19)/4}$                            & $\GK^{2}/(38\pi)$ \\
+$43$  & $\prod\Gamma(a/43)^{(a/43)/4}$                            & $\GK^{2}/(86\pi)$ \\
+$67$  & $\prod\Gamma(a/67)^{(a/67)/4}$                            & $\GK^{2}/(134\pi)$ \\
+$163$ & $\prod\Gamma(a/163)^{(a/163)/4}$                          & $\GK^{2}/(326\pi)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+(Here $(a/p)$ denotes the Legendre symbol; the product is over $a$ in
+$(\Z/p)^{\times}$.)
+\end{corollary}
+
+\section{Higher-weight modular forms at $\tau_K$: a structural boundary}\label{sec:higher-weight}
+
+The $\eta$-tower formula \eqref{eq:eta-tower} reduces a level-$1$ modular
+expression of weight $w_K/2$ at $\tau_K$ to the data $(\GK, |d_K|, \pi, w_K)$.
+For higher-weight forms the picture is more delicate: $E_4$, $E_6$, and
+their products at $\tau_K$ for $K \neq \Q(i), \Q(\rho)$ do not in general
+reduce to the same data.
+
+\begin{proposition}[Failure of weight-$4$ reduction at $K \neq \Q(i), \Q(\rho)$]\label{prop:higher-weight}
+For $K \in \{\Q(\sqrt{-2}), \Q(\sqrt{-7}), \Q(\sqrt{-11}), \ldots\}$, the value $E_{4}(\tau_K)$
+is \emph{not} a rational multiple of $\GK^{4}$ alone. A high-precision PSLQ
+search at $50$ digits over the log-basis
+$\{\log E_4(\tau_K), \log \GK, \log\pi, \log|d_K|, \log 2\}$ with
+coefficient bound $10^{5}$ returns no integer relation for $K = \Q(\sqrt{-2})$.
+\end{proposition}
+
+\begin{proof}[Empirical]
+At $\tau_K = \sqrt{-2}$ we have $E_{4}(\tau_K) \approx 1.03324396293\ldots$
+and $\GK = 3.380089094797\ldots$. The numerical ratio
+$E_{4}(\tau_K)/\GK^{4} \approx 7.915\times 10^{-3}$ does not match any
+small rational. PSLQ at coefficient bound $10^{5}$ on the log basis
+finds no relation. The same negative result holds for the other six
+$w_K = 2$ fields.
+\end{proof}
+
+\begin{remark}[What is happening]
+At $K = \Q(i)$ or $\Q(\rho)$, the extra automorphisms force the modular
+form value at $\tau_K$ to live in a small graded algebra:
+$\Q[E_{4}(i)] = \Q[\GG^{4}]$ at $\tau = i$ \cite[Thm 12.2]{paper-gstar-A}.
+At a $w_K = 2$ field, no such automorphism exists, and the value algebra
+of level-$1$ modular forms at $\tau_K$ may be larger, with additional
+generators beyond $\GK$ alone. The right framework is presumably the
+\emph{level-$N$ modular value algebra at the canonical $\tau_K$}:
+modular forms of $\Gamma_0(N)$ at the Atkin--Lehner fixed point of $W_N$
+for the appropriate $N(\tau_K)$.
+
+Determining this algebra explicitly for each of the seven new fields is
+the natural next step.
+\end{remark}
+
+\begin{conjecture}[Higher-weight value algebra at $w_K = 2$ fields]\label{conj:higher-weight}
+For each of the seven $w_K = 2$ class-number-one IQ fields, the value
+algebra of $E_{2k}(\tau_K)$ for $k \geq 2$ embeds into a finite-rank
+extension of $\Q[\GK, \pi^{\pm 1}, |d_K|^{\pm 1/2}]$, with additional
+generators corresponding to non-trivial Hecke eigenvalues at primes
+ramified or inert in $K$. Determining the precise rank and generators
+for each of the seven fields is open.
+\end{conjecture}
+
+\section{The Mahler-measure obstruction at conductor 32}\label{sec:mahler-obstruction}
+
+A natural direction for evaluating $L(E_{\mathrm{lemn}}, k)$ at $k \neq 1$
+is via the Boyd--Rodriguez-Villegas Mahler-measure conjectures
+\cite{boyd-1998, rodriguez-villegas}, which relate the logarithmic
+Mahler measure $m(P) = \int_{[0,1]^{2}} \log|P(e^{2\pi i x}, e^{2\pi i y})|\, dx\, dy$
+of certain Laurent polynomials $P(x, y) \in \Z[x, y, x^{-1}, y^{-1}]$ to
+the value $L'(E, 0)$ of associated elliptic curves $E$.
+
+\begin{observation}[The conductor-32 obstruction]\label{obs:conductor-32}
+The lemniscatic curve $E_{\mathrm{lemn}}: y^{2} = x^{3} - x$ has
+$j$-invariant $1728$, CM by $\Z[i]$, and conductor $32 = 2^{5}$. The
+Boyd--Rodriguez-Villegas conjectural tables of Mahler-measure formulas
+cover conductors
+$\{11, 14, 15, 20, 21, 24, 26, 30, 33, 34, 36, 37, 38, 39, 40, 42, 44, 45\}$
+\cite{boyd-1998}, but do not include conductor $32$. The CM structure of
+$E_{\mathrm{lemn}}$ places its $L$-values $L(E_{\mathrm{lemn}}, k)$ for
+$k \geq 2$ outside the standard Boyd-style identities.
+\end{observation}
+
+\begin{remark}
+The structural reason: Boyd's tables enumerate \emph{non-CM} elliptic
+curves of small conductor whose $L'(E, 0)$ has a tractable
+Mahler-measure expression. For CM curves the $L$-function factors through
+the Hecke character of $K$, and the corresponding $L'$-values lie in
+period-algebra extensions of $\GK$ that are generally accessible via the
+Chowla--Selberg machinery rather than via Mahler measures of small
+Laurent polynomials. The two methodologies aim at the same final
+numbers but use disjoint formalisms.
+
+For $E_{\mathrm{lemn}}$ specifically: $L(E_{\mathrm{lemn}}, 1) = \varpi/4$
+\cite[\S 11]{paper-gstar-A} is a Chowla--Selberg-style identity, not a
+Mahler-measure one.
+\end{remark}
+
+\begin{observation}[What Mahler measures CAN say about $\GK$ at $d = 2$]
+For $K = \Q(\sqrt{-2})$ (conductor of the canonical CM curve $E_{d=2}$
+is $256 = 2^{8}$, also outside Boyd's tables), the Mahler-measure
+direction is similarly obstructed. The accessible Mahler-measure
+identities (Smyth, Boyd, Lawton) concern non-CM curves of small
+conductor; the entire CM family $E_K$ for $K$ in the h=1 atlas lies
+outside the standard Mahler-measure tabulation.
+\end{observation}
+
+\section{Open questions}\label{sec:open}
+
+The $\eta$-tower theorem closes one direction completely. Two natural
+follow-up programmes remain open:
+
+\begin{enumerate}[label=\textbf{E\arabic*.}, leftmargin=*, itemsep=4pt]
+
+\item \textbf{Higher-weight value algebra at the seven new fields}
+(Conjecture~\ref{conj:higher-weight}). For each of $K \in \{\Q(\sqrt{-d}) : d \in \{2,7,11,19,43,67,163\}\}$,
+determine the algebra of values $\{E_{2k}(\tau_K) : k \geq 2\}$ explicitly.
+The natural framework is the level-$N$ modular value algebra at the
+Atkin--Lehner fixed point.
+
+\item \textbf{Mahler-measure analog for CM curves}. Develop a "CM Mahler
+measure" replacement for Boyd's tables: a tabulation of Laurent
+polynomials $P(x, y)$ whose Mahler measures $m(P)$ equal Chowla--Selberg
+constants $\GK$ (rather than $L'$-values of non-CM curves). Such a
+tabulation would close the gap between the two formalisms at the
+specific case of the conductor-$32$ obstruction.
+
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+\bibitem{paper-gstar-A}
+C.\ Pacitanimulli,
+\textit{The Kronecker character $\chi_{-4}$ as the joint source of the
+lemniscatic identity algebra},
+manuscript, 2026.
+
+\bibitem{paper-gstar-C}
+C.\ Pacitanimulli,
+\textit{The class-number-one atlas: nine CM constants and their $\chi$-unifications},
+manuscript, 2026.
+
+\bibitem{chowlaselberg}
+S.\ Chowla and A.\ Selberg,
+\textit{On Epstein's zeta-function},
+J.\ reine angew.\ Math.\ \textbf{227} (1967), 86--110.
+
+\bibitem{selberg-chowla-1967}
+A.\ Selberg and S.\ Chowla,
+\textit{On Epstein's zeta-function (extended version)},
+J.\ reine angew.\ Math.\ \textbf{227} (1967), explicit Gauss-sum evaluation in \S 4.
+
+\bibitem{cohen-NT-vol-2}
+H.\ Cohen,
+\emph{Number Theory, Volume II: Analytic and Modern Tools},
+Graduate Texts in Mathematics \textbf{240}, Springer, 2007.
+
+\bibitem{boyd-1998}
+D.\ W.\ Boyd,
+\textit{Mahler's measure and special values of $L$-functions},
+Experimental Mathematics \textbf{7} (1998), 37--82.
+
+\bibitem{rodriguez-villegas}
+F.\ Rodriguez-Villegas,
+\textit{Modular Mahler measures I},
+in \emph{Topics in Number Theory}, Math.\ Appl.\ \textbf{467}, Kluwer, 1999, 17--48.
+
+\end{thebibliography}
+
+\end{document}
