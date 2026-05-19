@@ -44,3 +44,69 @@ def test_identity_I1():
     # Both should agree to 80 digits (allow tolerance 10^-78 for floating slop)
     diff = abs(lhs - rhs)
     assert diff < mp.mpf('1e-78'), f"I1 fails: |lhs - rhs| = {diff}"
+
+
+def test_identity_I2_eta_squared():
+    """I2a: Phi(eta^2) = pi / G*^2, verified to 80 digits.
+
+    Per Convention C2: Phi(eta) = -sqrt(pi)/G*, so Phi(eta^2) = pi/G*^2.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import mpmath as mp
+
+    mp.mp.dps = 80
+    G_star = mp.gamma(mp.mpf('0.25')) / mp.gamma(mp.mpf('0.75'))
+    sqrt_pi = mp.sqrt(mp.pi)
+
+    lhs = gse.phi_specialise(0, 2, G_star, sqrt_pi)
+    rhs = mp.pi / G_star**2
+
+    diff = abs(lhs - rhs)
+    assert diff < mp.mpf('1e-78'), f"I2a fails: |lhs - rhs| = {diff}"
+
+
+def test_identity_I2_omega_eta():
+    """I2b: Phi(omega * eta) = -pi, verified to 80 digits.
+
+    Phi(omega) * Phi(eta) = (G* * sqrt(pi)) * (-sqrt(pi) / G*) = -pi.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import mpmath as mp
+
+    mp.mp.dps = 80
+    G_star = mp.gamma(mp.mpf('0.25')) / mp.gamma(mp.mpf('0.75'))
+    sqrt_pi = mp.sqrt(mp.pi)
+
+    lhs = gse.phi_specialise(1, 1, G_star, sqrt_pi)
+    rhs = -mp.pi
+
+    diff = abs(lhs - rhs)
+    assert diff < mp.mpf('1e-78'), f"I2b fails: |lhs - rhs| = {diff}"
+
+
+def test_identity_I2_legendre_consistency():
+    """I2c (the cross-check): the Legendre relation det = -2i * G* * sqrt(pi) * q with q = -sqrt(pi)/G*
+    should give -2i * G* * sqrt(pi) * (-sqrt(pi)/G*) = 2i * pi.
+
+    This is the Legendre relation det of period matrix = 2*pi*i (positive orientation per Convention C2).
+    """
+    import mpmath as mp
+
+    mp.mp.dps = 80
+    G_star = mp.gamma(mp.mpf('0.25')) / mp.gamma(mp.mpf('0.75'))
+    sqrt_pi = mp.sqrt(mp.pi)
+    q = -sqrt_pi / G_star  # eta_period per Convention C2
+
+    # Period matrix:
+    # [ G*sqrt(pi)    i G*sqrt(pi) ]
+    # [ q             -i q          ]
+    omega_p1 = G_star * sqrt_pi
+    omega_p2 = mp.mpc(0, 1) * omega_p1
+    eta_p1 = q
+    eta_p2 = mp.mpc(0, -1) * q
+
+    det = omega_p1 * eta_p2 - omega_p2 * eta_p1
+    expected = mp.mpc(0, 2) * mp.pi  # +2 pi i
+
+    diff = abs(det - expected)
+    assert diff < mp.mpf('1e-78'), f"Legendre det = {det}, expected {expected}, diff = {diff}"
