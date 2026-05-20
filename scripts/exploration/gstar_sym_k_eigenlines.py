@@ -20,6 +20,13 @@ mp.mp.dps = 80
 omega = sp.Symbol('omega', commutative=True, real=True)
 eta = sp.Symbol('eta', commutative=True, real=True)
 i = sp.I  # Q[i] imaginary unit
+G_star_sym = sp.Symbol('G_star_sym', commutative=True, real=True, positive=True)
+"""Formal SymPy symbol tracking G* in the symmetric period algebra.
+
+Use Phi specialisation (phi_specialise) to substitute the 80-digit numerical
+value when needed. G_star_sym appears in sigma_{a,b} scaling factors of the
+Hodge complex structure J (Convention C6).
+"""
 
 
 def sym_k_basis(k):
@@ -92,6 +99,39 @@ def z_i_eigenline_dim(k, z_i_eigenvalue=1):
 
 # Backward-compatible alias (deprecated; will be removed in Phase 1)
 c_invariant_dim = z_i_eigenline_dim
+
+
+def j_action(x):
+    """Apply the Hodge complex structure J to a Sym^k(H^1) (x) Q[i] element.
+
+    Per Convention C6:
+      J(omega) = -i * eta / G_star_sym
+      J(eta)   = i * G_star_sym * omega
+      J extended multiplicatively on monomials; semi-linearly on Q[i]-coefficients
+      (J(alpha * x) = conj(alpha) * J(x) for alpha in Q[i]).
+
+    Property: J^2 = (-1)^k * id on Sym^k(H^1).
+
+    Implementation strategy: conjugate Q[i]-coefficients (via Convention C3 c_action),
+    then substitute omega -> -i * eta / G_star_sym and eta -> i * G_star_sym * omega.
+    Use intermediate placeholder symbols to avoid omega <-> eta substitution collision.
+    """
+    omega_tmp = sp.Symbol('__j_omega_tmp', commutative=True, real=True)
+    eta_tmp = sp.Symbol('__j_eta_tmp', commutative=True, real=True)
+
+    # Step 1: conjugate Q[i]-coefficients only (C3 c_action)
+    x_conj = c_action(x)
+
+    # Step 2: substitute omega -> tmp_omega, eta -> tmp_eta (avoid swap collision)
+    step2 = x_conj.subs({omega: omega_tmp, eta: eta_tmp})
+
+    # Step 3: substitute tmp_omega -> J(omega), tmp_eta -> J(eta)
+    step3 = step2.subs({
+        omega_tmp: -sp.I * eta / G_star_sym,
+        eta_tmp: sp.I * G_star_sym * omega,
+    })
+
+    return sp.expand(step3)
 
 
 def c_action(x):
