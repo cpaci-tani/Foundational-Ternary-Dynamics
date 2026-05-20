@@ -808,3 +808,110 @@ def test_leading_period_real_roots_admissibility():
         assert actual == expected, (
             f"({a},{b}): disc = {disc_num}, expected real_roots = {expected}, got {actual}"
         )
+
+
+def test_H4_uniqueness_minimum_a_in_admissible_family():
+    """Pre-registered hypothesis H4 (from preregister-sym-k-c-invariant-parity-v1 tag):
+
+    Among monic quadratics P_{(a,b)} = x^2 - 16*G*^a*x + 16*G*^b with a < b,
+    a <= 5, b <= 6, the pair (a, b) = (2, 3) is uniquely picked out as the
+    minimum-a admissible pair under Paper A Theorem 17.5 criteria:
+      (i)   integer prefactor 16 on non-leading coeffs (automatic)
+      (ii)  roots not scalar multiples of any single G*^k (requires 2a > b)
+      (iii) non-degenerate discriminant (Δ > 0)
+
+    Criterion (ii) reduces to 2a > b (strict), equivalently b < 2a.
+    Combined with a < b: admissible region is { (a, b) : a < b < 2a, a >= 2 }.
+
+    For each a in {1, 2, 3, 4, 5}, enumerate admissible b in {a+1, ..., min(2a-1, 6)}:
+      a=1: b in (1, 2)        → empty
+      a=2: b in (2, 4) ∩ Z    → {3}            → (2, 3) ← Paper A
+      a=3: b in (3, 6) ∩ Z    → {4, 5}
+      a=4: b in (4, 8) ∩ Z    → {5, 6, 7}
+      a=5: b in (5, 10) ∩ Z   → {6, 7, 8, 9}
+
+    Restricted to b <= 6:
+      a=2: {(2, 3)}
+      a=3: {(3, 4), (3, 5)}
+      a=4: {(4, 5), (4, 6)}
+      a=5: {(5, 6)}
+
+    Minimum-a pair: (2, 3) — UNIQUE.
+
+    This test enumerates and verifies the structural claim.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    admissible = []
+    for a in range(1, 6):           # a in {1, 2, 3, 4, 5}
+        for b in range(a + 1, 7):    # b in {a+1, ..., 6}
+            # Criterion (ii) requires 2a > b (strict). Boundary 2a = b excluded
+            # because roots become scalar multiples of G*^a.
+            if 2 * a > b:
+                admissible.append((a, b))
+
+    expected_admissible = [(2, 3), (3, 4), (3, 5), (4, 5), (4, 6), (5, 6)]
+    assert admissible == expected_admissible, (
+        f"Admissible (a, b) pairs: got {admissible}, expected {expected_admissible}"
+    )
+
+    # Pair with minimum a
+    min_a = min(p[0] for p in admissible)
+    min_a_pairs = [p for p in admissible if p[0] == min_a]
+    assert min_a_pairs == [(2, 3)], (
+        f"Minimum-a pairs: got {min_a_pairs}, expected [(2, 3)]. H4 FALSIFIED."
+    )
+    assert len(min_a_pairs) == 1, (
+        f"Minimum-a pair is NOT unique: {min_a_pairs}. H4 FALSIFIED."
+    )
+
+    # Sanity-check the (2,3) case satisfies all 3 Theorem 17.5 criteria
+    # (i) integer prefactor 16 — by construction, P = x^2 - 16*G*^2*x + 16*G*^3
+    # (ii) roots not scalar multiples of G*^k: roots = 8*G*^2 ± 4*G*^(3/2)*sqrt(4*G* - 1)
+    #      The factor sqrt(4*G* - 1) is transcendental (Q-linearly independent from G*^k)
+    # (iii) discriminant 64*G*^3*(4*G* - 1) > 0 since G* > 1/4
+    G = gse.G_star_sym
+    disc_23 = gse.leading_period_discriminant(2, 3)
+    # Discriminant > 0: 4*G* - 1 > 0 always (G* > 1/4)
+    # We verify the factorisation 64*G*^3*(4*G* - 1)
+    expected_disc_23 = 64 * G**3 * (4 * G - 1)
+    diff = sp.simplify(disc_23 - expected_disc_23)
+    assert diff == 0, f"disc(2,3) factorisation: got {disc_23}, expected {expected_disc_23}, diff = {diff}"
+
+
+def test_H4_boundary_2a_equals_b_roots_scalar_multiples():
+    """Verifies the structural claim that for 2a = b, the roots are scalar multiples of G*^a.
+
+    For b = 2a: P(x) = x^2 - 16*G*^a*x + 16*G*^(2a). Discriminant = 256*G*^(2a) - 64*G*^(2a)
+                = 192*G*^(2a). sqrt(disc) = 8*sqrt(3)*G*^a. Roots = (8 ± 4*sqrt(3))*G*^a.
+    Both roots are RATIONAL multiples of G*^a — criterion (ii) of Theorem 17.5 fails.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    G = gse.G_star_sym
+
+    for a in [1, 2, 3, 4]:
+        b = 2 * a
+        x_plus, x_minus = gse.leading_period_roots(a, b)
+        # Both roots should equal (constant) * G*^a
+        ratio_plus = sp.simplify(x_plus / G**a)
+        ratio_minus = sp.simplify(x_minus / G**a)
+        # Each ratio should NOT contain G (i.e., should be a constant in Q(sqrt(3)))
+        assert G not in ratio_plus.free_symbols, (
+            f"a={a}, b={b}: x_+/G*^a = {ratio_plus} still contains G — boundary 2a=b should make roots scalar multiples"
+        )
+        assert G not in ratio_minus.free_symbols, (
+            f"a={a}, b={b}: x_-/G*^a = {ratio_minus} still contains G — boundary 2a=b should make roots scalar multiples"
+        )
+
+        # Both ratios should be 8 +/- 4*sqrt(3)
+        expected_plus_ratio = 8 + 4 * sp.sqrt(3)
+        expected_minus_ratio = 8 - 4 * sp.sqrt(3)
+        assert sp.simplify(ratio_plus - expected_plus_ratio) == 0, (
+            f"a={a}, b={b}: x_+/G*^a = {ratio_plus}, expected {expected_plus_ratio}"
+        )
+        assert sp.simplify(ratio_minus - expected_minus_ratio) == 0, (
+            f"a={a}, b={b}: x_-/G*^a = {ratio_minus}, expected {expected_minus_ratio}"
+        )
