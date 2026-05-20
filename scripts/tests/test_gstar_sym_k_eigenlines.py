@@ -716,3 +716,95 @@ def test_X_Y_master_quadratic_uniqueness_2_3():
     # All must be zero for residue = 0
     # We verify the symbolic structure (not solve, just check the polynomial form)
     assert len(coeffs) == 3, f"Expected degree-2 poly in u, got coeffs {coeffs}"
+
+
+def test_leading_period_discriminant_formula():
+    """Discriminant of P_{(a,b)} = x^2 - 16*G*^a*x + 16*G*^b is
+    Delta = 256*G*^(2a) - 64*G*^b = 64*G*^b * (4*G*^(2a-b) - 1).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    G = gse.G_star_sym
+    for (a, b) in [(1, 2), (2, 3), (3, 4), (3, 5), (4, 5)]:
+        disc = gse.leading_period_discriminant(a, b)
+        expected = 256 * G**(2 * a) - 64 * G**b
+        diff = sp.simplify(disc - expected)
+        assert diff == 0, f"disc({a},{b}) = {disc}, expected {expected}, diff = {diff}"
+
+
+def test_leading_period_roots_sum_product():
+    """Vieta's: x_plus + x_minus = 16*G*^a, x_plus * x_minus = 16*G*^b.
+    Verified for several (a, b) pairs.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    G = gse.G_star_sym
+    for (a, b) in [(2, 3), (3, 4), (1, 2), (4, 5)]:
+        x_plus, x_minus = gse.leading_period_roots(a, b)
+        sum_check = sp.simplify(x_plus + x_minus - 16 * G**a)
+        product_check = sp.simplify(x_plus * x_minus - 16 * G**b)
+        assert sum_check == 0, f"({a},{b}): sum = {x_plus + x_minus}, expected 16*G*^{a}: diff = {sum_check}"
+        assert product_check == 0, f"({a},{b}): product = {x_plus * x_minus}, expected 16*G*^{b}: diff = {product_check}"
+
+
+def test_leading_period_numerical_roots_2_3():
+    """Numerical verification of the (2, 3) master quadratic roots
+    against Paper A Theorem 6.1:
+      x_+ = 137.0361714581... (Paper A eq 16)
+      x_- = 3.02396391633...   (Paper A eq 17)
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+    import mpmath as mp
+
+    mp.mp.dps = 80
+    G_star_num = mp.gamma(mp.mpf('0.25')) / mp.gamma(mp.mpf('0.75'))
+
+    x_plus, x_minus = gse.leading_period_roots(2, 3)
+    x_plus_num = float(x_plus.subs(gse.G_star_sym, sp.Float(str(G_star_num), 80)))
+    x_minus_num = float(x_minus.subs(gse.G_star_sym, sp.Float(str(G_star_num), 80)))
+
+    # Paper A values:
+    expected_plus = 137.0361714581548
+    expected_minus = 3.023963916339021
+
+    assert abs(x_plus_num - expected_plus) < 1e-10, f"x_plus = {x_plus_num}, expected {expected_plus}"
+    assert abs(x_minus_num - expected_minus) < 1e-10, f"x_minus = {x_minus_num}, expected {expected_minus}"
+
+
+def test_leading_period_real_roots_admissibility():
+    """For (a, b) with a < b: real roots iff 2a - b >= -1 (equiv. b <= 2a + 1).
+
+    Verified numerically: substitute G* numerical value, check discriminant sign.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+    import mpmath as mp
+
+    mp.mp.dps = 50
+    G_star_num = float(mp.gamma(mp.mpf('0.25')) / mp.gamma(mp.mpf('0.75')))
+
+    test_pairs = [
+        # (a, b, expected_real_roots)
+        (1, 2, True),   # 2*1 - 2 = 0  >= -1  YES
+        (1, 3, True),   # 2*1 - 3 = -1 >= -1  YES (boundary)
+        (1, 4, False),  # 2*1 - 4 = -2 < -1   NO
+        (2, 3, True),   # 2*2 - 3 = 1  >= -1  YES (Paper A)
+        (2, 4, True),   # 2*2 - 4 = 0  YES
+        (2, 5, True),   # 2*2 - 5 = -1 YES (boundary)
+        (2, 6, False),  # 2*2 - 6 = -2 NO
+        (3, 4, True),
+        (3, 5, True),
+        (3, 7, True),   # 2*3 - 7 = -1 YES (boundary)
+        (3, 8, False),
+    ]
+
+    for (a, b, expected) in test_pairs:
+        disc = gse.leading_period_discriminant(a, b)
+        disc_num = float(disc.subs(gse.G_star_sym, sp.Float(G_star_num, 50)))
+        actual = disc_num >= 0
+        assert actual == expected, (
+            f"({a},{b}): disc = {disc_num}, expected real_roots = {expected}, got {actual}"
+        )
