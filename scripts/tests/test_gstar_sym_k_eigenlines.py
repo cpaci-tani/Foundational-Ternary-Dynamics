@@ -379,3 +379,55 @@ def test_j_matrix_matches_j_action_on_basis():
                 f"Sym^{k} j_matrix column {j} doesn't match j_action: "
                 f"reconstructed={j_image_reconstructed}, direct={j_image_direct}, diff={diff}"
             )
+
+
+def test_sym2_j_eigenspace_decomposition():
+    """Sym^2 J-eigenspaces under J^2 = +id:
+      - eigenvalue +1: dim 2 (spanned by omega*eta and omega^2 - eta^2/G*^2)
+      - eigenvalue -1: dim 1 (spanned by omega^2 + eta^2/G*^2)
+
+    Verification strategy:
+      1. Compute eigenvects of j_matrix_sym_k(2)
+      2. Check the eigenvalues are {+1, -1} with multiplicities {2, 1}
+      3. Verify J(predicted eigenvector) = eigenvalue * predicted eigenvector
+         (via j_action symbolic check, robust to sympy basis normalization differences)
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    M = gse.j_matrix_sym_k(2)
+    eigvecs = M.eigenvects()  # list of (eigenvalue, algebraic_multiplicity, [basis_vectors])
+
+    # Build a {eigenvalue: total dimension of eigenspace} dict
+    # Use sp.simplify(eigval - target) == 0 to be robust to different sympy representations
+    dim_by_eigenvalue = {}
+    for eigval, alg_mult, basis in eigvecs:
+        ev_simplified = sp.simplify(eigval)
+        dim_by_eigenvalue[ev_simplified] = dim_by_eigenvalue.get(ev_simplified, 0) + len(basis)
+
+    # Expected: {+1: 2, -1: 1}
+    assert dim_by_eigenvalue.get(sp.Integer(1), 0) == 2, (
+        f"Sym^2 J=+1 eigenspace dim = {dim_by_eigenvalue.get(sp.Integer(1), 0)}, expected 2. "
+        f"Full decomposition: {dim_by_eigenvalue}"
+    )
+    assert dim_by_eigenvalue.get(sp.Integer(-1), 0) == 1, (
+        f"Sym^2 J=-1 eigenspace dim = {dim_by_eigenvalue.get(sp.Integer(-1), 0)}, expected 1. "
+        f"Full decomposition: {dim_by_eigenvalue}"
+    )
+
+    # Verify the predicted eigenvectors are correct (using j_action directly)
+    omega_eta = gse.omega * gse.eta
+    plus_one_other = gse.omega**2 - gse.eta**2 / gse.G_star_sym**2
+    minus_one = gse.omega**2 + gse.eta**2 / gse.G_star_sym**2
+
+    # J(omega*eta) should = +1 * omega*eta
+    diff_a = sp.simplify(gse.j_action(omega_eta) - omega_eta)
+    assert diff_a == 0, f"J(omega*eta) != omega*eta: diff = {diff_a}"
+
+    # J(omega^2 - eta^2/G*^2) should = +1 * (omega^2 - eta^2/G*^2)
+    diff_b = sp.simplify(gse.j_action(plus_one_other) - plus_one_other)
+    assert diff_b == 0, f"J(omega^2 - eta^2/G*^2) != omega^2 - eta^2/G*^2: diff = {diff_b}"
+
+    # J(omega^2 + eta^2/G*^2) should = -1 * (omega^2 + eta^2/G*^2)
+    diff_c = sp.simplify(gse.j_action(minus_one) - (-minus_one))
+    assert diff_c == 0, f"J(omega^2 + eta^2/G*^2) != -(omega^2 + eta^2/G*^2): diff = {diff_c}"
