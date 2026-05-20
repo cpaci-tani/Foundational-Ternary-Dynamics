@@ -205,3 +205,25 @@ def test_c_invariant_dim_alias_works():
     import gstar_sym_k_eigenlines as gse
     assert gse.c_invariant_dim(k=2, z_i_eigenvalue=1) == gse.z_i_eigenline_dim(k=2, z_i_eigenvalue=1) == 1
     assert gse.c_invariant_dim(k=3, z_i_eigenvalue=1) == gse.z_i_eigenline_dim(k=3, z_i_eigenvalue=1) == 0
+
+
+def test_j_action_on_omega():
+    """J(omega) = -i * eta / G_star_sym (Convention C6)."""
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    expected = -sp.I * gse.eta / gse.G_star_sym
+    actual = gse.j_action(gse.omega)
+    diff = sp.simplify(actual - expected)
+    assert diff == 0, f"J(omega) != -i*eta/G_star_sym: diff = {diff}"
+
+
+def test_j_action_on_eta():
+    """J(eta) = i * G_star_sym * omega (Convention C6)."""
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    expected = sp.I * gse.G_star_sym * gse.omega
+    actual = gse.j_action(gse.eta)
+    diff = sp.simplify(actual - expected)
+    assert diff == 0, f"J(eta) != i*G_star_sym*omega: diff = {diff}"
