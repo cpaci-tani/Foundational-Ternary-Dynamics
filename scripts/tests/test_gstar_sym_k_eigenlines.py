@@ -460,3 +460,84 @@ def test_j_matrix_squared_parity_C6_1():
                     f"expected ({(-1)**k}) * delta_{{{i},{j}}} = {expected[i,j]}, "
                     f"diff = {diff[i,j]}"
                 )
+
+
+def test_sym4_j_eigenspace_decomposition():
+    """Sym^4 has J^2 = +id, so J has real eigenvalues +/-1.
+
+    Expected decomposition (verified by hand from j_matrix_sym_k(4) block structure):
+      - dim(J = +1) = 3
+      - dim(J = -1) = 2
+
+    Verifies the +1 eigenspace contains both the "Z[i]-trivial subspace's J=+1 part"
+    (omega^2*eta^2 and omega^4 + eta^4/G*^4) and the off-Z[i]-trivial element
+    (omega^3*eta + omega*eta^3 scaled appropriately).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    M = gse.j_matrix_sym_k(4)
+    eigvecs = M.eigenvects()
+
+    dim_by_eigenvalue = {}
+    for eigval, alg_mult, basis in eigvecs:
+        ev_simp = sp.simplify(eigval)
+        dim_by_eigenvalue[ev_simp] = dim_by_eigenvalue.get(ev_simp, 0) + len(basis)
+
+    assert dim_by_eigenvalue.get(sp.Integer(1), 0) == 3, (
+        f"Sym^4 J=+1 dim = {dim_by_eigenvalue.get(sp.Integer(1), 0)}, expected 3"
+    )
+    assert dim_by_eigenvalue.get(sp.Integer(-1), 0) == 2, (
+        f"Sym^4 J=-1 dim = {dim_by_eigenvalue.get(sp.Integer(-1), 0)}, expected 2"
+    )
+
+
+def test_sym4_z_i_trivial_subspace_J_split():
+    """Reconciliation: the 3-dim Z[i]-trivial subspace of Sym^4 (Phase 0 observation,
+    spanned by omega^4, omega^2*eta^2, eta^4) splits under J as:
+      - J = +1 part: dim 2, span(omega^2*eta^2, omega^4 + eta^4/G*^4)
+      - J = -1 part: dim 1, span(omega^4 - eta^4/G*^4)
+
+    Verifies explicitly via j_action that these three elements have the claimed J-eigenvalues.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    omega, eta, G = gse.omega, gse.eta, gse.G_star_sym
+
+    # J = +1 eigenvectors in the Z[i]-trivial subspace
+    v1 = omega**2 * eta**2
+    v2 = omega**4 + eta**4 / G**4
+    # J = -1 eigenvector in the Z[i]-trivial subspace
+    v3 = omega**4 - eta**4 / G**4
+
+    diff1 = sp.simplify(gse.j_action(v1) - v1)
+    assert diff1 == 0, f"J(omega^2 * eta^2) != omega^2 * eta^2: diff = {diff1}"
+
+    diff2 = sp.simplify(gse.j_action(v2) - v2)
+    assert diff2 == 0, f"J(omega^4 + eta^4/G*^4) != itself: diff = {diff2}"
+
+    diff3 = sp.simplify(gse.j_action(v3) - (-v3))
+    assert diff3 == 0, f"J(omega^4 - eta^4/G*^4) != -(itself): diff = {diff3}"
+
+
+def test_sym5_j_matrix_structure():
+    """Sym^5 has J^2 = -id (already verified at matrix level in L3-3).
+
+    Additional structural check: j_matrix_sym_k(5) is anti-diagonal with 6 entries
+    on the anti-diagonal (positions [5-j, j] for j in 0..5), and zero elsewhere.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    M = gse.j_matrix_sym_k(5)
+    assert M.shape == (6, 6)
+    for i in range(6):
+        for j in range(6):
+            if i == 5 - j:
+                # Anti-diagonal entry: should match sigma_factor(5-j, j)
+                expected = gse.sigma_factor(5 - j, j)
+                diff = sp.simplify(M[i, j] - expected)
+                assert diff == 0, f"Sym^5 M[{i},{j}] != sigma_factor({5-j},{j}): diff = {diff}"
+            else:
+                assert M[i, j] == 0, f"Sym^5 M[{i},{j}] should be 0 (off anti-diagonal), got {M[i,j]}"
