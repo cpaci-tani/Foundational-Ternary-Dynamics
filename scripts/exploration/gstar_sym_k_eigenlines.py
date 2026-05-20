@@ -160,6 +160,34 @@ def sigma_factor(a, b):
     return (-1)**a * sp.I**(a + b) * G_star_sym**(b - a)
 
 
+def j_matrix_sym_k(k):
+    """Matrix of J in the monomial basis (omega^k, omega^(k-1)*eta, ..., eta^k) of Sym^k(H^1).
+
+    Returns a (k+1) x (k+1) sympy Matrix M such that, when v is the column vector
+    of Q-rational coefficients of an element x = sum_j c_j * omega^(k-j) * eta^j,
+    the column M @ v gives the coefficients of J(x) in the same basis.
+
+    Structure: M is anti-diagonal — M[i, j] = sigma_factor(k-j, j) if i = k - j, else 0.
+    This reflects that J(omega^(k-j) * eta^j) = sigma_{k-j,j} * omega^j * eta^(k-j),
+    where omega^j * eta^(k-j) is the (k-j)-th basis element.
+
+    Semi-linearity caveat: J is semi-linear over Q[i]. This matrix represents J's
+    action on REAL/Q-rational coefficient vectors only. For Q[i] coefficients, apply
+    c_action to v first (to conjugate the Q[i]-coefficients) before multiplying by M.
+
+    Used by L3-2 through L3-4 to compute J-eigenspace decompositions.
+    """
+    M = sp.zeros(k + 1, k + 1)
+    for j in range(k + 1):
+        a = k - j  # column j basis element is omega^a * eta^j
+        b = j
+        # J sends omega^a * eta^b to sigma_factor(a, b) * omega^b * eta^a.
+        # The result omega^b * eta^a = omega^j * eta^(k-j) is the basis element
+        # at index i where omega-power = k - i = j, so i = k - j = a.
+        M[k - j, j] = sigma_factor(a, b)
+    return M
+
+
 if __name__ == "__main__":
     import sys
     import mpmath as mp
