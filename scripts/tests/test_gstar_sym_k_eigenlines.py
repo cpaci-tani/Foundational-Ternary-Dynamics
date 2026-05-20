@@ -227,3 +227,23 @@ def test_j_action_on_eta():
     actual = gse.j_action(gse.eta)
     diff = sp.simplify(actual - expected)
     assert diff == 0, f"J(eta) != i*G_star_sym*omega: diff = {diff}"
+
+
+def test_j_squared_parity():
+    """Property C6.1: J^2 = (-1)^k * id on Sym^k for k in {1, 2, 3, 4, 5}.
+
+    Verifies the Hodge complex-structure parity on each monomial basis element.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    for k in [1, 2, 3, 4, 5]:
+        expected_sign = (-1) ** k
+        for a, b in gse.sym_k_basis(k):
+            x = gse.omega**a * gse.eta**b
+            jj_x = gse.j_action(gse.j_action(x))
+            expected = expected_sign * x
+            diff = sp.simplify(jj_x - expected)
+            assert diff == 0, (
+                f"J^2(omega^{a} * eta^{b}) != ({expected_sign}) * x: diff = {diff}"
+            )
