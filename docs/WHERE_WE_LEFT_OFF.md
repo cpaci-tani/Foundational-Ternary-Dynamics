@@ -1,6 +1,49 @@
-# Where We Left Off — 2026-05-04 night (Phase B cluster-persistence — 4 retractions + 3-axis closure of "do a b and c" + trim-the-fat round 4)
+# Where We Left Off — 2026-05-19 (G* opus follow-up: Phase 0 + Phase 1 — Conjecture 16.5.2 closed, integer-4 unification proven)
 
-**Latest update:** 2026-05-04 evening + night — Phase B (cluster persistence under FTD-0136 discrete-native derivation program) ran a long diagnostic arc with **4 retractions in the F1/F9 hygiene pattern** (n=4=N_base falsified at L=64; n=8=BCC-corner falsified by spatial geometry; O_h-symmetric injection floods at all geometries; R-string=N_base under +color+triad falsified under full physics) plus a methodological correction from the user ("we need to do these experiments on a complete physics lattice, not a stripped-down toggle subset") that unlocked emergent-physics findings. Closing tasks (a)+(b)+(c) executed: **(a) L=256 full-physics 3-axis spot check** via WSL2/CUDA, **(b) full-physics amplitude scan at L=64** (revealing two stability islands at A=9.0–9.5 and A=13.0 amid flooding regimes), **(c) toggle bisection at L=32** (clean attribution map; toggle interactions are non-linear, "sum greater than parts" operationally confirmed). All findings tagged [OBSERVATION] only — no tag promotions, no derivations, no new claims; pre-registered falsification protocol queued. SPEC §5.6.21–§5.6.27 documents the full arc; LEDGER FTD-0136 row carries the provenance. **Trim-the-fat round 4 followed** (commit `08c517e`): 30 Phase B exploratory diagnostic-arc tests deleted (-5,397 LOC); 9 load-bearing Phase B keepers (`cluster_tracker.h` + 4 persistence sanity tests + 4 `dump_full_physics*` runners) build clean via WSL2/CUDA ninja. Provenance for the deleted files lives in LEDGER FTD-0136 + SPEC §5.6.* (file references retained in the historical record); recover via git history if needed. The 2026-05-03 work (FTD-0127 parity-twist + FTD-0128 s=i²) is preserved unchanged below at §0.8.
+**Latest update:** 2026-05-19 — the **G* opus follow-up arc** completed. After the G* opus shipped (Papers A–E), two open targets dominated the primitive/ontological math layer: **Conjecture 16.5.2** (Paper A's residual, the stated Duke/JAMS-upgrade gate) and the **integer-4 unification**. A brainstorming pass produced a unified research-attack design, executed as Phase 0 (symmetric-period-algebra infrastructure: eigenline module + 80-digit identity verification + pre-registration tag) and Phase 1 (the L2–L7 lemma chain) under TDD discipline. **All of Tier A closed:** T-A1 (Sym^k Z[i]-eigenline decomposition, established), **T-A2** (integer-4 unification, **[THEOREM]**, corrected — Q(i) is the unique imaginary quadratic field with `|μ_K| = |disc(K)|`), **T-A3** (**Conjecture 16.5.2 closed [DERIVED]** via the reality-collapse lemma — the Paper A Duke/JAMS upgrade is now mathematically available). Tier B closed negative (T-B1/T-B2 — `N_base = 4` is the O_h-orbit count of the 27-block, a crystallographic invariant, not a Z[i] bridge; FTD-0122's own source already disclaimed it). 36 commits, LEDGER FTD-0177 through FTD-0183, 43 pytest cases, 5 new theory docs. Two spec over-claims caught and corrected (the T-A2 draft error, T-B1). Full record in §0.10 below; the 2026-05-04 Phase B work is preserved unchanged at §0.9.
+
+---
+
+## 0.10 · 2026-05-19 — G* opus follow-up: Phase 0 + Phase 1 (symmetric period algebra)
+
+### What the arc covered
+
+After the G* opus shipped (Papers A–E, 2026-05-18/19), the two load-bearing open targets were **Conjecture 16.5.2** (Paper A Conjecture 17.6 — the residual of the (2,3) uniqueness theorem; the opus overview names closing it as the requirement for the Duke/JAMS-grade upgrade) and the **integer-4 unification**. A brainstorming pass produced a unified research-attack design (local spec `docs/superpowers/specs/2026-05-19-gstar-followup-attacks-design.md`), executed as Phase 0 (infrastructure) + Phase 1 (the L2–L7 lemma chain), subagent-driven with two-stage review per task.
+
+### What closed
+
+| Target | Statement | Outcome |
+|--------|-----------|---------|
+| T-A1 | Sym^k(H¹) Z[i]-eigenline decomposition | established (L2, L3) |
+| T-A2 | Integer-4 unification | **[THEOREM]** — corrected (L6, FTD-0181) |
+| T-A3 | Conjecture 16.5.2 closure | **[DERIVED]** (L4, L5, FTD-0182) |
+| T-B1 | N_base = 4 "is the same 4" | **[CLOSED NEGATIVE]** (L7, FTD-0183) |
+| T-B2 | engine k = 1/4 → Z[i]² | **[CLOSED NEGATIVE]** (L7, FTD-0183) |
+
+### Headline results
+
+- **Hodge complex structure J** on the symmetric period algebra: `J(ω) = −i·η/G*`, `J² = (−1)^k·id` on Sym^k, closed-form `σ_{a,b} = (−1)^a·i^{a+b}·G*^{b−a}`. Caught and corrected a spec inconsistency — the draft's `c² = id` was algebraically false; it is a complex structure, not an involution (Convention C6).
+- **Integer-4 unification** [THEOREM]: Q(i) is the *unique* imaginary quadratic field with `|μ_K| = |disc(K)|` — this is why the lemniscatic catalogue shows a uniform 4. Four-class taxonomy: (a) unit `|μ_4|`, (b) discriminant `|disc Q(i)|`, (c) module-rank `dim_Z(Z[i]²)`, (d) crystallographic orbit-count.
+- **Conjecture 16.5.2 closed** via the reality-collapse lemma: requiring real polynomial coefficients forces Q-rational Sym^a elements, collapsing the "arbitrary coefficient" residual to the already-proven Theorem 17.5. The Paper A Duke/JAMS-grade upgrade is now mathematically available (editorial write-up remains).
+- **Tier B closed negative**: `mult(A_{1g}) = 4` in the 27-block is the O_h-orbit count of the cubic Moore neighbourhood — crystallographic, no Q(i) content. FTD-0122's own source (`DERIV_BCC_COMPLEX_STRUCTURE.md` §3.2–3.3) already disclaimed the bridge.
+
+### Artifacts
+
+- **LEDGER FTD-0177 through FTD-0183** (7 rows).
+- Module `scripts/exploration/gstar_sym_k_eigenlines.py` + `scripts/tests/test_gstar_sym_k_eigenlines.py` (43 pytest cases, symbolic + 80-digit numerical, all passing).
+- **5 new theory docs** in `docs/theory/09_mathematical/` (META_INDEX 9.47–9.51): PREREG_SYM_K_C_INVARIANT_PARITY_V1, EXPLR_SYM_PERIOD_ALGEBRA_CONVENTIONS, DERIV_INTEGER_4_UNIFICATION, DERIV_CONJECTURE_16_5_2_CLOSURE, DERIV_TIER_B_CLOSED_NEGATIVE. Plus EXPLR_HIGHER_DIM_WATSON (morning Q3 closure, META_INDEX 9.46).
+- Git tag `preregister-sym-k-c-invariant-parity-v1` (H1–H4 hashed before any evidence).
+- Local research docs (gitignored): the attack spec + 2 implementation plans under `docs/superpowers/`.
+
+### Methodological notes
+
+- **Pre-registration discipline honoured:** hypothesis H4 was hashed + tagged BEFORE any computational evidence, and subsequently CONFIRMED (L4) — not retro-fitted.
+- The epistemic-rigor discipline caught **two over-claims**: the T-A2 spec draft (a factual error — `rank_Z H¹ = 4` is actually 2) and T-B1 (a coincidence the cited document already disclaimed). Both honestly corrected/closed.
+- **L3.bis** (explicit odd-k real-form J-eigenspaces) was scoped but found *unnecessary* — the reality-collapse lemma closed T-A3 without it.
+
+### What remains
+
+None of the 5 original targets — all resolved (3 positive, 2 negative). The forward path is the editorial Paper A Duke/JAMS write-up (now unblocked), outside this follow-up's scope.
 
 ---
 
