@@ -915,3 +915,85 @@ def test_H4_boundary_2a_equals_b_roots_scalar_multiples():
         assert sp.simplify(ratio_minus - expected_minus_ratio) == 0, (
             f"a={a}, b={b}: x_-/G*^a = {ratio_minus}, expected {expected_minus_ratio}"
         )
+
+
+def test_mu_disc_coincidence_unique_to_Q_i():
+    """T-A2 load-bearing fact: Q(i) is the UNIQUE imaginary quadratic field K
+    with |mu_K| = |disc(K)| (= 4).
+
+    For K = Q(sqrt(-d)) with d squarefree positive:
+      - |mu_K| = 4 if d == 1, 6 if d == 3, else 2
+      - |disc(K)| = 4*d if -d ≡ 2,3 (mod 4); d if -d ≡ 1 (mod 4)
+
+    Scans all squarefree d from 1 to 200; asserts only d=1 satisfies |mu_K| = |disc(K)|.
+    """
+    import gstar_sym_k_eigenlines as gse
+
+    matches = []
+    for d in range(1, 201):
+        # squarefree check
+        is_squarefree = all(d % (p * p) != 0 for p in range(2, int(d**0.5) + 1))
+        if not is_squarefree:
+            continue
+
+        mu = gse.unit_group_order_imag_quad(d)
+        disc_abs = abs(gse.discriminant_imag_quad(d))
+
+        if mu == disc_abs:
+            matches.append(d)
+
+    assert matches == [1], (
+        f"|mu_K| = |disc(K)| matches: got d in {matches}, expected only d=1 (Q(i)). "
+        f"T-A2 uniqueness claim FALSIFIED if this list differs."
+    )
+
+
+def test_unit_group_order_imag_quad_values():
+    """unit_group_order_imag_quad(d): |mu_K| for K = Q(sqrt(-d)).
+    4 for d=1, 6 for d=3, 2 otherwise.
+    """
+    import gstar_sym_k_eigenlines as gse
+
+    assert gse.unit_group_order_imag_quad(1) == 4, "Q(i): |mu| should be 4"
+    assert gse.unit_group_order_imag_quad(3) == 6, "Q(rho): |mu| should be 6"
+    for d in [2, 5, 6, 7, 11, 19, 43, 67, 163]:
+        assert gse.unit_group_order_imag_quad(d) == 2, f"Q(sqrt(-{d})): |mu| should be 2"
+
+
+def test_discriminant_imag_quad_values():
+    """discriminant_imag_quad(d): disc(K) for K = Q(sqrt(-d)).
+      disc = -d   if -d ≡ 1 (mod 4)  (i.e. d ≡ 3 mod 4)
+      disc = -4d  if -d ≡ 2,3 (mod 4) (i.e. d ≡ 1,2 mod 4)
+    """
+    import gstar_sym_k_eigenlines as gse
+
+    # d=1: d ≡ 1 mod 4, so disc = -4*1 = -4
+    assert gse.discriminant_imag_quad(1) == -4, "disc(Q(i)) should be -4"
+    # d=2: d ≡ 2 mod 4, so disc = -4*2 = -8
+    assert gse.discriminant_imag_quad(2) == -8, "disc(Q(sqrt(-2))) should be -8"
+    # d=3: d ≡ 3 mod 4, so disc = -3
+    assert gse.discriminant_imag_quad(3) == -3, "disc(Q(rho)) should be -3"
+    # d=7: d ≡ 3 mod 4, so disc = -7
+    assert gse.discriminant_imag_quad(7) == -7, "disc(Q(sqrt(-7))) should be -7"
+    # d=11: d ≡ 3 mod 4, so disc = -11
+    assert gse.discriminant_imag_quad(11) == -11, "disc should be -11"
+
+
+def test_catalogue_4_classification():
+    """The integer-4 catalogue classifies into 3 classes per corrected T-A2:
+      class 'a' (unit-derived):       |Z[i]^x|, |Aut(E_lemn)|
+      class 'b' (discriminant-derived): conductor of chi_{-4}, (1+i)-tower level
+      class 'c' (module-rank):        dim_Z(V_complex)
+
+    classify_catalogue_4(name) returns the class letter.
+    Also: the bogus 'rank_Z_H1' entry must be flagged as an ERROR (returns 'ERROR').
+    """
+    import gstar_sym_k_eigenlines as gse
+
+    assert gse.classify_catalogue_4('Z_i_unit_group') == 'a'
+    assert gse.classify_catalogue_4('Aut_E_lemn') == 'a'
+    assert gse.classify_catalogue_4('conductor_chi_minus_4') == 'b'
+    assert gse.classify_catalogue_4('one_plus_i_tower_level') == 'b'
+    assert gse.classify_catalogue_4('V_complex_Z_rank') == 'c'
+    # The bogus entry from the spec draft:
+    assert gse.classify_catalogue_4('rank_Z_H1') == 'ERROR'
