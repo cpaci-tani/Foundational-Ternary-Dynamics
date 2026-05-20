@@ -541,3 +541,90 @@ def test_sym5_j_matrix_structure():
                 assert diff == 0, f"Sym^5 M[{i},{j}] != sigma_factor({5-j},{j}): diff = {diff}"
             else:
                 assert M[i, j] == 0, f"Sym^5 M[{i},{j}] should be 0 (off anti-diagonal), got {M[i,j]}"
+
+
+def test_phi_symbolic_on_monomials():
+    """phi_specialise_symbolic on a single monomial omega^a * eta^b returns
+    (-1)^b * G_star_sym^(a-b) * pi_sym^((a+b)/2) — matching the closed-form Phi map.
+
+    Tests Sym^2 and Sym^3 basis monomials.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+
+    test_cases = [
+        # (a, b, expected_Phi)
+        (2, 0, gse.G_star_sym**2 * pi_sym),
+        (1, 1, -pi_sym),  # Phi(omega * eta)
+        (0, 2, pi_sym / gse.G_star_sym**2),
+        (3, 0, gse.G_star_sym**3 * pi_sym**sp.Rational(3, 2)),
+        (2, 1, -gse.G_star_sym * pi_sym**sp.Rational(3, 2)),
+        (1, 2, pi_sym**sp.Rational(3, 2) / gse.G_star_sym),
+        (0, 3, -pi_sym**sp.Rational(3, 2) / gse.G_star_sym**3),
+    ]
+
+    for a, b, expected in test_cases:
+        monomial = gse.omega**a * gse.eta**b
+        actual = gse.phi_specialise_symbolic(monomial, pi_sym=pi_sym)
+        diff = sp.simplify(actual - expected)
+        assert diff == 0, (
+            f"Phi(omega^{a} * eta^{b}): expected {expected}, got {actual}, diff = {diff}"
+        )
+
+
+def test_phi_symbolic_on_sym2_j_eigenvectors():
+    """Phi-images of Sym^2 J-eigenvectors:
+      - Phi(omega * eta) = -pi  (J = +1 eigenvector)
+      - Phi(omega^2 - eta^2/G*^2) = G*^2 * pi - pi/G*^4  (J = +1 eigenvector)
+      - Phi(omega^2 + eta^2/G*^2) = G*^2 * pi + pi/G*^4  (J = -1 eigenvector)
+
+    All three are REAL (real combinations of G* and pi).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+    G = gse.G_star_sym
+
+    v_plus_1 = gse.omega * gse.eta
+    expected_plus_1 = -pi_sym
+    diff1 = sp.simplify(gse.phi_specialise_symbolic(v_plus_1, pi_sym=pi_sym) - expected_plus_1)
+    assert diff1 == 0, f"Phi(omega*eta) != -pi: diff = {diff1}"
+
+    v_plus_2 = gse.omega**2 - gse.eta**2 / G**2
+    expected_plus_2 = G**2 * pi_sym - pi_sym / G**4
+    diff2 = sp.simplify(gse.phi_specialise_symbolic(v_plus_2, pi_sym=pi_sym) - expected_plus_2)
+    assert diff2 == 0, f"Phi(omega^2 - eta^2/G*^2) != G*^2*pi - pi/G*^4: diff = {diff2}"
+
+    v_minus = gse.omega**2 + gse.eta**2 / G**2
+    expected_minus = G**2 * pi_sym + pi_sym / G**4
+    diff3 = sp.simplify(gse.phi_specialise_symbolic(v_minus, pi_sym=pi_sym) - expected_minus)
+    assert diff3 == 0, f"Phi(omega^2 + eta^2/G*^2) != G*^2*pi + pi/G*^4: diff = {diff3}"
+
+
+def test_phi_symbolic_realness_on_q_rational_elements():
+    """For any Sym^k element with Q-rational coefficients, Phi yields a real expression
+    (a Q-linear combination of G* and pi powers, all real).
+
+    Tests via sp.im(Phi(x)) == 0 on representative elements.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+    G = gse.G_star_sym
+
+    elements = [
+        gse.omega**2,
+        gse.omega * gse.eta,
+        gse.eta**3,
+        gse.omega**3 + 2 * gse.omega * gse.eta**2,
+        gse.omega**4 - 5 * gse.omega**2 * gse.eta**2 + 3 * gse.eta**4,
+    ]
+
+    for x in elements:
+        phi_x = gse.phi_specialise_symbolic(x, pi_sym=pi_sym)
+        im_part = sp.simplify(sp.im(phi_x))
+        assert im_part == 0, f"Phi({x}) has non-zero imaginary part: im = {im_part}"
