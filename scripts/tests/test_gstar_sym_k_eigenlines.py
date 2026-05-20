@@ -431,3 +431,32 @@ def test_sym2_j_eigenspace_decomposition():
     # J(omega^2 + eta^2/G*^2) should = -1 * (omega^2 + eta^2/G*^2)
     diff_c = sp.simplify(gse.j_action(minus_one) - (-minus_one))
     assert diff_c == 0, f"J(omega^2 + eta^2/G*^2) != -(omega^2 + eta^2/G*^2): diff = {diff_c}"
+
+
+def test_j_matrix_squared_parity_C6_1():
+    """Property C6.1 at the matrix level: M * conj(M) = (-1)^k * I_{k+1} where M = j_matrix_sym_k(k).
+
+    Complements test_j_squared_parity (which verifies J^2 = (-1)^k * id per-monomial via j_action)
+    by confirming the same property at the matrix algebra level.
+
+    Reflects the semi-linear nature of J: J^2 on a Q[i]-coefficient vector v equals
+    M * conj(M) * v (the two conjugations from the two J applications compose to identity
+    on v's coefficients, leaving M * conj(M) as the residual matrix action).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    for k in [2, 3, 4, 5]:
+        M = gse.j_matrix_sym_k(k)
+        M_conj = M.applyfunc(sp.conjugate)
+        product = sp.simplify(M * M_conj)
+        expected = ((-1) ** k) * sp.eye(k + 1)
+        diff = sp.simplify(product - expected)
+        # Check element-wise equality
+        for i in range(k + 1):
+            for j in range(k + 1):
+                assert diff[i, j] == 0, (
+                    f"Sym^{k}: (M * conj(M))[{i},{j}] = {product[i,j]}, "
+                    f"expected ({(-1)**k}) * delta_{{{i},{j}}} = {expected[i,j]}, "
+                    f"diff = {diff[i,j]}"
+                )
