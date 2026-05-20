@@ -248,6 +248,76 @@ def leading_period_roots(a, b):
     return x_plus, x_minus
 
 
+def unit_group_order_imag_quad(d):
+    """Order of the unit group mu_K of the imaginary quadratic field K = Q(sqrt(-d)).
+
+    |mu_K| = 4 for d=1 (Q(i), units {+/-1, +/-i}),
+             6 for d=3 (Q(rho), sixth roots of unity),
+             2 otherwise ({+/-1}).
+
+    Args:
+      d: positive squarefree integer.
+    """
+    if d == 1:
+        return 4
+    if d == 3:
+        return 6
+    return 2
+
+
+def discriminant_imag_quad(d):
+    """Discriminant of the imaginary quadratic field K = Q(sqrt(-d)).
+
+    For d squarefree positive:
+      disc(K) = -d   if -d ≡ 1 (mod 4), i.e. d ≡ 3 (mod 4)
+      disc(K) = -4d  if -d ≡ 2, 3 (mod 4), i.e. d ≡ 1, 2 (mod 4)
+
+    Args:
+      d: positive squarefree integer.
+    """
+    if d % 4 == 3:
+        return -d
+    else:
+        return -4 * d
+
+
+# Classification of the integer-4 catalogue per corrected Theorem T-A2.
+# Class 'a': unit-derived (|mu_4| = |Z[i]^x| = |Aut(E_lemn)| = 4)
+# Class 'b': discriminant-derived (|disc(Q(i))| = 4 = conductor of chi_{-4} = (1+i)-tower level)
+# Class 'c': module-rank (dim_Z(V_complex) = dim_Z(Z[i]^2) = 4)
+# 'ERROR': the spec-draft entry rank_Z(H^1) = 4 is wrong; rank_Z(H^1(E_lemn)) = 2.
+_CATALOGUE_4_CLASSES = {
+    'Z_i_unit_group': 'a',
+    'Aut_E_lemn': 'a',
+    'conductor_chi_minus_4': 'b',
+    'one_plus_i_tower_level': 'b',
+    'V_complex_Z_rank': 'c',
+    'rank_Z_H1': 'ERROR',
+}
+
+
+def classify_catalogue_4(name):
+    """Classify a catalogue '4' entry into class 'a', 'b', 'c', or 'ERROR'.
+
+    Per the corrected Theorem T-A2 (integer-4 unification):
+      'a' = unit-derived:          |mu_4| = |Z[i]^x| = |Aut(E_lemn)| = 4
+      'b' = discriminant-derived:  |disc(Q(i))| = 4 (conductor of chi_{-4}, (1+i)-tower level)
+      'c' = module-rank:           dim_Z(V_complex) = dim_Z(Z[i]^2) = 4
+      'ERROR' = the spec-draft entry rank_Z(H^1) = 4, which is wrong
+                (rank_Z H^1(E_lemn) = 2; it is rank 1 over Z[i]).
+
+    Args:
+      name: catalogue entry identifier (str).
+
+    Returns:
+      'a', 'b', 'c', or 'ERROR'.
+
+    Raises:
+      KeyError if name is not a known catalogue entry.
+    """
+    return _CATALOGUE_4_CLASSES[name]
+
+
 if __name__ == "__main__":
     import sys
     import mpmath as mp
