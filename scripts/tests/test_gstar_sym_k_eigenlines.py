@@ -297,3 +297,22 @@ def test_sigma_factor_consistency_C6_3():
                 f"sigma_{{{a},{b}}} consistency: conj(sigma_ab) * sigma_ba = {lhs_simp}, "
                 f"expected {rhs}, diff = {diff}"
             )
+
+
+def test_j_action_eigenline_swap_C6_4():
+    """Property C6.4: J maps the i^(a-b)-eigenline to the i^(b-a)-eigenline.
+
+    Equivalently: if x has Z[i]-eigenvalue lambda, then J(x) has Z[i]-eigenvalue 1/lambda
+    (since i^(a-b) * i^(b-a) = i^0 = 1).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    for k in [2, 3, 4, 5]:
+        for a, b in gse.sym_k_basis(k):
+            ev_before = gse.z_i_eigenvalue(a, b)        # eigenvalue of omega^a * eta^b
+            ev_after = gse.z_i_eigenvalue(b, a)         # eigenvalue of omega^b * eta^a (the J-image basis)
+            product = sp.simplify(ev_before * ev_after)
+            assert product == 1, (
+                f"Sym^{k} (a,b)=({a},{b}): eigenvalue product = {product}, expected 1 (C6.4)"
+            )
