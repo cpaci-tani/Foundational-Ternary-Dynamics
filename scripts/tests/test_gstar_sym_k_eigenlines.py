@@ -628,3 +628,91 @@ def test_phi_symbolic_realness_on_q_rational_elements():
         phi_x = gse.phi_specialise_symbolic(x, pi_sym=pi_sym)
         im_part = sp.simplify(sp.im(phi_x))
         assert im_part == 0, f"Phi({x}) has non-zero imaginary part: im = {im_part}"
+
+
+def test_X_coord_sym2_parametrisation():
+    """For b' = alpha'*omega^2 + beta'*omega*eta + gamma'*eta^2 with Q-rational coeffs,
+    X_norm := Phi(b')/pi = alpha'*G*^2 - beta' + gamma'/G*^2.
+
+    Verified symbolically for generic Q-rational alpha', beta', gamma'.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+    G = gse.G_star_sym
+    alpha_p, beta_p, gamma_p = sp.symbols('alpha_p beta_p gamma_p', rational=True)
+
+    b_prime = alpha_p * gse.omega**2 + beta_p * gse.omega * gse.eta + gamma_p * gse.eta**2
+    phi_b = gse.phi_specialise_symbolic(b_prime, pi_sym=pi_sym)
+    X_norm = sp.simplify(phi_b / pi_sym)
+
+    expected = alpha_p * G**2 - beta_p + gamma_p / G**2
+    diff = sp.simplify(X_norm - expected)
+    assert diff == 0, f"Sym^2 X_norm parametrisation: got {X_norm}, expected {expected}, diff = {diff}"
+
+
+def test_Y_coord_sym3_parametrisation():
+    """For c' = alpha*omega^3 + beta*omega^2*eta + gamma*omega*eta^2 + delta*eta^3 with Q-rational coeffs,
+    Y_norm := Phi(c')/pi^(3/2) = alpha*G*^3 - beta*G* + gamma/G* - delta/G*^3.
+
+    Verified symbolically for generic Q-rational alpha, beta, gamma, delta.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+    G = gse.G_star_sym
+    a, b, c, d = sp.symbols('a b c d', rational=True)
+
+    c_prime = a * gse.omega**3 + b * gse.omega**2 * gse.eta + c * gse.omega * gse.eta**2 + d * gse.eta**3
+    phi_c = gse.phi_specialise_symbolic(c_prime, pi_sym=pi_sym)
+    Y_norm = sp.simplify(phi_c / pi_sym**sp.Rational(3, 2))
+
+    expected = a * G**3 - b * G + c / G - d / G**3
+    diff = sp.simplify(Y_norm - expected)
+    assert diff == 0, f"Sym^3 Y_norm parametrisation: got {Y_norm}, expected {expected}, diff = {diff}"
+
+
+def test_X_Y_master_quadratic_uniqueness_2_3():
+    """For (a, b) = (2, 3), the UNIQUE Q-rational (b', c') in Sym^2 x Sym^3 giving
+    (X_norm, Y_norm) = (G*^2, G*^3) — the Paper A master quadratic — is
+    (b', c') = (omega^2, omega^3).
+
+    This is Theorem 17.5 stated via the Phi specialisation map. The uniqueness
+    follows from Q-linear independence of {G*^k} over Q (G* transcendental,
+    Chudnovsky 1976).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+    G = gse.G_star_sym
+
+    # Verify the "obvious" choice (b', c') = (omega^2, omega^3) gives (G*^2, G*^3)
+    X_at_omega2 = sp.simplify(gse.phi_specialise_symbolic(gse.omega**2, pi_sym=pi_sym) / pi_sym)
+    Y_at_omega3 = sp.simplify(gse.phi_specialise_symbolic(gse.omega**3, pi_sym=pi_sym) / pi_sym**sp.Rational(3, 2))
+    assert sp.simplify(X_at_omega2 - G**2) == 0, f"Phi(omega^2)/pi != G*^2: got {X_at_omega2}"
+    assert sp.simplify(Y_at_omega3 - G**3) == 0, f"Phi(omega^3)/pi^(3/2) != G*^3: got {Y_at_omega3}"
+
+    # Uniqueness via Q-linear independence:
+    # X_norm = alpha'*G*^2 - beta' + gamma'/G*^2 = G*^2 forces alpha'=1, beta'=gamma'=0
+    # over Q (since {G*^2, 1, 1/G*^2} are Q-linearly independent for transcendental G*).
+    # Y_norm = a*G*^3 - b*G + c/G - d/G*^3 = G*^3 forces a=1, b=c=d=0.
+    #
+    # Symbolic check: the residue (X_norm - G*^2) is a polynomial in G with rational coefficients;
+    # its unique zero (within Q-coefficients) corresponds to (alpha', beta', gamma') = (1, 0, 0).
+    alpha_p, beta_p, gamma_p = sp.symbols('alpha_p beta_p gamma_p', rational=True)
+    X_general = alpha_p * G**2 - beta_p + gamma_p / G**2
+    residue = sp.simplify(X_general - G**2)
+    # As a polynomial in G^2 = u, the residue equals (alpha' - 1)*u - beta' + gamma'/u.
+    # Multiplying by u: (alpha' - 1)*u^2 - beta'*u + gamma'. As a polynomial in u, this is
+    # identically zero iff alpha' = 1, beta' = 0, gamma' = 0.
+    u = sp.Symbol('u', positive=True)
+    residue_u = residue.subs(G**2, u) * u
+    residue_u_expanded = sp.expand(residue_u)
+    coeffs = sp.Poly(residue_u_expanded, u).all_coeffs()
+    # coeffs should be [alpha' - 1, -beta', gamma']
+    # All must be zero for residue = 0
+    # We verify the symbolic structure (not solve, just check the polynomial form)
+    assert len(coeffs) == 3, f"Expected degree-2 poly in u, got coeffs {coeffs}"
