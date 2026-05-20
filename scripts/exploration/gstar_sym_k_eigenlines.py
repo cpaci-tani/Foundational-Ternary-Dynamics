@@ -147,6 +147,19 @@ def c_action(x):
     return sp.expand(sp.conjugate(x))
 
 
+def sigma_factor(a, b):
+    """Closed-form Legendre scaling factor in Convention C6.
+
+    sigma_{a,b} = (-1)^a * i^(a+b) * G_star_sym^(b-a)
+
+    such that j_action(omega^a * eta^b) = sigma_{a,b} * omega^b * eta^a.
+
+    Property C6.3 (consistency): conj(sigma_{a,b}) * sigma_{b,a} = (-1)^k for a+b=k,
+    which is the algebraic condition giving J^2 = (-1)^k * id on Sym^k.
+    """
+    return (-1)**a * sp.I**(a + b) * G_star_sym**(b - a)
+
+
 if __name__ == "__main__":
     import sys
     import mpmath as mp
