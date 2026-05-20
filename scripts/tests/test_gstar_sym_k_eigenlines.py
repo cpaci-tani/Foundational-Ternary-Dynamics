@@ -316,3 +316,66 @@ def test_j_action_eigenline_swap_C6_4():
             assert product == 1, (
                 f"Sym^{k} (a,b)=({a},{b}): eigenvalue product = {product}, expected 1 (C6.4)"
             )
+
+
+def test_j_matrix_sym_k_anti_diagonal_structure():
+    """j_matrix_sym_k(k) is anti-diagonal with sigma_{k-j, j} on position (k-j, j).
+
+    For each basis monomial omega^(k-j)*eta^j (column j), J sends it to
+    sigma_{k-j, j} * omega^j * eta^(k-j) (row k-j).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    for k in [2, 3, 4, 5]:
+        M = gse.j_matrix_sym_k(k)
+        assert M.shape == (k + 1, k + 1), f"Sym^{k} matrix shape {M.shape}, expected ({k+1},{k+1})"
+
+        # Check anti-diagonal structure
+        for j in range(k + 1):
+            a = k - j  # ω^a · η^j is the column-j basis element (a + j = k)
+            for i in range(k + 1):
+                if i == k - j:  # the mirror position where σ lives
+                    expected = gse.sigma_factor(a, j)
+                    diff = sp.simplify(M[i, j] - expected)
+                    assert diff == 0, (
+                        f"Sym^{k} M[{i},{j}]: expected sigma_factor({a},{j}) = {expected}, "
+                        f"got {M[i, j]}"
+                    )
+                else:
+                    assert M[i, j] == 0, (
+                        f"Sym^{k} M[{i},{j}] should be 0 (off anti-diagonal), got {M[i, j]}"
+                    )
+
+
+def test_j_matrix_matches_j_action_on_basis():
+    """For each basis monomial v = omega^(k-j)*eta^j, the matrix-vector product
+    j_matrix_sym_k(k) @ e_j (e_j the j-th standard basis vector) gives the
+    coefficient column of j_action(v) in the monomial basis.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    for k in [2, 3, 4, 5]:
+        M = gse.j_matrix_sym_k(k)
+        for j in range(k + 1):
+            a = k - j
+            b = j
+            # The basis vector e_j has 1 at position j, 0 elsewhere
+            e_j = sp.Matrix.zeros(k + 1, 1)
+            e_j[j, 0] = 1
+            # M @ e_j extracts the j-th column of M
+            M_col = M * e_j
+            # Reconstruct the J-image as a symbolic polynomial
+            j_image_reconstructed = sum(
+                M_col[i, 0] * gse.omega**(k - i) * gse.eta**i
+                for i in range(k + 1)
+            )
+            # Compare to j_action on the original monomial
+            v = gse.omega**a * gse.eta**b
+            j_image_direct = gse.j_action(v)
+            diff = sp.simplify(sp.expand(j_image_reconstructed - j_image_direct))
+            assert diff == 0, (
+                f"Sym^{k} j_matrix column {j} doesn't match j_action: "
+                f"reconstructed={j_image_reconstructed}, direct={j_image_direct}, diff={diff}"
+            )
