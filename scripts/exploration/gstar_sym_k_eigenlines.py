@@ -188,6 +188,40 @@ def j_matrix_sym_k(k):
     return M
 
 
+def phi_specialise_symbolic(x, pi_sym=None):
+    """Specialisation map Phi: Q[omega, eta] (x) Q[i] -> Q(G_star_sym, pi_sym, i),
+    extending the monomial-level phi_specialise to general Sym^k(H^1) elements
+    expressed symbolically in (omega, eta) with Q[i] coefficients.
+
+    Per Convention C2:
+      Phi(omega) = G_star_sym * sqrt(pi_sym)
+      Phi(eta) = -sqrt(pi_sym) / G_star_sym
+
+    For a monomial omega^a * eta^b, Phi maps to (-1)^b * G_star_sym^(a-b) * pi_sym^((a+b)/2).
+    For a general Q[i]-linear combination, Phi acts linearly.
+
+    Args:
+      x: sympy expression in omega, eta, optionally with Q[i] coefficients.
+         May be a polynomial or rational expression in omega, eta.
+      pi_sym: optional sympy Symbol for pi (default: a new Symbol named 'pi_sym').
+         Pass an explicit symbol if you want to substitute or compare with other expressions.
+
+    Returns:
+      A sympy expression in G_star_sym and pi_sym (and possibly i for Q[i] coeffs),
+      representing Phi(x).
+    """
+    if pi_sym is None:
+        pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+
+    sqrt_pi = sp.sqrt(pi_sym)
+    return sp.expand(
+        x.subs({
+            omega: G_star_sym * sqrt_pi,
+            eta: -sqrt_pi / G_star_sym,
+        })
+    )
+
+
 if __name__ == "__main__":
     import sys
     import mpmath as mp
