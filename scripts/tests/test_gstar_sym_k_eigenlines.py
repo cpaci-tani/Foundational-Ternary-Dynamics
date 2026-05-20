@@ -247,3 +247,53 @@ def test_j_squared_parity():
             assert diff == 0, (
                 f"J^2(omega^{a} * eta^{b}) != ({expected_sign}) * x: diff = {diff}"
             )
+
+
+def test_sigma_factor_closed_form():
+    """Property C6.2: sigma_{a,b} = (-1)^a * i^(a+b) * G_star_sym^(b-a).
+
+    Verifies the closed-form sigma matches what j_action produces on each basis monomial.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    for k in [2, 3, 4, 5]:
+        for a, b in gse.sym_k_basis(k):
+            # Expected sigma per closed form
+            sigma_closed = (-1)**a * sp.I**(a + b) * gse.G_star_sym**(b - a)
+            # Actual sigma extracted from j_action(omega^a * eta^b) = sigma * omega^b * eta^a
+            x = gse.omega**a * gse.eta**b
+            j_x = gse.j_action(x)
+            x_swapped = gse.omega**b * gse.eta**a
+            # j_x should equal sigma * x_swapped; extract sigma by dividing (symbolically)
+            sigma_actual = sp.simplify(j_x / x_swapped)
+
+            diff = sp.simplify(sigma_actual - sigma_closed)
+            assert diff == 0, (
+                f"sigma_{{{a},{b}}}: closed={sigma_closed}, actual={sigma_actual}, diff={diff}"
+            )
+
+
+def test_sigma_factor_consistency_C6_3():
+    """Property C6.3: conj(sigma_{a,b}) * sigma_{b,a} = (-1)^(a+b) = (-1)^k.
+
+    This is the algebraic consistency that gives J^2 = (-1)^k * id via the
+    semi-linear composition (the conj on the inner sigma comes from j_action
+    conjugating Q[i]-coefficients on the second pass).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    for k in [2, 3, 4, 5]:
+        for a, b in gse.sym_k_basis(k):
+            sigma_ab = gse.sigma_factor(a, b)
+            sigma_ba = gse.sigma_factor(b, a)
+            lhs = sp.conjugate(sigma_ab) * sigma_ba
+            # G_star_sym is real positive so its conjugate equals itself; simplify should reduce powers
+            lhs_simp = sp.simplify(lhs)
+            rhs = (-1)**(a + b)
+            diff = sp.simplify(lhs_simp - rhs)
+            assert diff == 0, (
+                f"sigma_{{{a},{b}}} consistency: conj(sigma_ab) * sigma_ba = {lhs_simp}, "
+                f"expected {rhs}, diff = {diff}"
+            )
