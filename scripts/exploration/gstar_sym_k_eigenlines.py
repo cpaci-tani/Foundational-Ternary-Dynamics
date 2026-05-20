@@ -318,6 +318,31 @@ def classify_catalogue_4(name):
     return _CATALOGUE_4_CLASSES[name]
 
 
+def phi_is_real_forces_q_rational(k):
+    """Reality-collapse lemma witness for Sym^k(H^1).
+
+    Returns the list of monomial Phi-images [Phi(omega^a * eta^b) : (a,b) in sym_k_basis(k)],
+    which are Q-linearly independent (distinct G*-powers, G* transcendental by Chudnovsky 1976).
+
+    The lemma: for b' = sum alpha_{a,b} * omega^a * eta^b with alpha in Q[i],
+      Phi(b') in R  <=>  Im(Phi(b')) = sum Im(alpha_{a,b}) * Phi(omega^a eta^b) = 0
+                    <=>  all Im(alpha_{a,b}) = 0  (by Q-linear independence)
+                    <=>  b' has Q-rational coefficients.
+
+    This collapses Conjecture 16.5.2's "arbitrary Sym^a coefficient" freedom to the
+    leading-period (Q-rational) case, reducing it to Theorem 17.5.
+
+    Returns:
+      List of sympy expressions (the monomial Phi-images), in sym_k_basis(k) order.
+      Each is real; the list is Q-linearly independent.
+    """
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+    return [
+        phi_specialise_symbolic(omega**a * eta**b, pi_sym=pi_sym)
+        for (a, b) in sym_k_basis(k)
+    ]
+
+
 if __name__ == "__main__":
     import sys
     import mpmath as mp

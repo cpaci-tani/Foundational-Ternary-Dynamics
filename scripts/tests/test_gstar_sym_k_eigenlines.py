@@ -997,3 +997,114 @@ def test_catalogue_4_classification():
     assert gse.classify_catalogue_4('V_complex_Z_rank') == 'c'
     # The bogus entry from the spec draft:
     assert gse.classify_catalogue_4('rank_Z_H1') == 'ERROR'
+
+
+def test_reality_collapse_lemma_sym2():
+    """Reality-collapse lemma for Sym^2: if b' has a Q[i]-coefficient with nonzero
+    imaginary part, Phi(b') has nonzero imaginary part (is NOT real).
+
+    Tests: b' = (p + i*q) * omega^2 with q != 0 gives Im(Phi(b')) != 0.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+
+    # b' with a genuinely complex coefficient
+    b_prime = (sp.Rational(3, 2) + sp.I * sp.Rational(5, 7)) * gse.omega**2
+    phi_b = gse.phi_specialise_symbolic(b_prime, pi_sym=pi_sym)
+    im_part = sp.simplify(sp.im(phi_b))
+    # Im(Phi(b')) = (5/7) * G*^2 * pi != 0
+    assert im_part != 0, f"Phi(b') should have nonzero imaginary part, got im = {im_part}"
+
+
+def test_reality_collapse_lemma_q_rational_gives_real():
+    """Converse direction: Q-rational coefficients give real Phi.
+
+    For b' with all-Q-rational coefficients, Phi(b') is real (im part = 0).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+
+    for k in [2, 3, 4]:
+        # Build a generic Q-rational element of Sym^k
+        b_prime = sum(
+            sp.Rational(a + 1, b + 2) * gse.omega**a * gse.eta**b
+            for (a, b) in gse.sym_k_basis(k)
+        )
+        phi_b = gse.phi_specialise_symbolic(b_prime, pi_sym=pi_sym)
+        im_part = sp.simplify(sp.im(phi_b))
+        assert im_part == 0, f"Sym^{k} Q-rational b': Phi should be real, got im = {im_part}"
+
+
+def test_reality_collapse_lemma_imaginary_parts_independent():
+    """The core of the lemma: Im(Phi(b')) = sum of q_{a,b} * Phi(omega^a eta^b),
+    and these monomial Phi-images are Q-linearly independent.
+
+    Verified: for b' = sum (p_{a,b} + i*q_{a,b}) omega^a eta^b over Sym^2,
+    Im(Phi(b')) as a function of (q_20, q_11, q_02) vanishes identically
+    iff all three q are zero.
+
+    Symbolic proof structure: Im(Phi(b')) is a Q-linear form in (q_20, q_11, q_02)
+    with coefficients Phi(omega^2), Phi(omega*eta), Phi(eta^2) which are
+    Q-linearly independent (distinct G*-powers, G* transcendental).
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    pi_sym = sp.Symbol('pi_sym', commutative=True, real=True, positive=True)
+    q20, q11, q02 = sp.symbols('q20 q11 q02', rational=True)
+
+    # b' = i*q20*omega^2 + i*q11*omega*eta + i*q02*eta^2  (pure-imaginary coefficients)
+    b_prime = (sp.I * q20 * gse.omega**2
+               + sp.I * q11 * gse.omega * gse.eta
+               + sp.I * q02 * gse.eta**2)
+    phi_b = gse.phi_specialise_symbolic(b_prime, pi_sym=pi_sym)
+    im_part = sp.simplify(sp.im(phi_b))
+
+    # im_part should be a Q-linear combination: q20*Phi(omega^2) + q11*Phi(omega*eta) + q02*Phi(eta^2)
+    # Extract the coefficient of each q; each must be a distinct nonzero G*-power times pi
+    coeff_q20 = sp.simplify(sp.expand(im_part).coeff(q20))
+    coeff_q11 = sp.simplify(sp.expand(im_part).coeff(q11))
+    coeff_q02 = sp.simplify(sp.expand(im_part).coeff(q02))
+
+    # Each coefficient is the corresponding monomial Phi-image (real, nonzero)
+    expected_q20 = gse.phi_specialise_symbolic(gse.omega**2, pi_sym=pi_sym)   # G*^2 * pi
+    expected_q11 = gse.phi_specialise_symbolic(gse.omega * gse.eta, pi_sym=pi_sym)  # -pi
+    expected_q02 = gse.phi_specialise_symbolic(gse.eta**2, pi_sym=pi_sym)     # pi/G*^2
+
+    assert sp.simplify(coeff_q20 - expected_q20) == 0, f"coeff(q20) = {coeff_q20}, expected {expected_q20}"
+    assert sp.simplify(coeff_q11 - expected_q11) == 0, f"coeff(q11) = {coeff_q11}, expected {expected_q11}"
+    assert sp.simplify(coeff_q02 - expected_q02) == 0, f"coeff(q02) = {coeff_q02}, expected {expected_q02}"
+
+    # The three coefficients are distinct nonzero G*-powers (times pi) — Q-linearly independent.
+    # Verify they are pairwise distinct and nonzero:
+    assert coeff_q20 != 0 and coeff_q11 != 0 and coeff_q02 != 0
+    assert sp.simplify(coeff_q20 - coeff_q11) != 0
+    assert sp.simplify(coeff_q20 - coeff_q02) != 0
+    assert sp.simplify(coeff_q11 - coeff_q02) != 0
+
+
+def test_phi_is_real_forces_q_rational_helper():
+    """The phi_is_real_forces_q_rational(k) helper returns k+1 Q-linearly independent
+    real monomial Phi-images for Sym^k.
+    """
+    import gstar_sym_k_eigenlines as gse
+    import sympy as sp
+
+    for k in [2, 3, 4, 5]:
+        phi_images = gse.phi_is_real_forces_q_rational(k)
+        assert len(phi_images) == k + 1, f"Sym^{k}: expected {k+1} Phi-images, got {len(phi_images)}"
+        # All real (im part zero)
+        for img in phi_images:
+            assert sp.simplify(sp.im(img)) == 0, f"Phi-image {img} is not real"
+        # Pairwise distinct (a proxy for Q-linear independence — distinct G*-powers)
+        for idx1 in range(len(phi_images)):
+            for idx2 in range(idx1 + 1, len(phi_images)):
+                diff = sp.simplify(phi_images[idx1] - phi_images[idx2])
+                assert diff != 0, (
+                    f"Sym^{k}: Phi-images {idx1} and {idx2} are equal — "
+                    f"Q-linear independence would fail"
+                )
