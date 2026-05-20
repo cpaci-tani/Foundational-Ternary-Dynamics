@@ -222,6 +222,32 @@ def phi_specialise_symbolic(x, pi_sym=None):
     )
 
 
+def leading_period_discriminant(a, b):
+    """Discriminant of leading-period polynomial P_{(a,b)}(x) = x^2 - 16*G*^a*x + 16*G*^b.
+
+    Returns the symbolic expression in G_star_sym:
+      Delta = (16*G_star_sym^a)^2 - 4*16*G_star_sym^b
+            = 64*G_star_sym^b * (4*G_star_sym^(2a-b) - 1)
+
+    Real-roots condition (Δ ≥ 0): equivalent to G_star_sym^(2a-b) >= 1/4.
+    For G* ≈ 2.9587, this is equivalent to 2a - b >= -1.
+    """
+    return 256 * G_star_sym**(2 * a) - 64 * G_star_sym**b
+
+
+def leading_period_roots(a, b):
+    """The two roots of P_{(a,b)}(x) = x^2 - 16*G*^a*x + 16*G*^b.
+
+    Returns (x_plus, x_minus) where x_plus >= x_minus when real.
+    Uses the quadratic formula symbolically.
+    """
+    disc = leading_period_discriminant(a, b)
+    sqrt_disc = sp.sqrt(disc)
+    x_plus = (16 * G_star_sym**a + sqrt_disc) / 2
+    x_minus = (16 * G_star_sym**a - sqrt_disc) / 2
+    return x_plus, x_minus
+
+
 if __name__ == "__main__":
     import sys
     import mpmath as mp
