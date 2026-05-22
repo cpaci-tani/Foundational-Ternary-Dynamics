@@ -564,7 +564,7 @@ lives in
 
 | FTD ID | Pre-reg git tag | Script | Output dir | Analysis doc |
 |---|---|---|---|---|
-| FTD-0097 | `preregister-look-elsewhere-scan-v1` | `tools/scan_look_elsewhere.py` | `engine/results/look_elsewhere_2026-04-27/` | [`10_eft_program/AUDIT_LOOK_ELSEWHERE_RESULTS.md`](docs/theory/10_eft_program/AUDIT_LOOK_ELSEWHERE_RESULTS.md) |
+| FTD-0097 | `preregister-look-elsewhere-scan-v1` | `tools/scan_look_elsewhere.py` | `engine/results/look_elsewhere_2026-04-27/` | [`07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`](docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) |
 | FTD-0103 | (continuum-limit campaign, no fresh tag) | `engine/tests/campaign_continuum_limit_*` | `engine/results/continuum_limit_*` | linked from LEDGER row FTD-0103 |
 | FTD-0104 | (topology atlas campaign, no fresh tag) | `engine/tests/campaign_topology_atlas_*` | `engine/results/topology_atlas_*` | linked from LEDGER row FTD-0104 |
 | FTD-0105 | `preregister-lemniscatic-v1` | `engine/tests/benchmark_black_hole_thermo --lemniscatic-mode` | `engine/results/lemniscatic_*` | LEDGER row FTD-0105 |
