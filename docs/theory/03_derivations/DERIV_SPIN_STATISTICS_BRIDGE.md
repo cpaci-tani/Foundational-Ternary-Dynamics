@@ -18,7 +18,7 @@
 - [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
 - [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Lemniscate-Alpha: winding number, lobe structure, Z/6Z, Cayley-Dickson hierarchy
 - [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — 720° periodicity, void mitosis, two-lemniscate G* agreement (MIT-1/MIT-5)
-- [engine/include/ftd/ontic.h](../../engine/include/ftd/ontic.h) — Layer 2b (k_crit, emergence of i), Layer 3 (master quadratic)
+- [engine/include/ftd/ontic.h](../../../engine/include/ftd/ontic.h) — Layer 2b (k_crit, emergence of i), Layer 3 (master quadratic)
 
 ---
 
@@ -516,7 +516,7 @@ The following remain to be formalized:
 - [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical constant atlas, lemniscate properties
 - [FOUND_FOURCIER_ONTIC_TOOL.md](../02_foundations/FOUND_FOURCIER_ONTIC_TOOL.md) — Lemniscate-Alpha, Cayley-Dickson hierarchy, OT-7/OT-8
 - [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — Void mitosis, 720° periodicity, MIT-1/MIT-5
-- [engine/include/ftd/ontic.h](../../engine/include/ftd/ontic.h) — Ontic derivation chain (Layers 2b, 3)
+- [engine/include/ftd/ontic.h](../../../engine/include/ftd/ontic.h) — Ontic derivation chain (Layers 2b, 3)
 - CLAUDE.md §2.7 — Spin-statistics in simulation context
 
 ---

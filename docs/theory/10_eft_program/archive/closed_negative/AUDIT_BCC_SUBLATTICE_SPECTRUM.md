@@ -101,7 +101,7 @@ These are follow-up campaigns, not part of D6.
 
 - Plan: `~/.claude/plans/let-s-plan-a-way-ethereal-sonnet.md` Campaign A
 - PROTOCOL: [`PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md`](../../PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md) §5 falsifier criteria
-- Source: [`engine/tests/campaign_bcc_band_spectrum.cpp`](../../engine/tests/campaign_bcc_band_spectrum.cpp) (production parameters L ∈ {24, 32, 48} via CLI flags added 2026-04-27)
+- Source: [`engine/tests/campaign_bcc_band_spectrum.cpp`](../../../../../engine/tests/campaign_bcc_band_spectrum.cpp) (production parameters L ∈ {24, 32, 48} via CLI flags added 2026-04-27)
 - Outputs:
   - `engine/results/bcc_spectrum_2026-04-27/L24/{spectrum,stencil_aggregate,meta}.csv`
   - `engine/results/bcc_spectrum_2026-04-27/L32/{spectrum,stencil_aggregate,meta}.csv`

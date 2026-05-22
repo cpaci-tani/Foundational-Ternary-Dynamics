@@ -505,7 +505,7 @@ Inspecting the engine reveals that the CPU and CUDA genesis paths apply DIFFEREN
 | Path | Drain at genesis? |
 |---|---|
 | **CPU** ([`render_bridge.cpp:553`](../../../engine/src/render_bridge.cpp)) | `v.wave_vel *= (1 − K_GENESIS_KINETIC_DRAIN)` (= 0.5 currently) AND `v.flux *= (1 − K_GENESIS/|J|)` |
-| **CUDA** ([`kernels_stencil.cu:540`](../../../engine/cuda/kernels_stencil.cu)) | NO drain — only `state`, `spin`, `color`, `particle_id` are set |
+| **CUDA** ([`kernels_stencil_single.cu`](../../../engine/cuda/kernels_stencil_single.cu)) | NO drain — only `state`, `spin`, `color`, `particle_id` are set |
 
 These are quantitatively distinct manifestation rules. **Yet both produce k ≈ ¼:**
 

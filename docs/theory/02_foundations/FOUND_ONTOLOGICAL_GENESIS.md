@@ -160,7 +160,7 @@ The lemniscate **is** the geometric form of the void observing itself. The self-
 
 ### Figure
 
-![Void Mitosis: The lemniscate as primordial self-division](../../media/images/fig_void_mitosis.png)
+*[Figure: Void Mitosis: The lemniscate as primordial self-division — figure not in repo]*
 
 **Epistemic Status:** [SELECTION] — The identification of void mitosis with the lemniscate is argued from geometric necessity, not proven from more fundamental principles.
 
