@@ -125,7 +125,7 @@ When auditing: confirm `git rev-list -n1 preregister-colour-singlet-rank-v1` res
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0192** weak-SU(2) provenance (Q12) | `preregister-weak-su2-provenance-v1` | tag `preregister-weak-su2-provenance-v1` | desk provenance audit of an existing derivation (`DERIV_LATTICE_SU2_WEAK.md`); step-by-step epistemic classification, no numerical search | n/a | n/a (desk audit) | [`PREREG_WEAK_SU2_PROVENANCE_v1.md`](../08_structural/PREREG_WEAK_SU2_PROVENANCE_v1.md) (pre-reg) -> result doc (post-audit) |
+| **FTD-0192** weak-SU(2) provenance (Q12) | `preregister-weak-su2-provenance-v1` | tag `preregister-weak-su2-provenance-v1` | desk provenance audit of an existing derivation (`DERIV_LATTICE_SU2_WEAK.md`); step-by-step epistemic classification, no numerical search | n/a | n/a (desk audit) | [`PREREG_WEAK_SU2_PROVENANCE_v1.md`](../08_structural/PREREG_WEAK_SU2_PROVENANCE_v1.md) (pre-reg) -> [`AUDIT_WEAK_SU2_PROVENANCE.md`](../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md) (result: COUNT-MATCH) |
 
 Pre-reg SHA256: `25ee75f4cf472841bf79a2c14495728731b2b2c27f5395ab28f3b30ea2c61784`.
 
