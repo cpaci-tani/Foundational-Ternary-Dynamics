@@ -41,7 +41,6 @@
 | FTD-0011 | Phase H coupling scaling (g_c² scales α_r) | THEOREM | UNAFFECTED |
 | FTD-0012 | Discriminant trichotomy (bosons/critical/fermions) | THEOREM (algebra) / SELECTION (physical readings) | UNAFFECTED |
 | FTD-0013 | x₊ ↔ 1/α (1.26 ppm) | STRONGLY MOTIVATED CONJECTURE | RESOLVED (downgraded from THEOREM) |
-| FTD-0014 | x₋ ↔ N_c = 3 (0.80%) | STRONGLY MOTIVATED CONJECTURE | RESOLVED (downgraded from THEOREM) |
 | FTD-0152 | Alpha Readout Contract for MC-T4.3 | SYNTHESIS / OPEN PROGRAM | NEW 2026-05-18 — defines ARC closure criteria; no tag promotion for FTD-0013/0014 |
 | FTD-0153 | Math-First Ontology | SYNTHESIS / OPEN PROGRAM | NEW 2026-05-18 — defines primitives -> invariants -> readouts -> physics ordering; no tag promotion |
 | FTD-0154 | G* in P^exp (exponential periods, Kontsevich-Zagier sense); strict P-status conditional on KZ conjecture | THEOREM (unconditional P^exp); CONDITIONAL (strict P) | NEW 2026-05-19 — closes Q1 of PAPER_GSTAR_INTRODUCTION §13. Proof via Beta integral B(1/4,1/4) = √(2π)·G* + Gaussian period √(2π) ∈ P^exp. See PAPER_GSTAR_INTRODUCTION.tex §11. |
@@ -283,13 +282,6 @@
 - **evidence:** (i) numerical match 1.26 ppm (better than experimental precision on most QED loop tests); (ii) dual match with x₋ ↔ N_c (one polynomial, two unrelated physical numbers); (iii) CM-curve structural uniqueness across class-number-1 fields (FTD-0003).
 - **what is NOT claimed:** that a dynamical mechanism produces 1/α from FTD's update rules. The identification rests on algebraic match + structural uniqueness, not on a dynamical derivation. Also not claimed after FTD-0058: that the Structure-1 ppb one-loop correction is a scheme-independent gauge-theory prediction. The Ward-valid Structure-2 scalar gauge completion does not reproduce it under the tested natural matter assumptions.
 - **reframe_status:** RESOLVED — the demotion was triggered by the reframe's clarification that the gap-equation derivation route was always conjectural.
-
-### FTD-0014: x₋ ↔ N_c = 3 physical identification (0.80%)
-
-- **statement:** The smaller root x₋ = 3.024 is identified with N_c = 3 (number of QCD colour charges), agreement 0.80%.
-- **tag:** STRONGLY MOTIVATED CONJECTURE
-- **tag_history:** Same as FTD-0013.
-- **evidence:** Same as FTD-0013. The dual nature of the match (one polynomial → two physical constants from disjoint sectors) is the key structural evidence.
 
 ### FTD-0030: a_phys derivation status [OPEN — NEW]
 
