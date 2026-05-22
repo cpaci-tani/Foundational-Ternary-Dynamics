@@ -65,14 +65,15 @@ The flux/state duality and the information-theoretic lens on G*.
 
 ---
 
-## Pre-registrations
+## Pre-registrations & audit results
 
-Hash-locked pre-registrations of structural audits in this cluster — the prose is fixed and SHA256-pinned before any matching is attempted (registry: [`../10_eft_program/REF_PREREGISTER_MANIFEST.md`](../10_eft_program/REF_PREREGISTER_MANIFEST.md)).
+Hash-locked pre-registrations of structural audits in this cluster — the prose is fixed and SHA256-pinned before any matching is attempted — and the audit results that execute them (registry: [`../10_eft_program/REF_PREREGISTER_MANIFEST.md`](../10_eft_program/REF_PREREGISTER_MANIFEST.md)).
 
 | File | Tag | Purpose |
 |---|---|---|
 | [PREREG_FINITE_NEUTRAL_LOCK_v1.md](PREREG_FINITE_NEUTRAL_LOCK_v1.md) | [PRE-REGISTRATION] | Q10 finite-neutral-lock audit (FTD-0190): the minimal finite closure object that locks an internal two-state opposition sector while leaving a massless U(1)-like neutral readout — and whether its continuum shadow carries the electroweak doublet (1,2)_{1/2}. Desk audit of the frozen structural inventory; no numerical search. |
+| [AUDIT_FINITE_NEUTRAL_LOCK.md](AUDIT_FINITE_NEUTRAL_LOCK.md) | [AUDIT FINDING] | Result of the Q10 audit (FTD-0190): **UNDERDETERMINED**. The catalog supplies every ingredient of the finite neutral-lock skeleton — a two-state opposition with a derivable ±½ doublet normalisation from ℤ[i]^×≅ℤ₄, a rank-1 U(1)-shadow, colour-singlet compatibility, hypercharge forced — but not a *forced* rank-2→rank-1 assembly. No falsifier fired. Verifier: `scripts/proofs/audit_finite_neutral_lock.py`. |
 
 ---
 
-12 active docs in this cluster (+ 0 archived).
+13 active docs in this cluster (+ 0 archived).
