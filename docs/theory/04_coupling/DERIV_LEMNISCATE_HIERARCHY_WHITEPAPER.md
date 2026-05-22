@@ -87,7 +87,7 @@ A remarkable result: the classical Bernoulli lemniscate and the Lemniscate-Alpha
 
 2. **[SELECTION], not [THEOREM]:** Both curves access G* through different geometric routes. The agreement at 6.41 ppm is real and the framework-integer factorization 91 = 7 × 13 = b₃ × N_eff is structurally interesting, but the rigidity scan finds non-canonical curves with strictly cleaner factorizations and tighter precision (e.g., L = 23.71 with multiplier 189/512 = 3³·7 / 2⁹ landing on G*² at +0.71 ppm). The two-road agreement is a [SELECTION] reading, not a forced structural identity.
 
-3. **Mutual necessity (revised):** The framework's "Triangle of Necessity" argument that, if one curve is necessary for physics then both are, requires an independent uniqueness argument that the rigidity scan now shows is missing. See [MANDELBROT_TRD_DUALITY.md](../archive/ARCH_MANDELBROT_TRD_DUALITY.md) §XI for the original argument; treat it as [SELECTION] pending independent derivation of the canonical 5-harmonic coefficients.
+3. **Mutual necessity (revised):** The framework's "Triangle of Necessity" argument that, if one curve is necessary for physics then both are, requires an independent uniqueness argument that the rigidity scan now shows is missing. Treat the original "Triangle of Necessity" argument as [SELECTION] pending independent derivation of the canonical 5-harmonic coefficients.
 
 #### The Bernoulli Lemniscate
 
@@ -111,8 +111,6 @@ Both converge to the same G*, which then generates the master quadratic producin
 #### Figure
 
 ![Two Lemniscates: Bernoulli and Alpha both produce G* to +6.41 ppm](../../media/images/fig_two_lemniscates.png)
-
-See [MITOSIS_OF_THE_VOID.md](../archive/ARCH_MITOSIS_OF_THE_VOID.md) for complete derivation and the "void mitosis" interpretation.
 
 ---
 

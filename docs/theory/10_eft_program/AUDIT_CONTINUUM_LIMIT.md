@@ -110,7 +110,7 @@ The cleanest reading: **the engine has a well-defined operator-mixing matrix str
 
 ## 5 · Comparison to the BCC closure pattern (FTD-0093)
 
-The BCC sub-stencil spectrum audit (FTD-0093, [`AUDIT_BCC_SUBLATTICE_SPECTRUM.md`](AUDIT_BCC_SUBLATTICE_SPECTRUM.md)) tracked a similar L ∈ {24, 32, 48} progression and closed [NEGATIVE]: BCC ratio 11.76→10.31→15.24, never approaching predicted 45.31. That audit had a **specific quantitative prediction** to falsify and missed it by 10σ at every L.
+The BCC sub-stencil spectrum audit (FTD-0093, [`AUDIT_BCC_SUBLATTICE_SPECTRUM.md`](archive/closed_negative/AUDIT_BCC_SUBLATTICE_SPECTRUM.md)) tracked a similar L ∈ {24, 32, 48} progression and closed [NEGATIVE]: BCC ratio 11.76→10.31→15.24, never approaching predicted 45.31. That audit had a **specific quantitative prediction** to falsify and missed it by 10σ at every L.
 
 This continuum-limit audit has **no specific prediction to falsify** — it's a convergence diagnostic. Both audits illustrate the user's reorientation: pre-registered measurements that produce structurally informative results regardless of whether they confirm a prior conjecture. FTD-0093 closes a derivation chain negative; FTD-0103 produces an inconclusive but informative continuum-limit diagnostic.
 

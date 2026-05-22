@@ -26,7 +26,6 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 - **§7 Theory — roadmaps, reference, specs** (`01_reference/`).
 - **§8 Scripts** — unfinished verification / proof / exploration scripts (`scripts/`).
 - **§9 Full inventory** — every file with `[OPEN]` + count (auto-refreshable).
-- **§10 Archived** — `[OPEN]` items inside `docs/theory/archive/` (historical context only).
 
 ---
 
@@ -222,7 +221,7 @@ All kept safely below `K_GENESIS = 3·K_B` so no spurious genesis fires.
 
 **Related artifacts:**
 - Langevin-on-J infrastructure already exists (FTD-0051, `TermToggles::langevin*`). Would compose naturally with an s-Metropolis toggle.
-- `docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md` documents the structural argument.
+- `docs/theory/10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md` documents the structural argument.
 
 **Location:** any attempt would be a new toggle `TermToggles::s_metropolis` + update code in `phase_write` or a new phase.
 
@@ -235,6 +234,8 @@ High-count files carry clustered work; low-count files have isolated gaps.
 ### 2.1 Lattice Black Holes — **11 `[OPEN]`** (highest-density derivation)
 **File:** `DERIV_LATTICE_BLACK_HOLES.md`.
 Horizon thermodynamics, Hawking radiation lattice derivation, information paradox at discrete scale, Kerr-Newman generalisation. Every `[OPEN]` is its own sub-task.
+
+**2026-05-20 reconciliation note:** per FTD-0184, future gravity work here must target substrate-side strong-field GR / Schwarzschild-Kerr-horizon derivation. Do **not** pursue the branch-compliance/Yilmaz exponential-metric route (`dτ=e^{-U}`, `n_γ=e^{2U}`) as a replacement gravity sector; it is closed negative for canon and preserved only as provenance.
 
 ### 2.2 Lattice QED — ✅ closed/reclassified 2026-04-22
 **File:** `DERIV_LATTICE_QED_COMPLETE.md`.
@@ -275,7 +276,7 @@ How the Moore-layer decomposition produces each gauge group's representations (v
 - `DERIV_SINGLET_FROM_VOID_EVENT.md`.
 
 ### 2.13 Mechanism C — `g_c` from BCC bridge operator — **CLOSED NEGATIVE (archived)**
-**File:** `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`. Successor to FTD-0031 / Mechanism-B closure. Closed negative by `docs/theory/10_eft_program/AUDIT_BCC_SUBLATTICE_SPECTRUM.md` and LEDGER row FTD-0093; no longer counted as an open item. The live `g_c` problem remains tracked through `docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md` and the native electrodynamics pivot in §4.2.
+**File:** `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`. Successor to FTD-0031 / Mechanism-B closure. Closed negative by `docs/theory/10_eft_program/archive/closed_negative/AUDIT_BCC_SUBLATTICE_SPECTRUM.md` and LEDGER row FTD-0093; no longer counted as an open item. The live `g_c` problem remains tracked through `docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md` and the native electrodynamics pivot in §4.2.
 
 ---
 
@@ -510,7 +511,7 @@ grep -rc "\[OPEN\]" docs/ engine/src/ engine/include/ engine/web/js/ \
   | sort -t: -k2 -rn
 ```
 
-Snapshot (2026-04-17, excluding `docs/theory/archive/` — see §10):
+Snapshot (2026-04-17):
 
 | File | Count |
 |---|---:|
@@ -585,30 +586,6 @@ Snapshot (2026-04-17, excluding `docs/theory/archive/` — see §10):
 - `engine/web/js/config/scenarios.js` (1) — enum documentation.
 - `engine/web/js/ui/components/knowledge-base/data.js` (1) — UI string literal.
 - This tracker itself (62) — mostly examples and cross-references.
-
----
-
-## §10 Archived (`docs/theory/archive/`)
-
-`[OPEN]` items inside archived documents are historical — the content is superseded. Listed for completeness only.
-
-| File | Count |
-|---|---:|
-| `ARCH_DERIV_LATTICE_KERR.md` | 8 |
-| `ARCH_DERIV_LATTICE_REISSNER_NORDSTROM.md` | 5 |
-| `ARCH_DERIV_TWO_LOOP_ALPHA.md` | 4 |
-| `ARCH_DERIV_MOORE_GAUGE_ORTHOGONAL.md` | 4 |
-| `ARCH_DERIV_LATTICE_SCHWARZSCHILD.md` | 3 |
-| `ARCH_DERIV_CAVITATION_THRESHOLD.md` | 2 |
-| `ARCH_SPEC_THE_COMPLETE_PROOF_RIGOROUS.md` | 1 |
-| `ARCH_GAP_ANALYSIS_AND_DEVELOPMENTS.md` | 1 |
-| `ARCH_FOUND_VON_NEUMANN_FACTOR_CLASSIFICATION.md` | 1 |
-| `ARCH_EXPLR_FRACTAL_DEPTH_AND_MASS.md` | 1 |
-| `ARCH_DERIV_CAVITATION_HIERARCHY.md` | 1 |
-| `ARCH_BIOLOGICAL_SLOOP.md` | 1 |
-| `ARCH_AUDIT_PANEL_RESPONSE.md` | 1 |
-
-If an archived `[OPEN]` turns out to be non-historical (i.e., someone wants to resume that line of work), move the doc out of `archive/` and add it to §2–§7 above.
 
 ---
 

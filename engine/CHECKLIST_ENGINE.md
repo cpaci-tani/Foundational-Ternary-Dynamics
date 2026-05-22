@@ -41,7 +41,7 @@ needed to make those claims auditable.
 |---|---|---|---|
 | CD-001 | ✅ | Removed stale-G* fallback (G_STAR=2.9586830685, 27 ppm drift) | [scripts/benchmarks/benchmark_engine_vs_theory.py:38](../scripts/benchmarks/benchmark_engine_vs_theory.py:38) |
 | CD-002 | ✅ | Same fallback removed | [scripts/benchmarks/analyze_convergence.py:13](../scripts/benchmarks/analyze_convergence.py:13) |
-| CD-003 | ✅ | alpha_inv 137.035999084 → 137.035999177 (CODATA-2022) in test fixtures | [scripts/tests/test_verify_manifest_builder.py](../scripts/tests/test_verify_manifest_builder.py) |
+| CD-003 | ✅ | alpha_inv 137.035999177 → 137.035999177 (CODATA-2022) in test fixtures | [scripts/tests/test_verify_manifest_builder.py](../scripts/tests/test_verify_manifest_builder.py) |
 | CD-004 | ✅ | G* mistranscription 2.9586788 → 2.958675119188639 | [scripts/exploration/lattice_3x3x3_center.py:102](../scripts/exploration/lattice_3x3x3_center.py:102) |
 | CD-005 | ✅ | Same mistranscription fixed | [scripts/exploration/five_minds_round5.py:274](../scripts/exploration/five_minds_round5.py:274) |
 | CD-006 | ✅ | Tree-level alpha now imports from canonical | [scripts/proofs/gauss_constrained_green_v2.py:316](../scripts/proofs/gauss_constrained_green_v2.py:316) |

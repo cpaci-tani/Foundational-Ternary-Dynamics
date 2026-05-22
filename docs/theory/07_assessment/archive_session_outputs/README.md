@@ -34,14 +34,7 @@ For current status of any claim or process previously tracked here:
 - **Single source of truth for claim status:** `../LEDGER.md` (parent directory)
 - **Append-only record of every change:** `../CHANGELOG_REFRAME.md`
 - **Current open work:** `../PARKING_LOT.md`
-- **Final epistemic / engine / constants audits (Session 4):**
-  - `../AUDIT_EPISTEMIC_FINAL_2026_04_19.md` (note: returned inline by agent, summarized in CHANGELOG_REFRAME Session 4)
-  - `../ENGINE_AUDIT_FINAL_2026_04_19.md`
-  - `../AUDIT_CONSTANTS_FINAL_2026_04_19.md`
-  - `../AUDIT_MANUSCRIPT_REFRAME.md`
-  - `../AUDIT_SPECULATIVE_BOOK_2026_04_19.md`
-  - `../REFACTORING_RECOMMENDATIONS_2026_04_19.md`
-  - `../PHYSICIST_REVIEW_2026_04_19.md`
+- **Final Session-4 audits** (epistemic / engine / constants / manuscript / speculative-book / refactoring / physicist review): these point-in-time audit outputs were removed in the 2026-05-21 corpus consolidation — the reframe deployment is long complete and their conclusions are summarized in `../CHANGELOG_REFRAME.md` (Session 4). Git history preserves the originals.
 
 ---
 

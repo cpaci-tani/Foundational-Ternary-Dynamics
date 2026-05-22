@@ -55,7 +55,7 @@ def bcc_watson_integral(N=160):
 def main():
     G_STAR_target = math.gamma(0.25) / math.gamma(0.75)
     W_3_target = G_STAR_target**2 / (2 * math.pi)
-    ALPHA_INV_CODATA = 137.035999084
+    ALPHA_INV_CODATA = 137.035999177
 
     print('=' * 70)
     print('PROOF: Volumetric pathway from 3D BZ integration to master quadratic')

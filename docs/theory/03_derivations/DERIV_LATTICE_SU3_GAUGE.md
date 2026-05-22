@@ -476,7 +476,6 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 |----------|-----------------|
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action; coupling terms; Gauss constraint |
 | [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) | Lattice Feynman rules (propagator, vertex, Ward identity) |
-| [DERIV_LATTICE_LOOP_CORRECTIONS.md](../archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md) | One-loop integral techniques; BZ compactness; UV finiteness |
 | [DERIV_OCTONIONIC_STRUCTURE.md](../05_particles/DERIV_OCTONIONIC_STRUCTURE.md) | G₂ = Aut(𝕆) ⊃ SU(3); algebraic origin of color |
 | [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | α_s = 7/59; quark masses |
 | [DERIV_LAMBDA_QCD_DERIVATION.md](../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | Λ_QCD value; string tension cross-check |

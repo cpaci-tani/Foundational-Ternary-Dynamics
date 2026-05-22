@@ -16,7 +16,7 @@ The lemniscatic constant `G* = Γ(1/4)/Γ(3/4)` admits a clean operational readi
 
 Combined with three derived boundary identities for L(s, χ_{−4}), this characterizes Q(G\*) **operationally** as the field of L-function content at the boundary of the Q(i) Dirichlet L-function's critical strip. The center of the critical line is explicitly OUTSIDE Q(G\*) (PSLQ-falsified at maxcoeff 10^7 / tol 1e-50 / 80 dps).
 
-This is the same mathematical content as Theorem 9 (no new spine theorem; spine count remains 9). What is new is (a) the operational identification of the natural L-function partner, (b) three explicit derivable boundary identities, and (c) a clean negative scoping result for the central critical-line value.
+This is the same mathematical content as Theorem 9 (no new spine theorem; spine count unchanged — nine numbered results, six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0). What is new is (a) the operational identification of the natural L-function partner, (b) three explicit derivable boundary identities, and (c) a clean negative scoping result for the central critical-line value.
 
 ---
 
@@ -179,7 +179,7 @@ This Result is one more entry in the multiple-4 catalogue: the conductor of the 
 - **Not a derivation of α.** The dual-prediction `x_+ ≈ 1/α` (1.26 ppm) remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); this Result extends the algebraic spine's *characterization* of G\*, not its bridge to physics.
 - **Not a connection to ζ's critical line.** Strong claim "FTD ↔ Riemann critical line" is FALSIFIED in the strong form (PSLQ on ζ(1/2) returned None in every tested basis). The partial true form is "FTD ↔ L(s, χ_{−4}) boundary of critical strip"; the center of either critical line is outside the algebraic spine's reach as currently stated.
 - **Not an extension of the spine to higher L-functions.** Result D as stated applies to ζ vs L(s, χ_{−4}) at conductor 4. Higher conductors would require analogous `G*_q` constants (related to FTD-0123's Γ-product analogue `G*_d := ∏ Γ(a/|d|)^{χ_d(a)}`) and analogous parity-twist identifications. Whether the structure generalizes cleanly is an OPEN extension.
-- **Not a new spine theorem.** Spine count remains nine. This is filed as a subsidiary of Theorem 9 (FTD-0112), not as Theorem 10.
+- **Not a new spine theorem.** The spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0). This is filed as a subsidiary of Theorem 9 (FTD-0112), not as Theorem 10.
 
 ---
 

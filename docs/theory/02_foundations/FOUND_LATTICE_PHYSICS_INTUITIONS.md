@@ -57,7 +57,7 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | Phenomenon | Empirical observation | Lattice definition | Status |
 |---|---|---|---|
 | Wave-particle duality | Particles show interference patterns | Flux field (wave) + manifestation events (particle) = two-layer ontology | Recovered |
-| Born rule | Probability = |psi|^2 | Aggregate statistic of many manifestation events, not a property of one event. Parseval: wave energy ~ |J|^2 sets the landscape. The frequency of outcomes over many trials converges to |J|^2 because energy determines where manifestation occurs. Same principle as Bell: eventS, not event. | Selection |
+| Born rule | Probability = \|psi\|^2 | Aggregate statistic of many manifestation events, not a property of one event. Parseval: wave energy ~ \|J\|^2 sets the landscape (the \|psi\|^2 *form*). That manifestation *frequency* equals the normalized energy density is asserted, not derived -- the load-bearing open step (T1c). Same principle as Bell: eventS, not event. Canonical status: LEDGER FTD-0187. | Selection |
 | Pauli exclusion | No two identical fermions in same state | pi_1(SO(3)) = Z_2 from frame bundle topology; ternary constraint | Recovered |
 | Uncertainty principle | Delta_x Delta_p >= hbar/2 | Lattice spacing provides minimum Delta_x; Brillouin zone bounds Delta_p | Recovered |
 | Measurement / collapse | Wavefunction -> eigenstate on observation | ReLU crystallization: Softplus -> ReLU as beta -> infinity; Type III -> Type I | Recovered |

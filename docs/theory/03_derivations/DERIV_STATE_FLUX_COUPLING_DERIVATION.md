@@ -284,7 +284,7 @@ $$e_{\text{FTD}} = \sqrt{\alpha} = g_c$$
 
 1. **[AXIOM]** Discrete lattice with ternary states and flux field
 2. **[THEOREM]** Master quadratic from G* with x₊ = 137.036
-3. **[THEOREM]** Probability = amplitude squared (Born rule)
+3. **[SELECTION]** Probability = amplitude squared (Born rule — |ψ|² form is [SELECTION], the probability=density step is [OPEN]; LEDGER FTD-0187)
 4. **[THEOREM]** Single-vertex transitions contribute amplitude g_c
 
 ### 7.2 Derivation
@@ -300,7 +300,7 @@ $$e_{\text{FTD}} = \sqrt{\alpha} = g_c$$
 
 $$\boxed{g_c = \sqrt{\alpha} = \sqrt{1/137.036} = 0.08542...}$$
 
-**Status:** [THEOREM] — derived from axioms + master quadratic + Born rule
+**Status:** [SELECTION] — the chain uses the Born rule (premise 3 — [SELECTION]/[OPEN], not [THEOREM], per LEDGER FTD-0187) and the x₊↔1/α identification; the result g_c=√α therefore inherits [SELECTION] status, consistent with GC-5/GC-6/GC-7 below
 
 ---
 
@@ -404,7 +404,7 @@ This matches α_s(M_Z) ≈ 0.118 to 0.6%.
 |----------|-----------|--------|
 | **GC-1** | g_c is dimensionless in natural units | **[THEOREM]** |
 | **GC-2** | Transition amplitude = g_c | **[DEFINITION]** |
-| **GC-3** | Probability = g_c² (Born rule) | **[THEOREM]** |
+| **GC-3** | Probability = g_c² (Born rule) | **[SELECTION]** — the Born rule is [SELECTION] (|ψ|² form) / [OPEN] (probability=density), not [THEOREM]; LEDGER FTD-0187 |
 | **GC-4** | Total modes = x₊ = 137.036 | **[SELECTION]** — requires gap equation (see DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) |
 | **GC-5** | g_c² = 1/x₊ = α | **[SELECTION]** — physical identification, not derived from partition function |
 | **GC-6** | g_c = √α = 0.0854 | **[SELECTION]** — follows from GC-5 |
@@ -414,7 +414,6 @@ This matches α_s(M_Z) ≈ 0.118 to 0.6%.
 
 ## Cross-References
 
-- **Master quadratic:** [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **α derivation:** [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md)
 - **Born rule / projection hierarchy:** [../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) §§2, 5
 - **Decay dynamics:** CLAUDE.md §4.3

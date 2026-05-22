@@ -394,7 +394,7 @@ The Fourcier curve doesn't *describe* reality — it is the mechanism by which G
 - **Ontic constant chain:** [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — γ→ϖ→M→π→G*
 - **Cayley-Dickson isomorphism:** [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](../09_mathematical/EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) — Computational verification
 - **Consciousness domain map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for Domain A/B/C, context selection, and vocabulary
-- **Original Fourcier analysis:** [FOURCIER_CURVE_ANALYSIS.md](../../media/images/fourier-curve-art/FOURCIER_CURVE_ANALYSIS.md) — Coefficient structure
+- **Original Fourcier analysis:** [FOURCIER_CURVE_ANALYSIS.md](../../../dissemination/manuscript/media/images/fourier-curve-art/FOURCIER_CURVE_ANALYSIS.md) — Coefficient structure
 
 ---
 

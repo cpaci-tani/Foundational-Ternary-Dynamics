@@ -3,6 +3,142 @@
 **Date:** 2026-04-24
 **Status:** [PARTIAL] real-engine Moore transport, collision, mixed histories, multi-tick intervals, and GPU-native movement ledgers connected to native finite-volume blocking
 **Purpose:** Extract signed face currents from actual `RenderBridge::tick()` movement histories and verify native b=2 continuity flow.
+**Consolidates:** also absorbs `DERIV_FTD_NATIVE_ENGINE_HISTORY_FLOW.md` (2026-05-21)
+
+---
+
+## §0 — Engine reaction-history context
+
+**Date:** 2026-04-23
+**Status:** [PARTIAL] real-engine reaction histories connected to native finite-volume blocking
+**Purpose:** Connect actual `RenderBridge::tick()` reaction histories to the dual-cell continuity ledger used by native RG flow tests.
+
+This section is the reaction-only prelude to the transport-flow work below: it establishes the engine-history bridge for reaction-only ticks, which the §1 transport extractor then extends with face currents.
+
+### §0.1 — Executive result (reaction-only)
+
+The native finite-volume continuity ledger now accepts actual engine
+before/after state histories for reaction-only ticks:
+
+```text
+rho_before = s(t)
+rho_after  = s(t+1)
+I          = 0
+S_R        = rho_after - rho_before
+```
+
+and verifies:
+
+```text
+Delta rho + div I = S_R
+```
+
+both before and after b=2 blocking.
+
+The engine-history audit covers:
+
+```text
+genesis
+pair production
+weak transmutation
+stochastic evaporation / no-op
+```
+
+Result:
+
+```text
+native_engine_history_flow passed
+```
+
+### §0.2 — Implementation (reaction-only)
+
+Audit:
+
+```text
+engine/tests/test_native_engine_history_flow.cpp
+ctest --test-dir engine/build_audit_cpu -C Release -R "^native_engine_history_flow$" --output-on-failure
+```
+
+The test converts actual `RenderBridge` snapshots into:
+
+```text
+DualCellContinuity
+```
+
+from:
+
+```text
+engine/include/ftd/eft/dual_cell_continuity.h
+engine/src/eft/dual_cell_continuity.cpp
+```
+
+It then applies:
+
+```text
+block_dual_cell_continuity_b2(...)
+```
+
+and verifies that the reaction ledger still closes.
+
+### §0.3 — Evaporation correction
+
+The older native reaction ledger treated evaporation as deterministic. The
+current engine rule is stochastic:
+
+```text
+evap_prob = exp(-local_energy / K_B^2) * 0.1.
+```
+
+Therefore a one-tick low-energy particle may either:
+
+```text
+remain manifested     delta_Q = 0
+evaporate             delta_Q = -1
+```
+
+The correct invariant is not "evaporation must occur." The invariant is:
+
+```text
+if state changes, S_R = delta rho;
+if state does not change, S_R = 0;
+in either case Delta rho + div I = S_R.
+```
+
+`engine/tests/test_native_reaction_ledger.cpp` was updated to reflect this
+current engine behavior.
+
+### §0.4 — Combined native battery (2026-04-23, reaction-only milestone)
+
+Result on 2026-04-23:
+
+```text
+native_reaction_ledger passed
+native_blocking_map passed
+native_flow passed
+native_current_flow passed
+native_response_flow passed
+native_engine_history_flow passed
+```
+
+This connects the Gaussian native RG objects to real engine reaction histories.
+
+### §0.5 — What this prelude leaves open
+
+The reaction-only history extraction above is still reaction-only. The next bridge step is to add
+transport-current extraction from real movement ticks:
+
+```text
+s(t), s(t+1), movement events -> I_face
+```
+
+Then the engine-history ledger can cover mixed reaction-transport ticks:
+
+```text
+Delta rho + div I = S_R
+```
+
+with both `I` and `S_R` extracted from engine dynamics rather than supplied by
+hand. The face-transport part is the subject of the remainder of this document.
 
 ---
 

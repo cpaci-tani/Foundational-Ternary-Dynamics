@@ -51,7 +51,7 @@ The lattice produces a number of **dimensionless** algebraic invariants without 
 
 ### 3.2 · Mechanism β — EFT matching to a known physical observable
 
-If FTD's continuum-effective-theory limit (the EFT recovery program, [SPEC_EFT_RECOVERY_PROGRAM.md](SPEC_EFT_RECOVERY_PROGRAM.md)) reproduces a known physical quantity that itself has a length dimension — e.g., the proton Compton wavelength, the hydrogen Bohr radius, the electroweak scale — then `a_phys` could be **matched** so that the corresponding lattice-units prediction agrees with the physical observable. This is conventional EFT matching at one renormalisation point.
+If FTD's continuum-effective-theory limit (the EFT recovery program, [SPEC_EFT_RECOVERY_PROGRAM.md](../../SPEC_EFT_RECOVERY_PROGRAM.md)) reproduces a known physical quantity that itself has a length dimension — e.g., the proton Compton wavelength, the hydrogen Bohr radius, the electroweak scale — then `a_phys` could be **matched** so that the corresponding lattice-units prediction agrees with the physical observable. This is conventional EFT matching at one renormalisation point.
 
 This is *not a derivation*; it is the standard way EFTs fix their cutoff to data. It would render `a_phys` a calibrated parameter, not a derived one. But it is the **honest version** of what the EFT program is in practice doing already (the 3.6× α-plateau is precisely a statement at one fixed matching choice).
 
@@ -119,7 +119,7 @@ If β-matching at proton Compton and electron Compton give different `a_phys` va
 1. **[Priority A]** Inventory every dimensional FTD prediction currently in the literature (engine benchmarks, manuscript chapters, papers). For each, identify whether it is dimensionless (parameter-free) or dimensional (needs `a_phys`). This becomes the calibration audit.
 2. **[Priority B]** Attempt Mechanism γ explicitly: write the dimensional-analysis chain that converts the engine's lattice G_N to a physical G_N as a function of `a_phys`, solve for `a_phys`, and report.
 3. **[Priority C]** If γ fails or gives no unique value, write a one-paragraph addendum to `SPEC_FTD.md` declaring `a_phys` as a calibrated parameter, naming the matching observable, and stating that all dimensional predictions are conditional on it.
-4. **[Priority D]** Update [SPEC_EFT_RECOVERY_PROGRAM.md](SPEC_EFT_RECOVERY_PROGRAM.md) to note that the 3.6× plateau is conditional on the current `a_phys` choice, and re-quote the result accordingly.
+4. **[Priority D]** Update [SPEC_EFT_RECOVERY_PROGRAM.md](../../SPEC_EFT_RECOVERY_PROGRAM.md) to note that the 3.6× plateau is conditional on the current `a_phys` choice, and re-quote the result accordingly.
 
 ---
 

@@ -152,7 +152,7 @@ EXPECTED_CONSTANT_AGREEMENTS = {
     "n_color":                 [("ftd_value", "X_MINUS")],
     "mu_over_e_mass_ratio":    [("ftd_value", "MU_RATIO")],
     "tau_over_e_mass_ratio":   [("ftd_value", "TAU_RATIO")],
-    "mass_unit_anchor":        [],  # constants_py_ref=K_B but value is CODATA 0.5109989461 not K_B=0.511
+    "mass_unit_anchor":        [],  # constants_py_ref=K_B but value is CODATA m_e, not the lattice K_B=0.511
     "m_electron_dimensional":  [("ftd_value", "K_B")],
 }
 

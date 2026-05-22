@@ -178,7 +178,7 @@ print('  ' + '-' * 68)
 print()
 
 # T2.01: 1/alpha tree level
-test(2, 1, '1/alpha (tree) = 137.036', X_PLUS, 137.035999084, tolerance=0.001)
+test(2, 1, '1/alpha (tree) = 137.036', X_PLUS, 137.035999177, tolerance=0.001)
 
 # T2.02: 1/alpha 4-term precision
 EPSILON = np.exp(np.pi) - np.pi - (b_3 + N_eff)
@@ -189,7 +189,7 @@ c3 = N_base / (N_c * D_CONST)
 c4 = (N_c * D_CONST) / (b_3 + N_base)
 eps = abs(EPSILON)
 alpha_4term = X_PLUS - c1*eps + c2*eps**2 - c3*eps**3 - c4*eps**4
-test(2, 2, '1/alpha (4-term) < 0.001 ppt', alpha_4term, 137.035999084, tolerance=0.0001)
+test(2, 2, '1/alpha (4-term) < 0.001 ppt', alpha_4term, 137.035999177, tolerance=0.0001)
 
 # T2.03: sin^2(theta_W)
 sin2w = float(N_c) / float(N_eff)

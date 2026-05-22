@@ -33,7 +33,7 @@ Stencil definitions (from SPEC_FTD_NATIVE_ELECTRODYNAMICS.md, §15):
         Delta_G18(k) = (1/3)(6 - 2 sum cos)
                      + (1/6)(12 - 4 sum cos*cos pairs)
 
-Provenance: docs/theory/09_mathematical/EXPLR_TWO_PI_GSTAR_CONNECTION.md
+Provenance: docs/theory/09_mathematical/archive/EXPLR_TWO_PI_GSTAR_CONNECTION.md
 LEDGER: FTD-0116 Q4a test.
 
 Usage:

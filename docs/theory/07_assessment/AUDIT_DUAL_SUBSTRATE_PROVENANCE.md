@@ -60,7 +60,7 @@ So $\delta^2$ is **algebraic dressing** on $(S, P)$, not an independent constrai
 
 Per [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) §2.2:
 
-- **Route A — CM-curve auto count.** The elliptic curve $E: y^2 = x^3 - x$ has $j = 1728$, CM by $\mathbb{Z}[i]$, and $\mathrm{Aut}(E) \cong \mathbb{Z}/4$. Hence $|\mathrm{Aut}(E)|^2 = 16$. (See [`DERIV_DUAL_DERIVATION_OF_16.md`](../03_derivations/DERIV_DUAL_DERIVATION_OF_16.md).)
+- **Route A — CM-curve auto count.** The elliptic curve $E: y^2 = x^3 - x$ has $j = 1728$, CM by $\mathbb{Z}[i]$, and $\mathrm{Aut}(E) \cong \mathbb{Z}/4$. Hence $|\mathrm{Aut}(E)|^2 = 16$. (See [`DERIV_DUAL_DERIVATION_OF_16.md`](../08_structural/DERIV_DUAL_DERIVATION_OF_16.md).)
 - **Route B — BCC coordination × ternary states.** $z_{\mathrm{BCC}} = 8$ on the Moore neighbourhood; non-void states $\{-1, +1\}$, count 2; product $8 \times 2 = 16$.
 
 Both are finite-combinatorial. Neither invokes a limit. Their numerical agreement is multi-route evidence for 16 as the natural leading coefficient.
@@ -79,7 +79,7 @@ But [`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`](../03_derivations/DERIV_MASTER_QU
 
 ### §4.3 — The G* powers in the master quadratic
 
-The polynomial degree (2) is forced by the CM field $\mathbb{Q}(i)$ having $[\mathbb{Q}(i):\mathbb{Q}] = 2$ and Schneider–Chudnovsky algebraic-relation bounds (`DERIV_QUADRATIC_NECESSITY.md`). The powers $G^{*2}$ and $G^{*3}$ in the linear and constant coefficients are forced by the period structure of $E$: $G^{*2}/(2\pi) = W_3$ (Watson's BCC integral), and $G^{*3}$ is the corresponding cubic period invariant. [THEOREM] for the algebra; see [`DERIV_WATSON_GSTAR_IDENTITY.md`](../03_derivations/DERIV_WATSON_GSTAR_IDENTITY.md).
+The polynomial degree (2) is forced by the CM field $\mathbb{Q}(i)$ having $[\mathbb{Q}(i):\mathbb{Q}] = 2$ and Schneider–Chudnovsky algebraic-relation bounds (`DERIV_QUADRATIC_NECESSITY.md`). The powers $G^{*2}$ and $G^{*3}$ in the linear and constant coefficients are forced by the period structure of $E$: $G^{*2}/(2\pi) = W_3$ (Watson's BCC integral), and $G^{*3}$ is the corresponding cubic period invariant. [THEOREM] for the algebra; see [`DERIV_WATSON_GSTAR_IDENTITY.md`](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md).
 
 ---
 

@@ -444,7 +444,7 @@ Error: **0.01%**
 
 **Measurement:** Collapse = manifestation when |J| > KB
 
-**Bell Violations:** ⚠️ [SELECTION] — The three-level observer Bell mechanism resolves how aggregate S > 2 emerges from substrate S ≤ 2. Two factors: complexification (Gauss constraint → psi = J_x + iJ_y, changing correlation shape) and sLoop coupling (shared substrate → non-factorizable joint probability, doubling correlation strength). Net: S_substrate × √2 = S_observer. Numerically verified (4/4 checks). See [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md) and [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md).
+**Bell Violations:** ⚠️ [SELECTION] — The three-level observer Bell mechanism resolves how aggregate S > 2 emerges from substrate S ≤ 2. Two factors: complexification (Gauss constraint → psi = J_x + iJ_y, changing correlation shape) and sLoop coupling (shared substrate → non-factorizable joint probability, doubling correlation strength). Net: S_substrate × √2 = S_observer. Numerically verified (4/4 checks). See [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) and [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md).
 
 ---
 

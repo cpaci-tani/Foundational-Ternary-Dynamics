@@ -380,13 +380,11 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 
 [2] [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — QFT-GR duality of the flux field.
 
-[3] [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — Exact Schwarzschild from latency field.
+[3] [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Full Einstein equations via Lovelock.
 
-[4] [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Full Einstein equations via Lovelock.
+[4] [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) — Vertex factor $g_c = \sqrt{\alpha}$.
 
-[5] [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) — Vertex factor $g_c = \sqrt{\alpha}$.
-
-[6] [DERIV_COSMOLOGICAL_CONSTANT.md](../04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md) — Cosmological constant from lattice vacuum energy.
+[5] [DERIV_COSMOLOGICAL_CONSTANT.md](../04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md) — Cosmological constant from lattice vacuum energy.
 
 ---
 

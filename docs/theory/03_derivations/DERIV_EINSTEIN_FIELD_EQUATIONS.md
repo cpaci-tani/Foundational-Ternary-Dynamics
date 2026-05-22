@@ -11,7 +11,6 @@
 
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) — SR, linearized GR (§§1-15)
 - [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) — T_μν via Noether's theorem
-- [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — Exact Schwarzschild from lattice
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Born-Infeld render-bridge action
 - [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) — α_G derivation
 
@@ -376,9 +375,6 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 |----------|-----------------|
 | [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) | SR, linearized GR, GAP-2 now resolved |
 | [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) | T_μν derivation, conservation law |
-| [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | Exact Schwarzschild verification |
-| [DERIV_LATTICE_KERR.md](../archive/ARCH_DERIV_LATTICE_KERR.md) | Kerr metric verification |
-| [DERIV_LATTICE_REISSNER_NORDSTROM.md](../archive/ARCH_DERIV_LATTICE_REISSNER_NORDSTROM.md) | RN metric verification |
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, Poisson equation |
 | [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) | α_G derivation |
 

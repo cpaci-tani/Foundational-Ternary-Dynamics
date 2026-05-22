@@ -20,7 +20,7 @@
 
 ## Honesty Note
 
-The spectral shapes (circle and lemniscate) are direct simulation output -- [EMERGENT] results not designed in. The identification of the Born rule with the Joukowski transform is algebraically exact. The numerical coincidence between DOF loss (79.3%) and void interference (78.5%) is suggestive but not proven to be fundamental; it may reflect lattice geometry rather than deep structure. The connection to G* remains [CONJECTURE].
+The spectral shapes (circle and lemniscate) are direct simulation output -- [EMERGENT] results not designed in. The identification of the Born rule with the Joukowski transform is algebraically exact. The numerical coincidence between DOF loss (79.3%) and void interference (78.5%) is suggestive but not proven to be fundamental; it may reflect lattice geometry rather than deep structure. The connection to G* remains [CONJECTURE]. The Born rule itself (P = |psi|^2) is *taken as given* here -- this document studies the spectral geometry of an assumed Born map, it does not derive it. The Born rule's derivation status within FTD is [SELECTION] for the |psi|^2 form and [OPEN] for the probability=density step -- canonical: LEDGER FTD-0187.
 
 ---
 

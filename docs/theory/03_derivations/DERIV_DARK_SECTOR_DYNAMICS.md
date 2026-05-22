@@ -11,7 +11,7 @@
 
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Lagrangian, coupling term, Rayleigh dissipation
 - [DERIV_COSMOLOGICAL_CONSTANT.md](../04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md) -- rho_Lambda = m_e^4 * alpha^16 * G*^2
-- [SPEC_ENGINE.md](../../engine/SPEC_ENGINE.md) -- Tick cycle, selective damping, phase structure
+- [SPEC_ENGINE.md](../../../engine/SPEC_ENGINE.md) -- Tick cycle, selective damping, phase structure
 
 ---
 
@@ -253,7 +253,7 @@ The engine constant OMEGA_LAMBDA_CONJ = 2/3 should be understood as a **round-nu
 |----------|-----------------|
 | [DERIV_COSMOLOGICAL_CONSTANT.md](../04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md) | rho_Lambda formula, 16 DOF counting, Omega_Lambda derivation |
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Coupling term L-7, Rayleigh dissipation L-8 |
-| [SPEC_ENGINE.md](../../engine/SPEC_ENGINE.md) | Selective damping, tick cycle, phase structure |
+| [SPEC_ENGINE.md](../../../engine/SPEC_ENGINE.md) | Selective damping, tick cycle, phase structure |
 | [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) | Gravitational force from density gradient |
 | campaign_dark_sector.cpp | 8 verification tests (DS-1 through DS-8) |
 

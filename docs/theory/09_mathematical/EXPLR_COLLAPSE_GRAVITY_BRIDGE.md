@@ -38,7 +38,6 @@ A crucial subtlety: the factor type is **observer-dependent**. The Tolman relati
 
 **Depends on:**
 - [EXPLR_RELU_TYPE_TRANSITION.md](EXPLR_RELU_TYPE_TRANSITION.md) — Type III $\to$ Type I via Softplus $\beta$, RT dictionary
-- [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — $f(r) = 1 - r_s/r$, computational budget
 - [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — Same flux $J$ for QFT and GRT
 - [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) — $G^* = \varpi/\sqrt{\text{PF}}$, PF cancellation
 - [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) — Projection hierarchy $E(x) \to |x|^2 \to \Phi$
@@ -69,13 +68,13 @@ This transition occurs at a **single spacetime point** at the **moment of measur
 
 ### 1.2 Gravity as Spatial Crystallization
 
-From [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md), the Schwarzschild metric arises from computational budget saturation:
+The Schwarzschild metric arises from computational budget saturation:
 
 $$f(r) = 1 - \frac{r_s}{r} = 1 - \frac{\rho_{\text{info}}}{\rho_{\max}}}$$
 
 The availability factor $f$ measures what fraction of computational capacity remains after gravitational data processing. At the horizon ($r = r_s$), $f = 0$: the lattice is fully saturated, proper time stops, no further computation can occur.
 
-The proper time formula ([DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) Theorem 5.1):
+The proper time formula:
 
 $$\frac{d\tau}{dT_U} = \sqrt{\frac{f^2 - v^2}{f}}$$
 
@@ -216,7 +215,7 @@ The duality:
 
 **These are not contradictory** — they are two valid descriptions of the same system from different observer perspectives. The factor type is a property of the **observer-system coupling** (the sLoop), not of spacetime alone.
 
-**Connection to FTD:** This is precisely the sLoop principle from [CLAUDE.md](../../CLAUDE.md) §12.4: the observer is ontologically continuous with the observed. A local observer embedded in the near-horizon flux field experiences different algebraic structure than an asymptotic observer decoupled from the local thermal bath.
+**Connection to FTD:** This is precisely the sLoop principle from [CLAUDE.md](../../../CLAUDE.md) §12.4: the observer is ontologically continuous with the observed. A local observer embedded in the near-horizon flux field experiences different algebraic structure than an asymptotic observer decoupled from the local thermal bath.
 
 ---
 
@@ -483,7 +482,6 @@ These are not contradictory because the factor type is observer-dependent (§3.3
 | Document | Relevance |
 |----------|-----------|
 | [EXPLR_RELU_TYPE_TRANSITION.md](EXPLR_RELU_TYPE_TRANSITION.md) | RT dictionary, Softplus $\beta$, type descent chain, phase diagram |
-| [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | $f(r) = 1 - r_s/r$, computational budget, velocity amplification |
 | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Same flux $J$ for QFT and GRT, $T_{\mu\nu}$ via Noether |
 | [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) | $G^* = \varpi/\sqrt{\text{PF}}$, BH thermodynamics, PF cancellation |
 | [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy $E \to |\cdot|^2 \to \Phi$ |

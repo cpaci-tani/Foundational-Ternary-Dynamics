@@ -72,7 +72,7 @@ These four confirmations are *not* new FTD theorems. They cross-validate the FQC
 | Compatibility paper Proposition 5.2 | Weak compatibility is an *open* condition: persists under sufficiently small perturbations of recurrence parameters and curve coefficients, given nondegeneracy + threshold-margin assumptions | Methodological template for FTD-0143's perturbation-stability analysis. |
 | Compatibility paper Proposition 7.4 | For the depth-4 five-harmonic model, $\mathrm{Area}(\gamma_4) = 177\pi/400$ | Verified by `proof_fqcr_branch_value.py` at exact-rational + 50-digit-numerical levels. |
 
-These are theorem-grade in the trilogy. FTD documents them but does not adopt them as new spine theorems; the spine count remains 9.
+These are theorem-grade in the trilogy. FTD documents them but does not adopt them as new spine theorems; the spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0).
 
 ---
 
@@ -179,7 +179,7 @@ The trilogy's integration into FTD is deliberately minimal:
 | `REF_QCR_TRILOGY_BRIDGE.md` (this doc) | NEW | Single canonical reference for the trilogy's content and its correspondence to FTD constructs. |
 | `SPEC_FQCR.md` §3.3, §5 | Small additions | Cross-link to this bridge doc; note that compatibility paper Definition 2.2 $\kappa_N(t) = R_N(t)/(16 G_N^*)$ is the same $R_N(t)$. |
 | `DERIV_GSTAR_QUARTER_CONJUGACY.md` §5 | One-paragraph note | Curve-side bridge cross-ref. |
-| `LEDGER.md` | New row FTD-0144 | [STRUCTURAL CORRESPONDENCE] tag. Trilogy correspondence documented; spine count unchanged at 9; OT-1.7 / OT-1.8 unchanged. |
+| `LEDGER.md` | New row FTD-0144 | [STRUCTURAL CORRESPONDENCE] tag. Trilogy correspondence documented; spine count unchanged — nine numbered results (six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0); OT-1.7 / OT-1.8 unchanged. |
 | `META_INDEX.md` | New row | Discoverability. |
 | `scripts/proofs/proof_fqcr_branch_value.py` | NEW | Verifies depth-4 Area = $177\pi/400$ via two independent paths (rational arithmetic + numerical Green's-formula integration). |
 
@@ -206,7 +206,7 @@ To prevent overclaim, in line with the compatibility paper's §10 self-restraint
 - Does NOT identify the $6 = 2 \times 3$ sector structure with $N_c = 3$, three SM generations, or any other physical "3".
 - Does NOT promote any of compatibility-paper Conjectures 9.1–9.4 to FTD claim status.
 - Does NOT supply a derivation chain from the trilogy to the master quadratic's $\alpha^{-1} = x_+$ identification (FTD-0013 stays at [STRONGLY MOTIVATED CONJECTURE]).
-- Does NOT extend FTD's algebraic spine. The 9-theorem count is unchanged.
+- Does NOT extend FTD's algebraic spine. The spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0).
 - Does NOT provide an a-priori interpretation of the FQCR base point $t = 1$. Test 3 (running behaviour) still gates on that interpretation.
 - Does NOT execute Test 2 of the FQCR program (FTD-0143 (4,6;3,2) uniqueness scan). The compatibility paper's §8 protocols inform the methodology of Test 2 but do not constitute its execution.
 

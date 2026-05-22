@@ -405,7 +405,6 @@ Honest accounting of what is NOT derived in this document:
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) -- g_c = sqrt(alpha) derivation
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) -- Wave equation -> Maxwell, metric emergence
 - [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) -- Force hierarchy via G*
-- [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) -- Schwarzschild from lattice budget
 - [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) -- Master quadratic as bridge
 - [EXPLR_LOOP_GRID_DUALITY.md](../08_structural/EXPLR_LOOP_GRID_DUALITY.md) -- Two-layer ontology
 

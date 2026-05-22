@@ -679,7 +679,7 @@ $$R_{00} \approx -\frac{1}{2}\Box h_{00} \approx -\frac{1}{2}\nabla^2 \rho$$
 
 ## 14. Einstein Field Equations
 
-### 14.1 The Linearized Equations [THEOREM]
+### 14.1 The Linearized Equations [SELECTION — conditional on Conjecture 10.1]
 
 **Theorem 14.1:** The linearized Einstein equations follow from the flux wave equation.
 
@@ -693,7 +693,9 @@ where $\bar{h}_{\mu\nu} = h_{\mu\nu} - \frac{1}{2}\eta_{\mu\nu}h$ is the trace-r
 2. Metric perturbation: $h \sim J$
 3. Source term: $T_{\mu\nu}$ from flux conservation
 
-**Status:** [THEOREM] — Linearized correspondence established.
+**Status:** [SELECTION / CONDITIONAL] — *not* [THEOREM].
+
+> **[2026-05-21 correction — Step-0 graviton-provenance audit, LEDGER FTD-0189]** The original [THEOREM] tag overclaimed. This result is conditional on **Conjecture 10.1** (§10.1) — the rank-2 metric perturbation $h_{\mu\nu}$ is *posited*, not constructed from the substrate — and on **Gap 10.1** (§10.3) — its spin-2-bearing spatial components are explicitly not derived. The correspondence step "$h \sim J$" above maps a rank-2 tensor to a rank-1 vector; it is an identification, not a derivation. Honest tag: [SELECTION], conditional on Conjecture 10.1. Whether the FTD substrate carries a derived massless spin-2 mode is [OPEN] — Frontier 4; see `docs/theory/10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`.
 
 ### 14.2 The 8πG Coefficient [SELECTION]
 
@@ -769,7 +771,7 @@ This is a wave equation with solutions propagating at $c$.
 
 **Status:** [THEOREM]
 
-### 15.3 FTD Correspondence [THEOREM]
+### 15.3 FTD Correspondence [CONJECTURE]
 
 **Theorem 15.3:** Gravitational waves correspond to transverse flux modes.
 
@@ -779,7 +781,9 @@ This is a wave equation with solutions propagating at $c$.
 3. Remaining: 2 transverse modes.
 4. These correspond to the 2 GW polarizations.
 
-**Status:** [THEOREM]
+**Status:** [CONJECTURE] — *not* [THEOREM].
+
+> **[2026-05-21 correction — Step-0 graviton-provenance audit, LEDGER FTD-0189]** Step 3→4 is a representation-content error. The 2 transverse modes of the **vector** flux field $J$ carry helicity $\pm1$ — they are **spin-1** (this is the photon). The 2 graviton polarizations carry helicity $\pm2$ — **spin-2**. Matching the *count* (2 ↔ 2) is necessary but not sufficient: a photon and a graviton both have 2 polarizations. The distinguishing invariant — the transformation law under rotation about the propagation axis ($e^{\pm i\theta}$ vs $e^{\pm 2i\theta}$) — is not checked. As stated the claim identifies spin-1 with spin-2. Honest tag: [CONJECTURE]. A genuine derivation of an emergent spin-2 substrate mode is [OPEN] — Frontier 4; see `docs/theory/10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`.
 
 ### 15.4 Speed of Gravitational Waves [VERIFIED]
 
@@ -883,13 +887,13 @@ This is a wave equation with solutions propagating at $c$.
 | Equivalence principle | §9 | [THEOREM] + [VERIFIED] | High |
 | Weak field metric | §10 | [THEOREM] | High |
 | Schwarzschild $g_{00}$ | §11 | [THEOREM] | High |
-| Full Schwarzschild | §11 | [THEOREM] + [SELECTION] | High — See [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) |
+| Full Schwarzschild | §11 | [THEOREM] + [SELECTION] | High |
 | Weak field geodesics | §12 | [THEOREM] | High |
 | Strong field geodesics | §12 | [GAP] | N/A |
 | Linearized curvature | §13 | [THEOREM] | Medium |
-| Linearized Einstein | §14 | [THEOREM] | Medium |
+| Linearized Einstein | §14 | [SELECTION — conditional on Conjecture 10.1] (FTD-0189) | Medium |
 | Full Einstein | §14 | [GAP] | N/A |
-| Gravitational waves | §15 | [THEOREM] | High |
+| Gravitational waves | §15 | §15.1–15.2 [THEOREM] *given* $h_{\mu\nu}$; §15.3 FTD correspondence [CONJECTURE] (FTD-0189) | High |
 | Diffeomorphism | §16 | [SELECTION] | Medium |
 | Relational Lorentz | §17 | [SELECTION] | Medium |
 
@@ -897,10 +901,10 @@ This is a wave equation with solutions propagating at $c$.
 
 | Gap | Description | Priority | Research Direction |
 |-----|-------------|----------|-------------------|
-| **GAP-1** | Full Schwarzschild metric ($g_{rr}$) | **RESOLVED** | See [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — $g_{rr} = -1/f$ from velocity cost amplification |
+| **GAP-1** | Full Schwarzschild metric ($g_{rr}$) | **RESOLVED** | $g_{rr} = -1/f$ from velocity cost amplification |
 | **GAP-2** | Nonlinear Einstein equations | HIGH | Lattice self-consistency |
 | **GAP-3** | $T_{\mu\nu}$ construction | **RESOLVED** | See [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) — Noether's theorem on flux Lagrangian |
-| **GAP-4** | Strong field geodesics | MEDIUM | Now possible — GAP-1 resolved. See [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) |
+| **GAP-4** | Strong field geodesics | MEDIUM | Now possible — GAP-1 resolved |
 
 ### 18.3 What FTD Achieves
 
@@ -915,7 +919,7 @@ This is a wave equation with solutions propagating at $c$.
 - Effective metric concept
 
 **Not derived:**
-- Full Schwarzschild metric — **RESOLVED**: See [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md)
+- Full Schwarzschild metric — **RESOLVED**
 - Nonlinear Einstein equations
 - Kerr metric
 - Black hole thermodynamics

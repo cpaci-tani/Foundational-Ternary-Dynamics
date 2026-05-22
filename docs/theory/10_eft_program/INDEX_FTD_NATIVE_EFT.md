@@ -75,7 +75,7 @@ The active structure. This is the single largest category — the FTD-native flo
 | `DERIV_FTD_NATIVE_SCALE_FLOW.md` | 2026-04-22 | [THEOREM] | Scale-invariance theorem for native multiscale flow; blocking transformation self-similar. | Native RG closure |
 | `DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` | 2026-04-22 | [CLOSED NEGATIVE]/[DEFINITION] | Unit-derivation attempt closed; source-flux coupling is DEFINITION, not measured quantity. | architecture |
 | `DERIV_PROJECTED_EFT_MATTER_COUPLING.md` | 2026-04-22 | [PARTIAL] | Matter coupling under projection; EFT matter sector bridge. | Projected EFT route |
-| `DERIV_BETA_FUNCTION_MEASURED.md` | 2026-04-19 | [MEASUREMENT] | Screened two-charge potential at all L; qualitative RG match (sign correct), quantitative gap 2–3× (later updated to ~80–160× in projection framing). | Phase 2 EFT campaign |
+| `archive/phase_0_f_campaign/DERIV_BETA_FUNCTION_MEASURED.md` | 2026-04-19 | [MEASUREMENT] | Screened two-charge potential at all L; qualitative RG match (sign correct), quantitative gap 2–3× (later updated to ~80–160× in projection framing). | Phase 2 EFT campaign |
 
 ---
 
@@ -94,11 +94,11 @@ Empirical results. Every entry corresponds to a CTest or campaign output.
 | `ANALYSIS_TOPOLOGICAL_OBSERVABLES.md` | 2026-04-27 | [PARTIAL] | Four sub-experiments (Wilson loop, flux tube, monopole, instanton) match pre-reg grid. | PROTOCOL_TOPOLOGICAL_OBSERVABLES |
 | `MEASUREMENT_GATE_D_T_PERTURBATION.md` | 2026-04-30 | [MEASURED] | Gate D PASS for theorem-grade diagonals; T-perturbation response validated. | PROTOCOL_S_EFF_NONLINEAR_v2_DESIGN |
 | `MEASUREMENT_S_EFF_NONLINEAR_v1_partial.md` | 2026-04-29 | [PARTIAL] | Gates B & C PASS; Gate A subthreshold pending larger ensemble. | s_eff_nonlinear v1 campaign |
-| `DERIV_DAY2_CAMPAIGN.md` | 2026-04-19 | [MEASUREMENT] | Four threads converge: matched-stencil Poisson 1e-8, EWSB sharp, spectroscopy clean. | Day 2 EFT measurements |
-| `DERIV_DYNAMICAL_SM_EMERGENCE.md` | 2026-04-19 | [MEASUREMENT] | Phase 4 closures: 4A EWSB null, 4B three-gen null, 4C decay-chain null. | Phase 4 |
-| `DERIV_GAP_CLOSURE.md` | 2026-04-19 | [MEASUREMENT] | EFT Recovery Phase 1–3 gaps closed (continuum limit, Lorentz recovery, Ward). | EFT framework |
-| `DERIV_OPERATOR_SPECTRUM.md` | 2026-04-19 | [MEASUREMENT] | Operator spectrum classification from native RG flow. **R3b extends this.** | EFT Pillar 5 |
-| `DERIV_SYMMETRY_RECOVERY.md` | 2026-04-19 | [MEASUREMENT] | Symmetry recovery under blocking; continuum symmetry structure. | EFT Pillar 2 |
+| `archive/phase_0_f_campaign/DERIV_DAY2_CAMPAIGN.md` | 2026-04-19 | [MEASUREMENT] | Four threads converge: matched-stencil Poisson 1e-8, EWSB sharp, spectroscopy clean. | Day 2 EFT measurements |
+| `archive/phase_0_f_campaign/DERIV_DYNAMICAL_SM_EMERGENCE.md` | 2026-04-19 | [MEASUREMENT] | Phase 4 closures: 4A EWSB null, 4B three-gen null, 4C decay-chain null. | Phase 4 |
+| `archive/phase_0_f_campaign/DERIV_GAP_CLOSURE.md` | 2026-04-19 | [MEASUREMENT] | EFT Recovery Phase 1–3 gaps closed (continuum limit, Lorentz recovery, Ward). | EFT framework |
+| `archive/phase_0_f_campaign/DERIV_OPERATOR_SPECTRUM.md` | 2026-04-19 | [MEASUREMENT] | Operator spectrum classification from native RG flow. **R3b extends this.** | EFT Pillar 5 |
+| `archive/phase_0_f_campaign/DERIV_SYMMETRY_RECOVERY.md` | 2026-04-19 | [MEASUREMENT] | Symmetry recovery under blocking; continuum symmetry structure. | EFT Pillar 2 |
 
 ---
 
@@ -108,7 +108,7 @@ Empirical results. Every entry corresponds to a CTest or campaign output.
 |---|---|---|---|---|
 | `AUDIT_ALPHA_EXTRACTION.md` | 2026-04-19 | [AUDIT] | Line-by-line audit of Phase F α extraction; resolves 1.8× residual as lattice-Coulomb geometry. | DERIV_EMERGENT_COULOMB_GEOMETRIC |
 | `AUDIT_ALPHA_SCALING_L256.md` | 2026-04-20 | [MEASURED] | T=0 α_eff scaling clean to L=256; thermal α extraction untractable. | Langevin-GPU validation |
-| `AUDIT_BCC_SUBLATTICE_SPECTRUM.md` | 2026-04-27 | [CLOSED NEGATIVE] | Mechanism C BCC ratio misses prediction 45.31 by ≥10σ at L∈{24,32,48}. | `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` |
+| `archive/closed_negative/AUDIT_BCC_SUBLATTICE_SPECTRUM.md` | 2026-04-27 | [CLOSED NEGATIVE] | Mechanism C BCC ratio misses prediction 45.31 by ≥10σ at L∈{24,32,48}. | `archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` |
 | `AUDIT_CONTINUUM_LIMIT.md` | 2026-04-27 | [PARTIAL] | Operator-mixing matrix convergence at L∈{16,32,64}; cond(S), eigenvalue positivity, RG semigroup tracked. | FTD-0098/0099 |
 | `AUDIT_EFT_BCC_ORTHOGONALITY.md` | 2026-04-20 | [AUDIT] | Link 8 BCC-orthogonality does not invalidate existing claims. | AUDIT_LINK8_CLOSURE |
 | `AUDIT_FTD0105_MATH_CHECK.md` | 2026-04-27 | [AUDIT] | Math audit of lemniscatic-replacement; holds with two corrigenda. | ANALYSIS_LEMNISCATIC_REPLACEMENT |
@@ -118,7 +118,7 @@ Empirical results. Every entry corresponds to a CTest or campaign output.
 | `AUDIT_HEEGNER_TOWER_RIGIDITY.md` | 2026-05-02 | [COMPLETE] | Canonical FTD case NOT unique under rational-multiplier criterion (1 vs 21 matches); CM Uniqueness bifurcates by methodology. | SPEC_ALGEBRAIC_SPINE Theorem 3 |
 | `AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` | 2026-05-01 | [COMPLETE] | Canonical Cayley-Dickson 5-harmonic curve found in ~4.3% of natural alternatives; retagged [SELECTION]. | PREREG_LEMNISCATE_ALPHA_RIGIDITY |
 | `AUDIT_LEMNISCATIC_SPHERE_REPLACEMENT.md` | 2026-04-27 | [HYPOTHESIS] | Structured catalog of Einstein + thermodynamics formulas; ϖ-native candidate matrix; engine arbitrates. | (awaiting PROTOCOL/ANALYSIS) |
-| `AUDIT_LINK8_CLOSURE.md` | 2026-04-20 | [CLOSED NEGATIVE] | RG-flow interpretation of master quadratic closed; coupling flow does NOT satisfy characteristic equation (FTD-0050). | test_link8_kadanoff |
+| `archive/closed_negative/AUDIT_LINK8_CLOSURE.md` | 2026-04-20 | [CLOSED NEGATIVE] | RG-flow interpretation of master quadratic closed; coupling flow does NOT satisfy characteristic equation (FTD-0050). | test_link8_kadanoff |
 | `AUDIT_LORENTZ_ANISOTROPY.md` | 2026-04-25 | [MEASURED] | Anisotropy exponent $p=4.0008\pm0.0006$ ($R^2=1.0$); rotation-breaking operator dimension 7, Wilsonian-irrelevant. | EFT-Recovery Pillars 1, 3 |
 | `AUDIT_OPERATOR_SPECTRUM.md` | 2026-04-25 | [PARTIAL] | Relevant/marginal/irrelevant classification NOT recovered in propagating-pulse; partial in confinement-era. | STATUS_EFT_CHECKLIST §5 |
 | `AUDIT_STRUCTURE2_WARD_VALIDATION.md` | 2026-04-22 | [MEASURED] | Ward-valid Structure-2 two-U(1) BCC scalar loop does NOT reproduce Structure-1 closure. | gpu_plan_priority4 |
