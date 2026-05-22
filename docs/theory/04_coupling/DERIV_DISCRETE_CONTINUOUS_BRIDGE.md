@@ -379,7 +379,6 @@ The complete bridge path is composed entirely of [THEOREM]-level steps, with two
 
 | Document | Sections Referenced | Key Claims Used |
 |----------|-------------------|-----------------|
-| [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | Parts V, VI, XIV, XIX | MQ-7, MQ-12, MQ-13, MQ-22 |
 | [DERIV_GSTAR_PF_BRIDGE.md](DERIV_GSTAR_PF_BRIDGE.md) | §§1-2, §8 | PF-1, PF-7 |
 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | §§3-4 | Historical constant atlas; minimal generating set is definitional/derived, not the canonical α chain |
 | [DERIV_ALPHA_PRECISION_FORMULA.md](DERIV_ALPHA_PRECISION_FORMULA.md) | Parts I-III | ALPHAP-1 through ALPHAP-7 |

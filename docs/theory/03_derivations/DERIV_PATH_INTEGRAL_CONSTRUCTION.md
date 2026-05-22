@@ -14,11 +14,7 @@
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- The FTD Lagrangian (Born-Infeld render-bridge action)
 - [DERIV_VARIATIONAL_PROOF.md](DERIV_VARIATIONAL_PROOF.md) -- delta-S = 0 reproduces all 59 update rules
 - [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) -- Lattice propagator G_L(k) = 1/lambda(k), vertex g_c = sqrt(alpha), Ward identity
-- [DERIV_LATTICE_LOOP_CORRECTIONS.md](../archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md) -- One-loop vacuum polarization, self-energy, vertex correction
-- [DERIV_LATTICE_SELF_ENERGY.md](../archive/ARCH_DERIV_LATTICE_SELF_ENERGY.md) -- Electron self-energy on the lattice
-- [DERIV_LATTICE_VERTEX_CORRECTION.md](../archive/ARCH_DERIV_LATTICE_VERTEX_CORRECTION.md) -- One-loop vertex correction
 - [DERIV_HIGGS_FROM_MANIFESTATION.md](DERIV_HIGGS_FROM_MANIFESTATION.md) -- Phase transition at K_B, Higgs as order parameter
-- [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) -- Schwarzschild metric from lattice budget
 - [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) -- KMS states verified at beta = pi
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) -- g_c = sqrt(alpha) derivation
 
@@ -592,11 +588,7 @@ The KMS connection (Section 6) is [THEOREM] for the standard results (Gibbs stat
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | The complete FTD Lagrangian | Starting point for Euclidean action $S_E$ |
 | [DERIV_VARIATIONAL_PROOF.md](DERIV_VARIATIONAL_PROOF.md) | $\delta S = 0$ reproduces all update rules | Ensures $S_E$ is the correct action for the simulation |
 | [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) | Lattice propagator, vertex, Ward identity | Recovered as functional derivatives of $Z$ (Section 4) |
-| [DERIV_LATTICE_LOOP_CORRECTIONS.md](../archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md) | One-loop vacuum polarization | Identified as $\Gamma^{(2)}_{\text{photon}}$ at one loop (Section 3.4) |
-| [DERIV_LATTICE_SELF_ENERGY.md](../archive/ARCH_DERIV_LATTICE_SELF_ENERGY.md) | Electron self-energy | Identified as $\Gamma^{(2)}_{\text{fermion}}$ at one loop (Section 3.4) |
-| [DERIV_LATTICE_VERTEX_CORRECTION.md](../archive/ARCH_DERIV_LATTICE_VERTEX_CORRECTION.md) | One-loop vertex correction | Identified as $\Gamma^{(3)}$ at one loop (Section 3.4) |
 | [DERIV_HIGGS_FROM_MANIFESTATION.md](DERIV_HIGGS_FROM_MANIFESTATION.md) | Phase transition at $K_B$, Higgs as order parameter | Phase transition in $Z(\beta)$ (Section 5.4) |
-| [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | Schwarzschild metric from lattice budget | Hawking temperature conjecture (Section 6.5) |
 | [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | KMS verification at $\beta = \pi$, modular flow program | KMS confirmation (Section 6.2), modular Hamiltonian (Section 6.3) |
 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | $g_c = \sqrt{\alpha}$ derivation | Vertex factor in Feynman rules (Section 4.2) |
 | [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) | Lattice Green's functions, dispersion relation | Free propagator structure (Section 2.3) |

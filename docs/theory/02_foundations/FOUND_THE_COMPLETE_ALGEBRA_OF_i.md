@@ -769,7 +769,6 @@ This document extends and deepens:
 - **Related:** [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md)
 - **Related:** [DERIV_OCTONIONIC_STRUCTURE.md](../05_particles/DERIV_OCTONIONIC_STRUCTURE.md)
 - **Related:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
-- **Related:** [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md)
 - **Verification:** [verify_complete_algebra_of_i.py](../../scripts/verification/verify_complete_algebra_of_i.py)
 
 ---

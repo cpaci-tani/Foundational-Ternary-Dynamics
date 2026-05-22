@@ -17,6 +17,8 @@ $$i^2 + a^2 + b^2 = 0 \tag{*}$$
 
 — simultaneously encodes the Born rule, the Pythagorean theorem, the unit circle, the Riemann sphere, the null cone of (1+2)D Minkowski space, and the Wick rotation between Euclidean and Lorentzian signatures. The quadratic form of the Born rule is not arbitrary: it is the unique norm compatible with the null-cone geometry that i² = −1 creates.
 
+> **Epistemic scope [LEDGER FTD-0187].** This document addresses the *form* question — why the Born functional is the quadratic norm |ψ|² rather than |ψ| or |ψ|⁴ — and contributes a structural-uniqueness argument (the null-cone norm). That places the |ψ|²-*form* at `[SELECTION]` grade. It does **not** address, and does not derive, the load-bearing dynamical step *probability = normalized energy density* (target T1c), which remains `[OPEN]`. The geometric facts in Part II (unit circle, Riemann sphere, Wick rotation) are genuine `[THEOREM]`s of geometry; their *identification* with the Born rule is the [SELECTION]-grade interpretive overlay.
+
 ---
 
 ## Part I: The Equation

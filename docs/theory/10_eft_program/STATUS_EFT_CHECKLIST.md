@@ -256,7 +256,7 @@ Per the user's 2026-04-26 reorientation toward "use the engine as a primary inst
 
 **FTD-0094 (L2 candidate identity 2·m_e/α = 16G*²)** terminally demoted to [PARAMETRIC] per pre-registered FTD-0093 closure criterion. FTD-0096 (μ-from-ℓ_P missing arrow) remains [OPEN]; the demotion is conditional on FTD-0096 staying open.
 
-**Status of the algebraic spine (refreshed 2026-05-05; spine count of 9 theorems unchanged from `SPEC_ALGEBRAIC_SPINE.md`):**
+**Status of the algebraic spine (refreshed 2026-05-05; nine numbered results — six theorem-grade + three honestly-tiered — per `SPEC_ALGEBRAIC_SPINE.md` §0):**
 - FTD-0001 G* algebraic identity — [THEOREM]
 - FTD-0013 master quadratic dual prediction (x₊ ≈ 1/α, x₋ ≈ N_c) — [STRONGLY MOTIVATED CONJECTURE]
 - FTD-0014 master quadratic algebraic identity x² − 16G*²x + 16G*³ = 0 — [THEOREM]

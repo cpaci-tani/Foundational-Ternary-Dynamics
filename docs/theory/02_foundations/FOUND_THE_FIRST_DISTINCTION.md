@@ -231,7 +231,6 @@ The current treatment replaces all of that with a single clean axiom ("i exists"
 - **Primary reference:** [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md) -- The 13-step chain from i to alpha
 - **Extended from:** [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md) -- Earlier treatment (partially superseded)
 - **Algebra of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) -- Perpendicularity theorem, Cayley-Dickson, CM theory
-- **Lemniscate geometry:** [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **Number theory:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE.md](FOUND_SPACETIME_EMERGENCE.md)
 

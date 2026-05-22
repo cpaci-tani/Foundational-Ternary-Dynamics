@@ -3,11 +3,11 @@
 **Tag:** [REFERENCE] / canonical research-questions queue (replaces tier-aligned CHECKLIST)
 **Date:** 2026-05-08
 **Version:** 1.0
-**Replaces:** [`CHECKLIST_MATH_COMPLETE.md`](../archive/ARCH_CHECKLIST_MATH_COMPLETE.md) (now archived; tier-aligned organisation preserved there for provenance)
+**Replaces:** `CHECKLIST_MATH_COMPLETE.md` (now archived; tier-aligned organisation preserved there for provenance)
 **LEDGER:** FTD-0146 [SYNTHESIS] — sector-organised consolidation; introduces no new theorems
 **Companion docs:**
 - [`SPEC_DOCTRINE_LEDGER.md`](SPEC_DOCTRINE_LEDGER.md) — single-page status map (closed + open)
-- [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — 9-theorem canonical reference
+- [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical algebraic-spine reference (nine numbered results: six theorem-grade + three honestly-tiered, see §0)
 - [`SPEC_FQCR.md`](SPEC_FQCR.md) — FQCR Models I–V
 - [`SPEC_MATH_FIRST_ONTOLOGY.md`](SPEC_MATH_FIRST_ONTOLOGY.md) — primitives -> invariants -> readouts -> physics ordering principle
 - [`SPEC_ALPHA_READOUT_CONTRACT.md`](SPEC_ALPHA_READOUT_CONTRACT.md) — MC-T4.3 closure contract / "earn the map" criteria
@@ -62,9 +62,9 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 # §1 · Pure mathematics / Algebraic spine
 
-**Scope:** Number-theoretic and algebraic content of FTD's 9-theorem spine; independent of physics interpretation.
+**Scope:** Number-theoretic and algebraic content of FTD's algebraic spine (nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0); independent of physics interpretation.
 
-**Status snapshot:** Spine count 9. Tier I 5/5 closed (2026-05-02). Tier II 3/4 closed; 1 structural theorem [OPEN]. 1 pre-registered scan awaiting execution. 1 small closed-form gap.
+**Status snapshot:** Spine: nine numbered results — six theorem-grade + three honestly-tiered (see `SPEC_ALGEBRAIC_SPINE.md` §0). Tier I 5/5 closed (2026-05-02). Tier II 3/4 closed; 1 structural theorem [OPEN]. 1 pre-registered scan awaiting execution. 1 small closed-form gap.
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
@@ -87,6 +87,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
 | **MC-T4.3** | **Operational alpha-readout mechanism (CENTRAL).** A closure proof would have to derive the physical identification `x_+ = 1/alpha` from FTD structure rather than insert it. All natural action-level routes [CLOSED NEGATIVE]. `SPEC_ALPHA_READOUT_CONTRACT.md` now formalizes the closure contract and four candidate classes (boundary-condition / observable-selection / quantization-readout / discrete-native measurement); ARC-B1 observable-selection is the first proof obligation | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
+| **TEST4-GEN** | **Alpha arithmetic generativity test.** Pre-registers the Balmer-to-Bohr gate: the same lemniscatic CM/FQCR rigidity that produces the alpha candidate must generate one additional independent physical dimensionless observable or relation with no new tuned freedom. `x_- ≈ N_c` does not count as the prize; target declaration must precede numerical comparison. | [PRE-REGISTRATION] | D-W | MC-T4.3; `PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md` |
 | §7-bivector | Lorentzian signature from bivector duality on FTD lattice. Requires non-site-local Clifford construction compatible with FTD-0073 (site-local Clifford [CLOSED NEGATIVE] under pointwise-threshold dynamics) | [OPEN] | RP | — |
 | §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac (currently [OPEN — IMPORTED scaffold]) | [OPEN] | M | §7-bivector |
 | §7-loop | One-loop `a^{(1)} = α_FQCR/(2π)`. Requires `α_FQCR ↔ α` physical identification (= FTD-0013 [SMC]) | [OPEN] | RP | MC-T4.3 |

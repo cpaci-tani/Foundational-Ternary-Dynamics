@@ -97,7 +97,7 @@ All three are monotonic in $t$ (no sign changes in $dx_+/dt$). Multiplicative is
 
 At $t = 1$, $x_+(N)$ for the additive law:
 
-| $N$ | $G_N^*$ | $x_+(N, 1)$ | Gap to CODATA $\alpha^{-1} = 137.0359990840$ |
+| $N$ | $G_N^*$ | $x_+(N, 1)$ | Gap to CODATA $\alpha^{-1} = 137.0359991770$ |
 |---:|---:|---:|---:|
 | 16 | 2.95883500 | 137.0509770 | $+109.30$ ppm |
 | 64 | 2.95868606 | 137.0370242 | $+7.48$ ppm |

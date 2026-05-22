@@ -10,7 +10,7 @@
 
 ## 0 · The question
 
-Given everything established in the project — 9 algebraic-spine theorems, the Maxwell-exploit closure (FTD-0113 through FTD-0120), Phase A/B/C of the FTD-0110 closure attempt, the canonical-reference G\* typo fix — **is there a logical path that DERIVES α (the fine-structure constant) from FTD axioms?**
+Given everything established in the project — the algebraic spine (nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0), the Maxwell-exploit closure (FTD-0113 through FTD-0120), Phase A/B/C of the FTD-0110 closure attempt, the canonical-reference G\* typo fix — **is there a logical path that DERIVES α (the fine-structure constant) from FTD axioms?**
 
 This document records an exhaustive search. The honest verdict is **no new path exists** beyond what's already in the LEDGER. The existing path through the algebraic spine remains [STRONGLY MOTIVATED CONJECTURE] (1.26 ppm match), not a derivation.
 
@@ -123,7 +123,7 @@ None has succeeded. The spine path remains [STRONGLY MOTIVATED CONJECTURE].
 
 The existing path (algebraic spine + empirical identification) is the only path. It produces α = 1/137.036 conditional on the conjecture x_+ = 1/α, which has 1.26 ppm strength but is not a derivation.
 
-The 9 spine theorems collectively give a *highly constrained mathematical object* (the master quadratic with x_+ = 137.036), and this object has clean structural properties (Watson identity, π-free in Q(G\*), harmonic invariant tower, Hodge duality, retarded Phase G, etc.). But none of these properties **forces** the identification x_+ = 1/α — they're all properties of x_+ AS A MATHEMATICAL NUMBER, not properties that elevate the identification to theorem-grade.
+The nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) collectively give a *highly constrained mathematical object* (the master quadratic with x_+ = 137.036), and this object has clean structural properties (Watson identity, π-free in Q(G\*), harmonic invariant tower, Hodge duality, retarded Phase G, etc.). But none of these properties **forces** the identification x_+ = 1/α — they're all properties of x_+ AS A MATHEMATICAL NUMBER, not properties that elevate the identification to theorem-grade.
 
 ### 4.1 · What this exploration rules out
 
@@ -294,7 +294,7 @@ The framework's strongest external move remains **Paper A**: peer-reviewed publi
 
 ## 8 · Single-line summary
 
-**With the 9 algebraic-spine theorems, the Maxwell-exploit thread
+**With the algebraic spine (nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0), the Maxwell-exploit thread
 (FTD-0113-0120), the FTD-0110 closure-attempt artifacts, and the
 post-FTD-0117 canonical references all in clean state, no NEW logical
 path to deriving α emerges from algebraic, logarithmic, structural,

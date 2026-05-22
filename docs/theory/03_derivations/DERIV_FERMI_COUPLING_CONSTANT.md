@@ -235,7 +235,7 @@ The 1.3% error arises from the compounding of errors in $G_F$ (0.13%) and $m_\mu
 |----------|----------------|
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Remove $G_F$ from "External inputs required" list |
 | [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | Reclassify $G_F$ from external to derived; update counts |
-| [README.md](../../README.md) | Update epistemic notice: $G_F$ no longer external |
+| [README.md](../../../README.md) | Update epistemic notice: $G_F$ no longer external |
 | [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md) | Add GF-1 through GF-7 |
 
 ## 6.3 Remaining External Input

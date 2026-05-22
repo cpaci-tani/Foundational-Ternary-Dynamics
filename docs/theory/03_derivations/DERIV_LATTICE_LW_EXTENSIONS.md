@@ -385,8 +385,10 @@ at appropriate engine precision floors.
 
 This document closes Q5/Q6/Q7/Q8 of the Maxwell-exploit thread. Filed
 as **FTD-0120** at the [DERIVED] tag, subsidiary to FTD-0113/FTD-0114/
-FTD-0115. Spine count remains 9 (no new spine theorem; this is a closure
-of follow-up sub-questions).
+FTD-0115. No new spine theorem; the spine count is unchanged — nine
+numbered results, six theorem-grade + three honestly-tiered (see
+`SPEC_ALGEBRAIC_SPINE.md` §0). This is a closure of follow-up
+sub-questions.
 
 After this document, the Maxwell-exploit thread has **fully closed all
 eight original sub-questions** Q1-Q8:
@@ -422,8 +424,10 @@ Path A Paper A draft (publication target).
   bound-state LW radiation are all at lattice-wavelength scale; under
   the `a_phys ≡ ℓ_P` calibration, these are at Planck wavelengths and
   far below any laboratory detection threshold.
-- **NOT a new spine theorem.** Spine count remains 9; FTD-0120 is a
-  closure of follow-up sub-questions, not a new structural theorem.
+- **NOT a new spine theorem.** The spine count is unchanged — nine
+  numbered results, six theorem-grade + three honestly-tiered (see
+  `SPEC_ALGEBRAIC_SPINE.md` §0); FTD-0120 is a closure of follow-up
+  sub-questions, not a new structural theorem.
 - **NOT a re-derivation** of FTD-0113 / FTD-0114 / FTD-0115. Those
   remain the canonical references for the static + retarded + Bianchi
   + uniform-motion structure.

@@ -1,8 +1,8 @@
-# Foundational Ternary Dynamics: The Complete Specification
+# Foundational Ternary Dynamics: Framework Specification
 
 ## A Principled Framework for Universe Simulation
 
-**Document Classification:** Authoritative Theoretical Specification (Single Source of Truth)
+**Document Classification:** Framework overview / readable orientation — **not** a status authority (defers to the canonical hierarchy in [`docs/theory/META_STRUCTURE.md`](theory/META_STRUCTURE.md))
 **Version:** 5.30 (April 11, 2026) — **STALE TAGS NOTICE** (April 19, 2026; supplemental 2026-04-28)
 **Status (post-audit, 2026-04-19; supplemental 2026-04-28):** ~5 firm [THEOREM]s + ~8 [STRONGLY MOTIVATED CONJECTURE]s + 1 [DERIVED at linear level] (FTD-0110 ¼ coefficient, NEW 2026-04-28) + ~10 [STRUCTURALLY MOTIVATED PARAMETRIC] + remainder [PARAMETRIC] / [OPEN]
 **Supersedes:** CLAUDE.md (v5.17), docs/internal/SPEC_CLAUDE.md (v5.24), SPEC_FTD_FORMAL.md, SPEC_THE_COMPLETE_PROOF_RIGOROUS.md
@@ -23,7 +23,7 @@
 >
 > An editorial pass to rewrite this document in line with the April 19 audits is queued as Option 4 in WHERE_WE_LEFT_OFF.md §3.
 
-> **This is the single authoritative specification for FTD.** All other documents derive from or reference this one. For the C++ engine implementation, see [engine/SPEC_ENGINE.md](../engine/SPEC_ENGINE.md). For the theory document library, see [theory/META_INDEX.md](theory/META_INDEX.md).
+> **This document is a readable framework overview, not a status authority.** For the epistemic status of any claim, the canonical sources are [`LEDGER.md`](theory/07_assessment/LEDGER.md) (per-claim tags) and [`TRACKER_ONTIC_TRUTH.md`](theory/07_assessment/TRACKER_ONTIC_TRUTH.md) (truth tiers); the precedence of all status-bearing documents is fixed in [`theory/META_STRUCTURE.md`](theory/META_STRUCTURE.md) § Canonical Hierarchy. Where this document's body and a canonical source disagree, the canonical source wins and this document is the drift to fix. For the C++ engine implementation, see [engine/SPEC_ENGINE.md](../engine/SPEC_ENGINE.md). For the theory document library, see [theory/META_INDEX.md](theory/META_INDEX.md).
 
 **Editorial note (2026):** The publication-ready narrative and epistemic taxonomy live in `dissemination/manuscript/`. This file uses occasional shorthand (e.g., "derived", "resolved", "first principles") to mean "derived within the stated FTD postulates/constraints" or "implemented and validated in simulation," not a claim of empirical establishment.
 
@@ -44,8 +44,9 @@
 > - **Inflation DERIVED**: n_s = 0.966, r = 0.022 (compatible with Planck)
 > - **Baryogenesis DERIVED**: η ~ 10⁻¹⁰ from CP violation + Sakharov conditions
 > - **Neutrinos COMPLETE**: Seesaw mechanism with M_R from framework integers
+> - **GR / inflation / baryogenesis / neutrino items above — RECLASSIFIED (2026-04-19 audit)**: these are **[PARAMETRIC]** insertions — standard physics formulas (the Einstein equations, slow-roll inflation, Sakharov/CP, the seesaw) populated with FTD constants — **not derivations from the FTD postulates**. The "COMPLETE" / "DERIVED" headings predate the audit and are retained only as historical version markers. See `docs/theory/07_assessment/LEDGER.md` for live per-claim tags. Substrate gravity in particular is [CLOSED NEGATIVE] (FTD-0131); FTD strong-field gravity (Schwarzschild / Kerr) is imported from GR, not substrate-derived (FTD-0184).
 >
-> See [FTD_REFERENCE.md](docs/theory/01_reference/SPEC_FTD_REFERENCE.md) for complete reference and [CHANGELOG.md](CHANGELOG.md) for version history.
+> See [FTD_REFERENCE.md](theory/01_reference/SPEC_FTD_REFERENCE.md) for complete reference and [CHANGELOG.md](../CHANGELOG.md) for version history.
 
 > **Major Update (v5.13-5.16)**: Extended ontological hierarchy (Levels -3 to 12), emergence of i, dimensional emergence (XY vs X+Y), and documentation consolidation. See docs/theory/ for theory documents.
 
@@ -55,7 +56,7 @@
 > - **~50+ External Physics**: Standard Model mechanisms used without derivation (Fermi theory, HQET, ChPT)
 > - **~3-5 Explicit Inputs**: M_Planck, G_F, Λ_QCD, decay constants
 >
-> See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) for honest breakdown.
+> See [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) for honest breakdown.
 
 ---
 
@@ -72,7 +73,7 @@ Key achievements within the framework (with several items representing proposed 
 - **Action principle**: S[s,J] yielding the update rules via δS = 0 (within the model)
 - **Hilbert space**: quantum-style formalism constructed from flux field complexification
 - **Born rule**: several derivations/motivations collected (threshold crossing, conservation, max entropy, Gleason-style)
-- **G\***: a proposed derivation chain via elliptic structure + self-consistency + CM selection — see [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](docs/theory/archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
+- **G\***: a proposed derivation chain via elliptic structure + self-consistency + CM selection
 - **Bell locality**: Pure lattice gives S≤2 (as expected for local deterministic substrate); QM correlations S>2 understood as aggregate statistical behavior
 - **Continuum limit**: a correspondence argument relating FTD to Maxwell + Schrödinger as lattice spacing → 0
 - **Spinor structure**: Fermi statistics from frame bundle topology π₁(SO(3)) = ℤ₂
@@ -83,10 +84,10 @@ Key achievements within the framework (with several items representing proposed 
 - **phi³ exact EFT**: Cubic potential expansion terminates exactly; λ₃ = 1/3 = 1/D universal; UV-complete in field space
 - **One-loop lattice α**: Structure-1 SC scalar-EFT tadpole with a = 2/D gives x₊ = 137.036000 (9.6 ppb from NIST, 99.2% gap closure) within that scheme. GPU audits now mark this as scheme-conditional; a Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce the ppb closure.
 - **Blind derivation**: 13 steps from "i exists" to α⁻¹ with only two selection principles
-- **Honest accounting**: ~35 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted — see [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
+- **Honest accounting**: ~35 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted — see [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Full SM gauge group**: U(1) × SU(2) × SU(3) derived from FTD axioms
 - **D = 3 uniqueness**: Three dimensions uniquely selected by atomic stability + gauge requirements (no longer axiomatic)
-- **Consciousness**: Derived from same G* geometry with complex roots y = 2.19 ± 2.86i — see [archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](docs/theory/archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md)
+- **Reflexivity layer** [CONJECTURE]: an exploratory interpretive reading via the same G* geometry (complex roots y = 2.19 ± 2.86i) — a proposed correspondence, **not a derivation**; see the reflexivity-vocabulary reframe [REF_REFLEXIVITY_VOCABULARY.md](theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md)
 
 The framework demonstrates that U(1) gauge symmetry emerges naturally from the constraint structure (Gauss law), SU(2) from the ternary state structure, SU(3) from the three spatial dimensions, and Lorentz invariance emerges at scales >> lattice spacing.
 
@@ -120,7 +121,7 @@ This document does **not**:
 - Propose a resolution of the measurement problem within FTD (manifestation = collapse)
 - Derive thermodynamics (from microstate counting)
 - **Derive the Born rule** from manifestation statistics
-- **G\***: provide a proposed derivation chain via elliptic curve selection (within assumptions) — see [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](docs/theory/archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
+- **G\***: provide a proposed derivation chain via elliptic curve selection (within assumptions)
 - **Offer candidate predictions** (see Chapter 16)
 
 ## Reading Conventions and Epistemic Tags
@@ -542,7 +543,7 @@ PHASE 12: Increment
 
 **CAUTION**: The update order matters. Different orderings may produce different emergent behaviors. The specified order is a design choice.
 
-**Gate function identification (April 2026):** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/02_foundations/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
+**Gate function identification (April 2026):** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
 
 ---
 
@@ -664,7 +665,7 @@ The following are now **derived**, not input parameters:
 
 ### Derivation Status Summary
 
-> **Research Program**: ✅ **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/LEDGER.md](docs/theory/07_assessment/LEDGER.md).
+> **Research Program**: ✅ **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/LEDGER.md](theory/07_assessment/LEDGER.md).
 
 > **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. The CM/master-quadratic arithmetic is theorem-level, but the identification of x₊ with 1/α remains a strongly motivated conjecture and the ppb one-loop correction is scheme-conditional after the 2026-04-22 Structure-2 audit. This does not constitute independent physical confirmation.
 
@@ -755,9 +756,9 @@ The lemniscatic constant G* has theorem-level mathematical provenance through th
 2. **Γ(1/4)² factor**: Lattice regularization → elliptic integral K(1/√2)
 3. **Coefficient 16**: Physical degrees of freedom on 2×2×2 minimal lattice (24 - 7 - 1 = 16)
 
-**BCC Watson integral (April 2026):** The identity W₃ = G*²/(2π) has been confirmed as the **BCC** Watson integral specifically (not SC or FCC). The BCC eigenvalue's multiplicative cosine product is what produces Γ(1/4)⁴/(4π³), connecting G* directly to BCC lattice geometry. See [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](theory/03_derivations/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).
+**BCC Watson integral (April 2026):** The identity W₃ = G*²/(2π) has been confirmed as the **BCC** Watson integral specifically (not SC or FCC). The BCC eigenvalue's multiplicative cosine product is what produces Γ(1/4)⁴/(4π³), connecting G* directly to BCC lattice geometry. See [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).
 
-The master quadratic (degree 2 is forced by self-referential closure of the ternary constraint AND by the degree-2 CM field $\mathbb{Q}(i)$; see [DERIV_QUADRATIC_NECESSITY.md](docs/theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md)):
+The master quadratic (degree 2 is forced by self-referential closure of the ternary constraint AND by the degree-2 CM field $\mathbb{Q}(i)$; see [DERIV_QUADRATIC_NECESSITY.md](theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md)):
 
 $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 
@@ -768,7 +769,7 @@ produces two roots:
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
 | x₋ | 3.024 | N_c (color charges) | 0.8% |
 
-**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identifications x₊ ↔ 1/α and x₋ ↔ N_c are **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger. The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/LEDGER.md](docs/theory/07_assessment/LEDGER.md) and [docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md](docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
+**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identifications x₊ ↔ 1/α and x₋ ↔ N_c are **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger. The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/LEDGER.md](theory/07_assessment/LEDGER.md) and [docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
 
 ### 7.4.1 Lemniscate Selection: Four Algebraic Criteria
 
@@ -813,7 +814,7 @@ The convergent routes provide structural evidence for coefficient 16. They do no
 | Coefficient 16 from lattice | Structurally motivated; exact status tracked in the algebraic-spine/ledger docs |
 | √2 from Gauss constraint | ✅ Derived (simulations/critical_coupling_selection.py) |
 
-For related theoretical context, see also [LEMNISCATE_HIERARCHY_WHITEPAPER.md](docs/theory/04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md).
+For related theoretical context, see also [LEMNISCATE_HIERARCHY_WHITEPAPER.md](theory/04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md).
 
 ## 7.6 Topological Latency Interpretation of Mass
 
@@ -1853,14 +1854,14 @@ Evaluation criteria and status (updated for v5.24):
 - **~3-5 Explicit Inputs**: M_Planck, G_F, Λ_QCD, decay constants — required but not derived
 - **"Zero free parameters" is FALSE**: The claim conflates derived parameters with zero inputs
 
-See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) for complete breakdown.
+See [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) for complete breakdown.
 
 **Remaining work:**
 1. Characterize the substrate-to-aggregate transition (how QM statistics emerge from deterministic lattice)
 2. Produce a genuinely novel pre-observation prediction
 3. Close the Λ_QCD derivation loop
 
-See [FTD_REFERENCE.md](docs/theory/01_reference/SPEC_FTD_REFERENCE.md), [NOVEL_CLAIMS.md](docs/theory/archive/ARCH_AUDIT_NOVEL_CLAIMS.md), and [CHANGELOG.md](CHANGELOG.md) for documentation.
+See [FTD_REFERENCE.md](theory/01_reference/SPEC_FTD_REFERENCE.md) and [CHANGELOG.md](../CHANGELOG.md) for documentation.
 
 ---
 

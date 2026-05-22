@@ -282,8 +282,6 @@ The black hole loses mass in Planck-mass quanta, radiating its final energy in $
 
 [5] [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — The Born-Infeld action and Euclidean continuation.
 
-[6] [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — Exact Schwarzschild from latency field.
-
 ---
 
 *Version 1.0 — February 26, 2026*

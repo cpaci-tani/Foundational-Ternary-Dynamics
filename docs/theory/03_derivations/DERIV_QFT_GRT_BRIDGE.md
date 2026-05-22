@@ -14,7 +14,6 @@
 - [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) — Lattice Green's functions G_L(r) → 1/(4πr)
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) — Vertex factor g_c = √α
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) — Linearized Einstein (Theorem 14.1)
-- [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — Schwarzschild from lattice budget
 
 ---
 
@@ -554,7 +553,6 @@ The three terms correspond to direct (t-channel²), interference (t-u cross, neg
 - [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) — Lattice Green's functions (foundation)
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) — g_c = √α derivation
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) — Linearized Einstein, Conjecture 14.1 (now resolved)
-- [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — Schwarzschild from lattice budget
 - [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) — Coupling hierarchy via G*
 - [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) — Master quadratic as bridge
 - [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) — Full bridge research program (GAP-G3 resolved here)

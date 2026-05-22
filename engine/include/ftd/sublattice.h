@@ -8,7 +8,7 @@
  *   L₁₈ = (1/3)·face_sum + (1/6)·edge_sum − 4·center
  * is structurally (σ_SC + σ_FCC)/2 — orthogonal to the BCC sub-stencil
  * where the master quadratic's polynomial roots live (FTD-0050 closure;
- * see docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md).
+ * see docs/theory/10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md).
  *
  * This header introduces three sublattice-projected Laplacians, runnable
  * on the same field, so a campaign can measure spectra on any of the

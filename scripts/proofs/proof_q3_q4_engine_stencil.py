@@ -21,7 +21,7 @@ NOTE: this is engine-equivalent (same Fourier sum) not engine-identical
 follow-up.
 
 Provenance: docs/theory/03_derivations/DERIV_RETARDED_GREEN_LATTICE.md
-            docs/theory/09_mathematical/EXPLR_TWO_PI_GSTAR_CONNECTION.md
+            docs/theory/09_mathematical/archive/EXPLR_TWO_PI_GSTAR_CONNECTION.md
 LEDGER: FTD-0113 Q3 G18 cross-check; FTD-0116 Q4a engine-side confirmation.
 
 Usage:

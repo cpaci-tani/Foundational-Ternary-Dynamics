@@ -642,7 +642,7 @@ Mechanism α. Closure path mapped: ~3-4 weeks combined theory + engine.
 - `docs/theory/03_derivations/DERIV_LATTICE_LW_EXTENSIONS.md` — FTD-0120 (Q5/Q6/Q7/Q8 unified)
 - `docs/theory/03_derivations/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` — FTD-0119
 - `docs/theory/09_mathematical/EXPLR_FOURIER_CURVE_LEVEL_4.md` — Fourier-curve / triple-cusp
-- `docs/theory/09_mathematical/EXPLR_TWO_PI_GSTAR_CONNECTION.md` — Q4 trajectory + falsification
+- `docs/theory/09_mathematical/archive/EXPLR_TWO_PI_GSTAR_CONNECTION.md` — Q4 trajectory + falsification
 
 **Strategy:**
 - `docs/theory/STRATEGY_PAPER_SPLIT_2026-04-30.md` — paper-split recommendation
@@ -958,7 +958,9 @@ verification suite is in
 
 In order from most to least defensible:
 
-1. **"FTD has a rigorous algebraic core: nine theorems centered on G\* =
+1. **"FTD has a rigorous algebraic core: nine numbered results — six
+   theorem-grade, three honestly tiered below theorem grade (see
+   `SPEC_ALGEBRAIC_SPINE.md` §0) — centered on G\* =
    Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587 (distinct from the
    Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622). The master quadratic
    polynomial x² − 16G\*²x + 16G\*³ has roots x_+ = 137.036 (matching 1/α

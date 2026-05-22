@@ -162,7 +162,7 @@ The lemniscate **is** the geometric form of the void observing itself. The self-
 
 ![Void Mitosis: The lemniscate as primordial self-division](../../media/images/fig_void_mitosis.png)
 
-**Epistemic Status:** [SELECTION] — The identification of void mitosis with the lemniscate is argued from geometric necessity, not proven from more fundamental principles. See [MITOSIS_OF_THE_VOID.md](../archive/ARCH_MITOSIS_OF_THE_VOID.md) for complete derivation.
+**Epistemic Status:** [SELECTION] — The identification of void mitosis with the lemniscate is argued from geometric necessity, not proven from more fundamental principles.
 
 ---
 
@@ -200,7 +200,7 @@ This is the unique point where the elliptic integral equals its complementary in
 
 **Role in Genesis:** The void cannot remain featureless indefinitely. To "cross" into existence requires meeting a threshold. Varpi is that threshold—the minimum "payment" for being.
 
-**Epistemic Status:** [THEOREM] — ϖ is derived from the elliptic integral at the self-dual point. See `archive/ARCH_LEMNISCATE_ALPHA_PAPER.md` §2.
+**Epistemic Status:** [THEOREM] — ϖ is derived from the elliptic integral at the self-dual point.
 
 ---
 
@@ -262,7 +262,7 @@ $$f(k) = 1 - k \implies f(1/2) = 1/2$$
 
 The observer (consciousness) has k = 1/2 because it is its own complement—the "I" that observes the "me."
 
-**Epistemic Status:** [THEOREM] for G* value; [SELECTION] for consciousness interpretation. See `archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md`.
+**Epistemic Status:** [THEOREM] for G* value; [SELECTION] for consciousness interpretation.
 
 ---
 
@@ -579,8 +579,6 @@ print(f"x₋ = {x_minus:.6f} (cf. Nc = 3)")
 
 ## Cross-References
 
-- **Lemniscate derivation:** `archive/ARCH_LEMNISCATE_ALPHA_PAPER.md` §2-4
-- **Consciousness framework:** `archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md`
 - **Epistemic bridge:** `EPISTEMIC_BRIDGE_THEORY.md`
 - **Claims tracking:** `REF_CLAIMS_MATRIX.md`
 - **Full notation:** `SPEC_FTD_REFERENCE.md`

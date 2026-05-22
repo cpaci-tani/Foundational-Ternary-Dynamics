@@ -399,13 +399,18 @@ C_MANDELBROT = 1.0 / G_STAR  # Mandelbrot sLoop fixed point
 # =============================================================================
 
 class Experimental:
-    """Experimental values from PDG 2024 for comparison."""
+    """Experimental comparison values -- CODATA 2022 + PDG 2024.
+
+    Canonical edition + sourcing standard: docs/reference/REF_EXTERNAL_CONSTANTS.md
+    This class is the machine-readable Python mirror; update the reference doc
+    first. Comparison targets only -- never inputs to the FTD spine.
+    """
 
     # Coupling constants
-    # Note: CODATA 2022 uncertainty is +/- 0.000000021 (absolute), which is
-    # ~153 ppb (parts per billion) or ~0.15 ppm in relative terms.
+    # Note: CODATA 2022 uncertainty is +/- 0.000000021 (absolute), a relative
+    # uncertainty of ~1.5e-10 (~0.15 ppb, ~1.5e-4 ppm).
     # The "(21)" notation means 21 in the last two digits, NOT 21 ppt.
-    alpha_inv = 137.035999177  # +/- 0.000000021 (= ~153 ppb relative uncertainty)
+    alpha_inv = 137.035999177  # +/- 0.000000021 (rel. ~1.5e-10, ~0.15 ppb), CODATA 2022
     alpha_s = 0.1179          # +/- 0.0009 at M_Z
     sin2_theta_w = 0.23122    # +/- 0.00003
 
@@ -446,7 +451,7 @@ class Experimental:
     m_Z = 91.1876             # +/- 0.0021
     m_Higgs = 125.25          # +/- 0.17
     # Boson masses in MeV (mirror engine/web/js/constants.js *_PHYS suffix)
-    m_W_phys_mev      = 80377.0    # MeV (PDG 2022)
+    m_W_phys_mev      = 80369.2    # MeV (PDG 2024)
     m_Z_phys_mev      = 91187.6    # MeV
     m_Higgs_phys_mev  = 125100.0   # MeV
 

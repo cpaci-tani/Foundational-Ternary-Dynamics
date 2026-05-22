@@ -23,11 +23,11 @@ User flagged a concern (2026-04-20): **do any existing EFT-campaign claims depen
 
 Systematic read of the EFT campaign's load-bearing claim documents:
 - `dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex` (the published headline paper)
-- `docs/theory/10_eft_program/DERIV_BETA_FUNCTION_MEASURED.md` (β-function extraction)
-- `docs/theory/10_eft_program/DERIV_DAY2_CAMPAIGN.md` (Day-2 Rutherford + EWSB + Ward)
+- `docs/theory/10_eft_program/archive/phase_0_f_campaign/DERIV_BETA_FUNCTION_MEASURED.md` (β-function extraction)
+- `docs/theory/10_eft_program/archive/phase_0_f_campaign/DERIV_DAY2_CAMPAIGN.md` (Day-2 Rutherford + EWSB + Ward)
 - `docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md` (Phase G analytical result)
 - `docs/theory/10_eft_program/AUDIT_ALPHA_EXTRACTION.md` (Phase F audit)
-- `docs/theory/10_eft_program/DERIV_DYNAMICAL_SM_EMERGENCE.md` (dynamical SM tests)
+- `docs/theory/10_eft_program/archive/phase_0_f_campaign/DERIV_DYNAMICAL_SM_EMERGENCE.md` (dynamical SM tests)
 
 Checked each for: claims that engine observables are physical couplings; claims of convergence to α_QED / β_QED; framing of the 3.6× plateau; Phase H status.
 
@@ -126,7 +126,7 @@ The caveat belongs on **future** claims, specifically: if anyone proposes to pub
 ## Artifact list
 
 - This audit: `docs/theory/10_eft_program/AUDIT_EFT_BCC_ORTHOGONALITY.md`.
-- Link 8 closure: `docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md`.
+- Link 8 closure: `docs/theory/10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md`.
 - Phase 1 analytical gate: `scripts/exploration/link8_phase1_flow_matrix.py`.
 - BCC structural derivation: `docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`.
 - EFT publication: `dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex`.

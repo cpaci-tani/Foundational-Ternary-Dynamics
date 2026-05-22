@@ -446,14 +446,11 @@ Whether this is a theory of everything or a very elaborate coincidence is an emp
 
 ## Cross-References
 
-- **Master quadratic:** [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md)
 - **Trit information theory:** [EXPLR_TRIT_INFORMATION_THEORY.md](../08_structural/EXPLR_TRIT_INFORMATION_THEORY.md)
 - **Consciousness domain/source map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
-- **sLoop axioms:** [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md)
 - **Consciousness synthesis:** [../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
 - **Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md)
-- **Novel predictions:** [AUDIT_NOVEL_PREDICTIONS.md](../archive/ARCH_AUDIT_NOVEL_PREDICTIONS.md)
 - **Bell mechanism:** [AUDIT_BELL_ANALYSIS.md](AUDIT_BELL_ANALYSIS.md)
 - **SM Lagrangian mapping:** [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md)
 - **Space-time separation:** [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)

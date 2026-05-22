@@ -322,7 +322,7 @@ $$= |\sqrt{2}| + |\sqrt{2}| = 2\sqrt{2}$$
 | Step | Content | Tag | Gap |
 |------|---------|-----|-----|
 | Factorizable substrate | Bell's theorem + POSTULATE 4 | [THEOREM] | None |
-| Gauss -> complexification | div(J) = 0 removes one mode | [SELECTION] | Why does this specific reduction produce Born rule statistics? |
+| Gauss -> complexification | div(J) = 0 removes one mode | [SELECTION] | Why does this specific reduction produce Born rule statistics? (Born-rule derivation status: LEDGER FTD-0187 -- \|psi\|^2 form [SELECTION], probability=density step [OPEN].) |
 | sLoop -> non-factorizability | Shared origin constrains joint state | [SELECTION] | Can the joint probability table be derived from S[s,J] without imposing it? |
 | S = 2sqrt(2) from cosine | CHSH algebra with E = -cos(theta) | [THEOREM] | None (given cosine correlations) |
 

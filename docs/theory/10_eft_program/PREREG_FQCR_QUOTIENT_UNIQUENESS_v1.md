@@ -6,7 +6,7 @@
 **LEDGER row reservation:** FTD-0143
 **Supersedes:** none — first uniqueness scan of the FQCR Model IV ansatz exponent quadruple.
 **Author:** FTD-EFT program, FQCR sub-arc.
-**Companion docs:** [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/DERIV_GSTAR_QUARTER_CONJUGACY.md), [`AUDIT_LOOK_ELSEWHERE_RESULTS.md`](AUDIT_LOOK_ELSEWHERE_RESULTS.md) (FTD-0097 spine-level look-elsewhere precedent), [`tools/scan_look_elsewhere.py`](../../../tools/scan_look_elsewhere.py) (target-list source).
+**Companion docs:** [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../03_derivations/DERIV_GSTAR_QUARTER_CONJUGACY.md), [`AUDIT_LOOK_ELSEWHERE_RESULTS.md`](../07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) (FTD-0097 spine-level look-elsewhere precedent), [`tools/scan_look_elsewhere.py`](../../../tools/scan_look_elsewhere.py) (target-list source).
 
 > **Pre-registration discipline.** Every search-space boundary, target list, tolerance, acceptance criterion, and outcome-classifier below is committed *before* any (4,6;3,2) uniqueness claim is made. After commit, this document gets the SHA256 hash recorded in `REF_PREREGISTER_MANIFEST.md` and the git tag `preregister-fqcr-quotient-uniqueness-v1` is applied. Any post-hoc edit to thresholds, parameters, or acceptance criteria invalidates the pre-registration; a v2 must be issued before further measurement.
 

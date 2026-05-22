@@ -518,7 +518,7 @@ Even though Q4 closed negative, three artifacts have lasting value:
 - **NOT a uniqueness argument for the master quadratic.** The
   observation `G*² = self-energy/radiation` is structural, not
   selective.
-- **NOT a promotion to spine theorem.** Spine count remains 9.
+- **NOT a promotion to spine theorem.** The spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0).
 - **NOT a closure of the broader Maxwell-exploit thread.** Q3 (engine
   cross-check), Q5–Q8 (lattice Larmor, Cherenkov rate, bound-state
   LW, source-half consistency) remain open.

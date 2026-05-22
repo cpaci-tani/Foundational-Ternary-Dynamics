@@ -4,6 +4,9 @@
 **Framework:** Foundational Ternary Dynamics v5.23
 **Status:** Self-consistency demonstrated; uniqueness NOT proven
 **Prior art:** Argument originally presented in EXPLR_NUMBER_THEORY.md Part II
+**Consolidates:** also absorbs `DERIV_INTEGER_UNIQUENESS.md` (2026-05-21)
+
+> **Update note (uniqueness).** The original (February 11, 2026) version of this document showed self-consistency but explicitly left uniqueness open. A later exhaustive-enumeration result (March 17, 2026, `DERIV_INTEGER_UNIQUENESS.md`) closes part of that open question. Its content is consolidated here as the new section **"Exhaustive Uniqueness Verification {3, 4, 7, 13}"** below, after "What Is NOT Proven: Uniqueness". That section establishes a `[THEOREM]`-grade uniqueness result *conditional* on N_c = 3 and N_gen = N_c; the residual `[SELECTION]` items (N_gen = N_c, the sequence choices, the additive closure) remain open exactly as described in this document's original body.
 
 ---
 
@@ -132,6 +135,78 @@ A genuinely non-circular derivation would:
 3. Discover {3, 4, 7, 13} as the answer without knowing the target
 
 This has not been done.
+
+---
+
+## Exhaustive Uniqueness Verification {3, 4, 7, 13}
+
+> **Consolidated from `DERIV_INTEGER_UNIQUENESS.md` (March 17, 2026).** This section reports the exhaustive-enumeration result that closes part of the uniqueness question left open above. It updates this document's self-consistency analysis with exhaustive search results.
+>
+> **Status:** [THEOREM] for uniqueness given N_c = 3 and N_gen = N_c; [SELECTION] for N_gen = N_c.
+> **Proof script:** `scripts/proofs/proof_integer_uniqueness.py`
+
+### Abstract
+
+The FTD framework integers {N_c = 3, N_base = 4, b_3 = 7, N_eff = 13} are tested for uniqueness via exhaustive enumeration. Three levels of uniqueness are established:
+
+1. **Combinatorial uniqueness:** {3, 4, 7, 13} is the UNIQUE integer quadruple satisfying all structural + sequence constraints (exhaustive search, N_c up to 100).
+
+2. **Physics uniqueness:** Given N_c = 3 (from master quadratic) and N_gen = N_c = 3 (three generations = three colors), the system P1-P5 has a UNIQUE solution: {3, 4, 7, 13}.
+
+3. **Without the master quadratic:** 10 solutions exist for N_c = 2..11, all satisfying P1-P5. The master quadratic selects N_c = 3.
+
+### Constraints
+
+The uniqueness search uses an expanded constraint set. The physics constraints P1-P5 and sequence constraints S1-S4 below correspond to (and refine) constraints C1-C6 in the self-consistency body above.
+
+#### Physics Constraints
+- **P1.** b_3 = (11 N_c - 2 N_f)/3, integer, positive (QCD one-loop beta function)
+- **P2.** N_eff = b_3 + 2 N_c (effective DOF in electroweak mixing)
+- **P3.** sin^2(theta_W) = N_c / N_eff in (0, 0.5) (physical Weinberg angle)
+- **P4.** N_base = 2^((D+1)/2) = 4 (spinor dimension for D = 3)
+- **P5.** b_3 = N_base + N_c (additive closure)
+
+#### Sequence Constraints
+- **S1.** N_eff at Fibonacci-Tribonacci crossover (F_7 = T_7 = 13)
+- **S2.** b_3, N_eff consecutive Tribonacci (T_6 = 7, T_7 = 13)
+- **S3.** N_base, b_3 consecutive Lucas (L_3 = 4, L_4 = 7)
+- **S4.** Crossover index = b_3 (self-referential: index 7 = b_3)
+
+### Key Results
+
+#### 1. Exhaustive combinatorial search (P2 + P5 + S1 + S2 + S3)
+
+Searched all integer quadruples with N_c = 1..100, N_base = 1..50.
+
+**Result: {3, 4, 7, 13} is the UNIQUE solution.** No other quadruple satisfies all five constraints simultaneously.
+
+#### 2. Physics constraints only (P1-P5)
+
+10 solutions exist for N_c = 2..11 (each with a specific N_gen). All have sin^2(theta_W) in the physical range. The master quadratic floor(x_-) = 3 selects N_c = 3 uniquely.
+
+#### 3. With N_gen = N_c
+
+Given N_c = 3 and N_gen = 3: b_3 = (33 - 12)/3 = 7, N_eff = 7 + 6 = 13, N_base = 4. This is the UNIQUE solution — no degrees of freedom remain.
+
+Interesting: all solutions with N_gen = N_c give the same Weinberg angle sin^2 = 3/13 = 0.2308, because the ratio N_c/N_eff = N_c / (7N_c/3 + 2N_c) = 3/13 is independent of N_c (when N_c divides 3).
+
+### Epistemic Status (uniqueness)
+
+**[THEOREM]:**
+1. F_7 = T_7 = 13 is the unique non-trivial Fibonacci-Tribonacci crossover for n <= 30
+2. {3, 4, 7, 13} satisfies all constraints P1-P5 and S1-S4
+3. Given N_c = 3 and N_gen = N_c, the solution is unique
+4. {3, 4, 7, 13} is the unique solution to P2 + P5 + S1 + S2 + S3 (exhaustive)
+
+**[SELECTION]:**
+- N_gen = N_c (three generations from three colors)
+- The sequence constraints S1-S4 (why Fibonacci, Tribonacci, and Lucas?)
+- The additive closure P5 (why b_3 = N_base + N_c?)
+
+### References (uniqueness section)
+
+- proof_integer_uniqueness.py -- Exhaustive search (6/6 tests pass)
+- DERIV_D3_UNIQUENESS.md -- D = 3 uniqueness from Watson integral
 
 ---
 

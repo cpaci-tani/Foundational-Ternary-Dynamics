@@ -156,7 +156,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 |---|---|---|---|---|---|
 | `a_phys_planck` | a_phys ≡ ℓ_P (length anchor) | DECLARED: 1 voxel ≡ 1 Planck length ℓ_P | 1.616255e-35 m | CALIBRATION | [FTD-0030](../07_assessment/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/LEDGER.md#ftd-0059) |
 | `t_phys_lattice_tick` | t_phys (one tick in seconds) | t_phys = √3 · ℓ_P / c (CFL condition c_lat = 1/√3 + a_phys ≡ ℓ_P + c_phys = 2.998 × 10⁸ m/s) | 9.34e-44 s | CALIBRATION | [FTD-0041](../07_assessment/LEDGER.md#ftd-0041) |
-| `mass_unit_anchor` | K_B = m_e (mass-unit anchor) | DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c². | 0.5109989461 MeV/c² | IMPOSED | [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/LEDGER.md#ftd-0096) |
+| `mass_unit_anchor` | K_B = m_e (mass-unit anchor) | DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c². | 0.5109989507 MeV/c² | IMPOSED | [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/LEDGER.md#ftd-0096) |
 
 ### a_phys ≡ ℓ_P (length anchor) (`a_phys_planck`)
 
@@ -182,7 +182,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 ### K_B = m_e (mass-unit anchor) (`mass_unit_anchor`)
 
 - **Formula:** DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c².
-- **Value:** 0.5109989461 MeV/c²
+- **Value:** 0.5109989507 MeV/c²
 - **Tag:** `IMPOSED`
 - **LEDGER:** [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/LEDGER.md#ftd-0096)
 - **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/THEOREM_MU_NO_GO_FTD0096.md`

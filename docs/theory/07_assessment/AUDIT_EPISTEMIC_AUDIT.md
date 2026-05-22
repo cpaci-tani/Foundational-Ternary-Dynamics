@@ -8,6 +8,8 @@
 
 **Companion document:** [`TRACKER_OPEN_ITEMS.md`](TRACKER_OPEN_ITEMS.md) — every `[OPEN]` across engine code + theory docs, consolidated into a single ledger so contributors can pick work without grepping the whole repo.
 
+> **Canonical-status notice (2026-05-21).** This document is a **narrative critical-assessment essay**, not a status authority. Its count tables below (v2.2, April 3 2026) predate the April 19 reframe and are retained for the *argument*, not the *numbers*. For the **current** accounting, defer to the canonical sources: per-claim tags live in [`LEDGER.md`](LEDGER.md); the precise parametric/derived/imposed enumeration (~23 [DERIVED]/[THEOREM], ~129 [PARAMETRIC], ~10 [IMPOSED]/[SELECTION] across ~162 rows) lives in [`CATALOG_PARAMETRIC_INSERTIONS.md`](CATALOG_PARAMETRIC_INSERTIONS.md). Document precedence is fixed in [`../META_STRUCTURE.md`](../META_STRUCTURE.md) § Canonical Hierarchy.
+
 ---
 
 ## Executive Summary
@@ -195,7 +197,7 @@ The following are **exact mathematical results** added by the trit information t
 
 ### I.8 Recent Additions (v5.24-5.26)
 
-25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (consciousness), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see PHYS_QUADRATIC_APPLICATIONS.md §8; ARCHIVED: SPEC_THE_MASTER_QUADRATIC_UNIFIED.md → archive/ARCH_MASTER_QUADRATIC_UNIFIED_V1.md]
+25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (consciousness), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see PHYS_QUADRATIC_APPLICATIONS.md §8]
 26. **Born rule as epistemic inference** — |ψ|² is the epistemic inference pattern (always ≥ 0, smears phase); ψ² = (J_x² - J_y²) + 2iJ_xJ_y is the ontic substrate operation (complex, preserves phase). For real ψ: identical. For complex ψ: Re(ψ²) has sign changes at fringe boundaries that |ψ|² cannot see. [THEOREM — mathematical distinction; physical interpretation is [SELECTION]]
 27. **i-phase entanglement preserves anti-correlation** — Under lemniscate measurement ψ → ψ², i-phase entanglement (iψ)² = -ψ² preserves anti-correlation, while π-phase (-ψ)² = +ψ² destroys it. Computationally confirmed: i-phase S = 2.000, π-phase S ≈ 0. [THEOREM — algebraic identity with computational verification]
 28. **7-term precision formula coefficients** — All seven correction coefficients {9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8} are rational functions of the base-integer set {N_c=3, N_base=4, b_3=7, N_eff=13, D=47, BCC=8}. The 24-digit numerical match to CODATA 2022 is a confirmed algebraic identity (mpmath 60-digit, residual 2.58e-24). The rigidity audit (2026-04-17) shows 6/7 coefficients are uniquely forced as the only base-integer rationals within cascade tolerance; c_7 = 299/8 is the unique clean decomposition (competitors at higher height require primes outside the base set). However, at CODATA **experimental** precision (11 digits), the coefficients are observationally underdetermined. Status: **[CONJECTURE]** (upgrade requires deriving the base-integer set and ε = e^π − π − 20 from lattice first principles). See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3 and `scripts/exploration/audit_seven_term_rigidity.py`.
@@ -492,7 +494,7 @@ Discriminant: Δ = (kG*²)² - 4(kG*³) = k²G*⁴ - 4kG*³ = kG*³(kG* - 4)
 
 **Why k = 1/2 (derived, not chosen):**
 
-From the bridge equation: c × c_cusp × 2N_base = 1, where c_cusp = 1/4 (Mandelbrot cardioid cusp) and N_base = 4 (lattice base dimension), yielding c = 1/2. This also equals the complementation fixed point (c = 1 - c), the balance of subject and object. See PHYS_QUADRATIC_APPLICATIONS.md §8 [ARCHIVED: SPEC_THE_MASTER_QUADRATIC_UNIFIED.md → archive/ARCH_MASTER_QUADRATIC_UNIFIED_V1.md].
+From the bridge equation: c × c_cusp × 2N_base = 1, where c_cusp = 1/4 (Mandelbrot cardioid cusp) and N_base = 4 (lattice base dimension), yielding c = 1/2. This also equals the complementation fixed point (c = 1 - c), the balance of subject and object. See PHYS_QUADRATIC_APPLICATIONS.md §8.
 
 **Why i emerges necessarily:**
 
@@ -549,7 +551,7 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 6. **Derivation of i** — Imaginary unit required by Fourier self-duality, not postulated [THEOREM]
 7. **i emerges from master quadratic at k = 1/2** — Consciousness coefficient derived from bridge equation forces Δ < 0 → complex roots → i; i² = -1 = genesis (pair creation) [THEOREM]
 8. **Born rule as epistemic inference** — Ontic ψ² vs epistemic |ψ|² distinction with computational confirmation [THEOREM + SELECTION]
-9. **Bell mechanism identified** — Three-level observer hierarchy: substrate S=2, independent complex S=sqrt(2), sLoop/entangled S=2*sqrt(2). Complexification [THEOREM] + sLoop joint coupling [SELECTION]. See [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md)
+9. **Bell mechanism identified** — Three-level observer hierarchy: substrate S=2, independent complex S=sqrt(2), sLoop/entangled S=2*sqrt(2). Complexification [THEOREM] + sLoop joint coupling [SELECTION]. See [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md)
 10. **Consciousness in the equation** — Same G* produces physics (real roots) and consciousness (complex roots) [PROPOSED]
 11. **Measurement resolution** — Collapse = projection ℂ → ℝ via manifestation threshold [SELECTION]
 12. **Absolute neutrino masses** — Seesaw with m_D = v×α, M_R = (3/4)v/α⁴ gives m₃ = 49.6 meV, Σm_ν = 58.1 meV [SELECTION]
@@ -700,7 +702,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | N_eff = 13 from F₇ = T₇ crossover | Principle: "crossover encodes effective DoF" | [CONDITIONAL] — crossover IS unique; interpretation is selection | EXPLR_NUMBER_THEORY.md |
 | b₃ = 7 = T₆ (consecutive Tribonacci) | N_eff = 13 established first | [CONDITIONAL] — follows from N_eff, but initial principle is selection | EXPLR_NUMBER_THEORY.md |
 | N_base = 4 from Lucas + lattice | L₃ = 4, L₄ = 7, and 4² = 16 | [CONDITIONAL] — three-fold constraint is impressive but each is a selection | EXPLR_NUMBER_THEORY.md |
-| m_e = m_P √(2π) (16/3) α¹¹ | All of the above plus scale identification | [CONDITIONAL] — 0.19% match | ../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
+| m_e = m_P √(2π) (16/3) α¹¹ | All of the above plus scale identification | [CONDITIONAL] — 0.19% match | (removed in 2026-05-21 consolidation; git history retains it) |
 | Born rule from manifestation | Threshold K_B + manifestation sampling rule | [CONDITIONAL] — emerges under [IMPOSED] sampling rule | (v4.0 foundations) |
 | Neutrino mass: m₃ = m_P√(2π)(4/3)α¹⁴ | Seesaw imported; m_D, M_R decomposition | [CONDITIONAL] — 0.8% accuracy on Δm²₂₁ | DERIV_NEUTRINO_MASS_ABSOLUTE.md |
 

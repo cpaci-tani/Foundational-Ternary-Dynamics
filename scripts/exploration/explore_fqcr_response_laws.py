@@ -252,7 +252,7 @@ def main() -> None:
     print()
 
     # CODATA reference for context
-    codata = 137.035999084
+    codata = 137.035999177
     print(f"CODATA 2022 alpha^-1 = {codata:.9f}")
     print()
 

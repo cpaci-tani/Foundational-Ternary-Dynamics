@@ -218,7 +218,7 @@ FTD-0122  [PARTIAL]  Lemniscate-Alpha rigidity-scan result
 
 ### 5.3 · `SPEC_ALGEBRAIC_SPINE.md` impact
 
-The 9 spine theorems are NOT affected — they are stated independent of the Lemniscate-Alpha narrative, and the Lemniscate-Alpha is not part of the canonical algebraic spine. The Bernoulli-route G\* derivation (Theorem 1: G\* = Γ(1/4)/Γ(3/4)) is a true algebraic identity; the Lemniscate-Alpha route is structurally weaker than previously framed.
+The nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) are NOT affected — they are stated independent of the Lemniscate-Alpha narrative, and the Lemniscate-Alpha is not part of the canonical algebraic spine. The Bernoulli-route G\* derivation (Theorem 1: G\* = Γ(1/4)/Γ(3/4)) is a true algebraic identity; the Lemniscate-Alpha route is structurally weaker than previously framed.
 
 ---
 
@@ -268,4 +268,4 @@ The Lemniscate-Alpha is a real, geometrically interesting curve with verified to
 
 The framework's [SELECTION] tag is honest. The narrative ("two roads to G\*") is descriptively accurate but does not establish unique privilege. Future work needs an independent derivation of the canonical curve's coefficients to upgrade the [SELECTION] tag.
 
-The 9-theorem algebraic spine is unaffected. Paper A draft (which excludes the Lemniscate-Alpha narrative entirely per `STRATEGY_PAPER_SPLIT_2026-04-30.md` §1.4) is unaffected. The corrections apply specifically to the spin-statistics-bridge derivation and its downstream summaries.
+The algebraic spine (nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0) is unaffected. Paper A draft (which excludes the Lemniscate-Alpha narrative entirely per `STRATEGY_PAPER_SPLIT_2026-04-30.md` §1.4) is unaffected. The corrections apply specifically to the spin-statistics-bridge derivation and its downstream summaries.

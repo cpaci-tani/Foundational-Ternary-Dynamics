@@ -154,7 +154,7 @@ struct GaugeLinks {
 // where mu in {0, 1, 2} indexes the 3 spatial directions.
 // =============================================================================
 struct WilsonDiracParams {
-    double m = 0.5109989461e-3;  // electron mass in lattice units (placeholder; calibration TBD)
+    double m = 0.51099895069e-3;  // electron mass in lattice units (placeholder; calibration TBD)
     double r = 1.0;              // Wilson parameter
     double a = 1.0;              // lattice spacing (engine-internal units)
 };

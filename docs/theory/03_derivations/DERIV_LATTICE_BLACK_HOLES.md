@@ -7,7 +7,6 @@
 
 **Depends on:**
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) -- Theorem 11.1 (g_00 from flux saturation)
-- [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) -- G* bridge between continuous and discrete domains
 - [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) -- Historical/interpretive constant atlas; canonical G* status lives in SPEC_ALGEBRAIC_SPINE/SPEC_FQCR
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Born-Infeld Render-Bridge Lagrangian v2.1
 - [FOUND_RELATIVITY_GRAVITY_DISTINCTION.md](../02_foundations/FOUND_RELATIVITY_GRAVITY_DISTINCTION.md) -- SR / Gravity / GR trichotomy and 7-level hierarchy
@@ -1521,7 +1520,6 @@ Compare with Schwarzschild at the same radius: $f_{\text{Schw}} = 1 - 2/3 = 0.33
 | [DERIV_BLACK_HOLE_PHYSICS.md](DERIV_BLACK_HOLE_PHYSICS.md) | Black hole thermodynamics (Hawking temperature, Bekenstein-Hawking entropy, information paradox). Complements the metric derivations here with thermodynamic content. |
 | [DERIV_EINSTEIN_FIELD_EQUATIONS.md](DERIV_EINSTEIN_FIELD_EQUATIONS.md) | Full Einstein field equations from FTD. The metrics derived here are exact vacuum (Schwarzschild, Kerr) or electrovacuum (RN) solutions to those equations. |
 | [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) | Theorem 11.1 ($g_{00}$ from flux saturation); foundational result that all three metric derivations build upon. |
-| [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | G* definition, 16 forms. The G* exchange rate underpins the computational budget interpretation. |
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld Lagrangian v2.1 (Schwarzschild-exact). Extended to Kerr (Part B) and RN (Part C) here. |
 | [FOUND_RELATIVITY_GRAVITY_DISTINCTION.md](../02_foundations/FOUND_RELATIVITY_GRAVITY_DISTINCTION.md) | SR / Gravity / GR trichotomy and 7-level hierarchy. The lattice metrics sit at Level 4 (metric description); the budget interpretation is Level 2-3. |
 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas. Not the canonical source for G* status or framework-integer derivation. |

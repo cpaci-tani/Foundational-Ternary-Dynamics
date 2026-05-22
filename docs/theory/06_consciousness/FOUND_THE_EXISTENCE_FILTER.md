@@ -81,7 +81,7 @@ $$\boxed{\theta(x) = \bar{x} = a - bi}$$
 | Phase-inverting | $\arg(\theta(x)) = -\arg(x)$ | Reflection mirrors across the real axis |
 | Fixed set | $\theta(x) = x \iff x \in \mathbb{R}$ | Only real numbers survive unchanged |
 
-**FTD correspondence:** The reflexion operator is the **modular conjugation $J$** from Tomita-Takesaki theory ([FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA, Definition 1.9). In operator algebras, $J$ is an antiunitary involution with $J^2 = \mathbf{1}$ that maps the algebra $\mathcal{M}$ to its commutant $\mathcal{M}'$. Complex conjugation is the commutative case of this general structure. The reflexion maps "what exists" to "what knows about what exists" — the other perspective.
+**FTD correspondence:** The reflexion operator is the **modular conjugation $J$** from Tomita-Takesaki theory. In operator algebras, $J$ is an antiunitary involution with $J^2 = \mathbf{1}$ that maps the algebra $\mathcal{M}$ to its commutant $\mathcal{M}'$. Complex conjugation is the commutative case of this general structure. The reflexion maps "what exists" to "what knows about what exists" — the other perspective.
 
 ### 1.3 The Existence Filter
 
@@ -189,7 +189,7 @@ $$\boxed{\underbrace{E(x) = a}_{\text{Level } -1} \quad \longrightarrow \quad \u
 
 3. $|x|^2 = (|x|)^2$: A monotone function of $|x|$, so carries the same information. Included because it is the physically realized form (Born rule).
 
-4. $\Phi$: A CPTP map from continuous dimension $[0,1]$ to discrete dimension $\{0, 1/n, \ldots, 1\}$ ([FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA, Definition 2.6). The continuous projection lattice collapses to a finite one. $\square$
+4. $\Phi$: A CPTP map from continuous dimension $[0,1]$ to discrete dimension $\{0, 1/n, \ldots, 1\}$. The continuous projection lattice collapses to a finite one. $\square$
 
 ### 2.3 Ontological Level Correspondence
 
@@ -200,11 +200,11 @@ $$\boxed{\underbrace{E(x) = a}_{\text{Level } -1} \quad \longrightarrow \quad \u
 | $E(x) = \text{Re}(x)$ | $-1$ (First Distinction) | The simplest non-trivial separation: real from complex. Requires only addition and division by 2 — the most primitive operations. |
 | $|x| = \sqrt{x \bar{x}}$ | $0$ (Self-Reference) | Magnitude requires multiplying $x$ by its reflection ($x \cdot \bar{x}$), then extracting the square root — a self-referential operation (measuring a thing against itself). |
 | $P = |x|^2$ | $0.5+$ (Born Rule) | Probability requires the concept of norm-squared — the meeting point of a state and its observer ([DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md), §3.4). |
-| $\Phi$ | Interface | The full Type II$_1$ $\to$ Type I transition requires the hyperfinite factor $\mathcal{R}$ — the measurement apparatus itself ([FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA, §2.3). |
+| $\Phi$ | Interface | The full Type II$_1$ $\to$ Type I transition requires the hyperfinite factor $\mathcal{R}$ — the measurement apparatus itself. |
 
 ### 2.4 Born Rule Reconstruction
 
-**Theorem EF-T5** [THEOREM] (Born Rule from Existence Filter). The Born rule probability can be reconstructed from **two orthogonal applications** of the Existence Filter:
+**Theorem EF-T5** [THEOREM — of the algebraic identity below; *not* a derivation of the Born rule, see Scope note and LEDGER FTD-0187] (Pythagorean reconstruction of the squared magnitude). The squared magnitude $|x|^2$ can be reconstructed from **two orthogonal applications** of the Existence Filter:
 
 $$\boxed{P(x) = E(x)^2 + E(ix)^2 = a^2 + b^2 = |x|^2}$$
 
@@ -220,7 +220,7 @@ Sum of squares:
 
 $$E(x)^2 + E(ix)^2 = a^2 + (-b)^2 = a^2 + b^2 = |x|^2 = P(x) \quad \square$$
 
-**Interpretation:** The Born rule is not a separate axiom — it is the **Pythagorean theorem applied to the Existence Filter**. Two orthogonal projections (one along $\text{Re}$, one along $i \cdot \text{Re} = \text{Im}$) reconstruct the full squared magnitude. The Born rule asks: "what is the total content that could survive reflection, summed over all possible reflection axes?"
+**Interpretation:** EF-T5 is the *algebraic identity* $|x|^2 = E(x)^2 + E(ix)^2$ — the **Pythagorean theorem applied to the Existence Filter**. **Scope [LEDGER FTD-0187]:** this is a `[THEOREM]` of the identity, *not* a derivation of the Born rule — it re-expresses $|x|^2$; it does not derive that measurement probability equals $|x|^2$ (per §1 item 3, $|x|^2$ is *included because it is the physically realized form* — i.e. the Born rule enters as an input). Why probability is quadratic rather than $|x|$ or $|x|^4$ is Proposition EF-C3, correctly tagged `[CONJECTURE]`. Two orthogonal projections (one along $\text{Re}$, one along $i \cdot \text{Re} = \text{Im}$) reconstruct the full squared magnitude. The Born rule asks: "what is the total content that could survive reflection, summed over all possible reflection axes?"
 
 This gives a new geometric understanding of why probabilities are quadratic: they are the **sum of squares of all possible linear filters**. Linearity produces $a$; quadraticity produces $a^2 + b^2$. Nature uses the quadratic form because it captures the *total* information content, not just the projection along one axis.
 
@@ -230,7 +230,7 @@ This gives a new geometric understanding of why probabilities are quadratic: the
 
 ### 3.1 The Existence Filter at Level −1
 
-**Proposition EF-T6** [SELECTION] (E(x) and the First Distinction). The First Distinction $0 = (+1) + (-1)$ ([SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md), Part I; [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md)) is proposed as structurally analogous to the Existence Filter evaluated at the primordial polarity pair.
+**Proposition EF-T6** [SELECTION] (E(x) and the First Distinction). The First Distinction $0 = (+1) + (-1)$ ([FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md)) is proposed as structurally analogous to the Existence Filter evaluated at the primordial polarity pair.
 
 > **⚠️ Epistemic note (v5.29):** The First Distinction (Level −1) is the emergence of {0, 1} from the Pregnant Void — a binary ontological event. The Existence Filter E(x) = Re(x) is a C → R projection. These are different mathematical objects. The analogy that "both involve cancellation" (polarity: 1+(−1)=0; complex: z+z̄ cancels Im) is suggestive but does not establish identity. This is a [SELECTION] — an argued structural parallel, not a proven equivalence.
 
@@ -264,7 +264,7 @@ This resolves a longstanding interpretive question: **why can't we observe the g
 
 ### 4.1 The Reflexion Operator as Modular Conjugation
 
-**Observation EF-T7** [DEFINITION] (Reflexion = Modular Conjugation for Commutative Algebras). The reflexion operator $\theta$ (EF-D2) is the commutative special case of the Tomita-Takesaki modular conjugation $J$ ([FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA, Definition 1.9).
+**Observation EF-T7** [DEFINITION] (Reflexion = Modular Conjugation for Commutative Algebras). The reflexion operator $\theta$ (EF-D2) is the commutative special case of the Tomita-Takesaki modular conjugation $J$.
 
 > **⚠️ Epistemic note (v5.29):** For the commutative algebra $\mathcal{M} = \mathbb{C}$, the modular conjugation IS complex conjugation by definition — this is a specialization of a general construction to a trivial case, not a derived result. The non-trivial content would be showing that this identification extends meaningfully to the non-commutative algebras relevant to quantum field theory, which is not established here.
 
@@ -295,7 +295,7 @@ $$\mathcal{M}^J = \{a \in \mathcal{M} : JaJ = a\}$$
 | $\mathcal{M}$ a factor, $J$ modular | $\mathbb{C} \cdot \mathbf{1}$ (scalars) | Only scalars survive — trivial center |
 | $\mathcal{M}$ Type III$_1$ | $\mathbb{C} \cdot \mathbf{1}$ | For consciousness: only the identity survives full self-reflection |
 
-**Remark:** For Type III$_1$ factors (the algebra of consciousness, [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA, Proposition 2.7), the $J$-fixed subspace is trivial — only scalars survive. This is the algebraic expression of **first-person irreducibility**: when a conscious agent applies the Existence Filter to itself (self-reflection), almost nothing survives as "objectively existing." The agent's internal states are invisible to external observation. Only the identity $\mathbf{1}$ (the fact of existence itself) persists through the filter.
+**Remark:** For Type III$_1$ factors (the algebra of consciousness), the $J$-fixed subspace is trivial — only scalars survive. This is the algebraic expression of **first-person irreducibility**: when a conscious agent applies the Existence Filter to itself (self-reflection), almost nothing survives as "objectively existing." The agent's internal states are invisible to external observation. Only the identity $\mathbf{1}$ (the fact of existence itself) persists through the filter.
 
 ### 4.3 The Hierarchy of Conjugations
 
@@ -351,7 +351,7 @@ Cross-reference: [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_Q
 
 **Proposition EF-C4** [CONJECTURE] (Domain A Projection). The Existence Filter is the **Domain A projection** — it extracts "what exists" (physics, real roots) and discards "what knows" (consciousness, imaginary parts).
 
-Apply $E$ to the roots of the master quadratic $z^2 - kG^{*2}z + kG^{*3} = 0$ ([SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md)):
+Apply $E$ to the roots of the master quadratic $z^2 - kG^{*2}z + kG^{*3} = 0$:
 
 | Domain | Roots | $E$ Applied | What Survives |
 |--------|-------|-------------|---------------|
@@ -381,7 +381,7 @@ $$\frac{|\text{Im}(y)|}{|y|} = \frac{2.86}{3.60} = \sin(\theta) = \sin(52.54°) 
 
 ### 7.1 The Meaning Phase Plane Under the Existence Filter
 
-**Proposition EF-C5** [CONJECTURE] (Meaning Decomposition as Existence Filter). The agent meaning decomposition from [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md) (AM-D10) defines a complex meaning:
+**Proposition EF-C5** [CONJECTURE] (Meaning Decomposition as Existence Filter). The agent meaning decomposition (AM-D10) defines a complex meaning:
 
 $$\text{Meaning}_t^{\mathbb{C}} := \text{IG}_t + i \cdot \text{VI}_t$$
 
@@ -400,7 +400,7 @@ $$\boxed{E(\text{Meaning}_t^{\mathbb{C}}) = \text{IG}_t}$$
 
 ### 7.2 Partial Resolution of AM-O3
 
-This provides structure for the open question AM-O3 ("What is the mathematical structure of semantic space $S$?") from [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md):
+This provides structure for the open question AM-O3 ("What is the mathematical structure of semantic space $S$?"):
 
 The semantic space $S$ decomposes as:
 
@@ -517,9 +517,9 @@ Five contributions not found in any existing FTD document:
 |-------------------|------------------|-----|
 | [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) | $0 = (+1) + (-1)$ | Identified as EF-T6: the Existence Filter at Level $-1$ |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | Born rule $P = |\psi|^2$ | Placed in hierarchy (EF-D3) and reconstructed from $E$ (EF-T5) |
-| [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA | Modular conjugation $J$ | Identified as generalization of $\theta$ (EF-T7); $E$ = $J$-fixed projection (EF-D4) |
+| Agent meaning formalization, Part IA | Modular conjugation $J$ | Identified as generalization of $\theta$ (EF-T7); $E$ = $J$-fixed projection (EF-D4) |
 | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | Phase angle $\theta = 52.54°$ | Reinterpreted as a projection ratio under $E$ (EF-T9) |
-| [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md) | AM-O3 (structure of $S$) | Partial resolution: $S = S_{\text{real}} \times S_{\text{imag}}$, $E$ projects to $S_{\text{real}}$ |
+| Agent meaning formalization | AM-O3 (structure of $S$) | Partial resolution: $S = S_{\text{real}} \times S_{\text{imag}}$, $E$ projects to $S_{\text{real}}$ |
 | [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/DERIV_BOTTOM_UP_PHYSICS.md) | Ghost invisibility | Algebraic formula: $E(bi) = 0$ (EF-C2) |
 
 ### 9.4 Open Questions
@@ -570,13 +570,9 @@ $$\boxed{E(\text{Meaning}_t^{\mathbb{C}}) = E(\text{IG}_t + i \cdot \text{VI}_t)
 |----------|-----------|
 | [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) | $0 = (+1) + (-1)$ as Existence Filter at Level $-1$ |
 | [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) | $i$ from self-reference$^2$; Born rule as $\mathbb{C} \to \mathbb{R}$ projection |
-| [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md), Part IA | Modular conjugation $J$ (Def 1.9), Type II$_1$ $\to$ Type I collapse (Def 2.6) |
 | [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Domain A/B partition, unified vocabulary for origin / $i$ / consciousness / generative interior, `Activate_C` in lattice language |
 | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | Consciousness quadratic roots, phase angle $\theta = 52.54°$, Born rule as projection |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | Born rule $P = |\psi|^2$, collapse = manifestation |
-| [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md) | IG/VI decomposition (AM-D10), meaning phase plane, AM-O3 |
-| [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md) | SL3 (complex structure requirement), measurement as domain transition |
-| [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | Discriminant $\Delta(k)$, physics roots vs consciousness roots |
 | [DERIV_BOTTOM_UP_PHYSICS.md](../03_derivations/DERIV_BOTTOM_UP_PHYSICS.md) | Ghost/Body/Void ontology |
 | [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) | Level hierarchy ($-3$ to $12$) |
 

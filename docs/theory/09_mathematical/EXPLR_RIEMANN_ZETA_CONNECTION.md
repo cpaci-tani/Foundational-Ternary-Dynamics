@@ -6,7 +6,7 @@
 **Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Connections real but limited; derivations are fittings
 
-> **Merge note (v5.26):** This document consolidates the former `EXPLR_RIEMANN_ZETA_FTD_DISCOVERY.md` (discovery report, Feb 2 2026) and `AUDIT_RIEMANN_JUSTIFICATION_AUDIT.md` (honest assessment, Feb 2 2026). The originals are archived at `archive/ARCH_RIEMANN_ZETA_FTD_DISCOVERY.md` and `archive/ARCH_RIEMANN_JUSTIFICATION_AUDIT.md`.
+> **Merge note (v5.26):** This document consolidates the former `EXPLR_RIEMANN_ZETA_FTD_DISCOVERY.md` (discovery report, Feb 2 2026) and `AUDIT_RIEMANN_JUSTIFICATION_AUDIT.md` (honest assessment, Feb 2 2026). The standalone originals were removed in the 2026-05-21 consolidation; git history retains them.
 
 ---
 
@@ -192,7 +192,6 @@ The FTD-Riemann connections represent **clever pattern-matching** within a space
 ## Cross-References
 
 - **Number theory connections:** [EXPLR_NUMBER_THEORY.md](EXPLR_NUMBER_THEORY.md)
-- **Master quadratic:** [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **Framework reference:** [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 

@@ -71,8 +71,8 @@ print()
 
 # Fine structure constant
 alpha_derived = 1.0 / x_plus
-alpha_expt = 1.0 / 137.035999084
-report('1/alpha (inv. fine structure)', x_plus, 137.035999084, '', 'root of x^2-16G*^2 x+16G*^3=0')
+alpha_expt = 1.0 / 137.035999177
+report('1/alpha (inv. fine structure)', x_plus, 137.035999177, '', 'root of x^2-16G*^2 x+16G*^3=0')
 
 # Strong coupling at M_Z
 alpha_s_derived = float(b3_derived) / (b3_derived + 4*Neff)  # 7/59

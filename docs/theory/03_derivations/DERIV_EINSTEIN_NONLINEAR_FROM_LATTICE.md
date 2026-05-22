@@ -26,7 +26,7 @@ The two routes (Lovelock and Deser) arrive at the same result independently, pro
 
 ---
 
-## 1. Starting Point: Linearized EFE [THEOREM]
+## 1. Starting Point: Linearized EFE [SELECTION — conditional on Conjecture 10.1]
 
 From the FTD lattice postulate, the linearized Einstein field equations are derived as Theorem 14.1 of DERIV_RELATIVITY_DERIVATION.md:
 
@@ -41,6 +41,8 @@ where $\bar{h}_{\mu\nu} = h_{\mu\nu} - \frac{1}{2}\eta_{\mu\nu}h$ is the trace-r
 | $c$ | $1/\sqrt{3}$ (lattice units) | CFL stability [THEOREM] |
 
 This linearized form is the seed for the iterative bootstrap.
+
+> **[2026-05-21 correction — Step-0 graviton-provenance audit, LEDGER FTD-0189]** The "Linearized EFE [THEOREM]" starting point is **not** theorem-grade. It is `DERIV_RELATIVITY_DERIVATION.md` Theorem 14.1, which is conditional on **Conjecture 10.1** (the rank-2 $h_{\mu\nu}$ is posited, not constructed from the $s$/$J$ substrate) and **Gap 10.1** (its spin-2 spatial part is admittedly not derived). The Deser bootstrap below therefore *completes* a posited massless spin-2 field — it does not derive one from FTD. The bootstrap is sound **given** a massless spin-2 substrate mode; whether the FTD substrate carries one is [OPEN] — Frontier 4 (`docs/theory/10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`). This locates the load-bearing assumption; it does not falsify the bootstrap.
 
 ---
 
@@ -106,13 +108,13 @@ On the FTD lattice with $G_N = 0.01$:
 
 The iterates generate the post-Newtonian expansion of the Schwarzschild metric. In isotropic coordinates:
 
-$$g_{00} = \left(\frac{1 - GM/(2r)}{1 + GM/(2r)}\right)^2 = 1 - 2\frac{GM}{r} + 2\left(\frac{GM}{r}\right)^2 - 2\left(\frac{GM}{r}\right)^3 + \cdots$$
+$$g_{00} = \left(\frac{1 - GM/(2r)}{1 + GM/(2r)}\right)^2 = 1 - 2\frac{GM}{r} + 2\left(\frac{GM}{r}\right)^2 - \frac{3}{2}\left(\frac{GM}{r}\right)^3 + \cdots$$
 
 | Order | Bootstrap iteration | Term | Physical content |
 |-------|-------------------|------|-----------------|
 | 1PN | $h^{(1)}$ | $-2GM/r$ | Newtonian gravity |
 | 2PN | $h^{(2)}$ | $+2(GM/r)^2$ | Gravitational self-energy |
-| 3PN | $h^{(3)}$ | $-2(GM/r)^3$ | Energy of gravitational energy |
+| 3PN | $h^{(3)}$ | $-\tfrac{3}{2}(GM/r)^3$ | Energy of gravitational energy |
 | $n$PN | $h^{(n)}$ | $O((GM/r)^n)$ | $n$th-order self-interaction |
 
 The companion script `proof_einstein_nonlinear.py` verifies this numerically for the first several iterations.
@@ -206,7 +208,7 @@ The agreement between two independent routes is a non-trivial consistency check.
 
 | ID | Claim | Status | Key dependency |
 |----|-------|--------|---------------|
-| ENL-1 | Linearized EFE: $\Box\bar{h}_{\mu\nu} = -16\pi G_N T_{\mu\nu}$ | **[THEOREM]** | DERIV_RELATIVITY Thm 14.1 |
+| ENL-1 | Linearized EFE: $\Box\bar{h}_{\mu\nu} = -16\pi G_N T_{\mu\nu}$ | **[SELECTION — conditional on Conjecture 10.1]** (FTD-0189) | DERIV_RELATIVITY Thm 14.1 (see §1 correction note) |
 | ENL-2 | $G_N = 1/(b_3 + N_c)^2 = 0.01$ | **[SELECTION at SUBSTRATE level; ENGINE-INTERNAL at numerical level]** (downgraded from [THEOREM] 2026-05-03 night per FTD-0131 falsification: this identification with physical G_N is structurally inconsistent under all natural calibrations; substrate-derived gravity gives α_G(e,e) = (m_e/m_P)² ≈ 1.745×10⁻⁴⁵ instead) | Coupling hierarchy (engine-internal) |
 | ENL-3 | Gravitational stress-energy $t_{\mu\nu}^{\text{GR}}$ well-defined | **[THEOREM]** | Landau-Lifshitz formalism |
 | ENL-4 | Bootstrap converges for $G_N M / r < 1$ | **[THEOREM]** | Contraction mapping |

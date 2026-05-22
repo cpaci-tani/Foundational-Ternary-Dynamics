@@ -3,7 +3,7 @@
 **Document Classification:** Capstone Specification
 **Version:** 1.1 (2026-05-01 audit re-tag — abstract corrected; in-document SU(2)/QCD tags reconciled with LEDGER 2026-04-19 demotions)
 **Date:** February 25, 2026 (original); 2026-05-01 (re-tag pass)
-**Status:** Synthesis of Waves 1--4 derivations. **Re-tag pass 2026-05-01:** abstract claims of "25 [THEOREM] / 0 open items" replaced by the canonical 9-spine + LEDGER current state. Several in-document `[THEOREM]` tags on SU(2)/QCD observables (sin²θ_W, α_s = 7/59, Yukawa-power masses) demoted to `[PARAMETRIC]` or `[STRUCTURALLY MOTIVATED PARAMETRIC]` per LEDGER FTD-0018/0019/0020 (demoted 2026-04-19) and FTD-0094 (demoted 2026-04-27).
+**Status:** Synthesis of Waves 1--4 derivations. **Re-tag pass 2026-05-01:** abstract claims of "25 [THEOREM] / 0 open items" replaced by the canonical algebraic spine + LEDGER current state. Several in-document `[THEOREM]` tags on SU(2)/QCD observables (sin²θ_W, α_s = 7/59, Yukawa-power masses) demoted to `[PARAMETRIC]` or `[STRUCTURALLY MOTIVATED PARAMETRIC]` per LEDGER FTD-0018/0019/0020 (demoted 2026-04-19) and FTD-0094 (demoted 2026-04-27).
 **Depends on:** All documents in Categories 1--3 of META_INDEX.md
 **Authoritative source for tag conflicts:** [`07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) wins over this document.
 
@@ -15,7 +15,7 @@ The Standard Model Lagrangian $\mathcal{L}_{\text{SM}}$ consists of six disconne
 
 $$\mathcal{L}_{\text{RB}} = -K_B \frac{\sqrt{f^2 - v^2}}{\sqrt{f}} - g_c \cdot s \cdot (\nabla \cdot \mathbf{J}) - \lambda_G(\nabla \cdot \mathbf{J} - \rho_{\text{charge}})^2$$
 
-from which all gauge sectors, the Higgs mechanism, fermion masses, mixing angles, and gravity emerge. The entire framework traces to one physical axiom ($D = 3$ cubic lattice with ternary states and local deterministic updates) and one canonical mathematical constant (the FTD bridge constant $G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.9587$; **note: $G^*$ is NOT the lemniscate constant $\varpi \approx 2.6221$ — the two are related by $G^* = \varpi \cdot 2/\sqrt{\pi}$ but are distinct quantities, see FTD-0117 typo-bug closure**). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ and $x_- = 3.024$. The polynomial itself is [THEOREM] (FTD-0001); the **physical identifications** $x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) and $x_- \leftrightarrow N_c = 3$ (0.80%) are tagged [STRONGLY MOTIVATED CONJECTURE] (FTD-0013, FTD-0014; downgraded from [THEOREM] in the 2026-04-19 reframe). The framework integers $\{3, 4, 7, 13\}$ structure many coupling and mass formulas, but their use in deriving observables is mostly [PARAMETRIC]/[STRUCTURALLY MOTIVATED PARAMETRIC] rather than [DERIVED]. Gravity via the lattice availability factor $f = 1 - \mathcal{L}^2$ reproduces Schwarzschild, Kerr, and Reissner-Nordstrom metrics ([THEOREM] / [SELECTION] depending on the specific result). **Honest accounting per LEDGER (2026-05-01):** the canonical algebraic spine has 9 [THEOREM]-grade results (see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md)); roughly 23 individual derivations carry [DERIVED] or sub-[THEOREM] tags across the project; ~129 [PARAMETRIC] insertions remain (per [`CATALOG_PARAMETRIC_INSERTIONS.md`](../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)); ~10 [IMPOSED]/[SELECTION] choices; **at least 87 [OPEN] items** are tracked in [`TRACKER_OPEN_ITEMS.md`](../07_assessment/TRACKER_OPEN_ITEMS.md) (NOT zero); the framework rests on 5 axioms + a two-layer ontology + the calibration $a_{\text{phys}} \equiv \ell_P$ (FTD-0041, 2026-04-19). What is genuinely achieved and what is honestly not yet derived are distinguished throughout.
+from which all gauge sectors, the Higgs mechanism, fermion masses, mixing angles, and gravity emerge. The entire framework traces to one physical axiom ($D = 3$ cubic lattice with ternary states and local deterministic updates) and one canonical mathematical constant (the FTD bridge constant $G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.9587$; **note: $G^*$ is NOT the lemniscate constant $\varpi \approx 2.6221$ — the two are related by $G^* = \varpi \cdot 2/\sqrt{\pi}$ but are distinct quantities, see FTD-0117 typo-bug closure**). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ and $x_- = 3.024$. The polynomial itself is [THEOREM] (FTD-0001); the **physical identifications** $x_+ \leftrightarrow 1/\alpha$ (1.26 ppm) and $x_- \leftrightarrow N_c = 3$ (0.80%) are tagged [STRONGLY MOTIVATED CONJECTURE] (FTD-0013, FTD-0014; downgraded from [THEOREM] in the 2026-04-19 reframe). The framework integers $\{3, 4, 7, 13\}$ structure many coupling and mass formulas, but their use in deriving observables is mostly [PARAMETRIC]/[STRUCTURALLY MOTIVATED PARAMETRIC] rather than [DERIVED]. Gravity via the lattice availability factor $f = 1 - \mathcal{L}^2$ reproduces Schwarzschild, Kerr, and Reissner-Nordstrom metrics ([THEOREM] / [SELECTION] depending on the specific result). **Honest accounting per LEDGER (2026-05-01):** the canonical algebraic spine has six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered; see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0); roughly 23 individual derivations carry [DERIVED] or sub-[THEOREM] tags across the project; ~129 [PARAMETRIC] insertions remain (per [`CATALOG_PARAMETRIC_INSERTIONS.md`](../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md)); ~10 [IMPOSED]/[SELECTION] choices; **at least 87 [OPEN] items** are tracked in [`TRACKER_OPEN_ITEMS.md`](../07_assessment/TRACKER_OPEN_ITEMS.md) (NOT zero); the framework rests on 5 axioms + a two-layer ontology + the calibration $a_{\text{phys}} \equiv \ell_P$ (FTD-0041, 2026-04-19). What is genuinely achieved and what is honestly not yet derived are distinguished throughout.
 
 ---
 
@@ -311,7 +311,7 @@ Following AUDIT_EPISTEMIC_AUDIT.md, every claim in the framework is classified:
 
 ## 4.2 What Is Genuinely Derived [THEOREM]
 
-> **2026-05-01 audit re-tag**: this table pre-dates the 2026-04-19 reframe and the 2026-05-01 spine canonicalization. **The original tags were uniformly [THEOREM]; LEDGER current state is mixed.** Tags below are reconciled against LEDGER.md as of 2026-05-01. Authoritative source: [`07_assessment/LEDGER.md`](../07_assessment/LEDGER.md). The canonical algebraic spine has 9 [THEOREM]-grade results; see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md). Many "framework-integer arithmetic" results below are [STRUCTURALLY MOTIVATED PARAMETRIC] or [PARAMETRIC] in current LEDGER tagging.
+> **2026-05-01 audit re-tag**: this table pre-dates the 2026-04-19 reframe and the 2026-05-01 spine canonicalization. **The original tags were uniformly [THEOREM]; LEDGER current state is mixed.** Tags below are reconciled against LEDGER.md as of 2026-05-01. Authoritative source: [`07_assessment/LEDGER.md`](../07_assessment/LEDGER.md). The canonical algebraic spine has six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered); see [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) §0. Many "framework-integer arithmetic" results below are [STRUCTURALLY MOTIVATED PARAMETRIC] or [PARAMETRIC] in current LEDGER tagging.
 
 These results follow from $G^*$, the master quadratic, and integer arithmetic alone:
 
@@ -537,7 +537,7 @@ This section lists limitations and open problems that the framework does not res
 
 ## 7.1 Gravity
 
-- **Full nonlinear Einstein equations** are not derived. The linearized equations follow from Noether's theorem applied to $\mathcal{L}_{\text{RB}}$ (DERIV_QFT_GRT_BRIDGE), and the Schwarzschild/Kerr/RN solutions are derived from the computational budget framework (DERIV_LATTICE_BLACK_HOLES; originally DERIV_LATTICE_SCHWARZSCHILD, DERIV_LATTICE_KERR, DERIV_LATTICE_REISSNER_NORDSTROM [ARCHIVED → archive/ARCH_DERIV_LATTICE_*.md, consolidated into DERIV_LATTICE_BLACK_HOLES]). The full $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G T_{\mu\nu}$ with arbitrary matter content in arbitrary geometries remains [OPEN].
+- **Full nonlinear Einstein equations** are not derived. The linearized equations follow from Noether's theorem applied to $\mathcal{L}_{\text{RB}}$ (DERIV_QFT_GRT_BRIDGE), and the Schwarzschild/Kerr/RN solutions are derived from the computational budget framework (DERIV_LATTICE_BLACK_HOLES; originally the separate DERIV_LATTICE_SCHWARZSCHILD, DERIV_LATTICE_KERR, DERIV_LATTICE_REISSNER_NORDSTROM, since consolidated into DERIV_LATTICE_BLACK_HOLES). The full $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G T_{\mu\nu}$ with arbitrary matter content in arbitrary geometries remains [OPEN].
 - **Background independence** is not achieved. The lattice is a fixed background; the metric emerges as an effective description but spacetime itself does not fluctuate.
 - **Kerr-Newman** (rotating + charged) is outlined but not fully derived.
 
@@ -614,18 +614,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) | All 4 forces from lattice Green's functions |
 | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Propagator, vertex, stress-energy tensor, Moller scattering |
 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | $g_c = \sqrt{\alpha}$ derivation |
-| [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | Schwarzschild from computational budget |
 | [DERIV_VARIATIONAL_PROOF.md](../03_derivations/DERIV_VARIATIONAL_PROOF.md) | $\delta S = 0$ reproduces all update rules (59 checks) |
-
-## Wave 2: One-Loop QED + Black Holes
-
-| Document | Content |
-|----------|---------|
-| [DERIV_LATTICE_LOOP_CORRECTIONS.md](../archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md) | Vacuum polarization $\Pi(k)$, QED beta function |
-| [DERIV_LATTICE_SELF_ENERGY.md](../archive/ARCH_DERIV_LATTICE_SELF_ENERGY.md) | Self-energy $\Sigma(p)$, mass renormalization |
-| [DERIV_LATTICE_VERTEX_CORRECTION.md](../archive/ARCH_DERIV_LATTICE_VERTEX_CORRECTION.md) | Vertex $\Lambda_\mu$, $g - 2 = \alpha/(2\pi)$ |
-| [DERIV_LATTICE_KERR.md](../archive/ARCH_DERIV_LATTICE_KERR.md) | Kerr metric from vortical flux |
-| [DERIV_LATTICE_REISSNER_NORDSTROM.md](../archive/ARCH_DERIV_LATTICE_REISSNER_NORDSTROM.md) | Reissner-Nordstrom from EM anti-saturation |
 
 ## Wave 3: Non-Abelian Gauge Sectors + Higgs
 
@@ -641,14 +630,12 @@ The capstone achievement is not any single derivation but the structural claim: 
 |----------|---------|
 | [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | Path integral $Z[\mathbf{J}]$, generating functional, effective action |
 | [DERIV_LATTICE_CHIRAL_ANOMALY.md](../03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md) | Chiral anomaly, $\pi^0 \to \gamma\gamma$, baryogenesis |
-| [DERIV_TWO_LOOP_ALPHA.md](../archive/ARCH_DERIV_TWO_LOOP_ALPHA.md) | Two-loop $\alpha$ correction, road to sub-ppm |
 
 ## Foundations and Constants
 
 | Document | Content |
 |----------|---------|
 | [SPEC_FTD_LAGRANGIAN.md](SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, $G^*$ operators, Lorentz factor, SM mapping |
-| [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | Master quadratic (16 algebraic forms) |
 | [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) | Master quadratic as domain connector |
 | [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) | $G^* = \varpi/\sqrt{\text{PF}}$ decomposition |
 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas $\gamma \to \varpi \to M \to \pi \to G^*$; not the canonical $\alpha$ derivation chain |
@@ -696,7 +683,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-31 | $N_{\text{base}} = 2^{(D+1)/2} = 4$ | [SELECTION] | $D = 3$ + spinor dimension argument |
 | SM-32 | Mexican hat potential from BI + manifestation feedback | [SELECTION] | SM-30, Born-Infeld nonlinearity |
 | SM-33 | Hierarchy problem resolved by lattice UV cutoff | [SELECTION] | Physical cutoff at $a$ (= $\ell_P$ under Planck-primary calibration FTD-0041; gauge per FTD-0137) |
-| SM-34 | Substrate-to-aggregate transition yields $S > 2$ | [SELECTION] | Three-level hierarchy: L1=2, L2=sqrt(2), L3=2*sqrt(2); see [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md) |
+| SM-34 | Substrate-to-aggregate transition yields $S > 2$ | [SELECTION] | Three-level hierarchy: L1=2, L2=sqrt(2), L3=2*sqrt(2); see [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) |
 | SM-35 | Two-loop correction closes 1.26 ppm gap | [CONJECTURE] | Right magnitude; exact coefficient not computed |
 | SM-36 | Dark matter = sub-threshold flux, $\mathcal{L} = 0.75$ | [CONJECTURE] | Qualitative consistency only |
 | SM-37 | $D = 3$ uniquely selected by 6 independent constraints | [THEOREM] | Gauge + atomic stability + Fibonacci |
