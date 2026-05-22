@@ -16,6 +16,19 @@ reading; all assertions pass, exit 0. No numerical search.
 
 ---
 
+> **Update (2026-05-22) — Q11 resolved to CLOSED-NEGATIVE; the chain has
+> terminated.** Q11 below deferred one question to Q12: is the weak
+> `SU(2)` on `φ` a genuine `[SELECTION]` or a count-match? Q12
+> ([`AUDIT_WEAK_SU2_PROVENANCE.md`](AUDIT_WEAK_SU2_PROVENANCE.md),
+> FTD-0192) found it is a **count-match** — not a genuine rank-1. The
+> rank-2 reading therefore collapses: the colour-singlet internal abelian
+> rank is **forced to 1**, and Q11's UNDERDETERMINED verdict below
+> **resolves to CLOSED-NEGATIVE** (rank forced ≠ 2). Q10 (FTD-0190)
+> closes negative with it. The §1 verdict and the audit trace below stand
+> as the correct Q11-stage record; the closure is the chain-level result.
+
+---
+
 ## §1 — Verdict
 
 > **UNDERDETERMINED** (pre-reg §6).
