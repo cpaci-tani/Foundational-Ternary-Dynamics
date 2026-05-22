@@ -65,4 +65,14 @@ The flux/state duality and the information-theoretic lens on G*.
 
 ---
 
-11 active docs in this cluster (+ 0 archived).
+## Pre-registrations
+
+Hash-locked pre-registrations of structural audits in this cluster — the prose is fixed and SHA256-pinned before any matching is attempted (registry: [`../10_eft_program/REF_PREREGISTER_MANIFEST.md`](../10_eft_program/REF_PREREGISTER_MANIFEST.md)).
+
+| File | Tag | Purpose |
+|---|---|---|
+| [PREREG_FINITE_NEUTRAL_LOCK_v1.md](PREREG_FINITE_NEUTRAL_LOCK_v1.md) | [PRE-REGISTRATION] | Q10 finite-neutral-lock audit (FTD-0190): the minimal finite closure object that locks an internal two-state opposition sector while leaving a massless U(1)-like neutral readout — and whether its continuum shadow carries the electroweak doublet (1,2)_{1/2}. Desk audit of the frozen structural inventory; no numerical search. |
+
+---
+
+12 active docs in this cluster (+ 0 archived).
