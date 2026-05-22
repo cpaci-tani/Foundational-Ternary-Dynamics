@@ -905,6 +905,21 @@ ftd_add_test(test_two_state_extraction tests/test_two_state_extraction.cpp
 ftd_add_test(campaign_bcc_band_spectrum tests/campaign_bcc_band_spectrum.cpp
              CTEST_NAME bcc_band_spectrum TIMEOUT 1800 LABELS native eft)
 
+# Frontier 4 / Step 4a-ii — emergent transverse-traceless (spin-2) pole
+# campaign. Implements Test 4a-ii of the hash-locked pre-registration
+# PREREG_GRAVITON_SUBSTRATE_MODE_v1.md (tag preregister-graviton-substrate-
+# mode-v1): perturbs the interacting substrate with a fixed broadband J
+# field, measures the connected TT-projected two-point function of two
+# rank-2 J-composites (strain-rate + Noether stress), and extracts
+# pole-vs-continuum structure per small-|k| point along [100]/[110]/[111].
+# A spin-1 transverse-J control validates the correlator machinery against
+# the known pole ω = 2C|sin(k/2)|. Smoke parameters L=16, window=512 fit
+# within 1800 s; canonical run is L ∈ {32,64,128} with a longer window
+# and a separately-launched invocation. GPU (CUDA backend) per project rule.
+ftd_add_test(campaign_graviton_tt_correlator tests/campaign_graviton_tt_correlator.cpp
+             CTEST_NAME graviton_tt_correlator GPU_HEAVY TIMEOUT 1800
+             LABELS native eft gravity)
+
 # Flux-slice propagation diagnostic (FTD-0092 companion). Real-space
 # 2D slice (xy / xz / yz) capture of a centred Gaussian flux pulse
 # under wave-only dynamics. Complements the spectral Lorentz-isotropy
