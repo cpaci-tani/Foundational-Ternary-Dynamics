@@ -625,37 +625,50 @@ explicitly state material already covered by Theorems 1-9. Spine count remains 9
 
 ## 11 · The empirical observation (NOT a theorem — explicit boundary)
 
-The two roots of the master quadratic (Theorem 2) match dimensionless
-constants from unrelated physical sectors:
+The larger root of the master quadratic (Theorem 2) matches the
+inverse fine-structure constant:
 
 $$x_+ = 137.0362\ldots \approx 1/\alpha \quad (\text{1.26 ppm})$$
-$$x_- = 3.0240\ldots \approx N_c \quad (\text{0.80\%})$$
 
-This is the **dual-prediction property**. It is the strongest piece of
-empirical motivation for taking FTD's algebraic spine seriously as a
-physics-relevant structure. It is recorded in the LEDGER as
+This is the central physics identification carried by the algebraic
+spine. It is recorded in the LEDGER as
 
-- **FTD-0013** [STRONGLY MOTIVATED CONJECTURE] x+ identification with 1/α
-- **FTD-0017** [STRONGLY MOTIVATED CONJECTURE] x− identification with N_c
+- **FTD-0013** [STRONGLY MOTIVATED CONJECTURE] x₊ identification with 1/α
 
-These are NOT promoted to theorem. The motivation is the algebraic
-rigidity of P(x) (Theorem 2 + uniqueness from Theorem 3) plus a
-60k-polynomial scan (`scripts/proofs/audit_master_quadratic_rigidity.py`)
-showing the master quadratic is the tightest dual-match in its
-neighborhood of polynomial space. The observation is structural
-evidence, not derivation.
+It is NOT promoted to theorem. The motivation is the algebraic rigidity
+of `P(x)` (Theorem 2 + uniqueness from Theorem 3) plus the **adversarial
+look-elsewhere scan** (FTD-0189; pre-reg tag
+`preregister-adversarial-look-elsewhere-v1`): across **2.65 M degree-2
+polynomials** over an 18-constant basket FTD did not design, the master
+quadratic is the **unique dual-matcher** — zero non-G* dual-matchers,
+rank 1 by ~130×. That is structural evidence of polynomial-template
+uniqueness; it is not a derivation of α from FTD axioms.
 
-The methodological gap that prevents promotion: there is no derivation
-of the physics identification from the FTD axioms. As of 2026-04-27,
-all three attempted derivation routes for the gauge coupling g_c
-(Mechanisms A, B, C) have closed negative, so the route from "P(x)
-roots" to "physical α" runs through `g_c` at [PARAMETRIC] status.
+The polynomial's smaller root, `x_- = 3.0240…`, is a mathematical
+artifact of the quadratic. **The identification `x_- ↔ N_c` is
+RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — the original LEDGER
+row FTD-0014 was removed in commit `ca7eb61`. FTD's `N_c = 3` is
+independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes)
+and the Moore Layer Theorem (`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`,
+where `W_3 = G*²/(2π)` and `SU(3)` both arise from the BCC eigenvalue's
+triple cosine product). The FTD-0189 scan's "dual-matcher" criterion
+historically used `(1/α, N_c)` as the target pair; the polynomial-
+uniqueness fact it establishes is independent of which physical
+constant one tries to identify with `x_-`, and is unchanged by the
+retirement.
 
-The honest reading: P(x) is a specific polynomial (Theorem 2) with two
-roots that numerically match (1/α, N_c). That is a real fact. Whether
-it is structurally meaningful or a 60k-poly look-elsewhere artifact is
-the open methodological question (FTD-0097 pre-registered scan
-addresses this; not yet run).
+The methodological gap that prevents promotion of the α identification:
+there is no derivation chain from the FTD axioms to it. As of
+2026-04-27, all three attempted derivation routes for the gauge
+coupling g_c (Mechanisms A, B, C) have closed negative, so the route
+from "P(x) root x₊" to "physical α" runs through `g_c` at
+[PARAMETRIC] status.
+
+The honest reading: `P(x)` is a specific polynomial (Theorem 2) whose
+larger root numerically matches 1/α. The FTD-0189 scan shows no other
+polynomial in a large, fairly-chosen neighborhood produces a comparable
+match. That is structural evidence the polynomial is special; it is
+not a derivation of α from FTD axioms.
 
 ---
 
