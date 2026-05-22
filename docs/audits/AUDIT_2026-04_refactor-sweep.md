@@ -1,6 +1,6 @@
 # Audit: 2026-04 Engine Refactor Sweep
 
-**Plan:** [`.claude/plans/i-want-to-try-crispy-charm.md`](../../.claude/plans/i-want-to-try-crispy-charm.md) (closed)
+**Plan:** `.claude/plans/i-want-to-try-crispy-charm.md` (closed; local-only, gitignored)
 **Status:** Complete (17 commits) · WSL2 GPU parity verified 2026-04-28
 **Date opened:** 2026-04-27 (Phase 0 documentation scaffolding)
 **Date closed:** 2026-04-27 (Phase 7 test fixture + telemetry impl)
@@ -147,4 +147,4 @@ inventing it ad hoc.
 - [CONTRACTS.md](../../CONTRACTS.md) §10, §11, §12 (new contracts codified)
 - [docs/adr/INDEX.md](../adr/INDEX.md) (new ADRs 0010-0013)
 - [engine/web/js/viewport/REFACTOR_MAP.md](../../engine/web/js/viewport/REFACTOR_MAP.md) (Phase 3 in-flight extraction guide; closed/historical)
-- [.claude/plans/i-want-to-try-crispy-charm.md](../../.claude/plans/i-want-to-try-crispy-charm.md) (the original plan; closed)
+- `.claude/plans/i-want-to-try-crispy-charm.md` (the original plan; closed; local-only, gitignored)
