@@ -48,7 +48,7 @@ The Langevin+genesis ensemble drives non-zero state s, so unlike the pulse-only 
 
 ## 3 · Pre-registered ensemble parameters
 
-Mirror [`test_nonlinear_flow_multiscale.cpp`](../../engine/tests/test_nonlinear_flow_multiscale.cpp) verbatim (proven Gaussian-flow ensemble, 21/21 ctests PASS on RTX 5090, 2026-04-26):
+Mirror [`test_nonlinear_flow_multiscale.cpp`](../../../engine/tests/test_nonlinear_flow_multiscale.cpp) verbatim (proven Gaussian-flow ensemble, 21/21 ctests PASS on RTX 5090, 2026-04-26):
 
 | Parameter | Production | Smoke |
 |---|---|---|
@@ -219,8 +219,8 @@ Single new row **FTD-0099** for the F1+F5+F3 bundle. Tag determined by the empir
 ## 8 · Cross-references
 
 - Template PROTOCOL doc: [`PROTOCOL_BETA_MEASUREMENT.md`](PROTOCOL_BETA_MEASUREMENT.md)
-- Template campaign source: [`engine/tests/test_nonlinear_flow_multiscale.cpp`](../../engine/tests/test_nonlinear_flow_multiscale.cpp)
-- Template result schema: [`engine/results/gaussian_expansion_2026-04-26/meta.json`](../../engine/results/gaussian_expansion_2026-04-26/meta.json)
+- Template campaign source: [`engine/tests/test_nonlinear_flow_multiscale.cpp`](../../../engine/tests/test_nonlinear_flow_multiscale.cpp)
+- Template result schema: [`engine/results/gaussian_expansion_2026-04-26/meta.json`](../../../engine/results/gaussian_expansion_2026-04-26/meta.json)
 - Operator basis SPEC: [`SPEC_OPERATOR_BASIS.md`](SPEC_OPERATOR_BASIS.md)
 - Blocking map SPEC: [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](SPEC_FTD_NATIVE_BLOCKING_MAP.md)
 - Audit closing this protocol partially supersedes: [`AUDIT_OPERATOR_SPECTRUM.md`](AUDIT_OPERATOR_SPECTRUM.md)
