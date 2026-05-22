@@ -87,14 +87,14 @@ This is the entry that would draw the most reviewer pressure. The honest framing
 
 ---
 
-## TIER 5 — Strongly motivated conjectures (2)
+## TIER 5 — Strongly motivated conjectures (1)
 
-These are the load-bearing identifications between FTD's algebraic structure and Standard Model constants. They are **honestly tagged as conjectures**. Substantial structural-uniqueness evidence exists; no derivation chain from FTD axioms exists.
+This is the load-bearing identification between FTD's algebraic structure and the inverse fine-structure constant. It is **honestly tagged as a conjecture**. Substantial structural-uniqueness evidence exists; no derivation chain from FTD axioms exists.
 
 | ID | Conjecture | Empirical match | Structural evidence |
 |---|---|---|---|
-| **OT-5.1** | `x_+ = 1/α` | 1.26 ppm to CODATA 2022 (`α^{-1} = 137.035999177(21)`) | OT-3.2 + OT-3.3 (combined ~4×10⁵:1 Bayes weight); OT-1.5 (Z[i] structure unifying CM Aut count and tower level k=4) |
-| **OT-5.2** | `x_- = N_c = 3` | 0.80% to integer 3 | Same as OT-5.1; the dual-matching property is what distinguishes the master quadratic in OT-3.3 |
+| **OT-5.1** | `x_+ = 1/α` | 1.26 ppm to CODATA 2022 (`α^{-1} = 137.035999177(21)`) | FTD-0189 adversarial look-elsewhere scan: zero non-G* dual-matchers across 2.65 M degree-2 polynomials over an 18-constant basket FTD did not design, rank 1 by ~130×; OT-3.2 / OT-3.3 (Chowla–Selberg h-scan, d = −4 uniqueness); OT-1.5 (Z[i] structure unifying CM Aut count and tower level k=4). Note: OT-3.2 / OT-3.3 used the pre-v1.4 `(1/α, N_c)` dual-target pair — the polynomial-template-uniqueness facts they establish are unchanged; only the `x_- ↔ N_c` identification is retired |
+| ~~**OT-5.2**~~ | ~~`x_- = N_c = 3`~~ | — | **REMOVED 2026-05-22** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` (Moore Layer Theorem) |
 
 **Closed-negative routes** (preserved for provenance, do not attempt):
 - R1 transverse stiffness — closed
