@@ -199,6 +199,6 @@ move after the §4 ring-algebra extension.
   ontology side of L2 (mass-as-functional).
 - `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093) —
   the derivation side of L2 (Mechanism C).
-- `docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093) —
+- `docs/theory/10_eft_program/archive/closed_negative/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093) —
   the falsifier.
 - Roundtable record (2026-04-25 conversation) — formal-semantic chair.

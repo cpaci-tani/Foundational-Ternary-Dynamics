@@ -3,7 +3,7 @@
 **Document type:** Audit (delivers results of pre-registered scan)
 **Status:** [COMPLETE] — verdict landed; methodology distinction critical
 **Created:** 2026-05-02
-**Pre-registration:** [PREREG_HEEGNER_TOWER_RIGIDITY.md](PREREG_HEEGNER_TOWER_RIGIDITY.md)
+**Pre-registration:** [PREREG_HEEGNER_TOWER_RIGIDITY.md](archive/campaign_complete/PREREG_HEEGNER_TOWER_RIGIDITY.md)
 **Related:** SPEC_ALGEBRAIC_SPINE.md Theorem 3 (CM uniqueness); EXPLR_CM_RATIO_TOWER.md (existing fixed-c=16 tabulation); AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md (FTD-0122).
 
 ---

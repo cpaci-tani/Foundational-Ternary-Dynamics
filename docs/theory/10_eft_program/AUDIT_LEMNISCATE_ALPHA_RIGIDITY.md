@@ -3,7 +3,7 @@
 **Document type:** Audit (delivers results of pre-registered scan)
 **Status:** [COMPLETE] — verdict landed
 **Created:** 2026-05-01 evening
-**Pre-registration:** [PREREG_LEMNISCATE_ALPHA_RIGIDITY.md](PREREG_LEMNISCATE_ALPHA_RIGIDITY.md)
+**Pre-registration:** [PREREG_LEMNISCATE_ALPHA_RIGIDITY.md](archive/campaign_complete/PREREG_LEMNISCATE_ALPHA_RIGIDITY.md)
 **Companion fixes:** `DERIV_SPIN_STATISTICS_BRIDGE.md` (L_α value, denominator decomposition formula, agreement ppm — three corrections applied 2026-05-01); `SPEC_SM_REPLACEMENT_COMPLETE.md §4.4` (spin-statistics tag drift fixed: "Derived" → "[SELECTION]").
 
 ---

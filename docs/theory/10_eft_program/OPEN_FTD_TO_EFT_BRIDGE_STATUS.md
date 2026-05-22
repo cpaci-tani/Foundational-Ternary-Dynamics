@@ -50,12 +50,9 @@ See:
 ```text
 SPEC_FTD_EFT_BRIDGE_CONTRACT.md      frozen bridge gates and branch policy
 SPEC_FTD_NATIVE_ELECTRODYNAMICS.md   active native source/flux target
-DERIV_FTD_NATIVE_LINEAR_GENERATOR.md linear constrained-flux generator
+DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md linear constrained-flux generator + bare/current/response b=2 native flow audits
 SPEC_FTD_NATIVE_BLOCKING_MAP.md      finite-volume native RG blocking map
-DERIV_FTD_NATIVE_BARE_FLOW.md        first bare b=2 native flow audit
-DERIV_FTD_NATIVE_CURRENT_FLOW.md     native current b=2 flow audit
-DERIV_FTD_NATIVE_RESPONSE_FLOW.md    native static/vertex b=2 flow audit
-DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md real engine face-transport flow audit
+DERIV_FTD_NATIVE_NONLINEAR_FLOW.md   real engine face-transport flow audit
 ```
 
 ---
@@ -105,23 +102,23 @@ The new native program changes the question. It asks for:
 | `J` as physical vector flux | `DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` | Supported | Native flux is not automatically a gauge potential |
 | U(1) as emergent transverse-projection redundancy | `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` | Partial | Matter coupling and alpha observable still open |
 | Gauss constraint as source/transverse decomposition | Engine Gauss tests, continuum-limit docs | Strong conditional | Supports two transverse DoF, not full QED by itself |
-| Exact native Gauss as dual-cell boundary flux | `DERIV_FTD_NATIVE_RESPONSE_TUPLE.md`, `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` | [MEASURED] | Production engine still stores cell-centered `J`; exact full-site Gauss would require face-centered or equivalent dual-cell storage |
-| Moore shell / BCC role | `DERIV_FTD_NATIVE_RESPONSE_TUPLE.md`, `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` | [MEASURED] / [SELECTION] | G18 is the direct one-tick longitudinal response; BCC/stella is a delayed Moore layer unless a native action/timing principle selects nonzero G26 corner weight |
+| Exact native Gauss as dual-cell boundary flux | `DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`, `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` | [MEASURED] | Production engine still stores cell-centered `J`; exact full-site Gauss would require face-centered or equivalent dual-cell storage |
+| Moore shell / BCC role | `DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`, `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` | [MEASURED] / [SELECTION] | G18 is the direct one-tick longitudinal response; BCC/stella is a delayed Moore layer unless a native action/timing principle selects nonzero G26 corner weight |
 | Self-dual half-shell `r^2 = 1/2` | `EXPLR_SELF_DUAL_HALF_SHELL.md` | [MEASURED] / [CONJECTURE] | Dual-edge shell is now a measured response channel, but the link to `G*` remains a bridge hypothesis |
 | Master quadratic root `x_+` | FTD-0001, FTD-0002, FTD-0003 | Algebraic theorem | Physical identification with alpha remains conjectural |
 | Engine coupling operator | Link 8 and BCC-orthogonality audit | Negative for BCC bridge | Engine stencil is `(SC+FCC)/2`, orthogonal to BCC corner sector |
 | Structure-1 one-loop scalar correction | `DERIV_ONE_LOOP_LATTICE_ALPHA.md`, HMC checks | Scheme-specific | Not reproduced by Ward-valid Structure-2 scalar gauge completion |
-| Structure-2 scalar gauge completion | `AUDIT_STRUCTURE2_WARD_VALIDATION.md` | Closed negative | Natural scalar cases S2-A through S2-E fail threshold |
+| Structure-2 scalar gauge completion | `archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md` | Closed negative | Natural scalar cases S2-A through S2-E fail threshold |
 | Fermionic QED completion | `DERIV_LATTICE_QED_COMPLETE.md` | [SELECTION] | Fermion content and doubler handling are not forced by FTD axioms |
-| Projected matter/current coupling | `DERIV_PROJECTED_EFT_MATTER_COUPLING.md` | Partial native result | Native current/coupling dictionary survives; QED charge normalization closed negative under current action |
+| Projected matter/current coupling | `archive/closed_negative/DERIV_PROJECTED_EFT_MATTER_COUPLING.md` | Partial native result | Native current/coupling dictionary survives; QED charge normalization closed negative under current action |
 | Projected Dirac operator and charge normalization | `archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` | Historical QED-facing candidate | Dirac candidate fixed symbolically; `e0^2 = 1/x_+` not derived |
 | Projected EFT renormalization and alpha observable | `archive/closed_negative/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` | Closed negative / superseded | Replaced by FTD-native electrodynamics target |
 | Projected stiffness route `K_T,0 = x_+` | `archive/closed_negative/DERIV_PROJECTED_STIFFNESS_XPLUS_ATTEMPT.md` | Closed negative | Current action gives canonical transverse stiffness, not `x_+` |
 | Projected response-eigenvalue route | `archive/closed_negative/DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md` | Closed negative under current action | Master quadratic has an algebraic matrix representation, but current projected EFT does not derive the two-sector response matrix |
 | Source-current normalization route `e0^2 = 1/x_+` | `archive/closed_negative/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` | Closed negative under current action | Ternary source transport fixes integer charge and current conservation, not the physical coupling magnitude |
-| Regulator/counterterm prescription for QED alpha | `AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md`, FTD-0056 | Closed negative for old target | Unrenormalized BCC tadpole has no continuum limit |
+| Regulator/counterterm prescription for QED alpha | `archive/campaign_complete/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md`, FTD-0056 | Closed negative for old target | Unrenormalized BCC tadpole has no continuum limit |
 | Physical alpha observable | Coupling docs and audits | Superseded | QED alpha is now an external comparison, not the primary FTD observable |
-| FTD-native electrodynamics replacement | `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md`, `DERIV_FTD_NATIVE_RESPONSE_TUPLE.md`, `DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` | Active target | Native response observables replace QED alpha as the primary physics goal; bare canonical tuple is closed, native scale flow remains open |
+| FTD-native electrodynamics replacement | `SPEC_FTD_NATIVE_ELECTRODYNAMICS.md`, `DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`, `archive/closed_negative/DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md` | Active target | Native response observables replace QED alpha as the primary physics goal; bare canonical tuple is closed, native scale flow remains open |
 
 ---
 

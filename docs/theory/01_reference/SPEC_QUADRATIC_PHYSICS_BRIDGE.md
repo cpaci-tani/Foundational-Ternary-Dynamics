@@ -301,7 +301,7 @@ Bridge Functional cross-references:
 - `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md`: master quadratic chain.
 - `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`: master quadratic algebraic identity.
 - `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` (FTD-0093, closed negative): structural derivation attempt for the BCC bridge operator.
-- `docs/theory/10_eft_program/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093, closed negative): falsifier.
+- `docs/theory/10_eft_program/archive/closed_negative/PROTOCOL_BCC_SUBLATTICE_SPECTRUM.md` (FTD-0093, closed negative): falsifier.
 - `docs/theory/10_eft_program/OPEN_MU_FROM_LP_MISSING_ARROW.md` (FTD-0096): the calibration-side broken arrow.
 
 ---

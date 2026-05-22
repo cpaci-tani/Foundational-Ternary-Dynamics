@@ -1120,7 +1120,7 @@ Error:         9.6 ppb (99.2% gap closure from tree-level)
 
 This closes 99.2% of the gap between the tree-level G* quadratic and the experimental value inside the Structure-1 SC scalar-EFT scheme.
 
-**Audit update 2026-04-22:** This is not currently a scheme-independent physical prediction. The BCC tadpole and continuum scans show regulator dependence, and the Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce the ppb closure. See `docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md` and ledger row FTD-0058.
+**Audit update 2026-04-22:** This is not currently a scheme-independent physical prediction. The BCC tadpole and continuum scans show regulator dependence, and the Ward-valid Structure-2 two-U(1) scalar gauge completion does not reproduce the ppb closure. See `docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md` and ledger row FTD-0058.
 
 ### 29.3 The 13-Step Blind Derivation Chain (i to alpha)
 
