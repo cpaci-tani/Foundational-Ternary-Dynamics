@@ -41,6 +41,7 @@ Critical self-assessment of what FTD derives vs imports, and where derivations h
 
 | File | Tag | Purpose |
 |---|---|---|
+| [ROUNDTABLE_STATE_OF_FTD_2026-05-22.md](ROUNDTABLE_STATE_OF_FTD_2026-05-22.md) | [SYNTHESIS] | **State-of-the-theory roundtable (2026-05-22):** five-expert-persona panel over a full deep read of all 312 theory-content docs — honest state of FTD, consensus/tensions, load-bearing-vs-decorative corpus map, prioritized next moves, retirement recommendations. Recommends only. |
 | [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md) | Critical Self-Assessment | Honest "derived vs imported" accounting; narrative essay (count tables predate the April reframe — defer to LEDGER for numbers). |
 | [AUDIT_HIDDEN_SELECTIONS.md](AUDIT_HIDDEN_SELECTIONS.md) | Critical Honest Assessment | Catalogs the selection principles in the G* → α chain that are argued, not proven. |
 | [AUDIT_WHAT_IS_GENUINELY_NEW.md](AUDIT_WHAT_IS_GENUINELY_NEW.md) | Synthesis | What FTD achieves that no other framework does; outsider-facing synthesis. |
@@ -109,4 +110,4 @@ This cluster has two subdirectories holding historical / packaged material — n
 
 ---
 
-26 active docs in this cluster (+ subdirectories `reframe_deployment/` and `archive_session_outputs/`).
+27 active docs in this cluster (+ subdirectories `reframe_deployment/` and `archive_session_outputs/`).
