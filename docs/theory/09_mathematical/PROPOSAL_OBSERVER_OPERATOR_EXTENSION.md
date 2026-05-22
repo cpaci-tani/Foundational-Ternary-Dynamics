@@ -1,15 +1,15 @@
 # Proposal · Observer Operator Extension for FQCR Model V (C1 sketch)
 
 **Date:** 2026-05-08
-**Status:** [PROPOSAL / SKETCH] — outlines the C1 closability path from [`EXPLR_FQCR_T_SCALE_MAP.md`](EXPLR_FQCR_T_SCALE_MAP.md) §5. Not derived; not numerically verified end-to-end. The structural constraint identified in §5 is, however, a [THEOREM] of the existing operator stack.
+**Status:** [PROPOSAL / SKETCH] — outlines the C1 closability path from [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](EXPLR_FQCR_OBSERVER_TESTS_SUITE.md) §5. Not derived; not numerically verified end-to-end. The structural constraint identified in §5 is, however, a [THEOREM] of the existing operator stack.
 **Tag impact:** none. This is brainstorming the operator extension that would, if realized, upgrade FTD-0013 [SMC] toward [DERIVED]. No upgrades performed here.
-**Companion:** [`EXPLR_FQCR_T_SCALE_MAP.md`](EXPLR_FQCR_T_SCALE_MAP.md), [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md).
+**Companion:** [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](EXPLR_FQCR_OBSERVER_TESTS_SUITE.md), [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md).
 
 ---
 
 ## §1 — The C1 question
 
-[`EXPLR_FQCR_T_SCALE_MAP.md`](EXPLR_FQCR_T_SCALE_MAP.md) §5 closed with three paths for SPEC_FQCR §6 Test 3:
+[`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](EXPLR_FQCR_OBSERVER_TESTS_SUITE.md) §5 closed with three paths for SPEC_FQCR §6 Test 3:
 
 - **(C1)** Extend the operator stack to include observer / vacuum-polarization content, so $x_+(t)$ matches QED running.
 - **(C2)** Reinterpret $t$ as a non-RG parameter (genus, holographic radial, etc.).
@@ -245,7 +245,7 @@ I have not run this test in this session because the t-scale map question is a p
 
 ## §9 — Cross-references
 
-- [`EXPLR_FQCR_T_SCALE_MAP.md`](EXPLR_FQCR_T_SCALE_MAP.md) §5 — the C1/C2/C3 trifurcation that this proposal addresses.
+- [`EXPLR_FQCR_OBSERVER_TESTS_SUITE.md`](EXPLR_FQCR_OBSERVER_TESTS_SUITE.md) §5 — the C1/C2/C3 trifurcation that this proposal addresses.
 - [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) §3.2, §6 Test 3 — the [SELECTION] tags this proposal would ultimately upgrade.
 - [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md) — observer disambiguation; "observation layer" reading.
 - [`FOUND_THE_RATIO_AND_THE_PRODUCT.md`](../02_foundations/FOUND_THE_RATIO_AND_THE_PRODUCT.md) §5 — the "observer = imaginary axis" reading; complementary to but distinct from the QED-running reading used here.

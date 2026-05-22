@@ -372,7 +372,7 @@ These are not reasons to abandon the program --- they are reasons to be honest a
 | [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Canonical live source map for the consciousness layer: Domain A/B/C partition, vocabulary discipline, and context selection formalization |
 | [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) | SR fully derived, weak-field GR, linearized Einstein equations. Full Schwarzschild and nonlinear Einstein NOT derived |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | H_FTD constructed, Born rule derived, Bell S <= 2 from substrate |
-| [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) | "Quantum gravity = coupling constant between space and time", dimensional hierarchy |
+| [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | "Quantum gravity = coupling constant between space and time", dimensional hierarchy |
 
 ### 6.2 Companion Computations (all completed)
 

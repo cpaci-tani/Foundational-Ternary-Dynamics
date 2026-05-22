@@ -193,6 +193,6 @@ The Wick rotation i ↔ t converts one into the other. This suggests that quantu
 - FOUND_THE_EXISTENCE_FILTER.md — P = E(x)² + E(ix)² (02_foundations)
 - DERIV_QUADRATIC_NECESSITY.md — Why the master equation is degree 2 (03_derivations)
 - DERIV_QUANTUM_MECHANICS_RESOLVED.md — Born rule in FTD quantum mechanics (03_derivations)
-- FOUND_RELATIVITY_GRAVITY_DISTINCTION.md — Pythagorean cost structure in SR (02_foundations)
+- FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md — Pythagorean cost structure in SR (02_foundations)
 - Penrose, R. *The Road to Reality*, Jonathan Cape, 2004 (Ch. 18: Minkowskian geometry)
 - Needham, T. *Visual Complex Analysis*, Oxford, 1997 (Ch. 3: Möbius transformations and the Riemann sphere)

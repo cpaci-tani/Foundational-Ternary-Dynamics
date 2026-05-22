@@ -286,7 +286,7 @@ How the Moore-layer decomposition produces each gauge group's representations (v
 **File:** `FOUND_AXIOM_ZERO.md`. Deeper principle for the ternary state?
 
 ### 3.2 Relativity / gravity distinction — **2 `[OPEN]`**
-**File:** `FOUND_RELATIVITY_GRAVITY_DISTINCTION.md`.
+**File:** `FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`.
 
 ### 3.3 Potential core and generative interior — **1 `[OPEN]`**
 **File:** `FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md`. The `N_meas = 18 = |SC|+|FCC|` identification as the von-Neumann-chain length.
@@ -298,7 +298,7 @@ How the Moore-layer decomposition produces each gauge group's representations (v
 - `DERIV_D3_FROM_AUTOMORPHISM.md`.
 
 ### 3.5 Bridge Functional ontology — **1 `[OPEN]`** (arithmetic-mean derivation target)
-**File:** `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md`. LEDGER row FTD-0095. Mass-as-functional commitment. The arithmetic-mean rule `M(x₊, x₋) = α·(x₊+x₋)/2` is asserted (matching L2's selection); explicit derivation from the lattice action is open. Closure routes: variational principle on σ_BCC, 't Hooft beable equivalence, Beilinson regulator slot. Slogan upgrade ("mass is the stationary expectation of the master beable, computed by Vieta") conditional on FTD-0093 PASS + this [OPEN] closure.
+**File:** `docs/theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md`. LEDGER row FTD-0095. Mass-as-functional commitment. The arithmetic-mean rule `M(x₊, x₋) = α·(x₊+x₋)/2` is asserted (matching L2's selection); explicit derivation from the lattice action is open. Closure routes: variational principle on σ_BCC, 't Hooft beable equivalence, Beilinson regulator slot. Slogan upgrade ("mass is the stationary expectation of the master beable, computed by Vieta") conditional on FTD-0093 PASS + this [OPEN] closure.
 
 ---
 
@@ -343,7 +343,7 @@ Still open:
 ### 4.5 L2 candidate identity 2·m_e/α = 16G*² — TRACKER-only `[CONJECTURE]` (LEDGER FTD-0094)
 Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-theoretic: `∀μ:MassUnit. (2·m_e/α)[μ]=16G*² ↔ μ=μ_FTD`. NOT promoted to LEDGER detail-row beyond the FTD-0094 quick-index entry. Mechanism C closed negative (FTD-0093), so this remains tracker-only / parametric per the 2026-04-25 roundtable verdict and the FTD-0094 quick-index disposition. See:
 - `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §5 (calibration-invariant statement)
-- `docs/theory/02_foundations/FOUND_BRIDGE_FUNCTIONAL.md` (mass-as-functional reading)
+- `docs/theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md` (mass-as-functional reading)
 - `docs/theory/10_eft_program/OPEN_MU_FROM_LP_MISSING_ARROW.md` (type-theoretic version)
 
 ### 4.6 μ-from-ℓ_P missing arrow — **1 `[OPEN]`**
@@ -546,7 +546,7 @@ Snapshot (2026-04-17):
 | `docs/theory/03_derivations/DERIV_VARIATIONAL_PROOF.md` | 2 |
 | `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md` | 2 |
 | `docs/theory/03_derivations/DERIV_KCOMP_VOLUMETRIC_SHELL.md` | 2 |
-| `docs/theory/02_foundations/FOUND_RELATIVITY_GRAVITY_DISTINCTION.md` | 2 |
+| `docs/theory/02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md` | 2 |
 | `docs/theory/01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md` | 2 |
 | `docs/reference/REF_EPISTEMIC_LABELS.md` | 2 |
 | `docs/internal/SPEC_CLAUDE.md` | 2 |

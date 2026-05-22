@@ -597,7 +597,7 @@ The framework's most impressive results---matching $\alpha$, $\sin^2\theta_W$, $
 9. DERIV_LATTICE_SU3_GAUGE.md -- SU(3) from flux geometry
 10. DERIV_LATTICE_SU2_WEAK.md -- SU(2) weak sector
 11. DERIV_HIGGS_FROM_MANIFESTATION.md -- Higgs mechanism from manifestation
-12. FOUND_SPACETIME_EMERGENCE.md -- Space-time separation predictions
+12. FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md -- Space-time separation predictions
 
 ---
 

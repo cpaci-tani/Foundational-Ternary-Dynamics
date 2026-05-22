@@ -91,7 +91,7 @@ This subsection is a consolidation rule for future writing. It does not override
 |----------------------------------------------------------------------|----------------------------------|-----------------------------------------------------------------------------------------|
 | `J² = −I ⇒ J⁴ = I`                                                   | [THEOREM]                        | Standard linear algebra; SPEC_FQCR.md §1 Def 1                                          |
 | Quarter eigenphases `1/4`, `3/4` (residue classes mod 4)             | [THEOREM]                        | SPEC_FQCR.md §1 Def 2; OT-1.7                                                            |
-| `J` as ontic primitive of finite conjugacy                            | [SELECTION]                      | SPEC_FTD.md §1.1 (graded monism); FOUND_COGITO_AXIOM_AND_FULL_TRACE.md                  |
+| `J` as ontic primitive of finite conjugacy                            | [SELECTION]                      | SPEC_FTD.md §1.1 (graded monism); FOUND_AXIOM_ZERO.md                  |
 | Physical reality is finite-trace dynamics (interpretive ontology)    | [CONJECTURE — interpretive]      | Discharged algebraically by FQCR Model II (FTD-0142, OT-1.8); does not commit ontology |
 
 ---
@@ -442,7 +442,7 @@ This is the strongest possible FTD self-claim. **Achievability is conditional on
 
 | Doctrine §  | Primary anchor                                                                                      | LEDGER row(s)                                                  | Tracker row(s)               |
 |-------------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------|------------------------------|
-| §1          | SPEC_FQCR.md §1; ../02_foundations/FOUND_COGITO_AXIOM_AND_FULL_TRACE.md                            | FTD-0141                                                       | OT-1.7                       |
+| §1          | SPEC_FQCR.md §1; ../02_foundations/FOUND_AXIOM_ZERO.md                            | FTD-0141                                                       | OT-1.7                       |
 | §2          | SPEC_ALGEBRAIC_SPINE.md §1, §5; SPEC_FQCR.md §2 Props 1, 2                                          | FTD-0001, FTD-0141, FTD-0142, FTD-0117                         | OT-1.2, OT-1.7, OT-1.8, OT-2.1|
 | §3          | SPEC_FQCR.md §1, §2 Props 3, 4 (Model III)                                                          | FTD-0141, FTD-0142                                             | (algebraic; standard rep theory)|
 | §4          | ../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md; SPEC_ALGEBRAIC_SPINE.md §1                  | FTD-0001                                                       | OT-1.2                       |

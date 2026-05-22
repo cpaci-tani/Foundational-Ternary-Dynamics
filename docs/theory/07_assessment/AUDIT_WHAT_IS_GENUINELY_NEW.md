@@ -416,7 +416,7 @@ $\alpha_G \sim \alpha^{20}$ because gravity is a **cross-domain coupling** (spac
 | P4 | No forces between EM and gravity scales | [PROPOSED] |
 | P5 | Time irreversibility is ontological, not thermodynamic | [THEOREM within FTD] |
 
-**Full details:** [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
+**Full details:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 
 ---
 
@@ -453,7 +453,7 @@ Whether this is a theory of everything or a very elaborate coincidence is an emp
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md)
 - **Bell mechanism:** [AUDIT_BELL_ANALYSIS.md](AUDIT_BELL_ANALYSIS.md)
 - **SM Lagrangian mapping:** [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md)
-- **Space-time separation:** [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
+- **Space-time separation:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 - **Verification (trit):** [../../scripts/verification/verify_trit_framework.py](../../scripts/verification/verify_trit_framework.py)
 - **Verification (space-time):** [../../scripts/verification/verify_space_time.py](../../scripts/verification/verify_space_time.py)
 

@@ -326,7 +326,7 @@ Product of the first four: $1 \times 2 \times 3 \times 7 = 42$.
 
 ## §9. The Precision Series
 
-> **Epistemic note on §9 (updated 2026-04-17 post-audit).** The arithmetic identity in Theorem 9.1 is an identity between a specific transcendental combination and a specific real number; as pure mathematics it is [THEOREM] (numerical). Labeling the target real number as "CODATA $1/\alpha$" is the physical identification SP4 ([BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md) §4), which is [SELECTION] at this document's level of rigor, upgradable to conditional [THEOREM] only via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md). The rigidity audit ([CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3) confirms the 24-digit match as an algebraic identity (residual 2.58e-24 at mpmath 60-digit); however, it **cannot be verified beyond digit ~11** against CODATA 2022's experimental precision of $2.1 \times 10^{-8}$. Six of seven coefficients are uniquely forced in the base-integer set at cascade precision; one ($c_7$) is the unique clean base-integer decomposition. §9 is retained in this document for completeness; readers should treat the CODATA comparisons as SP4-conditional and the "24-digit" framing as structural algebra, not testable prediction.
+> **Epistemic note on §9 (updated 2026-04-17 post-audit).** The arithmetic identity in Theorem 9.1 is an identity between a specific transcendental combination and a specific real number; as pure mathematics it is [THEOREM] (numerical). Labeling the target real number as "CODATA $1/\alpha$" is the physical identification SP4 ([SPEC_QUADRATIC_PHYSICS_BRIDGE.md](SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §4), which is [SELECTION] at this document's level of rigor, upgradable to conditional [THEOREM] only via [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md). The rigidity audit ([CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3) confirms the 24-digit match as an algebraic identity (residual 2.58e-24 at mpmath 60-digit); however, it **cannot be verified beyond digit ~11** against CODATA 2022's experimental precision of $2.1 \times 10^{-8}$. Six of seven coefficients are uniquely forced in the base-integer set at cascade precision; one ($c_7$) is the unique clean base-integer decomposition. §9 is retained in this document for completeness; readers should treat the CODATA comparisons as SP4-conditional and the "24-digit" framing as structural algebra, not testable prediction.
 
 ### 9.1 The Expansion Parameter
 
@@ -527,5 +527,4 @@ These interpretive questions are deferred to separate documents.
 
 *Document Version 1.0 — February 25, 2026*
 *Pure mathematics. All results are verifiable algebraic/analytic identities.*
-*See BRIDGE_QUADRATIC_PHYSICS.md for interpretive selection principles.*
-*See PHYS_QUADRATIC_APPLICATIONS.md for domain-specific correspondences.*
+*See SPEC_QUADRATIC_PHYSICS_BRIDGE.md for interpretive selection principles and domain-specific correspondences.*

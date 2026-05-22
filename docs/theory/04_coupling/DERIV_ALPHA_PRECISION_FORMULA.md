@@ -401,8 +401,7 @@ Until these are resolved, the formula should be understood as a **remarkable obs
 ## Cross-References
 
 - **Master quadratic (pure math):** [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) — Layer 1: G* definition, roots, parametric family
-- **Selection principles:** [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) — Layer 2: SP1-SP5, integer circularity analysis
-- **Physical correspondences:** [PHYS_QUADRATIC_APPLICATIONS.md](../01_reference/PHYS_QUADRATIC_APPLICATIONS.md) — Layer 3: conditional applications
+- **Selection principles & physical correspondences:** [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) — Layer 2: SP1-SP5, integer circularity analysis; Layer 3: conditional applications
 - **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **Verification scripts:** `scripts/verification/verify_precision_formula_v3.py` (7-term), `scripts/verification/verify_precision_formula_v2.py` (3-term)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)

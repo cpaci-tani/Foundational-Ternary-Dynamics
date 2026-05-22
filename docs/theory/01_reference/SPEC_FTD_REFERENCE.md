@@ -114,7 +114,7 @@ Four integers encode all physics:
 
 ### 5.1 What Uses These Integers (SP5 Circularity Table)
 
-The integers were originally identified by inspecting known physics values ($N_c = 3$ from QCD, $b_3$ from the QCD beta function, etc.), then shown to satisfy an interlocking set of sequence constraints. This means any result **derived from them** carries a circularity risk: the match to experiment may be evidence that the integers were well-chosen, not that the mechanism is derived. This table — reproduced from [BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md) §5.4 — makes the distinction explicit:
+The integers were originally identified by inspecting known physics values ($N_c = 3$ from QCD, $b_3$ from the QCD beta function, etc.), then shown to satisfy an interlocking set of sequence constraints. This means any result **derived from them** carries a circularity risk: the match to experiment may be evidence that the integers were well-chosen, not that the mechanism is derived. This table — reproduced from [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §5.4 — makes the distinction explicit:
 
 | Result | Depends on SP5? | Circularity risk |
 |--------|-----------------|-------------------|

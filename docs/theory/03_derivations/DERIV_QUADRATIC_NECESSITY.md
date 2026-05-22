@@ -210,7 +210,7 @@ Both are intrinsic invariants of the same elliptic curve $E: y^2 = x^3 - x$. The
 - FOUND_THE_FIRST_DISTINCTION.md -- Why $n = 4$ in $I_4$ (02_foundations)
 - FOUND_THE_COMPLETE_ALGEBRA_OF_i.md -- Emergence of $i$ from self-reference (02_foundations)
 - AUDIT_HIDDEN_SELECTIONS.md -- Catalog of selection principles (07_assessment)
-- BRIDGE_QUADRATIC_PHYSICS.md -- Physical interpretation of the roots (01_reference)
+- SPEC_QUADRATIC_PHYSICS_BRIDGE.md -- Physical interpretation of the roots (01_reference)
 - Silverman, J. H. *Advanced Topics in the Arithmetic of Elliptic Curves*, Springer, 1994
 - Schneider, T. "Transzendenzuntersuchungen periodischer Funktionen," *J. reine angew. Math.* **172** (1935)
 - Cox, D. A. *Primes of the Form x^2 + ny^2*, Wiley, 2013

@@ -7,7 +7,7 @@
 **Companions:**
 - [DERIV_MASTER_QUADRATIC_FROM_Z.md](../03_derivations/DERIV_MASTER_QUADRATIC_FROM_Z.md) — physics route from the partition function
 - [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](../09_mathematical/DERIV_MASTER_QUADRATIC_CM_LVALUES.md) — L-value route from Damerell–Shimura
-- [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) — the five selection principles SP1–SP5
+- [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) — the five selection principles SP1–SP5
 
 ---
 
@@ -197,7 +197,7 @@ Previously: five selection principles SP1–SP5.
 - The convergence is to 100-digit precision on both coefficients
 - No free parameters are introduced in either route
 
-**For the foundation doc (FOUND_COGITO_AXIOM_AND_FULL_TRACE.md §2):**
+**For the foundation doc (FOUND_AXIOM_ZERO.md §2):**
 - S1 is narrowed significantly: the master quadratic is no longer a free selection but a derived theorem modulo minimality
 - Combined with Program A (closing S2 via O_h subgroup chain), the entire chain from "$i$ exists" to physical predictions could be reduced to ZERO selections
 

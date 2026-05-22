@@ -55,7 +55,6 @@ SPEC_FTD_NATIVE_BLOCKING_MAP.md      finite-volume native RG blocking map
 DERIV_FTD_NATIVE_BARE_FLOW.md        first bare b=2 native flow audit
 DERIV_FTD_NATIVE_CURRENT_FLOW.md     native current b=2 flow audit
 DERIV_FTD_NATIVE_RESPONSE_FLOW.md    native static/vertex b=2 flow audit
-DERIV_FTD_NATIVE_ENGINE_HISTORY_FLOW.md real engine reaction-history flow audit
 DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md real engine face-transport flow audit
 ```
 

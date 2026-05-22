@@ -11,8 +11,7 @@
 ## Depends On
 
 - [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) — Master quadratic: pure mathematics (Layer 1, claims M-1 through M-15)
-- [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) — Selection principles SP1-SP6 (Layer 2)
-- [PHYS_QUADRATIC_APPLICATIONS.md](../01_reference/PHYS_QUADRATIC_APPLICATIONS.md) — Physical correspondences (Layer 3, claims P-1 through P-15)
+- [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) — Selection principles SP1-SP6 (Layer 2) and physical correspondences (Layer 3, claims P-1 through P-15)
 - [DERIV_GSTAR_PF_BRIDGE.md](DERIV_GSTAR_PF_BRIDGE.md) — G* = ϖ/√(PF) decomposition, PF cancellation rule PF-1 through PF-8
 - [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
 - [DERIV_ALPHA_PRECISION_FORMULA.md](DERIV_ALPHA_PRECISION_FORMULA.md) — 4-term precision formula
