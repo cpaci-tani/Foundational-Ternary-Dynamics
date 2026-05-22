@@ -151,4 +151,4 @@ This identity is [THEOREM]. But the full functor from the lattice category to th
 - **The master quadratic:** [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) — pure mathematics
 - **The L-function connection:** [DERIV_LFUNCTION_GSTAR_CONNECTION.md](../09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md) — G\* = 8L(E,1)/√π
 - **The log G\* identity:** [MATH_LOG_GSTAR_IDENTITY.md](../09_mathematical/MATH_LOG_GSTAR_IDENTITY.md) — G\* absorbs all unsolved L-values
-- **The dimensional triad:** [EXPLR_GSTAR_FLUX_TIME.md](../09_mathematical/EXPLR_GSTAR_FLUX_TIME.md) — G\*¹ = flux, G\*² = energy, G\*³ = action
+- **The dimensional triad:** [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) — G\*¹ = flux, G\*² = energy, G\*³ = action

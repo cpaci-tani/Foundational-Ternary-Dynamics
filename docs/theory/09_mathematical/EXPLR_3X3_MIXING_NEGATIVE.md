@@ -4,7 +4,7 @@
 **Status:** [STRUCTURAL OBSERVATION — NEGATIVE] — the 2×2 master-quadratic-as-mixing reading does NOT extend cleanly to 3×3; FTD's mode count for EM-color appears to be specifically 2
 **Created:** 2026-05-01 evening (continuing harmonic-conjugacy brainstorm)
 **Provenance:** User request "let's look at 3×3" following the 2×2 mixing matrix interpretation
-**Related:** `EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md` (the 2×2 reading); `SPEC_PHYSICS_BRIDGE.md`
+**Related:** `EXPLR_MASTER_QUADRATIC_STRUCTURAL_READINGS.md` (the 2×2 reading); `SPEC_PHYSICS_BRIDGE.md`
 
 ---
 

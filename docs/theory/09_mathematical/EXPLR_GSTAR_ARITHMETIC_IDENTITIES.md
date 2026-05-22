@@ -11,7 +11,7 @@
 - Classical: Gauss / Jacobi `θ_3(0|i) = π^(1/4)/Γ(3/4)`; Euler reflection `Γ(1/4)·Γ(3/4) = π√2`; Tate-thesis Archimedean local L-factor framework (Tate 1950); Lerch's special-value formula (Lerch 1894); Gauss's digamma theorem.
 - See `docs/reference/REF_BIBLIOGRAPHY.md` §1, §2, §3.
 - [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) — G\* decomposition (dimensional reading).
-- [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) — Space-time separation.
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — Space-time separation.
 - [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — consciousness quadratic.
 - Layer 3b of `engine/include/ftd/ontic.h` — dual-substrate decomposition.
 **Related:**
@@ -308,7 +308,7 @@ In the C++ engine, the flux field J is initialized with magnitude K_B (electron 
 
 - **G* decomposition**: [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md)
 - **Master quadratic**: [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md)
-- **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
+- **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 - **Consciousness source map**: [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **Dual substrate**: Layer 3b of `engine/include/ftd/ontic.h`
 - **Ontic chain**: `engine/include/ftd/ontic.h` (complete derivation)

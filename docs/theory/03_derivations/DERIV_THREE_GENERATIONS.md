@@ -149,4 +149,4 @@ The geometric facts are incontrovertible. The physical interpretation is a struc
 - Coxeter, H.S.M. *Regular Polytopes* (Dover, 1973)
 - Conway, J.H. and Smith, D.A. *On Quaternions and Octonions* (A.K. Peters, 2003)
 - FTD framework integers: `DERIV_INTEGER_PHYSICAL_IDENTIFICATION.md`
-- D=3 uniqueness: `DERIV_D3_UNIQUENESS.md` (via `scripts/proofs/proof_d3_uniqueness.py`)
+- D=3 uniqueness: `DERIV_D3_FROM_AUTOMORPHISM.md` (via `scripts/proofs/proof_d3_uniqueness.py`)

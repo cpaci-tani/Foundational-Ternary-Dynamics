@@ -301,7 +301,7 @@ Key numbers:
 **Ledger row:** FTD-0087
 **Filed:** 2026-04-24
 **Companions:**
-- §1 above / [DERIV_PLAQUETTE_BIVECTOR_EMERGENCE.md](DERIV_PLAQUETTE_BIVECTOR_EMERGENCE.md) (FTD-0086) — F-prime matching signature
+- §1 above (FTD-0086) — F-prime matching signature
 - [test_bivector_closure.cpp](../../../engine/tests/test_bivector_closure.cpp) — GPU test
 
 ## 2.0 — Executive statement

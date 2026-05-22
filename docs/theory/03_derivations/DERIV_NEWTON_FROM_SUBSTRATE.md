@@ -64,7 +64,7 @@ This step is **[DERIVED]** given Steps 1.1 and 1.2.
 
 ### 1.4 The tick-rate response: linearized
 
-Per `FOUND_EMERGENT_TIME_GRAVITY.md` §3.2: local tick rate responds linearly to local gravitational potential:
+Per `FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md` §3.2: local tick rate responds linearly to local gravitational potential:
 
 $$\frac{d\tau}{dT_U}(\mathbf{x}) \;=\; 1 \,+\, \frac{2\,\phi_g(\mathbf{x})}{c^2}$$
 

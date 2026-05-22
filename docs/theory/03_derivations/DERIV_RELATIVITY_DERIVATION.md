@@ -934,7 +934,7 @@ The gaps in General Relativity (full Schwarzschild, nonlinear Einstein) represen
 
 Either outcome would be scientifically valuable.
 
-**Semantic note:** This document labels Part II as "General Relativity," but the derivations in §9-11 are more precisely *gravity* (computational budget saturation producing $g_{00} = f$), while §13-15 are *linearized GR* (geometric description of the saturation pattern). For the precise distinction between SR, gravity-as-saturation, and GR-as-emergent-geometry, see [FOUND_RELATIVITY_GRAVITY_DISTINCTION.md](../02_foundations/FOUND_RELATIVITY_GRAVITY_DISTINCTION.md).
+**Semantic note:** This document labels Part II as "General Relativity," but the derivations in §9-11 are more precisely *gravity* (computational budget saturation producing $g_{00} = f$), while §13-15 are *linearized GR* (geometric description of the saturation pattern). For the precise distinction between SR, gravity-as-saturation, and GR-as-emergent-geometry, see [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md).
 
 ---
 

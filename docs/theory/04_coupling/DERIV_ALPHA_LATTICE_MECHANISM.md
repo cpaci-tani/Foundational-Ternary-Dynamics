@@ -4,7 +4,7 @@
 
 **Date:** March 16, 2026
 **Status:** Derivation chain with honest epistemic assessment
-**Dependencies:** DERIV_GSTAR_PF_BRIDGE.md, EXPLR_GSTAR_FLUX_TIME.md, FOUND_FORCE_STRUCTURE.md, DERIV_CUBOCTAHEDRAL_INTEGERS.md, DERIV_QUADRATIC_NECESSITY.md
+**Dependencies:** DERIV_GSTAR_PF_BRIDGE.md, EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md, FOUND_FORCE_STRUCTURE.md, DERIV_CUBOCTAHEDRAL_INTEGERS.md, DERIV_QUADRATIC_NECESSITY.md
 **Addresses:** SP4 in AUDIT_HIDDEN_SELECTIONS.md (physical mechanism for x₊ = 1/α)
 
 ---
@@ -112,7 +112,7 @@ The substrate asymmetry δ = (x₊ − x₋)/(x₊ + x₋) = 0.957 means 97.8% o
 
 ### 3.3 Why x₋ ≈ 3 but Not Exactly 3 [SELECTION]
 
-The EXPLR_GSTAR_FLUX_TIME.md (Part VI) establishes the G* ≈ 3 near-fixed-point:
+The EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md (Part VI) establishes the G* ≈ 3 near-fixed-point:
 
 At G* = 3 exactly, the wave equation on Z³ achieves perfect self-consistency: c² = 1/D = 1/3, and the CFL condition closes with lattice spacing ℓ = √3 (the face diagonal). At this fixed point, x₋ = 3.065 and 1/α = 141.
 
@@ -178,6 +178,6 @@ The 2026-04-22 Structure-2 audit (`docs/theory/10_eft_program/AUDIT_STRUCTURE2_W
 - DERIV_GSTAR_PF_BRIDGE.md — G* decomposition and PF bridge (04_coupling)
 - DERIV_QUADRATIC_NECESSITY.md — Why degree 2 (03_derivations)
 - MATH_MASTER_QUADRATIC.md — Complete quadratic structure (01_reference)
-- EXPLR_GSTAR_FLUX_TIME.md — G* dimensional triad and near-fixed-point (09_mathematical)
+- EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md — G* dimensional triad and near-fixed-point (09_mathematical)
 - FOUND_FORCE_STRUCTURE.md — Force hierarchy and EM dominance (02_foundations)
 - AUDIT_HIDDEN_SELECTIONS.md — Selection principles catalog (07_assessment)

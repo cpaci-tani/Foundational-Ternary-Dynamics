@@ -119,7 +119,7 @@ To keep the doc focused:
 - **Toggle interactions**: when multiple toggles are active simultaneously, behavior may not be the linear sum of single-toggle effects — non-linearity is documented in the engine's status doc (CLAUDE.md mentions the 2026-05-04 finding).
 - **Inter-scale matching** (Scale 0→1 cluster emergence, Scale 1→2 atom emergence, etc.): handled in R5 of the EFT roadmap; this MAP is Scale-0-only.
 - **Calibration sensitivity**: how dimensional predictions shift under different gauge choices; tracked in `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md`.
-- **Stochastic kernels** (Langevin, Boltzmann evaporation): governed by the Rayleigh dissipation row and the BH-F5/F8/F9 RNG portability decision pending in `DESIGN_RNG_PORTABILITY.md`.
+- **Stochastic kernels** (Langevin, Boltzmann evaporation): governed by the Rayleigh dissipation row and the BH-F5/F8/F9 RNG portability decision pending in `engine/docs/DESIGN_RNG_PORTABILITY.md`.
 
 ---
 

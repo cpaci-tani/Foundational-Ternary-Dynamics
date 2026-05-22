@@ -6,7 +6,7 @@
 **LEDGER row reservation:** FTD-0140 (R3a primary), FTD-0141 (R3a Wilson-eigendecomposition extension), FTD-0142 (R3b dim-6 operator coefficients).
 **Supersedes:** none. Extends — does **not** replace — `PROTOCOL_OPERATOR_MIXING_MATRIX.md` (FTD-0098/0099/0100, L=16/32 baseline). The L-scan campaign uses the same operator basis, blocking definition, and matrix assembly; only ensemble size + L grid + b grid are extended.
 **Author:** FTD EFT program (R3a sub-phase of the FTD-EFT roadmap; see `~/.claude/plans/we-fixed-a-lot-composed-reef.md`).
-**Companion docs:** `PROTOCOL_OPERATOR_MIXING_MATRIX.md`, `SPEC_OPERATOR_BASIS_COMPLETE.md`, `SPEC_FTD_NATIVE_BLOCKING_MAP.md`, `DECISION_FIELD_BASIS.md`, `DECISION_GAUSS_REPRESENTATION.md`, `DESIGN_RNG_PORTABILITY.md`.
+**Companion docs:** `PROTOCOL_OPERATOR_MIXING_MATRIX.md`, `SPEC_OPERATOR_BASIS_COMPLETE.md`, `SPEC_FTD_NATIVE_BLOCKING_MAP.md`, `DECISION_FIELD_BASIS.md`, `DECISION_GAUSS_REPRESENTATION.md`, `engine/docs/DESIGN_RNG_PORTABILITY.md`.
 
 > **Pre-registration discipline.** Every threshold, lattice size, seed value, sample count, and acceptance criterion below is committed *before* any L ≥ 64 measurement is run. This document will be tagged with `git tag preregister-operator-mixing-l-scan-v1 <commit-hash>` immediately after commit, locking the SHA256 content hash. No post-hoc edits to thresholds or expectations are permitted; surprising measurements are reported honestly and theory must explain them.
 

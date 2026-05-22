@@ -5,7 +5,7 @@
 **Status:** Foundational axiom — proposed replacement for the five postulates. §7 absorbs the cogito-algebraic bridge and full reverse-engineering trace ([FOUNDATION], FTD-0080).
 **Date:** 2026-05-21
 **Consolidates:** also absorbs `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md` (2026-05-21)
-**Dependencies:** SPEC_FTD.md, FOUND_SELF_REFERENTIAL_CLOSURE.md, FOUND_EMERGENT_TIME_GRAVITY.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md, DERIV_WATSON_GSTAR_IDENTITY.md, AUDIT_INFINITY_REFRAME.md, FOUND_THE_FIRST_DISTINCTION.md, FOUND_BLIND_DERIVATION_CHAIN.md, FOUND_MINIMAL_INSTANTIATED_UNIVERSE.md.
+**Dependencies:** SPEC_FTD.md, FOUND_SELF_REFERENTIAL_CLOSURE.md, FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md, DERIV_WATSON_GSTAR_IDENTITY.md, AUDIT_INFINITY_REFRAME.md, FOUND_THE_FIRST_DISTINCTION.md, FOUND_BLIND_DERIVATION_CHAIN.md, FOUND_MINIMAL_INSTANTIATED_UNIVERSE.md.
 
 ---
 
@@ -145,7 +145,7 @@ The CFL (Courant-Friedrichs-Lewy) stability condition on a D-dimensional cubic l
 
 $$c = \frac{1}{\sqrt{D}} = \frac{1}{\sqrt{3}}$$
 
-This is a theorem about discrete wave equations on Z^D. It does not depend on the state space. In FTD, it is the maximum speed at which information propagates through the lattice. (See FOUND_EMERGENT_TIME_GRAVITY.md, Section 2.3.)
+This is a theorem about discrete wave equations on Z^D. It does not depend on the state space. In FTD, it is the maximum speed at which information propagates through the lattice. (See FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md, Section 2.3.)
 
 **(e) G\* from Z^3** [THEOREM for the algebraic identity]
 
@@ -800,7 +800,7 @@ Levels 0–7 and 9 are purely arithmetic, forced by theorem. Level 8 is the firs
 
 - SPEC_FTD.md -- The five postulates (Part A, Chapter 1)
 - FOUND_SELF_REFERENTIAL_CLOSURE.md -- Self-referential closure as derivation principle
-- FOUND_EMERGENT_TIME_GRAVITY.md -- Time and gravity from G\*^2
+- FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md -- Time and gravity from G\*^2
 - FOUND_ONTOLOGICAL_GENESIS.md -- The ontological hierarchy from void to physics
 - DERIV_MASTER_QUADRATIC_GAP_EQUATION.md -- The gap equation derivation
 - DERIV_WATSON_GSTAR_IDENTITY.md -- W_3 = G\*^2/(2pi) identity and BCC correction

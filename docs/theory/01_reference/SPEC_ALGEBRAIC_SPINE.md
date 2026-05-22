@@ -515,7 +515,7 @@ location (`Q(G*) ∩ Q(π) = Q` excludes ζ's π-only special values for a
 structural reason).
 
 Full derivation, numerical verification, and PSLQ scoping in
-`docs/theory/03_derivations/DERIV_G_STAR_PARITY_TWIST.md`. Verification
+`docs/theory/09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`. Verification
 scripts: `scripts/proofs/proof_g_star_parity_twist.py` (identity check)
 and `scripts/proofs/proof_lprime_chi4_boundary.py` (Identities A/B/C at
 high precision). LEDGER row: FTD-0127.
@@ -576,7 +576,7 @@ provenance.
 - **Z\_4 unification candidate** — the conjugacy operator $J$ with
   $J^2 = -I$ shares its $Z_4$ structural anchor with Theorem 8's
   $(1+i)$-tower and with the $i$-cycle ontology in
-  `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md`. A future stylistic refactor
+  `FOUND_AXIOM_ZERO.md`. A future stylistic refactor
   could group these under a unified "$Z_4$ algebraic-spine" subsection;
   not done in the current spine version.
 

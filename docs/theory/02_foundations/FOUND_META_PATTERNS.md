@@ -419,7 +419,7 @@ Seventeen identified instances where FTD selects a boundary, organized by type.
 |---|----------|-----------|--------|
 | 15 | Complementation fixed point | f(k) = 1-k, k* = 1/2 | FOUND_ONTOLOGICAL_GENESIS.md (SR4-SR5) |
 | 16 | Elliptic self-duality | K(1/sqrt(2)) = K'(1/sqrt(2)) | FOUND_ONTOLOGICAL_GENESIS.md (Level 1) |
-| 17 | Vieta product-sum ratio | P/S = G* (self-consistent ratio) | EXPLR_GSTAR_FLUX_TIME.md |
+| 17 | Vieta product-sum ratio | P/S = G* (self-consistent ratio) | EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md |
 
 ### 6.6 Summary Statistics
 
@@ -559,7 +559,7 @@ The test is not "can we call it a boundary?" but "is it a NAMED boundary in a ST
 | FOUND_DEEP_HIERARCHY.md | 12-stage void-to-mind; alpha-power distance ladder |
 | FOUND_FORCE_STRUCTURE.md | Four forces from one equation; dual-substrate modes |
 | FOUND_LADDER_GENERATING_RULE.md | Exponent gaps = {N_base, N_c, N_c, N_f} |
-| EXPLR_GSTAR_FLUX_TIME.md | Vieta ratio P/S = G*; dimensional triad |
+| EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md | Vieta ratio P/S = G*; dimensional triad |
 | FOUND_FOURCIER_ONTIC_TOOL.md | Cayley-Dickson hierarchy; Z/6Z lobe structure |
 
 ---

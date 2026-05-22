@@ -330,7 +330,7 @@ This presentation says: two generators, one with period 2 and one with period 3,
 
 - **Product** of roots: x₊ · x₋ = 16G*³ (the 3-fold object: G* cubed)
 - **Sum** of roots: x₊ + x₋ = 16G*² (the 2-fold object: G* squared)
-- **Ratio**: Product/Sum = G* (EXPLR_GSTAR_FLUX_TIME.md)
+- **Ratio**: Product/Sum = G* (EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md)
 
 The knot group relation a² = b³ identifies a 2-fold structure with a 3-fold structure — precisely what the Vieta relations do (sum = 2-fold, product = 3-fold, ratio = G*).
 
@@ -440,7 +440,7 @@ The Z₁₂ completion would mean 12 = N_base × N_c elementary topological stat
 - **Half-Möbius topology:** [EXPLR_HALF_MOBIUS_LEMNISCATE.md](EXPLR_HALF_MOBIUS_LEMNISCATE.md) — Z₄ lattice, Berry phase, C₁₃Cl₂ mapping
 - **Discriminant trichotomy:** [DERIV_SPIN_STATISTICS_BRIDGE.md](../03_derivations/DERIV_SPIN_STATISTICS_BRIDGE.md) — Root classification, Z₂ from lemniscate
 - **Trefoil knot:** [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) — CDF-9 (flux vortex trefoil conjecture)
-- **G* dimensional triad:** [EXPLR_GSTAR_FLUX_TIME.md](EXPLR_GSTAR_FLUX_TIME.md) — Product/Sum = G*
+- **G* dimensional triad:** [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) — Product/Sum = G*
 - **Mathematical analysis:** [EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md](EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md) — Arc length, Feigenbaum bridge
 
 ---

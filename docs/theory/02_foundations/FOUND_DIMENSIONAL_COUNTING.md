@@ -5,13 +5,13 @@
 **Date:** March 17, 2026
 **Framework:** Foundational Ternary Dynamics v5.28
 **Status:** Constructive argument with mixed epistemic status
-**Dependencies:** FOUND_SPACETIME_EMERGENCE.md, DERIV_WATSON_GSTAR_IDENTITY.md
+**Dependencies:** FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md, DERIV_WATSON_GSTAR_IDENTITY.md
 
 ---
 
 ## Abstract
 
-We present a constructive counting argument that arrives at exactly three spatial dimensions from the pairing ontology of FOUND_SPACETIME_EMERGENCE.md. The argument proceeds in four steps: (1) a single point in void contributes 0.5D, (2) a second point forces a paired axis giving 1D, (3) orthogonal depth adds 1D giving 2D, and (4) state evolution (time) as an independent axis completing the causal structure adds the final 1D giving D = 3. The resulting 3D structure uniquely determines the 26-neighbor Moore neighborhood, whose BCC sublattice produces G* via the Watson integral identity.
+We present a constructive counting argument that arrives at exactly three spatial dimensions from the pairing ontology of FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md. The argument proceeds in four steps: (1) a single point in void contributes 0.5D, (2) a second point forces a paired axis giving 1D, (3) orthogonal depth adds 1D giving 2D, and (4) state evolution (time) as an independent axis completing the causal structure adds the final 1D giving D = 3. The resulting 3D structure uniquely determines the 26-neighbor Moore neighborhood, whose BCC sublattice produces G* via the Watson integral identity.
 
 **Honest assessment:** Steps 1-3 are well-motivated within FTD's existing ontology. Step 4 (time contributing to effective spatial dimensionality) is the weakest link and requires careful treatment given FTD's ontological separation of space and time.
 
@@ -21,7 +21,7 @@ We present a constructive counting argument that arrives at exactly three spatia
 
 ### 1.1 Starting Point
 
-From FOUND_SPACETIME_EMERGENCE.md (DIM-1), a single axis without reference is 0.5D — it exists but is undetermined. We adopt this as our starting point.
+From FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md (DIM-1), a single axis without reference is 0.5D — it exists but is undetermined. We adopt this as our starting point.
 
 A single point in void:
 - **Exists** (ontological presence)
@@ -43,7 +43,7 @@ A point is not 0D (it exists, so it has more structure than nothing). It is not 
 
 ### 2.1 The Second Point
 
-A second point introduces **relation**. From FOUND_SPACETIME_EMERGENCE.md (DIM-2, DIM-3), pairing (X ⊗ Y) differs fundamentally from stacking (X + Y):
+A second point introduces **relation**. From FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md (DIM-2, DIM-3), pairing (X ⊗ Y) differs fundamentally from stacking (X + Y):
 
 | Operation | Result |
 |-----------|--------|
@@ -93,7 +93,7 @@ $$2D + 1D_{\text{time}} = 3D_{\text{effective}}$$
 
 ### 4.2 The Tension
 
-FOUND_SPACETIME_EMERGENCE.md Part VII establishes that space ($\mathbb{Z}^3$) and time ($\mathbb{N}$) are **ontologically separate**. How can time "contribute" a spatial dimension if it is categorically different from space?
+FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md Part VII establishes that space ($\mathbb{Z}^3$) and time ($\mathbb{N}$) are **ontologically separate**. How can time "contribute" a spatial dimension if it is categorically different from space?
 
 ### 4.3 Resolution: Causal Dimensionality vs. Spatial Dimensionality
 
@@ -439,7 +439,7 @@ The argument that time contributes to effective dimensionality faces two objecti
 - Offers a physical interpretation of the 0.5D ontology in action
 
 **Doesn't:**
-- Prove that D = 3 is the unique possibility (other arguments, e.g. Arg 1-7 in FOUND_SPACETIME_EMERGENCE.md, are needed)
+- Prove that D = 3 is the unique possibility (other arguments, e.g. Arg 1-7 in FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md, are needed)
 - Uniquely derive the gap equation *form* from first principles (Part VIII provides a structural argument [CONJECTURE] that the quadratic form is forced by $i^2 = -1$; DC-15a proves the gap equation is at-most-quadratic [THEOREM]; but the specific self-consistency prescription $F(x) = K(1 - G^*/x)$ remains [SELECTION])
 - Resolve the ontological status of time's contribution to dimensionality
 
@@ -480,7 +480,7 @@ The argument that time contributes to effective dimensionality faces two objecti
 
 ## Cross-References
 
-- **0.5D ontology and pairing:** [FOUND_SPACETIME_EMERGENCE.md](FOUND_SPACETIME_EMERGENCE.md) (Parts I-III)
+- **0.5D ontology and pairing:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) (Parts I-III)
 - **Watson–G* identity:** [DERIV_WATSON_GSTAR_IDENTITY.md](../04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md)
 - **Master quadratic:** [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md)
 - **Moore decomposition:** [DERIV_ALPHA_LATTICE_MECHANISM.md](../04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md)

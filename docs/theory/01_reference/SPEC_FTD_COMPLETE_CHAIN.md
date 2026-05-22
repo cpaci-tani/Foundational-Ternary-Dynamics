@@ -460,7 +460,7 @@ The master quadratic's coefficients admit a **Deligne L-value identification** t
 
 The sum-of-roots identification is genuinely non-elementary arithmetic (a Sym² L-value at s=1). The product-of-roots identification is an elementary corollary of the rank-0 BSD relation L(E,1) = ϖ/4; the π^(3/2) arises mechanically from cubing a √π-bearing relation and should not be read as deep structure.
 
-**Selection principles (SP1–SP5)** structuring the chain are documented in [BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md).
+**Selection principles (SP1–SP5)** structuring the chain are documented in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](SPEC_QUADRATIC_PHYSICS_BRIDGE.md).
 
 **Correction mechanism audit.** Direct L-value closure of the 1.26 ppm tree-level gap is ruled out for the simple Q-span of tested L-values at CM critical points; see [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](../09_mathematical/EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md). The Structure-1 one-loop lattice tadpole with selected a = 2/D ([DERIV_ONE_LOOP_LATTICE_ALPHA.md](../04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md)) closes 99.2% of the gap to 9.6 ppb inside that scheme. GPU audits now mark this correction as scheme-specific: the BCC/continuum tests show regulator dependence, and the Ward-valid Structure-2 scalar gauge completion does not reproduce the closure.
 

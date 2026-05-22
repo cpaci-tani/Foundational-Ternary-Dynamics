@@ -3,7 +3,7 @@
 **Tag:** [THEOREM] (subject to standard zeta-regularization conventions)
 **Date:** 2026-05-06
 **LEDGER row reservation:** FTD-0141
-**Companion docs:** [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_FINITE_APPROX.md`](DERIV_GSTAR_FINITE_APPROX.md), [`DERIV_G_STAR_PARITY_TWIST.md`](DERIV_G_STAR_PARITY_TWIST.md) (FTD-0127), [`DERIV_LFUNCTION_GSTAR_CONNECTION.md`](../09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md), [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) §10.
+**Companion docs:** [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md), [`DERIV_GSTAR_FINITE_APPROX.md`](DERIV_GSTAR_FINITE_APPROX.md), [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) (FTD-0127), [`DERIV_LFUNCTION_GSTAR_CONNECTION.md`](../09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md), [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) §10.
 **Purpose:** Establishes an operator-theoretic provenance for $G^*$ — namely, that $G^*$ is the $\zeta$-regularized determinant ratio of two quarter-twisted spectra arising from a primitive conjugacy operator $J$ with $J^2 = -I$. This is **Model I** of the Finite Quarter-Conjugacy Recurrence (FQCR) framework. The result is complementary to FTD-0127's parity-twist (number-theoretic / L-function lens); both land $G^*$ from different angles without one subsuming the other.
 
 ---
@@ -19,7 +19,7 @@
 - The eigenvalues of $J$ on $\mathbb{C}$ are $\pm i = e^{\pm 2\pi i/4}$, the two primitive fourth roots of unity.
 - The action of $J$ partitions any $J$-equivariant function space into eigenspaces with $\tfrac{1}{4}$- and $\tfrac{3}{4}$-shifted Fourier modes.
 
-This is the algebraic source of the **quarter split** that pervades the FTD algebraic spine: the $i$-cycle ontology in `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md`, the framework integer $N_\text{base} = 4$ in `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (FTD-0110 linear closure), and the $(1+i)$-tower of FTD-0111 (Theorem 8) all share this $Z_4$ structure as their common anchor.
+This is the algebraic source of the **quarter split** that pervades the FTD algebraic spine: the $i$-cycle ontology in `FOUND_AXIOM_ZERO.md`, the framework integer $N_\text{base} = 4$ in `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (FTD-0110 linear closure), and the $(1+i)$-tower of FTD-0111 (Theorem 8) all share this $Z_4$ structure as their common anchor.
 
 ---
 
@@ -136,7 +136,7 @@ makes the prime-class structure explicit: split primes contribute $(1 - p^{-s})^
 
 Both derivations of $G^*$ are working in the same residue-class decomposition of $\mathbb{Z}_{>0}$ mod 4. They differ only in the **combination** of $\zeta_H(s, 1/4)$ and $\zeta_H(s, 3/4)$ each takes as primary:
 
-- **FTD-0127 parity-twist (`DERIV_G_STAR_PARITY_TWIST.md`):** primary objects are the **sum** ($\zeta(s)\cdot(1-2^{-s})$, even-parity, encodes "split + inert combined") and the **difference** ($L(s, \chi_{-4})$, odd-parity, encodes "split − inert"). $G^*$ emerges as the ratio of Archimedean Γ-factors at $s = 1/2$.
+- **FTD-0127 parity-twist (`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`):** primary objects are the **sum** ($\zeta(s)\cdot(1-2^{-s})$, even-parity, encodes "split + inert combined") and the **difference** ($L(s, \chi_{-4})$, odd-parity, encodes "split − inert"). $G^*$ emerges as the ratio of Archimedean Γ-factors at $s = 1/2$.
 
 - **FQCR Model I (this doc):** primary objects are the **individual Hurwitz components** $\zeta_H(s, 1/4)$ and $\zeta_H(s, 3/4)$. $G^*$ emerges as the ratio of $\zeta$-regularized determinants — equivalently, the ratio of $\exp[-\zeta_H'(0, 3/4)]$ to $\exp[-\zeta_H'(0, 1/4)]$, which is $\sqrt{2\pi}/\Gamma(3/4)$ over $\sqrt{2\pi}/\Gamma(1/4)$, with the $\sqrt{2\pi}$ canceling.
 
@@ -200,9 +200,9 @@ To prevent overclaim:
 | Cross-reference | Purpose |
 |---|---|
 | `SPEC_ALGEBRAIC_SPINE.md` Theorem 1 | Foundational $G^* = \Gamma(1/4)/\Gamma(3/4)$ identity that this derivation lands at via the operator route. |
-| `DERIV_G_STAR_PARITY_TWIST.md` (FTD-0127) | Complementary L-function lens on the same constant. |
+| `EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md` (FTD-0127) | Complementary L-function lens on the same constant. |
 | `DERIV_LFUNCTION_GSTAR_CONNECTION.md` | $L$-function side of the parity-twist; the quarter-conjugacy lens does not duplicate this. |
 | `DERIV_GSTAR_FINITE_APPROX.md` (FTD-0142) | Finite-N reframe of the same quarter-conjugacy chain; discharges the `AUDIT_INFINITY_REFRAME.md` ε-L obligation. |
 | `SPEC_FQCR.md` | Capstone reference for the full FQCR framework; this derivation is its Model I. |
-| `FOUND_COGITO_AXIOM_AND_FULL_TRACE.md` | $i$-cycle algebraic axiom; same $Z_4$ structure as $J$. |
+| `FOUND_AXIOM_ZERO.md` | $i$-cycle algebraic axiom; same $Z_4$ structure as $J$. |
 | `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (FTD-0110 linear) | $N_\text{base} = 4$ framework integer; another instance of the $Z_4$ structural anchor. |

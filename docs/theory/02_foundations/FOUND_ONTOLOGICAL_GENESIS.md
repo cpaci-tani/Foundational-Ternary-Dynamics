@@ -313,7 +313,7 @@ The formula D = 4 + (-1) = 3 can be understood through the **pairing principle**
 - -1 represents the cost of self-reference (the observer)
 - 3 is the number of actualized spatial dimensions
 
-See [FOUND_SPACETIME_EMERGENCE.md](FOUND_SPACETIME_EMERGENCE.md) for the derivation of why dimensions emerge from relational pairing (XY) rather than addition (X+Y).
+See [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) for the derivation of why dimensions emerge from relational pairing (XY) rather than addition (X+Y).
 
 ---
 

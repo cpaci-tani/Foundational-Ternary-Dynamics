@@ -34,7 +34,7 @@ Four commits resolving the major bug-hunt deferred parity items. Each closes a r
 
 **BH-F2** replaced GPU's naive `vel += f*dt; if (|v| > C) clamp` with the same γ_FTD momentum integration the CPU has used since 2026-04-17. GPU now honours the FTD bandwidth postulate `v²/C² + L² < 1`. Known limitation noted in commit message: colour force is added later by `color_force_kernel` and integrates non-relativistically, so CPU↔GPU velocity is bit-exact only when `color_forces` is OFF or magnitudes are non-relativistic.
 
-**BH-F5/F8/F9** design note ([DESIGN_RNG_PORTABILITY.md](DESIGN_RNG_PORTABILITY.md)) presents two options for the remaining stochastic-RNG divergence (CPU SplitMix64 vs GPU cuRAND Philox4_32_10). Awaiting user decision on Option A (bit-exact via shared SplitMix64, ~150 LOC) vs Option B (accept ensemble equivalence, ~50 LOC). Recommendation: Option A.
+**BH-F5/F8/F9** design note ([DESIGN_RNG_PORTABILITY.md](../../../engine/docs/DESIGN_RNG_PORTABILITY.md)) presents two options for the remaining stochastic-RNG divergence (CPU SplitMix64 vs GPU cuRAND Philox4_32_10). Awaiting user decision on Option A (bit-exact via shared SplitMix64, ~150 LOC) vs Option B (accept ensemble equivalence, ~50 LOC). Recommendation: Option A.
 
 ## Diagnostic finding during Tier B
 

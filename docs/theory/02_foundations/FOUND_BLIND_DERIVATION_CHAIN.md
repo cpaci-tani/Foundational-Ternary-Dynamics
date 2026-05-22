@@ -192,7 +192,7 @@ Discrepancy: $|137.036000 - 137.035999| / 137.036 = 7.3 \times 10^{-9}$ (9.6 ppb
 
 - `DERIV_D3_FROM_AUTOMORPHISM.md` — Step 8 proof
 - `DERIV_DUAL_DERIVATION_OF_16.md` — Step 7 context
-- `DERIV_D3_UNIQUENESS.md` — Independent D = 3 proof (Watson integral approach)
+- `DERIV_D3_FROM_AUTOMORPHISM.md` — Independent D = 3 proof (Watson integral approach in §5)
 - `DERIV_ONE_LOOP_LATTICE_ALPHA.md` — Step 12 lattice integral
 - `DERIV_PHI3_EXACT_EFT.md` — Step 11 cubic potential derivation
 
