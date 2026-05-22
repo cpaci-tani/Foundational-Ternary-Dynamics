@@ -1,0 +1,15 @@
+{
+  "campaign": "graviton_tt_correlator",
+  "prereg": "docs/theory/10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md",
+  "prereg_tag": "preregister-graviton-substrate-mode-v2",
+  "step": "Frontier 4 / Step 4a-ii",
+  "L": 64,
+  "equilibration_ticks": 200,
+  "measurement_window": 512,
+  "perturbation_seed": 4858295,
+  "perturbation_amplitude": 0.02,
+  "C_wave": 0.57735,
+  "control_recovered": 12,
+  "control_total": 12,
+  "note": "measurement data only — no Outcome verdict"
+}
