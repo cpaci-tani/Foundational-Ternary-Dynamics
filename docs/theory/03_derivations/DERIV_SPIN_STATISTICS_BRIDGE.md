@@ -108,7 +108,7 @@ $$G^*_\alpha = L_\alpha \times \frac{91}{732} = 2.95869409\ldots$$
 
 This agrees with the canonical `G* = Γ(1/4)/Γ(3/4) = 2.95867512...` at **+6.41 ppm**.
 
-**[SELECTION]**: The ratio 91/732 requires independent justification. We note that 91 = 7 × 13 = b₃ × N_eff and 732 = 4 × 183 = N_base × (N_eff² + N_eff + 1) = N_base × (1 + N_eff + N_eff²), connecting to framework integers via a third-cyclotomic-like expression in N_eff. This factorization has not been proven necessary, and is the subject of the rigidity-scan pre-registered in `docs/theory/10_eft_program/PREREG_LEMNISCATE_ALPHA_RIGIDITY.md` (2026-05-01 evening). Earlier versions of this doc:
+**[SELECTION]**: The ratio 91/732 requires independent justification. We note that 91 = 7 × 13 = b₃ × N_eff and 732 = 4 × 183 = N_base × (N_eff² + N_eff + 1) = N_base × (1 + N_eff + N_eff²), connecting to framework integers via a third-cyclotomic-like expression in N_eff. This factorization has not been proven necessary, and is the subject of the rigidity-scan pre-registered in `docs/theory/10_eft_program/archive/campaign_complete/PREREG_LEMNISCATE_ALPHA_RIGIDITY.md` (2026-05-01 evening). Earlier versions of this doc:
 - Misstated $L_\alpha$ as 23.7994 (correct value 23.79960517; arc-length error in the 4th decimal place).
 - Misstated the denominator decomposition as `N_eff(N_eff+1)/2 + 1`, which evaluates to 92, not 183.
 - Cited the agreement as "5.45 ppm" based on the misstated $L_\alpha = 23.7994$; with the corrected $L_\alpha$, the agreement is 6.41 ppm.

@@ -168,7 +168,7 @@ The chain shows WHY the lemniscate is connected to the lattice (through the Z₄
 3. Identifying the U(1) sector
 4. The matter content, regulator/counterterm prescription, and physical electromagnetic kinetic operator
 
-The 2026-04-22 Structure-2 audit (`docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md`) shows why this matching rule is required: a natural Ward-valid two-U(1) scalar gauge completion does not reproduce the Structure-1 ppb correction. Do not treat recovery of the 9.6 ppb number as a search target; only a first-principles matching derivation can change the claim status.
+The 2026-04-22 Structure-2 audit (`docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md`) shows why this matching rule is required: a natural Ward-valid two-U(1) scalar gauge completion does not reproduce the Structure-1 ppb correction. Do not treat recovery of the 9.6 ppb number as a search target; only a first-principles matching derivation can change the claim status.
 
 ---
 

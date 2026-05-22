@@ -2,7 +2,7 @@
 
 **Tag:** [EXPLORATORY] / **[STRUCTURAL HYPOTHESIS REFUTED 2026-04-27]** — the L¹-ball-radius-2 topology prediction (§3) was directly tested by `engine/tests/test_emergent_ic1_topology.cpp` and the engine produced a different per-orbit decomposition. See §11 (Corrigendum, end of file) for the refutation details. The remaining content of this document — that 25 = O(2) is the second centered octahedral number, the integer-counting fact — is unaffected.
 **Date:** 2026-04-27 (with corrigendum same day)
-**Builds on:** [`ANALYSIS_EMERGENT_SPECTRUM_G1.md`](../10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md) (FTD-0107: deterministic 25-voxel cluster L-invariant), [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md), [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md), [`THEOREM_MOORE_LAYER_DECOMPOSITION.md`](THEOREM_MOORE_LAYER_DECOMPOSITION.md)
+**Builds on:** [`ANALYSIS_EMERGENT_SPECTRUM_G1.md`](../10_eft_program/archive/campaign_complete/ANALYSIS_EMERGENT_SPECTRUM_G1.md) (FTD-0107: deterministic 25-voxel cluster L-invariant), [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md), [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md), [`THEOREM_MOORE_LAYER_DECOMPOSITION.md`](THEOREM_MOORE_LAYER_DECOMPOSITION.md)
 **Open question (per `WHERE_WE_LEFT_OFF.md` §10):** WHY exactly 25 voxels for the point-injection bound state? (still open; the topology that produces 25 is NOT the L¹-ball-radius-2 — see §11.)
 
 ---

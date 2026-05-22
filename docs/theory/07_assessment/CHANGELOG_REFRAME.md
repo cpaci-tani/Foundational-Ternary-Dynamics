@@ -578,7 +578,7 @@ User-invoked session to test an implicit additional conjecture on top of the mas
 
 | File | Change |
 |---|---|
-| `docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md` | NEW — 200-line closure report. |
+| `docs/theory/10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md` | NEW — 200-line closure report. |
 | `docs/theory/07_assessment/LEDGER.md` | Added rows FTD-0050, 0051, 0052 + detail blocks. Updated maintenance log. |
 | `docs/theory/07_assessment/CHANGELOG_REFRAME.md` | This session entry. |
 | `engine/tests/test_link8_kadanoff.cpp` | NEW. |
@@ -644,7 +644,7 @@ Owner selected "GPU port of Langevin" as the downstream work. Ported the OU upda
 
 Owner raised a specific concern after Link 8 closure: if the engine's coupling stencil is structurally BCC-orthogonal, do any existing EFT-campaign claims silently inherit that structural gap? Could publications be overclaiming that engine-measured couplings converge to QED observables when the structural argument rules it out?
 
-- **Created:** `docs/theory/10_eft_program/AUDIT_EFT_BCC_ORTHOGONALITY.md`. Read of 6 EFT-campaign docs (Wilsonian paper, β-function derivation, Day-2 campaign, Phase G, Phase F audit, dynamical SM), checked each for claims that engine observables are physical couplings converging to QED.
+- **Created:** `docs/theory/10_eft_program/archive/campaign_complete/AUDIT_EFT_BCC_ORTHOGONALITY.md`. Read of 6 EFT-campaign docs (Wilsonian paper, β-function derivation, Day-2 campaign, Phase G, Phase F audit, dynamical SM), checked each for claims that engine observables are physical couplings converging to QED.
 - **Result:** **No existing EFT document needs retraction or caveating.** All checked docs already frame their results honestly:
   - `PAPER_FTD_AS_WILSONIAN_EFT.tex` explicitly labels the 3.6× plateau as "pure lattice geometry, no fine-structure content"; α_r is "not a coupling constant at all".
   - `DERIV_BETA_FUNCTION_MEASURED.md` explicitly flags the β-function measurement as "qualitative match, 2-3 orders of magnitude quantitative gap" — not a successful QED reproduction.
@@ -751,7 +751,7 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 ### Phase 9 — FTD-0124 9-Heegner rigidity / criterion-bifurcation (64aa4a9)
 
-- **NEW**: `docs/theory/10_eft_program/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `AUDIT_HEEGNER_TOWER_RIGIDITY.md`.
+- **NEW**: `docs/theory/10_eft_program/archive/campaign_complete/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `AUDIT_HEEGNER_TOWER_RIGIDITY.md`.
 - **NEW LEDGER ROW**: FTD-0124 [NUMERICAL FACT + METHODOLOGICAL]. 5814-quadruple grid (9 Heegner × 19 coeff × 17 targets × 2 roots). Two criteria, two verdicts:
   - Trivial-multiplier (q=1): EXACTLY ONE strict match (canonical d=−4, c=16, x_+, 1/α at +1.258 ppm). Theorem 3 STRONGLY CONFIRMED at this strict criterion.
   - Rational-multiplier (q ≤ 200, FC-factorable): 21 strict matches. Theorem 3 FAILS at this looser criterion.

@@ -769,7 +769,7 @@ produces two roots:
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
 | x₋ | 3.024 | N_c (color charges) | 0.8% |
 
-**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identifications x₊ ↔ 1/α and x₋ ↔ N_c are **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger. The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/LEDGER.md](theory/07_assessment/LEDGER.md) and [docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
+**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identifications x₊ ↔ 1/α and x₋ ↔ N_c are **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger. The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/LEDGER.md](theory/07_assessment/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
 
 ### 7.4.1 Lemniscate Selection: Four Algebraic Criteria
 
