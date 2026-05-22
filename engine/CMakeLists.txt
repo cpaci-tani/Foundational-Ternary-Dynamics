@@ -916,9 +916,31 @@ ftd_add_test(campaign_bcc_band_spectrum tests/campaign_bcc_band_spectrum.cpp
 # the known pole ω = 2C|sin(k/2)|. Smoke parameters L=16, window=512 fit
 # within 1800 s; canonical run is L ∈ {32,64,128} with a longer window
 # and a separately-launched invocation. GPU (CUDA backend) per project rule.
+#
+# The per-tick 3D FFTs (15 L³ grids/tick) run on the GPU via cuFFT (Z2Z,
+# double precision) — see tests/graviton_fft_cuda.{h,cu}. This is a pure,
+# result-preserving performance optimization that makes the L=128 canonical
+# run feasible (minutes instead of 12+ hours). The cuFFT helper .cu is added
+# to the target's sources; CUDA::cufft is linked explicitly (also reachable
+# transitively via ftd_cuda, which the GPU_HEAVY flag links).
 ftd_add_test(campaign_graviton_tt_correlator tests/campaign_graviton_tt_correlator.cpp
              CTEST_NAME graviton_tt_correlator GPU_HEAVY TIMEOUT 1800
              LABELS native eft gravity)
+if(FTD_ENABLE_CUDA)
+    target_sources(campaign_graviton_tt_correlator
+                   PRIVATE tests/graviton_fft_cuda.cu)
+    target_link_libraries(campaign_graviton_tt_correlator PRIVATE CUDA::cufft)
+    target_compile_options(campaign_graviton_tt_correlator PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+        $<$<COMPILE_LANGUAGE:CUDA>:--allow-unsupported-compiler>
+    )
+    set_target_properties(campaign_graviton_tt_correlator PROPERTIES
+        CUDA_SEPARABLE_COMPILATION ON
+        CUDA_RESOLVE_DEVICE_SYMBOLS ON
+        COMPILE_PDB_NAME ""
+        COMPILE_PDB_OUTPUT_DIRECTORY ""
+    )
+endif()
 
 # Flux-slice propagation diagnostic (FTD-0092 companion). Real-space
 # 2D slice (xy / xz / yz) capture of a centred Gaussian flux pulse
