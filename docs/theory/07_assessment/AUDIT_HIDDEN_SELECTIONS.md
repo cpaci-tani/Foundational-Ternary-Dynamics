@@ -35,7 +35,7 @@ The FTD derivation of α = 1/137.036 from G* is remarkable — but it involves s
    ↓
 7. x₊ ↔ 1/α, x₋ ↔ N_c = 3                    ← STRONGLY MOTIVATED CONJECTURE (SP4); continuum-QED route is supporting/historical, not a theorem upgrade
    See FOUND_FORCE_STRUCTURE.md §V (EM as most ontic)
-   See EXPLR_GSTAR_FLUX_TIME.md (G* dimensional triad)
+   See EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md (G* dimensional triad)
 ```
 
 ---
@@ -185,7 +185,7 @@ The evidence has strengthened substantially:
 
 4. **SC vs FCC comparison** [THEOREM] — The lattice symmetry genuinely selects the curve (SC→j=1728, FCC→j=0). This is not a post-hoc identification.
 
-5. **G\*≈3 near-fixed-point** [SELECTION] — The CFL wave equation self-consistency closes at G\*=3. The 1.4% deviation from integer 3 (forced by lemniscate geometry) generates the actual value of α. See EXPLR_GSTAR_FLUX_TIME.md §VI.
+5. **G\*≈3 near-fixed-point** [SELECTION] — The CFL wave equation self-consistency closes at G\*=3. The 1.4% deviation from integer 3 (forced by lemniscate geometry) generates the actual value of α. See EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md §VI.
 
 **What is still missing:** A dynamical derivation (partition function extremum, RG fixed point, or anomaly matching) that produces α = 1/x₊ from the lattice action without assuming it.
 

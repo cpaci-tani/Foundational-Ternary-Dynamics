@@ -8,9 +8,9 @@
 **Epistemic Level:** [THEOREM] for algebraic identities; [SELECTION] for physical interpretations
 
 **Depends on:**
-- [EXPLR_GSTAR_FLUX_TIME.md](EXPLR_GSTAR_FLUX_TIME.md) --- Dimensional triad
+- [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) --- Dimensional triad
 - [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) --- G* decomposition
-- [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) --- Space-time separation
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) --- Space-time separation
 - `ontic.h` --- Complete derivation chain (9 layers)
 
 ---
@@ -78,7 +78,7 @@ varpi is to the lemniscate what pi is to the circle. The lemniscate (figure-8) i
 | PF | 0.78540... | pi/4 | Packing fraction |
 | sqrt(G*) | 1.72008... | G*^(1/2) | Time operator |
 
-**The Dimensional Triad (see EXPLR_GSTAR_FLUX_TIME.md):**
+**The Dimensional Triad (see EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md):**
 
 | Power | Value | Identification |
 |-------|-------|----------------|
@@ -365,9 +365,9 @@ The modular selector (which picks the lemniscatic curve from all possible ellipt
 
 ## Cross-References
 
-- **Dimensional triad**: [EXPLR_GSTAR_FLUX_TIME.md](EXPLR_GSTAR_FLUX_TIME.md)
+- **Dimensional triad**: [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md)
 - **G* decomposition**: [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md)
-- **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
+- **Spacetime emergence**: [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 - **Consciousness source map**: [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **Ontic chain**: `engine/include/ftd/ontic.h`
 - **Numerical verification**: `scripts/exploration/explore_ontic_constants.py`

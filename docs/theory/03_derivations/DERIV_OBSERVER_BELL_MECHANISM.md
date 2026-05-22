@@ -13,7 +13,7 @@
 - [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) -- Projection hierarchy E(x) = Re(x)
 - [DERIV_QUANTUM_MECHANICS_RESOLVED.md](DERIV_QUANTUM_MECHANICS_RESOLVED.md) -- QM from First Distinction; complexification of flux
 - [FOUND_BORN_RULE_NULL_CONE.md](../02_foundations/FOUND_BORN_RULE_NULL_CONE.md) -- Born rule as null-cone geometry
-- [FOUND_EMERGENT_TIME_GRAVITY.md](../02_foundations/FOUND_EMERGENT_TIME_GRAVITY.md) -- Discriminant trichotomy; ReLU crystallization
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) -- Discriminant trichotomy; ReLU crystallization
 - [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) -- Type III to Type I transition; Softplus/ReLU
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Action S[s,J] and coupling term
 
@@ -478,7 +478,7 @@ The mechanism is classified [SELECTION] -- it is structurally motivated, numeric
 - FOUND_THE_EXISTENCE_FILTER.md -- Projection hierarchy E(x) = Re(x) (06_consciousness)
 - DERIV_QUANTUM_MECHANICS_RESOLVED.md -- QM from First Distinction; complexification (03_derivations)
 - FOUND_BORN_RULE_NULL_CONE.md -- Born rule as null-cone geometry i^2 + a^2 + b^2 = 0 (02_foundations)
-- FOUND_EMERGENT_TIME_GRAVITY.md -- Discriminant trichotomy; ReLU crystallization (02_foundations)
+- FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md -- Discriminant trichotomy; ReLU crystallization (02_foundations)
 - DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md -- Type III to Type I transition (06_consciousness)
 - DERIV_KCOMP_VOLUMETRIC_SHELL.md -- Dynamical mechanism for joint probability (03_derivations)
 - SPEC_FTD_LAGRANGIAN.md -- Action S[s,J] and coupling term (01_reference)

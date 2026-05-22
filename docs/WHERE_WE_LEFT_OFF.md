@@ -130,7 +130,7 @@ That is: G\* is exactly the ratio of Archimedean Γ-factors of the two simplest 
 **Why L(s, χ_{−4}) is the right partner**: the L-function whose Γ-factor naturally produces Γ(1/4) and Γ(3/4) at half-integer points is the parity-1 Dirichlet L for conductor 4 — the L-function of the Hecke character on Q(i), the same number field whose endomorphism ring Z[i] controls the lemniscatic CM elliptic curve `y² = x³ − x` whose Archimedean period IS Γ(1/4). The whole arithmetic chain — Z[i] → CM curve → Γ(1/4) period → G\* → L(s, χ_{−4}) parity-twist — is one structure; Theorem 9 names its π-free part; FTD-0127 locates that π-free part exactly at the boundary.
 
 New artifacts:
-- `docs/theory/03_derivations/DERIV_G_STAR_PARITY_TWIST.md` (full derivation, scoping, structural picture)
+- `docs/theory/09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md` (full derivation, scoping, structural picture)
 - `scripts/proofs/proof_g_star_parity_twist.py` (10-line identity check, PASS)
 - `scripts/proofs/proof_lprime_chi4_boundary.py` (~140 lines; A/B/C verification + PSLQ scoping, PASS)
 - `SPEC_ALGEBRAIC_SPINE.md §9.1` added (operational reading of Theorem 9 via parity-twist + companion table)
@@ -161,7 +161,7 @@ New artifacts:
 - `docs/theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md` (full grounding chain + cross-references)
 - `SPEC_FTD.md` Postulate 3 augmented with grounding paragraph + cross-reference
 - `REF_REFLEXIVITY_VOCABULARY.md §10.1` added with dispositional/actual table for state-field grounding
-- META_INDEX.md entries 2.23 (FOUND_TERNARY_STATE_FROM_I) and 3.53 (DERIV_G_STAR_PARITY_TWIST)
+- META_INDEX.md entries 2.23 (FOUND_TERNARY_STATE_FROM_I) and 9.9 (EXPLR_GSTAR_ARITHMETIC_IDENTITIES)
 
 ### Cumulative state of spine + LEDGER (post 2026-05-03 late evening)
 
@@ -515,16 +515,14 @@ picture (commits `09a1569`, `0440e1d`, `a75888f`, `4964ba9`, `c9540dd`).
 
 ### New artifacts this session
 
-**Theory docs (10 new)**:
+**Theory docs (8 new)**:
 - `docs/theory/01_reference/SPEC_PHYSICS_BRIDGE.md` — synthesis (FTD-0121)
 - `docs/theory/03_derivations/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` (extended §8.5/§8.6/§8.7) — bridge attempt + falsifications
 - `docs/theory/09_mathematical/EXPLR_PATHS_TO_ALPHA.md` — α-derivation route survey
 - `docs/theory/09_mathematical/EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` — tower-scan rank-1
 - `docs/theory/09_mathematical/EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` — polynomial-scan unique
-- `docs/theory/09_mathematical/EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md` — 2×2 mixing reading
+- `docs/theory/09_mathematical/EXPLR_MASTER_QUADRATIC_STRUCTURAL_READINGS.md` — 2×2 mixing reading + volumetric correction + three readings of 16 (consolidated 2026-05-21)
 - `docs/theory/09_mathematical/EXPLR_3X3_MIXING_NEGATIVE.md` — 3×3 generalization negative
-- `docs/theory/09_mathematical/EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md` — volumetric correction
-- `docs/theory/09_mathematical/EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md` — three readings of 16
 - (existing) `EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md` extended
 
 **Verification scripts (6 new)**:

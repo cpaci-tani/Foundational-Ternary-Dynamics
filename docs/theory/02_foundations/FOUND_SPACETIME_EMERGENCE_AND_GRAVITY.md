@@ -551,7 +551,7 @@ Just as $i$ is not a number ON the real line but the operation that creates a ne
 
 ### 13.2 The Dimensional Triad [THEOREM for algebra, SELECTION for identification]
 
-From the Vieta relations of the master quadratic (EXPLR_GSTAR_FLUX_TIME.md):
+From the Vieta relations of the master quadratic (../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md):
 
 $$G^{*1} = 2.959 \quad \text{FLUX: what IS (spatial amplitude per DoF)}$$
 $$G^{*2} = 8.754 \quad \text{ENERGY: what HAPPENS (temporal amplitude per DoF)}$$
@@ -1179,7 +1179,7 @@ If correct, the three temporal modes (kinematic, thermodynamic, geometric) of th
 - **QFT/GRT bridge (linearized GR):** [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md)
 - **QFT/GRT bridge roadmap (gap analysis):** [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md)
 - **Collapse-gravity bridge:** [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md)
-- **G* flux-time triad:** EXPLR_GSTAR_FLUX_TIME.md (09_mathematical)
+- **G* flux-time triad:** EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md (09_mathematical)
 - **ReLU type transition:** EXPLR_RELU_TYPE_TRANSITION.md (09_mathematical)
 - **Discrete-continuous bridge:** DERIV_DISCRETE_CONTINUOUS_BRIDGE.md (04_coupling)
 - **Cuboctahedral integers:** [DERIV_CUBOCTAHEDRAL_INTEGERS.md](../08_structural/DERIV_CUBOCTAHEDRAL_INTEGERS.md)

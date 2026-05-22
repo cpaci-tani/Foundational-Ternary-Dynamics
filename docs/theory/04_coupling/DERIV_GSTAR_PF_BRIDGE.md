@@ -10,7 +10,7 @@
 **Depends on:**
 - [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
 - [MATH_MASTER_QUADRATIC.md](../01_reference/MATH_MASTER_QUADRATIC.md) — Master quadratic and G* definition (Layer 1: pure mathematics)
-- [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) — Selection principles SP1-SP6 (Layer 2)
+- [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) — Selection principles SP1-SP6 (Layer 2)
 
 ---
 

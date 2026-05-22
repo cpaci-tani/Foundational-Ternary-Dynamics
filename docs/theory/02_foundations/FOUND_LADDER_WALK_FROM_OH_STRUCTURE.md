@@ -5,7 +5,7 @@
 **Filed:** 2026-04-24
 **Companions:**
 - [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md) — the ladder walk this closes
-- [FOUND_COGITO_AXIOM_AND_FULL_TRACE.md](FOUND_COGITO_AXIOM_AND_FULL_TRACE.md) — S2 selection in chain §2.3
+- [FOUND_AXIOM_ZERO.md](FOUND_AXIOM_ZERO.md) — S2 selection in chain §2.3
 - [FOUND_MASTER_QUADRATIC_UNIQUENESS_PROOF.md](FOUND_MASTER_QUADRATIC_UNIQUENESS_PROOF.md) (FTD-0083) — Program E closed S1
 - [test_ladder_walk_from_oh.cpp](../../../engine/tests/test_ladder_walk_from_oh.cpp) — constructive proof
 
@@ -20,7 +20,7 @@ Program A, proposed in [FTD-0081](FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md),
 - **Step ORDER (which permutation of $\{3,3,4,6\}$)**: [SELECTION, narrowed]
   $12$ permutations satisfy the multiset constraint. The canonical FTD order $\{4, 3, 3, 6\}$ giving positions $\{4, 8, 11, 14, 20\}$ is SM-structurally motivated (spinor $\to$ color $\to$ color $\to$ flavor) but not forced by pure group theory.
 
-Net effect on S2 in the cogito-axiom ladder ([FTD-0080](FOUND_COGITO_AXIOM_AND_FULL_TRACE.md)):
+Net effect on S2 in the cogito-axiom ladder ([FTD-0080](FOUND_AXIOM_ZERO.md)):
 **S2 [SELECTION] $\to$ [THEOREM on multiset + SELECTION on order].**
 
 Combined with Program E (FTD-0083) closing S1:

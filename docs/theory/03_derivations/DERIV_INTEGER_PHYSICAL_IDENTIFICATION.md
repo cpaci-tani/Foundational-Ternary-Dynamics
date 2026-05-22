@@ -5,7 +5,7 @@
 **Date:** March 17, 2026
 **Status:** [THEOREM] for all identifications given N_gen = N_c [SELECTION]
 **Proof script:** `scripts/proofs/proof_integer_identification.py`
-**Prior:** Depends on DERIV_D3_UNIQUENESS.md, DERIV_INTEGER_UNIQUENESS.md, DERIV_MASTER_QUADRATIC_FROM_Z.md
+**Prior:** Depends on DERIV_D3_FROM_AUTOMORPHISM.md, AUDIT_SELF_CONSISTENCY.md, DERIV_MASTER_QUADRATIC_FROM_Z.md
 
 ---
 
@@ -23,7 +23,7 @@ The four framework integers {N_c = 3, N_base = 4, b_3 = 7, N_eff = 13} are each 
 
 The smaller root x_- = 3.024, so N_c = floor(x_-) = 3.
 
-**Self-referential identity:** D = 3 is the unique spatial dimension where floor(x_-) = D (proven in DERIV_D3_UNIQUENESS.md). The dimension selects itself: the lattice lives in D = 3 dimensions, and the gap equation on that lattice returns N_c = D = 3.
+**Self-referential identity:** D = 3 is the unique spatial dimension where floor(x_-) = D (proven in DERIV_D3_FROM_AUTOMORPHISM.md). The dimension selects itself: the lattice lives in D = 3 dimensions, and the gap equation on that lattice returns N_c = D = 3.
 
 ### N_base = 4: Spinor Dimension [THEOREM]
 
@@ -94,6 +94,6 @@ No free parameters remain once N_gen = N_c is assumed.
 ## References
 
 - proof_integer_identification.py -- Physical identification (14/14 tests pass)
-- DERIV_D3_UNIQUENESS.md -- D = 3 self-referential identity
-- DERIV_INTEGER_UNIQUENESS.md -- Exhaustive uniqueness search
+- DERIV_D3_FROM_AUTOMORPHISM.md -- D = 3 self-referential identity
+- AUDIT_SELF_CONSISTENCY.md -- Exhaustive uniqueness search
 - DERIV_MASTER_QUADRATIC_FROM_Z.md -- Gap equation from partition function

@@ -179,7 +179,7 @@ The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional 
 
 ## Depends On
 
-- `DERIV_D3_UNIQUENESS.md` — Watson integral approach (independent comparison)
+- §5 above — Watson integral approach (independent comparison, absorbed from the former `DERIV_D3_UNIQUENESS.md`)
 - `DERIV_DUAL_DERIVATION_OF_16.md` — Why $|\text{Aut}|^2 = 16$ is the correct invariant
 - `DERIV_STABILIZER_DECOMPOSITION.md` — Structural bridge between CM and octahedral groups
 

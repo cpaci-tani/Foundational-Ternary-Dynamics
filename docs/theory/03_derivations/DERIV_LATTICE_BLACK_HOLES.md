@@ -9,7 +9,7 @@
 - [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) -- Theorem 11.1 (g_00 from flux saturation)
 - [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) -- Historical/interpretive constant atlas; canonical G* status lives in SPEC_ALGEBRAIC_SPINE/SPEC_FQCR
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Born-Infeld Render-Bridge Lagrangian v2.1
-- [FOUND_RELATIVITY_GRAVITY_DISTINCTION.md](../02_foundations/FOUND_RELATIVITY_GRAVITY_DISTINCTION.md) -- SR / Gravity / GR trichotomy and 7-level hierarchy
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) -- SR / Gravity / GR trichotomy and 7-level hierarchy
 - [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) -- Linearized GR from flux (Theorem 2.3)
 - [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) -- All 4 forces from a single lattice Green's function
 
@@ -1521,9 +1521,9 @@ Compare with Schwarzschild at the same radius: $f_{\text{Schw}} = 1 - 2/3 = 0.33
 | [DERIV_EINSTEIN_FIELD_EQUATIONS.md](DERIV_EINSTEIN_FIELD_EQUATIONS.md) | Full Einstein field equations from FTD. The metrics derived here are exact vacuum (Schwarzschild, Kerr) or electrovacuum (RN) solutions to those equations. |
 | [DERIV_RELATIVITY_DERIVATION.md](DERIV_RELATIVITY_DERIVATION.md) | Theorem 11.1 ($g_{00}$ from flux saturation); foundational result that all three metric derivations build upon. |
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld Lagrangian v2.1 (Schwarzschild-exact). Extended to Kerr (Part B) and RN (Part C) here. |
-| [FOUND_RELATIVITY_GRAVITY_DISTINCTION.md](../02_foundations/FOUND_RELATIVITY_GRAVITY_DISTINCTION.md) | SR / Gravity / GR trichotomy and 7-level hierarchy. The lattice metrics sit at Level 4 (metric description); the budget interpretation is Level 2-3. |
+| [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | SR / Gravity / GR trichotomy and 7-level hierarchy. The lattice metrics sit at Level 4 (metric description); the budget interpretation is Level 2-3. |
 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas. Not the canonical source for G* status or framework-integer derivation. |
-| [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) | Dimensional hierarchy, space-time ontological separation. |
+| [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | Dimensional hierarchy, space-time ontological separation. |
 | [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) | Linearized GR from flux; graviton propagator. The Kerr metric goes beyond the linearized regime. The RN metric demonstrates electromagnetic back-reaction on gravity. |
 | [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) | All 4 forces from a single lattice Green's function. The RN metric provides the gravitational context in which the electromagnetic force operates. |
 | [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | GAP-G1 definition and critical path. GAP-1 / GAP-G1 resolved in Part A. |

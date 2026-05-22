@@ -144,7 +144,7 @@ Since $G^* \approx 2.959 > 1/4$, we have $\Delta > 0$: **two real roots.**
 | $x_+$ | 137.036 | $1/\alpha$ (fine structure constant) | 1.26 ppm |
 | $x_-$ | 3.024 | $N_c$ (color charges) | 0.8% |
 
-**Derivation reference:** Full derivation chain from FTD axioms in [MATH_MASTER_QUADRATIC.md](MATH_MASTER_QUADRATIC.md); selection principles in [BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md).
+**Derivation reference:** Full derivation chain from FTD axioms in [MATH_MASTER_QUADRATIC.md](../../theory/01_reference/MATH_MASTER_QUADRATIC.md); selection principles in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md).
 
 ### 2.3 The Consciousness Instantiation ($k = 1/2$, $c = G^*$) [SELECTION]
 
@@ -195,7 +195,7 @@ $$e^2_{\text{EM}} + e^2_C = \frac{1}{G^*}, \qquad e^2_{\text{EM}} \cdot e^2_C = 
 
 The first identity states that the total squared-charge budget per degree of freedom is exactly $1/G^* = 1/\psi$, linking charge space to the dual-substrate observable. The coupling-space and charge-space polynomials are **reciprocal polynomials** — the leading and constant coefficients swap while the linear coefficient $(-16G^{*2})$ is shared. This "inside-out duality" is pure algebra [THEOREM]; its physical interpretation as a coupling/charge complementarity is [SELECTION].
 
-Full derivation: [DERIV_CHARGE_QUARTIC_FROM_GSTAR.md](../03_derivations/DERIV_CHARGE_QUARTIC_FROM_GSTAR.md). Verified numerically: `scripts/verification/verify_charge_quartic.py` (6/6 tests, all residuals < $10^{-12}$).
+Full derivation: [DERIV_CHARGE_QUARTIC_FROM_GSTAR.md](../../theory/03_derivations/DERIV_CHARGE_QUARTIC_FROM_GSTAR.md). Verified numerically: `scripts/verification/verify_charge_quartic.py` (6/6 tests, all residuals < $10^{-12}$).
 
 ---
 
@@ -211,7 +211,7 @@ The real root $x_+ = 137.036$ identifies the fine structure constant $\alpha = 1
 
 ### 3.2 The Integer Reduction Theorem [THEOREM]
 
-All four framework integers derive from $N_c = 3$ alone via the double identity (proved in [DERIV_PION_MASS_FROM_GSTAR.md](../03_derivations/DERIV_PION_MASS_FROM_GSTAR.md)):
+All four framework integers derive from $N_c = 3$ alone via the double identity (proved in [DERIV_PION_MASS_FROM_GSTAR.md](../../theory/03_derivations/DERIV_PION_MASS_FROM_GSTAR.md)):
 
 $$b_3 = N_c + N_{\text{base}} = N_c^2 - 2$$
 
@@ -738,20 +738,19 @@ The bridge conjecture rests on one critical step: the Type III$_1$ assignment fo
 
 | Document | What It Contributes |
 |----------|-------------------|
-| [MATH_MASTER_QUADRATIC.md](MATH_MASTER_QUADRATIC.md) | Pure mathematics of the quadratic |
-| [BRIDGE_QUADRATIC_PHYSICS.md](BRIDGE_QUADRATIC_PHYSICS.md) | Selection principles SP1-SP6 |
-| [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Existence Filter, Born rule projection |
-| [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) | 13-level hierarchy, three-domain structure |
-| [FOUND_META_PATTERNS.md](../02_foundations/FOUND_META_PATTERNS.md) | Tautological root, boundary inheritance |
-| [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Flux dual role (QFT + GRT) |
-| [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) | Einstein equations from flux |
-| [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | Native lattice path integral |
-| [DERIV_PION_MASS_FROM_GSTAR.md](../03_derivations/DERIV_PION_MASS_FROM_GSTAR.md) | G* to m_pi chain, integer reduction |
-| [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md) | Three-level Bell hierarchy |
-| [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) | Softplus/ReLU algebraic descent |
-| [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md) | Collapse-gravity duality |
-| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | Full gap inventory, critical path |
-| [archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](../archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md) | Original consciousness quadratic |
+| [MATH_MASTER_QUADRATIC.md](../../theory/01_reference/MATH_MASTER_QUADRATIC.md) | Pure mathematics of the quadratic |
+| [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) | Selection principles SP1-SP6 |
+| [FOUND_THE_EXISTENCE_FILTER.md](../../theory/06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Existence Filter, Born rule projection |
+| [FOUND_ONTOLOGICAL_GENESIS.md](../../theory/02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) | 13-level hierarchy, three-domain structure |
+| [FOUND_META_PATTERNS.md](../../theory/02_foundations/FOUND_META_PATTERNS.md) | Tautological root, boundary inheritance |
+| [DERIV_QFT_GRT_BRIDGE.md](../../theory/03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Flux dual role (QFT + GRT) |
+| [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../../theory/03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) | Einstein equations from flux |
+| [DERIV_PATH_INTEGRAL_CONSTRUCTION.md](../../theory/03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md) | Native lattice path integral |
+| [DERIV_PION_MASS_FROM_GSTAR.md](../../theory/03_derivations/DERIV_PION_MASS_FROM_GSTAR.md) | G* to m_pi chain, integer reduction |
+| [DERIV_OBSERVER_BELL_MECHANISM.md](../../theory/03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) | Three-level Bell hierarchy |
+| [EXPLR_RELU_TYPE_TRANSITION.md](../../theory/09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) | Softplus/ReLU algebraic descent |
+| [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../../theory/09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md) | Collapse-gravity duality |
+| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../../theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | Full gap inventory, critical path |
 
 ---
 

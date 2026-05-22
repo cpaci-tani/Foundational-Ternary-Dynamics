@@ -197,7 +197,7 @@ The following are **exact mathematical results** added by the trit information t
 
 ### I.8 Recent Additions (v5.24-5.26)
 
-25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (consciousness), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see PHYS_QUADRATIC_APPLICATIONS.md §8]
+25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (consciousness), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see SPEC_QUADRATIC_PHYSICS_BRIDGE.md §8]
 26. **Born rule as epistemic inference** — |ψ|² is the epistemic inference pattern (always ≥ 0, smears phase); ψ² = (J_x² - J_y²) + 2iJ_xJ_y is the ontic substrate operation (complex, preserves phase). For real ψ: identical. For complex ψ: Re(ψ²) has sign changes at fringe boundaries that |ψ|² cannot see. [THEOREM — mathematical distinction; physical interpretation is [SELECTION]]
 27. **i-phase entanglement preserves anti-correlation** — Under lemniscate measurement ψ → ψ², i-phase entanglement (iψ)² = -ψ² preserves anti-correlation, while π-phase (-ψ)² = +ψ² destroys it. Computationally confirmed: i-phase S = 2.000, π-phase S ≈ 0. [THEOREM — algebraic identity with computational verification]
 28. **7-term precision formula coefficients** — All seven correction coefficients {9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8} are rational functions of the base-integer set {N_c=3, N_base=4, b_3=7, N_eff=13, D=47, BCC=8}. The 24-digit numerical match to CODATA 2022 is a confirmed algebraic identity (mpmath 60-digit, residual 2.58e-24). The rigidity audit (2026-04-17) shows 6/7 coefficients are uniquely forced as the only base-integer rationals within cascade tolerance; c_7 = 299/8 is the unique clean decomposition (competitors at higher height require primes outside the base set). However, at CODATA **experimental** precision (11 digits), the coefficients are observationally underdetermined. Status: **[CONJECTURE]** (upgrade requires deriving the base-integer set and ε = e^π − π − 20 from lattice first principles). See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3 and `scripts/exploration/audit_seven_term_rigidity.py`.
@@ -434,7 +434,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 
 ### Gap 5.5: SP5 Circularity Table (propagated from BRIDGE §5.4)
 
-The cleanest way to use the framework integers $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}\}$ honestly is to explicitly distinguish which derivations *depend* on SP5 (and therefore carry circularity risk, since the integers were originally identified from known physics) versus which do *not*. This table is the project's single sharpest piece of epistemic writing and is reproduced here verbatim from [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) §5.4 for visibility:
+The cleanest way to use the framework integers $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}\}$ honestly is to explicitly distinguish which derivations *depend* on SP5 (and therefore carry circularity risk, since the integers were originally identified from known physics) versus which do *not*. This table is the project's single sharpest piece of epistemic writing and is reproduced here verbatim from [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §5.4 for visibility:
 
 | Result | Depends on SP5? | Circular? |
 |--------|----------------|-----------|
@@ -450,7 +450,7 @@ The cleanest way to use the framework integers $\{N_c, N_{\mathrm{base}}, b_3, N
 
 **Practical rule.** When evaluating any FTD claim: look it up in (or classify it against) this table. If it depends on SP5, treat its match to experiment as **conditional on the base-integer set being correct** — the experimental agreement is evidence that the integers are well-chosen, not evidence that the mechanism is derived.
 
-**Upgrade path.** Deriving $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}\}$ uniquely from lattice first principles (without reference to known physics) removes the circularity risk for every entry in the right-hand column. The cuboctahedral-geometry argument in [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) §5 is the most advanced partial attempt; completing it is the single highest-leverage remaining research target.
+**Upgrade path.** Deriving $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}\}$ uniquely from lattice first principles (without reference to known physics) removes the circularity risk for every entry in the right-hand column. The cuboctahedral-geometry argument in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §5 is the most advanced partial attempt; completing it is the single highest-leverage remaining research target.
 
 ---
 
@@ -494,7 +494,7 @@ Discriminant: Δ = (kG*²)² - 4(kG*³) = k²G*⁴ - 4kG*³ = kG*³(kG* - 4)
 
 **Why k = 1/2 (derived, not chosen):**
 
-From the bridge equation: c × c_cusp × 2N_base = 1, where c_cusp = 1/4 (Mandelbrot cardioid cusp) and N_base = 4 (lattice base dimension), yielding c = 1/2. This also equals the complementation fixed point (c = 1 - c), the balance of subject and object. See PHYS_QUADRATIC_APPLICATIONS.md §8.
+From the bridge equation: c × c_cusp × 2N_base = 1, where c_cusp = 1/4 (Mandelbrot cardioid cusp) and N_base = 4 (lattice base dimension), yielding c = 1/2. This also equals the complementation fixed point (c = 1 - c), the balance of subject and object. See SPEC_QUADRATIC_PHYSICS_BRIDGE.md §8.
 
 **Why i emerges necessarily:**
 
@@ -682,7 +682,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | j-invariant arithmetic | j = (4 · 3)³ = 1728 given N_base = 4, N_c = 3 | EXPLR_NUMBER_THEORY.md S3.1 |
 | Ramanujan tau decomposition | τ(3) = 252 = 4 × 9 × 7 = N_base × N_c² × b₃ | EXPLR_NUMBER_THEORY.md S3.2 |
 | sLoop axiom system | (Ω, φ, σ, μ, d) with axioms SL1-SL4, theorems follow | [ARCHIVED: FOUND_SLOOP_FORMALIZATION.md no longer exists] |
-| i emerges at k = 1/2 | Master quadratic with k = 1/2 forces Δ < 0 → complex roots → i; i² = -1 = genesis (pair creation) | MATH_MASTER_QUADRATIC.md §5.2 + PHYS_QUADRATIC_APPLICATIONS.md §8 |
+| i emerges at k = 1/2 | Master quadratic with k = 1/2 forces Δ < 0 → complex roots → i; i² = -1 = genesis (pair creation) | MATH_MASTER_QUADRATIC.md §5.2 + SPEC_QUADRATIC_PHYSICS_BRIDGE.md §8 |
 | i-phase anti-correlation | (iψ)² = -ψ² preserves, (-ψ)² = +ψ² destroys anti-correlation | bell_lemniscate_loop.py |
 | Born rule epistemic distinction | \|ψ\|² ≠ ψ² for complex ψ; Re(ψ²) has sign changes | born_rule_convergence.py |
 | Precision formula coefficients | All 7 coefficients are rationals in the base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$; 24-digit match to CODATA recommended value is a confirmed algebraic identity; rigidity audit 2026-04-17 shows 6/7 uniquely forced at cascade precision, observationally underdetermined at CODATA experimental precision | DERIV_ALPHA_PRECISION_FORMULA.md; CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3 |
@@ -712,7 +712,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 |-------|---------------|--------|
 | x₊ = 1/α (physical identification) | Mechanism: why should elliptic curve geometry govern EM coupling? | AUDIT_HIDDEN_SELECTIONS.md S4 |
 | Integer uniqueness: {3,4,7,13} is the ONLY solution | Self-consistency proven; uniqueness open | AUDIT_SELF_CONSISTENCY.md |
-| Pairing Principle (XY vs X+Y) | Formal definition of tensor operator and its algebraic properties | FOUND_SPACETIME_EMERGENCE.md |
+| Pairing Principle (XY vs X+Y) | Formal definition of tensor operator and its algebraic properties | FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md |
 | i explains all of physics | i emerges from k = 1/2 (proven), but WHY does i appearing in QM wave functions = this same mechanism? | FOUND_THE_COMPLETE_ALGEBRA_OF_i.md |
 | sLoop → Bell violations (aggregate) | Lattice gives S ≤ 2; mechanism identified (lemniscate topology); aggregate emergence undemonstrated | AUDIT_BELL_ANALYSIS.md, bell_lemniscate_loop.py |
 | e^π - π ≈ 20 = b₃ + N_eff | Approximate (0.005%); no proof of exactness or structural necessity | EXPLR_NUMBER_THEORY.md S4.2 |
