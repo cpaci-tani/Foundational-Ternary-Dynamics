@@ -16,6 +16,21 @@ charge claimed below; all assertions pass, exit 0. No numerical search.
 
 ---
 
+> **Update (2026-05-22) — Q10 closed negative; the chain has terminated.**
+> The Q10 → Q11 → Q12 audit chain ran to completion. Q12
+> ([`AUDIT_WEAK_SU2_PROVENANCE.md`](AUDIT_WEAK_SU2_PROVENANCE.md),
+> FTD-0192) found the weak `SU(2)` is a **count-match**, which forces the
+> colour-singlet rank to 1, so the rank-2 → rank-1 electroweak lock
+> cannot assemble. Q10's UNDERDETERMINED verdict below therefore
+> **resolves to CLOSED-NEGATIVE** — the pre-registered consequence (§6
+> CLOSED-NEGATIVE). FTD's discrete ontology determines the electroweak
+> skeleton but not the rank-2 `SU(2)×U(1)` structure; the electroweak
+> sector is an honest effective continuum completion — a mapped boundary
+> (goal-clause 2). The §1 verdict and the audit trace below stand as the
+> correct Q10-stage record; the closure is the chain-level result.
+
+---
+
 ## §1 — Verdict
 
 > **UNDERDETERMINED** (pre-reg §6, clause **a**).
