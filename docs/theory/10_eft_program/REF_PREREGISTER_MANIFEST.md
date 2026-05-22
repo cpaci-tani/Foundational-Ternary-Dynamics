@@ -121,6 +121,18 @@ When auditing: confirm `git rev-list -n1 preregister-colour-singlet-rank-v1` res
 
 ---
 
+## Weak-SU(2) provenance audit (Q12) (2026-05-22)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0192** weak-SU(2) provenance (Q12) | `preregister-weak-su2-provenance-v1` | tag `preregister-weak-su2-provenance-v1` | desk provenance audit of an existing derivation (`DERIV_LATTICE_SU2_WEAK.md`); step-by-step epistemic classification, no numerical search | n/a | n/a (desk audit) | [`PREREG_WEAK_SU2_PROVENANCE_v1.md`](../08_structural/PREREG_WEAK_SU2_PROVENANCE_v1.md) (pre-reg) -> result doc (post-audit) |
+
+Pre-reg SHA256: `25ee75f4cf472841bf79a2c14495728731b2b2c27f5395ab28f3b30ea2c61784`.
+
+When auditing: confirm `git rev-list -n1 preregister-weak-su2-provenance-v1` resolves to the commit that introduced `PREREG_WEAK_SU2_PROVENANCE_v1.md`, and that the file's SHA256 still matches the value above. Q12 is the terminating step of the Q10 -> Q11 -> Q12 chain: its verdict decides whether FTD-0190 and FTD-0191 lift to FOUND (GENUINE), close negative (COUNT-MATCH), or stay UNDERDETERMINED with the gap pinned to one step (PARTIAL). The audit reads the frozen target documents as they exist at the lock commit. The question, definitions D1-D5, the genuine-derivation benchmark (§4), the three outcomes (§6), and the falsifier F-a..F-e (§7) were all locked before the audit was run.
+
+---
+
 ## How to add a new pre-registration row
 
 1. **Pre-register** before measurement:
