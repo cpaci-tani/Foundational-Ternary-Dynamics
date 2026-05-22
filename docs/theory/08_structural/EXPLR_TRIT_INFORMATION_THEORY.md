@@ -445,7 +445,7 @@ The complete chain — from self-duality to i to consciousness to measurement re
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Consciousness domain/source map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **Consciousness synthesis:** [../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
-- **Verification script:** [../../scripts/verification/verify_trit_framework.py](../../scripts/verification/verify_trit_framework.py)
+- **Verification script:** [../../../scripts/verification/verify_trit_framework.py](../../../scripts/verification/verify_trit_framework.py)
 
 ---
 

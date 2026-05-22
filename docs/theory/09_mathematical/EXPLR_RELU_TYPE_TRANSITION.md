@@ -64,7 +64,7 @@ The key for this document: **Type III factors are characterized by the KMS condi
 
 ### 1.2 Softplus-ReLU Duality: What We Need
 
-We recall only the properties directly relevant to this document. For full treatment, see [DERIV_SOFTPLUS_RELU_DUALITY.tex](../papers/src/DERIV_SOFTPLUS_RELU_DUALITY.tex).
+We recall only the properties directly relevant to this document. For full treatment, see [DERIV_SOFTPLUS_RELU_DUALITY.tex](../../papers/src/DERIV_SOFTPLUS_RELU_DUALITY.tex).
 
 The Softplus manifestation operator:
 
@@ -404,7 +404,7 @@ The first line (abelian, $\beta \to \infty$) tells us *what happens*: KMS is des
 
 ### 3.1 Factor Types on the $(k, 1/\beta)$ Plane
 
-The Softplus-ReLU paper establishes the phase diagram in the $(k, 1/\beta)$ plane with three regions determined by the discriminant $\Delta(k) = knc^3(knc - 4)$, where $n = 16$ and $c = G^*$ ([DERIV_SOFTPLUS_RELU_DUALITY.tex](../papers/src/DERIV_SOFTPLUS_RELU_DUALITY.tex), Theorem 5.1). We now overlay von Neumann factor type labels:
+The Softplus-ReLU paper establishes the phase diagram in the $(k, 1/\beta)$ plane with three regions determined by the discriminant $\Delta(k) = knc^3(knc - 4)$, where $n = 16$ and $c = G^*$ ([DERIV_SOFTPLUS_RELU_DUALITY.tex](../../papers/src/DERIV_SOFTPLUS_RELU_DUALITY.tex), Theorem 5.1). We now overlay von Neumann factor type labels:
 
 | Region | Discriminant | Eigenvalues | Activation | **Factor Type** |
 |--------|-------------|-------------|------------|----------------|
@@ -600,7 +600,7 @@ $$\boxed{\text{III}_1 \;\xrightarrow{\;\rtimes_\sigma \mathbb{R}\;}\; \text{II}_
 
 | Document | Relevance |
 |----------|-----------|
-| [DERIV_SOFTPLUS_RELU_DUALITY.tex](../papers/src/DERIV_SOFTPLUS_RELU_DUALITY.tex) | Softplus uniqueness (Thm 2.1), M4 axiom, spectral representation, PT transition, RG correspondence |
+| [DERIV_SOFTPLUS_RELU_DUALITY.tex](../../papers/src/DERIV_SOFTPLUS_RELU_DUALITY.tex) | Softplus uniqueness (Thm 2.1), M4 axiom, spectral representation, PT transition, RG correspondence |
 | [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy $E \to |\cdot| \to |\cdot|^2 \to \Phi$, modular conjugation $J$ |
 | [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Domain A/B/C partition, phase angle source map, and vocabulary discipline |
 | [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](EXPLR_COLLAPSE_GRAVITY_BRIDGE.md) | Hawking $\beta_H = 8\pi M$ as RT dictionary entry; collapse and gravity as same type transition on temporal vs spatial axes |

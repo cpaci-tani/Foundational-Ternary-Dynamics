@@ -40,7 +40,7 @@ $$V = 12, \quad E = 24, \quad F = 14 \;\;(8\text{ triangular} + 6\text{ square})
 
 These values satisfy the Euler relation $V - E + F = 2$. The cuboctahedron is depicted in Figure 1, with triangular faces (blue) and square faces (pink) distinguished by shading.
 
-![Figure 1. The cuboctahedron, showing 8 triangular faces (blue) and 6 square faces (pink). The 12 vertices correspond to edges of the cubic lattice.](fig1_cuboctahedron.png)
+![Figure 1. The cuboctahedron, showing 8 triangular faces (blue) and 6 square faces (pink). The 12 vertices correspond to edges of the cubic lattice.](figures/fig1_cuboctahedron.png)
 
 ### 2.2 Four Combinatorial Invariants
 

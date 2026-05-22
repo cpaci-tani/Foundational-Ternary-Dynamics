@@ -110,7 +110,7 @@ Both converge to the same G*, which then generates the master quadratic producin
 
 #### Figure
 
-![Two Lemniscates: Bernoulli and Alpha both produce G* to +6.41 ppm](../../media/images/fig_two_lemniscates.png)
+*[Figure: Two Lemniscates: Bernoulli and Alpha both produce G* to +6.41 ppm — figure not in repo]*
 
 ---
 

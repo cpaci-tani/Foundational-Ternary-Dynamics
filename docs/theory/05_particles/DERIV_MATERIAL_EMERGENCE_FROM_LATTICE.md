@@ -13,7 +13,7 @@ What is the smallest particle that manifests spontaneously from FTD's lattice dy
 
 ## 2. Engine genesis rule (summary)
 
-From [`engine/cuda/kernels_stencil.cu`](../../../engine/cuda/kernels_stencil.cu) and the matching CPU path:
+From [`kernels_stencil_single.cu`](../../../engine/cuda/kernels_stencil_single.cu) and the matching CPU path:
 
 A void voxel $s(x) = 0$ with $|\mathbf{J}(x)| > 3 K_B$ becomes manifested according to:
 
