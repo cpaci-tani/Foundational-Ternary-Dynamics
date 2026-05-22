@@ -515,7 +515,7 @@ $$0 = (-1) + (+1)$$
 
 - [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — Levels -3 to 0
 - [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) — Why i is necessary
-- [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) — XY vs X+Y
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — XY vs X+Y
 - [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for complex roots, `K_C`, and Domain A/B/C terminology
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) — g_c = √α
 - [REF_PHYSICS_REFERENCE.md](../05_particles/REF_PHYSICS_REFERENCE.md) — Framework integers in physics

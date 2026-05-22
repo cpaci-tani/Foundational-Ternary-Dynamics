@@ -4,7 +4,7 @@
 **Status:** [PARTIAL] — bridge analyzed and sharpened; closure requires engine measurements + further perturbation theory
 **Created:** 2026-05-01
 **Provenance:** Path D from the 2026-05-01 strategic-direction recommendation; explicit response to CLAUDE.md flag "the cleanest remaining derivation gap; closing it via perturbation theory in the irrep mixing would convert FTD-0110 to [THEOREM]-grade"
-**Related:** `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (linear theorem); `FOUND_MINIMUM_DIMENSIONS.md §6.5` (empirical k(A) data)
+**Related:** `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (linear theorem); `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md §6.5` (empirical k(A) data)
 
 ---
 
@@ -12,7 +12,7 @@
 
 **Linear theorem (closed):** for δ-localised injection of amplitude `A` at the O_h-fixed center voxel, the 18-point Laplacian's A_{1g} subspace of the 27-block carries mean energy `1/N_base = 1/4` per A_{1g} eigenmode. Verified at machine precision: energy fractions `{3/8, 1/8, 3/8, 1/8}` with mean exactly 0.25.
 
-**Empirical engine data (10 amplitudes from FOUND_MINIMUM_DIMENSIONS.md §6.5, GPU RTX 5090, 2026-04-27):**
+**Empirical engine data (10 amplitudes from FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md §6.5, GPU RTX 5090, 2026-04-27):**
 
 | A | k_eng(A) = N_eng/A² |
 |---|---|
@@ -28,7 +28,7 @@
 | 85.70 | 0.212 |
 | 117.93 | 0.206 |
 
-Empirical fit reported in `FOUND_MINIMUM_DIMENSIONS.md` line 164:
+Empirical fit reported in `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` §6.5:
 
 ```
 k(A) ≈ 1/4 · (1 − 0.07·log₁₀(A/2))  for A ∈ [2, 120]
@@ -141,7 +141,7 @@ This **does give log-A**. The slope coefficient depends on the per-shell leakage
 
 **Empirical fit** `Δk(A) ≈ 0.030·ln(A/2)` is most consistent with **Mechanism α** (multi-scale irrep leakage), with possible Mechanism γ contribution at small `A`.
 
-**Engine experiments to discriminate (proposed in `FOUND_MINIMUM_DIMENSIONS.md` §6.5 D3a/D3b but not yet run):**
+**Engine experiments to discriminate (proposed in `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` §6.5 D3a/D3b but not yet run):**
 
 - **D3a — Vary `K_GENESIS_KINETIC_DRAIN`:** if `k ∝ DRAIN²`, Mechanism β is dominant.
 - **D3b — Vary `K_EVAP_RATE`:** if `k` scales monotonically with evaporation, Mechanism γ-like dynamics (cluster energy balance) is dominant.
@@ -158,7 +158,7 @@ These four experiments, plus the perturbation calculations above, are the path t
 - Quantification of the log-A drift slope: `−0.030/ln-unit` empirically, equivalently `−0.0076 absolute per e-fold of A`.
 - Identification of three candidate mechanisms with specific functional forms.
 - Mechanism α (multi-scale irrep leakage) is structurally consistent with log-A drift; mechanisms β and γ require additional assumptions to match.
-- Concrete engine experiments (D3a-D3d) to discriminate among mechanisms, building on the proposals already in `FOUND_MINIMUM_DIMENSIONS.md` §6.5.
+- Concrete engine experiments (D3a-D3d) to discriminate among mechanisms, building on the proposals already in `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` §6.5.
 - Structural significance: log-A drift is **not arbitrary** — it's a signature of multi-scale physics, suggesting the cluster is RG-like in some lattice analog of running couplings.
 
 **[STILL OPEN] (the bridge itself):**

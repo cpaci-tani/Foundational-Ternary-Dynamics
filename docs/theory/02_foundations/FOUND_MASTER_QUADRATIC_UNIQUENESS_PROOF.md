@@ -212,7 +212,7 @@ physically), not the polynomial itself.
 
 ### 3.2 The cogito-axiom ladder (FTD-0080) update
 
-From [FOUND_COGITO_AXIOM_AND_FULL_TRACE.md](FOUND_COGITO_AXIOM_AND_FULL_TRACE.md):
+From [FOUND_AXIOM_ZERO.md](FOUND_AXIOM_ZERO.md):
 
 The ladder from "$i$ exists" to $\alpha^{-1} = 137.036$ was identified
 with **two selection principles**: S1 (Vieta exponents $(2,3)$) and S2

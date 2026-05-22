@@ -65,7 +65,6 @@ The active structure. This is the single largest category — the FTD-native flo
 | `DERIV_FTD_NATIVE_BARE_FLOW.md` | 2026-04-23 | [PARTIAL] | Finite-volume blocking map; native bare $b=2$ flow for Gaussian flux energy. | FTD-native RG seed |
 | `DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md` | 2026-04-26 | [SELECTION/THEOREM] | Canonical microscopic history action $Z_u[\eta, h, a, \lambda_R]$; [THEOREM] reduction to linear G18 generator. **Central foundation for R3.** | FTD bridge gate 2B |
 | `DERIV_FTD_NATIVE_CURRENT_FLOW.md` | 2026-04-23 | [PARTIAL] | Signed transport-current normalization canonical under native $b=2$ blocking; continuity equation closes. | Native gate 3 |
-| `DERIV_FTD_NATIVE_ENGINE_HISTORY_FLOW.md` | 2026-04-23 | [PARTIAL] | Actual `RenderBridge::tick()` reaction histories connected to dual-cell continuity ledger. | engine integration |
 | `DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md` | 2026-04-24 | [PARTIAL] | Real-engine Moore transport + multi-tick intervals connected to native dual-cell ledger; GPU-native movement. | bridge gate 3 |
 | `DERIV_FTD_NATIVE_LANGEVIN_ENSEMBLE.md` | 2026-04-24 | [THEOREM/PARTIAL] | Stationary ensemble exists + equipartitioned [THEOREM]; full source-coupled generator $Z[J]$ under nonlinear dynamics [PARTIAL]. | FTD-0051 (Langevin GPU) |
 | `DERIV_FTD_NATIVE_LINEAR_GENERATOR.md` | 2026-04-23 | [PARTIAL] | Minimal source-coupled generator for linear FTD sector; constrained flux-energy functional. | Bridge gate 2A |

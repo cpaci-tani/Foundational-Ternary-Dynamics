@@ -255,7 +255,7 @@ Numerical check: d from formula = 0.956819063350846, d from roots = 0.9568190633
 | MATH_MASTER_QUADRATIC.md | Layer 1 mathematics; this document is the charge-space dual |
 | FOUND_LADDER_GENERATING_RULE.md | Independent proof of x+/x- = (1+d)/(1-d) |
 | DERIV_DUAL_SUBSTRATE_IDENTITY.md | psi = G\* per DoF; charge sum = 1/psi |
-| EXPLR_GSTAR_FLUX_TIME.md | G\*^3 as action scale; appears as 1/(charge product) |
+| EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md | G\*^3 as action scale; appears as 1/(charge product) |
 | FOUND_FORCE_STRUCTURE.md | Four forces from master quadratic; charge quartic adds charge-space view |
 | PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md | Section 2.6 integrates this result |
 | scripts/verification/verify_charge_quartic.py | Numerical verification (6/6 tests pass) |

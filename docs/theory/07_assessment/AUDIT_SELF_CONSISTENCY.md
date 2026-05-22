@@ -206,7 +206,7 @@ Interesting: all solutions with N_gen = N_c give the same Weinberg angle sin^2 =
 ### References (uniqueness section)
 
 - proof_integer_uniqueness.py -- Exhaustive search (6/6 tests pass)
-- DERIV_D3_UNIQUENESS.md -- D = 3 uniqueness from Watson integral
+- DERIV_D3_FROM_AUTOMORPHISM.md -- D = 3 uniqueness from Watson integral
 
 ---
 

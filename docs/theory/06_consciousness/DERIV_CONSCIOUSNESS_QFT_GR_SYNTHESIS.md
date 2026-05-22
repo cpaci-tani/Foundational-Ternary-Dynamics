@@ -41,7 +41,7 @@ where $K(k)$ is the complete elliptic integral of the first kind and $\Gamma$ is
 2. **Complex multiplication** with $j$-invariant $j = 1728$ (the unique CM point with maximal symmetry)
 3. **Self-consistency** of the flux field's equilibrium statistics
 
-**Dimensional triad** [SELECTION: EXPLR_GSTAR_FLUX_TIME.md]:
+**Dimensional triad** [SELECTION: EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md]:
 - $G^{*1} = 2.959$ = flux (spatial amplitude per degree of freedom)
 - $G^{*2} = 8.754$ = energy/time (temporal amplitude per degree of freedom)
 - $G^{*3} = 25.90$ = action (spatiotemporal record per degree of freedom)

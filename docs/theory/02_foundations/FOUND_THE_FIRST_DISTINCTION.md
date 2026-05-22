@@ -232,7 +232,7 @@ The current treatment replaces all of that with a single clean axiom ("i exists"
 - **Extended from:** [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md) -- Earlier treatment (partially superseded)
 - **Algebra of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) -- Perpendicularity theorem, Cayley-Dickson, CM theory
 - **Number theory:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
-- **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE.md](FOUND_SPACETIME_EMERGENCE.md)
+- **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 
 ---
 

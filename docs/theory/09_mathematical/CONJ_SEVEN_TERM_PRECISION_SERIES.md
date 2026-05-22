@@ -126,7 +126,7 @@ At CODATA 2022 experimental precision, the 7 coefficients are collectively **obs
 > 4. The 24-digit "match to CODATA" is not experimentally verifiable: CODATA 2022 constrains $1/\alpha$ to ~11 digits ($\pm 2.1 \times 10^{-8}$), and at that precision the coefficients are dramatically underdetermined. Digits 12–24 of the claimed match are a **structural property of the specific chosen coefficients**, not a prediction that can currently be tested against data.
 >
 > **Upgrade path to [THEOREM]:**
-> - Derive the base-integer set $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ uniquely from lattice first principles (the cuboctahedral argument in [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) §5 is partially in place but not complete — see [CIRCULARITY RISK]).
+> - Derive the base-integer set $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ uniquely from lattice first principles (the cuboctahedral argument in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §5 is partially in place but not complete — see [CIRCULARITY RISK]).
 > - Derive the expansion parameter $\varepsilon = e^\pi - \pi - 20$ from lattice structure (the integer 20 remains unmotivated).
 > - Complete the $c_7$ residual analysis: show the 2.5× cascade-tolerance gap is absorbable by an 8th term that decomposes cleanly, or accept it as inherent truncation error.
 >
@@ -154,7 +154,7 @@ The integers $\{N_c = 3, N_{\mathrm{base}} = 4, b_3 = 7, N_{\mathrm{eff}} = 13\}
 - $b_3 = 7$: independent face pairs under parity in the 27-site Moore lattice
 - $N_{\mathrm{eff}} = 13$: cuboctahedral coordination shell (12 surrounding + 1 center)
 
-The derived integers $D = 47$ and $\mathrm{BCC} = 8$ follow. See [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) §SP5 for the cuboctahedral geometric origin.
+The derived integers $D = 47$ and $\mathrm{BCC} = 8$ follow. See [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §SP5 for the cuboctahedral geometric origin.
 
 ### 4.3 Comparison with the one-loop lattice correction
 

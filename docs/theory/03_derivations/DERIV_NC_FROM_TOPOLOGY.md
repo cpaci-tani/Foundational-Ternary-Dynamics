@@ -5,7 +5,7 @@
 **Date:** April 14, 2026
 **Framework:** Foundational Ternary Dynamics v5.30
 **Status:** [THEOREM] for N_c = 3 as a lattice topological invariant; [SELECTION] for the QCD identification
-**Depends on:** THEOREM_MOORE_LAYER_DECOMPOSITION.md, DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md, DERIV_D3_UNIQUENESS.md, DERIV_MOORE_GAUGE_STRUCTURE.md, DERIV_CONFINEMENT_FROM_GAP_EQUATION.md
+**Depends on:** THEOREM_MOORE_LAYER_DECOMPOSITION.md, DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md, DERIV_D3_FROM_AUTOMORPHISM.md, DERIV_MOORE_GAUGE_STRUCTURE.md, DERIV_CONFINEMENT_FROM_GAP_EQUATION.md
 
 ---
 
@@ -30,7 +30,7 @@ The BCC sublattice consists of the 8 Moore neighbors at offsets (±1, ±1, ±1).
 
 **Definition (Color label):** Assign to a BCC-sublattice excitation the ℤ_D-valued label given by its dominant flux axis. There are exactly D such axes, one per coordinate direction.
 
-**Consequence:** The number of distinct color labels equals D, the spatial dimensionality of the lattice. Combined with the independent fact (DERIV_D3_UNIQUENESS.md, DERIV_D3_FROM_AUTOMORPHISM.md) that **D = 3 is forced** — by Watson-integral self-consistency *and* by the algebraic constraint |Aut(E_i)|² = 2^D · (D−1)! — the color count is
+**Consequence:** The number of distinct color labels equals D, the spatial dimensionality of the lattice. Combined with the independent fact (DERIV_D3_FROM_AUTOMORPHISM.md) that **D = 3 is forced** — by Watson-integral self-consistency *and* by the algebraic constraint |Aut(E_i)|² = 2^D · (D−1)! — the color count is
 
 > N_c (geometric) = D = 3.
 
@@ -108,7 +108,7 @@ A coincidence between any two of these would already be striking. Coincidence am
 
 **The over-determination criterion:** if N_c = 3 were a fitted parameter, there would be no reason for each of (a) the spatial dimension, (b) the cuboctahedral subgroup order, (c) the SU(N)/Z_N winding count, and (d) the master quadratic root to all return the same integer. They do. The integer 3 is therefore upgraded from a numerical coincidence to a topological invariant of the Moore decomposition of Z³.
 
-This is the same logical move that elevated D = 3 from [SELECTION] to [THEOREM] (DERIV_D3_UNIQUENESS.md + DERIV_D3_FROM_AUTOMORPHISM.md): two independent derivations agreeing on the same integer constitutes structural evidence; four is decisive.
+This is the same logical move that elevated D = 3 from [SELECTION] to [THEOREM] (DERIV_D3_FROM_AUTOMORPHISM.md): two independent derivations agreeing on the same integer constitutes structural evidence; four is decisive.
 
 ---
 
@@ -170,8 +170,7 @@ This is a strict improvement over the previous status. We have moved the [SELECT
 
 - [THEOREM_MOORE_LAYER_DECOMPOSITION.md](../08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) — Routes 1 and 2 foundation
 - [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) — BCC sublattice and SU(3)
-- [DERIV_D3_UNIQUENESS.md](../02_foundations/DERIV_D3_UNIQUENESS.md) — D = 3 from Watson integral self-consistency
-- [DERIV_D3_FROM_AUTOMORPHISM.md](../02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) — D = 3 from |Aut(E_i)|² = 16
+- [DERIV_D3_FROM_AUTOMORPHISM.md](../02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) — D = 3 from Watson integral self-consistency and |Aut(E_i)|² = 16
 - [DERIV_MOORE_GAUGE_STRUCTURE.md](DERIV_MOORE_GAUGE_STRUCTURE.md) — Gauge group from sublattice
 - [DERIV_CONFINEMENT_FROM_GAP_EQUATION.md](DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) — Confined phase Wilson loops
 - [SPEC_FTD_COMPLETE_CHAIN.md](../01_reference/SPEC_FTD_COMPLETE_CHAIN.md) — §2.2 (the [SELECTION] this document upgrades)

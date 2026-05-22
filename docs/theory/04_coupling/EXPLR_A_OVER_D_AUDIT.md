@@ -117,7 +117,7 @@ It does **not** upgrade to [THEOREM]. A [THEOREM] tag would require either (i) $
 
 1. **Two-loop calculation.** Compute $\delta x^{(2)}(a)$ explicitly. If $\delta x^{(1)}(a_{\mathrm{opt}}^{(1)}) + \delta x^{(2)}(2/D) \approx \delta x_{\mathrm{req}}$ (i.e., a_opt shifts toward 2/D when two-loop is included), this would support the higher-loop absorption claim.
 2. **Lattice RG fixed-point argument.** Show that $a = 2/D$ is a fixed point of some Wilsonian flow on the cubic lattice.
-3. **Derive $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ from first principles.** This closes not just this gap but the broader SP5 circularity (see [BRIDGE_QUADRATIC_PHYSICS.md](../01_reference/BRIDGE_QUADRATIC_PHYSICS.md) §5.4 and [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) Gap 5.5).
+3. **Derive $\{N_c, N_{\mathrm{base}}, b_3, N_{\mathrm{eff}}, D, \mathrm{BCC}\}$ from first principles.** This closes not just this gap but the broader SP5 circularity (see [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) §5.4 and [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) Gap 5.5).
 
 ---
 

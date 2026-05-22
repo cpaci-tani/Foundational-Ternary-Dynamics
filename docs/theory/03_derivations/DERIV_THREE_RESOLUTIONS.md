@@ -4,7 +4,7 @@
 
 **Date:** March 17, 2026
 **Status:** Derivation closing the final three gaps
-**Dependencies:** FOUND_AXIOM_ZERO.md, DERIV_GAP_EQUATION_FORM.md, DERIV_ALPHA_FROM_PHASE_STRUCTURE.md, DERIV_QUADRATIC_NECESSITY.md, FOUND_EMERGENT_TIME_GRAVITY.md
+**Dependencies:** FOUND_AXIOM_ZERO.md, DERIV_GAP_EQUATION_FORM.md, DERIV_ALPHA_FROM_PHASE_STRUCTURE.md, DERIV_QUADRATIC_NECESSITY.md, FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md
 
 ---
 
@@ -165,6 +165,6 @@ The three gaps were never independent objections. They were three faces of one q
 - DERIV_QUADRATIC_NECESSITY.md — Degree 2 from self-referential closure (03_derivations)
 - DERIV_GAP_EQUATION_FORM.md — One-loop self-consistency (03_derivations)
 - DERIV_ALPHA_FROM_PHASE_STRUCTURE.md — U(1) phase structure (03_derivations)
-- FOUND_EMERGENT_TIME_GRAVITY.md — G*² = tick energy (02_foundations)
+- FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md — G*² = tick energy (02_foundations)
 - DERIV_LATTICE_QED_COMPLETE.md — Beta function from lattice (03_derivations)
 - DERIV_ALPHA_PRECISION_FORMULA.md — Modular corrections (04_coupling)

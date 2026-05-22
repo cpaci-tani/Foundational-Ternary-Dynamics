@@ -10,7 +10,7 @@
 **Depends on:**
 - [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) — G* = ϖ/√(PF) decomposition and PF cancellation rule
 - [SPEC_FTD_LAGRANGIAN.md](SPEC_FTD_LAGRANGIAN.md) — SM Lagrangian sector-by-sector mapping
-- [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) — D = 3 derivation and integer origins
+- [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — D = 3 derivation and integer origins
 - [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
 
 ---
@@ -75,7 +75,7 @@ using $G^* = \varpi/\sqrt{\text{PF}}$ and $16 = N_{\text{base}}^2$.
 
 ## §2. Integer Origins from D = 3 [SELECTION]
 
-All four framework integers derive from the dimensionality D = 3 (see [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)):
+All four framework integers derive from the dimensionality D = 3 (see [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)):
 
 | Integer | Formula from D | Value | Physical meaning |
 |---------|---------------|-------|------------------|
@@ -468,7 +468,7 @@ The following identify integer factors with physical meanings:
 |----------|-----------------|
 | [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) | Primary source: G* decomposition, BH thermo, LQG, vacuum energy, QFT loops |
 | [SPEC_FTD_LAGRANGIAN.md](SPEC_FTD_LAGRANGIAN.md) | SM Lagrangian sector-by-sector mapping, parameter reduction |
-| [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) | D = 3 derivation, 0.5D ontology |
+| [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | D = 3 derivation, 0.5D ontology |
 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas γ → ϖ → M → π → G* |
 | [DERIV_LAMBDA_QCD_DERIVATION.md](../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | Non-circular Λ_QCD, b₃ = 7 as beta coefficient |
 

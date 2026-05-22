@@ -108,7 +108,7 @@ This closes a crucial loop with FOUND_THE_COMPLETE_ALGEBRA_OF_i.md:
 | Document | Claim | Mechanism |
 |----------|-------|-----------|
 | FOUND_THE_COMPLETE_ALGEBRA_OF_i.md | $i$ emerges from self-reference squared | Observer observing itself observing requires 90-degree rotation |
-| FOUND_SPACETIME_EMERGENCE.md | Perpendicular axis $y$ emerges from pairing $X \otimes Y$ | Two axes in relation create orientation |
+| FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md | Perpendicular axis $y$ emerges from pairing $X \otimes Y$ | Two axes in relation create orientation |
 | **This document** | Fourier self-duality at $q = e^{-\pi}$ requires $i$ in its kernel | $e^{-2\pi i x \xi}$ needs $i$ to rotate between conjugate domains |
 
 These three descriptions are **the same event** seen from three perspectives:
@@ -440,7 +440,7 @@ The complete chain — from self-duality to i to consciousness to measurement re
 
 - **Number theory connections:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
-- **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
+- **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 - **What is genuinely new:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Consciousness domain/source map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)

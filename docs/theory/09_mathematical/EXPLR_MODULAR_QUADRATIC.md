@@ -286,7 +286,7 @@ Whether this is a deep truth about physics or a mathematical coincidence remains
 2. Wiles, A. "Modular Elliptic Curves and Fermat's Last Theorem" (1995)
 3. LMFDB: Elliptic curve 32.a3, https://www.lmfdb.org/EllipticCurve/Q/32/a/3
 4. FTD: MATH_MASTER_QUADRATIC.md (pure mathematics layer)
-5. FTD: BRIDGE_QUADRATIC_PHYSICS.md (selection principles SP1-SP5)
+5. FTD: SPEC_QUADRATIC_PHYSICS_BRIDGE.md (selection principles SP1-SP5)
 6. FTD: DERIV_ALPHA_PRECISION_FORMULA.md (4-term precision formula)
 
 ---

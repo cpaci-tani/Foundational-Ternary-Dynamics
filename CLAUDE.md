@@ -45,7 +45,7 @@ The 2026-05-21 session subjected the framework to an adversarial physics-panel r
 
 - **The honest headline.** The central conjecture `x₊ = 1/α` stays `[STRONGLY MOTIVATED CONJECTURE]`. No claim was promoted this session; two were honesty-corrected. The physics mechanism (MC-T4.3) and a real-theorem Stage 2 of the boundary theorem remain `[OPEN]`. `docs/papers/PAPER_GSTAR_INTRODUCTION.tex` (pure number theory) is submission-ready and not yet on arXiv.
 
-- **Corpus consolidation underway.** A three-agent audit found the theory corpus has grown to **~405 active documents** (the "115" in the Project Structure section below is stale) with drift across the canonical layer. A reconcile + archive + restructure consolidation is in progress — plan: `.claude/plans/take-the-role-of-fancy-kahn.md`; Phase 1 (drift reconciliation) underway.
+- **Corpus consolidation — merge pass complete (2026-05-22).** The reconcile + archive + restructure consolidation ran to completion: canonical-layer drift reconciled, dead content archived, the navigation layer restructured, and a merge pass consolidated 28 overlapping documents into 13 (every tagged claim, theorem, numeric result, and `FTD-NNNN` cross-reference preserved; husk references repointed corpus-wide; LEDGER edits path-only). Every cluster now carries a local `INDEX_*` navigation file. The active theory corpus is **~349 documents** across 10 clusters. Plan: `.claude/plans/take-the-role-of-fancy-kahn.md`.
 
 Read **`docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md`** (canonical bedrock) and **`docs/theory/07_assessment/LEDGER.md`** (per-claim status) before defending any FTD math claim.
 
@@ -240,7 +240,7 @@ that the FTD-0097 scan ruled as chance-level on 2026-04-27.
   (algebraic) to cluster-efficiency coefficient ¼ (engine). Verified via two
   code paths: GPU campaign (T5b/T6/T7/T8, 5/5 amplitudes + 5 SM particles)
   and WASM dashboard (Poynting-vector asymmetry visual cross-check). See
-  `FOUND_MINIMUM_DIMENSIONS.md` and `WHERE_WE_LEFT_OFF.md §10.6`.
+  `FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` and `WHERE_WE_LEFT_OFF.md §10.6`.
 
 **[NEW INFRASTRUCTURE 2026-04-27]:**
 - Pre-registration discipline operationalized via SHA256 hash + git tags
@@ -372,7 +372,7 @@ A discrete computational framework for simulating physical systems from explicit
 ftd/                                     # Project root
 ├── docs/
 │   ├── SPEC_FTD.md              # Framework overview (defers to the canonical hierarchy in META_STRUCTURE.md)
-│   ├── theory/                   # ~367 active theory documents (10 categories) + ~23 archived
+│   ├── theory/                   # ~349 active theory documents (10 categories, each with a local INDEX_ file) + local archive subdirs
 │   │   ├── META_INDEX.md         # Complete catalog
 │   │   ├── 01_reference/         # Master references and proofs
 │   │   ├── 02_foundations/       # Ontological emergence

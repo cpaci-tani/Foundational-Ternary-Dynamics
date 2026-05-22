@@ -2,14 +2,14 @@
 
 **Date:** 2026-05-08
 **Status:** [AUDIT FINDING] — F1-hygiene observation, no demotion of any spine claim.
-**Tag impact:** none on spine. Trims rhetoric in [`EXPLR_GSTAR_FLUX_TIME.md`](../09_mathematical/EXPLR_GSTAR_FLUX_TIME.md); flags stale comment in [`engine/include/ftd/ontic/master_quadratic.h`](../../../engine/include/ftd/ontic/master_quadratic.h).
+**Tag impact:** none on spine. Trims rhetoric in [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md); flags stale comment in [`engine/include/ftd/ontic/master_quadratic.h`](../../../engine/include/ftd/ontic/master_quadratic.h).
 **Verifier numerics:** verified to ≥10 digits; computation reproduced in §3.
 
 ---
 
 ## §1 — Question
 
-[`EXPLR_GSTAR_FLUX_TIME.md`](../09_mathematical/EXPLR_GSTAR_FLUX_TIME.md) §1 cites "five independent lines of evidence" for the identification $\psi = J_L + J_R = G^*$ per degree of freedom. The strongest of these are:
+[`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) §1 cites "five independent lines of evidence" for the identification $\psi = J_L + J_R = G^*$ per degree of freedom. The strongest of these are:
 
 1. **Dual substrate**: $\psi = J_L + J_R = G^*$ exactly (per DoF).
 2. **Vieta triad**: $S = x_+ + x_- = 16G^{*2}$, $P = x_+ \cdot x_- = 16G^{*3}$, $P/S = G^*$.
@@ -98,7 +98,7 @@ Once you have these two, everything else is algebraic forcing:
 - The dual-substrate identity $J_L + J_R = G^*$, $J_L \cdot J_R = G^*/16$ is the same Vieta relations rescaled by $16G^*$.
 - The asymmetry $\delta^2 = (4G^*-1)/(4G^*)$ is algebraic dressing on $(S, P)$.
 
-### §5.2 — Trim recommendation for [`EXPLR_GSTAR_FLUX_TIME.md`](../09_mathematical/EXPLR_GSTAR_FLUX_TIME.md)
+### §5.2 — Trim recommendation for [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md)
 
 The "five independent lines of evidence" framing in §1 needs trimming. Lines 1 (dual substrate $\psi = G^*$) and 2 (Vieta sum/product) are **the same algebraic identity in two coordinate systems**. The Claims Table (§Claims) is internally honest about this — GFT-1 cites the dual substrate, GFT-2 cites Vieta sum, GFT-3 cites Vieta product, GFT-4 cites $P/S$ — but the framing language "five independent lines" reads as five separate confirmations when it is really one identity rewritten.
 
@@ -141,7 +141,7 @@ Candidates worth probing:
 | DSP-2 | The integer 16 has two independent provenance chains (CM auto count, BCC × ternary) | [THEOREM] (canonical; this audit does not modify) |
 | DSP-3 | The Vieta relations $(S, P) = (16G^{*2}, 16G^{*3})$ follow from the master quadratic; the dual-substrate identity $(J_L + J_R = G^*, J_L \cdot J_R = G^*/16)$ is the rescaled form of these | [THEOREM] (algebraic; new wording, content unchanged) |
 | DSP-4 | $\delta^2 = (4G^*-1)/(4G^*)$ is algebraic dressing on $(S, P)$, not an independent constraint | [THEOREM] (this audit) |
-| DSP-5 | The "five independent lines of evidence" framing in EXPLR_GSTAR_FLUX_TIME §1 is overclaim | [F1 HYGIENE] (recommendation: trim language; no tag changes downstream) |
+| DSP-5 | The "five independent lines of evidence" framing in EXPLR_GSTAR_ARITHMETIC_IDENTITIES §1 is overclaim | [F1 HYGIENE] (recommendation: trim language; no tag changes downstream) |
 | DSP-6 | The header comment in `master_quadratic.h` lines 36–40 (temporal-gauge DoF count) is stale relative to DERIV_MASTER_QUADRATIC_GAP_EQUATION.md §2.2 line 84 | [DOC DRIFT] (recommendation: sync header to canonical theory layer) |
 | DSP-7 | Whether the J chain extends to derive $(S, P)$ from independent operator-theoretic invariants | [OPEN] |
 
@@ -154,6 +154,6 @@ Candidates worth probing:
 - [`AUDIT_MASTER_QUADRATIC.md`](AUDIT_MASTER_QUADRATIC.md) — the source of the Route C retraction.
 - [`SPEC_FQCR.md`](../01_reference/SPEC_FQCR.md) — full FQCR framework; the dual substrate sits structurally adjacent to Models III–V.
 - [`engine/include/ftd/ontic/master_quadratic.h`](../../../engine/include/ftd/ontic/master_quadratic.h) Layer 3b — the C++ codification of the dual substrate; carries the stale header comment.
-- [`EXPLR_GSTAR_FLUX_TIME.md`](../09_mathematical/EXPLR_GSTAR_FLUX_TIME.md) — the doc that uses the "five independent lines" framing.
+- [`EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`](../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) — the doc that uses the "five independent lines" framing.
 - [`DERIV_BCC_COMPLEX_STRUCTURE.md`](../09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md) — geometric realization of $J$ on the BCC sublattice (FTD-0122).
 - [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — Theorem 8 (1+i)-tower (FTD-0111) and Theorem 9 ($Q(G^*)$, FTD-0112).
