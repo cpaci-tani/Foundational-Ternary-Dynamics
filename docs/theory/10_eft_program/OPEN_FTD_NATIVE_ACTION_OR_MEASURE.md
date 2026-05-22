@@ -342,7 +342,7 @@ This gives a staged bridge:
 The first milestone is now:
 
 ```text
-DERIV_FTD_NATIVE_LINEAR_GENERATOR.md
+DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md
 ```
 
 with no external constants and no QED matching.

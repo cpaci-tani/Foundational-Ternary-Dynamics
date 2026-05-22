@@ -70,7 +70,7 @@ Provenance-protected artifacts known to carry the CODATA 2018 α⁻¹ by design:
 
 - `tools/scan_look_elsewhere.py` — FTD-0097 look-elsewhere scan (hash-locked; the one pre-registered scan among these files per `../theory/10_eft_program/REF_PREREGISTER_MANIFEST.md`).
 - `docs/theory/07_assessment/PROTOCOL_LOOK_ELSEWHERE_SCAN.md` — the locked scan specification.
-- `docs/theory/10_eft_program/PREREG_PHASE_I_NATIVE_COUPLING.md` and any other `PREREG_*` document.
+- `docs/theory/10_eft_program/archive/closed_negative/PREREG_PHASE_I_NATIVE_COUPLING.md` and any other `PREREG_*` document.
 - `scripts/proofs/proof_polynomial_look_elsewhere*.py` — pre-registered polynomial-scan executors.
 - `scripts/proofs/proof_phase_i_native_coupling.py` — executor of the PREREG above (its α⁻¹ literal is explicitly "committed BEFORE measurement per pre-reg §2.3").
 - Dated review snapshots and generated scan artifacts (`engine/results/.../scan_result.json`).

@@ -45,7 +45,7 @@ The 2026-05-21 session subjected the framework to an adversarial physics-panel r
 
 - **The honest headline.** The central conjecture `x₊ = 1/α` stays `[STRONGLY MOTIVATED CONJECTURE]`. No claim was promoted this session; two were honesty-corrected. The physics mechanism (MC-T4.3) and a real-theorem Stage 2 of the boundary theorem remain `[OPEN]`. `docs/papers/PAPER_GSTAR_INTRODUCTION.tex` (pure number theory) is submission-ready and not yet on arXiv.
 
-- **Corpus consolidation — merge pass complete (2026-05-22).** The reconcile + archive + restructure consolidation ran to completion: canonical-layer drift reconciled, dead content archived, the navigation layer restructured, and a merge pass consolidated 28 overlapping documents into 13 (every tagged claim, theorem, numeric result, and `FTD-NNNN` cross-reference preserved; husk references repointed corpus-wide; LEDGER edits path-only). Every cluster now carries a local `INDEX_*` navigation file. The active theory corpus is **~349 documents** across 10 clusters. Plan: `.claude/plans/take-the-role-of-fancy-kahn.md`.
+- **Corpus consolidation — merge pass complete (2026-05-22).** The reconcile + archive + restructure consolidation ran to completion: canonical-layer drift reconciled, dead content archived, the navigation layer restructured, and a merge pass consolidated 28 overlapping documents into 13 (every tagged claim, theorem, numeric result, and `FTD-NNNN` cross-reference preserved; husk references repointed corpus-wide; LEDGER edits path-only). Every cluster now carries a local `INDEX_*` navigation file. A subsequent state-of-the-theory roundtable (`docs/theory/07_assessment/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`) and an EFT-cluster consolidation (`10_eft_program` reduced 89→35 top-level docs; 48 scaffolding docs archived, the 11-doc native-flow family merged to 3) followed. The active theory corpus is **~298 documents** across 10 clusters. Plan: `.claude/plans/take-the-role-of-fancy-kahn.md`.
 
 Read **`docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md`** (canonical bedrock) and **`docs/theory/07_assessment/LEDGER.md`** (per-claim status) before defending any FTD math claim.
 
@@ -372,7 +372,7 @@ A discrete computational framework for simulating physical systems from explicit
 ftd/                                     # Project root
 ├── docs/
 │   ├── SPEC_FTD.md              # Framework overview (defers to the canonical hierarchy in META_STRUCTURE.md)
-│   ├── theory/                   # ~349 active theory documents (10 categories, each with a local INDEX_ file) + local archive subdirs
+│   ├── theory/                   # ~298 active theory documents (10 categories, each with a local INDEX_ file) + local archive subdirs
 │   │   ├── META_INDEX.md         # Complete catalog
 │   │   ├── 01_reference/         # Master references and proofs
 │   │   ├── 02_foundations/       # Ontological emergence

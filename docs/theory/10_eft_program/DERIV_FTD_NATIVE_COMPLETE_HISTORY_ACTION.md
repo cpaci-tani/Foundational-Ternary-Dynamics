@@ -295,7 +295,7 @@ Epistemic status:
 ```text
 reduction to Gamma_lin        [THEOREM] given the G18 constraint selection
 G18 direct-response branch    [SELECTION]
-native tuple values           mixed tags per DERIV_FTD_NATIVE_RESPONSE_TUPLE.md
+native tuple values           mixed tags per DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md
 ```
 
 ---

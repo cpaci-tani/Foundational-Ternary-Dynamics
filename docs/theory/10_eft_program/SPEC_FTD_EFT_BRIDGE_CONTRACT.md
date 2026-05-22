@@ -142,7 +142,7 @@ reflection/unitarity/stability statement, as appropriate
 
 Status: **[CLOSED] at ensemble-existence level (2026-04-24, FTD-0069).**
 Langevin thermostat (FTD-0051) promoted to Gate-2 stationary ensemble in
-`DERIV_FTD_NATIVE_LANGEVIN_ENSEMBLE.md`. OU update on `wave_vel` has a unique
+`DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`. OU update on `wave_vel` has a unique
 stationary distribution with `⟨|w|²⟩ = 3T` verified to 4% on GPU
 (`test_langevin_equipartition`). Source-coupled `Z[J^ext]` defined formally
 under frozen Gate-1 dimensions; reduces to linear constrained-flux generator
@@ -210,8 +210,7 @@ g_sJ^FTD(L)
 Status: **[MEASURED] at b ∈ {1,2,4,8} (2026-04-24, FTD-0065 + FTD-0067 +
 FTD-0070, Phase-2 closure).** `SPEC_FTD_NATIVE_BLOCKING_MAP.md` defines
 the finite-volume native blocking contract. The Gaussian b=2 tuple flow
-is closed by `DERIV_FTD_NATIVE_BARE_FLOW.md`,
-`DERIV_FTD_NATIVE_CURRENT_FLOW.md`, and `DERIV_FTD_NATIVE_RESPONSE_FLOW.md`:
+is closed by `DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`:
 
 ```text
 (C_L, K_T, Z_j, g_sJ)(b=2) = (1, 1, 1, 1)
@@ -231,7 +230,7 @@ $\sigma_{\mathcal{E}} \approx 1.6 \times 10^{-3}$. β-function
 $\beta_{\mathcal{E}}(1{\to}2{\to}4{\to}8) = (-0.080, -0.034, -0.013)$, all
 consistent with zero within 1σ and geometrically decaying toward the IR
 attractor. **Gaussian fixed point confirmed at this observable up to
-$b = 8$.** See `DERIV_FTD_NATIVE_MULTISCALE_FLOW.md`.
+$b = 8$.** See `DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`.
 
 **Still open (Phase-3+):** non-Gaussian flow under full mixed-toggle set
 (forces + movement + pair_production + weak); L-scan to $L \ge 32$ to
@@ -331,7 +330,7 @@ implemented in production engine. **Still [OPEN]** for physical $\alpha$
 (Branch B matching); the EFT Recovery $\alpha_\infty \approx 3.6 \alpha_\text{ref}$
 is a Coulomb-source-probe observable, not the density observable measured
 here, and the relationship between them is the Gate-6/Gate-7 matching
-problem. See `DERIV_FTD_NATIVE_MULTISCALE_FLOW.md`.
+problem. See `DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`.
 
 ---
 

@@ -15,8 +15,8 @@ This document's arithmetic remains reproducible inside its stated scalar-EFT sch
 
 Subsequent GPU audits found:
 
-1. The BCC tadpole value differs from the SC tadpole value used here, and the unrenormalized one-loop residual has no continuum limit without counterterms. See `docs/theory/10_eft_program/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md`.
-2. A Ward-valid Structure-2 two-U(1) BCC scalar gauge completion with bubble plus seagull terms does not reproduce the Structure-1 ppb closure. See `docs/theory/10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md`.
+1. The BCC tadpole value differs from the SC tadpole value used here, and the unrenormalized one-loop residual has no continuum limit without counterterms. See `docs/theory/10_eft_program/archive/campaign_complete/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md`.
+2. A Ward-valid Structure-2 two-U(1) BCC scalar gauge completion with bubble plus seagull terms does not reproduce the Structure-1 ppb closure. See `docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md`.
 
 Therefore the "9.6 ppb" result should be read as a Structure-1, fixed-regularization outcome. It is not currently a scheme-independent physical prediction.
 
