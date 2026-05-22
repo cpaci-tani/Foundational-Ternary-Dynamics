@@ -569,7 +569,7 @@ lives in
 | FTD-0104 | (topology atlas campaign, no fresh tag) | `engine/tests/campaign_topology_atlas_*` | `engine/results/topology_atlas_*` | linked from LEDGER row FTD-0104 |
 | FTD-0105 | `preregister-lemniscatic-v1` | `engine/tests/benchmark_black_hole_thermo --lemniscatic-mode` | `engine/results/lemniscatic_*` | LEDGER row FTD-0105 |
 | FTD-0106 | `preregister-gstar-asymmetry-v1` | (theory-only, engine measurements deferred) | n/a yet | LEDGER row FTD-0106 |
-| FTD-0107 | `preregister-emergent-spectrum-g1` | `engine/tests/campaign_emergent_spectrum_2026-04-27 --output-dir=…` | `engine/results/emergent_spectrum_2026-04-27_L64/` | [`10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md) |
+| FTD-0107 | `preregister-emergent-spectrum-g1` | `engine/tests/campaign_emergent_spectrum_2026-04-27 --output-dir=…` | `engine/results/emergent_spectrum_2026-04-27_L64/` | [`10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](docs/theory/10_eft_program/archive/campaign_complete/ANALYSIS_EMERGENT_SPECTRUM_G1.md) |
 
 Pre-registration discipline: each tag was applied BEFORE measurement
 and locks the script's SHA + commit. Verify with

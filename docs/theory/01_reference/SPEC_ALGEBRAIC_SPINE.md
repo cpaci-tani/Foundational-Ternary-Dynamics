@@ -153,7 +153,7 @@ on x_+ vs 1/α; 0.80% on x_− vs N_c).
 **Verification.** Three pre-registered exhaustive numerical scans:
 - `scripts/proofs/scan_cm_curves.py` (original h=1 over 9 Heegner)
 - `scripts/proofs/proof_chowla_selberg_higher_h_scan.py` (FTD-0123, classes 1–4 / 63 discriminants; pre-reg tag `preregister-chowla-selberg-higher-h-scan-v1`)
-- `docs/theory/10_eft_program/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `docs/theory/10_eft_program/AUDIT_HEEGNER_TOWER_RIGIDITY.md` (FTD-0124, full 5814-grid criterion-bifurcation analysis)
+- `docs/theory/10_eft_program/archive/campaign_complete/PREREG_HEEGNER_TOWER_RIGIDITY.md` + `docs/theory/10_eft_program/AUDIT_HEEGNER_TOWER_RIGIDITY.md` (FTD-0124, full 5814-grid criterion-bifurcation analysis)
 
 See also `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md` for context.
 

@@ -302,7 +302,7 @@ This is the clean replacement for the failed QED-alpha bridge.
 First-pass artifact:
 
 ```text
-docs/theory/10_eft_program/DERIV_FTD_NATIVE_RESPONSE_TUPLE.md
+docs/theory/10_eft_program/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md
 scripts/exploration/ftd_native_electrodynamics.py
 ```
 

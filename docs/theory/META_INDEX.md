@@ -355,7 +355,7 @@ Number theory and special functions.
 | 9.51 | [DERIV_TIER_B_CLOSED_NEGATIVE.md](09_mathematical/archive/DERIV_TIER_B_CLOSED_NEGATIVE.md) | 🆕 **(2026-05-19 / FTD-0183)** G* opus follow-up Tier B (T-B1, T-B2) [CLOSED NEGATIVE]. $\mathrm{mult}(A_{1g})=4$ in the 27-block is the $O_h$-orbit count of the cubic Moore neighbourhood — a crystallographic invariant, not a Z[i] bridge. FTD-0122's own source (`DERIV_BCC_COMPLEX_STRUCTURE.md` §3.2–3.3) already disclaims the connection ("Role 4 = count coincidence"; "dual-4 unifies as 2+2"). Adds class (d) crystallographic orbit-count to the integer-4 taxonomy, disjoint from the Q(i)-arithmetic classes (a)(b)(c). Second over-claim caught in Tier work. |
 | 9.53 | [DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md](09_mathematical/DERIV_BIVECTOR_ALGEBRA_PROGRAM_F.md) | **Bivector-algebra Program F (consolidated 2026-05-21):** plaquette bivector emergence (FTD-0086), partial bivector closure (FTD-0087), and clean Clifford multigrade structure (FTD-0088) — the Clifford/α-route program in one document. Merges `DERIV_PLAQUETTE_BIVECTOR_EMERGENCE.md` + `DERIV_BIVECTOR_CLOSURE_PARTIAL.md` + `DERIV_CLIFFORD_MULTIGRADE_CLEAN.md` |
 | 9.52 | [PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md](10_eft_program/PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md) | 🆕 **(2026-05-20 / FTD-0185)** Alpha arithmetic generativity pre-registration. Locks Test 4: if `x_+ ≈ 1/α` is genuinely an arithmetic invariant of the lemniscatic CM/FQCR structure, the same fixed architecture should produce one additional independent dimensionless observable or relation with no new tuned freedom. Explicitly excludes numerical near-miss scans, post-hoc targets, substitution identities, new free integers/exponents, and counting `x_- ≈ N_c` as the prize. [PRE-REGISTRATION] |
-| 10.20 | [PREREG_HEEGNER_TOWER_RIGIDITY.md](10_eft_program/PREREG_HEEGNER_TOWER_RIGIDITY.md) + [AUDIT_HEEGNER_TOWER_RIGIDITY.md](10_eft_program/AUDIT_HEEGNER_TOWER_RIGIDITY.md) | 🆕 **(2026-05-02 / FTD-0124)** 9-Heegner CM-tower rigidity scan + criterion-bifurcation finding. 5814-quadruple grid (9 Heegner × 19 framework-integer-factorable coefficients × 17 framework-integer targets × 2 roots). **Trivial-multiplier (q=1)**: EXACTLY ONE strict (5.45 ppm) match — canonical (d=−4, c=16, x_+, 1/α). Theorem 3 STRONGLY CONFIRMED at this strict criterion. **Rational-multiplier (q ≤ 200, FC-factorable)**: 21 strict matches; Theorem 3 FAILS at this looser criterion. **Verdict bifurcation = load-bearing methodological finding** — framework currently applies BOTH criteria in different places without flagging the choice. F10 hygiene issue. |
+| 10.20 | [AUDIT_HEEGNER_TOWER_RIGIDITY.md](10_eft_program/AUDIT_HEEGNER_TOWER_RIGIDITY.md) | 🆕 **(2026-05-02 / FTD-0124)** 9-Heegner CM-tower rigidity scan + criterion-bifurcation finding. 5814-quadruple grid (9 Heegner × 19 framework-integer-factorable coefficients × 17 framework-integer targets × 2 roots). **Trivial-multiplier (q=1)**: EXACTLY ONE strict (5.45 ppm) match — canonical (d=−4, c=16, x_+, 1/α). Theorem 3 STRONGLY CONFIRMED at this strict criterion. **Rational-multiplier (q ≤ 200, FC-factorable)**: 21 strict matches; Theorem 3 FAILS at this looser criterion. **Verdict bifurcation = load-bearing methodological finding** — framework currently applies BOTH criteria in different places without flagging the choice. F10 hygiene issue. |
 
 ---
 
@@ -380,7 +380,6 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.1 | [SPEC_EFT_RECOVERY_PROGRAM.md](10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md) | **[REFERENCE]** Pre-registration spec: five-pillar EFT checklist (β, Ward, Lorentz, OPE, continuum), canonical reference regime (L=64, flux-pulse, seed 42), pass/fail criteria for every phase committed before any experiment runs |
 | 10.2 | [DERIV_SYMMETRY_RECOVERY.md](10_eft_program/archive/phase_0_f_campaign/DERIV_SYMMETRY_RECOVERY.md) | ✅ **Phase 1 complete (2026-04-19)** — rotational-anisotropy diagnostics, Lorentz correlator collapse (0.4-1.9% residual for r≤8 at L=64), Ward-identity closure (SOR-tolerance limited at ~1% of |J|); 3 CTests pass |
 | 10.3 | [DERIV_BETA_FUNCTION_MEASURED.md](10_eft_program/archive/phase_0_f_campaign/DERIV_BETA_FUNCTION_MEASURED.md) | ✅ **Phase 2 complete (2026-04-19)** — lattice-measured β(g) via 3-method extraction (slope/Yukawa/asymptotic) at L ∈ {16, 32, 64}; engine produces screened Coulomb with λ≈10.6 at L=64; β sign matches QED asymptotic freedom but magnitude 2-3 orders off; 4 CTests pass |
-| 10.4 | [SPEC_OPERATOR_BASIS.md](10_eft_program/SPEC_OPERATOR_BASIS.md) | ✅ **Phase 3 spec (2026-04-19)** — 6 gauge-invariant operators (JJ, divJ², curlJ², J·∇(∇·J), J⁴, s²) with naive-counting Δ and classification brackets pre-registered |
 | 10.5 | [DERIV_OPERATOR_SPECTRUM.md](10_eft_program/archive/phase_0_f_campaign/DERIV_OPERATOR_SPECTRUM.md) | ✅ **Phase 3 complete (2026-04-19)** — 5/6 operators give valid Δ fits (R² 0.92–0.997); measured Δ ~ 0.4–0.75 rather than naive 2–5; pulse-envelope artefact documented honestly |
 | 10.6 | [DERIV_DYNAMICAL_SM_EMERGENCE.md](10_eft_program/archive/phase_0_f_campaign/DERIV_DYNAMICAL_SM_EMERGENCE.md) | ✅ **Phase 4 complete (2026-04-19)** — EWSB cold-start Branch B at canonical amp 0.15 (no dynamical Higgs); three-gen null result; continuum-limit α_inf = 0.021 (2.94× α_ref), improvement over Phase 2C single-scale. **Post-campaign Branch A at amp=0.80 (62 charges manifest)** |
 | 10.7 | [DERIV_GAP_CLOSURE.md](10_eft_program/archive/phase_0_f_campaign/DERIV_GAP_CLOSURE.md) | ✅ **Post-campaign (2026-04-19)** — five follow-up tickets from manuscript §7 all executed: T1 stencil-mismatch floor identified, T2 measurement is seed-robust, T3 Yukawa screening is λ∝L finite-size artefact, T4 dynamical EWSB observed at amp=0.80, T5 operator basis confirmed via confinement-scenario divJ²=1.69 |
@@ -392,15 +391,6 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.13 | [SPEC_FTD_NATIVE_BLOCKING_MAP.md](10_eft_program/SPEC_FTD_NATIVE_BLOCKING_MAP.md) | **Native Blocking Map** |
 | 10.14 | [SPEC_FTD_EFT_BRIDGE_CONTRACT.md](10_eft_program/SPEC_FTD_EFT_BRIDGE_CONTRACT.md) | **EFT Bridge Contract:** Mapping native components to EFT limits |
 | 10.15 | [DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md](10_eft_program/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md) | **State/Flux to EFT Dictionary** |
-| 10.16 | [DERIV_FTD_NATIVE_SCALE_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_SCALE_FLOW.md) | **Native Scale Flow Derivation** |
-| 10.17 | [DERIV_FTD_NATIVE_RESPONSE_TUPLE.md](10_eft_program/DERIV_FTD_NATIVE_RESPONSE_TUPLE.md) | **Native Response Tuple Derivation** |
-| 10.18 | [DERIV_FTD_NATIVE_RESPONSE_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_RESPONSE_FLOW.md) | **Native Response Flow Derivation** |
-| 10.19 | [DERIV_FTD_NATIVE_LINEAR_GENERATOR.md](10_eft_program/DERIV_FTD_NATIVE_LINEAR_GENERATOR.md) | **Native Linear Generator** |
-| 10.20 | [DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW.md) | **Native Engine Transport Flow** (absorbs the engine reaction-history flow audit, folded in 2026-05-21) |
-| 10.22 | [DERIV_FTD_NATIVE_CURRENT_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_CURRENT_FLOW.md) | **Native Current Flow** |
-| 10.23 | [DERIV_FTD_NATIVE_BARE_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_BARE_FLOW.md) | **Native Bare Flow** |
-| 10.24 | [DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md](10_eft_program/DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE.md) | **Native Source Flux Coupling Closure** |
-| 10.25 | [DERIV_PROJECTED_EFT_MATTER_COUPLING.md](10_eft_program/DERIV_PROJECTED_EFT_MATTER_COUPLING.md) | **Projected EFT Matter Coupling** |
 | 10.26 | [DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md](10_eft_program/archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md) | **Projected Dirac Operator & Charge Normalization** |
 | 10.27 | [DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md](10_eft_program/DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md) | **Emergent U(1) from Flux Projection** |
 | 10.28 | [DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md](10_eft_program/archive/closed_negative/DERIV_PROJECTED_RESPONSE_EIGENVALUE_XPLUS_ATTEMPT.md) | **Projected Response Eigenvalue Attempt** |
@@ -410,14 +400,11 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.32 | [OPEN_FTD_TO_EFT_MATCHING.md](10_eft_program/archive/closed_negative/OPEN_FTD_TO_EFT_MATCHING.md) | **EFT Matching:** Open questions |
 | 10.33 | [OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md](10_eft_program/archive/closed_negative/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md) | **Projected EFT Renormalization:** Open status |
 | 10.34 | [OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md](10_eft_program/OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md) | **Native Action or Measure:** Open questions |
-| 10.35 | [EXPLR_SELF_DUAL_HALF_SHELL.md](10_eft_program/EXPLR_SELF_DUAL_HALF_SHELL.md) | **Self-Dual Half-Shell Exploration** |
-| 10.36 | [AUDIT_ALPHA_SCALING_L256.md](10_eft_program/AUDIT_ALPHA_SCALING_L256.md) | **Alpha Scaling L=256 Audit** |
-| 10.37 | [AUDIT_EFT_BCC_ORTHOGONALITY.md](10_eft_program/AUDIT_EFT_BCC_ORTHOGONALITY.md) | **EFT BCC Orthogonality Audit** |
-| 10.38 | [AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md](10_eft_program/AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6.md) | **GPU Plan Priorities Audit** |
 | 10.39 | [AUDIT_LINK8_CLOSURE.md](10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md) | **Link-8 Closure Audit** |
-| 10.40 | [AUDIT_STRUCTURE2_WARD_VALIDATION.md](10_eft_program/AUDIT_STRUCTURE2_WARD_VALIDATION.md) | **Structure-2 Ward Validation** |
-| 10.41 | [ANALYSIS_EMERGENT_SPECTRUM_G1.md](10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md) | **(2026-04-27) FTD-0107 G1 follow-up analysis:** L=64 emergent-spectrum measurement; deterministic cluster counts L-invariant at L ∈ {32, 64} (1 from point injection, ~25-voxel cluster; 2 from collision, ~3–5 voxels); 5/5 seeds at both L. The most novel positive structural finding of the 2026-04-27 engine-as-instrument cycle. [PARTIAL] — opens "WHY 25 voxels?" structural question |
 | 10.42 | [AUDIT_LOOK_ELSEWHERE_RESULTS.md](07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) | **(2026-04-27) FTD-0097 look-elsewhere scan:** NULL REJECTED upward at ε=10⁻⁴ (62 raw / 11 dedup hits vs Poisson null λ=4); χ²(df=19) = 470 raw / 38 dedup; per-target uniformity rejected at 99.9%+ raw / 99% dedup. Catalog is over-rich at the monomial level; the L2 identity 8·G\*²·α appears as chance-level fit at exactly its reported 68.77 ppm precision. [MEASURED] — confirms FTD-0094 [PARAMETRIC] from methodological side |
+| 10.43 | [DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md](10_eft_program/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md) | **FTD-native response tuple & blocking flow (consolidated 2026-05-22):** the bare linear (C_L,K_T,Z_j,g_sJ)=(1,1,1,1) response tuple, its constrained-minimisation derivation, and its preservation under b=2 blocking; bare Gaussian fixed point [THEOREM]. Merges 6 DERIV_FTD_NATIVE_* docs. |
+| 10.44 | [DERIV_FTD_NATIVE_NONLINEAR_FLOW.md](10_eft_program/DERIV_FTD_NATIVE_NONLINEAR_FLOW.md) | **FTD-native nonlinear flow (consolidated 2026-05-22):** multiscale b<=8 Gaussian fixed point, the Langevin stationary-ensemble theorem, and engine-transport plumbing. Merges 3 DERIV_FTD_NATIVE_* docs. |
+| 10.45 | [RETROSPECTIVE_EFT_RECOVERY.md](10_eft_program/RETROSPECTIVE_EFT_RECOVERY.md) | **EFT Recovery Program retrospective (2026-05-22, [SYNTHESIS]):** end-to-end narrative of the EFT program — phases, the 2026-04-22 pivot, what closed negative, what stays live — with a pointer index to the ~48 archived scaffolding docs. |
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
 
@@ -471,7 +458,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Mathematical (09_; Clifford / α-route):** `CONJ_ALPHA_FROM_CM`, `DERIV_BIVECTOR_ALGEBRA_PROGRAM_F`, `DERIV_DIRAC_KAHLER_IDENTIFICATION`, `DERIV_LINK_BILINEAR_CLIFFORD_PARTIAL`, `DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA` (FTD-0073 site-local Clifford CLOSED NEGATIVE), `DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO`, `EXPLR_ALPHA_OVER_42_MASS_GAP`, `EXPLR_PATHS_TO_ALPHA`, `EXPLR_TOPOLOGICAL_DRAG_ALPHA`, `PROOF_ALPHA_FROM_SELF_DUALITY`.
 
-**EFT program (10_):** `AUDIT_ALPHA_EXTRACTION`, `AUDIT_ALPHA_SCALING_L256`, `AUDIT_LEMNISCATE_ALPHA_RIGIDITY`, `AUDIT_STRUCTURE2_WARD_VALIDATION`, `AUDIT_S_EFF_SMOKE_VALIDATION`, `AUDIT_WARD_IDENTITY`, `DERIV_BETA_FUNCTION_MEASURED`, `DERIV_DAY2_CAMPAIGN`, `DERIV_EMERGENT_COULOMB_GEOMETRIC`, `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION`, `DERIV_FTD_NATIVE_BARE_FLOW`, `DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION`, `DERIV_FTD_NATIVE_CURRENT_FLOW`, `DERIV_FTD_NATIVE_ENGINE_TRANSPORT_FLOW`, `DERIV_FTD_NATIVE_LANGEVIN_ENSEMBLE`, `DERIV_FTD_NATIVE_LINEAR_GENERATOR`, `DERIV_FTD_NATIVE_MULTISCALE_FLOW`, `DERIV_FTD_NATIVE_RESPONSE_FLOW`, `DERIV_FTD_NATIVE_RESPONSE_TUPLE`, `DERIV_FTD_NATIVE_SCALE_FLOW`, `DERIV_FTD_NATIVE_SOURCE_FLUX_COUPLING_CLOSURE`, `DERIV_GAP_CLOSURE`, `DERIV_PROJECTED_EFT_MATTER_COUPLING`, `DERIV_STATE_FLUX_TO_EFT_DICTIONARY`, `INDEX_FTD_NATIVE_EFT`, `MEASUREMENT_GATE_D_T_PERTURBATION`, `MEASUREMENT_S_EFF_NONLINEAR_v1_partial`, `OPEN_FTD_NATIVE_ACTION_OR_MEASURE`, `OPEN_FTD_TO_EFT_BRIDGE_STATUS`, `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1`, `PREREG_LEMNISCATE_ALPHA_RIGIDITY`, `PREREG_PHASE_II_WILSON_DIRAC_G2`, `PREREG_PHASE_I_NATIVE_COUPLING`, `PROTOCOL_BETA_MEASUREMENT`, `PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN`, `PROTOCOL_S_EFF_NONLINEAR_v2_DESIGN`, `SPEC_FTD_NATIVE_BLOCKING_MAP`, `SPEC_OPERATOR_BASIS`, `SPEC_OPERATOR_BASIS_COMPLETE`, `SPEC_WILSON_DIRAC_FTD`, `STATUS_NONLINEAR_REGIME_2026-04-30`.
+**EFT program (10_):** `AUDIT_ALPHA_EXTRACTION`, `AUDIT_LEMNISCATE_ALPHA_RIGIDITY`, `DERIV_BETA_FUNCTION_MEASURED`, `DERIV_DAY2_CAMPAIGN`, `DERIV_EMERGENT_COULOMB_GEOMETRIC`, `DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION`, `DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION`, `DERIV_FTD_NATIVE_NONLINEAR_FLOW`, `DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING`, `DERIV_GAP_CLOSURE`, `DERIV_STATE_FLUX_TO_EFT_DICTIONARY`, `INDEX_FTD_NATIVE_EFT`, `OPEN_FTD_NATIVE_ACTION_OR_MEASURE`, `OPEN_FTD_TO_EFT_BRIDGE_STATUS`, `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1`, `RETROSPECTIVE_EFT_RECOVERY`, `SPEC_FTD_NATIVE_BLOCKING_MAP`, `SPEC_OPERATOR_BASIS_COMPLETE`, `SPEC_WILSON_DIRAC_FTD`, `STATUS_NONLINEAR_REGIME_2026-04-30`.
 
 ---
 
@@ -499,7 +486,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Particles (05_):** `DERIV_COLOR_BINDING_STRUCTURE_AND_ME_STATUS`.
 
-**EFT program (10_):** `AUDIT_BCC_SUBLATTICE_SPECTRUM`, `OPEN_GC_FROM_FIRST_PRINCIPLES`, `PROTOCOL_BCC_SUBLATTICE_SPECTRUM`. Archived closures: `DERIV_MECHANISM_B_GC_DERIVATION`, `DERIV_MECHANISM_C_GC_BCC_BRIDGE`.
+**EFT program (10_):** `AUDIT_BCC_SUBLATTICE_SPECTRUM`, `OPEN_GC_FROM_FIRST_PRINCIPLES`. Archived closures: `DERIV_MECHANISM_B_GC_DERIVATION`, `DERIV_MECHANISM_C_GC_BCC_BRIDGE`.
 
 ---
 
@@ -551,7 +538,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Consciousness / measurement (06_):** `DERIV_COLLAPSE_MECHANISM`, `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS`, `DERIV_VON_NEUMANN_CONSTRUCTION`, `FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION`, `FOUND_THE_EXISTENCE_FILTER`, `FOUND_VON_NEUMANN_CHAIN`, `FOUND_WIGNERS_FRIEND_RESOLUTION`.
 
-**EFT program (10_):** `AUDIT_LORENTZ_ANISOTROPY`, `DERIV_SYMMETRY_RECOVERY`.
+**EFT program (10_):** `DERIV_SYMMETRY_RECOVERY`.
 
 **Assessment (07_):** `AUDIT_BELL_ANALYSIS`, `REPORT_DETECTOR_INFORMATION_LOSS`.
 
@@ -585,7 +572,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Mathematical (09_):** `EXPLR_3X3_MIXING_NEGATIVE`.
 
-**EFT program (10_):** `ANALYSIS_EMERGENT_SPECTRUM`, `ANALYSIS_EMERGENT_SPECTRUM_G1`, `ANALYSIS_EMERGENT_SPECTRUM_G2`, `ANALYSIS_GATE_C_VS_L`, `ANALYSIS_LEMNISCATIC_REPLACEMENT`, `ANALYSIS_MASTER_QUADRATIC_EFT_OPEN_ITEMS`, `ANALYSIS_OFFDIAGONAL_ASYMMETRY`, `ANALYSIS_OPERATOR_MIXING_L_SCAN`, `ANALYSIS_TOPOLOGICAL_OBSERVABLES`, `AUDIT_LEMNISCATIC_SPHERE_REPLACEMENT`, `AUDIT_OPERATOR_SPECTRUM`, `DERIV_OPERATOR_SPECTRUM`, `DERIV_PARTITION_FUNCTION_L2` (Phase J), `EXPLR_SELF_DUAL_HALF_SHELL`, `GAUSSIAN_EXPANSION_DATA_INVENTORY`, `PREREG_HEEGNER_TOWER_RIGIDITY`, `PREREG_OPERATOR_MIXING_L_SCAN_v1`, `PROTOCOL_EMERGENT_PARTICLE_SPECTRUM`, `PROTOCOL_EMERGENT_SPECTRUM_G1`, `PROTOCOL_EMERGENT_SPECTRUM_G2`, `PROTOCOL_GSTAR_ASYMMETRY_SCAN`, `PROTOCOL_LEMNISCATIC_REPLACEMENT`, `PROTOCOL_OPERATOR_MIXING_MATRIX`, `PROTOCOL_TOPOLOGICAL_OBSERVABLES`, `AUDIT_GAUSSIANITY_v1_LARGE`, `AUDIT_GPU_PLAN_PRIORITIES_1_3_5_6`, `AUDIT_GSTAR_ASYMMETRY_SCAN`, `AUDIT_HEEGNER_TOWER_RIGIDITY`, `AUDIT_LINK8_CLOSURE`, `AUDIT_FTD0105_MATH_CHECK`, `AUDIT_EFT_BCC_ORTHOGONALITY`, `AUDIT_CONTINUUM_LIMIT`.
+**EFT program (10_):** `AUDIT_HEEGNER_TOWER_RIGIDITY`, `AUDIT_LINK8_CLOSURE`, `DERIV_OPERATOR_SPECTRUM`, `DERIV_PARTITION_FUNCTION_L2` (Phase J).
 
 **Assessment (07_):** `AUDIT_ENGINE_CALLSTACK`.
 
@@ -607,7 +594,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Mathematical (09_):** `EXPLR_RELU_TYPE_TRANSITION`.
 
-**EFT program (10_):** `DECISION_FIELD_BASIS`, `DECISION_GAUSS_REPRESENTATION`, `DERIV_DYNAMICAL_SM_EMERGENCE`, `OPEN_MU_FROM_LP_MISSING_ARROW`, `REF_PREREGISTER_MANIFEST`, `SPEC_EFT_RECOVERY_PROGRAM`, `SPEC_FTD_EFT_BRIDGE_CONTRACT`, `STATUS_EFT_CHECKLIST`, `THEOREM_BLOCKING_DIAGONAL_IDENTITIES`, `THEOREM_MU_NO_GO_FTD0096`.
+**EFT program (10_):** `DERIV_DYNAMICAL_SM_EMERGENCE`, `OPEN_MU_FROM_LP_MISSING_ARROW`, `REF_PREREGISTER_MANIFEST`, `SPEC_EFT_RECOVERY_PROGRAM`, `SPEC_FTD_EFT_BRIDGE_CONTRACT`, `STATUS_EFT_CHECKLIST`, `THEOREM_BLOCKING_DIAGONAL_IDENTITIES`, `THEOREM_MU_NO_GO_FTD0096`.
 
 **Assessment (07_):** `AUDIT_DUAL_SUBSTRATE_PROVENANCE`, `AUDIT_INFINITY_REFRAME`.
 
