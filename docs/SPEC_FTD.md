@@ -12,7 +12,7 @@
 > **🔑 CRITICAL NOTICE (2026-04-19, supplemental 2026-04-28):** This document's body predates the April 19 audit cycle and the 2026-04-28 FTD-0110 derivation. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination, and one [OPEN]/[CONJECTURE] item was promoted to [DERIVED at linear level]. Specifically:
 >
 > - **"C1 PROVEN: x₊ = 1/α via Complex Multiplication uniqueness"** → read as [STRONGLY MOTIVATED CONJECTURE]. The polynomial identity is proven; the physical identification is an SMC bridge (1.26 ppm match, structurally unique but not dynamically derived).
-> - **"C2 PROVEN: x₋ → N_c = 3"** → read as [STRONGLY MOTIVATED CONJECTURE] (0.80% match, same epistemic tier).
+> - **"C2 PROVEN: x₋ → N_c = 3"** → **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; the `x_- ↔ N_c` identification is dropped (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD comes from independent structural sources — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 > - **sin²θ_W, sin²θ_13, α_s, PMNS angles** → downgraded to [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
 > - **"< 0.001 ppt with 7-term expansion"** framing → explicitly retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
 > - **"Thermodynamic limit"** language throughout → the framework now commits to undefined-boundary ontology, not completed-infinity ℤ³.
@@ -38,7 +38,7 @@
 
 > **Major Update (v5.0 - Foundational Completeness)**: Historical status note; later audits reclassified several physical identifications:
 > - **C1 RECLASSIFIED**: x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE]. The polynomial/root algebra is theorem-level; the physical identification is not dynamically derived.
-> - **C2 RECLASSIFIED**: x₋ → N_c = 3 is [STRONGLY MOTIVATED CONJECTURE] as a master-quadratic root identification. Independent topology routes to N_c = 3 remain separately tagged in the ledger.
+> - **C2 RETIRED** (2026-05-22, v1.4 §5): `x₋ → N_c = 3` is dropped as a physics identification; LEDGER FTD-0014 removed in commit `ca7eb61`. The master quadratic's smaller root `x_- ≈ 3.024` is a mathematical artifact of the polynomial only. Independent topology routes to `N_c = 3` remain separately tagged in the ledger (`DERIV_NC_FROM_TOPOLOGY.md`; Moore Layer Theorem).
 > - **A1 DERIVED**: D = 3 is uniquely selected by atomic stability + gauge requirements (no longer axiom)
 > - **GR COMPLETE**: Einstein equations derived with correct 8πG coefficient
 > - **Inflation DERIVED**: n_s = 0.966, r = 0.022 (compatible with Planck)
@@ -767,9 +767,9 @@ produces two roots:
 | Root | Value | Interpretation | Accuracy |
 |------|-------|----------------|----------|
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
-| x₋ | 3.024 | N_c (color charges) | 0.8% |
+| x₋ | 3.024 | mathematical artifact of P(x); no physics identification | n/a |
 
-**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identifications x₊ ↔ 1/α and x₋ ↔ N_c are **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger. The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/LEDGER.md](theory/07_assessment/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
+**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊ ↔ 1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The `x₋ ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/LEDGER.md](theory/07_assessment/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
 
 ### 7.4.1 Lemniscate Selection: Four Algebraic Criteria
 
@@ -801,7 +801,7 @@ The coefficient 16 in the master quadratic is over-derived via four convergent r
 | Base squared | N_base² = 4² (dimensional closure) | 16 |
 | Precision formula | Historical precision-fit evidence; not a derivation of coefficient 16 or α (see §16.2.1) | 16 |
 
-The convergent routes provide structural evidence for coefficient 16. They do not promote the physical identifications x₊ ↔ 1/α or x₋ ↔ N_c above their current ledger tags.
+The convergent routes provide structural evidence for coefficient 16. They do not promote the physical identification `x₊ ↔ 1/α` above its current LEDGER tag (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The `x₋ ↔ N_c` identification is retired (v1.4 §5).
 
 ## 7.5 Derivation Summary
 
@@ -1695,7 +1695,7 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | OPEN.19 | Can inflation observables be derived? | ✅ **DERIVED (v5.0)** | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |
 | OPEN.20 | Can baryogenesis be explained? | ✅ **DERIVED (v5.0)** | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
 | OPEN.21 | Is x₊ = 1/α a theorem or conjecture? | ⚠️ **[STRONGLY MOTIVATED CONJECTURE]** | Master-quadratic algebra is theorem-level; the physical identification x₊ ↔ 1/α is empirical/structural, not dynamically derived. |
-| OPEN.22 | Is x₋ → N_c = 3 a theorem? | ⚠️ **[STRONGLY MOTIVATED CONJECTURE]** | The small root is theorem-level as algebra; its N_c reading is an SMC bridge. Independent topology/RG arguments for N_c = 3 must be tracked separately. |
+| OPEN.22 | Is `x₋ → N_c = 3` a theorem? | **RETIRED (v1.4 §5)** | The `x_- ↔ N_c` identification is dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. The small root `x_- ≈ 3.024` is a mathematical artifact of P(x). `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). |
 
 See `packages/backend/simulation/open_question_tests.py` and `packages/backend/simulation/flavor_physics_tests.py` for simulation implementations.
 
@@ -1741,7 +1741,7 @@ A computational simulation based on:
 
 ### Constants and Phenomenology (historical v5.0 block; current tags live in LEDGER.md)
 - ⚠️ **Fine structure constant α = 1/137.036** ([STRONGLY MOTIVATED CONJECTURE] via x₊ identification; 1.26 ppm)
-- ⚠️ **Color charge number N_c = 3** ([STRONGLY MOTIVATED CONJECTURE] as x₋ identification; independent topology routes tracked separately)
+- ⚠️ **Color charge number N_c = 3** (the `x₋` identification is RETIRED v1.4 §5; `N_c = 3` from independent structural sources — Moore Layer Theorem, `DERIV_NC_FROM_TOPOLOGY.md`, Z₃ center closure)
 - ⚠️ **Electron mass m_e = 0.511 MeV** (selection/parametric chain depending on α; see LEDGER)
 - ⚠️ **Tau mass m_τ = 1.777 GeV** (selection/parametric chain; see LEDGER)
 - ⚠️ **Proton mass m_p = 938.3 MeV** (selection/parametric chain; see LEDGER)
@@ -1780,7 +1780,7 @@ A computational simulation based on:
 - ~~**Numerical value of G_N**~~ ✅ **DERIVED** — α_G = 2π(16/3)²(N_eff + 3/7)²α^20 gives 0.01% accuracy
 - ~~**Why a 3D discrete lattice exists**~~ ✅ **DERIVED (v5.0)** — D = 3 is uniquely selected (see §22.5.1)
 - ~~**C1: x₊ = 1/α**~~ ⚠️ **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — CM/uniqueness evidence supports the bridge but does not derive the physical identification.
-- ~~**C2: x₋ → N_c = 3**~~ ⚠️ **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — root algebra and independent N_c arguments must remain separated.
+- ~~**C2: x₋ → N_c = 3**~~ **RETIRED (2026-05-22, v1.4 §5)** — `x_- ↔ N_c` identification dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD from independent structural sources.
 - ~~**GR with 8πG**~~ ✅ **DERIVED** — Einstein equations with correct coefficient
 - ~~**Inflation mechanism**~~ ✅ **DERIVED** — n_s = 0.966, r = 0.022
 - ~~**Baryogenesis**~~ ✅ **DERIVED** — η ~ 10⁻¹⁰
