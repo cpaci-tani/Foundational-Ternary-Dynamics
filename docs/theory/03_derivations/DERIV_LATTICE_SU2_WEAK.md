@@ -1,7 +1,7 @@
 # SU(2) Weak Sector: W/Z Bosons from Ternary Structure
 
 **Document Classification:** Theoretical Derivation
-**Version:** 1.0
+**Version:** 1.1
 **Date:** February 25, 2026
 **Status:** [THEOREM] + [SELECTION] (mixed — see Claims Table §9)
 **Depends on:** SPEC_FTD_LAGRANGIAN.md, DERIV_QFT_GRT_BRIDGE.md, DERIV_FORCE_EMERGENCE.md, DERIV_COMPLETE_PARTICLE_PHYSICS.md
@@ -10,7 +10,7 @@
 
 ## Abstract
 
-We derive the SU(2) weak interaction sector from the ternary state structure of FTD. The ternary state space {−1, 0, +1} contains a doublet subspace {|+⟩, |−⟩} that carries the fundamental representation of SU(2), while the void state |0⟩ is an SU(2) singlet. The W± bosons are identified with transmutation operators that flip the ternary state, and the Z⁰ boson couples diagonally to the state-charge operator. The Weinberg angle sin²θ_W = N_c/N_eff = 3/13, the W and Z boson masses, and the Fermi constant G_F = 1/(√2 v²) are all derived from FTD axioms with zero free parameters. The derivation of G_F provides all numerical inputs (G_F, masses, CKM/PMNS elements) from FTD, but the ~50 weak decay rates remain [PARAMETRIC INSERTION] since G_F depends on v which is [SELECTION], and the functional forms (Fermi decay formulas) are imported from standard QFT.
+We construct the SU(2) weak interaction sector on the ternary state structure of FTD. The ternary state space {−1, 0, +1} contains a doublet subspace {|+⟩, |−⟩} *identified with* the fundamental representation of SU(2) — an identification that is **[SELECTION]**, a count-match (dim = 2), per the pre-registered Q12 provenance audit (FTD-0192; see §1.2 epistemic note); the void state |0⟩ is the corresponding SU(2) singlet. The W± bosons are identified with transmutation operators that flip the ternary state, and the Z⁰ boson couples diagonally to the state-charge operator. The Weinberg angle sin²θ_W = N_c/N_eff = 3/13, the W and Z boson masses, and the Fermi constant G_F = 1/(√2 v²) are all derived from FTD axioms with zero free parameters. The derivation of G_F provides all numerical inputs (G_F, masses, CKM/PMNS elements) from FTD, but the ~50 weak decay rates remain [PARAMETRIC INSERTION] since G_F depends on v which is [SELECTION], and the functional forms (Fermi decay formulas) are imported from standard QFT.
 
 ---
 
@@ -31,7 +31,7 @@ This state space has a natural decomposition:
 
 The manifested states {+1, −1} participate in the weak interaction; the void state does not. This is not an imposed assignment — it follows from the structure of the state-flux coupling.
 
-## 1.2 SU(2) Generators [THEOREM]
+## 1.2 SU(2) Generators [SELECTION]
 
 **Theorem 1.1.** *The Pauli matrices restricted to the {|+⟩, |−⟩} subspace generate the Lie algebra su(2):*
 
@@ -42,6 +42,8 @@ $$T_1 = \frac{1}{2}\sigma_1 = \frac{1}{2}\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pma
 $$[T_i, T_j] = i\varepsilon_{ijk} T_k$$
 
 **Proof.** Direct computation. The Pauli matrices satisfy [σ_i, σ_j] = 2iε_{ijk}σ_k, hence [T_i, T_j] = iε_{ijk}T_k. □
+
+**Epistemic note (2026-05-22 — Q12 provenance audit, FTD-0192).** The computation above is a *generic* fact: every 2-dimensional complex space admits an su(2) action, and the Pauli matrices satisfy the su(2) relations by definition. It is therefore **not** an FTD derivation of SU(2). The genuine FTD content here is the **skeleton** only — the Cartan T₃ = ŝ/2 (the ternary state-charge operator, §2.2) and the Weyl-ℤ₂ (the transmutation flip +1↔−1, §2.1) are substrate-grounded; the off-diagonal generators T₁, T₂ are the imported Pauli matrices, with no construction from lattice dynamics. The identification of the ternary doublet {|+⟩, |−⟩} with the SU(2) fundamental rests on the count dim = 2. Per the pre-registered Q12 provenance audit ([`../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md`](../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md), verdict COUNT-MATCH), claim SU2-1 (§9) is tagged **[SELECTION]**. Theorem 1.1's mathematical statement stands as standard linear algebra; what is corrected is the framing — it does not derive SU(2) *from FTD*.
 
 The raising and lowering operators are:
 
@@ -444,7 +446,7 @@ where:
 | Feature | Standard Model | FTD |
 |---------|---------------|-----|
 | sin²θ_W | Measured, unexplained | = N_c/N_eff = 3/13 (derived) |
-| Origin of SU(2) | Postulated gauge symmetry | Ternary state space {−1, 0, +1} |
+| Origin of SU(2) | Postulated gauge symmetry | Ternary state space {−1, 0, +1} — [SELECTION], count-match (see §9 SU2-1, FTD-0192) |
 | Higgs VEV | Measured, unexplained | v = M_P√(2π)α⁸ (derived) |
 | Parity violation | Built into gauge assignments | Divergence sign asymmetry [SELECTION] |
 | G_F | Measured from muon lifetime | Derived: 1/(√2 v²) |
@@ -462,7 +464,7 @@ where:
 
 | ID | Claim | Status | Evidence | Depends On |
 |----|-------|--------|----------|------------|
-| SU2-1 | SU(2) generators from ternary doublet {|+⟩, |−⟩} | **[THEOREM]** | [T_i, T_j] = iε_{ijk}T_k verified (§1.2) | Ternary state space |
+| SU2-1 | SU(2) generators from ternary doublet {|+⟩, |−⟩} | **[SELECTION]** | Pauli relations hold on any ℂ² (generic linear algebra); the FTD-doublet ↔ SU(2)-fundamental identification is a count-match (dim = 2) — Q12 audit, FTD-0192; see §1.2 epistemic note | Ternary state space |
 | SU2-2 | Void |0⟩ is SU(2) singlet | **[THEOREM]** | T_i|0⟩ = 0 (§1.3) | SU2-1 |
 | SU2-3 | W± = transmutation operators T± | **[SELECTION]** | Consistent with stress-threshold mechanism (§2.1) | SU2-1, Ch. 6.5 |
 | SU2-4 | Z⁰ = diagonal T₃ coupling | **[SELECTION]** | Consistent with neutral-current phenomenology (§2.2) | SU2-1 |
@@ -522,3 +524,4 @@ where:
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-02-25 | Initial document: SU(2) from ternary states, EW mixing, G_F derivation, decay rate upgrade |
+| 1.1 | 2026-05-22 | SU2-1 corrected [THEOREM]→[SELECTION] per the Q12 weak-SU(2) provenance audit (FTD-0192): Theorem 1.1 is a generic ℂ²↦su(2) fact, not an FTD derivation of SU(2). §1.2 epistemic note added; abstract, §1.2 heading, and §8.3 aligned. The genuine FTD content is the SU(2) skeleton (Cartan T₃ = ŝ/2 + Weyl-ℤ₂ transmutation); the non-abelian group is a count-match. SU2-2/SU2-8/SU2-12 [THEOREM] tags unaffected. |
