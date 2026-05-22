@@ -9,7 +9,6 @@
 
 **Depends on:**
 - [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) — SR derivation (Part I) and g₀₀ from flux saturation (Part II, Theorem 11.1)
-- [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) — Combined proper time formula, velocity cost amplification
 - [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) — Newtonian gravity as weak-field limit
 - [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — Linearized GR (propagators, wave equations)
 - [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) — Gap analysis (GAP-G2, GAP-G4, GAP-G5)
@@ -109,7 +108,7 @@ The Minkowski metric $\eta_{\mu\nu} = \text{diag}(+1, -1, -1, -1)$ is not "geome
 
 ### 2.3 Computational Budget Interpretation [SELECTION]
 
-From [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) §1-2: each lattice node receives one unit of computational budget per Universal Tick. This budget is distributed between:
+Each lattice node receives one unit of computational budget per Universal Tick. This budget is distributed between:
 
 - **Spatial translation**: moving information across lattice boundaries (costs $v^2$)
 - **Internal state update**: evolving local degrees of freedom (costs $1 - v^2$; this is proper time)
@@ -169,7 +168,7 @@ If SR and gravity were independent, the proper time formula would be:
 
 $$\frac{d\tau}{dT_U} \stackrel{?}{=} \sqrt{f - v^2} \qquad \textbf{[NAIVE — WRONG]}$$
 
-The actual formula (Theorem 6.1 from [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md)) is:
+The actual formula (Theorem 6.1) is:
 
 $$\frac{d\tau}{dT_U} = \sqrt{f - \frac{v^2}{f}} \qquad \textbf{[CORRECT]}$$
 
@@ -446,7 +445,6 @@ If correct, the three temporal modes (kinematic, thermodynamic, geometric) of th
 | Document | Relationship |
 |----------|-------------|
 | [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) | SR derivation (Part I); gravity/g₀₀ (Part II §9-11) |
-| [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | Combined proper time formula; velocity cost amplification; budget conservation |
 | [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) | Newtonian gravity as Green's function (weak-field limit) |
 | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Linearized GR; graviton propagator; gravitational wave equations |
 | [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | Full GRT gap analysis (GAP-G2, GAP-G4, GAP-G5) |

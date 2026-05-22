@@ -23,7 +23,7 @@ Axiom 0:  i exists
 
 The ternary state space is the **real projection of the unit group `Z[i]^× = {1, i, −1, −i}` extended by the additive identity**. Postulate 3's specific numerical values become derivable rather than asserted.
 
-**Mathematical content unchanged.** Same algebra, same nine theorems, same FTD-0127 subsidiary identities, same engine implementation. What changes is the canonical exposition — the framework's axiomatic footprint shrinks by one independent numerical choice, because the three state values now follow from Axiom 0.
+**Mathematical content unchanged.** Same algebra, same nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0), same FTD-0127 subsidiary identities, same engine implementation. What changes is the canonical exposition — the framework's axiomatic footprint shrinks by one independent numerical choice, because the three state values now follow from Axiom 0.
 
 ---
 
@@ -130,7 +130,7 @@ Plus a one-sentence cross-reference under §3 vocabulary tables:
 
 ### 5.3 What does NOT change
 
-- **No theorem changes.** All nine spine theorems and FTD-0127's subsidiary identities remain stated and proved as before. Each is independent of *how* Postulate 3's values are justified.
+- **No theorem changes.** All nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) and FTD-0127's subsidiary identities remain stated and proved as before. Each is independent of *how* Postulate 3's values are justified.
 - **No engine changes.** The C++ engine continues to use `int8_t s ∈ {−1, 0, +1}`. The label `i²` is exposition; the implementation is unaffected.
 - **No LEDGER tag changes.** Existing entries that reference `s ∈ {−1, 0, +1}` remain valid; the reframing adds a derivation chain rather than replacing the values. FTD-0038 (Postulate 3 = AXIOM) stays as is — Axiom 0 already had AXIOM status; Postulate 3's values are now downstream of an existing AXIOM, not promoted.
 - **No physics interpretation changes.** Two-layer ontology (state + flux) and dispositional/actual graded monism remain as specified.

@@ -193,7 +193,7 @@ export const M_K_0_PHYS    = 497.611;                  // neutral kaon (MeV)
 export const M_SIGMA_PHYS  = 1189.37;                  // Sigma+ (MeV)
 export const M_OMEGA_PHYS  = 1672.45;                  // Omega- (MeV)
 export const M_DELTA_PHYS  = 1232.0;                   // Delta++ (MeV)
-export const M_W_PHYS      = 80377.0;                  // W boson (MeV, PDG 2022)
+export const M_W_PHYS      = 80369.2;                  // W boson (MeV, PDG 2024)
 export const M_Z_PHYS      = 91187.6;                  // Z boson (MeV, PDG 2022) [PARAMETRIC PDG]
 export const M_HIGGS_PHYS  = 125100.0;                 // Higgs boson (MeV, PDG 2022) [PARAMETRIC PDG]
 

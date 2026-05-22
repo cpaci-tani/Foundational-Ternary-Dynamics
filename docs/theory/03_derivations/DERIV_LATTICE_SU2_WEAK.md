@@ -497,8 +497,6 @@ where:
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | BI action; VEV formula v = M_P√(2π)α⁸ |
 | [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) | Lattice Feynman rules, Ward identity |
 | [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) | Force laws from lattice Green's functions |
-| [DERIV_LATTICE_LOOP_CORRECTIONS.md](../archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md) | UV finiteness, one-loop QED |
-| [DERIV_LATTICE_VERTEX_CORRECTION.md](../archive/ARCH_DERIV_LATTICE_VERTEX_CORRECTION.md) | Ward identity, g-2 |
 
 ## 10.3 Related Documents
 
@@ -506,7 +504,6 @@ where:
 |----------|-------------|
 | [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) | Companion: SU(3) color sector |
 | [DERIV_HIGGS_FROM_MANIFESTATION.md](DERIV_HIGGS_FROM_MANIFESTATION.md) | Companion: symmetry breaking mechanism |
-| [SPEC_THE_MASTER_CUBIC.md](../01_reference/SPEC_THE_MASTER_CUBIC.md) | Master cubic extending quadratic to weak sector |
 
 ## 10.4 Open Questions
 

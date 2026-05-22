@@ -300,7 +300,7 @@ Error:     0.000263 ppt
 ### The Central Question
 
 FTD claims these are "derived" in the sense that:
-1. The master quadratic emerges from lattice geometry via CM selection (see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
+1. The master quadratic emerges from lattice geometry via CM selection
 2. The framework integers {3, 4, 7, 13} are constrained by self-consistency requirements
 3. Given these constraints, the coefficients are algebraically determined
 

@@ -13,7 +13,6 @@
 **Depends on:**
 
 - [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) -- Lattice propagator (Theorem 1.1), Wick rotation (Theorem 1.2), vertex factor g_c = sqrt(alpha) (Theorem 1.3), Ward identity (Theorem 1.5), fermion propagator (Theorem 4.2)
-- [DERIV_LATTICE_LOOP_CORRECTIONS.md](../archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md) -- Vacuum polarization, UV finiteness (Theorem 1.4), naive fermion propagator and doubler analysis (Section 1.3)
 - [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) -- N_c = 3 from flux geometry (Theorem 1.1), color trace factors
 - [DERIV_LATTICE_SU2_WEAK.md](DERIV_LATTICE_SU2_WEAK.md) -- SU(2) weak sector, electroweak mixing
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](DERIV_STATE_FLUX_COUPLING_DERIVATION.md) -- g_c = sqrt(alpha) derivation
@@ -409,9 +408,6 @@ The resulting baryon-to-photon ratio $\eta \sim 10^{-10}$ (CLAUDE.md, Section 22
 | Document | Relationship |
 |----------|-------------|
 | [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) | Lattice propagator, vertex factor $g_c = \sqrt{\alpha}$, Ward identity |
-| [DERIV_LATTICE_LOOP_CORRECTIONS.md](../archive/ARCH_DERIV_LATTICE_LOOP_CORRECTIONS.md) | Vacuum polarization, naive fermion propagator, doubler analysis |
-| [DERIV_LATTICE_VERTEX_CORRECTION.md](../archive/ARCH_DERIV_LATTICE_VERTEX_CORRECTION.md) | One-loop vertex: same Feynman rules, sister computation |
-| [DERIV_LATTICE_SELF_ENERGY.md](../archive/ARCH_DERIV_LATTICE_SELF_ENERGY.md) | Electron self-energy: completes one-loop QED on the lattice |
 | [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) | $N_c = 3$ derivation from flux geometry, color sector |
 | [DERIV_LATTICE_SU2_WEAK.md](DERIV_LATTICE_SU2_WEAK.md) | SU(2) sector, electroweak anomaly cancellation |
 | [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Quark charges, CKM phase, pion mass |

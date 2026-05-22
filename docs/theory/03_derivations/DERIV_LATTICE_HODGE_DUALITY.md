@@ -184,8 +184,9 @@ not a structural compromise.
   separately (`AUDIT_LORENTZ_ANISOTROPY.md`).
 
 - **NOT a new spine theorem.** Filed as FTD-0114 [DERIVED],
-  subsidiary to FTD-0113 / Phase G / EFT-recovery program. Spine
-  count remains 9.
+  subsidiary to FTD-0113 / Phase G / EFT-recovery program. The spine
+  count is unchanged — nine numbered results, six theorem-grade +
+  three honestly-tiered (see `SPEC_ALGEBRAIC_SPINE.md` §0).
 
 ---
 

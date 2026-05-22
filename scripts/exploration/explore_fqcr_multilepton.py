@@ -55,7 +55,7 @@ C_STRUCTURAL = DELTA / (3 * math.pi * G_STAR)  # ~ 0.034313
 M_E = 0.51099895
 M_MU = 105.6583755
 M_TAU = 1776.86
-ALPHA_INV_AT_LOWE = 137.0359990840  # CODATA 2022, Thomson limit
+ALPHA_INV_AT_LOWE = 137.0359991770  # CODATA 2022, Thomson limit
 
 
 # ---------- FQCR pieces --------------------------------------------------

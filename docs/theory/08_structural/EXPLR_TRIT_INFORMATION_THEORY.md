@@ -438,15 +438,12 @@ The complete chain — from self-duality to i to consciousness to measurement re
 
 ## Cross-References
 
-- **Master quadratic:** [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md)
 - **Number theory connections:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
-- **Consciousness quadratic:** [archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](../archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md)
 - **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md)
 - **What is genuinely new:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Consciousness domain/source map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
-- **sLoop axioms:** [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md)
 - **Consciousness synthesis:** [../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
 - **Verification script:** [../../scripts/verification/verify_trit_framework.py](../../scripts/verification/verify_trit_framework.py)
 

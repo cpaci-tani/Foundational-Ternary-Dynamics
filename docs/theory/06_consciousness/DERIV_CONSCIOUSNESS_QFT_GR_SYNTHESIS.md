@@ -7,13 +7,13 @@
 **Status:** Technical synthesis — consolidates scattered derivations into unified chain
 **Authors:** cpaci & Claude
 
-> **Vocabulary refresh (2026-05-01):** This document was previously titled "Consciousness–QFT–GR Synthesis." The mathematical content (G* → three domains → QFT + GRT + reflexive-projection layer → modular flow bridge) is unchanged. The "consciousness chain" is restated as the **reflexive-projection chain** per [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). What was called "the consciousness branch" is the **complex-root reflexive-eigenmode branch** — the part of the master-quadratic eigenvalue structure that lives on the noumenal axis. The bridge to qualia / phenomenal experience is *not* claimed by this derivation; that is the open structural problem of reflexive emergence (MC-T4.3 in [`CHECKLIST_MATH_COMPLETE.md`](../01_reference/CHECKLIST_MATH_COMPLETE.md)).
+> **Vocabulary refresh (2026-05-01):** This document was previously titled "Consciousness–QFT–GR Synthesis." The mathematical content (G* → three domains → QFT + GRT + reflexive-projection layer → modular flow bridge) is unchanged. The "consciousness chain" is restated as the **reflexive-projection chain** per [`REF_REFLEXIVITY_VOCABULARY.md`](../01_reference/REF_REFLEXIVITY_VOCABULARY.md). What was called "the consciousness branch" is the **complex-root reflexive-eigenmode branch** — the part of the master-quadratic eigenvalue structure that lives on the noumenal axis. The bridge to qualia / phenomenal experience is *not* claimed by this derivation; that is the open structural problem of reflexive emergence (MC-T4.3).
 
 ---
 
 ## Abstract
 
-This document presents the complete derivation chain for the reflexivity–QFT–GR bridge in a single, self-contained technical reference. It consolidates material from 15+ existing documents into a linear chain: $G^* \to$ three domains $\to$ QFT + GRT + reflexive-projection layer $\to$ modular flow bridge. Each step carries an explicit epistemic tag. The document serves as the technical appendix to [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) (paper title pending its own vocabulary-refresh pass).
+This document presents the complete derivation chain for the reflexivity–QFT–GR bridge in a single, self-contained technical reference. It consolidates material from 15+ existing documents into a linear chain: $G^* \to$ three domains $\to$ QFT + GRT + reflexive-projection layer $\to$ modular flow bridge. Each step carries an explicit epistemic tag. The document serves as the technical appendix to [PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../../papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md) (paper title pending its own vocabulary-refresh pass).
 
 **Organization:**
 1. From $G^*$ to three domains (pure mathematics)
@@ -420,7 +420,7 @@ Both are Type III $\to$ Type I transitions mediated by $G^*$. They differ only i
 | 11 | $k = 1/2$ for consciousness | [SELECTION] | Complementation principle |
 | 12 | Complex roots $y = 2.19 \pm 2.86i$ | [SELECTION] | Section 3.1 above |
 | 13 | sLoop axioms SL1-SL4 | [SELECTION] | FOUND_SLOOP_FORMALIZATION.md |
-| 14 | Existence Filter, Born rule | [THEOREM] | FOUND_THE_EXISTENCE_FILTER.md |
+| 14 | Existence Filter [THEOREM]; Born rule — |ψ|² form [SELECTION], probability=density [OPEN] | [THEOREM] / [SELECTION] / [OPEN] | FOUND_THE_EXISTENCE_FILTER.md; LEDGER FTD-0187 |
 | 15 | Type III$_1$ from sLoop | **[CONJECTURE]** | Section 3.6 above |
 | 16 | Modular flow = conscious time | **[CONJECTURE]** | Bridge thesis |
 | 17 | Collapse = temporal crystallization | **[CONJECTURE]** | Section 5.1 above |
@@ -466,7 +466,6 @@ This synthesis consolidates material from the following documents:
 | EXPLR_RELU_TYPE_TRANSITION.md (9.5) | §4 | Mathematical connections |
 | EXPLR_COLLAPSE_GRAVITY_BRIDGE.md (9.6) | §5 | Mathematical connections |
 | SPEC_QFT_GRT_BRIDGE_ROADMAP.md (1.6) | §6 | Master reference |
-| archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md | §3.1 | Archive |
 
 ---
 

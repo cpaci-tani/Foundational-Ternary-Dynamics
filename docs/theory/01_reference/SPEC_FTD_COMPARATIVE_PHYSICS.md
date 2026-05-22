@@ -9,7 +9,6 @@
 
 **Depends on:**
 - [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) — G* = ϖ/√(PF) decomposition and PF cancellation rule
-- [DERIV_VACUUM_ENERGY_FORMULA.md](../archive/ARCH_DERIV_VACUUM_ENERGY_FORMULA.md) — Cosmological constant formula
 - [SPEC_FTD_LAGRANGIAN.md](SPEC_FTD_LAGRANGIAN.md) — SM Lagrangian sector-by-sector mapping
 - [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) — D = 3 derivation and integer origins
 - [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — Historical/interpretive constant atlas γ → ϖ → M → π → G*
@@ -468,12 +467,9 @@ The following identify integer factors with physical meanings:
 | Document | Relevant Content |
 |----------|-----------------|
 | [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) | Primary source: G* decomposition, BH thermo, LQG, vacuum energy, QFT loops |
-| [DERIV_VACUUM_ENERGY_FORMULA.md](../archive/ARCH_DERIV_VACUUM_ENERGY_FORMULA.md) | ρ_Λ = m_e⁴ α¹⁶ G*², the 10⁻¹²⁰ problem |
 | [SPEC_FTD_LAGRANGIAN.md](SPEC_FTD_LAGRANGIAN.md) | SM Lagrangian sector-by-sector mapping, parameter reduction |
 | [FOUND_SPACETIME_EMERGENCE.md](../02_foundations/FOUND_SPACETIME_EMERGENCE.md) | D = 3 derivation, 0.5D ontology |
 | [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](../02_foundations/FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) | Historical/interpretive constant atlas γ → ϖ → M → π → G* |
-| [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) | Master quadratic, coefficient 16, G* properties |
-| [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) | Schwarzschild from lattice, holographic bound |
 | [DERIV_LAMBDA_QCD_DERIVATION.md](../04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md) | Non-circular Λ_QCD, b₃ = 7 as beta coefficient |
 
 ---

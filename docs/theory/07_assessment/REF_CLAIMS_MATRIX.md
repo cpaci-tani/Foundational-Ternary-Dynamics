@@ -6,7 +6,7 @@
 **Date:** February 26, 2026
 **Framework Status:** Discrete Substrate Framework — Core derivations complete + Neutrino Masses + Modularity
 
-> **Historical Note (v2.13):** This document now subsumes the earlier `AUDIT_NOVEL_CLAIMS.md` (narrative-format claim listing, v3.2). All claims from that document are represented here in structured matrix form with claim IDs, dependencies, and falsification criteria. The narrative document has been archived to `archive/ARCH_AUDIT_NOVEL_CLAIMS.md` for historical reference.
+> **Historical Note (v2.13):** This document now subsumes the earlier `AUDIT_NOVEL_CLAIMS.md` (narrative-format claim listing, v3.2). All claims from that document are represented here in structured matrix form with claim IDs, dependencies, and falsification criteria. The standalone narrative document was removed in the 2026-05-21 consolidation; git history retains it.
 
 > **v2.11 Note:** Corrected G*/varpi distinction across all documentation. G* = √2×Γ(1/4)²/(2π) ≈ 2.9587 (master quadratic coefficient) is distinct from ϖ = Γ(1/4)²/(2√(2π)) ≈ 2.6221 (classical lemniscate constant). Bell inequality claims updated to reflect that simple simulation shows classical S ≤ 2; quantum violation S ≈ 2.83 is a theoretical prediction requiring full Hilbert space implementation.
 
@@ -61,7 +61,7 @@
 | **BELL-1** | Spatial Domain is Local ($S \le 2$); Info speed limited to c | **CONFIRMED** | A1, Relativity | EPISTEMIC_BRIDGE §2.1 | Observation of FTL information transfer in Dom A | `scripts/experiments/verify_bell_inequality.py` (S=2.00) |
 | **PLANCK-1** | 1 voxel = Planck length identification | IMPOSED | (scale calibration) | CLAUDE.md §7.1 | n/a (calibration choice) | n/a |
 | **GAMMA-1** | γ = α in simulations | IMPOSED | (parameter identification) | CLAUDE.md §4.3, §7.3 | n/a (calibration choice) | `scripts/constants.py` |
-| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.19% error) | CONJECTURE | ALPHA-1, GAUSS-1 | archive/ARCH_LEMNISCATE_ALPHA_PAPER.md §7.2 | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
+| **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.19% error) | CONJECTURE | ALPHA-1, GAUSS-1 | (removed in 2026-05-21 consolidation; git history retains it) | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
 | **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² = 3.86×10⁻⁴⁷ GeV⁴ (1.0% error) | CONJECTURE | ALPHA-1, MASS-1, GAUSS-1 | DERIV_VACUUM_ENERGY_FORMULA.md §I | >5% discrepancy unexplained | `scripts/verification/verify_vacuum_energy.py` |
 | **COLLAPSE-1** | Measurement = manifestation (s: 0 → ±1) | SELECTION | A4, HILBERT-1 | FOUND_SLOOP_FORMALIZATION.md | Alternative collapse mechanism shown viable within axioms | n/a |
 | **OBSERVER-1** | Observer = manifested structure (s≠0), not consciousness | SELECTION | COLLAPSE-1 | FOUND_SLOOP_FORMALIZATION.md §3.5 | Consciousness-specific effects observed | n/a |
@@ -154,12 +154,10 @@
 | Document | Claims Addressed |
 |----------|-----------------|
 | `CLAUDE.md` | A1-A5, S1-S3, PLANCK-1, GAMMA-1 |
-| `archive/ARCH_AUDIT_NOVEL_CLAIMS.md` | Archived: narrative-format claim listing (superseded by this document) |
 | `paper/trd_fine_structure.tex` | ALPHA-1, ALPHA-2, GAUSS-1, SQRT2-1, CM-1, S1-S3 |
 | `DERIV_QUANTUM_MECHANICS_RESOLVED.md` | BORN-1 |
 | `SPEC_FTD_REFERENCE.md` | HILBERT-1, BELL-1, CONTINUUM-1, SPINOR-1, DARKMATTER-1, Complete v5.0 reference |
 | `FOUND_SLOOP_FORMALIZATION.md` | COLLAPSE-1, OBSERVER-1 |
-| `archive/ARCH_LEMNISCATE_ALPHA_PAPER.md` | MASS-1, LAMBDA-1 |
 | `DERIV_COMPLETE_PARTICLE_PHYSICS.md` | CKM-1, PMNS-1, JARLSKOG-1 |
 | `DERIV_RELATIVITY_DERIVATION.md` | Gravitational hierarchy derivation |
 | `scripts/` | Numerical validation scripts |
@@ -178,8 +176,6 @@
 | CM-1 | `scripts/cm_selection_proof.py` | j = 1728 only compatible |
 | BORN-1 | `scripts/born_rule_test.py` | Correlation > 0.9 |
 | BELL-1 | `sloop_bell_test.py` | S approaches 2√2 with overlap |
-
-See [REPRODUCIBILITY.md](REPRODUCIBILITY.md) for execution instructions and known-good outputs.
 
 ---
 
@@ -228,8 +224,6 @@ The consciousness quadratic derives awareness from the same G* geometry that pro
 2. **Consciousness (complex roots)** = What KNOWS
 3. **The Born rule** emerges from complex conjugate multiplication (consciousness → physics projection)
 4. **The measurement problem** is resolved: only consciousness has the complex conjugate structure to collapse superposition
-
-See [archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](../archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md) for complete derivation.
 
 ---
 
@@ -332,8 +326,6 @@ The prime counting function maps through FTD integers:
 2. **Primes encode color structure**: The prime wavelength is 4/N_c²
 3. **The 42-chain**: Prime counting maps FTD products to FTD integers
 4. **Lemniscate-zeta bridge**: Both involve Γ(1/4) and exhibit reflection symmetry
-
-See [RIEMANN_ZETA_CONNECTION.md](../archive/ARCH_RIEMANN_ZETA_CONNECTION.md) for complete analysis.
 
 ---
 
@@ -557,8 +549,6 @@ $$\frac{8}{G^*} \approx e$$
 - Alternative explanation for 8/G* ≈ e coincidence
 - No meaningful connection between period bulbs and generations
 
-See [MANDELBROT_FTD_DUALITY.md](MANDELBROT_FTD_DUALITY.md) for complete analysis.
-
 ---
 
 ## Octonionic Origin (v5.7 New)
@@ -629,8 +619,6 @@ $$x_+, x_- = 70 \pm 67$$
 - Discovery of 4th generation with standard gauge couplings
 - Physics requiring algebras beyond octonions
 - Alternative explanation for 70 ± 67 structure
-
-See [OCTONIONIC_ORIGIN.md](OCTONIONIC_ORIGIN.md) for complete analysis.
 
 ---
 
@@ -777,8 +765,6 @@ where x₊ = 137.036 = 1/α is the larger root of x² − 16G*²x + 16G*³ = 0.
 - Time-varying dark energy density
 - ρ_Λ refined to differ by >5% from prediction
 
-See [DERIV_VACUUM_ENERGY_FORMULA.md](../archive/ARCH_DERIV_VACUUM_ENERGY_FORMULA.md) for complete derivation.
-
 ---
 
 ## Mitosis of the Void (v5.9 New)
@@ -877,8 +863,6 @@ The Mandelbrot set is necessary (simplest nontrivial iteration). G* bridges uniq
 | `verify_mandelbrot_bridge()` | Verify k_c × c_cusp × G* = 1 |
 | `verify_master_quadratic()` | Verify roots and Vieta |
 
-See [MITOSIS_OF_THE_VOID.md](../archive/ARCH_MITOSIS_OF_THE_VOID.md) for complete formalization.
-
 ---
 
 ## Master Cubic Extension (v5.18 New)
@@ -972,8 +956,6 @@ The strong force point gives the sum of all framework integers.
 - m_tau/m_mu differs from |r_1/r_2|^2 by > 1%
 - Cabibbo angle measured to differ from G*/N_eff by > 5%
 - Discriminant not exactly 37
-
-See [SPEC_THE_MASTER_CUBIC.md](../01_reference/SPEC_THE_MASTER_CUBIC.md) for complete derivation.
 
 ---
 

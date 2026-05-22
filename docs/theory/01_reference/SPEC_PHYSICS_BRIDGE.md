@@ -4,7 +4,7 @@
 **Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constants (1/α, N_c) as it currently stands
 **Created:** 2026-05-01 evening (closing session on tractable open gaps)
 **Provenance:** Closes the "physics bridge" by making its logical structure crisp; consolidates `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` + `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` + `EXPLR_PATHS_TO_ALPHA.md` into a single reference position
-**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the 9 theorems); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013/0014 (the conjecture); FTD-0097 (look-elsewhere monomial); FTD-0117 (G\* notational fix)
+**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: six theorem-grade + three honestly-tiered, see §0); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013/0014 (the conjecture); FTD-0097 (look-elsewhere monomial); FTD-0117 (G\* notational fix)
 
 ---
 
@@ -147,7 +147,7 @@ spaces. Their interpretation is structural significance — see §3.
 ### 2.1 · The dual prediction
 
 ```
-CODATA 2022:           1/α = 137.035999084(21)        (~10-digit precision)
+CODATA 2022:           1/α = 137.035999177(21)        (~10-digit precision)
 PDG (Standard Model):  N_c = 3                          (exact integer)
 
 FTD master quadratic:  x_+ = 137.036171...              (algebraic)
@@ -296,7 +296,7 @@ strength.
 ## 5 · Honest meta-statement
 
 The "physics bridge" of FTD is:
-1. **A mathematical spine** (9 theorems) producing a specific algebraic
+1. **A mathematical spine** (nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0) producing a specific algebraic
    object whose roots are computable.
 2. **An empirical observation** that these roots match two unrelated
    Standard Model constants at high precision.
@@ -342,15 +342,17 @@ the position synthesized from existing entries:
 - NOT a theorem of α-derivation.
 - NOT a theorem of N_c-derivation.
 - NOT a falsification of any prior closed-negative route.
-- NOT a new spine theorem (count remains 9).
+- NOT a new spine theorem (spine count unchanged — nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0).
 - NOT a promotion of FTD-0013/0014 from [STRONGLY MOTIVATED CONJECTURE].
 
 ---
 
 ## 8 · Single-line summary
 
-**FTD's physics bridge consists of a mathematically rigid spine (9
-theorems producing the master quadratic with computable roots ≈ 137.036
+**FTD's physics bridge consists of a mathematically rigid spine (nine
+numbered results — six theorem-grade + three honestly-tiered, see
+`SPEC_ALGEBRAIC_SPINE.md` §0 — producing the master quadratic with
+computable roots ≈ 137.036
 and ≈ 3.024), an empirical observation (these roots match 1/α at 1.26
 ppm and N_c at 0.80%), a structural-uniqueness argument (the master
 quadratic is the unique dual-matcher in the declared natural family

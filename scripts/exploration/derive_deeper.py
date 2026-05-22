@@ -355,7 +355,7 @@ print('  %-35s  %12s  %12s  %8s' % ('Quantity', 'Derived', 'Experiment', 'Error'
 print('  ' + '-' * 72)
 
 preds = [
-    ('1/alpha', X_PLUS, 137.035999084, ''),
+    ('1/alpha', X_PLUS, 137.035999177, ''),
     ('N_c = floor(x-)', N_c, 3, ''),
     ('N_base = ceil(x-)', int(np.ceil(X_MINUS)), 4, ''),
     ('N_eff (Laplacian eigenvalues)', n_distinct_L, 13, ''),

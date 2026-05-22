@@ -97,7 +97,7 @@ The algebraic spine is unaffected. None of the following claims have changed tie
 - **FTD-0002** (G\* identity [THEOREM]) — unchanged
 - **FTD-0013** (x_+ = 1/α at 1.26 ppm [STRONGLY MOTIVATED CONJECTURE]) — unchanged
 - **FTD-0014** (x_− = N_c at 0.80% [STRONGLY MOTIVATED CONJECTURE]) — unchanged
-- All 9 spine theorems — unchanged
+- All nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) — unchanged
 - The structural-uniqueness Bayes factor (~4×10⁵) from FTD-0121 / Paper A — unchanged
 - The BCC complex-structure theorem (FTD-0122) — unchanged
 

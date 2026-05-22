@@ -212,7 +212,7 @@ Linear theorem energy distribution `{3/8, 1/8, 3/8, 1/8}` and mean `1/4` re-veri
 - **NOT a closure of the bridge.** The bridge analysis sharpens the gap; it does not close it.
 - **NOT a derivation of the empirical slope `−0.030`.** That requires Mechanism α's perturbation calculation, which is identified but not executed here.
 - **NOT a falsification of any mechanism.** All three mechanisms (α, β, γ) remain candidates; the analysis only argues α is most consistent with the *functional form*.
-- **NOT a new theorem.** Spine count remains 9; FTD-0110 main claim remains [STRONGLY MOTIVATED CONJECTURE] for the full nonlinear regime.
+- **NOT a new theorem.** The spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0); FTD-0110 main claim remains [STRONGLY MOTIVATED CONJECTURE] for the full nonlinear regime.
 
 ---
 

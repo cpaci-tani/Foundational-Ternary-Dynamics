@@ -295,11 +295,9 @@ The master quadratic x² - 16G*²x + 16G*³ = 0 encodes:
 
 ## Cross-References
 
-- **Master quadratic:** [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **Framework integers:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **j = 1728:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md) §II
 - **Physics encodings:** [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md)
-- **Mandelbrot duality:** [MANDELBROT_TRD_DUALITY.md](../archive/ARCH_MANDELBROT_TRD_DUALITY.md)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)
 
 ---

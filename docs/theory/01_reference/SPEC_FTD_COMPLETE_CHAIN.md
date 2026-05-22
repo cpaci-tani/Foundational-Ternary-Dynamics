@@ -370,7 +370,7 @@ The binary sign measurements (sign(v.a)) produce the triangle correlation -(1 - 
 
 The substrate (lattice) is local and deterministic: S <= 2 at the hidden-variable level. This is Bell's theorem applied correctly. The emergent theory (QM) gives S = 2 sqrt(2) as Tsirelson's bound — a theorem of any theory with Hilbert space structure and Born rule.
 
-Since FTD derives: (1) Schrodinger equation from complexified flux [THEOREM], (2) Born rule from Parseval [THEOREM], (3) Hilbert space from complexified flux [SELECTION], (4) pair creation from void events [AXIOM], the Bell violation follows as a corollary of the emergent QM. The two levels (substrate S <= 2, emergent S = 2 sqrt(2)) are simultaneously true at different description levels.
+Since FTD derives: (1) Schrodinger equation from complexified flux [THEOREM], (2) the |psi|^2 *form* of the Born rule from Parseval [SELECTION] -- the step *probability = normalized energy density* is [OPEN], see LEDGER FTD-0187, (3) Hilbert space from complexified flux [SELECTION], (4) pair creation from void events [AXIOM], the Bell violation follows as a corollary of the emergent QM. The two levels (substrate S <= 2, emergent S = 2 sqrt(2)) are simultaneously true at different description levels.
 
 **Remaining lemma** [SELECTION -> THEOREM target]: the void event 0 -> (+1)_A + (-1)_B produces the singlet state in the emergent Hilbert space. The Gauss constraint forces anti-correlated flux (entanglement); the complexification maps this to the standard singlet |psi> = (|+>|-> - |->|+>)/sqrt(2).
 
@@ -401,7 +401,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | 137 splits in Z[i], 3 is inert | [THEOREM] | Number theory |
 | G* encodes prime distribution via L-function | [THEOREM] | Euler product |
 | Cosine SHAPE from continuous flux projections | [THEOREM] | <(v.a)(-v.b)> = -(1/3)cos(theta); shape is cosine, amplitude is 1/3 |
-| Born rule P ~ |J|^2 | [SELECTION] | Parseval shows E ~ |J|^2; identification of energy fraction with detection probability is the Born rule itself, not a derivation of it |
+| Born rule P ~ |J|^2 | [SELECTION] | Parseval shows E ~ |J|^2; identification of energy fraction with detection probability is the Born rule itself, not a derivation of it. Canonical: LEDGER FTD-0187 |
 | x+ = 1/alpha | [STRONGLY MOTIVATED CONJECTURE] | 1.26 ppm match; g_c = sqrt(alpha) for arbitrarily fine spacing but identification requires QED recovery |
 | Bell S = 2.83 in experiments | [SELECTION] | EMERGENT from QM (Tsirelson's bound). Substrate S <= 2, emergent S = 2 sqrt(2). Remaining: singlet-state lemma (void event -> entangled pair in emergent Hilbert space). |
 | O-operation = Euler-Lagrange equation | [THEOREM] | Action extremization IS center integrating shell |
@@ -417,7 +417,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | floor(x-) = N_c = 3 | [SELECTION] | Derive topological quantization mechanism |
 | Frame dragging factor of 2 from dual BI contribution | [CONJECTURE] | Qualitative argument only; needs explicit derivation from BI Lagrangian in rotating background |
 | QM = epistemology, not ontology | [SELECTION] | Prove that QM statistics follow necessarily from lattice + partial observation |
-| Born rule from |J|^2 manifestation | [THEOREM] | Wave energy density ~ amplitude^2 (Parseval's theorem on the lattice wave equation) |
+| Born rule from |J|^2 manifestation | [SELECTION] (|psi|^2 form) / [OPEN] (probability=density, T1c) | Derive that manifestation *frequency* equals normalized energy density -- the load-bearing step, nowhere derived. Canonical: LEDGER FTD-0187. (Duplicates the §7.1 row; that row's tag is canonical.) |
 
 ## 7.3 What Is Conjectured
 

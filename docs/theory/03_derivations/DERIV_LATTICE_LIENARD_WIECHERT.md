@@ -322,7 +322,9 @@ between the engine's dynamics and the analytical lattice LW result.
   structural, not phenomenological.
 
 - **NOT a new spine theorem.** Filed as FTD-0115 [DERIVED],
-  subsidiary to FTD-0004/0113. Spine count remains 9.
+  subsidiary to FTD-0004/0113. The spine count is unchanged — nine
+  numbered results, six theorem-grade + three honestly-tiered (see
+  `SPEC_ALGEBRAIC_SPINE.md` §0).
 
 ---
 

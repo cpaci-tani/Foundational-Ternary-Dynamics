@@ -1,7 +1,7 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. **Update 2026-04-30:** Theorem 9 (field-theoretic characterization of `Q(G*)` as a maximal `π`-free subfield of `Q(π, Γ(1/4))`) added in §9, conditional on Chudnovsky 1976; LEDGER FTD-0112. The spine now has **nine theorems**; full derivations in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md` (Theorem 8) and `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 (Theorem 9). Section numbering bumped (`§§10–15`).
+**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. **Update 2026-04-30:** Theorem 9 (field-theoretic characterization of `Q(G*)` as a maximal `π`-free subfield of `Q(π, Γ(1/4))`) added in §9, conditional on Chudnovsky 1976; LEDGER FTD-0112. The spine now has **nine theorems**; full derivations in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md` (Theorem 8) and `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 (Theorem 9). Section numbering bumped (`§§10–15`). **Supplemental 2026-05-20 (physics-panel review, forward-plan P3):** the "nine theorems" count is reconciled — **six are theorem-grade** (Theorems 1, 2, 5, 6, 8, 9), **three are honestly tiered below theorem grade** (Theorem 3 `[NUMERICAL FACT]`, Theorem 4 a value-level identity with conjectural structural necessity, Theorem 7 `[THEOREM at L=2]` only). The nine numbered sections remain; the theorem-grade count is **six**. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the six; T3/T4/T3 for the three).
 **Purpose:** state the load-bearing algebraic content of FTD in
 [THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -13,9 +13,14 @@ the Standard Model.
 
 ## 0 · What this document is and is not
 
-**This document IS:** a canonical statement of nine theorems that
-constitute FTD's rigorous mathematical core, with proof references.
-Each theorem is independent of any physics interpretation. The objects
+**This document IS:** a canonical statement of FTD's rigorous
+mathematical core — nine numbered results, of which **six are
+theorem-grade** (Theorems 1, 2, 5, 6, 8, 9) and **three are honestly
+tiered below theorem grade**, so marked in their own sections
+(Theorem 3 — `[NUMERICAL FACT]`; Theorem 4 — a value-level identity
+whose structural necessity is conjectural; Theorem 7 —
+`[THEOREM at L=2]` only). The tiering matches `TRACKER_ONTIC_TRUTH.md`.
+Each result is independent of any physics interpretation. The objects
 involved (Γ-function values, CM elliptic curves, lattice Green's
 functions, Watson integrals) are standard mathematical objects with
 established literatures.
@@ -173,6 +178,18 @@ fields; Damerell-style identities at h ≥ 2 (theory note in
 Its automorphism group over ℚ̄ has order 4, so |Aut(E)|² = 16. The
 coefficient 16 in the master quadratic P(x) (Theorem 2) coincides with
 this automorphism-group order squared.
+
+**Status (added 2026-05-20, physics-panel review).** The arithmetic
+fact |Aut(E)| = 4, hence |Aut(E)|² = 16, is a `[THEOREM]`. That the
+master quadratic's coefficient is *forced* to equal |Aut(E)|² is
+**not** proven — it is a structural identification, conjectural
+(`TRACKER_ONTIC_TRUTH.md` OT-4.1, Tier 4: "two distinct objects both
+equal 16; the structural reason for this coincidence is conjectured
+but not proved"). The Proof below establishes only the arithmetic
+fact, not the forcing; Paper A §13.5 reports three negative tests
+(N1–N3) finding no CM-internal arrow that produces the polynomial
+*form*. Theorem 4 is therefore one of the three honestly-tiered
+subsidiary results, not one of the six theorems.
 
 **Proof.** Three independent arithmetic routes establish 16 =
 |Aut(E)|²:
@@ -646,10 +663,11 @@ addresses this; not yet run).
 
 In order from most to least defensible:
 
-1. "FTD has a rigorous algebraic core consisting of nine theorems
-   centered on the constant G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587
-   (distinct from the Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622;
-   see §1)." — Theorems 1-9.
+1. "FTD has a rigorous algebraic core: six theorem-grade results
+   (Theorems 1, 2, 5, 6, 8, 9) plus three honestly-tiered subsidiary
+   results (Theorems 3, 4, 7 — see §0), centered on the constant
+   G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) ≈ 2.9587 (distinct from the
+   Bernoulli/Gauss lemniscate constant ϖ ≈ 2.622; see §1)." — §§1-9.
 
 2. "A specific polynomial P(x) = x² − 16G*²x + 16G*³ has roots that
    match 1/α and N_c simultaneously to permille precision; this
@@ -716,7 +734,7 @@ What this document explicitly does NOT allow you to claim:
 
 ## 14 · Single-line summary
 
-**FTD's algebraic spine is nine theorems centered on G* =
+**FTD's algebraic spine is six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered sections; see §0), centered on G* =
 Γ(1/4)/Γ(3/4) ≈ 2.9587: the G* identity (Chowla-Selberg), the master
 quadratic P(x) = x² − 16G*²x + 16G*³ and its two roots, CM uniqueness
 within class-number-1 fields, the coefficient 16 = |Aut(E)|² for E:

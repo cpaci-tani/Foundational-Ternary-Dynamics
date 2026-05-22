@@ -10,7 +10,7 @@
 > - Part I (Theory) originates from `AUDIT_BELL_MECHANISM_HONEST.md` (v2.0, February 5, 2026)
 > - Part II (Simulation) originates from `AUDIT_BELL_LATTICE_INVESTIGATION.md` (v1.0, February 5, 2026)
 >
-> Archived originals are in `archive/ARCH_AUDIT_BELL_MECHANISM_HONEST.md` and `archive/ARCH_AUDIT_BELL_LATTICE_INVESTIGATION.md`.
+> The standalone originals were removed in the 2026-05-21 consolidation; git history retains them.
 
 ---
 
@@ -25,7 +25,7 @@ Foundational Ternary Dynamics (FTD) postulates local causality (POSTULATE 4) whi
 - The fundamental diagnostic: Bell violations require **noncommutative measurements**, which the lattice lacks
 - S <= 2 from the substrate is **expected**, not a failure -- QM correlations are understood as aggregate ensemble behavior
 
-**CLAIM.8 Status:** [SELECTION] — Three-level hierarchy mechanism identified and numerically verified (see [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md))
+**CLAIM.8 Status:** [SELECTION] — Three-level hierarchy mechanism identified and numerically verified (see [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md))
 
 ---
 
@@ -514,7 +514,7 @@ Two mechanisms: complexification (shape) + sLoop (strength).
 Net: S_substrate * sqrt(2) = S_observer. Verified 4/4 Monte Carlo checks."
 ```
 
-> **Update (v5.27):** The three-level hierarchy mechanism resolves the substrate-to-aggregate gap. The substrate correctly gives S <= 2 (confirmed by the simulation tests in Part II). The *observer-level* correlations (S = 2*sqrt(2)) arise from complexification (Gauss constraint removes one flux mode, leaving psi = J_x + iJ_y) plus sLoop joint coupling (shared substrate creates non-factorizable joint probability). See [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md) for the full derivation and numerical verification.
+> **Update (v5.27):** The three-level hierarchy mechanism resolves the substrate-to-aggregate gap. The substrate correctly gives S <= 2 (confirmed by the simulation tests in Part II). The *observer-level* correlations (S = 2*sqrt(2)) arise from complexification (Gauss constraint removes one flux mode, leaving psi = J_x + iJ_y) plus sLoop joint coupling (shared substrate creates non-factorizable joint probability). See [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) for the full derivation and numerical verification.
 
 ## 16. What Would Constitute Proof?
 
@@ -656,7 +656,6 @@ The quantum cosine and classical triangle agree at theta = 0, pi/2, pi but diffe
 
 | Document | Relationship |
 |----------|--------------|
-| [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md) | sLoop axioms SL1-SL4 |
 | [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md) | Overall epistemic accounting (includes formalization tiers) |
 | [REF_CLAIMS_MATRIX.md](REF_CLAIMS_MATRIX.md) | Bell violation listed as conjecture |
 | [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md) | Technical reference manual |

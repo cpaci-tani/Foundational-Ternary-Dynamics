@@ -13,7 +13,6 @@
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) — Born-Infeld action, lattice DOF
 - [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — T_μν from Noether's theorem
 - [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Full Einstein equations
-- [DERIV_VACUUM_ENERGY_FORMULA.md](../archive/ARCH_DERIV_VACUUM_ENERGY_FORMULA.md) — Original formula
 
 ---
 
@@ -367,7 +366,6 @@ The canonical formula remains $\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*
 
 | Document | Relevant Content |
 |----------|-----------------|
-| [DERIV_VACUUM_ENERGY_FORMULA.md](../archive/ARCH_DERIV_VACUUM_ENERGY_FORMULA.md) | Original formula (v1.0, now superseded) |
 | [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) | EFE-10 now resolved |
 | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) | T_μν derivation |
 | [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) | Born-Infeld action, DOF count |

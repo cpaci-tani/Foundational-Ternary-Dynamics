@@ -256,7 +256,7 @@ After L=128 LARGE:
 
 **L-INDEPENDENT BACKBONE (holds at L=24, 32, 48, 64, 128)**:
 - Bare Gaussian fixed point (FTD-0070) ✓
-- Algebraic spine (now 9 theorems) ✓
+- Algebraic spine (nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0) ✓
 - **Theorem 1** (M_JJ,JJ = b⁴ exactly): verified at all 5 lattice sizes to machine precision ✓
 - **Theorem 3** (charge-density blocking with ρ̄): structure verified ✓
 

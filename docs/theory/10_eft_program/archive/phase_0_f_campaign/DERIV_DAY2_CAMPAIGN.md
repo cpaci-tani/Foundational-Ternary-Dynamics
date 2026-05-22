@@ -312,7 +312,7 @@ with the 1/L² fit yielding α_largeL ≈ 3.6 × α_ref. The cross-scale series
 above shows the maximum-r ratio dropping from 4.1× (L=64) to 1.4× (L=256), a
 non-monotonic finite-L scaling diagnostic, **not a convergence proof**. Whether
 α_largeL matches α_ref depends on the framework's `a_phys` calibration choice
-(see [OPEN_A_PHYS_DERIVATION.md](archive/resolved/OPEN_A_PHYS_DERIVATION.md)); under the
+(see [OPEN_A_PHYS_DERIVATION.md](../resolved/OPEN_A_PHYS_DERIVATION.md)); under the
 declared calibration `a_phys ≡ ℓ_P`, the engine's prediction is α_engine ≈
 3.6 × α_ref at L = 384, which is falsifiable as stated.
 
@@ -402,7 +402,7 @@ What is **not** established:
   Whether `α_engine` should equal `α_ref` is decidable only after the
   framework's `a_phys` calibration is declared. Under the recommended
   calibration `a_phys ≡ ℓ_P` (see
-  [OPEN_A_PHYS_DERIVATION.md](archive/resolved/OPEN_A_PHYS_DERIVATION.md)), the present
+  [OPEN_A_PHYS_DERIVATION.md](../resolved/OPEN_A_PHYS_DERIVATION.md)), the present
   discrepancy is a falsifying disagreement with the calibrated prediction;
   under an alternative calibration, the discrepancy could be reconciled. The
   headline finding is the measurement itself, conditional on the calibration.

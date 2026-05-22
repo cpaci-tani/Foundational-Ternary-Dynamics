@@ -9,7 +9,6 @@
 
 **Depends on:**
 - [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md) --- Alpha-power ladder, dual substrate identity
-- [FOUND_DEEP_HIERARCHY.md](FOUND_DEEP_HIERARCHY.md) --- Twelve stages, three quadratics
 - `ontic.h` --- Complete derivation chain
 
 ---
@@ -220,7 +219,6 @@ In D=3, these four mode types map exactly to the four forces. In D=2, the intern
 ## Cross-References
 
 - **Ladder generating rule**: [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md)
-- **Deep hierarchy**: [FOUND_DEEP_HIERARCHY.md](FOUND_DEEP_HIERARCHY.md)
 - **G* / ontic-chain status**: canonical theorem/status stack in [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md), [SPEC_FQCR.md](../01_reference/SPEC_FQCR.md), and [TRACKER_ONTIC_TRUTH.md](../07_assessment/TRACKER_ONTIC_TRUTH.md)
 - **SU(2) weak sector**: [DERIV_LATTICE_SU2_WEAK.md](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
 - **SU(3) gauge theory**: [DERIV_LATTICE_SU3_GAUGE.md](../03_derivations/DERIV_LATTICE_SU3_GAUGE.md)

@@ -674,8 +674,6 @@ of all theorems in this document.
 
 - [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) - Imaginary unit foundations
 - [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) - Full hierarchy
-- [EXPLR_FEIGENBAUM_CONNECTION.md](../archive/ARCH_EXPLR_FEIGENBAUM_CONNECTION.md) - Chaos theory connection
-- [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md) - Original derivation
 
 ---
 

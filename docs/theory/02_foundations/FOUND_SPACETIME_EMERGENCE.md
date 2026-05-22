@@ -6,7 +6,7 @@
 **Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Foundational theory with 5 testable predictions
 
-> **Merge note (v5.26):** This document consolidates the former `FOUND_DIMENSIONAL_EMERGENCE.md` (the algebra of relation, Feb 1 2026) and `FOUND_SPACE_TIME_SEPARATION.md` (ontological separation of space and time, Feb 5 2026). The originals are archived at `archive/ARCH_DIMENSIONAL_EMERGENCE.md` and `archive/ARCH_SPACE_TIME_SEPARATION.md`.
+> **Merge note (v5.26):** This document consolidates the former `FOUND_DIMENSIONAL_EMERGENCE.md` (the algebra of relation, Feb 1 2026) and `FOUND_SPACE_TIME_SEPARATION.md` (ontological separation of space and time, Feb 5 2026). The standalone originals were removed in the 2026-05-21 consolidation; git history retains them.
 
 ---
 
@@ -249,7 +249,7 @@ The "-1" is the pairing cost: when you create the self-referential structure (th
 
 ## Part VI: Dimensional Buckling — Argument 8 for D = 3
 
-> **Merge note (Feb 14, 2026):** This section was originally published as the standalone document `EXPLR_DIMENSIONAL_BUCKLING.md` (v1.0, Feb 10, 2026, [CONJECTURE]). The archived original is at `archive/ARCH_EXPLR_DIMENSIONAL_BUCKLING.md`.
+> **Merge note (Feb 14, 2026):** This section was originally published as the standalone document `EXPLR_DIMENSIONAL_BUCKLING.md` (v1.0, Feb 10, 2026, [CONJECTURE]). The standalone original was removed in the 2026-05-21 consolidation; git history retains it.
 
 ### 6.1 Dimensions as Buckling Events
 
@@ -372,7 +372,7 @@ The imaginary unit $i$ is not "making time imaginary." In FTD, $i$ emerges from 
 
 ### 9.2 The Consciousness Roots
 
-The consciousness quadratic (from [ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](../archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md)):
+The consciousness quadratic:
 
 $$y^2 - \frac{G^{*2}}{2}y + \frac{G^{*3}}{2} = 0$$
 
@@ -559,10 +559,8 @@ Quantum gravity is not "unifying space and time." It is understanding the **coup
 - **The First Distinction:** [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md)
 - **The Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
 - **Ontological Genesis:** [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md)
-- **Consciousness quadratic (archived):** [ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md](../archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md)
 - **Relativity derivation:** [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md)
 - **Cuboctahedral integers:** [DERIV_CUBOCTAHEDRAL_INTEGERS.md](../08_structural/DERIV_CUBOCTAHEDRAL_INTEGERS.md)
-- **Novel predictions:** [AUDIT_NOVEL_PREDICTIONS.md](../archive/ARCH_AUDIT_NOVEL_PREDICTIONS.md)
 
 ---
 

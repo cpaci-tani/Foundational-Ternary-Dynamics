@@ -40,7 +40,7 @@ Tower observables at each level: `x_+(k)`, `x_-(k)`, `1/y_+(k) = G*/x_+(k)`, `1/
 The catalog is locked at **N_targets = 22 dimensionless physics constants** drawn from established sources (CODATA 2022, PDG 2024, established cosmology). Locking criterion: the constant must have an experimental determination at ≤1% precision and a name recognized by mainstream physics.
 
 **Anchor (verified, included for control):**
-1. `α⁻¹` (CODATA 2022): 137.035999084(21)
+1. `α⁻¹` (CODATA 2022): 137.035999177(21)
 
 **Lepton mass ratios (PDG 2024):**
 2. `m_μ/m_e`: 206.7682830

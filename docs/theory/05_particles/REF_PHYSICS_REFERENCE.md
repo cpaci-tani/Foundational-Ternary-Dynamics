@@ -6,7 +6,7 @@
 **Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Comprehensive reference — integer survey + completeness audit
 
-> **Merge note (v5.26):** This document consolidates the former `REF_PHYSICS_ENCODINGS.md` (integer appearances in physics, Jan 22 2026) and `REF_PHYSICS_COMPLETENESS_MATRIX.md` (SM completeness audit, Feb 1 2026). The originals are archived at `archive/ARCH_PHYSICS_ENCODINGS.md` and `archive/ARCH_PHYSICS_COMPLETENESS_MATRIX.md`.
+> **Merge note (v5.26):** This document consolidates the former `REF_PHYSICS_ENCODINGS.md` (integer appearances in physics, Jan 22 2026) and `REF_PHYSICS_COMPLETENESS_MATRIX.md` (SM completeness audit, Feb 1 2026). The standalone originals were removed in the 2026-05-21 consolidation; git history retains them.
 
 ---
 
@@ -239,7 +239,6 @@ Pions, kaons, η, η', D mesons, B mesons — all to < 0.1% accuracy. See comple
 
 ## Cross-References
 
-- **Master quadratic:** [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **Number theory:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **Framework reference:** [SPEC_FTD_REFERENCE.md](../01_reference/SPEC_FTD_REFERENCE.md)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)

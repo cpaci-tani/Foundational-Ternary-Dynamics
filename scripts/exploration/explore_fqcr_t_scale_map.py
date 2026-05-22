@@ -115,7 +115,7 @@ M_E = 0.51099895
 M_MU = 105.6583755
 M_TAU = 1776.86
 
-ALPHA_INV_AT_ME = 137.0359990840  # CODATA at low energy (Thomson)
+ALPHA_INV_AT_ME = 137.0359991770  # CODATA at low energy (Thomson)
 
 
 def alpha_inv_QED_lepton(mu_MeV: float) -> float:

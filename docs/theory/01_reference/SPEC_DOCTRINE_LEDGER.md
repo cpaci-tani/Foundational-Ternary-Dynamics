@@ -1,8 +1,8 @@
-# SPEC · FTD/FQCR Doctrine Ledger v1.3
+# SPEC · FTD/FQCR Doctrine Ledger v1.4
 
 **Tag:** [REFERENCE] — single-page status map. Per-element tags within (see §0 status key + §13 audit).
-**Date:** 2026-05-18
-**Version:** 1.3 (physicist consolidation of `complete_ftd_chain_v1.md` intake; no tag promotion; Phase-2 hardening cross-linked to `SPEC_OPEN_MATH_BY_SECTOR.md`).
+**Date:** 2026-05-20
+**Version:** 1.4 (ontic-system v0.2 intake reconciliation; branch-compliance/Yilmaz gravity fenced per FTD-0184; no tag promotion).
 **LEDGER:** FTD-0145 [SYNTHESIS] — claim-aggregation roll-up; introduces no new theorems.
 **Companion docs:**
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical 9-theorem reference (theorem-only, physics-free)
@@ -13,7 +13,6 @@
 - [`SPEC_OPEN_MATH_BY_SECTOR.md`](SPEC_OPEN_MATH_BY_SECTOR.md) — 18-item bridge-complete roadmap (Phase 2 hardening targets)
 - [`../07_assessment/TRACKER_ONTIC_TRUTH.md`](../07_assessment/TRACKER_ONTIC_TRUTH.md) — bedrock truth-tier tracker (T1–T5; OT-N.M IDs)
 - [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) — atomic per-claim provenance (FTD-NNNN IDs)
-- [`../07_assessment/AUDIT_COMPLETE_FTD_CHAIN_V1.md`](../07_assessment/AUDIT_COMPLETE_FTD_CHAIN_V1.md) — intake audit for the external `complete_ftd_chain_v1.md` synthesis draft
 
 ---
 
@@ -26,6 +25,8 @@
 **Why the doctrine exists.** FTD's canonical claim infrastructure has accumulated nine theorems, ~150 LEDGER rows, fifteen T1–T5 tracker entries, an 18-item math-completion checklist, and a five-model FQCR capstone. The doctrine compresses this into a single navigation surface that exposes which derivation chains are non-circular, which are imported scaffolding, and which are pending hardening. It prevents cycling — repeatedly re-litigating the same claim because the per-claim status was buried in a 700-line ledger.
 
 **v1.3 physicist consolidation.** The 2026-05-18 intake of `complete_ftd_chain_v1.md` adds no canonical claim and no new theorem. It sharpens the physics-facing reading: FTD is presently defensible as a finite-invariant algebraic reconstruction program whose strongest physical conjecture is the operational identification of the master-quadratic/FQCR dominant branch with the electromagnetic coupling. The mathematical object is solid; the physical readout is the open problem. `SPEC_MATH_FIRST_ONTOLOGY.md` now names this ordering explicitly: primitives -> invariants -> admissible readouts -> operational physics.
+
+**v1.4 ontic-system reconciliation.** The 2026-05-20 intake of `FTD_Ontic_System_v0_2_Agent_Brief.md` records useful external finite-closure/FQCR vocabulary but does not import a new ontology or gravity sector. Per FTD-0184, the branch-compliance exponential readout metric is the closed-negative Yilmaz route. The surviving gravity task is substrate-side strong-field GR / Schwarzschild-Kerr-horizon derivation, not reusing the exponential metric as a shortcut.
 
 ---
 
@@ -181,12 +182,12 @@ where `α_N⁻¹(t) = 8(G_N*)² + 4(G_N*)^{3/2} √(4G_N* − R_N(t))` is the do
 | `A_N = (1/3) d/dt log Ψ_N` once `Ψ_N` is selected                    | [DERIVED]                        | SPEC_FQCR.md §3.3                                                                        |
 | `λ_N(4it)` shape term as truncated modular lambda                    | [SELECTION]                      | SPEC_FQCR.md §3.3                                                                        |
 | `R_N = 1 + λ_N + A_N` additive combination                           | [SELECTION]                      | SPEC_FQCR.md §3.3 (one of several plausible combinations)                                |
-| Coefficient 16 = `\|Aut(E)\|²` for `E: y² = x³ − x`                  | [THEOREM]                        | SPEC_ALGEBRAIC_SPINE.md §4 Theorem 4; OT-4.1 (T4 — true at value level; structural identification conjectural) |
+| Coefficient 16 = `\|Aut(E)\|²` for `E: y² = x³ − x`                  | [CONJECTURE] (T4: value-equality holds, structural necessity unproven) | SPEC_ALGEBRAIC_SPINE.md §4 Theorem 4; OT-4.1 (T4 — true at value level; structural identification conjectural) |
 | `t = 1` fixed under modular involution                                | [THEOREM]                        | Direct: `1/t = t ⇔ t² = 1 ⇔ t = ±1`                                                     |
 | Base coupling evaluated at `t = 1`                                    | [SELECTION — physical principle] | SPEC_FQCR.md §3.2 (a-priori interpretation of `t` is open)                               |
 | Branch quadratic `x² − 16(G_N*)²x + 16(G_N*)³R_N(t) = 0` (notational) | [THEOREM — notational identity] | SPEC_FQCR.md §2 Prop 5; reduces to spine master quadratic at `R_N(1)=1, N→∞`             |
 | `α_FTD⁻¹ ≈ 137.035999177` at `t = 1`                                  | [STRONGLY MOTIVATED CONJECTURE]  | OT-5.1; FTD-0013. Structural evidence: ~4×10⁵:1 Bayes (OT-3.3, 2.87M-poly scan with 0 Eisenstein dual-matchers); 63-discriminant Γ-product null at `h ≥ 2` (OT-3.2); Z[i] structural unification of CM Aut count and tower level k=4 (OT-1.5, FTD-0122). |
-| Identification with physical `α⁻¹` (CODATA `137.035999084(21)`)       | [STRONGLY MOTIVATED CONJECTURE]  | OT-5.1; agreement 1.26 ppm; not [DERIVED] absent a non-action injection mechanism (MC-T4.3, foundational obstruction). |
+| Identification with physical `α⁻¹` (CODATA 2022 `137.035999177(21)`)       | [STRONGLY MOTIVATED CONJECTURE]  | OT-5.1; agreement 1.26 ppm; not [DERIVED] absent a non-action injection mechanism (MC-T4.3, foundational obstruction). |
 
 ---
 
@@ -331,6 +332,8 @@ matches measured `1.752 × 10⁻⁴⁵` to **0.38%** (within FTD-0015's existing
 
 **Closed-negative finding.** The framework-integer claim `G_N = 1/(b_3 + N_c)² = 1/100 in lattice units` is **[CLOSED NEGATIVE]** as identification with physical `G_N`. The substrate-derived `α_G` differs from `1/100` by `~10²⁰` (K_B = m_e calibration), `~300` (K_B = m_P calibration), or `~10⁴³` (dimensionless `α_G(e,e)`) — at minimum a 2.5-order discrepancy under any natural calibration.
 
+**v1.4 closed-negative guardrail (FTD-0184).** The external ontic-system v0.2 branch-compliance/source-law stack proposes the exponential readout metric `dτ=e^{-U}`, `d ell_eff=e^U d ell`, `n_γ=e^{2U}`, and `dτ_m^2=e^{-2U}dt^2-e^{2U}d ell^2/c^2`. This is the Yilmaz-style route: useful as red-team provenance, but **[CLOSED NEGATIVE]** as a replacement FTD gravity sector because it diverges from GR beyond leading weak-field order and removes literal horizons. `Action-Closure Duality`, `ell_F`, `m_F`, and mass-depth notation receive **no promotion**; they are Planck-scale/substitution-identity bookkeeping under the existing calibration.
+
 **v1.2 candidate principles.** The proposed Phase-3 program lists three candidate principles for substrate-deriving the remaining gravitational structure:
 1. Finite trace curvature (curvature from `s_m` variation in §3 finite-trace mechanics)
 2. Graph spectral curvature (curvature from lattice Laplacian eigenvalue structure)
@@ -345,9 +348,12 @@ These are **[CANDIDATE PRINCIPLE]** alternatives within the §14 Phase-3 program
 | Schwarzschild leading-order `dτ/dT = 1 + 2φ_g/c²` recovered           | [DERIVED, conditional on 2 flagged postulates] | FTD-0131; DERIV_NEWTON_FROM_SUBSTRATE.md §1                                |
 | `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵`, 0.38% match                | [STRONGLY MOTIVATED CONJECTURE] (floor inherited from FTD-0015) + [DERIVED chain] | FTD-0131; the 0.38% precision is squared FTD-0015 precision (mechanical, not new evidence); chain steps 1.1–1.5 are derived from substrate; 2 flagged postulates |
 | `G_N = 1/(b_3 + N_c)² = 1/100` framework-integer reading              | **[CLOSED NEGATIVE per FTD-0131]** | Off by `~10²⁰` to `~10⁴³` under any natural calibration                              |
+| Branch-compliance/Yilmaz exponential metric route (`dτ=e^{-U}`, `n_γ=e^{2U}`) | **[CLOSED NEGATIVE per FTD-0184]** | Agrees at low weak-field order but conflicts with standing GR/black-hole sector; see LEDGER FTD-0184 |
+| `Action-Closure Duality`, `ell_F`, `m_F`, mass-depth notation          | [NO NEW CLAIM]                    | Planck-length/Planck-mass reparameterization and substitution identity per FTD-0184      |
 | Gravitational coupling form `ρ_g = K_B^grav · 1_manifested`           | [POSTULATE 1, flagged]           | DERIV_NEWTON_FROM_SUBSTRATE.md §1.2                                                      |
 | Linearized tick-rate response `tick = 1 + 2φ_g/c²`                    | [POSTULATE 2, flagged]           | Matches GR linearization; substrate-derivation [OPEN]                                    |
 | Beyond-leading-order GR (Mercury perihelion, light bending, GW)       | [OPEN]                           | DERIV_NEWTON_FROM_SUBSTRATE.md §5                                                        |
+| Substrate-side strong-field GR / Schwarzschild-Kerr-horizon derivation | [OPEN]                           | Genuine open item surfaced by FTD-0184; do not use the exponential-metric shortcut       |
 | Equivalence-principle analogue from substrate                         | [OPEN]                           | No canonical anchor                                                                      |
 | Mass-gap to curvature source                                          | [OPEN]                           | No canonical anchor                                                                      |
 | Three v1.2 candidate principles (trace curvature / graph spectral / adjacency deformation) | [CANDIDATE PRINCIPLE] | Phase-3 hardening targets; not derivations                                          |
@@ -392,7 +398,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 4. **Derive Higgs residual curvature `χ_H`** — no canonical anchor.
 5. **Force flavor depth matrices from explicit transfer matrices** — no canonical anchor (depth matrices §10 [PARAMETRIC scaffold]).
 6. **Substrate-derive QCD trace-gap confinement** — FTD-0025 night-2026-05-03 audit recorded structural obstruction (no Phase-G analog for area-law behavior); the strong-sector substrate-derivation gap is real and structural.
-7. **Build gravity as finite trace curvature** — partial closure FTD-0131 (`α_G` to 0.38%, 2 postulates flagged); remaining items (Newtonian limit beyond leading order, equivalence principle, mass-gap-to-curvature) [OPEN].
+7. **Build gravity as finite trace curvature** — partial closure FTD-0131 (`α_G` to 0.38%, 2 postulates flagged); FTD-0184 closes the branch-compliance/Yilmaz shortcut negative and leaves substrate-side strong-field GR / horizon derivation [OPEN].
 
 ---
 
@@ -400,7 +406,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 
 ### Phase 1 — Doctrine ledger and audit (this document)
 
-**Status: COMPLETE.** This v1.3 document compresses FTD's claim infrastructure into a single navigation surface. Every claim is rolled up at canonical tag from `LEDGER.md`, `TRACKER_ONTIC_TRUTH.md`, `SPEC_ALGEBRAIC_SPINE.md`, `SPEC_FQCR.md`, `SPEC_OPEN_MATH_BY_SECTOR.md`, or `CATALOG_PARAMETRIC_INSERTIONS.md`. The non-circularity audit (§13) reads out the four-layer structure (derived / selected / imported / numerical) without inventing new categories. The 2026-05-18 physicist consolidation adds the operational-readout priority in §0.3 and §13.5 without changing any claim tag.
+**Status: COMPLETE.** This v1.4 document compresses FTD's claim infrastructure into a single navigation surface. Every claim is rolled up at canonical tag from `LEDGER.md`, `TRACKER_ONTIC_TRUTH.md`, `SPEC_ALGEBRAIC_SPINE.md`, `SPEC_FQCR.md`, `SPEC_OPEN_MATH_BY_SECTOR.md`, or `CATALOG_PARAMETRIC_INSERTIONS.md`. The non-circularity audit (§13) reads out the four-layer structure (derived / selected / imported / numerical) without inventing new categories. The 2026-05-20 ontic-system reconciliation adds the FTD-0184 gravity guardrail without changing any claim tag.
 
 ### Phase 2 — Hardening
 
@@ -412,7 +418,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 | 3        | Higgs residual curvature `χ_H`                    | NEW — no canonical anchor                                                | OPEN                             |
 | 4        | Flavor transfer matrices forcing depths           | NEW — no canonical anchor                                                | OPEN                             |
 | 5        | QCD trace-gap confinement substrate derivation    | FTD-0025 night-audit (2026-05-03); FTD-0131 cross-ref                    | OPEN, structural obstruction recognized |
-| 6        | Gravity beyond Newtonian limit (substrate-side GR)| FTD-0131 partial; remaining items in `DERIV_NEWTON_FROM_SUBSTRATE.md` §5 | OPEN, partial closure landed     |
+| 6        | Gravity beyond Newtonian limit (substrate-side GR)| FTD-0131 partial; FTD-0184 closes branch-compliance/Yilmaz route negative | OPEN, partial closure landed; shortcut closed negative |
 
 ### Phase 3 — Gravity (subsumed by Phase 2 priority 6 + new candidate principles)
 
@@ -447,7 +453,7 @@ This is the strongest possible FTD self-claim. **Achievability is conditional on
 | §9          | LEDGER.md (FTD-0017 Higgs)                                                                          | FTD-0017                                                       | (parametric)                 |
 | §10         | CATALOG_PARAMETRIC_INSERTIONS.md (flavor section)                                                   | (catalog rows)                                                 | (parametric scaffold)        |
 | §11         | LEDGER.md (FTD-0020 α_s; FTD-0025 confinement night-audit); standard QCD                            | FTD-0020, FTD-0025 (annotated 2026-05-03)                       | OT-5.2 (`x_- ↔ N_c`)         |
-| §12         | ../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md; SPEC_ALGEBRAIC_SPINE.md §6 (Phase G)              | **FTD-0131** ([SMC] for prediction inherited from FTD-0015 + [DERIVED chain]), FTD-0004, FTD-0110, FTD-0015 | OT-1.4, OT-3.4         |
+| §12         | ../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md; SPEC_ALGEBRAIC_SPINE.md §6 (Phase G) | **FTD-0131** ([SMC] for prediction inherited from FTD-0015 + [DERIVED chain]), **FTD-0184** (branch-compliance/Yilmaz route [CLOSED NEGATIVE]; strong-field substrate gravity [OPEN]), FTD-0004, FTD-0110, FTD-0015 | OT-1.4, OT-3.4 |
 | §13         | LEDGER.md (full); CATALOG_PARAMETRIC_INSERTIONS.md; TRACKER_ONTIC_TRUTH.md (T1–T5)                  | (roll-up)                                                      | (roll-up)                    |
 | §14         | SPEC_OPEN_MATH_BY_SECTOR.md (MC-T4.3, MC-T3.1, MC-T3.6, T4.4)                                        | (roadmap)                                                      | (roadmap)                    |
 
@@ -455,7 +461,7 @@ This is the strongest possible FTD self-claim. **Achievability is conditional on
 
 # §16 · Refresh policy
 
-This v1.3 document is refreshed when:
+This v1.4 document is refreshed when:
 
 - A LEDGER row's tag changes for any claim cited in §1–§13.
 - `SPEC_ALGEBRAIC_SPINE.md` adds, removes, or retags a theorem.
@@ -470,4 +476,4 @@ When refreshing, increment the `Version` line in the header (v1.3 → v1.4 etc.)
 
 # §17 · Single-line summary
 
-**FTD's algebraic spine is nine theorems centered on `G* = Γ(1/4)/Γ(3/4) ≈ 2.9587`; the FQCR capstone (Models I–V) lands operator-theoretic provenance and the finite-N reframe-compatible restatement; the master quadratic's roots match `1/α` to 1.26 ppm and `N_c` to 0.80% as [STRONGLY MOTIVATED CONJECTURE]; the strongest physics-facing claim is therefore a rigid candidate readout, not a finished derivation; gravity has a partial closure (`α_G(e,e) = (m_e/m_P)²` to 0.38%, FTD-0131, postulate-conditional); the §7 bivector/Dirac/QED bridge sector is [OPEN] pending a non-site-local construction compatible with FTD-0073's mode-erasure closure; §8's GUT-lock `sin²θ_W = 3/8` and IR `sin²θ_W = 3/13` [PARAMETRIC] coexist in canon at distinct scales; the central foundational obstruction (MC-T4.3, operational alpha-readout mechanism) may require ontology extension beyond the 5 axioms.**
+**FTD's algebraic spine is six theorem-grade results plus three honestly-tiered subsidiary results (nine numbered; see `SPEC_ALGEBRAIC_SPINE.md` §0) centered on `G* = Γ(1/4)/Γ(3/4) ≈ 2.9587`; the FQCR capstone (Models I–V) lands operator-theoretic provenance and the finite-N reframe-compatible restatement; the master quadratic's roots match `1/α` to 1.26 ppm and `N_c` to 0.80% as [STRONGLY MOTIVATED CONJECTURE]; the strongest physics-facing claim is therefore a rigid candidate readout, not a finished derivation; gravity has a partial closure (`α_G(e,e) = (m_e/m_P)²` to 0.38%, FTD-0131, postulate-conditional), while the branch-compliance/Yilmaz shortcut is closed negative (FTD-0184) and substrate-side strong-field GR remains open; the §7 bivector/Dirac/QED bridge sector is [OPEN] pending a non-site-local construction compatible with FTD-0073's mode-erasure closure; §8's GUT-lock `sin²θ_W = 3/8` and IR `sin²θ_W = 3/13` [PARAMETRIC] coexist in canon at distinct scales; the central foundational obstruction (MC-T4.3, operational alpha-readout mechanism) may require ontology extension beyond the 5 axioms.**

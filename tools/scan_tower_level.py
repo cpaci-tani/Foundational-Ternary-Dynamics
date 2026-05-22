@@ -57,7 +57,7 @@ NULL_REJECT_UPWARD_MIN_NONK4 = 15
 # from CODATA 2022, PDG 2024, or Planck 2018 as documented in the protocol.
 CANDIDATES = [
     # Anchor (verified, control)
-    ("1/alpha (CODATA 2022)", mpf("137.035999084")),
+    ("1/alpha (CODATA 2022)", mpf("137.035999177")),
     # Lepton mass ratios (PDG 2024)
     ("m_mu/m_e (PDG)", mpf("206.7682830")),
     ("m_tau/m_e (PDG)", mpf("3477.23")),

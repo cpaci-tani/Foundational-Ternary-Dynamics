@@ -34,9 +34,9 @@ We propose a quantum collapse mechanism within FTD as a consequence of the algeb
 
 **Epistemic note:** the entire mechanism rests on the scaffold hypothesis. Under the framework's actual ontology (every region Type I), the Softplus → ReLU transition is a finite-dimensional limit on a Type I algebra — phenomenologically valid as a model of decoherence + collapse, but not requiring the Type III₁ → Type I transition story. The scaffold framing is retained because it is informative about the kind of measurement structure the framework reproduces, not because it is derived from Axiom Zero.
 
-The Born rule $P(s) = |\langle s | J \rangle|^2$ is not assumed but emerges from the Gaussian structure of the Euclidean action $S_E$. The decoherence timescale is set by $N_\text{meas} \approx 18$ lattice ticks, corresponding to the minimal measurement cluster.
+The Born rule $P(s) = |\langle s | J \rangle|^2$ — specifically its $|\psi|^2$ *form* — is motivated by the Gaussian structure of the Euclidean action $S_E$ [SELECTION]; the load-bearing step *probability = normalized energy density* is not derived [OPEN]. Canonical status: LEDGER FTD-0187. The decoherence timescale is set by $N_\text{meas} \approx 18$ lattice ticks, corresponding to the minimal measurement cluster.
 
-**Epistemic discipline:** The mathematical properties of ReLU, Softplus, and the Lindblad equation are [THEOREM]. The identification of FTD's manifestation process with the Lindblad framework is [SELECTION] — structurally argued but not uniquely proven. The Born rule emergence from the Gaussian action is [THEOREM] given the algebraic identification. The decoherence timescale is [CONJECTURE].
+**Epistemic discipline:** The mathematical properties of ReLU, Softplus, and the Lindblad equation are [THEOREM]. The identification of FTD's manifestation process with the Lindblad framework is [SELECTION] — structurally argued but not uniquely proven. The Born rule's $|\psi|^2$ *form* from the Gaussian action is [SELECTION]; the *probability = normalized energy density* step is [OPEN] (LEDGER FTD-0187) — not [THEOREM]. The decoherence timescale is [CONJECTURE].
 
 ---
 
@@ -360,11 +360,13 @@ This is the *physical implementation* of the Existence Filter. The abstract proj
 
 ---
 
-## 7. Born Rule Derivation [THEOREM given algebraic identification]
+## 7. Born Rule — |ψ|² Form [SELECTION] / Probability=Density Step [OPEN]
+
+> **Canonical status (LEDGER FTD-0187):** this section does *not* derive the Born rule. §7.1 derives Born *within the imported Lindblad/QM formalism* (a theorem of that formalism, which already carries Born-rule structure). §7.2's Gaussian-action argument motivates the |ψ|² *form* [SELECTION] but does not derive the step *probability = normalized energy density* [OPEN, target T1c] — its key equality identifies the Gaussian weight *with* |ψ|², i.e. the Born rule enters as an input. Section heading retained for stable cross-references.
 
 ### 7.1 From Lindblad to Born
 
-In the Lindblad framework, the probability of outcome $s$ after complete decoherence is [THEOREM]:
+In the Lindblad framework, the probability of outcome $s$ after complete decoherence is [THEOREM *within the imported Lindblad/QM formalism* — that formalism already carries Born-rule structure; see FTD-0187]:
 
 $$P(s) = \text{Tr}(\Pi_s \rho \Pi_s) = \text{Tr}(\Pi_s \rho) = \langle s | \rho | s \rangle$$
 
@@ -374,9 +376,9 @@ $$P(s) = |\langle s | \psi \rangle|^2$$
 
 This is the Born rule. Within the Lindblad formalism, it is a theorem, not an axiom — it follows from the completeness of the projection operators and the trace-preserving property of the CPTP map.
 
-### 7.2 From FTD's Gaussian Action [THEOREM]
+### 7.2 From FTD's Gaussian Action [SELECTION — |ψ|² form / OPEN — probability=density]
 
-In FTD, the Born rule has a deeper origin: it follows from the Gaussian structure of the Euclidean action.
+In FTD, the Born rule's $|\psi|^2$ *form* is motivated by the Gaussian structure of the Euclidean action [SELECTION]; the load-bearing step *probability = normalized energy density* is not derived [OPEN]. Canonical status: LEDGER FTD-0187.
 
 The FTD partition function (DERIV_PATH_INTEGRAL_CONSTRUCTION.md) is:
 
@@ -390,7 +392,7 @@ where $\mathbf{M}$ is the lattice Laplacian matrix. The probability of a given s
 
 $$P(\{s\}) = \frac{1}{Z} \int \mathcal{D}\mathbf{J} \; \exp\!\left(-S_E[s, \mathbf{J}]\right)$$
 
-**Theorem CM-T4** [THEOREM given Gaussian identification]. The Gaussian integral yields:
+**Theorem CM-T4** [THEOREM of the Gaussian integral; *not* a derivation of the Born rule — the "Gaussian identification" it is *given* (identifying the Gaussian weight with $|\psi|^2$) is itself the Born rule; see FTD-0187]. The Gaussian integral yields:
 
 $$P(s \text{ at } v) \propto \int d^3J \; \delta\!\left(s - \text{ReLU}(|J| - K_B) \cdot \text{sign}(J)\right) \exp\!\left(-\frac{|J|^2}{2\sigma^2}\right)$$
 
@@ -485,7 +487,7 @@ The Softplus $\to$ ReLU transition maps onto this trichotomy:
 | 6 | $\beta \to \infty$ limit of Lindblad = von Neumann projection | [THEOREM] | Limit of claim 4 | Claim 4 |
 | 7 | Flux algebra is Type III$_1$ | [CONJECTURE] | Argued from KMS + spectral properties | EXPLR_RELU_TYPE_TRANSITION.md |
 | 8 | ReLU kink selects MASA (Type III$_1 \to$ Type I) | [CONJECTURE] | Central claim of EXPLR_RELU_TYPE_TRANSITION.md | Claim 7 |
-| 9 | Born rule from Gaussian action | [THEOREM] | Given Gaussian identification | DERIV_PATH_INTEGRAL_CONSTRUCTION.md |
+| 9 | Born rule \|ψ\|² *form* from Gaussian action | [SELECTION] / [OPEN] | Form motivated; the "Gaussian identification" (Gaussian weight ≡ \|ψ\|²) is the Born rule itself — not a derivation (FTD-0187) | DERIV_PATH_INTEGRAL_CONSTRUCTION.md |
 | 10 | Born rule from null-cone geometry | [SELECTION] | Structural argument | FOUND_THE_EXISTENCE_FILTER.md |
 | 11 | $N_\text{meas} \approx 18$ voxels | [CONJECTURE] | Moore neighborhood argument | Needs simulation verification |
 | 12 | $\tau_\text{decoherence} \approx 18 \; \tau_\text{Planck}$ | [CONJECTURE] | Follows from claim 11 | Claim 11 |
@@ -496,9 +498,9 @@ The Softplus $\to$ ReLU transition maps onto this trichotomy:
 - The mathematical properties of the Softplus/$\beta$-family (smoothness, limits, Fermi-Dirac connection)
 - The Lindblad equation produces exponential decoherence for projection-type Lindblad operators
 - The $\beta \to \infty$ limit recovers von Neumann's projection postulate
-- The Born rule follows from the Gaussian structure of $S_E$ (given the path integral construction)
 
 **Argued (SELECTION):**
+- The Born rule's |ψ|² *form* from the Gaussian action (the *probability = normalized energy density* step is [OPEN], not even [SELECTION] — LEDGER FTD-0187, target T1c)
 - The identification of FTD's Lindblad operators with sector projections
 - The interpretation of $\beta$ as the measurement sharpness parameter
 - The connection between the discriminant trichotomy and collapse phases

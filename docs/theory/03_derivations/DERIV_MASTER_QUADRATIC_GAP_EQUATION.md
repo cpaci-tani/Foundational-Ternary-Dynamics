@@ -44,7 +44,7 @@ Numerically, with G\* = 2.95867…,
 
 | Root | Value | Match | Accuracy |
 |---|---|---|---|
-| $x_+$ | $137.036$ | $1/\alpha$ (CODATA: $137.035999084$) | $1.26$ ppm |
+| $x_+$ | $137.036$ | $1/\alpha$ (CODATA: $137.035999177$) | $1.26$ ppm |
 | $x_-$ | $3.024$ | $N_c = 3$ | $0.80$ % |
 
 ### 1.3 Vieta relations
@@ -108,7 +108,7 @@ One quadratic, three regimes:
 | Regime | Condition | Sign of $\Delta$ | Roots | Physical reading |
 |---|---|---|---|---|
 | **Bosonic** | $k > 4/G^*$ (e.g. $k = 16$) | $\Delta > 0$ | real, distinct | coupling constants $\alpha$, $N_c$ |
-| **Critical** | $k = 4/G^*$ | $\Delta = 0$ | real, degenerate | Born-rule / measurement boundary (FOUND_BORN_RULE_NULL_CONE.md) |
+| **Critical** | $k = 4/G^*$ | $\Delta = 0$ | real, degenerate | Born-rule / measurement boundary (FOUND_BORN_RULE_NULL_CONE.md; Born-rule derivation status: LEDGER FTD-0187) |
 | **Fermionic** | $k < 4/G^*$ | $\Delta < 0$ | complex conjugate, $x = a \pm b\,i$ | $e^{ibt}$ wavefunction oscillation — Dirac sector |
 
 The same polynomial encodes bosons (real roots, the physical $k = 16$ case), the measurement boundary (degenerate roots), and the fermion sector (complex roots, oscillatory in time). The fermion sector is not imported from external physics; it is the complex-discriminant regime of the same equation. [THEOREM for the algebra; SELECTION for the physical readings of each regime.]
@@ -123,7 +123,7 @@ The two roots $x_+ = 137.036$ and $x_- = 3.024$ are algebraic outputs. Their ide
 
 A single quadratic produces two roots that match two unrelated physical constants:
 
-- $x_+ = 137.036$ vs $1/\alpha = 137.035999084$ — agreement to 1.26 ppm.
+- $x_+ = 137.036$ vs $1/\alpha = 137.035999177$ — agreement to 1.26 ppm.
 - $x_- = 3.024$ vs $N_c = 3$ — agreement to 0.80 %.
 
 Either match in isolation could be coincidence. The **simultaneous** match of both roots to two constants of unrelated physical origin (electromagnetic coupling and strong-sector colour count) from a single algebraic equation is the structural evidence: the polynomial is producing two physical numbers at once.

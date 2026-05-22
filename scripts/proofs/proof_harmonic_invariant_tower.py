@@ -25,7 +25,7 @@ mp.dps = 50
 
 G = gamma(mpf(1) / 4) / gamma(mpf(3) / 4)  # G_STAR per scripts/constants.py
 
-CODATA_ALPHA_INV = mpf("137.035999084")  # CODATA 2022
+CODATA_ALPHA_INV = mpf("137.035999177")  # CODATA 2022
 
 
 def header(title):
