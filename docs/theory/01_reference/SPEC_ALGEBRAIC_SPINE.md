@@ -116,15 +116,20 @@ because G* > 1/4 (Theorem 1). See
 
 **LEDGER:** FTD-0001 (Master Quadratic Polynomial + Roots, [THEOREM]);
 the polynomial coefficients are deterministic functions of G*. The
-physical identifications x+ ↔ 1/α and x− ↔ N_c are tracked separately
-under FTD-0013 and FTD-0014 ([STRONGLY MOTIVATED CONJECTURE]).
+physical identification x+ ↔ 1/α is tracked separately under FTD-0013
+([STRONGLY MOTIVATED CONJECTURE]). The x− ↔ N_c identification was
+historically tracked as FTD-0014; it is **RETIRED** per v1.4 §5 (LEDGER
+row removed in commit `ca7eb61`) — x− ≈ 3.024 is a mathematical artifact
+of the polynomial only.
 
 **Dependencies:** Theorem 1.
 
 **What it does NOT claim.** That P(x) describes a physical system, an
 RG flow, a partition function, or any dynamical object. It is a
 quadratic polynomial in one variable. The numerical proximity x+ ≈ 1/α
-and x− ≈ N_c is recorded separately in §9.
+is recorded separately in §11 (and as a physics identification in
+FTD-0013). The proximity x− ≈ N_c is mathematical only; the physics
+identification x− ↔ N_c is retired per v1.4 §5.
 
 ---
 
@@ -134,7 +139,7 @@ and x− ≈ N_c is recorded separately in §9.
 
 1. **Tier-I MC-T1.2 closure (2026-05-02 morning)**: honestly reclassified the original h=1 claim from [THEOREM] to [NUMERICAL FACT, h=1 only].
 2. **9-Heegner rigidity scan (2026-05-02 evening, FTD-0124)**: pre-registered scan over 9 Heegner × 19 framework-integer-factorable coefficients × 17 framework-integer targets × 2 roots = 5814 quadruples. **Under the trivial-multiplier criterion (q = 1, root = target directly): EXACTLY ONE strict (5.45 ppm) match in the 5814-grid — the canonical (d=−4, c=16, x_+, 1/α).** First quantitative rigidity confirmation at this strict criterion. **Under the rational-multiplier criterion (q ≤ 200, FC-factorable): 21 strict matches.** The two criteria yield different verdicts (criterion bifurcation; see §"What it does NOT claim").
-3. **Γ-product extension to classes 1–4 (2026-05-02 evening, FTD-0123)**: pre-registered scan over 63 fundamental discriminants spanning class numbers 1, 2, 3, 4 with |d| ≤ 907 using the Γ-product analogue `G^*_d := ∏ Γ(a/|d|)^{χ_d(a)}`. **Result: exactly one dual-matcher, d = −4. ZERO h ≥ 2 matchers.** Numerical net 7× larger than the original Heegner-only set; d=−4 structural privilege survives.
+3. **Γ-product extension to classes 1–4 (2026-05-02 evening, FTD-0123)**: pre-registered scan over 63 fundamental discriminants spanning class numbers 1, 2, 3, 4 with |d| ≤ 907 using the Γ-product analogue `G^*_d := ∏ Γ(a/|d|)^{χ_d(a)}`. **Result: exactly one dual-matcher to the historical `(1/α, N_c)` target pair, d = −4. ZERO h ≥ 2 matchers.** Numerical net 7× larger than the original Heegner-only set; d=−4 structural privilege survives. *Note: the second target `N_c` reflects the pre-v1.4 state; `x_- ↔ N_c` is retired per v1.4 §5, but the polynomial-uniqueness fact at d=−4 is independent of which physical constant one tries to identify with `x_-`.*
 
 **Criterion declaration (load-bearing, FTD-0124).** This theorem holds under the **trivial-multiplier criterion**: a "match" requires the natural root x_± of P_d(x) to equal the target dimensionless constant directly (q = 1 in the rational-multiplier search). The analogous statement under the **rational-multiplier criterion** (allow rescaling by any q ≤ 200 with framework-integer factorability) FAILS — 20 additional non-canonical matches exist in the 5814-grid. **Cite this criterion explicitly when invoking Theorem 3.**
 
@@ -148,7 +153,8 @@ discriminants checked (h ∈ {1, 2, 3, 4} with |d| ≤ 907), the
 discriminant d = −4 is the **unique** value for which both roots
 simultaneously match dimensionless physical constants under the
 trivial-multiplier criterion at master-quadratic precision (1.26 ppm
-on x_+ vs 1/α; 0.80% on x_− vs N_c).
+on x_+ vs 1/α; the historical 0.80% match on x_− vs N_c used the
+pre-v1.4 target pair — `x_- ↔ N_c` is retired per v1.4 §5).
 
 **Verification.** Three pre-registered exhaustive numerical scans:
 - `scripts/proofs/scan_cm_curves.py` (original h=1 over 9 Heegner)
@@ -202,7 +208,7 @@ subsidiary results, not one of the six theorems.
 See `docs/theory/08_structural/EXPLR_COEFFICIENT_16.md` and
 `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` §6.
 
-**LEDGER:** FTD-0014 (subsidiary).
+**LEDGER:** FTD-0006 (Coefficient 16 from |Aut(E)|² — Route A, [THEOREM]). *(Previous pointer to FTD-0014 was a typo; FTD-0014 was the unrelated x_- ↔ N_c identification, now retired per v1.4 §5 / commit `ca7eb61`.)*
 
 **Dependencies:** Theorems 1, 2; basic CM curve theory.
 
@@ -370,8 +376,8 @@ $$\alpha_{\text{tree}} \;=\; \frac{1}{2 G^*} \;-\; \frac{\sqrt{4 G^* - 1}}{4\,G^
 
 equivalent to `16 G*³ α² − 16 G*² α + 1 = 0`. This is FTD-0001 in
 algebraically legible form; it is not a new claim and does not change
-the [STRONGLY MOTIVATED CONJECTURE] tag of the dual-prediction
-identification (see §10 below).
+the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊ ↔ 1/α identification
+(see §11). The x_- ↔ N_c identification was retired per v1.4 §5 (see §11).
 
 **What it does NOT claim.**
 - Selection of `k = 4` as the "physics level" of the tower. The tower
