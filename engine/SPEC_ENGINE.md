@@ -1,9 +1,96 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-04-27 (post 8-phase modular refactor sweep — see §"April 27, 2026 — Modular refactor sweep" below)
-**Engine version:** 2.17.0 (post-refactor: viewport + bridge + render_bridge + CUDA stencil all decomposed)
-**Test count:** 257 C++ test source files (211 active CMake targets after 2026-05-04 trim-the-fat round 4) + 17 Playwright specs + 23 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+**Last updated:** 2026-05-22 (post May engine work + theory Q10→Q12 chain — see §"May 2026" entries below for engine changes; the Q10→Q12 audits were desk-grade [SELECTION]/COUNT-MATCH findings that did not generate engine code changes)
+**Engine version:** 2.18.0 (post May 2026 — BH-F* GPU plumbing sweep, SplitMix64 RNG portability Option A, trim-the-fat rounds 2-4, `ftd_eft` library extraction, F9 Tier-1 + F11.A Tier-3 audit closures)
+**Test count:** 257 C++ test source files (211 active CMake targets after 2026-05-04 trim-the-fat round 4) + 18 Playwright specs + 25 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+
+### 2026-05-19 / 21 — F9 Tier-1 BLOCKER fixes (FTD-0148) + F11.A Tier-3 deep-dive (FTD-0151)
+
+Two audit-closure passes against the engine's standing F-series fix queue.
+Both status / correction only — no architecture or physics changes.
+
+- **F9 Tier-1 BLOCKER fixes** (`263c0a6`, FTD-0148 `[CORRECTION]`): three
+  Tier-1 blocking issues from the F9 web/engine audit closed; touched
+  engine + web layers.
+- **F11.A Tier-3 deep-dive** (`89479c0`, FTD-0151): re-evaluation pass of
+  Tier-3 audit items; closures + remaining items logged.
+
+### 2026-05-09 — BH-F* GPU plumbing sweep + RNG portability (Option A)
+
+Multi-week GPU-port effort consolidating CPU↔GPU parity across the BH
+feature batch. Centerpiece: a shared portable RNG that makes GPU outputs
+bit-exact with the CPU path for stochastic toggles.
+
+- **SplitMix64 RNG header + CPU refactor** (`c1a4f88`): shared
+  `include/ftd/splitmix64.h` replaces ad-hoc per-call RNGs; CPU refactored
+  to use it; primes BH-F5/F8/F9 GPU plumbing.
+- **BH-F5/F8/F9 CUDA GPU plumbing** (`c8e03a5`): RNG portability **Option
+  A** — GPU kernels seed and step through the same SplitMix64 stream as
+  the CPU, giving per-voxel bit-exact parity at unit mass under Langevin
+  / stochastic toggles. The anchor for all subsequent GPU campaign work.
+- **BH-F2** γ_FTD momentum integration ported to GPU (`2504c9b`).
+- **BH-F3** CPU↔GPU `accel_mag` definition unified (`10f00f9`).
+- **BH-F12** `emergent_forces` mode ported to GPU (`c887948`).
+- Prior CPU↔GPU parity bug-hunt (`f2a721a`, F1/F4/F6) + locked-particle
+  skip in `phase_forces_kernel` (`2fa326f`) + `inject_flux_cpu`
+  `flush_host_mutations` fix (`843c6f6`).
+- Toggle cleanup: `toggles.evaporation` flag with dual-path propagation
+  (`255c1dd`); dead `wv_x/y/z` params removed from `phase_movement_kernel`
+  (`2881238`); `ALPHA == ALPHA_EFT` vestigial comments dropped (`56985a4`).
+
+Net: the BH feature batch now has uniform CPU↔GPU parity and a portable
+deterministic RNG. WSL2 GPU re-verification of the new ports is on the
+standing queue.
+
+### 2026-05-04 — Trim-the-fat rounds 2-4 + 100% test pass + library extraction
+
+A three-pass test-corpus consolidation removing superseded / duplicate /
+exploratory ctest targets, paired with an effort to drive pass rate to 100%.
+
+- **Round 2** (`e8eb8e8`): −4609 LOC, 10 superseded/duplicate ctest files.
+- **Round 3** (`f2945cb`): 4 more deletions + `test_lagrangian` fixes
+  (net 9 residual fails closed).
+- **Round 4** (`08c517e`): −5397 LOC, 30 Phase B exploratory tests
+  (cluster_persistence arc consolidation under FTD-0136).
+- **`ftd_eft` static library extracted** (`11c7212`): fixes a circular
+  `ftd_core ↔ ftd_cuda` link-order issue; unblocks 42 previously Not-Run
+  tests.
+- **100% pass at WSL2** (`c62ae8e`, `3c8dda0`): GPU energy 0.5-factor fix
+  + 13 individual test fixes + maxwell M1b/M5a fixes; 6 multi-hour
+  benchmarks disabled with explicit reasons.
+- Misc: maxwell timeout 1800→3600 s under `-j4` contention (`4bf42b1`);
+  TH1/EIN-2/WP3/PV4 follow-ups (`dccd8f7`).
+
+Net: ~10,000 LOC of test code removed; **211 active CMake targets** remain;
+the WSL2 CUDA path reaches 100% pass on the in-scope ctest set.
+
+### 2026-05-03 — Phase B cluster-persistence arc + FTD-0110 follow-up
+
+- **Phase B + multi-session cluster-persistence arc** (`d40f879`): 4
+  retractions under F1/F9 hygiene + (a)+(b)+(c) closure under FTD-0136;
+  two stability islands at A ∈ {9.0–9.5} and A = 13.0 amid flooding
+  regimes at L = 64; theory pass attached.
+- **FTD-0110 Option A — A₁g projector campaign** (`2f67503`): local-block
+  claim falsified — the linear-mode A₁g prediction does not survive the
+  full nonlinear engine. Closed-negative.
+- **FTD-0110 cluster-geometry diagnostic + baseline-drift finding**
+  (`b4f1dcf`): separate baseline-drift observation flagged `[OPEN]`.
+
+### 2026-05-02 — Scale 11 (consciousness / reflexivity) UI deletion
+
+`054b530`: the Scale 11 web-dashboard surface removed (~5200 LOC). Per the
+2026-05-02 reflexivity-vocabulary refresh, the consciousness/reflexivity
+content was retired as a separate web scale; the underlying physics layer
+remains accessible via the existing flux/state APIs.
+
+### 2026-04-29 — Phase I C++ cross-check + Wilson-Dirac Phase II pre-reg (FTD-0125)
+
+`e4cebf4`: the FTD-0125 Phase I (cyclotomic / spectral) verification ported
+to C++ as a cross-check of the Python implementation; the Phase II
+Wilson-Dirac campaign pre-registration staged.
+
+---
 
 ### April 27, 2026 — Modular refactor sweep (8 phases, 17 commits)
 
