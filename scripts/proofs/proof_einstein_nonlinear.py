@@ -210,7 +210,7 @@ print("    5. Iterate until convergence")
 print()
 print("  The Schwarzschild metric in isotropic coordinates gives:")
 print("    g_00 = -(1 - GM/2r)^2 / (1 + GM/2r)^2")
-print("         = -(1 - 2GM/r + 2(GM/r)^2 - 2(GM/r)^3 + ...)")
+print("         = -(1 - 2GM/r + 2(GM/r)^2 - (3/2)(GM/r)^3 + ...)")
 print()
 print("  The post-Newtonian expansion in harmonic gauge:")
 print("    h_00 = -2GM/r - 2(GM/r)^2 - ... (known corrections)")
@@ -371,7 +371,7 @@ h00_exact = schwarzschild_exact_h00(r, GM)
 u = GM / r
 h00_PN1 = -2.0 * u                              # 1PN (Newtonian)
 h00_PN2 = -2.0 * u + 2.0 * u**2                 # 2PN (first correction)
-h00_PN3 = -2.0 * u + 2.0 * u**2 - 2.0 * u**3   # 3PN
+h00_PN3 = -2.0 * u + 2.0 * u**2 - 1.5 * u**3   # 3PN
 
 # Compare at the midpoint
 print(f"  At r = {r[mid]:.1f}:")

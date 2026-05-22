@@ -121,8 +121,8 @@ The S = 2 sqrt(2) Tsirelson bound is a **theorem of quantum mechanics** (specifi
 
 **What HAS been derived from the lattice:**
 
-1. Schrodinger equation from complexified flux [THEOREM] (Section 2)
-2. Born rule from Parseval / existence filter [THEOREM] (Section 5)
+1. Schrodinger equation from complexified flux [THEOREM] (Section 2 — stale cross-ref; no such section in this doc; see DERIV_QUANTUM_MECHANICS_RESOLVED.md §2.2-2.3)
+2. Born rule **|ψ|² form** from Parseval / existence filter **[SELECTION]** — the |ψ|² *form* only; the step *probability = normalized energy density* is **[OPEN]**. Canonical status: LEDGER **FTD-0187**. ("Section 5" is a stale cross-ref — no such section exists here; the existence-filter argument lives in FOUND_THE_EXISTENCE_FILTER.md EF-T5/EF-C3, and EF-T5 is the Pythagorean identity, not a Born derivation.)
 3. Hilbert space from complexified flux field [SELECTION] (Section 3)
 4. Superposition from linearity of wave equation [THEOREM]
 5. Pair creation from void events 0 -> (+1) + (-1) [AXIOM — ternary balance]
@@ -154,14 +154,14 @@ On the lattice: a measurement is a tick. The O-operation reads the shell, integr
 
 "Collapse" is what the observer calls the moment they learn the result. Before: the observer had a distribution (many possible outcomes). After: the observer has a fact (one actual outcome). The lattice didn't change. The observer's knowledge changed. This is Bayes' theorem.
 
-Why Born-rule probabilities specifically? Because |J|^2 is the flux energy, and manifestation probability scales with available energy. [THEOREM within FTD's action — the manifestation threshold K_B is the mechanism.]
+Why Born-rule probabilities specifically? Because |J|^2 is the flux energy, and manifestation probability scales with available energy. [SELECTION / OPEN — the |ψ|² *form* is motivated by the energy density, but *probability ∝ energy* (proportionality, not mere monotonicity) is asserted, not derived: a pure threshold K_B gives a step, not a ramp. The load-bearing step *probability = normalized energy density* is [OPEN]. Canonical status: LEDGER FTD-0187.]
 
 The measurement problem had three parts:
 1. Why definite outcomes? Because the lattice is definite. [AXIOM]
-2. Why Born-rule probabilities? Because manifestation scales with |J|^2. [THEOREM from the action]
+2. Why Born-rule probabilities? The |ψ|² *form* is motivated by the |J|^2 energy density [SELECTION]; the step *probability = normalized energy density* is not derived [OPEN]. See LEDGER FTD-0187.
 3. What constitutes a measurement? The tick. [DEFINITION]
 
-All three answered. Not all three are [THEOREM]. Part 1 is axiomatic. Part 2 is from the action. Part 3 is definitional. This is honest.
+Part 1 is axiomatic. Part 2 is [SELECTION] for the form and [OPEN] for the probability=density step (FTD-0187) — not [THEOREM]. Part 3 is definitional. This is honest.
 
 ---
 
@@ -182,7 +182,7 @@ It misidentifies the statistics as ontology. The distribution is not the electro
 | The lattice is definite | [AXIOM] | Foundation |
 | Many measurements produce a distribution | [THEOREM] | Statistics of repeated definite events |
 | The distribution matches QM | [EMPIRICAL] | Confirmed by experiment, not derived from axioms |
-| Born rule from |J|^2 manifestation | [THEOREM] | From the FTD action (threshold K_B) |
+| Born rule from |J|^2 manifestation | [SELECTION] / [OPEN] | |ψ|² *form* is [SELECTION]; *probability = normalized energy density* is [OPEN]. The threshold-K_B mechanism gives monotonicity, not the asserted proportionality. Canonical: LEDGER FTD-0187 |
 | Hilbert space = observer's imagination | [SELECTION] | Motivated interpretation, not forced |
 | Tensor products = joint possibility space | [SELECTION] | Consistent with the framework |
 | Complex structure from Gauss constraint | [SELECTION] | Natural but not uniquely forced |
@@ -191,11 +191,11 @@ It misidentifies the statistics as ontology. The distribution is not the electro
 | Free will = O-operation experience | [CONJECTURE] | Conceptual |
 | The distribution matching QM specifically | [OPEN] | Not derived from lattice axioms |
 
-**What is established:** The lattice is definite. Measurements give distributions. The Born rule follows from the FTD action. Collapse is knowledge-update.
+**What is established:** The lattice is definite. Measurements give distributions. The Born rule's |ψ|² *form* is a [SELECTION] and the *probability = normalized energy density* step is [OPEN] (LEDGER FTD-0187) — it does not follow from the FTD action as a theorem. Collapse is knowledge-update.
 
 **What is selected:** The epistemic interpretation. The Hilbert space as imagination. Superdeterminism.
 
-**What is established:** The Schrodinger equation IS the long-wavelength behavior of the lattice wave equation (recovered for arbitrarily fine spacing a relative to the wavelength, with error O(a^p)). Each QM feature maps one-to-one to a lattice property: complex amplitudes from Gauss constraint (3D -> 2D), superposition from wave equation linearity, Born rule from Parseval (wave energy = amplitude^2), evolution from the wave equation itself. No uniqueness proof is needed — there is no alternative long-wavelength behavior, just as there is no alternative to the heat equation as the long-wavelength behavior of random walks.
+**What is established:** The Schrodinger equation IS the long-wavelength behavior of the lattice wave equation (recovered for arbitrarily fine spacing a relative to the wavelength, with error O(a^p)). Each QM feature maps one-to-one to a lattice property: complex amplitudes from Gauss constraint (3D -> 2D), superposition from wave equation linearity, Born rule **form** from Parseval (wave energy = amplitude², which yields the |ψ|² *form* — a [SELECTION], not the probability rule itself; see FTD-0187), evolution from the wave equation itself. The Schrödinger-equation limit has no alternative long-wavelength behavior (as the heat equation is the unique long-wavelength behavior of random walks); the Born **probability** rule is *not* in that category — "|ψ|² vs |ψ| vs |ψ|⁴" is a genuine open uniqueness question (LEDGER FTD-0187, target T1c).
 
 ---
 

@@ -163,8 +163,9 @@ feature, not a defect.
   length-unit no-go.** Identity (★) lives in dimensionless lattice
   geometry; calibration to physical units is unaffected.
 
-- **NOT a new spine theorem.** The spine count remains nine
-  (Theorems 1-9 per the 2026-04-30 update). Identity (★) is filed as a
+- **NOT a new spine theorem.** The spine count is unchanged — nine
+  numbered results, six theorem-grade + three honestly-tiered (see
+  `SPEC_ALGEBRAIC_SPINE.md` §0). Identity (★) is filed as a
   subsidiary derivation under Theorem 6 / FTD-0004.
 
 ---

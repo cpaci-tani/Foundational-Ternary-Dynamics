@@ -374,7 +374,7 @@
       "is_dimensionless": false,
       "calibration_required": true,
       "ftd_formula": "DECLARED: lattice manifestation threshold K_B = 0.511 in lattice units corresponds to m_e in physical units. Mass-unit ≡ m_e/K_B = 1 MeV/c².",
-      "ftd_value": 0.5109989461,
+      "ftd_value": 0.51099895069,
       "ftd_value_units": "MeV/c²",
       "depends_on": [],
       "epistemic_tag": "IMPOSED",
@@ -425,7 +425,7 @@
       "comparison": {
         "tier": "imposed",
         "delta_ppb": 2053,
-        "method": "0.511 (K_B, 3 sig figs) vs 0.5109989461 (CODATA): bookkeeping match by definition of the anchor. The +2053 ppb gap is purely the precision of K_B as stored in scripts/constants.py — not a physical disagreement."
+        "method": "0.511 (K_B, 3 sig figs) vs 0.51099895069 (CODATA): bookkeeping match by definition of the anchor. The +2053 ppb gap is purely the precision of K_B as stored in scripts/constants.py — not a physical disagreement."
       },
       "calibration_note": "This is the bridge mechanism: every dimensional FTD prediction reduces to (a) a dimensionless ratio (e.g. m_μ/m_e = 207) times (b) the mass-unit anchor (1 MeV/c² ≡ m_e/K_B). The same pattern applies to lengths (multiply dimensionless ratio by a_phys = ℓ_P) and times (multiply by t_phys = √3·ℓ_P/c).",
       "notes": "Single worked example. Other dimensional consequences (m_μ in MeV via 207 × m_e, m_p in MeV via m_p/m_e × m_e, etc.) follow the same pattern and are catalogued individually in CATALOG_PARAMETRIC_INSERTIONS.md."

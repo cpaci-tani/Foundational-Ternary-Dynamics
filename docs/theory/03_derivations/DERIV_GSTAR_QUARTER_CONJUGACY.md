@@ -170,7 +170,7 @@ This does not promote the SMC tag — the load-bearing physical claim still inhe
 
 ## §6 — Implications for the algebraic spine
 
-The 9-theorem spine in `SPEC_ALGEBRAIC_SPINE.md` is preserved as a fixed canonical reference; this derivation lands as a **subsidiary in §10 (Subsidiaries)** of that document, not as a "Theorem 10". Specifically:
+The algebraic spine in `SPEC_ALGEBRAIC_SPINE.md` — nine numbered results, six theorem-grade + three honestly-tiered below theorem grade (see §0) — is preserved as a fixed canonical reference; this derivation lands as a **subsidiary in §10 (Subsidiaries)** of that document, not as a "Theorem 10". Specifically:
 
 1. Theorem 1 (FTD-0001) — $G^* = \Gamma(1/4)/\Gamma(3/4)$ — is now equipped with **two independent provenance chains**:
    - FTD-0127 parity-twist (number-theoretic).

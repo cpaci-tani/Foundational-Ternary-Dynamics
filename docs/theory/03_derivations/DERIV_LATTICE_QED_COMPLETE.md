@@ -13,7 +13,6 @@
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- The FTD Lagrangian with coupling term and Gauss constraint
 - [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) -- Lattice Green's functions, dispersion relation
 - [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) -- 4-term precision formula for $1/\alpha$
-- [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) -- Master quadratic: $x_+ = 1/\alpha_{\text{tree}} = 137.036171...$
 
 ---
 
@@ -2241,7 +2240,6 @@ A shift of $\delta(1/\alpha) \sim 10^{-4}$ (the 1.26 ppm gap) translates to $\de
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- FTD Lagrangian with coupling term and Gauss constraint
 - [DERIV_FORCE_EMERGENCE.md](DERIV_FORCE_EMERGENCE.md) -- Lattice Green's functions and dispersion relation
 - [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) -- 4-term precision formula for $1/\alpha$ with coefficients $c_1$--$c_4$ from $\{3, 4, 7, 13\}$
-- [SPEC_THE_MASTER_QUADRATIC_UNIFIED.md](../archive/ARCH_SPEC_THE_MASTER_QUADRATIC_UNIFIED.md) -- Master quadratic: $x_+ = 1/\alpha_{\text{tree}} = 137.036171...$
 
 ### Combined Epistemic Summary
 

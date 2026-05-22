@@ -1,8 +1,10 @@
-# PRE-REGISTRATION — Adversarial Look-Elsewhere Scan (FTD-0187)
+# PRE-REGISTRATION — Adversarial Look-Elsewhere Scan (FTD-0189)
 
 **Tag:** [PRE-REGISTRATION]. Locks the methodology of a measurement **before** the measurement is run.
 **Date:** 2026-05-21.
-**LEDGER row:** FTD-0187 (to be added when the campaign is registered/run).
+**LEDGER row:** FTD-0189 (to be added when the campaign is registered/run).
+
+> **ID-renumber note (2026-05-21).** This campaign was originally numbered **FTD-0187** — the ID under which it was hash-locked (commit `9e5ad8f`, git tag `preregister-adversarial-look-elsewhere-v1`). That same ID had been concurrently committed in `LEDGER.md` to an unrelated claim (the Born-rule derivation-status consolidation row, ~12 inbound citations), creating a collision. The look-elsewhere scan was therefore renumbered to **FTD-0189** (FTD-0188 is the κ_ψ = 4π audit). The immutable git commit/tag and the hash-locked runner `tools/scan_adversarial_look_elsewhere.py` retain the literal string "FTD-0187" as frozen registration-time provenance — the runner's SHA256 (§6) is **deliberately not edited**, so the hash-lock stays intact and verifiable. **FTD-0189 is the canonical LEDGER ID for this scan.**
 **Runner:** `tools/scan_adversarial_look_elsewhere.py`, SHA256 `764a6a8c4d27fce6bd45d42e1c5714fcdfaf1ca72fc10fde8e98d189e40a27d9`.
 **Hash-lock status:** **PENDING** (see §7). This pre-registration is **not in force** until the git tag `preregister-adversarial-look-elsewhere-v1` is created over a commit containing this file and the runner. **The scan must NOT be run before that tag exists** — a pre-run measurement voids the pre-registration.
 
@@ -76,15 +78,15 @@ Per project commit policy, the commit and tag are explicit user actions. To put 
 ```sh
 git add tools/scan_adversarial_look_elsewhere.py \
         docs/theory/10_eft_program/PREREG_ADVERSARIAL_LOOK_ELSEWHERE_v1.md
-git commit -m "Pre-register FTD-0187 adversarial look-elsewhere scan"
-git tag preregister-adversarial-look-elsewhere-v1 -m "Pre-reg: FTD-0187"
+git commit -m "Pre-register FTD-0189 adversarial look-elsewhere scan"
+git tag preregister-adversarial-look-elsewhere-v1 -m "Pre-reg: FTD-0189"
 # verify the runner SHA matches §6 BEFORE running:
 sha256sum tools/scan_adversarial_look_elsewhere.py
 # only then:
 python tools/scan_adversarial_look_elsewhere.py
 ```
 
-Then add the FTD-0187 row to `LEDGER.md`, register the campaign in `REF_PREREGISTER_MANIFEST.md`, and write the post-run analysis doc `ANALYSIS_ADVERSARIAL_LOOK_ELSEWHERE.md`.
+Then add the FTD-0189 row to `LEDGER.md`, register the campaign in `REF_PREREGISTER_MANIFEST.md`, and write the post-run analysis doc `ANALYSIS_ADVERSARIAL_LOOK_ELSEWHERE.md`.
 
 ## §8 — Honesty notes
 

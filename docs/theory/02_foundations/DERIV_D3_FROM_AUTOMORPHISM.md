@@ -4,7 +4,8 @@
 
 **Date:** April 3, 2026
 **Status:** [THEOREM]
-**Proof script:** `scripts/verification/verify_blind_derivation.py` (step 8)
+**Consolidates:** also absorbs `DERIV_D3_UNIQUENESS.md` (2026-05-21)
+**Proof script:** `scripts/verification/verify_blind_derivation.py` (step 8); Watson-integral route — `scripts/proofs/proof_d3_uniqueness.py`
 
 ---
 
@@ -90,13 +91,86 @@ The two proofs share no logical dependencies. Their convergence on $D = 3$ is a 
 
 ---
 
-## Epistemic Status
+## $\S 5$. The Watson Integral Approach in Full
+
+> **Consolidation note (2026-05-21):** This section absorbs the full content of `DERIV_D3_UNIQUENESS.md` ("D = 3 Uniqueness from the Watson Integral," March 17, 2026, [THEOREM]). The automorphism approach above ($\S\S 1$–$4$) and the Watson-integral approach here ($\S 5$) are logically independent derivations of $D = 3$ — $\S 4$ tabulates their differences; this section supplies the second derivation in full so both [THEOREM] arguments live in one document.
+
+### $\S 5.1$. Abstract
+
+The master quadratic $x^2 - K_D x + K_D G^*_D = 0$ is well-defined in any spatial dimension $D$, with $K_D = 16 G^{*2}_D$ and $G^*_D = \sqrt{2\pi W_D}$ where $W_D$ is the $D$-dimensional Watson integral. We compute $W_D$ for $D = 1$ through $6$ and analyze the gap equation in each case.
+
+**Key finding:** $D = 3$ is the unique dimension where $\lfloor x_- \rfloor = D$. That is, the color number $N_c$ derived from the gap equation equals the spatial dimension. This self-referential identity $N_c = D$ is unique to $D = 3$.
+
+### $\S 5.2$. Results by Dimension
+
+| $D$ | $W_D$ | $G^*_D$ | $x_+$ | $x_-$ | $\lfloor x_- \rfloor$ | $\lfloor x_- \rfloor = D$? |
+|---|------|--------|------|------|-------------|------------------|
+| 1 | divergent | - | - | - | - | N/A |
+| 2 | 11.987 | 8.678 | 1196.3 | 8.742 | 8 | NO |
+| 3 | 1.3932 | 2.9587 | 137.04 | 3.024 | **3** | **YES** |
+| 4 | 1.118 | 2.651 | 109.7 | 2.716 | 2 | NO |
+| 5 | 1.047 | 2.565 | 102.6 | 2.631 | 2 | NO |
+| 6 | 1.020 | 2.532 | 100.0 | 2.598 | 2 | NO |
+
+$D = 1$ is excluded ($W_1$ diverges). $D = 2$ through $D = 6$ all have positive discriminants, but **only $D = 3$ has $\lfloor x_- \rfloor = D$**.
+
+### $\S 5.3$. The Self-Referential Identity
+
+The condition $\lfloor x_- \rfloor = D$ means: the number of color charges derived from the gap equation equals the number of spatial dimensions. In $D = 3$:
+
+- The lattice is $\mathbb{Z}^3$ (three spatial dimensions)
+- The Watson integral $W_3 = \Gamma(1/4)^4 / (4\pi^3)$ determines $G^*$
+- The gap equation gives $x_- = 3.024$, so $N_c = \lfloor x_- \rfloor = 3$
+- $N_c = D = 3$: the dimension selects itself
+
+This is a self-consistency loop: $D$ determines $W_D$, which determines $G^*_D$, which determines the gap equation roots, one of which gives $N_c = D$. **Only $D = 3$ closes this loop.**
+
+### $\S 5.4$. Why Not Other Dimensions?
+
+- **$D = 1$:** Watson integral diverges. No gap equation exists.
+- **$D = 2$:** $\lfloor x_- \rfloor = 8$, not 2. Also, compact U(1) in 2+1D has no confinement transition.
+- **$D = 4$:** $\lfloor x_- \rfloor = 2$, not 4. The Watson integral is too small ($G^*_4 < G^*_3$).
+- **$D = 5, 6$:** $\lfloor x_- \rfloor = 2$. Watson integrals decrease monotonically with $D$.
+
+The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional lattices have more neighbors, reducing the propagator at the origin). This drives $x_-$ downward, making $\lfloor x_- \rfloor = 2$ for all $D \geq 4$.
+
+### $\S 5.5$. Epistemic Status of the Watson Approach
 
 **[THEOREM]:**
+1. Watson integrals $W_D$ computed for $D = 1\ldots6$ ($D=3$ exact, $D=4\ldots6$ Monte Carlo with 5M samples)
+2. $D = 3$ is the unique dimension where $\lfloor x_- \rfloor = D$ (exhaustive check $D = 1\ldots6$)
+3. The self-referential identity $N_c = D$ holds only for $D = 3$
+
+**[SELECTION]:**
+- The coefficient $K = 16 G^{*2}$ is assumed uniform across dimensions. The Faddeev-Popov derivation ($48/3 = 16$ gauge modes) is specific to the octahedral symmetry group of $D = 3$.
+- $D \geq 4$ Watson integrals are Monte Carlo estimates (finite statistical error).
+- The self-referential criterion "$\lfloor x_- \rfloor = D$" is chosen as the selection principle.
+
+### $\S 5.6$. References Specific to the Watson Approach
+
+- `proof_d3_uniqueness.py` — Numerical verification (4/4 tests)
+- `DERIV_MASTER_QUADRATIC_FROM_Z.md` — Gap equation derivation
+- Watson, G. N. "Three Triple Integrals," *Q. J. Math.* **10** (1939), 266-276
+
+---
+
+## Epistemic Status
+
+**[THEOREM] (automorphism approach, $\S\S 1$–$4$):**
 1. $|\text{Aut}(E_i)| = 4$ (standard result in the theory of elliptic curves)
 2. $D = 3$ is the unique positive integer with $2^D \cdot (D-1)! = 16$ (exhaustive check + monotonicity)
 3. The three group-theoretic interpretations are equivalent (standard finite group theory)
 4. Independence from the Watson integral approach (no shared premises)
+
+**[THEOREM] (Watson-integral approach, $\S 5$):**
+5. Watson integrals $W_D$ computed for $D = 1\ldots6$ ($D=3$ exact, $D=4\ldots6$ Monte Carlo with 5M samples)
+6. $D = 3$ is the unique dimension where $\lfloor x_- \rfloor = D$ (exhaustive check $D = 1\ldots6$)
+7. The self-referential identity $N_c = D$ holds only for $D = 3$
+
+**[SELECTION] (Watson-integral approach, $\S 5$):**
+- The coefficient $K = 16 G^{*2}$ is assumed uniform across dimensions; the Faddeev-Popov $48/3 = 16$ derivation is specific to $O_h$.
+- $D \geq 4$ Watson integrals are Monte Carlo estimates (finite statistical error).
+- The self-referential criterion "$\lfloor x_- \rfloor = D$" is chosen as the selection principle.
 
 **[OPEN]:**
 - Why should $|\text{Aut}(E_i)|^2$ equal $2^D \cdot (D-1)!$? The equation is verified to select $D = 3$, but a deeper structural reason connecting the CM automorphism group to the hyperoctahedral group would strengthen the derivation. See DERIV\_STABILIZER\_DECOMPOSITION.md for the stabilizer bridge.

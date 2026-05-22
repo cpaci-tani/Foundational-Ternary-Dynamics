@@ -16,7 +16,7 @@ A discrete computational framework on a 3D cubic lattice with ternary states {�
 | Document | Purpose |
 |---|---|
 | [docs/SPEC_FTD.md](docs/SPEC_FTD.md) | Authoritative theoretical specification |
-| [docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) | Nine canonical theorems (Theorems 3 and 7 hold under stated restrictions: h=1 and L=2 respectively) |
+| [docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) | Algebraic spine — nine numbered results: six theorem-grade + three honestly tiered below theorem grade (Theorem 3 CM uniqueness h=1, Theorem 4 coefficient 16, Theorem 7 Phase J at L=2); see §0 |
 | [docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md](docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md) | Dimensionless ↔ dimensional bridge (15 entries) |
 | [docs/theory/07_assessment/LEDGER.md](docs/theory/07_assessment/LEDGER.md) | Master claim ledger with epistemic tags |
 | [docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) | ~162 SM quantities, honestly classified |

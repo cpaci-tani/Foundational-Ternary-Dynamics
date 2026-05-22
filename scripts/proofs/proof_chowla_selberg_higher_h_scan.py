@@ -22,7 +22,7 @@ For each discriminant, form the analogue master quadratic
 
 and test whether its roots (x_+, x_-) dual-match (1/alpha, N_c) at
 the canonical tolerances:
-  - 1.26 ppm on x_+ vs alpha^{-1} = 137.035999084
+  - 1.26 ppm on x_+ vs alpha^{-1} = 137.035999177
   - 0.80% on x_- vs N_c = 3
 
 The test space:
@@ -57,7 +57,7 @@ import mpmath as mp
 # ---------------------------------------------------------------
 mp.mp.dps = 40  # 40-digit precision
 
-ALPHA_INV_CODATA = mp.mpf("137.035999084")
+ALPHA_INV_CODATA = mp.mpf("137.035999177")
 NC_TARGET = mp.mpf(3)
 
 TOL_ALPHA = mp.mpf("1e-3")  # 1000 ppm cutoff (master-quadratic ~1.26 ppm; 1e-3 = 1000 ppm cushion)

@@ -104,7 +104,7 @@ This makes one of the framework's most opaque features ("why G\*?") into a one-s
 **What this is NOT:**
 - *Not new mathematics.* Each ingredient has a 150–200-year pedigree (Euler ~1750, Gauss ~1800, Jacobi ~1830). Anyone who knew both classical identities would derive `G* = √(2π)·θ_3(0|i)²` in two lines.
 - *Not a derivation of any physics quantity.* The identity is purely about classical analysis; FTD-0013/0014 (the empirical α/N_c match) are unaffected and remain [STRONGLY MOTIVATED CONJECTURE].
-- *Not a new spine theorem.* Spine count stays at 9. This is filed as [SYNTHESIS], not [THEOREM] or [DERIVED].
+- *Not a new spine theorem.* The spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0). This is filed as [SYNTHESIS], not [THEOREM] or [DERIVED].
 - *Not a uniqueness claim.* `G* = √(2π)·θ_3(0|i)²` does not assert that G\* is the *only* lattice-theta combination with this property; analogous identities exist for higher-conductor CM lattices (e.g., the Eisenstein lattice at τ = e^{iπ/3} produces analogous Γ(1/3)-content).
 - *Not a route to deriving α.* The synthesis sits inside the algebraic spine and does not bridge to the engine or to physics.
 

@@ -6,7 +6,7 @@
 **Framework:** Foundational Ternary Dynamics v5.26
 **Status:** Verified mathematical connections with derivation chain established
 
-> **Merge note (v5.26):** This document consolidates the former `EXPLR_NUMBER_THEORY_CONNECTIONS.md` (framework integer analysis, Jan 22 2026) and `EXPLR_THE_42_NEXUS.md` (seven routes to 42, Feb 1 2026). The originals are archived at `archive/ARCH_NUMBER_THEORY_CONNECTIONS.md` and `archive/ARCH_THE_42_NEXUS.md`.
+> **Merge note (v5.26):** This document consolidates the former `EXPLR_NUMBER_THEORY_CONNECTIONS.md` (framework integer analysis, Jan 22 2026) and `EXPLR_THE_42_NEXUS.md` (seven routes to 42, Feb 1 2026). The standalone originals were removed in the 2026-05-21 consolidation; git history retains them.
 
 ---
 
@@ -490,7 +490,7 @@ The self-dual nome $q = e^{-\pi}$ connects: $1/q = e^{\pi} \approx \pi + b_3 + N
 
 ## Part XI: Integer Uniqueness Proof
 
-> **Merge note (Feb 14, 2026):** This section was previously a standalone document (`EXPLR_INTEGER_UNIQUENESS_ANALYSIS.md`, Jan 24 2026). Merged here to consolidate all number-theory analysis of {3, 4, 7, 13} in one place. The archived original is at `archive/ARCH_EXPLR_INTEGER_UNIQUENESS_ANALYSIS.md`.
+> **Merge note (Feb 14, 2026):** This section was previously a standalone document (`EXPLR_INTEGER_UNIQUENESS_ANALYSIS.md`, Jan 24 2026). Merged here to consolidate all number-theory analysis of {3, 4, 7, 13} in one place. The standalone original was removed in the 2026-05-21 consolidation; git history retains it.
 
 **Document Status:** [SELECTION] - Argued, Not Proven Unique
 
@@ -676,7 +676,6 @@ The fact that FTD discovers these integers through physical reasoning (discrete 
 
 ## Cross-References
 
-- **Master quadratic derivation:** [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
 - **Riemann zeta connections:** [EXPLR_RIEMANN_ZETA_CONNECTION.md](EXPLR_RIEMANN_ZETA_CONNECTION.md)
 - **Ontological hierarchy:** [FOUND_ONTOLOGICAL_GENESIS.md](../02_foundations/FOUND_ONTOLOGICAL_GENESIS.md)
 - **Claims tracking:** [REF_CLAIMS_MATRIX.md](../07_assessment/REF_CLAIMS_MATRIX.md)

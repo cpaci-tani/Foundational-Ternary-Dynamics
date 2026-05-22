@@ -136,4 +136,3 @@ Despite the artifact, several genuine results emerged from this investigation:
 
 - **Valid spectral result:** [EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md](EXPLR_SPECTRAL_CIRCLE_TO_LEMNISCATE.md) -- Born rule as Joukowski transform
 - **Born rule derivation:** [FOUND_BORN_RULE_NULL_CONE.md](../02_foundations/FOUND_BORN_RULE_NULL_CONE.md) -- null-cone geometry (unaffected)
-- **Gauge group derivation:** [DERIV_GAUGE_GROUPS.md](../03_derivations/DERIV_GAUGE_GROUPS.md) -- from Moore neighborhood J^2 decomposition (orthogonal to spectral analysis)

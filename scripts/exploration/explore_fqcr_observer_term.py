@@ -116,7 +116,7 @@ def x_plus_extended(t: float, c_e: float, N: int = 1024) -> float | None:
 M_E = 0.51099895
 M_MU = 105.6583755
 M_TAU = 1776.86
-ALPHA_INV_AT_ME = 137.0359990840
+ALPHA_INV_AT_ME = 137.0359991770
 
 
 def alpha_inv_QED(mu_MeV: float) -> float:

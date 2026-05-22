@@ -36,7 +36,7 @@ RESULTS_DIR = Path(__file__).parent / "results"
 # FTD theoretical predictions
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 # Hard import: scripts/ MUST be on the path. The previous fallback masked
-# sys.path bugs and shipped pre-2026-04-17 stale values (alpha_inv=137.035999084,
+# sys.path bugs and shipped pre-2026-04-17 stale values (alpha_inv=137.035999177,
 # G_STAR=2.9586830685 — 27 ppm drift on G_STAR). Fail loudly instead.
 from constants import ALPHA, G_STAR  # noqa: E402
 

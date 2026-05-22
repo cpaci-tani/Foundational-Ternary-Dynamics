@@ -85,7 +85,7 @@ def main():
     print("  WARNING: post-hoc, not pre-registered.  Results EXPOSITORY only.")
     print()
     candidates = {
-        "1/alpha (CODATA)": mpf("137.035999084"),
+        "1/alpha (CODATA)": mpf("137.035999177"),
         "m_p/m_e": mpf("1836.15267343"),
         "m_mu/m_e": mpf("206.7682830"),
         "m_tau/m_e": mpf("3477.23"),

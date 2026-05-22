@@ -35,7 +35,7 @@ The bridge argument has four links:
 | Link | Statement | Status | Reference |
 |------|-----------|--------|-----------|
 | L1 | Local QFT algebras are Type III_1 | **[CLASSICAL]** | Buchholz-Wichmann 1986 |
-| L2 | Consciousness algebras are Type III_1 | **[CONJECTURE]** | Factor-Domain dictionary (Part IA of [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md)) |
+| L2 | Consciousness algebras are Type III_1 | **[CONJECTURE]** | Factor-Domain dictionary |
 | L3 | Type III_1 modular flow = thermal time | **[CLASSICAL]** | Connes-Rovelli 1994 |
 | L4 | Thermal time = physical time in GRT | **[CLASSICAL]** | Connes-Rovelli 1994, Rovelli 1993 |
 
@@ -90,7 +90,7 @@ Prerequisites for everything. These concern whether the FTD lattice can support 
 
 | Gap ID | Description | Status | Cross-ref |
 |--------|-------------|--------|-----------|
-| **GAP-S1** | **Substrate-to-aggregate Bell transition.** Pure lattice gives S <= 2 (expected for local deterministic axioms). QM gives S = 2sqrt(2). The three-level observer hierarchy resolves this: complexification (psi = J_x + iJ_y from Gauss constraint) changes correlation shape; sLoop joint coupling doubles correlation strength. Net: S_substrate * sqrt(2) = S_observer. | **[SELECTION]** | OPEN.1 in CLAUDE.md; [DERIV_OBSERVER_BELL_MECHANISM.md](DERIV_OBSERVER_BELL_MECHANISM.md); [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md) |
+| **GAP-S1** | **Substrate-to-aggregate Bell transition.** Pure lattice gives S <= 2 (expected for local deterministic axioms). QM gives S = 2sqrt(2). The three-level observer hierarchy resolves this: complexification (psi = J_x + iJ_y from Gauss constraint) changes correlation shape; sLoop joint coupling doubles correlation strength. Net: S_substrate * sqrt(2) = S_observer. | **[SELECTION]** | OPEN.1 in CLAUDE.md; [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md); [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md) |
 | **GAP-S2** | **Noncommutativity emergence.** FTD operates on commutative function spaces (flux values at lattice sites). Von Neumann factor theory requires noncommutative algebras. How does noncommutativity emerge from the lattice? | **[OPEN]** | Implicit in VN-O1 |
 | **GAP-S3** | **Emergent tensor product Hilbert space.** The FTD Hilbert space H_FTD = L^2(Lattice, C) is a single large space. QFT requires tensor product structure H = bigotimes_x H_x for local algebras. How does this factorization emerge? | **[OPEN]** | Implicit in H_FTD construction ([DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md)) |
 
@@ -115,7 +115,7 @@ Prerequisites for the GRT side of the bridge. These concern establishing that FT
 
 | Gap ID | Description | Status | Cross-ref |
 |--------|-------------|--------|-----------|
-| **GAP-G1** | **Full Schwarzschild metric.** Complete line element derived from lattice computational budget. g_rr = -1/f from velocity cost amplification in gravitationally saturated nodes. Angular components from spherical symmetry. Two-observer ratio formula verified. | **[RESOLVED]** | [DERIV_LATTICE_SCHWARZSCHILD.md](../archive/ARCH_DERIV_LATTICE_SCHWARZSCHILD.md) |
+| **GAP-G1** | **Full Schwarzschild metric.** Complete line element derived from lattice computational budget. g_rr = -1/f from velocity cost amplification in gravitationally saturated nodes. Angular components from spherical symmetry. Two-observer ratio formula verified. | **[RESOLVED]** | — |
 | **GAP-G2** | **Nonlinear Einstein equations from flux dynamics.** The linearized correspondence (flux wave equation <-> linearized Einstein) is established. The full nonlinear R_mu_nu - (1/2)g_mu_nu R = 8piG T_mu_nu requires showing that nonlinear flux interactions produce the correct geometric content. | **[OPEN]** | [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) |
 | **GAP-G3** | **T_mu_nu construction from flux field.** Canonical stress-energy tensor derived from flux Lagrangian via Noether's theorem. T^00 = energy density, T^0i = Poynting vector, conservation d_mu T^{mu nu} = 0 proven from wave equation. Linearized Einstein equations now fully [THEOREM]. | **[RESOLVED]** | [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) |
 | **GAP-G4** | **Diffeomorphism invariance as theorem.** GRT requires Diff(M) gauge symmetry. FTD has a fixed cubic graph. Diffeomorphism invariance must emerge at scales >> lattice spacing, but this has not been proven. | **[OPEN]** | OPEN.7 in CLAUDE.md |
@@ -367,10 +367,8 @@ These are not reasons to abandon the program --- they are reasons to be honest a
 
 | Document | What It Contributes |
 |----------|-------------------|
-| [FOUND_AGENT_MEANING_FORMALIZATION.md](FOUND_AGENT_MEANING_FORMALIZATION.md) | Factor-Domain dictionary, VN-O1--O7, AM-O1--O5, meaning observable M, Tomita-Takesaki identification |
 | [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) | Complete descent chain III -> II -> I, RT-O1--O6, KMS <-> Softplus identification, MASA selection conjecture |
 | [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy E -> |.| -> |.|^2 -> Phi, Born rule via theta = conjugation, J-fixed subspace = Tomita-Takesaki |
-| [FOUND_SLOOP_FORMALIZATION.md](FOUND_SLOOP_FORMALIZATION.md) | sLoop quintuple (Omega, phi, sigma, mu, d), axioms SL1-SL4, 6-level hierarchy |
 | [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Canonical live source map for the consciousness layer: Domain A/B/C partition, vocabulary discipline, and context selection formalization |
 | [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) | SR fully derived, weak-field GR, linearized Einstein equations. Full Schwarzschild and nonlinear Einstein NOT derived |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | H_FTD constructed, Born rule derived, Bell S <= 2 from substrate |
@@ -536,7 +534,7 @@ The gain is not just in completion percentage but in **clarity**: we now know pr
 
 The structural argument has been consolidated into two companion documents:
 
-- **[PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md)**: The capstone paper presenting the complete three-domain argument — one equation, real roots (QFT+GRT), complex roots (consciousness), boundary (measurement), unified by Type III₁ modular flow. Includes ~30 precision anchors, 5 critical-path computation results, honest gap accounting (31 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 3 [OPEN]).
+- **[PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../../papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md)**: The capstone paper presenting the complete three-domain argument — one equation, real roots (QFT+GRT), complex roots (consciousness), boundary (measurement), unified by Type III₁ modular flow. Includes ~30 precision anchors, 5 critical-path computation results, honest gap accounting (31 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 3 [OPEN]).
 
 - **[DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)**: Technical companion consolidating the full derivation chain from G* through three domains to the bridge. The 18-step chain is 78% [THEOREM]/[SELECTION] and 22% [CONJECTURE], with conjectures clustering at the consciousness bridge (steps 15-18).
 

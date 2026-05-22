@@ -94,7 +94,7 @@ $$P = \psi \cdot \psi^* = |ψ|^2 \in \mathbb{R}$$
 
 This is the unique ℝ-linear, reflexion-invariant, normalized projection ℂ → ℝ (see [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md), Theorem EF-T3), composed with squaring for positive-definiteness. The reconstruction P(x) = E(x)² + E(ix)² = |x|² is the Pythagorean theorem applied to the Existence Filter.
 
-**Epistemic note**: The argument that |·|² is the unique valid probability measure requires the imposed sampling rule (manifestation probability proportional to |J|²). This is argued from conservation and max-entropy considerations but remains a **[SELECTION]**, not a theorem — a reviewer may ask "why |ψ|² and not |ψ| or |ψ|⁴?"
+**Epistemic note**: The argument that |·|² is the unique valid probability measure requires the imposed sampling rule (manifestation probability proportional to |J|²). This is argued from conservation and max-entropy considerations but remains a **[SELECTION]**, not a theorem — a reviewer may ask "why |ψ|² and not |ψ| or |ψ|⁴?" **Canonical status: LEDGER FTD-0187** — this §2.4 [SELECTION] is the canonical prose statement for the Born-rule derivation question across FTD; the further step *probability = normalized energy density* is [OPEN] (target T1c).
 
 **QM Consequence**: Probability = amplitude squared.
 
@@ -350,7 +350,6 @@ From this, together with the selection principles, the structure of quantum mech
 - [FOUND_THE_FIRST_DISTINCTION.md](../02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — Levels -3 to 0
 - [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) — Why i is necessary
 - [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for complex roots and context-conditioned self-reference
-- [archive/ARCH_LEMNISCATE_ALPHA_PAPER.md](../archive/ARCH_LEMNISCATE_ALPHA_PAPER.md) — historical G* provenance
 - CLAUDE.md §4, §11-13 — Manifestation and measurement
 
 ---

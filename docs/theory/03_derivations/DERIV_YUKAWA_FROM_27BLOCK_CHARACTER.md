@@ -170,7 +170,7 @@ Until such derivation lands, the COMBINATION is [SELECTION]. The tag for the ove
 - **Not a derivation of the Yukawa formula from FTD substrate dynamics.** The COMBINATION of factors as `y_e` is [SELECTION].
 - **Not a closure of the m_e formula to [DERIVED].** FTD-0015 stays [STRONGLY MOTIVATED CONJECTURE]; the load-bearing [SELECTION] floor is now `√π` (from HIGGS-4 v formula) plus the SELECTION-level identification of the combination.
 - **Not a closure of FTD-0131's gravitational hierarchy to [DERIVED].** Same reason.
-- **Not a new spine theorem.** Spine count remains 9.
+- **Not a new spine theorem.** The spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0).
 - **Not a derivation of `√π`.** That factor is inherited from HIGGS-4's v formula and remains the load-bearing [SELECTION] piece in dimensional predictions.
 - **Not a substrate explanation of why `y_e ∝ α^{N_c}` rather than `α^{N_base}` or `α^{D}`.** The exponent 3 is [DERIVED] via MC-T3.2's ladder structure, but *why the ladder takes the values it does* is itself the MC-T3.2 derivation (which is [DERIVED] via the multiset theorem + 2 SELECTION steps).
 
