@@ -176,8 +176,10 @@
 #include "ftd/correlations.h"
 #include "ftd/field_operators.h"
 #include "ftd/render_bridge.h"
-#include "ftd/spectral.h"
+#include "ftd/spectral.h"          // power_spectrum() — 1D temporal FFT of C(τ)
 #include "ftd/spectrum_extraction.h"
+
+#include "graviton_fft_cuda.h"     // GPU (cuFFT Z2Z) backend for the per-tick 3D FFTs
 
 namespace fs = std::filesystem;
 
@@ -228,36 +230,30 @@ struct Lcg {
 };
 
 // ───────────────────────────────────────────────────────────────────────────
-// 3D FFT of a real scalar field laid out as lattice index (x*L*L + y*L + z).
-// Returns a complex L^3 array in the same index order. Built on the radix-2
-// fft_1d from ftd/spectral.h; L must be a power of two (16/32/64/128 all are).
+// Per-tick 3D FFTs — GPU (cuFFT Z2Z) backend.
+//
+// Each measurement tick FFTs 15 real-loaded complex L³ grids (6 flux-
+// quadrupole components + 6 stress components + 3 raw flux components). This
+// is the campaign's wall-clock bottleneck.
+//
+// Originally these were CPU radix-2 3D FFTs: for each grid, three passes of
+// the radix-2 fft_1d from ftd/spectral.h — along z (stride 1), y (stride L),
+// x (stride L²). Single-threaded, ~15 forward 3D FFTs/tick, which made the
+// canonical L=128 run take 12+ hours.
+//
+// The 3D FFT is now done on the GPU by ftd::graviton::Fft3dBatchGpu
+// (graviton_fft_cuda.{h,cu}): a persistent batched double-precision cuFFT
+// Z2Z 3D plan that transforms all 15 same-size grids in one cufftExecZ2Z.
+// This is a PURE, RESULT-PRESERVING swap — it computes exactly the same
+// discrete Fourier transforms (double precision, unnormalized forward, same
+// row-major x*L*L+y*L+z index layout as the old CPU fft3d; see
+// graviton_fft_cuda.h for the layout-equivalence argument). No physics, no
+// operators, no projector, no decision logic changes.
+//
+// NOTE: ftd::power_spectrum() (a small 1D temporal FFT of the correlator
+// C(τ), used inside extract_pole) stays on the CPU — it is not a per-tick
+// L³ transform and is out of scope for this optimization.
 // ───────────────────────────────────────────────────────────────────────────
-void fft3d(std::vector<std::complex<double>>& data, int L, bool inverse) {
-    using C = std::complex<double>;
-    std::vector<C> line(L);
-    // Transform along z (stride 1).
-    for (int x = 0; x < L; ++x)
-        for (int y = 0; y < L; ++y) {
-            int base = (x * L + y) * L;
-            for (int z = 0; z < L; ++z) line[z] = data[base + z];
-            ftd::fft_1d(line, inverse);
-            for (int z = 0; z < L; ++z) data[base + z] = line[z];
-        }
-    // Transform along y (stride L).
-    for (int x = 0; x < L; ++x)
-        for (int z = 0; z < L; ++z) {
-            for (int y = 0; y < L; ++y) line[y] = data[(x * L + y) * L + z];
-            ftd::fft_1d(line, inverse);
-            for (int y = 0; y < L; ++y) data[(x * L + y) * L + z] = line[y];
-        }
-    // Transform along x (stride L*L).
-    for (int y = 0; y < L; ++y)
-        for (int z = 0; z < L; ++z) {
-            for (int x = 0; x < L; ++x) line[x] = data[(x * L + y) * L + z];
-            ftd::fft_1d(line, inverse);
-            for (int x = 0; x < L; ++x) data[(x * L + y) * L + z] = line[x];
-        }
-}
 
 // ───────────────────────────────────────────────────────────────────────────
 // k-space geometry.
@@ -852,12 +848,15 @@ int main(int argc, char** argv) {
         else if (a.rfind("--output-dir=", 0) == 0) output_dir = a.substr(13);
     }
 
-    // L must be a power of two for the radix-2 FFT.
+    // L is kept a power of two: it matches the canonical run set L ∈ {32,64,128}
+    // and keeps the k-space index folding / sampling convention clean. (The GPU
+    // cuFFT Z2Z transform itself supports any size; this is a campaign-level
+    // constraint, unchanged from the original.)
     {
         int p = 1; while (p < L) p <<= 1;
         if (p != L) {
             std::cerr << "[FATAL] L=" << L << " is not a power of two; "
-                         "the radix-2 FFT in spectral.h requires L ∈ {16,32,64,128,...}\n";
+                         "this campaign requires L ∈ {16,32,64,128,...}\n";
             return 2;
         }
     }
@@ -977,6 +976,22 @@ int main(int argc, char** argv) {
     std::array<std::vector<std::complex<double>>, 3> Fjx;  // FFT of Jx,Jy,Jz
     for (int c = 0; c < 3; ++c) Fjx[c].resize(N);
 
+    // GPU 3D-FFT service. The campaign FFTs exactly 15 same-size L³ grids per
+    // tick — 6 flux-quadrupole + 6 stress + 3 raw-flux components. They are
+    // batched into a single cuFFT Z2Z exec via a persistent plan built once
+    // here. forward_batch() is a result-preserving drop-in for the old CPU
+    // fft3d (same unnormalized forward 3D DFT, same index layout).
+    constexpr int kGridsPerTick = 15;  // 6 Fquad + 6 Fstress + 3 Fjx
+    ftd::graviton::Fft3dBatchGpu gpu_fft(L, kGridsPerTick);
+    // Stable list of the 15 grid pointers, in a fixed order. Built once; the
+    // std::vector buffers are resized above and never reallocated thereafter,
+    // so .data() stays valid for the whole measurement window.
+    std::vector<std::complex<double>*> fft_batch;
+    fft_batch.reserve(kGridsPerTick);
+    for (int c = 0; c < 6; ++c) fft_batch.push_back(Fquad[c].data());
+    for (int c = 0; c < 6; ++c) fft_batch.push_back(Fstress[c].data());
+    for (int c = 0; c < 3; ++c) fft_batch.push_back(Fjx[c].data());
+
     for (int t = 0; t < window; ++t) {
         rb.run(1);
         const auto& vox = rb.voxels();
@@ -987,26 +1002,28 @@ int main(int argc, char** argv) {
         // --- operator (ii): stress ---
         compute_stress(rb, stress_field_);
 
-        // FFT each of the 6 components of both operators.
-        auto load_and_fft = [&](const std::vector<double>& src,
-                                std::vector<std::complex<double>>& dst) {
-            for (std::size_t i = 0; i < N; ++i) dst[i] = std::complex<double>(src[i], 0.0);
-            fft3d(dst, L, /*inverse=*/false);
+        // Load the 6 components of each operator into the complex FFT grids
+        // (real part = field value, imag = 0) — exactly as the old CPU path's
+        // load_and_fft did before calling fft3d.
+        auto load = [&](const std::vector<double>& src,
+                        std::vector<std::complex<double>>& dst) {
+            for (std::size_t i = 0; i < N; ++i)
+                dst[i] = std::complex<double>(src[i], 0.0);
         };
-        load_and_fft(quad_field.xx, Fquad[0]);
-        load_and_fft(quad_field.yy, Fquad[1]);
-        load_and_fft(quad_field.zz, Fquad[2]);
-        load_and_fft(quad_field.xy, Fquad[3]);
-        load_and_fft(quad_field.xz, Fquad[4]);
-        load_and_fft(quad_field.yz, Fquad[5]);
-        load_and_fft(stress_field_.xx, Fstress[0]);
-        load_and_fft(stress_field_.yy, Fstress[1]);
-        load_and_fft(stress_field_.zz, Fstress[2]);
-        load_and_fft(stress_field_.xy, Fstress[3]);
-        load_and_fft(stress_field_.xz, Fstress[4]);
-        load_and_fft(stress_field_.yz, Fstress[5]);
+        load(quad_field.xx, Fquad[0]);
+        load(quad_field.yy, Fquad[1]);
+        load(quad_field.zz, Fquad[2]);
+        load(quad_field.xy, Fquad[3]);
+        load(quad_field.xz, Fquad[4]);
+        load(quad_field.yz, Fquad[5]);
+        load(stress_field_.xx, Fstress[0]);
+        load(stress_field_.yy, Fstress[1]);
+        load(stress_field_.zz, Fstress[2]);
+        load(stress_field_.xy, Fstress[3]);
+        load(stress_field_.xz, Fstress[4]);
+        load(stress_field_.yz, Fstress[5]);
 
-        // FFT the raw flux components for the spin-1 control.
+        // Load the raw flux components for the spin-1 control.
         for (int comp = 0; comp < 3; ++comp) {
             for (int x = 0; x < L; ++x)
                 for (int y = 0; y < L; ++y)
@@ -1016,8 +1033,12 @@ int main(int argc, char** argv) {
                         const double v = (comp == 0) ? J.x : (comp == 1) ? J.y : J.z;
                         Fjx[comp][idx] = std::complex<double>(v, 0.0);
                     }
-            fft3d(Fjx[comp], L, /*inverse=*/false);
         }
+
+        // One batched GPU forward 3D FFT over all 15 grids, in place. This
+        // replaces the 15 separate CPU fft3d calls — same transforms, same
+        // result, same index layout.
+        gpu_fft.forward_batch(fft_batch);
 
         // Sample every k-slot.
         for (auto& s : slots) {
