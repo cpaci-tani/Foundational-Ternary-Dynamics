@@ -27,7 +27,19 @@ Read precisely:
 
 ---
 
-## Current epistemic state (2026-05-21 — post physics-panel review, boundary-theorem correction, FTD-0189 Outcome A)
+## Current epistemic state (2026-05-23 — post ARC-B1 pre-registration + G\* paper polish)
+
+The 2026-05-23 session landed two deliverables and zero new theorems. The epistemic record is unchanged; FTD-0013 (`x_+ = 1/α`) stays `[STRONGLY MOTIVATED CONJECTURE]`; the spine is untouched.
+
+- **MC-T4.3 ARC-B1 pre-registration (FTD-0198) hash-locked.** `docs/theory/10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`, git tag `preregister-alpha-readout-observable-selection-v1` (commit `0e79820`), SHA256 `e273ca85234c04406c14b0b0bb01bb2ea760367ca7286c2b35649b80563b582a`. The first session-scoped attack on the Priority-0 central foundational obstruction (MC-T4.3 per `SPEC_DOCTRINE_LEDGER.md` §14 Phase 2). ARC-B1 = Observable-Selection Readout per `SPEC_ALPHA_READOUT_CONTRACT.md` §5B — the narrowest unclosed mechanism class after the 11 closed-negative alpha-derivation routes. 9-section format following PREREG_FINITE_NEUTRAL_LOCK_v1 / PREREG_COLOUR_SINGLET_RANK_v1 templates; three-outcome scheme (FOUND / UNDERDETERMINED / CLOSED-NEGATIVE); 10 falsifier rules F-a..F-j with mechanical checking; §8 banned moves cover all 11+ closed routes. **Design lock only — no closure attempt run.** Closure attempt is a downstream multi-session arc against the locked pre-reg; prior-favoured outcome is CLOSED-NEGATIVE; the value of the pre-reg is in making whichever verdict lands rigorous and providing load-bearing input to FTD-0186 v2 boundary theorem if it closes negative.
+
+- **G\* paper (`docs/papers/PAPER_GSTAR_INTRODUCTION.tex`) polished through 4 red-team rounds → final grade A.** Pre-submission audit + 5 stylized personas (Zagier/Deligne/Tao/Cohen/Poonen) found and fixed 11 Sev-2 items across the rounds (including 4 self-introduced edit-bugs the iterative protocol caught — e.g. Chowla-Selberg misattribution introduced in round 1's Z2 edit, criterion-numbering inconsistency from round 2's P6 reformulation, Bernoulli arithmetic bug in round 4's Z5/Z6 edit). Paper now **30 pages, compile-clean, MSC 11G15 primary**, ready for arXiv math.NT upload. **Edits uncommitted** pending user's upload workflow (`\author{}` deliberately left empty per user instruction; needs fill at arXiv form-fill time; math.NT endorsement may be needed for first submission).
+
+- **Working memory** (`docs/WHERE_WE_LEFT_OFF.md` §0.11) records the full session work. Paths I/II/IV (Theorem 7 documentation alignment, FTD-0186 v2 boundary theorem pre-reg, FTD-0110 nonlinear bridge scoping memo) remain queued per the plan `.claude/plans/let-s-proceed-on-the-eager-rocket.md`.
+
+---
+
+## Previous epistemic state (2026-05-21 — post physics-panel review, boundary-theorem correction, FTD-0189 Outcome A)
 
 The 2026-05-21 session subjected the framework to an adversarial physics-panel review and acted on the verdict. Net effect: the epistemic record got **more honest** (two claims corrected, none promoted), and the one decisive pre-registered test ran and returned a favourable but tightly-scoped result.
 

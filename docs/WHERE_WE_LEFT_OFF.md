@@ -1,6 +1,101 @@
-# Where We Left Off — 2026-05-19 (G* opus follow-up: Phase 0 + Phase 1 — Conjecture 16.5.2 closed, integer-4 unification proven)
+# Where We Left Off — 2026-05-23 (MC-T4.3 ARC-B1 pre-registration hash-locked; G* paper polished to grade A)
 
-**Latest update:** 2026-05-19 — the **G* opus follow-up arc** completed. After the G* opus shipped (Papers A–E), two open targets dominated the primitive/ontological math layer: **Conjecture 16.5.2** (Paper A's residual, the stated Duke/JAMS-upgrade gate) and the **integer-4 unification**. A brainstorming pass produced a unified research-attack design, executed as Phase 0 (symmetric-period-algebra infrastructure: eigenline module + 80-digit identity verification + pre-registration tag) and Phase 1 (the L2–L7 lemma chain) under TDD discipline. **All of Tier A closed:** T-A1 (Sym^k Z[i]-eigenline decomposition, established), **T-A2** (integer-4 unification, **[THEOREM]**, corrected — Q(i) is the unique imaginary quadratic field with `|μ_K| = |disc(K)|`), **T-A3** (**Conjecture 16.5.2 closed [DERIVED]** via the reality-collapse lemma — the Paper A Duke/JAMS upgrade is now mathematically available). Tier B closed negative (T-B1/T-B2 — `N_base = 4` is the O_h-orbit count of the 27-block, a crystallographic invariant, not a Z[i] bridge; FTD-0122's own source already disclaimed it). 36 commits, LEDGER FTD-0177 through FTD-0183, 43 pytest cases, 5 new theory docs. Two spec over-claims caught and corrected (the T-A2 draft error, T-B1). Full record in §0.10 below; the 2026-05-04 Phase B work is preserved unchanged at §0.9.
+**Latest update:** 2026-05-23 — two deliverables landed, zero spine tag moves. (1) **MC-T4.3 ARC-B1 pre-registration FTD-0198 hash-locked** (`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`, git tag `preregister-alpha-readout-observable-selection-v1`, SHA256 `e273ca85234c04406c14b0b0bb01bb2ea760367ca7286c2b35649b80563b582a`) — the first session-scoped attack on the Priority-0 central foundational obstruction; design lock only, no closure attempt run. (2) **`PAPER_GSTAR_INTRODUCTION.tex` polished through 4 red-team rounds → final grade A** — pre-submission audit + 5 stylized personas (Zagier/Deligne/Tao/Cohen/Poonen) caught and fixed 11 Sev-2 items, including 4 self-introduced edit-bugs the iterative protocol caught. Paper is 30 pages, compile-clean, MSC 11G15 primary, ready for arXiv math.NT upload (edits uncommitted pending user's upload workflow). **No spine tag moves**; FTD-0013 (`x_+ = 1/α`) stays `[STRONGLY MOTIVATED CONJECTURE]`. Paths I/II/IV queued. Full record in §0.11 below; the 2026-05-19 G* opus follow-up is preserved at §0.10.
+
+---
+
+## 0.11 · 2026-05-23 — Session work: G\* paper polish + MC-T4.3 ARC-B1 pre-registration
+
+### What the session covered
+
+After the 2026-05-22 corpus consolidation, the session focused on two non-overlapping deliverables driven by direct user direction:
+
+1. **G\* paper externalization prep** (Path VI per the framework-advance plan): pre-submission audit of `PAPER_GSTAR_INTRODUCTION.tex`, then a 4-round red-team / revise cycle using 5 stylized expert personas, then a final-grade pass. Goal: get the paper externally defensible at math.NT grade. Result: grade A (up from initial A- after round 3).
+
+2. **MC-T4.3 ARC-B1 pre-registration** (Path III per the framework-advance plan, with paths I/II/IV queued behind it): design and hash-lock the first attempt against the Priority-0 central foundational obstruction. Goal: lock the *design* of the next closure attempt, not perform it. Result: FTD-0198 [PRE-REGISTRATION] hash-locked, all 8 verification checks pass.
+
+### G\* paper red-team arc → final grade A
+
+| Round | Found | Fixed | Notes |
+|---|---|---|---|
+| Initial audit | 0 Sev-1, 6 Sev-2, 14 Sev-3 | 6 Sev-2 applied | First-pass overclaim hot spots (Watson attribution, Deligne period-conjecture framing, (2,3) uniqueness statement, etc.) |
+| Round 2 | 0 Sev-1, 3 Sev-2 (1 self-correction) | All 3 fixed | C7 caught my own Chowla-Selberg misattribution in round 1's Z2 edit |
+| Round 3 | 0 Sev-1, 2 Sev-2 (both self-introduced by round-2 batch edits) | All 2 fixed | Criterion-numbering inconsistency from P6 reformulation; §1 reference drift |
+| Round 4 | 0 Sev-1, 1 Sev-2 (self-introduced) | Fixed in-round | Bernoulli arithmetic bug in Z5/Z6 edit (-65520/B_12 vs -24/B_12) |
+
+Total: 11 Sev-2 items found and fixed across 4 rounds; 4 were self-introduced edit-bugs the iterative red-team caught. Diminishing-returns pattern: 6→3→2→1.
+
+**Final paper state:**
+- 30 pages, 653,265 bytes, compile-clean
+- MSC 11G15 primary, 11F11/11F67/33B15 secondary
+- `\author{}` deliberately empty per user instruction (fill at arXiv form-fill time)
+- Forward-references to companion paper softened to "separate note in preparation"
+- §17.4 retitled from "ontological zero-point" to "Minimal generating structure"
+- All criterion-numbering self-consistent
+- Honest Watson attribution (no novelty claim)
+- Correct Chowla-Selberg attribution on η(i) closed form
+- Selection-vs-derivation distinction explicit for (2,3) minimal-a criterion
+
+**Final grade A** by 7 dimensions: mathematical correctness (A), epistemic discipline (A), scope discipline (A), internal coherence (A), provenance (A), externalization readiness (A-, conditional on author-fill + actual upload), adversarial robustness (A).
+
+**Edits are uncommitted** (working tree: `M docs/papers/PAPER_GSTAR_INTRODUCTION.tex` + `M docs/papers/PAPER_GSTAR_INTRODUCTION.pdf`). Per the user's preference, the commit + upload happen together in their arXiv workflow.
+
+### MC-T4.3 ARC-B1 pre-registration (FTD-0198)
+
+The session executed the plan at `.claude/plans/let-s-proceed-on-the-eager-rocket.md` (approved 2026-05-23). The plan covered Path III (MC-T4.3 sub-step memo) deep + Paths I/II/IV sequenced as ~1-session follow-ups.
+
+**Deliverable:** [`docs/theory/10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](theory/10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md)
+
+**Git anchors:**
+- Commit `0e79820` (tagged) — pre-reg file only (810 insertions, 1 file)
+- Commit `eaf7681` — LEDGER row FTD-0198 + REF_PREREGISTER_MANIFEST.md entry + SPEC_OPEN_MATH_BY_SECTOR.md §10.1 cross-ref (16 insertions, 1 deletion, 3 files)
+- Tag `preregister-alpha-readout-observable-selection-v1` → `0e79820`
+- SHA256 `e273ca85234c04406c14b0b0bb01bb2ea760367ca7286c2b35649b80563b582a`
+
+**What's locked (§§2-9 hash-locked):**
+
+- **§2 Question Q-ARC-B1:** does there exist an ARC tuple `(P, A_obs, O_EM, R, C)` built from the §4 frozen catalog whose transfer/readout operator's characteristic equation reproduces the master quadratic, with FTD-internal dominant-branch selection of `x_+` and an operational EM measurement protocol returning `R(O_EM) = 1/x_+`, admissible under `SPEC_ALPHA_READOUT_CONTRACT.md` §3?
+- **§3 Definitions D1-D6:** ARC tuple, site-local vs non-site-local, operational EM measurement, dominant-branch selection rule, admissibility gate, closure verdict.
+- **§4 Frozen catalog** (9 admissible observable primitives): state field `s`, flux field `J` + dual substrate `(J_L, J_R)`, bilinear link observables, plaquette bivectors, Wilson-loop traces, boundary-to-boundary transfer observables, reflexive projections, FQCR Model V `T_O` (target-not-input), master quadratic + coefficient 16 (target-not-input).
+- **§5 Benchmark:** the MC-T4.3 contract from `SPEC_ALPHA_READOUT_CONTRACT.md` §1 verbatim + ARC-0..ARC-3 status levels + the 4-leg empirical diagnostic (FTD-0004/0005/0125/0126).
+- **§6 Three outcomes:** FOUND / UNDERDETERMINED / CLOSED-NEGATIVE, each with explicit tag consequences and ratification protocol.
+- **§7 Falsifiers F-a..F-j:** 10 mechanically-checkable rules covering CODATA-input, free-parameter-=-α, dominant-branch ambiguity, post-hoc-observable, site-local-Clifford (FTD-0073), QED-normalization-reduction, closed-channel-relabelling (F-g enumerates FTD-0050/0073/0094/0116/0097/0035 and the 4-leg FTD-0004/0005/0125/0126), calibration-dependence, look-elsewhere, master-quadratic-inserted-not-derived.
+- **§8 Banned moves:** anti-laundering rules covering all 11+ closed-negative alpha-derivation routes.
+- **§9 Method:** locked 11-step ordered execution with numerical comparison only at step 10, after admissibility gate + falsifier checklist + banned-moves checklist.
+
+**What's open (§10):** only the verdict. All three §6 outcomes are pre-blessed; prior-favoured outcome is CLOSED-NEGATIVE.
+
+**Three-outcome scheme** chosen for project consistency with PREREG_FINITE_NEUTRAL_LOCK_v1 and PREREG_COLOUR_SINGLET_RANK_v1; ARC-0..ARC-3 partial-completion granularity from the contract §7 preserved inside UNDERDETERMINED as sub-classifications.
+
+**8 verification checks all pass** (anti-α grep clean, git tag resolves, SHA256 in 2 places, 15 cross-references resolve, LEDGER row format correct, sector tracker cross-ref present, no tag promotion/demotion in any commit, doctrine compliance with FTD-0013 unchanged stated 3 times in pre-reg).
+
+### What landed
+
+- FTD-0198 [PRE-REGISTRATION] LEDGER row + manifest entry + sector tracker §10.1 cross-ref
+- Tagged commit `0e79820` (the pre-reg file, hash-locked)
+- Follow-up commit `eaf7681` (cross-refs)
+- Plan file `C:\Users\cpaci\.claude\plans\let-s-proceed-on-the-eager-rocket.md` (approved by user, executed)
+- Working-memory wrap (this §0.11 + CLAUDE.md current-state update)
+
+### What did NOT land (honest accounting)
+
+- **No closure attempt** against the locked pre-reg. The closure attempt itself is a downstream multi-session arc.
+- **No spine tag moves.** FTD-0013 (`x_+ = 1/α`) stays `[STRONGLY MOTIVATED CONJECTURE]`. FTD-0001/0006 (master quadratic + coefficient 16) unchanged. Every other LEDGER claim unchanged.
+- **No promotion of MC-T4.3 status.** Still `[FOUNDATIONAL OBSTRUCTION]` per `SPEC_OPEN_MATH_BY_SECTOR.md` §10.
+- **G\* paper not yet posted to arXiv.** Edits are committed in the working tree (uncommitted pending user's upload workflow). Author entry + math.NT endorsement + form submission are user-side.
+- **Paths I, II, IV not started.** Queued per the plan §C sequencing.
+
+### What remains
+
+- **Path I — Theorem 7 documentation alignment** (~1 session). Retag `SPEC_ALGEBRAIC_SPINE.md` §7 from `[THEOREM at L=2] + [CONJECTURE for general L]` to `[THEOREM at L=2 — mode-degeneracy origin] + [DISCONFIRMED for general L]` per the exploration finding (`scripts/proofs/proof_phase_j_general_L.py`). Propagate to downstream references. Add LEDGER row `[METHODOLOGICAL CLARIFICATION]`. No new theorem.
+
+- **Path II — FTD-0186 v2 boundary-theorem pre-registration** (~1 session). Design v2 discriminator with tightened A1 criterion that doesn't trip on type-ii closed-negatives (FTD-0050, FTD-0164, FTD-0183). New tag `preregister-structural-dynamical-discriminator-v2`. ARC-B1 CLOSED-NEGATIVE (if it lands) strengthens this work's load-bearing input.
+
+- **Path IV — FTD-0110 nonlinear bridge scoping memo** (~1 session for scoping; multi-session for engine campaign). Identify which of discriminator tests D3a-D3d are desk-analytical (session-scoped) vs engine-resourced (multi-session WSL2/CUDA). Engine campaign requires its own pre-registration.
+
+- **G\* paper arXiv upload** (user-side). Fill `\author{}`, obtain math.NT endorsement if first submission, commit the polish edits, upload via arxiv.org. Submission package documented in the working-memory `Path VI` summary.
+
+- **MC-T4.3 ARC-B1 closure attempt** (downstream multi-session arc). Runs only against the hash-locked tag `preregister-alpha-readout-observable-selection-v1`. Result lands in a separate document (`FOUND_*`, `AUDIT_*`, or `AUDIT_*_CLOSED_NEGATIVE.md` per §6 verdict). If §3/§7/§8 prove defective during the attempt, the response is a v2 pre-registration, not a v1 edit.
 
 ---
 
