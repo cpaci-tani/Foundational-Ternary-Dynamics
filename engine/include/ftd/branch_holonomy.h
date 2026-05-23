@@ -69,8 +69,10 @@
  * builds on this primitive but is in separate modules.
  */
 
+#include <array>
 #include <cmath>
 #include <cstddef>
+#include <cstdint>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -224,6 +226,100 @@ inline std::vector<std::vector<double>> SignedRing1D::build_matrix() const {
         M[static_cast<std::size_t>(ip)][static_cast<std::size_t>(i)]  -= sigma_i;
     }
     return M;
+}
+
+// ---------------------------------------------------------------------------
+// Canonical PLAN_01 3D API — torus branch twists on the periodic cubic lattice.
+// ---------------------------------------------------------------------------
+//
+// Adds the 3D-native primitives specified in
+// `ftd_engine_agent_plans/PLAN_01_BRANCH_HOLONOMY_GAP.md`: per-axis Z_2
+// twist flags, holonomy and momentum-shift accessors, the 3D Laplacian
+// eigenvalue at general (m_x, m_y, m_z), and the closed-form k-twist
+// additivity result:
+//
+//     λ_min(N, twists)  =  k(twists) · 4 sin²(π / (2N)) / a²        (eq. 4)
+//
+// where k(twists) = #{ axis : axis is AntiPeriodic } ∈ {0, 1, 2, 3}.
+// The lowest mode for an axis-α twist sits at k_α = π/N (the half-integer
+// quantum), all other axes at the integer k = 0; additivity across twisted
+// axes follows from the Laplacian's coordinate-separability.
+
+enum class BranchTwist : std::uint8_t {
+    Periodic     = 0,
+    AntiPeriodic = 1,
+};
+
+struct BranchTwist3 {
+    BranchTwist x = BranchTwist::Periodic;
+    BranchTwist y = BranchTwist::Periodic;
+    BranchTwist z = BranchTwist::Periodic;
+};
+
+// Z_2 holonomy along a single axis: +1 (periodic) or −1 (antiperiodic).
+inline int holonomy(BranchTwist t) {
+    return t == BranchTwist::AntiPeriodic ? -1 : +1;
+}
+
+inline std::array<int, 3> holonomy_vector(const BranchTwist3& t) {
+    return {holonomy(t.x), holonomy(t.y), holonomy(t.z)};
+}
+
+// Momentum-shift on the twisted axis: π (antiperiodic) or 0 (periodic).
+inline double branch_momentum_shift(BranchTwist t) {
+    static constexpr double kPi = 3.14159265358979323846;
+    return t == BranchTwist::AntiPeriodic ? kPi : 0.0;
+}
+
+inline int twist_count(const BranchTwist3& twists) {
+    return (twists.x == BranchTwist::AntiPeriodic ? 1 : 0)
+         + (twists.y == BranchTwist::AntiPeriodic ? 1 : 0)
+         + (twists.z == BranchTwist::AntiPeriodic ? 1 : 0);
+}
+
+// 1D Laplacian eigenvalue at integer mode m with twist t on a ring of N sites,
+// lattice spacing a:
+//     k = (2π m + θ) / N,    θ = branch_momentum_shift(t)
+//     λ = (4 / a²) · sin²(k/2)
+inline double torus_laplacian_eigenvalue_1d(int N, int m, BranchTwist t,
+                                            double a = 1.0) {
+    if (N < 1) {
+        throw std::invalid_argument("torus_laplacian_eigenvalue_1d: N >= 1");
+    }
+    if (a == 0.0) {
+        throw std::invalid_argument("torus_laplacian_eigenvalue_1d: a != 0");
+    }
+    static constexpr double kPi = 3.14159265358979323846;
+    const double theta = branch_momentum_shift(t);
+    const double p = (2.0 * kPi * static_cast<double>(m) + theta)
+                     / static_cast<double>(N);
+    const double s = std::sin(0.5 * p);
+    return 4.0 * s * s / (a * a);
+}
+
+// 3D Laplacian eigenvalue at integer modes (mx, my, mz) with axis twists.
+inline double torus_laplacian_eigenvalue_3d(int N, int mx, int my, int mz,
+                                            const BranchTwist3& twists,
+                                            double a = 1.0) {
+    return torus_laplacian_eigenvalue_1d(N, mx, twists.x, a)
+         + torus_laplacian_eigenvalue_1d(N, my, twists.y, a)
+         + torus_laplacian_eigenvalue_1d(N, mz, twists.z, a);
+}
+
+// [THEOREM] Exact k-twist branch gap on the N×N×N periodic cubic torus
+// with `k = twist_count(twists)` antiperiodic axes:
+//     λ_min(N, twists)  =  k · 4 sin²(π / (2N)) / a².                 (eq. 4)
+inline double exact_torus_branch_gap(int N, const BranchTwist3& twists,
+                                     double a = 1.0) {
+    if (N < 2) {
+        throw std::invalid_argument("exact_torus_branch_gap: N >= 2");
+    }
+    if (a == 0.0) {
+        throw std::invalid_argument("exact_torus_branch_gap: a != 0");
+    }
+    static constexpr double kPi = 3.14159265358979323846;
+    const double s = std::sin(kPi / (2.0 * static_cast<double>(N)));
+    return static_cast<double>(twist_count(twists)) * 4.0 * s * s / (a * a);
 }
 
 }  // namespace branch
