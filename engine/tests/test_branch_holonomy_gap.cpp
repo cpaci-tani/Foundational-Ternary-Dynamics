@@ -263,6 +263,63 @@ int main() {
         std::printf("  T6  argument validation: N<2 / wrong size / bad sign all throw\n");
     }
 
+    // ----- T7: PLAN_01 canonical 3D API — k-twist additivity + asymptote ----
+    {
+        constexpr double kPi = 3.14159265358979323846;
+
+        // Enum / momentum-shift sanity.
+        CHECK(holonomy(BranchTwist::Periodic) == +1);
+        CHECK(holonomy(BranchTwist::AntiPeriodic) == -1);
+        CHECK(std::fabs(branch_momentum_shift(BranchTwist::Periodic)) < 1e-15);
+        CHECK(std::fabs(branch_momentum_shift(BranchTwist::AntiPeriodic) - kPi) < 1e-15);
+
+        for (int N : {8, 10, 12, 16, 18, 20, 32, 64}) {
+            BranchTwist3 none{};
+            BranchTwist3 x{BranchTwist::AntiPeriodic,
+                           BranchTwist::Periodic,
+                           BranchTwist::Periodic};
+            BranchTwist3 xy{BranchTwist::AntiPeriodic,
+                            BranchTwist::AntiPeriodic,
+                            BranchTwist::Periodic};
+            BranchTwist3 xyz{BranchTwist::AntiPeriodic,
+                             BranchTwist::AntiPeriodic,
+                             BranchTwist::AntiPeriodic};
+
+            CHECK(twist_count(none) == 0);
+            CHECK(twist_count(x)    == 1);
+            CHECK(twist_count(xy)   == 2);
+            CHECK(twist_count(xyz)  == 3);
+
+            const double gap_none = exact_torus_branch_gap(N, none);
+            const double gap_x    = exact_torus_branch_gap(N, x);
+            const double gap_xy   = exact_torus_branch_gap(N, xy);
+            const double gap_xyz  = exact_torus_branch_gap(N, xyz);
+
+            CHECK(std::fabs(gap_none) < 1e-15);
+            CHECK(std::fabs(gap_xy  - 2.0 * gap_x) < 1e-13);
+            CHECK(std::fabs(gap_xyz - 3.0 * gap_x) < 1e-13);
+
+            // 1-axis gap should equal the existing 1D theorem helper.
+            const double expected_1axis = torus_branch_twist_gap_1d(N);
+            CHECK(std::fabs(gap_x - expected_1axis) < 1e-13);
+
+            // Lowest 3D mode (m_x=m_y=m_z=0) under x-twist =
+            //   4 sin²(π/(2N))  (k_x = π/N, k_y = k_z = 0).
+            const double mode000 = torus_laplacian_eigenvalue_3d(N, 0, 0, 0, x);
+            CHECK(std::fabs(mode000 - gap_x) < 1e-13);
+
+            // Large-N asymptote: gap_x → π²/N². Check ratio ≈ 1 for N ≥ 32.
+            if (N >= 32) {
+                const double asym = kPi * kPi
+                                    / (static_cast<double>(N)
+                                       * static_cast<double>(N));
+                const double ratio = gap_x / asym;
+                CHECK(std::fabs(ratio - 1.0) < 0.01);
+            }
+        }
+        std::printf("  T7  PLAN_01 3D API: enum + momentum-shift; k-twist additivity (k ∈ {0,1,2,3}); π²/N² asymptote  ✓\n");
+    }
+
     std::printf("=== %s (%d failure(s)) ===\n",
                 g_fails == 0 ? "ALL PASSED" : "FAILED",
                 g_fails);
