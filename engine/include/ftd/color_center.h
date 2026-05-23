@@ -192,5 +192,27 @@ inline ComplexMatrix3 center_projector_p0() {
     return matrix_scale3(sum, 1.0 / 3.0);
 }
 
+// ---------------------------------------------------------------------------
+// Open-flux penalty toy (PLAN_02 — [CANDIDATE PRINCIPLE], NOT a theorem)
+// ---------------------------------------------------------------------------
+//
+// A minimal scalar toy for the open-flux-penalty CANDIDATE PRINCIPLE: a flux
+// tube of `length` carries base energy `sigma_c · length`; non-center-neutral
+// configurations pay an additional `open_penalty`. This does NOT derive a
+// confinement scale, does NOT pin sigma_c or open_penalty to any FTD ontic
+// constant, and is NOT promoted to a theorem. It is a scaffold so downstream
+// modules / visualisations can express the conjectural penalty without
+// re-implementing the same arithmetic.
+//
+// Per the LEDGER discipline this is [CANDIDATE PRINCIPLE]; the LEDGER row
+// FTD-0195 records that the open-flux penalty is conjectural while center-
+// closure (∑c_i ≡ 0 mod 3) is THEOREM.
+inline double toy_flux_energy(double length,
+                              bool   center_neutral,
+                              double sigma_c      = 1.0,
+                              double open_penalty = 0.0) {
+    return sigma_c * length + (center_neutral ? 0.0 : open_penalty);
+}
+
 }  // namespace color
 }  // namespace ftd

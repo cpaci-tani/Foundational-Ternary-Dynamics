@@ -157,6 +157,27 @@ int main() {
                     tr.real(), tr.imag());
     }
 
+    // ----- T7: open-flux penalty toy (PLAN_02 [CANDIDATE PRINCIPLE]) -----
+    // Verifies the toy_flux_energy scaffold returns σ_c·L for neutral
+    // configurations and σ_c·L + open_penalty for non-neutral ones. The
+    // function is asserted-arithmetic only; it carries no claim about the
+    // physical value of σ_c or open_penalty.
+    {
+        // Default (σ_c=1, open_penalty=0): neutral and open both = length.
+        CHECK(std::fabs(toy_flux_energy(3.0, true)  - 3.0) < 1e-15);
+        CHECK(std::fabs(toy_flux_energy(3.0, false) - 3.0) < 1e-15);
+
+        // Non-zero penalty: open pays the penalty, neutral does not.
+        CHECK(std::fabs(toy_flux_energy(5.0, true,  2.0, 100.0) - 10.0)  < 1e-12);
+        CHECK(std::fabs(toy_flux_energy(5.0, false, 2.0, 100.0) - 110.0) < 1e-12);
+
+        // Zero-length sanity: only the penalty (if any) remains.
+        CHECK(std::fabs(toy_flux_energy(0.0, true,  7.0, 42.0) - 0.0)  < 1e-15);
+        CHECK(std::fabs(toy_flux_energy(0.0, false, 7.0, 42.0) - 42.0) < 1e-15);
+
+        std::printf("  T7  toy_flux_energy: σ_c·L for neutral; σ_c·L + open_penalty otherwise  [CANDIDATE PRINCIPLE scaffold]  ✓\n");
+    }
+
     std::printf("=== %s (%d failure(s)) ===\n",
                 g_fails == 0 ? "ALL PASSED" : "FAILED",
                 g_fails);
