@@ -889,6 +889,14 @@ ftd_add_test(test_branch_holonomy_gap tests/test_branch_holonomy_gap.cpp
 ftd_add_test(test_z3_color_center tests/test_z3_color_center.cpp
              LABELS native)
 
+# Generation graph Γ_F(d) — [CANDIDATE RECONSTRUCTION], NOT a theorem.
+# Structural-sanity test only (Hermiticity, real spectrum, orthonormal
+# eigenvectors, eigenvalue equation, overlap unitarity). The owner-supplied
+# CKM-shape target is printed informationally; the test does NOT assert it.
+# See engine/include/ftd/generation_graph.h.
+ftd_add_test(test_generation_graph tests/test_generation_graph.cpp
+             LABELS native)
+
 # Cluster A — Langevin sublattice filter (FTD-0093). Verifies that with
 # langevin_site_filter = BCC_SITES, only BCC voxels equilibrate to <|v|^2>=3T
 # while SC/FCC voxels remain unfilled. Confound-check infrastructure for
