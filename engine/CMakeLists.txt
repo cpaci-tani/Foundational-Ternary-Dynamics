@@ -883,6 +883,12 @@ ftd_add_test(test_sublattice_laplacian tests/test_sublattice_laplacian.cpp
 ftd_add_test(test_branch_holonomy_gap tests/test_branch_holonomy_gap.cpp
              LABELS native)
 
+# Z_3 color-center closure (sum c_i ≡ 0 mod 3) + projector P_0 = (1/3)(I+Z+Z²).
+# Pure unit/theory test of the finite-center closure [THEOREM]. No engine
+# state, no RenderBridge. See engine/include/ftd/color_center.h.
+ftd_add_test(test_z3_color_center tests/test_z3_color_center.cpp
+             LABELS native)
+
 # Cluster A — Langevin sublattice filter (FTD-0093). Verifies that with
 # langevin_site_filter = BCC_SITES, only BCC voxels equilibrate to <|v|^2>=3T
 # while SC/FCC voxels remain unfilled. Confound-check infrastructure for
