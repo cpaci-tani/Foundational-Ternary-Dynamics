@@ -876,6 +876,13 @@ ftd_add_test(test_sublattice_helpers tests/test_sublattice_helpers.cpp
 ftd_add_test(test_sublattice_laplacian tests/test_sublattice_laplacian.cpp
              CTEST_NAME sublattice_laplacian TIMEOUT 60 LABELS native eft)
 
+# Branch holonomy gap (Z_2 line-bundle on a periodic ring).
+# Verifies lambda_min = 4 sin^2(pi/(2N)) [THEOREM] for the signed Laplacian
+# of a Z_2 torus branch twist. Pure unit/theory test — no engine state,
+# no RenderBridge, no physics toggles. See engine/include/ftd/branch_holonomy.h.
+ftd_add_test(test_branch_holonomy_gap tests/test_branch_holonomy_gap.cpp
+             LABELS native)
+
 # Cluster A — Langevin sublattice filter (FTD-0093). Verifies that with
 # langevin_site_filter = BCC_SITES, only BCC voxels equilibrate to <|v|^2>=3T
 # while SC/FCC voxels remain unfilled. Confound-check infrastructure for
