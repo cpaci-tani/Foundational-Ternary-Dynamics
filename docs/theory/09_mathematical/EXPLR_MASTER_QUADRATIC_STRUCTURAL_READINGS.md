@@ -1,6 +1,6 @@
 # EXPLR — Master Quadratic Structural Readings: Volumetric, 2×2 Mixing-Matrix, and Conjugate-Lattice Interpretations
 
-**Status:** [STRUCTURAL OBSERVATION] — three structural re-framings of the master quadratic `x² − 16·G*²·x + 16·G*³ = 0`. None is a new theorem; each is an interpretive picture of existing spine theorems (FTD-0001/0003/0004/0013/0014/0111). Per-section tags preserved from sources: the volumetric reading is [STRUCTURAL OBSERVATION] correcting the abstract 2×2 presentation; the 2×2 mixing-matrix reading is [STRUCTURAL OBSERVATION]; the conjugate-lattice reading is [STRUCTURAL OBSERVATION] with Reading 3 (|Aut(E × E)|) structurally cleanest.
+**Status:** [STRUCTURAL OBSERVATION] — three structural re-framings of the master quadratic `x² − 16·G*²·x + 16·G*³ = 0`. None is a new theorem; each is an interpretive picture of existing spine theorems (FTD-0001/0003/0004/0013/0111; historical FTD-0014 references throughout this document refer to the now-retired `x_- ↔ N_c` identification, **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+ ↔ 1/α` (FTD-0013); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. All "dual prediction" prose below is preserved as historical interpretation but no longer load-bearing). Per-section tags preserved from sources: the volumetric reading is [STRUCTURAL OBSERVATION] correcting the abstract 2×2 presentation; the 2×2 mixing-matrix reading is [STRUCTURAL OBSERVATION]; the conjugate-lattice reading is [STRUCTURAL OBSERVATION] with Reading 3 (|Aut(E × E)|) structurally cleanest.
 **Date:** 2026-05-21
 **Consolidates:** `EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md`, `EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md`, `EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md` (merged 2026-05-21)
 
@@ -651,7 +651,7 @@ None of the three readings introduces a new LEDGER entry. Each records a structu
 - FTD-0003 (CM uniqueness): [THEOREM] — picks E
 - FTD-0004 (= Theorem 4, |Aut(E)|² = 16): [THEOREM] — establishes the squaring
 - FTD-0013 (x_+ = 1/α): [STRONGLY MOTIVATED CONJECTURE] — unchanged
-- FTD-0014 (x_- = N_c): [STRONGLY MOTIVATED CONJECTURE] — unchanged
+- ~~FTD-0014 (x_- = N_c)~~: **RETIRED** per v1.4 §5 (2026-05-22); LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
 - FTD-0111 (harmonic invariant tower): [THEOREM] — establishes level-k=4 selection; unchanged
 - FTD-0121 (physics bridge synthesis): [SYNTHESIS] — extended in spirit by the 2×2 reading
 

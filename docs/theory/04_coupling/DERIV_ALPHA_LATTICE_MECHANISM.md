@@ -120,11 +120,13 @@ But G* is not 3. It is 2.9587... — determined by the lemniscate geometry (ϖ),
 
 $$\frac{1}{\alpha}\bigg|_{G^*=3} = 141 \quad \longrightarrow \quad \frac{1}{\alpha}\bigg|_{G^*=2.9587} = 137.036$$
 
-**The interpretation:** x₋ = 3.024 encodes TWO pieces of information:
+**The interpretation (historical, retired):** x₋ = 3.024 was previously read as encoding TWO pieces of information:
 1. **Integer part** floor(x₋) = 3 = N_c (the number of color charges, from the cuboctahedral geometry)
 2. **Fractional part** 0.024 = the coupling correction that connects color charge to electromagnetic coupling through the shared quadratic structure
 
-This is analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c = 3 through the QCD beta function. The non-integer value carries physical information about the coupling strength at a specific scale.
+**2026-05-22 update.** The `x_- ↔ N_c` identification — including the "integer part = N_c" reading — is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes; the cuboctahedral geometry referenced above is one of them) and the Moore Layer Theorem. The smaller root `x_- ≈ 3.024` is now a mathematical artifact of the polynomial only; the integer/fractional decomposition above is preserved as historical commentary.
+
+This was previously framed as analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c = 3 through the QCD beta function. Post-v1.4, the analogy depends on the retired identification and is no longer load-bearing.
 
 ---
 
@@ -156,7 +158,7 @@ This is analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c 
 3. **[THEOREM]** G* = ϖ/√(PF) is the curve's period in lattice units
 4. **[THEOREM]** The quadratic produces x₊ = 137.036 and x₋ = 3.024
 5. **[SELECTION]** EM is the most direct force (alpha¹, 97.8% of substrate flux)
-6. **[SELECTION]** x₋ ≈ 3 encodes N_c in its integer part, coupling correction in its fractional part
+6. ~~**[SELECTION]** x₋ ≈ 3 encodes N_c in its integer part, coupling correction in its fractional part~~ — **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (cuboctahedral geometry among the four routes)
 
 ### The remaining gap
 

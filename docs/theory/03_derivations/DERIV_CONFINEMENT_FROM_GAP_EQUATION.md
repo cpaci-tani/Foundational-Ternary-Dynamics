@@ -106,12 +106,12 @@ The two roots of the master quadratic live in sharply separated phases:
 
 The identification of $x_-$ with the QCD confined phase rests on:
 
-1. $\lfloor x_- \rfloor = 3 = N_c$ (the number of colors)
+1. ~~$\lfloor x_- \rfloor = 3 = N_c$~~ — **the `x_- ↔ N_c` identification is RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). $\lfloor x_- \rfloor = 3$ is a numerical fact about the polynomial root; the load-bearing match to $N_c$ is no longer in force. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem.
 2. Area-law Wilson loops (confinement)
 3. $g^2(x_-) = 0.331$ is $O(1)$, consistent with strong coupling
 4. The phase separation mirrors the EM/QCD hierarchy in nature
 
-This is classified as **[SELECTION]** because the theorems above establish confinement in a U(1) lattice gauge theory, not SU(3). The step from compact U(1) confinement to non-Abelian QCD confinement requires the additional identification $\lfloor x_- \rfloor = N_c = 3$, which selects the gauge group.
+This is classified as **[SELECTION]** because the theorems above establish confinement in a U(1) lattice gauge theory, not SU(3). The step from compact U(1) confinement to non-Abelian QCD confinement requires the additional identification of the gauge group with SU($N_c$) where $N_c = 3$ — which is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`), not derived from the master quadratic root.
 
 ### 4.2 What Is and Is Not Proven
 

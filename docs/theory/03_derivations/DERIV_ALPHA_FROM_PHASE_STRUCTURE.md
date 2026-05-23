@@ -107,11 +107,11 @@ The identification is not a separate postulate — it follows from recognizing w
 
 The smaller root $x_- = 3.024$ corresponds to strong coupling ($g^2 = 0.331$). In the confined phase, the static potential is linear: $V(r) \sim \sigma \cdot r$. This is the qualitative behavior of the strong nuclear force (quark confinement).
 
-The identification $x_- \approx N_c = 3$ (the number of colors) is more subtle. In QCD, the number of colors enters through the gauge group SU($N_c$), not through the coupling strength. The FTD framework uses a U(1) gauge field, not SU(3). The connection between $x_- \approx 3$ and $N_c = 3$ is:
+The historical identification $x_- \approx N_c = 3$ (the number of colors) is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$ with no physics identification; the prior arithmetic observation
 
 $$\text{floor}(x_-) = \text{floor}(3.024) = 3 = N_c$$
 
-This is [SELECTION] — the interpretation of $x_-$ as a color count rather than just a strong-coupling value. However, the cuboctahedral geometry independently gives $N_c = 3$ from the number of square-face axis pairs [THEOREM], providing a second route to the same integer.
+is preserved here as historical commentary. `N_c = 3` in FTD is independently sourced — cuboctahedral geometry (the number of square-face axis pairs) gives $N_c = 3$ [THEOREM], and `DERIV_NC_FROM_TOPOLOGY.md` enumerates four independent topology routes converging on this integer. The pre-v1.4 "second route to the same integer" framing is now the *single* route (the cuboctahedral / topology argument); the master-quadratic-root reading is no longer a load-bearing source for $N_c$.
 
 ### 3.2 The Phase Transition at G* [THEOREM for structure]
 

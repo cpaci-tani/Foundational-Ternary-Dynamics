@@ -17,11 +17,13 @@ says, in bare algebraic terms: **there are two positive real numbers $x_+, x_-$ 
 
 $$ \boxed{\ \frac{1}{x_+} + \frac{1}{x_-} = \frac{1}{G^*}\ } $$
 
-Under the physical identification (SP4) $x_+ = 1/\alpha$ and $x_- = N_c$, this becomes:
+Under the physical identification (SP4) $x_+ = 1/\alpha$ — the single live physics identification of the master quadratic (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]) — and the historical paired reading $x_- = N_c$ (which is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`), this becomes:
 
-$$ \boxed{\ \alpha + \frac{1}{N_c} = \frac{1}{G^*}\ } $$
+$$ \boxed{\ \alpha + \frac{1}{N_c} = \frac{1}{G^*}\ }\quad\text{(slogan form — historical, retired)} $$
 
-**This single line is the deepest content of the master quadratic.** Everything else is algebra on top of it.
+The live algebraic content (without the retired identification) is the harmonic-conjugate identity $1/x_+ + 1/x_- = 1/G^*$ itself; the physics-notation slogan above paired the two roots under the now-retired identification. The smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$; $N_c = 3$ in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
+
+**The harmonic identity $1/x_+ + 1/x_- = 1/G^*$ is the deepest algebraic content of the master quadratic.** Everything else is algebra on top of it.
 
 ---
 
@@ -116,11 +118,13 @@ $$ N_c = x_- = G^* + \frac{1}{16} + \frac{1}{256 G^*} + \frac{2}{4096 G^{*2}} + 
 
 **Leading-order statement:** $1/\alpha \approx 16 G^{*2}$ and $N_c \approx G^*$. The integer "3" for color count is $G^*$ rounded up plus a small lattice correction.
 
-## 5. The single deepest identity (under SP4)
+## 5. The single deepest identity (under SP4 — historical paired form)
 
-Accepting the physical identification $x_+ = 1/\alpha$, $x_- = N_c$ (selection principle SP4), the master quadratic's content compresses to:
+The bare algebraic identity is $1/x_+ + 1/x_- = 1/G^*$ (Vieta). Under the historical physical identification $x_+ = 1/\alpha$, $x_- = N_c$ (selection principle SP4, in its pre-v1.4 form), the master quadratic's content compresses to:
 
-$$ \boxed{\ \alpha + \frac{1}{N_c} = \frac{1}{G^*}\ } $$
+$$ \boxed{\ \alpha + \frac{1}{N_c} = \frac{1}{G^*}\ }\quad\text{(historical slogan, retired)} $$
+
+**Post-v1.4 status (2026-05-22):** the paired identification `x_- ↔ N_c` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+ ↔ 1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]); the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$ with no current physics identification. The algebraic identity $1/x_+ + 1/x_- = 1/G^*$ stands; the physics-notation slogan above is preserved here only for historical reference. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
 
 **This is the entire physical content of the master quadratic in one line.**
 
@@ -216,8 +220,9 @@ The polynomial is a **pure algebraic relation** between three objects: two roots
 | Normalized form $w^2 - w + \epsilon = 0$ | **[THEOREM]** (algebraic rearrangement) |
 | Small-$\epsilon$ expansion with Catalan coefficients | **[THEOREM]** (generating function of $w_\pm$) |
 | Reflection symmetry $x \leftrightarrow 16 G^{*3}/x$ | **[THEOREM]** (immediate from Vieta product) |
-| SP4 identification $x_+ = 1/\alpha$, $x_- = N_c$ | [SELECTION] (the one physics assumption) |
-| $\alpha + 1/N_c = 1/G^*$ as a physical statement | [THEOREM given SP4] |
+| SP4 identification $x_+ = 1/\alpha$ | [SELECTION] (the single live physics identification of the master quadratic) |
+| ~~$x_- = N_c$ identification~~ | **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` |
+| $\alpha + 1/N_c = 1/G^*$ as a physical statement | [THEOREM given historical SP4 paired form; retired post-v1.4]; live algebraic statement is $1/x_+ + 1/x_- = 1/G^*$ |
 
 **All of §1–6 is exact algebra.** No physics is invoked. The physics enters only at §5 (SP4 reading).
 

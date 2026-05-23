@@ -27,7 +27,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 |---|---|---|---:|---|
 | `g_star_identity` | G* algebraic identity | G* = Γ(1/4)/Γ(3/4) = √2·Γ(1/4)²/(2π) | 2.958675119 | [FTD-0002](../07_assessment/LEDGER.md#ftd-0002) |
 | `master_quadratic` | Master quadratic polynomial + roots | P(x) = x² − 16·G*²·x + 16·G*³ = 0; roots x± = 8·G*² ± √(16·G*⁴ − 4·G*³) | x_plus = 137.03617145815542, x_minus = 3.023963916339028 | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/LEDGER.md#ftd-0081) |
-| `cm_curve_uniqueness` | CM curve uniqueness among class-number-1 fields | Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots that simultaneously match dimensionless physical constants to permille precision | unique_discriminant = -4, class_number = 1 | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0014](../07_assessment/LEDGER.md#ftd-0014) |
+| `cm_curve_uniqueness` | CM curve uniqueness among class-number-1 fields | Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots whose larger root matches 1/α to permille precision. (Historical pair-target framing `(1/α, N_c)` reflects the pre-v1.4 state; the `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. CM uniqueness fact stands independently.) | unique_discriminant = -4, class_number = 1 | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001) |
 | `coefficient_16_aut_e_squared` | Coefficient 16 = |Aut(E)|² | For E: y² = x³ − x, |Aut(E)| = 4 over ℚ̄, so |Aut(E)|² = 16 (the master-quadratic coefficient) | 16 | [FTD-0006](../07_assessment/LEDGER.md#ftd-0006), [FTD-0007](../07_assessment/LEDGER.md#ftd-0007) |
 | `watson_identity` | Watson identity W₃ = G*²/(2π) | W₃ := ∫_0^π dx ∫_0^π dy ∫_0^π dz [3 − cos x − cos y − cos z]⁻¹ / π³ = G*²/(2π) | 1.39320393 | [FTD-0002](../07_assessment/LEDGER.md#ftd-0002) |
 | `phase_g_geometric_coulomb` | Phase G geometric Coulomb identity | α_r(r, L) = 2·r·G_L(r), where G_L is the periodic lattice Poisson Green's function. Holds at every finite L without free parameters. | — | [FTD-0004](../07_assessment/LEDGER.md#ftd-0004) |
@@ -52,12 +52,12 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 
 ### CM curve uniqueness among class-number-1 fields (`cm_curve_uniqueness`)
 
-- **Formula:** Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots that simultaneously match dimensionless physical constants to permille precision
+- **Formula:** Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots whose larger root matches 1/α to permille precision. (Historical pair-target framing `(1/α, N_c)` reflects the pre-v1.4 state; the `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. CM uniqueness fact stands independently.)
 - **Value:** unique_discriminant = -4, class_number = 1
 - **Depends on:** `g_star_identity`, `master_quadratic`
-- **LEDGER:** [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0014](../07_assessment/LEDGER.md#ftd-0014)
+- **LEDGER:** [FTD-0001](../07_assessment/LEDGER.md#ftd-0001)
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`; `scripts/proofs/scan_cm_curves.py`
-- **Notes:** Numerical verification across all 9 class-number-1 discriminants. Uniqueness extends only within the class-number-1 family; class-number ≥ 2 is [OPEN].
+- **Notes:** Numerical verification across all 9 class-number-1 discriminants. Uniqueness extends only within the class-number-1 family; class-number ≥ 2 is [OPEN]. (Prior ledger reference FTD-0014 removed — that row carried the now-retired `x_- ↔ N_c` identification, removed in commit `ca7eb61`.)
 
 ### Coefficient 16 = |Aut(E)|² (`coefficient_16_aut_e_squared`)
 
@@ -97,7 +97,7 @@ Dimensionless quantities FTD predicts and that have direct experimental analogue
 | ID | Quantity | FTD value | Lab measurement | Comparison | Tag | LEDGER |
 |---|---|---:|---|---|---|---|
 | `alpha_inverse` | 1/α (fine-structure constant) ↔ master-quadratic root x₊ | 137.0359992 | 137.0359992 ± 2.1e-08 (CODATA 2022) | Δ = -0.21 ppb; tier: hard | STRONGLY MOTIVATED CONJECTURE | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0013](../07_assessment/LEDGER.md#ftd-0013) |
-| `n_color` | N_c (number of colors) ↔ master-quadratic root x₋ | 3.023963916 | 3 (Standard Model (exact integer, not a measurement)) | Δ = 7.99e+06 ppb; tier: hard | STRONGLY MOTIVATED CONJECTURE | [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0014](../07_assessment/LEDGER.md#ftd-0014) |
+| `n_color` | N_c (number of colors) — independently sourced; `x_- ↔ N_c` identification **RETIRED** v1.4 §5 | 3 | 3 (Standard Model (exact integer, not a measurement)) | — | SELECTION | (LEDGER FTD-0014 removed in commit `ca7eb61`) |
 | `mu_over_e_mass_ratio` | m_μ / m_e (muon/electron mass ratio) | 207 | 206.768283 ± 4.6e-07 (CODATA 2022) | Δ = 1.12e+06 ppb; tier: parametric | STRONGLY MOTIVATED CONJECTURE | [FTD-0008](../07_assessment/LEDGER.md#ftd-0008) |
 | `tau_over_e_mass_ratio` | m_τ / m_e (tau/electron mass ratio) | 3477 | 3477.23 ± 0.23 (PDG 2024) | Δ = -6.61e+04 ppb; tier: parametric | STRONGLY MOTIVATED CONJECTURE | [FTD-0008](../07_assessment/LEDGER.md#ftd-0008) |
 
@@ -113,17 +113,14 @@ Dimensionless quantities FTD predicts and that have direct experimental analogue
 - **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`
 - **Notes:** Polynomial-level theorem (x₊ is a root of a number-theoretic polynomial); the physical identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE] (downgraded from THEOREM 2026-04-19) because it depends on dual-match + CM-curve uniqueness rather than a derivation chain to QED. FTD-0097 look-elsewhere scan (2026-04-27) confirms the master quadratic's polynomial-root layer lives outside the monomial scan space and is unaffected by the over-richness verdict.
 
-### N_c (number of colors) ↔ master-quadratic root x₋ (`n_color`)
+### N_c (number of colors) — independently sourced (`n_color`)
 
-- **Formula:** x₋ root of master quadratic; numerical value 3.024
-- **FTD value:** 3.023963916
+- **Formula:** `N_c = 3` from independent structural routes: Moore Layer Theorem and `DERIV_NC_FROM_TOPOLOGY.md` (four routes). The historical identification `N_c = ⌊x_-⌋` via the master-quadratic small root is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.
+- **FTD value:** 3
 - **Lab:** 3 (Standard Model (exact integer, not a measurement))
-- **Comparison:** Δ = 7.99e+06 ppb; tier: hard
-- **Tag:** `STRONGLY MOTIVATED CONJECTURE`
-- **Depends on:** `master_quadratic`
-- **LEDGER:** [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0014](../07_assessment/LEDGER.md#ftd-0014)
-- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md`
-- **Notes:** Same epistemic tier as α: polynomial-root layer is theorem; physical identification is conjecture. Four independent topological routes converge on N_c = 3 (DERIV_NC_FROM_TOPOLOGY).
+- **Tag:** `SELECTION`
+- **Sources:** `docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md`; `docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md`
+- **Notes:** `N_c = 3` in FTD is independently sourced from topology/representation-theory routes. The historical identification `x_- ↔ N_c` (where `x_- ≈ 3.024` is the smaller root of the master quadratic) is RETIRED per v1.4 §5: the smaller root is a mathematical artifact of `P(x)`, with no live physics identification. LEDGER row FTD-0014 was removed in commit `ca7eb61`.
 
 ### m_μ / m_e (muon/electron mass ratio) (`mu_over_e_mass_ratio`)
 
@@ -220,7 +217,7 @@ LEDGER ids touched by this map, with the entries that reference them. Use this s
 | FTD-0007 | `coefficient_16_aut_e_squared` |
 | FTD-0008 | `mu_over_e_mass_ratio`, `tau_over_e_mass_ratio` |
 | FTD-0013 | `alpha_inverse` |
-| FTD-0014 | `cm_curve_uniqueness`, `n_color` |
+| ~~FTD-0014~~ | **RETIRED** (v1.4 §5; LEDGER row removed in commit `ca7eb61`) — formerly referenced `cm_curve_uniqueness` and `n_color`; both entries restated above without this row. |
 | FTD-0030 | `a_phys_planck` |
 | FTD-0041 | `a_phys_planck`, `m_electron_dimensional`, `mass_unit_anchor`, `t_phys_lattice_tick` |
 | FTD-0059 | `a_phys_planck` |

@@ -96,7 +96,7 @@ L_3 = 4, L_4 = 7.
 **Proposition:** The system {N_c = 3, N_base = 4, b_3 = 7, N_eff = 13} satisfies all six constraints simultaneously.
 
 **Proof:**
-1. Master quadratic gives x_- = 3.024, so N_c = floor(x_-) = 3 [C1]
+1. Master quadratic gives x_- = 3.024. The historical reading `N_c = floor(x_-) = 3` is **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` here is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem. The arithmetic fact `floor(x_-) = 3` is preserved as historical commentary. [C1]
 2. F_7 = T_7 = 13, so N_eff = 13 [C2]
 3. T_6 = 7, and T_7 = N_eff = 13, so b_3 = 7 [C3]
 4. L_3 = 4, L_4 = 7 = b_3, and 4^2 = 16 = |Aut(E)|^2, so N_base = 4 [C4]
@@ -182,7 +182,7 @@ Searched all integer quadruples with N_c = 1..100, N_base = 1..50.
 
 #### 2. Physics constraints only (P1-P5)
 
-10 solutions exist for N_c = 2..11 (each with a specific N_gen). All have sin^2(theta_W) in the physical range. The master quadratic floor(x_-) = 3 selects N_c = 3 uniquely.
+10 solutions exist for N_c = 2..11 (each with a specific N_gen). All have sin^2(theta_W) in the physical range. *(Historical: "The master quadratic floor(x_-) = 3 selects N_c = 3 uniquely." This selection route is **retired** per v1.4 §5; `N_c = 3` is now independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem.)*
 
 #### 3. With N_gen = N_c
 

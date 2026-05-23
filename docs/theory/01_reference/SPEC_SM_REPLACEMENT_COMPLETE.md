@@ -318,7 +318,7 @@ These results follow from $G^*$, the master quadratic, and integer arithmetic al
 | # | Result | Formula | Status (2026-05-01) |
 |---|--------|---------|--------|
 | 1 | Fine structure constant | $1/\alpha = x_+ = 137.036$ | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, identification x_+ ↔ 1/α is conjecture) |
-| 2 | Color charge number | $N_c = \lfloor x_- \rfloor = 3$ | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0014; identification x_- ↔ N_c at 0.80%) |
+| 2 | Color charge number | $N_c = 3$ (independently sourced) | The historical identification `N_c = \lfloor x_- \rfloor` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The smaller root `x_- ≈ 3.024` is a mathematical artifact of $P(x)$ only. `N_c = 3` in FTD comes from independent structural sources — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. |
 | 3 | Weak mixing angle | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted 2026-04-19; 3.5% accuracy) |
 | 4 | Strong coupling at $M_Z$ | $\alpha_s = b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | [PARAMETRIC] (LEDGER FTD-0020, demoted 2026-04-19) |
 | 5 | Electron mass | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [SELECTION] (LEDGER FTD-0015; prefactor $16\sqrt{2\pi}/3$ is structural [THEOREM] per FTD-0077, exponent $n=11$ is [SELECTION]) |
@@ -654,8 +654,8 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-2 | $G^* = \varpi/\sqrt{\text{PF}}$ is the universal render bridge constant | [THEOREM] | Algebraic identity from $D = 3$ + $\varpi$ |
 | SM-3 | Master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields $x_+ = 137.036$ | [THEOREM] | SM-2, coefficient 16 from lattice DoF |
 | SM-4 | $x_+ = 1/\alpha$ (identification with fine structure constant) | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013) | SM-3 + CM/uniqueness evidence; physical identification remains conjectural |
-| SM-5 | $x_- = 3.024$, $N_c = \lfloor x_- \rfloor = 3$ | [STRONGLY MOTIVATED CONJECTURE] as root identification (LEDGER FTD-0014) | SM-3 + RG/topology evidence; independent $N_c=3$ routes tracked separately |
-| SM-6 | Framework integers $\{3, 4, 7, 13\}$ are self-consistent | [THEOREM] | SM-5, AUDIT_SELF_CONSISTENCY |
+| SM-5 | $x_- = 3.024$ is the smaller root of the master quadratic (mathematical artifact of $P(x)$; no physics identification) | [THEOREM] (algebra only) | SM-3. The historical identification `N_c = \lfloor x_- \rfloor` is **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem. |
+| SM-6 | Framework integers $\{3, 4, 7, 13\}$ are self-consistent | [THEOREM] | AUDIT_SELF_CONSISTENCY; $N_c = 3$ via independent topology routes |
 | SM-7 | U(1) gauge symmetry emerges from Gauss constraint | [THEOREM] | $\lambda_G \to \infty$ in $\mathcal{L}_{\text{RB}}$ |
 | SM-8 | SU(3) from flux triplet $(J_x, J_y, J_z)$ | [SELECTION] | $D = 3$ + complexification step |
 | SM-9 | SU(2) from ternary doublet $\{+1, -1\}$ | [THEOREM] | Postulate 3 (ternary states) |
