@@ -155,4 +155,15 @@ Bottom-up overview docs and gap-closing arguments.
 
 ---
 
-61 active docs in this cluster (+ 0 archived).
+## Engine-native overlay primitives (2026-05-22)
+
+Pure header-only theory overlays on the existing lattice engine. No `RenderBridge` touch; the golden-tick hash is preserved. Each module is a primitive header plus a `[unit]` ctest target.
+
+| File | Tag | Purpose |
+|---|---|---|
+| [DERIV_BRANCH_HOLONOMY_GAP.md](DERIV_BRANCH_HOLONOMY_GAP.md) | [THEOREM] | `λ_min = 4 sin²(π/(2N))` for the Z₂-twisted ring Laplacian (signed line-bundle gap on a periodic torus). FTD-0194. |
+| [DERIV_Z3_CENTER_GRAPH_CLOSURE.md](DERIV_Z3_CENTER_GRAPH_CLOSURE.md) | [THEOREM] (closure + projector) + [CANDIDATE PRINCIPLE] (open-flux penalty) | Z₃ center-closure characterisation `∑c_i ≡ 0 (mod 3)` + center projector `P₀ = (1/3)(I+Z+Z²)`. Open-flux penalty is NOT asserted. FTD-0195. |
+
+---
+
+63 active docs in this cluster (+ 0 archived).
