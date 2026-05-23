@@ -179,7 +179,7 @@ Previously: five selection principles SP1–SP5.
 | SP1 | Curve is $E_i$ | [SELECTION] | [SELECTION] (unchanged — still a choice of which CM curve, though motivated by maximal symmetry) |
 | SP2 | Polynomial is degree 2 | [SELECTION] | **[SELECTION NARROWED]** — now just "minimum-degree FTD-meaningful polynomial"; candidate Program E would close it |
 | SP3 | Coefficient is $|\mathrm{Aut}|^2 = 16$ | [SELECTION] | **[THEOREM]** — forced by L-value identity (Route B) |
-| SP4 | Physical identification $x_+ = 1/\alpha$, $x_- = N_c$ | [SELECTION] | [SELECTION] (unchanged — 1.26 ppm numerical match, but identification not uniquely forced) |
+| SP4 | Physical identification $x_+ = 1/\alpha$ | [SELECTION] | [SELECTION] (unchanged — 1.26 ppm numerical match, but identification not uniquely forced). *(The historical paired identification $x_- = N_c$ is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)* |
 | SP5 | Framework integer structure | [SELECTION] | [SELECTION] (unchanged — interlocking constraints) |
 
 **Three selections survive (SP1, SP4, SP5), two narrow to near-theorem (SP2, SP3).** The master quadratic itself is now essentially a theorem — both its form and its coefficients are derived by two independent routes, with only the minimum-degree choice requiring additional justification.

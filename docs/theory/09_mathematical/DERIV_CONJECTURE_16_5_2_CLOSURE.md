@@ -71,7 +71,7 @@ The converse (all q_{a,b} = 0 ⟹ Φ(b') ∈ ℝ) is immediate from the formula.
 
     P_{(a,b)}(x) = x² − 16·Φ(b')·x + 16·Φ(c')
 
-is required to admit a *real ordered root pair* (x₊, x₋) with x₊ > x₋ > 0. This is a necessary condition before any admissibility criteria of Theorem 17.5 can be evaluated: Theorem 17.5 criterion (iii) (non-degeneracy; discriminant analysis) presupposes a real discriminant, and the physical identification x₊ = α⁻¹ ≈ 137, x₋ = N_c ≈ 3 requires real roots. For P to have real roots, its coefficients must be real:
+is required to admit a *real ordered root pair* (x₊, x₋) with x₊ > x₋ > 0. This is a necessary condition before any admissibility criteria of Theorem 17.5 can be evaluated: Theorem 17.5 criterion (iii) (non-degeneracy; discriminant analysis) presupposes a real discriminant, and the physical identification x₊ = α⁻¹ ≈ 137 (FTD-0013 [SMC]) — together with the historical paired x₋ ≈ N_c (≈ 3), now **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`; preserved here as historical motivation for the reality-requirement) — requires real roots. For P to have real roots, its coefficients must be real:
 
     Φ(b') ∈ ℝ   and   Φ(c') ∈ ℝ.
 
@@ -103,7 +103,7 @@ All three criteria are phrased in terms of Φ(b') and Φ(c') as real numbers, an
 
 **Scope — the real-root reading (important honesty note).** The closure holds specifically under the **real-root admissibility criterion**: the master quadratic must have real, positive, distinct roots. This is the reading required by:
 - Paper A Theorem 17.5 itself (criterion (iii) presupposes a real discriminant analysis);
-- any physical identification of (x₊, x₋) with (α⁻¹, N_c) — which are real.
+- any physical identification of (x₊, x₋) with (α⁻¹, N_c) — which are real. *(Historical pair-identification framing; `x_- ↔ N_c` is retired per v1.4 §5. The single live identification `x_+ ↔ α⁻¹` still requires real roots; the historical paired reading is preserved here as motivation for the reality requirement.)*
 
 If a future reformulation of Conjecture 16.5.2 considered an *alternative* admissibility criterion that permitted complex-conjugate root pairs, or otherwise did not require Φ(b') and Φ(c') to be real, then Steps 1–2 of the proof chain would not apply. In that alternative framing the conjecture would remain open. The closure in this document is for the real-root reading, which is the mathematically and physically natural reading of Paper A's own criterion set. The scope note is not a weakness of the argument; it is a precise statement of the argument's hypothesis.
 

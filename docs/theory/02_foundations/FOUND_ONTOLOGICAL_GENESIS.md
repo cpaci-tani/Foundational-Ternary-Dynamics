@@ -332,14 +332,15 @@ $$x_{\pm} = 8G^{*2} \pm 8G^{*2}\sqrt{1 - \frac{1}{G^*}}$$
 | Root | Value | Physical Interpretation | Accuracy |
 |------|-------|------------------------|----------|
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
-| x₋ | 3.024 | N_c (color charges) | 0.8% |
+| x₋ | 3.024 | mathematical artifact of $P(x)$; no physics identification (the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | n/a |
 
 **G* as Operator:**
 
 G* "operates" on the circular shell (π) to extract physics:
 
 ```
-Shell (π) + Operator (G*) → Master Quadratic → {α, Nc}
+Shell (π) + Operator (G*) → Master Quadratic → {x_+ ↔ 1/α}
+                                              → {x_- ≈ 3.024 (math artifact only)}
 ```
 
 The master quadratic encodes:
@@ -571,7 +572,7 @@ print(f"x₋ = {x_minus:.6f} (cf. Nc = 3)")
 | D = log₂(16) + log₂(1/2) = 3 | [THEOREM] | Algebraic fact |
 | k_phys = 16 derived | [THEOREM] | Follows from k_cons, D |
 | x₊ = 1/α | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013) | Continuum-QED route is supporting/historical evidence, not a theorem upgrade |
-| x₋ = Nc | [STRONGLY MOTIVATED CONJECTURE] as root identification (LEDGER FTD-0014) | Independent topological N_c arguments are tracked separately |
+| ~~x₋ = Nc~~ | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`) | `N_c = 3` independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and Moore Layer Theorem |
 | Spin-1/2 from lemniscate | [SELECTION] | Topological argument |
 | Consciousness = twist | [CONJECTURE] | Philosophical interpretation |
 

@@ -9,12 +9,12 @@
 
 ## 1 · The question
 
-The master quadratic `x² − 16G*²x + 16G*³ = 0` has two roots, `x_+ ≈ 137.036` and `x_− ≈ 3.024`. The empirical match `x_+ = 1/α` at 1.26 ppm and `x_− = N_c` at 0.80% is the **dual-prediction** (FTD-0013, FTD-0014). It is currently tagged [STRONGLY MOTIVATED CONJECTURE]; the underlying polynomial and Γ-product algebra are theorems (FTD-0001, FTD-0002), but the **identification** of the polynomial roots with physical coupling values is empirical, not derived.
+The master quadratic `x² − 16G*²x + 16G*³ = 0` has two roots, `x_+ ≈ 137.036` and `x_− ≈ 3.024`. The empirical match `x_+ = 1/α` at 1.26 ppm is the **single live physics identification** (FTD-0013). It is currently tagged [STRONGLY MOTIVATED CONJECTURE]; the underlying polynomial and Γ-product algebra are theorems (FTD-0001, FTD-0002), but the **identification** of the larger root with physical α is empirical, not derived. *(The historical paired identification `x_− ↔ N_c` (the "dual-prediction" framing) is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The smaller root `x_− ≈ 3.024` is now a mathematical artifact of `P(x)` only; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem.)*
 
 A natural follow-up question: **does the master-quadratic value `α = 1/x_+` play the *dynamical* role of QED's fine-structure constant in FTD's engine?** Concretely: if we measure observables in the engine that, in QED, would scale with α (the static Coulomb potential, the Schwinger anomaly, scattering amplitudes), do those observables carry the master-quadratic value?
 
-If yes, the dual-prediction would gain a dynamical-mechanism warrant beyond the structural-uniqueness Bayes factor.
-If no, the dual-prediction stays formally a polynomial-root coincidence with structural-uniqueness backing — defensible empirical match, but not a derivation.
+If yes, the identification would gain a dynamical-mechanism warrant beyond the structural-uniqueness Bayes factor.
+If no, the identification stays formally a polynomial-root coincidence with structural-uniqueness backing — defensible empirical match, but not a derivation.
 
 This document records the answer that four independent engine tests have now produced.
 
@@ -96,12 +96,12 @@ The algebraic spine is unaffected. None of the following claims have changed tie
 - **FTD-0001** (master quadratic [THEOREM]) — unchanged
 - **FTD-0002** (G\* identity [THEOREM]) — unchanged
 - **FTD-0013** (x_+ = 1/α at 1.26 ppm [STRONGLY MOTIVATED CONJECTURE]) — unchanged
-- **FTD-0014** (x_− = N_c at 0.80% [STRONGLY MOTIVATED CONJECTURE]) — unchanged
+- ~~**FTD-0014** (x_− = N_c at 0.80%)~~ — **RETIRED** per v1.4 §5 (2026-05-22); LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`).
 - All nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) — unchanged
 - The structural-uniqueness Bayes factor (~4×10⁵) from FTD-0121 / Paper A — unchanged
 - The BCC complex-structure theorem (FTD-0122) — unchanged
 
-What was tested and ruled out is a **specific dynamical interpretation** of the dual-prediction: that `α = 1/x_+` plays the role of QED's coupling at the matter-sector vertex via classical gauge fields. The polynomial algebra and the empirical match remain at the same tags they held before today.
+What was tested and ruled out is a **specific dynamical interpretation** of the `x_+ ↔ 1/α` identification: that `α = 1/x_+` plays the role of QED's coupling at the matter-sector vertex via classical gauge fields. The polynomial algebra and the empirical match remain at the same tags they held before today.
 
 ### 4.3 — Strengthening rather than weakening
 
@@ -166,7 +166,7 @@ This document does **not** claim:
 
 - That the algebraic spine and the engine action are *necessarily* decoupled. The four tests are empirical; a non-action mechanism remains possible.
 - That α cannot be derived from FTD axioms. It claims that the four tested classical-gauge-field channels do not constitute a derivation; other channels remain open.
-- That the dual-prediction is downgraded. FTD-0013/0014 stay at [STRONGLY MOTIVATED CONJECTURE] with the same Bayes weight as before; this synthesis affects only the *interpretation* (no dynamical-mechanism warrant from these four channels), not the *strength* (the structural-uniqueness scans remain valid).
+- That the `x_+ ↔ 1/α` identification is downgraded. FTD-0013 stays at [STRONGLY MOTIVATED CONJECTURE] with the same Bayes weight as before; this synthesis affects only the *interpretation* (no dynamical-mechanism warrant from these four channels), not the *strength* (the structural-uniqueness scans remain valid). *(FTD-0014 is **retired** per v1.4 §5 — a separate, independent change unrelated to this synthesis.)*
 - That the framework's epistemic ceiling has been determined. MC-T4.3 closure remains an open research program. What this synthesis does is **bound the scope of acceptable closure mechanisms** to non-action channels.
 
 ---

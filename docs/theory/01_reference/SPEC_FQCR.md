@@ -110,7 +110,7 @@ Its characteristic polynomial is
 
 $$ x^2 - 16\,(G_N^*)^2\,x + 16\,(G_N^*)^3\,R_N(t) = 0. $$
 
-**[THEOREM]** as a notational identity: at $R_N(t) = 1$ and $N \to \infty$ this is **exactly** the FTD master quadratic (Theorem 2 of the algebraic spine, FTD-0014). The transfer-matrix structure provides an operator interpretation of a polynomial that was previously stated only algebraically.
+**[THEOREM]** as a notational identity: at $R_N(t) = 1$ and $N \to \infty$ this is **exactly** the FTD master quadratic (Theorem 2 of the algebraic spine, FTD-0001). The transfer-matrix structure provides an operator interpretation of a polynomial that was previously stated only algebraically. *(Note: prior citation FTD-0014 in this position refers to the now-retired `x_- ↔ N_c` physics identification — LEDGER FTD-0014 removed in commit `ca7eb61` per v1.4 §5; the polynomial itself is FTD-0001.)*
 
 This **does not change the [STRONGLY MOTIVATED CONJECTURE] tag** of the physical reading $\alpha^{-1} = \lambda_\text{max}(M_N(1, N\to\infty)) = x_+$ — that remains FTD-0013.
 
@@ -144,7 +144,7 @@ $$ R_N(t) = 1 + \lambda_N(4it) + A_N(t), $$
 
 with three additive terms:
 
-- $1$ — the canonical base point at which the master quadratic recovers FTD-0014 exactly.
+- $1$ — the canonical base point at which the master quadratic recovers FTD-0001 exactly. *(Prior citation FTD-0014 here is corrected to FTD-0001; FTD-0014 — the `x_- ↔ N_c` identification — is retired per v1.4 §5.)*
 - $\lambda_N(4it)$ — a finite-theta approximation to the modular lambda function:
   $$ \lambda_N(4it) := \left(\frac{\theta_{2,N}(4it)}{\theta_{3,N}(4it)}\right)^4, $$
   where $\theta_{2,N}, \theta_{3,N}$ are truncated Jacobi theta functions to $N$ terms.
@@ -185,11 +185,11 @@ The choice of additive combination $R = 1 + \lambda + A$ specifically (vs other 
 | Spine theorem | Relation to FQCR |
 |---|---|
 | Theorem 1 (FTD-0001): $G^* = \Gamma(1/4)/\Gamma(3/4)$ | FQCR Model I provides operator-theoretic provenance via $\det_\zeta$ ratio. FQCR Model II provides finite-N reframe-compatible restatement. **Subsidiary** to Theorem 1. |
-| Theorem 2 (FTD-0014): master quadratic | FQCR Model V provides transfer-matrix interpretation. **Subsidiary** to Theorem 2. |
+| Theorem 2 (FTD-0001): master quadratic | FQCR Model V provides transfer-matrix interpretation. **Subsidiary** to Theorem 2. *(Prior FTD-0014 citation corrected to FTD-0001; FTD-0014 — the `x_- ↔ N_c` identification — is retired per v1.4 §5, row removed in commit `ca7eb61`.)* |
 | Theorem 8 (FTD-0111): $(1+i)$-tower | Shares the $Z_4$ structural anchor with the conjugacy operator $J$. Unified $Z_4$ subsection in §10 of `SPEC_ALGEBRAIC_SPINE.md` is proposed as future stylistic refactor. |
 | Theorem 9 (FTD-0112): $Q(G^*)$ field-theoretic | Unaffected; FQCR does not introduce new transcendentals. |
 | FTD-0127: parity-twist (L-function lens) | **Two readings of the same residue-class decomposition mod 4**, sharper than the original "complementary lenses" framing. The shifts $\{1/4, 3/4\}$ in FQCR are not free parameters — once $J^2 = -I$ is committed, the quarter-twisted boundary forces the spectral shifts to be the two non-trivial residue classes mod 4. After scaling by 4, $4 D_{1/4} = \{n \equiv 1\pmod 4\}$ and $4 D_{3/4} = \{n \equiv 3\pmod 4\}$; restricted to primes, these are the split and inert prime classes of $\mathbb{Z}[i]$ (Fermat's two-square theorem). FTD-0127 takes the parity-symmetric (sum/difference) combinations of the same Hurwitz components $\zeta_H(s, 1/4)$ and $\zeta_H(s, 3/4)$ that FQCR Model I works on directly. Unification one-line: $G^* = \exp[\zeta_H'(0, 1/4) - \zeta_H'(0, 3/4)] = \Gamma_\zeta(1/2)/\Gamma_{\chi_{-4}}(1/2) = \Gamma(1/4)/\Gamma(3/4)$. See `DERIV_GSTAR_QUARTER_CONJUGACY.md` §5 (revised 2026-05-06) for the full residue-class / Z[i]-prime-splitting derivation. |
-| FTD-0001/0013/0014 SMC chain | FQCR's Model V physical readout is exactly FTD-0013 restated in operator language; tag stays at SMC. No promotion. |
+| FTD-0001/0013 SMC chain | FQCR's Model V physical readout is exactly FTD-0013 restated in operator language; tag stays at SMC. No promotion. *(FTD-0014 retired per v1.4 §5; LEDGER row removed in commit `ca7eb61`.)* |
 | FTD-0144 (QCR trilogy bridge) | The compatibility paper supplies the curve-side geometric pairing for FQCR's branch-side recurrence, plus a concrete depth-4 five-harmonic numerical incarnation of FTD's $(1+i)$-tower (Theorem 8 / FTD-0111). Cross-confirms FQCR Models II–V at the formula level. Documented in [`REF_QCR_TRILOGY_BRIDGE.md`](../09_mathematical/REF_QCR_TRILOGY_BRIDGE.md). No spine inflation; no tier promotion. |
 
 ### To FQCR's own derivation chain

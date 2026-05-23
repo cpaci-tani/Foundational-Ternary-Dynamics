@@ -168,7 +168,7 @@ For arbitrarily large L, $G^{\text{BCC}}_L(0)$ approaches $I_1 = G^{*2}/(2\pi)$ 
 
 $$x^2 = 16 G^{*2} \cdot x - 16 G^{*3}$$
 
-which is exactly the master quadratic with roots $x_+ = 1/\alpha = 137.036$ and $x_- = N_c = 3.024$.
+which is exactly the master quadratic with roots $x_+ = 137.036$ (identified with $1/\alpha$ at 1.26 ppm, FTD-0013 [STRONGLY MOTIVATED CONJECTURE]) and $x_- = 3.024$ (mathematical artifact of $P(x)$; the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`).
 
 **Epistemic status:** [THEOREM] — the identity chain is algebraically exact. The gap equation form is [SELECTION].
 
