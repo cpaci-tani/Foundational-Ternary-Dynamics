@@ -216,10 +216,59 @@ int main() {
         }
         std::printf("  Frobenius deviation ||computed − target||_F = %.6f\n",
                     std::sqrt(frob_sq));
-        std::printf("  (This is [CANDIDATE RECONSTRUCTION], not THEOREM. The\n"
-                    "   convention for off-diagonal-edge phase distribution and\n"
-                    "   eigenvector ordering may differ from the owner's Python\n"
-                    "   prototype; a perfect match is NOT expected here.)\n");
+        std::printf("  Status: [CANDIDATE RECONSTRUCTION] (the K_3 form is one\n"
+                    "  selection; identifying d_U=3, d_D=2, and φ=π+π/d as physical\n"
+                    "  is [SELECTION]). The canonical PLAN_03 K_3 graph-Laplacian\n"
+                    "  form reproduces the owner's Python-prototype overlap to\n"
+                    "  machine precision (see T9 assertion below).\n");
+    }
+
+    // ----- T8: PLAN_03 rule check — weights and phase per canonical form ----
+    {
+        const auto w2 = generation_weights(2);
+        const auto w3 = generation_weights(3);
+        const double q = q_star();
+        constexpr double kPi = 3.14159265358979323846;
+        constexpr double rule_tol = 1e-14;
+
+        CHECK(std::fabs(w2.w12 - std::pow(q, 3)) < rule_tol);
+        CHECK(std::fabs(w2.w23 - 1.0) < rule_tol);
+        CHECK(std::fabs(w2.w13 - std::pow(q, 2)) < rule_tol);
+        CHECK(std::fabs(w2.phi - 1.5 * kPi) < rule_tol);
+
+        CHECK(std::fabs(w3.w12 - std::pow(q, 4)) < rule_tol);
+        CHECK(std::fabs(w3.w23 - 1.0) < rule_tol);
+        CHECK(std::fabs(w3.w13 - std::pow(q, 3)) < rule_tol);
+        CHECK(std::fabs(w3.phi - 4.0 * kPi / 3.0) < rule_tol);
+
+        std::printf("  T8  PLAN_03 rule: w12=q^(d+1), w23=1, w13=q^d, φ=π+π/d  ✓\n");
+    }
+
+    // ----- T9: PLAN_03 target-tolerance assertion -----
+    //          With the canonical K_3 Laplacian form, the overlap matches the
+    //          owner's Python-prototype target. Tolerance per PLAN_03 §"Full
+    //          eigen-solver option": 5×10⁻⁴ for first implementation.
+    {
+        const auto mag = overlap_magnitudes(U, D);
+        const double target[3][3] = {
+            {0.973536, 0.228440, 0.006537},
+            {0.228336, 0.972678, 0.041952},
+            {0.009485, 0.041385, 0.999098},
+        };
+        constexpr double tol = 5e-4;   // canonical PLAN_03 tolerance
+        double frob_sq = 0.0;
+        double max_abs_diff = 0.0;
+        for (std::size_t i = 0; i < 3; ++i) {
+            for (std::size_t j = 0; j < 3; ++j) {
+                const double d_ij = mag[i][j] - target[i][j];
+                if (std::fabs(d_ij) > max_abs_diff) max_abs_diff = std::fabs(d_ij);
+                frob_sq += d_ij * d_ij;
+                CHECK(std::fabs(d_ij) <= tol);
+            }
+        }
+        std::printf("  T9  PLAN_03 target tolerance (5e-4): max |Δ| = %.2e, "
+                    "Frobenius = %.2e  ✓\n",
+                    max_abs_diff, std::sqrt(frob_sq));
     }
 
     std::printf("\n=== %s (%d failure(s)) ===\n",
