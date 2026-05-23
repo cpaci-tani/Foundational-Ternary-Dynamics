@@ -133,6 +133,18 @@ When auditing: confirm `git rev-list -n1 preregister-weak-su2-provenance-v1` res
 
 ---
 
+## Alpha-readout ARC-B1 observable-selection -- MC-T4.3 closure attempt design (2026-05-23)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0198** alpha-readout ARC-B1 observable-selection | `preregister-alpha-readout-observable-selection-v1` | `0e79820` | desk derivation (no script in this commit); engine measurements where finite-L stability or transfer-operator spectra need numerical confirmation will be instrumented once a candidate ARC tuple identifies the measurement need | n/a (desk) until engine measurement specified | `engine/results/alpha_readout_observable_selection_YYYY-MM-DD/` once instrumented | [`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md) (pre-reg, design only) -> `FOUND_ALPHA_READOUT_OBSERVABLE_SELECTION.md` / `AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION.md` / `AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE.md` (post-attempt, per §6 verdict) |
+
+Pre-reg SHA256: `e273ca85234c04406c14b0b0bb01bb2ea760367ca7286c2b35649b80563b582a`.
+
+When auditing: confirm `git rev-list -n1 preregister-alpha-readout-observable-selection-v1` resolves to commit `0e79820` (the commit that introduced `PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`), and that the file's SHA256 still matches the value above. This pre-registration locks the design of the first attempt against MC-T4.3 (the Priority-0 central foundational obstruction per `SPEC_DOCTRINE_LEDGER.md` v1.4 §14 Phase 2). The closure attempt itself is a downstream multi-session arc; this manifest entry records the design lock, not a measurement. The question (§2), definitions D1-D6 (§3), the FROZEN admissible observable catalog (§4 -- non-site-local FTD-native observables only: state field, flux field + dual substrate, bilinear link observables, plaquette bivectors, Wilson-loop traces, boundary-to-boundary transfer observables, reflexive projections, with the FQCR Model V `T_O` and master quadratic + coefficient 16 as targets-not-inputs), the MC-T4.3 contract benchmark (§5 = `SPEC_ALPHA_READOUT_CONTRACT.md` §1 verbatim) and ARC-0..ARC-3 status levels, the three pre-blessed outcomes (§6 -- FOUND / UNDERDETERMINED / CLOSED-NEGATIVE), the falsifier F-a..F-j (§7), the banned moves (§8), and the locked 11-step method (§9) with numerical comparison only at step 10 after admissibility gate + falsifier checklist + banned-moves checklist were all locked before the closure attempt was run. **Prior-favoured outcome: CLOSED-NEGATIVE** (11 closed-negative alpha-derivation routes precede; the value of the pre-reg is in making whichever verdict lands rigorous and providing load-bearing input to Path II FTD-0186 v2 boundary theorem if it closes negative). No closure attempt in this commit -- design lock only. Companion docs cross-referenced in pre-reg header.
+
+---
+
 ## How to add a new pre-registration row
 
 1. **Pre-register** before measurement:
