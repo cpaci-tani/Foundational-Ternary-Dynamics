@@ -390,7 +390,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 
 **Key finding (born_rule_convergence.py):** Re(ψ²) shows 5 sign changes at fringe boundaries where |ψ|² is smooth and positive. The Born rule is the **best epistemic inference** an observer can make about the substrate, but it is not the substrate's operation.
 
-**Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce |ψ|².
+**Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce |ψ|². **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0198 (2026-05-23); status under canonical 26-neighbour engine OPEN.]** The simplest pre-registered substrate test (`preregister-threshold-crossing-born-v1`) yields Rice upcrossing statistics, not `|ψ|²`; see `docs/theory/06_consciousness/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`.
 
 **Status:** ✅ REFRAMED — Born rule is [EMERGENT] from manifestation statistics (as before), but now understood as epistemic inference rather than fundamental law. The ontic/epistemic distinction is [THEOREM]; the physical interpretation is [SELECTION].
 
