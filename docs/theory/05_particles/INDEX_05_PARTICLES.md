@@ -38,4 +38,14 @@
 
 ---
 
-9 active docs in this cluster (+ 0 archived).
+## Engine-native overlay primitives — candidate reconstructions (2026-05-22)
+
+Pure header-only theory overlays on the existing lattice engine, tagged `[CANDIDATE RECONSTRUCTION]` explicitly — diagnostic instruments, not theorems. No `RenderBridge` touch; the golden-tick hash is preserved.
+
+| File | Tag | Purpose |
+|---|---|---|
+| [EXPLR_GENERATION_GRAPH_GAMMA_D.md](EXPLR_GENERATION_GRAPH_GAMMA_D.md) | [CANDIDATE RECONSTRUCTION] | Γ_F(d) K₃ triangle on `(q*^{d+1}, 1, q*^d)` with phase `φ=π+π/d`; CKM-shape overlap matrix as diagnostic only (NOT asserted vs experimental CKM). FTD-0196. |
+
+---
+
+10 active docs in this cluster (+ 0 archived).
