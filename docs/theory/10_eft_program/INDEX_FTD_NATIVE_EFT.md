@@ -112,7 +112,7 @@ The graviton-census trio — does the FTD substrate carry an emergent massless s
 |---|---|---|
 | [`PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`](PREREG_GRAVITON_SUBSTRATE_MODE_v1.md) | [PRE-REGISTRATION] | Frontier 4 Step 4a v1; locks the hypothesis and decision criteria. Retained as provenance. |
 | [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) | [PRE-REGISTRATION] | Step 4a-ii v2 — supersedes v1 §5/§8; locks the decisive engine campaign. |
-| [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](REPORT_GRAVITON_SUBSTRATE_MODE.md) | [MEASUREMENT REPORT] | Canonical measurement registered by v2; Outcome verdict applied against PREREG v2 §6/§7 (FTD-0190, pending). |
+| [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](REPORT_GRAVITON_SUBSTRATE_MODE.md) | [MEASUREMENT REPORT] | Canonical measurement registered by v2; Outcome verdict applied against PREREG v2 §6/§7. **FTD-0193** (renumbered 2026-05-22 from FTD-0190 to resolve a collision with the Q10 finite-neutral-lock FTD-0190). |
 
 ---
 
