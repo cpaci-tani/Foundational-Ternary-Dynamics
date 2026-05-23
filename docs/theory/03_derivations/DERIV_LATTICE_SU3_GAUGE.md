@@ -66,13 +66,13 @@ where f^{abc} are the totally antisymmetric SU(3) structure constants. In the fl
 
 The normalization is Tr(λ^a λ^b) = 2δ^{ab}, and the fundamental representation matrices are T^a = λ^a/2.
 
-## 1.4 Connection to N_c from the Master Quadratic [STRONGLY MOTIVATED CONJECTURE] (FTD-0014)
+## 1.4 Historical commentary on the Master Quadratic small root — **identification retired**
 
 The master quadratic (SPEC_FTD_LAGRANGIAN.md, from G*):
 
 $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
 
-yields roots x₊ = 137.036 (= 1/α) and x₋ = 3.024 (≈ N_c). The proximity of x₋ to the integer 3 is not coincidental — it reflects the D = 3 lattice structure that provides exactly three flux components. The small deviation x₋ − 3 = 0.024 represents corrections from the non-integer aspects of the master quadratic (the irrationality of G*).
+yields roots x₊ = 137.036 (identified with 1/α at 1.26 ppm, FTD-0013) and x₋ = 3.024. The historical identification $x_- \approx N_c$ is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`): the smaller root is a mathematical artifact of $P(x)$ with no live physics identification. `N_c = 3` in this document is sourced from the D = 3 lattice structure (three flux components / three spatial axes — see Theorem 1.1 below) and the independent topological routes in `DERIV_NC_FROM_TOPOLOGY.md`; the master-quadratic-root reading is no longer a load-bearing source for $N_c$. (The numerical proximity $\lfloor x_- \rfloor = 3$ is preserved as historical context.)
 
 **Theorem 1.1.** *The number of color charges N_c = 3 follows from the FTD lattice dimensionality D = 3, with the identification color direction = spatial flux axis.*
 
@@ -451,7 +451,7 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 | ID | Claim | Status | Key Evidence | Depends On |
 |----|-------|--------|-------------|------------|
 | SU3-1 | Color = flux axis alignment (J_x,J_y,J_z ↔ r,g,b) | **[SELECTION]** | Geometric interpretation; 3 axes ↔ 3 colors | D=3 lattice axiom |
-| SU3-2 | N_c = 3 from lattice dimensionality | **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0014) | D=3 → SU(D) = SU(3); confirmed by x₋ = 3.024 | Postulate 1, master quadratic |
+| SU3-2 | N_c = 3 from lattice dimensionality | **[SELECTION]** (D = 3 lattice axiom + complexification) | D=3 → SU(D) = SU(3). *(Prior reference to FTD-0014 / master-quadratic-root `x₋ ≈ 3.024` is removed: the `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` is sourced from the D = 3 axiom + topology routes in `DERIV_NC_FROM_TOPOLOGY.md`.)* | Postulate 1 (D = 3) |
 | SU3-3 | Gell-Mann matrices as flux rotation generators | **[THEOREM]** | Standard SU(3) algebra on complexified ℝ³ | SU3-2 |
 | SU3-4 | Gluon propagator G^{ab}_μν(k) | **[THEOREM]** | Extension of Thm 1.1 to color-octet sector | DERIV_QFT_GRT_BRIDGE.md |
 | SU3-5 | UV finiteness (compact BZ) | **[THEOREM]** | Same argument as U(1): finite sum | DERIV_LATTICE_LOOP_CORRECTIONS.md |

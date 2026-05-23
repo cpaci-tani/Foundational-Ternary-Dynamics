@@ -3,7 +3,7 @@
 ## The Gap Equation Derived from Z(x)
 
 **Date:** March 17, 2026
-**Status (per LEDGER 2026-04-19):** The "L → ∞ gap-equation derivation" route described here is **RETRACTED (FTD-0032)**: Phase I numerical convergence does not hold; Phase J shows the L=2 partition function is ultralocal with no master-quadratic signature; under undefined-boundary ontology "L → ∞" is not a well-posed load-bearing step. The polynomial itself is preserved as **[THEOREM] (FTD-0001)** — pure algebra; the physical identifications $x_+ \leftrightarrow 1/\alpha$ and $x_- \leftrightarrow N_c$ are now **[STRONGLY MOTIVATED CONJECTURE] (FTD-0013, FTD-0014)** resting on dual match + CM-curve uniqueness, not on the chain below.
+**Status (per LEDGER 2026-04-19, updated 2026-05-22 for v1.4 retirement):** The "L → ∞ gap-equation derivation" route described here is **RETRACTED (FTD-0032)**: Phase I numerical convergence does not hold; Phase J shows the L=2 partition function is ultralocal with no master-quadratic signature; under undefined-boundary ontology "L → ∞" is not a well-posed load-bearing step. The polynomial itself is preserved as **[THEOREM] (FTD-0001)** — pure algebra. The single live physical identification is $x_+ \leftrightarrow 1/\alpha$ ([STRONGLY MOTIVATED CONJECTURE] FTD-0013) resting on the empirical match (1.26 ppm) + polynomial-template uniqueness (FTD-0189) + CM-curve uniqueness. The historical paired identification $x_- \leftrightarrow N_c$ is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
 **Depends on:** DERIV_GAP_EQUATION_FORM.md, DERIV_MASTER_QUADRATIC_GAP_EQUATION.md
 **Proof script:** `scripts/proofs/proof_gap_equation_from_partition_function.py`
 
@@ -166,7 +166,7 @@ All 18 tests pass in `proof_gap_equation_from_partition_function.py`:
 | Finite-size convergence | PASS | [THEOREM] |
 | K = 16G\*^2 coefficient | PASS | [THEOREM] |
 | Root x\_+ = 1/alpha | PASS | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
-| Root x\_- = N\_c | PASS | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) |
+| ~~Root x\_- = N\_c~~ | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` | n/a |
 | Vieta sum | PASS | [THEOREM] |
 | Vieta product | PASS | [THEOREM] |
 | Finite-lattice two positive roots | PASS | [THEOREM] |

@@ -52,7 +52,7 @@
 | Claim ID | Statement | Status | Dependencies | Justified In | Falsification Criterion | Repro Script |
 |----------|-----------|--------|--------------|--------------|------------------------|--------------|
 | **ALPHA-1** | 1/α = 137.036 (1.26 ppm from CODATA) | **SELECTION + CONJECTURE** | S1, S2, S3, GAUSS-1 | paper §5.2, SPEC_FTD_REFERENCE.md §6 | Precision α measurement incompatible at >10 ppm after QED corrections | `scripts/verification/verify_quadratic.py` |
-| **ALPHA-2** | x₋ = 3.024 → N_c = 3 via RG flow | **SELECTION + CONJECTURE** | S3, ALPHA-1 | paper §5.3, SPEC_FTD_REFERENCE.md §6 | Discovery of 4th generation fermion with standard gauge couplings | `scripts/verification/verify_quadratic.py` |
+| ~~**ALPHA-2**~~ | ~~x₋ = 3.024 → N_c = 3 via RG flow~~ | **RETIRED** per v1.4 §5 (2026-05-22; LEDGER FTD-0014 removed in commit `ca7eb61`) — `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem | n/a | n/a | n/a | n/a |
 | **BORN-1** | Born rule P(v) = \|ψ(v)\|²/\|\|ψ\|\|² connects Spatial Potential to Epistemic Probability | **BRIDGE PROTOCOL** | A1-A4, EPISTEMIC_BRIDGE | BORN_RULE_DERIVATION.md | Failure of probability to track potential density | `scripts/verification/verify_born_rule.py` (Corr: 0.94) |
 | **GAUSS-1** | Gauss constraint yields 16 DoF on 2×2×2 lattice | THEOREM | A1, A3 | paper Appendix T2 | Mathematical counterexample | `scripts/verification/verify_quadratic.py` |
 | **SQRT2-1** | Critical coupling λ=1 gives ω=√2 | THEOREM | A1, A3 | paper Appendix T3-T4 | Mathematical counterexample | `scripts/verification/verify_quadratic.py` |

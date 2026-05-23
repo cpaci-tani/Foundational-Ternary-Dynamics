@@ -1,10 +1,11 @@
-# SPEC — The Physics Bridge: What FTD's Algebraic Spine Says About α and N_c
+# SPEC — The Physics Bridge: What FTD's Algebraic Spine Says About α
 
 **Document type:** Reference specification (synthesis)
-**Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constants (1/α, N_c) as it currently stands
+**Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constant 1/α as it currently stands
 **Created:** 2026-05-01 evening (closing session on tractable open gaps)
+**2026-05-22 update:** The `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The single load-bearing physics identification is now `x_+ ↔ 1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The polynomial-template-uniqueness argument (FTD-0189) is independent of the target identification and remains intact. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 **Provenance:** Closes the "physics bridge" by making its logical structure crisp; consolidates `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` + `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` + `EXPLR_PATHS_TO_ALPHA.md` into a single reference position
-**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: six theorem-grade + three honestly-tiered, see §0); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013/0014 (the conjecture); FTD-0097 (look-elsewhere monomial); FTD-0117 (G\* notational fix)
+**Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: six theorem-grade + three honestly-tiered, see §0); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013 (the conjecture; FTD-0014 retired); FTD-0097 (look-elsewhere monomial); FTD-0189 (adversarial polynomial-template uniqueness, the canonical structural-uniqueness evidence); FTD-0117 (G\* notational fix)
 
 ---
 
@@ -20,16 +21,20 @@ x_+ ≈ 137.036171
 x_- ≈   3.023964
 ```
 
-These are forced by the spine theorems (no free parameters). They match
-two unrelated Standard Model constants — the QED fine-structure constant
-reciprocal `1/α` and the QCD color number `N_c = 3` — to **1.26 ppm and
-0.80%** respectively.
+These are forced by the spine theorems (no free parameters). The larger
+root `x_+` matches the QED fine-structure constant reciprocal `1/α` to
+**1.26 ppm**. The smaller root `x_- ≈ 3.024` is a mathematical artifact
+of the polynomial only; the historical identification `x_- ↔ N_c` is
+**RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014
+removed in commit `ca7eb61`).
 
 The mathematical content (theorems + uniqueness) is established. The
-empirical match (the IDENTIFICATION) is conjectural. The bridge between
-them is the structural rigidity of the math + the precision of the
-empirical match + the uniqueness of the master quadratic in two natural
-search spaces.
+empirical match (the IDENTIFICATION `x_+ ↔ 1/α`) is conjectural. The
+bridge between them is the structural rigidity of the math + the
+precision of the empirical match + the uniqueness of the master
+quadratic's polynomial template within the natural family (FTD-0189
+adversarial scan: 0 non-G\* dual-matchers across 2.65M degree-2
+polynomials over an 18-constant basket FTD did not design).
 
 This document crystallizes what's established, what's not, and what
 the bridge LOGICALLY SAYS.
@@ -88,13 +93,11 @@ Setting `y = x/G*`, the master quadratic gives:
 1/y_+ + 1/y_- = 1
 ```
 
-Equivalently in physics notation (assuming x_+ = 1/α, x_- = N_c):
-
-```
-α + 1/N_c = 1/G*       (slogan form, Kirchhoff-style harmonic conjugacy)
-```
-
-Same conjecture, different framing.
+This is a mathematical identity between the two roots `y_± = x_±/G*` of
+the rescaled polynomial. The physics-notation slogan "α + 1/N_c = 1/G*"
+that previously paired the two roots is **retired** along with the
+`x_- ↔ N_c` identification (v1.4 §5); only `x_+ ↔ 1/α` remains as a
+live physics identification.
 
 ### 1.4 · Closed-form for x_+ (Theorem 8 corollary)
 
@@ -123,7 +126,7 @@ norms) and k ∈ {3, 4, 5, 6, 7}: **(m=2, k=4) is rank 1 in closeness to
 1/α with a 5-orders-of-magnitude gap to rank 2**.
 
 **Polynomial-scan uniqueness** (`EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md`,
-extended 2026-05-02):
+extended 2026-05-02; superseded by FTD-0189 adversarial scan 2026-05-21):
 the original 147,456-polynomial scan was extended to 2,871,576
 polynomials/multipliers in the natural master-quadratic family,
 including rational-coefficient, cubic-embedding, and Eisenstein/Gaussian
@@ -133,9 +136,22 @@ integer multiplier checks. The family includes polynomials of the form
 M_{n,p,m,q}(x) = x² − n · G*^p · x + m · G*^q
 ```
 
-with n, m ∈ [1, 64] and p, q ∈ [0, 5]. **Exactly one structure
-dual-matches BOTH x_+ and x_- at MQ precision — the master quadratic
-itself; the Eisenstein-integer family contributes 0 dual-matchers.**
+with n, m ∈ [1, 64] and p, q ∈ [0, 5]. **At the time of the original
+scan, the search targeted polynomials whose roots match the pair
+(1/α, N_c) jointly at MQ precision** — this dual-matching framing
+reflects the pre-v1.4 state (FTD-0014 was live). The polynomial-
+uniqueness fact (exactly one structure matches both targets at MQ
+precision — the master quadratic itself; the Eisenstein-integer
+family contributes 0 such matchers) is **independent of the target
+identification**: the structural rigidity of the master quadratic's
+polynomial template within the declared natural family is what the
+scan establishes, regardless of how its roots are physically read.
+
+FTD-0189 (adversarial look-elsewhere, 2026-05-21) extends and
+generalises this: the master quadratic is the **unique dual-matcher**
+across 2.65 M degree-2 polynomials over an 18-constant basket FTD did
+not design — 0 non-G\* dual-matchers, rank 1 by ~130×. This is the
+canonical structural-uniqueness evidence going forward.
 
 These uniqueness results are theorems within their explicit search
 spaces. Their interpretation is structural significance — see §3.
@@ -144,28 +160,30 @@ spaces. Their interpretation is structural significance — see §3.
 
 ## 2 · The empirical content (observations)
 
-### 2.1 · The dual prediction
+### 2.1 · The single physics identification
 
 ```
 CODATA 2022:           1/α = 137.035999177(21)        (~10-digit precision)
-PDG (Standard Model):  N_c = 3                          (exact integer)
 
 FTD master quadratic:  x_+ = 137.036171...              (algebraic)
-                        x_- =   3.023964...              (algebraic)
+                        x_- =   3.023964...              (algebraic, no physics ID)
 
 |x_+ − 1/α| / (1/α)  = 1.26 × 10⁻⁶  (1.26 ppm)
-|x_- − N_c| / N_c    = 8.0 × 10⁻³   (0.80%)
 ```
+
+The smaller root `x_- ≈ 3.024` is a mathematical artifact of the
+polynomial only; the identification `x_- ↔ N_c` is **RETIRED** per
+v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in
+FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four
+routes) and the Moore Layer Theorem.
 
 ### 2.2 · Status of the empirical match
 
 - **x_+ ≈ 1/α**: tagged FTD-0013 [STRONGLY MOTIVATED CONJECTURE]
-- **x_- ≈ N_c**: tagged FTD-0014 [STRONGLY MOTIVATED CONJECTURE]
-- **Both simultaneously** (the dual prediction): the central conjecture
-
-The 0.80% deviation in x_- (= 3.024 vs N_c = 3) is NOT a measurement
-error — it's structural. The polynomial gives 3.024 exactly; the
-empirical N_c is exactly 3. The 0.80% IS the conjecture's residual.
+  — the single load-bearing physics identification of the master
+  quadratic.
+- ~~**x_- ≈ N_c**~~: **RETIRED** (v1.4 §5; LEDGER FTD-0014 removed
+  `ca7eb61`).
 
 ---
 
@@ -192,27 +210,34 @@ non-statistical structural theorem would be needed.
 
 ### 3.2 · What the bridge LOGICALLY says
 
-**The disciplined statement:**
+**The disciplined statement (revised post-v1.4 retirement of `x_- ↔ N_c`):**
 
 > *Within FTD's natural polynomial complexity class (degree-2 polynomials
 > with coefficients in Z[1..64]·Q(G*)^[0..5]), the master quadratic is
-> the UNIQUE polynomial/root structure whose roots dual-match (1/α, N_c)
-> at master-quadratic precision, after the 2026-05-02 extended
-> polynomial/multiplier scan. The polynomial form itself is fixed by the
-> algebraic spine once G*, coefficient 16, and degree 2 are accepted.
-> The empirical match is at 1.26 ppm and 0.80%. The Bayesian strength
-> of evidence for the structural reading over random coincidence is
-> ~4×10^5:1 within this family. The
-> identification x_+ = 1/α and x_- = N_c remains formally [STRONGLY
-> MOTIVATED CONJECTURE] because no derivation chain from FTD axioms to
-> physical constants has been established despite multiple session-scale
-> attempts.*
+> structurally rigid: its polynomial template is the unique structure in
+> the declared natural family whose roots simultaneously match the
+> historical target pair (1/α, N_c) at master-quadratic precision (the
+> original scan target). The polynomial-uniqueness fact stands
+> independently of that target choice — the master quadratic is the
+> unique dual-matcher across 2.65 M degree-2 polynomials over an
+> 18-constant basket FTD did not design (FTD-0189, rank 1 by ~130×).
+> The polynomial form itself is fixed by the algebraic spine once G*,
+> coefficient 16, and degree 2 are accepted. The empirical match
+> `x_+ ↔ 1/α` is at 1.26 ppm. The Bayesian strength of evidence for the
+> structural reading over random coincidence is ~4×10^5:1 within the
+> natural family. The single live physics identification `x_+ = 1/α`
+> remains formally [STRONGLY MOTIVATED CONJECTURE] because no derivation
+> chain from FTD axioms to physical α has been established despite
+> multiple session-scale attempts. The historical identification
+> `x_- ↔ N_c` is retired (v1.4 §5).*
 
 ### 3.3 · What the bridge does NOT say
 
 - Does NOT say α is derived from FTD axioms.
-- Does NOT say N_c = 3 exactly is derived.
-- Does NOT say the dual match is impossible to be coincidental.
+- Does NOT say the empirical match `x_+ ↔ 1/α` is impossible to be
+  coincidental.
+- Does NOT say `x_- ↔ N_c` is a current physics identification
+  (retired v1.4 §5).
 - Does NOT say FTD's framework is empirically falsified or
   empirically validated as the unique correct theory.
 
@@ -329,21 +354,22 @@ This document does NOT introduce a new LEDGER entry. It crystallizes
 the position synthesized from existing entries:
 
 - FTD-0001 (master quadratic): [THEOREM] — unchanged
-- FTD-0013 (x_+ = 1/α identification): [STRONGLY MOTIVATED CONJECTURE] — unchanged tag, **strengthened** by 2026-05-01 uniqueness results
-- FTD-0014 (x_- = N_c identification): [STRONGLY MOTIVATED CONJECTURE] — same
+- FTD-0013 (x_+ = 1/α identification): [STRONGLY MOTIVATED CONJECTURE] — unchanged tag, **strengthened** by 2026-05-01 uniqueness results and 2026-05-21 FTD-0189 adversarial scan
+- ~~FTD-0014 (x_- = N_c identification)~~: **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`
 - FTD-0097 (look-elsewhere monomial): [MEASURED] — extended to polynomial level via this session
 - FTD-0111 (harmonic invariant tower): [THEOREM] with Q1 progressed
 - FTD-0117 (G\* typo fix): [BUG RESOLVED]
+- FTD-0189 (adversarial polynomial-template uniqueness, 2026-05-21): [MEASURED] — the canonical structural-uniqueness evidence; rank 1 by ~130× across 2.65 M polynomials over an 18-constant FTD-undesigned basket
 
 ---
 
 ## 7 · What this document does NOT claim
 
 - NOT a theorem of α-derivation.
-- NOT a theorem of N_c-derivation.
+- NOT a theorem of N_c-derivation (N_c = 3 is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem).
 - NOT a falsification of any prior closed-negative route.
 - NOT a new spine theorem (spine count unchanged — nine numbered results: six theorem-grade + three honestly-tiered, see `SPEC_ALGEBRAIC_SPINE.md` §0).
-- NOT a promotion of FTD-0013/0014 from [STRONGLY MOTIVATED CONJECTURE].
+- NOT a promotion of FTD-0013 from [STRONGLY MOTIVATED CONJECTURE].
 
 ---
 
@@ -352,19 +378,20 @@ the position synthesized from existing entries:
 **FTD's physics bridge consists of a mathematically rigid spine (nine
 numbered results — six theorem-grade + three honestly-tiered, see
 `SPEC_ALGEBRAIC_SPINE.md` §0 — producing the master quadratic with
-computable roots ≈ 137.036
-and ≈ 3.024), an empirical observation (these roots match 1/α at 1.26
-ppm and N_c at 0.80%), a structural-uniqueness argument (the master
-quadratic is the unique dual-matcher in the declared natural family
-with current ~4×10^5:1 Bayes evidence for structural over coincidence
-reading), and a conjectural identification linking the math to physics
-that remains [STRONGLY MOTIVATED CONJECTURE] absent a derivation chain
-from FTD axioms to physical constants. This is the bridge as currently
-finished at the algebraic layer — strong enough for external publication
-of the mathematical core (Paper A scope), not yet closed at the
-formal-derivation level. The next mathematical target is MC-T4.3: a
-non-action readout/observable-selection rule that explains why the
-distinguished root is the physical electromagnetic coupling.**
+computable roots ≈ 137.036 and ≈ 3.024), the empirical observation
+that the larger root matches 1/α at 1.26 ppm, and a polynomial-template
+structural-uniqueness argument (FTD-0189: the master quadratic is the
+unique dual-matcher across 2.65 M degree-2 polynomials over an
+18-constant FTD-undesigned basket; rank 1 by ~130×). The single live
+physics identification `x_+ = 1/α` remains [STRONGLY MOTIVATED
+CONJECTURE] absent a derivation chain from FTD axioms to physical α;
+the historical `x_- ↔ N_c` identification is retired (v1.4 §5;
+LEDGER FTD-0014 removed in commit `ca7eb61`). This is the bridge as
+currently finished at the algebraic layer — strong enough for external
+publication of the mathematical core (Paper A scope), not yet closed
+at the formal-derivation level. The next mathematical target is
+MC-T4.3: a non-action readout/observable-selection rule that explains
+why the distinguished root is the physical electromagnetic coupling.**
 
 ---
 

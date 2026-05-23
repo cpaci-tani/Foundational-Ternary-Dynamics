@@ -107,10 +107,10 @@ What stays out (defer to Paper B or to subsequent technical papers):
   abstract, in the statement, and in the conclusion. Triple-tagging is
   the price of the result.
 - The look-elsewhere scan FTD-0097 results for the catalog at large
-  must be cited as a methodological-hygiene caveat — the master
-  quadratic dual-prediction property is the strongest structural
+  must be cited as a methodological-hygiene caveat — *(historical:)* the master
+  quadratic dual-prediction property was the strongest structural
   evidence specifically because the catalog at large has been audited
-  as over-rich at the monomial level (FTD-0097 NULL REJECTED upward).
+  as over-rich at the monomial level (FTD-0097 NULL REJECTED upward). *(2026-05-22: the `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The dual-prediction framing is retired; the polynomial-template uniqueness fact has been substantially strengthened by FTD-0189's adversarial scan across an 18-constant FTD-undesigned basket and is the new canonical structural-uniqueness evidence.)*
 
 ### 1.6 · Estimated draft cost
 
@@ -272,8 +272,7 @@ introduce new LEDGER claims. It cites:
 - LEDGER FTD-0001 (master quadratic).
 - LEDGER FTD-0013 (`x_+ = 1/α` identification, [STRONGLY MOTIVATED
   CONJECTURE]).
-- LEDGER FTD-0017 (`x_- = N_c` identification, [STRONGLY MOTIVATED
-  CONJECTURE]).
+- ~~LEDGER FTD-0017 (`x_- = N_c` identification)~~: this citation appears to be a typo for **FTD-0014**, which carried the `x_- ↔ N_c` identification. FTD-0014 is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
 - LEDGER FTD-0097 (look-elsewhere scan).
 
 If the split proceeds, this document evolves into a project-tracking

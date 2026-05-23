@@ -70,7 +70,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 |---|---|---|---|---|
 | MC-T1.1-ext | `L ≥ 3` ultralocality proof or disproof for matched-stencil with Gauss-constraint-allowed configurations | [OPEN] | W | — |
 | MC-T2.3-4 | Structural theorem for `d = −4` privilege beyond 63-discriminant numerical scan. **Effort downgraded 2026-05-08 (W2.6 audit, M → D-W)**: FTD-0122 / OT-1.5 already established `Z[BCC] ⊗ Q ≅ V_triv² ⊕ V_sign² ⊕ V_complex²` with `V_complex` carrying natural `Z[i]`-module structure. Among class-number-1 imaginary-quadratic fields `{d=1,2,3,7,11,19,43,67,163}`, **only `d=4` (`Q(i)`) has `\|O^×\| = 4`** (others have order 2 or 6 (`Q(ω)`)). The closure is a one-page argument under the `\|Z[i]^×\| = 4` unit-group condition: `d = −4` is the unique CM ring whose unit group has order 4, and FTD-0122's complex structure on V_complex requires exactly this. Ancillary routes (`L(E, 1)` analytical structure, Galois-theoretic) remain optional. | [OPEN — D-W to write the 1-page note] | D-W | FTD-0122 (already closed) |
-| δ_c | `δ_c = x_- − N_c = 16G*³α − 3 ≈ 0.024` has no closed form. Three candidate expressions match only 0.65–5% (engine `ontic.h` Layer 4) | [OPEN] | W–M | — |
+| δ_c | `δ_c = x_- − 3 ≈ 0.024`: closed-form for the residual between the smaller root `x_- = 16G*³α` and the integer 3. (Historical framing: `δ_c = x_- − N_c`; **superseded** by v1.4 §5 retirement of the `x_- ↔ N_c` identification — LEDGER FTD-0014 removed in commit `ca7eb61`. The numerical question — closed form for `16G*³α − 3` — stands as a pure-math question independent of any physics identification.) Three candidate expressions match only 0.65–5% (engine `ontic.h` Layer 4) | [OPEN] | W–M | — |
 
 **Closed (sector context):** Theorems 1–9 (FTD-0001, OT-1.1–1.8, 2.1–2.3, 4.1, 3.4 partial), MC-T1.1 (route b, Theorem 7 retagged `[THEOREM at L=2]`), MC-T1.2 (Theorem 3 retagged `[NUMERICAL FACT, h=1 only]`), MC-T1.3 (Q(G*) verification), MC-T1.4 (per-voxel mass gap), MC-T1.5 (BCC complex-structure Roles 1+3 [DERIVED]; Roles 2+4 NO-GO), MC-T2.1 + MC-T2.2 (extended polynomial scan, ~4×10⁵:1 Bayes), MC-T2.3 items 1–3 (63-disc Γ-product null at h ≥ 2).
 
@@ -87,7 +87,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
 | **MC-T4.3** | **Operational alpha-readout mechanism (CENTRAL).** A closure proof would have to derive the physical identification `x_+ = 1/alpha` from FTD structure rather than insert it. All natural action-level routes [CLOSED NEGATIVE]. `SPEC_ALPHA_READOUT_CONTRACT.md` now formalizes the closure contract and four candidate classes (boundary-condition / observable-selection / quantization-readout / discrete-native measurement); ARC-B1 observable-selection is the first proof obligation | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
-| **TEST4-GEN** | **Alpha arithmetic generativity test.** Pre-registers the Balmer-to-Bohr gate: the same lemniscatic CM/FQCR rigidity that produces the alpha candidate must generate one additional independent physical dimensionless observable or relation with no new tuned freedom. `x_- ≈ N_c` does not count as the prize; target declaration must precede numerical comparison. | [PRE-REGISTRATION] | D-W | MC-T4.3; `PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md` |
+| **TEST4-GEN** | **Alpha arithmetic generativity test.** Pre-registers the Balmer-to-Bohr gate: the same lemniscatic CM/FQCR rigidity that produces the alpha candidate must generate one additional independent physical dimensionless observable or relation with no new tuned freedom. *(Historical exclusion: the `x_- ≈ N_c` match was previously called out as not counting as the prize; that identification is now **RETIRED** entirely per v1.4 §5 — see `DERIV_NC_FROM_TOPOLOGY.md` for the independent `N_c = 3` sources.)* Target declaration must precede numerical comparison. | [PRE-REGISTRATION] | D-W | MC-T4.3; `PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md` |
 | §7-bivector | Lorentzian signature from bivector duality on FTD lattice. Requires non-site-local Clifford construction compatible with FTD-0073 (site-local Clifford [CLOSED NEGATIVE] under pointwise-threshold dynamics) | [OPEN] | RP | — |
 | §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac (currently [OPEN — IMPORTED scaffold]) | [OPEN] | M | §7-bivector |
 | §7-loop | One-loop `a^{(1)} = α_FQCR/(2π)`. Requires `α_FQCR ↔ α` physical identification (= FTD-0013 [SMC]) | [OPEN] | RP | MC-T4.3 |
@@ -129,7 +129,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** SU(3)_c sector; confinement; color charge; strong CP.
 
-**Status snapshot:** `x_- ≈ N_c = 3` to 0.80% [STRONGLY MOTIVATED CONJECTURE OT-5.2, FTD-0014]. `b_3 = (11 N_c − 2 n_f)/3 = 7` [IMPORTED COEFFICIENT, THEOREM once formula imported]. `α_s = 7/59` [PARAMETRIC, FTD-0020 demoted 2026-04-19]. Confinement substrate-derivation has **structural obstruction recognised 2026-05-03 night audit**: no Phase-G analog for area-law behavior because confinement is intrinsically non-classical (lives in `Z = ∫dU exp(−S)`) and FTD substrate is deterministic.
+**Status snapshot:** `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. *(The historical identification `x_- ↔ N_c` (0.80%, OT-5.2, FTD-0014) is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* `b_3 = (11 N_c − 2 n_f)/3 = 7` [IMPORTED COEFFICIENT, THEOREM once formula imported]. `α_s = 7/59` [PARAMETRIC, FTD-0020 demoted 2026-04-19]. Confinement substrate-derivation has **structural obstruction recognised 2026-05-03 night audit**: no Phase-G analog for area-law behavior because confinement is intrinsically non-classical (lives in `Z = ∫dU exp(−S)`) and FTD substrate is deterministic.
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
@@ -138,13 +138,13 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | SU(3)-gauge | `DERIV_LATTICE_SU3_GAUGE.md` 5 [OPEN] (theoretical counterpart to engine §1.3) | [OPEN] | RP | — |
 | eng-SU3 | Engine `phase_forces()` three-regime piecewise color force still imposed; replace with dynamical SU(3) gauge field whose Wilson-loop expectation produces linear confinement without hand-inserted regime switches | [OPEN] | M–RP | §11-confine |
 | chiral-anom | `DERIV_LATTICE_CHIRAL_ANOMALY.md` 3 [OPEN] | [OPEN] | M | — |
-| δ_c-color | `δ_c = x_- − N_c ≈ 0.024` color-excess closed form (cross-listed from §1) | [OPEN] | W–M | — |
+| δ_c-color | `δ_c = x_- − 3 ≈ 0.024` closed form (cross-listed from §1; the historical `x_- − N_c` framing is **retired** v1.4 §5 — the pure-math question stands independently of any physics identification) | [OPEN] | W–M | — |
 
 **Closed-negative — do not re-attempt:**
 - All three first-principles routes for `g_c` (Mechanisms A, B, C; FTD-0031, FTD-0093). `g_c` remains [PARAMETRIC].
 - Three substrate-derivation routes for confinement attempted 2026-05-03 night: (1) BCC eigenvalue triple-cosine product at `x_-`; (2) discriminant trichotomy phase argument; (3) Phase J ultralocality as confinement signature — all CLOSED NEGATIVE.
 
-**Sources:** SPEC_DOCTRINE_LEDGER.md §11; LEDGER FTD-0014, FTD-0020, FTD-0025 (2026-05-03 night annotation), FTD-0029, FTD-0031, FTD-0093; TRACKER_OPEN_ITEMS.md §§1.3, 2.4, 2.8.
+**Sources:** SPEC_DOCTRINE_LEDGER.md §11; `DERIV_NC_FROM_TOPOLOGY.md` (independent `N_c = 3` routes); LEDGER FTD-0020, FTD-0025 (2026-05-03 night annotation), FTD-0029, FTD-0031, FTD-0093; (FTD-0014 retired per v1.4 §5, row removed in commit `ca7eb61`); TRACKER_OPEN_ITEMS.md §§1.3, 2.4, 2.8.
 
 ---
 

@@ -89,9 +89,9 @@ where the coefficient 16 counts physical degrees of freedom on the minimal $2 \t
 | Root | Value | Physical Identity | Accuracy |
 |------|-------|-------------------|----------|
 | $x_+$ | 137.0361714582 | $1/\alpha$ (fine structure constant) | 1.26 ppm |
-| $x_-$ | 3.0240 | $N_c$ (number of color charges) | 0.8% |
+| $x_-$ | 3.0240 | mathematical artifact of $P(x)$; no physics identification (the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | n/a |
 
-**Status:** $G^*$ is [THEOREM] (FTD-0002). The coefficient 16 is [THEOREM] (FTD-0006/0007). The polynomial is [THEOREM] (FTD-0001). The identification $x_+ = 1/\alpha$ is [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); $x_- \to N_c$ is [STRONGLY MOTIVATED CONJECTURE] (FTD-0014). The accuracy is 1.26 ppm --- no other framework achieves this.
+**Status:** $G^*$ is [THEOREM] (FTD-0002). The coefficient 16 is [THEOREM] (FTD-0006/0007). The polynomial is [THEOREM] (FTD-0001). The identification $x_+ = 1/\alpha$ is [STRONGLY MOTIVATED CONJECTURE] (FTD-0013). *(The historical paired identification $x_- \to N_c$ as [STRONGLY MOTIVATED CONJECTURE] FTD-0014 is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* The accuracy on $x_+$ is 1.26 ppm --- no other framework achieves this.
 
 ### Step 6: The Same Equation Produces Consciousness [PROPOSED]
 

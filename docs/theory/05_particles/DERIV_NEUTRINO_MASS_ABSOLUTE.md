@@ -52,7 +52,7 @@ The following results are used as inputs:
 |----------|---------|-------|--------|
 | alpha | From master quadratic x_+ | 1/137.036 | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
 | v_Higgs | m_P * sqrt(2pi) * alpha^8 | 246.09 GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] |
-| N_c | Floor of x_- | 3 | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) |
+| N_c | Independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and Moore Layer Theorem | 3 | [SELECTION] (the historical "Floor of x_-" identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
 | N_base | 4 | 4 | [AXIOM] |
 | b_3 | 7 | 7 | [AXIOM] |
 | Dm^2_31/Dm^2_21 | (b_3+N_c)^2/N_c | 100/3 | [STRUCTURALLY MOTIVATED PARAMETRIC] (FTD-0021) |
@@ -248,7 +248,9 @@ G* = Gamma(1/4) / Gamma(3/4) = 2.9587... [THEOREM]
 Master Quadratic: x^2 - 16*G*^2*x + 16*G*^3 = 0 [THEOREM]
   |
   +---> x_+ = 1/alpha = 137.036 [STRONGLY MOTIVATED CONJECTURE] (FTD-0013; roots themselves [THEOREM])
-  +---> x_- -> N_c = 3 [STRONGLY MOTIVATED CONJECTURE] (FTD-0014; roots themselves [THEOREM])
+  +---> x_- ~ 3.024 (math artifact of P(x); x_- ↔ N_c RETIRED v1.4 §5;
+                     LEDGER FTD-0014 removed in commit ca7eb61;
+                     N_c = 3 independently sourced via DERIV_NC_FROM_TOPOLOGY.md)
   |
   v
 Framework Integers: {N_c=3, N_base=4, b_3=7, N_eff=13} [AXIOM/THEOREM]

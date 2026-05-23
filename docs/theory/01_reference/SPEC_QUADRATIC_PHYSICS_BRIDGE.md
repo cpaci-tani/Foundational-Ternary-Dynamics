@@ -265,7 +265,7 @@ Cross-references:
 
 #### 4.6.4 Slogan upgrade
 
-Previous slogan in `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_*` (where present): *"the master quadratic predicts α and N_c"*.
+Previous slogan in `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_*` (where present): *"the master quadratic predicts α and N_c"* — the dual-prediction framing is **retired** along with the `x_- ↔ N_c` identification (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`). The live framing is single-root: *"the master quadratic predicts 1/α as its larger root"*.
 
 Adopted, conditional on the arithmetic-mean derivation closing positive:
 
@@ -330,7 +330,7 @@ The integers $\{3, 4, 7, 13\}$ were identified from **known physics**, then show
 
 | Integer | Physical origin | Mathematical constraint |
 |---------|----------------|----------------------|
-| $N_c = 3$ | Number of quark colors (QCD) | $L_3 - 1 = 3$; $x_- \approx 3.024$ |
+| $N_c = 3$ | Number of quark colors (QCD) | $L_3 - 1 = 3$ (historical: $x_- \approx 3.024$ — the `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
 | $N_{\mathrm{base}} = 4$ | Spacetime dimensions / $L_3$ | $L_3 = 4$; unique Lucas perfect square |
 | $b_3 = 7$ | QCD one-loop beta coefficient | $L_4 = 7$; crossover index $F_7 = T_7$ |
 | $N_{\mathrm{eff}} = 13$ | Closure parameter | $F_7 = T_7 = 13$; 6th prime |
@@ -419,30 +419,31 @@ SP3 (k = |Aut(E)|² = 16) ───┤
                               │
                     ┌─────────┴─────────┐
                     ▼                   ▼
-               x₊ = 137.036       x₋ = 3.024
-                    │                   │
-SP4 (x₊ = 1/α) ───┤   SP5 ({3,4,7,13})┤
-                    ▼                   ▼
-              α = 1/137.036     sin²θ_W = 3/13
-                    │           mass ratios, etc.
+               x₊ = 137.036       x₋ = 3.024  (mathematical artifact;
+                    │                   no physics ID; `x₋ ↔ N_c` RETIRED v1.4 §5)
+SP4 (x₊ = 1/α) ───┤
+                    ▼
+              α = 1/137.036
+                    │
 SP5 (integers) ────┤
                     ▼
             Precision formula
             Mass formulas
             Coupling constants
+            sin²θ_W = 3/13 (uses N_c independently sourced; see DERIV_NC_FROM_TOPOLOGY.md)
 ```
 
-**Observation:** The tree-level result $x_+ = 137.036$ depends only on SP1 + SP2 + SP3. The physical identification adds SP4. The extended physics adds SP5. The dependency is cumulative and each layer adds epistemic risk.
+**Observation:** The tree-level result $x_+ = 137.036$ depends only on SP1 + SP2 + SP3. The physical identification adds SP4 (`x_+ = 1/α`). The extended physics adds SP5. The historical `x_- ↔ N_c` identification is retired per v1.4 §5; the smaller root is a mathematical artifact of $P(x)$ only. The dependency is cumulative and each layer adds epistemic risk.
 
 ### 7.3 Conditional Theorem Template
 
 Given SP1–SP3:
 1. $G^* = \Gamma(1/4)/\Gamma(3/4) = \sqrt{2} \cdot \Gamma(1/4)^2/(2\pi) \approx 2.9587$ **[THEOREM]**
 2. $x_+ = 8G^{*2}(1 + \sqrt{1 - 1/G^*}) = 137.036\ldots$ **[THEOREM]**
-3. $x_- = 8G^{*2}(1 - \sqrt{1 - 1/G^*}) = 3.024\ldots$ **[THEOREM]**
+3. $x_- = 8G^{*2}(1 - \sqrt{1 - 1/G^*}) = 3.024\ldots$ **[THEOREM]** (mathematical artifact of $P(x)$; the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5)
 
 Adding SP4:
-4. $\alpha = 1/x_+ = 1/137.036\ldots$ **[CONDITIONAL on SP4]**
+4. $\alpha = 1/x_+ = 1/137.036\ldots$ **[CONDITIONAL on SP4]** — the single live physics identification of the master quadratic.
 
 Adding SP5:
 5. $\sin^2\theta_W = N_c/N_{\mathrm{eff}} = 3/13 = 0.2308\ldots$ **[CONDITIONAL on SP5 — circularity risk]**
@@ -471,7 +472,9 @@ The result's genuine strength lies in its **structural convergence**:
 1. **Two independent truncations** (tree level and 4-term) both land within experimental error
 2. **The coefficient 16 is intrinsic** to the curve, not a free parameter (conditional on SP1)
 3. **The precision formula predicts specific unmeasured digits** — a genuinely falsifiable claim
-4. **The smaller root $x_-$ independently relates** to the number of QCD colors (conditional on SP4)
+4. **Polynomial-template uniqueness** (FTD-0189, 2026-05-21): the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — rank 1 by ~130×.
+
+(The historical "smaller root $x_-$ matches $N_c$" point is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The polynomial-template-uniqueness fact replaces it as the canonical structural-uniqueness evidence; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)
 
 This convergence from multiple directions distinguishes the master quadratic from a pure numerical coincidence. But convergence is not proof.
 
@@ -853,24 +856,22 @@ The Galois structure (`MATH_MASTER_QUADRATIC.md`, §10.4) shows the real ($k=16$
 
 If SP4 is accepted, the roots encode a hierarchy:
 
-| Root | Value | Proposed identification | Status |
+| Root | Value | Identification | Status |
 |------|-------|----------------------|--------|
-| $x_+$ | 137.036 | $1/\alpha_{\mathrm{em}}$ (electromagnetic) | [CONJECTURE] |
-| $x_-$ | 3.024 | $N_c$ (QCD color charges) | [CONJECTURE] |
+| $x_+$ | 137.036 | $1/\alpha_{\mathrm{em}}$ (electromagnetic) | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
+| $x_-$ | 3.024 | mathematical artifact of $P(x)$; no physics identification | **RETIRED** (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
 
-The ratio $x_+/x_- = 45.3$ encodes the electromagnetic-to-strong hierarchy.
+### 19.2 The $x_-$ value
 
-### 19.2 The $x_- - 3$ Deviation
-
-$x_- = 3.024$ is **not** exactly 3. The 0.8% deviation is forced by Vieta:
+$x_- = 3.024$ is fully determined by Vieta once $x_+$ is fixed by the quadratic and $G^*$:
 
 $$x_- = \frac{16G^{*3}}{x_+} = \frac{16G^{*3}}{137.036}$$
 
-Once $x_+$ is fixed (by the quadratic and $G^*$), $x_-$ is determined. The floor $\lfloor x_- \rfloor = 3$ is then interpreted as the integer number of colors after RG flow to the confinement scale, where topological quantization enforces integrality.
+The historical identification of $\lfloor x_- \rfloor$ with $N_c = 3$ is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The smaller root is a mathematical artifact of the polynomial only; $N_c = 3$ in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 
 ### 19.3 Status
 
-> **[CONJECTURE]** — The identification of $\lfloor x_- \rfloor$ with $N_c$ is numerologically motivated. The RG-flow-to-confinement argument is proposed but not derived from the lattice action.
+> **`x_+ ↔ 1/α`**: [STRONGLY MOTIVATED CONJECTURE] (FTD-0013). **`x_- ↔ N_c`**: RETIRED (v1.4 §5).
 
 ---
 
@@ -883,7 +884,8 @@ Once $x_+$ is fixed (by the quadratic and $G^*$), $x_-$ is determined. The floor
 | Result | Value | Experimental | Error |
 |--------|-------|-------------|-------|
 | $\alpha^{-1}$ (tree) | 137.036 | 137.036 | 1.26 ppm |
-| $\lfloor x_- \rfloor$ | 3 | 3 | exact |
+
+(The historical $\lfloor x_- \rfloor \to N_c$ row is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)
 
 **Tier 2: Conditional on SP1–SP5 (circularity risk from integers):**
 

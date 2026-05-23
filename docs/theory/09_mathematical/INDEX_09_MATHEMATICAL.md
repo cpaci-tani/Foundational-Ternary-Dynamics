@@ -14,7 +14,7 @@ A newcomer to this cluster should read these in order:
 1. [PROOF_ALPHA_FROM_SELF_DUALITY.md](PROOF_ALPHA_FROM_SELF_DUALITY.md) — α⁻¹ = 137.036 from one CM elliptic curve; the spine's flagship chain.
 2. [DERIV_LFUNCTION_GSTAR_CONNECTION.md](DERIV_LFUNCTION_GSTAR_CONNECTION.md) — G\* = 8·L(E,1)/√π; ties the framework to BSD-level number theory.
 3. [EXPLR_PATHS_TO_ALPHA.md](EXPLR_PATHS_TO_ALPHA.md) — honest exhaustive survey: no derivation of α exists beyond the [SMC] spine route.
-4. [EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md](EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md) — the master quadratic is the unique dual-matcher in its polynomial family.
+4. [EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md](EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md) — the master quadratic is the unique dual-matcher in its polynomial family (target pair `(1/α, N_c)` reflects the pre-v1.4 framing; `x_- ↔ N_c` retired per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact is independent of the target identification).
 5. [MATH_FAMILY_OF_RACES.md](MATH_FAMILY_OF_RACES.md) — the Γ-ratio family G\* belongs to; structural context for q = 4.
 6. [EXPLR_NUMBER_THEORY.md](EXPLR_NUMBER_THEORY.md) — where the framework integers {3, 4, 7, 13} come from across pure mathematics.
 
@@ -48,7 +48,7 @@ What underpins `x₊ = 1/α` — the conjecture itself plus the scans that estab
 | [CONJ_ALPHA_FROM_CM.md](CONJ_ALPHA_FROM_CM.md) | [CONJECTURE] | The statement: 1/α = x₊, the larger master-quadratic root from CM arithmetic. |
 | [CONJ_SEVEN_TERM_PRECISION_SERIES.md](CONJ_SEVEN_TERM_PRECISION_SERIES.md) | [CONJECTURE] | The 7-term series for 1/α; 24-digit agreement, observationally underdetermined. |
 | [EXPLR_PATHS_TO_ALPHA.md](EXPLR_PATHS_TO_ALPHA.md) | [SURVEY] | Exhaustive survey of α-derivation routes; honest "no new path" verdict. |
-| [EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md](EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md) | [STRUCTURAL OBSERVATION] | 147k-polynomial scan: the master quadratic is the unique dual-matcher. |
+| [EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md](EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md) | [STRUCTURAL OBSERVATION] | 147k-polynomial scan: the master quadratic is the unique dual-matcher under the historical target pair `(1/α, N_c)`; polynomial-template-uniqueness fact independent of target. |
 | [EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md](EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md) | [STRUCTURAL OBSERVATION] | 58-pair scan: (m=2, k=4) is uniquely close to 1/α in the (1+i)-tower family. |
 | [EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md](EXPLR_LVALUE_SPAN_CORRECTION_SEARCH.md) | [EMERGENT] (negative result) | The tree-level-to-CODATA gap is NOT in the simple Q-span of tested L-values. |
 | [EXPLR_TOPOLOGICAL_DRAG_ALPHA.md](EXPLR_TOPOLOGICAL_DRAG_ALPHA.md) | [CONJECTURE] + [THEOREM] (tautology) | Audit of a topological-drag α "derivation"; shown to be a tautology. |

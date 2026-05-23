@@ -1,7 +1,9 @@
 # EXPLR — Polynomial-Level Look-Elsewhere Refinement (FTD-0097 Extension)
 
 **Document type:** Exploratory result (substantive positive)
-**Status:** [STRUCTURAL OBSERVATION] — extends FTD-0097's monomial scan to polynomial level; master quadratic shown to be uniquely dual-selective within the natural FTD polynomial family
+**Status:** [STRUCTURAL OBSERVATION] — extends FTD-0097's monomial scan to polynomial level; master quadratic shown to be uniquely dual-selective within the natural FTD polynomial family.
+
+**2026-05-22 v1.4 annotation:** This scan uses the historical target pair `(1/α, N_c)` (where the second target reflects the pre-v1.4 `x_- ↔ N_c` identification). That identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The polynomial-template-uniqueness fact reported here — that exactly one polynomial in the family matches the *numerical pair* (137.036…, 3.024) at MQ precision — is **independent of the physical interpretation of the second target** and stands. The "dual-prediction" prose below is preserved as historical interpretation, with the understanding that the load-bearing physics identification is now single-root (`x_+ ↔ 1/α`, FTD-0013). `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. FTD-0189's later adversarial scan (2.65 M polynomials, 18-constant FTD-undesigned basket; rank 1 by ~130×) is the canonical follow-up.
 **Created:** 2026-05-01 evening
 **Provenance:** User request "focus on tractable open gaps" → look-elsewhere refinement at polynomial level (a sister to the (1+i)-tower uniqueness scan completed earlier this evening)
 **Related:** `AUDIT_LOOK_ELSEWHERE_RESULTS.md` (FTD-0097 monomial scan); `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` (tower-level scan); `EXPLR_PATHS_TO_ALPHA.md` (α-derivation route survey); `THEOREM_HARMONIC_INVARIANT_TOWER.md` (FTD-0111)

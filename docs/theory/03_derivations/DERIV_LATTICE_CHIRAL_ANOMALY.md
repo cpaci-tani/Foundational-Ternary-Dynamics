@@ -306,7 +306,7 @@ $$\Gamma(\pi^0 \to \gamma\gamma) = \frac{\alpha^2\, m_{\pi}^3}{64\pi^3\, f_{\pi}
 | $\alpha$ | $1/137.036$ | Master quadratic | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
 | $m_{\pi^0}$ | 135.0 MeV | FTD mass formula | [STRONGLY MOTIVATED CONJECTURE] |
 | $f_{\pi}$ | 92.0 MeV | Adopted from experiment | [IMPOSED] |
-| $N_c(Q_u^2 - Q_d^2)$ | 1 | Derived (see Section 5.3) | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) |
+| $N_c(Q_u^2 - Q_d^2)$ | 1 | Derived (see Section 5.3); $N_c = 3$ independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem | [SELECTION] (the historical FTD-0014 `x_- ↔ N_c` route is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
 
 Substituting:
 
@@ -396,7 +396,7 @@ The resulting baryon-to-photon ratio $\eta \sim 10^{-10}$ (CLAUDE.md, Section 22
 | ANOM-5 | Anomaly coefficient is topological (integer-valued in units of $\alpha/(2\pi)$) | [THEOREM] | Atiyah-Singer index theorem |
 | ANOM-6 | Wilson term adopted as doubler resolution | [SELECTION] | Standard lattice QFT practice |
 | ANOM-7 | $\Gamma(\pi^0 \to \gamma\gamma) = 7.73$ eV (1.2% vs PDG 7.82 eV) | [STRONGLY MOTIVATED CONJECTURE] | $\alpha$, $N_c$, $m_{\pi}$ derived; $f_{\pi}$ imposed |
-| ANOM-8 | $N_c = 3$ factor in anomaly coefficient derived (not input) | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | Master quadratic, DERIV_LATTICE_SU3_GAUGE.md |
+| ANOM-8 | $N_c = 3$ factor in anomaly coefficient derived (not input) | [SELECTION] — `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem. *(Prior FTD-0014 / master-quadratic route is **RETIRED** per v1.4 §5; LEDGER row removed in commit `ca7eb61`.)* | DERIV_NC_FROM_TOPOLOGY.md; DERIV_LATTICE_SU3_GAUGE.md |
 | ANOM-9 | $f_{\pi} = 92$ MeV adopted as input | [IMPOSED] | Not derived from FTD dynamics |
 | ANOM-10 | Baryogenesis connection via lattice topological charge $Q_{\text{top}} \in \mathbb{Z}$ | [SELECTION] | Compact gauge group + sphaleron physics |
 | ANOM-11 | Ginsparg-Wilson fermion alternative | [OPEN] | Future work |
