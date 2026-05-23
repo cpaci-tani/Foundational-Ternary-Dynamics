@@ -2,7 +2,7 @@
 
 **Tag:** [MEASUREMENT REPORT] — records the canonical engine measurement registered by `PREREG_GRAVITON_SUBSTRATE_MODE_v2.md` (tag `preregister-graviton-substrate-mode-v2`, commit `bb354b6`). The Outcome A/B/Indeterminate verdict is applied here strictly against PREREG v2 §6/§7.
 **Date:** 2026-05-22
-**LEDGER:** FTD-0190
+**LEDGER:** FTD-0193 (renumbered 2026-05-22 from FTD-0190 to resolve a duplicate-id collision with the Q10 finite-neutral-lock FTD-0190; see the LEDGER row notes)
 **Pre-registration:** [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](PREREG_GRAVITON_SUBSTRATE_MODE_v2.md)
 **Instrument:** `engine/tests/campaign_graviton_tt_correlator.cpp` (v2-locked in `bb354b6`; cuFFT performance revision committed alongside this report — see §2 and §7)
 **Raw data:** [`data/graviton_tt/`](data/graviton_tt/) — `tt_correlator_L32.csv`, `tt_correlator_L64.csv`, `meta_L64.json` (preserved from `engine/build_wsl/graviton_tt_results/`, which is gitignored)
