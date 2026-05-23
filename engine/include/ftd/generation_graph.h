@@ -19,16 +19,23 @@
  * (so `q* · (1/q*) = 1` and `q* + 1/q* = G*`). Then Γ_F(d) is the 3×3
  * Hermitian "K_3" matrix on three vertices `(0, 1, 2)` with
  *
- *     Γ_F(d)_{kk}  = ⎰ q*^{d+1}  if k = 0
- *                    ⎱ 1         if k = 1
- *                    ⎰ q*^d      if k = 2
+ * Γ_F(d) is a **weighted graph Laplacian** of the K_3 triangle on vertices
+ * (0, 1, 2), with edge weights and a single Wilson-loop phase on the closing
+ * edge (0, 2):
  *
- *     Γ_F(d)_{k≠ℓ} = e^{iφ}  in the upper triangle  (k < ℓ),
- *                    e^{−iφ}  in the lower triangle  (k > ℓ),
+ *     edge (0,1) weight   w_12  =  q*^{d+1}
+ *     edge (1,2) weight   w_23  =  1
+ *     edge (0,2) weight   w_13  =  q*^d
+ *     Wilson-loop phase   φ(d)  =  π + π/d        (carried by (0,2) only)
  *
- * with phase
+ *           ⎡ w_12 + w_13      −w_12               −w_13 · e^{ iφ} ⎤
+ *     L  =  ⎢ −w_12             w_12 + w_23        −w_23           ⎥
+ *           ⎣ −w_13 · e^{−iφ}  −w_23                w_13 + w_23    ⎦
  *
- *     φ(d) = π + π/d.
+ * Diagonals are vertex degrees (sum of incident edge weights); off-diagonals
+ * are minus the edge weights; the Wilson-loop holonomy `e^{i 3φ}` distinguishes
+ * Γ_F(d) for different `d`. This is the canonical PLAN_03 form — a standard
+ * weighted graph Laplacian, *not* a uniform-phase adjacency matrix.
  *
  * The eigenvectors of Γ_U := Γ_F(3) and Γ_D := Γ_F(2), interpreted as
  * "up-type" and "down-type" generation bases, give a CKM-like overlap
@@ -82,21 +89,46 @@ inline double q_star() {
 }
 
 // ---------------------------------------------------------------------------
-// Γ_F(d) — the K_3 generation triangle, as a 3×3 Hermitian matrix.
+// Γ_F(d) — the K_3 generation triangle, as a 3×3 Hermitian graph Laplacian.
+// Canonical PLAN_03 form (see header comment above).
 // ---------------------------------------------------------------------------
-inline ComplexMatrix3 gamma_F(int d) {
-    if (d < 1) throw std::invalid_argument("gamma_F: d must be >= 1");
-    const double q  = q_star();
-    const double qd = std::pow(q, static_cast<double>(d));
-    const double qd1 = std::pow(q, static_cast<double>(d + 1));
-    const double phi = detail::kPi + detail::kPi / static_cast<double>(d);
-    const std::complex<double> e_phi  = std::polar(1.0, phi);
+
+// Edge weights + Wilson-loop phase for the K_3 triangle at depth d.
+struct GenerationWeights {
+    double w12;   // edge (0,1) — q*^{d+1}
+    double w23;   // edge (1,2) — 1
+    double w13;   // edge (0,2) — q*^d   (carries the Wilson-loop phase)
+    double phi;   // loop phase   π + π/d
+};
+
+inline GenerationWeights generation_weights(int d) {
+    if (d < 1) throw std::invalid_argument("generation_weights: d must be >= 1");
+    const double q = q_star();
+    return GenerationWeights{
+        std::pow(q, static_cast<double>(d + 1)),       // w12
+        1.0,                                            // w23
+        std::pow(q, static_cast<double>(d)),           // w13
+        detail::kPi + detail::kPi / static_cast<double>(d),  // phi
+    };
+}
+
+inline ComplexMatrix3 gamma_F_from_weights(const GenerationWeights& w) {
+    const std::complex<double> e_phi  = std::polar(1.0, w.phi);
     const std::complex<double> e_mphi = std::conj(e_phi);
-    ComplexMatrix3 G{};
-    G[0][0] = qd1;      G[0][1] = e_phi;     G[0][2] = e_phi;
-    G[1][0] = e_mphi;   G[1][1] = 1.0;       G[1][2] = e_phi;
-    G[2][0] = e_mphi;   G[2][1] = e_mphi;    G[2][2] = qd;
-    return G;
+    ComplexMatrix3 L{};
+    // Diagonals: vertex degree = sum of incident edge weights.
+    L[0][0] = w.w12 + w.w13;
+    L[1][1] = w.w12 + w.w23;
+    L[2][2] = w.w13 + w.w23;
+    // Off-diagonals: minus the edge weights; Wilson-loop phase on (0,2)/(2,0).
+    L[0][1] = -w.w12;            L[1][0] = -w.w12;
+    L[1][2] = -w.w23;            L[2][1] = -w.w23;
+    L[0][2] = -w.w13 * e_phi;    L[2][0] = -w.w13 * e_mphi;
+    return L;
+}
+
+inline ComplexMatrix3 gamma_F(int d) {
+    return gamma_F_from_weights(generation_weights(d));
 }
 
 // ---------------------------------------------------------------------------
