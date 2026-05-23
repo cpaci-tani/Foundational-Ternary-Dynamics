@@ -15,9 +15,9 @@ which polynomial form? which root?) that are honestly flagged in the
 source material but overstated in summary headings. Tree-level result is
 **[STRONGLY MOTIVATED CONJECTURE]**. The 7-term precision series is a
 **post-hoc fit** and should be demoted from any "< 0.001 ppt derivation"
-framing. The dual-prediction property (x+ matches 1/α, x- matches N_c=3
-simultaneously from the same polynomial) is the strongest structural
-evidence.
+framing. *(Historical:)* The dual-prediction property (x+ matches 1/α, x- matches N_c=3
+simultaneously from the same polynomial) was the strongest structural
+evidence as of 2026-04-19. **2026-05-22 update:** the `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now carried by FTD-0189's adversarial polynomial-template scan (2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket: 0 non-G\* dual-matchers, rank 1 by ~130×) — independent of the historical target-pair framing.
 
 ---
 
@@ -32,9 +32,12 @@ Pure algebra:
   x₊ = 137.036171458155...     (larger root)
   x₋ = 3.023963916339...       (smaller root)
 
-  Identification claimed by FTD:
-    x₊ ≡ 1/α        (measured 1/α = 137.035999177, 1.26 ppm discrepancy)
-    x₋ ≡ N_c        (N_c = 3, 0.80% discrepancy)
+  Identification (post-v1.4):
+    x₊ ≡ 1/α        (measured 1/α = 137.035999177, 1.26 ppm discrepancy; FTD-0013 [SMC])
+    x₋ ≡ (no physics identification; mathematical artifact of P(x))
+                    Historical: x₋ ≡ N_c (0.80% discrepancy) — RETIRED per v1.4 §5;
+                    LEDGER FTD-0014 removed in commit ca7eb61; N_c = 3 independently
+                    sourced via DERIV_NC_FROM_TOPOLOGY.md.
 ```
 
 All of the algebra above is rigorous to arbitrary precision. The proof
@@ -187,18 +190,18 @@ is:
 
 - Numerical: 1/α ≈ 137.036, master quadratic gives 137.036, match to
   1.26 ppm.
-- Dual: x- = 3.024 matches N_c = 3, simultaneously.
+- ~~Dual: x- = 3.024 matches N_c = 3, simultaneously.~~ — **2026-05-22 update:** the `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The dual-prediction argument no longer carries structural weight; FTD-0189's adversarial polynomial-template scan (0 non-G\* dual-matchers across 2.65 M polynomials over an 18-constant FTD-undesigned basket) is the new canonical structural-uniqueness evidence. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
 - Structural: in FTD's gauge-theory narrative, x+ is the "largest
-  coupling" → identified with U(1) electromagnetism; x- is the
-  "second coupling" → identified with SU(3) color.
+  coupling" → identified with U(1) electromagnetism. *(The historical
+  "x- = second coupling → SU(3) color" reading depended on the
+  retired `x_- ↔ N_c` identification.)*
 
-The dual-prediction argument (§2.5) strengthens this considerably
-beyond "one-digit coincidence," but it is still not a dynamical
+The structural-uniqueness argument (originally the dual-prediction §2.5, now FTD-0189 polynomial-template uniqueness) strengthens the `x_+ ↔ 1/α` identification considerably beyond "one-digit coincidence," but it is still not a dynamical
 derivation of α from first principles. The engine-side test of this
 identification (via Phase H's explicit coupling) now works — but that
 only verifies the plumbing, not the uniqueness of α as the output.
 
-**Status: [STRONGLY MOTIVATED CONJECTURE]**, conditional on the curve
+**Status: [STRONGLY MOTIVATED CONJECTURE]** (FTD-0013), conditional on the curve
 and polynomial-form selections above.
 
 ## 5 · The 7-term precision series — demote to [CONJECTURE]
@@ -239,8 +242,8 @@ physical content beyond the 11-digit measurement."
   of 3D cubic lattice is an input).
 - Degree-2 polynomial form (two independent motivational arguments,
   neither forcing).
-- Physical identification x+ = 1/α, x- = N_c (numerically tight but
-  not derived dynamically — conditional on the curve + form).
+- Physical identification x+ = 1/α (numerically tight but
+  not derived dynamically — conditional on the curve + form). *(The historical paired identification x- = N_c is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
 
 ### What is [CONJECTURE] / [FIT]
 
@@ -248,16 +251,18 @@ physical content beyond the 11-digit measurement."
   CODATA digits beyond measurable precision. Should not be labeled
   [DERIVATION].
 
-### What the dual-prediction buys
+### What the structural-uniqueness argument buys (historical "dual-prediction" framing, post-v1.4)
 
-The strongest honest claim is: among all natural quadratic relations on
+*(Historical claim, as of 2026-04-19:)* The strongest honest claim was: among all natural quadratic relations on
 the graded period ring of E, **the master quadratic is the unique
 polynomial whose two roots simultaneously match the physical constants
-1/α (to 1.26 ppm) and N_c (to 0.8%).** This joint match is roughly
-1-in-10,000 to 1-in-100,000 against random scan baselines. It is not
-proof of an identity, but it is much stronger than either single-root
-match alone, and it is the piece of the argument most worth taking
+1/α (to 1.26 ppm) and N_c (to 0.8%).** This joint match was roughly
+1-in-10,000 to 1-in-100,000 against random scan baselines. It was not
+proof of an identity, but it was much stronger than either single-root
+match alone, and it was the piece of the argument most worth taking
 seriously.
+
+**2026-05-22 update.** The `x_- ↔ N_c` identification is **retired** per v1.4 §5; the dual-prediction framing is no longer load-bearing. The polynomial-template-uniqueness fact, however, is **independent of the target identification** and has been substantially strengthened by FTD-0189: the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket (0 non-G\* dual-matchers; rank 1 by ~130×). This is the new canonical structural-uniqueness evidence going forward.
 
 ## 7 · Recommendations — status as of 2026-04-19
 
@@ -360,13 +365,13 @@ Until this is closed, the master quadratic's `x+ = 1/α` identification
 is a numerical match, not a derivation — and the `< 0.001 ppt` framing
 in CLAUDE.md remains misleading even after the 7-term retraction.
 
-### 7.4 · Retire the "< 0.001 ppt" headline (done)
+### 7.4 · Retire the "< 0.001 ppt" headline (done — historical chronology)
 
-`CLAUDE.md` line 40 has been rewritten to replace the "< 0.001 ppt
+`CLAUDE.md` line 40 was rewritten in the 2026-04-19 session to replace the "< 0.001 ppt
 with 7-term expansion" framing with:
 - "1.26 ppm tree-level" on 1/α
-- Dual-prediction via x_- ≈ N_c (0.80%)
-- [STRONGLY MOTIVATED CONJECTURE] tag on the physical identification
+- *(Historical:)* Dual-prediction via x_- ≈ N_c (0.80%) — **subsequently retired** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (2026-05-22); LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now FTD-0189's adversarial polynomial-template scan.
+- [STRONGLY MOTIVATED CONJECTURE] tag on the physical identification `x_+ ↔ 1/α` (FTD-0013)
 - 7-term expansion explicitly flagged as [CONJECTURE] post-hoc fit
   beyond experimental precision
 

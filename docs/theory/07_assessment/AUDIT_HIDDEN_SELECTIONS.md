@@ -33,7 +33,7 @@ The FTD derivation of α = 1/137.036 from G* is remarkable — but it involves s
    ↓
 6. Solve: x₊ = 137.036..., x₋ = 3.024...     ← MATHEMATICAL
    ↓
-7. x₊ ↔ 1/α, x₋ ↔ N_c = 3                    ← STRONGLY MOTIVATED CONJECTURE (SP4); continuum-QED route is supporting/historical, not a theorem upgrade
+7. x₊ ↔ 1/α                                  ← STRONGLY MOTIVATED CONJECTURE (SP4, FTD-0013); the historical paired x₋ ↔ N_c is **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`; continuum-QED route is supporting/historical, not a theorem upgrade
    See FOUND_FORCE_STRUCTURE.md §V (EM as most ontic)
    See EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md (G* dimensional triad)
 ```

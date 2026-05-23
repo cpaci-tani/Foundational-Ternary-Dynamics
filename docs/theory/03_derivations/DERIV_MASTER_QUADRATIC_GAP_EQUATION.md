@@ -14,11 +14,11 @@ The master quadratic
 
 $$x^2 - 16\,G^{*2}\,x + 16\,G^{*3} \;=\; 0 \qquad \text{with}\qquad G^* \;=\; \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi}$$
 
-is a **pure algebraic object**: every coefficient is computable from G\* to arbitrary finite precision. Its larger root x₊ = 137.036 matches 1/α to 1.26 ppm; its smaller root x₋ = 3.024 matches the colour count N_c = 3 to 0.80 %.
+is a **pure algebraic object**: every coefficient is computable from G\* to arbitrary finite precision. Its larger root x₊ = 137.036 matches 1/α to 1.26 ppm. The smaller root x₋ = 3.024 is a mathematical artifact of the polynomial; the historical identification `x₋ ↔ N_c` (which previously read this root as the QCD colour count) is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 
-This document records (i) the algebraic identity itself; (ii) the multiple finite-combinatorial routes to each of its coefficients (G\* via Watson–Chowla–Selberg, the leading 16 via two independent counts, the constant term via Vieta); (iii) the discriminant trichotomy that partitions one quadratic into bosonic, fermionic, and measurement regimes; and (iv) the empirical match plus structural-uniqueness evidence that motivates the physical identification x₊ ↔ 1/α, x₋ ↔ N_c.
+This document records (i) the algebraic identity itself; (ii) the multiple finite-combinatorial routes to each of its coefficients (G\* via Watson–Chowla–Selberg, the leading 16 via two independent counts, the constant term via Vieta); (iii) the discriminant trichotomy that partitions one quadratic into bosonic, fermionic, and measurement regimes; and (iv) the empirical match plus polynomial-template structural-uniqueness evidence (FTD-0189 adversarial scan: 0 non-G\* dual-matchers across 2.65M degree-2 polynomials over an 18-constant FTD-undesigned basket) that motivates the single live physics identification x₊ ↔ 1/α (FTD-0013).
 
-What this document does **not** do: derive the master quadratic as the L → ∞ limit of any finite-L self-consistency equation. The framework is undefined-boundary (no completed-totality lattice), and the explicit finite-L gap-equation scan and the L = 2 partition-function calculation jointly close the limit-route. The polynomial is what it is — an algebraic identity — and the physical identification rests on dual-match + uniqueness, not on a dynamical derivation.
+What this document does **not** do: derive the master quadratic as the L → ∞ limit of any finite-L self-consistency equation. The framework is undefined-boundary (no completed-totality lattice), and the explicit finite-L gap-equation scan and the L = 2 partition-function calculation jointly close the limit-route. The polynomial is what it is — an algebraic identity — and the physical identification x₊ ↔ 1/α rests on the empirical match (1.26 ppm) + polynomial-template uniqueness (FTD-0189), not on a dynamical derivation.
 
 ---
 
@@ -45,7 +45,7 @@ Numerically, with G\* = 2.95867…,
 | Root | Value | Match | Accuracy |
 |---|---|---|---|
 | $x_+$ | $137.036$ | $1/\alpha$ (CODATA: $137.035999177$) | $1.26$ ppm |
-| $x_-$ | $3.024$ | $N_c = 3$ | $0.80$ % |
+| $x_-$ | $3.024$ | mathematical artifact of $P(x)$; no physics identification (the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | n/a |
 
 ### 1.3 Vieta relations
 
@@ -117,29 +117,27 @@ The same polynomial encodes bosons (real roots, the physical $k = 16$ case), the
 
 ## Part IV: Physical Identification — Evidence Without Derivation
 
-The two roots $x_+ = 137.036$ and $x_- = 3.024$ are algebraic outputs. Their identification with $1/\alpha$ and $N_c$ is **conjectural**, but the conjecture rests on two independent lines of evidence beyond the bare numerical match.
+The larger root $x_+ = 137.036$ is identified with $1/\alpha$ at 1.26 ppm (FTD-0013 [STRONGLY MOTIVATED CONJECTURE]). The conjecture rests on the numerical match plus structural-uniqueness evidence (polynomial-template uniqueness across natural search families). The smaller root $x_- ≈ 3.024$ is a mathematical artifact of $P(x)$; the historical identification `x_- ↔ N_c` is **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
 
-### 4.1 The dual match
-
-A single quadratic produces two roots that match two unrelated physical constants:
+### 4.1 The numerical match
 
 - $x_+ = 137.036$ vs $1/\alpha = 137.035999177$ — agreement to 1.26 ppm.
-- $x_- = 3.024$ vs $N_c = 3$ — agreement to 0.80 %.
+- $x_- = 3.024$ — mathematical artifact of $P(x)$ (no live physics identification post-v1.4 §5).
 
-Either match in isolation could be coincidence. The **simultaneous** match of both roots to two constants of unrelated physical origin (electromagnetic coupling and strong-sector colour count) from a single algebraic equation is the structural evidence: the polynomial is producing two physical numbers at once.
+*(Historical framing: the **simultaneous** match of both roots to two constants of unrelated physical origin (the "dual prediction") was previously load-bearing structural evidence. That framing is retired along with `x_- ↔ N_c`; the polynomial-template-uniqueness fact below replaces it.)*
 
 ### 4.2 CM-curve uniqueness across class-number-1 fields
 
-Among the nine imaginary quadratic fields with class number $1$, the discriminant $d = -4$ — corresponding to $E\colon y^2 = x^3 - x$ — is the **unique** curve whose associated polynomial reproduces the dual match $(\,1/\alpha,\;N_c)$. Other class-number-1 CM curves give roots that miss both targets. (See `scripts/exploration/scan_cm_class_number_1.py` and the Option 3 results in CONJ_ALPHA_FROM_CM.md.)
+Among the nine imaginary quadratic fields with class number $1$, the discriminant $d = -4$ — corresponding to $E\colon y^2 = x^3 - x$ — is the **unique** curve whose associated polynomial reproduces the historical pair-match $(\,1/\alpha,\;N_c)$ at the original tolerances. (Historical framing reflects the pre-v1.4 target choice; the CM-uniqueness fact itself is independent of the physics interpretation of the second target.) Other class-number-1 CM curves give roots that miss both targets. (See `scripts/exploration/scan_cm_class_number_1.py` and the Option 3 results in CONJ_ALPHA_FROM_CM.md.)
 
-This structural uniqueness is what distinguishes the master quadratic from "any polynomial in $\Gamma(1/4)$ that hits 137." The space of comparable algebraic objects has been enumerated; only one survives.
+This structural uniqueness — together with FTD-0189's polynomial-template uniqueness across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — is what distinguishes the master quadratic from "any polynomial in $\Gamma(1/4)$ that hits 137." The space of comparable algebraic objects has been enumerated; only one survives.
 
 ### 4.3 What is *not* claimed
 
 This document does not claim:
 
 - That the master quadratic is the L → ∞ limit of a finite-L gap equation. (It is not. The finite-L scan does not converge to (137.036, 3.024); the L = 2 partition function carries no master-quadratic signature; the undefined-boundary ontology rules out load-bearing L → ∞ steps.)
-- That the physical identification is a [THEOREM]. It is [STRONGLY MOTIVATED CONJECTURE], anchored on the dual match and CM-curve uniqueness.
+- That the physical identification is a [THEOREM]. The single live identification `x_+ ↔ 1/α` is [STRONGLY MOTIVATED CONJECTURE], anchored on the empirical match and polynomial-template uniqueness (FTD-0189) plus CM-curve uniqueness. The historical paired `x_- ↔ N_c` identification is retired per v1.4 §5.
 - That a dynamical mechanism for $x_+ = 1/\alpha$ has been derived from FTD's local update rules. No such mechanism is currently in hand; the open problem of deriving the Coulomb coupling $g_c$ from first principles is documented in `../10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md`, and the conversion-factor question is closed by `../10_eft_program/THEOREM_A_PHYS_NO_GO.md` with provenance in `../10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md`.
 
 ---
@@ -158,7 +156,7 @@ This document does not claim:
 | 7 | Master quadratic $x^2 - 16 G^{*2} x + 16 G^{*3} = 0$ assembled algebraically | [THEOREM] |
 | 8 | Roots $x_+ = 137.036$, $x_- = 3.024$ (quadratic formula) | [THEOREM] |
 | 9 | Discriminant trichotomy: bosons (real), critical (degenerate), fermions (complex) | [THEOREM for the algebra; SELECTION for physical readings] |
-| 10 | Physical identification $x_+ \leftrightarrow 1/\alpha$, $x_- \leftrightarrow N_c$ | [STRONGLY MOTIVATED CONJECTURE] (dual match + CM uniqueness) |
+| 10 | Physical identification $x_+ \leftrightarrow 1/\alpha$ | [STRONGLY MOTIVATED CONJECTURE] (numerical match + polynomial-template uniqueness FTD-0189 + CM uniqueness). The historical paired $x_- \leftrightarrow N_c$ identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. |
 
 Steps 0–8 are algebra and finite combinatorics, all [THEOREM]. Step 9 is algebraic for the trichotomy itself; identifying each regime with bosons / measurement / fermions is [SELECTION]. Step 10 is conjectural but evidentially constrained.
 

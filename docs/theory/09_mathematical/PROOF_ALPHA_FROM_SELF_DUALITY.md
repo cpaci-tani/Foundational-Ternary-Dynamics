@@ -249,8 +249,10 @@ Tr = N (self-consistency at L-function center)
  ↓ degree 2 from [Q(i):Q]
 u² − 16G*u + 16G* = 0
  ↓ quadratic formula
-x₊ = 137.036  →  1/α (by axiom)
-x₋ = 3.024    →  N_c = ⌊x₋⌋ = 3
+x₊ = 137.036  →  1/α (by axiom; FTD-0013 [SMC])
+x₋ = 3.024    (math artifact of P(x); x_- ↔ N_c RETIRED v1.4 §5;
+                LEDGER FTD-0014 removed in commit ca7eb61;
+                N_c = 3 independently sourced via DERIV_NC_FROM_TOPOLOGY.md)
  ↓
 H = 2 = [Q(i):Q]  (harmonic mean = field degree)
 ```

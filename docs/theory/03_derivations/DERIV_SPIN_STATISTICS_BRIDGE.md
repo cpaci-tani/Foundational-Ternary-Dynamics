@@ -242,13 +242,13 @@ Fermions correspond to the **PF component** of G*: the lattice constraint that d
 
 $$x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
-produces x₊ = 137.036 (≈ 1/α) and x₋ = 3.024 (≈ N_c). In PF notation (see [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md), Theorem 1.1):
+produces x₊ = 137.036 (≈ 1/α) and x₋ = 3.024 (mathematical artifact of $P(x)$; the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`). In PF notation (see [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md), Theorem 1.1):
 
 $$x^2 - \frac{16\varpi^2}{\text{PF}} \, x + \frac{16\varpi^3}{\text{PF}^{3/2}} = 0.$$
 
 The linear coefficient 16ϖ²/PF contains ϖ² (continuous) divided by PF (discrete). The constant term 16ϖ³/PF^{3/2} contains ϖ³ (continuous) divided by PF^{3/2} (discrete). Setting either ϖ = 0 or PF = 0 destroys the equation — no roots exist. Sending PF or ϖ to arbitrarily large values pushes the roots into degenerate regimes incompatible with physical constants.
 
-**Corollary.** Bosons and fermions cannot exist independently. Any universe with electromagnetic coupling (α from x₊) necessarily contains color confinement (N_c from x₋), and vice versa. ∎
+**Corollary (historical, weakened by v1.4 §5 retirement of `x_- ↔ N_c`).** Under the historical paired identification, "bosons and fermions cannot exist independently — any universe with electromagnetic coupling (α from x₊) necessarily contains color confinement (N_c from x₋), and vice versa." Post-v1.4, the load-bearing tie from `x_-` to color is removed; the algebraic statement (the polynomial's coefficients couple continuous and discrete invariants) survives, but the physics-side coupling-between-sectors reading depends on the now-retired identification. ∎
 
 ---
 
@@ -435,8 +435,8 @@ THE TWO LEMNISCATES
 │   └── Arc length L × 91/732 ────────────────────────┘
 │
 └── BOTH → G* → master quadratic x² − 16G*²x + 16G*³ = 0
-    ├── x₊ = 137.036 ≈ 1/α  (fine structure constant)
-    ├── x₋ = 3.024   ≈ N_c  (color charges)
+    ├── x₊ = 137.036 ≈ 1/α  (fine structure constant, FTD-0013 [SMC])
+    ├── x₋ = 3.024   (math artifact of P(x); x_- ↔ N_c RETIRED v1.4 §5)
     ├── Discriminant Δ = kG*³(kG*−4):
     │   ├── Δ > 0: real roots      → BOSONIC statistics  (symmetric exchange)
     │   ├── Δ = 0: degenerate      → MEASUREMENT boundary (Born rule)

@@ -237,34 +237,34 @@ No matches at any other level, including the framework-integer levels `k ∈ {3,
 
 ---
 
-## 6.8 · Cover-page reformulation: the dual conjecture as harmonic complement
+## 6.8 · Cover-page reformulation: the harmonic complement — historical, retired
 
-**[CONJECTURE — restatement of FTD-0001 dual conjecture]** The harmonic invariant evaluated at the physical identifications collapses to one line:
+**Historical framing — RETIRED per v1.4 §5.** Under the historical paired identification `x_+ ↔ 1/α` and `x_- ↔ N_c`, the harmonic invariant collapsed to one line:
 
-$$\boxed{\; \alpha \;+\; \frac{1}{N_c} \;=\; \frac{1}{G^*} \;}$$
+$$\boxed{\; \alpha \;+\; \frac{1}{N_c} \;=\; \frac{1}{G^*} \;}\quad\text{(historical slogan, retired)}$$
 
-**Derivation.** Theorem 1 gives `1/y_+ + 1/y_- = 1` for the level-4 master quadratic. Substituting `1/y_+ = G*/x_+ = G*α` (FTD-0001 dual: `α = 1/x_+`) and `1/y_- = G*/x_- = G*/N_c` (FTD-0001 dual: `N_c = x_-`), then dividing by `G*`, gives the boxed equation directly. □
+**Derivation (historical).** Theorem 1 gives `1/y_+ + 1/y_- = 1` for the level-4 master quadratic. Substituting `1/y_+ = G*/x_+ = G*α` (FTD-0013: `α = 1/x_+`, [STRONGLY MOTIVATED CONJECTURE]) and `1/y_- = G*/x_- = G*/N_c` (historical FTD-0014: `N_c = x_-` — **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`), then dividing by `G*`, gives the boxed equation directly. □
 
-**What this is.** Algebraically, this is the dual-prediction conjecture in its most compact form. Numerically, with `α_obs = 0.00729735` and `N_c = 3` (integer) and `1/G* = 0.337988`:
+**Post-v1.4 status.** The `x_- ↔ N_c` identification is retired; the smaller root `x_- ≈ 3.024` is a mathematical artifact of $P(x)$ only, and `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. The live algebraic content is the bare identity `1/x_+ + 1/x_- = 1/G^*` (Vieta); the "α + 1/N_c = 1/G*" slogan form is preserved here only as historical commentary.
+
+**What it was, numerically (historical).** With `α_obs = 0.00729735`, `N_c = 3` (integer), and `1/G* = 0.337988`:
 
 $$\alpha_{\text{obs}} + \tfrac{1}{3} \;=\; 0.34063 \quad \text{vs} \quad 1/G^* = 0.33799,$$
 
-differing by **0.78%** — the *same* 0.78% as the master quadratic's smaller root deviation from 3 (`x_- = 3.0240 = 3 × (1 + 0.0080)`). The two equivalent statements:
+differing by **0.78%** — the *same* 0.78% as the master quadratic's smaller root deviation from 3 (`x_- = 3.0240 = 3 × (1 + 0.0080)`). Under the historical paired identification, the two equivalent statements:
 - "The master quadratic's smaller root is 3.024, off the integer N_c = 3 by 0.80%"
 - "α + 1/N_c (with N_c = 3) deviates from 1/G* by 0.78%"
 
-are the same conjecture, different framings. The boxed form is the conjecture's *cover-page* version: it states FTD's central empirical claim as a one-line conservation law over `(α, 1/N_c, 1/G*)` rather than as a polynomial-root coincidence.
+were the same conjecture in different framings. Both framings depend on the now-retired `x_- ↔ N_c` identification; only the bare algebraic identity `1/x_+ + 1/x_- = 1/G^*` survives unchanged.
 
-**Cross-domain bridge.** The structure `1/A + 1/B = 1/C` recurs across physics:
+**Cross-domain bridge (historical commentary).** The structure `1/A + 1/B = 1/C` recurs across physics:
 - **Parallel resistors** (Kirchhoff): `1/R_eq = 1/R_1 + 1/R_2`
 - **Reduced mass** (Newtonian two-body): `1/μ = 1/m_1 + 1/m_2`
 - **Thin lens equation** (paraxial optics): `1/f = 1/d_o + 1/d_i`
 
-In each case `C` is a *combined* / *equivalent* / *focal* quantity of which `A` and `B` are reciprocal contributions. **FTD's instance places `G*` as the "equivalent reciprocal" of which `α` (electromagnetic) and `1/N_c` (color) are complementary terms.** The dual conjecture is then not a numerical coincidence — it is the assertion that `G*` plays the structural role of a Kirchhoff-type combined reciprocal across the EM-color sectors.
+Under the historical paired identification, the FTD instance placed `G*` as the "equivalent reciprocal" of which `α` (electromagnetic) and `1/N_c` (color) were complementary terms. The Kirchhoff slogan and the "cover-page" form are **retired** along with `x_- ↔ N_c` (v1.4 §5); the structural analogy at the bare-algebra level (`1/x_+ + 1/x_- = 1/G^*`) survives, but its physics-notation slogan does not.
 
-**[CONJECTURE, exploratory only].** That this Kirchhoff analogy carries any predictive content beyond the identity itself. The analogy is *suggestive* — it changes how the FTD claim should be presented in papers (one line at the top of the abstract) — but it is not a derivation of α from first principles, and it cannot upgrade the empirical match's epistemic tag beyond what FTD-0001 already establishes. Use the analogy in motivation, not in proof.
-
-**Slogan-grade summary**: `(α, 1/N_c)` are complementary harmonic conjugates of `1/G*`.
+**Slogan-grade summary (historical, retired)**: `(α, 1/N_c)` were complementary harmonic conjugates of `1/G*`.
 
 ---
 

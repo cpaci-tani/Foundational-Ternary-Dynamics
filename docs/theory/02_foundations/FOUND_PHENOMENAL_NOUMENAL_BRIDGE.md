@@ -171,7 +171,7 @@ Every [SELECTION]/[OPEN]/[PARAMETRIC]/[THEOREM] tag in the FTD corpus can now be
 | Result | Previous tag | Layer | Reason |
 |---|---|---|---|
 | $x_+ = 1/\alpha$ root of master quadratic | [STRONGLY MOTIVATED CONJECTURE] | Noumenal | Lives at $3^3$ BCC scale |
-| $x_- = N_c$ root | [THEOREM] (arithmetic) | Noumenal | Same polynomial as $x_+$ |
+| $x_- ≈ 3.024$ root (mathematical artifact of $P(x)$; the `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | [THEOREM] (arithmetic — root of the polynomial) | Noumenal | Same polynomial as $x_+$ |
 | $m_\mu/m_e$, $m_\tau/m_e$ integer formulas | [THEOREM] | Noumenal | Pole-mass ratios, closed Γ-form |
 | $m_e = m_P \sqrt{2\pi} \cdot (16/3) \cdot \alpha^{11}$ | [SELECTION] | **Straddles** — prefactor noumenal, exponent phenomenal | Prefactor is [THEOREM]; exponent 11 needs interior-axis walk-ordering |
 | Quark masses | [OPEN] | Phenomenal | Scheme-dependent running masses; no noumenal closed form should exist |

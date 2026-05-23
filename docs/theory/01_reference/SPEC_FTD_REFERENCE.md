@@ -169,7 +169,7 @@ x₊ = (-b + √D) / 2 = (140.0601 + 134.0122) / 2 = 137.0361714582
 x₋ = (-b - √D) / 2 = (140.0601 - 134.0122) / 2 = 3.0239639163
 ```
 - **x₊ = 137.0361714582** → 1/α (fine structure constant, 1.26 ppm accuracy)
-- **x₋ = 3.0239639163** → N_c (color charges via RG flow, 0.8% from 3)
+- **x₋ = 3.0239639163** → mathematical artifact of `P(x)`; no physics identification (the historical `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`)
 
 ### Why x₊ = 1/α [STRONGLY MOTIVATED CONJECTURE]
 The identification x₊ = 1/α depends on five selection principles (see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md)):
@@ -178,10 +178,11 @@ The identification x₊ = 1/α depends on five selection principles (see [AUDIT_
 3. **SP3**: Quadratic form x² - 16c²x + 16c³ = 0 (imposed, not derived)
 4. x₊ is identified with the electromagnetic coupling
 
-### Why x₋ → N_c = 3 [SELECTION]
-1. x₋ = 3.024 is identified as the effective color parameter at UV
-2. QCD beta function: β₀ = 11 - 2n_f/3 = 7 = b₃ (uses empirical n_f = 6)
-3. RG flow: N_c,eff → ⌊x₋⌋ = 3 at confinement (topological quantization)
+### N_c = 3 — independent topological sources
+The historical `x_- → N_c = 3` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is now sourced from independent structural routes:
+1. Moore Layer Theorem (`docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md`): U(1)×SU(2)×SU(3) polyhedral decomposition forces N_c = 3 via the BCC-sublattice rank.
+2. `DERIV_NC_FROM_TOPOLOGY.md` enumerates four independent topology routes converging on N_c = 3.
+3. ℤ₃ center closure and BCC multiplicative structure provide further independent paths.
 
 ---
 
@@ -526,7 +527,7 @@ m_p/m_e = n_eff/α + T(b_3+N_c) = 1836.47
 |----|------------|----------|---------|------------|------------|
 | C1 | x₊ = 1/α | Conjecture | **[STRONGLY MOTIVATED CONJECTURE]** | CM selection + quadratic form | SP1, SP2, SP3 |
 
-| C2 | x₋ → N_c = 3 | Conjecture | **[STRONGLY MOTIVATED CONJECTURE]** as root identification | RG flow + confinement | SP3, empirical n_f = 6 |
+| ~~C2~~ | ~~x₋ → N_c = 3~~ | — | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via topology (see `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem) | n/a | n/a |
 | A1 | Why D = 3 | Axiom | **[SELECTION]** | Atomic stability + gauge + Fibonacci | Multiple sufficiency arguments |
 
 ### Previously Missing → Now COMPLETE

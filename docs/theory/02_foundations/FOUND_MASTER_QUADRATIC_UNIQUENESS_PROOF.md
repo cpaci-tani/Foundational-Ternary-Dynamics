@@ -22,12 +22,14 @@ $$
 p_*(x) \;=\; x^2 - 16 G^{*2} x + 16 G^{*3}
 $$
 is the **unique** polynomial whose two real roots simultaneously satisfy
-$|x_+ - 1/\alpha_{\rm tree}| < 10^{-3}$ and $|x_- - N_c| < 10^{-1}$, at every
+$|x_+ - 1/\alpha_{\rm tree}| < 10^{-3}$ and $|x_- - 3| < 10^{-1}$, at every
 $I_{\max} \in \{16, 32, 64, 128, 256, 512\}$ tested.
+
+*(Note on framing: the original scan targeted the pair $(1/\alpha, N_c)$ where $N_c = 3$; this reflects the pre-v1.4 state of the framework when `x_- ↔ N_c` was a live identification. The polynomial-uniqueness fact — that $p_*$ is the unique structure matching the pair $(1/\alpha, 3)$ at the declared tolerances — is **independent of the physical interpretation of the second target**: it remains a statement about which polynomial in $\mathcal{A}$-coefficients matches the numerical pair $(137.036, 3.024)$ to specified precision. The identification `x_- ↔ N_c` itself is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
 
 Combined with:
 - **Degree 1 impossible** (structure: a single root cannot encode the pair
-  $(1/\alpha, N_c)$; numerics: closest miss is $0.036$);
+  $(1/\alpha, 3)$; numerics: closest miss is $0.036$);
 - **Degree $\ge 3$ factors through $p_*$** (Euclidean division in $\mathbb{R}[x]$);
 
 this closes **SP2** (polynomial degree 2 selection) as a **[THEOREM]**.
@@ -201,7 +203,7 @@ From [FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md §5](FOUND_MASTER_QUADRATIC_U
 | SP1 | Curve is $E_i$ | [SELECTION] | [SELECTION] (unchanged — curve choice is motivated by maximal symmetry but not uniquely forced) |
 | SP2 | Polynomial is degree 2 | [SELECTION NARROWED] | **[THEOREM]** — unique minimal polynomial in the bounded $G^*$-integer class |
 | SP3 | Coefficient is $\|\mathrm{Aut}\|^2 = 16$ | [THEOREM] | [THEOREM] (from FTD-0081) |
-| SP4 | Physical identification $x_+ = 1/\alpha$, $x_- = N_c$ | [SELECTION] | [SELECTION] (unchanged — 1.26 ppm numerical match, but identification not uniquely forced) |
+| SP4 | Physical identification $x_+ = 1/\alpha$ | [SELECTION] | [SELECTION] (unchanged — 1.26 ppm numerical match, but identification not uniquely forced). *(The historical paired identification $x_- = N_c$ is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced.)* |
 | SP5 | Framework integer structure | [SELECTION] | [SELECTION] (unchanged) |
 
 **Three theorems (SP2, SP3, plus coefficients from two routes), two

@@ -76,13 +76,13 @@
       "label": "CM curve uniqueness among class-number-1 fields",
       "is_dimensionless": true,
       "calibration_required": false,
-      "ftd_formula": "Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots that simultaneously match dimensionless physical constants to permille precision",
+      "ftd_formula": "Among d ∈ {-3, -4, -7, -8, -11, -19, -43, -67, -163}, only d = -4 yields master-quadratic roots whose larger root matches 1/α to permille precision. (Historical formulation referenced the pair (1/α, N_c); the x_- ↔ N_c identification is RETIRED per v1.4 §5 — LEDGER FTD-0014 removed in commit ca7eb61. The CM uniqueness fact stands independently.)",
       "ftd_value": null,
       "ftd_value_aux": {"unique_discriminant": -4, "class_number": 1},
       "ftd_value_units": null,
       "depends_on": ["g_star_identity", "master_quadratic"],
       "epistemic_tag": "THEOREM",
-      "ledger_ids": ["FTD-0001", "FTD-0014"],
+      "ledger_ids": ["FTD-0001"],
       "source_files": [
         "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
         "docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md",
@@ -92,7 +92,7 @@
       "lab_measurement": null,
       "comparison": null,
       "calibration_note": null,
-      "notes": "Numerical verification across all 9 class-number-1 discriminants. Uniqueness extends only within the class-number-1 family; class-number ≥ 2 is [OPEN]."
+      "notes": "Numerical verification across all 9 class-number-1 discriminants. Uniqueness extends only within the class-number-1 family; class-number ≥ 2 is [OPEN]. (Prior ledger reference FTD-0014 removed — that row, which carried the now-retired x_- ↔ N_c identification, was removed in commit ca7eb61 per v1.4 §5.)"
     },
 
     {
@@ -219,39 +219,35 @@
         "method": "tree x₊ vs CODATA: 1.26 ppm; full 7-term 1-loop series matches CODATA to within published precision"
       },
       "calibration_note": null,
-      "notes": "Polynomial-level theorem (x₊ is a root of a number-theoretic polynomial); the physical identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE] (downgraded from THEOREM 2026-04-19) because it depends on dual-match + CM-curve uniqueness rather than a derivation chain to QED. FTD-0097 look-elsewhere scan (2026-04-27) confirms the master quadratic's polynomial-root layer lives outside the monomial scan space and is unaffected by the over-richness verdict."
+      "notes": "Polynomial-level theorem (x₊ is a root of a number-theoretic polynomial); the physical identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE] (downgraded from THEOREM 2026-04-19) because it depends on polynomial-template uniqueness (FTD-0189 adversarial scan: 0 non-G* dual-matchers across 2.65M degree-2 polynomials over an 18-constant FTD-undesigned basket) + CM-curve uniqueness rather than a derivation chain to QED. (Historical formulation referenced 'dual-match' with x_- ↔ N_c; the x_- ↔ N_c identification is RETIRED per v1.4 §5 and the polynomial-template-uniqueness fact is independent of the historical target.) FTD-0097 look-elsewhere scan (2026-04-27) confirms the master quadratic's polynomial-root layer lives outside the monomial scan space and is unaffected by the over-richness verdict."
     },
 
     {
       "id": "n_color",
       "category": "dimensionless_prediction",
-      "label": "N_c (number of colors) ↔ master-quadratic root x₋",
+      "label": "N_c (number of colors) — independently sourced; the historical x_- ↔ N_c identification is RETIRED",
       "is_dimensionless": true,
       "calibration_required": false,
-      "ftd_formula": "x₋ root of master quadratic; numerical value 3.024",
-      "ftd_value": 3.023963916339028,
+      "ftd_formula": "N_c = 3 from independent structural routes: Moore Layer Theorem and DERIV_NC_FROM_TOPOLOGY.md (four routes). The historical identification N_c = ⌊x_-⌋ via the master-quadratic small root is RETIRED per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit ca7eb61.",
+      "ftd_value": 3,
       "ftd_value_units": null,
-      "depends_on": ["master_quadratic"],
-      "epistemic_tag": "STRONGLY MOTIVATED CONJECTURE",
-      "ledger_ids": ["FTD-0001", "FTD-0014"],
+      "depends_on": [],
+      "epistemic_tag": "SELECTION",
+      "ledger_ids": [],
       "source_files": [
-        "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
-        "docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md"
+        "docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md",
+        "docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md"
       ],
-      "constants_py_ref": "X_MINUS",
+      "constants_py_ref": null,
       "lab_measurement": {
         "value": 3,
         "sigma": null,
         "units": null,
         "source": "Standard Model (exact integer, not a measurement)"
       },
-      "comparison": {
-        "tier": "hard",
-        "delta_ppb": 7987971.0,
-        "method": "x₋ = 3.024 vs N_c = 3 exactly (0.80% off integer)"
-      },
+      "comparison": null,
       "calibration_note": null,
-      "notes": "Same epistemic tier as α: polynomial-root layer is theorem; physical identification is conjecture. Four independent topological routes converge on N_c = 3 (DERIV_NC_FROM_TOPOLOGY)."
+      "notes": "N_c = 3 in FTD is independently sourced from topology/representation-theory routes. The historical identification x_- ↔ N_c (where x_- ≈ 3.024 is the smaller root of the master quadratic) is RETIRED per v1.4 §5: the smaller root is a mathematical artifact of P(x), with no live physics identification. LEDGER row FTD-0014 was removed in commit ca7eb61."
     },
 
     {

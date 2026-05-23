@@ -392,7 +392,7 @@ For B and beyond, the k(A) drift becomes structurally important: the simple iden
 
 #### §12.4.4 Tag and epistemic status
 
-**Tag:** [STRONGLY MOTIVATED CONJECTURE] — comparable in epistemic standing to the master quadratic dual match (1.26 ppm for x_+ ≈ 1/α and 0.80% for x_- ≈ N_c). The strength here is:
+**Tag:** [STRONGLY MOTIVATED CONJECTURE] — comparable in epistemic standing to the master quadratic identification `x_+ ≈ 1/α` (1.26 ppm, FTD-0013). *(The 0.80% `x_- ≈ N_c` framing previously used here as a parallel example is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)* The strength here is:
 
 - **5/5 seeds reproduce** the prediction for each tested particle (deterministic count, not a single seed coincidence).
 - **3 independent particles** at low R (e, μ, π) match with deviations 0%, 1.1%, 2.0% — well below the 5% scaling-law noise floor.

@@ -249,10 +249,10 @@ $$x^2 = 32\pi\,I_1\,(x - G^*)$$
 
 The roots are:
 
-| Root | Value | Proposed identification | Accuracy | Status |
+| Root | Value | Identification | Accuracy | Status |
 |------|-------|------------------------|----------|--------|
-| x_+ | 137.036 | 1/alpha (fine structure) | 1.26 ppm | [SELECTION] |
-| x_- | 3.024 | N_c (color charges) | 0.8% | [SELECTION] |
+| x_+ | 137.036 | 1/alpha (fine structure) | 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
+| x_- | 3.024 | mathematical artifact of `P(x)`; no physics identification | n/a | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`, Moore Layer Theorem) |
 
 **Note (April 2026):** An updated 13-step chain starting from "i exists" is now canonical — see [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md). The coefficient 16 is now [THEOREM] via dual derivation (|Aut(E_i)|^2 = |O_h|/3 = 16, see DERIV_DUAL_DERIVATION_OF_16.md). The one-loop lattice correction closes 99.2% of the gap (9.6 ppb).
 
@@ -270,15 +270,15 @@ The roots are:
 | 7 | Coefficient 16 | [THEOREM] -- derived as z_BCC x 2 = 8 x 2 = 16 in FOUND_DIMENSIONAL_COUNTING.md Section 5.4; also |Aut(E)|^2 = 16 |
 | 8 | Master quadratic follows algebraically | [THEOREM given 6 and 7] |
 | 9 | Roots x_+ = 137.036, x_- = 3.024 | [THEOREM given 8] |
-| 10 | Physical identification x_+ = 1/alpha, x_- -> N_c | [STRONGLY MOTIVATED CONJECTURE] |
+| 10 | Physical identification x_+ = 1/alpha | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); the historical x_- -> N_c identification is **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`, Moore Layer Theorem) |
 
 **Steps 0-5 are rock solid.** Steps 6-7 are the contested territory. Steps 8-9 are algebra. Step 10 is an identification, not a derivation.
 
 **The discriminant trichotomy** [THEOREM]: The generalized master quadratic $x^2 - kG^{*2}x + kG^{*3} = 0$ has discriminant $\Delta = kG^{*3}(kG^* - 4)$. One quadratic, three regimes:
 
-- $\Delta > 0$ ($k = 16$, physical): **real roots** — bosonic sector (coupling constants $\alpha$, $N_c$)
+- $\Delta > 0$ ($k = 16$, physical): **real roots** — bosonic sector (the larger root $x_+$ identified with $1/\alpha$, [STRONGLY MOTIVATED CONJECTURE]; the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$, with the historical `x_- ↔ N_c` identification **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`)
 - $\Delta = 0$ ($k = 4/G^*$, critical): **degenerate root** — the Born rule / measurement boundary
-- $\Delta < 0$ ($k < 4/G^*$): **complex roots** — the Dirac equation emerges; complex roots $x = a \pm bi$ yield $e^{ibt}$ oscillations, which IS the fermion wavefunction. The fermion sector is not imported from external physics — it is derived from the complex regime of the same master quadratic that produces $\alpha$ and $N_c$.
+- $\Delta < 0$ ($k < 4/G^*$): **complex roots** — the Dirac equation emerges; complex roots $x = a \pm bi$ yield $e^{ibt}$ oscillations, which IS the fermion wavefunction. The fermion sector is not imported from external physics — it is derived from the complex regime of the same master quadratic that produces $\alpha$.
 
 The master quadratic does not just produce coupling constants. It produces the entire particle content: bosons (real roots), fermions (complex roots), and measurement (degenerate root) from ONE equation.
 
@@ -771,7 +771,7 @@ Level 5: G* = Γ(1/4)/Γ(3/4), ϖ = Γ(1/4)²/(2√(2π))   [THEOREM]
 Level 6: 16 = 2^D(D-1)! → D = 3                     [THEOREM]
 Level 7: Z[i]³ → Moore-26 = 6+12+8 decomposition    [THEOREM]
 Level 8: Master quadratic x² − 16G*²x + 16G*³ = 0    [SELECTION S1]
-Level 9: x₊ ↔ 1/α, x₋ ↔ N_c                         [SMC physical identifications; algebraic roots theorem-level]
+Level 9: x₊ ↔ 1/α                                    [SMC physical identification (FTD-0013); algebraic roots theorem-level. x₋ ↔ N_c RETIRED v1.4 §5; LEDGER FTD-0014 removed in commit ca7eb61. N_c=3 independently sourced.]
 Level 10: Ladder walk {4,3,3,6} sums to 16          [THEOREM]
 Level 11: Walk ordering → particle scales           [SELECTION S2]
 Level 12: Lepton masses, m_H, m_p/m_e, etc.         [THEOREM from 11]
