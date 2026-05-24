@@ -24368,14 +24368,21 @@ function initGraph() {
     .warmupTicks(20)
     .graphData(buildGraphData());
 
-  // d3-force-3d configuration AFTER graphData is bound.
+  // Modify the bundled forces (charge/link) -- these belong to the
+  // simulation already, so we just retune them.  We do NOT replace
+  // forceCollide / forceManyBody / forceLink with our own constructed
+  // versions, because that mixes the standalone d3-force-3d's force
+  // objects with the bundled simulation's force-internal state, which
+  // breaks tick() / octree() during graphData replacement.
   Graph.d3Force("charge")
     .strength(d => -repulsion * (d._layer === "theorems" ? 2 : 1))
     .distanceMax(1500);
   Graph.d3Force("link")
     .distance(d => linkLen + (d.source._layer === "theorems" ? 40 : 0))
     .strength(0.4);
-  // Replace default center with our sector forces.
+  // Replace the default centering force with our sector forces.
+  // forceX/Y/Z are pure-accessor forces -- they don't hold octree state
+  // across simulation re-inits, so they survive graphData() changes.
   Graph.d3Force("center", null);
   Graph.d3Force("sectorX", d3.forceX(d =>
     (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].x : 0
@@ -24386,7 +24393,6 @@ function initGraph() {
   Graph.d3Force("sectorZ", d3.forceZ(d =>
     (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].z : 0
   ).strength(sectorPull / 1000));
-  Graph.d3Force("collide", d3.forceCollide(d => nodeSize(d) + 4).strength(0.85));
 
   // Kick the simulation so the new forces take effect.
   Graph.d3ReheatSimulation();
@@ -24394,8 +24400,14 @@ function initGraph() {
 
 function rerunSimulation() {
   if (!Graph) return;
-  Graph.graphData(buildGraphData());
-  Graph.d3ReheatSimulation();
+  try {
+    // Setting graphData restarts the simulation automatically; don't double-reheat.
+    Graph.graphData(buildGraphData());
+  } catch (e) {
+    console.warn("rerunSimulation error:", e);
+    const box = document.getElementById("js-error");
+    if (box) { box.style.display = "block"; box.textContent = "Sim restart: " + e.message; }
+  }
 }
 
 function focusOnNode(n) {
