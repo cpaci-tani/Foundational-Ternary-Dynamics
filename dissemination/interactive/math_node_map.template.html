@@ -4,7 +4,44 @@
 <meta charset="UTF-8">
 <title>FTD Math Node Map — 3D multi-layer connectivity</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.73.5/dist/3d-force-graph.min.js"></script>
+<!-- ES modules + importmap guarantee a SINGLE Three.js instance shared
+     across all dependencies.  3d-force-graph's UMD bundle was
+     double-loading Three.js, which broke instanceof identity and
+     caused the "Cannot read properties of undefined (reading 'tick')"
+     crash.  The importmap below tells esm.sh to resolve `three`
+     to the same module we control. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://esm.sh/three@0.155.0",
+    "three/": "https://esm.sh/three@0.155.0/",
+    "three/addons/": "https://esm.sh/three@0.155.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+  // Use a 3d-force-graph version (1.71.x) that predates the WebGPU + Timer
+  // dependencies introduced in later versions.  Pin three@0.155.0 to match
+  // (Timer was added in r158).  The `?external=three&deps=three@0.155.0`
+  // query tells esm.sh to resolve `three` to the version we just pinned
+  // via the importmap, so there's exactly ONE Three.js instance.
+  try {
+    const mod = await import("https://esm.sh/3d-force-graph@1.71.5?external=three&deps=three@0.155.0");
+    window.ForceGraph3D = mod.default || mod.ForceGraph3D || mod;
+    window.dispatchEvent(new Event("force-graph-3d-ready"));
+  } catch (err) {
+    const showErr = () => {
+      const box = document.getElementById("js-error");
+      if (box) {
+        box.style.display = "block";
+        box.textContent = "Failed to load 3d-force-graph ES module: " + (err.message || err);
+      }
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", showErr);
+    } else { showErr(); }
+  }
+</script>
 <!-- 3d-force-graph bundles its own d3-force-3d.  We deliberately do NOT load
      a separate d3-force-3d copy: passing force objects from a different copy
      into the bundled simulation triggered 'tick'/'octree' errors during
@@ -597,9 +634,23 @@ function bindControls() {
 const progressEl = document.getElementById("loadingProgress");
 const start = performance.now();
 
-loadData()
+// Wait for the ESM module to attach ForceGraph3D to window before we boot.
+function whenForceGraphReady() {
+  return new Promise((resolve, reject) => {
+    if (typeof ForceGraph3D !== "undefined") return resolve();
+    const timeout = setTimeout(() => reject(
+      new Error("Timed out waiting for ForceGraph3D ES module (10 s). " +
+                "Check network access to esm.sh.")), 10000);
+    window.addEventListener("force-graph-3d-ready", () => {
+      clearTimeout(timeout);
+      resolve();
+    }, { once: true });
+  });
+}
+
+Promise.all([loadData(), whenForceGraphReady()])
   .then(() => {
-    progressEl.textContent = `data loaded (${(performance.now()-start).toFixed(0)} ms); building 3D scene…`;
+    progressEl.textContent = `data + lib loaded (${(performance.now()-start).toFixed(0)} ms); building 3D scene…`;
     buildIndex();
     buildSectorDropdown();
     buildLegend();
