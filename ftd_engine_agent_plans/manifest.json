@@ -1,0 +1,23 @@
+{
+  "package": "FTD Engine Agent Implementation Plans",
+  "version": "0.1",
+  "files": [
+    "ENGINE_AGENT_CHECKLIST.md",
+    "PLAN_01_BRANCH_HOLONOMY_GAP.md",
+    "PLAN_02_Z3_COLOR_CENTER.md",
+    "PLAN_03_GENERATION_GRAPH.md",
+    "PLAN_04_DOCS_LEDGER.md",
+    "PLAN_05_DASHBOARD_SCENARIOS.md",
+    "PLAN_06_NONLINEAR_SOURCE_LAW.md",
+    "README_IMPLEMENTATION_SEQUENCE.md"
+  ],
+  "recommended_order": [
+    "PLAN_01_BRANCH_HOLONOMY_GAP.md",
+    "PLAN_02_Z3_COLOR_CENTER.md",
+    "PLAN_03_GENERATION_GRAPH.md",
+    "PLAN_04_DOCS_LEDGER.md",
+    "PLAN_05_DASHBOARD_SCENARIOS.md",
+    "PLAN_06_NONLINEAR_SOURCE_LAW.md"
+  ],
+  "created_utc": "2026-05-22T23:34:58.036338Z"
+}
