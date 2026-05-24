@@ -27,6 +27,7 @@ header but the original record stays.
 | 0011 | [Mesh-factory callback](0011-mesh-factory-callback.md) | Accepted | 2026-04-27 | Single canonical home + ctor-time bound callbacks for cross-sub-renderer helpers |
 | 0012 | [Golden-tick regression gate](0012-golden-tick-regression-gate.md) | Accepted | 2026-04-27 | 100-tick byte-hash gate for physics-touching extractions (Phase 4) |
 | 0013 | [Toggle table-driven](0013-toggle-table-driven.md) | Accepted | 2026-04-27 | TOGGLE_SPECS[] replaces 5-place edit with 2-place (Phase 6) |
+| 0014 | [CUDA constant memory for invariants](0014-cuda-constant-memory-for-invariants.md) | Accepted | 2026-05-23 | `__constant__` pattern for small read-only matrices + companion scalars |
 
 ---
 
