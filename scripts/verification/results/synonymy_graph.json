@@ -1,0 +1,3061 @@
+{
+  "schema_version": 1,
+  "source_file": "scripts/verification/verify_gstar_paper.py",
+  "source_commit": "188c03e2069f76e135b6466dcc7fd5f28493b573",
+  "extraction_script": "scripts/verification/extract_synonymy_graph.py",
+  "n_checks": 100,
+  "n_objects": 72,
+  "n_edges_bipartite": 216,
+  "n_edges_pairwise": 181,
+  "objects": [
+    {
+      "name": "G_G",
+      "valence": 29,
+      "first_seen_line": 48
+    },
+    {
+      "name": "pi",
+      "valence": 25,
+      "first_seen_line": 50
+    },
+    {
+      "name": "sqrt",
+      "valence": 18,
+      "first_seen_line": 50
+    },
+    {
+      "name": "Gstar",
+      "valence": 13,
+      "first_seen_line": 46
+    },
+    {
+      "name": "G_rho",
+      "valence": 9,
+      "first_seen_line": 157
+    },
+    {
+      "name": "gamma",
+      "valence": 9,
+      "first_seen_line": 54
+    },
+    {
+      "name": "varpi",
+      "valence": 8,
+      "first_seen_line": 52
+    },
+    {
+      "name": "eta_i",
+      "valence": 7,
+      "first_seen_line": 232
+    },
+    {
+      "name": "K_half",
+      "valence": 5,
+      "first_seen_line": 174
+    },
+    {
+      "name": "d_n",
+      "valence": 5,
+      "first_seen_line": 422
+    },
+    {
+      "name": "E_half",
+      "valence": 4,
+      "first_seen_line": 282
+    },
+    {
+      "name": "F213_direct",
+      "valence": 3,
+      "first_seen_line": 485
+    },
+    {
+      "name": "W3",
+      "valence": 3,
+      "first_seen_line": 170
+    },
+    {
+      "name": "omega_E_gamma",
+      "valence": 3,
+      "first_seen_line": 141
+    },
+    {
+      "name": "theta2_i",
+      "valence": 3,
+      "first_seen_line": 200
+    },
+    {
+      "name": "theta3_i",
+      "valence": 3,
+      "first_seen_line": 202
+    },
+    {
+      "name": "x_minus",
+      "valence": 3,
+      "first_seen_line": 82
+    },
+    {
+      "name": "x_plus",
+      "valence": 3,
+      "first_seen_line": 80
+    },
+    {
+      "name": "B_quarter",
+      "valence": 2,
+      "first_seen_line": 149
+    },
+    {
+      "name": "E12_i",
+      "valence": 2,
+      "first_seen_line": 332
+    },
+    {
+      "name": "M3_at",
+      "valence": 2,
+      "first_seen_line": 490
+    },
+    {
+      "name": "R12",
+      "valence": 2,
+      "first_seen_line": 121
+    },
+    {
+      "name": "R8",
+      "valence": 2,
+      "first_seen_line": 117
+    },
+    {
+      "name": "eta_2i",
+      "valence": 2,
+      "first_seen_line": 246
+    },
+    {
+      "name": "eta_i_half",
+      "valence": 2,
+      "first_seen_line": 244
+    },
+    {
+      "name": "n",
+      "valence": 2,
+      "first_seen_line": 126
+    },
+    {
+      "name": "theta4_i",
+      "valence": 2,
+      "first_seen_line": 201
+    },
+    {
+      "name": "Delta_i",
+      "valence": 1,
+      "first_seen_line": 343
+    },
+    {
+      "name": "Delta_rho",
+      "valence": 1,
+      "first_seen_line": 407
+    },
+    {
+      "name": "E10_i",
+      "valence": 1,
+      "first_seen_line": 331
+    },
+    {
+      "name": "E12_i_basis",
+      "valence": 1,
+      "first_seen_line": 390
+    },
+    {
+      "name": "E12_rho",
+      "valence": 1,
+      "first_seen_line": 403
+    },
+    {
+      "name": "E14_i",
+      "valence": 1,
+      "first_seen_line": 334
+    },
+    {
+      "name": "E16_i",
+      "valence": 1,
+      "first_seen_line": 335
+    },
+    {
+      "name": "E20_i",
+      "valence": 1,
+      "first_seen_line": 337
+    },
+    {
+      "name": "E24_i",
+      "valence": 1,
+      "first_seen_line": 339
+    },
+    {
+      "name": "E2_i",
+      "valence": 1,
+      "first_seen_line": 365
+    },
+    {
+      "name": "E2_rho",
+      "valence": 1,
+      "first_seen_line": 370
+    },
+    {
+      "name": "E4_i",
+      "valence": 1,
+      "first_seen_line": 328
+    },
+    {
+      "name": "E4_rho",
+      "valence": 1,
+      "first_seen_line": 400
+    },
+    {
+      "name": "E6_i",
+      "valence": 1,
+      "first_seen_line": 329
+    },
+    {
+      "name": "E6_rho",
+      "valence": 1,
+      "first_seen_line": 401
+    },
+    {
+      "name": "E8_i",
+      "valence": 1,
+      "first_seen_line": 330
+    },
+    {
+      "name": "F213_closed",
+      "valence": 1,
+      "first_seen_line": 485
+    },
+    {
+      "name": "G_rho_explicit",
+      "valence": 1,
+      "first_seen_line": 479
+    },
+    {
+      "name": "L_BSD",
+      "valence": 1,
+      "first_seen_line": 270
+    },
+    {
+      "name": "Omega_BSD",
+      "valence": 1,
+      "first_seen_line": 266
+    },
+    {
+      "name": "R",
+      "valence": 1,
+      "first_seen_line": 126
+    },
+    {
+      "name": "R2",
+      "valence": 1,
+      "first_seen_line": 107
+    },
+    {
+      "name": "R3",
+      "valence": 1,
+      "first_seen_line": 108
+    },
+    {
+      "name": "R4",
+      "valence": 1,
+      "first_seen_line": 110
+    },
+    {
+      "name": "R5",
+      "valence": 1,
+      "first_seen_line": 112
+    },
+    {
+      "name": "R6",
+      "valence": 1,
+      "first_seen_line": 114
+    },
+    {
+      "name": "Rn",
+      "valence": 1,
+      "first_seen_line": 432
+    },
+    {
+      "name": "Rn_alt",
+      "valence": 1,
+      "first_seen_line": 126
+    },
+    {
+      "name": "W4_raw",
+      "valence": 1,
+      "first_seen_line": 178
+    },
+    {
+      "name": "W4_watson",
+      "valence": 1,
+      "first_seen_line": 182
+    },
+    {
+      "name": "W5_raw",
+      "valence": 1,
+      "first_seen_line": 186
+    },
+    {
+      "name": "chi_imag",
+      "valence": 1,
+      "first_seen_line": 443
+    },
+    {
+      "name": "disc",
+      "valence": 1,
+      "first_seen_line": 90
+    },
+    {
+      "name": "eta_rho",
+      "valence": 1,
+      "first_seen_line": 413
+    },
+    {
+      "name": "euler",
+      "valence": 1,
+      "first_seen_line": 129
+    },
+    {
+      "name": "expected",
+      "valence": 1,
+      "first_seen_line": 443
+    },
+    {
+      "name": "expected_ratio",
+      "valence": 1,
+      "first_seen_line": 380
+    },
+    {
+      "name": "j_i",
+      "valence": 1,
+      "first_seen_line": 347
+    },
+    {
+      "name": "omega_E_int",
+      "valence": 1,
+      "first_seen_line": 141
+    },
+    {
+      "name": "omega_rho",
+      "valence": 1,
+      "first_seen_line": 161
+    },
+    {
+      "name": "omega_rho_direct",
+      "valence": 1,
+      "first_seen_line": 474
+    },
+    {
+      "name": "omega_rho_reduced",
+      "valence": 1,
+      "first_seen_line": 474
+    },
+    {
+      "name": "sin",
+      "valence": 1,
+      "first_seen_line": 443
+    },
+    {
+      "name": "wrong_GG4",
+      "valence": 1,
+      "first_seen_line": 380
+    },
+    {
+      "name": "x_minus_Rn",
+      "valence": 1,
+      "first_seen_line": 432
+    }
+  ],
+  "checks": [
+    {
+      "id": "A1",
+      "label": "G* = Gamma(1/4)/Gamma(3/4)",
+      "line": 46,
+      "participants": [
+        "Gstar"
+      ]
+    },
+    {
+      "id": "A2",
+      "label": "G_G = 1/AGM(1, sqrt 2)",
+      "line": 48,
+      "participants": [
+        "G_G"
+      ]
+    },
+    {
+      "id": "A3",
+      "label": "Bridge G* = 2 sqrt(pi) G_G",
+      "line": 50,
+      "participants": [
+        "G_G",
+        "Gstar",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "A4",
+      "label": "varpi = pi G_G",
+      "line": 52,
+      "participants": [
+        "G_G",
+        "pi",
+        "varpi"
+      ]
+    },
+    {
+      "id": "A5",
+      "label": "varpi from Gamma def",
+      "line": 54,
+      "participants": [
+        "gamma",
+        "pi",
+        "sqrt",
+        "varpi"
+      ]
+    },
+    {
+      "id": "A5b",
+      "label": "varpi numeric",
+      "line": 56,
+      "participants": [
+        "varpi"
+      ]
+    },
+    {
+      "id": "B1",
+      "label": "Gamma(1/4)*Gamma(3/4) = pi sqrt 2",
+      "line": 61,
+      "participants": [
+        "gamma",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "B2",
+      "label": "Gamma(1/4)^2 = pi sqrt 2 * G*",
+      "line": 63,
+      "participants": [
+        "Gstar",
+        "gamma",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "B3",
+      "label": "Gamma(3/4)^2 = pi sqrt 2 / G*",
+      "line": 65,
+      "participants": [
+        "Gstar",
+        "gamma",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "B4",
+      "label": "Gamma(1/4)^4 = 2 pi^2 G*^2",
+      "line": 67,
+      "participants": [
+        "Gstar",
+        "gamma",
+        "pi"
+      ]
+    },
+    {
+      "id": "B5",
+      "label": "Gamma(1/4)^8 = 4 pi^4 G*^4",
+      "line": 69,
+      "participants": [
+        "Gstar",
+        "gamma",
+        "pi"
+      ]
+    },
+    {
+      "id": "C1",
+      "label": "x_+ = 137.03617145815548388",
+      "line": 80,
+      "participants": [
+        "x_plus"
+      ]
+    },
+    {
+      "id": "C2",
+      "label": "x_- = 3.02396391633902100",
+      "line": 82,
+      "participants": [
+        "x_minus"
+      ]
+    },
+    {
+      "id": "C3",
+      "label": "Vieta: x_+ * x_- = 16 G*^3",
+      "line": 84,
+      "participants": [
+        "Gstar",
+        "x_minus",
+        "x_plus"
+      ]
+    },
+    {
+      "id": "C4",
+      "label": "Vieta: 1/x_+ + 1/x_- = 1/G*",
+      "line": 86,
+      "participants": [
+        "Gstar",
+        "x_minus",
+        "x_plus"
+      ]
+    },
+    {
+      "id": "C5",
+      "label": "Disc = 64 G*^3 (4 G* - 1)",
+      "line": 90,
+      "participants": [
+        "Gstar",
+        "disc"
+      ]
+    },
+    {
+      "id": "D1",
+      "label": "R_2 = 1",
+      "line": 107,
+      "participants": [
+        "R2"
+      ]
+    },
+    {
+      "id": "D2",
+      "label": "R_3 = 1.9783642596 (claim)",
+      "line": 108,
+      "participants": [
+        "R3"
+      ]
+    },
+    {
+      "id": "D3",
+      "label": "R_4 = G* = 2.9586751192",
+      "line": 110,
+      "participants": [
+        "Gstar",
+        "R4"
+      ]
+    },
+    {
+      "id": "D4",
+      "label": "R_5 = 3.9432456137",
+      "line": 112,
+      "participants": [
+        "R5"
+      ]
+    },
+    {
+      "id": "D5",
+      "label": "R_6 = 4.9312366764",
+      "line": 114,
+      "participants": [
+        "R6"
+      ]
+    },
+    {
+      "id": "D6",
+      "label": "R_8 = 6.9140781897 (corrected line 503)",
+      "line": 117,
+      "participants": [
+        "R8"
+      ]
+    },
+    {
+      "id": "D6b",
+      "label": "R_8 ~ 6.91408 (line 596 asymptotic table)",
+      "line": 119,
+      "participants": [
+        "R8"
+      ]
+    },
+    {
+      "id": "D7",
+      "label": "R_12 = 10.89429 (line 597 claim)",
+      "line": 121,
+      "participants": [
+        "R12"
+      ]
+    },
+    {
+      "id": "D9",
+      "label": "R_12 ~ 12 - 2*gamma (rough)",
+      "line": 129,
+      "participants": [
+        "R12",
+        "euler"
+      ]
+    },
+    {
+      "id": "E1",
+      "label": "omega_E via integral",
+      "line": 141,
+      "participants": [
+        "omega_E_gamma",
+        "omega_E_int"
+      ]
+    },
+    {
+      "id": "E2",
+      "label": "omega_E = G* sqrt(pi)",
+      "line": 143,
+      "participants": [
+        "Gstar",
+        "omega_E_gamma",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "E3",
+      "label": "omega_E = 2 pi G_G",
+      "line": 145,
+      "participants": [
+        "G_G",
+        "omega_E_gamma",
+        "pi"
+      ]
+    },
+    {
+      "id": "E4",
+      "label": "B(1/4,1/4) = sqrt(2pi) G*",
+      "line": 149,
+      "participants": [
+        "B_quarter",
+        "Gstar",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "E5",
+      "label": "B(1/4,1/4) = 2 sqrt(2) pi G_G",
+      "line": 151,
+      "participants": [
+        "B_quarter",
+        "G_G",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "F1",
+      "label": "G_rho ~ 1.33899",
+      "line": 157,
+      "participants": [
+        "G_rho"
+      ]
+    },
+    {
+      "id": "F2",
+      "label": "G_rho = sqrt(3) * omega_rho / (2 pi)",
+      "line": 161,
+      "participants": [
+        "G_rho",
+        "omega_rho",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "F3",
+      "label": "Gamma(1/3)*Gamma(2/3) = 2 pi / sqrt(3)",
+      "line": 163,
+      "participants": [
+        "gamma",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "G1",
+      "label": "W^(3)_BCC = 2 G_G^2 = 1.39320392968567685918",
+      "line": 170,
+      "participants": [
+        "W3"
+      ]
+    },
+    {
+      "id": "G2",
+      "label": "W^(3) = (4/pi^2) K(1/sqrt 2)^2",
+      "line": 174,
+      "participants": [
+        "K_half",
+        "W3",
+        "pi"
+      ]
+    },
+    {
+      "id": "G3",
+      "label": "W^(4) = 4F3 = 1.11863638716418706835",
+      "line": 178,
+      "participants": [
+        "W4_raw"
+      ]
+    },
+    {
+      "id": "G3b",
+      "label": "W4_watson = (2/pi)^2 * 4F3 ~ 0.4534",
+      "line": 182,
+      "participants": [
+        "W4_watson"
+      ]
+    },
+    {
+      "id": "G4",
+      "label": "W^(5) = 5F4 = 1.04682554983350000525",
+      "line": 186,
+      "participants": [
+        "W5_raw"
+      ]
+    },
+    {
+      "id": "H1",
+      "label": "theta_2(0|i)^2 = G_G",
+      "line": 200,
+      "participants": [
+        "G_G",
+        "theta2_i"
+      ]
+    },
+    {
+      "id": "H2",
+      "label": "theta_4(0|i)^2 = G_G",
+      "line": 201,
+      "participants": [
+        "G_G",
+        "theta4_i"
+      ]
+    },
+    {
+      "id": "H3",
+      "label": "theta_3(0|i)^2 = sqrt(2) G_G",
+      "line": 202,
+      "participants": [
+        "G_G",
+        "sqrt",
+        "theta3_i"
+      ]
+    },
+    {
+      "id": "H4",
+      "label": "Jacobi: theta_3^4 = theta_2^4 + theta_4^4",
+      "line": 204,
+      "participants": [
+        "theta2_i",
+        "theta3_i",
+        "theta4_i"
+      ]
+    },
+    {
+      "id": "H5",
+      "label": "lambda(i) = 1/2",
+      "line": 207,
+      "participants": [
+        "theta2_i",
+        "theta3_i"
+      ]
+    },
+    {
+      "id": "I1",
+      "label": "eta(i) = G_G^(1/2)/2^(1/4) = 0.7683 (real part)",
+      "line": 232,
+      "participants": [
+        "G_G",
+        "eta_i"
+      ]
+    },
+    {
+      "id": "I2",
+      "label": "|eta(i)|^16 = G_G^8/16",
+      "line": 234,
+      "participants": [
+        "G_G",
+        "eta_i"
+      ]
+    },
+    {
+      "id": "I3",
+      "label": "|eta(i)|^24 = G_G^12/64",
+      "line": 236,
+      "participants": [
+        "G_G",
+        "eta_i"
+      ]
+    },
+    {
+      "id": "I4",
+      "label": "|eta(i)|^2 = G_G/sqrt(2)",
+      "line": 238,
+      "participants": [
+        "G_G",
+        "eta_i",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "I5",
+      "label": "|eta(i)|^4 = G_G^2/2",
+      "line": 240,
+      "participants": [
+        "G_G",
+        "eta_i"
+      ]
+    },
+    {
+      "id": "I6",
+      "label": "|eta(i)|^8 = G_G^4/4",
+      "line": 242,
+      "participants": [
+        "G_G",
+        "eta_i"
+      ]
+    },
+    {
+      "id": "I7",
+      "label": "|eta(i/2)|^2 = G_G/2^(1/4)",
+      "line": 244,
+      "participants": [
+        "G_G",
+        "eta_i_half"
+      ]
+    },
+    {
+      "id": "I8",
+      "label": "|eta(2i)|^2 = G_G/2^(5/4)",
+      "line": 246,
+      "participants": [
+        "G_G",
+        "eta_2i"
+      ]
+    },
+    {
+      "id": "I9",
+      "label": "eta(i/2) = sqrt(2) * eta(2i) (real parts)",
+      "line": 249,
+      "participants": [
+        "eta_2i",
+        "eta_i_half",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "I10",
+      "label": "W^(3) = 4 eta(i)^4",
+      "line": 252,
+      "participants": [
+        "W3",
+        "eta_i"
+      ]
+    },
+    {
+      "id": "J1",
+      "label": "L(E,1) = varpi/4 (paper claims ~0.6555144)",
+      "line": 259,
+      "participants": [
+        "varpi"
+      ]
+    },
+    {
+      "id": "J2",
+      "label": "L(E,1) = pi G_G / 4",
+      "line": 262,
+      "participants": [
+        "G_G",
+        "pi",
+        "varpi"
+      ]
+    },
+    {
+      "id": "J3",
+      "label": "Omega = 2 varpi",
+      "line": 266,
+      "participants": [
+        "Omega_BSD",
+        "varpi"
+      ]
+    },
+    {
+      "id": "J4",
+      "label": "BSD: (2*varpi * c_2 * 1) / |tors|^2 = varpi/4",
+      "line": 270,
+      "participants": [
+        "L_BSD",
+        "varpi"
+      ]
+    },
+    {
+      "id": "K1",
+      "label": "K(1/sqrt 2) = pi G_G / sqrt(2)",
+      "line": 280,
+      "participants": [
+        "G_G",
+        "K_half",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "K2",
+      "label": "E(1/sqrt 2) = (sqrt 2 /4)(1/G_G + pi G_G)",
+      "line": 282,
+      "participants": [
+        "E_half",
+        "G_G",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "K3",
+      "label": "K E = (pi + varpi^2)/4",
+      "line": 284,
+      "participants": [
+        "E_half",
+        "K_half",
+        "pi",
+        "varpi"
+      ]
+    },
+    {
+      "id": "K4",
+      "label": "G_G^2 = (4 K E - pi)/pi^2",
+      "line": 286,
+      "participants": [
+        "E_half",
+        "G_G",
+        "K_half",
+        "pi"
+      ]
+    },
+    {
+      "id": "K5",
+      "label": "Legendre: 2 K E - K^2 = pi/2",
+      "line": 289,
+      "participants": [
+        "E_half",
+        "K_half",
+        "pi"
+      ]
+    },
+    {
+      "id": "L1",
+      "label": "E_4(i) = 3 G_G^4",
+      "line": 328,
+      "participants": [
+        "E4_i",
+        "G_G"
+      ]
+    },
+    {
+      "id": "L2",
+      "label": "E_6(i) = 0",
+      "line": 329,
+      "participants": [
+        "E6_i"
+      ]
+    },
+    {
+      "id": "L3",
+      "label": "E_8(i) = 9 G_G^8",
+      "line": 330,
+      "participants": [
+        "E8_i",
+        "G_G"
+      ]
+    },
+    {
+      "id": "L4",
+      "label": "E_10(i) = 0",
+      "line": 331,
+      "participants": [
+        "E10_i"
+      ]
+    },
+    {
+      "id": "L5",
+      "label": "E_12(i) = (11907/691) G_G^12",
+      "line": 332,
+      "participants": [
+        "E12_i",
+        "G_G"
+      ]
+    },
+    {
+      "id": "L6",
+      "label": "E_14(i) = 0",
+      "line": 334,
+      "participants": [
+        "E14_i"
+      ]
+    },
+    {
+      "id": "L7",
+      "label": "E_16(i) = (130977/3617) G_G^16",
+      "line": 335,
+      "participants": [
+        "E16_i",
+        "G_G"
+      ]
+    },
+    {
+      "id": "L8",
+      "label": "E_20(i) = (12966723/174611) G_G^20",
+      "line": 337,
+      "participants": [
+        "E20_i",
+        "G_G"
+      ]
+    },
+    {
+      "id": "L9",
+      "label": "E_24(i) = (36216057339/236364091) G_G^24",
+      "line": 339,
+      "participants": [
+        "E24_i",
+        "G_G"
+      ]
+    },
+    {
+      "id": "L10",
+      "label": "Delta(i) = G_G^12/64",
+      "line": 343,
+      "participants": [
+        "Delta_i",
+        "G_G"
+      ]
+    },
+    {
+      "id": "L11",
+      "label": "j(i) = 1728",
+      "line": 347,
+      "participants": [
+        "j_i"
+      ]
+    },
+    {
+      "id": "M1",
+      "label": "E_2(i) = 3/pi",
+      "line": 365,
+      "participants": [
+        "E2_i",
+        "pi"
+      ]
+    },
+    {
+      "id": "M2",
+      "label": "E_2(rho) = 2 sqrt(3)/pi",
+      "line": 370,
+      "participants": [
+        "E2_rho",
+        "pi",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "M3",
+      "label": "G_G^4 = Gamma(1/4)^8 / (64 pi^6) [CORRECTED]",
+      "line": 373,
+      "participants": [
+        "G_G",
+        "gamma",
+        "pi"
+      ]
+    },
+    {
+      "id": "M4",
+      "label": "[ANTI-REGRESSION] wrong v1.0 formula / G_G^4 == 4 pi^4",
+      "line": 380,
+      "participants": [
+        "G_G",
+        "expected_ratio",
+        "wrong_GG4"
+      ]
+    },
+    {
+      "id": "M5",
+      "label": "Basis decomp: 441 + 250 = 691",
+      "line": 385,
+      "participants": []
+    },
+    {
+      "id": "M6",
+      "label": "E_12(i) via basis decomp = 441/691 * 27 * G_G^12 = 11907/691 * G_G^12",
+      "line": 390,
+      "participants": [
+        "E12_i",
+        "E12_i_basis"
+      ]
+    },
+    {
+      "id": "N1",
+      "label": "E_4(rho) = 0",
+      "line": 400,
+      "participants": [
+        "E4_rho"
+      ]
+    },
+    {
+      "id": "N2",
+      "label": "E_6(rho) = G_rho^6 / 2",
+      "line": 401,
+      "participants": [
+        "E6_rho",
+        "G_rho"
+      ]
+    },
+    {
+      "id": "N3",
+      "label": "E_12(rho) = (125/1382) G_rho^12",
+      "line": 403,
+      "participants": [
+        "E12_rho",
+        "G_rho"
+      ]
+    },
+    {
+      "id": "N4",
+      "label": "Delta(rho) = -G_rho^12 / 6912",
+      "line": 407,
+      "participants": [
+        "Delta_rho",
+        "G_rho"
+      ]
+    },
+    {
+      "id": "N5",
+      "label": "6912 = 2^8 * 27",
+      "line": 410,
+      "participants": []
+    },
+    {
+      "id": "N6",
+      "label": "|eta(rho)|^24 = G_rho^12/6912",
+      "line": 413,
+      "participants": [
+        "G_rho",
+        "eta_rho"
+      ]
+    },
+    {
+      "id": "O1",
+      "label": "d_1 = 1",
+      "line": 422,
+      "participants": [
+        "d_n"
+      ]
+    },
+    {
+      "id": "O2",
+      "label": "d_2 = 1/16",
+      "line": 423,
+      "participants": [
+        "d_n"
+      ]
+    },
+    {
+      "id": "O3",
+      "label": "d_3 = 1/128",
+      "line": 424,
+      "participants": [
+        "d_n"
+      ]
+    },
+    {
+      "id": "O4",
+      "label": "d_4 = 5/4096",
+      "line": 425,
+      "participants": [
+        "d_n"
+      ]
+    },
+    {
+      "id": "O5",
+      "label": "d_5 = 7/32768",
+      "line": 426,
+      "participants": [
+        "d_n"
+      ]
+    },
+    {
+      "id": "P2",
+      "label": "chi_{-4}-twisted Gamma product = G*",
+      "line": 449,
+      "participants": [
+        "Gstar",
+        "gamma"
+      ]
+    },
+    {
+      "id": "Q1",
+      "label": "omega_rho = 2^(2/3) Gamma(1/3)^3 / (2 pi)",
+      "line": 474,
+      "participants": [
+        "omega_rho_direct",
+        "omega_rho_reduced"
+      ]
+    },
+    {
+      "id": "Q2",
+      "label": "G_rho = sqrt(3) * 2^(2/3) * Gamma(1/3)^3 / (4 pi^2)",
+      "line": 479,
+      "participants": [
+        "G_rho",
+        "G_rho_explicit"
+      ]
+    },
+    {
+      "id": "Q3",
+      "label": "2F1(1/3, 2/3; 1; 1/2) = (3 * 2^(2/3) / 8 pi^2) Gamma(1/3)^3",
+      "line": 485,
+      "participants": [
+        "F213_closed",
+        "F213_direct"
+      ]
+    },
+    {
+      "id": "Q4",
+      "label": "1/M_3(1, 2^(-1/3)) = 2F1(1/3, 2/3; 1; 1/2)",
+      "line": 490,
+      "participants": [
+        "F213_direct",
+        "M3_at"
+      ]
+    },
+    {
+      "id": "Q5",
+      "label": "G_rho = (2/sqrt 3) / M_3(1, 2^(-1/3))",
+      "line": 494,
+      "participants": [
+        "G_rho",
+        "M3_at",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "Q6",
+      "label": "G_rho = (2/sqrt 3) * 2F1(1/3, 2/3; 1; 1/2)",
+      "line": 496,
+      "participants": [
+        "F213_direct",
+        "G_rho",
+        "sqrt"
+      ]
+    },
+    {
+      "id": "D8.<ex",
+      "label": "D8.<expr> R_<expr> via Gamma^2 sin/pi",
+      "line": 126,
+      "participants": [
+        "R",
+        "Rn_alt",
+        "n"
+      ]
+    },
+    {
+      "id": "O6.<ex",
+      "label": "O6.<expr> x_-(R_<expr>) - R_<expr> > 1/16",
+      "line": 432,
+      "participants": [
+        "Rn",
+        "x_minus_Rn"
+      ]
+    },
+    {
+      "id": "P1.<ex",
+      "label": "P1.<expr> chi_{-4}(<expr>) = Im(i^<expr>) = sin(pi*<expr>/2)",
+      "line": 443,
+      "participants": [
+        "chi_imag",
+        "expected",
+        "n",
+        "pi",
+        "sin"
+      ]
+    }
+  ],
+  "edges_bipartite": [
+    [
+      "A1",
+      "Gstar"
+    ],
+    [
+      "A2",
+      "G_G"
+    ],
+    [
+      "A3",
+      "G_G"
+    ],
+    [
+      "A3",
+      "Gstar"
+    ],
+    [
+      "A3",
+      "pi"
+    ],
+    [
+      "A3",
+      "sqrt"
+    ],
+    [
+      "A4",
+      "G_G"
+    ],
+    [
+      "A4",
+      "pi"
+    ],
+    [
+      "A4",
+      "varpi"
+    ],
+    [
+      "A5",
+      "gamma"
+    ],
+    [
+      "A5",
+      "pi"
+    ],
+    [
+      "A5",
+      "sqrt"
+    ],
+    [
+      "A5",
+      "varpi"
+    ],
+    [
+      "A5b",
+      "varpi"
+    ],
+    [
+      "B1",
+      "gamma"
+    ],
+    [
+      "B1",
+      "pi"
+    ],
+    [
+      "B1",
+      "sqrt"
+    ],
+    [
+      "B2",
+      "Gstar"
+    ],
+    [
+      "B2",
+      "gamma"
+    ],
+    [
+      "B2",
+      "pi"
+    ],
+    [
+      "B2",
+      "sqrt"
+    ],
+    [
+      "B3",
+      "Gstar"
+    ],
+    [
+      "B3",
+      "gamma"
+    ],
+    [
+      "B3",
+      "pi"
+    ],
+    [
+      "B3",
+      "sqrt"
+    ],
+    [
+      "B4",
+      "Gstar"
+    ],
+    [
+      "B4",
+      "gamma"
+    ],
+    [
+      "B4",
+      "pi"
+    ],
+    [
+      "B5",
+      "Gstar"
+    ],
+    [
+      "B5",
+      "gamma"
+    ],
+    [
+      "B5",
+      "pi"
+    ],
+    [
+      "C1",
+      "x_plus"
+    ],
+    [
+      "C2",
+      "x_minus"
+    ],
+    [
+      "C3",
+      "Gstar"
+    ],
+    [
+      "C3",
+      "x_minus"
+    ],
+    [
+      "C3",
+      "x_plus"
+    ],
+    [
+      "C4",
+      "Gstar"
+    ],
+    [
+      "C4",
+      "x_minus"
+    ],
+    [
+      "C4",
+      "x_plus"
+    ],
+    [
+      "C5",
+      "Gstar"
+    ],
+    [
+      "C5",
+      "disc"
+    ],
+    [
+      "D1",
+      "R2"
+    ],
+    [
+      "D2",
+      "R3"
+    ],
+    [
+      "D3",
+      "Gstar"
+    ],
+    [
+      "D3",
+      "R4"
+    ],
+    [
+      "D4",
+      "R5"
+    ],
+    [
+      "D5",
+      "R6"
+    ],
+    [
+      "D6",
+      "R8"
+    ],
+    [
+      "D6b",
+      "R8"
+    ],
+    [
+      "D7",
+      "R12"
+    ],
+    [
+      "D9",
+      "R12"
+    ],
+    [
+      "D9",
+      "euler"
+    ],
+    [
+      "E1",
+      "omega_E_gamma"
+    ],
+    [
+      "E1",
+      "omega_E_int"
+    ],
+    [
+      "E2",
+      "Gstar"
+    ],
+    [
+      "E2",
+      "omega_E_gamma"
+    ],
+    [
+      "E2",
+      "pi"
+    ],
+    [
+      "E2",
+      "sqrt"
+    ],
+    [
+      "E3",
+      "G_G"
+    ],
+    [
+      "E3",
+      "omega_E_gamma"
+    ],
+    [
+      "E3",
+      "pi"
+    ],
+    [
+      "E4",
+      "B_quarter"
+    ],
+    [
+      "E4",
+      "Gstar"
+    ],
+    [
+      "E4",
+      "pi"
+    ],
+    [
+      "E4",
+      "sqrt"
+    ],
+    [
+      "E5",
+      "B_quarter"
+    ],
+    [
+      "E5",
+      "G_G"
+    ],
+    [
+      "E5",
+      "pi"
+    ],
+    [
+      "E5",
+      "sqrt"
+    ],
+    [
+      "F1",
+      "G_rho"
+    ],
+    [
+      "F2",
+      "G_rho"
+    ],
+    [
+      "F2",
+      "omega_rho"
+    ],
+    [
+      "F2",
+      "pi"
+    ],
+    [
+      "F2",
+      "sqrt"
+    ],
+    [
+      "F3",
+      "gamma"
+    ],
+    [
+      "F3",
+      "pi"
+    ],
+    [
+      "F3",
+      "sqrt"
+    ],
+    [
+      "G1",
+      "W3"
+    ],
+    [
+      "G2",
+      "K_half"
+    ],
+    [
+      "G2",
+      "W3"
+    ],
+    [
+      "G2",
+      "pi"
+    ],
+    [
+      "G3",
+      "W4_raw"
+    ],
+    [
+      "G3b",
+      "W4_watson"
+    ],
+    [
+      "G4",
+      "W5_raw"
+    ],
+    [
+      "H1",
+      "G_G"
+    ],
+    [
+      "H1",
+      "theta2_i"
+    ],
+    [
+      "H2",
+      "G_G"
+    ],
+    [
+      "H2",
+      "theta4_i"
+    ],
+    [
+      "H3",
+      "G_G"
+    ],
+    [
+      "H3",
+      "sqrt"
+    ],
+    [
+      "H3",
+      "theta3_i"
+    ],
+    [
+      "H4",
+      "theta2_i"
+    ],
+    [
+      "H4",
+      "theta3_i"
+    ],
+    [
+      "H4",
+      "theta4_i"
+    ],
+    [
+      "H5",
+      "theta2_i"
+    ],
+    [
+      "H5",
+      "theta3_i"
+    ],
+    [
+      "I1",
+      "G_G"
+    ],
+    [
+      "I1",
+      "eta_i"
+    ],
+    [
+      "I2",
+      "G_G"
+    ],
+    [
+      "I2",
+      "eta_i"
+    ],
+    [
+      "I3",
+      "G_G"
+    ],
+    [
+      "I3",
+      "eta_i"
+    ],
+    [
+      "I4",
+      "G_G"
+    ],
+    [
+      "I4",
+      "eta_i"
+    ],
+    [
+      "I4",
+      "sqrt"
+    ],
+    [
+      "I5",
+      "G_G"
+    ],
+    [
+      "I5",
+      "eta_i"
+    ],
+    [
+      "I6",
+      "G_G"
+    ],
+    [
+      "I6",
+      "eta_i"
+    ],
+    [
+      "I7",
+      "G_G"
+    ],
+    [
+      "I7",
+      "eta_i_half"
+    ],
+    [
+      "I8",
+      "G_G"
+    ],
+    [
+      "I8",
+      "eta_2i"
+    ],
+    [
+      "I9",
+      "eta_2i"
+    ],
+    [
+      "I9",
+      "eta_i_half"
+    ],
+    [
+      "I9",
+      "sqrt"
+    ],
+    [
+      "I10",
+      "W3"
+    ],
+    [
+      "I10",
+      "eta_i"
+    ],
+    [
+      "J1",
+      "varpi"
+    ],
+    [
+      "J2",
+      "G_G"
+    ],
+    [
+      "J2",
+      "pi"
+    ],
+    [
+      "J2",
+      "varpi"
+    ],
+    [
+      "J3",
+      "Omega_BSD"
+    ],
+    [
+      "J3",
+      "varpi"
+    ],
+    [
+      "J4",
+      "L_BSD"
+    ],
+    [
+      "J4",
+      "varpi"
+    ],
+    [
+      "K1",
+      "G_G"
+    ],
+    [
+      "K1",
+      "K_half"
+    ],
+    [
+      "K1",
+      "pi"
+    ],
+    [
+      "K1",
+      "sqrt"
+    ],
+    [
+      "K2",
+      "E_half"
+    ],
+    [
+      "K2",
+      "G_G"
+    ],
+    [
+      "K2",
+      "pi"
+    ],
+    [
+      "K2",
+      "sqrt"
+    ],
+    [
+      "K3",
+      "E_half"
+    ],
+    [
+      "K3",
+      "K_half"
+    ],
+    [
+      "K3",
+      "pi"
+    ],
+    [
+      "K3",
+      "varpi"
+    ],
+    [
+      "K4",
+      "E_half"
+    ],
+    [
+      "K4",
+      "G_G"
+    ],
+    [
+      "K4",
+      "K_half"
+    ],
+    [
+      "K4",
+      "pi"
+    ],
+    [
+      "K5",
+      "E_half"
+    ],
+    [
+      "K5",
+      "K_half"
+    ],
+    [
+      "K5",
+      "pi"
+    ],
+    [
+      "L1",
+      "E4_i"
+    ],
+    [
+      "L1",
+      "G_G"
+    ],
+    [
+      "L2",
+      "E6_i"
+    ],
+    [
+      "L3",
+      "E8_i"
+    ],
+    [
+      "L3",
+      "G_G"
+    ],
+    [
+      "L4",
+      "E10_i"
+    ],
+    [
+      "L5",
+      "E12_i"
+    ],
+    [
+      "L5",
+      "G_G"
+    ],
+    [
+      "L6",
+      "E14_i"
+    ],
+    [
+      "L7",
+      "E16_i"
+    ],
+    [
+      "L7",
+      "G_G"
+    ],
+    [
+      "L8",
+      "E20_i"
+    ],
+    [
+      "L8",
+      "G_G"
+    ],
+    [
+      "L9",
+      "E24_i"
+    ],
+    [
+      "L9",
+      "G_G"
+    ],
+    [
+      "L10",
+      "Delta_i"
+    ],
+    [
+      "L10",
+      "G_G"
+    ],
+    [
+      "L11",
+      "j_i"
+    ],
+    [
+      "M1",
+      "E2_i"
+    ],
+    [
+      "M1",
+      "pi"
+    ],
+    [
+      "M2",
+      "E2_rho"
+    ],
+    [
+      "M2",
+      "pi"
+    ],
+    [
+      "M2",
+      "sqrt"
+    ],
+    [
+      "M3",
+      "G_G"
+    ],
+    [
+      "M3",
+      "gamma"
+    ],
+    [
+      "M3",
+      "pi"
+    ],
+    [
+      "M4",
+      "G_G"
+    ],
+    [
+      "M4",
+      "expected_ratio"
+    ],
+    [
+      "M4",
+      "wrong_GG4"
+    ],
+    [
+      "M6",
+      "E12_i"
+    ],
+    [
+      "M6",
+      "E12_i_basis"
+    ],
+    [
+      "N1",
+      "E4_rho"
+    ],
+    [
+      "N2",
+      "E6_rho"
+    ],
+    [
+      "N2",
+      "G_rho"
+    ],
+    [
+      "N3",
+      "E12_rho"
+    ],
+    [
+      "N3",
+      "G_rho"
+    ],
+    [
+      "N4",
+      "Delta_rho"
+    ],
+    [
+      "N4",
+      "G_rho"
+    ],
+    [
+      "N6",
+      "G_rho"
+    ],
+    [
+      "N6",
+      "eta_rho"
+    ],
+    [
+      "O1",
+      "d_n"
+    ],
+    [
+      "O2",
+      "d_n"
+    ],
+    [
+      "O3",
+      "d_n"
+    ],
+    [
+      "O4",
+      "d_n"
+    ],
+    [
+      "O5",
+      "d_n"
+    ],
+    [
+      "P2",
+      "Gstar"
+    ],
+    [
+      "P2",
+      "gamma"
+    ],
+    [
+      "Q1",
+      "omega_rho_direct"
+    ],
+    [
+      "Q1",
+      "omega_rho_reduced"
+    ],
+    [
+      "Q2",
+      "G_rho"
+    ],
+    [
+      "Q2",
+      "G_rho_explicit"
+    ],
+    [
+      "Q3",
+      "F213_closed"
+    ],
+    [
+      "Q3",
+      "F213_direct"
+    ],
+    [
+      "Q4",
+      "F213_direct"
+    ],
+    [
+      "Q4",
+      "M3_at"
+    ],
+    [
+      "Q5",
+      "G_rho"
+    ],
+    [
+      "Q5",
+      "M3_at"
+    ],
+    [
+      "Q5",
+      "sqrt"
+    ],
+    [
+      "Q6",
+      "F213_direct"
+    ],
+    [
+      "Q6",
+      "G_rho"
+    ],
+    [
+      "Q6",
+      "sqrt"
+    ],
+    [
+      "D8.<ex",
+      "R"
+    ],
+    [
+      "D8.<ex",
+      "Rn_alt"
+    ],
+    [
+      "D8.<ex",
+      "n"
+    ],
+    [
+      "O6.<ex",
+      "Rn"
+    ],
+    [
+      "O6.<ex",
+      "x_minus_Rn"
+    ],
+    [
+      "P1.<ex",
+      "chi_imag"
+    ],
+    [
+      "P1.<ex",
+      "expected"
+    ],
+    [
+      "P1.<ex",
+      "n"
+    ],
+    [
+      "P1.<ex",
+      "pi"
+    ],
+    [
+      "P1.<ex",
+      "sin"
+    ]
+  ],
+  "edges_pairwise": [
+    [
+      "G_G",
+      "Gstar",
+      "A3"
+    ],
+    [
+      "G_G",
+      "pi",
+      "A3"
+    ],
+    [
+      "G_G",
+      "sqrt",
+      "A3"
+    ],
+    [
+      "Gstar",
+      "pi",
+      "A3"
+    ],
+    [
+      "Gstar",
+      "sqrt",
+      "A3"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "A3"
+    ],
+    [
+      "G_G",
+      "pi",
+      "A4"
+    ],
+    [
+      "G_G",
+      "varpi",
+      "A4"
+    ],
+    [
+      "pi",
+      "varpi",
+      "A4"
+    ],
+    [
+      "gamma",
+      "pi",
+      "A5"
+    ],
+    [
+      "gamma",
+      "sqrt",
+      "A5"
+    ],
+    [
+      "gamma",
+      "varpi",
+      "A5"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "A5"
+    ],
+    [
+      "pi",
+      "varpi",
+      "A5"
+    ],
+    [
+      "sqrt",
+      "varpi",
+      "A5"
+    ],
+    [
+      "gamma",
+      "pi",
+      "B1"
+    ],
+    [
+      "gamma",
+      "sqrt",
+      "B1"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "B1"
+    ],
+    [
+      "Gstar",
+      "gamma",
+      "B2"
+    ],
+    [
+      "Gstar",
+      "pi",
+      "B2"
+    ],
+    [
+      "Gstar",
+      "sqrt",
+      "B2"
+    ],
+    [
+      "gamma",
+      "pi",
+      "B2"
+    ],
+    [
+      "gamma",
+      "sqrt",
+      "B2"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "B2"
+    ],
+    [
+      "Gstar",
+      "gamma",
+      "B3"
+    ],
+    [
+      "Gstar",
+      "pi",
+      "B3"
+    ],
+    [
+      "Gstar",
+      "sqrt",
+      "B3"
+    ],
+    [
+      "gamma",
+      "pi",
+      "B3"
+    ],
+    [
+      "gamma",
+      "sqrt",
+      "B3"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "B3"
+    ],
+    [
+      "Gstar",
+      "gamma",
+      "B4"
+    ],
+    [
+      "Gstar",
+      "pi",
+      "B4"
+    ],
+    [
+      "gamma",
+      "pi",
+      "B4"
+    ],
+    [
+      "Gstar",
+      "gamma",
+      "B5"
+    ],
+    [
+      "Gstar",
+      "pi",
+      "B5"
+    ],
+    [
+      "gamma",
+      "pi",
+      "B5"
+    ],
+    [
+      "Gstar",
+      "x_minus",
+      "C3"
+    ],
+    [
+      "Gstar",
+      "x_plus",
+      "C3"
+    ],
+    [
+      "x_minus",
+      "x_plus",
+      "C3"
+    ],
+    [
+      "Gstar",
+      "x_minus",
+      "C4"
+    ],
+    [
+      "Gstar",
+      "x_plus",
+      "C4"
+    ],
+    [
+      "x_minus",
+      "x_plus",
+      "C4"
+    ],
+    [
+      "Gstar",
+      "disc",
+      "C5"
+    ],
+    [
+      "Gstar",
+      "R4",
+      "D3"
+    ],
+    [
+      "R12",
+      "euler",
+      "D9"
+    ],
+    [
+      "omega_E_gamma",
+      "omega_E_int",
+      "E1"
+    ],
+    [
+      "Gstar",
+      "omega_E_gamma",
+      "E2"
+    ],
+    [
+      "Gstar",
+      "pi",
+      "E2"
+    ],
+    [
+      "Gstar",
+      "sqrt",
+      "E2"
+    ],
+    [
+      "omega_E_gamma",
+      "pi",
+      "E2"
+    ],
+    [
+      "omega_E_gamma",
+      "sqrt",
+      "E2"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "E2"
+    ],
+    [
+      "G_G",
+      "omega_E_gamma",
+      "E3"
+    ],
+    [
+      "G_G",
+      "pi",
+      "E3"
+    ],
+    [
+      "omega_E_gamma",
+      "pi",
+      "E3"
+    ],
+    [
+      "B_quarter",
+      "Gstar",
+      "E4"
+    ],
+    [
+      "B_quarter",
+      "pi",
+      "E4"
+    ],
+    [
+      "B_quarter",
+      "sqrt",
+      "E4"
+    ],
+    [
+      "Gstar",
+      "pi",
+      "E4"
+    ],
+    [
+      "Gstar",
+      "sqrt",
+      "E4"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "E4"
+    ],
+    [
+      "B_quarter",
+      "G_G",
+      "E5"
+    ],
+    [
+      "B_quarter",
+      "pi",
+      "E5"
+    ],
+    [
+      "B_quarter",
+      "sqrt",
+      "E5"
+    ],
+    [
+      "G_G",
+      "pi",
+      "E5"
+    ],
+    [
+      "G_G",
+      "sqrt",
+      "E5"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "E5"
+    ],
+    [
+      "G_rho",
+      "omega_rho",
+      "F2"
+    ],
+    [
+      "G_rho",
+      "pi",
+      "F2"
+    ],
+    [
+      "G_rho",
+      "sqrt",
+      "F2"
+    ],
+    [
+      "omega_rho",
+      "pi",
+      "F2"
+    ],
+    [
+      "omega_rho",
+      "sqrt",
+      "F2"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "F2"
+    ],
+    [
+      "gamma",
+      "pi",
+      "F3"
+    ],
+    [
+      "gamma",
+      "sqrt",
+      "F3"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "F3"
+    ],
+    [
+      "K_half",
+      "W3",
+      "G2"
+    ],
+    [
+      "K_half",
+      "pi",
+      "G2"
+    ],
+    [
+      "W3",
+      "pi",
+      "G2"
+    ],
+    [
+      "G_G",
+      "theta2_i",
+      "H1"
+    ],
+    [
+      "G_G",
+      "theta4_i",
+      "H2"
+    ],
+    [
+      "G_G",
+      "sqrt",
+      "H3"
+    ],
+    [
+      "G_G",
+      "theta3_i",
+      "H3"
+    ],
+    [
+      "sqrt",
+      "theta3_i",
+      "H3"
+    ],
+    [
+      "theta2_i",
+      "theta3_i",
+      "H4"
+    ],
+    [
+      "theta2_i",
+      "theta4_i",
+      "H4"
+    ],
+    [
+      "theta3_i",
+      "theta4_i",
+      "H4"
+    ],
+    [
+      "theta2_i",
+      "theta3_i",
+      "H5"
+    ],
+    [
+      "G_G",
+      "eta_i",
+      "I1"
+    ],
+    [
+      "G_G",
+      "eta_i",
+      "I2"
+    ],
+    [
+      "G_G",
+      "eta_i",
+      "I3"
+    ],
+    [
+      "G_G",
+      "eta_i",
+      "I4"
+    ],
+    [
+      "G_G",
+      "sqrt",
+      "I4"
+    ],
+    [
+      "eta_i",
+      "sqrt",
+      "I4"
+    ],
+    [
+      "G_G",
+      "eta_i",
+      "I5"
+    ],
+    [
+      "G_G",
+      "eta_i",
+      "I6"
+    ],
+    [
+      "G_G",
+      "eta_i_half",
+      "I7"
+    ],
+    [
+      "G_G",
+      "eta_2i",
+      "I8"
+    ],
+    [
+      "eta_2i",
+      "eta_i_half",
+      "I9"
+    ],
+    [
+      "eta_2i",
+      "sqrt",
+      "I9"
+    ],
+    [
+      "eta_i_half",
+      "sqrt",
+      "I9"
+    ],
+    [
+      "W3",
+      "eta_i",
+      "I10"
+    ],
+    [
+      "G_G",
+      "pi",
+      "J2"
+    ],
+    [
+      "G_G",
+      "varpi",
+      "J2"
+    ],
+    [
+      "pi",
+      "varpi",
+      "J2"
+    ],
+    [
+      "Omega_BSD",
+      "varpi",
+      "J3"
+    ],
+    [
+      "L_BSD",
+      "varpi",
+      "J4"
+    ],
+    [
+      "G_G",
+      "K_half",
+      "K1"
+    ],
+    [
+      "G_G",
+      "pi",
+      "K1"
+    ],
+    [
+      "G_G",
+      "sqrt",
+      "K1"
+    ],
+    [
+      "K_half",
+      "pi",
+      "K1"
+    ],
+    [
+      "K_half",
+      "sqrt",
+      "K1"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "K1"
+    ],
+    [
+      "E_half",
+      "G_G",
+      "K2"
+    ],
+    [
+      "E_half",
+      "pi",
+      "K2"
+    ],
+    [
+      "E_half",
+      "sqrt",
+      "K2"
+    ],
+    [
+      "G_G",
+      "pi",
+      "K2"
+    ],
+    [
+      "G_G",
+      "sqrt",
+      "K2"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "K2"
+    ],
+    [
+      "E_half",
+      "K_half",
+      "K3"
+    ],
+    [
+      "E_half",
+      "pi",
+      "K3"
+    ],
+    [
+      "E_half",
+      "varpi",
+      "K3"
+    ],
+    [
+      "K_half",
+      "pi",
+      "K3"
+    ],
+    [
+      "K_half",
+      "varpi",
+      "K3"
+    ],
+    [
+      "pi",
+      "varpi",
+      "K3"
+    ],
+    [
+      "E_half",
+      "G_G",
+      "K4"
+    ],
+    [
+      "E_half",
+      "K_half",
+      "K4"
+    ],
+    [
+      "E_half",
+      "pi",
+      "K4"
+    ],
+    [
+      "G_G",
+      "K_half",
+      "K4"
+    ],
+    [
+      "G_G",
+      "pi",
+      "K4"
+    ],
+    [
+      "K_half",
+      "pi",
+      "K4"
+    ],
+    [
+      "E_half",
+      "K_half",
+      "K5"
+    ],
+    [
+      "E_half",
+      "pi",
+      "K5"
+    ],
+    [
+      "K_half",
+      "pi",
+      "K5"
+    ],
+    [
+      "E4_i",
+      "G_G",
+      "L1"
+    ],
+    [
+      "E8_i",
+      "G_G",
+      "L3"
+    ],
+    [
+      "E12_i",
+      "G_G",
+      "L5"
+    ],
+    [
+      "E16_i",
+      "G_G",
+      "L7"
+    ],
+    [
+      "E20_i",
+      "G_G",
+      "L8"
+    ],
+    [
+      "E24_i",
+      "G_G",
+      "L9"
+    ],
+    [
+      "Delta_i",
+      "G_G",
+      "L10"
+    ],
+    [
+      "E2_i",
+      "pi",
+      "M1"
+    ],
+    [
+      "E2_rho",
+      "pi",
+      "M2"
+    ],
+    [
+      "E2_rho",
+      "sqrt",
+      "M2"
+    ],
+    [
+      "pi",
+      "sqrt",
+      "M2"
+    ],
+    [
+      "G_G",
+      "gamma",
+      "M3"
+    ],
+    [
+      "G_G",
+      "pi",
+      "M3"
+    ],
+    [
+      "gamma",
+      "pi",
+      "M3"
+    ],
+    [
+      "G_G",
+      "expected_ratio",
+      "M4"
+    ],
+    [
+      "G_G",
+      "wrong_GG4",
+      "M4"
+    ],
+    [
+      "expected_ratio",
+      "wrong_GG4",
+      "M4"
+    ],
+    [
+      "E12_i",
+      "E12_i_basis",
+      "M6"
+    ],
+    [
+      "E6_rho",
+      "G_rho",
+      "N2"
+    ],
+    [
+      "E12_rho",
+      "G_rho",
+      "N3"
+    ],
+    [
+      "Delta_rho",
+      "G_rho",
+      "N4"
+    ],
+    [
+      "G_rho",
+      "eta_rho",
+      "N6"
+    ],
+    [
+      "Gstar",
+      "gamma",
+      "P2"
+    ],
+    [
+      "omega_rho_direct",
+      "omega_rho_reduced",
+      "Q1"
+    ],
+    [
+      "G_rho",
+      "G_rho_explicit",
+      "Q2"
+    ],
+    [
+      "F213_closed",
+      "F213_direct",
+      "Q3"
+    ],
+    [
+      "F213_direct",
+      "M3_at",
+      "Q4"
+    ],
+    [
+      "G_rho",
+      "M3_at",
+      "Q5"
+    ],
+    [
+      "G_rho",
+      "sqrt",
+      "Q5"
+    ],
+    [
+      "M3_at",
+      "sqrt",
+      "Q5"
+    ],
+    [
+      "F213_direct",
+      "G_rho",
+      "Q6"
+    ],
+    [
+      "F213_direct",
+      "sqrt",
+      "Q6"
+    ],
+    [
+      "G_rho",
+      "sqrt",
+      "Q6"
+    ],
+    [
+      "R",
+      "Rn_alt",
+      "D8.<ex"
+    ],
+    [
+      "R",
+      "n",
+      "D8.<ex"
+    ],
+    [
+      "Rn_alt",
+      "n",
+      "D8.<ex"
+    ],
+    [
+      "Rn",
+      "x_minus_Rn",
+      "O6.<ex"
+    ],
+    [
+      "chi_imag",
+      "expected",
+      "P1.<ex"
+    ],
+    [
+      "chi_imag",
+      "n",
+      "P1.<ex"
+    ],
+    [
+      "chi_imag",
+      "pi",
+      "P1.<ex"
+    ],
+    [
+      "chi_imag",
+      "sin",
+      "P1.<ex"
+    ],
+    [
+      "expected",
+      "n",
+      "P1.<ex"
+    ],
+    [
+      "expected",
+      "pi",
+      "P1.<ex"
+    ],
+    [
+      "expected",
+      "sin",
+      "P1.<ex"
+    ],
+    [
+      "n",
+      "pi",
+      "P1.<ex"
+    ],
+    [
+      "n",
+      "sin",
+      "P1.<ex"
+    ],
+    [
+      "pi",
+      "sin",
+      "P1.<ex"
+    ]
+  ]
+}
