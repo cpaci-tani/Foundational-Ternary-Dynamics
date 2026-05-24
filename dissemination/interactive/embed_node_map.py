@@ -60,7 +60,16 @@ def main():
     # splitting the closing tag with a no-op JSON-comment-equivalent.
     data_safe = data.replace("</script>", r"<\/script>")
 
-    out = template.replace(PLACEHOLDER, data_safe)
+    # Replace ONLY the first occurrence -- the placeholder string lives only
+    # in the inline <script type="application/json"> data block.  Any literal
+    # mention of the placeholder text elsewhere (e.g. in JS comments or
+    # diagnostic strings) must NOT be substituted, or the JSON payload would
+    # bloat the JS source and break parsing (this is exactly what bit us once).
+    n_occur = template.count(PLACEHOLDER)
+    if n_occur > 1:
+        print(f"WARNING: placeholder appears {n_occur} times in template;")
+        print(f"  substituting only the first occurrence.  Audit the template.")
+    out = template.replace(PLACEHOLDER, data_safe, 1)
     HTML_OUT.write_text(out, encoding="utf-8")
 
     template_kb = len(template) / 1024

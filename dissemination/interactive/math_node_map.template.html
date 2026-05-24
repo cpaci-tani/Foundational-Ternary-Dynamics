@@ -7,9 +7,10 @@
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
 <style>
   :root { color-scheme: light dark; }
+  html, body { height: 100%; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
          margin: 0; padding: 0; display: grid; grid-template-columns: 280px 1fr;
-         grid-template-rows: 100vh; }
+         grid-template-rows: 100vh; min-height: 100vh; }
   .sidebar { padding: 16px; border-right: 1px solid #ccc; overflow-y: auto;
              background: #f7f7f7; font-size: 13px; }
   @media (prefers-color-scheme: dark) { .sidebar { background: #181818; border-color: #333; } }
@@ -23,7 +24,19 @@
                                                   background: inherit; color: inherit; box-sizing: border-box; }
   .legend-item { display: flex; align-items: center; gap: 6px; padding: 2px 0; cursor: pointer; }
   .legend-swatch { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
-  #graph { width: 100%; height: 100vh; }
+  .graph-wrapper { position: relative; width: 100%; height: 100vh;
+                   overflow: hidden; background: #fafafa; }
+  @media (prefers-color-scheme: dark) { .graph-wrapper { background: #1a1a1a; } }
+  #graph { width: 100%; height: 100%; }
+  #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+             font-size: 16px; color: #888; text-align: center; padding: 20px;
+             border-radius: 8px; background: rgba(255,255,255,0.9);
+             box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 10; }
+  @media (prefers-color-scheme: dark) { #loading { background: rgba(40,40,40,0.9); color: #aaa; } }
+  #js-error { position: fixed; top: 0; right: 0; max-width: 500px; padding: 16px;
+              background: #c62828; color: white; font-family: monospace; font-size: 11px;
+              z-index: 1000; display: none; white-space: pre-wrap; overflow-x: auto;
+              box-shadow: -2px 2px 8px rgba(0,0,0,0.2); }
   .info-panel { position: absolute; right: 16px; top: 16px; max-width: 360px; max-height: 60vh;
                 background: rgba(255,255,255,0.95); border: 1px solid #aaa; border-radius: 4px;
                 padding: 12px; font-size: 12px; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -76,7 +89,11 @@
   </p>
 </div>
 
-<div style="position: relative;">
+<div class="graph-wrapper">
+  <div id="loading">
+    Loading FTD math node map…<br>
+    <small style="color: #aaa;">If this persists, check the browser console (F12) for errors.</small>
+  </div>
   <div id="graph"></div>
   <div class="info-panel" id="info">
     <span class="close-btn" onclick="document.getElementById('info').style.display='none'">×</span>
@@ -84,6 +101,7 @@
     <div id="info-body"></div>
   </div>
 </div>
+<div id="js-error"></div>
 
 <!-- Inline data block.  Empty in the template; populated by
      dissemination/interactive/embed_node_map.py at build time so the
@@ -94,6 +112,23 @@
 <script type="application/json" id="map-data">NODE_MAP_DATA_JSON_PLACEHOLDER</script>
 
 <script>
+// Surface JS errors visibly so users can see them without opening F12.
+window.addEventListener("error", (ev) => {
+  const box = document.getElementById("js-error");
+  if (box) {
+    box.style.display = "block";
+    box.textContent = "JS ERROR: " + (ev.message || ev) +
+                      "\n  at " + (ev.filename || "?") + ":" + (ev.lineno || "?");
+  }
+});
+window.addEventListener("unhandledrejection", (ev) => {
+  const box = document.getElementById("js-error");
+  if (box) {
+    box.style.display = "block";
+    box.textContent = "Unhandled promise rejection: " + (ev.reason && ev.reason.message || ev.reason);
+  }
+});
+
 let DATA = null;
 let activeLayers = new Set(["theorems", "ledger", "objects"]);
 let activeEdges = new Set(["theorem-anchors-ledger", "ledger-depends-on",
@@ -108,10 +143,17 @@ function loadData() {
   // the JSON is inlined into a <script type="application/json" id="map-data"> block
   // by dissemination/interactive/embed_node_map.py at build time.
   const inline = document.getElementById("map-data");
-  if (inline && inline.textContent.trim()
-      && !inline.textContent.includes("NODE_MAP_DATA_JSON_PLACEHOLDER")) {
+  // Detect "substituted with real JSON" via shape -- the unsubstituted
+  // template has a bare uppercase placeholder text; real JSON starts with {
+  // after trimming.  Detecting by shape (not literal sentinel string) means
+  // any literal mention of the placeholder text in the JS source would not
+  // get blanket-substituted by the embed step (str.replace replaces ALL
+  // occurrences -- this used to bloat the JS block with the full JSON and
+  // break parsing; the embed script now also defends against this).
+  const inlineText = inline ? inline.textContent.trim() : "";
+  if (inlineText && inlineText.charAt(0) === "{") {
     try {
-      DATA = JSON.parse(inline.textContent);
+      DATA = JSON.parse(inlineText);
       return Promise.resolve(DATA);
     } catch (e) {
       console.warn("Inline JSON parse failed, falling back to fetch:", e);
@@ -173,6 +215,26 @@ function isVisible(n) {
 }
 
 function render() {
+  // Plotly is loaded from a CDN -- if the browser is offline or the CDN is
+  // blocked, Plotly will be undefined and we should fail loudly.
+  if (typeof Plotly === "undefined") {
+    const box = document.getElementById("js-error");
+    if (box) {
+      box.style.display = "block";
+      box.textContent =
+        "Plotly.js failed to load from the CDN " +
+        "(https://cdn.plot.ly/plotly-2.35.2.min.js).\n" +
+        "Either you are offline, the CDN is blocked, or a firewall is " +
+        "interfering.\n" +
+        "Fix: connect to the internet, or download plotly-2.35.2.min.js " +
+        "locally and replace the <script src=...> URL with the local path.";
+    }
+    document.getElementById("loading").style.display = "none";
+    return;
+  }
+  const loading = document.getElementById("loading");
+  if (loading) loading.style.display = "none";
+
   const visibleNodes = [];
   const visibleIds = new Set();
   for (const layer of ["theorems", "ledger", "objects", "identities"]) {
