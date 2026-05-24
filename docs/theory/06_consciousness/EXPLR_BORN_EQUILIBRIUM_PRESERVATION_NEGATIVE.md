@@ -7,7 +7,7 @@
 **Git tag (hash-lock):** `preregister-born-equilibrium-preservation-v1` (commit `16f10a2`, runner SHA256 `94b280f40c6ef69b2d6b1f964ca165cdaadc3fd975a56504bb54a9f519ff0732`)
 **Runner:** `scripts/exploration/explore_born_equilibrium_preservation.py`
 **Results:** `scripts/exploration/results/born_equilibrium_preservation_2026-05-23.{csv,md}`
-**Sub-investigation of:** LEDGER FTD-0187 / T1c (the `[OPEN]` step *probability = normalized energy density*); follow-up to FTD-0198 closed-negative.
+**Sub-investigation of:** LEDGER FTD-0187 / T1c (the `[OPEN]` step *probability = normalized energy density*); follow-up to FTD-0200 closed-negative.
 **LEDGER row:** FTD-0199.
 
 ---
@@ -31,7 +31,7 @@ This mirrors DGZ 1992 for Bohmian mechanics: under the guidance equation, partic
 
 Construction (frozen in PREREG §2):
 
-- Same 6-neighbour Python substrate as FTD-0198 v1.
+- Same 6-neighbour Python substrate as FTD-0200 v1.
 - Three target profiles `|ψ(v)|²` (Gaussian, uniform-with-envelope, two-bump).
 - Initial flux `J_{x,y,z}(v)` independently `~ Normal(0, σ²(v))` with `σ²(v) ∝ |ψ(v)|²` and `max σ² = 4/3` (energy-scale match to v1).
 - 100 trials per profile × 80 ticks each = 8000 substrate samples per profile.
@@ -81,7 +81,7 @@ The net effect: `freq_long(v)` is **anti-correlated** with `|ψ(v)|²` because h
 ## 4 · What is **not** falsified by this run
 
 - **Born rule itself.** Unaffected.
-- **T1c (FTD-0187).** Sub-investigation; remains `[OPEN]`. Two routes closed-negative so far (FTD-0198 threshold-crossing-from-non-Born-ensemble; FTD-0199 DGZ-preservation-from-Born-ensemble in β=∞ regime). Open paths: Softplus v4, engine-canonical v3, EF-C3 algebraic-uniqueness.
+- **T1c (FTD-0187).** Sub-investigation; remains `[OPEN]`. Two routes closed-negative so far (FTD-0200 threshold-crossing-from-non-Born-ensemble; FTD-0199 DGZ-preservation-from-Born-ensemble in β=∞ regime). Open paths: Softplus v4, engine-canonical v3, EF-C3 algebraic-uniqueness.
 - **The `|ψ|²` form question** (EF-C3): separate algebraic-uniqueness question.
 - **The canonical engine version.** 26-neighbour Moore + full toggle dynamics not tested here.
 - **The Lindblad/Softplus collapse framework** (`DERIV_COLLAPSE_MECHANISM.md`): the present test is the β = ∞ limit; the finite-β behavior is the natural follow-up.
@@ -115,7 +115,7 @@ The net effect: `freq_long(v)` is **anti-correlated** with `|ψ(v)|²` because h
 ## 7 · Cross-references
 
 - [`PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md`](PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md) — the locked manifest.
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0198 (threshold-crossing closed-negative), FTD-0199 (this test).
+- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (threshold-crossing closed-negative), FTD-0199 (this test).
 - [`EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md) — v1 closed-negative (different question, same substrate).
 - [`DERIV_COLLAPSE_MECHANISM.md`](DERIV_COLLAPSE_MECHANISM.md) — canonical Softplus → ReLU framework; v4 would test the finite-β case.
 - Dürr, Goldstein, Zanghì 1992 — the analytical framework this test mirrored.

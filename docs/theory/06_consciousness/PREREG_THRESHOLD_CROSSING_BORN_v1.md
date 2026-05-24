@@ -2,7 +2,9 @@
 
 **Tag:** `[PRE-REGISTRATION]`. Locks the methodology of a measurement **before** the measurement is run.
 **Date:** 2026-05-23.
-**LEDGER row:** to be assigned (proposed FTD-0198; T1c sub-investigation under FTD-0187).
+**LEDGER row:** **FTD-0200** (T1c sub-investigation under FTD-0187).
+
+> **Renumbering annotation (outside frozen scope).** This pre-registration was hash-locked on 2026-05-23 with the proposed LEDGER ID **FTD-0198**. The same session contained an earlier ARC-B1 alpha-readout pre-registration that had already taken FTD-0198 (commit `eaf7681`). Per the FTD-0189 renumbering convention, the chronologically earlier commit keeps the ID; this test was renumbered to **FTD-0200**. The hash-locked tag `preregister-threshold-crossing-born-v1` and the runner SHA256 in §6 retain the registration-time literal "FTD-0198" as provenance; FTD-0200 is the canonical LEDGER ID for all live cross-references. No element of §§2–5 (the frozen construction, sweep, falsifiable prediction, outcome map) is touched by this annotation — only the LEDGER ID labelling.
 **Runner:** `scripts/exploration/explore_threshold_crossing_born.py`, SHA256 filled at hash-lock time.
 **Hash-lock status:** **PENDING** (see §7). This pre-registration is **not in force** until the git tag `preregister-threshold-crossing-born-v1` is created over a commit containing this file and the runner. **The script must NOT be executed before that tag exists** — a pre-run measurement voids the pre-registration.
 
