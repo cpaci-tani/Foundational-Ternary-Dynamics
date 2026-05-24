@@ -44,6 +44,17 @@ Scope discipline (CLAUDE.md Constraint 9): **lead with the algebraic
 spine; present physics identifications at their actual LEDGER status;
 do not let rhetorical momentum promote conjectures.**
 
+**Visualization (added 2026-05-23, FTD-0207).** A spine-theorem view of
+the multi-layer math node map renders the 9 spine theorems (T1-T9) + 4
+subsidiaries + their LEDGER anchors + `ledger-depends-on` edges as:
+`scripts/visualization/results/math_node_map/spine_only.{svg,png}` (high-
+res), `docs/papers/figures/node_map_tikz.tex` (paper-inclusion-ready
+TikZ), and the **Theorems** layer of
+`dissemination/interactive/math_node_map.html` (filterable). The full
+corpus-wide map (objects + identities + all 189 LEDGER claims) sits
+beside this spine view -- see LEDGER row FTD-0207 for cross-refs and
+the reproduction recipe.
+
 ---
 
 ## 1 · Theorem 1 — G* algebraic identity
