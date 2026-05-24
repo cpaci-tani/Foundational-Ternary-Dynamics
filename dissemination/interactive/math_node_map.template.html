@@ -385,35 +385,41 @@ function rebuildMeshes() {
   }
   if (visibleNodes.length) {
     const geom = new THREE.SphereGeometry(1, 12, 10);
-    const mat = new THREE.MeshLambertMaterial({ vertexColors: false });
+    // MeshBasicMaterial doesn't depend on lighting (works even with no lights
+    // in the scene) and honours per-instance color via the built-in
+    // USE_INSTANCING_COLOR shader define.  Lambert was failing to produce
+    // visible output despite ambient light being present.
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     nodeMesh = new THREE.InstancedMesh(geom, mat, visibleNodes.length);
+    // InstancedMesh.instanceColor must be allocated explicitly.
     nodeMesh.instanceColor = new THREE.InstancedBufferAttribute(
       new Float32Array(visibleNodes.length * 3), 3);
     nodeIdToInstance.clear();
     visibleNodes.forEach((n, i) => {
-      const r = nodeSize(n) * 0.5;
+      const r = Math.max(nodeSize(n) * 0.5, 1);
       _mat4.makeTranslation(n.x, n.y, n.z).scale(new THREE.Vector3(r, r, r));
       nodeMesh.setMatrixAt(i, _mat4);
       _color.set(nodeColor(n));
-      nodeMesh.instanceColor.setXYZ(i, _color.r, _color.g, _color.b);
+      nodeMesh.setColorAt(i, _color);
       nodeIdToInstance.set(n.id, i);
     });
     nodeMesh.instanceMatrix.needsUpdate = true;
-    nodeMesh.instanceColor.needsUpdate = true;
-    // Custom shader injection for per-instance color (Lambert):
-    mat.onBeforeCompile = (shader) => {
-      shader.vertexShader = `
-        attribute vec3 instanceColor;
-        varying vec3 vInstanceColor;
-      ` + shader.vertexShader.replace(
-        `#include <begin_vertex>`,
-        `#include <begin_vertex>\nvInstanceColor = instanceColor;`);
-      shader.fragmentShader = `varying vec3 vInstanceColor;\n` +
-        shader.fragmentShader.replace(
-          `vec4 diffuseColor = vec4( diffuse, opacity );`,
-          `vec4 diffuseColor = vec4( vInstanceColor, opacity );`);
-    };
+    if (nodeMesh.instanceColor) nodeMesh.instanceColor.needsUpdate = true;
+    // CRITICAL: InstancedMesh's default bounding sphere is the geometry's
+    // (radius 1 at origin).  If instances are spread far from origin, the
+    // entire mesh gets frustum-culled and nothing renders.  Compute the
+    // true bounding sphere from the instance transforms.
+    nodeMesh.computeBoundingSphere();
+    if (nodeMesh.boundingSphere) nodeMesh.boundingSphere.radius *= 1.2;
+    // Belt-and-suspenders: disable frustum culling entirely so the mesh
+    // is always rendered regardless of any bounding-sphere mishap.
+    nodeMesh.frustumCulled = false;
     scene.add(nodeMesh);
+    // Expose for debugging via window.DEBUG (module scope is otherwise opaque).
+    window.DEBUG = Object.assign(window.DEBUG || {}, {
+      THREE, scene, camera, controls, renderer, nodeMesh, visibleNodes,
+      cameraInfo: () => ({pos: camera.position.toArray(), target: controls.target.toArray()}),
+    });
   }
 
   // ---- Edges (LineSegments) ----
@@ -437,6 +443,7 @@ function rebuildMeshes() {
     geom.setAttribute("color", new THREE.BufferAttribute(colors, 3));
     const mat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.45 });
     edgeLines = new THREE.LineSegments(geom, mat);
+    edgeLines.frustumCulled = false;
     scene.add(edgeLines);
   }
   updateStats();
@@ -622,6 +629,25 @@ try {
   initThree();
   rebuildMeshes();
   document.getElementById("loading").style.display = "none";
+  // Auto-fit camera so all nodes are visible.
+  if (visibleNodes.length && nodeMesh) {
+    const box = new THREE.Box3();
+    box.makeEmpty();
+    const _v = new THREE.Vector3();
+    for (const n of visibleNodes) {
+      _v.set(n.x, n.y, n.z);
+      box.expandByPoint(_v);
+    }
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3()).length();
+    const fitDist = size * 0.9 / Math.tan((camera.fov * Math.PI / 180) / 2);
+    camera.position.copy(center).add(new THREE.Vector3(0, 0, Math.max(fitDist, 500)));
+    controls.target.copy(center);
+    camera.near = Math.max(1, fitDist / 200);
+    camera.far = fitDist * 10;
+    camera.updateProjectionMatrix();
+    controls.update();
+  }
 } catch (err) {
   showError(err.message || err);
   document.getElementById("loading").innerHTML =
