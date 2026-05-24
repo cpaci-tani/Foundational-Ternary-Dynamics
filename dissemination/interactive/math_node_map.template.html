@@ -451,6 +451,9 @@ function rebuildMeshes() {
     scene.add(edgeLines);
   }
   updateStats();
+  // Eager render so the result is visible even if rAF is paused
+  // (hidden tab) or the user's browser deferred a frame.
+  renderNow();
 }
 
 function animate() {
@@ -461,6 +464,20 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
 }
+
+// Explicit render -- safe to call any time.  Useful when rAF is paused
+// (hidden tab, background window) and we still want to update the scene
+// after state changes (filter toggle, slider, camera move).
+function renderNow() {
+  if (!renderer || !scene || !camera) return;
+  controls?.update();
+  renderer.render(scene, camera);
+}
+
+// When the tab regains focus, force a render in case rAF dropped frames.
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) renderNow();
+});
 
 // ---------------------------------------------------------------------------
 // Hover + click via raycaster
@@ -651,6 +668,7 @@ try {
     camera.far = fitDist * 5;
     camera.updateProjectionMatrix();
     controls.update();
+    renderNow();   // explicit first paint, in case rAF is paused
   }
 } catch (err) {
   showError(err.message || err);
