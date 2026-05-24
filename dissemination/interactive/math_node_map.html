@@ -2,60 +2,55 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>FTD Math Node Map — multi-layer connectivity</title>
+<title>FTD Math Node Map — 3D multi-layer connectivity</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" charset="utf-8"></script>
-<style>
-  :root { color-scheme: light dark; --bg: #fafafa; --fg: #222; --sidebar-bg: #f7f7f7; --border: #ccc;
-          --muted: #888; --panel-bg: rgba(255,255,255,0.96); }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #1a1a1a; --fg: #ddd; --sidebar-bg: #181818; --border: #333; --muted: #777;
-            --panel-bg: rgba(40,40,40,0.96); }
+<script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.73.5/dist/3d-force-graph.min.js"></script>
+<!-- d3-force-3d provides forceX/Y/Z + 3D-aware forceCollide / forceManyBody.
+     We expose it as window.d3 because vanilla d3 (the 2D version) doesn't have
+     forceZ; 3d-force-graph bundles d3-force-3d internally but doesn't expose it. -->
+<script src="https://cdn.jsdelivr.net/npm/d3-force-3d@3.0.5/dist/d3-force-3d.min.js"></script>
+<script>
+  // d3-force-3d exposes a global called `d3` (UMD).  If the build script
+  // didn't put it there, fall back to its individual exports.
+  if (typeof d3 === "undefined" && typeof window.d3Force3d !== "undefined") {
+    window.d3 = window.d3Force3d;
   }
-  html, body { height: 100%; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-         margin: 0; padding: 0; color: var(--fg); background: var(--bg);
+</script>
+<style>
+  :root { color-scheme: light dark; --bg: #0a0a0a; --fg: #ddd; --sidebar-bg: #141414; --border: #2a2a2a;
+          --muted: #888; --panel-bg: rgba(20,20,20,0.95); --accent: #4fc3f7; }
+  html, body { height: 100%; margin: 0; padding: 0; color: var(--fg); background: var(--bg); }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
          display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 100vh;
          min-height: 100vh; }
   .sidebar { padding: 14px; border-right: 1px solid var(--border); overflow-y: auto;
              background: var(--sidebar-bg); font-size: 13px; }
-  .sidebar h1 { font-size: 16px; margin: 0 0 4px 0; }
+  .sidebar h1 { font-size: 16px; margin: 0 0 4px 0; color: var(--accent); }
   .sidebar h2 { font-size: 11px; margin: 14px 0 4px 0; text-transform: uppercase;
                 letter-spacing: 0.7px; color: var(--muted); font-weight: 600; }
   .sidebar label { display: block; padding: 2px 0; cursor: pointer; user-select: none; }
   .sidebar input[type="checkbox"] { margin-right: 6px; }
   .sidebar select, .sidebar input[type="text"] { width: 100%; padding: 5px 7px;
                                                   border: 1px solid var(--border); border-radius: 3px;
-                                                  background: inherit; color: inherit; box-sizing: border-box; }
-  .sidebar input[type="range"] { width: 100%; }
+                                                  background: #1a1a1a; color: inherit; box-sizing: border-box; }
+  .sidebar input[type="range"] { width: 100%; accent-color: var(--accent); }
   .legend-item { display: flex; align-items: center; gap: 6px; padding: 2px 0; cursor: pointer; }
   .legend-swatch { width: 12px; height: 12px; border-radius: 2px; display: inline-block;
-                   border: 1px solid rgba(0,0,0,0.15); }
+                   border: 1px solid rgba(255,255,255,0.2); }
   .legend-count { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
   .graph-wrapper { position: relative; width: 100%; height: 100vh; overflow: hidden; background: var(--bg); }
   #graph { width: 100%; height: 100%; cursor: grab; }
   #graph:active { cursor: grabbing; }
-  #graph .edge { stroke-linecap: round; pointer-events: none; }
-  #graph .edge.theorem-anchors-ledger     { stroke: #1565c0; stroke-opacity: 0.7; stroke-width: 1.5px; }
-  #graph .edge.ledger-depends-on          { stroke: #90a4ae; stroke-opacity: 0.35; stroke-width: 0.7px; }
-  #graph .edge.identity-witnesses-theorem { stroke: #00897b; stroke-opacity: 0.55; stroke-width: 0.8px; }
-  #graph .edge.identity-witnesses-ledger  { stroke: #aed581; stroke-opacity: 0.3;  stroke-width: 0.5px; }
-  #graph .edge.object-in-identity         { stroke: #ce93d8; stroke-opacity: 0.18; stroke-width: 0.3px; }
-  #graph .node { cursor: pointer; }
-  #graph .node:hover { stroke: #ff5722 !important; stroke-width: 2px !important; }
-  #graph .node-label { font-size: 10px; fill: var(--fg); pointer-events: none; text-anchor: middle;
-                       paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-opacity: 0.8;
-                       font-family: inherit; }
   #loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
              padding: 20px 28px; border-radius: 8px; background: var(--panel-bg);
-             box-shadow: 0 2px 8px rgba(0,0,0,0.15); text-align: center; z-index: 10;
+             box-shadow: 0 2px 16px rgba(0,0,0,0.5); text-align: center; z-index: 10;
              color: var(--muted); font-size: 14px; }
-  #loading .progress { margin-top: 8px; font-variant-numeric: tabular-nums; font-size: 12px; }
+  #loading .progress { margin-top: 8px; font-variant-numeric: tabular-nums; font-size: 12px; color: var(--accent); }
   .info-panel { position: absolute; right: 14px; top: 14px; width: 360px; max-height: 80vh;
                 background: var(--panel-bg); border: 1px solid var(--border); border-radius: 6px;
                 padding: 12px; font-size: 12px; overflow-y: auto;
-                box-shadow: 0 2px 12px rgba(0,0,0,0.12); display: none; z-index: 20; }
-  .info-panel h3 { margin: 0 0 8px 0; font-size: 13px; }
+                box-shadow: 0 2px 16px rgba(0,0,0,0.4); display: none; z-index: 20; backdrop-filter: blur(6px); }
+  .info-panel h3 { margin: 0 0 8px 0; font-size: 13px; color: var(--accent); }
   .info-panel .kv { margin: 4px 0; line-height: 1.4; }
   .info-panel .kv .k { color: var(--muted); font-weight: 600; margin-right: 4px; }
   .info-panel .tag-chip { display: inline-block; padding: 1px 6px; border-radius: 3px;
@@ -68,22 +63,25 @@
   #js-error { position: fixed; top: 0; right: 0; max-width: 500px; padding: 14px;
               background: #c62828; color: white; font-family: monospace; font-size: 11px;
               z-index: 1000; display: none; white-space: pre-wrap; overflow-x: auto;
-              box-shadow: -2px 2px 12px rgba(0,0,0,0.2); }
+              box-shadow: -2px 2px 12px rgba(0,0,0,0.3); }
   .controls-mini { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
-  .controls-mini button { padding: 3px 8px; font-size: 11px; border: 1px solid var(--border);
-                          background: var(--bg); color: var(--fg); border-radius: 3px;
+  .controls-mini button { padding: 4px 9px; font-size: 11px; border: 1px solid var(--border);
+                          background: #1a1a1a; color: var(--fg); border-radius: 3px;
                           cursor: pointer; font-family: inherit; }
-  .controls-mini button:hover { background: var(--border); }
+  .controls-mini button:hover { background: #2a2a2a; }
   .range-row { display: flex; align-items: center; gap: 6px; }
-  .range-row .label { font-size: 11px; min-width: 60px; color: var(--muted); }
-  .range-row .value { font-size: 11px; min-width: 30px; color: var(--fg); text-align: right;
+  .range-row .label { font-size: 11px; min-width: 70px; color: var(--muted); }
+  .range-row .value { font-size: 11px; min-width: 36px; color: var(--fg); text-align: right;
                       font-variant-numeric: tabular-nums; }
-  .notes { font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .notes { font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .hint { position: absolute; bottom: 12px; left: 12px; color: var(--muted); font-size: 11px;
+          background: rgba(0,0,0,0.6); padding: 6px 10px; border-radius: 4px;
+          pointer-events: none; }
 </style>
 </head>
 <body>
 <div class="sidebar">
-  <h1>FTD Math Node Map</h1>
+  <h1>FTD Math Node Map · 3D</h1>
   <div class="notes" id="stats">Initialising…</div>
 
   <h2>Layers</h2>
@@ -105,25 +103,26 @@
   <h2>Search</h2>
   <input type="text" id="searchBox" placeholder="filter by name / id / label…">
 
-  <h2>Spacing</h2>
+  <h2>Spacing (3D)</h2>
   <div class="range-row">
     <span class="label">repulsion</span>
-    <input type="range" id="repulsionSlider" min="50" max="1500" value="500" step="50">
-    <span class="value" id="repulsionValue">500</span>
+    <input type="range" id="repulsionSlider" min="50" max="3000" value="800" step="50">
+    <span class="value" id="repulsionValue">800</span>
   </div>
   <div class="range-row">
     <span class="label">link length</span>
-    <input type="range" id="linkSlider" min="20" max="300" value="100" step="10">
-    <span class="value" id="linkValue">100</span>
+    <input type="range" id="linkSlider" min="20" max="400" value="120" step="10">
+    <span class="value" id="linkValue">120</span>
   </div>
   <div class="range-row">
-    <span class="label">sectors</span>
-    <input type="range" id="sectorSlider" min="0" max="200" value="60" step="10">
-    <span class="value" id="sectorValue">60</span>
+    <span class="label">sector pull</span>
+    <input type="range" id="sectorSlider" min="0" max="300" value="80" step="10">
+    <span class="value" id="sectorValue">80</span>
   </div>
   <div class="controls-mini">
-    <button id="resetView">Reset view</button>
+    <button id="resetView">Reset camera</button>
     <button id="reheat">Reheat</button>
+    <button id="zoomFit">Fit all</button>
   </div>
 
   <h2>Epistemic tags (click to toggle)</h2>
@@ -131,19 +130,20 @@
 
   <h2>Notes</h2>
   <p class="notes">
-    Data: 190 LEDGER claims + 13 spine theorems + 80 objects + 901 identities.
-    Rendered with D3 v7 + d3-force.  Drag nodes to rearrange.  Scroll to zoom,
-    drag the background to pan.  Click a node for details.  Adjust spacing
-    sliders to spread the layout.  See LEDGER row FTD-0207 for full provenance.
+    Rendered with Three.js + d3-force-3d via the 3d-force-graph library.
+    <b>Drag</b> background to rotate · <b>scroll</b> to zoom · <b>right-click + drag</b>
+    to pan · <b>click</b> a node for details · drag a node to reposition.
+    Adjust the sliders to spread the layout.
   </p>
 </div>
 
 <div class="graph-wrapper">
   <div id="loading">
-    Loading FTD math node map…
+    Loading FTD math node map (3D)…
     <div class="progress" id="loadingProgress"></div>
   </div>
-  <svg id="graph"></svg>
+  <div id="graph"></div>
+  <div class="hint">drag-to-rotate · scroll-to-zoom · right-click-to-pan</div>
   <div class="info-panel" id="info">
     <span class="close-btn" onclick="document.getElementById('info').style.display='none'">×</span>
     <h3 id="info-title">—</h3>
@@ -156,7 +156,7 @@
      so the standalone HTML works on file:// double-click without a server). -->
 <script type="application/json" id="map-data">{
   "schema_version": 2,
-  "source_commit": "1a1b4f563cde504e0ba6cdfc154fcd37b8ceef11",
+  "source_commit": "6d0616a5eb5cd3f687edadf5dda8a46f948c640c",
   "layers": {
     "objects": [
       {
@@ -24153,7 +24153,7 @@ window.addEventListener("unhandledrejection", (ev) => {
 });
 
 // ---------------------------------------------------------------------------
-// Data load (inline first, fetch fallback)
+// Data load
 // ---------------------------------------------------------------------------
 
 let DATA = null;
@@ -24162,7 +24162,6 @@ let nodeIndex = {};
 function loadData() {
   const inline = document.getElementById("map-data");
   const inlineText = inline ? inline.textContent.trim() : "";
-  // Real JSON starts with "{"; unsubstituted placeholder starts with "N".
   if (inlineText && inlineText.charAt(0) === "{") {
     try {
       DATA = JSON.parse(inlineText);
@@ -24177,7 +24176,7 @@ function loadData() {
 }
 
 // ---------------------------------------------------------------------------
-// Filters + state
+// State
 // ---------------------------------------------------------------------------
 
 let activeLayers = new Set(["theorems", "ledger", "objects"]);
@@ -24186,55 +24185,70 @@ let activeEdges  = new Set(["theorem-anchors-ledger", "ledger-depends-on",
 let activeSector = "";
 let activeSearch = "";
 let disabledTags = new Set();
-let repulsion = 500;
-let linkLen = 100;
-let sectorPull = 60;
-let simulation = null;
-let svg, g, edgeG, nodeG, labelG, zoomBehavior;
+let repulsion = 800;
+let linkLen = 120;
+let sectorPull = 80;
+let Graph = null;
 let allNodes = [], allEdges = [];
+let sectorCentroids = {};
 
 // ---------------------------------------------------------------------------
-// Node styling
+// Node visuals
 // ---------------------------------------------------------------------------
 
-function nodeRadius(n) {
+function nodeSize(n) {
   if (n._layer === "theorems") return 14;
-  if (n._layer === "ledger") return 7 + Math.min((n.deps?.length || 0) * 0.5, 4);
-  if (n._layer === "objects") return 5 + Math.min(Math.sqrt(n.valence || 1) * 1.5, 8);
-  if (n._layer === "identities") return 2.5;
-  return 4;
+  if (n._layer === "ledger") return 6 + Math.min((n.deps?.length || 0) * 0.4, 4);
+  if (n._layer === "objects") return 4 + Math.min(Math.sqrt(n.valence || 1) * 1.4, 8);
+  if (n._layer === "identities") return 1.5;
+  return 3;
 }
 
 function nodeColor(n) {
   if (n.epistemic_color) return n.epistemic_color;
-  if (n._layer === "theorems")   return "#1565c0";
-  if (n._layer === "ledger")     return "#37474f";
-  if (n._layer === "objects")    return "#6a1b9a";
-  if (n._layer === "identities") return "#bbbbbb";
+  if (n._layer === "theorems")   return "#42a5f5";
+  if (n._layer === "ledger")     return "#90a4ae";
+  if (n._layer === "objects")    return "#ba68c8";
+  if (n._layer === "identities") return "#666";
   return "#888";
 }
 
-function nodeShape(n) {
-  // SVG path shape per layer for visual distinguishability.
-  const r = nodeRadius(n);
-  if (n._layer === "theorems") {
-    // Diamond
-    return `M0,${-r} L${r},0 L0,${r} L${-r},0 Z`;
-  }
-  if (n._layer === "objects") {
-    // Square
-    const s = r * 0.9;
-    return `M${-s},${-s} L${s},${-s} L${s},${s} L${-s},${s} Z`;
-  }
-  // Default: circle approximated by a path
-  return `M${r},0 A${r},${r} 0 1,1 ${-r},0 A${r},${r} 0 1,1 ${r},0 Z`;
+function edgeColor(type) {
+  return {
+    "theorem-anchors-ledger":     "#1565c0",
+    "ledger-depends-on":          "#607d8b",
+    "identity-witnesses-theorem": "#00897b",
+    "identity-witnesses-ledger":  "#aed581",
+    "object-in-identity":         "#ce93d8",
+  }[type] || "#888";
 }
 
-function nodeLabel(n) {
-  if (n._layer === "objects")    return n.name || n.id;
-  if (n._layer === "theorems")   return n.id;
-  if (n._layer === "ledger")     return n.id;
-  return null;  // identities never get labels (too many)
+function edgeOpacity(type) {
+  return {
+    "theorem-anchors-ledger":     0.8,
+    "ledger-depends-on":          0.4,
+    "identity-witnesses-theorem": 0.5,
+    "identity-witnesses-ledger":  0.3,
+    "object-in-identity":         0.15,
+  }[type] || 0.4;
+}
+
+function edgeWidth(type) {
+  return {
+    "theorem-anchors-ledger":     1.5,
+    "ledger-depends-on":          0.5,
+    "identity-witnesses-theorem": 0.6,
+    "identity-witnesses-ledger":  0.4,
+    "object-in-identity":         0.2,
+  }[type] || 0.5;
+}
+
+function fullLabel(n) {
+  if (n._layer === "objects")    return `${n.name || n.id} (valence ${n.valence}, ${n.sector || ""})`;
+  if (n._layer === "theorems")   return `${n.id}: ${n.name || ""}`;
+  if (n._layer === "ledger")     return `${n.id}: ${n.short_name || ""}  [${n.primary_tag || "?"}]`;
+  if (n._layer === "identities") return n.label || n.id;
+  return n.id;
 }
 
 function isVisible(n) {
@@ -24249,7 +24263,7 @@ function isVisible(n) {
 }
 
 // ---------------------------------------------------------------------------
-// Setup -- build nodeIndex + flatten all layers
+// Build index + flatten layers
 // ---------------------------------------------------------------------------
 
 function buildIndex() {
@@ -24258,221 +24272,140 @@ function buildIndex() {
   for (const layer of ["theorems", "ledger", "objects", "identities"]) {
     for (const n of DATA.layers[layer]) {
       n._layer = layer;
-      // d3-force will write `x, y, vx, vy` -- if cached coords exist use them
-      // as starting positions; otherwise random.  Cached coords are fine as
-      // initial guesses; the simulation re-runs.
-      if (typeof n.x !== "number" || typeof n.y !== "number") {
-        n.x = (Math.random() - 0.5) * 2000;
-        n.y = (Math.random() - 0.5) * 1500;
-      } else {
-        // Spread the [-0.5, 0.5] cached layout into a larger pixel space.
-        n.x = n.x * 2000;
-        n.y = n.y * 1500;
-      }
+      // Seed initial positions in a large 3D box; the sector force then
+      // pulls them toward sector centroids and repulsion spreads them.
+      // Without an initial spread, all nodes start near origin and the
+      // weak sector force never moves them far.
+      n.x = (Math.random() - 0.5) * 1500;
+      n.y = (Math.random() - 0.5) * 1500;
+      n.z = (Math.random() - 0.5) * 1500;
       nodeIndex[n.id] = n;
       allNodes.push(n);
     }
   }
-  // d3-force needs edge source/target as references to node objects, not just ids.
   allEdges = DATA.edges
-    .map(e => {
-      const s = nodeIndex[e.from], t = nodeIndex[e.to];
-      if (!s || !t) return null;
-      return { source: s, target: t, type: e.type };
-    })
-    .filter(Boolean);
+    .map(e => ({ source: e.from, target: e.to, type: e.type }))
+    .filter(e => nodeIndex[e.source] && nodeIndex[e.target]);
 }
 
 // ---------------------------------------------------------------------------
-// Sector centroids (for sectoral clustering force)
+// Sector centroids in 3D (used for clustering force)
 // ---------------------------------------------------------------------------
 
-let sectorCentroids = {};
-
-function computeSectorCentroids(width, height) {
-  // Place each sector at a distinct (x, y) anchor on a coarse grid so the
-  // simulation gently pulls each sector's nodes toward its anchor.  This
-  // prevents the big circular blob that pure repulsion produces.
+function computeSectorCentroids() {
+  // Distribute sectors on a 3D grid so each sector cluster sits in its own
+  // region of space.  pure-math/* sectors get z < 0, physics/* sectors get
+  // z > 0, engine-bridge sits at z = 0, so the user sees a natural
+  // theory ↔ physics stratification along the z-axis.
   const sectors = Array.from(new Set(allNodes.map(n => n.sector).filter(Boolean))).sort();
-  const cols = Math.ceil(Math.sqrt(sectors.length));
-  const rows = Math.ceil(sectors.length / cols);
-  const cellW = width / (cols + 1);
-  const cellH = height / (rows + 1);
+  const SCALE = 400;
   sectorCentroids = {};
-  sectors.forEach((s, i) => {
-    const col = i % cols, row = Math.floor(i / cols);
-    sectorCentroids[s] = {
-      x: cellW * (col + 1) - width / 2,
-      y: cellH * (row + 1) - height / 2,
-    };
-  });
+  let pureIdx = 0, physIdx = 0;
+  const pureSectors = sectors.filter(s => s.startsWith("pure-math/"));
+  const physSectors = sectors.filter(s => s.startsWith("physics/"));
+  const otherSectors = sectors.filter(s => !s.startsWith("pure-math/") && !s.startsWith("physics/"));
+  // Lay out each group on its own plane.
+  function placeOnPlane(arr, zCoord) {
+    const cols = Math.ceil(Math.sqrt(arr.length));
+    arr.forEach((s, i) => {
+      const col = i % cols, row = Math.floor(i / cols);
+      sectorCentroids[s] = {
+        x: (col - (cols - 1) / 2) * SCALE,
+        y: (row - (Math.ceil(arr.length / cols) - 1) / 2) * SCALE,
+        z: zCoord,
+      };
+    });
+  }
+  placeOnPlane(pureSectors, -600);
+  placeOnPlane(physSectors,  600);
+  placeOnPlane(otherSectors,   0);
 }
 
 // ---------------------------------------------------------------------------
-// d3-force simulation
+// 3D force-graph setup
 // ---------------------------------------------------------------------------
 
-function makeSimulation(width, height) {
-  computeSectorCentroids(width, height);
-
-  // Filter to currently-visible nodes/edges so the simulation runs on what
-  // the user actually sees.  Filtering reduces noise from 900 identity
-  // nodes when only theorems + ledger are shown.
+function buildGraphData() {
   const visibleNodes = allNodes.filter(isVisible);
   const visibleIds = new Set(visibleNodes.map(n => n.id));
-  const visibleEdges = allEdges.filter(e =>
-    activeEdges.has(e.type) && visibleIds.has(e.source.id) && visibleIds.has(e.target.id));
-
-  return d3.forceSimulation(visibleNodes)
-    .force("charge", d3.forceManyBody()
-      .strength(d => -repulsion * (d._layer === "theorems" ? 2 : 1))
-      .distanceMax(800))
-    .force("link", d3.forceLink(visibleEdges)
-      .id(d => d.id)
-      .distance(d => linkLen + (d.source._layer === "theorems" ? 30 : 0))
-      .strength(0.4))
-    .force("collide", d3.forceCollide()
-      .radius(d => nodeRadius(d) + 6)
-      .strength(0.9)
-      .iterations(2))
-    .force("center", d3.forceCenter(0, 0).strength(0.04))
-    .force("sectorX", d3.forceX(d =>
-      (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].x : 0
-    ).strength(sectorPull / 1000))
-    .force("sectorY", d3.forceY(d =>
-      (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].y : 0
-    ).strength(sectorPull / 1000))
-    .alphaDecay(0.025);
+  const visibleEdges = allEdges
+    .filter(e => activeEdges.has(e.type)
+              && visibleIds.has(e.source) && visibleIds.has(e.target));
+  return { nodes: visibleNodes, links: visibleEdges };
 }
 
-// ---------------------------------------------------------------------------
-// SVG rendering
-// ---------------------------------------------------------------------------
-
-function initSvg() {
-  svg = d3.select("#graph");
-  const wrapper = document.querySelector(".graph-wrapper");
-  const w = wrapper.clientWidth, h = wrapper.clientHeight;
-  svg.attr("viewBox", `${-w/2} ${-h/2} ${w} ${h}`)
-     .attr("preserveAspectRatio", "xMidYMid meet");
-
-  g = svg.append("g").attr("class", "world");
-  edgeG  = g.append("g").attr("class", "edges");
-  nodeG  = g.append("g").attr("class", "nodes");
-  labelG = g.append("g").attr("class", "labels");
-
-  zoomBehavior = d3.zoom()
-    .scaleExtent([0.1, 8])
-    .on("zoom", (ev) => g.attr("transform", ev.transform));
-  svg.call(zoomBehavior);
-
-  // Resize handler
-  window.addEventListener("resize", () => {
-    const w2 = wrapper.clientWidth, h2 = wrapper.clientHeight;
-    svg.attr("viewBox", `${-w2/2} ${-h2/2} ${w2} ${h2}`);
-  });
-}
-
-function render() {
-  if (typeof d3 === "undefined") {
+function initGraph() {
+  if (typeof ForceGraph3D === "undefined") {
     document.getElementById("js-error").style.display = "block";
     document.getElementById("js-error").textContent =
-      "D3.js failed to load from the CDN.  Check your network or replace the " +
-      "<script src=...> URL with a local copy.";
+      "3d-force-graph (Three.js) failed to load from the CDN.\n" +
+      "Check your network or replace the <script src=...> URL with a local copy.";
     return;
   }
-  document.getElementById("loading").style.display = "none";
 
-  const wrapper = document.querySelector(".graph-wrapper");
-  const w = wrapper.clientWidth, h = wrapper.clientHeight;
+  computeSectorCentroids();
 
-  if (simulation) simulation.stop();
-  simulation = makeSimulation(w, h);
+  const graphEl = document.getElementById("graph");
+  // 3d-force-graph uses a factory pattern: ForceGraph3D()(domElement), not `new`.
+  // Set graphData BEFORE configuring d3Force -- otherwise the force
+  // configuration runs against an empty node set and gets reset.
+  Graph = ForceGraph3D()(graphEl)
+    .backgroundColor("#0a0a0a")
+    .nodeId("id")
+    .nodeVal(n => nodeSize(n))
+    .nodeColor(n => nodeColor(n))
+    .nodeLabel(n => fullLabel(n))
+    .nodeOpacity(0.95)
+    .nodeResolution(12)
+    .linkColor(d => edgeColor(d.type))
+    .linkOpacity(0.6)
+    .linkWidth(d => edgeWidth(d.type))
+    .linkDirectionalParticles(0)
+    .onNodeClick(n => { showInfo(n); focusOnNode(n); })
+    .onNodeDragEnd(n => { n.fx = n.x; n.fy = n.y; n.fz = n.z; })
+    .showNavInfo(false)
+    .cooldownTicks(400)
+    .warmupTicks(20)
+    .graphData(buildGraphData());
 
-  const visibleNodes = simulation.nodes();
-  const visibleIds = new Set(visibleNodes.map(n => n.id));
-  const visibleEdges = allEdges.filter(e =>
-    activeEdges.has(e.type) && visibleIds.has(e.source.id) && visibleIds.has(e.target.id));
+  // d3-force-3d configuration AFTER graphData is bound.
+  Graph.d3Force("charge")
+    .strength(d => -repulsion * (d._layer === "theorems" ? 2 : 1))
+    .distanceMax(1500);
+  Graph.d3Force("link")
+    .distance(d => linkLen + (d.source._layer === "theorems" ? 40 : 0))
+    .strength(0.4);
+  // Replace default center with our sector forces.
+  Graph.d3Force("center", null);
+  Graph.d3Force("sectorX", d3.forceX(d =>
+    (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].x : 0
+  ).strength(sectorPull / 1000));
+  Graph.d3Force("sectorY", d3.forceY(d =>
+    (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].y : 0
+  ).strength(sectorPull / 1000));
+  Graph.d3Force("sectorZ", d3.forceZ(d =>
+    (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].z : 0
+  ).strength(sectorPull / 1000));
+  Graph.d3Force("collide", d3.forceCollide(d => nodeSize(d) + 4).strength(0.85));
 
-  // Edges
-  const edgeSel = edgeG.selectAll("line")
-    .data(visibleEdges, d => `${d.source.id}|${d.target.id}|${d.type}`);
-  edgeSel.exit().remove();
-  edgeSel.enter().append("line")
-    .attr("class", d => `edge ${d.type}`)
-    .merge(edgeSel);
-
-  // Nodes
-  const nodeSel = nodeG.selectAll("path")
-    .data(visibleNodes, d => d.id);
-  nodeSel.exit().remove();
-  const enterNodes = nodeSel.enter().append("path")
-    .attr("class", "node")
-    .attr("d", d => nodeShape(d))
-    .attr("fill", d => nodeColor(d))
-    .attr("stroke", "#222")
-    .attr("stroke-width", 0.5)
-    .on("click", (ev, d) => { showInfo(d); ev.stopPropagation(); })
-    .call(d3.drag()
-      .on("start", dragStart)
-      .on("drag", dragMove)
-      .on("end", dragEnd));
-  enterNodes.append("title").text(d => fullLabel(d));
-  nodeSel.merge(enterNodes);
-
-  // Labels (only for theorems, ledger, objects -- never identities)
-  const labelData = visibleNodes.filter(n => nodeLabel(n));
-  const labelSel = labelG.selectAll("text").data(labelData, d => d.id);
-  labelSel.exit().remove();
-  labelSel.enter().append("text")
-    .attr("class", "node-label")
-    .text(d => nodeLabel(d))
-    .merge(labelSel);
-
-  // Tick handler -- update positions every animation frame.
-  simulation.on("tick", () => {
-    edgeG.selectAll("line")
-      .attr("x1", d => d.source.x).attr("y1", d => d.source.y)
-      .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
-    nodeG.selectAll("path")
-      .attr("transform", d => `translate(${d.x},${d.y})`);
-    labelG.selectAll("text")
-      .attr("x", d => d.x)
-      .attr("y", d => d.y - nodeRadius(d) - 4);
-  });
-
-  updateStats();
+  // Kick the simulation so the new forces take effect.
+  Graph.d3ReheatSimulation();
 }
 
-function fullLabel(n) {
-  if (n._layer === "objects")    return `${n.name || n.id} (valence ${n.valence}, ${n.sector || ""})`;
-  if (n._layer === "theorems")   return `${n.id}: ${n.name || ""}`;
-  if (n._layer === "ledger")     return `${n.id}: ${n.short_name || ""}  [${n.primary_tag || "?"}]`;
-  if (n._layer === "identities") return n.label || n.id;
-  return n.id;
+function rerunSimulation() {
+  if (!Graph) return;
+  Graph.graphData(buildGraphData());
+  Graph.d3ReheatSimulation();
 }
 
-function updateStats() {
-  if (!simulation) return;
-  const total = allNodes.length;
-  const visible = simulation.nodes().length;
-  document.getElementById("stats").innerHTML =
-    `<b>${visible}</b> visible / ${total} total nodes<br>` +
-    `commit <code>${(DATA.source_commit || "").slice(0, 7)}</code>`;
-}
-
-// ---------------------------------------------------------------------------
-// Drag
-// ---------------------------------------------------------------------------
-
-function dragStart(ev, d) {
-  if (!ev.active) simulation.alphaTarget(0.3).restart();
-  d.fx = d.x; d.fy = d.y;
-}
-function dragMove(ev, d) { d.fx = ev.x; d.fy = ev.y; }
-function dragEnd(ev, d) {
-  if (!ev.active) simulation.alphaTarget(0);
-  d.fx = null; d.fy = null;
+function focusOnNode(n) {
+  // Fly the camera to the clicked node.
+  const dist = 200;
+  const distRatio = 1 + dist / Math.hypot(n.x || 1, n.y || 1, n.z || 1);
+  Graph.cameraPosition(
+    { x: (n.x || 0) * distRatio, y: (n.y || 0) * distRatio, z: (n.z || 0) * distRatio },
+    n, 1000
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -24516,6 +24449,14 @@ function escapeHtml(s) {
 // UI controls
 // ---------------------------------------------------------------------------
 
+function updateStats() {
+  if (!Graph) return;
+  const data = Graph.graphData();
+  document.getElementById("stats").innerHTML =
+    `<b>${data.nodes.length}</b> visible / ${allNodes.length} total nodes<br>` +
+    `<b>${data.links.length}</b> visible links · commit <code>${(DATA.source_commit || "").slice(0, 7)}</code>`;
+}
+
 function buildSectorDropdown() {
   const sectors = new Set();
   for (const n of allNodes) if (n.sector) sectors.add(n.sector);
@@ -24544,7 +24485,8 @@ function buildLegend() {
     div.onclick = () => {
       if (disabledTags.has(tag)) disabledTags.delete(tag); else disabledTags.add(tag);
       div.style.opacity = disabledTags.has(tag) ? 0.35 : 1;
-      render();
+      rerunSimulation();
+      updateStats();
     };
     legend.appendChild(div);
   }
@@ -24555,59 +24497,65 @@ function bindControls() {
     cb.addEventListener("change", () => {
       if (cb.checked) activeLayers.add(cb.dataset.layer);
       else activeLayers.delete(cb.dataset.layer);
-      render();
+      rerunSimulation();
+      updateStats();
     });
   });
   document.querySelectorAll('input[data-edge]').forEach(cb => {
     cb.addEventListener("change", () => {
       if (cb.checked) activeEdges.add(cb.dataset.edge);
       else activeEdges.delete(cb.dataset.edge);
-      render();
+      rerunSimulation();
+      updateStats();
     });
   });
   document.getElementById("sectorFilter").addEventListener("change", e => {
-    activeSector = e.target.value; render();
+    activeSector = e.target.value;
+    rerunSimulation();
+    updateStats();
   });
   let searchTimer;
   document.getElementById("searchBox").addEventListener("input", e => {
     activeSearch = e.target.value.toLowerCase().trim();
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(render, 200);
+    searchTimer = setTimeout(() => { rerunSimulation(); updateStats(); }, 250);
   });
 
   document.getElementById("repulsionSlider").addEventListener("input", e => {
     repulsion = +e.target.value;
     document.getElementById("repulsionValue").textContent = repulsion;
-    if (simulation) {
-      simulation.force("charge")
-        .strength(d => -repulsion * (d._layer === "theorems" ? 2 : 1));
-      simulation.alpha(0.4).restart();
+    if (Graph) {
+      Graph.d3Force("charge").strength(d => -repulsion * (d._layer === "theorems" ? 2 : 1));
+      Graph.d3ReheatSimulation();
     }
   });
   document.getElementById("linkSlider").addEventListener("input", e => {
     linkLen = +e.target.value;
     document.getElementById("linkValue").textContent = linkLen;
-    if (simulation) {
-      simulation.force("link")
-        .distance(d => linkLen + (d.source._layer === "theorems" ? 30 : 0));
-      simulation.alpha(0.4).restart();
+    if (Graph) {
+      Graph.d3Force("link").distance(d => linkLen + (d.source._layer === "theorems" ? 40 : 0));
+      Graph.d3ReheatSimulation();
     }
   });
   document.getElementById("sectorSlider").addEventListener("input", e => {
     sectorPull = +e.target.value;
     document.getElementById("sectorValue").textContent = sectorPull;
-    if (simulation) {
-      simulation.force("sectorX").strength(sectorPull / 1000);
-      simulation.force("sectorY").strength(sectorPull / 1000);
-      simulation.alpha(0.4).restart();
+    if (Graph) {
+      Graph.d3Force("sectorX").strength(sectorPull / 1000);
+      Graph.d3Force("sectorY").strength(sectorPull / 1000);
+      Graph.d3Force("sectorZ").strength(sectorPull / 1000);
+      Graph.d3ReheatSimulation();
     }
   });
 
   document.getElementById("resetView").addEventListener("click", () => {
-    svg.transition().duration(500).call(zoomBehavior.transform, d3.zoomIdentity);
+    if (Graph) Graph.cameraPosition({ x: 0, y: 0, z: 1800 }, { x: 0, y: 0, z: 0 }, 1000);
   });
   document.getElementById("reheat").addEventListener("click", () => {
-    if (simulation) simulation.alpha(1).restart();
+    if (Graph) Graph.d3ReheatSimulation();
+  });
+  document.getElementById("zoomFit").addEventListener("click", () => {
+    if (Graph) Graph.zoomToFit(1000, 80);
   });
 }
 
@@ -24620,35 +24568,35 @@ const start = performance.now();
 
 loadData()
   .then(() => {
-    progressEl.textContent = `data loaded (${(performance.now()-start).toFixed(0)} ms); building graph…`;
+    progressEl.textContent = `data loaded (${(performance.now()-start).toFixed(0)} ms); building 3D scene…`;
     buildIndex();
     buildSectorDropdown();
     buildLegend();
-    initSvg();
     bindControls();
-    return new Promise(r => setTimeout(r, 30));  // let the DOM paint the loader
+    return new Promise(r => setTimeout(r, 30));
   })
   .then(() => {
-    render();
+    initGraph();
+    document.getElementById("loading").style.display = "none";
+    updateStats();
+    // Auto-fit after the initial layout settles.
+    setTimeout(() => { if (Graph) Graph.zoomToFit(1000, 80); }, 2500);
   })
   .catch(err => {
     const isFile = window.location.protocol === "file:";
     document.getElementById("loading").style.display = "none";
-    document.getElementById("graph").innerHTML = "";
     document.querySelector(".graph-wrapper").insertAdjacentHTML("beforeend",
       `<div style="position:absolute;top:20px;left:20px;right:20px;padding:20px;
                    background:#c62828;color:white;border-radius:6px;
                    font-family:monospace;font-size:12px;white-space:pre-wrap;">
-        Couldn't load the node-map data: ${err}
+        Couldn't initialise the 3D node map: ${err}
 
         ${isFile ? "You're viewing this HTML from the local filesystem (file://). " +
-                    "Either the inline JSON didn't parse, or fetch is blocked. " +
-                    "Rebuild with:\n" +
+                    "Either the inline JSON didn't parse, the WebGL context " +
+                    "failed, or fetch is blocked.\n\nRebuild with:\n" +
                     "  python scripts/verification/build_math_node_map.py\n" +
                     "  python dissemination/interactive/embed_node_map.py"
-                  : "Re-run:\n" +
-                    "  python scripts/verification/build_math_node_map.py\n" +
-                    "  python dissemination/interactive/embed_node_map.py"}
+                  : "Re-run the build pipeline."}
        </div>`);
   });
 </script>
