@@ -715,6 +715,29 @@ if(FTD_ENABLE_CUDA)
     target_link_libraries(test_wilson_dirac_cuda_parity ftd_core ftd_cuda)
     add_test(NAME test_wilson_dirac_cuda_parity COMMAND test_wilson_dirac_cuda_parity)
     set_tests_properties(test_wilson_dirac_cuda_parity PROPERTIES TIMEOUT 120)
+
+    # ADR-0014: CUDA constant-memory invariant pattern — standalone benchmark.
+    # Exercises c_A / c_consts upload + apply_invariant_A kernel against a CPU
+    # reference. No coupling to engine voxel state; dormant from the
+    # perspective of golden-tick + gpu_parity_complete.
+    #
+    # Separable compilation is REQUIRED here so the benchmark TU's reference
+    # to `extern __constant__ c_A` resolves at device-link time to the single
+    # storage defined in cuda/cuda_invariants.cu. Without it, nvcc treats the
+    # extern declaration as a static definition and the benchmark TU gets its
+    # own (zero-initialised, unused) copy of c_A — harmless for this target
+    # but a footgun for any future kernel defined outside cuda_invariants.cu.
+    add_executable(benchmark_invariant_matrix_constant_memory
+                   tests/benchmark_invariant_matrix_constant_memory.cu)
+    target_link_libraries(benchmark_invariant_matrix_constant_memory
+                          ftd_core ftd_cuda)
+    set_target_properties(benchmark_invariant_matrix_constant_memory PROPERTIES
+                          CUDA_SEPARABLE_COMPILATION ON
+                          CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+    add_test(NAME benchmark_invariant_matrix_constant_memory
+             COMMAND benchmark_invariant_matrix_constant_memory)
+    set_tests_properties(benchmark_invariant_matrix_constant_memory
+                         PROPERTIES TIMEOUT 120 LABELS "gpu;benchmark")
 endif()
 
 # ============================================================================
