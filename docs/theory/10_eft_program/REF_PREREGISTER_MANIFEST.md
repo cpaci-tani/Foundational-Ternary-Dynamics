@@ -85,15 +85,17 @@ manually trace via `git log --follow` if reproducing.
 
 ---
 
-## Structural / dynamical discriminator -- boundary theorem Stage 1 (2026-05-20)
+## Structural / dynamical discriminator -- boundary theorem Stage 1 (2026-05-20 v1, 2026-05-23 v2 close-positive)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0186** structural/dynamical discriminator | `preregister-structural-dynamical-discriminator-v1` | `75ebe56` | `scripts/proofs/proof_structural_dynamical_partition.py` | desk classification of the LEDGER record; no numerical search | n/a (classification is a theory doc) | `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md` (pre-reg) -> `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md` (Stage-1 result) |
+| **FTD-0186** structural/dynamical discriminator (v1, historical) | `preregister-structural-dynamical-discriminator-v1` | `75ebe56` | `scripts/proofs/proof_structural_dynamical_partition.py` | desk classification of the LEDGER record; no numerical search | n/a (classification is a theory doc) | `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md` (pre-reg) -> `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md` (Stage-1 result; v1 falsifier A1 fired -- see §5) |
+| **FTD-0186** structural/dynamical discriminator (v2, current) | `preregister-structural-dynamical-discriminator-v2` | `d550bca` | `scripts/proofs/proof_structural_dynamical_partition.py` (script encodes v2-style expectations per its header; same code as v1, re-applied against v2 wording -- no script edit required) | desk classification of the decisive set; no numerical search | n/a (classification is a theory doc) | `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md` (pre-reg, supersedes v1's falsifier wording) -> `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md` §5.2 (v2 result: Outcome A -- clean partition, A1 v2 PASS / A2 PASS / A3 PASS) |
 
-Pre-reg SHA256: `a6562dca56154401e7a2cfb8785266cef0d5b4ee70d3755797762ddffa3e538d`.
+Pre-reg v1 SHA256: `a6562dca56154401e7a2cfb8785266cef0d5b4ee70d3755797762ddffa3e538d`.
+Pre-reg v2 SHA256: `a233fa28be54c63c6a7ebae26c6b54e129c9f2120e535f92d85999ac84d9068a`.
 
-When auditing: confirm `git rev-list -n1 preregister-structural-dynamical-discriminator-v1` resolves to `75ebe56`. The discriminator definition (pre-reg S2) and falsifier (S4) were locked before the classification was run; a v2 is required to tighten the S4-A1 falsifier wording (see `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md` S5).
+When auditing: confirm `git rev-list -n1 preregister-structural-dynamical-discriminator-v1` resolves to `75ebe56` and `git rev-list -n1 preregister-structural-dynamical-discriminator-v2` resolves to `d550bca`. The discriminator definition (pre-reg §2) was locked under v1 and **carried over verbatim** into v2; the v1 falsifier (§4) fired on its own pre-registered wording -- v2 sharpens A1 to "failed attempt to derive a non-universal *dynamical value*" (rather than v1's broader "failed derivation attempt") and adds A3 to record structural-provenance closed-negatives as a separate honest category. The v2 re-run (`python scripts/proofs/proof_structural_dynamical_partition.py`, 2026-05-23) returns clean partition: 12 spine theorems all STRUCTURAL; 13 type-i closed-negatives all NON-UNIVERSAL DYNAMICAL / CALIBRATION-CONDITIONAL; 3 type-ii closed-negatives all STRUCTURAL targets (structural-provenance, outside the boundary-theorem axis). LEDGER FTD-0186 status updated from `[DEFINITION] + [OPEN]` to `[DEFINITION] + [STAGE 1 CLOSED POSITIVE per v2]`. **Honest framing per v2 §1:** v2 is a scope clarification, not a "win"; v2's falsifier is partly engineered to produce Outcome A; the discipline-bearing test is whether Stage 2 produces a provable proposition with stated axioms, independently of v2's outcome. **No FTD claim promoted or demoted.** Both v1 and v2 rows are preserved -- v1 as historical provenance, v2 as the current locked falsifier.
 
 ---
 
