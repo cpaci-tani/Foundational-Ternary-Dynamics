@@ -340,7 +340,7 @@ engine/
     scale_engine.h            # [v2.12] Abstract base class for all scale engines (111L)
     ontic.h                   # Ontic derivation chain (9+ layers), D=3 + varpi -> all constants (1221L)
     constants.h               # Re-exports ontic + engine-specific constants (279L)
-    constants_gpu.cuh         # GPU-side constants mirror (device __constant__ memory)
+    constants_gpu.cuh         # GPU-side `inline constexpr` constants mirror (compiles under both g++ and nvcc; no `__constant__` memory)
     voxel.h                   # Vec3, ForceDiag, Voxel struct (203L)
     lattice.h                 # Lattice class -- 3D cubic grid with periodic boundaries (59L)
     render_bridge.h           # RenderBridge -- main engine API, tick(), diagnostics() (239L)
