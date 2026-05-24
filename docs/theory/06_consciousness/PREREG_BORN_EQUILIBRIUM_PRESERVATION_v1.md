@@ -2,7 +2,9 @@
 
 **Tag:** `[PRE-REGISTRATION]`. Locks methodology before measurement.
 **Date:** 2026-05-23.
-**LEDGER row:** to be assigned (proposed FTD-0199; T1c sub-investigation under FTD-0187).
+**LEDGER row:** **FTD-0199** (T1c sub-investigation under FTD-0187).
+
+> **Renumbering annotation (outside frozen scope).** This pre-registration was hash-locked on 2026-05-23 referring to "FTD-0198 (this session)" as its predecessor v1. That predecessor was later renumbered to **FTD-0200** for an ID collision resolution with the ARC-B1 alpha-readout pre-reg already at FTD-0198. Body text in §§1, 2.1, and 8 has been updated from "FTD-0198" → "FTD-0200" to reflect the canonical IDs. The hash-locked tag `preregister-born-equilibrium-preservation-v1` and the runner SHA256 in §6 are untouched. No element of §§2–4 (the frozen construction, profiles, predictions, outcome map) is altered by this annotation.
 **Runner:** `scripts/exploration/explore_born_equilibrium_preservation.py`, SHA256 filled at hash-lock time.
 **Hash-lock status:** **PENDING**. The script must NOT be executed before the git tag `preregister-born-equilibrium-preservation-v1` exists over a commit containing this file and the runner.
 
@@ -16,7 +18,7 @@ This is a sub-investigation of LEDGER FTD-0187 / T1c. It does NOT close T1c. It 
 
 ## §1 — Purpose and motivation
 
-FTD-0198 (this session) ran a v1 threshold-crossing test that asked "does the substrate generate Born scaling from a non-Born initial ensemble?" — and got Rice 1944 upcrossing statistics, not Born. That test asked the wrong question per the (a)+(c) framing.
+FTD-0200 (this session) ran a v1 threshold-crossing test that asked "does the substrate generate Born scaling from a non-Born initial ensemble?" — and got Rice 1944 upcrossing statistics, not Born. That test asked the wrong question per the (a)+(c) framing.
 
 The right question, per DGZ 1992: **is `|ψ|²` an equilibrium of the substrate dynamics?** That is — *if* an ensemble of substrate configurations is initialized with spatial variance profile `⟨|J(v)|²⟩ ∝ |ψ(v)|²`, do the manifestation events under deterministic evolution preserve that profile, so that the long-run manifestation rate at site `v` tracks `|ψ(v)|²`?
 
@@ -28,7 +30,7 @@ Either outcome is informative for FTD-0187.
 
 ### §2.1 Substrate
 
-Same as FTD-0198 v1:
+Same as FTD-0200 v1:
 - 3D cubic lattice `L = 24`, periodic BCs, 6-neighbour face Laplacian.
 - Wave equation `J(t+1) = (1−γ) · (2J(t) − J(t−1) + c²·Δ_6 J(t))`, `c² = 1/3`, `γ = 0.001`.
 - Manifestation rule: `s = sign(J_x+J_y+J_z)` if `s=0 ∧ |J| > K_B = 0.5`; evaporation if `|s|=1 ∧ |J| < K_B_evap = 0.25`.
@@ -152,7 +154,7 @@ Locked when (1) this file is committed, (2) runner committed with real SHA256 in
 
 ## §8 — Cross-references
 
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0198 (v1 closed-negative), FTD-0199 (this test).
+- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (v1 closed-negative), FTD-0199 (this test).
 - [`EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md) — v1 result that motivated this v2.
 - [`PREREG_THRESHOLD_CROSSING_BORN_v1.md`](PREREG_THRESHOLD_CROSSING_BORN_v1.md) — v1 manifest; same machinery, different question.
 - [`FOUND_THE_EXISTENCE_FILTER.md`](FOUND_THE_EXISTENCE_FILTER.md) — EF-T5 / EF-C3 (the `|ψ|²` form question, separate workstream).
