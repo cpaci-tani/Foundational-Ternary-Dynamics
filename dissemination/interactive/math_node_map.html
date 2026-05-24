@@ -5,17 +5,12 @@
 <title>FTD Math Node Map — 3D multi-layer connectivity</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.73.5/dist/3d-force-graph.min.js"></script>
-<!-- d3-force-3d provides forceX/Y/Z + 3D-aware forceCollide / forceManyBody.
-     We expose it as window.d3 because vanilla d3 (the 2D version) doesn't have
-     forceZ; 3d-force-graph bundles d3-force-3d internally but doesn't expose it. -->
-<script src="https://cdn.jsdelivr.net/npm/d3-force-3d@3.0.5/dist/d3-force-3d.min.js"></script>
-<script>
-  // d3-force-3d exposes a global called `d3` (UMD).  If the build script
-  // didn't put it there, fall back to its individual exports.
-  if (typeof d3 === "undefined" && typeof window.d3Force3d !== "undefined") {
-    window.d3 = window.d3Force3d;
-  }
-</script>
+<!-- 3d-force-graph bundles its own d3-force-3d.  We deliberately do NOT load
+     a separate d3-force-3d copy: passing force objects from a different copy
+     into the bundled simulation triggered 'tick'/'octree' errors during
+     graphData re-init.  Sector clustering is achieved by initial-position
+     seeding (in buildIndex) instead of per-tick custom forces. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231565c0'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-size='28' font-family='sans-serif' fill='white' font-weight='bold'%3E◆%3C/text%3E%3C/svg%3E">
 <style>
   :root { color-scheme: light dark; --bg: #0a0a0a; --fg: #ddd; --sidebar-bg: #141414; --border: #2a2a2a;
           --muted: #888; --panel-bg: rgba(20,20,20,0.95); --accent: #4fc3f7; }
@@ -115,9 +110,9 @@
     <span class="value" id="linkValue">120</span>
   </div>
   <div class="range-row">
-    <span class="label">sector pull</span>
-    <input type="range" id="sectorSlider" min="0" max="300" value="80" step="10">
-    <span class="value" id="sectorValue">80</span>
+    <span class="label">resnap to sectors</span>
+    <input type="range" id="sectorSlider" min="0" max="200" value="0" step="10">
+    <span class="value" id="sectorValue">0</span>
   </div>
   <div class="controls-mini">
     <button id="resetView">Reset camera</button>
@@ -24269,16 +24264,21 @@ function isVisible(n) {
 function buildIndex() {
   nodeIndex = {};
   allNodes = [];
+  // Sector centroids must exist before we place nodes near them.
+  computeSectorCentroids();
+  const JITTER = 200;
   for (const layer of ["theorems", "ledger", "objects", "identities"]) {
     for (const n of DATA.layers[layer]) {
       n._layer = layer;
-      // Seed initial positions in a large 3D box; the sector force then
-      // pulls them toward sector centroids and repulsion spreads them.
-      // Without an initial spread, all nodes start near origin and the
-      // weak sector force never moves them far.
-      n.x = (Math.random() - 0.5) * 1500;
-      n.y = (Math.random() - 0.5) * 1500;
-      n.z = (Math.random() - 0.5) * 1500;
+      // Seed initial position NEAR the node's sector centroid (with jitter).
+      // Without per-tick forceX/Y/Z this is how sector clustering arises:
+      // nodes start near their sector, charge + link refine the layout,
+      // and they don't drift far from their home sector because the
+      // pairwise repulsion is symmetric.
+      const c = (n.sector && sectorCentroids[n.sector]) ? sectorCentroids[n.sector] : {x: 0, y: 0, z: 0};
+      n.x = c.x + (Math.random() - 0.5) * JITTER;
+      n.y = c.y + (Math.random() - 0.5) * JITTER;
+      n.z = c.z + (Math.random() - 0.5) * JITTER;
       nodeIndex[n.id] = n;
       allNodes.push(n);
     }
@@ -24368,31 +24368,18 @@ function initGraph() {
     .warmupTicks(20)
     .graphData(buildGraphData());
 
-  // Modify the bundled forces (charge/link) -- these belong to the
-  // simulation already, so we just retune them.  We do NOT replace
-  // forceCollide / forceManyBody / forceLink with our own constructed
-  // versions, because that mixes the standalone d3-force-3d's force
-  // objects with the bundled simulation's force-internal state, which
-  // breaks tick() / octree() during graphData replacement.
+  // Modify the bundled forces (charge/link).  We do NOT pass force
+  // objects from a separate d3-force-3d copy -- that triggered tick()
+  // and octree() crashes during graphData re-init.  Sector clustering
+  // is achieved by initial position seeding (see buildIndex), not by
+  // per-tick custom forces.  The bundled center force keeps the cloud
+  // from drifting off-axis.
   Graph.d3Force("charge")
     .strength(d => -repulsion * (d._layer === "theorems" ? 2 : 1))
     .distanceMax(1500);
   Graph.d3Force("link")
     .distance(d => linkLen + (d.source._layer === "theorems" ? 40 : 0))
     .strength(0.4);
-  // Replace the default centering force with our sector forces.
-  // forceX/Y/Z are pure-accessor forces -- they don't hold octree state
-  // across simulation re-inits, so they survive graphData() changes.
-  Graph.d3Force("center", null);
-  Graph.d3Force("sectorX", d3.forceX(d =>
-    (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].x : 0
-  ).strength(sectorPull / 1000));
-  Graph.d3Force("sectorY", d3.forceY(d =>
-    (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].y : 0
-  ).strength(sectorPull / 1000));
-  Graph.d3Force("sectorZ", d3.forceZ(d =>
-    (d.sector && sectorCentroids[d.sector]) ? sectorCentroids[d.sector].z : 0
-  ).strength(sectorPull / 1000));
 
   // Kick the simulation so the new forces take effect.
   Graph.d3ReheatSimulation();
@@ -24550,12 +24537,21 @@ function bindControls() {
     }
   });
   document.getElementById("sectorSlider").addEventListener("input", e => {
+    // Sector clustering is set at init via seed positions in buildIndex.
+    // Live re-clustering requires rebuilding the graph from scratch.
     sectorPull = +e.target.value;
     document.getElementById("sectorValue").textContent = sectorPull;
-    if (Graph) {
-      Graph.d3Force("sectorX").strength(sectorPull / 1000);
-      Graph.d3Force("sectorY").strength(sectorPull / 1000);
-      Graph.d3Force("sectorZ").strength(sectorPull / 1000);
+    // Re-seed positions toward sector centroids with the new pull and reheat.
+    if (Graph && allNodes.length) {
+      const blend = sectorPull / 200;   // 0..1
+      const JITTER = 200;
+      for (const n of allNodes) {
+        const c = (n.sector && sectorCentroids[n.sector]) ? sectorCentroids[n.sector] : {x:0,y:0,z:0};
+        // Blend current position toward the sector centroid by `blend`.
+        n.x = (n.x ?? 0) * (1 - blend) + (c.x + (Math.random() - 0.5) * JITTER) * blend;
+        n.y = (n.y ?? 0) * (1 - blend) + (c.y + (Math.random() - 0.5) * JITTER) * blend;
+        n.z = (n.z ?? 0) * (1 - blend) + (c.z + (Math.random() - 0.5) * JITTER) * blend;
+      }
       Graph.d3ReheatSimulation();
     }
   });
