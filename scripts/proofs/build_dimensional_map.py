@@ -172,7 +172,9 @@ def fmt_comparison(entry: dict) -> str:
 
 
 def fmt_ledger(ids: list[str]) -> str:
-    return ", ".join(f"[{i}](../07_assessment/LEDGER.md#{i.lower()})" for i in (ids or []))
+    if not ids:
+        return "—"
+    return ", ".join(f"[{i}](../07_assessment/LEDGER.md#{i.lower()})" for i in ids)
 
 
 def fmt_sources(paths: list[str]) -> str:

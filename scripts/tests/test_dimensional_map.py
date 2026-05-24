@@ -149,7 +149,7 @@ EXPECTED_CONSTANT_AGREEMENTS = {
     "g_star_identity":         [("ftd_value", "G_STAR")],
     "master_quadratic":        [("x_plus", "X_PLUS"), ("x_minus", "X_MINUS")],
     "alpha_inverse":           [("ftd_value", "ALPHA_INV")],
-    "n_color":                 [("ftd_value", "X_MINUS")],
+    "n_color":                 [("ftd_value", "N_c")],
     "mu_over_e_mass_ratio":    [("ftd_value", "MU_RATIO")],
     "tau_over_e_mass_ratio":   [("ftd_value", "TAU_RATIO")],
     "mass_unit_anchor":        [],  # constants_py_ref=K_B but value is CODATA m_e, not the lattice K_B=0.511
