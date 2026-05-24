@@ -444,4 +444,4 @@ Physics invariants preserved across all 17 commits:
 
 ---
 
-*Project version: FTD v5.33 | Engine version: v2.15 | Atlas refreshed 2026-04-27*
+*Project version: FTD/FQCR v1.5 | Engine version: v2.15 | Atlas refreshed 2026-05-22*
