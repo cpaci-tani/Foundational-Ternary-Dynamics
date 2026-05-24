@@ -4,8 +4,28 @@ proof_structural_dynamical_partition.py
 Boundary theorem (FTD-0186), Stage 1 -- machine verification of the
 structural / dynamical classification.
 
-Pre-registration: docs/theory/10_eft_program/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md
-  hash-locked: commit 75ebe56, tag preregister-structural-dynamical-discriminator-v1.
+Pre-registration v1 (historical): docs/theory/10_eft_program/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md
+  hash-locked: commit 75ebe56, tag preregister-structural-dynamical-discriminator-v1,
+  SHA256 a6562dca56154401e7a2cfb8785266cef0d5b4ee70d3755797762ddffa3e538d.
+  Falsifier S4-A1 fired on the v1 wording -- type-ii closed-negatives target
+  STRUCTURAL quantities, which v1's broad A1 quantification rejected.
+
+Pre-registration v2 (current, 2026-05-23 Path II Session A2):
+  docs/theory/10_eft_program/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md
+  hash-locked: commit d550bca, tag preregister-structural-dynamical-discriminator-v2,
+  SHA256 a233fa28be54c63c6a7ebae26c6b54e129c9f2120e535f92d85999ac84d9068a.
+  A1 sharpened to "failed attempt to derive a non-universal DYNAMICAL VALUE";
+  A3 added (type-ii recorded as structural-provenance closed-negatives, separate
+  honest category); S2 (the discriminator definition) carried over verbatim
+  from v1. v2 re-run returns Outcome A -- clean partition (A1 v2 PASS,
+  A2 PASS, A3 PASS); LEDGER FTD-0186 status [DEFINITION] + [STAGE 1 CLOSED
+  POSITIVE per v2].
+
+This script content has been the same since v1 -- its EXPECT table already
+encoded the v2-style semantics (cneg_ii -> STRUCTURAL). Under v1 the script
+was reading the post-fired finding correctly but documenting it as a v2 need;
+under v2 the same partition is the pre-registered falsifier test.
+
 Classification: docs/theory/02_foundations/FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md
 
 The discriminator (locked pre-reg S2) assigns each load-bearing quantity-claim
@@ -15,13 +35,16 @@ one of three classes:
     CALIBRATION_CONDITIONAL -- dimensional, depends on the calibration declarations
 
 This script encodes the S3 classification of the decisive load-bearing set and
-verifies the partition the S4 falsifier (v2-scoped, see FOUND doc S5) turns on:
-    spine THEOREM/DERIVED claims               -> STRUCTURAL
+verifies the partition the v2 S4 falsifier turns on:
+    spine THEOREM/DERIVED claims               -> STRUCTURAL          (A2)
     type-i closed-negatives  (failed derivation
-        of a non-universal dynamical VALUE)    -> DYNAMICAL or CALIBRATION_CONDITIONAL
+        of a non-universal DYNAMICAL VALUE)    -> DYNAMICAL or CALIB  (A1 v2)
     type-ii closed-negatives (failed derivation
-        of a structural object's provenance)   -> STRUCTURAL targets; out of scope,
-                                                  reported as the scope boundary.
+        of a structural object's provenance)   -> STRUCTURAL targets, recorded
+                                                  as structural-provenance
+                                                  closed-negatives, outside
+                                                  the boundary-theorem axis
+                                                  (A3 v2).
 """
 
 import sys
@@ -119,10 +142,17 @@ def main():
     print("  dynamical value. They are outside the boundary theorem's axis and")
     print("  define its scope (FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md S4-S5).")
     print()
-    print("  Outcome (v2-scoped falsifier): the discriminator partitions the")
-    print("  decisive set cleanly. The pre-registration S4-A1 wording requires a")
-    print("  v2 to scope 'closed-negative' to 'dynamical-value-derivation")
-    print("  closed-negative' -- see FOUND doc S5.")
+    print("  Outcome (v2 falsifier, hash-locked at commit d550bca,")
+    print("  tag preregister-structural-dynamical-discriminator-v2):")
+    print("    A1 v2  failed dynamical-value derivation -> DYNAMICAL/CALIB : PASS")
+    print("    A2     spine THEOREM/DERIVED              -> STRUCTURAL      : PASS")
+    print("    A3     type-ii (structural-provenance)    -> STRUCTURAL      : PASS")
+    print("  Stage 1 status: CLOSED POSITIVE per v2. LEDGER FTD-0186 updated")
+    print("  from [DEFINITION] + [OPEN] to [DEFINITION] + [STAGE 1 CLOSED")
+    print("  POSITIVE per v2]. No FTD claim promoted or demoted. Stage 2")
+    print("  (Structural Decoupling Theorem) remains an unsettled provable")
+    print("  proposition; v2 closing positive is its prerequisite, not its")
+    print("  proof. See FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md S5.2.")
     print("=" * 74)
     return 0 if (spine_clean and type_i_clean) else 1
 
