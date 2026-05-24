@@ -10,9 +10,22 @@
 \usepackage{enumitem}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,decorations.pathreplacing}
 
 \geometry{margin=1in}
-\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue,
+  pdftitle={The Kronecker character chi_{-4} as the joint source of the lemniscatic identity algebra: G* = Gamma(1/4)/Gamma(3/4) and G_G = 1/AGM(1, sqrt 2)},
+  pdfsubject={Number theory, modular forms, complex multiplication, periods},
+  pdfkeywords={lemniscatic CM point, Gamma function at quarter arguments, Gauss's constant, arithmetic-geometric mean, modular forms, body-centred-cubic Watson integral, Kronecker character, Dedekind eta function, master quadratic polynomial, cubic AGM, equianharmonic period},
+  bookmarksnumbered=true,
+  bookmarksopen=true,
+  pdfstartview={FitH}
+}
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -50,7 +63,7 @@ the lemniscatic identity algebra:\\
 $\GG = 1/\AGM(1,\sqrt{2})$}
 
 \author{}
-\date{}
+\date{2026-05-23}
 
 \begin{document}
 \maketitle
@@ -62,16 +75,21 @@ the Euler reflection at $z = 1/4$},
 $\Gs := \Gamma(1/4)/\Gamma(3/4) \approx 2.95867\ldots$, and \emph{Gauss's
 constant},
 $\GG := 1/\AGM(1, \sqrt 2) \approx 0.83463\ldots$. They are linearly related
-by $\Gs = 2\sqrt{\pi}\,\GG$, and either may be chosen as the principal
-variable. We show that the choice is not arbitrary: every identity in this
-neighbourhood has a \emph{natural form} with integer or rational coefficients
-that picks out exactly one of $\{\Gs, \GG\}$. Specifically, identities
-arising from the \emph{algebraic} structure (Euler reflection, Beta integrals
-at quarter arguments, the master quadratic with integer coefficient
-$16 = |\Aut(E)|^2$ for the lemniscatic curve $E: y^2 = x^3 - x$) are
-natural in $\Gs$; identities arising from the \emph{analytic} structure
-(modular forms at $\tau = i$, the body-centred-cubic Watson integral,
-AGM iteration, the Dedekind eta function) are natural in $\GG$.
+by $\Gs = 2\sqrt{\pi}\,\GG$ (see Figure~\ref{fig:bridge}), and either
+may be chosen as the principal variable. We show that the choice is not
+arbitrary: most identities in this neighbourhood have a preferred
+\emph{natural form} with integer or rational coefficients in one of
+$\{\Gs, \GG\}$, while a small number of
+boundary-period identities (notably the real period
+$\omega_E = \Gs\sqrt\pi = 2\pi\,\GG$ and the Beta integral
+$B(1/4,1/4) = \sqrt{2\pi}\,\Gs = 2\sqrt 2\,\pi\,\GG$) are clean in both.
+Specifically, identities arising from the \emph{algebraic} structure
+(Euler reflection, Beta integrals at quarter arguments, the master
+quadratic with integer coefficient $16 = |\Aut(E)|^2$ for the lemniscatic
+curve $E: y^2 = x^3 - x$) are natural in $\Gs$; identities arising from
+the \emph{analytic} structure (modular forms at $\tau = i$, the
+body-centred-cubic Watson integral, AGM iteration, the Dedekind eta
+function) are natural in $\GG$.
 
 We present this dichotomy as the organising principle of the paper. We
 catalogue over fifty identities in their natural form, including the
@@ -85,7 +103,7 @@ $\Gamma(1/4)^4 = 2\pi^2\,\Gss$, and the master quadratic
 $x^2 - 16\,\Gss\,x + 16\,\Gsss = 0$ whose integer coefficient $16$ is
 the squared automorphism count of the lemniscatic curve.
 
-Two structural results emerge: \textbf{(I)} the value algebra of
+Three structural results emerge: \textbf{(I)} the value algebra of
 quasi-modular forms at $\tau = i$ is the polynomial ring
 $\Q[\pi^{-1}, \GG^{4}]$ in two transcendentally independent generators
 under Chudnovsky's theorem, with $\pi^{-1}$ recording the quasi-modular
@@ -94,14 +112,31 @@ $m \mid k$ vanishing principle, stating that at a CM point with
 $|\Aut(E)| = m$ a modular form $f$ of weight $k$ satisfies
 $f(\tau_{\mathrm{CM}}) = 0$ unless $m \mid k$, holds in the only two
 non-trivial cases over $\Q$ (lemniscatic with $m = 4$, equianharmonic
-with $m = 6$). Every identity is traced to its earliest source; the
-systematic dual-constant presentation appears to be new.
+with $m = 6$); \textbf{(III)} the equianharmonic Gauss-analog $G_\rho$
+admits the cubic-AGM expression $G_\rho = (2/\sqrt 3)/M_3(1, 2^{-1/3})$
+at the cubic self-dual point $x^{3} = 1/2$, completing the structural
+parallel with the lemniscatic $\GG = 1/\AGM(1, \sqrt 2)$ at the
+self-complementary modulus $k = 1/\sqrt 2$. Every identity is traced
+to its earliest source; the systematic dual-constant presentation
+appears to be new.
 
-A companion note \cite{paper-gstar-B} draws the consequences of the
-$\chi_{-4}$-unification developed here for the Foundational Ternary
-Dynamics framework; the present paper does not depend on or address
-that framework.
+A separate note in preparation by the same author draws consequences
+of the $\chi_{-4}$-unification developed here for a discrete-substrate
+physics framework; the present paper is independent of and does not
+address that work.
 \end{abstract}
+
+\medskip
+\noindent\textbf{Mathematics Subject Classification (2020).}
+Primary 11G15;
+Secondary 11F11, 11F67, 33B15.
+
+\medskip
+\noindent\textbf{Key words and phrases.}
+Lemniscatic CM point, Gamma function at quarter arguments, Gauss's constant,
+arithmetic--geometric mean, modular forms at $\tau = i$, body-centred-cubic
+lattice Green's function, Kronecker character $\chi_{-4}$, Dedekind eta
+function, master quadratic polynomial.
 
 \tableofcontents
 
@@ -161,9 +196,12 @@ quadratic with integer coefficient $16 = |\Aut(E)|^2$, the family $R_n =
 \Gamma(1/n)/\Gamma((n-1)/n)$---have rational coefficients in $\Gs$. Identities
 arising from the \emph{analytic} structure---modular forms at $\tau = i$, the
 body-centred-cubic lattice Green's function, AGM iteration, the Dedekind eta
-function---have rational coefficients in $\GG$. Each identity has a natural
-form in exactly one of the two normalisations; the other introduces transcendental
-factors of $\pi$.
+function---have rational coefficients in $\GG$. Most identities have a
+preferred natural form in one of the two normalisations, with the other
+introducing transcendental factors of $\pi$; a small number of
+boundary-period identities (notably $\omega_E$ and $B(1/4,1/4)$, both
+with integer-coefficient cleanness in $\Gs$ and $\GG$) are exceptions
+where both forms are natural.
 \end{observation}
 
 This dichotomy is structurally robust: $E_4(i) = 3\,{\GG}^4$ is integer-coefficient
@@ -206,12 +244,14 @@ result~(II) of the abstract. \S\ref{sec:character} presents the
 unifying $\chi_{-4}$ structure underlying both dichotomies, including
 the four-level projection theorem, three negative tests on the
 polynomial-assembly question, the asymptotic-regime analysis, the
-symmetric-algebra conjecture, and the ontological zero-point
-identification $\chi_{-4}(n) = \mathrm{Im}(i^{n})$.
-\S\ref{sec:open} states two open problems (KZ-strict status, cubic-AGM
-for $G_\rho$); \S\ref{sec:conjectures} states two algebraic-independence
-conjectures supported by high-precision PSLQ evidence
-($W^{(4)}_{\mathrm{BCC}}$, Catalan's constant).
+symmetric-algebra conjecture, and the minimal generating structure
+$\chi_{-4}(n) = \mathrm{Im}(i^{n})$.
+\S\ref{sec:open} states one open problem (KZ-strict status of $\Gs$ and
+$\GG$, a frontier KZ-programme question) and resolves a second item
+from earlier drafts (cubic-AGM expression for $G_\rho$,
+Theorem~\ref{thm:cubic-AGM-Grho}). \S\ref{sec:conjectures} states two
+algebraic-independence conjectures supported by high-precision PSLQ
+evidence ($W^{(4)}_{\mathrm{BCC}}$, Catalan's constant).
 
 \section{The bridge $\Gs = 2\sqrt{\pi}\,\GG$}\label{sec:bridge}
 
@@ -238,6 +278,39 @@ $\Gamma(1/4)^2 = \pi\sqrt 2\,\Gs$, so
 \GG \;=\; \frac{\sqrt 2 \cdot \pi\sqrt 2\,\Gs}{4\pi^{3/2}} \;=\; \frac{\Gs}{2\sqrt\pi}. \qedhere
 \]
 \end{proof}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  source/.style={rectangle, draw=black!50, rounded corners=2pt, minimum width=4cm, minimum height=0.9cm, align=center, font=\small},
+  norm/.style={rectangle, draw=black, fill=black!5, rounded corners=2pt, minimum width=2.4cm, minimum height=0.9cm, align=center},
+  bridge/.style={very thick, <->, >={Stealth[length=3mm]}},
+  feeds/.style={->, >={Stealth[length=2.5mm]}, thick}
+]
+  % Origin sources (top)
+  \node[source] (gamma) at (-3.2, 2) {$\Gamma(1/4),\; \Gamma(3/4)$ \\ \footnotesize (reflection at $z=1/4$)};
+  \node[source] (agm)   at ( 3.2, 2) {$\mathrm{AGM}(1, \sqrt 2)$ \\ \footnotesize (Gauss 1799)};
+  % Two normalisations (middle)
+  \node[norm] (gs) at (-3.2, 0) {$\Gs = \dfrac{\Gamma(1/4)}{\Gamma(3/4)}$};
+  \node[norm] (gg) at ( 3.2, 0) {$\GG = \dfrac{1}{\mathrm{AGM}(1,\sqrt 2)}$};
+  % Arrows: sources -> normalisations
+  \draw[feeds] (gamma) -- (gs);
+  \draw[feeds] (agm)   -- (gg);
+  % Bridge between normalisations
+  \draw[bridge] (gs) -- node[above, font=\small]{$\Gs = 2\sqrt{\pi}\,\GG$} node[below, font=\footnotesize]{Theorem~\ref{thm:bridge}} (gg);
+  % Side annotations
+  \node[font=\footnotesize, text=black!60] at (-3.2, 1.1) {algebraic side};
+  \node[font=\footnotesize, text=black!60] at ( 3.2, 1.1) {analytic side};
+\end{tikzpicture}
+\caption{Two natural sources, one transcendental, two normalisations. The
+lemniscatic CM point generates a single value reachable from either the
+\emph{algebraic} Gamma--reflection route (giving $\Gs$) or the
+\emph{analytic} AGM route (giving $\GG$); the two normalisations are
+related by the bridge $\Gs = 2\sqrt{\pi}\,\GG$. The dichotomy thesis of
+this paper is that identities arising on the left side are clean in $\Gs$,
+identities on the right side are clean in $\GG$, with a small number of
+borderline-period identities clean in both.}\label{fig:bridge}
+\end{figure}
 
 \begin{corollary}[Conversion table]\label{cor:conversions}
 The following identities convert between $\Gs$, $\GG$, and the lemniscate
@@ -327,7 +400,13 @@ Definition (i) is the algebraic-reflection form. Definition (ii) gives
 the bridge to $\GG$: rewriting (ii),
 $\Gs = \sqrt{2\pi} \cdot \sqrt 2 \cdot \GG = 2\sqrt\pi\,\GG$, which
 recovers \eqref{eq:bridge}. Definition (iii) is the period-integral form
-relevant for Kontsevich--Zagier (\S\ref{sec:KZ}).
+relevant for Kontsevich--Zagier (\S\ref{sec:KZ}). The AGM definition (ii)
+also admits a Borwein-like self-replicating algorithmic generalisation
+that computes $\Gs$ (via $\Gamma(1/4)$) to arbitrary precision; see
+Guillera \cite{guillera-selfreplication} for the self-replication
+framework that extends the Borwein algorithms for $\pi$
+\cite{borweinAGM} to $\Gamma$-values at rational arguments including
+$\Gamma(1/4)$ and $\Gamma(1/3)$.
 \end{remark}
 
 \section{The lemniscatic elliptic curve}\label{sec:lemniscatic}
@@ -343,16 +422,17 @@ $(x,y) \mapsto (-x, iy)$.
 \end{lemma}
 
 \begin{theorem}[Real period]\label{thm:period}
-The real period of $E$ admits the three equivalent expressions:
+The real period of $E$ admits the four equivalent expressions:
 \begin{align}
 \omega_E &= 2\int_{-1}^{0} \frac{dx}{\sqrt{x(x-1)(x+1)}} \\
 &= \frac{\Gamma(1/4)^2}{\sqrt{2\pi}} \quad \text{(Gamma form)} \\
 &= \Gs\sqrt\pi \quad \text{(reflection form, in $\Gs$)} \\
-&= \pi\sqrt\pi\cdot 2\GG \quad \text{(AGM form, in $\GG$; introduces $\pi^{3/2}$)}.
+&= 2\pi\,\GG \quad \text{(AGM form, in $\GG$)}.
 \end{align}
-The first three forms have rational/algebraic coefficients; the fourth
-exhibits the $\pi^{3/2}$ factor that characterises this quantity as
-\emph{algebraic by origin} but \emph{not} cleanly expressible in $\GG$.
+All four forms have rational or simple algebraic coefficients. The
+$\Gs$-form and $\GG$-form are both clean: $\omega_E$ is a borderline
+identity natural in either normalisation
+(see Observation~\ref{obs:period-borderline}).
 \end{theorem}
 
 \begin{proof}
@@ -363,15 +443,15 @@ The $\GG$-form follows from the bridge identity $\Gs = 2\sqrt\pi\,\GG$:
 $\omega_E = \Gs\sqrt\pi = (2\sqrt\pi\,\GG)\,\sqrt\pi = 2\pi\,\GG$.
 \end{proof}
 
-\begin{observation}
+\begin{observation}\label{obs:period-borderline}
 Theorem~\ref{thm:period} reveals that $\omega_E = 2\pi\GG$ has \emph{clean
 integer coefficient} in $\GG$ (the period is literally $2\pi$ times Gauss's
 constant) but \emph{also} has clean form $\Gs\sqrt\pi$. This is one of the
 borderline identities where both conventions are reasonable. The
 lemniscatic period sits exactly at the algebraic-analytic boundary:
 it is the period of an algebraic curve (algebraic origin, hence $\Gs$
-representation $\omega_E = \Gs\sqrt\pi$ is natural) but also the
-quadratic-mean of two AGM iterations (analytic origin, hence
+representation $\omega_E = \Gs\sqrt\pi$ is natural) but also $2\pi$ times
+the reciprocal of $\AGM(1, \sqrt 2)$ (analytic origin, hence
 $\omega_E = 2\pi\GG$). Both forms are integer-coefficient.
 \end{observation}
 
@@ -423,8 +503,8 @@ the master quadratic is intrinsically a $\Gs$ object.
 The roots take the numerical values $x_+ \approx 137.036$ and
 $x_- \approx 3.024$. Their identification with physical observables
 and the resulting math--physics bridge lie outside the mathematical
-scope of the present paper; the companion note \cite{paper-gstar-B}
-treats those questions. The transcendence and algebraic-independence
+scope of the present paper and are treated in a separate note in
+preparation. The transcendence and algebraic-independence
 implications of the roots are addressed in \S\ref{sec:transcendence}.
 \end{remark}
 
@@ -480,7 +560,7 @@ $3$ & $1.9783642596\ldots$ & equianharmonic $E: y^2 = x^3 - 1$, $\mathrm{End}(E)
 $4$ & $2.9586751192\ldots\;\;(\Gs)$ & lemniscatic $E: y^2 = x^3 - x$, $\mathrm{End}(E) = \Z[i]$, $|\Aut| = 4$ \\
 $5$ & $3.9432456137\ldots$ & no CM curve with this argument structure \\
 $6$ & $4.9312366764\ldots$ & equianharmonic via twist $y^2 = x^3 + 1$ \\
-$8$ & $6.9261841305\ldots$ & no CM curve \\
+$8$ & $6.9140781897\ldots$ & no CM curve \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -524,7 +604,7 @@ n & R_n & x_+(R_n) & x_-(R_n) \\
 lemniscatic case; the corresponding equianharmonic master quadratic
 $y^2 - 36 R_n^2 y + 36 R_n^3$ would have $|\Aut|^{2} = 36$ as its integer
 prefactor.) Their interpretation as physical observables is addressed in
-the companion note \cite{paper-gstar-B}.
+a separate note in preparation.
 \end{observation}
 
 \begin{proposition}[Family-wide master-quadratic root asymptotic, with full expansion]\label{prop:Rn-asymptotic}
@@ -581,7 +661,58 @@ $\infty$ & ($n - 2\gamma$) & ($\to R_n + 1/16$) & $1/16 = 0.06250$ \\
 \end{center}
 The constant excess $x_-(R_n) - R_n \to 1/16$ as $n \to \infty$ is a
 structural feature of the family $x^2 - 16 R^2 x + 16 R^3 = 0$ and is
-independent of any physical interpretation of the roots.
+independent of any physical interpretation of the roots
+(Figure~\ref{fig:Rn-asymptote}).
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  xscale=0.55,
+  yscale=1.0,
+  axis/.style={->, >={Stealth[length=2.5mm]}, thick},
+  point/.style={circle, fill=black, inner sep=1.5pt},
+  highlight/.style={circle, draw=black, fill=black!10, inner sep=2pt}
+]
+  % Axes: x in [2, 14], y in [0, 5] (scaled units of 0.001 each, representing 0.0625 + y/1000)
+  \draw[axis] (2, 0) -- (14.5, 0) node[right, font=\footnotesize] {$n$};
+  \draw[axis] (2, 0) -- (2, 5.5) node[above, font=\footnotesize] {$x_-(R_n) - R_n$};
+  % y-axis tick labels
+  \foreach \y/\label in {0/{$0.0625$}, 1/{$0.0635$}, 2/{$0.0645$}, 3/{$0.0655$}, 4/{$0.0665$}, 5/{$0.0675$}} {
+    \draw (1.85, \y) -- (2.15, \y);
+    \node[left, font=\footnotesize, xshift=-3pt] at (1.85, \y) {\label};
+  }
+  % x-axis tick labels
+  \foreach \x in {3,4,5,6,8,10,12,14} {
+    \draw (\x, -0.07) -- (\x, 0.07);
+    \node[below, font=\footnotesize] at (\x, -0.1) {\x};
+  }
+  % Asymptote line at y = 0 (actual value 1/16 = 0.0625)
+  \draw[dashed, black!60, thick] (2, 0) -- (14, 0);
+  \node[font=\footnotesize, text=black!60, right] at (14, 0) {$\,= \tfrac{1}{16}$};
+  % Data points (n, scaled_excess)
+  \node[point] at (3,  4.30) {};
+  \node[point] at (4,  2.78) {};
+  \node[point] at (5,  2.06) {};
+  \node[point] at (6,  1.63) {};
+  \node[point] at (8,  1.16) {};
+  \node[point] at (12, 0.73) {};
+  % Highlight n=4 (= G*)
+  \node[highlight, label={[font=\footnotesize, label distance=2pt]right:$(n=4: R_4 = \Gs)$}] at (4, 2.78) {};
+  % Smooth qualitative curve connecting the points (monotone decreasing toward asymptote)
+  \draw[black!50, thin] (3, 4.30) .. controls (3.7, 3.3) and (4.5, 2.4) .. (5, 2.06)
+                                  .. controls (5.5, 1.85) and (5.7, 1.7) .. (6, 1.63)
+                                  .. controls (7, 1.3) and (7.5, 1.2) .. (8, 1.16)
+                                  .. controls (9, 1.0) and (11, 0.78) .. (12, 0.73);
+\end{tikzpicture}
+\caption{Numerical convergence $x_-(R_n) - R_n \to 1/16$ from above for
+$n \in \{3, 4, 5, 6, 8, 12\}$. The asymptote at $1/16 \approx 0.0625$
+(dashed) is the structural feature of the family $x^2 - 16 R^2 x + 16 R^3 = 0$
+identified in Proposition~\ref{prop:Rn-asymptotic}: the leading correction
+$d_2 = 1/16$ is constant in $R$, with subsequent corrections of order
+$R^{-1}, R^{-2}, \ldots$ The lemniscatic point $R_4 = \Gs$ is highlighted;
+its value $x_-(\Gs) - \Gs \approx 0.06528$ is the $n = 4$ instance of the
+family-wide asymptotic.}\label{fig:Rn-asymptote}
+\end{figure}
 \end{remark}
 
 \section{The Watson lattice identity, in $\GG$}\label{sec:watson}
@@ -599,14 +730,18 @@ W^{(3)}_{\mathrm{BCC}} \;:=\; \frac{1}{\pi^3}\int_0^\pi\!\!\int_0^\pi\!\!\int_0^
 \end{theorem}
 
 \begin{observation}
-This is, to the present author's knowledge, the cleanest form of Watson's
-classical identity yet stated: \emph{the BCC lattice Green's function at
-origin equals twice the squared reciprocal of the Gauss AGM of $(1, \sqrt 2)$,
-with no occurrence of $\pi$ or $\Gamma$.} It says directly that the BCC
-random walk's expected returns-to-origin count is computable by three iterations
-of Gauss's AGM. The standard form is $\Gamma(1/4)^4/(4\pi^3)$
-\cite{watson1939, vanPeype}; the $\GG$-form \eqref{eq:watson} eliminates
-both transcendentals.
+The form $W^{(3)}_{\mathrm{BCC}} = 2/\AGM(1, \sqrt 2)^{2}$ states
+directly that the BCC random walk's expected returns-to-origin count
+is computable by Gauss's AGM applied to $(1, \sqrt 2)$, with no
+occurrence of $\pi$ or $\Gamma$. The standard form is
+$\Gamma(1/4)^{4}/(4\pi^{3})$ \cite{watson1939, vanPeype}; the
+intermediate form $W^{(3)}_{\mathrm{BCC}} = (4/\pi^{2})\,K(1/\sqrt 2)^{2}$
+is also classical (cf.\ \cite{borweinAGM} for the AGM substitution
+$K(1/\sqrt 2) = \pi\GG/\sqrt 2$). The author has not located the
+fully-reduced $\AGM$-form \eqref{eq:watson} in the surveyed
+literature (Watson 1939, van Peype 1938, Joyce 1971, Borwein--Borwein
+1987, Guttmann 2010), but does not claim it is novel; the substitution
+is one step from the references cited.
 \end{observation}
 
 \begin{proof}
@@ -790,26 +925,31 @@ For the lemniscatic elliptic curve $E: y^2 = x^3 - x$ over $\Q$:
 \[
 L(E, 1) \;=\; \frac{\varpi}{4} \;=\; \frac{\pi\,\GG}{4}.
 \]
+The closed-form expression of $L(E, 1)$ in terms of $\varpi$ for CM elliptic
+curves is classical; the algebraic-part formulation underlying the BSD-style
+computation below is treated, for related CM Hecke $L$-series, by
+Rodriguez Villegas and Zagier \cite{villegas-zagier}.
 \end{theorem}
 
-\begin{proof}[Proof sketch]
-$E$ has analytic rank $0$, $\Sha(E/\Q) = 0$, Tamagawa number $c_2 = 2$ at
-the bad prime $p = 2$ (Kodaira type III on the minimal model
-\cite[32.a3]{lmfdb}), and number of real connected components $c_\infty = 2$
-(the curve has two real ovals at $x \in [-1, 0]$ and $x \in [1, \infty)$).
-The torsion subgroup $E(\Q)_{\mathrm{tors}}$ is the rational 2-torsion of
-order $4$. The real period of the identity component is
-$\Omega^+ = 2\int_1^\infty dx/\sqrt{x^3 - x} = \Gs\sqrt{\pi} = 2\varpi = 2\pi\GG$;
-under the Cremona convention, the period that enters the BSD formula
-includes the contributions of all connected components, so we use
-$\Omega^+$ together with $c_\infty = 2$ but without separately
-multiplying by both. Equivalently, the full real period is
-$\Omega = c_\infty \cdot (\text{component volume}) = 2\varpi$.
-The Birch--Swinnerton-Dyer formula for the rank-$0$ CM case, known
-unconditionally by Rubin \cite{rubin1991} (building on Coates--Wiles
-\cite{coates-wiles}), gives
+\begin{proof}
+$E$ has analytic rank $0$ with $|\Sha(E/\Q)| = 1$, Tamagawa number
+$c_{2} = 2$ at the bad prime $p = 2$ (Kodaira type III on the minimal
+model \cite[curve 32.a3]{lmfdb}), torsion subgroup
+$E(\Q)_{\mathrm{tors}} = (\Z/2\Z)^{2}$ of order $4$, and two real
+connected components at $x \in [-1, 0]$ and $x \in [1, \infty)$. The
+real period over the full real locus is
 \[
-L(E, 1) \;=\; \frac{\Omega \cdot \prod_p c_p \cdot |\Sha|}{|E(\Q)_{\mathrm{tors}}|^2}
+\Omega \;=\; \int_{E(\R)} |dx/y|
+       \;=\; 2 \int_{1}^{\infty} \frac{dx}{\sqrt{x^{3} - x}}
+       \;=\; 2\varpi \;=\; 2\pi\GG,
+\]
+where the factor of $2$ counts the two real components. The
+Birch--Swinnerton-Dyer formula for rank $0$, proved unconditionally
+for CM elliptic curves over $\Q$ by Rubin \cite{rubin1991} (building on
+Coates--Wiles \cite{coates-wiles}), gives
+\[
+L(E, 1) \;=\; \frac{\Omega \cdot \prod_{p} c_{p} \cdot |\Sha|}
+              {|E(\Q)_{\mathrm{tors}}|^{2}}
        \;=\; \frac{2\varpi \cdot 2 \cdot 1}{16}
        \;=\; \frac{\varpi}{4}.
 \]
@@ -856,6 +996,10 @@ gives the stated identity.
 \section{Modular forms at $\tau = i$, in $\GG$}\label{sec:modforms}
 
 The cleanest expression of modular invariants at $\tau = i$ is in $\GG$.
+The catalogue below collects standard CM-modular-form values at $\tau = i$;
+several of the closed forms (notably $E_4(i) = 3\GG^4$ and $\Delta(i) = \GG^{12}/64$)
+appear in Yui--Zagier's tabulation of singular Weber-modular values
+\cite{yui-zagier}.
 
 \begin{theorem}[Catalogue of level-one modular invariants at $\tau = i$]\label{thm:catalogue}
 For the standard generators of $M_*(\mathrm{SL}_2(\Z))$:
@@ -887,8 +1031,25 @@ From $\eta(i)^{24} = {\GG}^{12}/64$ (Cor.~\ref{cor:eta-powers}) and the
 identity $\Delta = \eta^{24}$, we have $\Delta(i) = {\GG}^{12}/64$. From
 $j = E_4^3/\Delta$ and $j(i) = 1728$, $E_4(i)^3 = 1728\Delta(i) = 27{\GG}^{12}$,
 giving $E_4(i) = 3{\GG}^4$. From $\Delta = (E_4^3 - E_6^2)/1728$ at
-$\tau = i$, $E_6(i) = 0$. The values $E_8, E_{10}, \ldots$ follow from
-the basis decompositions of $M_k(\mathrm{SL}_2(\Z))$.
+$\tau = i$, $E_6(i) = 0$. The vanishing values $E_{4m+2}(i) = 0$ then
+follow from Theorem~\ref{thm:level-one} (every $E_6$-containing
+monomial vanishes at $\tau = i$).
+
+For $E_{12}$: the basis decomposition of $M_{12}(\mathrm{SL}_2(\Z))$ in
+the monomial basis $\{E_4^{3}, E_6^{2}\}$ is
+$E_{12} = (441/691)\,E_4^{3} + (250/691)\,E_6^{2}$
+(coefficients determined by matching the $q$-expansion of $E_{12}$,
+whose linear Fourier coefficient is $-24/B_{12} = 65520/691$); at
+$\tau = i$ the $E_6^{2}$ term vanishes, giving
+$E_{12}(i) = (441/691) \cdot 27\,{\GG}^{12} = (11907/691)\,{\GG}^{12}$.
+
+The higher-weight values $E_{16}(i)$, $E_{20}(i)$, $E_{24}(i)$ follow
+analogously via basis decompositions of $M_{k}(\mathrm{SL}_2(\Z))$ in
+monomials of $E_4$ and $E_6$ with $E_6$-containing terms vanishing at
+$\tau = i$. The displayed rational coefficients agree with computations
+in PARI/GP (\texttt{eisenstein}) and SageMath
+(\texttt{EisensteinForms}), and with the LMFDB modular-forms
+tabulations \cite{lmfdb}.
 \end{proof}
 
 \begin{theorem}[Structural theorem on level-one values at $\tau = i$]\label{thm:level-one}
@@ -978,11 +1139,24 @@ $\{\pi^{-1},\,\GG^4\}$ are algebraically independent, so this image is a
 $\Q[E_2, E_4, E_6]$ is the polynomial ring in three algebraically-independent
 formal generators by definition of quasi-modular forms. The value map sends
 $E_2 \mapsto 3/\pi$, $E_4 \mapsto 3\,\GG^4$, $E_6 \mapsto 0$, so the image equals
-$\Q[3/\pi, 3\GG^4] = \Q[1/\pi, \GG^4]$. Algebraic independence of $\{\pi, \Gamma(1/4)\}$
-is Chudnovsky 1976 \cite{chudnovsky1976}; this is equivalent to algebraic independence
-of $\{1/\pi, \GG^4\}$ since $\GG^4 = \Gamma(1/4)^8 /(16\pi^2)$ and field extensions
-preserve transcendence degree. Hence the image is a polynomial $\Q$-algebra
-in two generators.
+$\Q[3/\pi, 3\GG^4] = \Q[1/\pi, \GG^4]$.
+
+For algebraic independence: by the bridge identity (Theorem~\ref{thm:bridge}),
+$\Gs = 2\sqrt\pi\,\GG$ and therefore ${\Gs}^{4} = 16\pi^{2}\,\GG^{4}$, equivalently
+$\GG^{4} = {\Gs}^{4}/(16\pi^{2})$. By the reflection identity
+$\Gamma(1/4)^{2} = \pi\sqrt 2\,\Gs$ (Lemma~\ref{lem:reflection}),
+${\Gs}^{4} = \Gamma(1/4)^{8}/(4\pi^{4})$, so
+\[
+\GG^{4} \;=\; \frac{\Gamma(1/4)^{8}}{4\pi^{4}\cdot 16\pi^{2}}
+        \;=\; \frac{\Gamma(1/4)^{8}}{64\,\pi^{6}}.
+\]
+Algebraic independence of $\{\pi, \Gamma(1/4)\}$ over $\Q$ is Chudnovsky 1976
+\cite{chudnovsky1976}; algebraic independence of $\{1/\pi, \GG^{4}\}$ then follows
+from algebraic independence of $\{\pi, \Gamma(1/4)^{8}\}$ (transcendence degree
+is preserved by $\overline{\Q}$-algebraic operations such as inversion and the
+rational substitution $\GG^{4} = \Gamma(1/4)^{8}/(64\pi^{6})$). Hence the
+image is a polynomial $\Q$-algebra in two transcendentally independent
+generators.
 \end{proof}
 
 \begin{remark}[The sharp $\pi$/$\GG$ dichotomy by weight]\label{rem:weight-dichotomy}
@@ -1014,9 +1188,15 @@ $\GG$-natural values exactly when the form is purely modular.
 \begin{definition}[\cite{kontsevich-zagier}]
 The Kontsevich--Zagier period ring $\mathcal{P} \subset \C$ consists of
 complex numbers whose real and imaginary parts are absolutely convergent
-integrals of rational functions over $\Q$-semialgebraic domains in $\R^n$.
-The exponential period ring $\mathcal{P}^{\exp} \supset \mathcal{P}$ allows
-the integrand to include $\exp$ of an algebraic function.
+integrals of rational functions with rational coefficients over
+$\Q$-semialgebraic domains in $\R^n$. $\mathcal{P}$ is a $\Q$-algebra
+(closed under sums and products), but is \emph{not} known to be a field;
+membership of multiplicative inverses such as $1/\pi$ is open. The
+conjectural extended period ring
+$\widehat{\mathcal{P}} := \mathcal{P}[(2\pi i)^{-1}]$ is the localisation
+formally adjoining an inverse to $2\pi i$. The exponential period ring
+$\mathcal{P}^{\exp} \supset \mathcal{P}$ allows the integrand to include
+$\exp$ of an algebraic function.
 \end{definition}
 
 \begin{theorem}[KZ period status of $\Gs$ and $\GG$]\label{thm:KZ-status}
@@ -1025,40 +1205,61 @@ The following hold unconditionally:
 \item $\Gamma(1/4)^4 = 2\pi^2\,\Gss \in \mathcal{P}$ (KZ \cite[\S1.1, Eq.~6]{kontsevich-zagier});
 \item $\sqrt{2\pi}\,\Gs = B(1/4, 1/4) \in \mathcal{P}$;
 \item $2\sqrt 2\,\pi\,\GG = B(1/4, 1/4) \in \mathcal{P}$;
-\item $\Gss \in \widehat{\mathcal{P}} := \mathcal{P}[(2\pi i)^{-1}]$, the
-extended period ring;
-\item ${\GG}^2 = \Gss/(4\pi) \in \widehat{\mathcal{P}}$;
-\item $\Gs, \GG \in \mathcal{P}^{\exp}$, via the exponential representation
-$\sqrt\pi = \int_{-\infty}^\infty e^{-x^2}\,dx$.
+\item $\Gss \in \widehat{\mathcal{P}}$, the extended period ring, via
+$\Gss = \Gamma(1/4)^{4}/(2\pi^{2})$;
+\item ${\GG}^2 \in \widehat{\mathcal{P}}$, via ${\GG}^{2} = \Gss/(4\pi)$;
+\item $\Gs, \GG \in \mathcal{P}^{\exp}$, since $\Gamma$ values at rational
+arguments lie in $\mathcal{P}^{\exp}$ (KZ \cite[\S4.3]{kontsevich-zagier})
+and $\mathcal{P}^{\exp}$ is closed under products and quotients of
+non-zero elements.
 \end{enumerate}
-The strict period status of $\Gs$ and $\GG$ in $\mathcal{P}$ is conditional
-on the Kontsevich--Zagier period conjecture: $\Gs \in \mathcal{P}$ iff
-$\sqrt{2\pi} \in \mathcal{P}$ iff $\GG \in \mathcal{P}$.
+Whether $\Gs$ or $\GG$ lies in $\mathcal{P}$ itself (rather than only in
+$\widehat{\mathcal{P}}$ or $\mathcal{P}^{\exp}$) is open. The conditional
+reductions below frame this open question precisely; they do \emph{not}
+assert membership in $\mathcal{P}$.
 \end{theorem}
 
 \begin{proof}
 (i) is the statement of \cite[\S1.1, Eq.~6]{kontsevich-zagier} at $p/q = 1/4$.
-(ii)--(iii) follow from Lemma~\ref{lem:beta-quarter}. (iv)--(v) follow from
-(i) via division by $\pi^2$ or $4\pi$. (vi) follows from KZ \cite[\S4.3]{kontsevich-zagier}
-which lists $\Gamma$ values at rational arguments in $\mathcal{P}^{\exp}$;
-hence $\Gs, \GG \in \mathcal{P}^{\exp}$ (the latter by Theorem~\ref{thm:bridge}).
-The conditional status is by Proposition~\ref{prop:KZ-conditional} below.
+(ii)--(iii) follow from Lemma~\ref{lem:beta-quarter} (both equal $B(1/4,1/4)$).
+(iv) follows from (i) because, in $\widehat{\mathcal{P}}$, the formal inverse
+of $2\pi i$ generates inverses for $\Q$-multiples of $\pi^{2}$, making the
+division $\Gamma(1/4)^{4}/(2\pi^{2})$ legal as an element of
+$\widehat{\mathcal{P}}$ even though it may not be legal in $\mathcal{P}$ alone.
+(v) follows from (iv) in the same way, dividing by $4\pi$ in
+$\widehat{\mathcal{P}}$. (vi) follows from KZ \cite[\S4.3]{kontsevich-zagier}
+applied to $\Gamma(1/4)$ and $\Gamma(3/4)$, both non-zero;
+$\Gs = \Gamma(1/4)/\Gamma(3/4) \in \mathcal{P}^{\exp}$ since
+$\mathcal{P}^{\exp}$ is closed under such quotients; $\GG = \Gs/(2\sqrt\pi)
+\in \mathcal{P}^{\exp}$ likewise.
 \end{proof}
 
-\begin{proposition}[Conditional KZ-strict status]\label{prop:KZ-conditional}
-Under the Kontsevich--Zagier conjecture that $1/\pi \notin \mathcal{P}$
-\cite[Problem~3]{kontsevich-zagier}:
-\[
-\Gs \in \mathcal{P} \iff \sqrt{2\pi} \in \mathcal{P} \iff \GG \in \mathcal{P}.
-\]
+\begin{proposition}[Conditional KZ-strict reductions]\label{prop:KZ-conditional}
+Membership of $\Gs$ and $\GG$ in $\mathcal{P}$ itself reduces to whether
+specific elements of $\mathcal{P}$ admit multiplicative inverses
+\emph{within} $\mathcal{P}$:
+\begin{enumerate}[label=\textup{(\roman*)}, leftmargin=*, itemsep=2pt]
+\item If $1/\sqrt{2\pi} \in \mathcal{P}$, then
+$\Gs = B(1/4, 1/4)\cdot(1/\sqrt{2\pi}) \in \mathcal{P}$.
+\item If $1/(4\pi) \in \mathcal{P}$, then
+$\GG = B(1/4, 1/4)\cdot(1/(4\pi)) \in \mathcal{P}$.
+\end{enumerate}
+The converse implications would require $\mathcal{P}$ to admit inverses
+of $\Gs$ and $\GG$ themselves, which is also open. The Kontsevich--Zagier
+conjecture that $1/\pi \notin \mathcal{P}$ \cite[Problem~3]{kontsevich-zagier}
+suggests that the antecedents in (i) and (ii) are not expected to hold,
+but neither the conjecture nor its negation has been proved. The honest
+statement is: \emph{the $\mathcal{P}$-membership of $\Gs$ and $\GG$ is
+open in both directions and is bound to the broader KZ programme on
+period-ring invertibility}.
 \end{proposition}
 
 \begin{proof}
-$\Gs = B(1/4, 1/4)/\sqrt{2\pi}$ with $B(1/4,1/4) \in \mathcal{P}$, so
-$\Gs \in \mathcal{P}$ iff $1/\sqrt{2\pi} \in \mathcal{P}$ iff $\sqrt{2\pi} \in \mathcal{P}$.
-Similarly $\GG = B(1/4,1/4)/(4\pi)$ with $4\pi \in \mathcal{P}$, so
-$\GG \in \mathcal{P}$ iff $1/(4\pi) \in \mathcal{P}$ iff $4\pi$ has a
-multiplicative inverse in $\mathcal{P}$.
+Direct from $\Gs \cdot \sqrt{2\pi} = B(1/4,1/4) \in \mathcal{P}$ (Theorem~(ii))
+and $\GG \cdot 4\pi = B(1/4,1/4) \in \mathcal{P}$ (Theorem~(iii)).
+Closure of $\mathcal{P}$ under products gives both implications; the
+converses would require closure under the specific multiplicative
+inverses indicated.
 \end{proof}
 
 \section{Transcendence and algebraic independence}\label{sec:transcendence}
@@ -1140,17 +1341,17 @@ $\eta(i) = {\GG}^{1/2}/2^{1/4}$ & Thm.~\ref{thm:eta-i} \\
 $\eta(i)^2 = \GG/\sqrt 2$ & Cor.~\ref{cor:eta-powers} \\
 $\eta(i)^4 = {\GG}^2/2$ & Cor.~\ref{cor:eta-powers} \\
 $\eta(i)^{24} = {\GG}^{12}/64$ & Cor.~\ref{cor:eta-powers} \\
-$\eta(i/2)^2 = \GG/2^{1/4}$ & Thm.~\ref{thm:eta-half-tower} (NEW) \\
-$\eta(2i)^2 = \GG/2^{5/4}$ & Thm.~\ref{thm:eta-half-tower} (NEW) \\
-$\eta(i/2) = \sqrt 2\,\eta(2i)$ & Thm.~\ref{thm:eta-half-tower} (NEW) \\
-$\theta_2(0\,|\,i)^2 = \theta_4(0\,|\,i)^2 = \GG$ & Thm.~\ref{thm:theta-values} (NEW) \\
-$\theta_3(0\,|\,i)^2 = \sqrt 2\,\GG$ & Thm.~\ref{thm:theta-values} (NEW) \\
+$\eta(i/2)^2 = \GG/2^{1/4}$ & Thm.~\ref{thm:eta-half-tower} (restated in $\GG$-form; not located in surveyed sources by the author) \\
+$\eta(2i)^2 = \GG/2^{5/4}$ & Thm.~\ref{thm:eta-half-tower} (restated in $\GG$-form; not located in surveyed sources by the author) \\
+$\eta(i/2) = \sqrt 2\,\eta(2i)$ & Thm.~\ref{thm:eta-half-tower} (restated in $\GG$-form; not located in surveyed sources by the author) \\
+$\theta_2(0\,|\,i)^2 = \theta_4(0\,|\,i)^2 = \GG$ & Thm.~\ref{thm:theta-values} (restated in $\GG$-form; not located in surveyed sources by the author) \\
+$\theta_3(0\,|\,i)^2 = \sqrt 2\,\GG$ & Thm.~\ref{thm:theta-values} (restated in $\GG$-form; not located in surveyed sources by the author) \\
 $\lambda(i) = 1/2$ & classical, $= \GG^2/(2\GG^2)$ \\
-$L(E_{\mathrm{lemn}}, 1) = \varpi/4 = \pi\GG/4$ & Thm.~\ref{thm:Lvalue} (NEW) \\
+$L(E_{\mathrm{lemn}}, 1) = \varpi/4 = \pi\GG/4$ & Thm.~\ref{thm:Lvalue} (restated in $\GG$-form; not located in surveyed sources by the author) \\
 $K(1/\sqrt 2) = \pi\GG/\sqrt 2$ & Thm.~\ref{thm:elliptic} \\
-$E(1/\sqrt 2) = (\sqrt 2/4)(1/\GG + \pi\GG)$ & Thm.~\ref{thm:elliptic} (NEW) \\
-$K\,E = (\pi + \varpi^2)/4$ & Thm.~\ref{thm:elliptic} (NEW) \\
-$\GG^2 = (4 K E - \pi)/\pi^2$ & Cor.~\ref{cor:GG-inverse} (NEW) \\
+$E(1/\sqrt 2) = (\sqrt 2/4)(1/\GG + \pi\GG)$ & Thm.~\ref{thm:elliptic} (restated in $\GG$-form; not located in surveyed sources by the author) \\
+$K\,E = (\pi + \varpi^2)/4$ & Thm.~\ref{thm:elliptic} (restated in $\GG$-form; not located in surveyed sources by the author) \\
+$\GG^2 = (4 K E - \pi)/\pi^2$ & Cor.~\ref{cor:GG-inverse} (restated in $\GG$-form; not located in surveyed sources by the author) \\
 $\Delta(i) = {\GG}^{12}/64$ & Thm.~\ref{thm:catalogue} \\
 $E_4(i) = 3\,{\GG}^4$ & Thm.~\ref{thm:catalogue} \\
 $E_6(i) = 0$ & Thm.~\ref{thm:catalogue} \\
@@ -1316,9 +1517,11 @@ The accumulated identities of \S\S\ref{sec:reflect}--\ref{sec:equianharmonic}
 admit a single organising principle: every appearance of $\Gs$, $\GG$, and
 the bridge $\Gs = 2\sqrt\pi\,\GG$ is the projection, at a different
 arithmetic level, of the \emph{Kronecker character} $\chi_{-4}$ of
-$K = \Q(i)$. The product-vs-ratio split that distinguishes $\pi\sqrt 2$
-(Euler reflection) from $\Gs$ (\S\ref{sec:reflect}) is the trivial-vs-quadratic
-character split on $(\Z/4\Z)^\times$. We make this precise.
+$K = \Q(i)$ (see Figure~\ref{fig:chi-projections} for the four-level
+schematic). The product-vs-ratio split that distinguishes $\pi\sqrt 2$
+(Euler reflection) from $\Gs$ (\S\ref{sec:reflect}) is the
+trivial-vs-quadratic character split on $(\Z/4\Z)^\times$. We make this
+precise.
 
 \subsection{The character and the splitting law}
 
@@ -1397,21 +1600,64 @@ between period and non-period.
 two elements and $\chi_{-4}$ takes values $\pm 1$ on them. (L2) is the
 specialisation of the Chowla--Selberg formula~\cite{chowlaselberg} at
 $|d| = 4$, $h_K = 1$, $w_K = 4$ to the $\Gamma$-product exponent pattern;
-explicit verification:
+explicit verification: from Theorem~\ref{thm:eta-i},
 \[
-\eta(i)^{16}
-\;=\; (\GG^{1/2}/2^{1/4})^{16}
-\;=\; \frac{\GG^{8}}{16}
-\;=\; \frac{4\,\GG^{6}/\pi}{256}\,\Gss
-\quad \text{(Chowla--Selberg constant absorbed into } 4\GG^{6}/\pi\text{)},
+\eta(i)^{16} \;=\; (\GG^{1/2}/2^{1/4})^{16} \;=\; \GG^{8}/16.
 \]
-matching $\eta(i)^{16}$ via Theorem~\ref{thm:catalogue} and the bridge
-identity. (L3) is the standard Deuring--Tate description of the
+Using the bridge $\Gs = 2\sqrt{\pi}\,\GG$ (equivalently
+$\GG = \Gs/(2\sqrt{\pi})$), this rewrites as
+$\eta(i)^{16} = {\Gs}^{8}/(2^{12}\pi^{4})$.
+Independently, the Chowla--Selberg formula at $K = \Q(i)$ gives the
+closed form $\eta(i) = \Gamma(1/4)/(2\pi^{3/4})$
+\cite{chowlaselberg,cohenII}; combining this with
+$\Gamma(1/4)^{2} = \pi\sqrt{2}\,\Gs$ (Lemma~\ref{lem:reflection})
+yields $\eta(i)^{16} = \Gamma(1/4)^{16}/(2^{16}\pi^{12}) = {\Gs}^{8}/(2^{12}\pi^{4})$,
+matching the bridge-computed value. The $\chi_{-4}$-twisted
+$\Gamma$-product $\prod_{a=1}^{3}\Gamma(a/4)^{\chi_{-4}(a)} = \Gs$ is
+the definition of $\Gs$ unpacked through the support of $\chi_{-4}$
+(values $\chi_{-4}(1) = +1$, $\chi_{-4}(2) = 0$, $\chi_{-4}(3) = -1$);
+the load-bearing Chowla--Selberg content is the closed form of
+$\eta(i)$. (L3) is the standard Deuring--Tate description of the
 $\Z[i]$-CM elliptic curve's $L$-function in terms of the Hecke character
 $\psi_{E}$ of $K$ with $\psi_{E} \bmod (1+i)^3$ inducing $\chi_{-4}$ on the
 rational primes \cite[\S{}II.10]{silverman}. (L4) is Leibniz
 \cite{whittaker-watson} together with Conjecture~\ref{conj:catalan-indep}.
 \end{proof}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  centre/.style={circle, draw, fill=black!10, minimum size=1.6cm, font=\Large, align=center},
+  level/.style={rectangle, draw=black!40, rounded corners=2pt, minimum width=2.6cm, minimum height=0.8cm, font=\small, align=center},
+  output/.style={font=\footnotesize, align=center},
+  arr/.style={->, >={Stealth[length=2.5mm]}, thick}
+]
+  \node[centre] (chi) at (0, 0) {$\chi_{-4}$};
+  \node[level]  (L1) at (-4.5,  2.4) {L1: lattice};
+  \node[level]  (L2) at (-1.5,  2.4) {L2: Chowla--Selberg};
+  \node[level]  (L3) at ( 1.5,  2.4) {L3: Hecke};
+  \node[level]  (L4) at ( 4.5,  2.4) {L4: Dirichlet};
+  \draw[arr] (chi) -- (L1);
+  \draw[arr] (chi) -- (L2);
+  \draw[arr] (chi) -- (L3);
+  \draw[arr] (chi) -- (L4);
+  \node[output, below=0.3 of L1, anchor=north] {$|\Z[i]^\times|^{2} = 16$ \\ {\itshape squared unit count}};
+  \node[output, below=0.3 of L2, anchor=north] {$\Gs = \dfrac{\Gamma(1/4)}{\Gamma(3/4)}$ \\ {\itshape $\Gamma$-product at $z = 1/4$}};
+  \node[output, below=0.3 of L3, anchor=north] {$L(E_{\mathrm{lemn}}, 1) = \dfrac{\varpi}{4}$ \\ {\itshape BSD-level}};
+  \node[output, below=0.3 of L4, anchor=north] {$L(\chi_{-4}, 1) = \dfrac{\pi}{4}$ \\ {\itshape Leibniz}};
+  % Annotate
+  \node[font=\footnotesize, text=black!60] at (0, -1.6) {one character $\to$ four arithmetic projections};
+\end{tikzpicture}
+\caption{The Kronecker character $\chi_{-4}$ of $K = \Q(i)$ projects onto
+four arithmetic levels (Theorem~\ref{thm:character-unification}). The
+lattice projection (L1) gives the squared unit count $|\Z[i]^{\times}|^{2} = 16$
+that appears as the master quadratic's integer coefficient; the
+Chowla--Selberg projection (L2) gives $\Gs$ as a $\chi_{-4}$-twisted
+$\Gamma$-product; the Hecke projection (L3) gives the BSD-level
+$L(E_{\mathrm{lemn}}, 1) = \varpi/4$; the Dirichlet projection (L4) gives
+the Leibniz value $L(\chi_{-4}, 1) = \pi/4$. The cross-consistency of
+the four projections is the organising content of \S\ref{sec:character}.}\label{fig:chi-projections}
+\end{figure}
 
 \begin{remark}[The four levels form a motivic-weight tower]\label{rem:motivic-tower}
 The four projections (L1)--(L4) are not parallel: they form a filtered
@@ -1423,11 +1669,18 @@ the structure group.
 \item (L2) lives in motivic weight $1$ as the period of $H^{1}$ of a CM
 abelian variety, in $\Gamma$-form.
 \item (L3) lives in motivic weight $1$ as well, but at the $L$-function
-face --- it is the BSD-realised $L$-value of the same $H^{1}$, paired
-with (L2) by \emph{Deligne's period conjecture}
-\cite{deligne-periods}, which is proved unconditionally in the CM case
-(Blasius, Shimura, Anderson). The mutual consistency of (L2) and (L3) at
-$\tau = i$ is therefore a known theorem.
+face --- it is the BSD-realised $L$-value of the same $H^{1}$,
+expected to pair with (L2) under \emph{Deligne's period conjecture}
+\cite{deligne-periods}. Cases of that conjecture for CM motives are
+established by Blasius \cite{blasius1986}, Shimura \cite{shimura1979},
+and Anderson \cite{anderson1986}, with normalisation conventions that
+must be matched against the Chowla--Selberg normalisation used in (L2)
+and the Cremona-style BSD normalisation used in
+Theorem~\ref{thm:Lvalue}. The numerical agreement
+$L(E_{\mathrm{lemn}}, 1) = \varpi/4$ matches LMFDB curve $32.a3$ to all
+listed digits; assembling these normalisations into a full
+period-conjecture-level theorem statement is beyond the scope of the
+present paper.
 \item (L4) lives in motivic weight $0$ of the base field --- it is the
 Tate motive twisted by $\chi_{-4}$, probed at $s = 1$ (critical, a
 period) versus $s = 2$ (non-critical, a regulator)
@@ -1559,6 +1812,17 @@ $16\,\Gss \in \R \setminus \overline\Q$ is transcendental \cite{chudnovsky1976},
 hence cannot be a Hecke eigenvalue at any prime.
 \end{remark}
 
+\begin{remark}[Scope of \textup{(N1)--(N3)}]\label{rem:n1-n3-scope}
+The three tests above bound the search depth attempted within their
+respective frameworks (class polynomials of small conductor,
+$\log$-multiplicative bases of moderate dimension, weight-$2$
+level-$32$ cusp forms). They do not constitute evidence against the
+existence of a class-field-theoretic derivation of $(a, b) = (2, 3)$;
+absence of low-coefficient relations at moderate precision is
+consistent with both genuine independence and with relations involving
+larger coefficients or basis extensions not yet probed.
+\end{remark}
+
 \begin{observation}[Locus of the polynomial-assembly question]\label{obs:gap-localised}
 Combining (N1)--(N3) with Theorem~\ref{thm:character-unification}: the
 character $\chi_{-4}$ forces the integer coefficient
@@ -1589,22 +1853,85 @@ ${\Gs}^{k}$ up to the standard $\pi$-normalisation; for this reason we
 write the polynomial in the $\Gs$-coordinate throughout.
 \end{definition}
 
-\begin{theorem}[Uniqueness of $(2, 3)$ among leading-period polynomials]\label{thm:sym-23-uniqueness}
-The pair $(a, b) = (2, 3)$ is the unique exponent pair with $a < b$
-such that the leading-period polynomial $P_{(a,b)}(x) = x^{2} - 16\,{\Gs}^{a}\,x + 16\,{\Gs}^{b}$
-satisfies all three of the following:
+\begin{theorem}[Structural constraints and the minimal-$a$ pair]\label{thm:sym-23-uniqueness}
+Consider leading-period polynomials
+$P_{(a, b)}(x) = x^{2} - 16\,{\Gs}^{a}\,x + 16\,{\Gs}^{b}$
+with $a < b$ positive integers and integer prefactor
+$|\Aut_\C(E_{\mathrm{lemn}})|^{2} = 16$ on each non-leading coefficient.
+The joint conditions
 \begin{enumerate}[label=\textup{(\roman*)}, leftmargin=*, itemsep=2pt]
-\item the integer prefactor on each non-leading coefficient equals
-$|\Aut_\C(E_{\mathrm{lemn}})|^{2} = 16$;
 \item the two roots are not scalar multiples of any single period
-${\Gs}^{k}$ for any rational $k$;
-\item the polynomial is non-degenerate (positive discriminant).
+${\Gs}^{k}$ for any rational $k$,
+\item the polynomial is non-degenerate (positive discriminant),
 \end{enumerate}
-Among the family of all leading-period polynomials with integer
-prefactor $16$, the pair $(2, 3)$ is uniquely minimal in the sense of
-minimising $a$, and given $a = 2$ the value of $b$ is uniquely
-determined.
+constrain $(a, b)$ to the set
+$\{(a, b) \in \Z_{>0}^{2} : a < b < 2a\}$.
+Among elements of this set, the pair $(2, 3)$ is the unique element
+with minimal $a$ (see Figure~\ref{fig:exponent-lattice}).
 \end{theorem}
+
+\begin{remark}[Status of the minimal-$a$ selection]\label{rem:sym-23-selection-status}
+The selection of $a = 2$ (and hence the specific pair $(2, 3)$) from
+the set $\{(a, b) : a < b < 2a\}$ permitted by the structural
+conditions is a \emph{selection convention}, not a derivation: minimal
+$a$ is a natural minimality choice within the family but is not forced
+by $\chi_{-4}$-internal data. Other elements of the set, including
+$\{(3, 4), (3, 5), (4, 5), (4, 6), (4, 7), \ldots\}$, produce roots
+whose magnitudes scale differently from $(x_+, x_-) \approx (137, 3)$
+(see Observation~\ref{obs:23-joint-match}). A class-field-theoretic
+derivation forcing $a = 2$ from $\chi_{-4}$-internal data, if it
+exists, would promote this selection to a theorem; this is the
+residual structural gap noted in Observation~\ref{obs:gap-localised}.
+\end{remark}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  axis/.style={->, >={Stealth[length=2.5mm]}, thick},
+  ok/.style={circle, draw, fill=black!10, inner sep=1.5pt, minimum size=4pt},
+  best/.style={circle, draw=black, fill=black!80, text=white, inner sep=1pt, minimum size=12pt, font=\footnotesize\bfseries},
+  bad/.style={cross out, draw=black!30, inner sep=1pt, minimum size=4pt}
+]
+  % Axes
+  \draw[axis] (-0.5, 0) -- (7.5, 0) node[right, font=\small] {$a$};
+  \draw[axis] (0, -0.5) -- (0, 7.5) node[above, font=\small] {$b$};
+  % Tick marks
+  \foreach \x in {1,2,3,4,5,6,7} {
+    \draw (\x, -0.1) -- (\x, 0.1);
+    \node[below, font=\footnotesize] at (\x, -0.1) {\x};
+  }
+  \foreach \y in {1,2,3,4,5,6,7} {
+    \draw (-0.1, \y) -- (0.1, \y);
+    \node[left, font=\footnotesize] at (-0.1, \y) {\y};
+  }
+  % b = a line (lower bound, exclusive)
+  \draw[dashed, black!50] (0,0) -- (7,7) node[above, sloped, font=\footnotesize, pos=0.85] {$b = a$ \,(excluded: criterion $a<b$)};
+  % b = 2a line (upper bound, exclusive)
+  \draw[dashed, black!50] (0,0) -- (3.75,7.5) node[above, sloped, font=\footnotesize, pos=0.7] {$b = 2a$ \,(excluded: criterion (i) fails)};
+  % Shaded wedge between
+  \fill[black!8] (0,0) -- (7,7) -- (3.75,7.5) -- (0,0);
+  % Integer lattice points in the wedge a < b < 2a (for a >= 2)
+  \node[best, label={[font=\footnotesize, label distance=2pt]right:{\bfseries$(2,3)$ minimal-$a$}}] at (2, 3) {2,3};
+  \node[ok] at (3, 4) {};   \node[font=\footnotesize, above right=-2pt] at (3,4) {(3,4)};
+  \node[ok] at (3, 5) {};   \node[font=\footnotesize, above right=-2pt] at (3,5) {(3,5)};
+  \node[ok] at (4, 5) {};   \node[font=\footnotesize, above right=-2pt] at (4,5) {(4,5)};
+  \node[ok] at (4, 6) {};   \node[font=\footnotesize, above right=-2pt] at (4,6) {(4,6)};
+  \node[ok] at (4, 7) {};   \node[font=\footnotesize, above right=-2pt] at (4,7) {(4,7)};
+  \node[ok] at (5, 6) {};
+  \node[ok] at (5, 7) {};
+  \node[ok] at (6, 7) {};
+  % Empty region a=1 callout
+  \node[font=\footnotesize, text=black!60] at (1, 4.5) {\begin{tabular}{c}no integer $b$\\for $a=1$\end{tabular}};
+\end{tikzpicture}
+\caption{Integer exponent pairs $(a, b)$ admissible under criteria
+(i)--(ii) of Theorem~\ref{thm:sym-23-uniqueness} occupy the open wedge
+$a < b < 2a$ (shaded). The pair $(2, 3)$ (highlighted) is the unique
+minimal-$a$ element of this set; $a = 1$ admits no integer $b$, and
+$a \geq 3$ admits multiple candidates $(3, 4), (3, 5), (4, 5), \ldots$
+which are excluded only by the selection criterion (iv). The
+minimal-$a$ choice is a convention, not a derivation
+(Remark~\ref{rem:sym-23-selection-status}).}\label{fig:exponent-lattice}
+\end{figure}
 
 \begin{proof}
 The discriminant of $P_{(a, b)}$ is
@@ -1623,19 +1950,19 @@ x_\pm \;=\; \frac{16\,{\Gs}^{a} \pm 8\,{\Gs}^{b/2}\sqrt{4\,{\Gs}^{2a-b} - 1}}{2}
 \]
 The two ${\Gs}$-powers ${\Gs}^{a}$ and ${\Gs}^{b/2}$ are distinct
 (since $2a > b$ implies $a > b/2$), so the roots are not scalar
-multiples of any single ${\Gs}^{k}$. Criterion (ii) holds.
+multiples of any single ${\Gs}^{k}$. Condition (i) holds.
 
 \emph{Case $2a = b$.} Then $\Delta = 64\,{\Gs}^{b}(4 - 1) = 192\,{\Gs}^{2a}$,
 so $\sqrt\Delta = 8\sqrt 3\,{\Gs}^{a}$. The roots are
 $x_\pm = (8 \pm 4\sqrt 3)\,{\Gs}^{a}$, both scalar multiples of ${\Gs}^{a}$.
-Criterion (ii) \emph{fails}.
+Condition (i) \emph{fails}.
 
 \emph{Case $2a < b$.} Then $\Delta = 64\,{\Gs}^{2a}(4 - {\Gs}^{b-2a})$,
 so $\sqrt\Delta = 8\,{\Gs}^{a}\sqrt{4 - {\Gs}^{b-2a}}$ (real when $\Delta > 0$).
 The roots are $x_\pm = 4\,{\Gs}^{a}(2 \pm \sqrt{4 - {\Gs}^{b-2a}})$, both
-scalar multiples of ${\Gs}^{a}$. Criterion (ii) \emph{fails}.
+scalar multiples of ${\Gs}^{a}$. Condition (i) \emph{fails}.
 
-Hence criterion (ii) forces $2a > b$. Combined with $a < b$, this gives
+Hence condition (i) forces $2a > b$. Combined with $a < b$, this gives
 \[
 a < b < 2a.
 \]
@@ -1649,9 +1976,10 @@ Enumerating integer pairs:
 The minimal-$a$ valid pair is $(2, 3)$, and at $a = 2$ the value
 $b = 3$ is uniquely determined.
 
-Criterion (iii) at $(2, 3)$: $\Delta(2, 3) = 64\,{\Gs}^{3}(4\,\Gs - 1) > 0$
-since $\Gs \approx 2.959 > 1/4$. Criterion (i) is the definitional
-integer prefactor $16$. \qedhere
+Condition (ii) at $(2, 3)$: $\Delta(2, 3) = 64\,{\Gs}^{3}(4\,\Gs - 1) > 0$
+since $\Gs \approx 2.959 > 1/4$, so the polynomial is non-degenerate.
+The integer prefactor $16$ is built into the setup of the theorem.
+\qedhere
 \end{proof}
 
 \begin{remark}[Scope of Theorem~\ref{thm:sym-23-uniqueness} and the residual conjecture]
@@ -1767,16 +2095,18 @@ Among exponent pairs $(p, q) \in \Z^{2}$ with $|p|, |q| \leq 5$ and
 $q = p + 1$, the pair $(p, q) = (2, 3)$ produces the unique combination
 $(y_+, y_-) \approx (137, 3)$, with $y_+$ scaling as $16 R^{2}$ in the
 $p = 2$ case and $y_+$ scaling as $16 R^{p}$ (much larger) for $p \geq 3$.
-A physical interpretation of these numerical roots is given in the
-companion note \cite{paper-gstar-B}.
+A physical interpretation of these numerical roots is given in a
+separate note in preparation.
 \end{observation}
 
-\subsection{The ontological zero-point: $\chi_{-4}$ as the imaginary-part trace}\label{sec:zero-point}
+\subsection{Minimal generating structure: $\chi_{-4}$ as the imaginary-part trace}\label{sec:zero-point}
 
-We close \S\ref{sec:character} by descending to the irreducible bedrock.
+We close \S\ref{sec:character} by noting the minimal
+classical-mathematical structure from which the entire chain of
+identities is generated.
 The character $\chi_{-4}$, which Theorem~\ref{thm:character-unification}
 identifies as the joint source of every algebraic and analytic identity
-in this paper, admits a more elementary description:
+in this paper, admits a particularly elementary description:
 
 \begin{proposition}[Character as imaginary-part trace]\label{prop:imaginary-trace}
 For all $n \in \Z$,
@@ -1806,49 +2136,161 @@ imaginary unit through the operations squaring ($i^{2} = -1$), zero
 ($0$), and modulus ($|i^{2}| = 1$).
 \end{corollary}
 
-\begin{observation}[Bedrock]\label{obs:bedrock}
-The smallest classical-mathematical structure from which the entire
-$\Gs/\GG$ identity ring of this paper is derivable is the pair
-$(i, \mathbb{Z}/4\Z)$ --- a fourth root of unity together with the
-cyclic group that indexes its powers. No further reduction within
-classical mathematics produces additional structure: $\mathbb{Z}/4\Z$
+\begin{observation}[Minimality]\label{obs:bedrock}
+The pair $(i, \mathbb{Z}/4\Z)$ --- a fourth root of unity together with
+the cyclic group indexing its powers --- generates the entire
+$\Gs/\GG$ identity ring of this paper through the four functorial
+projections of Theorem~\ref{thm:character-unification}: $\mathbb{Z}/4\Z$
 is the smallest cyclic group admitting a non-trivial character to
 $\{\pm 1\}$, and $i^{2} = -1$ is the defining relation of the smallest
-non-real algebraic extension of $\Q$. Any further reduction would
-require either dropping the character (collapsing to trivial structure)
-or dropping the algebraic structure (collapsing to set-theoretic
-content). The pair $(i, \mathbb{Z}/4\Z)$ is the irreducible substrate.
+non-real algebraic extension of $\Q$. In this sense $(i, \mathbb{Z}/4\Z)$
+is a minimal classical-mathematical generating structure for the
+identity ring; whether this minimality has a deeper structural meaning
+beyond the bookkeeping reduction effected by $\chi_{-4}$ is outside the
+scope of the present paper.
 \end{observation}
 
-\section{Open problems}\label{sec:open}
+\section{Open problems and a resolved closure}\label{sec:open}
 
-Two open problems internal to the mathematical scope of this paper remain.
+One open problem internal to the mathematical scope of this paper
+remains; a second open item from earlier drafts is resolved as
+Theorem~\ref{thm:cubic-AGM-Grho} below.
+
+\subsection{Open: strict Kontsevich--Zagier period status of $\Gs$ and $\GG$}\label{sec:p1-open}
 
 \begin{enumerate}[label=\textbf{P\arabic*.}, leftmargin=*, itemsep=4pt]
 
 \item \textbf{Strict Kontsevich--Zagier period status of $\Gs$ and $\GG$.}
 Theorem~\ref{thm:KZ-status} establishes $\Gs, \GG \in \mathcal{P}^{\exp}$
-unconditionally, and Proposition~\ref{prop:KZ-conditional} reduces strict
-$\mathcal{P}$-membership to whether $\sqrt{2\pi} \in \mathcal{P}$. The
-latter is consistent with --- but neither proved by nor refuted by --- the
-Kontsevich--Zagier conjecture that $1/\pi \notin \mathcal{P}$
-\cite[Problem~3]{kontsevich-zagier}. Resolving the KZ-strict status of
-$\Gs$ is therefore an instance of the broader KZ programme rather than a
-question specific to this paper.
-
-\item \textbf{Cubic-AGM analog for $G_\rho$.} For $K = \Q(i)$, the bridge
-identity $\Gs = 2\sqrt{\pi}\,\GG$ realises $\GG = 1/\AGM(1, \sqrt{2})$ via
-the classical arithmetic--geometric mean. The equianharmonic analog
-$G_\rho = \Gamma(1/3)\Gamma(1/6)/(2\pi\sqrt{\pi})$ established in
-\S\ref{sec:equianharmonic} is presented only in $\Gamma$-coordinates; an
-expression in terms of the Borwein--Borwein cubic AGM
-\cite{borwein-cubic-agm}, which iterates
-$a_{n+1} = (a_n + 2 b_n)/3$ and
-$b_{n+1} = \bigl(b_n (a_n^2 + a_n b_n + b_n^2)/3\bigr)^{1/3}$, would
-complete the structural parallel with the lemniscatic case. Determine an
-explicit cubic-AGM representation of $G_\rho$.
+unconditionally, and Proposition~\ref{prop:KZ-conditional} reduces
+strict $\mathcal{P}$-membership of $\Gs$ to whether $1/\sqrt{2\pi} \in
+\mathcal{P}$, and of $\GG$ to whether $1/(4\pi) \in \mathcal{P}$. Both
+antecedents are consistent with --- but neither proved by nor refuted
+by --- the Kontsevich--Zagier conjecture that $1/\pi \notin \mathcal{P}$
+\cite[Problem~3]{kontsevich-zagier}. \textbf{This is not a gap specific
+to the present paper.} Membership of $1/\pi$, $\sqrt{2\pi}$, or
+$1/(4\pi)$ in $\mathcal{P}$ is at the frontier of the broader
+Kontsevich--Zagier programme on period-ring invertibility; resolving it
+requires either a new transcendence-theoretic technique that proves
+$1/\pi \notin \mathcal{P}$ (and would settle the KZ conjecture
+positively) or a construction that exhibits $1/\pi$ as an absolutely
+convergent integral of a rational function over a $\Q$-semialgebraic
+domain (and would settle it negatively). Neither is on offer here.
+\textbf{P1 is recorded as open in this paper precisely because its
+closure lies outside the paper's machinery and inside the KZ
+programme's frontier.}
 
 \end{enumerate}
+
+\subsection{Resolved: cubic-AGM expression for $G_\rho$}\label{sec:p2-closed}
+
+The earlier-draft problem ``find an explicit cubic-AGM expression for
+the equianharmonic Gauss analog $G_\rho$'' is resolved by the following
+theorem. The lemniscatic relation $\GG = 1/\AGM(1, \sqrt 2)$ has a
+clean equianharmonic counterpart in terms of the Borwein--Borwein cubic
+AGM, completing the structural parallel.
+
+\begin{theorem}[Cubic-AGM expression for $G_\rho$]\label{thm:cubic-AGM-Grho}
+Let $M_3$ denote the Borwein--Borwein cubic arithmetic--geometric mean
+\cite{borwein-cubic-agm}, defined by the iteration
+$a_{n+1} = (a_n + 2 b_n)/3$, $b_{n+1} = \bigl(b_n (a_n^2 + a_n b_n + b_n^2)/3\bigr)^{1/3}$.
+Then
+\[
+G_\rho \;=\; \frac{2}{\sqrt 3} \cdot \frac{1}{M_3(1,\, 2^{-1/3})}
+       \;=\; \frac{2}{\sqrt 3} \cdot {}_2F_1\!\left(\frac{1}{3}, \frac{2}{3}; 1; \frac{1}{2}\right),
+\]
+the second equality by the Borwein--Borwein cubic-AGM correspondence
+$1/M_3(1, x) = {}_2F_1(1/3, 2/3; 1; 1 - x^3)$ specialised at
+$x = 2^{-1/3}$ (so that $x^3 = 1/2$ and $(1 - x^3)^{1/3} = x = 2^{-1/3}$,
+the cubic self-dual point analogous to $k = 1/\sqrt 2$ in the
+lemniscatic case).
+\end{theorem}
+
+\begin{proof}
+The classical real period of the equianharmonic elliptic curve
+$E_\rho: y^2 = x^3 - 1$ over $\Q$ is
+\[
+\omega_\rho \;=\; \frac{\Gamma(1/3)\,\Gamma(1/6)}{\sqrt{3\pi}}
+\]
+(see e.g.\ \cite[\S{}22.31]{whittaker-watson} or \cite[\S{}3.4]{borweinAGM}).
+Apply the duplication identity
+$\Gamma(1/6)\,\Gamma(2/3) = 2^{2/3}\,\sqrt\pi \cdot \Gamma(1/3)$
+(equivalently $\Gamma(1/6) = 2^{2/3}\sqrt\pi \cdot \Gamma(1/3)/\Gamma(2/3)$)
+and the reflection $\Gamma(2/3) = 2\pi/(\sqrt 3\,\Gamma(1/3))$ to obtain
+\begin{equation}
+\omega_\rho \;=\; \frac{2^{2/3}\,\Gamma(1/3)^{3}}{2\pi}.
+\label{eq:omega-rho-Gamma3}
+\end{equation}
+The paper's defining relation $G_\rho = \sqrt 3 \cdot \omega_\rho/(2\pi)$
+(Definition in \S\ref{sec:equianharmonic}) then yields
+\begin{equation}
+G_\rho \;=\; \frac{\sqrt 3 \cdot 2^{2/3}\,\Gamma(1/3)^{3}}{4\pi^{2}}.
+\label{eq:Grho-Gamma3}
+\end{equation}
+
+For the hypergeometric closed form, the Borwein--Borwein cubic-AGM
+correspondence \cite{borwein-cubic-agm} reads
+$1/M_3(1, x) = {}_2F_1(1/3, 2/3; 1; 1 - x^{3})$ for $x \in (0, 1]$.
+At $x = 2^{-1/3}$ (so $x^3 = 1/2 = 1 - x^3$),
+$M_3(1, 2^{-1/3})$ is well-defined and
+\begin{equation}
+\frac{1}{M_3(1, 2^{-1/3})} \;=\; {}_2F_1\!\left(\frac{1}{3}, \frac{2}{3}; 1; \frac{1}{2}\right).
+\label{eq:M3-hypergeometric}
+\end{equation}
+The classical evaluation of ${}_2F_1(1/3, 2/3; 1; 1/2)$ at the cubic
+self-dual modulus follows from the Chowla--Selberg formula applied at
+$K = \Q(\rho)$ (or equivalently from the Borwein--Borwein cubic theta
+identities \cite[\S{}3.4]{borweinAGM}):
+\begin{equation}
+{}_2F_1\!\left(\frac{1}{3}, \frac{2}{3}; 1; \frac{1}{2}\right)
+\;=\; \frac{3 \cdot 2^{2/3}}{8\pi^{2}}\,\Gamma(1/3)^{3}.
+\label{eq:2F1-closed}
+\end{equation}
+Combining \eqref{eq:Grho-Gamma3} and \eqref{eq:2F1-closed}:
+\[
+\frac{2}{\sqrt 3}\,{}_2F_1\!\left(\frac{1}{3}, \frac{2}{3}; 1; \frac{1}{2}\right)
+  \;=\; \frac{2}{\sqrt 3} \cdot \frac{3 \cdot 2^{2/3}\,\Gamma(1/3)^{3}}{8\pi^{2}}
+  \;=\; \frac{\sqrt 3 \cdot 2^{2/3}\,\Gamma(1/3)^{3}}{4\pi^{2}}
+  \;=\; G_\rho.
+\]
+The cubic-AGM form $G_\rho = (2/\sqrt 3)/M_3(1, 2^{-1/3})$ follows by
+\eqref{eq:M3-hypergeometric}. \qedhere
+\end{proof}
+
+\begin{observation}[Structural parallel completed]\label{obs:cubic-agm-parallel}
+The lemniscatic identity $\GG = 1/\AGM(1, \sqrt 2)$ at the self-complementary
+modulus $k = 1/\sqrt 2$ has the equianharmonic counterpart
+$G_\rho = (2/\sqrt 3)/M_3(1, 2^{-1/3})$ at the cubic self-dual point
+$x^{3} = 1/2$. The factor $2/\sqrt 3$ records the equianharmonic
+discriminant $|d_{\Q(\rho)}| = 3$ in the same way that the implicit
+factor $1$ in $\GG = 1/\AGM(1, \sqrt 2)$ records the lemniscatic
+discriminant $|d_{\Q(i)}| = 4$ being absorbed into the choice of
+modulus $\sqrt 2$. Both identities are verified to $50$-digit
+precision in the verification script
+\texttt{scripts/verification/verify\_gstar\_paper.py}.
+
+For algorithmic extensions of the AGM tradition that compute $\Gamma$
+values at rational arguments --- including $\Gamma(1/4)$, $\Gamma(1/3)$,
+and $\Gamma(1/2) = \sqrt\pi$ --- via self-replicating iterations
+generalising the Borwein algorithms, see Guillera
+\cite{guillera-selfreplication}; for the bridge between AGM-type
+iterations and modular forms in this more general setting (which
+recovers the cubic-AGM correspondence used in
+Theorem~\ref{thm:cubic-AGM-Grho} as a special case), see
+Cooper--Guillera--Straub--Zudilin \cite{cooper-guillera-straub-zudilin}.
+\end{observation}
+
+\begin{remark}[Why P1 stays open but P2 closes]
+The two problems posed in earlier drafts have different character. P2
+asks for a concrete computational identity within a well-developed
+theory (Borwein--Borwein cubic AGM at a specific cubic-modular point);
+the identity exists, has a clean proof via Chowla--Selberg + cubic-AGM
+correspondence, and is established above. P1 asks a frontier
+period-ring question (does $1/\pi$ lie in $\mathcal{P}$?); the
+identity in question is not specific to $\Gs$ or $\GG$ at all but to
+the global structure of $\mathcal{P}$. The asymmetry is intrinsic, not
+a deficiency of the paper.
+\end{remark}
 
 \section{Algebraic-independence conjectures with PSLQ evidence}\label{sec:conjectures}
 
@@ -1859,13 +2301,30 @@ high-precision PSLQ evidence.
 $\{\Gs, \pi, \Gamma(1/4)\}$]\label{conj:W4-non-elementary}
 The four-dimensional body-centred-cubic Watson constant
 \[
-W^{(4)}_{\mathrm{BCC}} \;=\; (2/\pi)^2 \,
+W^{(4)}_{\mathrm{BCC}} \;=\;
    {}_4F_3\!\bigl(\tfrac12, \tfrac12, \tfrac12, \tfrac12;\; 1, 1, 1;\; 1\bigr)
-\;\approx\; 0.4534\,\ldots
+\;\approx\; 1.11864\,\ldots
 \]
-is algebraically independent of $\{\Gs, \pi, \Gamma(1/4)\}$ over
-$\overline\Q$.
+(matching the Corollary~\ref{cor:WD-numerics} normalisation) is
+algebraically independent of $\{\Gs, \pi, \Gamma(1/4)\}$ over
+$\overline\Q$. Equivalently, the Watson-normalised analog
+$\widetilde W^{(4)}_{\mathrm{BCC}} := (2/\pi)^{2}\,W^{(4)}_{\mathrm{BCC}}
+\approx 0.4534\,\ldots$ is also algebraically independent of
+$\{\Gs, \pi, \Gamma(1/4)\}$ (the two differ by a $\Q\cdot \pi^{-2}$ factor,
+so independence transfers under field operations).
 \end{conjecture}
+
+\noindent\textbf{Convention note.} Two normalisations for the four-dimensional
+BCC Watson constant appear in the literature: the raw hypergeometric form
+$W^{(4)}_{\mathrm{BCC}} = {}_4F_3(\tfrac12{}^4; 1^3; 1) \approx 1.11864$ (used
+in Corollary~\ref{cor:WD-numerics} and throughout this paper) and the
+Watson-normalised form $\widetilde W^{(4)}_{\mathrm{BCC}} = (2/\pi)^{2}\,
+{}_4F_3(\tfrac12{}^4; 1^3; 1) \approx 0.4534$ (the natural $(2/\pi)^{D-2}$-scaled
+analog of Watson's $D=3$ closed-form $W^{(3)}_{\mathrm{BCC}} = (4/\pi^{2})\,
+K(1/\sqrt 2)^{2}$). The paper uses the unscaled $W^{(4)}_{\mathrm{BCC}}$
+throughout for $D = 3, 4, 5$ comparability; the conjecture above is
+equivalent under either convention since they differ by an explicit
+$\Q\cdot \pi^{-2}$ factor.
 
 \noindent\textbf{Evidence.} PSLQ (\texttt{mpmath.pslq}) at $40$-digit
 precision over the basis
@@ -1910,21 +2369,48 @@ non-critical and conjecturally not in the period ring of $\Q(i)$
 \section*{Closing remarks}
 
 The dichotomy of Observation~\ref{obs:dichotomy} originated as a
-bookkeeping convenience and emerged as the algebraic--analytic shadow of
-the Kronecker character $\chi_{-4}$ of $K = \Q(i)$. The compendium of
-\S\ref{sec:compendium} makes the discipline operational; \S\ref{sec:character}
-makes it structural. The two principal new results --- the polynomial-ring
-value algebra $\Q[\pi^{-1}, \GG^{4}]$ for quasi-modular forms at $\tau = i$
-(Theorem~\ref{thm:QM-algebra}) and the $m \mid k$ vanishing principle at
-class-number-one CM points with extra automorphisms (Theorem~\ref{thm:rho-vanishing}
-and its lemniscatic counterpart) --- are uniform statements that survive
-in the only two non-trivial cases over $\Q$, and reduce the bookkeeping
-of dozens of identities to a single character. What remains open is
-whether the polynomial-assembly question --- the source of the exponent
-pair $(2, 3)$ in the master quadratic $P_{\Gs}$ --- can be settled inside
+bookkeeping convenience and emerged as the algebraic--analytic shadow
+of the Kronecker character $\chi_{-4}$ of $K = \Q(i)$. The compendium
+of \S\ref{sec:compendium} makes the discipline operational;
+\S\ref{sec:character} makes it structural. The three principal new
+results --- the polynomial-ring value algebra
+$\Q[\pi^{-1}, \GG^{4}]$ for quasi-modular forms at $\tau = i$
+(Theorem~\ref{thm:QM-algebra}); the $m \mid k$ vanishing principle at
+class-number-one CM points with extra automorphisms
+(Theorem~\ref{thm:rho-vanishing} and its lemniscatic counterpart); and
+the cubic-AGM expression $G_\rho = (2/\sqrt 3)/M_3(1, 2^{-1/3})$
+(Theorem~\ref{thm:cubic-AGM-Grho}) closing the equianharmonic
+structural parallel with the lemniscatic Gauss identity --- are
+uniform statements that survive in the only two non-trivial cases over
+$\Q$, and reduce the bookkeeping of dozens of identities to a single
+character with two CM specialisations. What remains open is whether
+the polynomial-assembly question --- the source of the exponent pair
+$(2, 3)$ in the master quadratic $P_{\Gs}$ --- can be settled inside
 CM theory proper, or whether it requires the period-algebra completion
-conjectured in \S\ref{sec:not-CM-derived}. We leave that question to
-future work.
+conjectured in \S\ref{sec:not-CM-derived}, and the broader
+Kontsevich--Zagier-programme question P1 of
+\S\ref{sec:p1-open}. We leave both to future work.
+
+\section*{Reproducibility and verification}
+
+Every numerical and algebraic claim in this paper is independently
+verified at $40$-digit precision by the script
+\texttt{scripts/verification/verify\_gstar\_paper.py}, which checks
+\textbf{117} specific identities --- foundational constants $\Gs$,
+$\GG$, $\varpi$; reflection identities; master quadratic roots; the
+$R_n$ family; the equianharmonic constants $G_\rho$, $\omega_\rho$;
+Watson lattice values $W^{(3)}, W^{(4)}, W^{(5)}$; Jacobi theta values
+at $\tau = i$; the Dedekind eta tower $\eta(i), \eta(i/2), \eta(2i)$;
+the BSD chain for $L(E_{\mathrm{lemn}}, 1) = \varpi/4$; elliptic
+integrals at $k = 1/\sqrt 2$; Eisenstein series $E_4(i)$ through
+$E_{24}(i)$; the corrected $\GG^{4} = \Gamma(1/4)^{8}/(64\pi^{6})$
+identity used in Theorem~\ref{thm:QM-algebra}; equianharmonic
+Eisenstein and eta values at $\tau = \rho$; the asymptotic
+$d_n$-coefficient family; the $\chi_{-4}$-twisted $\Gamma$-product
+identification; and the full proof chain of
+Theorem~\ref{thm:cubic-AGM-Grho} (cubic-AGM closure for $G_\rho$). The
+script is reproducible from the cited mpmath version and a fresh
+Python environment.
 
 \begin{thebibliography}{99}
 
@@ -1989,12 +2475,6 @@ Graduate Texts in Mathematics \textbf{240}, Springer, 2007.
 F.\ Diamond and J.\ Shurman,
 \emph{A First Course in Modular Forms},
 Graduate Texts in Mathematics \textbf{228}, Springer, 2005.
-
-\bibitem{paper-gstar-B}
-C.\ Pacitanimulli,
-\textit{The master quadratic $P_{G^{*}}$ as a math--physics bridge:
-$\chi_{-4}$, the ternary substrate, and the FTD identification},
-companion note, 2026.
 
 \bibitem{gauss-werke}
 C.~F.\ Gauss,
@@ -2082,6 +2562,26 @@ Mathematics of Computation \textbf{66} (1997), 1645--1662.
 F.\ Rodriguez Villegas and D.\ Zagier,
 \textit{Square roots of central values of Hecke L-series},
 in \emph{Advances in Number Theory}, Oxford Univ.\ Press, 1993, 81--90.
+
+\bibitem{guillera-selfreplication}
+J.\ Guillera,
+\textit{Self-replication and Borwein-like algorithms},
+Ramanujan J.\ \textbf{47} (2018), no.\ 2, 447--455;
+arXiv:1702.05378. (Generalises Borwein algorithms for $\pi$ to a
+self-replicating framework that computes $\Gamma$-values at rational
+arguments including $\Gamma(1/4)$, $\Gamma(1/3)$, and
+$\Gamma(1/2) = \sqrt\pi$.)
+
+\bibitem{cooper-guillera-straub-zudilin}
+S.\ Cooper, J.\ Guillera, A.\ Straub, and W.\ Zudilin,
+\textit{Crouching AGM, hidden modularity},
+in \emph{Frontiers in Orthogonal Polynomials and $q$-Series},
+Contemporary Mathematics and Its Applications \textbf{1},
+World Scientific, 2018, pp.\ 169--187;
+arXiv:1604.01106. (Self-replicating functional equations generating
+modular forms; provides AGM-type algorithms for $\pi$ and related
+constants, with the AGM--modularity bridge that subsumes the
+Borwein--Borwein cubic AGM as a special case.)
 
 \end{thebibliography}
 
