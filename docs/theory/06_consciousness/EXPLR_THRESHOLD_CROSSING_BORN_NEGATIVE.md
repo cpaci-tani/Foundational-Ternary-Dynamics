@@ -8,7 +8,9 @@
 **Runner:** `scripts/exploration/explore_threshold_crossing_born.py`
 **Results:** `scripts/exploration/results/threshold_crossing_born_2026-05-23.{csv,md}`
 **Sub-investigation of:** LEDGER FTD-0187 / target T1c (the `[OPEN]` step *probability = normalized energy density*).
-**LEDGER row:** FTD-0198.
+**LEDGER row:** FTD-0200.
+
+> **Renumbering note (2026-05-23):** This test was originally proposed as **FTD-0198** in the v1 manifest hash-locked at commit `e4a5813`. After commit, a corpus check found that FTD-0198 had already been assigned earlier the same session to the ARC-B1 alpha-readout pre-registration (commit `eaf7681`, chronologically earlier). Per the FTD-0189 renumbering convention, this test was renumbered to **FTD-0200**. The git tag `preregister-threshold-crossing-born-v1`, the runner SHA256 in §6 of the manifest, and the underlying commits are unchanged — they retain "FTD-0198" as registration-time provenance. All live cross-references in the corpus (LEDGER, retags in `SPEC_SIX_ALGORITHMS.md` + `AUDIT_EPISTEMIC_AUDIT.md`, the v2 DGZ manifest) use FTD-0200.
 
 ---
 
@@ -111,13 +113,13 @@ Two corpus assertions are surgically retagged per manifest §4.3:
 
 **Before:** "**This IS wave function collapse.** The flux field (= wave function) is spread out. When it concentrates past K_B somewhere, that point manifests. The probability follows from `|ψ|²` because `ρ = |J|` and the threshold crossing statistics produce the Born rule."
 
-**After:** the assertion is retagged `[CONJECTURE — falsified in 6-neighbour substrate per FTD-0198, status under canonical 26-neighbour engine OPEN]` and the inline "produce the Born rule" claim is qualified with a footnote pointing at this document.
+**After:** the assertion is retagged `[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200, status under canonical 26-neighbour engine OPEN]` and the inline "produce the Born rule" claim is qualified with a footnote pointing at this document.
 
 ### 5.2 `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md:393`
 
 **Before:** "**Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce `|ψ|²`."
 
-**After:** the "threshold crossing statistics reproduce `|ψ|²`" clause is retagged `[CONJECTURE — falsified in 6-neighbour substrate per FTD-0198]` with a footnote.
+**After:** the "threshold crossing statistics reproduce `|ψ|²`" clause is retagged `[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200]` with a footnote.
 
 In both cases the surrounding prose is preserved; only the load-bearing sentence is qualified.
 
@@ -146,7 +148,7 @@ In both cases the surrounding prose is preserved; only the load-bearing sentence
 ## 8 · Cross-references
 
 - [`PREREG_THRESHOLD_CROSSING_BORN_v1.md`](PREREG_THRESHOLD_CROSSING_BORN_v1.md) — the manifest that locked this test.
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0198 (this test).
+- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (this test).
 - [`SPEC_SIX_ALGORITHMS.md`](../01_reference/SPEC_SIX_ALGORITHMS.md) §1A — site of retag.
 - [`AUDIT_EPISTEMIC_AUDIT.md`](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — site of retag.
 - [`FOUND_THE_EXISTENCE_FILTER.md`](FOUND_THE_EXISTENCE_FILTER.md) — EF-T5 [THEOREM] + EF-C3 [CONJECTURE] (the `|ψ|²` form question).
@@ -158,8 +160,8 @@ In both cases the surrounding prose is preserved; only the load-bearing sentence
 ## 9 · Bookkeeping
 
 - **Pre-registration discipline:** fully respected. Construction, prediction, outcome map, seeds frozen before runner executed.
-- **No FTD tag promoted.** Two corpus assertions retagged from un-tagged-but-asserted to `[CONJECTURE — falsified in 6-neighbour substrate per FTD-0198]`.
+- **No FTD tag promoted.** Two corpus assertions retagged from un-tagged-but-asserted to `[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200]`.
 - **Engine touched:** none. Pure Python lattice.
 - **Manuscript touched:** none.
 - **Paper touched:** none.
-- **Result lives in:** this file + LEDGER FTD-0198 + the CSV/MD result artifacts + the two retag sites. Nowhere else.
+- **Result lives in:** this file + LEDGER FTD-0200 + the CSV/MD result artifacts + the two retag sites. Nowhere else.
