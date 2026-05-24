@@ -291,11 +291,19 @@ verification at L=8 to machine precision).
 
 ## 7 · Theorem 7 — Phase J partition-function ultralocality
 
-**Status.** [THEOREM at L = 2] + [CONJECTURE for general L]. The L = 2
-case is proven by explicit construction; the structural-feature claim
-for arbitrary L is asserted but not formally derived from the axioms
-in this document. Audit 2026-05-01 flagged the unconditional [THEOREM]
-framing as inflated; the present text is the corrected statement.
+**Status.** [THEOREM at L = 2 — mode-degeneracy origin] + [DISCONFIRMED for
+general L]. The L = 2 case is proven by explicit construction. The
+general-L extension was conjectured in earlier drafts and is
+**DISCONFIRMED** by `scripts/proofs/proof_phase_j_general_L.py`: the
+L=2 ultralocality is a mode-counting degeneracy at the Nyquist mode,
+not a structural property; at L ≥ 3 the centered first-derivative is
+non-degenerate and the kinetic term picks up explicit
+spatial-distribution dependence. Audit 2026-05-01 flagged the
+unconditional [THEOREM] framing as inflated (added the
+[CONJECTURE for general L] bracket); audit 2026-05-23 closes the
+general-L conjecture as DISCONFIRMED via route (b) of MC-T1.1 —
+explicit acceptance of the L=2-specific limitation. Spine count
+post-retag is unchanged at 6 theorem-grade + 3 honestly-tiered.
 
 **Statement (L = 2, [THEOREM]).** The classical FTD partition function
 on a 2³ lattice has Euclidean action S_E that depends on the state
@@ -303,33 +311,54 @@ field s ∈ {−1, 0, +1}^{8} only through Σ_i s_i² (the count of
 manifested sites). The action is invariant under arbitrary spatial
 permutations of charge placement at fixed charge count.
 
-**Statement (general L, [CONJECTURE]).** The same dependence on
-Σ_i s_i² alone, and the same permutation invariance, hold on every
-finite L³ lattice.
+**Statement (general L, [DISCONFIRMED]).** The same dependence on
+Σ_i s_i² alone, and the same permutation invariance, do **not** hold
+on every finite L³ lattice. Specifically, at L ≥ 3 with the matched
+centered first-derivative stencil, charge-neutral configurations at
+fixed Σ_i s_i² yield different S_E values depending on spatial
+placement — directly contradicting the conjectured ultralocality. See
+`scripts/proofs/proof_phase_j_general_L.py` for the numerical
+disconfirmation at L ∈ {3, 4, 6, 8}.
+
+**Origin of the L=2 phenomenon.** On a 2³ lattice with centered
+first-derivative ∂_i (eigenvalue i·sin(k_i)), the only available
+momenta are k_i ∈ {0, π}, giving sin(k_i) = 0 for all non-zero modes.
+The kinetic term Σ |∇J|² is therefore identically zero for every
+configuration — trivially ultralocal. The continuum Parseval identity
+Σ |∇J|² = Σ s² (which underlay the earlier general-L conjecture)
+fails on the finite discrete lattice for L ≥ 3 because the discrete
+spectrum is non-degenerate. The L=2 result is a counting accident,
+not a structural fact.
 
 **Proof (L = 2 only).** Explicit construction of the L=2 partition
 function in `docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md`.
-The general-L extension is asserted on structural-feature grounds; a
-formal proof from the 5 axioms is [OPEN].
 
-**LEDGER:** FTD-0042 area (classical partition function).
+**LEDGER.** FTD-0005 (Phase J partition-function ultralocality at L=2)
+tag UNAFFECTED — the LEDGER row never claimed general-L ultralocality,
+so the L=2-only scope of the spine §7 entry is now consistent with the
+canonical LEDGER scope. Methodological clarification recorded as a
+fresh LEDGER row (see latest `[METHODOLOGICAL CLARIFICATION]`
+addition); no claim promotion or demotion.
 
 **Dependencies:** None beyond the FTD axioms (5 postulates per
 SPEC_FTD.md).
 
 **Consequence (NOT promoted to theorem in this document).**
-Ultralocality of the classical action means classical extremization
-alone cannot fix the gauge coupling g_c — informationally, the action
-sees only Σ s², not the spatial structure that g_c would couple to. A
-quantum extension (Mechanism B per FTD-0031) was attempted as the
-remaining first-principles route for g_c and closed NEGATIVE (circular
-in the boundary of the projection). g_c remains [PARAMETRIC] as of
+Ultralocality of the classical action at L=2 means classical
+extremization on the 2³ lattice cannot fix the gauge coupling g_c —
+informationally, the L=2 action sees only Σ s², not the spatial
+structure that g_c would couple to. This consequence is L=2-specific;
+at L ≥ 3 the action does depend on spatial placement and the
+informational obstruction does not apply in the same form. A quantum
+extension (Mechanism B per FTD-0031) was attempted as the remaining
+first-principles route for g_c and closed NEGATIVE (circular in the
+boundary of the projection). g_c remains [PARAMETRIC] as of
 2026-04-27.
 
-**What it does NOT claim.** That the classical action has any
-particular physical content beyond its information structure. The
-ultralocality is the structural finding; downstream consequences are
-separate.
+**What it does NOT claim.** That the L=2 ultralocality has any
+particular physical content beyond its information structure at L=2.
+The L=2-only scope is now the spine's honest claim; general-L
+extensions are DISCONFIRMED and out of scope.
 
 ---
 
@@ -734,7 +763,7 @@ What this document explicitly does NOT allow you to claim:
 | 4 Coefficient 16 | `EXPLR_COEFFICIENT_16.md` | included in motivic proof | FTD-0006 / FTD-0007 |
 | 5 Watson identity | `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` | (analytic) | FTD-0001 (sub) |
 | 6 Phase G Coulomb | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | `fit_geometric_coulomb.py` | (Phase G) |
-| 7 Phase J ultralocal (L=2 only) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` | FTD-0042 area |
+| 7 Phase J ultralocal (L=2 only; general L DISCONFIRMED 2026-05-23) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` + `proof_phase_j_general_L.py` | FTD-0005 area |
 
 | Subsidiary | Primary doc | LEDGER |
 |---|---|---|
