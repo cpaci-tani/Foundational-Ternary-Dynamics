@@ -173,3 +173,19 @@ Adding a new `check()` to `verify_gstar_paper.py` automatically regenerates the 
 - `docs/theory/09_mathematical/REF_GUILLERA_CORPUS_MAP.md` -- the Borwein-Cooper-Guillera-Straub-Zudilin AGM-modularity bridge that powers Bundles 2 and 5.
 - `docs/theory/09_mathematical/EXPLR_CM_RATIO_TOWER.md` -- the CM-uniqueness machinery Bundle 4 connects to.
 - `.claude/plans/let-s-proceed-on-the-eager-rocket.md` -- Sessions A3 (this work) + B2 (C3 higher-Γ catalogue) + D1 (Catalan PREREG).
+
+---
+
+## §8 -- Successor: the corpus-wide math node map (FTD-0207, 2026-05-23)
+
+This roadmap is **G\*-paper-scoped** -- the synonymy graph it ranks covers only `verify_gstar_paper.py`'s 100 verified identities (72 objects, 216 bipartite edges). Subsequent work (FTD-0207) generalises the extraction across the full ~131-script corpus and adds a multi-layer structure (mathematical objects ↔ identities ↔ spine theorems ↔ LEDGER claims with epistemic-tag overlay) rendered in four complementary output formats.
+
+The corpus-wide map does NOT supersede this roadmap -- the priority bundles in §3 remain the right ranking for G\*-paper-internal extensions. The corpus-wide map answers a different question: *"how do all of FTD's verified pieces connect across the whole project?"* The G\*-paper-scoped synonymy graph answers: *"which identity should be added next to the G\* paper's verification corpus?"*
+
+**Pointers:**
+- `docs/theory/09_mathematical/NODE_MAP_FTD_MATH.md` -- corpus-wide markdown view (per-sector Mermaid blocks + object backbone).
+- `dissemination/interactive/math_node_map.html` -- interactive Plotly.js viewer (filterable by layer, sector, epistemic tag, search).
+- `scripts/visualization/results/math_node_map/` -- 18 matplotlib SVG/PNG figures (full overview + spine-only + ARC-B1 context + Catalan frontier + 14 per-sector).
+- `docs/papers/figures/node_map_tikz.tex` -- spine-only TikZ fragment for paper inclusion.
+- `scripts/verification/results/math_node_map.json` -- canonical machine-readable data (commit-recorded).
+- LEDGER row FTD-0207 -- provenance + extractor honesty + reproduction recipe.

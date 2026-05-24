@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FTD Math Node Map — multi-layer connectivity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+         margin: 0; padding: 0; display: grid; grid-template-columns: 280px 1fr;
+         grid-template-rows: 100vh; }
+  .sidebar { padding: 16px; border-right: 1px solid #ccc; overflow-y: auto;
+             background: #f7f7f7; font-size: 13px; }
+  @media (prefers-color-scheme: dark) { .sidebar { background: #181818; border-color: #333; } }
+  .sidebar h1 { font-size: 16px; margin: 0 0 8px 0; }
+  .sidebar h2 { font-size: 13px; margin: 16px 0 4px 0; text-transform: uppercase;
+                letter-spacing: 0.5px; color: #666; }
+  .sidebar label { display: block; padding: 2px 0; cursor: pointer; }
+  .sidebar input[type="checkbox"] { margin-right: 6px; }
+  .sidebar select, .sidebar input[type="text"] { width: 100%; padding: 4px 6px;
+                                                  border: 1px solid #ccc; border-radius: 3px;
+                                                  background: inherit; color: inherit; box-sizing: border-box; }
+  .legend-item { display: flex; align-items: center; gap: 6px; padding: 2px 0; cursor: pointer; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+  #graph { width: 100%; height: 100vh; }
+  .info-panel { position: absolute; right: 16px; top: 16px; max-width: 360px; max-height: 60vh;
+                background: rgba(255,255,255,0.95); border: 1px solid #aaa; border-radius: 4px;
+                padding: 12px; font-size: 12px; overflow-y: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                display: none; }
+  @media (prefers-color-scheme: dark) { .info-panel { background: rgba(40,40,40,0.95); border-color: #555; } }
+  .info-panel h3 { margin: 0 0 8px 0; font-size: 14px; }
+  .info-panel .kv { margin: 4px 0; }
+  .info-panel .kv .k { color: #888; font-weight: 600; }
+  .info-panel .desc { margin-top: 8px; max-height: 200px; overflow-y: auto; font-size: 11px; }
+  .close-btn { float: right; cursor: pointer; color: #888; font-size: 16px; line-height: 1; }
+  .stats { font-size: 11px; color: #888; }
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <h1>FTD Math Node Map</h1>
+  <div class="stats" id="stats">Loading…</div>
+
+  <h2>Layers</h2>
+  <label><input type="checkbox" data-layer="theorems" checked> Theorems (T1–T9, S1–S4)</label>
+  <label><input type="checkbox" data-layer="ledger" checked> LEDGER claims (FTD-NNNN)</label>
+  <label><input type="checkbox" data-layer="objects" checked> Mathematical objects</label>
+  <label><input type="checkbox" data-layer="identities"> Identities (large; off by default)</label>
+
+  <h2>Sector filter</h2>
+  <select id="sectorFilter">
+    <option value="">All sectors</option>
+  </select>
+
+  <h2>Search</h2>
+  <input type="text" id="searchBox" placeholder="filter by name / id / label…">
+
+  <h2>Epistemic tags (click to toggle)</h2>
+  <div id="legend"></div>
+
+  <h2>Edge types</h2>
+  <label><input type="checkbox" data-edge="theorem-anchors-ledger" checked> theorem → ledger</label>
+  <label><input type="checkbox" data-edge="ledger-depends-on" checked> ledger → ledger (deps)</label>
+  <label><input type="checkbox" data-edge="identity-witnesses-theorem" checked> identity → theorem</label>
+  <label><input type="checkbox" data-edge="identity-witnesses-ledger" checked> identity → ledger</label>
+  <label><input type="checkbox" data-edge="object-in-identity"> object → identity (large; off by default)</label>
+
+  <h2>Notes</h2>
+  <p style="font-size: 11px; color: #888; line-height: 1.4;">
+    Data: <code>scripts/verification/results/math_node_map.json</code><br>
+    Source-of-truth: LEDGER.md + SPEC_ALGEBRAIC_SPINE.md + ~131 verify/proof Python scripts<br>
+    Per the plan §honest-limits, extraction is best-effort across heterogeneous scripts;
+    E1 covers ~15% of verify_*.py, E2 covers ~40% of proof_*.py, E3 emits one
+    coverage-record per remaining script.
+  </p>
+</div>
+
+<div style="position: relative;">
+  <div id="graph"></div>
+  <div class="info-panel" id="info">
+    <span class="close-btn" onclick="document.getElementById('info').style.display='none'">×</span>
+    <h3 id="info-title">—</h3>
+    <div id="info-body"></div>
+  </div>
+</div>
+
+<script>
+let DATA = null;
+let activeLayers = new Set(["theorems", "ledger", "objects"]);
+let activeEdges = new Set(["theorem-anchors-ledger", "ledger-depends-on",
+                           "identity-witnesses-theorem", "identity-witnesses-ledger"]);
+let activeSector = "";
+let activeSearch = "";
+let disabledTags = new Set();
+let nodeIndex = {};  // id -> node record
+
+function loadData() {
+  // Path is relative to dissemination/interactive/ -> ../../scripts/verification/results/
+  return fetch("../../scripts/verification/results/math_node_map.json")
+    .then(r => r.json())
+    .then(d => { DATA = d; return d; });
+}
+
+function buildIndex() {
+  nodeIndex = {};
+  for (const layer of ["theorems", "ledger", "objects", "identities"]) {
+    for (const n of DATA.layers[layer]) {
+      n._layer = layer;
+      nodeIndex[n.id] = n;
+    }
+  }
+}
+
+function nodeColor(n) {
+  // Color by epistemic_color if available, else by layer.
+  if (n.epistemic_color) return n.epistemic_color;
+  if (n._layer === "theorems") return "#1565c0";
+  if (n._layer === "ledger") return "#37474f";
+  if (n._layer === "objects") return "#6a1b9a";
+  if (n._layer === "identities") return "#aaaaaa";
+  return "#888";
+}
+
+function nodeSize(n) {
+  if (n._layer === "theorems") return 18;
+  if (n._layer === "ledger") return 10 + Math.min((n.deps?.length || 0), 6);
+  if (n._layer === "objects") return 6 + Math.min(Math.sqrt(n.valence || 1) * 2, 14);
+  if (n._layer === "identities") return 4;
+  return 5;
+}
+
+function nodeLabel(n) {
+  if (n._layer === "objects") return n.name || n.id;
+  if (n._layer === "theorems") return `${n.id}: ${n.name || ""}`;
+  if (n._layer === "ledger") return `${n.id}: ${n.short_name || ""}`;
+  if (n._layer === "identities") return n.label || n.id;
+  return n.id;
+}
+
+function isVisible(n) {
+  if (!activeLayers.has(n._layer)) return false;
+  if (activeSector && n.sector && n.sector !== activeSector) return false;
+  // Epistemic-tag filter applies to ledger rows only.
+  if (n._layer === "ledger" && n.primary_tag && disabledTags.has(n.primary_tag)) return false;
+  if (activeSearch) {
+    const text = `${n.id} ${n.name || ""} ${n.short_name || ""} ${n.label || ""}`.toLowerCase();
+    if (!text.includes(activeSearch)) return false;
+  }
+  return true;
+}
+
+function render() {
+  const visibleNodes = [];
+  const visibleIds = new Set();
+  for (const layer of ["theorems", "ledger", "objects", "identities"]) {
+    for (const n of DATA.layers[layer]) {
+      if (isVisible(n)) {
+        visibleNodes.push(n);
+        visibleIds.add(n.id);
+      }
+    }
+  }
+
+  // Edge segments: one trace per edge type so they can be toggled separately
+  // and styled differently.
+  const edgeTraces = [];
+  const edgeStyleByType = {
+    "theorem-anchors-ledger":   { color: "#1565c0", width: 2.5 },
+    "ledger-depends-on":        { color: "#90a4ae", width: 0.8 },
+    "identity-witnesses-theorem":{ color: "#00897b", width: 0.8 },
+    "identity-witnesses-ledger":{ color: "#aed581", width: 0.6 },
+    "object-in-identity":       { color: "#ce93d8", width: 0.4 },
+  };
+  const edgeXByType = {}, edgeYByType = {};
+  for (const t in edgeStyleByType) { edgeXByType[t] = []; edgeYByType[t] = []; }
+  for (const e of DATA.edges) {
+    if (!activeEdges.has(e.type)) continue;
+    const a = nodeIndex[e.from], b = nodeIndex[e.to];
+    if (!a || !b) continue;
+    if (!visibleIds.has(a.id) || !visibleIds.has(b.id)) continue;
+    edgeXByType[e.type].push(a.x, b.x, null);
+    edgeYByType[e.type].push(a.y, b.y, null);
+  }
+  for (const t in edgeStyleByType) {
+    if (edgeXByType[t].length === 0) continue;
+    edgeTraces.push({
+      x: edgeXByType[t], y: edgeYByType[t],
+      mode: "lines", type: "scatter",
+      line: edgeStyleByType[t], hoverinfo: "none",
+      showlegend: false, opacity: 0.5,
+    });
+  }
+
+  // Node traces per layer so the marker style differs.
+  const nodeTraces = [];
+  for (const layer of ["theorems", "ledger", "objects", "identities"]) {
+    const ns = visibleNodes.filter(n => n._layer === layer);
+    if (ns.length === 0) continue;
+    nodeTraces.push({
+      x: ns.map(n => n.x), y: ns.map(n => n.y),
+      text: ns.map(n => nodeLabel(n)),
+      hovertext: ns.map(n => nodeLabel(n)),
+      hoverinfo: "text",
+      customdata: ns.map(n => n.id),
+      mode: layer === "theorems" ? "markers+text" : "markers",
+      type: "scatter",
+      marker: {
+        color: ns.map(n => nodeColor(n)),
+        size: ns.map(n => nodeSize(n)),
+        line: { color: "#222", width: 0.5 },
+        symbol: layer === "theorems" ? "diamond"
+              : layer === "ledger" ? "circle"
+              : layer === "objects" ? "square"
+              : "circle-open",
+      },
+      textposition: "top center",
+      textfont: { size: 10 },
+      name: layer, showlegend: true,
+    });
+  }
+
+  const layout = {
+    showlegend: true,
+    legend: { x: 1, xanchor: "right", y: 1 },
+    hovermode: "closest",
+    xaxis: { visible: false, scaleanchor: "y" },
+    yaxis: { visible: false },
+    margin: { l: 0, r: 0, t: 0, b: 0 },
+    plot_bgcolor: "rgba(0,0,0,0)",
+    paper_bgcolor: "rgba(0,0,0,0)",
+  };
+
+  Plotly.react("graph", [...edgeTraces, ...nodeTraces], layout, {
+    responsive: true,
+    displaylogo: false,
+    modeBarButtonsToRemove: ["select2d", "lasso2d"],
+  });
+
+  // Click handler for info panel.
+  const gd = document.getElementById("graph");
+  gd.on("plotly_click", (ev) => {
+    const id = ev.points[0]?.customdata;
+    if (!id) return;
+    showInfo(nodeIndex[id]);
+  });
+
+  document.getElementById("stats").innerHTML =
+    `<b>${visibleNodes.length}</b> nodes (of ${DATA.layers.theorems.length + DATA.layers.ledger.length + DATA.layers.objects.length + DATA.layers.identities.length})<br>` +
+    `commit <code>${(DATA.source_commit || "").slice(0,7)}</code>`;
+}
+
+function showInfo(n) {
+  if (!n) return;
+  document.getElementById("info").style.display = "block";
+  document.getElementById("info-title").innerText = nodeLabel(n);
+  const body = document.getElementById("info-body");
+  const rows = [];
+  rows.push(`<div class="kv"><span class="k">layer:</span> ${n._layer}</div>`);
+  if (n.primary_tag) rows.push(`<div class="kv"><span class="k">tag:</span> <span style="background:${n.epistemic_color};color:white;padding:1px 5px;border-radius:2px;">${n.primary_tag}</span></div>`);
+  if (n.sector) rows.push(`<div class="kv"><span class="k">sector:</span> ${n.sector}</div>`);
+  if (n.valence !== undefined) rows.push(`<div class="kv"><span class="k">valence:</span> ${n.valence}</div>`);
+  if (n.deps && n.deps.length) rows.push(`<div class="kv"><span class="k">deps:</span> ${n.deps.join(", ")}</div>`);
+  if (n.ledger_ref) rows.push(`<div class="kv"><span class="k">ledger:</span> ${n.ledger_ref}</div>`);
+  if (n.primary_doc) rows.push(`<div class="kv"><span class="k">primary doc:</span> ${n.primary_doc}</div>`);
+  if (n.verifier_script) rows.push(`<div class="kv"><span class="k">verifier:</span> ${n.verifier_script}</div>`);
+  if (n.source_file) rows.push(`<div class="kv"><span class="k">source:</span> ${n.source_file}:${n.source_line || ""}</div>`);
+  if (n.extractor) rows.push(`<div class="kv"><span class="k">extractor:</span> ${n.extractor}</div>`);
+  if (n.description) rows.push(`<div class="desc">${n.description}</div>`);
+  body.innerHTML = rows.join("");
+}
+
+function buildSectorDropdown() {
+  const sectors = new Set();
+  for (const layer of ["theorems", "ledger", "objects", "identities"]) {
+    for (const n of DATA.layers[layer]) {
+      if (n.sector) sectors.add(n.sector);
+    }
+  }
+  const dd = document.getElementById("sectorFilter");
+  for (const s of Array.from(sectors).sort()) {
+    const opt = document.createElement("option");
+    opt.value = s; opt.textContent = s;
+    dd.appendChild(opt);
+  }
+}
+
+function buildLegend() {
+  const legend = document.getElementById("legend");
+  const tags = {};
+  for (const r of DATA.layers.ledger) {
+    if (r.primary_tag) {
+      tags[r.primary_tag] = (tags[r.primary_tag] || 0) + 1;
+    }
+  }
+  const sorted = Object.entries(tags).sort((a, b) => b[1] - a[1]);
+  for (const [tag, n] of sorted) {
+    const color = DATA.epistemic_colors[tag] || "#888";
+    const div = document.createElement("div");
+    div.className = "legend-item";
+    div.innerHTML = `<span class="legend-swatch" style="background:${color}"></span> ${tag} <span style="color:#888; margin-left:auto;">${n}</span>`;
+    div.onclick = () => {
+      if (disabledTags.has(tag)) disabledTags.delete(tag);
+      else disabledTags.add(tag);
+      div.style.opacity = disabledTags.has(tag) ? 0.3 : 1;
+      render();
+    };
+    legend.appendChild(div);
+  }
+}
+
+function bindControls() {
+  document.querySelectorAll('input[data-layer]').forEach(cb => {
+    cb.addEventListener("change", () => {
+      const l = cb.dataset.layer;
+      if (cb.checked) activeLayers.add(l); else activeLayers.delete(l);
+      render();
+    });
+  });
+  document.querySelectorAll('input[data-edge]').forEach(cb => {
+    cb.addEventListener("change", () => {
+      const t = cb.dataset.edge;
+      if (cb.checked) activeEdges.add(t); else activeEdges.delete(t);
+      render();
+    });
+  });
+  document.getElementById("sectorFilter").addEventListener("change", e => {
+    activeSector = e.target.value; render();
+  });
+  document.getElementById("searchBox").addEventListener("input", e => {
+    activeSearch = e.target.value.toLowerCase().trim(); render();
+  });
+}
+
+loadData().then(() => {
+  buildIndex();
+  buildSectorDropdown();
+  buildLegend();
+  bindControls();
+  render();
+}).catch(err => {
+  document.getElementById("graph").innerHTML =
+    `<div style="padding:40px;color:#c00;">Failed to load math_node_map.json: ${err}.<br>
+     Run <code>python scripts/verification/build_math_node_map.py</code> followed by
+     <code>python dissemination/interactive/math_node_map_layout.py</code>, then refresh.</div>`;
+});
+</script>
+</body>
+</html>
