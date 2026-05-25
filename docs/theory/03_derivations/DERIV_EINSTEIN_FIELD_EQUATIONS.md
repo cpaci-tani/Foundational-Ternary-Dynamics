@@ -2,10 +2,10 @@
 
 ## From Lattice Axiom to R_μν − ½g_μνR = 8πGT_μν
 
-**Document Version:** 1.0
+**Document Version:** 1.0 (Feb 25, 2026) + 2026-05-24 FTD-0189 ripple annotations
 **Date:** February 25, 2026
-**Status:** [THEOREM] (chain) + [SELECTION] (identifications)
-**Closes:** GAP-2 (nonlinear Einstein equations), GAP-14.1 (DERIV_RELATIVITY_DERIVATION.md)
+**Status:** **[CHAIN CONDITIONAL on Conjecture 10.1 per FTD-0189]** — corrected 2026-05-24. The chain's linearized-Einstein input (Step 3, citing DERIV_RELATIVITY Theorem 14.1) was retagged `[SELECTION/CONDITIONAL]` by FTD-0189 (2026-05-21). The Lovelock-completion (Step 5) inherits this conditionality. The Schwarzschild scalar sector (g_00 via Step 4 of FTD-0131; SPEC §4.3 Born-Infeld → Schwarzschild proper time) survives unchanged because it does not invoke `h_μν` correspondence. See `AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` §3 + LEDGER FTD-0189.
+**Closes (qualified per 2026-05-24):** GAP-2 (nonlinear Einstein equations) — **conditional on Conjecture 10.1** (h_μν posited per FTD-0189; substrate spin-2 emergence `[CLOSED NEGATIVE per FTD-0193]` in probed regime). GAP-14.1 (DERIV_RELATIVITY_DERIVATION.md) closure also inherits this conditionality.
 
 **Depends on:**
 
@@ -114,9 +114,11 @@ For this derivation, the canonical (weak-field) form is sufficient. The Born-Inf
 
 ---
 
-# Step 3: Linearized Einstein Equations [THEOREM]
+# Step 3: Linearized Einstein Equations [SELECTION — conditional on Conjecture 10.1, per FTD-0189]
 
 ## 3.1 The Established Result
+
+**2026-05-24 FTD-0189 ripple correction:** Theorem 14.1 of `DERIV_RELATIVITY_DERIVATION.md` was retagged from `[THEOREM]` to `[SELECTION/CONDITIONAL]` per the 2026-05-21 FTD-0189 audit — the proof rests on the h ↔ J correspondence (Conjecture 10.1), which is `[CONJECTURE]` rather than derived. Step 3 below inherits this conditionality. Substrate spin-2 emergence (the h_μν construction Conjecture 10.1 would require) was tested via FTD-0193 (2026-05-22) and `[CLOSED NEGATIVE]` in the probed regime L∈{32,64}.
 
 From the flux wave equation and the metric perturbation, the linearized Einstein equations are (Theorem 14.1, DERIV_RELATIVITY_DERIVATION.md):
 
@@ -336,16 +338,16 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 | EFE-3 | $g_{rr} = -1/f$ from velocity amplification | **[THEOREM]** + **[SELECTION]** | DERIV_LATTICE_SCHWARZSCHILD §7 |
 | EFE-4 | $T_{\mu\nu}$ via Noether from flux $\mathcal{L}$ | **[THEOREM]** | DERIV_QFT_GRT_BRIDGE Thm 2.1 |
 | EFE-5 | $\nabla_\mu T^{\mu\nu} = 0$ from wave equation | **[THEOREM]** | DERIV_QFT_GRT_BRIDGE Thm 2.2 |
-| EFE-6 | Linearized Einstein: $\Box\bar{h}_{\mu\nu} = -16\pi G T_{\mu\nu}/c^4$ | **[THEOREM]** | DERIV_RELATIVITY Thm 14.1 |
+| EFE-6 | Linearized Einstein: $\Box\bar{h}_{\mu\nu} = -16\pi G T_{\mu\nu}/c^4$ | **[SELECTION — conditional on Conjecture 10.1]** *(retagged 2026-05-24 per FTD-0189 ripple; was [THEOREM])* | DERIV_RELATIVITY Thm 14.1 (now [SELECTION/CONDITIONAL]) |
 | EFE-7 | $G$ from $\alpha_G$ hierarchy ($\alpha^{20}$) | **[THEOREM]** | DERIV_LEMNISCATE_HIERARCHY |
-| EFE-8 | Nonlinear completion via Lovelock | **[THEOREM]** | Lovelock (1971) + Premises 1-5 |
-| EFE-9 | Full Einstein equations recovered | **[THEOREM]** | EFE-1 through EFE-8 |
+| EFE-8 | Nonlinear completion via Lovelock | **[SELECTION — conditional on EFE-6]** *(retagged 2026-05-24; inherits from EFE-6)* | Lovelock (1971) + Premises 1-5 |
+| EFE-9 | Full Einstein equations recovered | **[SELECTION — conditional on Conjecture 10.1]** *(retagged 2026-05-24; inherits from EFE-6 + EFE-8)* | EFE-1 through EFE-8 |
 | EFE-10 | $\Lambda$ from lattice vacuum energy | **[CONJECTURE]** | Cosmological constant problem |
 | EFE-11 | Schwarzschild as vacuum solution | **[VERIFIED]** | Birkhoff + DERIV_LATTICE_SCHWARZSCHILD |
 | EFE-12 | Poisson equation in weak-field limit | **[VERIFIED]** | Standard GR + SPEC_FTD_LAGRANGIAN |
 | EFE-13 | GW propagation (2 polarizations, speed $c$) | **[VERIFIED]** | DERIV_RELATIVITY §15 |
 
-**Epistemic breakdown:** 9 [THEOREM], 1 [SELECTION], 1 [CONJECTURE], 3 [VERIFIED]
+**Epistemic breakdown** *(updated 2026-05-24 per FTD-0189 ripple)*: 6 [THEOREM] (EFE-1, EFE-2, EFE-3, EFE-4, EFE-5, EFE-7) + 3 [SELECTION — conditional on Conjecture 10.1] (EFE-6, EFE-8, EFE-9) + 1 [CONJECTURE] (EFE-10) + 3 [VERIFIED] (EFE-11, EFE-12, EFE-13). Pre-correction breakdown was 9 [THEOREM] + 1 [SELECTION] + 1 [CONJECTURE] + 3 [VERIFIED]; three [THEOREM] tags were downgraded to [SELECTION] when FTD-0189 (2026-05-21) retagged the load-bearing Theorem 14.1 input.
 
 ---
 
