@@ -70,18 +70,35 @@ print()
 # Per FTD-0110 [DERIVED at linear level]: cluster size N corresponds to mass
 # N * m_e (under K_B = m_e calibration). Source for discrete Poisson is then
 # proportional to manifested-voxel count.
+#
+# 2026-05-24 reconciliation (AUDIT_NEWTON_POSTULATES_RECONCILIATION.md):
+# under SPEC_FTD_LAGRANGIAN.md §4.2 [THEOREM] derivation, the source density
+# is rho_mass = K_B * n with K_B = m_e (manifestation threshold per §3.4).
+# The K_B_grav symbol below is bookkeeping; K_B_grav = K_B = m_e by SPEC §4.2.
+# POSTULATE-1 tag is therefore residue; substantively closed under Reading A.
 print("STEP 2 (FTD-0110 [DERIVED at linear level]): mass = N * m_e per cluster")
 print(f"  Source density: rho_voxel(x) = K_B_grav * 1_manifested(x)")
+print(f"  Note: K_B_grav = K_B = m_e per SPEC_FTD_LAGRANGIAN.md §4.2 [THEOREM]")
 print(f"  Total mass: M = N * m_e  for N-voxel cluster")
 print()
 
 # ============== Step 3 — Postulate: linearized tick-rate response ==============
 # tick_rate = 1 + 2 * phi_g / c^2  (matches GR linearization)
-# In lattice units c^2 = 1/3, so tick_rate = 1 + 6 * phi_g.
-# This is POSTULATE — would need substrate-dynamics derivation to upgrade.
-print("STEP 3 (POSTULATE, matches GR linearization):")
-print(f"  tick_rate(x) = 1 + 2 * phi_g(x) / c_lat^2")
-print(f"  In lattice units (c_lat^2 = 1/3): tick_rate = 1 + 6 * phi_g")
+# Convention: "tick_rate" here means g_00 (metric component), NOT dtau/dt
+# (the proper-time ratio = sqrt(g_00) approx 1 + phi_g/c^2 with coefficient 1).
+# In lattice units c^2 = 1/3, so g_00 = 1 + 6 * phi_g.
+#
+# 2026-05-24 reconciliation (AUDIT_NEWTON_POSTULATES_RECONCILIATION.md):
+# SPEC_FTD_LAGRANGIAN.md §4.3 [THEOREM] derives dtau/dt = sqrt(f - v^2/f) from
+# Born-Infeld + clock hypothesis, exact Schwarzschild for all f.  This subsumes
+# the linearized statement here (consistent under square-root).  POSTULATE-2
+# tag is substantively closed under Reading A modulo the clock hypothesis,
+# which is the genuine remaining open interpretive step (single substrate
+# question: derive the clock hypothesis or honest-axiom tier it).
+print("STEP 3 (POSTULATE-2 substantively closed by SPEC §4.3, modulo clock hypothesis):")
+print(f"  tick_rate(x) = 1 + 2 * phi_g(x) / c_lat^2   (this is g_00)")
+print(f"  Equivalent dtau/dt = sqrt(g_00) approx 1 + phi_g/c_lat^2  (coefficient 1)")
+print(f"  In lattice units (c_lat^2 = 1/3): g_00 = 1 + 6 * phi_g")
 print()
 
 # ============== Step 4 — Combine: form of Newton/Schwarzschild ==============
