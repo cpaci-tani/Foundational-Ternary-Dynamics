@@ -449,7 +449,7 @@ ftd/                                     # Project root
 | N_c (colors) | 3 | Master quadratic x₋ |
 | K_B (manifestation) | 0.511 | m_e = m_P·√(2π)·(16/3)·α¹¹ (current calibration: K_B = m_e mass anchor; role-conflated with engine manifestation threshold — see FTD-0130) |
 | C_SPEED | 1/√3 | CFL stability on cubic lattice |
-| G_N (gravity) | 0.01 | 1/(b₃+N_c)² — **falsified as identification with physical G_N** (FTD-0131); substrate derivation gives instead the gravitational fine-structure ratio for one electron: α_G(e,e) = (m_e/m_P)² = (√(2π)·(16/3)·α¹¹)² ≈ 1.745×10⁻⁴⁵ (predicted, 0.38% match to measured 1.752×10⁻⁴⁵) — derived via Phase G + FTD-0015 + 2 flagged postulates; see `docs/theory/03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`. The "1/100" numerical coincidence has no substrate justification under any natural reading. |
+| G_N (gravity) | 0.01 | 1/(b₃+N_c)² — **falsified as identification with physical G_N** (FTD-0131); substrate derivation gives instead the gravitational fine-structure ratio for one electron: α_G(e,e) = (m_e/m_P)² = (√(2π)·(16/3)·α¹¹)² ≈ 1.745×10⁻⁴⁵ (predicted, 0.38% match to measured 1.752×10⁻⁴⁵) — derived via Phase G + FTD-0015 + **1 flagged interpretive step (clock hypothesis used in SPEC_FTD_LAGRANGIAN.md §4.3)** per AUDIT 2026-05-24 reconciliation; the two original postulates of DERIV_NEWTON_FROM_SUBSTRATE.md §1.2 + §1.4 are subsumed by SPEC §4.2 + §4.3 [THEOREM]s (`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`); Arc B P2 closure attempt pre-registered (`preregister-clock-hypothesis-derivation-v1`). See `docs/theory/03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md`. The "1/100" numerical coincidence has no substrate justification under any natural reading. |
 
 ### Engine Philosophy
 

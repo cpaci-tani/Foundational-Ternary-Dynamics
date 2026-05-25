@@ -324,7 +324,7 @@ These integer-depth matrices are **proposed candidate scaffolding**. They have *
 
 # §12 · Gravity / curvature
 
-**Partial closure landed (FTD-0131, 2026-05-03).** `DERIV_NEWTON_FROM_SUBSTRATE.md` derives Schwarzschild's leading-order behaviour from FTD substrate via Phase G's lattice Poisson Green's function (FTD-0004 [THEOREM]) plus FTD-0110's cluster-mass identification ([DERIVED at linear level]) plus FTD-0015's α¹¹ mass formula ([STRONGLY MOTIVATED CONJECTURE]) plus two flagged postulates (gravitational coupling form, linearized tick-rate response coefficient `2/c²`).
+**Partial closure landed (FTD-0131, 2026-05-03; reconciled 2026-05-24 per `../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`).** `DERIV_NEWTON_FROM_SUBSTRATE.md` derives Schwarzschild's leading-order behaviour from FTD substrate via Phase G's lattice Poisson Green's function (FTD-0004 [THEOREM]) plus FTD-0110's cluster-mass identification ([DERIVED at linear level]) plus FTD-0015's α¹¹ mass formula ([STRONGLY MOTIVATED CONJECTURE]) plus **one flagged interpretive step (the clock hypothesis used in `SPEC_FTD_LAGRANGIAN.md` §4.3)** — the original two flagged postulates (gravitational coupling form, linearized tick-rate response coefficient `2/c²`) are subsumed by SPEC §4.2 + §4.3 [THEOREM]s per the 2026-05-24 reconciliation (Reading A confirmed; the linearized `2/c²` postulate's factor-of-2 was a `g_00`-vs-`dτ/dt` convention difference). Arc B P2 closure attempt pre-registered (`preregister-clock-hypothesis-derivation-v1`, FTD-0208).
 
 **Substrate prediction.**
 `α_G(e,e) = (m_e / m_P)² = [√(2π) · (16/3) · α¹¹]² ≈ 1.745 × 10⁻⁴⁵`
@@ -345,8 +345,8 @@ These are **[CANDIDATE PRINCIPLE]** alternatives within the §14 Phase-3 program
 |----------------------------------------------------------------------|----------------------------------|-----------------------------------------------------------------------------------------|
 | `G_+(r) → 1/(4π r)` at large r (Phase G)                             | [THEOREM]                        | SPEC_ALGEBRAIC_SPINE.md §6 Theorem 6; OT-1.4; FTD-0004                                  |
 | Cluster mass `M = N · m_e` (linear regime)                            | [DERIVED at linear level]        | FTD-0110; OT-3.4                                                                        |
-| Schwarzschild leading-order `dτ/dT = 1 + 2φ_g/c²` recovered           | [DERIVED, conditional on 2 flagged postulates] | FTD-0131; DERIV_NEWTON_FROM_SUBSTRATE.md §1                                |
-| `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵`, 0.38% match                | [STRONGLY MOTIVATED CONJECTURE] (floor inherited from FTD-0015) + [DERIVED chain] | FTD-0131; the 0.38% precision is squared FTD-0015 precision (mechanical, not new evidence); chain steps 1.1–1.5 are derived from substrate; 2 flagged postulates |
+| Schwarzschild leading-order `dτ/dT = 1 + 2φ_g/c²` recovered           | [DERIVED, conditional on 1 flagged interpretive step (clock hypothesis)] | FTD-0131; DERIV_NEWTON_FROM_SUBSTRATE.md §1; reconciled 2026-05-24 (`../03_derivations/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`)            |
+| `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵`, 0.38% match                | [STRONGLY MOTIVATED CONJECTURE] (floor inherited from FTD-0015) + [DERIVED chain] | FTD-0131; the 0.38% precision is squared FTD-0015 precision (mechanical, not new evidence); chain steps 1.1–1.5 derived from substrate; 1 flagged interpretive step (clock hypothesis) post-reconciliation 2026-05-24 |
 | `G_N = 1/(b_3 + N_c)² = 1/100` framework-integer reading              | **[CLOSED NEGATIVE per FTD-0131]** | Off by `~10²⁰` to `~10⁴³` under any natural calibration                              |
 | Branch-compliance/Yilmaz exponential metric route (`dτ=e^{-U}`, `n_γ=e^{2U}`) | **[CLOSED NEGATIVE per FTD-0184]** | Agrees at low weak-field order but conflicts with standing GR/black-hole sector; see LEDGER FTD-0184 |
 | `Action-Closure Duality`, `ell_F`, `m_F`, mass-depth notation          | [NO NEW CLAIM]                    | Planck-length/Planck-mass reparameterization and substitution identity per FTD-0184      |
@@ -398,7 +398,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 4. **Derive Higgs residual curvature `χ_H`** — no canonical anchor.
 5. **Force flavor depth matrices from explicit transfer matrices** — no canonical anchor (depth matrices §10 [PARAMETRIC scaffold]).
 6. **Substrate-derive QCD trace-gap confinement** — FTD-0025 night-2026-05-03 audit recorded structural obstruction (no Phase-G analog for area-law behavior); the strong-sector substrate-derivation gap is real and structural.
-7. **Build gravity as finite trace curvature** — partial closure FTD-0131 (`α_G` to 0.38%, 2 postulates flagged); FTD-0184 closes the branch-compliance/Yilmaz shortcut negative and leaves substrate-side strong-field GR / horizon derivation [OPEN].
+7. **Build gravity as finite trace curvature** — partial closure FTD-0131 (`α_G` to 0.38%, **1 interpretive step flagged: clock hypothesis** post-2026-05-24 reconciliation; original 2 postulates subsumed by SPEC §4.2 + §4.3 [THEOREM]s); FTD-0184 closes the branch-compliance/Yilmaz shortcut negative; FTD-0193 substrate spin-2 search [CLOSED NEGATIVE] at L≤64; **Arc C2 spin-2 boundary theorem free-theory derivation landed 2026-05-24** (`../10_eft_program/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` + `../10_eft_program/DERIV_J_BILINEAR_NO_SPIN2_POLE.md`); Arc C2 P3 pre-reg (`preregister-spin2-boundary-theorem-v1`, FTD-0209) hash-locked. Substrate-side strong-field GR / horizon derivation remains [OPEN] in the dual sense per the boundary theorem framework (full nonlinear GR via Deser-bootstrap of POSITED h_μν per FTD-0189).
 
 ---
 
