@@ -163,7 +163,7 @@ When auditing: confirm `git rev-list -n1 preregister-catalan-independence-v1` re
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0208** clock-hypothesis substrate-derivation (Arc B P2) | `preregister-clock-hypothesis-derivation-v1` | `4c15ba1` | desk derivation (no script in this commit); the closure attempt is a §9 method 11-step desk execution against the locked design. Quick-check companion `scripts/proofs/proof_newton_from_substrate.py` (no edits required at lock time; STEP 3 comment already references the pre-reg) | n/a (desk) | n/a (desk attempt; result-doc is the output) | [`PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`](../03_derivations/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md) (pre-reg, design only) → `REPORT_CLOCK_HYPOTHESIS_DERIVATION.md` (Outcome A FOUND or B UNDERDETERMINED) / `AUDIT_CLOCK_HYPOTHESIS_CLOSED_NEGATIVE.md` (Outcome C) per §6 verdict |
+| **FTD-0208** clock-hypothesis substrate-derivation (Arc B P2) | `preregister-clock-hypothesis-derivation-v1` | `4c15ba1` | desk derivation; closure attempt executed 2026-05-25; quick-check companion `scripts/proofs/proof_newton_from_substrate.py` (STEP 3 comment references pre-reg) | n/a (desk) | n/a (desk attempt) | [`PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`](../03_derivations/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md) (pre-reg) → [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](../03_derivations/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) (Outcome B UNDERDETERMINED, 2026-05-25; adversarial review FAIL → UNDERDETERMINED on executor's provisional CLOSED-NEGATIVE; v2 pre-reg queued with calibration-declaration + bandwidth-internal-time routes) |
 
 Pre-reg SHA256: `9feb9d57ee53709ca419a6d068ed183b4b1426186bdaf662fad84061438ee4a5`.
 
@@ -175,7 +175,7 @@ When auditing: confirm `git rev-list -n1 preregister-clock-hypothesis-derivation
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0209** spin-2 boundary theorem (Arc C2 P3) | `preregister-spin2-boundary-theorem-v1` | `d8e016b` | desk derivation (no script in this commit); the closure attempt is a §9 method 11-step mechanical walk-through against the locked design + adversarial review against the substantive proof scaffold in `DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` + `DERIV_J_BILINEAR_NO_SPIN2_POLE.md` (commit `d2ec208`) | n/a (desk) | n/a (desk attempt; result-doc is the output) | [`PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`](PREREG_SPIN2_BOUNDARY_THEOREM_v1.md) (pre-reg, design only) → `FOUND_SPIN2_BOUNDARY_THEOREM.md` (Outcome A FOUND, prior-favoured) / `AUDIT_SPIN2_BOUNDARY_THEOREM_v1_*.md` (Outcomes B / C) per §6 verdict |
+| **FTD-0209** spin-2 boundary theorem (Arc C2 P3) | `preregister-spin2-boundary-theorem-v1` | `d8e016b` | desk derivation; closure attempt executed 2026-05-25 against substantive proof scaffold in `DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` + `DERIV_J_BILINEAR_NO_SPIN2_POLE.md` (commit `d2ec208`) | n/a (desk) | n/a (desk attempt) | [`PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`](PREREG_SPIN2_BOUNDARY_THEOREM_v1.md) (pre-reg) → [`FOUND_SPIN2_BOUNDARY_THEOREM.md`](FOUND_SPIN2_BOUNDARY_THEOREM.md) (Outcome A FOUND, 2026-05-25; adversarial review PASS-WITH-CAVEATS; all 4 caveats incorporated inline: §5.1 uniqueness sub-case walk, finite-L caveat, L=128 deferral framing, Conjecture 10.1 scope-bounding) |
 
 Pre-reg SHA256: `c6bd0e182d85cf9027c4a1d54d0c16b83724c6a2bbd12a3b0b8391b0036440db`.
 
