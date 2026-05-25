@@ -825,6 +825,12 @@ ftd_add_test(ftd_budget_equation tests/benchmark_budget_equation.cpp
              CTEST_NAME benchmark_budget_equation TIMEOUT 1800)
 ftd_add_test(ftd_bh_thermo tests/benchmark_black_hole_thermo.cpp
              CTEST_NAME benchmark_bh_thermo TIMEOUT 1800)
+# Arc D gap (ii) scaffold (2026-05-24, Wilsonian-reframe plan v2): G_N(M, L)
+# mass-spectrum scan validating SPEC §4.2 [THEOREM] form-level closure
+# (poisson_solvers.cpp:190-228) across cluster mass scales at L ∈ {32,48,64}.
+# See AUDIT_NEWTON_POSTULATES_RECONCILIATION.md §3.5 + scaffold header.
+ftd_add_test(benchmark_g_n_mass_spectrum tests/benchmark_g_n_mass_spectrum.cpp
+             CTEST_NAME benchmark_g_n_mass_spectrum TIMEOUT 1200)
 
 # Native EFT/response tests (Apr 2026). These are fixed audits, not target
 # searches, and form the baseline for the FTD-native electrodynamics program.
