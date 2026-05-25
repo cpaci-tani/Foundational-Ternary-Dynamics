@@ -318,10 +318,10 @@ $$T^{\mu\nu} = (\partial^\mu J_a)(\partial^\nu J_a) - \eta^{\mu\nu}\mathcal{L}_\
 | GR result | Source | Reference |
 |----------|--------|-----------|
 | $\partial_\mu T^{\mu\nu} = 0$ | Wave equation $\Box J_a = 0$ | DERIV_QFT_GRT_BRIDGE §2.2 |
-| Linearized Einstein eqs | Flux wave eq + metric identification | DERIV_EINSTEIN_FIELD_EQUATIONS §3 |
+| Linearized Einstein eqs *(FTD-0189: conditional on Conjecture 10.1)* | Flux wave eq + metric identification | DERIV_EINSTEIN_FIELD_EQUATIONS §3 (now [SELECTION/CONDITIONAL]) |
 
 | Poisson eq $\nabla^2\mathcal{L} = 4\pi G\rho$ | Variation of $S$ w.r.t. $\mathcal{L}$ (§4.2) | This document |
-| Nonlinear completion: $G_{\mu\nu} = 8\pi G\,T_{\mu\nu}/c^4$ | Lovelock's theorem [1] | DERIV_EINSTEIN_FIELD_EQUATIONS §5 |
+| Nonlinear completion: $G_{\mu\nu} = 8\pi G\,T_{\mu\nu}/c^4$ *(FTD-0189: inherits conditionality from linearized input)* | Lovelock's theorem [1] | DERIV_EINSTEIN_FIELD_EQUATIONS §5 (now [SELECTION — conditional on Conjecture 10.1]) |
 | Exact Schwarzschild | Born-Infeld core (§4.3) | DERIV_LATTICE_SCHWARZSCHILD |
 
 **Lovelock's theorem** [1]: *In four spacetime dimensions, the Einstein tensor $G_{\mu\nu} + \Lambda g_{\mu\nu}$ is the unique symmetric, divergence-free, rank-2 tensor constructed from the metric and at most its second derivatives.* Given that FTD independently derives $\partial_\mu T^{\mu\nu} = 0$ and the linearized Einstein equations, Lovelock's theorem forces the unique nonlinear completion to be the full Einstein equations.
@@ -357,7 +357,7 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 
 | ID | Statement | Tag |
 |----|-----------|-----|
-| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM]** |
+| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM modulo clock hypothesis]** *(2026-05-24 reconciliation: §4.3 derivation uses the clock hypothesis as an interpretive step; substrate-derivation of the clock hypothesis is the single remaining open piece per `AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` §2; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
 | L-3 | $\gamma_\text{FTD}$ unifies SR and GR Lorentz factors | **[THEOREM]** |
 
