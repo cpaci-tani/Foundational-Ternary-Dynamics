@@ -65,9 +65,6 @@ $\GG = 1/\AGM(1,\sqrt{2})$}
 \author{W.\,J.\ cpaci-tani~III}
 \date{2026-05-23}
 
-\begin{document}
-\maketitle
-
 \begin{abstract}
 The lemniscatic CM point $\tau = i$ generates a single transcendental constant
 whose value has two equally-natural normalisations: the \emph{ratio of
@@ -100,12 +97,12 @@ W^{(3)}_{\mathrm{BCC}} &= 2{\GG}^2 = 2/\AGM(1,\sqrt 2)^2, & W^{(D)}_{\mathrm{BCC
 \end{align*}
 the reflection-form identities $\Gamma(1/4)^2 = \pi\sqrt 2\,\Gs$ and
 $\Gamma(1/4)^4 = 2\pi^2\,\Gss$, and the master quadratic
-$x^2 - 16\,\Gss\,x + 16\,\Gsss = 0$ whose integer coefficient $16$ is
+x^2 - 16\,\Gss\,x + 16\,\Gsss = 0$ whose integer coefficient $16$ is
 the squared automorphism count of the lemniscatic curve.
 
 Three structural results emerge: \textbf{(I)} the value algebra of
 quasi-modular forms at $\tau = i$ is the polynomial ring
-$\Q[\pi^{-1}, \GG^{4}]$ in two transcendentally independent generators
+$\Q[\pi^{-1}, \GG^{4}]$ in two algebraically independent generators
 under Chudnovsky's theorem, with $\pi^{-1}$ recording the quasi-modular
 anomaly and $\GG^{4}$ recording the modular weight; \textbf{(II)} the
 $m \mid k$ vanishing principle, stating that at a CM point with
@@ -125,6 +122,9 @@ of the $\chi_{-4}$-unification developed here for a discrete-substrate
 physics framework; the present paper is independent of and does not
 address that work.
 \end{abstract}
+
+\begin{document}
+\maketitle
 
 \medskip
 \noindent\textbf{Mathematics Subject Classification (2020).}
@@ -945,8 +945,9 @@ real period over the full real locus is
 \]
 where the factor of $2$ counts the two real components. The
 Birch--Swinnerton-Dyer formula for rank $0$, proved unconditionally
-for CM elliptic curves over $\Q$ by Rubin \cite{rubin1991} (building on
-Coates--Wiles \cite{coates-wiles}), gives
+for CM elliptic curves over $\Q$ by Rubin \cite{rubin1991} (using
+Kolyvagin's Euler-system machinery to establish the full quantitative
+Birch--Swinnerton-Dyer ratio), gives
 \[
 L(E, 1) \;=\; \frac{\Omega \cdot \prod_{p} c_{p} \cdot |\Sha|}
               {|E(\Q)_{\mathrm{tors}}|^{2}}
@@ -1129,10 +1130,10 @@ is the polynomial $\Q$-algebra
 \Q\bigl[\,E_2(i),\, E_4(i),\, E_6(i)\,\bigr] \;=\; \Q\bigl[\,\pi^{-1},\, \GG^{4}\,\bigr],
 \]
 where the second equality identifies $E_2(i) = 3/\pi$ and $E_4(i) = 3\,\GG^4$ and
-notes $E_6(i) = 0$. Under the Chudnovsky--Nesterenko theorem that
+notes $E_6(i) = 0$. Under Chudnovsky's theorem that
 $\{\pi,\,\Gamma(1/4)\}$ are algebraically independent over $\Q$, equivalently
 $\{\pi^{-1},\,\GG^4\}$ are algebraically independent, so this image is a
-\emph{polynomial} ring in two transcendental generators.
+\emph{polynomial} ring in two algebraically independent generators.
 \end{theorem}
 
 \begin{proof}
@@ -1155,7 +1156,7 @@ Algebraic independence of $\{\pi, \Gamma(1/4)\}$ over $\Q$ is Chudnovsky 1976
 from algebraic independence of $\{\pi, \Gamma(1/4)^{8}\}$ (transcendence degree
 is preserved by $\overline{\Q}$-algebraic operations such as inversion and the
 rational substitution $\GG^{4} = \Gamma(1/4)^{8}/(64\pi^{6})$). Hence the
-image is a polynomial $\Q$-algebra in two transcendentally independent
+image is a polynomial $\Q$-algebra in two algebraically independent
 generators.
 \end{proof}
 
