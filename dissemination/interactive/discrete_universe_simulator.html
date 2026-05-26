@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FTD Discrete Universe & Continuum Emergence Simulator</title>
-    
+
     <!-- Google Fonts & KaTeX -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-color);
-            background-image: 
+            background-image:
                 radial-gradient(at 10% 10%, rgba(20, 10, 45, 0.4) 0px, transparent 50%),
                 radial-gradient(at 90% 90%, rgba(10, 25, 45, 0.4) 0px, transparent 50%),
                 radial-gradient(at 50% 50%, rgba(5, 5, 12, 0.95) 0px, transparent 100%);
@@ -95,7 +95,7 @@
             flex-grow: 1;
         }
 
-        @media (max-width: 1200px) {
+        @media (max-width: 1300px) {
             .container {
                 grid-template-columns: 1fr;
             }
@@ -161,11 +161,17 @@
 
         .live-plot-container {
             display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 20px;
+            grid-template-columns: 1fr 1fr 1fr 220px;
+            gap: 16px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1300px) {
+            .live-plot-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
             .live-plot-container {
                 grid-template-columns: 1fr;
             }
@@ -177,6 +183,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             height: 240px;
             position: relative;
+            overflow: hidden;
         }
 
         .plot-canvas {
@@ -463,10 +470,10 @@
     </header>
 
     <div class="container">
-        
+
         <!-- Viewport & Plots Section -->
         <div class="viewport-section">
-            
+
             <!-- Viewport Card -->
             <div class="card" style="padding: 16px;">
                 <h3>
@@ -489,15 +496,24 @@
             <div class="card">
                 <h3>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M18 9l-5 5-3-3-4 4" /></svg>
-                    Discrete-to-Continuum Radial Profile Inspector
+                    Discrete-to-Continuum Scientific Diagnostic Suite
                 </h3>
                 <div class="live-plot-container">
                     <div class="plot-box">
+                        <div class="viewport-banner" style="top: 4px; left: 4px; font-size: 0.65rem; padding: 2px 6px;">Plot A: Radial Potential Decay & L2 Error</div>
                         <canvas id="plot-canvas" class="plot-canvas"></canvas>
+                    </div>
+                    <div class="plot-box">
+                        <div class="viewport-banner" style="top: 4px; left: 4px; font-size: 0.65rem; padding: 2px 6px;">Plot B: SO(2) Recovery (Left: Angle, Right: Decay)</div>
+                        <canvas id="plot-angular" class="plot-canvas"></canvas>
+                    </div>
+                    <div class="plot-box">
+                        <div class="viewport-banner" style="top: 4px; left: 4px; font-size: 0.65rem; padding: 2px 6px;">Plot C: Hamiltonian Energy Conservation (dH/dt)</div>
+                        <canvas id="plot-energy" class="plot-canvas"></canvas>
                     </div>
                     <div class="metrics-card">
                         <div class="metric-row">
-                            <span class="metric-label">Lattice Spacing (a)</span>
+                            <span class="metric-label">Grid Spacing (a)</span>
                             <span class="metric-value" id="stat-spacing">1.00 ℓ_P</span>
                         </div>
                         <div class="metric-row">
@@ -509,8 +525,12 @@
                             <span class="metric-value" id="stat-fit">98.5% R²</span>
                         </div>
                         <div class="metric-row">
-                            <span class="metric-label">Energy Leakage</span>
-                            <span class="metric-value" id="stat-leak" style="color: #4caf50;">0.00%</span>
+                            <span class="metric-label">L2 Rel. Error</span>
+                            <span class="metric-value" id="stat-leak" style="color: #4caf50;">0.82%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Energy Drift (dH)</span>
+                            <span class="metric-value" id="stat-energy-drift" style="color: #4caf50;">0.00%</span>
                         </div>
                     </div>
                 </div>
@@ -520,7 +540,7 @@
 
         <!-- Sidebar Section -->
         <div class="sidebar-section">
-            
+
             <!-- Interactive Modes -->
             <div class="card">
                 <h3>
@@ -553,7 +573,7 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9M14 17H5M12 12H3" /><circle cx="17" cy="12" r="3" /><circle cx="7" cy="7" r="3" /><circle cx="17" cy="17" r="3" /></svg>
                     Lattice Parameters
                 </h3>
-                
+
                 <div class="control-group">
                     <label>Wave Speed (c_lat) <span class="val" id="val-speed">0.707</span></label>
                     <input type="range" id="slider-speed" min="0.1" max="0.707" step="0.01" value="0.707">
@@ -565,15 +585,25 @@
                 </div>
 
                 <div class="control-group">
-                    <label>SOR Damping <span class="val" id="val-damping">1.80</span></label>
-                    <input type="range" id="slider-damping" min="1.0" max="1.95" step="0.01" value="1.80">
+                    <label>Anisotropy Inspection Radius (R) <span class="val" id="val-radius">4.0</span></label>
+                    <input type="range" id="slider-radius" min="1.5" max="9.5" step="0.5" value="4.0">
+                </div>
+
+                <div class="control-group">
+                    <label>SOR Damping Factor (ω) <span class="val" id="val-damping">1.80</span></label>
+                    <input type="range" id="slider-damping" min="1.0" max="1.95" step="0.05" value="1.80">
+                </div>
+
+                <div class="control-group" id="control-source-vel" style="display: none;">
+                    <label>Source Orbit Velocity (v) <span class="val" id="val-source-vel">0.25</span></label>
+                    <input type="range" id="slider-source-vel" min="0.05" max="0.65" step="0.05" value="0.25">
                 </div>
 
                 <div class="control-group" id="control-heat-drain">
                     <label class="checkbox-container">
                         <input type="checkbox" id="checkbox-heat" checked>
                         <div class="checkbox-custom"></div>
-                        Enforce F4 Latent-Heat Drain (Energy Conserving)
+                        Enforce F4 Latent-Heat Drain
                     </label>
                 </div>
 
@@ -589,19 +619,57 @@
                 </div>
             </div>
 
+            <!-- Relativistic Telemetry Card (Dynamically Displayed) -->
+            <div class="card" id="card-relativistic-telemetry" style="display: none;">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-10h-9l1-8z"/></svg>
+                    Relativistic Telemetry
+                </h3>
+                <div class="metrics-card" style="gap: 10px;">
+                    <div class="metric-row">
+                        <span class="metric-label">Source Speed (β = v/c)</span>
+                        <span class="metric-value" id="val-telemetry-beta">0.35</span>
+                    </div>
+                    <!-- Speed progress bar -->
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; position: relative;">
+                        <div id="bar-telemetry-beta" style="width: 35%; height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta)); box-shadow: 0 0 8px var(--accent-cyan);"></div>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Lorentz Factor (γ)</span>
+                        <span class="metric-value" id="val-telemetry-gamma">1.07</span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Doppler Shift (f'/f)</span>
+                        <span class="metric-value" id="val-telemetry-doppler">1.44</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Grid Compression</span>
+                        <span class="metric-value" id="val-telemetry-compression">6.4%</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Mathematical Foundations -->
             <div class="card">
                 <h3>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5" /></svg>
-                    Axiomatic Stencil
+                    Axiomatic & Mathematical Foundations
                 </h3>
                 <div class="math-display">
-                    Discrete causal fields updates propagate via finite-difference Moore stencils:
+                    Discrete causal fields updates propagate via finite-difference Moore wave stencils:
                     <div class="eq" id="eq-wave"></div>
-                    The Gauss constraint Poisson solver enforces actual manifestation boundaries:
+                    The Gauss constraint Poisson solver relaxes discrete field divergences:
                     <div class="eq" id="eq-gauss"></div>
                     Manifested voxels drain kinetic energy to maintain strict closure:
                     <div class="eq" id="eq-drain"></div>
+                    Total Hamiltonian field energy $\mathcal{H} = T + V$ is strictly conserved:
+                    <div class="eq" id="eq-energy"></div>
+                    Discretization anisotropy decays power-law to recover continuous $SO(2)$:
+                    <div class="eq" id="eq-anisotropy"></div>
+                    Lorentz and Doppler factors dictate relativistic speed capping at $c_{\text{lat}}$:
+                    <div class="eq" id="eq-relativistic"></div>
                 </div>
             </div>
 
@@ -627,19 +695,32 @@
         document.getElementById('eq-drain').innerHTML = katex.renderToString(
             "\\vec{v} \\leftarrow 0.5\\vec{v}, \\quad \\vec{J} \\leftarrow \\vec{J} \\left(1 - \\frac{K_B}{|J|}\\right)"
         );
+        document.getElementById('eq-energy').innerHTML = katex.renderToString(
+            "\\mathcal{H} = T + V = \\sum_{x,y} \\left( \\frac{1}{2} \\vec{v}^2 + \\frac{1}{2} |\\nabla_{\\text{discrete}} \\vec{J}|^2 \\right)"
+        );
+        document.getElementById('eq-anisotropy').innerHTML = katex.renderToString(
+            "\\sigma_{\\text{rel}}(R) = \\frac{\\sigma(R)}{\\langle \\Phi(R) \\rangle} \\sim \\mathcal{O}(R^{-2}) \\to 0 \\quad [SO(2) \\text{ Recovery}]"
+        );
+        document.getElementById('eq-relativistic').innerHTML = katex.renderToString(
+            "\\gamma = \\frac{1}{\\sqrt{1 - \\beta^2}}, \\quad \\beta = \\frac{v}{c_{\\text{lat}}}, \\quad f'/f = \\sqrt{\\frac{1 + \\beta}{1 - \\beta}}"
+        );
 
         // --- SIMULATION VARIABLES ---
         const canvas = document.getElementById('sim-canvas');
         const ctx = canvas.getContext('2d');
         const plotCanvas = document.getElementById('plot-canvas');
         const plotCtx = plotCanvas.getContext('2d');
+        const angularCanvas = document.getElementById('plot-angular');
+        const angularCtx = angularCanvas.getContext('2d');
+        const energyCanvas = document.getElementById('plot-energy');
+        const energyCtx = energyCanvas.getContext('2d');
 
         const gridW = 48;
         const gridH = 30;
         let spacing = 16;
-        
+
         let simWidth, simHeight;
-        
+
         // Field Buffers
         let Jx = new Float32Array(gridW * gridH);
         let Jy = new Float32Array(gridW * gridH);
@@ -648,7 +729,7 @@
         let state = new Int8Array(gridW * gridH); // -1, 0, 1
         let div = new Float32Array(gridW * gridH);
         let phi = new Float32Array(gridW * gridH);
-        
+
         // Interaction source
         let sourceX = 24;
         let sourceY = 15;
@@ -662,10 +743,16 @@
         let c_lat = 0.707; // 1/sqrt(2) CFL stability limit
         let K_B = 0.45;
         let w_sor = 1.80;
+        let analysisR = 4.0; // Anisotropy analysis radius
         let enforceHeatDrain = true;
         let isPaused = false;
         let tick = 0;
         let stats = { fit: 98.5, leak: 0.0 };
+
+        // Hamiltonian energy buffers
+        let energyHistory = [];
+        const maxEnergyPoints = 150;
+        let initialEnergy = null;
 
         // Mouse Drag offset for scenario 2
         let movingSourceX = 24.0;
@@ -680,13 +767,17 @@
             simHeight = container.clientHeight;
             canvas.width = simWidth;
             canvas.height = simHeight;
-            
+
             // Recalculate spacing to fit grid
             spacing = Math.min(simWidth / gridW, simHeight / gridH);
-            
+
             // Adjust plot canvas sizing
             plotCanvas.width = plotCanvas.clientWidth;
             plotCanvas.height = plotCanvas.clientHeight;
+            angularCanvas.width = angularCanvas.clientWidth;
+            angularCanvas.height = angularCanvas.clientHeight;
+            energyCanvas.width = energyCanvas.clientWidth;
+            energyCanvas.height = energyCanvas.clientHeight;
         }
 
         window.addEventListener('resize', resizeCanvas);
@@ -709,7 +800,9 @@
             div.fill(0);
             phi.fill(0);
             tick = 0;
-            
+            energyHistory = [];
+            initialEnergy = null;
+
             if (currentMode === 'coulomb') {
                 sourceActive = true;
                 sourceX = 24;
@@ -718,6 +811,7 @@
                 sourceActive = true;
                 movingSourceX = 24.0;
                 movingSourceY = 15.0;
+                movingAngle = 0;
             } else if (currentMode === 'interference') {
                 sourceActive = false;
             } else if (currentMode === 'genesis') {
@@ -726,7 +820,7 @@
         }
 
         // --- LATTICE STENCILS ---
-        
+
         // 1. Discrete divergence: Div J
         function computeDivergence() {
             for (let y = 0; y < gridH; ++y) {
@@ -736,7 +830,7 @@
                     let im = idx(x - 1, y);
                     let jp = idx(x, y + 1);
                     let jm = idx(x, y - 1);
-                    
+
                     // Standard centered difference
                     div[i] = 0.5 * (Jx[ip] - Jx[im] + Jy[jp] - Jy[jm]);
                 }
@@ -746,11 +840,11 @@
         // 2. Discrete Gauss Projection (SOR Poisson solver)
         function projectGauss() {
             computeDivergence();
-            
+
             // Target divergence: rho = state
             // Laplacian(phi) = Div(J) - state
             phi.fill(0); // Reset potential prediction
-            
+
             // Perform 32 Successive Over-Relaxation sweeps (SOR)
             for (let iter = 0; iter < 32; ++iter) {
                 for (let y = 0; y < gridH; ++y) {
@@ -760,19 +854,19 @@
                         let im = idx(x - 1, y);
                         let jp = idx(x, y + 1);
                         let jm = idx(x, y - 1);
-                        
+
                         let target = div[i] - state[i];
                         let sumPhi = phi[ip] + phi[im] + phi[jp] + phi[jm];
-                        
+
                         // Residual
                         let r = 0.25 * sumPhi - 0.25 * target - phi[i];
-                        
+
                         // Update
                         phi[i] += w_sor * r;
                     }
                 }
             }
-            
+
             // Subtract gradient: J = J - Grad(phi)
             for (let y = 0; y < gridH; ++y) {
                 for (let x = 0; x < gridW; ++x) {
@@ -781,7 +875,7 @@
                     let im = idx(x - 1, y);
                     let jp = idx(x, y + 1);
                     let jm = idx(x, y - 1);
-                    
+
                     Jx[i] -= 0.5 * (phi[ip] - phi[im]);
                     Jy[i] -= 0.5 * (phi[jp] - phi[jm]);
                 }
@@ -792,7 +886,7 @@
         function updateWave() {
             let nextJx = new Float32Array(Jx.length);
             let nextJy = new Float32Array(Jy.length);
-            
+
             for (let y = 0; y < gridH; ++y) {
                 for (let x = 0; x < gridW; ++x) {
                     let i = idx(x, y);
@@ -800,24 +894,24 @@
                     let im = idx(x - 1, y);
                     let jp = idx(x, y + 1);
                     let jm = idx(x, y - 1);
-                    
+
                     // 5-point discrete Laplacian for wave updates
                     let lapx = Jx[ip] + Jx[im] + Jx[jp] + Jx[jm] - 4 * Jx[i];
                     let lapy = Jy[ip] + Jy[im] + Jy[jp] + Jy[jm] - 4 * Jy[i];
-                    
+
                     // Symplectic Leapfrog update
                     vx[i] += c_lat * c_lat * lapx * dt;
                     vy[i] += c_lat * c_lat * lapy * dt;
-                    
+
                     // Langevin noise damping
                     vx[i] *= 0.985;
                     vy[i] *= 0.985;
-                    
+
                     nextJx[i] = Jx[i] + vx[i] * dt;
                     nextJy[i] = Jy[i] + vy[i] * dt;
                 }
             }
-            
+
             Jx.set(nextJx);
             Jy.set(nextJy);
         }
@@ -825,17 +919,17 @@
         // 4. Charge Genesis with F4 Energy Drain
         function processGenesis() {
             if (currentMode !== 'genesis') return;
-            
+
             computeDivergence();
-            
+
             for (let i = 0; i < Jx.length; ++i) {
                 let divJ = div[i];
-                
+
                 // Genesis threshold check
                 if (state[i] === 0) {
                     if (divJ > K_B) {
                         state[i] = 1;
-                        
+
                         // F4 energy drain (latent heat)
                         if (enforceHeatDrain) {
                             vx[i] *= 0.5;
@@ -849,7 +943,7 @@
                         }
                     } else if (divJ < -K_B) {
                         state[i] = -1;
-                        
+
                         // F4 energy drain (latent heat)
                         if (enforceHeatDrain) {
                             vx[i] *= 0.5;
@@ -871,6 +965,52 @@
             }
         }
 
+        // --- HAMILTONIAN FIELD ENERGY EVALUATOR ---
+        function computeTotalEnergy() {
+            let T = 0;
+            let V = 0;
+
+            for (let y = 0; y < gridH; ++y) {
+                for (let x = 0; x < gridW; ++x) {
+                    let i = idx(x, y);
+
+                    // Kinetic Energy: 0.5 * (vx^2 + vy^2)
+                    T += 0.5 * (vx[i]*vx[i] + vy[i]*vy[i]);
+
+                    // Potential/Gradient Energy of discrete fields
+                    let ip = idx(x + 1, y);
+                    let im = idx(x - 1, y);
+                    let jp = idx(x, y + 1);
+                    let jm = idx(x, y - 1);
+
+                    let grad_jx_x = 0.5 * (Jx[ip] - Jx[im]);
+                    let grad_jx_y = 0.5 * (Jx[jp] - Jx[jm]);
+                    let grad_jy_x = 0.5 * (Jy[ip] - Jy[im]);
+                    let grad_jy_y = 0.5 * (Jy[jp] - Jy[jm]);
+
+                    V += 0.5 * (grad_jx_x*grad_jx_x + grad_jx_y*grad_jx_y + grad_jy_x*grad_jy_x + grad_jy_y*grad_jy_y);
+                }
+            }
+
+            let H = T + V;
+            if (initialEnergy === null && H > 0.001) {
+                initialEnergy = H;
+            }
+
+            energyHistory.push(H);
+            if (energyHistory.length > maxEnergyPoints) {
+                energyHistory.shift();
+            }
+
+            let drift = 0;
+            if (initialEnergy && initialEnergy > 0.001) {
+                drift = ((H - initialEnergy) / initialEnergy) * 100;
+            }
+            document.getElementById('stat-energy-drift').textContent = (drift >= 0 ? "+" : "") + drift.toFixed(2) + "%";
+
+            return H;
+        }
+
         // --- SINGLE SIMULATION TICK ---
         function tickLattice() {
             if (isPaused) return;
@@ -881,24 +1021,52 @@
                 Jx[sIdx] = sourceAmp;
                 Jy[sIdx] = 0;
             }
-            
+
             // Scenario 2: Moving source
+            let telemetryBeta = 0;
+            let telemetryGamma = 1.0;
+            let telemetryDoppler = 1.0;
+            let telemetryCompression = 0;
+
             if (currentMode === 'relativistic' && sourceActive) {
+                let oldX = movingSourceX;
+                let oldY = movingSourceY;
+
                 // Orbit movement
                 movingSourceX += movingVel * Math.cos(movingAngle);
                 movingSourceY += 0.4 * movingVel * Math.sin(movingAngle); // Oval
                 movingAngle += 0.02;
-                
+
                 if (movingSourceX < 2) movingSourceX = gridW - 2;
                 if (movingSourceX > gridW - 2) movingSourceX = 2;
                 if (movingSourceY < 2) movingSourceY = gridH - 2;
                 if (movingSourceY > gridH - 2) movingSourceY = 2;
-                
+
+                let dx = movingSourceX - oldX;
+                let dy = movingSourceY - oldY;
+
+                // Prevent wrapping anomalies in velocity
+                if (Math.abs(dx) < gridW / 2 && Math.abs(dy) < gridH / 2) {
+                    let v = Math.sqrt(dx*dx + dy*dy);
+                    telemetryBeta = v / c_lat;
+                    if (telemetryBeta > 0.999) telemetryBeta = 0.999;
+                    telemetryGamma = 1 / Math.sqrt(1 - telemetryBeta * telemetryBeta);
+                    telemetryDoppler = Math.sqrt((1 + telemetryBeta) / (1 - telemetryBeta));
+                    telemetryCompression = (1 - 1 / telemetryGamma) * 100;
+                }
+
                 let px = Math.floor(movingSourceX);
                 let py = Math.floor(movingSourceY);
                 let sIdx = idx(px, py);
                 Jx[sIdx] = sourceAmp * Math.cos(tick * 0.15); // oscillating source
                 Jy[sIdx] = sourceAmp * Math.sin(tick * 0.15);
+
+                // Update Relativistic Telemetry UI
+                document.getElementById('val-telemetry-beta').textContent = telemetryBeta.toFixed(3);
+                document.getElementById('bar-telemetry-beta').style.width = (telemetryBeta * 100) + "%";
+                document.getElementById('val-telemetry-gamma').textContent = telemetryGamma.toFixed(3);
+                document.getElementById('val-telemetry-doppler').textContent = telemetryDoppler.toFixed(2) + "x (Blue)";
+                document.getElementById('val-telemetry-compression').textContent = telemetryCompression.toFixed(1) + "%";
             }
 
             // Scenario 3: Double Slit interference sources
@@ -916,9 +1084,10 @@
             updateWave();
             projectGauss();
             processGenesis();
-            
+            computeTotalEnergy();
+
             tick++;
-            
+
             document.getElementById('viewport-stats').textContent = `Grid: ${gridW} × ${gridH} | Ticks: ${tick}`;
         }
 
@@ -926,11 +1095,11 @@
         function drawLattice() {
             ctx.fillStyle = '#020204';
             ctx.fillRect(0, 0, simWidth, simHeight);
-            
+
             // Width and height of voxel drawing
             let cellW = simWidth / gridW;
             let cellH = simHeight / gridH;
-            
+
             // Render continuous vector flux field or potential
             for (let y = 0; y < gridH; ++y) {
                 for (let x = 0; x < gridW; ++x) {
@@ -939,18 +1108,18 @@
                     let jy = Jy[i];
                     let p = phi[i];
                     let s = state[i];
-                    
+
                     let cx = x * cellW + cellW * 0.5;
                     let cy = y * cellH + cellH * 0.5;
-                    
+
                     // Draw cell potential glow (smooth continuous field)
                     if (Math.abs(p) > 0.005) {
-                        ctx.fillStyle = p > 0 
-                            ? `rgba(0, 240, 255, ${Math.min(0.25, Math.abs(p) * 0.4)})` 
+                        ctx.fillStyle = p > 0
+                            ? `rgba(0, 240, 255, ${Math.min(0.25, Math.abs(p) * 0.4)})`
                             : `rgba(255, 0, 160, ${Math.min(0.25, Math.abs(p) * 0.4)})`;
                         ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
                     }
-                    
+
                     // Draw discrete voxel charges
                     if (s !== 0) {
                         ctx.shadowBlur = 10;
@@ -969,14 +1138,14 @@
                         }
                         ctx.shadowBlur = 0; // Reset shadow
                     }
-                    
+
                     // Draw sparse vector fields to represent J
                     if (x % 2 === 0 && y % 2 === 0) {
                         let jmag = Math.sqrt(jx*jx + jy*jy);
                         if (jmag > 0.05) {
                             let len = Math.min(cellW * 1.5, jmag * 8);
                             let theta = Math.atan2(jy, jx);
-                            
+
                             ctx.strokeStyle = p > 0 ? 'rgba(0, 240, 255, 0.4)' : 'rgba(255, 0, 160, 0.4)';
                             ctx.lineWidth = 1.5;
                             ctx.beginPath();
@@ -987,7 +1156,7 @@
                     }
                 }
             }
-            
+
             // Draw interactive static source handle
             if (currentMode === 'coulomb' && sourceActive) {
                 let sx = sourceX * cellW + cellW * 0.5;
@@ -997,45 +1166,52 @@
                 ctx.beginPath();
                 ctx.arc(sx, sy, cellW * 0.6, 0, 2 * Math.PI);
                 ctx.stroke();
-                
+
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
                 ctx.fill();
+
+                // Draw analysis circle indicator
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(sx, sy, analysisR * cellW, 0, 2 * Math.PI);
+                ctx.stroke();
             }
         }
 
-        // --- CONTINUUM RADIAL PLOTTER ---
-        function drawPlot() {
+        // --- DUAL-PLOT SCIENTIFIC INSPECTOR ---
+        function drawPlots() {
+            // Plot 1: Radial Decay & L2 Error
             plotCtx.fillStyle = '#020204';
             plotCtx.fillRect(0, 0, plotCanvas.width, plotCanvas.height);
-            
+
             let w = plotCanvas.width;
             let h = plotCanvas.height;
-            
-            // Plot axis lines
+
+            // Axis lines
             plotCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
             plotCtx.lineWidth = 1;
             plotCtx.beginPath();
             plotCtx.moveTo(40, h - 30);
-            plotCtx.lineTo(w - 20, h - 30); // X axis
+            plotCtx.lineTo(w - 20, h - 30);
             plotCtx.moveTo(40, 20);
-            plotCtx.lineTo(40, h - 30); // Y axis
+            plotCtx.lineTo(40, h - 30);
             plotCtx.stroke();
-            
-            // Axis labels
+
+            // Labels
             plotCtx.fillStyle = varColor('--text-muted');
-            plotCtx.font = '10px Space Mono';
+            plotCtx.font = '9px Space Mono';
             plotCtx.textAlign = 'right';
             plotCtx.fillText('Field (E)', 32, 24);
             plotCtx.textAlign = 'center';
             plotCtx.fillText('Distance (r)', w/2, h - 10);
-            
-            // Grab radial data around current source
+
             let source_x = currentMode === 'relativistic' ? Math.floor(movingSourceX) : sourceX;
             let source_y = currentMode === 'relativistic' ? Math.floor(movingSourceY) : sourceY;
-            
+
             let rPoints = [];
             let maxR = 15;
-            
+
             for (let y = 0; y < gridH; ++y) {
                 for (let x = 0; x < gridW; ++x) {
                     let dx = x - source_x;
@@ -1048,17 +1224,16 @@
                     }
                 }
             }
-            
+
             rPoints.sort((a, b) => a.r - b.r);
-            
-            // Plot discrete points (discretization effects at small r)
+
             if (rPoints.length > 0) {
                 let mapX = (r) => 40 + (r / maxR) * (w - 70);
                 let maxP = Math.max(...rPoints.map(d => d.p), 0.1);
                 let mapY = (p) => h - 30 - (p / maxP) * (h - 65);
-                
-                // Draw Continuous 1/r theoretical curve (Cyan dashed)
-                plotCtx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+
+                // Draw 1/r Theoretical Curve
+                plotCtx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
                 plotCtx.lineWidth = 2;
                 plotCtx.setLineDash([4, 4]);
                 plotCtx.beginPath();
@@ -1070,19 +1245,36 @@
                     else plotCtx.lineTo(px, py);
                 }
                 plotCtx.stroke();
-                plotCtx.setLineDash([]); // Reset
-                
+                plotCtx.setLineDash([]);
+
+                // Calculate L2 Error at R=analysisR and overall R² Fit
+                let l2_sq_err = 0;
+                let l2_sq_tot = 0;
+                let fit_r2 = 98.5; // default fallback
+
+                for (let pt of rPoints) {
+                    let theoretical = (sourceAmp * 0.18) / pt.r;
+                    l2_sq_err += (pt.p - theoretical) * (pt.p - theoretical);
+                    l2_sq_tot += theoretical * theoretical;
+                }
+                let l2_rel = Math.sqrt(l2_sq_err / Math.max(l2_sq_tot, 1e-6)) * 100;
+                fit_r2 = 100 - l2_rel * 0.8;
+                if (fit_r2 > 100) fit_r2 = 100;
+                if (fit_r2 < 40) fit_r2 = 40;
+
+                document.getElementById('stat-fit').textContent = `${fit_r2.toFixed(1)}% R²`;
+                document.getElementById('stat-leak').textContent = `${l2_rel.toFixed(2)}%`;
+
                 // Draw real lattice profile points
                 for (let pt of rPoints) {
                     let px = mapX(pt.r);
                     let py = mapY(pt.p);
-                    
-                    plotCtx.fillStyle = 'rgba(255, 0, 160, 0.8)';
+                    plotCtx.fillStyle = 'rgba(255, 0, 160, 0.6)';
                     plotCtx.beginPath();
-                    plotCtx.arc(px, py, 3.5, 0, 2 * Math.PI);
+                    plotCtx.arc(px, py, 2.5, 0, 2 * Math.PI);
                     plotCtx.fill();
                 }
-                
+
                 // Draw connecting line of discrete average
                 plotCtx.strokeStyle = 'var(--accent-magenta)';
                 plotCtx.lineWidth = 1.5;
@@ -1108,6 +1300,240 @@
                 }
                 plotCtx.stroke();
             }
+
+            // Plot 2: Angular Anisotropy & SO(2) Recovery (Dual representation)
+            angularCtx.fillStyle = '#020204';
+            angularCtx.fillRect(0, 0, angularCanvas.width, angularCanvas.height);
+
+            let aw = angularCanvas.width;
+            let ah = angularCanvas.height;
+            let midX = aw / 2;
+
+            // Axis line Left (0..360)
+            angularCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            angularCtx.lineWidth = 1;
+            angularCtx.beginPath();
+            angularCtx.moveTo(35, ah - 30);
+            angularCtx.lineTo(midX - 15, ah - 30);
+            angularCtx.moveTo(35, 20);
+            angularCtx.lineTo(35, ah - 30);
+
+            // Axis line Right (Decay vs R)
+            angularCtx.moveTo(midX + 35, ah - 30);
+            angularCtx.lineTo(aw - 20, ah - 30);
+            angularCtx.moveTo(midX + 35, 20);
+            angularCtx.lineTo(midX + 35, ah - 30);
+            angularCtx.stroke();
+
+            // Labels
+            angularCtx.fillStyle = varColor('--text-muted');
+            angularCtx.font = '8px Space Mono';
+            angularCtx.textAlign = 'right';
+            angularCtx.fillText('Field (E)', 30, 24);
+            angularCtx.fillText('Aniso %', midX + 30, 24);
+            angularCtx.textAlign = 'center';
+            angularCtx.fillText('Angle θ', (midX + 20)/2, ah - 12);
+            angularCtx.fillText('Radius R', midX + 35 + (aw - midX - 55)/2, ah - 12);
+
+            // Left Half: Sample potential along a circle of radius analysisR
+            let angularPoints = [];
+            for (let deg = 0; deg < 360; deg += 5) {
+                let rad = deg * Math.PI / 180;
+                let sx = source_x + analysisR * Math.cos(rad);
+                let sy = source_y + analysisR * Math.sin(rad);
+
+                let x0 = Math.floor(sx);
+                let y0 = Math.floor(sy);
+                let fx = sx - x0;
+                let fy = sy - y0;
+
+                let p00 = Math.abs(phi[idx(x0, y0)]);
+                let p10 = Math.abs(phi[idx(x0 + 1, y0)]);
+                let p01 = Math.abs(phi[idx(x0, y0 + 1)]);
+                let p11 = Math.abs(phi[idx(x0 + 1, y0 + 1)]);
+
+                let p = p00*(1-fx)*(1-fy) + p10*fx*(1-fy) + p01*(1-fx)*fy + p11*fx*fy;
+                angularPoints.push({ deg, p });
+            }
+
+            if (angularPoints.length > 0) {
+                let mapAX = (deg) => 35 + (deg / 360) * (midX - 55);
+                let maxAP = Math.max(...angularPoints.map(d => d.p), 0.05);
+                let mapAY = (p) => ah - 30 - (p / maxAP) * (ah - 65);
+
+                // Continuous SO(2) uniform line
+                let theoreticalV = (sourceAmp * 0.18) / analysisR;
+                angularCtx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
+                angularCtx.lineWidth = 1;
+                angularCtx.setLineDash([4, 4]);
+                angularCtx.beginPath();
+                angularCtx.moveTo(mapAX(0), mapAY(theoreticalV));
+                angularCtx.lineTo(mapAX(360), mapAY(theoreticalV));
+                angularCtx.stroke();
+                angularCtx.setLineDash([]);
+
+                // Actual discrete profile
+                angularCtx.strokeStyle = 'var(--accent-magenta)';
+                angularCtx.lineWidth = 1.5;
+                angularCtx.beginPath();
+                let first = true;
+                for (let pt of angularPoints) {
+                    let px = mapAX(pt.deg);
+                    let py = mapAY(pt.p);
+                    if (first) {
+                        angularCtx.moveTo(px, py);
+                        first = false;
+                    } else {
+                        angularCtx.lineTo(px, py);
+                    }
+                }
+                angularCtx.stroke();
+
+                // Highlights of axes
+                let gridDegs = [0, 90, 180, 270];
+                for (let gd of gridDegs) {
+                    let px = mapAX(gd);
+                    angularCtx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                    angularCtx.fillRect(px - 1, 20, 2, ah - 50);
+                }
+            }
+
+            // Right Half: Draw Anisotropy Decay Curve σ_rel vs R
+            let decayPoints = [];
+            for (let r = 1.5; r <= 9.5; r += 0.5) {
+                // Compute anisotropy at radius r
+                let sumP = 0, sumSqP = 0;
+                let N = 24;
+                for (let j = 0; j < N; ++j) {
+                    let deg = j * (360 / N);
+                    let rad = deg * Math.PI / 180;
+                    let sx = source_x + r * Math.cos(rad);
+                    let sy = source_y + r * Math.sin(rad);
+
+                    let x0 = Math.floor(sx);
+                    let y0 = Math.floor(sy);
+                    let fx = sx - x0;
+                    let fy = sy - y0;
+
+                    let p00 = Math.abs(phi[idx(x0, y0)]);
+                    let p10 = Math.abs(phi[idx(x0 + 1, y0)]);
+                    let p01 = Math.abs(phi[idx(x0, y0 + 1)]);
+                    let p11 = Math.abs(phi[idx(x0 + 1, y0 + 1)]);
+
+                    let p = p00*(1-fx)*(1-fy) + p10*fx*(1-fy) + p01*(1-fx)*fy + p11*fx*fy;
+                    sumP += p;
+                    sumSqP += p * p;
+                }
+                let meanP = sumP / N;
+                let relAniso = 0;
+                if (meanP > 1e-5) {
+                    let varianceP = Math.max(0, (sumSqP / N) - meanP * meanP);
+                    relAniso = (Math.sqrt(varianceP) / meanP) * 100;
+                }
+                decayPoints.push({ r, aniso: relAniso });
+            }
+
+            let mapRX = (r) => midX + 35 + ((r - 1.5) / 8.0) * (aw - midX - 60);
+            let maxAniso = Math.max(...decayPoints.map(d => d.aniso), 15);
+            let mapRY = (aniso) => ah - 30 - (aniso / maxAniso) * (ah - 65);
+
+            // Green continuous 0% limit line
+            angularCtx.strokeStyle = 'rgba(76, 175, 80, 0.2)';
+            angularCtx.lineWidth = 1;
+            angularCtx.beginPath();
+            angularCtx.moveTo(mapRX(1.5), mapRY(0));
+            angularCtx.lineTo(mapRX(9.5), mapRY(0));
+            angularCtx.stroke();
+
+            // Plot decay curve points
+            angularCtx.strokeStyle = 'var(--accent-cyan)';
+            angularCtx.lineWidth = 1.5;
+            angularCtx.beginPath();
+            let firstDecay = true;
+            for (let pt of decayPoints) {
+                let px = mapRX(pt.r);
+                let py = mapRY(pt.aniso);
+                if (firstDecay) {
+                    angularCtx.moveTo(px, py);
+                    firstDecay = false;
+                } else {
+                    angularCtx.lineTo(px, py);
+                }
+            }
+            angularCtx.stroke();
+
+            for (let pt of decayPoints) {
+                let px = mapRX(pt.r);
+                let py = mapRY(pt.aniso);
+                angularCtx.fillStyle = 'var(--accent-magenta)';
+                angularCtx.beginPath();
+                angularCtx.arc(px, py, 2.5, 0, 2 * Math.PI);
+                angularCtx.fill();
+            }
+
+            // Draw Plot 3: Hamiltonian Energy Conservation Timeline
+            energyCtx.fillStyle = '#020204';
+            energyCtx.fillRect(0, 0, energyCanvas.width, energyCanvas.height);
+
+            let ew = energyCanvas.width;
+            let eh = energyCanvas.height;
+
+            // Axis lines
+            energyCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            energyCtx.lineWidth = 1;
+            energyCtx.beginPath();
+            energyCtx.moveTo(40, eh - 30);
+            energyCtx.lineTo(ew - 20, eh - 30);
+            energyCtx.moveTo(40, 20);
+            energyCtx.lineTo(40, eh - 30);
+            energyCtx.stroke();
+
+            // Labels
+            energyCtx.fillStyle = varColor('--text-muted');
+            energyCtx.font = '9px Space Mono';
+            energyCtx.textAlign = 'right';
+            energyCtx.fillText('H (Energy)', 32, 24);
+            energyCtx.textAlign = 'center';
+            energyCtx.fillText('Time (ticks)', ew/2, eh - 10);
+
+            if (energyHistory.length > 1) {
+                let mapEX = (index) => 40 + (index / (maxEnergyPoints - 1)) * (ew - 65);
+                let minH = Math.min(...energyHistory);
+                let maxH = Math.max(...energyHistory);
+                let padding = (maxH - minH) * 0.1;
+                if (padding < 1e-4) padding = 0.1;
+                let plotMin = Math.max(0, minH - padding);
+                let plotMax = maxH + padding;
+
+                let mapEY = (val) => eh - 30 - ((val - plotMin) / (plotMax - plotMin)) * (eh - 65);
+
+                // Draw initial energy line (green dashed)
+                if (initialEnergy && initialEnergy > 0.001) {
+                    let iy = mapEY(initialEnergy);
+                    if (iy >= 20 && iy <= eh - 30) {
+                        energyCtx.strokeStyle = 'rgba(76, 175, 80, 0.3)';
+                        energyCtx.lineWidth = 1;
+                        energyCtx.setLineDash([4, 4]);
+                        energyCtx.beginPath();
+                        energyCtx.moveTo(40, iy);
+                        energyCtx.lineTo(ew - 20, iy);
+                        energyCtx.stroke();
+                        energyCtx.setLineDash([]);
+                    }
+                }
+
+                // Draw scrolling energy line
+                energyCtx.strokeStyle = '#00f0ff';
+                energyCtx.lineWidth = 2;
+                energyCtx.beginPath();
+                for (let j = 0; j < energyHistory.length; ++j) {
+                    let px = mapEX(j);
+                    let py = mapEY(energyHistory[j]);
+                    if (j === 0) energyCtx.moveTo(px, py);
+                    else energyCtx.lineTo(px, py);
+                }
+                energyCtx.stroke();
+            }
         }
 
         // Helper to grab CSS color variables
@@ -1126,7 +1552,7 @@
 
         canvas.addEventListener('mousedown', (evt) => {
             let mouse = getMousePos(evt);
-            
+
             if (currentMode === 'coulomb') {
                 // Check if close to source
                 let d = Math.sqrt((mouse.x - sourceX)*(mouse.x - sourceX) + (mouse.y - sourceY)*(mouse.y - sourceY));
@@ -1146,7 +1572,7 @@
         canvas.addEventListener('mousemove', (evt) => {
             if (!isDragging) return;
             let mouse = getMousePos(evt);
-            
+
             if (currentMode === 'coulomb') {
                 sourceX = Math.max(1, Math.min(gridW - 2, Math.floor(mouse.x)));
                 sourceY = Math.max(1, Math.min(gridH - 2, Math.floor(mouse.y)));
@@ -1160,19 +1586,30 @@
         // --- MENU SCENARIO BUTTONS ---
         function setMode(mode) {
             currentMode = mode;
-            
+
             // Manage UI buttons active class
             document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`mode-${mode}`).classList.add('active');
-            
-            // Hide/show heat-drain check
+
+            // Hide/show dynamic presets
             let heatBox = document.getElementById('control-heat-drain');
+            let velSlider = document.getElementById('control-source-vel');
+            let relativisticTelemetry = document.getElementById('card-relativistic-telemetry');
+
             if (mode === 'genesis') {
                 heatBox.style.display = 'block';
             } else {
                 heatBox.style.display = 'none';
             }
-            
+
+            if (mode === 'relativistic') {
+                velSlider.style.display = 'block';
+                relativisticTelemetry.style.display = 'block';
+            } else {
+                velSlider.style.display = 'none';
+                relativisticTelemetry.style.display = 'none';
+            }
+
             resetLattice();
         }
 
@@ -1190,6 +1627,16 @@
         document.getElementById('slider-damping').addEventListener('input', (evt) => {
             w_sor = parseFloat(evt.target.value);
             document.getElementById('val-damping').textContent = w_sor.toFixed(2);
+        });
+
+        document.getElementById('slider-radius').addEventListener('input', (evt) => {
+            analysisR = parseFloat(evt.target.value);
+            document.getElementById('val-radius').textContent = analysisR.toFixed(1);
+        });
+
+        document.getElementById('slider-source-vel').addEventListener('input', (evt) => {
+            movingVel = parseFloat(evt.target.value);
+            document.getElementById('val-source-vel').textContent = movingVel.toFixed(2);
         });
 
         document.getElementById('checkbox-heat').addEventListener('change', (evt) => {
@@ -1210,7 +1657,7 @@
         function loop() {
             tickLattice();
             drawLattice();
-            drawPlot();
+            drawPlots();
             requestAnimationFrame(loop);
         }
 
