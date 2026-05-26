@@ -48,7 +48,7 @@ namespace ftd { namespace gpu { namespace kernels {
                             uint8_t bcc_stencil_mode);
     void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
-                            bool do_genesis, bool do_evaporation, double dt,
+                            bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                             bool do_langevin, double langevin_gamma, double langevin_T,
                             uint8_t langevin_site_filter,
                             unsigned long long rng_seed, int tick);
@@ -69,7 +69,7 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling);
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                                   bool larmor_radiation, double damping_factor,
-                                  bool do_genesis, bool do_evaporation, double dt,
+                                  bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                                   unsigned long long rng_seed, int tick);
     void launch_gauss_sync_dual(GpuBuffers& bufs);
 
@@ -77,7 +77,7 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
                             bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
-                            bool do_genesis, bool do_evaporation, double dt,
+                            bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                             bool do_langevin, double langevin_gamma, double langevin_T,
                             unsigned long long rng_seed, int tick);
 
@@ -275,6 +275,7 @@ void GpuEngine::gpu_phase_write() {
                                          toggles.genesis,
                                          toggles.evaporation,
                                          dt_,
+                                         toggles.symplectic_leapfrog,
                                          rng_seed, tick);
     } else {
         kernels::launch_phase_write(bufs_,
@@ -285,6 +286,7 @@ void GpuEngine::gpu_phase_write() {
                                     toggles.genesis,
                                     toggles.evaporation,
                                     dt_,
+                                    toggles.symplectic_leapfrog,
                                     toggles.langevin,
                                     toggles.langevin_gamma,
                                     toggles.langevin_T,
@@ -326,6 +328,7 @@ void GpuEngine::gpu_wave_update() {
                                 toggles.genesis,
                                 toggles.evaporation,
                                 dt_,
+                                toggles.symplectic_leapfrog,
                                 toggles.langevin,
                                 toggles.langevin_gamma,
                                 toggles.langevin_T,

@@ -18,6 +18,10 @@ class RenderBridge;
 // uses left-stress only (parity-violating).
 void weak_transmutation_cpu(RenderBridge& rb);
 
+// Scale 0: edge-based gauge link staple relaxation
+void relax_su2_links_cpu(RenderBridge& rb, double dt, double beta);
+void relax_su3_links_cpu(RenderBridge& rb, double dt, double beta);
+
 // Rule 8: FTD Schwarzschild-like proper time integration.
 //   f = 1 − L²   (Schwarzschild factor from the latency field)
 //   dτ/dt = √(f² − |v|²) / √f
