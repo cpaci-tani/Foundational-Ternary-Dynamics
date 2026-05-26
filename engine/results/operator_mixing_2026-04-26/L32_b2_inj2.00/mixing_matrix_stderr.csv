@@ -1,8 +1,0 @@
-#,stderr (bootstrap, 100 resamples)
-row\col,JJ,divJ2,curlJ2,JdotDivJ,J4,stateSq
-JJ,0.502951,44.6901,1.60871,57.2956,13.2817,nan
-divJ2,0.0238061,1.71604,0.0768224,3.01563,0.63398,nan
-curlJ2,0.898729,79.5091,3.25053,106.776,23.3623,nan
-JdotDivJ,0.056434,4.51745,0.149916,7.2448,1.4901,nan
-J4,0.429921,31.2795,1.1648,52.6623,11.6642,nan
-stateSq,nan,nan,nan,nan,nan,nan

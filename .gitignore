@@ -206,4 +206,46 @@ scripts/exploration/outputs/*
 !scripts/exploration/outputs/manifestation_flow_*.pdf
 !scripts/exploration/outputs/ftd_native_electrodynamics*.json
 
+# === 2026-05-25 maximum-cleanup additions ===
+
+# Generated dashboard HTML in engine/web/ (regenerated from engine campaign
+# runners; engine/web/ is the GitHub Pages source — keep only stable demos).
+engine/web/phase_b3_*.html
+
+# Regenerable interactive HTML under dissemination/interactive/.
+# Hand-curated explorers (gauss_circle_explorer, master_quadratic_explorer,
+# prime_music, ternary_cube_27, etc.) ARE source-of-truth and stay tracked.
+dissemination/interactive/phase_b3_*.html
+dissemination/interactive/math_node_map.html
+
+# Quarto _book/ build output anywhere under dissemination/.
+# (Existing rule on line 14 covers manuscript/_book/ only; this catches
+# manuscript_v2/_book/ and any future Quarto book.)
+**/_book/
+
+# Compiled paper PDFs sit next to .tex sources (regenerable via latexmk).
+# Source-of-truth is the .tex; PDFs are build artifacts.
+docs/papers/*.pdf
+dissemination/papers/*.pdf
+dissemination/manuscript_v2/src/*.pdf
+
+# Generated publication figures in docs/papers/figures/ (older staging dir).
+# The src/figures/ sibling is already covered by lines 57–58.
+docs/papers/figures/*.png
+docs/papers/figures/*.pdf
+
+# Engine campaign result subtrees. The rule on line 159 already blocks NEW
+# subdirs; this de-tracks previously force-added campaign output. Recipes
+# are locked via pre-registration git tags (see REF_PREREGISTER_MANIFEST.md).
+engine/results/**/*.csv
+engine/results/**/*.json
+engine/results/**/*.log
+
+# Scripts/exploration result CSVs (regenerable from each generator script).
+scripts/exploration/results/*.csv
+scripts/exploration/results/*.md
+
+# Compiled Windows binaries.
+*.exe
+
 
