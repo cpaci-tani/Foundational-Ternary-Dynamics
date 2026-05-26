@@ -338,7 +338,8 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 export function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
     const scenarioId = state.currentScenarioId || readInputValue('scenario-select', 'flux-pulse');
     const bridge = ctx.bridge;
-    const projectedBytes = Math.ceil(newSize ** 3 * 330 * 1.3);
+    // Scale 0 now allocates ~988 bytes/site on the C++ heap (due to SU(2)/SU(3) link structures).
+    const projectedBytes = Math.ceil(newSize ** 3 * 1000 * 1.3);
     const maxWasmMemory = 2 * 1024 * 1024 * 1024;
 
     if (projectedBytes >= maxWasmMemory) {
