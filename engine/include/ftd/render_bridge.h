@@ -26,6 +26,7 @@
 #include "hilbert.h"
 #include "term_toggles.h"
 #include "constants.h"
+#include "ftd/gauge_field.h"
 #include "field_operators.h"
 #include "ftd/eft/dual_cell_continuity.h"
 
@@ -56,6 +57,8 @@ class RenderBridge {
     // Extracted physics modules (2026-04-18 refactor R1-R6) need access to
     // internal state (rng_, uniform_, next_particle_id_, phi_, buffers).
     friend void weak_transmutation_cpu(RenderBridge&);
+    friend void relax_su2_links_cpu(RenderBridge&, double, double);
+    friend void relax_su3_links_cpu(RenderBridge&, double, double);
     friend void accumulate_proper_time(RenderBridge&);
     friend void pair_production_cpu(RenderBridge&);
     friend void triad_binding_cpu(RenderBridge&);
@@ -196,6 +199,7 @@ public:
 
     // EL residual verification: exposes delta_j_ computed by phase_read()
     const std::vector<Vec3>& delta_j() const { return delta_j_; }
+    const std::vector<Vec3>& dJ() const { return dJ_; }
 
     // Recompute delta_j from current state (for EL residual verification).
     // Calls phase_read() without advancing the tick — state is NOT modified.
@@ -206,6 +210,14 @@ public:
 
     // Force diagnostics (separate buffer for cache-friendly Voxel layout)
     const std::vector<ForceDiag>& force_diag() const { return force_diag_; }
+
+    // Scale 0 Gauge Field link variable getters
+    const std::vector<SU2Link>& su2_links_x() const { return su2_links_x_; }
+    const std::vector<SU2Link>& su2_links_y() const { return su2_links_y_; }
+    const std::vector<SU2Link>& su2_links_z() const { return su2_links_z_; }
+    const std::vector<SU3Link>& su3_links_x() const { return su3_links_x_; }
+    const std::vector<SU3Link>& su3_links_y() const { return su3_links_y_; }
+    const std::vector<SU3Link>& su3_links_z() const { return su3_links_z_; }
     const ForceDiag& force_diag_at(int x, int y, int z) const {
         return force_diag_[lattice_.index(x, y, z)];
     }
@@ -360,9 +372,18 @@ private:
     std::vector<Vec3> delta_j_;  // Temporary buffer for Read phase
     std::vector<Vec3> delta_j_L_;  // Dual-substrate: Read phase buffer for J_L
     std::vector<Vec3> delta_j_R_;  // Dual-substrate: Read phase buffer for J_R
+    std::vector<Vec3> dJ_;         // Conjugate velocity buffer (Scale 0 Symplectic wave update)
     std::vector<double> phi_;    // Poisson potential for Gauss projection
     std::vector<double> phi_coulomb_;  // Coulomb potential (warm-started between ticks)
     std::vector<double> phi_latency_;  // Latency (gravitational) potential (warm-started)
+
+    // Scale 0 Gauge Field link variable arrays (edge variables)
+    std::vector<SU2Link> su2_links_x_;
+    std::vector<SU2Link> su2_links_y_;
+    std::vector<SU2Link> su2_links_z_;
+    std::vector<SU3Link> su3_links_x_;
+    std::vector<SU3Link> su3_links_y_;
+    std::vector<SU3Link> su3_links_z_;
     EnergyLedger energy_ledger_;  // per-tick conservation drift, populated by update_energy_ledger()
     mutable bool cpu_warnings_emitted_ = false;  // F2 callstack audit: GPU-only-toggle warning emitted flag
     std::string last_validation_warn_;  // ARCH-3: dedup repeated validate() warnings to one per unique string

@@ -46,6 +46,7 @@ struct ParticleToggles {
     bool spin_orbit = false;
     bool relativistic = false;
     bool magnetic_dipole = false;
+    bool relativistic_verlet = false;
 
     // Validates known dependency constraints between toggles.
     // Returns true if the combination is valid.
@@ -64,11 +65,13 @@ struct ParticleToggles {
 
     void enable_all() {
         coulomb = gravity = damping = true;
+        relativistic_verlet = true;
         lorentz = exchange = strong = radiation = true;
         spin_orbit = relativistic = magnetic_dipole = true;
     }
     void minimal() {
         coulomb = gravity = damping = true;
+        relativistic_verlet = true;
         lorentz = exchange = strong = radiation = false;
         spin_orbit = relativistic = magnetic_dipole = false;
     }
@@ -119,6 +122,7 @@ struct Particle {
     int32_t pair_id = -1;      // Entanglement partner
     bool locked = false;       // Infinite mass (e.g., proton in hydrogen)
     Vec3 spin_axis;            // Spin direction (for magnetic/exchange forces)
+    Vec3 momentum;             // Relativistic momentum p = gamma * m * v
 
     // Convert to universal ternary triple
     OnticEntity as_ontic() const {
@@ -241,6 +245,7 @@ public:
         if (name == "spin_orbit")      return toggles.spin_orbit;
         if (name == "relativistic")    return toggles.relativistic;
         if (name == "magnetic_dipole") return toggles.magnetic_dipole;
+        if (name == "relativistic_verlet") return toggles.relativistic_verlet;
         return false;
     }
 
@@ -255,6 +260,7 @@ public:
         if (name == "spin_orbit")      { toggles.spin_orbit = value; return; }
         if (name == "relativistic")    { toggles.relativistic = value; return; }
         if (name == "magnetic_dipole") { toggles.magnetic_dipole = value; return; }
+        if (name == "relativistic_verlet") { toggles.relativistic_verlet = value; return; }
     }
 
     ScaleBaseDiagnostics base_diagnostics() const override {

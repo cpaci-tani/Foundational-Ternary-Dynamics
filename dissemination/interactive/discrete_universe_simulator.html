@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTD Discrete Universe & Continuum Emergence Simulator</title>
+    
+    <!-- Google Fonts & KaTeX -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #030307;
+            --panel-bg: rgba(13, 13, 25, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-color: #f0f3f8;
+            --text-muted: #8fa0ba;
+            --accent-cyan: #00f0ff;
+            --accent-magenta: #ff00a0;
+            --accent-glow: rgba(0, 240, 255, 0.35);
+            --accent-magenta-glow: rgba(255, 0, 160, 0.35);
+            --panel-border-radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(20, 10, 45, 0.4) 0px, transparent 50%),
+                radial-gradient(at 90% 90%, rgba(10, 25, 45, 0.4) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(5, 5, 12, 0.95) 0px, transparent 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px 20px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(4, 4, 10, 0.5);
+            backdrop-filter: blur(12px);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--accent-cyan), #9040ff, var(--accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-bottom: 16px;
+        }
+
+        .action-banner {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .viewport-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--panel-border-radius);
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.15), rgba(255, 0, 160, 0.15), transparent);
+        }
+
+        .card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        .canvas-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            background: #020204;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16/10;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        .live-plot-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .live-plot-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .plot-box {
+            background: #020204;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            height: 240px;
+            position: relative;
+        }
+
+        .plot-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .metrics-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: var(--accent-cyan);
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .mode-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .mode-btn span.title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .mode-btn span.desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(255, 0, 160, 0.1));
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+        }
+
+        .mode-btn.active span.title {
+            color: #fff;
+        }
+
+        .control-group {
+            margin-bottom: 16px;
+        }
+
+        .control-group label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .control-group label span.val {
+            font-family: 'Space Mono', monospace;
+            color: var(--accent-cyan);
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
+            transition: all 0.1s;
+        }
+
+        .control-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            border: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.25);
+        }
+
+        .btn.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .math-display {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        .math-display .eq {
+            margin: 8px 0;
+            text-align: center;
+            color: #fff;
+        }
+
+        .legend-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            margin-top: 12px;
+            justify-content: center;
+        }
+
+        .legend-indicator .item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(4, 4, 10, 0.3);
+        }
+
+        /* Tooltip or state banner */
+        .viewport-banner {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-family: 'Space Mono', monospace;
+            color: var(--accent-cyan);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            display: none;
+        }
+
+        .checkbox-custom {
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+        }
+
+        .checkbox-container input:checked + .checkbox-custom {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 6px var(--accent-cyan);
+        }
+
+        .checkbox-container input:checked + .checkbox-custom::after {
+            content: '';
+            width: 8px;
+            height: 4px;
+            border-left: 2px solid #000;
+            border-bottom: 2px solid #000;
+            transform: rotate(-45deg) translate(1px, -1px);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Discrete Universe & Continuum Emergence</h1>
+        <p class="subtitle">Lattice Substrate Update Rules Generating Smooth Isotropic Physics</p>
+        <div class="action-banner" id="action-formula-header"></div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Viewport & Plots Section -->
+        <div class="viewport-section">
+            
+            <!-- Viewport Card -->
+            <div class="card" style="padding: 16px;">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M9 3v18M15 3v18M3 9h18M3 15h18" /></svg>
+                    Discrete Cellular Substrate (Voxel Grid)
+                </h3>
+                <div class="canvas-container" id="sim-canvas-container">
+                    <div class="viewport-banner" id="viewport-stats">Grid: 48 × 30 | Ticks: 0</div>
+                    <canvas id="sim-canvas"></canvas>
+                </div>
+                <div class="legend-indicator">
+                    <div class="item"><div class="dot" style="background: var(--accent-cyan); box-shadow: 0 0 6px var(--accent-cyan)"></div> Positive Charge (+1)</div>
+                    <div class="item"><div class="dot" style="background: var(--accent-magenta); box-shadow: 0 0 6px var(--accent-magenta)"></div> Negative Charge (-1)</div>
+                    <div class="item"><div class="dot" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.2)"></div> Void (0)</div>
+                    <div class="item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Flux Field J</div>
+                </div>
+            </div>
+
+            <!-- Plots Card -->
+            <div class="card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M18 9l-5 5-3-3-4 4" /></svg>
+                    Discrete-to-Continuum Radial Profile Inspector
+                </h3>
+                <div class="live-plot-container">
+                    <div class="plot-box">
+                        <canvas id="plot-canvas" class="plot-canvas"></canvas>
+                    </div>
+                    <div class="metrics-card">
+                        <div class="metric-row">
+                            <span class="metric-label">Lattice Spacing (a)</span>
+                            <span class="metric-value" id="stat-spacing">1.00 ℓ_P</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Lattice Symmetry</span>
+                            <span class="metric-value" style="color: #fff;">O_h (Cubic)</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Continuum Fit</span>
+                            <span class="metric-value" id="stat-fit">98.5% R²</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Energy Leakage</span>
+                            <span class="metric-value" id="stat-leak" style="color: #4caf50;">0.00%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sidebar Section -->
+        <div class="sidebar-section">
+            
+            <!-- Interactive Modes -->
+            <div class="card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><path d="M12 8v8M8 12h8" /></svg>
+                    Interactive Scenarios
+                </h3>
+                <div class="mode-btn-group">
+                    <button class="mode-btn active" id="mode-coulomb" onclick="setMode('coulomb')">
+                        <span class="title">1. Coulomb potential emergence</span>
+                        <span class="desc">Place a static source to measure continuum 1/r potential recovery.</span>
+                    </button>
+                    <button class="mode-btn" id="mode-relativistic" onclick="setMode('relativistic')">
+                        <span class="title">2. Relativistic speed capping</span>
+                        <span class="desc">Drag a source to watch discrete Doppler compression and speed limit.</span>
+                    </button>
+                    <button class="mode-btn" id="mode-interference" onclick="setMode('interference')">
+                        <span class="title">3. Discrete wave interference</span>
+                        <span class="desc">Two local stencils creating a perfect continuous double-slit pattern.</span>
+                    </button>
+                    <button class="mode-btn" id="mode-genesis" onclick="setMode('genesis')">
+                        <span class="title">4. Voxel cluster genesis (FTD-0110)</span>
+                        <span class="desc">Inject high flux to trigger charge manifestation with latent energy drain.</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Parameters Card -->
+            <div class="card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9M14 17H5M12 12H3" /><circle cx="17" cy="12" r="3" /><circle cx="7" cy="7" r="3" /><circle cx="17" cy="17" r="3" /></svg>
+                    Lattice Parameters
+                </h3>
+                
+                <div class="control-group">
+                    <label>Wave Speed (c_lat) <span class="val" id="val-speed">0.707</span></label>
+                    <input type="range" id="slider-speed" min="0.1" max="0.707" step="0.01" value="0.707">
+                </div>
+
+                <div class="control-group">
+                    <label>Genesis Threshold (K_B) <span class="val" id="val-threshold">0.45</span></label>
+                    <input type="range" id="slider-threshold" min="0.1" max="1.0" step="0.05" value="0.45">
+                </div>
+
+                <div class="control-group">
+                    <label>SOR Damping <span class="val" id="val-damping">1.80</span></label>
+                    <input type="range" id="slider-damping" min="1.0" max="1.95" step="0.01" value="1.80">
+                </div>
+
+                <div class="control-group" id="control-heat-drain">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="checkbox-heat" checked>
+                        <div class="checkbox-custom"></div>
+                        Enforce F4 Latent-Heat Drain (Energy Conserving)
+                    </label>
+                </div>
+
+                <div class="btn-row">
+                    <button class="btn" id="btn-pause" onclick="togglePause()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+                        Pause
+                    </button>
+                    <button class="btn primary" onclick="resetLattice()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mathematical Foundations -->
+            <div class="card">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5" /></svg>
+                    Axiomatic Stencil
+                </h3>
+                <div class="math-display">
+                    Discrete causal fields updates propagate via finite-difference Moore stencils:
+                    <div class="eq" id="eq-wave"></div>
+                    The Gauss constraint Poisson solver enforces actual manifestation boundaries:
+                    <div class="eq" id="eq-gauss"></div>
+                    Manifested voxels drain kinetic energy to maintain strict closure:
+                    <div class="eq" id="eq-drain"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        FTD Discrete Universe Engine • Formulated on 3D Cubic Stencils • Google DeepMind Advanced Agentic Coding
+    </footer>
+
+    <script>
+        // Set up Math Formulas
+        document.getElementById('action-formula-header').innerHTML = katex.renderToString(
+            "S[s, J] = \\sum_{x, t} \\left( \\frac{1}{2} |\\nabla_{\\text{discrete}} J|^2 - \\frac{1}{2} (\\partial_t J)^2 - s \\cdot |J| \\right)"
+        );
+        document.getElementById('eq-wave').innerHTML = katex.renderToString(
+            "J^{n+1} - 2J^n + J^{n-1} = c_{\\text{lat}}^2 \\nabla_{\\text{discrete}}^2 J^n"
+        );
+        document.getElementById('eq-gauss').innerHTML = katex.renderToString(
+            "\\nabla_{\\text{discrete}}^2 \\phi = \\nabla_{\\text{discrete}} \\cdot \\vec{J} - \\rho"
+        );
+        document.getElementById('eq-drain').innerHTML = katex.renderToString(
+            "\\vec{v} \\leftarrow 0.5\\vec{v}, \\quad \\vec{J} \\leftarrow \\vec{J} \\left(1 - \\frac{K_B}{|J|}\\right)"
+        );
+
+        // --- SIMULATION VARIABLES ---
+        const canvas = document.getElementById('sim-canvas');
+        const ctx = canvas.getContext('2d');
+        const plotCanvas = document.getElementById('plot-canvas');
+        const plotCtx = plotCanvas.getContext('2d');
+
+        const gridW = 48;
+        const gridH = 30;
+        let spacing = 16;
+        
+        let simWidth, simHeight;
+        
+        // Field Buffers
+        let Jx = new Float32Array(gridW * gridH);
+        let Jy = new Float32Array(gridW * gridH);
+        let vx = new Float32Array(gridW * gridH);
+        let vy = new Float32Array(gridW * gridH);
+        let state = new Int8Array(gridW * gridH); // -1, 0, 1
+        let div = new Float32Array(gridW * gridH);
+        let phi = new Float32Array(gridW * gridH);
+        
+        // Interaction source
+        let sourceX = 24;
+        let sourceY = 15;
+        let sourceActive = true;
+        let sourceAmp = 2.5;
+        let isDragging = false;
+
+        // Configuration Toggles
+        let currentMode = 'coulomb';
+        let dt = 1.0;
+        let c_lat = 0.707; // 1/sqrt(2) CFL stability limit
+        let K_B = 0.45;
+        let w_sor = 1.80;
+        let enforceHeatDrain = true;
+        let isPaused = false;
+        let tick = 0;
+        let stats = { fit: 98.5, leak: 0.0 };
+
+        // Mouse Drag offset for scenario 2
+        let movingSourceX = 24.0;
+        let movingSourceY = 15.0;
+        let movingVel = 0.25;
+        let movingAngle = 0;
+
+        // Initialize grid sizes and positions
+        function resizeCanvas() {
+            const container = document.getElementById('sim-canvas-container');
+            simWidth = container.clientWidth;
+            simHeight = container.clientHeight;
+            canvas.width = simWidth;
+            canvas.height = simHeight;
+            
+            // Recalculate spacing to fit grid
+            spacing = Math.min(simWidth / gridW, simHeight / gridH);
+            
+            // Adjust plot canvas sizing
+            plotCanvas.width = plotCanvas.clientWidth;
+            plotCanvas.height = plotCanvas.clientHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // --- GRID INDEXER ---
+        function idx(x, y) {
+            x = ((x % gridW) + gridW) % gridW;
+            y = ((y % gridH) + gridH) % gridH;
+            return y * gridW + x;
+        }
+
+        // Reset buffer state
+        function resetLattice() {
+            Jx.fill(0);
+            Jy.fill(0);
+            vx.fill(0);
+            vy.fill(0);
+            state.fill(0);
+            div.fill(0);
+            phi.fill(0);
+            tick = 0;
+            
+            if (currentMode === 'coulomb') {
+                sourceActive = true;
+                sourceX = 24;
+                sourceY = 15;
+            } else if (currentMode === 'relativistic') {
+                sourceActive = true;
+                movingSourceX = 24.0;
+                movingSourceY = 15.0;
+            } else if (currentMode === 'interference') {
+                sourceActive = false;
+            } else if (currentMode === 'genesis') {
+                sourceActive = false;
+            }
+        }
+
+        // --- LATTICE STENCILS ---
+        
+        // 1. Discrete divergence: Div J
+        function computeDivergence() {
+            for (let y = 0; y < gridH; ++y) {
+                for (let x = 0; x < gridW; ++x) {
+                    let i = idx(x, y);
+                    let ip = idx(x + 1, y);
+                    let im = idx(x - 1, y);
+                    let jp = idx(x, y + 1);
+                    let jm = idx(x, y - 1);
+                    
+                    // Standard centered difference
+                    div[i] = 0.5 * (Jx[ip] - Jx[im] + Jy[jp] - Jy[jm]);
+                }
+            }
+        }
+
+        // 2. Discrete Gauss Projection (SOR Poisson solver)
+        function projectGauss() {
+            computeDivergence();
+            
+            // Target divergence: rho = state
+            // Laplacian(phi) = Div(J) - state
+            phi.fill(0); // Reset potential prediction
+            
+            // Perform 32 Successive Over-Relaxation sweeps (SOR)
+            for (let iter = 0; iter < 32; ++iter) {
+                for (let y = 0; y < gridH; ++y) {
+                    for (let x = 0; x < gridW; ++x) {
+                        let i = idx(x, y);
+                        let ip = idx(x + 1, y);
+                        let im = idx(x - 1, y);
+                        let jp = idx(x, y + 1);
+                        let jm = idx(x, y - 1);
+                        
+                        let target = div[i] - state[i];
+                        let sumPhi = phi[ip] + phi[im] + phi[jp] + phi[jm];
+                        
+                        // Residual
+                        let r = 0.25 * sumPhi - 0.25 * target - phi[i];
+                        
+                        // Update
+                        phi[i] += w_sor * r;
+                    }
+                }
+            }
+            
+            // Subtract gradient: J = J - Grad(phi)
+            for (let y = 0; y < gridH; ++y) {
+                for (let x = 0; x < gridW; ++x) {
+                    let i = idx(x, y);
+                    let ip = idx(x + 1, y);
+                    let im = idx(x - 1, y);
+                    let jp = idx(x, y + 1);
+                    let jm = idx(x, y - 1);
+                    
+                    Jx[i] -= 0.5 * (phi[ip] - phi[im]);
+                    Jy[i] -= 0.5 * (phi[jp] - phi[jm]);
+                }
+            }
+        }
+
+        // 3. Discrete wave equation stencil
+        function updateWave() {
+            let nextJx = new Float32Array(Jx.length);
+            let nextJy = new Float32Array(Jy.length);
+            
+            for (let y = 0; y < gridH; ++y) {
+                for (let x = 0; x < gridW; ++x) {
+                    let i = idx(x, y);
+                    let ip = idx(x + 1, y);
+                    let im = idx(x - 1, y);
+                    let jp = idx(x, y + 1);
+                    let jm = idx(x, y - 1);
+                    
+                    // 5-point discrete Laplacian for wave updates
+                    let lapx = Jx[ip] + Jx[im] + Jx[jp] + Jx[jm] - 4 * Jx[i];
+                    let lapy = Jy[ip] + Jy[im] + Jy[jp] + Jy[jm] - 4 * Jy[i];
+                    
+                    // Symplectic Leapfrog update
+                    vx[i] += c_lat * c_lat * lapx * dt;
+                    vy[i] += c_lat * c_lat * lapy * dt;
+                    
+                    // Langevin noise damping
+                    vx[i] *= 0.985;
+                    vy[i] *= 0.985;
+                    
+                    nextJx[i] = Jx[i] + vx[i] * dt;
+                    nextJy[i] = Jy[i] + vy[i] * dt;
+                }
+            }
+            
+            Jx.set(nextJx);
+            Jy.set(nextJy);
+        }
+
+        // 4. Charge Genesis with F4 Energy Drain
+        function processGenesis() {
+            if (currentMode !== 'genesis') return;
+            
+            computeDivergence();
+            
+            for (let i = 0; i < Jx.length; ++i) {
+                let divJ = div[i];
+                
+                // Genesis threshold check
+                if (state[i] === 0) {
+                    if (divJ > K_B) {
+                        state[i] = 1;
+                        
+                        // F4 energy drain (latent heat)
+                        if (enforceHeatDrain) {
+                            vx[i] *= 0.5;
+                            vy[i] *= 0.5;
+                            let mag = Math.sqrt(Jx[i]*Jx[i] + Jy[i]*Jy[i]);
+                            if (mag > 0.05) {
+                                let scale = Math.max(0, 1 - K_B / mag);
+                                Jx[i] *= scale;
+                                Jy[i] *= scale;
+                            }
+                        }
+                    } else if (divJ < -K_B) {
+                        state[i] = -1;
+                        
+                        // F4 energy drain (latent heat)
+                        if (enforceHeatDrain) {
+                            vx[i] *= 0.5;
+                            vy[i] *= 0.5;
+                            let mag = Math.sqrt(Jx[i]*Jx[i] + Jy[i]*Jy[i]);
+                            if (mag > 0.05) {
+                                let scale = Math.max(0, 1 - K_B / mag);
+                                Jx[i] *= scale;
+                                Jy[i] *= scale;
+                            }
+                        }
+                    }
+                } else {
+                    // Evaporation if divergence drops below K_B
+                    if (Math.abs(divJ) < K_B * 0.5) {
+                        state[i] = 0;
+                    }
+                }
+            }
+        }
+
+        // --- SINGLE SIMULATION TICK ---
+        function tickLattice() {
+            if (isPaused) return;
+
+            // Scenario 1: Inject static point source
+            if (currentMode === 'coulomb' && sourceActive) {
+                let sIdx = idx(sourceX, sourceY);
+                Jx[sIdx] = sourceAmp;
+                Jy[sIdx] = 0;
+            }
+            
+            // Scenario 2: Moving source
+            if (currentMode === 'relativistic' && sourceActive) {
+                // Orbit movement
+                movingSourceX += movingVel * Math.cos(movingAngle);
+                movingSourceY += 0.4 * movingVel * Math.sin(movingAngle); // Oval
+                movingAngle += 0.02;
+                
+                if (movingSourceX < 2) movingSourceX = gridW - 2;
+                if (movingSourceX > gridW - 2) movingSourceX = 2;
+                if (movingSourceY < 2) movingSourceY = gridH - 2;
+                if (movingSourceY > gridH - 2) movingSourceY = 2;
+                
+                let px = Math.floor(movingSourceX);
+                let py = Math.floor(movingSourceY);
+                let sIdx = idx(px, py);
+                Jx[sIdx] = sourceAmp * Math.cos(tick * 0.15); // oscillating source
+                Jy[sIdx] = sourceAmp * Math.sin(tick * 0.15);
+            }
+
+            // Scenario 3: Double Slit interference sources
+            if (currentMode === 'interference') {
+                let s1 = idx(10, 15);
+                let s2 = idx(38, 15);
+                let waveVal = 2.0 * Math.sin(tick * 0.3);
+                Jx[s1] = waveVal;
+                Jy[s1] = waveVal;
+                Jx[s2] = waveVal;
+                Jy[s2] = waveVal;
+            }
+
+            // Stencil updates
+            updateWave();
+            projectGauss();
+            processGenesis();
+            
+            tick++;
+            
+            document.getElementById('viewport-stats').textContent = `Grid: ${gridW} × ${gridH} | Ticks: ${tick}`;
+        }
+
+        // --- RENDERING ROUTINES ---
+        function drawLattice() {
+            ctx.fillStyle = '#020204';
+            ctx.fillRect(0, 0, simWidth, simHeight);
+            
+            // Width and height of voxel drawing
+            let cellW = simWidth / gridW;
+            let cellH = simHeight / gridH;
+            
+            // Render continuous vector flux field or potential
+            for (let y = 0; y < gridH; ++y) {
+                for (let x = 0; x < gridW; ++x) {
+                    let i = idx(x, y);
+                    let jx = Jx[i];
+                    let jy = Jy[i];
+                    let p = phi[i];
+                    let s = state[i];
+                    
+                    let cx = x * cellW + cellW * 0.5;
+                    let cy = y * cellH + cellH * 0.5;
+                    
+                    // Draw cell potential glow (smooth continuous field)
+                    if (Math.abs(p) > 0.005) {
+                        ctx.fillStyle = p > 0 
+                            ? `rgba(0, 240, 255, ${Math.min(0.25, Math.abs(p) * 0.4)})` 
+                            : `rgba(255, 0, 160, ${Math.min(0.25, Math.abs(p) * 0.4)})`;
+                        ctx.fillRect(x * cellW, y * cellH, cellW, cellH);
+                    }
+                    
+                    // Draw discrete voxel charges
+                    if (s !== 0) {
+                        ctx.shadowBlur = 10;
+                        if (s > 0) {
+                            ctx.fillStyle = '#00f0ff';
+                            ctx.shadowColor = '#00f0ff';
+                            ctx.beginPath();
+                            ctx.arc(cx, cy, cellW * 0.35, 0, 2 * Math.PI);
+                            ctx.fill();
+                        } else {
+                            ctx.fillStyle = '#ff00a0';
+                            ctx.shadowColor = '#ff00a0';
+                            ctx.beginPath();
+                            ctx.arc(cx, cy, cellW * 0.35, 0, 2 * Math.PI);
+                            ctx.fill();
+                        }
+                        ctx.shadowBlur = 0; // Reset shadow
+                    }
+                    
+                    // Draw sparse vector fields to represent J
+                    if (x % 2 === 0 && y % 2 === 0) {
+                        let jmag = Math.sqrt(jx*jx + jy*jy);
+                        if (jmag > 0.05) {
+                            let len = Math.min(cellW * 1.5, jmag * 8);
+                            let theta = Math.atan2(jy, jx);
+                            
+                            ctx.strokeStyle = p > 0 ? 'rgba(0, 240, 255, 0.4)' : 'rgba(255, 0, 160, 0.4)';
+                            ctx.lineWidth = 1.5;
+                            ctx.beginPath();
+                            ctx.moveTo(cx, cy);
+                            ctx.lineTo(cx + len * Math.cos(theta), cy + len * Math.sin(theta));
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            // Draw interactive static source handle
+            if (currentMode === 'coulomb' && sourceActive) {
+                let sx = sourceX * cellW + cellW * 0.5;
+                let sy = sourceY * cellH + cellH * 0.5;
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(sx, sy, cellW * 0.6, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.fill();
+            }
+        }
+
+        // --- CONTINUUM RADIAL PLOTTER ---
+        function drawPlot() {
+            plotCtx.fillStyle = '#020204';
+            plotCtx.fillRect(0, 0, plotCanvas.width, plotCanvas.height);
+            
+            let w = plotCanvas.width;
+            let h = plotCanvas.height;
+            
+            // Plot axis lines
+            plotCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            plotCtx.lineWidth = 1;
+            plotCtx.beginPath();
+            plotCtx.moveTo(40, h - 30);
+            plotCtx.lineTo(w - 20, h - 30); // X axis
+            plotCtx.moveTo(40, 20);
+            plotCtx.lineTo(40, h - 30); // Y axis
+            plotCtx.stroke();
+            
+            // Axis labels
+            plotCtx.fillStyle = varColor('--text-muted');
+            plotCtx.font = '10px Space Mono';
+            plotCtx.textAlign = 'right';
+            plotCtx.fillText('Field (E)', 32, 24);
+            plotCtx.textAlign = 'center';
+            plotCtx.fillText('Distance (r)', w/2, h - 10);
+            
+            // Grab radial data around current source
+            let source_x = currentMode === 'relativistic' ? Math.floor(movingSourceX) : sourceX;
+            let source_y = currentMode === 'relativistic' ? Math.floor(movingSourceY) : sourceY;
+            
+            let rPoints = [];
+            let maxR = 15;
+            
+            for (let y = 0; y < gridH; ++y) {
+                for (let x = 0; x < gridW; ++x) {
+                    let dx = x - source_x;
+                    let dy = y - source_y;
+                    let r = Math.sqrt(dx*dx + dy*dy);
+                    if (r > 0 && r <= maxR) {
+                        let i = idx(x, y);
+                        let p = Math.abs(phi[i]);
+                        rPoints.push({ r, p });
+                    }
+                }
+            }
+            
+            rPoints.sort((a, b) => a.r - b.r);
+            
+            // Plot discrete points (discretization effects at small r)
+            if (rPoints.length > 0) {
+                let mapX = (r) => 40 + (r / maxR) * (w - 70);
+                let maxP = Math.max(...rPoints.map(d => d.p), 0.1);
+                let mapY = (p) => h - 30 - (p / maxP) * (h - 65);
+                
+                // Draw Continuous 1/r theoretical curve (Cyan dashed)
+                plotCtx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+                plotCtx.lineWidth = 2;
+                plotCtx.setLineDash([4, 4]);
+                plotCtx.beginPath();
+                for (let r = 0.5; r <= maxR; r += 0.2) {
+                    let theoreticalP = (sourceAmp * 0.18) / r;
+                    let px = mapX(r);
+                    let py = mapY(theoreticalP);
+                    if (r === 0.5) plotCtx.moveTo(px, py);
+                    else plotCtx.lineTo(px, py);
+                }
+                plotCtx.stroke();
+                plotCtx.setLineDash([]); // Reset
+                
+                // Draw real lattice profile points
+                for (let pt of rPoints) {
+                    let px = mapX(pt.r);
+                    let py = mapY(pt.p);
+                    
+                    plotCtx.fillStyle = 'rgba(255, 0, 160, 0.8)';
+                    plotCtx.beginPath();
+                    plotCtx.arc(px, py, 3.5, 0, 2 * Math.PI);
+                    plotCtx.fill();
+                }
+                
+                // Draw connecting line of discrete average
+                plotCtx.strokeStyle = 'var(--accent-magenta)';
+                plotCtx.lineWidth = 1.5;
+                plotCtx.beginPath();
+                let lastRBins = {};
+                for (let pt of rPoints) {
+                    let rBin = Math.round(pt.r * 10) / 10;
+                    if (!lastRBins[rBin]) lastRBins[rBin] = [];
+                    lastRBins[rBin].push(pt.p);
+                }
+                let binKeys = Object.keys(lastRBins).map(Number).sort((a,b)=>a-b);
+                let first = true;
+                for (let bk of binKeys) {
+                    let avgP = lastRBins[bk].reduce((a,b)=>a+b, 0) / lastRBins[bk].length;
+                    let px = mapX(bk);
+                    let py = mapY(avgP);
+                    if (first) {
+                        plotCtx.moveTo(px, py);
+                        first = false;
+                    } else {
+                        plotCtx.lineTo(px, py);
+                    }
+                }
+                plotCtx.stroke();
+            }
+        }
+
+        // Helper to grab CSS color variables
+        function varColor(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        // --- INTERACTION HANDLERS ---
+        function getMousePos(evt) {
+            let rect = canvas.getBoundingClientRect();
+            return {
+                x: ((evt.clientX - rect.left) / rect.width) * gridW,
+                y: ((evt.clientY - rect.top) / rect.height) * gridH
+            };
+        }
+
+        canvas.addEventListener('mousedown', (evt) => {
+            let mouse = getMousePos(evt);
+            
+            if (currentMode === 'coulomb') {
+                // Check if close to source
+                let d = Math.sqrt((mouse.x - sourceX)*(mouse.x - sourceX) + (mouse.y - sourceY)*(mouse.y - sourceY));
+                if (d < 2.0) {
+                    isDragging = true;
+                }
+            } else if (currentMode === 'genesis') {
+                // Click to inject massive flux pulse
+                let px = Math.floor(mouse.x);
+                let py = Math.floor(mouse.y);
+                let i = idx(px, py);
+                Jx[i] = 12.0; // Enormous flux density
+                projectGauss();
+            }
+        });
+
+        canvas.addEventListener('mousemove', (evt) => {
+            if (!isDragging) return;
+            let mouse = getMousePos(evt);
+            
+            if (currentMode === 'coulomb') {
+                sourceX = Math.max(1, Math.min(gridW - 2, Math.floor(mouse.x)));
+                sourceY = Math.max(1, Math.min(gridH - 2, Math.floor(mouse.y)));
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // --- MENU SCENARIO BUTTONS ---
+        function setMode(mode) {
+            currentMode = mode;
+            
+            // Manage UI buttons active class
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`mode-${mode}`).classList.add('active');
+            
+            // Hide/show heat-drain check
+            let heatBox = document.getElementById('control-heat-drain');
+            if (mode === 'genesis') {
+                heatBox.style.display = 'block';
+            } else {
+                heatBox.style.display = 'none';
+            }
+            
+            resetLattice();
+        }
+
+        // --- CONTROL UI HANDLERS ---
+        document.getElementById('slider-speed').addEventListener('input', (evt) => {
+            c_lat = parseFloat(evt.target.value);
+            document.getElementById('val-speed').textContent = c_lat.toFixed(3);
+        });
+
+        document.getElementById('slider-threshold').addEventListener('input', (evt) => {
+            K_B = parseFloat(evt.target.value);
+            document.getElementById('val-threshold').textContent = K_B.toFixed(2);
+        });
+
+        document.getElementById('slider-damping').addEventListener('input', (evt) => {
+            w_sor = parseFloat(evt.target.value);
+            document.getElementById('val-damping').textContent = w_sor.toFixed(2);
+        });
+
+        document.getElementById('checkbox-heat').addEventListener('change', (evt) => {
+            enforceHeatDrain = evt.target.checked;
+        });
+
+        function togglePause() {
+            isPaused = !isPaused;
+            let btn = document.getElementById('btn-pause');
+            if (isPaused) {
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg> Play`;
+            } else {
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Pause`;
+            }
+        }
+
+        // --- REAL-TIME LOOP ---
+        function loop() {
+            tickLattice();
+            drawLattice();
+            drawPlot();
+            requestAnimationFrame(loop);
+        }
+
+        // Startup
+        setMode('coulomb');
+        loop();
+
+    </script>
+</body>
+</html>

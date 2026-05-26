@@ -18,6 +18,7 @@ add_library(ftd_cuda STATIC
     wilson_dirac_gpu.cu     # Phase II.2-E: Wilson-Dirac CPU/GPU parity kernel
     cuda_invariants.cu      # ADR-0014: __constant__ pattern for invariant matrices
     kernels_eft.cu          # [NEW] Pure GPU-native EFT snapshot & operator calculations
+    kernels_gauge.cu        # [NEW] GPU kernels for non-Abelian link variable relaxation
 )
 
 target_include_directories(ftd_cuda PUBLIC
