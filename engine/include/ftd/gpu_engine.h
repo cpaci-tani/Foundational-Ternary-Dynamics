@@ -54,6 +54,7 @@ public:
     void upload_from_host(const std::vector<Voxel>& voxels);
 
     // --- Accessors ---
+    const GpuBuffers& bufs() const { return bufs_; }
     int lattice_size() const { return size_; }
     int current_tick() const { return tick_; }
     int total_sites() const { return N_; }
