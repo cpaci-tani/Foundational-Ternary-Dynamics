@@ -63,10 +63,14 @@ The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-
 |---|---|---|
 | [`DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`](DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md) | [PARTIAL]/[THEOREM] | **Consolidated** (6 husks: response-tuple, linear-generator, bare/response/current/scale flow). Bare linear source/flux response tuple + its invariance under native b=2 blocking; bare Gaussian fixed point scale-invariant. |
 | [`DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`](DERIV_FTD_NATIVE_NONLINEAR_FLOW.md) | [THEOREM]/[MEASURED]/[PARTIAL] | **Consolidated** (3 husks: multiscale-flow, Langevin-ensemble, engine-transport-flow). Native RG flow into the nonlinear regime: Langevin stationary ensemble, Gaussian fixed point at $b\le 8$, engine-transport plumbing. |
+| [`DERIV_BCC_ALGEBRAIC_READOUT.md`](DERIV_BCC_ALGEBRAIC_READOUT.md) | [DERIVED]/[PARTIAL] | ARC-B2: BCC algebraic readout and complex $V_{\text{complex}}$ observable; operationalizes the $\mathbb{Z}[i]$-module structure of $V_{\text{complex}}$. |
 | [`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`](DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md) | [SELECTION]/[THEOREM]/[OPEN] | Canonical microscopic history action $Z_u[\eta,h,a,\lambda_R]$; [THEOREM] reduction to the linear G18 generator. Kept as-is in the consolidation. |
 | [`DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`](DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md) | [PARTIAL] | FTD needs no microscopic U(1); U(1) is an effective description of projected flux. Post-pivot ontology foundation. |
 | [`DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`](DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md) | [PARTIAL] | Native state↔flux mapping to an EFT dictionary; scaling dimensions frozen under FTD-0059 (Gate-1 closure). |
 | [`RETROSPECTIVE_EFT_RECOVERY.md`](RETROSPECTIVE_EFT_RECOVERY.md) | [SYNTHESIS] | Narrative roll-up of the whole program; integrates existing claims at their canonical tags, promotes nothing. Pointer index back to live survivors and archived scaffolding. |
+| [`SCOPE_ALPHA_READOUT_NEXT_STEPS.md`](SCOPE_ALPHA_READOUT_NEXT_STEPS.md) | [SCOPING MEMO] | ARC-A1 track: outline of Candidate A, C, and B2 unattempted readout routes. |
+| [`SCOPE_GC_QUANTUM_PATH_INTEGRAL.md`](SCOPE_GC_QUANTUM_PATH_INTEGRAL.md) | [SCOPING MEMO] | Mechanism B track (FTD-0216): formulation of Euclidean quantum partition function over the body-diagonal sub-stencil $\sigma_{\text{BCC}}$, discrete-to-continuum vacuum polarization, and non-circular Wilsonian matching. |
+| [`ANALYSIS_NONLINEAR_BRIDGE_SWEEPS.md`](ANALYSIS_NONLINEAR_BRIDGE_SWEEPS.md) | [MEASUREMENT ANALYSIS] | F-D3 track: analysis of parameter sweeps D3a-D3d, leading to the final mechanism discrimination verdict among Mechanism $\alpha$, $\beta$, and $\gamma$. |
 
 ---
 
@@ -77,7 +81,6 @@ The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-
 | [`OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`](OPEN_FTD_TO_EFT_BRIDGE_STATUS.md) | [CLOSED NEGATIVE for QED α] / pivot | Where the QED-α bridge failed; defines the replacement target as native FTD source/flux physics. |
 | [`OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md`](OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md) | [PARTIAL] | Bridge Gate 2: linear generator derived, microscopic history measure selected; explicit nonlinear blocked effective action remains open. |
 | [`OPEN_GC_FROM_FIRST_PRINCIPLES.md`](OPEN_GC_FROM_FIRST_PRINCIPLES.md) | [OPEN] | $g_c$ from first principles after Mechanisms A–C closures; dimensionless origin unknown. |
-| [`OPEN_MU_FROM_LP_MISSING_ARROW.md`](OPEN_MU_FROM_LP_MISSING_ARROW.md) | [OPEN] | $\mu$ from $\ell_P$: the missing arrow in the calibration coherence diagram (FTD-0096). |
 
 ---
 
@@ -100,6 +103,7 @@ Methodology committed before measurement. See `REF_PREREGISTER_MANIFEST.md` for 
 | [`PREREG_ADVERSARIAL_LOOK_ELSEWHERE_v1.md`](PREREG_ADVERSARIAL_LOOK_ELSEWHERE_v1.md) | [PRE-REGISTRATION] | FTD-0189 adversarial look-elsewhere scan over an 18-constant basket FTD did not design. |
 | [`PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md`](PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md) | [PRE-REGISTRATION] | FTD-0185 alpha arithmetic-generativity test (Test 4) — the Balmer-to-Bohr gate. |
 | [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) | [PRE-REGISTRATION] | FTD-0143 uniqueness scan of the FQCR Model IV $(4,6;3,2)$ exponent quadruple. |
+| [`PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md`](PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md) | [PRE-REGISTRATION] | FTD-0215 nonlinear bridge coordinated parameters sweeps and active partitioning (F-D3). |
 | [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md`](PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md) | [PRE-REGISTRATION] | FTD-0186 boundary-theorem Stage 1: the structural/dynamical discriminator. |
 
 ---
@@ -120,6 +124,7 @@ The graviton-census trio — does the FTD substrate carry an emergent massless s
 
 | File | Tag | Purpose |
 |---|---|---|
+| [`AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`](AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md) | [AUDIT] | ARC-C1: Charge quantization audit and exact QED-vs-native normalization boundary integrity. |
 | [`AUDIT_ALPHA_EXTRACTION.md`](AUDIT_ALPHA_EXTRACTION.md) | [AUDIT] | Line-by-line audit of the Phase-F α extraction pipeline; the "3.6× α_ref" claim, resolved by Phase G as a category error. |
 | [`AUDIT_HEEGNER_TOWER_RIGIDITY.md`](AUDIT_HEEGNER_TOWER_RIGIDITY.md) | [COMPLETE] | 9-Heegner CM-tower master-quadratic rigidity scan; CM-uniqueness bifurcates by methodology. Pre-reg now in `archive/campaign_complete/`. |
 | [`AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md`](AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md) | [COMPLETE] | Lemniscate-alpha rigidity scan; canonical 5-harmonic curve found in ~4.3% of natural alternatives, retagged [SELECTION]. Pre-reg now in `archive/campaign_complete/`. |
@@ -132,7 +137,7 @@ Archived material is preserved for provenance — cite it to explain "why this r
 
 | Subdir | Count | Description |
 |---|---|---|
-| [`archive/closed_negative/`](archive/closed_negative/) | 18 | Closed-negative routes — pre-pivot projected-α derivations, the three $g_c$ mechanism attempts, $a_\text{phys}$ mechanism attempts, and superseded protocols/pre-regs. |
+| [`archive/closed_negative/`](archive/closed_negative/) | 21 | Closed-negative routes — pre-pivot projected-α derivations, the three $g_c$ mechanism attempts, $a_\text{phys}$ mechanism attempts, the mass-unit $\mu$ missing arrow, and superseded protocols/pre-regs. |
 | [`archive/campaign_complete/`](archive/campaign_complete/) | 42 | Completed-campaign scaffolding — protocol/pre-reg/analysis/audit triplets for campaigns that have run and recorded their result (emergent spectrum, topological observables, operator-mixing, s_eff nonlinear, Lorentz/Ward, rigidity scans, decisions). |
 | [`archive/resolved/`](archive/resolved/) | 1 | `OPEN_A_PHYS_DERIVATION.md` — the $a_\text{phys}$ open problem, closed by `THEOREM_A_PHYS_NO_GO.md`. |
 | [`archive/retracted/`](archive/retracted/) | 1 | `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` — a calibration-substitution false positive, retracted. |
@@ -142,4 +147,4 @@ Archived material is preserved for provenance — cite it to explain "why this r
 
 ---
 
-**Live document count:** 34 top-level docs (this INDEX excluded) — 6 SPEC, 5 THEOREM, 6 native-flow/bridge DERIV incl. the retrospective, 4 OPEN, 3 STATUS, 4 PREREG, 3 Frontier-4 graviton, 3 AUDIT.
+**Live document count:** 36 top-level docs (this INDEX excluded) — 6 SPEC, 5 THEOREM, 7 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 5 PREREG, 3 Frontier-4 graviton, 4 AUDIT.

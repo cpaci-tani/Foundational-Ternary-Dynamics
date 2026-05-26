@@ -254,7 +254,7 @@ Engine path (Cluster A build plan, complete 2026-04-26):
 
 Theory:
 - FTD-0095, `FOUND_BRIDGE_FUNCTIONAL.md` — ontology side
-- FTD-0096, `OPEN_MU_FROM_LP_MISSING_ARROW.md` — calibration side
+- FTD-0096, `archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md` — calibration side
 - FTD-0097, `PROTOCOL_LOOK_ELSEWHERE_SCAN.md` — author-isolation cross-check
 
 Closure precedents (templates):

@@ -139,7 +139,7 @@ Two of the program's most recent campaigns continue the pattern — FTD's algebr
 
 - The nonlinear blocked effective action `S_eff` — the cluster's central live deliverable (`OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md`; live entry point `STATUS_NONLINEAR_REGIME_2026-04-30.md`).
 - g_c Mechanism B (lattice-to-continuum matching) — open, but not a classical computation.
-- The μ-from-ℓ_P missing arrow as a *derivation path* — FTD-0096 is closed theorem-negative, but `OPEN_MU_FROM_LP_MISSING_ARROW.md` remains the live scoping doc for what an independent mass-quantum characterization would need.
+- The μ-from-ℓ_P missing arrow as a *derivation path* — FTD-0096 is closed theorem-negative, but `archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md` remains the live scoping doc for what an independent mass-quantum characterization would need.
 - The Frontier-4 L=128 verdict (`REPORT_GRAVITON_SUBSTRATE_MODE.md`).
 - Pre-registered, not-yet-run scans: `PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1` (FTD-0185, blocked behind MC-T4.3), `PREREG_FQCR_QUOTIENT_UNIQUENESS_v1` (FTD-0143, scan-runner not yet written), `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1` (FTD-0186; per CLAUDE.md the boundary classification is `[OPEN]` and needs a v2 re-pre-registration).
 
