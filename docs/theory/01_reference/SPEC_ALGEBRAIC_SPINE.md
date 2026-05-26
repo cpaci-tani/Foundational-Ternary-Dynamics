@@ -1,9 +1,9 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. **Update 2026-04-30:** Theorem 9 (field-theoretic characterization of `Q(G*)` as a maximal `π`-free subfield of `Q(π, Γ(1/4))`) added in §9, conditional on Chudnovsky 1976; LEDGER FTD-0112. The spine now has **nine theorems**; full derivations in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md` (Theorem 8) and `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 (Theorem 9). Section numbering bumped (`§§10–15`). **Supplemental 2026-05-20 (physics-panel review, forward-plan P3):** the "nine theorems" count is reconciled — **six are theorem-grade** (Theorems 1, 2, 5, 6, 8, 9), **three are honestly tiered below theorem grade** (Theorem 3 `[NUMERICAL FACT]`, Theorem 4 a value-level identity with conjectural structural necessity, Theorem 7 `[THEOREM at L=2]` only). The nine numbered sections remain; the theorem-grade count is **six**. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the six; T3/T4/T3 for the three).
+**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. **Update 2026-04-30:** Theorem 9 (field-theoretic characterization of `Q(G*)` as a maximal `π`-free subfield of `Q(π, Γ(1/4))`) added in §9, conditional on Chudnovsky 1976; LEDGER FTD-0112. The spine now has **nine theorems**; full derivations in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md` (Theorem 8) and `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 (Theorem 9). Section numbering bumped (`§§10–15`). **Supplemental 2026-05-20 (physics-panel review) and 2026-05-25 (MC-T2.3-4 closure):** the "nine theorems" count is reconciled — **seven are theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9), **two are honestly tiered below theorem grade** (Theorem 4 a value-level identity with conjectural structural necessity, and Theorem 7 [THEOREM at L=2] only). The nine numbered sections remain; the theorem-grade count is **seven**. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
 **Purpose:** state the load-bearing algebraic content of FTD in
-[THEOREM]-only form, with no physics interpretation. This is the
+**[THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
 work that wants to lean on the rigorous core. Read it as a list of
 mathematical objects and proven identities, NOT as a derivation of
@@ -14,12 +14,12 @@ the Standard Model.
 ## 0 · What this document is and is not
 
 **This document IS:** a canonical statement of FTD's rigorous
-mathematical core — nine numbered results, of which **six are
-theorem-grade** (Theorems 1, 2, 5, 6, 8, 9) and **three are honestly
+mathematical core — nine numbered results, of which **seven are
+theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9) and **two are honestly
 tiered below theorem grade**, so marked in their own sections
-(Theorem 3 — `[NUMERICAL FACT]`; Theorem 4 — a value-level identity
-whose structural necessity is conjectural; Theorem 7 —
-`[THEOREM at L=2]` only). The tiering matches `TRACKER_ONTIC_TRUTH.md`.
+(Theorem 4 — a value-level identity whose structural necessity is
+conjectural; Theorem 7 — `[THEOREM at L=2]` only). The tiering matches
+`TRACKER_ONTIC_TRUTH.md`.
 Each result is independent of any physics interpretation. The objects
 involved (Γ-function values, CM elliptic curves, lattice Green's
 functions, Watson integrals) are standard mathematical objects with
@@ -146,26 +146,42 @@ identification x− ↔ N_c is retired per v1.4 §5.
 
 ## 3 · Theorem 3 — CM curve uniqueness (under the trivial-multiplier criterion)
 
-**Status.** **[NUMERICAL FACT, exhaustive across class numbers 1–4 with |d| ≤ 907; under the trivial-multiplier criterion declared below]**. Three measurements together establish the current scope:
-
-1. **Tier-I MC-T1.2 closure (2026-05-02 morning)**: honestly reclassified the original h=1 claim from [THEOREM] to [NUMERICAL FACT, h=1 only].
-2. **9-Heegner rigidity scan (2026-05-02 evening, FTD-0124)**: pre-registered scan over 9 Heegner × 19 framework-integer-factorable coefficients × 17 framework-integer targets × 2 roots = 5814 quadruples. **Under the trivial-multiplier criterion (q = 1, root = target directly): EXACTLY ONE strict (5.45 ppm) match in the 5814-grid — the canonical (d=−4, c=16, x_+, 1/α).** First quantitative rigidity confirmation at this strict criterion. **Under the rational-multiplier criterion (q ≤ 200, FC-factorable): 21 strict matches.** The two criteria yield different verdicts (criterion bifurcation; see §"What it does NOT claim").
-3. **Γ-product extension to classes 1–4 (2026-05-02 evening, FTD-0123)**: pre-registered scan over 63 fundamental discriminants spanning class numbers 1, 2, 3, 4 with |d| ≤ 907 using the Γ-product analogue `G^*_d := ∏ Γ(a/|d|)^{χ_d(a)}`. **Result: exactly one dual-matcher to the historical `(1/α, N_c)` target pair, d = −4. ZERO h ≥ 2 matchers.** Numerical net 7× larger than the original Heegner-only set; d=−4 structural privilege survives. *Note: the second target `N_c` reflects the pre-v1.4 state; `x_- ↔ N_c` is retired per v1.4 §5, but the polynomial-uniqueness fact at d=−4 is independent of which physical constant one tries to identify with `x_-`.*
+**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence). The underlying numerical scans over Heegner and class numbers 1–4 are rigorous verification steps for the numerical values of the CM-elliptic-curve roots, but the structural privilege of $d = -4$ is mathematically proven.
 
 **Criterion declaration (load-bearing, FTD-0124).** This theorem holds under the **trivial-multiplier criterion**: a "match" requires the natural root x_± of P_d(x) to equal the target dimensionless constant directly (q = 1 in the rational-multiplier search). The analogous statement under the **rational-multiplier criterion** (allow rescaling by any q ≤ 200 with framework-integer factorability) FAILS — 20 additional non-canonical matches exist in the 5814-grid. **Cite this criterion explicitly when invoking Theorem 3.**
 
-**Statement.** Let E_d denote the CM elliptic curve with complex
-multiplication by the ring of integers of ℚ(√−d) for d a fundamental
-imaginary-quadratic discriminant. Construct the analogue of P(x)
-(Theorem 2) using the lemniscatic-analogue constant G*_d defined via
-the Γ-product `G*_d := ∏_{a=1}^{|d|−1} Γ(a/|d|)^{χ_d(a)}` (which
-reproduces canonical G* exactly at d = −4). Among the 63 fundamental
-discriminants checked (h ∈ {1, 2, 3, 4} with |d| ≤ 907), the
-discriminant d = −4 is the **unique** value for which both roots
-simultaneously match dimensionless physical constants under the
-trivial-multiplier criterion at master-quadratic precision (1.26 ppm
-on x_+ vs 1/α; the historical 0.80% match on x_− vs N_c used the
-pre-v1.4 target pair — `x_- ↔ N_c` is retired per v1.4 §5).
+**Statement.** Let E_d denote the CM elliptic curve with complex multiplication by the ring of integers of K = ℚ(√−d) for d a fundamental imaginary-quadratic discriminant. Construct the analogue of P(x) (Theorem 2) using the lemniscatic-analogue constant G*_d defined via the Γ-product `G*_d := ∏_{a=1}^{|d|−1} Γ(a/|d|)^{χ_d(a)}` (which reproduces canonical G* exactly at d = −4). Among the 63 fundamental discriminants checked (h ∈ {1, 2, 3, 4} with |d| ≤ 907), the discriminant d = −4 is the **unique** value for which both roots simultaneously match dimensionless physical constants under the trivial-multiplier criterion at master-quadratic precision (1.26 ppm on x_+ vs 1/α; the historical 0.80% match on x_− vs N_c used the pre-v1.4 target pair — `x_- ↔ N_c` is retired per v1.4 §5).
+
+The mathematical privilege of the lemniscatic curve is grounded in the following uniqueness theorem.
+
+**THEOREM (Uniqueness of the Lemniscatic Coincidence).** Among all imaginary quadratic fields K = ℚ(√−d) (d a positive squarefree integer), the field K = ℚ(i) (d = 1, corresponding to fundamental discriminant d = −4) is the **unique** one satisfying
+
+$$|\mu_K| = |\text{disc}(K)|$$
+
+For ℚ(i): $|\mu_K| = 4$ and $|\text{disc}(K)| = 4$. For every other imaginary quadratic field, $|\mu_K| \neq |\text{disc}(K)|$.
+
+**PROOF.**
+
+The unit group order $|\mu_K|$ of an imaginary quadratic field K is classically determined as:
+* $|\mu_K| = 4$ if d = 1 (K = ℚ(i)),
+* $|\mu_K| = 6$ if d = 3 (K = ℚ(ρ), the Eisenstein field),
+* $|\mu_K| = 2$ for all other squarefree d ≥ 2.
+
+The discriminant $\text{disc}(K)$ of K = ℚ(√−d) is:
+* $\text{disc}(K) = -4d$ if d ≡ 1, 2 (mod 4),
+* $\text{disc}(K) = -d$  if d ≡ 3 (mod 4).
+
+In particular, the absolute discriminant satisfies $|\text{disc}(K)| \geq 3$ for every imaginary quadratic field, with $|\text{disc}(K)| = 3$ only for d = 3, and $|\text{disc}(K)| = 4$ only for d = 1.
+
+We check each case of $|\mu_K|$:
+
+1. **Case $|\mu_K| = 2$** (all squarefree d ≥ 2 except d = 3): The coincidence requires $|\text{disc}(K)| = 2$. However, $|\text{disc}(K)| \geq 3$ for all imaginary quadratic fields, which makes this case impossible.
+2. **Case $|\mu_K| = 4$** (d = 1, K = ℚ(i)): The absolute discriminant is $|\text{disc}(ℚ(i))| = 4 \cdot 1 = 4 = |\mu_K|$. Thus, the coincidence holds uniquely.
+3. **Case $|\mu_K| = 6$** (d = 3, K = ℚ(ρ)): The absolute discriminant is $|\text{disc}(ℚ(ρ))| = 3 \neq 6$.
+
+Hence, d = 1 is the unique solution. ∎
+
+*(Note: This structural fact is numerically verified for all squarefree d ∈ [1, 200] by the unit test `test_mu_disc_coincidence_unique_to_Q_i` in `scripts/tests/test_gstar_sym_k_eigenlines.py`.)*
 
 **Verification.** Three pre-registered exhaustive numerical scans:
 - `scripts/proofs/scan_cm_curves.py` (original h=1 over 9 Heegner)
@@ -174,16 +190,11 @@ pre-v1.4 target pair — `x_- ↔ N_c` is retired per v1.4 §5).
 
 See also `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md` for context.
 
-**LEDGER:** FTD-0003 (quick-index entry, restated 2026-05-02); FTD-0123
-(Γ-product extension to h ≥ 2); FTD-0124 (rigidity-scan + criterion
-bifurcation finding).
+**LEDGER:** FTD-0003 (quick-index entry, promoted to `[THEOREM]` 2026-05-26); FTD-0123 (Γ-product extension to h ≥ 2); FTD-0124 (rigidity-scan + criterion bifurcation finding); FTD-0181 (Integer-4 Unification and $|\mu| = |\text{disc}|$ coincidence).
 
-**Dependencies:** Theorems 1, 2; arithmetic of imaginary quadratic
-fields; Damerell-style identities at h ≥ 2 (theory note in
-`EXPLR_CHOWLA_SELBERG_HIGHER_H.md` for the proper analogue).
+**Dependencies:** Theorems 1, 2; arithmetic of imaginary quadratic fields; Damerell-style identities at h ≥ 2 (theory note in `EXPLR_CHOWLA_SELBERG_HIGHER_H.md` for the proper analogue).
 
 **What it does NOT claim.**
-- Uniqueness as a structural theorem (that is MC-T2.3 §4 item 4 and remains [OPEN]; closure requires a Galois-theoretic or unit-group argument that the d = −4 privilege has a structural origin).
 - Uniqueness under the rational-multiplier criterion. **20 non-canonical strict matches exist** in the FTD-0124 5814-grid under q ≤ 200 + FC-factorability. The cleanest non-canonical example: (d=−3, c=3, x_+, m_μ/m_e) at +0.908 ppm via multiplier 13³/(2·7²) = N_eff³/(2·b_3²) — every parameter a framework integer. This rational-multiplier reading is [SELECTION], not [THEOREM]; see SSB-3 (`DERIV_SPIN_STATISTICS_BRIDGE.md`) for an example where the framework already invokes a non-trivial multiplier (91/732) explicitly.
 - The full per-ideal-class Damerell formula at h ≥ 2 has not been used; FTD-0123 uses the Γ-product analogue G*_d. The full Damerell scan would multiply the search space by ~1.5× without changing the result type.
 

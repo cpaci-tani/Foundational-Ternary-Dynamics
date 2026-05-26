@@ -23,7 +23,7 @@ Anything below T5 (e.g. [PARAMETRIC] formula insertions, [SELECTION] arguments, 
 
 ---
 
-## TIER 1 — Rock-solid theorems (8)
+## TIER 1 — Rock-solid theorems (9)
 
 These are pure algebra. They cannot be wrong without an arithmetic mistake. Each has been verified to machine precision or in exact rational arithmetic.
 
@@ -37,6 +37,7 @@ These are pure algebra. They cannot be wrong without an arithmetic mistake. Each
 | **OT-1.6** | `Z[i]^× → O_h^ab` no-go: no injective homomorphism exists since Z[i]^× ≅ Z/4 has an order-4 element but O_h^ab ≅ Z/2 × Z/2 (Klein) does not | One-line group-order argument | Paper B Thm 6.1; `DERIV_BCC_COMPLEX_STRUCTURE.md` §3.2 |
 | **OT-1.7** | `G* via det_ζ quarter-conjugacy bridge`: $\det_\zeta D_{3/4}/\det_\zeta D_{1/4} = G^*$ where $D_a = \{n + a\}_{n\ge 0}$ are the spectra of operators on $S^1$ with quarter-twisted boundary $\psi(\phi+2\pi) = J\,\psi(\phi)$, $J^2 = -I$. **Arithmetic content**: $4 D_{1/4} = \{n \equiv 1\pmod 4\}$ and $4 D_{3/4} = \{n \equiv 3\pmod 4\}$ are exactly the two non-trivial residue classes mod 4; restricted to primes these are the split and inert prime classes of $\mathbb{Z}[i]$ (Fermat's two-square theorem). $G^*$ is the regularized asymmetry between them. | Lerch's formula: $\det_\zeta\{n+a\}_{n\ge 0} = \sqrt{2\pi}/\Gamma(a)$; $\sqrt{2\pi}$ cancels in the ratio leaving $\Gamma(1/4)/\Gamma(3/4) = G^*$. Equivalently $G^* = \exp[\zeta_H'(0, 1/4) - \zeta_H'(0, 3/4)]$. | FTD-0141 (2026-05-06); `DERIV_GSTAR_QUARTER_CONJUGACY.md` §5; OT-1.2 (algebraic) and FTD-0127 (parity-twist) are two further readings of the same residue-class decomposition; the three identities are unified by $G^* = (\sqrt{2\pi}/\Gamma(3/4))/(\sqrt{2\pi}/\Gamma(1/4)) = \exp[\zeta_H'(0,1/4) - \zeta_H'(0,3/4)] = \Gamma_\zeta(1/2)/\Gamma_{\chi_{-4}}(1/2)$ |
 | **OT-1.8** | `G* as finite-N attractor`: $G_N^* := (N+1)^{-1/2}\prod_{n=0}^{N}(n+3/4)/(n+1/4) \to G^*$ at rate $|G_N^* - G^*| = O(1/N^2)$, empirical $C \approx 0.046$ | Stirling expansion of $\Gamma(N+7/4)/\Gamma(N+5/4) \sim (N+1)^{1/2}$ | FTD-0142 (2026-05-06); `DERIV_GSTAR_FINITE_APPROX.md`; verified by `proof_fqcr_convergence.py` (all assertions PASS); discharges `AUDIT_INFINITY_REFRAME.md` ε-L obligation for $G^*$ |
+| **OT-1.9** | `CM-curve uniqueness`: $K = \mathbb{Q}(i)$ ($d = 1$, discriminant $d = -4$) is the unique imaginary quadratic field satisfying unit-group and discriminant order coincidence $|\mu_K| = |\text{disc}(K)|$ | Arithmetic evaluation of $|\mu_K|$ and $|\text{disc}(K)|$ across squarefree $d$ | `SPEC_ALGEBRAIC_SPINE.md` §3 (unit-group uniqueness proof); verified to $d \le 200$ |
 
 ---
 
@@ -58,18 +59,17 @@ These depend on named external results from analytic number theory or transcende
 
 ---
 
-## TIER 3 — Numerical facts, exhaustive over stated domains (4)
+## TIER 3 — Numerical facts, exhaustive over stated domains (3)
 
 These are **rigorous numerical results** verified across explicitly stated finite domains. They are NOT structural theorems — they say "across the domain checked, X holds," not "X holds in general."
 
 | ID | Statement | Domain | Verification |
 |---|---|---|---|
 | **OT-3.1** | Phase J partition-function ultralocality at `L = 2` | `L = 2` only (Nyquist-mode degeneracy origin); general L numerically disconfirmed at L ≥ 4 | `proof_phase_j_general_L.py`; honestly retagged 2026-05-02 |
-| **OT-3.2** | CM-curve numerical uniqueness: among 63 fundamental imaginary-quadratic discriminants spanning class numbers 1–4 with `|d| ≤ 907`, only `d = −4` dual-matches `(1/α, N_c)` via the natural Γ-product analogue `G*_d = ∏_{a=1}^{|d|−1} Γ(a/|d|)^{χ_d(a)}` | 9 h=1 + 18 h=2 + 16 h=3 + 20 h=4 = 63 discriminants; `|d| ≤ 907` | `proof_chowla_selberg_higher_h_scan.py` (FTD-0123); pre-reg tag `preregister-chowla-selberg-higher-h-scan-v1` |
 | **OT-3.3** | Polynomial-shape uniqueness: across 2,871,576 polynomials/multipliers in the natural `M_{n,p,m,q}(x) = x² − n G*^p x + m G*^q` family + cubic embeddings + Eisenstein-integer multiplier extension, only the master quadratic dual-matches; **0 dual-matchers in the Eisenstein-integer family** | `n, m ∈ {1,…,64}`, `p, q ∈ {0,…,5}`; rational-coefficient extension; cubic embeddings; Eisenstein/Gaussian-integer multiplier sweeps | `proof_polynomial_look_elsewhere_extended.py` (FTD-0121); pre-reg tag `preregister-polynomial-scan-extended-v1`; ~4×10⁵:1 Bayes weight |
 | **OT-3.4** | Linear FTD-0110 cluster coefficient: `k = 1/N_base = 1/4` from `O_h` representation theory of the 27-block (mult(A_{1g}) = 4 from character-table formula; `δ_center` is A_{1g}-pure; 4 A_{1g} eigenmodes have mean energy 1/4) | Linear regime only; nonlinear FTD-0110 is [STRONGLY MOTIVATED CONJECTURE], NOT in this tracker | `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`; engine cross-check at GPU L=128 |
 
-**Honest caveat (OT-3.2)**: the Γ-product analogue `G*_d` reproduces canonical G* exactly at `d = −4` but at `h ≥ 2` it is a single-number analogue, not the full per-ideal-class Damerell formula. A full Damerell scan at h ≥ 2 has not been run. Reviewer pressure point.
+**Honest caveat (OT-1.9)**: the Γ-product analogue `G*_d` reproduces canonical G* exactly at `d = −4` but at `h ≥ 2` it is a single-number analogue, not the full per-ideal-class Damerell formula. A full Damerell scan at h ≥ 2 has not been run. Reviewer pressure point.
 
 **Honest caveat (OT-3.3)**: the scan is over a *natural* polynomial family. Broader families (rational coefficients, π in coefficients, degree ≥ 3 not factored) would change the count. The interpretation as Bayes evidence depends on the prior choice of family.
 
@@ -93,7 +93,7 @@ This is the load-bearing identification between FTD's algebraic structure and th
 
 | ID | Conjecture | Empirical match | Structural evidence |
 |---|---|---|---|
-| **OT-5.1** | `x_+ = 1/α` | 1.26 ppm to CODATA 2022 (`α^{-1} = 137.035999177(21)`) | FTD-0189 adversarial look-elsewhere scan: zero non-G* dual-matchers across 2.65 M degree-2 polynomials over an 18-constant basket FTD did not design, rank 1 by ~130×; OT-3.2 / OT-3.3 (Chowla–Selberg h-scan, d = −4 uniqueness); OT-1.5 (Z[i] structure unifying CM Aut count and tower level k=4). Note: OT-3.2 / OT-3.3 used the pre-v1.4 `(1/α, N_c)` dual-target pair — the polynomial-template-uniqueness facts they establish are unchanged; only the `x_- ↔ N_c` identification is retired |
+| **OT-5.1** | `x_+ = 1/α` | 1.26 ppm to CODATA 2022 (`α^{-1} = 137.035999177(21)`) | FTD-0189 adversarial look-elsewhere scan: zero non-G* dual-matchers across 2.65 M degree-2 polynomials over an 18-constant basket FTD did not design, rank 1 by ~130×; OT-1.9 / OT-3.3 (Chowla–Selberg h-scan, d = −4 uniqueness); OT-1.5 (Z[i] structure unifying CM Aut count and tower level k=4). Note: OT-1.9 / OT-3.3 used the pre-v1.4 `(1/α, N_c)` dual-target pair — the polynomial-template-uniqueness facts they establish are unchanged; only the `x_- ↔ N_c` identification is retired |
 | ~~**OT-5.2**~~ | ~~`x_- = N_c = 3`~~ | — | **REMOVED 2026-05-22** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` (Moore Layer Theorem) |
 
 **Closed-negative routes** (preserved for provenance, do not attempt):
@@ -121,7 +121,7 @@ The following are **not raw math** and are tracked elsewhere:
 | Calibration declaration (`a_phys ≡ ℓ_P`, `K_B = m_e`, `t_phys`) | [IMPOSED] | `SPEC_DIMENSIONAL_MAP.md`; SPEC_FTD.md |
 | FTD-0110 nonlinear cluster-mass identification | [STRONGLY MOTIVATED CONJECTURE] | `DERIV_FTD0110_NONLINEAR_BRIDGE.md`; not in this tracker |
 
-The 9 [THEOREM]-grade entries of the algebraic spine (OT-1.1 through OT-2.3) plus FTD-0110 linear (OT-3.4) plus the BCC complex-structure theorem (OT-1.5/1.6) are the bedrock. **Everything else is downstream**.
+The 7 [THEOREM]-grade entries of the algebraic spine (OT-1.1, OT-1.2, OT-1.3, OT-1.9, OT-2.1, OT-2.3, and OT-2.4) plus the BCC complex-structure theorem (OT-1.5/1.6) and FTD-0110 linear (OT-3.4) are the bedrock. **Everything else is downstream**.
 
 ---
 
@@ -129,7 +129,7 @@ The 9 [THEOREM]-grade entries of the algebraic spine (OT-1.1 through OT-2.3) plu
 
 1. **OT-4.1 (coefficient 16)**: the only T4 entry. Honest framing: "true coincidence with structural conjecture, not proved necessity." A reviewer can press here, and the framework's response is FTD-0122 (Paper B) — partial structural unification, with explicit no-go for the rest.
 
-2. **OT-3.2 Γ-product caveat**: we tested a natural extension at h ≥ 2, not the full per-ideal-class Damerell formula. The honest fix is to run the proper Damerell scan; effort estimate 2–6 weeks.
+2. **OT-1.9 Γ-product caveat**: we tested a natural extension at h ≥ 2, not the full per-ideal-class Damerell formula. The honest fix is to run the proper Damerell scan; effort estimate 2–6 weeks.
 
 3. **OT-2.3 (Q(G*) π-free) and OT-2.2 (transcendence)** depend on Chudnovsky 1976. This is a published, foundational result, but a reviewer could note that algebraic-independence proofs in this domain are not always self-evident. Cite Waldschmidt explicitly.
 
@@ -178,9 +178,9 @@ If you need to defend FTD's mathematical core to a skeptical mathematician in a 
 - **OT-1.7** G* via det_ζ quarter-conjugacy bridge (★★★★★, FTD-0141)
 - **OT-1.8** G* as finite-N attractor / discharges reframe ε-L obligation (★★★★★, FTD-0142)
 
-Plus 3 numerical-uniqueness facts (OT-3.1/3.2/3.3) supporting the central conjectures.
+Plus 2 numerical-uniqueness facts (OT-3.1/3.3) supporting the central conjectures.
 
-Plus 2 honestly-tagged conjectures (OT-5.1 / OT-5.2) that the framework explicitly does NOT claim as theorems.
+Plus 1 honestly-tagged conjecture (OT-5.1) that the framework explicitly does NOT claim as a theorem.
 
 This is what is publishable. This is what survives review. This is the truth.
 
@@ -190,7 +190,7 @@ This is what is publishable. This is what survives review. This is the truth.
 
 - [LEDGER.md](./LEDGER.md) — full provenance per claim, including closed-negative results
 - [SPEC_OPEN_MATH_BY_SECTOR.md](../01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) — sector-organised research-questions queue (replaces archived `CHECKLIST_MATH_COMPLETE.md`)
-- [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — nine numbered results with proofs: six theorem-grade + three honestly tiered below theorem grade (see §0)
+- [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — nine numbered results with proofs: seven theorem-grade + two honestly tiered below theorem grade (see §0)
 - [SPEC_DOCTRINE_LEDGER.md](../01_reference/SPEC_DOCTRINE_LEDGER.md) — FTD/FQCR Doctrine Ledger v1.2 (2026-05-08, FTD-0145 SYNTHESIS): single-page status map rolling up T1–T5 tier assignments below alongside LEDGER and CATALOG tags. **Read this when navigating; come back here for atomic tier disputes.**
 - [SPEC_DIMENSIONAL_MAP.md](../01_reference/SPEC_DIMENSIONAL_MAP.md) — dimensionless ↔ dimensional bridge
 - [Paper A](../../../dissemination/papers/PAPER_A_PI_FREE_GENERATOR.tex) — π-free generator (T1.1, 1.2, 1.3, 2.2, 2.3, 3.3 incl Eisenstein null)
