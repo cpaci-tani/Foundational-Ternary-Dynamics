@@ -17,6 +17,7 @@ add_library(ftd_cuda STATIC
     particle_engine_gpu.cu  # Wave 5.4 Phase 1: gpu::ParticleEngineGpu pair-force kernel
     wilson_dirac_gpu.cu     # Phase II.2-E: Wilson-Dirac CPU/GPU parity kernel
     cuda_invariants.cu      # ADR-0014: __constant__ pattern for invariant matrices
+    kernels_eft.cu          # [NEW] Pure GPU-native EFT snapshot & operator calculations
 )
 
 target_include_directories(ftd_cuda PUBLIC
