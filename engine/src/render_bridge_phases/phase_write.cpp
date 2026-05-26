@@ -183,10 +183,17 @@ void phase_write_main_loop(RenderBridge& rb) {
 
     if (dual) {
       // ---- Dual-substrate leapfrog integration ----
-      v.wave_vel_L += rb.delta_j_L_[i];
-      v.wave_vel_R += rb.delta_j_R_[i];
-      v.flux_L += v.wave_vel_L;
-      v.flux_R += v.wave_vel_R;
+      if (rb.toggles.symplectic_leapfrog) {
+        v.wave_vel_L += rb.delta_j_L_[i] * rb.dt_;
+        v.wave_vel_R += rb.delta_j_R_[i] * rb.dt_;
+        v.flux_L += v.wave_vel_L * rb.dt_;
+        v.flux_R += v.wave_vel_R * rb.dt_;
+      } else {
+        v.wave_vel_L += rb.delta_j_L_[i];
+        v.wave_vel_R += rb.delta_j_R_[i];
+        v.flux_L += v.wave_vel_L;
+        v.flux_R += v.wave_vel_R;
+      }
 
       // Damping on both substrates independently
       if (do_damping && should_damp) {
@@ -221,8 +228,13 @@ void phase_write_main_loop(RenderBridge& rb) {
       }
     } else {
       // ---- Single-substrate leapfrog integration (non-dual path) ----
-      v.wave_vel += rb.delta_j_[i];
-      v.flux += v.wave_vel;
+      if (rb.toggles.symplectic_leapfrog) {
+        v.wave_vel += rb.delta_j_[i] * rb.dt_;
+        v.flux += v.wave_vel * rb.dt_;
+      } else {
+        v.wave_vel += rb.delta_j_[i];
+        v.flux += v.wave_vel;
+      }
 
       // Langevin thermostat (Ornstein–Uhlenbeck on wave_vel, per-component).
       const bool langevin_active = rb.toggles.langevin &&

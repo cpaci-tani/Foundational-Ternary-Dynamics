@@ -18,9 +18,10 @@ setlocal
 
 REM Resolve script-relative paths so the script works from any cwd.
 set "ENGINE_DIR=%~dp0"
-set "PROJECT_DIR=%ENGINE_DIR%.."
-set "BUILD_DIR=%ENGINE_DIR%build_wasm"
-set "DEPLOY_DIR=%ENGINE_DIR%web\wasm"
+if "%ENGINE_DIR:~-1%"=="\" set "ENGINE_DIR=%ENGINE_DIR:~0,-1%"
+set "PROJECT_DIR=%ENGINE_DIR%\.."
+set "BUILD_DIR=%ENGINE_DIR%\build_wasm"
+set "DEPLOY_DIR=%ENGINE_DIR%\web\wasm"
 
 REM Locate emsdk. Prefer EMSDK environment variable; fall back to /c/emsdk.
 if not defined EMSDK (

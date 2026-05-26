@@ -533,6 +533,16 @@ target_link_libraries(test_radiative_decay_scale1 ftd_core)
 add_executable(test_atom_engine tests/test_atom_engine.cpp)
 target_link_libraries(test_atom_engine ftd_core)
 
+# Scale 0-3 Upgrades (2026-05-26)
+add_executable(test_symplectic_wave tests/test_symplectic_wave.cpp)
+target_link_libraries(test_symplectic_wave ftd_core)
+
+add_executable(test_relativistic_verlet tests/test_relativistic_verlet.cpp)
+target_link_libraries(test_relativistic_verlet ftd_core)
+
+add_executable(test_molecular_dihedrals tests/test_molecular_dihedrals.cpp)
+target_link_libraries(test_molecular_dihedrals ftd_core)
+
 add_executable(test_atom_scale_bridge tests/test_atom_scale_bridge.cpp)
 target_link_libraries(test_atom_scale_bridge ftd_core)
 
@@ -1630,6 +1640,9 @@ add_test(NAME fine_structure_scale1 COMMAND test_fine_structure_scale1)
 add_test(NAME helium_scale1 COMMAND test_helium_scale1)
 add_test(NAME radiative_decay_scale1 COMMAND test_radiative_decay_scale1)
 add_test(NAME atom_engine COMMAND test_atom_engine)
+add_test(NAME symplectic_wave COMMAND test_symplectic_wave)
+add_test(NAME relativistic_verlet COMMAND test_relativistic_verlet)
+add_test(NAME molecular_dihedrals COMMAND test_molecular_dihedrals)
 add_test(NAME atom_scale_bridge COMMAND test_atom_scale_bridge)
 add_test(NAME multiscale_bridge COMMAND test_multiscale_bridge)
 add_test(NAME em_fields COMMAND test_em_fields)

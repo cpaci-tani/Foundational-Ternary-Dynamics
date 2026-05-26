@@ -65,11 +65,18 @@ RenderBridge::RenderBridge(int lattice_size)
       delta_j_(lattice_.total_sites()),
       delta_j_L_(lattice_.total_sites()),
       delta_j_R_(lattice_.total_sites()),
+      dJ_(lattice_.total_sites()),
       phi_(lattice_.total_sites(), 0.0),
       phi_coulomb_(lattice_.total_sites(), 0.0),
       phi_latency_(lattice_.total_sites(), 0.0),
       moved_(lattice_.total_sites(), 0),
-      sor_source_(lattice_.total_sites(), 0.0)
+      sor_source_(lattice_.total_sites(), 0.0),
+      su2_links_x_(lattice_.total_sites()),
+      su2_links_y_(lattice_.total_sites()),
+      su2_links_z_(lattice_.total_sites()),
+      su3_links_x_(lattice_.total_sites()),
+      su3_links_y_(lattice_.total_sites()),
+      su3_links_z_(lattice_.total_sites())
 {
     // PERF: pre-size per-tick scratch buffers so phase_write doesn't
     // construct ~5KB of mt19937 state per voxel. Under WASM (no OpenMP)
@@ -108,7 +115,7 @@ void RenderBridge::seed_rng(unsigned int seed) {
 }
 
 void RenderBridge::set_dt(double dt) {
-    dt_ = (dt >= 1.0) ? dt : 1.0;
+    dt_ = (toggles.symplectic_leapfrog || dt >= 1.0) ? dt : 1.0;
     // ARCH-2: backend dispatch replaces the explicit ifdef. CpuBackend is a
     // no-op (RenderBridge::dt_ is the source of truth); GpuBackend forwards
     // to GpuEngine.

@@ -93,6 +93,15 @@ int ParticleEngine::add_particle(int8_t charge, Vec3 position, Vec3 velocity,
     if (spin != 0 && p.spin_axis.mag2() < 1e-30) {
         p.spin_axis = {0.0, 0.0, static_cast<double>(spin)};
     }
+    // Relativistic momentum initialization
+    double v2_init = velocity.mag2();
+    double c2_init = C_SPEED * C_SPEED;
+    if (v2_init < c2_init && v2_init > 1e-15) {
+        double gamma_init = 1.0 / std::sqrt(1.0 - v2_init / c2_init);
+        p.momentum = velocity * (mass * gamma_init);
+    } else {
+        p.momentum = velocity * mass;
+    }
     particles_.push_back(p);
     forces_.push_back({});
     return p.id;
@@ -112,6 +121,7 @@ int ParticleEngine::add_locked_particle(int8_t charge, Vec3 position, double mas
     if (spin != 0 && p.spin_axis.mag2() < 1e-30) {
         p.spin_axis = {0.0, 0.0, static_cast<double>(spin)};
     }
+    p.momentum = {0.0, 0.0, 0.0};
     particles_.push_back(p);
     forces_.push_back({});
     return p.id;
@@ -440,8 +450,18 @@ void ParticleEngine::half_kick() {
     double half_dt = dt_ * 0.5;
     for (int i = 0; i < static_cast<int>(particles_.size()); ++i) {
         if (particles_[i].locked) continue;
-        double inv_m = 1.0 / particles_[i].mass;
-        particles_[i].velocity += forces_[i] * (half_dt * inv_m);
+        if (toggles.relativistic_verlet) {
+            // Update relativistic momentum: p += F * dt/2
+            particles_[i].momentum += forces_[i] * half_dt;
+            // Update velocity from momentum: v = p / sqrt(m^2 + p^2/c^2)
+            double p2 = particles_[i].momentum.mag2();
+            double m2 = particles_[i].mass * particles_[i].mass;
+            double c2 = C_SPEED * C_SPEED;
+            particles_[i].velocity = particles_[i].momentum * (1.0 / std::sqrt(m2 + p2 / c2));
+        } else {
+            double inv_m = 1.0 / particles_[i].mass;
+            particles_[i].velocity += forces_[i] * (half_dt * inv_m);
+        }
     }
 }
 
