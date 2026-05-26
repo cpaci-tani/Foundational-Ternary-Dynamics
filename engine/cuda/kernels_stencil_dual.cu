@@ -303,6 +303,8 @@ __global__ void phase_write_dual_kernel(
     const uint8_t* __restrict__ near_particle,
     const double* __restrict__ near_accel,
     bool do_damping, bool selective_damping, bool do_larmor, double damp,
+    double dt,
+    bool symplectic_leapfrog,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -312,12 +314,21 @@ __global__ void phase_write_dual_kernel(
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
 
     // Independent leapfrog on L
-    wvL_x[i] += djL_x[i];  wvL_y[i] += djL_y[i];  wvL_z[i] += djL_z[i];
-    fL_x[i] += wvL_x[i];   fL_y[i] += wvL_y[i];   fL_z[i] += wvL_z[i];
+    if (symplectic_leapfrog) {
+        wvL_x[i] += djL_x[i] * dt;  wvL_y[i] += djL_y[i] * dt;  wvL_z[i] += djL_z[i] * dt;
+        fL_x[i] += wvL_x[i] * dt;   fL_y[i] += wvL_y[i] * dt;   fL_z[i] += wvL_z[i] * dt;
 
-    // Independent leapfrog on R
-    wvR_x[i] += djR_x[i];  wvR_y[i] += djR_y[i];  wvR_z[i] += djR_z[i];
-    fR_x[i] += wvR_x[i];   fR_y[i] += wvR_y[i];   fR_z[i] += wvR_z[i];
+        // Independent leapfrog on R
+        wvR_x[i] += djR_x[i] * dt;  wvR_y[i] += djR_y[i] * dt;  wvR_z[i] += djR_z[i] * dt;
+        fR_x[i] += wvR_x[i] * dt;   fR_y[i] += wvR_y[i] * dt;   fR_z[i] += wvR_z[i] * dt;
+    } else {
+        wvL_x[i] += djL_x[i];  wvL_y[i] += djL_y[i];  wvL_z[i] += djL_z[i];
+        fL_x[i] += wvL_x[i];   fL_y[i] += wvL_y[i];   fL_z[i] += wvL_z[i];
+
+        // Independent leapfrog on R
+        wvR_x[i] += djR_x[i];  wvR_y[i] += djR_y[i];  wvR_z[i] += djR_z[i];
+        fR_x[i] += wvR_x[i];   fR_y[i] += wvR_y[i];   fR_z[i] += wvR_z[i];
+    }
 
     // Conditional damping on L and R independently
     if (do_damping) {
@@ -444,7 +455,7 @@ void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupli
 
 void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                               bool larmor_radiation, double damping_factor,
-                              bool do_genesis, bool do_evaporation, double dt,
+                              bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                               unsigned long long rng_seed, int tick) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
@@ -474,7 +485,9 @@ void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_d
         bufs.d_wave_vel_x, bufs.d_wave_vel_y, bufs.d_wave_vel_z,
         bufs.d_near_particle, bufs.d_near_accel,
         do_damping, selective_damping, larmor_radiation,
-        damping_factor, L
+        damping_factor,
+        dt, symplectic_leapfrog,
+        L
     );
     CUDA_CHECK(cudaGetLastError());
 

@@ -56,6 +56,9 @@ struct TermToggles {
     bool exact_dual_gauss = false;  // gauss_project: exact dual-cell face-flux projection
     bool emergent_forces = false;   // EFT mode: force from flux gradient (no Poisson), alpha = G_C²
     bool langevin = false;          // Stochastic thermalization: OU process on wave_vel with (gamma, T)
+    bool symplectic_leapfrog = false; // Scale 0: Symplectic Leapfrog wave propagation
+    bool su2_gauge = false;         // Scale 0: SU(2) non-Abelian link variables
+    bool su3_gauge = false;         // Scale 0: SU(3) non-Abelian link variables
 
     // D-3 / E-1 (2026-04-27): JS scale-0 scenario library has been pushing a
     // `confinement` bool through setToggle(); without a backing field the
@@ -142,6 +145,9 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"exact_dual_gauss",   &TermToggles::exact_dual_gauss,   false, false, "",                 "",                 "", ToggleBackend::ANY, "Exact dual-cell face-flux Gauss projection"},
     {"emergent_forces",    &TermToggles::emergent_forces,    false, false, "",                 "poisson_coulomb",  "", ToggleBackend::ANY, "EFT mode: force from flux gradient (no Poisson)"},
     {"langevin",           &TermToggles::langevin,           false, false, "",                 "larmor_radiation", "", ToggleBackend::ANY, "Stochastic OU thermostat (CPU only at runtime)"},
+    {"symplectic_leapfrog", &TermToggles::symplectic_leapfrog, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Symplectic leapfrog wave integration"},
+    {"su2_gauge",           &TermToggles::su2_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(2) non-Abelian link variables"},
+    {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3) non-Abelian link variables"},
     {"confinement",        &TermToggles::confinement,        false, false, "",                 "",                 "", ToggleBackend::ANY, "Linear confinement intent flag (no C++ branch yet)"},
     {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 "", ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
 };

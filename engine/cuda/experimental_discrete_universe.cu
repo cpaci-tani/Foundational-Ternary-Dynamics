@@ -12,6 +12,7 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include <string>
 
 #define CUDA_CHECK(call) do { \
     cudaError_t err = (call); \
@@ -441,9 +442,9 @@ int main(int argc, char* argv[]) {
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg.rfind("--L=", 0) == 0) {
-            L = std::stoi(arg.substr(4));
+            L = std::atoi(arg.substr(4).c_str());
         } else if (arg.rfind("--ticks=", 0) == 0) {
-            ticks = std::stoi(arg.substr(8));
+            ticks = std::atoi(arg.substr(8).c_str());
         }
     }
 

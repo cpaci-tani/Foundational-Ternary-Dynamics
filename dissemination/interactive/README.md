@@ -62,6 +62,14 @@ These self-contained HTML simulations visualize the exact mathematical formulas 
 - Real-time force contribution breakdown
 - Atom formation demonstrations
 
+### 6. Discrete Universe & Continuum Emergence Simulator (`discrete_universe_simulator.html`)
+**Action:** S[s,J] = sum_{x, t} ( 1/2|\nabla_{\text{discrete}} J|^2 - 1/2(\partial_t J)^2 - s|J| )
+
+- Live 2D lattice voxel grid visualizing ternary state field $s(x)$ and vector flux field $\vec{J}(x)$
+- Interactive scenarios: Coulomb potential emergence, relativistic speed capping ($c_{\text{lat}} = 1/\sqrt{2}$ limit), discrete wave interference, and voxel cluster genesis (FTD-0110)
+- Real-time radial cross-section plot showing exact discrete-to-continuum potential curve matching
+- Live adjustable parameter sliders for wave speed, genesis threshold, SOR Poisson damping, and F4 latent-heat drain toggles
+
 ## How to Use
 
 1. **Open any HTML file directly in a web browser** - no server required

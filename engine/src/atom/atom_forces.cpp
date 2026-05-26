@@ -570,6 +570,11 @@ void AtomEngine::compute_all_forces() {
                         forces_[i2] += f2;
                         forces_[i3] += f3;
                         forces_[i4] += f4;
+
+                        if (i1 < static_cast<int>(force_diag_.size())) force_diag_[i1].f_torsion += f1;
+                        if (i2 < static_cast<int>(force_diag_.size())) force_diag_[i2].f_torsion += f2;
+                        if (i3 < static_cast<int>(force_diag_.size())) force_diag_[i3].f_torsion += f3;
+                        if (i4 < static_cast<int>(force_diag_.size())) force_diag_[i4].f_torsion += f4;
                     }
                 }
             }
@@ -614,6 +619,11 @@ void AtomEngine::compute_all_forces() {
                 forces_[j2] += f2;
                 forces_[j3] += f3;
                 forces_[i]  += f0;
+
+                if (j1 < static_cast<int>(force_diag_.size())) force_diag_[j1].f_improper += f1;
+                if (j2 < static_cast<int>(force_diag_.size())) force_diag_[j2].f_improper += f2;
+                if (j3 < static_cast<int>(force_diag_.size())) force_diag_[j3].f_improper += f3;
+                if (i < static_cast<int>(force_diag_.size())) force_diag_[i].f_improper += f0;
             }
         }
     }

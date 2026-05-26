@@ -282,6 +282,8 @@ __global__ void phase_write_kernel(
     bool selective_damping,
     bool do_larmor,
     double damp,
+    double dt,
+    bool symplectic_leapfrog,
     // Langevin thermostat (FTD-0051).
     bool do_langevin,
     double langevin_gamma,
@@ -301,13 +303,23 @@ __global__ void phase_write_kernel(
     int i = x * L * L + y * L + z;  // X-major (matches CPU)
 
     // Leapfrog: wave_vel += delta_j; flux += wave_vel
-    wv_x[i] += djx[i];
-    wv_y[i] += djy[i];
-    wv_z[i] += djz[i];
+    if (symplectic_leapfrog) {
+        wv_x[i] += djx[i] * dt;
+        wv_y[i] += djy[i] * dt;
+        wv_z[i] += djz[i] * dt;
 
-    flux_x[i] += wv_x[i];
-    flux_y[i] += wv_y[i];
-    flux_z[i] += wv_z[i];
+        flux_x[i] += wv_x[i] * dt;
+        flux_y[i] += wv_y[i] * dt;
+        flux_z[i] += wv_z[i] * dt;
+    } else {
+        wv_x[i] += djx[i];
+        wv_y[i] += djy[i];
+        wv_z[i] += djz[i];
+
+        flux_x[i] += wv_x[i];
+        flux_y[i] += wv_y[i];
+        flux_z[i] += wv_z[i];
+    }
 
     // Cluster A: Langevin OU update gated on site-class filter.
     const bool langevin_active =
@@ -344,7 +356,6 @@ __global__ void phase_write_kernel(
 // Computes Laplacian + coupling in registers and immediately applies leapfrog,
 // eliminating the intermediate delta_j global memory round-trip.
 // Single-substrate only; dual-substrate uses separate read/write kernels.
-
 __global__ void wave_update_kernel(
     double* __restrict__ flux_x,
     double* __restrict__ flux_y,
@@ -364,16 +375,12 @@ __global__ void wave_update_kernel(
     bool selective_damping,
     bool do_larmor,
     double damp,
-    // Langevin thermostat (FTD-0051). When do_langevin is true the OU step
-    // replaces the deterministic damping block:
-    //    v <- (1 - gamma) v + sqrt(2 gamma T) * eta,   eta ~ N(0,1) per comp.
-    // Noise buffer layout: [3*N] doubles, flattened as (comp, i) with
-    // comp ∈ {0=x, 1=y, 2=z}; stride N per component.
+    double dt,
+    bool symplectic_leapfrog,
     bool do_langevin,
     double langevin_gamma,
     double langevin_T,
     int L,
-    // BH-F9 (2026-05-05): Langevin noise via shared SplitMix64+Box-Muller.
     unsigned long long rng_seed,
     int                tick
 ) {
@@ -411,22 +418,22 @@ __global__ void wave_update_kernel(
         double face_x = flux_x[xp] + flux_x[xm] + flux_x[yp] + flux_x[ym]
                        + flux_x[zp] + flux_x[zm];
         double edge_x = flux_x[xy_pp] + flux_x[xy_pm] + flux_x[xy_mp] + flux_x[xy_mm]
-                      + flux_x[xz_pp] + flux_x[xz_pm] + flux_x[xz_mp] + flux_x[xz_mm]
-                      + flux_x[yz_pp] + flux_x[yz_pm] + flux_x[yz_mp] + flux_x[yz_mm];
+                       + flux_x[xz_pp] + flux_x[xz_pm] + flux_x[xz_mp] + flux_x[xz_mm]
+                       + flux_x[yz_pp] + flux_x[yz_pm] + flux_x[yz_mp] + flux_x[yz_mm];
         djx += cw2 * (WF * face_x + WE * edge_x - 4.0 * flux_x[i]);
 
         double face_y = flux_y[xp] + flux_y[xm] + flux_y[yp] + flux_y[ym]
                        + flux_y[zp] + flux_y[zm];
         double edge_y = flux_y[xy_pp] + flux_y[xy_pm] + flux_y[xy_mp] + flux_y[xy_mm]
-                      + flux_y[xz_pp] + flux_y[xz_pm] + flux_y[xz_mp] + flux_y[xz_mm]
-                      + flux_y[yz_pp] + flux_y[yz_pm] + flux_y[yz_mp] + flux_y[yz_mm];
+                       + flux_y[xz_pp] + flux_y[xz_pm] + flux_y[xz_mp] + flux_y[xz_mm]
+                       + flux_y[yz_pp] + flux_y[yz_pm] + flux_y[yz_mp] + flux_y[yz_mm];
         djy += cw2 * (WF * face_y + WE * edge_y - 4.0 * flux_y[i]);
 
         double face_z = flux_z[xp] + flux_z[xm] + flux_z[yp] + flux_z[ym]
                        + flux_z[zp] + flux_z[zm];
         double edge_z = flux_z[xy_pp] + flux_z[xy_pm] + flux_z[xy_mp] + flux_z[xy_mm]
-                      + flux_z[xz_pp] + flux_z[xz_pm] + flux_z[xz_mp] + flux_z[xz_mm]
-                      + flux_z[yz_pp] + flux_z[yz_pm] + flux_z[yz_mp] + flux_z[yz_mm];
+                       + flux_z[xz_pp] + flux_z[xz_pm] + flux_z[xz_mp] + flux_z[xz_mm]
+                       + flux_z[yz_pp] + flux_z[yz_pm] + flux_z[yz_mp] + flux_z[yz_mm];
         djz += cw2 * (WF * face_z + WE * edge_z - 4.0 * flux_z[i]);
     }
 
@@ -456,16 +463,25 @@ __global__ void wave_update_kernel(
     }
 
     // --- Phase Write: leapfrog integration + damping or Langevin OU ---
-    wv_x[i] += djx;
-    wv_y[i] += djy;
-    wv_z[i] += djz;
+    if (symplectic_leapfrog) {
+        wv_x[i] += djx * dt;
+        wv_y[i] += djy * dt;
+        wv_z[i] += djz * dt;
 
-    flux_x[i] += wv_x[i];
-    flux_y[i] += wv_y[i];
-    flux_z[i] += wv_z[i];
+        flux_x[i] += wv_x[i] * dt;
+        flux_y[i] += wv_y[i] * dt;
+        flux_z[i] += wv_z[i] * dt;
+    } else {
+        wv_x[i] += djx;
+        wv_y[i] += djy;
+        wv_z[i] += djz;
+
+        flux_x[i] += wv_x[i];
+        flux_y[i] += wv_y[i];
+        flux_z[i] += wv_z[i];
+    }
 
     if (do_langevin) {
-        // Ornstein-Uhlenbeck on wave_vel per-component. Replaces deterministic
         // damping. Field rescaling of J is NOT applied here (Langevin acts on
         // the "momentum" DoF; position J thermalizes via coupled dynamics).
         const double one_minus_gamma = 1.0 - langevin_gamma;
@@ -685,7 +701,7 @@ void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
 
 void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
-                        bool do_genesis, bool do_evaporation, double dt,
+                        bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                         bool do_langevin, double langevin_gamma, double langevin_T,
                         uint8_t langevin_site_filter,
                         unsigned long long rng_seed, int tick) {
@@ -711,6 +727,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
         bufs.d_near_particle, bufs.d_near_accel,
         do_damping, selective_damping, larmor_radiation,
         damping_factor,
+        dt, symplectic_leapfrog,
         do_langevin, langevin_gamma, langevin_T,
         langevin_site_filter,
         L,
@@ -761,7 +778,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
 void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
                         bool do_damping, bool selective_damping,
                         bool larmor_radiation, double damping_factor,
-                        bool do_genesis, bool do_evaporation, double dt,
+                        bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                         bool do_langevin, double langevin_gamma, double langevin_T,
                         unsigned long long rng_seed, int tick) {
     int L = bufs.L;
@@ -788,6 +805,7 @@ void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
         do_wave, do_coupling,
         do_damping, selective_damping, larmor_radiation,
         damping_factor,
+        dt, symplectic_leapfrog,
         do_langevin, langevin_gamma, langevin_T,
         L,
         rng_seed, tick
