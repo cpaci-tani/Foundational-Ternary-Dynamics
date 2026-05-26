@@ -115,7 +115,7 @@ FTD histories.
 - [x] `K_B` status remains calibration/manifestation scale.
 - [x] Old physical RG reading of `x_+` closed negative.
 - [x] Alpha extraction tooling builds again.
-- [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **2026-04-27 — Mechanism A ruled out; Mechanism B closed negative (`archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C closed negative by D6 audit (`archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` + `AUDIT_BCC_SUBLATTICE_SPECTRUM.md`). Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
+- [~] Derive or demote `g_c`: `OPEN_GC_FROM_FIRST_PRINCIPLES.md` remains open. **2026-04-27 — Mechanism A ruled out; Mechanism B closed negative (`archive/closed_negative/DERIV_MECHANISM_B_GC_DERIVATION.md`, circularity); Mechanism C closed negative by D6 audit (`archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` + `AUDIT_BCC_SUBLATTICE_SPECTRUM.md`). Companion: μ-from-ℓ_P missing arrow (FTD-0096) tracked in `archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`.**
 - [~] Evaluate "G18 direct sector vs BCC/CM capacity matching" as a possible `g_c` mechanism, tagged [CONJECTURE] until derived. **2026-04-26 — predecessor reading of Mechanism C bridge-operator hypothesis (FTD-0093 §3 cites the BCC sub-stencil structural argument).**
 - [ ] Decide whether `coulomb_charge_coupling` is a measurement knob, calibration, or derived engine convention.
 - [ ] Separate dimensionless native couplings from physical-unit calibrations in all docs and APIs.
