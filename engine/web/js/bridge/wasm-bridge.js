@@ -78,7 +78,12 @@ export class WasmBridge {
     }
 
     async init(latticeSize = 32) {
-        this.latticeSize = latticeSize;
+        let size = parseInt(latticeSize, 10);
+        if (isNaN(size) || size <= 0 || size > 128) {
+            console.warn('[WasmBridge] Invalid init latticeSize:', latticeSize, '- falling back to 32');
+            size = 32;
+        }
+        this.latticeSize = size;
         try {
             if (typeof globalThis.createFTDModule === 'undefined') {
                 if (!_wasmLoadPromise) {
@@ -103,7 +108,13 @@ export class WasmBridge {
             // etc.) takes `ftd::RenderBridge&`. The DagEngine embind class
             // only exposes .tick/.clear and cannot be passed to those
             // functions (embind throws BindingError on type mismatch).
-            this._bridge = new this._module.RenderBridge(latticeSize);
+            console.log('[WasmBridge] init() - constructing initial RenderBridge with L =', this.latticeSize);
+            try {
+                this._bridge = new this._module.RenderBridge(this.latticeSize);
+            } catch (err) {
+                console.error('[WasmBridge] Fatal: failed to construct initial RenderBridge(' + this.latticeSize + '):', err);
+                throw err;
+            }
             this.ready = true;
             debugLog('FTD WASM engine loaded successfully');
             return true;
@@ -130,7 +141,13 @@ export class WasmBridge {
     }
 
     reset(latticeSize) {
-        this.latticeSize = latticeSize || this.latticeSize;
+        let size = parseInt(latticeSize || this.latticeSize, 10);
+        if (isNaN(size) || size <= 0 || size > 128) {
+            console.warn('[WasmBridge] Invalid reset latticeSize:', latticeSize, 'or current:', this.latticeSize, '- falling back to 32');
+            size = 32;
+        }
+        this.latticeSize = size;
+        console.log('[WasmBridge] reset() called. latticeSize =', this.latticeSize);
         if (this._module) {
             // Bridge-H2 (audit 2026-04-27): the C++ ParticleEngine and
             // AtomEngine handles cached on `this._pe`/`this._ae` are
@@ -158,10 +175,18 @@ export class WasmBridge {
             // is unreachable for any sane lattice size.
             // RenderBridge (not DagEngine) — see init() above for rationale.
             if (this._bridge) {
+                console.log('[WasmBridge] reset() - deleting old RenderBridge...');
                 this._bridge.delete();
                 this._bridge = null;
             }
-            this._bridge = new this._module.RenderBridge(this.latticeSize);
+            console.log('[WasmBridge] reset() - constructing new RenderBridge with L =', this.latticeSize);
+            try {
+                this._bridge = new this._module.RenderBridge(this.latticeSize);
+            } catch (err) {
+                console.error('[WasmBridge] Fatal: failed to construct new RenderBridge(' + this.latticeSize + '):', err);
+                throw err;
+            }
+            console.log('[WasmBridge] reset() - RenderBridge constructed successfully.');
         }
     }
 
