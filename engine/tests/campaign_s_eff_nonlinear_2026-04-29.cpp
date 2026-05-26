@@ -46,6 +46,13 @@
 #include "ftd/eft/reaction_operators.h"
 #include "ftd/render_bridge.h"
 
+#ifdef FTD_ENABLE_CUDA
+#include "ftd/gpu_engine.h"
+#include "ftd/gpu_buffers.h"
+#include "ftd/eft/gpu_dual_cell_fields.cuh"
+#endif
+
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -306,7 +313,7 @@ static bool parse_scenario(const std::string& s, Scenario& out) {
     return false;
 }
 
-static void configure_scenario(ftd::RenderBridge& rb, Scenario sc, int L) {
+static void configure_scenario(ftd::RenderBridge& rb, Scenario sc, int L, double amp_mult = 1.0) {
     rb.toggles.disable_all();
     rb.toggles.wave_propagation = true;
     rb.toggles.gauss_projection = true;
@@ -325,7 +332,7 @@ static void configure_scenario(ftd::RenderBridge& rb, Scenario sc, int L) {
             // S2: matches FTD-0098 reference ensemble.
             rb.toggles.genesis = true;
             rb.inject_flux(L / 2, L / 2, L / 2,
-                           {1.0 * ftd::K_GENESIS, 0, 0});
+                           {amp_mult * ftd::K_GENESIS, 0, 0});
             break;
 
         case Scenario::PairRich:
@@ -345,7 +352,7 @@ static void configure_scenario(ftd::RenderBridge& rb, Scenario sc, int L) {
                 const int y = (L / 6) * (1 + (i + 1) % 3);
                 const int z = (L / 6) * (1 + (i + 2) % 3);
                 rb.inject_flux(x % L, y % L, z % L,
-                               {2.0 * ftd::K_GENESIS, 0, 0});
+                               {2.0 * amp_mult * ftd::K_GENESIS, 0, 0});
             }
             break;
 
@@ -495,7 +502,7 @@ int main(int argc, char** argv) {
         log(sl.str());
 
         ftd::RenderBridge rb(args.L);
-        configure_scenario(rb, args.scenario, args.L);
+        configure_scenario(rb, args.scenario, args.L, args.inject_amp_mult);
         if (args.T_override >= 0.0) {
             rb.toggles.langevin_T = args.T_override;
         }
@@ -538,38 +545,99 @@ int main(int argc, char** argv) {
                 ticks_since_inject = 0;
             }
             // Snapshot pair: before, advance 1 tick, after
-            const auto before = ftd::eft::render_bridge_to_dual_cell_fields(rb);
-            rb.run(1);
-            const auto after = ftd::eft::render_bridge_to_dual_cell_fields(rb);
+#ifdef FTD_ENABLE_CUDA
+            if (rb.backend_kind() == ftd::Backend::Kind::Gpu) {
+                ftd::eft::gpu::GpuDualCellFields gpu_before, gpu_after, gpu_c2_before, gpu_c2_after;
+                gpu_before.allocate(args.L);
+                gpu_after.allocate(args.L);
+                gpu_c2_before.allocate(args.L / 2);
+                gpu_c2_after.allocate(args.L / 2);
 
-            const auto coarse2_before = ftd::eft::block_dual_cell_b2(before);
-            const auto coarse2_after  = ftd::eft::block_dual_cell_b2(after);
+                ftd::eft::gpu::gpu_render_bridge_to_dual_cell_fields(rb.gpu_engine_ptr()->bufs(), gpu_before);
+                rb.run(1);
+                ftd::eft::gpu::gpu_render_bridge_to_dual_cell_fields(rb.gpu_engine_ptr()->bufs(), gpu_after);
 
-            ftd::eft::DualCellFields coarse4_before{}, coarse4_after{};
-            if (args.include_b4) {
-                coarse4_before = ftd::eft::block_dual_cell_b2(coarse2_before);
-                coarse4_after  = ftd::eft::block_dual_cell_b2(coarse2_after);
+                ftd::eft::gpu::gpu_block_dual_cell_b2(gpu_before, gpu_c2_before);
+                ftd::eft::gpu::gpu_block_dual_cell_b2(gpu_after, gpu_c2_after);
+
+                ftd::eft::gpu::GpuDualCellFields gpu_c4_before{}, gpu_c4_after{};
+                if (args.include_b4) {
+                    gpu_c4_before.allocate(args.L / 4);
+                    gpu_c4_after.allocate(args.L / 4);
+                    ftd::eft::gpu::gpu_block_dual_cell_b2(gpu_c2_before, gpu_c4_before);
+                    ftd::eft::gpu::gpu_block_dual_cell_b2(gpu_c2_after, gpu_c4_after);
+                }
+
+                // Compute means entirely on GPU
+                double f_means[10] = {0.0};
+                ftd::eft::gpu::GpuSnapshotPair pair_fine{gpu_before, gpu_after};
+                ftd::eft::gpu::gpu_compute_eft_means(pair_fine, f_means);
+
+                double c2_means[10] = {0.0};
+                ftd::eft::gpu::GpuSnapshotPair pair_c2{gpu_c2_before, gpu_c2_after};
+                ftd::eft::gpu::gpu_compute_eft_means(pair_c2, c2_means);
+
+                OpVec f_arr{}, c2_arr{}, c4_arr{};
+                for (int a = 0; a < 10; ++a) {
+                    f_arr[a] = f_means[a];
+                    c2_arr[a] = c2_means[a];
+                }
+                fine_samples.push_back(f_arr);
+                coarse2_samples.push_back(c2_arr);
+
+                if (args.include_b4) {
+                    double c4_means[10] = {0.0};
+                    ftd::eft::gpu::GpuSnapshotPair pair_c4{gpu_c4_before, gpu_c4_after};
+                    ftd::eft::gpu::gpu_compute_eft_means(pair_c4, c4_means);
+                    for (int a = 0; a < 10; ++a) c4_arr[a] = c4_means[a];
+                    coarse4_samples.push_back(c4_arr);
+                }
+
+                gpu_before.free();
+                gpu_after.free();
+                gpu_c2_before.free();
+                gpu_c2_after.free();
+                if (args.include_b4) {
+                    gpu_c4_before.free();
+                    gpu_c4_after.free();
+                }
+            } else {
+#endif
+                const auto before = ftd::eft::render_bridge_to_dual_cell_fields(rb);
+                rb.run(1);
+                const auto after = ftd::eft::render_bridge_to_dual_cell_fields(rb);
+
+                const auto coarse2_before = ftd::eft::block_dual_cell_b2(before);
+                const auto coarse2_after  = ftd::eft::block_dual_cell_b2(after);
+
+                ftd::eft::DualCellFields coarse4_before{}, coarse4_after{};
+                if (args.include_b4) {
+                    coarse4_before = ftd::eft::block_dual_cell_b2(coarse2_before);
+                    coarse4_after  = ftd::eft::block_dual_cell_b2(coarse2_after);
+                }
+
+                // Q conservation across blocking (snapshot-by-snapshot)
+                const int q_fine = ftd::eft::total_source(before);
+                const int q_c2   = ftd::eft::total_source(coarse2_before);
+                const int q_c4   = args.include_b4 ? ftd::eft::total_source(coarse4_before) : q_fine;
+                if (q_fine != q_c2 || q_fine != q_c4) {
+                    ++q_violations;
+                    ++snapshots_dropped;
+                    continue;
+                }
+
+                // Compute means on the snapshot pair (10 ops total)
+                ftd::eft::SnapshotPair pair_fine{before, after};
+                ftd::eft::SnapshotPair pair_c2{coarse2_before, coarse2_after};
+                fine_samples.push_back(mean_operators_pair(pair_fine));
+                coarse2_samples.push_back(mean_operators_pair(pair_c2));
+                if (args.include_b4) {
+                    ftd::eft::SnapshotPair pair_c4{coarse4_before, coarse4_after};
+                    coarse4_samples.push_back(mean_operators_pair(pair_c4));
+                }
+#ifdef FTD_ENABLE_CUDA
             }
-
-            // Q conservation across blocking (snapshot-by-snapshot)
-            const int q_fine = ftd::eft::total_source(before);
-            const int q_c2   = ftd::eft::total_source(coarse2_before);
-            const int q_c4   = args.include_b4 ? ftd::eft::total_source(coarse4_before) : q_fine;
-            if (q_fine != q_c2 || q_fine != q_c4) {
-                ++q_violations;
-                ++snapshots_dropped;
-                continue;
-            }
-
-            // Compute means on the snapshot pair (10 ops total)
-            ftd::eft::SnapshotPair pair_fine{before, after};
-            ftd::eft::SnapshotPair pair_c2{coarse2_before, coarse2_after};
-            fine_samples.push_back(mean_operators_pair(pair_fine));
-            coarse2_samples.push_back(mean_operators_pair(pair_c2));
-            if (args.include_b4) {
-                ftd::eft::SnapshotPair pair_c4{coarse4_before, coarse4_after};
-                coarse4_samples.push_back(mean_operators_pair(pair_c4));
-            }
+#endif
         }
     }
 
