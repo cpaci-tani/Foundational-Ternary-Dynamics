@@ -414,6 +414,8 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.51 | [PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md](10_eft_program/PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md) | **Nonlinear bridge coordinated sweeps pre-registration (2026-05-26, [PRE-REGISTRATION]):** F-D3 track. Locks parameter sweeps (D3a-D3d) to isolate the dominant nonlinear cluster-mass mechanism and verify active partitioning. |
 | 10.52 | [SCOPE_GC_QUANTUM_PATH_INTEGRAL.md](10_eft_program/SCOPE_GC_QUANTUM_PATH_INTEGRAL.md) | **Quantum path integral scoping memo (2026-05-26, [SCOPING MEMO]):** Mechanism B track (FTD-0216). Formulation of the Euclidean quantum partition function over the body-diagonal sub-stencil $\sigma_{\text{BCC}}$, discrete-to-continuum vacuum polarization, and non-circular Wilsonian matching. |
 | 10.53 | [ANALYSIS_NONLINEAR_BRIDGE_SWEEPS.md](10_eft_program/ANALYSIS_NONLINEAR_BRIDGE_SWEEPS.md) | **Nonlinear bridge sweeps analysis (2026-05-26, [MEASUREMENT ANALYSIS]):** F-D3 track. Analysis of parameter sweeps D3a-D3d, leading to the final mechanism discrimination verdict among Mechanism $\alpha$, $\beta$, and $\gamma$. |
+| 10.54 | [PREREG_GRAVITON_SUBSTRATE_MODE_v2.md](10_eft_program/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) | **Emergent graviton substrate mode pre-registration (2026-05-22, [PRE-REGISTRATION]):** Locks the decisive engine campaign and hypothesis. |
+| 10.55 | [REPORT_GRAVITON_SUBSTRATE_MODE.md](10_eft_program/REPORT_GRAVITON_SUBSTRATE_MODE.md) | **Emergent spin-2 substrate mode report (2026-05-26, [MEASUREMENT REPORT]):** Resolved $L=128$ measurement confirming Outcome B and non-separability. |
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
 
@@ -529,7 +531,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Mathematical (09_):** `EXPLR_COLLAPSE_GRAVITY_BRIDGE`.
 
-**EFT program (10_):** `THEOREM_A_PHYS_NO_GO`. Archived supporting closures: `DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT`, `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT`, `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS`, `OPEN_A_PHYS_DERIVATION`.
+**EFT program (10_):** `REPORT_GRAVITON_SUBSTRATE_MODE`, `PREREG_GRAVITON_SUBSTRATE_MODE_v2`, `THEOREM_A_PHYS_NO_GO`. Archived supporting closures: `DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT`, `DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT`, `DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS`, `OPEN_A_PHYS_DERIVATION`, `PREREG_GRAVITON_SUBSTRATE_MODE_v1`.
 
 ---
 
