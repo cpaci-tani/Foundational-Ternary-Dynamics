@@ -9,7 +9,7 @@
 
 ## Read first
 
-1. [SPEC_ALGEBRAIC_SPINE.md](SPEC_ALGEBRAIC_SPINE.md) — the nine numbered algebraic results (six theorem-grade + three honestly-tiered), physics-free. The rigorous core.
+1. [SPEC_ALGEBRAIC_SPINE.md](SPEC_ALGEBRAIC_SPINE.md) — the nine numbered algebraic results (seven theorem-grade + two honestly-tiered), physics-free. The rigorous core.
 2. [SPEC_DOCTRINE_LEDGER.md](SPEC_DOCTRINE_LEDGER.md) — single-page status map across spine + FQCR + bridge; start here for "what is the status of X".
 3. [SPEC_FQCR.md](SPEC_FQCR.md) — Finite Quarter-Conjugacy Recurrence capstone; operator-theoretic provenance of G* (Models I–V).
 4. [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) — standalone mathematical monograph deriving G* from nine branches of mathematics.
