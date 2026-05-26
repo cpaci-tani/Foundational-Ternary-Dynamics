@@ -129,6 +129,10 @@ function buildPanel(dockMode = false) {
                 <div style="${titleStyle()}">Coulomb V(r) probe</div>
                 <div id="${PANEL_ID}-coulomb-body"></div>
             </section>
+            <section data-section="anisotropy" style="${cardStyle(220)}">
+                <div style="${titleStyle()}">Lattice Anisotropy & SO(2) Recovery</div>
+                <div id="${PANEL_ID}-anisotropy-body"></div>
+            </section>
             <section data-section="hydrogen" style="${cardStyle(120)}">
                 <div style="${titleStyle()}">Hydrogen Spectrum</div>
                 <div id="${PANEL_ID}-hydrogen-body" style="font-style:italic;color:var(--text-muted);">
@@ -949,6 +953,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
     }
 
     const coulombBody = panel.querySelector(`#${PANEL_ID}-coulomb-body`);
+    const anisotropyBody = panel.querySelector(`#${PANEL_ID}-anisotropy-body`);
     const hydrogenBody = panel.querySelector(`#${PANEL_ID}-hydrogen-body`);
     const bellBody = panel.querySelector(`#${PANEL_ID}-bell-body`);
     const gravityBody = panel.querySelector(`#${PANEL_ID}-gravity-body`);
@@ -1049,6 +1054,87 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             </div>
         `;
         renderCoulombEngineProbe(panel.querySelector(`#${PANEL_ID}-coulomb-plot`), engineProbe?.samples ?? null);
+
+        // ── Lattice Anisotropy & SO(2) Recovery section ──────────────
+        const activeSource = particles.find((p) => (p.state ?? 0) !== 0);
+        const L = (typeof bridge.getLatticeSize === 'function' ? bridge.getLatticeSize() : bridge.latticeSize) || 32;
+        const cx = activeSource ? activeSource.x : L / 2;
+        const cy = activeSource ? activeSource.y : L / 2;
+        const cz = activeSource ? activeSource.z : L / 2;
+
+        const decayPoints = [];
+        const radii = [1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5];
+        const N_pts = 16;
+
+        for (const r of radii) {
+            const values = [];
+            for (let i = 0; i < N_pts; i++) {
+                const theta = (i * 2.0 * Math.PI) / N_pts;
+                const sx = Math.round(cx + r * Math.cos(theta));
+                const sy = Math.round(cy + r * Math.sin(theta));
+                const sz = Math.round(cz);
+
+                // Wrap periodic boundaries
+                const wx = (sx % L + L) % L;
+                const wy = (sy % L + L) % L;
+                const wz = (sz % L + L) % L;
+
+                const voxel = bridge.inspectVoxel(wx, wy, wz);
+                if (voxel) {
+                    const val = (voxel.Emag !== undefined && voxel.Emag !== null) ? voxel.Emag :
+                                (typeof voxel.density === 'number' ? voxel.density :
+                                Math.sqrt((voxel.fluxX || 0)**2 + (voxel.fluxY || 0)**2 + (voxel.fluxZ || 0)**2));
+                    values.push(val);
+                } else {
+                    values.push(0);
+                }
+            }
+
+            // Compute mean
+            const sum = values.reduce((a, b) => a + b, 0);
+            const mean = sum / N_pts;
+
+            // Compute standard deviation
+            let variance = 0;
+            if (N_pts > 1) {
+                const sqDiffs = values.map(v => (v - mean) ** 2);
+                const sumSqDiffs = sqDiffs.reduce((a, b) => a + b, 0);
+                variance = sumSqDiffs / N_pts;
+            }
+            const stdDev = Math.sqrt(variance);
+
+            // Relative standard deviation in percent
+            // Protect against division by zero
+            const aniso = mean > 1e-9 ? (stdDev / mean) * 100.0 : 0.0;
+            decayPoints.push({ r, aniso, mean });
+        }
+
+        // Render SVG Decay Curve in the panel card
+        let anisotropyPlotContainer = anisotropyBody.querySelector(`#${PANEL_ID}-anisotropy-plot`);
+        let anisotropyDescContainer = anisotropyBody.querySelector(`#${PANEL_ID}-anisotropy-desc`);
+        if (!anisotropyPlotContainer) {
+            anisotropyBody.innerHTML = `
+                <div id="${PANEL_ID}-anisotropy-plot" style="min-height:130px;"></div>
+                <div id="${PANEL_ID}-anisotropy-desc" style="margin-top:6px;font-size:11px;color:var(--text-muted);line-height:1.45;"></div>
+            `;
+            anisotropyPlotContainer = anisotropyBody.querySelector(`#${PANEL_ID}-anisotropy-plot`);
+            anisotropyDescContainer = anisotropyBody.querySelector(`#${PANEL_ID}-anisotropy-desc`);
+        }
+
+        renderAnisotropyDecay(anisotropyPlotContainer, decayPoints);
+
+        const minAniso = decayPoints.length > 0 ? decayPoints[decayPoints.length - 1].aniso : 0;
+        const sourceLabel = activeSource ? `charge ID ${activeSource.id} (${activeSource.state > 0 ? '+' : ''}${activeSource.state})` : 'grid center';
+
+        anisotropyDescContainer.innerHTML = `
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-family:var(--font-mono);font-size:12px;font-variant-numeric:tabular-nums;">
+                <span>${tagBadge('M')}Source: ${sourceLabel}</span>
+                <span>${tagBadge('~M')}Anisotropy: ${minAniso.toFixed(2)}% (at r=8.5a)</span>
+            </div>
+            <div style="opacity:0.75;line-height:1.4;">
+                ${tagBadge('D')} Rotational symmetry recovery O_h → SO(2) quantified via relative standard deviation σ_rel(r) = σ(r)/⟨E(r)⟩ × 100% over 16-point circular samplers. Note the power-law decay of grid discretization noise as r → ∞.
+            </div>
+        `;
 
         // ── Hydrogen spectrum section ───────────────────────────────
         if (HYDROGEN_SCENARIOS.has(scenarioId)) {
