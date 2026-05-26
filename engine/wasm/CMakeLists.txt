@@ -46,6 +46,7 @@ if(EMSCRIPTEN)
         -sEXPORT_NAME=createFTDModule
         -sMODULARIZE=1
         -sALLOW_MEMORY_GROWTH=1
+        -sASSERTIONS=1
         # Lattice memory budget (Voxel = 232 bytes after padding):
         #   L=32 → 12 MB total bridge  | L=64 → 95 MB
         #   L=96 → 325 MB              | L=128 → 770 MB
