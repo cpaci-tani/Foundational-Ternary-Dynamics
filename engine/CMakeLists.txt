@@ -679,6 +679,9 @@ if(FTD_ENABLE_CUDA)
     add_executable(test_gpu_parity tests/test_gpu_parity.cpp)
     target_link_libraries(test_gpu_parity ftd_core ftd_cuda)
 
+    add_executable(test_gpu_eft_parity tests/test_gpu_eft_parity.cpp)
+    target_link_libraries(test_gpu_eft_parity ftd_core ftd_cuda)
+
     add_executable(test_gpu_benchmark tests/test_gpu_benchmark.cpp)
     target_link_libraries(test_gpu_benchmark ftd_core ftd_cuda)
 
@@ -738,6 +741,24 @@ if(FTD_ENABLE_CUDA)
              COMMAND benchmark_invariant_matrix_constant_memory)
     set_tests_properties(benchmark_invariant_matrix_constant_memory
                          PROPERTIES TIMEOUT 120 LABELS "gpu;benchmark")
+
+    # Standalone hyper-optimized GPU Discrete Universe simulation engine prototype
+    add_executable(experimental_discrete_universe cuda/experimental_discrete_universe.cu)
+    target_link_libraries(experimental_discrete_universe ftd_core ftd_cuda)
+    target_compile_options(experimental_discrete_universe PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+        $<$<COMPILE_LANGUAGE:CUDA>:--allow-unsupported-compiler>
+    )
+    if(MSVC)
+        target_compile_options(experimental_discrete_universe PRIVATE
+            $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/Z7>
+        )
+    endif()
+    set_target_properties(experimental_discrete_universe PROPERTIES
+                          CUDA_SEPARABLE_COMPILATION ON
+                          CUDA_RESOLVE_DEVICE_SYMBOLS ON
+                          COMPILE_PDB_NAME ""
+                          COMPILE_PDB_OUTPUT_DIRECTORY "")
 endif()
 
 # ============================================================================
@@ -1713,11 +1734,12 @@ set_tests_properties(
 if(FTD_ENABLE_CUDA)
     add_test(NAME gpu_parity COMMAND test_gpu_parity)
     add_test(NAME gpu_parity_complete COMMAND test_gpu_parity_complete)
+    add_test(NAME gpu_eft_parity COMMAND test_gpu_eft_parity)
     add_test(NAME gpu_benchmark COMMAND test_gpu_benchmark)
     add_test(NAME gpu_continuity_ledger COMMAND test_gpu_continuity_ledger)
     add_test(NAME gpu_physics COMMAND test_gpu_physics)
     add_test(NAME gpu_experiments COMMAND test_gpu_experiments)
-    set_tests_properties(gpu_parity gpu_parity_complete gpu_benchmark
+    set_tests_properties(gpu_parity gpu_parity_complete gpu_eft_parity gpu_benchmark
                          gpu_continuity_ledger gpu_physics PROPERTIES TIMEOUT 600)
     set_tests_properties(gpu_continuity_ledger PROPERTIES
                          LABELS "gpu;constructor;ledger;observable;eft_quick")
