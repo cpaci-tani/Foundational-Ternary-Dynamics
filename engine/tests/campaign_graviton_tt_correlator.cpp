@@ -774,7 +774,9 @@ void seed_broadband_perturbation(ftd::RenderBridge& rb, int L,
             modes.push_back(m);
         }
     }
-    // Write the superposition into every voxel's flux.
+    // Write the superposition into every voxel's flux on the host, then push to device once.
+    auto& vox = rb.voxels();
+    const auto& lat = rb.lattice();
     for (int x = 0; x < L; ++x)
         for (int y = 0; y < L; ++y)
             for (int z = 0; z < L; ++z) {
@@ -787,8 +789,15 @@ void seed_broadband_perturbation(ftd::RenderBridge& rb, int L,
                     J.z += m.ez * s;
                 }
                 J.x *= amp; J.y *= amp; J.z *= amp;
-                rb.inject_flux(x, y, z, J);
+
+                int idx = lat.index(x, y, z);
+                vox[idx].flux = J;
+                if (rb.toggles.dual_substrate) {
+                    vox[idx].flux_L = J * 0.5;
+                    vox[idx].flux_R = J * 0.5;
+                }
             }
+    rb.backend().push_to_device();
 }
 
 // ───────────────────────────────────────────────────────────────────────────

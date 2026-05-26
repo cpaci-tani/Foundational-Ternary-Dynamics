@@ -440,11 +440,7 @@ bird's-eye assessment in
   verification suite C1–C4 PASS in
   `scripts/exploration/verify_k_derivation_2026-04-28.py`.
 
-- [OPEN] **L=128 G2 follow-up to FTD-0107** — engine-side. Extending
-  the L-invariance test from {32, 64} to {32, 64, 128} locks the
-  invariance further (and may surface a finite-L correction if one
-  exists). Pre-registration template ready; engine measurement
-  deferred. **Source:** CLAUDE.md v5.33 §[OPEN].
+- ✅ **L=128 G2 follow-up to FTD-0107** — **RESOLVED 2026-05-26**. GPU-native exascale campaign at $L=128$ recovers the spin-1 control cleanly and confirms Outcome B (non-separability of the spin-2 TT channel), locking the $L$-invariance of the verdict.
 
 - ✅ **Structural bridge between algebraic spine and engine
   phenomenology** — **CLOSED at linear level 2026-04-28**. The
