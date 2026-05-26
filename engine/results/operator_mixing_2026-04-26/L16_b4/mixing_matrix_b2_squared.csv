@@ -1,8 +1,0 @@
-#,M(b=2)·M(b=2) — RG semigroup prediction
-row\col,JJ,divJ2,curlJ2,JdotDivJ,J4,stateSq
-JJ,255.752,23.1578,-183.403,2.66946,4.63495,nan
-divJ2,0.00481996,8.79776,0.128824,3.06132,-0.193662,nan
-curlJ2,-0.91933,-75.901,81.3263,306.798,38.6609,nan
-JdotDivJ,0.0301183,10.4016,0.695051,9.23938,-0.996192,nan
-J4,-1007.13,18230.3,-6438.32,14764.6,65705.7,nan
-stateSq,nan,nan,nan,nan,nan,nan
