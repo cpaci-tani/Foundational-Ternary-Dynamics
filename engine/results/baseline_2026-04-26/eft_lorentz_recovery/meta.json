@@ -1,1 +1,0 @@
-{"test":"eft_lorentz_recovery","commit":"347a38f","wall_seconds":8,"return_code":0,"hardware":{"cpu":"AMD Ryzen 9 9950X3D","gpu":"NVIDIA RTX 5090","os":"Windows 11 Pro"},"build_config":"Release","timeout_seconds":280,"executable":"ftd_lorentz_measure.exe"}
