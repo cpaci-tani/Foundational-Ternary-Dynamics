@@ -101,6 +101,7 @@ export class TelemetryHub {
             chirality:           new RingBuffer(500),
             waveLeft:            new RingBuffer(500),
             waveRight:           new RingBuffer(500),
+            energyDrift:         new RingBuffer(500),
         };
 
         // Sparkline-resolution (80-sample) — used by DiagnosticsPanel sparklines
@@ -209,6 +210,17 @@ export class TelemetryHub {
             const pz  = audit.totalPoynting?.z ?? audit.poyntingZ ?? 0;
             const pMag = Math.sqrt(px * px + py * py + pz * pz);
 
+            // Energy drift calculation
+            const currentH = audit.totalEnergy || 0;
+            if (this._initialEnergy === undefined || this._initialEnergy === null) {
+                if (currentH > 0.001) this._initialEnergy = currentH;
+            }
+            let drift = 0;
+            if (this._initialEnergy) {
+                drift = ((currentH - this._initialEnergy) / this._initialEnergy) * 100;
+            }
+            audit.energyDrift = drift;
+
             this.ebDiff.push(eF - bF);
             this.gauss.push(audit.gaussViolation || 0);
 
@@ -227,6 +239,7 @@ export class TelemetryHub {
             this.aud.chirality.push(         audit.chiralityTotal     || 0);
             this.aud.waveLeft.push(          audit.wvLTotal           || 0);
             this.aud.waveRight.push(         audit.wvRTotal           || 0);
+            this.aud.energyDrift.push(       drift);
         }
         return audit;
     }
@@ -397,6 +410,7 @@ export class TelemetryHub {
                     ...Object.values(this.lag),
                 ]) b.clear();
                 this.s0 = { diag: null, audit: null, lagrangian: null };
+                this._initialEnergy = null;
                 break;
             case 1:
                 for (const b of [
