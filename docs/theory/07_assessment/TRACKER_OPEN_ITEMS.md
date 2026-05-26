@@ -325,6 +325,10 @@ Still open:
 - Current bridge inventory: `docs/theory/10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`.
 - First bridge-span result: `docs/theory/10_eft_program/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` supports a source-coupled vector EFT but leaves U(1) gauge redundancy unproved.
 - Emergent-U(1) refinement: `docs/theory/10_eft_program/DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md` treats U(1) as an auxiliary-potential redundancy of transverse projected flux, not as microscopic ontology. Still open: matter representation, local coupling, regulator/counterterms, and alpha observable.
+- BCC algebraic readout: `docs/theory/10_eft_program/DERIV_BCC_ALGEBRAIC_READOUT.md` [DERIVED]/[PARTIAL] (ARC-B2) operationalizes $V_{\text{complex}} \cong \mathbb{Z}[i]^2$ module projection and cyclic $J$ action to define an operational BCC complex observable $O_{\text{BCC}}$.
+- ✅ Boundary readout pre-registration: `docs/theory/10_eft_program/archive/closed_negative/PREREG_ALPHA_READOUT_BOUNDARY_v1.md` [CLOSED NEGATIVE] (ARC-A1). Closed negative by `docs/theory/10_eft_program/archive/closed_negative/AUDIT_ALPHA_READOUT_BOUNDARY_CLOSED_NEGATIVE.md` (FTD-0214); the boundary spectral ratio flows to 0 as $L \to \infty$.
+- Charge quantization audit: `docs/theory/10_eft_program/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md` [AUDIT] (ARC-C1) details exact QED-vs-native normalization boundary and strict non-circularity checklist.
+- Nonlinear bridge coordinated sweeps pre-registration: `docs/theory/10_eft_program/PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md` [PRE-REGISTRATION] (F-D3) locks coordinated parameter sweeps to isolate the dominant nonlinear cluster-mass mechanism (Mechanisms $\alpha$, $\beta$, $\gamma$) and verify active partitioning aggregation.
 - Projected-matter refinement: `docs/theory/10_eft_program/archive/closed_negative/DERIV_PROJECTED_EFT_MATTER_COUPLING.md` identifies native matter as signed source/worldline matter and the projected radiative coupling as `j_T · A_T`. Dirac matter is the preferred QED-facing completion but remains selected; charge normalization and Dirac dynamics remain open.
 - Projected-Dirac/charge refinement: `docs/theory/10_eft_program/archive/closed_negative/DERIV_PROJECTED_DIRAC_OPERATOR_AND_CHARGE_NORMALIZATION.md` fixes a symbolic central-difference/Wilson-Dirac candidate and shows that ternary charge gives integer `q`, not the magnitude `e0`. The equality `e0^2 = 1/x_+` still requires a matching rule.
 - Renormalization/observable gate: `docs/theory/10_eft_program/archive/closed_negative/OPEN_PROJECTED_EFT_RENORMALIZATION_AND_ALPHA_OBSERVABLE.md` states the remaining pre-computation decision. After the stiffness, response-eigenvalue, and source-current normalization attempts, the current-action endpoint is arithmetic-only unless a new normalization theorem is supplied.
@@ -344,10 +348,10 @@ Still open:
 Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-theoretic: `∀μ:MassUnit. (2·m_e/α)[μ]=16G*² ↔ μ=μ_FTD`. NOT promoted to LEDGER detail-row beyond the FTD-0094 quick-index entry. Mechanism C closed negative (FTD-0093), so this remains tracker-only / parametric per the 2026-04-25 roundtable verdict and the FTD-0094 quick-index disposition. See:
 - `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md` §5 (calibration-invariant statement)
 - `docs/theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md` (mass-as-functional reading)
-- `docs/theory/10_eft_program/OPEN_MU_FROM_LP_MISSING_ARROW.md` (type-theoretic version)
+- `docs/theory/10_eft_program/archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md` (type-theoretic version)
 
-### 4.6 μ-from-ℓ_P missing arrow — **1 `[OPEN]`**
-**File:** `docs/theory/10_eft_program/OPEN_MU_FROM_LP_MISSING_ARROW.md`. LEDGER row FTD-0096. The formal-semantic broken arrow in L2's coherence diagram: derivation of mass unit μ from `ℓ_P` (FTD-0030/0041 calibration) without passing through m_e itself. FTD-0059 closes the LENGTH analogue; this row tracks the MASS-UNIT version. Highest-leverage moves: (1) extend FTD-0059's ring-algebra technique to mass; (2) construct counter-model varying K_GENESIS / bridge operator B / ternary-state weighting.
+### 4.6 μ-from-ℓ_P missing arrow — ✅ CLOSED THEOREM-NEGATIVE 2026-04-28
+**File:** `docs/theory/10_eft_program/archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`. LEDGER row FTD-0096. Closed by `THEOREM_MU_NO_GO_FTD0096.md` which proved that the mass-unit $\mu$ is not derivable from Axiom Zero alone (hence remains an external calibration).
 
 ---
 

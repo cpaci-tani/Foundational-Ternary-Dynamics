@@ -177,7 +177,7 @@ Three independent closures from different directions all agree: the L₂ identit
 - LEDGER row FTD-0094 (L₂ identity): `docs/theory/07_assessment/LEDGER.md`
 - LEDGER row FTD-0093 (Mechanism C closure): `docs/theory/07_assessment/LEDGER.md`
 - LEDGER row FTD-0097 (look-elsewhere scan): `docs/theory/07_assessment/LEDGER.md`
-- Open-item tracker: [`OPEN_MU_FROM_LP_MISSING_ARROW.md`](OPEN_MU_FROM_LP_MISSING_ARROW.md) — should be marked CLOSED RESOLVED-BY-THEOREM
+- Open-item tracker: [`archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`](archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md) — marked CLOSED RESOLVED-BY-THEOREM
 - SPEC_FTD calibration declaration: `docs/SPEC_FTD.md` (LATTICE ↔ PHYSICAL CALIBRATION section)
 - Sympathetic audit identifying this as closeable: `docs/theory/07_assessment/AUDIT_PAPER_SYMPATHETIC_2026-04-28.md`
 

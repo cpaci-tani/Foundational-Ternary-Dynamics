@@ -1,10 +1,16 @@
-# OPEN — μ from ℓ_P: the missing arrow in the calibration coherence diagram
+# CLOSED THEOREM-NEGATIVE — μ from ℓ_P: the missing arrow in the calibration coherence diagram
 
-**Tag:** [OPEN]
-**Date:** 2026-04-26
+**Tag:** [CLOSED THEOREM-NEGATIVE]
+**Date:** 2026-04-28
 **LEDGER row:** FTD-0096
 **Dependencies:** FTD-0030 (a_phys ≡ ℓ_P), FTD-0041 (mass-unit ≡ m_e/K_B = 1 MeV/c²), FTD-0059 (THEOREM_A_PHYS_NO_GO)
 **Dependents:** FTD-0094 (L2 candidate identity)
+
+> [!NOTE]
+> **Definitive Resolution (2026-04-28):**
+> This open question is formally **CLOSED THEOREM-NEGATIVE** by [`THEOREM_MU_NO_GO_FTD0096.md`](file:///c:/Users/cpaci/Desktop/ftd/docs/theory/10_eft_program/THEOREM_MU_NO_GO_FTD0096.md).
+> The mass no-go theorem proves that because the threshold parameters in the update rules are dimensionless real numbers, no mass-dimensional quantity can be derived from the Axiom-Zero ring.
+> Consequently, the FTD mass unit $\mu$ is an external calibration, and the $L_2$ identity is terminally `[PARAMETRIC]`.
 
 ---
 
@@ -111,7 +117,7 @@ FTD-0059:
 |---|---|---|
 | length      | no length expressible from R                            | CLOSED — `a_phys ≡ ℓ_P` calibration (FTD-0030) |
 | time        | follows from `tick = √D · a_phys / c_lat`               | CLOSED — derivative of length calibration |
-| mass        | not analyzed in FTD-0059                                | **OPEN** — this document |
+| mass        | not analyzed in FTD-0059                                | **CLOSED THEOREM-NEGATIVE** — resolved by `THEOREM_MU_NO_GO_FTD0096.md` |
 
 The difference: length and time are *kinematic* dimensions that follow from
 the lattice structure (sites, ticks, c_lat). Mass is *dynamic* — it appears
