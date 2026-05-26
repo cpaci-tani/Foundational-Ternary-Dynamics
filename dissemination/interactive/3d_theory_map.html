@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTD 3D Theory Map</title>
+    
+    <!-- Load Three.js and 3D Force Graph -->
+    <script src="https://unpkg.com/three@0.150.1/build/three.min.js"></script>
+    <script src="https://unpkg.com/3d-force-graph@1.73.3/dist/3d-force-graph.min.js"></script>
+    
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #0d1117; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            color: #c9d1d9;
+        }
+        
+        #3d-graph {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* UI Overlays */
+        #ui-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #controls-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            pointer-events: auto;
+            z-index: 10;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 320px;
+        }
+
+        .glass-panel {
+            background: rgba(22, 27, 34, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            pointer-events: auto;
+            max-width: 350px;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            margin: 0 0 10px 0;
+            color: #58a6ff;
+            font-weight: 600;
+        }
+        
+        h2 {
+            font-size: 1rem;
+            margin: 15px 0 10px 0;
+            color: #c9d1d9;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 5px;
+        }
+
+        p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0 0 10px 0;
+            color: #8b949e;
+        }
+
+        #node-details {
+            display: none;
+            border-left: 4px solid #58a6ff;
+        }
+
+        #node-title {
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        #node-meta {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #8b949e;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+        }
+
+        .color-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
+            accent-color: #58a6ff;
+        }
+
+        .slider-val {
+            float: right;
+            color: #58a6ff;
+            font-weight: bold;
+        }
+
+        /* Legend Colors */
+        .c-lemniscate { background: #FFD700; }
+        .c-master { background: #FF4500; }
+        .c-substrate { background: #4169E1; }
+        .c-group { background: #00FFFF; }
+        .c-topology { background: #32CD32; }
+        .c-clifford { background: #9370DB; }
+        .c-geometry { background: #DC143C; }
+        .c-statistics { background: #FF00FF; }
+        .c-other { background: #444444; }
+
+        /* Custom Scrollbar for panel */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2); 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.4); 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-container">
+        <div class="glass-panel" id="title-panel">
+            <h1>FTD Theory Map (Math Properties)</h1>
+            <p>Interactive 3D visualization of the Foundational Ternary Dynamics documentation network, clustered by fundamental mathematical mechanics.</p>
+            <p style="font-size: 0.8rem; font-style: italic;">Scroll to zoom. Drag to rotate. Click nodes to focus.</p>
+        </div>
+
+        <div class="glass-panel" id="node-details">
+            <div id="node-title">Document Title</div>
+            <div id="node-meta">Math Group | Type: SPEC</div>
+            <p id="node-path">Path: docs/theory/...md</p>
+            <p id="node-links" style="font-size: 0.8rem; color: #58a6ff;">Connections: 0</p>
+        </div>
+
+        <div class="glass-panel" id="legend">
+            <h1 style="font-size: 0.9rem; margin-bottom: 8px; color:#fff;">Math Group (Color)</h1>
+            <div class="legend-item"><div class="color-box c-lemniscate"></div> Lemniscate / Elliptic Curves</div>
+            <div class="legend-item"><div class="color-box c-master"></div> Master Quadratic</div>
+            <div class="legend-item"><div class="color-box c-substrate"></div> Discrete Substrate / Z[i]</div>
+            <div class="legend-item"><div class="color-box c-group"></div> Group & Representation Theory</div>
+            <div class="legend-item"><div class="color-box c-topology"></div> Topology & Graph Theory</div>
+            <div class="legend-item"><div class="color-box c-clifford"></div> Clifford & Octonions</div>
+            <div class="legend-item"><div class="color-box c-geometry"></div> Differential Geometry</div>
+            <div class="legend-item"><div class="color-box c-statistics"></div> Statistics & Thermodynamics</div>
+            <div class="legend-item"><div class="color-box c-other"></div> Phenomenological / Other</div>
+            
+            <h1 style="font-size: 0.9rem; margin-top: 15px; margin-bottom: 8px; color:#fff;">Node Shapes (Epistemic Status)</h1>
+            <div class="legend-item">● Sphere: FOUND (Foundations)</div>
+            <div class="legend-item">■ Cube: DERIV (Derivations)</div>
+            <div class="legend-item">▲ Tetrahedron: AUDIT (Assessments)</div>
+            <div class="legend-item">◆ Octahedron: SPEC (Specifications)</div>
+            <div class="legend-item">▤ Cylinder: EXPLR (Explorations)</div>
+            <div class="legend-item">⬟ Icosahedron: ARCH/Other</div>
+        </div>
+    </div>
+
+    <!-- NEW CONTROL PANEL -->
+    <div class="glass-panel" id="controls-panel">
+        <h1>Analysis Controls</h1>
+        
+        <h2>Physical Groups</h2>
+        <div class="control-group">
+            <label><input type="checkbox" id="toggle-islands" style="margin-right:8px; accent-color:#58a6ff;"> Pull Math Groups into Islands</label>
+            <p style="font-size: 0.75rem; margin-top: 5px;">Physically segregates nodes to individual clusters in 3D space.</p>
+        </div>
+
+        <h2>Connection Controls</h2>
+        <div class="control-group">
+            <label><input type="checkbox" id="toggle-hide-links" style="margin-right:8px; accent-color:#58a6ff;"> Hide All Connections</label>
+        </div>
+        <div class="control-group">
+            <label><input type="checkbox" id="toggle-inter-links" style="margin-right:8px; accent-color:#58a6ff;"> Show Inter-Group Links Only</label>
+            <p style="font-size: 0.75rem; margin-top: 5px;">Hides internal group links to reveal how domains cross-pollinate.</p>
+        </div>
+        <div class="control-group">
+            <label>Data Flow Speed: <span id="val-speed" class="slider-val">5</span></label>
+            <input type="range" id="particle-speed" min="0" max="20" value="5">
+            <p style="font-size: 0.75rem; margin-top: 5px;">Adjust the speed of the directional particles (set to 0 to stop).</p>
+        </div>
+
+        <h2>Hub Isolation</h2>
+        <div class="control-group">
+            <label>Min Connections: <span id="val-min-conn" class="slider-val">0</span></label>
+            <input type="range" id="min-conn" min="0" max="30" value="0">
+            <p style="font-size: 0.75rem; margin-top: 5px;">Hide isolated documents to reveal structural hubs.</p>
+        </div>
+
+        <h2>Physics & Graphing</h2>
+        <div class="control-group">
+            <label>Repulsion (Charge): <span id="val-charge" class="slider-val">-150</span></label>
+            <input type="range" id="charge" min="-500" max="-10" value="-150">
+        </div>
+        <div class="control-group">
+            <label>Link Distance: <span id="val-link" class="slider-val">40</span></label>
+            <input type="range" id="link-dist" min="10" max="200" value="40">
+        </div>
+
+        <h2>Filter by Math Group</h2>
+        <div class="control-group" id="sector-filters">
+            <!-- Populated via JS -->
+        </div>
+    </div>
+
+    <div id="3d-graph"></div>
+
+    <script>
+        const colorMap = {
+            "Lemniscate / Elliptic Curves": "#FFD700",
+            "Master Quadratic": "#FF4500",
+            "Discrete Substrate / Z[i]": "#4169E1",
+            "Group & Representation Theory": "#00FFFF",
+            "Topology & Graph Theory": "#32CD32",
+            "Clifford & Octonions": "#9370DB",
+            "Differential Geometry": "#DC143C",
+            "Statistics & Thermodynamics": "#FF00FF",
+            "Phenomenological / Other": "#444444"
+        };
+
+        const settings = {
+            minConnections: 0,
+            charge: -150,
+            linkDistance: 40,
+            hiddenSectors: new Set(),
+            separateGroups: false,
+            hideAllLinks: false,
+            interGroupOnly: false,
+            particleSpeed: 0.005
+        };
+
+        const groupFoci = {
+            "Lemniscate / Elliptic Curves": {x: 400, y: 0, z: 0},
+            "Master Quadratic": {x: -400, y: 0, z: 0},
+            "Discrete Substrate / Z[i]": {x: 0, y: 400, z: 0},
+            "Group & Representation Theory": {x: 0, y: -400, z: 0},
+            "Topology & Graph Theory": {x: 0, y: 0, z: 400},
+            "Clifford & Octonions": {x: 0, y: 0, z: -400},
+            "Differential Geometry": {x: 300, y: 300, z: 300},
+            "Statistics & Thermodynamics": {x: -300, y: -300, z: -300},
+            "Phenomenological / Other": {x: -300, y: 300, z: 300}
+        };
+
+        function getNodeColor(node) {
+            return colorMap[node.group] || "#FFFFFF";
+        }
+
+        // Shared geometries for performance
+        const sphereGeo = new THREE.SphereGeometry(4, 16, 16);
+        const boxGeo = new THREE.BoxGeometry(7, 7, 7);
+        const tetraGeo = new THREE.TetrahedronGeometry(6);
+        const octaGeo = new THREE.OctahedronGeometry(6);
+        const cylinderGeo = new THREE.CylinderGeometry(4, 4, 8, 16);
+        const icosaGeo = new THREE.IcosahedronGeometry(5);
+
+        // Pre-create materials based on colors
+        const materials = {};
+        Object.keys(colorMap).forEach(key => {
+            materials[key] = new THREE.MeshLambertMaterial({ 
+                color: colorMap[key],
+                transparent: true,
+                opacity: 0.85
+            });
+        });
+        materials['default'] = new THREE.MeshLambertMaterial({ color: "#FFFFFF" });
+
+        fetch('graph.json').then(res => res.json()).then(gData => {
+            
+            // Calculate node connections for sizing or info
+            const linksCount = {};
+            gData.links.forEach(link => {
+                const source = typeof link.source === 'object' ? link.source.id : link.source;
+                const target = typeof link.target === 'object' ? link.target.id : link.target;
+                linksCount[source] = (linksCount[source] || 0) + 1;
+                linksCount[target] = (linksCount[target] || 0) + 1;
+            });
+
+            // Populate Sector Filters
+            const sectors = [...new Set(gData.nodes.map(n => n.group))].sort();
+            const sectorFiltersDiv = document.getElementById('sector-filters');
+            sectors.forEach(sector => {
+                const lbl = document.createElement('label');
+                lbl.innerHTML = `<input type="checkbox" checked value="${sector}" style="margin-right:8px; accent-color:#58a6ff;"> ${sector}`;
+                sectorFiltersDiv.appendChild(lbl);
+                
+                // Add event listener
+                lbl.querySelector('input').addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        settings.hiddenSectors.delete(sector);
+                    } else {
+                        settings.hiddenSectors.add(sector);
+                    }
+                    updateGraphVisibility();
+                });
+            });
+
+            const Graph = ForceGraph3D()
+                (document.getElementById('3d-graph'))
+                .graphData(gData)
+                .nodeId('id')
+                .nodeLabel(node => `<div style="background:rgba(0,0,0,0.8); padding:5px; border-radius:4px; font-family:sans-serif;">${node.name}</div>`)
+                .nodeVisibility(node => {
+                    const conn = linksCount[node.id] || 0;
+                    if (conn < settings.minConnections) return false;
+                    if (settings.hiddenSectors.has(node.group)) return false;
+                    return true;
+                })
+                .linkVisibility(link => {
+                    if (settings.hideAllLinks) return false;
+
+                    const sourceNode = typeof link.source === 'object' ? link.source : gData.nodes.find(n => n.id === link.source);
+                    const targetNode = typeof link.target === 'object' ? link.target : gData.nodes.find(n => n.id === link.target);
+                    
+                    if (!sourceNode || !targetNode) return true;
+                    
+                    if (settings.interGroupOnly && sourceNode.group === targetNode.group) return false;
+
+                    const sourceConn = linksCount[sourceNode.id] || 0;
+                    const targetConn = linksCount[targetNode.id] || 0;
+                    
+                    if (sourceConn < settings.minConnections || targetConn < settings.minConnections) return false;
+                    if (settings.hiddenSectors.has(sourceNode.group) || settings.hiddenSectors.has(targetNode.group)) return false;
+                    return true;
+                })
+                .nodeThreeObject(node => {
+                    let geometry;
+                    switch (node.type) {
+                        case 'FOUND': geometry = sphereGeo; break;
+                        case 'DERIV': geometry = boxGeo; break;
+                        case 'AUDIT': geometry = tetraGeo; break;
+                        case 'SPEC': geometry = octaGeo; break;
+                        case 'EXPLR': geometry = cylinderGeo; break;
+                        default: geometry = icosaGeo; break;
+                    }
+                    
+                    const mat = materials[node.group] || materials['default'];
+                    const mesh = new THREE.Mesh(geometry, mat);
+                    
+                    // Scale node slightly based on connections (hub size)
+                    const count = linksCount[node.id] || 0;
+                    const scale = 1 + (Math.min(count, 30) / 15);
+                    mesh.scale.set(scale, scale, scale);
+                    
+                    return mesh;
+                })
+                .linkDirectionalParticles(2)
+                .linkDirectionalParticleWidth(1.2)
+                .linkDirectionalParticleColor(() => '#58a6ff')
+                .linkDirectionalParticleSpeed(() => settings.particleSpeed)
+                .linkDirectionalArrowLength(4)
+                .linkDirectionalArrowRelPos(1)
+                .linkColor(() => 'rgba(255,255,255,0.1)')
+                .onNodeClick(node => {
+                    // Aim at node from outside it
+                    const distance = 80;
+                    const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
+                    
+                    const newPos = node.x || node.y || node.z
+                        ? { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }
+                        : { x: 0, y: 0, z: distance }; // special case if node is at (0,0,0)
+                        
+                    Graph.cameraPosition(
+                        newPos, 
+                        node, // lookAt ({ x, y, z })
+                        2000  // ms transition duration
+                    );
+                })
+                .onNodeHover(node => {
+                    const uiDetails = document.getElementById('node-details');
+                    if (node) {
+                        uiDetails.style.display = 'block';
+                        document.getElementById('node-title').textContent = node.name;
+                        document.getElementById('node-meta').textContent = `Math Group: ${node.group} | Type: ${node.type}`;
+                        document.getElementById('node-path').textContent = `Path: ${node.path}`;
+                        const connections = linksCount[node.id] || 0;
+                        document.getElementById('node-links').textContent = `Connections: ${connections}`;
+                        uiDetails.style.borderLeftColor = getNodeColor(node);
+                    } else {
+                        uiDetails.style.display = 'none';
+                    }
+                });
+                
+            // Initial physics forces
+            Graph.d3Force('charge').strength(settings.charge);
+            Graph.d3Force('link').distance(settings.linkDistance);
+
+            // Add custom grouping force
+            Graph.d3Force('grouping', (alpha) => {
+                if (!settings.separateGroups) return;
+                const nodes = Graph.graphData().nodes;
+                for (let i = 0; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    const focus = groupFoci[node.group];
+                    if (focus) {
+                        node.vx += (focus.x - node.x) * alpha * 0.1;
+                        node.vy += (focus.y - node.y) * alpha * 0.1;
+                        node.vz += (focus.z - node.z) * alpha * 0.1;
+                    }
+                }
+            });
+
+            // --- Control Panel Listeners ---
+            
+            function updateGraphVisibility() {
+                Graph.nodeVisibility(Graph.nodeVisibility());
+                Graph.linkVisibility(Graph.linkVisibility());
+            }
+
+            document.getElementById('toggle-islands').addEventListener('change', (e) => {
+                settings.separateGroups = e.target.checked;
+                Graph.d3ReheatSimulation();
+            });
+
+            document.getElementById('toggle-hide-links').addEventListener('change', (e) => {
+                settings.hideAllLinks = e.target.checked;
+                updateGraphVisibility();
+            });
+
+            document.getElementById('toggle-inter-links').addEventListener('change', (e) => {
+                settings.interGroupOnly = e.target.checked;
+                updateGraphVisibility();
+            });
+
+            // Flow Speed Slider
+            const speedSlider = document.getElementById('particle-speed');
+            const speedVal = document.getElementById('val-speed');
+            speedSlider.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                speedVal.textContent = val;
+                settings.particleSpeed = val * 0.001;
+                // Force link redraw
+                Graph.linkDirectionalParticleSpeed(Graph.linkDirectionalParticleSpeed());
+            });
+
+            // Min Connections Slider
+            const minConnSlider = document.getElementById('min-conn');
+            const minConnVal = document.getElementById('val-min-conn');
+            minConnSlider.addEventListener('input', (e) => {
+                settings.minConnections = parseInt(e.target.value);
+                minConnVal.textContent = settings.minConnections;
+                updateGraphVisibility();
+            });
+
+            // Charge Slider
+            const chargeSlider = document.getElementById('charge');
+            const chargeVal = document.getElementById('val-charge');
+            chargeSlider.addEventListener('input', (e) => {
+                settings.charge = parseInt(e.target.value);
+                chargeVal.textContent = settings.charge;
+                Graph.d3Force('charge').strength(settings.charge);
+                Graph.d3ReheatSimulation();
+            });
+
+            // Link Distance Slider
+            const linkDistSlider = document.getElementById('link-dist');
+            const linkDistVal = document.getElementById('val-link');
+            linkDistSlider.addEventListener('input', (e) => {
+                settings.linkDistance = parseInt(e.target.value);
+                linkDistVal.textContent = settings.linkDistance;
+                Graph.d3Force('link').distance(settings.linkDistance);
+                Graph.d3ReheatSimulation();
+            });
+
+        });
+    </script>
+</body>
+</html>

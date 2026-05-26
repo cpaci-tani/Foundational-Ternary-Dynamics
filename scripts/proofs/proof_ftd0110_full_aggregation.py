@@ -158,8 +158,8 @@ EMPIRICAL = [
 def main():
     print('=' * 78)
     print('PROOF Phase C: Cluster aggregation with Langevin equipartition framework')
-    print('=' * 78)
-    print(f'Lattice: L = {L_LATTICE}, c = 1/√3')
+    print('==============================================================================')
+    print(f'Lattice: L = {L_LATTICE}, c = 1/sqrt(3)')
     print()
     print('Computing G_L table...')
     gtable = green_table(L_LATTICE, max_dist=14)
@@ -168,12 +168,12 @@ def main():
 
     # Total field energy via the table
     total_E = total_field_energy(gtable)
-    print(f'  total_field_E = {total_E:.6f}  (sum |G_L(r)|² over |r|≤14)')
+    print(f'  total_field_E = {total_E:.6f}  (sum |G_L(r)|2 over |r|<=14)')
     print()
 
-    # Sanity check at central block: η(0) should give roughly k_linear = 1/4
+    # Sanity check at central block: eta(0) should give roughly k_linear = 1/4
     eta_0 = block_energy((0, 0, 0), gtable) / D_PER_SYMMETRY['O_h'] / total_E
-    print(f'  η(origin) = block_E(0) × (1/4) / total_E = {eta_0:.6f}')
+    print(f'  eta(origin) = block_E(0) * (1/4) / total_E = {eta_0:.6f}')
     print(f'    [Linear theorem at central block: k_linear = 1/4 = 0.250]')
     print()
 
@@ -189,15 +189,15 @@ def main():
 
     print()
     print('INTERPRETATION:')
-    print('  k_pred = Σ over cluster voxels of (block_E(x) × 1/d_G(x)) / total_E')
+    print('  k_pred = sum over cluster voxels of (block_E(x) * 1/d_G(x)) / total_E')
     print()
     print('  This is the Langevin-equipartition extension of the linear theorem.')
-    print('  At central block: 1/d_G = 1/4 → recovers k_linear = 1/4 directly.')
-    print('  At off-center blocks: 1/d_G < 1/4 → cluster contribution ↓ as far')
-    print('  blocks contribute, suggesting k(A) ↓ with A.')
+    print('  At central block: 1/d_G = 1/4 -> recovers k_linear = 1/4 directly.')
+    print('  At off-center blocks: 1/d_G < 1/4 -> cluster contribution decreases as far')
+    print('  blocks contribute, suggesting k(A) decreases with A.')
     print()
-    print('  If k_pred/k_emp ≈ 1 across A: framework supports cluster physics.')
-    print('  If k_pred ≠ k_emp (off by O(1)): framework is missing something.')
+    print('  If k_pred/k_emp ~= 1 across A: framework supports cluster physics.')
+    print('  If k_pred != k_emp (off by O(1)): framework is missing something.')
 
 
 if __name__ == '__main__':
