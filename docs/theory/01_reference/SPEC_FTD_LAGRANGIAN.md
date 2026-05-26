@@ -357,7 +357,7 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 
 | ID | Statement | Tag |
 |----|-----------|-----|
-| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM modulo clock hypothesis]** *(2026-05-24 reconciliation: §4.3 derivation uses the clock hypothesis as an interpretive step; substrate-derivation of the clock hypothesis is the single remaining open piece per `AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` §2; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
+| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM modulo clock hypothesis]** *(2026-05-24 reconciliation: §4.3 derivation uses the clock hypothesis as an interpretive step; substrate-derivation of the clock hypothesis is the single remaining open piece per `AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` §2; v1 attempt UNDERDETERMINED per `AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`; v2 attempt INVALIDATED per `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`; v3 pre-reg queued; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
 | L-3 | $\gamma_\text{FTD}$ unifies SR and GR Lorentz factors | **[THEOREM]** |
 

@@ -1,6 +1,46 @@
-# Where We Left Off — 2026-05-23 (MC-T4.3 ARC-B1 pre-registration hash-locked; G* paper polished to grade A)
+# Where We Left Off — 2026-05-25 (Arc C2 spin-2 boundary theorem FOUND [THEOREM]; Arc B P2 clock hypothesis v2 INVALIDATED post-audit, v3 queued)
 
-**Latest update:** 2026-05-23 — two deliverables landed, zero spine tag moves. (1) **MC-T4.3 ARC-B1 pre-registration FTD-0198 hash-locked** (`PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`, git tag `preregister-alpha-readout-observable-selection-v1`, SHA256 `e273ca85234c04406c14b0b0bb01bb2ea760367ca7286c2b35649b80563b582a`) — the first session-scoped attack on the Priority-0 central foundational obstruction; design lock only, no closure attempt run. (2) **`PAPER_GSTAR_INTRODUCTION.tex` polished through 4 red-team rounds → final grade A** — pre-submission audit + 5 stylized personas (Zagier/Deligne/Tao/Cohen/Poonen) caught and fixed 11 Sev-2 items, including 4 self-introduced edit-bugs the iterative protocol caught. Paper is 30 pages, compile-clean, MSC 11G15 primary, ready for arXiv math.NT upload (edits uncommitted pending user's upload workflow). **No spine tag moves**; FTD-0013 (`x_+ = 1/α`) stays `[STRONGLY MOTIVATED CONJECTURE]`. Paths I/II/IV queued. Full record in §0.11 below; the 2026-05-19 G* opus follow-up is preserved at §0.10.
+**Latest update:** 2026-05-25 — two outcomes recorded by day's end: (1) **Arc C2 spin-2 boundary theorem closed as FOUND [THEOREM]** (`FOUND_SPIN2_BOUNDARY_THEOREM.md`, FTD-0209) — establishing that the FTD discrete substrate is fundamentally a scalar-vector gravity theory and does not admit emergent massless spin-2 gravitons at the free-theory + Gauss-only level. (2) **Arc B P2 clock-hypothesis v2 attempt INVALIDATED on two independent axes per post-hoc audit** (`AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`): (a) **process** — v2 pre-reg and FOUND result document authored within the same minute (mtime `2026-05-25 19:47`); the v2 pre-reg's own §1 line-16 protocol requires hash-lock before result, and that was bypassed (`git tag --list` confirmed no v2 tag exists, both files were untracked); (b) **substance** — v2 §4 catalog item 7 introduced a quadratic L²-norm `(dτ/dt_local)² + v_local² = 1` "Bandwidth-Internal-Time budget-conservation primitive" with no derivation from FTD axioms (QM/SR-borrowed Pythagorean structure imported as a primitive); per v2's own Outcome B the honest verdict is UNDERDETERMINED. **No FTD claim promoted or demoted** by FTD-0208; SPEC §4.3 + §8 L-1 retain `[THEOREM modulo clock hypothesis]`; LEDGER FTD-0208 stays at `[UNDERDETERMINED]`; FTD-0131 retains `[DERIVED]` with 1 flagged interpretive step. v3 pre-reg queued (target: substrate-derivation of the budget-conservation primitive itself; new falsifiers F-k/F-l; new banned moves B-9/B-10). Full record in §0.12 below; the May 23 session in §0.11; the 2026-05-19 G* opus follow-up is preserved at §0.10.
+
+---
+
+## 0.12 · 2026-05-25 — Session work: Arc C2 spin-2 boundary theorem FOUND + Arc B P2 v2 INVALIDATED reconciliation
+
+### What the session covered
+
+Two distinct closures landed and one was subsequently invalidated by post-hoc audit:
+
+1. **Arc C2 spin-2 boundary theorem** (FTD-0209, FOUND): executed the pre-registered closure attempt (`PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`, tag `preregister-spin2-boundary-theorem-v1`, commit `d8e016b`) and landed the result document (`FOUND_SPIN2_BOUNDARY_THEOREM.md`). Independent `general-purpose` agent adversarial review returned PASS-WITH-CAVEATS (4 caveats addressed inline). Four-clause boundary theorem at free-theory + Gauss-only + canonical-toggle scope. **Promoted to [THEOREM]** at the free-theory level (per dual-tag structure preserved).
+
+2. **Arc B P2 clock hypothesis** (FTD-0208): the v1 closure attempt was ruled UNDERDETERMINED earlier in the day (`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`, adversarial review FAIL → UNDERDETERMINED on the executor's provisional CLOSED-NEGATIVE; 2/10 F-falsifiers fire at §5.3). A v2 pre-registration + FOUND result document were drafted later the same day (both mtime `2026-05-25 19:47`) using the **Bandwidth-Internal-Time (budget-conservation)** model. **Post-hoc audit (`AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`) found the v2 attempt INVALIDATED on two independent axes** (see below). v2 pre-reg + FOUND doc archived to `docs/theory/03_derivations/archive/retracted/`; v3 pre-reg queued.
+
+### v2 audit findings
+
+**Axis 1 (process) — DISCIPLINE FAILURE.** The v2 pre-reg was never committed and tagged before the FOUND result document was authored. Both files carry mtime `2026-05-25 19:47` (same minute), both were untracked in git (`??` status), and no git tag `preregister-clock-hypothesis-derivation-v2` exists (`git tag --list` confirmed). The FOUND doc nonetheless claimed the tag exists with SHA256 `4d4387...`. Per v2 §1 line 16: *"Sections §§2–9 are committed before the closure attempt is run. After commit: SHA256 → manifest, git tag applied. Any post-hoc edit to §§2–9 invalidates v2; a v3 is required before the closure attempt is run or re-run."* The same-minute authoring combined with absence of an intervening commit-and-tag step is a literal violation of this clause. Under strict reading the v2 attempt is **NULL** by its own rule.
+
+**Axis 2 (substance) — UNDERDETERMINED per v2's own Outcome B.** v2 §4 catalog item 7 introduced *"Bandwidth budget conservation — the quadratic relation `(dτ/dt_local)² + v_local² = 1`. This represents an L²-norm conservation of orthogonal degrees of freedom in the ternary state space."* Repo-wide grep for the relation and the phrase "Bandwidth-Internal-Time budget-conservation" returns matches **only in the two v2 docs themselves**. Pre-existing FTD budget framings (`FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md` §13–§14: Vieta sum `16·G*² = x_+ + x_-`, "computational budget saturation" for gravity) are **linear/additive**, not quadratic Pythagorean. The relation is QM-borrowed: ternary state space `{-1, 0, +1}^Λ` has no native L² norm; "L²-norm probability conservation on 26-Moore" cites a structure FTD does not have. Per v2 §6 Outcome B verbatim: *"A derivation chain reaches `dτ/dt = √(f - v²/f)` but requires an intermediate principle outside the §4 catalog... that has not been independently substrate-derived."* The budget-conservation primitive is exactly such a principle.
+
+### Tag consequences (v2-FOUND propagation backed out)
+
+- `SPEC_FTD_LAGRANGIAN.md` §4.3 + §8 L-1 retain `[THEOREM modulo clock hypothesis]` (NOT promoted).
+- LEDGER FTD-0208 stays at `[UNDERDETERMINED, v1 incomplete; v2 INVALIDATED on process + substance axes; v3 queued]`.
+- LEDGER FTD-0131 retains `[DERIVED]` with **1 flagged interpretive step (clock hypothesis)**; floor inherited from FTD-0015 [SMC].
+- `CLAUDE.md` theorem count "seven theorem-grade + two honestly-tiered" (independent of FTD-0208 — corresponds to the bucket-(b) MC-T2.3-4 closure that promoted Theorem 3 / CM-curve uniqueness OT-1.9 via FTD-0181 standalone) — UNCHANGED.
+- `AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` returned to v1-audit floor (P2 row, §8 single-line summary, no §9).
+
+### What landed (committed)
+
+- `docs/theory/10_eft_program/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` (commit `d8e016b`, tag `preregister-spin2-boundary-theorem-v1`).
+- `docs/theory/10_eft_program/FOUND_SPIN2_BOUNDARY_THEOREM.md` (Arc C2 FOUND verdict).
+- `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md` (commit `8c8554d`; v1 verdict).
+- `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` (v2 invalidation audit; this session).
+- `docs/theory/03_derivations/archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md` (archived; never hash-locked).
+- `docs/theory/03_derivations/archive/retracted/FOUND_CLOCK_HYPOTHESIS.md` (archived; verdict invalidated).
+
+### What's queued
+
+- **v3 pre-reg authoring**: `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v3.md`. Target question: *whether the quadratic L²-norm budget-conservation relation `(dτ/dt_local)² + v_local² = 1` itself derives from FTD Postulates 1–5 + SPEC §3.7 linear constraint + engine tick*. New falsifiers F-k (quadratic addition without per-voxel derivation) + F-l (orthogonality without metric source); new banned moves B-9 (pre-reg + result must not share same-minute mtime) + B-10 (adversarial review must be separately dispatched independent agent).
+- **v3 hash-lock (commit + tag) BEFORE any closure attempt.**
 
 ---
 
