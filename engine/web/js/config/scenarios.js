@@ -7,7 +7,7 @@
  */
 
 export const QUANTUM_SCENARIO_DESCRIPTIONS = {
-    'quantum-born-rule': 'Born Rule Convergence: Tests that manifestation probability converges to \\(|J|^2\\). Runs N trials with random-phase Gaussian flux, accumulates positions, verifies Born rule emergence from deterministic lattice dynamics. [THEOREM]',
+    'quantum-born-rule': 'Born Rule Convergence: Tests that manifestation probability tracks \\(|J|^2\\). Runs N trials with random-phase Gaussian flux, accumulates positions, compares against the Born-rule prediction. [SELECTION] — convergence is observed but a ~10× lattice bias is currently unaccounted for; see FAQ "born-rule-emergence". Was mis-tagged [THEOREM] pre-2026-05-27 (audit P0-16).',
     'quantum-double-slit': 'Quantitative Double-Slit: Two coherent sources create interference on a detector screen. Measures fringe visibility \\(V = (I_{\\max}-I_{\\min})/(I_{\\max}+I_{\\min})\\) and fringe spacing. Tests wave-particle duality from the two-layer ontology.',
     'quantum-tunnel': 'Quantum Tunneling: Flux packet encounters a potential barrier (locked charge wall). Measures transmission T vs barrier width W. Expected: \\(T \\propto \\exp(-2\\kappa W)\\), demonstrating evanescent wave penetration.',
     'quantum-well': 'Particle in a Box: Broadband flux confined between reflective walls. FFT of time series reveals discrete frequency peaks at \\(f_n \\propto n^2\\), demonstrating energy quantization from boundary conditions.',
@@ -257,7 +257,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         desc: 'The 8 corner-neighbors at L2 distance \u221a3, forming a stella octangula (two interpenetrating tetrahedra). Shell 3 of the Moore neighborhood, corresponding to the body-centered-cubic (BCC) sublattice. In the Moore Layer Theorem, this shell maps to the SU(3) gauge sector. The BCC eigenvalue produces both Watson\u2019s integral W\u2083 and the SU(3) gauge group via the triple-cosine product (DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md).',
         epistemic: [
             ['Geometry (8 sites at distance \u221a3)', '[THEOREM]', 'The 8 corner-neighbors form a stella octangula \u2014 geometric fact of the cubic lattice.'],
-            ['SU(3) sector identification', '[THEOREM]', 'The BCC sublattice eigenvalue factorizes into the triple-cosine product that generates SU(3). See DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md.'],
+            ['SU(3) sector identification', '[SELECTION]', 'The BCC sublattice eigenvalue factorizes into a triple-cosine product (that factorization itself is [THEOREM]; see DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md). The identification of that product with the SM strong-force SU(3) gauge group is structurally consistent but not uniquely forced — matching the U(1)/SU(2) identifications in the sibling scenarios above (audit P0-16 correction, 2026-05-27).'],
         ],
     },
     's0-seed-moore-cell': {

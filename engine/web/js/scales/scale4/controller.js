@@ -2,7 +2,7 @@
  * Scale 4 (Planetary) Controller
  *
  * Owns the Scale 4 N-Body physics loop, scenario loading, and UI list mapping.
- * Extracted from app_dag.js to isolate planetary logic into a self-contained module.
+ * Extracted from app.js to isolate planetary logic into a self-contained module.
  */
 
 import { BaseLifecycleController } from '../../lifecycle.js';
@@ -40,8 +40,25 @@ class Scale4LifecycleController extends BaseLifecycleController {
         }
         this.renderer = new PlanetaryRenderer(viewport.scene, viewport.camera, viewport.renderer);
         this.trackThreeObject(this.renderer);
-        
+
         if (inspector) inspector.setPlanetaryContext(this.bridge, this.renderer);
+
+        // Save prior camera/controls state so destroy() can restore for other scales
+        // (audit P1-8 fix, 2026-05-27).
+        if (viewport && viewport.camera && !this._savedCamera) {
+            this._savedCamera = {
+                near: viewport.camera.near,
+                far: viewport.camera.far,
+                position: viewport.camera.position.clone(),
+            };
+        }
+        if (viewport && viewport.controls && !this._savedControls) {
+            this._savedControls = {
+                minDistance: viewport.controls.minDistance,
+                maxDistance: viewport.controls.maxDistance,
+                target: viewport.controls.target.clone(),
+            };
+        }
 
         // Camera Presets
         viewport.camera.near = 0.001;
@@ -152,6 +169,23 @@ class Scale4LifecycleController extends BaseLifecycleController {
         // Restore lattice particles visibility for other scales
         if (ctx && ctx.viewport && ctx.viewport.particles) {
             ctx.viewport.particles.visible = true;
+        }
+        // Restore camera/controls (audit P1-8 fix, 2026-05-27)
+        if (ctx && ctx.viewport) {
+            const viewport = ctx.viewport;
+            if (this._savedCamera && viewport.camera) {
+                viewport.camera.near = this._savedCamera.near;
+                viewport.camera.far = this._savedCamera.far;
+                viewport.camera.position.copy(this._savedCamera.position);
+                viewport.camera.updateProjectionMatrix();
+                this._savedCamera = null;
+            }
+            if (this._savedControls && viewport.controls) {
+                viewport.controls.minDistance = this._savedControls.minDistance;
+                viewport.controls.maxDistance = this._savedControls.maxDistance;
+                viewport.controls.target.copy(this._savedControls.target);
+                this._savedControls = null;
+            }
         }
     }
 }

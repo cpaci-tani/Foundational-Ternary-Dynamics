@@ -104,7 +104,7 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-strong"></span>Strong
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-weak"
-          title="[PROXY] Weak force ∝ (∇×J)·δ. The curl of J is a parity-odd pseudovector, non-zero wherever the flux has rotational structure — matches the weak interaction's chirality-dependent / parity-violating nature. Scaled by DUAL_DELTA so magnitude reads as 'weak' next to EM/strong.">
+          title="[PROXY — VISUALIZATION ONLY] ∇×J pseudovector field scaled by DUAL_DELTA ≈ 0.957. Renders the curl of J (parity-odd) as &quot;weak-like&quot; arrows. This is NOT the SM weak force — FTD's weak interaction lives in state transmutation (weak_transmutation toggle), not a vector field. Label retained for slot consistency; audit P1-17 clarification, 2026-05-27.">
         <span class="field-swatch field-swatch-weak"></span>Weak
       </button>
     </div>
@@ -204,11 +204,11 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-dualj"></span>Dual J
       </button>
       <button class="view-toggle field-toggle" id="toggle-chirality"
-          title="Chirality field: |J_L| − |J_R| (net handedness)">
+          title="[PROXY] Chirality magnitude proxy: |J| · δ where δ = DUAL_DELTA ≈ 0.957. The true (E_L − E_R)/(E_L + E_R) handedness diagnostic lives in the energy budget; this overlay renders the scalar magnitude of the chiral channel, not the L−R difference (audit P1-18 correction, 2026-05-27).">
         <span class="field-swatch field-swatch-chirality"></span>Chirality
       </button>
       <button class="view-toggle field-toggle" id="toggle-dark-halo"
-          title="Sub-threshold flux envelope — gravitates but does not manifest (dark matter analogue)">
+          title="[PROXY] Sub-threshold flux envelope: voxels where |J| &lt; K_GENESIS rendered as a halo of points. Pedagogical analogue for &quot;dark&quot; (un-manifested) matter; NOT the 17/27 Moore-shell DM_FRACTION derivation — that constant lives in the cosmology card, not this overlay.">
         <span class="field-swatch field-swatch-dm-halo"></span>DM Halo
       </button>
       <button class="view-toggle field-toggle" id="toggle-genesis-iso"
@@ -220,7 +220,7 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-damping"></span>Damping
       </button>
       <button class="view-toggle field-toggle" id="toggle-confinement"
-          title="SU(3) confinement — flux strings connecting color-charged pairs">
+          title="[PROXY] Pair-proximity glyphs: lines drawn between every particle pair within a fixed L² radius (≈ √120 voxels). Pedagogically suggests color-flux strings but is NOT the area-law / Wilson-loop σ = 0.209 confinement claim — implementation is a distance heuristic only.">
         <span class="field-swatch field-swatch-confinement"></span>Confinement
       </button>
       <button class="view-toggle field-toggle" id="toggle-horizon"

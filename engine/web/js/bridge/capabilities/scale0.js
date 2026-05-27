@@ -11,7 +11,7 @@
  *          ../mock-bridge.js, ../wasm-bridge.js (the bridges this wraps).
  *
  * Phase 2c of the refactor sweep extracted createScale0Capabilities
- * from wasm-bridge-dag.js. Body unchanged — every method delegates to
+ * from bridge-init.js. Body unchanged — every method delegates to
  * the underlying bridge instance via closure capture.
  */
 

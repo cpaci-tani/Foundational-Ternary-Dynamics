@@ -8,7 +8,7 @@
  * @related ./scale0.js, ./scale2.js (sibling factories).
  *
  * Phase 2c of the refactor sweep extracted createScale1Capabilities
- * from wasm-bridge-dag.js. Body unchanged.
+ * from bridge-init.js. Body unchanged.
  */
 
 export function createScale1Capabilities(bridge) {

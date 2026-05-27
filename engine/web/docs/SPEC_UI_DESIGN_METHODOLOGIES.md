@@ -396,7 +396,7 @@ A custom component is ready only if all of these are true:
 - it defines empty, loading, disabled, and selected states as needed
 - it is keyboard and touch usable
 - it does not require unrelated global CSS to look correct
-- it does not force `index.html` or `app_dag.js` to know its internal DOM structure
+- it does not force `index.html` or `app.js` to know its internal DOM structure
 - it has a clear mount contract
 - it can be removed or replaced without breaking the shell
 

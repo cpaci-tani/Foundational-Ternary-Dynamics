@@ -72,9 +72,19 @@ function buildSiteData() {
 }
 
 function computeInversionParity(x, y, z) {
-    // Sites come in inversion pairs (x,y,z) <-> (-x,-y,-z).
-    // Classify gerade (even under inversion) vs ungerade (odd).
-    // Convention: site with first nonzero coord positive is gerade.
+    // Sites come in inversion pairs (x,y,z) <-> (-x,-y,-z). This function
+    // partitions each pair into an "orbit representative" (first nonzero
+    // coord positive) and its "antipode" — a fundamental domain of the
+    // inversion operator.
+    //
+    // ⚠ NAMING CAVEAT (audit P1-7, 2026-05-27): the historical labels
+    // 'gerade'/'ungerade' are RETAINED for backward compatibility with the
+    // UI toolbar (id="meta-toggle-gerade") and pedagogy panel, but this
+    // is NOT representation-theoretic g/u parity — individual sites are
+    // not g or u (the irreps living on them are; sites lie on inversion
+    // ORBITS). 'gerade' here means "orbit representative", 'ungerade'
+    // means "antipode". The visual 13+13 split reflects the fundamental
+    // domain count, which IS the canonical content of the partition.
     if (x > 0) return 'gerade';
     if (x < 0) return 'ungerade';
     if (y > 0) return 'gerade';
@@ -140,6 +150,19 @@ export class MetaUnit {
         shells.cuboctahedron.name = 'shell_cuboctahedron';
         shells.cube.name = 'shell_cube';
 
+        // Shell → canonical sublattice mapping per Moore Layer Theorem §4:
+        //   center           → central voxel
+        //   octahedron (k=1) → SC (simple cubic) sublattice
+        //   cuboctahedron (k=2) → FCC (face-centered cubic) sublattice
+        //   cube (k=3)       → BCC (body-centered cubic) sublattice
+        // The pre-2026-05-27 code labelled by coord-sum parity, which got
+        // cube corners and octahedral sites swapped (audit P0-17).
+        const _SHELL_TO_SUBLATTICE = {
+            center: 'central',
+            octahedron: 'SC',
+            cuboctahedron: 'FCC',
+            cube: 'BCC',
+        };
         for (const site of this._sites) {
             const mesh = makeSphere(site.radius, site.color);
             mesh.position.set(site.x * SCALE, site.y * SCALE, site.z * SCALE);
@@ -147,7 +170,10 @@ export class MetaUnit {
                 position: [site.x, site.y, site.z],
                 shell: site.shell,
                 distance: site.distance,
-                sublattice: site.parity === 'even' ? 'BCC' : 'FCC',
+                sublattice: _SHELL_TO_SUBLATTICE[site.shell] || 'unknown',
+                // Coord-sum parity preserved separately for the 13+13
+                // visual partition (renamed from misleading 'BCC/FCC' label).
+                coordSumParity: site.parity,
                 stabilizer: site.stabilizer,
                 irrep: site.irrep,
             };

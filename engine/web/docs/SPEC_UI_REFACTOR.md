@@ -85,7 +85,7 @@ Target interface:
 }
 ```
 
-`app_dag.js` remains the composition root and scheduler host, but not the owner of scale markup.
+`app.js` remains the composition root and scheduler host, but not the owner of scale markup.
 
 ## 3. Target Folder Structure
 
@@ -155,7 +155,7 @@ engine/web/
 │           ├── scale11/
 │           └── scale12/
 └── js/
-    ├── app_dag.js
+    ├── app.js
     ├── dom-utils.js
     ├── viewport.js
     ├── ui/
@@ -468,7 +468,7 @@ Target split:
 
 Current:
 - tab bar and panel area live in `index.html`
-- tab behavior is handled in `app_dag.js`
+- tab behavior is handled in `app.js`
 
 Target split:
 - `js/ui/components/workspace-tabs/component.js`
@@ -519,8 +519,8 @@ This is the implementation order. Each step should leave the app runnable.
    - keep current IDs alive
    - add shell mount roots
    - load new shell CSS after tokens/theme CSS
-   - load new shell JS entry through `app_dag.js`
-5. Update [app_dag.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app_dag.js):
+   - load new shell JS entry through `app.js`
+5. Update [app.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app.js):
    - instantiate `AppShell`
    - move shell DOM lookup into a shell adapter
    - keep old behavior intact while the shell mirrors existing DOM
@@ -575,7 +575,7 @@ Files to add:
 
 Files to update:
 - [index.html](/C:/Users/cpaci/Desktop/ftd/engine/web/index.html)
-- [app_dag.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app_dag.js)
+- [app.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app.js)
 
 Work:
 - remove inline loading overlay markup and script
@@ -597,7 +597,7 @@ Files to add:
 - `engine/web/js/ui/shell/panel-dock-controller.js`
 
 Files to update:
-- [app_dag.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app_dag.js)
+- [app.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app.js)
 
 Work:
 - convert tab visibility logic into registry-driven definitions
@@ -629,7 +629,7 @@ Files to add:
 
 Files to update:
 - [index.html](/C:/Users/cpaci/Desktop/ftd/engine/web/index.html)
-- [app_dag.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app_dag.js)
+- [app.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app.js)
 - [charts.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/charts.js)
 - [diagnostics.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/diagnostics.js)
 - [inspector.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/inspector.js)
@@ -664,7 +664,7 @@ Scale-owned files to add:
 Files to update:
 - [index.html](/C:/Users/cpaci/Desktop/ftd/engine/web/index.html)
 - [viewport.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/viewport.js)
-- [app_dag.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app_dag.js)
+- [app.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app.js)
 - scale controllers under `engine/web/js/scales/*/controller.js`
 
 Work:
@@ -689,7 +689,7 @@ Files to add:
 
 Files to update:
 - scale controllers under `engine/web/js/scales/*/controller.js`
-- [app_dag.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app_dag.js)
+- [app.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app.js)
 
 Work:
 - move scenario selectors and scale-specific toolbar controls out of the shell
@@ -712,7 +712,7 @@ Files to add:
 
 Files to update:
 - [index.html](/C:/Users/cpaci/Desktop/ftd/engine/web/index.html)
-- [app_dag.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app_dag.js)
+- [app.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app.js)
 - [engine/web/js/scales/scale0/controller.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/scales/scale0/controller.js)
 - [engine/web/js/scales/scale0/scenario-registry.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/scales/scale0/scenario-registry.js)
 - files under `engine/web/js/scales/scale0/ui/`
@@ -767,7 +767,7 @@ Exit criterion:
 ### Files that remain global
 
 - [index.html](/C:/Users/cpaci/Desktop/ftd/engine/web/index.html)
-- [js/app_dag.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app_dag.js)
+- [js/app.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/app.js)
 - [js/viewport.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/viewport.js)
 - [css/tokens.css](/C:/Users/cpaci/Desktop/ftd/engine/web/css/tokens.css)
 - [css/scale-visibility.css](/C:/Users/cpaci/Desktop/ftd/engine/web/css/scale-visibility.css)
@@ -852,7 +852,7 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 0 | Shell JS/CSS skeleton, AppShell instantiated in `app_dag.js` | ✅ Done |
+| 0 | Shell JS/CSS skeleton, AppShell instantiated in `app.js` | ✅ Done |
 | 1 | Shared CSS primitives (button, toggle, slider, card, etc.) | ✅ Done |
 | 2 | Shell components extracted (topbar, panel-dock, workspace-tabs, loading-overlay, viewport-frame) | ✅ Done |
 | 3 | Registry-based panel system (toolbar-registry, panel-registry, overlay-registry) | ✅ Done |
@@ -878,12 +878,12 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 - ✅ **Charts panel** componentized — `js/ui/panels/charts-panel/{component.js,template.js}`; `<div id="panel-charts">` in `index.html` reduced to empty mount root
 - ✅ **Lagrangian panel** componentized — `js/ui/panels/lagrangian-panel/{component.js,template.js}`; mount root only in `index.html`
 - ✅ **Consciousness panel** componentized — `js/ui/panels/consciousness-panel/{component.js,template.js}`; 140 lines of subtab/canvas markup removed from `index.html`
-- ✅ **Settings modal** componentized — `js/ui/components/settings-modal/{component.js,template.js}`; mounted by `initSettingsModal()` in `app_dag.js`, 80 lines of theme swatches + scale slider removed from `index.html`
+- ✅ **Settings modal** componentized — `js/ui/components/settings-modal/{component.js,template.js}`; mounted by `initSettingsModal()` in `app.js`, 80 lines of theme swatches + scale slider removed from `index.html`
 - ✅ **`index.html` shrunk** from 516 → 187 lines (−64%)
 - ✅ **`layout.css` retired** — content migrated: accessibility + theme transitions + `#app` root → `tokens.css`; theme-specific `.card` rules → `themes/{light,parchment}.css`; legacy class-based scale-visibility rules dropped (redundant with `data-active-scale` canonical rules + JS `applyScaleFilter`). File kept as a stub so cached HTML continues to 200 OK.
 - ✅ Browser verification — preview boot clean (0 console errors, 40/40 stylesheets load), scale switching (Scale 0 → Scale 11) preserves correct tab filtering, panel mounts, and viewport rendering
-- ✅ **Scale 0 controls fully modularised** — all Scale 0 control-panel wiring moved out of `app_dag.js` into a dedicated [scales/scale0/ui/controls/wire.js](../js/scales/scale0/ui/controls/wire.js):
-  - **18 physics toggles** (previously 14 were wired in `app_dag.js` and 4 new ones — `t-color-forces`, `t-strong-force`, `t-exchange`, `t-weak` — existed in the markup but had no event handlers; now all wired from `SCALE0_TOGGLES` config as the single source of truth)
+- ✅ **Scale 0 controls fully modularised** — all Scale 0 control-panel wiring moved out of `app.js` into a dedicated [scales/scale0/ui/controls/wire.js](../js/scales/scale0/ui/controls/wire.js):
+  - **18 physics toggles** (previously 14 were wired in `app.js` and 4 new ones — `t-color-forces`, `t-strong-force`, `t-exchange`, `t-weak` — existed in the markup but had no event handlers; now all wired from `SCALE0_TOGGLES` config as the single source of truth)
   - **Injection controls** (`inj-state-pos/neg`, `inj-x/y/z`, `btn-center`, `btn-random`, `btn-inject`, `btn-inject-wave`, `btn-inject-flux`, `btn-inject-pair`)
   - **Parameter sliders** (`combo-kb`, `combo-gn`, `combo-damp`)
   - **Flux volume controls** (`flux-shape-select`, `flux-opacity`, `flux-point-scale`, `flux-threshold`, `flux-scenario-scale`)
@@ -891,9 +891,9 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 
   Called from `Scale0Controller.bindUI()` via `wireScale0Controls(ctx, { setLatticeNeedsUpload })`. Uses live-accessor `ctx` so bridge reassignment during scale switches stays in sync.
 
-  Also removed **dead wiring** from `app_dag.js` for elements that no longer exist in the markup: `particle-shape`, `size-opacity`, `size-global`, `size-manifested`, `size-void`, `s0-dt-slider`, `btn-enable-all`, `btn-disable-all`, `btn-clear-particles`, `_visualSettings` hook, plus the dead `loadScenario`/`_markScenarioOverrides`/`_syncComboSliders` trio that was commented "DEAD" but never deleted. `app_dag.js`'s `wireControls()` now handles only Scale 1 (PE) and Scale 2/3 (AE) wiring.
+  Also removed **dead wiring** from `app.js` for elements that no longer exist in the markup: `particle-shape`, `size-opacity`, `size-global`, `size-manifested`, `size-void`, `s0-dt-slider`, `btn-enable-all`, `btn-disable-all`, `btn-clear-particles`, `_visualSettings` hook, plus the dead `loadScenario`/`_markScenarioOverrides`/`_syncComboSliders` trio that was commented "DEAD" but never deleted. `app.js`'s `wireControls()` now handles only Scale 1 (PE) and Scale 2/3 (AE) wiring.
 
-  Net effect: `app_dag.js` shrunk ~340 lines; Scale 0 is now architecturally self-contained for its control-panel interactions.
+  Net effect: `app.js` shrunk ~340 lines; Scale 0 is now architecturally self-contained for its control-panel interactions.
 
 ---
 
@@ -962,4 +962,4 @@ telemetryHub.resetScale(0);  // clears Scale 0 buffers on scenario change
 telemetryHub.resetAll();     // clears all scales on engine mode switch
 ```
 
-`clearCharts()` in `app_dag.js` calls `telemetryHub.resetScale(0)` — this is the only needed call site for Scale 0 resets.
+`clearCharts()` in `app.js` calls `telemetryHub.resetScale(0)` — this is the only needed call site for Scale 0 resets.

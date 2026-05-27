@@ -529,12 +529,12 @@ export function getCosmicInfoPanelTemplate() {
                     <tr>
                         <td class="panel-resource-key">DM frac</td>
                         <td>= 17/27 &asymp; 63%</td>
-                        <td class="panel-resource-note">Moore theorem</td>
+                        <td class="panel-resource-note" title="Moore-shell selection; does NOT match Planck 2018 observed Ω_DM/Ω_m ≈ 84%. See FAQ 'dark-matter-17-27'.">Moore-shell [SELECTION]</td>
                     </tr>
                     <tr>
                         <td class="panel-resource-key">&gamma;</td>
                         <td>= (D+2)/D = 5/3</td>
-                        <td class="panel-resource-note">Adiabatic index</td>
+                        <td class="panel-resource-note">Adiabatic index [SELECTION]</td>
                     </tr>
                     <tr>
                         <td class="panel-resource-key">c</td>
@@ -542,9 +542,9 @@ export function getCosmicInfoPanelTemplate() {
                         <td class="panel-resource-note">CFL speed</td>
                     </tr>
                     <tr>
-                        <td class="panel-resource-key">r<sub>s</sub></td>
-                        <td>= 2G<sub>N</sub>M</td>
-                        <td class="panel-resource-note">Schwarzschild</td>
+                        <td class="panel-resource-key">r<sub>h</sub></td>
+                        <td>&asymp; &#8731;M &middot; 0.12</td>
+                        <td class="panel-resource-note" title="Visual horizon radius (constant-density approx ∝M^(1/3)). NOT the physical Schwarzschild r_s = 2GM/c² — see audit P0-7.">BH display r [SELECTION]</td>
                     </tr>
                 </table>
                 <div class="panel-resource-divider">

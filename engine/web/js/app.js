@@ -135,7 +135,7 @@ const _aeLegendZArr = [];        // reusable sorted array for AE legend key
 // lives in Scale0Controller. Read/write via the controller's exported
 // getFieldState() / setFieldToggle() API. The fluxMock now lives entirely
 // inside `state.fluxMock` (see scales/scale0/state/store.js); the legacy
-// app_dag-level `_fluxMock` global was retired with the harness migration
+// app-level `_fluxMock` global was retired with the harness migration
 // cleanup and intercept removal.
 
 // Verification Lab (replaces the legacy Quantum Lab panel)
@@ -152,7 +152,7 @@ const _BH_MASS = 5000;             // MeV (pedagogical, not physical)
 const _BH_TEST_MASS = K_B;         // electron mass (MeV) for test particles
 
 // _recomputeAnyFieldActive() removed — this logic lives inside
-// Scale0Controller. The app_dag.js copy was never called and referenced
+// Scale0Controller. The app.js copy was never called and referenced
 // module-local flags that have since moved to the controller.
 
 /**
@@ -792,7 +792,8 @@ function wireToolbar() {
         planetarySelect.addEventListener('change', (e) => {
             running = false;
             updatePlayButton();
-            Scale4Controller.loadScenario({ viewport, inspector, running, ticksPerFrame, engineMode }, e.target.value);
+            // Pass live ctx (with getters) so setInterval closure reads live running/engineMode (audit P0-5 fix, 2026-05-27).
+            Scale4Controller.loadScenario(_makeCtx(), e.target.value);
         });
     }
 
@@ -1472,7 +1473,7 @@ function switchEngineMode(mode) {
     } else if (mode === 'molecules') {
         loadMoleculeScenario(document.getElementById('mol-scenario-select')?.value || 'mol-water');
     } else if (mode === 'planetary') {
-        Scale4Controller.loadScenario({ viewport, inspector, running, ticksPerFrame, engineMode }, document.getElementById('planetary-scenario-select')?.value || 'planetary-solar');
+        Scale4Controller.loadScenario(_makeCtx(), document.getElementById('planetary-scenario-select')?.value || 'planetary-solar');
     } else if (mode === 'cosmic') {
         Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
     } else if (mode === 'meta') {

@@ -471,7 +471,7 @@ export class Viewport {
 
     // ── Velocity Vectors / Trails ───────────────────────────────────────
     // Phase 3d: extracted to viewport/particle-renderer.js. These thin
-    // delegators preserve the public API for app_dag.js and panel code.
+    // delegators preserve the public API for app.js and panel code.
     updateVelocityVectors(positions, velocities, count) {
         this._particleRenderer.updateVelocityVectors(positions, velocities, count);
     }
@@ -1111,7 +1111,7 @@ export class Viewport {
 
     // ── Backward-compat getters/setters for Phase 3c extracted state ──
     // setEngineMode's hideAllOverlays helper, the dispose() flow, and
-    // various external panels (scale-N controllers, app_dag.js, etc.) read
+    // various external panels (scale-N controllers, app.js, etc.) read
     // these fields directly. Forward to FieldRenderer so the existing call
     // sites keep working without renaming. Remove once readers move to
     // `viewport._fieldRenderer.X`.

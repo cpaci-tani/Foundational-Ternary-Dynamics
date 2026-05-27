@@ -24,7 +24,7 @@
  * owns state, the tick schedule, telemetry, and the public API.
  */
 
-import { OMEGA_LAMBDA, OMEGA_MATTER, H0_LATTICE } from '../constants.js';
+import { OMEGA_LAMBDA, OMEGA_MATTER, H0_LATTICE, LATTICE_TO_SOLAR_MASS } from '../constants.js';
 
 import { runCosmicScenario } from './cosmic-scenarios/index.js';
 import { computeCosmicForces } from './cosmic-physics.js';
@@ -150,7 +150,7 @@ export class CosmicMockBridge {
                 }
             } else if (bhs.length === 1) {
                 tel['Status'] = 'Merger Complete';
-                tel['Singularity Mass'] = bhs[0].mass.toFixed(1) + ' M\u2299';
+                tel['Singularity Mass'] = (bhs[0].mass * LATTICE_TO_SOLAR_MASS).toFixed(1) + ' M\u2299';
             }
         } else if (name === 'cosmic-cartwheel-collision') {
             const bhs = this._bodies.filter(b => isBH(b.type));
@@ -172,7 +172,7 @@ export class CosmicMockBridge {
                 }
             }
             tel['Core Population (r<10)'] = coreStars;
-            tel['Core Density'] = (M_core / (4 / 3 * Math.PI * 1000)).toExponential(2) + ' M\u2299/lu\u00B3';
+            tel['Core Density'] = ((M_core * LATTICE_TO_SOLAR_MASS) / (4 / 3 * Math.PI * 1000)).toExponential(2) + ' M\u2299/lu\u00B3';
         } else if (name === 'cosmic-stellar-lifecycle') {
             const wd = this._bodies.filter(b => b.type === T.WHITE_DWARF || b.type === T.NEUTRON_STAR).length;
             const bh = this._bodies.filter(b => b.type === T.BLACK_HOLE).length;
@@ -181,14 +181,14 @@ export class CosmicMockBridge {
         } else if (name === 'cosmic-black-hole') {
             const bh = this._bodies.find(b => isBH(b.type));
             if (bh) {
-                tel['BH Mass'] = bh.mass.toFixed(2) + ' M\u2299';
+                tel['BH Mass'] = (bh.mass * LATTICE_TO_SOLAR_MASS).toFixed(2) + ' M\u2299';
                 tel['Accretion Disk Lum'] = (bh.luminosity || 0).toExponential(2) + ' W';
             }
         } else if (name === 'cosmic-ftd-collapse') {
             const bh = this._bodies.find(b => isBH(b.type));
             if (bh) {
                 tel['Status'] = 'Collapsed (Singularity Born)';
-                tel['BH Mass'] = bh.mass.toFixed(1) + ' M\u2299';
+                tel['BH Mass'] = (bh.mass * LATTICE_TO_SOLAR_MASS).toFixed(1) + ' M\u2299';
             } else {
                 tel['Status'] = 'Pre-Collapse (Increasing Density)';
             }

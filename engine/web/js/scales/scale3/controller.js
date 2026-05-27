@@ -32,7 +32,7 @@
  *   resetScale3(ctx)                - clear Scale 3-specific state
  *
  * ---------------------------------------------------------------
- * DELEGATION STUB: after wiring into app_dag.js:
+ * DELEGATION STUB: after wiring into app.js:
  *
  *   function loadMoleculeScenario(name) {
  *       return scale3.loadMoleculeScenario(ctx, name);
@@ -82,7 +82,7 @@ export function resetScale3(ctx) {
 // Exported: loadMoleculeScenario(ctx, name)
 // =====================================================================
 // Set up a molecule scenario in the AE engine.
-// Originally app_dag.js lines ~3913-3992.
+// Originally app.js lines ~3913-3992.
 //
 // Handles:
 //   - Data-driven molecular library (molecules.js): H2, H2O, ethanol, etc.
@@ -95,7 +95,7 @@ export function resetScale3(ctx) {
 // The render loop is delegated to animateAE() from Scale 2.
 //
 // NOTE: ctx.resetAllVisualState() is called first to clear cross-scale
-// visual state.  That function lives in app_dag.js.
+// visual state.  That function lives in app.js.
 
 export function loadMoleculeScenario(ctx, name) {
     const { bridge, viewport, inspector } = ctx;
@@ -180,7 +180,7 @@ export function loadMoleculeScenario(ctx, name) {
     if (initDiag.totalEnergy !== 0) _aeInitialEnergy = initDiag.totalEnergy;
 }
 
-// Re-export animateAE so app_dag.js can import it from either scale module.
+// Re-export animateAE so app.js can import it from either scale module.
 // Scale 3 uses the exact same render loop as Scale 2 -- no separate
 // animation function is needed.
 export { animateAE } from '../scale2/controller.js';

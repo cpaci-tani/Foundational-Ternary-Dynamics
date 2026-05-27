@@ -31,15 +31,19 @@
 // ── Bridge classes (Phase 2a + 2b) ──────────────────────────────────
 import { MockBridge } from './bridge/mock-bridge.js';
 import { WasmBridge } from './bridge/wasm-bridge.js';
+import { WebSocketBridge } from './ws-bridge.js';
 
 // ── Capability factories (Phase 2c) — installs the lazy
-//    `bridge.capabilities` getter on both prototypes so consumers see
-//    the symmetric Scale 0/1/2 surface (CONTRACTS.md §2). ────────────
+//    `bridge.capabilities` getter on all three bridge prototypes so
+//    consumers see the symmetric Scale 0/1/2 surface (CONTRACTS.md §2).
+//    Audit P0-4 fix (2026-05-27): WebSocketBridge previously lacked the
+//    getter, which made `bridge.capabilities.scale0` throw on native-GPU.
 import { installCapabilityGetter } from './bridge/capabilities/install.js';
 installCapabilityGetter(MockBridge.prototype);
 installCapabilityGetter(WasmBridge.prototype);
+installCapabilityGetter(WebSocketBridge.prototype);
 
 // ── Public re-exports ──────────────────────────────────────────────
-export { MockBridge, WasmBridge };
+export { MockBridge, WasmBridge, WebSocketBridge };
 export { CosmicMockBridge } from './bridge/mock-scale5.js';
 export { createBridge } from './bridge/bridge-factory.js';

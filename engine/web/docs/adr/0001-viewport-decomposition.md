@@ -11,7 +11,7 @@
 single `Viewport` class with ~70 methods that cover the entire scene
 graph and per-frame rendering for Scales 0-3 (lattice, particles,
 atoms, molecules). It is the largest single live module in the web
-engine after `wasm-bridge-dag.js`, and every scale controller
+engine after `bridge-init.js`, and every scale controller
 depends on it.
 
 The file mixes eight distinct concerns (see the categorized header at

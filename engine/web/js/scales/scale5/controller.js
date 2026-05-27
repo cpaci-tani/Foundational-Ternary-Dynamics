@@ -9,7 +9,7 @@
  * bodies as point clouds with type-coded colors (stars, gas, dark matter,
  * black holes).
  *
- * Physics preserved exactly from app_dag.js inline code:
+ * Physics preserved exactly from app.js inline code:
  *   - N-body ticks per frame (adjustable via ctx.ticksPerFrame)
  *   - Hubble parameter H(t), scale factor a(t)
  *   - Omega_matter, Omega_Lambda density fractions
@@ -59,12 +59,38 @@ class Scale5LifecycleController extends BaseLifecycleController {
         this.bridge = new CosmicMockBridge();
         this.bridge.setupScenario(scenarioName);
 
+        // Inform the inspector about the cosmic bridge so it can route
+        // queries to the right backend (audit P1-1 fix, 2026-05-27).
+        // Without this, the inspector keeps a stale reference to the
+        // global lattice bridge across all Scale 5 inspection.
+        if (ctx.inspectorRuntime?.setBridge) {
+            ctx.inspectorRuntime.setBridge(this.bridge);
+        } else if (ctx.inspector?.setBridge) {
+            ctx.inspector.setBridge(this.bridge);
+        }
+
         // Create cosmic renderer
         if (this.renderer) {
             this.renderer.dispose();
         }
         this.renderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer);
         this.trackThreeObject(this.renderer);
+
+        // Save prior camera state for destroy() to restore (audit P1-8, 2026-05-27)
+        if (viewport && viewport.camera && !this._savedCamera) {
+            this._savedCamera = {
+                near: viewport.camera.near,
+                far: viewport.camera.far,
+                position: viewport.camera.position.clone(),
+            };
+        }
+        if (viewport && viewport.controls && !this._savedControls) {
+            this._savedControls = {
+                minDistance: viewport.controls.minDistance,
+                maxDistance: viewport.controls.maxDistance,
+                target: viewport.controls.target.clone(),
+            };
+        }
 
         // Configure camera for cosmic scale
         viewport.camera.near = 0.1;
@@ -77,7 +103,12 @@ class Scale5LifecycleController extends BaseLifecycleController {
         const data = this.bridge.getCosmicData();
         this.renderer.update(data, this.bridge.getDiagnostics());
 
-        // Set camera preset based on scenario
+        // Set camera preset based on scenario. Note: 'cosmic-quasar' /
+        // 'quasar' preset was removed 2026-05-27 (audit W10) — the
+        // toolbar `<select>` never offered a quasar scenario, and the
+        // camera selector has no quasar option either, so the entry
+        // was unreachable. Binary AGN ('cosmic-binary-agn') exists and
+        // covers the quasar use case visually.
         const presetMap = {
             'cosmic-galaxy': 'galaxy',
             'cosmic-super-cluster': 'overview',
@@ -85,7 +116,6 @@ class Scale5LifecycleController extends BaseLifecycleController {
             'cosmic-web': 'overview',
             'cosmic-black-hole': 'blackhole',
             'cosmic-merger': 'merger',
-            'cosmic-quasar': 'quasar',
             'cosmic-stellar-lifecycle': 'overview',
             'cosmic-ftd-collapse': 'overview'
         };
@@ -124,6 +154,23 @@ class Scale5LifecycleController extends BaseLifecycleController {
         // Restore lattice particles visibility for other scales
         if (ctx && ctx.viewport && ctx.viewport.particles) {
             ctx.viewport.particles.visible = true;
+        }
+        // Restore camera/controls (audit P1-8 fix, 2026-05-27)
+        if (ctx && ctx.viewport) {
+            const viewport = ctx.viewport;
+            if (this._savedCamera && viewport.camera) {
+                viewport.camera.near = this._savedCamera.near;
+                viewport.camera.far = this._savedCamera.far;
+                viewport.camera.position.copy(this._savedCamera.position);
+                viewport.camera.updateProjectionMatrix();
+                this._savedCamera = null;
+            }
+            if (this._savedControls && viewport.controls) {
+                viewport.controls.minDistance = this._savedControls.minDistance;
+                viewport.controls.maxDistance = this._savedControls.maxDistance;
+                viewport.controls.target.copy(this._savedControls.target);
+                this._savedControls = null;
+            }
         }
     }
 }
@@ -165,10 +212,12 @@ export function animateCosmic(ctx) {
         const diag = bridge.getDiagnostics();
         renderer.update(data, diag);
 
-        // Compact toolbar telemetry
+        // Compact toolbar telemetry. Hubble parameter shows the static
+        // anchor H0_LATTICE — no Friedmann solver wires it into a(t)
+        // evolution yet (audit P0-9, 2026-05-27).
         _toolbarStatus.update('cosmic-tb-bodies', diag.bodyCount + ' bodies');
         _toolbarStatus.update('cosmic-tb-tick', 'T ' + diag.tick);
-        _toolbarStatus.update('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4));
+        _toolbarStatus.update('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4) + ' (anchor)');
 
         // Controls panel cards
         const c = diag.countsByType || [];

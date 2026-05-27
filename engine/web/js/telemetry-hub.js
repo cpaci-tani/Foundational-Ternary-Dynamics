@@ -321,7 +321,10 @@ export class TelemetryHub {
         if (!diag) return null;
         this.s5.diag = diag;
         this.csBodies.push(diag.bodyCount  || diag.count || 0);
-        this.csHubble.push(diag.hubble     || diag.hubbleParam || 0);
+        // Bridge emits diag.hubbleParameter; keep legacy aliases for forward-compat.
+        // (audit P0-3 fix, 2026-05-27 — csHubble was dead-on-arrival because
+        // neither 'hubble' nor 'hubbleParam' matched the emitted key.)
+        this.csHubble.push(diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0);
         this.csDM.push(    diag.darkMatter || diag.dmFraction  || 0);
         return diag;
     }
