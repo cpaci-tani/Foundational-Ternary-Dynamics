@@ -305,6 +305,16 @@ ftd_add_test(test_cluster_persistence_toggle_sweep tests/test_cluster_persistenc
 # fraction of original cluster voxels still manifested.
 ftd_add_test(test_cluster_mask_persistence tests/test_cluster_mask_persistence.cpp)
 
+# Class C Phase C.1 (FTD-0222 Discrete-Native Derivation Program):
+# Static cluster-cluster interaction Coulomb potential gradient force and Green's function recovery.
+ftd_add_test(test_cluster_interaction_static tests/test_cluster_interaction_static.cpp)
+
+# Class C Phase C.2: dynamic soliton-soliton (charge-charge) scattering deflection angles.
+ftd_add_test(test_cluster_interaction_dynamic tests/test_cluster_interaction_dynamic.cpp)
+
+# Class C Phase C.3: coupling readout sweeps for EM charge scaling and Yukawa fitting.
+ftd_add_test(test_coupling_readout_sweeps tests/test_coupling_readout_sweeps.cpp)
+
 # NOTE (2026-05-04 cleanup): the Phase B exploratory diagnostic-arc tests
 # (~26 files: test_cluster_gamma_t_exploratory, test_cluster_cooling_evap,
 # test_cluster_decay_channels, test_cluster_tau_amplitude_sweep,
