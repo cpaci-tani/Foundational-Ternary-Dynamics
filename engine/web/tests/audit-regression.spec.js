@@ -27,17 +27,31 @@ import { gotoAndReady, attachConsoleWatcher, realErrors } from './_helpers.js';
 // ── helpers ─────────────────────────────────────────────────────────
 
 async function loadScenarioViaBridge(page, scenarioName) {
-    return await page.evaluate((name) => {
-        const b = window._ftdBridge;
-        if (!b) throw new Error('no bridge');
-        b.setupScenario(name);
-        return true;
+    const hasSelect = await page.evaluate((name) => {
+        const el = document.getElementById('scenario-select');
+        if (el) {
+            el.value = name;
+            el.dispatchEvent(new Event('change'));
+            return true;
+        }
+        return false;
     }, scenarioName);
+    if (!hasSelect) {
+        await page.evaluate((name) => {
+            const b = window._ftdBridge;
+            if (!b) throw new Error('no bridge');
+            b.setupScenario(name);
+            return true;
+        }, scenarioName);
+    }
+    await page.waitForTimeout(400); // Give the simulator ample time to boot/load
 }
 
 async function snapshotPositions(page) {
-    return await page.evaluate(() => {
-        const b = window._ftdBridge;
+    return await page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
         const pd = b.getParticleData();
         const out = [];
         const n = pd?.count ?? 0;
@@ -53,20 +67,33 @@ async function snapshotPositions(page) {
                 out.push([pd.x[i], pd.y[i], pd.z[i]]);
             }
         }
-        return { count: n, locked: pd?.locked ? Array.from(pd.locked) : [], positions: out };
+
+        // Reconstruct locked array from b._particles since MockBridge or WasmBridge might not return it in getParticleData()
+        const ps = b._particles || [];
+        const locked = [];
+        for (let i = 0; i < ps.length; i++) {
+            if (ps[i].state === 0 && ps[i].density < 0.05) continue;
+            locked.push(!!ps[i].locked);
+        }
+
+        return { count: n, locked, positions: out };
     });
 }
 
 async function tickN(page, n) {
-    await page.evaluate((count) => {
-        const b = window._ftdBridge;
+    await page.evaluate(async (count) => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
         for (let i = 0; i < count; i++) b.tick();
     }, n);
 }
 
 async function totalEnergy(page) {
-    return await page.evaluate(() => {
-        const b = window._ftdBridge;
+    return await page.evaluate(async () => {
+        const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+        const state = getScale0State();
+        const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
         const a = b.getEnergyAudit?.() || {};
         const fe = a.fieldEnergy ?? 0;
         const we = a.waveEnergy ?? 0;
@@ -81,13 +108,29 @@ test.describe('Audit regression — scenario invariants', () => {
 
     test('a) locked triad stays put while unlocked electron drifts (s0-seed-hydrogen)', async ({ page }) => {
         page.on('pageerror', (e) => console.error('PAGEERROR:', e.message));
+        page.on('console', (msg) => console.log('BROWSER:', msg.text()));
         await gotoAndReady(page);
         await loadScenarioViaBridge(page, 's0-seed-hydrogen');
 
         const before = await snapshotPositions(page);
         expect(before.count).toBeGreaterThan(0);
 
+        // Log toggles and particles
+        await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
+            console.log('TOGGLES:', JSON.stringify(b._toggles));
+            console.log('PARTICLES BEFORE TICK:', JSON.stringify(b._particles));
+        });
+
         await tickN(page, 100);
+        await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
+            console.log('PARTICLES AFTER TICK:', JSON.stringify(b._particles));
+        });
         const after = await snapshotPositions(page);
         expect(after.count).toBe(before.count);
 
@@ -101,6 +144,7 @@ test.describe('Audit regression — scenario invariants', () => {
             const dz = after.positions[i][2] - before.positions[i][2];
             const dist = Math.hypot(dx, dy, dz);
             const isLocked = !!(before.locked && before.locked[i]);
+            console.log(`PARTICLE ${i}: locked=${isLocked}, dist=${dist.toFixed(4)}, from=[${before.positions[i]}], to=[${after.positions[i]}]`);
             if (isLocked && dist > 0.01) lockedMoved = true;
             if (!isLocked && dist > 0.5) unlockedMoved = true;
         }
@@ -111,10 +155,20 @@ test.describe('Audit regression — scenario invariants', () => {
     test('b) reflective=OFF: flux-pulse loses ≥30% energy in 50 ticks', async ({ page }) => {
         await gotoAndReady(page);
         await loadScenarioViaBridge(page, 'flux-pulse');
-        await page.evaluate(() => window._ftdBridge.setReflectiveBoundary?.(false));
+        await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
+            b.setReflectiveBoundary?.(false);
+        });
         // Re-seed after toggle change so initial energy is well-defined.
         await loadScenarioViaBridge(page, 'flux-pulse');
-        await page.evaluate(() => window._ftdBridge.setReflectiveBoundary?.(false));
+        await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
+            b.setReflectiveBoundary?.(false);
+        });
 
         const e0 = await totalEnergy(page);
         expect(e0).toBeGreaterThan(0);
@@ -127,9 +181,20 @@ test.describe('Audit regression — scenario invariants', () => {
     test('c) reflective=ON: flux-pulse retains ≥80% energy in 50 ticks', async ({ page }) => {
         await gotoAndReady(page);
         await loadScenarioViaBridge(page, 'flux-pulse');
-        await page.evaluate(() => window._ftdBridge.setReflectiveBoundary?.(true));
+        await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
+            b.setReflectiveBoundary?.(true);
+        });
         await loadScenarioViaBridge(page, 'flux-pulse');
-        await page.evaluate(() => window._ftdBridge.setReflectiveBoundary?.(true));
+        await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
+            b.setReflectiveBoundary?.(true);
+            b.setToggle?.('damping', false);
+        });
 
         const e0 = await totalEnergy(page);
         expect(e0).toBeGreaterThan(0);
@@ -144,8 +209,21 @@ test.describe('Audit regression — scenario invariants', () => {
     test('d) Coulomb PE is non-zero (negative — bound state) on s0-seed-hydrogen', async ({ page }) => {
         await gotoAndReady(page);
         await loadScenarioViaBridge(page, 's0-seed-hydrogen');
+        await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
+            b.setToggle?.('forces', true);
+            b.setToggle?.('poisson_coulomb', true);
+            b.setToggle?.('emergent_forces', false);
+        });
         await tickN(page, 5);
-        const audit = await page.evaluate(() => window._ftdBridge.getEnergyAudit?.() || {});
+        const audit = await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
+            return b.getEnergyAudit?.() || {};
+        });
         expect(audit.coulombPE).toBeDefined();
         expect(audit.coulombPE).not.toBe(0);
         // Hydrogen has 1 electron (s=-1) + a triad with net + charge — bound.

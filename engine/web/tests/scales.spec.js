@@ -45,7 +45,7 @@ test('index.html loads, bridge initializes, zero 404s', async ({ page }) => {
     expect(failures, `Failed requests: ${failures.join('\n')}`).toHaveLength(0);
 });
 
-const MODES = ['lattice', 'particles', 'atoms', 'molecules', 'planetary', 'cosmic', 'meta', 'consciousness'];
+const MODES = ['lattice', 'particles', 'atoms', 'molecules', 'planetary', 'cosmic', 'meta'];
 
 for (const mode of MODES) {
     test(`scale switch: ${mode} loads without errors`, async ({ page }) => {
@@ -72,65 +72,7 @@ for (const mode of MODES) {
     });
 }
 
-test('Scale 11 consciousness: listener count stable across 5 re-entries (Phase B.2)', async ({ page }) => {
-    await page.goto('/index.html');
-    await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
-        { timeout: 15_000 }).toBe(true);
-    // Warm up: enter/leave consciousness once BEFORE installing the patch so
-    // one-time first-load initialization lands on the untracked baseline.
-    await page.evaluate(async () => {
-        const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-        const eng = document.getElementById('engine-mode');
-        eng.value = 'consciousness';
-        eng.dispatchEvent(new Event('change', { bubbles: true }));
-        await sleep(800);
-        eng.value = 'lattice';
-        eng.dispatchEvent(new Event('change', { bubbles: true }));
-        await sleep(400);
-    });
 
-    const samples = await page.evaluate(async () => {
-        let adds = 0, rems = 0;
-        const origAdd = EventTarget.prototype.addEventListener;
-        const origRem = EventTarget.prototype.removeEventListener;
-        EventTarget.prototype.addEventListener = function (...a) { adds++; return origAdd.apply(this, a); };
-        EventTarget.prototype.removeEventListener = function (...a) { rems++; return origRem.apply(this, a); };
-
-        const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-        const eng = document.getElementById('engine-mode');
-
-        const cycleAdds = [];
-        const cycleRems = [];
-        for (let i = 0; i < 5; i++) {
-            eng.value = 'consciousness';
-            eng.dispatchEvent(new Event('change', { bubbles: true }));
-            await sleep(600);
-            eng.value = 'lattice';
-            eng.dispatchEvent(new Event('change', { bubbles: true }));
-            await sleep(400);
-            cycleAdds.push(adds);
-            cycleRems.push(rems);
-        }
-
-        EventTarget.prototype.addEventListener = origAdd;
-        EventTarget.prototype.removeEventListener = origRem;
-        return { cycleAdds, cycleRems };
-    });
-
-    // After warm-up, consciousness re-entries must be pure no-ops for the
-    // event-listener count. Phase B.2 keeps _csPedagogy alive, so wireSubTabs
-    // and ConsciousnessPedagogy() both run zero times on re-entry.
-    // Net = adds - rems should be 0 for every cycle (some internal churn
-    // from other scales may still add+remove symmetrically).
-    const nets = samples.cycleAdds.map((a, i) => a - samples.cycleRems[i]);
-    const firstNet = nets[0];
-    for (let i = 1; i < nets.length; i++) {
-        expect(nets[i],
-            `cycle ${i}: net listener count drifted from ${firstNet} to ${nets[i]} ` +
-            `(adds=${JSON.stringify(samples.cycleAdds)}, rems=${JSON.stringify(samples.cycleRems)})`)
-            .toBe(firstNet);
-    }
-});
 
 test('Scale 5 cosmic: no _cosmicInterval leak after Phase B.1', async ({ page }) => {
     await page.goto('/index.html');
@@ -248,8 +190,6 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
                 scale5Telemetry: !!document.getElementById('cosmic-telemetry'),
                 cosmicInfoPanel: !!document.getElementById('panel-cosmic-info'),
                 cosmicPanelDiagnostics: !!document.getElementById('cosmic-panel-diagnostics'),
-                scale11ScenarioSelect: !!document.getElementById('cs-scenario-select'),
-                scale11FigureSelect: !!document.getElementById('cs-figure-select'),
                 scale12MetaControls: !!document.getElementById('meta-controls'),
                 metaInfoPanel: !!document.getElementById('meta-info-panel'),
                 metaInspectPanel: !!document.getElementById('meta-inspect-panel'),
@@ -306,8 +246,6 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
     expect(shell.ui.scale5Telemetry).toBe(true);
     expect(shell.ui.cosmicInfoPanel).toBe(true);
     expect(shell.ui.cosmicPanelDiagnostics).toBe(true);
-    expect(shell.ui.scale11ScenarioSelect).toBe(true);
-    expect(shell.ui.scale11FigureSelect).toBe(true);
     expect(shell.ui.scale12MetaControls).toBe(true);
     expect(shell.ui.metaInfoPanel).toBe(true);
     expect(shell.ui.metaInspectPanel).toBe(true);
@@ -336,7 +274,7 @@ test('UI panel registry matches rendered shell tabs and panels', async ({ page }
         const validation = registry.validatePanelRegistry(panelArea);
         const tabs = Array.from(document.querySelectorAll('#tab-bar .tab')).map((tab) => ({
             panel: tab.dataset.panel,
-            label: tab.textContent?.trim() || '',
+            label: tab.querySelector('.tab-label')?.textContent?.trim() || tab.textContent?.trim() || '',
         }));
         const options = Array.from(document.querySelectorAll('#tab-select-mobile option')).map((option) => option.value);
         return {
@@ -773,7 +711,7 @@ test('Knowledge base opens as a single responsive library with shared content', 
     expect(planetaryScenarioState.readerTitle).toContain('TRAPPIST-1');
     expect(planetaryScenarioState.readerText.toLowerCase()).toContain('resonance');
 
-    await page.fill('#kb-sidebar-search', 'K_C');
+    await page.fill('#kb-sidebar-search', 'existential');
 
     const consciousnessScenarioState = await page.evaluate(() => ({
         resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
@@ -782,6 +720,6 @@ test('Knowledge base opens as a single responsive library with shared content', 
     }));
 
     expect(consciousnessScenarioState.resultCount).toBeGreaterThan(0);
-    expect(consciousnessScenarioState.readerTitle).toContain('Threshold Crossing');
-    expect(consciousnessScenarioState.readerText).toContain('Δ_k');
+    expect(consciousnessScenarioState.readerTitle).toContain('Meta / Existential Unit');
+    expect(consciousnessScenarioState.readerText).toContain('separate conceptual presentation layer');
 });

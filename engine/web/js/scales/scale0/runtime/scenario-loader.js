@@ -1,4 +1,4 @@
-import { MockBridge } from '../../../wasm-bridge-dag.js';
+import { MockBridge } from '../../../bridge-init.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';

@@ -22,7 +22,7 @@ function normalizeLabel(text) {
 }
 
 const SELECTOR_TOOLTIPS = [
-    ['#btn-play',       'Global play/pause. Freezes the whole simulation. Keyboard: Space.'],
+    ['#btn-play',       'Global play/pause. Freezes or resumes the simulation loop. Keyboard shortcut: Space.'],
     ['#btn-local-play', 'Local play/pause. Freezes scenario physics; visualization keeps animating. Keyboard: Shift+Space.'],
     ['#btn-step', 'Advance the simulation by exactly one step without entering continuous play mode. Keyboard shortcut: S.'],
     ['#btn-reset', 'Reset the active scale to its current scenario defaults. Keyboard shortcut: R.'],
@@ -138,7 +138,7 @@ const SCALE0_SECTION_TOOLTIPS = {
 // Scale 1 Particle Engine — conservation-summary rows. Each corresponds to
 // a class .pe-conservation-row block at the top of PE telemetry.
 const PE_ROW_TOOLTIPS = {
-    'Energy': 'Total particle-system energy KE + PE_coulomb + PE_gravity. In well-behaved closed scenarios this should be constant \u2014 watch it in combination with Drift below.',
+    'Energy': 'Total particle-engine energy KE + PE_coulomb + PE_gravity. In well-behaved closed scenarios this should be constant \u2014 watch it in combination with Drift below.',
     '|p|':    'Magnitude of the total linear momentum \u03a3 m\u1d62 v\u1d62. Conserved under translation invariance; drift here flags a broken Newton\'s-third-law pairing in the force calculation.',
     '|L|':    'Magnitude of the total angular momentum \u03a3 r\u1d62 \u00d7 m\u1d62 v\u1d62. Conserved under rotational invariance; useful for verifying orbit integrators.',
     'Drift':  'Relative energy drift (E \u2212 E\u2080)/|E\u2080| since the baseline tick. Under 0.01 % = excellent, 0.1 % = acceptable, \u226b 1 % = integrator needs shorter step.',

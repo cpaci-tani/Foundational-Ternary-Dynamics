@@ -6,7 +6,7 @@
 
 const VALID_MOUNTS = Object.freeze(['left', 'bottom', 'right']);
 const STORAGE_KEY = 'ftd.panel.mount';
-const DEFAULT_MOUNT = 'right'; // 'bottom' reserved for mobile sheet only
+const DEFAULT_MOUNT = 'bottom';
 
 export function isValidMount(value) {
     return typeof value === 'string' && VALID_MOUNTS.includes(value);

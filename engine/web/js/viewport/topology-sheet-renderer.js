@@ -98,6 +98,18 @@ export class TopologySheetRenderer {
         this._rampScratch = null;
     }
 
+    onLatticeSizeChanged(size, halfN) {
+        if (this._gravSurface) {
+            this._rebuildGravSurfaceIfResized();
+            if (this._gravPotData) {
+                this.updateGravPotential(this._gravPotData);
+            }
+        }
+        for (const key of Object.keys(this._topoSheets)) {
+            this._rebuildSheetIfResized(key);
+        }
+    }
+
     // ── Gravitational potential Φ (special-case rubber sheet) ──────────
 
     _buildGravSurface() {
@@ -474,5 +486,9 @@ export class TopologySheetRenderer {
         }
         this._topoSheets = {};
         this._scatterBufs = null;
+    }
+
+    destroy(ctx) {
+        this.dispose();
     }
 }

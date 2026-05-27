@@ -595,6 +595,67 @@ function renderCoulombEngineProbe(container, samples) {
     container.innerHTML = svg;
 }
 
+/**
+ * Render the circular lattice anisotropy decay curve over the radii samplers.
+ * Shows relative standard deviation σ_rel(r) recovering to SO(2) symmetry.
+ */
+function renderAnisotropyDecay(container, decayPoints) {
+    const W = 360;
+    const H = 130;
+    const margin = { top: 15, right: 14, bottom: 25, left: 50 };
+    const innerW = W - margin.left - margin.right;
+    const innerH = H - margin.top - margin.bottom;
+    const hasData = !!decayPoints && decayPoints.length > 0;
+
+    let rmin = 1.5, rmax = 8.5, amin = 0, amax = 100;
+    if (hasData) {
+        rmin = Math.min(...decayPoints.map(p => p.r));
+        rmax = Math.max(...decayPoints.map(p => p.r));
+        const anis = decayPoints.map(p => p.aniso);
+        amin = 0;
+        amax = Math.max(...anis) * 1.05 || 10;
+        if (amax < 10) amax = 10; // keep reasonable scale
+    }
+
+    const xpx = (r) => margin.left + ((r - rmin) / (rmax - rmin || 1)) * innerW;
+    const ypx = (aniso) => margin.top + (1 - (aniso - amin) / (amax - amin || 1)) * innerH;
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">`;
+    svg += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="1"/>`;
+    
+    // Y-axis tick labels
+    svg += `<text x="${margin.left - 6}" y="${margin.top + 4}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">${hasData ? amax.toFixed(1) + '%' : ''}</text>`;
+    svg += `<text x="${margin.left - 6}" y="${margin.top + innerH + 4}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">0%</text>`;
+    
+    // X-axis tick labels
+    svg += `<text x="${margin.left}" y="${margin.top + innerH + 14}" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">r=${rmin.toFixed(1)}a</text>`;
+    svg += `<text x="${margin.left + innerW}" y="${margin.top + innerH + 14}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">r=${rmax.toFixed(1)}a</text>`;
+    
+    // Axis titles
+    svg += `<text x="${margin.left + innerW / 2}" y="${H - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="10">Radius r from charge center</text>`;
+    
+    if (hasData) {
+        let path = '';
+        for (let i = 0; i < decayPoints.length; i++) {
+            const p = decayPoints[i];
+            const px = xpx(p.r).toFixed(2);
+            const py = ypx(p.aniso).toFixed(2);
+            path += (i === 0 ? 'M' : 'L') + px + ',' + py;
+        }
+        svg += `<path d="${path}" stroke="var(--accent)" stroke-width="1.8" fill="none"/>`;
+        
+        // draw data dots
+        for (const p of decayPoints) {
+            const cx = xpx(p.r).toFixed(2);
+            const cy = ypx(p.aniso).toFixed(2);
+            svg += `<circle cx="${cx}" cy="${cy}" r="3" fill="var(--accent)"/>`;
+        }
+    }
+    
+    svg += `</svg>`;
+    container.innerHTML = svg;
+}
+
 // ── Bell CHSH ───────────────────────────────────────────────────────
 
 /**

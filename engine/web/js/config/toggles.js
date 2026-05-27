@@ -22,7 +22,7 @@ export const SCALE0_TOGGLES = [
     ['movement',         true,  't-movement'],
     ['poisson_coulomb',  true,  't-poisson'],
     ['lorentz_force',    false, 't-lorentz'],
-    ['selective_damping',false, 't-selective'],
+    ['selective_damping', true,  't-selective'],
     ['larmor_radiation', false, 't-larmor'],
     ['dual_substrate',   false, 't-dual'],
     ['confinement',      false, 't-confinement'],

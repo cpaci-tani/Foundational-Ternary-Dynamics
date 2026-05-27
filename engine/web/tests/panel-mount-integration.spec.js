@@ -6,6 +6,10 @@
  */
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+});
+
 const MOUNTS = ['left', 'bottom', 'right'];
 
 test.afterEach(async ({ page }) => {

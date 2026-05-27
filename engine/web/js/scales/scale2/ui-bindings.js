@@ -36,33 +36,10 @@ import { Scale2ControlsComponent } from './ui/controls/component.js';
 export const AE_DEFAULT_TOGGLES = SCALE2_TOGGLES;
 
 
-/**
- * Sync all AE toggle checkboxes and sliders to the bridge.
- * Called after initAE() and after resetAETogglesToDefaults().
- */
-export function syncAEParamsFromUI(bridge) {
-    const dtEl = document.getElementById('ae-dt-slider');
-    if (dtEl) bridge.aeSetDt(parseFloat(dtEl.value));
-    const softEl = document.getElementById('ae-soft-slider');
-    if (softEl) bridge.aeSetSoftening(parseFloat(softEl.value));
-    for (const [elId, , setter] of AE_DEFAULT_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (el && bridge[setter]) bridge[setter](el.checked);
-    }
-}
+import { syncAEParamsFromUI, resetAETogglesToDefaults } from '../scale-utils.js';
 
+export { syncAEParamsFromUI, resetAETogglesToDefaults };
 
-/**
- * Reset all AE toggle checkboxes to their default values and push
- * defaults into the bridge.
- */
-export function resetAETogglesToDefaults(bridge) {
-    for (const [elId, defaultVal, setter] of AE_DEFAULT_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (el) el.checked = defaultVal;
-        if (bridge[setter]) bridge[setter](defaultVal);
-    }
-}
 
 
 /**
