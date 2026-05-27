@@ -40,6 +40,8 @@ The number-theoretic core. These establish the identities the framework's centra
 | [EXPLR_CM_RATIO_TOWER.md](EXPLR_CM_RATIO_TOWER.md) | [REFERENCE] / [EXPLORATORY MATH] | The 9-element tower of class-number-1 Chowla-Selberg ratios; only d=−4 anchors physics. |
 | [EXPLR_CHOWLA_SELBERG_HIGHER_H.md](EXPLR_CHOWLA_SELBERG_HIGHER_H.md) | [THEORY NOTE — literature synthesis] | Analytic machinery to extend Theorem 3 to class number h ≥ 2. |
 | [REF_GUILLERA_CORPUS_MAP.md](REF_GUILLERA_CORPUS_MAP.md) | [REFERENCE] / external-literature map | Guillera's Ramanujan-type-series corpus mapped to the spine; scholarly attribution only. |
+| [DERIV_JONES_INDEX_THRESHOLD_RATIO.md](DERIV_JONES_INDEX_THRESHOLD_RATIO.md) | [CONJECTURE] | Jones Index and manifestation threshold ratio: KB/KC = 4sqrt(2) derived from the hyperfinite Type III subfactor inclusion Jones Index [N:M] = 32. |
+
 
 ## The central α conjecture: CM identification & structural-uniqueness scans
 
@@ -127,4 +129,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-54 active docs in this cluster (+ 2 archived).
+55 active docs in this cluster (+ 2 archived).
