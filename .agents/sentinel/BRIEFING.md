@@ -19,7 +19,7 @@ Refactor the FTD web dashboard codebase for exceptional modularity, lifecycle ma
 - **Delivered results**: none
 
 ## Project Status
-- **Phase**: in progress
+- **Phase**: auditing
 
 ## Victory Audit Status
 - **Triggered**: yes
