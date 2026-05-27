@@ -437,7 +437,7 @@ ftd/                                     # Project root
 ## C++ Engine
 
 **Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release`
-**Test**: `cd engine/build && ctest --output-on-failure -C Release`
+**Test**: `cd engine/build && ctest -j 8 --output-on-failure -C Release`
 **WASM**: `engine\build_wasm.bat` (Windows wrapper; runs emcmake/emmake + deploys to `engine/web/wasm/`). Manual: `emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release && emmake cmake --build engine/build_wasm --target ftd_wasm`
 **Web UI**: `python engine/web/serve.py 8080` (no-cache dev server — emits `Cache-Control: no-store` on every response so JS edits hit the browser without manual hard-refresh). Plain fallback: `python -m http.server 8080 -d engine/web` (caches aggressively; expect to bounce + hard-refresh after edits).
 
