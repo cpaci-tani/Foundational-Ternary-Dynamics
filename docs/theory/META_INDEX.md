@@ -426,6 +426,8 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.55 | [REPORT_GRAVITON_SUBSTRATE_MODE.md](10_eft_program/REPORT_GRAVITON_SUBSTRATE_MODE.md) | **Emergent spin-2 substrate mode report (2026-05-26, [MEASUREMENT REPORT]):** Resolved $L=128$ measurement confirming Outcome B and non-separability. |
 | 10.56 | [PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md](10_eft_program/PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md) | 🆕 **(2026-05-27 / FTD-0215)** BCC complex readout pre-registration locking design and verification parameters. [PRE-REGISTRATION] |
 | 10.57 | [FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md](10_eft_program/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) | 🆕 **(2026-05-27 / FTD-0215)** BCC complex readout resolution; proves finite-block closed-negative and infinite-aperture ARC-2 level found verdicts. [THEOREM] + [SELECTION] |
+| 10.58 | [PREREG_ALPHA_READOUT_QUANTIZATION_v1.md](10_eft_program/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md) | 🆕 **(2026-05-27 / FTD-0216)** Candidate C Quantization/Readout Rule pre-registration. [PRE-REGISTRATION] |
+| 10.59 | [FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md](10_eft_program/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md) | 🆕 **(2026-05-27 / FTD-0216)** Candidate C Quantization/Readout Rule resolution, establishing a FOUND verdict at the ARC-2 level. [THEOREM] + [SELECTION] |
 
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
