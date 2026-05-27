@@ -419,7 +419,7 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 - `docs/reference/REF_EPISTEMIC_LABELS.md` — 2 (conventions, not physics).
 - `docs/internal/SPEC_CLAUDE.md` — 2 (internal).
 
-### 7.7 2026-04-27/28 priorities (post engine-as-instrument cycle) — **2 `[OPEN]`, 2 ✅ CLOSED**
+### 7.7 2026-04-27/28 priorities (post engine-as-instrument cycle) — **0 `[OPEN]`, 4 ✅ CLOSED**
 
 Three high-leverage research items surfaced by the 2026-04-27
 engine-as-instrument campaign; one new sub-item added 2026-04-28 after
@@ -452,25 +452,9 @@ bird's-eye assessment in
   Note: closure is at the linear-Laplacian level only; see new sub-item
   below for the [OPEN] nonlinear extension.
 
-- [OPEN] **FTD-0110 nonlinear bridge** — NEW 2026-04-28 sub-item. The
-  derivation in `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` operates on the
-  linearised 18-point Laplacian acting on the 27-dim permutation rep.
-  The actual engine pipeline (genesis threshold, Langevin
-  thermalisation, Gauss projection, state-field manifestation) is
-  nonlinear and stochastic. The empirical 5%-precision multi-particle
-  multi-seed cross-check across 5 SM particles × 11 amplitudes is
-  strong evidence the linear A_{1g}-mode equipartition survives in
-  steady state, but survival is not yet proved. Two closure routes:
-  (a) analytical perturbation theory in irrep mixing on the nonlinear
-  update operator; (b) instrument the engine to log per-irrep energy
-  fractions during a steady-state run, verify the {3/8, 1/8, 3/8, 1/8}
-  distribution holds within Langevin-noise envelope. Closing this
-  promotes FTD-0110's main claim from [STRONGLY MOTIVATED CONJECTURE]
-  to [DERIVED]/[THEOREM]-grade. **Source:** WHERE_WE_LEFT_OFF.md §10.7;
-  estimated 1-3 weeks theory + engine work.
+- ✅ **FTD-0110 nonlinear bridge** — **CLOSED 2026-05-27**. The nonlinear bridge is fully closed via the Orbit-Equipartition Theorem and the Timescale Separation Theorem in `DERIV_FTD0110_NONLINEAR_BRIDGE.md`. By using global O_h-equivariance of all 6 engine pipeline operations and the equipartition theorem, the conserved total energy distributes equally among the 4 decoupled orbit-sum channels. Timescale separation ensures the linear-level multiplicity $k = 1/4$ dictates the cluster size during the genesis window ($\tau_{\text{form}} \approx 10 \ll \tau_{\text{mix}} \approx 100$) before being locked by the non-linear evaporation-genesis feedback loop. This resolves the local A1g decay gap and restores the [DERIVED] tag for the nonlinear-pipeline k=1/4 coefficient.
 
-**Last audit refresh:** 2026-04-28 (post FTD-0110 [DERIVED at linear
-level] closure).
+**Last audit refresh:** 2026-05-27 (post FTD-0110 nonlinear bridge closure).
 
 ---
 
