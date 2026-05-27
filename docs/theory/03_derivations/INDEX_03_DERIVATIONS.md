@@ -151,6 +151,7 @@ Bottom-up overview docs and gap-closing arguments.
 | File | Tag | Purpose |
 |---|---|---|
 | [DERIV_BOTTOM_UP_PHYSICS.md](DERIV_BOTTOM_UP_PHYSICS.md) | [AXIOM]→[THEOREM]/[SELECTION]/[CONJECTURE] | Entry-point: from `0 = (−1)+(+1)` to the Standard Model. |
+| [MONOGRAPH_EFFECTIVE_EQUATIONS.md](MONOGRAPH_EFFECTIVE_EQUATIONS.md) | [AXIOM]→[THEOREM]/[SELECTION]/[CONJECTURE] | Comprehensive monograph deriving Maxwell, Lorentz, Einstein, and Dirac effective field equations. |
 | [DERIV_THREE_RESOLUTIONS.md](DERIV_THREE_RESOLUTIONS.md) | derivation (closes three gaps) | Compact U(1), bare = physical, one-loop exact — answered by the tick. |
 
 ---
@@ -166,4 +167,4 @@ Pure header-only theory overlays on the existing lattice engine. No `RenderBridg
 
 ---
 
-63 active docs in this cluster (+ 0 archived).
+64 active docs in this cluster (+ 0 archived).
