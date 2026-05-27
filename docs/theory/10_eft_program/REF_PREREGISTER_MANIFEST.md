@@ -201,6 +201,31 @@ When auditing: confirm `git rev-list -n1 preregister-x-minus-physical-identifica
 
 ---
 
+## W5 Moore-shell DM weighting independent confirmation -- Arc B P1 closure attempt design (2026-05-27)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0211** W5 DM weighting confirmation | `preregister-w5-confirmation-v1` | `ae9996e` | [`verify_w5_cosmology.py`](../../../scripts/exploration/verify_w5_cosmology.py) | n/a | n/a (desk/numerical) | [`PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md`](PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md) (pre-reg) → [`FOUND_DM_BARYON_W5_CONFIRMATION.md`](FOUND_DM_BARYON_W5_CONFIRMATION.md) (Outcome B UNDERDETERMINED) |
+
+Pre-reg SHA256: `a771b279327b0e82d409b645416ca9b1a68633b129e0852e875790150dbaa2ee`.
+
+When auditing: confirm `git rev-list -n1 preregister-w5-confirmation-v1` resolves to the commit that introduced `PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md`, and that the file's SHA256 matches the value above. The campaign design, question, independent observables, and three pre-blessed outcomes were locked before the verification was run.
+
+---
+
+## Lemniscatic K_2-regulator closed-form derivation -- Arc B P1 Path A design (2026-05-27)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0212** Lemniscatic K_2-regulator derivation | `preregister-lemniscatic-k2-regulator-v1` | `ae9996e` | [`proof_lemniscatic_k2_regulator.py`](../../../scripts/proofs/proof_lemniscatic_k2_regulator.py) | n/a | n/a (numerical proof) | [`PREREG_LEMNISCATIC_K2_REGULATOR_v1.md`](PREREG_LEMNISCATIC_K2_REGULATOR_v1.md) (pre-reg) → [`FOUND_LEMNISCATIC_K2_REGULATOR.md`](FOUND_LEMNISCATIC_K2_REGULATOR.md) (Outcome C CLOSED-NEGATIVE) |
+
+Pre-reg SHA256: `c514f20593bde5fb6e0638367420499e778dbfd0ff00b0e24e84fdbaffa9f797`.
+
+When auditing: confirm `git rev-list -n1 preregister-lemniscatic-k2-regulator-v1` resolves to the commit that introduced `PREREG_LEMNISCATIC_K2_REGULATOR_v1.md`, and that the file's SHA256 matches the value above. The campaign design, functional equation accelerated series, and PSLQ period basis were locked before the verification was run.
+
+---
+
+
 ## How to add a new pre-registration row
 
 1. **Pre-register** before measurement:
