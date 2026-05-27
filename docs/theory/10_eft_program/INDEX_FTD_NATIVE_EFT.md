@@ -35,6 +35,7 @@ These define the formal structure. They get read; they don't get measured.
 | File | Tag | Purpose |
 |---|---|---|
 | [`SPEC_EFT_RECOVERY_PROGRAM.md`](SPEC_EFT_RECOVERY_PROGRAM.md) | [REFERENCE] | Pre-registered Phases 0–F; complete, outcome NULL relative to the QED-α target. |
+| [`SPEC_FTD_DYNAMICAL_SU3_HADRODYNAMICS.md`](SPEC_FTD_DYNAMICAL_SU3_HADRODYNAMICS.md) | [THEOREM]/[SELECTION] | Post-pivot dynamical QCD: compact link connection variables, Langevin updates, and local voxel-gauge coupling stencils. |
 | [`SPEC_FTD_EFT_BRIDGE_CONTRACT.md`](SPEC_FTD_EFT_BRIDGE_CONTRACT.md) | [SELECTION] | The minimal 7-gate contract that lets FTD become a Wilsonian EFT without using physical α or SM targets as inputs. |
 | [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](SPEC_FTD_NATIVE_BLOCKING_MAP.md) | [SELECTION] | The fixed finite-volume coarse-graining map; canonical b=2 blocking transformation used throughout the program. |
 | [`SPEC_FTD_NATIVE_ELECTRODYNAMICS.md`](SPEC_FTD_NATIVE_ELECTRODYNAMICS.md) | [SELECTION] | Post-pivot native EM spec: native source/flux response theory replacing the QED-α derivation attempt. |
