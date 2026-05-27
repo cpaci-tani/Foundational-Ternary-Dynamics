@@ -19,6 +19,7 @@
  *   - Compact toolbar telemetry + controls panel cards
  */
 
+import { BaseLifecycleController } from '../../lifecycle.js';
 import { CosmicRenderer } from '../../cosmic-renderer.js';
 import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
 import { createStatusBarCache } from '../scale-utils.js';
@@ -27,29 +28,125 @@ import { createStatusBarCache } from '../scale-utils.js';
 // Module-level state
 // ---------------------------------------------------------------------------
 
-let _cosmicRenderer = null;    // CosmicRenderer instance (Three.js visuals)
-let _cosmicBridge = null;      // CosmicMockBridge instance (N-body engine)
+class Scale5LifecycleController extends BaseLifecycleController {
+    constructor() {
+        super();
+        this.bridge = null;
+        this.renderer = null;
+    }
+
+    mount(ctx) {
+        // Standard setup placeholder
+    }
+
+    loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
+        ctx._resetAllVisualState();
+        ctx.running = false;
+        ctx.updatePlayButton();
+
+        const viewport = ctx.viewport;
+
+        // Hide all non-cosmic visuals
+        if (viewport) {
+            viewport.toggleFluxVolume(false);
+            viewport.toggleFluxSlice(false);
+            viewport.toggleGrid(false);
+            viewport.toggleAxes(false);
+            if (viewport.particles) viewport.particles.visible = false;
+        }
+
+        // Create cosmic bridge (JS-only mock for now)
+        this.bridge = new CosmicMockBridge();
+        this.bridge.setupScenario(scenarioName);
+
+        // Create cosmic renderer
+        if (this.renderer) {
+            this.renderer.dispose();
+        }
+        this.renderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer);
+        this.trackThreeObject(this.renderer);
+
+        // Configure camera for cosmic scale
+        viewport.camera.near = 0.1;
+        viewport.camera.far = 50000;
+        viewport.camera.updateProjectionMatrix();
+        viewport.controls.minDistance = 5;
+        viewport.controls.maxDistance = 5000;
+
+        // Initial render
+        const data = this.bridge.getCosmicData();
+        this.renderer.update(data, this.bridge.getDiagnostics());
+
+        // Set camera preset based on scenario
+        const presetMap = {
+            'cosmic-galaxy': 'galaxy',
+            'cosmic-super-cluster': 'overview',
+            'cosmic-cluster': 'overview',
+            'cosmic-web': 'overview',
+            'cosmic-black-hole': 'blackhole',
+            'cosmic-merger': 'merger',
+            'cosmic-quasar': 'quasar',
+            'cosmic-stellar-lifecycle': 'overview',
+            'cosmic-ftd-collapse': 'overview'
+        };
+        this.renderer.setCameraPreset(presetMap[scenarioName] || 'overview', data);
+
+        // Auto-play
+        ctx.running = true;
+        ctx.updatePlayButton();
+    }
+
+    step(ctx) {
+        if (this.bridge) {
+            this.bridge.run(1);
+            if (this.renderer) {
+                const data = this.bridge.getCosmicData();
+                this.renderer.update(data, this.bridge.getDiagnostics());
+                ctx.viewport.render();
+            }
+        }
+    }
+
+    setCameraPreset(preset) {
+        if (this.renderer && this.bridge) {
+            const data = this.bridge.getCosmicData();
+            this.renderer.setCameraPreset(preset, data);
+        }
+    }
+
+    destroy(ctx) {
+        super.destroy(ctx);
+        if (this.renderer) {
+            this.renderer.dispose();
+            this.renderer = null;
+        }
+        this.bridge = null;
+        // Restore lattice particles visibility for other scales
+        if (ctx && ctx.viewport && ctx.viewport.particles) {
+            ctx.viewport.particles.visible = true;
+        }
+    }
+}
+
+const _lifecycleController = new Scale5LifecycleController();
+
 const _toolbarStatus = createStatusBarCache();
 const _panelStatus = createStatusBarCache();
 
-// ---------------------------------------------------------------------------
-// animateCosmic  -- per-frame update (called from the main rAF loop)
-// ---------------------------------------------------------------------------
+export function mount(ctx) {
+    _lifecycleController.mount(ctx);
+}
 
-/**
- * Per-frame cosmic animation. Drives physics ticks, renderer state updates,
- * and toolbar/panel telemetry from the main rAF loop. Physics and telemetry
- * update every other rAF frame (~30 Hz), matching the cadence of the
- * pre-B.1 setInterval; the viewport is rendered every rAF frame (~60 Hz)
- * so OrbitControls stay smooth.
- *
- * @param {object} ctx - Shared context from the main app:
- *   { viewport, running, ticksPerFrame, frameCount }
- */
+export function destroy(ctx) {
+    _lifecycleController.destroy(ctx);
+}
+
 export function animateCosmic(ctx) {
     const { viewport } = ctx;
+    const bridge = _lifecycleController.bridge;
+    const renderer = _lifecycleController.renderer;
 
-    if (!_cosmicBridge || !_cosmicRenderer) {
+    if (!bridge || !renderer) {
         // Fallback: still render viewport so the scene isn't frozen
         viewport.render();
         return;
@@ -61,12 +158,12 @@ export function animateCosmic(ctx) {
 
     if (isPhysicsFrame) {
         if (ctx.running) {
-            _cosmicBridge.run(Math.max(1, Math.round(ctx.ticksPerFrame)));
+            bridge.run(Math.max(1, Math.round(ctx.ticksPerFrame)));
         }
 
-        const data = _cosmicBridge.getCosmicData();
-        const diag = _cosmicBridge.getDiagnostics();
-        _cosmicRenderer.update(data, diag);
+        const data = bridge.getCosmicData();
+        const diag = bridge.getDiagnostics();
+        renderer.update(data, diag);
 
         // Compact toolbar telemetry
         _toolbarStatus.update('cosmic-tb-bodies', diag.bodyCount + ' bodies');
@@ -90,132 +187,18 @@ export function animateCosmic(ctx) {
     viewport.render();
 }
 
-// ---------------------------------------------------------------------------
-// loadCosmicScenario  -- set up a named cosmic scenario
-// ---------------------------------------------------------------------------
-
-/**
- * Initialize and load a cosmic scenario by name. Creates the CosmicMockBridge
- * and CosmicRenderer, configures camera for cosmic scale, and sets the
- * camera preset. Physics ticks, telemetry, and rendering are driven by
- * animateCosmic() on the main rAF loop.
- *
- * @param {object} ctx - Shared context:
- *   { viewport, running, ticksPerFrame, engineMode,
- *     _resetAllVisualState, updatePlayButton }
- * @param {string} scenarioName - Scenario key (default: 'cosmic-galaxy')
- */
 export function loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
-    ctx._resetAllVisualState();
-    ctx.running = false;
-    ctx.updatePlayButton();
-
-    const viewport = ctx.viewport;
-
-    // Hide all non-cosmic visuals
-    if (viewport) {
-        viewport.toggleFluxVolume(false);
-        viewport.toggleFluxSlice(false);
-        viewport.toggleGrid(false);
-        viewport.toggleAxes(false);
-        if (viewport.particles) viewport.particles.visible = false;
-    }
-
-    // Create cosmic bridge (JS-only mock for now)
-    _cosmicBridge = new CosmicMockBridge();
-    _cosmicBridge.setupScenario(scenarioName);
-
-    // Create cosmic renderer
-    if (_cosmicRenderer) _cosmicRenderer.dispose();
-    _cosmicRenderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer);
-
-    // Configure camera for cosmic scale
-    viewport.camera.near = 0.1;
-    viewport.camera.far = 50000;
-    viewport.camera.updateProjectionMatrix();
-    viewport.controls.minDistance = 5;
-    viewport.controls.maxDistance = 5000;
-
-    // Initial render
-    const data = _cosmicBridge.getCosmicData();
-    _cosmicRenderer.update(data, _cosmicBridge.getDiagnostics());
-
-    // Set camera preset based on scenario
-    const presetMap = {
-        'cosmic-galaxy': 'galaxy',
-        'cosmic-super-cluster': 'overview',
-        'cosmic-cluster': 'overview',
-        'cosmic-web': 'overview',
-        'cosmic-black-hole': 'blackhole',
-        'cosmic-merger': 'merger',
-        'cosmic-quasar': 'quasar',
-        'cosmic-stellar-lifecycle': 'overview',
-        'cosmic-ftd-collapse': 'overview'
-    };
-    _cosmicRenderer.setCameraPreset(presetMap[scenarioName] || 'overview', data);
-
-    // Auto-play; animateCosmic() will advance physics from the main rAF loop.
-    ctx.running = true;
-    ctx.updatePlayButton();
+    _lifecycleController.loadCosmicScenario(ctx, scenarioName);
 }
 
-// ---------------------------------------------------------------------------
-// step  -- single-tick step (called from Step button)
-// ---------------------------------------------------------------------------
-
-/**
- * Advance the cosmic simulation by one tick and re-render.
- * Called when the user clicks the Step button while in cosmic mode.
- *
- * @param {object} ctx - Shared context: { viewport }
- */
 export function step(ctx) {
-    if (_cosmicBridge) {
-        _cosmicBridge.run(1);
-        if (_cosmicRenderer) {
-            const data = _cosmicBridge.getCosmicData();
-            _cosmicRenderer.update(data, _cosmicBridge.getDiagnostics());
-            ctx.viewport.render();
-        }
-    }
+    _lifecycleController.step(ctx);
 }
 
-// ---------------------------------------------------------------------------
-// setCameraPreset  -- change camera view (called from camera selector)
-// ---------------------------------------------------------------------------
-
-/**
- * Set the camera preset for the cosmic renderer.
- *
- * @param {string} preset - Camera preset name
- */
 export function setCameraPreset(preset) {
-    if (_cosmicRenderer && _cosmicBridge) {
-        const data = _cosmicBridge.getCosmicData();
-        _cosmicRenderer.setCameraPreset(preset, data);
-    }
+    _lifecycleController.setCameraPreset(preset);
 }
 
-// ---------------------------------------------------------------------------
-// resetScale5  -- tear down cosmic state on scale switch
-// ---------------------------------------------------------------------------
-
-/**
- * Clean up Scale 5 state when leaving cosmic mode.
- * Disposes the renderer and clears the bridge. Physics/render is driven
- * by animateCosmic() on the main rAF loop, which becomes a no-op once
- * _cosmicBridge is nulled out, so no interval cleanup is needed.
- *
- * @param {object} ctx - Shared context (used only to restore viewport state)
- */
 export function resetScale5(ctx) {
-    if (_cosmicRenderer) {
-        _cosmicRenderer.dispose();
-        _cosmicRenderer = null;
-    }
-    _cosmicBridge = null;
-    // Restore lattice particles visibility for other scales
-    if (ctx && ctx.viewport && ctx.viewport.particles) {
-        ctx.viewport.particles.visible = true;
-    }
+    _lifecycleController.destroy(ctx);
 }
