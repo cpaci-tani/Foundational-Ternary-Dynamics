@@ -159,8 +159,8 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | §10-depths | Explicit transfer matrices forcing `N_E = diag(9,3,0)`, `N_U = diag(12,5,0)`, `N_D = diag(7,4,0)`. Currently no canonical derivation — reverse-engineered from mass-ratio fits | [OPEN] | M | — |
 | §10-depths-method | **Methodological honesty audit (added 2026-05-08).** The §10 depth matrices have **18 free integer slots** (9 in N_E∪N_U∪N_D + 9 per-fermion projection corrections C_F also tagged [PARAMETRIC]) — sufficient to fit any 3×3 hierarchy with 3 OOM spread. The "0" in third position is forced by `q*^0=1`, not by structure. The §10-depths target above is mis-framed as "find the matrices"; the actual methodological gap is **show this scaffold has predictive content beyond fit count**. Until a genuinely-predictive constraint (e.g., a transfer-matrix derivation that fixes ≥10 of 18 slots from substrate) is in hand, the [PARAMETRIC candidate scaffold] tag risks overstating the degree to which depth matrices are a substrate object vs a curve fit | [OPEN — methodological] | W (audit) + M (predictive constraint) | — |
 | me-prefactor | Substrate justification of FTD-0015 prefactor `√(2π)·(16/3)`. Promoting `α_G(e,e) ≈ 1.745 × 10⁻⁴⁵` from [DERIVED, postulate-conditional] to [DERIVED, axiom-conditional] requires this | [OPEN] | M–RP | — |
-| quark-mass | `DERIV_QUARK_MASSES_FROM_LATTICE.md` 5 [OPEN] (light-quark masses + CKM; top ≈ `v_Higgs` supports Yukawa-at-unity story; rest sketched only) | [OPEN] | RP | §10-depths |
-| quark-bridge | `proof_quark_masses_lattice.py` 3 [OPEN] (quark-electron mass bridge) | [OPEN] | M | — |
+| quark-mass | `FOUND_DISCRETE_NATIVE_MASS_GENERATION.md` (retracted continuous QFT fits; replaced by native discrete mass paradigm — Class A voxel cardinality) | [OPEN] | RP | §10-depths |
+| quark-bridge | `archive_proof_quark_masses_lattice.py` (archived post-hoc quark mass verification script) | [ARCHIVED] | — | — |
 
 **Closed (sector context):** FTD-0015 `n = 11` exponent [DERIVED]; FTD-0016 `m_p/m_e` formula [STRONGLY MOTIVATED CONJECTURE]; FTD-0084 multiset theorem [DERIVED].
 
