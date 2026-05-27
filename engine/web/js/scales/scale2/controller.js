@@ -552,3 +552,11 @@ export function loadAEScenario(ctx, name) {
     const initDiag = bridge.aeGetDiagnostics();
     if (initDiag.totalEnergy !== 0) _aeInitialEnergy = initDiag.totalEnergy;
 }
+
+export function mount(ctx) {
+    // standard placeholder
+}
+
+export function destroy(ctx) {
+    resetScale2(ctx);
+}

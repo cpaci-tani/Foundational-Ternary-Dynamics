@@ -1,0 +1,1 @@
+Metadata folder for explorer subagent in the web dashboard refactoring mission.

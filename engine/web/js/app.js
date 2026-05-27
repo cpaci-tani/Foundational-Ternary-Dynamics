@@ -1,12 +1,12 @@
 /**
- * @file app_dag.js
+ * @file app.js
  * @brief FTD Web Dashboard — Main Application Controller
  *
  * [EXTENDED] Initializes all subsystems, manages the frame loop,
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge } from './wasm-bridge-dag.js';
+import { createBridge } from './bridge-init.js';
 // PhysicsHarness factory — lazily attached per-bridge by panels and
 // overlays that need the canonical read/write surface.
 import { getPhysicsHarness } from './physics/index.js';
@@ -241,6 +241,8 @@ function applyReflectiveBoundary(on) {
     if (bridge?.setReflectiveBoundary) bridge.setReflectiveBoundary(on);
     const fm = Scale0Controller.getFluxMock();
     if (fm?.setReflectiveBoundary) fm.setReflectiveBoundary(on);
+    if (viewport?.setReflectiveBoundary) viewport.setReflectiveBoundary(on);
+    Scale0Controller.setLatticeNeedsUpload();
 }
 
 /**
@@ -1399,7 +1401,23 @@ function wireKeyboard() {
 //   5. Call the new scale's scenario loader
 // Rapid switching is safe because step 1 halts ticking before any teardown,
 // and each loader calls _resetAllVisualState() which clears all prior state.
+const CONTROLLERS = {
+    lattice: Scale0Controller,
+    particles: Scale1Controller,
+    atoms: Scale2Controller,
+    molecules: Scale3Controller,
+    planetary: Scale4Controller,
+    cosmic: Scale5Controller,
+    meta: Scale6Controller
+};
+
 function switchEngineMode(mode) {
+    // 1. Uniform Lifecycle: Teardown previous controller
+    const prevController = CONTROLLERS[engineMode];
+    if (prevController && typeof prevController.destroy === 'function') {
+        prevController.destroy(_makeCtx());
+    }
+
     engineMode = mode;
 
     // Stop simulation on mode switch — prevents leftover play state
@@ -1422,9 +1440,6 @@ function switchEngineMode(mode) {
     if (appShell) appShell.setActiveScale(scaleIndex);
     else app.setAttribute('data-active-scale', scaleIndex);
 
-    // Free JS flux sim when leaving Scale 0 (before loadXxx resets visual state)
-    if (mode !== 'lattice') Scale0Controller.exit(_makeCtx());
-
     // Keep mode-dependent inspector, viewport, and zoo state in sync.
     inspectorRuntime?.syncMode(mode);
 
@@ -1441,24 +1456,14 @@ function switchEngineMode(mode) {
         if (axesBtn) axesBtn.classList.remove('active');
     }
 
-    // Cleanup cosmic renderer when leaving Scale 5
-    if (mode !== 'cosmic') {
-        Scale5Controller.resetScale5(_makeCtx());
-    }
-
-    // Cleanup planetary renderer when leaving Scale 4
-    if (mode !== 'planetary') {
-        Scale4Controller.dispose({ viewport, inspector, running, ticksPerFrame, engineMode });
-    }
-
-    // Cleanup meta unit when leaving Scale 12
-    if (mode !== 'meta') {
-        Scale6Controller.resetScale6(_makeCtx());
+    // 2. Uniform Lifecycle: Mount the next controller
+    const nextController = CONTROLLERS[mode];
+    if (nextController && typeof nextController.mount === 'function') {
+        nextController.mount(_makeCtx());
     }
 
     if (mode === 'lattice') {
         const scenario = document.getElementById('scenario-select')?.value || 'flux-pulse';
-        Scale0Controller.enter(_makeCtx());
         Scale0Controller.loadScenario(_makeCtx(), scenario);
     } else if (mode === 'particles') {
         loadPEScenario(document.getElementById('pe-scenario-select')?.value || 'pe-hydrogen');

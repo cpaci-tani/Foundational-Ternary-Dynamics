@@ -7,23 +7,24 @@ import {
 } from '../../shell/panel-mount-state.js';
 
 const GLYPHS = Object.freeze({
-    left:  '\u25EA',
-    right: '\u25E9',
+    left:   '\u25EA',
+    bottom: '\u25A2',
+    right:  '\u25E9',
 });
 
 const LABELS = Object.freeze({
-    left:  'Dock to left (Ctrl+Shift+Left)',
-    right: 'Dock to right (Ctrl+Shift+Right)',
+    left:   'Dock to left (Ctrl+Shift+Left)',
+    bottom: 'Dock to bottom (Ctrl+Shift+Down)',
+    right:  'Dock to right (Ctrl+Shift+Right)',
 });
 
 const SHORTCUT_MAP = Object.freeze({
     ArrowLeft:  'left',
+    ArrowDown:  'bottom',
     ArrowRight: 'right',
 });
 
-/* User-facing mount options — 'bottom' is reserved for the mobile bottom
-   sheet fallback and is not offered as an explicit user choice. */
-const USER_MOUNTS = Object.freeze(['left', 'right']);
+const USER_MOUNTS = Object.freeze(['left', 'bottom', 'right']);
 
 /**
  * Updates --viewport-safe-left / --viewport-safe-right on <html> so that any

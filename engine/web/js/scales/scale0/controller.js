@@ -5,6 +5,7 @@
  * a viewport adapter, scenario registry, and UI bindings owned by Scale 0.
  */
 
+import { BaseLifecycleController } from '../../lifecycle.js';
 import { createScale0ViewportAdapter } from './viewport-adapter.js';
 import {
     getFieldStateSnapshot,
@@ -301,10 +302,42 @@ if (typeof window !== 'undefined') {
     window.__ftdCancelRender = () => cancelScale0Render();
 }
 
-export function enter(_ctx, _options = {}) {}
+class Scale0LifecycleController extends BaseLifecycleController {
+    constructor() {
+        super();
+    }
 
-export function exit(_ctx) {
-    exitScale0();
+    mount(ctx) {
+        if (typeof window !== 'undefined') {
+            this.bindEvent(window, 'pagehide', () => {
+                try { exitScale0(); } catch { /* defensive: never block teardown */ }
+            });
+        }
+    }
+
+    destroy(ctx) {
+        super.destroy(ctx);
+        try { exitScale0(); } catch (e) { /* ignore */ }
+        try { clearScale0Timeline(); } catch (e) { /* ignore */ }
+    }
+}
+
+const _lifecycleController = new Scale0LifecycleController();
+
+export function enter(ctx, options = {}) {
+    _lifecycleController.mount(ctx);
+}
+
+export function exit(ctx) {
+    _lifecycleController.destroy(ctx);
+}
+
+export function mount(ctx) {
+    _lifecycleController.mount(ctx);
+}
+
+export function destroy(ctx) {
+    _lifecycleController.destroy(ctx);
 }
 
 export function loadScenario(ctx, scenarioId, params) {
@@ -379,12 +412,5 @@ export const animateLattice = animate;
 export const resizeLattice = resize;
 export { shouldUseFluxMock };
 
-// Page-shutdown hook (Bridge-M1 audit, 2026-04-27): release the lazy
-// fluxMock so its typed-array buffers (~21 MB at L=96) don't survive
-// into a backgrounded tab. `pagehide` fires for both close and bfcache
-// freeze; idempotent because `clearFluxMock` no-ops on a null mock.
-if (typeof window !== 'undefined') {
-    window.addEventListener('pagehide', () => {
-        try { exitScale0(); } catch { /* defensive: never block teardown */ }
-    });
-}
+// managed via BaseLifecycleController
+

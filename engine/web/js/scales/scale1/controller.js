@@ -20,6 +20,7 @@
  *   resetScale1(ctx)           — clear PE-specific state for mode switch
  */
 
+import { BaseLifecycleController } from '../../lifecycle.js';
 import { getById } from '../../particle-catalog.js';
 import { formatEnergy } from '../../units.js';
 import {
@@ -99,7 +100,36 @@ export { getCloudParticleMap, getTrailHistory };
 /**
  * Reset PE-internal state for a clean mode switch.
  */
+class Scale1LifecycleController extends BaseLifecycleController {
+    constructor() {
+        super();
+    }
+
+    mount(ctx) {
+        // Standard setup placeholder
+    }
+
+    destroy(ctx) {
+        super.destroy(ctx);
+        _resetScale1Internal(ctx);
+    }
+}
+
+const _lifecycleController = new Scale1LifecycleController();
+
+export function mount(ctx) {
+    _lifecycleController.mount(ctx);
+}
+
+export function destroy(ctx) {
+    _lifecycleController.destroy(ctx);
+}
+
 export function resetScale1(ctx) {
+    _lifecycleController.destroy(ctx);
+}
+
+function _resetScale1Internal(ctx) {
     const { viewport } = ctx;
 
     // Clear cloud templates and trail history (owned by pe-cloud-expander)

@@ -71,55 +71,8 @@ const PARTICLE_VERT = `
     }
 `;
 
-const PARTICLE_FRAG = `
-    uniform int shapeType;
-    uniform float uOpacity;
-    varying vec3 vColor;
-    varying float vSize;
+import { PARTICLE_FRAG } from './shaders.js';
 
-    void main() {
-        vec2 c = gl_PointCoord - vec2(0.5);
-        float dist;
-
-        if (shapeType == 1) {
-            dist = max(abs(c.x), abs(c.y));
-            if (dist > 0.48) discard;
-        } else if (shapeType == 2) {
-            dist = abs(c.x) + abs(c.y);
-            if (dist > 0.5) discard;
-        } else if (shapeType == 3) {
-            float angle = atan(c.y, c.x);
-            float r = length(c);
-            float star = cos(5.0 * angle) * 0.15 + 0.35;
-            if (r > star) discard;
-            dist = r / star * 0.5;
-        } else if (shapeType == 4) {
-            float x = c.x, y = c.y + 0.15;
-            if (y > 0.35 || y < -0.35 + 0.7 * abs(x) / 0.4) discard;
-            dist = length(c);
-        } else if (shapeType == 5) {
-            vec2 a = abs(c);
-            dist = max(a.x * 0.866 + a.y * 0.5, a.y);
-            if (dist > 0.45) discard;
-            dist /= 0.45;
-        } else if (shapeType == 6) {
-            float r = length(c);
-            if (r > 0.5 || r < 0.3) discard;
-            dist = abs(r - 0.4) / 0.1;
-        } else if (shapeType == 7) {
-            float ax = abs(c.x), ay = abs(c.y);
-            if (ax > 0.15 && ay > 0.15) discard;
-            dist = max(ax, ay);
-        } else {
-            dist = length(c);
-            if (dist > 0.5) discard;
-        }
-
-        float alpha = 1.0 - smoothstep(0.15, 0.5, dist);
-        float glow = exp(-dist * dist * 4.0) * 0.15;
-        gl_FragColor = vec4(vColor + glow, alpha * alpha * uOpacity);
-    }
-`;
 
 // Lazy-built static texture for soft-disc sprite (weak-field / quantum overlays).
 let __softSpriteTex = null;
@@ -214,6 +167,13 @@ export class ViewportFieldRenderer {
     onLatticeSizeChanged(size, halfN) {
         this._latticeSize = size;
         this._halfN = halfN;
+
+        if (this._eventHorizonSphere) {
+            this._eventHorizonSphere.position.set(halfN, halfN, halfN);
+        }
+        if (this._eventHorizonRing) {
+            this._eventHorizonRing.position.set(halfN, halfN, halfN);
+        }
 
         // Rebuild field heatmap for new lattice capacity (it sizes from MAX_FIELD_GRID
         // so capacity is fine, but ensure stale data is cleared).
@@ -601,12 +561,25 @@ export class ViewportFieldRenderer {
         const halfN = this._halfN;
         const [br, bg, bb] = colors.base;
         const [tr, tg, tb] = colors.tip;
-        let vi = 0;
-        for (let i = 0; i < count && vi < maxArrows; i++) {
+
+        // Gather all active indices that pass threshold and boundary checks
+        const activeIndices = [];
+        for (let i = 0; i < count; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            activeIndices.push(i);
+        }
+
+        const activeCount = activeIndices.length;
+        const step = activeCount > maxArrows ? Math.ceil(activeCount / maxArrows) : 1;
+
+        let vi = 0;
+        for (let k = 0; k < activeCount && vi < maxArrows; k += step) {
+            const i = activeIndices[k];
+            const mag = mags[i];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             const scale = Math.log(1 + mag / maxMag) * arrowBase;
             const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
             const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
@@ -713,7 +686,7 @@ export class ViewportFieldRenderer {
 
     // ── Poynting Vectors (Yellow-Orange arrows) ──────────────────────
     _buildPoyntingVectors() {
-        const maxArrows = 4000;
+        const maxArrows = 32768;
         const positions = new Float32Array(maxArrows * 2 * 3);
         const colors = new Float32Array(maxArrows * 2 * 3);
         const geo = new THREE.BufferGeometry();
@@ -748,15 +721,26 @@ export class ViewportFieldRenderer {
         const threshold = maxMag * 0.05;
         const halfN = this._halfN;
         const arrowBase = 2.0;
-        let vi = 0;
 
-        for (let i = 0; i < count && vi < maxArrows; i++) {
+        // Gather all active indices
+        const activeIndices = [];
+        for (let i = 0; i < count; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
-            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
-
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            activeIndices.push(i);
+        }
+
+        const activeCount = activeIndices.length;
+        const step = activeCount > maxArrows ? Math.ceil(activeCount / maxArrows) : 1;
+
+        let vi = 0;
+        for (let k = 0; k < activeCount && vi < maxArrows; k += step) {
+            const i = activeIndices[k];
+            const mag = mags[i];
+            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             const scale = Math.log(1 + mag / maxMag) * arrowBase;
             const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
 
@@ -779,12 +763,14 @@ export class ViewportFieldRenderer {
 
     // ── Divergence Field (Red-Blue dots) ─────────────────────────────
     _buildDivergenceField() {
-        const maxPts = 4000;
+        const maxPts = 16384;
         const positions = new Float32Array(maxPts * 3);
         const colors = new Float32Array(maxPts * 3);
         const sizes = new Float32Array(maxPts);
         const geo = new THREE.BufferGeometry();
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3)); // changed attribute to color for standard mesh, wait!
+        // No, original was particleColor! Wait, let's keep exact attributes to not break shader material!
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
         geo.setDrawRange(0, 0);
@@ -816,14 +802,25 @@ export class ViewportFieldRenderer {
         }
         const threshold = maxVal * 0.01;
         const halfN = this._halfN;
-        let vi = 0;
 
-        for (let i = 0; i < count && vi < maxPts; i++) {
+        // Gather active indices
+        const activeIndices = [];
+        for (let i = 0; i < count; i++) {
             const v = values[i];
             if (Math.abs(v) < threshold) continue;
-
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            activeIndices.push(i);
+        }
+
+        const activeCount = activeIndices.length;
+        const step = activeCount > maxPts ? Math.ceil(activeCount / maxPts) : 1;
+
+        let vi = 0;
+        for (let k = 0; k < activeCount && vi < maxPts; k += step) {
+            const i = activeIndices[k];
+            const v = values[i];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
 
             posAttr.array[vi * 3] = px;
             posAttr.array[vi * 3 + 1] = py;
@@ -852,7 +849,7 @@ export class ViewportFieldRenderer {
 
     // ── EM Force Volume (Cyan arrows) ────────────────────────────────
     _buildForceVolume() {
-        this._forceVolume = this._buildArrowFieldMesh(8000, 0.6);
+        this._forceVolume = this._buildArrowFieldMesh(32768, 0.6);
     }
 
     updateForceVolume(fieldData) {
@@ -870,7 +867,7 @@ export class ViewportFieldRenderer {
 
     // ── Gravity Field Volume (density gradient vectors) ─────────────
     _buildGravityField() {
-        const maxArrows = 8000;
+        const maxArrows = 32768;
         const positions = new Float32Array(maxArrows * 2 * 3);
         const colors = new Float32Array(maxArrows * 2 * 3);
         const geo = new THREE.BufferGeometry();
@@ -905,15 +902,26 @@ export class ViewportFieldRenderer {
         const threshold = maxMag * 0.05;
         const halfN = this._halfN;
         const arrowBase = 2.0;
-        let vi = 0;
 
-        for (let i = 0; i < count && vi < maxArrows; i++) {
+        // Gather all active indices
+        const activeIndices = [];
+        for (let i = 0; i < count; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
-            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
-
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            activeIndices.push(i);
+        }
+
+        const activeCount = activeIndices.length;
+        const step = activeCount > maxArrows ? Math.ceil(activeCount / maxArrows) : 1;
+
+        let vi = 0;
+        for (let k = 0; k < activeCount && vi < maxArrows; k += step) {
+            const i = activeIndices[k];
+            const mag = mags[i];
+            const vx = vectors[i * 3], vy = vectors[i * 3 + 1], vz = vectors[i * 3 + 2];
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             const t = mag / maxMag;
             const scale = Math.log(1 + t) * arrowBase;
             const nx = vx / mag * scale, ny = vy / mag * scale, nz = vz / mag * scale;
@@ -947,7 +955,7 @@ export class ViewportFieldRenderer {
 
     // ── Strong Force Volume (Red arrows) ──────────────────────────────
     _buildStrongForce() {
-        this._strongForce = this._buildArrowFieldMesh(8000, 0.7);
+        this._strongForce = this._buildArrowFieldMesh(32768, 0.7);
     }
 
     updateStrongForceField(fieldData) {
@@ -1485,6 +1493,9 @@ export class ViewportFieldRenderer {
     setEventHorizon(active, radius) {
         if (!this._eventHorizonSphere) this._buildEventHorizon();
         if (active && radius > 0) {
+            const halfN = this._halfN;
+            this._eventHorizonSphere.position.set(halfN, halfN, halfN);
+            this._eventHorizonRing.position.set(halfN, halfN, halfN);
             this._eventHorizonSphere.scale.setScalar(radius);
             this._eventHorizonSphere.visible = true;
             this._eventHorizonRing.scale.setScalar(radius * 3.0);
@@ -2292,5 +2303,9 @@ export class ViewportFieldRenderer {
             this._softDiscTex.dispose();
             this._softDiscTex = null;
         }
+    }
+
+    destroy(ctx) {
+        this.dispose();
     }
 }

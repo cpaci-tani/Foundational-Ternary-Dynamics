@@ -53,55 +53,8 @@ const FLUX_VOL_VERT = `
     }
 `;
 
-const PARTICLE_FRAG = `
-    uniform int shapeType;
-    uniform float uOpacity;
-    varying vec3 vColor;
-    varying float vSize;
+import { PARTICLE_FRAG } from './shaders.js';
 
-    void main() {
-        vec2 c = gl_PointCoord - vec2(0.5);
-        float dist;
-
-        if (shapeType == 1) {
-            dist = max(abs(c.x), abs(c.y));
-            if (dist > 0.48) discard;
-        } else if (shapeType == 2) {
-            dist = abs(c.x) + abs(c.y);
-            if (dist > 0.5) discard;
-        } else if (shapeType == 3) {
-            float angle = atan(c.y, c.x);
-            float r = length(c);
-            float star = cos(5.0 * angle) * 0.15 + 0.35;
-            if (r > star) discard;
-            dist = r / star * 0.5;
-        } else if (shapeType == 4) {
-            float x = c.x, y = c.y + 0.15;
-            if (y > 0.35 || y < -0.35 + 0.7 * abs(x) / 0.4) discard;
-            dist = length(c);
-        } else if (shapeType == 5) {
-            vec2 a = abs(c);
-            dist = max(a.x * 0.866 + a.y * 0.5, a.y);
-            if (dist > 0.45) discard;
-            dist /= 0.45;
-        } else if (shapeType == 6) {
-            float r = length(c);
-            if (r > 0.5 || r < 0.3) discard;
-            dist = abs(r - 0.4) / 0.1;
-        } else if (shapeType == 7) {
-            float ax = abs(c.x), ay = abs(c.y);
-            if (ax > 0.15 && ay > 0.15) discard;
-            dist = max(ax, ay);
-        } else {
-            dist = length(c);
-            if (dist > 0.5) discard;
-        }
-
-        float alpha = 1.0 - smoothstep(0.15, 0.5, dist);
-        float glow = exp(-dist * dist * 4.0) * 0.15;
-        gl_FragColor = vec4(vColor + glow, alpha * alpha * uOpacity);
-    }
-`;
 
 const MAX_FIELD_GRID = 16384;
 
@@ -223,6 +176,10 @@ export class ViewportFluxRenderer {
             // _buildFluxVolume initialises visible=false; restore the user's current
             // showFlux state so the volume doesn't disappear after a size change.
             this._fluxVolume.visible = this.showFlux;
+            // Re-apply spacing if configured
+            if (this._fluxLatticeSpacing !== 1.0) {
+                this.setFluxLatticeSpacing(this._fluxLatticeSpacing);
+            }
         }
 
         const posAttr = this._fluxVolume.geometry.getAttribute('position');
@@ -412,5 +369,9 @@ export class ViewportFluxRenderer {
             if (this._fluxStreamlines.material) this._fluxStreamlines.material.dispose();
             this._fluxStreamlines = null;
         }
+    }
+
+    destroy(ctx) {
+        this.dispose();
     }
 }

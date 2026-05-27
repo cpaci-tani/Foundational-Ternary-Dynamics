@@ -89,7 +89,7 @@ export class MockBridge {
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
             gauss_projection: true, forces: true, gravity: false, movement: true,
-            poisson_coulomb: true, lorentz_force: false, selective_damping: false,
+            poisson_coulomb: true, lorentz_force: false, selective_damping: true,
             larmor_radiation: false, dual_substrate: false, confinement: false,
             // weak_transmutation requires dual_substrate (operates on J_L/J_R).
             // Default OFF to satisfy the C++ TermToggles validator and stop
@@ -603,7 +603,7 @@ export class MockBridge {
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
             gauss_projection: true, forces: true, gravity: false, movement: true,
-            poisson_coulomb: true, lorentz_force: false, selective_damping: false,
+            poisson_coulomb: true, lorentz_force: false, selective_damping: true,
             larmor_radiation: false, dual_substrate: false, confinement: false,
             // weak_transmutation requires dual_substrate (operates on J_L/J_R).
             // Default OFF to satisfy the C++ TermToggles validator and stop
@@ -1345,7 +1345,6 @@ export class MockBridge {
             const f = this._spongeTable;
             for (let z = 0; z < N; z++) {
                 const dz = Math.min(z, Nm1 - z);
-                if (dz >= D) continue;  // entire z-slab is interior
                 for (let y = 0; y < N; y++) {
                     const dy = Math.min(y, Nm1 - y);
                     for (let x = 0; x < N; x++) {

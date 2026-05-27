@@ -161,63 +161,8 @@ const FLUX_VOL_VERT = `
     }
 `;
 
-const PARTICLE_FRAG = `
-    uniform int shapeType;
-    uniform float uOpacity;
-    varying vec3 vColor;
-    varying float vSize;
+import { PARTICLE_FRAG } from './viewport/shaders.js';
 
-    void main() {
-        vec2 c = gl_PointCoord - vec2(0.5);
-        float dist;
-
-        if (shapeType == 1) {
-            // Square
-            dist = max(abs(c.x), abs(c.y));
-            if (dist > 0.48) discard;
-        } else if (shapeType == 2) {
-            // Diamond
-            dist = abs(c.x) + abs(c.y);
-            if (dist > 0.5) discard;
-        } else if (shapeType == 3) {
-            // Star (5-pointed)
-            float angle = atan(c.y, c.x);
-            float r = length(c);
-            float star = cos(5.0 * angle) * 0.15 + 0.35;
-            if (r > star) discard;
-            dist = r / star * 0.5;
-        } else if (shapeType == 4) {
-            // Triangle
-            float x = c.x, y = c.y + 0.15;
-            if (y > 0.35 || y < -0.35 + 0.7 * abs(x) / 0.4) discard;
-            dist = length(c);
-        } else if (shapeType == 5) {
-            // Hexagon
-            vec2 a = abs(c);
-            dist = max(a.x * 0.866 + a.y * 0.5, a.y);
-            if (dist > 0.45) discard;
-            dist /= 0.45;
-        } else if (shapeType == 6) {
-            // Ring
-            float r = length(c);
-            if (r > 0.5 || r < 0.3) discard;
-            dist = abs(r - 0.4) / 0.1;
-        } else if (shapeType == 7) {
-            // Cross
-            float ax = abs(c.x), ay = abs(c.y);
-            if (ax > 0.15 && ay > 0.15) discard;
-            dist = max(ax, ay);
-        } else {
-            // Circle (default, shapeType == 0)
-            dist = length(c);
-            if (dist > 0.5) discard;
-        }
-
-        float alpha = 1.0 - smoothstep(0.15, 0.5, dist);
-        float glow = exp(-dist * dist * 4.0) * 0.15;
-        gl_FragColor = vec4(vColor + glow, alpha * alpha * uOpacity);
-    }
-`;
 
 export class Viewport {
     constructor(container) {
@@ -278,6 +223,7 @@ export class Viewport {
         this.latticeSize = 32;
         this._latticeSize = 32;  // mirrored so quantum overlays can read it too
         this._halfN = 16;
+        this._reflectiveBoundary = true;
 
         // Scene decoration (boundary wireframe, axes, post-processing, camera
         // presets) — Phase 3a extraction. Constructed BEFORE the flux/particle
@@ -408,13 +354,20 @@ export class Viewport {
         this._fieldRenderer?.setBoundaryShape(shape);
     }
 
+    setReflectiveBoundary(on) {
+        this._reflectiveBoundary = !!on;
+    }
+
     /**
      * Test whether a point (normalized -1..1 from center) is inside the
      * current boundary. Delegated to viewport/boundary-geometry.js.
      * Stays on the orchestrator so flux/particle/field renderers all
      * share a single callback (avoids 4 duplicate definitions).
      */
-    _insideBoundary(nx, ny, nz) { return insideBoundary(this._boundaryShape, nx, ny, nz); }
+    _insideBoundary(nx, ny, nz) {
+        if (this._reflectiveBoundary === false) return true;
+        return insideBoundary(this._boundaryShape, nx, ny, nz);
+    }
 
     // Phase 3a: extracted to viewport/scene-core.js.
     _buildAxes() { this._sceneCore?._buildAxes(); }
@@ -435,12 +388,12 @@ export class Viewport {
         this._fluxRenderer?.onLatticeSizeChanged(size, this._halfN);
         this._fieldRenderer?.onLatticeSizeChanged(size, this._halfN);
         this._particleRenderer?.onLatticeSizeChanged(size, this._halfN);
+        this._topoRenderer?.onLatticeSizeChanged(size, this._halfN);
 
         // Tracked particles may have stale ids after a scenario / lattice resize;
         // dispose all spin arrows so the next track() request gets a clean Group.
         if (this.spinArrowManager) this.spinArrowManager.dispose();
-        // TopologySheetRenderer re-queries latticeSize via its getter on next
-        // update; grav-surface rebuild now happens inside that module.
+        // TopologySheetRenderer has resized all built surfaces immediately.
 
         // Rebuild void box for raycasting (orchestrator-owned — it's a
         // raycasting bounding volume used by the inspector, not scene
@@ -790,6 +743,30 @@ export class Viewport {
     _buildHorizonField() { this._fieldRenderer._buildHorizonField(); }
     toggleHorizonField(on) { this._fieldRenderer.toggleHorizonField(on); }
     updateHorizonField(data) { this._fieldRenderer.updateHorizonField(data); }
+
+    // -- Topological Sheet (deformable rubber-sheet) overlays --
+    toggleGravPotentialField(on) { this._topoRenderer?.toggleGravPotential(on); }
+    updateGravPotentialField(data) { this._topoRenderer?.updateGravPotential(data); }
+    toggleEmEnergyField(on) { this._topoRenderer?.toggle('emEnergy', on); }
+    updateEmEnergyField(data) { this._topoRenderer?.update('emEnergy', data); }
+    toggleHelicityField(on) { this._topoRenderer?.toggle('helicity', on); }
+    updateHelicityField(data) { this._topoRenderer?.update('helicity', data); }
+    toggleKretschmannField(on) { this._topoRenderer?.toggle('kretschmann', on); }
+    updateKretschmannField(data) { this._topoRenderer?.update('kretschmann', data); }
+    toggleEPressureField(on) { this._topoRenderer?.toggle('ePressure', on); }
+    updateEPressureField(data) { this._topoRenderer?.update('ePressure', data); }
+    toggleBPressureField(on) { this._topoRenderer?.toggle('bPressure', on); }
+    updateBPressureField(data) { this._topoRenderer?.update('bPressure', data); }
+    toggleKineticEnergyField(on) { this._topoRenderer?.toggle('kineticEnergy', on); }
+    updateKineticEnergyField(data) { this._topoRenderer?.update('kineticEnergy', data); }
+    toggleFisherField(on) { this._topoRenderer?.toggle('fisher', on); }
+    updateFisherField(data) { this._topoRenderer?.update('fisher', data); }
+    toggleCoherenceField(on) { this._topoRenderer?.toggle('coherence', on); }
+    updateCoherenceField(data) { this._topoRenderer?.update('coherence', data); }
+    toggleChargeDensityField(on) { this._topoRenderer?.toggle('chargeDensity', on); }
+    updateChargeDensityField(data) { this._topoRenderer?.update('chargeDensity', data); }
+    toggleVorticityField(on) { this._topoRenderer?.toggle('vorticity', on); }
+    updateVorticityField(data) { this._topoRenderer?.update('vorticity', data); }
 
     // -- |psi|^2 breathing animation -- delegated; orchestrator forwards animation clock --
     _animateQuantumField() {

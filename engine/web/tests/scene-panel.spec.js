@@ -102,11 +102,11 @@ test.describe('Scene panel', () => {
         expect(readout.trim()).toMatch(/^55/);
     });
 
-    test('Scene tab is hidden on Scale 11 (consciousness) and returns on Scale 0', async ({ page }) => {
-        // Switch to consciousness (Scale 11)
+    test('Scene tab is hidden on Scale 4 (planetary) and returns on Scale 0', async ({ page }) => {
+        // Switch to planetary (Scale 4)
         await page.evaluate(() => {
             const sel = document.getElementById('engine-mode');
-            sel.value = 'consciousness';
+            sel.value = 'planetary';
             sel.dispatchEvent(new Event('change', { bubbles: true }));
         });
         await page.waitForTimeout(1000);

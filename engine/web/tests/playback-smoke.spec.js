@@ -2,6 +2,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Playback timeline smoke', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 720 });
+    });
+
     test('play buttons render with labels and distinct classes', async ({ page }) => {
         await page.goto('/');
         await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
