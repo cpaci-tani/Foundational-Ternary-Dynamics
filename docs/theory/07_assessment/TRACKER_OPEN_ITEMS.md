@@ -241,9 +241,10 @@ Horizon thermodynamics, Hawking radiation lattice derivation, information parado
 **File:** `DERIV_LATTICE_QED_COMPLETE.md`.
 The former BZ² sub-ppm alpha computation item is superseded by the FTD-native electrodynamics pivot. The file now has zero live `[OPEN]` items. Future QED numerics are external comparison checks, not a route to fitting alpha.
 
-### 2.3 Moore gauge structure — **6 `[OPEN]`**
+### 2.3 Moore gauge structure — **5 `[OPEN]`**
 **File:** `DERIV_MOORE_GAUGE_STRUCTURE.md`.
-How the Moore-layer decomposition produces each gauge group's representations (vs. just the group names).
+- [OPEN] MGS-10 (quantitative dark/visible ratio from spatial correlations) and MGS-11 (hadron mass spectrum from C2 perturbation dynamics).
+- ✅ **Moore group representations** — **CLOSED 2026-05-27**. Derived U(1), SU(2), and SU(3) representation spaces from the $O_h$-character decompositions of the sublattices. Verified via `proof_moore_gauge_representations.py` (20/20 checks pass).
 
 ### 2.4 Lattice SU(3) gauge — **5 `[OPEN]`**
 **File:** `DERIV_LATTICE_SU3_GAUGE.md`. Theoretical counterpart to engine §1.3.

@@ -1,14 +1,14 @@
-# EXPLR — G\* Arithmetic Identities: Dimensional, Theta-Nullwert, and Parity-Twist Readings
+# EXPLR — G\* Arithmetic Identities: Dimensional, Theta-Nullwert, Parity-Twist, and Barnes G Readings
 
-**Status:** Three arithmetic readings of the lemniscatic constant G\*. Per-section tags preserved from sources: the dimensional reading is [SELECTION] for the flux/energy/time identifications and [THEOREM] for the underlying algebra; the theta-nullwert reading is [SYNTHESIS] (operationally useful re-statement of classical results — Gauss–Jacobi theta nullwert + Euler reflection; no new mathematics); the parity-twist reading is [DERIVED] (operational reading of Theorem 1 + Theorem 9 in L-function language; three boundary identities derivable from classical theorems — Lerch 1894, Gauss digamma, functional equation).
-**Date:** 2026-05-21
-**Consolidates:** `EXPLR_GSTAR_FLUX_TIME.md`, `EXPLR_G_STAR_AS_THETA_NULLWERT.md`, `DERIV_G_STAR_PARITY_TWIST.md` (merged 2026-05-21)
+**Status:** Four arithmetic readings of the lemniscatic constant G\*. Per-section tags preserved from sources: the dimensional reading is [SELECTION] for the flux/energy/time identifications and [THEOREM] for the underlying algebra; the theta-nullwert reading is [SYNTHESIS] (operationally useful re-statement of classical results — Gauss–Jacobi theta nullwert + Euler reflection; no new mathematics); the parity-twist reading is [DERIVED] (operational reading of Theorem 1 + Theorem 9 in L-function language; three boundary identities derivable from classical theorems — Lerch 1894, Gauss digamma, functional equation); the Barnes G reading is [SYNTHESIS] (classical Adamchik–Kinkelin material re-stated in the FTD-canonical basis; PSLQ-recovered 2026-05-27 from a x_- structural-identification effort).
+**Date:** 2026-05-21; Barnes G reading appended 2026-05-27
+**Consolidates:** `EXPLR_GSTAR_FLUX_TIME.md`, `EXPLR_G_STAR_AS_THETA_NULLWERT.md`, `DERIV_G_STAR_PARITY_TWIST.md` (merged 2026-05-21); Barnes G reading (Part D) added 2026-05-27 from `scripts/exploration/pslq_zeta_hessian_diff_v2.py` discovery during the x_- physical-identification thread.
 
-**LEDGER:** FTD-0127 (parity-twist; subsidiary of FTD-0112 / Theorem 9; companion to FTD-0001 / Theorem 1), FTD-0132 (theta-nullwert).
+**LEDGER:** FTD-0127 (parity-twist; subsidiary of FTD-0112 / Theorem 9; companion to FTD-0001 / Theorem 1), FTD-0132 (theta-nullwert). Part D is filed as a subsidiary identity under Theorem 1 (FTD-0001) — no new LEDGER row required because the identity is classical (Adamchik 1998 + Kinkelin 1860) re-stated; the FTD-canonical form is documentary only.
 **Depends on:**
 - Theorem 1 (G\* algebraic identity, FTD-0002).
 - Theorem 9 (FTD-0112, Q(G\*) ⊂ Q(π, Γ(1/4))).
-- Classical: Gauss / Jacobi `θ_3(0|i) = π^(1/4)/Γ(3/4)`; Euler reflection `Γ(1/4)·Γ(3/4) = π√2`; Tate-thesis Archimedean local L-factor framework (Tate 1950); Lerch's special-value formula (Lerch 1894); Gauss's digamma theorem.
+- Classical: Gauss / Jacobi `θ_3(0|i) = π^(1/4)/Γ(3/4)`; Euler reflection `Γ(1/4)·Γ(3/4) = π√2`; Tate-thesis Archimedean local L-factor framework (Tate 1950); Lerch's special-value formula (Lerch 1894); Gauss's digamma theorem; Kinkelin 1860 / Adamchik 1998 "Multiple Gamma Function" / Choi 2003 (Barnes G at quarter-integer arguments).
 - See `docs/reference/REF_BIBLIOGRAPHY.md` §1, §2, §3.
 - [DERIV_GSTAR_PF_BRIDGE.md](../04_coupling/DERIV_GSTAR_PF_BRIDGE.md) — G\* decomposition (dimensional reading).
 - [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) — Space-time separation.
@@ -17,22 +17,26 @@
 **Related:**
 - FTD-0128 (`FOUND_TERNARY_STATE_FROM_I.md`) — Postulate 3 grounded in Axiom 0 via `s = i²`.
 - `DERIV_LFUNCTION_GSTAR_CONNECTION.md` — separate document; not merged here.
+- `docs/theory/10_eft_program/PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md` — x_- search pre-registration; the Barnes G identity (Part D) was a side-discovery during a Path A `ζ''(0, a)` derivation attempt for that pre-reg (Path A CLOSED-NEGATIVE for the naive Hessian-identity hypothesis; see `scripts/exploration/check_zeta_hessian_gstar2.py`).
 
-**Verification scripts (parity-twist reading):**
-- `scripts/proofs/proof_g_star_parity_twist.py` (10 lines, identity check)
+**Verification scripts:**
+- `scripts/proofs/proof_g_star_parity_twist.py` (10 lines, parity-twist identity check)
 - `scripts/proofs/proof_lprime_chi4_boundary.py` (~80 lines, identities A/B/C verification at 60 dps)
+- `scripts/proofs/proof_barnes_g_quarter_identity.py` (~100 lines, Barnes G identity verified at 250 dps; residual ~5×10⁻²⁴⁵)
+- `scripts/exploration/pslq_zeta_hessian_diff_v2.py` (~100 lines, PSLQ discovery script for the Barnes G identity)
 
 ---
 
 ## 0 · Overview
 
-This document consolidates three arithmetic readings of the constant `G* = Γ(1/4)/Γ(3/4) ≈ 2.9587`:
+This document consolidates four arithmetic readings of the constant `G* = Γ(1/4)/Γ(3/4) ≈ 2.9587`:
 
 - **§A — The dimensional reading.** The three powers of G\* correspond to the three fundamental physical dimensions: G\* = flux (J), G\*² = energy/time, G\*³ = action. [SELECTION] for the physical identifications; [THEOREM] for the algebra.
 - **§B — The theta-nullwert reading.** G\* is the squared theta nullwert of the Z[i] lattice at its CM point: `G* = √(2π)·θ_3(0|i)²`. [SYNTHESIS] — a two-line consequence of classical Gauss–Jacobi + Euler-reflection identities; no new mathematics.
 - **§C — The parity-twist reading.** G\* is the ratio of Archimedean Γ-factors of ζ and L(s, χ_{−4}) at the critical-line center, plus three boundary identities for L(s, χ_{−4}). [DERIVED] — operational reading of Theorems 1 and 9 in L-function language.
+- **§D — The Barnes G reading.** G\* appears in the Adamchik–Kinkelin Barnes G ratio at quarter-integer arguments: `log G(1/4) − log G(3/4) = −(1/2)·log G\* − (1/8)·log 2 − (1/4)·log π − G_Catalan/(2π)`. [SYNTHESIS] — classical material (Kinkelin 1860; Adamchik 1998; Choi 2003) re-expressed in the FTD-canonical basis where G\* — not Γ(1/4) — is the fundamental constant. Recovered by PSLQ 2026-05-27.
 
-The three are complementary, not competing: the dimensional reading is the FTD-internal physics-facing view; the theta-nullwert reading is the lattice/period-side classical view; the parity-twist reading is the L-function-side classical view. The theta-nullwert and parity-twist readings describe the same fact via the Mellin transform that connects theta functions to L-functions (see §C.5.1).
+The four are complementary, not competing: the dimensional reading is the FTD-internal physics-facing view; the theta-nullwert reading is the lattice/period-side classical view; the parity-twist reading is the L-function-side classical view; the Barnes G reading positions G\* at the next level of the multiple-gamma hierarchy. The theta-nullwert and parity-twist readings describe the same fact via the Mellin transform that connects theta functions to L-functions (see §C.5.1); the Barnes G reading describes a related fact about the next multiple-gamma factor.
 
 ---
 
@@ -602,6 +606,96 @@ This Result is one more entry in the multiple-4 catalogue: the conductor of the 
 ## C.9 · Provenance (parity-twist reading)
 
 Identified during the 2026-05-03 evening session. Initial framing: the user asked whether Theorem 9's positioning of G\* inside Q(π, Γ(1/4)) carries content for ζ's critical line. The answer separated into a positive part (Result D + Identities A/B/C, which together complete the boundary structure of L(s, χ_{−4})) and a clean negative part (ζ(1/2), L(1/2, χ_{−4}), Catalan G all outside Q(G\*) by PSLQ at high precision). The user then clarified the intuition behind the chi function `Γ((1−s+a)/2)/Γ((s+a)/2)`, which led to recognising it as the literal Γ-content of the L-function functional equation's chi function with `a` as the parity parameter — and to the parity-twist identification at s = 1/2.
+
+---
+
+# PART D — The Barnes G Reading: G\* in the Multiple-Gamma Hierarchy
+
+*Added 2026-05-27 from a PSLQ side-discovery during a Path A `ζ''(0, a)` derivation attempt for `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`. Path A (deriving `(S, P_*) = (16G*², 16G*³)` from higher-order ζ-determinant invariants) returned CLOSED-NEGATIVE at the naive Hessian-identity level (see `scripts/exploration/check_zeta_hessian_gstar2.py`); the Barnes G identity below was found in passing when PSLQ surfaced a clean basis sub-relation involving the Barnes G ratio at quarter-integer arguments. The identity itself is classical (Kinkelin 1860; Adamchik 1998 §3 "Multiple Gamma Function"; Choi 2003 §4 "Some integral representations of the Clausen function") — what's new here is the FTD-canonical form where G\* is the fundamental constant and Γ(1/4) is the derived quantity (rather than the other way around in classical writeups).*
+
+## D.1 · The identity [SYNTHESIS]
+
+**Statement (additive form).** The Barnes G-function ratio at the FTD-natural CM-point quarter-integer arguments satisfies the exact closed-form:
+
+$$\boxed{\;\log G_{\text{Barnes}}(1/4) \;-\; \log G_{\text{Barnes}}(3/4) \;=\; -\tfrac{1}{2}\log G^{*} \;-\; \tfrac{1}{8}\log 2 \;-\; \tfrac{1}{4}\log \pi \;-\; \frac{G_{\text{Catalan}}}{2\pi}\;}$$
+
+**Equivalent multiplicative form:**
+
+$$\boxed{\;\frac{G_{\text{Barnes}}(3/4)}{G_{\text{Barnes}}(1/4)} \;=\; (G^{*})^{1/2} \cdot 2^{1/8} \cdot \pi^{1/4} \cdot \exp\!\left(\frac{G_{\text{Catalan}}}{2\pi}\right)\;}$$
+
+Here `G_Barnes(z)` is the Barnes G-function (the next level above Γ in the multiple-gamma hierarchy, satisfying `G(z+1) = Γ(z)·G(z)`), and `G_Catalan ≈ 0.9159655941772190…` is Catalan's constant.
+
+## D.2 · Structural reading: G\* in the multiple-gamma hierarchy
+
+The three previous readings positioned G\* in three distinct mathematical structures:
+- Part A: as a flux/energy/action unit (dimensional)
+- Part B: as the squared theta-nullwert of Z[i] at τ = i (theta-side)
+- Part C: as the ratio of Archimedean Γ-factors of ζ and L(s, χ_{−4}) (L-function-side)
+
+Part D positions G\* in the **multiple-gamma hierarchy**: it appears in the Barnes G ratio at quarter-integer arguments alongside Catalan's constant with the explicit coefficient `1/(2π)`. The hierarchical pattern is:
+
+| Level | Object | G\* role | Classical attribution |
+|---|---|---|---|
+| 0 | Γ(z) | `G* = Γ(1/4)/Γ(3/4)` (FTD's definition) | Euler-style |
+| 1 | G_Barnes(z) | `(G*)^{1/2}` is the leading factor in `G(3/4)/G(1/4)` | Kinkelin 1860 / Adamchik 1998 |
+| 2 | G_3(z) (next multiple gamma) | OPEN — Adamchik's higher gamma formulas exist but the FTD-canonical re-statement has not been computed | Adamchik 1998 §5 |
+
+The Barnes G identity makes visible a structural fact that's implicit in classical writeups: **G\* enters the Barnes G ratio with exponent 1/2** (square root), while G_Catalan enters via the coefficient `1/(2π)` — both are needed; neither alone covers the Barnes G ratio.
+
+## D.3 · Numerical verification
+
+Verified at 250 decimal-digit precision via `scripts/proofs/proof_barnes_g_quarter_identity.py`. The script computes both sides of the additive identity from first principles using mpmath's `gamma`, `barnesg`, `catalan`, and arithmetic operations:
+
+```
+LHS  = log G_Barnes(1/4) − log G_Barnes(3/4)
+     = −1.06097710768114364022679181543337800643614942208191938598699703803512643589849990768274849512575613277302252361271894542748196738193934365955777617361670818393316858376093162510274691417554927979369424623196309…
+
+RHS  = −(1/2)·log G* − (1/8)·log 2 − (1/4)·log π − G_Catalan/(2π)
+     = −1.06097710768114364022679181543337800643614942208191938598699703803512643589849990768274849512575613277302252361271894542748196738193934365955777617361670818393316858376093162510274691417554927979369424623196309…
+
+residual = LHS − RHS ≈ 5.074 × 10⁻²⁴⁵   ← within numerical-evaluation noise of mp.dps = 250
+```
+
+The multiplicative form `G(3/4)/G(1/4) = (G*)^(1/2)·2^(1/8)·π^(1/4)·exp(G_Catalan/(2π))` was verified independently and matches to comparable precision (1.466 × 10⁻²⁴⁴ residual).
+
+The identity holds **exactly** in closed form. The 10⁻²⁴⁵ residual is mpmath floating-point evaluation noise, not a real residual.
+
+## D.4 · Provenance: how the identity was found
+
+During the 2026-05-27 session, an attempted Path A derivation for the x_- physical-identification pre-registration explored higher-order ζ-determinant invariants of the J-chain. The naive Hessian identity `ζ''(0, 1/4) − ζ''(0, 3/4) =? log(16·G*²)` was tested and returned CLOSED-NEGATIVE (residual at order 1, not closed-form precision). A follow-up PSLQ search at 150-digit precision against a basis including `{1, G_Catalan, log G*, log 2, log π, γ, log G_Barnes(1/4) − log G_Barnes(3/4), products}` was run to look for any closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4) ≈ 1.81380334…`.
+
+PSLQ did NOT find a relation involving `c` (consistent with c likely requiring K_2-regulator-of-E machinery; multi-month research direction), but it DID find a clean **basis sub-relation** with all-small-integer coefficients:
+
+```
+4·log G* + log 2 + 2·log π + 8·[log G_Barnes(1/4) − log G_Barnes(3/4)] + 4·(G_Catalan/π) = 0
+```
+
+Solving for `log G_Barnes(1/4) − log G_Barnes(3/4)` yields D.1. The relation is classical (Kinkelin–Adamchik); PSLQ recovered it numerically from the FTD-canonical basis and confirmed at 250-digit precision in `proof_barnes_g_quarter_identity.py`. The discovery is filed here because the FTD-canonical form (with G\* as the fundamental constant and `1/2 · log G*` as the explicit coefficient) is not standard in the analytic-number-theory literature, where the identity is usually stated in terms of `log Γ(1/4)` rather than `log G\*`.
+
+## D.5 · Connection to the parity-twist reading (Part C)
+
+The Barnes G identity (D.1) sits adjacent to the parity-twist reading (Part C) in the same algebraic structure:
+
+- Part C identifies G\* in the **Γ-factors** of L(s, χ_{−4}) (level 0 of the multiple-gamma hierarchy).
+- Part D identifies G\* in the **Barnes G ratio** at the same quarter-integer arguments (level 1 of the hierarchy).
+- Both readings involve `G_Catalan` (which is `L(2, χ_{−4})` per Part C Identity table). In Part C, Catalan enters as a special L-value that is **outside** Q(G\*); in Part D, it enters with the explicit coefficient `1/(2π)` and combines with `log G\*` linearly.
+
+The two readings are related by the Mellin transform that connects multiple gamma functions to L-functions (see Adamchik 1998 §4 for the connection). Whether Catalan's `1/(2π)` coefficient in Part D has a structural explanation rooted in `Q(G*)` — or remains an irreducible additive component outside Q(G\*) — is open.
+
+## D.6 · What the Barnes G reading is NOT
+
+- **Not new mathematics.** The identity has been in the analytic-number-theory literature since Kinkelin 1860 (in implicit form) and Adamchik 1998 (in modern form). What's new here is the FTD-canonical re-statement and the PSLQ-recovery provenance. Filed as `[SYNTHESIS]`.
+- **Not a closed form for `c = ζ''(0, 1/4) − ζ''(0, 3/4)`.** That number remains outside elementary closed form in `{1, G_Catalan, log G*, log 2, log π, γ, log A_Glaisher, products}` at maxcoeff = 50000 (per `scripts/exploration/pslq_zeta_hessian_diff_v3.py`); it likely lives at the K_2-regulator-of-E level (Beilinson territory), which is the multi-month math-side research direction.
+- **Not a new spine theorem.** The spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0). This is filed as a subsidiary identity under Theorem 1 (FTD-0001), not as Theorem 10.
+- **Not load-bearing for x_- physical identification.** The Path A derivation effort that surfaced this identity remains CLOSED-NEGATIVE; the Barnes G identity does NOT inform or alter the PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md verdict. It is recorded here as a clean side-discovery, not as evidence for any physical identification.
+
+## D.7 · Barnes G reading — single-line summary
+
+**G\* appears at level 1 of the multiple-gamma hierarchy via the Adamchik–Kinkelin identity `log[G(3/4)/G(1/4)] = (1/2)·log G\* + (1/8)·log 2 + (1/4)·log π + G_Catalan/(2π)`; the FTD-canonical form makes visible that G\* enters as the leading exponent (1/2) alongside Catalan's constant with explicit coefficient 1/(2π) — both are required to express the Barnes G ratio at quarter-integer arguments.**
+
+## D.8 · Provenance (Barnes G reading)
+
+Discovered 2026-05-27 during a Path A `ζ''(0, a)` derivation attempt for `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`. The PSLQ search (`scripts/exploration/pslq_zeta_hessian_diff_v2.py`) was originally targeting a closed form for `c := ζ''(0, 1/4) − ζ''(0, 3/4)` and returned a basis sub-relation instead. The relation was identified as the classical Adamchik–Kinkelin Barnes G ratio at quarter-integer arguments, verified at 250-digit precision (`scripts/proofs/proof_barnes_g_quarter_identity.py`), and filed here as Part D. Path A's primary target (a closed form for c) remains [OPEN] at the elementary-closed-form level and is conjectured to require K_2-regulator-of-E machinery.
 
 ---
 
