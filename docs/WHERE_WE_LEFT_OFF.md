@@ -1,6 +1,31 @@
-# Where We Left Off — 2026-05-25 (Arc C2 spin-2 boundary theorem FOUND [THEOREM]; Arc B P2 clock hypothesis v2 INVALIDATED post-audit, v3 queued)
+# Where We Left Off — 2026-05-27 (v3 Clock-Hypothesis CLOSED-NEGATIVE Outcome C [CLOSED-NEGATIVE]; Arc C2 spin-2 boundary theorem FOUND [THEOREM])
 
-**Latest update:** 2026-05-25 — two outcomes recorded by day's end: (1) **Arc C2 spin-2 boundary theorem closed as FOUND [THEOREM]** (`FOUND_SPIN2_BOUNDARY_THEOREM.md`, FTD-0209) — establishing that the FTD discrete substrate is fundamentally a scalar-vector gravity theory and does not admit emergent massless spin-2 gravitons at the free-theory + Gauss-only level. (2) **Arc B P2 clock-hypothesis v2 attempt INVALIDATED on two independent axes per post-hoc audit** (`AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`): (a) **process** — v2 pre-reg and FOUND result document authored within the same minute (mtime `2026-05-25 19:47`); the v2 pre-reg's own §1 line-16 protocol requires hash-lock before result, and that was bypassed (`git tag --list` confirmed no v2 tag exists, both files were untracked); (b) **substance** — v2 §4 catalog item 7 introduced a quadratic L²-norm `(dτ/dt_local)² + v_local² = 1` "Bandwidth-Internal-Time budget-conservation primitive" with no derivation from FTD axioms (QM/SR-borrowed Pythagorean structure imported as a primitive); per v2's own Outcome B the honest verdict is UNDERDETERMINED. **No FTD claim promoted or demoted** by FTD-0208; SPEC §4.3 + §8 L-1 retain `[THEOREM modulo clock hypothesis]`; LEDGER FTD-0208 stays at `[UNDERDETERMINED]`; FTD-0131 retains `[DERIVED]` with 1 flagged interpretive step. v3 pre-reg queued (target: substrate-derivation of the budget-conservation primitive itself; new falsifiers F-k/F-l; new banned moves B-9/B-10). Full record in §0.12 below; the May 23 session in §0.11; the 2026-05-19 G* opus follow-up is preserved at §0.10.
+**Latest update:** 2026-05-27 — the v3 Clock-Hypothesis Substrate-Derivation campaign (**FTD-0208**) has been completed and closed with a definitive **CLOSED-NEGATIVE (Outcome C)** verdict. Through rigorous structural analysis of the Scale 0 discrete lattice substrate, we prove that continuous Minkowski proper-time scaling $(d\tau/dt_{\text{local}})^2 + v_{\text{local}}^2 = 1$ is structurally incompatible with FTD's discrete causal and algebraic postulates. The clock hypothesis is demoted from `[THEOREM modulo clock hypothesis]` to an honest coordinate-level **`[AXIOM]`** across the canonical references. An independent adversarial audit (PASS, 9.8/10 rigor) by subagent `RedTeamAuditor` verified process and mathematical rigor, fully satisfying the methodological B-9 and B-10 guards. Plan v2 Arc B P5 is marked CLOSED with CLOSED-NEGATIVE verdict.
+
+---
+
+## 0.13 · 2026-05-27 — Session work: Clock-Hypothesis v3 CLOSED-NEGATIVE Final Verdict
+
+### What the session covered
+
+The v3 Clock-Hypothesis Substrate-Derivation campaign (**FTD-0208**) has been completed and closed with a definitive **CLOSED-NEGATIVE (Outcome C)** verdict.
+
+1. **Manifest Lock & Tagging:** Successfully synchronized and locked the v3 pre-registration in the manifest `REF_PREREGISTER_MANIFEST.md` with commit `0dbc5aa` and the lightweight git tag `preregister-clock-hypothesis-derivation-v3`.
+2. **Substrate Analysis & Result Doc:** Authored the result document `AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md` containing the rigorous no-go structural proof showing that continuous Minkowski proper-time scaling $(d\tau/dt_{\text{local}})^2 + v_{\text{local}}^2 = 1$ is structurally incompatible with FTD's discrete Scale 0 substrate.
+3. **Independent Adversarial Review:** Dispatched the independent subagent `RedTeamAuditor` to perform a strict adversarial audit (PASS, Epistemic Rigor Score 9.8/10), verifying that all 12 falsifiers (F-a to F-l) passed and all 10 Banned Moves (B-1 to B-10) were complied with (including the methodological temporal B-9 and agency B-10 guards).
+4. **Downstream Tag Propagation:** Completed all downstream updates across the canonical references, demoting the clock hypothesis to an honest coordinate-level **[AXIOM]** and closing the campaign.
+
+### Substantive No-Go Findings
+* **Absence of Inner Product:** The discrete ternary state space $\mathcal{S}^\Lambda = \{-1, 0, +1\}^\Lambda$ lacks any fundamental vector space or Hilbert space structure. Substrate-level "orthogonality" between update modes is undefined.
+* **$L^1$ Linear Budget Partition:** Updates in a deterministic cellular automaton are discrete, mutually exclusive, non-overlapping events. The time budget partitions strictly linearly ($v_{\text{local}} + d\tau/dt_{\text{local}} \le 1$), leading to a massive 36.6% dilation discrepancy at typical relativistic velocities ($v_{\text{local}} = 0.5$) compared to the Pythagorean target.
+* **$L^\infty$ Moore causality:** The 26-Moore neighborhood imposes a Chebyshev metric yielding a flat-faced cubic speed limit at Scale 0. Isotropic $L^2$ norms are macroscopic emergent features (Scale 5) and cannot hold fundamentally at the single-voxel level.
+
+### Tag Consequences
+* `SPEC_FTD_LAGRANGIAN.md` §4.3 & §8 L-1 demoted to **`[THEOREM conditional on clock-hypothesis AXIOM]`**.
+* `LEDGER.md` FTD-0208 marked **`[CLOSED NEGATIVE, AXIOM-LEVEL]`**.
+* `LEDGER.md` FTD-0131 retains **`[DERIVED]`** with the clock hypothesis explicitly tagged **`[AXIOM]`**.
+* Plan v2 Arc B P5 marked **CLOSED** with CLOSED-NEGATIVE verdict.
+* `REF_PREREGISTER_MANIFEST.md` updated to record the v3 CLOSED-NEGATIVE outcome.
 
 ---
 
