@@ -4,6 +4,52 @@
 
 ---
 
+## 0.14 · 2026-05-27 — Session work: Web engine audit, _dag rename, x_- pre-reg + Path A exploration, W5 cosmological reframing
+
+### What the session covered
+
+A long mixed-workstream session combining a major web-dashboard audit with a number-theoretic exploration of the master quadratic's smaller root `x_-`. Seven threads landed:
+
+1. **Comprehensive 12-agent web engine audit** (`engine/web/AUDIT_WEB_ENGINE_2026-05-27.md`, ~50 KB). Seven scale-experts + five cross-cutting agents produced a 52-ticket prioritized report covering scientific accuracy, visualization fidelity, performance, wiring, and consolidation. P0 findings included: Scale 4 used lattice `G_N=0.01` for AU·M_sun·yr scenarios (Earth year ~63× too long); telemetry-hub Hubble key mismatch (Scale 5 emitted `hubbleParameter`, hub read `hubble`/`hubbleParam`); cosmic mass labels missing `LATTICE_TO_SOLAR_MASS` factor (50× off); Scale 2 `Temperature K` unit-mislabel; Scale 3 acetylene C-C distance exceeded auto-bond threshold; retired `x_- ↔ N_c` identification still surfaced; multiple `[THEOREM]` tags overclaimed cosmology constants (`Ω_Λ = 2/3`, `DM_FRACTION = 17/27`).
+
+2. **W1–W10 audit follow-up commit** (`c581af6`, 65 files, +677/−291). Closed ~30 tickets across the audit's priority queue. Major epistemic fixes: `constants.js` Layer 9 cosmic tags downgraded `[THEOREM]` → `[PARAMETRIC]`/`[SELECTION]`; Scale 4 `G_HELIOCENTRIC = 4π²` wired; Scale 5 mass labels apply `LATTICE_TO_SOLAR_MASS`; Scale 5 panel Schwarzschild formula corrected to match engine's `cbrt(M)·0.12`; cosmic-scenarios galaxies now use canonical `DM_FRACTION`/`BARYON_FRACTION`; Born rule scenario tag `[THEOREM]` → `[SELECTION]`; SU(3) identification tag `[THEOREM]` → `[SELECTION]`; Scale 6 BCC/FCC sublattice labels switched to shell-based per Moore Layer Theorem §4; `[CLOSED NEGATIVE]` and `[PARTIAL]` added to `FAQ_TAGS` allowlist (caught one self-inflicted regression mid-flight where the new tag broke bridge init).
+
+3. **`_dag` → modern-name rename consistency cleanup**. Pre-existing background-agent commit `1b68685` renamed `app_dag.js → app.js`, `wasm-bridge-dag.js → bridge-init.js`, `bridge-factory-dag.js → bridge-factory.js` but missed ~30 docstring/comment/README references. Bulk replace across `web/**/*.js`, `web/**/*.md`, `tests/**/*.spec.js` corrected all stale references. Verified dashboard boot via Playwright (29 passed, 6 pre-existing failures unrelated to renames).
+
+4. **`x_-` structural derivation + Path A K_2-regulator exploration**. Derived 5 equivalent closed forms for `x_- = 8G*²(1−δ) = G*/(1−αG*)` from the master quadratic + Theorem 8 harmonic invariant, with the cleanest form tying `x_-` to the dual-substrate chirality split. Surfaced bridge identity `αG* = (1−δ)/2`. Tested naive Hessian-identity `ζ''(0,1/4) − ζ''(0,3/4) =? log(16·G*²)`: **CLOSED-NEGATIVE** at 80-dps (LHS = 1.81380…, RHS = 4.94207…). Broader PSLQ at 200-dps over a 24-element basis found NO integer relation for `c = ζ''(0,1/4) − ζ''(0,3/4)` in elementary basis + Catalan + Glaisher + products. Attempted K_2-regulator-of-E layer via direct Dirichlet summation of `L(E, 2)` for E: y² = x³ − x (LMFDB E_32a1, η(4z)²·η(8z)² verified vs LMFDB a-coefficients); INCONCLUSIVE at N_max=5000 due to slow Hasse-Weil convergence. Conclusion: K_2-regulator route requires Mellin-transform acceleration (multi-hour) or literature-derived closed form (Brunault–Zudilin); not session-tractable.
+
+5. **Side-discovery: Barnes G ratio identity at quarter-integer arguments** (committed in background-agent commit `d90f4bb`). PSLQ at 150-dps recovered the classical Adamchik–Kinkelin identity in FTD-canonical form: `log G_Barnes(1/4) − log G_Barnes(3/4) = −(1/2)·log G* − (1/8)·log 2 − (1/4)·log π − G_Catalan/(2π)`. Verified to 245 decimal digits via `scripts/proofs/proof_barnes_g_quarter_identity.py`. Filed as Part D of `EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md`. Tag `[SYNTHESIS]` — classical result (Kinkelin 1860 / Adamchik 1998) re-stated in FTD-canonical basis where G* is the fundamental constant.
+
+6. **W5 Moore-shell weighting → Planck-compatible Ω_DM/Ω_b prediction** (committed in background-agent commit `386fd42`). Tested 9 natural FTD-internal weighting schemes for the 17:10 vs Planck 5.4 discrepancy. Of 9 candidates, only **W5 (cuboctahedron sites × N_base = 4)** lands within Planck 1σ: `DM:b = 53/10 = 5.30` (1.4% off Planck 5.375), `Ω_DM/Ω_m = 53/63 = 0.8413` (0.2% off Planck 0.843). Status `[SELECTION]` — post-hoc weighting, structurally motivated by cuboct = 12 fermion species × N_base internal multiplicity. Filed as `docs/theory/10_eft_program/EXPLR_DM_BARYON_W5_WEIGHTING.md`; FAQ entry `dark-matter` updated to cite both readings.
+
+7. **`x_-` physical-identification pre-registration drafted and hash-locked** (`docs/theory/10_eft_program/PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`). 9-section template following `PREREG_FINITE_NEUTRAL_LOCK_v1.md` / `PREREG_COLOUR_SINGLET_RANK_v1.md` precedents. Locks the *design* of an FTD-internal physical-identification search for `x_-` under three constraints: algebraic (harmonic sum rule `1/Q_phys + α = 1/G*`), structural (L/R-asymmetric in SM — guards against re-litigating retired FTD-0014 N_c identification), methodological (FTD-0189-style adversarial dual-match uniqueness scan). Frozen 25-entry SM observable basket. Three pre-blessed outcomes FOUND/UNDERDETERMINED/CLOSED-NEGATIVE; prior-favoured CLOSED-NEGATIVE. SHA256 `06c1cd0f0c82f331292d51620077d6eec99424af8a728de4fc24a3cfbe619f08`. Hash-locked in `REF_PREREGISTER_MANIFEST.md` (this commit); `git tag preregister-x-minus-physical-identification-v1` to be applied at commit time. LEDGER row FTD-0210 reserved.
+
+### Exploration scripts landed (this commit)
+
+- `scripts/exploration/check_zeta_hessian_gstar2.py` — Path A first-pass: naive Hessian identity test at 80-dps, CLOSED-NEGATIVE.
+- `scripts/exploration/pslq_zeta_hessian_diff.py` (+`_v2.py`, `_v3.py`) — broader PSLQ searches for `c = ζ''(0,1/4) − ζ''(0,3/4)` closed form; v2 surfaced the Barnes G side-discovery; v3 extended basis with no relation found.
+- `scripts/exploration/lemniscatic_lvalue_path_a.py` — K_2-regulator probe via direct Dirichlet sum of `L(E, 2)` for E_32a1; INCONCLUSIVE due to slow Hasse-Weil convergence.
+
+### Tag consequences (cumulative across session)
+
+- `constants.js` Layer 9 cosmic constants downgraded `[THEOREM]` → `[PARAMETRIC]` (`Ω_Λ = 2/3`) and `[SELECTION]` (`DM_FRACTION = 17/27`, `BARYON_FRACTION = 10/27`, `γ = 5/3`).
+- `constants.js` `X_MINUS` retired-claim comment retired; `ALPHA = G_C²` tag clarified as `[CALIBRATED]` not `[DERIVED]`.
+- `constants.js` Thomas-Fermi prefactor `[DERIVED]` → `[IMPOSED — external Lieb–Simon]`.
+- `config/scenarios.js` Born rule `[THEOREM]` → `[SELECTION]`; SU(3) sector identification `[THEOREM]` → `[SELECTION]`; Higgs self-coupling `[DERIVED]` → `[PARAMETRIC]`.
+- FAQ `dark-matter` entry now carries both readings (uniform 1.7 + W5 5.30).
+- LEDGER row FTD-0210 reserved for `x_-` physical-identification pre-registration (no result yet).
+- No spine theorem promoted or demoted.
+
+### What's queued for the next session
+
+1. **Apply hash-lock tag**: `git tag preregister-x-minus-physical-identification-v1` after this commit lands. The manifest entry already pre-populates the SHA.
+2. **Run the §6 measurement procedure** of the x_- pre-reg (frozen 25-entry observable basket search). Prior: CLOSED-NEGATIVE (Candidate C1 — x_- is pure algebraic artifact).
+3. **Pre-register W5 independent-observable confirmation** (CMB ℓ₁, BBN Y_p, or z_eq under W5 weighting). If a second independent observable lands at <5% under W5 and not under W1, that's structural confirmation; if not, W5 retires.
+4. **Path A K_2-regulator continuation** if desired: implement Mellin-transform acceleration for L(E, 2) at ~50-dps precision (multi-hour) OR import Brunault–Zudilin Mahler-measure identity from the literature.
+5. **Untouched threads from the 2026-05-27 prediction brainstorm**: scalar-vector-not-spin-2 strong-field gravity signature (Frontier 4), no-4th-generation no-go formalization, mass-ratio deviation hierarchy (m_τ at 66 ppm vs m_μ at 1100 ppm).
+
+---
+
 ## 0.13 · 2026-05-27 — Session work: Clock-Hypothesis v3 CLOSED-NEGATIVE Final Verdict
 
 ### What the session covered
