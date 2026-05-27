@@ -72,6 +72,7 @@ Interpretive re-framings of the master quadratic and the recurring integer 4 / 1
 | [EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md](EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md) | [SELECTION] / [SYNTHESIS] / [DERIVED] | Consolidated: dimensional, theta-nullwert, and parity-twist readings of G\*. |
 | [EXPLR_ONTIC_CONSTANT_ATLAS.md](EXPLR_ONTIC_CONSTANT_ATLAS.md) | [THEOREM] (identities) + [SELECTION] | Atlas of every constant in the ontic derivation chain; G\*=3 fixed-point analysis. |
 | [EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md](EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md) | theorems vs conjectures distinguished | Rigorous analysis of the FTD curve family converging on {3, 4, 7, 13}. |
+| [EXPLR_COLOR_EXCESS_CLOSED_FORM.md](EXPLR_COLOR_EXCESS_CLOSED_FORM.md) | [THEOREM] / [CLOSED NEGATIVE] | High-precision PSLQ and algebraic closed-form analysis of the color excess delta_c. |
 
 ## Clifford / bivector algebra & fermion-emergence program
 
@@ -129,4 +130,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-55 active docs in this cluster (+ 2 archived).
+56 active docs in this cluster (+ 2 archived).
