@@ -1,6 +1,10 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+});
+
 test('every panel descriptor exposes a unicode icon glyph', async ({ page }) => {
     await page.goto('/');
     await page.waitForTimeout(800);

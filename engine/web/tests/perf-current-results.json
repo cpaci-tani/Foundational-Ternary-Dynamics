@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-05-27T05:26:10.819Z",
+  "config": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.7727.15 Safari/537.36",
+    "hardwareConcurrency": 32,
+    "devicePixelRatio": 1,
+    "latticeSize": 32
+  },
+  "scenario": "flux-pulse",
+  "preset": "full",
+  "observationWindowMs": 3000,
+  "steadyStateTick": 200,
+  "metrics": {
+    "sampleCount": 83,
+    "observationMs": 3274.2000000476837,
+    "fpsMedian": 0,
+    "frameTimeMedianMs": 0,
+    "frameTimeP95Ms": 166.60000000000218,
+    "overlayTimeMs": 0,
+    "heapBytes": 91700000,
+    "heapMB": 87.45193481445312,
+    "gcPauseRatePerSec": 9
+  }
+}

@@ -47,40 +47,8 @@ import { Scale3ControlsComponent } from './ui/controls/component.js';
 
 
 // =====================================================================
-// Internal Helpers (duplicated from scale2 to avoid circular deps
-// for the subset needed here)
-// =====================================================================
+import { syncAEParamsFromUI as _syncAEParamsFromUIInternal, resetAETogglesToDefaults as _resetAETogglesToDefaults } from '../scale-utils.js';
 
-// AE toggle defaults (same source of truth as Scale 2)
-const AE_DEFAULT_TOGGLES = SCALE2_TOGGLES;
-
-/**
- * Sync all AE toggle checkboxes to the bridge.
- * Minimal copy from Scale 2 -- only needed during scenario load
- * because syncAEParams(ctx) requires the full ctx which may not
- * be available at load time.
- */
-function _syncAEParamsFromUIInternal(bridge) {
-    const dtEl = document.getElementById('ae-dt-slider');
-    if (dtEl) bridge.aeSetDt(parseFloat(dtEl.value));
-    const softEl = document.getElementById('ae-soft-slider');
-    if (softEl) bridge.aeSetSoftening(parseFloat(softEl.value));
-    for (const [elId, , setter] of AE_DEFAULT_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (el && bridge[setter]) bridge[setter](el.checked);
-    }
-}
-
-/**
- * Reset all AE toggle checkboxes to their default values.
- */
-function _resetAETogglesToDefaults(bridge) {
-    for (const [elId, defaultVal, setter] of AE_DEFAULT_TOGGLES) {
-        const el = document.getElementById(elId);
-        if (el) el.checked = defaultVal;
-        if (bridge[setter]) bridge[setter](defaultVal);
-    }
-}
 
 
 // =====================================================================
@@ -227,4 +195,12 @@ export { animateAE } from '../scale2/controller.js';
 export function bindScale3ControlsUI() {
     const controlsPanel = document.getElementById('panel-controls');
     if (controlsPanel) new Scale3ControlsComponent(controlsPanel).init();
+}
+
+export function mount(ctx) {
+    // standard placeholder
+}
+
+export function destroy(ctx) {
+    resetScale3(ctx);
 }

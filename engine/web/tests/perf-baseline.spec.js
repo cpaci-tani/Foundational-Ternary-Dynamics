@@ -228,8 +228,10 @@ test.describe('perf baseline', () => {
 
         // Wait until tick counter passes STEADY_STATE_TICK
         await expect.poll(async () => {
-            return await page.evaluate(() => {
-                const b = window._ftdBridge;
+            return await page.evaluate(async () => {
+                const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+                const state = getScale0State();
+                const b = state.useFluxMock && state.fluxMock ? state.fluxMock : window._ftdBridge;
                 return (b && typeof b._tick === 'number') ? b._tick : -1;
             });
         }, {
@@ -244,12 +246,17 @@ test.describe('perf baseline', () => {
         const sample = await runObservation(page, OBSERVATION_WINDOW_MS);
 
         // Collect config info for the report
-        const config = await page.evaluate(() => ({
-            userAgent: navigator.userAgent,
-            hardwareConcurrency: navigator.hardwareConcurrency,
-            devicePixelRatio: window.devicePixelRatio,
-            latticeSize: window._ftdBridge?.latticeSize,
-        }));
+        const config = await page.evaluate(async () => {
+            const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+            const state = getScale0State();
+            const b = state.useFluxMock && state.fluxMock ? state.fluxMock : window._ftdBridge;
+            return {
+                userAgent: navigator.userAgent,
+                hardwareConcurrency: navigator.hardwareConcurrency,
+                devicePixelRatio: window.devicePixelRatio,
+                latticeSize: b?.latticeSize,
+            };
+        });
 
         const record = {
             timestamp: new Date().toISOString(),

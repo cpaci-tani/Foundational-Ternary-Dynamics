@@ -89,9 +89,9 @@
             try {
                 var stored = localStorage.getItem('ftd.panel.mount');
                 var valid = stored === 'left' || stored === 'bottom' || stored === 'right';
-                document.documentElement.dataset.panelMount = valid ? stored : 'right';
+                document.documentElement.dataset.panelMount = valid ? stored : 'bottom';
             } catch (_e) {
-                document.documentElement.dataset.panelMount = 'right';
+                document.documentElement.dataset.panelMount = 'bottom';
             }
         })();
     </script>
@@ -213,7 +213,7 @@
     </div>
 
     <!-- ── Application Scripts ──────────────────────── -->
-    <script type="module" src="js/app_dag.js?v=19"></script>
+    <script type="module" src="js/app.js?v=20"></script>
 </body>
 
 </html>

@@ -15,6 +15,9 @@
  *   createListenerBag()      - Trackable addEventListener bag for clean teardown
  */
 
+import { SCALE2_TOGGLES } from '../config/toggles.js';
+
+
 // ── formatNumber ────────────────────────────────────────────────────
 /**
  * Format a numeric value for display in diagnostics / status bars.
@@ -179,3 +182,29 @@ export function createListenerBag() {
         size() { return cleanups.length; }
     };
 }
+
+/**
+ * Sync all AE toggle checkboxes and sliders to the bridge.
+ */
+export function syncAEParamsFromUI(bridge) {
+    const dtEl = document.getElementById('ae-dt-slider');
+    if (dtEl) bridge.aeSetDt(parseFloat(dtEl.value));
+    const softEl = document.getElementById('ae-soft-slider');
+    if (softEl) bridge.aeSetSoftening(parseFloat(softEl.value));
+    for (const [elId, , setter] of SCALE2_TOGGLES) {
+        const el = document.getElementById(elId);
+        if (el && bridge[setter]) bridge[setter](el.checked);
+    }
+}
+
+/**
+ * Reset all AE toggle checkboxes to their default values and push them to the bridge.
+ */
+export function resetAETogglesToDefaults(bridge) {
+    for (const [elId, defaultVal, setter] of SCALE2_TOGGLES) {
+        const el = document.getElementById(elId);
+        if (el) el.checked = defaultVal;
+        if (bridge[setter]) bridge[setter](defaultVal);
+    }
+}
+
