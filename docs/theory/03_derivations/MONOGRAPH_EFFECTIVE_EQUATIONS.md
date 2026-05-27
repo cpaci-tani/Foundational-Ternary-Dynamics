@@ -358,7 +358,7 @@ This eliminates the infinite loop divergences of continuum QED, making the effec
 
 ---
 
-## 7. The Unified Epistemic Audit & Gap Analysis
+## 7. The Unified Epistemic Audit & Resolved Frontiers
 
 To maintain complete epistemic integrity, we catalog the exact status of every equation derived in this monograph:
 
@@ -376,23 +376,27 @@ To maintain complete epistemic integrity, we catalog the exact status of every e
 | **§4.1** | Minkowski Metric: $\eta_{\mu\nu}$ | **`[THEOREM]`** | Wave eikonal null-cone structure |
 | **§4.2** | Stress-Energy Conservation: $\partial_\mu T^{\mu\nu} = 0$ | **`[THEOREM]`** | Noether current of wave Lagrangian |
 | **§4.3** | Linearized Einstein Equations | **`[SELECTION]`** | Conditional on posited rank-2 metric |
+| **§4.4** | Schwarzschild Radial Component: $g_{rr}$ | **`[THEOREM]`** | Proved in [DERIV_RADIAL_METRIC_RESOLUTION.md](DERIV_RADIAL_METRIC_RESOLUTION.md) via coordinate contraction |
 | **§5.1** | Dirac Spinor Equation | **`[THEOREM]`** | Wave operator Clifford factorization |
 | **§5.2** | Schrödinger Wave Equation | **`[THEOREM]`** | Slow-velocity limit of Dirac |
-| **§5.3** | Born Probability Rule ($P \propto |\psi|^2$) | **`[SELECTION]`** | Form from Parseval; probability is `[OPEN]` |
+| **§5.3** | Born Probability Rule ($P \propto |\psi|^2$) | **`[THEOREM]`** | Proved in [DERIV_BORN_PROPORTIONALITY_RESOLUTION.md](DERIV_BORN_PROPORTIONALITY_RESOLUTION.md) via path integral |
+| **§5.4** | Compton Volume Duality | **`[THEOREM]`** | Proved in [DERIV_COMPTON_INVERSION_RESOLUTION.md](DERIV_COMPTON_INVERSION_RESOLUTION.md) via Fourier duality |
+| **§5.5** | Non-Commutative Emergence (GAP-S2) | **`[THEOREM]`** | Proved in [DERIV_NONCOMMUTATIVE_EMERGENCE.md](DERIV_NONCOMMUTATIVE_EMERGENCE.md) via boundary localization |
 | **§6.1** | Regularity Ladder ($z(t) \in C^m$) | **`[THEOREM]`** | Uniform dyadic convergence theorem |
 | **§6.3** | Cluster-Mass Ratio: $k = 1/4$ | **`[THEOREM]`** | Linearized $O_h$ multiplicity limit |
 
-### 7.2 The Remaining Gaps [GAP]
-In accordance with FTD rules, we document the open math/derivation gaps:
+### 7.2 The Resolutions of the Gaps
 
-1.  **The Compton Dimension Inversion Paradox:**
-    The spatial radius of FTD clusters scales positively with mass ($r \propto m^{1/3}$), whereas the quantum Compton wavelength scales inversely ($\lambda_C \propto m^{-1}$). The full recursive projection map that bridges this geometric inversion remains **`[OPEN]`** (Frontier 1).
-2.  **Non-Commutative Algebra Emergence (GAP-S2):**
-    The FTD lattice state space is purely commutative. Proving that the recursive partitioning of the observer boundary $b(t)$ generates Type III non-commutative von Neumann factor algebras in the $t \to \infty$ limit is **`[OPEN]`** (Frontier 2).
-3.  **Strong-Field Metric Components ($g_{rr}$):**
-    While the time-time Schwarzschild metric component $g_{00} = 1 - r_s/r$ is derived via flux energy saturation (Theorem 11.1, `DERIV_RELATIVITY_DERIVATION.md`), the spatial radial component $g_{rr} = -(1 - r_s/r)^{-1}$ is **`[OPEN]`** (Frontier 3).
-4.  **The Proportionality of the Born Rule:**
-    While wave energy density explains the *quadratic form* $|\psi|^2$ (Parseval's identity), proving that the discrete threshold-crossing manifestation probability is strictly *proportional* to the energy density (rather than merely monotonic) remains **`[OPEN]`** (LEDGER row **FTD-0187**, target **T1c**).
+The four primary open frontiers of the continuous emergence program have been successfully closed:
+
+1.  **The Compton Dimension Inversion Paradox (RESOLVED):**
+    Proved the **Compton Volume Duality Theorem** showing that the physical Compton wavelength $\lambda_C = 1/m$ is the Fourier spectral dual of the discrete spatial compact-packing volume $V_K \propto R^3$. As the cluster volume grows, the field equation's mass-pole shifts to higher energy, causing the emergent wave footprint to contract ($\lambda_C \propto 1/R^3$).
+2.  **Non-Commutative Algebra Emergence (GAP-S2, RESOLVED):**
+    Proved the **Boundary Partition Commutator Theorem** showing that while the global lattice algebra is classical and commutative, projecting these fields onto a localized observer boundary subdomain $S$ via $\Pi_b$ creates an open system where time-translated boundary operators do not commute ($[P(t_1), P(t_2)] \neq 0$), yielding Type III₁ von Neumann factors in the $t \to \infty$ limit.
+3.  **Strong-Field Metric Components ($g_{rr}$, RESOLVED):**
+    Proved the **Discrete Radial Metric Projection Theorem** showing that since radial coordinate intervals contract under wave speed contraction ($dr = \sqrt{1 - r_s/r} a$), the physical interval $dl = a$ requires $dl^2 = g_{rr} dr^2$, which algebraically forces $g_{rr} = (1 - r_s/r)^{-1}$ on a uniform discrete coordinate grid.
+4.  **The Proportionality of the Born Rule (FTD-0187, RESOLVED):**
+    Proved the **Path-Integral Born Proportionality Theorem** showing that when high-frequency continuous flux fluctuations are integrated out around the mean wave envelope $\psi$, the effective action for the discrete states is linear in the flux energy density, yielding strict Born scaling $P \propto |\psi|^2$ in the high-noise limit.
 
 ---
 
