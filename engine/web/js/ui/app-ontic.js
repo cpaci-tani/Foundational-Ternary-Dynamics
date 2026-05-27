@@ -1,14 +1,14 @@
 /**
  * Ontic Observatory / Physics / Hierarchy panel glue.
  *
- * Extracted from `app_dag.js` as Wave 2 ticket 7 of the large-file refactor
+ * Extracted from `app.js` as Wave 2 ticket 7 of the large-file refactor
  * (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). This is a move, not a rewrite —
  * function bodies preserved verbatim; the only structural change is that
- * accesses to `app_dag`-scope mutable state (bridge, engineMode, observatory,
+ * accesses to `app`-scope mutable state (bridge, engineMode, observatory,
  * aggregateDetector, emergenceMonitor, _physicsZ) go through a getter bag.
  *
  * DEPS CONTRACT — caller must pass a bag providing live access to the
- * mutable variables that live in app_dag.js module scope:
+ * mutable variables that live in app.js module scope:
  *   {
  *     getBridge():            Bridge,              // simulation bridge (mock or wasm)
  *     getEngineMode():        'cosmic' | 'particles' | 'atoms' | 'molecules' | 'lattice' | ...
@@ -108,7 +108,7 @@ export function createOnticPanel(deps) {
             ['G*', G_STAR.toFixed(10), 'Universal render bridge'],
             ['ϖ', VARPI.toFixed(10), 'Lemniscate constant'],
             ['1/α', X_PLUS.toFixed(7), 'Fine structure inverse'],
-            ['x₋', X_MINUS.toFixed(7), '≈ N_c (color charges)'],
+            ['x₋', X_MINUS.toFixed(7), 'Smaller master-quadratic root; identification ↔ N_c RETIRED (Cleanup Taxonomy v1.4 §5)'],
             ['α', ALPHA.toFixed(10), 'Fine structure constant'],
             ['K_B', K_B + ' MeV', 'Electron mass / threshold'],
         ];

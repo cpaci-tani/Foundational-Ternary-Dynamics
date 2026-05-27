@@ -94,6 +94,8 @@ Quarter-conjugacy recurrences and the observer-term tests against QED running.
 | [PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md](PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md) | [PROPOSAL / SKETCH] | Summary observer extension that would advance FTD-0013. |
 | [PREREG_SYM_K_C_INVARIANT_PARITY_V1.md](PREREG_SYM_K_C_INVARIANT_PARITY_V1.md) | [PRE-REGISTRATION] | Hash-locked eigenline-parity hypothesis for Sym^k(H¹(E_lemn)). |
 | [EXPLR_SYM_PERIOD_ALGEBRA_CONVENTIONS.md](EXPLR_SYM_PERIOD_ALGEBRA_CONVENTIONS.md) | [EXPLR] | Working conventions for the symmetric period algebra of E_lemn. |
+| [DERIV_FQCR_EM_CONNECTED_RESPONSE.md](DERIV_FQCR_EM_CONNECTED_RESPONSE.md) | [THEOREM] + [SELECTION] | Tree-level limit of the FQCR connected response $R_{\text{conn}} \to 1$ and recovery of the bedrock master quadratic root $x_+$. |
+
 
 ## Cross-domain explorations
 
@@ -124,4 +126,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-52 active docs in this cluster (+ 2 archived).
+53 active docs in this cluster (+ 2 archived).

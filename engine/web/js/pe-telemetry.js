@@ -206,7 +206,7 @@ export class PETelemetryPanel {
     }
 
     /**
-     * Main update entry point — called every ~3 frames from app_dag.js
+     * Main update entry point — called every ~3 frames from app.js
      * @param {object} diag - from bridge.peGetDiagnostics()
      * @param {object|null} ext - from bridge.peGetExtendedData()
      */

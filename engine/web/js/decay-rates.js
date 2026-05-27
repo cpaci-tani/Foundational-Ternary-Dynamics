@@ -92,7 +92,12 @@ export function tauLifetime() {
  * Experimental: 878.4 ± 0.5 s
  */
 export function neutronLifetime() {
-    const dM = M_NEUTRON - M_PROTON; // mass difference ~1.293 MeV
+    // Use DELTA_NP (PDG-exact neutron-proton mass split = 1.29333184 MeV)
+    // directly rather than subtracting framework M_PROTON from PDG M_NEUTRON.
+    // The old expression (M_NEUTRON - M_PROTON) mixed PDG and framework
+    // anchors and would silently drift if K_B were rescaled. Audit P1-5,
+    // 2026-05-27.
+    const dM = DELTA_NP;
     // Phase space factor for neutron beta decay
     // Use M_E_PHYS (PDG) here since the lifetime is compared against the
     // PDG-measured neutron lifetime; using K_B would shift τ by ~0.2%.

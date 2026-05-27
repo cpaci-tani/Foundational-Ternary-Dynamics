@@ -3,7 +3,7 @@
  * ────────────────────────────────────────────────────────────────────
  *
  * Common formatting, throttling, and DOM-update utilities extracted
- * from app_dag.js so that every scale controller can reuse them
+ * from app.js so that every scale controller can reuse them
  * without duplicating logic.
  *
  * Functions:

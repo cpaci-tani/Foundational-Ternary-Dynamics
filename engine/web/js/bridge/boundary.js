@@ -2,7 +2,7 @@
  * Boundary shape geometry for the FTD particle engine.
  * Pure functions — stateless, no MockBridge dependency.
  *
- * RF-13: extracted from MockBridge in wasm-bridge-dag.js.
+ * RF-13: extracted from MockBridge in bridge-init.js.
  */
 
 /** Face normals for dodecahedron containment test (phi ≈ 1.618). */

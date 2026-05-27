@@ -9,20 +9,17 @@
  * - Distance: Astronomical Units (AU)
  * - Mass: Solar Masses (M_sun)
  * - Time: Earth Years (yr)
- * - Velocity: AU / FTD_Time
- * -> Gravitational Constant G = G_N = 0.01
+ * - Velocity: AU / yr
+ * -> Gravitational Constant G = G_HELIOCENTRIC = 4π² (Kepler's 3rd law).
  *
- * NOTE: G = G_N here is decorative cadence — it sets the integrator step
- * scale so animations play at a watchable rate. It is NOT the
- * Keplerian/heliocentric constant (which would be 4π² in AU·M_sun·yr).
- * Orbital periods/velocities therefore won't match real solar-system
- * Kepler values. For physically calibrated heliocentric dynamics use
- * `G_HELIOCENTRIC` from constants.js. The figure-8 scenario below sets
- * G=1 deliberately (Chenciner–Montgomery natural units).
+ * 2026-05-27 audit P0-1 fix: switched from G_N = 0.01 (lattice toy gravity)
+ * to G_HELIOCENTRIC = 4π² ≈ 39.478 so Earth's circular orbit at a=1 AU
+ * has the correct period T = 1 yr (was ~63 yr under G_N). The figure-8
+ * scenario still overrides to G=1 (Chenciner–Montgomery natural units).
  */
 
 import { EXOPLANET_SEEDS } from '../config/exoplanet-seeds.js';
-import { G_N } from '../constants.js';
+import { G_HELIOCENTRIC } from '../constants.js';
 
 export class PlanetaryMockBridge {
     constructor() {
@@ -31,8 +28,9 @@ export class PlanetaryMockBridge {
         this._nextId = 0;
         this._dt = 0.0001; // Exact, tiny step to preserve Verlet integration on dense TRAPPIST arrays
         
-        // FTD canonical universal gravity constant G_N (~0.01)
-        this.G = G_N; 
+        // Keplerian heliocentric G (AU³·M_sun⁻¹·yr⁻²) = 4π². Earth at 1 AU
+        // orbits in 1 yr under this constant; was incorrectly G_N pre-2026-05-27.
+        this.G = G_HELIOCENTRIC;
     }
 
     static TYPE = {
@@ -63,7 +61,7 @@ export class PlanetaryMockBridge {
         this._nextId = 0;
         this._tick = 0;
         this._scenarioName = name;
-        this.G = G_N; // reset G to FTD canonical value (may be overridden by specific scenarios)
+        this.G = G_HELIOCENTRIC; // reset to Kepler-AU-yr default (figure-8 scenario overrides to G=1)
 
         const T = PlanetaryMockBridge.TYPE;
         const TAU = Math.PI * 2;

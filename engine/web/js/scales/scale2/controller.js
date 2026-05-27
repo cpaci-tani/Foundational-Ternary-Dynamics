@@ -47,7 +47,7 @@ import {
 } from './ui-bindings.js';
 import { setupAEScenario } from './scenarios.js';
 
-// Re-export for app_dag.js startup wiring
+// Re-export for app.js startup wiring
 export { bindScale2ControlsUI };
 
 

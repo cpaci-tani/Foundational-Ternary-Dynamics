@@ -79,7 +79,7 @@ const _trailHistory = new Map(); // particleId -> { positions: Float32Array, hea
  *
  * Template fields: { n, radius, offsets: Float32Array, brightness: Float32Array }
  *
- * Originally app_dag.js lines ~416-453.
+ * Originally app.js lines ~416-453.
  */
 export function ensureCloudTemplate(catalogId, mass_mev) {
     if (_cloudTemplates.has(catalogId)) return _cloudTemplates.get(catalogId);
@@ -134,7 +134,7 @@ export function ensureCloudTemplate(catalogId, mass_mev) {
  * Returns { positions, colors, sizes, count } referencing the module-level
  * pre-allocated buffers (zero-copy for the viewport).
  *
- * Originally app_dag.js lines ~455-510.
+ * Originally app.js lines ~455-510.
  */
 export function expandPEToCloud(peData, typeMap, t) {
     const srcCount = peData.count;
@@ -202,7 +202,7 @@ export function expandPEToCloud(peData, typeMap, t) {
  * Record current particle positions into per-particle circular trail buffers.
  * Prunes trails for particles that no longer exist.
  *
- * Originally app_dag.js lines ~512-535.
+ * Originally app.js lines ~512-535.
  */
 export function updateTrailHistory(peData) {
     for (let i = 0; i < peData.count; i++) {

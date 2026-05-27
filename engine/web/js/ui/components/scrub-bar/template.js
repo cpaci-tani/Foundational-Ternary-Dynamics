@@ -7,7 +7,7 @@
  *
  * The ids below match the original toolbar wiring (`btn-play`,
  * `btn-local-play`, `btn-step`, `btn-reset`, `ticks-per-frame`,
- * `tpf-display`) so app_dag.js listeners keep working unchanged.
+ * `tpf-display`) so app.js listeners keep working unchanged.
  */
 export function getScrubBarTemplate() {
     const el = document.createElement('div');

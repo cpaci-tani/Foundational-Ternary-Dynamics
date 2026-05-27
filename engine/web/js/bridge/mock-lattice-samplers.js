@@ -9,7 +9,7 @@
  * the output aligns with the Scale-0 rendering convention used by every
  * overlay that consumes these samples.
  *
- * Extracted from `wasm-bridge-dag.js` as Wave 1 ticket 2 of the
+ * Extracted from `bridge-init.js` as Wave 1 ticket 2 of the
  * large-file refactor (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). The
  * extraction is a move, not a rewrite — every sampler body is preserved
  * verbatim, and the latency-proxy cache-invalidation chain stays intact
@@ -46,6 +46,7 @@ import {
     STRONG_ALPHA_S, STRONG_RUN_COEFF, STRONG_R_COULOMB, STRONG_R_LINEAR,
     STRONG_TRANSITION_DENOM, STRONG_LINEAR_DENOM,
     STRONG_COLOR_REPEL, STRONG_COLOR_ATTRACT,
+    LAPLACIAN_FACE_WEIGHT, LAPLACIAN_EDGE_WEIGHT,
 } from '../constants.js';
 
 /**
@@ -387,7 +388,9 @@ export function createLatticeSamplers(state) {
         const positions = new Float32Array(maxPts * 3);
         const values = new Float32Array(maxPts);
         let count = 0;
-        const INV3 = 1 / 3, INV6 = 1 / 6;
+        // 18-pt isotropic Laplacian weights (Patra-Karttunen 2006) sourced
+        // from constants.js (audit P2-9 fix, 2026-05-27).
+        const INV3 = LAPLACIAN_FACE_WEIGHT, INV6 = LAPLACIAN_EDGE_WEIGHT;
         // Skip lattice boundary — `_fluxIdx` wraps, and a curvature proxy
         // that reads across the periodic seam manufactures spurious spikes
         // along the walls.
@@ -583,7 +586,7 @@ export function createLatticeSamplers(state) {
         // Local idx helper — DELIBERATELY different from state._fluxIdx:
         // this returns a flat offset ALREADY scaled by *3 (indexes into the
         // `_fluxJ` typed array directly). Preserved verbatim from the
-        // pre-refactor wasm-bridge-dag.js behaviour.
+        // pre-refactor bridge-init.js behaviour.
         const idx = (x, y, z) => {
             const wx = ((x % N) + N) % N, wy = ((y % N) + N) % N, wz = ((z % N) + N) % N;
             return (wz * N * N + wy * N + wx) * 3;

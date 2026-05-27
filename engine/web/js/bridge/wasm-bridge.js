@@ -4,7 +4,7 @@
  *          (engine/wasm/ftd_wasm.cpp). Implements the same ScaleBridge
  *          contract as MockBridge so consumers can switch backends
  *          without touching call sites.
- * @consumers wasm-bridge-dag.js (re-exports), engine/web/js/scales/scaleN/controller.js
+ * @consumers bridge-init.js (re-exports), engine/web/js/scales/scaleN/controller.js
  *            for N in 0..11 via the createScale0/1/2Capabilities factories.
  * @contract CONTRACTS.md §2 (Capability Factory Contract) — symmetric
  *            surface with MockBridge.
@@ -13,13 +13,13 @@
  *          engine/wasm/bindings_render_bridge.cpp (toggle map + per-method bindings)
  *
  * Phase 2b of the refactor sweep extracted WasmBridge from
- * wasm-bridge-dag.js. Verbatim move — class body and helper functions
+ * bridge-init.js. Verbatim move — class body and helper functions
  * (_wasmCallOr, _wasmLoadPromise singleton, EMPTY_* sampler-fallback
  * frozen objects) are bit-identical to the pre-Phase-2 file.
  *
  * Phase 2c will extract the capability factories
  * (createScale0/1/2Capabilities + installCapabilityGetter) so that
- * wasm-bridge-dag.js shrinks to a re-export shim.
+ * bridge-init.js shrinks to a re-export shim.
  *
  * The _wasmCallOr helper (defined below) is the single delegation
  * pattern WasmBridge uses for ~20 sampler methods that may or may not

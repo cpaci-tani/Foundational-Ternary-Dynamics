@@ -3,7 +3,7 @@ import { getSettingsModalTemplate } from './template.js';
 /**
  * Settings Modal Component
  * Mounts the settings modal into a container. Event wiring is owned by
- * the settings block in app_dag.js (keeps scale/theme side-effects close
+ * the settings block in app.js (keeps scale/theme side-effects close
  * to the viewport singleton it needs access to).
  */
 export function mountSettingsModal(container) {

@@ -1,7 +1,7 @@
 /**
  * Bridge contract — the surface every Scale-0 bridge must implement.
  *
- * Two concrete bridges live in `wasm-bridge-dag.js`:
+ * Two concrete bridges live in `bridge-init.js`:
  *   - `MockBridge` — pure JS lattice for offline / parity testing.
  *   - `WasmBridge` — Emscripten-compiled C++ engine, the canonical path.
  *
