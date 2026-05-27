@@ -438,6 +438,8 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.62 | [PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md](10_eft_program/PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md) | 🆕 **(2026-05-27 / FTD-0218)** Stochastic Effective Action pre-registration. [PRE-REGISTRATION] |
 | 10.63 | [FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md](10_eft_program/FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md) | 🆕 **(2026-05-27 / FTD-0218)** Langevin noise integration and Stochastic Effective Action derivation resolution, establishing a FOUND verdict for emergent QED. [THEOREM] + [SELECTION] |
 | 10.64 | [EXPLR_MASS_SCALE_GENERATION.md](10_eft_program/EXPLR_MASS_SCALE_GENERATION.md) | 🆕 **(2026-05-27 / FTD-0219)** Formulates Candidate A (holographic area-to-volume scaling) and Candidate B (non-perturbative sLoop self-energy feedback) loopholes to bypass the FTD-0096 no-go mass barrier. [CONJECTURE] + [SELECTION] |
+| 10.65 | [PREREG_NO_4TH_GENERATION_NO_GO_v1.md](10_eft_program/PREREG_NO_4TH_GENERATION_NO_GO_v1.md) | 🆕 **(2026-05-27 / FTD-0220)** No 4th generation fermions no-go formalization pre-registration. [PRE-REGISTRATION] |
+| 10.66 | [FOUND_NO_4TH_GENERATION_NO_GO.md](10_eft_program/FOUND_NO_4TH_GENERATION_NO_GO.md) | 🆕 **(2026-05-27 / FTD-0220)** No 4th generation fermions no-go formalization result, establishing a FOUND verdict. [THEOREM] |
 
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).

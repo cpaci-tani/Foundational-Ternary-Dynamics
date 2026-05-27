@@ -79,6 +79,7 @@ The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-
 | [`SCOPE_GC_QUANTUM_PATH_INTEGRAL.md`](SCOPE_GC_QUANTUM_PATH_INTEGRAL.md) | [SCOPING MEMO] | Mechanism B track (FTD-0216): formulation of Euclidean quantum partition function over the body-diagonal sub-stencil $\sigma_{\text{BCC}}$, discrete-to-continuum vacuum polarization, and non-circular Wilsonian matching. |
 | [`ANALYSIS_NONLINEAR_BRIDGE_SWEEPS.md`](ANALYSIS_NONLINEAR_BRIDGE_SWEEPS.md) | [MEASUREMENT ANALYSIS] | F-D3 track: analysis of parameter sweeps D3a-D3d, leading to the final mechanism discrimination verdict among Mechanism $\alpha$, $\beta$, and $\gamma$. |
 | [`EXPLR_MASS_SCALE_GENERATION.md`](EXPLR_MASS_SCALE_GENERATION.md) | [CONJECTURE]/[SELECTION] | FTD-0219: Formulates Candidate A (holographic area-to-volume scaling) and Candidate B (non-perturbative sLoop self-energy feedback) loopholes to bypass the FTD-0096 no-go mass barrier. |
+| [`FOUND_NO_4TH_GENERATION_NO_GO.md`](FOUND_NO_4TH_GENERATION_NO_GO.md) | [THEOREM] | FTD-0220: No 4th generation fermions no-go formalization result, establishing a FOUND verdict. |
 
 ---
 
@@ -113,6 +114,7 @@ Methodology committed before measurement. See `REF_PREREGISTER_MANIFEST.md` for 
 | [`PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md`](PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md) | [PRE-REGISTRATION] | FTD-0215: BCC complex readout pre-registration locking design and verification parameters. |
 | [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) | [PRE-REGISTRATION] | FTD-0143 uniqueness scan of the FQCR Model IV $(4,6;3,2)$ exponent quadruple. |
 | [`PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md`](PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md) | [PRE-REGISTRATION] | FTD-0215 nonlinear bridge coordinated parameters sweeps and active partitioning (F-D3). |
+| [`PREREG_NO_4TH_GENERATION_NO_GO_v1.md`](PREREG_NO_4TH_GENERATION_NO_GO_v1.md) | [PRE-REGISTRATION] | FTD-0220: No 4th generation fermions no-go formalization pre-registration locking design and verification parameters. |
 | [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md`](PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md) | [PRE-REGISTRATION] | FTD-0186 boundary-theorem Stage 1: the structural/dynamical discriminator. |
 
 ---
