@@ -132,16 +132,19 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Mainstream cosmology adopts dark matter as a parametric addition — \\(\\Lambda\\)-CDM works phenomenologically but the underlying particle is unidentified. MOND and modified gravity theories capture some rotation curves but not cluster lensing. Nothing is satisfactory.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'The Moore Layer decomposition of the 27-site neighborhood identifies 17 states that, on the proposed identification, do not participate in the electromagnetic sector. The structural ratio \\(17/27 \\approx 63\\%\\) is a count of structural states; its identification with cosmological dark matter is a separate claim and does not match the Planck-2018 ratio (see still-open).' },
+                    { tag: 'SELECTION', text: 'The Moore Layer decomposition of the 27-site neighborhood identifies 17 states that, on the proposed identification, do not participate in the electromagnetic sector. Under uniform voxel-counting the structural ratio is \\(17/10 \\approx 1.70\\) (DM:baryon); under uniform fraction it is \\(17/27 \\approx 63\\%\\). Neither matches Planck 2018\'s \\(\\Omega_\\mathrm{DM}/\\Omega_b \\approx 5.37\\).' },
+                    { tag: 'SELECTION', text: 'A natural weighting candidate ("W5") gives a substantially sharper match (2026-05-27 analysis, post-hoc): weight the 12 cuboctahedral sites by \\(N_\\mathrm{base} = 4\\) (reflecting the cuboct ↔ fermion identification — 12 sites = 3 generations × 4 fermions × internal multiplicity 4). Result: weighted DM = \\(1 + 12 \\cdot 4 + 4 = 53\\); BARYON = \\(6 + 4 = 10\\); ratio = \\(53/10 = 5.30\\) (1.4% from Planck), and \\(\\Omega_\\mathrm{DM}/\\Omega_m = 53/63 = 0.841\\) (0.2% from Planck). Of 9 natural FTD weighting candidates tested, only W5 lands within Planck\'s 1σ band. Status is [SELECTION] — structurally motivated but POST-HOC; pre-registered confirmation against an independent observable is the next step.' },
                     { tag: 'CONJECTURE', text: 'Dark matter is proposed to be the unexcited subset of the same lattice structure that produces visible matter — not a separate substance.' },
                 ],
                 stillOpen: [
-                    'The structural count \\(17/27 \\approx 63\\%\\) does not match the Planck 2018 observed ratio \\(\\Omega_\\mathrm{DM}/\\Omega_m \\approx 84\\%\\). The discrepancy is unresolved; no argument currently bridges the structural count to the cosmological measurement.',
+                    'The W5 cuboctahedron × \\(N_\\mathrm{base}\\) weighting was found post-hoc (no pre-registration); a confirmation test against an independent cosmological observable (CMB acoustic-peak position, BBN \\(^4\\)He mass fraction, or matter-radiation equality redshift) under the same weighting is required before promoting it beyond [SELECTION].',
+                    '"Why N_base and not N_eff" lacks a first-principles derivation — N_eff = 13 weighting gives 16.1 (catastrophically off), so the choice of N_base = 4 specifically is not yet derived from FTD axioms.',
                     'FTD does not currently explain galactic rotation-curve shapes or halo profiles quantitatively.',
                     'No direct-detection prediction distinguishes FTD dark matter from a sterile-neutrino or other weakly-interacting candidate.',
                 ],
                 theoryRefs: [
                     'docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md',
+                    'docs/theory/10_eft_program/EXPLR_DM_BARYON_W5_WEIGHTING.md',
                 ],
             },
             {
