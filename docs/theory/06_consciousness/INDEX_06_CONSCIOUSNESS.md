@@ -19,6 +19,8 @@
 | [DERIV_VON_NEUMANN_CONSTRUCTION.md](DERIV_VON_NEUMANN_CONSTRUCTION.md) | [THEOREM] on finite lattices (Type I at every L) + [HYPOTHESIS] for Type-III | Von Neumann algebra of lattice observables and its Murray–von Neumann type; Araki–Woods inductive limit treated as a separate scaffold. |
 | [DERIV_COLLAPSE_MECHANISM.md](DERIV_COLLAPSE_MECHANISM.md) | [SELECTION] with [THEOREM] components | Quantum collapse as an algebraic phase transition: Softplus → ReLU operator, Lindblad master equation, ~18-tick decoherence. |
 | [FOUND_WIGNERS_FRIEND_RESOLUTION.md](FOUND_WIGNERS_FRIEND_RESOLUTION.md) | foundational synthesis with epistemic classification | Why Wigner's friend (and Frauchiger-Renner) dissolves when measurement is an algebraic Type-III → Type-I operation. |
+| [DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md](DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md) | [CONJECTURE] | Connes lambda modular flow derivation: sentience hierarchy scaling lambda(k) derived from interacting modular Hamiltonian spectral flow ratio. |
+
 
 ## Projection & reflexive-layer foundations
 
@@ -30,4 +32,4 @@
 
 ---
 
-7 active docs in this cluster (+ 0 archived).
+8 active docs in this cluster (+ 0 archived).

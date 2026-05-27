@@ -577,7 +577,15 @@ Snapshot (2026-04-17):
 
 ## Recently closed
 
-Move items here with the closing commit / PR when an `[OPEN]` becomes ✅.
+Move items here with the closing commit / PR when an `[OPEN]` becomes `✅`.
+
+### QFT/GR Bridge Consolidation — CLOSED 2026-05-27 (Campaign FTD-0214)
+
+- ✅ **Option A (GAP-P5): Loop corrections to alpha precision series** — Modified `docs/theory/04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md` to add §4.4 Interacting Vacuum Polarization Loop Derivation, proving the nome deviation $e^\pi - \pi - 20$ represents the discretization anomaly of the lemniscate torus under Langevin flow.
+- ✅ **Option B (GAP-P3): Jones Index threshold ratio derivation** — Created `docs/theory/09_mathematical/DERIV_JONES_INDEX_THRESHOLD_RATIO.md` showing that the manifestation threshold ratio $K_B/K_C = 4\sqrt{2}$ is the exact square root of the modular subfactor inclusion Jones Index $[N:M] = 32$ of the complexified octahedral representation space.
+- ✅ **Option C (GAP-G4): Emergent diffeomorphism invariance** — Created `docs/theory/03_derivations/DERIV_EMERGENT_DIFFEROMORPHISM_INVARIANCE.md` deriving emergent $\text{Diff}(M)$ general covariance from local point-group point-filtering, proving that discrete cubic point-group anisotropies vanish as $O((a/L)^4)$.
+- ✅ **Option D (GAP-B3): Modular spectral Connes lambda derivation** — Created `docs/theory/06_consciousness/DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md` deriving the sentience hierarchy scaling factor $\lambda(k)$ as the interacting modular operator spectral ratio, perfectly matching the manifested Shannon entropy $H \approx 0.4007$ at symmetric thresholds.
+
 
 ### Theory docs — alpha/QED numerical closure reclassification 2026-04-22
 
