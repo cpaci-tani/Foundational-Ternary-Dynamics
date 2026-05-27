@@ -228,7 +228,7 @@ $$\nabla_L^2\,\mathcal{L} = 4\pi G\,\rho_\text{mass}$$
 
 ### 4.3 Proper Time [THEOREM]
 
-The proper time per coordinate tick follows from the Born-Infeld core. The action of a free particle ($s = 0$, no constraint term) is $S = -K_B \sum_t \sqrt{(f^2-v^2)/f}$. By the clock hypothesis, $d\tau \propto \sqrt{(f^2-v^2)/f}\,dt$, giving:
+The proper time per coordinate tick follows from the Born-Infeld core. The action of a free particle ($s = 0$, no constraint term) is $S = -K_B \sum_t \sqrt{(f^2-v^2)/f}$. By the Clock Hypothesis (which v3 audit [AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md](../03_derivations/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) proved is an independent, non-derivable coordinate-level **[AXIOM]** incompatible with Scale 0 substrate primitives), $d\tau \propto \sqrt{(f^2-v^2)/f}\,dt$, giving:
 
 $$\frac{d\tau}{dt} = \frac{1}{\gamma_\text{FTD}} = \frac{\sqrt{f^2-v^2}}{\sqrt{f}} = \sqrt{f - \frac{v^2}{f}}$$
 
@@ -357,7 +357,7 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 
 | ID | Statement | Tag |
 |----|-----------|-----|
-| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM modulo clock hypothesis]** *(2026-05-24 reconciliation: §4.3 derivation uses the clock hypothesis as an interpretive step; substrate-derivation of the clock hypothesis is the single remaining open piece per `AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` §2; v1 attempt UNDERDETERMINED per `AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`; v2 attempt INVALIDATED per `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`; v3 pre-reg queued; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
+| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM conditional on clock-hypothesis AXIOM]** *(2026-05-27 v3 closure: v3 audit [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`](../03_derivations/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) established that the clock hypothesis is structurally incompatible with Scale 0 discrete primitives and must be posited as an independent macroscopic **[AXIOM]**; this theorem holds exactly conditional on that axiom; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
 | L-3 | $\gamma_\text{FTD}$ unifies SR and GR Lorentz factors | **[THEOREM]** |
 
