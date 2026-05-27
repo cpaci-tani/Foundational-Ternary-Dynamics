@@ -211,18 +211,14 @@ Muon: 3 × 7 × (7+3) - 3 = 3 × 7 × 10 - 3 = 210 - 3 = 207 ✓
 Tau:  (13+4) × 207 - 2 × 3 × 7 = 17 × 207 - 42 = 3519 - 42 = 3477 ✓
 ```
 
-### 7.3 Quark Masses
+### 7.3 Quark Masses [RETRACTED]
 
-| Particle | Formula | m/m_e | Predicted | Experiment | Error |
-|----------|---------|-------|-----------|------------|-------|
-| Up | N_base + sin²θ_W | 4.231 | 2.16 MeV | 2.16 MeV | **0.09%** |
-| Down | 2N_base + 1 + α×n_eff | 9.095 | 4.65 MeV | 4.67 MeV | **0.48%** |
-| Strange | n_eff(n_eff+1) + 1 | 183 | 93.5 MeV | 93.4 MeV | **0.12%** |
-| Charm | n_eff(b_3+N_c)(2(b_3+N_c)-1) + n_eff + 2 | 2485 | 1.270 GeV | 1.270 GeV | **0.01%** |
-| Bottom | (b_3+N_c)³×2N_c + n_eff² | 6169 | 3.15 GeV | 4.18 GeV | 24.6%* |
-| Top | m_W × (φ² - 64α) | - | 203 GeV | 173 GeV | 17.8%* |
+Quark masses are scale- and scheme-dependent (e.g. MS-bar at $\mu = 2\text{ GeV}$). 
 
-*Note: Some formulas need refinement; see errata section.
+> **⚠️ RETRACTED 2026-05-27:** All previous quark mass ratio conjectures (Up, Down, Strange, Charm, Bottom, Top) are officially **retracted** per strict epistemic discipline (FTD-0221). They are recognized as post-hoc continuous-integer matches with no ab-initio C++ engine dynamical basis.
+> 
+> For the new, rigorous discrete-native mass paradigm (mass as voxel cardinality $N \in \mathbb{N}$), see the foundational spec:
+> *   [`FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`](../05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md)
 
 ### 7.4 Gauge Boson Masses
 
@@ -268,30 +264,11 @@ Neutron-proton difference:
 Δm²₃₁/Δm²₂₁ = (7+3)² / 3 = 10² / 3 = 100/3 = 33.33 ✓
 ```
 
-#### Absolute Neutrino Mass Scale [SELECTION] (v5.27-neutrino)
+#### Absolute Neutrino Mass Scale [RETRACTED]
 
-Type-I seesaw mechanism with FTD-derived Dirac and Majorana masses:
-
-| Parameter | Formula | Value | Status |
-|-----------|---------|-------|--------|
-| m_D (Dirac) | v_Higgs × α | 1.796 GeV | [SELECTION] |
-| M_R (Majorana) | (N_c/N_base) × v_Higgs / α⁴ | 6.509 × 10¹⁰ GeV | [SELECTION] |
-| m₃ (heaviest) | m_P √(2π) (N_base/N_c) α¹⁴ | 49.6 meV | [SELECTION] |
-| m₂ | √(m₁² + Δm²₂₁) | 8.6 meV | derived from m₃ + ratio |
-| m₁ (lightest) | √(m₃² − Δm²₃₁) | 4.1 neV | **PREDICTION** |
-| Σm_ν | m₁ + m₂ + m₃ | 58.1 meV | < 0.12 eV (Planck+BAO) ✓ |
-| m_β (effective) | √(Σ|U_ei|²m_i²) | 8.3 meV | < 0.45 eV (KATRIN) ✓ |
-
-**Mass-Squared Differences:**
-
-| Parameter | FTD | Experiment (PDG 2024) | Error |
-|-----------|-----|----------------------|-------|
-| Δm²₂₁ | 7.36 × 10⁻⁵ eV² | 7.42 × 10⁻⁵ eV² | **0.8%** |
-| Δm²₃₁ | 2.45 × 10⁻³ eV² | 2.51 × 10⁻³ eV² | **2.4%** |
-
-**Epistemic note:** The seesaw mechanism is imported from standard physics [EXTERNAL]. The specific decomposition m_D = v×α and M_R = (3/4)v/α⁴ is a [SELECTION] — these are chosen as the best-fit among 176 candidate FTD formulas that reproduce experimental Δm² values. The exponent pattern (α¹⁴ = α^{2b₇}) and integer factor (4/3 = N_base/N_c) follow the FTD mass formula hierarchy.
-
-See DERIV_NEUTRINO_MASS_ABSOLUTE.md for the complete derivation chain.
+> **⚠️ RETRACTED 2026-05-27:** The absolute neutrino mass scale seesaw parameterization ($m_D = v\alpha$, $M_R = (3/4)v/\alpha^4$) is officially **retracted** per strict epistemic discipline (FTD-0221). It is recognized as a post-hoc continuous-QFT fit that is not native to the discrete lattice.
+> 
+> The discrete-native program will measure cluster persistence (Class B) and interactions (Class C) in C++ to determine physical lifetimes and couplings directly from relational grid coordinates.
 
 ---
 

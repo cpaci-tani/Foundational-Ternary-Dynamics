@@ -91,7 +91,7 @@ So under FTD's own representation:
 
 The FTD theory has:
 - **Derived formulas** for lepton masses (electron 0.19%, muon 0.11%, tau 0.006%)
-- **No clean derivation** for quark masses ([OPEN], see `DERIV_QUARK_MASSES_FROM_LATTICE.md`)
+- **No clean derivation** for quark masses ([OPEN / RETRACTED], see `FOUND_DISCRETE_NATIVE_MASS_GENERATION.md` which retracts the post-hoc ratio conjectures)
 
 The engine has:
 - **Spontaneous emergence** of quark-like colored objects from genesis
