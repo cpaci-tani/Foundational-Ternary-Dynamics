@@ -437,6 +437,7 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.61 | [FOUND_COLOR_CONFINEMENT_RESOLUTION.md](10_eft_program/FOUND_COLOR_CONFINEMENT_RESOLUTION.md) | 🆕 **(2026-05-27 / FTD-0217)** Color Confinement Substrate Derivation resolution, establishing a FOUND verdict for strong-force confinement. [THEOREM] + [SELECTION] |
 | 10.62 | [PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md](10_eft_program/PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md) | 🆕 **(2026-05-27 / FTD-0218)** Stochastic Effective Action pre-registration. [PRE-REGISTRATION] |
 | 10.63 | [FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md](10_eft_program/FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md) | 🆕 **(2026-05-27 / FTD-0218)** Langevin noise integration and Stochastic Effective Action derivation resolution, establishing a FOUND verdict for emergent QED. [THEOREM] + [SELECTION] |
+| 10.64 | [EXPLR_MASS_SCALE_GENERATION.md](10_eft_program/EXPLR_MASS_SCALE_GENERATION.md) | 🆕 **(2026-05-27 / FTD-0219)** Formulates Candidate A (holographic area-to-volume scaling) and Candidate B (non-perturbative sLoop self-energy feedback) loopholes to bypass the FTD-0096 no-go mass barrier. [CONJECTURE] + [SELECTION] |
 
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
@@ -534,6 +535,8 @@ External data tests of FTD predictions. All files in this category have been arc
 **Particles (05_):** `DERIV_COMPLETE_PARTICLE_PHYSICS`, `DERIV_ELECTRON_MASS_MOTIVATION`, `DERIV_MATERIAL_EMERGENCE_FROM_LATTICE`, `DERIV_NEUTRINO_MASS_ABSOLUTE`, `DERIV_OCTONIONIC_STRUCTURE`, `DERIV_QUARK_MASSES_FROM_LATTICE`.
 
 **Couplings (04_):** `DERIV_PLANCK_MASS_AND_LAMBDA_QCD` (cross-cuts §6).
+
+**EFT program (10_):** `EXPLR_MASS_SCALE_GENERATION`.
 
 ---
 
