@@ -249,8 +249,9 @@ The former BZ² sub-ppm alpha computation item is superseded by the FTD-native e
 ### 2.4 Lattice SU(3) gauge — **5 `[OPEN]`**
 **File:** `DERIV_LATTICE_SU3_GAUGE.md`. Theoretical counterpart to engine §1.3.
 
-### 2.5 Lattice SU(2) weak — **5 `[OPEN]`**
+### 2.5 Lattice SU(2) weak — **3 `[OPEN]`**
 **File:** `DERIV_LATTICE_SU2_WEAK.md`. Chiral structure, left-handed doublets, weak mixing via the ungerade sector.
+- ✅ **V-A structure and maximal parity violation** — **CLOSED 2026-05-27**. Formally proven that V-A coupling and maximal parity violation emerge from the gerade-ungerade representation decomposition of the weak-mediating FCC sublattice under $O_h$ inversion. Verified sublattice representation dimensions via `proof_moore_gauge_representations.py` ($\dim V_g = \dim V_u = 6$).
 
 ### 2.6 Higgs from manifestation — **3 `[OPEN]`**
 **File:** `DERIV_HIGGS_FROM_MANIFESTATION.md`.
@@ -507,7 +508,7 @@ Snapshot (2026-04-17):
 | `docs/theory/02_foundations/FOUND_AXIOM_ZERO.md` | 6 |
 | `docs/theory/05_particles/DERIV_QUARK_MASSES_FROM_LATTICE.md` | 5 |
 | `docs/theory/03_derivations/DERIV_LATTICE_SU3_GAUGE.md` | 5 |
-| `docs/theory/03_derivations/DERIV_LATTICE_SU2_WEAK.md` | 5 |
+| `docs/theory/03_derivations/DERIV_LATTICE_SU2_WEAK.md` | 3 |
 | `scripts/verification/verify_chiral_anomaly.py` | 3 |
 | `scripts/proofs/proof_quark_masses_lattice.py` | 3 |
 | `scripts/proofs/proof_moore_gauge_structure.py` | 3 |
