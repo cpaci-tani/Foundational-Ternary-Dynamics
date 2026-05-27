@@ -18,8 +18,7 @@
 | [DERIV_COMPLETE_PARTICLE_PHYSICS.md](DERIV_COMPLETE_PARTICLE_PHYSICS.md) | Mixed: ~35 [THEOREM] / ~50 [PARAMETRIC] / ~50+ [EXTERNAL] | SM observables from framework structure; explicit epistemic notice on which predictions are genuine vs imported. |
 | [DERIV_ELECTRON_MASS_MOTIVATION.md](DERIV_ELECTRON_MASS_MOTIVATION.md) | [SELECTION] | Factor-by-factor motivation for m_e = M_P·√(2π)·(16/3)·α¹¹ (0.19%); combination not uniquely derived. |
 | [PRED_ELECTROWEAK_MASSES.md](PRED_ELECTROWEAK_MASSES.md) | [THEOREM] (running + tree) + [PARAMETRIC] (radiative corr.) | M_Z to 0.02% and M_W to 0.5% from α, sin²θ_W = 3/13, v — zero free parameters. |
-| [DERIV_QUARK_MASSES_FROM_LATTICE.md](DERIV_QUARK_MASSES_FROM_LATTICE.md) | [OPEN] / [CONJECTURE] | Tests whether quark masses follow the lepton integer pattern; no clean derivation found, candidates cataloged. |
-| [DERIV_NEUTRINO_MASS_ABSOLUTE.md](DERIV_NEUTRINO_MASS_ABSOLUTE.md) | [SELECTION] | Absolute neutrino mass scale via Type-I seesaw with m_D, M_R in FTD constants; m₁ a falsifiable prediction. |
+| [FOUND_DISCRETE_NATIVE_MASS_GENERATION.md](FOUND_DISCRETE_NATIVE_MASS_GENERATION.md) | [FOUNDATIONAL / OPERATIONAL] | Rest mass operationally defined as voxel cardinality, with linear-level scaling (FTD-0110) and point-group representation analysis. |
 
 ## Color, binding & engine measurements
 
@@ -48,4 +47,4 @@ Pure header-only theory overlays on the existing lattice engine, tagged `[CANDID
 
 ---
 
-10 active docs in this cluster (+ 0 archived).
+9 active docs in this cluster (+ 2 archived).

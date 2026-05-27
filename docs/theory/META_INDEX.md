@@ -226,8 +226,7 @@ Standard Model coverage.
 | 5.3 | [DERIV_OCTONIONIC_STRUCTURE.md](05_particles/DERIV_OCTONIONIC_STRUCTURE.md) | 70 ± 67 division algebra |
 | 5.4 | [DERIV_ELECTRON_MASS_MOTIVATION.md](05_particles/DERIV_ELECTRON_MASS_MOTIVATION.md) | **Electron mass motivation:** m_e = M_P·√(2π)·(16/3)·α¹¹ factor-by-factor structural motivation; √(2π) from Gaussian integral, 16/3 = gauge DOF/D, exponent 11 from ladder [SELECTION] |
 | 5.5 | [PRED_ELECTROWEAK_MASSES.md](05_particles/PRED_ELECTROWEAK_MASSES.md) | Novel prediction: M_Z to 0.02%, M_W to 0.5% from α, sin²θ_W = 3/13, v = M_P√(2π)α⁸ |
-| 5.6 | [DERIV_NEUTRINO_MASS_ABSOLUTE.md](05_particles/DERIV_NEUTRINO_MASS_ABSOLUTE.md) | Absolute neutrino mass scale from seesaw; m₁ = 4.1 neV [SELECTION], Σmν = 58.1 meV, testable against KATRIN/JUNO |
-| 5.7 | [DERIV_QUARK_MASSES_FROM_LATTICE.md](05_particles/DERIV_QUARK_MASSES_FROM_LATTICE.md) | **Quark masses [OPEN]:** Honest attempt using framework integers; lepton baseline solid (mu_ratio=207, tau_ratio=3477); five quark ratio candidates all [CONJECTURE]; fundamental obstacle: scheme-dependent masses; 16/16 tests pass |
+| 5.6 | [FOUND_DISCRETE_NATIVE_MASS_GENERATION.md](05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md) | **Discrete-native mass [ACTIVE]:** Rest mass operationally defined as voxel cardinality, with linear-level scaling (FTD-0110) and point-group representation analysis. [FOUNDATIONAL / OPERATIONAL] |
 
 ---
 
@@ -437,7 +436,6 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.61 | [FOUND_COLOR_CONFINEMENT_RESOLUTION.md](10_eft_program/FOUND_COLOR_CONFINEMENT_RESOLUTION.md) | 🆕 **(2026-05-27 / FTD-0217)** Color Confinement Substrate Derivation resolution, establishing a FOUND verdict for strong-force confinement. [THEOREM] + [SELECTION] |
 | 10.62 | [PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md](10_eft_program/PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md) | 🆕 **(2026-05-27 / FTD-0218)** Stochastic Effective Action pre-registration. [PRE-REGISTRATION] |
 | 10.63 | [FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md](10_eft_program/FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md) | 🆕 **(2026-05-27 / FTD-0218)** Langevin noise integration and Stochastic Effective Action derivation resolution, establishing a FOUND verdict for emergent QED. [THEOREM] + [SELECTION] |
-| 10.64 | [EXPLR_MASS_SCALE_GENERATION.md](10_eft_program/EXPLR_MASS_SCALE_GENERATION.md) | 🆕 **(2026-05-27 / FTD-0219)** Formulates Candidate A (holographic area-to-volume scaling) and Candidate B (non-perturbative sLoop self-energy feedback) loopholes to bypass the FTD-0096 no-go mass barrier. [CONJECTURE] + [SELECTION] |
 | 10.65 | [PREREG_NO_4TH_GENERATION_NO_GO_v1.md](10_eft_program/PREREG_NO_4TH_GENERATION_NO_GO_v1.md) | 🆕 **(2026-05-27 / FTD-0220)** No 4th generation fermions no-go formalization pre-registration. [PRE-REGISTRATION] |
 | 10.66 | [FOUND_NO_4TH_GENERATION_NO_GO.md](10_eft_program/FOUND_NO_4TH_GENERATION_NO_GO.md) | 🆕 **(2026-05-27 / FTD-0220)** No 4th generation fermions no-go formalization result, establishing a FOUND verdict. [THEOREM] |
 
@@ -534,11 +532,9 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Derivations (03_):** `DERIV_PION_MASS_FROM_GSTAR`, `DERIV_THREE_GENERATIONS`, `DERIV_YUKAWA_FROM_27BLOCK_CHARACTER`.
 
-**Particles (05_):** `DERIV_COMPLETE_PARTICLE_PHYSICS`, `DERIV_ELECTRON_MASS_MOTIVATION`, `DERIV_MATERIAL_EMERGENCE_FROM_LATTICE`, `DERIV_NEUTRINO_MASS_ABSOLUTE`, `DERIV_OCTONIONIC_STRUCTURE`, `DERIV_QUARK_MASSES_FROM_LATTICE`.
+**Particles (05_):** `DERIV_COMPLETE_PARTICLE_PHYSICS`, `DERIV_ELECTRON_MASS_MOTIVATION`, `FOUND_DISCRETE_NATIVE_MASS_GENERATION`, `DERIV_MATERIAL_EMERGENCE_FROM_LATTICE`, `DERIV_OCTONIONIC_STRUCTURE`.
 
 **Couplings (04_):** `DERIV_PLANCK_MASS_AND_LAMBDA_QCD` (cross-cuts §6).
-
-**EFT program (10_):** `EXPLR_MASS_SCALE_GENERATION`.
 
 ---
 

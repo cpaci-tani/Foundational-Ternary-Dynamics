@@ -306,8 +306,8 @@ The former BZ² sub-ppm alpha computation item is superseded by the FTD-native e
 
 ## §4 Theory — particles + couplings
 
-### 4.1 Quark masses from lattice — **5 `[OPEN]`**
-**File:** `docs/theory/05_particles/DERIV_QUARK_MASSES_FROM_LATTICE.md`. Light-quark masses + CKM remain open. Top ≈ v_Higgs supports a Yukawa-at-unity story; the rest is sketched only.
+### 4.1 Quark masses from lattice — ✅ RETRACTED 2026-05-27
+**File:** `docs/theory/archive/DERIV_QUARK_MASSES_FROM_LATTICE_RETRACTED.md`. **Officially retracted 2026-05-27** per strict epistemic discipline. The continuous post-hoc ratio conjectures are removed. Superseded by the Discrete-Native program (`FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`).
 
 ### 4.2 One-loop lattice α / native electrodynamics pivot — **QED-alpha bridge closed negative; native program `[OPEN]`**
 **File:** `docs/theory/04_coupling/DERIV_ONE_LOOP_LATTICE_ALPHA.md`.
@@ -355,8 +355,8 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 ### 4.6 μ-from-ℓ_P missing arrow — ✅ CLOSED THEOREM-NEGATIVE 2026-04-28
 **File:** `docs/theory/10_eft_program/archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`. LEDGER row FTD-0096. Closed by `THEOREM_MU_NO_GO_FTD0096.md` which proved that the mass-unit $\mu$ is not derivable from Axiom Zero alone (hence remains an external calibration).
 
-### 4.7 Absolute Mass Scale Calibration (μ) generation loopholes — **1 `[OPEN]`**
-**File:** `docs/theory/10_eft_program/EXPLR_MASS_SCALE_GENERATION.md`. FTD-0219. Formulates Candidate A (holographic area-to-volume scaling) and Candidate B (non-perturbative sLoop self-energy feedback) loopholes to bypass the FTD-0096 no-go mass barrier. Numerical consistency verified in `explore_mass_scale_generation.py`. The proof of full dynamic self-consistency under sLoop back-reaction remains `[OPEN]`.
+### 4.7 Absolute Mass Scale Calibration (μ) generation loopholes — ✅ RETRACTED 2026-05-27
+**File:** `docs/theory/archive/EXPLR_MASS_SCALE_GENERATION_RETRACTED.md`. FTD-0219. **Officially retracted 2026-05-27** per strict epistemic discipline. Bypassing the FTD-0096 no-go barrier via continuous loopholes and ad-hoc discrepancy corrections is rejected as post-hoc continuous fitting.
 
 ---
 
@@ -474,7 +474,7 @@ Unfinished verification, proof, and exploration scripts. The script itself usual
 - `scripts/verification/verify_thermodynamic_limit.py` — **1 `[OPEN]`**.
 
 ### 8.2 Proofs
-- `scripts/proofs/proof_quark_masses_lattice.py` — **3 `[OPEN]`** (quark-electron mass bridge).
+- `scripts/exploration/archive_proof_quark_masses_lattice.py` — ✅ RETRACTED 2026-05-27.
 - `scripts/proofs/proof_moore_gauge_structure.py` — **3 `[OPEN]`**.
 - `scripts/proofs/proof_moore_gauge_orthogonal.py` — **2 `[OPEN]`**.
 - `scripts/proofs/proof_partition_function_gstar.py` — **1 `[OPEN]`** ("What remains [OPEN]" epilogue).
@@ -509,11 +509,11 @@ Snapshot (2026-04-17):
 | `engine/src/dag_engine.cpp` | 6 |
 | `docs/theory/03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md` | 6 |
 | `docs/theory/02_foundations/FOUND_AXIOM_ZERO.md` | 6 |
-| `docs/theory/05_particles/DERIV_QUARK_MASSES_FROM_LATTICE.md` | 5 |
+| `docs/theory/archive/DERIV_QUARK_MASSES_FROM_LATTICE_RETRACTED.md` | RETRACTED |
 | `docs/theory/03_derivations/DERIV_LATTICE_SU3_GAUGE.md` | 5 |
 | `docs/theory/03_derivations/DERIV_LATTICE_SU2_WEAK.md` | 3 |
 | `scripts/verification/verify_chiral_anomaly.py` | 3 |
-| `scripts/proofs/proof_quark_masses_lattice.py` | 3 |
+| `scripts/exploration/archive_proof_quark_masses_lattice.py` | RETRACTED |
 | `scripts/proofs/proof_moore_gauge_structure.py` | 3 |
 | `scripts/exploration/explore_precision_deep.py` | 3 |
 | `engine/include/ftd/ontic.h` | 3 |
