@@ -129,8 +129,8 @@ The linear→nonlinear bridge connecting cluster size to particle mass.
 
 | File | Tag | Purpose |
 |---|---|---|
-| [DERIV_K_FROM_OH_A1G_MULTIPLICITY.md](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) | [DERIVED at linear level] / [STRONGLY MOTIVATED CONJECTURE] nonlinear | `k = 1/N_base = 1/4` from O_h representation theory of the 27-block. |
-| [DERIV_FTD0110_NONLINEAR_BRIDGE.md](DERIV_FTD0110_NONLINEAR_BRIDGE.md) | [DERIVED] Bridge-I / [FALSIFIED EMPIRICALLY] local reading | Nonlinear-bridge closure: O_h-equivariance + single-block energy budget. |
+| [DERIV_K_FROM_OH_A1G_MULTIPLICITY.md](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) | [DERIVED] (linear level derived; nonlinear closure resolved by DERIV_FTD0110_NONLINEAR_BRIDGE.md) | `k = 1/N_base = 1/4` from O_h representation theory of the 27-block. |
+| [DERIV_FTD0110_NONLINEAR_BRIDGE.md](DERIV_FTD0110_NONLINEAR_BRIDGE.md) | [DERIVED] | Nonlinear-bridge closure: O_h-equivariance + Orbit-Equipartition + Timescale Separation. |
 | [DERIV_FTD0110_FREE_ENERGY_LANDSCAPE.md](DERIV_FTD0110_FREE_ENERGY_LANDSCAPE.md) | [DERIVED] framework / [PARTIAL] parameters | Cluster phenomenology as a multi-basin free-energy landscape. |
 | [DERIV_FTD0110_VARIANCE_ENTROPY.md](DERIV_FTD0110_VARIANCE_ENTROPY.md) | [PARTIAL] | Cluster-size variance as boundary entropy; tested against engine data. |
 | [EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md](EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md) | [PARTIAL] (exploratory) | Sharpens the [OPEN] nonlinear-bridge gap; does not close it. |
