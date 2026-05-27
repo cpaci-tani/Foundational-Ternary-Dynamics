@@ -96,6 +96,7 @@ From the latency field to the full nonlinear Einstein equations and black holes.
 | [DERIV_LATTICE_BLACK_HOLES.md](DERIV_LATTICE_BLACK_HOLES.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | Schwarzschild, Kerr, Reissner-Nordström metrics via the computational-budget principle. |
 | [DERIV_STELLAR_LIFECYCLE_LATTICE.md](DERIV_STELLAR_LIFECYCLE_LATTICE.md) | [SELECTION] | Intuitive ground-up account of the stellar lifecycle as flux-budget dynamics. |
 | [DERIV_DARK_SECTOR_DYNAMICS.md](DERIV_DARK_SECTOR_DYNAMICS.md) | [SELECTION] | Dark energy + dark matter from coupling injection vs selective damping. |
+| [DERIV_SCALE_GROWTH_AND_COSMIC_EMERGENCE.md](DERIV_SCALE_GROWTH_AND_COSMIC_EMERGENCE.md) | [THEOREM] + [SELECTION] / [CONJECTURE] | Scale growth and cosmic emergence: comoving spatial stretch, emergent Friedmann, dark energy leak, and dark matter halo superposition. |
 | [DERIV_QFT_GRT_BRIDGE.md](DERIV_QFT_GRT_BRIDGE.md) | [THEOREM] + [SELECTION] | (Also QFT) — provides T_μν, the gravitational source, via Noether. |
 
 ## Quantum mechanics, measurement, and Bell
@@ -171,4 +172,4 @@ Pure header-only theory overlays on the existing lattice engine. No `RenderBridg
 
 ---
 
-68 active docs in this cluster (+ 0 archived).
+69 active docs in this cluster (+ 0 archived).
