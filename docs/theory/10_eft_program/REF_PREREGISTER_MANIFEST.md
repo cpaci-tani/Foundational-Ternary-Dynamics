@@ -225,6 +225,18 @@ When auditing: confirm `git rev-list -n1 preregister-lemniscatic-k2-regulator-v1
 
 ---
 
+## FTD Native strong-field gravity signature campaign -- FTD emergent gravity audit (FTD-0213) (2026-05-27)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0213** FTD native strong-field gravity signature | `preregister-strong-field-gravity-v1` | tag `preregister-strong-field-gravity-v1` | [`verify_strong_field_gravity.py`](../../../scripts/exploration/verify_strong_field_gravity.py) | n/a | n/a (numerical simulation) | [`PREREG_STRONG_FIELD_GRAVITY_v1.md`](PREREG_STRONG_FIELD_GRAVITY_v1.md) (pre-reg) → [`FOUND_STRONG_FIELD_GRAVITY_SIGNATURE.md`](../03_derivations/FOUND_STRONG_FIELD_GRAVITY_SIGNATURE.md) (post-attempt) |
+
+Pre-reg SHA256: `9c624520b99ed40a2ac0dc43bb7d70a2a8572b98129eded3479bc23496701bf8`.
+
+When auditing: confirm `git rev-list -n1 preregister-strong-field-gravity-v1` resolves to the commit that introduced `PREREG_STRONG_FIELD_GRAVITY_v1.md`, and that the file's SHA256 matches the value above. The campaign design, physical observables (ISCO, precession, decay), and pre-blessed outcomes were locked before the verification was run.
+
+---
+
 
 ## How to add a new pre-registration row
 
