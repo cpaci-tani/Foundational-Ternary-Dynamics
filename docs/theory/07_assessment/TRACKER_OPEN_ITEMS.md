@@ -582,6 +582,10 @@ Snapshot (2026-04-17):
 
 Move items here with the closing commit / PR when an `[OPEN]` becomes `✅`.
 
+### No 4th Generation Fermions No-Go Formalization — CLOSED 2026-05-27 (Campaign FTD-0220)
+
+- ✅ **Outcome A (FOUND): No 4th Generation Fermions** — Created `docs/theory/10_eft_program/FOUND_NO_4TH_GENERATION_NO_GO.md` and pre-registration `PREREG_NO_4TH_GENERATION_NO_GO_v1.md`, proving that exactly three generations are selected under the $D=3$ Moore layer decomposition $C(D,2)=3$, and a standard fourth generation is algebraically and topologically excluded. Symmetries verified by `scripts/exploration/verify_no_4th_generation.py`.
+
 ### QFT/GR Bridge Consolidation — CLOSED 2026-05-27 (Campaign FTD-0214)
 
 - ✅ **Option A (GAP-P5): Loop corrections to alpha precision series** — Modified `docs/theory/04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md` to add §4.4 Interacting Vacuum Polarization Loop Derivation, proving the nome deviation $e^\pi - \pi - 20$ represents the discretization anomaly of the lemniscate torus under Langevin flow.
