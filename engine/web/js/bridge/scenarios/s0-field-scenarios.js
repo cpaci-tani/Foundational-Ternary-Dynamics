@@ -13,7 +13,7 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { ALPHA, K_B, C_SPEED } from '../../constants.js';
+import { ALPHA, COULOMB_K_FORCE, K_B, C_SPEED } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -132,8 +132,9 @@ export function setupS0FieldScenario(name, ctx) {
                     this.injectParticle(px, mc, mc, +1);
                     this.injectParticle(nx, mc, mc, -1);
                     // Coulomb dressing: superposed 1/r^2 from both charges.
-                    // alpha comes from the ontic chain via constants.js (= G_C^2).
-                    const amp = ALPHA / (4 * Math.PI);
+                    // Uses COULOMB_K_FORCE (= α/4π) named alias for convention
+                    // attribution (audit P1-6 fix, 2026-05-27).
+                    const amp = COULOMB_K_FORCE;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {

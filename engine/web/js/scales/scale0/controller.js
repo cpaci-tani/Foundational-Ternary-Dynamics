@@ -31,7 +31,7 @@ import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js';
 import { Scale0ControlsComponent } from './ui/controls/component.js';
 import { wireScale0Controls } from './ui/controls/wire.js';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
-// flux-slice-panel and p1-observables-panel are mounted by app_dag.js into
+// flux-slice-panel and p1-observables-panel are mounted by app.js into
 // the side-panel tab system; their init functions are imported there.
 import { MemoryRecorder } from './timeline/memory-recorder.js';
 import { RenderController } from './timeline/render-controller.js';
@@ -218,7 +218,7 @@ export function bindUI(ctx) {
     mountSymmetryPanel(document.getElementById('app'));
 
     // Flux-slice diagnostic and P1-observables panels are mounted by
-    // app_dag.js into the side-panel tab system (#panel-flux-slice and
+    // app.js into the side-panel tab system (#panel-flux-slice and
     // #panel-p1-observables slots) via initFluxSlicePanel() and
     // initP1ObservablesPanel(). They read live ctx.bridge / state.fluxMock
     // through window.__ftdCtx + getScale0State() per frame, so the
@@ -236,7 +236,7 @@ export function bindUI(ctx) {
 
     // Wire all Scale 0 control-panel interactions (physics toggles, injection,
     // parameter sliders, flux volume, field actions). Previously scattered in
-    // app_dag.js's wireControls(); now owned by Scale 0.
+    // app.js's wireControls(); now owned by Scale 0.
     //
     // Pass ctx through directly so that ctx.bridge / ctx.viewport remain
     // live-reading accessors (scale switches reassign them).
@@ -259,7 +259,7 @@ export function bindUI(ctx) {
  * `window.__ftdCtx` at interaction time, so the controls remain functional
  * after a scale switch.
  *
- * Called from app_dag.js BEFORE wireToolbar() so that the playback
+ * Called from app.js BEFORE wireToolbar() so that the playback
  * button IDs (btn-play, btn-local-play, btn-step, btn-reset,
  * ticks-per-frame, tpf-display) exist in the DOM when the toolbar
  * wirer looks them up.

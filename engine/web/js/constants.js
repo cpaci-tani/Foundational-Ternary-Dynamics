@@ -2,9 +2,14 @@
  * @file constants.js
  * @brief FTD Constants — single source of truth for the web dashboard.
  *
- * [THEOREM] Values are taken from the C++ ontic.h derivation chain:
- * e -> gamma -> Gamma(1/4) -> theta_3 -> varpi -> M -> G* -> pi -> all physics.
- * Nine layers, each derived from the one above. The only inputs are D=3 
+ * Values are taken from the C++ ontic.h derivation chain:
+ * e -> gamma -> Gamma(1/4) -> theta_3 -> varpi -> M -> G* -> pi.
+ * The algebraic chain through x_+ (master quadratic) is [THEOREM]; the
+ * physical identification x_+ ↔ 1/α (and downstream physics applications)
+ * is [STRONGLY MOTIVATED CONJECTURE] per FTD-0013. The "all physics"
+ * blanket claim in earlier versions of this header was an overclaim
+ * (corrected 2026-05-27, audit ticket P0-15).
+ * Nine layers, each derived from the one above. The only inputs are D=3
  * (spatial dimensions) and the lemniscate constant varpi.
  *
  * These JS values mirror ontic.h to the precision shown and are
@@ -39,7 +44,12 @@ export const X_BORN = 2.0 * G_STAR;                  // degenerate root (Born ru
 export const COEFFICIENT = 16;                         // N_BASE^2 = 2^(D+1)
 export const X_PLUS            = 137.0361714582;      // tree-level root
 export const X_PLUS_PRECISION  = 137.035999177;       // 4-term corrected (CODATA)
-export const X_MINUS = 3.0239639163;                  // ≈ N_c
+// X_MINUS: smaller root of the master quadratic. The historical
+// identification X_MINUS ↔ N_c was RETIRED per FTD/FQCR Cleanup Taxonomy
+// v1.4 §5 (commit ca7eb61); N_c = 3 is sourced from DERIV_NC_FROM_TOPOLOGY,
+// not from this root. Preserved for completeness of the root pair
+// {X_PLUS, X_MINUS}.
+export const X_MINUS = 3.0239639163;
 
 // ── Layer 4: Framework Integers ─────────────────────────────────────
 export const D_SPATIAL = 3;
@@ -59,7 +69,12 @@ export const N_EFF     = 13;
 // so ALPHA = G_C² matches CODATA 2022 (137.035999177) — see TRACKER §1.5.
 export const G_C       = 0.0854245431028543695;      // state-flux coupling = sqrt(1/X_PLUS_PRECISION)
 export const ALPHA_EFT = G_C * G_C;                   // EFT-derived fine structure
-export const ALPHA     = ALPHA_EFT;                   // alias: alpha = G_C^2 [DERIVED]
+// alias: alpha = G_C^2 — algebraic identity is exact ([THEOREM]); G_C
+// itself is [CALIBRATED] to sqrt(1/X_PLUS_PRECISION) so this matches
+// CODATA α numerically. The physical identification x_+ ↔ 1/α is
+// [STRONGLY MOTIVATED CONJECTURE] per FTD-0013 — not a derivation of
+// physical α from FTD axioms.
+export const ALPHA     = ALPHA_EFT;
 export const ALPHA_TREE      = 1.0 / X_PLUS;          // tree-level (reference only)
 export const ALPHA_PRECISION = ALPHA;                  // alias; matches CODATA
 export const G_N   = 1.0 / ((B_3 + N_C) * (B_3 + N_C));  // = 0.01
@@ -307,7 +322,7 @@ export const C_MS             = 2.99792458e8;    // speed of light (m/s)
 //   COULOMB_K_FORCE  = ALPHA / (4π)     (classical force-law convention,
 //                                        Scale-1 pairwise force F = K·q·q/r²
 //                                        as in mock-particle-engine.js,
-//                                        wasm-bridge-dag.js pair-force loop)
+//                                        bridge-init.js pair-force loop)
 //   COULOMB_K_HEP    = ALPHA            (Gaussian/HEP units, used in
 //                                        cross-sections.js / spectroscopy.js
 //                                        for textbook-comparable formulas)
@@ -390,11 +405,12 @@ export const ATOMIC_RADII_PM = [
     156,  154,  143,  135,  127,  120,                                          // 81-86
 ];
 
-// ── Thomas-Fermi Atom-Binding Prefactor [DERIVED] ───────────────────
+// ── Thomas-Fermi Atom-Binding Prefactor [IMPOSED — external] ────────
 // E_atom ≈ −0.7687 · Z^(7/3) Hartree = −20.93 · Z^(7/3) eV.
-// Standard derivation: integrate the Thomas-Fermi electron density
-// against a Coulomb potential. Replaces a long-standing 15.73 literal
-// in atomic-energy.js (Theme D bug, fixed 2026-04-26).
+// Standard non-relativistic Thomas-Fermi atom theory (Lieb–Simon 1977);
+// no FTD axiom enters. Was mis-tagged [DERIVED] pre-2026-05-27 (audit
+// P1-11). Replaces a long-standing 15.73 literal in atomic-energy.js
+// (Theme D bug, fixed 2026-04-26).
 export const THOMAS_FERMI_PREFACTOR_EV = 20.93;
 
 // ── Ontic chain metadata (for observatory) ──────────────────────────
@@ -427,15 +443,23 @@ export const TICK_PHASES = [
 ];
 
 // ── Layer 9: Cosmic Scale ──────────────────────────────────────────
-// Dark energy fraction: Omega_Lambda = 2/3 from FTD [THEOREM]
+// Dark energy fraction: Omega_Lambda = 2/3 [PARAMETRIC — FTD-internal
+// selection; does NOT match Planck 2018 Ω_Λ ≈ 0.685. See FAQ entry
+// "dark-energy" and audit P0-15]. Was mis-tagged [THEOREM] pre-2026-05-27.
 export const OMEGA_LAMBDA = 2.0 / 3.0;
-// Matter fraction: 1 - Omega_Lambda = 1/3
+// Matter fraction: 1 - Omega_Lambda = 1/3 [PARAMETRIC — follows from OMEGA_LAMBDA].
 export const OMEGA_MATTER = 1.0 / 3.0;
-// Dark matter fraction: 17/27 from Moore theorem [THEOREM]
+// Dark matter fraction: 17/27 [SELECTION — from Moore-shell decomposition
+// (17 = 6 octahedral + 12 cuboctahedral - 1 center); does NOT match
+// Planck 2018 observed Ω_DM/Ω_m ≈ 84% (FAQ "dark-matter-17-27" caveat).
+// Was mis-tagged [THEOREM] pre-2026-05-27 (audit P0-15)].
 export const DM_FRACTION = 17.0 / 27.0;
-// Baryonic fraction: 10/27 [THEOREM]
+// Baryonic fraction: 10/27 [SELECTION — complement of DM_FRACTION under
+// the Moore-shell selection above].
 export const BARYON_FRACTION = 10.0 / 27.0;
-// Adiabatic index: gamma = (D+2)/D = 5/3 for D=3 [THEOREM]
+// Adiabatic index: gamma = (D+2)/D = 5/3 [SELECTION — analytically follows
+// from D=3, but D=3 itself is [SELECTION] per FAQ "dimensional-selection"
+// and DERIV_DIMENSIONAL_SELECTION.md; the chain is not [THEOREM]-grade].
 export const GAMMA_ADIABATIC = 5.0 / 3.0;
 
 export const GLSL_SIMPLEX_NOISE_3D = `

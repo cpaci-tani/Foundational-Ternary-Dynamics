@@ -6,9 +6,15 @@
  * Molecules centered at origin, principal axis along x, planar in xy.
  *
  * Auto-bonding threshold: 1.2 × sigma_avg.
- *   H σ≈4.0  C σ≈2.2  N σ≈2.1  O σ≈2.0  S σ≈1.6  Cl σ≈1.55  Na σ≈1.5
+ *   H σ≈4.0  C σ≈2.2  N σ≈2.1  O σ≈2.0  S σ≈1.6  Cl σ≈1.55  Na σ≈1.79
  *   H-H threshold ≈ 4.8    C-H ≈ 3.7    C-C ≈ 2.6
  *   O-H ≈ 3.6              N-H ≈ 3.7    C-O ≈ 2.5
+ *
+ * ⚠ BOND-ORDER LIMITATION (audit P0-13, 2026-05-27): the auto-bonder
+ * emits `order: 1` for every bond. Molecules with formal C=C, C≡C, C=O,
+ * or aromatic bonds render as single lines despite the descriptions
+ * naming the canonical chemical order. Descriptions are honest about
+ * which bonds are "formal (rendered as single line)".
  */
 
 // ── Categories ───────────────────────────────────────────────────────
@@ -64,7 +70,7 @@ const MOLECULES = [
     {
         id: 'o2', name: 'Oxygen', formula: 'O<sub>2</sub>',
         category: 'diatomic',
-        description: 'Diatomic oxygen — double bond, paramagnetic.',
+        description: 'Diatomic oxygen — formal double bond (rendered as single line); paramagnetism not modelled.',
         atoms: [
             { Z: 8, x: -1.5, y: 0, z: 0, vx:  0.05 },
             { Z: 8, x:  1.5, y: 0, z: 0, vx: -0.05 },
@@ -74,7 +80,7 @@ const MOLECULES = [
     {
         id: 'n2', name: 'Nitrogen', formula: 'N<sub>2</sub>',
         category: 'diatomic',
-        description: 'Diatomic nitrogen — triple bond, extremely stable.',
+        description: 'Diatomic nitrogen — formal triple bond (rendered as single line); extremely stable.',
         atoms: [
             { Z: 7, x: -1.5, y: 0, z: 0, vx:  0.05 },
             { Z: 7, x:  1.5, y: 0, z: 0, vx: -0.05 },
@@ -134,7 +140,7 @@ const MOLECULES = [
     {
         id: 'co2', name: 'Carbon Dioxide', formula: 'CO<sub>2</sub>',
         category: 'inorganic',
-        description: 'Linear molecule (180°) — greenhouse gas, double bonds.',
+        description: 'Linear molecule (180°) — greenhouse gas; formal C=O double bonds (rendered as single lines).',
         atoms: [
             { Z: 8, x: -2.5, y: 0, z: 0 },
             { Z: 6, x:  0,   y: 0, z: 0 },
@@ -239,7 +245,7 @@ const MOLECULES = [
     {
         id: 'ethylene', name: 'Ethylene', formula: 'C<sub>2</sub>H<sub>4</sub>',
         category: 'organic',
-        description: 'C=C double bond — planar molecule, 120° angles.',
+        description: 'Formal C=C double bond (rendered as single line) — planar molecule, 120° angles.',
         atoms: (() => {
             const cc = 2.0;
             const ch = 3.2;
@@ -260,12 +266,15 @@ const MOLECULES = [
     {
         id: 'acetylene', name: 'Acetylene', formula: 'C<sub>2</sub>H<sub>2</sub>',
         category: 'organic',
-        description: 'C≡C triple bond — linear molecule.',
+        // 2026-05-27 audit P0-12 fix: shortened C-C from 4.0 → 2.4 (within
+        // auto-bond threshold 2.64) so the central bond actually forms.
+        // H-C distance kept at 3.5 (< 3.72 threshold).
+        description: 'Formal C≡C triple bond (rendered as single line) — linear molecule.',
         atoms: [
-            { Z: 1, x: -5.5, y: 0, z: 0 },
-            { Z: 6, x: -2.0, y: 0, z: 0 },
-            { Z: 6, x:  2.0, y: 0, z: 0 },
-            { Z: 1, x:  5.5, y: 0, z: 0 },
+            { Z: 1, x: -4.7, y: 0, z: 0 },
+            { Z: 6, x: -1.2, y: 0, z: 0 },
+            { Z: 6, x:  1.2, y: 0, z: 0 },
+            { Z: 1, x:  4.7, y: 0, z: 0 },
         ],
         cameraDistance: 22,
     },
@@ -291,7 +300,7 @@ const MOLECULES = [
     {
         id: 'formaldehyde', name: 'Formaldehyde', formula: 'CH<sub>2</sub>O',
         category: 'organic',
-        description: 'C=O carbonyl group — trigonal planar geometry.',
+        description: 'Formal C=O carbonyl group (rendered as single line) — trigonal planar geometry.',
         atoms: [
             { Z: 6, x: 0, y: 0, z: 0 },
             { Z: 8, x: 2.5, y: 0, z: 0 },

@@ -17,7 +17,7 @@
 
 // Wave 2F (2026-04-26): every constant in this module is now sourced
 // from constants.js (single source of truth). The exports below keep
-// their previous names so the 6 importers of units.js (app_dag.js,
+// their previous names so the 6 importers of units.js (app.js,
 // scale1/2 controllers, scale0/runtime/diagnostics, pe-telemetry,
 // diagnostics) need no edits — they continue to import from units.js
 // for the formatter helpers below, and any constant they need.

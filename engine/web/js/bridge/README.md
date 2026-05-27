@@ -8,7 +8,7 @@ modules they compose to provide a uniform external surface.
 ## Public API
 
 Consumers import from one of:
-- `../wasm-bridge-dag.js` — 42-LOC re-export shim (post-Phase 2 split, commits 2db67ca…87158ae). Surfaces `MockBridge`, `WasmBridge`, and capability factories from this directory.
+- `../bridge-init.js` — 42-LOC re-export shim (post-Phase 2 split, commits 2db67ca…87158ae). Surfaces `MockBridge`, `WasmBridge`, and capability factories from this directory.
 - `./mock-bridge.js` (1578 LOC, `MockBridge` class — Phase 2a)
 - `./wasm-bridge.js` (715 LOC, `WasmBridge` class — Phase 2b)
 - `./capabilities/scale0.js`, `./capabilities/scale1.js`, `./capabilities/scale2.js`, `./capabilities/install.js` — capability factories (Phase 2c)
@@ -19,7 +19,7 @@ Consumers import from one of:
 
 ## Internal structure
 
-Phase 2 split (post-refactor): `wasm-bridge-dag.js` shrank from 2395 → 42 LOC; the bridge classes and their capability surfaces now live in this directory.
+Phase 2 split (post-refactor): `bridge-init.js` shrank from 2395 → 42 LOC; the bridge classes and their capability surfaces now live in this directory.
 
 | File | Role |
 |---|---|
@@ -42,7 +42,7 @@ Phase 2 split (post-refactor): `wasm-bridge-dag.js` shrank from 2395 → 42 LOC;
 ## Dependencies
 
 - **Imports from**: `../constants.js`, `../elements.js`, `../atomic-props.js`, `../core/log.js`
-- **Imported by**: `../wasm-bridge-dag.js` (re-export shim — `MockBridge` composes the live-ref factories internally, `capabilities/install.js` wires the per-scale surfaces), scale controllers (consume capabilities)
+- **Imported by**: `../bridge-init.js` (re-export shim — `MockBridge` composes the live-ref factories internally, `capabilities/install.js` wires the per-scale surfaces), scale controllers (consume capabilities)
 - **No cross-scale imports** — the bridge layer is scale-agnostic.
 
 ## State contract (live-reference pattern)

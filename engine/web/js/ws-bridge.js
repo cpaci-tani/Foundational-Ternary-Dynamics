@@ -27,15 +27,18 @@ export class WebSocketBridge {
         this.ready = false;
         this.latticeSize = 32;
 
-        // Toggle state mirror (updated from server, defaults match config/toggles.js)
+        // Toggle state mirror (updated from server, defaults match config/toggles.js).
         // These are overwritten by the server's actual state on connect,
         // but provide sane fallbacks if the server is slow to respond.
+        // Audit P1-3 fix (2026-05-27): selective_damping defaulted to false
+        // and weak_transmutation defaulted to true here — both inverted
+        // relative to config/toggles.js and MockBridge. Now synced.
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
             gauss_projection: true, forces: true, gravity: false, movement: true,
-            poisson_coulomb: true, lorentz_force: false, selective_damping: false,
+            poisson_coulomb: true, lorentz_force: false, selective_damping: true,
             larmor_radiation: false, dual_substrate: false, confinement: false,
-            weak_transmutation: true,
+            weak_transmutation: false,
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
         };

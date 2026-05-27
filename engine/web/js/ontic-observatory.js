@@ -1,16 +1,23 @@
 /**
- * Ontic Observatory — Makes the Ontic Incompleteness paper visible.
+ * Ontic Observatory — Makes the Ontic Incompleteness narrative visible.
  *
- * Implements Steinmetz (2026) theorems for a live simulation:
- *   Theorem 3.1: C_0 not derivable from f  (Ontic Incompleteness)
- *   Theorem 4.1: Complete specification = (f, C_0)  (Ontological Separation)
- *   Theorem 5.4: K(C_0) >> K(f)  (Boundary Information Dominance)
- *   Corollary 6.3: The Trilemma — any principle selecting C_0 is nonlocal,
- *                  translation-variant, or carries system-scale information
- *   Theorem A.1: No Premature Emergence — Level 3 requires |R|>>1 AND t>>1
- *   Remark 6.5: First Perturbation P_0 = C_0 - V
+ * Surfaces 5 propositions attributed to Steinmetz (2026), an
+ * "Ontic Incompleteness" framing that has NOT been audited into FTD's
+ * LEDGER and has no entry in docs/papers/. The labels below are
+ * intentionally demoted from "Theorem"/"Corollary" to "Proposition"
+ * (audit P1-13 fix, 2026-05-27) until a canonical provenance lands.
  *
- * The user IS the external observer of Corollary 3.2.
+ *   Proposition I  (Ontic Incompleteness):           C_0 not derivable from f
+ *   Proposition II (Ontological Separation):         Complete spec = (f, C_0)
+ *   Proposition III (Boundary Information Dominance): K(C_0) >> K(f)
+ *   Proposition IV (The Trilemma):                   any selector for C_0 is
+ *                                                    nonlocal, translation-
+ *                                                    variant, or carries
+ *                                                    system-scale info
+ *   Proposition V  (No Premature Emergence):         Level 3 needs |R|>>1, t>>1
+ *   Remark         (First Perturbation):             P_0 = C_0 - V
+ *
+ * The user is positioned as the external observer of the framing.
  */
 
 import {

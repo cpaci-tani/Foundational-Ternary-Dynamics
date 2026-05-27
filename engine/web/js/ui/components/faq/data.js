@@ -10,7 +10,19 @@
  *   OPEN        framed by FTD but unresolved
  */
 
-export const FAQ_TAGS = Object.freeze(['THEOREM', 'SELECTION', 'PARAMETRIC', 'CONJECTURE', 'OPEN']);
+// Expanded 2026-05-27 (audit P1-16) to include 'CLOSED NEGATIVE' and
+// 'PARTIAL' so FAQ entries can mark retracted identifications honestly
+// (e.g. FTD-0131 G_N closed-negative status) without forcing a less
+// accurate tag. Allowed set mirrors CLAUDE.md § Epistemic Tags.
+export const FAQ_TAGS = Object.freeze([
+    'THEOREM',
+    'SELECTION',
+    'PARAMETRIC',
+    'CONJECTURE',
+    'OPEN',
+    'CLOSED NEGATIVE',
+    'PARTIAL',
+]);
 
 export const FAQ_SECTIONS = Object.freeze([
     {
@@ -29,17 +41,16 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Integrated Information Theory, Global Workspace, Higher-Order-Thought, and related frameworks characterize neural correlates of consciousness. They are models of when experience occurs, not explanations of why there is experience at all. The explanatory gap remains open.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'Consciousness enters as the phase angle \\(\\theta_C\\) of the master-quadratic consciousness extension. The observable fraction \\(\\cos^2(\\theta_C) = G^{\\ast}/8\\) follows from the ternary-state algebra.' },
-                    { tag: 'CONJECTURE', text: 'The sLoop self-reference ring is proposed as the structural locus where reference closes on itself — a candidate substrate for subjective experience, not an explanation of qualia.' },
-                    { tag: 'OPEN', text: 'FTD offers a geometry for where consciousness could live in the formalism; it does not derive qualia from that geometry.' },
+                    { tag: 'SELECTION', text: 'Reflexivity enters the formalism as the phase angle \\(\\theta_C\\) of the master-quadratic extension. The structural fraction \\(\\cos^2(\\theta_C) = G^{\\ast}/8\\) follows from the ternary-state algebra. (Per REF_REFLEXIVITY_VOCABULARY 2026-05-01, "reflexivity" denotes the structural closure; "consciousness" is the colloquial pointer.)' },
+                    { tag: 'CONJECTURE', text: 'The sLoop self-reference ring is proposed as the structural locus where reference closes on itself — a candidate substrate for reflexive agency, not an explanation of qualia.' },
+                    { tag: 'OPEN', text: 'FTD offers a geometry for where reflexivity could live in the formalism; it does not derive qualia (subjective experience) from that geometry.' },
                 ],
                 stillOpen: [
-                    'No operational test distinguishes the "FTD consciousness phase" from a purely functional account.',
+                    'No operational test distinguishes the "FTD reflexivity phase" from a purely functional account.',
                     'The relationship between the sLoop structure and the subjective quality of experience is asserted, not derived.',
                 ],
                 theoryRefs: [
-                    'docs/theory/06_consciousness/FOUND_CONSCIOUSNESS_ONTOLOGY.md',
-                    'docs/theory/06_consciousness/DERIV_CONSCIOUSNESS_FRACTION.md',
+                    'docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md',
                 ],
             },
             {
@@ -85,7 +96,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'The connection between lattice time and observed thermodynamic entropy is stated but not quantitatively derived.',
                 ],
                 theoryRefs: [
-                    'docs/papers/PAPER_RATIO_AND_THE_ARROW.tex',
+                    'docs/papers/src/PAPER_RATIO_AND_THE_ARROW.tex',
                 ],
             },
             {
@@ -175,7 +186,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'The Planck scale itself is imposed as a unit, not explained.',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_ALPHA_FROM_GSTAR.md',
+                    'docs/theory/03_derivations/DERIV_ALPHA_FROM_PHASE_STRUCTURE.md',
                     'docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md',
                 ],
             },
@@ -190,15 +201,17 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Supersymmetry was the leading proposed solution but has not been observed at the LHC at accessible scales. Extra-dimensional, compositeness, and anthropic approaches each introduce new structure without decisive empirical support.',
                 ],
                 ftdAngle: [
-                    { tag: 'PARAMETRIC', text: 'In FTD the gravitational coupling \\(G_N = 1/(b_3 + N_c)^2\\) is fitted to the topology of the 27-site Moore cell. The numerical match works at the chosen normalisation; a uniqueness derivation that selects this specific functional form is not currently available.' },
-                    { tag: 'CONJECTURE', text: 'Gravity\'s weakness is reinterpreted as a long-range relaxation of the flux field across many manifestation events — weakness is structural dilution, not a hierarchy of mass scales.' },
+                    { tag: 'CLOSED NEGATIVE', text: 'The reading \\(G_N = 1/(b_3 + N_c)^2 = 0.01\\) as an identification with the physical Newton constant is RETIRED per FTD-0131 (SPEC_DOCTRINE_LEDGER §10): under any natural calibration it is off by ~10^20 to 10^43 from the measured value.' },
+                    { tag: 'PARTIAL', text: 'The surviving claim is the substrate-derived gravitational fine-structure ratio for one electron: \\(\\alpha_G(e,e) = (m_e/m_P)^2 \\approx 1.745\\times10^{-45}\\) (predicted, 0.38% match to measured 1.752×10^-45), conditional on one flagged interpretive step (clock hypothesis). See DERIV_NEWTON_FROM_SUBSTRATE.md and FTD-0131.' },
+                    { tag: 'CONJECTURE', text: 'Gravity\'s weakness is reinterpreted as a long-range relaxation of the flux field across many manifestation events — weakness as structural dilution, not a mass-scale hierarchy.' },
                 ],
                 stillOpen: [
-                    'FTD produces a small \\(G_N\\) but does not yet reproduce a full quantitative Higgs-mass stabilization argument.',
-                    'The connection between the 17-digit hierarchy and the FTD cell topology is qualitative.',
+                    'FTD-0131 closes the framework-integer reading of G_N as [CLOSED NEGATIVE]; the substrate α_G(e,e) match is partial (one flagged step).',
+                    'The connection between the 17-digit hierarchy and the FTD cell topology remains qualitative.',
                 ],
                 theoryRefs: [
-                    'docs/theory/04_coupling/DERIV_GRAVITATIONAL_COUPLING.md',
+                    'docs/theory/03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md',
+                    'docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md',
                 ],
             },
             {
@@ -287,7 +300,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'No experimental discriminator between "D=3 is fundamental" and "D=3 is an emergent large-scale approximation".',
                 ],
                 theoryRefs: [
-                    'docs/theory/02_foundations/FOUND_DIMENSIONAL_SELECTION.md',
+                    'docs/theory/02_foundations/FOUND_DIMENSIONAL_COUNTING.md',
                 ],
             },
         ],
@@ -317,7 +330,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'No meta-theory distinguishes "FTD is the ontology" from "FTD is one ontology among many possible minimal ones".',
                 ],
                 theoryRefs: [
-                    'docs/theory/02_foundations/FOUND_ONTOLOGICAL_EMERGENCE.md',
+                    'docs/theory/02_foundations/FOUND_ONTOLOGICAL_GENESIS.md',
                 ],
             },
             {

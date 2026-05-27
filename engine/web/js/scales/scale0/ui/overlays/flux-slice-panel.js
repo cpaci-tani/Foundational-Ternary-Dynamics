@@ -1085,7 +1085,7 @@ export function mountFluxSlicePanel(parentEl, getBridge) {
  *
  * Idempotent: calling twice reuses the singleton at window.__ftdFluxSlicePanel.
  *
- * Bridge resolution: at the time this function runs from app_dag.js,
+ * Bridge resolution: at the time this function runs from app.js,
  * window.__ftdCtx may not yet exist. The getBridge callback is evaluated
  * per frame inside the panel's update loop, so it gracefully handles a
  * null context until the Scale 0 controller initializes. When the active

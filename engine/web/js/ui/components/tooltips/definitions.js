@@ -149,7 +149,7 @@ const PE_ROW_TOOLTIPS = {
 const PE_CARD_TOOLTIPS = {
     'Particles':          'Active Scale 1 particles in the simulation (excludes locked particles that don\'t integrate).',
     'Virial 2K/|U|':      'Virial-theorem ratio 2\u27e8K\u27e9 / |\u27e8U\u27e9|. Equals 1 for a steady bound system, > 1 if the system is unbound, < 1 if the KE hasn\'t ramped up to equilibrium yet.',
-    'Temperature MeV':    'Effective temperature \\(T = (2/3)\\langle K\\rangle / (k_B N)\\). Meaningful only for statistical-ensemble-sized N; for N=2 this is just 2/3 of the mean KE.',
+    'Temperature MeV':    'Mean kinetic energy per particle scaled by 2/3: \\(T_{\\text{sim}} = (2/3)\\langle K\\rangle / N\\). Reported in MeV (sim units, k_B = 1). Meaningful only for statistical-ensemble-sized N; for N=2 this is just 2/3 of the mean KE — not an SI temperature.',
     'RMS Velocity c':     'Root-mean-square particle speed \u221a\u27e8|v|\u00b2\u27e9 expressed in units of c (so 0.5 = half the speed of light on the lattice).',
     'System Radius lu':   'Characteristic radius \\(\\langle|r - R_\\mathrm{CoM}|\\rangle\\) \u2014 average distance of particles from the centre of mass. Grows as the system expands, shrinks as it contracts.',
     'Tick':               'Particle-engine tick counter. PE is integrated in its own loop; may run at a different rate than the Scale-0 lattice tick.',
@@ -200,7 +200,7 @@ const AE_CARD_TOOLTIPS = {
     'PE Bonds eV':       'Harmonic bond potential \\(\\sum \\tfrac{1}{2} k_b (r - r_0)^2\\) for every covalent bond. Zero at equilibrium length, grows quadratically with strain.',
 
     // ─── Thermo + momentum ────────────────────────────────────────────
-    'Temperature K': 'Instantaneous temperature from equipartition: \\(T = 2\\langle KE\\rangle / (3 k_B N)\\). Reported in kelvin for intuition against room temperature (\u2248 298 K).',
+    'Temperature K': '\u26a0 Sim-unit equipartition proxy: \\(T_{\\text{sim}} = 2\\langle KE\\rangle / (3 N)\\) with implicit k_B = 1. The "K" suffix is a label, not a true Kelvin conversion \u2014 values are in the same sim units as the AE energy cards. (Audit P0-10: kelvin claim mis-tagged pre-2026-05-27.)',
     'Momentum |p|':  'Magnitude of the total linear momentum. Conserved in a closed system; non-conservation flags a bug.',
 
     // ─── Bookkeeping ──────────────────────────────────────────────────
@@ -211,9 +211,9 @@ const AE_CARD_TOOLTIPS = {
     'Atomic Mass':  'The selected element\'s standard atomic mass in atomic mass units (u). Sourced from the periodic-table data table.',
     'Nuclear B.E.': 'Nuclear binding energy from the Semi-Empirical Mass Formula (SEMF), in MeV. Energy released if the nucleus were fully separated into free nucleons.',
     'B/A MeV':      'Binding energy per nucleon B/A. Peaks at \u2248 8.8 MeV around iron \u2014 this curve is what drives fusion (low A) and fission (high A) energetics.',
-    'Electron B.E.': 'Total electron binding energy summed over all shells, from Slater-shielded hydrogenic orbitals. Typical magnitude: tens to hundreds of eV for light atoms.',
+    'Electron B.E.': 'Total electron binding energy from the Thomas–Fermi atomic-binding prefactor: \\(E_{\\text{atom}} \\approx -20.93 \\cdot Z^{7/3}\\) eV (Lieb–Simon 1977, [IMPOSED — external]). Not a shell-summed Slater-hydrogenic calculation despite earlier tooltip wording. Typical magnitude: tens to hundreds of eV for light atoms; thousands for heavy.',
     // Card title is "Mass (K_B)" with <sub>B</sub>; textContent renders as "Mass (KB)" \u2192 normalized "Mass KB".
-    'Mass KB':      'Composite atomic mass in lattice \\(K_B\\) units, including both nuclear and electron binding corrections. This is the value used by the Scale-0 particle genesis threshold.',
+    'Mass KB':      'Composite atomic mass in units of the PDG electron mass \\(m_e = 0.510999\\) MeV (the divisor used in atomic-energy.js), including both nuclear and electron binding corrections. Despite the K_B-labelled key, the value is NOT divided by the FTD anchor K_B = 0.511; the two agree by construction to ~0.2%. This card is display-only — Scale-0 genesis uses K_GENESIS = N_c · K_B directly, not this value (audit P0-11 / P1-19).',
 };
 
 function annotateScale0Diagnostics(root) {

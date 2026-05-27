@@ -6,7 +6,7 @@
  *   - Substrate controls card (injection, parameter sliders, field actions)
  *   - Flux volume card (shape, opacity, point size, threshold, scenario scale)
  *
- * This replaces the legacy wiring blocks in app_dag.js's wireControls().
+ * This replaces the legacy wiring blocks in app.js's wireControls().
  *
  * IMPORTANT: `ctx` uses live accessors — closures read ctx.bridge / ctx.viewport
  * at event-handler invocation time so scale-switching (which reassigns bridge)
