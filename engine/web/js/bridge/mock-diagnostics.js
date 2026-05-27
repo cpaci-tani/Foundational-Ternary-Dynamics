@@ -17,7 +17,7 @@
  *                        setScale0FluxBuffer / setScale0WaveBuffer) stays
  *                        authoritative.
  *
- * Extracted from `wasm-bridge-dag.js` as Wave 1 ticket 3 of the large-file
+ * Extracted from `bridge-init.js` as Wave 1 ticket 3 of the large-file
  * refactor (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). The extraction is
  * a move, not a rewrite — bodies preserved verbatim; the only structural
  * change is that `this._xxx` field reads/writes go through the live
@@ -49,7 +49,7 @@
  * protected by Risk 3 in the refactor spec — do NOT destructure `state`.
  */
 
-import { ALPHA } from '../constants.js';
+import { ALPHA, COULOMB_K_PE } from '../constants.js';
 
 /**
  * Build the diagnostics object bound to the given bridge-like state.
@@ -223,6 +223,8 @@ export function createDiagnosticsProvider(state) {
         // double-counting per-pair contributions in the i<j sum).
         // No Poisson solve in MockBridge — the particle list is small
         // enough that direct pairwise summation is the canonical path.
+        // Uses COULOMB_K_PE (= ALPHA) named alias for convention attribution
+        // (audit P1-6 fix, 2026-05-27).
         let coulombPE = 0;
         for (let i = 0; i < ps.length; i++) {
             const pi = ps[i];
@@ -236,7 +238,7 @@ export function createDiagnosticsProvider(state) {
                 const dz = zi - (pj.z ?? 0);
                 const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
                 if (r < 1e-6) continue;
-                coulombPE += ALPHA * pi.state * pj.state / r;
+                coulombPE += COULOMB_K_PE * pi.state * pj.state / r;
             }
         }
         state._cachedParticleKE = pKE;

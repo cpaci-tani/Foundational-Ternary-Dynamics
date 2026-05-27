@@ -1,7 +1,7 @@
 /**
  * Scale 1 (Particles) Controller
  *
- * Extracted from app_dag.js to isolate the Particle Engine (PE) frame loop,
+ * Extracted from app.js to isolate the Particle Engine (PE) frame loop,
  * scenario loader, cloud rendering, trail history, and field overlay logic.
  *
  * Owns all PE-specific state internally:
@@ -356,7 +356,7 @@ export function loadPEScenario(ctx, name) {
 
     if (!bridge.initPE) return;
 
-    // Delegate to app_dag.js master reset (clears charts, trails, field cache,
+    // Delegate to app.js master reset (clears charts, trails, field cache,
     // and resets all toggle buttons across all scales)
     ctx.resetAllVisualState();
 

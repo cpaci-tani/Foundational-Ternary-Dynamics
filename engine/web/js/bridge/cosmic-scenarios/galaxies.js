@@ -12,14 +12,22 @@
  * tick or force computation happens in these functions.
  */
 
-import { G_N } from '../../constants.js';
+import { G_N, DM_FRACTION, BARYON_FRACTION } from '../../constants.js';
+
+// DM:baryon split sourced from FTD constants (17/27 vs 10/27) — was
+// 0.85/0.15 (observed Universe) pre-2026-05-27 audit P0-8. Now matches
+// what the "Cosmology (FTD)" panel advertises. The Planck-2018 observed
+// ratio remains in tension; that's the open empirical question, not a
+// dashboard inconsistency.
+const _DM_FRAC = DM_FRACTION;        // 17/27 ≈ 0.6296
+const _BARYON_FRAC = BARYON_FRACTION; // 10/27 ≈ 0.3704
 
 export function setupCosmicGalaxy(ctx) {
     const { T, rng, randn, PI2 } = ctx;
     const M_total = 7000;
     const M_bh = 100;
-    const M_dm = (M_total - M_bh) * 0.85;
-    const M_disk = (M_total - M_bh) * 0.15;
+    const M_dm = (M_total - M_bh) * _DM_FRAC;
+    const M_disk = (M_total - M_bh) * _BARYON_FRAC;
     const r_s = 40;
     const r_disk = 90;
 
@@ -392,7 +400,7 @@ export function setupMerger(ctx) {
         const M_enc = this._enclosedMass(r, M1, r_s1);
         const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
         const M1_remaining = M1 * 0.95;
-        this.addBody(t, (t === T.DARK_MATTER ? M1_remaining * 0.85 : M1_remaining * 0.15) / 800,
+        this.addBody(t, (t === T.DARK_MATTER ? M1_remaining * _DM_FRAC : M1_remaining * _BARYON_FRAC) / 800,
             cx1 + r * Math.cos(ph), zz, cz1 + r * Math.sin(ph),
             v_approach - vc * Math.sin(ph), randn() * vc * 0.05, v_approach * 0.15 + vc * Math.cos(ph),
             t === T.STAR ? 4000 + rng() * 18000 : 0);
@@ -427,7 +435,7 @@ export function setupMerger(ctx) {
         const M_enc = this._enclosedMass(r, M2, r_s2);
         const vc = Math.sqrt(G_N * M_enc / Math.max(r, 1));
         const M2_remaining = M2 * 0.95;
-        this.addBody(t, (t === T.DARK_MATTER ? M2_remaining * 0.85 : M2_remaining * 0.15) / 700,
+        this.addBody(t, (t === T.DARK_MATTER ? M2_remaining * _DM_FRAC : M2_remaining * _BARYON_FRAC) / 700,
             cx2 + r * Math.cos(ph), zz, cz2 + r * Math.sin(ph),
             -v_approach - vc * Math.sin(ph), randn() * vc * 0.05, -v_approach * 0.15 + vc * Math.cos(ph),
             t === T.STAR ? 4000 + rng() * 18000 : 0);

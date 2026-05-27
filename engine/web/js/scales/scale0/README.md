@@ -7,7 +7,7 @@ the particle scale.
 
 ## Public API
 
-The controller exports lifecycle hooks consumed by `app_dag.js` (the
+The controller exports lifecycle hooks consumed by `app.js` (the
 top-level dashboard orchestrator):
 
 ```js
@@ -40,8 +40,8 @@ memory-budget reset.
 
 ## Dependencies
 
-- **Imports from**: `../../constants.js`, `../../config/toggles.js`, `../../bridge/scenarios/`, `../../wasm-bridge-dag.js` (re-export shim; underlying classes live in `../../bridge/`), `../../viewport.js` (1256-LOC orchestrator that composes 4 sub-renderers — see below)
-- **Imported by**: `../../app_dag.js` (dashboard root)
+- **Imports from**: `../../constants.js`, `../../config/toggles.js`, `../../bridge/scenarios/`, `../../bridge-init.js` (re-export shim; underlying classes live in `../../bridge/`), `../../viewport.js` (1256-LOC orchestrator that composes 4 sub-renderers — see below)
+- **Imported by**: `../../app.js` (dashboard root)
 - **No cross-scale imports** (Scale 1, 2, etc. are independent)
 
 The viewport adapter ultimately drives 4 cascading sub-renderers under

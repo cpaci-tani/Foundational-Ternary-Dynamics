@@ -43,13 +43,13 @@ engine/web/
 │   ├── ftd_core.js
 │   └── ftd_core.wasm
 ├── js/
-│   ├── app_dag.js
+│   ├── app.js
 │   ├── viewport.js
 │   ├── inspector.js
-│   ├── wasm-bridge-dag.js
+│   ├── bridge-init.js
 │   ├── ws-bridge.js
 │   ├── bridge/
-│   │   ├── bridge-factory-dag.js
+│   │   ├── bridge-factory.js
 │   │   ├── boundary.js
 │   │   ├── mock-diagnostics.js
 │   │   ├── mock-lattice-samplers.js
@@ -72,7 +72,7 @@ engine/web/
 │   ├── app-wire/
 │   │   └── keyboard.js              # (NEW Apr 2026 RF-9 partial) keyboard shortcuts
 │   ├── ui/
-│   │   ├── app-ontic.js             # (NEW Apr 2026) ontic-mode plumbing extracted from app_dag.js
+│   │   ├── app-ontic.js             # (NEW Apr 2026) ontic-mode plumbing extracted from app.js
 │   │   ├── charts/ components/ panels/ primitives/ scale-registry/ shell/
 │   └── scales/
 │       ├── scale0/
@@ -95,7 +95,7 @@ engine/web/
 `index.html` loads exactly one module entry:
 
 ```html
-<script type="module" src="js/app_dag.js?v=..."></script>
+<script type="module" src="js/app.js?v=..."></script>
 ```
 
 There is no bundler. Everything else is pulled in by native ES-module
@@ -110,7 +110,7 @@ At the highest level the runtime looks like this:
 ```text
 Browser DOM
   -> index.html
-  -> js/app_dag.js
+  -> js/app.js
      -> bridge selection
         -> WebSocketBridge (optional native server)
         -> WasmBridge (default real browser engine)
@@ -125,7 +125,7 @@ Browser DOM
 There are three main layers:
 
 1. Application shell
-   `app_dag.js` owns startup, global state, shared context
+   `app.js` owns startup, global state, shared context
    construction, mode switching, and the main
    `requestAnimationFrame` loop. After the Scale 0 refactor it is still
    the composition root, but it no longer owns Scale 0 field-toggle,
@@ -135,7 +135,7 @@ There are three main layers:
    Each controller owns scenario loading plus the per-frame logic for a
    mode. Scale 0 now also owns its own UI binding, internal runtime
    phases, state store, and scenario registry. Controllers are leaves:
-   they do not import `app_dag.js`.
+   they do not import `app.js`.
 
 3. Simulation backends
    The active controller talks to a bridge. That bridge may be a native
@@ -158,7 +158,7 @@ The browser boot path is:
 
 ```text
 index.html
-  -> load js/app_dag.js
+  -> load js/app.js
   -> init()
      -> _cacheDOM()
      -> tryNativeBridge(latticeSize)
@@ -203,7 +203,7 @@ type the web helper functions operate on.
 
 ## 4. Global ownership model
 
-`app_dag.js` is the application root and owns the following long-lived
+`app.js` is the application root and owns the following long-lived
 objects:
 
 - `bridge`
@@ -239,7 +239,7 @@ state, not a copied boolean.
 
 ### 5.1 Main scheduler
 
-For every mode except planetary physics, `app_dag.js` owns a single
+For every mode except planetary physics, `app.js` owns a single
 unconditional `requestAnimationFrame` loop:
 
 ```text
@@ -394,7 +394,7 @@ debugging stale state, start here.
 There is not one universal backend:
 
 ```text
-app_dag.js bridge variable
+app.js bridge variable
   -> WebSocketBridge      optional native server bridge
   -> WasmBridge           browser default real engine
      -> RenderBridge      Scale 0 substrate
@@ -411,15 +411,15 @@ Scale 11 -> temporary flux-only MockBridge swap
 
 Real startup order is:
 
-1. `tryNativeBridge(latticeSize)` in `app_dag.js`
+1. `tryNativeBridge(latticeSize)` in `app.js`
 2. if native unavailable: `createBridge(latticeSize)`
 3. inside `createBridge()`:
    `WasmBridge.init()` -> else `new MockBridge()`
 
 So the selection decision is split across two files:
 
-- `app_dag.js` chooses native vs browser-local
-- `bridge-factory-dag.js` chooses WASM vs mock
+- `app.js` chooses native vs browser-local
+- `bridge-factory.js` chooses WASM vs mock
 
 ### 7.3 Native bridge behavior
 
@@ -451,7 +451,7 @@ Scale 0 uses these capability objects as its backend contract.
 ### 7.5 AtomEngine reality
 
 `AtomEngine` is compiled and bound in `ftd_wasm.cpp`, but the web UI
-does not currently use the WASM AE runtime. In `wasm-bridge-dag.js`,
+does not currently use the WASM AE runtime. In `bridge-init.js`,
 `_aeHasWasm` is hardcoded to `false` because the WASM engine uses
 Planck-scaled units while the web atom/molecule UI uses Bohr-scaled
 simulation units.
@@ -553,7 +553,7 @@ Frame stack:
 
 ```text
 requestAnimationFrame
-  -> app_dag.animate(now)
+  -> app.animate(now)
   -> Scale0Controller.animate(ctx)
      -> advanceSimulation(ctx, state)
         -> bridge.capabilities.scale0.tickScale0()
@@ -609,7 +609,7 @@ Frame stack:
 
 ```text
 requestAnimationFrame
-  -> app_dag.animate(now)
+  -> app.animate(now)
   -> animatePE(now)
   -> Scale1Controller.animatePE(ctx)
      -> if running:
@@ -646,7 +646,7 @@ Frame stack:
 
 ```text
 requestAnimationFrame
-  -> app_dag.animate(now)
+  -> app.animate(now)
   -> animateAE(now)
   -> Scale2Controller.animateAE(ctx)
      -> if running:
@@ -756,7 +756,7 @@ Frame stack:
 
 ```text
 requestAnimationFrame
-  -> app_dag.animate(now)
+  -> app.animate(now)
   -> Scale5Controller.animateCosmic(ctx)
      -> isPhysicsFrame = (ctx.frameCount & 1) === 0
      -> if physics frame and running:
@@ -774,7 +774,7 @@ The meta controller is mostly a scene-object animator:
 
 ```text
 requestAnimationFrame
-  -> app_dag.animate(now)
+  -> app.animate(now)
   -> Scale6Controller.updateMeta(ctx, 1 / 60)
      -> metaUnit.update(dt)
      -> viewport.render()
@@ -794,7 +794,7 @@ Scale6Controller.loadMetaScenario(ctx)
 Important naming note:
 
 - the controller lives in `scales/scale6/`
-- but `app_dag.js` maps `meta` to UI scale index `12`
+- but `app.js` maps `meta` to UI scale index `12`
 
 That mismatch is intentional historical numbering, not a typo.
 
@@ -822,7 +822,7 @@ Frame stack:
 
 ```text
 requestAnimationFrame
-  -> app_dag.animate(now)
+  -> app.animate(now)
   -> Scale11Controller.animateConsciousness(ctx, now)
      -> if running:
         -> wholeTicks = tickAccumulator.accumulate(ticksPerFrame)
@@ -927,7 +927,7 @@ These are not theoretical concerns. They are true of the current code.
 
 - `viewport.js` is large and central. Many rendering behaviors still
   converge there.
-- `wasm-bridge-dag.js` is still sizeable because it combines real bridge
+- `bridge-init.js` is still sizeable because it combines real bridge
   code and mock-fallback code. Scenario logic no longer lives here —
   it was extracted to `bridge/scenarios/` (see "Recent refactor" below).
 - The native WebSocket bridge will keep trying to reconnect forever.
@@ -947,7 +947,7 @@ cleanup pass (RF-1/3/4/5/6/7/8/10) reshaped the web tree. The three
 fattest modules all shrank in place, and the extracted concerns landed
 as siblings under `bridge/`, `viewport/`, `ui/`, and `app-wire/`:
 
-- `wasm-bridge-dag.js` 5736 → 2132 LOC — scenarios, diagnostics, lattice
+- `bridge-init.js` 5736 → 2132 LOC — scenarios, diagnostics, lattice
   samplers, and particle/atom mock engines pulled out; `_wasmCallOr`
   helper + 3 frozen empty-result singletons replaced ~80 LOC of
   early-return boilerplate across 8 sampler methods (RF-6)
@@ -957,7 +957,7 @@ as siblings under `bridge/`, `viewport/`, `ui/`, and `app-wire/`:
   (`_buildStreamlineMesh`/`_writeStreamlinesIntoMesh` RF-3,
   `_buildArrowFieldMesh`/`_writeArrowFieldIntoMesh` RF-2) dedupe 6
   copy-paste build+update pairs
-- `app_dag.js` 1898 → 1723 LOC — ontic-mode plumbing moved to
+- `app.js` 1898 → 1723 LOC — ontic-mode plumbing moved to
   `ui/app-ontic.js`; keyboard handler to `app-wire/keyboard.js` (RF-9
   partial; wireToolbar/wireControls/wireViewportToggles deferred)
 
@@ -1003,10 +1003,10 @@ in:
 When tracing runtime behavior, start at these files:
 
 - boot problems:
-  `engine/web/index.html`, `engine/web/js/app_dag.js`,
-  `engine/web/js/bridge/bridge-factory-dag.js`,
+  `engine/web/index.html`, `engine/web/js/app.js`,
+  `engine/web/js/bridge/bridge-factory.js`,
   `engine/web/js/ws-bridge.js`,
-  `engine/web/js/wasm-bridge-dag.js`
+  `engine/web/js/bridge-init.js`
 - substrate frame behavior:
   `engine/web/js/scales/scale0/controller.js`,
   `engine/src/render_bridge.cpp`,
@@ -1018,18 +1018,18 @@ When tracing runtime behavior, start at these files:
 - atom/molecule mode:
   `engine/web/js/scales/scale2/controller.js`,
   `engine/web/js/scales/scale3/controller.js`,
-  `engine/web/js/wasm-bridge-dag.js`
+  `engine/web/js/bridge-init.js`
 - rendering bugs:
   `engine/web/js/viewport.js`,
   `engine/web/js/inspector.js`
 - mode-switch bugs and leaked state:
-  `engine/web/js/app_dag.js` `switchEngineMode()`
+  `engine/web/js/app.js` `switchEngineMode()`
 
 If you only remember one call stack, remember this one:
 
 ```text
 UI event
-  -> app_dag.js
+  -> app.js
   -> scale controller
   -> bridge facade
   -> optional WASM/native boundary
@@ -1049,7 +1049,7 @@ To add a scale cleanly:
 1. Create `js/scales/scale{N}/controller.js`.
 2. Export a loader plus the runtime functions the mode needs, usually
    `animate...`, `load...Scenario`, and `reset...`.
-3. Wire the controller into `app_dag.js`:
+3. Wire the controller into `app.js`:
    imports, `animate()` dispatch, and `switchEngineMode()`.
 4. Add the mode to the UI in `index.html`.
 5. Reuse shared helpers from `scales/scale-utils.js`.

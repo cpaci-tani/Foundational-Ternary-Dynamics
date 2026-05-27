@@ -1,9 +1,9 @@
 /**
  * @file engine/web/js/bridge/mock-bridge.js
  * @purpose JS-only physics implementation of the ScaleBridge contract.
- *          Owned by `engine/web/js/wasm-bridge-dag.js` and re-exported there
+ *          Owned by `engine/web/js/bridge-init.js` and re-exported there
  *          for backward compatibility.
- * @consumers wasm-bridge-dag.js (re-exports); each scale controller
+ * @consumers bridge-init.js (re-exports); each scale controller
  *            (engine/web/js/scales/scaleN/controller.js for N in 0..11)
  *            via the createScale0/1/2Capabilities factories.
  * @contract CONTRACTS.md §1 (Bridge State Contract — live-reference factories)
@@ -12,14 +12,14 @@
  *          engine/web/js/bridge/mock-{diagnostics,particle-engine,
  *          lattice-samplers,atom-engine}.js (live-ref factories MockBridge composes)
  *
- * Phase 2a of the refactor sweep extracted MockBridge from wasm-bridge-dag.js
+ * Phase 2a of the refactor sweep extracted MockBridge from bridge-init.js
  * (which was 2395 LOC mixing MockBridge + WasmBridge + capability factories).
  * The extraction is a verbatim move — class body unchanged — so cache
  * invalidation, locked-particle pair forces, absorbing-boundary semantics,
  * and energy-convention guards are bit-identical to the pre-Phase-2 file.
  *
  * Subsequent phases will extract WasmBridge (2b) and the capability factories
- * (2c); after Phase 2c the original wasm-bridge-dag.js shrinks to a re-export
+ * (2c); after Phase 2c the original bridge-init.js shrinks to a re-export
  * shim. See .claude/plans/i-want-to-try-crispy-charm.md Phase 2.
  */
 
@@ -1551,7 +1551,7 @@ export class MockBridge {
      * `_particles`: the array identity is stable but per-particle fields
      * mutate in place.
      *
-     * Was a prototype patch in wasm-bridge-dag.js; moved here in Phase 2c
+     * Was a prototype patch in bridge-init.js; moved here in Phase 2c
      * to keep the MockBridge class definition self-contained. The
      * capability factory in capabilities/scale0.js calls this method
      * if present; WasmBridge has no equivalent so the factory's

@@ -28,7 +28,7 @@
 
 import * as THREE from 'three';
 import { potentialToColor, magnitudeToColor, fluxToColor } from '../fields.js';
-import { K_B } from '../constants.js';
+import { K_B, K_GENESIS } from '../constants.js';
 
 // ── Voxel-center rendering convention ─────────────────────────────────
 // Lattice voxel index k is rendered at world centre k+0.5 (see
@@ -1426,7 +1426,7 @@ export class ViewportFieldRenderer {
         const colAttr = this._darkMatterHalo.geometry.getAttribute('particleColor');
         const sizeAttr = this._darkMatterHalo.geometry.getAttribute('size');
         const N = latticeSize;
-        const kGen = 1.533; // K_GENESIS = 3 * K_B
+        const kGen = K_GENESIS; // 3 * K_B = 1.533 (audit P2-9 fix: import the named constant, 2026-05-27)
         let vi = 0;
         const maxPts = 8000;
 

@@ -2,7 +2,7 @@
  * Scale-1 Particle Engine (PE) — MockBridge side only.
  *
  * N-body Coulomb + gravity dynamics with a Velocity Verlet integrator.
- * Extracted from `wasm-bridge-dag.js` as Wave 2 ticket 5 of the large-file
+ * Extracted from `bridge-init.js` as Wave 2 ticket 5 of the large-file
  * refactor (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). This is a move, not
  * a rewrite — method bodies are preserved verbatim; the only structural
  * change is that `this.*` field accesses go through the live `state`

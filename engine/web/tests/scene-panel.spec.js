@@ -50,7 +50,7 @@ test.describe('Scene panel', () => {
         // _ftdBridge is the engine bridge, not the Viewport. Access viewport via
         // the module directly — it's exposed via window for debug.
         const viewportFov = await page.evaluate(async () => {
-            // The app_dag module stores the viewport in a closure; read through
+            // The app module stores the viewport in a closure; read through
             // an appended window global if available, otherwise fall back to
             // inspecting the OrbitControls target that links back to camera.
             return window.__ftdViewport?.camera?.fov

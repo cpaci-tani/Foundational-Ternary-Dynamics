@@ -1,10 +1,10 @@
 /**
  * app-wire/keyboard.js — keyboard-shortcut handler for the FTD dashboard.
  *
- * Extracted from `app_dag.js::wireKeyboard()` as refactoring-analyst ticket
+ * Extracted from `app.js::wireKeyboard()` as refactoring-analyst ticket
  * RF-9 (partial). The rest of the wire* functions (wireToolbar,
  * wireControls, wireViewportToggles) are too deeply entangled with
- * app_dag module-scope state to extract cleanly without a larger
+ * app module-scope state to extract cleanly without a larger
  * state-plumbing pass; deferred until the scale-controller interface
  * unification lands.
  *

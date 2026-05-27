@@ -33,7 +33,7 @@ When in doubt, this audit uses the weaker label.
 
 - **[x] [THEOREM]** The main control-flow claims in
   `ARCHITECTURE.md` are source-grounded.
-  Evidence: `engine/web/js/app_dag.js`, `engine/web/js/wasm-bridge-dag.js`,
+  Evidence: `engine/web/js/app.js`, `engine/web/js/bridge-init.js`,
   `engine/web/js/scales/scale*/controller.js`, `engine/wasm/ftd_wasm.cpp`,
   `engine/src/render_bridge.cpp`.
 
@@ -56,30 +56,30 @@ When in doubt, this audit uses the weaker label.
 ### 3.1 Entry point and boot
 
 - **[x] [THEOREM]** `index.html` loads exactly one module entry:
-  `js/app_dag.js`.
+  `js/app.js`.
   Evidence: `engine/web/index.html`.
 
 - **[x] [THEOREM]** `init()` is the real browser boot entry point.
-  Evidence: `engine/web/js/app_dag.js`.
+  Evidence: `engine/web/js/app.js`.
 
 - **[x] [THEOREM]** The app tries the native WebSocket bridge first,
   then falls back to `createBridge()`.
-  Evidence: `app_dag.js` `init()`, `ws-bridge.js`, `bridge-factory-dag.js`.
+  Evidence: `app.js` `init()`, `ws-bridge.js`, `bridge-factory.js`.
 
 - **[x] [THEOREM]** `createBridge()` itself only chooses between WASM
   and `MockBridge`; it does not probe the native server.
-  Evidence: `engine/web/js/bridge/bridge-factory-dag.js`.
+  Evidence: `engine/web/js/bridge/bridge-factory.js`.
 
 - **[x] [THEOREM]** The default boot scenario is `flux-pulse`.
-  Evidence: `app_dag.js` `Scale0Controller.loadScenario(_makeCtx(), 'flux-pulse')`.
+  Evidence: `app.js` `Scale0Controller.loadScenario(_makeCtx(), 'flux-pulse')`.
 
 - **[x] [THEOREM]** Scale 0 UI binding now happens during boot through
   `Scale0Controller.bindUI(_makeCtx())`.
-  Evidence: `engine/web/js/app_dag.js`.
+  Evidence: `engine/web/js/app.js`.
 
 - **[x] [EMERGENT]** The loading overlay should disappear after startup
   completes, with an 8-second safety timeout if init hangs.
-  Evidence: `app_dag.js`.
+  Evidence: `app.js`.
   Note: source-verified statically, but user-visible timing behavior was
   not exercised live in this audit.
 
@@ -87,11 +87,11 @@ When in doubt, this audit uses the weaker label.
 
 - **[x] [THEOREM]** `WasmBridge.init()` injects `wasm/ftd_core.js` on
   demand and then calls `createFTDModule({ locateFile })`.
-  Evidence: `engine/web/js/wasm-bridge-dag.js`.
+  Evidence: `engine/web/js/bridge-init.js`.
 
 - **[x] [THEOREM]** The browser substrate bridge is instantiated as
   `module.RenderBridge`, not `module.DagEngine`.
-  Evidence: `wasm-bridge-dag.js`, `engine/wasm/ftd_wasm.cpp`.
+  Evidence: `bridge-init.js`, `engine/wasm/ftd_wasm.cpp`.
 
 - **[x] [THEOREM]** The native server URL is `ws://localhost:9100`.
   Evidence: `engine/web/js/ws-bridge.js`.
@@ -106,21 +106,21 @@ When in doubt, this audit uses the weaker label.
 
 - **[x] [THEOREM]** Scale 0 and Scale 1 can use real C++ browser paths
   through WASM today.
-  Evidence: `wasm-bridge-dag.js`, `ftd_wasm.cpp`.
+  Evidence: `bridge-init.js`, `ftd_wasm.cpp`.
 
 - **[x] [THEOREM]** `WasmBridge` and `MockBridge` now expose
   lazily-built capability surfaces including `scale0`, `scale1`, and
   `scale2`.
-  Evidence: `engine/web/js/wasm-bridge-dag.js`.
+  Evidence: `engine/web/js/bridge-init.js`.
 
 - **[x] [THEOREM]** The web AE path is forced onto JavaScript fallback
   because `_aeHasWasm` returns `false`.
-  Evidence: `wasm-bridge-dag.js`.
+  Evidence: `bridge-init.js`.
 
 - **[x] [IMPOSED]** The reason given for disabling AE WASM is the unit
   mismatch between Planck-scaled engine units and Bohr-scaled web UI
   units.
-  Evidence: inline comment in `wasm-bridge-dag.js`.
+  Evidence: inline comment in `bridge-init.js`.
 
 - **[ ] [OPEN]** Native WebSocket feature parity with the WASM bridge
   was not exhaustively audited in this pass.
@@ -128,16 +128,16 @@ When in doubt, this audit uses the weaker label.
 
 ### 3.3 Main scheduler and mode dispatch
 
-- **[x] [THEOREM]** `app_dag.js` owns a single unconditional rAF loop
+- **[x] [THEOREM]** `app.js` owns a single unconditional rAF loop
   for every mode except planetary physics.
-  Evidence: `engine/web/js/app_dag.js` `animate(now)`.
+  Evidence: `engine/web/js/app.js` `animate(now)`.
 
 - **[x] [THEOREM]** The next rAF is scheduled before mode dispatch.
   Evidence: first line of `animate(now)`.
 
 - **[x] [THEOREM]** Dispatch by `engineMode` matches the architecture
   document's table.
-  Evidence: `app_dag.js` `animate(now)`.
+  Evidence: `app.js` `animate(now)`.
 
 - **[x] [THEOREM]** Scale 4 planetary physics runs in its own
   `setInterval(..., 16)` loop.
@@ -154,41 +154,41 @@ When in doubt, this audit uses the weaker label.
 - **[x] [SELECTION]** The scheduler chapter in `ARCHITECTURE.md`
   intentionally compresses background updates, FPS bookkeeping, and
   floating-panel tracking into one control-flow narrative.
-  Evidence: `app_dag.js` contains more detail than the summary text.
+  Evidence: `app.js` contains more detail than the summary text.
 
 ### 3.4 Play, step, reset, mode switch
 
 - **[x] [THEOREM]** Play toggles `running`; it does not directly tick
   the simulation.
-  Evidence: `app_dag.js` `togglePlay()`.
+  Evidence: `app.js` `togglePlay()`.
 
 - **[x] [THEOREM]** Step dispatches directly to per-mode tick or step
   entry points.
-  Evidence: `app_dag.js` Step button handler.
+  Evidence: `app.js` Step button handler.
 
 - **[x] [THEOREM]** Lattice step now dispatches through
   `Scale0Controller.step(_makeCtx())`.
-  Evidence: `engine/web/js/app_dag.js`.
+  Evidence: `engine/web/js/app.js`.
 
 - **[x] [THEOREM]** Reset reloads the current mode's scenario instead of
   performing a universal engine reset.
-  Evidence: `app_dag.js` Reset button handler.
+  Evidence: `app.js` Reset button handler.
 
 - **[x] [THEOREM]** Lattice reset now dispatches through
   `Scale0Controller.reset(_makeCtx())`.
-  Evidence: `engine/web/js/app_dag.js`.
+  Evidence: `engine/web/js/app.js`.
 
 - **[x] [THEOREM]** `switchEngineMode()` is the sole mode-switch entry
   point.
-  Evidence: comment and dispatch structure in `app_dag.js`.
+  Evidence: comment and dispatch structure in `app.js`.
 
 - **[x] [THEOREM]** Mode switching pauses simulation, updates CSS/tab
   visibility, performs scale cleanup, then loads the target scenario.
-  Evidence: `app_dag.js` `switchEngineMode(mode)`.
+  Evidence: `app.js` `switchEngineMode(mode)`.
 
 - **[x] [THEOREM]** Leaving lattice now routes cleanup through
   `Scale0Controller.exit(_makeCtx())`.
-  Evidence: `engine/web/js/app_dag.js`.
+  Evidence: `engine/web/js/app.js`.
 
 - **[ ] [OPEN]** Full cleanup correctness across long repeated mode
   switches was not re-run manually in this audit.
@@ -204,7 +204,7 @@ When in doubt, this audit uses the weaker label.
 - **[x] [THEOREM]** The substrate tick path documented in
   `ARCHITECTURE.md` matches the code:
   `WasmBridge.tick()` -> `RenderBridge::tick()`.
-  Evidence: `wasm-bridge-dag.js`, `ftd_wasm.cpp`, `render_bridge.cpp`.
+  Evidence: `bridge-init.js`, `ftd_wasm.cpp`, `render_bridge.cpp`.
 
 - **[x] [THEOREM]** The CPU `RenderBridge::tick()` order documented in
   `ARCHITECTURE.md` matches the real call sequence.
@@ -213,7 +213,7 @@ When in doubt, this audit uses the weaker label.
 - **[x] [THEOREM]** The PE path documented in `ARCHITECTURE.md` matches
   the real call sequence:
   `bridge.peTick()` -> `this._pe.tick()`.
-  Evidence: `wasm-bridge-dag.js`, `ftd_wasm.cpp`.
+  Evidence: `bridge-init.js`, `ftd_wasm.cpp`.
 
 - **[ ] [OPEN]** The GPU/native `RenderBridge::tick()` path was only
   read statically, not exercised live.
@@ -257,12 +257,12 @@ When in doubt, this audit uses the weaker label.
   controls, boundary controls, flux volume/slice toggles, keyboard
   shortcuts, and scenario selection now lives inside the Scale 0
   package.
-  Evidence: `scale0/ui/bindings.js`, `app_dag.js`.
+  Evidence: `scale0/ui/bindings.js`, `app.js`.
 
 - **[x] [THEOREM]** Scale 0 now consumes backend data through
   `bridge.capabilities.scale0` rather than reading `MockBridge` private
   fields directly.
-  Evidence: `scale0/runtime/*.js`, `wasm-bridge-dag.js`.
+  Evidence: `scale0/runtime/*.js`, `bridge-init.js`.
 
 - **[x] [THEOREM]** Scale 0 scenario selection is registry-driven and
   can be validated through `validateScale0ScenarioRegistry()`.
@@ -294,7 +294,7 @@ When in doubt, this audit uses the weaker label.
 
 - **[x] [THEOREM]** Scale 2 ticks through the AE facade, which resolves
   to JS fallback today.
-  Evidence: `scale2/controller.js`, `wasm-bridge-dag.js`.
+  Evidence: `scale2/controller.js`, `bridge-init.js`.
 
 - **[x] [THEOREM]** Scale 3's distinctive behavior is in scenario load,
   not in a separate frame scheduler.
@@ -340,11 +340,11 @@ When in doubt, this audit uses the weaker label.
 
 - **[x] [THEOREM]** `meta` uses `Scale6Controller.updateMeta(ctx, 1/60)`
   from the main rAF loop.
-  Evidence: `app_dag.js`, `scale6/controller.js`.
+  Evidence: `app.js`, `scale6/controller.js`.
 
 - **[x] [THEOREM]** The controller file is `scale6`, while the UI scale
   index is `12`.
-  Evidence: `app_dag.js`.
+  Evidence: `app.js`.
 
 - **[x] [SELECTION]** Calling this a "historical numbering mismatch" is
   a documentation interpretation of what the code shows.

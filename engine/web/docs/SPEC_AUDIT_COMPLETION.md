@@ -10,10 +10,10 @@ Scope: everything not already tracked in [SPEC_UI_REFACTOR.md](./SPEC_UI_REFACTO
 | # | Finding | Priority | Type | Effort |
 |---|---|---|---|---|
 | 1 | `--text-muted` fails WCAG 4.5:1 contrast on dark themes | **P0** | a11y | 15 min |
-| 2 | Scale 1 wiring still in `app_dag.js` (10 listeners + 2 sliders + 1 btn) | **P1** | arch parity | 45 min |
-| 3 | Scale 2 wiring still in `app_dag.js` (6 listeners + 2 sliders + 1 btn; `SCALE2_TOGGLES` unused) | **P1** | arch parity | 45 min |
-| 4 | Scale 4 has no `controls/` — 17 `planetary-*` DOM lookups inline in `app_dag.js` | **P1** | arch parity | 1 hr |
-| 5 | Scale 11 has no `controls/` — cs-scenario-select, cs-figure-select, cs-audio lookups in `app_dag.js` | **P1** | arch parity | 45 min |
+| 2 | Scale 1 wiring still in `app.js` (10 listeners + 2 sliders + 1 btn) | **P1** | arch parity | 45 min |
+| 3 | Scale 2 wiring still in `app.js` (6 listeners + 2 sliders + 1 btn; `SCALE2_TOGGLES` unused) | **P1** | arch parity | 45 min |
+| 4 | Scale 4 has no `controls/` — 17 `planetary-*` DOM lookups inline in `app.js` | **P1** | arch parity | 1 hr |
+| 5 | Scale 11 has no `controls/` — cs-scenario-select, cs-figure-select, cs-audio lookups in `app.js` | **P1** | arch parity | 45 min |
 | 6 | Settings modal has no Escape-key handler / focus trap | **P1** | a11y | 20 min |
 | 7 | `showToast()` referenced but implementation may be missing; silent failures on inject-full / clear-empty | **P1** | UX | 30 min |
 | 8 | `meta-pedagogy.js` (48) + `ontic-observatory.js` (40) inline styles — mix of static + dynamic | **P2** | code quality | 1.5 hr |
@@ -39,12 +39,12 @@ Scope: everything not already tracked in [SPEC_UI_REFACTOR.md](./SPEC_UI_REFACTO
 | Scale | `controller.js` | `register-ui.js` | `toolbar/` | `overlays/template.js` | `controls/component.js` | `controls/wire.js` | `bindings.js` | `dom.js` | Wiring location |
 |---|---|---|---|---|---|---|---|---|---|
 | 0 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | **owned by scale** |
-| 1 | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | **app_dag.js** |
-| 2 | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | **app_dag.js** |
-| 3 | ✅ | ✅ | ✅ | ✅ | stub (inherits 2) | N/A | ❌ | ❌ | app_dag.js (via scale 2) |
-| 4 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | **app_dag.js (17 lookups)** |
-| 5 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | app_dag.js (minimal) |
-| 11 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | **app_dag.js** |
+| 1 | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | **app.js** |
+| 2 | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | **app.js** |
+| 3 | ✅ | ✅ | ✅ | ✅ | stub (inherits 2) | N/A | ❌ | ❌ | app.js (via scale 2) |
+| 4 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | **app.js (17 lookups)** |
+| 5 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | app.js (minimal) |
+| 11 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | **app.js** |
 | 12 | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | minimal, mostly static |
 
 Seven scales still need some form of migration; Scale 1 and Scale 2 are the highest-value next targets since `SCALE{1,2}_TOGGLES` config exists but isn't wired through, meaning toggle drift risk today.

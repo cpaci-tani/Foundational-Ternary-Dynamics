@@ -5,7 +5,7 @@
  * Each procedural theme lives in its own module under ./backgrounds/
  * and exports a Theme descriptor { label, build, animate }. This file
  * wires them together and exposes the BackgroundManager lifecycle
- * (set, update, dispose) consumed by app_dag.js.
+ * (set, update, dispose) consumed by app.js.
  *
  * Refactored 2026-04-18 (BG-1, BG-2): theme implementations and the
  * HDRI loader extracted to engine/web/js/backgrounds/*.js.
