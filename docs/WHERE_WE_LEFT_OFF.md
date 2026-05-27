@@ -1,6 +1,8 @@
-# Where We Left Off — 2026-05-27 (v3 Clock-Hypothesis CLOSED-NEGATIVE Outcome C [CLOSED-NEGATIVE]; Arc C2 spin-2 boundary theorem FOUND [THEOREM])
+# Where We Left Off — 2026-05-27 (x_- Physical-Identification CLOSED-NEGATIVE Campaign FTD-0210 [CLOSED-NEGATIVE]; v3 Clock-Hypothesis CLOSED-NEGATIVE [CLOSED-NEGATIVE]; Arc C2 spin-2 boundary theorem FOUND [THEOREM])
 
-**Latest update:** 2026-05-27 — the v3 Clock-Hypothesis Substrate-Derivation campaign (**FTD-0208**) has been completed and closed with a definitive **CLOSED-NEGATIVE (Outcome C)** verdict. Through rigorous structural analysis of the Scale 0 discrete lattice substrate, we prove that continuous Minkowski proper-time scaling $(d\tau/dt_{\text{local}})^2 + v_{\text{local}}^2 = 1$ is structurally incompatible with FTD's discrete causal and algebraic postulates. The clock hypothesis is demoted from `[THEOREM modulo clock hypothesis]` to an honest coordinate-level **`[AXIOM]`** across the canonical references. An independent adversarial audit (PASS, 9.8/10 rigor) by subagent `RedTeamAuditor` verified process and mathematical rigor, fully satisfying the methodological B-9 and B-10 guards. Plan v2 Arc B P5 is marked CLOSED with CLOSED-NEGATIVE verdict.
+**Latest update:** 2026-05-27 — the x_- physical-identification search campaign (**FTD-0210**) has been completed and closed with a definitive **CLOSED-NEGATIVE (Outcome C)** verdict. Through mechanical evaluation of the 25 pre-specified Standard Model observables using high-precision constants, we prove that $x_- \approx 3.024$ corresponds to zero Standard Model observables under strict filters. $x_-$ is proven to be a pure coordinate projection/chirality artifact of the master quadratic polynomial with no physical correspondent in the Standard Model. This negative campaign closure maps FTD's physical boundary, fully complying with CLAUDE.md goal-clause 2.
+
+**Latest clock-hypothesis update:** 2026-05-27 — the v3 Clock-Hypothesis Substrate-Derivation campaign (**FTD-0208**) has been completed and closed with a definitive **CLOSED-NEGATIVE (Outcome C)** verdict. Through rigorous structural analysis of the Scale 0 discrete lattice substrate, we prove that continuous Minkowski proper-time scaling $(d\tau/dt_{\text{local}})^2 + v_{\text{local}}^2 = 1$ is structurally incompatible with FTD's discrete causal and algebraic postulates. The clock hypothesis is demoted from `[THEOREM modulo clock hypothesis]` to an honest coordinate-level **`[AXIOM]`** across the canonical references. An independent adversarial audit (PASS, 9.8/10 rigor) by subagent `RedTeamAuditor` verified process and mathematical rigor, fully satisfying the methodological B-9 and B-10 guards. Plan v2 Arc B P5 is marked CLOSED with CLOSED-NEGATIVE verdict.
 
 ---
 
@@ -37,16 +39,14 @@ A long mixed-workstream session combining a major web-dashboard audit with a num
 - `constants.js` Thomas-Fermi prefactor `[DERIVED]` → `[IMPOSED — external Lieb–Simon]`.
 - `config/scenarios.js` Born rule `[THEOREM]` → `[SELECTION]`; SU(3) sector identification `[THEOREM]` → `[SELECTION]`; Higgs self-coupling `[DERIVED]` → `[PARAMETRIC]`.
 - FAQ `dark-matter` entry now carries both readings (uniform 1.7 + W5 5.30).
-- LEDGER row FTD-0210 reserved for `x_-` physical-identification pre-registration (no result yet).
+- LEDGER row FTD-0210 completed and closed with the final **[CLOSED NEGATIVE]** verdict. x_- is proven to be a pure coordinate projection/chirality artifact of the master quadratic polynomial with no physical correspondent in the Standard Model.
 - No spine theorem promoted or demoted.
 
 ### What's queued for the next session
 
-1. **Apply hash-lock tag**: `git tag preregister-x-minus-physical-identification-v1` after this commit lands. The manifest entry already pre-populates the SHA.
-2. **Run the §6 measurement procedure** of the x_- pre-reg (frozen 25-entry observable basket search). Prior: CLOSED-NEGATIVE (Candidate C1 — x_- is pure algebraic artifact).
-3. **Pre-register W5 independent-observable confirmation** (CMB ℓ₁, BBN Y_p, or z_eq under W5 weighting). If a second independent observable lands at <5% under W5 and not under W1, that's structural confirmation; if not, W5 retires.
-4. **Path A K_2-regulator continuation** if desired: implement Mellin-transform acceleration for L(E, 2) at ~50-dps precision (multi-hour) OR import Brunault–Zudilin Mahler-measure identity from the literature.
-5. **Untouched threads from the 2026-05-27 prediction brainstorm**: scalar-vector-not-spin-2 strong-field gravity signature (Frontier 4), no-4th-generation no-go formalization, mass-ratio deviation hierarchy (m_τ at 66 ppm vs m_μ at 1100 ppm).
+1. **Pre-register W5 independent-observable confirmation** (CMB l_1, BBN Y_p, or z_eq under W5 weighting). If a second independent observable lands at <5% under W5 and not under W1, that's structural confirmation; if not, W5 retires.
+2. **Path A K_2-regulator continuation** if desired: implement Mellin-transform acceleration for L(E, 2) at ~50-dps precision (multi-hour) OR import Brunault–Zudilin Mahler-measure identity from the literature.
+3. **Untouched threads from the 2026-05-27 prediction brainstorm**: scalar-vector-not-spin-2 strong-field gravity signature (Frontier 4), no-4th-generation no-go formalization, mass-ratio deviation hierarchy (m_tau at 66 ppm vs m_mu at 1100 ppm).
 
 ---
 
