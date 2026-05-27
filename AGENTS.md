@@ -132,7 +132,7 @@ ftd/                                     # Project root
 ## C++ Engine
 
 **Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release`
-**Test**: `cd engine/build && ctest --output-on-failure -C Release`
+**Test**: `cd engine/build && ctest -j 8 --output-on-failure -C Release`
 **WASM**: `emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release && emmake cmake --build engine/build_wasm --target ftd_wasm`
 **Web UI**: `python -m http.server 8080 -d engine/web`
 
