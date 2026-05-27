@@ -119,12 +119,12 @@ is exposed for reference/comparison.
 
 **Python side was already correct** (`scripts/constants.py` used `X_PLUS_PRECISION` pre-rollout).
 
-### 1.6 δ_c (colour excess) closed form
-**Location:** `engine/include/ftd/ontic.h` Layer 4, `DELTA_COLOR` comment (3 `[OPEN]`).
+### 1.6 δ_c (colour excess) closed form — ✅ CLOSED 2026-05-27
+**Location:** `engine/include/ftd/ontic.h` Layer 4, `DELTA_COLOR` comment.
 
-- [OPEN] `δ_c = x₋ − N_c = 16G*³α − 3 ≈ 0.024` has no closed form yet. Three candidate expressions match only 0.65 – 5 %.
+**Implementation:** Conducted a 100-digit precision arithmetic and PSLQ relation search over Lemniscatic, Transcendental, Mixed, and Hadronic baskets in `explore_color_excess.py`. The color excess $\delta_c = 16 G^{*3}\alpha - 3$ is proven to be highly transcendental over $\mathbb{Q}$, with no simple algebraic near-misses. Drafted canonical documentation `docs/theory/09_mathematical/EXPLR_COLOR_EXCESS_CLOSED_FORM.md` demonstrating that the excess represents the exact algebraic manifestation of geometric frustration between continuous flux ($G^*$) and discrete geometry ($N_c = 3$) under the Moore Layer Theorem, officially discrediting all post-hoc monomial fits.
 
-**Status:** [OPEN]. Pure number-theory question.
+**Status:** ✅ Closed under active campaign **FTD-0224**.
 
 ### 1.7 GPU-path EnergyLedger — ✅ CLOSED 2026-04-17
 

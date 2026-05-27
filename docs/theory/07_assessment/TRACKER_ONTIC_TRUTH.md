@@ -171,7 +171,7 @@ If you need to defend FTD's mathematical core to a skeptical mathematician in a 
 7. **OT-2.1** Watson identity (★★★★, Watson 1939 / Glasser–Zucker 1980)
 8. **OT-2.2** Tower discriminant transcendence (★★★★, Schneider–Chudnovsky)
 9. **OT-2.3** Q(G*) π-free (★★★★, Chudnovsky 1976)
-10. **OT-3.4** FTD-0110 (★★★, O_h rep theory, Orbit-Equipartition, Timescale Separation)
+10. **OT-3.4** FTD-0110 (★★★, O_h rep theory at linear level + Bridge-I global O_h-equivariance + 5% empirical match across 11 amplitudes × 5 SM × 3 L × 2 geom; nonlinear-pipeline closure [OPEN] — see [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../03_derivations/AUDIT_FTD0110_2026-05-27_RESOLUTION.md))
 
 **FQCR additions (2026-05-06; complementary lens, do not change tier 1 above):**
 
