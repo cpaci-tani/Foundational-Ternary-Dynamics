@@ -582,6 +582,10 @@ Snapshot (2026-04-17):
 
 Move items here with the closing commit / PR when an `[OPEN]` becomes `✅`.
 
+### Class C Cluster-Cluster Interaction Specification — ✅ CLOSED 2026-05-27 (Campaign FTD-0222)
+
+- ✅ **Outcome A (FOUND): Class C Specification** — Drafted `docs/theory/01_reference/SPEC_CLASS_C_CLUSTER_INTERACTION.md` detailing the discrete-native forces, displacement gradients, dimensionless coupling extraction ($\alpha, y_{\text{Yukawa}}, G_N$) directly from relational coordinates, and calibration conversion to SI Newtons.
+
 ### No 4th Generation Fermions No-Go Formalization — CLOSED 2026-05-27 (Campaign FTD-0220)
 
 - ✅ **Outcome A (FOUND): No 4th Generation Fermions** — Created `docs/theory/10_eft_program/FOUND_NO_4TH_GENERATION_NO_GO.md` and pre-registration `PREREG_NO_4TH_GENERATION_NO_GO_v1.md`, proving that exactly three generations are selected under the $D=3$ Moore layer decomposition $C(D,2)=3$, and a standard fourth generation is algebraically and topologically excluded. Symmetries verified by `scripts/exploration/verify_no_4th_generation.py`.

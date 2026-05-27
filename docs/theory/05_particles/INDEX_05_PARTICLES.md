@@ -19,6 +19,11 @@
 | [DERIV_ELECTRON_MASS_MOTIVATION.md](DERIV_ELECTRON_MASS_MOTIVATION.md) | [SELECTION] | Factor-by-factor motivation for m_e = M_P·√(2π)·(16/3)·α¹¹ (0.19%); combination not uniquely derived. |
 | [PRED_ELECTROWEAK_MASSES.md](PRED_ELECTROWEAK_MASSES.md) | [THEOREM] (running + tree) + [PARAMETRIC] (radiative corr.) | M_Z to 0.02% and M_W to 0.5% from α, sin²θ_W = 3/13, v — zero free parameters. |
 | [FOUND_DISCRETE_NATIVE_MASS_GENERATION.md](FOUND_DISCRETE_NATIVE_MASS_GENERATION.md) | [FOUNDATIONAL / OPERATIONAL] | Rest mass operationally defined as voxel cardinality, with linear-level scaling (FTD-0110) and point-group representation analysis. |
+## Coupling constants & forces (Class C)
+
+| File | Tag | Purpose |
+|---|---|---|
+| [SPEC_CLASS_C_CLUSTER_INTERACTION.md](../01_reference/SPEC_CLASS_C_CLUSTER_INTERACTION.md) | [INFRASTRUCTURE SPEC] | Cluster-cluster interaction and coupling readout spec (protocol; engine implementation TBD). |
 
 ## Color, binding & engine measurements
 

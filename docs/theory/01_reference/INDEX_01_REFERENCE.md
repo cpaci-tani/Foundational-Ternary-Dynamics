@@ -58,6 +58,7 @@
 | [SPEC_SIX_ALGORITHMS.md](SPEC_SIX_ALGORITHMS.md) | reference document | The six algorithms of physics — complete technical reference for the engine's rule set. |
 | [SPEC_DISCRETE_NATIVE_DERIVATION.md](SPEC_DISCRETE_NATIVE_DERIVATION.md) | [METHODOLOGICAL REFRAME] | Discrete-native derivation program; reframes the substrate-derivation goal (FTD-0136). |
 | [SPEC_CLASS_B_CLUSTER_PERSISTENCE.md](SPEC_CLASS_B_CLUSTER_PERSISTENCE.md) | [INFRASTRUCTURE SPEC] | Cluster-persistence measurement instrument spec (protocol; engine implementation TBD). |
+| [SPEC_CLASS_C_CLUSTER_INTERACTION.md](SPEC_CLASS_C_CLUSTER_INTERACTION.md) | [INFRASTRUCTURE SPEC] | Cluster-cluster interaction and coupling readout spec (protocol; engine implementation TBD). |
 
 ## Framework reference & prediction catalogs
 
@@ -69,4 +70,4 @@
 
 ---
 
-23 active docs in this cluster (+ 0 archived).
+24 active docs in this cluster (+ 0 archived).
