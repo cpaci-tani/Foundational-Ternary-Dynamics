@@ -152,6 +152,10 @@ Bottom-up overview docs and gap-closing arguments.
 |---|---|---|
 | [DERIV_BOTTOM_UP_PHYSICS.md](DERIV_BOTTOM_UP_PHYSICS.md) | [AXIOM]→[THEOREM]/[SELECTION]/[CONJECTURE] | Entry-point: from `0 = (−1)+(+1)` to the Standard Model. |
 | [MONOGRAPH_EFFECTIVE_EQUATIONS.md](MONOGRAPH_EFFECTIVE_EQUATIONS.md) | [AXIOM]→[THEOREM]/[SELECTION]/[CONJECTURE] | Comprehensive monograph deriving Maxwell, Lorentz, Einstein, and Dirac effective field equations. |
+| [DERIV_COMPTON_INVERSION_RESOLUTION.md](DERIV_COMPTON_INVERSION_RESOLUTION.md) | [THEOREM] | Proves the Compton Volume Duality Theorem, resolving the dimension inversion paradox. |
+| [DERIV_NONCOMMUTATIVE_EMERGENCE.md](DERIV_NONCOMMUTATIVE_EMERGENCE.md) | [THEOREM] | Proves the Boundary Partition Commutator Theorem, deriving emergent operator non-commutativity (GAP-S2). |
+| [DERIV_RADIAL_METRIC_RESOLUTION.md](DERIV_RADIAL_METRIC_RESOLUTION.md) | [THEOREM] | Proves the Discrete Radial Metric Projection Theorem, deriving the Schwarzschild $g_{rr}$ component from wave speed contraction. |
+| [DERIV_BORN_PROPORTIONALITY_RESOLUTION.md](DERIV_BORN_PROPORTIONALITY_RESOLUTION.md) | [THEOREM] | Proves the Path-Integral Born Proportionality Theorem, deriving exact $|\psi|^2$ probability scaling in high-noise limits (closes FTD-0187). |
 | [DERIV_THREE_RESOLUTIONS.md](DERIV_THREE_RESOLUTIONS.md) | derivation (closes three gaps) | Compact U(1), bare = physical, one-loop exact — answered by the tick. |
 
 ---
@@ -167,4 +171,4 @@ Pure header-only theory overlays on the existing lattice engine. No `RenderBridg
 
 ---
 
-64 active docs in this cluster (+ 0 archived).
+68 active docs in this cluster (+ 0 archived).
