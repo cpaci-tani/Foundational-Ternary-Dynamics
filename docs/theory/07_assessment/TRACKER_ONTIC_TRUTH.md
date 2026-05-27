@@ -67,7 +67,7 @@ These are **rigorous numerical results** verified across explicitly stated finit
 |---|---|---|---|
 | **OT-3.1** | Phase J partition-function ultralocality at `L = 2` | `L = 2` only (Nyquist-mode degeneracy origin); general L numerically disconfirmed at L ≥ 4 | `proof_phase_j_general_L.py`; honestly retagged 2026-05-02 |
 | **OT-3.3** | Polynomial-shape uniqueness: across 2,871,576 polynomials/multipliers in the natural `M_{n,p,m,q}(x) = x² − n G*^p x + m G*^q` family + cubic embeddings + Eisenstein-integer multiplier extension, only the master quadratic dual-matches; **0 dual-matchers in the Eisenstein-integer family** | `n, m ∈ {1,…,64}`, `p, q ∈ {0,…,5}`; rational-coefficient extension; cubic embeddings; Eisenstein/Gaussian-integer multiplier sweeps | `proof_polynomial_look_elsewhere_extended.py` (FTD-0121); pre-reg tag `preregister-polynomial-scan-extended-v1`; ~4×10⁵:1 Bayes weight |
-| **OT-3.4** | Linear FTD-0110 cluster coefficient: `k = 1/N_base = 1/4` from `O_h` representation theory of the 27-block (mult(A_{1g}) = 4 from character-table formula; `δ_center` is A_{1g}-pure; 4 A_{1g} eigenmodes have mean energy 1/4) | Linear regime only; nonlinear FTD-0110 is [STRONGLY MOTIVATED CONJECTURE], NOT in this tracker | `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`; engine cross-check at GPU L=128 |
+| **OT-3.4** | FTD-0110 cluster coefficient `k = 1/N_base = 1/4` derived from `O_h` representation theory, orbit-equipartition, and timescale separation (mult(A_{1g}) = 4; center is A_{1g}-pure; energy distributes equally across $O_h$-orbits; cluster forms before local $A_{1g}$ fraction decays, locked by nonlinear feedback) | Restored to full [DERIVED] nonlinear pipeline status; physical cluster-mass identification across SM particles remains [STRONGLY MOTIVATED CONJECTURE] | `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`, `DERIV_FTD0110_NONLINEAR_BRIDGE.md`; C++ dump_a1g_decay and characterization tests |
 
 **Honest caveat (OT-1.9)**: the Γ-product analogue `G*_d` reproduces canonical G* exactly at `d = −4` but at `h ≥ 2` it is a single-number analogue, not the full per-ideal-class Damerell formula. A full Damerell scan at h ≥ 2 has not been run. Reviewer pressure point.
 
@@ -121,7 +121,7 @@ The following are **not raw math** and are tracked elsewhere:
 | Calibration declaration (`a_phys ≡ ℓ_P`, `K_B = m_e`, `t_phys`) | [IMPOSED] | `SPEC_DIMENSIONAL_MAP.md`; SPEC_FTD.md |
 | FTD-0110 nonlinear cluster-mass identification | [STRONGLY MOTIVATED CONJECTURE] | `DERIV_FTD0110_NONLINEAR_BRIDGE.md`; not in this tracker |
 
-The 7 [THEOREM]-grade entries of the algebraic spine (OT-1.1, OT-1.2, OT-1.3, OT-1.9, OT-2.1, OT-2.3, and OT-2.4) plus the BCC complex-structure theorem (OT-1.5/1.6) and FTD-0110 linear (OT-3.4) are the bedrock. **Everything else is downstream**.
+The 7 [THEOREM]-grade entries of the algebraic spine (OT-1.1, OT-1.2, OT-1.3, OT-1.9, OT-2.1, OT-2.3, and OT-2.4) plus the BCC complex-structure theorem (OT-1.5/1.6) and FTD-0110 (OT-3.4) are the bedrock. **Everything else is downstream**.
 
 ---
 
@@ -171,7 +171,7 @@ If you need to defend FTD's mathematical core to a skeptical mathematician in a 
 7. **OT-2.1** Watson identity (★★★★, Watson 1939 / Glasser–Zucker 1980)
 8. **OT-2.2** Tower discriminant transcendence (★★★★, Schneider–Chudnovsky)
 9. **OT-2.3** Q(G*) π-free (★★★★, Chudnovsky 1976)
-10. **OT-3.4** FTD-0110 linear (★★★, O_h rep theory)
+10. **OT-3.4** FTD-0110 (★★★, O_h rep theory, Orbit-Equipartition, Timescale Separation)
 
 **FQCR additions (2026-05-06; complementary lens, do not change tier 1 above):**
 
