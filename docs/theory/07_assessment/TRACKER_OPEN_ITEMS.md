@@ -355,6 +355,9 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 ### 4.6 μ-from-ℓ_P missing arrow — ✅ CLOSED THEOREM-NEGATIVE 2026-04-28
 **File:** `docs/theory/10_eft_program/archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`. LEDGER row FTD-0096. Closed by `THEOREM_MU_NO_GO_FTD0096.md` which proved that the mass-unit $\mu$ is not derivable from Axiom Zero alone (hence remains an external calibration).
 
+### 4.7 Absolute Mass Scale Calibration (μ) generation loopholes — **1 `[OPEN]`**
+**File:** `docs/theory/10_eft_program/EXPLR_MASS_SCALE_GENERATION.md`. FTD-0219. Formulates Candidate A (holographic area-to-volume scaling) and Candidate B (non-perturbative sLoop self-energy feedback) loopholes to bypass the FTD-0096 no-go mass barrier. Numerical consistency verified in `explore_mass_scale_generation.py`. The proof of full dynamic self-consistency under sLoop back-reaction remains `[OPEN]`.
+
 ---
 
 ## §5 Theory — consciousness / observer (`docs/theory/06_consciousness/`)
