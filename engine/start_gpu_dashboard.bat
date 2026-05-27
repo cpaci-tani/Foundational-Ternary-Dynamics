@@ -20,4 +20,4 @@ timeout /t 2 /nobreak > nul
 
 :: Start GPU engine server in foreground (so you see the output)
 cd /d %~dp0
-build_cuda\Release\ws_server.exe 64 9100
+build\Release\ws_server.exe 64 9100
