@@ -35,6 +35,7 @@ The number-theoretic core. These establish the identities the framework's centra
 | [EXPLR_HIGHER_DIM_WATSON.md](EXPLR_HIGHER_DIM_WATSON.md) | [THEOREM] | Generalised Watson identity for dimension D ≥ 3 (G\* paper Theorem 13.2). |
 | [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](DERIV_MASTER_QUADRATIC_CM_LVALUES.md) | [THEOREM] + [COROLLARY] | Master-quadratic coefficients as Deligne L-values; 16G\*² = 2⁹·L(Sym²E,1). |
 | [DERIV_MASTER_QUADRATIC_FROM_PERIOD_ALGEBRA.md](DERIV_MASTER_QUADRATIC_FROM_PERIOD_ALGEBRA.md) | [THEOREM] | Proves the algebraic derivation of the master quadratic from motivic symmetric period algebra invariants. |
+| [DERIV_PYTHAGOREAN_FERMAT_BRIDGE.md](DERIV_PYTHAGOREAN_FERMAT_BRIDGE.md) | [THEOREM] + [SELECTION] | Derivation of the Pythagorean-Fermat bridge and the master quadratic from number-theoretic boundary constraints. |
 | [EXPLR_MODULAR_QUADRATIC.md](EXPLR_MODULAR_QUADRATIC.md) | [THEOREM] + [SELECTION] | Is the master quadratic a modular equation? Definitive answers (no; L(E,1) appears). |
 | [EXPLR_CM_RATIO_TOWER.md](EXPLR_CM_RATIO_TOWER.md) | [REFERENCE] / [EXPLORATORY MATH] | The 9-element tower of class-number-1 Chowla-Selberg ratios; only d=−4 anchors physics. |
 | [EXPLR_CHOWLA_SELBERG_HIGHER_H.md](EXPLR_CHOWLA_SELBERG_HIGHER_H.md) | [THEORY NOTE — literature synthesis] | Analytic machinery to extend Theorem 3 to class number h ≥ 2. |
@@ -126,4 +127,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-53 active docs in this cluster (+ 2 archived).
+54 active docs in this cluster (+ 2 archived).
