@@ -67,6 +67,10 @@ The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-
 | [`FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) | [THEOREM]/[SELECTION] | FTD-0215: BCC complex readout resolution; proves finite-block closed-negative and infinite-aperture ARC-2 level found verdicts. |
 | [`PREREG_ALPHA_READOUT_QUANTIZATION_v1.md`](PREREG_ALPHA_READOUT_QUANTIZATION_v1.md) | [PRE-REGISTRATION] | FTD-0216: Candidate C Quantization/Readout Rule pre-registration. |
 | [`FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md`](FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md) | [THEOREM]/[SELECTION] | FTD-0216: Candidate C Quantization/Readout Rule resolution, establishing a FOUND verdict at the ARC-2 level. |
+| [`PREREG_COLOR_CONFINEMENT_v1.md`](PREREG_COLOR_CONFINEMENT_v1.md) | [PRE-REGISTRATION] | FTD-0217: Color Confinement Substrate Derivation pre-registration. |
+| [`FOUND_COLOR_CONFINEMENT_RESOLUTION.md`](FOUND_COLOR_CONFINEMENT_RESOLUTION.md) | [THEOREM]/[SELECTION] | FTD-0217: Color Confinement Substrate Derivation resolution, establishing a FOUND verdict. |
+| [`PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md`](PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md) | [PRE-REGISTRATION] | FTD-0218: Stochastic Effective Action pre-registration. |
+| [`FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md`](FOUND_STOCHASTIC_EFFECTIVE_ACTION_RESOLUTION.md) | [THEOREM]/[SELECTION] | FTD-0218: Langevin noise integration and Stochastic Effective Action derivation resolution, establishing a FOUND verdict. |
 | [`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`](DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md) | [SELECTION]/[THEOREM]/[OPEN] | Canonical microscopic history action $Z_u[\eta,h,a,\lambda_R]$; [THEOREM] reduction to the linear G18 generator. Kept as-is in the consolidation. |
 | [`DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`](DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md) | [PARTIAL] | FTD needs no microscopic U(1); U(1) is an effective description of projected flux. Post-pivot ontology foundation. |
 | [`DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`](DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md) | [PARTIAL] | Native state↔flux mapping to an EFT dictionary; scaling dimensions frozen under FTD-0059 (Gate-1 closure). |
@@ -151,4 +155,4 @@ Archived material is preserved for provenance — cite it to explain "why this r
 
 ---
 
-**Live document count:** 40 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 9 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 7 PREREG, 3 Frontier-4 graviton, 4 AUDIT.
+**Live document count:** 44 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 11 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 9 PREREG, 3 Frontier-4 graviton, 4 AUDIT.
