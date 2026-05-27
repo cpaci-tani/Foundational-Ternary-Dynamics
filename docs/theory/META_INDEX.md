@@ -596,7 +596,7 @@ External data tests of FTD predictions. All files in this category have been arc
 
 **Open gaps:** [`SPEC_OPEN_MATH_BY_SECTOR.md` §9](01_reference/SPEC_OPEN_MATH_BY_SECTOR.md#9--engine--algebra-bridge).
 
-**Anchor refs:** `SPEC_CLASS_B_CLUSTER_PERSISTENCE` (01_), `MAP_LAGRANGIAN_TO_ENGINE` (01_; R1 of FTD-EFT roadmap).
+**Anchor refs:** `SPEC_CLASS_B_CLUSTER_PERSISTENCE` (01_), `SPEC_CLASS_C_CLUSTER_INTERACTION` (01_), `MAP_LAGRANGIAN_TO_ENGINE` (01_; R1 of FTD-EFT roadmap).
 
 **Reference (01_):** `SPEC_QUADRATIC_PHYSICS_BRIDGE` (carries the FTD-0095 mass-functional reading).
 
