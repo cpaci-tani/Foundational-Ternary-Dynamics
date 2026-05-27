@@ -1,7 +1,10 @@
 # Derivation — Nonlinear-bridge closure for FTD-0110
 
-**Tag:** [DERIVED] (with the local A1g fraction decay gap fully closed via the Orbit-Equipartition and Timescale Separation Theorems)
-**Date:** 2026-04-28 (original) · 2026-05-04 (Option A empirical update) · 2026-05-27 (theorems formalized)
+> [!CAUTION]
+> **AUDIT NOTICE — 2026-05-27 (later).** The §6 "Orbit-Equipartition Theorem" and "Timescale Separation Theorem" and the `[DERIVED]` retag claimed in §0 / §5.3 / §6 / §8 are **disputed** by [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](AUDIT_FTD0110_2026-05-27_RESOLUTION.md), which identifies four defects: (1) arithmetic error at the load-bearing $A^2/4$ step (sum of 4 copies of $A^2/4 = A^2$, not $A^2/4$); (2) single-block analysis applied to a multi-scale phenomenon (single-block prediction is saturation at 27 voxels, not $A^2$ scaling); (3) §6.2 is a phenomenological exponential-decay fit with empirical timescales, not a derivation; (4) §6 would predict pure $k = 1/4$ with no drift — contradicting the empirical log-A signature. Pending §5 falsifier refutation, the canonical position is the 2026-05-04 honest line: **`[DERIVED]` for linear-level theorem + Bridge-I global $O_h$-equivariance (§§1–4 and §§2.1–2.7) only**; **`[STRONGLY MOTIVATED CONJECTURE]` for the nonlinear-pipeline coefficient origin and multi-scale extension**, supported by the 5% empirical match across 11 amplitudes × 5 SM particles × 3 lattice scales × 2 injection geometries. §§1–4 and §§2.1–2.7 of this document are NOT challenged.
+
+**Tag:** **[DISPUTED 2026-05-27]** — honest position: `[DERIVED]` at linear level + Bridge-I global $O_h$-equivariance only; `[STRONGLY MOTIVATED CONJECTURE]` for nonlinear-pipeline coefficient origin and multi-scale extension. See [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](AUDIT_FTD0110_2026-05-27_RESOLUTION.md).
+**Date:** 2026-04-28 (original) · 2026-05-04 (Option A empirical update) · 2026-05-27 (§6 theorems formalized) · 2026-05-27 (later, §6 disputed via audit)
 **LEDGER row:** FTD-0110 (extended)
 **Companion:** [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) (the linear-level derivation of `k = 1/N_base = 1/4`)
 **Paper section:** `dissemination/papers/PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` §4 + §8
@@ -20,7 +23,12 @@ This document closes the bridge in three parts:
 - **Orbit-Equipartition Theorem** (conserved energy distributes equally across $O_h$-orbits in the 27-block): **[DERIVED]** by group representation theory and equipartition.
 - **Timescale Separation Theorem** (cluster forms before local $A_{1g}$ fraction decays, then locked by nonlinear feedback): **[DERIVED]** by analysis of the genesis window ($\tau_{\text{form}} \approx 10 \ll \tau_{\text{mix}} \approx 100$).
 
-**Net effect on FTD-0110 LEDGER tag:** the structural origin of `k = 1/4` is now fully **[DERIVED]** at the nonlinear pipeline level, resolving the local A1g decay gap. The physical cluster-mass identification across SM particles remains a **[STRONGLY MOTIVATED CONJECTURE]**.
+**Net effect on FTD-0110 LEDGER tag (DISPUTED — see AUDIT banner at top of document):**
+
+- **[2026-05-27 morning, since disputed]:** the structural origin of `k = 1/4` is now fully **[DERIVED]** at the nonlinear pipeline level, resolving the local A1g decay gap.
+- **[2026-05-27 audit revert, current canonical]:** the §6 derivation has four defects per [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](AUDIT_FTD0110_2026-05-27_RESOLUTION.md); honest position is **[DERIVED]** at linear level + Bridge-I global $O_h$-equivariance (§§1–4, §§2.1–2.7) only; **[STRONGLY MOTIVATED CONJECTURE]** for the nonlinear-pipeline coefficient and multi-scale extension; multi-scale closure work queued per scoping memo FTD-0203 Mechanism α.
+
+The physical cluster-mass identification across SM particles remains a **[STRONGLY MOTIVATED CONJECTURE]** (unchanged by either the morning retag or the audit revert).
 
 ---
 
@@ -321,9 +329,12 @@ The diagnosis is **non-locality of the Poisson convolution**. The argument in §
 
 ### 5.2 · Implication for Bridge-II
 
-Bridge-II's single-block argument in §3.1 invokes the **local** 27-block A_{1g}### 5.3 · Tag movement and Resolution (post 2026-05-27)
+Bridge-II's single-block argument in §3.1 invokes the **local** 27-block A_{1g}### 5.3 · Tag movement and Resolution (post 2026-05-27) — DISPUTED
 
-Following the formalization of the **Orbit-Equipartition Theorem** and the **Timescale Separation Theorem**, the local A1g decay gap is resolved, and the `k = 1/4` coefficient is restored to full `[DERIVED]` status.
+> [!WARNING]
+> The "resolution" claimed in this subsection is **disputed** by [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](AUDIT_FTD0110_2026-05-27_RESOLUTION.md). The §6 theorems on which the retag depends contain an arithmetic error, a scale-conflation, a phenomenological fit, and an empirical inadequacy (would predict pure $k = 1/4$ contradicting the observed log-A drift). The "Post-2026-05-27" column below is therefore NOT canonical; the canonical position is the "Pre-2026-05-27" column with multi-scale closure remaining [OPEN].
+
+Following the formalization of the **Orbit-Equipartition Theorem** and the **Timescale Separation Theorem**, the local A1g decay gap is *claimed* (but disputed) to be resolved, and the `k = 1/4` coefficient is *claimed* (but disputed) to be restored to full `[DERIVED]` status.
 
 | Claim | Pre-2026-05-27 | Post-2026-05-27 |
 |---|---|---|
@@ -335,7 +346,11 @@ Following the formalization of the **Orbit-Equipartition Theorem** and the **Tim
 
 ---
 
-## 6 · Rigorous Proof of the Resolving Theorems
+## 6 · Rigorous Proof of the Resolving Theorems — DISPUTED
+
+> [!CAUTION]
+> The two "theorems" in this section are **disputed** by [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](AUDIT_FTD0110_2026-05-27_RESOLUTION.md) §1.1–1.5. Specifically: (i) §6.1 step 3 contains an arithmetic error — $\sum_{i=1}^4 (A^2/4) = A^2$, not $A^2/4$; (ii) §6.1 applies single-block analysis to a multi-scale phenomenon — single-block manifestation thresholds give saturation at 27 voxels, not $A^2$ scaling; (iii) §6.2 uses an exponential-decay ansatz with empirical timescales fit to the §5.1 measurement, not derived; (iv) §6 theorems together would predict pure $k = 1/4$ with no drift, contradicting the empirical log-A signature ($k = 0.252$ at $A=10 \to 0.206$ at $A=117.93$). §6 is preserved below for provenance; it does NOT support the `[DERIVED]` retag claimed in §0 / §5.3 / §8.
+
 
 We now formalize the two theorems that resolve the local $A_{1g}$ fraction decay gap and place the `k = 1/4` scaling on a solid, non-circular structural foundation.
 
@@ -420,4 +435,4 @@ We now formalize the two theorems that resolve the local $A_{1g}$ fraction decay
 
 ## 8 · Single-line summary
 
-**Bridge-I (global O_h-equivariance of all 6 engine pipeline operations) is DERIVED; the local-block A1g decay gap is RESOLVED via the Orbit-Equipartition Theorem and the Timescale Separation Theorem, proving that the linear-level multiplicity $k = 1/4$ dictates the cluster size $N(A) \approx A^2/4$ during the genesis window ($\tau_{\text{form}} \approx 10 \ll \tau_{\text{mix}} \approx 100$) before being locked by the non-linear evaporation-genesis feedback loop. LEDGER row FTD-0110 is restored to [DERIVED] status at the full nonlinear level, while the physical SM particle mass identification remains a [STRONGLY MOTIVATED CONJECTURE].**
+**Bridge-I (global $O_h$-equivariance of all 6 engine pipeline operations, §§2.1–2.7) is [DERIVED] at theorem grade. The linear-level theorem $k = 1/4$ via $A_{1g}$ eigenmode equipartition (`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`) is [DERIVED]. The §6 "Orbit-Equipartition" and "Timescale Separation" attempt to close the local $A_{1g}$ decay gap is DISPUTED per [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](AUDIT_FTD0110_2026-05-27_RESOLUTION.md) — four defects: arithmetic at the load-bearing $A^2/4$ step, single-block-to-multi-scale conflation, phenomenological timescale fit labeled as theorem, predicts pure $k=1/4$ contradicting empirical log-A drift. Honest canonical position: nonlinear-pipeline coefficient origin remains [STRONGLY MOTIVATED CONJECTURE], multi-scale extension remains [OPEN] with Mechanism α perturbation calculation queued (~1 week per scoping memo FTD-0203). The 5% empirical SM-particle cluster-size match is unchanged.**
