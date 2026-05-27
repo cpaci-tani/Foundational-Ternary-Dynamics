@@ -237,6 +237,18 @@ When auditing: confirm `git rev-list -n1 preregister-strong-field-gravity-v1` re
 
 ---
 
+## No 4th Generation Fermions No-Go Formalization Campaign -- Moore Layer Theorem (FTD-0220) (2026-05-27)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0220** No 4th generation fermions no-go | `preregister-no-4th-generation-no-go-v1` | tag `preregister-no-4th-generation-no-go-v1` | [`verify_no_4th_generation.py`](../../../scripts/exploration/verify_no_4th_generation.py) | n/a | n/a (combinatorial proof) | [`PREREG_NO_4TH_GENERATION_NO_GO_v1.md`](PREREG_NO_4TH_GENERATION_NO_GO_v1.md) (pre-reg) → [`FOUND_NO_4TH_GENERATION_NO_GO.md`](FOUND_NO_4TH_GENERATION_NO_GO.md) (post-attempt) |
+
+Pre-reg SHA256: `6d53d163f26ce47641c51a8612afe2b106bda3fe13e3b37db9bb3b75f8820435`.
+
+When auditing: confirm `git rev-list -n1 preregister-no-4th-generation-no-go-v1` resolves to the commit that introduced `PREREG_NO_4TH_GENERATION_NO_GO_v1.md`, and that the file's SHA256 matches the value above. The campaign design, polyhedral decomposition representation counts, and pre-blessed outcomes were locked before the verification was run.
+
+---
+
 
 ## How to add a new pre-registration row
 
