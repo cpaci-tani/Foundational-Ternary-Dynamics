@@ -193,7 +193,7 @@ When auditing: confirm `git rev-list -n1 preregister-spin2-boundary-theorem-v1` 
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0210** x_- physical identification | `preregister-x-minus-physical-identification-v1` | (pending commit/tag) | [`search_x_minus_candidates.py`](../../../scripts/exploration/search_x_minus_candidates.py) -- frozen-catalog search (pre-reg §4); no numerical search, no near-miss scan | n/a | n/a (desk audit) | [`PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md`](PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md) (pre-reg, design only) -> `FOUND_X_MINUS_PHYSICAL_IDENTIFICATION.md` / `AUDIT_X_MINUS_UNDERDETERMINED.md` / `AUDIT_X_MINUS_CLOSED_NEGATIVE.md` (post-attempt, per §6 verdict) |
+| **FTD-0210** x_- physical identification | `preregister-x-minus-physical-identification-v1` | `6a0392e` | [`search_x_minus_candidates.py`](../../../scripts/exploration/search_x_minus_candidates.py) -- frozen-catalog search (pre-reg §4); no numerical search, no near-miss scan | n/a | n/a (desk audit) | [`AUDIT_X_MINUS_CLOSED_NEGATIVE.md`](AUDIT_X_MINUS_CLOSED_NEGATIVE.md) (verdict: CLOSED-NEGATIVE) |
 
 Pre-reg SHA256: `06c1cd0f0c82f331292d51620077d6eec99424af8a728de4fc24a3cfbe619f08`.
 
