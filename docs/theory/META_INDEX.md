@@ -189,6 +189,7 @@ Physics from first principles.
 | 3.61 | **[DERIV_NONCOMMUTATIVE_EMERGENCE.md](03_derivations/DERIV_NONCOMMUTATIVE_EMERGENCE.md)** | **Non-Commutative Emergence:** Proof of the Boundary Partition Commutator Theorem deriving emergent noncommutative Type III₁ operator algebras from commutative lattices via regional boundary localization (closes GAP-S2) [THEOREM]. |
 | 3.62 | **[DERIV_RADIAL_METRIC_RESOLUTION.md](03_derivations/DERIV_RADIAL_METRIC_RESOLUTION.md)** | **Radial Metric Component:** Proves the Discrete Radial Metric Projection Theorem, deriving the Schwarzschild $g_{rr} = (1-r_s/r)^{-1}$ component from local wave speed interval contraction [THEOREM]. |
 | 3.63 | **[DERIV_BORN_PROPORTIONALITY_RESOLUTION.md](03_derivations/DERIV_BORN_PROPORTIONALITY_RESOLUTION.md)** | **Born Rule Proportionality:** Proves the Path-Integral Born Proportionality Theorem, deriving the strict $|\psi|^2$ scaling from Gaussian path integration of FTD action fluctuations (closes FTD-0187) [THEOREM]. |
+| 3.64 | **[DERIV_SCALE_GROWTH_AND_COSMIC_EMERGENCE.md](03_derivations/DERIV_SCALE_GROWTH_AND_COSMIC_EMERGENCE.md)** | **Scale Growth & Cosmic Emergence:** Derives comoving spatial metric stretch $a(\tau)$ and Friedmann cosmic expansion from first-principles energy injection; unifies dark energy leak ($\Omega_\Lambda = 0.683$) and dark matter halos from self-field envelope overlap ($r_{\text{eff}} \approx 15$) [THEOREM] + [SELECTION] |
 
 ---
 
