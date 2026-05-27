@@ -65,6 +65,8 @@ The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-
 | [`DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`](DERIV_FTD_NATIVE_NONLINEAR_FLOW.md) | [THEOREM]/[MEASURED]/[PARTIAL] | **Consolidated** (3 husks: multiscale-flow, Langevin-ensemble, engine-transport-flow). Native RG flow into the nonlinear regime: Langevin stationary ensemble, Gaussian fixed point at $b\le 8$, engine-transport plumbing. |
 | [`DERIV_BCC_ALGEBRAIC_READOUT.md`](DERIV_BCC_ALGEBRAIC_READOUT.md) | [DERIVED]/[PARTIAL] | ARC-B2: BCC algebraic readout and complex $V_{\text{complex}}$ observable; operationalizes the $\mathbb{Z}[i]$-module structure of $V_{\text{complex}}$. |
 | [`FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) | [THEOREM]/[SELECTION] | FTD-0215: BCC complex readout resolution; proves finite-block closed-negative and infinite-aperture ARC-2 level found verdicts. |
+| [`PREREG_ALPHA_READOUT_QUANTIZATION_v1.md`](PREREG_ALPHA_READOUT_QUANTIZATION_v1.md) | [PRE-REGISTRATION] | FTD-0216: Candidate C Quantization/Readout Rule pre-registration. |
+| [`FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md`](FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md) | [THEOREM]/[SELECTION] | FTD-0216: Candidate C Quantization/Readout Rule resolution, establishing a FOUND verdict at the ARC-2 level. |
 | [`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`](DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md) | [SELECTION]/[THEOREM]/[OPEN] | Canonical microscopic history action $Z_u[\eta,h,a,\lambda_R]$; [THEOREM] reduction to the linear G18 generator. Kept as-is in the consolidation. |
 | [`DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md`](DERIV_EMERGENT_U1_FROM_FLUX_PROJECTION.md) | [PARTIAL] | FTD needs no microscopic U(1); U(1) is an effective description of projected flux. Post-pivot ontology foundation. |
 | [`DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md`](DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md) | [PARTIAL] | Native state↔flux mapping to an EFT dictionary; scaling dimensions frozen under FTD-0059 (Gate-1 closure). |
@@ -149,4 +151,4 @@ Archived material is preserved for provenance — cite it to explain "why this r
 
 ---
 
-**Live document count:** 38 top-level docs (this INDEX excluded) — 6 SPEC, 5 THEOREM, 8 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 6 PREREG, 3 Frontier-4 graviton, 4 AUDIT.
+**Live document count:** 40 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 9 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 7 PREREG, 3 Frontier-4 graviton, 4 AUDIT.
