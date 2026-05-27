@@ -34,6 +34,7 @@ The number-theoretic core. These establish the identities the framework's centra
 | [THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md](THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md) | [THEOREM] (identity) + [CONJECTURE] (interp.) | Exact identity linking the BCC Green's function to the reflection ratio. |
 | [EXPLR_HIGHER_DIM_WATSON.md](EXPLR_HIGHER_DIM_WATSON.md) | [THEOREM] | Generalised Watson identity for dimension D ≥ 3 (G\* paper Theorem 13.2). |
 | [DERIV_MASTER_QUADRATIC_CM_LVALUES.md](DERIV_MASTER_QUADRATIC_CM_LVALUES.md) | [THEOREM] + [COROLLARY] | Master-quadratic coefficients as Deligne L-values; 16G\*² = 2⁹·L(Sym²E,1). |
+| [DERIV_MASTER_QUADRATIC_FROM_PERIOD_ALGEBRA.md](DERIV_MASTER_QUADRATIC_FROM_PERIOD_ALGEBRA.md) | [THEOREM] | Proves the algebraic derivation of the master quadratic from motivic symmetric period algebra invariants. |
 | [EXPLR_MODULAR_QUADRATIC.md](EXPLR_MODULAR_QUADRATIC.md) | [THEOREM] + [SELECTION] | Is the master quadratic a modular equation? Definitive answers (no; L(E,1) appears). |
 | [EXPLR_CM_RATIO_TOWER.md](EXPLR_CM_RATIO_TOWER.md) | [REFERENCE] / [EXPLORATORY MATH] | The 9-element tower of class-number-1 Chowla-Selberg ratios; only d=−4 anchors physics. |
 | [EXPLR_CHOWLA_SELBERG_HIGHER_H.md](EXPLR_CHOWLA_SELBERG_HIGHER_H.md) | [THEORY NOTE — literature synthesis] | Analytic machinery to extend Theorem 3 to class number h ≥ 2. |
@@ -90,7 +91,7 @@ Quarter-conjugacy recurrences and the observer-term tests against QED running.
 |---|---|---|
 | [REF_QCR_TRILOGY_BRIDGE.md](REF_QCR_TRILOGY_BRIDGE.md) | [REFERENCE] / [STRUCTURAL CORRESPONDENCE] | The external QCR trilogy mapped to FQCR; cross-confirmations without tag inflation. |
 | [EXPLR_FQCR_OBSERVER_TESTS_SUITE.md](EXPLR_FQCR_OBSERVER_TESTS_SUITE.md) | [EXPLORATORY] | Consolidated 4-test suite: FQCR Model V vs QED running coupling. |
-| [PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md](PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md) | [PROPOSAL / SKETCH] | Sketch of the C1 observer-operator extension that would advance FTD-0013. |
+| [PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md](PROPOSAL_OBSERVER_OPERATOR_EXTENSION.md) | [PROPOSAL / SKETCH] | Summary observer extension that would advance FTD-0013. |
 | [PREREG_SYM_K_C_INVARIANT_PARITY_V1.md](PREREG_SYM_K_C_INVARIANT_PARITY_V1.md) | [PRE-REGISTRATION] | Hash-locked eigenline-parity hypothesis for Sym^k(H¹(E_lemn)). |
 | [EXPLR_SYM_PERIOD_ALGEBRA_CONVENTIONS.md](EXPLR_SYM_PERIOD_ALGEBRA_CONVENTIONS.md) | [EXPLR] | Working conventions for the symmetric period algebra of E_lemn. |
 
@@ -102,7 +103,7 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 |---|---|---|
 | [EXPLR_NUMBER_THEORY.md](EXPLR_NUMBER_THEORY.md) | verified connections (some open) | The {3, 4, 7, 13} integers across modular forms, number theory, elliptic curves; the 42 nexus. |
 | [EXPLR_RIEMANN_ZETA_CONNECTION.md](EXPLR_RIEMANN_ZETA_CONNECTION.md) | connections real but limited | Honest audit of seven claimed FTD–Riemann-zeta connections; most "derivations" are fits. |
-| [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) | computationally verified | The Fourcier curve's {1,2,4,8,16} frequencies are the Cayley-Dickson algebra dimensions. |
+| [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) | computationally verified | The Fourcier curve's {1,2,4,8,16} frequencies are the Cayley-Jackson dimensions. |
 | [EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md](EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | Counter-rotation, lobe genesis, and the trefoil bridge of the Fourcier curve. |
 | [EXPLR_HALF_MOBIUS_LEMNISCATE.md](EXPLR_HALF_MOBIUS_LEMNISCATE.md) | [THEOREM] / [SELECTION] / [CONJECTURE] | Z₄ topology from period lattice to molecular orbitals; discriminant trichotomy. |
 | [EXPLR_FOURIER_CURVE_LEVEL_4.md](EXPLR_FOURIER_CURVE_LEVEL_4.md) | [EXPLORATORY] | Fourier curve at level 4: triple-cusp structure and class divisibility. |
@@ -123,4 +124,4 @@ Fourcier curves, the division-algebra tower, von Neumann factors, and other cros
 
 ---
 
-51 active docs in this cluster (+ 2 archived).
+52 active docs in this cluster (+ 2 archived).
