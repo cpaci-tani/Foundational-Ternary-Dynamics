@@ -86,9 +86,9 @@
 | **BARYO-1** | η ~ 10⁻¹⁰ (baryon asymmetry) | **DERIVED (v5.0)** | CP violation + Sakharov conditions | SPEC_FTD_REFERENCE.md §9.2 | η order of magnitude wrong | `scripts/verification/verify_cosmology.py` |
 | **GR-1** | R_μν - ½g_μν R = 8πG T_μν | **DERIVED (v5.0)** | flux density → effective metric | SPEC_FTD_REFERENCE.md §10 | GR coefficient wrong | `scripts/verification/verify_cosmology.py` |
 | **ALPHAG-1** | α_G = 5.91×10⁻³⁹ (0.01% error) | **DERIVED (v5.0)** | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | SPEC_FTD_REFERENCE.md §7.1 | >1% discrepancy | `scripts/verification/verify_cosmology.py` |
-| **NEUTRINO-1** | m₃ = m_P√(2π)(4/3)α¹⁴ = 49.6 meV | **SELECTION (v5.27)** | Seesaw (imported) + ALPHA-1, MASS-1 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | Δm²₂₁ > 5% from experiment | `scripts/verification/neutrino_mass_derivation.py` |
-| **NEUTRINO-2** | Σm_ν = 58.1 meV | **SELECTION (v5.27)** | NEUTRINO-1 + mass ratio 100/3 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | Cosmological Σ < 58 meV or > 65 meV | `scripts/verification/neutrino_mass_derivation.py` |
-| **NEUTRINO-3** | m₁ ≈ 4.1 neV (effectively zero) | **PREDICTION (v5.27)** | NEUTRINO-1 | DERIV_NEUTRINO_MASS_ABSOLUTE.md | m₁ > 1 meV measured | `scripts/verification/neutrino_mass_derivation.py` |
+| ~~**NEUTRINO-1**~~ | ~~m₃ = m_P√(2π)(4/3)α¹⁴ = 49.6 meV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
+| ~~**NEUTRINO-2**~~ | ~~Σm_ν = 58.1 meV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
+| ~~**NEUTRINO-3**~~ | ~~m₁ ≈ 4.1 neV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
 | **MODULAR-1** | G* = 4√(2/π) · L(E,1) for E: y²=x³−x | **THEOREM (v5.27)** | G* definition + BSD L-function | EXPLR_MODULAR_QUADRATIC.md | Mathematical counterexample | `scripts/modular_investigation.py` |
 
 ---
