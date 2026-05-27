@@ -78,7 +78,6 @@ The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-
 | [`SCOPE_ALPHA_READOUT_NEXT_STEPS.md`](SCOPE_ALPHA_READOUT_NEXT_STEPS.md) | [SCOPING MEMO] | ARC-A1 track: outline of Candidate A, C, and B2 unattempted readout routes. |
 | [`SCOPE_GC_QUANTUM_PATH_INTEGRAL.md`](SCOPE_GC_QUANTUM_PATH_INTEGRAL.md) | [SCOPING MEMO] | Mechanism B track (FTD-0216): formulation of Euclidean quantum partition function over the body-diagonal sub-stencil $\sigma_{\text{BCC}}$, discrete-to-continuum vacuum polarization, and non-circular Wilsonian matching. |
 | [`ANALYSIS_NONLINEAR_BRIDGE_SWEEPS.md`](ANALYSIS_NONLINEAR_BRIDGE_SWEEPS.md) | [MEASUREMENT ANALYSIS] | F-D3 track: analysis of parameter sweeps D3a-D3d, leading to the final mechanism discrimination verdict among Mechanism $\alpha$, $\beta$, and $\gamma$. |
-| [`EXPLR_MASS_SCALE_GENERATION.md`](EXPLR_MASS_SCALE_GENERATION.md) | [CONJECTURE]/[SELECTION] | FTD-0219: Formulates Candidate A (holographic area-to-volume scaling) and Candidate B (non-perturbative sLoop self-energy feedback) loopholes to bypass the FTD-0096 no-go mass barrier. |
 | [`FOUND_NO_4TH_GENERATION_NO_GO.md`](FOUND_NO_4TH_GENERATION_NO_GO.md) | [THEOREM] | FTD-0220: No 4th generation fermions no-go formalization result, establishing a FOUND verdict. |
 
 ---
@@ -158,4 +157,4 @@ Archived material is preserved for provenance — cite it to explain "why this r
 
 ---
 
-**Live document count:** 45 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 12 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 9 PREREG, 3 Frontier-4 graviton, 4 AUDIT.
+**Live document count:** 44 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 12 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 9 PREREG, 3 Frontier-4 graviton, 4 AUDIT.
