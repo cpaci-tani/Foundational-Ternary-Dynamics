@@ -13,6 +13,20 @@
  */
 
 import { debugLog } from './core/log.js';
+import { MockBridge } from './bridge/mock-bridge.js';
+import { runSetupScenario } from './bridge/scenarios/index.js';
+
+const EMPTY_FIELD_SAMPLE = Object.freeze({
+    positions: new Float32Array(0),
+    vectors: new Float32Array(0),
+    count: 0,
+});
+const EMPTY_SCALAR_SAMPLE = Object.freeze({
+    positions: new Float32Array(0),
+    values: new Float32Array(0),
+    count: 0,
+});
+
 
 export class WebSocketBridge {
     constructor(url = 'ws://127.0.0.1:9100') {
@@ -52,6 +66,7 @@ export class WebSocketBridge {
 
         // Visual settings placeholder
         this._visualSettings = null;
+        this._fallback = null;
     }
 
     async connect() {
@@ -319,19 +334,159 @@ export class WebSocketBridge {
         this._sendAndForget({ cmd: 'create_pair', x, y, z, fx, fy, fz });
     }
 
+    _ensureFallback() {
+        if (!this._fallback) {
+            this._fallback = new MockBridge(this.latticeSize);
+        }
+        return this._fallback;
+    }
+
     async resize(size) {
         this.latticeSize = size;
+        if (this._fallback) this._fallback.latticeSize = size;
         return this._sendJSON({ cmd: 'resize', size });
     }
 
     reset() {
         this._sendAndForget({ cmd: 'reset' });
+        if (this._fallback) this._fallback.reset();
     }
+
+    setupScenario(name) {
+        this.reset();
+        runSetupScenario.call(this, name);
+    }
+
+    setDt(dt) { this.setParam('dt', dt); }
+    getDt() { return 1.0; }
+    getPhysicalTime() { return 0.0; }
+
+    getLagrangian() {
+        return {
+            fieldKinetic: 0, fieldGradient: 0,
+            bornInfeld: 0, coupling: 0, velocity: 0, gauss: 0, dissipation: 0,
+            total: 0, hamiltonian: 0, totalAction: 0, gaussViolation: 0, maxGaussError: 0,
+            totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0
+        };
+    }
+
+    getConstants() {
+        return null;
+    }
+
+    inspectVoxel(x, y, z) {
+        return {
+            x, y, z,
+            state: 0,
+            density: 0,
+            fluxX: 0, fluxY: 0, fluxZ: 0,
+            Emag: 0,
+            Ex: 0, Ey: 0, Ez: 0,
+            Bx: 0, By: 0, Bz: 0
+        };
+    }
+
+    getForceAt(x, y, z) {
+        return { x: 0, y: 0, z: 0 };
+    }
+
+    getFluxSlice(axis, index) {
+        return new Float64Array(0);
+    }
+    getFluxVolume() {
+        return new Float64Array(0);
+    }
+
+    // Samplers returning safe empty frozen objects to avoid browser layout/rendering crashes
+    getEFieldSampled(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    sampleVAtRay(x1, y1, z1, x2, y2, z2, n) {
+        return { positions: new Float32Array(0), V: new Float32Array(0), count: 0 };
+    }
+    getBFieldSampled(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getPoyntingSampled(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getDivJSampled(stride = 2) { return EMPTY_SCALAR_SAMPLE; }
+    getFluxVectorSampled(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getForceFieldSampled(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getVorticitySampled(stride = 2) { return EMPTY_SCALAR_SAMPLE; }
+    getHelicitySampled(stride = 2) { return EMPTY_SCALAR_SAMPLE; }
+    getCurlJSampled(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getGravityFieldSampled(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getEMForceField(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getGravityForceField(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+    getStrongForceField(stride = 2) { return EMPTY_FIELD_SAMPLE; }
+
+    // Scale 1 (ParticleEngine) fallback delegation
+    initPE() { this._ensureFallback().initPE(); }
+    resetPE() { this._ensureFallback().resetPE(); }
+    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) {
+        return this._ensureFallback().peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff);
+    }
+    peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff) {
+        return this._ensureFallback().peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff);
+    }
+    peTick() { this._ensureFallback().peTick(); }
+    peGetParticleData() { return this._ensureFallback().peGetParticleData(); }
+    peGetDiagnostics() { return this._ensureFallback().peGetDiagnostics(); }
+    peGetExtendedData() { return this._ensureFallback().peGetExtendedData(); }
+    peGetForces() { return this._ensureFallback().peGetForces(); }
+    peGetFieldSources() { return this._ensureFallback().peGetFieldSources(); }
+    peSetDt(dt) { this._ensureFallback().peSetDt(dt); }
+    peGetDt() { return this._ensureFallback().peGetDt(); }
+    peSetSoftening(s) { this._ensureFallback().peSetSoftening(s); }
+    peSetCoulomb(e) { this._ensureFallback().peSetCoulomb(e); }
+    peSetDamping(e) { this._ensureFallback().peSetDamping(e); }
+    peSetGravity(e) { this._ensureFallback().peSetGravity(e); }
+    peSetLorentz(e) { this._ensureFallback().peSetLorentz(e); }
+    peSetExchange(e) { this._ensureFallback().peSetExchange(e); }
+    peSetStrong(e) { this._ensureFallback().peSetStrong(e); }
+    peSetMagneticDipole(e) { this._ensureFallback().peSetMagneticDipole(e); }
+    peSetSpinOrbit(e) { this._ensureFallback().peSetSpinOrbit(e); }
+    peSetRadiation(e) { this._ensureFallback().peSetRadiation(e); }
+    peSetRelativistic(e) { this._ensureFallback().peSetRelativistic(e); }
+    peParticleCount() { return this._ensureFallback().peParticleCount(); }
+    peClear() { this._ensureFallback().peClear(); }
+    peGetParticleTypes() { return this._ensureFallback().peGetParticleTypes(); }
+    peInspectParticle(id) { return this._ensureFallback().peInspectParticle(id); }
+
+    // Scale 2 (AtomEngine) fallback delegation
+    setBoundaryShape(shape) { this._ensureFallback().setBoundaryShape(shape); }
+    setReflectiveBoundary(on) { this._ensureFallback().setReflectiveBoundary(on); }
+    initAE() { this._ensureFallback().initAE(); }
+    resetAE() { this._ensureFallback().resetAE(); }
+    aeAddAtom(Z, x, y, z, vx, vy, vz, charge, N) {
+        return this._ensureFallback().aeAddAtom(Z, x, y, z, vx, vy, vz, charge, N);
+    }
+    aeAddLockedAtom(Z, x, y, z, charge, N) {
+        return this._ensureFallback().aeAddLockedAtom(Z, x, y, z, charge, N);
+    }
+    aeCreateBond(idA, idB, order) { this._ensureFallback().aeCreateBond(idA, idB, order); }
+    aeTick() { this._ensureFallback().aeTick(); }
+    aeGetAtomData() { return this._ensureFallback().aeGetAtomData(); }
+    aeGetDiagnostics() { return this._ensureFallback().aeGetDiagnostics(); }
+    aeGetFieldSources() { return this._ensureFallback().aeGetFieldSources(); }
+    aeSetDt(dt) { this._ensureFallback().aeSetDt(dt); }
+    aeGetDt() { return this._ensureFallback().aeGetDt(); }
+    aeSetSoftening(s) { this._ensureFallback().aeSetSoftening(s); }
+    aeSetDamping(e) { this._ensureFallback().aeSetDamping(e); }
+    aeSetBonding(e) { this._ensureFallback().aeSetBonding(e); }
+    aeSetIonic(e) { this._ensureFallback().aeSetIonic(e); }
+    aeSetVdw(e) { this._ensureFallback().aeSetVdw(e); }
+    aeSetBondsForce(e) { this._ensureFallback().aeSetBondsForce(e); }
+    aeSetSpeedLimit(e) { this._ensureFallback().aeSetSpeedLimit(e); }
+    aeSetHBonds(e) { this._ensureFallback().aeSetHBonds(e); }
+    aeSetAngleStrain(e) { this._ensureFallback().aeSetAngleStrain(e); }
+    aeSetDipoleDipole(e) { this._ensureFallback().aeSetDipoleDipole(e); }
+    aeSetThermostat(e) { this._ensureFallback().aeSetThermostat(e); }
+    aeSetThermostatTemp(t) { this._ensureFallback().aeSetThermostatTemp(t); }
+    aeSetElectronegativity(e) { this._ensureFallback().aeSetElectronegativity(e); }
+    aePreBond() { this._ensureFallback().aePreBond(); }
+    aeAtomCount() { return this._ensureFallback().aeAtomCount(); }
+    aeInspectAtom(id) { return this._ensureFallback().aeInspectAtom(id); }
+    aeClear() { this._ensureFallback().aeClear(); }
 
     // Stubs for compatibility with MockBridge API
     currentTick() { return this._lastDiag?.tick ?? 0; }
     setVisualSettings(vs) { this._visualSettings = vs; }
-    setBoundaryShape() {}
     loadScenario() {}
 }
 
