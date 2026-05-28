@@ -365,7 +365,6 @@ export class Viewport {
      * share a single callback (avoids 4 duplicate definitions).
      */
     _insideBoundary(nx, ny, nz) {
-        if (this._reflectiveBoundary === false) return true;
         return insideBoundary(this._boundaryShape, nx, ny, nz);
     }
 
@@ -867,7 +866,7 @@ export class Viewport {
             if (this._genesisIsosurface) this._genesisIsosurface.visible = false;
             if (this._confinementStrings) this._confinementStrings.visible = false;
             // Boundary box
-            if (this._boundary) this._boundary.visible = false;
+            if (this.wireframe) this.wireframe.visible = false;
         };
 
         // ── Cosmic mode: hide all non-cosmic visuals ──
@@ -912,7 +911,7 @@ export class Viewport {
             this.peAxes.visible = this._showAxes;
             if (this.peGrid) this.peGrid.visible = this._showGrid;
             this.particles.visible = true; // Particles point cloud used by Scale 1, 2, 3
-            if (this._boundary) this._boundary.visible = true;
+            if (this.wireframe) this.wireframe.visible = this.showWireframe;
 
             // Recenter camera at origin
             this.controls.target.set(0, 0, 0);
@@ -929,7 +928,7 @@ export class Viewport {
             this._buildBoundary(this._boundaryShape, 'lattice');
             if (this.axes) this.axes.visible = this._showAxes;
             this.particles.visible = true; // Lattice fallback point cloud
-            if (this._boundary) this._boundary.visible = true;
+            if (this.wireframe) this.wireframe.visible = this.showWireframe;
 
             if (this._fieldHeatmap) this._fieldHeatmap.visible = this.showHeatmap;
             // Restore flux volume/slice if enabled
