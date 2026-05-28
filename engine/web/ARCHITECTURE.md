@@ -8,7 +8,7 @@ when debugging.
 The C++ engine itself is documented in `engine/SPEC_ENGINE.md`. This
 document is about the web runtime that sits on top of it.
 
-Epistemic companion: see `engine/web/AUDIT_WEB_ARCHITECTURE_EPISTEMIC_STATUS.md`
+Epistemic companion: see `engine/web/docs/audits/AUDIT_WEB_ARCHITECTURE_EPISTEMIC_STATUS.md`
 for a checklist of which claims here are source-verified, which are
 documentation compressions, and which still need live-runtime
 verification.

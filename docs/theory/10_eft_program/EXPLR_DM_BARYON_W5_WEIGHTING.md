@@ -15,7 +15,7 @@
 
 **Related:**
 - `engine/web/js/ui/components/faq/data.js` `dark-matter` entry (updated 2026-05-27 to cite this document)
-- `engine/web/AUDIT_WEB_ENGINE_2026-05-27.md` P0-15 (the audit ticket that corrected `[THEOREM]` → `[SELECTION]` on the cosmological constants, opening the door to this exploration)
+- `engine/web/docs/audits/AUDIT_WEB_ENGINE_2026-05-27.md` P0-15 (the audit ticket that corrected `[THEOREM]` → `[SELECTION]` on the cosmological constants, opening the door to this exploration)
 
 **Verification scripts:**
 - `scripts/exploration/moore_shell_dm_baryon_weightings.py` (~150 lines; enumerates 9 weightings and computes DM:baryon ratio for each)
