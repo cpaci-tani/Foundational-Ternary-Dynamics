@@ -15,7 +15,7 @@
 import { debugLog } from './core/log.js';
 
 export class WebSocketBridge {
-    constructor(url = 'ws://localhost:9100') {
+    constructor(url = 'ws://127.0.0.1:9100') {
         this._url = url;
         this._ws = null;
         this._connected = false;
@@ -339,7 +339,7 @@ export class WebSocketBridge {
  * Try to connect to native GPU engine, return null if unavailable.
  */
 export async function tryNativeBridge(latticeSize = 32) {
-    const bridge = new WebSocketBridge(`ws://localhost:9100`);
+    const bridge = new WebSocketBridge(`ws://127.0.0.1:9100`);
     try {
         await bridge.connect();
         // Request resize to match desired lattice size
