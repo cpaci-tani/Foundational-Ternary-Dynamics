@@ -451,7 +451,7 @@ async function init() {
     const computeEl = document.getElementById('status-compute');
 
     // 1. Try native GPU engine
-    debugLog('[init] Trying native GPU engine on ws://localhost:9100...');
+    debugLog('[init] Trying native GPU engine on ws://127.0.0.1:9100...');
     try {
         bridge = await tryNativeBridge(latticeSize);
     } catch (e) {
