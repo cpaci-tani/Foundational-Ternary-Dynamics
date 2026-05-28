@@ -89,7 +89,7 @@ needed to make those claims auditable.
 
 | ID | Status | Title | Effort | Where |
 |---|---|---|---|---|
-| ARCH-1 | ✅ | Split `RenderBridge` god-class — Injector + RenderBridgeView extracted; delegators deprecated; 17/17 regression pass | done 2026-04-25 | [injector.h](include/ftd/injector.h), [bridge_view.h](include/ftd/bridge_view.h), [render_bridge.h](include/ftd/render_bridge.h) |
+| ARCH-1 | ✅ | Split `RenderBridge` god-class — Injector + RenderBridgeView extracted; delegators deprecated; 17/17 regression pass. (Cleanup 2026-05-27: the `RenderBridgeView` type alias in `bridge_view.h` was deleted as never-consumed scaffolding; the existing const-ref convention in diagnostics_compute.cpp / energy_ledger_compute.cpp continues to satisfy the read-only contract. Injector portion retained.) | done 2026-04-25 | [injector.h](include/ftd/injector.h), [render_bridge.h](include/ftd/render_bridge.h) |
 | ARCH-2 | ✅ | Backend abstraction — full migration. All ifdef blocks collapsed; `use_gpu_` flag deleted; 6 inject friends dropped; 18/18 regression pass | done 2026-04-25 | [backend.h](include/ftd/backend.h), [backend.cpp](src/backend.cpp), [render_bridge.h](include/ftd/render_bridge.h), [render_bridge.cpp](src/render_bridge.cpp) |
 | ARCH-3 | ✅ | Toggle validator strictness: dedup repeated warnings (one per unique error string) + opt-in `strict_validation` toggle that throws std::logic_error. 3 contract tests added (test_strict_validation). | done 2026-04-25 | [render_bridge.cpp:tick()](src/render_bridge.cpp), [term_toggles.h:strict_validation](include/ftd/term_toggles.h) |
 | ARCH-4 | ✅ | `seed_rng()` now propagates to: bridge mt19937 + thread_rngs_ (via langevin_seed_initialized_=false) + toggles.langevin_seed (cuRAND picks up next tick) + direct gpu_->set_rng_seed() call. Determinism test PASS. | done 2026-04-25 | [render_bridge.h:seed_rng](include/ftd/render_bridge.h), [render_bridge.cpp:seed_rng](src/render_bridge.cpp) |
@@ -177,13 +177,13 @@ These are tracked here so the GPU-priority directive doesn't lose them. Each is 
 - Tests run between phases.
 - Backend abstraction (ARCH-2) waits for ARCH-1 to land — too much surface area touched at once otherwise.
 
-**Estimated total LOC delta:** −60 LOC in render_bridge.h public API; +150 LOC across new files (`injector.h`, `bridge_view.h`); net +90 LOC across project but *much* tighter ownership boundaries and faster TU rebuilds.
+**Estimated total LOC delta:** −60 LOC in render_bridge.h public API; +150 LOC across new files (`injector.h`, `bridge_view.h`); net +90 LOC across project but *much* tighter ownership boundaries and faster TU rebuilds. (Subsequent cleanup 2026-05-27 removed `bridge_view.h` as never-consumed, reducing the new-file delta to ~+114 LOC net.)
 
 ### ARCH-1 — Closure report (2026-04-25)
 
 **Phase A (inventory):** ✅ Full RenderBridge public-API catalogue: 51 methods + 1 public field across 10 categories. 11 friend declarations on extracted CPU functions.
 
-**Phase B (Diagnostician via RenderBridgeView):** ✅ Created [bridge_view.h](include/ftd/bridge_view.h) — `using RenderBridgeView = const RenderBridge&;`. Existing diagnostic free functions in `diagnostics_compute.cpp` and `energy_ledger_compute.cpp` already take const ref; the type alias formalises the contract for forward-looking PIMPL/value-view migrations.
+**Phase B (Diagnostician via RenderBridgeView):** ✅ originally created `bridge_view.h` — `using RenderBridgeView = const RenderBridge&;`. Existing diagnostic free functions in `diagnostics_compute.cpp` and `energy_ledger_compute.cpp` already take const ref; the type alias was intended to formalise the contract for forward-looking PIMPL/value-view migrations. **Retracted 2026-05-27 cleanup:** the type alias accumulated zero consumers — no source file ever included `bridge_view.h` or used the `RenderBridgeView` name in a signature. The file was deleted as orphan scaffolding. The const-ref discipline continues without the alias; a future PIMPL migration can reintroduce the type when there is concrete take-up.
 
 **Phase C (Injector extraction):** ✅ Created [injector.h](include/ftd/injector.h) (61 LOC). Moved `next_particle_id_` (`std::atomic<int>`) and `next_pair_id_` (`int`) from RenderBridge into a dedicated Injector class. Added `Injector& injector()` accessor on RenderBridge. Migrated 7 call sites:
 - `src/render_bridge.cpp` — 2 genesis paths use `injector_.next_particle_id()`
@@ -199,7 +199,7 @@ The Injector encapsulates the BUG-001 atomic semantics behind named methods; fut
 **LOC summary:**
 - `render_bridge.h`: 428 → 445 (+17, due to Injector accessor + Phase D deprecation comment)
 - `injector.h`: NEW (+61 LOC)
-- `bridge_view.h`: NEW (+36 LOC)
+- `bridge_view.h`: NEW (+36 LOC) — retracted 2026-05-27 (−36 LOC); never consumed
 - Removed `omp critical(genesis_id)` blocks from render_bridge.cpp (already done in BUG-001)
 - Net: +114 LOC, but ownership boundaries are now explicit. The "next_particle_id_" semantics live in one place; future fixes propagate through one accessor instead of 7 call sites.
 
