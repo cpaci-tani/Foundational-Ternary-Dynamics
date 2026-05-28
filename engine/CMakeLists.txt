@@ -1075,9 +1075,8 @@ ftd_add_test(test_nonlinear_flow_multiscale tests/test_nonlinear_flow_multiscale
 # spectrum from generic initial conditions. 5 IC classes × 5 seeds at L=32.
 # Pre-registered in PROTOCOL_EMERGENT_PARTICLE_SPECTRUM.md. Output: per-IC
 # clustering history + stable-cluster mass histogram + volumetric snapshots.
-ftd_add_test(campaign_emergent_spectrum tests/campaign_emergent_spectrum_2026-04-27.cpp
-             CTEST_NAME campaign_emergent_spectrum TIMEOUT 7200
-             LABELS native eft observable engine_as_instrument)
+# Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_emergent_spectrum_2026-04-27.cpp.
+# To restore: git mv back to engine/tests/ and re-enable the ftd_add_test block.
 
 # FTD-0107 regression + L¹-ball-radius-2 topology verification.
 # Confirms the deterministic 25-voxel cluster (FTD-0102/0107) and tests the
@@ -1100,9 +1099,7 @@ ftd_add_test(campaign_amplitude_time_series tests/campaign_amplitude_time_series
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
 # Pre-registered in PROTOCOL_TOPOLOGICAL_OBSERVABLES.md.
-ftd_add_test(campaign_topological_observables tests/campaign_topological_observables_2026-04-27.cpp
-             CTEST_NAME campaign_topological_observables TIMEOUT 7200
-             LABELS native eft observable engine_as_instrument)
+# Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_topological_observables_2026-04-27.cpp.
 
 # FTD-0098 (2026-04-26): first measured native operator-mixing matrix M_ab(b=2).
 # Pre-registered in docs/theory/10_eft_program/PROTOCOL_OPERATOR_MIXING_MATRIX.md.
@@ -1110,9 +1107,7 @@ ftd_add_test(campaign_topological_observables tests/campaign_topological_observa
 # L=16, 40 samples × 5-tick stride, 5 seeds) and extracts the 6-operator basis
 # moments before/after b=2 blocking, solving for M_ab via the Wilsonian normal
 # equations with bootstrap stderr.
-ftd_add_test(campaign_operator_mixing tests/campaign_operator_mixing_2026-04-26.cpp
-             CTEST_NAME campaign_operator_mixing TIMEOUT 1800
-             LABELS native eft blocking observable eft_quick)
+# Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_operator_mixing_2026-04-26.cpp.
 
 # FTD-0112: reaction-sector operators (O7-O10) unit tests.
 # Pre-registration: docs/theory/10_eft_program/PROTOCOL_S_EFF_NONLINEAR_CAMPAIGN.md
@@ -1131,9 +1126,7 @@ ftd_add_test(test_reaction_operators tests/test_reaction_operators.cpp
 # pair-rich, mixed-balanced}, --L, --N-seeds, --N-samples, --b4, --smoke.
 # Long-running production: 5-8 hours per L size on RTX 5090; smoke variant
 # completes in <30s.
-ftd_add_test(campaign_s_eff_nonlinear tests/campaign_s_eff_nonlinear_2026-04-29.cpp
-             CTEST_NAME campaign_s_eff_nonlinear TIMEOUT 28800
-             LABELS native eft blocking observable s_eff_campaign)
+# Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_2026-04-29.cpp.
 
 # Phase-4 fermion-emergence alternative routes (FTD-0061 extension).
 # Runs WH/Clifford anticommutator measurement under three alternative
@@ -1541,8 +1534,9 @@ add_executable(test_a1g_projector tests/test_a1g_projector.cpp)
 target_link_libraries(test_a1g_projector PRIVATE ftd_core)
 add_executable(test_a1g_bridge_i_empirical tests/test_a1g_bridge_i_empirical.cpp)
 target_link_libraries(test_a1g_bridge_i_empirical PRIVATE ftd_core)
-add_executable(dump_a1g_decay tests/dump_a1g_decay.cpp)
-target_link_libraries(dump_a1g_decay PRIVATE ftd_core)
+# dump_a1g_decay archived 2026-05-27 → engine/archive/dumps_non_load_bearing/dump_a1g_decay.cpp.
+# Non-load-bearing per SPEC_ENGINE.md §5.6.23–27. Load-bearing dumps (dump_full_physics*,
+# dump_toggle_bisection) remain in engine/tests/.
 add_executable(test_ftd0110_cluster_geometry tests/test_ftd0110_cluster_geometry.cpp)
 target_link_libraries(test_ftd0110_cluster_geometry PRIVATE ftd_core)
 add_executable(test_asymptotic_freedom tests/test_asymptotic_freedom.cpp)
