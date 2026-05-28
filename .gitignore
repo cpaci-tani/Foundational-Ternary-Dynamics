@@ -173,6 +173,9 @@ scripts/run_all_proofs.py
 Testing/
 engine/web/test_results.json
 
+# Playwright test runner output (auto-generated; .last-run.json + artifacts)
+engine/web/test-results/
+
 # Stray directories
 models/
 
