@@ -124,13 +124,13 @@ export class WebSocketBridge {
                     reject(err);
                 };
 
-                // Timeout after 2 seconds
+                // Timeout after 5 seconds
                 setTimeout(() => {
                     if (!this._connected) {
                         this._ws.close();
                         reject(new Error('WebSocket connection timeout'));
                     }
-                }, 2000);
+                }, 5000);
             } catch (e) {
                 reject(e);
             }
