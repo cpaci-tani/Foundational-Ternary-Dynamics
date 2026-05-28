@@ -1,6 +1,8 @@
 # Scientific Status of FTD Engine Tests
 
-**Last updated: 2026-03-05**
+**Last updated: 2026-05-27**
+
+> **Provenance note (2026-05-27 cleanup):** Phase B diagnostic arc closed 2026-05-04 (FTD-0136 retractions, commit `08c517e` removed 30 superseded exploratory tests). Canonical engine reference is `engine/SPEC_ENGINE.md`. The Phase B keepers (9 files: `cluster_tracker` + 4 persistence sanity tests + 4 `dump_full_physics*` runners) build clean via WSL2/CUDA ninja. See SPEC_ENGINE.md §"May 2026" entries and §5.6.21–§5.6.27 for the closure record. The grade tables below predate the Phase B closure and the 2026-05 BH-F* GPU plumbing sweep; treat them as a snapshot, not a current measurement. No grade values are revised in this refresh — content edits beyond the date stamp are out of scope for a cleanup pass.
 
 ## What These Tests DO Verify
 
