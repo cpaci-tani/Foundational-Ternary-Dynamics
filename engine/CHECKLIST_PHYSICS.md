@@ -5,6 +5,8 @@
 **Tests**: 184 CTest files, 139/179 passing, 20-benchmark engine-theory suite
 **Purpose**: Track every physics feature needed for the complete Lagrangian and all of physics
 
+> **Canonical engine reference (since 2026-05):** [`SPEC_ENGINE.md`](SPEC_ENGINE.md). The version, engine state, and test counts above are an April-2026 snapshot; for current numbers (engine v2.18.0, 257 C++ test source files, 211 active CMake targets post 2026-05-04 trim-the-fat round 4) consult SPEC_ENGINE.md. This checklist remains useful as a feature-coverage matrix; the snapshot fields will be re-baselined in a follow-up content pass.
+
 ### Engine-Theory Bridge Status (April 13, 2026)
 20 quantitative benchmarks + 4 new physics domains:
 - **A+**: Charge conservation, Hydrogen 1/n^2, Color force signs, Higgs threshold, Bell S=2, Gravitational superposition (0.08%)
