@@ -33,7 +33,7 @@ telemetry API contract.
 |---|---|---|
 | `test_*.cpp` | Standalone unit tests (1 per concern) | `test_constants.cpp`, `test_lorentz.cpp`, `test_audit_regression.cpp` |
 | `benchmark_*.cpp` | Engine-theory bridge tests (numerical comparison) | `benchmark_engine_theory.cpp`, `benchmark_emergent_alpha.cpp`, `benchmark_black_hole_thermo.cpp` |
-| `campaign_*.cpp` | Long-running measurement campaigns | `campaign_emergent_spectrum_2026-04-27.cpp`, `campaign_gluon_dynamics.cpp`, `campaign_wigner.cpp` |
+| `campaign_*.cpp` | Long-running measurement campaigns | `campaign_gluon_dynamics.cpp`, `campaign_wigner.cpp`, `campaign_lorentz_measure.cpp` |
 | `support/` | Shared fixtures and telemetry impl (post-Phase 7, commits 2db67ca…87158ae) — see "Shared infrastructure" below |
 
 ## How to run
