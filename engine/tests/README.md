@@ -3,6 +3,8 @@
 **Purpose.** ~250 C++ unit tests, benchmarks, and measurement campaigns
 for the FTD engine. Built via CMake; run via CTest.
 
+**Registration audit (2026-05-27 cleanup).** All 267 `.cpp`/`.cu` files in this directory are registered in `engine/CMakeLists.txt` via either `ftd_add_test(...)` or `add_executable(...)`. Zero orphan files (tests that compile-fail-silently because no build rule references them). This invariant is intended to hold across future PRs: a new test file should arrive with its CMake registration in the same commit. If the audit ever drifts, see Commit 5 of the 2026-05-27 engine cleanup batch for the verification methodology (strict grep for `(?:ftd_add_test|add_executable|target_sources)\b[^)]*tests/<file>` plus a permissive `tests/<file>` fallback).
+
 ## Public API
 
 Tests are individual `.cpp` files registered via the `ftd_add_test` macro
