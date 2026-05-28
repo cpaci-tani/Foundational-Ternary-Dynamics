@@ -12,13 +12,8 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
     // flux-slice panel had before its 2026-04-26 fix.
     const activeBridge = (state.useFluxMock && state.fluxMock) ? state.fluxMock : ctx.bridge;
     const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : mainScale0;
-    const fallbackScale0 = (activeScale0 === mockScale0) ? mainScale0 : mockScale0;
 
     let particleData = activeScale0.getScale0ParticleFrame();
-    if ((!particleData || particleData.count === 0) && fallbackScale0) {
-        const fb = fallbackScale0.getScale0ParticleFrame();
-        if (fb && fb.count > 0) particleData = fb;
-    }
     viewportAdapter.applyParticleFrame(particleData);
 
     if (state.fieldFlags.showConfinement) {
@@ -27,18 +22,12 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
 
     if (viewportAdapter.isFluxVolumeVisible()) {
         let volume = activeScale0.getScale0FluxVolume();
-        if ((!volume || volume.length === 0) && fallbackScale0) {
-            volume = fallbackScale0.getScale0FluxVolume();
-        }
         if (volume && volume.length > 0) viewportAdapter.applyFluxVolume(volume, latticeSize);
     }
 
     if (viewportAdapter.isFluxSliceVisible()) {
         const sliceIdx = Math.floor(latticeSize / 2);
         let slice = activeScale0.getScale0FluxSlice(1, sliceIdx);
-        if ((!slice || slice.length === 0) && fallbackScale0) {
-            slice = fallbackScale0.getScale0FluxSlice(1, sliceIdx);
-        }
         if (slice && slice.length > 0) viewportAdapter.applyFluxSlice(slice, latticeSize, 1, sliceIdx);
     }
 
