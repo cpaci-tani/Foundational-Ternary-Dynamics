@@ -7,8 +7,8 @@
 # found.
 #
 # The user passes CMAKE_PREFIX_PATH=C:/Qt/6.10.2/msvc2022_64 (or equivalent)
-# to the configure command; see engine/_build_runner.bat for the scripted
-# invocation.
+# to the configure command; see engine/archive/scripts_superseded/test_bench_qt6/_build_runner.bat
+# (archived 2026-05-27) for the scripted invocation.
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets OpenGL OpenGLWidgets Sql Charts)
 

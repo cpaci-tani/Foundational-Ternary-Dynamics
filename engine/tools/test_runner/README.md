@@ -51,8 +51,10 @@ without rewriting the surrounding plumbing.
 From the engine directory (or use the helper):
 
 ```bash
-# Helper script — sets up vcvars64 and invokes cmake with the right paths
-cmd.exe //c "engine\_build_runner.bat"
+# Helper script — sets up vcvars64 and invokes cmake with the right paths.
+# Archived 2026-05-27 (Qt6 Test Bench gracefully disabled when Qt6 missing); restore from
+# engine/archive/scripts_superseded/test_bench_qt6/_build_runner.bat via git mv if reactivating.
+cmd.exe //c "engine\archive\scripts_superseded\test_bench_qt6\_build_runner.bat"
 ```
 
 Or manually:

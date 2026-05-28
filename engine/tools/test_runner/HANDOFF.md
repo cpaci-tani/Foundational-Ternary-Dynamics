@@ -28,7 +28,7 @@ telemetry charts, and SQLite-backed run history with regression detection.
 | 6 | `b454a80` | 6 | `HistoryDb` (SQLite via Qt6::Sql, 161 + 483 LOC): auto-migrating schema (`runs`, `test_results`, `schema_version`), run-scoped transactions wrap per-test inserts for throughput, `startRun`/`recordResult`/`finishRun` lifecycle, `findRegressions` (pass→fail flips since last run), `diffRuns`. `HistoryTab` UI (78 + 447 LOC): `QTableView` of past runs, click-to-show details, two-row Diff button, per-test trend chart. MainWindow: replaces History tab placeholder, instantiates `HistoryDb` at `applicationDirPath()/runs.sqlite`, captures git short SHA via `git rev-parse --short HEAD` subprocess (500ms timeouts), 10-second regression toast in the status bar. |
 | 7 | `f8844b7` | 7 | **Retired** the legacy web test dashboard. Deleted `engine/web/tests.html`, `engine/web/js/tests.js` (535 LOC), `engine/run_tests_live.py` (374 LOC). Updated historical comments in `TestModel.{h,cpp}` and `README.md` to note the retirement. Updated `engine/tools/AUDIT_PLAN.md` lines 6.15/6.16 to mark the legacy dashboard as retired and point at the Qt runner. Net diff: +55/-1412 lines — meaningful dead-code removal. Also added a local `.gitignore` at the worktree root mirroring the main repo's ignore rules (the main repo's `.gitignore` is an uncommitted local modification, so the worktree didn't inherit any ignore rules by default — a `git add -A` accident was caught and reset). |
 | 8 | `7d93eb0` | 8a | PyTorch canonical imports added to `scripts/constants.py` (`DEVICE`, `DTYPE`, `t()`, `to_numpy()`, `TORCH` — behind `try/except ImportError` so scripts that don't use them are unaffected). Converted 5 hot scripts: `compute_observer_bell.py`, `born_rule_comprehensive.py`, `watson_convergence.py`, `proof_d3_uniqueness.py`, `proof_bell_cosine_from_gauss.py`. **`watson_convergence.py` ran 38× faster** (3m 18.7s → 5.1s) from replacing a pure-Python triple-nested for-loop (512M iterations) with a chunked 3D broadcast — speedup realized via the NumPy fallback alone, before any GPU involvement. `proof_confinement_wilson.py` skipped (no hot loop, pure analytic). `look_elsewhere_monte_carlo.py` skipped (pre-existing IndexError bug in baseline unrelated to conversion). Status doc at `scripts/PHASE_8_PYTORCH_STATUS.md`. |
-| 9 | `d0f558a` | — | `engine/_verify_final.bat` end-to-end verification helper: builds Qt runner + telemetry selftest, runs the selftest in both modes, captures `ctest --show-only=json-v1`. Post-Phase-8a run: 178 tests registered, selftest emits 26 NDJSON lines, human-readable ALL PASS. |
+| 9 | `d0f558a` | — | `engine/_verify_final.bat` end-to-end verification helper: builds Qt runner + telemetry selftest, runs the selftest in both modes, captures `ctest --show-only=json-v1`. Post-Phase-8a run: 178 tests registered, selftest emits 26 NDJSON lines, human-readable ALL PASS. (Archived 2026-05-27 → `engine/archive/scripts_superseded/test_bench_qt6/_verify_final.bat`.) |
 | 10 | `6469a33` | 1+2b POC | Consolidated two test families as a proof-of-concept for the full Phase 1 sweep. **tritium: 7 files (1104 LOC) → 1 file (847 LOC)**, 23% reduction. **pe_*: 7 files (1060 LOC) → 1 file (818 LOC)**, 23% reduction. Both use the Phase 2a `ftd::test` API (172 + 46 = 218 check sites). Parity verified: pe_* has strict runtime 41/41 PASS match; tritium has 172 static CHECK→check site match (tritium's legacy CHECK macro was silent on pass, no runtime PASS count to diff). Builds cleanly, `ctest -R '^(pe_forces\|tritium_algebra)$'` → 2/2, both modes exit 0. |
 
 **Total diff vs `c0f7d3a` merge base:** 62 files changed, +8045 / -3687 lines (net +4358). Ten commits.
@@ -41,8 +41,12 @@ The user's main checkout at `C:\Users\cpaci\Desktop\ftd\engine\` is untouched.
 ### Build the Qt runner
 
 ```
-cmd.exe //c "engine\\_build_runner.bat"
+cmd.exe //c "engine\\archive\\scripts_superseded\\test_bench_qt6\\_build_runner.bat"
 ```
+
+(Helper relocated 2026-05-27 — Qt6 Test Bench is conditionally disabled by CMake when Qt6
+is not installed. The scripts still work if invoked from the archive path; if reactivating
+the subsystem permanently, restore via `git mv` back to `engine/`.)
 
 This helper sources `vcvars64.bat` via `vswhere`, copies CUDA MSBuild extensions
 if missing, configures with `-DFTD_ENABLE_CUDA=ON -DCMAKE_PREFIX_PATH=C:/Qt/6.10.2/msvc2022_64`,
@@ -53,7 +57,7 @@ Output: `engine/build_runner/tools/test_runner/Release/ftd_test_runner.exe` (~43
 ### End-to-end verification (also builds telemetry selftest, runs it in both modes)
 
 ```
-cmd.exe //c "engine\\_verify_final.bat"
+cmd.exe //c "engine\\archive\\scripts_superseded\\test_bench_qt6\\_verify_final.bat"
 ```
 
 Output: `engine/build_final/` with both binaries, NDJSON capture, and CTest enumeration.
@@ -196,7 +200,7 @@ Qt runner core) and leave Phases 7, 8a, 1+2b POC for later:
 git cherry-pick e86513f 3801e49 f87c7c5 3403865 e450c96 b454a80
 ```
 
-Then build with `engine/_build_runner.bat` to verify on top of the user's
+Then build with `engine/archive/scripts_superseded/test_bench_qt6/_build_runner.bat` (archived 2026-05-27) to verify on top of the user's
 main branch state.
 
 ### Option C: Keep the branch alive, merge later
@@ -253,8 +257,8 @@ Full plan with phase-by-phase design: `C:\Users\cpaci\.claude\plans\concurrent-w
 - **Runner source tree:** `engine/tools/test_runner/` — 15 .h/.cpp files + CMakeLists.txt + README.md
 - **Telemetry library:** `engine/include/ftd/test_telemetry.h`
 - **CMake macro:** `engine/cmake/FtdAddTest.cmake`
-- **Build helper:** `engine/_build_runner.bat`
-- **Verification helper:** `engine/_verify_final.bat`
+- **Build helper:** `engine/archive/scripts_superseded/test_bench_qt6/_build_runner.bat` (archived 2026-05-27)
+- **Verification helper:** `engine/archive/scripts_superseded/test_bench_qt6/_verify_final.bat` (archived 2026-05-27)
 - **PyTorch status doc:** `scripts/PHASE_8_PYTORCH_STATUS.md`
 - **This handoff doc:** `engine/tools/test_runner/HANDOFF.md`
 - **Plan file (outside worktree):** `C:\Users\cpaci\.claude\plans\concurrent-watching-crane.md`
