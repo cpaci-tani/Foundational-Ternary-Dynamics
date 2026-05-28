@@ -308,6 +308,7 @@ export class WebSocketBridge {
     setToggle(name, value) {
         if (name in this._toggles) this._toggles[name] = value;
         this._sendAndForget({ cmd: 'set_toggle', name, value });
+        this._ensureFallback().setToggle(name, value);
     }
 
     getToggle(name) {
@@ -316,22 +317,37 @@ export class WebSocketBridge {
 
     setParam(name, value) {
         this._sendAndForget({ cmd: 'set_param', name, value });
+        this._ensureFallback().setParam(name, value);
     }
 
     injectFlux(x, y, z, fx, fy, fz) {
         this._sendAndForget({ cmd: 'inject_flux', x, y, z, fx, fy, fz });
+        this._ensureFallback().injectFlux(x, y, z, fx, fy, fz);
     }
 
     injectParticle(x, y, z, state) {
         this._sendAndForget({ cmd: 'inject_particle', x, y, z, state, fx: 0.1, fy: 0, fz: 0 });
+        this._ensureFallback().injectParticle(x, y, z, state);
     }
 
     injectWavepacket(x, y, z, state) {
         this._sendAndForget({ cmd: 'inject_wavepacket', x, y, z, state });
+        this._ensureFallback().injectWavepacket(x, y, z, state);
     }
 
     createEntangledPair(x, y, z, fx = 0.511, fy = 0, fz = 0) {
         this._sendAndForget({ cmd: 'create_pair', x, y, z, fx, fy, fz });
+        this._ensureFallback().createEntangledPair(x, y, z, fx, fy, fz);
+    }
+
+    // MockBridge private method/array delegation for full scenario-loading support
+    get _particles() { return this._ensureFallback()._particles; }
+    set _particles(v) { this._ensureFallback()._particles = v; }
+
+    _initFluxGrid() { this._ensureFallback()._initFluxGrid(); }
+
+    _injectFlux(x, y, z, fx, fy, fz) {
+        this.injectFlux(x, y, z, fx, fy, fz);
     }
 
     _ensureFallback() {
