@@ -302,7 +302,7 @@ consistent with the documented pre-existing bug.
 
 ## Ready to use
 
-Build helpers (all live in `engine/`):
+Build helpers (archived 2026-05-27 to `engine/archive/scripts_superseded/test_bench_qt6/` — the Qt6 Test Bench is gracefully disabled by the CMake `find_package(Qt6 QUIET)` when Qt6 is not installed, so the helpers sit dormant until Qt6 is set up again; restore via `git mv` if reactivating):
 - `_build_runner.bat`  — builds `ftd_test_runner.exe` only (fast: ~2-30s incremental)
 - `_build_all.bat`     — builds the full engine ALL_BUILD (slow: ~10 min clean)
 - `_build_wilson.bat`  — builds just `ftd_wilson_loops` (used to verify the copy fix)
