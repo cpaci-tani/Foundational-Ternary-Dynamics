@@ -47,7 +47,7 @@ bool send_all(SOCKET sock, const void* buf, size_t n) {
 //  Handshake
 // ============================================================================
 
-static const char* WS_GUID = "258EAFA5-E914-47DA-95CA-5AB9DC799073";
+static const char* WS_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 bool ws_handshake(SOCKET client) {
     // Read the HTTP upgrade request (up to 4KB is plenty)
