@@ -8,8 +8,11 @@
 > not derived (the Watson Green's function gives `G*²`, not `G*³`). Per the
 > independent review (`AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md`) and three
 > pre-registered attempts (FTD-0217/0218/0219): the determinant `16G*³ = x₊x₋` is
-> an ordinary product, not a ζ-regularized determinant, and a 2×2's trace and
-> determinant are independent — so `Det = 16G*³` is the inserted Vieta target.
+> an ordinary product and a 2×2's trace and determinant are **independent**
+> invariants — so the readout's `(Tr, Det)` structure is the *unforced* imposed
+> master-quadratic target (**W-CRIT-2**). (The coefficients `16=|μ₄|²`,
+> `G*²=2π·G_BCC(0)`, `G*`=det_ζ ratio are all forward-derived **scalars**, so this is
+> an *unforced assembly*, not a hard no-go; honest status UNDERDETERMINED.)
 > Genuine `[THEOREM]` content (`V_complex ≅ Z[i]²`, `16=|μ₄|²`, Watson, finite-block
 > no-go) **stands**; the infinite-aperture FOUND *verdict* does **not**. Honest
 > status: **UNDERDETERMINED**; MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`. Original

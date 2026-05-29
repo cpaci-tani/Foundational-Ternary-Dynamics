@@ -5,12 +5,15 @@
 > plus three pre-registered closure attempts
 > (`AUDIT_ALPHA_READOUT_DETERMINANT_GRADING_CLOSED_NEGATIVE.md` FTD-0217,
 > `AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md` FTD-0218,
-> `AUDIT_ALPHA_READOUT_DET_IDENTITY_CLOSED_NEGATIVE.md` FTD-0219) established that
+> `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` FTD-0219) established that
 > the §3 "Selection 1" (the transfer-matrix trace/determinant `= 16G*²`/`16G*³`)
 > is an **asserted** master-quadratic target, not a forward derivation: the
-> determinant `16G*³ = x₊x₋` is an ordinary product (not a ζ-regularized
-> determinant), and a 2×2 operator's trace and determinant are independent
-> invariants. **F-j fires** on that selection. The genuine `[THEOREM]` content
+> determinant `16G*³ = x₊x₋` is an ordinary product and a 2×2 operator's trace and
+> determinant are **independent** invariants, so the readout's `(Tr, Det)` structure
+> is the *unforced* imposed master-quadratic target (**W-CRIT-2**). **F-j fires** on
+> that selection. (The coefficients `16=|μ₄|²`, `G*²=2π·G_BCC(0)`, `G*`=det_ζ ratio are
+> forward-derived **scalars**, so this is an unforced assembly, not a hard no-go;
+> honest status UNDERDETERMINED.) The genuine `[THEOREM]` content
 > below — C₄ decomposition, `V_complex ≅ Z[i]²`, charge quantization to {−1,0,+1},
 > `16 = |μ₄|²`, Watson `G_BCC(0)=G*²/(2π)` — **stands**; the FOUND-at-ARC-2
 > *verdict* does **not**. Honest status: **UNDERDETERMINED**. MC-T4.3 remains a
