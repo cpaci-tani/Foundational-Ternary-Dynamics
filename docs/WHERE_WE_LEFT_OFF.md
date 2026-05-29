@@ -6,6 +6,56 @@
 
 ---
 
+## 0.15 · 2026-05-28 — MC-T4.3 alpha-readout FOUND audit + correction (the "FOUND" is an overclaim)
+
+**Latest update (2026-05-28):** an independent adversarial review found that the
+2026-05-27 ARC-C1 / ARC-B2 **"FOUND-at-ARC-2"** verdicts for the operational
+α-readout (MC-T4.3) are an **overclaim**. Honest status: **UNDERDETERMINED.**
+MC-T4.3 remains a `[FOUNDATIONAL OBSTRUCTION]`. The spine is untouched
+(`x₊=1/α` FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`). LEDGER row **FTD-0224**.
+
+### What the session found
+
+1. **Independent review** (`docs/theory/10_eft_program/AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md`):
+   the FOUND rests on the docs' *own* admitted §3 "Selection 1" — the transfer-matrix
+   trace/determinant `=16G*²`/`16G*³` are "epistemic selections designed to couple to
+   the master quadratic … rather than first-principles derivations." That fires F-j and
+   fails the project's own no-cheat audit Gate 4. The honest verdict per the locked
+   pre-regs' §4 criteria is **UNDERDETERMINED**.
+2. **Three pre-registered rescue attempts** (commit deferred per owner; SHAs in-session):
+   - *Determinant-grading* (`..._DETERMINANT_GRADING_CLOSED_NEGATIVE.md`, SHA `f55c7504…`):
+     **CLOSED-NEGATIVE** — G\*-degree parity no-go (frozen ingredients are even-degree;
+     `16G*³` is odd; only `√Watson` bridges, firing F4). Script 11/11.
+   - *Odd period via J-twisted det_ζ* (`..._ODD_PERIOD_UNDERDETERMINED.md`, SHA `a5c97b73…`):
+     **UNDERDETERMINED** — the J-twisted ζ-reg determinant ratio `=G*` IS a clean forward
+     odd source (the owner's "lattice is J²" hint vindicated *for the odd source*), but
+     `Det=Tr·G*` stays asserted (OP3). Script 6/6.
+   - *det↔det_ζ identity* (`..._DET_IDENTITY_CLOSED_NEGATIVE.md`, SHA `03b967c7…`):
+     **CLOSED-NEGATIVE** — the master-quadratic determinant `16G*³=x₊x₋` is an ordinary
+     finite product, *not* a ζ-regularized determinant; and a 2×2's Tr & Det are
+     independent, so `Det=16G*³` is the inserted Vieta target. Script 7/7.
+3. **Correction applied:** both FOUND resolution docs now carry top **FOUND→UNDERDETERMINED**
+   banners; the genuine `[THEOREM]`/`[DERIVED]` kernel (`V_complex≅Z[i]²`, charge
+   quantization, `16=|μ₄|²`, Watson, J-twisted det_ζ=G\*, finite-block CLOSED-NEGATIVE)
+   is preserved at grade.
+
+**Net:** every BCC/quantization observable-readout rescue route is closed; the surviving
+MC-T4.3 space is **ARC-D** (engine-native measurement) or a new postulate. (ARC-A/B1 were
+already closed-negative.)
+
+**⚠ Flagged (not fixed):** a pre-existing LEDGER-numbering tangle — the alpha-readout
+resolution docs claim ids FTD-0210/0211/0212/0215/0216 that collide with the parallel
+2026-05-27 workstream (x_-, W5, K₂-regulator) or are absent; the FOUND resolutions have
+no canonical LEDGER rows. This session did **not** renumber the committed tangle; queued
+for a dedicated cleanup.
+
+**Commit status:** all 2026-05-28 artifacts (1 review + 3 pre-regs + 3 verdicts + 3 scripts
++ the 2 corrected FOUND docs + this update + LEDGER FTD-0224) are **uncommitted/branch-staged
+pending the owner's merge** (the working tree also holds unrelated in-flight engine/web work
+that was left untouched).
+
+---
+
 ## 0.14 · 2026-05-27 — Session work: Web engine audit, _dag rename, x_- pre-reg + Path A exploration, W5 cosmological reframing
 
 ### What the session covered
