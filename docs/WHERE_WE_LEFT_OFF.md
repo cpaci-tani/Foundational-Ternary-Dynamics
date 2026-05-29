@@ -6,6 +6,22 @@
 
 ---
 
+## 0.16 · 2026-05-29 — Route B (modular time) + the derive-QM / epistemic arc: the non-commutativity wall, unified
+
+**Latest update (2026-05-29):** a conceptual arc on *time* and *quantum-mechanics emergence* landed a unified boundary result plus one genuine derived positive. **No spine claim moved** (`x₊=1/α` FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`). LEDGER rows **FTD-0225–0228** (4 pre-registered attempts, GTCA-disciplined).
+
+- **FTD-0225 / B1 — modular time:** substrate observable algebra is *commutative* (classical fields) → abelian → type I → trivial modular flow → no objective modular time. **CLOSED-NEGATIVE**; same wall as FTD-0208, from the operator-algebra side.
+- **FTD-0226 / B-QM-1 — manifestation:** genesis + Gauss projection is a deterministic function of the commuting flux → **Boolean (distributive)** event lattice → classical coarse-graining, not quantum non-commutativity. **CLOSED-NEGATIVE**. Structurally explains FTD-0199/0200 (Rice/Gaussian, not Born).
+- **[ψ-epistemic reframe — the productive turn]** QM as epistemic ensemble statistics; FTD supplies the ontic discrete events + an epistemic restriction. Recast in **"frame of reference"** vocabulary (adopted conversationally, *not* formalized as a `REF_` doc this session): a god's-eye frame (substrate, classical, privileged/neo-Lorentzian) vs internal frames (located, self-identifying = GUID+XYZ, with a binding self-blind-spot).
+- **FTD-0227 / B-QM-1′ — Spekkens knowledge-balance:** the **binding** half is **DERIVED** (classical finite self-reference, non-circular); the **sharp** balance needs the full symplectic **S₃** budget symmetry, not supplied by binding alone. **PARTIAL** (`J²=−I` gives ℤ/2; ℤ/3 unverified).
+- **FTD-0228 / B-QM-1″ — budget symmetry:** adversarial (P4) test of the `N_c=3 → ℤ/3` candidate. **Apophenia** — `{J_x,J_y,J_z}` commute (co-measurable), the budget needs complementary (non-commuting) bases; same count, different kind. **CLOSED-NEGATIVE**; the epistemic route re-derives the non-commutativity wall.
+
+**Net:** FTD's classical/commutative substrate **derives** the commutative spine (G\*, π√2, master quadratic) and a **binding epistemic horizon** (internal-observer self-reference), but **cannot derive QM's non-commutativity** at any route (ontic, manifestation, or epistemic budget symmetry). The ψ-epistemic reframe relocates but does not dissolve the gap; the missing piece is always a non-commutative `SU(2)`, which must be **imported** (a 6th-postulate-class move — consistent with the Bell wall requiring superdeterminism). A subsequent conversational thread grounded the **free-will *phenomenon*** (agency as a frame's inability to self-predict — MacKay/Breuer logical indeterminacy) in the *derived* binding horizon, while keeping the speculative `α_sent` machinery out.
+
+**Logical-path status:** mid-conversation on *frame-of-reference time* — a frame's subjective time = its readout order against the god's-eye tick; rate (dilation) = tick-cost per readout (motion + latency); the *order* is FTD-native, the *metric* (`√(1−v²)`, the L²) is the import (FTD-0208). Next: the *order* side — how a frame's partial-order "now" + persistence-across-ticks define identity (the GUID staying the same GUID).
+
+---
+
 ## 0.15 · 2026-05-28 — MC-T4.3 alpha-readout FOUND audit + correction (the "FOUND" is an overclaim)
 
 **Latest update (2026-05-28):** an independent adversarial review found that the

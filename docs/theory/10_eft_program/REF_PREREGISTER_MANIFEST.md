@@ -57,6 +57,19 @@ When launching: confirm `git rev-list -n1 preregister-fqcr-quotient-uniqueness-v
 
 Pre-reg SHA256: `b222c2a0873fa21dcf28b87111ecab5de8753ec3a4a38e3074d038b6f3d06a27`. This pre-registration locks the rules for Test 4, not a measurement script.
 
+## Derive-QM / epistemic arc — desk pre-regs (2026-05-29; closure attempts complete)
+
+Desk pre-registrations (in-session SHA256 lock recorded **before** each analysis; no engine GPU; commit deferred per owner, integrated this commit). Per the FTD-0224 alpha-readout precedent, the lock is the pre-reg file's SHA256 recorded in-session, not a `preregister-*` git tag anchored before a separate engine run.
+
+| FTD ID | Pre-reg doc (`10_eft_program/`) | In-session SHA256 | Verifier (passes) | Verdict |
+|---|---|---|---|---|
+| **FTD-0225** Route B modular-time algebra type (B1) | `PREREG_MODULAR_TIME_ALGEBRA_TYPE_v1.md` | `f8a3e960c400863677e631abba898e13d73ef64023e9da9ea51fe088b63606e5` | `scripts/proofs/proof_modular_time_algebra_type.py` (4/4) | CLOSED-NEGATIVE (type I) |
+| **FTD-0226** manifestation non-commutativity (B-QM-1) | `PREREG_MANIFESTATION_NONCOMMUTATIVITY_v1.md` | `fefcd6ad26320ed4f2b3e8a46144080894c3eceb07bf90378295cd3a3386d91b` | `scripts/proofs/proof_manifestation_noncommutativity.py` (5/5) | CLOSED-NEGATIVE (Boolean) |
+| **FTD-0227** Spekkens knowledge-balance (B-QM-1′) | `PREREG_SPEKKENS_KNOWLEDGE_BALANCE_v1.md` | `79e3b7f8c4a7e4aff5887c0cd130c45f5477778400c1da4db1cd51fcdc49f2dc` | `scripts/proofs/proof_spekkens_knowledge_balance.py` (10/10) | PARTIAL (binding derived) |
+| **FTD-0228** symplectic budget symmetry (B-QM-1″) | `PREREG_SYMPLECTIC_BUDGET_SYMMETRY_v1.md` | `dd8a8fa065ae2800d7554a2c82938137d340e0825e37a3362ffc1f22951a0f20` | `scripts/proofs/proof_symplectic_budget_symmetry.py` (5/5) | CLOSED-NEGATIVE (apophenia) |
+
+Companion scopes: `SCOPE_ROUTE_B_MODULAR_TIME.md`, `SCOPE_DERIVE_QM_GAP.md`. Verdict docs: the matching `AUDIT_*` files. No spine claim promoted or demoted (`x₊=1/α` FTD-0013 unchanged).
+
 ## R3a operator-mixing L-scan (2026-05-05; campaign queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
