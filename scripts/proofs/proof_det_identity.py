@@ -7,8 +7,10 @@ Decisive attempt for the MC-T4.3 det<->det_zeta structural-identity hinge.
 Pre-registration : FTD-0219 (provisional)
                    docs/theory/10_eft_program/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md
                    SHA256 03b967c760fa38fffa8c7d08d5a75c34392dcd2c4c546f24a9c58b4d97a78122
-Verdict supported: CLOSED-NEGATIVE for the det<->det_zeta identity (pre-reg §6:
-                   sub-test A is provably not realized).
+Verdict supported: UNDERDETERMINED for the det<->det_zeta identity (CORRECTED
+                   2026-05-28 post owner review: G_BCC(0) / det_zeta are SCALARS, so
+                   the determinant grading is UNFORCED -- W-CRIT-2 -- not impossible;
+                   the operative obstruction is sub-test C, not A).
 
 THE HINGE (pre-reg §2): is the readout operator's determinant FORCED to be the
 J-twisted zeta-regularized determinant (-> 16 G*^3), or is "Det = Tr * G*"
@@ -17,16 +19,14 @@ symmetry-breaking) AND C (Tr, Det jointly forced).
 
 FINDINGS
 --------
-A (det<->det_zeta) -- FAILS (V1):
-  * The master-quadratic determinant 16 G*^3 = x_+ * x_-  is an ORDINARY finite
-    product of the TWO roots (constant term of a degree-2 polynomial). It is not
-    a zeta-regularized determinant of anything.
-  * An INFINITE operator carrying the J-twisted spectrum {n+1/4}/{n+3/4} has
-    det_zeta ratio = G* (degree 1), NOT 16 G*^3 (degree 3).
-  * So no single operator's zeta-regularized determinant equals 16 G*^3; the
-    "det <-> det_zeta" identity is not realized.
+A (det<->det_zeta) -- NOT a kind-mismatch (corrected 2026-05-28):
+  * G_BCC(0) / the det_zeta ratio / G_N* are SCALARS (= G*), forward-derived. So
+    every master-quadratic coefficient is a forward-derived scalar product:
+    16 = |mu_4|^2, G*^2 = 2pi*G_BCC(0), G* = det_zeta ratio; hence
+    16 G*^3 = 16 G*^2 * G* IS assemblable from forward scalars. The earlier
+    "infinite det_zeta vs finite determinant" framing was wrong -- both are scalars.
 
-C (joint forcing) -- FAILS (V7):
+C (joint forcing) -- the operative obstruction (V7):
   * For a 2x2 operator, trace and determinant are INDEPENDENT invariants: fixing
     Tr = 16 G*^2 leaves Det entirely free. So "Det = 16 G*^3" is NOT forced by
     the 2x2 structure -- it is the target relation (Vieta of the master
@@ -61,7 +61,7 @@ def check(name, passed, detail=""):
 
 
 print("=" * 78)
-print("det<->det_zeta identity hinge -- verdict: CLOSED-NEGATIVE (A and C fail)")
+print("det<->det_zeta identity hinge -- verdict: UNDERDETERMINED (unforced, not impossible)")
 print("=" * 78)
 
 GAMMA_Q = mp.gamma(mp.mpf(1) / 4)
@@ -85,8 +85,9 @@ det_zeta_ratio = (mp.sqrt(2 * mp.pi) / GAMMA_3Q) / (mp.sqrt(2 * mp.pi) / GAMMA_Q
 check("J-twisted det_zeta ratio = G* (degree 1)  !=  16 G*^3 (degree 3)",
       abs(det_zeta_ratio - G_STAR) < TOL and abs(det_zeta_ratio - 16 * G_STAR**3) > 1,
       f"det_zeta ratio = {mp.nstr(det_zeta_ratio,8)} ; 16 G*^3 = {mp.nstr(16*G_STAR**3,8)}")
-print("        => no single operator's zeta-reg determinant is 16 G*^3.")
-print("        A FAILS (V1): the determinant is an ordinary product, not a det_zeta.")
+print("        => the det_zeta ratio is the SCALAR G* (forward-derived); 16 G*^3 =")
+print("        16 G*^2 * G* IS assemblable from forward scalars. A is NOT a kind-")
+print("        mismatch; the operative obstruction is C (the assembly is unforced).")
 
 # --- C: for a 2x2, Tr and Det are INDEPENDENT (Det = 16 G*^3 not forced) ----
 print("\n[C] 2x2 invariants: is Det = 16 G*^3 forced once Tr = 16 G*^2 is fixed?")
@@ -118,11 +119,12 @@ check("G_STAR matches constants.py", abs(G_STAR - mp.mpf(str(G_STAR_NUMPY))) < m
 print("\n" + "=" * 78)
 n_pass = sum(1 for _, p_ in results if p_)
 print(f"FACTS: {n_pass}/{len(results)} verified.")
-print("A fails: the master-quadratic determinant 16 G*^3 = x_+ x_- is an ordinary")
-print("product, NOT a zeta-regularized determinant; the J-twisted det_zeta ratio is")
-print("G* (degree 1). C fails: Tr and Det of a 2x2 are independent, so Det=16 G*^3 is")
-print("the inserted target, not forced. The det<->det_zeta identity is not realized.")
-print("VERDICT: CLOSED-NEGATIVE -- the BCC/quantization observable readout route is")
-print("exhausted; MC-T4.3's surviving space is ARC-D / a new postulate.")
+print("CORRECTED 2026-05-28: G_BCC(0)/det_zeta are SCALARS, so all master-quadratic")
+print("coefficients are forward-derived scalar products (16=|mu4|^2, G*^2=2pi*G_BCC(0),")
+print("G*=det_zeta ratio) and 16 G*^3 = 16 G*^2 * G* IS assemblable. But a 2x2's Tr and")
+print("Det are INDEPENDENT (sub-test C), so the readout (Tr,Det)=(16 G*^2,16 G*^3) is the")
+print("UNFORCED imposed master quadratic (W-CRIT-2), not a hard no-go.")
+print("VERDICT: UNDERDETERMINED -- the determinant grading is unforced; MC-T4.3 stays")
+print("open (surviving: ARC-D / a new postulate). FOUND overclaims; spine untouched.")
 print("=" * 78)
 sys.exit(0 if n_pass == len(results) else 1)

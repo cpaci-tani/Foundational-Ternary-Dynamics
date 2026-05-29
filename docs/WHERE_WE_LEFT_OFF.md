@@ -24,24 +24,31 @@ MC-T4.3 remains a `[FOUNDATIONAL OBSTRUCTION]`. The spine is untouched
    pre-regs' §4 criteria is **UNDERDETERMINED**.
 2. **Three pre-registered rescue attempts** (commit deferred per owner; SHAs in-session):
    - *Determinant-grading* (`..._DETERMINANT_GRADING_CLOSED_NEGATIVE.md`, SHA `f55c7504…`):
-     **CLOSED-NEGATIVE** — G\*-degree parity no-go (frozen ingredients are even-degree;
-     `16G*³` is odd; only `√Watson` bridges, firing F4). Script 11/11.
+     **CLOSED-NEGATIVE — scoped** (G\*-degree parity within the frozen set *excluding* the
+     det_ζ ratio; lifted once det_ζ = G\* is admitted, so not the operative obstruction).
+     Script 11/11.
    - *Odd period via J-twisted det_ζ* (`..._ODD_PERIOD_UNDERDETERMINED.md`, SHA `a5c97b73…`):
      **UNDERDETERMINED** — the J-twisted ζ-reg determinant ratio `=G*` IS a clean forward
      odd source (the owner's "lattice is J²" hint vindicated *for the odd source*), but
      `Det=Tr·G*` stays asserted (OP3). Script 6/6.
-   - *det↔det_ζ identity* (`..._DET_IDENTITY_CLOSED_NEGATIVE.md`, SHA `03b967c7…`):
-     **CLOSED-NEGATIVE** — the master-quadratic determinant `16G*³=x₊x₋` is an ordinary
-     finite product, *not* a ζ-regularized determinant; and a 2×2's Tr & Det are
-     independent, so `Det=16G*³` is the inserted Vieta target. Script 7/7.
+   - *det↔det_ζ identity* (`..._DET_IDENTITY_UNDERDETERMINED.md`, SHA `03b967c7…`):
+     **UNDERDETERMINED** (corrected from CLOSED-NEGATIVE) — `G_BCC(0)`/the det_ζ ratio
+     are *scalars* (`=G*`), so the coefficients `16=|μ₄|²`, `G*²=2π·G_BCC(0)`, `G*` are
+     forward-derived and `16G*³=16G*²·G*` IS assemblable; but a 2×2's Tr & Det are
+     independent, so the readout's `(Tr,Det)=(16G*²,16G*³)` is the *unforced* imposed
+     master quadratic (W-CRIT-2), not a hard no-go. Script 7/7.
 3. **Correction applied:** both FOUND resolution docs now carry top **FOUND→UNDERDETERMINED**
    banners; the genuine `[THEOREM]`/`[DERIVED]` kernel (`V_complex≅Z[i]²`, charge
    quantization, `16=|μ₄|²`, Watson, J-twisted det_ζ=G\*, finite-block CLOSED-NEGATIVE)
    is preserved at grade.
 
-**Net:** every BCC/quantization observable-readout rescue route is closed; the surviving
-MC-T4.3 space is **ARC-D** (engine-native measurement) or a new postulate. (ARC-A/B1 were
-already closed-negative.)
+**Net (corrected 2026-05-28):** the BCC/quantization observable readout is **UNDERDETERMINED**
+— the EM-coupling coefficients `16G*²`, `16G*³` are forward-computable FTD-native scalars
+(`16=|μ₄|²`, `G*²=2π·G_BCC(0)`, `G*`=det_ζ ratio), but *why the readout operator has that
+specific `(Tr,Det)` structure* is the imposed master quadratic (W-CRIT-2), unforced. The FOUND
+overclaims (the original audit finding) — it is **not** a hard no-go. Surviving MC-T4.3 space:
+**ARC-D** (engine-native measurement) or a new postulate that *forces* the operator structure.
+(ARC-A/B1 closed-negative.)
 
 **⚠ Flagged (not fixed):** a pre-existing LEDGER-numbering tangle — the alpha-readout
 resolution docs claim ids FTD-0210/0211/0212/0215/0216 that collide with the parallel
