@@ -1,5 +1,20 @@
 # Foundational Resolution — BCC Algebraic Bridge Readout (ARC-B2)
 
+> **⚠ CORRECTION (2026-05-28): infinite-aperture verdict downgraded FOUND → UNDERDETERMINED.**
+> The **finite-block CLOSED-NEGATIVE** (§3 Theorem 2) is correct and stands. The
+> **infinite-aperture "FOUND-at-ARC-2"** (§4/§7) is an overclaim: the Watson limit
+> supplies only the *even*-degree self-energy `G*²/(2π)`; the master-quadratic
+> determinant `16G*³` (an *odd* third power of G\*) is **asserted** in §4 Theorem 3,
+> not derived (the Watson Green's function gives `G*²`, not `G*³`). Per the
+> independent review (`AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md`) and three
+> pre-registered attempts (FTD-0217/0218/0219): the determinant `16G*³ = x₊x₋` is
+> an ordinary product, not a ζ-regularized determinant, and a 2×2's trace and
+> determinant are independent — so `Det = 16G*³` is the inserted Vieta target.
+> Genuine `[THEOREM]` content (`V_complex ≅ Z[i]²`, `16=|μ₄|²`, Watson, finite-block
+> no-go) **stands**; the infinite-aperture FOUND *verdict* does **not**. Honest
+> status: **UNDERDETERMINED**; MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`. Original
+> text preserved below.
+
 **Tag:** [THEOREM] (for the algebraic decomposition and infinite-aperture limits), [SELECTION] (for the choice of observable and readout map)  
 **Date:** 2026-05-27  
 **Framework:** Foundational Ternary Dynamics v5.33  
@@ -15,9 +30,9 @@ This document executes the locked pre-registration protocol **PREREG_ALPHA_READO
 
 We resolve the technical program across two regimes:
 1. **Finite-Block Regime ($L < \infty$):** Returns a **CLOSED-NEGATIVE** verdict. We prove a rigorous *categorical structural mismatch* — the eigenvalues of any finite-block discrete transfer operator $T_{\text{BCC}}$ are algebraic numbers in a finite extension of $\mathbb{Q}(i)$, which cannot match the transcendental lemniscatic constant $G^*$ without parameter tuning.
-2. **Infinite-Aperture Propagator Limit ($L \to \infty$):** Returns a **FOUND** verdict at the **ARC-2** level (operational physical readout). We prove that in the infinite-aperture limit, the discrete propagator (Green's function) at the core origin $v=0$ projected onto the complex subspace $V_{\text{complex}}$ is exactly the BCC Watson integral:
+2. **Infinite-Aperture Propagator Limit ($L \to \infty$):** Returns ~~a **FOUND** verdict at the **ARC-2** level~~ an **UNDERDETERMINED** verdict **[CORRECTED 2026-05-28; see banner]**. We prove that in the infinite-aperture limit, the discrete propagator (Green's function) at the core origin $v=0$ projected onto the complex subspace $V_{\text{complex}}$ is exactly the BCC Watson integral:
    $$ G_{\text{BCC}}(0) = W_3 = \frac{G^{*2}}{2\pi} $$
-   By defining the electromagnetic self-energy functional $O_{\text{EM}}$ as the self-interaction on $V_{\text{complex}}$, the coupling is structurally bound to $G^{*2}$. Combined with the $\mathbb{Z}[i]$-module automorphism group size $|\mu_4|^2 = 16$, this derives the master quadratic coefficients $16 G^{*2}$ and $16 G^{*3}$ directly from BCC lattice geometry without circularity.
+   By defining the electromagnetic self-energy functional $O_{\text{EM}}$ as the self-interaction on $V_{\text{complex}}$, the coupling is structurally bound to $G^{*2}$ (the trace `16G*²`, with $|\mu_4|^2 = 16$). **[CORRECTED 2026-05-28:** the determinant `16G*³` — the *odd* third power of G\* — is **asserted** in §4 below, not derived: the Watson Green's function yields only `G*²`, and `Det = 16G*³` is the inserted Vieta target (FTD-0217/0219). No "derivation without circularity" of the full master quadratic is achieved.**]**
 
 ---
 
@@ -115,7 +130,7 @@ $$ \text{Tr}(T_{\text{BCC}}) = 16 G^{*2} $$
 recovers the exact, unperturbed master quadratic at tree level ($R_{\text{conn}} = 1$):
 $$ x^2 - 16 G^{*2} x + 16 G^{*3} = 0 $$
 
-> **[FOUND Verdict for Infinite Aperture (ARC-2 Level)]:** In the infinite-aperture limit ($L \to \infty$), the discrete lattice propagator naturally resolves the categorical mismatch. The self-energy at the origin projects exactly to the transcendental period $G^{*2}/(2\pi)$, deriving the master quadratic coefficients without target parameter insertion.
+> **~~[FOUND Verdict for Infinite Aperture (ARC-2 Level)]~~ [UNDERDETERMINED — CORRECTED 2026-05-28]:** In the infinite-aperture limit, the self-energy projects to the transcendental period $G^{*2}/(2\pi)$ — supplying the trace `16G*²`. But `Det(T_BCC) = 16G*³` just above is **posited**, not derived: the Watson limit yields `G*²` (even degree), and the determinant's odd `16G*³` is the asserted master-quadratic Vieta target (FTD-0217 parity no-go; FTD-0219 det↔det_ζ no-go). The master quadratic is **not** recovered without target insertion.
 
 ---
 
@@ -137,12 +152,12 @@ We check the completed derivation against all 10 F-rules:
 - **F-c (Dominant selection): PASS.** Selected uniquely by fixed-point stability under coarse-graining.
 - **F-d (Operational protocol): PASS.** The protocol defines a localized preparation $P$ and self-energy back-reaction $O_{\text{EM}}$.
 - **F-e (No site-local Clifford): PASS.** The bivector and complex subspaces span the 8 corners of the BCC unit cell, making the construction non-site-local from step 1.
-- **F-j (No reverse-engineering): PASS.** The polynomial coefficients $16 G^{*2}$ and $16 G^{*3}$ emerge directly from the Galois-invariant symmetric period algebra of $V_{\text{complex}}$ and the BCC Green's function, rather than being pasted as scaffold.
+- **F-j (No reverse-engineering): ~~PASS~~ FIRES [CORRECTED 2026-05-28].** Only `16G*²` (the trace) emerges from the Watson Green's function (even degree in G\*). The determinant `16G*³` (odd degree) is *posited* in §4 (`Det(T_BCC) = 16G*³`), not derived — it is the master-quadratic Vieta target pasted as scaffold (FTD-0217 parity no-go; FTD-0219 det↔det_ζ no-go). F-j fires.
 
 ---
 
 ## 7. Conclusion & Epistemic Status
 
-We have successfully bridged the gap between discrete lattice structures and continuous modular periods:
-* **Finite-Block Verdict:** **CLOSED-NEGATIVE** due to finite-dimensional algebraic mismatch.
-* **Infinite-Aperture Verdict:** **FOUND (ARC-2 Level)**. The infinite-dimensional BCC lattice Green's function naturally acts as the algebraic bridge, deriving the master quadratic from first principles without circularity.
+We reach a **genuine partial result** (ARC-1), not a closure:
+* **Finite-Block Verdict:** **CLOSED-NEGATIVE** due to finite-dimensional algebraic mismatch. *(Correct; stands.)*
+* **Infinite-Aperture Verdict:** ~~**FOUND (ARC-2 Level)**~~ **UNDERDETERMINED [CORRECTED 2026-05-28].** The Watson Green's function supplies the trace `16G*²` (even-degree), but the determinant `16G*³` (the odd third power of G\*) is asserted, not derived from first principles (FTD-0217/0218/0219). MC-T4.3 stays open; surviving routes: ARC-D (engine-native measurement) or a new postulate.
