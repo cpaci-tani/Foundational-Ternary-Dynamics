@@ -1,5 +1,16 @@
 # AUDIT — Determinant-Grading Forward Derivation: CLOSED-NEGATIVE (G\*-degree parity no-go)
 
+> **⚠ SCOPE CORRECTION (2026-05-28, post owner review).** This CLOSED-NEGATIVE is
+> **scoped to the frozen ingredients that EXCLUDE the J-twisted det_ζ ratio.** That
+> ratio (`= G*`, a clean forward **odd** scalar; FQCR Model I) — admitted in FTD-0218 —
+> supplies the missing odd G\*-degree directly, so the parity argument here is **not the
+> operative MC-T4.3 obstruction.** The operative obstruction is the *unforced operator
+> structure* (`AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md`, FTD-0219:
+> UNDERDETERMINED, W-CRIT-2), since `G_BCC(0)`/det_ζ are scalars and the master-quadratic
+> coefficients are forward-derived scalar products. This doc is retained as a scoped
+> technical result; the parity "no-go" should not be read as a hard impossibility for
+> the determinant grading overall.
+
 **Tag:** `[CLOSED NEGATIVE]` — pre-reg §6 CLOSED-NEGATIVE ("a structural argument that the frozen ingredients generate only a restricted set of G\*-degrees that excludes the determinant's"). **No spine claim moved.**
 **Date:** 2026-05-28
 **Result of:** the pre-registered attempt `PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md` (FTD-0217 provisional), SHA256 `f55c7504401a1e5eb4a61ae18380d10c0ae8a4d407cfb1fc48da45e91918abd7` (recorded in-session before the analysis; git commit deferred by owner instruction — see §8).
