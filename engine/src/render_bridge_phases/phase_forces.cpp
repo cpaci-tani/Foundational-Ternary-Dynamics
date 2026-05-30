@@ -66,6 +66,7 @@ void phase_forces_main_loop(RenderBridge& rb) {
   const int N = static_cast<int>(rb.lattice_.total_sites());
   const int L = rb.lattice_.size();
 
+#pragma omp parallel for schedule(static)
   for (int i = 0; i < N; ++i) {
     auto &v = rb.voxels_[i];
     if (v.state == 0) continue;

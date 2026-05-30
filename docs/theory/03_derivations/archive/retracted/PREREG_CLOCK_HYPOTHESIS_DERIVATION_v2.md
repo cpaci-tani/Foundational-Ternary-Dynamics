@@ -7,10 +7,10 @@
 **LEDGER row:** FTD-0208
 **Supersedes:** `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md` (commit `4c15ba1`, tag `preregister-clock-hypothesis-derivation-v1`) which was closed as `UNDERDETERMINED` per `AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md` (commit `8c8554d`).
 **Companion docs:**
-- [`DERIV_NEWTON_FROM_SUBSTRATE.md`](DERIV_NEWTON_FROM_SUBSTRATE.md) §1.4 — flagged POSTULATE 2 (now reconciled to SPEC §4.3 modulo clock hypothesis)
+- [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../../gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.4 — flagged POSTULATE 2 (now reconciled to SPEC §4.3 modulo clock hypothesis)
 - [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.7 (bandwidth constraint) + §4.3 (Born-Infeld proper time) + §8 L-1 [THEOREM modulo clock hypothesis]
-- [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §2 (reconciliation that identified the clock hypothesis as the narrowed remaining open piece)
-- [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) (records the v1 failure modes and reviews)
+- [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](../../../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) §2 (reconciliation that identified the clock hypothesis as the narrowed remaining open piece)
+- [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](../../../07_assessment/audits/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) (records the v1 failure modes and reviews)
 - Methodological templates: [`../10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md)
 
 > **Pre-registration discipline.** Sections §§2–9 are committed before the closure attempt is run. After commit: SHA256 → `../10_eft_program/REF_PREREGISTER_MANIFEST.md`, git tag applied. Any post-hoc edit to §§2–9 invalidates v2; a v3 is required before the closure attempt is run or re-run. The closure attempt's result lands in a separate doc (`FOUND_CLOCK_HYPOTHESIS.md` or `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`), never as edits to this file.

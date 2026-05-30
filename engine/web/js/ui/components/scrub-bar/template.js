@@ -47,26 +47,7 @@ export function getScrubBarTemplate() {
 
         <div class="scrub-bar-divider" aria-hidden="true"></div>
 
-        <div class="scrub-bar-section scrub-bar-timeline">
-            <button class="scrub-bar-icon-btn scrub-bar-reset"
-                type="button" title="Snap back to live (double-click the timeline)" aria-label="Reset playhead to live">
-                &#10227;
-            </button>
-            <div class="scrub-bar-strip" role="slider"
-                 aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" tabindex="0">
-                <div class="scrub-bar-zones"></div>
-                <div class="scrub-bar-render"></div>
-                <div class="scrub-bar-playhead"></div>
-            </div>
-            <span class="scrub-bar-time" aria-live="polite">now</span>
-        </div>
-
         <div class="scrub-bar-section scrub-bar-actions">
-            <button class="scrub-bar-icon-btn scrub-bar-render-btn"
-                type="button" title="Render next N seconds into a scrubbable clip" aria-label="Render scenario">
-                <span class="scrub-bar-render-dot">&#9679;</span>
-                <span class="scrub-bar-render-label">Render</span>
-            </button>
             <button class="scrub-bar-icon-btn scrub-bar-settings"
                 type="button" title="Timeline settings" aria-label="Timeline settings"
                 aria-expanded="false" aria-controls="scrub-bar-settings-popover">
@@ -99,17 +80,6 @@ export function getScrubBarTemplate() {
                         <button type="button" class="scrub-bar-settings-chip" data-step-by="10"  title="Advance 10 ticks">+10</button>
                         <button type="button" class="scrub-bar-settings-chip" data-step-by="100" title="Advance 100 ticks">+100</button>
                     </div>
-                </div>
-                <div class="scrub-bar-settings-row">
-                    <span class="scrub-bar-settings-label">Render duration</span>
-                    <div class="scrub-bar-settings-options" role="radiogroup" aria-label="Render duration">
-                        <button type="button" class="scrub-bar-settings-chip" data-render-secs="10" role="radio">10s</button>
-                        <button type="button" class="scrub-bar-settings-chip is-active" data-render-secs="30" role="radio" aria-checked="true">30s</button>
-                        <button type="button" class="scrub-bar-settings-chip" data-render-secs="60" role="radio">60s</button>
-                    </div>
-                </div>
-                <div class="scrub-bar-settings-row scrub-bar-settings-hint">
-                    Sim ticks run in ~12 ms slices between frames, so live playback keeps moving while the clip builds.
                 </div>
             </div>
         </div>

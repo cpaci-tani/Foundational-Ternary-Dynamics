@@ -33,8 +33,10 @@ const USER_MOUNTS = Object.freeze(['left', 'bottom', 'right']);
  */
 export function updateSafeEdges(mount) {
     const root = document.documentElement;
-    const leftW  = parseFloat(root.style.getPropertyValue('--panel-width-left'))  || 380;
-    const rightW = parseFloat(root.style.getPropertyValue('--panel-width-right')) || 380;
+    const leftW  = parseFloat(root.style.getPropertyValue('--panel-width-left'))  || 
+                   parseFloat(getComputedStyle(root).getPropertyValue('--panel-width-left')) || 380;
+    const rightW = parseFloat(root.style.getPropertyValue('--panel-width-right')) || 
+                   parseFloat(getComputedStyle(root).getPropertyValue('--panel-width-right')) || 380;
     const gap    = 12;
     const tabW   = 50; // icon-rail width + gap
     switch (mount) {
@@ -75,6 +77,22 @@ export class MountToggleComponent {
         this.root.addEventListener('click', this._click);
         window.addEventListener('keydown', this._keydown);
         window.addEventListener('resize', this._onResize);
+
+        // Watch html[data-panel-mount] for programmatic updates (e.g., from integration tests)
+        this._observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (mutation.attributeName === 'data-panel-mount') {
+                    const next = document.documentElement.dataset.panelMount;
+                    updateSafeEdges(next);
+                    this._sync(next);
+                    this._updateDisabledState();
+                }
+            }
+        });
+        this._observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-panel-mount'],
+        });
         const current = readPanelMount();
         const effective = resolveEffectiveMount(current, window.innerWidth);
         if (effective !== current) {

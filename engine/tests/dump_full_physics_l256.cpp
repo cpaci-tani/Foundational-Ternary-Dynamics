@@ -1,7 +1,7 @@
 /**
  * L=256 full-physics spot check — does the FTD-framework-integer pattern continue?
  *
- * Cost-conscious: 3 axes × 1 seed × 100 ticks. L=256 has 16M voxels;
+ * Cost-reference-frame: 3 axes × 1 seed × 100 ticks. L=256 has 16M voxels;
  * each tick at L=256 is ~16x slower than L=64.
  */
 #include <iostream>

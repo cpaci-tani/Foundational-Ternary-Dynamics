@@ -42,6 +42,7 @@ export function formatNumber(v) {
  * @returns {string}
  */
 export function formatSI(n) {
+    if (typeof n !== 'number' || isNaN(n)) return '0.00';
     if (Math.abs(n) >= 1e12) return (n / 1e12).toFixed(2) + 'T';
     if (Math.abs(n) >= 1e9)  return (n / 1e9).toFixed(2)  + 'G';
     if (Math.abs(n) >= 1e6)  return (n / 1e6).toFixed(2)  + 'M';

@@ -42,6 +42,7 @@ import {
     getCloudParticleMap, getTrailHistory, clearCloudAndTrails
 } from './pe-cloud-expander.js';
 import { setupPEScenario } from './scenarios.js';
+import { telemetryHub } from '../../telemetry-hub.js';
 
 
 // =====================================================================
@@ -293,37 +294,39 @@ export function animatePE(ctx) {
 
     // ── 7. PE diagnostics (throttled to every 3rd frame) ────────────
     if (frameCount % 3 === 0 && (running || !_diagPushedWhilePaused)) {
-        const diag = bridge.peGetDiagnostics();
+        const diag = telemetryHub.collectScale1(bridge);
+        const ext = telemetryHub.collectScale1Extended(bridge);
 
-        const sTick = formatSI(diag.tick);
-        const sParticles = String(diag.particleCount);
-        const sEnergy = formatEnergy(diag.totalEnergy, 1).text;
-        const sState = running ? 'Running' : 'Idle';
+        if (diag) {
+            const sTick = formatSI(diag.tick);
+            const sParticles = String(diag.particleCount);
+            const sEnergy = formatEnergy(diag.totalEnergy, 1).text;
+            const sState = running ? 'Running' : 'Idle';
 
-        if (_statusCache.tick !== sTick) { dom.statusTick.textContent = sTick; dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
-        if (_statusCache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; _statusCache.particles = sParticles; }
-        if (_statusCache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; _statusCache.energy = sEnergy; }
-        if (_statusCache.state !== sState) {
-            dom.statusState.textContent = sState;
-            _statusCache.state = sState;
-            if (running) dom.statusDot.classList.remove('idle');
-            else dom.statusDot.classList.add('idle');
+            if (_statusCache.tick !== sTick) { dom.statusTick.textContent = sTick; dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
+            if (_statusCache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; _statusCache.particles = sParticles; }
+            if (_statusCache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; _statusCache.energy = sEnergy; }
+            if (_statusCache.state !== sState) {
+                dom.statusState.textContent = sState;
+                _statusCache.state = sState;
+                if (running) dom.statusDot.classList.remove('idle');
+                else dom.statusDot.classList.add('idle');
+            }
+
+            if (peTelemetry) peTelemetry.update(diag, ext);
+
+            const diagAdapted = {
+                tick:          diag.tick,
+                manifested:    diag.particleCount,
+                positive: 0,  negative: 0,
+                totalFlux: 0, totalEnergy: diag.totalEnergy,
+                fieldEnergy:   diag.totalPE,
+                kineticEnergy: diag.totalKE,
+                peFlux:        diag.totalPE,
+            };
+            fluxEnergyChart.push(diagAdapted);
+            particleChart.push(diagAdapted);
         }
-
-        const ext = bridge.peGetExtendedData();
-        if (peTelemetry) peTelemetry.update(diag, ext);
-
-        const diagAdapted = {
-            tick:          diag.tick,
-            manifested:    diag.particleCount,
-            positive: 0,  negative: 0,
-            totalFlux: 0, totalEnergy: diag.totalEnergy,
-            fieldEnergy:   diag.totalPE,
-            kineticEnergy: diag.totalKE,
-            peFlux:        diag.totalPE,
-        };
-        fluxEnergyChart.push(diagAdapted);
-        particleChart.push(diagAdapted);
 
         if (!running) _diagPushedWhilePaused = true;
         else _diagPushedWhilePaused = false;

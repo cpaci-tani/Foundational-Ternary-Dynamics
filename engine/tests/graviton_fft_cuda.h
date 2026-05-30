@@ -47,6 +47,13 @@
 #include <cstddef>
 #include <vector>
 
+#ifndef FTD_ENABLE_CUDA
+#include <cassert>
+#include <iostream>
+#include <algorithm>
+#include "ftd/spectral.h"
+#endif
+
 namespace ftd {
 namespace graviton {
 
@@ -98,6 +105,74 @@ private:
     int          plan_      = 0;
     bool         plan_made_ = false;
 };
+
+#ifndef FTD_ENABLE_CUDA
+inline Fft3dBatchGpu::Fft3dBatchGpu(int L, int max_batch)
+    : L_(L), max_batch_(max_batch) {
+    assert(L > 0 && "lattice size must be positive");
+    assert(max_batch > 0 && "batch size must be positive");
+    n_per_grid_ = static_cast<std::size_t>(L_) * L_ * L_;
+    std::cerr << "[graviton_fft_cuda] CPU fallback mode ready: L=" << L_ 
+              << ", batch=" << max_batch_ << "\n";
+}
+
+inline Fft3dBatchGpu::~Fft3dBatchGpu() {}
+
+inline void Fft3dBatchGpu::forward_batch(const std::vector<std::complex<double>*>& grids) {
+    const int batch = static_cast<int>(grids.size());
+    if (batch == 0) return;
+    assert(batch <= max_batch_ && "more grids than plan max_batch");
+
+    std::vector<std::complex<double>> temp(L_);
+
+    for (int b = 0; b < batch; ++b) {
+        std::complex<double>* grid = grids[b];
+        assert(grid != nullptr && "null grid pointer");
+
+        // 1. FFT along z-direction (stride 1)
+        for (int x = 0; x < L_; ++x) {
+            for (int y = 0; y < L_; ++y) {
+                std::size_t offset = (static_cast<std::size_t>(x) * L_ + y) * L_;
+                for (int z = 0; z < L_; ++z) {
+                    temp[z] = grid[offset + z];
+                }
+                ftd::fft_1d(temp, false);
+                for (int z = 0; z < L_; ++z) {
+                    grid[offset + z] = temp[z];
+                }
+            }
+        }
+
+        // 2. FFT along y-direction (stride L)
+        for (int x = 0; x < L_; ++x) {
+            for (int z = 0; z < L_; ++z) {
+                std::size_t offset_xz = static_cast<std::size_t>(x) * L_ * L_ + z;
+                for (int y = 0; y < L_; ++y) {
+                    temp[y] = grid[offset_xz + static_cast<std::size_t>(y) * L_];
+                }
+                ftd::fft_1d(temp, false);
+                for (int y = 0; y < L_; ++y) {
+                    grid[offset_xz + static_cast<std::size_t>(y) * L_] = temp[y];
+                }
+            }
+        }
+
+        // 3. FFT along x-direction (stride L*L)
+        for (int y = 0; y < L_; ++y) {
+            for (int z = 0; z < L_; ++z) {
+                std::size_t offset_yz = static_cast<std::size_t>(y) * L_ + z;
+                for (int x = 0; x < L_; ++x) {
+                    temp[x] = grid[offset_yz + static_cast<std::size_t>(x) * L_ * L_];
+                }
+                ftd::fft_1d(temp, false);
+                for (int x = 0; x < L_; ++x) {
+                    grid[offset_yz + static_cast<std::size_t>(x) * L_ * L_] = temp[x];
+                }
+            }
+        }
+    }
+}
+#endif // FTD_ENABLE_CUDA
 
 }  // namespace graviton
 }  // namespace ftd

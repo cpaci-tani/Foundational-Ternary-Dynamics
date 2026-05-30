@@ -16,7 +16,7 @@
  *                             well, entangle, aharonov-bohm, casimir, zeno)
  *   s0-seed-scenarios.js   — 49 s0-seed-* scenarios (SM particles, Moore
  *                             geometries, quarks, gauge bosons, gravity,
- *                             consciousness/observer seeds)
+ *                             reference frame context/observer seeds)
  *   s0-field-scenarios.js  — 8 s0-field-* scenarios (plane/standing waves,
  *                             uniform E/B, electric/magnetic dipoles, vortex)
  *

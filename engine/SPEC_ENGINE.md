@@ -77,10 +77,10 @@ the WSL2 CUDA path reaches 100% pass on the in-scope ctest set.
 - **FTD-0110 cluster-geometry diagnostic + baseline-drift finding**
   (`b4f1dcf`): separate baseline-drift observation flagged `[OPEN]`.
 
-### 2026-05-02 — Scale 11 (consciousness / reflexivity) UI deletion
+### 2026-05-02 — Scale 11 (reference frame context / reference frame structure) UI deletion
 
 `054b530`: the Scale 11 web-dashboard surface removed (~5200 LOC). Per the
-2026-05-02 reflexivity-vocabulary refresh, the consciousness/reflexivity
+2026-05-02 reference frame structure-vocabulary refresh, the reference frame context/reference frame structure
 content was retired as a separate web scale; the underlying physics layer
 remains accessible via the existing flux/state APIs.
 
@@ -225,7 +225,7 @@ Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered seq
 **All six viable engine opens are now ✅ CLOSED.** Three remaining §1 items are explicitly `[BLOCKED]` (DagEngine stubs, dynamical SU(3), δ_c closed form) on upstream work. See [`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md) for the full ledger.
 
 ### April 17, 2026: Open items tracker + cleanup sweep
-- **`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`** — new canonical ledger of every `[OPEN]` across engine code, theory derivations, foundations, particles, consciousness, math connections, and bridges. 275 occurrences across 83 files, organised + auto-refreshable.
+- **`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`** — new canonical ledger of every `[OPEN]` across engine code, theory derivations, foundations, particles, reference frame context, math connections, and bridges. 275 occurrences across 83 files, organised + auto-refreshable.
 - **Dead-code removal:** `vec3Str` / `fmtForce` in `engine/web/js/inspector.js` (unused, superseded by `units.js`).
 - See [CHANGELOG.md](../CHANGELOG.md) → "Open Items Tracker + Cleanup Sweep" for full list.
 
@@ -294,7 +294,7 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 **What was removed** (archived in `archive/engine_v1_phenomenological/`):
 - Pairwise Coulomb, Yukawa, exchange, Lorentz forces
 - QCD running coupling, color Yukawa
-- Weak transmutation, binding/triad locking, noetic/consciousness coupling
+- Weak transmutation, binding/triad locking, noetic/reference frame context coupling
 - Latency/bandwidth/proper-time system
 
 **Toggle-gated extensions** (default OFF, for pedagogy and exploration):
@@ -394,7 +394,7 @@ engine/
       scale1.json             # 25 particle scenarios
       scale2.json             # 20 atom scenarios + 118 element entries
       scale3.json             # 27 molecule scenarios
-      scale4.json             # 10 consciousness scenarios + 12 figures
+      scale4.json             # 10 reference frame context scenarios + 12 figures
       scale5.json             # 4 cosmic scenarios + camera presets
       scale6.json             # Meta scenario + 13 toggle controls
   tests/
@@ -422,7 +422,7 @@ engine/
         bridge.js              # UnifiedBridge -- scale-agnostic simulation interface
       config/                 # Extracted configuration data
         toggles.js            # Toggle definitions + scenario override maps
-        scenarios.js          # Consciousness scenario descriptions
+        scenarios.js          # Reference frame context scenario descriptions
       bridge/                 # Simulation bridge layer
         bridge-factory.js     # createBridge() factory (WASM -> MockBridge fallback)
         mock-scale5.js        # CosmicMockBridge (JS-only N-body for dev)
@@ -431,15 +431,15 @@ engine/
         scale1/controller.js  # Particles: animatePE, cloud rendering, trails (912L)
         scale2/controller.js  # Atoms: animateAE, orbital clouds, force arrows (1056L)
         scale3/controller.js  # Molecules: loadMolecule, reuses Scale 2 animate (217L)
-        scale4/controller.js  # Consciousness: sLoop, Mandelbrot, hologram (443L)
+        scale4/controller.js  # Reference frame context: sLoop, Mandelbrot, hologram (443L)
         scale5/controller.js  # Cosmic: N-body, galaxy rendering (193L)
         scale6/controller.js  # Meta: existential unit, geometry toggles (150L)
       viewport.js             # Three.js 3D: particles, bonds, orbitals, fields, camera
       wasm-bridge.js          # WasmBridge + MockBridge (auto-fallback)
       cosmic-renderer.js      # [v2.12] Photorealistic cosmic body rendering
-      consciousness.js        # ConsciousnessEngine (sLoop, measurement cascade)
-      consciousness-pedagogy.js  # Pedagogical visualizations (Canvas 2D)
-      consciousness-figure.js    # Holographic figure (Three.js)
+      reference frame context.js        # Reference frame contextEngine (sLoop, measurement cascade)
+      reference frame context-pedagogy.js  # Pedagogical visualizations (Canvas 2D)
+      reference frame context-figure.js    # Holographic figure (Three.js)
       meta-unit.js            # MetaUnit (3x3x3 Moore neighborhood)
       meta-pedagogy.js        # Meta info/inspect panels
       [+ 15 additional library modules: elements, orbitals, molecules, fields, etc.]
@@ -559,7 +559,7 @@ The derivation chain lives in `ontic.h` (9+ layers). `constants.h` re-exports ev
 | 5 | `ALPHA`, `G_C`, `G_N`=0.01, `SIN2_WEINBERG` | Coupling constants |
 | 6 | `K_B`=0.511, `K_GENESIS`=1.533 | Mass scale |
 | 7 | Mass ratios, mixing angles, CP violation | Particle physics |
-| 8 | Cosmological parameters, consciousness | Extended hierarchy |
+| 8 | Cosmological parameters, reference frame context | Extended hierarchy |
 | sim | `C_SPEED`=`C_WAVE`=1/sqrt(3), `DAMPING`=alpha | Simulation parameters |
 
 ### Active vs reference constants
@@ -597,7 +597,7 @@ The derivation chain lives in `ontic.h` (9+ layers). `constants.h` re-exports ev
 | `THETA_W`, `THETA_12`, `THETA_13`, `THETA_23` | Mixing angles (theoretical reference) |
 | `DELTA_CP` | CP violation phase (theoretical reference) |
 | `G_STAR`, `PF`, `X_PLUS`, `X_MINUS` | Master quadratic intermediates |
-| `THETA_C`, `PHI_C` | Consciousness parameters (theoretical reference) |
+| `THETA_C`, `PHI_C` | Reference frame context parameters (theoretical reference) |
 | `LAMBDA_COSMO` | Cosmological constant (theoretical reference) |
 | `EULER_E`, `EULER_GAMMA`, `GAMMA_QUARTER` | Mathematical seeds |
 

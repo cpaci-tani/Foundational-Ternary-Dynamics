@@ -6,7 +6,7 @@ Semantic color tokens for the web engine. Source of truth: `engine/web/css/token
 
 - **No raw hex in component CSS.** Every color maps to a `--token` in `tokens.css` so themes can re-skin without touching components.
 - **Four themes** ship in `engine/web/css/themes/`: `abyss` (default), `nord`, `light`, `parchment`. Each re-defines the override-surface tokens.
-- **Legend palette is literal.** The seven Lagrangian / consciousness term colors are fixed across themes — a red "Born-Infeld" curve should always be the same red.
+- **Legend palette is literal.** The seven Lagrangian / reference frame context term colors are fixed across themes — a red "Born-Infeld" curve should always be the same red.
 
 ## Background ladder (dark theme defaults)
 
@@ -45,7 +45,7 @@ Semantic color tokens for the web engine. Source of truth: `engine/web/css/token
 | `--negative` | `#fb7185` | pink — error / fail / warning state |
 | `--warning` | `#fbbf24` | amber — scenario-override indicator, drift warning |
 
-## Lagrangian / consciousness term legend (theme-invariant)
+## Lagrangian / reference frame context term legend (theme-invariant)
 
 Seven colors, permanently assigned to Lagrangian density terms so charts stay consistent across themes:
 
@@ -74,16 +74,16 @@ Preview gradients shown in the overlay panel. Defined in `engine/web/css/ui/scal
 | `ℒ(x)` | diverging blue-red: `#2166ac → #f7f7f7 → #b2182b` |
 | `Entropy s` | grayscale |
 
-## Consciousness mode overrides
+## Reference frame context mode overrides
 
 When Scale 11 is active, these tokens take over:
 
 | Token | Hex |
 |---|---|
-| `--consciousness-primary` | `#00e5ff` |
-| `--consciousness-secondary` | `#7c4dff` |
-| `--consciousness-glow` | `#00bcd4` |
-| `--consciousness-gold` | `#ffd700` |
+| `--reference frame context-primary` | `#00e5ff` |
+| `--reference frame context-secondary` | `#7c4dff` |
+| `--reference frame context-glow` | `#00bcd4` |
+| `--reference frame context-gold` | `#ffd700` |
 
 ## Rules
 

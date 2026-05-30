@@ -311,7 +311,7 @@ print("    - The whole brain is the organism's master O-structure")
 print()
 print("  The cortical folds INCREASE the shell surface area for a")
 print("  given volume. More folds = more shell = richer integration")
-print("  = more complex observation/consciousness.")
+print("  = more complex observation/reference frame context.")
 print()
 print("  Gyrification index (GI) across species:")
 print(f"    {'Species':>20} | {'GI':>6} | {'Encephalization':>16}")
@@ -368,7 +368,7 @@ print("  - Fractal dimension drops sharply (Alzheimer's: D -> 2.38)")
 print("  - Cortical surface approaching smoothness (loss of folds)")
 print("  - = Weierstrass surface losing harmonics")
 print("  - = O-structure can no longer integrate its shell")
-print("  - = Consciousness dims, then ceases")
+print("  - = Reference frame context dims, then ceases")
 print()
 print("  This is the Weierstrass aging model applied to the brain:")
 print("  cellular noise accumulates until the macroscopic resonance")
@@ -407,7 +407,7 @@ Connection to the aging model:
 
 The brain is the ultimate O-structure:
   - Maximum cortical folding = maximum shell surface area
-  - Maximum integration capacity = richest consciousness
+  - Maximum integration capacity = richest reference frame context
   - Most vulnerable to harmonic accumulation (most to lose)
 
 EPISTEMIC STATUS: [CONJECTURE]

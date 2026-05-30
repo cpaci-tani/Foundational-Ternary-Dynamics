@@ -41,17 +41,20 @@ export class ScrubBarComponent {
         this.settingsBtn = this.el.querySelector('.scrub-bar-settings');
         this.popoverEl   = this.el.querySelector('.scrub-bar-settings-popover');
 
-        this.resetBtn.addEventListener('click', () => {
-            this.opts.onScrubEnd?.();
-            this._updatePlayhead(1);
-        });
+        if (this.resetBtn) {
+            this.resetBtn.addEventListener('click', () => {
+                this.opts.onScrubEnd?.();
+                this._updatePlayhead(1);
+            });
+        }
 
-        this.stripEl.addEventListener('dblclick', () => {
-            this.opts.onScrubEnd?.();
-            this._updatePlayhead(1);
-        });
-
-        this.stripEl.addEventListener('pointerdown', (e) => this._beginDrag(e));
+        if (this.stripEl) {
+            this.stripEl.addEventListener('dblclick', () => {
+                this.opts.onScrubEnd?.();
+                this._updatePlayhead(1);
+            });
+            this.stripEl.addEventListener('pointerdown', (e) => this._beginDrag(e));
+        }
 
         if (this.renderBtn) {
             this.renderBtn.addEventListener('click', () => {
@@ -185,6 +188,7 @@ export class ScrubBarComponent {
     }
 
     _beginDrag(e) {
+        if (!this.stripEl) return;
         this._dragging = true;
         this.stripEl.setPointerCapture(e.pointerId);
         this._updateFromEvent(e);
@@ -193,7 +197,7 @@ export class ScrubBarComponent {
         this.stripEl.addEventListener('pointercancel', this._onUp);
     }
     _onMove = (e) => {
-        if (!this._dragging) return;
+        if (!this._dragging || !this.stripEl) return;
         // Cache the latest pointer fraction and coalesce to one hydrate
         // per animation frame. High-rate pointers (240 Hz / trackpads) can
         // otherwise enqueue multiple heavy snapshot loads per frame.
@@ -218,14 +222,17 @@ export class ScrubBarComponent {
         this._dragging = false;
         if (this._rafId != null) { cancelAnimationFrame(this._rafId); this._rafId = null; }
         this._pendingFrac = null;
-        try { this.stripEl.releasePointerCapture(e.pointerId); } catch {}
-        this.stripEl.removeEventListener('pointermove', this._onMove);
-        this.stripEl.removeEventListener('pointerup',   this._onUp);
-        this.stripEl.removeEventListener('pointercancel', this._onUp);
+        if (this.stripEl) {
+            try { this.stripEl.releasePointerCapture(e.pointerId); } catch {}
+            this.stripEl.removeEventListener('pointermove', this._onMove);
+            this.stripEl.removeEventListener('pointerup',   this._onUp);
+            this.stripEl.removeEventListener('pointercancel', this._onUp);
+        }
         this.opts.onScrubEnd?.();
     };
 
     _updateFromEvent(e) {
+        if (!this.stripEl) return;
         const rect = this.stripEl.getBoundingClientRect();
         const t = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
         this._updatePlayhead(t);
@@ -286,31 +293,39 @@ export class ScrubBarComponent {
         // Skip zone drawing if the buffer has nothing for THIS scenario yet.
         // `now` is sim-tick (scenario); a stale buffer from a prior scenario
         // would have oldestTick > now, which would compute negative positions.
-        this.zonesEl.innerHTML = '';
-        const haveMem = mem.size > 0 && mem.oldestTick <= now;
-        if (haveMem) {
-            const oldest = mem.oldestTick;
-            const span = Math.max(1, now - oldest);
-            for (const z of mem.asZones()) {
-                if (z.toTick > now) continue; // skip any post-"now" stragglers
-                const start = Math.max(0, (z.fromTick - oldest) / span);
-                const end   = Math.min(1, (z.toTick   - oldest) / span);
-                if (end <= start) continue;
-                const div = document.createElement('div');
-                div.className = 'scrub-bar-zone';
-                div.dataset.lod = String(z.lod);
-                div.style.left  = `${(start * 100).toFixed(2)}%`;
-                div.style.width = `${((end - start) * 100).toFixed(2)}%`;
-                this.zonesEl.appendChild(div);
+        if (this.zonesEl) {
+            this.zonesEl.innerHTML = '';
+            const haveMem = mem.size > 0 && mem.oldestTick <= now;
+            if (haveMem) {
+                const oldest = mem.oldestTick;
+                const span = Math.max(1, now - oldest);
+                for (const z of mem.asZones()) {
+                    if (z.toTick > now) continue; // skip any post-"now" stragglers
+                    const start = Math.max(0, (z.fromTick - oldest) / span);
+                    const end   = Math.min(1, (z.toTick   - oldest) / span);
+                    if (end <= start) continue;
+                    const div = document.createElement('div');
+                    div.className = 'scrub-bar-zone';
+                    div.dataset.lod = String(z.lod);
+                    div.style.left  = `${(start * 100).toFixed(2)}%`;
+                    div.style.width = `${((end - start) * 100).toFixed(2)}%`;
+                    this.zonesEl.appendChild(div);
+                }
             }
         }
 
         const hasRender = !!(render && render.size > 0);
-        this.renderEl.dataset.active = hasRender ? 'true' : 'false';
-        if (this.renderBtn) this.renderBtn.dataset.rendering = hasRender ? 'true' : 'false';
+        if (this.renderEl) {
+            this.renderEl.dataset.active = hasRender ? 'true' : 'false';
+        }
+        if (this.renderBtn) {
+            this.renderBtn.dataset.rendering = hasRender ? 'true' : 'false';
+        }
 
         if (!this._dragging) {
-            this.timeEl.textContent = 'now';
+            if (this.timeEl) {
+                this.timeEl.textContent = 'now';
+            }
             this._updatePlayhead(1);
         } else if (this._lastScrubTick != null) {
             // Report age in SIM seconds (60 scenario ticks/sec), not wall-clock.
@@ -318,7 +333,9 @@ export class ScrubBarComponent {
             // `now` and `_lastScrubTick` both stop advancing, so the age
             // display freezes with them instead of drifting via global time.
             const ageSec = Math.max(0, (now - this._lastScrubTick) / 60).toFixed(1);
-            this.timeEl.textContent = `t−${ageSec}s`;
+            if (this.timeEl) {
+                this.timeEl.textContent = `t−${ageSec}s`;
+            }
         }
     }
 

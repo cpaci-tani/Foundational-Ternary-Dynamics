@@ -11,11 +11,11 @@
 
 Newcomers should read these in order:
 
-1. [LEDGER.md](LEDGER.md) — the single source of truth for per-claim status; papers derive their tags from here.
-2. [TRACKER_ONTIC_TRUTH.md](TRACKER_ONTIC_TRUTH.md) — canonical bedrock: what *actually* survives skeptical mathematical review, ranked into 5 truth tiers.
+1. [LEDGER.md](core_ledgers/LEDGER.md) — the single source of truth for per-claim status; papers derive their tags from here.
+2. [TRACKER_ONTIC_TRUTH.md](core_ledgers/TRACKER_ONTIC_TRUTH.md) — canonical bedrock: what *actually* survives skeptical mathematical review, ranked into 5 truth tiers.
 3. [AUDIT_EPISTEMIC_AUDIT.md](AUDIT_EPISTEMIC_AUDIT.md) — the brutally-honest "derived vs imported" critical-assessment essay.
 4. [CATALOG_PARAMETRIC_INSERTIONS.md](CATALOG_PARAMETRIC_INSERTIONS.md) — every place FTD supplies numbers to a borrowed formula (~162 rows).
-5. [TRACKER_OPEN_ITEMS.md](TRACKER_OPEN_ITEMS.md) — every `[OPEN]` item across code + theory, one place to pick work.
+5. [TRACKER_OPEN_ITEMS.md](core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` item across code + theory, one place to pick work.
 
 ---
 
@@ -25,9 +25,9 @@ The load-bearing status authorities. If a paper and one of these disagree, these
 
 | File | Tag | Purpose |
 |---|---|---|
-| [LEDGER.md](LEDGER.md) | [REFERENCE] | Master claim ledger; every load-bearing claim with tag history + dependencies. Single source of truth for claim status. |
-| [TRACKER_ONTIC_TRUTH.md](TRACKER_ONTIC_TRUTH.md) | [REFERENCE] | Canonical bedrock; 5 truth tiers (T1 rock-solid → T5 conjecture), each tied to a verification artifact. |
-| [TRACKER_OPEN_ITEMS.md](TRACKER_OPEN_ITEMS.md) | [REFERENCE] | Central ledger of every `[OPEN]` claim — code stubs, theory gaps, verification tasks. |
+| [LEDGER.md](core_ledgers/LEDGER.md) | [REFERENCE] | Master claim ledger; every load-bearing claim with tag history + dependencies. Single source of truth for claim status. |
+| [TRACKER_ONTIC_TRUTH.md](core_ledgers/TRACKER_ONTIC_TRUTH.md) | [REFERENCE] | Canonical bedrock; 5 truth tiers (T1 rock-solid → T5 conjecture), each tied to a verification artifact. |
+| [TRACKER_OPEN_ITEMS.md](core_ledgers/TRACKER_OPEN_ITEMS.md) | [REFERENCE] | Central ledger of every `[OPEN]` claim — code stubs, theory gaps, verification tasks. |
 | [CATALOG_PARAMETRIC_INSERTIONS.md](CATALOG_PARAMETRIC_INSERTIONS.md) | [REFERENCE] | Canonical enumeration of parametric insertions vs genuine derivations. |
 | [REF_CLAIMS_MATRIX.md](REF_CLAIMS_MATRIX.md) | [REFERENCE] | Structured matrix of headline claims with IDs, dependencies, falsification criteria. |
 | [CHANGELOG_REFRAME.md](CHANGELOG_REFRAME.md) | [REFERENCE] | Append-only changelog of every change made under the 2026-04-19 undefined-boundary reframe. |
@@ -48,6 +48,7 @@ Critical self-assessment of what FTD derives vs imports, and where derivations h
 | [AUDIT_INFINITY_REFRAME.md](AUDIT_INFINITY_REFRAME.md) | [AUDIT] | Portfolio-wide triage of the completed-infinity → undefined-boundary ontology shift. |
 | [AUDIT_RATIONAL_FIT_CLAIMS.md](AUDIT_RATIONAL_FIT_CLAIMS.md) | [AUDIT] | Rigidity test applied to rational/integer fits (sin²θ_W, α_s, PMNS, Δm²); several downgraded. |
 | [AUDIT_DUAL_SUBSTRATE_PROVENANCE.md](AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) | [AUDIT FINDING] | Provenance check on the dual-substrate decomposition; F1-hygiene, no spine demotion. |
+| [AUDIT_MASS_CHAIN_REDTEAM.md](AUDIT_MASS_CHAIN_REDTEAM.md) | [ADVERSARIAL CRITIQUE] | Rigorous adversarial critique of the leptonic and hadronic mass derivation chain; identifies post-hoc fitting and MeV scale calibration issues. |
 
 ---
 
@@ -110,4 +111,4 @@ This cluster has two subdirectories holding historical / packaged material — n
 
 ---
 
-27 active docs in this cluster (+ subdirectories `reframe_deployment/` and `archive_session_outputs/`).
+28 active docs in this cluster (+ subdirectories `reframe_deployment/` and `archive_session_outputs/`).

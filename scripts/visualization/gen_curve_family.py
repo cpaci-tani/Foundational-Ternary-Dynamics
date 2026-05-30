@@ -402,17 +402,17 @@ def gen_quadratic_phase():
                    fontsize=9, color=RED, fontweight='bold',
                    arrowprops=dict(arrowstyle='->', color=RED, lw=1.0))
 
-    # Mark consciousness point (k=0.5)
+    # Mark reference frame context point (k=0.5)
     k_con = 0.5
     re_con = re_plus[np.argmin(np.abs(k_vals - k_con))]
     ax_re.plot(k_con, re_con, 's', color=PURPLE, markersize=8, zorder=5)
-    ax_re.annotate(r'$k=\frac{1}{2}$ (consciousness)',
+    ax_re.annotate(r'$k=\frac{1}{2}$ (reference frame context)',
                    xy=(k_con, re_con), xytext=(k_con + 1.5, re_con + 25),
                    fontsize=9, color=PURPLE,
                    arrowprops=dict(arrowstyle='->', color=PURPLE, lw=1.0))
 
     # Shade regions
-    ax_re.axvspan(0, k_crit, alpha=0.06, color=PURPLE, label='Complex roots\n(consciousness)')
+    ax_re.axvspan(0, k_crit, alpha=0.06, color=PURPLE, label='Complex roots\n(reference frame context)')
     ax_re.axvspan(k_crit, 25, alpha=0.06, color=NAVY, label='Real roots\n(physics)')
 
     ax_re.set_ylabel('Re(x)', fontsize=11)
@@ -426,7 +426,7 @@ def gen_quadratic_phase():
     ax_im.axvline(k_crit, color='gray', ls='--', lw=0.8, alpha=0.6)
     ax_im.axhline(0, color='gray', lw=0.5)
 
-    # Mark consciousness Im values
+    # Mark reference frame context Im values
     im_con = im_plus[np.argmin(np.abs(k_vals - k_con))]
     ax_im.plot(k_con, im_con, 's', color=PURPLE, markersize=8, zorder=5)
     ax_im.plot(k_con, -im_con, 's', color='#B565A7', markersize=8, zorder=5)
@@ -446,7 +446,7 @@ def gen_quadratic_phase():
 
     # Label regions
     ax_im.text(k_crit / 2, ax_im.get_ylim()[0] * 0.85,
-               'COMPLEX\n(consciousness)', ha='center', fontsize=10,
+               'COMPLEX\n(reference frame context)', ha='center', fontsize=10,
                color=PURPLE, alpha=0.6, fontweight='bold')
     ax_im.text((k_crit + 25) / 2, ax_im.get_ylim()[0] * 0.85,
                'REAL\n(physics)', ha='center', fontsize=10,
@@ -531,7 +531,7 @@ def gen_origin_avoidance():
     ax.text(0.05, 0.05,
             r'Exclusion zone: $r_{min} = G^{*2}/(2 \cdot N_{base}^2) = G^{*2}/32$'
             '\nThe curve never crosses the origin — the\n'
-            'consciousness roots remain complex, not real.',
+            'reference frame context roots remain complex, not real.',
             transform=ax.transAxes, fontsize=9, va='bottom',
             bbox=dict(boxstyle='round,pad=0.4', facecolor='#FFF8F0',
                       edgecolor=GOLD, alpha=0.9))

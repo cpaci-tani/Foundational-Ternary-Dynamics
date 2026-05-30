@@ -49,6 +49,9 @@ public:
 
     // Periodic wrapping
     int wrap(int val) const {
+        if (val >= 0 && val < size_) return val;
+        if (val >= size_ && val < 2 * size_) return val - size_;
+        if (val >= -size_ && val < 0) return val + size_;
         int r = val % size_;
         return r < 0 ? r + size_ : r;
     }

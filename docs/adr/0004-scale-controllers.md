@@ -7,7 +7,7 @@
 ## Context
 
 The dashboard hosts 12+ scales (lattice / particle / atom / molecular /
-planetary / cosmic / meta / consciousness / etc.). Each scale needs its own
+planetary / cosmic / meta / reference frame context / etc.). Each scale needs its own
 tick loop, scenario loading, UI panels, and reactive state. Putting all of
 this in one entry point (`app_dag.js`) made cross-scale concerns implicit
 and prevented isolated testing.

@@ -165,7 +165,6 @@ export class MockBridge {
 
     setReflectiveBoundary(on) { this._reflectiveBoundary = !!on; }
 
-    /** Precompute boundary mask so _tickFlux can skip per-voxel _insideBoundary calls. */
     _rebuildBoundaryMask() {
         const N = this.latticeSize;
         if (this._boundaryShape === 'cube' || this._boundaryShape === 'none') {
@@ -529,13 +528,25 @@ export class MockBridge {
     // ── Snapshot / load hooks for the playback TimelineBuffer ───────
     // Read methods return fresh copies (snapshots must survive past the next tick).
     getScale0LatticeBuffer() {
-        return this._stateGrid ? new Int8Array(this._stateGrid) : null;
+        if (!this._stateGrid) {
+            const N = this.latticeSize;
+            this._stateGrid = new Int8Array(N * N * N);
+        }
+        return new Int8Array(this._stateGrid);
     }
     getScale0FluxBuffer() {
-        return this._fluxJ ? new Float32Array(this._fluxJ) : null;
+        if (!this._fluxJ) {
+            const N = this.latticeSize;
+            this._fluxJ = new Float64Array(N * N * N * 3);
+        }
+        return new Float32Array(this._fluxJ);
     }
     getScale0WaveBuffer() {
-        return this._fluxWV ? new Float32Array(this._fluxWV) : null;
+        if (!this._fluxWV) {
+            const N = this.latticeSize;
+            this._fluxWV = new Float64Array(N * N * N * 3);
+        }
+        return new Float32Array(this._fluxWV);
     }
     getScale0ParticleList() {
         return Array.isArray(this._particles) ? this._particles.map((p) => ({ ...p })) : [];

@@ -62,7 +62,7 @@ A particle appears when flux density exceeds the threshold.
 
 **In plain English:** When the flux field concentrates enough energy at a point, that point "crystallizes" into a particle. The sign of the flux divergence (is flux flowing in or out?) determines whether it's matter or antimatter.
 
-**This IS wave function collapse.** The flux field (= wave function) is spread out. When it concentrates past K_B somewhere, that point manifests. The probability follows from |ψ|² because ρ = |**J**| and the threshold crossing statistics produce the Born rule. **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200 (2026-05-23); status under canonical 26-neighbour engine OPEN.]** The simplest substrate setting tested (linear 6-neighbour wave equation, Gaussian-envelope initial flux, deterministic ReLU manifestation) produces Rice upcrossing statistics `freq ∝ exp(−(K_B−μ)²/2σ²)` rather than `|ψ|²` scaling. See [`docs/theory/06_consciousness/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](../06_consciousness/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md).
+**This IS wave function collapse.** The flux field (= wave function) is spread out. When it concentrates past K_B somewhere, that point manifests. The probability follows from |ψ|² because ρ = |**J**| and the threshold crossing statistics produce the Born rule. **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200 (2026-05-23); status under canonical 26-neighbour engine OPEN.]** The simplest substrate setting tested (linear 6-neighbour wave equation, Gaussian-envelope initial flux, deterministic ReLU manifestation) produces Rice upcrossing statistics `freq ∝ exp(−(K_B−μ)²/2σ²)` rather than `|ψ|²` scaling. See [`docs/theory/06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](../06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md).
 
 ## 1B. Evaporation (±1 → 0)
 
@@ -90,9 +90,9 @@ When matter and antimatter are adjacent, both return to void.
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Manifestation threshold | K_B | 0.511 MeV | m_e = M_P √(2π)(16/3)α¹¹ | ✅ DERIVED (0.19%) |
+| Manifestation threshold | K_B | 0.511 MeV | m_e = M_P √(2π)(16/3)α¹¹ | ⚠️ CONJECTURE (0.19% fit) |
 | Planck mass | M_P | 1.22 × 10¹⁹ GeV | Lattice spacing identification | ❌ INPUT |
-| Fine structure constant | α | 1/137.036 | Master quadratic from G* | ✅ DERIVED (1.26 ppm) |
+| Fine structure constant | α | 1/137.036 | Master quadratic from G* | ⚠️ CONJECTURE (1.26 ppm) |
 | Genesis probability form | 1 − e^(−x) | Exponential | Chosen for smoothness | ⚠️ SELECTION |
 | Polarity rule | sign(∇·**J**) | ±1 | Symmetry breaking mechanism | ⚠️ IMPOSED |
 
@@ -143,7 +143,7 @@ When matter and antimatter are adjacent, both return to void.
 
 **What it does:** Couples manifested matter to the flux field. This is why "observation" causes collapse.
 **Standard physics equivalent:** The measurement postulate, decoherence.
-**Confusion it resolves:** "Does consciousness collapse the wave function?" → No. Any manifested matter does it. A rock works as well as a physicist.
+**Confusion it resolves:** "Does reference frame context collapse the wave function?" → No. Any manifested matter does it. A rock works as well as a physicist.
 
 ## The Coupling
 
@@ -280,10 +280,10 @@ IF s(v) = 0 everywhere:
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
 | Strong coupling (sim) | g_s | 1.0 | Phenomenological | ⚠️ IMPOSED |
-| Strong coupling (theory) | α_s(M_Z) | 7/59 = 0.1186 | From b₃ = 7 | ✅ DERIVED (0.6%) |
+| Strong coupling (theory) | α_s(M_Z) | 7/59 = 0.1186 | From b₃ = 7 | ⚠️ PARAMETRIC (0.6% fit) |
 | Pion mass scale | m_π | 0.15 | Sets Yukawa range | ⚠️ IMPOSED |
-| Number of colors | N_c | 3 | Master quadratic x₋ | ✅ DERIVED (0.8%) |
-| Beta function coeff | b₃ | 7 | Framework integer | ✅ DERIVED |
+| Number of colors | N_c | 3 | Master quadratic x₋ | ⚠️ RETIRED (root-ident); topological THEOREM |
+| Beta function coeff | b₃ | 7 | Framework integer | ✅ THEOREM (CM sequence) |
 | Functional form | Yukawa | — | Borrowed from nuclear physics | ⚠️ IMPORTED |
 
 ---
@@ -308,13 +308,13 @@ The weak force is the only force that **changes particle identity.** EM and stro
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Weak mixing angle | sin²θ_W | 3/13 = 0.2308 | N_c/N_eff | ✅ DERIVED (0.19%) |
+| Weak mixing angle | sin²θ_W | 3/13 = 0.2308 | N_c/N_eff | ⚠️ PARAMETRIC (0.19% fit) |
 | Stress threshold | σ_weak | 10.0 | Phenomenological | ⚠️ IMPOSED |
-| W boson mass | m_W | 80.4 GeV | 67/(8α²) × m_e | ✅ DERIVED (0.06%) |
-| Z boson mass | m_Z | 91.2 GeV | m_W × √(13/10) | ✅ DERIVED (0.09%) |
+| W boson mass | m_W | 80.4 GeV | 67/(8α²) × m_e | ⚠️ CONJECTURE (0.06% fit) |
+| Z boson mass | m_Z | 91.2 GeV | m_W × √(13/10) | ⚠️ CONJECTURE (0.09% fit) |
 | Fermi constant | G_F | 1.17 × 10⁻⁵ GeV⁻² | Required input | ❌ INPUT |
-| CP violation phase | δ | 66.8° | arctan(7/3) | ✅ DERIVED (2.1%) |
-| Cabibbo angle | θ_C | 13.16° | sin(θ_C) = G*/N_eff | ✅ DERIVED (1.2%) |
+| CP violation phase | δ | 66.8° | arctan(7/3) | ⚠️ CONJECTURE (2.1% fit) |
+| Cabibbo angle | θ_C | 13.16° | sin(θ_C) = G*/N_eff | ⚠️ CONJECTURE (1.2% fit) |
 
 ### CKM Matrix (Quark Flavor Mixing via W Boson)
 
@@ -369,11 +369,11 @@ The weak force is the only force that **changes particle identity.** EM and stro
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Gravitational coupling (sim) | G_N | 0.01 | 1/(b₃+N_c)² | ✅ DERIVED |
-| Gravitational fine structure | α_G | 5.91 × 10⁻³⁹ | 2π(16/3)²(94/7)²α²⁰ | ✅ DERIVED (0.06%) |
-| Newton's constant | G | 6.678 × 10⁻¹¹ | α_G × ℏc/m_p² | ✅ DERIVED (0.055%) |
-| Hierarchy exponent | k | 20 = 13 + 7 | N_eff + b₃ | ✅ DERIVED |
-| Hierarchy ratio | α/α_G | ~10³⁶ | α¹⁻²⁰ × prefactor | ✅ DERIVED |
+| Gravitational coupling (sim) | G_N | 0.01 | 1/(b₃+N_c)² | ❌ RETRACTED (1/100 model); sim coupling is IMPOSED |
+| Gravitational fine structure | α_G | 5.91 × 10⁻³⁹ | 2π(16/3)²(94/7)²α²⁰ | ✅ THEOREM (postulate-cond) |
+| Newton's constant | G | 6.678 × 10⁻¹¹ | α_G × ℏc/m_p² | ✅ THEOREM (postulate-cond) |
+| Hierarchy exponent | k | 20 = 13 + 7 | N_eff + b₃ | ✅ THEOREM (sum rule) |
+| Hierarchy ratio | α/α_G | ~10³⁶ | α¹⁻²⁰ × prefactor | ✅ THEOREM (ratio) |
 
 ### The Contextual Relevance Spectrum (Φ = GM/Rc²)
 
@@ -596,7 +596,7 @@ Boundary condition: low-entropy start
          Everything else:
          particles, atoms, stars,
          planets, chemistry, life,
-         consciousness, this document
+         reference frame context, this document
 ```
 
 Six algorithms. One curve. One coupling constant. Four integers. A low-entropy boundary condition. That's physics.

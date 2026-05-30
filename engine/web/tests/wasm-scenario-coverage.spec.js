@@ -73,8 +73,8 @@ const NEWLY_PORTED_SCENARIOS = [
     ['s0-seed-wilson-loop',   'newly ported',  's0-seed gauge'],
     ['s0-seed-flux-tube',     'newly ported',  's0-seed gauge'],
     ['s0-seed-schwarzschild', 'newly ported',  's0-seed gravity'],
-    ['s0-seed-sloop',         'newly ported',  's0-seed consciousness'],
-    ['s0-seed-observer-cell', 'newly ported',  's0-seed consciousness'],
+    ['s0-seed-sloop',         'newly ported',  's0-seed reference frame context'],
+    ['s0-seed-observer-cell', 'newly ported',  's0-seed reference frame context'],
 ];
 
 test.describe('WASM Scale-0 scenario coverage', () => {

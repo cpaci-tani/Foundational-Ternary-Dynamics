@@ -177,7 +177,7 @@ using ontic::C4;
 using ontic::EPSILON;
 using ontic::EPSILON_ABS;
 
-// Layer 8: Consciousness quadratic (noetic domain)
+// Layer 8: Reference frame context quadratic (noetic domain)
 using ontic::C_MANDELBROT;
 using ontic::COS2_THETA_C;
 using ontic::K_C_SQUARED;
@@ -185,7 +185,7 @@ using ontic::K_NOETIC;
 using ontic::SIN2_THETA_C;
 using ontic::Y_REAL;
 
-// Layer 8b: Golden ratio fixed point (self-referential consciousness)
+// Layer 8b: Golden ratio fixed point (self-referential reference frame context)
 using ontic::BETA_INTROSPECTION;
 using ontic::LAMBDA_LOOP;
 using ontic::N_CONSCIOUSNESS_MIN;

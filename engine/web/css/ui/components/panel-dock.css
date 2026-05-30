@@ -133,6 +133,10 @@ html[data-density="compact"] #panel-area {
     transform: scale(0.96);
 }
 
+#app.panels-collapsed #tab-bar {
+    pointer-events: none;
+}
+
 #app.panels-collapsed #tab-bar .tab {
     opacity: 0.4;
     pointer-events: none;

@@ -39,6 +39,14 @@ void sor_sweep_18pt(std::vector<double>& phi,
   const int o_ypzp = o_yp + o_zp, o_ypzm = o_yp + o_zm;
   const int o_ymzp = o_ym + o_zp, o_ymzm = o_ym + o_zm;
 
+  // NOTE: Red-Black SOR sweeps for an 18-point Laplacian MUST run sequentially
+  // to remain deterministic and avoid read-write race conditions.
+  // Proof: In a 3D grid, any edge-sharing neighbor (distance sqrt(2), e.g. x+1, y+1, z)
+  // has coordinate sum (x+1)+(y+1)+z = x+y+z+2, which has the EXACT SAME color
+  // (parity of x+y+z) as the center voxel. Because the 18-point stencil includes
+  // 12 edge-sharing neighbors, a Red update reads from other Red voxels. Parallelizing
+  // this sweep causes threads to concurrently read and write Red values, breaking
+  // bit-exact golden determinism.
   for (int color = 0; color < 2; ++color) {
     for (int z = 1; z < Nm1; ++z) {
       for (int y = 1; y < Nm1; ++y) {

@@ -82,7 +82,7 @@ The Born rule "derivation" in section 2.4 claims P = |psi|^2 follows from "manif
 2. The complexification psi = J_x + iJ_y is performed
 3. Manifestation probability is then claimed to follow |psi|^2
 
-But why |psi|^2 rather than |psi|, |psi|^4, or any other function? The claim that this follows from "the projection from the complex observer domain to the real manifestation domain" (lines 80-82) is metaphysical speculation, not derivation. The reference to "Consciousness Quadratic" suggests the argument relies on additional assumptions not presented in these chapters.
+But why |psi|^2 rather than |psi|, |psi|^4, or any other function? The claim that this follows from "the projection from the complex observer domain to the real manifestation domain" (lines 80-82) is metaphysical speculation, not derivation. The reference to "Reference frame context Quadratic" suggests the argument relies on additional assumptions not presented in these chapters.
 
 ### MAJOR Issues
 

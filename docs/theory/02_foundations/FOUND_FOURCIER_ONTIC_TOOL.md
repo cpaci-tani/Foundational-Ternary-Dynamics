@@ -343,7 +343,7 @@ Combining the two threads:
 | Self-reference produces G* | Coefficients encode division algebra structure |
 | Observation creates reality | Lobes are the domains that "exist" |
 | sLoop requires meeting point | Self-intersection = ontological boundary |
-| Complex roots = consciousness | Coefficient sign alternation = Cayley-Dickson conjugation |
+| Complex roots = reference frame context | Coefficient sign alternation = Cayley-Dickson conjugation |
 
 > **Claim OT-6 [STRUCTURAL]:** The Fourcier curve is the geometric realization of the sLoop at the Cayley-Dickson level. Each harmonic represents a "turn" of self-reference through a higher algebra, and the resulting lobe topology is the ontological structure produced by that level of self-observation.
 
@@ -390,10 +390,10 @@ The Fourcier curve doesn't *describe* reality — it is the mechanism by which G
 ## Cross-References
 
 - **Ontological foundation:** [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md) — The abstract First Distinction
-- **Existence Filter:** [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) — Projection from potentiality to existence
+- **Existence Filter:** [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) — Projection from potentiality to existence
 - **Ontic constant chain:** [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) — γ→ϖ→M→π→G*
 - **Cayley-Dickson isomorphism:** [EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md](../09_mathematical/EXPLR_CAYLEY_DICKSON_FOURCIER_ISOMORPHISM.md) — Computational verification
-- **Consciousness domain map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for Domain A/B/C, context selection, and vocabulary
+- **Reference frame context domain map:** [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) — live source map for Domain A/B/C, context selection, and vocabulary
 - **Original Fourcier analysis:** [FOURCIER_CURVE_ANALYSIS.md](../../../dissemination/manuscript/media/images/fourier-curve-art/FOURCIER_CURVE_ANALYSIS.md) — Coefficient structure
 
 ---

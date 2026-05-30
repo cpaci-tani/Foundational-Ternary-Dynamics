@@ -6,7 +6,7 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge } from './bridge-init.js';
+import { createBridge, MockBridge } from './bridge-init.js';
 // PhysicsHarness factory — lazily attached per-bridge by panels and
 // overlays that need the canonical read/write surface.
 import { getPhysicsHarness } from './physics/index.js';
@@ -45,7 +45,8 @@ import { BackgroundManager } from './backgrounds.js';
 import { PETelemetryPanel } from './pe-telemetry.js';
 import { initVerifyPanel } from './verify-panel/component.js';
 import { AppShell } from './ui/shell/app-shell.js';
-import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel } from './ui/panels/index.js';
+import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
+import { floatingWindowManager } from './ui/components/floating-window/component.js';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
 import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js';
 import { initConservationMicropanel } from './scales/scale0/ui/overlays/conservation-micropanel.js';
@@ -68,6 +69,7 @@ let inspectorRuntime = null;
 let diagnostics = null;
 let diagnosticsPanel = null;
 let chartsPanel = null;
+let telemetryGridPanel = null;
 let lagrangianPanel = null;
 // Legacy chart instances (scale1/scale2 still push into these ring buffers).
 let fluxEnergyChart = null;
@@ -169,6 +171,7 @@ function _makeCtx() {
         get diagnostics() { return diagnostics; },
         get diagnosticsPanel() { return diagnosticsPanel; },
         get chartsPanel() { return chartsPanel; },
+        get telemetryGridPanel() { return telemetryGridPanel; },
         get lagrangianPanel() { return lagrangianPanel; },
         get fluxEnergyChart() { return fluxEnergyChart; },
         get particleChart() { return particleChart; },
@@ -277,6 +280,13 @@ function _resetAllVisualState() {
 
     // ── Scale 0: delegate to controller for field state, buttons, viewport overlays ──
     Scale0Controller.resetScale0(_makeCtx());
+
+    if (engineMode !== 'lattice') {
+        if (viewport) {
+            viewport.toggleFluxVolume(false);
+            viewport.toggleFluxSlice(false);
+        }
+    }
 
     // ── Scale 1: PE overlay buttons (delegated to Scale1Controller) ──
     Scale1Controller.resetScale1({ viewport });
@@ -450,14 +460,23 @@ async function init() {
     const engineEl = document.getElementById('status-engine');
     const computeEl = document.getElementById('status-compute');
 
-    // 1. Try native GPU engine
-    debugLog('[init] Trying native GPU engine on ws://127.0.0.1:9100...');
-    try {
-        bridge = await tryNativeBridge(latticeSize);
-    } catch (e) {
-        console.warn('[init] Native GPU bridge error:', e);
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceMock = urlParams.get('engine') === 'mock';
+
+    if (!forceMock) {
+        // 1. Try native GPU engine
+        debugLog('[init] Trying native GPU engine on ws://127.0.0.1:9100...');
+        try {
+            bridge = await tryNativeBridge(latticeSize);
+        } catch (e) {
+            console.warn('[init] Native GPU bridge error:', e);
+            bridge = null;
+        }
+    } else {
+        debugLog('[init] Skipping native GPU: forceMock active');
         bridge = null;
     }
+
     debugLog('[init] Native bridge result:', bridge ? 'connected' : 'unavailable');
     if (bridge && bridge.ready) {
         _loadProgress(30, 'GPU engine connected');
@@ -470,22 +489,32 @@ async function init() {
             : 'Connected to native CPU engine';
         showToast('Native GPU engine connected — full CUDA acceleration active.', 'success');
     } else {
-        _loadProgress(20, 'Compiling WASM engine...');
-        bridge = await createBridge(latticeSize);
-        if (bridge.isWasm && bridge.ready) {
-            _loadProgress(30, 'WASM engine ready');
-            engineEl.textContent = 'WASM Engine';
-            engineEl.style.color = '#4ade80';
-            computeEl.textContent = 'CPU';
-            computeEl.style.color = '#60a5fa';
-            computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
-        } else {
-            _loadProgress(30, 'Mock engine (fallback)');
+        if (forceMock) {
+            _loadProgress(30, 'Mock engine (forced)');
+            bridge = new MockBridge(latticeSize);
             engineEl.textContent = 'Mock Engine';
             engineEl.style.color = '#fbbf24';
             computeEl.textContent = 'CPU';
             computeEl.style.color = '#667';
-            showToast('No engine available — running in Mock mode. Start ws_server.exe for GPU.', 'warning');
+            showToast('Running in forced Mock mode.', 'warning');
+        } else {
+            _loadProgress(20, 'Compiling WASM engine...');
+            bridge = await createBridge(latticeSize);
+            if (bridge.isWasm && bridge.ready) {
+                _loadProgress(30, 'WASM engine ready');
+                engineEl.textContent = 'WASM Engine';
+                engineEl.style.color = '#4ade80';
+                computeEl.textContent = 'CPU';
+                computeEl.style.color = '#60a5fa';
+                computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
+            } else {
+                _loadProgress(30, 'Mock engine (fallback)');
+                engineEl.textContent = 'Mock Engine';
+                engineEl.style.color = '#fbbf24';
+                computeEl.textContent = 'CPU';
+                computeEl.style.color = '#667';
+                showToast('No engine available — running in Mock mode. Start ws_server.exe for GPU.', 'warning');
+            }
         }
     }
 
@@ -499,6 +528,7 @@ async function init() {
     // Initialize panel component wrappers (Phase 4)
     diagnosticsPanel = initDiagnosticsPanel();
     chartsPanel = initChartsPanel();
+    telemetryGridPanel = initTelemetryGridPanel();
     lagrangianPanel = initLagrangianPanel();
     initFluxSlicePanel();
     initP1ObservablesPanel();
@@ -597,6 +627,7 @@ async function init() {
 
     // Done — dismiss loading overlay
     _loadProgress(100, 'Ready');
+    if (appShell) appShell.setReady();
     setTimeout(() => {
         const lo = document.getElementById('loading-overlay');
         if (lo) {
@@ -642,6 +673,20 @@ function animate(now) {
     if (bgManager) bgManager.update(1 / 60);
 
     inspectorRuntime?.updateFloatingPanels();
+
+    // Update active docked panels or floated windows in real-time
+    if (activeTab === 'telemetry-grid' || floatingWindowManager.has('telemetry-grid')) {
+        telemetryGridPanel?.update();
+    }
+    if (activeTab === 'charts' || floatingWindowManager.has('charts')) {
+        chartsPanel?.update();
+    }
+    if (activeTab === 'diagnostics' || floatingWindowManager.has('diagnostics')) {
+        diagnosticsPanel?.update();
+    }
+    if (activeTab === 'lagrangian' || floatingWindowManager.has('lagrangian')) {
+        lagrangianPanel?.update();
+    }
 
     // FPS counter
     frameCount++;
@@ -904,6 +949,8 @@ function wireTabs() {
 
         if (target === 'charts') {
             chartsPanel?.update();
+        } else if (target === 'telemetry-grid') {
+            telemetryGridPanel?.update();
         } else if (target === 'lagrangian') {
             lagrangianPanel?.update();
         } else if (target === 'diagnostics') {
@@ -944,7 +991,25 @@ function wireControls() {
     };
     for (const [elId, setter] of Object.entries(peToggleMap)) {
         const el = document.getElementById(elId);
-        if (el) el.addEventListener('change', () => setter(el.checked));
+        if (el) {
+            el.addEventListener('change', () => {
+                const checked = el.checked;
+                setter(checked);
+                if (elId === 'pe-gravity') {
+                    const btn = document.getElementById('toggle-pe-gravity');
+                    if (btn) {
+                        if (checked) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    }
+                } else if (elId === 'pe-damping') {
+                    const btn = document.getElementById('toggle-pe-damping');
+                    if (btn) {
+                        if (checked) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    }
+                }
+            });
+        }
     }
 
     // PE sliders
@@ -1121,7 +1186,7 @@ function wireViewportToggles() {
             const on = peGravBtn.classList.contains('active');
             bridge.peSetGravity(on);
             // Sync sidebar checkbox if it exists
-            const cb = document.getElementById('pe-gravity-check');
+            const cb = document.getElementById('pe-gravity');
             if (cb) cb.checked = on;
         });
     }
@@ -1133,7 +1198,7 @@ function wireViewportToggles() {
             const on = peDampBtn.classList.contains('active');
             bridge.peSetDamping(on);
             // Sync sidebar checkbox if it exists
-            const cb = document.getElementById('pe-damping-check');
+            const cb = document.getElementById('pe-damping');
             if (cb) cb.checked = on;
         });
     }

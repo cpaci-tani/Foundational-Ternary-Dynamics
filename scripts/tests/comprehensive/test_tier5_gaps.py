@@ -313,14 +313,14 @@ class TestIntegerUniquenessExhaustive:
 
 
 # =============================================================================
-# Test 5.6: Consciousness Claims Verification
+# Test 5.6: Reference frame context Claims Verification
 # =============================================================================
 
 
-class TestConsciousnessVerification:
-    """Verify the mathematical claims about consciousness parameters."""
+class TestReference frame contextVerification:
+    """Verify the mathematical claims about reference frame context parameters."""
 
-    def test_consciousness_quadratic_roots(self):
+    def test_reference frame context_quadratic_roots(self):
         """Verify complex roots from k=1/2 quadratic."""
         if not HAS_MPMATH:
             pytest.skip("mpmath required")
@@ -333,7 +333,7 @@ class TestConsciousnessVerification:
         c = g_star**3 / 2
 
         disc = b**2 - 4 * a * c
-        print(f"\n  Consciousness quadratic discriminant: {float(disc):.6f}")
+        print(f"\n  Reference frame context quadratic discriminant: {float(disc):.6f}")
         assert disc < 0, "Discriminant should be negative (complex roots)"
 
         real_part = -b / (2 * a)
@@ -355,4 +355,4 @@ class TestConsciousnessVerification:
 
         print("  K_C = sqrt(G*^3/2) verified")
         print("  NOTE: These are mathematically verified but the INTERPRETATION")
-        print("  as consciousness parameters is [PROPOSED] and untestable.")
+        print("  as reference frame context parameters is [PROPOSED] and untestable.")

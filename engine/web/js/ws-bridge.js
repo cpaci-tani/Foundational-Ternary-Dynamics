@@ -67,6 +67,16 @@ export class WebSocketBridge {
         // Visual settings placeholder
         this._visualSettings = null;
         this._fallback = null;
+
+        // High-frequency query throttling flags (Audit P0-4 fix)
+        this._diagnosticsInFlight = false;
+        this._energyInFlight = false;
+
+        // Cached flux volume and slice data (async WebSocket channel)
+        this._sliceCache = {};
+        this._volumeCache = null;
+        this._boundaryShape = 'cube';
+        this._reflectiveBoundary = true;
     }
 
     async connect() {
@@ -78,11 +88,13 @@ export class WebSocketBridge {
             return Promise.reject(new Error('Connection already in progress'));
         }
         return new Promise((resolve, reject) => {
+            let connectTimeout = null;
             try {
                 this._ws = new WebSocket(this._url);
                 this._ws.binaryType = 'arraybuffer';
 
                 this._ws.onopen = () => {
+                    if (connectTimeout) clearTimeout(connectTimeout);
                     this._connected = true;
                     this.ready = true;
                     debugLog('[ws-bridge] Connected to native GPU engine');
@@ -91,6 +103,8 @@ export class WebSocketBridge {
                         this.latticeSize = info.latticeSize || 32;
                         this.isNativeGPU = info.gpu || false;
                         debugLog(`[ws-bridge] Engine: L=${this.latticeSize}, GPU=${this.isNativeGPU}`);
+                    }).catch(err => {
+                        debugLog('[ws-bridge] Failed to query engine info:', err.message);
                     });
                     resolve(this);
                 };
@@ -106,32 +120,51 @@ export class WebSocketBridge {
                 };
 
                 this._ws.onclose = () => {
+                    if (connectTimeout) clearTimeout(connectTimeout);
+                    const wasConnected = this._connected;
                     this._connected = false;
                     this.ready = false;
+                    this._diagnosticsInFlight = false;
+                    this._energyInFlight = false;
                     debugLog('[ws-bridge] Disconnected');
-                    // Drain pending queue — reject all waiting promises
+                    // Drain pending queue — reject all waiting promises cleanly and clear timers
                     while (this._pendingQueue.length > 0) {
                         const pending = this._pendingQueue.shift();
+                        if (pending.timeoutId) clearTimeout(pending.timeoutId);
                         pending.reject(new Error('WebSocket closed'));
                     }
-                    // Auto-reconnect with exponential backoff
-                    this._scheduleReconnect();
+                    // Auto-reconnect with exponential backoff ONLY if we were previously connected
+                    if (wasConnected) {
+                        this._scheduleReconnect();
+                    }
                 };
 
                 this._ws.onerror = (err) => {
+                    if (connectTimeout) clearTimeout(connectTimeout);
                     this._connected = false;
                     this.ready = false;
+                    this._diagnosticsInFlight = false;
+                    this._energyInFlight = false;
+                    // Drain pending queue — reject all waiting promises cleanly and clear timers
+                    while (this._pendingQueue.length > 0) {
+                        const pending = this._pendingQueue.shift();
+                        if (pending.timeoutId) clearTimeout(pending.timeoutId);
+                        pending.reject(err || new Error('WebSocket error'));
+                    }
                     reject(err);
                 };
 
                 // Timeout after 5 seconds
-                setTimeout(() => {
+                connectTimeout = setTimeout(() => {
                     if (!this._connected) {
-                        this._ws.close();
+                        try {
+                            this._ws.close();
+                        } catch (e) {}
                         reject(new Error('WebSocket connection timeout'));
                     }
                 }, 5000);
             } catch (e) {
+                if (connectTimeout) clearTimeout(connectTimeout);
                 reject(e);
             }
         });
@@ -181,17 +214,25 @@ export class WebSocketBridge {
                 reject(new Error('Pending queue full (64 commands in flight)'));
                 return;
             }
-            // FIFO queue — server doesn't echo _id, so resolve in order
-            this._pendingQueue.push({ resolve, reject });
-            this._ws.send(JSON.stringify(obj));
             // Timeout
-            setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 const idx = this._pendingQueue.findIndex(p => p.resolve === resolve);
                 if (idx >= 0) {
                     this._pendingQueue.splice(idx, 1);
                     reject(new Error('Command timeout'));
+                    // Force-close the WebSocket to trigger a clean disconnect, drain the queue, and reconnect.
+                    if (this._ws) {
+                        debugLog('[ws-bridge] Force-closing WebSocket due to command timeout');
+                        try {
+                            this._ws.close();
+                        } catch (_e) {}
+                    }
                 }
             }, 5000);
+
+            // FIFO queue — server doesn't echo _id, so resolve in order
+            this._pendingQueue.push({ resolve, reject, timeoutId });
+            this._ws.send(JSON.stringify(obj));
         });
     }
 
@@ -203,14 +244,27 @@ export class WebSocketBridge {
     _handleJSON(text) {
         try {
             const data = JSON.parse(text);
+            // Check fire-and-forget cached responses first, preventing them
+            // from mistakenly resolving pending command promises in the queue!
+            if (data.type === 'flux_slice') {
+                const key = `${data.axis}_${data.index}`;
+                this._sliceCache[key] = new Float64Array(data.data);
+                return;
+            }
+            if (data.type === 'flux_volume') {
+                this._volumeCache = new Float64Array(data.data);
+                return;
+            }
+
             // Resolve next pending promise in FIFO order, or drop if none waiting
             if (this._pendingQueue.length > 0) {
                 const { resolve } = this._pendingQueue.shift();
                 resolve(data);
+                return;
             }
             // else: fire-and-forget response, just cache useful fields
             if (data.tick !== undefined) this._lastTick = data.tick;
-            if (data.manifested !== undefined) this._lastDiag = data;
+            if (data.manifested !== undefined && data.tick !== undefined) this._lastDiag = data;
         } catch (e) {
             console.warn('[ws-bridge] Bad JSON:', text);
         }
@@ -280,8 +334,18 @@ export class WebSocketBridge {
     }
 
     getDiagnostics() {
-        // Fire request, return cached
-        this._sendJSON({ cmd: 'get_diagnostics' }).then(d => { this._lastDiag = d; });
+        // Fire request if not already in flight, return cached
+        if (this._connected && !this._diagnosticsInFlight) {
+            this._diagnosticsInFlight = true;
+            this._sendJSON({ cmd: 'get_diagnostics' })
+                .then(d => {
+                    this._lastDiag = d;
+                    this._diagnosticsInFlight = false;
+                })
+                .catch(() => {
+                    this._diagnosticsInFlight = false;
+                });
+        }
         if (this._lastDiag) return this._lastDiag;
         return {
             tick: 0, physicalTime: 0, dt: 1,
@@ -296,7 +360,18 @@ export class WebSocketBridge {
     }
 
     getEnergyAudit() {
-        this._sendJSON({ cmd: 'get_energy_audit' }).then(d => { this._lastAudit = d; });
+        // Fire request if not already in flight, return cached
+        if (this._connected && !this._energyInFlight) {
+            this._energyInFlight = true;
+            this._sendJSON({ cmd: 'get_energy_audit' })
+                .then(d => {
+                    this._lastAudit = d;
+                    this._energyInFlight = false;
+                })
+                .catch(() => {
+                    this._energyInFlight = false;
+                });
+        }
         if (this._lastAudit) return this._lastAudit;
         return {
             fieldEnergy: 0, waveEnergy: 0, particleKE: 0, totalEnergy: 0,
@@ -347,7 +422,13 @@ export class WebSocketBridge {
     _initFluxGrid() { this._ensureFallback()._initFluxGrid(); }
 
     _injectFlux(x, y, z, fx, fy, fz) {
-        this.injectFlux(x, y, z, fx, fy, fz);
+        this._sendAndForget({ cmd: 'inject_flux_add', x, y, z, fx, fy, fz });
+        this._ensureFallback()._injectFlux(x, y, z, fx, fy, fz);
+    }
+
+    _injectWaveVel(x, y, z, wx, wy, wz) {
+        this._sendAndForget({ cmd: 'inject_wave_vel_add', x, y, z, wx, wy, wz });
+        this._ensureFallback()._injectWaveVel(x, y, z, wx, wy, wz);
     }
 
     _ensureFallback() {
@@ -370,7 +451,10 @@ export class WebSocketBridge {
 
     setupScenario(name) {
         this.reset();
-        runSetupScenario.call(this, name);
+        if (this._connected) {
+            this._sendAndForget({ cmd: 'setup_scenario', name });
+        }
+        this._ensureFallback().setupScenario(name);
     }
 
     setDt(dt) { this.setParam('dt', dt); }
@@ -407,10 +491,17 @@ export class WebSocketBridge {
     }
 
     getFluxSlice(axis, index) {
-        return new Float64Array(0);
+        if (this._connected) {
+            this._sendAndForget({ cmd: 'get_flux_slice', axis, index });
+        }
+        const key = `${axis}_${index}`;
+        return this._sliceCache[key] || new Float64Array(0);
     }
     getFluxVolume() {
-        return new Float64Array(0);
+        if (this._connected) {
+            this._sendAndForget({ cmd: 'get_flux_volume' });
+        }
+        return this._volumeCache || new Float64Array(0);
     }
 
     // Samplers returning safe empty frozen objects to avoid browser layout/rendering crashes
@@ -465,8 +556,14 @@ export class WebSocketBridge {
     peInspectParticle(id) { return this._ensureFallback().peInspectParticle(id); }
 
     // Scale 2 (AtomEngine) fallback delegation
-    setBoundaryShape(shape) { this._ensureFallback().setBoundaryShape(shape); }
-    setReflectiveBoundary(on) { this._ensureFallback().setReflectiveBoundary(on); }
+    setBoundaryShape(shape) {
+        this._boundaryShape = shape;
+        this._ensureFallback().setBoundaryShape(shape);
+    }
+    setReflectiveBoundary(on) {
+        this._reflectiveBoundary = !!on;
+        this._ensureFallback().setReflectiveBoundary(on);
+    }
     initAE() { this._ensureFallback().initAE(); }
     resetAE() { this._ensureFallback().resetAE(); }
     aeAddAtom(Z, x, y, z, vx, vy, vz, charge, N) {

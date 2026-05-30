@@ -382,8 +382,8 @@ def verify_speculative_relationships(H, P0, gstar):
     print(f"     Error: {h_err:.4f}%")
     print(f"     Status: [SPECULATIVE] - unit dependent (requires MeV)")
 
-    # Consciousness threshold / H ~ 2pi
-    K_C = 3.597  # sqrt(G*^3/2) from consciousness quadratic
+    # Reference frame context threshold / H ~ 2pi
+    K_C = 3.597  # sqrt(G*^3/2) from reference frame context quadratic
     kc_h_ratio = K_C / H
     kc_err = percent_error(kc_h_ratio, 2 * math.pi)
     print(f"\n  2. K_C / H vs 2pi:")

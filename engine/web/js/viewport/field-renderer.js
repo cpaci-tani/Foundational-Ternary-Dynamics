@@ -41,7 +41,7 @@ import { K_B, K_GENESIS } from '../constants.js';
 // VOXEL_CENTER_OFFSET at the mesh-write site, field arrows / streamlines /
 // vectors render half a voxel off from the particles + flux volume. The
 // audit (2026-04-28) caught this systemic mismatch.
-const VOXEL_CENTER_OFFSET = 0.5;
+let VOXEL_CENTER_OFFSET = 0.0;
 import {
     rampViridis,
     rampCyclicHSL,
@@ -103,13 +103,17 @@ export class ViewportFieldRenderer {
         halfN,
         boundaryShape,
         insideBoundary,
+        getBoundaryMode,
     }) {
         this._scene = scene;
         this._camera = camera;
         this._latticeSize = latticeSize;
         this._halfN = halfN;
+        this._center = latticeSize / 2;
+        this._radius = latticeSize / 2;
         this._boundaryShape = boundaryShape;
         this._insideBoundary = insideBoundary;
+        this._getBoundaryMode = getBoundaryMode || (() => 'lattice');
 
         // State owned by FieldRenderer (every mesh starts null and is built lazily).
         this._fieldHeatmap = null;
@@ -164,15 +168,50 @@ export class ViewportFieldRenderer {
         this._magCacheDual = null;
     }
 
+    _getVoxelCenterOffset() {
+        const isOrigin = this._getBoundaryMode && this._getBoundaryMode() === 'origin';
+        return isOrigin ? 0.0 : 0.5;
+    }
+
+    _checkInsideBoundary(x, y, z) {
+        const isOrigin = this._getBoundaryMode && this._getBoundaryMode() === 'origin';
+        if (isOrigin) {
+            const boundaryRadius = 35.0; // PE boundary radius
+            return this._insideBoundary(x / boundaryRadius, y / boundaryRadius, z / boundaryRadius);
+        } else {
+            return this._insideBoundary((x - this._center) / this._radius, (y - this._center) / this._radius, (z - this._center) / this._radius);
+        }
+    }
+
+    _syncCenterAndRadius() {
+        const isOrigin = this._getBoundaryMode && this._getBoundaryMode() === 'origin';
+        if (isOrigin) {
+            this._center = 0.0;
+            this._radius = 35.0;
+            VOXEL_CENTER_OFFSET = 0.0;
+        } else {
+            this._center = this._latticeSize / 2;
+            this._radius = this._latticeSize / 2;
+            VOXEL_CENTER_OFFSET = 0.0;
+        }
+    }
+
     onLatticeSizeChanged(size, halfN) {
         this._latticeSize = size;
         this._halfN = halfN;
+        this._center = size / 2;
+        this._radius = size / 2;
+
+        const isOrigin = this._getBoundaryMode && this._getBoundaryMode() === 'origin';
+        const cx = isOrigin ? 0.0 : this._center;
+        const cy = isOrigin ? 0.0 : this._center;
+        const cz = isOrigin ? 0.0 : this._center;
 
         if (this._eventHorizonSphere) {
-            this._eventHorizonSphere.position.set(halfN, halfN, halfN);
+            this._eventHorizonSphere.position.set(cx, cy, cz);
         }
         if (this._eventHorizonRing) {
-            this._eventHorizonRing.position.set(halfN, halfN, halfN);
+            this._eventHorizonRing.position.set(cx, cy, cz);
         }
 
         // Rebuild field heatmap for new lattice capacity (it sizes from MAX_FIELD_GRID
@@ -239,6 +278,7 @@ export class ViewportFieldRenderer {
     }
 
     updateFieldHeatmap(gridPositions, potentials, count, maxAbsPotential) {
+        this._syncCenterAndRadius();
         if (!this._fieldHeatmap) this._buildFieldHeatmap();
         const posAttr = this._fieldHeatmap.geometry.getAttribute('position');
         const colAttr = this._fieldHeatmap.geometry.getAttribute('particleColor');
@@ -273,6 +313,7 @@ export class ViewportFieldRenderer {
     // ── Flux Slice (uses _fieldHeatmap mesh) ──────────────────────────
 
     updateFluxSlice(sliceData, latticeSize, axis, index) {
+        this._syncCenterAndRadius();
         if (!this._fieldHeatmap) this._buildFieldHeatmap();
         const posAttr = this._fieldHeatmap.geometry.getAttribute('position');
         const colAttr = this._fieldHeatmap.geometry.getAttribute('particleColor');
@@ -282,6 +323,10 @@ export class ViewportFieldRenderer {
         // Find max for normalization
         let maxFlux = 0;
         const total = N * N;
+        if (!sliceData || sliceData.length !== total) {
+            // Size mismatch (e.g. during async resize transition or startup lag) — skip rendering this frame
+            return;
+        }
         for (let i = 0; i < total; i++) {
             if (sliceData[i] > maxFlux) maxFlux = sliceData[i];
         }
@@ -298,9 +343,9 @@ export class ViewportFieldRenderer {
             else { x = a; y = b; z = index; }
 
             // Clip to boundary shape
-            const nx = (x - halfN + 0.5) / halfN;
-            const ny = (y - halfN + 0.5) / halfN;
-            const nz = (z - halfN + 0.5) / halfN;
+            const nx = (x + 0.5 - this._center) / this._radius;
+            const ny = (y + 0.5 - this._center) / this._radius;
+            const nz = (z + 0.5 - this._center) / this._radius;
             if (!this._insideBoundary(nx, ny, nz)) continue;
 
             posAttr.array[count * 3]     = x + 0.5;
@@ -349,6 +394,7 @@ export class ViewportFieldRenderer {
     }
 
     updateFieldVectors(gridPositions, forces, count, maxForce, arrowScale = 8.0) {
+        this._syncCenterAndRadius();
         if (!this._fieldVectors) this._buildFieldVectors();
         const posAttr = this._fieldVectors.geometry.getAttribute('position');
         const colAttr = this._fieldVectors.geometry.getAttribute('color');
@@ -412,6 +458,7 @@ export class ViewportFieldRenderer {
     }
 
     updatePEStreamlines(lines) {
+        this._syncCenterAndRadius();
         if (!this._peStreamlines) this._buildPEStreamlines();
         const posAttr = this._peStreamlines.geometry.getAttribute('position');
         const colAttr = this._peStreamlines.geometry.getAttribute('color');
@@ -459,6 +506,7 @@ export class ViewportFieldRenderer {
     }
 
     updateGravityVectors(gridPositions, forces, count, maxForce, arrowScale = 8.0) {
+        this._syncCenterAndRadius();
         if (!this._gravityVectors) this._buildGravityVectors();
         const posAttr = this._gravityVectors.geometry.getAttribute('position');
         const colAttr = this._gravityVectors.geometry.getAttribute('color');
@@ -542,6 +590,7 @@ export class ViewportFieldRenderer {
     }
 
     _writeArrowFieldIntoMesh(mesh, fieldData, colors, magCacheKey, arrowBase = 1.5, thresholdFrac = 0.03) {
+        this._syncCenterAndRadius();
         const posAttr = mesh.geometry.getAttribute('position');
         const colAttr = mesh.geometry.getAttribute('color');
         const { positions, vectors, count } = fieldData;
@@ -568,7 +617,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             activeIndices.push(i);
         }
 
@@ -597,6 +646,7 @@ export class ViewportFieldRenderer {
     }
 
     _writeStreamlinesIntoMesh(mesh, streamlines, colorFn) {
+        this._syncCenterAndRadius();
         const posAttr = mesh.geometry.getAttribute('position');
         const colAttr = mesh.geometry.getAttribute('color');
         const maxVerts = posAttr.array.length / 3;
@@ -607,12 +657,15 @@ export class ViewportFieldRenderer {
             const nPts = line.length / 3;
             for (let i = 0; i < nPts - 1 && vi + 2 <= maxVerts; i++) {
                 const sx = line[i * 3], sy = line[i * 3 + 1], sz = line[i * 3 + 2];
-                if (!this._insideBoundary((sx - halfN) / halfN, (sy - halfN) / halfN, (sz - halfN) / halfN)) continue;
+                const px = sx + VOXEL_CENTER_OFFSET;
+                const py = sy + VOXEL_CENTER_OFFSET;
+                const pz = sz + VOXEL_CENTER_OFFSET;
+                if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
                 colorFn(i, nPts, rgb);
                 // +VOXEL_CENTER_OFFSET so the line aligns with particles + flux volume.
-                posAttr.array[vi * 3]     = sx + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 1] = sy + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 2] = sz + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3]     = px;
+                posAttr.array[vi * 3 + 1] = py;
+                posAttr.array[vi * 3 + 2] = pz;
                 colAttr.array[vi * 3]     = rgb[0];
                 colAttr.array[vi * 3 + 1] = rgb[1];
                 colAttr.array[vi * 3 + 2] = rgb[2];
@@ -704,6 +757,7 @@ export class ViewportFieldRenderer {
     }
 
     updatePoyntingVectors(fieldData) {
+        this._syncCenterAndRadius();
         if (!this._poyntingVectors) this._buildPoyntingVectors();
         const posAttr = this._poyntingVectors.geometry.getAttribute('position');
         const colAttr = this._poyntingVectors.geometry.getAttribute('color');
@@ -728,7 +782,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             activeIndices.push(i);
         }
 
@@ -789,6 +843,7 @@ export class ViewportFieldRenderer {
     }
 
     updateDivergenceField(fieldData) {
+        this._syncCenterAndRadius();
         if (!this._divField) this._buildDivergenceField();
         const posAttr = this._divField.geometry.getAttribute('position');
         const colAttr = this._divField.geometry.getAttribute('particleColor');
@@ -809,7 +864,7 @@ export class ViewportFieldRenderer {
             const v = values[i];
             if (Math.abs(v) < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             activeIndices.push(i);
         }
 
@@ -885,6 +940,7 @@ export class ViewportFieldRenderer {
     }
 
     updateGravityField(fieldData) {
+        this._syncCenterAndRadius();
         if (!this._gravityField) this._buildGravityField();
         const posAttr = this._gravityField.geometry.getAttribute('position');
         const colAttr = this._gravityField.geometry.getAttribute('color');
@@ -909,7 +965,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             activeIndices.push(i);
         }
 
@@ -1001,6 +1057,7 @@ export class ViewportFieldRenderer {
     }
 
     updateWeakField(fieldData) {
+        this._syncCenterAndRadius();
         if (!this._weakField) this._buildWeakField();
         const posAttr = this._weakField.geometry.getAttribute('position');
         const colAttr = this._weakField.geometry.getAttribute('color');
@@ -1028,9 +1085,9 @@ export class ViewportFieldRenderer {
             const px = positions[i * 3]     + VOXEL_CENTER_OFFSET;
             const py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
             const pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN,
-                                      (py - halfN) / halfN,
-                                      (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius,
+                                      (py - this._center) / this._radius,
+                                      (pz - this._center) / this._radius)) continue;
 
             const t   = Math.min(1, abs / maxVal);
             const rgb = lerpPalette(pal, t);
@@ -1115,6 +1172,7 @@ export class ViewportFieldRenderer {
     initForceHeatmap() { if (!this._forceHeatmap) this._buildForceHeatmap(); }
 
     updateForceHeatmap(fieldData, forceType) {
+        this._syncCenterAndRadius();
         if (!this._forceHeatmap) this._buildForceHeatmap();
         const posAttr  = this._forceHeatmap.geometry.getAttribute('position');
         const colAttr  = this._forceHeatmap.geometry.getAttribute('particleColor');
@@ -1143,7 +1201,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             const t = mag / maxMag;
             const [r, g, b] = lerpPalette(pal, t);
@@ -1201,6 +1259,7 @@ export class ViewportFieldRenderer {
     initForceStreamlines() { if (!this._forceStreamlinePool) this._buildForceStreamlines(); }
 
     updateForceStreamlines(lines, forceType) {
+        this._syncCenterAndRadius();
         if (!this._forceStreamlinePool) this._buildForceStreamlines();
         const pool = this._forceStreamlinePool;
         const mats = this._forceStreamlineMats;
@@ -1294,6 +1353,7 @@ export class ViewportFieldRenderer {
     initForceGlyphs() { this._ensureForceGlyphInfra(); }
 
     updateForceGlyphs(fieldData, forceType) {
+        this._syncCenterAndRadius();
         this._ensureForceGlyphInfra();
         const mesh = this._forceGlyphMeshes[forceType] || this._forceGlyphMeshes.em;
         const { positions, vectors, count } = fieldData;
@@ -1336,7 +1396,7 @@ export class ViewportFieldRenderer {
             if (mag < threshold) continue;
             if ((qualifyingSeen++ % sampleStride) !== 0) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             const t = mag / maxMag;
             const scale = Math.log(1 + t * 9) / Math.log(10) * scaleBase;
@@ -1421,6 +1481,7 @@ export class ViewportFieldRenderer {
     }
 
     updateDarkMatterHalo(particles, fluxMag, latticeSize) {
+        this._syncCenterAndRadius();
         if (!this._darkMatterHalo) this._buildDarkMatterHalo();
         const posAttr = this._darkMatterHalo.geometry.getAttribute('position');
         const colAttr = this._darkMatterHalo.geometry.getAttribute('particleColor');
@@ -1493,9 +1554,12 @@ export class ViewportFieldRenderer {
     setEventHorizon(active, radius) {
         if (!this._eventHorizonSphere) this._buildEventHorizon();
         if (active && radius > 0) {
-            const halfN = this._halfN;
-            this._eventHorizonSphere.position.set(halfN, halfN, halfN);
-            this._eventHorizonRing.position.set(halfN, halfN, halfN);
+            const isOrigin = this._getBoundaryMode && this._getBoundaryMode() === 'origin';
+            const cx = isOrigin ? 0.0 : this._center;
+            const cy = isOrigin ? 0.0 : this._center;
+            const cz = isOrigin ? 0.0 : this._center;
+            this._eventHorizonSphere.position.set(cx, cy, cz);
+            this._eventHorizonRing.position.set(cx, cy, cz);
             this._eventHorizonSphere.scale.setScalar(radius);
             this._eventHorizonSphere.visible = true;
             this._eventHorizonRing.scale.setScalar(radius * 3.0);
@@ -1526,6 +1590,7 @@ export class ViewportFieldRenderer {
     }
 
     updateDampingZones(particles, latticeSize) {
+        this._syncCenterAndRadius();
         if (!this._dampingZones) this._buildDampingZones();
         const posAttr = this._dampingZones.geometry.getAttribute('position');
         const colAttr = this._dampingZones.geometry.getAttribute('color');
@@ -1589,6 +1654,7 @@ export class ViewportFieldRenderer {
     }
 
     updateGenesisIsosurface(fluxMag, latticeSize, kGenesis) {
+        this._syncCenterAndRadius();
         if (!this._genesisIsosurface) this._buildGenesisIsosurface();
         const posAttr = this._genesisIsosurface.geometry.getAttribute('position');
         const colAttr = this._genesisIsosurface.geometry.getAttribute('particleColor');
@@ -1737,6 +1803,7 @@ export class ViewportFieldRenderer {
     }
 
     updateDualFluxVolume(lData, rData) {
+        this._syncCenterAndRadius();
         if (!this._dualFluxVolume) this._buildDualFluxVolume();
         const posAttr = this._dualFluxVolume.geometry.getAttribute('position');
         const colAttr = this._dualFluxVolume.geometry.getAttribute('particleColor');
@@ -1770,7 +1837,7 @@ export class ViewportFieldRenderer {
             const mag = dualMags[i];
             if (mag < threshold) continue;
             const px = lData.positions[i * 3], py = lData.positions[i * 3 + 1], pz = lData.positions[i * 3 + 2];
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
             colAttr.array[vi * 3] = 0.9 * t; colAttr.array[vi * 3 + 1] = 0.4 * t; colAttr.array[vi * 3 + 2] = 0.15 * t;
@@ -1781,7 +1848,7 @@ export class ViewportFieldRenderer {
             const mag = dualMags[lCount + i];
             if (mag < threshold) continue;
             const px = rData.positions[i * 3], py = rData.positions[i * 3 + 1], pz = rData.positions[i * 3 + 2];
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
             colAttr.array[vi * 3] = 0.3 * t; colAttr.array[vi * 3 + 1] = 0.2 * t; colAttr.array[vi * 3 + 2] = 0.9 * t;
@@ -1826,6 +1893,7 @@ export class ViewportFieldRenderer {
     }
 
     updateChiralityField(fieldData) {
+        this._syncCenterAndRadius();
         if (!this._chiralityField) this._buildChiralityField();
         const posAttr = this._chiralityField.geometry.getAttribute('position');
         const colAttr = this._chiralityField.geometry.getAttribute('particleColor');
@@ -1846,7 +1914,7 @@ export class ViewportFieldRenderer {
             if (Math.abs(v) < threshold) continue;
 
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             posAttr.array[vi * 3] = px;
             posAttr.array[vi * 3 + 1] = py;
@@ -1899,6 +1967,7 @@ export class ViewportFieldRenderer {
     }
 
     updateLightField(poyntingData) {
+        this._syncCenterAndRadius();
         if (!this._lightField) this._buildLightField();
         const posAttr = this._lightField.geometry.getAttribute('position');
         const colAttr = this._lightField.geometry.getAttribute('particleColor');
@@ -1922,7 +1991,7 @@ export class ViewportFieldRenderer {
             if (mag < threshold) continue;
 
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             posAttr.array[vi * 3] = px;
             posAttr.array[vi * 3 + 1] = py;
@@ -2005,6 +2074,7 @@ export class ViewportFieldRenderer {
     }
 
     _populateQuantumField(data, kind, options = {}) {
+        this._syncCenterAndRadius();
         if (!this._quantumField) this._buildQuantumField();
         if (!data || !data.positions || !data.values || !data.count) return;
         const posAttr = this._quantumField.geometry.getAttribute('position');
@@ -2033,7 +2103,7 @@ export class ViewportFieldRenderer {
             if (!signed && v < threshold) continue;
             if (signed && Math.abs(v) < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             posAttr.array[vi * 3]     = px;
             posAttr.array[vi * 3 + 1] = py;
             posAttr.array[vi * 3 + 2] = pz;
@@ -2095,6 +2165,7 @@ export class ViewportFieldRenderer {
     }
 
     updatePhaseField(data) {
+        this._syncCenterAndRadius();
         this._phaseData = data;
         if (!this._phaseVisible || !data?.count) return;
         if (!this._phaseNeedles) this._buildPhaseNeedles();
@@ -2110,7 +2181,7 @@ export class ViewportFieldRenderer {
             const px = positions[i * 3]     + VOXEL_CENTER_OFFSET;
             const py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
             const pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             const phase = values[i];
             if (Math.abs(phase) < 0.02) continue;
             const dx = Math.cos(phase) * len;
@@ -2157,6 +2228,7 @@ export class ViewportFieldRenderer {
         this._quantumSetVisibility();
     }
     updateEntropyDensityField(data) {
+        this._syncCenterAndRadius();
         this._entropyData = data;
         if (!this._entropyVisible) return;
         if (!this._quantumField) this._buildQuantumField();
@@ -2171,7 +2243,7 @@ export class ViewportFieldRenderer {
             const s = Math.max(0, Math.min(1, values[i]));
             if (s < 0.04) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - halfN) / halfN, (py - halfN) / halfN, (pz - halfN) / halfN)) continue;
+            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             const seed = (i * 9301 + this._entropyJitterSeed) & 0x7fffffff;
             const r1 = ((seed * 49297) % 233280) / 233280 - 0.5;
             const r2 = ((seed * 2147) % 233280) / 233280 - 0.5;
@@ -2215,6 +2287,7 @@ export class ViewportFieldRenderer {
     }
 
     updateHorizonField(data) {
+        this._syncCenterAndRadius();
         if (!data?.count) return;
         if (!this._horizonField) this._buildHorizonField();
         const hf = this._horizonField;

@@ -193,9 +193,14 @@ export class ViewportFluxRenderer {
             return;
         }
 
+        const total = N * N * N;
+        if (volumeData.length !== total) {
+            // Size mismatch (e.g. during async resize transition or startup lag) — skip rendering this frame
+            return;
+        }
+
         // Find max for normalization
         let maxFlux = 0;
-        const total = N * N * N;
         for (let i = 0; i < total; i++) {
             if (volumeData[i] > maxFlux) maxFlux = volumeData[i];
         }
@@ -241,9 +246,11 @@ export class ViewportFluxRenderer {
                 const zNNyN = zNN + y * N;
                 for (let x = 0; x < N && count < maxPts; x += step) {
                     if (needsClip) {
-                        const nx = (x - halfN + 0.5) / halfN;
-                        const ny = (y - halfN + 0.5) / halfN;
-                        const nz = (z - halfN + 0.5) / halfN;
+                        const center = N / 2;
+                        const radius = N / 2;
+                        const nx = (x + 0.5 - center) / radius;
+                        const ny = (y + 0.5 - center) / radius;
+                        const nz = (z + 0.5 - center) / radius;
                         if (!this._insideBoundary(nx, ny, nz)) continue;
                     }
 

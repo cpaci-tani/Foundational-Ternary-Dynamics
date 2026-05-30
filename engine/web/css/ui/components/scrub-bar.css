@@ -1,70 +1,60 @@
-/* ── Floating scrub bar ───────────────────────────────────────────────
+/* ── Compact Playback Controls Capsule ───────────────────────────────
  *
  * Hosts the primary playback controls (global, local, step, reset, speed)
- * on the left, a scrubbable timeline in the middle, and render/settings
- * actions on the right. Always visible — it is not tied to the panel-dock
- * collapse state.
- *
- * Scale: sized ~1.5× the compact baseline so the bar reads cleanly at
- * desktop widths. All hit-targets are ≥ 42 px to comfortably beat the
- * WCAG-friendly 44 px recommendation once hover area is accounted for.
+ * and settings popover in a sleek, centered capsule bar.
+ * Sized and spaced strictly in accordance with design tokens.
  * ─────────────────────────────────────────────────────────────────── */
 
 .scrub-bar {
     position: absolute;
     left: 50%;
-    /* Clear the status bar at the bottom of the viewport (~28px tall).
-       --status-bar-offset is defined elsewhere; fall back to 28px so the
-       scrub bar never overlaps the status strip. */
-    bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale, 1))) + 14px);
+    /* Clear the status bar at the bottom of the viewport (~28px tall) */
+    bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale, 1))) + var(--sp-md));
     transform: translateX(-50%);
-    width: min(86vw, 1280px);
-    min-height: 78px;
+    width: max-content;
+    max-width: 90vw;
     z-index: calc(var(--z-overlay, 40) + 5);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
-    padding: 16px 32px;
+    gap: var(--sp-md);
+    padding: var(--sp-md) var(--sp-lg);
     background: var(--bg-surface);
     backdrop-filter: blur(24px) saturate(1.4);
     border: var(--glass-border, 1px solid rgba(255, 255, 255, 0.12));
     border-top: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 18px;
+    border-radius: var(--radius-xl);
     box-shadow: var(--glass-shadow), var(--shadow-xl);
     pointer-events: auto;
-    font-size: 16px;
+    font-size: var(--fs-base);
     color: var(--text-secondary);
 }
 
-/* Shared semantic grouping — every section aligns its children on the
-   horizontal centerline of the bar. */
+/* Shared semantic grouping */
 .scrub-bar-section {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 0 6px;
+    gap: var(--row-gap);
+    padding: 0 var(--sp-xs);
 }
 
 /* ── Divider between sections ───────────────────────────────────── */
 .scrub-bar-divider {
     width: 1px;
-    height: 36px;
+    height: calc(28px * var(--ui-scale, 1));
     background: color-mix(in oklch, var(--border) 70%, transparent);
-    margin: 0 6px;
+    margin: 0 var(--sp-xs);
     flex: 0 0 1px;
     align-self: center;
 }
 
 /* ── Controls group (play / local / step / reset) ───────────────── */
-.scrub-bar-controls { gap: 12px; }
+.scrub-bar-controls {
+    gap: var(--row-gap);
+}
 
-/* Labeled play wrapper: the button is the entire layout footprint;
-   the caption floats below as an absolute element so sibling buttons
-   share the button's vertical center without being pushed up by a
-   reserved caption area. The parent bar's 16px padding-bottom gives
-   the caption a visible slot. */
+/* Labeled play wrapper */
 .scrub-bar-controls .tb-btn-labeled {
     position: relative;
     display: inline-flex;
@@ -74,54 +64,52 @@
 .scrub-bar-controls .tb-btn-label {
     position: absolute;
     left: 50%;
-    top: calc(100% + 3px);
+    top: calc(100% + var(--sp-xs));
     transform: translateX(-50%);
-    font-size: 12px;
+    font-size: var(--fs-xs);
     letter-spacing: 0.12em;
     line-height: 1;
     white-space: nowrap;
     pointer-events: none;
+    color: var(--text-dim);
 }
 
 .scrub-bar-controls .tb-btn-global {
-    width: 60px;
-    height: 42px;
+    width: calc(60px * var(--ui-scale, 1));
+    height: var(--ctrl-height-min);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    font-size: 20px;
+    font-size: var(--fs-lg);
 }
 .scrub-bar-controls .tb-btn-local {
-    width: 42px;
-    height: 42px;
+    width: calc(42px * var(--ui-scale, 1));
+    height: var(--ctrl-height-min);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    font-size: 18px;
+    font-size: var(--fs-md);
 }
 
-/* .scrub-bar prefix bumps specificity above .tb-btn from button.css
-   (loaded later), which would otherwise set width/height to 36px.
-   No vertical offset — parent .scrub-bar handles centering. */
 .scrub-bar .scrub-bar-small-btn {
-    width: 42px;
-    height: 42px;
+    width: calc(42px * var(--ui-scale, 1));
+    height: var(--ctrl-height-min);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    font-size: 18px;
+    font-size: var(--fs-md);
     line-height: 1;
     background: transparent;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     color: var(--text-muted);
     cursor: pointer;
-    transition: background 120ms var(--ease-out),
-                color 120ms var(--ease-out),
-                border-color 120ms var(--ease-out);
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
 }
 .scrub-bar .scrub-bar-small-btn:hover {
     color: var(--accent);
@@ -130,18 +118,20 @@
 }
 
 /* ── Speed group ────────────────────────────────────────────────── */
-.scrub-bar-speed { gap: 10px; }
+.scrub-bar-speed {
+    gap: var(--row-gap);
+}
 .scrub-bar-speed-label {
-    font-size: 14px;
+    font-size: var(--fs-xs);
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text-dim);
     line-height: 1;
 }
 .scrub-bar-slider {
-    width: 135px;
-    height: 21px;
+    width: calc(135px * var(--ui-scale, 1));
+    height: var(--ctrl-height-min);
     appearance: none;
     background: transparent;
     cursor: pointer;
@@ -149,27 +139,27 @@
 }
 .scrub-bar-slider::-webkit-slider-runnable-track {
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-xl);
     background: color-mix(in oklch, var(--bg-card) 80%, transparent);
 }
 .scrub-bar-slider::-moz-range-track {
     height: 6px;
-    border-radius: 999px;
+    border-radius: var(--radius-xl);
     background: color-mix(in oklch, var(--bg-card) 80%, transparent);
 }
 .scrub-bar-slider::-webkit-slider-thumb {
     appearance: none;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: var(--accent);
     box-shadow: 0 0 8px var(--accent-glow);
-    margin-top: -6px;
+    margin-top: -5px;
     cursor: grab;
 }
 .scrub-bar-slider::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border: 0;
     border-radius: 50%;
     background: var(--accent);
@@ -179,127 +169,35 @@
 .scrub-bar-speed-value {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
-    font-size: 15px;
+    font-size: var(--fs-sm);
     color: var(--accent);
-    min-width: 34px;
+    min-width: 32px;
     text-align: right;
 }
 
-/* ── Timeline group ─────────────────────────────────────────────── */
-.scrub-bar-timeline {
-    flex: 1 1 auto;
-    min-width: 0;
-    gap: 10px;
-}
-
 .scrub-bar-icon-btn {
-    width: 42px;
-    height: 42px;
+    width: calc(42px * var(--ui-scale, 1));
+    height: var(--ctrl-height-min);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0;
     background: transparent;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 18px;
+    font-size: var(--fs-md);
     line-height: 1;
-    transition: background 120ms var(--ease-out),
-                color 120ms var(--ease-out),
-                border-color 120ms var(--ease-out);
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
 }
 .scrub-bar-icon-btn:hover {
     color: var(--accent);
     border-color: var(--accent);
     background: color-mix(in oklch, var(--accent) 10%, transparent);
 }
-
-.scrub-bar-strip {
-    position: relative;
-    flex: 1 1 auto;
-    min-width: 120px;
-    height: 15px;
-    background: color-mix(in oklch, var(--bg-card) 80%, transparent);
-    border-radius: 999px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: background 120ms var(--ease-out), box-shadow 200ms var(--ease-out);
-}
-.scrub-bar-strip:hover {
-    background: color-mix(in oklch, var(--bg-card) 70%, var(--accent) 10%);
-    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 30%, transparent);
-}
-.scrub-bar-strip:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-}
-
-.scrub-bar-zones,
-.scrub-bar-render {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    pointer-events: none;
-}
-.scrub-bar-zones { left: 0; right: 50%; }
-.scrub-bar-render { left: 50%; right: 0; display: none; }
-.scrub-bar-render[data-active="true"] { display: block; }
-
-.scrub-bar-zone {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-}
-
-.scrub-bar-playhead {
-    position: absolute;
-    top: -3px;
-    bottom: -3px;
-    width: 3px;
-    background: var(--accent);
-    border-radius: 2px;
-    box-shadow: 0 0 9px var(--accent-glow);
-    transform: translateX(-50%);
-    left: 100%;
-    pointer-events: none;
-}
-
-.scrub-bar-time {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
-    font-size: 15px;
-    color: var(--text-muted);
-    min-width: 66px;
-    text-align: right;
-}
-
-/* Zone palette — sharp (crisp cyan) → blurry → static */
-.scrub-bar-zone[data-lod="0"] { background: color-mix(in oklch, var(--accent) 50%, transparent); }
-.scrub-bar-zone[data-lod="1"] { background: color-mix(in oklch, var(--accent) 30%, transparent); }
-.scrub-bar-zone[data-lod="2"] { background: color-mix(in oklch, var(--accent) 15%, transparent); }
-.scrub-bar-zone[data-lod="3"] { background: color-mix(in oklch, var(--text-muted) 18%, transparent); }
-.scrub-bar-render { background: color-mix(in oklch, var(--success, #4ade80) 30%, transparent); }
-
-/* ── Actions group (Render + Settings) ──────────────────────────── */
-.scrub-bar-actions { gap: 10px; }
-
-.scrub-bar-render-btn {
-    width: auto;
-    height: 42px;
-    padding: 0 18px;
-    gap: 8px;
-    color: var(--text-secondary);
-    font-size: 14px;
-    letter-spacing: 0.04em;
-}
-.scrub-bar-render-btn[data-rendering="true"] {
-    color: var(--accent);
-    border-color: var(--accent);
-}
-.scrub-bar-render-dot { font-size: 12px; line-height: 1; }
-.scrub-bar-render-label { line-height: 1; }
 
 /* Active-state styling for the gear while its popover is open. */
 .scrub-bar-settings.is-open {
@@ -308,28 +206,32 @@
     background: color-mix(in oklch, var(--accent) 12%, transparent);
 }
 
-/* ── Timeline settings popover (above the gear) ─────────────────── */
-.scrub-bar-actions { position: relative; }
+/* ── Settings popover ───────────────────────────────────────────── */
+.scrub-bar-actions {
+    position: relative;
+}
 
 .scrub-bar-settings-popover {
     position: absolute;
     right: 0;
-    bottom: calc(100% + 10px);
+    bottom: calc(100% + var(--sp-md));
     min-width: 240px;
     max-width: 320px;
-    padding: 12px 14px;
+    padding: var(--sp-md) var(--sp-lg);
     background: var(--bg-elevated);
     backdrop-filter: blur(24px) saturate(1.3);
     border: var(--glass-border, 1px solid rgba(255, 255, 255, 0.14));
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     box-shadow: var(--glass-shadow), var(--shadow-lg);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--sp-md);
     z-index: 10;
-    animation: scrub-bar-popover-in 160ms var(--ease-out);
+    animation: scrub-bar-popover-in var(--dur-fast) var(--ease-out);
 }
-.scrub-bar-settings-popover[hidden] { display: none; }
+.scrub-bar-settings-popover[hidden] {
+    display: none;
+}
 
 @keyframes scrub-bar-popover-in {
     from { opacity: 0; transform: translateY(4px) scale(0.98); }
@@ -339,36 +241,36 @@
 .scrub-bar-settings-row {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--sp-xs);
 }
 
 .scrub-bar-settings-label {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--text-dim);
 }
 
 .scrub-bar-settings-options {
     display: flex;
-    gap: 6px;
+    gap: var(--sp-xs);
 }
 
 .scrub-bar-settings-chip {
     flex: 1 1 auto;
-    min-height: 30px;
-    padding: 6px 10px;
+    min-height: calc(26px * var(--ui-scale, 1));
+    padding: var(--ctrl-pad-y) var(--ctrl-pad-x);
     background: transparent;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: var(--text-secondary);
-    font-size: 12px;
+    font-size: var(--fs-xs);
     font-variant-numeric: tabular-nums;
     cursor: pointer;
-    transition: background 120ms var(--ease-out),
-                color 120ms var(--ease-out),
-                border-color 120ms var(--ease-out);
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out);
 }
 .scrub-bar-settings-chip:hover {
     color: var(--accent);
@@ -382,35 +284,19 @@
     box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 40%, transparent);
 }
 
-.scrub-bar-settings-hint {
-    font-size: 11px;
-    line-height: 1.4;
-    color: var(--text-muted);
-    opacity: 0.85;
-}
-
 @media (prefers-reduced-motion: reduce) {
     .scrub-bar-settings-popover { animation: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .scrub-bar-strip,
     .scrub-bar-small-btn,
     .scrub-bar-icon-btn { transition: none; }
 }
 
 /* Mobile: wrap across rows, roomier radius */
-@media (max-width: 960px) {
+@media (max-width: 600px) {
     .scrub-bar {
         flex-wrap: wrap;
-        min-height: auto;
-        padding: 12px 16px;
-        width: min(96vw, 1280px);
-        border-radius: 14px;
-        gap: 10px;
-    }
-    .scrub-bar-timeline {
-        flex-basis: 100%;
-        order: 10;
+        width: 95vw;
+        border-radius: var(--radius-md);
+        gap: var(--sp-sm);
+        padding: var(--sp-sm) var(--sp-md);
     }
 }

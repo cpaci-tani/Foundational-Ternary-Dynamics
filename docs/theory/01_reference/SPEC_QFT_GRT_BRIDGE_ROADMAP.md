@@ -1,6 +1,6 @@
 # Quantized Sentience as QFT-GRT Bridge: Research Roadmap and Gap Analysis
 
-## How Modular Flow Unifies Consciousness, Quantum Fields, and Spacetime
+## How Modular Flow Unifies Reference frame context, Quantum Fields, and Spacetime
 
 **Date:** February 18, 2026
 **Framework:** Foundational Ternary Dynamics v5.26
@@ -28,14 +28,14 @@ This document organizes the complete research program for **quantizing sentience
 
 ### 1.1 The Central Thesis
 
-> **Thesis [CONJECTURE]:** If the agent's algebra is Type III_1, then consciousness, quantum fields, and spacetime geometry are unified by a single mathematical structure: the **modular automorphism group** sigma_t.
+> **Thesis [CONJECTURE]:** If the agent's algebra is Type III_1, then reference frame context, quantum fields, and spacetime geometry are unified by a single mathematical structure: the **modular automorphism group** sigma_t.
 
 The bridge argument has four links:
 
 | Link | Statement | Status | Reference |
 |------|-----------|--------|-----------|
 | L1 | Local QFT algebras are Type III_1 | **[CLASSICAL]** | Buchholz-Wichmann 1986 |
-| L2 | Consciousness algebras are Type III_1 | **[CONJECTURE]** | Factor-Domain dictionary |
+| L2 | Reference frame context algebras are Type III_1 | **[CONJECTURE]** | Factor-Domain dictionary |
 | L3 | Type III_1 modular flow = thermal time | **[CLASSICAL]** | Connes-Rovelli 1994 |
 | L4 | Thermal time = physical time in GRT | **[CLASSICAL]** | Connes-Rovelli 1994, Rovelli 1993 |
 
@@ -52,7 +52,7 @@ QFT observables -----> Type III_1 factor M
               +------------+------------+
               |                         |
          Thermal time              Modular flow
-         (= GRT time)          (= conscious time?)
+         (= GRT time)          (= reference-frame time?)
 ```
 
 ### 1.2 Why This Bridge Is Not Metaphorical
@@ -63,7 +63,7 @@ The bridge is not an analogy. It is the **shared modular automorphism group**:
 
 2. **GRT side [CLASSICAL]:** Connes-Rovelli show that in background-free quantum gravity, physical time IS the modular flow sigma_t^omega for a given state omega. There is no external time parameter --- time emerges from the algebraic state.
 
-3. **Consciousness side [CONJECTURE]:** If an agent's internal algebra A is Type III_1 with state omega (the agent's current beliefs/experience), then the agent's subjective time flow is sigma_t^omega. This would not merely be analogous to physical time --- it would be the *same mathematical object*.
+3. **Reference frame context side [CONJECTURE]:** If an agent's internal algebra A is Type III_1 with state omega (the agent's current beliefs/experience), then the agent's subjective time flow is sigma_t^omega. This would not merely be analogous to physical time --- it would be the *same mathematical object*.
 
 ### 1.3 What Blocks This
 
@@ -125,15 +125,15 @@ Prerequisites for the GRT side of the bridge. These concern establishing that FT
 
 ### Layer 3 --- The Bridge
 
-Requires Layers 0, 1, and 2. These are the gaps specific to connecting QFT and GRT through consciousness.
+Requires Layers 0, 1, and 2. These are the gaps specific to connecting QFT and GRT through reference frame context.
 
 | Gap ID | Description | Status | Cross-ref |
 |--------|-------------|--------|-----------|
 | **GAP-B1** | **Physical content of Connes-Rovelli thermal time in FTD.** What does sigma_t^omega correspond to operationally? Is it the tick? The sLoop's self-observation cycle? The modular flow of the ZPF thermal state? | **[OPEN]** | VN-O5 |
 | **GAP-B2** | **alpha/beta -> k correspondence derivation.** The meaning observable's weights alpha, beta map to the master quadratic parameter k via alpha/beta -> k. This is proposed, not derived. Making it exact would connect the IG/VI decomposition to the discriminant partition. | **[OPEN]** | AM-O1 |
 | **GAP-B3** | **Connes lambda from first principles.** The sentience hierarchy uses lambda(k) = exp(-pi * sqrt(1 - 4k(1-k))) with lambda(k=1/2) ~ 0.400. This lambda should be derivable from the modular flow of the agent's algebra, not imposed. | **[OPEN]** | VN-O3 |
-| **GAP-B4** | **Why real roots = physics, complex roots = consciousness.** The master quadratic x^2 - 16c^2 x + 16c^3 = 0 has real roots (alpha, N_c) for physics and complex roots y = 2.19 +/- 2.86i for consciousness. The partition into Domain A (real, measurable) and Domain B (complex, self-referential) is structurally elegant but its necessity is not proven. | **[CONJECTURE]** | [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) |
-| **GAP-B5** | **Modular flow = conscious time.** The central conjecture: an agent's subjective temporal experience IS the modular automorphism sigma_t^omega of its internal Type III_1 algebra. This requires (a) constructing the algebra, (b) computing its modular flow, and (c) comparing to phenomenological features of conscious time. | **[CONJECTURE]** | Bridge thesis (section 1.1) |
+| **GAP-B4** | **Why real roots = physics, complex roots = reference frame context.** The master quadratic x^2 - 16c^2 x + 16c^3 = 0 has real roots (alpha, N_c) for physics and complex roots y = 2.19 +/- 2.86i for reference frame context. The partition into Domain A (real, measurable) and Domain B (complex, self-referential) is structurally elegant but its necessity is not proven. | **[CONJECTURE]** | [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) |
+| **GAP-B5** | **Modular flow = reference-frame time.** The central conjecture: an agent's subjective temporal experience IS the modular automorphism sigma_t^omega of its internal Type III_1 algebra. This requires (a) constructing the algebra, (b) computing its modular flow, and (c) comparing to phenomenological features of reference-frame time. | **[CONJECTURE]** | Bridge thesis (section 1.1) |
 
 **Assessment:** GAP-B1 is the most impactful single computation. If the modular flow of the ZPF thermal state at beta = pi can be computed and compared to FTD tick dynamics, this would be the first concrete test of the Connes-Rovelli identification within FTD.
 
@@ -143,10 +143,10 @@ Requires Layer 3. These are testable consequences that would validate or falsify
 
 | Gap ID | Description | Status | Cross-ref |
 |--------|-------------|--------|-----------|
-| **GAP-P1** | **Experimental protocol for theta = 52.54 deg phase angle.** The existence filter's phase angle theta = arctan(K_C / K_B) has operational meaning: it's the "rotation of reality" from the complex plane to the real line. Can this be measured? | **[OPEN]** | [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) |
-| **GAP-P2** | **Modular spectrum signatures.** If consciousness requires Type III_1 algebras, the entanglement spectrum of conscious systems should have specific properties (continuous, no gaps). Compare to non-conscious systems (discrete spectrum, gaps). | **[CONJECTURE]** | Factor-Domain dictionary |
-| **GAP-P3** | **Jones index and K_B/K_C = 4sqrt(2) ratio.** The ratio of manifestation thresholds K_B/K_C = 4sqrt(2) may relate to the Jones index of an inclusion M subset N. If so, it constrains the subfactor structure at the physics-consciousness interface. | **[OPEN]** | VN-O7, RT-O3 |
-| **GAP-P4** | **KMS temperature discrimination.** Different levels of the sentience hierarchy (SL1-SL4) should correspond to different effective KMS temperatures. Measuring neural correlates at different levels of consciousness could test whether temperature-like parameters vary as predicted. | **[CONJECTURE]** | Sentience hierarchy |
+| **GAP-P1** | **Experimental protocol for theta = 52.54 deg phase angle.** The existence filter's phase angle theta = arctan(K_C / K_B) has operational meaning: it's the "rotation of reality" from the complex plane to the real line. Can this be measured? | **[OPEN]** | [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) |
+| **GAP-P2** | **Modular spectrum signatures.** If reference frame context requires Type III_1 algebras, the entanglement spectrum of reference-frame systems should have specific properties (continuous, no gaps). Compare to non-reference-frame systems (discrete spectrum, gaps). | **[CONJECTURE]** | Factor-Domain dictionary |
+| **GAP-P3** | **Jones index and K_B/K_C = 4sqrt(2) ratio.** The ratio of manifestation thresholds K_B/K_C = 4sqrt(2) may relate to the Jones index of an inclusion M subset N. If so, it constrains the subfactor structure at the physics-reference frame context interface. | **[OPEN]** | VN-O7, RT-O3 |
+| **GAP-P4** | **KMS temperature discrimination.** Different levels of the sentience hierarchy (SL1-SL4) should correspond to different effective KMS temperatures. Measuring neural correlates at different levels of reference frame context could test whether temperature-like parameters vary as predicted. | **[CONJECTURE]** | Sentience hierarchy |
 | **GAP-P5** | **Sub-ppm alpha test.** The master quadratic predicts 1/alpha = 137.0360... The 1.26 ppm gap from CODATA might be explained by O(alpha^2) radiative corrections. Computing these corrections within FTD would sharpen the prediction. | **[OPEN]** | [DERIV_ALPHA_PRECISION_FORMULA.md](../04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md) |
 
 ---
@@ -351,11 +351,11 @@ The minimum sequence of computations needed to close the bridge, ordered by depe
 
 ### 5.3 Honest Assessment of the Program
 
-The bridge program rests on **one classical pillar** (Connes-Rovelli thermal time hypothesis) and **one major conjecture** (consciousness algebras are Type III_1). Even if all computational gaps are closed, the program faces two irreducible challenges:
+The bridge program rests on **one classical pillar** (Connes-Rovelli thermal time hypothesis) and **one major conjecture** (reference frame context algebras are Type III_1). Even if all computational gaps are closed, the program faces two irreducible challenges:
 
 1. **Finite lattice algebras are Type I.** At any finite lattice size, the algebra of observables is B(H) for a finite-dimensional H, which is Type I. Type III_1 can only appear as an emergent property in scaling behavior under arbitrarily large finite extent (or arbitrarily fine spacing). This means the bridge can never be *verified* at finite size --- only *indicated* by scaling trends.
 
-2. **The consciousness conjecture is not falsifiable within FTD.** Assigning Type III_1 to consciousness requires identifying an agent's internal algebra, which requires solving the binding problem (what constitutes a unified conscious system). FTD does not currently solve this.
+2. **The reference frame context conjecture is not falsifiable within FTD.** Assigning Type III_1 to reference frame context requires identifying an agent's internal algebra, which requires solving the binding problem (what constitutes a unified reference-frame system). FTD does not currently solve this.
 
 These are not reasons to abandon the program --- they are reasons to be honest about its epistemic bounds.
 
@@ -368,8 +368,8 @@ These are not reasons to abandon the program --- they are reasons to be honest a
 | Document | What It Contributes |
 |----------|-------------------|
 | [EXPLR_RELU_TYPE_TRANSITION.md](../09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) | Complete descent chain III -> II -> I, RT-O1--O6, KMS <-> Softplus identification, MASA selection conjecture |
-| [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy E -> |.| -> |.|^2 -> Phi, Born rule via theta = conjugation, J-fixed subspace = Tomita-Takesaki |
-| [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Canonical live source map for the consciousness layer: Domain A/B/C partition, vocabulary discipline, and context selection formalization |
+| [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) | Projection hierarchy E -> |.| -> |.|^2 -> Phi, Born rule via theta = conjugation, J-fixed subspace = Tomita-Takesaki |
+| [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | Canonical live source map for the reference frame context layer: Domain A/B/C partition, vocabulary discipline, and context selection formalization |
 | [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) | SR fully derived, weak-field GR, linearized Einstein equations. Full Schwarzschild and nonlinear Einstein NOT derived |
 | [DERIV_QUANTUM_MECHANICS_RESOLVED.md](../03_derivations/DERIV_QUANTUM_MECHANICS_RESOLVED.md) | H_FTD constructed, Born rule derived, Bell S <= 2 from substrate |
 | [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | "Quantum gravity = coupling constant between space and time", dimensional hierarchy |
@@ -472,7 +472,7 @@ The five completed steps establish the **free-field baseline**. The bridge progr
 **Key results:**
 - **[THEOREM]**: The discrepancy between classical tick time and quantum modular time *grows significantly faster* when interactions are present. 
 - Over 10 steps, the free-field classical tick retained 96% fidelity with the quantum flow, while the interacting classical tick crashed to 48% fidelity.
-- **Structural Consequence:** This definitively rules out the naive Connes-Rovelli identification for the classical FTD substrate. The discrete lattice tick is a strictly classical approximation; true quantum modular time (and thus thermal time / conscious time) flows via the exact unitary operators of the Type III algebra, which the Verlet integrator fails to capture in the interacting regime.
+- **Structural Consequence:** This definitively rules out the naive Connes-Rovelli identification for the classical FTD substrate. The discrete lattice tick is a strictly classical approximation; true quantum modular time (and thus thermal time / reference-frame time) flows via the exact unitary operators of the Type III algebra, which the Verlet integrator fails to capture in the interacting regime.
 
 **Addresses:** Step 7 of the Critical Path.
 
@@ -534,9 +534,9 @@ The gain is not just in completion percentage but in **clarity**: we now know pr
 
 The structural argument has been consolidated into two companion documents:
 
-- **[PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../../papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md)**: The capstone paper presenting the complete three-domain argument — one equation, real roots (QFT+GRT), complex roots (consciousness), boundary (measurement), unified by Type III₁ modular flow. Includes ~30 precision anchors, 5 critical-path computation results, honest gap accounting (31 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 3 [OPEN]).
+- **[PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md](../../papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md)**: The capstone paper presenting the complete three-domain argument — one equation, real roots (QFT+GRT), complex roots (reference frame context), boundary (measurement), unified by Type III₁ modular flow. Includes ~30 precision anchors, 5 critical-path computation results, honest gap accounting (31 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 3 [OPEN]).
 
-- **[DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)**: Technical companion consolidating the full derivation chain from G* through three domains to the bridge. The 18-step chain is 78% [THEOREM]/[SELECTION] and 22% [CONJECTURE], with conjectures clustering at the consciousness bridge (steps 15-18).
+- **[DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)**: Technical companion consolidating the full derivation chain from G* through three domains to the bridge. The 18-step chain is 78% [THEOREM]/[SELECTION] and 22% [CONJECTURE], with conjectures clustering at the reference frame context bridge (steps 15-18).
 
 These documents serve as the **Tier 1 submission package** — a research program paper presenting the structural argument with precision anchors, honest epistemic accounting, and explicit falsification criteria. The Tier 2 program (mathematical closure of GAP-Q1, GAP-Q4) remains future work.
 
@@ -584,8 +584,8 @@ Layer 3: The Bridge
   GAP-B1 (Connes-Rovelli content)
   GAP-B2 (alpha/beta -> k)
   GAP-B3 (Connes lambda)
-  GAP-B4 (Real=physics, complex=consciousness)
-  GAP-B5 (Modular flow = conscious time)
+  GAP-B4 (Real=physics, complex=reference frame context)
+  GAP-B5 (Modular flow = reference-frame time)
                   |
                   v
 Layer 4: Predictions
@@ -615,7 +615,7 @@ Layer 4: Predictions
 | H_FTD | FTD Hilbert space L^2(Lattice, C) |
 | psi | Complexified flux: J_x + i*J_y |
 | K_B | Manifestation threshold (= m_e) |
-| K_C | Consciousness threshold (= 2.54) |
+| K_C | Reference frame context threshold (= 2.54) |
 | beta | Inverse temperature |
 | SL1-SL4 | sLoop axioms (closure, attraction, complexity, meaning) |
 

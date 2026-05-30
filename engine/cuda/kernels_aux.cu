@@ -20,6 +20,7 @@
 
 #include "ftd/gpu_buffers.h"
 #include "ftd/constants.h"
+#include "ftd/voxel_rng.h"
 #include "kernels_stencil_common.cuh"   // wrap, idx3d (atomicCAS_byte_stencil is local)
 #include <cuda_runtime.h>
 #include <cmath>
@@ -58,7 +59,6 @@ __global__ void weak_transmutation_kernel(
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
-    const double* __restrict__ random,
     bool dual_substrate,
     const double* __restrict__ fL_x,
     const double* __restrict__ fL_y,
@@ -76,7 +76,9 @@ __global__ void weak_transmutation_kernel(
     double* __restrict__ wvR_y_mut,
     double* __restrict__ wvR_z_mut,
     int* __restrict__ ledger_reaction,
-    int L
+    int L,
+    unsigned long long rng_seed,
+    int                tick
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -122,7 +124,9 @@ __global__ void weak_transmutation_kernel(
 
     // Probabilistic flip: p = 1 - exp(-(stress - threshold) / K_B)
     double p = 1.0 - exp(-(stress - weak_threshold) / K_B);
-    if (random[i] >= p) return;
+    double r = ::ftd::voxel_uniform(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::WeakTransmutation));
+    if (r >= p) return;
 
     // Flip polarity
     const int8_t old_state = state[i];
@@ -180,10 +184,11 @@ __global__ void pair_production_kernel(
     const double* __restrict__ flux_x,
     const double* __restrict__ flux_y,
     const double* __restrict__ flux_z,
-    const double* __restrict__ random,
     int32_t* __restrict__ pair_id,
     int* __restrict__ ledger_reaction,
-    int L
+    int L,
+    unsigned long long rng_seed,
+    int                tick
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -200,7 +205,9 @@ __global__ void pair_production_kernel(
 
     // Probabilistic: p = 1 - exp(-(rho - threshold) / K_B)
     double p = 1.0 - exp(-(rho - PAIR_THRESHOLD) / K_B);
-    if (random[i] >= p) return;
+    double r = ::ftd::voxel_uniform(rng_seed, i, tick,
+                static_cast<unsigned long long>(::ftd::VoxelRng::PairProduction));
+    if (r >= p) return;
 
     // Find best adjacent void site for partner
     // Check 6 face neighbors
@@ -244,7 +251,7 @@ __global__ void pair_production_kernel(
     }
 }
 
-void launch_pair_production(GpuBuffers& bufs) {
+void launch_pair_production(GpuBuffers& bufs, unsigned long long rng_seed, int tick) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -252,15 +259,15 @@ void launch_pair_production(GpuBuffers& bufs) {
     pair_production_kernel<<<grid, block>>>(
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-        bufs.d_random,
         bufs.d_pair_id,
         bufs.d_ledger_reaction,
-        L
+        L,
+        rng_seed, tick
     );
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate) {
+void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate, unsigned long long rng_seed, int tick) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -268,7 +275,6 @@ void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate) {
     weak_transmutation_kernel<<<grid, block>>>(
         bufs.d_state,
         bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
-        bufs.d_random,
         dual_substrate,
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
         bufs.d_flux_L_x, bufs.d_flux_L_y, bufs.d_flux_L_z,
@@ -276,7 +282,8 @@ void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate) {
         bufs.d_wave_vel_L_x, bufs.d_wave_vel_L_y, bufs.d_wave_vel_L_z,
         bufs.d_wave_vel_R_x, bufs.d_wave_vel_R_y, bufs.d_wave_vel_R_z,
         bufs.d_ledger_reaction,
-        L
+        L,
+        rng_seed, tick
     );
     CUDA_CHECK(cudaGetLastError());
 }

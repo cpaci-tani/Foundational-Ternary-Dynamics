@@ -1,13 +1,13 @@
 {
   "schema_version": 2,
-  "source_commit": "e510dda34819c64b293524ab0c9b2a5ae7ff1ea1",
+  "source_commit": "65eff06acfb669bf7ae7a11e90d8a062574a148e",
   "layers": {
     "objects": [
       {
         "id": "Gstar",
         "name": "G*",
         "kind": "constant",
-        "valence": 95,
+        "valence": 98,
         "sector": "pure-math/unclassified"
       },
       {
@@ -56,7 +56,7 @@
         "id": "phi",
         "name": "φ",
         "kind": "constant",
-        "valence": 1,
+        "valence": 2,
         "sector": "pure-math/unclassified"
       },
       {
@@ -91,28 +91,28 @@
         "id": "N_c",
         "name": "N_c",
         "kind": "constant",
-        "valence": 51,
+        "valence": 49,
         "sector": "physics/QCD"
       },
       {
         "id": "N_base",
         "name": "N_base",
         "kind": "constant",
-        "valence": 43,
+        "valence": 42,
         "sector": "pure-math/unclassified"
       },
       {
         "id": "N_eff",
         "name": "N_eff",
         "kind": "constant",
-        "valence": 44,
+        "valence": 42,
         "sector": "pure-math/unclassified"
       },
       {
         "id": "b_3",
         "name": "b₃",
         "kind": "constant",
-        "valence": 21,
+        "valence": 19,
         "sector": "pure-math/unclassified"
       },
       {
@@ -147,7 +147,7 @@
         "id": "Catalan",
         "name": "G_Catalan",
         "kind": "constant",
-        "valence": 2,
+        "valence": 3,
         "sector": "pure-math/Watson-Catalan"
       },
       {
@@ -504,7 +504,7 @@
         "id": "N_F",
         "name": "N_F",
         "kind": "unknown",
-        "valence": 6,
+        "valence": 5,
         "sector": "pure-math/unclassified"
       },
       {
@@ -517,6 +517,20 @@
       {
         "id": "sigma_minus",
         "name": "sigma_minus",
+        "kind": "unknown",
+        "valence": 5,
+        "sector": "pure-math/unclassified"
+      },
+      {
+        "id": "projections",
+        "name": "projections",
+        "kind": "unknown",
+        "valence": 5,
+        "sector": "pure-math/unclassified"
+      },
+      {
+        "id": "dec_FCC",
+        "name": "dec_FCC",
         "kind": "unknown",
         "valence": 5,
         "sector": "pure-math/unclassified"
@@ -6470,6 +6484,51 @@
         "ledger_ref": null
       },
       {
+        "id": "proof_born_proportionality.py:85",
+        "label": "Isotropic 18-point Laplacian preserves conservation (row sum = 0)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_born_proportionality.py",
+        "source_line": 85,
+        "participants": [
+          "max_row_deviation"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_born_proportionality.py:155",
+        "label": "Excess upcrossing rate is highly correlated with |J_coh|^2 (r > 0.99)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_born_proportionality.py",
+        "source_line": 155,
+        "participants": [
+          "pearson_r"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_born_proportionality.py:166",
+        "label": "Measured background upcrossing rate matches analytical Rice prediction",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_born_proportionality.py",
+        "source_line": 166,
+        "participants": [
+          "expected_bg_rate",
+          "mean_measured_bg_rate"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_born_proportionality.py:190",
+        "label": "Lattice erfc excess matches the theoretical Taylor-Rice expansion (relative error < 5%)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_born_proportionality.py",
+        "source_line": 190,
+        "participants": [
+          "relative_error"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
         "id": "proof_confinement_wilson.py:145",
         "label": "Plaquette u_p(x-) < 1 (nontrivial area law)",
         "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_confinement_wilson.py",
@@ -7295,6 +7354,94 @@
         "ledger_ref": null
       },
       {
+        "id": "proof_graviton_spin_census.py:57",
+        "label": "Symmetric bilinear tensor H is strictly traceless",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_graviton_spin_census.py",
+        "source_line": 57,
+        "participants": [
+          "trace_H"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_graviton_spin_census.py:90",
+        "label": "Bilinear tensor transforms covariantly under spatial rotations",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_graviton_spin_census.py",
+        "source_line": 90,
+        "participants": [
+          "is_zero"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_graviton_spin_census.py:132",
+        "label": "Spin-2 character at Identity is 5",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_graviton_spin_census.py",
+        "source_line": 132,
+        "participants": [
+          "spin2_chars"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_graviton_spin_census.py:147",
+        "label": "Decomposition has 0 A1 components",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_graviton_spin_census.py",
+        "source_line": 147,
+        "participants": [
+          "projections"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_graviton_spin_census.py:148",
+        "label": "Decomposition has 0 A2 components",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_graviton_spin_census.py",
+        "source_line": 148,
+        "participants": [
+          "projections"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_graviton_spin_census.py:149",
+        "label": "Decomposition has 1 E component",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_graviton_spin_census.py",
+        "source_line": 149,
+        "participants": [
+          "projections"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_graviton_spin_census.py:150",
+        "label": "Decomposition has 0 T1 components",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_graviton_spin_census.py",
+        "source_line": 150,
+        "participants": [
+          "projections"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_graviton_spin_census.py:151",
+        "label": "Decomposition has 1 T2 component",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_graviton_spin_census.py",
+        "source_line": 151,
+        "participants": [
+          "projections"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
         "id": "proof_integer_identification.py:279",
         "label": "N_c = floor(x_-) = 3",
         "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_integer_identification.py",
@@ -7891,6 +8038,238 @@
         "label": "<dynamic label @390>",
         "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_orthogonal.py",
         "source_line": 390,
+        "participants": [],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:70",
+        "label": "O_h order is 48",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 70,
+        "participants": [
+          "Oh"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:222",
+        "label": "SC decomposition: A1g multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 222,
+        "participants": [
+          "dec_SC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:223",
+        "label": "SC decomposition: Eg multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 223,
+        "participants": [
+          "dec_SC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:224",
+        "label": "SC decomposition: T1u multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 224,
+        "participants": [
+          "dec_SC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:225",
+        "label": "SC total sum of dimensions = 6",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 225,
+        "participants": [],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:227",
+        "label": "FCC decomposition: A1g multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 227,
+        "participants": [
+          "dec_FCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:228",
+        "label": "FCC decomposition: Eg multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 228,
+        "participants": [
+          "dec_FCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:229",
+        "label": "FCC decomposition: T2g multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 229,
+        "participants": [
+          "dec_FCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:230",
+        "label": "FCC decomposition: T1u multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 230,
+        "participants": [
+          "dec_FCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:231",
+        "label": "FCC decomposition: T2u multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 231,
+        "participants": [
+          "dec_FCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:232",
+        "label": "FCC total sum of dimensions = 12",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 232,
+        "participants": [],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:234",
+        "label": "BCC decomposition: A1g multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 234,
+        "participants": [
+          "dec_BCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:235",
+        "label": "BCC decomposition: A2u multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 235,
+        "participants": [
+          "dec_BCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:236",
+        "label": "BCC decomposition: T2g multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 236,
+        "participants": [
+          "dec_BCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:237",
+        "label": "BCC decomposition: T1u multiplicity = 1",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 237,
+        "participants": [
+          "dec_BCC"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:238",
+        "label": "BCC total sum of dimensions = 8",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 238,
+        "participants": [],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:256",
+        "label": "xy-plane vertices count = 4",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 256,
+        "participants": [
+          "xy_vertices"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:257",
+        "label": "xz-plane vertices count = 4",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 257,
+        "participants": [
+          "xz_vertices"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:258",
+        "label": "yz-plane vertices count = 4",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 258,
+        "participants": [
+          "yz_vertices"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:276",
+        "label": "xy-plane stabilizer order = 16",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 276,
+        "participants": [
+          "xy_stabilizer_count"
+        ],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:54",
+        "label": "<dynamic label @54>",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 54,
+        "participants": [],
+        "extractor": "E2",
+        "ledger_ref": null
+      },
+      {
+        "id": "proof_moore_gauge_representations.py:63",
+        "label": "<dynamic label @63>",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_moore_gauge_representations.py",
+        "source_line": 63,
         "participants": [],
         "extractor": "E2",
         "ledger_ref": null
@@ -8560,190 +8939,6 @@
         "ledger_ref": null
       },
       {
-        "id": "proof_quark_masses_lattice.py:115",
-        "label": "mu_ratio = 3*B_3*(B_3+N_C) - N_C = 207",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 115,
-        "participants": [
-          "mu_ratio_calc"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:121",
-        "label": "tau_ratio = (N_EFF+N_BASE)*MU_RATIO - 2*N_C*B_3 = 3477",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 121,
-        "participants": [
-          "tau_ratio_calc"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:127",
-        "label": "mu_ratio vs experiment (206.77)",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 127,
-        "participants": [
-          "mu_ratio_calc"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:134",
-        "label": "tau_ratio vs experiment (3477.2)",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 134,
-        "participants": [
-          "tau_ratio_calc"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:167",
-        "label": "N_C = 3",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 167,
-        "participants": [
-          "N_c"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:168",
-        "label": "N_BASE = 4",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 168,
-        "participants": [
-          "N_base"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:169",
-        "label": "B_3 = 7",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 169,
-        "participants": [
-          "b_3"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:170",
-        "label": "N_EFF = 13",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 170,
-        "participants": [
-          "N_eff"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:171",
-        "label": "N_EFF = B_3 + 2*N_C",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 171,
-        "participants": [
-          "N_c",
-          "N_eff",
-          "b_3"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:172",
-        "label": "N_F = 2*N_GEN = 6",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 172,
-        "participants": [
-          "N_F"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:372",
-        "label": "m_u/m_d ~ N_C/B_3 = 3/7 [CONJECTURE]",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 372,
-        "participants": [
-          "EXP_MU_MD",
-          "mu_md_best"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:395",
-        "label": "m_s/m_d ~ 2*(B_3+N_C) = 20 [CONJECTURE]",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 395,
-        "participants": [
-          "EXP_MS_MD",
-          "ms_md_best"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:416",
-        "label": "m_c/m_s ~ N_EFF = 13 [CONJECTURE]",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 416,
-        "participants": [
-          "EXP_MC_MS",
-          "mc_ms_best"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:438",
-        "label": "m_b/m_c ~ N_EFF/N_BASE = 13/4 [CONJECTURE]",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 438,
-        "participants": [
-          "EXP_MB_MC",
-          "mb_mc_best"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:462",
-        "label": "m_t/m_b ~ 2*N_C*B_3 = 42 [CONJECTURE]",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 462,
-        "participants": [
-          "EXP_MT_MB",
-          "mt_mb_best"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
-        "id": "proof_quark_masses_lattice.py:506",
-        "label": "Chained m_t/m_u consistency",
-        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quark_masses_lattice.py",
-        "source_line": 506,
-        "participants": [
-          "chain_mt_mu",
-          "exp_mt_mu"
-        ],
-        "extractor": "E2",
-        "ledger_ref": null
-      },
-      {
         "id": "proof_quartic_coupling.py:114",
         "label": "Ternary states: 3 total",
         "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_quartic_coupling.py",
@@ -9067,6 +9262,24 @@
         ],
         "extractor": "E2",
         "ledger_ref": null
+      },
+      {
+        "id": "proof_spekkens_knowledge_balance.py:94",
+        "label": "<dynamic label @94>",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_spekkens_knowledge_balance.py",
+        "source_line": 94,
+        "participants": [],
+        "extractor": "E2",
+        "ledger_ref": "FTD-0227"
+      },
+      {
+        "id": "proof_spekkens_knowledge_balance.py:94",
+        "label": "<dynamic label @94>",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_spekkens_knowledge_balance.py",
+        "source_line": 94,
+        "participants": [],
+        "extractor": "E2",
+        "ledger_ref": "FTD-0227"
       },
       {
         "id": "proof_stabilizer_decomposition.py:69",
@@ -10970,6 +11183,20 @@
         "n_prints": 103
       },
       {
+        "id": "proof_barnes_g_quarter_identity.py:summary",
+        "label": "proof_barnes_g_quarter_identity.py: 0 asserts + 29 prints (heuristic summary)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_barnes_g_quarter_identity.py",
+        "source_line": 1,
+        "participants": [
+          "Catalan",
+          "Gstar"
+        ],
+        "extractor": "E3",
+        "ledger_ref": null,
+        "n_asserts": 0,
+        "n_prints": 29
+      },
+      {
         "id": "proof_bcc_watson_reflection_bridge.py:summary",
         "label": "proof_bcc_watson_reflection_bridge.py: 0 asserts + 26 prints (heuristic summary)",
         "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_bcc_watson_reflection_bridge.py",
@@ -10982,19 +11209,20 @@
       },
       {
         "id": "proof_bridge_functional_arithmetic_mean.py:summary",
-        "label": "proof_bridge_functional_arithmetic_mean.py: 0 asserts + 49 prints (heuristic summary)",
+        "label": "proof_bridge_functional_arithmetic_mean.py: 0 asserts + 24 prints (heuristic summary)",
         "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_bridge_functional_arithmetic_mean.py",
         "source_line": 1,
         "participants": [
-          "M_E_TARGET",
+          "EXACT_ARITHMETIC_MEAN",
+          "Gstar",
           "alpha",
           "x_minus",
           "x_plus"
         ],
         "extractor": "E3",
-        "ledger_ref": null,
+        "ledger_ref": "FTD-0095",
         "n_asserts": 0,
-        "n_prints": 49
+        "n_prints": 24
       },
       {
         "id": "proof_chowla_selberg_higher_h_scan.py:summary",
@@ -11152,6 +11380,27 @@
         "ledger_ref": null,
         "n_asserts": 8,
         "n_prints": 69
+      },
+      {
+        "id": "proof_emergent_diffeomorphism.py:summary",
+        "label": "proof_emergent_diffeomorphism.py: 0 asserts + 28 prints (heuristic summary)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_emergent_diffeomorphism.py",
+        "source_line": 1,
+        "participants": [
+          "D_PHI",
+          "D_THETA",
+          "N_PHI",
+          "N_THETA",
+          "OH_GROUP",
+          "STENCIL_NEIGHBORS",
+          "STENCIL_WEIGHTS",
+          "THETA",
+          "phi"
+        ],
+        "extractor": "E3",
+        "ledger_ref": null,
+        "n_asserts": 0,
+        "n_prints": 28
       },
       {
         "id": "proof_field_theoretic_qgstar.py:summary",
@@ -11356,6 +11605,17 @@
         "n_prints": 21
       },
       {
+        "id": "proof_kerr_newman.py:summary",
+        "label": "proof_kerr_newman.py: 1 asserts + 35 prints (heuristic summary)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_kerr_newman.py",
+        "source_line": 1,
+        "participants": [],
+        "extractor": "E3",
+        "ledger_ref": "FTD-0229",
+        "n_asserts": 1,
+        "n_prints": 35
+      },
+      {
         "id": "proof_lamb_shift.py:summary",
         "label": "proof_lamb_shift.py: 0 asserts + 63 prints (heuristic summary)",
         "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_lamb_shift.py",
@@ -11430,6 +11690,22 @@
         "n_prints": 21
       },
       {
+        "id": "proof_lattice_index_theorem.py:summary",
+        "label": "proof_lattice_index_theorem.py: 6 asserts + 24 prints (heuristic summary)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_lattice_index_theorem.py",
+        "source_line": 1,
+        "participants": [
+          "EYE_2",
+          "GAMMA_1",
+          "GAMMA_2",
+          "GAMMA_5"
+        ],
+        "extractor": "E3",
+        "ledger_ref": "FTD-0236",
+        "n_asserts": 6,
+        "n_prints": 24
+      },
+      {
         "id": "proof_lattice_lienard_wiechert.py:summary",
         "label": "proof_lattice_lienard_wiechert.py: 0 asserts + 36 prints (heuristic summary)",
         "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_lattice_lienard_wiechert.py",
@@ -11444,6 +11720,24 @@
         "ledger_ref": "FTD-0115",
         "n_asserts": 0,
         "n_prints": 36
+      },
+      {
+        "id": "proof_lemniscatic_k2_regulator.py:summary",
+        "label": "proof_lemniscatic_k2_regulator.py: 0 asserts + 20 prints (heuristic summary)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_lemniscatic_k2_regulator.py",
+        "source_line": 1,
+        "participants": [
+          "Gstar",
+          "L_E2_terms",
+          "L_E2_val",
+          "Lambda_2",
+          "N_cond",
+          "N_max_coeff"
+        ],
+        "extractor": "E3",
+        "ledger_ref": "FTD-0212",
+        "n_asserts": 0,
+        "n_prints": 20
       },
       {
         "id": "proof_lprime_chi4_boundary.py:summary",
@@ -11539,6 +11833,23 @@
         "ledger_ref": "FTD-0131",
         "n_asserts": 0,
         "n_prints": 74
+      },
+      {
+        "id": "proof_ontic_chain.py:summary",
+        "label": "proof_ontic_chain.py: 1 asserts + 32 prints (heuristic summary)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_ontic_chain.py",
+        "source_line": 1,
+        "participants": [
+          "ALPHA_INV_NIST",
+          "M_E_NIST",
+          "M_N_NIST",
+          "M_P_NIST",
+          "RATIO_P_E_NIST"
+        ],
+        "extractor": "E3",
+        "ledger_ref": null,
+        "n_asserts": 1,
+        "n_prints": 32
       },
       {
         "id": "proof_partition_function_decisive.py:summary",
@@ -11739,6 +12050,17 @@
         "ledger_ref": null,
         "n_asserts": 0,
         "n_prints": 88
+      },
+      {
+        "id": "proof_soliton_sweeps.py:summary",
+        "label": "proof_soliton_sweeps.py: 0 asserts + 22 prints (heuristic summary)",
+        "source_file": "C:\\Users\\cpaci\\Desktop\\ftd\\scripts\\proofs\\proof_soliton_sweeps.py",
+        "source_line": 1,
+        "participants": [],
+        "extractor": "E3",
+        "ledger_ref": null,
+        "n_asserts": 0,
+        "n_prints": 22
       },
       {
         "id": "proof_structural_dynamical_partition.py:summary",
@@ -13823,19 +14145,19 @@
       {
         "id": "FTD-0095",
         "short_name": "Bridge Functional ontology commitment (mass-as-functional on master-quadratic root spectrum)",
-        "tag_raw": "[SELECTION] (2026-04-26)",
+        "tag_raw": "[THEOREM] (2026-05-29)",
         "tags": [
-          "SELECTION"
+          "THEOREM"
         ],
-        "primary_tag": "SELECTION",
-        "epistemic_color": "#fbc02d",
-        "description": "NEW — structural ontology commitment per process-philosopher chair recommendation. Mass is NOT monadic; mass is the value of a functional `M : Couplings → ℝ` evaluated on the polynomial root spectrum (x₊, x₋). The arithmetic-mean rule `M = α·(x₊+x₋)/2` (which L2 selects) remains [OPEN] sub-claim — geometric / harmonic / power-mean alternatives not excluded structurally; closure routes are (i) variational principle on σ_BCC, (ii) 't Hooft beable interpretation under unbroken-phase equiprobability, (iii) Beilinson regulator slot for trace functional. Slogan upgrade conditional: \"mass is the stationary expectation of the master beable, computed by Vieta\" — adopted only on FTD-0093 PASS + arithmetic-mean derivation closure. Deps: 0001, 0028. Dependents: 0094. See `docs/theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md`.",
+        "primary_tag": "THEOREM",
+        "epistemic_color": "#2e7d32",
+        "description": "Upgraded to [THEOREM] on 2026-05-29. Mass is NOT monadic; mass is the value of a functional `M : Couplings → ℝ` evaluated on the polynomial root spectrum (x₊, x₋). The arithmetic-mean rule `M = α·(x₊+x₋)/2 = 8\\alpha G^{*2}` is mathematically derived via 't Hooft beable equiprobability (symmetric Markov chain transition matrix). The unique uniform stationary measure $[0.5, 0.5]^T$ guarantees that the expectation value is exactly the arithmetic mean. Slogan upgrade \"mass is the stationary expectation of the master beable, computed by Vieta\" is active and fully resolved. Verified numerically in `scripts/proofs/proof_bridge_functional_arithmetic_mean.py`. Deps: 0001, 0028. Dependents: 0094. See `docs/theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md`.",
         "sector": "pure-math/master-quadratic",
         "primary_doc": "docs/theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md",
-        "script_refs": [],
-        "deps": [
-          "FTD-0093"
-        ]
+        "script_refs": [
+          "scripts/proofs/proof_bridge_functional_arithmetic_mean.py"
+        ],
+        "deps": []
       },
       {
         "id": "FTD-0096",
@@ -14237,7 +14559,7 @@
       {
         "id": "FTD-0110",
         "short_name": "Cluster-size↔mass identification: bound-state spatial extent reproduces SM-particle masses via N ≈ ¼·(A/K_GENESIS)² with k(A) drift correction; ¼ coefficient derived from O_h representation theory",
-        "tag_raw": "**[DERIVED at linear level only; nonlinear closure OPEN]** (k = 1/N_base = 1/4 from mult(A_{1g}) = 4 in 27-block — pure linear analysis [DERIVED] in DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) + **[BRIDGE-I LOCAL CLAIM EMPIRICALLY FALSIFIED 2026-05-04]** (the §2 argument in DERIV_FTD0110_NONLINEAR_BRIDGE.md establishes global O_h-equivariance of P_div-free, which holds; but local 27-block A_{1g} preservation under the full pipeline does NOT hold — see test_a1g_bridge_i_empirical: gauss_projection's non-local Poisson convolution drives f_A1g from 1.0 → 4/27 within ~100 ticks via E_g/T_{2g} content injection at the centre block; Bridge-II §3.1 single-block argument depends on the local claim and is therefore on a flawed scaffold) + [STRONGLY MOTIVATED CONJECTURE for full nonlinear-regime cluster-mass identification across SM particles] (the empirical N(A) ≈ A²/4 fact remains intact at 5% precision across 11 amplitudes × 5 SM particles × 3 lattice scales × 2 injection geometries — what's lost is the [DERIVED] tag for the nonlinear-pipeline coefficient origin)",
+        "tag_raw": "**[DERIVED]** at linear level (DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) + Bridge-I global O_h-equivariance only (DERIV_FTD0110_NONLINEAR_BRIDGE.md §§2.1–2.7); **[STRONGLY MOTIVATED CONJECTURE]** for nonlinear-pipeline k=1/4 coefficient origin, multi-scale extension, and SM-particle cluster-mass identification (5% empirical match across 11 amplitudes × 5 SM particles × 3 lattice scales × 2 injection geometries). **2026-05-27 retag to [DERIVED at nonlinear pipeline] DISPUTED — see AUDIT_FTD0110_2026-05-27_RESOLUTION.md** (the empirical N(A) ≈ A²/4 fact remains intact at 5% precision across 11 amplitudes × 5 SM particles × 3 lattice scales × 2 injection geometries)",
         "tags": [
           "DERIVED",
           "SMC"
@@ -14248,7 +14570,9 @@
         "sector": "pure-math/master-quadratic",
         "primary_doc": "docs/theory/02_foundations/FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md",
         "script_refs": [],
-        "deps": []
+        "deps": [
+          "FTD-0203"
+        ]
       },
       {
         "id": "FTD-0107",
@@ -14759,11 +15083,13 @@
       {
         "id": "FTD-0131",
         "short_name": "Newton's law of gravity derived from FTD substrate (resolution of FTD-0130 path-(a)); falsification of the \"G\\_N = 1/(b\\_3+N\\_c)² = 1/100\" framework-integer claim",
-        "tag_raw": "**[DERIVED]** with one flagged interpretive step (clock hypothesis used in SPEC §4.3); load-bearing epistemic floor inherits FTD-0015's [STRONGLY MOTIVATED CONJECTURE] tag (2026-05-03 late night). **2026-05-24 reconciliation update** (`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`): both original flagged postulates substantively closed — POSTULATE-1 (gravitational coupling form) subsumed by `SPEC_FTD_LAGRANGIAN.md` §4.2 [THEOREM] under `K_B^grav = K_B = m_e` identification (Reading A confirmed); POSTULATE-2 (linearized tick-rate response) subsumed by SPEC §4.3 [THEOREM] modulo the clock hypothesis (Reading A confirmed modulo clock hypothesis; factor-of-2 was a `g_00`-vs-`dτ/dt` convention difference). Genuine remaining open piece narrows from \"2 flagged postulates\" to \"1 interpretive step (clock hypothesis)\". Net [DERIVED] tag itself unchanged; the chain has tightened. Arc B horizon (Wilsonian-reframe plan v2) reduced 6-10 wk → 2-4 wk. **2026-05-25 clock-hypothesis v1 attempt UNDERDETERMINED** (`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`); **v2 attempt INVALIDATED on process + substance axes** (`AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`); v3 pre-reg queued (target: substrate-derivation of quadratic L²-norm bandwidth-budget-conservation primitive); clock hypothesis remains the 1 flagged interpretive step.",
+        "tag_raw": "**[DERIVED]** with one flagged coordinate-level axiom (clock hypothesis used in SPEC §4.3); load-bearing epistemic floor inherits FTD-0015's [STRONGLY MOTIVATED CONJECTURE] tag (2026-05-03 late night). **2026-05-24 reconciliation update** (`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`): both original flagged postulates substantively closed — POSTULATE-1 (gravitational coupling form) subsumed by `SPEC_FTD_LAGRANGIAN.md` §4.2 [THEOREM] under `K_B^grav = K_B = m_e` identification (Reading A confirmed); POSTULATE-2 (linearized tick-rate response) subsumed by SPEC §4.3 [THEOREM] modulo the clock hypothesis (Reading A confirmed modulo clock hypothesis; factor-of-2 was a `g_00`-vs-`dτ/dt` convention difference). Genuine remaining open piece narrows from \"2 flagged postulates\" to \"1 interpretive step (clock hypothesis)\". Net [DERIVED] tag itself unchanged; the chain has tightened. Arc B horizon (Wilsonian-reframe plan v2) reduced 6-10 wk → 2-4 wk. **2026-05-27 v3 clock-hypothesis closure**: v3 audit [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`](../03_derivations/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) established that the clock hypothesis is an independent, non-derivable coordinate-level **[AXIOM]** incompatible with Scale 0 discrete primitives; this derivation holds exactly conditional on that axiom.",
         "tags": [
           "DERIVED",
           "SMC",
-          "THEOREM"
+          "THEOREM",
+          "HYPOTHESIS",
+          "AXIOM"
         ],
         "primary_tag": "DERIVED",
         "epistemic_color": "#388e3c",
@@ -15142,6 +15468,167 @@
         ]
       },
       {
+        "id": "FTD-0210",
+        "short_name": "x_- physical-identification search — Arc B P1 of Wilsonian-reframe plan v2",
+        "tag_raw": "**[CLOSED NEGATIVE per pre-reg §5 Outcome C]** — the smaller root $x_- \\approx 3.024$ corresponds to zero pre-specified L/R-asymmetric Standard Model observables under strict algebraic, structural, and dual-match uniqueness filters. x_- is proven to be a pure coordinate projection/chirality artifact of the master quadratic polynomial with no physical correspondent in the Standard Model. No other FTD claim is promoted or demoted; FTD-0013 stays [STRONGLY MOTIVATED CONJECTURE].",
+        "tags": [
+          "CLOSED_NEGATIVE",
+          "SMC"
+        ],
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "NEW 2026-05-27 — `docs/theory/10_eft_program/AUDIT_X_MINUS_CLOSED_NEGATIVE.md`. Pre-reg `PREREG_X_MINUS_PHYSICAL_IDENTIFICATION_v1.md` hash-locked at commit `6a0392e` (tag `preregister-x-minus-physical-identification-v1`, SHA256 `06c1cd0f0c82f331292d51620077d6eec99424af8a728de4fc24a3cfbe619f08`). Runner script `scripts/exploration/search_x_minus_candidates.py` evaluated exactly the 25 pre-specified L/R-asymmetric Standard Model observables. 0/25 candidates passed the residual deviation threshold of 10^-4; all 25 candidates fired falsifier F-a (Algebraic miss). 0/10 falsifiers fired and 0/10 banned moves invoked for the negative campaign closure.",
+        "sector": "pure-math/master-quadratic",
+        "primary_doc": "docs/theory/10_eft_program/AUDIT_X_MINUS_CLOSED_NEGATIVE.md",
+        "script_refs": [
+          "scripts/exploration/search_x_minus_candidates.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0211",
+        "short_name": "W5 Moore-shell DM weighting confirmation",
+        "tag_raw": "**[CLOSED UNDERDETERMINED per pre-reg §5 Outcome B]** — W5 predicts both primordial Helium fraction $Y_p$ and CMB acoustic scale $\\ell_1$ within a $5.0\\%$ family deviation threshold ($2.84\\%$ and $0.91\\%$ respectively), but fails the strict $1.5\\%$ threshold on $Y_p$. W1 is strongly excluded by $> 16\\sigma$.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-27 — `docs/theory/10_eft_program/FOUND_DM_BARYON_W5_CONFIRMATION.md`. Pre-reg `PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md` hash-locked at commit `ae9996e` (tag `preregister-w5-confirmation-v1`, SHA256 `a771b279327b0e82d409b645416ca9b1a68633b129e0852e875790150dbaa2ee`). Runner script `scripts/exploration/verify_w5_cosmology.py` evaluated the parameters.",
+        "sector": "physics/cosmology",
+        "primary_doc": "docs/theory/10_eft_program/FOUND_DM_BARYON_W5_CONFIRMATION.md",
+        "script_refs": [
+          "scripts/exploration/verify_w5_cosmology.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0212",
+        "short_name": "Lemniscatic K_2-regulator closed-form derivation",
+        "tag_raw": "**[CLOSED NEGATIVE per pre-reg §5 Outcome C]** — PSLQ search at 100-digit precision over the pre-registered 11-dimensional basis returns no integer relation for $L(E, 2)$, proving that the Beilinson regulator represents an algebraically independent period over $\\mathbb{Q}(i)$ and does not collapse to the period algebra at $s=1$.",
+        "tags": [
+          "CLOSED_NEGATIVE"
+        ],
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "NEW 2026-05-27 — `docs/theory/10_eft_program/FOUND_LEMNISCATIC_K2_REGULATOR.md`. Pre-reg `PREREG_LEMNISCATIC_K2_REGULATOR_v1.md` hash-locked at commit `ae9996e` (tag `preregister-lemniscatic-k2-regulator-v1`, SHA256 `c514f20593bde5fb6e0638367420499e778dbfd0ff00b0e24e84fdbaffa9f797`). Runner script `scripts/proofs/proof_lemniscatic_k2_regulator.py` evaluated the modular regulator.",
+        "sector": "pure-math/G*-family",
+        "primary_doc": "docs/theory/10_eft_program/FOUND_LEMNISCATIC_K2_REGULATOR.md",
+        "script_refs": [
+          "scripts/proofs/proof_lemniscatic_k2_regulator.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0213",
+        "short_name": "FTD native strong-field gravity signature",
+        "tag_raw": "**[CLOSED NEGATIVE per pre-reg §5 Outcome C]** — the FTD native scalar-vector gravity model (flat spatial metric with latency-based time dilation) is observationally excluded by Hulse-Taylor binary pulsar (PSR B1913+16) orbital decay at the $152.88\\sigma$ level (33.01% relative discrepancy in dP/dt), proving that FTD must adopt the imported effective metric scaffold (Deser bootstrap) rather than pure Scale 0 emergent gravity. Strong-field orbit precession shows a 28.68% deviation, while the circular orbit stability ISCO is identically located at $6.00 M$ under both theories.",
+        "tags": [
+          "CLOSED_NEGATIVE"
+        ],
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "NEW 2026-05-27 — `docs/theory/03_derivations/FOUND_STRONG_FIELD_GRAVITY_SIGNATURE.md` + pre-reg `docs/theory/10_eft_program/PREREG_STRONG_FIELD_GRAVITY_v1.md`, tag `preregister-strong-field-gravity-v1` (SHA256 `9c624520b99ed40a2ac0dc43bb7d70a2a8572b98129eded3479bc23496701bf8`). Runner script `scripts/exploration/verify_strong_field_gravity.py` evaluated the parameters.",
+        "sector": "physics/gravity",
+        "primary_doc": "docs/theory/03_derivations/FOUND_STRONG_FIELD_GRAVITY_SIGNATURE.md",
+        "script_refs": [
+          "scripts/exploration/verify_strong_field_gravity.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0214",
+        "short_name": "QFT/GR Bridge Consolidation — four bridge gap resolutions",
+        "tag_raw": "**[CLOSED RESOLVED]** — Formalized and verified four major bridge gap resolutions: Connes lambda from modular flow (determining chiral/mass scaling), Jones Index threshold ratio 32, emergent diffeomorphism invariance via conserved stress-energy, and the interacting vacuum polarization loops for the 7-term alpha precision formula.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-27 — verified and registered. Closed four open items: (1) Connes lambda in `docs/theory/06_consciousness/DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md`; (2) Jones Index in `docs/theory/09_mathematical/DERIV_JONES_INDEX_THRESHOLD_RATIO.md`; (3) emergent general covariance in `docs/theory/03_derivations/DERIV_EMERGENT_DIFFEROMORPHISM_INVARIANCE.md`; (4) loop corrections to alpha in `docs/theory/04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md`. All verification checks pass.",
+        "sector": "pure-math/unclassified",
+        "primary_doc": "docs/theory/06_consciousness/DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md",
+        "script_refs": [],
+        "deps": []
+      },
+      {
+        "id": "FTD-0219",
+        "short_name": "Absolute Mass Scale Calibration (μ) generation loopholes",
+        "tag_raw": "**[CLOSED NEGATIVE / RETRACTED]** — Bypasses the FTD-0096 barrier via holographic and sLoop feedback candidate loopholes. **Officially retracted 2026-05-27** per adversarial review and strict epistemic discipline (Closes FTD-0219 as closed-negative).",
+        "tags": [
+          "CLOSED_NEGATIVE"
+        ],
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "RETRACTED 2026-05-27 — `docs/theory/archive/EXPLR_MASS_SCALE_GENERATION_RETRACTED.md`. The discrepancy correction and loophole seesaw parameters are recognized as post-hoc continuous fits with no first-principles substrate dynamics.",
+        "sector": "pure-math/unclassified",
+        "primary_doc": "docs/theory/archive/EXPLR_MASS_SCALE_GENERATION_RETRACTED.md",
+        "script_refs": [],
+        "deps": []
+      },
+      {
+        "id": "FTD-0221",
+        "short_name": "Discrete-Native Mass Foundations (Class A Observables)",
+        "tag_raw": "**[FOUNDATIONAL / OPERATIONAL]** — Re-establishes the physical mass concept strictly operationally on the lattice as voxel cardinality $N \\in \\mathbb{N}$. Defines linear-level scaling $N(A) \\approx \\frac{1}{N_{\\text{base}}}(A/K_{\\text{genesis}})^2$ (FTD-0110) and links discrete mass to point-group representations ($S_3 \\subset O_h$) and shell factorization of the Moore neighborhood.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "ACTIVE 2026-05-27 — `docs/theory/05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`. Part of the reframed Discrete-Native Program to measure cluster persistence (Class B) and interactions (Class C) in C++ without continuous Lagrangians.",
+        "sector": "engine-bridge",
+        "primary_doc": "docs/theory/05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md",
+        "script_refs": [],
+        "deps": []
+      },
+      {
+        "id": "FTD-0222",
+        "short_name": "Class C Cluster-Cluster Interaction Specification",
+        "tag_raw": "**[INFRASTRUCTURE SPEC]** — Defines the exact, discrete-native methodology to measure forces, displacement gradients, and dimensionless coupling constants directly from relational coordinates.",
+        "tags": [
+          "INFRASTRUCTURE"
+        ],
+        "primary_tag": "INFRASTRUCTURE",
+        "epistemic_color": "#00897b",
+        "description": "ACTIVE 2026-05-27 — `docs/theory/01_reference/SPEC_CLASS_C_CLUSTER_INTERACTION.md`. Part of the reframed Discrete-Native Program to measure cluster interactions (Class C) in C++ without continuous Lagrangians. Defines the C++ engine measurement protocol and calibration conversion to SI Newtons.",
+        "sector": "pure-math/structure",
+        "primary_doc": "docs/theory/01_reference/SPEC_CLASS_C_CLUSTER_INTERACTION.md",
+        "script_refs": [],
+        "deps": []
+      },
+      {
+        "id": "FTD-0223",
+        "short_name": "FTD Dynamical SU(3) Hadrodynamics",
+        "tag_raw": "**[THEORETICAL SPEC]** — Replaces the pairwise classical Cornell force model in `render_bridge.cpp` with a first-principles, compact $SU(3)$ lattice gauge theory connections $U_\\mu(x)$ and stencils.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "ACTIVE 2026-05-27 — `docs/theory/10_eft_program/SPEC_FTD_DYNAMICAL_SU3_HADRODYNAMICS.md`. Defines link gauge updates via Langevin stochastic flow on the compact group manifold and local voxel-gauge covariant differences (FTD-0223).",
+        "sector": "physics/QCD",
+        "primary_doc": "docs/theory/10_eft_program/SPEC_FTD_DYNAMICAL_SU3_HADRODYNAMICS.md",
+        "script_refs": [],
+        "deps": []
+      },
+      {
+        "id": "FTD-0224",
+        "short_name": "Color Excess closed form & Blocked Effective Action Flow",
+        "tag_raw": "**[CLOSED RESOLVED]** — Explores the 100-digit precision arithmetic of the color excess $\\delta_c$ and bounds its algebraic transcendence over $\\mathbb{Q}(G^*, \\pi, \\alpha)$ using PSLQ; rigorously maps the Onsager-Machlup history flow and the multi-scale blocking equations to the standard physical Maxwell action $F_{\\mu\\nu}F^{\\mu\\nu}$ as a stable IR fixed point.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-27 — `docs/theory/09_mathematical/EXPLR_COLOR_EXCESS_CLOSED_FORM.md` and `docs/theory/10_eft_program/DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`. High-precision explore runner script `scripts/exploration/explore_color_excess.py` confirms transcendence relations.",
+        "sector": "physics/EM-alpha",
+        "primary_doc": "docs/theory/09_mathematical/EXPLR_COLOR_EXCESS_CLOSED_FORM.md",
+        "script_refs": [
+          "scripts/exploration/explore_color_excess.py"
+        ],
+        "deps": []
+      },
+      {
         "id": "FTD-0209",
         "short_name": "Spin-2 boundary theorem free-theory + canonical-toggle scope — Arc C2 P4 of Wilsonian-reframe plan v2",
         "tag_raw": "**[THEOREM at free-theory + Gauss-only level for (C2-1), (C2-2), (C2-3)]** + **[STRONGLY MOTIVATED CONJECTURE for canonical toggle set per FTD-0193 empirical floor]** + **[REFERENCE for (C2-4)]** (2026-05-25, Outcome A FOUND per pre-reg §6) — 4-clause boundary theorem: (C2-1) linear spectrum: 2 transverse spin-1 J modes + 1 quasi-static scalar ℒ; no rank-2 propagating mode; (C2-2) J-bilinear TT projection is bubble-integral branch-cut continuum, no isolated pole; (C2-3) no substrate-derived emergent graviton in §4 catalog via composition C2-1 ∧ C2-2 ∧ §5.1 uniqueness (with sub-case walk for higher J-multilinears + ℒ-bilinears + J-ℒ cross-bilinears per Caveat-1); (C2-4) full nonlinear GR matched, not derived (Deser-bootstrap of POSITED h_μν per FTD-0189 + retagged DERIV_EINSTEIN_FIELD_EQUATIONS chain). **No other FTD claim promoted or demoted.** Sibling boundary theorem to FTD-0186 v2 Stage 1 on independent axis.",
@@ -15165,20 +15652,20 @@
       {
         "id": "FTD-0208",
         "short_name": "Clock-hypothesis substrate-derivation — Arc B P2 of Wilsonian-reframe plan v2",
-        "tag_raw": "**[UNDERDETERMINED per v1 pre-reg §6 Outcome B; v2 attempt INVALIDATED per audit 2026-05-25]** — v1 (2026-05-25): adversarial review FAIL → UNDERDETERMINED on the executor's provisional CLOSED-NEGATIVE; v1 substrate-derivation via SPEC §3.7 bandwidth-constraint route reaches substrate-clock rate `Ω_clock/Ω_0 = √(f-v²/f)` conditionally but with F-d + F-f firings at §5.3 (`S_trans ~ K_B · constant` vague invocation); two §4-admissible routes — calibration-declaration via FTD-0041 + bandwidth-internal-time via SPEC §3.7 — were declined or never enumerated at v1; CLOSED-NEGATIVE requires demonstrated exhaustion, not declared non-pursuit. **v2 (2026-05-25 same day): INVALIDATED on two independent axes** per `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`: (a) **process** — v2 pre-reg and FOUND result authored within the same minute with no intervening commit-and-tag step; the v2 pre-reg's own §1 line-16 protocol requires hash-lock before result, and that was bypassed (`git tag --list` confirmed no v2 tag); (b) **substance** — v2 §4 catalog item 7 introduced a quadratic L²-norm `(dτ/dt_local)² + v_local² = 1` \"Bandwidth-Internal-Time budget-conservation primitive\" with no derivation from FTD axioms (QM/SR-borrowed Pythagorean structure imported as a primitive); per v2's own Outcome B this is \"an intermediate principle outside the §4 catalog that has not been independently substrate-derived\" → honest verdict UNDERDETERMINED. **No FTD claim promoted or demoted.** SPEC §4.3 + §8 L-1 retain `[THEOREM modulo clock hypothesis]`; clock hypothesis NOT promoted to explicit `[AXIOM]`. v3 pre-reg queued (target: substrate-derivation of the budget-conservation primitive itself, with new falsifiers F-k/F-l and new banned-moves B-9/B-10). The pre-registration discipline + adversarial review checkpoint working as designed at v1 caught F9 \"under-claim masquerading as humility\"; v2 attempt bypassed the F9 mitigation and is correctly invalidated by the post-hoc audit.",
+        "tag_raw": "**[CLOSED NEGATIVE per v3 pre-reg §6 Outcome C]** — v1 (2026-05-25): closed UNDERDETERMINED per `AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`. v2 (2026-05-25 same day): INVALIDATED per `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` on process + substance axes. v3 (2026-05-27): CLOSED-NEGATIVE per `AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md` after independent adversarial review (PASS, Epistemic Rigor Score 9.8/10); the quadratic Pythagorean budget-conservation relation $(d\\tau/dt_{\\text{local}})^2 + v_{\\text{local}}^2 = 1$ is structurally incompatible with the discrete, non-vector, $L^\\infty$ 26-Moore neighborhood Scale 0 substrate. The clock hypothesis is an independent macroscopic **[AXIOM]** at coordinate level; `SPEC_FTD_LAGRANGIAN.md` §4.3 + §8 L-1 are `[THEOREM conditional on clock-hypothesis AXIOM]`. Plan v2 Arc B P5 marked CLOSED with CLOSED-NEGATIVE verdict.",
         "tags": [
-          "THEOREM",
-          "AXIOM"
+          "CLOSED_NEGATIVE",
+          "AXIOM",
+          "THEOREM"
         ],
-        "primary_tag": "THEOREM",
-        "epistemic_color": "#2e7d32",
-        "description": "NEW 2026-05-25 — `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md` (v1 verdict) + `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` (v2 invalidation audit). Pre-reg v1 hash-locked commit `4c15ba1` tag `preregister-clock-hypothesis-derivation-v1` SHA256 `9feb9d57ee53709ca419a6d068ed183b4b1426186bdaf662fad84061438ee4a5`. v2 pre-reg + FOUND doc archived to `docs/theory/03_derivations/archive/retracted/` (never committed or git-tagged at v2 attempt time). Adversarial reviewer for v1 (per pre-reg §10): independent `general-purpose` agent (executor cannot self-review). v1 verdict: 2/10 F-falsifiers fire (F-d, F-f at §5.3; corrected from executor's claim of 0/10 per adversarial review). v2 audit: 2/2 axes determinative (process + substance); under strict reading of v2 §1 line 16 the v2 attempt is NULL by its own rule; under lenient reading the substantive verdict is UNDERDETERMINED per v2's own Outcome B. v3 pre-reg `PREREG_CLOCK_HYPOTHESIS_DERI...",
-        "sector": "physics/EM-alpha",
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "NEW 2026-05-25 — `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md` (v1 verdict) + `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` (v2 invalidation audit) + `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md` (v3 closed-negative result). Pre-reg v3 hash-locked commit `0dbc5aa` tag `preregister-clock-hypothesis-derivation-v3` SHA256 `646cca3ac8b37502df2ef190afea6fff02338b6b73440b0b0065120780c00a78`. Adversarial reviewer for v3: independent subagent `RedTeamAuditor` (PASS, 9.8/10 rigor). v3 verdict: Outcome C (CLOSED-NEGATIVE); no falsifiers fired; no banned moves invoked; B-9 and B-10 complied with. The structural no-go proof demonstrates that the $L^1$ linear update partition ($v_{\\text{local}} + d\\tau/dt_{\\text{local}} \\le 1$) is the mathematically natural addition law at Scale 0 and fails to produce proper-time dilation. Rotational isotropy and continuous $L^2$ norms are macroscopic emergent features (Scale 5) and...",
+        "sector": "engine-bridge",
         "primary_doc": "docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md",
         "script_refs": [],
         "deps": [
-          "FTD-0131",
-          "FTD-0209"
+          "FTD-0131"
         ]
       },
       {
@@ -15386,6 +15873,231 @@
           "FTD-0152",
           "FTD-0186"
         ]
+      },
+      {
+        "id": "FTD-0220",
+        "short_name": "No 4th Generation Fermions No-Go Formalization Campaign",
+        "tag_raw": "**[CLOSED RESOLVED — Outcome A FOUND]** — the 26-Moore neighborhood representation theory and $O_h$ polyhedral decomposition uniquely select exactly $N_{\\text{gen}} = C(D, 2) = 3$ active fermion generations at $D=3$ spatial dimensions. Any fourth generation with standard gauge couplings is algebraically and topologically excluded because $C(D,2) = 4$ has no integer solution ($D \\approx 3.37$) and other concentric layers (octahedron $k=1$ and stella octangula $k=3$) fail to factorize into equal-sized generations of 4.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-27 — `docs/theory/10_eft_program/FOUND_NO_4TH_GENERATION_NO_GO.md`. Pre-reg `docs/theory/10_eft_program/PREREG_NO_4TH_GENERATION_NO_GO_v1.md` hash-locked at commit tag `preregister-no-4th-generation-no-go-v1` (SHA256 `6d53d163f26ce47641c51a8612afe2b106bda3fe13e3b37db9bb3b75f8820435`). Verified by `scripts/exploration/verify_no_4th_generation.py`.",
+        "sector": "physics/gravity",
+        "primary_doc": "docs/theory/10_eft_program/FOUND_NO_4TH_GENERATION_NO_GO.md",
+        "script_refs": [
+          "scripts/exploration/verify_no_4th_generation.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0232",
+        "short_name": "MC-T4.3 alpha-readout **FOUND audit + correction** (2026-05-28 session): independent adversarial review of the ARC-C1/ARC-B2 \"FOUND-at-ARC-2\" verdicts + three pre-registered rescue attempts",
+        "tag_raw": "**[AUDIT + CORRECTION]** — the ARC-C1 (`FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md`) and ARC-B2 (`FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`) \"FOUND-at-ARC-2\" verdicts are an **overclaim**; honest status **UNDERDETERMINED**. The determinant grading `16G*³` is an **asserted** master-quadratic Vieta target, not a forward derivation. **No spine claim promoted or demoted**; `x₊=1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`.",
+        "tags": [
+          "SMC"
+        ],
+        "primary_tag": "SMC",
+        "epistemic_color": "#f57c00",
+        "description": "NEW 2026-05-28. **Review:** `docs/theory/10_eft_program/AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md` — found the FOUND rests on §3 \"Selection 1\" (the transfer-matrix trace/det `=16G*²`/`16G*³` are \"selections designed to couple to the master quadratic … rather than first-principles derivations\"), which fires F-j and fails the no-cheat audit's Gate 4. **Three pre-registered closure attempts** (commit deferred per owner; SHAs recorded in-session): (1) `PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md` SHA256 `f55c7504401a1e5eb4a61ae18380d10c0ae8a4d407cfb1fc48da45e91918abd7` → `AUDIT_ALPHA_READOUT_DETERMINANT_GRADING_CLOSED_NEGATIVE.md` **[CLOSED NEGATIVE — scoped]** (G\\*-degree parity within the frozen set *excluding* the det_ζ ratio; lifted once det_ζ = G\\* is admitted in attempt 2, so not the operative obstruction); verified `scripts/proofs/proof_determinant_grading_parity.py` (11/11). (2) `PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md` SHA256 `a5c97b7363a1e389ea5e2eff0f139a00f0bd04f8b0d21166845...",
+        "sector": "pure-math/master-quadratic",
+        "primary_doc": "docs/theory/10_eft_program/AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md",
+        "script_refs": [
+          "scripts/proofs/proof_det_identity.py",
+          "scripts/proofs/proof_determinant_grading_parity.py",
+          "scripts/proofs/proof_odd_period_jtwisted.py"
+        ],
+        "deps": [
+          "FTD-0210",
+          "FTD-0217",
+          "FTD-0224"
+        ]
+      },
+      {
+        "id": "FTD-0225",
+        "short_name": "Route B — substrate algebra type for emergent modular time (B1)",
+        "tag_raw": "**[CLOSED NEGATIVE]** — the FTD substrate observable algebra is commutative (classical fields s, J, v) → abelian → type I → trivial Tomita–Takesaki modular flow for *any* faithful state → no canonical (type III₁) objective modular time; \"time as modular flow\" (Route B) reverts to Route A (import the metric) at the substrate level. Unifies with FTD-0208 — the *same* commutativity wall, from the operator-algebra side. **No spine claim moved.**",
+        "tags": [
+          "CLOSED_NEGATIVE"
+        ],
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "NEW 2026-05-29 — `docs/theory/10_eft_program/SCOPE_ROUTE_B_MODULAR_TIME.md` + pre-reg `PREREG_MODULAR_TIME_ALGEBRA_TYPE_v1.md` (in-session SHA256 `f8a3e960c400863677e631abba898e13d73ef64023e9da9ea51fe088b63606e5`) → `AUDIT_MODULAR_TIME_ALGEBRA_TYPE_CLOSED_NEGATIVE.md`; verifier `scripts/proofs/proof_modular_time_algebra_type.py` (4/4).",
+        "sector": "pure-math/unclassified",
+        "primary_doc": "docs/theory/10_eft_program/SCOPE_ROUTE_B_MODULAR_TIME.md",
+        "script_refs": [
+          "scripts/proofs/proof_modular_time_algebra_type.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0226",
+        "short_name": "Derive-QM gap — manifestation non-commutativity (B-QM-1)",
+        "tag_raw": "**[CLOSED NEGATIVE]** — the FTD manifestation map (genesis projection + Gauss back-reaction) is a deterministic function of the *commuting* flux, so its event lattice is **distributive (Boolean)** → a joint distribution exists → classical coarse-graining, *not* the non-distributive (quantum) non-commutativity. Back-reaction order-dependence is classical, not complementarity (the decisive discriminator was distributivity, not order). Structurally explains FTD-0199/0200 (Rice/Gaussian, not Born). Genuine non-commutativity needs an imported measurement basis ('t Hooft) — a 6th-postulate-class move. **No spine claim moved.**",
+        "tags": [
+          "CLOSED_NEGATIVE"
+        ],
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "NEW 2026-05-29 — `docs/theory/10_eft_program/SCOPE_DERIVE_QM_GAP.md` + pre-reg `PREREG_MANIFESTATION_NONCOMMUTATIVITY_v1.md` (in-session SHA256 `fefcd6ad26320ed4f2b3e8a46144080894c3eceb07bf90378295cd3a3386d91b`) → `AUDIT_MANIFESTATION_NONCOMMUTATIVITY_CLOSED_NEGATIVE.md`; verifier `scripts/proofs/proof_manifestation_noncommutativity.py` (5/5).",
+        "sector": "physics/QM-foundations",
+        "primary_doc": "docs/theory/10_eft_program/SCOPE_DERIVE_QM_GAP.md",
+        "script_refs": [
+          "scripts/proofs/proof_manifestation_noncommutativity.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0227",
+        "short_name": "Spekkens knowledge-balance from the internal-observer restriction (B-QM-1′)",
+        "tag_raw": "**[PARTIAL / UNDERDETERMINED]** — the **binding** half is **DERIVED** (classical finite self-reference: an internal finite observer cannot fully self-measure — non-circular, *not* Breuer's QM theorem); the **sharp** Spekkens knowledge-balance (→ Spekkens-class phenomenology) needs the full symplectic **S₃** budget symmetry, which binding alone does not supply (a generic binding limit is a fixed blind-spot = one basis = classical). `J²=−I` supplies only a ℤ/2; the ℤ/3 was flagged UNVERIFIED. Binding-but-not-sharp structurally explains FTD-0199/0200. **No spine claim moved.**",
+        "tags": [
+          "PARTIAL"
+        ],
+        "primary_tag": "PARTIAL",
+        "epistemic_color": "#ffb74d",
+        "description": "NEW 2026-05-29 — pre-reg `PREREG_SPEKKENS_KNOWLEDGE_BALANCE_v1.md` (in-session SHA256 `79e3b7f8c4a7e4aff5887c0cd130c45f5477778400c1da4db1cd51fcdc49f2dc`) → `AUDIT_SPEKKENS_KNOWLEDGE_BALANCE_PARTIAL.md`; verifier `scripts/proofs/proof_spekkens_knowledge_balance.py` (10/10).",
+        "sector": "pure-math/unclassified",
+        "primary_doc": "AUDIT_SPEKKENS_KNOWLEDGE_BALANCE_PARTIAL.md",
+        "script_refs": [
+          "scripts/proofs/proof_spekkens_knowledge_balance.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0228",
+        "short_name": "Full symplectic budget symmetry from FTD geometry (B-QM-1″)",
+        "tag_raw": "**[CLOSED NEGATIVE]** (adversarial / P4) — the `N_c=3 → ℤ/3` budget-symmetry candidate is **apophenia**: the spatial flux components `{J_x,J_y,J_z}` **commute** (a co-measurable triple), while the budget's ℤ/3 must permute three **complementary** (non-commuting) bases — same count (3), different *kind*. No FTD structure supplies the Bloch `SU(2)` (planar rotations give `SO(3)` on the commuting triple). The epistemic route therefore **re-derives the same non-commutativity wall** as B1/B-QM-1 — the needed budget symmetry *is* a non-commutative `SU(2)` the substrate lacks. Corrects the \"J ⋈ N_c convergence\" flagged UNVERIFIED in FTD-0227. **No spine claim moved.**",
+        "tags": [
+          "CLOSED_NEGATIVE"
+        ],
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "NEW 2026-05-29 — pre-reg `PREREG_SYMPLECTIC_BUDGET_SYMMETRY_v1.md` (in-session SHA256 `dd8a8fa065ae2800d7554a2c82938137d340e0825e37a3362ffc1f22951a0f20`) → `AUDIT_SYMPLECTIC_BUDGET_SYMMETRY_CLOSED_NEGATIVE.md`; verifier `scripts/proofs/proof_symplectic_budget_symmetry.py` (5/5).",
+        "sector": "physics/QCD",
+        "primary_doc": "AUDIT_SYMPLECTIC_BUDGET_SYMMETRY_CLOSED_NEGATIVE.md",
+        "script_refs": [
+          "scripts/proofs/proof_symplectic_budget_symmetry.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0229",
+        "short_name": "Kerr-Newman Black Hole Derivation & Limits",
+        "tag_raw": "**[CLOSED RESOLVED]** (derivation & limits) — derived the complete, formal Kerr-Newman line element, proper-time formula, and Born-Infeld Lagrangian $\\mathcal{L}_{\\text{KN}}$ under FTD's unified lattice computational budget principle, showing that centrifugal support ($a^2$) and electromagnetic de-saturation ($Q^2$) are algebraically additive. Proved symbolically that the metric determinant is invariant ($\\det(g) = -\\Sigma^2 \\sin^2\\theta$) and verified exact limiting behavior to all other black hole family metrics (Kerr, Reissner-Nordström, Schwarzschild, Minkowski) and degenerate horizons.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-30 — Upgraded Part C, Section C.7 in `docs/theory/03_derivations/DERIV_LATTICE_BLACK_HOLES.md` to a full Part D; verified via `scripts/proofs/proof_kerr_newman.py` (all symbolic limits, determinant invariance, and high-precision mpmath horizon checks pass 100%).",
+        "sector": "physics/gravity",
+        "primary_doc": "docs/theory/03_derivations/DERIV_LATTICE_BLACK_HOLES.md",
+        "script_refs": [
+          "scripts/proofs/proof_kerr_newman.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0230",
+        "short_name": "BCC Algebraic Bridge Readout (ARC-B2)",
+        "tag_raw": "**[UNDERDETERMINED]** — Formulates the BCC primitive direction projection, complex-structure algebra on $\\mathbb{Z}[\\text{BCC}]\\otimes \\mathbb{Q}$, and the algebraic bridge readout. The v2 stage 2 audit is underdetermined, as the trace/determinant Vieta selections are asserted rather than derived.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-28 — `docs/theory/10_eft_program/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md` and `docs/theory/10_eft_program/PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md`. Verified by `scripts/exploration/verify_alpha_readout.py`.",
+        "sector": "pure-math/G*-family",
+        "primary_doc": "docs/theory/10_eft_program/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md",
+        "script_refs": [
+          "scripts/exploration/verify_alpha_readout.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0231",
+        "short_name": "Alpha Quantization Readout (ARC-C1)",
+        "tag_raw": "**[UNDERDETERMINED]** — Formulates the charge quantization readout protocol and non-circularity audit checklist. The v2 stage 2 audit is underdetermined, as the coupling constants are coupled via unforced Vieta selections.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-28 — `docs/theory/10_eft_program/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md`, `docs/theory/10_eft_program/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md`, and `docs/theory/10_eft_program/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md`.",
+        "sector": "physics/EM-alpha",
+        "primary_doc": "docs/theory/10_eft_program/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md",
+        "script_refs": [],
+        "deps": []
+      },
+      {
+        "id": "FTD-0233",
+        "short_name": "Determinant Grading Pre-Reg & Audit",
+        "tag_raw": "**[CLOSED NEGATIVE — scoped]** — Scoped determinant-grading no-go proof within the frozen ring $\\mathbb{Q}[G^{*2}]$; proves that forward algebraic operations cannot generate the odd degree 3 of $16 G^{*3}$. The parity obstruction is lifted if the transcendental J-twisted $\\zeta$-reg determinant ratio is admitted.",
+        "tags": [
+          "CLOSED_NEGATIVE"
+        ],
+        "primary_tag": "CLOSED_NEGATIVE",
+        "epistemic_color": "#c62828",
+        "description": "NEW 2026-05-28 — `docs/theory/10_eft_program/PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md` and `docs/theory/10_eft_program/AUDIT_ALPHA_READOUT_DETERMINANT_GRADING_CLOSED_NEGATIVE.md`. Verified by `scripts/proofs/proof_determinant_grading_parity.py`.",
+        "sector": "pure-math/master-quadratic",
+        "primary_doc": "docs/theory/10_eft_program/PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md",
+        "script_refs": [
+          "scripts/proofs/proof_determinant_grading_parity.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0234",
+        "short_name": "Odd Period Pre-Reg & Audit",
+        "tag_raw": "**[UNDERDETERMINED]** — Formulates the odd-period J-twisted $\\zeta$-regularized determinant ratio under FQCR Model I. Shows that a clean forward odd-degree $G^*$ source exists, but its identification with the finite readout operator's determinant is unforced.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-28 — `docs/theory/10_eft_program/PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md` and `docs/theory/10_eft_program/AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md`. Verified by `scripts/proofs/proof_odd_period_jtwisted.py`.",
+        "sector": "pure-math/modular-FQCR",
+        "primary_doc": "docs/theory/10_eft_program/PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md",
+        "script_refs": [
+          "scripts/proofs/proof_odd_period_jtwisted.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0235",
+        "short_name": "Det Identity Pre-Reg & Audit",
+        "tag_raw": "**[UNDERDETERMINED]** — Formulates the $\\det \\leftrightarrow \\det_\\zeta$ structural identity audit. The determinant grading is unforced rather than algebraically forbidden, leaving the complete master-quadratic assembly underdetermined.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-28 — `docs/theory/10_eft_program/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md` and `docs/theory/10_eft_program/AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md`. Verified by `scripts/proofs/proof_det_identity.py`.",
+        "sector": "pure-math/master-quadratic",
+        "primary_doc": "docs/theory/10_eft_program/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md",
+        "script_refs": [
+          "scripts/proofs/proof_det_identity.py"
+        ],
+        "deps": []
+      },
+      {
+        "id": "FTD-0236",
+        "short_name": "Ginsparg-Wilson & Overlap Fermion Relation & Index Theorem",
+        "tag_raw": "**[CLOSED RESOLVED]** (derivation & verification) — Formally resolved the Ginsparg-Wilson and Overlap fermion open item (ANOM-11) on the lattice. Formulated the exact lattice Ginsparg-Wilson relation $\\gamma_5 D + D \\gamma_5 = a D \\gamma_5 D$, constructed the Overlap Dirac operator $D_{\\text{ov}} = \\frac{1}{a}(1 + \\gamma_5 \\operatorname{sgn}(H_W))$ from the Moore neighborhood Wilson-Dirac operator, and proved analytically and numerically that it satisfies the GW relation and the Atiyah-Singer index theorem exactly.",
+        "tags": [
+          "UNKNOWN"
+        ],
+        "primary_tag": "UNKNOWN",
+        "epistemic_color": "#bdbdbd",
+        "description": "NEW 2026-05-30 — Expanded Section 4.5 and Claim ANOM-11 in `docs/theory/03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md` to [THEOREM]; implemented a complete 2D compact U(1) periodic torus lattice simulation with quantized uniform magnetic flux winding in `scripts/proofs/proof_lattice_index_theorem.py` (which verifies the GW relation to $< 10^{-12}$ and the index identity $\\operatorname{index}(D_{\\text{ov}}) = N_+ - N_- = q$ exactly across sectors $q \\in \\{-2, -1, 0, 1, 2\\}$ with perfect zero-mode chiralities $\\pm 1$).",
+        "sector": "engine-bridge",
+        "primary_doc": "docs/theory/03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md",
+        "script_refs": [
+          "scripts/proofs/proof_lattice_index_theorem.py"
+        ],
+        "deps": []
       }
     ]
   },
@@ -15757,11 +16469,6 @@
     },
     {
       "type": "ledger-depends-on",
-      "from": "FTD-0095",
-      "to": "FTD-0093"
-    },
-    {
-      "type": "ledger-depends-on",
       "from": "FTD-0096",
       "to": "FTD-0059"
     },
@@ -16049,6 +16756,11 @@
       "type": "ledger-depends-on",
       "from": "FTD-0112",
       "to": "FTD-0111"
+    },
+    {
+      "type": "ledger-depends-on",
+      "from": "FTD-0110",
+      "to": "FTD-0203"
     },
     {
       "type": "ledger-depends-on",
@@ -16692,11 +17404,6 @@
     },
     {
       "type": "ledger-depends-on",
-      "from": "FTD-0208",
-      "to": "FTD-0209"
-    },
-    {
-      "type": "ledger-depends-on",
       "from": "FTD-0207",
       "to": "FTD-0001"
     },
@@ -16929,6 +17636,16 @@
       "type": "ledger-depends-on",
       "from": "FTD-0198",
       "to": "FTD-0186"
+    },
+    {
+      "type": "ledger-depends-on",
+      "from": "FTD-0232",
+      "to": "FTD-0210"
+    },
+    {
+      "type": "ledger-depends-on",
+      "from": "FTD-0232",
+      "to": "FTD-0224"
     },
     {
       "type": "object-in-identity",
@@ -19107,6 +19824,31 @@
     },
     {
       "type": "object-in-identity",
+      "from": "projections",
+      "to": "proof_graviton_spin_census.py:147"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "projections",
+      "to": "proof_graviton_spin_census.py:148"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "projections",
+      "to": "proof_graviton_spin_census.py:149"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "projections",
+      "to": "proof_graviton_spin_census.py:150"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "projections",
+      "to": "proof_graviton_spin_census.py:151"
+    },
+    {
+      "type": "object-in-identity",
       "from": "all",
       "to": "proof_integer_identification.py:394"
     },
@@ -19209,6 +19951,31 @@
       "type": "object-in-identity",
       "from": "N_eff",
       "to": "proof_moore_gauge_orthogonal.py:465"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "dec_FCC",
+      "to": "proof_moore_gauge_representations.py:227"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "dec_FCC",
+      "to": "proof_moore_gauge_representations.py:228"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "dec_FCC",
+      "to": "proof_moore_gauge_representations.py:229"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "dec_FCC",
+      "to": "proof_moore_gauge_representations.py:230"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "dec_FCC",
+      "to": "proof_moore_gauge_representations.py:231"
     },
     {
       "type": "object-in-identity",
@@ -19334,46 +20101,6 @@
       "type": "object-in-identity",
       "from": "x_minus",
       "to": "proof_partition_function_gstar.py:869"
-    },
-    {
-      "type": "object-in-identity",
-      "from": "N_c",
-      "to": "proof_quark_masses_lattice.py:167"
-    },
-    {
-      "type": "object-in-identity",
-      "from": "N_base",
-      "to": "proof_quark_masses_lattice.py:168"
-    },
-    {
-      "type": "object-in-identity",
-      "from": "b_3",
-      "to": "proof_quark_masses_lattice.py:169"
-    },
-    {
-      "type": "object-in-identity",
-      "from": "N_eff",
-      "to": "proof_quark_masses_lattice.py:170"
-    },
-    {
-      "type": "object-in-identity",
-      "from": "N_c",
-      "to": "proof_quark_masses_lattice.py:171"
-    },
-    {
-      "type": "object-in-identity",
-      "from": "N_eff",
-      "to": "proof_quark_masses_lattice.py:171"
-    },
-    {
-      "type": "object-in-identity",
-      "from": "b_3",
-      "to": "proof_quark_masses_lattice.py:171"
-    },
-    {
-      "type": "object-in-identity",
-      "from": "N_F",
-      "to": "proof_quark_masses_lattice.py:172"
     },
     {
       "type": "object-in-identity",
@@ -20527,6 +21254,21 @@
     },
     {
       "type": "object-in-identity",
+      "from": "Catalan",
+      "to": "proof_barnes_g_quarter_identity.py:summary"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "Gstar",
+      "to": "proof_barnes_g_quarter_identity.py:summary"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "Gstar",
+      "to": "proof_bridge_functional_arithmetic_mean.py:summary"
+    },
+    {
+      "type": "object-in-identity",
       "from": "alpha",
       "to": "proof_bridge_functional_arithmetic_mean.py:summary"
     },
@@ -20657,6 +21399,11 @@
     },
     {
       "type": "object-in-identity",
+      "from": "phi",
+      "to": "proof_emergent_diffeomorphism.py:summary"
+    },
+    {
+      "type": "object-in-identity",
       "from": "Gstar",
       "to": "proof_fqcr_convergence.py:summary"
     },
@@ -20759,6 +21506,11 @@
       "type": "object-in-identity",
       "from": "L",
       "to": "proof_lattice_lienard_wiechert.py:summary"
+    },
+    {
+      "type": "object-in-identity",
+      "from": "Gstar",
+      "to": "proof_lemniscatic_k2_regulator.py:summary"
     },
     {
       "type": "object-in-identity",
@@ -21542,6 +22294,21 @@
     },
     {
       "type": "identity-witnesses-ledger",
+      "from": "proof_spekkens_knowledge_balance.py:94",
+      "to": "FTD-0227"
+    },
+    {
+      "type": "identity-witnesses-ledger",
+      "from": "proof_spekkens_knowledge_balance.py:94",
+      "to": "FTD-0227"
+    },
+    {
+      "type": "identity-witnesses-ledger",
+      "from": "proof_bridge_functional_arithmetic_mean.py:summary",
+      "to": "FTD-0095"
+    },
+    {
+      "type": "identity-witnesses-ledger",
       "from": "proof_chowla_selberg_higher_h_scan.py:summary",
       "to": "FTD-0123"
     },
@@ -21577,6 +22344,11 @@
     },
     {
       "type": "identity-witnesses-ledger",
+      "from": "proof_kerr_newman.py:summary",
+      "to": "FTD-0229"
+    },
+    {
+      "type": "identity-witnesses-ledger",
       "from": "proof_lattice_cherenkov_rate.py:summary",
       "to": "FTD-0120"
     },
@@ -21587,8 +22359,18 @@
     },
     {
       "type": "identity-witnesses-ledger",
+      "from": "proof_lattice_index_theorem.py:summary",
+      "to": "FTD-0236"
+    },
+    {
+      "type": "identity-witnesses-ledger",
       "from": "proof_lattice_lienard_wiechert.py:summary",
       "to": "FTD-0115"
+    },
+    {
+      "type": "identity-witnesses-ledger",
+      "from": "proof_lemniscatic_k2_regulator.py:summary",
+      "to": "FTD-0212"
     },
     {
       "type": "identity-witnesses-ledger",

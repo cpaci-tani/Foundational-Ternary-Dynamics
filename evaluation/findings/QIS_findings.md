@@ -5,7 +5,7 @@
 - **Credentials:** PhD in Quantum Information (Entanglement, Bell Inequalities, Quantum Foundations)
 - **Chapters Reviewed:**
   - `manuscript/src/chapters/2.4-quantum-phenomena.qmd`
-  - `manuscript/src/chapters/12.5-consciousness-as-self-reference.qmd`
+  - `manuscript/src/chapters/12.5-reference frame context-as-self-reference.qmd`
   - `manuscript/src/chapters/14.7-sloop-formalization.qmd`
   - SPEC_CLAUDE.md (main framework documentation)
   - SPEC_FTD_REFERENCE.md
@@ -19,7 +19,7 @@ Foundational Ternary Dynamics (FTD) presents an ambitious framework attempting t
 
 **Key Strengths:** The framework correctly identifies the essential mathematical structure of quantum mechanics (Hilbert space, Born rule, tensor products for entanglement) and attempts to ground these in a physical substrate. The four independent Born rule "derivations" show genuine engagement with foundational questions.
 
-**Key Weaknesses:** The Bell inequality treatment conflates different levels of analysis; the sLoop mechanism lacks the mathematical rigor needed to demonstrate genuine nonlocal correlations; the Hilbert space is constructed rather than emergent; and the consciousness extensions venture into unfalsifiable territory.
+**Key Weaknesses:** The Bell inequality treatment conflates different levels of analysis; the sLoop mechanism lacks the mathematical rigor needed to demonstrate genuine nonlocal correlations; the Hilbert space is constructed rather than emergent; and the reference frame context extensions venture into unfalsifiable territory.
 
 **Overall Assessment:** The quantum information aspects of FTD are a mixed achievement. The framework demonstrates competent understanding of quantum formalism but falls short of the revolutionary claims regarding measurement problem resolution and Bell violation derivation.
 
@@ -77,8 +77,8 @@ The four "independent" Born rule derivations are not as independent as claimed:
 3. The continuity equation argument assumes the form of the probability current
 4. The maximum entropy argument requires specifying the constraint structure
 
-### W6: Consciousness Extensions Are Not Falsifiable
-The extension to consciousness via "complex roots" (y = 2.19 +/- 2.86i) is numerology without predictive content. The claims about "consciousness as oscillatory awareness" are not connected to any measurable quantity.
+### W6: Reference frame context Extensions Are Not Falsifiable
+The extension to reference frame context via "complex roots" (y = 2.19 +/- 2.86i) is numerology without predictive content. The claims about "reference frame context as oscillatory awareness" are not connected to any measurable quantity.
 
 ### W7: No Treatment of Quantum Computing Primitives
 The framework does not address:
@@ -171,7 +171,7 @@ The through-pattern algebra (pass, scatter, collapse, store, loop) is formally i
 The identification of collapse with manifestation (s: 0 -> +/-1) is a concrete proposal. The coupling term L_coupling = -g_c * s * (nabla . J) provides a mechanism for how manifested matter affects the flux field.
 
 **Positive aspects:**
-- Avoids the "consciousness causes collapse" trap
+- Avoids the "reference frame context causes collapse" trap
 - Provides a substrate-level mechanism
 - Connects naturally to the ternary state structure
 
@@ -209,7 +209,7 @@ The identification of collapse with manifestation (s: 0 -> +/-1) is a concrete p
 | **Consistency** | 50/100 | Internal tension between "local causality" axiom and nonlocal quantum correlations |
 | **Completeness** | 40/100 | Missing: quantum computing, error correction, mixed states, decoherence |
 | **Novelty** | 60/100 | sLoop concept is interesting; complexified flux as wave function is creative |
-| **Falsifiability** | 45/100 | Some predictions testable (S scaling); consciousness extension unfalsifiable |
+| **Falsifiability** | 45/100 | Some predictions testable (S scaling); reference frame context extension unfalsifiable |
 
 **Weighted Average:** 49/100
 
@@ -232,8 +232,8 @@ Be explicit that the Hilbert space is constructed by definition, not derived fro
 ### R3: Address Quantum Computing
 Demonstrate that universal quantum computation is possible within FTD. Show how quantum gates, entanglement swapping, and teleportation protocols work.
 
-### R4: Remove or Sequester Consciousness Material
-The consciousness extension adds nothing to the physics and detracts from credibility. If included, it should be clearly labeled as speculative philosophy, not derived physics.
+### R4: Remove or Sequester Reference frame context Material
+The reference frame context extension adds nothing to the physics and detracts from credibility. If included, it should be clearly labeled as speculative philosophy, not derived physics.
 
 ### R5: Engage with No-Go Theorems
 Explicitly address how FTD evades:

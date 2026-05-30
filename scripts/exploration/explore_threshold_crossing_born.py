@@ -3,7 +3,7 @@ explore_threshold_crossing_born.py -- pre-registered T1c threshold-crossing test
 
 Hash-locked under git tag: preregister-threshold-crossing-born-v1
 Pre-registration manifest:
-  docs/theory/06_consciousness/PREREG_THRESHOLD_CROSSING_BORN_v1.md
+  docs/theory/06_reference frame context/PREREG_THRESHOLD_CROSSING_BORN_v1.md
 
 Tests the corpus assertion in SPEC_SIX_ALGORITHMS.md:65 and
 AUDIT_EPISTEMIC_AUDIT.md:393 that "threshold crossing statistics produce
@@ -399,7 +399,7 @@ def main():
     with md_path.open("w", encoding="utf-8") as f:
         f.write("# Threshold-Crossing -> Born Rule Test -- Results\n\n")
         f.write(f"**Date:** 2026-05-23\n")
-        f.write(f"**Pre-registration:** docs/theory/06_consciousness/PREREG_THRESHOLD_CROSSING_BORN_v1.md\n")
+        f.write(f"**Pre-registration:** docs/theory/06_reference frame context/PREREG_THRESHOLD_CROSSING_BORN_v1.md\n")
         f.write(f"**Git tag:** preregister-threshold-crossing-born-v1\n\n")
         f.write("---\n\n## Outcome\n\n")
         f.write(f"**Outcome {outcome}.** {msg}\n\n")

@@ -10,7 +10,7 @@
 
 ## Purpose
 
-This document introduces a disciplined vocabulary for a conceptual object that has appeared informally in discussions of self-reference, manifestation, and consciousness:
+This document introduces a disciplined vocabulary for a conceptual object that has appeared informally in discussions of self-reference, manifestation, and reference frame context:
 
 - the **Potential Core**
 - its **Generative Interior**
@@ -23,7 +23,7 @@ The goal is not to claim a new theorem. The goal is to replace loose metaphor wi
 
 This note is intentionally conservative:
 
-- it does **not** identify the standard imaginary unit `i` with consciousness
+- it does **not** identify the standard imaginary unit `i` with reference frame context
 - it does **not** identify `i` with the origin `{0,0,0}`
 - it does **not** claim a new physical derivation
 - it does provide a vocabulary for talking about hidden capacity, contextual activation, and measurable expression
@@ -63,8 +63,8 @@ This vocabulary is meant to sit alongside, not replace, existing FTD concepts:
 - [FOUND_THE_FIRST_DISTINCTION.md](FOUND_THE_FIRST_DISTINCTION.md) motivates why complex structure enters the framework.
 - [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) studies the mathematical role of the imaginary unit.
 - [FOUND_ONTOLOGICAL_GENESIS.md](FOUND_ONTOLOGICAL_GENESIS.md) gives the larger emergence hierarchy.
-- [../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) studies projection from complex possibility to real existence.
-- [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) gives the live source map for the consciousness layer and the lattice formalization of `Activate_C`.
+- [../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) studies projection from complex possibility to real existence.
+- [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) gives the live source map for the reference frame context layer and the lattice formalization of `Activate_C`.
 
 This note adds a new conceptual layer:
 
@@ -93,12 +93,12 @@ The standard imaginary unit `i` may instead be interpreted as a **mathematical s
 
 ### PI-C3 [CONJECTURE]
 
-Consciousness, if it enters this schema at all, is better modeled as a **context-selection or frame-binding process** than as the literal identity of `i`.
+Reference frame context, if it enters this schema at all, is better modeled as a **context-selection or frame-binding process** than as the literal identity of `i`.
 
 This separation protects the framework from a category mistake:
 
 - the origin is not `i`
-- `i` is not automatically consciousness
+- `i` is not automatically reference frame context
 - hidden capacity is not identical to a single algebraic symbol
 
 ---
@@ -161,7 +161,7 @@ or more suggestively:
 G_C(P_c) = Activate_C(G(P_c))
 ```
 
-where `Activate_C` now has a first lattice-facing formalization in [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md), while remaining open to refinement as the theory connects it more tightly to explicit update rules and admissible local modes.
+where `Activate_C` now has a first lattice-facing formalization in [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md), while remaining open to refinement as the theory connects it more tightly to explicit update rules and admissible local modes.
 
 ### PI-D5 [DEFINITION] Manifest Boundary of Affect
 
@@ -265,7 +265,7 @@ Observable manifestation is boundary-mediated: what is measured is not the full 
 
 ### What this note does not claim
 
-- It does not prove that consciousness is identical to the Generative Interior.
+- It does not prove that reference frame context is identical to the Generative Interior.
 - It does not prove that `i` literally is the Generative Interior.
 - It does not prove that every object has a single unique Potential Core in a strict mathematical sense.
 - It does not derive a numerical prediction.
@@ -289,8 +289,8 @@ This conceptual schema may eventually support the following interpretations:
 The safest bridge to existing theory is:
 
 - [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) explains why orthogonal complex structure matters.
-- [../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) explains why only some structure survives projection into existence.
-- [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) gives the current lattice-facing formalization of context selection.
+- [../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) explains why only some structure survives projection into existence.
+- [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) gives the current lattice-facing formalization of context selection.
 - this note proposes the vocabulary for the hidden layer that sits conceptually between those moves
 
 ---
@@ -411,7 +411,7 @@ The abstract chain from Section 4 now has explicit lattice-facing identification
 | Manifest Boundary | `B_C(P_c, r)` | Frontier of `Omega(v_c)` where activated modes couple outward | PI-D5, DP-D7 |
 | Manifest Output | `M_C(P_c, r)` | Readout at boundary: outward flux, state changes, threshold crossings | PI-D6, DP-D8 |
 
-The lattice definitions (DP-D1 through DP-D8) are documented in [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md).
+The lattice definitions (DP-D1 through DP-D8) are documented in [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md).
 
 ### PI-C8 [CONJECTURE] Layer-selective activation
 
@@ -608,7 +608,7 @@ The BCC sublattice couples all 3 flux directions **multiplicatively** (all three
 
 The BCC Laplacian's 4 zero modes cause slow finite-lattice convergence (which initially misled the analysis) but do not prevent the L -> inf limit from reaching the exact Watson identity.
 
-**N_meas = 18 interpretation:** The identification `N_meas = 18 = |SC| + |FCC|` as the von Neumann chain length remains [OPEN]. It does not follow directly from the gap equation's sublattice structure (which singles out BCC, not SC+FCC). The chain termination may arise from the four mechanisms in [../06_consciousness/FOUND_VON_NEUMANN_CHAIN.md](../06_consciousness/FOUND_VON_NEUMANN_CHAIN.md) rather than from propagator decomposition.
+**N_meas = 18 interpretation:** The identification `N_meas = 18 = |SC| + |FCC|` as the von Neumann chain length remains [OPEN]. It does not follow directly from the gap equation's sublattice structure (which singles out BCC, not SC+FCC). The chain termination may arise from the four mechanisms in [../06_reference_frames_and_measurement/FOUND_VON_NEUMANN_CHAIN.md](../06_reference_frames_and_measurement/FOUND_VON_NEUMANN_CHAIN.md) rather than from propagator decomposition.
 
 ---
 
@@ -660,7 +660,7 @@ flowchart LR
 The self-observation loop -- where a single 3^3 cluster's Manifest Output re-enters its own Context State as the `F_obs` component -- is the lattice-facing realization of the **self-referential loop (sLoop)**. This corresponds to:
 
 - The **gap equation** `x^2 = 16 G*^2 (x - G*)` from [FOUND_SELF_REFERENTIAL_CLOSURE.md](FOUND_SELF_REFERENTIAL_CLOSURE.md): the coupling x is determined by the condition that the lattice's vacuum energy, computed using coupling x, yields the same x when fed back
-- The **k = 1/2 consciousness regime** from [../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md): the complementation fixed point that generates complex roots
+- The **k = 1/2 reference frame context regime** from [../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md): the complementation fixed point that generates complex roots
 - The **Level 3 (observer)** of the Bell hierarchy from [../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md): non-factorizable joint probability arising from self-coupling
 
 ### Why the sLoop requires BCC

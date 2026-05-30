@@ -134,13 +134,7 @@ struct GpuBuffers {
     cufftComplex*       d_fft_buf_f = nullptr;  // N complex floats (default, 2× faster C2C)
     double*             d_green     = nullptr;   // precomputed 1/G(k) (double precision, computed once)
 
-    // --- cuRAND workspace ---
-    double*   d_random      = nullptr;  // N uniform random doubles
-    // Langevin thermostat noise: 3·N standard normal doubles per tick
-    // (three components of wave_vel per voxel). Only allocated when the
-    // langevin toggle is active; otherwise stays nullptr and no noise is
-    // generated. See FTD-0051.
-    double*   d_langevin_noise = nullptr;  // 3N standard normal doubles
+
 
     // --- Particle list (compact indices of manifested particles) ---
     // Scales with lattice: enough for ~1.5% occupation at any size

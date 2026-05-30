@@ -50,7 +50,7 @@ export function ensurePanelResources(panelArea) {
     ensureControlsBlocks(panelArea);
     ensurePanel(panelArea, 'zoo', getZooPanelTemplate(), 'inspector');
     ensurePanel(panelArea, 'inspector', getInspectorPanelTemplate(), 'physics');
-    ensurePanel(panelArea, 'hierarchy', getHierarchyPanelTemplate(), 'consciousness');
+    ensurePanel(panelArea, 'hierarchy', getHierarchyPanelTemplate(), 'reference frame context');
     ensurePanel(panelArea, 'planetary', getPlanetaryPanelTemplate(), 'hierarchy');
     ensurePanel(panelArea, 'physics', getPhysicsPanelTemplate(), 'planetary');
     ensurePanel(panelArea, 'cosmic-info', getCosmicInfoPanelTemplate(), 'meta-info');

@@ -87,19 +87,16 @@ test('right mount moves overlay panels to the left edge', async ({ page }) => {
     await page.goto('/');
     await page.waitForTimeout(800);
 
-    const leftPx = await page.evaluate(async () => {
+    const isNearLeft = await page.evaluate(async () => {
         const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
         writePanelMount('right');
         await new Promise((r) => requestAnimationFrame(r));
         const el = document.getElementById('viewport-overlay') || document.querySelector('.viewport-overlay-panel');
-        if (!el) return null;
-        return el.getBoundingClientRect().left;
+        if (!el) return true;
+        return el.getBoundingClientRect().left < 400;
     });
 
-    // Overlay must be near the left edge (within first 30% of screen)
-    if (leftPx !== null) {
-        expect(leftPx).toBeLessThan(window.screen.availWidth * 0.3 + 100);
-    }
+    expect(isNearLeft).toBe(true);
 });
 
 test('switching mounts does not break existing panel tab activation', async ({ page }) => {

@@ -142,13 +142,7 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMalloc(&d_fft_buf_f, N * sizeof(cufftComplex)));
     CUDA_CHECK(cudaMalloc(&d_green, N * sizeof(double)));
 
-    // cuRAND workspace
-    CUDA_CHECK(cudaMalloc(&d_random, N * sizeof(double)));
 
-    // Langevin thermostat noise (3N normals per tick when toggle active).
-    // Allocate eagerly so the buffer is always available; wasted bytes are
-    // 24·N = 24 MB at L=128, negligible. Zeroed at init and at free.
-    CUDA_CHECK(cudaMalloc(&d_langevin_noise, 3 * N * sizeof(double)));
 
     // Particle list
     CUDA_CHECK(cudaMalloc(&d_plist_idx, MAX_PARTICLES * sizeof(int)));
@@ -238,8 +232,7 @@ void GpuBuffers::allocate(int lattice_size) {
     CUDA_CHECK(cudaMemset(d_fd_exchange_x, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_fd_exchange_y, 0, N * sizeof(double)));
     CUDA_CHECK(cudaMemset(d_fd_exchange_z, 0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_random, 0, N * sizeof(double)));
-    CUDA_CHECK(cudaMemset(d_langevin_noise, 0, 3 * N * sizeof(double)));
+
     CUDA_CHECK(cudaMemset(d_plist_idx, 0, MAX_PARTICLES * sizeof(int)));
     CUDA_CHECK(cudaMemset(d_num_particles, 0, sizeof(int)));
     CUDA_CHECK(cudaMemset(d_pair_id, 0xFF, N * sizeof(int32_t))); // -1
@@ -329,8 +322,7 @@ void GpuBuffers::free() {
     if (d_fft_buf)       { cudaFree(d_fft_buf); d_fft_buf = nullptr; }
     if (d_fft_buf_f)     { cudaFree(d_fft_buf_f); d_fft_buf_f = nullptr; }
     if (d_green)         { cudaFree(d_green); d_green = nullptr; }
-    if (d_random)        { cudaFree(d_random); d_random = nullptr; }
-    if (d_langevin_noise) { cudaFree(d_langevin_noise); d_langevin_noise = nullptr; }
+
     if (d_plist_idx)     { cudaFree(d_plist_idx); d_plist_idx = nullptr; }
     if (d_num_particles) { cudaFree(d_num_particles); d_num_particles = nullptr; }
     if (d_pair_id)       { cudaFree(d_pair_id); d_pair_id = nullptr; }

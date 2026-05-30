@@ -286,6 +286,7 @@ export class Viewport {
             halfN: this._halfN,
             boundaryShape: this._boundaryShape,
             insideBoundary: (nx, ny, nz) => this._insideBoundary(nx, ny, nz),
+            getBoundaryMode: () => this._boundaryMode,
         });
 
         // Flux volume + flux streamlines — extracted Phase 3b. Viewport owns

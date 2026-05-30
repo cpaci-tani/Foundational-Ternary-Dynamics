@@ -159,7 +159,7 @@ ratios = [
     ('x-/G*       = 1.022 ', 'Strong force IS the circle scale'),
     ('x-/G* - 1   = 0.022 ', 'Confinement correction'),
     ('(x+-x-)/(x++x-) = 0.957', 'EM-strong asymmetry'),
-    ('K_C^2/x+x-  = 1/32  ', 'Consciousness = 1/32 of physics (exact)'),
+    ('K_C^2/x+x-  = 1/32  ', 'Reference frame context = 1/32 of physics (exact)'),
 ]
 for formula, meaning in ratios:
     c.setFont('Courier', 6.5)
@@ -196,7 +196,7 @@ for k_val, root_type, regime, desc, color in k_data:
 
 c.setFont('Helvetica-Oblique', 6.5)
 c.setFillColor(ACCENT)
-c.drawString(col1_x, y, '32 = 2^5 doublings from consciousness to physics')
+c.drawString(col1_x, y, '32 = 2^5 doublings from reference frame context to physics')
 y -= 6
 
 # === RIGHT COLUMN ===
@@ -225,7 +225,7 @@ steps = [
     ('2.', 'Evaluate Gamma(1/2)', 'sqrt(pi)'),
     ('3.', 'Compute Gamma(1/4)/Gamma(3/4)', 'G*'),
     ('4.', 'Solve x^2 - 16G*^2 x + 16G*^3 = 0', 'alpha, N_c'),
-    ('5.', 'k=1/2 places observer at visibility', 'consciousness'),
+    ('5.', 'k=1/2 places observer at visibility', 'reference frame context'),
 ]
 for num, action, result in steps:
     c.setFont('Courier-Bold', 7)

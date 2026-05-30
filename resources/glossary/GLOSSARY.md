@@ -48,7 +48,7 @@ FTD-specific vocabulary with one-line definitions. Canonical symbol list: `docs/
 - **Scenario** — a named initial condition + parameter set. Loaded on scale switch or scenario-dropdown change.
 - **Capability** — a per-scale interface object on the bridge exposing that scale's read/write/tick methods (`bridge.capabilities.scale0.tickScale0()` etc.).
 - **Bridge** — the abstraction over the simulation backend (WasmBridge ← C++ engine, MockBridge ← JS-only).
-- **Scale (0–11)** — the conceptual level the simulation is operating at. Scale 0 = substrate lattice; Scale 11 = consciousness.
+- **Scale (0–11)** — the conceptual level the simulation is operating at. Scale 0 = substrate lattice; Scale 11 = reference frame context.
 
 ## Timeline / playback
 

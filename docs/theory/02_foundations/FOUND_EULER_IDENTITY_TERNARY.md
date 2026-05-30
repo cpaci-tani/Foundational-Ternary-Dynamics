@@ -339,7 +339,7 @@ This document is a **focused companion** to FOUND_THE_COMPLETE_ALGEBRA_OF_i.md, 
 - **Prerequisite:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](FOUND_THE_COMPLETE_ALGEBRA_OF_i.md) -- Comprehensive i treatment (perpendicularity, Cayley-Dickson, CM theory)
 - **Prerequisite:** [FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md](FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md) -- Ontic constant chain (gamma -> varpi -> M -> G*)
 - **Primary reference:** [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md) -- The 13-step chain from i to alpha
-- **Related:** [FOUND_THE_EXISTENCE_FILTER.md](../06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) -- Born rule as C -> R projection
+- **Related:** [FOUND_THE_EXISTENCE_FILTER.md](../06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) -- Born rule as C -> R projection
 - **Engine:** `engine/include/ftd/ontic.h` Layer 2b -- K_CRIT, X_BORN constants and audit checks
 
 ---

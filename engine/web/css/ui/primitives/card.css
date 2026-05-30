@@ -45,7 +45,7 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 12px;
+    padding: var(--sp-md);
 }
 
 .chart-container canvas {
@@ -58,7 +58,7 @@
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 10px;
+    padding: var(--sp-md);
     position: relative;
 }
 

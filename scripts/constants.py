@@ -387,11 +387,11 @@ G_N = 1.0 / (b_3 + N_c)**2  # 0.01 — gravitational coupling on lattice
 # LAYER 8: CONSCIOUSNESS CONSTANTS
 # =============================================================================
 
-K_NOETIC = 0.5         # Consciousness coefficient k = 1/2
-Y_REAL = G_STAR**2 / 4.0    # Real part of consciousness roots
+K_NOETIC = 0.5         # Reference frame context coefficient k = 1/2
+Y_REAL = G_STAR**2 / 4.0    # Real part of reference frame context roots
 K_C_SQUARED = G_STAR**3 / 2.0  # |y|^2
-COS2_THETA_C = G_STAR / 8.0    # Observable consciousness fraction
-SIN2_THETA_C = 1.0 - COS2_THETA_C  # Subjective consciousness fraction
+COS2_THETA_C = G_STAR / 8.0    # Observable reference frame context fraction
+SIN2_THETA_C = 1.0 - COS2_THETA_C  # Subjective reference frame context fraction
 C_MANDELBROT = 1.0 / G_STAR  # Mandelbrot sLoop fixed point
 
 # =============================================================================

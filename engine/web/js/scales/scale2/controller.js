@@ -46,6 +46,7 @@ import {
     bindScale2ControlsUI
 } from './ui-bindings.js';
 import { setupAEScenario } from './scenarios.js';
+import { telemetryHub } from '../../telemetry-hub.js';
 
 // Re-export for app.js startup wiring
 export { bindScale2ControlsUI };
@@ -450,56 +451,58 @@ export function animateAE(ctx) {
 
     // ── 11. AE diagnostics (throttled to every 3rd frame) ──────────
     if (frameCount % 3 === 0 && (running || !_diagPushedWhilePaused)) {
-        const diag = bridge.aeGetDiagnostics();
+        const diag = telemetryHub.collectScale2(bridge);
 
-        const sTick = formatSI(diag.tick);
-        const sParticles = String(diag.atomCount);
-        const sEnergy = formatEnergy(diag.totalEnergy, 2).text;
-        const sState = running ? 'Running' : 'Idle';
+        if (diag) {
+            const sTick = formatSI(diag.tick);
+            const sParticles = String(diag.atomCount);
+            const sEnergy = formatEnergy(diag.totalEnergy, 2).text;
+            const sState = running ? 'Running' : 'Idle';
 
-        if (_statusCache.tick !== sTick) { dom.statusTick.textContent = sTick; dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
-        if (_statusCache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; _statusCache.particles = sParticles; }
-        if (_statusCache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; _statusCache.energy = sEnergy; }
-        if (_statusCache.state !== sState) {
-            dom.statusState.textContent = sState;
-            _statusCache.state = sState;
-            if (running) dom.statusDot.classList.remove('idle');
-            else dom.statusDot.classList.add('idle');
+            if (_statusCache.tick !== sTick) { dom.statusTick.textContent = sTick; dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
+            if (_statusCache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; _statusCache.particles = sParticles; }
+            if (_statusCache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; _statusCache.energy = sEnergy; }
+            if (_statusCache.state !== sState) {
+                dom.statusState.textContent = sState;
+                _statusCache.state = sState;
+                if (running) dom.statusDot.classList.remove('idle');
+                else dom.statusDot.classList.add('idle');
+            }
+
+            dom.aeDiagCount.textContent = diag.atomCount;
+            dom.aeDiagBonds.textContent = diag.bondCount;
+            dom.aeDiagKe.textContent = formatEnergy(diag.totalKE, 2).text;
+            dom.aeDiagEtotal.textContent = formatEnergy(diag.totalEnergy, 2).text;
+            dom.aeDiagPeIonic.textContent = formatEnergy(diag.totalPEIonic, 2).text;
+            dom.aeDiagPeVdw.textContent = formatEnergy(diag.totalPEVdw, 2).text;
+            dom.aeDiagPeBond.textContent = formatEnergy(diag.totalPEBond, 2).text;
+            dom.aeDiagTemp.textContent = formatTemperature(diag.temperature, 2).text;
+            const pMag = Math.sqrt(diag.momentumX ** 2 + diag.momentumY ** 2 + diag.momentumZ ** 2);
+            dom.aeDiagMomentum.textContent = pMag.toFixed(6) + ' AMU\u00b7\u00c5/step';
+            dom.aeDiagTick.textContent = sTick;
+
+            if (_aeInitialEnergy === null && diag.totalEnergy !== 0) {
+                _aeInitialEnergy = diag.totalEnergy;
+            }
+            if (_aeInitialEnergy !== null) {
+                const drift = ((diag.totalEnergy - _aeInitialEnergy) / Math.abs(_aeInitialEnergy)) * 100;
+                dom.aeDiagDrift.textContent = drift.toFixed(4) + '%';
+            }
+
+            updateAtomicEnergyDisplay(dom, atomData);
+
+            const diagAdapted = {
+                tick: diag.tick,
+                manifested: diag.atomCount,
+                positive: 0, negative: 0,
+                totalFlux: 0, totalEnergy: diag.totalEnergy,
+                fieldEnergy: diag.totalPEIonic + diag.totalPEVdw + diag.totalPEBond,
+                kineticEnergy: diag.totalKE,
+                peFlux: diag.totalPEIonic,
+            };
+            fluxEnergyChart.push(diagAdapted);
+            particleChart.push(diagAdapted);
         }
-
-        dom.aeDiagCount.textContent = diag.atomCount;
-        dom.aeDiagBonds.textContent = diag.bondCount;
-        dom.aeDiagKe.textContent = formatEnergy(diag.totalKE, 2).text;
-        dom.aeDiagEtotal.textContent = formatEnergy(diag.totalEnergy, 2).text;
-        dom.aeDiagPeIonic.textContent = formatEnergy(diag.totalPEIonic, 2).text;
-        dom.aeDiagPeVdw.textContent = formatEnergy(diag.totalPEVdw, 2).text;
-        dom.aeDiagPeBond.textContent = formatEnergy(diag.totalPEBond, 2).text;
-        dom.aeDiagTemp.textContent = formatTemperature(diag.temperature, 2).text;
-        const pMag = Math.sqrt(diag.momentumX ** 2 + diag.momentumY ** 2 + diag.momentumZ ** 2);
-        dom.aeDiagMomentum.textContent = pMag.toFixed(6) + ' AMU\u00b7\u00c5/step';
-        dom.aeDiagTick.textContent = sTick;
-
-        if (_aeInitialEnergy === null && diag.totalEnergy !== 0) {
-            _aeInitialEnergy = diag.totalEnergy;
-        }
-        if (_aeInitialEnergy !== null) {
-            const drift = ((diag.totalEnergy - _aeInitialEnergy) / Math.abs(_aeInitialEnergy)) * 100;
-            dom.aeDiagDrift.textContent = drift.toFixed(4) + '%';
-        }
-
-        updateAtomicEnergyDisplay(dom, atomData);
-
-        const diagAdapted = {
-            tick: diag.tick,
-            manifested: diag.atomCount,
-            positive: 0, negative: 0,
-            totalFlux: 0, totalEnergy: diag.totalEnergy,
-            fieldEnergy: diag.totalPEIonic + diag.totalPEVdw + diag.totalPEBond,
-            kineticEnergy: diag.totalKE,
-            peFlux: diag.totalPEIonic,
-        };
-        fluxEnergyChart.push(diagAdapted);
-        particleChart.push(diagAdapted);
 
         if (!running) _diagPushedWhilePaused = true;
         else _diagPushedWhilePaused = false;

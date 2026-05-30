@@ -460,11 +460,11 @@ This is tantalizingly close to the Pythagorean program ("all is number") and to 
 
 ### 5.4 The hard problem
 
-Axiom Zero says nothing about consciousness. This is deliberate.
+Axiom Zero says nothing about reference frame context. This is deliberate.
 
-FTD's consciousness framework (see docs/theory/06_consciousness/) treats consciousness as the complex-root domain of the generalized master quadratic (at k = 1/2 instead of k = 16). This is [CONJECTURE]. Whether consciousness can be derived from state + position, or requires additional axioms, is the hardest open problem in the framework.
+FTD's reference frame context framework (see docs/theory/06_reference_frames_and_measurement/) treats reference frame context as the complex-root domain of the generalized master quadratic (at k = 1/2 instead of k = 16). This is [CONJECTURE]. Whether reference frame context can be derived from state + position, or requires additional axioms, is the hardest open problem in the framework.
 
-What can be said: if consciousness emerges from the same mathematical structure as physics (the master quadratic with different k), then Axiom Zero is complete -- state and position are sufficient for both matter and mind. If consciousness requires something beyond state and position, then Axiom Zero is incomplete.
+What can be said: if reference frame context emerges from the same mathematical structure as physics (the master quadratic with different k), then Axiom Zero is complete -- state and position are sufficient for both matter and mind. If reference frame context requires something beyond state and position, then Axiom Zero is incomplete.
 
 This question is [OPEN] in the deepest possible sense.
 
@@ -599,8 +599,8 @@ These two selections are the ONLY gaps between "$i$ exists" and the full FTD pre
 |---|---|---|
 | $1/\alpha = x_+ = 137.036...$ | Larger root of master quadratic | [THEOREM given S1] |
 | $N_c = x_- = 3.024$ | Smaller root | [THEOREM given S1] |
-| $m_\mu/m_e = 3 B_3(B_3 + N_c) - N_c = 207$ | Integer formula in framework constants | [THEOREM] (0.11% match to experiment) |
-| $m_\tau/m_e = 3477$ | Extended integer formula | [THEOREM] (0.006% match) |
+| $m_\mu/m_e = 3 B_3(B_3 + N_c) - N_c = 207$ | Integer formula in framework constants | [IMPOSED] (0.11% match to experiment, parametric insertion) |
+| $m_\tau/m_e = 3477$ | Extended integer formula | [IMPOSED] (0.006% match, parametric insertion) |
 | $m_e = m_P \sqrt{2\pi} (16/3) \alpha^{11}$ | $m_P$ = UV scale, prefactor from $G^*$ chain, exponent from ladder | [SELECTION given S2] (0.19%) |
 | $m_H = (N_{\rm eff}/\alpha^2) \, m_e$ | Higgs VEV relation | Structural identity (0.24%) |
 | $m_p/m_e = N_{\rm eff}/\alpha + N_{\rm base} N_{\rm eff} + N_c = 1836.47$ | 174 ppm gap | [SELECTION], 174 ppm [OPEN] |
