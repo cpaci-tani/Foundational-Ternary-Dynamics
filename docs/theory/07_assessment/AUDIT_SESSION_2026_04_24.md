@@ -121,7 +121,7 @@ These are three **different quantities measuring three different things**. Their
 | 27/8 is *the* phenomenal-to-noumenal bridge factor | — | **[FALSIFIED]** — two independent tests reject |
 | Phase-F 3.6× measures physical α | — | **[CLOSED NEGATIVE]** — category error per earlier audit |
 | Watson-integral ratio ≈ 27/8 | — | **[FALSIFIED]** — $W_{\rm M18}/W_{\rm BCC} = 0.913$ |
-| Consciousness = interior-axis integration | — | [CONJECTURE] — philosophical anchor only |
+| Reference frame context = interior-axis integration | — | [CONJECTURE] — philosophical anchor only |
 | Fermion emergence from site-local probes fails | — | [THEOREM] (from FTD-0061..0075) |
 
 ## 6. Bridge status — post-audit

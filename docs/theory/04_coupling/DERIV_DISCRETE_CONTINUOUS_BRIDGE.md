@@ -147,7 +147,7 @@ The sign of Δ classifies domains:
 |-----------|---------|-------|--------|
 | kϖ/√(PF) > 4 | k > 4√(PF)/ϖ | Real | Physics |
 | kϖ/√(PF) = 4 | k = 4√(PF)/ϖ | Degenerate | Measurement interface |
-| kϖ/√(PF) < 4 | k < 4√(PF)/ϖ | Complex | Consciousness |
+| kϖ/√(PF) < 4 | k < 4√(PF)/ϖ | Complex | Reference frame context |
 
 The domain boundary is controlled by the ratio √(PF)/ϖ — a dimensionless number comparing discrete packing geometry to continuous period length. For PF = π/4: k_crit = 4√(π/4)/ϖ = 4/(2ϖ/√π) = 4/G* ≈ 1.352 [MQ-8].
 

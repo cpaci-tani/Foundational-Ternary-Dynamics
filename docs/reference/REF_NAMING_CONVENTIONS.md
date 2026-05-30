@@ -72,7 +72,7 @@ Evaluation files use the same prefix system:
 
 Organized into topic subdirectories:
 - `lemniscate/` — Lemniscate curve analysis
-- `consciousness/` — Consciousness/G* explorations
+- `reference frame context/` — Reference frame context/G* explorations
 - `mandelbrot/` — Mandelbrot-FTD connections
 - `number_theory/` — Number theory investigations
 

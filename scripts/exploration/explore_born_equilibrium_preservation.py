@@ -3,7 +3,7 @@ explore_born_equilibrium_preservation.py -- pre-registered v2 test.
 
 Hash-locked under git tag: preregister-born-equilibrium-preservation-v1
 Pre-registration manifest:
-  docs/theory/06_consciousness/PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md
+  docs/theory/06_reference frame context/PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md
 
 Tests whether the FTD substrate (6-neighbour Python lattice) PRESERVES a
 Born-distributed initial ensemble under deterministic evolution.
@@ -423,7 +423,7 @@ def main():
         f.write("# Born-Equilibrium Preservation Test -- Results\n\n")
         f.write("**Date:** 2026-05-23\n")
         f.write("**Pre-registration:** "
-                "docs/theory/06_consciousness/PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md\n")
+                "docs/theory/06_reference frame context/PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md\n")
         f.write("**Git tag:** preregister-born-equilibrium-preservation-v1\n\n")
         f.write("---\n\n## Aggregate outcome\n\n")
         f.write(f"**Outcome `{outcome}`.** {msg}\n\n")

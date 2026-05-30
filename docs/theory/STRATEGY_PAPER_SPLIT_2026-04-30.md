@@ -136,8 +136,8 @@ What stays out (defer to Paper B or to subsequent technical papers):
    have appeared.
 2. **Synthese** — philosophy-of-physics venue; broader scope including
    ontology of mathematical objects.
-3. **Journal of Consciousness Studies** — if the paper foregrounds the
-   consciousness-coupling material from FTD's portfolio.
+3. **Journal of Reference frame context Studies** — if the paper foregrounds the
+   reference frame context-coupling material from FTD's portfolio.
 4. **Mind and Matter** — Pauli-Jung tradition; the closed-form
    transcendental + symmetry-of-axioms story fits.
 
@@ -159,7 +159,7 @@ Conceptual content:
   AUDIT_INFINITY_REFRAME.md).
 - The algebraic spine as ontological substrate — `G*` as a closed-form
   transcendental "first object" before any physical interpretation.
-- The hard problem of consciousness as a frame-of-reference question
+- The hard problem of reference frame context as a frame-of-reference question
   rather than a generation question.
 - The least-wrong framing: FTD as primary in ontology / logic /
   philosophy / mathematics, with physics as constraint (not sole

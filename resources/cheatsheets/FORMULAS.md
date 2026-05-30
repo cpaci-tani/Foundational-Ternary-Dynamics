@@ -130,14 +130,14 @@ G_N       = 1 / (b_3 + N_c)²     = 1/100 on lattice
   v² + L² < 1                   ← bandwidth budget (never ≥ 1)
 ```
 
-## Consciousness extension
+## Reference frame context extension
 
 ```
-y_real    = G*² / 4   ≈ 2.188         real part of consciousness roots
+y_real    = G*² / 4   ≈ 2.188         real part of reference frame context roots
 |y|²      = G*³ / 2   ≈ 12.96          squared magnitude
 cos²θ_C   = G* / 8    ≈ 0.370          observable fraction
 C_sLoop   = 1 / G*    ≈ 0.338          Mandelbrot fixed point
-k_noetic  = 1/2                        consciousness coefficient
+k_noetic  = 1/2                        reference frame context coefficient
 ```
 
 ## Cross-references

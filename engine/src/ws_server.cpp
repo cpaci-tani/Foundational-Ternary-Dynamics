@@ -16,6 +16,7 @@
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
 #include "ftd/ws_protocol.h"   // Pulls in SOCKET type + framing API
+#include "ftd/scenarios.h"
 
 #include <iostream>
 #include <iomanip>
@@ -47,10 +48,10 @@ std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb) {
     const int N = rb.lattice().size();
     const int total = N * N * N;
 
-    // Count visible voxels
+    // Count visible voxels (strictly manifested particles state != 0)
     int count = 0;
     for (int i = 0; i < total; i++) {
-        if (voxels[i].state != 0 || voxels[i].density() > ftd::K_B * 0.05)
+        if (voxels[i].state != 0)
             count++;
     }
 
@@ -76,14 +77,14 @@ std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb) {
     int idx = 0;
     for (int i = 0; i < total; i++) {
         const auto& v = voxels[i];
-        if (v.state == 0 && v.density() <= ftd::K_B * 0.05) continue;
+        if (v.state == 0) continue;
 
         auto c = rb.lattice().coord(i);
 
-        // Position
-        positions[idx * 3]     = static_cast<float>(c.x);
-        positions[idx * 3 + 1] = static_cast<float>(c.y);
-        positions[idx * 3 + 2] = static_cast<float>(c.z);
+        // Position with +0.5f center-voxel offset
+        positions[idx * 3]     = static_cast<float>(c.x) + 0.5f;
+        positions[idx * 3 + 1] = static_cast<float>(c.y) + 0.5f;
+        positions[idx * 3 + 2] = static_cast<float>(c.z) + 0.5f;
 
         // Color by state
         if (v.state == 1) {
@@ -91,29 +92,15 @@ std::vector<uint8_t> pack_particle_data(ftd::RenderBridge& rb) {
             colors[idx * 3]     = 0.29f;
             colors[idx * 3 + 1] = 0.87f;
             colors[idx * 3 + 2] = 0.50f;
-        } else if (v.state == -1) {
+        } else { // v.state == -1
             // Red (negative)
             colors[idx * 3]     = 0.97f;
             colors[idx * 3 + 1] = 0.44f;
             colors[idx * 3 + 2] = 0.44f;
-        } else {
-            // Void with flux: blue-gray, brightness proportional to density
-            float brightness = static_cast<float>(v.density() / (ftd::K_B * 2.0));
-            if (brightness > 1.0f) brightness = 1.0f;
-            colors[idx * 3]     = 0.37f + brightness * 0.1f;
-            colors[idx * 3 + 1] = 0.45f + brightness * 0.1f;
-            colors[idx * 3 + 2] = 0.58f + brightness * 0.2f;
         }
 
-        // Size: manifested particles larger
-        if (v.state != 0) {
-            sizes[idx] = 12.0f;
-        } else {
-            float s = 4.0f + static_cast<float>(v.density() / ftd::K_B) * 8.0f;
-            if (s > 12.0f) s = 12.0f;
-            sizes[idx] = s;
-        }
-
+        // Size matches WASM particle size
+        sizes[idx] = 6.0f;
         idx++;
     }
 
@@ -206,6 +193,51 @@ std::string json_info(ftd::RenderBridge& rb, bool gpu_active) {
     return ss.str();
 }
 
+std::string json_flux_slice(ftd::RenderBridge& rb, int axis, int index) {
+    const int N = rb.lattice().size();
+    const auto& voxels = rb.voxels();
+    std::ostringstream ss;
+    ss << std::setprecision(6);
+    ss << "{\"type\":\"flux_slice\",\"axis\":" << axis << ",\"index\":" << index << ",\"data\":[";
+    bool first = true;
+    for (int a = 0; a < N; ++a) {
+        for (int b = 0; b < N; ++b) {
+            int x, y, z;
+            if (axis == 0)      { x = index; y = a; z = b; }
+            else if (axis == 1) { x = a; y = index; z = b; }
+            else                { x = a; y = b; z = index; }
+            int idx = rb.lattice().index(x, y, z);
+            if (!first) ss << ",";
+            ss << voxels[idx].density();
+            first = false;
+        }
+    }
+    ss << "]}";
+    return ss.str();
+}
+
+std::string json_flux_volume(ftd::RenderBridge& rb) {
+    const int N = rb.lattice().size();
+    const auto& voxels = rb.voxels();
+    std::ostringstream ss;
+    ss << std::setprecision(6);
+    ss << "{\"type\":\"flux_volume\",\"data\":[";
+    bool first = true;
+    // Layout transpose matching JS Z-slowest ordering
+    for (int z = 0; z < N; ++z) {
+        for (int y = 0; y < N; ++y) {
+            for (int x = 0; x < N; ++x) {
+                int cpp_idx = rb.lattice().index(x, y, z);
+                if (!first) ss << ",";
+                ss << voxels[cpp_idx].density();
+                first = false;
+            }
+        }
+    }
+    ss << "]}";
+    return ss.str();
+}
+
 // ============================================================================
 //  Toggle name -> pointer mapping
 // ============================================================================
@@ -266,6 +298,14 @@ bool handle_command(const std::string& json, SOCKET client,
     else if (cmd == "get_energy_audit") {
         return ftd::ws_send_text(client, json_energy_audit(*rb));
     }
+    else if (cmd == "get_flux_slice") {
+        int axis = static_cast<int>(ftd::json_number(json, "axis"));
+        int index = static_cast<int>(ftd::json_number(json, "index"));
+        return ftd::ws_send_text(client, json_flux_slice(*rb, axis, index));
+    }
+    else if (cmd == "get_flux_volume") {
+        return ftd::ws_send_text(client, json_flux_volume(*rb));
+    }
     else if (cmd == "set_toggle") {
         std::string name = ftd::json_string(json, "name");
         bool value = ftd::json_bool(json, "value");
@@ -292,6 +332,26 @@ bool handle_command(const std::string& json, SOCKET client,
         double fy = ftd::json_number(json, "fy");
         double fz = ftd::json_number(json, "fz");
         rb->inject_flux(x, y, z, {fx, fy, fz});
+        return true;
+    }
+    else if (cmd == "inject_flux_add") {
+        int x = static_cast<int>(ftd::json_number(json, "x"));
+        int y = static_cast<int>(ftd::json_number(json, "y"));
+        int z = static_cast<int>(ftd::json_number(json, "z"));
+        double fx = ftd::json_number(json, "fx");
+        double fy = ftd::json_number(json, "fy");
+        double fz = ftd::json_number(json, "fz");
+        rb->inject_flux_add(x, y, z, {fx, fy, fz});
+        return true;
+    }
+    else if (cmd == "inject_wave_vel_add") {
+        int x = static_cast<int>(ftd::json_number(json, "x"));
+        int y = static_cast<int>(ftd::json_number(json, "y"));
+        int z = static_cast<int>(ftd::json_number(json, "z"));
+        double wx = ftd::json_number(json, "wx");
+        double wy = ftd::json_number(json, "wy");
+        double wz = ftd::json_number(json, "wz");
+        rb->inject_wave_vel_add(x, y, z, {wx, wy, wz});
         return true;
     }
     else if (cmd == "inject_particle") {
@@ -336,6 +396,18 @@ bool handle_command(const std::string& json, SOCKET client,
         rb = std::make_unique<ftd::RenderBridge>(lattice_size);
         std::cout << "[ws_server] Reset engine (" << lattice_size << "^3)\n";
         return ftd::ws_send_text(client, json_ok(rb->current_tick()));
+    }
+    else if (cmd == "setup_scenario") {
+        std::string name = ftd::json_string(json, "name");
+        rb = std::make_unique<ftd::RenderBridge>(lattice_size); // reset first, matching JS setupScenario contract
+        bool success = ftd::dispatch_scenario(*rb, name);
+        if (success) {
+            std::cout << "[ws_server] Loaded scenario natively: " << name << "\n";
+            return ftd::ws_send_text(client, json_ok(rb->current_tick()));
+        } else {
+            std::cout << "[ws_server] Warning: dispatch_scenario failed for: " << name << "\n";
+            return ftd::ws_send_text(client, json_error("failed to dispatch scenario: " + name));
+        }
     }
     else if (cmd == "info") {
         return ftd::ws_send_text(client, json_info(*rb, gpu_active));

@@ -70,10 +70,15 @@
     --bg-elevated: rgba(25, 36, 60, 0.75);      /* modal, dropdown */
     --bg-raised:   rgba(35, 50, 80, 0.85);      /* tooltip, toast */
 
+    /* Dynamic HSL Accent Components (Hue: 185, Saturation: 100%, Lightness: 50%) */
+    --accent-h:     185;
+    --accent-s:     100%;
+    --accent-l:     50%;
+
     /* Borders & Glass Defaults */
     --border:       rgba(255, 255, 255, 0.10);
     --border-light: rgba(255, 255, 255, 0.18);
-    --border-glow:  rgba(0, 229, 255, 0.40);
+    --border-glow:  hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.40);
     --glass-border: 1px solid rgba(255, 255, 255, 0.12);
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 
@@ -85,9 +90,9 @@
     --text-dim:       #94a3b8;                   /* disabled, inert */
 
     /* Interaction accents */
-    --accent:       #00e5ff;
-    --accent-dim:   #0088aa;
-    --accent-glow:  #00e5ff88;
+    --accent:       hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+    --accent-dim:   hsl(var(--accent-h), var(--accent-s), calc(var(--accent-l) - 15%));
+    --accent-glow:  hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.53);
 
     /* Semantic status */
     --positive: #34d399;
@@ -96,9 +101,9 @@
     --caution:  #fb923c;        /* intermediate state between warning and negative; orange */
 
     /* Themeable interaction state tints (NOT accent-locked) */
-    --state-hover-bg:   rgba(0, 229, 255, 0.08);
-    --state-active-bg:  rgba(0, 229, 255, 0.18);
-    --state-focus-ring: 0 0 0 2px rgba(0, 229, 255, 0.40);
+    --state-hover-bg:   hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.08);
+    --state-active-bg:  hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.18);
+    --state-focus-ring: 0 0 0 2px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.40);
 
     /* Viewport + card surfaces (previously hardcoded with !important) */
     --viewport-bg:     radial-gradient(circle at 50% 50%, var(--bg-deep) 0%, #030408 100%);

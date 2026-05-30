@@ -1,4 +1,5 @@
 import { readStoredBoolean, writeStoredBoolean } from './layout-state.js';
+import { floatingWindowManager } from '../components/floating-window/component.js';
 
 export class PanelDockController {
     constructor({
@@ -43,7 +44,22 @@ export class PanelDockController {
 
     activate(panelName, { emit = true, autoExpand = true } = {}) {
         if (!panelName) return;
-        if (autoExpand && this.app?.classList.contains('panels-collapsed')) {
+
+        // If the panel is floated, focus its floating window and do not mount in dock
+        if (floatingWindowManager.has(panelName)) {
+            const win = floatingWindowManager.getWindow(panelName);
+            win.focus();
+            // Flash title bar to alert user
+            if (win.header) {
+                win.header.style.background = 'rgba(0, 229, 255, 0.2)';
+                setTimeout(() => {
+                    if (win.header) win.header.style.background = '';
+                }, 180);
+            }
+            return;
+        }
+
+        if (autoExpand && this.app?.classList?.contains('panels-collapsed')) {
             this.setCollapsed(false);
         }
 
@@ -90,11 +106,17 @@ export class PanelDockController {
     }
 
     setCollapsed(collapsed) {
-        if (!this.app || !this.toggleButton) return;
-        this.app.classList.toggle('panels-collapsed', !!collapsed);
-        this.app.dataset.panelsCollapsed = collapsed ? 'true' : 'false';
-        this.toggleButton.innerHTML = collapsed ? '&#9650;' : '&#9660;';
-        this.toggleButton.title = collapsed ? 'Expand panels' : 'Collapse panels';
+        if (!this.app) return;
+        this.app.classList?.toggle('panels-collapsed', !!collapsed);
+        if (this.app.dataset) {
+            this.app.dataset.panelsCollapsed = collapsed ? 'true' : 'false';
+        }
+        
+        const btn = document.getElementById('btn-panel-toggle');
+        if (btn) {
+            btn.innerHTML = collapsed ? '&#9650;' : '&#9660;';
+            btn.title = collapsed ? 'Expand panels' : 'Collapse panels';
+        }
         writeStoredBoolean(this.storageKey, !!collapsed);
         this._notifyViewportResize();
     }
@@ -112,7 +134,89 @@ export class PanelDockController {
 
     _bindTabs() {
         this._getTabs().forEach((tab) => {
-            tab.addEventListener('click', () => this.activate(tab.dataset.panel));
+            let startX = 0;
+            let startY = 0;
+            let hasDragged = false;
+            let dragThresholdActive = false;
+
+            const onPointerMove = (e) => {
+                if (!dragThresholdActive) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                if (Math.sqrt(dx * dx + dy * dy) > 15) {
+                    hasDragged = true;
+                    dragThresholdActive = false;
+                    
+                    window.removeEventListener('pointermove', onPointerMove);
+                    window.removeEventListener('pointerup', onPointerUp);
+
+                    // Float the panel!
+                    const panelId = tab.dataset.panel;
+                    const win = this.floatPanel(panelId, e.clientX, e.clientY);
+                    
+                    // Seamlessly chain pointer drag on the new window title header
+                    if (win) win.startDrag(e.clientX, e.clientY);
+                }
+            };
+
+            const onPointerUp = (e) => {
+                dragThresholdActive = false;
+                window.removeEventListener('pointermove', onPointerMove);
+                window.removeEventListener('pointerup', onPointerUp);
+            };
+
+            tab.addEventListener('pointerdown', (e) => {
+                // Only left click / standard pointer touch
+                if (e.button !== 0) return;
+                startX = e.clientX;
+                startY = e.clientY;
+                hasDragged = false;
+                dragThresholdActive = true;
+
+                window.addEventListener('pointermove', onPointerMove);
+                window.addEventListener('pointerup', onPointerUp);
+            });
+
+            tab.addEventListener('click', (e) => {
+                if (!hasDragged) {
+                    this.activate(tab.dataset.panel);
+                }
+            });
+        });
+    }
+
+    floatPanel(panelId, x, y) {
+        const tab = this.tabBar.querySelector(`.tab[data-panel="${panelId}"]`);
+        const panelEl = this.panelArea.querySelector(`#panel-${panelId}`);
+        if (!tab || !panelEl) return null;
+
+        tab.classList.add('is-floated');
+
+        // Extract label and icon from tab
+        const label = tab.title || tab.querySelector('.tab-label')?.textContent || 'Panel';
+        const icon = tab.querySelector('.tab-icon')?.textContent || '⚙️';
+
+        // Auto-activate next visible docked tab so the dock is never blank
+        const otherTabs = this._getTabs().filter(t => t.dataset.panel !== panelId && !t.classList.contains('is-floated') && t.style.display !== 'none');
+        if (tab.classList.contains('active')) {
+            if (otherTabs.length > 0) {
+                this.activate(otherTabs[0].dataset.panel);
+            } else {
+                this.setCollapsed(true);
+            }
+        }
+
+        // Create the floating window
+        return floatingWindowManager.floatPanel(panelId, label, icon, panelEl, { x: x - 100, y: y - 10 }, (id, el) => {
+            // Callback onDock back to dock
+            tab.classList.remove('is-floated');
+            
+            // Put panel back into dock body
+            const dockBody = this.panelArea.querySelector('[data-panel-dock-body]') || this.panelArea;
+            dockBody.appendChild(el);
+
+            this.setCollapsed(false);
+            this.activate(id);
         });
     }
 
@@ -123,10 +227,13 @@ export class PanelDockController {
     }
 
     _bindCollapseToggle() {
-        if (!this.toggleButton) return;
-        this.toggleButton.addEventListener('click', () => {
-            const collapsed = !this.app.classList.contains('panels-collapsed');
-            this.setCollapsed(collapsed);
+        if (!this.app || typeof this.app.addEventListener !== 'function') return;
+        this.app.addEventListener('click', (event) => {
+            const btn = event.target.closest('#btn-panel-toggle');
+            if (btn) {
+                const collapsed = !this.app.classList?.contains('panels-collapsed');
+                this.setCollapsed(collapsed);
+            }
         });
     }
 
@@ -161,7 +268,7 @@ export class PanelDockController {
     }
 
     _restoreCollapsedState() {
-        const isCollapsed = readStoredBoolean(this.storageKey, true);
+        const isCollapsed = readStoredBoolean(this.storageKey, false);
         this.setCollapsed(isCollapsed);
     }
 

@@ -37,18 +37,18 @@ namespace ftd_wasm_internal {
 // Returns a JS object with Float32Array views for direct BufferAttribute upload.
 // Format: { positions: Float32Array, colors: Float32Array, sizes: Float32Array, count: int }
 val get_particle_data(ftd::RenderBridge& rb) {
-    // PERF: zero-copy via typed_memory_view. Pre-fix this called val::set
-    // 7x per particle. Now positions/colors/sizes are heap views.
+    // PERF: zero-copy via typed_memory_view. Skip void density voxels entirely
+    // and return only manifested particles (state != 0).
     static std::vector<float> pos_cache, col_cache, size_cache;
     const auto& voxels = rb.voxels();
     const int N = rb.lattice().size();
     const int total = N * N * N;
 
-    // First pass: count visible voxels
+    // First pass: count visible voxels (only manifested particles, state != 0)
     int count = 0;
     for (int i = 0; i < total; i++) {
         const auto& v = voxels[i];
-        if (v.state != 0 || v.density() > ftd::K_B * 0.3) count++;
+        if (v.state != 0) count++;
     }
 
     if (static_cast<int>(pos_cache.size()) < count * 3) {
@@ -60,17 +60,10 @@ val get_particle_data(ftd::RenderBridge& rb) {
     int idx = 0;
     for (int i = 0; i < total; i++) {
         const auto& v = voxels[i];
-        if (v.state == 0 && v.density() <= ftd::K_B * 0.3) continue;
+        if (v.state == 0) continue;
 
         auto c = rb.lattice().coord(i);
         const int o3 = idx * 3;
-        // Voxel-center convention: particles render at world (x+0.5, y+0.5, z+0.5)
-        // so they align with the wireframe crosshair (which draws at raw+0.5 —
-        // see viewport/boundary-geometry.js buildCubeBoundary). Without this
-        // offset, single-particle seeds like `s0-vacuum-electron` appeared half a
-        // voxel low-and-right of the cube crosshair at even N (matches the
-        // MockBridge JS path at wasm-bridge-dag.js:656-658 which already
-        // applies the same +0.5f offset).
         pos_cache[o3]     = static_cast<float>(c.x) + 0.5f;
         pos_cache[o3 + 1] = static_cast<float>(c.y) + 0.5f;
         pos_cache[o3 + 2] = static_cast<float>(c.z) + 0.5f;
@@ -79,25 +72,13 @@ val get_particle_data(ftd::RenderBridge& rb) {
             col_cache[o3]     = 0.29f;
             col_cache[o3 + 1] = 0.87f;
             col_cache[o3 + 2] = 0.50f;
-        } else if (v.state == -1) {
+        } else { // v.state == -1
             col_cache[o3]     = 0.97f;
             col_cache[o3 + 1] = 0.44f;
             col_cache[o3 + 2] = 0.44f;
-        } else {
-            float brightness = static_cast<float>(v.density() / (ftd::K_B * 2.0));
-            if (brightness > 1.0f) brightness = 1.0f;
-            col_cache[o3]     = 0.37f + brightness * 0.1f;
-            col_cache[o3 + 1] = 0.45f + brightness * 0.1f;
-            col_cache[o3 + 2] = 0.58f + brightness * 0.2f;
         }
 
-        if (v.state != 0) {
-            size_cache[idx] = 6.0f;
-        } else {
-            float s = 1.5f + static_cast<float>(v.density() / ftd::K_B) * 3.0f;
-            if (s > 5.0f) s = 5.0f;
-            size_cache[idx] = s;
-        }
+        size_cache[idx] = 6.0f;
         idx++;
     }
 
@@ -401,9 +382,9 @@ val get_e_field_sampled(ftd::RenderBridge& rb, int stride) {
                 auto em = rb.em_field_at(idx);
                 if (em.E_mag < 1e-15) continue;
                 const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x);
-                pos_cache[o3 + 1] = static_cast<float>(y);
-                pos_cache[o3 + 2] = static_cast<float>(z);
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
                 vec_cache[o3]     = static_cast<float>(em.E.x);
                 vec_cache[o3 + 1] = static_cast<float>(em.E.y);
                 vec_cache[o3 + 2] = static_cast<float>(em.E.z);
@@ -519,9 +500,9 @@ val get_b_field_sampled(ftd::RenderBridge& rb, int stride) {
                 auto em = rb.em_field_at(idx);
                 if (em.B_mag < 1e-15) continue;
                 const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x);
-                pos_cache[o3 + 1] = static_cast<float>(y);
-                pos_cache[o3 + 2] = static_cast<float>(z);
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
                 vec_cache[o3]     = static_cast<float>(em.B.x);
                 vec_cache[o3 + 1] = static_cast<float>(em.B.y);
                 vec_cache[o3 + 2] = static_cast<float>(em.B.z);
@@ -557,9 +538,9 @@ val get_poynting_sampled(ftd::RenderBridge& rb, int stride) {
                 auto S_vec = rb.poynting_vector(idx);
                 if (S_vec.mag() < 1e-15) continue;
                 const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x);
-                pos_cache[o3 + 1] = static_cast<float>(y);
-                pos_cache[o3 + 2] = static_cast<float>(z);
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
                 vec_cache[o3]     = static_cast<float>(S_vec.x);
                 vec_cache[o3 + 1] = static_cast<float>(S_vec.y);
                 vec_cache[o3 + 2] = static_cast<float>(S_vec.z);
@@ -595,9 +576,9 @@ val get_divj_sampled(ftd::RenderBridge& rb, int stride) {
                 double div = rb.divergence_flux(idx);
                 if (std::abs(div) < 1e-15) continue;
                 const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x);
-                pos_cache[o3 + 1] = static_cast<float>(y);
-                pos_cache[o3 + 2] = static_cast<float>(z);
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
                 val_cache[count]  = static_cast<float>(div);
                 count++;
             }
@@ -632,9 +613,9 @@ val get_flux_vector_sampled(ftd::RenderBridge& rb, int stride) {
                 const auto& v = voxels[idx];
                 if (v.density() < 1e-15) continue;
                 const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x);
-                pos_cache[o3 + 1] = static_cast<float>(y);
-                pos_cache[o3 + 2] = static_cast<float>(z);
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
                 vec_cache[o3]     = static_cast<float>(v.flux.x);
                 vec_cache[o3 + 1] = static_cast<float>(v.flux.y);
                 vec_cache[o3 + 2] = static_cast<float>(v.flux.z);
@@ -672,9 +653,9 @@ val get_force_field_sampled(ftd::RenderBridge& rb, int stride) {
                 auto f = fd.f_coulomb + fd.f_gravity + fd.f_magnetic;
                 if (f.mag() < 1e-15) continue;
                 const int o3 = count * 3;
-                pos_cache[o3]     = static_cast<float>(x);
-                pos_cache[o3 + 1] = static_cast<float>(y);
-                pos_cache[o3 + 2] = static_cast<float>(z);
+                pos_cache[o3]     = static_cast<float>(x) + 0.5f;
+                pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
+                pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
                 vec_cache[o3]     = static_cast<float>(f.x);
                 vec_cache[o3 + 1] = static_cast<float>(f.y);
                 vec_cache[o3 + 2] = static_cast<float>(f.z);

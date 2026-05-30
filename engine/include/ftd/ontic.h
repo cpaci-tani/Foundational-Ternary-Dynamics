@@ -26,8 +26,8 @@
  * Layer 6c: Mass Ratios            (MU_RATIO, TAU_RATIO, ...) → ontic/particle_masses.h
  * Layer 7:  Precision Formula      (ε, c₁-c₄, corrected α)    → ontic/gauge_couplings.h
  * Layer 7b: Absolute ν Masses      (seesaw: m_D, M_R, m_1/2/3)→ ontic/neutrino.h
- * Layer 8:  Consciousness          (y, θ_C, K_C)              → ontic/consciousness.h
- * Layer 8b: Golden Ratio Fixed Pt  (φ, λ_loop, β_intr)        → ontic/consciousness.h
+ * Layer 8:  Reference frame context          (y, θ_C, K_C)              → ontic/reference frame context.h
+ * Layer 8b: Golden Ratio Fixed Pt  (φ, λ_loop, β_intr)        → ontic/reference frame context.h
  *
  * All constants live in namespace ftd::ontic. Downstream code should
  * continue to #include "ftd/ontic.h" — this umbrella re-exports every
@@ -45,4 +45,4 @@
 #include "ftd/ontic/gauge_couplings.h"
 #include "ftd/ontic/particle_masses.h"
 #include "ftd/ontic/neutrino.h"
-#include "ftd/ontic/consciousness.h"
+#include "ftd/ontic/reference frame context.h"

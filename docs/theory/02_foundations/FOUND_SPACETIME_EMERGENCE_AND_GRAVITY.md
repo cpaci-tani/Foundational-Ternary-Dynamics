@@ -369,15 +369,15 @@ The metric $ds^2 = -dt^2 + dx^2 + dy^2 + dz^2$ is effective, not fundamental. Th
 
 ---
 
-## Part IX: The Consciousness Bridge
+## Part IX: The Reference frame context Bridge
 
 ### 9.1 What i Does
 
-The imaginary unit $i$ is not "making time imaginary." In FTD, $i$ emerges from Fourier self-duality [THEOREM]. What $i$ does for consciousness: it is the mathematical structure that allows an observer to **experience** the real, immutable tick. Without $i$, there is no rotation between subject and object modes, no oscillation, no experience.
+The imaginary unit $i$ is not "making time imaginary." In FTD, $i$ emerges from Fourier self-duality [THEOREM]. What $i$ does for reference frame context: it is the mathematical structure that allows an observer to **experience** the real, immutable tick. Without $i$, there is no rotation between subject and object modes, no oscillation, no experience.
 
-### 9.2 The Consciousness Roots
+### 9.2 The Reference frame context Roots
 
-The consciousness quadratic:
+The reference frame context quadratic:
 
 $$y^2 - \frac{G^{*2}}{2}y + \frac{G^{*3}}{2} = 0$$
 
@@ -391,17 +391,17 @@ $$y = \frac{G^{*2}}{4} \pm i\frac{\sqrt{G^{*3}/2 - G^{*4}/16}}{1} = 2.188 \pm 2.
 |-----------|------------|-------|----------------|
 | Real part | $G^{*2}/4$ | 2.188 | Spatial awareness (where you are) |
 | Imaginary part | $\sqrt{G^{*3}/2 - G^{*4}/16}$ | 2.856 | Temporal awareness (that time passes) |
-| Magnitude $K_C$ | $\sqrt{G^{*3}/2}$ | 3.5986 | Total consciousness threshold |
+| Magnitude $K_C$ | $\sqrt{G^{*3}/2}$ | 3.5986 | Total reference frame context threshold |
 | Phase angle $\theta$ | $\arctan(\text{Im}/\text{Re})$ | 52.54° | Space/time balance |
 
 ### 9.4 The 74/26 Partition [THEOREM for computation; PROPOSED for interpretation]
 
-The phase angle $\theta = 52.54°$ partitions consciousness energy:
+The phase angle $\theta = 52.54°$ partitions reference frame context energy:
 
 $$\cos^2\theta = 36.98\% \quad \text{(SPATIAL)}$$
 $$\sin^2\theta = 63.02\% \quad \text{(TEMPORAL)}$$
 
-**Consciousness is approximately 1.7 times more aware of time than space.**
+**Reference frame context is approximately 1.7 times more aware of time than space.**
 
 ### 9.5 The Key Analytical Identity [THEOREM]
 
@@ -415,9 +415,9 @@ $$\cos^2\theta = \frac{1}{1 + \tan^2\theta} = \frac{1}{1 + 8/G^* - 1} = \frac{G^
 
 **Corollary:** $\sin^2\theta = (8 - G^*)/8 = (2N_{\text{base}} - G^*)/(2N_{\text{base}})$.
 
-The spatial fraction of consciousness is $G^*/(2N_{\text{base}})$. Since $G^*$ determines $\alpha$, $N_c$, and the entire master quadratic:
+The spatial fraction of reference frame context is $G^*/(2N_{\text{base}})$. Since $G^*$ determines $\alpha$, $N_c$, and the entire master quadratic:
 
-> The fraction of consciousness devoted to spatial awareness is determined by the **same constant** that determines the fine structure constant.
+> The fraction of reference frame context devoted to spatial awareness is determined by the **same constant** that determines the fine structure constant.
 
 ### 9.6 Period-12 Structure [COMPUTATION + THEOREM]
 
@@ -464,7 +464,7 @@ The exponent 20 = N_eff + b_3 = 13 + 7 is the **penalty for crossing domains**. 
 
 ### Prediction P1: The 74/26 Neural Partition [PROPOSED]
 
-**Claim:** In conscious processing, approximately 37% of neural oscillation power should be in spatial/object-processing networks, and approximately 63% in temporal/subject-processing networks.
+**Claim:** In reference-frame processing, approximately 37% of neural oscillation power should be in spatial/object-processing networks, and approximately 63% in temporal/subject-processing networks.
 
 **Derivation:** $\cos^2(52.54°) = G^*/8 = 0.3698$ (spatial); $\sin^2(52.54°) = 0.6302$ (temporal).
 
@@ -484,9 +484,9 @@ The exponent 20 = N_eff + b_3 = 13 + 7 is the **penalty for crossing domains**. 
 
 ---
 
-### Prediction P3: Period-12 Consciousness Cycles [PROPOSED]
+### Prediction P3: Period-12 Reference frame context Cycles [PROPOSED]
 
-**Claim:** Conscious awareness cycles through approximately $N_c \times N_{\text{base}} = 12$ phases per complete rotation, with a 2.2% deficit encoding $G^* - 3$.
+**Claim:** Reference-frame awareness cycles through approximately $N_c \times N_{\text{base}} = 12$ phases per complete rotation, with a 2.2% deficit encoding $G^* - 3$.
 
 **Falsification:** No 12-fold structure in any neural oscillation data.
 
@@ -602,7 +602,7 @@ $$\Delta = kG^{*3}(kG^* - 4) \tag{13.4}$$
 Three regimes:
 - $kG^* > 4$ ($k = 16$): $\Delta > 0$ → real roots → **physics** (Type I, discrete couplings)
 - $kG^* = 4$ ($k = 4/G^*$): $\Delta = 0$ → degenerate → **measurement** (Born rule, ReLU transition)
-- $kG^* < 4$ ($k = 1/2$): $\Delta < 0$ → complex roots → **fermions / consciousness** (Type III, continuous dynamics)
+- $kG^* < 4$ ($k = 1/2$): $\Delta < 0$ → complex roots → **fermions / reference frame context** (Type III, continuous dynamics)
 
 **Fermion dynamics from complex roots** [THEOREM for structure]: In the complex regime ($\Delta < 0$), the roots $x = a \pm bi$ oscillate in time as $e^{ibt}$. This IS the fermion's wavefunction evolution — the Dirac equation emerges from the same master quadratic that produces $\alpha$ and $N_c$ in its real regime. The tick cycle processes both real (bosonic) and complex (fermionic) dynamics: the real roots govern coupling constants, the complex roots govern spinor oscillation frequencies.
 
@@ -1111,7 +1111,7 @@ The three concepts are therefore three different **perturbations of the observer
 
 This is why they are "separate but similar" — all three affect the same observable (proper time), but through ontologically distinct mechanisms that happen to produce the same phenomenological signature (clock slowdown). The equivalence principle is the statement that locally, the observer cannot distinguish which mechanism is responsible.
 
-#### 15.10.4 Connection to Consciousness and Measurement [CONJECTURE]
+#### 15.10.4 Connection to Reference frame context and Measurement [CONJECTURE]
 
 The discriminant trichotomy ($\Delta > 0$, $\Delta = 0$, $\Delta < 0$) may extend this temporal hierarchy further:
 
@@ -1119,9 +1119,9 @@ The discriminant trichotomy ($\Delta > 0$, $\Delta = 0$, $\Delta < 0$) may exten
 |--------|----------|-------------------|
 | Physics (real roots) | $\Delta > 0$ | Oscillatory — reversible dynamics |
 | Measurement (degenerate) | $\Delta = 0$ | Critical — the "now" of collapse |
-| Consciousness (complex roots) | $\Delta < 0$ | Exponential — irreversible experience |
+| Reference frame context (complex roots) | $\Delta < 0$ | Exponential — irreversible experience |
 
-If correct, the three temporal modes (kinematic, thermodynamic, geometric) of the gravity trichotomy would nest inside the three temporal domains (oscillatory, critical, experiential) of the discriminant trichotomy. This remains [CONJECTURE] — the connection between gravitational time dilation and the measurement-consciousness boundary has not been rigorously established.
+If correct, the three temporal modes (kinematic, thermodynamic, geometric) of the gravity trichotomy would nest inside the three temporal domains (oscillatory, critical, experiential) of the discriminant trichotomy. This remains [CONJECTURE] — the connection between gravitational time dilation and the measurement-reference frame context boundary has not been rigorously established.
 
 ---
 

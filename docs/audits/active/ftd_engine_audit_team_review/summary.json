@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-05-28T06:17:40Z",
+  "subsystems": {
+    "cpp": {
+      "build": {
+        "success": true,
+        "code": 0,
+        "duration_sec": 2.922,
+        "log_file": "architecture/cpp_build.log"
+      },
+      "tests": {
+        "success": false,
+        "code": 8,
+        "duration_sec": 3747.391,
+        "log_file": "performance/ctests.log"
+      }
+    },
+    "physics": {
+      "proof_chain": {
+        "success": true,
+        "code": 0,
+        "duration_sec": 4.123,
+        "log_file": "mathematics/proof_master_verification.log"
+      },
+      "physics_battery": {
+        "success": true,
+        "code": 0,
+        "duration_sec": 4.119,
+        "log_file": "mathematics/test_all_physics.log"
+      }
+    },
+    "web": {
+      "regression_suite": {
+        "success": true,
+        "code": 0,
+        "duration_sec": 29.078,
+        "log_file": "ui_ux/playwright_regression.log"
+      }
+    }
+  }
+}

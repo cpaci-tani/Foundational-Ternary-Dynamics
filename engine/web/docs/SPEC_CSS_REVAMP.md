@@ -58,7 +58,7 @@ Tokens exist for sizing, spacing, colors, font, radius, z-layer. But the system 
 106 `style="…"` attributes in `js/ui/**`. Biggest offenders (from this session's new templates):
 
 - **Lagrangian template** — 14 inline styles (`font-size:11px`, `color:#ef5350`, `width:13px;height:13px`, flex layout). These are repeated 7× for the term toggles.
-- **Consciousness template** — 12 inline styles (`margin-top:12px`, `color:var(--consciousness-primary)`, `font-size:11px`).
+- **Reference frame context template** — 12 inline styles (`margin-top:12px`, `color:var(--reference frame context-primary)`, `font-size:11px`).
 - **Charts template** — 6 inline styles (`height:80px;width:100%`, `margin-top:10px`).
 - **Scale-0 legacy templates** (registered-ui.js) — toolbar groups with inline flex/gap.
 
@@ -166,11 +166,11 @@ Replace the 106 inline `style="…"` attributes with classes. One pass per templ
 **Conventions:**
 - Utility classes for common one-off layout (`.u-mt-sm`, `.u-gap-md`, `.u-flex-wrap`) in a new `css/ui/primitives/utilities.css`.
 - Component-local classes for panel-specific styling (`.lag-term-row`, `.lag-term-toggle`, `.cs-metrics-row`).
-- Delete any `style="color:#ef5350"` and use `.term-legend-bi { color: var(--legend-bi); }` where `--legend-bi: #ef5350` is defined in `consciousness-panel.css` or `lagrangian-panel.css`.
+- Delete any `style="color:#ef5350"` and use `.term-legend-bi { color: var(--legend-bi); }` where `--legend-bi: #ef5350` is defined in `reference frame context-panel.css` or `lagrangian-panel.css`.
 
 **Templates to clean:**
 - `lagrangian-panel/template.js` (14 inline styles)
-- `consciousness-panel/template.js` (12)
+- `reference frame context-panel/template.js` (12)
 - `charts-panel/template.js` (6)
 - `components/panel-resources/template.js` + `diagnostics-template.js` (~20 combined)
 - `components/panel-resources/template.js` inspector section (~15)
@@ -198,7 +198,7 @@ Every `z-index` in `css/ui/**` must reference a `--z-*` token. Extend the regist
 --z-error:      10000;
 ```
 
-Update consumers: `panel-dock.css`, `status-bar.css`, `topbar.css`, `viewport-overlays.css`, `workspace-tabs.css`, `toast.css`, `scale0/toolbar.css`, `zoo-panel.css`, `consciousness-panel.css`.
+Update consumers: `panel-dock.css`, `status-bar.css`, `topbar.css`, `viewport-overlays.css`, `workspace-tabs.css`, `toast.css`, `scale0/toolbar.css`, `zoo-panel.css`, `reference frame context-panel.css`.
 
 **Exit criterion:** `grep -rE 'z-index:\s*[0-9]' css/ui | wc -l == 0`.
 
@@ -271,7 +271,7 @@ Remove every `!important` whose purpose is specificity war (not visibility overr
 1. Add missing tokens in `tokens.css` (Phase A prefix).
 2. Remove the duplicate transition block in `tokens.css`.
 3. Replace literal `z-index` values in [status-bar.css](../css/ui/components/status-bar.css), [workspace-tabs.css](../css/ui/components/workspace-tabs.css), [panel-dock.css](../css/ui/components/panel-dock.css), [topbar.css](../css/ui/components/topbar.css) with the existing `--z-*` tokens.
-4. Purge `style="…"` from the three templates added this session (charts, lagrangian, consciousness) — while the mapping is fresh.
+4. Purge `style="…"` from the three templates added this session (charts, lagrangian, reference frame context) — while the mapping is fresh.
 
 These four items are ~90 minutes of work and unblock the rest.
 
@@ -307,7 +307,7 @@ All five phases complete. Browser verified after each phase (0 failed stylesheet
 - `viewport-frame.css` → `var(--z-viewport)`
 - `viewport-overlays.css` → `var(--z-overlay)`
 - `scale0/toolbar.css` (z-index: 8 and 1000) → `var(--z-field-overlay)` + `var(--z-sidebar)`
-- `scale11/pedagogy.css` / `consciousness-panel.css` → `var(--z-overlay)` + `var(--z-panel-toggle)`
+- `scale11/pedagogy.css` / `reference frame context-panel.css` → `var(--z-overlay)` + `var(--z-panel-toggle)`
 - `scale2/legend.css` → `var(--z-status)`
 - `toast.css` → `var(--z-toast)`
 - `app-shell.css` (z: 150, 99999) → `var(--z-sidebar)` + `var(--z-error)`
@@ -323,7 +323,7 @@ All five phases complete. Browser verified after each phase (0 failed stylesheet
 - Created [utilities.css](../css/ui/primitives/utilities.css) for one-off layout helpers (`.u-mt-*`, `.u-gap-*`, `.u-flex-*`, `.u-sparkline-canvas`).
 - Charts panel → `.charts-row` layout class, canvas sparklines use `.u-sparkline-canvas`.
 - Lagrangian panel → `.lag-layout` grid, `.lag-term-row`, `.lag-term-toggle[data-term]` with `--legend-*` tokens in [lagrangian-panel.css](../css/ui/panels/lagrangian-panel.css).
-- Consciousness panel → `.cs-metrics-row`, `.cs-metric-{primary,secondary,domain}` in [consciousness-panel.css](../css/ui/panels/consciousness-panel.css).
+- Reference frame context panel → `.cs-metrics-row`, `.cs-metric-{primary,secondary,domain}` in [reference frame context-panel.css](../css/ui/panels/reference frame context-panel.css).
 - Diagnostics template → `.diag-s0-grid`, `.diag-badge-row`, `.diag-badge-{r,g,b}`, `.diag-sparkline-row`, `.pe-ts-legend-*`, `.pe-telemetry-row-gap`, `.ae-diag-row` etc. in [diagnostics-panel.css](../css/ui/panels/diagnostics-panel.css).
 - Panel-resources scale blocks → `.scale-controls-block`, `.scale-info-mono`, `.scale-info-copy`.
 - Scale 0/1 field swatches → 22 named classes (`.field-swatch-{e-field,b-field,…}`, `.field-swatch-pe-{velocities,trails,…}`).

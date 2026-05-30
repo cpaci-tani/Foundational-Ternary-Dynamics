@@ -913,7 +913,7 @@ class OnticChain:
             tag="[SELECTION]", unit="eV",
         ))
 
-    # ── Layer 8: Consciousness Quadratic ─────────────────────────────────
+    # ── Layer 8: Reference frame context Quadratic ─────────────────────────────────
 
     def _layer_8(self):
         G = self._v("G_STAR")
@@ -927,7 +927,7 @@ class OnticChain:
             name="K_NOETIC", symbol="k_noetic",
             value=0.5,
             layer="8", depends_on=[],
-            formula="1/2 (consciousness coefficient)",
+            formula="1/2 (reference frame context coefficient)",
             tag="[CONJECTURE]", unit="dimensionless",
         ))
         self._add(Constant(
@@ -1000,7 +1000,7 @@ class OnticChain:
             "6b": "Electroweak Scale",
             "7": "Precision Formula",
             "7b": "Neutrino Masses",
-            "8": "Consciousness Quadratic",
+            "8": "Reference frame context Quadratic",
             "sim": "Simulation Parameters",
         }
 

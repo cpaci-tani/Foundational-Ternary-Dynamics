@@ -26,7 +26,7 @@
 | `03_derivations/` | Core physics derivations and major sector documents | `DERIV_` |
 | `04_coupling/` | Constants, precision formulas, coupling structure | `DERIV_` |
 | `05_particles/` | Particle-physics applications and prediction docs | `DERIV_`, `PRED_`, `REF_` |
-| `06_consciousness/` | Measurement, observer, and consciousness layer | `FOUND_`, `DERIV_` |
+| `06_reference_frames_and_measurement/` | Measurement, observer, and reference frame context layer | `FOUND_`, `DERIV_` |
 | `07_assessment/` | Epistemic audits, claims matrices, document status | `AUDIT_`, `REF_`, `TRACKER_`, `REPORT_` |
 | `08_structural/` | Geometry, topology, information, lattice structure | `DERIV_`, `EXPLR_` |
 | `09_mathematical/` | Number theory, CM, special-function, and pure-math links | `MATH_`, `PROOF_`, `CONJ_`, `DERIV_`, `EXPLR_` |
@@ -67,7 +67,7 @@ If a document must remain in place temporarily for continuity, label it clearly 
 ## Maintenance Rules
 
 - Treat [META_INDEX.md](META_INDEX.md) as the curated navigation layer.
-- Treat [07_assessment/TRACKER_ONTIC_TRUTH.md](07_assessment/TRACKER_ONTIC_TRUTH.md) as the canonical bedrock truth tracker, [07_assessment/LEDGER.md](07_assessment/LEDGER.md) as the per-claim provenance layer, and [07_assessment/TRACKER_OPEN_ITEMS.md](07_assessment/TRACKER_OPEN_ITEMS.md) as the open-work queue.
+- Treat [07_assessment/TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) as the canonical bedrock truth tracker, [07_assessment/LEDGER.md](07_assessment/core_ledgers/LEDGER.md) as the per-claim provenance layer, and [07_assessment/TRACKER_OPEN_ITEMS.md](07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) as the open-work queue.
 - Avoid brittle count claims inside category headings; counts drift faster than structure.
 - When a new active theory doc is added, update the catalog in the same change.
 - When a doc is superseded, update the index entry in the same change.
@@ -86,8 +86,8 @@ the canonical document is right and the downstream document is the drift to fix.
 
 | Tier | Document | Authoritative for | Answers |
 |------|----------|-------------------|---------|
-| Bedrock | [07_assessment/LEDGER.md](07_assessment/LEDGER.md) | The **epistemic tag** of every load-bearing claim (`FTD-NNNN` rows) — `[THEOREM]`, `[DERIVED]`, `[SMC]`, `[PARAMETRIC]`, `[CLOSED NEGATIVE]`, … — with tag history and dependencies. | "What is claim X's status, and how did it get there?" |
-| Bedrock | [07_assessment/TRACKER_ONTIC_TRUTH.md](07_assessment/TRACKER_ONTIC_TRUTH.md) | The **truth tier** (T1–T5) of the ~dozen claims that carry the framework (`OT-N.M` rows). Co-canonical with the LEDGER — the LEDGER wins on the *tag*, this tracker wins on the *tier*. | "How solid is X on the 5-tier bedrock scale?" |
+| Bedrock | [07_assessment/LEDGER.md](07_assessment/core_ledgers/LEDGER.md) | The **epistemic tag** of every load-bearing claim (`FTD-NNNN` rows) — `[THEOREM]`, `[DERIVED]`, `[SMC]`, `[PARAMETRIC]`, `[CLOSED NEGATIVE]`, … — with tag history and dependencies. | "What is claim X's status, and how did it get there?" |
+| Bedrock | [07_assessment/TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) | The **truth tier** (T1–T5) of the ~dozen claims that carry the framework (`OT-N.M` rows). Co-canonical with the LEDGER — the LEDGER wins on the *tag*, this tracker wins on the *tier*. | "How solid is X on the 5-tier bedrock scale?" |
 | Theorems | [01_reference/SPEC_ALGEBRAIC_SPINE.md](01_reference/SPEC_ALGEBRAIC_SPINE.md) | The **theorem statements** — which numbered results are theorem-grade, which are honestly tiered below it, and the exact statement + proof obligation of each. | "Is X actually a theorem, and what precisely does it say?" |
 | Roll-up | [01_reference/SPEC_DOCTRINE_LEDGER.md](01_reference/SPEC_DOCTRINE_LEDGER.md) | A **single-page status map** of the three above. It introduces no claim of its own; every row points at a Bedrock/Theorems source. If it disagrees with one, it is the drift. | "What is the whole status map at a glance?" |
 
@@ -98,7 +98,7 @@ the canonical document is right and the downstream document is the drift to fix.
 
 **Open-work queues** — authoritative for what is unfinished:
 
-- [07_assessment/TRACKER_OPEN_ITEMS.md](07_assessment/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` item across code and theory.
+- [07_assessment/TRACKER_OPEN_ITEMS.md](07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` item across code and theory.
 - [01_reference/SPEC_OPEN_MATH_BY_SECTOR.md](01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) — the same queue, organized by physics sector.
 
 **Everything else is downstream** — including [../SPEC_FTD.md](../SPEC_FTD.md), [META_INDEX.md](META_INDEX.md),
@@ -122,11 +122,11 @@ commit* carries every applicable update below.
 
 **Propagation checklist** — skip a line only if it genuinely does not apply:
 
-1. [LEDGER.md](07_assessment/LEDGER.md) — update the `FTD-NNNN` row's tag; add a dated `tag_history` entry (old tag → new tag, with the reason).
-2. [TRACKER_ONTIC_TRUTH.md](07_assessment/TRACKER_ONTIC_TRUTH.md) — if the claim is a truth-tier (`OT-N.M`) entry, update its tier and star rating.
+1. [LEDGER.md](07_assessment/core_ledgers/LEDGER.md) — update the `FTD-NNNN` row's tag; add a dated `tag_history` entry (old tag → new tag, with the reason).
+2. [TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) — if the claim is a truth-tier (`OT-N.M`) entry, update its tier and star rating.
 3. [SPEC_ALGEBRAIC_SPINE.md](01_reference/SPEC_ALGEBRAIC_SPINE.md) — if the claim is theorem-grade, or crosses into/out of theorem grade, update its numbered entry and the §0 count.
 4. [SPEC_DOCTRINE_LEDGER.md](01_reference/SPEC_DOCTRINE_LEDGER.md) — update the roll-up row so the single-page map stays true.
-5. [TRACKER_OPEN_ITEMS.md](07_assessment/TRACKER_OPEN_ITEMS.md) / [SPEC_OPEN_MATH_BY_SECTOR.md](01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) — if the change opens or closes work.
+5. [TRACKER_OPEN_ITEMS.md](07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) / [SPEC_OPEN_MATH_BY_SECTOR.md](01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) — if the change opens or closes work.
 6. [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) — if the change reclassifies a formula among `[PARAMETRIC]` / `[DERIVED]` / `[IMPOSED]`.
 7. [../../CLAUDE.md](../../CLAUDE.md) — if the change moves the *headline* epistemic state, refresh the "Current epistemic state" section.
 8. **Downstream docs** — search for the claim's `FTD-NNNN` id and key phrasing; reconcile any derivation, paper, or index that quotes the old status.

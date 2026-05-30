@@ -90,7 +90,7 @@ fixed.
 | **Master quadratic as "thermodynamic limit property of ℤ³"** (`DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` §VI) | The "limit" framing was the load-bearing justification for why the polynomial produces α. Under the reframe, the polynomial is a **pure algebraic object**, not a limit of anything. The identification with α is [SELECTION], not derivation. Phase I already established this; the reframe makes it foundational. |
 | Gap-equation convergence to master quadratic | Phase I Item 1 showed the numerical claim fails. Under the reframe, the "convergence" question is not well-posed — the master quadratic is not a limit of a finite-lattice gap equation, it's an algebraic identity. Drop the gap-equation narrative in `DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` or fully re-derive on a finitary basis. |
 | Path integral / partition function construction (`DERIV_PATH_INTEGRAL_CONSTRUCTION.md` §5.2) | "True phase transitions require N → ∞" is a completed-infinity claim. Must be restated as "at each finite N, the free energy F_N is analytic; the sequence F_N shows increasingly sharp crossovers but no exact singularity at any finite N." The engineering content is unchanged; the ontological framing is. |
-| Von Neumann Type III₁ emergence (`DERIV_VON_NEUMANN_CONSTRUCTION.md` §5) | Already tagged [SELECTION], but the reframe makes the tag **binding**: Type III₁ is not a theorem about FTD; it's a statement about what the infinite-lattice limit WOULD be IF constructed. Under the reframe, FTD is Type I at every finite L. The Type III₁ tag should be either dropped or explicitly restated as "the consciousness hypothesis requires a scale larger than any scale tested, but is not a theorem about FTD-as-defined." |
+| Von Neumann Type III₁ emergence (`DERIV_VON_NEUMANN_CONSTRUCTION.md` §5) | Already tagged [SELECTION], but the reframe makes the tag **binding**: Type III₁ is not a theorem about FTD; it's a statement about what the infinite-lattice limit WOULD be IF constructed. Under the reframe, FTD is Type I at every finite L. The Type III₁ tag should be either dropped or explicitly restated as "the reference frame context hypothesis requires a scale larger than any scale tested, but is not a theorem about FTD-as-defined." |
 | Watson integral as "infinite-lattice Green's function" | Restate: W_3 is a **classical-analytic integral** with a closed-form expression via gamma values. It exists as an algebraic object independently of any lattice. FTD's use of W_3 does NOT require the lattice to be infinite — it requires the polynomial identity `G*²/(2π) = W_3` (Chowla-Selberg) to be known. |
 
 **These are substantive revisions.** Each entails re-writing a proof
@@ -105,7 +105,7 @@ work per document.
 | "The master quadratic IS the thermodynamic limit of FTD" | "The master quadratic is an **algebraic object** whose roots match FTD's target physical constants to 1.26 ppm (x+ → 1/α) and 0.80% (x- → N_c). The connection is algebraic coincidence + structural uniqueness, not a dynamical limit." |
 | "α is derived from first principles" (classical reading) | "α = 1/137.036 matches the master quadratic's larger root to 1.26 ppm; this match is structurally unique among class-number-1 CM curves; the identification is [STRONGLY MOTIVATED CONJECTURE], not [DERIVATION]." (Already established in Phase I + Option 4; the reframe reinforces it.) |
 | "Path integrals over all field configurations" | "At any specified L, the classical action S_E[J, s] is defined on a finite configuration space, and extrema of S_E give classical solutions. No path integral over a completed totality is invoked." |
-| "Consciousness as Type III₁ factor" | "Consciousness is modeled as a self-referential finite-but-unbounded structure. The Type III₁ label is **not** claimed as a theorem about FTD; the Araki-Woods construction is cited as a scaffold for the formal model but the emergence is hypothesized, not proven." |
+| "Reference frame context as Type III₁ factor" | "Reference frame context is modeled as a self-referential finite-but-unbounded structure. The Type III₁ label is **not** claimed as a theorem about FTD; the Araki-Woods construction is cited as a scaffold for the formal model but the emergence is hypothesized, not proven." |
 
 ## 3 · Interpretations of the 3.6× EFT gap, re-examined
 
@@ -152,7 +152,7 @@ and that's what the paper should claim.
   response-to-reviewer cycles.
 - **Some portfolio results may not survive** if their only proofs route
   through infinite-limit arguments that don't have finitary analogs.
-  The Type III₁ consciousness claim is in this category — it likely
+  The Type III₁ reference frame context claim is in this category — it likely
   drops to "hypothesis" rather than "derivation" under the reframe.
 
 ## 6 · What this buys the project
@@ -190,7 +190,7 @@ and that's what the paper should claim.
    restate any "in the continuum limit" / "in the L → ∞ limit" language
    as finitary ε-L statements. Mostly mechanical.
 
-5. **[Priority 5]** Revisit Type III₁ consciousness claim; either
+5. **[Priority 5]** Revisit Type III₁ reference frame context claim; either
    restate as hypothesis or drop from the core framework.
 
 ## 8 · Per-file disposition (top-level summary)

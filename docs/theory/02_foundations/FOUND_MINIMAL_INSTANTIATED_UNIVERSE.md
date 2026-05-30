@@ -83,7 +83,7 @@ Minimum requirement:
 there is a context in which distinction can be instantiated
 ```
 
-The context instantiator is not necessarily a conscious observer. It is the
+The context instantiator is not necessarily a local reference frame. It is the
 minimal frame/interface that makes the statement:
 
 ```text
@@ -114,7 +114,7 @@ What it does not yet require:
 ```text
 time
 metric space
-consciousness
+reference frame context
 many-body dynamics
 ```
 

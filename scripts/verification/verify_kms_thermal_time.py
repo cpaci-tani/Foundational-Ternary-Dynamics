@@ -750,8 +750,8 @@ def main():
     print(f"    - Its modular flow IS FTD time evolution [{'VERIFIED' if cr_result['best_overlap'] > 0.95 else 'PARTIAL'}]")
     print(f"    - By Connes-Rovelli: modular time = physical time [CLASSICAL]")
     print(f"    - Therefore: FTD tick time = modular time = physical time")
-    print(f"    - Remaining: show consciousness algebra is also Type III_1")
-    print(f"      so that conscious time = modular time = physical time")
+    print(f"    - Remaining: show reference frame context algebra is also Type III_1")
+    print(f"      so that reference-frame time = modular time = physical time")
 
     # --- Generate Figure ---
     print("\n  Generating 4-panel figure...")

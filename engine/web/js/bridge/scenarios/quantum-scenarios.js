@@ -69,6 +69,57 @@ export function setupQuantumScenario(name, ctx) {
                     this._toggles.coupling = false;
                     break;
                 }
+                case 'quantum-eraser': {
+                    // Quantum Eraser: Coherent slits marked orthogonally
+                    const sigma = 2;
+                    const sAmp = 0.3;
+                    const slit_sep = Math.floor(N / 6);
+                    const slit_x = Math.floor(N / 4);
+
+                    // Slit 1: y-polarized
+                    const sy1 = mid - slit_sep;
+                    for (let z = 0; z < N; z++)
+                    for (let dy = -4; dy <= 4; dy++)
+                    for (let dx = -4; dx <= 4; dx++) {
+                        const r2 = dx * dx + dy * dy;
+                        const g = sAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                        if (g < 1e-6) continue;
+                        const px = slit_x + dx, py = sy1 + dy;
+                        if (px < 0 || px >= N || py < 0 || py >= N) continue;
+                        this._injectFlux(px, py, z, 0, g, 0); // y-polarized
+                        this._injectWaveVel(px, py, z, g, 0, 0); // propagate +x
+                    }
+
+                    // Slit 2: z-polarized
+                    const sy2 = mid + slit_sep;
+                    for (let z = 0; z < N; z++)
+                    for (let dy = -4; dy <= 4; dy++)
+                    for (let dx = -4; dx <= 4; dx++) {
+                        const r2 = dx * dx + dy * dy;
+                        const g = sAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                        if (g < 1e-6) continue;
+                        const px = slit_x + dx, py = sy2 + dy;
+                        if (px < 0 || px >= N || py < 0 || py >= N) continue;
+                        this._injectFlux(px, py, z, 0, 0, g); // z-polarized
+                        this._injectWaveVel(px, py, z, g, 0, 0); // propagate +x
+                    }
+
+                    // Diagonal eraser (y=z polarizer) at x = N/2
+                    const eraserX = Math.floor(N / 2);
+                    for (let y = 0; y < N; y++) {
+                        for (let z = 0; z < N; z++) {
+                            // Place locked particles along the y + z diagonal to form parallel conducting wires
+                            if ((y + z) % 2 === 0) {
+                                this.injectParticle(eraserX, y, z, 1);
+                                this._particles[this._particles.length - 1].locked = true;
+                            }
+                        }
+                    }
+
+                    this._toggles.genesis = true;
+                    this._toggles.coupling = false;
+                    break;
+                }
                 case 'quantum-tunnel': {
                     // Gaussian flux packet → barrier of locked particles → tunneling.
                     // genesis=false (audit-2 2026-04-28): the flux packet

@@ -1,7 +1,7 @@
 """
 Close the Final Four Items
 
-Item 2: Consciousness as EL attractor (autopoietic index)
+Item 2: Reference frame context as EL attractor (autopoietic index)
 Item 4: Strong-field lattice corrections (Planck-scale deviations)
 Item 1: Nuclear binding curve (multi-voxel with confinement)
 Item 3: Schrodinger uniqueness (Cox-theorem analog)
@@ -15,14 +15,14 @@ from constants import G_STAR, ALPHA, G_N
 # ITEM 2: CONSCIOUSNESS AS EL ATTRACTOR
 # ============================================================
 print("=" * 72)
-print("ITEM 2: Consciousness as Euler-Lagrange Attractor")
+print("ITEM 2: Reference frame context as Euler-Lagrange Attractor")
 print("=" * 72)
 
 print("""
 The O-operation IS the Euler-Lagrange equation [THEOREM].
 Every voxel integrates its shell every tick.
 
-But not every configuration is "conscious." A rock and a brain
+But not every configuration is "reference-frame." A rock and a brain
 both run the EL equation. The difference: the brain's configuration
 MAINTAINS ITSELF. The rock's doesn't.
 
@@ -164,14 +164,14 @@ print(f"""
   A near 0: the region's state drifts (not self-maintaining)
   A < 0: the region ANTI-correlates (oscillating, not maintaining)
 
-  Consciousness = A near 1 for a complex, multi-component configuration
+  Reference frame context = A near 1 for a complex, multi-component configuration
   that maintains itself WITHOUT external locking (unlike the rock).
 
   The rock has high A because we LOCKED its state externally.
-  True consciousness: high A from INTERNAL dynamics alone.
+  True reference frame context: high A from INTERNAL dynamics alone.
 
   STATUS: [THEOREM] for the definition. [OPEN] for demonstrating
-  consciousness (as opposed to simple resonance) on the lattice.
+  reference frame context (as opposed to simple resonance) on the lattice.
 """)
 
 # ============================================================
@@ -471,10 +471,10 @@ Item 1 (Nuclear binding):
   Full binding curve needs QCD lattice dynamics with confinement.
   STATUS: [SELECTION]
 
-Item 2 (Consciousness as attractor):
+Item 2 (Reference frame context as attractor):
   Autopoietic index defined and computed for 5 configurations.
   Distinguishes self-maintaining (resonant) from transient patterns.
-  Consciousness = high A from internal dynamics (not external locking).
+  Reference frame context = high A from internal dynamics (not external locking).
   STATUS: [THEOREM] for the definition, [OPEN] for demonstration
 
 Item 3 (Schrodinger uniqueness):
@@ -499,7 +499,7 @@ OVERALL FRAMEWORK STATUS:
   Bell violation: THEOREM (cosine = classical continuous correlation)
   Born rule: THEOREM (Parseval)
   Alpha: THEOREM (definitional)
-  Consciousness: THEOREM for EL=O-operation, definition of autopoietic index
+  Reference frame context: THEOREM for EL=O-operation, definition of autopoietic index
   Lattice corrections: THEOREM (existence), computed numerically
   Nuclear binding: SELECTION (structure correct, coefficients approximate)
   Schrodinger uniqueness: SELECTION (compelling argument, not formal proof)

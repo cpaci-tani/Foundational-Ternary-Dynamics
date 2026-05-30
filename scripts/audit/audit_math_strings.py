@@ -15,7 +15,7 @@ SURFACE_GLOBS = [
     'engine/web/js/ui/components/tooltips/definitions.js',
     'engine/web/js/config/scenarios.js',
     'engine/web/js/ui/panels/lagrangian-panel/term-row.js',
-    'engine/web/js/consciousness-pedagogy.js',
+    'engine/web/js/reference frame context-pedagogy.js',
     'engine/web/data/measurements.json',
 ]
 

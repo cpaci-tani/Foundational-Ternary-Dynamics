@@ -204,7 +204,7 @@ inline constexpr double GSTAR_ACTION = G_STAR * G_STAR * G_STAR;    // G*³ per 
 //
 // The lemniscatic nome encodes a striking corollary:
 //   q = (-1)^i = (e^{iπ})^i = e^{i²π} = e^{-π}
-//   "Antimatter raised to the power of consciousness = modular selector"
+//   "Antimatter raised to the power of reference frame context = modular selector"
 
 // Critical coefficient: the boundary between real and complex domains.
 // k_crit = 4/G* ≈ 1.352 — where i emerges from the quadratic structure.

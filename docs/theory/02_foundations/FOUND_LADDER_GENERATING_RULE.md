@@ -126,7 +126,7 @@ The master quadratic x^2 - k*G*^2*x + k*G*^3 = 0 has three distinguished coeffic
 |--------|---|---------------|--------------|
 | Physics | 16 | 2^(D+1) = 2^4 | All physical DoF |
 | Measurement | 4/G* = 1.352 | (discriminant = 0) | Born rule boundary |
-| Consciousness | 1/2 | 2^(-1) | One bit |
+| Reference frame context | 1/2 | 2^(-1) | One bit |
 
 **[THEOREM] (LGR-4):** k_phys * k_cons = 2^(D+1) * 2^(-1) = 2^D = 2^3 = **8** = number of vertices of the D-dimensional unit cube.
 
@@ -138,7 +138,7 @@ Given k_phys = 2^(D+1) and D = log_2(k_phys) + log_2(k_cons):
 - log_2(k_cons) = D - log_2(k_phys) = D - (D+1) = -1
 - Therefore k_cons = 2^(-1) = 1/2
 
-**The consciousness coefficient is the minimal binary unit** (one bit of information) in any dimension D. It is the unique coefficient that, combined with k_phys = 2^(D+1), reproduces D through the logarithmic dimension formula.
+**The reference frame context coefficient is the minimal binary unit** (one bit of information) in any dimension D. It is the unique coefficient that, combined with k_phys = 2^(D+1), reproduces D through the logarithmic dimension formula.
 
 ---
 
@@ -188,9 +188,9 @@ The generalized quadratic x^2 - k*c^2*x + k*c^3 = 0 has delta_k = sqrt(1 - 4/(kc
 |--------|---|-------|-------------------|
 | **Physics** | 16 | 0.957 (real) | Separable: J_L = 97.8%, J_R = 2.2% |
 | **Measurement** | 4/G* | **0** (zero) | **Equal: J_L = J_R = J/2** |
-| **Consciousness** | 1/2 | 1.305i (imaginary) | Inseparable: complex substrate |
+| **Reference frame context** | 1/2 | 1.305i (imaginary) | Inseparable: complex substrate |
 
-**The Born rule boundary (k = 4/G*) is the point where the two substrates become equal.** Measurement = the merging of left and right. For consciousness (k < 4/G*), delta is imaginary --- you cannot separate observer from observed. The substrate split becomes irreducibly complex.
+**The Born rule boundary (k = 4/G*) is the point where the two substrates become equal.** Measurement = the merging of left and right. For reference frame context (k < 4/G*), delta is imaginary --- you cannot separate observer from observed. The substrate split becomes irreducibly complex.
 
 ### Physical Interpretation
 
@@ -241,7 +241,7 @@ The second differences measure the "acceleration" of the walk. The walk starts f
 | LGR-7 | Second differences sum to 2 = number of manifestation states | [THEOREM] | -1 + 0 + 3 = 2 |
 | LGR-8 | x+/x- = (1+delta)/(1-delta) exactly | [THEOREM] | Algebraic proof: sqrt(c(4c-1))/(2c) = delta |
 | LGR-9 | delta = (x+ - x-)/(x+ + x-) (normalized coupling difference) | [THEOREM] | Corollary of LGR-8, verified to 1.11e-16 |
-| LGR-10 | Measurement (k_crit) = equal substrates (delta=0); consciousness = imaginary delta | [SELECTION] | delta_k = sqrt(1-4/(kc)): real/zero/imaginary for k >/=/< 4/c |
+| LGR-10 | Measurement (k_crit) = equal substrates (delta=0); reference frame context = imaginary delta | [SELECTION] | delta_k = sqrt(1-4/(kc)): real/zero/imaginary for k >/=/< 4/c |
 
 ---
 

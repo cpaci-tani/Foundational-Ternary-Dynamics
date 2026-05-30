@@ -1,7 +1,7 @@
 # Born-Equilibrium Preservation Test -- Results
 
 **Date:** 2026-05-23
-**Pre-registration:** docs/theory/06_consciousness/PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md
+**Pre-registration:** docs/theory/06_reference frame context/PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md
 **Git tag:** preregister-born-equilibrium-preservation-v1
 
 ---

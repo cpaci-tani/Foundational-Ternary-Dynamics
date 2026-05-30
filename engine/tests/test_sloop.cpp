@@ -1,19 +1,19 @@
 /**
- * Test: Consciousness Constants and Quadratic Structure
+ * Test: Reference frame context Constants and Quadratic Structure
  *
- * Verifies that the consciousness-sector constants from ontic.h Layer 8
+ * Verifies that the reference frame context-sector constants from ontic.h Layer 8
  * are correctly derived and internally consistent.
  *
  * The sLoop detection, attention field, and noetic mass implementations
  * were removed in v2.11 (they were stubs returning zero since v2.0).
- * When a consciousness implementation is added, this test should be
+ * When a reference frame context implementation is added, this test should be
  * extended with runtime checks.
  *
  * Checklist items #71, #72, #73.
  *
  * Theory references:
- *   - ontic.h Layer 8 (K_C, COS2_THETA_C, consciousness quadratic)
- *   - FOUND_THE_EXISTENCE_FILTER.md (consciousness threshold)
+ *   - ontic.h Layer 8 (K_C, COS2_THETA_C, reference frame context quadratic)
+ *   - FOUND_THE_EXISTENCE_FILTER.md (reference frame context threshold)
  */
 
 #include <iostream>
@@ -46,12 +46,12 @@ void check_close(const char* name, double a, double b, double tol) {
 
 int main() {
     std::cout << "================================================================\n";
-    std::cout << "  TEST: Consciousness Constants and Quadratic Structure\n";
+    std::cout << "  TEST: Reference frame context Constants and Quadratic Structure\n";
     std::cout << "================================================================\n\n";
 
-    // SLOOP-1: Consciousness constants are positive and finite
+    // SLOOP-1: Reference frame context constants are positive and finite
     {
-        std::cout << "--- SLOOP-1: Consciousness constants well-defined ---\n";
+        std::cout << "--- SLOOP-1: Reference frame context constants well-defined ---\n";
         check("SLOOP-1: K_C_SQUARED > 0", ftd::K_C_SQUARED > 0.0);
         check("SLOOP-1: K_NOETIC > 0", ftd::K_NOETIC > 0.0);
         check("SLOOP-1: SIN2_THETA_C in (0,1)", ftd::SIN2_THETA_C > 0.0 && ftd::SIN2_THETA_C < 1.0);
@@ -73,9 +73,9 @@ int main() {
         check_close("SLOOP-3: C_MANDELBROT = 1/G*", ftd::C_MANDELBROT, 1.0 / ftd::G_STAR, 1e-12);
     }
 
-    // SLOOP-4: Engine runs without consciousness fields
+    // SLOOP-4: Engine runs without reference frame context fields
     {
-        std::cout << "\n--- SLOOP-4: Engine operates without consciousness fields ---\n";
+        std::cout << "\n--- SLOOP-4: Engine operates without reference frame context fields ---\n";
         const int L = 8;
         ftd::RenderBridge engine(L);
         engine.toggles.enable_all();
@@ -95,7 +95,7 @@ int main() {
 
     std::cout << "\n================================================================\n";
     if (failures == 0) {
-        std::cout << "  All consciousness constant tests PASSED.\n";
+        std::cout << "  All reference frame context constant tests PASSED.\n";
     } else {
         std::cout << "  " << failures << " test(s) FAILED.\n";
     }

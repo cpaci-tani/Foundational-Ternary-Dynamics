@@ -5,7 +5,7 @@
 **Author:** FTD EFT program
 **LEDGER row:** FTD-0098 (assigned ahead of measurement)
 **Supersedes:** none — first measurement of its kind in this codebase.
-**Companion docs:** [`SPEC_OPERATOR_BASIS.md`](SPEC_OPERATOR_BASIS.md), [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](SPEC_FTD_NATIVE_BLOCKING_MAP.md), [`AUDIT_OPERATOR_SPECTRUM.md`](AUDIT_OPERATOR_SPECTRUM.md), [`PROTOCOL_BETA_MEASUREMENT.md`](PROTOCOL_BETA_MEASUREMENT.md).
+**Companion docs:** [`SPEC_OPERATOR_BASIS.md`](SPEC_OPERATOR_BASIS.md), [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](../../scopes_and_specs/SPEC_FTD_NATIVE_BLOCKING_MAP.md), [`AUDIT_OPERATOR_SPECTRUM.md`](AUDIT_OPERATOR_SPECTRUM.md), [`PROTOCOL_BETA_MEASUREMENT.md`](PROTOCOL_BETA_MEASUREMENT.md).
 
 This protocol is **pre-registered before measurement** per CLAUDE.md epistemic discipline rules and per the [PARTIAL] outcome of [`AUDIT_OPERATOR_SPECTRUM.md`](AUDIT_OPERATOR_SPECTRUM.md), which warned that post-hoc bracket-fitting weakens classification claims. All thresholds, basis choices, definitions, and acceptance criteria below are committed prior to seeing any campaign output.
 
@@ -13,7 +13,7 @@ This protocol is **pre-registered before measurement** per CLAUDE.md epistemic d
 
 ## 1 · Why this protocol exists
 
-[`STATUS_EFT_CHECKLIST.md`](STATUS_EFT_CHECKLIST.md) names exactly one explicit "next milestone" (lines 222–225):
+[`STATUS_EFT_CHECKLIST.md`](../../reports_and_audits/STATUS_EFT_CHECKLIST.md) names exactly one explicit "next milestone" (lines 222–225):
 
 > "The next milestone should be the nonlinear operator-flow campaign: consume `RenderBridge::continuity_step()` histories, block them, compute the operator moment vector before/after blocking, and assemble the first measured native mixing matrix."
 
@@ -129,7 +129,7 @@ For each diagonal entry `λ_a = M_aa(b=2)`, the per-step scaling dimension is
 Δ_a = D − log₂(λ_a)            (D = 4 spacetime dimensions)
 ```
 
-Classification per [`SPEC_EFT_RECOVERY_PROGRAM.md`](SPEC_EFT_RECOVERY_PROGRAM.md) §6.1:
+Classification per [`SPEC_EFT_RECOVERY_PROGRAM.md`](../../scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md) §6.1:
 
 - **relevant**:  Δ_a < D − 0.5 = 3.5
 - **marginal**:  3.5 ≤ Δ_a ≤ 4.5
@@ -222,7 +222,7 @@ Single new row **FTD-0099** for the F1+F5+F3 bundle. Tag determined by the empir
 - Template campaign source: [`engine/tests/test_nonlinear_flow_multiscale.cpp`](../../../engine/tests/test_nonlinear_flow_multiscale.cpp)
 - Template result schema: [`engine/results/gaussian_expansion_2026-04-26/meta.json`](../../../engine/results/gaussian_expansion_2026-04-26/meta.json)
 - Operator basis SPEC: [`SPEC_OPERATOR_BASIS.md`](SPEC_OPERATOR_BASIS.md)
-- Blocking map SPEC: [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](SPEC_FTD_NATIVE_BLOCKING_MAP.md)
+- Blocking map SPEC: [`SPEC_FTD_NATIVE_BLOCKING_MAP.md`](../../scopes_and_specs/SPEC_FTD_NATIVE_BLOCKING_MAP.md)
 - Audit closing this protocol partially supersedes: [`AUDIT_OPERATOR_SPECTRUM.md`](AUDIT_OPERATOR_SPECTRUM.md)
 - Plan: `~/.claude/plans/let-s-plan-a-way-ethereal-sonnet.md` (FTD-0098 single-session implementation plan)
 

@@ -515,16 +515,16 @@ check("0.16h", f"4-term 1/alpha (stored x+) precision",
       f"computed={mpmath.nstr(alpha_inv_corrected_stored, 15)}, ppt={float(ppt_stored):.3f}")
 
 # ============================================================================
-# 0.17 Layer 8: Consciousness Quadratic
+# 0.17 Layer 8: Reference frame context Quadratic
 # ============================================================================
-print("\n--- 0.17: Layer 8: Consciousness Quadratic ---")
+print("\n--- 0.17: Layer 8: Reference frame context Quadratic ---")
 
 K_NOETIC = mpmath.mpf("0.5")
 
 # y^2 - (G*^2/2)*y + G*^3/2 = 0
 # Discriminant
 disc_cons = (GSTAR_CPP**2/2)**2 - 4*(GSTAR_CPP**3/2)
-check("0.17a", "Consciousness discriminant < 0 (complex roots)", float(disc_cons) < 0,
+check("0.17a", "Reference frame context discriminant < 0 (complex roots)", float(disc_cons) < 0,
       f"disc = {float(disc_cons):.6f}")
 
 # Re(y) = G*^2/4

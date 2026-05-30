@@ -348,9 +348,11 @@ export class ViewportParticleRenderer {
             const py = data.positions[i * 3 + 1];
             const pz = data.positions[i * 3 + 2];
             if (needsClip) {
-                const nx = (px - halfN) / halfN;
-                const ny = (py - halfN) / halfN;
-                const nz = (pz - halfN) / halfN;
+                const center = this._latticeSize / 2;
+                const radius = this._latticeSize / 2;
+                const nx = (px - center) / radius;
+                const ny = (py - center) / radius;
+                const nz = (pz - center) / radius;
                 if (!this._insideBoundary(nx, ny, nz)) continue;
             }
             posAttr.array[count * 3] = px;

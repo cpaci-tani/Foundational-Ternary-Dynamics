@@ -348,7 +348,7 @@ function probeCoulombEngineE(bridge, particles) {
     let engineSamples = null;
     let probeMode = 'analytic-fallback';
     if (typeof bridge.sampleVAtRay === 'function') {
-        const direct = bridge.sampleVAtRay(pPos.x, pPos.y, pPos.z, pNeg.x, pNeg.y, pNeg.z, PROBE_SAMPLES);
+        const direct = bridge.sampleVAtRay(pPos.x + 0.5, pPos.y + 0.5, pPos.z + 0.5, pNeg.x + 0.5, pNeg.y + 0.5, pNeg.z + 0.5, PROBE_SAMPLES);
         if (direct && direct.count > 0 && direct.V && direct.V.length === direct.count) {
             // Convert V samples to {r, E_mag} by finite-difference along the ray:
             // |E·r̂| = -dV/dr along the ray direction. Plus the analytic |E|
@@ -1317,7 +1317,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
                         const b = getBridge?.();
                         const ps = b?.getScale0ParticleList?.() || [];
                         const p = ps.find((pp) => pp.id === trackedId);
-                        return p ? { x: p.x, y: p.y, z: p.z } : null;
+                        return p ? { x: p.x + 0.5, y: p.y + 0.5, z: p.z + 0.5 } : null;
                     },
                     getSpin: () => ({ sx: 0, sy: 0, sz: 1, omega_z: omegaPredicted }),
                     omegaDefault: omegaPredicted,

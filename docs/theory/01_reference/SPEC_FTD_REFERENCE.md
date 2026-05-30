@@ -8,18 +8,19 @@
 
 ## ⚠️ EPISTEMIC NOTICE
 
-**This document uses FTD-derived parameters in standard physics formulas.**
+**This document uses FTD conformed and conjectured parameters in standard physics formulas.**
 
 | Category | Count | Description |
 |----------|-------|-------------|
-| **Genuine derivations** | ~35 | α, mass ratios, mixing angles from G* + integers |
-| **Parametric insertions** | ~50 | FTD values in Fermi theory, HQET, ChPT formulas |
+| **Spine Theorems** | 6 | Pure CM algebraic and lattice self-energy identities (G*, Watson, L-values) |
+| **Conjectured Couplings** | ~5 | Dimensionless physical constants identified from roots (α, N_c, spin-1/2) |
+| **Parametric insertions** | ~129 | FTD values in Fermi theory, HQET, ChPT, and standard QFT formulas |
 | **External physics** | ~50+ | Standard Model mechanisms adopted without derivation |
 
 **The claim "zero free parameters" is FALSE.** External inputs required:
-- M_Planck, G_F, Λ_QCD, decay constants, phase space factors
+- M_Planck, G_F, Λ_QCD, decay constants, phase space factors, and standard QED/QCD loop integrals.
 
-See [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) for honest assessment.
+See [LEDGER.md](../07_assessment/LEDGER.md), [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md), and [ROUNDTABLE_STATE_OF_FTD_2026-05-22.md](../07_assessment/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md) for the honest, rigorous state of the theory.
 
 ---
 

@@ -3,7 +3,7 @@
 **Status:** [MEASURED · Gate D PASS for theorem-grade diagonals]
 **Date:** 2026-04-30 (late session)
 **Source data:** `engine/results/s_eff_nonlinear_2026-04-29/GateD_T_perturbation/`
-**Companion:** [`PROTOCOL_S_EFF_NONLINEAR_v2_DESIGN.md`](PROTOCOL_S_EFF_NONLINEAR_v2_DESIGN.md), [`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`](THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md)
+**Companion:** [`PROTOCOL_S_EFF_NONLINEAR_v2_DESIGN.md`](PROTOCOL_S_EFF_NONLINEAR_v2_DESIGN.md), [`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`](../../derivations/THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md)
 **LEDGER:** FTD-0112
 
 ---

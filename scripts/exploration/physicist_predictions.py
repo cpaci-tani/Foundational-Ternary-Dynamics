@@ -203,7 +203,7 @@ print(f"""
 If dark matter is a particle connected to G*, what mass would it have?
 
 Options:
-1. A "sterile" particle at the consciousness scale
+1. A "sterile" particle at the reference frame context scale
 2. A particle at the G* mass scale
 3. Something connected to neutrinos
 

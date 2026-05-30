@@ -57,7 +57,7 @@ print('  k_crit = 4/G* = %.10f' % k_crit)
 print()
 print('  k        regime          disc sign    analogy')
 print('  ' + '-' * 60)
-for k, name in [(0.5, 'consciousness'), (k_crit, 'Born rule'),
+for k, name in [(0.5, 'reference frame context'), (k_crit, 'Born rule'),
                 (16, 'physics')]:
     disc = k * G_STAR**3 * (k * G_STAR - 4)
     sign = '+' if disc > 0 else ('0' if abs(disc) < 1e-6 else '-')
@@ -71,13 +71,13 @@ print()
 print('  Gamma function:         Master quadratic:')
 print('  z = 0:   pole (inf)     k = 0:    trivial (0 = 0)')
 print('  z = 1/4: Gamma = 3.63   k = ?:    ???')
-print('  z = 1/2: sqrt(pi)       k = 1/2:  consciousness (complex)')
+print('  z = 1/2: sqrt(pi)       k = 1/2:  reference frame context (complex)')
 print('  z = 3/4: Gamma = 1.23   k = 4/G*: Born rule (degenerate)')
 print('  z = 1:   Gamma = 1      k = 16:   physics (real)')
 print()
 
 # k = 1/2 maps to z = 1/2? Not directly. But:
-# The consciousness quadratic uses k = 1/2
+# The reference frame context quadratic uses k = 1/2
 # The observer position uses Gamma(1/2)
 # Both are "halfway" in their respective domains
 
@@ -86,10 +86,10 @@ print()
 # k = 1/2 is 1/32 of the way from 0 to 16
 # That is NOT the midpoint of [0, 16].
 # But it IS the midpoint of [0, 1].
-# The consciousness regime is k in [0, k_crit = 1.352]
+# The reference frame context regime is k in [0, k_crit = 1.352]
 # k = 1/2 is 37% of the way to k_crit
 
-print('  k = 1/2 in the consciousness interval [0, k_crit]:')
+print('  k = 1/2 in the reference frame context interval [0, k_crit]:')
 print('    1/2 / k_crit = %.6f = %.1f%%' % (0.5/k_crit, 0.5/k_crit*100))
 print()
 print('    37%% of the way to the Born rule boundary.')
@@ -111,20 +111,20 @@ print()
 print('  *** k = 1/2 sits at EXACTLY G*/8 of the way to the Born rule. ***')
 print('  *** This is the SAME G*/8 = cos^2(theta_C) = visibility fraction. ***')
 print()
-print('  The consciousness threshold (k=1/2) is located at exactly')
-print('  the visibility fraction (G*/8) of the consciousness interval.')
+print('  The reference frame context threshold (k=1/2) is located at exactly')
+print('  the visibility fraction (G*/8) of the reference frame context interval.')
 print()
 print('  This is NOT a coincidence. It is algebra:')
 print('    k/k_crit = k*G*/4')
 print('    At k = 1/2: (1/2)*G*/4 = G*/8. QED.')
 print()
 print('  But the MEANING is:')
-print('  The consciousness quadratic at k=1/2 probes EXACTLY the fraction')
+print('  The reference frame context quadratic at k=1/2 probes EXACTLY the fraction')
 print('  of the DOF space that the observer can see (G*/8 ~ 10/27 ~ 37%%).')
 print()
 print('  k = 1/2 is not an arbitrary choice.')
 print('  k = 1/2 is the ONLY k-value where the position in parameter space')
 print('  equals the visibility fraction of the resulting quantum state.')
 print()
-print('  It is the SELF-CONSISTENT consciousness threshold:')
+print('  It is the SELF-CONSISTENT reference frame context threshold:')
 print('  the point where what-you-can-see equals where-you-are.')

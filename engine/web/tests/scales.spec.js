@@ -10,7 +10,7 @@ import { switchMode, attachConsoleWatcher, attachNetworkWatcher, isNoise } from 
  *   - Console errors during page load and during scale switches
  *   - Mode-specific controllers failing to initialize (no bridge, null ctx)
  *   - Scale 5 cosmic physics cadence regressions (Phase B.1)
- *   - Scale 11 consciousness listener leak regressions (Phase B.2)
+ *   - Scale 11 reference frame context listener leak regressions (Phase B.2)
  *
  * What it does NOT do:
  *   - Visual regression (GPU nondeterminism makes screenshot diffing unreliable)
@@ -570,6 +570,9 @@ test('UI tooltip system annotates controls and telemetry with custom help', asyn
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
         { timeout: 15_000 }).toBe(true);
 
+    // Collapse panel dock to prevent tab bar overlapping playback controls
+    await page.click('#btn-panel-toggle');
+
     await page.hover('#btn-play');
 
     const result = await page.evaluate(() => {
@@ -600,7 +603,7 @@ test('Tooltip palette follows theme switches', async ({ page }) => {
         { timeout: 15_000 }).toBe(true);
 
     async function captureTooltipStyle() {
-        await page.hover('#btn-play');
+        await page.hover('#btn-play', { force: true });
         return page.evaluate(() => {
             const tooltip = document.getElementById('ui-tooltip');
             const style = tooltip ? window.getComputedStyle(tooltip) : null;
@@ -713,13 +716,13 @@ test('Knowledge base opens as a single responsive library with shared content', 
 
     await page.fill('#kb-sidebar-search', 'existential');
 
-    const consciousnessScenarioState = await page.evaluate(() => ({
+    const reference frame contextScenarioState = await page.evaluate(() => ({
         resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
         readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
         readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
     }));
 
-    expect(consciousnessScenarioState.resultCount).toBeGreaterThan(0);
-    expect(consciousnessScenarioState.readerTitle).toContain('Meta / Existential Unit');
-    expect(consciousnessScenarioState.readerText).toContain('separate conceptual presentation layer');
+    expect(reference frame contextScenarioState.resultCount).toBeGreaterThan(0);
+    expect(reference frame contextScenarioState.readerTitle).toContain('Meta / Existential Unit');
+    expect(reference frame contextScenarioState.readerText).toContain('separate conceptual presentation layer');
 });

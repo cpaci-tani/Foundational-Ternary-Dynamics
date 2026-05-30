@@ -152,7 +152,7 @@ SECTOR_KEYWORDS = [
                                        "dark energy", "inflation"]),
     ("physics/QM-foundations",       ["Born rule", "Born equilibrium", "Born-equilibrium",
                                        "wavefunction", "measurement", "DGZ", "Lindblad",
-                                       "collapse", "reflexivity", "reflexive"]),
+                                       "collapse", "reference frame structure", "frame-relative"]),
     ("engine-bridge",                ["lattice spacing", "a_phys", "Langevin", "Phase G",
                                        "Phase J", "Phase H", "Moore", "cluster", "FTD-0110",
                                        "engine campaign", "GPU", "L=64", "L=128",

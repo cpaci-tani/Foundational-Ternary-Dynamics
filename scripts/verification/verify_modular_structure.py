@@ -417,7 +417,7 @@ def run_section_6(rho_A, dim_A):
     Compute sigma_t(O) = rho_A^{it} O rho_A^{-it} for a test observable O.
 
     This previews the modular automorphism, which is the candidate for
-    physical/conscious time in the Connes-Rovelli framework.
+    physical/reference-frame time in the Connes-Rovelli framework.
     """
     print("\n" + "=" * 70)
     print("SECTION 6: MODULAR FLOW PREVIEW")

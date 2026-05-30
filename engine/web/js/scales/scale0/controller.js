@@ -34,10 +34,8 @@ import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 // flux-slice-panel and p1-observables-panel are mounted by app.js into
 // the side-panel tab system; their init functions are imported there.
 import { MemoryRecorder } from './timeline/memory-recorder.js';
-import { RenderController } from './timeline/render-controller.js';
 import * as _lodMod from './timeline/lod.js';
 import { ScrubBarComponent } from '../../ui/components/scrub-bar/component.js';
-import { RenderChipComponent } from '../../ui/components/render-chip/component.js';
 
 const state = getScale0State();
 
@@ -72,64 +70,16 @@ export function resetScale0MemoryBudget(totalBytes) {
 let _scrubBar = null;
 
 // ── Render mode ──────────────────────────────────────────────────────
-const DEFAULT_RENDER_BYTES = 20 * 1024 * 1024; // ~40% of default 50 MB cap
-let _renderController = null;
-let _renderChip = null;
-
-export function startScale0Render(ctx, seconds = 30) {
-    if (_renderController?.running) return;
-    const latticeN = ctx.bridge.latticeSize || 32;
-    _renderController = new RenderController({
-        budgetBytes: DEFAULT_RENDER_BYTES,
-        latticeN,
-        scale0Caps: ctx.bridge.capabilities.scale0,
-    });
-    _renderChip?.bindController(_renderController);
-
-    // Freeze the live animate loop's tick path for the render's lifetime so
-    // render-controller ticks don't fight the main-loop ticks. Also push an
-    // upload flag after every slice so the canvas visibly fast-forwards
-    // through the clip while it builds, and once more on completion so the
-    // restored original snapshot is actually drawn.
-    state.rendering = true;
-    _renderController.addEventListener('progress', () => {
-        state.latticeNeedsUpload = true;
-        state.fieldNeedsUpdate   = true;
-    });
-    const clearRendering = () => {
-        state.rendering = false;
-        state.latticeNeedsUpload = true;
-        state.fieldNeedsUpdate   = true;
-    };
-    _renderController.addEventListener('done',   clearRendering);
-    _renderController.addEventListener('cancel', clearRendering);
-    _renderController.addEventListener('error',  clearRendering);
-
-    _renderController.start(seconds);
-}
-
-export function cancelScale0Render() {
-    _renderController?.cancel();
-}
+// Removed as part of simplifying UI and removing the render system.
 
 /**
  * Forget every recorded snapshot so the scrub bar tracks the fresh scenario
- * from tick 0. Called whenever a scenario (re)loads or the lattice resizes —
- * stale snapshots from the previous run carry tick numbers that don't match
- * the new simulation, which would skew the scrub fraction-to-tick mapping
- * and hydrate wrong-scenario state on drag.
- *
- * Also cancels any in-flight render, since the render buffer is only
- * meaningful inside the scenario it was recorded against.
+ * from tick 0. Called whenever a scenario (re)loads or the lattice resizes.
  */
 export function clearScale0Timeline() {
     _memoryRecorder?.clear?.();
-    if (_renderController?.running) _renderController.cancel();
-    if (_renderController) _renderController.buffer = null;
     _scrubBar?._resetPlayhead?.();
 }
-
-export function getScale0RenderController() { return _renderController; }
 
 /**
  * Restore the engine state to the snapshot nearest `tick` for scrub display.
@@ -144,11 +94,9 @@ export function getScale0RenderController() { return _renderController; }
  * releases the scrub thumb (see `resumeLive`).
  */
 export function hydrateToTick(ctx, tick) {
-    const rb = _renderController?.buffer;
     const mb = _memoryRecorder?.buffer;
-    const source = (rb && rb.size > 0) ? rb : mb;
-    if (!source || source.size === 0) return false;
-    const snap = _nearest(source, tick);
+    if (!mb || mb.size === 0) return false;
+    const snap = _nearest(mb, tick);
     if (!snap) return false;
     const ok = !!ctx.bridge.capabilities.scale0.loadScale0Snapshot?.(snap);
     if (!ok) return false;
@@ -270,36 +218,20 @@ export function mountScale0PlaybackUI() {
     if (!_scrubBar) {
         _scrubBar = new ScrubBarComponent(viewportEl, {
             getMemoryBuffer: () => _memoryRecorder?.buffer ?? null,
-            getRenderBuffer: () => _renderController?.buffer ?? null,
             getNowTick:      () => {
                 const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-                return ctx?.bridge?.capabilities?.scale0?.getScale0Diagnostics?.()?.tick ?? 0;
+                const state = getScale0State();
+                const mockScale0 = state.fluxMock?.capabilities?.scale0 || null;
+                const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : ctx?.bridge?.capabilities?.scale0;
+                return activeScale0?.getScale0Diagnostics?.()?.tick ?? 0;
             },
             onScrub: (tick) => {
                 const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
                 return ctx ? hydrateToTick(ctx, tick) : false;
             },
             onScrubEnd: () => resumeLive(),
-            onRender:   (seconds) => {
-                const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-                if (ctx) startScale0Render(ctx, seconds);
-            },
         }).mount();
     }
-    if (!_renderChip) {
-        _renderChip = new RenderChipComponent(viewportEl, {
-            onCancel: () => cancelScale0Render(),
-        }).mount();
-    }
-}
-
-// ── Test hooks (see design spec §Testing). Also convenient for console. ─
-if (typeof window !== 'undefined') {
-    window.__ftdStartRender = (seconds = 5) => {
-        const ctx = window.__ftdCtx;
-        if (ctx) startScale0Render(ctx, seconds);
-    };
-    window.__ftdCancelRender = () => cancelScale0Render();
 }
 
 class Scale0LifecycleController extends BaseLifecycleController {
@@ -364,8 +296,12 @@ export function reset(ctx) {
     resetScale0Scenario(ctx, state, viewportAdapter(ctx));
 }
 
-export function resize(ctx, newSize) {
-    resizeScale0Lattice(ctx, state, viewportAdapter(ctx), newSize);
+export async function resize(ctx, newSize) {
+    try {
+        await resizeScale0Lattice(ctx, state, viewportAdapter(ctx), newSize);
+    } catch (e) {
+        console.error('[Scale0] Controller resize failed:', e);
+    }
 }
 
 export function resetScale0(ctx) {

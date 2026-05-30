@@ -117,10 +117,10 @@ These reveal structures unique to FTD and aren't standard QFT.
 
 ### 4.1 Master-quadratic domain map
 
-- **Physics:** The master quadratic `x² − kx + 1 = 0` has three regimes: Real (k=16, physics), Degenerate (k≈1.35, measurement boundary), Complex (k=½, consciousness). Sample `k(x)` per voxel from local |J|/K_C ratio.
-- **Visualization:** 3-color map (physics blue / boundary purple / consciousness gold).
+- **Physics:** The master quadratic `x² − kx + 1 = 0` has three regimes: Real (k=16, physics), Degenerate (k≈1.35, measurement boundary), Complex (k=½, reference frame context). Sample `k(x)` per voxel from local |J|/K_C ratio.
+- **Visualization:** 3-color map (physics blue / boundary purple / reference frame context gold).
 - **Toggle id:** `toggle-master-domain` · **Field key:** `showMasterDomain`.
-- **Tooltip:** "Master-quadratic regime per voxel: physics (k=16), measurement boundary (k≈1.35), consciousness (k=½)."
+- **Tooltip:** "Master-quadratic regime per voxel: physics (k=16), measurement boundary (k≈1.35), reference frame context (k=½)."
 
 ### 4.2 Dual-substrate coupling `|J_L · J_R|`
 

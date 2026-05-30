@@ -63,7 +63,7 @@ by path only.
 | P1-12 | `ALPHA = G_C² [DERIVED]` masks the calibration step `G_C ≡ sqrt(1/X_PLUS_PRECISION)`. Add explicit `[CALIBRATED]` note or pointer to FTD-0013 conjecture status. | `constants.js:60-62` |
 | P1-13 | `ontic-observatory.js` surfaces "Theorem 3.1" / "Theorem 4.1" / "Theorem 5.4" / "Corollary 6.3" / "Theorem A.1" attributed to cpaci-tani (2026) — no LEDGER row, no `docs/papers/` entry, no arXiv id. Live panel ships unaudited theorem labels. | `ontic-observatory.js:1-14` (header), surfaced via `renderFcCard`, `renderInfoDynamics` |
 | P1-14 | 7 of ~14 FAQ `theoryRefs` 404 (broken post-May 2026 corpus consolidation). FAQ "Theory Refs" footer routinely sends users to missing files. | `ui/components/faq/data.js:41,42,88,178,201,290,320` |
-| P1-15 | Reflexivity vocabulary sweep (`REF_REFLEXIVITY_VOCABULARY.md`, 2026-05-01) was not applied to the dashboard FAQ or knowledge base. Load-bearing physics text still uses "consciousness" framing. | `ui/components/faq/data.js:32,33,37,38,41,42`; `ui/components/knowledge-base/data.js:1154-1162` |
+| P1-15 | Reference frame structure vocabulary sweep (`REF_REFERENCE_FRAME_VOCABULARY.md`, 2026-05-01) was not applied to the dashboard FAQ or knowledge base. Load-bearing physics text still uses "reference frame context" framing. | `ui/components/faq/data.js:32,33,37,38,41,42`; `ui/components/knowledge-base/data.js:1154-1162` |
 | P1-16 | FTD-0131 closed-negative status of `G_N = 1/(b_3+N_c)²` as a *framework-integer reading of physical G_N* is not surfaced. FAQ presents the identity as merely `[PARAMETRIC]`, omitting that the LEDGER closes it as a physical-G_N identification. | `ui/components/faq/data.js:193` |
 | P1-17 | Scale 0 force-column "Weak" toggle (`#toggle-force-weak`) renders `∇×J · δ` and is self-flagged `[PROXY]` in tooltip, but the label "Weak Force" makes a physical claim the implementation does not support. Either rename to "∇×J pseudovector" or remove. | `scales/scale0/ui/overlays/template.js` weak-toggle entry |
 | P1-18 | Scale 0 chirality tooltip says `\|J_L\| − \|J_R\|`; implementation writes `\|J\| · DUAL_DELTA` (positive scaled magnitude). Tooltip-code drift. | `scales/scale0/ui/overlays/template.js:207` vs `runtime/field-overlays.js:346-356` |
@@ -356,7 +356,7 @@ JS / C++ / Python ontic chain (-1 through Layer 7) is in lockstep. Drift surface
 - **P1:** `ALPHA_S` collision inside C++: `constants.h:219` = 1.0 (lattice imposed) vs `gauge_couplings.h:145` = 7/59 (M_Z scale). JS resolves with `STRONG_ALPHA_S` vs `ALPHA_S_MZ`; mirror this in C++.
 - **P1:** `STRONG_*` JS ↔ `COLOR_*` C++ — values match, names disagree.
 - **P2:** `OMEGA_LAMBDA` JS vs `OMEGA_LAMBDA_CONJ` C++ — `_CONJ` suffix in C++ marks `[CONJECTURE]`; JS dropped it.
-- **P2:** JS Layer-8 (consciousness) constants `PHI`, `K_NOETIC`, etc. exist in C++ + Py but not JS; JS Layer-9 cosmic constants (DM_FRACTION, BARYON_FRACTION, GAMMA_ADIABATIC) exist in JS + C++ but not Py.
+- **P2:** JS Layer-8 (reference frame context) constants `PHI`, `K_NOETIC`, etc. exist in C++ + Py but not JS; JS Layer-9 cosmic constants (DM_FRACTION, BARYON_FRACTION, GAMMA_ADIABATIC) exist in JS + C++ but not Py.
 
 `scripts/constants.py` parity test (`scripts/tests/test_constants_parity.py:57`) covers PDG mirror block only; should extend to load-bearing ontic-chain symbols.
 
@@ -397,9 +397,9 @@ Three facades (`MockBridge`, `WasmBridge`, `WebSocketBridge`):
 - Scale 2 `massInKB` key is divided by `M_E_PHYS` (PDG), not `K_B` (anchor). Downstream importer reading `massInKB` and multiplying by `K_B` gets 0.2% error.
 - K_GENESIS is canonically threaded everywhere except `viewport/field-renderer.js:1429` (hardcoded `1.533`).
 
-### G-6 Reflexivity vocabulary sweep incomplete
+### G-6 Reference frame structure vocabulary sweep incomplete
 
-The 2026-05-01 sweep (`REF_REFLEXIVITY_VOCABULARY.md`) replaced "consciousness" with "reflexivity / reflexive agency" in load-bearing physics text. Sweep applied to manuscript + whitepaper + most theory docs; **dashboard FAQ + knowledge base were not swept**. ~10 entries in `ui/components/faq/data.js` and `ui/components/knowledge-base/data.js` retain old vocabulary.
+The 2026-05-01 sweep (`REF_REFERENCE_FRAME_VOCABULARY.md`) replaced "reference frame context" with "reference frame structure / frame-relative frame dynamics" in load-bearing physics text. Sweep applied to manuscript + whitepaper + most theory docs; **dashboard FAQ + knowledge base were not swept**. ~10 entries in `ui/components/faq/data.js` and `ui/components/knowledge-base/data.js` retain old vocabulary.
 
 ### G-7 Index drift
 
@@ -433,7 +433,7 @@ H-8. **cpaci-tani 2026 provenance.** Five "theorems" surface in `ontic-observato
 
 H-9. **`x₋` row removal vs preservation.** Removing the row from the Ontic Chain panel is one option; preserving as "mathematical root of master quadratic; identification with N_c is RETIRED" is another. The second is more pedagogically informative. Confirm preference.
 
-H-10. **Reflexivity sweep scope.** Should the dashboard FAQ entry titled "How does FTD address the hard problem of consciousness?" be retitled per `REF_REFLEXIVITY_VOCABULARY.md`, or kept as-is to address users searching for "consciousness"? The sweep policy is silent on user-discoverability vs canonical vocabulary trade-offs in FAQ contexts.
+H-10. **Reference frame structure sweep scope.** Should the dashboard FAQ entry titled "How does FTD address the hard problem of reference frame context?" be retitled per `REF_REFERENCE_FRAME_VOCABULARY.md`, or kept as-is to address users searching for "reference frame context"? The sweep policy is silent on user-discoverability vs canonical vocabulary trade-offs in FAQ contexts.
 
 H-11. **Bond-order inference vs molecule-string fix.** For Scale 3, two paths to fix P0-13: (a) implement bond-order inference (distance threshold tightening + valence saturation) so O₂ renders as a double bond, or (b) strip multi-bond claims from the molecule panel strings. Path (a) is more work but better pedagogy.
 

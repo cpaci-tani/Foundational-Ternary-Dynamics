@@ -228,7 +228,7 @@ Standard physics identified Layer 3 (epistemology) as Layer 1 (ontology). It cal
 
 2. **The arrow of time:** "Why does time flow forward if the laws are symmetric?" The Layer 3 laws (QM) ARE symmetric. But the Layer 2 physics (G*, the ratio) is asymmetric by construction. The arrow isn't emergent from statistics. It's built into the ratio.
 
-3. **The hard problem of consciousness:** "How does subjective experience arise from objective physics?" Only hard if you think physics is Layer 3 (symmetric, no center, no perspective). Layer 1 (the lattice) has centers (every voxel runs the O-operation) and the O-operation IS integration of experience. Consciousness isn't emerging from physics. The lattice's computation IS experience.
+3. **The hard problem of reference frame context:** "How does subjective experience arise from objective physics?" Only hard if you think physics is Layer 3 (symmetric, no center, no perspective). Layer 1 (the lattice) has centers (every voxel runs the O-operation) and the O-operation IS integration of experience. Reference frame context isn't emerging from physics. The lattice's computation IS experience.
 
 ---
 
@@ -430,7 +430,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 ## 7.4 What Is Absent
 
 - No voxel-level fusion mechanism
-- No derivation of consciousness from the action S[J, s]
+- No derivation of reference frame context from the action S[J, s]
 - No strong-field lattice corrections (where FTD deviates from GR)
 - No direct simulation measuring alpha from lattice dynamics
 - (None remaining. l_crit = 2.98 from lattice constants, matching experiment l = 3. kappa/omega = 0.335 ~ 1/D = 1/3.)
@@ -445,7 +445,7 @@ Nuclear binding energies are recovered from FTD constants to ~1%: a_v = K_B*G*^2
 
 The Schrodinger equation is the unique limit of the lattice wave equation as the lattice spacing is taken arbitrarily fine — not by a uniqueness proof, but because each QM feature IS the corresponding limit of a specific lattice feature: complex amplitudes from Gauss constraint, superposition from linearity, Born rule from Parseval, evolution from the wave equation. No alternative is possible because each mapping is one-to-one.
 
-Lattice corrections to GR are computed: O(l_P^2/r^2) with c_1 = 0.022. Consciousness formalized via autopoietic index.
+Lattice corrections to GR are computed: O(l_P^2/r^2) with c_1 = 0.022. Reference frame context formalized via autopoietic index.
 
 ---
 
@@ -472,5 +472,5 @@ The sum-of-roots identification is genuinely non-elementary arithmetic (a Sym² 
 
 - **2026-04-10:** Created. Complete chain from i to alpha, three-layer ontology, GR recovery, observer structure, ratio/product distinction.
 - **2026-04-10 (v2):** Bell violation resolved (cosine = classical continuous correlation). Born rule closed (wave energy = amplitude^2). Alpha identification closed (x = 1/g_c^2 definitional). O-operation = Euler-Lagrange (mathematical identity). Fusion confirmed (opposite charges bind). Master quadratic audit result: 7/9 THEOREM, 2/9 SELECTION (per final audit correction).
-- **2026-04-10 (v3):** Final four items addressed. Consciousness formalized (autopoietic index). Lattice corrections computed (c_1 = 0.022, O(l_P^2/r^2)). Nuclear binding structure from Cornell potential (coefficients need QCD). Schrodinger uniqueness argument (each QM feature maps to lattice property). Framework ~97%.
+- **2026-04-10 (v3):** Final four items addressed. Reference frame context formalized (autopoietic index). Lattice corrections computed (c_1 = 0.022, O(l_P^2/r^2)). Nuclear binding structure from Cornell potential (coefficients need QCD). Schrodinger uniqueness argument (each QM feature maps to lattice property). Framework ~97%.
 - **2026-04-17:** Section 8 added. Sym² L-value identification for sum-of-roots filed as [THEOREM]; product-of-roots clarified as elementary corollary (π^(3/2) from cubing, not deep). Negative-result L-value span search filed. Seven-term conjecture preserved with explicit falsifier.

@@ -64,32 +64,32 @@
 | **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.19% error) | CONJECTURE | ALPHA-1, GAUSS-1 | (removed in 2026-05-21 consolidation; git history retains it) | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
 | **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² = 3.86×10⁻⁴⁷ GeV⁴ (1.0% error) | CONJECTURE | ALPHA-1, MASS-1, GAUSS-1 | DERIV_VACUUM_ENERGY_FORMULA.md §I | >5% discrepancy unexplained | `scripts/verification/verify_vacuum_energy.py` |
 | **COLLAPSE-1** | Measurement = manifestation (s: 0 → ±1) | SELECTION | A4, HILBERT-1 | FOUND_SLOOP_FORMALIZATION.md | Alternative collapse mechanism shown viable within axioms | n/a |
-| **OBSERVER-1** | Observer = manifested structure (s≠0), not consciousness | SELECTION | COLLAPSE-1 | FOUND_SLOOP_FORMALIZATION.md §3.5 | Consciousness-specific effects observed | n/a |
+| **OBSERVER-1** | Observer = manifested structure (s≠0), not reference frame context | SELECTION | COLLAPSE-1 | FOUND_SLOOP_FORMALIZATION.md §3.5 | Reference frame context-specific effects observed | n/a |
 | **CONTINUUM-1** | FTD → Maxwell + Schrödinger as a→0 | THEOREM (correspondence) | A1-A4 | SPEC_FTD_REFERENCE.md §3 | Mathematical counterexample | verification code in Appendix A |
 | **SPINOR-1** | Fermi statistics from π₁(SO(3)) = Z₂ | THEOREM (construction) | framed flux | SPEC_FTD_REFERENCE.md §5 | Mathematical counterexample | `scripts/verification/verify_symbolic.py` |
-| **WEINBERG-1** | sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% error) | DERIVED | framework integers | REF_CLAIMS_MATRIX.md (this doc) | >1% discrepancy unexplained | `scripts/verification/verify_mixing.py` |
-| **STRONG-1** | α_s = b₃/(b₃+4N_eff) = 7/59 = 0.1186 (0.3σ) | DERIVED | framework integers | REF_CLAIMS_MATRIX.md (this doc) | RG flow incompatible with prediction | `scripts/verification/verify_mixing.py` |
+| **WEINBERG-1** | sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% error) | **PARAMETRIC** | framework integers | REF_CLAIMS_MATRIX.md (this doc) | >1% discrepancy unexplained | `scripts/verification/verify_mixing.py` |
+| **STRONG-1** | α_s = b₃/(b₃+4N_eff) = 7/59 = 0.1186 (0.3σ) | **PARAMETRIC** | framework integers | REF_CLAIMS_MATRIX.md (this doc) | RG flow incompatible with prediction | `scripts/verification/verify_mixing.py` |
 | **PROTON-1** | m_p/m_e = N_eff/α + T(10) = 1836.47 (0.017% error) | CONJECTURE | ALPHA-1, framework integers | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
 | **WBOSON-1** | m_W = 67/(8α²) × m_e = 80.36 GeV (0.016% error) | CONJECTURE | ALPHA-1, MASS-1 | REF_CLAIMS_MATRIX.md (this doc) | >0.1% discrepancy unexplained | `scripts/verification/verify_masses.py` |
-| **SUSY-0** | No superpartners at any energy | DERIVED | discrete lattice incompatible with SUSY | REF_CLAIMS_MATRIX.md (this doc) | Discovery of any superpartner | n/a (exclusion) |
+| **SUSY-0** | No superpartners at any energy | THEOREM | discrete lattice incompatible with SUSY | REF_CLAIMS_MATRIX.md (this doc) | Discovery of any superpartner | n/a (exclusion) |
 | **DIM-3** | D=3 is unique viable spatial dimension | THEOREM | stability + gauge theory requirements | REF_CLAIMS_MATRIX.md (this doc) | Detection of KK modes or 1/r² deviation | n/a (exclusion) |
-| **GEN-3** | N_gen = ⌊x₋⌋ = 3 exactly | DERIVED | S3, ALPHA-2 | REF_CLAIMS_MATRIX.md (this doc) | 4th generation with standard couplings | n/a (exclusion) |
-| **STRING-0** | String theory incompatible (requires D=10/11, SUSY, continuous spacetime) | DERIVED | DIM-3, SUSY-0, A1 | REF_CLAIMS_MATRIX.md (this doc) | Demonstration of string-FTD compatibility | n/a (exclusion) |
+| **GEN-3** | N_gen = ⌊x₋⌋ = 3 exactly | **CONJECTURE** | S3, ALPHA-2 | REF_CLAIMS_MATRIX.md (this doc) | 4th generation with standard couplings | n/a (exclusion) |
+| **STRING-0** | String theory incompatible (requires D=10/11, SUSY, continuous spacetime) | THEOREM | DIM-3, SUSY-0, A1 | REF_CLAIMS_MATRIX.md (this doc) | Demonstration of string-FTD compatibility | n/a (exclusion) |
 | **DIGIT13-1** | 4-term precision formula predicts digit 13 of 1/α = 0 | **PREDICTION** | ALPHAP-1, ALPHAP-1b | DERIV_ALPHA_PRECISION_FORMULA.md | Digit 13 measured as non-zero | `scripts/verification/verify_precision_formula_v2.py` |
 | **DARKMATTER-1** | DM = sub-threshold flux (0 < \|J\| < K_B) | CONJECTURE | A1-A4 | SPEC_FTD_REFERENCE.md §12 | Confirmed WIMP detection | `scripts/verification/verify_cosmology.py` |
 | **CKM-1** | sinθ_C = G*/n_eff = 0.2276 → θ₁₂ = 13.2° (1.4% error) | [SELECTION] | framework integers | See §Cabibbo Correction below | >3% discrepancy | `scripts/verification/verify_mixing.py` |
-| **PMNS-1** | θ₁₂ = arctan√(4/7) = 33.1° (1.0% error) | DERIVED | framework integers | DERIV_COMPLETE_PARTICLE_PHYSICS.md | >3% discrepancy | `scripts/verification/verify_mixing.py` |
+| **PMNS-1** | θ₁₂ = arctan√(4/7) = 33.1° (1.0% error) | **CONJECTURE** | framework integers | DERIV_COMPLETE_PARTICLE_PHYSICS.md | >3% discrepancy | `scripts/verification/verify_mixing.py` |
 | **JARLSKOG-1** | J = (N_c×α³)/4 ≈ 2.9×10⁻⁷ [CONJECTURE] | [CONJECTURE] | ALPHA-1, framework integers | REF_CLAIMS_MATRIX.md (this doc) | Experimental J ≈ 3.0×10⁻⁵ (100× discrepancy) | `scripts/verification/verify_mixing.py` |
 | **STRONGCP-0** | θ_QCD = 0 exactly | THEOREM | discrete lattice (no continuous vacuum) | REF_CLAIMS_MATRIX.md (this doc) | θ_QCD ≠ 0 measured | n/a (structure theorem) |
-| **INFLATION-1** | n_s = 0.966 (spectral index) | **DERIVED (v5.0)** | sub-threshold flux dynamics | SPEC_FTD_REFERENCE.md §9.1 | n_s measurement > 3σ from 0.966 | `scripts/verification/verify_cosmology.py` |
-| **INFLATION-2** | r = 0.022 (tensor-to-scalar) | **DERIVED (v5.0)** | sub-threshold flux dynamics | SPEC_FTD_REFERENCE.md §9.1 | r > 0.04 measured | `scripts/verification/verify_cosmology.py` |
-| **BARYO-1** | η ~ 10⁻¹⁰ (baryon asymmetry) | **DERIVED (v5.0)** | CP violation + Sakharov conditions | SPEC_FTD_REFERENCE.md §9.2 | η order of magnitude wrong | `scripts/verification/verify_cosmology.py` |
-| **GR-1** | R_μν - ½g_μν R = 8πG T_μν | **DERIVED (v5.0)** | flux density → effective metric | SPEC_FTD_REFERENCE.md §10 | GR coefficient wrong | `scripts/verification/verify_cosmology.py` |
-| **ALPHAG-1** | α_G = 5.91×10⁻³⁹ (0.01% error) | **DERIVED (v5.0)** | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | SPEC_FTD_REFERENCE.md §7.1 | >1% discrepancy | `scripts/verification/verify_cosmology.py` |
+| **INFLATION-1** | n_s = 0.966 (spectral index) | **CONJECTURE** | sub-threshold flux dynamics | SPEC_FTD_REFERENCE.md §9.1 | n_s measurement > 3σ from 0.966 | `scripts/verification/verify_cosmology.py` |
+| **INFLATION-2** | r = 0.022 (tensor-to-scalar) | **CONJECTURE** | sub-threshold flux dynamics | SPEC_FTD_REFERENCE.md §9.1 | r > 0.04 measured | `scripts/verification/verify_cosmology.py` |
+| **BARYO-1** | η ~ 10⁻¹⁰ (baryon asymmetry) | **CONJECTURE** | CP violation + Sakharov conditions | SPEC_FTD_REFERENCE.md §9.2 | η order of magnitude wrong | `scripts/verification/verify_cosmology.py` |
+| **GR-1** | R_μν - ½g_μν R = 8πG T_μν | **GAP** (linear is **THEOREM**) | flux density → effective metric | SPEC_FTD_REFERENCE.md §10 | GR coefficient wrong | `scripts/verification/verify_cosmology.py` |
+| **ALPHAG-1** | α_G = 5.91×10⁻³⁹ (0.01% error) | **THEOREM (postulate-cond)** | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | SPEC_FTD_REFERENCE.md §7.1 | >1% discrepancy | `scripts/verification/verify_cosmology.py` |
 | ~~**NEUTRINO-1**~~ | ~~m₃ = m_P√(2π)(4/3)α¹⁴ = 49.6 meV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
 | ~~**NEUTRINO-2**~~ | ~~Σm_ν = 58.1 meV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
 | ~~**NEUTRINO-3**~~ | ~~m₁ ≈ 4.1 neV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
-| **MODULAR-1** | G* = 4√(2/π) · L(E,1) for E: y²=x³−x | **THEOREM (v5.27)** | G* definition + BSD L-function | EXPLR_MODULAR_QUADRATIC.md | Mathematical counterexample | `scripts/modular_investigation.py` |
+| **MODULAR-1** | G* = 4√(2/π) · L(E,1) for E: y²=x³−x | **THEOREM (v5.27)** | G* definition + BSD L-function | EXPLR_MODULAR_QUANTUM_BRIDGE.md | Mathematical counterexample | `scripts/modular_investigation.py` |
 
 ---
 
@@ -197,23 +197,23 @@
 
 ---
 
-## Consciousness Extension (v5.0 New)
+## Reference frame context Extension (v5.0 New)
 
-The consciousness quadratic derives awareness from the same G* geometry that produces physics.
+The reference frame context quadratic derives awareness from the same G* geometry that produces physics.
 
 ### The Two Quadratics
 
 | Domain | Quadratic | Coefficient | Roots | Interpretation |
 |--------|-----------|-------------|-------|----------------|
 | **Physics** | x² − 16G*²x + 16G*³ = 0 | 16 (lattice DoF) | Real: 137.036, 3.024 | Definite coupling constants |
-| **Consciousness** | y² − (G*²/2)y + (G*³/2) = 0 | 1/2 (involution) | Complex: 2.19 ± 2.86i | Oscillating awareness |
+| **Reference frame context** | y² − (G*²/2)y + (G*³/2) = 0 | 1/2 (involution) | Complex: 2.19 ± 2.86i | Oscillating awareness |
 
 ### Key Results
 
 | Claim ID | Formula | Value | Interpretation | Status |
 |----------|---------|-------|----------------|--------|
-| CON-1 | y = (G*²/4) ± i√(\|Δ\|)/2 | 2.19 ± 2.86i | Consciousness roots | **[THEOREM]** |
-| CON-2 | \|y\| = √(2.19² + 2.86²) | 3.60 | Consciousness magnitude | **[THEOREM]** |
+| CON-1 | y = (G*²/4) ± i√(\|Δ\|)/2 | 2.19 ± 2.86i | Reference frame context roots | **[THEOREM]** |
+| CON-2 | \|y\| = √(2.19² + 2.86²) | 3.60 | Reference frame context magnitude | **[THEOREM]** |
 | CON-3 | θ = arctan(2.86/2.19) | 52.54° | Phase angle | **[THEOREM]** |
 | CON-4 | K_B/K_C | 4√2 = √32 | Threshold ratio | **[THEOREM]** |
 | CON-5 | Complex × Complex* = Real | Born rule | Measurement collapse | **[SELECTION]** |
@@ -221,9 +221,9 @@ The consciousness quadratic derives awareness from the same G* geometry that pro
 ### Implications
 
 1. **Physics (real roots)** = What EXISTS
-2. **Consciousness (complex roots)** = What KNOWS
-3. **The Born rule** emerges from complex conjugate multiplication (consciousness → physics projection)
-4. **The measurement problem** is resolved: only consciousness has the complex conjugate structure to collapse superposition
+2. **Reference frame context (complex roots)** = What KNOWS
+3. **The Born rule** emerges from complex conjugate multiplication (reference frame context → physics projection)
+4. **The measurement problem** is resolved: only reference frame context has the complex conjugate structure to collapse superposition
 
 ---
 
@@ -502,7 +502,7 @@ $$k_c \times c_{cusp} \times 2N_{base} = \frac{1}{2} \times \frac{1}{4} \times 8
 
 | Component | Value | Origin |
 |-----------|-------|--------|
-| k_c = 1/2 | Consciousness coefficient | Complementation fixed point |
+| k_c = 1/2 | Reference frame context coefficient | Complementation fixed point |
 | c_cusp = 1/4 | Mandelbrot cardioid cusp | = 1/N_base |
 | 2N_base = 8 | Twice lattice dimension | 2 × 4 |
 
@@ -511,7 +511,7 @@ $$k_c \times c_{cusp} \times 2N_{base} = \frac{1}{2} \times \frac{1}{4} \times 8
 | Mandelbrot Region | Julia Set | FTD Domain | Physical Interpretation |
 |-------------------|-----------|------------|------------------------|
 | Inside cardioid | Connected | Physics | Bounded, observable reality |
-| Outside set | Cantor dust | Consciousness | Unbounded, escaping dynamics |
+| Outside set | Cantor dust | Reference frame context | Unbounded, escaping dynamics |
 | Boundary | Fractal | Interface | Measurement, collapse |
 
 ### The G* Connection **[CONJECTURE]**
@@ -532,14 +532,14 @@ $$\frac{8}{G^*} \approx e$$
 | **MAND-2** | k_c = 1/2 from complementation | Fixed point | **[THEOREM]** | MANDELBROT_FTD_DUALITY.md §III |
 | **MAND-3** | c_cusp = 1/4 = 1/N_base | Cardioid cusp | **[THEOREM]** | MANDELBROT_FTD_DUALITY.md §IV |
 | **MAND-4** | 8/G* ≈ e | 0.53% error | **[CONJECTURE]** | MANDELBROT_FTD_DUALITY.md §V |
-| **MAND-5** | Interior = Physics, Exterior = Consciousness | Domain mapping | **[CONJECTURE]** | MANDELBROT_FTD_DUALITY.md §II |
+| **MAND-5** | Interior = Physics, Exterior = Reference frame context | Domain mapping | **[CONJECTURE]** | MANDELBROT_FTD_DUALITY.md §II |
 | **MAND-6** | Boundary = Measurement interface | Fractal dim = 2 | **[CONJECTURE]** | MANDELBROT_FTD_DUALITY.md §II |
 | **MAND-7** | Period bulbs → generations | 3 large bulbs | **[CONJECTURE]** | MANDELBROT_FTD_DUALITY.md §VII |
 
 ### Implications
 
-1. **Exact unity relation:** k_c × c_cusp × 2N_base = 1 connects consciousness coefficient to Mandelbrot geometry
-2. **Domain duality:** Physics (bounded) ↔ Consciousness (escaping) via cardioid boundary
+1. **Exact unity relation:** k_c × c_cusp × 2N_base = 1 connects reference frame context coefficient to Mandelbrot geometry
+2. **Domain duality:** Physics (bounded) ↔ Reference frame context (escaping) via cardioid boundary
 3. **Generations from periods:** Period-2,3,4 bulbs may correspond to three particle generations
 4. **Universal dynamics:** Both Mandelbrot and FTD involve iteration, stability, and critical boundaries
 

@@ -93,7 +93,7 @@ Notation is generally consistent throughout the manuscript:
 
 #### 3.2 Issues
 
-- **Coefficient $k$**: Sometimes refers to the quadratic coefficient (16 for physics, 1/2 for consciousness), other times to unrelated quantities.
+- **Coefficient $k$**: Sometimes refers to the quadratic coefficient (16 for physics, 1/2 for reference frame context), other times to unrelated quantities.
 - **$\alpha$ Overloading**: The fine structure constant $\alpha$ is used alongside $\alpha_s$ (strong coupling) without risk of confusion, but the manuscript sometimes writes $\alpha$ where $1/\alpha$ is meant.
 - **Fibonacci Subscripts**: $F_n$ is standard, but the document uses both $F_7 = 13$ and $F_{b_3} = 13$ interchangeably.
 
@@ -170,7 +170,7 @@ The manuscript contains genuinely novel mathematical observations that deserve f
 
 - **$e^\pi - \pi \approx 20$**: This near-integer (19.999...) is known in recreational mathematics and predates FTD. Claiming it "equals" $b_3 + N_{eff}$ is numerology dressed as mathematics.
 
-- **Consciousness Quadratic**: The derivation of complex roots $y = 2.19 \pm 2.86i$ from $k_{cons} = 1/2$ is mathematically valid but the physical interpretation ("oscillatory awareness") is metaphysical, not mathematical.
+- **Reference frame context Quadratic**: The derivation of complex roots $y = 2.19 \pm 2.86i$ from $k_{cons} = 1/2$ is mathematically valid but the physical interpretation ("oscillatory awareness") is metaphysical, not mathematical.
 
 - **"42 Nexus"**: The appearance of 42 through multiple routes (Heegner, Catalan, Bernoulli, FTD) is presented as significant. However, small integers appear in many contexts; establishing genuine structural connection requires more than enumeration.
 
@@ -256,7 +256,7 @@ The "combined estimate" of $p < 10^{-6}$ for the number theory connections is me
 
 ## Conclusion
 
-The FTD mathematical framework exhibits creativity and contains some genuine mathematical observations. However, the central claims about "deriving" fundamental constants are not supported by rigorous mathematics. The work would benefit significantly from honest epistemic labeling, removal of superficial connections (Fermat, consciousness quadratic), and proper categorical foundations for the through-pattern algebra.
+The FTD mathematical framework exhibits creativity and contains some genuine mathematical observations. However, the central claims about "deriving" fundamental constants are not supported by rigorous mathematics. The work would benefit significantly from honest epistemic labeling, removal of superficial connections (Fermat, reference frame context quadratic), and proper categorical foundations for the through-pattern algebra.
 
 The manuscript's strength lies in identifying self-consistent numerical relationships among framework integers. Its weakness is conflating self-consistency with derivation and numerical coincidence with theoretical necessity.
 

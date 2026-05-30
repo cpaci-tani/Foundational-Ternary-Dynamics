@@ -155,7 +155,7 @@ The action channel is blind. Site-local state readouts erase modes. Classical ga
 - a plaquette bivector readout,
 - a bilinear link observable,
 - a boundary-to-boundary transfer observable,
-- or a reflexive projection from a finite observable algebra to a public measurement channel.
+- or a reference frame projection from a finite observable algebra to a public measurement channel.
 
 ### ARC-B1 Target
 

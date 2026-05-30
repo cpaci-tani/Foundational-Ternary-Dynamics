@@ -245,33 +245,40 @@ export class WasmBridge {
     getParticleData() {
         if (!this._module || !this._bridge) return EMPTY_PARTICLE_DATA;
         const raw = this._module.getParticleData(this._bridge);
-        // Filter out low-density void particles to prevent white grid artifacts
-        // when transparent points stack along camera axes with blending.
-        if (!raw || raw.count === 0) return raw;
-        const VOID_THRESHOLD = 0.02;
-        const outPos = new Float32Array(raw.count * 3);
-        const outCol = new Float32Array(raw.count * 3);
-        const outSiz = new Float32Array(raw.count);
-        let out = 0;
-        for (let i = 0; i < raw.count; i++) {
-            const sz = raw.sizes[i];
-            const r = raw.colors[i * 3], g = raw.colors[i * 3 + 1], b = raw.colors[i * 3 + 2];
-            // Detect void particles: they are small and grey/dark
-            // Manifested particles (+1/-1) are green (0.29,0.87,0.50) or red (0.97,0.44,0.44) at size ~12
-            // Void particles are grey (0.25,0.28,0.35) at size ~2-4
-            // Manifested particles: green (g>0.7) or red (r>0.8) at size 6
-            // Void with significant flux: grey-blue at size 1.5-5.0
-            // Skip ALL void dots — the flux volume handles void visualization
-            const isManifested = g > 0.7 || r > 0.8;
-            if (!isManifested) continue;
-            outPos[out * 3] = raw.positions[i * 3];
-            outPos[out * 3 + 1] = raw.positions[i * 3 + 1];
-            outPos[out * 3 + 2] = raw.positions[i * 3 + 2];
-            outCol[out * 3] = r; outCol[out * 3 + 1] = g; outCol[out * 3 + 2] = b;
-            outSiz[out] = sz;
-            out++;
+        if (!raw || raw.count === 0) return EMPTY_PARTICLE_DATA;
+        return {
+            positions: raw.positions,
+            colors: raw.colors,
+            sizes: raw.sizes,
+            count: raw.count
+        };
+    }
+
+    getScale0ParticleList() {
+        const pd = this.getParticleData();
+        if (!pd || pd.count === 0) return [];
+        const list = [];
+        for (let i = 0; i < pd.count; i++) {
+            const x = Math.floor(pd.positions[i * 3]);
+            const y = Math.floor(pd.positions[i * 3 + 1]);
+            const z = Math.floor(pd.positions[i * 3 + 2]);
+            const r = pd.colors[i * 3];
+            const g = pd.colors[i * 3 + 1];
+            let state = 0;
+            if (g > 0.7) state = 1;
+            else if (r > 0.8) state = -1;
+            list.push({
+                id: i,
+                x, y, z,
+                state,
+                charge: state,
+                q: state,
+                color: 0,
+                spin: 1,
+                locked: pd.sizes[i] > 8.0
+            });
         }
-        return { positions: outPos, colors: outCol, sizes: outSiz, count: out };
+        return list;
     }
 
     getDiagnostics() {

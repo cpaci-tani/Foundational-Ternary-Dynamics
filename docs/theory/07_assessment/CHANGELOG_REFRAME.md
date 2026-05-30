@@ -47,7 +47,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 | `02_foundations/FOUND_AXIOM_ZERO.md` | Position clause restated to undefined-boundary; §3.2/§4.2/§4.3 restated as algebraic-identity claims (gap-equation thermodynamic-limit framing withdrawn); chain table Step 0 updated. | FTD-0036 |
 | `03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | **Full rewrite.** Title changed to "Algebraic Identity and Physical Match." Coefficient 16 presented via two finite-combinatorial routes (\|Aut(E)\|² + z_BCC·2). Discriminant trichotomy preserved. Physical identification x₊↔1/α, x₋↔N_c moved to STRONGLY MOTIVATED CONJECTURE anchored on dual match + CM uniqueness. Gap-equation/thermodynamic-limit narrative withdrawn. | FTD-0001, FTD-0013, FTD-0014, FTD-0032 |
 | `03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md` | §1.2 configuration-space framing restated to undefined-boundary; §1.4 IR-finiteness corollary restated; §5.5 "thermodynamic limit" theorem restated as scaling property of {F_N} family with explicit "no exact non-analyticity at any finite N" caveat. | n/a (theorem-level, finitary statement) |
-| `06_consciousness/DERIV_VON_NEUMANN_CONSTRUCTION.md` | Type III₁ demoted SELECTION → HYPOTHESIS. Sections 5–6 restated as "Araki–Woods inductive-limit scaffold yields Type III₁ *if* applied"; Section 7 numerical-verification rows tagged [HYPOTHESIS] (Scaffold) for III₁ items; Section 8 epistemic accounting updated. | FTD-0033 |
+| `06_reference_frames_and_measurement/DERIV_VON_NEUMANN_CONSTRUCTION.md` | Type III₁ demoted SELECTION → HYPOTHESIS. Sections 5–6 restated as "Araki–Woods inductive-limit scaffold yields Type III₁ *if* applied"; Section 7 numerical-verification rows tagged [HYPOTHESIS] (Scaffold) for III₁ items; Section 8 epistemic accounting updated. | FTD-0033 |
 | `docs/SPEC_FTD.md` | Postulate 1 restated to "undefined-boundary cubic lattice"; DEF.1 updated; finite-size-effects note updated. | FTD-0036 |
 
 #### Mechanical sweep (5 parallel batches, ~127 edits across 38 files)
@@ -58,7 +58,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 | 2: 03_derivations remainder | DERIV_QM_FROM_LATTICE, DERIV_SINGLET_FROM_VOID_EVENT, DERIV_NC_FROM_TOPOLOGY, DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE, DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE, DERIV_MASTER_QUADRATIC_FROM_Z, DERIV_THREE_RESOLUTIONS, DERIV_FORCE_EMERGENCE, DERIV_VARIATIONAL_PROOF, DERIV_QFT_GRT_BRIDGE, DERIV_SPIN_STATISTICS_BRIDGE | 48 | 0 |
 | 3: foundations + bridges | FOUND_DIMENSIONAL_COUNTING, FOUND_RELATIVITY_GRAVITY_DISTINCTION, DERIV_GSTAR_PF_BRIDGE, DERIV_BCC_MULTIPLICATIVE_STRUCTURE, CONJ_ALPHA_FROM_CM, BRIDGE_QUADRATIC_PHYSICS | 11 | 1 (CONJ_ALPHA_FROM_CM Path A) |
 | 4: 01_reference + papers | SPEC_FTD_COMPLETE_CHAIN, SPEC_FTD_REFERENCE, SPEC_FTD_LAGRANGIAN, SPEC_QFT_GRT_BRIDGE_ROADMAP, SPEC_FTD_COMPARATIVE_PHYSICS, PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE, AUDIT_BELL_ANALYSIS | 23 | 0 |
-| 5: consciousness + EFT + audits | DERIV_COLLAPSE_MECHANISM, AUDIT_ALPHA_EXTRACTION, SPEC_EFT_RECOVERY_PROGRAM, DERIV_DAY2_CAMPAIGN, DERIV_EMERGENT_COULOMB_GEOMETRIC, DERIV_DYNAMICAL_SM_EMERGENCE, DERIV_GAP_CLOSURE, DERIV_BETA_FUNCTION_MEASURED | 18 | 4 (EFT-program "engine→QED in L→∞" claims) |
+| 5: reference frame context + EFT + audits | DERIV_COLLAPSE_MECHANISM, AUDIT_ALPHA_EXTRACTION, SPEC_EFT_RECOVERY_PROGRAM, DERIV_DAY2_CAMPAIGN, DERIV_EMERGENT_COULOMB_GEOMETRIC, DERIV_DYNAMICAL_SM_EMERGENCE, DERIV_GAP_CLOSURE, DERIV_BETA_FUNCTION_MEASURED | 18 | 4 (EFT-program "engine→QED in L→∞" claims) |
 
 **Total mechanical edits: 126.** **Total inline FLAGs: 5** (collected in `TRACKER_REFRAME_FLAGS.md`).
 
@@ -106,7 +106,7 @@ The devil's-advocate agent (`DEVILS_ADVOCATE_REPORT.md`) flagged 3 blocking issu
 | Boxed Axiom Zero contradicted body (line 17 said "x ∈ ℤ³"; body said "undefined-boundary cubic graph") | `02_foundations/FOUND_AXIOM_ZERO.md` | Restated boxed Axiom Zero position clause to undefined-boundary. |
 | §4.4 still attributed master quadratic to "fixed point of gap equation" | `02_foundations/FOUND_AXIOM_ZERO.md` | Restated to algebraic-uniqueness + dual match + CM-curve uniqueness. |
 | One-sentence summary still said "self-consistent gap equation yields x_+" | `02_foundations/FOUND_AXIOM_ZERO.md` | Restated as algebraic determination + dual match. |
-| Orphan Type III₁ premise: "the flux field IS Type III$_1$" still asserted in 3 places | `06_consciousness/DERIV_COLLAPSE_MECHANISM.md` (lines 28, 320, 511) | Restated all three to "[HYPOTHESIS] under Araki–Woods scaffold"; cross-cited `DERIV_VON_NEUMANN_CONSTRUCTION.md`. |
+| Orphan Type III₁ premise: "the flux field IS Type III$_1$" still asserted in 3 places | `06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md` (lines 28, 320, 511) | Restated all three to "[HYPOTHESIS] under Araki–Woods scaffold"; cross-cited `DERIV_VON_NEUMANN_CONSTRUCTION.md`. |
 
 ### Engine-audit follow-up (Phase 5 fixes, same-day)
 
@@ -664,7 +664,7 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 8-agent parallel audit (epistemic, lead-physicist, constants-sentinel, manuscript, test-orchestrator, refactoring, Explore, physics-orchestrator). Phase A remediation:
 
-- **NEW**: `docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md` (canonical replacement for "consciousness" terminology). P1-P4 sweep applied across 06_consciousness/* (8 files), 02_foundations/FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md, LEDGER FTD-0078, manuscript ch 14.5, whitepaper.
+- **NEW**: `docs/theory/01_reference/REF_REFERENCE_FRAME_VOCABULARY.md` (canonical replacement for "reference frame context" terminology). P1-P4 sweep applied across 06_reference_frames_and_measurement/* (8 files), 02_foundations/FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md, LEDGER FTD-0078, manuscript ch 14.5, whitepaper.
 - **NEW**: `docs/theory/01_reference/CHECKLIST_MATH_COMPLETE.md` — 18-item bridge-complete roadmap.
 - **RESTATE**: SPEC_ALGEBRAIC_SPINE.md Theorem 7 = `[THEOREM at L=2 — Nyquist-mode degeneracy origin]` (was `[THEOREM at L=2] + [CONJECTURE for general L]`); LEDGER FTD-0005.
 - **RESTATE**: SPEC_ALGEBRAIC_SPINE.md Theorem 3 = `[NUMERICAL FACT, exhaustive over 9-element h=1 set]` (was [THEOREM]); LEDGER FTD-0003.
@@ -676,8 +676,8 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 ### Phase 0a: Engine Scale 11 deletion (commits `054b530`, `7021a9e`, `306f32d`)
 
-- **RETRACT**: engine `scales/scale11/`, `consciousness/`, `consciousness-panel/` directories + 3 top-level modules + 2 dead CSS files. 25 files, ~5200 LOC.
-- **PRESERVE**: theory math content in `06_consciousness/*`, Scale 12 (Meta) substrate-pedagogy.
+- **RETRACT**: engine `scales/scale11/`, `reference frame context/`, `reference frame context-panel/` directories + 3 top-level modules + 2 dead CSS files. 25 files, ~5200 LOC.
+- **PRESERVE**: theory math content in `06_reference_frames_and_measurement/*`, Scale 12 (Meta) substrate-pedagogy.
 - **CLEANUP**: tombstone strip + dead-import removal + ONTIC_LAYERS layer-8 hole closed (renumbered Cosmic Scale 9→8).
 - Preview-verified clean dashboard load.
 
