@@ -14,7 +14,7 @@
  * Layer 1:  Elliptic Geometry      (ϖ, M)                     → ontic/lemniscate.h
  * Layer 2:  Universal Operator     (G*, π, PF, √G*)           → ontic/lemniscate.h
  * Layer 2b: Euler's Identity       (i emerges at k_crit=4/G*) → ontic/lemniscate.h
- * Layer 3:  Master Quadratic       (x₊ = 1/α, x₋ = N_c)       → ontic/master_quadratic.h
+ * Layer 3:  Master Quadratic       (x₊ = 1/α; x₋ = artifact)  → ontic/master_quadratic.h
  * Layer 3b: Dual-Substrate         (E_SUM, E_PRODUCT, δ²)     → ontic/master_quadratic.h
  * Layer 3c: Charge-Space Duality   (E2_COLOR)                 → ontic/master_quadratic.h
  * Layer 4:  Framework Integers     (N_c, b₃, N_eff, D)        → ontic/master_quadratic.h
@@ -45,4 +45,4 @@
 #include "ftd/ontic/gauge_couplings.h"
 #include "ftd/ontic/particle_masses.h"
 #include "ftd/ontic/neutrino.h"
-#include "ftd/ontic/reference frame context.h"
+#include "ftd/ontic/consciousness.h"

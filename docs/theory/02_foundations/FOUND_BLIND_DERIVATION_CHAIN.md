@@ -62,7 +62,7 @@ This is the sole axiom. We postulate the existence of a square root of $-1$ in s
 
 ### Step 6: $G^* = \Gamma(1/4)/\Gamma(3/4) = 2.9587\ldots$
 
-**Claim BDC-6.** The ratio $G^* = \Gamma(1/4)/\Gamma(3/4)$ is algebraically independent of $\pi$, and $G^* = 2.958781\ldots$ **[THEOREM]**
+**Claim BDC-6.** The ratio $G^* = \Gamma(1/4)/\Gamma(3/4)$ is algebraically independent of $\pi$, and $G^* = 2.9586751\ldots$ **[THEOREM]**
 
 *Proof.* $\Gamma(1/4)$ is transcendental (Chudnovsky 1980). The reflection formula gives $\Gamma(1/4)\Gamma(3/4) = \pi\sqrt{2}$, so $\Gamma(3/4) = \pi\sqrt{2}/\Gamma(1/4)$. Thus $G^* = \Gamma(1/4)^2 / (\pi\sqrt{2})$. If $G^*$ were algebraically dependent on $\pi$, then $\Gamma(1/4)$ would satisfy a polynomial relation over $\mathbb{Q}(\pi)$, contradicting algebraic independence of $\Gamma(1/4)$ and $\pi$ (Chudnovsky 1980, Nesterenko 1996).
 
@@ -111,7 +111,7 @@ Therefore $D = 3$ is uniquely selected.
 *Proof.* Direct application of the quadratic formula:
 $$x_{\pm} = 8{G^*}^2 \pm \sqrt{64{G^*}^4 - 16{G^*}^3} = 8{G^*}^2 \pm 4{G^*}^{3/2}\sqrt{4G^* - 1}$$
 
-With $G^* = 2.958781\ldots$:
+With $G^* = 2.9586751\ldots$:
 $$x_+ = 137.036171\ldots, \qquad x_- = 3.023964\ldots$$
 
 ---
@@ -163,7 +163,7 @@ Discrepancy: $|137.036000 - 137.035999| / 137.036 = 7.3 \times 10^{-9}$ (9.6 ppb
 | 3 | $E_i: y^2 = x^3 - x$, unique CM curve | [THEOREM] | Step 2 |
 | 4 | $|\text{Aut}(E_i)| = 4$ | [THEOREM] | Step 3 |
 | 5 | Periods involve $\Gamma(1/4), \Gamma(3/4)$ | [THEOREM] | Step 3 |
-| 6 | $G^* = \Gamma(1/4)/\Gamma(3/4) = 2.9588$ | [THEOREM] | Step 5 |
+| 6 | $G^* = \Gamma(1/4)/\Gamma(3/4) = 2.9587$ | [THEOREM] | Step 5 |
 | 7 | $|\text{Aut}|^2 = 16$ | [THEOREM] | Step 4 |
 | 8 | $D = 3$ uniquely | [THEOREM] | Step 7 |
 | 9 | Master quadratic $Q(x)$ | [SELECTION] | Steps 7, 8, 6 |

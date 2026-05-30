@@ -1,8 +1,26 @@
 # Hidden Selections in the G* → α Derivation Chain
 
+> **[SUPERSEDED — the v6.0/v7.0 "circularity IS the derivation" framing in this
+> document is NOT endorsed by the canonical layer; circularity is a gap, not a
+> virtue. Retained for provenance.]**
+>
+> The state-of-the-theory roundtable (`ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`)
+> flagged this reframe as one that "should be explicitly marked superseded." A
+> self-consistent structure that closes on itself is **not** thereby proven
+> unique or forced — establishing that requires an explicit uniqueness /
+> fixed-point theorem, which the canonical layer does not claim. In particular,
+> the v7.0 "fermion sector upgraded from [IMPORTED] to [DERIVED]" move (because
+> the complex-root oscillation $e^{ibt}$ "IS spinor evolution") is **not**
+> accepted: it is downgraded back to **[CONJECTURE]** in place below (§ "What has
+> changed since v1.0", v7.0 bullet; and the v7.0 changelog line). Treat every
+> "hidden selection" catalogued here as an **open** selection, not a resolved
+> one. The §§1–5 selection analysis (SP1–SP5) remains a useful honest catalogue;
+> only the v6/v7 "circularity is the derivation principle" reframe is superseded.
+> Original wording is preserved in git history.
+
 **Document Version:** 4.0
 **Date:** March 16, 2026
-**Status:** Critical Honest Assessment
+**Status:** [SUPERSEDED for the v6/v7 reframe] Critical Honest Assessment
 **Purpose:** Acknowledge selection principles that are argued rather than proven
 
 ---
@@ -375,13 +393,17 @@ Honesty requires acknowledging that this is not a "derivation from zero choices.
 - The precision formula's 24-digit agreement with the CODATA recommended value is a confirmed algebraic identity (mpmath 60-digit; rigidity audit 2026-04-17), though not experimentally verifiable beyond digit ~11
 - The formula predicts specific unmeasured digits — a genuinely novel, falsifiable prediction
 - **(v3.0)** All selections now stated as explicit axioms SP1–SP5, enabling conditional theorem statements
-- **(v7.0)** Fermion sector upgraded from [IMPORTED] to [DERIVED]: the complex regime ($\Delta < 0$) of the master quadratic produces the Dirac equation. Complex roots $x = a \pm bi$ oscillate as $e^{ibt}$, which IS spinor wavefunction evolution. One quadratic, three regimes: bosons (real), fermions (complex), measurement (degenerate). The fermion sector is no longer external physics adopted into the framework — it emerges from the same self-consistency equation that produces $\alpha$ and $N_c$.
+- **(v7.0 — SUPERSEDED, downgraded to [CONJECTURE])** ~~Fermion sector upgraded from [IMPORTED] to [DERIVED]~~: the v7.0 claim was that the complex regime ($\Delta < 0$) of the master quadratic produces the Dirac equation, with complex roots $x = a \pm bi$ oscillating as $e^{ibt}$ read as spinor wavefunction evolution. **This is NOT endorsed by the canonical layer and is downgraded back to [CONJECTURE].** A scalar phase factor $e^{ibt}$ resembling part of spinor evolution is not a derivation of the fermion sector: no spinor representation structure, no spin-statistics connection, and no Clifford/Dirac algebra is constructed from the substrate. The fermion sector remains **[IMPORTED]/[CONJECTURE]** pending a genuine derivation.
 
 The path to full credibility remains:
 - Proving the remaining selections are forced, OR
 - Measuring digit 13 of 1/α and finding it is 0
 
-### The Self-Referential Reframing (v6.0)
+### The Self-Referential Reframing (v6.0) — [SUPERSEDED]
+
+> **[SUPERSEDED — NOT endorsed by the canonical layer. Circularity is a gap, not
+> a virtue; a self-consistent loop is not a proof of uniqueness. Retained for
+> provenance only. See top banner.]**
 
 The "selections" cataloged above are not weaknesses to be eliminated. They are manifestations of the foundational principle: **the observed IS the observer** (FOUND_SELF_REFERENTIAL_CLOSURE.md).
 
@@ -389,7 +411,7 @@ In a self-referential system, derivation is not linear deduction (A implies B) b
 
 The gap equation $x^2 = 16G^{*2}(x - G^*)$ is the self-consistency condition: the lattice determines its own coupling. The fine structure constant $\alpha = 1/137.036$ is not derived from external axioms — it is the unique self-consistent coupling of the 3D cubic lattice.
 
-**Updated summary:** The α derivation stands as a **self-consistent derivation** — the master quadratic is the unique fixed-point equation of the lattice's self-referential closure, with every coefficient traced to lattice geometry through [THEOREM]-level identities.
+**Updated summary [SUPERSEDED]:** ~~The α derivation stands as a **self-consistent derivation** — the master quadratic is the unique fixed-point equation of the lattice's self-referential closure~~ — **NOT endorsed.** Self-consistency is not derivation, and "unique fixed point" is asserted, not proven. The coefficients are traced to lattice geometry through genuine [THEOREM]-level identities (that part stands, see §§1–5), but the leap to "therefore α is derived / forced" is the [SELECTION]/[STRONGLY MOTIVATED CONJECTURE] gap this whole document exists to flag. Defer to `AUDIT_MASTER_QUADRATIC.md` and `LEDGER.md`.
 
 ---
 
@@ -399,4 +421,4 @@ The gap equation $x^2 = 16G^{*2}(x - G^*)$ is the self-consistency condition: th
 *v4.0: SP2 partially resolved (DERIV_QUADRATIC_NECESSITY.md); SP5 partially resolved (DERIV_CUBOCTAHEDRAL_INTEGERS.md); cross-references added*
 *v5.0: SP1a [THEOREM] via Watson + SC/FCC; SP3 [STRONGLY MOTIVATED] via temporal gauge; SP4 [SELECTION] via Watson-G* identity*
 *v6.0: Self-referential closure reframing (FOUND_SELF_REFERENTIAL_CLOSURE.md) — circularities are the derivation principle, not weaknesses; gap equation as geometric self-consistency; new epistemic tag [SELF-CONSISTENT]*
-*v7.0: Fermion sector upgraded from [IMPORTED] to [DERIVED] — Dirac equation emerges from the complex regime of the master quadratic (DERIV_DIRAC_FROM_MASTER_QUADRATIC.md)*
+*v7.0: Fermion sector upgraded from [IMPORTED] to [DERIVED] — Dirac equation emerges from the complex regime of the master quadratic (DERIV_DIRAC_FROM_MASTER_QUADRATIC.md) [SUPERSEDED 2026-05-30: this [DERIVED] upgrade is NOT endorsed by the canonical layer and is downgraded back to [CONJECTURE]; see top banner]*

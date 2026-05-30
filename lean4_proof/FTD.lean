@@ -33,6 +33,7 @@ import FTD.SelfDuality
 import FTD.DimensionalUniqueness
 import FTD.Phi3EFT
 import FTD.OneLoopAlpha
+import FTD.Emergence
 
 -- Axioms.lean is subsumed by LFunction.lean and SelfDuality.lean.
 -- Keeping the import for backward compatibility:
