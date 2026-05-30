@@ -13,6 +13,7 @@
 #include <chrono>
 #include <cstdio>
 #include <vector>
+#include <cuda_runtime.h>
 
 using namespace ftd;
 using Clock = std::chrono::high_resolution_clock;

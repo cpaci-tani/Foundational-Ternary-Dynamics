@@ -57,9 +57,13 @@ inline constexpr double ALPHA_PRECISION = ALPHA;
 //
 //   STEP 2 [STRONGLY MOTIVATED CONJECTURE, physical match]:
 //     Identify x_+ with the inverse fine-structure constant: α ≡ 1/x_+.
-//     Evidence: the SAME polynomial gives x_- ≈ 3 = N_c (dual match),
-//     and CM-curve uniqueness at class number 1 selects this λ-modular
-//     fixed point. See LEDGER FTD-0013/0014.
+//     Evidence: CM-curve uniqueness at class number 1 selects this
+//     λ-modular fixed point, and the adversarial look-elsewhere scan
+//     (FTD-0189) finds the master quadratic to be the unique dual-matcher.
+//     (The smaller root x_- ≈ 3.024 is a mathematical artifact; its
+//     identification with N_c is RETIRED — FTD-0014 removed in ca7eb61.
+//     N_c = 3 comes independently from topology, see DERIV_NC_FROM_TOPOLOGY.md.)
+//     See LEDGER FTD-0013.
 //
 //   STEP 3 [SELECTION, Lagrangian ansatz]:
 //     Adopt the coupling term L_coupling = −g_c · s · (∇·J).

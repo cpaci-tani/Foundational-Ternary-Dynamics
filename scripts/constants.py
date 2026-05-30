@@ -449,11 +449,11 @@ class Experimental:
     # MeV-units consistent with the rest of the catalog.
     m_W = 80.3692             # +/- 0.0133
     m_Z = 91.1876             # +/- 0.0021
-    m_Higgs = 125.25          # +/- 0.17
+    m_Higgs = 125.20          # +/- 0.11 (PDG 2024 combined)
     # Boson masses in MeV (mirror engine/web/js/constants.js *_PHYS suffix)
     m_W_phys_mev      = 80369.2    # MeV (PDG 2024)
     m_Z_phys_mev      = 91187.6    # MeV
-    m_Higgs_phys_mev  = 125100.0   # MeV
+    m_Higgs_phys_mev  = 125200.0   # MeV (PDG 2024 combined)
 
     # Neutrino mass upper bounds (MeV)
     m_nu_e   = 4.1e-9         # beta-decay bound
