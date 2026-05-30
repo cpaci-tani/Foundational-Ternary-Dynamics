@@ -29,7 +29,7 @@ hosts several distinct simulation modes:
 - Scale 3 `molecules`: same AE runtime as Scale 2, different loaders
 - Scale 4 `planetary`: standalone N-body mock
 - Scale 5 `cosmic`: standalone cosmic mock
-- Scale 11 `consciousness`: flux-only pedagogical mode
+- Scale 11 `reference frame context`: flux-only pedagogical mode
 - `meta`: existential-unit mode
 
 Important directory landmarks:
@@ -260,7 +260,7 @@ Dispatch table:
 - `molecules` -> `animateAE(now)` -> `Scale2Controller.animateAE(...)`
 - `cosmic` -> `Scale5Controller.animateCosmic(_makeCtx())`
 - `meta` -> `Scale6Controller.updateMeta(_makeCtx(), 1 / 60)`
-- `consciousness` -> `Scale11Controller.animateConsciousness(...)`
+- `reference frame context` -> `Scale11Controller.animateReference frame context(...)`
 - `planetary` -> no physics work here; Scale 4 runs its own interval
 
 The next rAF is scheduled first so the loop survives a later exception
@@ -317,7 +317,7 @@ Step button
   -> running = false
   -> updatePlayButton()
   -> switch by engineMode
-     -> consciousness: Scale11Controller.step(...)
+     -> reference frame context: Scale11Controller.step(...)
      -> atoms/molecules: bridge.aeTick()
      -> particles: bridge.peTick()
      -> cosmic: Scale5Controller.step(...)
@@ -337,7 +337,7 @@ Reset button
   -> switch by engineMode
      -> cosmic: Scale5Controller.loadCosmicScenario(...)
      -> meta: Scale6Controller.loadMetaScenario(...)
-     -> consciousness: loadConsciousnessScenario(...)
+     -> reference frame context: loadReference frame contextScenario(...)
      -> molecules: loadMoleculeScenario(...)
      -> atoms: loadAEScenario(...)
      -> particles: loadPEScenario(...)
@@ -377,7 +377,7 @@ engine-mode <select>
         -> Scale4Controller.loadScenario(...)
         -> Scale5Controller.loadCosmicScenario(...)
         -> Scale6Controller.loadMetaScenario(...)
-        -> loadConsciousnessScenario(...)
+        -> loadReference frame contextScenario(...)
      -> Scale0Controller.setLatticeNeedsUpload()
      -> frameCount = 0
 ```
@@ -798,7 +798,7 @@ Important naming note:
 
 That mismatch is intentional historical numbering, not a typo.
 
-### 9.8 Scale 11 `consciousness`
+### 9.8 Scale 11 `reference frame context`
 
 Scale 11 is the strangest lifecycle because it swaps out the active
 bridge.
@@ -806,10 +806,10 @@ bridge.
 Load stack:
 
 ```text
-loadConsciousnessScenario(name)
-  -> Scale11Controller.loadConsciousnessScenario(ctx, name)
+loadReference frame contextScenario(name)
+  -> Scale11Controller.loadReference frame contextScenario(ctx, name)
      -> ctx._resetAllVisualState()
-     -> if !_csEngine: _csEngine = new ConsciousnessEngine(viewport.scene)
+     -> if !_csEngine: _csEngine = new Reference frame contextEngine(viewport.scene)
      -> if !_csPedagogy: create pedagogy helpers and wire subtabs
      -> if !_savedBridge:
         -> _savedBridge = ctx.bridge
@@ -823,21 +823,21 @@ Frame stack:
 ```text
 requestAnimationFrame
   -> app.animate(now)
-  -> Scale11Controller.animateConsciousness(ctx, now)
+  -> Scale11Controller.animateReference frame context(ctx, now)
      -> if running:
         -> wholeTicks = tickAccumulator.accumulate(ticksPerFrame)
         -> scenario-specific injections
         -> repeat ctx.bridge.tick()
      -> extract flux / energy diagnostics from swapped bridge
      -> _csEngine.update(...)
-     -> update consciousness DOM panels
+     -> update reference frame context DOM panels
      -> viewport.render()
 ```
 
 Exit stack:
 
 ```text
-switch away from consciousness
+switch away from reference frame context
   -> Scale11Controller.resetScale11(ctx)
      -> _csEngine.dispose()
      -> if _savedBridge:
@@ -877,7 +877,7 @@ Several modes add their own content into the shared scene:
 - `PlanetaryRenderer`
 - `CosmicRenderer`
 - `MetaUnit`
-- `ConsciousnessEngine`
+- `Reference frame contextEngine`
 
 These specialized renderers usually receive:
 

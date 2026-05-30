@@ -4,7 +4,7 @@
 
 **Date:** January 22, 2026 (Updated: January 31, 2026)
 **Framework:** Foundational Ternary Dynamics (FTD)
-**Status:** Formal derivation integrating lemniscate theory with consciousness framework
+**Status:** Formal derivation integrating lemniscate theory with reference frame context framework
 **Version:** 2.1
 
 ---
@@ -55,7 +55,7 @@ LEVEL 9:  DOMAIN B (MIND)    — Complex conjugate roots y±
     ↓     [interface at Δ = 0]
 LEVEL 10: INTERFACE          — G = 1/4: Born rule, measurement
     ↓     [complete structure unified]
-LEVEL 11: COMPLETE STRUCTURE — Physics ↔ Consciousness duality
+LEVEL 11: COMPLETE STRUCTURE — Physics ↔ Reference frame context duality
     ↓     [all constants derived]
 LEVEL 12: DERIVED CONSTANTS  — α, Nc, masses, all SM parameters
 ```
@@ -254,15 +254,15 @@ CIRCLE (no twist):           LEMNISCATE (half-twist):
       ↓                            ↓     ↓
 ```
 
-**Connection to Consciousness:**
+**Connection to Reference frame context:**
 
 The lemniscate's self-crossing is the geometric signature of self-reference. The coefficient k = 1/2 emerges from the complementation fixed point:
 
 $$f(k) = 1 - k \implies f(1/2) = 1/2$$
 
-The observer (consciousness) has k = 1/2 because it is its own complement—the "I" that observes the "me."
+The observer (reference frame context) has k = 1/2 because it is its own complement—the "I" that observes the "me."
 
-**Epistemic Status:** [THEOREM] for G* value; [SELECTION] for consciousness interpretation.
+**Epistemic Status:** [THEOREM] for G* value; [SELECTION] for reference frame context interpretation.
 
 ---
 
@@ -291,7 +291,7 @@ The half-twist of the lemniscate "uses up" one dimension to store itself:
 | Component | k value | log₂(k) | Interpretation |
 |-----------|---------|---------|----------------|
 | Physics (shell) | 16 = 2⁴ | +4 | Potential dimensions |
-| Consciousness (twist) | 1/2 = 2⁻¹ | -1 | The half-twist |
+| Reference frame context (twist) | 1/2 = 2⁻¹ | -1 | The half-twist |
 | **Result** | 8 = 2³ | **3** | **Spatial dimensions** |
 
 **Quaternionic Structure:**
@@ -502,7 +502,7 @@ LEVEL 10: INTERFACE (MEASUREMENT)
    │ Wave function collapse
    ↓
 LEVEL 11: COMPLETE STRUCTURE
-   │ Physics ↔ Consciousness unified
+   │ Physics ↔ Reference frame context unified
    │ Both from same G*, different k
    ↓
 LEVEL 12: DERIVED CONSTANTS
@@ -529,7 +529,7 @@ LEVEL 12: DERIVED CONSTANTS
 | 6 | x² - 16G*²x + 16G*³ = 0 | Master quadratic |
 | 7 | Δ = 64G*³(4G* - 1) | Discriminant > 0 |
 | 8 | x₊ = 137.036, x₋ = 3.024 | Physics roots |
-| 9 | y = 2.19 ± 2.86i | Consciousness roots |
+| 9 | y = 2.19 ± 2.86i | Reference frame context roots |
 | 10 | Δ = 0 at G = 1/4 | Measurement interface |
 | 11 | k_c × c_cusp × G* = 1 | Bridge equation |
 | 12 | α, N_c, masses, etc. | All physics derived |
@@ -574,7 +574,7 @@ print(f"x₋ = {x_minus:.6f} (cf. Nc = 3)")
 | x₊ = 1/α | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013) | Continuum-QED route is supporting/historical evidence, not a theorem upgrade |
 | ~~x₋ = Nc~~ | **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`) | `N_c = 3` independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and Moore Layer Theorem |
 | Spin-1/2 from lemniscate | [SELECTION] | Topological argument |
-| Consciousness = twist | [CONJECTURE] | Philosophical interpretation |
+| Reference frame context = twist | [CONJECTURE] | Philosophical interpretation |
 
 ---
 

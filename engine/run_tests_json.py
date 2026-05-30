@@ -39,7 +39,7 @@ CATEGORY_RULES = [
     ({"latency_field"}, "Latency"),
     ({"falsifiability"}, "Falsifiability"),
     ({"inflation", "dark_matter", "cosmological_constant"}, "Cosmology"),
-    ({"consciousness", "sloop"}, "Consciousness"),
+    ({"reference frame context", "sloop"}, "Reference frame context"),
     ({"lorentz_invariance", "electroweak", "hydrogen_em_only"}, "Precision"),
     ({"correlations", "ensemble", "spectral", "tracker", "light", "benchmark"}, "Analysis"),
 ]

@@ -366,7 +366,7 @@ print()
 Delta_cons = k_cons * Gstar**3 * (k_cons * Gstar - 4)
 x_cons_re = k_cons * Gstar**2 / 2
 x_cons_im = np.sqrt(abs(Delta_cons)) / 2
-print(f"  AT k_cons = 1/2 (consciousness):")
+print(f"  AT k_cons = 1/2 (reference frame context):")
 print(f"    Delta = {Delta_cons:.10f} < 0 (complex roots)")
 print(f"    x = {x_cons_re:.6f} +/- {x_cons_im:.6f}*i")
 phase = np.degrees(np.arctan2(x_cons_im, x_cons_re))

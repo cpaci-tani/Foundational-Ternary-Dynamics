@@ -1151,14 +1151,14 @@ const SCALE0_CATEGORY_GUIDES = Object.freeze({
         notation: ['Φ', 'a(t)', 'h_μν', 'Schwarzschild-like well'],
         tags: ['gravity', 'cosmology'],
     },
-    'Consciousness / Observer': {
+    'Reference frame context / Observer': {
         summary: 'Observer-facing seed structures tied to self-reference and recursive closure themes.',
         body: [
             'These scenarios are conceptual seeds for observer-like or self-referential structure rather than ordinary particle or optics demos.',
             'Their math language is recursive closure, ring or loop structure, fixed-point behavior, and the extent to which a local pattern can sustain self-related organization.',
         ],
         notation: ['sLoop', 'fixed point', 'recursive closure'],
-        tags: ['observer', 'reflexivity'],
+        tags: ['observer', 'reference frame structure'],
     },
     'Field Configurations': {
         summary: 'Canonical field patterns used as clean mathematical initial conditions.',

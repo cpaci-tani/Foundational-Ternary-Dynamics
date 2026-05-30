@@ -51,7 +51,7 @@ files are confirmed live and tested.
 - `body, #toolbar, #tab-bar, ...` transition smoothing block — global theme-transition rule; keep until tokens.css absorbs it
 - `#app.mode-*` scale-visibility blocks (all `.scale0-only`, `.scale1-only`, `.scale23-only`, `.scale-ae`, `.scale4-only`, `.scale5-only`, `.scale-cosmic-only`) — these are **global behavioral rules** tied to `#app` state; keep in `layout.css` or move to `css/ui/scale-visibility.css`
 - Tab visibility per scale (`#app.mode-* .tab[data-scales="..."]`) — global behavioral, same recommendation
-- Mode-specific viewport backgrounds (`#app.mode-cosmic #viewport`, `#app.mode-meta #viewport`, `#app.mode-consciousness #viewport`) — keep global
+- Mode-specific viewport backgrounds (`#app.mode-cosmic #viewport`, `#app.mode-meta #viewport`, `#app.mode-reference frame context #viewport`) — keep global
 - `#app.mode-meta .tab[data-panel="..."]`, `#app.mode-cosmic .tab[data-panel="..."]` — keep global
 
 ### Needs investigation
@@ -114,9 +114,9 @@ files are confirmed live and tested.
 - `.zoo-table`, `.zoo-table th/td/tr`, `.zoo-cat-header`, `.zoo-dot`, `.zoo-symbol`, `.zoo-mass`, `.zoo-formula`, `.zoo-accuracy` → `css/ui/scales/` (particle zoo, Scale 1+)
 - `.mode-unavailable` → `css/ui/panels/` (generic empty-state)
 - `.sym-panel`, `.sym-panel-title`, `.sym-panel-label` → `css/ui/scales/` (floating symmetry panel)
-- `.cs-theory-grid`, `.cs-theory-card`, `.cs-theory-title` → `css/ui/scales/` (consciousness, Scale 4)
-- `.cs-walkthrough-*` block → `css/ui/scales/` (consciousness walkthrough)
-- `.cs-info-btn`, `.cs-info-tooltip`, `.cs-info-tooltip.visible` → `css/ui/scales/` (consciousness tooltips)
+- `.cs-theory-grid`, `.cs-theory-card`, `.cs-theory-title` → `css/ui/scales/` (reference frame context, Scale 4)
+- `.cs-walkthrough-*` block → `css/ui/scales/` (reference frame context walkthrough)
+- `.cs-info-btn`, `.cs-info-tooltip`, `.cs-info-tooltip.visible` → `css/ui/scales/` (reference frame context tooltips)
 - `.cs-scenario-desc` → `css/ui/scales/`
 - `#loading-overlay`, `#loading-overlay.hidden/removed` → `css/ui/components/loading-overlay.css` (component file already exists)
 - `.load-lattice`, `.load-logo`, `.load-logo .letter`, `.load-logo .dot`, `.load-subtitle`, `.load-progress-wrap`, `.load-bar-bg`, `.load-bar-fill`, `.load-status`, `.load-version` → `css/ui/components/loading-overlay.css`
@@ -131,5 +131,5 @@ files are confirmed live and tested.
 
 - `.settings-scale-row input[type=range]` — also touched by checkbox.css (accent-color). Decide canonical home: modal.css (contextual) vs checkbox.css (global reset). Recommend modal.css since it's settings-specific.
 - `.panel-grid` — appears in both layout.css (responsive overrides) and components.css (base definition). Consolidate to one location (panel-dock.css or a `grid-helpers.css`).
-- `.cs-theory-card` uses `.card` base-like styling but is consciousness-specific — decide whether to extend `.card` or keep standalone.
+- `.cs-theory-card` uses `.card` base-like styling but is reference frame context-specific — decide whether to extend `.card` or keep standalone.
 - `.qlab-btn-primary/secondary` — currently in button.css (extracted), but Quantum Lab is a panel; may belong in `css/ui/scales/scale1/` instead of a global primitive.

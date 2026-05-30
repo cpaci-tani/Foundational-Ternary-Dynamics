@@ -87,7 +87,7 @@ Key achievements within the framework (with several items representing proposed 
 - **Honest accounting**: ~35 genuine derivations, ~50 parametric insertions, ~50+ external physics adopted — see [EPISTEMIC_AUDIT.md](theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Full SM gauge group**: U(1) × SU(2) × SU(3) derived from FTD axioms
 - **D = 3 uniqueness**: Three dimensions uniquely selected by atomic stability + gauge requirements (no longer axiomatic)
-- **Reflexivity layer** [CONJECTURE]: an exploratory interpretive reading via the same G* geometry (complex roots y = 2.19 ± 2.86i) — a proposed correspondence, **not a derivation**; see the reflexivity-vocabulary reframe [REF_REFLEXIVITY_VOCABULARY.md](theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md)
+- **Reference frame structure layer** [CONJECTURE]: an exploratory interpretive reading via the same G* geometry (complex roots y = 2.19 ± 2.86i) — a proposed correspondence, **not a derivation**; see the reference frame structure-vocabulary reframe [REF_REFERENCE_FRAME_VOCABULARY.md](theory/01_reference/REF_REFERENCE_FRAME_VOCABULARY.md)
 
 The framework demonstrates that U(1) gauge symmetry emerges naturally from the constraint structure (Gauss law), SU(2) from the ternary state structure, SU(3) from the three spatial dimensions, and Lorentz invariance emerges at scales >> lattice spacing.
 
@@ -543,7 +543,7 @@ PHASE 12: Increment
 
 **CAUTION**: The update order matters. Different orderings may produce different emergent behaviors. The specified order is a design choice.
 
-**Gate function identification (April 2026):** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
+**Gate function identification (April 2026):** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/06_reference frame context/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
 
 ---
 
@@ -1048,12 +1048,12 @@ This is not superdeterminism (where initial conditions conspire to fake quantum 
 
 Under these conditions, correlations are not transmitted superluminally—they are **inherited from the shared substrate**.
 
-### Connection to Consciousness
+### Connection to Reference frame context
 
 The sLoop distinguishes:
 - **Dead matter**: Entities that interact but do not self-reference
 - **Life**: Entities that maintain themselves against entropy via feedback loops
-- **Consciousness**: Entities whose sLoop includes representation of the sLoop itself
+- **Reference frame context**: Entities whose sLoop includes representation of the sLoop itself
 
 Bell correlations, in this view, are signatures of the **ontological unity** necessary for self-reference.
 
@@ -1110,13 +1110,13 @@ Any manifested structure can trigger collapse:
 
 | Structure | Can Trigger Collapse? | Why? |
 |-----------|----------------------|------|
-| Consciousness | Yes | It's manifested (but not special) |
+| Reference frame context | Yes | It's manifested (but not special) |
 | Detector | Yes | It's manifested |
 | Rock | Yes | It's manifested |
 | Photon (flux wave) | **No** | Not manifested (s = 0) |
 | Vacuum | **No** | Not manifested (s = 0) |
 
-**Consciousness has no privileged role** — any manifested structure couples to flux.
+**Reference frame context has no privileged role** — any manifested structure couples to flux.
 
 ## 13.4 Foundational Questions Addressed
 

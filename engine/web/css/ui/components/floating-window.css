@@ -1,0 +1,163 @@
+/* Floating Window styling — Spatial Glassmorphism Architecture */
+
+.floating-window {
+    position: fixed;
+    z-index: 1000;
+    width: 420px;
+    height: 320px;
+    background: rgba(10, 15, 26, 0.75);
+    backdrop-filter: blur(24px) saturate(190%);
+    -webkit-backdrop-filter: blur(24px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    box-shadow: 
+        0 8px 32px 0 rgba(0, 0, 0, 0.5), 
+        0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+        0 0 20px 0 rgba(0, 229, 255, 0.03);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    resize: both;
+    min-width: 320px;
+    min-height: 200px;
+    transition: 
+        border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.2s ease,
+        transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity, width, height;
+}
+
+.floating-window.is-dragging {
+    border-color: rgba(0, 229, 255, 0.25);
+    box-shadow: 
+        0 16px 48px 0 rgba(0, 0, 0, 0.65), 
+        0 0 0 1px rgba(0, 229, 255, 0.15) inset,
+        0 0 30px 0 rgba(0, 229, 255, 0.08);
+    opacity: 0.95;
+    transform: scale(1.01);
+}
+
+.floating-window.is-collapsed {
+    height: 38px !important;
+    min-height: 38px !important;
+    resize: none !important;
+}
+
+.floating-window.active-focus {
+    border-color: rgba(0, 229, 255, 0.35);
+    box-shadow: 
+        0 12px 40px 0 rgba(0, 0, 0, 0.55), 
+        0 0 0 1px rgba(0, 229, 255, 0.2) inset,
+        0 0 25px 0 rgba(0, 229, 255, 0.1);
+}
+
+.floating-window-header {
+    height: 38px;
+    padding: 0 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.floating-window-header:active {
+    cursor: grabbing;
+}
+
+.floating-window-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary, #ffffff);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.floating-window-icon {
+    font-size: 14px;
+    opacity: 0.85;
+}
+
+.floating-window-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.floating-window-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    border: none;
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-secondary, rgba(255, 255, 255, 0.82));
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.floating-window-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.floating-window-btn.btn-close:hover {
+    background: rgba(251, 113, 133, 0.25);
+    color: #fda4af;
+}
+
+.floating-window-body {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    padding: var(--sp-md, 10px);
+}
+
+.floating-window-body > .panel {
+    display: block !important; /* Always visible in the window context */
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+/* Hide tab when floated */
+.tab.is-floated {
+    opacity: 0.3;
+    pointer-events: auto;
+    border-bottom: 2px dashed rgba(0, 229, 255, 0.4);
+}
+.tab.is-floated::after {
+    content: "⎘";
+    font-size: 9px;
+    margin-left: 4px;
+    opacity: 0.8;
+}
+
+/* Style the native resizer marker to match theme */
+.floating-window::-webkit-resizer {
+    background-image: linear-gradient(135deg, transparent 50%, rgba(0, 229, 255, 0.4) 50%);
+    width: 12px;
+    height: 12px;
+}

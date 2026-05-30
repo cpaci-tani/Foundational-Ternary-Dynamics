@@ -42,7 +42,7 @@ graph TD
 The no-go proof of FTD-0096 is strictly conditional on the assumption that the physical scale is defined on an *infinite* flat lattice $\mathbb{Z}^3$ with *no localized boundary constraints*. Two dimensional loopholes escape the ring-algebra proof:
 
 ### Loophole A: Non-local Boundary-to-Bulk Partition
-If the lattice is finite or partition-bounded (as established by the **reflexive observer boundary**), the ratio of the boundary area $A_{\partial}$ to the bulk volume $V$ introduces a non-trivial scaling parameter:
+If the lattice is finite or partition-bounded (as established by the **frame-relative observer boundary**), the ratio of the boundary area $A_{\partial}$ to the bulk volume $V$ introduces a non-trivial scaling parameter:
 $$\epsilon \sim \frac{A_{\partial}}{V} \propto \frac{1}{L}$$
 where $L$ is the linear extent of the partition. If $L$ is dynamically pinned by a physical coupling (such as $L \sim 1/\alpha$), the ratio $\epsilon$ carries scale information that bridges the UV cutoff (Planck scale) to the IR limit (mass quantum).
 

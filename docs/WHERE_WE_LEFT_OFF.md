@@ -1,8 +1,25 @@
-# Where We Left Off — 2026-05-27 (x_- Physical-Identification CLOSED-NEGATIVE Campaign FTD-0210 [CLOSED-NEGATIVE]; v3 Clock-Hypothesis CLOSED-NEGATIVE [CLOSED-NEGATIVE]; Arc C2 spin-2 boundary theorem FOUND [THEOREM])
+# Where We Left Off — 2026-05-30 (Phase 10 Ledger Renumbering & Index Reconciliation COMPLETE [100% verified]; GW / Chiral Anomaly theorem integrated FTD-0236 [THEOREM])
 
 **Latest update:** 2026-05-27 — the x_- physical-identification search campaign (**FTD-0210**) has been completed and closed with a definitive **CLOSED-NEGATIVE (Outcome C)** verdict. Through mechanical evaluation of the 25 pre-specified Standard Model observables using high-precision constants, we prove that $x_- \approx 3.024$ corresponds to zero Standard Model observables under strict filters. $x_-$ is proven to be a pure coordinate projection/chirality artifact of the master quadratic polynomial with no physical correspondent in the Standard Model. This negative campaign closure maps FTD's physical boundary, fully complying with CLAUDE.md goal-clause 2.
 
 **Latest clock-hypothesis update:** 2026-05-27 — the v3 Clock-Hypothesis Substrate-Derivation campaign (**FTD-0208**) has been completed and closed with a definitive **CLOSED-NEGATIVE (Outcome C)** verdict. Through rigorous structural analysis of the Scale 0 discrete lattice substrate, we prove that continuous Minkowski proper-time scaling $(d\tau/dt_{\text{local}})^2 + v_{\text{local}}^2 = 1$ is structurally incompatible with FTD's discrete causal and algebraic postulates. The clock hypothesis is demoted from `[THEOREM modulo clock hypothesis]` to an honest coordinate-level **`[AXIOM]`** across the canonical references. An independent adversarial audit (PASS, 9.8/10 rigor) by subagent `RedTeamAuditor` verified process and mathematical rigor, fully satisfying the methodological B-9 and B-10 guards. Plan v2 Arc B P5 is marked CLOSED with CLOSED-NEGATIVE verdict.
+
+---
+
+## 0.17 · 2026-05-30 — Phase 10 / Front A ledger renumbering, index reconciliation, and anomaly-theorem integration
+
+**Latest update (2026-05-30):** A comprehensive repository-wide reconciliation campaign has successfully resolved the late-May ledger-numbering tangle (Front A), synced all downstream navigation layers, integrated the Ginsparg-Wilson / Chiral Anomaly theorem, and rebuilt the dynamic math node map to 100% consistency.
+
+- **Duplicate Ledger IDs Resolved:** Cleared the duplicate `FTD-0224` row by reassigning the independent audit row to `FTD-0232` (preserving `Color Excess / Blocked Flow` on `FTD-0224`). Registered the Ginsparg-Wilson / Chiral Anomaly theorem under the unique canonical ID `FTD-0236` (resolving the collision with `FTD-0230`).
+- **Late-May Campaign Pre-Registrations Registered:** Added five separate, canonical rows in `docs/theory/07_assessment/LEDGER.md` for campaign resolution and pre-registration documents:
+  - **FTD-0230 / ARC-B2 — BCC Algebraic Bridge Readout:** Proves that the body-diagonal self-energy trace `16G*²` is derivable, but the odd-degree `16G*³` term remains an underdetermined project selection boundary. **[UNDERDETERMINED — Outcome B]**
+  - **FTD-0231 / ARC-C1 — Alpha Quantization Readout:** Tracks the charge-quantization resolution. **[UNDERDETERMINED — Outcome B]** (reassigned from colliding `FTD-0211` row).
+  - **FTD-0233 — Determinant Grading:** Closed-negative attempt analyzing G*-degree parity. **[CLOSED NEGATIVE — scoped]**
+  - **FTD-0234 — Odd Period:** Odd source generation via J-twisted determinant. **[UNDERDETERMINED]**
+  - **FTD-0235 — Det Identity:** Proves that G_BCC(0) and the determinant ratio are derivable scalars, but the trace-determinant relation remains unforced. **[UNDERDETERMINED]**
+- **Doc-Internal Renumbering & Index Sync:** Systematically reindexed metadata, headings, and cross-references across 12 files under `docs/theory/10_eft_program/`. Fully synchronized all downstream navigation tables inside `docs/theory/META_INDEX.md`, `INDEX_FTD_NATIVE_EFT.md`, and `TRACKER_OPEN_ITEMS.md`.
+- **Dynamic Math Node Map Rebuilt:** Executed `build_math_node_map.py` to regenerate the dynamic graph JSON and interactive Plotly HTML viewer (`math_node_map.html`) with 100% graph consistency (82 objects, 13 theorems, 215 ledger nodes, 1265 edges).
+- **Link Integrity & Proof Verification:** Executed `verify_index_links.py` to verify 384 file-path references across the indices with exactly **0 broken links** detected. Ran and verified all 4 active mathematical and physics proof scripts to 100% success (determinant grading, odd period, det identity, and compact torus lattice index theorem).
 
 ---
 
@@ -16,7 +33,7 @@
 - **FTD-0227 / B-QM-1′ — Spekkens knowledge-balance:** the **binding** half is **DERIVED** (classical finite self-reference, non-circular); the **sharp** balance needs the full symplectic **S₃** budget symmetry, not supplied by binding alone. **PARTIAL** (`J²=−I` gives ℤ/2; ℤ/3 unverified).
 - **FTD-0228 / B-QM-1″ — budget symmetry:** adversarial (P4) test of the `N_c=3 → ℤ/3` candidate. **Apophenia** — `{J_x,J_y,J_z}` commute (co-measurable), the budget needs complementary (non-commuting) bases; same count, different kind. **CLOSED-NEGATIVE**; the epistemic route re-derives the non-commutativity wall.
 
-**Net:** FTD's classical/commutative substrate **derives** the commutative spine (G\*, π√2, master quadratic) and a **binding epistemic horizon** (internal-observer self-reference), but **cannot derive QM's non-commutativity** at any route (ontic, manifestation, or epistemic budget symmetry). The ψ-epistemic reframe relocates but does not dissolve the gap; the missing piece is always a non-commutative `SU(2)`, which must be **imported** (a 6th-postulate-class move — consistent with the Bell wall requiring superdeterminism). A subsequent conversational thread grounded the **free-will *phenomenon*** (agency as a frame's inability to self-predict — MacKay/Breuer logical indeterminacy) in the *derived* binding horizon, while keeping the speculative `α_sent` machinery out.
+**Net:** FTD's classical/commutative substrate **derives** the commutative spine (G\*, π√2, master quadratic) and a **binding epistemic horizon** (internal-observer self-reference), but **cannot derive QM's non-commutativity** at any route (ontic, manifestation, or epistemic budget symmetry). The ψ-epistemic reframe relocates but does not dissolve the gap; the missing piece is always a non-commutative `SU(2)`, which must be **imported** (a 6th-postulate-class move — consistent with the Bell wall requiring superdeterminism). A subsequent conversational thread grounded the **free-will *phenomenon*** (frame dynamics as a frame's inability to self-predict — MacKay/Breuer logical indeterminacy) in the *derived* binding horizon, while keeping the speculative `α_sent` machinery out.
 
 **Logical-path status:** mid-conversation on *frame-of-reference time* — a frame's subjective time = its readout order against the god's-eye tick; rate (dilation) = tick-cost per readout (motion + latency); the *order* is FTD-native, the *metric* (`√(1−v²)`, the L²) is the import (FTD-0208). Next: the *order* side — how a frame's partial-order "now" + persistence-across-ticks define identity (the GUID staying the same GUID).
 
@@ -131,7 +148,7 @@ The v3 Clock-Hypothesis Substrate-Derivation campaign (**FTD-0208**) has been co
 
 1. **Manifest Lock & Tagging:** Successfully synchronized and locked the v3 pre-registration in the manifest `REF_PREREGISTER_MANIFEST.md` with commit `0dbc5aa` and the lightweight git tag `preregister-clock-hypothesis-derivation-v3`.
 2. **Substrate Analysis & Result Doc:** Authored the result document `AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md` containing the rigorous no-go structural proof showing that continuous Minkowski proper-time scaling $(d\tau/dt_{\text{local}})^2 + v_{\text{local}}^2 = 1$ is structurally incompatible with FTD's discrete Scale 0 substrate.
-3. **Independent Adversarial Review:** Dispatched the independent subagent `RedTeamAuditor` to perform a strict adversarial audit (PASS, Epistemic Rigor Score 9.8/10), verifying that all 12 falsifiers (F-a to F-l) passed and all 10 Banned Moves (B-1 to B-10) were complied with (including the methodological temporal B-9 and agency B-10 guards).
+3. **Independent Adversarial Review:** Dispatched the independent subagent `RedTeamAuditor` to perform a strict adversarial audit (PASS, Epistemic Rigor Score 9.8/10), verifying that all 12 falsifiers (F-a to F-l) passed and all 10 Banned Moves (B-1 to B-10) were complied with (including the methodological temporal B-9 and frame dynamics B-10 guards).
 4. **Downstream Tag Propagation:** Completed all downstream updates across the canonical references, demoting the clock hypothesis to an honest coordinate-level **[AXIOM]** and closing the campaign.
 
 ### Substantive No-Go Findings
@@ -240,7 +257,7 @@ The session executed the plan at `.claude/plans/let-s-proceed-on-the-eager-rocke
 
 - **§2 Question Q-ARC-B1:** does there exist an ARC tuple `(P, A_obs, O_EM, R, C)` built from the §4 frozen catalog whose transfer/readout operator's characteristic equation reproduces the master quadratic, with FTD-internal dominant-branch selection of `x_+` and an operational EM measurement protocol returning `R(O_EM) = 1/x_+`, admissible under `SPEC_ALPHA_READOUT_CONTRACT.md` §3?
 - **§3 Definitions D1-D6:** ARC tuple, site-local vs non-site-local, operational EM measurement, dominant-branch selection rule, admissibility gate, closure verdict.
-- **§4 Frozen catalog** (9 admissible observable primitives): state field `s`, flux field `J` + dual substrate `(J_L, J_R)`, bilinear link observables, plaquette bivectors, Wilson-loop traces, boundary-to-boundary transfer observables, reflexive projections, FQCR Model V `T_O` (target-not-input), master quadratic + coefficient 16 (target-not-input).
+- **§4 Frozen catalog** (9 admissible observable primitives): state field `s`, flux field `J` + dual substrate `(J_L, J_R)`, bilinear link observables, plaquette bivectors, Wilson-loop traces, boundary-to-boundary transfer observables, reference frame projections, FQCR Model V `T_O` (target-not-input), master quadratic + coefficient 16 (target-not-input).
 - **§5 Benchmark:** the MC-T4.3 contract from `SPEC_ALPHA_READOUT_CONTRACT.md` §1 verbatim + ARC-0..ARC-3 status levels + the 4-leg empirical diagnostic (FTD-0004/0005/0125/0126).
 - **§6 Three outcomes:** FOUND / UNDERDETERMINED / CLOSED-NEGATIVE, each with explicit tag consequences and ratification protocol.
 - **§7 Falsifiers F-a..F-j:** 10 mechanically-checkable rules covering CODATA-input, free-parameter-=-α, dominant-branch ambiguity, post-hoc-observable, site-local-Clifford (FTD-0073), QED-normalization-reduction, closed-channel-relabelling (F-g enumerates FTD-0050/0073/0094/0116/0097/0035 and the 4-leg FTD-0004/0005/0125/0126), calibration-dependence, look-elsewhere, master-quadratic-inserted-not-derived.
@@ -439,7 +456,7 @@ The ternary state space is the **real projection of `Z[i]^× ∪ {0}`** (the uni
 New artifacts:
 - `docs/theory/02_foundations/FOUND_TERNARY_STATE_FROM_I.md` (full grounding chain + cross-references)
 - `SPEC_FTD.md` Postulate 3 augmented with grounding paragraph + cross-reference
-- `REF_REFLEXIVITY_VOCABULARY.md §10.1` added with dispositional/actual table for state-field grounding
+- `REF_REFERENCE_FRAME_VOCABULARY.md §10.1` added with dispositional/actual table for state-field grounding
 - META_INDEX.md entries 2.23 (FOUND_TERNARY_STATE_FROM_I) and 9.9 (EXPLR_GSTAR_ARITHMETIC_IDENTITIES)
 
 ### Cumulative state of spine + LEDGER (post 2026-05-03 late evening)
@@ -620,14 +637,14 @@ Eight commits pushed to `origin/main` between commit `fc85425` (session start) a
   - [SYNTHESIS] tag undefined in CLAUDE.md
   - FTD-0121 polynomial scan was retrospectively hash-locked, not pre-registered (methodological-discipline gap)
 - Phase A remediation: 38 LEDGER detail blocks added; SPEC contradictions resolved; META_INDEX updated; tag table extended in CLAUDE.md; Theorem 7 honestly restated as `[THEOREM at L=2 — Nyquist-mode degeneracy origin]`; Theorem 3 retagged as `[NUMERICAL FACT, h=1 only]`.
-- **Reflexivity vocabulary doc** (`docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md`) created. Two-term core: reflexivity (structural property) + agency (dynamical manifestation). 25-row replacement table + 5 distinctions. Drops qualia/Hard-Problem baggage without losing conceptual content.
-- P1-P4 sweep applied across `06_consciousness/*`, FOUND_PHENOMENAL_NOUMENAL_BRIDGE, LEDGER FTD-0078, manuscript_v2 ch 14.5, whitepaper version bump (v5.28 → v5.34), CLAUDE.md.
+- **Reference frame structure vocabulary doc** (`docs/theory/01_reference/REF_REFERENCE_FRAME_VOCABULARY.md`) created. Two-term core: reference frame structure (structural property) + frame dynamics (dynamical manifestation). 25-row replacement table + 5 distinctions. Drops qualia/Hard-Problem baggage without losing conceptual content.
+- P1-P4 sweep applied across `06_reference frame context/*`, FOUND_PHENOMENAL_NOUMENAL_BRIDGE, LEDGER FTD-0078, manuscript_v2 ch 14.5, whitepaper version bump (v5.28 → v5.34), CLAUDE.md.
 
 **Scale 11 deletion (commits `054b530`, `7021a9e`, `306f32d`)**
 
-- Engine Scale 11 (consciousness/reflexivity) UI deleted — 25 files, ~5200 LOC. Pedagogical visualization (holographic figure / sLoop ring / audio synthesis) for the master-quadratic complex-roots case.
+- Engine Scale 11 (reference frame context/reference frame structure) UI deleted — 25 files, ~5200 LOC. Pedagogical visualization (holographic figure / sLoop ring / audio synthesis) for the master-quadratic complex-roots case.
 - Scale 12 (Meta) preserved per substrate-pedagogy reasoning (it visualizes the 27-site Moore neighborhood + polyhedral decomposition + N_base = 4 / |Aut(E)|² = 16 substrate).
-- Theory math content in `docs/theory/06_consciousness/*` preserved unchanged.
+- Theory math content in `docs/theory/06_reference frame context/*` preserved unchanged.
 - Cleanup pass strips tombstone comments + dead imports (unused MockBridge in app_dag, dangling resetScale(11) in telemetry-hub) + closes layer-8 hole in ONTIC_LAYERS array (renumbered Cosmic Scale 9→8).
 - Preview-verified: dashboard loads cleanly; 7-option engine-mode dropdown; all other panels mount; no JS errors.
 

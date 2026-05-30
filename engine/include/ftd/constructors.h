@@ -321,7 +321,7 @@ StampResult gravitational_wave(RenderBridge& rb, Vec3 direction,
                                double wavelength = 8.0,
                                double amplitude = 0.05);
 
-// Level 8 — consciousness/observer (self-referential structures)
+// Level 8 — reference frame context/observer (self-referential structures)
 // [CONJECTURE] These encode the observer formalism; interpretation is open.
 
 /// sLoop: self-referential causal loop (ring of particles with circulating flux).

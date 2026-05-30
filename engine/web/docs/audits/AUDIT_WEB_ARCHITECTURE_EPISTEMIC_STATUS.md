@@ -349,7 +349,7 @@ When in doubt, this audit uses the weaker label.
 - **[x] [SELECTION]** Calling this a "historical numbering mismatch" is
   a documentation interpretation of what the code shows.
 
-### 3.12 Scale 11 `consciousness`
+### 3.12 Scale 11 `reference frame context`
 
 - **[x] [THEOREM]** Scale 11 swaps the active bridge to a flux-only
   `MockBridge(32)` and stores the original in `_savedBridge`.
@@ -377,7 +377,7 @@ When in doubt, this audit uses the weaker label.
   Evidence: `engine/web/js/viewport.js`.
 
 - **[x] [THEOREM]** `PlanetaryRenderer`, `CosmicRenderer`, `MetaUnit`,
-  and `ConsciousnessEngine` add specialized content into the shared
+  and `Reference frame contextEngine` add specialized content into the shared
   scene.
   Evidence: their constructors and load paths.
 
@@ -404,7 +404,7 @@ When in doubt, this audit uses the weaker label.
   Evidence: both files inspected directly.
 
 - **[x] [THEOREM]** The suite covers scale sweep, bridge init, cosmic
-  interval regression, consciousness listener regression, and constants.
+  interval regression, reference frame context listener regression, and constants.
   Evidence: `tests/README.md`, `tests/scales.spec.js`.
 
 - **[x] [THEOREM]** The suite now also covers the Scale 0 module

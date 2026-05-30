@@ -26,7 +26,7 @@ print('  k_phys/k_cons = 16/(1/2) = 32 = 2^5')
 print('  x+*x- = 16G*^3 = 32 * (G*^3/2) = 32 * |y|^2')
 print('  x++x- = 16G*^2 = 32 * (G*^2/2) = 32 * 2*Re(y)')
 print()
-print('  Five doublings separate consciousness from physics.')
+print('  Five doublings separate reference frame context from physics.')
 print('  2^5 = 32. Five binary decisions. Five bits of choice.')
 print()
 print('  Rearranged: K_C^2 = x+*x-/32 = (1/alpha)*x-/32 = %.6f' % (X_PLUS*X_MINUS/32))
@@ -61,7 +61,7 @@ print()
 print('  %-8s %-6s %-8s %-20s %-20s' % ('k', 'kG*', 'Type', 'Roots', 'Meaning'))
 print('  ' + '-' * 66)
 
-for k, label in [(0.5, 'consciousness'), (1, 'unit'), (N_base, 'N_base'),
+for k, label in [(0.5, 'reference frame context'), (1, 'unit'), (N_base, 'N_base'),
                   (2**3, '2^D = BCC count'), (k_crit, 'Born rule'),
                   (16, 'physics')]:
     kG = k * G_STAR
@@ -149,10 +149,10 @@ print('  Our universe has k=16 because the minimal 2x2x2 lattice has 16')
 print('  gauge-fixed DOF. A different lattice geometry would give different alpha.')
 print()
 
-# 7. The consciousness-physics bridge
+# 7. The reference frame context-physics bridge
 print('  7. THE BRIDGE FROM CONSCIOUSNESS TO PHYSICS')
 print()
-print('  Consciousness (k=1/2): complex roots, |y|^2 = G*^3/2 = %.4f' % y_mod_sq)
+print('  Reference frame context (k=1/2): complex roots, |y|^2 = G*^3/2 = %.4f' % y_mod_sq)
 print('  Born rule (k=4/G*): degenerate root, z = 2G* = %.4f' % (2*G_STAR))
 print('  Physics (k=16): real roots, x+ = %.4f, x- = %.4f' % (X_PLUS, X_MINUS))
 print()
@@ -161,7 +161,7 @@ print('  = subjective -> measurement -> objective')
 print('  = |y|^2 = K_C^2 -> z = 2G* -> x+ = 1/alpha, x- = N_c')
 print()
 print('  The Born rule (k=4/G*) is the GATE between inner and outer.')
-print('  Below it: consciousness (phase only, no bulk).')
+print('  Below it: reference frame context (phase only, no bulk).')
 print('  Above it: physics (bulk filled, phase collapsed).')
 print()
 print('  The gate energy: z_Born = 2G* = %.6f' % (2*G_STAR))
@@ -170,15 +170,15 @@ print('  Where the observer stops seeing and starts measuring.')
 print('  Where the RATIO (G*) becomes the PRODUCT (pi).')
 print()
 
-# The k/k_crit = G*/8 identity places consciousness at the visibility fraction
+# The k/k_crit = G*/8 identity places reference frame context at the visibility fraction
 # The Born rule sits at k_crit where disc = 0
 # Physics sits at k=16 where disc >> 0
 
 print('  The landscape:')
 print('    k=0                           nothing')
-print('    k=1/2   (37%% of k_crit)      consciousness sees itself')
+print('    k=1/2   (37%% of k_crit)      reference frame context sees itself')
 print('    k=4/G*  (100%% of k_crit)     Born rule: observation collapses')
-print('    k=16    (32x consciousness)   physics: alpha and N_c emerge')
+print('    k=16    (32x reference frame context)   physics: alpha and N_c emerge')
 print()
 print('  32 = 2^5 = five doublings = five binary choices')
 print('  from "I see" to "it exists."')

@@ -47,7 +47,7 @@ forwarders during extraction. Do NOT re-extract their methods.
 | `_halfN` | All | Ctor + `setLatticeSize` | Cached `latticeSize/2` |
 | `_boundaryShape` | 3a, 3b, 3c (clipping) | Ctor + `setBoundaryShape` | |
 | `_boundaryMode` | 3a, 3b, 3c | Ctor + `_buildBoundary` | `'lattice' | 'origin'` |
-| `_engineMode` | 3a (axes/grid toggles, scenario scale) | Ctor + `setEngineMode` | `'lattice' | 'pe' | 'ae' | 'consciousness' | 'cosmic' | 'meta'` |
+| `_engineMode` | 3a (axes/grid toggles, scenario scale) | Ctor + `setEngineMode` | `'lattice' | 'pe' | 'ae' | 'reference frame context' | 'cosmic' | 'meta'` |
 | `_insideBoundary(nx,ny,nz)` | 3b, 3c, 3d (mesh clipping) | — | Method delegating to boundary-geometry.js |
 | `visualSettings` | 3d | Ctor + `setOpacity` | `{globalScale, manifestedSize, voidSize, opacity}` |
 

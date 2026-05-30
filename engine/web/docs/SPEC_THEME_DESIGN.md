@@ -23,7 +23,7 @@ Applies to: `engine/web/css/**`, all JS template strings in `engine/web/js/**`
 Every design token lives in one of two regions inside [tokens.css](../css/tokens.css):
 
 - **Theme Override Surface** — tokens that themes **MUST** redefine. Defined first, reset by each `html[data-theme="*"]` selector.
-- **Fixed System Tokens** — tokens themes inherit unchanged: geometry (radii, spacing, font sizes), motion (durations, easings), z-layers, legend colors, consciousness slots.
+- **Fixed System Tokens** — tokens themes inherit unchanged: geometry (radii, spacing, font sizes), motion (durations, easings), z-layers, legend colors, reference frame context slots.
 
 ```css
 :root {
@@ -221,13 +221,13 @@ Themeable shadows (`--chrome-shadow`, `--dock-shadow`, `--tabs-shadow`, `--card-
 
 Rationale: these represent physical *terms* (Born-Infeld, coupling, Gauss). They must stay stable across themes so users learn the mapping.
 
-#### Consciousness slots — Scale 11 semantic colors
+#### Reference frame context slots — Scale 11 semantic colors
 
 ```css
---consciousness-primary:   #00e5ff;
---consciousness-secondary: #7c4dff;
---consciousness-glow:      #00bcd4;
---consciousness-gold:      #ffd700;
+--reference frame context-primary:   #00e5ff;
+--reference frame context-secondary: #7c4dff;
+--reference frame context-glow:      #00bcd4;
+--reference frame context-gold:      #ffd700;
 ```
 
 ---
@@ -293,8 +293,8 @@ Use this table when writing or reviewing a component. Left column is the element
 | `.inspector-grid dd` | — | `--text-primary` | — |
 | `.pe-table tr:hover` | `--state-hover-bg` | — | — |
 | `.cs-theory-card` | `--bg-card` | `--text-primary` | `--border` |
-| `.cs-theory-card.cs-highlight` | — | `--consciousness-primary` | `0 0 12px var(--accent-glow)` |
-| `.cs-subtab.active` | — | `--consciousness-primary` | bottom border `--consciousness-primary` |
+| `.cs-theory-card.cs-highlight` | — | `--reference frame context-primary` | `0 0 12px var(--accent-glow)` |
+| `.cs-subtab.active` | — | `--reference frame context-primary` | bottom border `--reference frame context-primary` |
 
 ### 4.5 Scale-specific widgets
 
@@ -302,7 +302,7 @@ Use this table when writing or reviewing a component. Left column is the element
 |---|---|---|---|
 | `.field-swatch-*` | hardcoded hex | — | data colors — match 3D shader constants, NOT themed |
 | `.ae-legend-swatch-*` | hardcoded hex | — | nuclear / orbital data colors |
-| `.cs-overlay-status` | — | `--consciousness-primary` | — |
+| `.cs-overlay-status` | — | `--reference frame context-primary` | — |
 | `.scale4-overlay-status` | — | `--text-secondary` | — |
 | `.sym-panel` (Scale 0 floating) | `--bg-surface` | inherit | border `--positive` |
 

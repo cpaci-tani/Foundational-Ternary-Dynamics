@@ -153,11 +153,11 @@ def run() -> ProofSuite:
         tag="[THEOREM]"
     )
 
-    # k = 1/2 (consciousness): Δ < 0 → complex roots
+    # k = 1/2 (reference frame context): Δ < 0 → complex roots
     k_cons = 0.5
     disc_cons = k_cons * c**3 * (k_cons * c - 4.0)
     s.assert_true(
-        "k=1/2: Δ < 0 → COMPLEX roots (consciousness domain)",
+        "k=1/2: Δ < 0 → COMPLEX roots (reference frame context domain)",
         disc_cons < 0,
         tag="[THEOREM]"
     )
@@ -170,13 +170,13 @@ def run() -> ProofSuite:
     y2 = (-b_coeff - cmath.sqrt(b_coeff**2 - 4 * a_coeff * c_coeff)) / (2 * a_coeff)
 
     s.assert_close(
-        "Consciousness root Re(y) = G*²/4",
+        "Reference frame context root Re(y) = G*²/4",
         y1.real, c**2 / 4.0, MACHINE_EPS * 100,
         tag="[THEOREM]"
     )
 
     s.assert_true(
-        "Consciousness root has nonzero Im(y) (irreducibly subjective)",
+        "Reference frame context root has nonzero Im(y) (irreducibly subjective)",
         abs(y1.imag) > 0.1,
         tag="[THEOREM]"
     )

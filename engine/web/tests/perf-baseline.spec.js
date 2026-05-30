@@ -76,14 +76,20 @@ async function attachInstrumentation(page) {
             rafStart: 0,
             lastRaf: 0,
         };
-        // Wrap rAF to capture frame deltas
+        // Run a clean, independent requestAnimationFrame measuring loop using performance.now()
+        // to prevent delta pollution from multiple callbacks in the same frame tick.
         const origRAF = window.requestAnimationFrame.bind(window);
-        window.requestAnimationFrame = (cb) => origRAF((ts) => {
+        const measureFrame = () => {
             const probe = window.__perfProbe;
-            if (probe.lastRaf > 0) probe.frameDeltas.push(ts - probe.lastRaf);
-            probe.lastRaf = ts;
-            return cb(ts);
-        });
+            if (!probe) return;
+            const now = performance.now();
+            if (probe.lastRaf > 0) {
+                probe.frameDeltas.push(now - probe.lastRaf);
+            }
+            probe.lastRaf = now;
+            origRAF(measureFrame);
+        };
+        origRAF(measureFrame);
     });
 
     // Install the overlay hook. The actual function is inside a module import
@@ -232,7 +238,9 @@ test.describe('perf baseline', () => {
                 const { getScale0State } = await import('/js/scales/scale0/state/store.js');
                 const state = getScale0State();
                 const b = state.useFluxMock && state.fluxMock ? state.fluxMock : window._ftdBridge;
-                return (b && typeof b._tick === 'number') ? b._tick : -1;
+                if (!b) return -1;
+                if (typeof b.currentTick === 'function') return b.currentTick();
+                return typeof b._tick === 'number' ? b._tick : -1;
             });
         }, {
             timeout: 30_000,

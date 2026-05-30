@@ -62,55 +62,55 @@ void phase_read_main_loop(RenderBridge& rb) {
   if (dual) {
     // Dual-substrate: compute delta for J_L and J_R in a single neighbor sweep
 #pragma omp parallel for schedule(static)
-    for (int i = 0; i < N; ++i) {
-      rb.delta_j_L_[i] = {};
-      rb.delta_j_R_[i] = {};
+    for (int ix = 0; ix < L; ++ix) {
+      for (int iy = 0; iy < L; ++iy) {
+        for (int iz = 0; iz < L; ++iz) {
+          const int i = ix * LL + iy * L + iz;
+          rb.delta_j_L_[i] = {};
+          rb.delta_j_R_[i] = {};
 
-      if (do_wave) {
-        // Decompose flat index into lattice coordinates
-        const int iz = i % L;
-        const int iy = (i / L) % L;
-        const int ix = i / LL;
+          if (do_wave) {
+            Vec3 lap_L, lap_R;
+            if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+              // Interior fast path: precomputed offsets, zero modulo operations.
+              // Neighbor offsets: ±1=±z, ±L=±y, ±LL=±x (matches lattice coord convention).
+              const Vec3 fL = (rb.voxels_[i+1].flux_L  + rb.voxels_[i-1].flux_L
+                             + rb.voxels_[i+L].flux_L  + rb.voxels_[i-L].flux_L
+                             + rb.voxels_[i+LL].flux_L + rb.voxels_[i-LL].flux_L) * INV3;
+              const Vec3 fR = (rb.voxels_[i+1].flux_R  + rb.voxels_[i-1].flux_R
+                             + rb.voxels_[i+L].flux_R  + rb.voxels_[i-L].flux_R
+                             + rb.voxels_[i+LL].flux_R + rb.voxels_[i-LL].flux_R) * INV3;
+              const Vec3 eL = (rb.voxels_[i+1+L].flux_L  + rb.voxels_[i+1-L].flux_L
+                             + rb.voxels_[i-1+L].flux_L  + rb.voxels_[i-1-L].flux_L
+                             + rb.voxels_[i+1+LL].flux_L + rb.voxels_[i+1-LL].flux_L
+                             + rb.voxels_[i-1+LL].flux_L + rb.voxels_[i-1-LL].flux_L
+                             + rb.voxels_[i+L+LL].flux_L + rb.voxels_[i+L-LL].flux_L
+                             + rb.voxels_[i-L+LL].flux_L + rb.voxels_[i-L-LL].flux_L) * INV6;
+              const Vec3 eR = (rb.voxels_[i+1+L].flux_R  + rb.voxels_[i+1-L].flux_R
+                             + rb.voxels_[i-1+L].flux_R  + rb.voxels_[i-1-L].flux_R
+                             + rb.voxels_[i+1+LL].flux_R + rb.voxels_[i+1-LL].flux_R
+                             + rb.voxels_[i-1+LL].flux_R + rb.voxels_[i-1-LL].flux_R
+                             + rb.voxels_[i+L+LL].flux_R + rb.voxels_[i+L-LL].flux_R
+                             + rb.voxels_[i-L+LL].flux_R + rb.voxels_[i-L-LL].flux_R) * INV6;
+              lap_L = fL + eL - rb.voxels_[i].flux_L * 4.0;
+              lap_R = fR + eR - rb.voxels_[i].flux_R * 4.0;
+            } else {
+              // Boundary slow path: modular wrapping via lattice neighbor tables.
+              lap_L = ::ftd::laplacian_field<&Voxel::flux_L>(rb.voxels_, rb.lattice_, i);
+              lap_R = ::ftd::laplacian_field<&Voxel::flux_R>(rb.voxels_, rb.lattice_, i);
+            }
+            rb.delta_j_L_[i] = lap_L * cw2;
+            rb.delta_j_R_[i] = lap_R * cw2;
+          }
 
-        Vec3 lap_L, lap_R;
-        if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
-          // Interior fast path: precomputed offsets, zero modulo operations.
-          // Neighbor offsets: ±1=±z, ±L=±y, ±LL=±x (matches lattice coord convention).
-          const Vec3 fL = (rb.voxels_[i+1].flux_L  + rb.voxels_[i-1].flux_L
-                         + rb.voxels_[i+L].flux_L  + rb.voxels_[i-L].flux_L
-                         + rb.voxels_[i+LL].flux_L + rb.voxels_[i-LL].flux_L) * INV3;
-          const Vec3 fR = (rb.voxels_[i+1].flux_R  + rb.voxels_[i-1].flux_R
-                         + rb.voxels_[i+L].flux_R  + rb.voxels_[i-L].flux_R
-                         + rb.voxels_[i+LL].flux_R + rb.voxels_[i-LL].flux_R) * INV3;
-          const Vec3 eL = (rb.voxels_[i+1+L].flux_L  + rb.voxels_[i+1-L].flux_L
-                         + rb.voxels_[i-1+L].flux_L  + rb.voxels_[i-1-L].flux_L
-                         + rb.voxels_[i+1+LL].flux_L + rb.voxels_[i+1-LL].flux_L
-                         + rb.voxels_[i-1+LL].flux_L + rb.voxels_[i-1-LL].flux_L
-                         + rb.voxels_[i+L+LL].flux_L + rb.voxels_[i+L-LL].flux_L
-                         + rb.voxels_[i-L+LL].flux_L + rb.voxels_[i-L-LL].flux_L) * INV6;
-          const Vec3 eR = (rb.voxels_[i+1+L].flux_R  + rb.voxels_[i+1-L].flux_R
-                         + rb.voxels_[i-1+L].flux_R  + rb.voxels_[i-1-L].flux_R
-                         + rb.voxels_[i+1+LL].flux_R + rb.voxels_[i+1-LL].flux_R
-                         + rb.voxels_[i-1+LL].flux_R + rb.voxels_[i-1-LL].flux_R
-                         + rb.voxels_[i+L+LL].flux_R + rb.voxels_[i+L-LL].flux_R
-                         + rb.voxels_[i-L+LL].flux_R + rb.voxels_[i-L-LL].flux_R) * INV6;
-          lap_L = fL + eL - rb.voxels_[i].flux_L * 4.0;
-          lap_R = fR + eR - rb.voxels_[i].flux_R * 4.0;
-        } else {
-          // Boundary slow path: modular wrapping via lattice neighbor tables.
-          lap_L = ::ftd::laplacian_field<&Voxel::flux_L>(rb.voxels_, rb.lattice_, i);
-          lap_R = ::ftd::laplacian_field<&Voxel::flux_R>(rb.voxels_, rb.lattice_, i);
+          // Coupling source: split equally between L and R substrates
+          if (do_coupling) {
+            Vec3 grad_s = rb.gradient_state(i) * (G_C * 0.5);
+            Vec3 curl_sv = rb.curl_state_velocity(i) * (G_C * 0.5);
+            rb.delta_j_L_[i] += grad_s + curl_sv;
+            rb.delta_j_R_[i] += grad_s + curl_sv;
+          }
         }
-        rb.delta_j_L_[i] = lap_L * cw2;
-        rb.delta_j_R_[i] = lap_R * cw2;
-      }
-
-      // Coupling source: split equally between L and R substrates
-      if (do_coupling) {
-        Vec3 grad_s = rb.gradient_state(i) * (G_C * 0.5);
-        Vec3 curl_sv = rb.curl_state_velocity(i) * (G_C * 0.5);
-        rb.delta_j_L_[i] += grad_s + curl_sv;
-        rb.delta_j_R_[i] += grad_s + curl_sv;
       }
     }
   } else {
@@ -123,43 +123,44 @@ void phase_read_main_loop(RenderBridge& rb) {
     // dual_substrate==false in this branch when bcc_stencil != FULL.
     const BccStencilMode stencil_mode = rb.toggles.bcc_stencil;
 #pragma omp parallel for schedule(static)
-    for (int i = 0; i < N; ++i) {
-      rb.delta_j_[i] = {};
+    for (int ix = 0; ix < L; ++ix) {
+      for (int iy = 0; iy < L; ++iy) {
+        for (int iz = 0; iz < L; ++iz) {
+          const int i = ix * LL + iy * L + iz;
+          rb.delta_j_[i] = {};
 
-      if (do_wave) {
-        Vec3 lap;
-        if (stencil_mode == BccStencilMode::FULL) {
-          const int iz = i % L;
-          const int iy = (i / L) % L;
-          const int ix = i / LL;
-
-          if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
-            // Interior fast path (FULL stencil only)
-            const Vec3 f = (rb.voxels_[i+1].flux  + rb.voxels_[i-1].flux
-                          + rb.voxels_[i+L].flux  + rb.voxels_[i-L].flux
-                          + rb.voxels_[i+LL].flux + rb.voxels_[i-LL].flux) * INV3;
-            const Vec3 e = (rb.voxels_[i+1+L].flux  + rb.voxels_[i+1-L].flux
-                          + rb.voxels_[i-1+L].flux  + rb.voxels_[i-1-L].flux
-                          + rb.voxels_[i+1+LL].flux + rb.voxels_[i+1-LL].flux
-                          + rb.voxels_[i-1+LL].flux + rb.voxels_[i-1-LL].flux
-                          + rb.voxels_[i+L+LL].flux + rb.voxels_[i+L-LL].flux
-                          + rb.voxels_[i-L+LL].flux + rb.voxels_[i-L-LL].flux) * INV6;
-            lap = f + e - rb.voxels_[i].flux * 4.0;
-          } else {
-            // Boundary slow path (FULL stencil)
-            lap = rb.laplacian_flux(i);
+          if (do_wave) {
+            Vec3 lap;
+            if (stencil_mode == BccStencilMode::FULL) {
+              if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+                // Interior fast path (FULL stencil only)
+                const Vec3 f = (rb.voxels_[i+1].flux  + rb.voxels_[i-1].flux
+                              + rb.voxels_[i+L].flux  + rb.voxels_[i-L].flux
+                              + rb.voxels_[i+LL].flux + rb.voxels_[i-LL].flux) * INV3;
+                const Vec3 e = (rb.voxels_[i+1+L].flux  + rb.voxels_[i+1-L].flux
+                              + rb.voxels_[i-1+L].flux  + rb.voxels_[i-1-L].flux
+                              + rb.voxels_[i+1+LL].flux + rb.voxels_[i+1-LL].flux
+                              + rb.voxels_[i-1+LL].flux + rb.voxels_[i-1-LL].flux
+                              + rb.voxels_[i+L+LL].flux + rb.voxels_[i+L-LL].flux
+                              + rb.voxels_[i-L+LL].flux + rb.voxels_[i-L-LL].flux) * INV6;
+                lap = f + e - rb.voxels_[i].flux * 4.0;
+              } else {
+                // Boundary slow path (FULL stencil)
+                lap = rb.laplacian_flux(i);
+              }
+            } else {
+              // Sublattice projection (SC, FCC, or BCC). Slow path for all sites.
+              lap = ::ftd::laplacian_sublattice<&Voxel::flux>(stencil_mode,
+                                                              rb.voxels_, rb.lattice_, i);
+            }
+            rb.delta_j_[i] = lap * cw2;
           }
-        } else {
-          // Sublattice projection (SC, FCC, or BCC). Slow path for all sites.
-          lap = ::ftd::laplacian_sublattice<&Voxel::flux>(stencil_mode,
-                                                          rb.voxels_, rb.lattice_, i);
-        }
-        rb.delta_j_[i] = lap * cw2;
-      }
 
-      if (do_coupling) {
-        rb.delta_j_[i] += rb.gradient_state(i) * G_C;
-        rb.delta_j_[i] += rb.curl_state_velocity(i) * G_C;
+          if (do_coupling) {
+            rb.delta_j_[i] += rb.gradient_state(i) * G_C;
+            rb.delta_j_[i] += rb.curl_state_velocity(i) * G_C;
+          }
+        }
       }
     }
   }

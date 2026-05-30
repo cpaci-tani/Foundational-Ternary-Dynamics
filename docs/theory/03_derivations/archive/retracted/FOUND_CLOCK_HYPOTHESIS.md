@@ -10,7 +10,7 @@
 **Closure-attempt executor:** FTD lead session.
 **Adversarial reviewer (per pre-reg §9 step 9):** independent `self` subagent (executed per the F9 mitigation checkpoint).
 **Companion docs (load-bearing proof scaffold):**
-- [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) — v1 audit report
+- [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](../../../07_assessment/audits/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) — v1 audit report
 - [`../01_reference/SPEC_FTD_LAGRANGIAN.md`](../01_reference/SPEC_FTD_LAGRANGIAN.md) §3.7, §4.3 — Bandwidth constraint and proper time
 
 ---

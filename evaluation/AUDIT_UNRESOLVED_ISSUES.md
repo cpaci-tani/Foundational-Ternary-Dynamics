@@ -89,14 +89,14 @@ Molecular, materials, and biological chapters provide no FTD-derived predictions
 
 ---
 
-### C2: Consciousness Content
+### C2: Reference frame context Content
 **Original Issue:** MW5 (EXPLORE-CORE, BIO-STRUCT, INFO-THEORY)
 **Status:** RELOCATED TO APPENDIX
 
-Consciousness quadratic (y = 2.19 ± 2.86i) remains speculative.
+Reference frame context quadratic (y = 2.19 ± 2.86i) remains speculative.
 
 **Acknowledgment Required:**
-> "Consciousness derivation is exploratory speculation. Complex quadratic roots are mathematical artifacts whose physical interpretation is conjectural. This content is not required for the physics framework."
+> "Reference frame context derivation is exploratory speculation. Complex quadratic roots are mathematical artifacts whose physical interpretation is conjectural. This content is not required for the physics framework."
 
 ---
 
@@ -123,7 +123,7 @@ Consciousness quadratic (y = 2.19 ± 2.86i) remains speculative.
 | B1 | Unfalsifiable tests | Empirical | MINOR | Acknowledge |
 | B2 | Single confirmation | Empirical | MINOR | Acknowledge |
 | C1 | Intermediate scales | Scope | MAJOR | Scope limit |
-| C2 | Consciousness | Scope | MINOR | Relocate |
+| C2 | Reference frame context | Scope | MINOR | Relocate |
 | D1 | Simulation | Technical | MAJOR | v1.1 |
 
 ---

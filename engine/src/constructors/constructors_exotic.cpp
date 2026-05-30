@@ -1,7 +1,7 @@
 // constructors_exotic.cpp
 // Covers source lines 1081-1245 of the pre-split constructors.cpp:
 //   Level 7 gravity/cosmology — schwarzschild, frw_patch, gravitational_wave
-//   Level 8 consciousness     — sloop, observer_cell
+//   Level 8 reference frame context     — sloop, observer_cell
 
 #include "ftd/constructors.h"
 #include "./_common.h"
@@ -108,7 +108,7 @@ StampResult gravitational_wave(RenderBridge& rb, Vec3 direction,
 }
 
 // ============================================================================
-// Level 8 — consciousness/observer
+// Level 8 — reference frame context/observer
 // ============================================================================
 
 StampResult sloop(RenderBridge& rb, Coord center, int radius) {

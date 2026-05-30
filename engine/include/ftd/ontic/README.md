@@ -28,7 +28,7 @@ Consumers that want a flat `ftd::ALPHA` (etc.) include
 | 6 | `particle_masses.h` | K_B (electron mass anchor 0.511 MeV), K_GENESIS, mass ratios, R_BOHR |
 | 6b | `particle_masses.h` | LAMBDA_HIGGS, M_HIGGS, V_HIGGS, M_W |
 | 7 | `neutrino.h` | Neutrino mass formula chain |
-| 8 | `consciousness.h` | Scale 11 / observer formalism constants |
+| 8 | `reference frame context.h` | Scale 11 / observer formalism constants |
 
 Plus: the umbrella `engine/include/ftd/ontic.h` (above this directory) imports
 all sub-headers and provides the namespace.

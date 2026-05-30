@@ -336,7 +336,7 @@ hex_dist_sq_py = hex_real**2 + hex_imag**2
 phi6_py = s_py**2 - s_py + 1
 test(3, 9, 'Phi_6 = |sqrt(pi) - e^{ipi/3}|^2', phi6_py, hex_dist_sq_py)
 
-# T3.10: Consciousness/physics ratio = 1/32 exactly
+# T3.10: Reference frame context/physics ratio = 1/32 exactly
 KC2 = G_STAR**3 / 2
 ratio_cp = KC2 / (X_PLUS * X_MINUS)
 test(3, 10, 'K_C^2 / (x+*x-) = 1/32 exactly', ratio_cp, 1/32)

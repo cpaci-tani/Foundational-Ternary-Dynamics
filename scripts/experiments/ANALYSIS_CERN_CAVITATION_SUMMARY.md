@@ -200,7 +200,7 @@ We ran a discriminant test to distinguish FTD cavitation from missing ttbar. The
 | `ftd_cern_partial_correlation_deep.py` | Deep partial correlation investigation (10 tests) |
 | `ftd_partial_correlation_DEEP.png` | 12-panel deep investigation figure |
 | `ftd_partial_correlation_deep_results.txt` | Deep investigation results |
-| `cavitation_consciousness_bridge_verification.py` | Beta=1/2 derivation verification (13 checks) |
+| `cavitation_reference frame context_bridge_verification.py` | Beta=1/2 derivation verification (13 checks) |
 | `cavitation_threshold_verification.py` | Energy threshold analysis (10 checks) -- rules out FTD cavitation at LHC |
 | `cavitation_hierarchy_verification.py` | Multi-scale hierarchy analysis (10 checks) -- 8 scales mapped, QCD confirmed, no FTD scale matches |
 

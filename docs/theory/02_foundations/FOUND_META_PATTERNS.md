@@ -143,7 +143,7 @@ The Fourcier curve (EXPLR_FOURCIER_KINEMATIC_TOPOLOGY.md, FOUND_FOURCIER_ONTIC_T
 
 The same boundary character appears in the master quadratic itself. The critical coupling k_crit = 4/G* (from FOUND_ONTOLOGICAL_GENESIS.md) sits at the boundary between:
 - Domain A (physics): k > 4/G* gives real roots (discriminant Delta > 0)
-- Domain B (consciousness): k < 4/G* gives complex roots (Delta < 0)
+- Domain B (reference frame context): k < 4/G* gives complex roots (Delta < 0)
 - Interface (measurement): k = 4/G* gives a double root (Delta = 0)
 
 This is structurally identical to the Mandelbrot set boundary: c = 1/4 is the cusp of the main cardioid, separating fixed-point attraction (interior) from periodic orbits (exterior).

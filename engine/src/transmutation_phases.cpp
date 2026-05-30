@@ -6,9 +6,11 @@
 #include "ftd/transmutation_phases.h"
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/voxel_rng.h"
 #include <algorithm>
 #include <cmath>
 #include <vector>
+#include <cstdint>
 
 namespace ftd {
 
@@ -16,6 +18,7 @@ void weak_transmutation_cpu(RenderBridge& rb) {
   auto& voxels = rb.voxels_;
   const auto& lattice = rb.lattice_;
   const int N = static_cast<int>(lattice.total_sites());
+  const std::uint64_t gseed = static_cast<std::uint64_t>(rb.toggles.langevin_seed);
   for (int i = 0; i < N; ++i) {
     auto& v = voxels[i];
     if (v.state == 0) continue;
@@ -26,7 +29,8 @@ void weak_transmutation_cpu(RenderBridge& rb) {
 
     if (stress > WEAK_THRESHOLD) {
       double p = 1.0 - std::exp(-(stress - WEAK_THRESHOLD) / K_B);
-      if (rb.rng_state_->sample_uniform() < p) {
+      if (voxel_uniform(gseed, i, rb.tick_,
+                        static_cast<std::uint64_t>(VoxelRng::WeakTransmutation)) < p) {
         v.state = -v.state;
         if (rb.toggles.dual_substrate) {
           std::swap(v.flux_L, v.flux_R);
@@ -58,6 +62,7 @@ void pair_production_cpu(RenderBridge& rb) {
   auto& voxels = rb.voxels_;
   const auto& lattice = rb.lattice_;
   const int N = static_cast<int>(lattice.total_sites());
+  const std::uint64_t gseed = static_cast<std::uint64_t>(rb.toggles.langevin_seed);
   for (int i = 0; i < N; ++i) {
     auto& v = voxels[i];
     if (v.state != 0) continue;
@@ -65,7 +70,8 @@ void pair_production_cpu(RenderBridge& rb) {
     if (jmag <= K_GENESIS) continue;
 
     double p = 1.0 - std::exp(-(jmag - K_GENESIS) / K_B);
-    if (rb.rng_state_->sample_uniform() >= p) continue;
+    if (voxel_uniform(gseed, i, rb.tick_,
+                      static_cast<std::uint64_t>(VoxelRng::PairProduction)) >= p) continue;
 
     // Geometric Pair Production: find the major axis of the flux vector
     int dx = 0, dy = 0, dz = 0;

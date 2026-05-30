@@ -20,6 +20,8 @@
 
 namespace ftd {
 
+using detail::urand;
+
 // (seed_lepton helper removed audit-4 2026-04-28: only callers were
 // s0-seed-{electron, muon, tau} which are now canonical in vacuum.cpp.)
 
@@ -314,15 +316,16 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         dp(rb, mc, mc, mc + oR, -1, +1, 0, 2, K_B * 0.8, false);
         dp(rb, mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8, false);
     }
-    else if (name == "s0-seed-2-hydrogen-atoms") {
-        const int bd = std::max(4, N / 6), hf = bd / 2;
-        const int oR = std::max(3, N / 8), bR = std::max(1, N / 16);
+    else if (name == "s0-seed-h2-bond-formation") {
+        const int bd = std::max(4, N / 6);
+        const int hf = bd / 2;
+        const int bR = std::max(1, N / 16);
         const int charges[3] = {+1, +1, -1};
         const int colors[3]  = {1, 2, 3};
-        tri(rb, mc - hf, mc, mc, charges, colors, bR, true);
-        dp(rb, mc - hf, mc, mc + oR, -1, -1, 0, 2, K_B * 0.8, false);
-        tri(rb, mc + hf, mc, mc, charges, colors, bR, true);
-        dp(rb, mc + hf, mc, mc + oR, -1, +1, 0, 2, K_B * 0.8, false);
+        tri(rb, mc - RND(hf * 0.7), mc, mc, charges, colors, bR, true);
+        tri(rb, mc + RND(hf * 0.7), mc, mc, charges, colors, bR, true);
+        dp(rb, mc, mc, mc + 1, -1, -1, 0, 2, K_B * 0.8, false);
+        dp(rb, mc, mc, mc - 1, -1, +1, 0, 2, K_B * 0.8, false);
     }
     // ── Quarks (LHC additions) ──
     else if (name == "s0-seed-up-quark" || name == "s0-seed-down-quark" ||
@@ -434,6 +437,96 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             }
         }
     }
+    else if (name == "s0-seed-quark-gluon-plasma") {
+        const int qOffset = 2;
+        const int dirs[2] = {-qOffset, qOffset};
+        int quarkIndex = 0;
+        for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++)
+        for (int k = 0; k < 2; k++) {
+            int dx = dirs[i], dy = dirs[j], dz = dirs[k];
+            const int charge = (quarkIndex % 2 == 0) ? +1 : -1;
+            const int color = (quarkIndex % 3) + 1; // R=1, G=2, B=3
+            IPF(rb, mc + dx, mc + dy, mc + dz, charge, (charge > 0) ? +1 : -1, color);
+
+            // High thermal random velocity, speed = 0.5 * C_SPEED
+            const double theta = urand() * 2.0 * PI;
+            const double phi = std::acos(urand() * 2.0 - 1.0);
+            const double speed = 0.5 * C_SPEED;
+            SET_VEL(rb, mc + dx, mc + dy, mc + dz,
+                    speed * std::sin(phi) * std::cos(theta),
+                    speed * std::sin(phi) * std::sin(theta),
+                    speed * std::cos(phi));
+
+            quarkIndex++;
+        }
+
+        // Seed random high-energy gluon flux pulses in a central 8x8x8 region:
+        const int pulseR = 4;
+        for (int dz = -pulseR; dz <= pulseR; dz++)
+        for (int dy = -pulseR; dy <= pulseR; dy++)
+        for (int dx = -pulseR; dx <= pulseR; dx++) {
+            const int r2 = dx * dx + dy * dy + dz * dz;
+            if (r2 > pulseR * pulseR) continue;
+
+            const double amp = K_B * 3.0 * urand();
+            const double theta = urand() * 2.0 * PI;
+            const double phi = std::acos(urand() * 2.0 - 1.0);
+
+            const double jx = amp * std::sin(phi) * std::cos(theta);
+            const double jy = amp * std::sin(phi) * std::sin(theta);
+            const double jz = amp * std::cos(phi);
+
+            const double wx = amp * std::sin(phi) * std::cos(theta) * C_SPEED;
+            const double wy = amp * std::sin(phi) * std::sin(theta) * C_SPEED;
+            const double wz = amp * std::cos(phi) * C_SPEED;
+
+            IF(rb, mc + dx, mc + dy, mc + dz, jx, jy, jz);
+            IW(rb, mc + dx, mc + dy, mc + dz, wx, wy, wz);
+        }
+    }
+    else if (name == "s0-seed-gravitational-lensing") {
+        // Schwarzschild well at the center:
+        const double sHalf = midF, rs = 3.0;
+        IP(rb, mc, mc, mc, +1);
+        for (int z = 0; z < N; z++)
+        for (int y = 0; y < N; y++)
+        for (int x = 0; x < N; x++) {
+            const double rx = x - sHalf, ry = y - sHalf, rz = z - sHalf;
+            const double r = std::max(std::sqrt(rx * rx + ry * ry + rz * rz), 0.5);
+            const double mg = G_N * (K_B * rs) / (r * r);
+            if (mg < 1e-6) continue;
+            IF(rb, x, y, z, -mg * rx / r, -mg * ry / r, -mg * rz / r);
+        }
+
+        // Off-axis photon pulse launched at x0 = N/4, propagating in +x:
+        const int x0 = N / 4;
+        const int offset = std::max(4, N / 6);
+        const int y0 = mc + offset;
+        const int z0 = mc;
+
+        const int sigma = std::max(2, N / 12);
+        const double amp = K_B * 3.0;
+        const double lambdaEff = 4.0 * sigma;
+        const double k_val = 2.0 * PI / lambdaEff;
+        const double cutR = 3.0 * sigma;
+        const double cutR2 = cutR * cutR;
+
+        for (int z = 0; z < N; z++)
+        for (int y = 0; y < N; y++)
+        for (int x = 0; x < N; x++) {
+            const int dx = x - x0, dy = y - y0, dz = z - z0;
+            const int r2 = dx * dx + dy * dy + dz * dz;
+            if (r2 > cutR2) continue;
+            double g = std::exp(-r2 / (2.0 * sigma * sigma));
+            if (g < 1e-6) continue;
+            double phase = k_val * dx;
+            double jz = amp * g * std::sin(phase);
+            double wz = amp * g * std::cos(phase) * C_SPEED;
+            IF(rb, x, y, z, 0, 0, jz);
+            IW(rb, x, y, z, wz, 0, 0);
+        }
+    }
     // ── Level 6: Gauge / Topological ──
     else if (name == "s0-seed-wilson-loop") {
         const int R = std::max(3, N / 8);
@@ -510,7 +603,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             if (std::fabs(v) > 1e-6) IF(rb, x, y, z, 0, v, 0);
         }
     }
-    // ── Level 8: Consciousness / Observer ──
+    // ── Level 8: Reference frame context / Observer ──
     else if (name == "s0-seed-sloop") {
         const int slR = std::max(3, N / 8);
         const int slN = 12;

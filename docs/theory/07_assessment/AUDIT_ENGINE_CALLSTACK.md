@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-17 (post engine-cleanup sweep)
 **Scope:** `ftd::RenderBridge` — the production Scale-0 engine — and its GPU counterpart `ftd::gpu::GpuEngine`. Traces every call path from `tick()` to leaf functions; checks CPU/GPU parity; flags dead code, silent no-ops, and inconsistent naming.
-**Companion:** [`TRACKER_OPEN_ITEMS.md`](TRACKER_OPEN_ITEMS.md).
+**Companion:** [`TRACKER_OPEN_ITEMS.md`](core_ledgers/TRACKER_OPEN_ITEMS.md).
 
 **STATUS 2026-04-17 (end of day):** all 10 findings ✅ RESOLVED.
 

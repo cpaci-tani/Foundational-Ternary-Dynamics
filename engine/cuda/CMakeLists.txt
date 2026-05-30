@@ -34,7 +34,6 @@ target_link_libraries(ftd_cuda PUBLIC
     ftd_eft
     CUDA::cudart
     CUDA::cufft
-    CUDA::curand
 )
 
 # NVCC needs relaxed constexpr for inline constexpr constants in device code

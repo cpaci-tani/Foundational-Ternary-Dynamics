@@ -10,7 +10,6 @@
 #include "ftd/constants.h"
 #include <cuda_runtime.h>
 #include <cufft.h>
-#include <curand.h>
 #include <cstdio>
 #include <cmath>
 #include <algorithm>
@@ -33,14 +32,7 @@
     } \
 } while(0)
 
-#define CURAND_CHECK(call) do { \
-    curandStatus_t err = (call); \
-    if (err != CURAND_STATUS_SUCCESS) { \
-        fprintf(stderr, "cuRAND error at %s:%d: %d\n", \
-                __FILE__, __LINE__, (int)err); \
-        exit(1); \
-    } \
-} while(0)
+
 
 // Forward declarations of GPU kernel launchers (implemented in kernel files)
 namespace ftd { namespace gpu { namespace kernels {
@@ -73,17 +65,10 @@ namespace ftd { namespace gpu { namespace kernels {
                                   unsigned long long rng_seed, int tick);
     void launch_gauss_sync_dual(GpuBuffers& bufs);
 
-    // Fused wave update (single-substrate: replaces phase_read + phase_write)
-    void launch_wave_update(GpuBuffers& bufs, bool do_wave, bool do_coupling,
-                            bool do_damping, bool selective_damping,
-                            bool larmor_radiation, double damping_factor,
-                            bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
-                            bool do_langevin, double langevin_gamma, double langevin_T,
-                            unsigned long long rng_seed, int tick);
-
     // Extended physics launchers
-    void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate);
-    void launch_pair_production(GpuBuffers& bufs);
+    void launch_weak_transmutation(GpuBuffers& bufs, bool dual_substrate,
+                                   unsigned long long rng_seed, int tick);
+    void launch_pair_production(GpuBuffers& bufs, unsigned long long rng_seed, int tick);
     void launch_build_particle_list(GpuBuffers& bufs);
     void launch_color_force(GpuBuffers& bufs, int num_particles, double dt);
     void launch_yukawa_force(GpuBuffers& bufs, int num_particles, double dt);
@@ -115,8 +100,6 @@ GpuEngine::GpuEngine(int lattice_size)
     CUFFT_CHECK(cufftPlan3d(&fft_plan_forward_f_, size_, size_, size_, CUFFT_C2C));
     CUFFT_CHECK(cufftPlan3d(&fft_plan_inverse_f_, size_, size_, size_, CUFFT_C2C));
 
-    // Create cuRAND generator
-    CURAND_CHECK(curandCreateGenerator(&rng_, CURAND_RNG_PSEUDO_DEFAULT));
     set_rng_seed(toggles.langevin_seed);
 
     // Initialize host shadow
@@ -150,7 +133,6 @@ GpuEngine::~GpuEngine() {
     if (fft_plan_inverse_) cufftDestroy(fft_plan_inverse_);
     if (fft_plan_forward_f_) cufftDestroy(fft_plan_forward_f_);
     if (fft_plan_inverse_f_) cufftDestroy(fft_plan_inverse_f_);
-    if (rng_) curandDestroyGenerator(rng_);
     bufs_.free();
 }
 
@@ -162,8 +144,6 @@ void GpuEngine::set_rng_seed(unsigned int seed) {
     if (rng_seed_initialized_ && rng_seed_ == seed) return;
     rng_seed_ = seed;
     rng_seed_initialized_ = true;
-    CURAND_CHECK(curandSetPseudoRandomGeneratorSeed(
-        rng_, static_cast<unsigned long long>(rng_seed_)));
 }
 
 // ---------- Core Simulation ----------
@@ -307,33 +287,7 @@ void GpuEngine::gpu_phase_write() {
     }
 }
 
-// C4: DEAD CODE — This fused kernel has a known race condition (neighbor reads
-// while other threads write in the same pass). It is never called from tick().
-// The safe split approach (gpu_phase_read + gpu_phase_write) is used instead.
-// Kept for reference only — do not call without implementing double-buffering.
-void GpuEngine::gpu_wave_update() {
-    // BH-F5/F8/F9 (2026-05-05): cuRAND prefill removed. SplitMix64 RNG inside
-    // the kernel; bit-exact CPU↔GPU.
-    const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
-    const int  tick     = static_cast<int>(tick_);
 
-    double damping = 1.0 - ALPHA;
-    kernels::launch_wave_update(bufs_,
-                                toggles.wave_propagation,
-                                toggles.coupling,
-                                toggles.damping,
-                                toggles.selective_damping,
-                                toggles.larmor_radiation,
-                                damping,
-                                toggles.genesis,
-                                toggles.evaporation,
-                                dt_,
-                                toggles.symplectic_leapfrog,
-                                toggles.langevin,
-                                toggles.langevin_gamma,
-                                toggles.langevin_T,
-                                rng_seed, tick);
-}
 
 void GpuEngine::gpu_gauss_project() {
     kernels::launch_gauss_project(bufs_,
@@ -393,15 +347,15 @@ void GpuEngine::gpu_phase_movement() {
 // ---------- Extended Physics Sub-Phases ----------
 
 void GpuEngine::gpu_weak_transmutation() {
-    // Fill random buffer for stochastic flip
-    CURAND_CHECK(curandGenerateUniformDouble(rng_, bufs_.d_random, N_));
-    kernels::launch_weak_transmutation(bufs_, toggles.dual_substrate);
+    const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
+    const int  tick     = static_cast<int>(tick_);
+    kernels::launch_weak_transmutation(bufs_, toggles.dual_substrate, rng_seed, tick);
 }
 
 void GpuEngine::gpu_pair_production() {
-    // Fill random buffer for stochastic pair creation
-    CURAND_CHECK(curandGenerateUniformDouble(rng_, bufs_.d_random, N_));
-    kernels::launch_pair_production(bufs_);
+    const auto rng_seed = static_cast<unsigned long long>(toggles.langevin_seed);
+    const int  tick     = static_cast<int>(tick_);
+    kernels::launch_pair_production(bufs_, rng_seed, tick);
 }
 
 void GpuEngine::gpu_build_particle_list() {

@@ -62,43 +62,29 @@ the reproduction recipe.
 **Statement.** Let G* := Γ(1/4) / Γ(3/4). Then
 
 $$G^* = \frac{\Gamma(1/4)}{\Gamma(3/4)}
-       = \frac{\Gamma(1/4)^2}{\sqrt{2}\cdot \pi}
-       = \varpi \cdot \frac{2}{\sqrt{\pi}}$$
+       = \frac{\Gamma(1/4)^2}{2^{1/2}\cdot \pi}
+       = \varpi \cdot \frac{2}{\pi^{1/2}}$$
 
-where ϖ = Γ(1/4)² / (2√(2π)) ≈ 2.62205755... is the Bernoulli/Gauss
-lemniscate constant (a *different* number from G*). Numerically
-G* = 2.95867512... and 16·G*² = 140.060... .
+where ϖ = Γ(1/4)² / (2 · (2\pi)^{1/2}) ≈ 2.62205755... is the Bernoulli/Gauss lemniscate constant (a *different* number from G*). Numerically G* = 2.95867512... and 16·G*² = 140.060... .
 
-The two equivalent closed forms follow from the Γ-function reflection
-identity Γ(1/4)·Γ(3/4) = π/sin(π/4) = π√2.
+The two equivalent closed forms follow from the Γ-function reflection identity Γ(1/4)·Γ(3/4) = π/sin(π/4) = π · 2^{1/2}.
 
-**Notational warning.** G* (project canonical, ≈ 2.959) and the
-Bernoulli/Gauss lemniscate constant ϖ (≈ 2.622) are sometimes both
-called "the lemniscate constant" in informal usage. They are distinct:
-the master quadratic `x² − 16G*²x + 16G*³ = 0` produces x_+ = 137.036
-(= 1/α numerically) ONLY at G* = 2.959, not at ϖ = 2.622 (which would
-give x_+ = 107.3, far from 1/α). Always cross-check against
-`scripts/constants.py` (`G_STAR`) when a numerical value is needed.
+**The Gauss AGM Constant Bridge (2026-05-30 synthesis).** The reflection ratio $G^*$ is exactly twice the product of the Gauss Constant $G = 1 / M(2^{1/2}, 1) \approx 0.83462684$ and the square root of $\pi$:
+$$G^* = 2 G \pi^{1/2}$$
+Substituting this identity into the FTD electrostatic self-energy formula expresses the electron rest mass $m_e$ in lattice units as a pure transcendental function of the Gauss constant $G$:
+$$m_e = \frac{2}{2 + \left(4 - \frac{1}{2G\pi^{1/2}}\right)^{1/2}} \approx 0.51103345$$
 
-This document was previously stated with an erroneous formula
-`Γ(1/4)²/(2√(2π)·Γ(1/2))` (which evaluates to 1.479, not 2.622) and
-an erroneous asserted value 2.622 (which is ϖ, not G*). Corrected
-2026-04-30 per LEDGER FTD-0117.
+**Notational warning.** G* (project canonical, ≈ 2.959) and the Bernoulli/Gauss lemniscate constant ϖ (≈ 2.622) are sometimes both called "the lemniscate constant" in informal usage. They are distinct: the master quadratic `x² − 16G*²x + 16G*³ = 0` produces x_+ = 137.036 (= 1/α numerically) ONLY at G* = 2.959, not at ϖ = 2.622 (which would give x_+ = 107.3, far from 1/α). Always cross-check against `scripts/constants.py` (`G_STAR`) when a numerical value is needed.
 
-**Proof reference.** Follows directly from Chowla-Selberg evaluation
-of the L-function L(s, χ_{-4}) at s=1, applied to the lemniscatic
-elliptic curve y² = x³ − x. See `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`
-for the four independent derivations (Γ-function ratio, Watson period
-integral, lemniscate arc length, modular-form value).
+This document was previously stated with an erroneous formula `Γ(1/4)²/(2 · (2\pi)^{1/2}·Γ(1/2))` (which evaluates to 1.479, not 2.622) and an erroneous asserted value 2.622 (which is ϖ, not G*). Corrected 2026-04-30 per LEDGER FTD-0117.
+
+**Proof reference.** Follows directly from Chowla-Selberg evaluation of the L-function L(s, χ_{-4}) at s=1, applied to the lemniscatic elliptic curve y² = x³ − x. See `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` for the four independent derivations (Γ-function ratio, Watson period integral, lemniscate arc length, modular-form value).
 
 **LEDGER:** FTD-0001.
 
-**Dependencies:** Γ-function functional equation; Chowla-Selberg
-formula (Chowla & Selberg 1949); arithmetic of CM curves over ℚ(i).
+**Dependencies:** Γ-function functional equation; Chowla-Selberg formula (Chowla & Selberg 1949); arithmetic of CM curves over ℚ(i).
 
-**What it does NOT claim.** Nothing about physics. G* is a specific
-real number defined by gamma-function values; the theorem records its
-algebraic identity, nothing more.
+**What it does NOT claim.** Nothing about physics. G* is a specific real number defined by gamma-function values; the theorem records its algebraic identity, nothing more.
 
 ---
 
@@ -241,19 +227,14 @@ interpretation. It is an arithmetic invariant of E.
 
 ## 5 · Theorem 5 — Watson identity
 
-**Statement.** The Watson integral W₃ on the BCC sub-lattice of the
-3D cubic lattice satisfies
+**Statement.** The Watson integral W₃ on the BCC sub-lattice of the 3D cubic lattice satisfies
 
-$$W_3 = \frac{G^{*2}}{2\pi}.$$
+$$W_3 = \frac{G^{*2}}{2\pi} = 2 G^2.$$
 
-Equivalently, the BCC eigenvalue triple cosine product evaluates to
-G*²/(2π).
+Equivalently, the BCC eigenvalue triple cosine product evaluates to G*²/(2\pi), which is exactly twice the square of the Gauss Constant $G$:
+$$W_3 = 2 G^2 \approx 1.39320393$$
 
-**Proof.** Watson's original 1939 computation evaluates W₃ in closed
-form via the lemniscatic period integral; the connection to G* is
-direct application of Theorem 1. See
-`docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` and
-the references therein to Watson 1939.
+**Proof.** Watson's original 1939 computation evaluates W₃ in closed form via the lemniscatic period integral; the connection to G* is direct application of Theorem 1. Substituting the Gauss AGM bridge constant $G^* = 2 G \pi^{1/2}$ into Watson's expression collapses it identically to $W_3 = 2 G^2$. See `docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` and the references therein to Watson 1939.
 
 **LEDGER:** Theorem-level subsidiary of FTD-0001; explicitly named in
 Watson's literature.

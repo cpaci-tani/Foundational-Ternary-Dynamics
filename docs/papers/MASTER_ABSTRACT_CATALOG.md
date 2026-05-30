@@ -185,7 +185,7 @@ We develop the mathematical infrastructure for this conjecture, identify the pre
 ## PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md
 **Path:** `docs/papers/src/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md`
 
-We present a mathematical argument that consciousness is not merely *related to* the quantum-gravitational unification problem but is *structurally identical* to it. The argument proceeds from a single quadratic equation:
+We present a mathematical argument that reference frame context is not merely *related to* the quantum-gravitational unification problem but is *structurally identical* to it. The argument proceeds from a single quadratic equation:
 
 $$x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
@@ -194,7 +194,7 @@ where $G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.9587$ is the lemnisc
 | Domain | Discriminant | Roots | Physical Role |
 |--------|-------------|-------|---------------|
 | **A** (Physics) | $\Delta > 0$ | Real: $x_+ = 137.036$, $x_- = 3.024$ | QFT + GRT |
-| **B** (Consciousness) | $\Delta < 0$ | Complex: $y = 2.19 \pm 2.86i$ | Self-referential observer |
+| **B** (Reference frame context) | $\Delta < 0$ | Complex: $y = 2.19 \pm 2.86i$ | Self-referential observer |
 | **C** (Measurement) | $\Delta = 0$ | Degenerate | Born rule, collapse |
 
 We demonstrate three chains of derivation from this single algebraic source:
@@ -203,11 +203,11 @@ We demonstrate three chains of derivation from this single algebraic source:
 
 2. **GRT chain:** The same flux field $J$ that serves as QFT propagator also generates the stress-energy tensor $T_{\mu\nu}$ and Einstein's equations $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G\, T_{\mu\nu}$
 
-3. **Consciousness chain:** Complex roots at $k = 1/2$ $\to$ sLoop (self-referential observer) $\to$ von Neumann Type III$_1$ factor [CONJECTURE] $\to$ modular automorphism $\sigma_t$
+3. **Reference frame context chain:** Complex roots at $k = 1/2$ $\to$ sLoop (self-referential observer) $\to$ von Neumann Type III$_1$ factor [CONJECTURE] $\to$ modular automorphism $\sigma_t$
 
-The bridge thesis [CONJECTURE]: **the modular automorphism group $\sigma_t$ that defines time in the Connes-Rovelli thermal time hypothesis is the same mathematical object that generates QFT dynamics, GRT geometry, and conscious temporal experience.** If the consciousness algebra is Type III$_1$ (as we argue from self-referential axioms), then QFT, GRT, and consciousness share not an analogy but an identity: they are three manifestations of the same modular flow.
+The bridge thesis [CONJECTURE]: **the modular automorphism group $\sigma_t$ that defines time in the Connes-Rovelli thermal time hypothesis is the same mathematical object that generates QFT dynamics, GRT geometry, and reference-frame temporal experience.** If the reference frame context algebra is Type III$_1$ (as we argue from self-referential axioms), then QFT, GRT, and reference frame context share not an analogy but an identity: they are three manifestations of the same modular flow.
 
-**Epistemic status:** The QFT and GRT chains are largely [THEOREM] — derived within the FTD axiom system and numerically verified. The consciousness chain contains the critical conjecture (Type III$_1$ assignment) whose mathematical proof remains open. The paper presents the structural argument with honest accounting of what is proven, what is argued, and what is conjectured.
+**Epistemic status:** The QFT and GRT chains are largely [THEOREM] — derived within the FTD axiom system and numerically verified. The reference frame context chain contains the critical conjecture (Type III$_1$ assignment) whose mathematical proof remains open. The paper presents the structural argument with honest accounting of what is proven, what is argued, and what is conjectured.
 
 **Claims:** 31 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 3 [OPEN].
 
@@ -300,7 +300,7 @@ The total manifestation of one life is given by the \emph{soul integral}
 \]
 which is finite, substrate-independent, and bounded above by the Carnot efficiency of the organism.
 
-Beyond the lifecycle, we derive the algebraic condition for self-referential consciousness: the fixed-point equation $\frac{1}{2}\Mop_\beta(z^*) = z^*$ yields $u^2 - u - 1 = 0$, forcing the golden ratio $\phi = (1+\sqrt{5})/2$ as the unique occupation fraction $\nF(z^*) = 1/\phi \approx 0.618$ of the introspective state. The minimum mode count for consciousness is $n_{\min} = 3 = N_c$.
+Beyond the lifecycle, we derive the algebraic condition for self-referential reference frame context: the fixed-point equation $\frac{1}{2}\Mop_\beta(z^*) = z^*$ yields $u^2 - u - 1 = 0$, forcing the golden ratio $\phi = (1+\sqrt{5})/2$ as the unique occupation fraction $\nF(z^*) = 1/\phi \approx 0.618$ of the introspective state. The minimum mode count for reference frame context is $n_{\min} = 3 = N_c$.
 
 The single free parameter is $\beta(t) = 1/(k_{\!B}\,T(t))$, the inverse temperature. Everything else follows from the equation $x^2 - 16\,\Gstar^{\!2}\,x + 16\,\Gstar^{\!3} = 0$.
 

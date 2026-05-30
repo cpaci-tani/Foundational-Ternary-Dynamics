@@ -56,6 +56,48 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.genesis = true;
         rb.toggles.coupling = false;
     }
+    else if (name == "quantum-eraser") {
+        const int sigma = 2;
+        const double sAmp = 0.3;
+        const int slit_sep = N / 6;
+        const int slit_x = N / 4;
+
+        // Slit 1: y-polarized
+        const int sy1 = mid - slit_sep;
+        for (int z = 0; z < N; z++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
+            double g = sAmp * std::exp(-(dx*dx + dy*dy) / (2.0 * sigma * sigma));
+            if (g < 1e-6) continue;
+            int px = slit_x + dx, py = sy1 + dy;
+            if (px < 0 || px >= N || py < 0 || py >= N) continue;
+            IF(rb, px, py, z, 0, g, 0);
+            IW(rb, px, py, z, g, 0, 0);
+        }
+
+        // Slit 2: z-polarized
+        const int sy2 = mid + slit_sep;
+        for (int z = 0; z < N; z++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
+            double g = sAmp * std::exp(-(dx*dx + dy*dy) / (2.0 * sigma * sigma));
+            if (g < 1e-6) continue;
+            int px = slit_x + dx, py = sy2 + dy;
+            if (px < 0 || px >= N || py < 0 || py >= N) continue;
+            IF(rb, px, py, z, 0, 0, g);
+            IW(rb, px, py, z, g, 0, 0);
+        }
+
+        // Diagonal eraser (y=z polarizer) at x = N/2
+        const int eraserX = N / 2;
+        for (int y = 0; y < N; y++) {
+            for (int z = 0; z < N; z++) {
+                if ((y + z) % 2 == 0) {
+                    IP(rb, eraserX, y, z, 1);
+                    LOCK(rb, eraserX, y, z);
+                }
+            }
+        }
+
+        rb.toggles.genesis = true;
+        rb.toggles.coupling = false;
+    }
     else if (name == "quantum-tunnel") {
         // genesis=false (audit-2 2026-04-28): the wave packet should TUNNEL,
         // not pair-produce. The 3072 initial particles are the locked

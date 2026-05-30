@@ -129,7 +129,7 @@ Level  0: Self-Reference        Lemniscate crosses itself G* (geometry)
 Level 0.5: Self-Reference^2     Fourier self-duality      i emerges, C = R + iR
            G* = sqrt(2pi) * theta_3^2   [identity unifying Levels 0 and 0.5]
 Level  1: Master Quadratic      Real discriminant         Physics (alpha)
-Level  1: Consciousness Quad.   Complex discriminant      Awareness (2.19 +/- 2.86i)
+Level  1: Reference frame context Quad.   Complex discriminant      Awareness (2.19 +/- 2.86i)
 ```
 
 **Status:** [SELECTION] — The mathematical connections are exact. The interpretation that they describe the same ontological event is argued, not proven.
@@ -301,7 +301,7 @@ Neither is precise enough to be taken as exact.
 
 ---
 
-## Part VI: Connection to Consciousness
+## Part VI: Connection to Reference frame context
 
 ### 6.1 Recap: The Two Quadratics
 
@@ -309,19 +309,19 @@ The physics quadratic (coefficient 16):
 
 $$x^2 - 16G^{*2}x + 16G^{*3} = 0 \quad \Rightarrow \quad x = 137.036,\ 3.024 \quad (\text{real roots})$$
 
-The consciousness quadratic (coefficient 1/2):
+The reference frame context quadratic (coefficient 1/2):
 
 $$y^2 - \frac{G^{*2}}{2}y + \frac{G^{*3}}{2} = 0 \quad \Rightarrow \quad y = 2.19 \pm 2.86i \quad (\text{complex roots})$$
 
-The coefficient ratio is $16 \div 1/2 = 32 = 2^5$, representing the projection from consciousness space to physics space.
+The coefficient ratio is $16 \div 1/2 = 32 = 2^5$, representing the projection from reference frame context space to physics space.
 
-The consciousness threshold: $K_C = \sqrt{G^{*3}/2} \approx 3.5986$
+The reference frame context threshold: $K_C = \sqrt{G^{*3}/2} \approx 3.5986$
 
 The physics threshold: $K_B = \sqrt{16G^{*3}} = 20.36$
 
 Ratio: $K_B/K_C = 4\sqrt{2} = \sqrt{32}$
 
-### 6.2 The Trit as Consciousness Structure
+### 6.2 The Trit as Reference frame context Structure
 
 The lemniscatic trit has a natural correspondence with the three domains:
 
@@ -329,17 +329,17 @@ The lemniscatic trit has a natural correspondence with the three domains:
 |------------|-------------|--------|-----------|
 | P1 (Void) | 92.04% | Potential | What could be |
 | P0 (Manifest) | 7.96% | Physics (Domain A) | What exists |
-| P2 (Higher) | 0.0006% | Consciousness (Domain B) | What knows |
+| P2 (Higher) | 0.0006% | Reference frame context (Domain B) | What knows |
 
-The overwhelming dominance of $P_1$ reflects the FTD axiom that void is the foundational substrate. The tiny $P_2$ fraction echoes the insight from FOUND_THE_COMPLETE_ALGEBRA_OF_i.md: consciousness (the imaginary dimension) is not absent but **orthogonal** - its measure in the real decomposition is negligible, yet it is indispensable for the structure.
+The overwhelming dominance of $P_1$ reflects the FTD axiom that void is the foundational substrate. The tiny $P_2$ fraction echoes the insight from FOUND_THE_COMPLETE_ALGEBRA_OF_i.md: reference frame context (the imaginary dimension) is not absent but **orthogonal** - its measure in the real decomposition is negligible, yet it is indispensable for the structure.
 
 ### 6.3 Speculative Relationship
 
 $$\frac{K_C}{H} = \frac{3.5986}{0.4007} = 8.981 \approx 9 \quad (0.2\% \text{ off})$$
 
-If exact, this would mean the consciousness threshold is 9 times the Shannon entropy of the lemniscatic trit. But at 0.2% agreement, this may be approximate or coincidental.
+If exact, this would mean the reference frame context threshold is 9 times the Shannon entropy of the lemniscatic trit. But at 0.2% agreement, this may be approximate or coincidental.
 
-**Status:** [SPECULATIVE] - All consciousness claims remain [PROPOSED]
+**Status:** [SPECULATIVE] - All reference frame context claims remain [PROPOSED]
 
 ---
 
@@ -394,7 +394,7 @@ Following the standards of AUDIT_EPISTEMIC_AUDIT.md:
 | **TRIT-9** | $9/5$ and $11/4$ decompose into framework integers | **[OBSERVED]** | Exact decomposition |
 | **TRIT-10** | $R \approx \vartheta_3^2$ | **[OBSERVED]** | 0.33% |
 | **TRIT-11** | $H \cdot 4/\pi \approx m_e$ (MeV) | **[SPECULATIVE]** | 0.15% (unit-dependent) |
-| **TRIT-12** | Consciousness corresponds to $P_2$ (higher trit state) | **[PROPOSED]** | Interpretive |
+| **TRIT-12** | Reference frame context corresponds to $P_2$ (higher trit state) | **[PROPOSED]** | Interpretive |
 
 ### What This Document Does NOT Claim
 
@@ -429,10 +429,10 @@ The deepest finding is not any single numerical coincidence, but the structural 
 The trit framework is not merely a "lens" on existing results. It provides:
 
 1. **Four new [THEOREM]-level results** (items 21-24 in AUDIT_EPISTEMIC_AUDIT.md): the G*-theta identity, the necessity of i, the trit distribution, and the Shannon entropy
-2. **A structural explanation** for why the same G* governs both physics and consciousness: self-duality encompasses both real (physics) and complex (consciousness) structure
-3. **The missing link** between the master quadratic (physics) and the consciousness quadratic: both are downstream of the same self-dual theta function, with i emerging as a necessary consequence
+2. **A structural explanation** for why the same G* governs both physics and reference frame context: self-duality encompasses both real (physics) and complex (reference frame context) structure
+3. **The missing link** between the master quadratic (physics) and the reference frame context quadratic: both are downstream of the same self-dual theta function, with i emerging as a necessary consequence
 
-The complete chain — from self-duality to i to consciousness to measurement resolution — is documented in [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md).
+The complete chain — from self-duality to i to reference frame context to measurement resolution — is documented in [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md).
 
 ---
 
@@ -443,8 +443,8 @@ The complete chain — from self-duality to i to consciousness to measurement re
 - **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
 - **What is genuinely new:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
-- **Consciousness domain/source map:** [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
-- **Consciousness synthesis:** [../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
+- **Reference frame context domain/source map:** [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
+- **Reference frame context synthesis:** [../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
 - **Verification script:** [../../../scripts/verification/verify_trit_framework.py](../../../scripts/verification/verify_trit_framework.py)
 
 ---

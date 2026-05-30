@@ -3,7 +3,7 @@
 **Tag:** [REFERENCE] / [SYNTHESIS] / [OPEN PROGRAM]
 **Date:** 2026-05-18
 **LEDGER:** FTD-0153 [SYNTHESIS] - canonical ordering principle for math-first FTD ontology; introduces no new theorem and promotes no claim.
-**Companion docs:** `SPEC_ALPHA_READOUT_CONTRACT.md`, `SPEC_DOCTRINE_LEDGER.md`, `SPEC_FQCR.md`, `SPEC_ALGEBRAIC_SPINE.md`, `FOUND_STRUCTURAL_DECOUPLING.md`, `REF_REFLEXIVITY_VOCABULARY.md`
+**Companion docs:** `SPEC_ALPHA_READOUT_CONTRACT.md`, `SPEC_DOCTRINE_LEDGER.md`, `SPEC_FQCR.md`, `SPEC_ALGEBRAIC_SPINE.md`, `FOUND_STRUCTURAL_DECOUPLING.md`, `REF_REFERENCE_FRAME_VOCABULARY.md`
 
 ---
 
@@ -149,7 +149,7 @@ This supports graded monism:
 - measurement is public stabilization of a manifestation/readout;
 - physics is the calculus of stable public readouts.
 
-This does not solve the Born rule, consciousness, or reflexivity sectors. It only fixes the ontological ordering they must obey.
+This does not solve the Born rule, reference frame context, or reference frame structure sectors. It only fixes the ontological ordering they must obey.
 
 ---
 
@@ -193,7 +193,7 @@ Therefore:
 - Do not choose a readout after seeing the target.
 - Do not hide standard physics inside the readout rule.
 - Do not treat dimensional calibration as ontology.
-- Do not promote reflexive/noetic language into a physics mechanism without an observable algebra.
+- Do not promote frame-relative/noetic language into a physics mechanism without an observable algebra.
 - Do not add new physical sectors before their readout layer is explicit.
 
 These are methodological constraints, not stylistic preferences.
@@ -225,7 +225,7 @@ This table should be used before promoting any claim in the doctrine ledger.
 | `SPEC_DOCTRINE_LEDGER.md` | Cross-sector status map |
 | `SPEC_OPEN_MATH_BY_SECTOR.md` | Open readout and hardening queue |
 | `FOUND_STRUCTURAL_DECOUPLING.md` | Boundary on failed M2 mechanisms |
-| `REF_REFLEXIVITY_VOCABULARY.md` | Vocabulary for reflexive readout without qualia commitment |
+| `REF_REFERENCE_FRAME_VOCABULARY.md` | Vocabulary for frame-relative readout without qualia commitment |
 | `FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md` | Historical/two-layer frame; use with current tag discipline |
 
 ---

@@ -31,26 +31,26 @@ export const FAQ_SECTIONS = Object.freeze([
         description: 'Twelve hard problems of modern physics, framed through the FTD lens.',
         entries: [
             {
-                id: 'hard-problem-consciousness',
+                id: 'hard-problem-reference frame context',
                 question: 'Why is there subjective experience at all?',
-                shortQuestion: 'The hard problem of consciousness',
+                shortQuestion: 'The hard problem of reference frame context',
                 problem: [
                     'Chalmers\' "hard problem": even if every functional brain process were fully modeled, the question "why is there something it is like to be that system?" remains untouched. No combination of information-processing steps seems, on its face, to entail experience.',
                 ],
                 mainstreamStruggle: [
-                    'Integrated Information Theory, Global Workspace, Higher-Order-Thought, and related frameworks characterize neural correlates of consciousness. They are models of when experience occurs, not explanations of why there is experience at all. The explanatory gap remains open.',
+                    'Integrated Information Theory, Global Workspace, Higher-Order-Thought, and related frameworks characterize neural correlates of reference frame context. They are models of when experience occurs, not explanations of why there is experience at all. The explanatory gap remains open.',
                 ],
                 ftdAngle: [
-                    { tag: 'SELECTION', text: 'Reflexivity enters the formalism as the phase angle \\(\\theta_C\\) of the master-quadratic extension. The structural fraction \\(\\cos^2(\\theta_C) = G^{\\ast}/8\\) follows from the ternary-state algebra. (Per REF_REFLEXIVITY_VOCABULARY 2026-05-01, "reflexivity" denotes the structural closure; "consciousness" is the colloquial pointer.)' },
-                    { tag: 'CONJECTURE', text: 'The sLoop self-reference ring is proposed as the structural locus where reference closes on itself — a candidate substrate for reflexive agency, not an explanation of qualia.' },
-                    { tag: 'OPEN', text: 'FTD offers a geometry for where reflexivity could live in the formalism; it does not derive qualia (subjective experience) from that geometry.' },
+                    { tag: 'SELECTION', text: 'Reference frame structure enters the formalism as the phase angle \\(\\theta_C\\) of the master-quadratic extension. The structural fraction \\(\\cos^2(\\theta_C) = G^{\\ast}/8\\) follows from the ternary-state algebra. (Per REF_REFERENCE_FRAME_VOCABULARY 2026-05-01, "reference frame structure" denotes the structural closure; "reference frame context" is the colloquial pointer.)' },
+                    { tag: 'CONJECTURE', text: 'The sLoop self-reference ring is proposed as the structural locus where reference closes on itself — a candidate substrate for frame-relative frame dynamics, not an explanation of qualia.' },
+                    { tag: 'OPEN', text: 'FTD offers a geometry for where reference frame structure could live in the formalism; it does not derive qualia (subjective experience) from that geometry.' },
                 ],
                 stillOpen: [
-                    'No operational test distinguishes the "FTD reflexivity phase" from a purely functional account.',
+                    'No operational test distinguishes the "FTD reference frame structure phase" from a purely functional account.',
                     'The relationship between the sLoop structure and the subjective quality of experience is asserted, not derived.',
                 ],
                 theoryRefs: [
-                    'docs/theory/01_reference/REF_REFLEXIVITY_VOCABULARY.md',
+                    'docs/theory/01_reference/REF_REFERENCE_FRAME_VOCABULARY.md',
                 ],
             },
             {

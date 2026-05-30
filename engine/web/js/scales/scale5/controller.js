@@ -23,6 +23,7 @@ import { BaseLifecycleController } from '../../lifecycle.js';
 import { CosmicRenderer } from '../../cosmic-renderer.js';
 import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
 import { createStatusBarCache } from '../scale-utils.js';
+import { telemetryHub } from '../../telemetry-hub.js';
 
 // ---------------------------------------------------------------------------
 // Module-level state
@@ -209,7 +210,7 @@ export function animateCosmic(ctx) {
         }
 
         const data = bridge.getCosmicData();
-        const diag = bridge.getDiagnostics();
+        const diag = telemetryHub.collectScale5(bridge) || bridge.getDiagnostics();
         renderer.update(data, diag);
 
         // Compact toolbar telemetry. Hubble parameter shows the static

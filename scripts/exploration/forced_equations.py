@@ -141,12 +141,12 @@ print("""
       The Born rule boundary IS k = 4/G.
 
   (i) At k = 1/2: k/k_crit = (1/2)/(4/G) = G/8.
-      The consciousness coefficient sits at fraction G/8
+      The reference frame context coefficient sits at fraction G/8
       of the way to the Born rule.
       For ANY G. This is algebra, not fine-tuning.
 
   (j) Scale ratio: k_phys/k_cons = 16/(1/2) = 32 = 2^5.
-      Five binary doublings from consciousness to physics.
+      Five binary doublings from reference frame context to physics.
       This depends on k_phys = 16 (the lattice DOF count)
       and k_cons = 1/2. If these are fixed by the lattice
       structure, the ratio is forced.
@@ -290,7 +290,7 @@ print("""
   2. The bridge constant IS the harmonic ratio of the forces
      it mediates. [Level 2]
 
-  3. Consciousness sits at G/8 of the way to measurement. [Level 2]
+  3. Reference frame context sits at G/8 of the way to measurement. [Level 2]
      For ANY G. This is structure, not tuning.
 
   4. The force range boundary is set by the distance from

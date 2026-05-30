@@ -56,7 +56,8 @@ export function advanceSimulation(ctx, state) {
     // yet or if the scenario didn't tick this frame).
     if (tickScenario && ticksToRun > 0) {
         const rec = getScale0MemoryRecorder();
-        rec?.onTick(ctx.bridge.capabilities.scale0);
+        const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : mainScale0;
+        rec?.onTick(activeScale0);
     }
 
     return latticeSize;

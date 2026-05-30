@@ -85,7 +85,7 @@
 - **W3**: Modal constraint reification problem
 - **W4**: Noetic mass is operationally undefined
 - **W5**: sLoop-Bell mechanism underspecified
-- **W6**: Consciousness definition may be vacuous
+- **W6**: Reference frame context definition may be vacuous
 - **W7**: Deflationary move on qualia too quick
 - **W8**: Insufficient comparison to rival positions
 
@@ -132,7 +132,7 @@
 - **W3**: sLoop lacks mathematical rigor
 - **W4**: Born rule derivations not truly independent
 - **W5**: No treatment of quantum computing primitives
-- **W6**: Consciousness extensions unfalsifiable
+- **W6**: Reference frame context extensions unfalsifiable
 
 ---
 

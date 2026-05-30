@@ -25,7 +25,7 @@
 | [SPEC_DOCTRINE_LEDGER.md](SPEC_DOCTRINE_LEDGER.md) | [REFERENCE] / [SYNTHESIS] | Doctrine Ledger v1.4 — single-page status map; per-element tags; introduces no new theorems. |
 | [SPEC_MATH_FIRST_ONTOLOGY.md](SPEC_MATH_FIRST_ONTOLOGY.md) | [REFERENCE] / [SYNTHESIS] / [OPEN PROGRAM] | Canonical math-first ontology + readout-ordering principle (FTD-0153). |
 | [SPEC_OPEN_MATH_BY_SECTOR.md](SPEC_OPEN_MATH_BY_SECTOR.md) | [REFERENCE] | Sector-organised open research-questions queue, 10 SM sectors (FTD-0146); replaces tier-aligned checklist. |
-| [REF_REFLEXIVITY_VOCABULARY.md](REF_REFLEXIVITY_VOCABULARY.md) | [REFERENCE] (proposed canonical) | Canonical reflexivity/agency vocabulary replacing "consciousness" terminology. |
+| [REF_REFERENCE_FRAME_VOCABULARY.md](REF_REFERENCE_FRAME_VOCABULARY.md) | [REFERENCE] (proposed canonical) | Canonical reference frame structure/frame dynamics vocabulary replacing "reference frame context" terminology. |
 
 ## Algebraic spine, G*, and the master quadratic
 
@@ -45,8 +45,7 @@
 | [SPEC_ALPHA_READOUT_CONTRACT.md](SPEC_ALPHA_READOUT_CONTRACT.md) | [REFERENCE] / [OPEN PROGRAM] | MC-T4.3 closure criteria — what it would mean to "earn the map" from spine to physical α (FTD-0152). |
 | [SPEC_DIMENSIONAL_MAP.md](SPEC_DIMENSIONAL_MAP.md) | [REFERENCE] (auto-generated) | Dimensionless ↔ dimensional map: spine theorems → predictions → calibration → one worked application. |
 | [SPEC_SM_REPLACEMENT_COMPLETE.md](SPEC_SM_REPLACEMENT_COMPLETE.md) | capstone spec (re-tagged) | L_SM → L_RB replacement; Waves 1–4 synthesis (LEDGER wins on tag conflicts). |
-| [SPEC_FTD_COMPARATIVE_PHYSICS.md](SPEC_FTD_COMPARATIVE_PHYSICS.md) | reference standard | The PF Atlas — how π/4 enters and exits Standard Model formulas, side by side with FTD. |
-| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | research roadmap | Gap inventory for bridging QFT and GR via modular flow; 25+ open gaps across 5 layers. |
+| [SPEC_FTD_COMPARATIVE_PHYSICS.md](SPEC_FTD_COMPARATIVE_PHYSICS.md) | reference standard | The PF Atlas — how π/4 enters and exits Standard Model formulas, side by side with FTD. || [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | research roadmap | Gap inventory for bridging QFT and GR via modular flow; 25+ open gaps across 5 layers. |
 
 ## Canonical action & engine map
 
@@ -70,4 +69,4 @@
 
 ---
 
-24 active docs in this cluster (+ 0 archived).
+25 active docs in this cluster (+ 0 archived).

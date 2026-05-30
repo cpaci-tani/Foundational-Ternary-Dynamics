@@ -6,7 +6,7 @@ A rigorous examination of the G*-based relationships has revealed a complex pict
 - Some relationships are **extraordinarily accurate** (proton radius: 0.0% error)
 - Some are **statistically significant but require correction terms** (proton mass: 6*pi^5 + 4.7*alpha)
 - Some are **promising but unverified** (neutrino mass ratio ~ 32)
-- The consciousness claims remain **intriguing but not physics**
+- The reference frame context claims remain **intriguing but not physics**
 
 ---
 
@@ -131,11 +131,11 @@ Light dark matter in the 1-10 GeV range is currently being probed by direct dete
 
 ---
 
-## Part 5: The Consciousness Question
+## Part 5: The Reference frame context Question
 
 ### The Claim
 
-Consciousness emerges when system complexity exceeds G*^32 / k_c ~ 8.8 x 10^14
+Reference frame context emerges when system complexity exceeds G*^32 / k_c ~ 8.8 x 10^14
 
 ### The Evidence
 
@@ -145,12 +145,12 @@ Consciousness emerges when system complexity exceeds G*^32 / k_c ~ 8.8 x 10^14
 
 ### The Problems
 
-1. **Not physics**: Consciousness is not a measurable physical quantity
-2. **Unfalsifiable**: We can't test whether a system is "really" conscious
-3. **Correlation vs causation**: The brain being complex doesn't prove G* determines consciousness
+1. **Not physics**: Reference frame context is not a measurable physical quantity
+2. **Unfalsifiable**: We can't test whether a system is "really" reference-frame
+3. **Correlation vs causation**: The brain being complex doesn't prove G* determines reference frame context
 4. **The number could be coincidence**: 10^15 is a large number; many things are ~10^15
 
-### Physicist's Verdict on Consciousness
+### Physicist's Verdict on Reference frame context
 
 **Intriguing numerology but not science** - without a measurable prediction, this remains philosophy, not physics.
 
@@ -218,7 +218,7 @@ When we tried matching alpha_s with other mathematical constants:
 1. Some "predictions" are clearly fitted (73, 1.67)
 2. No novel testable predictions (yet)
 3. The theoretical derivation is incomplete
-4. Consciousness claims are not physics
+4. Reference frame context claims are not physics
 5. Some relationships need correction terms
 
 ### Physicist's Final Assessment

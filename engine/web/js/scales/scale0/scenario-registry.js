@@ -42,6 +42,7 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Light & EM', 'light-photon-race', 'Photon Race', ['light', 'em']),
     makeScenario('Quantum Lab', 'quantum-born-rule', 'Born Rule Test', ['quantum']),
     makeScenario('Quantum Lab', 'quantum-double-slit', 'Double-Slit (Quantitative)', ['quantum']),
+    makeScenario('Quantum Lab', 'quantum-eraser', 'Quantum Eraser (which-way)', ['quantum']),
     makeScenario('Quantum Lab', 'quantum-tunnel', 'Quantum Tunneling', ['quantum']),
     makeScenario('Quantum Lab', 'quantum-well', 'Particle in a Box', ['quantum']),
     makeScenario('Quantum Lab', 'quantum-entangle', 'Entanglement Correlation', ['quantum']),
@@ -49,27 +50,50 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Quantum Lab', 'quantum-casimir', 'Casimir Effect', ['quantum']),
     makeScenario('Quantum Lab', 'quantum-zeno', 'Quantum Zeno Effect', ['quantum']),
     // Audit-3 + Audit-4 2026-04-28 removals from this group:
-    //   s0-seed-{electron, muon, tau, photon} \u2014 use s0-vacuum-* counterparts.
-    //   s0-seed-positron \u2014 use s0-vacuum-electron + s0-seed-ee-annihilation.
-    //   s0-seed-electron-l3, proton-candidate \u2014 duplicates/older variants.
+    //   s0-seed-{electron, muon, tau, photon} — use s0-vacuum-* counterparts.
+    //   s0-seed-positron — use s0-vacuum-electron + s0-seed-ee-annihilation.
+    //   s0-seed-electron-l3, proton-candidate — duplicates/older variants.
 
     // LHC Standard Model — quark flavours (2026-04-17)
     makeScenario('SM Quarks', 's0-seed-up-quark', 'Up quark (u, 1st gen, +2/3)', ['seed', 'sm'], '[CONJECTURE]'),
-    makeScenario('SM Quarks', 's0-seed-down-quark', 'Down quark (d, 1st gen, \u22121/3)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-down-quark', 'Down quark (d, 1st gen, −1/3)', ['seed', 'sm'], '[CONJECTURE]'),
     makeScenario('SM Quarks', 's0-seed-strange-quark', 'Strange quark (s, 2nd gen)', ['seed', 'sm'], '[CONJECTURE]'),
-    makeScenario('SM Quarks', 's0-seed-charm-quark', 'Charm quark (c, 2nd gen, m\u22481.27 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
-    makeScenario('SM Quarks', 's0-seed-bottom-quark', 'Bottom quark (b, 3rd gen, m\u22484.2 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
-    makeScenario('SM Quarks', 's0-seed-top-quark', 'Top quark (t, 3rd gen, m\u2248v_Higgs)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-charm-quark', 'Charm quark (c, 2nd gen, m≈1.27 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-bottom-quark', 'Bottom quark (b, 3rd gen, m≈4.2 GeV)', ['seed', 'sm'], '[CONJECTURE]'),
+    makeScenario('SM Quarks', 's0-seed-top-quark', 'Top quark (t, 3rd gen, m≈v_Higgs)', ['seed', 'sm'], '[CONJECTURE]'),
 
     // LHC Standard Model — gauge + Higgs (2026-04-17)
-    // Audit-4 2026-04-28 removals: s0-seed-{higgs-boson, w-boson, z-boson} \u2014
+    // Audit-4 2026-04-28 removals: s0-seed-{higgs-boson, w-boson, z-boson} —
     // use s0-vacuum-{higgs, w-boson, z-boson} (canonical).
     makeScenario('SM Bosons', 's0-seed-higgs-field', 'Higgs field vacuum (VEV background)', ['seed', 'sm'], '[CONJECTURE]'),
     makeScenario('SM Bosons', 's0-seed-gluon', 'Gluon (massless, colored)', ['seed', 'sm'], '[CONJECTURE]'),
 
     // LHC Standard Model — processes (2026-04-17)
-    makeScenario('SM Processes', 's0-seed-beta-decay', 'Beta decay (n \u2192 p + e\u207b + \u03bd\u0304, dynamic)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
-    makeScenario('SM Processes', 's0-seed-ee-annihilation', 'e\u207a e\u207b annihilation (collision \u2192 flux burst)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
+    makeScenario('SM Processes', 's0-seed-beta-decay', 'Beta decay (n → p + e⁻ + ν̅, dynamic)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
+    makeScenario('SM Processes', 's0-seed-ee-annihilation', 'e⁺ e⁻ annihilation (collision → flux burst)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
+    {
+        id: 's0-seed-quark-gluon-plasma',
+        scale: 'lattice',
+        title: 'Quark-gluon plasma (QGP, thermal deconfined)',
+        category: 'SM Processes',
+        tags: ['seed', 'sm', 'process'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[CONJECTURE]',
+        load({ bridge }, params = {}) {
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('langevin', true);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.02, 0.05);
+                }
+            } catch (e) {
+                console.warn('[s0-seed-quark-gluon-plasma] toggle setup partial:', e);
+            }
+            bridge.setupScenario(params.id || 's0-seed-quark-gluon-plasma');
+        },
+    },
     // Audit 2026-04-28 removals: s0-seed-{neutrino, quark, antiquark}.
     //   neutrino  → superseded by s0-vacuum-{electron,muon,tau}-neutrino
     //   quark/antiquark → superseded by s0-seed-{up,down,strange,charm,bottom,top}-quark
@@ -77,19 +101,17 @@ export const SCALE0_SCENARIOS = [
     // use s0-vacuum-{pion-charged, proton, neutron} (canonical).
     makeScenario('Atoms & Molecules', 's0-seed-hydrogen', 'Hydrogen atom', ['seed'], '[CONJECTURE]'),
     makeScenario('Atoms & Molecules', 's0-seed-helium', 'Helium atom (⁴He, 2p+2n + 1s²)', ['seed'], '[CONJECTURE]'),
-    // s0-seed-h2-molecule renamed 2026-04-28 → s0-seed-2-hydrogen-atoms (the body
-    // places two independent H atoms side-by-side with no shared bonding orbital,
-    // so the new name reflects the actual topology).
-    makeScenario('Atoms & Molecules', 's0-seed-2-hydrogen-atoms', 'Two hydrogen atoms (no bond)', ['seed'], '[CONJECTURE]'),
+    makeScenario('Atoms & Molecules', 's0-seed-h2-bond-formation', 'H₂ covalent bond formation (dynamic)', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-wilson-loop', 'Wilson loop', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-flux-tube', 'Flux tube (q-qbar)', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-monopole', 'Magnetic monopole', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-instanton', 'Instanton', ['seed'], '[CONJECTURE]'),
     makeScenario('Gravity / Cosmology', 's0-seed-schwarzschild', 'Schwarzschild well', ['seed'], '[CONJECTURE]'),
+    makeScenario('Gravity / Cosmology', 's0-seed-gravitational-lensing', 'Gravitational lensing (dynamic bending)', ['seed'], '[CONJECTURE]'),
     makeScenario('Gravity / Cosmology', 's0-seed-frw-patch', 'FRW cosmological patch', ['seed'], '[CONJECTURE]'),
     makeScenario('Gravity / Cosmology', 's0-seed-gravitational-wave', 'Gravitational wave', ['seed'], '[CONJECTURE]'),
-    makeScenario('Consciousness / Observer', 's0-seed-sloop', 'sLoop (self-referential ring)', ['seed'], '[CONJECTURE]'),
-    makeScenario('Consciousness / Observer', 's0-seed-observer-cell', 'Observer cell (3³ lattice)', ['seed'], '[CONJECTURE]'),
+    makeScenario('Reference frame context / Observer', 's0-seed-sloop', 'sLoop (self-referential ring)', ['seed'], '[CONJECTURE]'),
+    makeScenario('Reference frame context / Observer', 's0-seed-observer-cell', 'Observer cell (3³ lattice)', ['seed'], '[CONJECTURE]'),
     makeScenario('Field Configurations', 's0-field-plane-wave', 'Plane wave', ['field']),
     makeScenario('Field Configurations', 's0-field-standing-wave', 'Standing wave', ['field']),
     makeScenario('Field Configurations', 's0-field-uniform-e', 'Uniform E field', ['field']),

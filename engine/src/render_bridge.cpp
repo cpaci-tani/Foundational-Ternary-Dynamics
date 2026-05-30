@@ -16,7 +16,7 @@
  *   - No QCD running coupling
  *   - No weak transmutation
  *   - No binding energy maintenance
- *   - No noetic/consciousness
+ *   - No noetic/reference frame context
  *   - No latency/bandwidth/proper time
  *
  * What emerges from these rules IS the physics.

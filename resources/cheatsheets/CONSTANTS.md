@@ -81,11 +81,11 @@ Since 2026-04-17 the engine's `ALPHA` is the precision value (1.26 ppm tighter t
 | `c₃` | 4/141 = 0.0284 | `N_base / (N_c · D_constraint)` |
 | `c₄` | 141/11 = 12.818 | `(N_c · D_constraint) / (b_3 + N_base)` |
 
-## Consciousness sector (Scale 11)
+## Reference frame context sector (Scale 11)
 
 | Symbol | Value | Meaning |
 |---|---|---|
-| `y_real` | `G*² / 4` = 2.188 | real part of consciousness roots |
+| `y_real` | `G*² / 4` = 2.188 | real part of reference frame context roots |
 | `\|y\|²` | `G*³ / 2` = 12.96 | squared magnitude |
 | `cos²θ_C` | `G*/8` = 0.370 | observable fraction |
 | `sin²θ_C` | 1 − `G*/8` = 0.630 | subjective fraction |

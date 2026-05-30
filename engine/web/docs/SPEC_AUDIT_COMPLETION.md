@@ -18,7 +18,7 @@ Scope: everything not already tracked in [SPEC_UI_REFACTOR.md](./SPEC_UI_REFACTO
 | 7 | `showToast()` referenced but implementation may be missing; silent failures on inject-full / clear-empty | **P1** | UX | 30 min |
 | 8 | `meta-pedagogy.js` (48) + `ontic-observatory.js` (40) inline styles — mix of static + dynamic | **P2** | code quality | 1.5 hr |
 | 9 | Tab → panel `aria-controls` association missing | **P2** | a11y | 15 min |
-| 10 | 10 unused design tokens in `tokens.css` (`--bg-raised`, `--shadow-sm/lg`, `--sp-xs`, `--fs-3xl`, `--dur-slow`, `--consciousness-glow/gold`, `--state-*` pair) | **P2** | hygiene | 10 min |
+| 10 | 10 unused design tokens in `tokens.css` (`--bg-raised`, `--shadow-sm/lg`, `--sp-xs`, `--fs-3xl`, `--dur-slow`, `--reference frame context-glow/gold`, `--state-*` pair) | **P2** | hygiene | 10 min |
 | 11 | Light/parchment themes don't override `--text-accent` / `--text-dim` — inherited dark-mode grays on white | **P2** | theme parity | 20 min |
 | 12 | `scale23/toolbar.css` uses raw hex `#ff4444` etc. instead of `--legend-*` tokens | **P2** | token adoption | 10 min |
 | 13 | No responsive `wide` layout in `responsive.css` — spec calls for multi-column at 1440+ | **P2** | responsive | 45 min |

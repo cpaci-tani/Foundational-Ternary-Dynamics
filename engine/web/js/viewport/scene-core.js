@@ -114,8 +114,9 @@ export class ViewportSceneCore {
             if (shape === 'cube') {
                 // Cube is already built at lattice coords — no transform needed
             } else {
+                const center = s / 2;
                 group.scale.setScalar(s / 2);
-                group.position.set(s / 2, s / 2, s / 2);
+                group.position.set(center, center, center);
             }
         } else {
             // origin mode (PE/AE/molecules)
@@ -383,7 +384,7 @@ export class ViewportSceneCore {
         this._scene.add(this.peGrid);
     }
 
-    // ── Post-Processing (Consciousness Mode) ──────────────────────
+    // ── Post-Processing (Reference frame context Mode) ──────────────────────
 
     enablePostProcessing() {
         if (this._composer) {

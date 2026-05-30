@@ -1,7 +1,7 @@
 # Threshold-Crossing -> Born Rule Test -- Results
 
 **Date:** 2026-05-23
-**Pre-registration:** docs/theory/06_consciousness/PREREG_THRESHOLD_CROSSING_BORN_v1.md
+**Pre-registration:** docs/theory/06_reference frame context/PREREG_THRESHOLD_CROSSING_BORN_v1.md
 **Git tag:** preregister-threshold-crossing-born-v1
 
 ---

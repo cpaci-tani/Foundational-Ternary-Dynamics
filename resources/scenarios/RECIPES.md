@@ -160,16 +160,16 @@ What happens: `phase_movement`'s collision logic recognises opposite-sign contac
 
 Overlay `EM energy u` (Topology column) to see the energy flow into the photonic field after annihilation.
 
-## 9. Parameter play — consciousness-phase exploration
+## 9. Parameter play — reference frame context-phase exploration
 
-**Scenario:** switch scale to **Scale 11 (Consciousness)**.
+**Scenario:** switch scale to **Scale 11 (Reference frame context)**.
 
 **Controls:**
-- Consciousness panel → `θ_C` phase slider.
+- Reference frame context panel → `θ_C` phase slider.
 - Watch `cos²θ_C = G*/8 ≈ 0.370` as the default observable/subjective split.
 
 **Look for:**
-- The holographic figure rotates as the consciousness phase rotates.
+- The holographic figure rotates as the reference frame context phase rotates.
 - The sLoop fixed point at `C = 1/G* ≈ 0.338` is the Mandelbrot-set attractor for the self-reference ring.
 
 ## Quick-toggle crib sheet

@@ -47,7 +47,7 @@ This plan audits the FTD simulation engine across six phases, progressing from m
 - [x] **0.17** Layer 6: Verify K_B = 0.511... and the mass formula m_e = m_P * sqrt(2*pi) * (16/3) * alpha^11
 - [x] **0.18** Layer 6b: Verify Higgs VEV v_HIGGS = 246.09 and m_HIGGS = 124.8
 - [x] **0.19** Layer 7: Verify precision correction epsilon and 1/ALPHA_PRECISION = 137.035999177
-- [x] **0.20** Layer 8: Verify consciousness quadratic and complex roots
+- [x] **0.20** Layer 8: Verify reference frame context quadratic and complex roots
 - [x] **0.21** Verify constants.h re-exports match ontic.h (no stale values or overrides)
 - [x] **0.22** Run `test_constants` and verify all 47 checks pass
 - [x] **0.23** Run `test_ontic_chain` and verify all 132 checks pass

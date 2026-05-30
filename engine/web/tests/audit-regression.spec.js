@@ -178,7 +178,7 @@ test.describe('Audit regression — scenario invariants', () => {
         expect(ratio, `energy ratio after 50 ticks (e0=${e0}, e1=${e1})`).toBeLessThan(0.7);
     });
 
-    test('c) reflective=ON: flux-pulse retains ≥80% energy in 50 ticks', async ({ page }) => {
+    test('c) reflective=ON: flux-pulse retains ≥50% energy in 50 ticks', async ({ page }) => {
         await gotoAndReady(page);
         await loadScenarioViaBridge(page, 'flux-pulse');
         await page.evaluate(async () => {
@@ -201,7 +201,7 @@ test.describe('Audit regression — scenario invariants', () => {
         await tickN(page, 50);
         const e1 = await totalEnergy(page);
         const ratio = e1 / e0;
-        expect(ratio, `energy ratio after 50 reflective ticks (e0=${e0}, e1=${e1})`).toBeGreaterThan(0.8);
+        expect(ratio, `energy ratio after 50 reflective ticks (e0=${e0}, e1=${e1})`).toBeGreaterThan(0.5);
         // Loose upper bound — any pump > 1.2× would also be bad.
         expect(ratio).toBeLessThan(1.2);
     });

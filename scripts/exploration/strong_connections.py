@@ -39,7 +39,7 @@ print('  ' + '-' * 68)
 print()
 
 # What we know:
-# G*/8 = 0.36983 (from consciousness quadratic: cos^2(theta_C))
+# G*/8 = 0.36983 (from reference frame context quadratic: cos^2(theta_C))
 # 10/27 = 0.37037 (from S_3 symmetric sector of 3^3 cube)
 # Difference: 0.14%
 

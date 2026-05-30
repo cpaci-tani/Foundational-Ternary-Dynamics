@@ -81,7 +81,7 @@ Every lattice site carries two coupled layers:
 | 1 | `ParticleEngine` | Continuous-position particles with Velocity Verlet integration |
 | 2 | `AtomEngine` | Composite atoms with ionic, van der Waals, and covalent bond forces |
 | 3 | `AtomEngine` (bonding) | Molecules — pre-bonded multi-atom structures with 1-3 exclusion |
-| 4 | `ConsciousnessEngine` (JS) | Observer modes, sLoop, phase states (visualization) |
+| 4 | `Reference frame contextEngine` (JS) | Observer modes, sLoop, phase states (visualization) |
 | 5 | `CosmicEngine` / `CosmicMockBridge` (JS) | N-body + SPH cosmic simulation, stellar lifecycle |
 | 6 | `MetaUnit` (JS) | Existential unit — Moore layer decomposition visualization |
 

@@ -4,7 +4,7 @@
 .ctrl-input {
     width: 100%;
     height: 30px;
-    padding: 0 8px;
+    padding: 0 var(--sp-sm);
     background: var(--bg-input);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -21,9 +21,9 @@
 /* ── Control row / label (.ctrl-row, .ctrl-label) ─────── */
 .ctrl-row {
     display: flex;
-    gap: 8px;
+    gap: var(--row-gap);
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: var(--row-gap);
 }
 
 .ctrl-label {
@@ -35,9 +35,9 @@
 /* ── PE control row / label / value ──────────────────── */
 .pe-ctrl-row {
     display: flex;
-    gap: 8px;
+    gap: var(--row-gap);
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: var(--row-gap);
 }
 
 .pe-ctrl-label {
@@ -69,8 +69,8 @@
 .toggle-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 0;
+    gap: var(--row-gap);
+    padding: var(--row-pad-y) 0;
 }
 
 .toggle-row label {
@@ -82,11 +82,11 @@
 /* Scenario override indicator (gold left border) */
 .toggle-row.scenario-override {
     border-left: 2px solid var(--warning);
-    padding-left: 6px;
+    padding-left: var(--sp-sm);
 }
 
 /* Collapsible advanced toggle section */
-.toggle-advanced { margin-top: 4px; }
+.toggle-advanced { margin-top: var(--row-pad-y); }
 .toggle-advanced summary {
     list-style: none;
     cursor: pointer;
@@ -95,7 +95,7 @@
     text-transform: uppercase;
     letter-spacing: 0.6px;
     color: var(--text-muted);
-    margin: 8px 0 2px 0;
+    margin: var(--sp-sm) 0 var(--sp-xs) 0;
     opacity: 0.7;
     user-select: none;
 }
@@ -108,7 +108,7 @@
     display: flex;
     align-items: center;
     gap: var(--sp-sm);
-    margin-bottom: 6px;
+    margin-bottom: var(--row-gap);
 }
 .ctrl-slider-row input[type="range"] { flex: 1; }
 
@@ -141,7 +141,7 @@
    with cascade order (this file loads after tokens.css) as tiebreaker. */
 .coord-stepper input.ctrl-input-coord {
     width: 72px;
-    padding: 0 22px 0 8px;
+    padding: 0 var(--sp-xl) 0 var(--sp-sm);
     min-height: 0;
     height: 30px;
     text-align: right;
@@ -162,7 +162,7 @@
 
 .coord-stepper-btns {
     position: absolute;
-    right: 2px;
+    right: var(--sp-xs);
     top: 0;
     bottom: 0;
     width: 14px;
@@ -170,7 +170,7 @@
     flex-direction: column;
     justify-content: center;  /* center the pair vertically on the input */
     align-items: stretch;
-    gap: 3px;                  /* small breathing room between ▲ and ▼ */
+    gap: calc(var(--sp-xs) + 1px);                  /* small breathing room between ▲ and ▼ */
     pointer-events: auto;
 }
 
@@ -196,7 +196,7 @@
    min-height:28px and padding:6px 10px on these micro-buttons. */
 .coord-stepper .coord-step {
     min-height: 0;
-    height: 10px;
+    height: var(--sp-md);
     padding: 0;
 }
 
@@ -211,17 +211,17 @@
 }
 
 /* ── Compact row spacing ─────────────────────────────── */
-.ctrl-row-compact { margin-bottom: 4px; }
+.ctrl-row-compact { margin-bottom: var(--row-pad-y); }
 
 /* ── Compact / dense buttons ─────────────────────────── */
 .ctrl-btn-compact {
-    padding: 4px 6px;
+    padding: var(--row-pad-y) var(--sp-sm);
     font-size: 10px;
     min-width: 0;
 }
 
 /* ── Flex helpers specific to control layouts ─────────── */
-.ctrl-btn-row-fill { flex: 1; gap: 2px; }
+.ctrl-btn-row-fill { flex: 1; gap: var(--sp-xs); }
 .ctrl-btn-flex-1   { flex: 1; }
 
 /* Dim footnote inside control cards */

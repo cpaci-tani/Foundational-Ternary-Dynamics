@@ -26,7 +26,7 @@ export async function gotoAndReady(page, opts = {}) {
  * Set the engine-mode select and fire its change handler.
  * @param {import('@playwright/test').Page} page
  * @param {string} mode - one of 'lattice', 'particles', 'atoms', 'molecules',
- *   'planetary', 'cosmic', 'meta', 'consciousness', 'hamiltonian-bridge'
+ *   'planetary', 'cosmic', 'meta', 'reference frame context', 'hamiltonian-bridge'
  */
 export async function switchMode(page, mode) {
     await page.evaluate((m) => {
@@ -84,6 +84,8 @@ export const KNOWN_NOISE = [
     /\[ws-bridge\]/,
     // Chrome font preload warning
     /was preloaded using link preload/,
+    // WebSocket connection failure on native port 9100 when offline
+    /WebSocket connection to 'ws:\/\/(?:127\.0\.0\.1|localhost):9100\/' failed/,
 ];
 
 /**

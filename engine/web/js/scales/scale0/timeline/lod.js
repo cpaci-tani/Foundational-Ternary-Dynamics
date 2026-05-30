@@ -115,17 +115,56 @@ export function upsampleVec3(src, N, k) {
     if (!factor || factor === 1) return src;
     const M = Math.floor(N / factor);
     const out = new Float32Array(3 * N * N * N);
+    
     for (let z = 0; z < N; z++) {
-        const zs = Math.min(M - 1, Math.floor(z / factor));
+        const zf = z / factor;
+        const z0 = Math.floor(zf);
+        const z1 = Math.min(M - 1, z0 + 1);
+        const tz = zf - z0;
+        
         for (let y = 0; y < N; y++) {
-            const ys = Math.min(M - 1, Math.floor(y / factor));
+            const yf = y / factor;
+            const y0 = Math.floor(yf);
+            const y1 = Math.min(M - 1, y0 + 1);
+            const ty = yf - y0;
+            
             for (let x = 0; x < N; x++) {
-                const xs = Math.min(M - 1, Math.floor(x / factor));
-                const si = 3 * (xs + ys * M + zs * M * M);
+                const xf = x / factor;
+                const x0 = Math.floor(xf);
+                const x1 = Math.min(M - 1, x0 + 1);
+                const tx = xf - x0;
+                
+                const idx000 = 3 * (x0 + y0 * M + z0 * M * M);
+                const idx100 = 3 * (x1 + y0 * M + z0 * M * M);
+                const idx010 = 3 * (x0 + y1 * M + z0 * M * M);
+                const idx110 = 3 * (x1 + y1 * M + z0 * M * M);
+                const idx001 = 3 * (x0 + y0 * M + z1 * M * M);
+                const idx101 = 3 * (x1 + y0 * M + z1 * M * M);
+                const idx011 = 3 * (x0 + y1 * M + z1 * M * M);
+                const idx111 = 3 * (x1 + y1 * M + z1 * M * M);
+                
                 const oi = 3 * (x + y * N + z * N * N);
-                out[oi]     = src[si];
-                out[oi + 1] = src[si + 1];
-                out[oi + 2] = src[si + 2];
+                
+                for (let c = 0; c < 3; ++c) {
+                    const c000 = src[idx000 + c];
+                    const c100 = src[idx100 + c];
+                    const c010 = src[idx010 + c];
+                    const c110 = src[idx110 + c];
+                    const c001 = src[idx001 + c];
+                    const c101 = src[idx101 + c];
+                    const c011 = src[idx011 + c];
+                    const c111 = src[idx111 + c];
+                    
+                    const c00 = c000 * (1 - tx) + c100 * tx;
+                    const c10 = c010 * (1 - tx) + c110 * tx;
+                    const c01 = c001 * (1 - tx) + c101 * tx;
+                    const c11 = c011 * (1 - tx) + c111 * tx;
+                    
+                    const c0 = c00 * (1 - ty) + c10 * ty;
+                    const c1 = c01 * (1 - ty) + c11 * ty;
+                    
+                    out[oi + c] = c0 * (1 - tz) + c1 * tz;
+                }
             }
         }
     }
