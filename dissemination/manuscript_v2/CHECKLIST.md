@@ -45,7 +45,7 @@
 
 - [D] Ch 19 The Observer Formalism — DRAFTED April 12
 - [D] Ch 20 Measurement: Type III_1 to Type I — DRAFTED April 12
-- [D] Ch 21 Consciousness and Self-Reference — DRAFTED April 12
+- [D] Ch 21 Reference frame context and Self-Reference — DRAFTED April 12
 - [D] Ch 22 Dark Matter and Dark Energy — DRAFTED April 12
 - [D] Ch 23 The Vacuum Energy Resolution — DRAFTED April 12
 - [D] Ch 24 Experimental Predictions and Status — DRAFTED April 12
@@ -151,7 +151,7 @@
 - Edits by type:
   - Old chapter number updates: 4 files
   - Dark matter forward references (-> Ch 22): 2 files
-  - Consciousness forward references (-> Ch 21): 4 files
+  - Reference frame context forward references (-> Ch 21): 4 files
   - Assumption ledger v2 notice: 1 file
   - Predictions cross-ref (-> Ch 24): 2 files
   - Bell resolution note: 1 file

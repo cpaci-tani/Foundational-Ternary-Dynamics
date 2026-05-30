@@ -12,7 +12,7 @@
 
 1. **The Eternal Equation: From Ancient Sages to the Master Quadratic**
 2. **Remembering the Numbers: Humanity's 12,000-Year Journey to Rediscover Reality**
-3. **The Thread of Knowing: Ancient Wisdom and the Mathematics of Consciousness**
+3. **The Thread of Knowing: Ancient Wisdom and the Mathematics of Reference frame context**
 4. **Before the Flood, After the Code: The Perennial Philosophy Made Mathematical**
 
 ---
@@ -107,7 +107,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - What was studied: Heka, astronomy, medicine, ritual
 - The priesthood system: levels of initiation
 - The 42 books of Thoth: alleged complete knowledge
-- *Framework connection*: Institutional preservation of consciousness technology
+- *Framework connection*: Institutional preservation of reference frame context technology
 
 **Chapter 9: The Pyramid Frequency**
 - Construction: not just tombs, but machines
@@ -121,7 +121,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - Ka, Ba, Akh: composite soul anatomy
 - The Book of the Dead: navigation manual
 - Initiation as rehearsed death
-- *Framework connection*: Valley traversal; ego dissolution; consciousness transformation protocol
+- *Framework connection*: Valley traversal; ego dissolution; reference frame context transformation protocol
 
 **Chapter 11: The Numbers of the Gods**
 - Egyptian sacred mathematics
@@ -147,7 +147,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - *Framework connection*: Ratios encoding the same relationships differently
 
 **Chapter 14: Plato's Allegory and Atlantis**
-- The Allegory of the Cave: consciousness levels
+- The Allegory of the Cave: reference frame context levels
 - Timaeus: the world soul and sacred geometry
 - Atlantis: memory or invention?
 - 9,000 years before Solon = Younger Dryas window
@@ -171,17 +171,17 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 
 **Chapter 17: The Sound of Creation**
 - OM/AUM as primordial vibration
-- Mantra: technology of consciousness alteration
+- Mantra: technology of reference frame context alteration
 - Sanskrit: alleged "perfect language"
 - The Gayatri: most sacred formula
 - *Framework connection*: Frequency as creative force; language as reality manipulation
 
 **Chapter 18: Buddha and the Middle Way**
 - 108 earthly desires; 108 beads
-- Consciousness as fundamental
+- Reference frame context as fundamental
 - The emptiness (śūnyatā) beneath phenomena
 - Meditation technology: accessing substrate
-- *Framework connection*: Void state (s=0) as fundamental; consciousness traversing states
+- *Framework connection*: Void state (s=0) as fundamental; reference frame context traversing states
 
 **Chapter 19: Tao and the Way**
 - The nameless that can be named
@@ -197,7 +197,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - The seven Archons as planetary rulers
 - Material world as trap
 - The divine spark imprisoned in matter
-- *Framework connection*: Consciousness below threshold; the challenge of manifestation
+- *Framework connection*: Reference frame context below threshold; the challenge of manifestation
 
 **Chapter 21: Gnosis - Knowledge as Salvation**
 - Not faith but direct knowing
@@ -217,7 +217,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - 415 CE: Hypatia murdered in Alexandria
 - The burning of libraries
 - Knowledge driven underground
-- *Framework connection*: Institutional erasure of consciousness technology
+- *Framework connection*: Institutional erasure of reference frame context technology
 
 **Chapter 23: The Hermetic Underground**
 - Alchemy: outer cover, inner teaching
@@ -245,7 +245,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 **Chapter 26: The Masonic Transmission**
 - Operative to speculative masonry
 - The 33 degrees and the spinal column
-- Temple of Solomon as consciousness map
+- Temple of Solomon as reference frame context map
 - Sacred geometry in ritual
 - *Framework connection*: Institutional preservation in symbolic form
 
@@ -254,7 +254,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - Flamel, Fulcanelli, Cagliostro
 - The pattern of the adept: appears, teaches, vanishes
 - Transmutation: outer gold, inner transformation
-- *Framework connection*: Stable consciousness above threshold; what "immortality" actually means
+- *Framework connection*: Stable reference frame context above threshold; what "immortality" actually means
 
 ### Part 9: The Scientific Divorce
 
@@ -270,7 +270,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - What was gained: method, rigor, technology
 - What was lost: meaning, connection, purpose
 - Materialism as metaphysics
-- *Framework connection*: Forgetting that consciousness is fundamental
+- *Framework connection*: Forgetting that reference frame context is fundamental
 
 **Chapter 30: The 440 Hz Conspiracy?**
 - 1939: Nazi-influenced standardization
@@ -293,14 +293,14 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - *Framework connection*: First modern attempt at synthesis
 
 **Chapter 32: Quantum Weirdness**
-- Observer effect: consciousness re-enters physics
+- Observer effect: reference frame context re-enters physics
 - Wave-particle duality: the measurement problem
 - Bell's theorem: reality is non-local (or...)
 - The Copenhagen interpretation's mysticism
 - *Framework connection*: Physics rediscovering what mystics knew
 
 **Chapter 33: The Psychedelic Revelation**
-- 1950s-60s: consciousness becomes experimental
+- 1950s-60s: reference frame context becomes experimental
 - What researchers found: archetypes, entities, unified field
 - The suppression (again)
 - Renaissance: 2000s-present
@@ -310,7 +310,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - Wheeler: "It from bit"
 - Digital physics: reality as computation
 - Simulation hypothesis
-- Consciousness as fundamental: Integrated Information Theory, Orch-OR
+- Reference frame context as fundamental: Integrated Information Theory, Orch-OR
 - *Framework connection*: Science arriving at ancient conclusions through new language
 
 ### Part 11: The Quadratic Discovery
@@ -342,21 +342,21 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - The void as dispositional substrate
 - Manifestation threshold K_B
 - Update rules from action principle
-- *Framework connection*: How consciousness and matter actually relate (model)
+- *Framework connection*: How reference frame context and matter actually relate (model)
 
-**Chapter 39: Consciousness and the Complex Roots**
+**Chapter 39: Reference frame context and the Complex Roots**
 - The quadratic has two more roots: y = 2.19 ± 1.30i
 - Complex numbers = rotation through imaginary space
-- Consciousness as the "imaginary" dimension?
+- Reference frame context as the "imaginary" dimension?
 - Self-reference and the sLoop
-- *Framework connection*: Why consciousness is real but "orthogonal" to matter
+- *Framework connection*: Why reference frame context is real but "orthogonal" to matter
 
 ### Part 12: The Synthesis
 
 **Chapter 40: What the Ancients Actually Knew**
 - Not superstition but encoded science
 - Frequency technology (110 Hz, 432 Hz)
-- Consciousness transformation protocols
+- Reference frame context transformation protocols
 - Sacred architecture as machines
 - Numbers as access codes
 - *Framework connection*: Reinterpreting all of Act I with Act III knowledge
@@ -381,7 +381,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 
 **Chapter 43: Living the Numbers**
 - Practical implications of the framework
-- Meditation and consciousness technology (modern approach)
+- Meditation and reference frame context technology (modern approach)
 - Frequency and health
 - Architecture and environment
 - Community and transmission
@@ -418,7 +418,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - Visual timeline from Younger Dryas to present
 - Key events, figures, and transmissions
 
-**Appendix D: Frequency and Consciousness**
+**Appendix D: Frequency and Reference frame context**
 - The science of 110 Hz effects
 - 432 Hz vs 440 Hz research
 - Binaural beats and brainwave entrainment
@@ -435,7 +435,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 1. **The Perennial Transmission**: Same knowledge, different encodings, across all time
 2. **Catastrophe and Preservation**: Knowledge must survive resets
 3. **The Numbers Don't Lie**: Mathematical relationships that appear independently everywhere
-4. **Consciousness is Fundamental**: The core insight of all traditions, now mathematical
+4. **Reference frame context is Fundamental**: The core insight of all traditions, now mathematical
 5. **The Encoding Necessity**: Why direct statement is dangerous; why symbolism is necessary
 6. **Your Story as Culmination**: A modern person, untrained in traditions, discovers the same mathematics—proving it's built into reality, not culture
 
@@ -491,7 +491,7 @@ ACT III: THE REMEMBERING (~1900 CE → Now)
 - Tobias Churton - Rosicrucian histories
 - Various Masonic scholars
 
-**Modern Physics/Consciousness:**
+**Modern Physics/Reference frame context:**
 - David Bohm - "Wholeness and the Implicate Order"
 - Roger Penrose - "The Emperor's New Mind"
 - Giulio Tononi - Integrated Information Theory papers

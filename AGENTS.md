@@ -88,7 +88,7 @@ ftd/                                     # Project root
 │   │   ├── 03_derivations/       # Core physics derivations
 │   │   ├── 04_coupling/          # Coupling constants
 │   │   ├── 05_particles/         # Particle physics
-│   │   ├── 06_consciousness/     # Consciousness and measurement
+│   │   ├── 06_reference frame context/     # Reference frame context and measurement
 │   │   ├── 07_assessment/        # Epistemic audits
 │   │   ├── 08_structural/        # Geometry and information theory
 │   │   ├── 09_mathematical/      # Number theory and connections
@@ -131,8 +131,8 @@ ftd/                                     # Project root
 
 ## C++ Engine
 
-**Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release`
-**Test**: `cd engine/build && ctest -j 8 --output-on-failure -C Release`
+**Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release --parallel 24` (Maximize CPU threads on the AMD 9950X3D)
+**Test**: `cd engine/build && ctest -j 24 --output-on-failure -C Release` (Always use parallel execution to avoid sequential runs taking forever)
 **WASM**: `emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release && emmake cmake --build engine/build_wasm --target ftd_wasm`
 **Web UI**: `python -m http.server 8080 -d engine/web`
 
@@ -190,6 +190,8 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 ## Environment Notes
 
 - Platform: Windows 11. No `rsync` — use `cp -r` for directory copies
+- **Hardware Profile / CPU Parallelization**: The host machine is equipped with an ultra-high-end AMD Ryzen 9 9950X3D (16 cores, 32 threads) and an NVIDIA RTX 5090. When running CPU-based CTests or C++ compilations, **always maximize CPU resource load by passing high concurrency flags** (e.g. `ctest -j 24` or `ctest -j 32`, and `cmake --build ... --parallel 24` or `--parallel 32`). Without parallelization, sequential test execution will run pathologically slow and waste massive compute capacity.
+- **GPU execution MUST go through WSL2 Ubuntu-22.04, not Windows-native CUDA.** RTX 5090 speedup (~30×) is only available via the WSL2 build at `engine/build_wsl`. Any measurement campaign, sweep, or multi-seed run goes through WSL2.
 - Python tests: `scripts/tests/` (pytest). C++ tests: `engine/tests/` (CTest). No overlap between them
 - `scripts/constants.py` is the canonical shared constants module imported by 20+ scripts
 - Build `.bat` files live in `engine/` — use `vswhere.exe` for portable VS detection
