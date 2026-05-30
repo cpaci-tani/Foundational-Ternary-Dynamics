@@ -124,15 +124,15 @@ with coefficient $16 = N_{\text{base}}^2 = 2^{D+1}$ counting physical degrees of
 
 | Root | Value | Physical Identification | Accuracy |
 |------|-------|------------------------|----------|
-| $x_+$ | 137.036 | $1/\alpha$ (fine structure constant) | 1.26 ppm vs CODATA |
-| $x_-$ | 3.024 | $N_c$ (color charges, $\lfloor x_- \rfloor = 3$) | 0.8% |
+| $x_+$ | 137.036 | $1/\alpha$ (fine structure constant) [STRONGLY MOTIVATED CONJECTURE] | 1.26 ppm vs CODATA |
+| $x_-$ | 3.024 | **none** — mathematical artifact of $P(x)$. The historical $x_- \to N_c$ identification is **RETIRED** (LEDGER FTD-0014, commit `ca7eb61`; cf. §4.2 row 2 below). $N_c = 3$ is sourced independently from D=3 (`DERIV_LATTICE_SU3_GAUGE.md`, `DERIV_NC_FROM_TOPOLOGY.md`). | n/a |
 
 ## 2.3 The Framework Integers [THEOREM]
 
 From $\alpha$ and $N_c$, the complete integer structure follows:
 
 ```
-N_c = 3          (from master quadratic)
+N_c = 3          (from D=3 / SU(D)=SU(3) [SELECTION]; NOT from the master-quadratic root, which is RETIRED — FTD-0014)
 N_base = 4       (from D=3 spinor structure) [SELECTION]
 N_gen = N_c = 3  (fermion generations)
 N_f = 2*N_gen = 6 (active quark flavors)
@@ -285,7 +285,7 @@ $$D = 3 + \varpi \;\longrightarrow\; \text{PF},\; N_{\text{base}} \;\longrightar
 
 **SM status:** The chiral anomaly is an exact result of the SM; it governs $\pi^0 \to \gamma\gamma$ and constrains the fermion spectrum.
 
-**FTD derivation:** The triangle diagram (VVA) computed on the compact Brillouin zone is UV-finite without regularization. Naive lattice fermions give zero anomaly (Nielsen-Ninomiya theorem); Wilson fermions restore the correct coefficient $Q^2\alpha/(2\pi)$ per physical fermion. With $N_c = 3$ from the master quadratic:
+**FTD derivation:** The triangle diagram (VVA) computed on the compact Brillouin zone is UV-finite without regularization. Naive lattice fermions give zero anomaly (Nielsen-Ninomiya theorem); Wilson fermions restore the correct coefficient $Q^2\alpha/(2\pi)$ per physical fermion. With $N_c = 3$ (from D=3 / SU(D)=SU(3) [SELECTION]; the master-quadratic-root reading is RETIRED, FTD-0014):
 
 $$\Gamma(\pi^0 \to \gamma\gamma) = 7.73 \text{ eV} \quad \text{(PDG: 7.82 eV, 1.2\% agreement)}$$
 
@@ -318,7 +318,7 @@ These results follow from $G^*$, the master quadratic, and integer arithmetic al
 | # | Result | Formula | Status (2026-05-01) |
 |---|--------|---------|--------|
 | 1 | Fine structure constant | $1/\alpha = x_+ = 137.036$ | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, identification x_+ ↔ 1/α is conjecture) |
-| 2 | Color charge number | $N_c = 3$ (independently sourced) | The historical identification `N_c = \lfloor x_- \rfloor` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The smaller root `x_- ≈ 3.024` is a mathematical artifact of $P(x)$ only. `N_c = 3` in FTD comes from independent structural sources — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. |
+| 2 | Color charge number | $N_c = 3$ (independently sourced, [SELECTION]) | The historical identification `N_c = \lfloor x_- \rfloor` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The smaller root `x_- ≈ 3.024` is a mathematical artifact of $P(x)$ only. `N_c = 3` follows from D=3 (color = spatial flux axis ⟹ SU(D)=SU(3)) [SELECTION] — see `DERIV_LATTICE_SU3_GAUGE.md` (Theorem 1.1) and `DERIV_NC_FROM_TOPOLOGY.md` (D=3 with geometric/topological corroboration; the routes are not independent). |
 | 3 | Weak mixing angle | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted 2026-04-19; 3.5% accuracy) |
 | 4 | Strong coupling at $M_Z$ | $\alpha_s = b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | [PARAMETRIC] (LEDGER FTD-0020, demoted 2026-04-19) |
 | 5 | Electron mass | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [SELECTION] (LEDGER FTD-0015; prefactor $16\sqrt{2\pi}/3$ is structural [THEOREM] per FTD-0077, exponent $n=11$ is [SELECTION]) |
@@ -574,7 +574,7 @@ This section lists limitations and open problems that the framework does not res
 | ID | Claim | Falsifying Observation | Status |
 |----|-------|----------------------|--------|
 | F-1 | Master quadratic gives $1/\alpha$ | Precision $\alpha$ measurement incompatible with $x_+ = 137.036...$ at better than 10 ppm | Testable now |
-| F-2 | $N_{\text{gen}} = \lfloor x_- \rfloor = 3$ | Discovery of 4th generation with standard gauge couplings (heavy sterile neutrinos do not count) | Testable at LHC/FCC |
+| F-2 | $N_{\text{gen}} = N_c = 3$ (sourced from D=3, NOT from $\lfloor x_- \rfloor$ — that identification is RETIRED, FTD-0014) | Discovery of 4th generation with standard gauge couplings (heavy sterile neutrinos do not count) | Testable at LHC/FCC |
 | F-3 | $\sin^2\theta_W = 3/13$ | Precision EW measurement incompatible with 0.23077 at 5$\sigma$ | Testable at ILC/CEPC |
 | F-4 | $m_\tau/m_e = 3477$ | Mass ratio measurement deviating by > 0.01% | Testable now (PDG: 3477.2) |
 | F-5 | Substrate locality | Demonstration that no ensemble averaging over local deterministic states can produce $S > 2$ (mathematical proof, not experiment) | [OPEN] -- would require formal result |
@@ -659,7 +659,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-7 | U(1) gauge symmetry emerges from Gauss constraint | [THEOREM] | $\lambda_G \to \infty$ in $\mathcal{L}_{\text{RB}}$ |
 | SM-8 | SU(3) from flux triplet $(J_x, J_y, J_z)$ | [SELECTION] | $D = 3$ + complexification step |
 | SM-9 | SU(2) from ternary doublet $\{+1, -1\}$ | [THEOREM] | Postulate 3 (ternary states) |
-| SM-10 | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018) | SM-5, SM-6 |
+| SM-10 | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018) | SM-6, SM-8 ($N_c$ from D=3, NOT from SM-5 / $x_-$) |
 | SM-11 | $\alpha_s(M_Z) = b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | [PARAMETRIC] (LEDGER FTD-0020) | SM-6, RG running |
 | SM-12 | $m_e = M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | [SELECTION] (LEDGER FTD-0015 / FTD-0077; the prefactor $16\sqrt{2\pi}/3$ is [THEOREM], the exponent $n=11$ is [SELECTION]) | SM-4, lattice normalization |
 | SM-13 | $v = M_P\sqrt{2\pi}\alpha^8 = 246.09$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] | SM-4, lattice normalization |

@@ -133,13 +133,13 @@ The physics derivation chain has been extensively documented. We summarize with 
 | Result | Derivation | Status | Reference |
 |--------|-----------|--------|-----------|
 | $\alpha = 1/x_+ = 1/137.036$ | Master quadratic root | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) | MATH_MASTER_QUADRATIC.md |
-| $N_c = \lfloor x_- \rfloor = 3$ | Master quadratic root | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | MATH_MASTER_QUADRATIC.md |
+| $N_c = 3$ | Lattice topology (NOT from $x_-$; $x_-\!\leftrightarrow\!N_c$ RETIRED, FTD-0014 removed) | [THEOREM] | DERIV_NC_FROM_TOPOLOGY.md |
 
 ### 2.2 Framework Integers
 
 | Integer | Value | Derivation | Status | Reference |
 |---------|-------|-----------|--------|-----------|
-| $N_c$ | 3 | $\lfloor x_- \rfloor$ | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | Master quadratic |
+| $N_c$ | 3 | Lattice topology (NOT $\lfloor x_- \rfloor$; $x_-\!\leftrightarrow\!N_c$ RETIRED) | [THEOREM] | DERIV_NC_FROM_TOPOLOGY.md |
 | $N_{\text{base}}$ | 4 | $N_c^2 - N_c - 2$ | [THEOREM] | DERIV_PION_MASS_FROM_GSTAR.md |
 | $b_3$ | 7 | $N_c^2 - 2 = N_c + N_{\text{base}}$ | [THEOREM] | DERIV_PION_MASS_FROM_GSTAR.md |
 | $N_{\text{eff}}$ | 13 | $b_3 + 2N_c$ | [THEOREM] | DERIV_PION_MASS_FROM_GSTAR.md |
@@ -189,7 +189,7 @@ The substitution $e^2 = 1/x$ transforms the master quadratic into the **charge q
 | Root | Value | Status | ID |
 |------|-------|--------|-----|
 | $e^2_{\text{EM}} = 1/x_+$ | 0.00730 | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) | EM charge squared ($\alpha$) |
-| $e^2_C = 1/x_-$ | 0.3307 | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | Color charge scale squared |
+| $e^2_C = 1/x_-$ | 0.3307 | [ARTIFACT] (reciprocal of smaller root; $x_-\!\leftrightarrow\!N_c$ RETIRED, FTD-0014 removed) | Color charge scale squared |
 
 **Charge-space Vieta relations** [THEOREM]:
 
@@ -411,7 +411,7 @@ Both are Type III $\to$ Type I transitions mediated by $G^*$. They differ only i
 | 2 | $k = 16$ from lattice DoF | [THEOREM] | SPEC_THE_COMPLETE_PROOF_RIGOROUS.md |
 | 3 | Discriminant partitions into 3 domains | [THEOREM] | Section 1.2 above |
 | 4 | $x_+ = 1/\alpha = 137.036$ | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) | Master quadratic |
-| 5 | $x_- \to N_c = 3$ | [STRONGLY MOTIVATED CONJECTURE] (FTD-0014) | Master quadratic |
+| 5 | $N_c = 3$ from lattice topology ($x_-\!\to\!N_c$ RETIRED, FTD-0014 removed) | [THEOREM] | DERIV_NC_FROM_TOPOLOGY.md |
 | 6 | All 4 integers from $N_c$ | [THEOREM] | DERIV_PION_MASS_FROM_GSTAR.md |
 | 7 | Full gauge group SU(3)×SU(2)×U(1) | [THEOREM/SELECTION] | Multiple DERIV docs |
 | 8 | Path integral, Feynman rules, loops | [THEOREM] | DERIV_PATH_INTEGRAL_CONSTRUCTION.md |

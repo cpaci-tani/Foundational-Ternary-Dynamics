@@ -51,7 +51,7 @@ namespace ontic {
 inline constexpr int COEFFICIENT = 16;  // |Aut(E)|² where E: y²=x³-x
 
 inline constexpr double X_PLUS  = 137.0361714582;   // tree-level 1/α (master-quadratic root)
-inline constexpr double X_MINUS = 3.0239639163;      // N_c root
+inline constexpr double X_MINUS = 3.0239639163;      // smaller root (artifact; NOT N_c — retired FTD-0014)
 
 // Precision-corrected 1/α (Layer 7 — see below for c₁..c₄ and ε).
 // This is the value that matches CODATA 2022 to < 0.001 ppt.
@@ -157,9 +157,16 @@ inline constexpr double E2_COLOR = 1.0 / X_MINUS_PRECISION;   // e²_C ≈ 0.330
 // ============================================================================
 // Layer 4: Framework Integers
 // ============================================================================
-// All integers emerge from x₋ ≈ 3.024 via physical identification:
+// N_c = 3 is the framework's single free integer. It is sourced INDEPENDENTLY
+// from lattice topology (see docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md),
+// NOT from the smaller root x₋. The earlier x₋ ↔ N_c identification is RETIRED
+// (LEDGER row FTD-0014 removed in ca7eb61); x₋ ≈ 3.024 is a mathematical
+// artifact of the quadratic (0.80% from 3), not the origin of N_c.
 //
-//   N_c    = ⌊x₋⌋ = 3         (number of color charges)
+// Given N_c = 3 from topology, the remaining integers follow by the integer
+// reduction theorem below:
+//
+//   N_c    = 3                (number of color charges — from topology, not x₋)
 //   N_gen  = N_c = 3           (number of fermion generations)
 //   N_f    = 2·N_gen = 6       (number of quark flavors)
 //   b₃     = (11N_c-2N_f)/3 = 7  (QCD one-loop beta coefficient)
