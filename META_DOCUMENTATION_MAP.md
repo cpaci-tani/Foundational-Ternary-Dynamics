@@ -40,8 +40,8 @@ For current documentation drift, cleanup status, and deferred remediation items,
 ### For Philosophers
 1. [FOUND_THE_FIRST_DISTINCTION.md](docs/theory/02_foundations/FOUND_THE_FIRST_DISTINCTION.md) — From void to existence
 2. [FOUND_ONTOLOGICAL_GENESIS.md](docs/theory/02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) — 13-level emergence hierarchy
-3. [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](docs/theory/06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Consciousness from QFT/GR bridge
-4. [FOUND_THE_EXISTENCE_FILTER.md](docs/theory/06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x) and the Born rule
+3. [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](docs/theory/06_reference frame context/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) — Reference frame context from QFT/GR bridge
+4. [FOUND_THE_EXISTENCE_FILTER.md](docs/theory/06_reference frame context/FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x) and the Born rule
 
 ### For Programmers
 1. [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md) — Engine architecture and API
@@ -84,7 +84,7 @@ ftd/
 │   │   ├── 03_derivations/          # Core physics derivations
 │   │   ├── 04_coupling/             # Coupling constants
 │   │   ├── 05_particles/            # Particle physics
-│   │   ├── 06_consciousness/        # Consciousness and measurement
+│   │   ├── 06_reference frame context/        # Reference frame context and measurement
 │   │   ├── 07_assessment/           # Epistemic audits
 │   │   ├── 08_structural/           # Geometry and information theory
 │   │   │   └── DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md  # BCC multiplicative structure: Watson identity + SU(3) (April 2026)
@@ -117,7 +117,7 @@ ftd/
 │       ├── REF_IMAGE_INVENTORY.md   # Image catalog
 │       └── explorations/            # Research scripts & visualizations
 │           ├── lemniscate/           # Lemniscate curve explorations
-│           ├── consciousness/       # Consciousness/G* explorations
+│           ├── reference frame context/       # Reference frame context/G* explorations
 │           ├── mandelbrot/          # Mandelbrot-FTD connections
 │           └── number_theory/       # Number theory explorations
 │
@@ -202,7 +202,7 @@ The current theory categories are:
 3. Core Physics Derivations
 4. Coupling Constants and Precision
 5. Particle Physics Applications
-6. Consciousness and Measurement
+6. Reference frame context and Measurement
 7. Critical Self-Assessment
 8. Structural Principles
 9. Mathematical Connections

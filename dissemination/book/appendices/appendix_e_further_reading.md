@@ -109,9 +109,9 @@
 - Frank Wilczek, *A Beautiful Question*
 - Graham Farmelo, *The Universe Speaks in Numbers*
 
-### Consciousness
+### Reference frame context
 
-- David Chalmers, *The Conscious Mind*
+- David Chalmers, *The Reference-frame Mind*
 - Thomas Nagel, *Mind and Cosmos*
 - Evan Thompson, *Waking, Dreaming, Being*
 - Douglas Hofstadter, *Gödel, Escher, Bach*
@@ -159,18 +159,18 @@ Start with:
 1. Huxley, *The Perennial Philosophy* (overview of traditions)
 2. Smith, *The World's Religions* (comparative survey)
 3. Carroll, *The Particle at the End of the Universe* (accessible physics)
-4. Hofstadter, *Gödel, Escher, Bach* (self-reference and consciousness)
+4. Hofstadter, *Gödel, Escher, Bach* (self-reference and reference frame context)
 
 ### For Physicists
 Focus on:
 1. Framework technical documents (action principle, derivations)
 2. Elliptic curve mathematics (Silverman, Lang)
-3. Consciousness literature (Chalmers, Thompson)
+3. Reference frame context literature (Chalmers, Thompson)
 4. History of ideas (Yates, Copenhaver)
 
 ### For Philosophers
 Focus on:
-1. Chalmers on consciousness
+1. Chalmers on reference frame context
 2. Primary sources (Plato, Plotinus, Upanishads)
 3. Penrose, *The Road to Reality* (for physics context)
 4. Guénon and Schuon on tradition
@@ -211,7 +211,7 @@ The framework presented in this book is itself a claim requiring scrutiny. Read 
 4. Huxley, *The Perennial Philosophy*
 5. Penrose, *The Road to Reality*
 6. Hofstadter, *Gödel, Escher, Bach*
-7. Chalmers, *The Conscious Mind*
+7. Chalmers, *The Reference-frame Mind*
 8. *Corpus Hermeticum*
 9. Yates, *Giordano Bruno and the Hermetic Tradition*
 10. Framework technical documents

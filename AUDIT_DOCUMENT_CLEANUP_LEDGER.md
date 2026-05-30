@@ -50,7 +50,7 @@ Important distinction:
 - `docs/theory/META_INDEX.md` is currently a **curated theory catalog**, not a raw directory listing.
 - The curated index now reports `129` indexed core entries and `76` archived entries.
 - The raw active theory directories currently contain `136` Markdown files, which means some live-in-place, superseded, or not-yet-normalized documents still remain outside `archive/`.
-- Theory sweep on `2026-04-11`: promoted `FOUND_GSTAR_SCALE.md` and `THEOREM_MOORE_LAYER_DECOMPOSITION.md` into the curated catalog; archived `FOUND_ENDGAME_SYNTHESIS.md`, `FOUND_FROM_PCIR_TO_FTD.md`, and `REPORT_FIVE_MINDS.md` as historical/noncanonical documents; archived `EXPLR_CUBOCTAHEDRAL_GEOMETRY.md`, `EXPLR_VACUUM_DRAG_DERIVATION.md`, and `EXPLR_PARTITION_PRIME_DETECTION.md` as superseded or low-signal exploratory documents; added `FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md` as an active foundations note to formalize the new Potential Core / Generative Interior vocabulary; added `FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` as the canonical live replacement for the missing consciousness source file and the lattice-facing formalization of `Activate_C`.
+- Theory sweep on `2026-04-11`: promoted `FOUND_GSTAR_SCALE.md` and `THEOREM_MOORE_LAYER_DECOMPOSITION.md` into the curated catalog; archived `FOUND_ENDGAME_SYNTHESIS.md`, `FOUND_FROM_PCIR_TO_FTD.md`, and `REPORT_FIVE_MINDS.md` as historical/noncanonical documents; archived `EXPLR_CUBOCTAHEDRAL_GEOMETRY.md`, `EXPLR_VACUUM_DRAG_DERIVATION.md`, and `EXPLR_PARTITION_PRIME_DETECTION.md` as superseded or low-signal exploratory documents; added `FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md` as an active foundations note to formalize the new Potential Core / Generative Interior vocabulary; added `FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` as the canonical live replacement for the missing reference frame context source file and the lattice-facing formalization of `Activate_C`.
 
 ---
 
@@ -60,7 +60,7 @@ Important distinction:
 
 - `META_DOCUMENTATION_MAP.md` and `META_PROJECT_ATLAS.md` still identified the framework as `v5.28` and the engine as `v2.11`, while `docs/SPEC_FTD.md` is `v5.29` and `engine/SPEC_ENGINE.md` is `v2.12`.
 - `META_DOCUMENTATION_MAP.md` and `META_PROJECT_ATLAS.md` repeated stale hard-coded counts for theory docs, engine tests, and dissemination interactives.
-- `README.md` also contained stale structure counts and an outdated theory subdirectory name (`06_measurement` instead of `06_consciousness` in the structure block).
+- `README.md` also contained stale structure counts and an outdated theory subdirectory name (`06_measurement` instead of `06_reference frame context` in the structure block).
 
 ### Catalog-versus-filesystem drift
 
