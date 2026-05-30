@@ -419,7 +419,7 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 **File:** `docs/SPEC_FTD.md`. Top-level spec has one unresolved note.
 
 ### 7.6 Misc status/meta files
-- `docs/theory/07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md` — 1.
+- `docs/theory/07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md` — 1. **[LEGACY — pre-reframe doc; superseded, do NOT cite externally. The lone `[OPEN]` here is on the untestable consciousness/reference-frame-context material now tagged [SPECULATIVE CONJECTURE]; not a live research item.]**
 - `docs/theory/META_INDEX.md` — 1.
 - `docs/reference/REF_EPISTEMIC_LABELS.md` — 2 (conventions, not physics).
 - `docs/internal/SPEC_CLAUDE.md` — 2 (internal).

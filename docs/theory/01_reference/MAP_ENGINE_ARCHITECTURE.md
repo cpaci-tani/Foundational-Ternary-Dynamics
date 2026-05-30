@@ -223,12 +223,12 @@ The FTD C++ engine is engineered around a strict compile-time dependency hierarc
 ### 3.1 The 9-Layer Ontic Derivation Chain
 The mathematical and physical constants of FTD are derived from a 9-layer mathematical hierarchy beginning with spatial dimensions $D=3$ and the lemniscate constant $\varpi$. The headers in `engine/include/ftd/ontic/` reflect this progression:
 
-1. **`ontic/lemniscate.h` (Layers -1 to 2b):** Defines the foundational geometric constants, centered around $\varpi \approx 2.62205755$ (derived as $\Gamma(1/4)/\Gamma(3/4)$). Establishes Layer 0 (lemniscatic constant $G^* \approx 2.95868$, the ratio of the lemniscate perimeter to diameter), Layer 1 (CFL speed limit $c = 1/\sqrt{3}$), and Layer 2b (gauge volume ratios).
+1. **`ontic/lemniscate.h` (Layers -1 to 2b):** Defines the foundational geometric constants, centered around the lemniscate constant $\varpi \approx 2.62205755$ (the Gauss/Bernoulli constant, half the lemniscate perimeter). Establishes Layer 0 (the FTD bridge constant $G^* = \Gamma(1/4)/\Gamma(3/4) \approx 2.95868$ — distinct from $\varpi$; the two are related by $G^* = 2\varpi/\sqrt{\pi}$, see the FTD-0117 $G^* \neq \varpi$ distinction), Layer 1 (CFL speed limit $c = 1/\sqrt{3}$), and Layer 2b (gauge volume ratios).
 2. **`ontic/master_quadratic.h` (Layers 3 to 4b):** Formulates the physics roots from the Master Quadratic equation:
    $$x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$$
    Solving this quadratic yields the roots $x_+$ and $x_-$.
    * $x_+$ leads to the fine structure constant: $\alpha = 1/x_+ \approx 1/137.036$
-   * $x_-$ leads to the QCD color number $N_c = \lfloor x_- \rfloor \approx 3$.
+   * $x_- \approx 3.024$ is the smaller root (a mathematical artifact of the quadratic; its identification with $N_c$ is **RETIRED** — see retired LEDGER row FTD-0014). $N_c = 3$ is independently sourced from lattice topology (see `DERIV_NC_FROM_TOPOLOGY.md`), not derived from $x_-$.
 3. **`ontic/gauge_couplings.h` (Layers 5 to 7):** Derives the running gauge couplings, including electroweak $\alpha_w \approx 0.0338$, strong coupling $\alpha_s = 1.0$, and the perturbative loop coefficients $c_1, c_2, c_3$.
 4. **`ontic/particle_masses.h` (Layers 6 to 6c):** Computes the mass scales relative to the Planck mass $m_P$, defining the electron mass threshold $m_e = m_P \sqrt{2\pi} (16/3) \alpha^{11} \approx 0.511 \text{ MeV}$ (represented by manifestation threshold $K_B$) and the proton mass $m_p \approx 938.272 \text{ MeV}$.
 5. **`ontic/neutrino.h` (Layer 7b):** Implements absolute neutrino mass definitions ($m_{\nu_1}, m_{\nu_2}, m_{\nu_3}$) using topological volume ratios.

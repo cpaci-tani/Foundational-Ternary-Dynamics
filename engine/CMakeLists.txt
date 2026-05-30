@@ -318,6 +318,7 @@ ftd_add_test(test_cluster_interaction_dynamic tests/test_cluster_interaction_dyn
 ftd_add_test(test_cluster_genealogy tests/test_cluster_genealogy.cpp)
 ftd_add_test(campaign_cluster_fission_fusion tests/campaign_cluster_fission_fusion.cpp TIMEOUT 1800)
 ftd_add_test(campaign_cluster_relaxation tests/campaign_cluster_relaxation.cpp TIMEOUT 1800)
+ftd_add_test(campaign_alpha_readout_scattering tests/campaign_alpha_readout_scattering.cpp TIMEOUT 3600)
 
 # Class C Phase C.3: coupling readout sweeps for EM charge scaling and Yukawa fitting.
 ftd_add_test(test_coupling_readout_sweeps tests/test_coupling_readout_sweeps.cpp)

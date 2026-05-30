@@ -820,6 +820,15 @@ equals the conductor of the elliptic curve $E: y^2 = x^3 - x$.
 
 ### 18.4 Proposed Interpretation: Reference frame context
 
+> **[LEGACY / SPECULATIVE — not a live framework claim.]** The reference-frame-context /
+> "consciousness" reading of the $k=1/2$ complex roots ($K_C \approx 3.5986$, the
+> 52.54° phase angle, the period-12 reading) is **untestable interpretation**, not
+> a result. It has no operational definition and no falsifier (see §17.2, where it
+> is classed Tier 5 / unfalsifiable). It is retained for provenance only; do NOT
+> cite it externally as an FTD prediction. The canonical home for this material,
+> with all tags downgraded to [SPECULATIVE CONJECTURE], is the legacy doc
+> `../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md`.
+
 In the FTD framework, the complex roots are **proposed** to correspond to reference frame context:
 
 | Component | Proposed meaning |
