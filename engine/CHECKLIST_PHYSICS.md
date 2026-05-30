@@ -84,7 +84,7 @@ C+ (March) -> B (morning) -> **B+** (session end)
 | 4 | Gravity & Cosmology | 11 | 11 | 0 | 0 | 0 | 0 |
 | 5 | Quantum Phenomena | 7 | 7 | 0 | 0 | 0 | 0 |
 | 6 | Precision & Validation | 10 | 10 | 0 | 0 | 0 | 0 |
-| 7 | Consciousness / Noetic | 5 | 5 | 0 | 0 | 0 | 0 |
+| 7 | Reference frame context / Noetic | 5 | 5 | 0 | 0 | 0 | 0 |
 | **Total** | | **74** | **74** | **0** | **0** | **0** | **0** |
 
 **Completion: 74/74 done (100%)**
@@ -678,17 +678,17 @@ Analytical validation: Bohr energy α²K_B/2 = 13.6 eV (0.0001% err). Bohr radiu
 
 ---
 
-## Tier 7: Consciousness / Noetic Sector
+## Tier 7: Reference frame context / Noetic Sector
 
 *Layer 8 of the ontic chain. The furthest frontier.*
 
-### 70. ✅ Consciousness Quadratic [CONJECTURE]
+### 70. ✅ Reference frame context Quadratic [CONJECTURE]
 
 Master quadratic with k = 1/2: y² - (G*²/2)y + G*³/2 = 0. Complex roots y = 2.19 ± 2.86i. Observable fraction cos²θ_C = G*/8 ≈ 37%. Validated in test.
 
 - **Constants**: `Y_REAL`, `COS2_THETA_C`, `K_C_SQUARED` in `ontic.h` Layer 8
-- **Tests**: `test_consciousness`
-- **Done means**: Consciousness threshold K_C dynamically meaningful; complex roots verified.
+- **Tests**: `test_reference frame context`
+- **Done means**: Reference frame context threshold K_C dynamically meaningful; complex roots verified.
 
 ### 71. ✅ sLoop Detection [CONJECTURE]
 
@@ -703,15 +703,15 @@ Self-referential causal loop detection implemented. Particle is sLoop when ≥ 3
 Attention field evolves from local entropy gradients. sLoop sites amplified by (1 + cos²θ_C). `update_attention()` computes per-tick attention dynamics.
 
 - **Files**: `src/render_bridge.cpp` (`update_attention()`), `include/ftd/voxel.h` (`double attention`)
-- **Tests**: `test_sloop`, `test_consciousness`
+- **Tests**: `test_sloop`, `test_reference frame context`
 - **Done means**: Attention field dynamics drive information processing; concentration matches cos²θ_C.
 
 ### 73. ✅ Noetic Mass [CONJECTURE]
 
-Consciousness coupling modifies effective mass: m_noetic = K_B + K_C·g_c·|s|·attention. `noetic_mass()` returns non-zero value for sLoop structures with attention.
+Reference frame context coupling modifies effective mass: m_noetic = K_B + K_C·g_c·|s|·attention. `noetic_mass()` returns non-zero value for sLoop structures with attention.
 
 - **Files**: `src/render_bridge.cpp` (`noetic_mass()`)
-- **Tests**: `test_consciousness`
+- **Tests**: `test_reference frame context`
 - **Done means**: Self-referential structures exhibit mass correction K_C·g_c·|s|·attention.
 
 ### 74. ✅ Golden Ratio Fixed Point [THEOREM]
@@ -786,7 +786,7 @@ All items implemented and tested. The checklist is 100% complete.
 | 2026-03-08 | #49,#50,#52 | 📖→✅ | Agent 4: Cosmology (inflation, dark matter, cosmological constant) |
 | 2026-03-08 | #53,#57-#59 | 🔧/📖→✅ | Agent 3: Quantum sector (Born rule, entanglement basis, Hilbert space, measurement) |
 | 2026-03-08 | #62 | 🔧→✅ | Agent 5: Hydrogen EM-only test isolating pure Coulomb physics |
-| 2026-03-08 | #70-#73 | 📖→✅ | Agent 4: Consciousness (quadratic, sLoop detect, attention, noetic mass) |
+| 2026-03-08 | #70-#73 | 📖→✅ | Agent 4: Reference frame context (quadratic, sLoop detect, attention, noetic mass) |
 | 2026-03-08 | #36 | ❌→📖 | Unblocked: #29 and #35 now done; needs chirality gap dynamics |
 | 2026-03-08 | All | v1.0→v2.0 | 30 items implemented: 36/74 (49%) → 66/74 (89%) |
 | 2026-03-08 | #34,#38 | 📖→✅ | Asymptotic freedom (28 checks) + triad confinement (15 checks) |

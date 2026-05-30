@@ -234,7 +234,7 @@ class TestFalsifiability:
             ("m_mu/m_e = 207", True, "Any measurement inconsistent with 207.0"),
             ("Substrate S <= 2", True, "Would be falsified if substrate could give S > 2"),
             ("Aggregate S = 2sqrt(2)", False, "Cannot test -- no demonstration of aggregate emergence"),
-            ("Consciousness K_C = 3.60", False, "No experimental protocol to measure this"),
+            ("Reference frame context K_C = 3.60", False, "No experimental protocol to measure this"),
             ("Phase = 52.54 degrees", False, "No experimental protocol to measure this"),
             ("Void is dispositional substrate", False, "Philosophical -- not empirically testable"),
             (

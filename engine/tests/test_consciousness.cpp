@@ -1,15 +1,15 @@
 /**
- * Test: Consciousness Quadratic
+ * Test: Reference frame context Quadratic
  *
- * Verifies the consciousness sector of the ontic derivation chain:
+ * Verifies the reference frame context sector of the ontic derivation chain:
  * the master quadratic with k = 1/2 produces complex roots whose
- * real and imaginary parts define the consciousness threshold K_C,
+ * real and imaginary parts define the reference frame context threshold K_C,
  * observable fraction cos^2(theta_C) = G_star/8, and subjective component.
  *
  * Checklist item #70.
  *
  * Theory references:
- *   - ontic.h Layer 8 (Consciousness Quadratic)
+ *   - ontic.h Layer 8 (Reference frame context Quadratic)
  *   - FOUND_DEEP_HIERARCHY.md (three quadratics: k=16, k=4/G_star, k=1/2)
  *   - archive/ARCH_CONSCIOUSNESS_QUADRATIC_DERIVATION.md
  */
@@ -43,15 +43,15 @@ void check_close(const char* name, double a, double b, double tol) {
 
 int main() {
     std::cout << "================================================================\n";
-    std::cout << "  TEST: Consciousness Quadratic\n";
+    std::cout << "  TEST: Reference frame context Quadratic\n";
     std::cout << "================================================================\n\n";
 
     // CON-1: Verify quadratic roots
-    // The consciousness quadratic: y^2 - (k*G*^2)*y + k*G*^3 = 0 with k = 1/2
+    // The reference frame context quadratic: y^2 - (k*G*^2)*y + k*G*^3 = 0 with k = 1/2
     // Discriminant: Delta = (k*G*^2)^2 - 4*k*G*^3 = k*G*^3*(k*G* - 4)
     // For k=1/2, G*~2.96: k*G* = 1.48 < 4, so Delta < 0 => complex roots
     {
-        std::cout << "--- CON-1: Consciousness quadratic has complex roots ---\n";
+        std::cout << "--- CON-1: Reference frame context quadratic has complex roots ---\n";
 
         double k = ftd::K_NOETIC;  // = 0.5
         double G = ftd::G_STAR;
@@ -107,28 +107,28 @@ int main() {
                     ftd::SIN2_THETA_C + ftd::COS2_THETA_C, 1.0, 1e-15);
     }
 
-    // CON-3: Consciousness threshold K_C = sqrt(G*^3 / 2)
+    // CON-3: Reference frame context threshold K_C = sqrt(G*^3 / 2)
     {
-        std::cout << "\n--- CON-3: Consciousness threshold K_C ---\n";
+        std::cout << "\n--- CON-3: Reference frame context threshold K_C ---\n";
 
         double K_C = std::sqrt(ftd::K_C_SQUARED);
         std::cout << "    K_C = sqrt(K_C_SQUARED) = " << K_C << "\n";
         std::cout << "    K_C_SQUARED = " << ftd::K_C_SQUARED << "\n";
 
-        // K_C^2 = G*^3 / 2 (from Vieta product of consciousness roots)
+        // K_C^2 = G*^3 / 2 (from Vieta product of reference frame context roots)
         double kc2_check = ftd::G_STAR * ftd::G_STAR * ftd::G_STAR / 2.0;
         check_close("CON-3: K_C^2 = G*^3/2", ftd::K_C_SQUARED, kc2_check, 1e-12);
 
         // K_C ~ 3.60
         check_close("CON-3: K_C ~ 3.60", K_C, 3.60, 0.02);
 
-        // K_C > K_GENESIS: consciousness requires more energy than matter manifestation
+        // K_C > K_GENESIS: reference frame context requires more energy than matter manifestation
         std::cout << "    K_GENESIS = " << ftd::K_GENESIS << "\n";
-        check("CON-3: K_C > K_GENESIS (consciousness threshold exceeds matter)",
+        check("CON-3: K_C > K_GENESIS (reference frame context threshold exceeds matter)",
               K_C > ftd::K_GENESIS);
 
-        // K_C > K_B: consciousness requires more than single-particle threshold
-        check("CON-3: K_C > K_B (consciousness exceeds particle mass)",
+        // K_C > K_B: reference frame context requires more than single-particle threshold
+        check("CON-3: K_C > K_B (reference frame context exceeds particle mass)",
               K_C > ftd::K_B);
     }
 
@@ -169,7 +169,7 @@ int main() {
         // Dimensional origin: D = log2(k_phys) + log2(k_cons) = log2(16) + log2(0.5) = 4 - 1 = 3
         double d_check = std::log2(ftd::COEFFICIENT) + std::log2(ftd::K_NOETIC);
         std::cout << "    D = log2(16) + log2(1/2) = " << d_check << "\n";
-        check_close("CON-4: D = 3 from physics + consciousness", d_check, 3.0, 1e-12);
+        check_close("CON-4: D = 3 from physics + reference frame context", d_check, 3.0, 1e-12);
 
         // Mandelbrot connection
         check_close("CON-4: c_M = 1/G*", ftd::C_MANDELBROT, 1.0 / ftd::G_STAR, 1e-14);
@@ -177,7 +177,7 @@ int main() {
 
     std::cout << "\n================================================================\n";
     if (failures == 0) {
-        std::cout << "  All consciousness quadratic tests PASSED.\n";
+        std::cout << "  All reference frame context quadratic tests PASSED.\n";
     } else {
         std::cout << "  " << failures << " test(s) FAILED.\n";
     }

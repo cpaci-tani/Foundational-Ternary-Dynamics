@@ -356,8 +356,8 @@ $$\frac{1}{\alpha} = 137.035999177000(1)...$$
 
 | Claim ID | Statement | Status | Epistemic Note |
 |----------|-----------|--------|----------------|
-| **ALPHAP-1** | 4-term formula matches CODATA 2022 recommended value to < 0.001 ppt | **[THEOREM]** (algebraic identity) | Numerically verified; NOT experimentally verifiable beyond digit ~11 (CODATA $\sigma$ = 2.1e-8) |
-| **ALPHAP-1b** | 7-term extension matches CODATA recommended value to 24 digits | **[THEOREM]** (algebraic identity, 2026-04-17 audit, residual 2.58e-24) | Same caveat as ALPHAP-1 |
+| **ALPHAP-1** | 4-term formula matches CODATA 2022 recommended value to < 0.001 ppt | **[IMPOSED]** (parametric $\epsilon$-polynomial fit to CODATA) | Numerically verified; NOT experimentally verifiable beyond digit ~11 (CODATA $\sigma$ = 2.1e-8) |
+| **ALPHAP-1b** | 7-term extension matches CODATA recommended value to 24 digits | **[IMPOSED]** (parametric $\epsilon$-polynomial fit to CODATA, 2026-04-17 audit, residual 2.58e-24) | Same caveat as ALPHAP-1 |
 | **ALPHAP-2** | All 7 coefficients decompose cleanly in base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$ | **[THEOREM]** (algebraic) + **partial rigidity**: 6/7 uniquely forced at cascade precision | Algebraically verified; base-integer set itself is [SELECTION] |
 | **ALPHAP-3** | 20 = 1/c_Dirac = b_3 + N_eff | **[THEOREM]** | Convention-dependent |
 | **ALPHAP-4** | D = 47 = N_c x N_base^2 - 1 | **[THEOREM]** | Algebraic identity |

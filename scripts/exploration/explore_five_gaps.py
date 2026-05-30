@@ -5,7 +5,7 @@ Gap 1: x+ = 1/alpha (is it definitional?)
 Gap 2: P ~ |J|^2 (from wave energy density)
 Gap 3: Cosine correlation (Gauss-constrained Bell test)
 Gap 4: Fusion (energy release from flux reconfiguration)
-Gap 5: Consciousness = Euler-Lagrange equation
+Gap 5: Reference frame context = Euler-Lagrange equation
 """
 import numpy as np
 import sys
@@ -447,7 +447,7 @@ GAP 4 (fusion):
   Status: [THEOREM] for energy release, [OPEN] for matching
   nuclear binding curve.
 
-GAP 5 (consciousness = EL):
+GAP 5 (reference frame context = EL):
   CLOSED. The Euler-Lagrange equation IS the O-operation.
   The action principle forces each site to integrate its
   neighborhood. The tick is observation by mathematical identity.

@@ -117,6 +117,9 @@ const FIELD_BUTTON_TO_FLAG = {
 };
 
 export function shouldUseFluxMock(bridge, scenarioName) {
+    if (bridge && (bridge.isNativeGPU || bridge.constructor.name === 'WebSocketBridge')) {
+        return false;
+    }
     if (scenarioName.startsWith('flux-')) return true;
     if (scenarioName.startsWith('s0-seed-')) return true;
     if (scenarioName.startsWith('s0-field-')) return true;
@@ -335,7 +338,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     recomputeAnyFieldActive();
 }
 
-export function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
+export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
     const scenarioId = state.currentScenarioId || readInputValue('scenario-select', 'flux-pulse');
     const bridge = ctx.bridge;
     // Scale 0 now allocates ~988 bytes/site on the C++ heap (due to SU(2)/SU(3) link structures).
@@ -351,10 +354,30 @@ export function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
         return;
     }
 
-    bridge.latticeSize = newSize;
+    if (bridge && typeof bridge.resize === 'function') {
+        try {
+            await bridge.resize(newSize);
+        } catch (e) {
+            console.error('[Scale0] Failed to resize simulation lattice:', e);
+            if (typeof window.showToast === 'function') {
+                window.showToast(`Lattice resize failed: ${e.message}`, 'error');
+            }
+        }
+    } else {
+        bridge.latticeSize = newSize;
+    }
     getScale0Scenario(scenarioId).load({ bridge }, { id: scenarioId });
     ctx.viewport.setLatticeSize(newSize);
     viewportAdapter.setFluxVolumeVisible(ctx.viewport.showFlux);
+
+    if (bridge && bridge.capabilities && bridge.capabilities.scale0) {
+        if (typeof bridge.capabilities.scale0.setBoundaryShape === 'function') {
+            bridge.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
+        }
+        if (typeof bridge.capabilities.scale0.setReflectiveBoundary === 'function') {
+            bridge.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
+        }
+    }
 
     // Same lazy-allocation rule as loadScale0Scenario (ARC-2).
     const useFluxMock = shouldUseFluxMock(bridge, scenarioId);

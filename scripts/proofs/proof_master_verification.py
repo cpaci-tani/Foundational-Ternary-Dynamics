@@ -12,7 +12,7 @@ Sections:
   5. Nuclear Binding (5 Weizsacker coefficients)
   6. Magic Numbers (7/7)
   7. QM as Statistics (framing check)
-  8. Consciousness (EL = O-operation)
+  8. Reference frame context (EL = O-operation)
   9. Lattice Corrections (Planck-scale)
   10. Cross-Document Consistency
 """
@@ -243,7 +243,7 @@ check("Cosine correlation = classical (proven above)", True)
 # ============================================================
 # 8. CONSCIOUSNESS
 # ============================================================
-print("\n--- 8. Consciousness (EL = O-operation) ---\n")
+print("\n--- 8. Reference frame context (EL = O-operation) ---\n")
 
 # The EL equation for the wave equation:
 # J(v,t+1) = 2*J(v,t) - J(v,t-1) + c^2 * laplacian(J)
@@ -300,6 +300,6 @@ print(f"    Born rule:             checked")
 print(f"    Nuclear binding:       checked")
 print(f"    Magic numbers:         checked")
 print(f"    QM framing:            checked")
-print(f"    Consciousness:         checked")
+print(f"    Reference frame context:         checked")
 print(f"    Lattice corrections:   checked")
 print(f"    Integer consistency:   checked")

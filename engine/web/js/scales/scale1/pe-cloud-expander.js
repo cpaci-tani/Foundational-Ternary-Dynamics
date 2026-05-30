@@ -66,6 +66,7 @@ const _cloudTemplates = new Map();
 // -- Trail history (circular buffers per particle) --------------------
 export const TRAIL_MAX_LENGTH = 200;
 const _trailHistory = new Map(); // particleId -> { positions: Float32Array, head, length }
+const _activeIdsSet = new Set(); // persistent GC-safe set of active particle IDs
 
 
 // =====================================================================
@@ -205,8 +206,10 @@ export function expandPEToCloud(peData, typeMap, t) {
  * Originally app.js lines ~512-535.
  */
 export function updateTrailHistory(peData) {
+    _activeIdsSet.clear();
     for (let i = 0; i < peData.count; i++) {
         const id = peData.ids[i];
+        _activeIdsSet.add(id);
         if (!_trailHistory.has(id)) {
             _trailHistory.set(id, {
                 positions: new Float32Array(TRAIL_MAX_LENGTH * 3),
@@ -223,10 +226,8 @@ export function updateTrailHistory(peData) {
     }
 
     // Remove trails for particles that no longer exist
-    const activeIds = new Set();
-    for (let i = 0; i < peData.count; i++) activeIds.add(peData.ids[i]);
     for (const [id] of _trailHistory) {
-        if (!activeIds.has(id)) _trailHistory.delete(id);
+        if (!_activeIdsSet.has(id)) _trailHistory.delete(id);
     }
 }
 

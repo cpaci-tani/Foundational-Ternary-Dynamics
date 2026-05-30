@@ -98,7 +98,7 @@ units = [
     ('Coupling (EM)', '1/x+ = alpha', '= 1/(137*G*) in G* units... no'),
     ('Coupling (strong)', '1/x- ~ 1/3', '~ 1/G* (the confinement scale)'),
     ('Mass (electron)', 'K_B/G*', '= 0.511/2.959 = 0.173 G* units'),
-    ('Consciousness', 'K_C/G*', '= 3.60/2.959 = 1.216 G* units'),
+    ('Reference frame context', 'K_C/G*', '= 3.60/2.959 = 1.216 G* units'),
     ('Speed of light', '1/sqrt(3)', 'CFL condition on cubic lattice'),
     ('Planck mass', '1', 'G* = Planck scale (by construction)'),
 ]
@@ -137,7 +137,7 @@ ratios = [
     ('(x+ - x-)/(x+ + x-)', (X_PLUS-X_MINUS)/(X_PLUS+X_MINUS),
      'The asymmetry between EM and strong'),
     ('K_C^2/x+x-', (G_STAR**3/2)/(X_PLUS*X_MINUS),
-     '1/32 exactly (consciousness/physics ratio)'),
+     '1/32 exactly (reference frame context/physics ratio)'),
 ]
 
 print('  %-25s %-18s %s' % ('Ratio', 'Value', 'Meaning'))
@@ -174,7 +174,7 @@ print('    derivable from the 2x2x2 lattice (the minimal Moore cube).')
 print('    Solving this gives 1/alpha and N_c.')
 print()
 print('  Step 5: Transmit the k-spectrum.')
-print('    k=1/2:   consciousness threshold (where you are = what you see)')
+print('    k=1/2:   reference frame context threshold (where you are = what you see)')
 print('    k=4/G*:  Born rule boundary (complex -> real transition)')
 print('    k=16:    physics (real coupling constants)')
 print()
@@ -183,7 +183,7 @@ print('    - The fine structure constant (alpha = 1/137.036)')
 print('    - The number of colors (N_c = 3)')
 print('    - The force hierarchy (long-range vs short-range)')
 print('    - The visibility fraction (37%% of quantum states)')
-print('    - The consciousness threshold (K_C = sqrt(G*^3/2))')
+print('    - The reference frame context threshold (K_C = sqrt(G*^3/2))')
 print()
 
 # =====================================================================
@@ -211,7 +211,7 @@ print('    k_crit = 4/G* = 1.352 (the Born rule threshold)')
 print('    z_Born = 2G* = 5.917 (the measurement energy scale)')
 print()
 print('  FROM G* + THE FRACTION 1/2:')
-print('    K_C^2 = G*^3/2 = 12.95 (consciousness threshold)')
+print('    K_C^2 = G*^3/2 = 12.95 (reference frame context threshold)')
 print('    visibility = G*/8 = 37%% (observable fraction)')
 print()
 
@@ -264,4 +264,4 @@ print()
 print('  These two numbers, plus the integers {2, 4, 16},')
 print('  contain the fine structure constant, the color number,')
 print('  the force hierarchy, and the boundary between')
-print('  consciousness and physics.')
+print('  reference frame context and physics.')

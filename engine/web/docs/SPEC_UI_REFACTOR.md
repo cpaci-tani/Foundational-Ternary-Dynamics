@@ -140,7 +140,7 @@ engine/web/
 │       │   ├── ontic-panel.css
 │       │   ├── physics-panel.css
 │       │   ├── planetary-panel.css
-│       │   ├── consciousness-panel.css
+│       │   ├── reference frame context-panel.css
 │       │   ├── cosmic-info-panel.css
 │       │   ├── meta-info-panel.css
 │       │   ├── quantum-lab-panel.css
@@ -210,7 +210,7 @@ engine/web/
     │   │   ├── ontic-panel/
     │   │   ├── physics-panel/
     │   │   ├── planetary-panel/
-    │   │   ├── consciousness-panel/
+    │   │   ├── reference frame context-panel/
     │   │   ├── cosmic-info-panel/
     │   │   ├── meta-info-panel/
     │   │   ├── quantum-lab-panel/
@@ -356,7 +356,7 @@ This is the required component inventory for the first full refactor pass.
 - `PhysicsPanelView`
 - `PlanetaryPanelView`
 - `HierarchyPanelView`
-- `ConsciousnessPanelView`
+- `Reference frame contextPanelView`
 - `CosmicInfoPanelView`
 - `MetaInfoPanelView`
 - `QuantumLabPanelView`
@@ -621,7 +621,7 @@ Files to add:
 - `engine/web/js/ui/panels/physics-panel/component.js`
 - `engine/web/js/ui/panels/planetary-panel/component.js`
 - `engine/web/js/ui/panels/hierarchy-panel/component.js`
-- `engine/web/js/ui/panels/consciousness-panel/component.js`
+- `engine/web/js/ui/panels/reference frame context-panel/component.js`
 - `engine/web/js/ui/panels/cosmic-info-panel/component.js`
 - `engine/web/js/ui/panels/meta-info-panel/component.js`
 - `engine/web/js/ui/panels/quantum-lab-panel/component.js`
@@ -638,7 +638,7 @@ Files to update:
 - [ontic-observatory.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/ontic-observatory.js)
 - [aggregation-bridge.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/aggregation-bridge.js)
 - [meta-pedagogy.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/meta-pedagogy.js)
-- [consciousness-pedagogy.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/consciousness-pedagogy.js)
+- [reference frame context-pedagogy.js](/C:/Users/cpaci/Desktop/ftd/engine/web/js/reference frame context-pedagogy.js)
 
 Work:
 - adapt panel producers to mount into component-owned roots rather than static page markup
@@ -877,7 +877,7 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 - ✅ Telemetry Hub — `js/telemetry-hub.js` owns all ring buffers and bridge calls
 - ✅ **Charts panel** componentized — `js/ui/panels/charts-panel/{component.js,template.js}`; `<div id="panel-charts">` in `index.html` reduced to empty mount root
 - ✅ **Lagrangian panel** componentized — `js/ui/panels/lagrangian-panel/{component.js,template.js}`; mount root only in `index.html`
-- ✅ **Consciousness panel** componentized — `js/ui/panels/consciousness-panel/{component.js,template.js}`; 140 lines of subtab/canvas markup removed from `index.html`
+- ✅ **Reference frame context panel** componentized — `js/ui/panels/reference frame context-panel/{component.js,template.js}`; 140 lines of subtab/canvas markup removed from `index.html`
 - ✅ **Settings modal** componentized — `js/ui/components/settings-modal/{component.js,template.js}`; mounted by `initSettingsModal()` in `app.js`, 80 lines of theme swatches + scale slider removed from `index.html`
 - ✅ **`index.html` shrunk** from 516 → 187 lines (−64%)
 - ✅ **`layout.css` retired** — content migrated: accessibility + theme transitions + `#app` root → `tokens.css`; theme-specific `.card` rules → `themes/{light,parchment}.css`; legacy class-based scale-visibility rules dropped (redundant with `data-active-scale` canonical rules + JS `applyScaleFilter`). File kept as a stub so cached HTML continues to 200 OK.
@@ -919,7 +919,7 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 | `peKE`, `pePE`, `peTotal`, `peCount`, `peMomentum`, `peAngMom`, `peVirial` | 1 | 200 | Particle engine |
 | `aeKE`, `aeTemp`, `aeEnergy`, `aeBonds` | 2/3 | 200 | Atom/molecule engine |
 | `csBodies`, `csHubble`, `csDM` | 5 | 200 | Cosmic |
-| `csTheta`, `csIntensity`, `csFluxRatio` | 11 | 200 | Consciousness |
+| `csTheta`, `csIntensity`, `csFluxRatio` | 11 | 200 | Reference frame context |
 
 ### Collection API
 

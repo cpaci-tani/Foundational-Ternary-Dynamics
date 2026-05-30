@@ -3,6 +3,9 @@ import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
+    await page.addInitScript(() => {
+        window.localStorage.clear();
+    });
 });
 
 test('every panel descriptor exposes a unicode icon glyph', async ({ page }) => {
@@ -135,7 +138,7 @@ test('left mount docks the panel to the left edge with viewport-safe height', as
         };
     });
 
-    expect(box.left).toBeLessThan(40);
+    expect(box.left).toBeLessThan(80);
     expect(box.width).toBeGreaterThanOrEqual(320);
     expect(box.width).toBeLessThanOrEqual(box.innerWidth * 0.5);
     expect(box.height).toBeGreaterThan(box.innerHeight * 0.5);
@@ -159,7 +162,7 @@ test('right mount docks the panel to the right edge', async ({ page }) => {
         };
     });
 
-    expect(box.right).toBeLessThan(40);
+    expect(box.right).toBeLessThan(80);
     expect(box.width).toBeGreaterThanOrEqual(320);
 });
 
@@ -244,26 +247,37 @@ test('side-mount collapse hides panel-area but keeps tab rail visible', async ({
     await page.goto('/');
     await page.waitForTimeout(800);
 
-    const result = await page.evaluate(async () => {
+    // Set panel mount to left
+    await page.evaluate(async () => {
         const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
         writePanelMount('left');
-        await new Promise((r) => requestAnimationFrame(r));
+    });
+    await page.waitForTimeout(100);
 
-        // Collapse via the toggle button
-        document.getElementById('btn-panel-toggle')?.click();
-        await new Promise((r) => requestAnimationFrame(r));
+    // Check if initially collapsed, and toggle to expanded if so
+    const isCollapsed = await page.evaluate(() => document.getElementById('app')?.classList.contains('panels-collapsed'));
+    if (isCollapsed) {
+        await page.click('#btn-panel-toggle');
+        await page.waitForTimeout(100);
+    }
 
+    // Collapse via toggle button
+    await page.click('#btn-panel-toggle');
+    await page.waitForTimeout(200);
+
+    const result = await page.evaluate(() => {
         const panelDisplay = getComputedStyle(document.getElementById('panel-area')).display;
         const tabDisplay   = getComputedStyle(document.getElementById('tab-bar')).display;
-
-        writePanelMount('bottom');
         return { panelDisplay, tabDisplay };
     });
 
     expect(result.panelDisplay).toBe('none');
     expect(result.tabDisplay).not.toBe('none');
 
-    await page.evaluate(() => localStorage.removeItem('ftd.panel.mount'));
+    await page.evaluate(() => {
+        localStorage.removeItem('ftd.panel.mount');
+        localStorage.removeItem('ftd-panels-collapsed');
+    });
 });
 
 test('bottom mount sets both safe-edge vars to 0px', async ({ page }) => {

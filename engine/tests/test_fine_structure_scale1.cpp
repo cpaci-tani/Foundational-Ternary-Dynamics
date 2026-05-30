@@ -88,14 +88,15 @@ int main() {
     CHECK(E_bare < 0, "FS-2: Bare hydrogen is bound (E < 0)");
 
     // FS-3: Shift scales as α⁴
-    // Expected order: ΔE_fs ~ α⁴ * E_ground ~ (7.3e-3)⁴ * E_ground ~ 2.8e-9 * E_ground
-    double alpha4 = ALPHA * ALPHA * ALPHA * ALPHA;
-    double expected_scale = alpha4 * std::abs(E_bare);
+    // Since E_bare is already of order α² (ground state energy E ~ -0.5 * m * α²),
+    // the fine structure shift (ΔE ~ α⁴ * m) scales as α² * E_bare.
+    double alpha2 = ALPHA * ALPHA;
+    double expected_scale = alpha2 * std::abs(E_bare);
     double actual_shift = std::abs(shift_full);
     // Allow 3 orders of magnitude — we just want the right ballpark
     bool correct_scale = (actual_shift > expected_scale * 0.001
                        && actual_shift < expected_scale * 1000.0);
-    std::printf("  FS-3: |shift|=%.4e, α⁴*|E|=%.4e, ratio=%.2f\n",
+    std::printf("  FS-3: |shift|=%.4e, α²*|E|=%.4e, ratio=%.2f\n",
                 actual_shift, expected_scale,
                 (expected_scale > 0) ? actual_shift / expected_scale : 0);
     CHECK(correct_scale, "FS-3: Shift in α⁴ ballpark (within 3 OOM)");

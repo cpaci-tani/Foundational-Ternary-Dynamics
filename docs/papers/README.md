@@ -152,7 +152,7 @@ Historical and superseded content.
 | figures/ | 24 unreferenced figures from development |
 | ARCH_GEOMETRIC_STANDARD_MODEL.pdf | Archived geometric standard model |
 | ARCH_MASTER_QUADRATIC_DISCRETE_SPACETIME_V1.pdf | Master quadratic v1 |
-| ARCH_REFLEXIVE_DYNAMICS.pdf | Reflexive dynamics |
+| ARCH_REFLEXIVE_DYNAMICS.pdf | Frame-relative dynamics |
 | ON_THE_ONTIC_INCOMPLETENESS.pdf | Earlier version of FOUND_ONTIC_INCOMPLETENESS |
 | SPEC_FTD_FINE_STRUCTURE_CONSTANT.docx | Fine structure constant (Word format) |
 | SPEC_FTD_FINE_STRUCTURE_CONSTANT_V2.docx | Fine structure constant v2 (Word format) |

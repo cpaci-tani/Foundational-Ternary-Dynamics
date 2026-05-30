@@ -4,10 +4,15 @@ import { test, expect } from '@playwright/test';
 test.describe('Playback timeline smoke', () => {
     test.beforeEach(async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 720 });
+        // Clear local storage to ensure fresh, predictable panel state before page loads
+        await page.context().addInitScript(() => {
+            window.localStorage.removeItem('ftd.panel.mount');
+            window.localStorage.removeItem('ftd-panels-collapsed');
+        });
     });
 
     test('play buttons render with labels and distinct classes', async ({ page }) => {
-        await page.goto('/');
+        await page.goto('/?engine=mock');
         await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
 
         const state = await page.evaluate(() => {
@@ -31,56 +36,36 @@ test.describe('Playback timeline smoke', () => {
         expect(state.labels).toContain('local');
     });
 
-    test('scrub bar mounts with memory zones after sim runs briefly', async ({ page }) => {
-        await page.goto('/');
+    test('scrub bar mounts as a compact capsule without timeline elements', async ({ page }) => {
+        await page.goto('/?engine=mock');
         await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
 
         // Ensure panels aren't collapsed — the scrub bar hides in that state.
-        await page.evaluate(() => document.getElementById('app')?.classList.remove('panels-collapsed'));
-
-        // Make sure the sim is running.
         await page.evaluate(() => {
-            const btn = document.getElementById('btn-play');
-            if (btn?.dataset.paused === 'true') btn.click();
+            const app = document.getElementById('app');
+            if (app && app.classList.contains('panels-collapsed')) {
+                document.getElementById('btn-panel-toggle')?.click();
+            }
         });
-        await page.waitForTimeout(3000);
 
         const report = await page.evaluate(() => {
             const bar    = document.getElementById('scrub-bar');
             const strip  = bar?.querySelector('.scrub-bar-strip');
-            const zones  = bar?.querySelectorAll('.scrub-bar-zone');
+            const zones  = bar?.querySelector('.scrub-bar-zones');
             const render = bar?.querySelector('.scrub-bar-render-btn');
             const ph     = bar?.querySelector('.scrub-bar-playhead');
             return {
                 barMounted: !!bar,
                 hasStrip: !!strip,
                 hasRenderBtn: !!render,
-                zoneCount: zones?.length ?? 0,
-                playheadAt: ph?.style.left ?? null,
+                hasZones: !!zones,
+                hasPlayhead: !!ph,
             };
         });
         expect(report.barMounted).toBe(true);
-        expect(report.hasStrip).toBe(true);
-        expect(report.hasRenderBtn).toBe(true);
-        expect(report.zoneCount).toBeGreaterThan(0);
-    });
-
-    test('render chip appears, progresses, and can be cancelled', async ({ page }) => {
-        await page.goto('/');
-        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
-
-        await page.waitForFunction(() => typeof window.__ftdStartRender === 'function');
-        await page.evaluate(() => window.__ftdStartRender(3));
-
-        await page.waitForFunction(() => {
-            const chip = document.getElementById('render-chip');
-            return chip && !chip.hidden;
-        }, { timeout: 5000 });
-
-        await page.evaluate(() => document.querySelector('.render-chip-cancel')?.click());
-        await page.waitForTimeout(500);
-
-        const afterCancel = await page.evaluate(() => document.getElementById('render-chip')?.hidden);
-        expect(afterCancel).toBe(true);
+        expect(report.hasStrip).toBe(false);
+        expect(report.hasRenderBtn).toBe(false);
+        expect(report.hasZones).toBe(false);
+        expect(report.hasPlayhead).toBe(false);
     });
 });

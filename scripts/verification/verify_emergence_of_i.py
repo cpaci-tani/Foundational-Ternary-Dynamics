@@ -4,7 +4,7 @@ Verification Script: The Emergence of i
 This script verifies the mathematical claims in THE_EMERGENCE_OF_i.md:
 1. Shows that only i^2 = -1 preserves magnitude under rotation
 2. Verifies Gaussian integer structure in lemniscate (j = 1728)
-3. Demonstrates the consciousness quadratic complex roots
+3. Demonstrates the reference frame context quadratic complex roots
 4. Shows the Born rule as C -> R projection
 
 Framework: Foundational Ternary Dynamics v5.14
@@ -129,12 +129,12 @@ def verify_gaussian_integers():
 
     return j_invariant == j_from_framework
 
-def verify_consciousness_quadratic():
+def verify_reference frame context_quadratic():
     """
-    Verify the complex roots of the consciousness quadratic.
+    Verify the complex roots of the reference frame context quadratic.
     """
     print("=" * 70)
-    print("PART 3: Consciousness Quadratic Complex Roots")
+    print("PART 3: Reference frame context Quadratic Complex Roots")
     print("=" * 70)
     print()
 
@@ -145,12 +145,12 @@ def verify_consciousness_quadratic():
     print(f"G* = sqrt(2) * Gamma(1/4)^2 / (2*pi) = {G_star:.10f}")
     print()
 
-    # Consciousness quadratic: y^2 - (G*^2/2)y + (G*^3/2) = 0
+    # Reference frame context quadratic: y^2 - (G*^2/2)y + (G*^3/2) = 0
     a_coef = 1
     b_coef = -G_star**2 / 2
     c_coef = G_star**3 / 2
 
-    print("Consciousness quadratic: y^2 - (G*^2/2)y + (G*^3/2) = 0")
+    print("Reference frame context quadratic: y^2 - (G*^2/2)y + (G*^3/2) = 0")
     print()
     print(f"  a = {a_coef}")
     print(f"  b = -G*^2/2 = {b_coef:.10f}")
@@ -189,7 +189,7 @@ def verify_consciousness_quadratic():
 
     # Compare to physics quadratic
     print("-" * 70)
-    print("COMPARISON: Physics vs Consciousness Quadratics")
+    print("COMPARISON: Physics vs Reference frame context Quadratics")
     print("-" * 70)
     print()
 
@@ -209,7 +209,7 @@ def verify_consciousness_quadratic():
     print("| Quadratic    | Coefficient | Discriminant | Roots          |")
     print("|--------------|-------------|--------------|----------------|")
     print(f"| Physics      | k = 16      | {disc_phys:+.2f}       | Real: {x_plus:.1f}, {x_minus:.2f} |")
-    print(f"| Consciousness| k = 1/2     | {discriminant:+.2f}       | Complex: {real_part:.2f} +/- {imag_part:.2f}i |")
+    print(f"| Reference frame context| k = 1/2     | {discriminant:+.2f}       | Complex: {real_part:.2f} +/- {imag_part:.2f}i |")
     print()
 
     return discriminant < 0
@@ -316,8 +316,8 @@ def main():
     # Part 2: Gaussian integers
     results.append(("Gaussian Integers", verify_gaussian_integers()))
 
-    # Part 3: Consciousness quadratic
-    results.append(("Consciousness Quadratic", verify_consciousness_quadratic()))
+    # Part 3: Reference frame context quadratic
+    results.append(("Reference frame context Quadratic", verify_reference frame context_quadratic()))
 
     # Part 4: Born rule
     results.append(("Born Rule", verify_born_rule()))
@@ -346,7 +346,7 @@ def main():
         print("KEY RESULTS:")
         print("  1. i^2 = -1 is the UNIQUE rotation-preserving 2D structure")
         print("  2. The lemniscate has CM by Z[i] (same i)")
-        print("  3. Consciousness quadratic has complex roots (same i)")
+        print("  3. Reference frame context quadratic has complex roots (same i)")
         print("  4. Born rule is C -> R projection (extracts real from complex)")
         print("  5. Lemniscate crosses at 90 degrees (geometric signature of i)")
         print()

@@ -20,7 +20,7 @@ npm test
 npm run test:ui
 
 # run a single test by name
-npx playwright test -g "Scale 11 consciousness"
+npx playwright test -g "Scale 11 reference frame context"
 ```
 
 The config uses Playwright's `webServer` block to start / stop
@@ -31,14 +31,14 @@ collide with the 8080 that many developers leave running manually.
 ## What the suite covers
 
 - **Scale sweep**: each of the 8 engine modes (`lattice`, `particles`,
-  `atoms`, `molecules`, `planetary`, `cosmic`, `meta`, `consciousness`)
+  `atoms`, `molecules`, `planetary`, `cosmic`, `meta`, `reference frame context`)
   loads without console errors or failed network requests.
 - **Bridge initialization**: `window._ftdBridge` becomes non-null within
   15 s of page load.
 - **Phase B.1 regression**: `window._cosmicInterval` is never set after
   the Scale 5 refactor (cosmic mode now drives physics from the rAF
   loop instead of a parallel `setInterval`).
-- **Phase B.2 regression**: re-entering consciousness mode does not leak
+- **Phase B.2 regression**: re-entering reference frame context mode does not leak
   event listeners. A warmup cycle runs first so that one-time init
   listeners land on the untracked baseline, then 5 further cycles are
   monitored for growth.

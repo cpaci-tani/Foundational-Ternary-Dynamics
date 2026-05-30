@@ -50,7 +50,7 @@ Status legend: `[x]` fixed · `[~]` partial · `[d]` deferred (with reason) · `
 - [n] **A-14** particle-catalog.js mass `units_source` tag — cosmetic; deferred
 - [n] **A-15** AE_* MD constants unit comments — cosmetic; deferred
 - [x] **A-16** `BOHR_LATTICE_TO_M` exported from constants.js + units.js
-- [x] **A-17** scale11 consciousness `K_B*0.3` → `CS_SUB_AMPLITUDE`
+- [x] **A-17** scale11 reference frame context `K_B*0.3` → `CS_SUB_AMPLITUDE`
 - [x] **A-18** K_B slider in substrate-controls.js now templates from K_B
 - [x] **A-19** decay-rates.js Wilkinson uses M_E_PHYS for PDG comparison
 - [n] **A-21** pe-telemetry.js Coulomb readout — verified correct; no fix needed

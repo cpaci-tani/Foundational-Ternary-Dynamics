@@ -16,7 +16,6 @@
 #include "ftd/eft/dual_cell_continuity.h"
 #include <vector>
 #include <cufft.h>
-#include <curand.h>
 
 namespace ftd {
 namespace gpu {
@@ -88,7 +87,7 @@ private:
     // GPU tick sub-phases
     void gpu_phase_read();
     void gpu_phase_write();
-    void gpu_wave_update();  // fused read+write (single-substrate only)
+
     void gpu_gauss_project();
     void gpu_solve_coulomb();
     void gpu_solve_latency_poisson();   // Wave 5: GPU latency Poisson. Renamed from gpu_solve_latency (F7 callstack audit 2026-04-17) for parity with CPU solve_latency_poisson.
@@ -116,8 +115,6 @@ private:
     cufftHandle fft_plan_forward_f_ = 0;  // C2C float (default, 2× faster)
     cufftHandle fft_plan_inverse_f_ = 0;  // C2C float (default, 2× faster)
 
-    // cuRAND generator (for genesis probability)
-    curandGenerator_t rng_ = nullptr;
     unsigned int rng_seed_ = 0;
     bool rng_seed_initialized_ = false;
 

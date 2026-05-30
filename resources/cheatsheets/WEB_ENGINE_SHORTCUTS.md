@@ -70,7 +70,7 @@ The scale dropdown in the toolbar switches between:
 | Scale 4 (Planetary) | N-body sandbox | exoplanet systems, Kepler orbits, terrain |
 | Scale 5 (Cosmic) | Λ-CDM | Hubble expansion, galaxy formation, black holes |
 | Meta | existential unit | 27-site Moore polyhedra, O_h symmetry |
-| Scale 11 (Consciousness) | φ-loop | consciousness phase, sLoop, holographic figures |
+| Scale 11 (Reference frame context) | φ-loop | reference frame context phase, sLoop, holographic figures |
 
 ## Scenario picker (controls panel, Scale 0)
 

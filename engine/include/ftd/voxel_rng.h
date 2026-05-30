@@ -42,6 +42,8 @@ enum class VoxelRng : std::uint64_t {
     LangevinNoiseX  = 4,  // BH-F5: replaces curandGenerateNormalDouble (axis x)
     LangevinNoiseY  = 5,  // axis y
     LangevinNoiseZ  = 6,  // axis z
+    WeakTransmutation = 7,
+    PairProduction = 8,
 };
 
 // SplitMix64-based per-voxel uniform on [0, 1).

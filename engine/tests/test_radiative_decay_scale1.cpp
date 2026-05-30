@@ -34,9 +34,10 @@ struct TrajectoryPoint {
 };
 
 static std::vector<TrajectoryPoint> run_hydrogen(bool radiation, int ticks, double dt) {
-    double alpha_eff = ALPHA / (4.0 * PI) + G_N * K_B * K_B;
-    double a_0 = 1.0 / (K_B * alpha_eff);
-    double v_orb = std::sqrt(alpha_eff / (K_B * a_0));
+    double m_e = 0.0015; // Lighter electron to amplify radiation acceleration
+    double alpha_eff = ALPHA / (4.0 * PI) + G_N * K_B * m_e;
+    double a_0 = 1.0 / (K_B * alpha_eff); // Keep the orbit size stable around 613
+    double v_orb = std::sqrt(alpha_eff / (m_e * a_0));
 
     ParticleEngine pe;
     pe.set_dt(dt);
@@ -46,7 +47,7 @@ static std::vector<TrajectoryPoint> run_hydrogen(bool radiation, int ticks, doub
     pe.toggles.radiation = radiation;
 
     pe.add_locked_particle(+1, {0, 0, 0});
-    pe.add_particle(-1, {a_0, 0, 0}, {0, v_orb, 0});
+    pe.add_particle(-1, {a_0, 0, 0}, {0, v_orb, 0}, m_e);
     pe.particles()[1].r_eff = 0.01;
 
     std::vector<TrajectoryPoint> traj;

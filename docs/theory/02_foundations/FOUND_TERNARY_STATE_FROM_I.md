@@ -5,7 +5,7 @@
 **LEDGER:** FTD-0128 — exposition / framework-deductive-chain entry.
 **Verification:** No script needed (pure exposition; no new identity).
 **Depends on:** Axiom 0 ("i exists"); Postulate 3 (current SPEC_FTD.md form); FTD-0122 (BCC complex-structure, `V_complex ≅ Z[i]²` in BCC decomposition); Theorem 8 (FTD-0111, (1+i)-tower); FTD-0110 / `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (existing 4-unification observation); FTD-0127 (G\* parity-twist, conductor-4 connection).
-**Companion:** `REF_REFLEXIVITY_VOCABULARY.md` (dispositional/actual graded monism).
+**Companion:** `REF_REFERENCE_FRAME_VOCABULARY.md` (dispositional/actual graded monism).
 
 ---
 
@@ -73,7 +73,7 @@ So `s = i²` correctly captures that the state field is the **phase-collapsed re
 - `s` (state field) carries the **discrete real-phase-collapsed** content — `s ∈ {i², 0, |i²|} = {−1, 0, +1}`.
 - `J` (flux field) carries the **continuous vector / phase-bearing** content — magnitude `|J|` is the "infinite potential" each voxel can carry.
 
-This is consistent with `SPEC_FTD.md` §1.1's existing graded-monism reading and with `REF_REFLEXIVITY_VOCABULARY.md`'s dispositional/actual split.
+This is consistent with `SPEC_FTD.md` §1.1's existing graded-monism reading and with `REF_REFERENCE_FRAME_VOCABULARY.md`'s dispositional/actual split.
 
 ---
 
@@ -114,7 +114,7 @@ This document does not strengthen the "all 4s are the same 4" conjecture; it add
 >
 > [Then the existing J-primary text continues unchanged.]
 
-### 5.2 `REF_REFLEXIVITY_VOCABULARY.md`
+### 5.2 `REF_REFERENCE_FRAME_VOCABULARY.md`
 
 Add to a new section "Vocabulary for the state-field grounding":
 

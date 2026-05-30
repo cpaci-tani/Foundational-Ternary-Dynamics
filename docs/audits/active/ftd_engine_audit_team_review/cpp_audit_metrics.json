@@ -1,0 +1,14 @@
+{
+  "build": {
+    "success": true,
+    "code": 0,
+    "duration_sec": 2.922,
+    "log_file": "architecture/cpp_build.log"
+  },
+  "tests": {
+    "success": false,
+    "code": 8,
+    "duration_sec": 3747.391,
+    "log_file": "performance/ctests.log"
+  }
+}

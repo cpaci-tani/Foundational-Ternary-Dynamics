@@ -1233,7 +1233,7 @@ static void section_level7_gravitational_wave() {
 }
 
 // ============================================================================
-// Level 8 — consciousness/observer
+// Level 8 — reference frame context/observer
 // ============================================================================
 
 static void section_level8_sloop() {

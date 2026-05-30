@@ -61,7 +61,7 @@ engine/
   * `gauge_couplings.h`: Precision coupling calculations (CODATA 2022 matching via 4-term loop expansions), $G_N = 0.01$ (scaled lattice gravity), and QCD running definitions.
   * `particle_masses.h`: Standard Model mass scale definitions ($K_B = 0.511$ MeV, $K_{genesis} = 3 K_B$) and the Higgs VEV ($V_{Higgs} = 246.09$ GeV, $M_{Higgs} = 124.8$ GeV).
   * `neutrino.h`: Seesaw mechanism equations and PMNS neutrino mixing parameters.
-  * `consciousness.h`: Pedagogical noetic coordinates ($y_{real}$, $K_{noetic}$, $\theta_C$) and softplus fixed points.
+  * `reference frame context.h`: Pedagogical noetic coordinates ($y_{real}$, $K_{noetic}$, $\theta_C$) and softplus fixed points.
 * **`constants.h`**: Re-exports all ontic constants into the `ftd::` namespace and appends engine tuning parameters (`SOR_ITERATIONS = 6`, `SOR_OMEGA = 1.75`, `EVAP_THRESHOLD = 1e-6`, `BANDWIDTH_FLOOR = 1e-6`). Contains the algebraic identity `ALPHA_EFT = G_C * G_C`.
 * **`constants_gpu.cuh`**: CUDA-side `inline constexpr` mirror of `constants.h` compiling cleanly under both standard MSVC/g++ and NVCC.
 * **`voxel.h` & `lattice.h`**: Voxel struct and coordinates/neighbor geometry helpers.
@@ -200,7 +200,7 @@ The FTD C++ engine is engineered around a strict compile-time dependency hierarc
             │                        [ontic/neutrino.h] (Layer 7b)
             └────────────────┬────────────────┘
                              ▼
-                 [ontic/consciousness.h] (Layers 8 to 8b)
+                 [ontic/reference frame context.h] (Layers 8 to 8b)
                              │
                              ▼
                         [ontic.h] (Umbrella Header)
@@ -232,7 +232,7 @@ The mathematical and physical constants of FTD are derived from a 9-layer mathem
 3. **`ontic/gauge_couplings.h` (Layers 5 to 7):** Derives the running gauge couplings, including electroweak $\alpha_w \approx 0.0338$, strong coupling $\alpha_s = 1.0$, and the perturbative loop coefficients $c_1, c_2, c_3$.
 4. **`ontic/particle_masses.h` (Layers 6 to 6c):** Computes the mass scales relative to the Planck mass $m_P$, defining the electron mass threshold $m_e = m_P \sqrt{2\pi} (16/3) \alpha^{11} \approx 0.511 \text{ MeV}$ (represented by manifestation threshold $K_B$) and the proton mass $m_p \approx 938.272 \text{ MeV}$.
 5. **`ontic/neutrino.h` (Layer 7b):** Implements absolute neutrino mass definitions ($m_{\nu_1}, m_{\nu_2}, m_{\nu_3}$) using topological volume ratios.
-6. **`ontic/consciousness.h` (Layers 8 to 8b):** Contains mathematical boundary values for the noetic domain, defining the genesis threshold $K_{genesis}$ and other informational scale bounds.
+6. **`ontic/reference frame context.h` (Layers 8 to 8b):** Contains mathematical boundary values for the noetic domain, defining the genesis threshold $K_{genesis}$ and other informational scale bounds.
 7. **`ontic.h`:** Serves as the global **Umbrella Header**, including all sub-headers under `ontic/` inside the `ftd::ontic` namespace.
 
 ### 3.2 Circular Include Prevention Schemes

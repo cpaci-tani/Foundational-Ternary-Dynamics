@@ -312,8 +312,18 @@ ftd_add_test(test_cluster_interaction_static tests/test_cluster_interaction_stat
 # Class C Phase C.2: dynamic soliton-soliton (charge-charge) scattering deflection angles.
 ftd_add_test(test_cluster_interaction_dynamic tests/test_cluster_interaction_dynamic.cpp)
 
+# Cluster-thermodynamics EXPLORATORY pass (.claude/plans/lazy-conjuring-marble.md):
+# genealogy detector correctness gate + fission/fusion (Exp-A) + relaxation (Exp-B)
+# campaigns. EXPLORATORY, NOT pre-registered. Campaigns take CLI args; run manually.
+ftd_add_test(test_cluster_genealogy tests/test_cluster_genealogy.cpp)
+ftd_add_test(campaign_cluster_fission_fusion tests/campaign_cluster_fission_fusion.cpp TIMEOUT 1800)
+ftd_add_test(campaign_cluster_relaxation tests/campaign_cluster_relaxation.cpp TIMEOUT 1800)
+
 # Class C Phase C.3: coupling readout sweeps for EM charge scaling and Yukawa fitting.
 ftd_add_test(test_coupling_readout_sweeps tests/test_coupling_readout_sweeps.cpp)
+
+# Class B Track 2: C++/CUDA-based cluster persistence and stable soliton sweeps in C++ engine
+ftd_add_test(test_soliton_sweeps tests/test_soliton_sweeps.cpp)
 
 # NOTE (2026-05-04 cleanup): the Phase B exploratory diagnostic-arc tests
 # (~26 files: test_cluster_gamma_t_exploratory, test_cluster_cooling_evap,

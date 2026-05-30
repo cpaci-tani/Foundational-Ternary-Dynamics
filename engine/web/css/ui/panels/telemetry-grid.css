@@ -1,0 +1,114 @@
+/* Telemetry Grid panel styling — Spatial Glassmorphism Architecture */
+
+.telemetry-grid-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 12px;
+    padding: 6px;
+    overflow: auto;
+}
+
+.telemetry-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+    flex: 1;
+}
+
+.telemetry-card {
+    background: rgba(18, 26, 47, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 120px;
+    position: relative;
+    overflow: hidden;
+    transition: 
+        border-color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.2s ease;
+}
+
+.telemetry-card:hover {
+    background: rgba(25, 36, 60, 0.4);
+    border-color: rgba(0, 229, 255, 0.2);
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.25),
+        0 0 10px rgba(0, 229, 255, 0.05);
+}
+
+.telemetry-card-head {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.telemetry-card-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-dim, #94a3b8);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.telemetry-card-value {
+    font-size: 20px;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-weight: 500;
+    color: var(--text-primary, #ffffff);
+    margin-top: 2px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.telemetry-card-plot {
+    flex: 1;
+    min-height: 60px;
+    height: 70px;
+    width: 100%;
+    position: relative;
+}
+
+/* uPlot overrides within micro telemetry sparklines */
+.telemetry-card-plot .uplot {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.telemetry-card-plot .u-legend {
+    display: none !important; /* Hide legend for sparkline micro-charts */
+}
+
+.telemetry-card-plot .u-title {
+    display: none !important; /* Hide title for sparkline micro-charts */
+}
+
+/* Hide grid axis lines and ticks in high density microsparkline mode */
+.telemetry-card-plot .u-over, 
+.telemetry-card-plot .u-under {
+    border: none !important;
+}
+
+/* Modern collapsing hover styling for uPlot cursors in synchronization */
+.telemetry-sync-line {
+    border-left: 1px dashed rgba(0, 229, 255, 0.6) !important;
+}
+
+.telemetry-grid-empty {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    color: var(--text-dim, #94a3b8);
+    font-size: 13px;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.01);
+}

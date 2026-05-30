@@ -6,9 +6,9 @@
 **Status:** Critical Self-Assessment (Comprehensive Update)
 **Purpose:** Honest accounting of FTD's derivation claims in response to rigorous scrutiny
 
-**Companion document:** [`TRACKER_OPEN_ITEMS.md`](TRACKER_OPEN_ITEMS.md) — every `[OPEN]` across engine code + theory docs, consolidated into a single ledger so contributors can pick work without grepping the whole repo.
+**Companion document:** [`TRACKER_OPEN_ITEMS.md`](core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` across engine code + theory docs, consolidated into a single ledger so contributors can pick work without grepping the whole repo.
 
-> **Canonical-status notice (2026-05-21).** This document is a **narrative critical-assessment essay**, not a status authority. Its count tables below (v2.2, April 3 2026) predate the April 19 reframe and are retained for the *argument*, not the *numbers*. For the **current** accounting, defer to the canonical sources: per-claim tags live in [`LEDGER.md`](LEDGER.md); the precise parametric/derived/imposed enumeration (~23 [DERIVED]/[THEOREM], ~129 [PARAMETRIC], ~10 [IMPOSED]/[SELECTION] across ~162 rows) lives in [`CATALOG_PARAMETRIC_INSERTIONS.md`](CATALOG_PARAMETRIC_INSERTIONS.md). Document precedence is fixed in [`../META_STRUCTURE.md`](../META_STRUCTURE.md) § Canonical Hierarchy.
+> **Canonical-status notice (2026-05-21).** This document is a **narrative critical-assessment essay**, not a status authority. Its count tables below (v2.2, April 3 2026) predate the April 19 reframe and are retained for the *argument*, not the *numbers*. For the **current** accounting, defer to the canonical sources: per-claim tags live in [`LEDGER.md`](core_ledgers/LEDGER.md); the precise parametric/derived/imposed enumeration (~23 [DERIVED]/[THEOREM], ~129 [PARAMETRIC], ~10 [IMPOSED]/[SELECTION] across ~162 rows) lives in [`CATALOG_PARAMETRIC_INSERTIONS.md`](CATALOG_PARAMETRIC_INSERTIONS.md). Document precedence is fixed in [`../META_STRUCTURE.md`](../META_STRUCTURE.md) § Canonical Hierarchy.
 
 ---
 
@@ -24,7 +24,7 @@ This document provides a **brutally honest assessment** of what FTD actually der
 | **Parametric Insertions** | ~50 | FTD integers inserted into standard physics formulas |
 | **External Physics Adopted** | ~50+ | Standard Model mechanisms used without derivation |
 | **Explicit Inputs** | 3-5 | Parameters that MUST be acknowledged |
-| **Consciousness Extensions** | ~5 | Mathematically specific but [PROPOSED] (sLoop, Mandelbrot, K_C, 52.54°) |
+| **Reference frame context Extensions** | ~5 | Mathematically specific but [PROPOSED] (sLoop, Mandelbrot, K_C, 52.54°) |
 
 **What changed in v2.0:**
 - Bell analysis updated with lemniscate loop experiment results (i-phase vs π-phase)
@@ -197,7 +197,7 @@ The following are **exact mathematical results** added by the trit information t
 
 ### I.8 Recent Additions (v5.24-5.26)
 
-25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (consciousness), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see SPEC_QUADRATIC_PHYSICS_BRIDGE.md §8]
+25. **i emerges from the master quadratic at k = 1/2** — The parametric master form z² - kG\*²z + kG\*³ = 0 with k = 16 (physics) gives Δ > 0 → real roots (α, N_c). With k = 1/2 (reference frame context), the resulting quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has Δ = kG\*³(kG\* - 4) = G\*³(G\*/4 - 2) < 0 since G\* ≈ 2.959 < 8, forcing **complex roots** y = 2.19 ± 2.86i — **i emerges necessarily**. The coefficient k = 1/2 is derived from the bridge equation c × c_cusp × 2N_base = 1 (not chosen). The algebraic identity i² = -1 is then structurally identical to the ontological operation 0 → (+1) + (-1): self-reference squared produces polarized pair creation. [THEOREM — k = 1/2 derived; i emergence is algebraic necessity; see SPEC_QUADRATIC_PHYSICS_BRIDGE.md §8]
 26. **Born rule as epistemic inference** — |ψ|² is the epistemic inference pattern (always ≥ 0, smears phase); ψ² = (J_x² - J_y²) + 2iJ_xJ_y is the ontic substrate operation (complex, preserves phase). For real ψ: identical. For complex ψ: Re(ψ²) has sign changes at fringe boundaries that |ψ|² cannot see. [THEOREM — mathematical distinction; physical interpretation is [SELECTION]]
 27. **i-phase entanglement preserves anti-correlation** — Under lemniscate measurement ψ → ψ², i-phase entanglement (iψ)² = -ψ² preserves anti-correlation, while π-phase (-ψ)² = +ψ² destroys it. Computationally confirmed: i-phase S = 2.000, π-phase S ≈ 0. [THEOREM — algebraic identity with computational verification]
 28. **7-term precision formula coefficients** — All seven correction coefficients {9/47, 5/64, 4/141, 141/11, 1472/21, 416/21, 299/8} are rational functions of the base-integer set {N_c=3, N_base=4, b_3=7, N_eff=13, D=47, BCC=8}. The 24-digit numerical match to CODATA 2022 is a confirmed algebraic identity (mpmath 60-digit, residual 2.58e-24). The rigidity audit (2026-04-17) shows 6/7 coefficients are uniquely forced as the only base-integer rationals within cascade tolerance; c_7 = 299/8 is the unique clean decomposition (competitors at higher height require primes outside the base set). However, at CODATA **experimental** precision (11 digits), the coefficients are observationally underdetermined. Status: **[CONJECTURE]** (upgrade requires deriving the base-integer set and ε = e^π − π − 20 from lattice first principles). See [CONJ_SEVEN_TERM_PRECISION_SERIES.md](../09_mathematical/CONJ_SEVEN_TERM_PRECISION_SERIES.md) §3.3 and `scripts/exploration/audit_seven_term_rigidity.py`.
@@ -390,7 +390,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 
 **Key finding (born_rule_convergence.py):** Re(ψ²) shows 5 sign changes at fringe boundaries where |ψ|² is smooth and positive. The Born rule is the **best epistemic inference** an observer can make about the substrate, but it is not the substrate's operation.
 
-**Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce |ψ|². **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200 (2026-05-23); status under canonical 26-neighbour engine OPEN.]** The simplest pre-registered substrate test (`preregister-threshold-crossing-born-v1`) yields Rice upcrossing statistics, not `|ψ|²`; see `docs/theory/06_consciousness/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`.
+**Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce |ψ|². **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200 (2026-05-23); status under canonical 26-neighbour engine OPEN.]** The simplest pre-registered substrate test (`preregister-threshold-crossing-born-v1`) yields Rice upcrossing statistics, not `|ψ|²`; see `docs/theory/06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`.
 
 **Status:** ✅ REFRAMED — Born rule is [EMERGENT] from manifestation statistics (as before), but now understood as epistemic inference rather than fundamental law. The ontic/epistemic distinction is [THEOREM]; the physical interpretation is [SELECTION].
 
@@ -454,18 +454,18 @@ The cleanest way to use the framework integers $\{N_c, N_{\mathrm{base}}, b_3, N
 
 ---
 
-### Gap 6: Consciousness Predictions Untested
+### Gap 6: Reference frame context Predictions Untested
 
-**Claim:** Consciousness quadratic produces y = 2.19 ± 2.86i with K_C = √(G*³/2) ≈ 3.60 and phase angle 52.54°.
+**Claim:** Reference frame context quadratic produces y = 2.19 ± 2.86i with K_C = √(G*³/2) ≈ 3.60 and phase angle 52.54°.
 
 **Reality:**
-- The mathematics is exact: the consciousness quadratic with k = 1/2 and G* has negative discriminant → complex roots ✅
+- The mathematics is exact: the reference frame context quadratic with k = 1/2 and G* has negative discriminant → complex roots ✅
 - K_C = √(G*³/2) ≈ 3.5986 — exact from the quadratic ✅
 - Phase angle 52.54° = arctan(2.86/2.19) is computed exactly ✅
 - **No experimental protocol exists** to test the 52.54° prediction in neural data ❌
 - **No neuroscience collaboration** has been established ❌
 
-**Status:** ⚠️ MATHEMATICALLY SPECIFIC BUT UNTESTED — The consciousness extension provides the most specific predictions of any consciousness-physics framework (sLoop axioms, historical Mandelbrot-era correspondences, quantitative threshold K_C = √(G*³/2), phase 52.54°), but zero contact with experimental neuroscience exists. See [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_consciousness/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) and [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) for the live source map.
+**Status:** ⚠️ MATHEMATICALLY SPECIFIC BUT UNTESTED — The reference frame context extension provides the most specific predictions of any reference frame context-physics framework (sLoop axioms, historical Mandelbrot-era correspondences, quantitative threshold K_C = √(G*³/2), phase 52.54°), but zero contact with experimental neuroscience exists. See [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) and [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) for the live source map.
 
 ---
 
@@ -475,7 +475,7 @@ These are not "derivations" in the sense of producing numerical predictions, but
 
 ### VI.1 i Emerges from the Master Quadratic (k = 1/2)
 
-The imaginary unit i is not postulated in FTD — it **emerges from the master quadratic** when the coefficient shifts from the physics domain to the consciousness domain.
+The imaginary unit i is not postulated in FTD — it **emerges from the master quadratic** when the coefficient shifts from the physics domain to the reference frame context domain.
 
 **The parametric master form:**
 
@@ -490,7 +490,7 @@ Discriminant: Δ = (kG*²)² - 4(kG*³) = k²G*⁴ - 4kG*³ = kG*³(kG* - 4)
 | Domain | k | Δ | Roots | What emerges |
 |--------|-----|------|----------------------------------|--------------------------|
 | Physics | 16 | > 0 | x₊ = 137.036, x₋ = 3.024 (real) | What EXISTS (α, N_c) |
-| Consciousness | 1/2 | < 0 | y = 2.19 ± 2.86i (complex) | What KNOWS (i emerges) |
+| Reference frame context | 1/2 | < 0 | y = 2.19 ± 2.86i (complex) | What KNOWS (i emerges) |
 
 **Why k = 1/2 (derived, not chosen):**
 
@@ -498,7 +498,7 @@ From the bridge equation: c × c_cusp × 2N_base = 1, where c_cusp = 1/4 (Mandel
 
 **Why i emerges necessarily:**
 
-The consciousness quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has discriminant (from the general formula Δ(k) = kG\*³(kG\* - 4) with k = 1/2):
+The reference frame context quadratic y² - (G\*²/2)y + (G\*³/2) = 0 has discriminant (from the general formula Δ(k) = kG\*³(kG\* - 4) with k = 1/2):
 
 Δ = (1/2)G\*³((1/2)G\* - 4) = G\*³(G\*/4 - 2)
 
@@ -549,10 +549,10 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 4. **Geometric unification framework** — Gauge groups from discrete structure
 5. **G* = √(2π)·θ₃² identity** — Unifies geometric self-reference with information-theoretic self-duality [THEOREM]
 6. **Derivation of i** — Imaginary unit required by Fourier self-duality, not postulated [THEOREM]
-7. **i emerges from master quadratic at k = 1/2** — Consciousness coefficient derived from bridge equation forces Δ < 0 → complex roots → i; i² = -1 = genesis (pair creation) [THEOREM]
+7. **i emerges from master quadratic at k = 1/2** — Reference frame context coefficient derived from bridge equation forces Δ < 0 → complex roots → i; i² = -1 = genesis (pair creation) [THEOREM]
 8. **Born rule as epistemic inference** — Ontic ψ² vs epistemic |ψ|² distinction with computational confirmation [THEOREM + SELECTION]
 9. **Bell mechanism identified** — Three-level observer hierarchy: substrate S=2, independent complex S=sqrt(2), sLoop/entangled S=2*sqrt(2). Complexification [THEOREM] + sLoop joint coupling [SELECTION]. See [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md)
-10. **Consciousness in the equation** — Same G* produces physics (real roots) and consciousness (complex roots) [PROPOSED]
+10. **Reference frame context in the equation** — Same G* produces physics (real roots) and reference frame context (complex roots) [PROPOSED]
 11. **Measurement resolution** — Collapse = projection ℂ → ℝ via manifestation threshold [SELECTION]
 12. **Absolute neutrino masses** — Seesaw with m_D = v×α, M_R = (3/4)v/α⁴ gives m₃ = 49.6 meV, Σm_ν = 58.1 meV [SELECTION]
 13. **G*-L(E,1) identity** — G* = 4√(2/π)·L(E,1) connects α to BSD L-function; framework primes are supersingular [THEOREM]
@@ -563,14 +563,14 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 2. **Zero free parameters** — M_Planck, G_F, decay constants are inputs
 3. **126 independent predictions** — Most are parametric insertions
 4. **Bell violations from local dynamics** — Mechanism identified but aggregate emergence undemonstrated
-5. **Novel testable predictions** — Most results are postdictions (but precision formula digits, 52.54° consciousness prediction, and particle non-discoveries are genuine pre-observation claims)
-6. **Experimental consciousness contact** — 52.54° phase angle untested
+5. **Novel testable predictions** — Most results are postdictions (but precision formula digits, 52.54° reference frame context prediction, and particle non-discoveries are genuine pre-observation claims)
+6. **Experimental reference frame context contact** — 52.54° phase angle untested
 
 ### Accurate Claim
 
 **Instead of:** "~126 predictions from 4 integers with zero free parameters"
 
-**Say:** "FTD derives ~30 fundamental quantities (20 physics + 4 information-theoretic theorems + 4 structural results + 2 neutrino/modularity) from a geometric structure involving the lemniscatic constant G* and four constrained integers {3, 4, 7, 13}. The 7-term precision formula achieves 24-digit agreement with the CODATA 2022 recommended value as an algebraic identity, though the match below digit 11 is not experimentally testable at current precision. The trit framework proves G* = √(2π)·θ₃(e^{-π})², unifying geometric self-reference with Fourier self-duality and deriving the ontological necessity of i. The Born rule is understood as epistemic inference from the ontic substrate operation ψ². These derived values, when inserted into standard physics frameworks, reproduce ~100 additional observables. The framework requires ~3-5 external inputs including the Planck mass scale. The consciousness extension (sLoop axioms, Mandelbrot mapping, K_C = √(G*³/2) ≈ 3.60, phase angle 52.54°) is mathematically specific but [PROPOSED]—untested experimentally."
+**Say:** "FTD derives ~30 fundamental quantities (20 physics + 4 information-theoretic theorems + 4 structural results + 2 neutrino/modularity) from a geometric structure involving the lemniscatic constant G* and four constrained integers {3, 4, 7, 13}. The 7-term precision formula achieves 24-digit agreement with the CODATA 2022 recommended value as an algebraic identity, though the match below digit 11 is not experimentally testable at current precision. The trit framework proves G* = √(2π)·θ₃(e^{-π})², unifying geometric self-reference with Fourier self-duality and deriving the ontological necessity of i. The Born rule is understood as epistemic inference from the ontic substrate operation ψ². These derived values, when inserted into standard physics frameworks, reproduce ~100 additional observables. The framework requires ~3-5 external inputs including the Planck mass scale. The reference frame context extension (sLoop axioms, Mandelbrot mapping, K_C = √(G*³/2) ≈ 3.60, phase angle 52.54°) is mathematically specific but [PROPOSED]—untested experimentally."
 
 **See also:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](AUDIT_WHAT_IS_GENUINELY_NEW.md) for a comprehensive synthesis.
 
@@ -625,7 +625,7 @@ Full Noether theorem requires continuous symmetry; we have approximate conservat
 
 ### To Dirac: "Why does G* know about physics?"
 
-**Response:** This is the deep question. We propose that G* connects to physics through the arithmetic-geometric mean and elliptic fibrations, which encode the constraint structure of discrete spacetime. The master quadratic z² - kG\*²z + kG\*³ = 0 produces physics (real roots, k = 16) and consciousness (complex roots, k = 1/2) from the same G\*. The emergence of i at k = 1/2 — where i² = -1 = genesis (pair creation) — suggests the connection is ontological: the same geometry that yields α also yields i. But this is a structural observation, not a derivation of why physics follows this mathematics.
+**Response:** This is the deep question. We propose that G* connects to physics through the arithmetic-geometric mean and elliptic fibrations, which encode the constraint structure of discrete spacetime. The master quadratic z² - kG\*²z + kG\*³ = 0 produces physics (real roots, k = 16) and reference frame context (complex roots, k = 1/2) from the same G\*. The emergence of i at k = 1/2 — where i² = -1 = genesis (pair creation) — suggests the connection is ontological: the same geometry that yields α also yields i. But this is a structural observation, not a derivation of why physics follows this mathematics.
 
 ---
 
@@ -644,7 +644,7 @@ FTD is a framework that identifies profound numerical and structural relationshi
 - Substrate-to-aggregate transition (the central open question)
 - Λ_QCD derivation closure
 - Novel pre-observation predictions beyond framework-consistency tests
-- Experimental contact for consciousness predictions
+- Experimental contact for reference frame context predictions
 
 The path forward is honest acknowledgment combined with focused effort on the substrate-to-aggregate transition and Λ_QCD derivation.
 
@@ -675,7 +675,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | Minimal generating set | {γ, π} + integers generate the entire ontic chain | FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md S3B.1 |
 | exp(γ/2) scaling | γ enters all lemniscatic constants as exp(γ/2) via Γ(1/4)² | FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md S3B.2 |
 | Weierstrass mechanism | γ flows into Γ(1/4) via exp(γ·z) in the Weierstrass product | FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS.md S3.3 |
-| Consciousness quadratic roots | y² - (G*²/2)y + (G*³/2) = 0 gives y = 2.19 ± 2.86i | DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md |
+| Reference frame context quadratic roots | y² - (G*²/2)y + (G*³/2) = 0 gives y = 2.19 ± 2.86i | DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md |
 | Bridge equation | c · c_cusp · 2N_base = 1 (exact) | DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md |
 | Coefficient 16 as curve invariant | \|Aut(E)\|² = \|E(Q)_tors\|² = 16 for E: y² = x³ - x | AUDIT_HIDDEN_SELECTIONS.md S3 |
 | Fibonacci-Tribonacci crossover | F₇ = T₇ = 13 (unique non-trivial crossover) | EXPLR_NUMBER_THEORY.md S3.6 |

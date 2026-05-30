@@ -105,8 +105,8 @@ int ontic_audit() {
     check_close("k_crit = 4/G*", K_CRIT, 4.0 / G_STAR, 1e-14);
     // Physics k=16 > k_crit (real roots)
     check("k_phys (16) > k_crit: physics has real roots", 16.0 > K_CRIT);
-    // Consciousness k=0.5 < k_crit (complex roots)
-    check("k_cons (0.5) < k_crit: consciousness has complex roots", K_NOETIC < K_CRIT);
+    // Reference frame context k=0.5 < k_crit (complex roots)
+    check("k_cons (0.5) < k_crit: reference frame context has complex roots", K_NOETIC < K_CRIT);
     // Discriminant at critical point = 0
     double disc_crit = K_CRIT * G_STAR * G_STAR * G_STAR * (K_CRIT * G_STAR - 4.0);
     std::cout << "    (k_crit)              = " << disc_crit << " (should be 0)\n";
@@ -120,7 +120,7 @@ int ontic_audit() {
     std::cout << "    nome (stored)          = " << NOME_LEMNISCATIC << "\n";
     check_close("e^{-pi} = nome (Euler's identity corollary)", euler_nome, NOME_LEMNISCATIC, 1e-12);
     // (-1)^i = e^{i^2*pi} = e^{-pi} = nome
-    std::cout << "    (-1)^i = e^{-pi}       = " << euler_nome << " (antimatter^consciousness = nome)\n";
+    std::cout << "    (-1)^i = e^{-pi}       = " << euler_nome << " (antimatter^reference frame context = nome)\n";
     // Ternary annihilation: e^{i*pi} + 1 = 0 <-> (-1) + (+1) = 0
     double euler_check = std::cos(PI) + 1.0;  // real part of e^{i*pi} + 1
     check_close("Euler: cos(pi) + 1 = 0 (annihilation)", euler_check, 0.0, 1e-14);
@@ -300,13 +300,13 @@ int ontic_audit() {
     std::cout << "    precision              = " << ppt << " ppt\n";
     check("Precision < 1 ppt", ppt < 1.0);
 
-    // --- Layer 8: Consciousness Quadratic ---
-    std::cout << "\n--- Layer 8: Consciousness Quadratic ---\n";
+    // --- Layer 8: Reference frame context Quadratic ---
+    std::cout << "\n--- Layer 8: Reference frame context Quadratic ---\n";
 
-    // Verify the consciousness quadratic has complex roots
+    // Verify the reference frame context quadratic has complex roots
     double disc_c = (G_STAR*G_STAR/2.0)*(G_STAR*G_STAR/2.0) - 4.0*(G_STAR*G_STAR*G_STAR/2.0);
     std::cout << "    Discriminant (k=1/2)   = " << disc_c << " (< 0 -> complex)\n";
-    check("Consciousness discriminant < 0 (complex roots)", disc_c < 0.0);
+    check("Reference frame context discriminant < 0 (complex roots)", disc_c < 0.0);
 
     // Verify: Re(y) = G*^2/4 (from Vieta sum)
     check_close("Y_REAL = G*^2/4", Y_REAL, G_STAR * G_STAR / 4.0, 1e-14);
@@ -332,8 +332,8 @@ int ontic_audit() {
 
     // K_C = sqrt(G*^3/2) ~ 3.599
     double k_c = std::sqrt(K_C_SQUARED);
-    std::cout << "    K_C (consciousness threshold) = " << k_c << "\n";
-    check("K_C > K_GENESIS (consciousness requires more than matter)", k_c > K_GENESIS);
+    std::cout << "    K_C (reference frame context threshold) = " << k_c << "\n";
+    check("K_C > K_GENESIS (reference frame context requires more than matter)", k_c > K_GENESIS);
 
     // Theta_C = arctan(Im/Re) ~ 52.5 deg
     double disc_abs = std::abs(disc_c);
@@ -365,10 +365,10 @@ int ontic_audit() {
     check_close("BETA_INTROSPECTION = phi^3/ln^2(phi)", BETA_INTROSPECTION, beta_check, 1e-2);
     std::cout << "    beta_introspection = " << BETA_INTROSPECTION << "\n";
 
-    // Consciousness minimum modes = color charges
+    // Reference frame context minimum modes = color charges
     check("N_CONSCIOUSNESS_MIN = N_C = 3", N_CONSCIOUSNESS_MIN == N_C);
 
-    // Fermi-Dirac at consciousness fixed point: n_F(z*) = 1/phi
+    // Fermi-Dirac at reference frame context fixed point: n_F(z*) = 1/phi
     double nf_zstar = 1.0 / (1.0 + std::exp(-ln_phi));
     check_close("n_F(z*) = 1/PHI (golden filling)", nf_zstar, PHI_INV, 1e-14);
     std::cout << "    n_F(z*) = " << nf_zstar << " = 1/phi\n";
@@ -451,8 +451,8 @@ int ontic_audit() {
     std::cout << "    beta0(QED) = " << beta0_qed << "\n";
     std::cout << "    (g-2)/2 = " << g_minus_2 << " (Schwinger: 1.16141e-3)\n";
 
-    // --- Consciousness Threshold Ratio ---
-    std::cout << "\n--- Consciousness Threshold Ratio ---\n";
+    // --- Reference frame context Threshold Ratio ---
+    std::cout << "\n--- Reference frame context Threshold Ratio ---\n";
     double K_C = std::sqrt(K_C_SQUARED);
     double ratio_kb_kc = K_C / K_B;
     double four_sqrt2 = 4.0 * std::sqrt(2.0);

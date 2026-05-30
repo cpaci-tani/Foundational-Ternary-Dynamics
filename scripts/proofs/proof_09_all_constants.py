@@ -23,7 +23,7 @@ Layers:
   6b: Higgs Sector
    7: Precision Formula (ε, corrected α)
   7b: Neutrino Masses
-   8: Consciousness Quadratic
+   8: Reference frame context Quadratic
 """
 
 import math
@@ -198,9 +198,9 @@ def run() -> ProofSuite:
         tag="[THEOREM]"
     )
 
-    # k=0.5 (consciousness) < k_crit → complex roots
+    # k=0.5 (reference frame context) < k_crit → complex roots
     s.assert_true(
-        "L2b: k_cons=0.5 < k_crit → COMPLEX roots (consciousness)",
+        "L2b: k_cons=0.5 < k_crit → COMPLEX roots (reference frame context)",
         0.5 < k_crit,
         tag="[THEOREM]"
     )
@@ -302,7 +302,7 @@ def run() -> ProofSuite:
         tag="[THEOREM]"
     )
     s.assert_close(
-        "L3b: E_right ≈ x₋ (consciousness substrate)",
+        "L3b: E_right ≈ x₋ (reference frame context substrate)",
         e_right, xm, PERCENT_01,
         tag="[THEOREM]"
     )
@@ -664,13 +664,13 @@ def run() -> ProofSuite:
     )
 
     # =========================================================================
-    # Layer 8: Consciousness Quadratic
+    # Layer 8: Reference frame context Quadratic
     # =========================================================================
     # y² - (G*²/2)·y + G*³/2 = 0
     disc_c = (c**2 / 2.0)**2 - 4.0 * (c**3 / 2.0)
 
     s.assert_true(
-        "L8: Consciousness discriminant < 0 (complex roots)",
+        "L8: Reference frame context discriminant < 0 (complex roots)",
         disc_c < 0.0,
         tag="[THEOREM]"
     )

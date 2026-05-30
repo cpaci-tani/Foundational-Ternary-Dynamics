@@ -77,7 +77,7 @@ print('  ' + '-'*72)
 print()
 
 print('  1. Derive G* = 80/27 (or show why the 0.14% gap exists).')
-print('     This would connect the consciousness quadratic to')
+print('     This would connect the reference frame context quadratic to')
 print('     the Moore neighborhood combinatorics exactly.')
 print()
 print('  2. Derive a force RATIO from the cube (not just the hierarchy).')

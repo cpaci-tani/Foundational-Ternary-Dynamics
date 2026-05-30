@@ -101,8 +101,11 @@ export class AppShell {
         });
         const snapshot = this.breakpoints.start();
         if (snapshot) this._applySnapshot(snapshot);
-        this.app.dataset.shellReady = 'true';
         return this;
+    }
+
+    setReady() {
+        this.app.dataset.shellReady = 'true';
     }
 
     bindPanelDock({ activeTab = 'controls', onTabActivated = null } = {}) {

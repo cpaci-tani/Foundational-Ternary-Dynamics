@@ -9,6 +9,7 @@
 export const QUANTUM_SCENARIO_DESCRIPTIONS = {
     'quantum-born-rule': 'Born Rule Convergence: Tests that manifestation probability tracks \\(|J|^2\\). Runs N trials with random-phase Gaussian flux, accumulates positions, compares against the Born-rule prediction. [SELECTION] — convergence is observed but a ~10× lattice bias is currently unaccounted for; see FAQ "born-rule-emergence". Was mis-tagged [THEOREM] pre-2026-05-27 (audit P0-16).',
     'quantum-double-slit': 'Quantitative Double-Slit: Two coherent sources create interference on a detector screen. Measures fringe visibility \\(V = (I_{\\max}-I_{\\min})/(I_{\\max}+I_{\\min})\\) and fringe spacing. Tests wave-particle duality from the two-layer ontology.',
+    'quantum-eraser': 'Quantum Eraser: Coherent slits are marked orthogonally (y-polarised vs z-polarised), representing which-way information, which erases interference fringes in the $|J|^2$ point cloud. A diagonal eraser (y=z polariser) placed at $x=N/2$ erases this which-way markers, dynamically restoring the interference fringes. Demonstrates physical topological phase eraser.',
     'quantum-tunnel': 'Quantum Tunneling: Flux packet encounters a potential barrier (locked charge wall). Measures transmission T vs barrier width W. Expected: \\(T \\propto \\exp(-2\\kappa W)\\), demonstrating evanescent wave penetration.',
     'quantum-well': 'Particle in a Box: Broadband flux confined between reflective walls. FFT of time series reveals discrete frequency peaks at \\(f_n \\propto n^2\\), demonstrating energy quantization from boundary conditions.',
     'quantum-entangle': 'Entanglement Correlation: Pair production creates correlated +1/-1 particles. Measures spin-charge correlation C(d) vs separation distance. Tests decoherence length and correlation decay.',
@@ -269,11 +270,35 @@ export const S0_SEED_SCENARIO_METADATA = {
         ],
     },
     's0-seed-moore-decomposition': {
-        title: 'Moore decomposition \u2014 3 shells visualized by polarity',
+        title: 'Moore decomposition — 3 shells visualized by polarity',
         desc: 'All three Moore shells shown simultaneously with alternating states so each shell is visually distinguishable: Shell 1 (octahedron, 6 sites) = positive, Shell 2 (cuboctahedron, 12 sites) = negative, Shell 3 (stella octangula, 8 sites) = positive, Center = negative. This lets you see the U(1) \u00d7 SU(2) \u00d7 SU(3) decomposition as three concentric geometric layers.',
         epistemic: [
             ['Polyhedral decomposition', '[THEOREM]', 'THEOREM_MOORE_LAYER_DECOMPOSITION: the 26-site Moore neighborhood decomposes uniquely into octahedron + cuboctahedron + stella octangula at distances 1, \u221a2, \u221a3.'],
             ['Gauge group mapping', '[SELECTION]', 'U(1) \u00d7 SU(2) \u00d7 SU(3) identification follows from the theorem but is a selection principle, not a uniqueness proof.'],
+        ],
+    },
+    's0-seed-h2-bond-formation': {
+        title: 'H\u2082 covalent bond formation (dynamic)',
+        desc: 'Places two hydrogen nuclei (3-quark triads) close together, and seeds two shared electrons with opposite spins in the center. Demonstrates the dynamic formation of a stable covalent flux-tube bond.',
+        epistemic: [
+            ['Configuration', '[SELECTION]', 'Initial triad spacing and shared electron placement are selected to show bonding dynamics.'],
+            ['Covalent bonding', '[EMERGENT]', 'Emergent flux-tube unification between the nuclei shows chemical bond formation.'],
+        ],
+    },
+    's0-seed-gravitational-lensing': {
+        title: 'Gravitational lensing (dynamic bending)',
+        desc: 'Places a massive central particle Schwarzschild well at the center, and launches an off-axis z-polarized flux wave packet in +x. Bends the propagating flux wave path dynamically toward the center core.',
+        epistemic: [
+            ['Schwarzschild well', '[SELECTION]', 'Lattice-scale Schwarzschild well represented by central inflow flux.'],
+            ['Wave propagation bending', '[EMERGENT]', 'Path curvature of the photon pulse passing the gravity well is a dynamic, non-scripted effect.'],
+        ],
+    },
+    's0-seed-quark-gluon-plasma': {
+        title: 'Quark-gluon plasma (QGP, thermal deconfined)',
+        desc: 'Seeds 8 quarks with high thermal velocities and high-energy random gluon flux pulses in a tight central region under elevated Langevin temperature. Demonstrates immediate deconfinement, high-flux collision dynamics, and thermalization.',
+        epistemic: [
+            ['Configuration', '[SELECTION]', 'High initial kinetic energy and random-axis gluon flux seeds represent a QGP-like initial state.'],
+            ['Substrate thermalization', '[EMERGENT]', 'Langevin-driven thermalization and chaotic flux-tube collisions are genuine substrate dynamics.'],
         ],
     },
 };

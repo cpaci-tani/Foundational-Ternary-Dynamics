@@ -85,7 +85,7 @@ export function setupS0FieldScenario(name, ctx) {
                     // Uniform B field in +z via vector-potential-like flux
                     // B = curl(J), so J = (-Bz*y/2, Bz*x/2, 0) relative to center
                     const bMag = 0.05;
-                    const half = (N - 1) / 2.0;
+                    const half = midF;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {
@@ -181,7 +181,7 @@ export function setupS0FieldScenario(name, ctx) {
                 case 's0-field-vortex-line': {
                     // Vortex along z-axis through center: J = (Gamma/2pi*r) * theta_hat
                     const gamma = K_B * 4;
-                    const half  = (N - 1) / 2.0;
+                    const half  = midF;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {

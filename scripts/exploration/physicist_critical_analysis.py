@@ -310,7 +310,7 @@ print("PART 6: CONSCIOUSNESS CLAIMS - PHYSICS ASSESSMENT")
 print("=" * 80)
 
 print(f"""
-The claim: Consciousness threshold = G*^32 / k_c ~ 8.8 x 10^14
+The claim: Reference frame context threshold = G*^32 / k_c ~ 8.8 x 10^14
 
 PHYSICS CRITIQUE:
 
@@ -343,9 +343,9 @@ PHYSICS CRITIQUE:
    - Dividing by k_c ~ 1.35 doesn't change order of magnitude
 
 5. TESTABLE PREDICTION?
-   - If consciousness threshold ~ G*^32 / k_c,
-   - Then systems with complexity >> 10^15 should be "more conscious"
-   - And systems << 10^14 should definitely not be conscious
+   - If reference frame context threshold ~ G*^32 / k_c,
+   - Then systems with complexity >> 10^15 should be "more reference-frame"
+   - And systems << 10^14 should definitely not be reference-frame
    - This matches intuition but doesn't prove causation
 
 VERDICT: Intriguing but not physics (yet)
@@ -436,7 +436,7 @@ WEAKNESSES:
   1. No theoretical derivation from first principles
   2. Integers (6, 73, 32) are unexplained
   3. Some formulas have fitted constants (1.67, 12.8)
-  4. Consciousness claims are not testable physics
+  4. Reference frame context claims are not testable physics
   5. Look-elsewhere effect is hard to quantify
 
 PHYSICIST'S VERDICT:

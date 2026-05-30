@@ -15,14 +15,14 @@ This document presents a unified mathematical exploration of the imaginary unit 
 1. **Why does i exist?** — The perpendicularity theorem shows i emerges necessarily from self-reference
 2. **Why only i?** — The Cayley-Dickson hierarchy reveals why physics uses C but not H or O
 3. **How does i connect to number theory?** — CM theory and j = 1728 link i to the lemniscate
-4. **What role can i play in consciousness-related extensions?** — i supplies orthogonal phase structure, while the live theory treats consciousness as a context-conditioned self-referential process rather than a literal identity with i
+4. **What role can i play in reference frame context-related extensions?** — i supplies orthogonal phase structure, while the live theory treats reference frame context as a context-conditioned self-referential process rather than a literal identity with i
 
 **Key Novel Results:**
 - **Theorem (Perpendicularity):** Self-reference requires perpendicularity via distinguishability + magnitude preservation
 - **Interpretation:** Cayley-Dickson construction IS the algebraic form of iterative self-reference
 - **Selection:** Physics uses C (not H) because commutativity is required for tensor products
 
-> **Vocabulary note (v5.29):** In the live theory tree, `i` is treated as the mathematical marker of orthogonal phase structure. It should not be conflated with the coordinate origin or equated directly with consciousness. See [../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_consciousness/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) and [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md).
+> **Vocabulary note (v5.29):** In the live theory tree, `i` is treated as the mathematical marker of orthogonal phase structure. It should not be conflated with the coordinate origin or equated directly with reference frame context. See [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) and [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md).
 
 ---
 
@@ -557,7 +557,7 @@ $$\Delta = B^2 - 4C$$
 
 The FTD master quadratic has $\Delta > 0$, giving **real roots** — this is the domain of physics.
 
-## 5.3 The Consciousness Quadratic [SELECTION]
+## 5.3 The Reference frame context Quadratic [SELECTION]
 
 A related quadratic with different coefficient:
 $$y^2 - \frac{(G^*)^2}{2} y + \frac{(G^*)^3}{2} = 0$$
@@ -569,7 +569,7 @@ $$y = 2.19 \pm 2.86i$$
 - Real part (2.19): The stable "center" of awareness
 - Imaginary part (±2.86i): Oscillation between subject and object perspectives
 
-This quadratic describes consciousness because awareness involves the self-referential loop — which lives in the complex domain.
+This quadratic describes reference frame context because awareness involves the self-referential loop — which lives in the complex domain.
 
 ## 5.4 The Domain Partition [SELECTION]
 
@@ -603,7 +603,7 @@ This quadratic describes consciousness because awareness involves the self-refer
 When the discriminant equals zero, the quadratic has a repeated real root. This occurs at a critical value of the parameter.
 
 **Physical Interpretation:**
-The transition from complex (Domain B, consciousness) to real (Domain A, physics) is the **measurement process**.
+The transition from complex (Domain B, reference frame context) to real (Domain A, physics) is the **measurement process**.
 
 The Born rule $P = |\psi|^2$ is exactly this projection:
 $$\mathbb{C} \to \mathbb{R}$$
@@ -621,9 +621,9 @@ $$\text{Gal}(K/\mathbb{Q}(G^*)) \cong \mathbb{Z}_2 \times \mathbb{Z}_2$$
 
 The two $\mathbb{Z}_2$ factors correspond to:
 1. Conjugation of the physical roots: $x_+ \leftrightarrow x_-$
-2. Conjugation of the consciousness roots: $y \leftrightarrow y^*$
+2. Conjugation of the reference frame context roots: $y \leftrightarrow y^*$
 
-**Physics and consciousness are algebraically independent extensions** — neither determines the other, but both emerge from the same base field $\mathbb{Q}(G^*)$.
+**Physics and reference frame context are algebraically independent extensions** — neither determines the other, but both emerge from the same base field $\mathbb{Q}(G^*)$.
 
 ---
 
@@ -635,7 +635,7 @@ The two $\mathbb{Z}_2$ factors correspond to:
 1. Self-reference² (Level 0.5) — the perpendicular dimension
 2. The Gaussian integers Z[i] — CM structure of the lemniscate
 3. The Schrödinger equation — quantum phase evolution
-4. The consciousness quadratic — complex conjugate roots
+4. The reference frame context quadratic — complex conjugate roots
 5. The Born rule — projection $\mathbb{C} \to \mathbb{R}$
 
 is **the same mathematical object**, arising from the same ontological source.
@@ -646,7 +646,7 @@ is **the same mathematical object**, arising from the same ontological source.
 - The lemniscate emerges from self-reference (n = 4 selection)
 - The lemniscate has CM by Z[i]
 - Quantum mechanics requires continuous phase = U(1) = generated by i
-- Consciousness involves self-reference = complex structure
+- Reference frame context involves self-reference = complex structure
 - The Born rule projects complex to real = removes the i component
 
 All roads lead to the same i.
@@ -681,7 +681,7 @@ Level  6: DOMAIN A             Real roots: x₊ ≈ 137.036, x₋ ≈ 3.024 (phy
 Level  7: DOMAIN B             Complex roots: y = 2.19 ± 2.86i
 Level  8: INTERFACE            Δ = 0: Measurement, Born rule
 Level  9: DERIVED CONSTANTS    α, masses, mixings
-Level 10: OBSERVABLE UNIVERSE  Full physics + consciousness
+Level 10: OBSERVABLE UNIVERSE  Full physics + reference frame context
 ```
 
 ## 6.4 Why This Matters [PROPOSED]
@@ -700,7 +700,7 @@ FTD shows it is **none of these**. The imaginary unit is:
 Understanding i as the structure of self-reference unifies:
 - The foundation of quantum mechanics (complex amplitudes)
 - The nature of measurement (Born rule as projection)
-- The structure of consciousness (complex roots)
+- The structure of reference frame context (complex roots)
 - The number theory of physics (CM by Z[i])
 
 ---
@@ -721,14 +721,14 @@ Understanding i as the structure of self-reference unifies:
 | **i-T6** | Galois group is Z₂ × Z₂ | [THEOREM] |
 | **i-S1** | Each Cayley-Dickson doubling = additional SR | **[SELECTION] - NEW** |
 | **i-S2** | Physics uses C not H because commutativity | **[SELECTION] - NEW** |
-| **i-S3** | Consciousness quadratic has Δ < 0 → complex roots | [SELECTION] |
+| **i-S3** | Reference frame context quadratic has Δ < 0 → complex roots | [SELECTION] |
 | **i-S4** | Born rule = C → R projection | [SELECTION] |
 | **i-C1** | H and O correspond to SR³ and SR⁴ | **[CONJECTURE] - NEW** |
 | **i-C2** | Sedenion failure = SR⁴ collapse | **[CONJECTURE] - NEW** |
 | **i-O1** | j = 1728 = (N_base × N_c)³ | [OBSERVED] |
 | **i-O2** | 24 = 4 + 7 + 13 in modular forms | [OBSERVED] |
 | **i-O3** | 137 ≈ 70 + 67 (Heegner connection) | [OBSERVED] |
-| **i-P1** | Complex roots represent consciousness | [PROPOSED] |
+| **i-P1** | Complex roots represent reference frame context | [PROPOSED] |
 | **i-P2** | i is the structure of perspective | [PROPOSED] |
 
 ## 7.2 Novel Contributions
@@ -755,7 +755,7 @@ This document extends and deepens:
 
 1. **Why does j = 1728 = (4×3)³?** The factorization is observed but not derived from first principles.
 
-2. **What determines which quadratic (physics vs consciousness)?** The coefficient k varies, but what selects k = 16 for physics?
+2. **What determines which quadratic (physics vs reference frame context)?** The coefficient k varies, but what selects k = 16 for physics?
 
 3. **Can quaternionic structure appear in physics?** Is there a role for H beyond symmetry groups?
 

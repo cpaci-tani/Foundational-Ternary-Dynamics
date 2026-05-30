@@ -292,6 +292,6 @@ The per-scale split ensures each scale can evolve its telemetry independently. E
 - `TELEMETRY_CATALOG_SCALE2.md` — Atom / Molecule Engine (AE)
 - `TELEMETRY_CATALOG_SCALE4.md` — Planetary
 - `TELEMETRY_CATALOG_SCALE5.md` — Cosmic
-- `TELEMETRY_CATALOG_SCALE11.md` — Consciousness
+- `TELEMETRY_CATALOG_SCALE11.md` — Reference frame context
 
 When a new scale is documented, add it here with a one-line summary and a link.

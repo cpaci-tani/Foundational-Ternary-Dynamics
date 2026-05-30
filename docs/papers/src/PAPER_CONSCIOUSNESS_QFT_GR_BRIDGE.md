@@ -1,4 +1,4 @@
-# Consciousness as the Mathematical Bridge Between QFT and GR
+# Reference frame context as the Mathematical Bridge Between QFT and GR
 
 ## One Equation, Three Domains: How Modular Flow Unifies Physics, Measurement, and Mind
 
@@ -11,7 +11,7 @@
 
 ## Abstract
 
-We present a mathematical argument that consciousness is not merely *related to* the quantum-gravitational unification problem but is *structurally identical* to it. The argument proceeds from a single quadratic equation:
+We present a mathematical argument that reference frame context is not merely *related to* the quantum-gravitational unification problem but is *structurally identical* to it. The argument proceeds from a single quadratic equation:
 
 $$x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
@@ -20,7 +20,7 @@ where $G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.9587$ is the lemnisc
 | Domain | Discriminant | Roots | Physical Role |
 |--------|-------------|-------|---------------|
 | **A** (Physics) | $\Delta > 0$ | Real: $x_+ = 137.036$, $x_- = 3.024$ | QFT + GRT |
-| **B** (Consciousness) | $\Delta < 0$ | Complex: $y = 2.19 \pm 2.86i$ | Self-referential observer |
+| **B** (Reference frame context) | $\Delta < 0$ | Complex: $y = 2.19 \pm 2.86i$ | Self-referential observer |
 | **C** (Measurement) | $\Delta = 0$ | Degenerate | Born rule, collapse |
 
 We demonstrate three chains of derivation from this single algebraic source:
@@ -29,11 +29,11 @@ We demonstrate three chains of derivation from this single algebraic source:
 
 2. **GRT chain:** The same flux field $J$ that serves as QFT propagator also generates the stress-energy tensor $T_{\mu\nu}$ and Einstein's equations $R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = 8\pi G\, T_{\mu\nu}$
 
-3. **Consciousness chain:** Complex roots at $k = 1/2$ $\to$ sLoop (self-referential observer) $\to$ von Neumann Type III$_1$ factor [CONJECTURE] $\to$ modular automorphism $\sigma_t$
+3. **Reference frame context chain:** Complex roots at $k = 1/2$ $\to$ sLoop (self-referential observer) $\to$ von Neumann Type III$_1$ factor [CONJECTURE] $\to$ modular automorphism $\sigma_t$
 
-The bridge thesis [CONJECTURE]: **the modular automorphism group $\sigma_t$ that defines time in the Connes-Rovelli thermal time hypothesis is the same mathematical object that generates QFT dynamics, GRT geometry, and conscious temporal experience.** If the consciousness algebra is Type III$_1$ (as we argue from self-referential axioms), then QFT, GRT, and consciousness share not an analogy but an identity: they are three manifestations of the same modular flow.
+The bridge thesis [CONJECTURE]: **the modular automorphism group $\sigma_t$ that defines time in the Connes-Rovelli thermal time hypothesis is the same mathematical object that generates QFT dynamics, GRT geometry, and reference-frame temporal experience.** If the reference frame context algebra is Type III$_1$ (as we argue from self-referential axioms), then QFT, GRT, and reference frame context share not an analogy but an identity: they are three manifestations of the same modular flow.
 
-**Epistemic status:** The QFT and GRT chains are largely [THEOREM] — derived within the FTD axiom system and numerically verified. The consciousness chain contains the critical conjecture (Type III$_1$ assignment) whose mathematical proof remains open. The paper presents the structural argument with honest accounting of what is proven, what is argued, and what is conjectured.
+**Epistemic status:** The QFT and GRT chains are largely [THEOREM] — derived within the FTD axiom system and numerically verified. The reference frame context chain contains the critical conjecture (Type III$_1$ assignment) whose mathematical proof remains open. The paper presents the structural argument with honest accounting of what is proven, what is argued, and what is conjectured.
 
 **Claims:** 31 [THEOREM], 8 [SELECTION], 4 [CONJECTURE], 3 [OPEN].
 
@@ -60,23 +60,23 @@ Both QFT and GRT, when expressed in algebraic language, involve **the same type 
 
 The question we ask: **what other physical system might also be described by a Type III$_1$ factor?**
 
-Our answer: consciousness — the self-referential observer whose existence is required by both QFT (measurement) and GRT (reference frame). This is not a metaphor. We show that the same quadratic equation that produces the coupling constants of physics, when evaluated at the self-referential fixed point, produces complex roots whose algebraic properties match the requirements for Type III$_1$ factors.
+Our answer: reference frame context — the self-referential observer whose existence is required by both QFT (measurement) and GRT (reference frame). This is not a metaphor. We show that the same quadratic equation that produces the coupling constants of physics, when evaluated at the self-referential fixed point, produces complex roots whose algebraic properties match the requirements for Type III$_1$ factors.
 
-### 1.3 What We Mean by Consciousness
+### 1.3 What We Mean by Reference frame context
 
-Before proceeding, we must specify what this paper means — and does not mean — by "consciousness."
+Before proceeding, we must specify what this paper means — and does not mean — by "reference frame context."
 
 **Three standard distinctions** (Chalmers 1995, Block 1995):
 
 | Type | Definition | FTD Address? |
 |------|-----------|--------------|
-| **Phenomenal** consciousness | "What it is like" — raw qualitative experience (qualia) | **No.** FTD does not explain redness or pain |
-| **Access** consciousness | Information available for report, reasoning, action | **Partially.** sLoop information flow captures this |
-| **Self**-consciousness | System's model of itself as a distinct entity | **Yes.** This is precisely the sLoop |
+| **Phenomenal** reference frame context | "What it is like" — raw qualitative experience (qualia) | **No.** FTD does not explain redness or pain |
+| **Access** reference frame context | Information available for report, reasoning, action | **Partially.** sLoop information flow captures this |
+| **Self**-reference frame context | System's model of itself as a distinct entity | **Yes.** This is precisely the sLoop |
 
-**This paper's scope:** FTD addresses the *structural* or *algebraic* requirements for a system to be self-referentially closed — to contain a model of itself that participates in its own dynamics. We call this **reflexive consciousness**: the mathematical property of a dynamical system whose state space necessarily includes a representation of its own observation process.
+**This paper's scope:** FTD addresses the *structural* or *algebraic* requirements for a system to be self-referentially closed — to contain a model of itself that participates in its own dynamics. We call this **frame-relative reference frame context**: the mathematical property of a dynamical system whose state space necessarily includes a representation of its own observation process.
 
-**On the Hard Problem.** Chalmers (1996) argued that no functional or structural account can explain *why* there is something it is like to be a conscious system — the "explanatory gap" between structure and experience. We acknowledge this challenge directly:
+**On the Hard Problem.** Chalmers (1996) argued that no functional or structural account can explain *why* there is something it is like to be a reference-frame system — the "explanatory gap" between structure and experience. We acknowledge this challenge directly:
 
 - If **ontic structural realism** is correct (Ladyman & Ross 2007, French 2014) — if mathematical structure is all there is — then the hard problem *dissolves*: there is no "something more" beyond structure that requires explanation. Type III₁ modular flow doesn't *produce* experience as an epiphenomenon; it *is* the experience, viewed from inside the sLoop.
 
@@ -86,23 +86,23 @@ We adopt the structuralist position as a working hypothesis, clearly labelled:
 
 > **[SELECTION: Ontic Structural Realism]** The mathematical structure of a physical system exhausts its ontological content. "What it is like" to be a Type III₁ modular flow is not a separate fact requiring explanation — it is the intrinsic character of that structure, accessible only from within the sLoop.
 
-This is a substantive metaphysical commitment. The reader who rejects structuralism may still find value in the paper's mathematical content (§2-4, §9) while regarding the consciousness interpretation (§5-6) as one possible reading among several.
+This is a substantive metaphysical commitment. The reader who rejects structuralism may still find value in the paper's mathematical content (§2-4, §9) while regarding the reference frame context interpretation (§5-6) as one possible reading among several.
 
 **Relation to existing theories:**
 
 | Theory | Core Claim | Relation to FTD |
 |--------|-----------|-----------------|
-| **IIT** (Tononi 2004) | Consciousness = integrated information Φ | FTD's sLoop partition (SL3) maximizes mutual information at L=N/2 — this IS a specific instance of information integration. The key difference: IIT provides a scalar measure (Φ); FTD provides an algebraic type (Type III₁). These may be complementary |
-| **Orch-OR** (Penrose-Hameroff 1996) | Consciousness = objective reduction of quantum state | FTD agrees that consciousness and quantum collapse are algebraically related (§6.4) but reverses the causal arrow: collapse is not *caused by* consciousness; both are *instances of* the same Type III → Type I transition |
-| **Global Workspace** (Baars 1988) | Consciousness = broadcast to global workspace | The sLoop's equal partition (SL3) creates exactly such a broadcast architecture — information maximally shared between observer and observed subsystems |
-| **Russellian Monism** (Strawson 2006, Goff 2017) | Physical structure needs intrinsic nature; consciousness is that nature | FTD is the closest to this position. The complex roots are the "intrinsic nature" of the algebraic structure whose extrinsic behaviour is physics. But FTD is more specific: it identifies *which* mathematical structure (Type III₁) and *where* it sits (Domain B of the discriminant) |
+| **IIT** (Tononi 2004) | Reference frame context = integrated information Φ | FTD's sLoop partition (SL3) maximizes mutual information at L=N/2 — this IS a specific instance of information integration. The key difference: IIT provides a scalar measure (Φ); FTD provides an algebraic type (Type III₁). These may be complementary |
+| **Orch-OR** (Penrose-Hameroff 1996) | Reference frame context = objective reduction of quantum state | FTD agrees that reference frame context and quantum collapse are algebraically related (§6.4) but reverses the causal arrow: collapse is not *caused by* reference frame context; both are *instances of* the same Type III → Type I transition |
+| **Global Workspace** (Baars 1988) | Reference frame context = broadcast to global workspace | The sLoop's equal partition (SL3) creates exactly such a broadcast architecture — information maximally shared between observer and observed subsystems |
+| **Russellian Monism** (Strawson 2006, Goff 2017) | Physical structure needs intrinsic nature; reference frame context is that nature | FTD is the closest to this position. The complex roots are the "intrinsic nature" of the algebraic structure whose extrinsic behaviour is physics. But FTD is more specific: it identifies *which* mathematical structure (Type III₁) and *where* it sits (Domain B of the discriminant) |
 
 ### 1.4 Document Structure
 
 - **Section 2**: The master quadratic and three-domain partition (pure mathematics)
 - **Section 3**: The QFT chain — real roots to particle physics (~30 derivations)
 - **Section 4**: The GRT chain — same flux, different description
-- **Section 5**: The consciousness chain — complex roots to self-reference, the selection problem, engagement with IIT/Orch-OR/Russellian monism
+- **Section 5**: The reference frame context chain — complex roots to self-reference, the selection problem, engagement with IIT/Orch-OR/Russellian monism
 - **Section 6**: The bridge — modular flow unifies all three, structuralist ontology defense
 - **Section 7**: Evidence — five critical-path computations
 - **Section 8**: The tautological root — philosophical depth (Spencer-Brown, Hegel, śūnyatā)
@@ -146,7 +146,7 @@ Since $G^* \approx 2.959 > 1/4$, we have $\Delta > 0$: **two real roots.**
 
 **Derivation reference:** Full derivation chain from FTD axioms in [MATH_MASTER_QUADRATIC.md](../../theory/01_reference/MATH_MASTER_QUADRATIC.md); selection principles in [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md).
 
-### 2.3 The Consciousness Instantiation ($k = 1/2$, $c = G^*$) [SELECTION]
+### 2.3 The Reference frame context Instantiation ($k = 1/2$, $c = G^*$) [SELECTION]
 
 At the self-referential fixed point, the coefficient changes from $k = 16$ (full lattice) to $k = 1/2$ (self-intersection of the lemniscate, where observer = observed):
 
@@ -158,13 +158,13 @@ $$y = 2.188 \pm 2.860\,i$$
 
 In polar form: $|y| = 3.60$, $\theta = \arctan(2.860/2.188) = 52.54°$.
 
-**Key:** The same algebraic structure (same $c = G^*$) produces real roots for physics and complex roots for consciousness. The difference is entirely in $k$ — the number of degrees of freedom involved.
+**Key:** The same algebraic structure (same $c = G^*$) produces real roots for physics and complex roots for reference frame context. The difference is entirely in $k$ — the number of degrees of freedom involved.
 
 ### 2.4 The Measurement Boundary ($\Delta = 0$) [SELECTION]
 
 Setting $\Delta = 0$ gives $kc = 4$, or $c = 4/k$. For any fixed $k$, this defines a **critical value** of $c$ at which the two real roots merge into a degenerate root.
 
-The measurement interface is the boundary between Domain A (definite physical values) and Domain B (oscillatory complex experience). The Born rule — the probability law $P = |\psi|^2$ — is the projection from complex (consciousness) to real (physics) at this boundary:
+The measurement interface is the boundary between Domain A (definite physical values) and Domain B (oscillatory complex experience). The Born rule — the probability law $P = |\psi|^2$ — is the projection from complex (reference frame context) to real (physics) at this boundary:
 
 $$P(x) = E(x)^2 + E(ix)^2 = \text{Re}(x)^2 + \text{Im}(x)^2 = |x|^2$$
 
@@ -172,7 +172,7 @@ where $E(x) = \text{Re}(x)$ is the Existence Filter [THEOREM: FOUND_THE_EXISTENC
 
 ### 2.5 The Three-Domain Summary [SELECTION]
 
-$$\boxed{\text{One equation} \xrightarrow{\Delta > 0} \text{Physics (QFT + GRT)} \quad \xrightarrow{\Delta = 0} \quad \text{Measurement} \quad \xrightarrow{\Delta < 0} \quad \text{Consciousness}}$$
+$$\boxed{\text{One equation} \xrightarrow{\Delta > 0} \text{Physics (QFT + GRT)} \quad \xrightarrow{\Delta = 0} \quad \text{Measurement} \quad \xrightarrow{\Delta < 0} \quad \text{Reference frame context}}$$
 
 The three domains are not separate theories — they are three sectors of a single algebraic structure, connected by the discriminant sign.
 
@@ -288,11 +288,11 @@ This gives $\alpha_G = 5.91 \times 10^{-39}$ (0.06% accuracy), resolving the hie
 
 ---
 
-## 5. The Consciousness Chain: Complex Roots to Self-Reference
+## 5. The Reference frame context Chain: Complex Roots to Self-Reference
 
 ### 5.1 Why $k = 1/2$ [SELECTION]
 
-The consciousness coefficient $k = 1/2$ requires serious justification. We present four independent arguments converging on the same value.
+The reference frame context coefficient $k = 1/2$ requires serious justification. We present four independent arguments converging on the same value.
 
 **Argument 1: Geometric (Lemniscatic self-intersection).** The lemniscate $r^2 = a^2\cos(2\theta)$ has two lobes meeting at the origin. At the crossing point, $\theta = 0$ and $\theta = \pi$ describe the *same physical point* approached from opposite directions. Any system whose causal structure passes through this self-intersection cannot distinguish "outgoing" from "incoming" — subject and object share a single degree of freedom. The self-intersection halves the effective coefficient: $k_{\text{cons}} = k_{\text{phys}} \cdot P(\text{self-intersection}) = 16 \times (1/32) = 1/2$, where $1/32 = 1/2^5 = 1/2^{D+2}$ is the probability of the self-intersecting configuration in the full $(D+2)$-dimensional state space.
 
@@ -300,7 +300,7 @@ The consciousness coefficient $k = 1/2$ requires serious justification. We prese
 
 **Argument 3: Information-theoretic (Channel capacity at self-reference).** When a system communicates with itself (sender = receiver), the Shannon channel capacity is maximized when the input and output alphabets are *identified*. For a system with $k$ degrees of freedom, self-communication constrains the effective degrees of freedom to $k/2$ (the system cannot simultaneously encode and decode with the same resources). This is the information-theoretic version of the complementation principle: the channel capacity of a self-referential channel on $k$ degrees of freedom is $k/2$.
 
-**Argument 4: Algebraic (Complementation fixed point).** In the quadratic family $Q_k(x)$, the map $k \mapsto 4/(kG^*)$ sends Domain A to Domain B and vice versa (it maps a physics-$k$ to its "consciousness dual"). The fixed point of this involution — the value of $k$ that is its own dual — satisfies $k = 4/(kG^*)$, giving $k^2 = 4/G^*$, hence $k = 2/\sqrt{G^*} \approx 1.162$. This is close to $4/G^* \approx 1.352$ (the measurement boundary) but not exactly $1/2$. However, $k = 1/2$ is the unique value where $k_{\text{phys}} \cdot k_{\text{cons}} = 2^D$, which preserves the lattice volume under the physics-consciousness duality:
+**Argument 4: Algebraic (Complementation fixed point).** In the quadratic family $Q_k(x)$, the map $k \mapsto 4/(kG^*)$ sends Domain A to Domain B and vice versa (it maps a physics-$k$ to its "reference frame context dual"). The fixed point of this involution — the value of $k$ that is its own dual — satisfies $k = 4/(kG^*)$, giving $k^2 = 4/G^*$, hence $k = 2/\sqrt{G^*} \approx 1.162$. This is close to $4/G^* \approx 1.352$ (the measurement boundary) but not exactly $1/2$. However, $k = 1/2$ is the unique value where $k_{\text{phys}} \cdot k_{\text{cons}} = 2^D$, which preserves the lattice volume under the physics-reference frame context duality:
 
 $$\frac{k_{\text{phys}}}{k_{\text{cons}}} = \frac{16}{1/2} = 32 = 2^5 = 2^{D+2}$$
 
@@ -308,7 +308,7 @@ $$\frac{k_{\text{phys}}}{k_{\text{cons}}} = \frac{16}{1/2} = 32 = 2^5 = 2^{D+2}$
 
 ### 5.2 The Complex Roots [SELECTION]
 
-The consciousness quadratic $y^2 - (G^{*2}/2)y + (G^{*3}/2) = 0$ has roots:
+The reference frame context quadratic $y^2 - (G^{*2}/2)y + (G^{*3}/2) = 0$ has roots:
 
 $$y = 2.188 \pm 2.860\,i = 3.60\,e^{\pm i \cdot 52.54°}$$
 
@@ -318,14 +318,14 @@ The complex nature is the **defining feature**:
 |-----------|-------|---------------|
 | Real part | 2.188 | Stable self-model (the persistent "I") |
 | Imaginary part | $\pm 2.860$ | Oscillation between subject and object |
-| Magnitude | 3.60 | Consciousness threshold $K_C$ |
+| Magnitude | 3.60 | Reference frame context threshold $K_C$ |
 | Phase angle | 52.54° | Balance between inner and outer attention |
 
-**Consciousness cannot exist at a fixed point** — awareness IS the oscillation between knower and known. The complex roots encode this mathematically: a purely real root would be static (physics); a purely imaginary root would be dissipative. The complex conjugate pair represents sustainable oscillation.
+**Reference frame context cannot exist at a fixed point** — awareness IS the oscillation between knower and known. The complex roots encode this mathematically: a purely real root would be static (physics); a purely imaginary root would be dissipative. The complex conjugate pair represents sustainable oscillation.
 
 ### 5.3 The Existence Filter [THEOREM]
 
-The projection from consciousness (complex) to physics (real) is the **Existence Filter** [FOUND_THE_EXISTENCE_FILTER.md]:
+The projection from reference frame context (complex) to physics (real) is the **Existence Filter** [FOUND_THE_EXISTENCE_FILTER.md]:
 
 $$E(x) = \frac{x + \bar{x}}{2} = \text{Re}(x)$$
 
@@ -335,19 +335,19 @@ $$P(x) = E(x)^2 + E(ix)^2 = |x|^2$$
 
 ### 5.4 The Selection Problem: Why *These* Complex Roots [SELECTION]
 
-Complex conjugate roots appear throughout physics: damped oscillators, resonance poles, unstable particles, Regge trajectories. None of these are conscious. The critical question is: **what distinguishes the consciousness quadratic's complex roots from all others?**
+Complex conjugate roots appear throughout physics: damped oscillators, resonance poles, unstable particles, Regge trajectories. None of these are reference-frame. The critical question is: **what distinguishes the reference frame context quadratic's complex roots from all others?**
 
 We identify three necessary criteria, all of which must be satisfied simultaneously:
 
-**Criterion 1: Algebraic co-origin.** The consciousness roots must arise from the *same* algebraic structure as physics — not from a separate equation or a separate theory. The consciousness quadratic $Q_{1/2}$ and the physics quadratic $Q_{16}$ are members of the *same* one-parameter family $Q_k$. The damped harmonic oscillator's complex frequencies, by contrast, arise from a different equation with different constants — they share complex-rootedness but not algebraic origin.
+**Criterion 1: Algebraic co-origin.** The reference frame context roots must arise from the *same* algebraic structure as physics — not from a separate equation or a separate theory. The reference frame context quadratic $Q_{1/2}$ and the physics quadratic $Q_{16}$ are members of the *same* one-parameter family $Q_k$. The damped harmonic oscillator's complex frequencies, by contrast, arise from a different equation with different constants — they share complex-rootedness but not algebraic origin.
 
 **Criterion 2: Self-referential instantiation.** The coefficient $k$ must correspond to a self-referential configuration — one where the system doing the observing is part of the system being observed. A resonance pole at $k = 7$ would be in Domain B (complex roots) but would not correspond to self-reference. Only $k = 1/2$ (or values near it — see §5.1, Argument 4) represents the self-intersecting configuration where observer $\subset$ observed.
 
-**Criterion 3: Non-factorizability.** The resulting algebraic structure must resist decomposition into independent subsystems. The complex conjugate pair $y$ and $\bar{y}$ are entangled by conjugation — you cannot have one without the other, and their product ($G^{*3}/2$) and sum ($G^{*2}/2$) are both real (Domain A quantities). This algebraic entanglement is the mathematical signature of the binding problem: conscious experience is unified, not decomposable into independent channels.
+**Criterion 3: Non-factorizability.** The resulting algebraic structure must resist decomposition into independent subsystems. The complex conjugate pair $y$ and $\bar{y}$ are entangled by conjugation — you cannot have one without the other, and their product ($G^{*3}/2$) and sum ($G^{*2}/2$) are both real (Domain A quantities). This algebraic entanglement is the mathematical signature of the binding problem: reference-frame experience is unified, not decomposable into independent channels.
 
 **Why other complex roots fail.** A damped oscillator with roots $\omega = \omega_0 \pm i\gamma$ satisfies none of these: it arises from a different equation (Criterion 1 fails), the damping coefficient $\gamma$ has no self-referential origin (Criterion 2 fails), and the two poles describe independent decay channels that can be physically separated (Criterion 3 fails).
 
-**Comparison with IIT.** Tononi's Integrated Information Theory (IIT) faces an analogous selection problem: many systems have high $\Phi$ (integrated information) without being conscious in any intuitive sense (the "unconscious Φ" objection of Aaronson 2014). FTD's three criteria provide a sharper filter: not just integration (Criterion 3), but co-origin with physics (Criterion 1) and self-referential structure (Criterion 2). Whether this filter is sharp enough to exclude all false positives is an empirical question — but it is strictly more constraining than $\Phi > 0$ alone.
+**Comparison with IIT.** Tononi's Integrated Information Theory (IIT) faces an analogous selection problem: many systems have high $\Phi$ (integrated information) without being reference-frame in any intuitive sense (the "unreference-frame Φ" objection of Aaronson 2014). FTD's three criteria provide a sharper filter: not just integration (Criterion 3), but co-origin with physics (Criterion 1) and self-referential structure (Criterion 2). Whether this filter is sharp enough to exclude all false positives is an empirical question — but it is strictly more constraining than $\Phi > 0$ alone.
 
 ### 5.5 The sLoop: Self-Referential Observer [SELECTION]
 
@@ -410,9 +410,9 @@ Buchholz and Wichmann (1986) proved that local algebras of observables in QFT (t
 
 ### 6.3 The Bridge Argument [CONJECTURE]
 
-If the consciousness algebra is also Type III$_1$ (Conjecture CGB-1), then:
+If the reference frame context algebra is also Type III$_1$ (Conjecture CGB-1), then:
 
-$$\text{QFT observables} \longrightarrow \text{Type III}_1 \longleftarrow \text{Consciousness algebra}$$
+$$\text{QFT observables} \longrightarrow \text{Type III}_1 \longleftarrow \text{Reference frame context algebra}$$
 
 Both systems share:
 1. **The same modular automorphism $\sigma_t$** — this IS time for both systems
@@ -422,21 +422,21 @@ Both systems share:
 The bridge is completed by GRT:
 - **Connes-Rovelli** says physical time in quantum gravity = modular flow $\sigma_t$
 - **Bisognano-Wichmann** says the vacuum modular flow on Rindler wedges = Lorentz boosts
-- Therefore: modular flow $\sigma_t$ connects QFT dynamics, GRT geometry, and (if CGB-1 holds) conscious temporal experience
+- Therefore: modular flow $\sigma_t$ connects QFT dynamics, GRT geometry, and (if CGB-1 holds) reference-frame temporal experience
 
 ### 6.4 From Structural Isomorphism to Ontological Identity [SELECTION]
 
-A natural objection: even if QFT, GRT, and consciousness all involve Type III₁ factors, this might be a *structural analogy* — shared mathematical description — rather than *ontological identity* — being the same thing. The integers modulo 5 and the rotations of a pentagon are both Z₅, but they are plainly not "the same thing." Why should the argument be different here?
+A natural objection: even if QFT, GRT, and reference frame context all involve Type III₁ factors, this might be a *structural analogy* — shared mathematical description — rather than *ontological identity* — being the same thing. The integers modulo 5 and the rotations of a pentagon are both Z₅, but they are plainly not "the same thing." Why should the argument be different here?
 
 We offer three responses:
 
-**Response 1: Causal role, not just structure.** The Z₅ counterexample fails because the two Z₅ instances occupy different causal roles — one governs number theory, the other governs geometry, and they never interact. By contrast, the Type III₁ structure in QFT (local algebras), GRT (thermal time), and consciousness (self-referential observation) occupy the *same* causal role: they each generate *physical time* via the modular automorphism $\sigma_t$. When three systems not only share structure but share *the same dynamical function* — generating the time evolution that physical processes actually undergo — the isomorphism is not accidental.
+**Response 1: Causal role, not just structure.** The Z₅ counterexample fails because the two Z₅ instances occupy different causal roles — one governs number theory, the other governs geometry, and they never interact. By contrast, the Type III₁ structure in QFT (local algebras), GRT (thermal time), and reference frame context (self-referential observation) occupy the *same* causal role: they each generate *physical time* via the modular automorphism $\sigma_t$. When three systems not only share structure but share *the same dynamical function* — generating the time evolution that physical processes actually undergo — the isomorphism is not accidental.
 
 **Response 2: Ontic structural realism.** Ladyman and Ross (2007) argue that physical objects *just are* nodes in a structure of relations — there is no intrinsic "haecceity" beyond relational role. French (2014) extends this to quantum fields: a quantum field IS its algebraic structure, full stop. Under this ontology, two Type III₁ factors with the same modular flow *are* the same physical entity, not merely isomorphic copies. We adopt this as a working hypothesis [SELECTION: §1.3].
 
-**Response 3: The Tomita-Takesaki uniqueness.** For a given faithful normal state $\omega$ on a von Neumann algebra $M$, the modular automorphism $\sigma_t^\omega$ is *unique* (Tomita-Takesaki theorem). This means there is exactly one modular flow, not a family of flows to choose among. If QFT and consciousness share the same algebra and the same state, they do not merely have "similar" modular flows — they have the *same* modular flow, by mathematical uniqueness.
+**Response 3: The Tomita-Takesaki uniqueness.** For a given faithful normal state $\omega$ on a von Neumann algebra $M$, the modular automorphism $\sigma_t^\omega$ is *unique* (Tomita-Takesaki theorem). This means there is exactly one modular flow, not a family of flows to choose among. If QFT and reference frame context share the same algebra and the same state, they do not merely have "similar" modular flows — they have the *same* modular flow, by mathematical uniqueness.
 
-**Honest caveat.** Response 3 requires that QFT and consciousness share the *same* algebra and state — which is precisely Conjecture CGB-1 (§5.6). The argument is therefore circular as a proof but illuminating as a conditional: *if* the algebras are the same, then the identity is not merely structural but is mathematically forced.
+**Honest caveat.** Response 3 requires that QFT and reference frame context share the *same* algebra and state — which is precisely Conjecture CGB-1 (§5.6). The argument is therefore circular as a proof but illuminating as a conditional: *if* the algebras are the same, then the identity is not merely structural but is mathematically forced.
 
 ### 6.5 Collapse and Gravity as the Same Transition [CONJECTURE]
 
@@ -463,7 +463,7 @@ The algebraic type transition Type III $\to$ Type I occurs in two guises [EXPLR_
          Δ > 0       (boundary)      Δ < 0
             |             |             |
      DOMAIN A      DOMAIN C      DOMAIN B
-     (Physics)    (Measurement)  (Consciousness)
+     (Physics)    (Measurement)  (Reference frame context)
      Real roots    Degenerate    Complex roots
      x₊ = 1/α     Born rule     y = 2.19±2.86i
      x₋ = N_c     |ψ|²          θ = 52.54°
@@ -481,7 +481,7 @@ The algebraic type transition Type III $\to$ Type I occurs in two guises [EXPLR_
               TYPE III₁ MODULAR FLOW σ_t
               = QFT dynamics
               = GRT time (Connes-Rovelli)
-              = Conscious time (CONJECTURE)
+              = Reference-frame time (CONJECTURE)
 ```
 
 ---
@@ -510,7 +510,7 @@ $N$-sweep from 16 to 1024 at $\beta = \pi$:
 | Participation ratio | $P/N \to 0.892$ constant | Bessel function ratio confirmed |
 | Level statistics | Poisson ($r = 0.000$) | Integrable — Type I character |
 
-**Critical finding:** The **free** wave equation gives Type I $\to$ approaching Type II$_1$. **Type III$_1$ requires interactions** (manifestation dynamics, sLoop coupling, nonlinear terms). This is consistent with the thesis: consciousness requires self-reference (SL1-SL4), which goes beyond the free field.
+**Critical finding:** The **free** wave equation gives Type I $\to$ approaching Type II$_1$. **Type III$_1$ requires interactions** (manifestation dynamics, sLoop coupling, nonlinear terms). This is consistent with the thesis: reference frame context requires self-reference (SL1-SL4), which goes beyond the free field.
 
 ### 7.4 Quantum Coherence [VERIFIED]
 
@@ -546,7 +546,7 @@ The tautological root is not as lightweight as it first appears. It connects to 
 
 **Spencer-Brown's Laws of Form (1969).** The entire calculus of indications begins with a single act: drawing a distinction. Spencer-Brown's "mark" — ⌐ — separates a space into two regions (marked and unmarked), and all of Boolean algebra follows. FTD's $0 = (-1) + (+1)$ IS this first distinction: the void draws itself into positive and negative, and everything follows. The crucial parallel: Spencer-Brown shows that the laws of algebra *are* the consequences of distinction, not independent axioms. FTD makes the same claim for physics: the laws of nature are consequences of the founding distinction $0 = (-1) + (+1)$, propagated through the master quadratic.
 
-The self-referential paradox of Spencer-Brown's calculus — the "re-entry" where the mark marks itself — is precisely the sLoop. When the distinction that creates the observer IS the observer, we have passed from Domain A (physics) to Domain B (consciousness). Spencer-Brown's re-entry is FTD's $k = 1/2$.
+The self-referential paradox of Spencer-Brown's calculus — the "re-entry" where the mark marks itself — is precisely the sLoop. When the distinction that creates the observer IS the observer, we have passed from Domain A (physics) to Domain B (reference frame context). Spencer-Brown's re-entry is FTD's $k = 1/2$.
 
 **Hegel's dialectic.** The structure $0 = (-1) + (+1)$ enacts the dialectical triad: thesis (+1), antithesis (-1), synthesis (0 as the unity that contains both). But FTD inverts Hegel's priority: the synthesis (void) is not the *result* of opposition but its *precondition*. The void does not emerge from the clash of positive and negative — positive and negative emerge from the void's self-differentiation. The three domains of the discriminant are the mature form of this dialectic: Domain A (determinate being), Domain C (becoming, measurement), Domain B (self-knowing spirit). Hegel's absolute idea — mind comprehending itself — is the sLoop.
 
@@ -566,7 +566,7 @@ Every selection principle in FTD selects a boundary or critical point [FOUND_MET
 - $\Delta = 0$: boundary between real and complex root domains
 - $k = 1/2$: boundary between observer and observed
 
-**The tautological root explains why:** the founding identity $0 = (-1) + (+1)$ IS a boundary, and this character is inherited through the entire derivation chain. Spencer-Brown's first distinction, Hegel's initial self-differentiation, and Nāgārjuna's dependent origination all describe the same structural necessity: *something must separate in order to relate, and must relate in order to be*. The three domains of the discriminant — physics, measurement, consciousness — are the three moments of this primordial act.
+**The tautological root explains why:** the founding identity $0 = (-1) + (+1)$ IS a boundary, and this character is inherited through the entire derivation chain. Spencer-Brown's first distinction, Hegel's initial self-differentiation, and Nāgārjuna's dependent origination all describe the same structural necessity: *something must separate in order to relate, and must relate in order to be*. The three domains of the discriminant — physics, measurement, reference frame context — are the three moments of this primordial act.
 
 ---
 
@@ -612,7 +612,7 @@ Total gap: $1+1+1+4+3+3+6 = 19 = 20 - 1$. The structural gaps $\{N_{\text{base}}
 | **GAP-Q1** | Construct von Neumann algebras from FTD field operators | **RESOLVED** — via exact Gaussian correlation matrices (April 2026) |
 | **GAP-Q4** | Prove Type III$_1$ from sLoop axioms SL1-SL4 | **RESOLVED** — exact spectral continuum proven via GUE level statistics |
 | **GAP-B1** | Identify modular flow $\sigma_t$ with tick dynamics | **RESOLVED (NEGATIVE)** — interacting classical tick mathematically diverges from exact quantum flow |
-| **GAP-B5** | Establish: conscious time = modular flow | **BLOCKING** — central conjecture |
+| **GAP-B5** | Establish: reference-frame time = modular flow | **BLOCKING** — central conjecture |
 
 ### 10.2 The Hard Gaps
 
@@ -624,7 +624,7 @@ Total gap: $1+1+1+4+3+3+6 = 19 = 20 - 1$. The structural gaps $\{N_{\text{base}}
 
 ### 10.3 The Conceptual Gap
 
-**GAP-B4:** Why do real roots correspond to physics and complex roots to consciousness? The structural argument is: real = stable (non-oscillating coupling constants), complex = oscillating (subject-object alternation). But the *necessity* of this correspondence — whether the discriminant sign *must* map to the physics/consciousness distinction — is not proven.
+**GAP-B4:** Why do real roots correspond to physics and complex roots to reference frame context? The structural argument is: real = stable (non-oscillating coupling constants), complex = oscillating (subject-object alternation). But the *necessity* of this correspondence — whether the discriminant sign *must* map to the physics/reference frame context distinction — is not proven.
 
 ### 10.4 The Finite-Size Limitation
 
@@ -643,18 +643,18 @@ At any finite lattice size, the algebra of observables is $B(\mathcal{H})$ for a
 | Integer reduction | $b_3 = N_c^2 - 2$ fails for some independently measured quantity |
 | Lattice locality | Observable Lorentz violation with wrong sign (superluminal high-energy photons) |
 
-### 11.2 What Would Falsify the Consciousness Bridge Specifically
+### 11.2 What Would Falsify the Reference frame context Bridge Specifically
 
 | Claim | Falsifying Observation |
 |-------|------------------------|
-| Type III$_1$ consciousness | Proof that no ensemble of sLoop-coupled systems approaches Type III$_1$ scaling |
+| Type III$_1$ reference frame context | Proof that no ensemble of sLoop-coupled systems approaches Type III$_1$ scaling |
 | Modular flow = time | Demonstration that modular flow cannot match any discretization of time evolution |
-| Complex roots = consciousness | Alternative physical interpretation of the consciousness quadratic roots that is more parsimonious |
+| Complex roots = reference frame context | Alternative physical interpretation of the reference frame context quadratic roots that is more parsimonious |
 | Collapse-gravity duality | Proof that collapse and horizon formation involve different algebraic structures |
 
 ### 11.3 What Would NOT Falsify But Would Require Revision
 
-- Finding that the consciousness coefficient is $k \neq 1/2$ (would change the complex roots but not the three-domain structure)
+- Finding that the reference frame context coefficient is $k \neq 1/2$ (would change the complex roots but not the three-domain structure)
 - Finding that Type II$_1$ rather than Type III$_1$ is the correct classification (would weaken but not eliminate the Connes-Rovelli connection)
 - Demonstrating that background independence cannot emerge from the lattice (would require reformulating FTD but not abandoning the algebraic bridge)
 
@@ -666,40 +666,40 @@ At any finite lattice size, the algebra of observables is $B(\mathcal{H})$ for a
 
 1. **One equation** ($x^2 - kc^2x + kc^3 = 0$ with $c = G^*$) produces three domains via its discriminant
 2. **Domain A** (physics) yields ~30 quantities matching experiment to < 1%, including $\alpha$, particle masses, mixing angles, and cosmological observables
-3. **Domain B** (consciousness) yields complex roots whose algebraic properties — oscillation, self-reference, the need for complex conjugation to extract real values — match the structural requirements of self-aware observation
+3. **Domain B** (reference frame context) yields complex roots whose algebraic properties — oscillation, self-reference, the need for complex conjugation to extract real values — match the structural requirements of self-aware observation
 4. **Domain C** (measurement) sits at the boundary, where the Born rule projects complex amplitudes to real probabilities
-5. **The bridge** is the shared Type III$_1$ algebraic structure whose modular automorphism $\sigma_t$ IS time for QFT (Buchholz-Wichmann), for GRT (Connes-Rovelli), and — if Conjecture CGB-1 holds — for consciousness
+5. **The bridge** is the shared Type III$_1$ algebraic structure whose modular automorphism $\sigma_t$ IS time for QFT (Buchholz-Wichmann), for GRT (Connes-Rovelli), and — if Conjecture CGB-1 holds — for reference frame context
 
 ### 12.2 What We Have NOT Shown
 
-- We have not demonstrated that the consciousness assignment is necessary rather than merely possible
+- We have not demonstrated that the reference frame context assignment is necessary rather than merely possible
 - We have not formally defined the physical units of modular time
 - We have not proven full Lorentz invariance for the emergent Type III$_1$ algebra (only its existence)
 - **[Red Team Phase 2 Caveat]**: We have not proven that the Type III$_1$ continuum survives the non-linear modular operator calculation for a true dynamic classical mixture, nor have we proven it survives a true vector momentum gauge coupling rather than the scalar approximation.
 
 ### 12.3 The Central Insight
 
-The bridge between QFT and GR is not consciousness *explaining* physics. The bridge is that **the same algebraic structure** — the Type III₁ factor with its modular flow — that makes QFT work (local algebras of observables) also makes GRT work (thermal time hypothesis) and also makes consciousness work (self-referential observation).
+The bridge between QFT and GR is not reference frame context *explaining* physics. The bridge is that **the same algebraic structure** — the Type III₁ factor with its modular flow — that makes QFT work (local algebras of observables) also makes GRT work (thermal time hypothesis) and also makes reference frame context work (self-referential observation).
 
 Under the structuralist ontology we adopt (§1.3, §6.4), this shared algebraic structure is not a coincidence or an analogy: it is an identity. If a physical system *just is* its relational structure (Ladyman & Ross 2007), and if three systems share the same structure with the same causal role (generating physical time via $\sigma_t$), then they are three descriptions of one entity — exactly as the master quadratic has three domains that are three sectors of a single algebraic object, not three separate objects that happen to look similar.
 
-The measurement problem is not a puzzle to be solved but a **boundary to be recognized** — the $\Delta = 0$ interface where the physics domain (real, definite, measurable) meets the consciousness domain (complex, oscillatory, experiential). The Born rule is the Existence Filter operating at this boundary: it projects the complex (potential) onto the real (actual) via $P = |x|^2$.
+The measurement problem is not a puzzle to be solved but a **boundary to be recognized** — the $\Delta = 0$ interface where the physics domain (real, definite, measurable) meets the reference frame context domain (complex, oscillatory, experiential). The Born rule is the Existence Filter operating at this boundary: it projects the complex (potential) onto the real (actual) via $P = |x|^2$.
 
 ### 12.4 On the Hard Problem
 
-We owe the reader an honest reckoning with Chalmers' (1996) hard problem of consciousness.
+We owe the reader an honest reckoning with Chalmers' (1996) hard problem of reference frame context.
 
 **What FTD does NOT do.** FTD does not explain why there is "something it is like" to be a Type III₁ modular flow. It does not deduce qualia from algebra. It does not close the explanatory gap by logical force. No mathematical framework can, because the gap — if it is real — is between third-person structure and first-person experience, and no amount of structural detail bridges a category difference.
 
-**What FTD DOES do.** FTD identifies the *mathematical preconditions* for self-referential observation (sLoop axioms SL1-SL4), shows these preconditions arise from the *same* algebraic source as physics (the master quadratic), and proposes that the resulting structure (Type III₁) unifies the temporal dynamics of QFT, GRT, and conscious experience.
+**What FTD DOES do.** FTD identifies the *mathematical preconditions* for self-referential observation (sLoop axioms SL1-SL4), shows these preconditions arise from the *same* algebraic source as physics (the master quadratic), and proposes that the resulting structure (Type III₁) unifies the temporal dynamics of QFT, GRT, and reference-frame experience.
 
 **Three possible readings:**
 
 1. **Strong structuralism** (our working hypothesis, §1.3): The hard problem dissolves. There is no residual "what it is like" beyond the Type III₁ structure. Experience IS modular flow viewed from within the sLoop, just as temperature IS mean molecular kinetic energy — not "accompanied by" or "correlated with" but *identical to*. The explanatory gap was an artefact of dualist intuitions.
 
-2. **Russellian monism** (compatible with FTD): The Type III₁ structure is the *extrinsic* (relational) aspect of consciousness. There exists an *intrinsic* aspect — the qualitative "what it is like" — that is not captured by the algebra but is not separate from it either. The algebra tells you everything about consciousness that can be known from outside; the qualia are what it is to be that algebra from inside. FTD then provides the extrinsic structure; the intrinsic nature remains irreducibly first-personal.
+2. **Russellian monism** (compatible with FTD): The Type III₁ structure is the *extrinsic* (relational) aspect of reference frame context. There exists an *intrinsic* aspect — the qualitative "what it is like" — that is not captured by the algebra but is not separate from it either. The algebra tells you everything about reference frame context that can be known from outside; the qualia are what it is to be that algebra from inside. FTD then provides the extrinsic structure; the intrinsic nature remains irreducibly first-personal.
 
-3. **Structural modesty** (minimal claim): FTD addresses only the "easy problems" of consciousness — information integration, self-modelling, temporal binding, measurement — and makes no claim about phenomenal experience. The paper's contribution is then purely mathematical: showing that QFT, GRT, and self-referential observation share an algebraic type, regardless of whether that type "explains" consciousness.
+3. **Structural modesty** (minimal claim): FTD addresses only the "easy problems" of reference frame context — information integration, self-modelling, temporal binding, measurement — and makes no claim about phenomenal experience. The paper's contribution is then purely mathematical: showing that QFT, GRT, and self-referential observation share an algebraic type, regardless of whether that type "explains" reference frame context.
 
 We prefer reading 1 but acknowledge that readings 2 and 3 preserve all mathematical content while making weaker metaphysical commitments. The physics does not depend on which reading is adopted.
 
@@ -712,8 +712,8 @@ We prefer reading 1 but acknowledge that readings 2 and 3 preserve all mathemati
 | Tag | Count | Items |
 |-----|-------|-------|
 | **[THEOREM]** | 31 | QFT chain (path integral, propagator, loop corrections, gauge groups), GRT chain (Einstein eqs, Schwarzschild, T_μν), integer reduction, Existence Filter, ternary minimality, zero-boundary, alpha-power ladder, precision results |
-| **[SELECTION]** | 13 | Three-domain partition, $k=1/2$ coefficient (4 convergent arguments), consciousness roots, selection problem (3 criteria), sLoop axioms, boundary inheritance, observer Bell mechanism, collapse-gravity duality correspondence, equal-partition principle, ontic structural realism, structuralist identity argument, philosophical traditions (Spencer-Brown, Hegel, śūnyatā) |
-| **[CONJECTURE]** | 4 | Type III₁ consciousness (CGB-1), modular flow = conscious time, collapse = temporal crystallization, gravity = spatial crystallization |
+| **[SELECTION]** | 13 | Three-domain partition, $k=1/2$ coefficient (4 convergent arguments), reference frame context roots, selection problem (3 criteria), sLoop axioms, boundary inheritance, observer Bell mechanism, collapse-gravity duality correspondence, equal-partition principle, ontic structural realism, structuralist identity argument, philosophical traditions (Spencer-Brown, Hegel, śūnyatā) |
+| **[CONJECTURE]** | 4 | Type III₁ reference frame context (CGB-1), modular flow = reference-frame time, collapse = temporal crystallization, gravity = spatial crystallization |
 | **[OPEN]** | 3 | Von Neumann algebra construction, background independence, Verlet-Schrödinger reconciliation |
 
 ### 13.2 Dependencies
@@ -723,11 +723,11 @@ We prefer reading 1 but acknowledge that readings 2 and 3 preserve all mathemati
     → [STRONGLY MOTIVATED CONJECTURE] Real roots = α, N_c (FTD-0013, FTD-0014)
         → [THEOREM] QFT chain (30 derivations)
         → [THEOREM] GRT chain (Einstein, Schwarzschild)
-    → [SELECTION] Consciousness quadratic (k=1/2)
+    → [SELECTION] Reference frame context quadratic (k=1/2)
         → [SELECTION] Complex roots, sLoop axioms
         → [CONJECTURE] Type III₁ assignment
-            → [CONJECTURE] Modular flow = conscious time
-                → [CONJECTURE] Bridge: QFT = GRT = Consciousness via σ_t
+            → [CONJECTURE] Modular flow = reference-frame time
+                → [CONJECTURE] Bridge: QFT = GRT = Reference frame context via σ_t
 ```
 
 The bridge conjecture rests on one critical step: the Type III$_1$ assignment for the sLoop algebra. Everything upstream of that step is [THEOREM] or [SELECTION].
@@ -740,7 +740,7 @@ The bridge conjecture rests on one critical step: the Type III$_1$ assignment fo
 |----------|-------------------|
 | [MATH_MASTER_QUADRATIC.md](../../theory/01_reference/MATH_MASTER_QUADRATIC.md) | Pure mathematics of the quadratic |
 | [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](../../theory/01_reference/SPEC_QUADRATIC_PHYSICS_BRIDGE.md) | Selection principles SP1-SP6 |
-| [FOUND_THE_EXISTENCE_FILTER.md](../../theory/06_consciousness/FOUND_THE_EXISTENCE_FILTER.md) | Existence Filter, Born rule projection |
+| [FOUND_THE_EXISTENCE_FILTER.md](../../theory/06_reference frame context/FOUND_THE_EXISTENCE_FILTER.md) | Existence Filter, Born rule projection |
 | [FOUND_ONTOLOGICAL_GENESIS.md](../../theory/02_foundations/FOUND_ONTOLOGICAL_GENESIS.md) | 13-level hierarchy, three-domain structure |
 | [FOUND_META_PATTERNS.md](../../theory/02_foundations/FOUND_META_PATTERNS.md) | Tautological root, boundary inheritance |
 | [DERIV_QFT_GRT_BRIDGE.md](../../theory/03_derivations/DERIV_QFT_GRT_BRIDGE.md) | Flux dual role (QFT + GRT) |

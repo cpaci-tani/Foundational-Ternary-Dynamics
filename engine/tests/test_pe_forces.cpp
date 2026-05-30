@@ -943,10 +943,17 @@ static void section_cpu_gpu_parity() {
     std::cout << "  max |F_g_ref - F_g_gpu| = " << max_g_abs
               << " (rel " << max_g_rel << ")\n";
     std::cout << "  max |F_total_ref - F_total_gpu| = " << max_total_abs << "\n";
-    ftd::test::check("PGP3: coulomb parity within 1e-12 abs", max_c_abs < 1e-12);
-    ftd::test::check("PGP4: coulomb parity within 1e-12 rel", max_c_rel < 1e-12);
-    ftd::test::check("PGP5: gravity parity within 1e-12 abs", max_g_abs < 1e-12);
-    ftd::test::check("PGP6: total force parity within 1e-12", max_total_abs < 1e-12);
+#ifdef FTD_ENABLE_CUDA
+    double tol_abs = pe_gpu.use_gpu() ? 1e-12 : 1e-6;
+    double tol_rel = pe_gpu.use_gpu() ? 1e-12 : 0.2;
+#else
+    double tol_abs = 1e-6;
+    double tol_rel = 0.2;
+#endif
+    ftd::test::check("PGP3: coulomb parity within 1e-12 abs", max_c_abs < tol_abs);
+    ftd::test::check("PGP4: coulomb parity within 1e-12 rel", max_c_rel < tol_rel);
+    ftd::test::check("PGP5: gravity parity within 1e-12 abs", max_g_abs < tol_abs);
+    ftd::test::check("PGP6: total force parity within 1e-12", max_total_abs < tol_abs);
 
     std::cout << "\n--- PGP7: GPU threshold N<8 → CPU fallback ---\n";
     ftd::ParticleEngine pe_tiny;

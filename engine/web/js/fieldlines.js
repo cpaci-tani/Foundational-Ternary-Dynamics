@@ -301,7 +301,7 @@ export function generateGridSeeds(N, spacing = 8, maxSeeds = 200) {
     for (let z = spacing / 2; z < N && seeds.length < maxSeeds; z += spacing) {
         for (let y = spacing / 2; y < N && seeds.length < maxSeeds; y += spacing) {
             for (let x = spacing / 2; x < N && seeds.length < maxSeeds; x += spacing) {
-                seeds.push([x, y, z]);
+                seeds.push([x + 0.5, y + 0.5, z + 0.5]);
             }
         }
     }

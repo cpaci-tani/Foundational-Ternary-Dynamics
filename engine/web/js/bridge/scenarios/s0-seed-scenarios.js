@@ -246,7 +246,7 @@ export function setupS0SeedScenario(name, ctx) {
                 // Composite ATOMS stay because they have no vacuum-family equivalent yet.
                 case 's0-seed-hydrogen':
                 case 's0-seed-helium':
-                case 's0-seed-2-hydrogen-atoms': {
+                case 's0-seed-h2-bond-formation': {
                     const dp  = (cx, cy, cz, st, sp, co, sig, amp, lock = false) =>
                         injectDressedParticle(this, cx, cy, cz, st, sp, co, sig, amp, lock);
                     const tri = (cx, cy, cz, charges, colors, rad, lock = true) =>
@@ -287,10 +287,16 @@ export function setupS0SeedScenario(name, ctx) {
                         dp(mc, mc, mc + oR, -1, +1, 0, 2, K_B * 0.8);
                         dp(mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8);
                     }
-                    else if (name === 's0-seed-2-hydrogen-atoms') {
-                        const bd=Math.max(4,Math.floor(N/6)), hf=Math.floor(bd/2), oR=Math.max(3,Math.floor(N/8)), bR=Math.max(1,Math.floor(N/16));
-                        tri(mc-hf,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc-hf,mc,mc+oR, -1,-1,0, 2,K_B*0.8);
-                        tri(mc+hf,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc+hf,mc,mc+oR, -1,+1,0, 2,K_B*0.8);
+                    else if (name === 's0-seed-h2-bond-formation') {
+                        const bd = Math.max(4, Math.floor(N / 6));
+                        const hf = Math.floor(bd / 2);
+                        const bR = Math.max(1, Math.floor(N / 16));
+                        // Place two hydrogen nuclei close together:
+                        tri(mc - hf * 0.7, mc, mc, [+1, +1, -1], [1, 2, 3], bR);
+                        tri(mc + hf * 0.7, mc, mc, [+1, +1, -1], [1, 2, 3], bR);
+                        // Seed two shared electrons in the center with opposite spins:
+                        dp(mc, mc, mc + 1, -1, -1, 0, 2, K_B * 0.8);
+                        dp(mc, mc, mc - 1, -1, +1, 0, 2, K_B * 0.8);
                     }
                     break;
                 }
@@ -486,6 +492,101 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
 
+                case 's0-seed-quark-gluon-plasma': {
+                    // QGP: 8 quarks (alternating charges/colors) in a tight 4x4x4 cube around center.
+                    const qOffset = 2;
+                    let quarkIndex = 0;
+                    for (const dx of [-qOffset, qOffset])
+                    for (const dy of [-qOffset, qOffset])
+                    for (const dz of [-qOffset, qOffset]) {
+                        const charge = (quarkIndex % 2 === 0) ? +1 : -1;
+                        const color = (quarkIndex % 3) + 1; // R=1, G=2, B=3
+                        this.injectParticle(mc + dx, mc + dy, mc + dz, charge);
+                        const q = this._particles[this._particles.length - 1];
+                        q.color = color;
+                        q.spin = (charge > 0) ? +1 : -1;
+
+                        // High thermal random velocity, speed = 0.5 * C_SPEED
+                        const theta = Math.random() * Math.PI * 2;
+                        const phi = Math.acos(Math.random() * 2 - 1);
+                        const speed = 0.5 * C_SPEED;
+                        q.vx = speed * Math.sin(phi) * Math.cos(theta);
+                        q.vy = speed * Math.sin(phi) * Math.sin(theta);
+                        q.vz = speed * Math.cos(phi);
+
+                        quarkIndex++;
+                    }
+
+                    // Seed random high-energy gluon flux pulses in a central 8x8x8 region:
+                    const pulseR = 4;
+                    for (let dz = -pulseR; dz <= pulseR; dz++)
+                    for (let dy = -pulseR; dy <= pulseR; dy++)
+                    for (let dx = -pulseR; dx <= pulseR; dx++) {
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        if (r2 > pulseR * pulseR) continue;
+
+                        const amp = K_B * 3.0 * Math.random();
+                        const theta = Math.random() * Math.PI * 2;
+                        const phi = Math.acos(Math.random() * 2 - 1);
+
+                        const jx = amp * Math.sin(phi) * Math.cos(theta);
+                        const jy = amp * Math.sin(phi) * Math.sin(theta);
+                        const jz = amp * Math.cos(phi);
+
+                        const wx = amp * Math.sin(phi) * Math.cos(theta) * C_SPEED;
+                        const wy = amp * Math.sin(phi) * Math.sin(theta) * C_SPEED;
+                        const wz = amp * Math.cos(phi) * C_SPEED;
+
+                        this._injectFlux(mc + dx, mc + dy, mc + dz, jx, jy, jz);
+                        this._injectWaveVel(mc + dx, mc + dy, mc + dz, wx, wy, wz);
+                    }
+                    break;
+                }
+
+                case 's0-seed-gravitational-lensing': {
+                    // Schwarzschild well at the center:
+                    const sHalf = midF, rs = 3.0;
+                    this.injectParticle(mc, mc, mc, +1);
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const rx = x - sHalf, ry = y - sHalf, rz = z - sHalf;
+                        const r = Math.max(Math.sqrt(rx * rx + ry * ry + rz * rz), 0.5);
+                        const mg = G_N * (K_B * rs) / (r * r);
+                        if (mg < 1e-6) continue;
+                        this._injectFlux(x, y, z, -mg * rx / r, -mg * ry / r, -mg * rz / r);
+                    }
+
+                    // Off-axis photon pulse launched at x0 = N/4, propagating in +x:
+                    const x0 = Math.floor(N / 4);
+                    const offset = Math.max(4, Math.floor(N / 6));
+                    const y0 = mc + offset;
+                    const z0 = mc;
+
+                    const sigma = Math.max(2, Math.floor(N / 12));
+                    const amp = K_B * 3; // high amplitude so it stands out
+                    const lambdaEff = 4 * sigma;
+                    const k = 2 * Math.PI / lambdaEff;
+                    const cutR = 3.0 * sigma;
+                    const cutR2 = cutR * cutR;
+
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const dx = x - x0, dy = y - y0, dz = z - z0;
+                        const r2 = dx * dx + dy * dy + dz * dz;
+                        if (r2 > cutR2) continue;
+                        const g = Math.exp(-r2 / (2 * sigma * sigma));
+                        if (g < 1e-6) continue;
+                        const phase = k * dx;
+                        const jz = amp * g * Math.sin(phase);
+                        const wz = amp * g * Math.cos(phase) * C_SPEED;
+                        this._injectFlux(x, y, z, 0, 0, jz);
+                        this._injectWaveVel(x, y, z, wz, 0, 0);
+                    }
+                    break;
+                }
+
                 // ── Level 6: Gauge / Topological ─────────────────────
                 case 's0-seed-wilson-loop': {
                     const R = Math.max(3, Math.floor(N/8)), wAmp = K_B;
@@ -508,7 +609,7 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
                 case 's0-seed-monopole': {
-                    const mHalf=(N-1)/2.0;
+                    const mHalf=midF;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
                         const rx=x-mHalf,ry=y-mHalf,rz=z-mHalf;
                         const r=Math.max(Math.sqrt(rx*rx+ry*ry+rz*rz),1.0);
@@ -520,7 +621,7 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
                 case 's0-seed-instanton': {
-                    const iSize=3.0, iHalf=(N-1)/2.0;
+                    const iSize=3.0, iHalf=midF;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
                         const rx=x-iHalf,ry=y-iHalf,rz=z-iHalf,r2=rx*rx+ry*ry+rz*rz,r=Math.sqrt(r2);
                         const mg=iSize/(r2+iSize*iSize); if(mg<1e-6||r<0.5) continue;
@@ -528,8 +629,6 @@ export function setupS0SeedScenario(name, ctx) {
                     }
                     break;
                 }
-
-                // ── Level 7: Gravity / Cosmology ─────────────────────
                 case 's0-seed-schwarzschild': {
                     // Custom seed-bias inflow toward a central mass: a
                     // visualization aid, NOT engine gravity (does not gate
@@ -538,7 +637,7 @@ export function setupS0SeedScenario(name, ctx) {
                     // included so the seed bias scales with the FTD
                     // gravitational-coupling knob in the same direction
                     // as a physical Schwarzschild well.
-                    const sHalf=(N-1)/2.0, rs=3.0;
+                    const sHalf=midF, rs=3.0;
                     this.injectParticle(mc,mc,mc,+1);
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
                         const rx=x-sHalf,ry=y-sHalf,rz=z-sHalf;
@@ -563,7 +662,7 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
 
-                // ── Level 8: Consciousness / Observer ────────────────
+                // ── Level 8: Reference frame context / Observer ────────────────
                 case 's0-seed-sloop': {
                     const slR=Math.max(3,Math.floor(N/8)), slN=12, slA=K_B;
                     for (let i=0;i<slN;i++) {
