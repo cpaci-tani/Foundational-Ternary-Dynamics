@@ -493,12 +493,12 @@ and new debt accrues.
 
 ### 3.1 Live debt
 
-- **`consciousness-pedagogy.js` walkthrough math wiring.** The
+- **`reference frame context-pedagogy.js` walkthrough math wiring.** The
   `step.text` injection now calls `renderMathInHtml`, but the wire
   landed entangled with a ~1000-line refactor from the user's in-
   progress tree. Follow-up: once the refactor lands, verify
   walkthrough LaTeX renders via the math-formatting coverage spec
-  (currently doesn't exercise the consciousness panel).
+  (currently doesn't exercise the reference frame context panel).
 - **`panel-mount-*.spec.js` flaky tests.** Pre-existing localStorage
   contamination between mount-mode test cases. Trace available in
   `test-results/panel-mount-*/` on CI failures. Fix: add a

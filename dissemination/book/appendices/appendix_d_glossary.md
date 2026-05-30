@@ -96,7 +96,7 @@
 
 ## H
 
-**Hard problem of consciousness**: David Chalmers' term for the question of why subjective experience exists at all.
+**Hard problem of reference frame context**: David Chalmers' term for the question of why subjective experience exists at all.
 
 **Hermetic tradition**: The wisdom tradition attributed to Hermes Trismegistus, emphasizing correspondence between levels of reality.
 

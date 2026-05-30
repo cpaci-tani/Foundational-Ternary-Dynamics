@@ -102,7 +102,7 @@ Universal generic $O(N \log N)$ spatial partitioning octree. Integrates mass and
   * `gauge_couplings.h`: Precision coupling calculations (CODATA 2022 matching via 4-term loop expansions), $G_N = 0.01$ (scaled lattice gravity), and QCD running definitions.
   * `particle_masses.h`: Standard Model mass scale definitions ($K_B = 0.511$ MeV, $K_{genesis} = 3 K_B$) and the Higgs VEV ($V_{Higgs} = 246.09$ GeV, $M_{Higgs} = 124.8$ GeV).
   * `neutrino.h`: Seesaw mechanism equations and PMNS neutrino mixing parameters.
-  * `consciousness.h`: Pedagogical noetic coordinates ($y_{real}$, $K_{noetic}$, $\theta_C$) and softplus fixed points.
+  * `reference frame context.h`: Pedagogical noetic coordinates ($y_{real}$, $K_{noetic}$, $\theta_C$) and softplus fixed points.
 * **`constants.h`**: Re-exports all ontic constants into the `ftd::` namespace and appends engine tuning parameters (`SOR_ITERATIONS = 6`, `SOR_OMEGA = 1.75`, `EVAP_THRESHOLD = 1e-6`, `BANDWIDTH_FLOOR = 1e-6`). Contains the algebraic identity `ALPHA_EFT = G_C * G_C`.
 * **`constants_gpu.cuh`**: CUDA-side `inline constexpr` mirror of `constants.h` compiling cleanly under both standard MSVC/g++ and NVCC.
 * **`voxel.h` & `lattice.h`**: Voxel struct and coordinates/neighbor geometry helpers.

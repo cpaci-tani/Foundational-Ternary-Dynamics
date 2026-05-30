@@ -2,7 +2,7 @@
 
 ## 1. Observation
 - **Header Files Mapped:** 
-  - `engine/include/ftd/ontic.h` acts as an umbrella including layer files under `ftd/ontic/`: `lemniscate.h`, `master_quadratic.h`, `gauge_couplings.h`, `particle_masses.h`, `neutrino.h`, and `consciousness.h`.
+  - `engine/include/ftd/ontic.h` acts as an umbrella including layer files under `ftd/ontic/`: `lemniscate.h`, `master_quadratic.h`, `gauge_couplings.h`, `particle_masses.h`, `neutrino.h`, and `reference frame context.h`.
   - `engine/include/ftd/constants.h` exposes these constants inside public namespaces, while `engine/include/ftd/constants_gpu.cuh` maps them for device-side CUDA compatibility.
   - Public interface files `voxel.h`, `lattice.h`, and `render_bridge.h` contain definitions of fundamental primitives and classes.
   - Prevention of circular inclusion observed in the abstract base class `Backend` in `backend.h` (subclasses `CpuBackend` and `GpuBackend` in PIMPL-like virtual setup) and free functions in `field_operators.h`.

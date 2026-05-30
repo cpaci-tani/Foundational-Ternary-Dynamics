@@ -1,7 +1,7 @@
 # Project: FTD Web Dashboard Refactoring
 
 ## Architecture
-- The FTD web dashboard is a Three.js-based simulation dashboard spanning 8 scales (lattice, particles, atoms, molecules, planetary, cosmic, meta, consciousness).
+- The FTD web dashboard is a Three.js-based simulation dashboard spanning 8 scales (lattice, particles, atoms, molecules, planetary, cosmic, meta, reference frame context).
 - Composition root: `app_dag.js`.
 - Core renderers: `field-renderer.js`, `flux-renderer.js`, `topology-sheet-renderer.js`, `molecular-renderer.js`, `particle-renderer.js`, `planetary-renderer.js`, `cosmic-renderer.js`.
 
