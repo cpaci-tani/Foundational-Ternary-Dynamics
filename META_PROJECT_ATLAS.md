@@ -80,7 +80,7 @@ ftd/
 │   │   ├── 03_derivations/            # DERIV_*.md
 │   │   ├── 04_coupling/               # alpha, alpha_s, sin²θ_W, ...
 │   │   ├── 05_particles/              # masses, mixing, generations
-│   │   ├── 06_consciousness/          # Scale 11 / observer formalism
+│   │   ├── 06_reference frame context/          # Scale 11 / observer formalism
 │   │   ├── 07_assessment/             # AUDIT_*.md, LEDGER.md, TRACKER_OPEN_ITEMS.md
 │   │   ├── 08_structural/             # geometry, information theory
 │   │   ├── 09_mathematical/           # number theory, Chowla-Selberg
