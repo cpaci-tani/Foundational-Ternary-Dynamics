@@ -215,9 +215,9 @@ export function buildMetaInfoPanel(container, metaUnit) {
         <div class="meta-card-body">
             <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">Toggle coloring modes to see how 27 decomposes</div>
 
-            <button class="meta-btn" data-action="bcc-fcc" style="width:100%;justify-content:center;">
+            <button class="meta-btn" data-action="bcc-fcc" style="width:100%;justify-content:center;" title="Coord-sum parity coloring. This is the even/odd coordinate-sum partition, NOT the BCC/FCC sublattice distinction (the canonical shell&rarr;sublattice map is center/SC/FCC/BCC per Moore Layer Theorem &sect;4, shown in the site inspector). Audit P0-17 fix.">
                 <span class="swatch" style="background:#4488FF;"></span>/<span class="swatch" style="background:#FF4444;"></span>
-                BCC / FCC Split &mdash; 13 + 14
+                Coord-sum parity &mdash; 13 + 14
             </button>
             <div style="font-size:10px;color:#6b7280;text-align:center;margin:2px 0 6px;">
                 = N<sub>eff</sub> + 2&middot;b<sub>3</sub>

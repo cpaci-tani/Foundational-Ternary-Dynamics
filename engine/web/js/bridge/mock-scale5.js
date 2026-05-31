@@ -14,9 +14,10 @@
  *
  * Mass-unit note: body masses on this scale are stored in lattice units,
  * not solar masses. For UI display ("M = X M_sun") multiply by
- * `LATTICE_TO_SOLAR_MASS` from constants.js. No conversion is currently
- * applied here — telemetry consumers downstream are responsible for the
- * SI labelling step.
+ * `LATTICE_TO_SOLAR_MASS` (= 50, constants.js). As of the 2026-05-27
+ * audit (P0-6) every `M☉`-labelled telemetry string in `_updateTelemetry`
+ * applies this factor at the point of formatting; the raw `b.mass` values
+ * elsewhere (forces, getCosmicData) remain in lattice units by design.
  *
  * Refactor note (MS5-1..3): scenario data generation moved to
  * ./cosmic-scenarios/, the force kernel to ./cosmic-physics.js, and
@@ -24,16 +25,55 @@
  * owns state, the tick schedule, telemetry, and the public API.
  */
 
-import { OMEGA_LAMBDA, OMEGA_MATTER, H0_LATTICE, LATTICE_TO_SOLAR_MASS } from '../constants.js';
+import {
+    OMEGA_LAMBDA, OMEGA_MATTER, H0_LATTICE, LATTICE_TO_SOLAR_MASS,
+} from '../constants.js';
 
 import { runCosmicScenario } from './cosmic-scenarios/index.js';
 import { computeCosmicForces } from './cosmic-physics.js';
 import { postCosmicUpdates } from './cosmic-postupdates.js';
 
-// H0_LATTICE migrated to constants.js (Wave 2G, 2026-04-26).
-// Note: this is still a static parameter; no Friedmann solver wires
-// it into a(t) evolution — see Theme D Scale-5 follow-up for the
-// integrator implementation.
+// ── Friedmann / Hubble integration (audit P0-9, 2026-05-27) ─────────────
+// Flat ΛCDM background: H(a)² = H0²·(Ω_M·a⁻³ + Ω_Λ), with a=1 "today".
+// Ω_Λ = OMEGA_LAMBDA = 2/3 [PARAMETRIC — FTD-internal selection, NOT
+// [THEOREM]; does not match Planck-2018 Ω_Λ ≈ 0.685; see constants.js
+// :445-451]. Ω_M = OMEGA_MATTER = 1/3 [PARAMETRIC] is its complement and
+// equals (DM_FRACTION + BARYON_FRACTION = 17/27 + 10/27 = 1)·OMEGA_MATTER,
+// i.e. the full matter budget — the DM:baryon split partitions Ω_M but
+// does not change the total that enters the Friedmann source.
+//
+// The integrator below replaces the historical static (_a = 1.0,
+// _adot = 0.0) placeholder. a(t) is evolved forward by RK4 on
+// da/dt = a·H(a) from an early-universe initial condition so the
+// dashboard shows monotonic expansion with H decreasing toward the
+// de Sitter floor H → H0·√Ω_Λ.
+//
+// COSMIC_A_INIT: scale factor at scenario start (a < 1 ⇒ room to expand;
+//   z = 1/a − 1 = 19 at a = 0.05, a recognizable early-universe redshift).
+// COSMIC_CLOCK_GAIN: [IMPOSED] display-only acceleration of the cosmic
+//   clock. H0_LATTICE = 0.001 with per-tick dt ~ 0.01–0.05 gives a bare
+//   H0·dt ~ 1e-5 — invisible on dashboard timescales. The cosmic-time
+//   increment per tick is dtCosmic = dt · COSMIC_CLOCK_GAIN. GAIN = 40 is
+//   calibrated so the universe crosses a = 1 ("today") around a few
+//   hundred ticks and then stays in readable single/double digits for
+//   thousands of ticks, with H smoothly relaxing to the de Sitter floor
+//   H0·√Ω_Λ ≈ 8.2e-4 — i.e. the correct ΛCDM SHAPE of a(t) at a
+//   comfortable viewing rate. This gain scales ONLY the cosmological
+//   background clock (a, H, z diagnostics); it does NOT enter the N-body
+//   force kernel or body kinematics, so scenario dynamics are unchanged.
+// COSMIC_A_MAX: soft display cap on a(t). In the de Sitter future a grows
+//   without bound; capping keeps the readout finite (H, z stay meaningful
+//   at the floor). Purely cosmetic — no dynamical effect.
+const COSMIC_A_INIT = 0.05;
+const COSMIC_CLOCK_GAIN = 40.0;
+const COSMIC_A_MAX = 1000.0;
+
+// Hubble rate from the flat-ΛCDM Friedmann equation at scale factor `a`.
+// H(a) = H0·√(Ω_M·a⁻³ + Ω_Λ). Returns lattice-unit H (pre clock-gain).
+function _friedmannH(a, H0, omegaM, omegaL) {
+    const inv_a3 = 1.0 / (a * a * a);
+    return H0 * Math.sqrt(omegaM * inv_a3 + omegaL);
+}
 
 export class CosmicMockBridge {
     constructor() {
@@ -41,9 +81,14 @@ export class CosmicMockBridge {
         this._tick = 0;
         this._nextId = 0;
         this._dt = 0.01;
-        this._a = 1.0;
-        this._adot = 0.0;
         this._H0 = H0_LATTICE;
+        // Flat-ΛCDM background state (audit P0-9). Initialized from the
+        // Friedmann equation rather than left static; _resetFriedmann()
+        // is the single source of truth so constructor + setupScenario agree.
+        this._omegaM = OMEGA_MATTER;       // [PARAMETRIC] 1/3
+        this._omegaL = OMEGA_LAMBDA;       // [PARAMETRIC] 2/3
+        this._a = COSMIC_A_INIT; this._adot = 0.0; this._H = this._H0; this._z = 0.0;
+        this._resetFriedmann();            // authoritative init of a/adot/H/z
         this._boxSize = 200;
         this._softening = 5.0; // base softening (used as fallback)
         this._gwEvents = [];
@@ -87,6 +132,47 @@ export class CosmicMockBridge {
     }
 
     // ================================================================
+    // FRIEDMANN / HUBBLE BACKGROUND (audit P0-9)
+    // ================================================================
+    // Flat ΛCDM: H(a)² = H0²·(Ω_M·a⁻³ + Ω_Λ); a(t) integrated by RK4 on
+    // da/dt = a·H(a). Deterministic (no RNG). Diagnostics-only: the
+    // background a/H/z are reported to telemetry but are intentionally NOT
+    // fed back into the N-body force kernel, so enabling this changes no
+    // scenario dynamics (see header note on COSMIC_CLOCK_GAIN).
+
+    /** Reset the background to the early-universe IC. Single source of
+     *  truth shared by the constructor and setupScenario(). */
+    _resetFriedmann() {
+        this._a = COSMIC_A_INIT;
+        this._H = _friedmannH(this._a, this._H0, this._omegaM, this._omegaL);
+        this._adot = this._a * this._H;
+        this._z = 1.0 / this._a - 1.0;
+    }
+
+    /** Advance the scale factor by one tick using RK4 on da/dt = a·H(a).
+     *  `dtCosmic` is the cosmic-clock increment for this tick. */
+    _stepFriedmann(dtCosmic) {
+        const H0 = this._H0, oM = this._omegaM, oL = this._omegaL;
+        // da/dt = a · H(a)
+        const f = (a) => a * _friedmannH(a, H0, oM, oL);
+        const a0 = this._a;
+        const k1 = f(a0);
+        const k2 = f(a0 + 0.5 * dtCosmic * k1);
+        const k3 = f(a0 + 0.5 * dtCosmic * k2);
+        const k4 = f(a0 + dtCosmic * k3);
+        let a = a0 + (dtCosmic / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4);
+        // Guard: a is strictly positive and monotonically increasing for
+        // Ω_M, Ω_Λ ≥ 0; clamp the floor against any FP underflow, and the
+        // ceiling with COSMIC_A_MAX (cosmetic — keeps the readout finite).
+        if (!(a > 1e-6)) a = 1e-6;
+        if (a > COSMIC_A_MAX) a = COSMIC_A_MAX;
+        this._a = a;
+        this._H = _friedmannH(a, H0, oM, oL);
+        this._adot = a * this._H;
+        this._z = 1.0 / a - 1.0;
+    }
+
+    // ================================================================
     // SCENARIOS — delegated to ./cosmic-scenarios/
     // ================================================================
 
@@ -94,7 +180,7 @@ export class CosmicMockBridge {
         this._bodies = [];
         this._nextId = 0;
         this._tick = 0;
-        this._a = 1.0;
+        this._resetFriedmann();   // a(t)/H(t) back to early-universe IC (P0-9)
         this._gwEvents = [];
         this._t_cosmic = 0.0;
         this._scenarioName = name;
@@ -234,6 +320,12 @@ export class CosmicMockBridge {
         // Step 5: post-integration updates (mass changes, mergers, cleanup)
         this._postUpdates();
 
+        // Step 6: advance the ΛCDM background a(t)/H(t) (audit P0-9).
+        // dtCosmic = dt · GAIN (the visual-accelerated cosmic clock);
+        // _friedmannH already carries H0, so H0 is NOT multiplied in here.
+        // Diagnostics-only — does not perturb the N-body integration above.
+        this._stepFriedmann(dt * COSMIC_CLOCK_GAIN);
+
         this._t_cosmic += dt;
         this._tick++;
     }
@@ -250,6 +342,11 @@ export class CosmicMockBridge {
         const types = new Int8Array(n);
         const temperatures = new Float32Array(n);
         const sizes = new Float32Array(n);
+        // True body mass in lattice units (audit P0-7). `sizes` is a
+        // radius-like field (b.radius || cbrt(mass)·…); the BH renderer
+        // needs the actual mass to draw a Schwarzschild horizon r_s = 2 G_N M
+        // that is LINEAR in M rather than the historical ∝ M^(1/3).
+        const masses = new Float32Array(n);
         const densities = new Float32Array(n);
         const luminosities = new Float32Array(n);
         const stretches = new Float32Array(n);
@@ -266,6 +363,7 @@ export class CosmicMockBridge {
             temperatures[i] = b.temperature + stretch * 15000;
             // Radius override if present, else fallback to mass-based
             sizes[i] = b.radius || (Math.cbrt(b.mass) * (1 + stretch * 2));
+            masses[i] = b.mass;
             densities[i] = b.density || 0.1;
             // Note: For BH, luminosity holds the Jet Intensity gauge!
             luminosities[i] = b.luminosity * (1 - stretch * 0.5);
@@ -273,7 +371,7 @@ export class CosmicMockBridge {
             fuel_stages[i] = b.fuel_stage || 0;
             fuel_fractions[i] = b.fuel_fraction != null ? b.fuel_fraction : 1.0;
         }
-        return { positions, types, temperatures, sizes, densities, luminosities, stretches, ids, fuel_stages, fuel_fractions, count: n };
+        return { positions, types, temperatures, sizes, masses, densities, luminosities, stretches, ids, fuel_stages, fuel_fractions, count: n };
     }
 
     cosmicInspectBody(id) {
@@ -304,8 +402,13 @@ export class CosmicMockBridge {
         return {
             tick: this._tick, bodyCount: this._bodies.length,
             countsByType: counts, totalMass, totalKE,
-            hubbleParameter: this._H0, scaleFactor: this._a,
-            omegaMatter: OMEGA_MATTER, omegaLambda: OMEGA_LAMBDA,
+            // Live ΛCDM background (audit P0-9): _H and _a are integrated
+            // each tick by _stepFriedmann, no longer the static H0/1.0.
+            // hubbleParameter is the present (visual-clock) Hubble rate;
+            // hubble0 keeps the H0 anchor available for reference.
+            hubbleParameter: this._H, scaleFactor: this._a,
+            redshift: this._z, hubble0: this._H0,
+            omegaMatter: this._omegaM, omegaLambda: this._omegaL,
             customTelemetry: this._customTelemetry
         };
     }

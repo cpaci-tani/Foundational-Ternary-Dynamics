@@ -15,12 +15,36 @@ import * as THREE from 'three';
 import { BaseRenderer } from './core/BaseRenderer.js';
 import { makeStarSprite, makeGasSprite, makeHaloSprite } from './cosmic/sprites.js';
 import { DISK_VERT, DISK_FRAG, JET_VERT, JET_FRAG, blackbodyColor } from './cosmic/shaders.js';
+import { G_N } from './constants.js';
 
 const BT = {
     DARK_ENERGY: -3, QUASAR: -2, BLACK_HOLE: -1,
     DARK_MATTER: 0, GAS: 1, STAR: 2,
     NEUTRON_STAR: 3, NEBULA: 4, WHITE_DWARF: 5
 };
+
+// ── Black-hole horizon (audit P0-7) ─────────────────────────────────────
+// Genuine Schwarzschild horizon r_s = 2 G_N M, LINEAR in M (the old
+// renderer used a constant-density r ∝ M^(1/3), and read the radius-like
+// `sizes` field rather than the true mass). G_N = 0.01 is the FTD ontic
+// constant; lattice units take c = 1 for this display radius (the panel
+// text states r_s = 2 G_N M verbatim). BH_VISUAL_SCALE is an [IMPOSED]
+// display gauge that keeps horizons on-screen across the scenario mass
+// range (BH masses span ~100–7000 lattice units); it scales the rendered
+// horizon only and carries no physical content. The result is clamped to
+// a visible band so a runaway-accreted BH cannot fill the viewport, while
+// remaining strictly linear in M below the cap.
+// Scale calibrated so common BHs (M~100–500: galaxy/BH scenarios) render
+// near the old visual size, while the heaviest scenario BHs (binary-AGN
+// M~3000) stay prominent but below the viewport-fill cap:
+//   M=100→0.7  M=500→3.5  M=3000→21  M=7000→49 (cap 50).
+const BH_VISUAL_SCALE = 0.35;                // display gauge (on-screen sizing)
+const BH_RS_MIN = 0.6;                       // floor (sub-resolution horizons)
+const BH_RS_MAX = 50.0;                      // cap (keeps view usable)
+function schwarzschildRenderRadius(mass) {
+    const rs = (2.0 * G_N * mass) * BH_VISUAL_SCALE;   // r_s = 2 G_N M
+    return Math.min(BH_RS_MAX, Math.max(BH_RS_MIN, rs));
+}
 
 const _starTex = makeStarSprite();
 const _gasTex = makeGasSprite();
@@ -319,8 +343,13 @@ export class CosmicRenderer extends BaseRenderer {
         }
 
         for (const bh of bhs) {
-            const mass = bodyData.sizes ? bodyData.sizes[bh.i] : 100;
-            const rs = Math.max(0.6, Math.cbrt(mass) * 0.35);
+            // True body mass (audit P0-7): prefer the dedicated masses
+            // array; fall back to the legacy radius-like `sizes` field only
+            // if an older bridge omits it (keeps the renderer robust).
+            const mass = bodyData.masses ? bodyData.masses[bh.i]
+                       : (bodyData.sizes ? bodyData.sizes[bh.i] : 100);
+            // Schwarzschild horizon r_s = 2 G_N M (linear in M), visual-scaled.
+            const rs = schwarzschildRenderRadius(mass);
             const bhPos = new THREE.Vector3(bh.x, bh.y, bh.z);
 
             if (!this._bhAge.has(bh.id)) this._bhAge.set(bh.id, this._time);

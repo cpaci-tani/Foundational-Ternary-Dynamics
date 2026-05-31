@@ -102,9 +102,10 @@ export function atomicEnergy(Z) {
     // Total atomic rest mass energy
     const massEnergy = freeEnergy - B;
 
-    // Approximate electron binding energy using hydrogen-like scaling
-    // E ≈ -13.6 eV × Z_eff² / n² summed over all electrons
-    // This is a rough estimate; actual values need Hartree-Fock
+    // Approximate TOTAL electron binding via the Thomas-Fermi atomic model:
+    // E_atom ≈ -20.93 · Z^(7/3) eV (see approxElectronBinding below). This
+    // is a single closed-form total, NOT a Slater shell-by-shell hydrogenic
+    // sum (audit P0-11). Actual values need Hartree-Fock.
     const electronBinding = approxElectronBinding(Z);
 
     return {

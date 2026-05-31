@@ -14,6 +14,10 @@ class Scale4LifecycleController extends BaseLifecycleController {
         super();
         this.bridge = null;
         this.renderer = null;
+        // Gravity-constant mode for Scale 4 (P0-1). 'decorative' = slow lattice
+        // G (default, preserves prior UX); 'physical' = Keplerian 4π². Survives
+        // bridge recreation on scenario reload; mirrored by #planetary-gravity-mode.
+        this._gravityMode = 'decorative';
     }
 
     mount(ctx) {
@@ -33,6 +37,11 @@ class Scale4LifecycleController extends BaseLifecycleController {
         }
 
         this.bridge = new PlanetaryMockBridge();
+        // Persist the user's gravity-mode choice across the bridge recreate that
+        // happens on every (re)load. A fresh bridge defaults to 'decorative';
+        // re-apply the remembered mode BEFORE setupScenario so initial
+        // velocities are generated with the correct G (P0-1).
+        if (this._gravityMode) this.bridge.setGravityMode(this._gravityMode);
         this.bridge.setupScenario(name);
 
         if (this.renderer) {
@@ -74,30 +83,46 @@ class Scale4LifecycleController extends BaseLifecycleController {
         this.renderer.update(data);
 
         this._populateLayerList(ctx);
-        this._bindToggles();
+        this._bindToggles(ctx);
 
         this._startPlanetaryLoop(ctx);
     }
 
     _startPlanetaryLoop(ctx) {
+        // loadScenario() runs again on every in-place reload (scenario change,
+        // gravity-mode change) WITHOUT an intervening destroy(), so clear any
+        // prior loop first — otherwise intervals stack and the sim runs N× too
+        // fast after N reloads.
+        if (this._planetaryIntervalId != null) {
+            clearInterval(this._planetaryIntervalId);
+            this._planetaryIntervalId = null;
+        }
+
         let planetAcc = 0;
-        this.setInterval(() => {
+        // NOTE (P0-5): ctx is the live getter object from app.js _makeCtx(), so
+        // ctx.running / ctx.engineMode / ctx.ticksPerFrame are read fresh each
+        // tick — NOT captured snapshots. This is what makes pause work after
+        // load. Do not destructure these into locals here.
+        this._planetaryIntervalId = this.setInterval(() => {
+            // Guard: if we've switched away from planetary, idle. (destroy()
+            // also clears this interval; this is belt-and-suspenders for the
+            // in-place-reload window.)
             if (ctx.engineMode !== 'planetary') {
                 return;
             }
-            
+
             if (ctx.running) {
                 planetAcc += ctx.ticksPerFrame || 1;
                 const f = Math.floor(planetAcc);
                 planetAcc -= f;
                 if (f > 0 && this.bridge) this.bridge.run(f);
             }
-            
+
             if (this.bridge && this.renderer) {
                 const currentData = this.bridge.getPlanetaryData();
                 this.renderer.update(currentData);
             }
-            
+
             // Update DOM diagnostics and inspector state
             if (ctx.inspector) ctx.inspector.update();
             if (ctx.viewport) ctx.viewport.render();
@@ -134,19 +159,60 @@ class Scale4LifecycleController extends BaseLifecycleController {
         }
     }
 
-    _bindToggles() {
+    _bindToggles(ctx) {
+        // loadScenario() can run repeatedly without an intervening destroy()
+        // (the scenario <select> reloads in place), so guard each binding with
+        // a dataset flag to avoid stacking duplicate listeners.
         const optOrbits = document.getElementById('planetary-opt-orbits');
-        if (optOrbits) {
+        if (optOrbits && !optOrbits.dataset.s4Bound) {
+            optOrbits.dataset.s4Bound = '1';
             this.bindEvent(optOrbits, 'change', (e) => {
                 if (this.renderer) this.renderer.setRenderOrbits(e.target.checked);
             });
         }
         const optAxes = document.getElementById('planetary-opt-axes');
-        if (optAxes) {
+        if (optAxes && !optAxes.dataset.s4Bound) {
+            optAxes.dataset.s4Bound = '1';
             this.bindEvent(optAxes, 'change', (e) => {
                 if (this.renderer) this.renderer.setRenderAxes(e.target.checked);
             });
         }
+
+        // Gravity-constant mode toggle (P0-1). this._gravityMode is the
+        // controller-level source of truth (the bridge is recreated on every
+        // reload, so the choice must survive at controller scope). On change,
+        // remember the mode and reload the current scenario so initial
+        // velocities are regenerated for the new G — orbits run ~63× faster in
+        // 'physical' (Keplerian) vs 'decorative' (slow lattice-G default).
+        const gravSel = document.getElementById('planetary-gravity-mode');
+        if (gravSel && !gravSel.dataset.s4Bound) {
+            gravSel.dataset.s4Bound = '1';
+            this.bindEvent(gravSel, 'change', (e) => {
+                this._gravityMode = e.target.value;
+                const scenario = document.getElementById('planetary-scenario-select')?.value
+                    || this.bridge?._scenarioName
+                    || 'planetary-solar';
+                this.loadScenario(ctx, scenario);
+            });
+        }
+        // Keep the visible selection in sync with the active mode across both
+        // first mount and in-place scenario reloads.
+        if (gravSel) gravSel.value = this._gravityMode;
+
+        this._updateOverlayStatus();
+    }
+
+    /**
+     * Update the viewport overlay status line so the UI does not assert AU/yr
+     * timing fidelity while in 'decorative' mode (P0-1). In 'physical' mode the
+     * Keplerian AU/M☉/yr timing is faithful, so the label says so.
+     */
+    _updateOverlayStatus() {
+        const statusEl = document.getElementById('planetary-overlay-status');
+        if (!statusEl) return;
+        statusEl.textContent = this._gravityMode === 'physical'
+            ? 'Orbital mechanics — Physical (Keplerian AU/M☉/yr; Earth year = 1 sim yr)'
+            : 'Orbital mechanics — Decorative (visual cadence; not AU/yr-faithful)';
     }
 
     step() {
@@ -161,6 +227,17 @@ class Scale4LifecycleController extends BaseLifecycleController {
 
     destroy(ctx) {
         super.destroy(ctx);
+        // super.destroy() cleared the tracked loop interval; drop our handle so
+        // a later re-mount starts a fresh one.
+        this._planetaryIntervalId = null;
+        // The toolbar toggle elements persist in the DOM across scale switches
+        // (hidden via .scale4-only). super.destroy() removed their listeners, so
+        // clear the bind-guard flags too; otherwise re-entering Scale 4 would
+        // see s4Bound and skip re-binding, leaving the toggles dead.
+        ['planetary-opt-orbits', 'planetary-opt-axes', 'planetary-gravity-mode'].forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) delete el.dataset.s4Bound;
+        });
         if (this.renderer) {
             this.renderer.dispose();
             this.renderer = null;
