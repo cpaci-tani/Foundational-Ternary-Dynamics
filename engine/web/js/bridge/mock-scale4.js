@@ -5,21 +5,35 @@
  *   1. _computeForces():  pure Newton gravity
  *   2. tick():            Velocity Verlet integrator
  *
- * Unit system:
+ * Unit system (positions/masses are heliocentric in both gravity modes):
  * - Distance: Astronomical Units (AU)
  * - Mass: Solar Masses (M_sun)
  * - Time: Earth Years (yr)
  * - Velocity: AU / yr
- * -> Gravitational Constant G = G_HELIOCENTRIC = 4π² (Kepler's 3rd law).
  *
- * 2026-05-27 audit P0-1 fix: switched from G_N = 0.01 (lattice toy gravity)
- * to G_HELIOCENTRIC = 4π² ≈ 39.478 so Earth's circular orbit at a=1 AU
- * has the correct period T = 1 yr (was ~63 yr under G_N). The figure-8
- * scenario still overrides to G=1 (Chenciner–Montgomery natural units).
+ * Gravitational-constant mode (P0-1 audit, 2026-05-27 — implemented as a
+ * user-facing toggle rather than a one-way switch, to preserve the prior
+ * slow/decorative cadence as the default UX):
+ * - 'decorative' (DEFAULT): G = G_N = 0.01 (FTD lattice-natural constant).
+ *   Orbits crawl; Earth's "year" runs ~63× slow. NOT quantitatively faithful
+ *   to AU/M_sun/yr Kepler timing — purely a calm visual.
+ * - 'physical': G = G_HELIOCENTRIC = 4π² ≈ 39.478 (Kepler's 3rd law). Earth's
+ *   circular orbit at a=1 AU has the correct period T = 1 yr; orbits are
+ *   ~63× faster than decorative.
+ * The figure-8 three-body scenario always overrides to G=1 regardless of mode
+ * (Chenciner–Montgomery natural units).
  */
 
 import { EXOPLANET_SEEDS } from '../config/exoplanet-seeds.js';
-import { G_HELIOCENTRIC } from '../constants.js';
+import { G_HELIOCENTRIC, G_N } from '../constants.js';
+
+// Gravity-constant presets for the Scale-4 toggle. Both are named exports of
+// constants.js; do not inline the numbers.
+const G_BY_MODE = {
+    decorative: G_N,            // 0.01 — FTD lattice-natural, slow visual default
+    physical:   G_HELIOCENTRIC, // 4π²  — Keplerian AU/M_sun/yr, period-faithful
+};
+const DEFAULT_GRAVITY_MODE = 'decorative';
 
 export class PlanetaryMockBridge {
     constructor() {
@@ -27,10 +41,27 @@ export class PlanetaryMockBridge {
         this._tick = 0;
         this._nextId = 0;
         this._dt = 0.0001; // Exact, tiny step to preserve Verlet integration on dense TRAPPIST arrays
-        
-        // Keplerian heliocentric G (AU³·M_sun⁻¹·yr⁻²) = 4π². Earth at 1 AU
-        // orbits in 1 yr under this constant; was incorrectly G_N pre-2026-05-27.
-        this.G = G_HELIOCENTRIC;
+
+        // Gravity mode is user-selectable (toolbar). Default 'decorative' keeps
+        // the historical slow cadence so existing UX is unchanged until the
+        // user opts into 'physical'. setGravityMode() updates this.G.
+        this._gravityMode = DEFAULT_GRAVITY_MODE;
+        this.G = G_BY_MODE[this._gravityMode];
+    }
+
+    /**
+     * Select the gravitational-constant mode. Takes effect on the next
+     * setupScenario() (callers reload the scenario after switching).
+     * @param {'decorative'|'physical'} mode
+     */
+    setGravityMode(mode) {
+        if (!(mode in G_BY_MODE)) return;
+        this._gravityMode = mode;
+        this.G = G_BY_MODE[mode];
+    }
+
+    getGravityMode() {
+        return this._gravityMode;
     }
 
     static TYPE = {
@@ -61,7 +92,9 @@ export class PlanetaryMockBridge {
         this._nextId = 0;
         this._tick = 0;
         this._scenarioName = name;
-        this.G = G_HELIOCENTRIC; // reset to Kepler-AU-yr default (figure-8 scenario overrides to G=1)
+        // Apply the currently-selected gravity mode (figure-8 scenario below
+        // overrides to G=1 for its natural units, regardless of mode).
+        this.G = G_BY_MODE[this._gravityMode];
 
         const T = PlanetaryMockBridge.TYPE;
         const TAU = Math.PI * 2;

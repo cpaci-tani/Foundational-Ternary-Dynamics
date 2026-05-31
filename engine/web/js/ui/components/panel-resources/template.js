@@ -29,6 +29,7 @@ export function getScaleControlsBlocksTemplate() {
                         <div>Tick: <span id="cosmic-tick">--</span></div>
                         <div>H(t): <span id="cosmic-hubble">--</span></div>
                         <div>a(t): <span id="cosmic-scale-factor">--</span></div>
+                        <div>z(t): <span id="cosmic-redshift">--</span></div>
                     </div>
                 </div>
                 <div class="card">
@@ -542,9 +543,9 @@ export function getCosmicInfoPanelTemplate() {
                         <td class="panel-resource-note">CFL speed</td>
                     </tr>
                     <tr>
-                        <td class="panel-resource-key">r<sub>h</sub></td>
-                        <td>&asymp; &#8731;M &middot; 0.12</td>
-                        <td class="panel-resource-note" title="Visual horizon radius (constant-density approx ∝M^(1/3)). NOT the physical Schwarzschild r_s = 2GM/c² — see audit P0-7.">BH display r [SELECTION]</td>
+                        <td class="panel-resource-key">r<sub>s</sub></td>
+                        <td>= 2 G<sub>N</sub> M</td>
+                        <td class="panel-resource-note" title="Schwarzschild horizon, linear in M (audit P0-7). Rendered radius applies an on-screen visual gauge and is clamped to a visible band, but scales ∝ M as shown.">BH horizon [SELECTION]</td>
                     </tr>
                 </table>
                 <div class="panel-resource-divider">
