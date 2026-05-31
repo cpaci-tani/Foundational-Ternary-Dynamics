@@ -16,6 +16,11 @@ export function getScale4ScenarioToolbarTemplate() {
                     <option value="exo-Kepler-20">Kepler-20 System</option>
                 </optgroup>
             </select>
+            <label class="tb-label" for="planetary-gravity-mode" title="Decorative: slow visual cadence (G=0.01, lattice-natural). Physical: Keplerian AU/M_sun/yr timing (G=4π², Earth year = 1 sim year, ~63× faster).">Gravity</label>
+            <select class="tb-select" id="planetary-gravity-mode">
+                <option value="decorative" selected>Decorative (slow)</option>
+                <option value="physical">Physical (Kepler AU/yr)</option>
+            </select>
         </div>
     `;
 }

@@ -200,7 +200,7 @@ const AE_CARD_TOOLTIPS = {
     'PE Bonds eV':       'Harmonic bond potential \\(\\sum \\tfrac{1}{2} k_b (r - r_0)^2\\) for every covalent bond. Zero at equilibrium length, grows quadratically with strain.',
 
     // ─── Thermo + momentum ────────────────────────────────────────────
-    'Temperature K': '\u26a0 Sim-unit equipartition proxy: \\(T_{\\text{sim}} = 2\\langle KE\\rangle / (3 N)\\) with implicit k_B = 1. The "K" suffix is a label, not a true Kelvin conversion \u2014 values are in the same sim units as the AE energy cards. (Audit P0-10: kelvin claim mis-tagged pre-2026-05-27.)',
+    'Temperature sim': '\u26a0 Sim-unit equipartition proxy: \\(T_{\\text{sim}} = 2\\langle KE\\rangle / (3 N)\\) with implicit k_B = 1. NOT kelvin \u2014 no Boltzmann conversion is applied, so the value (suffixed "(sim)") is in the same sim units as the AE energy cards. (Audit P0-10: kelvin claim corrected 2026-05-27.)',
     'Momentum |p|':  'Magnitude of the total linear momentum. Conserved in a closed system; non-conservation flags a bug.',
 
     // ─── Bookkeeping ──────────────────────────────────────────────────

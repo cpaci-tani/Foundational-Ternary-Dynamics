@@ -64,6 +64,47 @@ function _valenceElectrons(Z) {
 }
 
 /**
+ * Standard covalent valence (target total bond order) by atomic number.
+ *
+ * Used by bond-order inference (audit P0-12/P0-13): an atom "wants" its
+ * summed bond order to equal this value, so the residual valence above its
+ * bond *count* drives promotion of single bonds to double/triple/aromatic.
+ * Values are the common neutral covalent valences for the elements that
+ * appear in the molecule library; ionic / noble species return 0 so they
+ * never promote a covalent multiple bond. Anything unlisted falls back to
+ * the element's max-bond count.
+ */
+const COVALENT_VALENCE = {
+    1: 1,   // H
+    2: 0,   // He (noble)
+    5: 3,   // B
+    6: 4,   // C
+    7: 3,   // N
+    8: 2,   // O
+    9: 1,   // F
+    10: 0,  // Ne (noble)
+    11: 0,  // Na (ionic — bonds via electrostatics, not covalent order)
+    15: 3,  // P
+    16: 2,  // S
+    17: 1,  // Cl
+    18: 0,  // Ar (noble)
+    35: 1,  // Br
+};
+
+function _covalentValence(Z) {
+    if (Z in COVALENT_VALENCE) return COVALENT_VALENCE[Z];
+    return elemMaxBonds(Z);
+}
+
+// Bond-order inference tuning (audit P0-12/P0-13). AROMATIC_ORDER is the
+// sentinel order written for delocalised ring bonds; the renderer treats
+// orders ≥ 1.5 and < 2 as aromatic. A carbon is an aromatic-ring candidate
+// when its residual valence (valence − bond count) is exactly 1 and it sits
+// in a closed cycle of like candidates (benzene: 6 carbons, each degree 3).
+const AROMATIC_ORDER = 1.5;
+const MAX_BOND_ORDER = 3;
+
+/**
  * Atomic properties from atomic number Z + neutron count N.
  */
 function computeAtomicProps(Z, N = 0) {
@@ -388,6 +429,149 @@ export function createAtomEngine(state) {
     }
 
     /**
+     * Infer covalent bond orders (single / double / triple / aromatic) from
+     * geometry + valence saturation. Audit P0-12/P0-13: the auto-bonder only
+     * knows connectivity, so without this pass every bond renders as order 1
+     * and the multi-order molecules (O₂, N₂, CO₂, ethylene, acetylene,
+     * benzene, carbonyls) look identical to single-bonded ones.
+     *
+     * Rule (two signals, run after all bonds exist):
+     *   1. Valence saturation (primary): each atom targets a total bond order
+     *      equal to its covalent valence v(Z). Its residual = v − degree is the
+     *      number of extra order-units it still needs. A bond between two atoms
+     *      that both still have residual capacity is promoted; this is what
+     *      turns the single O–O into O=O, the single N–N into N≡N, each C–O in
+     *      CO₂ into C=O, the C–C in ethylene into C=C, and in acetylene into C≡C.
+     *   2. Distance ordering (tie-breaker): bonds are promoted shortest-first
+     *      (smallest r/r_eq), so when an atom has more candidate partners than
+     *      residual capacity the geometrically tighter (genuinely multiple)
+     *      bond wins. Multiply-bonded atoms are placed closer in molecules.js.
+     *
+     * Aromatic rings (e.g. benzene) are detected first: a maximal set of
+     * carbons each with residual exactly 1 that forms a closed cycle (every
+     * member has ≥2 ring neighbours in the set) has all its intra-set bonds
+     * marked aromatic (order AROMATIC_ORDER) and its residual cleared, so the
+     * ring renders as a uniform delocalised ring rather than a Kekulé
+     * single/double alternation.
+     *
+     * Orders are written to BOTH directed half-edges (ai→aj and aj→ai).
+     * Idempotent: resets every order to 1 before re-inferring, so it is safe
+     * to call after each auto-bonding pass.
+     *
+     * KNOWN LIMITATION: molecules whose hand-built geometry is an incomplete
+     * fragment (the 8-atom 'diamond' cell, parts of 'caffeine') leave some
+     * carbons under-coordinated — they are missing single-bond neighbours that
+     * a full crystal/ring would supply. Valence saturation then reads that
+     * missing connectivity as unsaturation and may promote a normal single
+     * bond to double/triple. This is a geometry-completeness artifact in those
+     * two non-canonical molecules, not an inference error; every advertised
+     * multiple bond in the diatomics, CO₂, the alkenes/alkynes, the carbonyls,
+     * and benzene is inferred correctly. (See AUDIT_WEB_ENGINE_2026-05-27 H-11.)
+     */
+    function _aeInferBondOrders() {
+        if (!state._ae) return;
+        const atoms = state._ae.atoms;
+        if (atoms.length === 0) return;
+
+        const idToIdx = new Map();
+        for (let i = 0; i < atoms.length; i++) idToIdx.set(atoms[i].id, i);
+
+        // Reset all directed half-edges to single before inferring.
+        for (const a of atoms) {
+            for (const b of a.bonds) b.order = 1;
+        }
+
+        // Build the undirected bond list (one entry per pair, i < j by index).
+        const bonds = [];
+        for (let i = 0; i < atoms.length; i++) {
+            const a = atoms[i];
+            for (const b of a.bonds) {
+                const j = idToIdx.get(b.partner_id);
+                if (j === undefined || j <= i) continue;
+                const aj = atoms[j];
+                const dx = aj.x - a.x, dy = aj.y - a.y, dz = aj.z - a.z;
+                const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                const ratio = b.r_eq > 0 ? r / b.r_eq : 1;
+                bonds.push({ i, j, ratio });
+            }
+        }
+        if (bonds.length === 0) return;
+
+        // Per-atom residual valence = covalent valence − bond degree.
+        const degree = new Array(atoms.length).fill(0);
+        for (const e of bonds) { degree[e.i]++; degree[e.j]++; }
+        const residual = new Array(atoms.length).fill(0);
+        for (let i = 0; i < atoms.length; i++) {
+            residual[i] = Math.max(0, _covalentValence(atoms[i].Z) - degree[i]);
+        }
+
+        // ── Aromatic-ring detection ────────────────────────────────────────
+        // Candidates: carbons with residual exactly 1. A candidate is in a ring
+        // iff it has ≥2 bonds to other candidates. Iteratively drop candidates
+        // with <2 candidate-neighbours (peel chains/leaves); what survives is
+        // the set of closed-cycle aromatic carbons.
+        const isCandidate = new Array(atoms.length).fill(false);
+        for (let i = 0; i < atoms.length; i++) {
+            if (atoms[i].Z === 6 && residual[i] === 1) isCandidate[i] = true;
+        }
+        // Adjacency among candidates.
+        const candAdj = new Map(); // idx -> Set of candidate neighbour idxs
+        const ensure = (k) => { if (!candAdj.has(k)) candAdj.set(k, new Set()); return candAdj.get(k); };
+        for (const e of bonds) {
+            if (isCandidate[e.i] && isCandidate[e.j]) {
+                ensure(e.i).add(e.j);
+                ensure(e.j).add(e.i);
+            }
+        }
+        let changed = true;
+        while (changed) {
+            changed = false;
+            for (let i = 0; i < atoms.length; i++) {
+                if (!isCandidate[i]) continue;
+                const nbrs = candAdj.get(i);
+                const live = nbrs ? [...nbrs].filter(k => isCandidate[k]).length : 0;
+                if (live < 2) { isCandidate[i] = false; changed = true; }
+            }
+        }
+        // Mark intra-ring bonds aromatic; clear residual of ring atoms.
+        const aromaticBond = new Array(bonds.length).fill(false);
+        for (let bi = 0; bi < bonds.length; bi++) {
+            const e = bonds[bi];
+            if (isCandidate[e.i] && isCandidate[e.j]) {
+                aromaticBond[bi] = true;
+            }
+        }
+        for (let i = 0; i < atoms.length; i++) {
+            if (isCandidate[i]) residual[i] = 0;
+        }
+
+        // ── Greedy valence-saturation promotion (shortest bond first) ──────
+        const order = new Array(bonds.length).fill(1);
+        const idxOrder = bonds.map((_, k) => k).sort((p, q) => bonds[p].ratio - bonds[q].ratio);
+        for (const bi of idxOrder) {
+            if (aromaticBond[bi]) continue;
+            const e = bonds[bi];
+            while (residual[e.i] > 0 && residual[e.j] > 0 && order[bi] < MAX_BOND_ORDER) {
+                order[bi]++;
+                residual[e.i]--;
+                residual[e.j]--;
+            }
+        }
+
+        // ── Write orders back to both directed half-edges ──────────────────
+        const finalOrder = (bi) => aromaticBond[bi] ? AROMATIC_ORDER : order[bi];
+        for (let bi = 0; bi < bonds.length; bi++) {
+            const e = bonds[bi];
+            const ai = atoms[e.i], aj = atoms[e.j];
+            const o = finalOrder(bi);
+            const hAB = ai.bonds.find(b => b.partner_id === aj.id);
+            const hBA = aj.bonds.find(b => b.partner_id === ai.id);
+            if (hAB) hAB.order = o;
+            if (hBA) hBA.order = o;
+        }
+    }
+
+    /**
      * Run auto-bonding logic without physics integration.
      * Call after loading a molecule to establish bonds before the first tick.
      */
@@ -416,6 +600,10 @@ export function createAtomEngine(state) {
                 }
             }
         }
+        // Infer double/triple/aromatic orders now that connectivity is set
+        // (audit P0-12/P0-13). Must run after every bond exists so valence
+        // saturation sees the full degree of each atom.
+        _aeInferBondOrders();
         debugLog(`[FTD aePreBond] ${atoms.length} atoms, ${bondsCreated} bonds created`);
         for (const a of atoms) {
             debugLog(`  atom ${a.id} Z=${a.Z} pos=(${a.x.toFixed(2)},${a.y.toFixed(2)},${a.z.toFixed(2)}) bonds=${a.bonds.length}/${a.max_bonds} sigma=${a.vdw_sigma.toFixed(2)}`);
@@ -629,13 +817,16 @@ export function createAtomEngine(state) {
                     return r <= 3.5 * b.r_eq;
                 });
             }
+            // Re-infer bond orders after connectivity may have changed this
+            // tick (audit P0-12/P0-13). Idempotent — resets to single first.
+            _aeInferBondOrders();
         }
 
         state._ae.tick++;
     }
 
     function aeGetAtomData() {
-        if (!state._ae) return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), atomicNums: new Int32Array(0), charges: new Int32Array(0), ids: new Int32Array(0), bonds: new Int32Array(0), bondOrders: new Int32Array(0), bondCount: 0, count: 0 };
+        if (!state._ae) return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), atomicNums: new Int32Array(0), charges: new Int32Array(0), ids: new Int32Array(0), bonds: new Int32Array(0), bondOrders: new Float32Array(0), bondCount: 0, count: 0 };
         const atoms = state._ae.atoms;
         const count = atoms.length;
         const positions = new Float32Array(count * 3);
@@ -652,7 +843,9 @@ export function createAtomEngine(state) {
             }
         }
         const bonds = new Int32Array(bondCount * 2);
-        const bondOrders = new Int32Array(bondCount);
+        // Float (not Int) so the aromatic sentinel order 1.5 survives — the
+        // renderer distinguishes 1.5 ≤ order < 2 as aromatic (audit P0-13).
+        const bondOrders = new Float32Array(bondCount);
 
         for (let i = 0; i < count; i++) {
             const a = atoms[i];
@@ -747,6 +940,10 @@ export function createAtomEngine(state) {
             for (const b of a.bonds) { if (b.partner_id > a.id) bondCount++; }
         }
 
+        // Equipartition proxy in SIM UNITS (implicit k_B = 1), NOT kelvin.
+        // No Boltzmann conversion is applied — this is the bare 2⟨KE⟩/(3N)
+        // statistic. The UI relabels it "(sim)" (audit P0-10); do not append
+        // a "K" suffix or treat this as an SI temperature downstream.
         const T = atoms.length > 0 ? 2.0 * ke / (3.0 * atoms.length) : 0;
 
         return {

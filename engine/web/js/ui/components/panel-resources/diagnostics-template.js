@@ -312,7 +312,7 @@ export function getDiagnosticsPanelTemplate() {
                     <div class="stat-value" id="ae-diag-pe-bond">0.0000</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Temperature <span class="unit-hint">(K)</span></div>
+                    <div class="card-title">Temperature <span class="unit-hint">(sim)</span></div>
                     <div class="stat-value" id="ae-diag-temp">0.0000</div>
                 </div>
             </div>
