@@ -716,13 +716,13 @@ test('Knowledge base opens as a single responsive library with shared content', 
 
     await page.fill('#kb-sidebar-search', 'existential');
 
-    const reference frame contextScenarioState = await page.evaluate(() => ({
+    const existentialScenarioState = await page.evaluate(() => ({
         resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
         readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
         readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
     }));
 
-    expect(reference frame contextScenarioState.resultCount).toBeGreaterThan(0);
-    expect(reference frame contextScenarioState.readerTitle).toContain('Meta / Existential Unit');
-    expect(reference frame contextScenarioState.readerText).toContain('separate conceptual presentation layer');
+    expect(existentialScenarioState.resultCount).toBeGreaterThan(0);
+    expect(existentialScenarioState.readerTitle).toContain('Meta / Existential Unit');
+    expect(existentialScenarioState.readerText).toContain('separate conceptual presentation layer');
 });
