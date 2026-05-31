@@ -1,0 +1,17 @@
+name = "ftd_nogo"
+defaultTargets = ["FtdNoGo"]
+
+# Mathlib pinned to match lean-toolchain (v4.30.0). To move versions, bump
+# lean-toolchain and this rev together (Mathlib tags track Lean tags), then
+# `lake update`. Proofs use stable API; version-sensitive spots are flagged
+# in comments (pderiv lemmas in Poisson.lean; matrix simp set in Independence.lean).
+# NOTE: Standalone.lean is intentionally NOT part of this library — it is the
+# Mathlib-free mirror, compiled directly with `lean Standalone.lean`.
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.30.0"
+
+[[lean_lib]]
+name = "FtdNoGo"
