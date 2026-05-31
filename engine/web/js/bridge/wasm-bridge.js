@@ -32,6 +32,12 @@
 import { ALPHA, ALPHA_EFT, K_B, G_C } from '../constants.js';
 import { debugLog } from '../core/log.js';
 import { getById as catalogGetById } from '../particle-catalog.js';
+// AtomEngine (Scale 2/3) runs through the MockBridge JS implementation while
+// the WASM AtomEngine's Planck-unit conversion layer is unbuilt (see _aeHasWasm).
+// _ensureAEFallback() instantiates one — the import was lost in the Phase-2b
+// bridge split, making every AE call in WASM mode throw "MockBridge is not
+// defined" (audit P1-2 crash-portion; Scale 2/3 were broken in the default mode).
+import { MockBridge } from './mock-bridge.js';
 
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
