@@ -76,7 +76,7 @@ export class WebSocketBridge {
         this._sliceCache = {};
         this._volumeCache = null;
         this._boundaryShape = 'cube';
-        this._reflectiveBoundary = true;
+        this._reflectiveBoundary = false;
     }
 
     async connect() {

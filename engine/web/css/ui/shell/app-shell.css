@@ -104,3 +104,72 @@
     max-height: 120px;
     overflow-y: auto;
 }
+
+/* ==========================================================================
+   Immersive Mode (UI Hidden)
+   ========================================================================== */
+html.ui-hidden #toolbar,
+html.ui-hidden #tab-bar,
+html.ui-hidden #panel-area,
+html.ui-hidden #status-bar,
+html.ui-hidden .timeline-container,
+html.ui-hidden .hud-overlay,
+html.ui-hidden .overlay-card,
+html.ui-hidden .scrub-bar,
+html.ui-hidden .render-chip,
+html.ui-hidden .panel-mount-toggle,
+html.ui-hidden .pull-strip-container,
+html.ui-hidden .toast-container,
+html.ui-hidden #toast-container {
+    display: none !important;
+}
+
+html.ui-hidden #viewport {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Floating UI Toggle Button (Top Right) */
+#btn-toggle-ui {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 1000000;
+    background: rgba(30, 45, 68, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e2e8f0;
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#btn-toggle-ui:hover {
+    background: rgba(45, 65, 95, 0.9);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+#btn-toggle-ui:active {
+    transform: scale(0.95);
+}
+
+#btn-toggle-ui svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    color: #e2e8f0;
+}
+

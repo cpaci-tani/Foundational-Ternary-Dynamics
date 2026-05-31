@@ -608,6 +608,46 @@ async function init() {
     wireVerificationLab();
     wireKeyboard();
 
+    // ── Wire Immersive Mode (UI Toggle) ──
+    const btnToggleUI = document.getElementById('btn-toggle-ui');
+    if (btnToggleUI) {
+        const eyeOpenSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+        const eyeClosedSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-10-7-10-7a19.45 19.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 7 10 7a19.5 19.5 0 0 1-2.58 3.73M1 1l22 22"></path></svg>`;
+
+        const updateToggleButton = (isHidden) => {
+            if (isHidden) {
+                btnToggleUI.innerHTML = eyeOpenSVG;
+                btnToggleUI.title = 'Show UI (Ctrl+U)';
+            } else {
+                btnToggleUI.innerHTML = eyeClosedSVG;
+                btnToggleUI.title = 'Hide UI (Ctrl+U)';
+            }
+        };
+
+        // Initial state is visible (closed eye icon represents hide action)
+        updateToggleButton(false);
+
+        const toggleUI = () => {
+            const isHidden = document.documentElement.classList.toggle('ui-hidden');
+            updateToggleButton(isHidden);
+            
+            // Force WebGL renderer resize and camera update
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+            }, 50);
+        };
+
+        btnToggleUI.addEventListener('click', toggleUI);
+
+        // Bind keyboard shortcut (Ctrl+U)
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') {
+                e.preventDefault();
+                toggleUI();
+            }
+        });
+    }
+
     _loadProgress(80, 'Loading particle zoo...');
     initZoo(bridge);
 

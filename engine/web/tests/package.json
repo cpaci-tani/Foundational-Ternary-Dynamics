@@ -6,6 +6,8 @@
   "description": "Playwright smoke suite for the FTD web dashboard. Boots a real Chromium against index.html served from python -m http.server.",
   "scripts": {
     "test": "playwright test",
+    "test:empirical": "playwright test scenario-parity.spec.js wasm-scenario-coverage.spec.js verify-panel.spec.js audit-regression.spec.js force-field-samplers.spec.js",
+    "test:scale0-protocol": "playwright test scale0-substrate-protocol-v2.spec.js",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "install:browsers": "playwright install chromium"

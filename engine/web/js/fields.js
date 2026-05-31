@@ -287,6 +287,30 @@ export function potentialToColor(value, maxAbs) {
 }
 
 /**
+ * In-place divergent colormap.
+ */
+export function potentialToColorInto(out, offset, value, maxAbs) {
+    if (maxAbs < 1e-20) {
+        out[offset]     = 0.08;
+        out[offset + 1] = 0.09;
+        out[offset + 2] = 0.13;
+        return;
+    }
+    const t = Math.max(-1, Math.min(1, value / maxAbs));
+    if (t < 0) {
+        const s = -t;
+        out[offset]     = 0.08 + 0.02 * s;
+        out[offset + 1] = 0.12 + 0.45 * s;
+        out[offset + 2] = 0.18 + 0.62 * s;
+    } else {
+        const s = t;
+        out[offset]     = 0.18 + 0.72 * s;
+        out[offset + 1] = 0.10 + 0.08 * s;
+        out[offset + 2] = 0.08 + 0.02 * s;
+    }
+}
+
+/**
  * Flux magnitude colormap: dark blue → cyan → white → yellow → red.
  * Designed for volume rendering of flux density fields (Scale 0).
  * @param {number} mag     — flux magnitude |J|
@@ -373,5 +397,34 @@ export function magnitudeToColor(mag, maxMag) {
     } else {
         const s = (t - 0.66) / 0.34;
         return [0.25 + 0.75 * s, 0.75 + 0.25 * s, 0.65 + 0.15 * s];
+    }
+}
+
+/**
+ * In-place sequential colormap.
+ */
+export function magnitudeToColorInto(out, offset, mag, maxMag) {
+    if (maxMag < 1e-20) {
+        out[offset]     = 0.05;
+        out[offset + 1] = 0.08;
+        out[offset + 2] = 0.15;
+        return;
+    }
+    const t = Math.max(0, Math.min(1, mag / maxMag));
+    if (t < 0.33) {
+        const s = t / 0.33;
+        out[offset]     = 0.05 + 0.05 * s;
+        out[offset + 1] = 0.08 + 0.32 * s;
+        out[offset + 2] = 0.15 + 0.55 * s;
+    } else if (t < 0.66) {
+        const s = (t - 0.33) / 0.33;
+        out[offset]     = 0.10 + 0.15 * s;
+        out[offset + 1] = 0.40 + 0.35 * s;
+        out[offset + 2] = 0.70 - 0.05 * s;
+    } else {
+        const s = (t - 0.66) / 0.34;
+        out[offset]     = 0.25 + 0.75 * s;
+        out[offset + 1] = 0.75 + 0.25 * s;
+        out[offset + 2] = 0.65 + 0.15 * s;
     }
 }

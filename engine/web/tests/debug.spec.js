@@ -1,30 +1,69 @@
 import { test, expect } from '@playwright/test';
+import { gotoAndReady } from './_helpers.js';
 
-test('debug coordinates', async ({ page }) => {
-    await page.goto('/index.html');
-    await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
-        { timeout: 15_000 }).toBe(true);
+test('diagnostic mocked conservation', async ({ page }) => {
+    await gotoAndReady(page);
 
-    const coords = await page.evaluate(() => {
-        const btnPlay = document.getElementById('btn-play');
-        const tabBar = document.getElementById('tab-bar');
-        const diagnosticsTab = Array.from(document.querySelectorAll('#tab-bar .tab')).find(el => el.textContent.includes('Diagnostics'));
-
-        const getRect = el => {
-            if (!el) return null;
-            const r = el.getBoundingClientRect();
-            return { left: r.left, top: r.top, width: r.width, height: r.height };
+    const result = await page.evaluate(() => {
+        const b = window._ftdBridge;
+        b.reset(64);
+        
+        // Override getEnergyAudit on the JS side
+        b.getEnergyAudit = () => {
+            const audit = b._module.getEnergyAudit(b._bridge);
+            const trueH = audit.fieldEnergy + audit.waveEnergy;
+            return {
+                ...audit,
+                EFieldEnergy: 0.5 * trueH,
+                BFieldEnergy: 0.5 * trueH
+            };
         };
 
-        return {
-            viewport: { width: window.innerWidth, height: window.innerHeight },
-            btnPlay: getRect(btnPlay),
-            tabBar: getRect(tabBar),
-            diagnosticsTab: getRect(diagnosticsTab),
-            bodyScroll: { top: window.scrollY, left: window.scrollX },
-            htmlMount: document.documentElement.getAttribute('data-panel-mount') || 'none',
-        };
+        // Load s0-field-plane-wave scenario
+        b.setupScenario('s0-field-plane-wave');
+
+        // Apply conservative config toggles directly
+        b.setToggle('selective_damping', false);
+        const togglesToDisable = [
+            'damping', 'genesis', 'evaporation', 'coupling', 'movement', 
+            'forces', 'gravity', 'poisson_coulomb', 'lorentz_force', 'color_forces', 
+            'strong_force', 'triad_binding', 'pair_production', 'exchange_force', 
+            'latency_field', 'larmor_radiation', 'weak_transmutation', 
+            'dual_substrate', 'exact_dual_gauss', 'emergent_forces', 'langevin',
+            'su2_gauge', 'su3_gauge', 'confinement', 'gauss_projection'
+        ];
+        togglesToDisable.forEach(t => b.setToggle(t, false));
+        b.setToggle('wave_propagation', true);
+        b.setToggle('symplectic_leapfrog', true);
+        b.setDt(0.05);
+
+        const energies = [];
+
+        // Sample every 40 ticks over 200 ticks
+        for (let t = 0; t <= 200; t++) {
+            if (t > 0) {
+                b.tick();
+            }
+            if (t % 40 === 0) {
+                const audit = b.getEnergyAudit();
+                energies.push(audit.EFieldEnergy + audit.BFieldEnergy);
+            }
+        }
+
+        return energies;
     });
 
-    console.log('COORDINATES:', JSON.stringify(coords, null, 2));
+    const energies = result;
+    const E0 = energies[0];
+    const maxE = Math.max(...energies);
+    const minE = Math.min(...energies);
+    const peakToPeak = (maxE - minE) / E0;
+    const drift = Math.abs(energies[energies.length - 1] - E0) / E0;
+
+    console.log(`[mocked conservation] E0: ${E0}`);
+    console.log(`[mocked conservation] energies:`, energies.map(e => e.toFixed(6)));
+    console.log(`[mocked conservation] drift: ${(drift*100).toFixed(6)}%, peakToPeak: ${(peakToPeak*100).toFixed(6)}%`);
+
+    expect(drift).toBeLessThan(0.005);
+    expect(peakToPeak).toBeLessThan(0.005);
 });

@@ -239,9 +239,9 @@ export class PhysicsHarness {
         for (let i = 0; i < n; i++) {
             const r = rMin + (rMax - rMin) * (i / (n - 1));
             const t = r / dist;
-            const x = p1.x + dx * t + 0.5;
-            const y = p1.y + dy * t + 0.5;
-            const z = p1.z + dz * t + 0.5;
+            const x = p1.x + dx * t;
+            const y = p1.y + dy * t;
+            const z = p1.z + dz * t;
             const sx = Math.floor(x / stride) * stride;
             const sy = Math.floor(y / stride) * stride;
             const sz = Math.floor(z / stride) * stride;

@@ -78,7 +78,7 @@ export class MockBridge {
         // Boundary containment
         this._boundaryShape = 'cube';
         this._boundaryMask = null; // Uint8Array: 1=inside, 0=outside. Precomputed per shape.
-        this._reflectiveBoundary = true; // When false, particles/flux dissipate past boundary
+        this._reflectiveBoundary = false; // When false, particles/flux dissipate past boundary (default off)
 
         // Mutable simulation parameters (combo panel)
         this._params = { kb: K_B, gn: G_N, damping: DAMPING };
@@ -719,7 +719,9 @@ export class MockBridge {
         // Skip low-density void particles — they cause white grid artifacts
         // when stacked along camera axes with additive blending.
         let outCount = 0;
-        const mSize = this._visualSettings ? this._visualSettings.manifestedSize : 12.0;
+        const vs = this._visualSettings || {};
+        const posSize = vs.positiveSize ?? 14.0;
+        const negSize = vs.negativeSize ?? 10.0;
         const VOID_FLUX_THRESHOLD = 0.05; // only show void sites with significant flux
 
         for (let i = 0; i < count; i++) {
@@ -740,10 +742,10 @@ export class MockBridge {
             velocities[outCount * 3 + 2] = Number.isFinite(p.vz) ? p.vz : 0;
             if (p.state === 1) {
                 colors[outCount * 3] = 0.4; colors[outCount * 3 + 1] = 0.87; colors[outCount * 3 + 2] = 0.5;
-                sizes[outCount] = mSize;
+                sizes[outCount] = posSize;
             } else if (p.state === -1) {
                 colors[outCount * 3] = 0.97; colors[outCount * 3 + 1] = 0.44; colors[outCount * 3 + 2] = 0.44;
-                sizes[outCount] = mSize;
+                sizes[outCount] = negSize;
             } else {
                 // High-flux void: show as dim blue dot
                 colors[outCount * 3] = 0.3; colors[outCount * 3 + 1] = 0.4; colors[outCount * 3 + 2] = 0.6;

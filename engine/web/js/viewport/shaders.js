@@ -9,6 +9,7 @@
 export const PARTICLE_FRAG = `
     uniform int shapeType;
     uniform float uOpacity;
+    uniform float uGlow;
     varying vec3 vColor;
     varying float vSize;
 
@@ -59,7 +60,7 @@ export const PARTICLE_FRAG = `
         }
 
         float alpha = 1.0 - smoothstep(0.15, 0.5, dist);
-        float glow = exp(-dist * dist * 4.0) * 0.15;
+        float glow = exp(-dist * dist * 4.0) * uGlow;
         gl_FragColor = vec4(vColor + glow, alpha * alpha * uOpacity);
     }
 `;
