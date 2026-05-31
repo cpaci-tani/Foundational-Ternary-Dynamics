@@ -277,3 +277,33 @@
 
 /* Disabled toggle row (e.g., not-yet-implemented feature) */
 .toggle-row-disabled { opacity: 0.4; }
+
+/* Selection card axis navigation */
+.sel-axis-nav {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+}
+.sel-axis-pair {
+    display: flex;
+    flex: 1;
+    gap: 2px;
+}
+.sel-axis-btn {
+    flex: 1;
+    padding: 4px 2px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.12s;
+    font-family: var(--font-mono, monospace);
+}
+.sel-axis-btn:hover {
+    background: rgba(255,255,255,0.12);
+}
+.sel-axis-btn:active {
+    background: rgba(255,255,255,0.2);
+}

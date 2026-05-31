@@ -101,7 +101,7 @@ export class ViewportParticleRenderer {
         geometry.setDrawRange(0, 0);
 
         const material = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.9 } },
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.9 }, uGlow: { value: 0.15 } },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
             transparent: true,
@@ -361,7 +361,17 @@ export class ViewportParticleRenderer {
             colAttr.array[count * 3] = data.colors[i * 3];
             colAttr.array[count * 3 + 1] = data.colors[i * 3 + 1];
             colAttr.array[count * 3 + 2] = data.colors[i * 3 + 2];
-            sizeAttr.array[count] = data.sizes[i] * this.visualSettings.globalScale;
+            // Per-polarity size: detect from color (green=+1, red=-1, blue=void)
+            const cr = data.colors[i * 3], cg = data.colors[i * 3 + 1];
+            let baseSize;
+            if (cg > 0.6 && cr < 0.6) {
+                baseSize = this.visualSettings.positiveSize ?? data.sizes[i];
+            } else if (cr > 0.6 && cg < 0.6) {
+                baseSize = this.visualSettings.negativeSize ?? data.sizes[i];
+            } else {
+                baseSize = data.sizes[i];
+            }
+            sizeAttr.array[count] = baseSize * this.visualSettings.globalScale;
             count++;
         }
 
@@ -384,6 +394,13 @@ export class ViewportParticleRenderer {
             this.particles.material.uniforms.uOpacity.value = val;
         }
         this.visualSettings.opacity = val;
+    }
+
+    setGlow(val) {
+        if (this.particles && this.particles.material.uniforms) {
+            this.particles.material.uniforms.uGlow.value = val;
+        }
+        this.visualSettings.glowIntensity = val;
     }
 
     // Override colors from catalog type map (PE mode)

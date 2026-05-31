@@ -16,6 +16,12 @@ npm run install:browsers
 # run the full suite
 npm test
 
+# run only the empirical/WASM verification subset
+npm run test:empirical
+
+# run the Scale-0 substrate protocol only
+npm run test:scale0-protocol
+
 # watch UI mode (for debugging a specific test)
 npm run test:ui
 
@@ -44,6 +50,14 @@ collide with the 8080 that many developers leave running manually.
   monitored for growth.
 - **Constants contract**: `constants.js` still exports `K_B`, `ALPHA`,
   `G_STAR` as named values and `K_B === 0.511`.
+- **Empirical/WASM subset**: `npm run test:empirical` combines scenario
+  parity, WASM scenario execution, Verify-panel honesty checks, audit
+  invariants, and force-field sampler probes.
+- **Scale-0 substrate protocol**: `npm run test:scale0-protocol` runs
+  `scale0-substrate-protocol-v2.spec.js`, the draft falsifier protocol that
+  checks the conservative toggle recipe, Maxwell Hamiltonian conservation,
+  `c_lat`, strict locality, charge conservation, genesis scaling/cluster
+  count/null control, determinism, and Gauss projection.
 
 ## What the suite does NOT cover
 
@@ -51,8 +65,20 @@ collide with the 8080 that many developers leave running manually.
   drivers; screenshot diffing is a trap.
 - Cross-browser. We use ES module importmaps and Three.js; Chromium
   only is sufficient for the dashboard.
-- Physics correctness. That lives in the C++ CTest and Python pytest
-  suites in `engine/tests/` and `scripts/tests/`.
+- Physical-world proof. The empirical/WASM subset tests whether the discrete
+  substrate exhibits its pre-stated internal behavior; C++ CTest and Python
+  pytest remain the broader physics and manifest-contract suites.
+
+## Complete empirical runner
+
+From the repository root:
+
+```bash
+python scripts/runners/run_empirical_verification_suite.py --profile quick
+```
+
+See `docs/EMPIRICAL_VERIFICATION_SUITE.md` for the full runbook and the
+claim-boundary language to use when reporting results.
 
 ## Adding tests
 

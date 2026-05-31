@@ -152,7 +152,7 @@ export class ViewportOverlaysComponent {
       <div class="vcp-toggle-grid">
         <button class="view-toggle active scale4-hide" id="toggle-axes" title="XYZ axis indicator">Axes</button>
         <button class="view-toggle active scale4-hide" id="toggle-grid" title="Reference grid (XZ plane)">Grid</button>
-        <button class="view-toggle active" id="toggle-reflective" title="Reflective boundary conditions">Reflect</button>
+        <button class="view-toggle" id="toggle-reflective" title="Reflective boundary conditions">Reflect</button>
       </div>
       <!-- Camera preset buttons — snap the orbit camera to a named viewpoint.
            All positions are computed from the current lattice size, so the

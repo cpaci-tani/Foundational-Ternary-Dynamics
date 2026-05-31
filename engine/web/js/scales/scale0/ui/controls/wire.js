@@ -323,6 +323,143 @@ function wireFluxVolume(ctx, api) {
     }
 }
 
+function wireSelection(ctx) {
+    const L = () => ctx.bridge?.latticeSize || 32;
+    const clamp = v => Math.max(0, Math.min(L() - 1, Math.round(v)));
+
+    function getSelPos() {
+        return {
+            x: clamp(parseInt(getEl('sel-x')?.value) || 0),
+            y: clamp(parseInt(getEl('sel-y')?.value) || 0),
+            z: clamp(parseInt(getEl('sel-z')?.value) || 0),
+        };
+    }
+
+    function setSelDisplay(x, y, z) {
+        const L2 = L();
+        const ex = getEl('sel-x'); if (ex) { ex.max = L2 - 1; ex.value = x; }
+        const ey = getEl('sel-y'); if (ey) { ey.max = L2 - 1; ey.value = y; }
+        const ez = getEl('sel-z'); if (ez) { ez.max = L2 - 1; ez.value = z; }
+    }
+
+    function isAreaMode() { return getEl('sel-area-toggle')?.dataset.active === 'true'; }
+    function getRadius()   { return parseInt(getEl('sel-radius')?.value) || 2; }
+
+    function applyHighlight() {
+        const { x, y, z } = getSelPos();
+        ctx.viewport?.setVoxelHighlight?.(x, y, z, true);
+        if (isAreaMode()) {
+            ctx.viewport?.setAreaHighlight?.(x, y, z, getRadius(), true);
+        } else {
+            ctx.viewport?.setAreaHighlight?.(0, 0, 0, 1, false);
+        }
+    }
+
+    function fireSelect() {
+        const { x, y, z } = getSelPos();
+        applyHighlight();
+        // Sync inspector so the data panel updates
+        const insp = ctx.inspector;
+        if (insp) {
+            insp._selectedPos = { x, y, z };
+            import('../../../../../inspector/scales/lattice.js')
+                .then(m => m.showLatticeInspector(insp))
+                .catch(() => {});
+        }
+    }
+
+    // Coord stepper buttons (scoped to #sel-card to avoid clash with injection steppers)
+    const card = document.getElementById('sel-card');
+    if (card) {
+        card.querySelectorAll('.sel-coord-step').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = getEl(btn.dataset.for);
+                if (!input) return;
+                input.value = clamp((parseInt(input.value) || 0) + (parseInt(btn.dataset.step) || 0));
+                applyHighlight();
+            });
+        });
+    }
+
+    // Axis navigation buttons
+    document.querySelectorAll('.sel-axis-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const input = getEl(`sel-${btn.dataset.axis}`);
+            if (!input) return;
+            input.value = clamp((parseInt(input.value) || 0) + (parseInt(btn.dataset.dir) || 0));
+            applyHighlight();
+        });
+    });
+
+    // Area toggle
+    const areaToggle = getEl('sel-area-toggle');
+    const areaControls = getEl('sel-area-controls');
+    if (areaToggle && areaControls) {
+        areaToggle.addEventListener('click', () => {
+            const on = areaToggle.dataset.active !== 'true';
+            areaToggle.dataset.active = on;
+            areaToggle.textContent = on ? '▪ Area' : '◻ Area';
+            areaToggle.style.background = on ? 'rgba(56,189,248,0.2)' : '';
+            areaToggle.style.borderColor = on ? '#38bdf8' : '';
+            areaControls.style.display = on ? '' : 'none';
+            if (!on) ctx.viewport?.setAreaHighlight?.(0, 0, 0, 1, false);
+            else applyHighlight();
+        });
+    }
+
+    // Radius slider
+    const radiusSlider = getEl('sel-radius');
+    const radiusVal = getEl('sel-radius-val');
+    if (radiusSlider && radiusVal) {
+        radiusSlider.addEventListener('input', () => {
+            radiusVal.textContent = radiusSlider.value;
+            if (isAreaMode()) applyHighlight();
+        });
+    }
+
+    // SELECT button
+    getEl('btn-select')?.addEventListener('click', fireSelect);
+
+    // sel-x/y/z manual edits
+    for (const axis of ['x', 'y', 'z']) {
+        getEl(`sel-${axis}`)?.addEventListener('change', (e) => {
+            e.target.value = clamp(parseInt(e.target.value) || 0);
+            applyHighlight();
+        });
+    }
+
+    // Receive click-to-select events from the inspector (set in lattice.js)
+    document.addEventListener('ftd:voxel-selected', (e) => {
+        setSelDisplay(e.detail.x, e.detail.y, e.detail.z);
+    });
+}
+
+function wireParticleDisplay(ctx) {
+    const shapeSelect = getEl('particle-shape-select');
+    if (shapeSelect) {
+        shapeSelect.addEventListener('change', () => {
+            ctx.viewport.setParticleShape(parseInt(shapeSelect.value, 10));
+        });
+    }
+
+    const sliders = [
+        { id: 'particle-pos-size',  valId: 'particle-pos-size-val',  fn: v => ctx.viewport.setPositiveSize(v),     fmt: 1 },
+        { id: 'particle-neg-size',  valId: 'particle-neg-size-val',  fn: v => ctx.viewport.setNegativeSize(v),     fmt: 1 },
+        { id: 'particle-opacity',   valId: 'particle-opacity-val',   fn: v => ctx.viewport.setParticleOpacity(v),  fmt: 2 },
+        { id: 'particle-glow',      valId: 'particle-glow-val',      fn: v => ctx.viewport.setParticleGlow(v),     fmt: 2 },
+    ];
+    for (const s of sliders) {
+        const slider = getEl(s.id);
+        const display = getEl(s.valId);
+        if (!slider || !display) continue;
+        slider.addEventListener('input', () => {
+            const v = parseFloat(slider.value);
+            display.textContent = v.toFixed(s.fmt);
+            s.fn(v);
+        });
+    }
+}
+
 /**
  * Wire all Scale 0 control-panel event handlers.
  *
@@ -338,4 +475,6 @@ export function wireScale0Controls(ctx, api) {
     wireParameterSliders(ctx);
     wireFieldActions(ctx, api);
     wireFluxVolume(ctx, api);
+    wireParticleDisplay(ctx);
+    wireSelection(ctx);
 }

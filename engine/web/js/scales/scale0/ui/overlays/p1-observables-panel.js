@@ -348,12 +348,20 @@ function probeCoulombEngineE(bridge, particles) {
     let engineSamples = null;
     let probeMode = 'analytic-fallback';
     if (typeof bridge.sampleVAtRay === 'function') {
-        const direct = bridge.sampleVAtRay(pPos.x + 0.5, pPos.y + 0.5, pPos.z + 0.5, pNeg.x + 0.5, pNeg.y + 0.5, pNeg.z + 0.5, PROBE_SAMPLES);
+        const rMin = 0.5;
+        const rMax = dist * 0.85;
+        const tMin = rMin / dist;
+        const tMax = rMax / dist;
+        const direct = bridge.sampleVAtRay(
+            pPos.x + dx * tMin, pPos.y + dy * tMin, pPos.z + dz * tMin,
+            pPos.x + dx * tMax, pPos.y + dy * tMax, pPos.z + dz * tMax,
+            PROBE_SAMPLES
+        );
         if (direct && direct.count > 0 && direct.V && direct.V.length === direct.count) {
             // Convert V samples to {r, E_mag} by finite-difference along the ray:
             // |E·r̂| = -dV/dr along the ray direction. Plus the analytic |E|
             // from the two-source formula (used for residual computation).
-            const ds = dist / Math.max(1, direct.count - 1);
+            const ds = (rMax - rMin) / Math.max(1, direct.count - 1);
             engineSamples = new Array(direct.count);
             for (let i = 0; i < direct.count; i++) {
                 // Central-difference for interior; one-sided at ends
@@ -361,7 +369,7 @@ function probeCoulombEngineE(bridge, particles) {
                 const ip = Math.min(direct.count - 1, i + 1);
                 const dV = (direct.V[ip] - direct.V[im]) / ((ip - im) * ds || 1e-9);
                 engineSamples[i] = {
-                    r: 0.5 + (dist * 0.85 - 0.5) * (i / (direct.count - 1)),
+                    r: rMin + (rMax - rMin) * (i / (direct.count - 1)),
                     E_mag: Math.abs(dV),
                 };
             }
@@ -1237,7 +1245,8 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         if (GRAVITY_SCENARIOS.has(scenarioId)) {
             const probe = probeTimeDilation(bridge);
             // Tick phase drives the animated clocks (radians); 0.6 rad/sec base
-            const tickPhase = (now - startTime) * 0.0006;
+            const isReduced = document.body.getAttribute('data-reduced-motion') === '1';
+            const tickPhase = isReduced ? 0 : (now - startTime) * 0.0006;
             renderGravitySection(gravityBody, probe, tickPhase);
             gravityRenderedFor = scenarioId;
         } else if (gravityRenderedFor !== null) {
