@@ -270,6 +270,32 @@ export class ViewportSceneCore {
         }
     }
 
+    setAreaHighlight(cx, cy, cz, radius, active) {
+        if (!active) {
+            if (this._areaHighlight) this._areaHighlight.visible = false;
+            return;
+        }
+        const r = Math.max(1, Math.round(radius));
+        const size = r * 2 + 1;
+        if (!this._areaHighlight || this._areaHighlightRadius !== r) {
+            if (this._areaHighlight) {
+                this._scene.remove(this._areaHighlight);
+                this._areaHighlight.geometry.dispose();
+                this._areaHighlight.material.dispose();
+            }
+            const geo = new THREE.BoxGeometry(size, size, size);
+            const edges = new THREE.EdgesGeometry(geo);
+            geo.dispose();
+            const mat = new THREE.LineBasicMaterial({ color: 0x38bdf8, linewidth: 2, transparent: true, opacity: 0.8 });
+            this._areaHighlight = new THREE.LineSegments(edges, mat);
+            this._areaHighlight.frustumCulled = false;
+            this._scene.add(this._areaHighlight);
+            this._areaHighlightRadius = r;
+        }
+        this._areaHighlight.position.set(cx + 0.5, cy + 0.5, cz + 0.5);
+        this._areaHighlight.visible = true;
+    }
+
     setSymmetryHighlights(x, y, z, u1, su2, su3) {
         if (!this._symHighlights) {
             const geo = new THREE.BoxGeometry(1.0, 1.0, 1.0);

@@ -5,7 +5,7 @@
 
 import { createPhysicsTogglesCard } from './physics-toggles.js';
 import { createSubstrateControlsCard } from './substrate-controls.js';
-import { createFluxVolumeCard } from './flux-volume.js';
+import { createFluxVolumeCard, createParticleDisplayCard, createSelectionCard } from './flux-volume.js';
 
 export class Scale0ControlsComponent {
   constructor(panelControlsDiv) {
@@ -27,10 +27,12 @@ export class Scale0ControlsComponent {
       this.panel.appendChild(gridContainer);
     }
 
-    // Mount the three control cards
+    // Mount control cards
     gridContainer.appendChild(createPhysicsTogglesCard());
     gridContainer.appendChild(createSubstrateControlsCard());
     gridContainer.appendChild(createFluxVolumeCard());
+    gridContainer.appendChild(createParticleDisplayCard());
+    gridContainer.appendChild(createSelectionCard());
 
     return this;
   }
