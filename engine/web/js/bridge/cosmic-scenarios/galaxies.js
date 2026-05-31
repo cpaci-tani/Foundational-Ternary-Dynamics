@@ -19,8 +19,13 @@ import { G_N, DM_FRACTION, BARYON_FRACTION } from '../../constants.js';
 // what the "Cosmology (FTD)" panel advertises. The Planck-2018 observed
 // ratio remains in tension; that's the open empirical question, not a
 // dashboard inconsistency.
-const _DM_FRAC = DM_FRACTION;        // 17/27 ≈ 0.6296
-const _BARYON_FRAC = BARYON_FRACTION; // 10/27 ≈ 0.3704
+//
+// Epistemic tag: [SELECTION]. DM_FRACTION = 17/27 and BARYON_FRACTION =
+// 10/27 come from the Moore-shell polyhedral decomposition (17 dark
+// states) per LEDGER — they are [SELECTION], NOT [THEOREM], and do not
+// match the Planck-2018 observed Ω_DM/Ω_m. See constants.js:452-459.
+const _DM_FRAC = DM_FRACTION;        // [SELECTION] 17/27 ≈ 0.6296
+const _BARYON_FRAC = BARYON_FRACTION; // [SELECTION] 10/27 ≈ 0.3704
 
 export function setupCosmicGalaxy(ctx) {
     const { T, rng, randn, PI2 } = ctx;

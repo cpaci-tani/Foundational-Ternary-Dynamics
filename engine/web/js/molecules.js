@@ -10,11 +10,13 @@
  *   H-H threshold ≈ 4.8    C-H ≈ 3.7    C-C ≈ 2.6
  *   O-H ≈ 3.6              N-H ≈ 3.7    C-O ≈ 2.5
  *
- * ⚠ BOND-ORDER LIMITATION (audit P0-13, 2026-05-27): the auto-bonder
- * emits `order: 1` for every bond. Molecules with formal C=C, C≡C, C=O,
- * or aromatic bonds render as single lines despite the descriptions
- * naming the canonical chemical order. Descriptions are honest about
- * which bonds are "formal (rendered as single line)".
+ * BOND-ORDER INFERENCE (audit P0-12/P0-13, resolved 2026-05-27): the
+ * auto-bonder establishes connectivity only; bond orders (double / triple /
+ * aromatic) are then inferred by `_aeInferBondOrders()` in mock-atom-engine.js
+ * from valence saturation + interatomic distance, and the molecular renderer
+ * draws 2 / 3 / delocalised cylinders accordingly. Geometries below are sized
+ * so every advertised multiple bond is within the auto-bond threshold; the
+ * descriptions name the order the visualization actually shows.
  */
 
 // ── Categories ───────────────────────────────────────────────────────
@@ -70,20 +72,28 @@ const MOLECULES = [
     {
         id: 'o2', name: 'Oxygen', formula: 'O<sub>2</sub>',
         category: 'diatomic',
-        description: 'Diatomic oxygen — formal double bond (rendered as single line); paramagnetism not modelled.',
+        // 2026-05-27 audit P0-12/P0-13: O-O was 3.0 apart, outside the
+        // auto-bond threshold (1.2·σ_avg = 2.4), so no bond formed at all.
+        // Shortened to 2.2 (≈ r_eq, < 2.4) so the bond forms and valence
+        // saturation infers it as a double (O wants 2 bonds, has 1).
+        description: 'Diatomic oxygen — O=O double bond (inferred from valence saturation); paramagnetism not modelled.',
         atoms: [
-            { Z: 8, x: -1.5, y: 0, z: 0, vx:  0.05 },
-            { Z: 8, x:  1.5, y: 0, z: 0, vx: -0.05 },
+            { Z: 8, x: -1.1, y: 0, z: 0, vx:  0.05 },
+            { Z: 8, x:  1.1, y: 0, z: 0, vx: -0.05 },
         ],
         cameraDistance: 20,
     },
     {
         id: 'n2', name: 'Nitrogen', formula: 'N<sub>2</sub>',
         category: 'diatomic',
-        description: 'Diatomic nitrogen — formal triple bond (rendered as single line); extremely stable.',
+        // 2026-05-27 audit P0-12/P0-13: N-N was 3.0 apart, outside the
+        // auto-bond threshold (1.2·σ_avg = 2.51), so no bond formed. Shortened
+        // to 2.3 (≈ r_eq, < 2.51) so the bond forms and valence saturation
+        // infers it as a triple (N wants 3 bonds, has 1).
+        description: 'Diatomic nitrogen — N≡N triple bond (inferred from valence saturation); extremely stable.',
         atoms: [
-            { Z: 7, x: -1.5, y: 0, z: 0, vx:  0.05 },
-            { Z: 7, x:  1.5, y: 0, z: 0, vx: -0.05 },
+            { Z: 7, x: -1.15, y: 0, z: 0, vx:  0.05 },
+            { Z: 7, x:  1.15, y: 0, z: 0, vx: -0.05 },
         ],
         cameraDistance: 20,
     },
@@ -140,7 +150,7 @@ const MOLECULES = [
     {
         id: 'co2', name: 'Carbon Dioxide', formula: 'CO<sub>2</sub>',
         category: 'inorganic',
-        description: 'Linear molecule (180°) — greenhouse gas; formal C=O double bonds (rendered as single lines).',
+        description: 'Linear molecule (180°) — greenhouse gas; two C=O double bonds (inferred from valence saturation).',
         atoms: [
             { Z: 8, x: -2.5, y: 0, z: 0 },
             { Z: 6, x:  0,   y: 0, z: 0 },
@@ -245,7 +255,7 @@ const MOLECULES = [
     {
         id: 'ethylene', name: 'Ethylene', formula: 'C<sub>2</sub>H<sub>4</sub>',
         category: 'organic',
-        description: 'Formal C=C double bond (rendered as single line) — planar molecule, 120° angles.',
+        description: 'C=C double bond (inferred from valence saturation) — planar molecule, 120° angles.',
         atoms: (() => {
             const cc = 2.0;
             const ch = 3.2;
@@ -268,8 +278,9 @@ const MOLECULES = [
         category: 'organic',
         // 2026-05-27 audit P0-12 fix: shortened C-C from 4.0 → 2.4 (within
         // auto-bond threshold 2.64) so the central bond actually forms.
-        // H-C distance kept at 3.5 (< 3.72 threshold).
-        description: 'Formal C≡C triple bond (rendered as single line) — linear molecule.',
+        // H-C distance kept at 3.5 (< 3.72 threshold). Valence saturation
+        // then infers the central bond as a triple (C wants 4, has 2 bonds).
+        description: 'C≡C triple bond (inferred from valence saturation) — linear molecule.',
         atoms: [
             { Z: 1, x: -4.7, y: 0, z: 0 },
             { Z: 6, x: -1.2, y: 0, z: 0 },
@@ -300,7 +311,7 @@ const MOLECULES = [
     {
         id: 'formaldehyde', name: 'Formaldehyde', formula: 'CH<sub>2</sub>O',
         category: 'organic',
-        description: 'Formal C=O carbonyl group (rendered as single line) — trigonal planar geometry.',
+        description: 'C=O carbonyl group (inferred from valence saturation) — trigonal planar geometry.',
         atoms: [
             { Z: 6, x: 0, y: 0, z: 0 },
             { Z: 8, x: 2.5, y: 0, z: 0 },

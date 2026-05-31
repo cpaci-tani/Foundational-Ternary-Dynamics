@@ -31,11 +31,20 @@ export function postCosmicUpdates(TYPE) {
     const isStar = (t) => t === T.STAR || t === T.NEUTRON_STAR || t === T.WHITE_DWARF;
 
     // --- Always-active: event-horizon absorption + AGN jet tracking ---
+    // NOTE (audit P0-7): `r_sink` below is the INTERNAL accretion-sink
+    // radius — a numerically-bounded tuning parameter that decides when a
+    // nearby body is swallowed. It is deliberately small and sub-linear in
+    // mass so the merger / binary-AGN scenarios (BH separations ~30 lu)
+    // stay stable. It is NOT the displayed Schwarzschild horizon, which is
+    // r_s = 2 G_N M (linear in M) and is what the cosmic info panel claims
+    // and the renderer draws (cosmic-renderer.js schwarzschildRenderRadius).
+    // Keeping these separate is intentional: changing the sink to the full
+    // linear r_s would vacuum whole disks instantly. Cross-ref P0-7.
     for (const bh of this._bodies) {
         if (!isBH(bh.type)) continue;
         bh.luminosity = (bh.luminosity || 0) * 0.96;
-        const r_horizon = Math.max(0.8, Math.cbrt(bh.mass) * 0.12);
-        const r_kill = r_horizon * 0.4;
+        const r_sink = Math.max(0.8, Math.cbrt(bh.mass) * 0.12);
+        const r_kill = r_sink * 0.4;
         const r_h2 = r_kill * r_kill;
         for (const b of this._bodies) {
             if (b.id === bh.id || b.mass <= 0) continue;

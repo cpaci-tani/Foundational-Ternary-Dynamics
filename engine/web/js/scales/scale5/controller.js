@@ -213,19 +213,23 @@ export function animateCosmic(ctx) {
         const diag = telemetryHub.collectScale5(bridge) || bridge.getDiagnostics();
         renderer.update(data, diag);
 
-        // Compact toolbar telemetry. Hubble parameter shows the static
-        // anchor H0_LATTICE — no Friedmann solver wires it into a(t)
-        // evolution yet (audit P0-9, 2026-05-27).
+        // Compact toolbar telemetry. Hubble parameter is now the LIVE
+        // ΛCDM rate H(a) integrated each tick by the Friedmann solver
+        // (audit P0-9 implemented 2026-05-27) — H decreases as a(t) grows.
         _toolbarStatus.update('cosmic-tb-bodies', diag.bodyCount + ' bodies');
         _toolbarStatus.update('cosmic-tb-tick', 'T ' + diag.tick);
-        _toolbarStatus.update('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4) + ' (anchor)');
+        _toolbarStatus.update('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4));
 
         // Controls panel cards
         const c = diag.countsByType || [];
         _panelStatus.update('cosmic-n-bodies', String(diag.bodyCount));
         _panelStatus.update('cosmic-tick', String(diag.tick));
         _panelStatus.update('cosmic-hubble', diag.hubbleParameter.toFixed(5));
-        _panelStatus.update('cosmic-scale-factor', diag.scaleFactor.toFixed(5));
+        _panelStatus.update('cosmic-scale-factor', diag.scaleFactor.toFixed(4));
+        // Redshift z = 1/a − 1, live from the Friedmann solver (audit P0-9).
+        if (diag.redshift != null) {
+            _panelStatus.update('cosmic-redshift', diag.redshift.toFixed(3));
+        }
         _panelStatus.update('cosmic-n-dm', String(c[3] || 0));
         _panelStatus.update('cosmic-n-gas', String(c[4] || 0));
         _panelStatus.update('cosmic-n-stars', String(c[5] || 0));

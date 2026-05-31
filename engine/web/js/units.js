@@ -232,11 +232,19 @@ export function formatForce(value, scale = 0) {
 /**
  * Format a temperature value.
  *   Scale 0/1: natural units (MeV, kB=1) — show MeV + Kelvin equivalent
- *   Scale 2:   Kelvin (directly)
+ *   Scale 2:   sim-unit equipartition proxy 2·KE/(3N), NOT kelvin
+ *
+ * Audit P0-10 (2026-05-27): the Scale-2 AtomEngine "temperature" is the
+ * bare equipartition proxy T_sim = 2⟨KE⟩/(3N) with an implicit k_B = 1.
+ * No Boltzmann conversion to kelvin is performed, so the value is in the
+ * same sim units as the AE energy cards. The previous "K" suffix made an
+ * unbacked kelvin claim; it is relabelled "(sim)" so the readout no longer
+ * asserts a unit it does not compute. (Tooltip fixed in
+ * tooltips/definitions.js; card unit-hint in diagnostics-template.js.)
  */
 export function formatTemperature(value, scale = 0) {
     if (typeof value !== 'number' || !isFinite(value)) return { text: '--', value: 0, unit: '' };
-    if (scale === 2) return _fmt(value, 'K');
+    if (scale === 2) return _fmt(value, '(sim)');
     // Scale 0/1: value is in MeV
     const kelvin = value * K_PER_MEV;
     return {

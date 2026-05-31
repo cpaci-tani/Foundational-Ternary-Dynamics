@@ -213,14 +213,36 @@ export class MolecularRenderer {
             color.copy(cA).lerp(cB, 0.5);
 
             const order = atomData.bondOrders ? atomData.bondOrders[b] : 1;
+            // Aromatic bonds carry the sentinel order 1.5 (P0-13): render them
+            // as one full bond plus a thinner parallel "delocalised" cylinder,
+            // visually between a single and a hard double.
+            const isAromatic = order >= 1.5 && order < 2;
 
-            if (order === 1) {
+            if (isAromatic) {
+                // Aromatic: full-width main cylinder + thin offset companion.
+                const perp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 0, 1));
+                if (perp.lengthSq() < 0.001) perp.crossVectors(dir, new THREE.Vector3(1, 0, 0));
+                perp.normalize().multiplyScalar(0.16);
+                // Main bond (centred).
+                mat4.compose(new THREE.Vector3(ax, ay, az), quat, new THREE.Vector3(0.15, bondLen, 0.15));
+                this._bondCylinders.setMatrixAt(instIdx, mat4);
+                this._bondCylinders.setColorAt(instIdx, color);
+                instIdx++;
+                // Thin delocalised companion (offset to one side).
+                if (instIdx < 1500) {
+                    const ox = ax + perp.x, oy = ay + perp.y, oz = az + perp.z;
+                    mat4.compose(new THREE.Vector3(ox, oy, oz), quat, new THREE.Vector3(0.07, bondLen, 0.07));
+                    this._bondCylinders.setMatrixAt(instIdx, mat4);
+                    this._bondCylinders.setColorAt(instIdx, color);
+                    instIdx++;
+                }
+            } else if (order < 2) {
                 // Single bond: 1 cylinder, radius 0.15
                 mat4.compose(new THREE.Vector3(ax, ay, az), quat, new THREE.Vector3(0.15, bondLen, 0.15));
                 this._bondCylinders.setMatrixAt(instIdx, mat4);
                 this._bondCylinders.setColorAt(instIdx, color);
                 instIdx++;
-            } else if (order === 2) {
+            } else if (order < 3) {
                 // Double bond: 2 parallel cylinders offset ±0.18
                 const perp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0, 0, 1));
                 if (perp.lengthSq() < 0.001) perp.crossVectors(dir, new THREE.Vector3(1, 0, 0));
