@@ -153,7 +153,7 @@ function syncComboSliders(bridge) {
 function applyAuxiliaryDefaults(ctx, viewportAdapter) {
     ctx.applyTicksPerFrameFromSlider(50);
     ctx.applyBoundaryShape('cube');
-    ctx.applyReflectiveBoundary(true);
+    ctx.applyReflectiveBoundary(false);
     viewportAdapter.setFluxVolumeVisible(true);
     viewportAdapter.setFluxSliceVisible(false);
     setButtonActive('toggle-flux-volume', true);

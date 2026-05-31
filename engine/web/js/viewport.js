@@ -199,8 +199,12 @@ export class Viewport {
         this.visualSettings = {
             globalScale: 1.0,
             manifestedSize: 12.0,
+            positiveSize: 14.0,
+            negativeSize: 10.0,
             voidSize: 4.0,
             opacity: 0.95,
+            particleOpacity: 0.9,
+            glowIntensity: 0.15,
         };
 
         // Particle system extracted to ViewportParticleRenderer (Phase 3d).
@@ -223,7 +227,7 @@ export class Viewport {
         this.latticeSize = 32;
         this._latticeSize = 32;  // mirrored so quantum overlays can read it too
         this._halfN = 16;
-        this._reflectiveBoundary = true;
+        this._reflectiveBoundary = false;
 
         // Scene decoration (boundary wireframe, axes, post-processing, camera
         // presets) — Phase 3a extraction. Constructed BEFORE the flux/particle
@@ -781,7 +785,9 @@ export class Viewport {
     // `performance.now()`.
     advanceAnimationClock(dtSeconds) {
         if (!this._animationClock) this._animationClock = 0;
-        this._animationClock += (dtSeconds || 0) * 1000;
+        if (document.body.getAttribute('data-reduced-motion') !== '1') {
+            this._animationClock += (dtSeconds || 0) * 1000;
+        }
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -954,6 +960,15 @@ export class Viewport {
     updateParticles(data) { this._particleRenderer.updateParticles(data); }
     setPointShape(shapeIndex) { this._particleRenderer.setPointShape(shapeIndex); }
     setOpacity(val) { this._particleRenderer.setOpacity(val); }
+    setPositiveSize(val) { this.visualSettings.positiveSize = val; }
+    setNegativeSize(val) { this.visualSettings.negativeSize = val; }
+    setParticleOpacity(val) {
+        this.visualSettings.particleOpacity = val;
+        this._particleRenderer.setOpacity(val);
+    }
+    setParticleGlow(val) { this._particleRenderer.setGlow(val); }
+    setParticleShape(idx) { this._particleRenderer.setPointShape(idx); }
+    setAreaHighlight(cx, cy, cz, radius, active) { this._sceneCore?.setAreaHighlight(cx, cy, cz, radius, active); }
 
     // ── Element labels + clearMolecularMeshes — delegated to viewport/molecular-renderer.js
     updateElementLabels(labels) { this._molRenderer.updateElementLabels(labels); }
@@ -990,7 +1005,10 @@ export class Viewport {
         // ω·dt accumulation; passed in so all arrows share the same clock.
         if (this.spinArrowManager) {
             const now = performance.now();
-            const dtMs = now - (this._lastSpinArrowUpdateMs || now);
+            let dtMs = now - (this._lastSpinArrowUpdateMs || now);
+            if (document.body.getAttribute('data-reduced-motion') === '1') {
+                dtMs = 0; // Freezes theta rotation while retaining slerp/lerp positional follow
+            }
             this.spinArrowManager.update(dtMs);
             this._lastSpinArrowUpdateMs = now;
         }

@@ -27,20 +27,16 @@
  */
 
 import * as THREE from 'three';
-import { potentialToColor, magnitudeToColor, fluxToColor } from '../fields.js';
+import { potentialToColor, magnitudeToColor, fluxToColor, potentialToColorInto, magnitudeToColorInto } from '../fields.js';
 import { K_B, K_GENESIS } from '../constants.js';
 
 // ── Voxel-center rendering convention ─────────────────────────────────
 // Lattice voxel index k is rendered at world centre k+0.5 (see
 // scene-core.js, flux-renderer.js, ftd_wasm.cpp particle pos_cache, and
-// the wireframe crosshair in boundary-geometry.js). All overlay positions
-// taken from the WASM samplers (getEFieldSampled, getBFieldSampled,
-// getPoyntingSampled, getEMForceField, getStrongForceField,
-// getGravityFieldSampled, getFluxVectorSampled) come back at RAW voxel
-// indices (0, stride, 2·stride, …, N-1) with NO offset. Without applying
-// VOXEL_CENTER_OFFSET at the mesh-write site, field arrows / streamlines /
-// vectors render half a voxel off from the particles + flux volume. The
-// audit (2026-04-28) caught this systemic mismatch.
+// the wireframe crosshair in boundary-geometry.js). As of the April-19
+// patch, ftd_wasm.cpp handles the +0.5f centering natively for all samplers.
+// Thus, VOXEL_CENTER_OFFSET = 0.0 is correct and MUST NOT BE CHANGED.
+// DO NOT "fix" this to 0.5, it will break visual alignment!
 let VOXEL_CENTER_OFFSET = 0.0;
 import {
     rampViridis,
@@ -168,10 +164,6 @@ export class ViewportFieldRenderer {
         this._magCacheDual = null;
     }
 
-    _getVoxelCenterOffset() {
-        const isOrigin = this._getBoundaryMode && this._getBoundaryMode() === 'origin';
-        return isOrigin ? 0.0 : 0.5;
-    }
 
     _checkInsideBoundary(x, y, z) {
         const isOrigin = this._getBoundaryMode && this._getBoundaryMode() === 'origin';
@@ -290,10 +282,7 @@ export class ViewportFieldRenderer {
             posAttr.array[i * 3 + 1] = gridPositions[i * 3 + 1] - 0.3;
             posAttr.array[i * 3 + 2] = gridPositions[i * 3 + 2];
 
-            const [r, g, b] = potentialToColor(potentials[i], maxAbsPotential);
-            colAttr.array[i * 3] = r;
-            colAttr.array[i * 3 + 1] = g;
-            colAttr.array[i * 3 + 2] = b;
+            potentialToColorInto(colAttr.array, i * 3, potentials[i], maxAbsPotential);
 
             sizeAttr.array[i] = 10.0;
         }
@@ -417,13 +406,10 @@ export class ViewportFieldRenderer {
             posAttr.array[i * 6 + 4] = gy + (mag > 1e-20 ? fy / mag * scale : 0);
             posAttr.array[i * 6 + 5] = gz + (mag > 1e-20 ? fz / mag * scale : 0);
 
-            const [cr, cg, cb] = magnitudeToColor(mag, maxForce);
-            colAttr.array[i * 6] = cr * 0.5;
-            colAttr.array[i * 6 + 1] = cg * 0.5;
-            colAttr.array[i * 6 + 2] = cb * 0.5;
-            colAttr.array[i * 6 + 3] = cr;
-            colAttr.array[i * 6 + 4] = cg;
-            colAttr.array[i * 6 + 5] = cb;
+            magnitudeToColorInto(colAttr.array, i * 6 + 3, mag, maxForce);
+            colAttr.array[i * 6] = colAttr.array[i * 6 + 3] * 0.5;
+            colAttr.array[i * 6 + 1] = colAttr.array[i * 6 + 4] * 0.5;
+            colAttr.array[i * 6 + 2] = colAttr.array[i * 6 + 5] * 0.5;
         }
 
         posAttr.needsUpdate = true;

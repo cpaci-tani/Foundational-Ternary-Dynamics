@@ -71,6 +71,12 @@ export function showLatticeInspector(target) {
 
     const symPanel = document.getElementById('floating-symmetry-panel');
     if (symPanel) symPanel.style.display = 'block';
+    // Notify the selection card so sel-x/y/z stay in sync with click-to-select
+    if (target._selectedPos) {
+        document.dispatchEvent(new CustomEvent('ftd:voxel-selected', {
+            detail: { ...target._selectedPos },
+        }));
+    }
     updateLatticeFields(target);
     target._updateInspectorChrome();
 }

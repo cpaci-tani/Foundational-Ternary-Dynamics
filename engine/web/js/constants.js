@@ -210,7 +210,7 @@ export const M_OMEGA_PHYS  = 1672.45;                  // Omega- (MeV)
 export const M_DELTA_PHYS  = 1232.0;                   // Delta++ (MeV)
 export const M_W_PHYS      = 80369.2;                  // W boson (MeV, PDG 2024)
 export const M_Z_PHYS      = 91187.6;                  // Z boson (MeV, PDG 2022) [PARAMETRIC PDG]
-export const M_HIGGS_PHYS  = 125100.0;                 // Higgs boson (MeV, PDG 2022) [PARAMETRIC PDG]
+export const M_HIGGS_PHYS  = 125200.0;                 // Higgs boson (MeV, PDG 2024) [PARAMETRIC PDG]
 
 // ── Quark Masses (MeV) [PARAMETRIC PDG 2022] ────────────────────────
 // Constituent quark masses from PDG 2022. Used by particle-catalog.js.
