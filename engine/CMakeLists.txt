@@ -259,6 +259,11 @@ ftd_add_test(test_tick_phase_order tests/test_tick_phase_order.cpp
              CTEST_NAME tick_phase_order TIMEOUT 120 LABELS lifecycle unit)
 ftd_add_test(test_engine_lifecycle tests/test_engine_lifecycle.cpp
              CTEST_NAME engine_lifecycle TIMEOUT 120 LABELS lifecycle unit)
+# Conservation profile: pins the engine's REAL energy-conservation physics
+# (bare-leapfrog well-posedness, gauss-projection runaway, iteration-independent
+# gauss_violation floor). Documentation-of-reality, not a quality gate.
+ftd_add_test(test_conservation_profile tests/test_conservation_profile.cpp
+             CTEST_NAME conservation_profile TIMEOUT 120 LABELS unit conservation)
 
 # Foundational
 add_executable(test_constants tests/test_constants.cpp)
