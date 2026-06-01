@@ -33,30 +33,13 @@
 import * as THREE from 'three';
 import { fluxToColorInto, fluxToColor } from '../fields.js';
 
-// Flux-volume variant: sqrt depth scaling instead of linear 1/z.
-// (Identical to viewport.js's FLUX_VOL_VERT — duplicated here so this
-// module is self-contained.)
-const FLUX_VOL_VERT = `
-    attribute float size;
-    attribute vec3 particleColor;
-    varying vec3 vColor;
-    varying float vSize;
+// Flux-volume vertex shader (sqrt depth scaling) — centralized in
+// viewport/shaders.js (D-1).
+import { FLUX_VOL_VERT, PARTICLE_FRAG } from './shaders.js';
 
-    void main() {
-        vColor = particleColor;
-        vSize = size;
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        float depth = max(-mvPosition.z, 0.1);
-        gl_PointSize = size * sqrt(60.0 / depth);
-        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
-        gl_Position = projectionMatrix * mvPosition;
-    }
-`;
-
-import { PARTICLE_FRAG } from './shaders.js';
-
-
-const MAX_FIELD_GRID = 16384;
+// (MAX_FIELD_GRID was declared here but never referenced — flux volume
+// buffers size from lattice³, not the field-grid cap. Removed under D-6;
+// the canonical constant now lives in viewport/constants.js.)
 
 export class ViewportFluxRenderer {
     constructor({
