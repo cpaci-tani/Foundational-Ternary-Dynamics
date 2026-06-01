@@ -117,50 +117,16 @@ import { ViewportParticleRenderer } from './viewport/particle-renderer.js';
 // route through bound methods on FieldRenderer. See viewport/REFACTOR_MAP.md §3c.
 import { ViewportFieldRenderer } from './viewport/field-renderer.js';
 
-// Pre-allocated buffer sizes. Particle buffer is fixed at init to avoid
-// dynamic GPU reallocation; draw range controls visible count each frame.
-const MAX_PARTICLES = 100000;
-const MAX_FIELD_GRID = 16384;  // up to 128x128 grid points (must cover lattice^2)
+// Pre-allocated buffer-size constants (MAX_PARTICLES / MAX_FIELD_GRID)
+// were centralized into viewport/constants.js (D-6). They were unused in
+// this orchestrator (every buffer allocation lives in the Phase-3
+// sub-renderers), so they are not re-imported here.
 
-// Custom particle shaders
-const PARTICLE_VERT = `
-    attribute float size;
-    attribute vec3 particleColor;
-    varying vec3 vColor;
-    varying float vSize;
-
-    void main() {
-        vColor = particleColor;
-        vSize = size;
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = size * (150.0 / -mvPosition.z);
-        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
-        gl_Position = projectionMatrix * mvPosition;
-    }
-`;
-
-// Flux-volume variant: sqrt depth scaling instead of linear 1/z.
-// For N=8 the camera is only ~9-19 units away, so linear 1/z gives a
-// 2× size ratio between near and far faces, making the sphere look
-// wildly asymmetric.  sqrt(60/z) compresses that to ~1.4× so both
-// hemispheres stay visually balanced regardless of lattice size.
-const FLUX_VOL_VERT = `
-    attribute float size;
-    attribute vec3 particleColor;
-    varying vec3 vColor;
-    varying float vSize;
-
-    void main() {
-        vColor = particleColor;
-        vSize = size;
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        float depth = max(-mvPosition.z, 0.1);
-        gl_PointSize = size * sqrt(60.0 / depth);
-        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
-        gl_Position = projectionMatrix * mvPosition;
-    }
-`;
-
+// PARTICLE_VERT / FLUX_VOL_VERT GLSL strings were centralized into
+// viewport/shaders.js (D-1). They are unused in this orchestrator (all
+// ShaderMaterial construction lives in the Phase-3 sub-renderers), so
+// they are not re-imported here. PARTICLE_FRAG is imported below only to
+// preserve the existing export surface of this module.
 import { PARTICLE_FRAG } from './viewport/shaders.js';
 
 

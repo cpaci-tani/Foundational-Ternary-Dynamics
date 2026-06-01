@@ -22,7 +22,7 @@
 import { BaseLifecycleController } from '../../lifecycle.js';
 import { CosmicRenderer } from '../../cosmic-renderer.js';
 import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
-import { createStatusBarCache } from '../scale-utils.js';
+import { createStatusBarCache, hideScale0Overlays } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 // ---------------------------------------------------------------------------
@@ -76,13 +76,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
         const viewport = ctx.viewport;
 
         // Hide all non-cosmic visuals
-        if (viewport) {
-            viewport.toggleFluxVolume(false);
-            viewport.toggleFluxSlice(false);
-            viewport.toggleGrid(false);
-            viewport.toggleAxes(false);
-            if (viewport.particles) viewport.particles.visible = false;
-        }
+        hideScale0Overlays(viewport);
 
         // Create cosmic bridge (JS-only mock for now)
         this.bridge = new CosmicMockBridge();

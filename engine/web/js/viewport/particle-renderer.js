@@ -21,28 +21,11 @@ import * as THREE from 'three';
 import { getById } from '../particle-catalog.js';
 import { K_B } from '../constants.js';
 
-// Pre-allocated buffer sizes. Particle buffer is fixed at init to avoid
-// dynamic GPU reallocation; draw range controls visible count each frame.
-const MAX_PARTICLES = 100000;
+// Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
+import { MAX_PARTICLES } from './constants.js';
 
-// Custom particle shaders (duplicated here so the module is self-contained).
-const PARTICLE_VERT = `
-    attribute float size;
-    attribute vec3 particleColor;
-    varying vec3 vColor;
-    varying float vSize;
-
-    void main() {
-        vColor = particleColor;
-        vSize = size;
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = size * (150.0 / -mvPosition.z);
-        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
-        gl_Position = projectionMatrix * mvPosition;
-    }
-`;
-
-import { PARTICLE_FRAG } from './shaders.js';
+// Custom particle shaders — centralized in viewport/shaders.js (D-1).
+import { PARTICLE_VERT, PARTICLE_FRAG } from './shaders.js';
 
 
 export class ViewportParticleRenderer {

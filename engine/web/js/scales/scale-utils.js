@@ -10,9 +10,8 @@
  *   formatNumber(v)          - Human-friendly number display (fixed/exponential)
  *   formatSI(n)              - SI-prefix formatter (K, M, G, T)
  *   createTickAccumulator()  - Fractional-tick accumulator for sub-1 speed
- *   throttleBySize(L, thr)   - Lattice-size-dependent throttle selector
  *   createStatusBarCache()   - Deduplicating DOM writer for status elements
- *   createListenerBag()      - Trackable addEventListener bag for clean teardown
+ *   hideScale0Overlays(vp)   - Hide lattice overlays for non-lattice scales
  */
 
 import { SCALE2_TOGGLES } from '../config/toggles.js';
@@ -79,35 +78,6 @@ export function createTickAccumulator() {
     };
 }
 
-// ── throttleBySize ──────────────────────────────────────────────────
-/**
- * Select a throttle value based on lattice size.
- *
- * Thresholds are checked top-down; the first entry whose `above` value
- * is exceeded by L wins. The last entry should either omit `above` or
- * include a `default` key to serve as the fallback.
- *
- * Example:
- *   throttleBySize(64, [
- *       { above: 96, value: 8 },
- *       { above: 48, value: 4 },
- *       { above: 32, value: 2 },
- *       { default: 1 }
- *   ]);
- *   // returns 4  (64 > 48)
- *
- * @param {number} L - Lattice size
- * @param {Array<{above?: number, value?: *, default?: *}>} thresholds
- * @returns {*} The selected throttle value
- */
-export function throttleBySize(L, thresholds) {
-    for (const t of thresholds) {
-        if (t.above !== undefined && L > t.above) return t.value;
-    }
-    const last = thresholds[thresholds.length - 1];
-    return last.default !== undefined ? last.default : last.value;
-}
-
 // ── createStatusBarCache ────────────────────────────────────────────
 /**
  * Create a deduplicating DOM writer for status-bar elements.
@@ -136,52 +106,30 @@ export function createStatusBarCache() {
     };
 }
 
-// ── createListenerBag ───────────────────────────────────────────────
+// ── hideScale0Overlays ──────────────────────────────────────────────
 /**
- * Create a trackable event-listener bag for clean teardown.
+ * Hide the Scale-0 lattice visualization overlays before switching to a
+ * non-lattice scale.
  *
- * Scale controllers that wire up DOM listeners in their `load*`/`wire*`
- * functions must remove those same listeners in `resetScale*` or the
- * app leaks one set of closures per scale re-entry. Using a listener
- * bag makes the lifecycle explicit:
+ * Turns off the flux volume, flux slice, grid, and axes overlays and hides
+ * the particle cloud. Used by the Scale 4 (planetary) and Scale 5 (cosmic)
+ * controllers, which share an identical overlay-hide preamble.
  *
- *   const bag = createListenerBag();
- *   bag.on(btn, 'click', () => { ... });
- *   bag.on(select, 'change', () => { ... });
- *   // ...
- *   bag.clear(); // removes everything attached via this bag
+ * NOTE: Scale 6 (meta) deliberately does NOT use this helper — it hides a
+ * different overlay set (it skips the axes overlay and additionally hides the
+ * E/B field lines), so collapsing it here would change its behavior.
  *
- * `on()` is a no-op (and returns silently) when `el` is null, so it's
- * safe to call on `document.getElementById(...)` results without
- * null-checking each one.
+ * No-op when `viewport` is falsy, so callers need not null-check first.
  *
- * @returns {{ on(el: EventTarget|null, evt: string, fn: Function, opts?: any): void,
- *             clear(): void,
- *             size(): number }}
+ * @param {object|null|undefined} viewport - The active viewport instance.
  */
-export function createListenerBag() {
-    const cleanups = [];
-    return {
-        /**
-         * Attach a listener and remember how to remove it.
-         * @param {EventTarget|null} el   - Target (no-op if null)
-         * @param {string}           evt  - Event name
-         * @param {Function}         fn   - Handler
-         * @param {any}              opts - Optional addEventListener options
-         */
-        on(el, evt, fn, opts) {
-            if (!el) return;
-            el.addEventListener(evt, fn, opts);
-            cleanups.push(() => el.removeEventListener(evt, fn, opts));
-        },
-        /** Remove all listeners attached via this bag and reset the bag. */
-        clear() {
-            for (const fn of cleanups) fn();
-            cleanups.length = 0;
-        },
-        /** Current number of live listeners in the bag. */
-        size() { return cleanups.length; }
-    };
+export function hideScale0Overlays(viewport) {
+    if (!viewport) return;
+    viewport.toggleFluxVolume(false);
+    viewport.toggleFluxSlice(false);
+    viewport.toggleGrid(false);
+    viewport.toggleAxes(false);
+    if (viewport.particles) viewport.particles.visible = false;
 }
 
 /**
