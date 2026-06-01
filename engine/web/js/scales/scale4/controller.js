@@ -9,6 +9,7 @@ import { BaseLifecycleController } from '../../lifecycle.js';
 import { PlanetaryMockBridge } from '../../bridge/mock-scale4.js';
 import { PlanetaryRenderer } from '../../planetary-renderer.js';
 import { rafCoordinator } from '../../lib/raf-coordinator.js';
+import { hideScale0Overlays } from '../scale-utils.js';
 
 // F-6: drive the planetary loop from the shared rAF coordinator instead of
 // setInterval(…, 16). 60 Hz matches the old ~16 ms cadence (1000/16 ≈ 62.5),
@@ -40,13 +41,7 @@ class Scale4LifecycleController extends BaseLifecycleController {
         const { viewport, inspector } = ctx;
 
         // Isolate visualization overlays
-        if (viewport) {
-            viewport.toggleFluxVolume(false);
-            viewport.toggleFluxSlice(false);
-            viewport.toggleGrid(false);
-            viewport.toggleAxes(false);
-            if (viewport.particles) viewport.particles.visible = false;
-        }
+        hideScale0Overlays(viewport);
 
         this.bridge = new PlanetaryMockBridge();
         // Persist the user's gravity-mode choice across the bridge recreate that

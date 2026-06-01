@@ -56,27 +56,11 @@ import {
     lerpPalette,
 } from './color-ramps.js';
 
-// Pre-allocated buffer sizes — kept in lockstep with viewport.js.
-const MAX_FIELD_GRID = 16384;
+// Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
+import { MAX_FIELD_GRID } from './constants.js';
 
-// Shared particle shaders (duplicated here so the module is self-contained).
-const PARTICLE_VERT = `
-    attribute float size;
-    attribute vec3 particleColor;
-    varying vec3 vColor;
-    varying float vSize;
-
-    void main() {
-        vColor = particleColor;
-        vSize = size;
-        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = size * (150.0 / -mvPosition.z);
-        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
-        gl_Position = projectionMatrix * mvPosition;
-    }
-`;
-
-import { PARTICLE_FRAG } from './shaders.js';
+// Shared particle shaders — centralized in viewport/shaders.js (D-1).
+import { PARTICLE_VERT, PARTICLE_FRAG } from './shaders.js';
 
 
 // Lazy-built static texture for soft-disc sprite (weak-field / quantum overlays).

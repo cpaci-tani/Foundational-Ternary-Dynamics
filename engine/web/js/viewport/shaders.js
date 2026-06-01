@@ -6,6 +6,53 @@
  * enable global shader optimizations.
  */
 
+// Custom particle vertex shader. Linear 1/z point-size scaling — the
+// standard size convention shared by the particle Points mesh and every
+// field-overlay Points/LineSegments material (E/B/Poynting/divergence/
+// force volumes/dark matter/genesis/chirality/light…). Centralized here
+// (D-1) so all sites import a single byte-identical copy. Byte-identical
+// across the former viewport.js + field-renderer.js + particle-renderer.js
+// copies (419 chars) verified before merge.
+export const PARTICLE_VERT = `
+    attribute float size;
+    attribute vec3 particleColor;
+    varying vec3 vColor;
+    varying float vSize;
+
+    void main() {
+        vColor = particleColor;
+        vSize = size;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = size * (150.0 / -mvPosition.z);
+        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
+        gl_Position = projectionMatrix * mvPosition;
+    }
+`;
+
+// Flux-volume variant: sqrt depth scaling instead of linear 1/z.
+// For N=8 the camera is only ~9-19 units away, so linear 1/z gives a
+// 2× size ratio between near and far faces, making the sphere look
+// wildly asymmetric.  sqrt(60/z) compresses that to ~1.4× so both
+// hemispheres stay visually balanced regardless of lattice size.
+// Centralized here (D-1); byte-identical across the former viewport.js +
+// flux-renderer.js copies (461 chars) verified before merge.
+export const FLUX_VOL_VERT = `
+    attribute float size;
+    attribute vec3 particleColor;
+    varying vec3 vColor;
+    varying float vSize;
+
+    void main() {
+        vColor = particleColor;
+        vSize = size;
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        float depth = max(-mvPosition.z, 0.1);
+        gl_PointSize = size * sqrt(60.0 / depth);
+        gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
+        gl_Position = projectionMatrix * mvPosition;
+    }
+`;
+
 export const PARTICLE_FRAG = `
     uniform int shapeType;
     uniform float uOpacity;
