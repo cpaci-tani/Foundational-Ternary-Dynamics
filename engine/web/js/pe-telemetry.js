@@ -113,6 +113,41 @@ class TimeSeriesChart {
     }
 }
 
+// ── Phase-space ring buffer ──────────────────────────────────────────
+// Fixed-capacity FIFO of {r, vr} samples. Mirrors the head/count modular
+// indexing of telemetry-hub.js RingBuffer (O(1) append, O(1) eviction by
+// overwrite) but stores paired objects instead of Float32 scalars, since
+// the phase-space plot needs both coordinates per sample. Logical order is
+// identical to the previous Array push()/shift() FIFO: index 0 is the
+// oldest retained sample, index (length-1) the newest.
+const PHASE_BUF_CAPACITY = 300;
+
+class PhaseRingBuffer {
+    constructor(capacity = PHASE_BUF_CAPACITY) {
+        this.capacity = capacity;
+        this.data = new Array(capacity);
+        this.head = 0;   // next write slot
+        this.count = 0;  // number of valid samples (≤ capacity)
+    }
+
+    /** Append one sample; overwrites the oldest in place once full. O(1). */
+    push(r, vr) {
+        this.data[this.head] = { r, vr };
+        this.head = (this.head + 1) % this.capacity;
+        if (this.count < this.capacity) this.count++;
+    }
+
+    /** Sample at logical index i (0 = oldest, count-1 = newest). */
+    get(i) {
+        return this.data[(this.head - this.count + i + this.capacity) % this.capacity];
+    }
+
+    /** Number of valid samples currently held. */
+    get length() { return this.count; }
+
+    clear() { this.head = 0; this.count = 0; }
+}
+
 // ── Formatting helpers ───────────────────────────────────────────────
 function fmt(v, digits = 6) {
     if (typeof v !== 'number' || !isFinite(v)) return '—';
@@ -191,8 +226,7 @@ export class PETelemetryPanel {
 
         // Phase space chart
         this._phaseCanvas = document.getElementById('pet-phase-space');
-        this._phaseBuf = []; // [{r, vr}] ring buffer
-        this._phaseMax = 300;
+        this._phaseBuf = new PhaseRingBuffer(PHASE_BUF_CAPACITY); // {r, vr} ring buffer
         // Phase C.3: cache rect dims, refreshed via ResizeObserver
         this._phaseRectCache = this._phaseCanvas ? createCachedCanvasRect(this._phaseCanvas) : null;
 
@@ -432,8 +466,7 @@ export class PETelemetryPanel {
 
         // Phase space: radial velocity v_r = (dr · dv) / |dr|
         const vr = r > 0 ? (dr[0] * dv[0] + dr[1] * dv[1] + dr[2] * dv[2]) / r : 0;
-        this._phaseBuf.push({ r, vr });
-        if (this._phaseBuf.length > this._phaseMax) this._phaseBuf.shift();
+        this._phaseBuf.push(r, vr);  // ring buffer evicts oldest in place once full
         this._drawPhaseSpace();
     }
 
@@ -454,8 +487,10 @@ export class PETelemetryPanel {
         ctx.clearRect(0, 0, w, h);
 
         const buf = this._phaseBuf;
+        const n = buf.length;
         let rMin = Infinity, rMax = -Infinity, vrMin = Infinity, vrMax = -Infinity;
-        for (const p of buf) {
+        for (let i = 0; i < n; i++) {
+            const p = buf.get(i);
             if (p.r < rMin) rMin = p.r;
             if (p.r > rMax) rMax = p.r;
             if (p.vr < vrMin) vrMin = p.vr;
@@ -471,11 +506,11 @@ export class PETelemetryPanel {
         ctx.beginPath(); ctx.moveTo(0, zeroY); ctx.lineTo(w, zeroY); ctx.stroke();
 
         // Points (fade older ones)
-        const n = buf.length;
         for (let i = 0; i < n; i++) {
+            const p = buf.get(i);
             const alpha = 0.15 + 0.85 * (i / n);
-            const x = ((buf[i].r - rMin) / rRange) * (w - 8) + 4;
-            const y = h - ((buf[i].vr - vrMin) / vrRange) * (h - 8) - 4;
+            const x = ((p.r - rMin) / rRange) * (w - 8) + 4;
+            const y = h - ((p.vr - vrMin) / vrRange) * (h - 8) - 4;
             ctx.fillStyle = `rgba(96, 165, 250, ${alpha})`;
             ctx.beginPath();
             ctx.arc(x, y, 1.5, 0, 2 * Math.PI);
@@ -518,7 +553,7 @@ export class PETelemetryPanel {
         this._initialEnergy = null;
         this._initialMomentum = null;
         this._initialAngmom = null;
-        this._phaseBuf = [];
+        this._phaseBuf.clear();
         for (const s of Object.values(this._sparks)) s.clear();
         this._tsEnergy.clear();
         this._tsMomentum.clear();

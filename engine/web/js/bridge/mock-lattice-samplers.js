@@ -59,14 +59,38 @@ import {
  * @returns {object} sampler methods keyed by their public names
  */
 export function createLatticeSamplers(state) {
+    // ── Persistent sampler scratch buffers (F-2) ──────────────────────
+    // Pre-refactor each sampler call allocated fresh `new Float32Array`s for
+    // its `positions` + `vectors`/`values` outputs — ~50 allocations and
+    // ~30k floats per overlay refresh at L=32, stride=2 (~3 MB/s GC churn).
+    // Instead we keep one reusable buffer per (sampler, role) slot, sized to
+    // the current `maxPts`, and grow it only when a larger lattice/finer
+    // stride demands more capacity. This is output-exact: every sampler only
+    // ever WRITES indices [0, count) and every consumer only READS [0, count)
+    // (renderers + field-overlays all loop `i < count`), so stale tail data
+    // beyond `count` is never observed. The empty-guard early returns keep
+    // returning fresh length-0 arrays (unchanged, negligible).
+    //
+    // Keyed by an integer slot id (one per output array across all samplers)
+    // so two samplers never alias the same backing store within a frame.
+    const _buf = [];
+    function scratch(slot, len) {
+        let b = _buf[slot];
+        if (b === undefined || b.length < len) {
+            b = new Float32Array(len);
+            _buf[slot] = b;
+        }
+        return b;
+    }
+
     // ── Pure lattice readers (12 of 14 scalar/vector samplers) ────────
 
     function getEFieldSampled(stride = 2) {
         if (!state._fluxWV) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(0, maxPts * 3);
+        const vectors = scratch(1, maxPts * 3);
         let count = 0;
         for (let z = 0; z < N; z += stride) {
             for (let y = 0; y < N; y += stride) {
@@ -91,8 +115,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(2, maxPts * 3);
+        const vectors = scratch(3, maxPts * 3);
         const J = state._fluxJ;
         let count = 0;
         for (let z = 0; z < N; z += stride) {
@@ -120,8 +144,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ || !state._fluxWV) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(4, maxPts * 3);
+        const vectors = scratch(5, maxPts * 3);
         const J = state._fluxJ, WV = state._fluxWV;
         let count = 0;
         for (let z = 0; z < N; z += stride) {
@@ -156,8 +180,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const values = new Float32Array(maxPts);
+        const positions = scratch(6, maxPts * 3);
+        const values = scratch(7, maxPts);
         const J = state._fluxJ;
         let count = 0;
         for (let z = 0; z < N; z += stride) {
@@ -186,8 +210,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const values = new Float32Array(maxPts);
+        const positions = scratch(8, maxPts * 3);
+        const values = scratch(9, maxPts);
         const J = state._fluxJ;
         let count = 0;
         for (let z = 0; z < N; z += stride) {
@@ -229,8 +253,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(10, maxPts * 3);
+        const vectors = scratch(11, maxPts * 3);
         const J = state._fluxJ;
         let count = 0;
         for (let z = 1; z < N - 1; z += stride) {
@@ -265,8 +289,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(12, maxPts * 3);
+        const vectors = scratch(13, maxPts * 3);
         const J = state._fluxJ;
         let count = 0;
         for (let z = 0; z < N; z += stride) {
@@ -292,8 +316,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const values = new Float32Array(maxPts);
+        const positions = scratch(14, maxPts * 3);
+        const values = scratch(15, maxPts);
         const J = state._fluxJ;
         let count = 0;
         // Skip one-voxel border: `_fluxIdx` wraps periodically, so at x=0 or
@@ -385,8 +409,8 @@ export function createLatticeSamplers(state) {
         if (!Lvox) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const values = new Float32Array(maxPts);
+        const positions = scratch(16, maxPts * 3);
+        const values = scratch(17, maxPts);
         let count = 0;
         // 18-pt isotropic Laplacian weights (Patra-Karttunen 2006) sourced
         // from constants.js (audit P2-9 fix, 2026-05-27).
@@ -436,8 +460,8 @@ export function createLatticeSamplers(state) {
         if (!Lvox) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const values = new Float32Array(maxPts);
+        const positions = scratch(18, maxPts * 3);
+        const values = scratch(19, maxPts);
         let count = 0;
         for (let z = 0; z < N; z += stride) {
             for (let y = 0; y < N; y += stride) {
@@ -458,8 +482,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const values = new Float32Array(maxPts);
+        const positions = scratch(20, maxPts * 3);
+        const values = scratch(21, maxPts);
         const J = state._fluxJ;
         const rhoAt = (xi, yi, zi) => {
             const i = state._fluxIdx(xi, yi, zi);
@@ -495,8 +519,8 @@ export function createLatticeSamplers(state) {
         if (!state._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
         const N = state.latticeSize;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const values = new Float32Array(maxPts);
+        const positions = scratch(22, maxPts * 3);
+        const values = scratch(23, maxPts);
         const J = state._fluxJ;
         const eps = 1e-10;
         let count = 0;
@@ -538,8 +562,8 @@ export function createLatticeSamplers(state) {
         const doGravity = state._toggles.gravity;
         const soft = 1.0;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(24, maxPts * 3);
+        const vectors = scratch(25, maxPts * 3);
         let count = 0;
 
         for (let z = 0; z < N; z += stride)
@@ -598,8 +622,8 @@ export function createLatticeSamplers(state) {
         };
 
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(26, maxPts * 3);
+        const vectors = scratch(27, maxPts * 3);
         let count = 0;
         const gn = state._params.gn;
 
@@ -634,8 +658,8 @@ export function createLatticeSamplers(state) {
         const alpha4pi = COULOMB_K_FORCE;
         const soft = 1.0;
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(28, maxPts * 3);
+        const vectors = scratch(29, maxPts * 3);
         let count = 0;
 
         for (let z = 0; z < N; z += stride)
@@ -683,8 +707,8 @@ export function createLatticeSamplers(state) {
         const ALPHA_S = STRONG_ALPHA_S;
         const TUBE_W  = 1.5;     // flux tube Gaussian width (visualization only)
         const maxPts = Math.ceil(N / stride) ** 3;
-        const positions = new Float32Array(maxPts * 3);
-        const vectors = new Float32Array(maxPts * 3);
+        const positions = scratch(30, maxPts * 3);
+        const vectors = scratch(31, maxPts * 3);
         let count = 0;
 
         // Build ALL particle pairs with tube geometry

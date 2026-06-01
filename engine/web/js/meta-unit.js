@@ -5,7 +5,7 @@
 
 import * as THREE from 'three';
 import {
-    makeSphere,
+    makeInstancedShell,
     makeWireframe,
     makeAxisLine,
     makeMirrorPlane,
@@ -14,6 +14,9 @@ import {
 } from './meta-unit-geometry.js';
 
 const SCALE = 1.5;
+
+// Reused scratch colour for per-instance recolouring (avoids per-call alloc).
+const _tmpRecolor = new THREE.Color();
 
 const COLORS = {
     center:         0xFFD700,
@@ -120,7 +123,9 @@ export class MetaUnit {
         this._scene.add(this._root);
 
         this._sites = buildSiteData();
-        this._meshes = [];
+        this._meshes = [];          // the 4 per-shell InstancedMeshes
+        this._shellMeshes = {};     // shell name -> InstancedMesh
+        this._siteRefs = [];        // parallel to this._sites: { mesh, instanceId }
         this._originalColors = [];
 
         this._groups = {};
@@ -139,17 +144,6 @@ export class MetaUnit {
     // ── Shell groups ────────────────────────────────────────────────
 
     _buildShellGroups() {
-        const shells = {
-            center: new THREE.Group(),
-            octahedron: new THREE.Group(),
-            cuboctahedron: new THREE.Group(),
-            cube: new THREE.Group(),
-        };
-        shells.center.name = 'shell_center';
-        shells.octahedron.name = 'shell_octahedron';
-        shells.cuboctahedron.name = 'shell_cuboctahedron';
-        shells.cube.name = 'shell_cube';
-
         // Shell → canonical sublattice mapping per Moore Layer Theorem §4:
         //   center           → central voxel
         //   octahedron (k=1) → SC (simple cubic) sublattice
@@ -163,32 +157,63 @@ export class MetaUnit {
             cuboctahedron: 'FCC',
             cube: 'BCC',
         };
-        for (const site of this._sites) {
-            const mesh = makeSphere(site.radius, site.color);
-            mesh.position.set(site.x * SCALE, site.y * SCALE, site.z * SCALE);
-            mesh.userData = {
-                position: [site.x, site.y, site.z],
-                shell: site.shell,
-                distance: site.distance,
-                sublattice: _SHELL_TO_SUBLATTICE[site.shell] || 'unknown',
-                // Coord-sum parity preserved separately for the 13+13
-                // visual partition (renamed from misleading 'BCC/FCC' label).
-                coordSumParity: site.parity,
-                stabilizer: site.stabilizer,
-                irrep: site.irrep,
-            };
-            shells[site.shell].add(mesh);
-            this._meshes.push(mesh);
-            this._originalColors.push(site.color);
+
+        // F-11: one InstancedMesh per shell (4 draw calls total) instead of
+        // 27 individual Meshes. Per-shell keeps the existing visibility
+        // toggles (this._groups.<shell>.visible) and per-shell colouring
+        // working, while per-instance colour/position carry each site's
+        // exact appearance.
+        const SHELL_NAMES = ['center', 'octahedron', 'cuboctahedron', 'cube'];
+        const sitesByShell = { center: [], octahedron: [], cuboctahedron: [], cube: [] };
+        for (const site of this._sites) sitesByShell[site.shell].push(site);
+
+        const tmpMatrix = new THREE.Matrix4();
+        const tmpColor = new THREE.Color();
+
+        for (const shellName of SHELL_NAMES) {
+            const shellSites = sitesByShell[shellName];
+            // All sites in a shell share the same radius (set in buildSiteData).
+            const radius = shellSites[0].radius;
+            const inst = makeInstancedShell(radius, shellSites.length);
+            inst.name = 'shell_' + shellName;
+
+            for (let k = 0; k < shellSites.length; k++) {
+                const site = shellSites[k];
+                tmpMatrix.makeTranslation(site.x * SCALE, site.y * SCALE, site.z * SCALE);
+                inst.setMatrixAt(k, tmpMatrix);
+                inst.setColorAt(k, tmpColor.setHex(site.color));
+
+                // Per-instance metadata for click-to-inspect (instanceId -> site).
+                inst.userData[k] = {
+                    position: [site.x, site.y, site.z],
+                    shell: site.shell,
+                    distance: site.distance,
+                    sublattice: _SHELL_TO_SUBLATTICE[site.shell] || 'unknown',
+                    // Coord-sum parity preserved separately for the 13+13
+                    // visual partition (renamed from misleading 'BCC/FCC' label).
+                    coordSumParity: site.parity,
+                    stabilizer: site.stabilizer,
+                    irrep: site.irrep,
+                };
+            }
+            inst.instanceMatrix.needsUpdate = true;
+            if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+
+            this._shellMeshes[shellName] = inst;
+            this._groups[shellName] = inst;
+            this._meshes.push(inst);
+            this._root.add(inst);
         }
 
-        for (const key of Object.keys(shells)) {
-            this._root.add(shells[key]);
+        // Per-site reference table, parallel to this._sites, so the colour
+        // toggles (_resetColors / _applyBCCFCC / _applyGeradeUngerade) can
+        // still iterate 0..26 in the same order and recolour by instance.
+        const cursor = { center: 0, octahedron: 0, cuboctahedron: 0, cube: 0 };
+        for (const site of this._sites) {
+            const mesh = this._shellMeshes[site.shell];
+            this._siteRefs.push({ mesh, instanceId: cursor[site.shell]++ });
+            this._originalColors.push(site.color);
         }
-        this._groups.center = shells.center;
-        this._groups.octahedron = shells.octahedron;
-        this._groups.cuboctahedron = shells.cuboctahedron;
-        this._groups.cube = shells.cube;
     }
 
     // ── Wireframe polyhedra ─────────────────────────────────────────
@@ -409,30 +434,38 @@ export class MetaUnit {
 
     // ── Parity coloring ─────────────────────────────────────────────
 
+    // Recolour by writing per-instance colour. The shell material keeps the
+    // colour===emissive invariant via the shader injection in
+    // makeInstancedShell, so one setColorAt per site updates both diffuse and
+    // emissive exactly as the legacy per-material color/emissive pair did.
+    _setSiteColor(i, hex) {
+        const ref = this._siteRefs[i];
+        _tmpRecolor.setHex(hex);
+        ref.mesh.setColorAt(ref.instanceId, _tmpRecolor);
+        if (ref.mesh.instanceColor) ref.mesh.instanceColor.needsUpdate = true;
+    }
+
     _resetColors() {
-        for (let i = 0; i < this._meshes.length; i++) {
-            this._meshes[i].material.color.setHex(this._originalColors[i]);
-            this._meshes[i].material.emissive.setHex(this._originalColors[i]);
+        for (let i = 0; i < this._siteRefs.length; i++) {
+            this._setSiteColor(i, this._originalColors[i]);
         }
     }
 
     _applyBCCFCC() {
-        for (let i = 0; i < this._meshes.length; i++) {
+        for (let i = 0; i < this._siteRefs.length; i++) {
             const site = this._sites[i];
             if (site.d2 === 0) continue;
             const c = site.parity === 'even' ? COLORS.evenParity : COLORS.oddParity;
-            this._meshes[i].material.color.setHex(c);
-            this._meshes[i].material.emissive.setHex(c);
+            this._setSiteColor(i, c);
         }
     }
 
     _applyGeradeUngerade() {
-        for (let i = 0; i < this._meshes.length; i++) {
+        for (let i = 0; i < this._siteRefs.length; i++) {
             const site = this._sites[i];
             if (site.d2 === 0) continue;
             const c = site.inversionParity === 'gerade' ? COLORS.gerade : COLORS.ungerade;
-            this._meshes[i].material.color.setHex(c);
-            this._meshes[i].material.emissive.setHex(c);
+            this._setSiteColor(i, c);
         }
     }
 
@@ -539,18 +572,21 @@ export class MetaUnit {
     // ── Click-to-inspect ────────────────────────────────────────────
 
     inspectSite(raycaster) {
-        const allMeshes = [];
-        for (const g of [this._groups.center, this._groups.octahedron,
-                         this._groups.cuboctahedron, this._groups.cube]) {
-            g.traverse(child => {
-                if (child.isMesh) allMeshes.push(child);
-            });
+        // Raycast against the 4 per-shell InstancedMeshes. Only visible shells
+        // participate, matching the legacy per-mesh behaviour. Each hit carries
+        // an `instanceId`; the per-instance site metadata lives in the
+        // InstancedMesh's userData keyed by that id (set in _buildShellGroups).
+        const shellMeshes = [];
+        for (const m of this._meshes) {
+            if (m && m.visible) shellMeshes.push(m);
         }
-        const hits = raycaster.intersectObjects(allMeshes, false);
+        const hits = raycaster.intersectObjects(shellMeshes, false);
         if (hits.length === 0) return null;
 
-        const mesh = hits[0].object;
-        return mesh.userData || null;
+        const hit = hits[0];
+        const instanceId = hit.instanceId;
+        if (instanceId === undefined || instanceId === null) return null;
+        return hit.object.userData[instanceId] || null;
     }
 
     // ── Lifecycle ───────────────────────────────────────────────────
@@ -559,6 +595,12 @@ export class MetaUnit {
         // Remove label overlay
         if (this._labelContainer && this._labelContainer.parentElement) {
             this._labelContainer.parentElement.removeChild(this._labelContainer);
+        }
+
+        // Free per-shell InstancedMesh instance buffers (traverse below frees
+        // their geometry/material; .dispose() releases the instanced attrs).
+        for (const m of this._meshes) {
+            if (m && typeof m.dispose === 'function') m.dispose();
         }
 
         // Dispose all Three.js objects
@@ -575,6 +617,8 @@ export class MetaUnit {
 
         this._scene.remove(this._root);
         this._meshes = [];
+        this._shellMeshes = {};
+        this._siteRefs = [];
         this._labelElements = [];
         this._groups = {};
     }

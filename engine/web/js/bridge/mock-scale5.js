@@ -338,21 +338,45 @@ export class CosmicMockBridge {
 
     getCosmicData() {
         const n = this._bodies.length;
-        const positions = new Float32Array(n * 3);
-        const types = new Int8Array(n);
-        const temperatures = new Float32Array(n);
-        const sizes = new Float32Array(n);
-        // True body mass in lattice units (audit P0-7). `sizes` is a
-        // radius-like field (b.radius || cbrt(mass)·…); the BH renderer
-        // needs the actual mass to draw a Schwarzschild horizon r_s = 2 G_N M
-        // that is LINEAR in M rather than the historical ∝ M^(1/3).
-        const masses = new Float32Array(n);
-        const densities = new Float32Array(n);
-        const luminosities = new Float32Array(n);
-        const stretches = new Float32Array(n);
-        const ids = new Int32Array(n); // stable body IDs (survive index shifts)
-        const fuel_stages = new Int8Array(n);
-        const fuel_fractions = new Float32Array(n);
+        // F-3 (audit 2026-05-27): reuse persistent typed-array buffers across
+        // physics frames instead of allocating 9 fresh arrays sized N every
+        // tick (~2.4 MB/s GC churn at N≈2600). The returned object is consumed
+        // synchronously by renderer.update() and never retained across calls
+        // (see scale5/controller.js), so a reused (next-frame-overwritten)
+        // buffer set is safe. Buffers are reallocated only when N changes, so
+        // their `.length` stays exactly n·{1,3} — bit-identical output values.
+        const buf = (this._dataBuf && this._dataBuf.n === n)
+            ? this._dataBuf
+            : (this._dataBuf = {
+                n,
+                positions: new Float32Array(n * 3),
+                types: new Int8Array(n),
+                temperatures: new Float32Array(n),
+                sizes: new Float32Array(n),
+                // True body mass in lattice units (audit P0-7). `sizes` is a
+                // radius-like field (b.radius || cbrt(mass)·…); the BH renderer
+                // needs the actual mass to draw a Schwarzschild horizon
+                // r_s = 2 G_N M that is LINEAR in M rather than ∝ M^(1/3).
+                masses: new Float32Array(n),
+                densities: new Float32Array(n),
+                luminosities: new Float32Array(n),
+                stretches: new Float32Array(n),
+                ids: new Int32Array(n), // stable body IDs (survive index shifts)
+                fuel_stages: new Int8Array(n),
+                fuel_fractions: new Float32Array(n),
+            });
+
+        const positions = buf.positions;
+        const types = buf.types;
+        const temperatures = buf.temperatures;
+        const sizes = buf.sizes;
+        const masses = buf.masses;
+        const densities = buf.densities;
+        const luminosities = buf.luminosities;
+        const stretches = buf.stretches;
+        const ids = buf.ids;
+        const fuel_stages = buf.fuel_stages;
+        const fuel_fractions = buf.fuel_fractions;
 
         for (let i = 0; i < n; i++) {
             const b = this._bodies[i];
