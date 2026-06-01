@@ -65,11 +65,6 @@ export function createAeControlsCard() {
         <label for="ae-angle" title="Bond angle strain: VSEPR preferred angles">Angle
           Strain</label>
       </div>
-      <div class="toggle-row toggle-row-disabled">
-        <input type="checkbox" id="ae-torsional" disabled>
-        <label for="ae-torsional"
-          title="Torsional / dihedral angle forces (Phase 4 — not yet implemented)">Torsional</label>
-      </div>
       <div class="toggle-row">
         <input type="checkbox" id="ae-thermostat">
         <label for="ae-thermostat"

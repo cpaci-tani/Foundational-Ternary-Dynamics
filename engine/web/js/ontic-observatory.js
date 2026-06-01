@@ -76,7 +76,7 @@ export class OnticObservatory {
         }
     }
 
-    /** log_2|Omega| — total configuration space (Theorem 5.4 upper bound) */
+    /** log_2|Omega| — total configuration space (Proposition III upper bound) */
     configSpaceSize() {
         switch (this._scale) {
             case 0: {
@@ -89,7 +89,7 @@ export class OnticObservatory {
         }
     }
 
-    /** Boundary Information Dominance ratio — Theorem 5.4 */
+    /** Boundary Information Dominance ratio — Proposition III */
     dominanceRatio() {
         const kf = this.lawComplexity();
         const kc0 = this.boundaryComplexity();
@@ -105,7 +105,7 @@ export class OnticObservatory {
         };
     }
 
-    // ── First Perturbation P_0 = C_0 - V (Remark 6.5) ──────────────
+    // ── First Perturbation P_0 = C_0 - V (Remark / heuristic) ──────────────
 
     firstPerturbation() {
         return {
@@ -116,7 +116,7 @@ export class OnticObservatory {
         };
     }
 
-    // ── Trilemma status (Corollary 6.3) ─────────────────────────────
+    // ── Trilemma status (Proposition IV) ─────────────────────────────
 
     trilemmaStatus() {
         // The user IS the external observer. Their scenario choice carries
@@ -130,7 +130,7 @@ export class OnticObservatory {
         };
     }
 
-    // ── Aggregation Hierarchy (Appendix A) ──────────────────────────
+    // ── Aggregation Hierarchy (heuristic) ──────────────────────────
 
     aggregationLevels() {
         const spatialNorm = this._spatialExtent / this._latticeSize;
@@ -148,7 +148,7 @@ export class OnticObservatory {
         ];
     }
 
-    /** Theorem A.1 check: No Premature Emergence */
+    /** Proposition V check: No Premature Emergence */
     theoremA1() {
         const spatialNorm = this._spatialExtent / this._latticeSize;
         const temporalDepth = this._tick / 100;
@@ -219,7 +219,7 @@ export function renderFcCard(obs, container) {
     const maxBar = Math.max(sp.kf, sp.kc0, 1);
 
     container.innerHTML = `
-        <div class="card-title">(f, C<sub>0</sub>) Ordered Pair <span style="color:var(--text-muted);font-weight:400">\u2014 Theorem 4.1</span></div>
+        <div class="card-title">(f, C<sub>0</sub>) Ordered Pair <span style="color:var(--text-muted);font-weight:400">\u2014 Proposition II</span></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div>
                 <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">f = Update Rule</div>
@@ -249,12 +249,12 @@ export function renderObserverCard(obs, container) {
     const tri = obs.trilemmaStatus();
 
     container.innerHTML = `
-        <div class="card-title">Observer Panel <span style="color:var(--text-muted);font-weight:400">\u2014 Corollary 3.2</span></div>
+        <div class="card-title">Observer Panel <span style="color:var(--text-muted);font-weight:400">\u2014 Heuristic</span></div>
         <div style="font-size:12px;color:var(--positive);margin-bottom:8px;font-weight:500">
             You are the external observer providing C<sub>0</sub>
         </div>
         <div style="font-size:11px;color:var(--text-secondary);margin-bottom:6px">
-            <strong>First Perturbation P<sub>0</sub></strong> (Remark 6.5): C<sub>0</sub> \u2212 V
+            <strong>First Perturbation P<sub>0</sub></strong> (Remark / heuristic): C<sub>0</sub> \u2212 V
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:11px">
             <span style="color:var(--text-muted)">Manifested</span>
@@ -276,7 +276,7 @@ export function renderHierarchyTower(obs, container) {
     const colors = ['#60a5fa', '#4ade80', '#fbbf24', '#f87171'];
     const highestActive = levels.reduce((m, l) => l.active ? l.level : m, -1);
 
-    let html = `<div class="card-title">Aggregation Hierarchy <span style="color:var(--text-muted);font-weight:400">\u2014 Appendix A</span></div>`;
+    let html = `<div class="card-title">Aggregation Hierarchy <span style="color:var(--text-muted);font-weight:400">\u2014 Heuristic</span></div>`;
     // Render top-to-bottom (Level 3 at top)
     for (let i = levels.length - 1; i >= 0; i--) {
         const l = levels[i];
@@ -300,7 +300,7 @@ export function renderInfoDynamics(obs, container) {
     const barOmega = Math.min(sp.logOmega / maxVal * 100, 100);
 
     container.innerHTML = `
-        <div class="card-title">Information Dynamics <span style="color:var(--text-muted);font-weight:400">\u2014 Theorem 5.4</span></div>
+        <div class="card-title">Information Dynamics <span style="color:var(--text-muted);font-weight:400">\u2014 Proposition III</span></div>
         <div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">
             K(f) \u226A K(C<sub>0</sub>) \u226A log<sub>2</sub>|\u03A9|
         </div>

@@ -292,7 +292,10 @@ const PARTICLES = [
         mass_mev: M_W_PHYS, charge: 1, spin: 1,
         color_charge: 'none', antiparticle: 'w_minus',
         ftd_formula: 'm_e·67/(8α²) ≈ 80.4 GeV',
-        ftd_accuracy: 0.02, ftd_status: 'derived',
+        // SPEC_SM_REPLACEMENT_COMPLETE.md row 10: M_W is [STRUCTURALLY
+        // MOTIVATED PARAMETRIC] (depends on demoted SM-3 sin²θ_W = 3/13).
+        // Retagged 'derived'→'parametric'. Audit Section C, 2026-05-27.
+        ftd_accuracy: 0.02, ftd_status: 'parametric',
         display_color: [0.30, 0.60, 0.95], display_size: 7
     },
     {
@@ -301,7 +304,8 @@ const PARTICLES = [
         mass_mev: M_W_PHYS, charge: -1, spin: 1,
         color_charge: 'none', antiparticle: 'w_plus',
         ftd_formula: 'm_W (same mass)',
-        ftd_accuracy: 0.02, ftd_status: 'derived',
+        // Mirrors W⁺ (same mass) → same status as M_W.
+        ftd_accuracy: 0.02, ftd_status: 'parametric',
         display_color: [0.20, 0.50, 0.85], display_size: 7
     },
     {
@@ -310,7 +314,10 @@ const PARTICLES = [
         mass_mev: M_Z_PHYS, charge: 0, spin: 1,
         color_charge: 'none', antiparticle: 'z_boson',
         ftd_formula: 'm_W/cos(θ_W) ≈ 91.2 GeV',
-        ftd_accuracy: 0.01, ftd_status: 'derived',
+        // SPEC_SM_REPLACEMENT_COMPLETE.md row 11: M_Z is [STRUCTURALLY
+        // MOTIVATED PARAMETRIC] (M_W/cos θ_W; depends on demoted sin²θ_W).
+        // Retagged 'derived'→'parametric'. Audit Section C, 2026-05-27.
+        ftd_accuracy: 0.01, ftd_status: 'parametric',
         display_color: [0.25, 0.55, 0.90], display_size: 7
     },
 
@@ -337,7 +344,10 @@ const PARTICLES = [
         color_charge: 'singlet', antiparticle: 'antiproton',
         composition: 'uud',
         ftd_formula: 'm_e·(N_eff/α + N_base·N_eff + N_c) ≈ 1836.47·m_e',
-        ftd_accuracy: 0.017, ftd_status: 'derived',
+        // LEDGER FTD-0016: m_p/m_e formula is [STRONGLY MOTIVATED CONJECTURE],
+        // not a derivation (no axioms→m_p chain). Retagged 'derived'→'selection'
+        // to match LEDGER. Audit Section C, 2026-05-27.
+        ftd_accuracy: 0.017, ftd_status: 'selection',
         display_color: [0.95, 0.30, 0.30], display_size: 6
     },
     {
@@ -347,7 +357,8 @@ const PARTICLES = [
         color_charge: 'singlet', antiparticle: 'proton',
         composition: 'ūūd̄',
         ftd_formula: 'm_p (same mass)',
-        ftd_accuracy: 0.017, ftd_status: 'derived',
+        // Mirrors proton (CPT partner, same mass) → same status as m_p.
+        ftd_accuracy: 0.017, ftd_status: 'selection',
         display_color: [0.30, 0.95, 0.95], display_size: 6
     },
     {
@@ -357,7 +368,10 @@ const PARTICLES = [
         color_charge: 'singlet', antiparticle: 'antineutron',
         composition: 'udd',
         ftd_formula: 'm_p + (m_d−m_u)·(1+α/π)',
-        ftd_accuracy: 0.02, ftd_status: 'derived',
+        // Built on m_p (FTD-0016 [STRONGLY MOTIVATED CONJECTURE]) plus a
+        // quark-mass-difference + EM-correction insertion (PDG inputs).
+        // Retagged 'derived'→'parametric'. Audit Section C, 2026-05-27.
+        ftd_accuracy: 0.02, ftd_status: 'parametric',
         display_color: [0.70, 0.25, 0.55], display_size: 6
     },
     {
@@ -367,7 +381,8 @@ const PARTICLES = [
         color_charge: 'singlet', antiparticle: 'neutron',
         composition: 'ūd̄d̄',
         ftd_formula: 'm_n (same mass)',
-        ftd_accuracy: 0.02, ftd_status: 'derived',
+        // Mirrors neutron (CPT partner, same mass) → same status as m_n.
+        ftd_accuracy: 0.02, ftd_status: 'parametric',
         display_color: [0.55, 0.20, 0.45], display_size: 6
     },
     {

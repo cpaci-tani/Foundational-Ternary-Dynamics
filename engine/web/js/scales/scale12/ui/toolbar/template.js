@@ -12,7 +12,7 @@ export function getScale12MetaToolbarTemplate() {
             <button class="view-toggle" id="meta-toggle-connections" title="Neighbor connections">Links</button>
             <span class="field-sep"></span>
             <button class="view-toggle" id="meta-toggle-bcc-fcc" title="Coord-sum parity coloring (13 even / 14 odd). Site userData.sublattice carries the canonical shell→sublattice mapping (center / SC / FCC / BCC) per Moore Layer Theorem §4; this toggle is the parity visual, not the canonical labelling — audit P0-17 fix, 2026-05-27.">BCC/FCC</button>
-            <button class="view-toggle" id="meta-toggle-gerade" title="Antipode partition (13+13 inversion fundamental domain). Historical name 'gerade/ungerade' retained for compatibility; this is NOT representation-theoretic g/u parity — see meta-unit.js audit P1-7.">g/u</button>
+            <button class="view-toggle" id="meta-toggle-gerade" title="Inversion fundamental domain (13 + 13): one representative per antipodal site-pair vs its antipode. NOT representation-theoretic gerade/ungerade parity (that labels irreps, not sites — Moore Layer Theorem §3/§8). Renamed orbit_rep/antipode — see meta-unit.js audit P1-7.">Orbit/Anti</button>
             <span class="field-sep"></span>
             <button class="view-toggle" id="meta-toggle-axes" title="Rotation axes (C2,C3,C4)">Axes</button>
             <button class="view-toggle" id="meta-toggle-mirrors" title="Mirror planes">Mirrors</button>

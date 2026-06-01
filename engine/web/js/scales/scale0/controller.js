@@ -31,8 +31,17 @@ import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js';
 import { Scale0ControlsComponent } from './ui/controls/component.js';
 import { wireScale0Controls } from './ui/controls/wire.js';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
-// flux-slice-panel and p1-observables-panel are mounted by app.js into
-// the side-panel tab system; their init functions are imported there.
+// The four Scale-0 overlay panels are first created by app.js at boot
+// ("Creating panels…", one-time). The controller ALSO drives their
+// lifecycle on engineMode switch: dispose() on destroy() (audit P1-4)
+// paired with idempotent init*() on mount() so a switch back to lattice
+// re-creates them. The init*() functions reuse their window singleton
+// when present, so the boot-time calls and the mount() calls do not
+// double-mount.
+import { initFluxSlicePanel } from './ui/overlays/flux-slice-panel.js';
+import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js';
+import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
+import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
 import { MemoryRecorder } from './timeline/memory-recorder.js';
 import * as _lodMod from './timeline/lod.js';
 import { ScrubBarComponent } from '../../ui/components/scrub-bar/component.js';
@@ -245,12 +254,35 @@ class Scale0LifecycleController extends BaseLifecycleController {
                 try { exitScale0(); } catch { /* defensive: never block teardown */ }
             });
         }
+        // (Re-)create the four Scale-0 overlay panels (audit P1-4). On first
+        // boot these already exist (app.js created them) and init*() is a
+        // no-op reuse; after a switch away from lattice their destroy()
+        // disposed them, so this re-creates them on re-entry. Each init*()
+        // is idempotent and guards its own DOM host, so a missing host
+        // (early boot ordering) is a safe no-op.
+        try { initFluxSlicePanel(); } catch (e) { /* ignore */ }
+        try { initP1ObservablesPanel(); } catch (e) { /* ignore */ }
+        try { initConservationMicropanel(); } catch (e) { /* ignore */ }
+        try { initSpectrumPanel(); } catch (e) { /* ignore */ }
     }
 
     destroy(ctx) {
         super.destroy(ctx);
         try { exitScale0(); } catch (e) { /* ignore */ }
         try { clearScale0Timeline(); } catch (e) { /* ignore */ }
+        // Dispose the four Scale-0 overlay panels on engineMode switch
+        // (audit P1-4, 2026-05-27). Each has a self-driving rAF loop that
+        // calls bridge.getDiagnostics() / getConservationTotals() every
+        // frame and rebuilds DOM; without disposal they keep running in
+        // non-lattice scales. dispose() unsubscribes the rAF, removes the
+        // DOM subtree, and clears its window singleton. Each is idempotent
+        // and re-created on the next Scale-0 mount via its init*() call.
+        if (typeof window !== 'undefined') {
+            try { window.__ftdConservationPanel?.dispose?.(); } catch (e) { /* ignore */ }
+            try { window.__ftdP1Panel?.dispose?.(); } catch (e) { /* ignore */ }
+            try { window.__ftdSpectrumPanel?.dispose?.(); } catch (e) { /* ignore */ }
+            try { window.__ftdFluxSlicePanel?.dispose?.(); } catch (e) { /* ignore */ }
+        }
     }
 }
 
