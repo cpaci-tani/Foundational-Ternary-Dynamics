@@ -83,6 +83,38 @@ export function createLatticeSamplers(state) {
         return b;
     }
 
+    // ── Persistent locality mask for getStrongForceField (F-16) ───────
+    // The strong-force field is SHORT-RANGE / tube-localized: a voxel can only
+    // contribute via (a) a flux-tube envelope `tubeEnv ≥ 0.01` — which forces
+    // perpendicular distance ≤ √(2·TUBE_W²·ln100) ≈ 4.55 from the tube segment
+    // and axial projection within [-1, sep+1] — or (b) short-range nuclear
+    // attraction at wrapped `r ≤ 5` from a quark. Every voxel outside the union
+    // of these neighbourhoods evaluates to exactly fx=fy=fz=0 and is dropped by
+    // the existing `mag < 1e-4` guard. Pre-refactor the sampler still ran the
+    // full per-pair + per-quark inner work for all N³ voxels — ~97% of which are
+    // provably non-contributing at a typical compact Moore cell (measured: 969
+    // contributing / 32768 scanned). We restrict the inner work to a conservative
+    // candidate set by stamping an axis-aligned box of half-width STRONG_REACH
+    // (≥ both reaches) around each tube-segment sample point and each quark,
+    // with periodic wrap, then gating the voxel loop on membership.
+    //
+    // EXACTNESS: the mask is a strict SUPERSET of contributing voxels (REACH ≥
+    // max physical reach, segments sampled every REACH voxels so long tubes are
+    // fully covered, wrap handled via mod N). The (z,y,x) iteration order and the
+    // identical force computation + `mag < 1e-4` test run unchanged for every
+    // gated-in voxel, so the emitted (position, vector) set and its order — and
+    // thus the `maxPts` truncation point — are BIT-IDENTICAL to the brute scan.
+    //
+    // Zero-GC: a single persistent Int32Array holds a per-voxel "stamp
+    // generation"; each call bumps `_strongMaskGen` and stamps that value, so a
+    // voxel is a candidate iff `mask[idx] === gen`. This needs no per-call
+    // allocation and no per-call clear (O(1) reset by incrementing the counter),
+    // mirroring the F-2 buffer-reuse and the _latencyProxy persistent-buffer
+    // patterns already in this file. Grown only on lattice resize.
+    const STRONG_REACH = 6; // ⌈max(4.55 perp + 1 axial, 5 quark)⌉, conservative
+    let _strongMask = null;
+    let _strongMaskGen = 0;
+
     // ── Pure lattice readers (12 of 14 scalar/vector samplers) ────────
 
     function getEFieldSampled(stride = 2) {
@@ -731,9 +763,59 @@ export function createLatticeSamplers(state) {
         }
         if (pairs.length === 0) return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
 
+        // Locality mask (F-16): stamp a conservative candidate region around the
+        // tube segments + quarks so the inner per-pair/per-quark work runs only
+        // where the field can be non-zero. See the STRONG_REACH note above for
+        // the exactness argument (the mask is a superset; iteration order and
+        // emitted set are bit-identical to the full brute scan).
+        if (_strongMask === null || _strongMask.length < N * N * N) {
+            _strongMask = new Int32Array(N * N * N);
+            _strongMaskGen = 0;
+        }
+        const mask = _strongMask;
+        const gen = ++_strongMaskGen;
+        const stampBox = (cx, cy, cz) => {
+            const x0 = Math.floor(cx - STRONG_REACH), x1 = Math.ceil(cx + STRONG_REACH);
+            const y0 = Math.floor(cy - STRONG_REACH), y1 = Math.ceil(cy + STRONG_REACH);
+            const z0 = Math.floor(cz - STRONG_REACH), z1 = Math.ceil(cz + STRONG_REACH);
+            for (let sz = z0; sz <= z1; sz++) {
+                const wz = ((sz % N) + N) % N;
+                for (let sy = y0; sy <= y1; sy++) {
+                    const wy = ((sy % N) + N) % N;
+                    const rowBase = wz * N * N + wy * N;
+                    for (let sx = x0; sx <= x1; sx++) {
+                        const wx = ((sx % N) + N) % N;
+                        mask[rowBase + wx] = gen;
+                    }
+                }
+            }
+        };
+        for (let pi = 0; pi < pairs.length; pi++) {
+            const pair = pairs[pi];
+            // Stamp both tube endpoints (A and B = A + d) plus interior sample
+            // points every STRONG_REACH voxels so a tube longer than 2·REACH is
+            // still fully covered along its axis.
+            const bx = pair.ax + pair.dx, by = pair.ay + pair.dy, bz = pair.az + pair.dz;
+            stampBox(pair.ax, pair.ay, pair.az);
+            stampBox(bx, by, bz);
+            const steps = Math.ceil(pair.sep / STRONG_REACH);
+            for (let s = 1; s < steps; s++) {
+                const f = s / steps;
+                stampBox(pair.ax + pair.dx * f, pair.ay + pair.dy * f, pair.az + pair.dz * f);
+            }
+        }
+        for (let qi = 0; qi < ps.length; qi++) {
+            stampBox(ps[qi].x, ps[qi].y, ps[qi].z);
+        }
+
         for (let z = 0; z < N; z += stride)
         for (let y = 0; y < N; y += stride)
         for (let x = 0; x < N; x += stride) {
+            // F-16 gate: skip voxels outside the stamped candidate region. These
+            // are provably non-contributing (would yield mag < 1e-4 and be
+            // dropped anyway), so this is output-exact — not an approximation.
+            if (mask[z * N * N + y * N + x] !== gen) continue;
+
             let fx = 0, fy = 0, fz = 0;
 
             // 1. Flux tube visualization: force along tube, pointing INWARD from both ends

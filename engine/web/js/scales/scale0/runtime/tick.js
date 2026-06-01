@@ -50,7 +50,21 @@ export function advanceSimulation(ctx, state) {
     // Mark the lattice for re-upload only if a tick actually advanced — when
     // scenario is paused, the lattice contents haven't changed, so skipping the
     // upload saves the per-frame data round-trip.
-    if (tickScenario) state.latticeNeedsUpload = true;
+    //
+    // `latticeNeedsUpload` is a one-shot flag consumed (and cleared) by
+    // frame-sync.js on its own throttle cadence, which is generally finer than
+    // the overlay throttle — so the overlay scheduler cannot reliably use it as
+    // a "did the field change since my last sweep?" signal. Maintain instead a
+    // monotonic `fieldDataVersion` that ticks once per actual field advance and
+    // is never cleared; the overlay scheduler latches its value at sweep start
+    // and only re-sweeps when it has moved (skip-unchanged). Owned entirely
+    // within the scale0 runtime (set here, read in field-overlays.js).
+    if (tickScenario && ticksToRun > 0) {
+        state.latticeNeedsUpload = true;
+        state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
+    } else if (tickScenario) {
+        state.latticeNeedsUpload = true;
+    }
 
     // Feed the playback timeline (no-op if the recorder hasn't been created
     // yet or if the scenario didn't tick this frame).
