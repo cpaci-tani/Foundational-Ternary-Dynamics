@@ -138,6 +138,13 @@ const _cloudCol  = new Float32Array(MAX_CLOUD * 3);
 const _cloudSize = new Float32Array(MAX_CLOUD);
 const _cloudAtomMap = new Int32Array(MAX_CLOUD);  // cloud point index → atom array index
 
+// F-9: one-time guard. The fixed buffers above are never overflowed (the loop
+// clamps to MAX_CLOUD), but a large scenario (e.g. ae-periodic, 118 atoms ×
+// full nuclear+orbital templates) can silently hit the cap and drop the tail of
+// the cloud. Latch a single console.warn the first time that truncation occurs
+// so the dropped points are visible in the console without spamming per frame.
+let _cloudCapWarned = false;
+
 /**
  * Expand atom positions + atomic numbers into a full orbital cloud.
  * Includes a nucleus center point for each atom (CPK colored, larger).
@@ -148,8 +155,10 @@ const _cloudAtomMap = new Int32Array(MAX_CLOUD);  // cloud point index → atom 
  */
 export function expandAEToOrbitalCloud(atomData, time = 0) {
     let out = 0;
+    let i = 0;
+    let capHit = false;
 
-    for (let i = 0; i < atomData.count && out < MAX_CLOUD - 1; i++) {
+    for (; i < atomData.count && out < MAX_CLOUD - 1; i++) {
         const cx = atomData.positions[i * 3];
         const cy = atomData.positions[i * 3 + 1];
         const cz = atomData.positions[i * 3 + 2];
@@ -159,6 +168,8 @@ export function expandAEToOrbitalCloud(atomData, time = 0) {
         const tmpl = generateTemplate(Z);
         const nucCount = nucleonCount(Z);  // number of nuclear cloud points
         const n = Math.min(tmpl.count, MAX_CLOUD - out);
+        // This atom's template was clipped to fit the buffer → cap hit (F-9).
+        if (n < tmpl.count) capHit = true;
 
         for (let j = 0; j < n; j++) {
             // Nuclear points get minimal breathing; electron orbitals get full breathing
@@ -183,6 +194,18 @@ export function expandAEToOrbitalCloud(atomData, time = 0) {
             _cloudAtomMap[out] = i;  // map cloud point → atom array index
             out++;
         }
+    }
+
+    // Early exit with atoms still unprocessed also means the cap was hit (F-9).
+    if (i < atomData.count) capHit = true;
+    if (capHit && !_cloudCapWarned) {
+        _cloudCapWarned = true;
+        console.warn(
+            `[FTD orbitals] orbital cloud hit MAX_CLOUD cap (${MAX_CLOUD} points); ` +
+            `cloud truncated — processed ${i}/${atomData.count} atoms. ` +
+            `Tail orbital points are dropped this render (and subsequent ones); ` +
+            `raise MAX_CLOUD in orbitals.js to show the full cloud.`
+        );
     }
 
     return { positions: _cloudPos, colors: _cloudCol, sizes: _cloudSize, count: out, atomMap: _cloudAtomMap };
