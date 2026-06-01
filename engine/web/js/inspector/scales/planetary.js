@@ -1,5 +1,24 @@
 import { setInspectorSectionVisibility } from '../chrome.js';
 
+// D-16: single source of the distance→(temperature, biome) classification for a
+// NON-STAR body. Both the inspector (here) and the planetary renderer
+// (planetary-renderer.js, which imports this) previously inlined the identical
+// three-way distance branch; this is the one definition. Thresholds and the
+// `1.25 - d` temperate ramp are byte-identical to both former copies, so visual
+// + telemetry output is unchanged. Star and gas-giant special-casing stays at
+// each call site (they differ by design and are not shared).
+//
+// (Architectural note: the natural home for this shared pure helper is
+// constants.js, alongside GLSL_SIMPLEX_NOISE_3D, but that file is outside this
+// change's ownership scope. It lives here to avoid pulling three.js into a
+// DOM-only module; chrome.js — the renderer's only added transitive import — is
+// side-effect-free.)
+export function classifyBiome(d) {
+    if (d < 0.5) return { uTemp: 1.0, biome: 'Lava World' };
+    if (d > 2.0) return { uTemp: -1.0, biome: 'Ice World' };
+    return { uTemp: (1.25 - d), biome: 'Temperate Earthlike' };
+}
+
 export function handlePlanetaryClick(target, intersects) {
     if (intersects.length > 0) {
         const mesh = intersects[0].object;
@@ -71,16 +90,7 @@ export function updatePlanetaryFields(target) {
         target.planetaryFields.type.textContent = 'Rocky Exoplanet';
         target.planetaryFields.dot.style.background = '#4ade80';
 
-        if (d < 0.5) {
-            uTemp = 1.0;
-            biome = 'Lava World';
-        } else if (d > 2.0) {
-            uTemp = -1.0;
-            biome = 'Ice World';
-        } else {
-            uTemp = (1.25 - d);
-            biome = 'Temperate Earthlike';
-        }
+        ({ uTemp, biome } = classifyBiome(d));
 
         if (type === 2) {
             target.planetaryFields.type.textContent = 'Gas Giant';
