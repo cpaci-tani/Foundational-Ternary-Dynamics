@@ -252,6 +252,14 @@ ftd_add_test(test_constructor_contract tests/test_constructor_contract.cpp
 ftd_add_test(test_native_observable_registry tests/test_native_observable_registry.cpp
              NO_CORE LABELS constructor observable eft_quick)
 
+# Engine-flawless audit (2026-06-01): tick phase-order regression + scale-engine
+# RAII/clear() lifecycle contract. Labelled "lifecycle" for the `ctest -L
+# lifecycle` merge-gate bundle.
+ftd_add_test(test_tick_phase_order tests/test_tick_phase_order.cpp
+             CTEST_NAME tick_phase_order TIMEOUT 120 LABELS lifecycle unit)
+ftd_add_test(test_engine_lifecycle tests/test_engine_lifecycle.cpp
+             CTEST_NAME engine_lifecycle TIMEOUT 120 LABELS lifecycle unit)
+
 # Foundational
 add_executable(test_constants tests/test_constants.cpp)
 target_link_libraries(test_constants ftd_core)
