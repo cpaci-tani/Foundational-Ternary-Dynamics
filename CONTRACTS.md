@@ -610,6 +610,78 @@ See also: ADR-0012 (Golden-tick regression gate).
 
 ---
 
+## §13 — Scale-engine lifecycle (`ScaleEngine::clear()` + RAII)
+
+### Purpose
+
+The abstract base [`engine/include/ftd/scale_engine.h`](engine/include/ftd/scale_engine.h)
+is the polymorphic interface the bridge holds (`ScaleEngine*`) while the web
+dashboard switches scales at runtime. Two members govern an engine's
+construct → use → reset → reuse → destruct lifecycle:
+
+```cpp
+virtual void clear()       = 0;          // reset to a reusable-empty state
+virtual ~ScaleEngine()     = default;    // RAII: member destructors free all
+```
+
+Concrete subclasses: `ParticleEngine` (Scale 1), `CosmicEngine` (Scale 5),
+`DagEngine` (Scale 0, EXPERIMENTAL). Each owns entity vectors and/or a
+unique_ptr resource; the lifecycle contract is what lets the bridge re-seed an
+engine between scenarios without leaking or carrying stale state.
+
+### The contract
+
+A concrete `ScaleEngine`:
+
+1. **`clear()` returns the engine to reusable-empty.** After `clear()`,
+   `entity_count() == 0`, the entity container is empty, and the tick counter
+   is back to 0. The engine MUST be immediately reusable — a subsequent
+   inject + `tick()` works exactly as on a freshly-constructed instance.
+2. **`clear()` also resets per-engine integrator/world state**, not just the
+   entity list. `CosmicEngine::clear()` resets the Friedmann cosmology
+   (`scale_factor() → 1.0`, `hubble_parameter() → 0`, cosmic time → 0);
+   `ParticleEngine`/`CosmicEngine` reset their id counter (`next_id_ → 0`, so
+   ids restart); `DagEngine::clear()` rebuilds the DAG (all flux wiped) and
+   resets the tick.
+3. **`clear()` does NOT reset configuration.** Time step (`dt_`), softening,
+   box size, lattice/DAG size, and the toggle struct survive `clear()` — they
+   are configuration, not state. (`DagEngine::clear()` preserves the DAG's
+   power-of-two `size()`.) Callers that need a config reset construct a new
+   engine.
+4. **`clear()` is idempotent.** Calling it on an already-empty engine neither
+   crashes nor resurrects state; the engine stays empty with tick 0.
+5. **The destructor is virtual and defaulted; teardown is member-RAII.**
+   Deleting any subclass through a `ScaleEngine*` MUST dispatch the correct
+   derived destructor and free every owned resource (`DagEngine`'s
+   `unique_ptr<SparseVoxelDAG>`, the Barnes-Hut octrees, the entity vectors).
+   Construct + populate + destruct in a tight loop MUST not crash or grow
+   unboundedly.
+
+### Known quirk (recorded, not a contract waiver)
+
+`DagEngine::entity_count()` reads `active_indices_`, a member that is declared
+but never written anywhere in the codebase, so it is **permanently 0**. The
+DAG carries injected flux correctly (`dag().get_voxel(...)`), but the
+polymorphic `entity_count()` contract (clause 1) is unmet for `DagEngine`.
+The lifecycle test asserts `DagEngine` population/reset against the DAG voxel
+state directly and records the `entity_count() == 0` quirk explicitly rather
+than skipping it. Closing this means populating `active_indices_` during
+`phase_write`/`phase_read` (tracked alongside the engine's other `[OPEN]`
+stub phases).
+
+### Enforcement
+
+[`engine/tests/test_engine_lifecycle.cpp`](engine/tests/test_engine_lifecycle.cpp)
+enforces clauses 1–5 for all three concrete subclasses (labelled L1–L6 per
+engine) plus a delete-through-`ScaleEngine*` polymorphic-teardown section. It
+is a deterministic CPU test built against `ftd_core` + `ftd_test_support` and
+uses the §8 test-telemetry API. New `ScaleEngine` subclasses that are
+practical to instantiate standalone MUST be added to it; subclasses that
+require a full `RenderBridge`/scene MAY be recorded as an explained `check`
+skip rather than faked.
+
+---
+
 ## Cross-references
 
 - [META_PROJECT_ATLAS.md](META_PROJECT_ATLAS.md) — entry-point navigation
@@ -619,6 +691,8 @@ See also: ADR-0012 (Golden-tick regression gate).
 - [engine/web/js/bridge/scenarios/_helpers.js](engine/web/js/bridge/scenarios/_helpers.js) — scenario primitives
 - [engine/include/ftd/term_toggles.h](engine/include/ftd/term_toggles.h) — toggle struct
 - [engine/include/ftd/test_telemetry.h](engine/include/ftd/test_telemetry.h) — test API
+- [engine/include/ftd/scale_engine.h](engine/include/ftd/scale_engine.h) — ScaleEngine lifecycle interface (§13)
+- [engine/tests/test_engine_lifecycle.cpp](engine/tests/test_engine_lifecycle.cpp) — ScaleEngine lifecycle enforcement (§13)
 - [scripts/constants.py](scripts/constants.py) — canonical Python constants
 - [engine/include/ftd/ontic.h](engine/include/ftd/ontic.h) — canonical C++ derivation chain
 - [engine/web/js/constants.js](engine/web/js/constants.js) — canonical JS mirror
