@@ -926,8 +926,16 @@ export class Viewport {
     updateParticles(data) { this._particleRenderer.updateParticles(data); }
     setPointShape(shapeIndex) { this._particleRenderer.setPointShape(shapeIndex); }
     setOpacity(val) { this._particleRenderer.setOpacity(val); }
-    setPositiveSize(val) { this.visualSettings.positiveSize = val; }
-    setNegativeSize(val) { this.visualSettings.negativeSize = val; }
+    setPositiveSize(val) {
+        this.visualSettings.positiveSize = val;
+        this._particleRenderer?.updateParticleSizes();
+        this.render();
+    }
+    setNegativeSize(val) {
+        this.visualSettings.negativeSize = val;
+        this._particleRenderer?.updateParticleSizes();
+        this.render();
+    }
     setParticleOpacity(val) {
         this.visualSettings.particleOpacity = val;
         this._particleRenderer.setOpacity(val);
