@@ -40,6 +40,7 @@
  * ---------------------------------------------------------------
  */
 
+import { BaseLifecycleController } from '../../lifecycle.js';
 import { getMolecule, loadMolecule } from '../../molecules.js';
 import { SCALE2_TOGGLES } from '../../config/toggles.js';
 import { animateAE, syncAEParams } from '../scale2/controller.js';
@@ -197,10 +198,49 @@ export function bindScale3ControlsUI() {
     if (controlsPanel) new Scale3ControlsComponent(controlsPanel).init();
 }
 
+// =====================================================================
+// Lifecycle Controller (unified pattern — see scale1/controller.js)
+// =====================================================================
+//
+// Brings Scale 3 into parity with scales 0/1/4/5/6: a singleton
+// BaseLifecycleController whose destroy() reclaims any tracked
+// listeners/timers/Three.js objects (super.destroy) BEFORE running the
+// existing resetScale3() molecule-state reset. Today Scale 3 binds no raw
+// listeners/timers/Three.js objects (verified by grep), so super.destroy
+// is a no-op and this wrapper is purely defensive.
+//
+// Scale 3 delegates its render loop and most visual state to Scale 2
+// (animateAE / resetScale2). That delegation is unchanged: this wrapper
+// only governs Scale 3's OWN destroy/reset (molecule-specific state). The
+// exported mount/destroy signatures are unchanged so app.js's CONTROLLERS
+// registry is unaffected.
+//
+// NOTE: resetScale3(ctx) above stays a pure reset (NOT routed through the
+// lifecycle) to mirror Scale 2 and keep it callable as a plain state
+// clear without tearing down lifecycle resources.
+
+class Scale3LifecycleController extends BaseLifecycleController {
+    constructor() {
+        super();
+    }
+
+    mount(ctx) {
+        // Standard setup placeholder
+    }
+
+    destroy(ctx) {
+        // Reclaim tracked resources first, then run the existing reset.
+        super.destroy(ctx);
+        resetScale3(ctx);
+    }
+}
+
+const _lifecycleController = new Scale3LifecycleController();
+
 export function mount(ctx) {
-    // standard placeholder
+    _lifecycleController.mount(ctx);
 }
 
 export function destroy(ctx) {
-    resetScale3(ctx);
+    _lifecycleController.destroy(ctx);
 }

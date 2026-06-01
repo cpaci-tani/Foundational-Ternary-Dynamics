@@ -28,6 +28,7 @@
  *   bindScale2ControlsUI()        - mount controls card (re-export)
  */
 
+import { BaseLifecycleController } from '../../lifecycle.js';
 import { getElement } from '../../elements.js';
 import {
     expandAEToOrbitalCloud, generateBondingCloud,
@@ -565,10 +566,47 @@ export function loadAEScenario(ctx, name) {
     if (initDiag.totalEnergy !== 0) _aeInitialEnergy = initDiag.totalEnergy;
 }
 
+// =====================================================================
+// Lifecycle Controller (unified pattern — see scale1/controller.js)
+// =====================================================================
+//
+// Brings Scale 2 into parity with scales 0/1/4/5/6: a singleton
+// BaseLifecycleController whose destroy() reclaims any tracked
+// listeners/timers/Three.js objects (super.destroy) BEFORE running the
+// existing resetScale2() visual reset. Today Scale 2 binds no raw
+// listeners/timers/Three.js objects (verified by grep), so super.destroy
+// is a no-op and this wrapper is purely defensive — it makes any FUTURE
+// `this.bindEvent`/`this.setInterval`/`this.trackThreeObject` here
+// automatically reclaimed on mode switch. The exported mount/destroy
+// signatures are unchanged so app.js's CONTROLLERS registry is unaffected.
+//
+// NOTE: resetScale2(ctx) above stays a pure visual reset (NOT routed
+// through the lifecycle) because app.js calls it directly mid-session as
+// the cross-scale visual reset (_resetAllVisualState); tearing down
+// lifecycle resources there would change behavior.
+
+class Scale2LifecycleController extends BaseLifecycleController {
+    constructor() {
+        super();
+    }
+
+    mount(ctx) {
+        // Standard setup placeholder
+    }
+
+    destroy(ctx) {
+        // Reclaim tracked resources first, then run the existing reset.
+        super.destroy(ctx);
+        resetScale2(ctx);
+    }
+}
+
+const _lifecycleController = new Scale2LifecycleController();
+
 export function mount(ctx) {
-    // standard placeholder
+    _lifecycleController.mount(ctx);
 }
 
 export function destroy(ctx) {
-    resetScale2(ctx);
+    _lifecycleController.destroy(ctx);
 }
