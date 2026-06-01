@@ -919,14 +919,17 @@ export function createAtomEngine(state) {
             }
         }
 
-        // Bond PE
+        // Bond PE — build id→atom map ONCE (F-10) so the partner lookup in the
+        // bond loop is O(1) instead of an O(N) Array.find per bond (was O(N²)).
+        const idToAtom = new Map();
+        for (let i = 0; i < atoms.length; i++) idToAtom.set(atoms[i].id, atoms[i]);
         const counted = new Set();
         for (const a of atoms) {
             for (const b of a.bonds) {
                 const key = Math.min(a.id, b.partner_id) + ',' + Math.max(a.id, b.partner_id);
                 if (counted.has(key)) continue;
                 counted.add(key);
-                const partner = atoms.find(at => at.id === b.partner_id);
+                const partner = idToAtom.get(b.partner_id);
                 if (!partner) continue;
                 const dx = partner.x - a.x, dy = partner.y - a.y, dz = partner.z - a.z;
                 const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
@@ -956,8 +959,23 @@ export function createAtomEngine(state) {
 
     /**
      * Decomposed forces on each atom: ionic (Coulomb), vdW (LJ), bond (spring), net.
+     *
+     * F-8 (visibility-gated, EXACT): the O(N²) ionic+vdW pair loop is the only
+     * expensive part. The caller passes `want` flags for the channels whose
+     * force arrows are actually visible; `net` requires all three channels.
+     * Channels that are neither requested nor needed by `net` are returned as
+     * the zeroed Float32Array they were allocated to — the renderer leaves those
+     * (invisible) arrow meshes hidden, so the displayed output is identical.
+     *
+     * The long-range pair loop is skipped ENTIRELY when no long-range channel
+     * (ionic, vdW, or net) is requested — e.g. bond-only arrows on ae-periodic.
+     * No cutoff is introduced: when the loop does run it is the same exact
+     * full-N² sum as before, so every displayed channel value is unchanged.
+     *
+     * @param {{ionic?:boolean, vdw?:boolean, bond?:boolean, net?:boolean}} [want]
+     *        Which channels to compute. Omitted ⇒ all (backward-compatible).
      */
-    function aeGetForceDecomposition() {
+    function aeGetForceDecomposition(want) {
         if (!state._ae) return { ionic: new Float32Array(0), vdw: new Float32Array(0), bond: new Float32Array(0), net: new Float32Array(0), count: 0 };
         const atoms = state._ae.atoms;
         const n = atoms.length;
@@ -967,13 +985,27 @@ export function createAtomEngine(state) {
         const net   = new Float32Array(n * 3);
         const soft2 = state._ae.soft * state._ae.soft;
 
+        // Default to all-channels when no selection is given (callers that pass
+        // a `want` object get per-channel gating). `net` pulls in every channel.
+        const wantNet   = !want || want.net;
+        const wantIonic = wantNet || (want && want.ionic);
+        const wantVdw   = wantNet || (want && want.vdw);
+        const wantBond  = wantNet || !want || want.bond;
+        // The pair loop produces ONLY the long-range channels (ionic, vdW).
+        const wantPair  = wantIonic || wantVdw;
+
+        // Net accumulator kept in f64 so the final net = f32((fi+fv)+fb) is
+        // bit-identical to the original single-expression sum (no intermediate
+        // float32 rounding between the ionic+vdW and bond passes). Only when net
+        // is actually requested.
+        const netAcc = wantNet ? new Float64Array(n * 3) : null;
+
         _aeBuildBondLookup();
 
-        for (let i = 0; i < n; i++) {
+        for (let i = 0; wantPair && i < n; i++) {
             const ai = atoms[i];
             let fi_x = 0, fi_y = 0, fi_z = 0;
             let fv_x = 0, fv_y = 0, fv_z = 0;
-            let fb_x = 0, fb_y = 0, fb_z = 0;
 
             for (let j = 0; j < n; j++) {
                 if (j === i) continue;
@@ -987,12 +1019,12 @@ export function createAtomEngine(state) {
                 const isBonded = _aeIsBonded(ai.id, aj.id);
                 const is13 = !isBonded && _aeIs13(i, j);
 
-                if (state._ae.ionic && !isBonded && !is13 && ai.charge !== 0 && aj.charge !== 0) {
+                if (wantIonic && state._ae.ionic && !isBonded && !is13 && ai.charge !== 0 && aj.charge !== 0) {
                     const f = -AE_K_COULOMB * ai.charge * aj.charge / r2;
                     fi_x += f * rx; fi_y += f * ry; fi_z += f * rz;
                 }
 
-                if (state._ae.vdw && !isBonded && !is13) {
+                if (wantVdw && state._ae.vdw && !isBonded && !is13) {
                     const eps_mix = Math.sqrt(ai.vdw_epsilon * aj.vdw_epsilon);
                     const sig_mix = (ai.vdw_sigma + aj.vdw_sigma) / 2;
                     const sr = sig_mix / r;
@@ -1003,7 +1035,21 @@ export function createAtomEngine(state) {
                 }
             }
 
-            if (state._ae.bonds_force) {
+            ionic[i * 3] = fi_x; ionic[i * 3 + 1] = fi_y; ionic[i * 3 + 2] = fi_z;
+            vdw[i * 3]   = fv_x; vdw[i * 3 + 1]   = fv_y; vdw[i * 3 + 2]   = fv_z;
+            // Seed the f64 net accumulator with the ionic+vdW partials (bond
+            // added in the bond pass). Kept in f64 → no intermediate rounding.
+            if (netAcc) {
+                netAcc[i * 3] = fi_x + fv_x; netAcc[i * 3 + 1] = fi_y + fv_y; netAcc[i * 3 + 2] = fi_z + fv_z;
+            }
+        }
+
+        // Bond spring channel (O(bonds), cheap) — computed independently of the
+        // long-range pair loop so bond-only arrows skip the N² work entirely.
+        if (wantBond && state._ae.bonds_force) {
+            for (let i = 0; i < n; i++) {
+                const ai = atoms[i];
+                let fb_x = 0, fb_y = 0, fb_z = 0;
                 for (const b of ai.bonds) {
                     const jIdx = state._aeIdToIdx.get(b.partner_id);
                     const aj = jIdx !== undefined ? atoms[jIdx] : null;
@@ -1016,15 +1062,17 @@ export function createAtomEngine(state) {
                     const f = b.k_bond * dr;
                     fb_x += f * rx; fb_y += f * ry; fb_z += f * rz;
                 }
+                bond[i * 3] = fb_x; bond[i * 3 + 1] = fb_y; bond[i * 3 + 2] = fb_z;
+                // Add the f64 bond partial onto the f64 net accumulator.
+                if (netAcc) {
+                    netAcc[i * 3] += fb_x; netAcc[i * 3 + 1] += fb_y; netAcc[i * 3 + 2] += fb_z;
+                }
             }
-
-            ionic[i * 3] = fi_x; ionic[i * 3 + 1] = fi_y; ionic[i * 3 + 2] = fi_z;
-            vdw[i * 3]   = fv_x; vdw[i * 3 + 1]   = fv_y; vdw[i * 3 + 2]   = fv_z;
-            bond[i * 3]  = fb_x; bond[i * 3 + 1]  = fb_y; bond[i * 3 + 2]  = fb_z;
-            net[i * 3]   = fi_x + fv_x + fb_x;
-            net[i * 3 + 1] = fi_y + fv_y + fb_y;
-            net[i * 3 + 2] = fi_z + fv_z + fb_z;
         }
+
+        // Commit the f64 net accumulator to the float32 net channel in one pass.
+        // net[k] = f32((fi+fv)+fb), matching the original fi+fv+fb expression.
+        if (netAcc) net.set(netAcc);
 
         return { ionic, vdw, bond, net, count: n };
     }

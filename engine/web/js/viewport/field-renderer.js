@@ -30,6 +30,15 @@ import * as THREE from 'three';
 import { potentialToColor, magnitudeToColor, fluxToColor, potentialToColorInto, magnitudeToColorInto } from '../fields.js';
 import { K_B, K_GENESIS } from '../constants.js';
 
+// Confinement-string visual: draw a color-pair proximity glyph between any
+// two particles whose squared separation is below this cutoff. [IMPOSED]
+// (audit P2-9: replaces a bare `J2_threshold_dist2 = 120` magic literal).
+// √120 ≈ 10.95 voxels — the visual reach of a flux string before it fades.
+// Defined module-locally (not in the shared constants.js) to keep this
+// Section-F change confined to the owned file; value preserved verbatim so
+// the rendered pair set is bit-identical to the prior hardcode.
+const CONFINEMENT_PAIR_DIST2 = 120.0;
+
 // ── Voxel-center rendering convention ─────────────────────────────────
 // Lattice voxel index k is rendered at world centre k+0.5 (see
 // scene-core.js, flux-renderer.js, ftd_wasm.cpp particle pos_cache, and
@@ -164,6 +173,19 @@ export class ViewportFieldRenderer {
         this._magCacheDual = null;
     }
 
+
+    // PERF (F-13): true only when the active boundary shape actually clips.
+    // For 'cube' / 'none' / undefined, insideBoundary() returns true for every
+    // point, so the per-voxel insideBoundary() call in the hot arrow/streamline
+    // loops is pure overhead. Hoisting `const _needsClip = this._clipActive();`
+    // once per update and gating the call on it is output-EXACT (identical
+    // control flow — the call would have returned true and never `continue`d)
+    // while skipping ~100k function calls + 3 divisions per upload at L=64.
+    // Mirrors the hoist already present in flux-renderer.js:233-234.
+    _clipActive() {
+        const bs = this._boundaryShape;
+        return !(bs === 'cube' || bs === 'none' || bs === undefined);
+    }
 
     _checkInsideBoundary(x, y, z) {
         const isOrigin = this._getBoundaryMode && this._getBoundaryMode() === 'origin';
@@ -321,6 +343,7 @@ export class ViewportFieldRenderer {
         }
 
         const halfN = N / 2;
+        const _needsClip = this._clipActive();
         let count = 0;
         const maxPts = Math.min(total, MAX_FIELD_GRID);
         for (let i = 0; i < total && count < maxPts; i++) {
@@ -331,11 +354,14 @@ export class ViewportFieldRenderer {
             else if (axis === 1) { x = a; y = index; z = b; }
             else { x = a; y = b; z = index; }
 
-            // Clip to boundary shape
-            const nx = (x + 0.5 - this._center) / this._radius;
-            const ny = (y + 0.5 - this._center) / this._radius;
-            const nz = (z + 0.5 - this._center) / this._radius;
-            if (!this._insideBoundary(nx, ny, nz)) continue;
+            // Clip to boundary shape (F-13: skip entirely when the shape never
+            // clips — same control flow, no per-voxel call or 3 divisions).
+            if (_needsClip) {
+                const nx = (x + 0.5 - this._center) / this._radius;
+                const ny = (y + 0.5 - this._center) / this._radius;
+                const nz = (z + 0.5 - this._center) / this._radius;
+                if (!this._insideBoundary(nx, ny, nz)) continue;
+            }
 
             posAttr.array[count * 3]     = x + 0.5;
             posAttr.array[count * 3 + 1] = y + 0.5;
@@ -594,6 +620,7 @@ export class ViewportFieldRenderer {
         }
         const threshold = maxMag * thresholdFrac;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         const [br, bg, bb] = colors.base;
         const [tr, tg, tb] = colors.tip;
 
@@ -603,7 +630,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             activeIndices.push(i);
         }
 
@@ -637,6 +664,7 @@ export class ViewportFieldRenderer {
         const colAttr = mesh.geometry.getAttribute('color');
         const maxVerts = posAttr.array.length / 3;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         const rgb = [0, 0, 0];
         let vi = 0;
         for (const line of streamlines) {
@@ -646,7 +674,7 @@ export class ViewportFieldRenderer {
                 const px = sx + VOXEL_CENTER_OFFSET;
                 const py = sy + VOXEL_CENTER_OFFSET;
                 const pz = sz + VOXEL_CENTER_OFFSET;
-                if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+                if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
                 colorFn(i, nPts, rgb);
                 // +VOXEL_CENTER_OFFSET so the line aligns with particles + flux volume.
                 posAttr.array[vi * 3]     = px;
@@ -745,6 +773,7 @@ export class ViewportFieldRenderer {
     updatePoyntingVectors(fieldData) {
         this._syncCenterAndRadius();
         if (!this._poyntingVectors) this._buildPoyntingVectors();
+        const _needsClip = this._clipActive();
         const posAttr = this._poyntingVectors.geometry.getAttribute('position');
         const colAttr = this._poyntingVectors.geometry.getAttribute('color');
         const { positions, vectors, count } = fieldData;
@@ -768,7 +797,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             activeIndices.push(i);
         }
 
@@ -831,6 +860,7 @@ export class ViewportFieldRenderer {
     updateDivergenceField(fieldData) {
         this._syncCenterAndRadius();
         if (!this._divField) this._buildDivergenceField();
+        const _needsClip = this._clipActive();
         const posAttr = this._divField.geometry.getAttribute('position');
         const colAttr = this._divField.geometry.getAttribute('particleColor');
         const sizeAttr = this._divField.geometry.getAttribute('size');
@@ -850,7 +880,7 @@ export class ViewportFieldRenderer {
             const v = values[i];
             if (Math.abs(v) < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             activeIndices.push(i);
         }
 
@@ -928,6 +958,7 @@ export class ViewportFieldRenderer {
     updateGravityField(fieldData) {
         this._syncCenterAndRadius();
         if (!this._gravityField) this._buildGravityField();
+        const _needsClip = this._clipActive();
         const posAttr = this._gravityField.geometry.getAttribute('position');
         const colAttr = this._gravityField.geometry.getAttribute('color');
         const { positions, vectors, count } = fieldData;
@@ -951,7 +982,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             activeIndices.push(i);
         }
 
@@ -1063,6 +1094,7 @@ export class ViewportFieldRenderer {
         const pal = FORCE_PALETTES.weak;
         const threshold = maxVal * 0.08;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
@@ -1071,7 +1103,7 @@ export class ViewportFieldRenderer {
             const px = positions[i * 3]     + VOXEL_CENTER_OFFSET;
             const py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
             const pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius,
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius,
                                       (py - this._center) / this._radius,
                                       (pz - this._center) / this._radius)) continue;
 
@@ -1180,6 +1212,7 @@ export class ViewportFieldRenderer {
         if (maxMag < 1e-15) maxMag = 1;
         const threshold = maxMag * 0.02;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         const sizeBase = 15 + 10 * (this._latticeSize / 64);
         let vi = 0;
 
@@ -1187,7 +1220,7 @@ export class ViewportFieldRenderer {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             const t = mag / maxMag;
             const [r, g, b] = lerpPalette(pal, t);
@@ -1240,6 +1273,11 @@ export class ViewportFieldRenderer {
             this._forceStreamlineMats.push(mat);
         }
         this._forceStreamlineCount = 0;
+        // F-5 change-detection cache — must be (re)initialised whenever the
+        // pool is (re)built so a fresh empty geometry is never mistaken for an
+        // already-uploaded line. -1 = "no data resident yet" → first update
+        // always writes + computes distances.
+        this._forceStreamlineDrawn = new Int32Array(maxLines).fill(-1);
     }
 
     initForceStreamlines() { if (!this._forceStreamlinePool) this._buildForceStreamlines(); }
@@ -1253,6 +1291,18 @@ export class ViewportFieldRenderer {
         const baseColor = pal.mid;
         const colorHex = new THREE.Color(baseColor[0], baseColor[1], baseColor[2]);
 
+        // PERF (F-5): cache the per-line drawn vertex count so we can detect
+        // when an incoming streamline is element-wise identical to the one
+        // already resident in the GPU buffer. computeLineDistances() (dash
+        // arc-length integration) + computeBoundingSphere() + the position
+        // re-upload are deterministic functions of the vertex data, so when
+        // nothing changed they reproduce a byte-identical result — skipping
+        // them is output-exact, not approximate. The comparison is O(verts)
+        // but avoids the strictly-more-expensive distance integration + GPU
+        // upload for unchanged lines (overlay refreshes fire far more often
+        // than the field actually changes).
+        const drawnCounts = this._forceStreamlineDrawn ||
+            (this._forceStreamlineDrawn = new Int32Array(pool.length).fill(-1));
         const usedCount = Math.min(lines.length, pool.length);
         for (let li = 0; li < usedCount; li++) {
             const verts = lines[li];
@@ -1261,13 +1311,24 @@ export class ViewportFieldRenderer {
             const maxVerts = posAttr.array.length / 3;
             const vertCount = Math.min(verts.length / 3, maxVerts);
 
-            for (let v = 0; v < vertCount * 3; v++) {
-                posAttr.array[v] = verts[v];
+            const arr = posAttr.array;
+            const n3 = vertCount * 3;
+            let changed = drawnCounts[li] !== vertCount;
+            if (!changed) {
+                for (let v = 0; v < n3; v++) {
+                    if (arr[v] !== verts[v]) { changed = true; break; }
+                }
             }
-            posAttr.needsUpdate = true;
-            line.geometry.setDrawRange(0, vertCount);
-            line.geometry.computeBoundingSphere();
-            line.computeLineDistances();
+            if (changed) {
+                for (let v = 0; v < n3; v++) {
+                    arr[v] = verts[v];
+                }
+                posAttr.needsUpdate = true;
+                line.geometry.setDrawRange(0, vertCount);
+                line.geometry.computeBoundingSphere();
+                line.computeLineDistances();
+                drawnCounts[li] = vertCount;
+            }
 
             mats[li].color.copy(colorHex);
             mats[li].opacity = Math.min(0.8, 0.3 + vertCount / 40 * 0.5);
@@ -1360,6 +1421,7 @@ export class ViewportFieldRenderer {
         if (maxMag < 1e-15) maxMag = 1;
         const threshold = maxMag * 0.03;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         const scaleBase = 0.8;
         let vi = 0;
 
@@ -1382,7 +1444,7 @@ export class ViewportFieldRenderer {
             if (mag < threshold) continue;
             if ((qualifyingSeen++ % sampleStride) !== 0) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             const t = mag / maxMag;
             const scale = Math.log(1 + t * 9) / Math.log(10) * scaleBase;
@@ -1710,7 +1772,7 @@ export class ViewportFieldRenderer {
 
         let vi = 0;
         const kb = bridge.getParam ? bridge.getParam('kb') : K_B;
-        const J2_threshold_dist2 = 120.0;
+        const J2_threshold_dist2 = CONFINEMENT_PAIR_DIST2;
 
         const ptData = bridge.getParticleData();
         if (!ptData || ptData.count < 2 || !ptData.positions) {
@@ -1718,10 +1780,56 @@ export class ViewportFieldRenderer {
             return;
         }
         const pos = ptData.positions;
+        const count = ptData.count;
 
-        for (let i = 0; i < ptData.count; i++) {
+        // PERF (F-4): the pair test below was O(N²) — 40k pair-tests/frame at
+        // N=200. Replace the all-pairs inner scan with a uniform spatial hash
+        // so each particle only checks others within its 27-cell neighbourhood.
+        // EXACTNESS: this is output-identical, not approximate. Cell size is
+        // exactly √threshold, so every pair with r² < threshold necessarily
+        // falls in the same or an adjacent cell — none are missed. For each i
+        // (ascending, outer order unchanged) the surviving candidates are
+        // SORTED ascending by j before emission, reproducing the original
+        // (i asc, j asc) lexicographic order — which is what the `maxVerts`
+        // truncation depends on, so the selected/written segment set is bit-
+        // identical to the brute-force version.
+        const cell = Math.sqrt(J2_threshold_dist2);
+        const buckets = this._confBuckets || (this._confBuckets = new Map());
+        buckets.clear();
+        const keyOf = (cx, cy, cz) => cx + ',' + cy + ',' + cz;
+        for (let p = 0; p < count; p++) {
+            const cx = Math.floor(pos[p * 3]     / cell);
+            const cy = Math.floor(pos[p * 3 + 1] / cell);
+            const cz = Math.floor(pos[p * 3 + 2] / cell);
+            const k = keyOf(cx, cy, cz);
+            let arr = buckets.get(k);
+            if (arr === undefined) { arr = []; buckets.set(k, arr); }
+            arr.push(p);
+        }
+
+        const cand = this._confCand || (this._confCand = []);
+        outer:
+        for (let i = 0; i < count; i++) {
             const xi = pos[i * 3], yi = pos[i * 3 + 1], zi = pos[i * 3 + 2];
-            for (let j = i + 1; j < ptData.count; j++) {
+            const cix = Math.floor(xi / cell);
+            const ciy = Math.floor(yi / cell);
+            const ciz = Math.floor(zi / cell);
+            cand.length = 0;
+            for (let ax = -1; ax <= 1; ax++)
+            for (let ay = -1; ay <= 1; ay++)
+            for (let az = -1; az <= 1; az++) {
+                const arr = buckets.get(keyOf(cix + ax, ciy + ay, ciz + az));
+                if (arr === undefined) continue;
+                for (let n = 0; n < arr.length; n++) {
+                    const j = arr[n];
+                    if (j > i) cand.push(j);
+                }
+            }
+            // Restore the original ascending-j emission order so the
+            // maxVerts truncation picks exactly the same pairs.
+            cand.sort((a, b) => a - b);
+            for (let c = 0; c < cand.length; c++) {
+                const j = cand[c];
                 const dx = pos[j * 3]     - xi;
                 const dy = pos[j * 3 + 1] - yi;
                 const dz = pos[j * 3 + 2] - zi;
@@ -1735,7 +1843,7 @@ export class ViewportFieldRenderer {
                     const g = Math.abs(dy) * invR * alpha + 0.2;
                     const b = Math.abs(dz) * invR * alpha + 0.2;
 
-                    if (vi + 2 > maxVerts) break;
+                    if (vi + 2 > maxVerts) break outer;
 
                     posAttr.array[vi * 3]     = xi;
                     posAttr.array[vi * 3 + 1] = yi;
@@ -1818,12 +1926,13 @@ export class ViewportFieldRenderer {
         let vi = 0;
 
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
 
         for (let i = 0; i < lCount && vi < maxPts; i++) {
             const mag = dualMags[i];
             if (mag < threshold) continue;
             const px = lData.positions[i * 3], py = lData.positions[i * 3 + 1], pz = lData.positions[i * 3 + 2];
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
             colAttr.array[vi * 3] = 0.9 * t; colAttr.array[vi * 3 + 1] = 0.4 * t; colAttr.array[vi * 3 + 2] = 0.15 * t;
@@ -1834,7 +1943,7 @@ export class ViewportFieldRenderer {
             const mag = dualMags[lCount + i];
             if (mag < threshold) continue;
             const px = rData.positions[i * 3], py = rData.positions[i * 3 + 1], pz = rData.positions[i * 3 + 2];
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             posAttr.array[vi * 3] = px; posAttr.array[vi * 3 + 1] = py; posAttr.array[vi * 3 + 2] = pz;
             const t = mag / maxVal;
             colAttr.array[vi * 3] = 0.3 * t; colAttr.array[vi * 3 + 1] = 0.2 * t; colAttr.array[vi * 3 + 2] = 0.9 * t;
@@ -1893,6 +2002,7 @@ export class ViewportFieldRenderer {
         }
         const threshold = maxVal * 0.02;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
@@ -1900,7 +2010,7 @@ export class ViewportFieldRenderer {
             if (Math.abs(v) < threshold) continue;
 
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             posAttr.array[vi * 3] = px;
             posAttr.array[vi * 3 + 1] = py;
@@ -1969,6 +2079,7 @@ export class ViewportFieldRenderer {
         }
         const threshold = maxMag * 0.03;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         let vi = 0;
 
         for (let i = 0; i < count && vi < maxPts; i++) {
@@ -1977,7 +2088,7 @@ export class ViewportFieldRenderer {
             if (mag < threshold) continue;
 
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
 
             posAttr.array[vi * 3] = px;
             posAttr.array[vi * 3 + 1] = py;
@@ -2082,6 +2193,7 @@ export class ViewportFieldRenderer {
         const denom = Math.max(maxAbs, eps);
         const ramp = options.ramp;
         const threshold = options.threshold !== undefined ? options.threshold : 0.02;
+        const _needsClip = this._clipActive();
         let vi = 0;
         for (let i = 0; i < count && vi < maxPts; i++) {
             const raw = values[i];
@@ -2089,7 +2201,7 @@ export class ViewportFieldRenderer {
             if (!signed && v < threshold) continue;
             if (signed && Math.abs(v) < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             posAttr.array[vi * 3]     = px;
             posAttr.array[vi * 3 + 1] = py;
             posAttr.array[vi * 3 + 2] = pz;
@@ -2159,6 +2271,7 @@ export class ViewportFieldRenderer {
         const colAttr = this._phaseNeedles.geometry.getAttribute('color');
         const maxSegments = posAttr.array.length / 6;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         const len = 1.2;
         const { positions, values, count } = data;
         const rgb = new Float32Array(3);
@@ -2167,7 +2280,7 @@ export class ViewportFieldRenderer {
             const px = positions[i * 3]     + VOXEL_CENTER_OFFSET;
             const py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
             const pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             const phase = values[i];
             if (Math.abs(phase) < 0.02) continue;
             const dx = Math.cos(phase) * len;
@@ -2222,6 +2335,7 @@ export class ViewportFieldRenderer {
         const colAttr = this._quantumField.geometry.getAttribute('color');
         const maxPts = posAttr.array.length / 3;
         const halfN = this._halfN;
+        const _needsClip = this._clipActive();
         const { positions, values, count } = data;
         const JITTER_SCALE = 0.8;
         let vi = 0;
@@ -2229,7 +2343,7 @@ export class ViewportFieldRenderer {
             const s = Math.max(0, Math.min(1, values[i]));
             if (s < 0.04) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (!this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
             const seed = (i * 9301 + this._entropyJitterSeed) & 0x7fffffff;
             const r1 = ((seed * 49297) % 233280) / 233280 - 0.5;
             const r2 = ((seed * 2147) % 233280) / 233280 - 0.5;

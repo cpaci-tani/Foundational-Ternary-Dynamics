@@ -8,6 +8,18 @@
 import { BaseLifecycleController } from '../../lifecycle.js';
 import { PlanetaryMockBridge } from '../../bridge/mock-scale4.js';
 import { PlanetaryRenderer } from '../../planetary-renderer.js';
+import { rafCoordinator } from '../../lib/raf-coordinator.js';
+
+// F-6: drive the planetary loop from the shared rAF coordinator instead of
+// setInterval(…, 16). 60 Hz matches the old ~16 ms cadence (1000/16 ≈ 62.5),
+// and because 60 ≥ the coordinator's VISIBILITY_PAUSE_THRESHOLD_HZ (30) the
+// loop keeps advancing when the tab is backgrounded — exactly the opposite of
+// setInterval, which throttles to ~1 Hz and lets the sim drift. Integration is
+// frame-counted (accumulate ticksPerFrame → bridge.run(f) → 100 fixed-dt
+// Velocity-Verlet substeps), NOT wall-clock-integrated, so swapping the timer
+// source leaves trajectories bit-identical.
+const PLANETARY_LOOP_HZ = 60;
+const PLANETARY_LOOP_ID = 'scale4-planetary-loop';
 
 class Scale4LifecycleController extends BaseLifecycleController {
     constructor() {
@@ -90,43 +102,67 @@ class Scale4LifecycleController extends BaseLifecycleController {
 
     _startPlanetaryLoop(ctx) {
         // loadScenario() runs again on every in-place reload (scenario change,
-        // gravity-mode change) WITHOUT an intervening destroy(), so clear any
-        // prior loop first — otherwise intervals stack and the sim runs N× too
-        // fast after N reloads.
-        if (this._planetaryIntervalId != null) {
-            clearInterval(this._planetaryIntervalId);
-            this._planetaryIntervalId = null;
-        }
+        // gravity-mode change) WITHOUT an intervening destroy(), so tear down
+        // any prior loop first — otherwise subscriptions stack and the sim runs
+        // N× too fast after N reloads. (Wave-1 invariant, preserved for the rAF
+        // path: rafCoordinator.subscribe with a duplicate id only replaces the
+        // entry, but unsubscribing first keeps the contract explicit and lets
+        // destroy() share one teardown helper.)
+        this._stopPlanetaryLoop();
 
-        let planetAcc = 0;
+        // Per-frame fractional-tick accumulator (was a closure local under
+        // setInterval; promoted to an instance field so a scenario reload that
+        // re-subscribes does not silently inherit a stale partial tick).
+        this._planetAcc = 0;
+
         // NOTE (P0-5): ctx is the live getter object from app.js _makeCtx(), so
         // ctx.running / ctx.engineMode / ctx.ticksPerFrame are read fresh each
-        // tick — NOT captured snapshots. This is what makes pause work after
+        // frame — NOT captured snapshots. This is what makes pause work after
         // load. Do not destructure these into locals here.
-        this._planetaryIntervalId = this.setInterval(() => {
-            // Guard: if we've switched away from planetary, idle. (destroy()
-            // also clears this interval; this is belt-and-suspenders for the
-            // in-place-reload window.)
-            if (ctx.engineMode !== 'planetary') {
-                return;
-            }
+        //
+        // F-6: subscribe to the shared rAF coordinator at 60 Hz in place of
+        // setInterval(…, 16). The body is unchanged, so the integration is
+        // identical: same accumulation of ticksPerFrame, same bridge.run(f)
+        // (100 fixed-dt Velocity-Verlet substeps per visual tick), same dt.
+        this._planetaryLoopSub = rafCoordinator.subscribe(PLANETARY_LOOP_ID, {
+            hz: PLANETARY_LOOP_HZ,
+            cb: () => {
+                // Guard: if we've switched away from planetary, idle.
+                // (_stopPlanetaryLoop() in destroy() also drops this
+                // subscription; this is belt-and-suspenders for the
+                // in-place-reload window.)
+                if (ctx.engineMode !== 'planetary') {
+                    return;
+                }
 
-            if (ctx.running) {
-                planetAcc += ctx.ticksPerFrame || 1;
-                const f = Math.floor(planetAcc);
-                planetAcc -= f;
-                if (f > 0 && this.bridge) this.bridge.run(f);
-            }
+                if (ctx.running) {
+                    this._planetAcc += ctx.ticksPerFrame || 1;
+                    const f = Math.floor(this._planetAcc);
+                    this._planetAcc -= f;
+                    if (f > 0 && this.bridge) this.bridge.run(f);
+                }
 
-            if (this.bridge && this.renderer) {
-                const currentData = this.bridge.getPlanetaryData();
-                this.renderer.update(currentData);
-            }
+                if (this.bridge && this.renderer) {
+                    const currentData = this.bridge.getPlanetaryData();
+                    this.renderer.update(currentData);
+                }
 
-            // Update DOM diagnostics and inspector state
-            if (ctx.inspector) ctx.inspector.update();
-            if (ctx.viewport) ctx.viewport.render();
-        }, 16);
+                // Update DOM diagnostics and inspector state
+                if (ctx.inspector) ctx.inspector.update();
+                if (ctx.viewport) ctx.viewport.render();
+            },
+        });
+    }
+
+    /**
+     * Tear down the planetary frame loop. Idempotent; safe to call when no
+     * loop is active. (F-6: replaces the Wave-1 clearInterval teardown.)
+     */
+    _stopPlanetaryLoop() {
+        if (this._planetaryLoopSub) {
+            this._planetaryLoopSub.unsubscribe();
+            this._planetaryLoopSub = null;
+        }
     }
 
     _populateLayerList(ctx) {
@@ -226,10 +262,13 @@ class Scale4LifecycleController extends BaseLifecycleController {
     }
 
     destroy(ctx) {
+        // F-6: the frame loop is now an rAF-coordinator subscription, not a
+        // tracked setInterval, so super.destroy() no longer clears it. Drop the
+        // subscription explicitly before the base teardown so a later re-mount
+        // starts a fresh one and the coordinator stops its rAF when no other
+        // subscribers remain.
+        this._stopPlanetaryLoop();
         super.destroy(ctx);
-        // super.destroy() cleared the tracked loop interval; drop our handle so
-        // a later re-mount starts a fresh one.
-        this._planetaryIntervalId = null;
         // The toolbar toggle elements persist in the DOM across scale switches
         // (hidden via .scale4-only). super.destroy() removed their listeners, so
         // clear the bind-guard flags too; otherwise re-entering Scale 4 would
