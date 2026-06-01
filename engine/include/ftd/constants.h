@@ -294,21 +294,36 @@ inline constexpr double EXCHANGE_RANGE_SQ = EXCHANGE_RANGE * EXCHANGE_RANGE;
 
 // SOR solver parameters (used by gauss_project and solve_coulomb_poisson).
 //
-// The Coulomb solver is warm-started from the previous tick, so post-tick
-// drift converges in a handful of iterations. Per-iteration SOR cost
-// dominates the tick at L>=64 (~70% of total), so iteration count has
-// direct linear FPS impact. Empirical convergence at warm-start:
+// Per-iteration SOR cost dominates the tick at L>=64 (~70% of total), so the
+// iteration count has direct linear FPS impact. 6 is the cheapest point that
+// still places the solver on its accuracy floor for the interactive default.
 //
-//   iters | gauss_violation @ L=64 | tick cost (rel)
-//   ------+------------------------+-----------------
-//     30  |  0.00012               |  ~3.0x
-//     10  |  0.00040               |  ~1.0x
-//      6  |  0.00080               |  ~0.7x   ← chosen
-//      4  |  0.0018                |  ~0.5x
+// HONEST NOTE — the central-difference gauss_violation does NOT converge to
+// zero with iterations; it SATURATES to an iteration-independent structural
+// FLOOR (~5e-3 RMS on a non-Gauss dipole config; sum-of-squares ~0.342 at
+// L=24). The floor is a STENCIL MISMATCH: gauss_project solves phi with an
+// 18-point Laplacian (sor_sweep_18pt) while the Gauss residual is MEASURED
+// with a 6-point central-difference divergence (EnergyAudit.gauss_violation
+// via divergence_flux). The 18-pt-solved phi cannot zero the 6-pt divergence,
+// so the residual saturates and is BIT-IDENTICAL from ~100 iterations through
+// 1000 (it is within ~4e-8 of the floor already by 50). At the interactive
+// default of 6 iters the residual sits only ~7.6% ABOVE that saturated floor,
+// and going to 1000 iters closes that ~7.6% and then PINS — it never trends
+// toward zero. Raising SOR_ITERATIONS therefore buys at most a few percent on
+// this metric and then NOTHING. See engine/include/ftd/eft/matched_poisson.h
+// lines 7-19 for the analysis, and engine/tests/test_conservation_profile.cpp
+// (CP-3) for the runnable measurement. (An earlier comment here showed a
+// vacuum-only L=64 convergence table implying more iterations monotonically
+// help; that was misleading — it did not reflect the per-config floor.)
 //
-// 6 iters keeps gauss_violation < 1e-3 for typical scenarios and gives
-// ~30% faster ticks than 10. If you observe drift in physics tests at
-// the new value, bump back to 8.
+// Energy conservation under LIVE dynamics is limited by the NON-VARIATIONAL
+// projection operator (J -= grad(phi) is a hard constraint not derived from
+// the action; it injects energy each tick — see test_conservation_profile.cpp
+// CP-2), NOT by SOR convergence. Machine-precision conservation needs a
+// variational/energy-aware projection (a separate physics task), not a tighter
+// or longer solve. 6 iterations is retained as the interactive default
+// because additional iterations improve neither the gauss_violation floor nor
+// the live-dynamics energy drift.
 inline constexpr int SOR_ITERATIONS = 6;
 inline constexpr double SOR_OMEGA = 1.75;
 
