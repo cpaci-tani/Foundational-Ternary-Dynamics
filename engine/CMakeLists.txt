@@ -936,10 +936,6 @@ ftd_add_test(test_fractional_heat_flow tests/test_fractional_heat_flow.cpp
 ftd_add_test(test_manifestation_background tests/test_manifestation_background.cpp
              CTEST_NAME manifestation_background TIMEOUT 120 LABELS native eft)
 
-# Local repro (do not commit) for GPU empty-bridge crash triage.
-ftd_add_test(_repro_gpu_empty_bridge tests/_repro_gpu_empty_bridge.cpp
-             CTEST_NAME _repro_gpu_empty_bridge TIMEOUT 120 LABELS native eft)
-
 # Langevin thermostat equipartition (FTD-0051 acceptance test).
 # Verifies <|wave_vel|^2> = 3T on bare lattice single-substrate path.
 ftd_add_test(test_langevin_equipartition tests/test_langevin_equipartition.cpp
