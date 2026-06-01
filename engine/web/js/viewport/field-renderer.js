@@ -155,6 +155,26 @@ export class ViewportFieldRenderer {
         this._strongMagCache = null;
         this._heatMagCache = null;
         this._magCacheDual = null;
+
+        // PERF (F-16): reusable active-index scratch for the arrow/point writers
+        // (_writeArrowFieldIntoMesh, updatePoyntingVectors, updateDivergenceField,
+        // updateGravityField). Pre-fix each of those allocated a fresh JS Array
+        // and grew it via `.push` every update over up to `count` (~4k at L=32,
+        // up to 32k for the long-range EM/gravity force fields at fine stride) —
+        // a per-update boxed-array allocation that contradicts the F-2 buffer-
+        // reuse philosophy. One persistent Int32Array, grown on demand, replaces
+        // all four; callers track the live length explicitly. Output-exact: the
+        // gather writes the SAME indices in the SAME ascending order, only into
+        // a reused typed array instead of a fresh boxed Array.
+        this._activeIdx = null;
+    }
+
+    // Grow-on-demand accessor for the shared active-index scratch (F-16).
+    _ensureActiveIdx(len) {
+        if (!this._activeIdx || this._activeIdx.length < len) {
+            this._activeIdx = new Int32Array(len);
+        }
+        return this._activeIdx;
     }
 
 
@@ -453,24 +473,33 @@ export class ViewportFieldRenderer {
         this._scene.add(this._peStreamlines);
     }
 
+    // `lines` is the POOLED StreamlineResult from computeStreamlines
+    // ({count, buffer, offsets, lengths}). Iterate [0,count) and read the float
+    // run buffer[offsets[li] .. offsets[li]+lengths[li]); `base + j` indexes the
+    // same floats the old `line[j]` did, so output is byte-identical.
     updatePEStreamlines(lines) {
         this._syncCenterAndRadius();
         if (!this._peStreamlines) this._buildPEStreamlines();
         const posAttr = this._peStreamlines.geometry.getAttribute('position');
         const colAttr = this._peStreamlines.geometry.getAttribute('color');
         const maxVerts = posAttr.count;
+        const lineCount = lines.count;
+        const buffer = lines.buffer;
+        const offsets = lines.offsets;
+        const lengths = lines.lengths;
         let vi = 0;
 
-        for (const line of lines) {
-            const nPts = line.length / 3;
+        for (let li = 0; li < lineCount; li++) {
+            const base = offsets[li];
+            const nPts = lengths[li] / 3;
             for (let i = 0; i < nPts - 1 && vi + 2 <= maxVerts; i++) {
                 // +VOXEL_CENTER_OFFSET — see header convention note.
-                posAttr.array[vi * 3]     = line[i * 3]         + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 1] = line[i * 3 + 1]     + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 2] = line[i * 3 + 2]     + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 3] = line[(i + 1) * 3]     + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 4] = line[(i + 1) * 3 + 1] + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 5] = line[(i + 1) * 3 + 2] + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3]     = buffer[base + i * 3]         + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 1] = buffer[base + i * 3 + 1]     + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 2] = buffer[base + i * 3 + 2]     + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 3] = buffer[base + (i + 1) * 3]     + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 4] = buffer[base + (i + 1) * 3 + 1] + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 5] = buffer[base + (i + 1) * 3 + 2] + VOXEL_CENTER_OFFSET;
 
                 const t = i / Math.max(1, nPts - 2);
                 const bright = 1.0 - t * 0.6;
@@ -609,16 +638,17 @@ export class ViewportFieldRenderer {
         const [tr, tg, tb] = colors.tip;
 
         // Gather all active indices that pass threshold and boundary checks
-        const activeIndices = [];
+        // (F-16: into a reused Int32Array, ascending order preserved).
+        const activeIndices = this._ensureActiveIdx(count);
+        let activeCount = 0;
         for (let i = 0; i < count; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
-            activeIndices.push(i);
+            activeIndices[activeCount++] = i;
         }
 
-        const activeCount = activeIndices.length;
         const step = activeCount > maxArrows ? Math.ceil(activeCount / maxArrows) : 1;
 
         let vi = 0;
@@ -642,6 +672,14 @@ export class ViewportFieldRenderer {
         mesh.geometry.setDrawRange(0, vi * 2);
     }
 
+    // `streamlines` is the POOLED StreamlineResult from computeStreamlines
+    // ({count, buffer, offsets, lengths}) — fieldlines.js (web/engine-
+    // optimization-2026-05-31). Line li is the float run
+    // buffer[offsets[li] .. offsets[li]+lengths[li]); iterate [0,count) and read
+    // lengths[li] (the flat buffer is grown to a high-water mark, so its own
+    // .length is over-long). The inner per-segment math is unchanged — `base + j`
+    // indexes the same floats the old per-line `line[j]` did, so output is
+    // byte-identical.
     _writeStreamlinesIntoMesh(mesh, streamlines, colorFn) {
         this._syncCenterAndRadius();
         const posAttr = mesh.geometry.getAttribute('position');
@@ -650,11 +688,16 @@ export class ViewportFieldRenderer {
         const halfN = this._halfN;
         const _needsClip = this._clipActive();
         const rgb = [0, 0, 0];
+        const lineCount = streamlines.count;
+        const buffer = streamlines.buffer;
+        const offsets = streamlines.offsets;
+        const lengths = streamlines.lengths;
         let vi = 0;
-        for (const line of streamlines) {
-            const nPts = line.length / 3;
+        for (let li = 0; li < lineCount; li++) {
+            const base = offsets[li];
+            const nPts = lengths[li] / 3;
             for (let i = 0; i < nPts - 1 && vi + 2 <= maxVerts; i++) {
-                const sx = line[i * 3], sy = line[i * 3 + 1], sz = line[i * 3 + 2];
+                const sx = buffer[base + i * 3], sy = buffer[base + i * 3 + 1], sz = buffer[base + i * 3 + 2];
                 const px = sx + VOXEL_CENTER_OFFSET;
                 const py = sy + VOXEL_CENTER_OFFSET;
                 const pz = sz + VOXEL_CENTER_OFFSET;
@@ -668,9 +711,9 @@ export class ViewportFieldRenderer {
                 colAttr.array[vi * 3 + 1] = rgb[1];
                 colAttr.array[vi * 3 + 2] = rgb[2];
                 vi++;
-                posAttr.array[vi * 3]     = line[(i + 1) * 3]     + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 1] = line[(i + 1) * 3 + 1] + VOXEL_CENTER_OFFSET;
-                posAttr.array[vi * 3 + 2] = line[(i + 1) * 3 + 2] + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3]     = buffer[base + (i + 1) * 3]     + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 1] = buffer[base + (i + 1) * 3 + 1] + VOXEL_CENTER_OFFSET;
+                posAttr.array[vi * 3 + 2] = buffer[base + (i + 1) * 3 + 2] + VOXEL_CENTER_OFFSET;
                 colAttr.array[vi * 3]     = rgb[0];
                 colAttr.array[vi * 3 + 1] = rgb[1];
                 colAttr.array[vi * 3 + 2] = rgb[2];
@@ -775,17 +818,17 @@ export class ViewportFieldRenderer {
         const halfN = this._halfN;
         const arrowBase = 2.0;
 
-        // Gather all active indices
-        const activeIndices = [];
+        // Gather all active indices (F-16: reused Int32Array, ascending order).
+        const activeIndices = this._ensureActiveIdx(count);
+        let activeCount = 0;
         for (let i = 0; i < count; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
-            activeIndices.push(i);
+            activeIndices[activeCount++] = i;
         }
 
-        const activeCount = activeIndices.length;
         const step = activeCount > maxArrows ? Math.ceil(activeCount / maxArrows) : 1;
 
         let vi = 0;
@@ -858,17 +901,17 @@ export class ViewportFieldRenderer {
         const threshold = maxVal * 0.01;
         const halfN = this._halfN;
 
-        // Gather active indices
-        const activeIndices = [];
+        // Gather active indices (F-16: reused Int32Array, ascending order).
+        const activeIndices = this._ensureActiveIdx(count);
+        let activeCount = 0;
         for (let i = 0; i < count; i++) {
             const v = values[i];
             if (Math.abs(v) < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
-            activeIndices.push(i);
+            activeIndices[activeCount++] = i;
         }
 
-        const activeCount = activeIndices.length;
         const step = activeCount > maxPts ? Math.ceil(activeCount / maxPts) : 1;
 
         let vi = 0;
@@ -960,17 +1003,17 @@ export class ViewportFieldRenderer {
         const halfN = this._halfN;
         const arrowBase = 2.0;
 
-        // Gather all active indices
-        const activeIndices = [];
+        // Gather all active indices (F-16: reused Int32Array, ascending order).
+        const activeIndices = this._ensureActiveIdx(count);
+        let activeCount = 0;
         for (let i = 0; i < count; i++) {
             const mag = mags[i];
             if (mag < threshold) continue;
             const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
             if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
-            activeIndices.push(i);
+            activeIndices[activeCount++] = i;
         }
 
-        const activeCount = activeIndices.length;
         const step = activeCount > maxArrows ? Math.ceil(activeCount / maxArrows) : 1;
 
         let vi = 0;
@@ -1285,27 +1328,35 @@ export class ViewportFieldRenderer {
         // but avoids the strictly-more-expensive distance integration + GPU
         // upload for unchanged lines (overlay refreshes fire far more often
         // than the field actually changes).
+        // `lines` is the POOLED StreamlineResult from computeStreamlines
+        // ({count, buffer, offsets, lengths}) — web/engine-optimization-
+        // 2026-05-31. Line li is buffer[offsets[li] .. offsets[li]+lengths[li]);
+        // `base + v` indexes the floats the old per-line `verts[v]` did, so the
+        // F-5 element-wise change comparison and the upload are byte-identical.
         const drawnCounts = this._forceStreamlineDrawn ||
             (this._forceStreamlineDrawn = new Int32Array(pool.length).fill(-1));
-        const usedCount = Math.min(lines.length, pool.length);
+        const buffer = lines.buffer;
+        const offsets = lines.offsets;
+        const lengths = lines.lengths;
+        const usedCount = Math.min(lines.count, pool.length);
         for (let li = 0; li < usedCount; li++) {
-            const verts = lines[li];
+            const base = offsets[li];
             const line = pool[li];
             const posAttr = line.geometry.getAttribute('position');
             const maxVerts = posAttr.array.length / 3;
-            const vertCount = Math.min(verts.length / 3, maxVerts);
+            const vertCount = Math.min(lengths[li] / 3, maxVerts);
 
             const arr = posAttr.array;
             const n3 = vertCount * 3;
             let changed = drawnCounts[li] !== vertCount;
             if (!changed) {
                 for (let v = 0; v < n3; v++) {
-                    if (arr[v] !== verts[v]) { changed = true; break; }
+                    if (arr[v] !== buffer[base + v]) { changed = true; break; }
                 }
             }
             if (changed) {
                 for (let v = 0; v < n3; v++) {
-                    arr[v] = verts[v];
+                    arr[v] = buffer[base + v];
                 }
                 posAttr.needsUpdate = true;
                 line.geometry.setDrawRange(0, vertCount);
@@ -1730,7 +1781,7 @@ export class ViewportFieldRenderer {
 
     // ── Confinement Strings (SU(3) 1D topological defects) ───────────
     _buildConfinementStrings() {
-        const maxVerts = 400 * 2;
+        const maxVerts = 3000 * 2;
         const positions = new Float32Array(maxVerts * 3);
         const colors = new Float32Array(maxVerts * 3);
         const geo = new THREE.BufferGeometry();
