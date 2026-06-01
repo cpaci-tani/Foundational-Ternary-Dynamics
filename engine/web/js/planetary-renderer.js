@@ -2,6 +2,23 @@ import * as THREE from 'three';
 import { GLSL_SIMPLEX_NOISE_3D } from './constants.js';
 import { BaseRenderer } from './core/BaseRenderer.js';
 
+// F-18: distance LOD for the procedural spheres. The vertex shader runs
+// 4-octave fbm per vertex every frame, so cost scales with vertex count. Near
+// bodies keep the full 64×64 mesh (appearance unchanged); far bodies — where
+// the 5%-radius displacement silhouette and the extra triangles are sub-pixel —
+// drop to a 24×24 mesh (~7× fewer vertices, still smooth, no visible popping).
+//
+// LOD metric is angular size = (visual radius) / (camera distance), which is
+// proportional to on-screen size. The switch point is chosen conservatively:
+// at a 60° vertical FOV, screen-height fraction ≈ ratio / tan(30°) ≈ ratio /
+// 0.577, so the 0.015 threshold only drops detail once a body covers under
+// ~2.6% of the viewport height (≈24 px on a 900 px canvas) — far below where
+// 64- vs 24-segment silhouette detail is perceptible. Near, hero-sized bodies
+// stay at full detail and render byte-identically.
+const SPHERE_SEGMENTS_HIGH = 64;   // full-detail tessellation (unchanged from prior)
+const SPHERE_SEGMENTS_LOW  = 24;   // far-body tessellation (still visibly smooth)
+const LOD_ANGULAR_THRESHOLD = 0.015; // (radius / camera-distance) below this → low detail
+
 const proceduralVertexShader = `
     varying vec2 vUv;
     varying vec3 vNormal;
@@ -186,9 +203,28 @@ export class PlanetaryRenderer extends BaseRenderer {
         super(scene, camera, renderer);
         
         this._orbitLines = [];
-        
-        // High-res geometry for displacement
-        this._sphereGeo = new THREE.SphereGeometry(1, 64, 64);
+
+        // High-res geometry for displacement (near bodies — appearance unchanged).
+        this._sphereGeo = new THREE.SphereGeometry(1, SPHERE_SEGMENTS_HIGH, SPHERE_SEGMENTS_HIGH);
+        // F-18: low-res geometry for distant bodies (far LOD). Shared across all
+        // far bodies; meshes swap between this and _sphereGeo by angular size.
+        this._sphereGeoLow = new THREE.SphereGeometry(1, SPHERE_SEGMENTS_LOW, SPHERE_SEGMENTS_LOW);
+
+        // F-7: one ShaderMaterial *program* per body-type, not per body.
+        // Every rocky body shares the same (vertex, fragment) GLSL source and
+        // every star shares another, so there are only two distinct programs.
+        // We keep two template materials and hand each body a .clone() of its
+        // type's template: clones reuse the template's compiled program (the
+        // WebGLPrograms cache key is the shader source, identical across
+        // clones) while owning an independent `uniforms` object, so per-body
+        // uSeed/uTime/uTemp still vary. Net: TRAPPIST-1's 8 bodies trigger 2
+        // program compiles instead of 8, with byte-identical visual output.
+        this._materialTemplates = {
+            // type 0 (STAR) → emissive star surface shader
+            star:  this._makeMaterialTemplate(true),
+            // all other types (rocky / gas / moon / asteroid) → terrain shader
+            rocky: this._makeMaterialTemplate(false),
+        };
         
         // Add soft ambient light
         this._ambientLight = new THREE.AmbientLight(0xffffff, 0.2); // Reduced for realistic harsh light
@@ -197,34 +233,73 @@ export class PlanetaryRenderer extends BaseRenderer {
         // Let BaseRenderer handle disposal of these
         this._cleanGeometries = () => {
             if (this._sphereGeo) this._sphereGeo.dispose();
+            if (this._sphereGeoLow) this._sphereGeoLow.dispose();  // F-18: far-LOD geometry
             if (this._orbitLines) {
                 this._orbitLines.forEach(l => {
                     if (l && l.geometry) l.geometry.dispose();
                 });
             }
+            // F-7: the per-type template materials are never assigned to a mesh
+            // and so are not in this._materials (which BaseRenderer.dispose
+            // walks). Dispose them here to free their compiled programs.
+            if (this._materialTemplates) {
+                Object.values(this._materialTemplates).forEach(m => {
+                    if (m) m.dispose();
+                });
+            }
         };
     }
 
-    _getMaterial(index, type, seed) {
-        if (index < this._materials.length) {
-            const mat = this._materials[index];
-            mat.uniforms.uSeed.value = seed;
-            return mat;
-        }
-
-        const isStar = type === 0;
-        
-        const mat = new THREE.ShaderMaterial({
+    /**
+     * F-7: build one of the two shared shader-program templates. The body
+     * clones from these so the GPU compiles each program exactly once.
+     * @param {boolean} isStar  true → star surface shader; false → terrain shader
+     */
+    _makeMaterialTemplate(isStar) {
+        return new THREE.ShaderMaterial({
             vertexShader: proceduralVertexShader,
             fragmentShader: isStar ? starFragmentShader : rockyFragmentShader,
             uniforms: {
-                uSeed: { value: seed },
+                uSeed: { value: 0 },
                 uTime: { value: 0 },
-                uTemp: { value: 0 }
-            }
+                uTemp: { value: 0 },
+            },
         });
+    }
 
+    _getMaterial(index, type, seed) {
+        const wantStar = type === 0;
+        if (index < this._materials.length) {
+            const mat = this._materials[index];
+            // A body slot keeps its type for the renderer's lifetime (scenario
+            // reload disposes + recreates the renderer), so the cached clone is
+            // always the right type. Guard defensively anyway: if the type ever
+            // changed, re-clone from the correct template so the program stays
+            // shared and the visuals stay correct.
+            if (mat._isStarMaterial === wantStar) {
+                mat.uniforms.uSeed.value = seed;
+                return mat;
+            }
+            mat.dispose();
+            const replacement = this._cloneTypeTemplate(wantStar, seed);
+            this._materials[index] = replacement;
+            return replacement;
+        }
+
+        // F-7: clone the shared per-type template instead of compiling a fresh
+        // ShaderMaterial. Clones reuse the template's compiled program; only the
+        // uniforms object is independent (per-body uSeed/uTime/uTemp).
+        const mat = this._cloneTypeTemplate(wantStar, seed);
         this._materials.push(mat);
+        return mat;
+    }
+
+    /** Clone the star/rocky template and stamp this body's seed + a type tag. */
+    _cloneTypeTemplate(isStar, seed) {
+        const template = isStar ? this._materialTemplates.star : this._materialTemplates.rocky;
+        const mat = template.clone();
+        mat._isStarMaterial = isStar;
+        mat.uniforms.uSeed.value = seed;
         return mat;
     }
 
@@ -233,9 +308,38 @@ export class PlanetaryRenderer extends BaseRenderer {
             return this._meshes[index];
         }
         const mesh = new THREE.Mesh(this._sphereGeo);
+        mesh._lodHigh = true;  // F-18: track current LOD bucket to avoid churn
         this._meshes.push(mesh);
         this._group.add(mesh);
         return mesh;
+    }
+
+    /**
+     * F-18: select the sphere geometry LOD for one body by its on-screen
+     * angular size. ratio = worldRadius / cameraDistance is proportional to
+     * projected size; above LOD_ANGULAR_THRESHOLD the body is large/near and
+     * keeps the full-detail mesh (unchanged appearance), below it switches to
+     * the low-detail mesh. The geometry reference is only reassigned when the
+     * bucket flips, so a body sitting at full or low detail incurs no per-frame
+     * geometry writes — and the fbm vertex shader simply runs over fewer
+     * vertices once a body is far.
+     * @param {THREE.Mesh} mesh
+     * @param {number} scaleR  world-space (visual) radius of this body
+     */
+    _applySphereLOD(mesh, scaleR) {
+        // Distance from camera to the body centre. Reuse one scratch vector to
+        // avoid per-body, per-frame allocation.
+        const cam = this.camera;
+        if (!cam) return;
+        if (!this._lodScratch) this._lodScratch = new THREE.Vector3();
+        const dist = this._lodScratch.copy(mesh.position).sub(cam.position).length();
+        // Guard a degenerate near-zero distance (camera inside the body): treat
+        // as "near" so the hero view never loses detail.
+        const ratio = dist > 1e-6 ? (scaleR / dist) : Infinity;
+        const wantHigh = ratio >= LOD_ANGULAR_THRESHOLD;
+        if (wantHigh === mesh._lodHigh) return; // bucket unchanged → no write
+        mesh._lodHigh = wantHigh;
+        mesh.geometry = wantHigh ? this._sphereGeo : this._sphereGeoLow;
     }
 
     _getLight(index) {
@@ -317,10 +421,17 @@ export class PlanetaryRenderer extends BaseRenderer {
             const mesh = this._getMesh(i);
             mesh.visible = true;
             mesh.position.set(x, y, z);
-            
+
             // Visual sizing.
             const scaleR = Math.max(0.01, r);
             mesh.scale.set(scaleR, scaleR, scaleR);
+
+            // F-18: pick geometry LOD by angular size (visual radius / camera
+            // distance). Near bodies use the full 64×64 mesh — byte-identical to
+            // before; far bodies (sub-threshold angular size) use the 24×24 mesh,
+            // cutting per-vertex fbm cost ~7× with no perceptible change. Only
+            // swap when the bucket changes to avoid per-frame geometry churn.
+            this._applySphereLOD(mesh, scaleR);
 
             const mat = this._getMaterial(i, type, seed);
             mat.uniforms.uTime.value = time;

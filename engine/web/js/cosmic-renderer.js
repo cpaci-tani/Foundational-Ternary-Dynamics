@@ -632,6 +632,19 @@ export class CosmicRenderer extends BaseRenderer {
             }
             
             cloud = new THREE.Points(g, mat);
+            // F-20 note (audit 2026-05-27): culling is INTENTIONALLY disabled on
+            // the dynamic body clouds and must stay that way. These clouds use a
+            // fixed-capacity buffer trimmed each frame by setDrawRange(); their
+            // positions are rewritten every frame WITHOUT calling
+            // computeBoundingSphere(), so Three.js's cached bounding sphere would
+            // go stale and bodies would pop out of view as the stale volume left
+            // the frustum. Enabling culling here would require a per-frame
+            // computeBoundingSphere() (CPU cost) to stay correct — not worth it
+            // for clouds that usually fill the view anyway. The 12000-star
+            // BACKGROUND (this._bgStars, _initBackground) is already a single
+            // static THREE.Points with default culling, which is the consolidated
+            // form F-20 asks for; this line is the dynamic-cloud case and is
+            // deliberately left unculled.
             cloud.frustumCulled = false;
             cloud.name = 'cosmic-' + name;
             cloud.userData.ids = new Int32Array(maxCount);

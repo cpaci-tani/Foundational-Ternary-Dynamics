@@ -1530,7 +1530,7 @@ export class MockBridge {
     aeGetAtomData()                                                   { return this._aeEngine.aeGetAtomData(); }
     aeGetFieldSources()                                               { return this._aeEngine.aeGetFieldSources(); }
     aeGetDiagnostics()                                                { return this._aeEngine.aeGetDiagnostics(); }
-    aeGetForceDecomposition()                                         { return this._aeEngine.aeGetForceDecomposition(); }
+    aeGetForceDecomposition(want)                                     { return this._aeEngine.aeGetForceDecomposition(want); }
     aeSetDt(dt)                                                       { return this._aeEngine.aeSetDt(dt); }
     aeGetDt()                                                         { return this._aeEngine.aeGetDt(); }
     aeSetSoftening(s)                                                 { return this._aeEngine.aeSetSoftening(s); }

@@ -6,16 +6,69 @@ import * as THREE from 'three';
 
 const SCALE = 1.5;
 
+// Sphere tessellation — keep identical to the legacy per-site SphereGeometry
+// so the InstancedMesh silhouette is pixel-for-pixel the same.
+const SPHERE_WIDTH_SEGMENTS = 24;
+const SPHERE_HEIGHT_SEGMENTS = 16;
+
+// Material constants shared by both the legacy single-sphere factory and the
+// instanced-shell factory, so site appearance is unchanged.
+const SITE_EMISSIVE_INTENSITY = 0.3;
+const SITE_METALNESS = 0.2;
+const SITE_ROUGHNESS = 0.5;
+
 export function makeSphere(radius, color) {
-    const geo = new THREE.SphereGeometry(radius * SCALE, 24, 16);
+    const geo = new THREE.SphereGeometry(radius * SCALE, SPHERE_WIDTH_SEGMENTS, SPHERE_HEIGHT_SEGMENTS);
     const mat = new THREE.MeshStandardMaterial({
         color,
         emissive: color,
-        emissiveIntensity: 0.3,
-        metalness: 0.2,
-        roughness: 0.5,
+        emissiveIntensity: SITE_EMISSIVE_INTENSITY,
+        metalness: SITE_METALNESS,
+        roughness: SITE_ROUGHNESS,
     });
     return new THREE.Mesh(geo, mat);
+}
+
+// ── Instanced shell factory (F-11) ──────────────────────────────────
+// Builds ONE InstancedMesh that draws `count` site spheres of identical
+// radius in a single draw call, replacing `count` individual Meshes.
+//
+// Per-instance colour is carried by `instanceColor`. The legacy per-site
+// material set BOTH `color` and `emissive` to the same hex with
+// emissiveIntensity 0.3; that invariant (color === emissive) holds in
+// every recolour path (default / parity / inversion). We reproduce it
+// exactly by:
+//   • setting the base material color + emissive to WHITE,
+//   • leaving emissiveIntensity at 0.3,
+//   • injecting one shader line so the emissive term is multiplied by the
+//     per-instance vertex colour (which the renderer sets from
+//     instanceColor when USE_INSTANCING_COLOR is defined).
+// Result per instance: diffuse = white·instanceColor = instanceColor;
+// emissive = white·0.3·instanceColor = instanceColor·0.3 — identical to
+// `MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.3 })`.
+export function makeInstancedShell(radius, count) {
+    const geo = new THREE.SphereGeometry(radius * SCALE, SPHERE_WIDTH_SEGMENTS, SPHERE_HEIGHT_SEGMENTS);
+    const mat = new THREE.MeshStandardMaterial({
+        color: 0xFFFFFF,
+        emissive: 0xFFFFFF,
+        emissiveIntensity: SITE_EMISSIVE_INTENSITY,
+        metalness: SITE_METALNESS,
+        roughness: SITE_ROUGHNESS,
+    });
+    // Per-instance emissive: fold the instance colour into the emissive term.
+    // `vColor` is white (1,1,1) for un-instanced verts and equals the
+    // instance colour once USE_INSTANCING_COLOR is active, so this is a no-op
+    // for any non-instanced use and exact per-instance emissive when instanced.
+    mat.onBeforeCompile = (shader) => {
+        shader.fragmentShader = shader.fragmentShader.replace(
+            '#include <emissivemap_fragment>',
+            '#include <emissivemap_fragment>\n\ttotalEmissiveRadiance *= vColor;'
+        );
+    };
+    const inst = new THREE.InstancedMesh(geo, mat, count);
+    // Allocate the per-instance colour buffer up front so setColorAt works.
+    inst.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(count * 3), 3);
+    return inst;
 }
 
 export function makeWireframe(vertices, edges, color) {

@@ -161,9 +161,20 @@ const _BH_TEST_MASS = K_B;         // electron mass (MeV) for test particles
  * Build a shared context object for scale controllers.
  * Uses getters/setters so controllers read/write the live module-level
  * variables (running, ticksPerFrame, engineMode) rather than snapshots.
+ *
+ * PERF (F-16): every field below is either a live getter/setter over module
+ * state or a function reference that is stable for the app's lifetime — there
+ * are NO per-call plain-value snapshots. The object is therefore built exactly
+ * once and the same instance is returned on every call (including the per-frame
+ * lattice/cosmic/meta animators). Getter semantics are preserved verbatim:
+ * each property access still re-reads the live module variable, so consumers
+ * never observe a stale snapshot. Eliminates one object + several closure
+ * allocations per call.
  */
+let _ctxSingleton = null;
 function _makeCtx() {
-    return {
+    if (_ctxSingleton) return _ctxSingleton;
+    _ctxSingleton = {
         get bridge() { return bridge; },
         get viewport() { return viewport; },
         get appShell() { return appShell; },
@@ -200,6 +211,7 @@ function _makeCtx() {
         applyReflectiveBoundary,
         clearCharts,
     };
+    return _ctxSingleton;
 }
 
 function pauseSimulation() {
@@ -744,33 +756,78 @@ function animate(now) {
 // See engine/web/js/scales/scale0/controller.js for the extracted code.
 
 // ── Scale 1/2/3 Context Builders ────────────────────────────────────
+// PERF (F-16): animatePE/animateAE run every animation frame, and their
+// consumers (Scale1Controller.animatePE / Scale2Controller.animateAE)
+// destructure the entire ctx synchronously at the top of the call and never
+// retain or re-read it. We therefore reuse one persistent ctx object per scale,
+// built once with its stable function references, and refresh ONLY the volatile
+// fields in place on each call. This is byte-identical to the previous
+// per-frame object literals (which snapshotted the same values by value at the
+// same instant), while eliminating one object + the per-frame closure
+// allocations. The function references below are app-lifetime-stable, so they
+// are captured once; they are NOT getters because the previous literals were
+// not getters — the snapshot point is "the moment the builder runs", and that
+// is exactly when these fields are refreshed, immediately before the consumer
+// destructures them within the same frame.
+const _scale1Ctx = {
+    bridge: null, viewport: null, running: false,
+    // Effective scenarioRunning: false whenever global is paused.
+    scenarioRunning: false,
+    ticksPerFrame: 1, inspector: null,
+    fluxEnergyChart: null, particleChart: null, peTelemetry: null,
+    activeTab: null, frameCount: 0, dom: _dom, now: 0,
+    updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
+    updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
+};
+
 function _buildScale1Ctx(now) {
-    return {
-        bridge, viewport, running,
-        // Effective scenarioRunning: false whenever global is paused.
-        scenarioRunning: running && scenarioRunning,
-        ticksPerFrame, inspector,
-        fluxEnergyChart, particleChart, peTelemetry,
-        activeTab, frameCount, dom: _dom, now,
-        updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
-        updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
-    };
+    const c = _scale1Ctx;
+    c.bridge = bridge;
+    c.viewport = viewport;
+    c.running = running;
+    c.scenarioRunning = running && scenarioRunning;
+    c.ticksPerFrame = ticksPerFrame;
+    c.inspector = inspector;
+    c.fluxEnergyChart = fluxEnergyChart;
+    c.particleChart = particleChart;
+    c.peTelemetry = peTelemetry;
+    c.activeTab = activeTab;
+    c.frameCount = frameCount;
+    c.dom = _dom;
+    c.now = now;
+    return c;
 }
 
+const _scale2Ctx = {
+    bridge: null, viewport: null, running: false,
+    scenarioRunning: false,
+    ticksPerFrame: 1, inspector: null,
+    fluxEnergyChart: null, particleChart: null,
+    activeTab: null, frameCount: 0, dom: _dom, now: 0,
+    updatePlayButton,
+    updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
+    updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
+    resetAllVisualState: _resetAllVisualState,
+    setRunning: (v) => { running = v; updateLocalPlayButton(); },
+    engineMode: null,
+};
+
 function _buildScale2Ctx(now) {
-    return {
-        bridge, viewport, running,
-        scenarioRunning: running && scenarioRunning,
-        ticksPerFrame, inspector,
-        fluxEnergyChart, particleChart,
-        activeTab, frameCount, dom: _dom, now,
-        updatePlayButton,
-        updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
-        updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
-        resetAllVisualState: _resetAllVisualState,
-        setRunning: (v) => { running = v; updateLocalPlayButton(); },
-        engineMode,
-    };
+    const c = _scale2Ctx;
+    c.bridge = bridge;
+    c.viewport = viewport;
+    c.running = running;
+    c.scenarioRunning = running && scenarioRunning;
+    c.ticksPerFrame = ticksPerFrame;
+    c.inspector = inspector;
+    c.fluxEnergyChart = fluxEnergyChart;
+    c.particleChart = particleChart;
+    c.activeTab = activeTab;
+    c.frameCount = frameCount;
+    c.dom = _dom;
+    c.now = now;
+    c.engineMode = engineMode;
+    return c;
 }
 
 function animatePE(now) {

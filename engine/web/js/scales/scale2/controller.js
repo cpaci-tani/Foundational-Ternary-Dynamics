@@ -363,11 +363,20 @@ export function animateAE(ctx) {
     }
 
     // ── 7. Update per-atom force arrows (every 2nd frame) ──────────
+    // F-8: only request the channels whose arrows are actually visible. The
+    // bridge skips the O(N²) ionic+vdW pair loop entirely when no long-range
+    // channel (ionic / vdW / net) is on, so bond-only arrows are O(bonds).
+    // Returned values for visible channels are bit-identical to the full sweep.
     const anyForce = _showAEForceIonic || _showAEForceVdw || _showAEForceBond || _showAEForceNet;
     if (anyForce && atomData.count > 0) {
         _forceFrame++;
         if (_forceFrame % 2 === 0) {
-            const forceData = bridge.aeGetForceDecomposition();
+            const forceData = bridge.aeGetForceDecomposition({
+                ionic: _showAEForceIonic,
+                vdw:   _showAEForceVdw,
+                bond:  _showAEForceBond,
+                net:   _showAEForceNet,
+            });
             viewport.updateAEForces(atomData.positions, forceData, forceData.count);
         }
     }
