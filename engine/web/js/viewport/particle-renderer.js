@@ -365,6 +365,31 @@ export class ViewportParticleRenderer {
         geo.setDrawRange(0, count);
     }
 
+    // Dynamic reactive size update for sliders when paused/running
+    updateParticleSizes() {
+        if (!this.particles) return;
+        const geo = this.particles.geometry;
+        const colAttr = geo.getAttribute('particleColor');
+        const sizeAttr = geo.getAttribute('size');
+        if (!colAttr || !sizeAttr) return;
+
+        const count = geo.drawRange.count;
+        for (let i = 0; i < count; i++) {
+            const cr = colAttr.array[i * 3], cg = colAttr.array[i * 3 + 1];
+            let baseSize;
+            if (cg > 0.6 && cr < 0.6) {
+                baseSize = this.visualSettings.positiveSize;
+            } else if (cr > 0.6 && cg < 0.6) {
+                baseSize = this.visualSettings.negativeSize;
+            } else {
+                continue; // Skip void or other particles where size isn't managed by pos/neg size controls
+            }
+            sizeAttr.array[i] = baseSize * this.visualSettings.globalScale;
+        }
+        sizeAttr.needsUpdate = true;
+    }
+
+
     // ── Particle shape and opacity ──────────────────────────────────
     setPointShape(shapeIndex) {
         if (this.particles && this.particles.material.uniforms) {
