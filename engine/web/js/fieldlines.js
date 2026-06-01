@@ -845,10 +845,32 @@ function sampleByFieldMagnitude(fieldData, count, exponent = 1.5, jitter = 0.5) 
     const { positions, vectors, count: nSamples } = fieldData;
     if (!nSamples || count <= 0) return [];
 
+    // Find the minimum and maximum coordinates in positions to identify and exclude
+    // boundary voxels (within 1 voxel of the lattice boundaries) to prevent periodic
+    // boundary spikes from polluting the importance-sampling weights.
+    let minC = Infinity, maxC = -Infinity;
+    for (let i = 0; i < nSamples * 3; i++) {
+        const v = positions[i];
+        if (v < minC) minC = v;
+        if (v > maxC) maxC = v;
+    }
+    const borderMin = minC + 0.5;
+    const borderMax = maxC - 0.5;
+
     // Pass 1: weight per sample
     const weights = new Float32Array(nSamples);
     let total = 0;
     for (let i = 0; i < nSamples; i++) {
+        const px = positions[i * 3];
+        const py = positions[i * 3 + 1];
+        const pz = positions[i * 3 + 2];
+        if (px < borderMin || px > borderMax ||
+            py < borderMin || py > borderMax ||
+            pz < borderMin || pz > borderMax) {
+            weights[i] = 0;
+            continue;
+        }
+
         const x = vectors[i * 3];
         const y = vectors[i * 3 + 1];
         const z = vectors[i * 3 + 2];

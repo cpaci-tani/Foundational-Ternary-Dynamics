@@ -317,10 +317,10 @@ class TestIntegerUniquenessExhaustive:
 # =============================================================================
 
 
-class TestReference frame contextVerification:
+class TestReferenceFrameContextVerification:
     """Verify the mathematical claims about reference frame context parameters."""
 
-    def test_reference frame context_quadratic_roots(self):
+    def test_reference_frame_context_quadratic_roots(self):
         """Verify complex roots from k=1/2 quadratic."""
         if not HAS_MPMATH:
             pytest.skip("mpmath required")
