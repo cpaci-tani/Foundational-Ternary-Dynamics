@@ -701,9 +701,10 @@ async function init() {
 // Main rAF loop — dispatches to the mode-specific animator.
 // Always schedules next frame first (unconditional rAF) so the loop
 // never stalls, even if a mode-specific function throws.
-// NOTE: 'planetary' mode is a no-op here; it runs via setInterval
-// inside Scale4Controller.loadScenario. All other modes (including
-// 'cosmic' after Phase B.1) drive physics + render from this rAF loop.
+// NOTE: 'planetary' mode is a no-op here; it runs via its own
+// rafCoordinator subscription ('scale4-planetary-loop') set up in
+// Scale4Controller.loadScenario. All other modes (including 'cosmic'
+// after Phase B.1) drive physics + render from this rAF loop.
 function animate(now) {
     requestAnimationFrame(animate);
 
@@ -721,7 +722,8 @@ function animate(now) {
     } else if (engineMode === 'particles') {
         animatePE(now);
     } else if (engineMode === 'planetary') {
-        // Handled via _planetaryInterval in loadPlanetaryScenario
+        // Handled via the rafCoordinator 'scale4-planetary-loop'
+        // subscription created in Scale4Controller.loadScenario.
     } else {
         Scale0Controller.animateLattice(_makeCtx());
     }
@@ -939,7 +941,7 @@ function wireToolbar() {
         planetarySelect.addEventListener('change', (e) => {
             running = false;
             updatePlayButton();
-            // Pass live ctx (with getters) so setInterval closure reads live running/engineMode (audit P0-5 fix, 2026-05-27).
+            // Pass live ctx (with getters) so the rafCoordinator loop callback reads live running/engineMode (audit P0-5 fix, 2026-05-27).
             Scale4Controller.loadScenario(_makeCtx(), e.target.value);
         });
     }
