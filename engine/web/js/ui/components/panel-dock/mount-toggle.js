@@ -5,6 +5,7 @@ import {
     resolveEffectiveMount,
     getSideMountMinWidth,
 } from '../../shell/panel-mount-state.js';
+import { BaseLifecycleController } from '../../../lifecycle.js';
 
 const GLYPHS = Object.freeze({
     left:   '\u25EA',
@@ -54,9 +55,11 @@ export function updateSafeEdges(mount) {
     }
 }
 
-export class MountToggleComponent {
+export class MountToggleComponent extends BaseLifecycleController {
     constructor(root) {
+        super();
         this.root = root;
+        this._observer = null;
         this._keydown = this._keydown.bind(this);
         this._click = this._click.bind(this);
         this._onResize = this._onResize.bind(this);
@@ -74,9 +77,9 @@ export class MountToggleComponent {
             `</button>`
         )).join('');
 
-        this.root.addEventListener('click', this._click);
-        window.addEventListener('keydown', this._keydown);
-        window.addEventListener('resize', this._onResize);
+        this.bindEvent(this.root, 'click', this._click);
+        this.bindEvent(window, 'keydown', this._keydown);
+        this.bindEvent(window, 'resize', this._onResize);
 
         // Watch html[data-panel-mount] for programmatic updates (e.g., from integration tests)
         this._observer = new MutationObserver((mutations) => {
@@ -159,5 +162,21 @@ export class MountToggleComponent {
                 btn.setAttribute('tabindex', '0');
             }
         });
+    }
+
+    /**
+     * Tear down all resources acquired in init().
+     *
+     * super.destroy() removes the three tracked listeners (root 'click',
+     * window 'keydown', window 'resize'). The MutationObserver is NOT tracked
+     * by the base class, so it is disconnected explicitly here.
+     *
+     * Safe to call multiple times: super.destroy() empties its listener list,
+     * and disconnect() on an already-disconnected observer is a no-op.
+     */
+    destroy(ctx) {
+        super.destroy(ctx);
+        this._observer?.disconnect();
+        this._observer = null;
     }
 }
