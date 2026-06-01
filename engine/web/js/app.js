@@ -179,6 +179,11 @@ function _makeCtx() {
         get viewport() { return viewport; },
         get appShell() { return appShell; },
         get inspector() { return inspector; },
+        // Exposed so scale controllers that own their own bridge (Scale 4
+        // planetary, Scale 5 cosmic) can re-point the inspector via
+        // inspectorRuntime.setBridge() instead of falling through to the
+        // bare inspector handle (audit P1-1, 2026-05-27).
+        get inspectorRuntime() { return inspectorRuntime; },
         get diagnostics() { return diagnostics; },
         get diagnosticsPanel() { return diagnosticsPanel; },
         get chartsPanel() { return chartsPanel; },
@@ -1605,6 +1610,19 @@ function switchEngineMode(mode) {
 
     // Keep mode-dependent inspector, viewport, and zoo state in sync.
     inspectorRuntime?.syncMode(mode);
+
+    // Re-point the inspector at the active scale's bridge (audit P1-1).
+    // Scales 0-3 (lattice/particles/atoms/molecules) all share the
+    // app-level `bridge`; restore it here so that returning from a
+    // self-bridged scale (Scale 4 planetary / Scale 5 cosmic, which swap
+    // in their own bridge during loadScenario) does not leave the
+    // inspector querying a stale planetary/cosmic backend. Scales 4/5/6
+    // overwrite this with their own bridge later in their loaders, so the
+    // guard avoids clobbering them.
+    if (mode === 'lattice' || mode === 'particles'
+        || mode === 'atoms' || mode === 'molecules') {
+        inspectorRuntime?.setBridge(bridge);
+    }
 
     const tpfSlider = document.getElementById('ticks-per-frame');
     if (tpfSlider) applyTicksPerFrameFromSlider(tpfSlider.value);

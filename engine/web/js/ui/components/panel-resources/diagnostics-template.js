@@ -290,25 +290,25 @@ export function getDiagnosticsPanelTemplate() {
                     <div class="stat-value" id="ae-diag-bonds">0</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Kinetic Energy <span class="unit-hint">(eV)</span></div>
+                    <div class="card-title">Kinetic Energy <span class="unit-hint">(sim)</span></div>
                     <div class="stat-value" id="ae-diag-ke">0.0000</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">Total Energy <span class="unit-hint">(eV)</span></div>
+                    <div class="card-title">Total Energy <span class="unit-hint">(sim)</span></div>
                     <div class="stat-value" id="ae-diag-etotal">0.0000</div>
                 </div>
             </div>
             <div class="panel-grid panel-grid-4 scale-ae ae-diag-row">
                 <div class="card">
-                    <div class="card-title">PE (Ionic) <span class="unit-hint">(eV)</span></div>
+                    <div class="card-title">PE (Ionic) <span class="unit-hint">(sim)</span></div>
                     <div class="stat-value" id="ae-diag-pe-ionic">0.0000</div>
                 </div>
                 <div class="card">
-                    <div class="card-title">PE (Van der Waals) <span class="unit-hint">(eV)</span></div>
+                    <div class="card-title">PE (Van der Waals) <span class="unit-hint">(sim)</span></div>
                     <div class="stat-value" id="ae-diag-pe-vdw">0.0000</div>
                 </div>
                 <div class="card scale3-only">
-                    <div class="card-title">PE (Bonds) <span class="unit-hint">(eV)</span></div>
+                    <div class="card-title">PE (Bonds) <span class="unit-hint">(sim)</span></div>
                     <div class="stat-value" id="ae-diag-pe-bond">0.0000</div>
                 </div>
                 <div class="card">

@@ -223,12 +223,12 @@ export function buildMetaInfoPanel(container, metaUnit) {
                 = N<sub>eff</sub> + 2&middot;b<sub>3</sub>
             </div>
 
-            <button class="meta-btn" data-action="gerade" style="width:100%;justify-content:center;">
+            <button class="meta-btn" data-action="gerade" style="width:100%;justify-content:center;" title="Inversion fundamental domain: one representative per antipodal site-pair (orbit_rep) vs its antipode. NOT gerade/ungerade irrep parity — that labels irreps, not sites (Moore Layer Theorem §3/§8). Audit P1-7 fix.">
                 <span class="swatch" style="background:#44CC44;"></span>/<span class="swatch" style="background:#FF8800;"></span>
-                Gerade / Ungerade &mdash; 13 + 13
+                Orbit rep / Antipode &mdash; 13 + 13
             </button>
             <div style="font-size:10px;color:#6b7280;text-align:center;margin:2px 0 6px;">
-                = N<sub>eff</sub> + N<sub>eff</sub> (Moore neighborhood under inversion)
+                = N<sub>eff</sub> + N<sub>eff</sub> (inversion fundamental domain of the 26 Moore neighbors + center)
             </div>
 
             <button class="meta-btn" data-action="reset-colors" style="width:100%;justify-content:center;">
@@ -242,8 +242,10 @@ export function buildMetaInfoPanel(container, metaUnit) {
             </div>
 
             <div class="meta-stat-grid" style="margin-top:8px;">
-                <div class="meta-stat"><div class="meta-stat-val" style="color:#FFD700;">48</div><div class="meta-stat-label">|O<sub>h</sub>|</div></div>
-                <div class="meta-stat"><div class="meta-stat-val" style="color:#00CED1;">1296</div><div class="meta-stat-label">Full group = 6<sup>4</sup></div></div>
+                <div class="meta-stat" title="Order of the octahedral point group O_h (48 operations) — the stabilizer of the center site.">
+                    <div class="meta-stat-val" style="color:#FFD700;">48</div><div class="meta-stat-label">|O<sub>h</sub>|</div></div>
+                <div class="meta-stat" title="Order of the full symmetry group of the 3³ periodic torus, (Z/3Z)³ ⋊ O_h = 27 × 48 = 1296 = 6⁴ = |Aut(Eᵢ)|²·N_c⁴. [THEOREM] — DERIV_EXISTENTIAL_UNIT.md §8 (Theorem 8.1).">
+                    <div class="meta-stat-val" style="color:#00CED1;">1296</div><div class="meta-stat-label">(&#8484;/3)<sup>3</sup>&#8906;O<sub>h</sub> = 6<sup>4</sup></div></div>
             </div>
         </div>
     </div>
@@ -357,14 +359,14 @@ export function buildMetaInfoPanel(container, metaUnit) {
                     break;
                 case 'gerade':
                     btn.classList.toggle('active');
-                    metaUnit.toggleGeradeUngerade(btn.classList.contains('active'));
+                    metaUnit.toggleInversionDomain(btn.classList.contains('active'));
                     _syncToolbarButton('meta-toggle-gerade', btn.classList.contains('active'));
                     const bfBtn = root.querySelector('[data-action="bcc-fcc"]');
                     if (bfBtn && btn.classList.contains('active')) { bfBtn.classList.remove('active'); }
                     break;
                 case 'reset-colors':
                     metaUnit.toggleBCCFCC(false);
-                    metaUnit.toggleGeradeUngerade(false);
+                    metaUnit.toggleInversionDomain(false);
                     root.querySelectorAll('[data-action="bcc-fcc"],[data-action="gerade"]').forEach(b => b.classList.remove('active'));
                     _syncToolbarButton('meta-toggle-bcc-fcc', false);
                     _syncToolbarButton('meta-toggle-gerade', false);

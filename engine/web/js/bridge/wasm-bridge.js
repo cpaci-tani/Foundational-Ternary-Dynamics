@@ -634,9 +634,14 @@ export class WasmBridge {
     }
 
     get _aeHasWasm() {
-        // WASM AtomEngine exists but uses Planck units internally.
-        // Web UI molecule/atom data uses Bohr-scaled simulation units.
-        // Until a scale conversion layer is added, force MockBridge fallback.
+        // Deliberately disabled (audit P1-2, deferred feature D-11). The
+        // compiled WASM AtomEngine may exist, but it works in Planck units
+        // internally, whereas the web UI molecule/atom data is in
+        // Bohr-scaled simulation units. Enabling it without the JS↔WASM
+        // scale-conversion shim would silently corrupt every Scale-2/3
+        // readout, so we force the MockBridge JS fallback below until the
+        // conversion layer lands. Do NOT flip this to a binding probe
+        // before that shim exists.
         return false;
         // return this._module && typeof this._module.AtomEngine === 'function';
     }

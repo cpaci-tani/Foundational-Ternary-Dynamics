@@ -30,6 +30,21 @@ export function createPeControlsCard() {
         title="Velocity damping: v *= (1 - DAMPING*dt) per tick">Damping</label>
     </div>
 
+    <!--
+      "Advanced Forces (Phase 2)" toggles HIDDEN per audit §B/§E (2026-05-27).
+      The 7 toggles (pe-lorentz-p, pe-exchange, pe-strong, pe-magnetic-dipole,
+      pe-spin-orbit, pe-radiation, pe-relativistic) ARE wired: app.js:1081-1087
+      adds change-listeners → mock-bridge.js → mock-particle-engine.js setters
+      store the flags on state._pe (e.g. state._pe.lorentz). HOWEVER the mock
+      particle-engine force step (_computeForces / Velocity-Verlet integrator)
+      reads ONLY state._pe.coulomb, state._pe.gravity and state._pe.damping —
+      the 7 advanced flags are written but never consumed, so the toggles are
+      no-ops in the shipped JS engine. They were advertising non-functional
+      physics. The WASM bridge forwards them to a real _peToggle, so the markup
+      is preserved (commented, not deleted) for re-enable if/when the JS engine
+      grows the corresponding force terms or a WASM PE is wired by default.
+    -->
+    <!--
     <details class="toggle-details">
       <summary class="ctrl-details-summary">Advanced Forces (Phase 2)</summary>
       <div class="toggle-row">
@@ -67,6 +82,7 @@ export function createPeControlsCard() {
           title="Relativistic mass correction: F/gamma">Relativistic</label>
       </div>
     </details>
+    -->
 
     <div class="combo-section-label">Parameters</div>
     <div class="pe-ctrl-row">

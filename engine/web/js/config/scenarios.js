@@ -29,17 +29,30 @@ export const QUANTUM_SCENARIO_DESCRIPTIONS = {
 // not a structural test for "electron-ness". The configuration that
 // realizes m_e is [SELECTION], not [THEOREM].
 //
-// Allowed tags:
-//   [THEOREM]    — rigorously proven from FTD axioms
-//   [SELECTION]  — argued from consistency, not uniquely proven
-//   [CONJECTURE] — proposed interpretation requiring validation
-//   [IMPOSED]    — parameter choice or model calibration
-//   [OPEN]       — unresolved question
+// Allowed tags (the canonical CLAUDE.md § Epistemic Tags vocabulary —
+// this file uses the subset listed here; all are canonical, none invented):
+//   [THEOREM]                       — rigorously proven from FTD axioms
+//   [DERIVED]                       — explicit chain from axioms/prior theorems
+//   [SELECTION]                     — argued from consistency, not uniquely proven
+//   [STRONGLY MOTIVATED CONJECTURE] — empirical match + structural uniqueness,
+//                                     no derivation chain (e.g. the FTD-0013
+//                                     x_+ ↔ 1/α identification and the mass
+//                                     ratios downstream of it, per LEDGER)
+//   [PARAMETRIC]                    — SM formula filled with FTD numbers
+//   [CONJECTURE]                    — proposed interpretation requiring validation
+//   [IMPOSED] / [EXTERNAL INPUT]    — parameter choice / external value
+//   [EMERGENT]                      — behavior arising from dynamics
+//   [PARTIAL]                       — partially established
+//   [OPEN]                          — unresolved question
+//   [AXIOM]                         — structural postulate
+//   [DEMO] / [NOT SHOWN] / [WARNING] — UI-scenario annotations (non-epistemic)
 //
 // DO NOT INVENT NEW TAGS. DO NOT UPGRADE A TAG WITHOUT A CORRESPONDING
-// THEORY DOCUMENT. Labelling a [SELECTION] as [THEOREM] in this file
-// constitutes an epistemic regression that the FTD project explicitly
-// forbids.
+// THEORY DOCUMENT / LEDGER ROW. Labelling a [SELECTION] or a
+// [STRONGLY MOTIVATED CONJECTURE] as [THEOREM] in this file constitutes an
+// epistemic regression that the FTD project explicitly forbids. Tags here
+// must match the canonical LEDGER (docs/theory/07_assessment/core_ledgers/
+// LEDGER.md); when in doubt, align to LEDGER, do not re-decide status.
 // ─────────────────────────────────────────────────────────────────────
 export const S0_SEED_SCENARIO_METADATA = {
     // Audit-3 + Audit-4 2026-04-28 metadata removals: s0-seed-{electron,
@@ -54,7 +67,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         epistemic: [
             ['Configuration', '[SELECTION]', 'DERIV_DARK_SECTOR \u00a75.2 seed+envelope picture. Structurally motivated, not uniquely proven.'],
             ['Name "electron"', '[IMPOSED]', 'FTD derives \\(m_e\\) but has no structural test for \u201celectron-ness\u201d. The label is engineered, not derived.'],
-            ['Mass \\(m_e\\)', '[THEOREM]', '\\(m_e = m_P \\sqrt{2\\pi} (16/3) \\alpha^{11}\\) (0.27% error). Derived, but mass does NOT encode spatial structure.'],
+            ['Mass \\(m_e\\)', '[STRONGLY MOTIVATED CONJECTURE]', '\\(m_e = m_P \\sqrt{2\\pi} (16/3) \\alpha^{11}\\) (0.19% error per FTD-0015). Inherits FTD-0013 status: [STRONGLY MOTIVATED CONJECTURE] per LEDGER, not [THEOREM]. (Reference-only — this metadata block is commented out; retagged + error corrected 0.27%→0.19% for accuracy, audit P1-9, 2026-05-27.)'],
         ],
     },
     's0-seed-photon': {
@@ -72,7 +85,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         epistemic: [
             ['Configuration', '[SELECTION]', 'Same envelope shape as electron \u2014 visualization choice. FTD does not prescribe a spatial form for lepton mass.'],
             ['Name "muon"', '[IMPOSED]', 'Structural test for \u201cmuon-ness\u201d absent \u2014 label is engineered.'],
-            ['Mass ratio \\(m_\\mu/m_e = 207\\)', '[THEOREM]', '\\(3 b_3 (b_3+N_c) - N_c = 3 \\cdot 7 \\cdot 10 - 3 = 207\\). Derived from framework integers, 0.11% from experimental 206.77.'],
+            ['Mass ratio \\(m_\\mu/m_e = 207\\)', '[STRONGLY MOTIVATED CONJECTURE]', '\\(3 b_3 (b_3+N_c) - N_c = 3 \\cdot 7 \\cdot 10 - 3 = 207\\), a framework-integer match 0.11% from experimental 206.77. The integer arithmetic is exact, but the physical identification inherits FTD-0013 (\\(x_+ \\leftrightarrow 1/\\alpha\\)) status: [STRONGLY MOTIVATED CONJECTURE] per LEDGER, not [THEOREM]. Retagged 2026-05-27 (audit P1-9).'],
             ['Amplitude scaling', '[SELECTION]', 'Envelope amplitude slightly boosted over electron to suggest higher field concentration; chosen to stay below \\(K_\\mathrm{GENESIS}\\) so no spurious genesis fires.'],
         ],
     },
@@ -82,7 +95,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         epistemic: [
             ['Configuration', '[SELECTION]', 'Same envelope shape as electron \u2014 visualization choice. Spatial form not prescribed by theory.'],
             ['Name "tau"', '[IMPOSED]', 'Label only \u2014 no structural test.'],
-            ['Mass ratio \\(m_\\tau/m_e = 3477\\)', '[THEOREM]', '\\((N_\\mathrm{eff}+N_\\mathrm{base}) \\cdot \\mu_\\mathrm{ratio} - 2 N_c b_3 = 17 \\cdot 207 - 42 = 3477\\). Matches experimental 3477.23 to 0.01%.'],
+            ['Mass ratio \\(m_\\tau/m_e = 3477\\)', '[STRONGLY MOTIVATED CONJECTURE]', '\\((N_\\mathrm{eff}+N_\\mathrm{base}) \\cdot \\mu_\\mathrm{ratio} - 2 N_c b_3 = 17 \\cdot 207 - 42 = 3477\\), matching experimental 3477.23 to 0.01%. The integer arithmetic is exact, but the physical identification inherits FTD-0013 status: [STRONGLY MOTIVATED CONJECTURE] per LEDGER, not [THEOREM]. Retagged 2026-05-27 (audit P1-9).'],
             ['Amplitude scaling', '[SELECTION]', 'Envelope amplitude boosted to illustrate a more concentrated flux energy; chosen to stay below \\(K_\\mathrm{GENESIS}\\) (visual only, not a mass representation).'],
         ],
     },
@@ -103,7 +116,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         epistemic: [
             ['Configuration', '[SELECTION]', 'Localised scalar envelope \u2014 visualisation choice. No theory prescription for Higgs spatial form.'],
             ['Mass \\(m_H = 124.8\\) GeV', '[SELECTION]', '\\(m_H = (N_\\mathrm{eff}/\\alpha^2) m_e = 124.8\\) GeV (0.36% from 125.25 GeV observed). Argued from framework integers, not uniquely proven.'],
-            ['Self-coupling \\(\\lambda_H\\)', '[DERIVED]', '\\(\\lambda_H = m_H^2 / (2v^2) \\approx 0.129\\) given the Higgs VEV.'],
+            ['Self-coupling \\(\\lambda_H\\)', '[PARAMETRIC]', '\\(\\lambda_H = m_H^2 / (2v^2) \\approx 0.129\\) is the Standard-Model tree-level relation filled with the FTD \\(m_H\\) and VEV — a parametric insertion, no FTD axiom enters. Retagged from [DERIVED] 2026-05-27 (audit P1-10).'],
             ['Name "Higgs"', '[IMPOSED]', 'Label. No structural test for Higgs-ness in the seed configuration.'],
         ],
     },
@@ -227,7 +240,7 @@ export const S0_SEED_SCENARIO_METADATA = {
         epistemic: [
             ['3-site cluster configuration', '[SELECTION]', 'Consistent with baryon number 3. Triangle geometry is one choice among many \u2014 not uniquely forced.'],
             ['Name "proton"', '[IMPOSED]', 'A label on the cluster. Do NOT read color, flavor, or quark identity from the triangle vertices.'],
-            ['Mass ratio \\(m_p/m_e\\)', '[THEOREM]', '\\(m_p/m_e = N_\\mathrm{eff}/\\alpha + N_\\mathrm{base} N_\\mathrm{eff} + N_c = 1836.47\\) (174 ppm). The ratio is derived, but has NO spatial expression.'],
+            ['Mass ratio \\(m_p/m_e\\)', '[STRONGLY MOTIVATED CONJECTURE]', '\\(m_p/m_e = N_\\mathrm{eff}/\\alpha + N_\\mathrm{base} N_\\mathrm{eff} + N_c = 1836.47\\) (174 ppm). Inherits FTD-0013/FTD-0016 status: [STRONGLY MOTIVATED CONJECTURE] per LEDGER, not [THEOREM]. (Reference-only — this metadata block is commented out; retagged for accuracy, audit P1-9, 2026-05-27.)'],
             ['LANDMINE', '[WARNING]', 'Do NOT interpret J_x-dominant flux as "red quark" or map vertices to u/d. The BCC\u2192SU(3) link is about the gluon propagator, not per-quark orientation.'],
         ],
     },
