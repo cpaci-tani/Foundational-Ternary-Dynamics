@@ -1,5 +1,33 @@
 # The Alpha Readout Resolution: Bridging the Conformed Root to Physical Couplings
 
+> ## ⛔ [RETRACTED] — 2026-06-01. This document does NOT resolve MC-T4.3.
+>
+> **Status: retracted substitution-identity facade. Preserved for provenance; do not re-attempt or cite as a result.**
+>
+> **Why retracted.** Part II "Track A" §2.5 inserts the *ansatz*
+> `α⁻¹(μ) = x₊ + c_fermion · ln(M_Planck/μ)` with a fitted `c_fermion = 1/20`, then
+> §2.6 declares the resulting 1.26 ppm residual "**the exact physical signature of the
+> conformal trace anomaly**." That is a **substitution identity** — FTD numbers placed into
+> a hand-constructed formula and the post-hoc match called a derivation — which is a **Hard
+> Exclusion** under `docs/theory/01_reference/SPEC_ALPHA_READOUT_CONTRACT.md` §3. It derives
+> nothing; the title's claim to "formally resolve MC-T4.3" is false.
+>
+> **The canonical position (supersedes this doc).** MC-T4.3 remains a **[FOUNDATIONAL
+> OBSTRUCTION]**. The 2026-06-01 four-route adversarial audit (J-twist / BCC / lemniscatic-CM /
+> variational-valuation-Hodge, each independently force-attempted and adversarially refuted)
+> returned **BOUNDARY, 0/4 forced**: the substrate forward-forces the operator *trace* 16G\*²
+> (Watson + |Aut(E)|²) and the *existence* of a clean odd source G\* (the J-twisted
+> ζ-determinant ratio), but does **not** force the *operator assembly* binding `det = 16G*³`
+> to the same readout — the imposed master-quadratic Vieta target (W-CRIT-2). α is therefore
+> a **dynamical** coupling the substrate consumes, not a structurally forced one; `x₊ = 1/α`
+> stays **[STRONGLY MOTIVATED CONJECTURE]** resting on FTD-0189 polynomial-uniqueness.
+> See `docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`,
+> `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` (W-CRIT-2), and
+> `docs/theory/10_eft_program/preregistrations/PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md`.
+>
+> *(Part III "Track B" un-readability material is subsumed by the canonical RSI pre-registration
+> and the FTD-0235 det-identity audit; consult those, not this doc.)*
+
 ## Abstract
 This document formally resolves the operational readout mechanism gap **(MC-T4.3)** within Foundational Ternary Dynamics (FTD). The master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ yields a larger root $x_+ \approx 137.0361715$ conformed uniquely by CM geometry. However, bridging this static algebraic root to a physical, scale-dependent coupling $\alpha(\mu)$ measured by observers has remained a significant gap. We formulate a two-track resolution: **Track A** develops the physical bridge via conformal Weyl anomalies and trace anomaly coupling, while **Track B** establishes a rigorous mathematical no-go theorem proving the limits of un-readability under the raw discrete axioms.
 
