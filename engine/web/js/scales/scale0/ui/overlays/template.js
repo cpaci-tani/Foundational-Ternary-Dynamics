@@ -105,7 +105,7 @@ export function getScale0OverlayTemplate() {
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-weak"
           title="[PROXY — VISUALIZATION ONLY] ∇×J pseudovector field scaled by DUAL_DELTA ≈ 0.957. Renders the curl of J (parity-odd) as &quot;weak-like&quot; arrows. This is NOT the SM weak force — FTD's weak interaction lives in state transmutation (weak_transmutation toggle), not a vector field. Label retained for slot consistency; audit P1-17 clarification, 2026-05-27.">
-        <span class="field-swatch field-swatch-weak"></span>Weak
+        <span class="field-swatch field-swatch-weak"></span>&nabla;&times;J pseudovector
       </button>
     </div>
 

@@ -26,6 +26,34 @@ import { createStatusBarCache } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+// Max scenario-telemetry pairs to show in the compact toolbar strip. The
+// bridge emits at most two keys per scenario today; the cap guards the
+// always-visible strip against an unexpectedly large map.
+const COSMIC_TELEMETRY_MAX_PAIRS = 3;
+
+/**
+ * Flatten the bridge's per-scenario telemetry map into one compact toolbar
+ * string, e.g. {'Core Separation': '12.3 lu', 'Status': 'Approach'} →
+ * "Core Separation: 12.3 lu · Status: Approach". Returns '' for an empty or
+ * missing map so the strip entry simply stays blank between scenarios.
+ *
+ * @param {Object<string,string|number>|null|undefined} tel
+ * @returns {string}
+ */
+function formatCosmicTelemetry(tel) {
+    if (!tel) return '';
+    const keys = Object.keys(tel);
+    if (keys.length === 0) return '';
+    return keys
+        .slice(0, COSMIC_TELEMETRY_MAX_PAIRS)
+        .map((k) => k + ': ' + tel[k])
+        .join(' · ');
+}
+
+// ---------------------------------------------------------------------------
 // Module-level state
 // ---------------------------------------------------------------------------
 
@@ -77,6 +105,18 @@ class Scale5LifecycleController extends BaseLifecycleController {
         this.renderer = new CosmicRenderer(viewport.scene, viewport.camera, viewport.renderer);
         this.trackThreeObject(this.renderer);
 
+        // Hand the cosmic bridge + renderer to the inspector so body-click
+        // inspection works (audit §E item (a), 2026-05-31). The inspector's
+        // cosmic raycast path (inspector.js) is gated on `_cosmicRenderer`
+        // being set via setCosmicContext(); without this call the producer
+        // `bridge.cosmicInspectBody()` and the whole cosmic-inspector panel
+        // (already built in inspector/scales/cosmic.js + panel template) were
+        // unreachable — clicks never resolved to a body. syncMode('cosmic')
+        // already sets _engineMode='cosmic'; this supplies getInteractables().
+        if (ctx.inspector?.setCosmicContext) {
+            ctx.inspector.setCosmicContext(this.bridge, this.renderer);
+        }
+
         // Save prior camera state for destroy() to restore (audit P1-8, 2026-05-27)
         if (viewport && viewport.camera && !this._savedCamera) {
             this._savedCamera = {
@@ -104,12 +144,12 @@ class Scale5LifecycleController extends BaseLifecycleController {
         const data = this.bridge.getCosmicData();
         this.renderer.update(data, this.bridge.getDiagnostics());
 
-        // Set camera preset based on scenario. Note: 'cosmic-quasar' /
-        // 'quasar' preset was removed 2026-05-27 (audit W10) — the
-        // toolbar `<select>` never offered a quasar scenario, and the
-        // camera selector has no quasar option either, so the entry
-        // was unreachable. Binary AGN ('cosmic-binary-agn') exists and
-        // covers the quasar use case visually.
+        // Set camera preset based on scenario. Note: the 'quasar' camera
+        // preset was orphaned — neither the scenario `<select>` nor the
+        // camera `<select>` ever offered it, and this map never dispatched
+        // to it. Its dead entry in CosmicRenderer.setCameraPreset() was
+        // removed 2026-05-31 (audit §E item (c)). Binary AGN
+        // ('cosmic-binary-agn') covers the quasar use case visually.
         const presetMap = {
             'cosmic-galaxy': 'galaxy',
             'cosmic-super-cluster': 'overview',
@@ -219,6 +259,13 @@ export function animateCosmic(ctx) {
         _toolbarStatus.update('cosmic-tb-bodies', diag.bodyCount + ' bodies');
         _toolbarStatus.update('cosmic-tb-tick', 'T ' + diag.tick);
         _toolbarStatus.update('cosmic-tb-hubble', 'H=' + diag.hubbleParameter.toFixed(4));
+        // Scenario-specific telemetry (audit §E item (b), 2026-05-31). The
+        // bridge computes per-scenario readouts each tick (_updateTelemetry →
+        // _customTelemetry, e.g. "Core Separation", "BH Mass", "Status") and
+        // returns them as diag.customTelemetry, but nothing displayed them.
+        // Flatten the {key: value} map into one compact strip entry; the
+        // status cache skips the DOM write when the string is unchanged.
+        _toolbarStatus.update('cosmic-tb-scenario', formatCosmicTelemetry(diag.customTelemetry));
 
         // Controls panel cards
         const c = diag.countsByType || [];

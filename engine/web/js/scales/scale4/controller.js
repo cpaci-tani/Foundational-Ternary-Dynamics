@@ -64,8 +64,15 @@ class Scale4LifecycleController extends BaseLifecycleController {
 
         if (inspector) inspector.setPlanetaryContext(this.bridge, this.renderer);
 
-        // Save prior camera/controls state so destroy() can restore for other scales
-        // (audit P1-8 fix, 2026-05-27).
+        // Capture the pre-Scale-4 camera/controls state so destroy() can restore
+        // it for other scales (audit P1-8a). The `!this._saved*` guard is
+        // load-bearing: loadScenario() re-runs on every in-place reload
+        // (scenario change, gravity-mode change) WITHOUT an intervening
+        // destroy(), and by then near/far/min/max have already been narrowed
+        // below. Capturing only on the first load (when _saved* is null) keeps
+        // the originals pristine; destroy() nulls them so a later re-entry
+        // re-captures a fresh baseline. Vectors are cloned so later camera
+        // motion doesn't mutate the saved snapshot.
         if (viewport && viewport.camera && !this._savedCamera) {
             this._savedCamera = {
                 near: viewport.camera.near,
@@ -199,6 +206,19 @@ class Scale4LifecycleController extends BaseLifecycleController {
         // loadScenario() can run repeatedly without an intervening destroy()
         // (the scenario <select> reloads in place), so guard each binding with
         // a dataset flag to avoid stacking duplicate listeners.
+        //
+        // NOTE (audit §E / P1-8 dead-UI): #planetary-opt-orbits and
+        // #planetary-opt-axes are NOT dead. The audit checked index.html only;
+        // these checkboxes are rendered at runtime by getPlanetaryPanelTemplate()
+        // in js/ui/components/panel-resources/template.js (the "Visualization
+        // Overlays" card of #panel-planetary), alongside #planetary-layer-list
+        // which _populateLayerList() fills. Both bindings drive real renderer
+        // behaviour — setRenderOrbits() toggles orbit-line visibility,
+        // setRenderAxes() lazily builds + toggles a per-mesh AxesHelper
+        // (planetary-renderer.js). Keep them. Do NOT also render these IDs in the
+        // Scale-4 toolbar template: duplicate element IDs would split the toggle
+        // state across two checkboxes and getElementById would bind only the
+        // first.
         const optOrbits = document.getElementById('planetary-opt-orbits');
         if (optOrbits && !optOrbits.dataset.s4Bound) {
             optOrbits.dataset.s4Bound = '1';
@@ -286,7 +306,20 @@ class Scale4LifecycleController extends BaseLifecycleController {
         if (ctx && ctx.viewport && ctx.viewport.particles) {
             ctx.viewport.particles.visible = true;
         }
-        // Restore camera/controls (audit P1-8 fix, 2026-05-27)
+        // Restore camera/controls clip planes + zoom limits to their
+        // pre-Scale-4 values (audit P1-8a; originals captured in loadScenario).
+        //
+        // Division of labour with viewport.setEngineMode() (called downstream
+        // via inspectorRuntime.syncMode AFTER this destroy()): that path already
+        // re-derives camera.near, controls.minDistance, and re-centres
+        // position/target for the destination scale — but it NEVER touches
+        // camera.far or controls.maxDistance. Scale 4 narrows both
+        // (far 2000→1000, maxDistance 500→100), so without this restore a
+        // Scale 4→0 switch leaves the lattice with a 1000-unit far plane and a
+        // 100-unit zoom cap → far geometry culled / z-fighting. far + maxDistance
+        // are therefore the load-bearing restores here; near/position/min/target
+        // are restored too (harmless — setEngineMode overwrites them) so this
+        // teardown stays self-contained.
         if (ctx && ctx.viewport) {
             const viewport = ctx.viewport;
             if (this._savedCamera && viewport.camera) {
@@ -300,6 +333,13 @@ class Scale4LifecycleController extends BaseLifecycleController {
                 viewport.controls.minDistance = this._savedControls.minDistance;
                 viewport.controls.maxDistance = this._savedControls.maxDistance;
                 viewport.controls.target.copy(this._savedControls.target);
+                // Push the restored target/limits into OrbitControls now rather
+                // than relying on a later controls.update() from whatever scale
+                // mounts next — keeps the restore correct even if call order
+                // changes or the destination skips its own update().
+                if (typeof viewport.controls.update === 'function') {
+                    viewport.controls.update();
+                }
                 this._savedControls = null;
             }
         }

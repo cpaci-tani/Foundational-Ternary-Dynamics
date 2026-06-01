@@ -185,19 +185,23 @@ const PE_TABLE_HEADER_TOOLTIPS = {
 
 // Scale 2/3 Atom-Engine diagnostics. Shown in .scale-ae panel-grid rows
 // adjacent to but NOT inside #pe-telemetry. Keys match card-title text
-// after normalizeLabel (so "Kinetic Energy (eV)" \u2192 "Kinetic Energy eV",
+// after normalizeLabel (so "Kinetic Energy (sim)" \u2192 "Kinetic Energy sim",
 // "Mass (K_B)" \u2192 "Mass KB" because the DOM has <sub>B</sub>).
 const AE_CARD_TOOLTIPS = {
     // ─── Core counts ──────────────────────────────────────────────────
     'Atom Count':   'Number of atoms currently in the AtomEngine. In Scale 2 this is one atom; in Scale 3 it can be hundreds of atoms belonging to molecules.',
     'Bond Count':   'Number of covalent bonds tracked by the engine. A water molecule H\u2082O has 2; methane has 4; zero in Scale 2.',
 
-    // ─── Energy terms (eV) ────────────────────────────────────────────
-    'Kinetic Energy eV': 'Total KE across all atoms \\(\\sum \\tfrac{1}{2}m|v|^2\\), in eV. Related to temperature via \\(T = 2KE/(3 k_B N)\\).',
-    'Total Energy eV':   'KE + PE_ionic + PE_vdw + PE_bonds, in eV. Should be conserved when no thermostat is attached.',
-    'PE Ionic eV':       'Electrostatic energy from atom partial charges: \\(\\sum k q_i q_j / r\\). Usually positive (repulsion) for salts; dominant term in ionic crystals.',
-    'PE Van der Waals eV': 'Lennard-Jones 12-6 potential summed over non-bonded atom pairs: 4\u03b5[(\u03c3/r)\u00b9\u00b2 \u2212 (\u03c3/r)\u2076]. Captures hard-core repulsion + weak dispersion attraction.',
-    'PE Bonds eV':       'Harmonic bond potential \\(\\sum \\tfrac{1}{2} k_b (r - r_0)^2\\) for every covalent bond. Zero at equilibrium length, grows quadratically with strain.',
+    // ─── Energy terms (sim units) ─────────────────────────────────────
+    // Audit P1-19 (2026-05-31): these are raw MD sim-unit energies. The
+    // engine applies no eV calibration — formatEnergy(value, 2) only
+    // auto-scales the magnitude suffix, it does not convert sim units to
+    // eV. The cards are suffixed "(sim)" so they no longer claim eV.
+    'Kinetic Energy sim': '⚠ Sim-unit energy (no eV calibration applied). Total KE across all atoms \\(\\sum \\tfrac{1}{2}m|v|^2\\) in the AtomEngine\'s native MD units. Related to the sim-unit Temperature proxy via \\(T_{\\text{sim}} = 2\\langle KE\\rangle/(3 N)\\).',
+    'Total Energy sim':   '⚠ Sim-unit energy (no eV calibration applied). KE + PE_ionic + PE_vdw + PE_bonds in native MD units. Should be conserved when no thermostat is attached.',
+    'PE Ionic sim':       '⚠ Sim-unit energy (no eV calibration applied). Electrostatic energy from atom partial charges: \\(\\sum k q_i q_j / r\\). Usually positive (repulsion) for salts; dominant term in ionic crystals.',
+    'PE Van der Waals sim': '⚠ Sim-unit energy (no eV calibration applied). Lennard-Jones 12-6 potential summed over non-bonded atom pairs: 4\u03b5[(\u03c3/r)\u00b9\u00b2 \u2212 (\u03c3/r)\u2076]. Captures hard-core repulsion + weak dispersion attraction.',
+    'PE Bonds sim':      '⚠ Sim-unit energy (no eV calibration applied). Harmonic bond potential \\(\\sum \\tfrac{1}{2} k_b (r - r_0)^2\\) for every covalent bond. Zero at equilibrium length, grows quadratically with strain.',
 
     // ─── Thermo + momentum ────────────────────────────────────────────
     'Temperature sim': '\u26a0 Sim-unit equipartition proxy: \\(T_{\\text{sim}} = 2\\langle KE\\rangle / (3 N)\\) with implicit k_B = 1. NOT kelvin \u2014 no Boltzmann conversion is applied, so the value (suffixed "(sim)") is in the same sim units as the AE energy cards. (Audit P0-10: kelvin claim corrected 2026-05-27.)',

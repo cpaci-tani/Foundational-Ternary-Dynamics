@@ -13,7 +13,7 @@
  * Physics preserved exactly from the main dashboard controller:
  *   - Camera preset: position (5, 3.5, 5), target origin
  *   - Toggle map: 13 geometric layers (center, oct, cuboct, cube,
- *     tetra+/-, BCC/FCC, gerade/ungerade, connections, axes, mirrors,
+ *     tetra+/-, BCC/FCC, orbit_rep/antipode, connections, axes, mirrors,
  *     labels, auto-rotate)
  *   - Info panel built via buildMetaInfoPanel (pedagogy)
  */
@@ -92,7 +92,7 @@ class Scale6LifecycleController extends BaseLifecycleController {
             ['meta-toggle-tetra-plus', 'toggleTetraPlus'],
             ['meta-toggle-tetra-minus', 'toggleTetraMinus'],
             ['meta-toggle-bcc-fcc', 'toggleBCCFCC'],
-            ['meta-toggle-gerade', 'toggleGeradeUngerade'],
+            ['meta-toggle-gerade', 'toggleInversionDomain'],
             ['meta-toggle-connections', 'toggleConnections'],
             ['meta-toggle-axes', 'toggleRotationAxes'],
             ['meta-toggle-mirrors', 'toggleMirrorPlanes'],

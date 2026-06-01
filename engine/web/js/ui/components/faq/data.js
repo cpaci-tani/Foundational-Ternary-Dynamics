@@ -38,7 +38,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Chalmers\' "hard problem": even if every functional brain process were fully modeled, the question "why is there something it is like to be that system?" remains untouched. No combination of information-processing steps seems, on its face, to entail experience.',
                 ],
                 mainstreamStruggle: [
-                    'Integrated Information Theory, Global Workspace, Higher-Order-Thought, and related frameworks characterize neural correlates of reference frame context. They are models of when experience occurs, not explanations of why there is experience at all. The explanatory gap remains open.',
+                    'Integrated Information Theory, Global Workspace, Higher-Order-Thought, and related frameworks characterize neural correlates of subjective experience. They are models of when experience occurs, not explanations of why there is experience at all. The explanatory gap remains open.',
                 ],
                 ftdAngle: [
                     { tag: 'SELECTION', text: 'Reference frame structure enters the formalism as the phase angle \\(\\theta_C\\) of the master-quadratic extension. The structural fraction \\(\\cos^2(\\theta_C) = G^{\\ast}/8\\) follows from the ternary-state algebra. (Per REF_REFERENCE_FRAME_VOCABULARY 2026-05-01, "reference frame structure" denotes the structural closure; "reference frame context" is the colloquial pointer.)' },
@@ -73,8 +73,8 @@ export const FAQ_SECTIONS = Object.freeze([
                     'No unambiguous experimental discriminator separates "FTD manifestation" from textbook Copenhagen collapse.',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md',
-                    'docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md',
+                    'docs/theory/03_derivations/quantum_mechanics/DERIV_QM_FROM_LATTICE.md',
+                    'docs/theory/03_derivations/quantum_mechanics/DERIV_SINGLET_FROM_VOID_EVENT.md',
                 ],
             },
             {
@@ -144,7 +144,7 @@ export const FAQ_SECTIONS = Object.freeze([
                 ],
                 theoryRefs: [
                     'docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md',
-                    'docs/theory/10_eft_program/EXPLR_DM_BARYON_W5_WEIGHTING.md',
+                    'docs/theory/10_eft_program/general/EXPLR_DM_BARYON_W5_WEIGHTING.md',
                 ],
             },
             {
@@ -166,7 +166,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'No quantitative account of why the observed value is so small compared to any natural cutoff.',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md',
+                    'docs/theory/03_derivations/gravity_and_cosmology/DERIV_STELLAR_LIFECYCLE_LATTICE.md',
                 ],
             },
             {
@@ -189,7 +189,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'The Planck scale itself is imposed as a unit, not explained.',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_ALPHA_FROM_PHASE_STRUCTURE.md',
+                    'docs/theory/03_derivations/foundational_mechanics/DERIV_ALPHA_FROM_PHASE_STRUCTURE.md',
                     'docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md',
                 ],
             },
@@ -213,7 +213,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'The connection between the 17-digit hierarchy and the FTD cell topology remains qualitative.',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md',
+                    'docs/theory/03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md',
                     'docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md',
                 ],
             },
@@ -237,7 +237,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'The specific continuum limit that recovers QFT perturbation theory from FTD is a work in progress.',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md',
+                    'docs/theory/03_derivations/electromagnetism/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md',
                 ],
             },
             {
@@ -259,7 +259,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'No prediction that distinguishes FTD corrections from Page-curve-style unitary evaporation models.',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md',
+                    'docs/theory/03_derivations/gravity_and_cosmology/DERIV_STELLAR_LIFECYCLE_LATTICE.md',
                 ],
             },
             {
@@ -281,7 +281,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'FTD does not privilege one metaphysical interpretation of nonlocality over another — it sharpens the question by replacing "instantaneous collapse" with "shared manifestation history".',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md',
+                    'docs/theory/03_derivations/quantum_mechanics/DERIV_SINGLET_FROM_VOID_EVENT.md',
                 ],
             },
             {
@@ -377,7 +377,7 @@ export const FAQ_SECTIONS = Object.freeze([
                     'The claim that no lattice configuration corresponds to an ill-defined limit is structural; no theorem establishes this across all possible dynamics.',
                 ],
                 theoryRefs: [
-                    'docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md',
+                    'docs/theory/03_derivations/gravity_and_cosmology/DERIV_STELLAR_LIFECYCLE_LATTICE.md',
                 ],
             },
             {
