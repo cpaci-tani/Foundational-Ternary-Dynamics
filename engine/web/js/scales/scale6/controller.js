@@ -60,6 +60,34 @@ class Scale6LifecycleController extends BaseLifecycleController {
         const gridBtn = document.getElementById('toggle-grid');
         if (gridBtn) gridBtn.classList.remove('active');
 
+        // Capture the pre-Scale-6 camera/controls state so destroy() can restore
+        // it for other scales (audit W1-1). The `!this._saved*` guard mirrors the
+        // Scale-4 reference (scale4/controller.js ~L71-84): loadMetaScenario()
+        // can re-run on an in-place reload WITHOUT an intervening destroy(), and
+        // by then position/target have already been moved to the meta preset.
+        // Capturing only on the first load (when _saved* is null) keeps the
+        // originals pristine; destroy() nulls them so a later re-entry re-captures
+        // a fresh baseline. Vectors are cloned so later camera motion (e.g.
+        // auto-rotate / user orbit) doesn't mutate the saved snapshot. near/far
+        // and minDistance/maxDistance are captured even though the meta preset
+        // below currently leaves them untouched: this keeps the snapshot complete
+        // and the restore self-contained (far + maxDistance are the load-bearing
+        // restores the shared mode-switch path never re-derives — see destroy()).
+        if (viewport && viewport.camera && !this._savedCamera) {
+            this._savedCamera = {
+                near: viewport.camera.near,
+                far: viewport.camera.far,
+                position: viewport.camera.position.clone(),
+            };
+        }
+        if (viewport && viewport.controls && !this._savedControls) {
+            this._savedControls = {
+                minDistance: viewport.controls.minDistance,
+                maxDistance: viewport.controls.maxDistance,
+                target: viewport.controls.target.clone(),
+            };
+        }
+
         // Position camera for meta view (close-up, centered on origin)
         if (viewport.camera && viewport.controls) {
             viewport.controls.target.set(0, 0, 0);
@@ -135,6 +163,42 @@ class Scale6LifecycleController extends BaseLifecycleController {
         // Restore lattice particles visibility for other scales
         if (ctx && ctx.viewport && ctx.viewport.particles) {
             ctx.viewport.particles.visible = true;
+        }
+        // Restore camera/controls clip planes + zoom limits + framing to their
+        // pre-Scale-6 values (audit W1-1; originals captured in
+        // loadMetaScenario). Mirrors the Scale-4 reference
+        // (scale4/controller.js ~L318-340).
+        //
+        // Division of labour with viewport.setEngineMode() (called downstream
+        // via the inspector/mode-sync path AFTER this destroy()): that shared
+        // path re-derives camera.near, controls.minDistance, and re-centres
+        // position/target for the destination scale — but it NEVER touches
+        // camera.far or controls.maxDistance. far + maxDistance are therefore
+        // the load-bearing restores here; near/position/min/target are restored
+        // too (harmless — setEngineMode overwrites them) so this teardown stays
+        // self-contained and Meta→Lattice leaves the lattice camera correct.
+        if (ctx && ctx.viewport) {
+            const viewport = ctx.viewport;
+            if (this._savedCamera && viewport.camera) {
+                viewport.camera.near = this._savedCamera.near;
+                viewport.camera.far = this._savedCamera.far;
+                viewport.camera.position.copy(this._savedCamera.position);
+                viewport.camera.updateProjectionMatrix();
+                this._savedCamera = null;
+            }
+            if (this._savedControls && viewport.controls) {
+                viewport.controls.minDistance = this._savedControls.minDistance;
+                viewport.controls.maxDistance = this._savedControls.maxDistance;
+                viewport.controls.target.copy(this._savedControls.target);
+                // Push the restored target/limits into OrbitControls now rather
+                // than relying on a later controls.update() from whatever scale
+                // mounts next — keeps the restore correct even if call order
+                // changes or the destination skips its own update().
+                if (typeof viewport.controls.update === 'function') {
+                    viewport.controls.update();
+                }
+                this._savedControls = null;
+            }
         }
     }
 }
