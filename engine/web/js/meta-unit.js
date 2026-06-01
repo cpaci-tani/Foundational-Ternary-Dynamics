@@ -25,8 +25,8 @@ const COLORS = {
     cube:           0x7FFF00,
     evenParity:     0x4488FF,
     oddParity:      0xFF4444,
-    gerade:         0x44CC44,
-    ungerade:       0xFF8800,
+    orbitRep:       0x44CC44,
+    antipode:       0xFF8800,
     axis_c4:        0xFFFF00,
     axis_c3:        0xFF6600,
     axis_c2:        0x00AAFF,
@@ -76,25 +76,28 @@ function buildSiteData() {
 
 function computeInversionParity(x, y, z) {
     // Sites come in inversion pairs (x,y,z) <-> (-x,-y,-z). This function
-    // partitions each pair into an "orbit representative" (first nonzero
-    // coord positive) and its "antipode" — a fundamental domain of the
-    // inversion operator.
+    // partitions each non-center pair into an "orbit representative"
+    // ('orbit_rep', the half with first nonzero coord positive) and its
+    // "antipode" — i.e. a fundamental domain of the inversion operator.
     //
-    // ⚠ NAMING CAVEAT (audit P1-7, 2026-05-27): the historical labels
-    // 'gerade'/'ungerade' are RETAINED for backward compatibility with the
-    // UI toolbar (id="meta-toggle-gerade") and pedagogy panel, but this
-    // is NOT representation-theoretic g/u parity — individual sites are
-    // not g or u (the irreps living on them are; sites lie on inversion
-    // ORBITS). 'gerade' here means "orbit representative", 'ungerade'
-    // means "antipode". The visual 13+13 split reflects the fundamental
-    // domain count, which IS the canonical content of the partition.
-    if (x > 0) return 'gerade';
-    if (x < 0) return 'ungerade';
-    if (y > 0) return 'gerade';
-    if (y < 0) return 'ungerade';
-    if (z > 0) return 'gerade';
-    if (z < 0) return 'ungerade';
-    return 'gerade';
+    // NOTE (audit P1-7, corrected 2026-05-27): the labels were formerly
+    // 'gerade'/'ungerade'. That was wrong. Gerade/ungerade is the parity
+    // of an IRREP under inversion (a property of a basis function — e.g.
+    // the center spans A_1g, the octahedron spans T_1u; see the Moore
+    // Layer Theorem §3 / §8 shell->irrep map), NOT a property of an
+    // individual site. Each shell mixes g and u (the cube carries A_2u
+    // AND T_1u), so a per-site g/u label is meaningless. What the
+    // heuristic actually computes is an inversion fundamental domain:
+    // one representative per antipodal site-pair. The 13+13 visual split
+    // is the count of that fundamental domain, which is the genuine
+    // content. Renamed to 'orbit_rep'/'antipode' accordingly.
+    if (x > 0) return 'orbit_rep';
+    if (x < 0) return 'antipode';
+    if (y > 0) return 'orbit_rep';
+    if (y < 0) return 'antipode';
+    if (z > 0) return 'orbit_rep';
+    if (z < 0) return 'antipode';
+    return 'orbit_rep';
 }
 
 function computeStabilizer(x, y, z) {
@@ -206,7 +209,7 @@ export class MetaUnit {
         }
 
         // Per-site reference table, parallel to this._sites, so the colour
-        // toggles (_resetColors / _applyBCCFCC / _applyGeradeUngerade) can
+        // toggles (_resetColors / _applyBCCFCC / _applyInversionDomain) can
         // still iterate 0..26 in the same order and recolour by instance.
         const cursor = { center: 0, octahedron: 0, cuboctahedron: 0, cube: 0 };
         for (const site of this._sites) {
@@ -460,11 +463,11 @@ export class MetaUnit {
         }
     }
 
-    _applyGeradeUngerade() {
+    _applyInversionDomain() {
         for (let i = 0; i < this._siteRefs.length; i++) {
             const site = this._sites[i];
             if (site.d2 === 0) continue;
-            const c = site.inversionParity === 'gerade' ? COLORS.gerade : COLORS.ungerade;
+            const c = site.inversionParity === 'orbit_rep' ? COLORS.orbitRep : COLORS.antipode;
             this._setSiteColor(i, c);
         }
     }
@@ -520,14 +523,22 @@ export class MetaUnit {
         return active;
     }
 
-    toggleGeradeUngerade(on) {
+    toggleInversionDomain(on) {
         const active = on !== undefined ? on : true;
         if (active) {
-            this._applyGeradeUngerade();
+            this._applyInversionDomain();
         } else {
             this._resetColors();
         }
         return active;
+    }
+
+    // Back-compat alias: the toggle was historically (mis)named "gerade/
+    // ungerade". No in-repo caller uses this name anymore (owned files call
+    // toggleInversionDomain); kept only so any external caller still
+    // resolves. See audit P1-7.
+    toggleGeradeUngerade(on) {
+        return this.toggleInversionDomain(on);
     }
 
     toggleConnections(on) {

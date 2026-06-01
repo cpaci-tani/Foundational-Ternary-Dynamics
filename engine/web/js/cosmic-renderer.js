@@ -518,12 +518,17 @@ export class CosmicRenderer extends BaseRenderer {
 
     // ================================================================
     setCameraPreset(name, bodyData) {
+        // Camera presets — these are the four offered by the toolbar
+        // `#cosmic-camera-select` selector (scale5/ui/toolbar/template.js).
+        // The former `quasar` preset was orphaned (audit §E item (c),
+        // 2026-05-31): no `<option>` exposed it and the scenario→preset map
+        // in the controller never dispatched to it, so it was unreachable.
+        // Binary-AGN ('Binary Quasars') uses the `overview`/`merger` framings.
         const presets = {
             overview:  { pos: [0, 350, 450], target: [0, 0, 0], fov: 60 },
             galaxy:    { pos: [40, 70, 100],  target: [0, 0, 0], fov: 55 },
             blackhole: { pos: [0, 35, 70],   target: [0, 0, 0], fov: 45 },
-            merger:    { pos: [0, 80, 170],  target: [0, 0, 0], fov: 55 },
-            quasar:    { pos: [0, 20, 45],   target: [0, 0, 0], fov: 42 }
+            merger:    { pos: [0, 80, 170],  target: [0, 0, 0], fov: 55 }
         };
         const p = presets[name] || presets.overview;
         this.camera.position.set(p.pos[0], p.pos[1], p.pos[2]);
