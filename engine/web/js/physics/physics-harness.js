@@ -2,6 +2,22 @@
  * PhysicsHarness — single canonical surface for reading and writing
  * Scale-0 lattice physics state.
  *
+ * STATUS: LIVE (wired into the running dashboard). Disposition verified
+ * 2026-06-01 (ticket W3-3). Consumer chain:
+ *   index.html → js/app.js → physics/index.js (getPhysicsHarness factory,
+ *   lazily constructs ONE PhysicsHarness per bridge) → this module.
+ * Runtime consumers (all reached via app.js, which calls their init fns):
+ *   • scales/scale0/ui/overlays/p1-observables-panel.js   — imports the
+ *     harness + the `getParticleCharge` / `findOppositeChargePairFromList`
+ *     helpers; init'd by app.js initP1ObservablesPanel().
+ *   • scales/scale0/ui/overlays/conservation-micropanel.js — reads totals
+ *     via getPhysicsHarness(); init'd by app.js initConservationMicropanel().
+ * The two free helpers below (getParticleCharge / findOppositeChargePairFromList)
+ * are also re-exported from physics/index.js for panels that hold a raw
+ * snapshot rather than a harness handle. Do not delete or inline this
+ * module: removing it breaks the .charge/.q backend-drift papering that
+ * the panels rely on (see AUDIT_WEB_ENGINE_2026-05-27 §particle-drift).
+ *
  * The harness wraps a bridge (MockBridge or WasmBridge) and does not
  * replace it: `harness.bridge` exposes the underlying instance.
  * Getters return plain data snapshots (mutations don't propagate to
