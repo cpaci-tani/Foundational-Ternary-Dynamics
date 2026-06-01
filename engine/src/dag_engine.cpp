@@ -1,25 +1,37 @@
 #include "ftd/dag_engine.h"
 #include <iostream>
+#include <cassert>
 
 // ══════════════════════════════════════════════════════════════════════
-// STATUS BANNER — DAG Engine is a SKELETON, not the production physics path.
+// STATUS BANNER — DAG Engine is a DEPRECATED SKELETON (ticket W6),
+//                 NOT the production physics path.
 // ══════════════════════════════════════════════════════════════════════
 //
 // The file name advertises a DAG-based six-phase engine. In reality:
 //
 //   phase_read    — implemented (Laplacian + coupling source)
 //   phase_write   — implemented (leapfrog-style update + damping)
-//   gauss_project — STUB — see [OPEN] below
-//   phase_forces  — STUB — see [OPEN] below
-//   phase_movement— STUB — see [OPEN] below
+//   gauss_project — UNIMPLEMENTED STUB — [[deprecated]], asserts false
+//   phase_forces  — UNIMPLEMENTED STUB — [[deprecated]], asserts false
+//   phase_movement— UNIMPLEMENTED STUB — [[deprecated]], asserts false
 //
-// The production Scale-0 physics runs through src/render_bridge.cpp on a
-// FLAT voxel array. The SparseVoxelDAG in this file is in-progress
-// infrastructure for a future migration, not the path the browser engine,
-// tests, or benchmarks currently exercise.
+// As of W6 (deprecate-clearly) the three stubs are no longer silent
+// no-ops. tick() emits a one-time runtime warning and SKIPS them (it is
+// wave-only), and each stub body asserts false so that any DIRECT call
+// surfaces loudly in a debug build. This converts a "looks implemented
+// but isn't" hazard into a loud, explicit incompleteness signal without
+// breaking anything that currently compiles or links — see test_dag_engine
+// (release build) which exercises only phase_read/phase_write via tick().
+//
+// The GOLDEN / production Scale-0 physics runs through src/render_bridge.cpp
+// on a FLAT voxel array (golden hash 0xcd957b601d47868a). DagEngine is NOT
+// in that tick path and has no WASM/JS binding. The SparseVoxelDAG here is
+// in-progress infrastructure for a future migration, not a path the browser
+// engine, tests, or benchmarks currently exercise.
 //
 // Do NOT cite results produced by this class as representative of FTD
-// engine output. When this class is completed, delete this banner.
+// engine output. When this class is completed, delete this banner, the
+// [[deprecated]] markers, the tick() warning, and the stub asserts.
 //
 // ══════════════════════════════════════════════════════════════════════
 // INTEGRATION SCHEME NOTE
@@ -80,29 +92,44 @@ void DagEngine::clear() {
 }
 
 void DagEngine::tick() {
-    // 1. Compute delta_J (Laplacian wave equation, Biort-Savart coupling)
+    // ── W6 (deprecate-clearly) ────────────────────────────────────────────
+    // DagEngine::tick() is WAVE-ONLY. Phases 1-2 (read/write) are real and
+    // run. Phases 3-5 (gauss_project / phase_forces / phase_movement) are
+    // UNIMPLEMENTED stubs; they used to be invoked here behind their toggles
+    // and silently no-op'd, which made an incomplete engine look complete.
+    //
+    // They are now NOT invoked. Instead we emit a one-time loud runtime
+    // warning so anyone who ticks this engine learns it is incomplete, and
+    // we skip the stubs (each stub also asserts false if called directly).
+    // This keeps the only live caller (test_dag_engine, release build, which
+    // checks phase_read/phase_write wave propagation) passing while making
+    // the incompleteness explicit. For real Gauss/force/movement physics use
+    // RenderBridge (the golden production path).
+
+    // 1. Compute delta_J (Laplacian wave equation, curl coupling source)
     if (toggles_.wave_propagation || toggles_.coupling) {
         phase_read();
     }
-    
-    // 2. Leapfrog wave update and threshold manifestation constraints
+
+    // 2. Leapfrog wave update + damping (Störmer–Verlet)
     phase_write();
 
-    // 3. Exact U(1) charge conservation projection 
-    if (toggles_.gauss_projection) {
-        gauss_project();
+    // 3-5. UNIMPLEMENTED — gauss_project / phase_forces / phase_movement.
+    //      Warn once and skip. Do NOT silently no-op, do NOT throw from the
+    //      hot tick path (test_dag_engine ticks and expects no crash).
+    if (toggles_.gauss_projection || toggles_.forces || toggles_.movement) {
+        static bool warned = false;
+        if (!warned) {
+            warned = true;
+            std::cerr
+                << "[DagEngine][W6] WARNING: gauss_project / phase_forces / "
+                   "phase_movement are UNIMPLEMENTED in this experimental, "
+                   "deprecated engine. tick() is wave-only (read+write); no "
+                   "charge projection, forces, or movement are applied. "
+                   "Use RenderBridge for the production (golden) physics path.\n";
+        }
     }
 
-    // 4. Compute deterministic field-based forces
-    if (toggles_.forces) {
-        phase_forces();
-    }
-
-    // 5. Integration of velocities and strict movement collisions
-    if (toggles_.movement) {
-        phase_movement();
-    }
-    
     tick_++;
 }
 
@@ -242,16 +269,32 @@ void DagEngine::phase_write() {
     recursive_write(0, 0, 0, dag_->size());
 }
 
+// ── UNIMPLEMENTED STUBS (W6 deprecate-clearly) ─────────────────────────────
+// These three phases are NOT implemented. They are no longer called from
+// tick() (which warns + skips). If invoked DIRECTLY they assert false — loud
+// in a debug build, consistent with the engine's assert-based "this must not
+// happen" convention (see field_operators.h). Under NDEBUG/Release the assert
+// compiles out, so nothing that currently links is broken; the loud signal is
+// the runtime warning in tick() plus the compile-time [[deprecated]] markers
+// on the declarations. Implement on SparseVoxelDAG traversal (mirroring
+// RenderBridge) to upgrade to production, then remove these asserts + markers.
+
 void DagEngine::gauss_project() {
     // [OPEN] Implement recursive SOR solver skipping active manifested indices.
+    assert(false && "DagEngine::gauss_project is not implemented (W6 "
+                    "deprecate-clearly). Use RenderBridge::gauss_project.");
 }
 
 void DagEngine::phase_forces() {
     // [OPEN] Implement recursive Poisson and Lorentz force summations.
+    assert(false && "DagEngine::phase_forces is not implemented (W6 "
+                    "deprecate-clearly). Use RenderBridge::phase_forces.");
 }
 
 void DagEngine::phase_movement() {
     // [OPEN] Integrate fractional remainder accumulation handling for precise tracking.
+    assert(false && "DagEngine::phase_movement is not implemented (W6 "
+                    "deprecate-clearly). Use RenderBridge::phase_movement.");
 }
 
 // -----------------------------------------------------------------------------
