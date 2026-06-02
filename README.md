@@ -80,9 +80,9 @@ To assist reviewers and collaborators of varying backgrounds, the following path
 | Audience | Primary Entry Point | Deep Dive |
 | :--- | :--- | :--- |
 | **Mathematician** | [`SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) | [`PAPER_GSTAR_INTRODUCTION.tex`](docs/papers/PAPER_GSTAR_INTRODUCTION.tex) |
-| **Physicist** | [`SPEC_DOCTRINE_LEDGER.md`](docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md) | [`LEDGER.md`](docs/theory/07_assessment/core_ledgers/LEDGER.md) |
-| **Skeptic / Reviewer** | [`AUDIT_EPISTEMIC_AUDIT.md`](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | [`CATALOG_PARAMETRIC_INSERTIONS.md`](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) |
-| **Programmer** | [`engine/SPEC_ENGINE.md`](engine/SPEC_ENGINE.md) | [`META_PROJECT_ATLAS.md`](META_PROJECT_ATLAS.md) |
+| **Physicist** | [`SPEC_DOCTRINE_LEDGER.md`](docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md) | [`PAPER_FTD_AS_WILSONIAN_EFT.tex`](dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex) |
+| **Skeptic / Reviewer** | [`AUDIT_EPISTEMIC_AUDIT.md`](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) | [`FTD_Whitepaper.tex`](dissemination/whitepaper/FTD_Whitepaper.tex) |
+| **Programmer** | [`engine/SPEC_ENGINE.md`](engine/SPEC_ENGINE.md) | [`PAPER_GSTAR_FTD_BRIDGE.tex`](docs/papers/PAPER_GSTAR_FTD_BRIDGE.tex) |
 
 ---
 
