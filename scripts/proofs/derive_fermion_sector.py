@@ -336,7 +336,7 @@ print(f"""
     Each generation: 4 intra-gen edges + inter-gen mixing edges
 
   ESTABLISHED [SELECTION]:
-    m_e = M_P * sqrt(2*pi) * (16/3) * alpha^11    (0.27%)
+    m_e = M_P * sqrt(2*pi) * (16/3) * alpha^11    (0.19%)
     v = M_P * sqrt(2*pi) * alpha^8                 (0.05%)
     
   NEW OBSERVATIONS:

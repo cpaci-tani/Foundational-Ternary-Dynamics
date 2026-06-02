@@ -55,7 +55,7 @@ A discrete computational framework for simulating physical systems from explicit
 **Key results** (within framework assumptions):
 - Fine structure constant α = 1/137.036 derived from lemniscatic constant G* (1.26 ppm tree-level; 9.6 ppb one-loop; < 0.001 ppt with 7-term expansion)
 - Loop coefficients c1–c3 derived from lattice Feynman diagrams: c1 = 9/47 (0.8%), c2 = 5/64 via gauge factor 13/9 (0.07%), c3 = 4/141 via gauge factor 11/6 (0.33%)
-- Electron mass m_e = m_P √(2π) (16/3) α¹¹ (0.27% error)
+- Electron mass m_e = m_P √(2π) (16/3) α¹¹ (0.19% error)
 - Higgs mass m_H = (N_eff/α²)·m_e = 124.8 GeV (0.24% error), λ_H = m_H²/(2v²)
 - Proton mass m_p/m_e = N_eff/α + N_base·N_eff + N_c = 1836.47 (174 ppm)
 - Electron g-2: a_e = α/(2π) to 5-loop = 2.55 ppb

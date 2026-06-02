@@ -513,7 +513,7 @@ class TestPhysicallyMotivated(unittest.TestCase):
         - 11 is prime (special in QFT?)
 
         Without derivation of WHY 11, this is borderline.
-        But the 0.27% accuracy with no free parameters is significant.
+        But the 0.19% error with no free parameters is significant.
         """
         m_e_ftd = M_PLANCK * np.sqrt(2 * np.pi) * (N_base**2 / N_c) * ALPHA**11 * 1000  # MeV
 
@@ -733,7 +733,7 @@ THEOREMS (Mathematically Proven):
 DERIVED (Clear chain from axioms):
 ----------------------------------
   [D1] alpha = 1/137.036 from x_+  (1.26 ppm) - STRONG
-  [D2] m_e = m_P*sqrt(2*pi)*(16/3)*alpha^11  (0.27%) - STRONG
+  [D2] m_e = m_P*sqrt(2*pi)*(16/3)*alpha^11  (0.19%) - STRONG
   [D3] v_Higgs = m_P*sqrt(2*pi)*alpha^8  (0.05%) - STRONG
   [D4] delta_CKM = arctan(7/3) = 66.8 deg  (1.8%) - STRONG
   [D5] alpha_G = 2*pi*(16/3)^2*(13+3/7)^2*alpha^20  (0.06%) - STRONG

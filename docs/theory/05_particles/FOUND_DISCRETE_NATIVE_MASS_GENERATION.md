@@ -70,7 +70,7 @@ To maintain absolute scientific rigour, **we officially retract all previous att
 
 ### §4.2 The Legitimate Calibration Boundary
 The electron mass formula:
-$$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{16}{3} \cdot \alpha^{11} \approx 0.5124\text{ MeV} \quad (0.19\%\text{ error})$$
+$$m_e = m_P \cdot \sqrt{2\pi} \cdot \frac{16}{3} \cdot \alpha^{11} \approx 0.5100\text{ MeV} \quad (0.19\%\text{ error})$$
 is recognized as a **[SELECTION]**-grade parametric scale anchor. The prefactor $16\sqrt{2\pi}/3$ is structurally motivated, but the exponent $11$ remains a selection from the ladder walk. It is an external calibration, not a first-principles derivation. 
 
 ---
