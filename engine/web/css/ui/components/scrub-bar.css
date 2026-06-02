@@ -299,4 +299,15 @@
         gap: var(--sp-sm);
         padding: var(--sp-sm) var(--sp-md);
     }
+
+    /* Finger-sized playback controls on touch devices (28px desktop floor
+       is below the WCAG 44px touch minimum). */
+    .scrub-bar-controls .tb-btn-global,
+    .scrub-bar-controls .tb-btn-local,
+    .scrub-bar .scrub-bar-small-btn,
+    .scrub-bar-icon-btn,
+    .scrub-bar-slider,
+    .scrub-bar-settings-chip {
+        min-height: var(--tap-min);
+    }
 }
