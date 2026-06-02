@@ -296,7 +296,7 @@ CLASSIFICATION SUMMARY
 
 RIGOROUS (High confidence):
   - Fine structure constant alpha (1.26 ppm)
-  - Electron mass m_e (0.27%)
+  - Electron mass m_e (0.19%)
   - Higgs VEV v (0.05%)
   - Gravitational coupling alpha_G (0.06%)
   - CKM CP phase delta (1.8%)
