@@ -49,7 +49,24 @@ The algebraic spine represents the rock-solid mathematical foundation of FTD, in
 
 ---
 
-## 3. Epistemic Demarcation & The Decoupling Wall
+## 3. Core Axioms & Postulates
+
+Operational simulations and the underlying mathematical ontology of FTD are grounded in a rigid set of core postulates and deep axioms.
+
+### Operational Postulates
+* **Discrete Space (Postulate 1):** Space is modeled as a 3D cubic lattice $\Lambda$ with no defined boundary (undefined-boundary ontology, avoiding the mathematical commitment to a completed-infinity $\mathbb{Z}^3$).
+* **Discrete Time (Postulate 2):** Time advances in uniform discrete steps ("ticks" $t \in \mathbb{N}$), implying absolute simultaneity at the substrate level.
+* **Ternary States & Two-Layer Ontology (Postulate 3):** Ontic variables consist of a continuous dispositional flux field $\mathbf{J} \in \mathbb{R}^3$ and a discrete manifestation state $s \in \{-1, 0, +1\}$. Manifestation is determined when the local flux magnitude crosses a threshold ($|\mathbf{J}| \geq K_B$). The ternary values represent real projections of the unit group of Gaussian integers extended by zero: $\{i^2, 0, |i^2|\}$.
+* **Local Causality (Postulate 4):** Updates to a voxel depend strictly on its local 26-neighbor Moore neighborhood, establishing the causal propagation speed limit $C = 1$ lattice unit per tick.
+* **Determinism (Postulate 5):** The system's evolution is entirely deterministic; apparent quantum-like randomness is epistemic.
+
+### Deep Mathematical Axioms
+* **Axiom A1 (First Distinction):** $0 = (+1) + (-1)$, representing identity, inverse, and conservation of distinction.
+* **Axiom A2 (Self-Reference Requirement):** There exists a self-observation map $\sigma: \Omega \to \Omega$ such that $\sigma(\Omega) \subseteq \Omega$. When the self-reference map is constrained by rotational symmetry ($\sigma^4 = \text{id}, \sigma^2 \neq \text{id}$), complex numbers $\mathbb{C}$ are mathematically necessitated.
+
+---
+
+## 4. Epistemic Demarcation & The Decoupling Wall
 
 While the algebraic spine (T1–T9) is mathematically robust, FTD maintains a rigorous demarcation between proven mathematical identities and physical conjectures.
 
@@ -63,7 +80,7 @@ The primary transition barrier from FTD's static period algebra (such as $G^*$ a
 
 ---
 
-## 4. Closed-Negative Catalog (Limits of Discreteness)
+## 5. Closed-Negative Catalog (Limits of Discreteness)
 
 Per the mandate that falsified paths are valuable scientific boundaries, the following results are locked as `[CLOSED NEGATIVE]` in [`LEDGER.md`](docs/theory/07_assessment/core_ledgers/LEDGER.md):
 * **Retired $\alpha$ Derivation Routes:** Eleven distinct dynamical routes (including transverse stiffness, Langevin equipartition, and monomial scans) have been conclusively closed as insufficient to derive $\alpha$ from discrete stencils alone.
@@ -73,7 +90,23 @@ Per the mandate that falsified paths are valuable scientific boundaries, the fol
 
 ---
 
-## 5. Audience Reading Paths
+## 6. Upper & Lower Limitations (What is Still Missing)
+
+To map out the limits of the framework and prevent overclaiming, FTD explicitly catalogs the open boundaries of the current ontology:
+
+### Lower Limitations (Substrate Discreteness)
+* **Approximate Lorentz Invariance:** Lorentz invariance is fundamentally broken at the substrate level by the preferred frame of the cubic lattice. Rotational and boost symmetries only emerge relationally in the long-wavelength limit ($\lambda \gg a$) for momenta $|p| \ll \pi/a$, carrying an error of $O((a/\lambda)^2)$.
+* **Lattice Spacing Gauge Freedom:** The physical lattice spacing $a_{\text{phys}}$ is a gauge degree of freedom and is not derivable from FTD axioms. Setting $a_{\text{phys}} \equiv \ell_P$ is an *interpretive calibration choice* (model calibration), not an emergent prediction of the dynamics.
+* **Substrate Bell Bound:** The deterministic, local updates of the lattice substrate strictly satisfy the classical Bell inequality ($S \le 2$). Quantum correlations violating this bound ($S = 2\sqrt{2}$) are statistical ensemble properties of aggregate observer-measurement frameworks, not fundamental substrate dynamics.
+
+### Upper Limitations & Absent Physics
+* **Non-Abelian Gauge Fields:** While Abelian $U(1)$ electrodynamics emerge naturally from divergence constraints (Gauss law), non-Abelian $SU(2)$ electroweak and $SU(3)$ color gauge fields are not dynamically forced. Although they are modeled geometrically (e.g., via spatial axis alignments), a rigorous dynamical derivation of non-Abelian gauge fields is missing.
+* **Nonlinear Gravity Curvature:** The weak-field limit of flux gradients recovers Newtonian gravity and linearized general relativity. However, full general relativistic spacetime curvature, strong-field gravity (e.g., Kerr/Schwarzschild metrics), and a unified quantum gravity framework remain open theoretical goals.
+* **QFT Vacuum & Renormalization:** FTD lacks a dynamical renormalization group framework and a virtual particle vacuum structure in the quantum field theory sense. Particle masses and coupling parameters are mapped and calibrated, but are not dynamically forced from first principles.
+
+---
+
+## 7. Audience Reading Paths
 
 To assist reviewers and collaborators of varying backgrounds, the following paths are recommended:
 
@@ -86,7 +119,7 @@ To assist reviewers and collaborators of varying backgrounds, the following path
 
 ---
 
-## 6. Golden Verification Guidelines
+## 8. Golden Verification Guidelines
 
 FTD enforces full reproducibility through continuous verification of both the C++ simulation engine and the Python mathematical proofs.
 
