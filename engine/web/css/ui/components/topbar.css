@@ -154,7 +154,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 }
 
 .topbar-context-kicker {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -179,7 +179,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     width: auto;
     min-width: 46px;
     padding-inline: 12px;
-    font-size: 12px;
+    font-size: var(--fs-sm);
     font-weight: 700;
     letter-spacing: 0.06em;
 }
@@ -246,6 +246,13 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     .topbar-slot-sim .tb-group {
         padding: 2px 4px;
     }
+
+    /* Finger-sized play controls on touch devices (32px desktop floor is
+       below the WCAG 44px touch minimum). The toolbar row grows to fit. */
+    .tb-btn-global,
+    .tb-btn-local {
+        min-height: var(--tap-min);
+    }
 }
 
 /* ── Play-button hierarchy (global = pill + accent, local = square + outline) ── */
@@ -258,7 +265,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 }
 
 .tb-btn-label {
-    font-size: 9px;
+    font-size: var(--fs-xs);
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: lowercase;
@@ -277,7 +284,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     color: var(--accent);
     box-shadow: 0 0 0 1px color-mix(in oklch, var(--accent-glow) 35%, transparent),
                 0 0 10px color-mix(in oklch, var(--accent-glow) 25%, transparent);
-    font-size: 14px;
+    font-size: var(--fs-base);
     transition: background 120ms var(--ease-out), box-shadow 160ms var(--ease-out);
 }
 .tb-btn-global:hover {
@@ -304,7 +311,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     background: transparent;
     border: 1px solid var(--border-light);
     color: var(--text-secondary);
-    font-size: 13px;
+    font-size: var(--fs-sm);
     transition: border-color 120ms var(--ease-out), color 120ms var(--ease-out);
 }
 .tb-btn-local:hover {

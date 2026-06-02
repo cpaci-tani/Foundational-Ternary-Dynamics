@@ -52,7 +52,7 @@
     background: none;
     border: none;
     color: var(--text-muted);
-    font-size: 22px;
+    font-size: var(--fs-2xl);
     cursor: pointer;
     padding: 4px;
     line-height: 1;
@@ -299,6 +299,12 @@
         padding: 20px 18px;
     }
 
+    /* Finger-sized close target on touch devices. */
+    .settings-close-btn {
+        min-width: var(--tap-min);
+        min-height: var(--tap-min);
+    }
+
     .settings-theme-grid {
         grid-template-columns: 1fr 1fr;
     }
@@ -318,5 +324,11 @@
     .settings-presets button {
         min-width: calc(50% - 3px);
         flex: 1 1 calc(50% - 3px);
+    }
+
+    /* Finger-sized choice/preset targets on touch devices. */
+    .settings-choice,
+    .settings-preset {
+        min-height: var(--tap-min);
     }
 }

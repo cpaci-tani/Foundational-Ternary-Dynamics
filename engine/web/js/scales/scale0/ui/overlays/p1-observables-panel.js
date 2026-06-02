@@ -95,7 +95,7 @@ function buildPanel(dockMode = false) {
             position: absolute;
             bottom: 12px;
             left: 12px;
-            width: 420px;
+            width: min(420px, calc(100vw - 20px));
             max-height: 70vh;
             overflow-y: auto;
             background: rgba(8, 12, 20, 0.92);
