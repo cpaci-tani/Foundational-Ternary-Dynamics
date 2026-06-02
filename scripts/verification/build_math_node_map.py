@@ -117,7 +117,7 @@ def build() -> dict:
     out["source_commit"] = git_head_sha()
 
     # -------------------- Layer 4: LEDGER claims --------------------
-    ledger_path = REPO_ROOT / "docs" / "theory" / "07_assessment" / "LEDGER.md"
+    ledger_path = REPO_ROOT / "docs" / "theory" / "07_assessment" / "core_ledgers" / "LEDGER.md"
     ledger_rows = parse_ledger(ledger_path)
     out["layers"]["ledger"] = ledger_rows
     ledger_ids = {r["id"] for r in ledger_rows}

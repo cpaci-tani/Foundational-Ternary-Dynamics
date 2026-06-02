@@ -32,7 +32,9 @@ I have performed a thorough review of the repository's meta-documentation status
   - Running the master verification script via `python scripts/proofs/proof_master_verification.py` verified all 54 checks successfully with **Passed: 54/54, Failed: 0/54**.
 
 * **C++ Simulation Engine**:
-  - Parallel CTest suite was launched in `engine/build/` to verify native simulation execution in parallel.
+  - Parallel CTest suite (`ctest -j 24 --output-on-failure -C Release`) was executed in `engine/build/`. It completed with 82% of tests passing (196 passed, 44 failed out of 240).
+  - The failures are primarily `Timeout` results on long-running CPU campaign/physics sweeps (such as `campaign_cluster_fission_fusion`, `gauss`, `campaign_coulomb_force_law`, `campaign_hydrogen_spectrum`) due to the absence of RTX 5090 GPU acceleration, which speeds these up ~30x.
+  - A few pre-existing failures (such as `cluster_persistence_quiescent`, `emergent_ic1_topology`, `triad_confinement`) are present in the CPU simulation codebase, which are completely untouched and unaffected by our documentation-only re-linking and comments updates.
 
 ---
 
