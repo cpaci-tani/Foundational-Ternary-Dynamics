@@ -20,7 +20,7 @@ $$ G_0^* = 1^{-1/2} \cdot \frac{3/4}{1/4} = 3. $$
 
 $$ G_1^* = 2^{-1/2} \cdot \frac{3/4}{1/4} \cdot \frac{7/4}{5/4} = \frac{1}{\sqrt 2} \cdot 3 \cdot \frac{7}{5} = \frac{21}{5\sqrt 2} \approx 2.9698. $$
 
-$$ G_2^* \approx 2.9626, \quad G_5^* \approx 2.95896, \quad G_{20}^* \approx 2.95869. $$
+$$ G_2^* \approx 2.9626, \quad G_5^* \approx 2.95995, \quad G_{20}^* \approx 2.95878. $$
 
 **These are computable in O(N) arithmetic operations** without ever invoking $\Gamma(1/4)$ or any transcendental.
 

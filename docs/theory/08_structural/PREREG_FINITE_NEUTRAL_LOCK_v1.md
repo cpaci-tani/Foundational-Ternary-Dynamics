@@ -12,7 +12,7 @@
 
 ## §1 — Context and doctrine
 
-**The doctrine (2026-05-22 owner direction; corroborated by `../07_assessment/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md` §5).** FTD does not aim to recover the Standard Model as primitive ontology. The SM is a **benchmark shadow**. FTD aims to recover the **finite-closure invariants** whose continuum completion parallels SM observables where empirically tested. `SU(3)×SU(2)×U(1)` is treated as the *effective continuous completion* of finite centre/transport closure, not as a primitive object. **[Program statement — derives nothing on its own; F10 discipline applies.]**
+**The doctrine (2026-05-22 owner direction; corroborated by `../07_assessment/archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md` §5 (archived 2026-06-02)).** FTD does not aim to recover the Standard Model as primitive ontology. The SM is a **benchmark shadow**. FTD aims to recover the **finite-closure invariants** whose continuum completion parallels SM observables where empirically tested. `SU(3)×SU(2)×U(1)` is treated as the *effective continuous completion* of finite centre/transport closure, not as a primitive object. **[Program statement — derives nothing on its own; F10 discipline applies.]**
 
 **What Q10 targets.** The electroweak sector's defining function: a mechanism that breaks an internal symmetry while leaving exactly one massless electromagnetic readout. The SM realises this with the Higgs `(1,2)₁/₂` and `Q = T₃ + Y`, with the vacuum expectation value satisfying `Q⟨Φ⟩ = 0`. **[Standard electroweak theory.]**
 

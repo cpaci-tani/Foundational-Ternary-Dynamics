@@ -220,7 +220,7 @@ Numerically (using $G^* = 2.9586751192\ldots$):
 ### 6.4 Vieta Relations
 
 $$x_+ + x_- = 16\,G^{*2} = 140.0601\ldots$$
-$$x_+ \cdot x_- = 16\,G^{*3} = 414.3906\ldots$$
+$$x_+ \cdot x_- = 16\,G^{*3} = 414.392437723\ldots$$
 $$x_+/x_- = 45.31\ldots$$
 
 ### 6.5 Algebraic Identities

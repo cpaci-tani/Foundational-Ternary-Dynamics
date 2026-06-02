@@ -247,7 +247,7 @@ Version 1.0 included multiple ad hoc formulas (m_e * integers, m_p * alpha^n, et
 
 ## 7. Cross-References
 
-- **alpha_s derivation**: AUDIT_EPISTEMIC_AUDIT.md (Section I.2), AUDIT_WHAT_IS_GENUINELY_NEW.md
+- **alpha_s derivation**: AUDIT_EPISTEMIC_AUDIT.md (Section I.2), archive/AUDIT_WHAT_IS_GENUINELY_NEW.md (archived 2026-06-02; superseded by LEDGER + TRACKER_ONTIC_TRUTH)
 - **Master quadratic**: SPEC_THE_MASTER_QUADRATIC_UNIFIED.md
 - **Higgs VEV**: DERIV_COMPLETE_PARTICLE_PHYSICS.md
 - **Mass hierarchy**: DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md

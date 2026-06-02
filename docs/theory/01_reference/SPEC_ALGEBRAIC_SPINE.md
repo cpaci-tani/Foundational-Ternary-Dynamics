@@ -100,7 +100,7 @@ $$\Delta = 256 G^{*4} - 64 G^{*3} = 64 G^{*3}(4 G^* - 1)$$
 
 and the two real roots are
 
-$$x_{\pm} = 8 G^{*2} \pm \sqrt{16 G^{*4} - 4 G^{*3}}.$$
+$$x_{\pm} = 8 G^{*2} \pm \sqrt{64 G^{*4} - 16 G^{*3}}.$$
 
 Numerically: x+ = 137.0362..., x− = 3.0240... .
 

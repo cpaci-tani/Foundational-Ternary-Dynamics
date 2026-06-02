@@ -145,8 +145,8 @@ When a claim's tier changes:
 
 1. Update this document **first** (the bedrock changes).
 2. Update [LEDGER.md](LEDGER.md) entry to match.
-3. Update [SPEC_OPEN_MATH_BY_SECTOR.md](../01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) if the claim is on the sector-organised research queue.
-4. Update [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md) if the claim is one of the nine numbered spine results (see §0).
+3. Update [SPEC_OPEN_MATH_BY_SECTOR.md](../../01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) if the claim is on the sector-organised research queue.
+4. Update [SPEC_ALGEBRAIC_SPINE.md](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) if the claim is one of the nine numbered spine results (see §0).
 5. Re-run any verification script that backs the claim.
 6. Commit with message that names the tier change and the verification that backs it.
 
@@ -171,7 +171,7 @@ If you need to defend FTD's mathematical core to a skeptical mathematician in a 
 7. **OT-2.1** Watson identity (★★★★, Watson 1939 / Glasser–Zucker 1980)
 8. **OT-2.2** Tower discriminant transcendence (★★★★, Schneider–Chudnovsky)
 9. **OT-2.3** Q(G*) π-free (★★★★, Chudnovsky 1976)
-10. **OT-3.4** FTD-0110 (★★★, O_h rep theory at linear level + Bridge-I global O_h-equivariance + 5% empirical match across 11 amplitudes × 5 SM × 3 L × 2 geom; nonlinear-pipeline closure [OPEN] — see [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../03_derivations/AUDIT_FTD0110_2026-05-27_RESOLUTION.md))
+10. **OT-3.4** FTD-0110 (★★★, O_h rep theory at linear level + Bridge-I global O_h-equivariance + 5% empirical match across 11 amplitudes × 5 SM × 3 L × 2 geom; nonlinear-pipeline closure [OPEN] — see [`AUDIT_FTD0110_2026-05-27_RESOLUTION.md`](../audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md))
 
 **FQCR additions (2026-05-06; complementary lens, do not change tier 1 above):**
 
@@ -189,10 +189,10 @@ This is what is publishable. This is what survives review. This is the truth.
 ## Cross-references
 
 - [LEDGER.md](LEDGER.md) — full provenance per claim, including closed-negative results
-- [SPEC_OPEN_MATH_BY_SECTOR.md](../01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) — sector-organised research-questions queue (replaces archived `CHECKLIST_MATH_COMPLETE.md`)
-- [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — nine numbered results with proofs: seven theorem-grade + two honestly tiered below theorem grade (see §0)
-- [SPEC_DOCTRINE_LEDGER.md](../01_reference/SPEC_DOCTRINE_LEDGER.md) — FTD/FQCR Doctrine Ledger v1.2 (2026-05-08, FTD-0145 SYNTHESIS): single-page status map rolling up T1–T5 tier assignments below alongside LEDGER and CATALOG tags. **Read this when navigating; come back here for atomic tier disputes.**
-- [SPEC_DIMENSIONAL_MAP.md](../01_reference/SPEC_DIMENSIONAL_MAP.md) — dimensionless ↔ dimensional bridge
-- [Paper A](../../../dissemination/papers/PAPER_A_PI_FREE_GENERATOR.tex) — π-free generator (T1.1, 1.2, 1.3, 2.2, 2.3, 3.3 incl Eisenstein null)
-- [Paper B](../../../dissemination/papers/PAPER_B_BCC_COMPLEX_STRUCTURE.tex) — BCC complex structure (T1.5, 1.6, 4.1)
-- [Paper C](../../../dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex) — Branch-A native EFT (T1.4 anchored, downstream measurements)
+- [SPEC_OPEN_MATH_BY_SECTOR.md](../../01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) — sector-organised research-questions queue (replaces archived `CHECKLIST_MATH_COMPLETE.md`)
+- [SPEC_ALGEBRAIC_SPINE.md](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) — nine numbered results with proofs: seven theorem-grade + two honestly tiered below theorem grade (see §0)
+- [SPEC_DOCTRINE_LEDGER.md](../../01_reference/SPEC_DOCTRINE_LEDGER.md) — FTD/FQCR Doctrine Ledger v1.2 (2026-05-08, FTD-0145 SYNTHESIS): single-page status map rolling up T1–T5 tier assignments below alongside LEDGER and CATALOG tags. **Read this when navigating; come back here for atomic tier disputes.**
+- [SPEC_DIMENSIONAL_MAP.md](../../01_reference/SPEC_DIMENSIONAL_MAP.md) — dimensionless ↔ dimensional bridge
+- [Paper A](../../../../dissemination/papers/PAPER_A_PI_FREE_GENERATOR.tex) — π-free generator (T1.1, 1.2, 1.3, 2.2, 2.3, 3.3 incl Eisenstein null)
+- [Paper B](../../../../dissemination/papers/PAPER_B_BCC_COMPLEX_STRUCTURE.tex) — BCC complex structure (T1.5, 1.6, 4.1)
+- [Paper C](../../../../dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex) — Branch-A native EFT (T1.4 anchored, downstream measurements)
