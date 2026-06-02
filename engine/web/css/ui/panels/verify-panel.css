@@ -12,7 +12,7 @@
 }
 
 #panel-verification-lab .verify-kicker {
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-muted, #888);
@@ -33,12 +33,12 @@
     display: flex;
     gap: 1rem;
     font-family: var(--font-mono, monospace);
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
     color: var(--text-muted, #888);
 }
 .verify-header-sub {
     margin: 0;
-    font-size: 0.82rem;
+    font-size: var(--fs-sm);
     color: var(--text-muted, #888);
 }
 .verify-counts {
@@ -48,13 +48,13 @@
     margin: 0.25rem 0 0;
     padding: 0;
     list-style: none;
-    font-size: 0.9rem;
+    font-size: var(--fs-base);
 }
-.verify-counts strong { font-size: 1.1rem; margin-right: 0.3rem; }
+.verify-counts strong { font-size: var(--fs-xl); margin-right: 0.3rem; }
 
 .verify-tensions-label {
     margin: 0.5rem 0 0.3rem;
-    font-size: 0.78rem;
+    font-size: var(--fs-sm);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-muted, #888);
@@ -80,6 +80,26 @@
 .verify-tension-pull { font-family: var(--font-mono, monospace); opacity: 0.85; }
 .verify-tension-delta { font-family: var(--font-mono, monospace); opacity: 0.7; }
 
+/* Tension rows pack three columns (label / pull / delta) into a row; on a
+ * narrow phone the mono pull+delta crowd the label. Drop to label-over-stats. */
+@media (max-width: 479px) {
+    .verify-tension a {
+        grid-template-columns: 1fr auto;
+        gap: 0.4rem 0.8rem;
+    }
+    .verify-tension-delta {
+        grid-column: 2;
+    }
+}
+
+/* Touch target: tension rows are tap-to-jump links. */
+@media (max-width: 767px) {
+    .verify-tension a {
+        min-height: var(--tap-min);
+        align-items: center;
+    }
+}
+
 /* ── Filters ───────────────────────────────────────────────────────── */
 
 .verify-filters {
@@ -94,7 +114,7 @@
     border-radius: 999px;
     background: transparent;
     color: var(--text, #ddd);
-    font-size: 0.82rem;
+    font-size: var(--fs-sm);
     cursor: pointer;
 }
 .verify-filter.active {
@@ -109,8 +129,16 @@
     border-radius: 4px;
     background: transparent;
     color: var(--text, #ddd);
-    font-size: 0.82rem;
+    font-size: var(--fs-sm);
     cursor: pointer;
+}
+
+/* Touch targets: filter pills + export are tap controls on phones. */
+@media (max-width: 767px) {
+    .verify-filter,
+    .verify-export {
+        min-height: var(--tap-min);
+    }
 }
 
 /* ── Tier sections ─────────────────────────────────────────────────── */
@@ -123,9 +151,9 @@
     padding: 0.6rem 0;
     border-bottom: 1px solid var(--border, #333);
 }
-.verify-tier-label { margin: 0; font-size: 1rem; }
-.verify-tier-blurb { margin: 0; font-size: 0.82rem; color: var(--text-muted, #888); }
-.verify-tier-count { font-size: 0.75rem; color: var(--text-muted, #888); }
+.verify-tier-label { margin: 0; font-size: var(--fs-md); }
+.verify-tier-blurb { margin: 0; font-size: var(--fs-sm); color: var(--text-muted, #888); }
+.verify-tier-count { font-size: var(--fs-xs); color: var(--text-muted, #888); }
 
 .verify-tier--parametric { opacity: 0.92; }
 .verify-tier--unpredicted { opacity: 0.75; }
@@ -143,9 +171,9 @@
 }
 .verify-row--parametric { border-style: dashed; }
 .verify-row--unpredicted { background: transparent; border-color: var(--border-muted, #222); }
-.verify-question { margin: 0; font-size: 0.95rem; font-weight: 600; }
+.verify-question { margin: 0; font-size: var(--fs-lg); font-weight: 600; }
 
-.verify-lines { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.85rem; }
+.verify-lines { display: flex; flex-direction: column; gap: 0.2rem; font-size: var(--fs-base); }
 .verify-line {
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -155,7 +183,7 @@
 }
 .verify-line--delta { opacity: 0.8; }
 .verify-tag {
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 0.1rem 0.4rem;
@@ -166,13 +194,13 @@
 .verify-tag--open { background: transparent; border: 1px dashed var(--border, #333); }
 
 .verify-inputs {
-    font-size: 0.78rem;
+    font-size: var(--fs-sm);
     color: var(--text-muted, #888);
     font-family: var(--font-mono, monospace);
 }
-.verify-caveat { margin: 0; font-size: 0.78rem; color: var(--text-muted, #888); font-style: italic; }
+.verify-caveat { margin: 0; font-size: var(--fs-sm); color: var(--text-muted, #888); font-style: italic; }
 .verify-theory-ref {
-    font-size: 0.78rem;
+    font-size: var(--fs-sm);
     color: var(--text-muted, #888);
     text-decoration: none;
 }
@@ -208,12 +236,35 @@
     border-radius: 4px;
     color: var(--text-muted, #888);
     font-family: var(--font-mono, monospace);
-    font-size: 0.82rem;
+    font-size: var(--fs-sm);
 }
 .verify-tier-empty {
     margin: 0;
     padding: 0.8rem 1rem;
     color: var(--text-muted, #888);
     font-style: italic;
-    font-size: 0.85rem;
+    font-size: var(--fs-base);
+}
+
+/* ── Responsive: shell width + narrow-phone line collapse ────────────────────
+ * The 920px shell already centers with auto margins (no overflow on its own),
+ * but make the intent explicit on phones and drop the redundant centering. */
+@media (max-width: 767px) {
+    #panel-verification-lab .verify-shell {
+        max-width: 100%;
+        padding: 1rem 0.85rem 2rem;
+    }
+}
+
+/* Evidence lines are tag / formula / value triplets; on a small phone the
+ * mono formula overflows. Wrap the value under the formula. */
+@media (max-width: 479px) {
+    .verify-line {
+        grid-template-columns: auto 1fr;
+        gap: 0.3rem 0.6rem;
+    }
+    .verify-line > :nth-child(3) {
+        grid-column: 1 / -1;
+        padding-left: 0;
+    }
 }

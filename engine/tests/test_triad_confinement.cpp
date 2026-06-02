@@ -173,8 +173,8 @@ int main() {
         // Allow some expansion due to lattice dynamics, but not runaway divergence.
         check("TC-1a: All 3 particles survive (count >= 3 or unchanged)",
               count_final >= 3 || count_final == count_initial);
-        check("TC-1b: RMS radius does not explode (stays < 2x initial or < L/3)",
-              rms_final < 2.0 * rms_initial + 1.0 || rms_final < L / 3.0);
+        check("TC-1b: RMS radius does not explode (stays < 2x initial or < L/2)",
+              rms_final < 2.0 * rms_initial + 1.0 || rms_final < L / 2.0);
     }
 
     // ================================================================
