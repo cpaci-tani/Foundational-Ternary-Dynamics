@@ -574,7 +574,7 @@ Everything below is a theorem from "$i$ exists", with standard mathematical deri
 | D | $\Gamma(1/4), \Gamma(3/4)$ — periods | [THEOREM] | Chowla–Selberg applied to $E_i$; real period of $E_i$ |
 | E | $G^* = \Gamma(1/4)/\Gamma(3/4)$ | [THEOREM] | The ratio; algebraically independent of $\pi$ |
 | F | $\varpi = \Gamma(1/4)^2/(2\sqrt{2\pi})$ | [THEOREM] | Bernoulli lemniscatic constant |
-| G | $G^*/\varpi = 2/\sqrt{\pi}$ | [THEOREM] | Via Euler reflection (proved in AUDIT_SESSION_2026_04_24.md) |
+| G | $G^*/\varpi = 2/\sqrt{\pi}$ | [THEOREM] | Via Euler reflection (proved in `archive/AUDIT_SESSION_2026_04_24.md`, archived 2026-06-02) |
 | H | $|\mathrm{Aut}(E_i)|^2 = 16$ | [THEOREM] | Squaring Step C |
 | I | $D = 3$ uniquely satisfies $16 = 2^D(D-1)!$ | [THEOREM] | Verified for $D \in \{1,2,3,4,5\}$ |
 

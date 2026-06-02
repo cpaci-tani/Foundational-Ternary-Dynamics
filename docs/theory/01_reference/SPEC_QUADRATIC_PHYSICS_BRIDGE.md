@@ -827,7 +827,7 @@ equals the conductor of the elliptic curve $E: y^2 = x^3 - x$.
 > is classed Tier 5 / unfalsifiable). It is retained for provenance only; do NOT
 > cite it externally as an FTD prediction. The canonical home for this material,
 > with all tags downgraded to [SPECULATIVE CONJECTURE], is the legacy doc
-> `../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md`.
+> `../07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` (archived 2026-06-02).
 
 In the FTD framework, the complex roots are **proposed** to correspond to reference frame context:
 

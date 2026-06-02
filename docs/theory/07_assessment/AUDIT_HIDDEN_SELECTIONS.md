@@ -4,7 +4,7 @@
 > document is NOT endorsed by the canonical layer; circularity is a gap, not a
 > virtue. Retained for provenance.]**
 >
-> The state-of-the-theory roundtable (`ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`)
+> The state-of-the-theory roundtable (`archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`, archived 2026-06-02)
 > flagged this reframe as one that "should be explicitly marked superseded." A
 > self-consistent structure that closes on itself is **not** thereby proven
 > unique or forced — establishing that requires an explicit uniqueness /
