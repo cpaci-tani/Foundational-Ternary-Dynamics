@@ -2,7 +2,7 @@
 
 **Audience: LLM agents and humans needing to find code/docs fast.**
 **Update trigger: any directory creation, public-API change, or architectural decision.**
-**Last refreshed: 2026-04-27 (post-refactor: 8-phase sweep complete, 17 commits 2db67ca…87158ae).**
+**Last refreshed: 2026-06-01 (post engine-flawless lifecycle/callstack/toggle audit, 16 commits on branch `flawless-engine-2026-06-01`; prior baseline: 2026-04-27 8-phase refactor sweep, 17 commits 2db67ca…87158ae).**
 
 This file is the entry point for navigating the FTD codebase. If you are a
 fresh agent looking at this project for the first time, read this file →
@@ -378,6 +378,29 @@ wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && \
     engine/build_wsl/test_render_bridge_golden && \
     engine/build_wsl/test_gpu_parity_complete"
 ```
+
+**Engine-flawless verification harness — added 2026-06-01** (branch
+`flawless-engine-2026-06-01`, 16 commits). A lifecycle/callstack/toggle
+audit added a verification surface pinning engine lifecycle, tick-phase
+order, toggle coverage, and the energy-conservation profile:
+
+| Layer | File | Pins |
+|---|---|---|
+| C++ | `engine/tests/test_conservation_profile.cpp` | energy-conservation profile (leak = non-variational Gauss-projection **operator**, not solver tol) |
+| C++ | `engine/tests/test_tick_phase_order.cpp` | `phase_read → phase_write → gauss_project → phase_forces → phase_movement` order |
+| C++ | `engine/tests/test_engine_lifecycle.cpp` | construct / run / teardown lifecycle; `DagEngine::entity_count()==0` documented |
+| JS (Playwright) | `engine/web/tests/lifecycle-harness.spec.js` | web bridge lifecycle |
+| JS (Playwright) | `engine/web/tests/reconcile-claims.spec.js` | claim reconciliation |
+| JS (Playwright) | `engine/web/tests/toggle-coverage.spec.js` | toggle coverage |
+| JS (Playwright) | `engine/web/tests/overlay-scheduler.spec.js` | overlay scheduler |
+
+This audit also **fixed a 5-week clean-checkout `cmake` break** (dangling
+`_repro_gpu_empty_bridge` reference in `engine/CMakeLists.txt`) and marked
+**DagEngine deprecate-clearly**. The MC-T4.3 theory-side companion is the
+route-invariance boundary audit
+`docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`
+(FTD-0242, `[STRONGLY MOTIVATED CONJECTURE no-go]` — α is dynamical not
+structural; **nothing promoted**).
 
 ---
 
