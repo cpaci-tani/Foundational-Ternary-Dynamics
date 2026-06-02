@@ -95,7 +95,7 @@ theorem is **different in kind**: a single `2×2` readout operator generates a
 non-commutativity. It is a **co-realizability obstruction inside the (non-abelian,
 substrate-native) `O_h` spatial symmetry** — whether one preparation can carry
 both the trace's complex structure and the determinant's three-plane structure.
-The `SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md` classification "the readout IS
+The `THEOREM_COMMUTATIVITY_INDEPENDENCE.md` (supersedes archived `SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md`) classification "the readout IS
 the commutativity wall" is a `[SYNTHESIS]`-level interpretive grouping; this
 theorem operates at the sharper, **decidable** (finite-group representation-theory)
 level and is logically independent of the Bell-walled QM question. **This pre-reg

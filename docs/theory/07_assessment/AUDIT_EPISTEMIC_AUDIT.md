@@ -572,7 +572,7 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 
 **Say:** "FTD derives ~30 fundamental quantities (20 physics + 4 information-theoretic theorems + 4 structural results + 2 neutrino/modularity) from a geometric structure involving the lemniscatic constant G* and four constrained integers {3, 4, 7, 13}. The 7-term precision formula achieves 24-digit agreement with the CODATA 2022 recommended value as an algebraic identity, though the match below digit 11 is not experimentally testable at current precision. The trit framework proves G* = √(2π)·θ₃(e^{-π})², unifying geometric self-reference with Fourier self-duality and deriving the ontological necessity of i. The Born rule is understood as epistemic inference from the ontic substrate operation ψ². These derived values, when inserted into standard physics frameworks, reproduce ~100 additional observables. The framework requires ~3-5 external inputs including the Planck mass scale. The reference frame context extension (sLoop axioms, Mandelbrot mapping, K_C = √(G*³/2) ≈ 3.60, phase angle 52.54°) is mathematically specific but [PROPOSED]—untested experimentally."
 
-**See also:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](AUDIT_WHAT_IS_GENUINELY_NEW.md) for a comprehensive synthesis.
+**See also:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](archive/AUDIT_WHAT_IS_GENUINELY_NEW.md) for a comprehensive synthesis (archived 2026-06-02; superseded by LEDGER + TRACKER_ONTIC_TRUTH + SPEC_ALGEBRAIC_SPINE).
 
 ---
 

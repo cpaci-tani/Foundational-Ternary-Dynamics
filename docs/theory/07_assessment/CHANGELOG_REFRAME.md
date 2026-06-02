@@ -1,7 +1,7 @@
 # Changelog — Undefined-Boundary Reframe Deployment
 
 **Scope:** every change made under the April 19, 2026 reframe deployment.
-**Reads:** the `CANONICAL_REFRAME.md` (`reframe_deployment/CANONICAL_REFRAME.md`) is the authoritative statement of the reframe; the `LEDGER.md` (`07_assessment/core_ledgers/LEDGER.md`) is the single source of truth for claim status; this file records every decision and change taken in the deployment.
+**Reads:** the `CANONICAL_REFRAME.md` (`campaigns/archive/reframe_deployment/CANONICAL_REFRAME.md`, archived 2026-06-02) is the authoritative statement of the reframe; the `LEDGER.md` (`07_assessment/core_ledgers/LEDGER.md`) is the single source of truth for claim status; this file records every decision and change taken in the deployment.
 
 **Maintenance rule:** append-only. Every change to the portfolio under the reframe must add a row here.
 
@@ -17,7 +17,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 
 - **Adopted:** `AUDIT_INFINITY_REFRAME.md` (per-claim disposition triage, project-internal).
 - **Adopted:** `CANONICAL_REFRAME.md` from external deployment package (single source of truth on what the reframe *means*; agent-facing reference).
-- **Created:** `docs/theory/07_assessment/reframe_deployment/` — full package import (canonical doc, deployment guide, agent prompts, templates, checklists).
+- **Created:** `docs/theory/07_assessment/reframe_deployment/` — full package import (canonical doc, deployment guide, agent prompts, templates, checklists). (Moved to `campaigns/archive/reframe_deployment/` on 2026-06-02.)
 - **Updated:** `CLAUDE.md` — Foundational commitment line, key navigation pointers.
 
 ### Phase 1 — Inventory
