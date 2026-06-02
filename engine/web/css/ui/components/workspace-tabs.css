@@ -54,7 +54,7 @@ html:not([data-panel-mount]) #tab-bar {
 }
 
 .workspace-tabs-mobile-label {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -102,5 +102,6 @@ html:not([data-panel-mount]) #tab-bar {
         min-width: 0;
         width: 100%;
         max-width: none;
+        min-height: var(--tap-min);
     }
 }
