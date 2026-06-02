@@ -66,6 +66,12 @@
     color: var(--text-primary);
 }
 
+/* Touch target — these action buttons sit ~28px tall on desktop; lift them to
+   the WCAG tap floor on phones. Full-width-ish controls, so height only. */
+@media (max-width: 767px) {
+    .ctrl-btn-secondary { min-height: var(--tap-min); }
+}
+
 /* Primary control button (.ctrl-btn) */
 .ctrl-btn {
     padding: 6px var(--sp-lg);
@@ -81,6 +87,11 @@
 
 .ctrl-btn:hover {
     background: var(--accent);
+}
+
+/* Touch target — primary action button to the tap floor on phones. */
+@media (max-width: 767px) {
+    .ctrl-btn { min-height: var(--tap-min); }
 }
 
 /* ── Force-style segmented buttons (.style-btn) ──────── */
@@ -107,4 +118,10 @@
 .style-btn:hover {
     background: var(--state-hover-bg);
     color: var(--text-accent);
+}
+
+/* Touch target — segmented force-style buttons are only ~3px-padded on desktop.
+   They split a row horizontally, so raise height (not width) on phones. */
+@media (max-width: 767px) {
+    .style-btn { min-height: var(--tap-min); }
 }

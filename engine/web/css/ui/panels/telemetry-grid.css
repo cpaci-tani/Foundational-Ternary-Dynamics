@@ -51,7 +51,7 @@
 }
 
 .telemetry-card-title {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 600;
     color: var(--text-dim, #94a3b8);
     text-transform: uppercase;
@@ -59,7 +59,7 @@
 }
 
 .telemetry-card-value {
-    font-size: 20px;
+    font-size: var(--fs-2xl);
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-weight: 500;
     color: var(--text-primary, #ffffff);
@@ -107,8 +107,35 @@
     justify-content: center;
     height: 150px;
     color: var(--text-dim, #94a3b8);
-    font-size: 13px;
+    font-size: var(--fs-sm);
     border: 1px dashed rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.01);
+}
+
+/* ── Responsive: collapse the auto-fit grid + shrink cards on phones ─────────
+ * The base minmax(280px, 1fr) auto-fit grid overflows a 375px / 320px phone
+ * (the 280px track + 6px padding exceeds the viewport). Force a single column
+ * on small phones and trim the card floor so several cards fit without a deep
+ * scroll. */
+@media (max-width: 479px) {
+    .telemetry-grid-container {
+        grid-template-columns: 1fr;
+    }
+    .telemetry-card {
+        min-height: 96px;
+    }
+}
+
+/* Landscape phones (667×375 / 844×390): the card min-height stacks past the
+ * viewport height. Cap it so a couple of cards remain visible above the fold. */
+@media (max-height: 500px) {
+    .telemetry-card {
+        min-height: 0;
+    }
+    .telemetry-card-plot {
+        min-height: 0;
+        height: 48px;
+        max-height: 48px;
+    }
 }

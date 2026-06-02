@@ -10,7 +10,7 @@
     color: var(--tooltip-text);
     box-shadow: var(--tooltip-shadow);
     backdrop-filter: var(--tooltip-backdrop);
-    font-size: 12px;
+    font-size: var(--fs-sm);
     line-height: 1.45;
     letter-spacing: 0.01em;
     z-index: calc(var(--z-modal) + 1);
@@ -25,7 +25,7 @@
 @media (max-width: 767px) {
     .ui-tooltip {
         max-width: min(280px, calc(100vw - 20px));
-        font-size: 11px;
+        font-size: var(--fs-xs);
         line-height: 1.4;
     }
 }
