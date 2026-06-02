@@ -211,7 +211,7 @@ This is the wave equation with source terms.
 
 | Constant | Symbol | Value | Origin |
 |----------|--------|-------|--------|
-| Lemniscatic constant | G* | 2.9587053... | K(1/√2) geometry |
+| Lemniscatic constant | G* | 2.9586751... | K(1/√2) geometry |
 | Gamma(1/4) | Γ(1/4) | 3.6256099... | Special gamma value |
 | 16G*² | — | 140.06 | Quadratic coefficient |
 | 16G*³ | — | 414.4 | Quadratic constant term |

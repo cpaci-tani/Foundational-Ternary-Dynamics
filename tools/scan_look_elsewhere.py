@@ -53,7 +53,7 @@ import numpy as np
 
 # Constants at protocol-required precision
 G_STAR = 2.95867511918863889  # Γ(1/4)/Γ(3/4), 30 digits per protocol §1.1
-ALPHA = 1.0 / 137.035999084  # CODATA 2022 per protocol §1.1
+ALPHA = 1.0 / 137.035999084  # CODATA 2018 (FTD-0097 registration-time value) per protocol §1.1
 PI = math.pi
 E = math.e
 SQRT_PI = math.sqrt(PI)
