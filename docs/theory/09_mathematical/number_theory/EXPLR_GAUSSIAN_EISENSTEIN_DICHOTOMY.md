@@ -1,9 +1,9 @@
 # EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY: Why the Master Quadratic is Gaussian, and What the Odd Term Wants
 
 **Tag:** `[EXPLORATORY MATH]` — mixed status; per-claim tags inline
-**Date:** 2026-05-30 (updated 2026-05-30: arithmetic kernel promoted to `[THEOREM]`)
+**Date:** 2026-05-30 (updated 2026-05-30: arithmetic kernel promoted to `[THEOREM]`; updated 2026-06-01: added §5.1 ramified-prime structural synthesis — `[SYNTHESIS]`/`[STRONGLY MOTIVATED]`, promotes nothing)
 **LEDGER:** FTD-0237
-**Status:** One new `[THEOREM]` — **Theorem GE-1 (Gaussian coefficient coincidence)**, §3.1, a finitely-provable statement about integers ($2^4=4^2$ is the unique $a^b=b^a$ coincidence, hence the master-quadratic coefficient $16$ is canonically defined only for $\mathbb{Q}(i)$) — supporting the existing `[STRUCTURAL OBSERVATION]` (§3, the doubly-sourced coefficient) + a `[CLARIFICATION]` of the $\mathbb{Z}[\omega]\leftrightarrow G^{*3}$ reading (§4) + a reframing of the MC-T4.3 odd-term gap (§5, FTD-0235). **The new theorem is about integers, not about $\alpha$.** Its FTD significance ("hardens the $d=-4$ selection; no Eisenstein twin") stays `[STRUCTURAL OBSERVATION]`/`[SELECTION]`. **No spine change, no promotion of any physics claim, no new derivation of physics.**
+**Status:** One new `[THEOREM]` — **Theorem GE-1 (Gaussian coefficient coincidence)**, §3.1, a finitely-provable statement about integers ($2^4=4^2$ is the unique $a^b=b^a$ coincidence, hence the master-quadratic coefficient $16$ is canonically defined only for $\mathbb{Q}(i)$) — supporting the existing `[STRUCTURAL OBSERVATION]` (§3, the doubly-sourced coefficient) + a `[CLARIFICATION]` of the $\mathbb{Z}[\omega]\leftrightarrow G^{*3}$ reading (§4) + a reframing of the MC-T4.3 odd-term gap (§5, FTD-0235) + **a new `[SYNTHESIS]`/`[STRONGLY MOTIVATED]` structural synthesis (§5.1): the half-power obstruction is the ramified prime at 2 ($\sqrt2 = |1+i|$); local–global cleanliness; the ontic/epistemic seam on which $\alpha$ sits.** **The new theorem is about integers, not about $\alpha$.** Its FTD significance ("hardens the $d=-4$ selection; no Eisenstein twin") stays `[STRUCTURAL OBSERVATION]`/`[SELECTION]`; §5.1 is interpretive synthesis that **localizes** MC-T4.3 without closing it. **No spine change, no promotion of any physics claim, no new derivation of physics.**
 
 ---
 
@@ -145,6 +145,51 @@ This note's contribution is to **localize and name** that gap: the trace is the 
 
 ---
 
+## 5.1 · The half-power obstruction is the ramified prime at 2 — a structural synthesis `[SYNTHESIS]` / `[STRONGLY MOTIVATED]`
+
+The §5 gap is "the determinant wants an *odd* power of $G^*$ that the readout cannot force." Seen from the *realizer* side (the weight-½ objects that would supply a clean $\sqrt{G^*}$ to square into the determinant slot — catalogued in [`MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`](../../01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) Derivation 5 and [`DERIV_SPIN_STATISTICS_BRIDGE.md`](../../03_derivations/quantum_mechanics/DERIV_SPIN_STATISTICS_BRIDGE.md) §5.4), the obstruction has a single arithmetic root. This section names it. **Everything here is structural exploration; it promotes no physics claim, adds no spine theorem, and does not close MC-T4.3.**
+
+### 5.1.1 · The stuck $\sqrt 2$ is the ramified prime; the clean $16$ is the units `[STRONGLY MOTIVATED]`
+
+Every native degree-½ $G^*$-object is dressed, never unit-clean (VERIFIED, 16 dp):
+
+| degree-½ object | value | dressing | place |
+|---|---|---|---|
+| theta-null $\theta_3(0,i) = \sqrt{G^*}/(2\pi)^{1/4}$ | $1.0864348\ldots$ | $(2\pi)^{1/4}$ (modular measure) | archimedean |
+| $\det_\zeta(D_{3/4}) = 2^{1/4}\sqrt{G^*}$ | $2.0455313\ldots$ | $2^{1/4}$ (ramified prime) | non-archimedean |
+| readout's needed trace $4\sqrt{G^*}$ | $6.8803199\ldots$ | $4 = |\mu_4|$ (units) | — |
+| clean reference $\sqrt{G^*}$ | $1.7200800\ldots$ | none | — |
+
+The non-archimedean dressing is **the ramified prime at 2**. In $\mathbb{Z}[i]$,
+
+$$\sqrt 2 \;=\; |1+i|, \qquad 2 \;=\; -\,i\,(1+i)^2, \qquad N(1+i)=(1+i)(1-i)=2,$$
+
+so $2$ is the unique ramified rational prime of $\mathbb{Q}(i)$ (exact, verified). The crucial point is that **ramification at 2 is intrinsic to the entire 2-power cyclotomic tower that $\mathbb{Z}[i]$ lives in** — the same tower that supplies the master quadratic's Gaussian content: the units $|\mu_4|=4$ giving $16 = 4^2 = |\mathrm{Aut}(E)|^2$ (the *trace*'s clean integer), and the complex structure $J^2=-I$ on $V_{\text{complex}}\cong\mathbb{Z}[i]^2$ (FTD-0122, the $i$ that makes the readout 2×2). You cannot reach into that tower for the units without also carrying its ramified prime.
+
+This is why **refining $\mathbb{Z}/4 \to \mathbb{Z}/8$ — the $45^\circ$ diagonal/⟨110⟩ direction the user observes field lines locking to — repackages but cannot remove the obstruction**: $\mathbb{Q}(\zeta_8) \supset \mathbb{Q}(i)$ is a *further 2-power cyclotomic extension*, in which $2$ is *still* (more deeply) ramified ($2 = $ unit $\cdot (1-\zeta_8)^4$ up to the standard factorization). Going to the diagonal changes the *presentation* of the half-turn (a finer root of unity) but stays inside the 2-ramified tower, so the $\sqrt 2 = |1+i|$ dressing is carried along. The slogan:
+
+> **The trace's clean integer $16$ is the UNITS of $\mathbb{Z}[i]$; the half-power's stuck $\sqrt 2$ is the RAMIFIED PRIME of $\mathbb{Z}[i]$. You can keep the units (and get the clean trace $16G^{*2}$) or get a clean $\sqrt{\text{-half}}$, but not both in one CM field** — because in $\mathbb{Q}(i)$ the prime whose square root you want to clean ($2$) is exactly the prime the discriminant ramifies at. (Cf. §3: the $2^4=4^2$ over-determination that *forces* the Gaussian trace has no Eisenstein twin; here, the same ramified-2 structure that forces the trace *obstructs* the clean half-power. One arithmetic fact, two faces.)
+
+### 5.1.2 · Local–global: cleanliness is globality, a square root is a local act `[STRONGLY MOTIVATED]`
+
+The product formula $\prod_v |x|_v = 1$ (over all places $v$ of $\mathbb{Q}$, archimedean and non-archimedean) is the precise statement that **integer-degree, norm-/product-built quantities balance across all places at once** — they are *global*. The forced ingredients of the readout are exactly of this kind: the trace $16G^{*2}$ is a Watson Green's function (a sum/product over the whole lattice), the units $16$ are a global count, $G^{*2} = 2\pi\,G_{\text{BCC}}(0)$ is a product-formula-clean period.
+
+A **square root is an intrinsically local act**: $\sqrt{\cdot}$ does not commute with the global product structure — it must choose a branch, and that choice carries *one place's valuation* as a dressing. That is exactly what the table in §5.1.1 shows: the half-power picks up either the non-archimedean $2^{1/4}$ (the ramified-prime valuation $|\cdot|_2$) or the archimedean $(2\pi)^{1/4}$ (the measure at $|\cdot|_\infty$) — one place's worth of dressing, never zero. **Integer degree is clean because it is global (product-formula-balanced); half degree is dressed because it is local (it reads one valuation).** The determinant the readout needs is the *square* of a half-power, so it inherits the dressing the half-power could not shed.
+
+### 5.1.3 · The ontic/epistemic seam — and α sits on it `[SYNTHESIS]`
+
+The two preceding points line up with FTD's two-layer ontology in a way worth stating plainly (this is interpretive synthesis, `[SYNTHESIS]`, not a derivation):
+
+- **The ontic side is the integer-degree, product-formula-clean menu.** Norms, products, periods, the trace $16G^{*2}$, the units $|\mu_4|^2 = 16$, the time-symmetric Euler-reflection content (cf. "The Ratio and the Arrow," where the *product* $\Gamma(1/4)\Gamma(3/4)=\pi\sqrt2$ is commutative and yields $\pi$). This is the substrate's forced output — what discreteness *determines*.
+- **The epistemic side is the chiral half-degree act.** A square root selects one conjugate from the symmetric pair $z\cdot\bar z$; it is the *ratio* $\Gamma(1/4)/\Gamma(3/4)=G^*$ (non-commutative, the arrow), the half-turn, the measurement that breaks the $z\leftrightarrow\bar z$ symmetry the ontic side preserves. Measurement *is* the local, branch-selecting, valuation-carrying operation.
+- **$\alpha$ sits on the seam.** The master quadratic's *trace* is ontic (forced, global, clean); its *determinant* requires the epistemic half-degree act (the unforced assembly = "Postulate 6" of [`AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`](../../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) §8). So $\alpha$ is precisely the **output of the epistemic act on the ontic structure** — which is exactly why it is classified *dynamical, not structural* (that audit §5; contrast $N_c=3$, which is purely ontic/structural and forced). The "boundary" of MC-T4.3 is the seam itself: the substrate hands over a globally-clean menu, and reading a definite coupling off it requires one local, chiral, branch-selecting act that the menu does not itself contain.
+
+**Why this is `[STRONGLY MOTIVATED]` / `[SYNTHESIS]` and not a theorem.** The arithmetic facts (the ramification of $2$, $\sqrt2=|1+i|$, the product formula, the dressings in §5.1.1) are `[THEOREM]`-grade and verified. The *identification* of "global/integer-degree" with the ontic layer and "local/half-degree" with the epistemic/measurement act is a structural reading — compelling and internally consistent, but a `[SELECTION]`-grade interpretive bridge, not a forced consequence of the five postulates. It **localizes** the MC-T4.3 obstruction to the seam and explains the half-power's stubbornness; it does **not** close the obstruction (closing it is still RSI Leg-3 / Postulate-6, `[OPEN]`), does not promote `x_+ = 1/\alpha` (FTD-0013, `[STRONGLY MOTIVATED CONJECTURE]`), and adds no spine theorem.
+
+**Cross-references for the arithmetic kernel.** The integer $4$ as ramified-prime-norm$^2$ is [`DERIV_INTEGER_4_UNIFICATION.md`](DERIV_INTEGER_4_UNIFICATION.md) ($2 = -i(1+i)^2$, $|\mathrm{disc}\,\mathbb{Q}(i)|=4$); the prime-splitting law of $\mathbb{Z}[i]$ that puts $2$ alone in the ramified class is [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) §5.2 (residue classes mod 4; $p=2$ Ramified $= -i(1+i)^2$). The time-symmetric product vs. time-asymmetric ratio framing is "The Ratio and the Arrow."
+
+---
+
 ## 6 · A falsifiable next step (ARC-D, engine-native) `[PROPOSED FALSIFIER]`
 
 The surviving MC-T4.3 route is engine-native measurement. The trace/determinant split suggests a concrete test:
@@ -173,6 +218,7 @@ All numbers computed with `mpmath` (≥40 dp) in-session, not recalled:
 - $2^4 = 4^2 = 16$; $3^6 = 729 \ne 6^2 = 36$; and $3^6 = 729 \ne 6^3 = 216$ (Eisenstein fails under **both** exponent conventions — §3.2 corollary).
 - Harmonic invariant $1/y_+ + 1/y_- = 1$ verified to ~37 dp for the Gaussian and *both* Eisenstein routes → non-discriminating.
 - Cuboctahedron ⟨110⟩ shell = 12 vertices; ⟨111⟩ angle = 54.7356°; $\sum\cos^2$ for ⟨111⟩ = 1, for a hypothetical 45°-to-all-axes = 1.5.
+- **§5.1 ramified-prime synthesis (16 dp):** $\theta_3(0,i) = \pi^{1/4}/\Gamma(3/4) = \sqrt{G^*}/(2\pi)^{1/4} = 1.0864348112$; $\det_\zeta(D_{3/4}) = 2^{1/4}\sqrt{G^*} = 2.0455313442$; $4\sqrt{G^*} = 6.8803198986$; $\sqrt{G^*} = 1.7200799746$. Ramified prime: $2 = -i(1+i)^2$ (exact), $N(1+i) = 2$, $|1+i| = \sqrt2 = 1.4142135624$. Archimedean vs non-archimedean dressings $(2\pi)^{1/4} = 1.5832334871$ and $2^{1/4} = 1.1892071150$ are both $\ne$ any $\mathbb{Z}[i]$-unit.
 
 ## 9 · Cross-references
 
@@ -181,4 +227,5 @@ All numbers computed with `mpmath` (≥40 dp) in-session, not recalled:
 - Tower / coefficient: [`SPEC_ALGEBRAIC_SPINE.md`](../../01_reference/SPEC_ALGEBRAIC_SPINE.md) §4 §8, [`THEOREM_HARMONIC_INVARIANT_TOWER.md`](../../03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md), [`EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md`](EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md)
 - Eisenstein / equianharmonic: [`PAPER_GSTAR_INTRODUCTION.tex`](../../../papers/PAPER_GSTAR_INTRODUCTION.tex) §16, [`PAPER_GSTAR_ETA_TOWER.tex`](../../../papers/PAPER_GSTAR_ETA_TOWER.tex), [`MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`](../../01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md)
 - MC-T4.3 odd term: [`FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](../../10_eft_program/derivations/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md), [`PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md`](../../10_eft_program/preregistrations/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md), [`AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md`](../../07_assessment/audits/AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md)
+- §5.1 ramified-prime synthesis: [`MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`](../../01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) Derivation 5 (theta-null triplet), [`DERIV_SPIN_STATISTICS_BRIDGE.md`](../../03_derivations/quantum_mechanics/DERIV_SPIN_STATISTICS_BRIDGE.md) §5.4 (weight-½ spin object), [`AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`](../../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) §8–§9 (Postulate-6 pricing), [`DERIV_INTEGER_4_UNIFICATION.md`](DERIV_INTEGER_4_UNIFICATION.md) ($4$ = ramified-prime-norm²), [`DERIV_GSTAR_QUARTER_CONJUGACY.md`](../../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md) §5.2 (ℤ[i] prime splitting)
 - Ledger: [`LEDGER.md`](../../07_assessment/core_ledgers/LEDGER.md) FTD-0237

@@ -209,6 +209,27 @@ The self-dual nome is special: it is the unique value where θ₃(q) = θ₃(q) 
 
 By the 5th term, G* is determined to 10 significant figures. The lattice's self-coupling is an ultralocal quantity — it depends only on the nearest few shells.
 
+**The weight-½ reading and the spin triplet at τ = i.** [OBSERVATION, all values VERIFIED at 16 dp] The catalogued evaluation above is for the *square* `θ₃(e^{−π})² = G*/√(2π) = 1.180340599…`. The theta-null **itself** — the weight-½ object, since `θ₃ = √(θ₃²)` is a genuine forced square root — is
+
+$$\theta_3(0, i) \;=\; \frac{\pi^{1/4}}{\Gamma(3/4)} \;=\; \frac{\sqrt{G^*}}{(2\pi)^{1/4}} \;=\; 1.0864348112\ldots$$
+
+(written here with nome `q = e^{iπτ}` at `τ = i`, i.e. `q = e^{−π}`). At this self-dual point the three Jacobi theta-nulls form a **spin triplet**, with the two odd-characteristic nulls degenerate:
+
+$$\theta_2(0, i) \;=\; \theta_4(0, i) \;=\; \frac{\sqrt{G^*}}{(4\pi)^{1/4}} \;=\; 0.9135791382\ldots,$$
+
+and the Jacobi quartic identity `θ₃⁴ = θ₂⁴ + θ₄⁴` holds exactly (residual `< 10^{−41}`; both sides equal `Γ(1/4)⁴/(4π³) = W₃ = 1.393203929…`, closing the loop to Derivation 6).
+
+The point of the weight-½ reading is what it reveals about **degree-½ G\*-content**. A *clean* `√G*` would be dressed only by units of `ℤ[i]`. But every native degree-½ object here is **prime- or measure-dressed**:
+
+| Degree-½ object | Value | Dressing | Place |
+|---|---|---|---|
+| `θ₃(0,i) = √G*/(2π)^{1/4}` | 1.0864348112… | `(2π)^{1/4}` (the modular measure) | archimedean |
+| `det_ζ(D_{3/4}) = 2^{1/4}√G*` | 2.0455313442… | `2^{1/4}` (the ramified prime, `2 = N(1+i)`) | non-archimedean |
+| the readout's needed trace `4√G*` | 6.8803198986… | `4 = |μ₄|` (the units) — *unit-dressed* | — |
+| (clean reference) `√G*` | 1.7200799746… | none | — |
+
+So the individual J-twisted ζ-determinant `det_ζ(D_{3/4}) = 2^{1/4}√G*` and the theta-null `θ₃(0,i) = √G*/(2π)^{1/4}` are **the same `√G*`-flavoured degree-½ object dressed two different ways** — one by the ramified prime `2^{1/4}`, the other by the archimedean measure `(2π)^{1/4}`. The trace the master-quadratic readout actually needs is the *unit-dressed* `4√G*`. The clean `√G*` (units only) does not occur natively. This is an `[OBSERVATION]` — it catalogues where the half-power lives and notes that it is never unit-clean; it **promotes nothing** and bears on no physics claim. The structural reason no unit-clean half-power can exist in a single CM field is the synthesis in [`EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md`](../09_mathematical/number_theory/EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md); its role as the (only) input that would force the α-readout's odd determinant is priced in [`AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`](../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) §8–§9, and its spin-statistics reading is [`DERIV_SPIN_STATISTICS_BRIDGE.md`](../03_derivations/quantum_mechanics/DERIV_SPIN_STATISTICS_BRIDGE.md) §5.
+
 ---
 
 ### Derivation 6: From the Watson Integral (Lattice Combinatorics, 1939)
@@ -512,14 +533,18 @@ All values computed from the canonical definition G* = Γ(1/4)²/(√2·Γ(1/2)�
 | Γ(1/4) | 3.62560990822190831... | Standard tables |
 | ϖ = Γ(1/4)²/(2√(2π)) | 2.62205755429211198... | OEIS A062539 |
 | G* = 2ϖ/√π | 2.95867511918863880... | scripts/constants.py |
-| G*² = 2πW₃ | 8.75426141478... | Watson 1939 |
-| 16G*² | 140.068... | Coefficient of x in quadratic |
-| 16G*³ | 414.388... | Constant term of quadratic |
+| G*² = 2πW₃ | 8.75375846091... | Watson 1939 |
+| 16G*² | 140.060135... | Coefficient of x in quadratic |
+| 16G*³ | 414.392438... | Constant term of quadratic |
 | x₊ | 137.036171458... | Quadratic formula |
 | x₋ | 3.023963916... | Quadratic formula |
 | ⌊x₋⌋ | 3 | — |
 | H (normalized) | 2.000000000... | Vieta: 2·Prod/Sum |
 | θ₃(e^{−π})² | 1.180340599... | = G*/√(2π) |
+| θ₃(0,i) | 1.086434811... | = π^{1/4}/Γ(3/4) = √G*/(2π)^{1/4} (weight-½, Derivation 5) |
+| θ₂(0,i) = θ₄(0,i) | 0.913579138... | = √G*/(4π)^{1/4}; Jacobi θ₃⁴ = θ₂⁴+θ₄⁴ exact |
+| det_ζ(D_{3/4}) | 2.045531344... | = 2^{1/4}√G* (ramified-prime-dressed degree-½, FTD-0234) |
+| √G* (clean reference) | 1.720079975... | unit-dressed `4√G*`=6.880319899… is the readout's needed trace |
 | K(1/√2) | 1.854074677... | = G*√(2π)/4, Legendre 1811 |
 | Σ binom(2n,n)³(6n+1)/256ⁿ | 1.273239544... | = 4/π, Borwein-Borwein 1987 d=1 (60 terms, ~37 digits) |
 | β′(0) | 0.391594393... | = log G* − log 2 (Derivation 9; β = Dirichlet beta = L(s, χ_{−4})) |
