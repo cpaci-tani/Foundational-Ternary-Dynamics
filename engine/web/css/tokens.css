@@ -33,8 +33,16 @@
 /* ── Design Tokens ─────────────────────────────────── */
 :root {
     /* UI Scale multiplier for accessibility — keep 1.0 default.
-       Users can bump via Settings (Compact 0.85 / Normal 1.0 / Large 1.2 / X-Large 1.4). */
-    --ui-scale: 1.0;
+       Users can bump via Settings (Compact 0.85 / Normal 1.0 / Large 1.2 / X-Large 1.4).
+
+       Two-layer design so a per-breakpoint boost composes with the user's choice:
+         --ui-scale-base : the USER knob (written by Settings via app.js).
+         --ui-scale      : the EFFECTIVE multiplier all tokens read; defaults to
+                           the base but can be multiplied per-breakpoint (e.g.
+                           responsive.css bumps mobile to base × 1.2) WITHOUT
+                           clobbering the user's accessibility setting. */
+    --ui-scale-base: 1.0;
+    --ui-scale: var(--ui-scale-base);
 
     /* Font size ramp — bases tuned for readability on 1440p+ monitors.
        All sizes multiply through --ui-scale for accessibility zoom. */
