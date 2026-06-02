@@ -20,7 +20,6 @@ Usage:
 """
 from __future__ import annotations
 
-import json
 import sys
 from pathlib import Path
 
@@ -68,7 +67,7 @@ def main():
     n_occur = template.count(PLACEHOLDER)
     if n_occur > 1:
         print(f"WARNING: placeholder appears {n_occur} times in template;")
-        print(f"  substituting only the first occurrence.  Audit the template.")
+        print("  substituting only the first occurrence.  Audit the template.")
     out = template.replace(PLACEHOLDER, data_safe, 1)
     HTML_OUT.write_text(out, encoding="utf-8")
 
