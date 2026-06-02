@@ -487,7 +487,7 @@ class TestStatisticalSignificance(unittest.TestCase):
         # Key predictions with their error (%)
         predictions = {
             "alpha (1.26 ppm)": 0.000126,
-            "m_e (0.27%)": 0.27,
+            "m_e (0.19%)": 0.19,
             "v_Higgs (0.05%)": 0.05,
             "alpha_G (0.06%)": 0.06,
             "m_H (0.08%)": 0.08,
@@ -507,7 +507,7 @@ class TestStatisticalSignificance(unittest.TestCase):
 
         for name, error in predictions.items():
             # Probability of random formula matching to this precision
-            p_single = error / 100  # e.g., 0.27% -> 0.0027
+            p_single = error / 100  # e.g., 0.19% -> 0.0019
             p_adjusted = p_single * formulas_tried  # Bonferroni-like
 
             combined_prob *= min(p_adjusted, 1.0)
