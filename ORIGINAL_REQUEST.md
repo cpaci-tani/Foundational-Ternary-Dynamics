@@ -138,3 +138,43 @@ Directly update the project's ledgers (e.g., `TRACKER_OPEN_ITEMS.md`) with the s
 ### Quality and Ledger Verification (Agent-as-Judge)
 - [ ] An independent evaluator agent must verify that the written report covers math, ontology, and docs without hallucinating claims.
 - [ ] The evaluator must verify that the ledger updates (`TRACKER_OPEN_ITEMS.md`) are properly formatted and accurately reflect the report's findings.
+
+
+## Follow-up — 2026-06-02T03:35:54Z
+
+An intensive, platinum-tier audit and consolidation of all meta-documentation for the Foundational Ternary Dynamics (FTD) project, combined with a complete, premium revamp of the primary GitHub-facing README. The final deliverables must reflect a world-class academic research program on the mathematical origins of existence, ensuring 100% consistency across all ledgers, indices, guides, and the C++ engine/Python proof reference points.
+
+Working directory: `c:\Users\cpaci\Desktop\ftd`
+
+## Requirements
+
+### R1. Meta-Documentation Consistency and Completeness Audit
+- Audit and synchronize all root-level meta-documentation files (`CLAUDE.md`, `AGENTS.md`, `CONTRACTS.md`, `META_PROJECT_ATLAS.md`, `META_DOCUMENTATION_MAP.md`, `META_CONTRIBUTOR_ONBOARDING.md`, `MAINTAINABILITY.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `DEPLOYMENT.md`) and the theory indices (`docs/theory/META_INDEX.md`, `INDEX_FTD_NATIVE_EFT.md`, etc.).
+- Ensure every documented claim, theorem, and epistemic tag is perfectly aligned with `docs/theory/07_assessment/LEDGER.md` and `docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md` (no overclaims or tag promotions).
+- Ensure all file paths, cross-references, and navigation layers are 100% correct, resolving any broken links or stale/renamed file references (e.g. `_dag` files).
+
+### R2. Complete Premium GitHub-Facing README Revamp
+- Redesign the primary `README.md` from the ground up to reflect a prestigious, world-class academic research program.
+- Use outstanding typography, curated color schemas (with HSL/HEX custom themes if styled, clear table structures, beautiful badges), a compelling narrative structure, and premium formatting (such as smooth structural guides and exhaustive mathematical/epistemic explanations).
+- Clearly demarcate proven mathematical theorems (the algebraic spine: T1-T9), physical conjectures (e.g. $x_+ \leftrightarrow 1/\alpha$), closed-negative results (the boundaries of discreteness), and active research frontiers.
+- Include complete, clear instructions for building, running tests, and reproducing results (including C++ engine, CUDA/WSL2, WASM, and Python proofs).
+
+### R3. Structural Link and Proof Validation
+- Run existing link check scripts (`verify_index_links.py`, `scratch_linkcheck.py`) and fix all identified link/reference errors.
+- Ensure all Python proof and C++ unit/empirical test verification suites run and pass 100% (or note any existing external environment limits).
+
+## Acceptance Criteria
+
+### Documentation Rigor & Consistency
+- [ ] 0 broken links or invalid markdown references across all audited files.
+- [ ] No mismatch or divergence between the primary `README.md`, `CLAUDE.md`, the `LEDGER.md` (claims FTD-0001 to FTD-0236+), and `TRACKER_ONTIC_TRUTH.md`.
+- [ ] All occurrences of old active paths or renamed filenames (like `app_dag.js` and `wasm-bridge-dag.js`) are completely eliminated or updated to their correct names.
+
+### Visual and Narrative Excellence
+- [ ] The `README.md` is structured like a premium scientific manuscript/project homepage, featuring high-fidelity badges, clean tables of theorems/claims, clear installation & execution instructions, and structured navigation.
+- [ ] The README has an elegant, high-impact aesthetic that immediately conveys the seriousness and rigor of the academic work.
+
+### Execution Parity
+- [ ] All proof and verification scripts under `scripts/proofs/` run and execute successfully.
+- [ ] The C++ build and test environment instructions are accurate and work with the AMD Ryzen 9 9950X3D and NVIDIA RTX 5090 hardware profile outlined in the rules.
+

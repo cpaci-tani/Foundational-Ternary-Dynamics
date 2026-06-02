@@ -91,7 +91,7 @@ for name, f in funcs.items():
     bases[name] = (s0, s1)
 epistemic_states = set()
 for s0, s1 in bases.values():
-    epistemic_states.add(s0); epistemic_states.add(s1)
+    epistemic_states.update([s0, s1])
 all_2subsets = set(frozenset(c) for c in combinations(ontic, 2))
 check("3 complementary bases (a, b, a^b), each 2 level-sets -> 6 epistemic states",
       len(bases) == 3 and len(epistemic_states) == 6,
