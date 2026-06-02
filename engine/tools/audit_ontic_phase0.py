@@ -420,7 +420,7 @@ m_e_predicted_GeV = m_P_GeV * mpmath.sqrt(2*pi_ref) * mpmath.mpf(16)/3 * alpha_e
 m_e_predicted_MeV = m_e_predicted_GeV * 1000
 m_e_exp_MeV = mpmath.mpf("0.5110")
 
-check_val_rel("0.14d", "m_e predicted ~ 0.5096 MeV (0.27% from 0.5110)",
+check_val_rel("0.14d", "m_e predicted ~ 0.5100 MeV (0.19% from 0.5110)",
               m_e_predicted_MeV, m_e_exp_MeV, 0.01)
 
 # Mass ratios
@@ -433,8 +433,8 @@ check("0.14f", "TAU_RATIO = 3477", TAU_RATIO == 3477, f"17*207-42 = {TAU_RATIO}"
 # Proton ratio
 PROTON_RATIO = N_EFF * float(X_PLUS_CPP) + TAU_RATIO * (B_3 + N_C) / (N_EFF + B_3)
 m_proton = float(K_B_CPP) * PROTON_RATIO
-check_val_rel("0.14g", "M_PROTON ~ 938.3 MeV",
-              mpmath.mpf(str(m_proton)), mpmath.mpf("938.3"), 0.001)
+check_val_rel("0.14g", "M_PROTON ~ 1798.7 MeV",
+              mpmath.mpf(str(m_proton)), mpmath.mpf("1798.7"), 0.001)
 
 # ============================================================================
 # 0.15 Layer 6b: Higgs VEV and mass

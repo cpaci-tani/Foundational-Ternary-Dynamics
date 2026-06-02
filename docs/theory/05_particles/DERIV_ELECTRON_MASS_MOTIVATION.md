@@ -12,7 +12,7 @@
 
 $$m_e = M_P \cdot \sqrt{2\pi} \cdot \frac{16}{3} \cdot \alpha^{11}$$
 
-**Result:** 0.5124 MeV (0.19% from PDG value 0.51100 MeV).
+**Result:** 0.5100 MeV (0.19% from PDG value 0.51100 MeV).
 
 This is a parametric insertion: the formula structure (M_P · prefactor · α^n) is standard dimensional analysis for relating particle masses to the Planck scale. What FTD provides is a structural motivation for each factor.
 
@@ -103,7 +103,7 @@ m_e_derived = M_PLANCK * np.sqrt(2*np.pi) * (16/3) * ALPHA**11
 m_e_exp = Experimental.m_electron / 1000  # Convert MeV to GeV
 error = abs(m_e_derived - m_e_exp) / m_e_exp * 100
 
-print(f"m_e (FTD):  {m_e_derived*1000:.4f} MeV")   # 0.5124 MeV
+print(f"m_e (FTD):  {m_e_derived*1000:.4f} MeV")   # 0.5100 MeV
 print(f"m_e (PDG):  {m_e_exp*1000:.4f} MeV")        # 0.5110 MeV
 print(f"Error:      {error:.2f}%")                    # 0.19%
 ```

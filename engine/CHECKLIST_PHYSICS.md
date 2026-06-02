@@ -616,7 +616,7 @@ Observer coupling triggers localization: manifested observer (s ≠ 0) concentra
 - **Tests**: `test_ontic_chain`, `test_falsifiability`
 - **Done means**: α derived from G* with no free parameters.
 
-### 61. ✅ Electron Mass (0.27%) [THEOREM]
+### 61. ✅ Electron Mass (0.19%) [THEOREM]
 
 m_e = m_P · √(2π) · (16/3) · α¹¹. K_B = 0.511 in simulation units.
 
