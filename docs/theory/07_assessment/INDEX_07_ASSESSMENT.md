@@ -59,6 +59,7 @@ Deep audits of individual claims, mechanisms, and engine subsystems.
 | File | Tag | Purpose |
 |---|---|---|
 | [AUDIT_MASTER_QUADRATIC.md](AUDIT_MASTER_QUADRATIC.md) | [AUDIT] | Numerical + epistemic review of the master quadratic; verdict [STRONGLY MOTIVATED CONJECTURE]. |
+| [AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md](audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) | [AUDIT] | Route-invariant boundary for MC-T4.3; 4 FTD-native routes converge on the unforced operator-assembly; α dynamical not structural (FTD-0242). |
 | [AUDIT_KAPPA_PSI_4PI.md](AUDIT_KAPPA_PSI_4PI.md) | [AUDIT] (FTD-0188) | κ_ψ = 4π is a [DEFINITION]; "closure law forces 4π" is [CLOSED NEGATIVE]. |
 | [AUDIT_SELF_CONSISTENCY.md](AUDIT_SELF_CONSISTENCY.md) | self-consistency shown; uniqueness conditional | Framework integers {3,4,7,13} self-consistency; absorbs DERIV_INTEGER_UNIQUENESS. |
 | [AUDIT_BELL_ANALYSIS.md](AUDIT_BELL_ANALYSIS.md) | Complete Analysis | Consolidated Bell theory + simulation; lattice dynamics give S ≤ 2 in all configs tested. |
