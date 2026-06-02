@@ -135,7 +135,7 @@ deterministic byte-hash gate (`test_render_bridge_golden`, hash
 | File | Before | After | Δ |
 |---|---:|---:|---:|
 | `engine/web/js/viewport.js` | 3953 | 1256 | **−68%** |
-| `engine/web/js/wasm-bridge-dag.js` | 2395 | 42 | **−98%** |
+| `engine/web/js/bridge-init.js` | 2395 | 42 | **−98%** |
 | `engine/src/render_bridge.cpp` | 1231 | 545 | **−56%** |
 | `engine/cuda/kernels_stencil.cu` | 1530 | 0 (deleted, split into 3 TUs) | **−100%** |
 | `engine/include/ftd/render_bridge.h` | 506 | 369 | **−27%** |
@@ -251,10 +251,10 @@ Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered seq
 | 1.7 | GPU-path `EnergyLedger` | Hook needed | `tick()`'s GPU path now calls `gpu_sync_to_host()` + `update_energy_ledger()` |
 | 1.9 | Muon / tau spatial seeds | JS feature | Two new scale-0 scenarios (`s0-seed-muon`, `s0-seed-tau`) with full epistemic metadata |
 
-**All six viable engine opens are now ✅ CLOSED.** Three remaining §1 items are explicitly `[BLOCKED]` (DagEngine stubs, dynamical SU(3), δ_c closed form) on upstream work. See [`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md) for the full ledger.
+**All six viable engine opens are now ✅ CLOSED.** Three remaining §1 items are explicitly `[BLOCKED]` (DagEngine stubs, dynamical SU(3), δ_c closed form) on upstream work. See [`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) for the full ledger.
 
 ### April 17, 2026: Open items tracker + cleanup sweep
-- **`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`** — new canonical ledger of every `[OPEN]` across engine code, theory derivations, foundations, particles, reference frame context, math connections, and bridges. 275 occurrences across 83 files, organised + auto-refreshable.
+- **`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`** — new canonical ledger of every `[OPEN]` across engine code, theory derivations, foundations, particles, reference frame context, math connections, and bridges. 275 occurrences across 83 files, organised + auto-refreshable.
 - **Dead-code removal:** `vec3Str` / `fmtForce` in `engine/web/js/inspector.js` (unused, superseded by `units.js`).
 - See [CHANGELOG.md](../CHANGELOG.md) → "Open Items Tracker + Cleanup Sweep" for full list.
 

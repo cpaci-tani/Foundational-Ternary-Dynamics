@@ -300,7 +300,7 @@ This audit's claims can be cross-checked against:
 
 1. The paper's source: `dissemination/papers/PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` (commit `547da31`).
 2. The deriv doc: `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`).
-3. The LEDGER: `docs/theory/07_assessment/LEDGER.md` (FTD-0001 through FTD-0008 for spine, FTD-0107 G2 for empirical anchor, FTD-0110 for the bridge).
+3. The LEDGER: `docs/theory/07_assessment/core_ledgers/LEDGER.md` (FTD-0001 through FTD-0008 for spine, FTD-0107 G2 for empirical anchor, FTD-0110 for the bridge).
 4. Cubic point group character tables: Altmann–Herzig (1994), §4.2.
 5. Verification suite: `scripts/exploration/verify_k_derivation_2026-04-28.py` (C1–C4 PASS).
 

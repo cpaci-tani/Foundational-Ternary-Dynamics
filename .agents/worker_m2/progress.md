@@ -1,17 +1,11 @@
-# Progress - Worker M2
+# Progress — 2026-06-02T22:45:00Z
 
-Last visited: 2026-05-26T22:53:00Z
+Last visited: 2026-06-02T22:45:00Z
 
-## Status
-- **Current Phase**: Completed and Documented
-- **Status**: Finished
-
-## Checklist
-
-- [x] Create `original_prompt.md` and `BRIEFING.md`
-- [x] Map compile-time header inclusions (#include chains) in `engine/include/ftd/`
-- [x] Outline the runtime execution pipelines (6-phase tick cycle + multi-scale models orchestration)
-- [x] Map host-device (CPU/GPU) data transfer boundaries and GPU kernel accelerations
-- [x] Write the comprehensive report `c:\Users\cpaci\Desktop\ftd\.agents\orchestrator_engine_map\M2_dependency_report.md`
-- [x] Create `handoff.md` in `worker_m2/`
-- [x] Send handoff message to the orchestrator (caller agent)
+## Task List
+- [x] Edit root-level meta-documentation files to fix all identified broken links and stale references
+- [x] Rename stale Javascript & web references globally
+- [x] Sync Theory indexes and sub-indexes
+- [x] Rewrite README.md following guidelines
+- [x] Run verify_index_links.py and scratch_linkcheck.py to confirm 0 broken links
+- [x] Write handoff.md and report to orchestrator

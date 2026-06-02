@@ -174,7 +174,7 @@ LEDGER promotion: FTD-0107 G2 sub-row from [HYPOTHESIS] / [PARTIAL · in flight]
 - G1 (L=64) baseline: [`ANALYSIS_EMERGENT_SPECTRUM_G1.md`](ANALYSIS_EMERGENT_SPECTRUM_G1.md)
 - L=32 baseline: [`ANALYSIS_EMERGENT_SPECTRUM.md`](ANALYSIS_EMERGENT_SPECTRUM.md)
 - Linear-level derivation (cross-check anchor): [`../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md)
-- LEDGER row: [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) FTD-0107
+- LEDGER row: [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) FTD-0107
 - Output: `engine/results/emergent_spectrum_2026-04-28_L128/`
 - Paper draft empirical anchor: `dissemination/papers/PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex` §5
 

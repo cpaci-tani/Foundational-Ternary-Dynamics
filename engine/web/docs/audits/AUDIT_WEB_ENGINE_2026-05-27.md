@@ -11,8 +11,8 @@ by path only.
 
 **Key surface facts:**
 - Sole HTML entry is `engine/web/index.html`. `index_dag.html` does NOT exist
-  on disk (the "DAG" suffix in `app_dag.js` / `wasm-bridge-dag.js` /
-  `bridge-factory-dag.js` is residue from the reconciled pre-2026-04-27 split).
+  on disk (the "DAG" suffix in `app.js` / `bridge-init.js` /
+  `bridge-factory.js` is residue from the reconciled pre-2026-04-27 split).
 - Active scales: 0 lattice, 1 particle, 2 atom, 3 molecular, 4 planetary,
   5 cosmic, 6 meta. Scale 11 deletion confirmed clean in JS source; doc and
   test-helper references are stale.
@@ -30,7 +30,7 @@ by path only.
 | P0-1 | Scale 4 uses lattice `G_N = 0.01` for heliocentric AU·M_sun·yr scenarios → Earth year wrong by factor ~63×. `G_HELIOCENTRIC = 4π²` exists in `constants.js:275` and is never imported. | `bridge/mock-scale4.js:35,66` |
 | P0-2 | `PROTON_RATIO` formula drift JS ↔ C++. JS (canonical, FTD-0016): `N_eff/α + N_base·N_eff + N_c ≈ 1836.47`. C++ + `proof_complete_sm.py`: pre-F9 wrong formula ≈ 3520 (1.91× too large). `engine/tests/campaign_triad_binding.cpp:154-159` will silently fail. | JS `constants.js:101` vs C++ `engine/include/ftd/ontic/particle_masses.h:52-55` |
 | P0-3 | Telemetry hub Hubble key mismatch — Scale-5 emits `hubbleParameter`, hub reads `hubble`/`hubbleParam`. `csHubble` ring buffer is dead-on-arrival. | `telemetry-hub.js:324` vs `bridge/mock-scale5.js:307` |
-| P0-4 | `WebSocketBridge` has no `bridge.capabilities` getter installed; `installCapabilityGetter` is only mounted on Mock + Wasm prototypes. `scales/scale0/runtime/tick.js:19` will throw `TypeError` on native-GPU mode. | `ws-bridge.js` (missing surface) + `wasm-bridge-dag.js:36-37` |
+| P0-4 | `WebSocketBridge` has no `bridge.capabilities` getter installed; `installCapabilityGetter` is only mounted on Mock + Wasm prototypes. `scales/scale0/runtime/tick.js:19` will throw `TypeError` on native-GPU mode. | `ws-bridge.js` (missing surface) + `bridge-init.js:36-37` |
 | P0-5 | Scale 4 `setInterval` captures `ctx.running` from snapshot — planetary mode cannot be paused after load. | `scales/scale4/controller.js:65-88` |
 | P0-6 | Scale 5 telemetry labels lattice mass with `M☉` glyph without multiplying by `LATTICE_TO_SOLAR_MASS = 50`. Reported masses are 50× off. | `bridge/mock-scale5.js:153,175,184,191` |
 | P0-7 | Scale 5 cosmic info panel claims `r_s = 2 G_N M`; engine actually renders `cbrt(M) · 0.35`. Panel formula is wrong for what the visualization shows. | `ui/components/panel-resources/template.js:546` vs `bridge/cosmic-postupdates.js:37` |
@@ -87,8 +87,8 @@ by path only.
 | P2-11 | Test-spec boilerplate: 30+ specs duplicate the goto + waitForFunction(_ftdBridge) pattern when `_helpers.js:18 gotoAndReady` already exists. ~90 LOC savings, race-safe. | `engine/web/tests/*.spec.js` |
 | P2-12 | Scale 5 `cosmic-super-cluster` is a duplicate of `cosmic-web` (same camera, same fallback). Collapse. `cosmic-gravitational-wave` registers `_gwEvents` array that no consumer reads. `cosmic-viewport-overlay` element is an empty shell. Orphaned camera preset `quasar` (in dispatcher, not in `<select>`). Duplicate tick readout (`#cosmic-tb-tick` + `#cosmic-tick`). | `scales/scale5/**` |
 | P2-13 | Three bridge facades (Mock / Wasm / WS) with no shared contract enforcement. `bridge-contract.js` is a typedef-only file; `WebSocketBridge` doesn't even claim to implement it. Install `capabilities` getter on `WebSocketBridge` to eliminate P0-4, or extract a `BridgeBase`. | `bridge/{mock-bridge,wasm-bridge}.js` + `ws-bridge.js` |
-| P2-14 | "DAG" suffix residue (`app_dag.js`, `wasm-bridge-dag.js`, `bridge/bridge-factory-dag.js`) — the split sibling no longer exists. Strip on next touch. | three filenames |
-| P2-15 | Many minor: `decay-rates.js` mass duplication with `particle-catalog`; orphaned `cross-sections.js` / `decay-rates.js` / `spectroscopy.js` render functions; Scale 4 biome heuristic duplicated (renderer + inspector); Scale 4 inlined `snoise` shadows `GLSL_SIMPLEX_NOISE_3D`; Scale 1 BH constants duplicated (`app_dag.js:144-152` vs `scales/scale1/controller.js:64-69`); Scale 3 two bond renderers (lines + cylinders) under one "Bonds" toggle; `MAX_PARTICLES` / `MAX_FIELD_GRID` / `VOXEL_CENTER_OFFSET` declared 4×. | see §D |
+| P2-14 | "DAG" suffix residue (`app.js`, `bridge-init.js`, `bridge/bridge-factory.js`) — the split sibling no longer exists. Strip on next touch. | three filenames |
+| P2-15 | Many minor: `decay-rates.js` mass duplication with `particle-catalog`; orphaned `cross-sections.js` / `decay-rates.js` / `spectroscopy.js` render functions; Scale 4 biome heuristic duplicated (renderer + inspector); Scale 4 inlined `snoise` shadows `GLSL_SIMPLEX_NOISE_3D`; Scale 1 BH constants duplicated (`app.js:144-152` vs `scales/scale1/controller.js:64-69`); Scale 3 two bond renderers (lines + cylinders) under one "Bonds" toggle; `MAX_PARTICLES` / `MAX_FIELD_GRID` / `VOXEL_CENTER_OFFSET` declared 4×. | see §D |
 
 Total tickets: **17 P0 + 20 P1 + 15 P2 = 52** discrete items.
 
@@ -246,15 +246,15 @@ Cross-cutting (sorted by LOC delta × confidence / risk):
 | D-10 | Three bridge facades — install `capabilities` getter on `WebSocketBridge` (resolves P0-4). Optionally extract `BridgeBase` for shared contract enforcement. | bridge/{mock,wasm,bridge-factory-dag,bridge-contract}.js, ws-bridge.js | +20 / −0 | Med |
 | D-11 | Promote AE WASM check from hardcoded false (`wasm-bridge.js:625-629`) to a binding-availability probe (resolves P1-2). | bridge/wasm-bridge.js + the JS↔WASM scale-conversion shim | +50 to fully port AE; small to enable probe | Med-High |
 | D-12 | Delete `Scale1LifecycleController` empty stub (forwards `destroy` only; class wrapper without value) | scales/scale1/controller.js:103-131 | −20 | Low |
-| D-13 | Strip `-dag.js` suffix on next touch — `app_dag.js`, `wasm-bridge-dag.js`, `bridge/bridge-factory-dag.js` (DAG sibling no longer exists) | 3 file renames + ~30 import updates | 0 net | Low |
+| D-13 | Strip `-dag.js` suffix on next touch — `app.js`, `bridge-init.js`, `bridge/bridge-factory.js` (DAG sibling no longer exists) | 3 file renames + ~30 import updates | 0 net | Low |
 | D-14 | Scale 6 directory naming — consolidate `scale6/` controller + `scale12/` toolbar under one numeric key; rename class `Scale6LifecycleController` → `MetaLifecycleController` | scales/scale6/, scales/scale12/, css scale12-only class, index.html | Small | Low |
 | D-15 | Scale 4 inlined `snoise` in star shader shadows `GLSL_SIMPLEX_NOISE_3D` from constants.js — replace with template-string injection | planetary-renderer.js:113-155 | −40 | Low |
 | D-16 | Scale 4 biome heuristic duplicated (renderer + inspector) — extract `_classifyBiome(d)` helper | planetary-renderer.js:329-338, inspector/scales/planetary.js:73-89 | −10 | Low |
-| D-17 | Scale 1 BH micro constants duplicated in `app_dag.js:144-152` and `scales/scale1/controller.js:64-69` — delete the app_dag copy | app_dag.js | −10 | Low |
+| D-17 | Scale 1 BH micro constants duplicated in `app.js:144-152` and `scales/scale1/controller.js:64-69` — delete the app_dag copy | app.js | −10 | Low |
 | D-18 | Scale 3 two bond renderers (`bondLines` + `_bondCylinders`) under one "Bonds" toggle — pick one canonical | viewport/molecular-renderer.js:53-115, 158-268 | −60 to −100 | Med |
 | D-19 | Delete `cosmic-super-cluster` scenario (≡ `cosmic-web` fallback) | bridge/cosmic-scenarios/index.js, scales/scale5/ui/toolbar/template.js | −15 | Low |
 | D-20 | Consolidate diagnostics-throttle (status-cache + activeTab switch) between Scale 1 and Scale 2 controllers into `scale-utils.createDiagnosticsThrottle` | scales/scale-utils.js, scale1/scale2 controllers | −50 | Med |
-| D-21 | `_resetAllVisualState` (app_dag.js:275-328) — push Scale-2 AE button-reset block into `scale2/controller.js:resetScale2`, etc. Orchestrator should not know AE checkbox ids. | app_dag.js + scale controllers | −60 in app_dag.js | Med |
+| D-21 | `_resetAllVisualState` (app.js:275-328) — push Scale-2 AE button-reset block into `scale2/controller.js:resetScale2`, etc. Orchestrator should not know AE checkbox ids. | app.js + scale controllers | −60 in app.js | Med |
 
 ---
 
@@ -314,7 +314,7 @@ Cross-cutting (sorted by LOC delta × confidence / risk):
 |---|---|
 | `WebSocketBridge.setBoundaryShape()`, `loadScenario()` are no-op stubs | `ws-bridge.js:331-332` |
 | `WebSocketBridge` lacks 16+ field samplers (`getEFieldSampled`, `getBFieldSampled`, `getPoyntingSampled`, `getDivJSampled`, …, `getStrongForceField`) and the entire PE/AE method surface | `ws-bridge.js` |
-| `WebSocketBridge` lacks `bridge.capabilities` getter; `scales/scale0/runtime/tick.js:19` will throw `TypeError: bridge.capabilities is undefined` on native-GPU | `wasm-bridge-dag.js:36-37` mounts capability getter only on Mock + Wasm prototypes |
+| `WebSocketBridge` lacks `bridge.capabilities` getter; `scales/scale0/runtime/tick.js:19` will throw `TypeError: bridge.capabilities is undefined` on native-GPU | `bridge-init.js:36-37` mounts capability getter only on Mock + Wasm prototypes |
 
 ---
 
@@ -337,7 +337,7 @@ Cross-cutting (sorted by LOC delta × confidence / risk):
 | F-13 | `viewport.js:198-202` `_insideBoundary()` hoisted out in `flux-renderer.js:228-229` but not in `field-renderer.js` arrow/streamline loops (14 sites). Per-voxel function-call overhead aggregates. | High in aggregate | `viewport/field-renderer.js:570,582,731,811,912,1031,1146,1339,1773,1849,1924,2036,2113,2174` |
 | F-14 | Scale 0 `field-overlays.js:300,301` `generateImportanceSeeds(...)` re-allocates seed array per overlay refresh inside force-flow loop | Medium | `runtime/field-overlays.js:300-301` |
 | F-15 | Scale 0 redundant soft-disc texture build at `field-renderer.js:79-96` (module-level) AND `:1953-1970` (instance method) | Low (memory ~16KB) | as cited |
-| F-16 | `_buildScale1Ctx(now)` / `_buildScale2Ctx(now)` / `_makeCtx()` fresh-object allocations every frame in app_dag.js (low cost individually, observably common) | Low | `app_dag.js:163-200, 662-689` |
+| F-16 | `_buildScale1Ctx(now)` / `_buildScale2Ctx(now)` / `_makeCtx()` fresh-object allocations every frame in app.js (low cost individually, observably common) | Low | `app.js:163-200, 662-689` |
 | F-17 | Scale 1 PE telemetry `_phaseBuf.push() / shift()` on 300-element buffer per 2-body frame — `shift()` is O(n). Replace with circular buffer | Low | `pe-telemetry.js:435-436` |
 | F-18 | Scale 4 64×64 sphere geometry per body × 4 octaves of vertex-shader fbm every frame even when geometry is stationary. LOD or bake | Low-Med | `planetary-renderer.js:191` |
 | F-19 | Cosmic per-body PointLight (binary-star scenarios duplicate lighting cost) | Low | `cosmic-renderer.js:241-249,350-354` |
@@ -393,7 +393,7 @@ Three facades (`MockBridge`, `WasmBridge`, `WebSocketBridge`):
 ### G-5 Cross-scale handoff state
 
 - `aggregation-bridge.js:135` defaults missing particle energy to `K_B` (electron mass) — misleading for non-electrons.
-- Scale 1 BH micro-scenario constants duplicated in `app_dag.js:144-152` and `scales/scale1/controller.js:64-69`. The `app_dag.js` copy is dead.
+- Scale 1 BH micro-scenario constants duplicated in `app.js:144-152` and `scales/scale1/controller.js:64-69`. The `app.js` copy is dead.
 - Scale 2 `massInKB` key is divided by `M_E_PHYS` (PDG), not `K_B` (anchor). Downstream importer reading `massInKB` and multiplying by `K_B` gets 0.2% error.
 - K_GENESIS is canonically threaded everywhere except `viewport/field-renderer.js:1429` (hardcoded `1.533`).
 

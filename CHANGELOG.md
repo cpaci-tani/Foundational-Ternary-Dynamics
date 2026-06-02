@@ -58,14 +58,14 @@ A comprehensive repository-wide cleanup, ledger-numbering reconciliation, and in
 ### Phase 10: Ledger Reconciliation & Index Synchronization (Front A)
 
 - **Duplicate Ledger IDs Resolved:** Cleared the duplicate `FTD-0224` row by reassigning the MC-T4.3 Independent Audit row to `FTD-0232` (leaving `Color Excess / Blocked Flow` at `FTD-0224`). Registered the Ginsparg-Wilson / Chiral Anomaly theorem under the unique canonical ID `FTD-0236` (resolving the collision with `FTD-0230`).
-- **Late-May Campaign Pre-Registrations Registered:** Added five separate, canonical rows in `docs/theory/07_assessment/LEDGER.md` with honest underdetermined/closed-negative statuses:
+- **Late-May Campaign Pre-Registrations Registered:** Added five separate, canonical rows in `docs/theory/07_assessment/core_ledgers/LEDGER.md` with honest underdetermined/closed-negative statuses:
   - **FTD-0230 / ARC-B2 — BCC Algebraic Bridge Readout:** Proves that the body-diagonal self-energy trace `16G*²` is derivable, but the odd-degree `16G*³` term remains underdetermined. **[UNDERDETERMINED — Outcome B]**
   - **FTD-0231 / ARC-C1 — Alpha Quantization Readout:** Tracks the charge-quantization resolution. **[UNDERDETERMINED — Outcome B]** (resolving collision with W5 cosmology).
   - **FTD-0233 — Determinant Grading:** Closed-negative attempt analyzing G*-degree parity. **[CLOSED NEGATIVE — scoped]**
   - **FTD-0234 — Odd Period:** Odd source generation via J-twisted determinant. **[UNDERDETERMINED]**
   - **FTD-0235 — Det Identity:** Proves that G_BCC(0) and the determinant ratio are derivable scalars, but the trace-determinant relation remains unforced. **[UNDERDETERMINED]**
 - **Doc-Internal Renumbering:** Modified all internal headers, metadata frontmatter, and cross-references across 12 campaign files under `docs/theory/10_eft_program/` to align bit-faithfully with the new canonical sequence.
-- **Downstream Index Sync:** Fully synchronized all downstream navigation tables, columns, and path links inside `docs/theory/META_INDEX.md`, `docs/theory/10_eft_program/INDEX_FTD_NATIVE_EFT.md`, and `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`.
+- **Downstream Index Sync:** Fully synchronized all downstream navigation tables, columns, and path links inside `docs/theory/META_INDEX.md`, `docs/theory/10_eft_program/INDEX_FTD_NATIVE_EFT.md`, and `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 - **Math Node Map Rebuilt:** Executed `build_math_node_map.py` to regenerate the dynamic graph JSON and interactive Plotly HTML viewer (`math_node_map.html`) with 100% graph consistency (**82 objects, 13 theorems, 215 ledger nodes, 1265 edges**).
 - **Link Integrity Verified:** Executed `verify_index_links.py` to verify 384 file-path references across the indices with exactly **0 broken links** detected.
 - **Analytical Proofs Execution:** Verified 100% successful execution of the 4 active mathematical and physics proof scripts:
@@ -464,7 +464,7 @@ output to the pre-refactor baseline.
 - **Phase 2b** (`7256a14`) — `WasmBridge` extracted to
   `engine/web/js/bridge/wasm-bridge.js`.
 - **Phase 2c** (`c11ef96`) — capability factories extracted;
-  `engine/web/js/bridge/wasm-bridge-dag.js` becomes a 42-LOC re-export
+  `engine/web/js/bridge/bridge-init.js` becomes a 42-LOC re-export
   shim.
 - **Phase 3 prep** (`848e839`) — `viewport.js` extraction map
   (REFACTOR_MAP.md) authored.
@@ -1352,7 +1352,7 @@ against JS↔WASM scenario drift.
   - `viewport/boundary-geometry.js` — pure boundary wireframe builders + inside-boundary predicate (255 LOC new file, −189 LOC from viewport.js)
   - `viewport/topology-sheet-renderer.js` — 11 rubber-sheet visualizations (Φ + 10 topology fields) as a TopologySheetRenderer class with live-state getters and onVisibilityChange callback (472 LOC new file, −412 LOC from viewport.js)
   - Shared streamline helpers `_buildStreamlineMesh` + `_writeStreamlinesIntoMesh` consolidating 3 copies of the E/B/flux streamline build+update pattern
-- `engine/web/js/app_dag.js`: 1731 → 1723 LOC via `app-wire/keyboard.js` partial extraction (keyboard handler; full wireToolbar/Controls/ViewportToggles deferred — too coupled)
+- `engine/web/js/app.js`: 1731 → 1723 LOC via `app-wire/keyboard.js` partial extraction (keyboard handler; full wireToolbar/Controls/ViewportToggles deferred — too coupled)
 - `engine/web/tests/_helpers.js` — 3 specs now share `gotoAndReady`, `attachConsoleWatcher`, `attachNetworkWatcher`, `switchMode`, `KNOWN_NOISE`, `isNoise`
 
 ### RF-2/5/6/7 follow-up tickets
@@ -1382,8 +1382,8 @@ against JS↔WASM scenario drift.
 | File | Pre-refactor | Post-all-tickets | Δ |
 |---|---|---|---|
 | `engine/web/js/viewport.js` | 5325 | 3900 | −1425 (−27%) |
-| `engine/web/js/wasm-bridge-dag.js` | 5736 | 2132 | −3604 (−63%) |
-| `engine/web/js/app_dag.js` | 1898 | 1723 | −175 (−9%) |
+| `engine/web/js/bridge-init.js` | 5736 | 2132 | −3604 (−63%) |
+| `engine/web/js/app.js` | 1898 | 1723 | −175 (−9%) |
 | **Three primary files** | **12959** | **7755** | **−5204 (−40%)** |
 
 ### Verification
@@ -1412,8 +1412,8 @@ closing a long-standing JS/WASM parity gap.
 Split three oversized web-engine files into cohesive modules:
 
 - `engine/web/js/viewport.js`: 5325 -> 4611 LOC (-714)
-- `engine/web/js/wasm-bridge-dag.js`: 5736 -> 2116 LOC (-3620, 63% reduction)
-- `engine/web/js/app_dag.js`: 1898 -> 1731 LOC (-167)
+- `engine/web/js/bridge-init.js`: 5736 -> 2116 LOC (-3620, 63% reduction)
+- `engine/web/js/app.js`: 1898 -> 1731 LOC (-167)
 
 14 new modules extracted across `viewport/`, `bridge/`,
 `bridge/scenarios/`, and `ui/` subdirectories.
@@ -1587,7 +1587,7 @@ derivation than it has.
 
 - `engine/web/js/config/scenarios.js` — 13 new entries in `S0_SEED_SCENARIO_METADATA`.
 - `engine/web/js/scales/scale0/scenario-registry.js` — 13 new registry entries in 3 new dropdown groups ("SM Quarks", "SM Bosons", "SM Processes").
-- `engine/web/js/wasm-bridge-dag.js` — 13 new `case` implementations (~220 LOC), grouped as:
+- `engine/web/js/bridge-init.js` — 13 new `case` implementations (~220 LOC), grouped as:
   - Unified quark block dispatching on name → (charge, color, ampBoost).
   - Four boson blocks (Higgs, W, Z, gluon).
   - Higgs-field vacuum block.
@@ -1780,7 +1780,7 @@ group of the scenario dropdown:
 - `s0-seed-tau` — envelope amplitude `K_B · 2.25` (+50 %).
 
 Both share a single `case 's0-seed-muon': case 's0-seed-tau':` block
-in `wasm-bridge-dag.js` using a conditional boost factor. Amplitudes
+in `bridge-init.js` using a conditional boost factor. Amplitudes
 stay below `K_GENESIS = 3·K_B` so no spurious genesis fires.
 
 Epistemic tagging explicit in the metadata:
@@ -1792,7 +1792,7 @@ Epistemic tagging explicit in the metadata:
 Full entries in `S0_SEED_SCENARIO_METADATA` (`engine/web/js/config/scenarios.js`)
 and the scenario registry (`engine/web/js/scales/scale0/scenario-registry.js`).
 The "Muon/tau: [OPEN] — no spatial prescription" comment in
-`wasm-bridge-dag.js` was removed.
+`bridge-init.js` was removed.
 
 ### All six viable engine opens are now closed.
 
@@ -2046,7 +2046,7 @@ Consolidated every `[OPEN]` across code and theory into a single ledger so
 contributors can pick work without grepping the whole repo.
 
 ### New canonical tracker
-- **`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`** — categorised list
+- **`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`** — categorised list
   of all `[OPEN]` items across engine code, theory derivations,
   foundations, particles, reference frame context, math connections, and bridges.
   Each section links to the source location; the "Recently closed"
@@ -2067,7 +2067,7 @@ These looked like cleanup candidates but are actually load-bearing:
   code but still called by scale1 / scale2 controllers. Deprecation is
   aspirational (swap to `telemetryHub.collectScale0()` when those scales
   migrate to the new panels).
-- "REMOVED" breadcrumb comments in `app_dag.js` and `render_bridge.cpp` —
+- "REMOVED" breadcrumb comments in `app.js` and `render_bridge.cpp` —
   navigation aids that tell readers where code moved to; keep them.
 - Build directories (`engine/build*`) — already gitignored, no action
   needed.

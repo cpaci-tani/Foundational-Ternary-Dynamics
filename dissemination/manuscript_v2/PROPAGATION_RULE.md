@@ -138,6 +138,6 @@ For any chapter edit made under the undefined-boundary reframe (per `docs/theory
 - Find every location of the chapter (manuscript v1 + manuscript_v2 src/chapters + vol1/vol2 if present).
 - Apply the same restatement to every location.
 - Log the edit set in `docs/theory/07_assessment/CHANGELOG_REFRAME.md` so subsequent sessions can verify propagation.
-- Consider tagging the LEDGER row (`docs/theory/07_assessment/LEDGER.md`) with the manuscript citation locations as part of the `citations:` field.
+- Consider tagging the LEDGER row (`docs/theory/07_assessment/core_ledgers/LEDGER.md`) with the manuscript citation locations as part of the `citations:` field.
 
 This is mandatory under the reframe — silently editing one location and leaving the others stale produces a divergent portfolio that contradicts itself across documents.

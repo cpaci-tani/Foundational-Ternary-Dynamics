@@ -20,7 +20,7 @@ dependencies declaratively. Each phase declares its inputs (state fields,
 toggles required) and outputs; the scheduler topologically sorts and
 executes only enabled nodes per tick.
 
-The current implementation lives in `engine/web/js/wasm-bridge-dag.js`
+The current implementation lives in `engine/web/js/bridge-init.js`
 (the `-dag` suffix is the historical marker; the file holds both
 MockBridge and WasmBridge, which Phase 2 will split).
 
@@ -42,5 +42,5 @@ MockBridge and WasmBridge, which Phase 2 will split).
 
 ## References
 
-- Files: `engine/web/js/wasm-bridge-dag.js`
+- Files: `engine/web/js/bridge-init.js`
 - Cross-refs: ADR-0008 (R1-R5 phase extraction in C++), CONTRACTS.md §2

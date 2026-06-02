@@ -1,7 +1,7 @@
 # SCOPE — Arc B / Newton-postulates reconciliation: SPEC_FTD_LAGRANGIAN.md [THEOREM] vs DERIV_NEWTON_FROM_SUBSTRATE.md [POSTULATE]
 
 **Tag:** `[SCOPING MEMO]` — not a closure, not a tag promotion, not a new derivation. Records a cross-doc tag-reconciliation question that materially affects what Arc B (Newton-postulate substrate derivation) needs to attempt.
-**LEDGER row reservation:** to be confirmed against `../07_assessment/LEDGER.md` at hash-lock; provisional placeholder pending audit.
+**LEDGER row reservation:** to be confirmed against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; provisional placeholder pending audit.
 **Date:** 2026-05-24
 **Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 (Wilsonian reframe) — Arc B P2 P0 deliverable.
 **Sources read:**

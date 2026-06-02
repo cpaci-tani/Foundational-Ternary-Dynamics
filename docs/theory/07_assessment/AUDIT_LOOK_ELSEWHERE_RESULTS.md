@@ -177,9 +177,9 @@ Cross-references:
 
 - `docs/theory/07_assessment/PROTOCOL_LOOK_ELSEWHERE_SCAN.md` — the locked spec
 - `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md` — the ~129 PARAMETRIC entries this scan implicitly tested against
-- `docs/theory/07_assessment/LEDGER.md` FTD-0093 (Mechanism C closed negative), FTD-0094 (L2 [PARAMETRIC]), FTD-0096 (μ-arrow [OPEN])
+- `docs/theory/07_assessment/core_ledgers/LEDGER.md` FTD-0093 (Mechanism C closed negative), FTD-0094 (L2 [PARAMETRIC]), FTD-0096 (μ-arrow [OPEN])
 - `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — the seven-theorem algebraic spine remains UNCHANGED by this scan
-- `docs/theory/09_mathematical/EXPLR_CM_RATIO_TOWER.md` — 9-Heegner Chowla-Selberg tower, foundational-math reference
+- `docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md` — 9-Heegner Chowla-Selberg tower, foundational-math reference
 - `CLAUDE.md` Constraint 11 — methodological commitment this scan operationalizes
 
 ---

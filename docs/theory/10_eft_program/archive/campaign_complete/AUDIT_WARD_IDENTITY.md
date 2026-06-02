@@ -97,7 +97,7 @@ result for the actual physics-grade Ward closure. This already holds in
 
 ## 4. Cross-references
 
-* SPEC pre-registration: `docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md` §4.3
+* SPEC pre-registration: `docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md` §4.3
 * Day-2 matched-stencil derivation: `docs/theory/10_eft_program/archive/phase_0_f_campaign/DERIV_GAP_CLOSURE.md` §T1
 * Day-2 campaign report: `docs/theory/10_eft_program/archive/phase_0_f_campaign/DERIV_DAY2_CAMPAIGN.md`
 * Tests:

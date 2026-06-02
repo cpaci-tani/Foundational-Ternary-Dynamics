@@ -323,7 +323,7 @@ docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md                   # FTD-0059
 docs/theory/10_eft_program/AUDIT_LINK8_CLOSURE.md                    # FTD-0050 (BCC-orthogonality)
 docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md            # ultralocality of S_E in s
 docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md    # FTD-0001 / FTD-0013
-docs/theory/07_assessment/LEDGER.md                                  # FTD-0031 row
+docs/theory/07_assessment/core_ledgers/LEDGER.md                                  # FTD-0031 row
 engine/include/ftd/ontic/gauge_couplings.h:74-77                     # current G_C ≡ √α hardcode
 engine/src/poisson_solvers.cpp:123                                   # Gauss law source
 engine/include/ftd/term_toggles.h                                    # coulomb_charge_coupling default 1.0

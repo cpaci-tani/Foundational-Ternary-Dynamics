@@ -11,7 +11,7 @@
 
 Eight-phase modular + reusability + LLM-friendly refactor of the FTD engine.
 Driven by the post-audit observation that 5 specific files had accumulated
-structural bloat (viewport.js 3953 LOC, wasm-bridge-dag.js 2395 LOC,
+structural bloat (viewport.js 3953 LOC, bridge-init.js 2395 LOC,
 kernels_stencil.cu 1530 LOC, render_bridge.cpp 1231 LOC, render_bridge.h
 506 LOC, test_telemetry.h 412 LOC) and that every recent physics fix had
 to scroll past hundreds of LOC of unrelated code to reach the relevant
@@ -25,7 +25,7 @@ inventing it ad hoc.
 |---|---|---|---|---|
 | 1 | 0 — Docs scaffolding | [2db67ca](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/2db67ca) | `[x]` | META_PROJECT_ATLAS + CONTRACTS + 9 retroactive ADRs + 7 directory READMEs |
 | 2 | 1 — Diagnostic struct split | [194563a](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/194563a) | `[x]` | render_bridge.h 506→369; ~30→5 TU rebuild fan-out for diagnostic-only field changes |
-| 3 | 2a — MockBridge | [6be0a19](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/6be0a19) | `[x]` | wasm-bridge-dag.js 2395→879 |
+| 3 | 2a — MockBridge | [6be0a19](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/6be0a19) | `[x]` | bridge-init.js 2395→879 |
 | 4 | 2b — WasmBridge | [7256a14](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/7256a14) | `[x]` | →213 |
 | 5 | 2c — Capability factories | [c11ef96](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/c11ef96) | `[x]` | →42 (re-export shim only) |
 | 6 | 3 prep — REFACTOR_MAP | [848e839](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/848e839) | `[x]` | 169-method viewport.js extraction guide |
@@ -46,7 +46,7 @@ inventing it ad hoc.
 | File | Before | After | Δ |
 |---|---:|---:|---:|
 | `engine/web/js/viewport.js` | 3953 | 1256 | **−68%** |
-| `engine/web/js/wasm-bridge-dag.js` | 2395 | 42 | **−98%** |
+| `engine/web/js/bridge-init.js` | 2395 | 42 | **−98%** |
 | `engine/src/render_bridge.cpp` | 1231 | 545 | **−56%** |
 | `engine/cuda/kernels_stencil.cu` | 1530 | 0 (deleted, split) | **−100%** |
 | `engine/include/ftd/render_bridge.h` | 506 | 369 | **−27%** |

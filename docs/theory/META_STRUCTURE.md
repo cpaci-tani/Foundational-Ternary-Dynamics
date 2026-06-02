@@ -67,7 +67,7 @@ If a document must remain in place temporarily for continuity, label it clearly 
 ## Maintenance Rules
 
 - Treat [META_INDEX.md](META_INDEX.md) as the curated navigation layer.
-- Treat [07_assessment/TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) as the canonical bedrock truth tracker, [07_assessment/LEDGER.md](07_assessment/core_ledgers/LEDGER.md) as the per-claim provenance layer, and [07_assessment/TRACKER_OPEN_ITEMS.md](07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) as the open-work queue.
+- Treat [07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) as the canonical bedrock truth tracker, [07_assessment/core_ledgers/LEDGER.md](07_assessment/core_ledgers/LEDGER.md) as the per-claim provenance layer, and [07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md](07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) as the open-work queue.
 - Avoid brittle count claims inside category headings; counts drift faster than structure.
 - When a new active theory doc is added, update the catalog in the same change.
 - When a doc is superseded, update the index entry in the same change.
@@ -86,8 +86,8 @@ the canonical document is right and the downstream document is the drift to fix.
 
 | Tier | Document | Authoritative for | Answers |
 |------|----------|-------------------|---------|
-| Bedrock | [07_assessment/LEDGER.md](07_assessment/core_ledgers/LEDGER.md) | The **epistemic tag** of every load-bearing claim (`FTD-NNNN` rows) — `[THEOREM]`, `[DERIVED]`, `[SMC]`, `[PARAMETRIC]`, `[CLOSED NEGATIVE]`, … — with tag history and dependencies. | "What is claim X's status, and how did it get there?" |
-| Bedrock | [07_assessment/TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) | The **truth tier** (T1–T5) of the ~dozen claims that carry the framework (`OT-N.M` rows). Co-canonical with the LEDGER — the LEDGER wins on the *tag*, this tracker wins on the *tier*. | "How solid is X on the 5-tier bedrock scale?" |
+| Bedrock | [07_assessment/core_ledgers/LEDGER.md](07_assessment/core_ledgers/LEDGER.md) | The **epistemic tag** of every load-bearing claim (`FTD-NNNN` rows) — `[THEOREM]`, `[DERIVED]`, `[SMC]`, `[PARAMETRIC]`, `[CLOSED NEGATIVE]`, … — with tag history and dependencies. | "What is claim X's status, and how did it get there?" |
+| Bedrock | [07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) | The **truth tier** (T1–T5) of the ~dozen claims that carry the framework (`OT-N.M` rows). Co-canonical with the LEDGER — the LEDGER wins on the *tag*, this tracker wins on the *tier*. | "How solid is X on the 5-tier bedrock scale?" |
 | Theorems | [01_reference/SPEC_ALGEBRAIC_SPINE.md](01_reference/SPEC_ALGEBRAIC_SPINE.md) | The **theorem statements** — which numbered results are theorem-grade, which are honestly tiered below it, and the exact statement + proof obligation of each. | "Is X actually a theorem, and what precisely does it say?" |
 | Roll-up | [01_reference/SPEC_DOCTRINE_LEDGER.md](01_reference/SPEC_DOCTRINE_LEDGER.md) | A **single-page status map** of the three above. It introduces no claim of its own; every row points at a Bedrock/Theorems source. If it disagrees with one, it is the drift. | "What is the whole status map at a glance?" |
 
@@ -98,7 +98,7 @@ the canonical document is right and the downstream document is the drift to fix.
 
 **Open-work queues** — authoritative for what is unfinished:
 
-- [07_assessment/TRACKER_OPEN_ITEMS.md](07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` item across code and theory.
+- [07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md](07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` item across code and theory.
 - [01_reference/SPEC_OPEN_MATH_BY_SECTOR.md](01_reference/SPEC_OPEN_MATH_BY_SECTOR.md) — the same queue, organized by physics sector.
 
 **Everything else is downstream** — including [../SPEC_FTD.md](../SPEC_FTD.md), [META_INDEX.md](META_INDEX.md),

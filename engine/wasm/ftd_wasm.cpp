@@ -997,7 +997,7 @@ int get_lattice_size(ftd::RenderBridge& rb) {
 //
 // DagEngine binding intentionally removed (2026 consolidation sweep).
 // The web engine always uses RenderBridge — see the binding above and
-// the comment in web/js/wasm-bridge-dag.js explaining why. DagEngine
+// the comment in web/js/bridge-init.js explaining why. DagEngine
 // is now an experimental C++-only data-structure prototype; exposing
 // it through WASM would invite callers into an unfinished code path
 // whose gauss_project / phase_forces / phase_movement are stubs.

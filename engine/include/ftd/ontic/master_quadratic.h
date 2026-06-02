@@ -158,7 +158,7 @@ inline constexpr double E2_COLOR = 1.0 / X_MINUS_PRECISION;   // e²_C ≈ 0.330
 // Layer 4: Framework Integers
 // ============================================================================
 // N_c = 3 is the framework's single free integer. It is sourced INDEPENDENTLY
-// from lattice topology (see docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md),
+// from lattice topology (see docs/theory/03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md),
 // NOT from the smaller root x₋. The earlier x₋ ↔ N_c identification is RETIRED
 // (LEDGER row FTD-0014 removed in ca7eb61); x₋ ≈ 3.024 is a mathematical
 // artifact of the quadratic (0.80% from 3), not the origin of N_c.

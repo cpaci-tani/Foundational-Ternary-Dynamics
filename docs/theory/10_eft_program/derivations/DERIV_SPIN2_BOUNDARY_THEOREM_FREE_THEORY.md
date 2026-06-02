@@ -5,7 +5,7 @@
 This document consolidates Arc C2 P1 substantive derivation into a unified free-theory + canonical-toggle-set version of the boundary theorem. It is the load-bearing pre-pre-reg derivation underlying the future `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` (Arc C2 P3). Tag promotion to a full closed-form theorem requires P3 pre-reg + P4 closure attempt against the locked design.
 
 **Date:** 2026-05-24 (Arc C2 P1 consolidated deliverable, Wilsonian-reframe plan v2)
-**LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/LEDGER.md` at hash-lock; expected to be cited by `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`.
+**LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; expected to be cited by `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`.
 **Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 Arc C2 P1 deliverable.
 **Companion docs:**
 - [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 P0 scoping (parent; this is its P1 closure)

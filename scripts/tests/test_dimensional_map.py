@@ -27,7 +27,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 JSON_PATH = ROOT / "docs" / "theory" / "01_reference" / "dimensional_map.json"
 MD_PATH = ROOT / "docs" / "theory" / "01_reference" / "SPEC_DIMENSIONAL_MAP.md"
-LEDGER_PATH = ROOT / "docs" / "theory" / "07_assessment" / "LEDGER.md"
+LEDGER_PATH = ROOT / "docs" / "theory" / "07_assessment" / "core_ledgers" / "LEDGER.md"
 RENDERER = ROOT / "scripts" / "proofs" / "build_dimensional_map.py"
 
 

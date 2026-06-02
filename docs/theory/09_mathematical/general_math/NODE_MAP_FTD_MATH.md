@@ -781,5 +781,5 @@ python -m scripts.verification.parsers.mermaid_renderer
 - `dissemination/interactive/math_node_map.html` — interactive Plotly.js viewer (filterable by layer, sector, epistemic tag, search).
 - `docs/theory/09_mathematical/ROADMAP_IDENTITY_PRIORITIES.md` — G\*-paper-scoped synonymy graph (predecessor; covers `verify_gstar_paper.py` only).
 - `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` — canonical 9-theorem spine (source for layers.theorems).
-- `docs/theory/07_assessment/LEDGER.md` — canonical claim registry (source for layers.ledger).
+- `docs/theory/07_assessment/core_ledgers/LEDGER.md` — canonical claim registry (source for layers.ledger).
 - LEDGER row FTD-0207 — this node map's provenance entry.

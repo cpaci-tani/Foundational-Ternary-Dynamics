@@ -161,5 +161,5 @@ After hash-lock: the runner is executed exactly once at the locked SHA256, the r
 - [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) — canonical BCC formalism; (±1, ±1, ±1) primitive offsets.
 - [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — Theorems 1–9 (G*, master quadratic) at their honest tier per §0.
 - [`DERIV_COLLAPSE_MECHANISM.md`](../06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal (out-of-scope for this test).
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — per-claim tags.
+- [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — per-claim tags.
 - `scripts/proofs/proof_quartic_quarter_constants.py` — Guillera's quartic instance (not invoked by this runner).

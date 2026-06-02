@@ -148,7 +148,7 @@ In both cases the surrounding prose is preserved; only the load-bearing sentence
 ## 8 · Cross-references
 
 - [`PREREG_THRESHOLD_CROSSING_BORN_v1.md`](PREREG_THRESHOLD_CROSSING_BORN_v1.md) — the manifest that locked this test.
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (this test).
+- [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (this test).
 - [`SPEC_SIX_ALGORITHMS.md`](../01_reference/SPEC_SIX_ALGORITHMS.md) §1A — site of retag.
 - [`AUDIT_EPISTEMIC_AUDIT.md`](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — site of retag.
 - [`FOUND_THE_EXISTENCE_FILTER.md`](FOUND_THE_EXISTENCE_FILTER.md) — EF-T5 [THEOREM] + EF-C3 [CONJECTURE] (the `|ψ|²` form question).

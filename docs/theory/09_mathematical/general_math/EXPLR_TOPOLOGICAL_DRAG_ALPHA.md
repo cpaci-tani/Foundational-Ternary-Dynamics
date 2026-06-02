@@ -3,7 +3,7 @@
 **Date:** 2026-04-24
 **Status:** [CONJECTURE] of the physical claim; [THEOREM] of the tautology observation
 **Supersedes:** α-derivation claim in "Generated Document April 24, 2026 – 12:47 AM.pdf" (§2, labelled there as THEOREM 2)
-**Depends on:** [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md)
+**Depends on:** [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md), [SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md)
 **Ledger row:** FTD-0062
 
 ---
@@ -23,7 +23,7 @@ The PDF draft states:
 Unpacking the definitions in order:
 
 - Step 1. $x_+ = 137.036171\ldots$, the root of the master quadratic. This is [THEOREM] at the arithmetic level (see [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](../03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md)).
-- Step 2. Define $\alpha \equiv 1/x_+$. This is the **original conjecture** the bridge program is trying to prove, tagged in the current [LEDGER.md](../07_assessment/LEDGER.md) and in CLAUDE.md as [STRONGLY MOTIVATED CONJECTURE].
+- Step 2. Define $\alpha \equiv 1/x_+$. This is the **original conjecture** the bridge program is trying to prove, tagged in the current [LEDGER.md](../07_assessment/core_ledgers/LEDGER.md) and in CLAUDE.md as [STRONGLY MOTIVATED CONJECTURE].
 - Step 3. Define $\lambda_0 := 18 / x_+ = 18 \alpha$. This uses Step 2.
 - Step 4. Divide: $\alpha = \lambda_0 / 18 = (18 \alpha) / 18 = \alpha$.
 
@@ -51,7 +51,7 @@ Even if one supplies an equipartition argument, Step 3's identification $\lambda
 
 ## 4. What the engine actually measures
 
-The proposed derivation is contradicted by direct measurement. The EFT Recovery Program ([SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md)) pre-registered the measurement of the lattice correction to $\alpha$ on FTD's own engine and found
+The proposed derivation is contradicted by direct measurement. The EFT Recovery Program ([SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md)) pre-registered the measurement of the lattice correction to $\alpha$ on FTD's own engine and found
 
 $$ \alpha_\infty \;\approx\; 3.6 \times \alpha_{\mathrm{ref}} \quad\text{across } L \in \{64, 128, 256, 384\}. $$
 
@@ -90,7 +90,7 @@ Until G1–G5 are passed, the claim is a restatement of "$x_+ = 1/\alpha$" in di
 ## 7. Relation to existing FTD work
 
 - [CONJ_ALPHA_FROM_CM.md](CONJ_ALPHA_FROM_CM.md) already carries the $\alpha \leftrightarrow x_+$ bridge as [CONJECTURE]. This file adds the observation that the proposed "derivation via topological drag" is a tautology and does not move the claim along the tag hierarchy.
-- [SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md) records the 3.6× discrepancy.
+- [SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md) records the 3.6× discrepancy.
 - [OPEN_FTD_TO_EFT_BRIDGE_STATUS.md](../10_eft_program/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md) (2026-04-22) explicitly states "the QED-alpha bridge is [CLOSED NEGATIVE] under the current projected action" and lists this kind of derivation attempt as not load-bearing.
 
 ---

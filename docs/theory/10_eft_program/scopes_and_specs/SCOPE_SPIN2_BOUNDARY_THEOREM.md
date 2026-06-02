@@ -2,7 +2,7 @@
 
 **Tag:** `[SCOPING MEMO]` — not a pre-registration, not a closure, not a tag promotion. Identifies the theorem-statement structure, axiom dependencies, proof-structure preview, falsifier-criteria preview, and connection to existing work for the Arc C2 boundary theorem of Wilsonian-reframe plan v2. Mirrors the form of `SCOPE_NEWTON_POSTULATES_RECONCILIATION.md` (Arc B P0) and the prior-art template of `PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v2.md` (FTD-0186 Stage 1).
 **Date:** 2026-05-24
-**LEDGER row reservation:** to be confirmed against `../07_assessment/LEDGER.md` at hash-lock; provisional placeholder pending audit.
+**LEDGER row reservation:** to be confirmed against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; provisional placeholder pending audit.
 **Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 (Wilsonian reframe) — Arc C2 P0 deliverable.
 **Companion docs:**
 - [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 `[CLOSED NEGATIVE per Outcome B]` 2026-05-22 — the decisive empirical evidence

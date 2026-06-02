@@ -173,10 +173,10 @@ Three independent closures from different directions all agree: the L₂ identit
 ## 9 · Cross-references
 
 - FTD-0059 a_phys no-go (parent theorem): [`THEOREM_A_PHYS_NO_GO.md`](THEOREM_A_PHYS_NO_GO.md)
-- LEDGER row FTD-0096: `docs/theory/07_assessment/LEDGER.md`
-- LEDGER row FTD-0094 (L₂ identity): `docs/theory/07_assessment/LEDGER.md`
-- LEDGER row FTD-0093 (Mechanism C closure): `docs/theory/07_assessment/LEDGER.md`
-- LEDGER row FTD-0097 (look-elsewhere scan): `docs/theory/07_assessment/LEDGER.md`
+- LEDGER row FTD-0096: `docs/theory/07_assessment/core_ledgers/LEDGER.md`
+- LEDGER row FTD-0094 (L₂ identity): `docs/theory/07_assessment/core_ledgers/LEDGER.md`
+- LEDGER row FTD-0093 (Mechanism C closure): `docs/theory/07_assessment/core_ledgers/LEDGER.md`
+- LEDGER row FTD-0097 (look-elsewhere scan): `docs/theory/07_assessment/core_ledgers/LEDGER.md`
 - Open-item tracker: [`archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`](archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md) — marked CLOSED RESOLVED-BY-THEOREM
 - SPEC_FTD calibration declaration: `docs/SPEC_FTD.md` (LATTICE ↔ PHYSICAL CALIBRATION section)
 - Sympathetic audit identifying this as closeable: `docs/theory/07_assessment/AUDIT_PAPER_SYMPATHETIC_2026-04-28.md`

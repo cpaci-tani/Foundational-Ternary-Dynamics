@@ -180,7 +180,7 @@ Until all three are done, the runner must NOT be executed.
 
 ## §8 — Cross-references
 
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born-rule consolidation row).
+- [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0187 (Born-rule consolidation row).
 - [`DERIV_COLLAPSE_MECHANISM.md`](DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal (out-of-scope for this run).
 - [`FOUND_THE_EXISTENCE_FILTER.md`](FOUND_THE_EXISTENCE_FILTER.md) — EF-T5 theorem, EF-C3 conjecture.
 - [`SPEC_SIX_ALGORITHMS.md`](../01_reference/SPEC_SIX_ALGORITHMS.md) §line 65 — the target corpus assertion.
