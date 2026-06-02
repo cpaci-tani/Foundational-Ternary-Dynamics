@@ -5,6 +5,8 @@
 **LEDGER:** FTD-0152 [SYNTHESIS] - formalizes MC-T4.3 closure criteria; introduces no new theorem and promotes no claim.
 **Companion docs:** `SPEC_MATH_FIRST_ONTOLOGY.md`, `SPEC_PHYSICS_BRIDGE.md`, `SPEC_FQCR.md`, `SPEC_DOCTRINE_LEDGER.md`, `SPEC_OPEN_MATH_BY_SECTOR.md`, `FOUND_STRUCTURAL_DECOUPLING.md`
 
+> **Status note (2026-06-01) — this document states the contract/criteria, not the live program status.** The §8 work-package statuses below ([OPEN]) record the 2026-05-18 design state. Since then all four ARC mechanism classes have been attacked: ARC-A (boundary) and ARC-B1 (observable-selection) closed `[CLOSED NEGATIVE]` (FTD-0204/0205); ARC-B2/ARC-C1 reached **UNDERDETERMINED** (the 2026-05-27 "FOUND-at-ARC-2" verdict was corrected, FTD-0224); and on 2026-06-01 the operator-forcing question (W-CRIT-2) was sharpened to a **route-invariant boundary** — four independent FTD-native routes force-attempted, **0/4 forced**, so the trace `16G*²` and a clean odd source `G*` are forward-forced but the operator assembly is not (**α is dynamical, not structural**; `[STRONGLY MOTIVATED CONJECTURE no-go]`, not `[THEOREM]`). MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; `x_+ <-> 1/alpha` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; no spine tag moved. Live per-ARC status: `SPEC_OPEN_MATH_BY_SECTOR.md` §10; route-invariance audit: `../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md` (FTD-0242).
+
 ---
 
 ## 0. Purpose

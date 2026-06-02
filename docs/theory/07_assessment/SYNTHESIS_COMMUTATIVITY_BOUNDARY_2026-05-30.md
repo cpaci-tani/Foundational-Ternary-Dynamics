@@ -55,6 +55,8 @@ identification** with the EM coupling is `[STRONGLY MOTIVATED CONJECTURE]` and i
 | 5 | **FTD-0228** B-QM-1″ budget sym. | `[CLOSED NEGATIVE]` | `N_c=3 → ℤ/3` is apophenia (commuting ≠ complementary) | the Bloch **SU(2)** |
 | 6 | **MC-T4.3** α-readout (FTD-0224) | `[FOUNDATIONAL OBSTRUCTION]` (W-CRIT-2) | the readout's `(Tr,Det)` operator structure is unforced | a forced non-commutative operator |
 
+> **Row-6 update (2026-06-01, FTD-0242):** the "operator structure is unforced" diagnosis is now **route-invariant** — 4 independent FTD-native routes were force-attempted and adversarially refuted, **0/4 forced** (`audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`). The trace `16G*²` and a clean odd source `G*` are each forward-forced; only their *assembly* (W-CRIT-2) is not. α is **dynamical, not structural**. This sharpens row 6; it promotes nothing (the boundary is `[STRONGLY MOTIVATED CONJECTURE no-go]`, RSI Leg 3 open).
+
 **Supporting closed-negatives:** FTD-0199 / FTD-0200 (Born-rule emergence `[CLOSED NEGATIVE]`
 — the substrate gives Rice/Gaussian, not Born). **Exploratory corroboration (NOT evidence,
 NOT a LEDGER claim):** the 2026-05-30 dissipation-N engine pass returned a comprehensive null
