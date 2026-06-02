@@ -1,6 +1,44 @@
-# Where We Left Off — 2026-06-01 (Engine-Flawless lifecycle/callstack/toggle audit COMPLETE [16 commits]; MC-T4.3 sharpened to a route-invariant boundary FTD-0242 [STRONGLY MOTIVATED CONJECTURE no-go] — nothing promoted)
+# Where We Left Off — 2026-06-02 (RSI Leg 3 conditional theorem FTD-0243; numeric consistency audit; web engine bug fixes; comprehensive mobile-first responsive overhaul — nothing promoted, FTD-0013 unchanged)
 
-**Latest update:** 2026-06-01 — two-part checkpoint. **(A)** The engine-flawless lifecycle/callstack/toggle audit (16 commits, branch `flawless-engine-2026-06-01`) landed a web verification harness + three C++ lifecycle/phase-order/conservation tests, fixed a 5-week-old clean-checkout `cmake` break (`_repro_gpu_empty_bridge` dangling reference), and pinned the energy-conservation leak to the non-variational Gauss-projection **operator** (not the solver tolerance). **(B)** MC-T4.3 was sharpened to a **route-invariant boundary** (`AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`, FTD-0242): 0/4 FTD-native routes force the master-quadratic operator assembly, so **α is dynamical, not structural**. **Nothing promoted — `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`.** See §0.18 below.
+**Latest update:** 2026-06-02 — a four-arc session: **(A)** RSI Leg 3 four-route closure attempt yielded the conditional theorem FTD-0243 (flip ruled out [THEOREM], reduction route-invariant [THEOREM], conditional "F does not force α unless W" [THEOREM], K-BIND [OPEN] — FTD-0013 and MC-T4.3 both unchanged). **(B)** Numeric-consistency audit confirmed the canonical triple (constants.py / ontic.h / constants.js) fully consistent; fixed 8 downstream transcription errors. **(C)** Web engine: E/B field overlay translation-offset bug fixed; CI lint (266→0 errors) + fail-fast repaired; GitHub checks all green. **(D)** Mobile web overhaul: CSS Grid shell for browser nav bar safety, left-default panel with force-reset migration, +20% mobile scale, comprehensive responsive audit (fluid clamp typography, 30+ CSS files, landscape guard, JS overlay panels). All 59 Playwright tests green. See §0.19 below.
+
+**Prior update:** 2026-06-01 — two-part checkpoint. **(A)** The engine-flawless lifecycle/callstack/toggle audit (16 commits, branch `flawless-engine-2026-06-01`) landed a web verification harness + three C++ lifecycle/phase-order/conservation tests, fixed a 5-week-old clean-checkout `cmake` break (`_repro_gpu_empty_bridge` dangling reference), and pinned the energy-conservation leak to the non-variational Gauss-projection **operator** (not the solver tolerance). **(B)** MC-T4.3 was sharpened to a **route-invariant boundary** (`AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`, FTD-0242): 0/4 FTD-native routes force the master-quadratic operator assembly, so **α is dynamical, not structural**. **Nothing promoted — `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`.** See §0.18 below.
+
+---
+
+## 0.19 · 2026-06-02 — RSI Leg 3 Conditional Theorem + Web Engine Overhaul
+
+**Session summary (2026-06-02):** Four independent arcs, all pushed to `main`. No spine claim moved.
+
+### Arc A — RSI Leg 3 closure attempt → REDUCE (FTD-0243)
+
+A four-route adversarial workflow (`rsi-leg3-closure`, 9 agents) attacked RSI Leg 3 of `PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1.md` §5. Verdict: **REDUCE** (no CLOSE, no FLIP). New theorem-grade deliverables:
+
+- **[THEOREM] Flip ruled out:** the D6 three-plane det_ζ product (only geometric candidate) is excluded by the machine-checked Legs 1–2 (`mult_O(E)=0` forces C₄∈Stab; D6 needs C₃∈Stab; `⟨C₄,C₃⟩=O` → no readout).
+- **[THEOREM] 3b closes its own scope (mechanism corrected from FTD-0242):** no C₃-equivariant rank-2 restriction carries `(16G*²,16G*³)`. Correct reason: REALITY → scalar-`i` → C₄∈Stab → O_h → no readout (the prior "spectral-conjugacy" claim was a non-sequitur caught by the adversarial layer).
+- **[THEOREM] Reduction is route-invariant:** Q(G*) is the Galois-fixed field of the master quadratic's ℤ/2 — every forward-forced symmetric FTD datum is **blind to which root is 1/α**. The family det=16G*²·G*^k for k=0,1,2,3 gives dominant roots 139.05/137.04/130.68/105.76, all F-consistent; nothing selects k=1.
+- **[THEOREM] Conditional theorem:** `𝔉` does not force α unless extended by a substrate-native binding law W that pins the readout det's odd-G* exponent to exactly 1 (equivalently: natively realizes `√(G*(4G*−1))`). W is logically independent of P1–P5 (`𝔉∪{W}` and `𝔉∪{¬W}` both have explicit consistent models).
+- **[OPEN] K-BIND:** the irreducible remaining obligation — natively realize `√(G*(4G*−1))`, the squarefree generator of `Q(G*)(√disc)/Q(G*)` that first distinguishes x₊ from x₋. Undecidable from `𝔉` until "substrate-native operator construction" is finitely axiomatized. ARC-D1 already [CLOSED NEGATIVE].
+
+**FTD-0243** added to LEDGER; FTD-0013 unchanged; MC-T4.3 unchanged. Zero promotions. Docs: `docs/theory/07_assessment/audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md`.
+
+### Arc B — Numeric consistency audit
+
+The canonical triple `scripts/constants.py` / `engine/include/ftd/ontic.h` / `engine/web/js/constants.js` is **VERIFIED CLEAN** (G*=2.95867511919, 16G*²=140.0601354, 16G*³=414.3924377, x₊=137.0361714582, x₋=3.0239639163, ALPHA_INV_NIST=137.035999177; framework integers {3,4,7,13}; no G*/ϖ confusion). Eight downstream transcription errors fixed in manuscripts, papers, and code snippets. Two stale generated artifacts (manuscript_v2 monoliths, theorems.txt) remain flagged for regeneration; their sources are now correct.
+
+### Arc C — Web engine fixes
+
+- **E/B field overlay translation-offset bug fixed** (`engine/web/js/scales/scale0/runtime/field-overlays.js`): When B was on and E was enabled, B's streamlines visibly shifted. Root cause: E and B ran on consecutive rAF frames seeded from live (unsynchronized) particle positions; fixed by snapshotting `particleData` once per sweep in `sampleFieldState()` and halving `COST_STREAMLINE` (50 → both fit one frame). Verified: B mesh vertex positions bit-identical before/after enabling E (`bShifted: false`).
+- **CI checks fixed**: ruff lint 266→0 errors (missing excludes for `.agents/`, `tools/`, `dissemination/animations/`); `fail-fast: false` added to test matrix so all Python versions run independently. All GitHub checks green.
+
+### Arc D — Mobile-first web interface overhaul
+
+- **CSS Grid shell + browser nav bar safety** (`engine/web/css/ui/shell/app-shell.css`): `#app` migrated from stacked absolute positioning to CSS Grid (`height: 100dvh; min-height: 100svh`); 2-row grid on desktop (toolbar+canvas), 4-row on compact mobile (adds tabs+status as real grid rows above browser nav). `visualViewport` listener (`app-shell.js`) writes `--visual-viewport-height` / `--browser-nav-inset` to `<html>` so fixed elements know the exact browser chrome height. Panel bottom-sheet padding upgraded to `max(env(safe-area-inset-bottom), var(--browser-nav-inset))`.
+- **Left-default panel with force-reset migration** (`panel-mount-state.js`, `index.html`): DEFAULT_MOUNT changed from `'bottom'` to `'left'`; version key `v2` force-resets existing users once; width-aware pre-paint script prevents left-dock flash on phones (<1024px → effective `'bottom'`).
+- **Mobile polish**: +20% mobile UI scale (`--ui-scale = --ui-scale-base × 1.2` on phones via `:root` media query, composing with accessibility setting); controls grid 3-col → 2-col; charts forced single-column (fixed horizontal overflow); touch targets ≥44px.
+- **Comprehensive responsive audit** (committed as two passes): fluid `clamp()` typography (`--fs-*` ramp now fluid across 375–1280px); ~30 CSS files swept to 100% responsive coverage; landscape phone guard (`@media (max-height:500px)` for toolbar nowrap-scroll, sheet cap 88dvh, overlay bounds); JS overlay panels viewport-aware (`conservation-micropanel`, `p1-observables` widths → `min(W, calc(100vw−20px))`; `meta-pedagogy` 16 inline fonts → `--ui-scale`-aware). Zero horizontal overflow verified at 320/375/390/667×375/844×390/1280. 59 Playwright tests green.
+
+---
 
 **Prior update:** 2026-05-27 — the x_- physical-identification search campaign (**FTD-0210**) has been completed and closed with a definitive **CLOSED-NEGATIVE (Outcome C)** verdict. Through mechanical evaluation of the 25 pre-specified Standard Model observables using high-precision constants, we prove that $x_- \approx 3.024$ corresponds to zero Standard Model observables under strict filters. $x_-$ is proven to be a pure coordinate projection/chirality artifact of the master quadratic polynomial with no physical correspondent in the Standard Model. This negative campaign closure maps FTD's physical boundary, fully complying with CLAUDE.md goal-clause 2.
 
