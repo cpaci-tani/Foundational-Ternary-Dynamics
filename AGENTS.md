@@ -88,7 +88,7 @@ ftd/                                     # Project root
 │   │   ├── 03_derivations/       # Core physics derivations
 │   │   ├── 04_coupling/          # Coupling constants
 │   │   ├── 05_particles/         # Particle physics
-│   │   ├── 06_reference frame context/     # Reference frame context and measurement
+│   │   ├── 06_reference_frames_and_measurement/     # Reference frame context and measurement
 │   │   ├── 07_assessment/        # Epistemic audits
 │   │   ├── 08_structural/        # Geometry and information theory
 │   │   ├── 09_mathematical/      # Number theory and connections

@@ -59,7 +59,7 @@
 .tb-detail-inline summary {
     cursor: pointer;
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
@@ -89,5 +89,27 @@
 
     .tb-check-inline {
         margin-left: 0;
+    }
+}
+
+/* ── Responsive: compact phones ─────────────────────────────────────────── */
+/* At very narrow widths the scenario pickers must fill the rail rather than
+   hold any fixed minimum, and every toolbar group must wrap so its controls
+   never overflow horizontally. Desktop layout is untouched. */
+@media (max-width: 479px) {
+    .tb-group-scenario,
+    .tb-group-scale23,
+    .tb-group-force,
+    .tb-group-telemetry,
+    .tb-group-meta {
+        flex-wrap: wrap;
+    }
+
+    .tb-select-scenario-wide,
+    .tb-select-scenario-medium,
+    .tb-select-scenario-compact {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
     }
 }

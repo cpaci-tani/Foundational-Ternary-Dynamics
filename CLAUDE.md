@@ -404,7 +404,7 @@ ftd/                                     # Project root
 │   │   ├── 03_derivations/       # Core physics derivations
 │   │   ├── 04_coupling/          # Coupling constants
 │   │   ├── 05_particles/         # Particle physics
-│   │   ├── 06_reference frame context/     # Frame-relative-projection layer + measurement (formerly framed as "reference frame context"; directory name preserved for backward compatibility, see REF_REFERENCE_FRAME_VOCABULARY.md)
+│   │   ├── 06_reference_frames_and_measurement/ # Frame-relative-projection layer + measurement (formerly framed as "reference frame context"; directory name preserved for backward compatibility, see REF_REFERENCE_FRAME_VOCABULARY.md)
 │   │   ├── 07_assessment/        # Epistemic audits
 │   │   ├── 08_structural/        # Geometry and information theory
 │   │   ├── 09_mathematical/      # Number theory and connections

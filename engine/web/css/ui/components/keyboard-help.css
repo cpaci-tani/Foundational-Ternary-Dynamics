@@ -39,7 +39,7 @@
 }
 .kbd-help-title {
     margin: 0;
-    font-size: 13px;
+    font-size: var(--fs-sm);
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -57,7 +57,7 @@
     border-radius: 6px;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 13px;
+    font-size: var(--fs-sm);
     transition: color 120ms, border-color 120ms, background 120ms;
 }
 .kbd-help-close:hover {
@@ -75,11 +75,16 @@
 }
 @media (max-width: 700px) {
     .kbd-help-body { grid-template-columns: 1fr; }
+    /* Finger-sized close target on touch devices. */
+    .kbd-help-close {
+        min-width: var(--tap-min);
+        min-height: var(--tap-min);
+    }
 }
 
 .kbd-help-section-title {
     margin: 0 0 8px;
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -107,12 +112,12 @@
 }
 .kbd-help-label {
     margin: 0;
-    font-size: 12px;
+    font-size: var(--fs-sm);
     color: var(--text-primary, #d0d8f0);
 }
 .kbd-help-sep {
     opacity: 0.4;
-    font-size: 11px;
+    font-size: var(--fs-xs);
     margin: 0 1px;
 }
 
@@ -121,7 +126,7 @@
     min-width: 22px;
     padding: 2px 6px;
     font-family: var(--font-mono, ui-monospace, 'Roboto Mono', monospace);
-    font-size: 11px;
+    font-size: var(--fs-xs);
     font-weight: 600;
     line-height: 1;
     color: var(--text-primary, #d0d8f0);
@@ -135,7 +140,7 @@
 .kbd-help-footer {
     padding: 10px 20px;
     border-top: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
-    font-size: 11px;
+    font-size: var(--fs-xs);
     color: var(--text-muted);
     text-align: center;
 }

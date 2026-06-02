@@ -36,7 +36,7 @@ html[data-panel-mount="left"] #panel-area {
     transform: none;
     width: var(--panel-width-left);
     max-width: 50vw;
-    min-width: 320px;
+    min-width: min(320px, calc(100vw - 100px));
     max-height: none;
     overflow-y: auto;
     overflow-x: hidden;
@@ -54,7 +54,7 @@ html[data-panel-mount="right"] #panel-area {
     transform: none;
     width: var(--panel-width-right);
     max-width: 50vw;
-    min-width: 320px;
+    min-width: min(320px, calc(100vw - 100px));
     max-height: none;
     overflow-y: auto;
     overflow-x: hidden;
@@ -190,4 +190,29 @@ html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
     justify-content: center;
     flex-shrink: 0;
     border-radius: var(--radius-md);
+}
+
+/* ── Touch targets: enlarge the vertical icon rail on small phones ──────────
+   The 36px rail tabs + collapse toggle sit below the WCAG 44px floor; on the
+   smallest viewports grow the hit area to 44px. The rail container is widened
+   to tap-min + its 4px padding on each side so the larger tabs are not
+   clipped, and the left-mount panel shifts over to clear the wider rail. */
+@media (max-width: 479px) {
+    html[data-panel-mount="left"] #tab-bar,
+    html[data-panel-mount="right"] #tab-bar {
+        width: calc(var(--tap-min) + 8px);
+    }
+    html[data-panel-mount="left"] #tab-bar .tab,
+    html[data-panel-mount="right"] #tab-bar .tab,
+    html[data-panel-mount="left"] #tab-bar #btn-panel-toggle,
+    html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
+        width: var(--tap-min);
+        height: var(--tap-min);
+    }
+    html[data-panel-mount="left"] #panel-area {
+        left: calc(var(--panel-mount-gap) + var(--tap-min) + 8px + 6px);
+    }
+    html[data-panel-mount="right"] #panel-area {
+        right: calc(var(--panel-mount-gap) + var(--tap-min) + 8px + 6px);
+    }
 }

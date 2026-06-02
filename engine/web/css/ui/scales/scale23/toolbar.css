@@ -7,3 +7,15 @@
 #ae-force-vdw   { color: #44ff44; }
 #ae-force-bond  { color: #ff8844; }
 #ae-force-net   { color: #ffffff; }
+
+/* ── Responsive: compact phones ─────────────────────────────────────────── */
+/* The four force-type toggles are interactive buttons; give them the WCAG
+   touch-target floor on coarse-pointer / phone widths. Desktop is untouched. */
+@media (max-width: 767px) {
+    #ae-force-ionic,
+    #ae-force-vdw,
+    #ae-force-bond,
+    #ae-force-net {
+        min-height: var(--tap-min);
+    }
+}

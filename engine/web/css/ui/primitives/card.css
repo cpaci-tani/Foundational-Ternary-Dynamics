@@ -37,7 +37,9 @@
     font-weight: 400;
     text-transform: none;
     opacity: 0.6;
-    font-size: calc(var(--fs-xs) - 1px);
+    /* Hold the --fs-xs floor — opacity already de-emphasises it without
+       dropping below the smallest legible token. */
+    font-size: var(--fs-xs);
 }
 
 /* ── Chart container (card variant) ─────────────────── */

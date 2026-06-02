@@ -12,7 +12,7 @@
     display: grid;
     grid-template-columns: auto 1fr;
     gap: 4px 16px;
-    font-size: 12px;
+    font-size: var(--fs-sm);
 }
 
 .inspector-grid dt {
@@ -32,7 +32,15 @@
     border: 1px solid var(--border);
     border-radius: 2px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-xs);
+}
+
+/* Touch target: the 36px-wide coordinate inputs are below the 44px tap floor
+ * on phones (and aren't caught by the shell's .ctrl-input rule). */
+@media (max-width: 767px) {
+    .insp-pos-input {
+        min-height: var(--tap-min);
+    }
 }
 
 /* ============================================================
@@ -80,7 +88,7 @@
 }
 
 .panel-inspector-hit-help {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     color: var(--text-muted);
     margin-top: 4px;
 }

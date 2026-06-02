@@ -18,6 +18,12 @@
     border-color: var(--accent);
 }
 
+/* Touch target — toolbar select sits 32px tall on desktop; lift to the tap
+   floor on phones. */
+@media (max-width: 767px) {
+    .tb-select { min-height: var(--tap-min); }
+}
+
 /* ── Viewport select group (.viewport-select-group) ──── */
 .viewport-select-group {
     display: flex;
@@ -26,7 +32,7 @@
 }
 
 .viewport-select-group label {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 600;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -51,6 +57,12 @@
 .viewport-select-group select:focus {
     color: var(--text-primary);
     border-color: var(--border-light);
+}
+
+/* Touch target — viewport overlay select is small-padded; raise to the tap
+   floor on phones. */
+@media (max-width: 767px) {
+    .viewport-select-group select { min-height: var(--tap-min); }
 }
 
 /* Dropdown option list — the browser uses system UA chrome; rely on

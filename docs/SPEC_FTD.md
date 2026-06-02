@@ -543,7 +543,7 @@ PHASE 12: Increment
 
 **CAUTION**: The update order matters. Different orderings may produce different emergent behaviors. The specified order is a design choice.
 
-**Gate function identification (April 2026):** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/06_reference frame context/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
+**Gate function identification (April 2026):** The abstract gate functions (Activate_C, etc.) from the theoretical formalism have been identified with concrete engine tick cycle phases (phase_read, phase_write, gauss_project, phase_forces, phase_movement). See [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) §8.
 
 ---
 

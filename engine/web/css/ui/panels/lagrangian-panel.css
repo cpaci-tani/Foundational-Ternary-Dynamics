@@ -78,6 +78,19 @@
     max-height: 380px;
 }
 
+/* Landscape phones (667×375 / 844×390): the 240px chart min-height plus the
+ * term-toggle row overruns the viewport. Cap the plot and the legacy fixed
+ * canvas so the chart + toggles fit a short landscape viewport. */
+@media (max-height: 500px) {
+    .lag-chart-col .chart-card-plot {
+        min-height: 0;
+        max-height: 180px;
+    }
+    .lag-chart-canvas {
+        height: 140px;
+    }
+}
+
 .lag-term-row {
     display: flex;
     flex-wrap: wrap;
@@ -89,7 +102,7 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
+    font-size: var(--fs-sm);
     color: var(--text-secondary);
     cursor: pointer;
     user-select: none;
@@ -114,6 +127,15 @@
     .lag-layout { grid-template-columns: 1fr; }
 }
 
+/* Touch target: term toggles are tap-to-toggle rows; the wrapping label is the
+ * hit area, so give it a 44px min-height on phones (the 13px checkbox alone is
+ * well under the floor). */
+@media (max-width: 767px) {
+    .lag-term-toggle {
+        min-height: var(--tap-min);
+    }
+}
+
 /* ── Sidebar (left/right) mount overrides ────────────────────────── */
 /* minmax(420px, ...) and minmax(280px, ...) both exceed the ~350px
    sidebar content width — force single-column stack. */
@@ -132,7 +154,7 @@ html[data-panel-mount="right"] .lag-chart-col .chart-card-plot {
 
 html[data-panel-mount="left"] .lag-term-toggle,
 html[data-panel-mount="right"] .lag-term-toggle {
-    font-size: 11px;
+    font-size: var(--fs-xs);
 }
 
 html[data-panel-mount="left"] .lag-data-col,
