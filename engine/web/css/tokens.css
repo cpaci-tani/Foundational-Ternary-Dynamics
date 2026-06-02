@@ -2,6 +2,25 @@
  * Upgraded to Spatial Glassmorphism Architecture
  */
 
+/* ── Viewport height fallback (mobile browser nav bar safety) ──────────────
+ * --app-height / --app-min-height default to vh units, overridden to dvh/svh
+ * by @supports when the browser supports them.  Using dvh as the working
+ * height lets the canvas grow when the browser chrome hides (address bar /
+ * Edge nav bar slides away) while svh as the minimum keeps the layout stable
+ * so no element is ever hidden behind persistent chrome.
+ *
+ * Consumed by #app in app-shell.css. */
+:root {
+    --app-height:     100vh;
+    --app-min-height: 100vh;
+}
+@supports (height: 1dvh) and (height: 1svh) {
+    :root {
+        --app-height:     100dvh; /* shrinks/grows with browser chrome */
+        --app-min-height: 100svh; /* stable floor: always fits with chrome visible */
+    }
+}
+
 /* ── Reset ─────────────────────────────────────────── */
 *,
 *::before,
