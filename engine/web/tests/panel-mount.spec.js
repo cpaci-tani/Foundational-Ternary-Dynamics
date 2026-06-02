@@ -41,10 +41,24 @@ test('tab bar renders icons alongside labels', async ({ page }) => {
     }
 });
 
-test('html[data-panel-mount] is set before first paint and defaults to bottom', async ({ page }) => {
+test('html[data-panel-mount] is set before first paint and defaults to left on desktop', async ({ page }) => {
+    // Desktop Chrome viewport is 1280px (>= 1024 side-mount minimum), so the
+    // new 'left' default resolves to 'left'. The one-time migration (v2) clears
+    // any stale stored mount so the new default applies; the version key is set.
+    await page.goto('/');
+    const state = await page.evaluate(() => ({
+        mount: document.documentElement.dataset.panelMount,
+        version: localStorage.getItem('ftd.panel.mount.version'),
+    }));
+    expect(state.mount).toBe('left');
+    expect(state.version).toBe('2');
+});
+
+test('side-mount default falls back to bottom-sheet on a narrow viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/');
     const mount = await page.evaluate(() => document.documentElement.dataset.panelMount);
-    expect(mount).toBe('bottom');
+    expect(mount).toBe('bottom'); // left default is width-gated to >= 1024px
 });
 
 test('panel-mount state module exposes read/write helpers', async ({ page }) => {
@@ -80,7 +94,12 @@ test('writePanelMount persists to localStorage and updates attribute', async ({ 
 
 test('bottom-mount panel-area keeps absolute centering layout', async ({ page }) => {
     await page.goto('/');
+    // The default mount is now 'left'; switching to 'bottom' needs a frame for
+    // layout to settle (the translateX(-50%) centering is width-dependent, and
+    // reading mid-transition yields the identity matrix). Match the sibling
+    // left-mount test which already waits.
     await page.evaluate(() => { document.documentElement.dataset.panelMount = 'bottom'; });
+    await page.waitForTimeout(80);
 
     const styles = await page.evaluate(() => {
         const el = document.getElementById('panel-area');
@@ -202,8 +221,9 @@ test('mount toggle renders three buttons with aria-pressed reflecting current mo
     });
 
     expect(snapshot.map((b) => b.value)).toEqual(['left', 'bottom', 'right']);
-    expect(snapshot.find((b) => b.value === 'bottom').pressed).toBe('true');
-    expect(snapshot.find((b) => b.value === 'left').pressed).toBe('false');
+    // Default mount is now 'left' (Desktop Chrome viewport is 1280px >= 1024).
+    expect(snapshot.find((b) => b.value === 'left').pressed).toBe('true');
+    expect(snapshot.find((b) => b.value === 'bottom').pressed).toBe('false');
     expect(snapshot.find((b) => b.value === 'right').pressed).toBe('false');
 });
 

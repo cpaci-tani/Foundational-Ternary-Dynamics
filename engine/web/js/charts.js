@@ -50,8 +50,13 @@ function drawChart(canvas, series, options = {}) {
 
     if (series.length === 0 || series[0].buffer.count < 2) return;
 
+    // Narrow (phone) canvases: trim the left axis gutter and use a slightly
+    // larger, more legible label font. Keeps labels readable without eating the
+    // already-tight plot width on a ~340px-wide mobile chart.
+    const narrow = w < 420;
+    const axisFontPx = narrow ? 12 : 10;
     // Compute global range
-    const margin = { top: 8, right: 8, bottom: 20, left: 50 };
+    const margin = { top: 8, right: 8, bottom: narrow ? 22 : 20, left: narrow ? 36 : 50 };
     const plotW = w - margin.left - margin.right;
     const plotH = h - margin.top - margin.bottom;
 
@@ -83,7 +88,7 @@ function drawChart(canvas, series, options = {}) {
         // Y-axis labels
         const val = yMax - (i / gridLines) * (yMax - yMin);
         ctx.fillStyle = '#6b7280';
-        ctx.font = '10px JetBrains Mono, monospace';
+        ctx.font = axisFontPx + 'px JetBrains Mono, monospace';
         ctx.textAlign = 'right';
         ctx.fillText(formatValue(val), margin.left - 6, y + 4);
     }
@@ -105,7 +110,7 @@ function drawChart(canvas, series, options = {}) {
 
     // X-axis label
     ctx.fillStyle = '#6b7280';
-    ctx.font = '10px Inter, sans-serif';
+    ctx.font = axisFontPx + 'px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(`${count} ticks`, w / 2, h - 2);
 }
