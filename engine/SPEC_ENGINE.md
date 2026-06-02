@@ -1,9 +1,38 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-05-22 (post May engine work + theory Q10→Q12 chain — see §"May 2026" entries below for engine changes; the Q10→Q12 audits were desk-grade [SELECTION]/COUNT-MATCH findings that did not generate engine code changes)
+**Last updated:** 2026-06-01 (post engine-flawless lifecycle/callstack/toggle audit — see the 2026-06-01 entry directly below; no physics edited, golden hash unchanged)
 **Engine version:** 2.18.0 (post May 2026 — BH-F* GPU plumbing sweep, SplitMix64 RNG portability Option A, trim-the-fat rounds 2-4, `ftd_eft` library extraction, F9 Tier-1 + F11.A Tier-3 audit closures)
 **Test count:** 257 C++ test source files (211 active CMake targets after 2026-05-04 trim-the-fat round 4) + 18 Playwright specs + 25 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+
+### 2026-06-01 — Engine-Flawless Lifecycle/Callstack/Toggle Audit (16 commits)
+
+A 16-commit audit of the engine's lifecycle, callstack, and toggle
+surface (branch `flawless-engine-2026-06-01`, HEAD `09eaa0c1`).
+**Documentation + verification + two real-bug fixes only; golden hash
+`0xcd957b601d47868a` unchanged; zero behavioral drift.**
+
+- **Verification harness.** New web specs `lifecycle-harness` (per-scale
+  mount→unmount round-trip leak net), `reconcile-claims` (re-asserts four
+  prior fixes), `toggle-coverage` (all 32 Scale-0 field toggles),
+  `overlay-scheduler` (scheduler invariants); new C++ tests
+  `test_conservation_profile`, `test_tick_phase_order`,
+  `test_engine_lifecycle`. Web lifecycle fixes: `BaseLifecycleController`
+  adoption across Scale-2/3/6, `MountToggle` teardown, `physics-harness`
+  verified LIVE. New TOGGLE_REGISTRY doc + Scale-0 field-toggle coverage.
+- **Clean-checkout fix (real bug).** A committed dangling
+  `_repro_gpu_empty_bridge` CMakeLists reference had broken clean-checkout
+  `cmake` *configure* for ~5 weeks; removed — a fresh clone configures
+  again and **242 tests register**.
+- **Conservation profile (pinned).** The energy-conservation leak is the
+  non-variational **Gauss projection operator** (`J -= ∇φ`), **not** the
+  solver tolerance. `gauss_violation` has an iteration-independent stencil
+  floor (~5e-3 RMS) from the 18-point-Laplacian / 6-point-divergence
+  mismatch; bare leapfrog is well-posed by boundedness.
+- **DagEngine deprecation.** The three legacy stub methods now
+  `warn + skip + assert` and carry `[[deprecated]]`. Second real bug
+  documented (not fixed — DagEngine is deprecated): `entity_count()` is
+  permanently 0 (`active_indices_` never written); see `CONTRACTS.md §13`.
 
 ### 2026-05-19 / 21 — F9 Tier-1 BLOCKER fixes (FTD-0148) + F11.A Tier-3 deep-dive (FTD-0151)
 
