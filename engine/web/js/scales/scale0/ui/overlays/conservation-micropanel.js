@@ -51,7 +51,7 @@ function buildPanel() {
         position: absolute;
         top: 80px;                 /* clears the toolbar */
         left: 12px;
-        width: 220px;
+        width: min(220px, calc(100vw - 20px));
         min-height: 156px;
         z-index: 60;
         padding: 10px 12px;

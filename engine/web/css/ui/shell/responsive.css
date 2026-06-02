@@ -264,3 +264,37 @@
         height: 1.4rem;
     }
 }
+
+/* ── Landscape phones / short viewports (height <= 500px) ─────────────────────
+ * A 667x375 or 844x390 landscape phone has very little vertical room. The
+ * bottom-sheet (80/90dvh) and a wrapped compact toolbar would together leave
+ * almost no canvas, and tall floating panels would exceed the viewport. Cap the
+ * sheet, un-wrap the toolbar to a single scrollable row, and let the canvas keep
+ * the majority of the height. Pairs with the per-component max-height:500px
+ * guards added in the panels/scales sweeps. */
+@media (max-height: 500px) {
+    /* Bottom-sheet must not eat the whole short screen */
+    html[data-panel-mount="bottom"] #panel-area,
+    html:not([data-panel-mount]) #panel-area {
+        max-height: 88dvh !important;
+    }
+
+    /* Toolbar: one scrollable row instead of wrapping to many rows (which on a
+       375px-tall landscape phone could consume half the height). */
+    #app[data-layout-mode^="compact"] #toolbar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+    }
+    #app[data-layout-mode^="compact"] #toolbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Any tall floating viewport overlay/panel caps to the visible height. */
+    .viewport-overlay-panel,
+    .s0-overlay-panel {
+        max-height: calc(100dvh - 16px);
+        overflow-y: auto;
+    }
+}

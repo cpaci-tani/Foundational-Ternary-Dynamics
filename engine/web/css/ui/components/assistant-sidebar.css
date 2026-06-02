@@ -49,7 +49,7 @@
 }
 
 .assistant-kicker {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -71,7 +71,7 @@
     background: var(--state-hover-bg);
     color: var(--text-secondary);
     cursor: pointer;
-    font-size: 22px;
+    font-size: var(--fs-2xl);
 }
 
 .assistant-status {
@@ -153,5 +153,15 @@
         inset: calc(8px + var(--shell-safe-top)) 8px calc(8px + var(--shell-safe-bottom)) 8px;
         width: auto;
         border-radius: 18px;
+    }
+
+    /* Finger-sized targets on touch devices. */
+    .assistant-close {
+        width: var(--tap-min);
+        height: var(--tap-min);
+    }
+    .assistant-chip,
+    .assistant-primary {
+        min-height: var(--tap-min);
     }
 }

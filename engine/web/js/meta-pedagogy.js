@@ -106,6 +106,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
             display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
             margin: 6px 0;
         }
+        @media (max-width: 479px) { .meta-stat-grid { grid-template-columns: 1fr; } }
         .meta-stat {
             background: var(--bg-input); border-radius: 4px;
             padding: 8px 10px; text-align: center;
@@ -124,7 +125,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
     <!-- Hero -->
     <div class="meta-hero">
         <div class="meta-hero-title">The Existential Unit</div>
-        <div class="meta-hero-number"><span>3</span><sup style="font-size:18px;">3</sup> = <span>27</span></div>
+        <div class="meta-hero-number"><span>3</span><sup style="font-size:calc(18px * var(--ui-scale, 1));">3</sup> = <span>27</span></div>
         <div class="meta-hero-sub">minimal complete lattice</div>
     </div>
 
@@ -136,7 +137,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
             <span class="arrow">&#9654;</span>
         </div>
         <div class="meta-card-body">
-            <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">Click a shell to isolate it in the 3D view</div>
+            <div style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;margin-bottom:6px;">Click a shell to isolate it in the 3D view</div>
 
             <div class="meta-shell-row active" data-shell="all">
                 <div class="meta-shell-dot" style="background:linear-gradient(135deg,#FFD700,#00CED1,#FF00FF,#7FFF00);"></div>
@@ -170,7 +171,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
             </div>
 
             <div style="margin-top:8px;">
-                <div style="font-size:10px;color:#6b7280;margin-bottom:4px;">Wireframes</div>
+                <div style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;margin-bottom:4px;">Wireframes</div>
                 <button class="meta-btn" data-action="tetra-plus"><span class="swatch" style="background:#00FFAA;"></span>Tetra T+</button>
                 <button class="meta-btn" data-action="tetra-minus"><span class="swatch" style="background:#FF5555;"></span>Tetra T&minus;</button>
                 <button class="meta-btn" data-action="connections"><span class="swatch" style="background:#888;"></span>Links</button>
@@ -192,13 +193,13 @@ export function buildMetaInfoPanel(container, metaUnit) {
             </div>
 
             <div class="meta-slider-row">
-                <span style="font-size:10px;color:#6b7280;">N<sub>c</sub></span>
+                <span style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;">N<sub>c</sub></span>
                 <input type="range" min="1" max="8" value="3" step="1" id="meta-nc-input">
                 <div class="meta-slider-val" id="meta-nc-val">3</div>
             </div>
             <div class="meta-eq" id="meta-nc-result" style="margin-top:6px;"></div>
 
-            <div style="font-size:10px;color:#6b7280;margin-top:8px;text-align:center;">
+            <div style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;margin-top:8px;text-align:center;">
                 Factors as (N<sub>c</sub> &minus; 3)(N<sub>c</sub>&sup2; + 2N<sub>c</sub> + 4) = 0<br>
                 Quadratic has no real roots &rarr; <span style="color:#FFD700;">N<sub>c</sub> = 3 is unique</span>
             </div>
@@ -213,13 +214,13 @@ export function buildMetaInfoPanel(container, metaUnit) {
             <span class="arrow">&#9654;</span>
         </div>
         <div class="meta-card-body">
-            <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">Toggle coloring modes to see how 27 decomposes</div>
+            <div style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;margin-bottom:6px;">Toggle coloring modes to see how 27 decomposes</div>
 
             <button class="meta-btn" data-action="bcc-fcc" style="width:100%;justify-content:center;" title="Coord-sum parity coloring. This is the even/odd coordinate-sum partition, NOT the BCC/FCC sublattice distinction (the canonical shell&rarr;sublattice map is center/SC/FCC/BCC per Moore Layer Theorem &sect;4, shown in the site inspector). Audit P0-17 fix.">
                 <span class="swatch" style="background:#4488FF;"></span>/<span class="swatch" style="background:#FF4444;"></span>
                 Coord-sum parity &mdash; 13 + 14
             </button>
-            <div style="font-size:10px;color:#6b7280;text-align:center;margin:2px 0 6px;">
+            <div style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;text-align:center;margin:2px 0 6px;">
                 = N<sub>eff</sub> + 2&middot;b<sub>3</sub>
             </div>
 
@@ -227,7 +228,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
                 <span class="swatch" style="background:#44CC44;"></span>/<span class="swatch" style="background:#FF8800;"></span>
                 Orbit rep / Antipode &mdash; 13 + 13
             </button>
-            <div style="font-size:10px;color:#6b7280;text-align:center;margin:2px 0 6px;">
+            <div style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;text-align:center;margin:2px 0 6px;">
                 = N<sub>eff</sub> + N<sub>eff</sub> (inversion fundamental domain of the 26 Moore neighbors + center)
             </div>
 
@@ -236,7 +237,7 @@ export function buildMetaInfoPanel(container, metaUnit) {
             </button>
 
             <div style="margin-top:10px;">
-                <div style="font-size:10px;color:#6b7280;margin-bottom:4px;">Symmetry Elements</div>
+                <div style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;margin-bottom:4px;">Symmetry Elements</div>
                 <button class="meta-btn" data-action="axes"><span class="swatch" style="background:#FFFF00;"></span>Rotation Axes</button>
                 <button class="meta-btn" data-action="mirrors"><span class="swatch" style="background:#fff;opacity:0.5;"></span>Mirror Planes</button>
             </div>
@@ -265,8 +266,8 @@ export function buildMetaInfoPanel(container, metaUnit) {
                 <div class="meta-stat"><div class="meta-stat-val" style="color:#FF6B6B;">13</div><div class="meta-stat-label">N<sub>eff</sub> (DOF)</div></div>
             </div>
 
-            <div style="font-size:10px;color:#6b7280;margin-top:6px;">Where they appear in O<sub>h</sub>:</div>
-            <table style="width:100%;font-size:10px;border-collapse:collapse;margin-top:4px;">
+            <div style="font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;margin-top:6px;">Where they appear in O<sub>h</sub>:</div>
+            <table style="width:100%;font-size:calc(10px * var(--ui-scale, 1));border-collapse:collapse;margin-top:4px;">
                 <tr><td style="padding:2px 0;">Scalar reps (A<sub>1g</sub>)</td><td style="text-align:right;color:#FF00FF;font-weight:bold;">4</td><td style="color:#4b5563;padding-left:6px;">= N<sub>base</sub></td></tr>
                 <tr><td style="padding:2px 0;">Vector reps (T<sub>1u</sub>)</td><td style="text-align:right;color:#00CED1;font-weight:bold;">3</td><td style="color:#4b5563;padding-left:6px;">= N<sub>c</sub></td></tr>
                 <tr><td style="padding:2px 0;">Distinct irreps used</td><td style="text-align:right;color:#7FFF00;font-weight:bold;">7</td><td style="color:#4b5563;padding-left:6px;">= b<sub>3</sub></td></tr>
@@ -274,11 +275,11 @@ export function buildMetaInfoPanel(container, metaUnit) {
                 <tr><td style="padding:2px 0;">Cuboct stabilizer</td><td style="text-align:right;color:#FF00FF;font-weight:bold;">4</td><td style="color:#4b5563;padding-left:6px;">= |Aut(E<sub>i</sub>)|</td></tr>
             </table>
 
-            <div style="margin-top:8px;font-size:10px;color:#6b7280;">Vieta coefficients of P(x)=(x&minus;3)(x&minus;4)(x&minus;7)(x&minus;13):</div>
+            <div style="margin-top:8px;font-size:calc(10px * var(--ui-scale, 1));color:#6b7280;">Vieta coefficients of P(x)=(x&minus;3)(x&minus;4)(x&minus;7)(x&minus;13):</div>
             <div style="display:flex;gap:6px;margin-top:4px;">
-                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:18px;">27</div><div class="meta-stat-label">e<sub>1</sub> = 3&sup3;</div></div>
-                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:18px;">243</div><div class="meta-stat-label">e<sub>2</sub> = 3<sup>5</sup></div></div>
-                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="font-size:18px;">1092</div><div class="meta-stat-label">e<sub>4</sub> = product</div></div>
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:calc(18px * var(--ui-scale, 1));">27</div><div class="meta-stat-label">e<sub>1</sub> = 3&sup3;</div></div>
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="color:#FFD700;font-size:calc(18px * var(--ui-scale, 1));">243</div><div class="meta-stat-label">e<sub>2</sub> = 3<sup>5</sup></div></div>
+                <div class="meta-stat" style="flex:1;"><div class="meta-stat-val" style="font-size:calc(18px * var(--ui-scale, 1));">1092</div><div class="meta-stat-label">e<sub>4</sub> = product</div></div>
             </div>
         </div>
     </div>
@@ -441,16 +442,16 @@ export function buildSiteInspectPanel(container, siteInfo) {
     area.innerHTML = `
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
             <div style="width:12px;height:12px;border-radius:50%;background:${c};"></div>
-            <div style="font-size:13px;font-weight:bold;color:${c};">${siteInfo.shell.charAt(0).toUpperCase() + siteInfo.shell.slice(1)}</div>
+            <div style="font-size:calc(13px * var(--ui-scale, 1));font-weight:bold;color:${c};">${siteInfo.shell.charAt(0).toUpperCase() + siteInfo.shell.slice(1)}</div>
         </div>
         <div class="meta-stat-grid" style="grid-template-columns:1fr 1fr 1fr;">
-            <div class="meta-stat"><div class="meta-stat-val" style="font-size:12px;">(${siteInfo.position.map(v => v.toFixed(0)).join(',')})</div><div class="meta-stat-label">position</div></div>
-            <div class="meta-stat"><div class="meta-stat-val" style="font-size:12px;">${siteInfo.distance}</div><div class="meta-stat-label">distance</div></div>
-            <div class="meta-stat"><div class="meta-stat-val" style="font-size:12px;">${siteInfo.sublattice}</div><div class="meta-stat-label">sublattice</div></div>
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:calc(12px * var(--ui-scale, 1));">(${siteInfo.position.map(v => v.toFixed(0)).join(',')})</div><div class="meta-stat-label">position</div></div>
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:calc(12px * var(--ui-scale, 1));">${siteInfo.distance}</div><div class="meta-stat-label">distance</div></div>
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:calc(12px * var(--ui-scale, 1));">${siteInfo.sublattice}</div><div class="meta-stat-label">sublattice</div></div>
         </div>
         <div class="meta-stat-grid" style="margin-top:2px;">
-            <div class="meta-stat"><div class="meta-stat-val" style="font-size:11px;">${siteInfo.stabilizer}</div><div class="meta-stat-label">stabilizer (|Stab|=${siteInfo.stabOrder || '?'})</div></div>
-            <div class="meta-stat"><div class="meta-stat-val" style="font-size:11px;">${siteInfo.irrep}</div><div class="meta-stat-label">irrep sector</div></div>
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:calc(11px * var(--ui-scale, 1));">${siteInfo.stabilizer}</div><div class="meta-stat-label">stabilizer (|Stab|=${siteInfo.stabOrder || '?'})</div></div>
+            <div class="meta-stat"><div class="meta-stat-val" style="font-size:calc(11px * var(--ui-scale, 1));">${siteInfo.irrep}</div><div class="meta-stat-label">irrep sector</div></div>
         </div>
     `;
 }

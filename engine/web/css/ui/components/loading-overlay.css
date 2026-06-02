@@ -47,7 +47,7 @@
 
 .load-subtitle {
     font-family: var(--font-body);
-    font-size: 11px; font-weight: 400;
+    font-size: var(--fs-xs); font-weight: 400;
     color: var(--text-muted);
     letter-spacing: 3px; text-transform: uppercase;
     margin-bottom: 40px;
@@ -72,14 +72,14 @@
 .load-status {
     margin-top: 12px;
     font-family: var(--font-mono);
-    font-size: 10px; color: var(--text-muted);
+    font-size: var(--fs-xs); color: var(--text-muted);
     letter-spacing: 1px;
     min-height: 14px;
 }
 .load-version {
     position: absolute; bottom: 24px;
     font-family: var(--font-mono);
-    font-size: 9px; color: var(--border-light);
+    font-size: var(--fs-xs); color: var(--border-light);
     letter-spacing: 2px;
     opacity: 0; animation: letter-in 0.6s ease forwards 1.3s;
 }
