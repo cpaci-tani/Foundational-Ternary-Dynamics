@@ -231,7 +231,10 @@ dissemination/interactive/math_node_map.html
 # Compiled paper PDFs sit next to .tex sources (regenerable via latexmk).
 # Source-of-truth is the .tex; PDFs are build artifacts.
 docs/papers/*.pdf
+!docs/papers/PAPER_GSTAR_INTRODUCTION.pdf
+!docs/papers/PAPER_GSTAR_FTD_BRIDGE.pdf
 dissemination/papers/*.pdf
+!dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.pdf
 dissemination/manuscript_v2/src/*.pdf
 
 # Generated publication figures in docs/papers/figures/ (older staging dir).
