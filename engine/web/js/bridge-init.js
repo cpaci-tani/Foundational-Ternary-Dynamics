@@ -6,7 +6,7 @@
  *          the lazy `bridge.capabilities` getter on MockBridge and
  *          WasmBridge prototypes (CONTRACTS.md §2).
  *
- *          Renamed from wasm-bridge-dag.js (2026-05-27, audit ticket P2-14).
+ *          Renamed from bridge-init.js (2026-05-27, audit ticket P2-14).
  *          The pre-2026-04-27 file was a 2395-LOC monolith containing the
  *          actual MockBridge / WasmBridge / capability-factory bodies; the
  *          Phase 2 refactor sweep split them into focused modules under
@@ -25,7 +25,7 @@
  *   after 2a:      879 LOC (MockBridge extracted)
  *   after 2b:      213 LOC (WasmBridge extracted)
  *   after 2c:    ~50 LOC (capability factories extracted)
- *   2026-05-27:   renamed wasm-bridge-dag.js → bridge-init.js
+ *   2026-05-27:   renamed bridge-init.js → bridge-init.js
  */
 
 // ── Bridge classes (Phase 2a + 2b) ──────────────────────────────────

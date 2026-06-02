@@ -3,7 +3,7 @@
  * @brief EFT Phase 1A — rotational-anisotropy diagnostics.
  *
  * Pre-registered expectations from
- * docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §4.1.
+ * docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md §4.1.
  *
  * Checks
  * ------

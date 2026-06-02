@@ -149,7 +149,7 @@ This is a transcendental small parameter with $|\varepsilon| \sim 10^{-3}$, not 
 
 The integers $\{N_c = 3, N_{\mathrm{base}} = 4, b_3 = 7, N_{\mathrm{eff}} = 13\}$ have lattice-structural derivations filed elsewhere:
 
-- $N_c = 3$: [DERIV_NC_FROM_TOPOLOGY.md](../03_derivations/DERIV_NC_FROM_TOPOLOGY.md) (four independent routes to $N_c = 3$)
+- $N_c = 3$: [DERIV_NC_FROM_TOPOLOGY.md](../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md) (four independent routes to $N_c = 3$)
 - $N_{\mathrm{base}} = 4$: cuboctahedral coordination number in $\mathbb{Z}^3$ (vertex figure)
 - $b_3 = 7$: independent face pairs under parity in the 27-site Moore lattice
 - $N_{\mathrm{eff}} = 13$: cuboctahedral coordination shell (12 surrounding + 1 center)

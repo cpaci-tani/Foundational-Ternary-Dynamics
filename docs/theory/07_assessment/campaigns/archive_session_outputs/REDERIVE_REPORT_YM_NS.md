@@ -192,7 +192,7 @@ If the paper's only value-add over standard lattice gauge theory is
 "K_B as constructive mass gap" identification, and if the Clay framing
 is removed, then the residual content is much smaller and overlaps
 with material already in `THEOREM_MOORE_LAYER_DECOMPOSITION.md` and
-`docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md`. In that case
+`docs/theory/03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md`. In that case
 the paper could be moved to `archive/` and a much shorter note in the
 theory directory could capture the surviving content (per-voxel mass
 gap as a corollary of the manifestation axiom; Wilson-loop algebra at

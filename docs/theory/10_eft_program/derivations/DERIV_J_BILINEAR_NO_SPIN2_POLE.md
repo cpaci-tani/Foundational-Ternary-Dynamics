@@ -2,7 +2,7 @@
 
 **Tag:** `[THEOREM at free-theory level + tree-level interactions in the canonical Gauss-only toggle subset]` + `[STRONGLY MOTIVATED CONJECTURE for full canonical toggle set with all interactions]` + `[OPEN for general non-canonical toggle configurations]`. Load-bearing step 3 of the Arc C2 spin-2 boundary theorem program per [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) §3.
 **Date:** 2026-05-24 (Arc C2 P1 deliverable a, Wilsonian-reframe plan v2)
-**LEDGER row reservation:** provisional, confirm against `../07_assessment/LEDGER.md` at hash-lock; this derivation is referenced by the future `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`.
+**LEDGER row reservation:** provisional, confirm against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; this derivation is referenced by the future `PREREG_SPIN2_BOUNDARY_THEOREM_v1.md`.
 **Companion docs:**
 - [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 scoping (parent doc; this derivation is its §3 step 3)
 - [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) — FTD-0193 empirical validation (11/12 k-points identical to spin-1 control at L=64)

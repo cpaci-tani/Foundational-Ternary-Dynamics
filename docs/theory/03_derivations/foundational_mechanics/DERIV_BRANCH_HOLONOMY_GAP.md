@@ -95,7 +95,7 @@ The gap formula has downstream physical readings (antiperiodic fermionic boundar
 - **Engine primitive:** [`../../../engine/include/ftd/branch_holonomy.h`](../../../engine/include/ftd/branch_holonomy.h) — `SignedRing1D` class, `apply()` / `build_matrix()`, `torus_branch_twist_gap_1d(N)`, `twisted_ring_spectrum_closed_form(N)`, `trivial_ring_spectrum_closed_form(N)`.
 - **Test:** [`../../../engine/tests/test_branch_holonomy_gap.cpp`](../../../engine/tests/test_branch_holonomy_gap.cpp).
 - **CMake:** registered as `ftd_add_test(test_branch_holonomy_gap … LABELS native)` in `engine/CMakeLists.txt`, adjacent to `test_sublattice_laplacian` (same conceptual cluster of signed / sub-stencil Laplacians).
-- **LEDGER:** FTD-0194 (`docs/theory/07_assessment/LEDGER.md`).
+- **LEDGER:** FTD-0194 (`docs/theory/07_assessment/core_ledgers/LEDGER.md`).
 - **Sibling overlays** (same campaign): [`DERIV_Z3_CENTER_GRAPH_CLOSURE.md`](../standard_model/DERIV_Z3_CENTER_GRAPH_CLOSURE.md) (Z_3 color-center closure, FTD-0195), [`../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md`](../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md) (generation graph `Γ_F(d)`, `[CANDIDATE RECONSTRUCTION]`, FTD-0196).
 
 ---

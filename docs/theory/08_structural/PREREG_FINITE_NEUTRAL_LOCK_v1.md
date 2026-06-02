@@ -3,7 +3,7 @@
 **Tag:** [PRE-REGISTRATION]
 **Date:** 2026-05-22
 **Status:** [PRE-REGISTRATION] — this document locks the question, definitions, admissible search space, success criterion, falsifier, and method for a **desk audit** (finite group theory; no engine, no numerics). It contains **no result**. All three outcomes — FOUND / UNDERDETERMINED / CLOSED-NEGATIVE — are pre-blessed; the audit's verdict is genuinely open.
-**LEDGER row:** FTD-0190 (provisional — confirm next-free id against `../07_assessment/LEDGER.md` at hash-lock).
+**LEDGER row:** FTD-0190 (provisional — confirm next-free id against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock).
 **Hash-lock:** to be SHA256-locked and git-tagged `preregister-finite-neutral-lock-v1` before the audit runs — see §11.
 
 **Purpose.** Lock, *before* any matching to Standard-Model representation theory, (a) what would count as FTD possessing a **finite neutral-lock** object, and (b) what would **falsify** the claim that such an object's continuum shadow is the SM Higgs representation `(1,2)₁/₂`. This pre-registration is the anti-laundering instrument for Q10: it exists so the subsequent audit cannot become a post-hoc construct-to-match.
@@ -148,7 +148,7 @@ The audit is a desk computation: small finite groups, character tables, stabilis
 To lock this pre-registration before the audit runs:
 
 1. Finalise this document. Compute `sha256sum docs/theory/08_structural/PREREG_FINITE_NEUTRAL_LOCK_v1.md`.
-2. Record the SHA256 in `../10_eft_program/REF_PREREGISTER_MANIFEST.md` (new row) and add a `07_assessment/LEDGER.md` row (FTD-0190 or next-free) tagged `[PRE-REGISTRATION]`, citing this file.
+2. Record the SHA256 in `../10_eft_program/REF_PREREGISTER_MANIFEST.md` (new row) and add a `07_assessment/core_ledgers/LEDGER.md` row (FTD-0190 or next-free) tagged `[PRE-REGISTRATION]`, citing this file.
 3. `git commit` the pre-registration; create a lightweight tag `git tag preregister-finite-neutral-lock-v1 -m "Pre-reg for Q10: finite neutral-lock audit"`.
 4. The audit (executing §9) runs only against the tagged commit. Its result lands in a separate `FOUND_FINITE_NEUTRAL_LOCK.md` (or `AUDIT_…` / `…_CLOSED_NEGATIVE.md` per the verdict) — never by editing this file.
 5. If a definition here proves defective once the audit starts, the correct response is a **v2 pre-registration**, not an edit to v1 (cf. the FTD-0186 boundary-theorem v1→v2 precedent).

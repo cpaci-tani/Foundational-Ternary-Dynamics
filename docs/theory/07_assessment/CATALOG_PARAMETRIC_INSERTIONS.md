@@ -298,7 +298,7 @@ The EFT program (Phases 1–4) can plausibly move these entries from [PARAMETRIC
 **Cross-references:**
 - `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` — narrative discussion of the honest accounting
 - `docs/theory/07_assessment/REF_CLAIMS_MATRIX.md` — structured claim-by-claim dependency matrix
-- `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` — [OPEN] items, many of which block upgrades here
-- `docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md` — the program that aims to reduce the [PARAMETRIC] column
+- `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` — [OPEN] items, many of which block upgrades here
+- `docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md` — the program that aims to reduce the [PARAMETRIC] column
 - `scripts/proofs/proof_complete_sm.py` — primary source of row data
 - `scripts/constants.py` — framework integers {N_c, N_base, N_eff, b_3, α, G_C, G*}

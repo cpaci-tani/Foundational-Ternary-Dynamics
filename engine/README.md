@@ -123,7 +123,7 @@ Integration-scheme notes (2026-04 verified):
 - The 18-point Moore Laplacian (face = 1/3, edge = 1/6, self = −4) is **analytically isotropic through O(h⁴)** — the 2:1 face:edge ratio produces `(h²/12)(∇²)²f` corrections, no anisotropic term. Residual empirical asymmetry at finite h is lattice dispersion at `k·h ~ 1` (universal cubic-FD artefact). Verified in `tests/test_moore_laplacian_isotropy.cpp`.
 - Velocity clamp at `C_SPEED` is a **non-relativistic approximation**; proper `γ_FTD = 1/√(1−v²−L²)` momentum integration is `[OPEN]`.
 
-Full status of every open item: [`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md).
+Full status of every open item: [`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md).
 
 Every phase is gated by a runtime toggle (`TermToggles` struct, 20 booleans — 10 core ON, 10 extensions).
 

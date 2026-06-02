@@ -4,7 +4,7 @@
 
 **Date:** 2026-05-28
 **Hash-lock target tag:** `preregister-alpha-readout-det-identity-v1`
-**LEDGER row reservation:** FTD-0235 (confirm next-free identifier against `../07_assessment/LEDGER.md` at hash-lock).
+**LEDGER row reservation:** FTD-0235 (confirm next-free identifier against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock).
 **Decides:** whether MC-T4.3 (operational α-readout) closes **positive** (FOUND ⇒ ARC-3 eligibility for FTD-0013) or whether the BCC/quantization route closes **negative/underdetermined** definitively.
 **Builds on:** FTD-0233 (parity no-go: odd G\* unreachable from even ingredients) and FTD-0234 (the J-twisted det_ζ ratio = G\* is a clean odd source, but `Det = Tr·G*` is asserted).
 **Companion docs:** `SPEC_FQCR.md` §2 Prop 1 (Model I), `DERIV_GSTAR_QUARTER_CONJUGACY.md`, `FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md` (the C₄/winding charge quantization), `AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md`.

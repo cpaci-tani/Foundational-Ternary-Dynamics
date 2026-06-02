@@ -7,7 +7,7 @@
 - FTD-0086 — F-prime bivector matching signature
 - FTD-0088 — Path 1 multi-grade decomposition (12/12 PASS)
 - FTD-0073 — Mode-erasure theorem
-- [DERIV_NC_FROM_TOPOLOGY.md](../03_derivations/DERIV_NC_FROM_TOPOLOGY.md) — N_c topology argument
+- [DERIV_NC_FROM_TOPOLOGY.md](../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md) — N_c topology argument
 
 ---
 

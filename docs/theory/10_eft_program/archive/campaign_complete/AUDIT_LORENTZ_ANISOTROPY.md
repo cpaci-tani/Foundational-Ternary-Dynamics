@@ -145,8 +145,8 @@ What remains [OPEN]: re-running `test_eft_anisotropy` A2/A3 and `benchmark_loren
 
 ## 8 · References
 
-- `docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md` §4.1 (Phase 1A pre-registration)
-- `docs/theory/07_assessment/LEDGER.md` — row FTD-0073 added 2026-04-25
+- `docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md` §4.1 (Phase 1A pre-registration)
+- `docs/theory/07_assessment/core_ledgers/LEDGER.md` — row FTD-0073 added 2026-04-25
 - `engine/tests/test_lorentz.cpp` § lorentz_invariance LOR-3, LOR-4 (independent companion analytical check on the 6-point stencil; gives p = 2 there as expected)
 - `engine/tests/campaign_lorentz_measure.cpp` (the leading-edge measurement of §2.3)
 - `engine/tests/campaign_dispersion.cpp` DISP-1..DISP-5 (mode-by-mode ω² match to the 6-point stencil, < 0.1% — companion measurement on the simpler stencil)

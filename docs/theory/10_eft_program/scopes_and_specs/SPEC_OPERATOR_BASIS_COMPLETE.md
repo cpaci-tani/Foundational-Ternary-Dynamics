@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-24
 **Status:** [THEOREM] (enumeration under frozen dimensions); [SELECTION] on C/P/T conventions
-**Purpose:** Gate 3 closure of the bridge contract. Enumerate all $O_h$-invariant, $C$-invariant local operators in $(\rho, J, j, A)$ through engineering dimension $D \le 6$ under the frozen scaling of [FTD-0064](../07_assessment/LEDGER.md).
+**Purpose:** Gate 3 closure of the bridge contract. Enumerate all $O_h$-invariant, $C$-invariant local operators in $(\rho, J, j, A)$ through engineering dimension $D \le 6$ under the frozen scaling of [FTD-0064](../07_assessment/core_ledgers/LEDGER.md).
 **Supersedes:** [SPEC_OPERATOR_BASIS.md](archive/campaign_complete/SPEC_OPERATOR_BASIS.md) (Phase-3 lattice-unit spec) in the continuum EFT sense.
 
 ---

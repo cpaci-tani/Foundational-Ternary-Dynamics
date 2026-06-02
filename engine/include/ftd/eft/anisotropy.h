@@ -24,7 +24,7 @@
  *   - residual amplitude |C_face(r) − C_diag(r)| / |C̄(r)|.
  *
  * Pre-registered expectations are in
- * docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §4.1. No expectation
+ * docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md §4.1. No expectation
  * is adjusted here after the fact.
  *
  * Epistemic status

@@ -44,5 +44,5 @@ checking `bridge.isWasm`.
 
 ## References
 
-- Files: `createScale0/1/2Capabilities` in `engine/web/js/wasm-bridge-dag.js`
+- Files: `createScale0/1/2Capabilities` in `engine/web/js/bridge-init.js`
 - Cross-refs: CONTRACTS.md §2, ADR-0004 (scale controllers)

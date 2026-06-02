@@ -147,8 +147,8 @@ If any falsifier lands, this audit is closed-negative and the 2026-05-27 retag s
 - **Honest analysis the §6 resolution displaces:** [`EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md`](../../03_derivations/foundational_mechanics/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md).
 - **Scoping memo (2026-05-23, FTD-0203):** [`SCOPE_FTD_0110_NONLINEAR_BRIDGE.md`](../10_eft_program/SCOPE_FTD_0110_NONLINEAR_BRIDGE.md).
 - **Candidate-aggregation proof scripts (not §6 verifications):** [`scripts/proofs/proof_ftd0110_full_aggregation.py`](../../../scripts/proofs/proof_ftd0110_full_aggregation.py), [`scripts/proofs/proof_ftd0110_active_partition.py`](../../../scripts/proofs/proof_ftd0110_active_partition.py).
-- **LEDGER row:** [`LEDGER.md`](../07_assessment/LEDGER.md) FTD-0110 (with 2026-04-27 / 2026-05-04 / 2026-05-27 maintenance history).
-- **Tracker entry:** [`TRACKER_ONTIC_TRUTH.md`](../07_assessment/TRACKER_ONTIC_TRUTH.md) OT-3.4.
+- **LEDGER row:** [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) FTD-0110 (with 2026-04-27 / 2026-05-04 / 2026-05-27 maintenance history).
+- **Tracker entry:** [`TRACKER_ONTIC_TRUTH.md`](../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) OT-3.4.
 
 ---
 
