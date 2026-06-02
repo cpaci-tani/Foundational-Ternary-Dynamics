@@ -1,7 +1,7 @@
 # FTD Theory Documentation Index
 
 **Framework:** Foundational Ternary Dynamics v5.40 (post-2026-05-08 FTD/FQCR doctrine-ledger + theory cleanup pass)
-**Date:** May 18, 2026
+**Date:** 2026-06-01 (engine-flawless audit + MC-T4.3 route-invariance checkpoint; new audit AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md / FTD-0242 added below — nothing promoted, FTD-0013 unchanged)
 **Status:** Curated catalog. **Single source of truth for claim status: [`07_assessment/LEDGER.md`](07_assessment/core_ledgers/LEDGER.md)**; if LEDGER and individual docs disagree, LEDGER wins.
 **Single Source of Truth (spec):** [`docs/SPEC_FTD.md`](../SPEC_FTD.md)
 **Foundational commitment (2026-04-19):** undefined-boundary lattice ontology — see [`07_assessment/AUDIT_INFINITY_REFRAME.md`](07_assessment/AUDIT_INFINITY_REFRAME.md) and [`07_assessment/reframe_deployment/CANONICAL_REFRAME.md`](07_assessment/reframe_deployment/CANONICAL_REFRAME.md).
@@ -449,6 +449,7 @@ Active research line (2026-04-19 → ongoing). Pre-registered, multi-phase progr
 | 10.72 | [AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md](07_assessment/audits/AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md) | 🆕 **(2026-05-28 / FTD-0234)** J-twisted ζ-regularized determinant audit: UNDERDETERMINED clean odd source. [UNDERDETERMINED] |
 | 10.73 | [PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md](10_eft_program/preregistrations/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md) | 🆕 **(2026-05-28 / FTD-0235)** det↔det_ζ operator identity pre-registration locking design. [PRE-REGISTRATION] |
 | 10.74 | [AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md](07_assessment/audits/AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md) | 🆕 **(2026-05-28 / FTD-0235)** det↔det_ζ operator structural identity audit: UNDERDETERMINED unforced Vieta selections. [UNDERDETERMINED] |
+| 10.75 | [AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md](07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) | 🆕 **(2026-06-01 / FTD-0242)** MC-T4.3 route-invariance boundary: 0/4 FTD-native routes force the master-quadratic operator assembly `(Tr,Det)=(16G*²,16G*³)`, so α is **dynamical, not structural**. Sharpens the 2026-05-28 UNDERDETERMINED rows (10.68/10.72/10.74) from "this readout is unforced" to "no FTD-native route forces it"; retracts `DERIV_ALPHA_READOUT_RESOLUTION.md`. MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`; α not derived. [STRONGLY MOTIVATED CONJECTURE no-go] |
 
 
 Cross-reference: [CATALOG_PARAMETRIC_INSERTIONS.md](07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) enumerates what this program aims to reduce (currently ~129 parametric rows; target: 5–15 upgrades to [DERIVED]).
