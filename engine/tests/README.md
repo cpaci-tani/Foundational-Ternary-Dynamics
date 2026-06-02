@@ -38,6 +38,17 @@ telemetry API contract.
 | `campaign_*.cpp` | Long-running measurement campaigns | `campaign_gluon_dynamics.cpp`, `campaign_wigner.cpp`, `campaign_lorentz_measure.cpp` |
 | `support/` | Shared fixtures and telemetry impl (post-Phase 7, commits 2db67ca…87158ae) — see "Shared infrastructure" below |
 
+### Engine-flawless audit additions (2026-06-01)
+
+The engine-flawless lifecycle/callstack audit added three focused tests
+(branch `flawless-engine-2026-06-01`):
+
+| Test | Concern | Labels |
+|---|---|---|
+| `test_conservation_profile` | Energy-conservation + Gauss-constraint profile (pins the non-variational Gauss projection operator `J -= ∇φ` as the conservation leak; iteration-independent ~5e-3 RMS stencil floor) | `conservation`, `unit` |
+| `test_tick_phase_order` | Tick phase-order regression (read → write → gauss_project → forces → movement) | `lifecycle`, `unit` |
+| `test_engine_lifecycle` | ScaleEngine `clear()` / RAII teardown | `lifecycle`, `unit` |
+
 ## How to run
 
 ```bash
