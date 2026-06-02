@@ -20,6 +20,8 @@ manuscript/*_files/
 .special_projects/
 
 *.pdf
+!papers/PAPER_FTD_AS_WILSONIAN_EFT.pdf
+!whitepaper/FTD_Whitepaper.pdf
 # LaTeX auxiliary files
 *.aux
 *.log

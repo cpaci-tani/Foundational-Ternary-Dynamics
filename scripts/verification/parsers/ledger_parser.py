@@ -278,7 +278,7 @@ if __name__ == "__main__":
         sys.stdout.reconfigure(encoding="utf-8")
     from pathlib import Path as _P
     root = _P(__file__).resolve().parents[3]
-    rows = parse_ledger(root / "docs" / "theory" / "07_assessment" / "LEDGER.md")
+    rows = parse_ledger(root / "docs" / "theory" / "07_assessment" / "core_ledgers" / "LEDGER.md")
     print(f"Parsed {len(rows)} LEDGER rows.")
     print(f"Primary-tag distribution:")
     from collections import Counter
