@@ -2,7 +2,7 @@
 
 **The Card Catalog** — Find any document in two clicks.
 
-**Last updated:** May 22, 2026 (FTD/FQCR v1.5 Checkpoint)
+**Last updated:** June 1, 2026 (engine-flawless audit + MC-T4.3 route-invariance checkpoint — CLAUDE.md v5.43; nothing promoted, FTD-0013 unchanged)
 **Framework version:** v1.5 (Phase G/H Checkpoint)
 **Engine version:** v2.15.0
 
@@ -59,6 +59,7 @@ For current documentation drift, cleanup status, and deferred remediation items,
 2. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) — Every implicit assumption made explicit
 3. [AUDIT_BELL_ANALYSIS.md](docs/theory/07_assessment/AUDIT_BELL_ANALYSIS.md) — Bell inequality theory and simulation
 4. [AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md) — Master weakness compilation
+5. [AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md](docs/theory/07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) — **(2026-06-01 / FTD-0242)** MC-T4.3 route-invariant boundary: 0/4 FTD-native routes force the master-quadratic α operator, so α is **dynamical, not structural**. `[STRONGLY MOTIVATED CONJECTURE no-go]` — α is not derived; FTD-0013 stays `[STRONGLY MOTIVATED CONJECTURE]`.
 
 ---
 
