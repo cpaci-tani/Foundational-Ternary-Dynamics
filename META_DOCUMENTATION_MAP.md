@@ -2,9 +2,9 @@
 
 **The Card Catalog** — Find any document in two clicks.
 
-**Last updated:** June 1, 2026 (engine-flawless audit + MC-T4.3 route-invariance checkpoint — CLAUDE.md v5.43; nothing promoted, FTD-0013 unchanged)
+**Last updated:** June 2, 2026 (RSI Leg 3 conditional theorem FTD-0243; numeric consistency audit; E/B overlay bug fix; CI repair; mobile-first responsive overhaul — CLAUDE.md v5.44; FTD-0013 unchanged; 59 Playwright green)
 **Framework version:** v1.5 (Phase G/H Checkpoint)
-**Engine version:** v2.15.0
+**Engine version:** v2.18.0
 
 > **2026-04-27 priority reading:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — full-day synthesis with §10 bird's-eye assessment ("what's physically missing"). Then per topic: [`docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) for the seven [THEOREM]s; [`docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md`](docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md) for the 9-Heegner tower; [`docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](docs/theory/10_eft_program/archive/campaign_complete/ANALYSIS_EMERGENT_SPECTRUM_G1.md) for FTD-0107 (deterministic cluster counts L-invariant — strongest positive structural finding); [`docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`](docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) for FTD-0097 (catalog over-rich at monomial level — methodological hygiene confirms FTD-0094 [PARAMETRIC]).
 
