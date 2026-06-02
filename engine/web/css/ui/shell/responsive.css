@@ -7,6 +7,25 @@
  *   wide        > 1439px
  * ──────────────────────────────────────────────────────────────────────────── */
 
+/* ── Mobile UI scale boost (phones) ───────────────────────────────────────────
+ * Bumps the EFFECTIVE --ui-scale 20% on phones so default text/controls are
+ * comfortably readable. Multiplies the user's accessibility knob (--ui-scale-base)
+ * rather than replacing it, so an X-Large user (base 1.4) still gets 1.68 here,
+ * not a downgrade to 1.2.
+ *
+ * MUST be set on :root (not #app): the font/space/control tokens are declared
+ * on :root as calc(Npx times var(--ui-scale)), and an unregistered custom property
+ * bakes its nested var() at the element where it's DECLARED. Overriding --ui-scale
+ * on a descendant (#app) therefore would NOT reach those tokens — only direct
+ * var(--ui-scale) uses in regular properties would scale. Setting it on :root
+ * makes every token recompute. The 767px-max media query matches the compact-sm/lg
+ * breakpoints; desktop/tablet keep the user's exact scale. */
+@media (max-width: 767px) {
+    :root {
+        --ui-scale: calc(var(--ui-scale-base, 1) * 1.2);
+    }
+}
+
 /* ── Compact toolbar (≤767px) ─────────────────────────────────────────────── */
 #app[data-layout-mode^="compact"] #toolbar {
     flex-wrap: wrap;
@@ -30,7 +49,23 @@
     max-width: calc(100vw - 24px);
 }
 
+/* Controls grids: 3/4 columns are far too cramped on a phone (labels wrap
+   mid-word). Collapse to 2 columns on phones — readable without the deep
+   vertical scroll a single column would force. (grid-2 already fits.)
+   Uses the viewport media query (not the data-layout-mode attribute) so it
+   applies on first paint, before the breakpoint service has booted. */
+@media (max-width: 767px) {
+    #app .panel-grid-3,
+    #app .panel-grid-4 {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 #app[data-layout-mode^="compact"] #status-bar {
+    /* Tighter horizontal padding on phones (was --sp-xl ≈ 20px) so status items
+       aren't pushed off-screen; keep the safe-area-aware bottom padding. */
+    padding-left: var(--sp-md);
+    padding-right: var(--sp-md);
     padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
     flex-wrap: wrap;
     gap: 6px 10px;
@@ -170,5 +205,62 @@
     /* Stack status bar items on very small screens */
     #status-bar .status-item:not(:first-child):not(:last-child) {
         display: none;
+    }
+}
+
+/* ── Mobile touch targets (≤767px) ────────────────────────────────────────────
+ * Several controls hardcode pixel sizes that do NOT scale with --ui-scale and
+ * fall well under the 44px touch-target minimum on phones. Boost their tap area
+ * here. (Buttons/tabs/view-toggles already get a 44px floor in their own files.)
+ *
+ * Selectors are prefixed with #app so specificity (1,1,x) beats the primitive
+ * CSS files (button/select/field/slider, single-class rules) which load AFTER
+ * this shell file in index.html and would otherwise win on cascade order.
+ * Uses max-width rather than (pointer: coarse) so it is exercised by responsive
+ * emulation/resize during testing. */
+@media (max-width: 767px) {
+    /* Checkboxes in physics-toggle rows (was 16×16) */
+    #app .toggle-row input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+    }
+
+    /* Text/number inputs (was 30px hardcoded) */
+    #app .ctrl-input {
+        min-height: 44px;
+    }
+
+    /* Toolbar selects: scenario / size / mode (was 32px) */
+    #app .tb-select {
+        min-height: 44px;
+    }
+
+    /* Range sliders: enlarge the thumb (the grab target). These tracks draw as
+       the input's own 6px background, so we must NOT raise the input height
+       (that would thicken the track into a bar) — the thumb renders centered
+       and overflows the thin track, giving a 24px touch target. */
+    #app .tb-slider::-webkit-slider-thumb,
+    #app .pe-slider::-webkit-slider-thumb,
+    #app .ctrl-slider-row input[type="range"]::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+    #app .tb-slider::-moz-range-thumb,
+    #app .pe-slider::-moz-range-thumb,
+    #app .ctrl-slider-row input[type="range"]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Coordinate stepper ▲/▼ micro-buttons (was 10px tall) */
+    #app .coord-step {
+        min-height: 32px;
+        min-width: 32px;
+    }
+
+    /* Scene-panel checkboxes (was 1.2rem) */
+    #app #panel-scene input[type="checkbox"] {
+        width: 1.4rem;
+        height: 1.4rem;
     }
 }

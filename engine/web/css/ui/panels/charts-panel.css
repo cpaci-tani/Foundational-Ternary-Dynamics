@@ -105,6 +105,18 @@ html[data-panel-mount="right"] .charts-grid {
     grid-template-columns: 1fr;
 }
 
+/* ── Mobile (compact): force single column ─────────────────────────
+ * The default minmax(340px, 1fr) overflows a 375px phone horizontally.
+ * Stack to one full-width column so charts are readable with no h-scroll. */
+#app[data-layout-mode^="compact"] .charts-grid {
+    grid-template-columns: 1fr;
+}
+#app[data-layout-mode^="compact"] .chart-card-plot {
+    aspect-ratio: 16 / 9;
+    min-height: 200px;
+    max-height: 280px;
+}
+
 html[data-panel-mount="left"] .charts-chip-strip,
 html[data-panel-mount="right"] .charts-chip-strip {
     gap: 6px 8px;
