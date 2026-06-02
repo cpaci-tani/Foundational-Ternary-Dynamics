@@ -115,7 +115,7 @@ The net effect: `freq_long(v)` is **anti-correlated** with `|ψ(v)|²` because h
 ## 7 · Cross-references
 
 - [`PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md`](PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md) — the locked manifest.
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (threshold-crossing closed-negative), FTD-0199 (this test).
+- [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (threshold-crossing closed-negative), FTD-0199 (this test).
 - [`EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md) — v1 closed-negative (different question, same substrate).
 - [`DERIV_COLLAPSE_MECHANISM.md`](DERIV_COLLAPSE_MECHANISM.md) — canonical Softplus → ReLU framework; v4 would test the finite-β case.
 - Dürr, Goldstein, Zanghì 1992 — the analytical framework this test mirrored.

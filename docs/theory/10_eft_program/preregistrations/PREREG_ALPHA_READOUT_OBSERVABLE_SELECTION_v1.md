@@ -11,7 +11,7 @@ outcome is CLOSED-NEGATIVE.
 **Date:** 2026-05-23
 **Hash-lock target tag:** `preregister-alpha-readout-observable-selection-v1`
 **LEDGER row reservation:** FTD-0198 (provisional; confirm next-free
-identifier against `../07_assessment/LEDGER.md` at hash-lock; current
+identifier against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock; current
 top per audit 2026-05-23 is FTD-0197).
 **Supersedes:** none -- first pre-registration against the MC-T4.3
 closure contract.
@@ -766,7 +766,7 @@ To lock this pre-registration before the closure attempt runs:
 
 2. Record the SHA256 in `REF_PREREGISTER_MANIFEST.md` (new section,
    following the format of the FTD-0190 / FTD-0191 / FTD-0192 / FTD-0186
-   sections). Add a `../07_assessment/LEDGER.md` row (FTD-0198 or
+   sections). Add a `../07_assessment/core_ledgers/LEDGER.md` row (FTD-0198 or
    next-free identifier; current top per audit 2026-05-23 is FTD-0197)
    tagged `[PRE-REGISTRATION]`, citing this file.
 

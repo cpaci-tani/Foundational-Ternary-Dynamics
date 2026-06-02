@@ -27,7 +27,7 @@
 //               name `running_coupling.cpp` for the Phase-2 measured flow
 //               and to reflect that the contents are parametric insertion,
 //               not lattice derivation. See
-//               docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §0.
+//               docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md §0.
 //
 // -----------------------------------------------------------------------------
 

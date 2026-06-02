@@ -4,7 +4,7 @@
 
 **Date:** 2026-05-24
 **Hash-lock target tag:** `preregister-spin2-boundary-theorem-v1`
-**LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/LEDGER.md` at hash-lock time (current top per audit 2026-05-24 is FTD-0203).
+**LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock time (current top per audit 2026-05-24 is FTD-0203).
 **Supersedes:** none — first pre-registration on the spin-2 boundary theorem.
 **Companion docs:**
 - [`SCOPE_SPIN2_BOUNDARY_THEOREM.md`](../scopes_and_specs/SCOPE_SPIN2_BOUNDARY_THEOREM.md) — Arc C2 P0 scoping (parent)

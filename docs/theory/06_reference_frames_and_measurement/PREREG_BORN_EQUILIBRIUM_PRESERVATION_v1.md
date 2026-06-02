@@ -154,7 +154,7 @@ Locked when (1) this file is committed, (2) runner committed with real SHA256 in
 
 ## §8 — Cross-references
 
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (v1 closed-negative), FTD-0199 (this test).
+- [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0187 (Born consolidation), FTD-0200 (v1 closed-negative), FTD-0199 (this test).
 - [`EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`](EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md) — v1 result that motivated this v2.
 - [`PREREG_THRESHOLD_CROSSING_BORN_v1.md`](PREREG_THRESHOLD_CROSSING_BORN_v1.md) — v1 manifest; same machinery, different question.
 - [`FOUND_THE_EXISTENCE_FILTER.md`](FOUND_THE_EXISTENCE_FILTER.md) — EF-T5 / EF-C3 (the `|ψ|²` form question, separate workstream).

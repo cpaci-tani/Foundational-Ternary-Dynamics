@@ -3,7 +3,7 @@
 **Date:** 2026-04-24
 **Status:** [CONJECTURE] — numerical match with no derivation
 **Supersedes:** mass-gap closure claim in "Generated Document April 24, 2026 – 12:47 AM.pdf" (§3, labelled there as THEOREM 3)
-**Depends on:** [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md), [LEDGER.md:FTD-0016](../07_assessment/LEDGER.md), [LEDGER.md:FTD-0060](../07_assessment/LEDGER.md)
+**Depends on:** [DERIV_COMPLETE_PARTICLE_PHYSICS.md](../05_particles/DERIV_COMPLETE_PARTICLE_PHYSICS.md), [LEDGER.md:FTD-0016](../07_assessment/core_ledgers/LEDGER.md), [LEDGER.md:FTD-0060](../07_assessment/core_ledgers/LEDGER.md)
 **Ledger row:** FTD-0063
 
 ---
@@ -69,7 +69,7 @@ No independent argument is given for why the correction sits on the electron DoF
 
 ### 2.4 The engine contradicts the required order of magnitude
 
-The EFT Recovery Program measured the lattice correction to $\alpha$ on FTD's own engine and found $\alpha_\infty \approx 3.6 \alpha_{\mathrm{ref}}$ (see [SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md) and FTD-0058). A claimed lattice self-energy at the $\alpha/42 \approx 10^{-4}$ level sits at a completely different scale than the engine's actually-measured finite-$L$ correction. Either the engine's EFT Recovery observable is the wrong one for this comparison, or the $\alpha/42$ correction is on a separate mechanism the engine does not currently resolve, or the match is incidental.
+The EFT Recovery Program measured the lattice correction to $\alpha$ on FTD's own engine and found $\alpha_\infty \approx 3.6 \alpha_{\mathrm{ref}}$ (see [SPEC_EFT_RECOVERY_PROGRAM.md](../10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md) and FTD-0058). A claimed lattice self-energy at the $\alpha/42 \approx 10^{-4}$ level sits at a completely different scale than the engine's actually-measured finite-$L$ correction. Either the engine's EFT Recovery observable is the wrong one for this comparison, or the $\alpha/42$ correction is on a separate mechanism the engine does not currently resolve, or the match is incidental.
 
 ## 3. What would promote this to a theorem
 

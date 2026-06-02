@@ -20,7 +20,7 @@ RenderBridge::tick()
 └─ tick_++ + update_energy_ledger()  -> per-tick conservation drift snapshot (CPU path auto-populates)
 ```
 
-The advance pair in `phase_write` is mathematically forward Euler, not symplectic leapfrog — `DAMPING = α` masks Euler drift for typical benchmarks. See [`SPEC_ENGINE.md`](SPEC_ENGINE.md) §4 and [`TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md) §1.4 for the leapfrog upgrade plan.
+The advance pair in `phase_write` is mathematically forward Euler, not symplectic leapfrog — `DAMPING = α` masks Euler drift for typical benchmarks. See [`SPEC_ENGINE.md`](SPEC_ENGINE.md) §4 and [`TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) §1.4 for the leapfrog upgrade plan.
 
 ### Mutability Guardians
 During execution, the `Voxel` object space utilizes intermediate memory buffers (e.g., `wave_vel`) so that a "Read" phase evaluates an entirely isolated snapshot of the last tick, outputting purely to "Next State" accumulators. This double-buffering protects the spatial differentiation kernels from propagating immediate neighboring side-effects within the identical loop pass.

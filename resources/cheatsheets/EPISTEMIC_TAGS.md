@@ -50,7 +50,7 @@ If a claim's status weakens, tags change:
 
 - Every derivation doc in `docs/theory/03_derivations/` opens with an epistemic summary.
 - `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` is the project-wide ledger of tag decisions.
-- `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` aggregates every `[OPEN]` in one place — engine code stubs, theory gaps, and roadmap items — so contributors can pick work without grepping the whole repo.
+- `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` aggregates every `[OPEN]` in one place — engine code stubs, theory gaps, and roadmap items — so contributors can pick work without grepping the whole repo.
 - The `epistemic-auditor` agent scans for untagged claims and mislabeled derivations.
 
 ## Quick test

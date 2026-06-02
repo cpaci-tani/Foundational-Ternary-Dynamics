@@ -3,7 +3,7 @@
  * @brief EFT Phase 1C — Ward-identity test suite.
  *
  * Pre-registered expectations live in
- * docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md §4.3.
+ * docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md §4.3.
  *
  *   W1 (Gauss, vacuum):        max |∇·J − ρ| ≤ 1e-6 on empty lattice
  *   W2 (Gauss, charge pair):   max |∇·J − ρ| ≤ 1e-6 after gauss_projection runs

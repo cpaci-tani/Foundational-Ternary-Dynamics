@@ -61,7 +61,7 @@ Paradigm cases: m_e in MeV, G_N in SI units, any quantity carrying physical unit
 
 ## §3 -- The pre-registered classification procedure
 
-Upon hash-lock, classify **every load-bearing quantity-claim** in `docs/theory/07_assessment/LEDGER.md` (all FTD-NNNN rows) and `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`. For each, record: the quantity-claim, its current LEDGER tag, its §2 class, and a one-line justification. The classification is mechanical given §2 alone -- no class may be chosen to fit §4. Output: `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md`, verified by `scripts/proofs/proof_structural_dynamical_partition.py`.
+Upon hash-lock, classify **every load-bearing quantity-claim** in `docs/theory/07_assessment/core_ledgers/LEDGER.md` (all FTD-NNNN rows) and `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`. For each, record: the quantity-claim, its current LEDGER tag, its §2 class, and a one-line justification. The classification is mechanical given §2 alone -- no class may be chosen to fit §4. Output: `FOUND_STRUCTURAL_DYNAMICAL_DISCRIMINATOR.md`, verified by `scripts/proofs/proof_structural_dynamical_partition.py`.
 
 ---
 

@@ -4,7 +4,7 @@
 **Scope:** Engineering health, constructor-domain formalization, bugs,
 refactoring, test coverage, architecture.
 **NOT in scope:** theorem promotions (see
-[docs/theory/07_assessment/LEDGER.md](../docs/theory/07_assessment/LEDGER.md)).
+[docs/theory/07_assessment/core_ledgers/LEDGER.md](../docs/theory/07_assessment/core_ledgers/LEDGER.md)).
 Physics coverage is tracked in [CHECKLIST_PHYSICS.md](CHECKLIST_PHYSICS.md)
 and the native EFT checklist; this file may track the engine infrastructure
 needed to make those claims auditable.

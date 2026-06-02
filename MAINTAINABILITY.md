@@ -3,7 +3,7 @@
 Field manual for making changes to this project without breaking
 sibling systems. Complements — does not replace — `CLAUDE.md`,
 `CONTRIBUTING.md`, the layered `ARCHITECTURE.md` files, and the
-`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` ledger.
+`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` ledger.
 
 **Who this is for:** a maintainer (human or agent) who has skimmed
 `README.md` and `CLAUDE.md` and now wants to do work without
@@ -122,7 +122,7 @@ For each common addition, the files you touch and their order:
 | Scale-0 diagnostic row | 1) `engine/web/js/ui/panels/diagnostics-panel/descriptors/scale0.js` — add the row. 2) The producer that writes to `hub.s0.diag` in `scales/scale0/controller.js`. 3) `engine/web/docs/TELEMETRY_CATALOG_SCALE0.md` — document it. |
 | Scale-0 chart series | `engine/web/js/ui/panels/charts-panel/descriptors/scale0.js` + a `RingBuffer` in `engine/web/js/telemetry-hub.js` if one doesn't exist. |
 | Scale-0 scenario | `engine/web/js/config/scenarios.js` with a new seed entry + `engine/web/js/scales/scale0/scenario-registry.js` to make it selectable. |
-| New panel | `PANEL_REGISTRY` entry in `engine/web/js/ui/scale-registry/panel-registry.js` + `<div class="panel" id="panel-X">` stub in `engine/web/index.html` + `engine/web/js/ui/panels/X-panel/{component,template}.js` + `engine/web/css/ui/panels/X-panel.css` + `<link>` in `index.html` + re-export in `panels/index.js` + `initXPanel({...})` call in `app_dag.js`. |
+| New panel | `PANEL_REGISTRY` entry in `engine/web/js/ui/scale-registry/panel-registry.js` + `<div class="panel" id="panel-X">` stub in `engine/web/index.html` + `engine/web/js/ui/panels/X-panel/{component,template}.js` + `engine/web/css/ui/panels/X-panel.css` + `<link>` in `index.html` + re-export in `panels/index.js` + `initXPanel({...})` call in `app.js`. |
 | Verify manifest row | 1) `engine/web/data/measurements.json` — add measurement with citation + URL. 2) `_ftd_rows_from_constants()` in `scripts/proofs/build_verify_manifest.py` — add matching FTD row (pick a tier). 3) Run `python -m scripts.proofs.build_verify_manifest` — regenerate the manifest. 4) Commit all three. |
 | FAQ entry | `engine/web/js/ui/components/faq/data.js` — add the entry under the correct section with all four required keys (`problem`, `mainstreamStruggle`, `ftdAngle`, `stillOpen`); every `ftdAngle` item needs an epistemic tag. |
 | Scene control | `engine/web/js/ui/panels/scene-panel/adapter.js` setter + `template.js` row + `component.js` `CONTROL_META` entry — all three in one commit. |
@@ -331,7 +331,7 @@ Deliberately terse — more detail in the linked examples.
 **Steps:**
 1. Add a scenario block to `scenarios.js` under `SCALE0_SCENARIOS` with `id`, `title`, `desc` (promote math to LaTeX per H2), and any seed metadata.
 2. Register it in `scenario-registry.js` so `populateScale0ScenarioSelect` picks it up.
-3. Ensure the bridge supports the scenario id (`bridge.setupScenario(id)` in `wasm-bridge-dag.js`) — add a branch if new.
+3. Ensure the bridge supports the scenario id (`bridge.setupScenario(id)` in `bridge-init.js`) — add a branch if new.
 
 **Verify:** reload, select the scenario from the dropdown, run it, confirm no bridge errors in console. `grep scenarios.js -nE '<your-id>'` returns exactly the expected hits.
 
@@ -345,7 +345,7 @@ Deliberately terse — more detail in the linked examples.
 3. Create `engine/web/js/ui/panels/X-panel/{component,template}.js`. Template returns INNER content (no outer wrapper). Component queries `#panel-X` and sets `innerHTML`.
 4. Create `engine/web/css/ui/panels/X-panel.css` and add `<link rel="stylesheet" href="css/ui/panels/X-panel.css?v=1">` to `index.html`.
 5. Re-export `initXPanel` from `engine/web/js/ui/panels/index.js`.
-6. Call `initXPanel({...})` from `app_dag.js` in the panel-init block.
+6. Call `initXPanel({...})` from `app.js` in the panel-init block.
 
 **Verify:** `cd engine/web/tests && npx playwright test scales.spec.js --reporter=list`. Scene panel commit `966e684` is the canonical reference.
 
@@ -487,7 +487,7 @@ Deliberately terse — more detail in the linked examples.
 ## Part 3 — Technical-debt ledger
 
 Live inventory of known debt on the code/UX side. The theory side
-lives in `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`. Cross-
+lives in `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`. Cross-
 references noted inline. Expect this section to update as things land
 and new debt accrues.
 
@@ -516,7 +516,7 @@ and new debt accrues.
   from `engine/web/js/ui/components/panel-resources/template.js`
   but unused since the Verify-panel retirement. Safe to remove.
 - **`_switchToQuantumLabTab` shim.** Still routes to
-  `_switchToVerifyTab` in `app_dag.js`. Once all Scale 0 bindings
+  `_switchToVerifyTab` in `app.js`. Once all Scale 0 bindings
   stop calling it, remove the shim.
 - **BackgroundManager unused reference in SceneAdapter.** The
   adapter accepts `backgroundManager` but never calls any of its
@@ -554,7 +554,7 @@ changes.
 ### 3.3 Cross-reference with TRACKER_OPEN_ITEMS.md
 
 This ledger is the code/UX debt side. The theory debt side lives in
-`docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` which catalogues
+`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` which catalogues
 every `[OPEN]` tag across the theory corpus. Items that span both:
 
 - Bell-singlet loop closure — theory-side `[OPEN]` in

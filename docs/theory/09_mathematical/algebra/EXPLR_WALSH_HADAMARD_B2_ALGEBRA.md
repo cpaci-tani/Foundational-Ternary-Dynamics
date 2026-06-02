@@ -102,7 +102,7 @@ Diagonal agrees with Clifford ($e_i^2 = \mathbb{1}$). Off-diagonal is maximally 
 
 **Cause.** Every weight-1 mode injection produces the same uniform state after tick 1 via the genesis rule (sign of divergence → polarity). The mode index is lost before the second tick can expose any ordering asymmetry.
 
-**Verdict.** Clifford emergence on the b=2 block via genesis + movement is **falsified**. See [DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md §8](DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md#8-measurement-executed-2026-04-24) for the measurement table and [LEDGER.md:FTD-0061](../07_assessment/LEDGER.md) for the closure record.
+**Verdict.** Clifford emergence on the b=2 block via genesis + movement is **falsified**. See [DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md §8](DERIV_WH_ALGEBRA_VS_CLIFFORD_NOGO.md#8-measurement-executed-2026-04-24) for the measurement table and [LEDGER.md:FTD-0061](../07_assessment/core_ledgers/LEDGER.md) for the closure record.
 
 The fermion-emergence direction is not yet fully closed — four alternative routes (pair production, weak transmutation, Moore-26 stencil, velocity-driven movement) remain measurable with the same harness. Each is a future falsifier.
 

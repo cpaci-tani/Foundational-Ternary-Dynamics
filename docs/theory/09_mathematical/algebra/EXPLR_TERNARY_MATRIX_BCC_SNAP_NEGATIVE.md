@@ -110,7 +110,7 @@ The pre-registration explicitly fenced these off this run:
 - [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) — canonical BCC formalism; the BCC eigenvalue `σ_BCC(k)` is a *momentum-space scalar*, not a position-space matrix iteration. This run did not test that result; it tested a different object the user proposed.
 - [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — Theorems 1–9 (unaffected).
 - [`DERIV_COLLAPSE_MECHANISM.md`](../06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal; the present run does not engage it.
-- [`LEDGER.md`](../07_assessment/LEDGER.md) — see new row FTD-0197.
+- [`LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — see new row FTD-0197.
 - [`EXPLR_3X3_MIXING_NEGATIVE.md`](../general_math/EXPLR_3X3_MIXING_NEGATIVE.md) — sibling 3×3 closed-negative document; same epistemic pattern (a 3×3 promotion that does not extend a 2×2 structure cleanly).
 
 ---

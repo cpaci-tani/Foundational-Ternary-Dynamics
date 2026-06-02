@@ -109,6 +109,6 @@ docs/SPEC_FTD.md                                                   # LATTICE ↔
 docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md  # Mechanism δ (closure)
 docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md  # Mechanism γ (closure)
 docs/theory/10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md                # closed open-problem doc
-docs/theory/07_assessment/LEDGER.md                                 # FTD-0030, FTD-0041, FTD-0059
+docs/theory/07_assessment/core_ledgers/LEDGER.md                                 # FTD-0030, FTD-0041, FTD-0059
 docs/theory/02_foundations/FOUND_AXIOM_ZERO.md                      # Axiom Zero definition
 ```

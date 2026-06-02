@@ -4,7 +4,7 @@
 
 **Date:** 2026-05-27  
 **Hash-lock target tag:** `preregister-alpha-readout-bcc-bridge-v1`  
-**LEDGER row reservation:** FTD-0230 (confirm next-free identifier against `../07_assessment/LEDGER.md` at hash-lock).  
+**LEDGER row reservation:** FTD-0230 (confirm next-free identifier against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock).  
 **Companion docs:** `../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md`, `../09_mathematical/DERIV_BCC_COMPLEX_STRUCTURE.md` (FTD-0122, the BCC complex-decomposition theorem).
 
 ---

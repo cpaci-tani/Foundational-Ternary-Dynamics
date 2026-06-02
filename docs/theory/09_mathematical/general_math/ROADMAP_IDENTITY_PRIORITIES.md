@@ -171,7 +171,7 @@ Adding a new `check()` to `verify_gstar_paper.py` automatically regenerates the 
 - `scripts/verification/results/synonymy_graph.json` -- the canonical machine-readable graph.
 - `docs/papers/PAPER_GSTAR_INTRODUCTION.tex` §19 -- Conjecture 19.2 (Catalan algebraic independence) -- Bundle 1's frontier.
 - `docs/theory/09_mathematical/REF_GUILLERA_CORPUS_MAP.md` -- the Borwein-Cooper-Guillera-Straub-Zudilin AGM-modularity bridge that powers Bundles 2 and 5.
-- `docs/theory/09_mathematical/EXPLR_CM_RATIO_TOWER.md` -- the CM-uniqueness machinery Bundle 4 connects to.
+- `docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md` -- the CM-uniqueness machinery Bundle 4 connects to.
 - `.claude/plans/let-s-proceed-on-the-eager-rocket.md` -- Sessions A3 (this work) + B2 (C3 higher-Γ catalogue) + D1 (Catalan PREREG).
 
 ---

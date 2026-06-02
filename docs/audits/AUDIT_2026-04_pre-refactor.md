@@ -37,7 +37,7 @@ Status legend: `[x]` fixed · `[~]` partial · `[d]` deferred (with reason) · `
 ## Track A — Cross-scale convention drift (Wave-2 Agent A)
 
 - [x] **A-2** Coulomb prefactor convention split → `COULOMB_K_FORCE` import across 5 files
-- [x] **A-3** Strong-force tuning constants → `STRONG_*` imports (mock-lattice-samplers.js + Agent-E in wasm-bridge-dag.js)
+- [x] **A-3** Strong-force tuning constants → `STRONG_*` imports (mock-lattice-samplers.js + Agent-E in bridge-init.js)
 - [x] **A-4** Scale-4 G value comment clarified (decorative cadence, not Keplerian)
 - [x] **A-5** `units.js` PLANCK_TIME_S clarified vs `FTD_TICK_S = √3·ℓ_P/c`
 - [x] **A-6** Cosmic mass-unit conversion documented at top of mock-scale5.js
@@ -45,7 +45,7 @@ Status legend: `[x]` fixed · `[~]` partial · `[d]` deferred (with reason) · `
 - [x] **A-8** units.js orphan SI literals promoted to constants.js
 - [x] **A-9** mock-scale4.js figure-8 G=1.0 override commented as intentional
 - [x] **A-10** cross-sections.js / spectroscopy.js / decay-rates.js use `M_E_PHYS` for PDG comparisons
-- [x] **A-11** Gravity uses per-particle masses instead of `K_B²` (Agent-E in wasm-bridge-dag.js)
+- [x] **A-11** Gravity uses per-particle masses instead of `K_B²` (Agent-E in bridge-init.js)
 - [n] **A-13** AE_K_COULOMB already labeled `[IMPOSED]` in constants.js — no fix needed
 - [n] **A-14** particle-catalog.js mass `units_source` tag — cosmetic; deferred
 - [n] **A-15** AE_* MD constants unit comments — cosmetic; deferred
@@ -54,7 +54,7 @@ Status legend: `[x]` fixed · `[~]` partial · `[d]` deferred (with reason) · `
 - [x] **A-18** K_B slider in substrate-controls.js now templates from K_B
 - [x] **A-19** decay-rates.js Wilkinson uses M_E_PHYS for PDG comparison
 - [n] **A-21** pe-telemetry.js Coulomb readout — verified correct; no fix needed
-- [x] **A-22** wasm-bridge-dag.js gravity per-particle masses (same as A-11)
+- [x] **A-22** bridge-init.js gravity per-particle masses (same as A-11)
 - [x] **A-23** `G_FERMI_MEV` exported, replacing inline conversion
 - [x] **A-24** pe-cloud-expander.js heuristic documented with TODO
 - [x] **A-25** s0-seed-scenarios Schwarzschild seed-bias uses `G_N` explicitly

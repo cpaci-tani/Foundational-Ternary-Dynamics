@@ -189,7 +189,7 @@ The numerical agreement is exact across the entire domain.
 The clock hypothesis is derived as a theorem from FTD substrate primitives.
 
 **Tag consequences:**
-* `docs/theory/07_assessment/LEDGER.md` row `FTD-0208` updated to `[THEOREM]`.
+* `docs/theory/07_assessment/core_ledgers/LEDGER.md` row `FTD-0208` updated to `[THEOREM]`.
 * `SPEC_FTD_LAGRANGIAN.md` §4.3 and §8 L-1 promoted from `[THEOREM modulo clock hypothesis]` to fully **`[THEOREM]`**.
 * `LEDGER.md` `FTD-0131` (Newton scaling postulates) promoted to **`[DERIVED]`** without qualifiers.
 * `AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` updated to reflect positive closure.

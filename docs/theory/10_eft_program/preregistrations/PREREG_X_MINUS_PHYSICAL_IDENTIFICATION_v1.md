@@ -4,13 +4,13 @@
 
 **Date:** 2026-05-27
 **Hash-lock target tag:** `preregister-x-minus-physical-identification-v1`
-**LEDGER row reservation:** FTD-0210 (provisional; confirm next-free identifier against `../07_assessment/LEDGER.md` at hash-lock).
+**LEDGER row reservation:** FTD-0210 (provisional; confirm next-free identifier against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock).
 **Supersedes:** none — first pre-registration of an x_- physical-identification search after the 2026-05-2X retirement of FTD-0014 (the original `x_- ↔ N_c` identification, removed in commit `ca7eb61` per FTD/FQCR Cleanup Taxonomy v1.4 §5).
 **Companion docs:**
 - `../01_reference/SPEC_ALGEBRAIC_SPINE.md` §§2, 5 (master quadratic; coefficient 16; nine-theorem spine context)
 - `../01_reference/SPEC_DOCTRINE_LEDGER.md` §§13.5, 14 (closed-negative reminders; hardening targets; "earn the map" framing)
 - `../01_reference/SPEC_ALPHA_READOUT_CONTRACT.md` §§3, 4 (anti-laundering rules adapted to the x_- case)
-- `../07_assessment/LEDGER.md` rows FTD-0001, FTD-0013, FTD-0014 (the master quadratic, the x_+ conjecture, the retired x_- identification)
+- `../07_assessment/core_ledgers/LEDGER.md` rows FTD-0001, FTD-0013, FTD-0014 (the master quadratic, the x_+ conjecture, the retired x_- identification)
 - `../09_mathematical/MATH_LOG_GSTAR_IDENTITY.md` (G* algebraic provenance; the J-chain link ② of the spine)
 - `../09_mathematical/EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md` (the algebraic identity catalog this search uses to derive constraints)
 - `../10_eft_program/PREREG_ADVERSARIAL_LOOK_ELSEWHERE_v1.md` (FTD-0189; the methodological template for the dual-match uniqueness scan)

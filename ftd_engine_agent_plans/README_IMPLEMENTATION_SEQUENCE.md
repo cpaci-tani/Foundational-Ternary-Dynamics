@@ -101,7 +101,7 @@ Only run GPU/CUDA tests in the repo's established WSL2 path if required.
 | Branch holonomy | `engine/include/ftd/branch_holonomy.h`, `engine/tests/test_branch_holonomy_gap.cpp` | `engine/CMakeLists.txt` |
 | Z3 color center | `engine/include/ftd/color_center.h`, `engine/tests/test_z3_color_center.cpp` | `engine/CMakeLists.txt` |
 | Generation graph | `engine/include/ftd/generation_graph.h`, `engine/tests/test_generation_graph.cpp` | `engine/CMakeLists.txt` |
-| Docs | three theory docs | `docs/theory/07_assessment/LEDGER.md`, `docs/theory/META_INDEX.md`, optionally `META_PROJECT_ATLAS.md` |
+| Docs | three theory docs | `docs/theory/07_assessment/core_ledgers/LEDGER.md`, `docs/theory/META_INDEX.md`, optionally `META_PROJECT_ATLAS.md` |
 | Dashboard | optional JS scenario/visual modules | `engine/web/js/bridge/scenarios/`, `engine/web/js/config/toggles.js` |
 
 ## Definition of done for the first integration wave

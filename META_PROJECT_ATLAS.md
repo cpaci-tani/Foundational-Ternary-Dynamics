@@ -18,7 +18,7 @@ read [CLAUDE.md](CLAUDE.md) → read [docs/WHERE_WE_LEFT_OFF.md](docs/WHERE_WE_L
 | Modify scenario toggle defaults | `engine/web/js/config/toggles.js` | `SCALE0_TOGGLES`, `SCALE0_SCENARIO_OVERRIDES` |
 | Change a physics constant | `engine/web/js/constants.js` (JS) + `engine/include/ftd/ontic.h` (C++) | layered by category |
 | Add a new toggle | `engine/include/ftd/term_toggles.h` (C++) + `engine/web/js/config/toggles.js` (JS) + `engine/wasm/bindings_render_bridge.cpp` (binding) | (Phase 6 will make this 1-place edit) |
-| Change MockBridge physics (JS) | `engine/web/js/wasm-bridge-dag.js` `MockBridge` class (lines 62–1568); helpers in `engine/web/js/bridge/mock-*.js` | `_tickFlux`, `_computePairwiseForces` |
+| Change MockBridge physics (JS) | `engine/web/js/bridge-init.js` `MockBridge` class (lines 62–1568); helpers in `engine/web/js/bridge/mock-*.js` | `_tickFlux`, `_computePairwiseForces` |
 | Change WasmBridge bindings | `engine/wasm/ftd_wasm.cpp`, `engine/wasm/bindings_*.cpp` | `EMSCRIPTEN_BINDINGS` block |
 | Change C++ engine physics | `engine/src/render_bridge.cpp` phase methods | `phase_read`, `phase_write`, `phase_forces`, `phase_movement` |
 | Change CUDA kernels | `engine/cuda/kernels_stencil.cu`, `kernels_forces.cu`, `kernels_poisson.cu` | `phase_*_kernel` |
@@ -33,7 +33,7 @@ read [CLAUDE.md](CLAUDE.md) → read [docs/WHERE_WE_LEFT_OFF.md](docs/WHERE_WE_L
 | Find a physics derivation | `docs/theory/03_derivations/` (DERIV_*.md) | `docs/theory/META_INDEX.md` catalog |
 | Find a foundational document | `docs/theory/02_foundations/` (FOUND_*.md) | same catalog |
 | Find an audit / assessment | `docs/theory/07_assessment/` (AUDIT_*.md) | same catalog |
-| Find a load-bearing claim | `docs/theory/07_assessment/LEDGER.md` | single source of truth for claim status |
+| Find a load-bearing claim | `docs/theory/07_assessment/core_ledgers/LEDGER.md` | single source of truth for claim status |
 | Find an architectural decision | `docs/adr/` | `docs/adr/INDEX.md` |
 | Find an audit ledger | `docs/audits/` | `docs/audits/INDEX.md` |
 | Find a contract / interface spec | `CONTRACTS.md` (root) | section per contract |
@@ -164,8 +164,8 @@ ftd/
 │           │   ├── molecular-renderer.js, boundary-geometry.js
 │           │   ├── topology-sheet-renderer.js, color-ramps.js
 │           │   └── REFACTOR_MAP.md    # Phase 3 extraction guide (closed; archival reference)
-│           ├── wasm-bridge-dag.js     # 42-LOC re-export shim (Phase 2; 2395 LOC originally)
-│           ├── app_dag.js             # Main entry / orchestrator
+│           ├── bridge-init.js     # 42-LOC re-export shim (Phase 2; 2395 LOC originally)
+│           ├── app.js             # Main entry / orchestrator
 │           ├── config/toggles.js      # SCALE0_TOGGLES + scenario overrides
 │           ├── bridge/                # Bridge layer (README.md inside; Phase 2 isolated)
 │           │   ├── mock-bridge.js     # 1578 LOC — MockBridge class (Phase 2a)
@@ -223,8 +223,8 @@ graph TD
     RB <-.parity.-> Cuda
     RB --> Wasm
 
-    MockBridge["wasm-bridge-dag.js<br/>MockBridge"]
-    WasmBridge["wasm-bridge-dag.js<br/>WasmBridge"]
+    MockBridge["bridge-init.js<br/>MockBridge"]
+    WasmBridge["bridge-init.js<br/>WasmBridge"]
     BridgeHelpers["bridge/mock-*.js<br/>(live-ref factories)"]
     Capabilities["createScale0/1/2Capabilities<br/>(symmetric surface)"]
 
@@ -234,7 +234,7 @@ graph TD
     MockBridge --> Capabilities
     WasmBridge --> Capabilities
 
-    AppDag["app_dag.js<br/>(main entry)"]
+    AppDag["app.js<br/>(main entry)"]
     Scale0["scales/scale0/controller.js"]
     OtherScales["scales/scale1..11"]
     Viewport["viewport.js"]
@@ -414,7 +414,7 @@ for the full ledger; commits chained below.
 |---|---|---|---|
 | 1 | 0 — Docs scaffolding | [2db67ca](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/2db67ca) | This file + CONTRACTS.md + 9 ADRs + 7 READMEs |
 | 2 | 1 — Diagnostic struct split | [194563a](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/194563a) | `render_bridge.h` 506→369; ~30→5 TU rebuild fan-out |
-| 3 | 2a — MockBridge | [6be0a19](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/6be0a19) | `wasm-bridge-dag.js` 2395→879 |
+| 3 | 2a — MockBridge | [6be0a19](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/6be0a19) | `bridge-init.js` 2395→879 |
 | 4 | 2b — WasmBridge | [7256a14](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/7256a14) | →213 |
 | 5 | 2c — Capability factories | [c11ef96](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/c11ef96) | →42 (re-export shim) |
 | 6 | 3 prep — REFACTOR_MAP | [848e839](https://github.com/williamsteinmetz/Foundational-Ternary-Dynamics/commit/848e839) | viewport.js method map |

@@ -59,7 +59,7 @@
       "ledger_ids": ["FTD-0001", "FTD-0081"],
       "source_files": [
         "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
-        "docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md",
+        "docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md",
         "docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md",
         "scripts/proofs/proof_motivic_master_quadratic.py"
       ],
@@ -154,7 +154,7 @@
       "ledger_ids": ["FTD-0004"],
       "source_files": [
         "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
-        "docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md"
+        "docs/theory/10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md"
       ],
       "constants_py_ref": null,
       "lab_measurement": {
@@ -202,7 +202,7 @@
       "ledger_ids": ["FTD-0001", "FTD-0013"],
       "source_files": [
         "docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md",
-        "docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md",
+        "docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md",
         "docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md"
       ],
       "constants_py_ref": "ALPHA_INV",
@@ -235,7 +235,7 @@
       "epistemic_tag": "SELECTION",
       "ledger_ids": [],
       "source_files": [
-        "docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md",
+        "docs/theory/03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md",
         "docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md"
       ],
       "constants_py_ref": null,
@@ -330,7 +330,7 @@
       "ledger_ids": ["FTD-0030", "FTD-0041", "FTD-0059"],
       "source_files": [
         "docs/SPEC_FTD.md",
-        "docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md",
+        "docs/theory/10_eft_program/derivations/THEOREM_A_PHYS_NO_GO.md",
         "docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md",
         "docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md"
       ],
@@ -377,7 +377,7 @@
       "ledger_ids": ["FTD-0041", "FTD-0096"],
       "source_files": [
         "docs/SPEC_FTD.md",
-        "docs/theory/10_eft_program/THEOREM_MU_NO_GO_FTD0096.md"
+        "docs/theory/10_eft_program/derivations/THEOREM_MU_NO_GO_FTD0096.md"
       ],
       "constants_py_ref": "K_B",
       "lab_measurement": {

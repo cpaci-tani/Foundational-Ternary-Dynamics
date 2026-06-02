@@ -219,7 +219,7 @@ In D=3, these four mode types map exactly to the four forces. In D=2, the intern
 ## Cross-References
 
 - **Ladder generating rule**: [FOUND_LADDER_GENERATING_RULE.md](FOUND_LADDER_GENERATING_RULE.md)
-- **G* / ontic-chain status**: canonical theorem/status stack in [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md), [SPEC_FQCR.md](../01_reference/SPEC_FQCR.md), and [TRACKER_ONTIC_TRUTH.md](../07_assessment/TRACKER_ONTIC_TRUTH.md)
+- **G* / ontic-chain status**: canonical theorem/status stack in [SPEC_ALGEBRAIC_SPINE.md](../01_reference/SPEC_ALGEBRAIC_SPINE.md), [SPEC_FQCR.md](../01_reference/SPEC_FQCR.md), and [TRACKER_ONTIC_TRUTH.md](../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md)
 - **SU(2) weak sector**: [DERIV_LATTICE_SU2_WEAK.md](../03_derivations/DERIV_LATTICE_SU2_WEAK.md)
 - **SU(3) gauge theory**: [DERIV_LATTICE_SU3_GAUGE.md](../03_derivations/DERIV_LATTICE_SU3_GAUGE.md)
 - **Numerical verification**: `scripts/exploration/explore_force_structure.py`

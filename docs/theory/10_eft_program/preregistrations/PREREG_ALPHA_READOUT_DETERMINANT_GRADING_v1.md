@@ -4,7 +4,7 @@
 
 **Date:** 2026-05-28
 **Hash-lock target tag:** `preregister-alpha-readout-determinant-grading-v1`
-**LEDGER row reservation:** FTD-0233 (confirm next-free identifier against `../07_assessment/LEDGER.md` at hash-lock).
+**LEDGER row reservation:** FTD-0233 (confirm next-free identifier against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock).
 **Governs / refines:** the ARC-B2 (FTD-0230) and ARC-C1 (FTD-0231) attempts, on the *one* step the independent review found unjustified. It does not re-open their genuine `[THEOREM]` content.
 **Companion docs:** `SPEC_ALPHA_READOUT_CONTRACT.md` (FTD-0152), `AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md` (the review that localized this gap), `DERIV_BCC_COMPLEX_STRUCTURE.md` (FTD-0122, `V_complex ≅ Z[i]²`), `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` (Watson identity), `AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md` (FTD-0231, Gate 4).
 

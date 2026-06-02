@@ -317,7 +317,7 @@ These are *acknowledged* before measurement, not discovered after.
 **Cross-references:**
 - `../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md` — what this program aims to reduce
 - `../03_derivations/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — the conditional theorem this program tests empirically
-- `../07_assessment/TRACKER_OPEN_ITEMS.md` — [OPEN] items whose resolution is a Phase deliverable
+- `../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` — [OPEN] items whose resolution is a Phase deliverable
 - `DERIV_SYMMETRY_RECOVERY.md` (Phase 1 output) — to be written
 - `DERIV_BETA_FUNCTION_MEASURED.md` (Phase 2 output) — to be written
 - `SPEC_OPERATOR_BASIS.md` (Phase 3 input) — to be written

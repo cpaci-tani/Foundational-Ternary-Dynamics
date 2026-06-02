@@ -4,7 +4,7 @@
 
 **Date:** 2026-05-24
 **Hash-lock target tag:** `preregister-clock-hypothesis-derivation-v1`
-**LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/LEDGER.md` at hash-lock time (current top per audit 2026-05-24 is FTD-0203).
+**LEDGER row reservation:** provisional, confirm next-free against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock time (current top per audit 2026-05-24 is FTD-0203).
 **Supersedes:** none — first pre-registration on the clock hypothesis as an isolable interpretive step.
 **Companion docs:**
 - [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) §1.4 — flagged POSTULATE 2 (now reconciled to SPEC §4.3 modulo clock hypothesis)

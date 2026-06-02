@@ -2,7 +2,7 @@
 
 **Tag:** `[AUDIT]` — cross-doc tag-reconciliation verdict. Records which `[POSTULATE]` flags in `DERIV_NEWTON_FROM_SUBSTRATE.md` (2026-05-03) are subsumed by `[THEOREM]`-tagged content in `SPEC_FTD_LAGRANGIAN.md` (v3.2, 2026-03-16) + cognate docs. **Does not** promote tags in any other doc; recommends downstream housekeeping edits that should be executed as separate commits.
 **Date:** 2026-05-24
-**LEDGER row reservation:** to be confirmed against `../07_assessment/LEDGER.md` (provisional placeholder; next-free below FTD-0203).
+**LEDGER row reservation:** to be confirmed against `../07_assessment/core_ledgers/LEDGER.md` (provisional placeholder; next-free below FTD-0203).
 **Plan:** `~/.claude/plans/let-s-plan-that-as-twinkling-volcano.md` v2 (Wilsonian reframe) — Arc B P0 → P1 deliverable per `SCOPE_NEWTON_POSTULATES_RECONCILIATION.md` §5.
 **Sources read in full or in load-bearing sections:**
 - [`DERIV_NEWTON_FROM_SUBSTRATE.md`](../../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md) (2026-05-03, FTD-0131) — §0 through §8
@@ -11,7 +11,7 @@
 - [`DERIV_EINSTEIN_FIELD_EQUATIONS.md`](../../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) (2026-02-25) — Step 1 through Step 5 + Verification Checks + Claims Table EFE-1..EFE-13
 - [`../../../scripts/proofs/proof_newton_from_substrate.py`](../../../scripts/proofs/proof_newton_from_substrate.py) (239 lines)
 - [`../../../engine/include/ftd/ontic.h`](../../../engine/include/ftd/ontic.h) (umbrella header)
-- [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) — FTD-0131, FTD-0189, FTD-0026 rows (sampled)
+- [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — FTD-0131, FTD-0189, FTD-0026 rows (sampled)
 
 ---
 

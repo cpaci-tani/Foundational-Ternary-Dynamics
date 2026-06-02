@@ -2,7 +2,7 @@
 
 Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, unresolved verification tasks, and research questions. One place to look when picking work, one place to update when an item closes.
 
-**Canonical path:** `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md`.
+**Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
 **Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). (Previous: 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~202 real `[OPEN]` items across ~75 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
 
@@ -206,7 +206,7 @@ All kept safely below `K_GENESIS = 3·K_B` so no spurious genesis fires.
   in "Elementary Particles" group.
 - `engine/web/js/config/scenarios.js` — `S0_SEED_SCENARIO_METADATA` for
   both with full epistemic breakdown.
-- `engine/web/js/wasm-bridge-dag.js` — shared `case 's0-seed-muon': case 's0-seed-tau':`
+- `engine/web/js/bridge-init.js` — shared `case 's0-seed-muon': case 's0-seed-tau':`
   block using a conditional `boost` factor.
 
 ### 1.11 s-field Metropolis for thermal ternary ensembles — LEDGER FTD-0052 — **[OPEN, DEFERRED]**
@@ -545,7 +545,7 @@ Snapshot (2026-04-17):
 | `scripts/proofs/proof_partition_function_gstar.py` | 1 |
 | `scripts/exploration/explore_two_mechanism_gravity.py` | 1 |
 | `scripts/exploration/explore_five_gaps.py` | 1 |
-| `engine/web/js/wasm-bridge-dag.js` | 1 |
+| `engine/web/js/bridge-init.js` | 1 |
 | `engine/include/ftd/dag_engine.h` | 1 |
 | `docs/theory/META_INDEX.md` | 1 |
 | `docs/theory/07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md` | 1 |
