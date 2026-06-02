@@ -5,6 +5,8 @@
 **LEDGER row:** FTD-0210 (new scoping memo claim)
 **Depends on:** FTD-0152 (Alpha Readout Contract), FTD-0205 (ARC-B1 closed-negative synthesis)
 
+> **⚠ Status update (2026-06-01) — this is now a historical scoping memo; its "unattempted routes" framing and success-probability column are superseded.** All three routes below were subsequently attempted: ARC-C1 (FTD-0231/0236) and ARC-B2 (FTD-0230) returned **UNDERDETERMINED** (the initial "FOUND" was an overclaim; corrected 2026-05-28, FTD-0232/0234/0235), and ARC-A1 (FTD-0239) likewise **UNDERDETERMINED**. The obstruction is now sharpened to a **route-invariant boundary** (FTD-0242, `../../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`): 0/4 FTD-native routes force the `(Tr,Det)` operator assembly (W-CRIT-2); α is **dynamical, not structural**; the boundary is `[STRONGLY MOTIVATED CONJECTURE no-go]`, not `[THEOREM]`. MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; `x₊=1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`. The text below is preserved as provenance.
+
 ---
 
 ## 0 · Purpose and context
