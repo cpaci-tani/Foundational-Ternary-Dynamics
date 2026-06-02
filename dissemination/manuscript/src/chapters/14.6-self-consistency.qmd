@@ -366,7 +366,7 @@ This is what makes FTD scientific: it makes specific predictions that can be wro
 
 1. **Integers are selected (within constraints)**: {7, 3, 13, 4} form a self-consistent solution satisfying the stated Fibonacci constraints
 2. **Coefficient 16 derived**: From lattice DoF counting (primary derivation)
-3. **α = 1/137.036**: From master quadratic with **0.21 ppt precision** (precision formula)
+3. **α = 1/137.036**: master quadratic root *matches* 1/α to 1.26 ppm at tree level — the identification is a [STRONGLY MOTIVATED CONJECTURE], not a derivation (the "0.21 ppt" precision-formula figure is a post-hoc fit beyond CODATA precision)
 
 ### What Companion Work Extends [†]
 

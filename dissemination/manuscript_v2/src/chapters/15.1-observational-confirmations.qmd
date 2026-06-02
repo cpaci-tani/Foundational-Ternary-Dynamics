@@ -174,16 +174,16 @@ The Migdal effect was predicted by Arkady Migdal in 1941 but never directly obse
 
 ### Fine Structure Constant
 
-**Status:** [CONSISTENT TO 0.21 PPT]
+**Status:** [TREE-LEVEL MATCH TO 1.26 PPM; identification $x_+=1/\alpha$ is STRONGLY MOTIVATED CONJECTURE, not derived]
 
-The master quadratic with precision formula yields:
+The master quadratic with the (post-hoc) precision formula yields:
 $$\frac{1}{\alpha} = x_+ - \frac{9}{47}|\varepsilon| + \frac{5}{64}|\varepsilon|^2 = 137.035999...$$
 
 where $\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}$.
 
 CODATA 2022 [@codata2022]: $1/\alpha = 137.035999177(21)$
 
-Agreement to **0.21 ppt** (parts per trillion): the most precise theoretical derivation of α ever achieved. This is 6,000× better than the base 1.26 ppm derivation and depends on the selection principles (S1, S2, S3), which are argued rather than proven.
+The tree-level match is **1.26 ppm**. The $\varepsilon$-expansion above can be tuned to reproduce more CODATA digits, but this is a post-hoc fit beyond CODATA's experimental precision (~0.15 ppb), not a testable prediction — the earlier "0.21 ppt" headline is retracted. The whole identification $x_+ = 1/\alpha$ rests on the selection principles (S1, S2, S3), which are argued rather than proven; FTD does not derive α from its axioms.
 
 ---
 
@@ -414,7 +414,7 @@ The eEDM measurement **constrains** potential extensions to FTD. Any future FTD-
 | d_e ≈ 0 (no electron CP violation) | Precision tests | ✅ **CONSISTENT** (JILA eEDM 2025) |
 | No 4th generation | Particle physics | ✅ Consistent (LHC) |
 | Tensor GW only | Gravity | ✅ Consistent (LIGO) |
-| $\alpha$ = 1/137.036 | Couplings | (confirmed) (**0.21 ppt**) |
+| $\alpha$ = 1/137.036 | Couplings | (matches to **1.26 ppm**; identification [SMC], not derived) |
 | $N_c \approx 3$ | QCD | (consistent) |
 
 ::: {.callout-note}

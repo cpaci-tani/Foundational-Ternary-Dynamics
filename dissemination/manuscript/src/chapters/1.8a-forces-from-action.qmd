@@ -194,10 +194,10 @@ The **form** of the forces is derived. What about the **coefficients**?
 |-------------|-------|--------|
 | $g_c$ (state-flux coupling) | $\sim \sqrt{\alpha}$ | Derived from $\alpha$ |
 | $G_N$ (gravity) | $\sim 10^{-38}$ | [DERIVED] from hierarchy (see Chapter 1.12) |
-| $\alpha$ (EM) | $1/137.036$ | [DERIVED] from master quadratic |
+| $\alpha$ (EM) | $1/137.036$ | [SMC] master quadratic root matches 1/α to 1.26 ppm (identification not derived) |
 | $m_\pi$ (Yukawa range) | $\sim 140$ MeV | [DERIVED] from confinement scale |
 
-The derivation of $\alpha$ from the master quadratic (Chapter 1.10b) is the key result that closes the loop.
+The master quadratic's root *matches* $\alpha$ to 1.26 ppm (Chapter 1.10b); the identification $x_+ = 1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation that closes the loop.
 
 ## The Action in Full
 

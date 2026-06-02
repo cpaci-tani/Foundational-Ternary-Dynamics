@@ -141,7 +141,7 @@ Features explicitly built into the rules:
 
 We do not claim to have derived F = $kq_1q_2/r^2$ from pure geometry. We claim that **given** force-like rules, FTD produces physics-like behavior.
 
-The exception: The fine structure constant $\alpha$ IS derived from geometry (see @sec-lemniscate-alpha). This represents a genuine reduction of an imposed parameter to an emergent one.
+The closest case: a geometric master quadratic has a root that *matches* the fine structure constant $\alpha$ to 1.26 ppm (see @sec-lemniscate-alpha). The identification of that root with $1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation — FTD does not derive $\alpha$ from its axioms. It is a striking numerical match, not a reduction of $\alpha$ to geometry.
 
 ## What This Book Claims
 
