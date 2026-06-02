@@ -101,7 +101,48 @@ export class AppShell {
         });
         const snapshot = this.breakpoints.start();
         if (snapshot) this._applySnapshot(snapshot);
+        // Must run after breakpoints (layout mode must be set first so CSS grid
+        // is already active when we measure the visual viewport).
+        this._initVisualViewport();
         return this;
+    }
+
+    /**
+     * Track the visual viewport separately from the layout viewport.
+     *
+     * Mobile browsers (Edge Mobile, Chrome on Android, Safari on iOS) have a
+     * persistent or intermittently-visible navigation bar at the bottom. This bar
+     * shrinks the *visual* viewport (what the user actually sees) below the *layout*
+     * viewport (window.innerHeight / 100vh).  CSS `dvh` accounts for this at the
+     * page-height level, but fixed-position elements that use `bottom: 0` need to
+     * know the *current* bottom offset to avoid overlapping the browser chrome.
+     *
+     * This listener writes two CSS custom properties onto <html> (so every element
+     * can read them):
+     *   --visual-viewport-height  the actual visible window height in px
+     *   --browser-nav-inset       the height of the bottom browser chrome in px
+     *                             (0 on desktop / when chrome is hidden)
+     *
+     * These are consumed by the mobile bottom-sheet panel and the tab bar in
+     * responsive.css via max(env(safe-area-inset-bottom), var(--browser-nav-inset)).
+     */
+    _initVisualViewport() {
+        if (!window.visualViewport) return;
+        const root = document.documentElement;
+        const update = () => {
+            const vvh = Math.round(window.visualViewport.height);
+            const lvh = window.innerHeight;
+            // The gap between layout-viewport height and visual-viewport height
+            // equals the browser chrome (address bar + persistent nav bar).
+            // offsetTop handles the case where the visual viewport has scrolled
+            // down relative to the layout viewport (uncommon but possible).
+            const navInset = Math.max(0, lvh - vvh - Math.round(window.visualViewport.offsetTop));
+            root.style.setProperty('--visual-viewport-height', `${vvh}px`);
+            root.style.setProperty('--browser-nav-inset', `${navInset}px`);
+        };
+        window.visualViewport.addEventListener('resize', update, { passive: true });
+        window.visualViewport.addEventListener('scroll', update, { passive: true });
+        update(); // set immediately so first paint is already correct
     }
 
     setReady() {

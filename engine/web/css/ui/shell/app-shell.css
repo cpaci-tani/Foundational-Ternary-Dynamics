@@ -1,5 +1,28 @@
-/* Phase 0 shell scaffold: annotate existing regions and reserve future
-   component mounts without changing the current visual ownership yet. */
+/* ── Shell layout: CSS Grid with proper mobile viewport height ───────────────
+ *
+ * WHY GRID INSTEAD OF STACKED ABSOLUTES:
+ *   Stacked absolute children gave #app no intrinsic height, so it defaulted
+ *   to 0/auto — meaning the canvas filled "100% of nothing" on mobile.  With
+ *   a persistent bottom browser nav bar (Edge Mobile, older Chrome on Android)
+ *   the visual viewport is shorter than 100vh; absolute children clipped into
+ *   or behind that bar.  A grid with height: 100dvh constrains #app to the
+ *   actual visible height, and the 1fr viewport row absorbs whatever is left
+ *   after the chrome rows take their natural height.
+ *
+ * GRID ROWS:
+ *   toolbar  — auto (measured by ResizeObserver via --toolbar-h)
+ *   viewport — 1fr  (all remaining space → the 3D canvas)
+ *   tabs     — auto (tab/workspace switcher bar)
+ *   status   — auto (status-bar footer)
+ *
+ * PANEL-AREA & TOAST stay position:fixed (viewport-anchored) — unchanged.
+ * SKIP-LINK and #btn-toggle-ui stay position:fixed — unchanged.
+ *
+ * VISUAL VIEWPORT CUSTOM PROPERTIES:
+ *   --visual-viewport-height  set by visualViewport listener (app-shell.js)
+ *   --browser-nav-inset       = window.innerHeight - visualViewport.height
+ *   Both are used by panels/tab-bar to add padding above persistent chrome.
+ */
 
 /* ── Layout tokens updated by JS ────────────────────────────────────────── */
 /* --toolbar-h is set live by TopbarComponent's ResizeObserver so that all
@@ -13,8 +36,101 @@
     initial-value: 0px;
 }
 
+/* The visual-viewport listener (app-shell.js) writes these on <html>. */
+@property --visual-viewport-height {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 100dvh;
+}
+@property --browser-nav-inset {
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+}
+
 #app {
+    /* ── Grid shell ── */
+    /* Default (desktop/tablet): 2-row grid — toolbar + canvas.
+     * Tab-bar and status-bar remain position:absolute overlays on desktop,
+     * exactly as before. The grid exists primarily to give #app a concrete
+     * height (dvh) so the canvas fills the actual visible window. */
+    display: grid;
+    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr;
+
+    /* Use dvh/svh (with vh fallback from tokens.css) so the shell height
+       matches the actual visible browser window, not the layout viewport.
+       This prevents content from sliding behind Edge Mobile's bottom nav bar. */
+    height: var(--app-height);
+    min-height: var(--app-min-height);
+    overflow: hidden;
+
+    /* Visual-viewport defaults (overridden immediately by JS listener) */
+    --visual-viewport-height: var(--app-height);
+    --browser-nav-inset: 0px;
+
+    /* Keep existing toolbar-h seed (overwritten by ResizeObserver) */
     --toolbar-h: calc(48px * var(--ui-scale));
+}
+
+/* ── Toolbar: always the first grid row ──────────────────────────────────── */
+/* position:relative overrides topbar.css's position:absolute so the element
+   participates in the grid track sizing (absolutely-positioned items don't). */
+#toolbar {
+    grid-row: 1;
+    position: relative !important;
+    top: unset !important; left: unset !important;
+    width: 100%;
+}
+
+/* ── Viewport: always the second grid row (1fr = fills remaining space) ───── */
+#viewport {
+    grid-row: 2;
+    position: relative !important;
+    top: unset !important; left: unset !important;
+    overflow: hidden;
+    min-height: 0;   /* critical: prevents canvas from expanding the 1fr row */
+    width: 100%;
+}
+
+/* ── Tab-bar and status-bar: desktop stays as positioned overlays ─────────── */
+/* On desktop/tablet, these float over the canvas exactly as before — the canvas
+   fills the full area below the toolbar, and the status-bar/tab-bar overlay it
+   from the bottom. This matches the original design intent. */
+
+/* ── Mobile (compact modes only): 4-row grid for browser-nav-bar safety ─────
+ * On mobile we push tab-bar and status-bar OUT of the canvas into their own
+ * grid rows BELOW the canvas.  This means:
+ *   - the canvas ends before the browser nav bar (not behind it)
+ *   - the status bar is visible above the nav bar
+ *   - the bottom-sheet panel and tab strip sit in proper grid rows
+ *
+ * The data-layout-mode^="compact" selector matches both compact-sm (≤479px)
+ * and compact-lg (≤767px) from layout-state.js. */
+#app[data-layout-mode^="compact"] {
+    grid-template-rows: auto 1fr auto auto; /* toolbar | canvas | tabs | status */
+    grid-template-areas:
+        "toolbar"
+        "viewport"
+        "tabs"
+        "status";
+}
+
+/* position:relative + grid-area pull these out of positioned-overlay mode
+   and into grid-flow so they size the auto rows properly. !important beats
+   position:absolute in the component CSS (topbar.css, workspace-tabs.css…). */
+#app[data-layout-mode^="compact"] #tab-bar {
+    grid-area: tabs;
+    position: relative !important;
+    top: unset !important; left: unset !important;
+    bottom: unset !important; right: unset !important;
+    width: 100%;
+}
+#app[data-layout-mode^="compact"] #status-bar {
+    grid-area: status;
+    position: relative !important;
+    bottom: unset !important; left: unset !important;
+    width: 100%;
 }
 
 #app[data-shell-ready="true"] {
@@ -129,7 +245,7 @@ html.ui-hidden #viewport {
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
-    height: 100vh !important;
+    height: 100dvh !important; /* dvh: fills actual visible window (not behind browser chrome) */
     z-index: 99999 !important;
     margin: 0 !important;
     padding: 0 !important;
