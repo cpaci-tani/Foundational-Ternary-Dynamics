@@ -9,9 +9,9 @@
 .pe-conservation-row {
     display: grid; grid-template-columns: 50px 1fr 20px 80px;
     align-items: center; gap: 6px; margin-bottom: 4px;
-    font-family: var(--font-mono); font-size: 12px;
+    font-family: var(--font-mono); font-size: var(--fs-sm);
 }
-.pe-cons-label { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pe-cons-label { color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.5px; }
 .pe-cons-value { color: var(--text-primary); }
 .pe-cons-alarm { width: 8px; height: 8px; border-radius: 50%; background: transparent; }
 .pe-cons-alarm.alarm-green { background: var(--positive); }
@@ -21,17 +21,17 @@
 .pe-telem-details { margin-top: 10px; }
 .pe-telem-details summary { cursor: pointer; }
 .pe-telem-summary {
-    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    font-size: var(--fs-sm); font-weight: 600; text-transform: uppercase;
     letter-spacing: 0.8px; color: var(--text-secondary);
     padding: 4px 0; border-bottom: 1px solid var(--border);
 }
 .pe-table-wrap { max-height: 200px; overflow-y: auto; }
 .pe-table {
-    width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 11px;
+    width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--fs-sm);
 }
 .pe-table th {
     position: sticky; top: 0; background: var(--bg-surface);
-    color: var(--text-muted); font-size: 9px; text-transform: uppercase;
+    color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase;
     letter-spacing: 0.5px; padding: 4px 6px; text-align: right;
     border-bottom: 1px solid var(--border);
 }
@@ -42,7 +42,7 @@
 }
 .pe-table tr:hover { background: var(--state-hover-bg); }
 .pe-ts-label {
-    font-size: 10px; color: var(--text-muted); margin-top: 6px; margin-bottom: 2px;
+    font-size: var(--fs-xs); color: var(--text-muted); margin-top: 6px; margin-bottom: 2px;
 }
 .pe-ts-chart { width: 100%; height: 60px; }
 
@@ -66,11 +66,11 @@
     margin-bottom: 8px;
 }
 .pe-insp-name {
-    font-size: 16px;
+    font-size: var(--fs-md);
     font-weight: 600;
 }
 .pe-insp-symbol {
-    font-size: 14px;
+    font-size: var(--fs-base);
     font-weight: 500;
     color: var(--accent);
 }
@@ -82,3 +82,15 @@
 .field-swatch-pe-potential  { background: linear-gradient(90deg, #ef5350, #42a5f5); }
 .field-swatch-pe-gravity    { background: #78909c; }
 .field-swatch-pe-forces     { background: #66bb6a; }
+
+/* ── Responsive: compact phones ─────────────────────────────────────────── */
+/* The conservation row reserves 150px across three fixed columns (label /
+   alarm / sparkline), which squeezes the 1fr value column on a phone-width
+   rail. Shrink the fixed reserves so the numeric value keeps room; the
+   sparkline stays informative at a smaller width. Desktop is untouched. */
+@media (max-width: 479px) {
+    .pe-conservation-row {
+        grid-template-columns: 40px 1fr 16px 56px;
+        gap: 4px;
+    }
+}

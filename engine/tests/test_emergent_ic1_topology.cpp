@@ -128,6 +128,7 @@ void run_ic1_diagonal_amplitude(int L, std::uint32_t seed, double amp_in_K_GENES
     rb.toggles.gauss_projection = true;
     rb.toggles.genesis          = true;
     rb.toggles.langevin         = true;
+    rb.toggles.coupling         = true;
     rb.toggles.langevin_T       = 0.005;
     rb.toggles.langevin_gamma   = 0.02;
     rb.toggles.dual_substrate   = false;
@@ -152,6 +153,7 @@ void run_ic1_amplitude(int L, std::uint32_t seed, double amp_in_K_GENESIS,
     rb.toggles.gauss_projection = true;
     rb.toggles.genesis          = true;
     rb.toggles.langevin         = true;
+    rb.toggles.coupling         = true;
     rb.toggles.langevin_T       = 0.005;
     rb.toggles.langevin_gamma   = 0.02;
     rb.toggles.dual_substrate   = false;

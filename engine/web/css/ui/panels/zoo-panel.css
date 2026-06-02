@@ -4,7 +4,7 @@
 .zoo-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: var(--fs-sm);
 }
 
 .zoo-table th {
@@ -16,7 +16,7 @@
     color: var(--text-muted);
     padding: 6px 8px;
     border-bottom: 1px solid var(--border);
-    font-size: 10px;
+    font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     background: var(--bg-surface);
@@ -33,7 +33,7 @@
 
 .zoo-cat-header td {
     font-weight: 600;
-    font-size: 11px;
+    font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.6px;
     padding: 8px 8px 4px;
@@ -51,24 +51,24 @@
 
 .zoo-symbol {
     font-weight: 600;
-    font-size: 13px;
+    font-size: var(--fs-sm);
 }
 
 .zoo-mass {
     font-family: var(--font-mono);
     color: var(--accent);
-    font-size: 11px;
+    font-size: var(--fs-xs);
 }
 
 .zoo-formula {
-    font-size: 10px;
+    font-size: var(--fs-xs);
     color: var(--text-muted);
     max-width: 200px;
 }
 
 .zoo-accuracy {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-xs);
 }
 
 /* ── Zoo inject button (moved from primitives/button.css in Phase D) ─── */
@@ -96,4 +96,14 @@
 .zoo-inject-btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
+}
+
+/* Touch target: the 28px circular inject button is below the 44px tap floor
+ * on phones. Grow it (and keep it round) for coarse pointers. */
+@media (max-width: 767px) {
+    .zoo-inject-btn {
+        width: var(--tap-min);
+        height: var(--tap-min);
+        min-height: var(--tap-min);
+    }
 }

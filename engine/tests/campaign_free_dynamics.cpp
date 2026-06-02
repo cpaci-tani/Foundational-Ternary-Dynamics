@@ -563,6 +563,7 @@ int main() {
     {
         const int L = 48;
         ftd::RenderBridge rb(L);
+        rb.toggles.genesis = false;
         int mid = L / 2;
 
         double iso = ftd::K_B / std::sqrt(3.0);

@@ -21,7 +21,7 @@
     gap: 10px;
     padding: 8px 12px;
     border-radius: var(--radius-lg);
-    font-size: 11px;
+    font-size: var(--fs-xs);
     line-height: 1.4;
     background: var(--bg-elevated);
     backdrop-filter: blur(12px);
@@ -36,13 +36,22 @@
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 16px;
+    font-size: var(--fs-md);
     padding: 0 2px;
     line-height: 1;
 }
 
 .toast button:hover {
     color: var(--text-primary);
+}
+
+/* Touch target — the toast dismiss button is a small icon glyph; give it a
+   square tap floor on phones. */
+@media (max-width: 767px) {
+    .toast button {
+        min-width: var(--tap-min);
+        min-height: var(--tap-min);
+    }
 }
 
 /* ── Toast variants ──────────────────────────────────── */

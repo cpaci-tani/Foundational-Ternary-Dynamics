@@ -10,12 +10,18 @@
     border-radius: var(--radius);
     color: var(--text-primary);
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: var(--fs-sm);
 }
 
 .ctrl-input:focus {
     outline: none;
     border-color: var(--accent);
+}
+
+/* Touch target — 30px text field lifts to the tap floor on phones (full-width,
+   height only). */
+@media (max-width: 767px) {
+    .ctrl-input { min-height: var(--tap-min); }
 }
 
 /* ── Control row / label (.ctrl-row, .ctrl-label) ─────── */
@@ -27,7 +33,7 @@
 }
 
 .ctrl-label {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     color: var(--text-muted);
     min-width: 60px;
 }
@@ -41,14 +47,14 @@
 }
 
 .pe-ctrl-label {
-    font-size: 11px;
+    font-size: var(--fs-xs);
     color: var(--text-muted);
     min-width: 70px;
 }
 
 .pe-ctrl-value {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-xs);
     color: var(--accent);
     min-width: 40px;
     text-align: right;
@@ -62,7 +68,13 @@
     border: 1px solid var(--border);
     border-radius: 2px;
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: var(--fs-xs);
+}
+
+/* Touch target — narrow coordinate field keeps its 36px width (compact inline
+   layout) but reaches the tap floor in height on phones. */
+@media (max-width: 767px) {
+    .insp-pos-input { min-height: var(--tap-min); }
 }
 
 /* ── Toggle row (field container with checkbox label) ─── */
@@ -74,9 +86,15 @@
 }
 
 .toggle-row label {
-    font-size: 12px;
+    font-size: var(--fs-sm);
     color: var(--text-secondary);
     cursor: pointer;
+}
+
+/* Touch target — the whole row (checkbox + label) is the tap unit; give it the
+   WCAG floor height on phones rather than inflating the 16px checkbox glyph. */
+@media (max-width: 767px) {
+    .toggle-row { min-height: var(--tap-min); }
 }
 
 /* Scenario override indicator (gold left border) */
@@ -90,7 +108,7 @@
 .toggle-advanced summary {
     list-style: none;
     cursor: pointer;
-    font-size: 9px;
+    font-size: var(--fs-xs);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.6px;
@@ -100,8 +118,14 @@
     user-select: none;
 }
 .toggle-advanced summary::-webkit-details-marker { display: none; }
-.toggle-advanced summary::after { content: ' \25B8'; font-size: 8px; }
+.toggle-advanced summary::after { content: ' \25B8'; font-size: var(--fs-xs); }
 .toggle-advanced[open] summary::after { content: ' \25BE'; }
+
+/* Touch target — the advanced-disclosure summary is a tiny clickable row;
+   raise it to the tap floor on phones. */
+@media (max-width: 767px) {
+    .toggle-advanced summary { min-height: var(--tap-min); }
+}
 
 /* ── Slider rows in control cards ────────────────────── */
 .ctrl-slider-row {
@@ -183,7 +207,7 @@
     background: transparent;
     border: none;
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: var(--fs-xs);
     line-height: 0.8;
     letter-spacing: 0;
     cursor: pointer;
@@ -216,8 +240,13 @@
 /* ── Compact / dense buttons ─────────────────────────── */
 .ctrl-btn-compact {
     padding: var(--row-pad-y) var(--sp-sm);
-    font-size: 10px;
+    font-size: var(--fs-xs);
     min-width: 0;
+}
+
+/* Touch target — dense buttons reach the tap floor on phones. */
+@media (max-width: 767px) {
+    .ctrl-btn-compact { min-height: var(--tap-min); }
 }
 
 /* ── Flex helpers specific to control layouts ─────────── */
@@ -227,7 +256,7 @@
 /* Dim footnote inside control cards */
 .ctrl-footnote {
     margin-top: var(--sp-sm);
-    font-size: 10px;
+    font-size: var(--fs-xs);
     color: var(--text-muted);
     opacity: 0.7;
     display: flex;
@@ -245,7 +274,7 @@
     color: var(--text-muted);
     border-radius: 4px;
     padding: 2px 8px;
-    font-size: 10px;
+    font-size: var(--fs-xs);
     cursor: pointer;
     font-family: inherit;
     transition: background 120ms, color 120ms, border-color 120ms;
@@ -253,6 +282,11 @@
 .ctrl-reset-btn:hover {
     color: var(--text-primary, #d0d8f0);
     border-color: rgba(120, 140, 200, 0.45);
+}
+
+/* Touch target — the reset pill reaches the tap floor on phones. */
+@media (max-width: 767px) {
+    .ctrl-reset-btn { min-height: var(--tap-min); }
 }
 .ctrl-reset-flash {
     background: rgba(110, 200, 140, 0.22);
@@ -292,7 +326,7 @@
 .sel-axis-btn {
     flex: 1;
     padding: 4px 2px;
-    font-size: 11px;
+    font-size: var(--fs-xs);
     font-weight: 600;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.12);
@@ -306,4 +340,10 @@
 }
 .sel-axis-btn:active {
     background: rgba(255,255,255,0.2);
+}
+
+/* Touch target — axis-nav buttons split a row (flex:1); raise height to the
+   tap floor on phones. */
+@media (max-width: 767px) {
+    .sel-axis-btn { min-height: var(--tap-min); }
 }

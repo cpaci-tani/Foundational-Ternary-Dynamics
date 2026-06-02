@@ -77,6 +77,7 @@ int main() {
     rb.toggles.gauss_projection = true;
     rb.toggles.genesis          = true;
     rb.toggles.langevin         = true;
+    rb.toggles.coupling         = true;
     rb.toggles.langevin_T       = 0.005;
     rb.toggles.langevin_gamma   = 0.02;
 

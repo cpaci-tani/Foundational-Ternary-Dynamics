@@ -14,6 +14,13 @@
     font-size: var(--fs-sm);
     color: var(--text-secondary);
     pointer-events: none;
+    /* The legend grows with the active element set; cap it to the viewport
+       so a long list scrolls inside the panel instead of running off-screen
+       or past the bottom edge. */
+    max-width: min(260px, calc(100vw - 24px));
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .ae-legend-item {
@@ -40,7 +47,7 @@
 
 .ae-legend-name {
     color: var(--text-muted);
-    font-size: 10px;
+    font-size: var(--fs-xs);
 }
 
 .ae-legend-sep {
@@ -50,7 +57,7 @@
 }
 
 .ae-legend-header {
-    font-size: 9px;
+    font-size: var(--fs-xs);
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -64,3 +71,14 @@
 .ae-legend-swatch-orb-p    { background: #4de673; }
 .ae-legend-swatch-orb-d    { background: #ffb333; }
 .ae-legend-swatch-orb-f    { background: #d94db3; }
+
+/* ── Responsive: compact phones ─────────────────────────────────────────── */
+/* On phones the toolbar eats more vertical space, so tighten the legend cap
+   and keep it clear of the right edge. Internal scroll keeps long lists
+   reachable. Desktop is untouched. */
+@media (max-width: 767px) {
+    .ae-legend {
+        max-width: min(200px, calc(100vw - 24px));
+        max-height: calc(100vh - 140px);
+    }
+}
