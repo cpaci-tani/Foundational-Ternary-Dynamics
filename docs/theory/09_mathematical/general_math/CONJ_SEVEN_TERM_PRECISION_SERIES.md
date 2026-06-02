@@ -227,7 +227,7 @@ eps = e**pi - pi - 20
 absEps = abs(eps)
 
 # Master quadratic
-Gstar = mpf('2.9586751191124372375...')
+Gstar = mpf('2.9586751191886388923...')
 xplus = 8*Gstar**2 + 4*Gstar**(mpf(3)/2) * sqrt(4*Gstar - 1)
 
 # Seven-term sum
