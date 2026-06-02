@@ -10,12 +10,12 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <!-- Modular CSS Architecture (Phase 0) -->
-    <link rel="stylesheet" href="css/tokens.css?v=7">
+    <link rel="stylesheet" href="css/tokens.css?v=8">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/scale-visibility.css">
     <link rel="stylesheet" href="css/ui/shell/app-shell.css">
     <link rel="stylesheet" href="css/ui/shell/regions.css">
-    <link rel="stylesheet" href="css/ui/shell/responsive.css">
+    <link rel="stylesheet" href="css/ui/shell/responsive.css?v=5">
     <link rel="stylesheet" href="css/ui/shell/z-layers.css">
     <link rel="stylesheet" href="css/ui/components/loading-overlay.css">
     <link rel="stylesheet" href="css/ui/components/topbar.css">
@@ -56,7 +56,7 @@
     <link rel="stylesheet" href="css/ui/primitives/toast.css">
     <!-- Panel CSS (Phase 4) -->
     <link rel="stylesheet" href="css/ui/panels/diagnostics-panel.css?v=7">
-    <link rel="stylesheet" href="css/ui/panels/charts-panel.css?v=7">
+    <link rel="stylesheet" href="css/ui/panels/charts-panel.css?v=8">
     <link rel="stylesheet" href="css/ui/panels/telemetry-grid.css">
     <link rel="stylesheet" href="css/ui/panels/inspector-panel.css?v=2">
     <link rel="stylesheet" href="css/ui/panels/lagrangian-panel.css?v=4">
@@ -86,11 +86,22 @@
 <body>
     <script>
         // Pre-paint hydration of html[data-panel-mount] to avoid FOUC.
+        // Mirrors js/ui/shell/panel-mount-state.js: default 'left', one-time
+        // version reset, and width-aware so phones start as a bottom-sheet (a
+        // side mount needs >= 1024px) without a left-dock flash on first paint.
         (function () {
             try {
-                var stored = localStorage.getItem('ftd.panel.mount');
+                var MOUNT_KEY = 'ftd.panel.mount', VKEY = 'ftd.panel.mount.version', VER = '2';
+                if (localStorage.getItem(VKEY) !== VER) {
+                    localStorage.removeItem(MOUNT_KEY); // force the new default once
+                    localStorage.setItem(VKEY, VER);
+                }
+                var stored = localStorage.getItem(MOUNT_KEY);
                 var valid = stored === 'left' || stored === 'bottom' || stored === 'right';
-                document.documentElement.dataset.panelMount = valid ? stored : 'bottom';
+                var pref = valid ? stored : 'left'; // new default
+                var isSide = pref === 'left' || pref === 'right';
+                var effective = (isSide && window.innerWidth < 1024) ? 'bottom' : pref;
+                document.documentElement.dataset.panelMount = effective;
             } catch (_e) {
                 document.documentElement.dataset.panelMount = 'bottom';
             }

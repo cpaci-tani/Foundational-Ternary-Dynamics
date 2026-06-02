@@ -1434,7 +1434,10 @@ function wireKeyboard() {
 
     // ── Scale ──
     function applyScale(s) {
-        root.style.setProperty('--ui-scale', s);
+        // Write the USER knob (--ui-scale-base). The effective --ui-scale is
+        // derived in tokens.css (= base) and may be multiplied per-breakpoint
+        // in responsive.css (mobile = base × 1.2) without losing this setting.
+        root.style.setProperty('--ui-scale-base', s);
         if (slider) slider.value = s;
         if (valDisplay) valDisplay.textContent = Math.round(s * 100) + '%';
         document.querySelectorAll('.settings-preset').forEach(b => {
