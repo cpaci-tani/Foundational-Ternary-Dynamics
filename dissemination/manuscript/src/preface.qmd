@@ -26,7 +26,7 @@ This book presents a tightly specified discrete framework and a derivation progr
 
 In particular, from the four framework integers and stated constraints (with explicit "core vs companion" scope separation), the text reports:
 
-- The fine structure constant $\alpha$ = 1/137.036 (**0.21 ppt precision** with correction formula)
+- A master-quadratic root that *matches* the fine structure constant $\alpha$ = 1/137.036 to **1.26 ppm** at tree level (the identification $x_+=1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation; the earlier "0.21 ppt" figure is a post-hoc fit beyond CODATA precision)
 - All 15 Standard Model particle masses (<0.5% average error)
 - The cosmological constant $\Lambda/\Lambda_{\text{Planck}}$ = $10^{-121.8}$ (0.16% error)
 - Why there are exactly 3 generations of fermions
@@ -44,8 +44,8 @@ This book achieves foundational completeness within its assumptions. All seven t
 
 | Gap | Resolution | Status |
 |-----|------------|--------|
-| **C1**: Why $x_+$ = $1/\alpha$ | CM selection uniqueness | [T] **PROVEN** |
-| **C2**: Why x₋ → N_c = 3 | RG flow + topological quantization | [T] **PROVEN** |
+| **C1**: Why $x_+$ = $1/\alpha$ | Root matches $1/\alpha$ to 1.26 ppm; CM selection + uniqueness scans | [SMC] (identification not derived) |
+| **C2**: Why x₋ → N_c = 3 | Root matches 3 to 0.80%; $N_c=3$ independently derived | [SMC] (identification not derived) |
 | **A1**: Why D = 3 | 6 independent constraints | [T] **DERIVED** |
 | GR coefficient | Discrete Laplacian → $8\pi G$ | [†] **COMPLETE** |
 | Inflation | Starobinsky from sub-threshold flux | [†] **DERIVED** |

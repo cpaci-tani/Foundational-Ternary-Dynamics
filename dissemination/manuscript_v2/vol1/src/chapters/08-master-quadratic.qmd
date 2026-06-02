@@ -1,6 +1,6 @@
 # The Master Quadratic {#sec-quadratic}
 
-The gap equation is the self-consistency condition of the lattice: the coupling constant determined by the lattice's own Green's function must reproduce the lattice dynamics that generated it. Its solutions are the fine structure constant and the number of colors.
+The gap equation is the self-consistency condition of the lattice: the coupling constant determined by the lattice's own Green's function must reproduce the lattice dynamics that generated it. Its two roots *match* the inverse fine structure constant and the number of colors; those physical identifications are [STRONGLY MOTIVATED CONJECTURE]s (Chapter 9), not derivations of $\alpha$ or $N_c$.
 
 ## The coefficient $K = 16$ [THEOREM]
 
@@ -104,4 +104,4 @@ The master quadratic encodes the entire coupling structure of the Standard Model
 - $K = 16$ from degree-of-freedom counting (Section 8.1)
 - Self-consistency from the gap equation structure (Section 8.6)
 
-From these two numbers ($\Gs$ and 16), the fine structure constant, the number of quark colors, and all derived coupling constants follow. This is the content of Book II.
+From these two numbers ($\Gs$ and 16), the master quadratic's roots are fixed exactly. Their *identification* with the fine structure constant, the number of quark colors, and the derived coupling constants is the [STRONGLY MOTIVATED CONJECTURE] developed in Book II — the roots match the physical values, but FTD does not derive $\alpha$ from its axioms.

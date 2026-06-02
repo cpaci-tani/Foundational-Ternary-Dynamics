@@ -74,12 +74,12 @@ $$
 |----------|-------|
 | Symbol | $\alpha$ |
 | Value | 0.007297 |
-| Nature | [T+] **DERIVED** |
-| Derivation | Larger root of master quadratic |
-| Base Accuracy | 1.26 ppm |
-| **Precision Formula** | **0.21 ppt** (6,000× better) |
+| Nature | [SMC] **STRONGLY MOTIVATED CONJECTURE** (master quadratic [T]; identification not derived) |
+| Source | Larger root of master quadratic *matches* 1/α |
+| Tree-level match | 1.26 ppm |
+| Precision Formula | ε-expansion (post-hoc fit beyond CODATA precision; "0.21 ppt" is not an achieved accuracy) |
 
-The fine structure constant emerges from the self-consistency requirement of the Lemniscate-Alpha curve. The **precision formula** adds corrections from conformal field theory:
+The master quadratic's larger root matches the fine structure constant to 1.26 ppm; the identification $x_+ = 1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation. The **precision formula** below adds an ε-expansion (conformal-field-theory-style corrections) that can reproduce additional CODATA digits, but only as a post-hoc fit:
 
 $$\frac{1}{\alpha} = x_+ - \frac{9}{47}|\varepsilon| + \frac{5}{64}|\varepsilon|^2$$
 
@@ -375,7 +375,7 @@ ALPHA_S = B3 / (B3**2 + B3 + NC)           # = 7/59
 ### Derived Constants
 | Constant | Value | Accuracy |
 |----------|-------|----------|
-| $\alpha$ | 1/137.036 | 0.21 ppt (precision) |
+| $\alpha$ | 1/137.036 | 1.26 ppm tree-level match ([SMC]; 0.21 ppt is post-hoc fit) |
 | $m_e$ | $70\alpha$ | 0.036% |
 | α_G(e,e) | 1.745×10⁻⁴⁵ | 0.38% (FTD-0131, postulate-conditional) |
 | $\phi$ | $(1+\sqrt{5})/2$ | exact |

@@ -4,7 +4,7 @@
 
 ::: {.callout-important}
 ## The Central Claim
-This chapter presents a constructive route from a specified geometric object (the Lemniscate-Alpha curve) and a stated constraint set to a master quadratic whose electromagnetic root reproduces the observed fine structure constant $\alpha \approx 1/137$ to **0.21 parts per trillion precision**: the most accurate theoretical derivation of $\alpha$ ever achieved.
+This chapter presents a constructive route from a specified geometric object (the Lemniscate-Alpha curve) and a stated constraint set to a master quadratic whose electromagnetic root **matches** the observed fine structure constant $\alpha \approx 1/137$ to **1.26 ppm** at tree level. The identification of this root with $1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation of $\alpha$ from the axioms (see the epistemic note below).
 :::
 
 ::: {.callout-warning}
@@ -16,12 +16,12 @@ We do **not** claim:
 2. That these integers are derived from more fundamental principles
 3. That this constitutes a prediction of $\alpha$ (the constraint set was constructed knowing the target)
 
-The proper characterization is: **self-consistent fit within a structured framework**: more principled than pure numerology, less certain than a parameter-free prediction. The extraordinary precision (**0.21 ppt** with the precision formula, 6,000× better than the 1.26 ppm base derivation) may reflect deep structure or may be an artifact of fitting flexibility within the constraint space.
+The proper characterization is: **self-consistent fit within a structured framework**: more principled than pure numerology, less certain than a parameter-free prediction. The tree-level match is **1.26 ppm**. The earlier "0.21 ppt" figure (from the $\varepsilon$-expansion precision formula) is retracted as a headline result: it is a post-hoc fit beyond CODATA's experimental precision, so the extra digits cannot be tested as a prediction.
 :::
 
 ::: {.callout-note collapse="true"}
 ## Historical Context
-The fine structure constant $\alpha$ was first identified by Arnold Sommerfeld in 1916 while extending Bohr's atomic model to include relativistic corrections. Wolfgang Pauli spent decades searching for a derivation, reportedly asking on his deathbed why $\alpha \approx 1/137$. Arthur Eddington proposed (incorrectly) that $\alpha = 1/136$ from numerological arguments. Richard Feynman called it "one of the greatest damn mysteries of physics." This chapter presents a geometric derivation achieving **0.21 ppt accuracy** (parts per trillion): the most precise theoretical derivation of $\alpha$'s value ever achieved, and potentially the first principled explanation for this fundamental constant.
+The fine structure constant $\alpha$ was first identified by Arnold Sommerfeld in 1916 while extending Bohr's atomic model to include relativistic corrections. Wolfgang Pauli spent decades searching for a derivation, reportedly asking on his deathbed why $\alpha \approx 1/137$. Arthur Eddington proposed (incorrectly) that $\alpha = 1/136$ from numerological arguments. Richard Feynman called it "one of the greatest damn mysteries of physics." This chapter presents a geometric master quadratic whose root *matches* $\alpha$ to **1.26 ppm** at tree level. The identification $x_+ = 1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation — FTD does not explain why $\alpha$ takes its value. (The "0.21 ppt" figure that an ε-expansion can reach is a post-hoc fit beyond CODATA's experimental precision, not an achieved accuracy.)
 :::
 
 ::: {.callout-note}
@@ -160,9 +160,9 @@ $$\alpha = \frac{1}{137.036}$$
 
 ## The Alpha Precision Formula (v5.4) {#sec-alpha-precision}
 
-::: {.callout-important}
-## Sub-ppb Precision
-The standard derivation achieves 1.26 ppm accuracy. A precision correction achieves **0.21 ppt** (parts per trillion) accuracy, far exceeding experimental precision.
+::: {.callout-warning}
+## On the "Sub-ppb Precision" Claim (retracted as a prediction)
+The tree-level match is 1.26 ppm. The $\varepsilon$-expansion below can be tuned to reproduce the CODATA digit-string to arbitrary depth, but this is a **post-hoc fit beyond CODATA's experimental precision** (~0.15 ppb), not a testable prediction. The "0.21 ppt" figure is retained here only to show the expansion's form; it must **not** be read as an achieved accuracy.
 :::
 
 ### The Correction Term
@@ -184,7 +184,7 @@ $$\frac{1}{\alpha} = 137.0361714582 - \frac{9}{47}(0.0009) + \frac{5}{64}(0.0009
 **Comparison:**
 - CODATA 2022: $1/\alpha$ = 137.035999177(21)
 - FTD precision: $1/\alpha$ = 137.035999177029...
-- Error: **0.21 ppt** (parts per trillion)
+- Nominal residual: **0.21 ppt** — but note this is a post-hoc fit beyond CODATA's ~0.15 ppb experimental precision (see the caveat above); the testable match is the tree-level **1.26 ppm**, not this figure.
 
 ### Why These Coefficients?
 
@@ -234,7 +234,7 @@ This derivation changes the status of constants in our framework:
 
 | Constant | Previous Status | New Status | Scope |
 |----------|-----------------|------------|-------|
-| ALPHA | Tuned parameter | **DERIVED** | Core paper |
+| ALPHA | Tuned parameter | **[STRONGLY MOTIVATED CONJECTURE]** (root matches $1/\alpha$ to 1.26 ppm; not derived) | Core paper |
 | C | Axiomatic | Axiomatic | Core paper |
 | H | Axiomatic | Axiomatic | Core paper |
 | KB | Phenomenological | **DERIVED** [†] | Companion |
@@ -834,8 +834,8 @@ No broader claim is made here about uniqueness outside the stated constraint cla
 
 | Category | Count | Best Accuracy | Status |
 |----------|-------|---------------|--------|
-| Coupling constants ($\alpha$) | 1 | 1.26 ppm | [T] THEOREM |
-| N_c from quadratic | 1 | ~0.8% (integer 3) | [T] THEOREM |
+| Coupling constant ($\alpha$): root matches $1/\alpha$ | 1 | 1.26 ppm | [SMC] (master quadratic [T]; identification not derived) |
+| $N_c$ from quadratic: root matches 3 | 1 | ~0.8% (integer 3) | [SMC] (identification not derived) |
 | Coefficient 16 | 1 | Exact | [T] THEOREM |
 
 **Companion Work Derivations** [†] (same framework, separate papers):
@@ -902,6 +902,6 @@ print(f"N_c = {x_minus:.3f}")  # Output: 3.024
 
 ## Transition
 
-The fine structure constant is not arbitrary: it emerges from the geometry of self-reference. But this derivation raises as many questions as it answers. What principle selects this geometry? Why does self-reference encode physics?
+The master quadratic's electromagnetic root matches the fine structure constant to 1.26 ppm. But this match raises as many questions as it answers. What principle selects this geometry? Why does self-reference encode physics? And — the open question the framework has not closed — *why* the root should equal $1/\alpha$ at all.
 
-The next chapter (@sec-fermat-encoding) provides a deeper answer: the master quadratic is not merely selected; it is **derived** from the number-theoretic boundary defined by Fermat's Last Theorem. The degree 2 polynomial, the coefficient 16, and the powers of G* all emerge from the structure of what is and is not solvable in integer arithmetic.
+The next chapter (@sec-fermat-encoding) provides a deeper structural motivation: the master quadratic's *form* is **strongly motivated** by the number-theoretic boundary defined by Fermat's Last Theorem. The degree 2 polynomial, the coefficient 16, and the powers of G* all emerge from the structure of what is and is not solvable in integer arithmetic.

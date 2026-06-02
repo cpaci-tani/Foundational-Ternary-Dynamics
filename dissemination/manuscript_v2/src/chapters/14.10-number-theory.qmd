@@ -179,7 +179,7 @@ $$t_1 = \frac{N_c^2}{2}\pi - \frac{1}{N_c \cdot \alpha^{-1}}$$
 | **Actual** | 14.1347251417 | - |
 | **Error** | **0.66 ppm** | - |
 
-This precision is comparable to the TRD base derivation of $\alpha$ (1.26 ppm); the precision formula achieves **0.21 ppt**.
+This precision is comparable to the 1.26 ppm tree-level *match* of the master-quadratic root to $\alpha$ (the identification $x_+=1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation; the "0.21 ppt" precision-formula figure is a post-hoc fit beyond CODATA precision).
 
 ::: {.callout-note}
 ## Python Verification
