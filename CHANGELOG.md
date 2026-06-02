@@ -1,5 +1,56 @@
 # Foundational Ternary Dynamics Changelog
 
+## Phase 11 — Engine-Flawless Audit + MC-T4.3 Route-Invariance (2026-06-01)
+
+A 16-commit lifecycle / callstack / toggle audit of the engine (branch
+`flawless-engine-2026-06-01`, HEAD `09eaa0c1`), paired with a theory-side
+sharpening of MC-T4.3 to a route-invariant boundary. **No physics edited:
+golden hash `0xcd957b601d47868a` is unchanged.**
+
+### Verification harness (new tests + specs)
+
+- **Web specs** (`engine/web/tests/`): `lifecycle-harness` (per-scale
+  mount→unmount round-trip leak net), `reconcile-claims` (re-asserts four
+  prior fixes still hold), `toggle-coverage` (exercises all 32 Scale-0
+  field toggles), `overlay-scheduler` (overlay-scheduler invariants).
+- **C++ tests** (`engine/tests/`): `test_conservation_profile`
+  (energy-conservation + Gauss-constraint profile; labels `conservation`
+  `unit`), `test_tick_phase_order` (tick phase-order regression; labels
+  `lifecycle` `unit`), `test_engine_lifecycle` (ScaleEngine `clear()` /
+  RAII teardown; labels `lifecycle` `unit`).
+- **Web lifecycle fixes**: `BaseLifecycleController` adoption across
+  Scale-2/3/6, `MountToggle` teardown, `physics-harness` verified LIVE.
+- **TOGGLE_REGISTRY doc** + Scale-0 field-toggle coverage map.
+
+### Clean-checkout build fix (real bug, ~5 weeks latent)
+
+- Removed a committed **dangling `_repro_gpu_empty_bridge` CMakeLists
+  reference** that broke clean-checkout `cmake` *configure* for roughly
+  five weeks. A fresh clone now configures again; **242 tests register**.
+
+### Energy-conservation profile (pinned)
+
+- The conservation leak is the **non-variational Gauss projection
+  OPERATOR** (`J -= ∇φ`), **not** the solver tolerance. `gauss_violation`
+  has an iteration-**independent** stencil floor (~5e-3 RMS) from the
+  18-point-Laplacian / 6-point-divergence mismatch. Bare leapfrog is
+  well-posed by boundedness. Documented in `test_conservation_profile`.
+
+### DagEngine deprecate-clearly
+
+- The three legacy DagEngine stub methods now `warn + skip + assert` and
+  carry `[[deprecated]]`. Second real bug found and **documented (not
+  fixed, since DagEngine is deprecated)**: `DagEngine::entity_count()` is
+  permanently 0 (`active_indices_` is never written) — recorded in
+  `CONTRACTS.md §13`.
+
+### MC-T4.3 route-invariant boundary (theory; nothing promoted)
+
+- MC-T4.3 was sharpened to a **route-invariant boundary**: α is
+  classified **dynamical, not structural**. No tag moved — `x₊ = 1/α`
+  stays `[STRONGLY MOTIVATED CONJECTURE]`. The two surviving exits are a
+  6th postulate or the (closed-negative) ARC-D route.
+
 ## Phase 10 Ledger Reconciliation + Theoretical Campaigns Culmination (May 30, 2026)
 
 A comprehensive repository-wide cleanup, ledger-numbering reconciliation, and index synchronization campaign (Phase 10 / Front A) completed with 100% verified graph and link consistency, marking the final integration of the Phase 1–9 theoretical derivations, proofs, and U(1) compact lattice simulations.

@@ -26,7 +26,7 @@ npm run test:scale0-protocol
 npm run test:ui
 
 # run a single test by name
-npx playwright test -g "Scale 11 reference frame context"
+npx playwright test -g "Scale sweep"
 ```
 
 The config uses Playwright's `webServer` block to start / stop
@@ -36,9 +36,10 @@ collide with the 8080 that many developers leave running manually.
 
 ## What the suite covers
 
-- **Scale sweep**: each of the 8 engine modes (`lattice`, `particles`,
-  `atoms`, `molecules`, `planetary`, `cosmic`, `meta`, `reference frame context`)
-  loads without console errors or failed network requests.
+- **Scale sweep**: each of the 7 engine modes (`lattice`, `particles`,
+  `atoms`, `molecules`, `planetary`, `cosmic`, `meta`) loads without
+  console errors or failed network requests. (Scale 11 / reference frame
+  context was deleted; the suite no longer drives it.)
 - **Bridge initialization**: `window._ftdBridge` becomes non-null within
   15 s of page load.
 - **Phase B.1 regression**: `window._cosmicInterval` is never set after
@@ -58,6 +59,15 @@ collide with the 8080 that many developers leave running manually.
   checks the conservative toggle recipe, Maxwell Hamiltonian conservation,
   `c_lat`, strict locality, charge conservation, genesis scaling/cluster
   count/null control, determinism, and Gauss projection.
+- **Lifecycle harness** (engine-flawless audit, 2026-06-01): `lifecycle-harness`
+  drives a per-scale mount → unmount round trip and asserts the net listener /
+  resource leak is zero across scales.
+- **Claim reconciliation**: `reconcile-claims` re-asserts the four prior
+  web-layer fixes still hold (guards against silent regression).
+- **Toggle coverage**: `toggle-coverage` exercises all 32 Scale-0 field
+  toggles, confirming each is reachable and round-trips through the UI.
+- **Overlay scheduler**: `overlay-scheduler` checks the overlay-scheduler
+  invariants (no double-schedule, clean teardown).
 
 ## What the suite does NOT cover
 
