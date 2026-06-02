@@ -29,8 +29,16 @@ import {
     fillFieldParticleBuf,
 } from './streamline-integrator.js';
 
-export function sampleFieldState(fieldCapability, flags, stride) {
+export function sampleFieldState(fieldCapability, flags, stride, acScale0) {
     const sampled = {};
+    // Snapshot the particle frame ONCE per sweep so every job in the sweep
+    // (E-field, B-field) seeds from the same tick's particle positions. Without
+    // this, each builder called getScale0ParticleFrame() live on different rAF
+    // frames — causing B's seeds to be one frame newer than E's when both fields
+    // were enabled, producing the "B translates offset" visual bug.
+    if (acScale0 && (flags.showEField || flags.showBField)) {
+        sampled.particleData = acScale0.getScale0ParticleFrame();
+    }
     // Tier 1 quantum overlays all derive from fluxVector + optional poynting,
     // so pull those samples whenever any quantum toggle is active.
     const needFlux = flags.showFluxLines || flags.showDualSubstrate || flags.showChirality ||
@@ -146,7 +154,10 @@ function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
     // (iron-filings effect). Bidirectional integration draws from each seed
     // both toward the source and toward the sink, so the visible line spans
     // the natural field-line path.
-    const particleData = activeScale0.getScale0ParticleFrame();
+    //
+    // Use the pre-snapshotted particleData from sampleFieldState so E and B
+    // both seed from the same tick's particle positions (fixes the offset bug).
+    const particleData = sampled.particleData ?? activeScale0.getScale0ParticleFrame();
     fillFieldParticleBuf(state, particleData);
     const seeds = particleData.count > 0
         ? generateEFieldSeeds(state.fieldParticleBuf, p.eOffset, p.maxSeeds)
@@ -163,7 +174,10 @@ function buildBFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
     // perpendicular offset so seeds land on the loop circumference rather
     // than at the center (where they'd integrate in place). Bidirectional
     // integration is mandatory — half the loop runs each direction.
-    const particleData = activeScale0.getScale0ParticleFrame();
+    //
+    // Use the pre-snapshotted particleData so B seeds from the same particle
+    // positions as E (same tick, same snapshot — fixes the offset bug).
+    const particleData = sampled.particleData ?? activeScale0.getScale0ParticleFrame();
     fillFieldParticleBuf(state, particleData);
     const seeds = particleData.count > 0
         ? generateBFieldSeeds(state.fieldParticleBuf, p.bRadius, p.maxSeeds)
@@ -516,7 +530,15 @@ const OVERLAY_FRAME_BUDGET = 100;
 // Relative cost weights (calibrated from reading the job bodies, not timed):
 //   streamline jobs build a spatial index + bidirectional RK4 over up to
 //   ~300 lines × ~maxSteps steps × a 27-cell neighbour scan → dominant.
-const COST_STREAMLINE = 100;  // E / B / flux / each force-flow field
+// Lowered from 100 → 50 so E and B both fit in one frame budget when both
+// are enabled. At 100 (= OVERLAY_FRAME_BUDGET) the scheduler could only fit
+// one streamline job per frame, causing E and B to update on consecutive
+// frames. Since they seed from particle positions and the particle frame was
+// re-fetched live inside each job body, B's seeds would be one frame newer
+// than E's — producing the "B field shifts/translates offset" visual bug
+// when both fields were enabled simultaneously. At 50, both E and B land on
+// the same frame and read the same snapshotted particle positions.
+const COST_STREAMLINE = 50;   // E / B / flux / each force-flow field
 const COST_FORCE_FIELD = 25;  // a force arrow/heatmap/glyph field (sampler + O(count))
 const COST_DERIVED = 20;      // dual-substrate / chirality / mock-derived overlays
 const COST_SCALAR = 12;       // a Tier-1/2/3 scalar topology sheet (one O(count) pass)
@@ -972,7 +994,8 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         sched.lastVersion = version;
         const params = computeStreamlineParams(latticeSize);
         const fieldCapability = (state.useFluxMock ? state.fluxMock : ctx.bridge).capabilities.scale0;
-        sched.sampled = sampleFieldState(fieldCapability, state.fieldFlags, params.stride);
+        const acScale0ForSnapshot = emActiveScale0(ctx, state);
+        sched.sampled = sampleFieldState(fieldCapability, state.fieldFlags, params.stride, acScale0ForSnapshot);
         sched.running = !!ctx.running;
         sched.cursor = 0;
         sched.sweepFrames = 0;
