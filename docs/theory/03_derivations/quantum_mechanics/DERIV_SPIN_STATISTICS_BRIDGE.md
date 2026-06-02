@@ -410,6 +410,24 @@ which counts representations of integers as sums of two squares. We conjecture:
 
 **[CONJECTURE]**: A rigorous derivation of this partition function from the FTD action S[s, J] remains future work.
 
+## §5.4 The Weight-½ Spin Object θ₃(0,i) and the Archimedean Shortfall [OBSERVATION]
+
+§5.1 records `G* = √(2π)·θ₃(e^{−π})²` — the catalogued evaluation is of the **square** of the theta-null. The theta-null *itself* is the natural weight-½ (spin-½-graded) object on the modular side, and it is genuinely forced — `θ₃ = √(θ₃²)` is an honest square root, not a redefinition. At the self-dual point τ = i (nome `q = e^{iπτ} = e^{−π}`):
+
+$$\theta_3(0, i) \;=\; \frac{\pi^{1/4}}{\Gamma(3/4)} \;=\; \frac{\sqrt{G^*}}{(2\pi)^{1/4}} \;=\; 1.0864348112\ldots \quad\text{[VERIFIED, 16 dp]}$$
+
+with the two odd-characteristic nulls degenerate, `θ₂(0,i) = θ₄(0,i) = √G*/(4π)^{1/4} = 0.9135791382…`, and the Jacobi quartic identity `θ₃⁴ = θ₂⁴ + θ₄⁴` exact. This is the same self-dual triplet whose square gives `θ₃(e^{−π})² = G*/√(2π)` (Derivation 5 of [`MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md`](../../01_reference/MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md)).
+
+**Why this is the bridge object spin-statistics has been pointing at — and where it falls short.** Throughout this document the boson-fermion split is carried by the degree structure of G\*: the bosonic (continuous) sector by the smooth period, the fermionic (discrete, half-twist) sector by the lattice constraint that demands the *square root* / 720°-doubling. The weight-½ theta-null `θ₃(0,i)` is the concrete degree-½ realizer of that half-twist on the elliptic-function side — a real, native, self-dual, weight-½ object built from exactly the lemniscatic data (`Γ(1/4)`, `Γ(3/4)`, the self-dual `τ=i`) that underlies the whole bridge.
+
+It **exists**, but it does **not force** the one place the framework most wants a clean `√G*`: the odd determinant `16G*³` of the α-readout master quadratic (the MC-T4.3 obstruction; see [`AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`](../../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md) §8–§9, where granting that forcing is named "Postulate 6"). The reason is precise and is **exactly the archimedean measure**: `θ₃(0,i)` is not a clean `√G*` but a *measure-dressed* one,
+
+$$\theta_3(0,i) \;=\; \frac{\sqrt{G^*}}{(2\pi)^{1/4}}, \qquad\text{dressing} = (2\pi)^{1/4}\ \text{(archimedean)}.$$
+
+The companion native degree-½ object, the J-twisted ζ-determinant `det_ζ(D_{3/4}) = 2^{1/4}√G* = 2.0455313442…`, is dressed instead by the *ramified prime* `2^{1/4}` (non-archimedean). **The bridge object is real; the shortfall is one measure factor.** Neither dressing is a unit of `ℤ[i]`, so neither yields the unit-clean `√G*` (or the unit-dressed `4√G*`, `4 = |μ₄|`) the readout would need to force the odd slot. The structural reason a single CM field cannot supply a unit-clean half-power is the synthesis in [`EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md`](../../09_mathematical/number_theory/EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md).
+
+**Tag: `[OBSERVATION]`.** This identifies a genuine weight-½ spin object on the bridge and locates its shortfall as the archimedean measure. It **promotes nothing**: it does not upgrade SSB-12, does not close the §5.3 partition-function conjecture, does not touch `x₊ = 1/α` (FTD-0013, `[STRONGLY MOTIVATED CONJECTURE]`), and adds no theorem. It is the spin-statistics-side reading of an object whose α-readout role is `[OPEN]` (MC-T4.3).
+
 ---
 
 # PART VI: THE COMPLETE BRIDGE
@@ -461,6 +479,7 @@ THE TWO LEMNISCATES
 | SSB-10 | Cayley-Dickson ↔ physical structure | [SELECTION] | Hierarchy table §1.5 | Find counterexample |
 | SSB-11 | Full exchange statistics from root phases | [CONJECTURE] | §3.2, §3.3 | Derive quantitative statistics |
 | SSB-12 | θ₃² as joint partition function | [CONJECTURE] | §5.3 | Derive from S[s,J] |
+| SSB-13 | θ₃(0,i)=√G*/(2π)^{1/4} is the weight-½ spin object; shortfall = archimedean measure | [OBSERVATION] | §5.4 | Mathematical fact (16 dp); promotes nothing |
 
 ## §6.3 Open Problems
 
@@ -498,6 +517,7 @@ The following remain to be formalized:
 | SSB-10 | Cayley-Dickson ↔ gauge hierarchy | [SELECTION] | FOUND_FOURCIER_ONTIC_TOOL OT-3, OT-4 |
 | SSB-11 | Quantitative exchange statistics | [CONJECTURE] | (future work) |
 | SSB-12 | θ₃² joint partition function | [CONJECTURE] | DERIV_DISCRETE_CONTINUOUS_BRIDGE §5 |
+| SSB-13 | θ₃(0,i) weight-½ spin object; archimedean shortfall | [OBSERVATION] | §5.4; MONOGRAPH Derivation 5; AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE §8–§9 |
 
 ## Score
 
@@ -506,6 +526,7 @@ The following remain to be formalized:
 | [THEOREM] | 6 (SSB-1, SSB-2, SSB-3, SSB-5, SSB-7, SSB-9) |
 | [SELECTION] | 4 (SSB-4, SSB-6, SSB-8, SSB-10) |
 | [CONJECTURE] | 2 (SSB-11, SSB-12) |
+| [OBSERVATION] | 1 (SSB-13) |
 
 ---
 
