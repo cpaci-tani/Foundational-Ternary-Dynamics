@@ -5,16 +5,16 @@
 ::: {.callout-important}
 ## The Central Claim
 
-This chapter derives the master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ from the FTD lattice action using standard lattice field theory methods. The derivation upgrades the quadratic from **[S]** (selection principle argued by dimensional analysis) to **[T]** (theorem proven from the action principle).
+This chapter constructs the master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ from the FTD lattice action using standard lattice field theory methods. The **quadratic form and its roots are theorem-grade algebra [T]**. The *physical identification* of the larger root with $1/\alpha$ is a separate question, treated as a **[STRONGLY MOTIVATED CONJECTURE]** below: the root *matches* $1/\alpha$ to 1.26 ppm, but FTD does not derive $\alpha$ from its axioms.
 :::
 
 ::: {.callout-note}
 ## Root Identification Status
 
-The identification of roots is now proven:
+The identification of the roots with physical quantities is a **[STRONGLY MOTIVATED CONJECTURE]**, not a theorem:
 
-- **C1 ($x_+ = 1/\alpha$)**: [T] **PROVEN** via Complex Multiplication uniqueness - the CM selection mechanism uniquely determines $j = 1728$, and the eigenvalue equation on the elliptic fibration yields the master quadratic with $x_+ = 137.0361...$
-- **C2 ($x_- \to N_c = 3$)**: [T] **PROVEN** via RG flow + topological quantization - QCD beta function $\beta_0 = 7 = b_3$ (framework integer), and topological quantization forces $\lfloor x_- \rfloor = 3$ at confinement
+- **C1 ($x_+ = 1/\alpha$)**: [STRONGLY MOTIVATED CONJECTURE] - the larger root $x_+ = 137.0361...$ *matches* the inverse fine structure constant to 1.26 ppm. The CM selection of $j = 1728$ and the structural-uniqueness scans (Bayes weight $\sim 4{\times}10^5$:1) make the identification strongly motivated, but no derivation chain forces $x_+ = 1/\alpha$ from the axioms.
+- **C2 ($x_- \to N_c = 3$)**: [STRONGLY MOTIVATED CONJECTURE] - the smaller root $x_- = 3.024...$ is near the integer 3 (0.80%); $N_c = 3$ has independent structural derivations (topology, Moore Layer Theorem), so the $x_- \approx N_c$ relation is a motivated match, not a derivation.
 :::
 
 ::: {.callout-note}
@@ -36,7 +36,7 @@ This chapter establishes the quadratic form as **[T]** via a six-step derivation
 ::: {.callout-important}
 ## Theorem: The Lemniscatic Curve is UNIQUE
 
-Among all elliptic curves compatible with FTD constraints, only the lemniscatic curve ($j = 1728$) satisfies all requirements. This uniqueness eliminates circularity: the master quadratic is derived, not selected.
+Among all class-number-one CM curves, the lemniscatic curve ($j = 1728$) is the one the FTD constraints pick out. This uniqueness (a [NUMERICAL FACT] over class numbers 1–4, $|d|\le 907$) strengthens the master-quadratic construction, but it does **not** by itself derive $\alpha$: the identification $x_+ = 1/\alpha$ remains a [STRONGLY MOTIVATED CONJECTURE].
 :::
 
 ### The j-invariant Selection
@@ -425,7 +425,7 @@ $$\boxed{x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0}$$ {#eq-master-quadratic}
 
 ---
 
-## Step 8: Physical Interpretation [T] PROVEN
+## Step 8: Physical Interpretation [STRONGLY MOTIVATED CONJECTURE]
 
 ### The Roots
 
@@ -455,21 +455,21 @@ $$x_+ = \frac{140.0594 + 134.0122}{2} = 137.0358...$$ {#eq-x-plus}
 $$x_- = \frac{140.0594 - 134.0122}{2} = 3.0236...$$ {#eq-x-minus}
 
 ::: {.callout-tip}
-## Physical Interpretation [T] PROVEN
+## Physical Interpretation [STRONGLY MOTIVATED CONJECTURE]
 
-**Theorem T5 (C1)**: The larger root IS the inverse fine structure constant:
-$$x_+ = \frac{1}{\alpha} = 137.0361714582$$
+**Identification (C1)**: The larger root *matches* the inverse fine structure constant:
+$$x_+ = 137.0361714582 \;\overset{?}{=}\; \frac{1}{\alpha}$$
 
 Comparison with experiment (CODATA 2022): $1/\alpha_{\text{exp}} = 137.035999177(21)$
 
-**Base Accuracy: 1.26 ppm** (precision formula achieves **0.21 ppt**; see @sec-alpha-precision)
+**Base accuracy: 1.26 ppm.** (The earlier "0.21 ppt" precision claim is retracted: the $\varepsilon$-expansion is a post-hoc fit beyond CODATA's experimental precision, not a prediction.)
 
-*Proof*: CM selection mechanism uniquely determines the lemniscatic curve ($j = 1728$). The master quadratic emerges as the eigenvalue equation on the elliptic fibration, making $x_+ = 1/\alpha$ a theorem, not a numerical coincidence.
+*Status*: CM selection picks out the lemniscatic curve ($j = 1728$), and the structural-uniqueness scans make $x_+ = 1/\alpha$ strongly motivated, but the identification is a **conjecture**, not a theorem — FTD does not derive $\alpha$ from its axioms.
 
-**Theorem T6 (C2)**: The smaller root flows to the number of color charges under RG:
-$$x_- = 3.0239639163 \to N_c = 3$$
+**Identification (C2)**: The smaller root is near the number of color charges:
+$$x_- = 3.0239639163 \;\approx\; N_c = 3$$
 
-*Proof*: The QCD beta function coefficient $β_0 = 11 - 2n_f/3 = 7 = b_3$ (framework integer). RG flow analysis shows $x_-$ is the UV effective color parameter. Topological quantization forces $\lfloor x_- \rfloor = 3$ at the confinement scale.
+*Status*: $\lfloor x_- \rfloor = 3$ matches $N_c$ to 0.80%. $N_c = 3$ has independent structural derivations (topology, Moore Layer Theorem); the $x_- \approx N_c$ relation is a motivated match. [STRONGLY MOTIVATED CONJECTURE]
 
 **Accuracy: 0.8% from integer 3**
 :::
@@ -501,9 +501,9 @@ The algebraic consistency confirms the derivation.
 | 5 | One-loop effective action | Standard QFT | [T] |
 | 6 | Polarization form $\Pi(x) = 16(G^*)^3/x$ | Argued | [S] |
 | 7 | Dyson self-consistency | Physical requirement | [T] |
-| 7 | **Master quadratic derivation** | **Proven** | **[T]** |
-| 8 | $x_+ = 1/\alpha$ | **PROVEN** (CM selection) | **[T]** |
-| 8 | $x_- \to N_c = 3$ | **PROVEN** (RG flow + topology) | **[T]** |
+| 7 | **Master quadratic form** | **Proven (algebra)** | **[T]** |
+| 8 | $x_+ = 1/\alpha$ | **Matches to 1.26 ppm** (identification not derived) | **[SMC]** |
+| 8 | $x_- \to N_c = 3$ | **Matches to 0.80%** (identification not derived) | **[SMC]** |
 
 ::: {.callout-important}
 ## Main Result

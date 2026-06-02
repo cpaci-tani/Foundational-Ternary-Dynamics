@@ -244,7 +244,7 @@ The master quadratic determines:
 
 The formula uses:
 - $m_e$ (already derived as $K_B = m_P \sqrt{2\pi} (16/3) \alpha^{11}$)
-- $\alpha$ (already derived from master quadratic)
+- $\alpha$ (master quadratic root matches 1/α to 1.26 ppm; identification [STRONGLY MOTIVATED CONJECTURE], not derived)
 - $G^*$ (already derived from $j = 1728$ geometry)
 
 **Zero new inputs.**

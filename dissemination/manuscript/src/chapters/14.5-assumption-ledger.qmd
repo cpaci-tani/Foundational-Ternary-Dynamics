@@ -78,7 +78,7 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 |----------|-------|--------|-------|-------|
 | C (speed of causality) | 1.0 | [A] AXIOM | Core | Defines units |
 | H (Planck resolution) | 1.0 | [A] AXIOM | Core | Defines units |
-| **ALPHA (fine structure)** | 0.00729 | [T] **THEOREM** | Core | From master quadratic (0.21 ppt precision) |
+| **ALPHA (fine structure)** | 0.00729 | [SMC] **STRONGLY MOTIVATED CONJECTURE** | Core | Master quadratic [T]; identification $x_+=1/\alpha$ matches to 1.26 ppm but is not derived |
 | **KB (existence threshold)** | 0.511 | [†] **COMPANION** | Extended | $m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}$ |
 | **PHI (golden ratio)** | 1.618 | [†] **COMPANION** | Extended | Stability fixed point |
 | **GRAVITY_BIAS** | 0.01 | [†] **COMPANION** | Extended | $1/(b_3+N_c)^2$ Exactly |
@@ -92,8 +92,8 @@ The ternary state space {−1, 0, +1} was historically listed as an axiom, but i
 
 | Quantity | Formula/Value | Status | Accuracy |
 |----------|---------------|--------|----------|
-| Fine structure α | 1/137.036 | [T] THEOREM | **0.21 ppt** |
-| Number of colors N_c | 3.024 → 3 | [T] THEOREM | Exact |
+| Fine structure α | 1/137.036 | [SMC] STRONGLY MOTIVATED CONJECTURE (master quadratic [T]; identification $x_+=1/\alpha$ not derived) | 1.26 ppm match (the "0.21 ppt" ε-expansion is a post-hoc fit beyond CODATA precision) |
+| Number of colors N_c | 3.024 → 3 | [SMC] STRONGLY MOTIVATED CONJECTURE ($x_-$ match; $N_c=3$ independently derived) | 0.80% match |
 | Lemniscatic constant G* | 2.9587 | [T] THEOREM | 0.0006% |
 | Coefficient 16 | $2^3 / 0.5$ | [T] THEOREM | Exact |
 | **D = 3 uniqueness** | Topological necessity | [T] **THEOREM** | Derived |
@@ -418,8 +418,8 @@ FTD achieves **foundational completeness** within its assumptions:
 
 | Category | Derived | Status |
 |----------|---------|--------|
-| Fine structure α | 1 | [T] 1.26 ppm base; **0.21 ppt** precision |
-| Color number N_c | 1 | [T] Exact (integer) |
+| Fine structure α | 1 | [SMC] 1.26 ppm tree-level match (identification not derived; 0.21 ppt is post-hoc fit) |
+| Color number N_c | 1 | [SMC] root matches 3 to 0.80% ($N_c=3$ independently derived) |
 | Lemniscatic constant G* | 1 | [T] 0.0006% |
 | Coefficient 16 | 1 | [T] Exact (lattice DoF) |
 | **Total core** | **4** | |
@@ -462,7 +462,7 @@ FTD is a **structured framework** with clearly delineated scope:
 
 ### Core Paper Establishes
 - **4 theorems** (T1-T6): rigorous derivations from axioms
-- **Fine structure constant α** to 1.26 ppm (base); **0.21 ppt** (precision formula)
+- **Fine structure constant α**: tree-level master-quadratic root matches to 1.26 ppm (identification $x_+=1/\alpha$ is [STRONGLY MOTIVATED CONJECTURE], not derived; the 0.21 ppt ε-expansion is post-hoc fitting beyond CODATA precision)
 - **Coefficient 16** from lattice degrees of freedom
 - **Selection Principles S1-S4**: argued but not uniquely proven
 
@@ -555,11 +555,9 @@ This resolves the 10¹²³ cosmological constant problem.
 
 **Reference:** VACUUM_ENERGY_FORMULA.md, v5.5
 
-### Alpha Precision: 1.26 ppm → 0.21 ppt (v5.4)
+### Alpha Precision: 1.26 ppm tree-level (0.21 ppt claim retracted)
 
-**Previous status:** 1.26 ppm (parts per million) accuracy (from standard quadratic)
-
-**New status:** **0.21 ppt** (parts per trillion) accuracy (with ε expansion)
+**Honest status:** The tree-level match is **1.26 ppm**. The "0.21 ppt" figure (from the ε expansion) is **retracted** as a result: it is a post-hoc fit beyond CODATA's experimental precision (~0.15 ppb), not a testable prediction. The identification $x_+ = 1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation.
 
 **Formula:**
 $$\frac{1}{\alpha} = x_+ + \frac{\varepsilon}{1111} = 137.036... + \frac{3}{1111}$$
@@ -576,7 +574,7 @@ where ε = (N_eff - N_base)/N_c = 3.
 | j = 1728 | SELECTION | **THEOREM** | v5.3 |
 | Framework integers | Assumed | **THEOREM** | v5.7 |
 | Vacuum energy ρ_Λ | OPEN | **THEOREM** (1.0%) | v5.5 |
-| Alpha precision | 1.26 ppm | **0.21 ppt** | v5.4 |
+| Alpha precision | 1.26 ppm | 1.26 ppm tree-level (0.21 ppt retracted as post-hoc fit) | v5.4 |
 | 70 ± 67 structure | Unknown | **VERIFIED** (Heegner) | v5.7 |
 | Riemann zeta ρ₁ | Unconnected | **VERIFIED** (0.15%) | v5.2 |
 | Mandelbrot duality | Unconnected | **PROVEN** (exact) | v5.6 |

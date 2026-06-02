@@ -297,10 +297,10 @@ The master quadratic $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ encodes:
 - $G^*$ is selected by CM maximality (j = 1728)
 - Powers $c^2$ and $c^3$ encode boundary crossing
 
-**Proven (Physical Interpretation) [T]:**
-- $x_+ = 1/\alpha$ via CM selection uniqueness
-- $x_- \to N_c = 3$ via RG flow + topological quantization
-- The **0.21 ppt precision** (with precision formula) follows from the derivation chain
+**Physical Interpretation [STRONGLY MOTIVATED CONJECTURE]:**
+- $x_+ = 1/\alpha$ — the root *matches* the inverse fine structure constant to 1.26 ppm. CM selection and structural-uniqueness scans make this strongly motivated, but it is not derived from the axioms.
+- $x_- \to N_c = 3$ — the root matches 3 to 0.80%; $N_c = 3$ has independent structural derivations.
+- The "0.21 ppt" figure from the precision formula is **retracted** as a result: it is a post-hoc fit beyond CODATA's experimental precision, not a testable prediction.
 :::
 
 ## The Derivation Chain
@@ -391,6 +391,6 @@ print(f"x₋ = {x_minus:.3f} → N_c")    # 3.024
 
 ## Transition
 
-The Fermat encoding reveals that the master quadratic is not a free choice: it is structurally determined by number-theoretic constraints at the boundary between solvable and unsolvable polynomial equations. The fine structure constant emerges not from arbitrary geometry, but from the deepest structure of integer arithmetic itself.
+The Fermat encoding argues that the master quadratic's *form* is not a free choice: it is strongly motivated by number-theoretic constraints at the boundary between solvable and unsolvable polynomial equations. Whether the electromagnetic root then *equals* $1/\alpha$ — as opposed to merely matching it to 1.26 ppm — remains a [STRONGLY MOTIVATED CONJECTURE]; the framework does not derive $\alpha$ from arithmetic.
 
 In the next chapter, we derive the update rules from an action principle, grounding the simulation dynamics in variational calculus.

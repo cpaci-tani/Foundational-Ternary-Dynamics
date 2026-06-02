@@ -13,10 +13,10 @@ From six constants, an entire universe unfolds. Change any of them, and chemistr
 | Constant | Status | Scope |
 |----------|--------|-------|
 | C, H | Axiomatic | Core paper |
-| ALPHA | **DERIVED** | Core paper (1.26 ppm base; **0.21 ppt** precision) |
+| ALPHA | **[STRONGLY MOTIVATED CONJECTURE]** (root matches 1/α to 1.26 ppm; not derived) | Core paper |
 | KB, PHI, GRAVITY_BIAS | **DERIVED** [†] | Companion work |
 
-The core paper derives α from the master quadratic. Other derived constants use α plus additional framework relations developed in companion papers.
+The core paper's master quadratic has a root that *matches* α to 1.26 ppm; the identification $x_+ = 1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation. Other constants use α plus additional framework relations developed in companion papers.
 :::
 
 ## The Fundamental Constants
@@ -62,8 +62,8 @@ Other constants are tunable: they determine *behavior* within the framework:
 The fine structure constant determines the strength of electromagnetic interactions. The experimentally measured value is $\alpha = 1/137.035999177(21)$ [@codata2022].
 
 ::: {.callout-important}
-## Derived, Not Assumed
-Unlike other constants in this section, $\alpha$ is **not** a free parameter. It emerges from geometric constraints on a self-referential curve. See @sec-lemniscate-alpha for the full derivation, which achieves **0.21 ppt precision** (1.26 ppm base, 6,000× improvement with precision formula).
+## A Striking Match, Not Yet a Derivation
+A geometric master quadratic on a self-referential curve has a root that *matches* $\alpha$ to 1.26 ppm at tree level. See @sec-lemniscate-alpha. The identification $x_+ = 1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], **not** a derivation of $\alpha$ — and the "0.21 ppt" precision-formula figure is a post-hoc fit beyond CODATA precision, not an achieved accuracy.
 :::
 
 This single number controls:
@@ -183,12 +183,12 @@ Time to half-density: $t_{1/2} = \frac{\ln 2}{\ln(1/(1-\text{DECAY\_RATE}))}$
 
 ::: {.callout-note}
 ## Chapter Summary
-**Six constants define the FTD framework**: C (causality speed), H (Planck resolution), KB (existence threshold), ALPHA (fine structure), PHI (golden ratio), and GRAVITY_BIAS (gravitational coupling). Of these, **$\alpha$ is derived** from geometric constraints (**0.21 ppt precision** with the precision formula), while the others are either axiomatic (C, H) or derived from α via framework relations. The constants fall within a narrow **anthropic window**: small changes would prevent stable atoms, stars, or observers from existing.
+**Six constants define the FTD framework**: C (causality speed), H (Planck resolution), KB (existence threshold), ALPHA (fine structure), PHI (golden ratio), and GRAVITY_BIAS (gravitational coupling). Of these, **$\alpha$ is *matched*** by a geometric master quadratic to 1.26 ppm at tree level — the identification $x_+ = 1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation (the "0.21 ppt" precision-formula figure is a post-hoc fit beyond CODATA precision). The others are either axiomatic (C, H) or expressed via α and framework relations. The constants fall within a narrow **anthropic window**: small changes would prevent stable atoms, stars, or observers from existing.
 :::
 
 ## Transition
 
-We have presented six constants as the tuning parameters of reality. But are they truly free parameters? The next chapter (@sec-lemniscate-alpha) reveals something remarkable: at least one of these constants, the fine structure constant $\alpha$, is not arbitrary at all. It emerges from the geometry of self-reference.
+We have presented six constants as the tuning parameters of reality. But are they truly free parameters? The next chapter (@sec-lemniscate-alpha) presents something remarkable: a geometric master quadratic whose root *matches* the fine structure constant $\alpha$ to 1.26 ppm. Whether that match reflects a genuine determination of $\alpha$ by the geometry — as opposed to a striking coincidence — remains an open [STRONGLY MOTIVATED CONJECTURE].
 
 ::: {.callout-tip}
 ## Related Topics

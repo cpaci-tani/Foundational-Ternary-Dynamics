@@ -78,7 +78,7 @@ Before looking at future tests, here is the complete ledger of quantities FTD de
 
 | Quantity | FTD Formula | FTD Value | Experimental | Error |
 |----------|-------------|-----------|--------------|-------|
-| Fine structure constant | Master quadratic root + precision formula | 1/137.036 | 1/137.036 | **0.21 ppt** |
+| Fine structure constant | Master quadratic root (identification [SMC], not derived) | 1/137.036 | 1/137.036 | **1.26 ppm** (tree-level; 0.21 ppt is post-hoc fit) |
 | Color charges | Master quadratic root | 3.024 → 3 | 3 | exact |
 | Weinberg angle | $\sin^2\theta_W = N_c/n_{\text{eff}}$ | 3/13 = 0.2308 | 0.2312 | **0.17%** |
 | Strong coupling | $\alpha_s = b_3/(b_3+4n_{\text{eff}})$ | 7/59 = 0.1186 | 0.1179 | **0.6%** |

@@ -87,7 +87,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 : The hierarchical sequence of α powers encoding fundamental mass and energy scales: α⁸ (Higgs VEV), α¹¹ (electron mass), α¹⁶ (vacuum energy), α²⁰ (gravitational coupling). The gaps {3, 5, 4} between exponents encode framework integers.
 
 **Alpha Precision Formula**
-: The correction formula achieving **0.21 ppt** accuracy for $\alpha$: $1/\alpha = x_+ - (9/47)|\varepsilon| + (5/64)|\varepsilon|^2$ where $\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}$. The correction term 9/47 combines framework integers (47 = N_c × N_base² - 1 = 3×16-1), and remarkably |ε| ≈ 1/1111 where 1111 = (b₃+N_base)(8N_eff-N_c) = 11×101. The constant 20 = b₃ + N_eff = 7 + 13 = 1/c_fermion connects to the Weyl anomaly coefficient from conformal field theory. This 6,000× improvement over the base 1.26 ppm derivation represents the most precise theoretical prediction of α ever achieved.
+: The ε-expansion correction formula for $\alpha$: $1/\alpha = x_+ - (9/47)|\varepsilon| + (5/64)|\varepsilon|^2$ where $\varepsilon = e^\pi - \pi - 20 \approx -9 \times 10^{-4}$. The correction term 9/47 combines framework integers (47 = N_c × N_base² - 1 = 3×16-1), and |ε| ≈ 1/1111 where 1111 = (b₃+N_base)(8N_eff-N_c) = 11×101. The constant 20 = b₃ + N_eff = 7 + 13 = 1/c_fermion connects to a Weyl anomaly coefficient. **Caveat:** the tree-level match is 1.26 ppm; the "0.21 ppt" figure is a post-hoc fit beyond CODATA's experimental precision (~0.15 ppb), so the extra digits are not a testable prediction. The whole identification $x_+ = 1/\alpha$ remains a [STRONGLY MOTIVATED CONJECTURE], not a derivation.
 
 ## B
 
@@ -268,7 +268,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 : The tenth triangular number = 10 × 11/2 = 55. Also Fibonacci F₁₀. Appears in the proton mass formula: m_p/m_e = N_eff/α + T(b₃ + N_c) = 13 × 137 + 55 ≈ 1836.
 
 **Fine Structure Constant (α)**
-: Dimensionless constant = 1/137.036 (0.007297). **DERIVED** from the master quadratic as the larger root. Controls electromagnetic strength. Base accuracy: 1.26 ppm; **Precision formula: 0.21 ppt** (6,000× better) via 1/α = x₊ - (9/47)|ε| + (5/64)|ε|² where ε = e^π - π - 20 ≈ -9×10⁻⁴. See also: Alpha Precision Formula.
+: Dimensionless constant = 1/137.036 (0.007297). The master quadratic's larger root *matches* 1/α to 1.26 ppm at tree level; the identification $x_+ = 1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], **not derived** from the axioms. Controls electromagnetic strength. The ε-expansion 1/α = x₊ - (9/47)|ε| + (5/64)|ε|² (ε = e^π - π - 20 ≈ -9×10⁻⁴) can be tuned to reproduce more CODATA digits, but that is a post-hoc fit beyond CODATA precision — the "0.21 ppt" figure is **not** an achieved accuracy. See also: Alpha Precision Formula.
 
 **Flux**
 : 3D vector field J = [Jx, Jy, Jz] representing momentum/energy. The substrate of potential.
@@ -348,7 +348,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 ## J
 
 **j-Invariant (1728 = 12³)**
-: The modular j-invariant = 12³ = (N_base × N_c)³ = (4 × 3)³ = 1728. This value is **derived** from framework integers, not selected. The j-invariant determines the complex multiplication structure of elliptic curves; j = 1728 corresponds to the curve y² = x³ - x with complex multiplication by i. This special curve underlies the master quadratic derivation of α.
+: The modular j-invariant = 12³ = (N_base × N_c)³ = (4 × 3)³ = 1728. j = 1728 is the classical value for the CM curve y² = x³ - x (complex multiplication by i); its factorization as (4 × 3)³ is a [STRUCTURAL OBSERVATION] suggestive of framework-integer involvement, not a derivation in either direction. This curve underlies the master quadratic, whose larger root *matches* 1/α to 1.26 ppm (a [STRONGLY MOTIVATED CONJECTURE], not a derivation of α).
 
 **Jeans Mass**
 : Minimum mass for gravitational collapse to overcome pressure.
