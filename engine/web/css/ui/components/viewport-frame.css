@@ -1,10 +1,14 @@
-/* ── Base viewport styles ── */
+/* ── Base viewport styles ──
+ * #viewport is a CSS Grid cell (grid-area: viewport) in app-shell.css.
+ * It no longer needs position:absolute — it fills its 1fr row naturally.
+ * width/height:100% still fills the grid cell; min-height:0 prevents the
+ * grid row from expanding to the canvas's intrinsic height (required for 1fr
+ * to work correctly when the canvas has a content size). */
 #viewport {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* position: absolute removed — now a grid child (grid-area: viewport) */
     width: 100%;
     height: 100%;
+    min-height: 0;  /* critical: lets the 1fr row compress the canvas, not the reverse */
     z-index: var(--z-viewport);
     overflow: hidden;
     background: var(--viewport-bg);

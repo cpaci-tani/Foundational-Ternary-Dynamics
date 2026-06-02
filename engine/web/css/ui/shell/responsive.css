@@ -89,7 +89,13 @@
         border-radius: 16px 16px 0 0;
         max-height: 80dvh !important;
         min-height: 0;
-        padding-bottom: env(safe-area-inset-bottom, 12px);
+        /* Combine safe-area-inset (notch / gesture nav) with --browser-nav-inset
+           (set by the visualViewport listener for persistent browser chrome like
+           Edge Mobile's bottom nav bar). max() picks whichever is larger. */
+        padding-bottom: max(
+            env(safe-area-inset-bottom, 12px),
+            var(--browser-nav-inset, 0px)
+        );
         transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
         backdrop-filter: blur(32px) saturate(1.4);
     }
@@ -122,7 +128,12 @@
         overflow-x: auto;
         justify-content: flex-start;
         padding-right: 8px;
-        padding-bottom: env(safe-area-inset-bottom, 0px);
+        /* Same max() pattern as the panel — keeps tab bar above the browser
+           nav bar when both safe-area and browser chrome are present. */
+        padding-bottom: max(
+            env(safe-area-inset-bottom, 0px),
+            var(--browser-nav-inset, 0px)
+        );
         scrollbar-width: none;
     }
 
