@@ -36,6 +36,6 @@ Curated, high-signal goodies for working with Foundational Ternary Dynamics. Not
 - **Building a notebook** — import `data/constants.json` to avoid re-declaring values.
 - **Running a demo** — follow a walkthrough in `scenarios/RECIPES.md`.
 - **Starting a new derivation** — copy `templates/DERIVATION_TEMPLATE.md` into `docs/theory/03_derivations/`.
-- **Picking something to work on** — skim `docs/theory/07_assessment/TRACKER_OPEN_ITEMS.md` — every `[OPEN]` across engine code + theory in one file.
+- **Picking something to work on** — skim `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md` — every `[OPEN]` across engine code + theory in one file.
 
 If a resource here turns out to be wrong, fix it, then fix whatever upstream source drifted. The point of the directory is to fail loudly when reality and the summary disagree.

@@ -23,7 +23,7 @@
 >
 > An editorial pass to rewrite this document in line with the April 19 audits is queued as Option 4 in WHERE_WE_LEFT_OFF.md §3.
 
-> **This document is a readable framework overview, not a status authority.** For the epistemic status of any claim, the canonical sources are [`LEDGER.md`](theory/07_assessment/LEDGER.md) (per-claim tags) and [`TRACKER_ONTIC_TRUTH.md`](theory/07_assessment/TRACKER_ONTIC_TRUTH.md) (truth tiers); the precedence of all status-bearing documents is fixed in [`theory/META_STRUCTURE.md`](theory/META_STRUCTURE.md) § Canonical Hierarchy. Where this document's body and a canonical source disagree, the canonical source wins and this document is the drift to fix. For the C++ engine implementation, see [engine/SPEC_ENGINE.md](../engine/SPEC_ENGINE.md). For the theory document library, see [theory/META_INDEX.md](theory/META_INDEX.md).
+> **This document is a readable framework overview, not a status authority.** For the epistemic status of any claim, the canonical sources are [`LEDGER.md`](theory/07_assessment/core_ledgers/LEDGER.md) (per-claim tags) and [`TRACKER_ONTIC_TRUTH.md`](theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) (truth tiers); the precedence of all status-bearing documents is fixed in [`theory/META_STRUCTURE.md`](theory/META_STRUCTURE.md) § Canonical Hierarchy. Where this document's body and a canonical source disagree, the canonical source wins and this document is the drift to fix. For the C++ engine implementation, see [engine/SPEC_ENGINE.md](../engine/SPEC_ENGINE.md). For the theory document library, see [theory/META_INDEX.md](theory/META_INDEX.md).
 
 **Editorial note (2026):** The publication-ready narrative and epistemic taxonomy live in `dissemination/manuscript/`. This file uses occasional shorthand (e.g., "derived", "resolved", "first principles") to mean "derived within the stated FTD postulates/constraints" or "implemented and validated in simulation," not a claim of empirical establishment.
 
@@ -44,7 +44,7 @@
 > - **Inflation DERIVED**: n_s = 0.966, r = 0.022 (compatible with Planck)
 > - **Baryogenesis DERIVED**: η ~ 10⁻¹⁰ from CP violation + Sakharov conditions
 > - **Neutrinos COMPLETE**: Seesaw mechanism with M_R from framework integers
-> - **GR / inflation / baryogenesis / neutrino items above — RECLASSIFIED (2026-04-19 audit)**: these are **[PARAMETRIC]** insertions — standard physics formulas (the Einstein equations, slow-roll inflation, Sakharov/CP, the seesaw) populated with FTD constants — **not derivations from the FTD postulates**. The "COMPLETE" / "DERIVED" headings predate the audit and are retained only as historical version markers. See `docs/theory/07_assessment/LEDGER.md` for live per-claim tags. Substrate gravity in particular is [CLOSED NEGATIVE] (FTD-0131); FTD strong-field gravity (Schwarzschild / Kerr) is imported from GR, not substrate-derived (FTD-0184).
+> - **GR / inflation / baryogenesis / neutrino items above — RECLASSIFIED (2026-04-19 audit)**: these are **[PARAMETRIC]** insertions — standard physics formulas (the Einstein equations, slow-roll inflation, Sakharov/CP, the seesaw) populated with FTD constants — **not derivations from the FTD postulates**. The "COMPLETE" / "DERIVED" headings predate the audit and are retained only as historical version markers. See `docs/theory/07_assessment/core_ledgers/LEDGER.md` for live per-claim tags. Substrate gravity in particular is [CLOSED NEGATIVE] (FTD-0131); FTD strong-field gravity (Schwarzschild / Kerr) is imported from GR, not substrate-derived (FTD-0184).
 >
 > See [FTD_REFERENCE.md](theory/01_reference/SPEC_FTD_REFERENCE.md) for complete reference and [CHANGELOG.md](../CHANGELOG.md) for version history.
 
@@ -665,7 +665,7 @@ The following are now **derived**, not input parameters:
 
 ### Derivation Status Summary
 
-> **Research Program**: ✅ **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/LEDGER.md](theory/07_assessment/LEDGER.md).
+> **Research Program**: ✅ **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md).
 
 > **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. The CM/master-quadratic arithmetic is theorem-level, but the identification of x₊ with 1/α remains a strongly motivated conjecture and the ppb one-loop correction is scheme-conditional after the 2026-04-22 Structure-2 audit. This does not constitute independent physical confirmation.
 
@@ -769,7 +769,7 @@ produces two roots:
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
 | x₋ | 3.024 | mathematical artifact of P(x); no physics identification | n/a |
 
-**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊ ↔ 1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The `x₋ ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/LEDGER.md](theory/07_assessment/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
+**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊ ↔ 1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The `x₋ ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
 
 ### 7.4.1 Lemniscate Selection: Four Algebraic Criteria
 

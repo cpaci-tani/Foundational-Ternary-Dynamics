@@ -14,7 +14,7 @@
  * Gauss + force-readout pipeline against the coupling constant it consumes
  * (ALPHA_EFT = G_C² = ALPHA by construction, see constants.h). It is NOT a
  * derivation of the physical fine-structure constant. The EFT Recovery
- * Program (docs/theory/10_eft_program/SPEC_EFT_RECOVERY_PROGRAM.md) found
+ * Program (docs/theory/10_eft_program/scopes_and_specs/SPEC_EFT_RECOVERY_PROGRAM.md) found
  * α_∞ ≈ 3.6 × α_ref on the emergent_forces path in the continuum limit —
  * that is where the physical-α comparison lives, not here.
  *

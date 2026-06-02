@@ -9,7 +9,7 @@
 The dashboard hosts 12+ scales (lattice / particle / atom / molecular /
 planetary / cosmic / meta / reference frame context / etc.). Each scale needs its own
 tick loop, scenario loading, UI panels, and reactive state. Putting all of
-this in one entry point (`app_dag.js`) made cross-scale concerns implicit
+this in one entry point (`app.js`) made cross-scale concerns implicit
 and prevented isolated testing.
 
 ## Decision
@@ -21,7 +21,7 @@ Each scale lives in `engine/web/js/scales/scale<N>/` with three subfolders:
 - `state/` — reactive store
 
 Plus a top-level `controller.js` orchestrating them and a `viewport-adapter.js`
-for the rendering bridge. `app_dag.js` plugs scales together via stateless
+for the rendering bridge. `app.js` plugs scales together via stateless
 exports; no cross-scale imports.
 
 The shared `ctx` object (see CONTRACTS.md §3) is the only inter-scale

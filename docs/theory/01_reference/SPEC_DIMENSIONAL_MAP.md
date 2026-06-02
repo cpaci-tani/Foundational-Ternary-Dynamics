@@ -47,7 +47,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 - **Value:** x_plus = 137.03617145815542, x_minus = 3.023963916339028
 - **Depends on:** `g_star_identity`
 - **LEDGER:** [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0081](../07_assessment/LEDGER.md#ftd-0081)
-- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md`; `scripts/proofs/proof_motivic_master_quadratic.py`
+- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md`; `scripts/proofs/proof_motivic_master_quadratic.py`
 - **Notes:** Two independent derivations (FTD-0081): Route A (physics — Gaussian J-integration of S_E) and Route B (arithmetic — Damerell–Shimura at CM curve E_i). Both produce the identical polynomial to 100 digits.
 
 ### CM curve uniqueness among class-number-1 fields (`cm_curve_uniqueness`)
@@ -80,7 +80,7 @@ Pure-mathematics theorems. No physical-unit content; falsifiable on their algebr
 
 - **Formula:** α_r(r, L) = 2·r·G_L(r), where G_L is the periodic lattice Poisson Green's function. Holds at every finite L without free parameters.
 - **LEDGER:** [FTD-0004](../07_assessment/LEDGER.md#ftd-0004)
-- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
+- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/10_eft_program/derivations/DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
 - **Notes:** Reframed away from the QED-deviation reading: the lattice α plateau at ≈1.8× α_ref is the Poisson Green's function shape, not a fine-structure correction. Zero free parameters.
 
 ### Phase J partition-function ultralocality at L=2 (`phase_j_ultralocality`)
@@ -110,7 +110,7 @@ Dimensionless quantities FTD predicts and that have direct experimental analogue
 - **Tag:** `STRONGLY MOTIVATED CONJECTURE`
 - **Depends on:** `master_quadratic`
 - **LEDGER:** [FTD-0001](../07_assessment/LEDGER.md#ftd-0001), [FTD-0013](../07_assessment/LEDGER.md#ftd-0013)
-- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`
+- **Sources:** `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`; `docs/theory/03_derivations/foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md`; `docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`
 - **Notes:** Polynomial-level theorem (x₊ is a root of a number-theoretic polynomial); the physical identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE] (downgraded from THEOREM 2026-04-19) because it depends on polynomial-template uniqueness (FTD-0189 adversarial scan: 0 non-G* dual-matchers across 2.65M degree-2 polynomials over an 18-constant FTD-undesigned basket) + CM-curve uniqueness rather than a derivation chain to QED. (Historical formulation referenced 'dual-match' with x_- ↔ N_c; the x_- ↔ N_c identification is RETIRED per v1.4 §5 and the polynomial-template-uniqueness fact is independent of the historical target.) FTD-0097 look-elsewhere scan (2026-04-27) confirms the master quadratic's polynomial-root layer lives outside the monomial scan space and is unaffected by the over-richness verdict.
 
 ### N_c (number of colors) — independently sourced; the historical x_- ↔ N_c identification is RETIRED (`n_color`)
@@ -121,7 +121,7 @@ Dimensionless quantities FTD predicts and that have direct experimental analogue
 - **Comparison:** —
 - **Tag:** `SELECTION`
 - **LEDGER:** —
-- **Sources:** `docs/theory/03_derivations/DERIV_NC_FROM_TOPOLOGY.md`; `docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md`
+- **Sources:** `docs/theory/03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md`; `docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md`
 - **Notes:** N_c = 3 in FTD is independently sourced from topology/representation-theory routes. The historical identification x_- ↔ N_c (where x_- ≈ 3.024 is the smaller root of the master quadratic) is RETIRED per v1.4 §5: the smaller root is a mathematical artifact of P(x), with no live physics identification. LEDGER row FTD-0014 was removed in commit ca7eb61.
 
 ### m_μ / m_e (muon/electron mass ratio) (`mu_over_e_mass_ratio`)
@@ -163,7 +163,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 - **Value:** 1.616255e-35 m
 - **Tag:** `CALIBRATION`
 - **LEDGER:** [FTD-0030](../07_assessment/LEDGER.md#ftd-0030), [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0059](../07_assessment/LEDGER.md#ftd-0059)
-- **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`
+- **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/derivations/THEOREM_A_PHYS_NO_GO.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md`; `docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md`
 - **Calibration note:** FTD-0059 (no-go theorem, 2026-04-23): no length is expressible from Axiom-Zero invariants alone. Mechanisms α/β/γ/δ all closed negative. The Planck-length declaration is theorem-enforced as the irreducible minimum, not a convenience choice. ℓ_P value from CODATA 2022: ≈1.616255 × 10⁻³⁵ m.
 - **Notes:** First of two SI-dimensional calibrations theorem-enforced by FTD-0096.
 
@@ -184,7 +184,7 @@ Two SI-dimensional calibrations are theorem-enforced as the irreducible minimum 
 - **Value:** 0.5109989507 MeV/c²
 - **Tag:** `IMPOSED`
 - **LEDGER:** [FTD-0041](../07_assessment/LEDGER.md#ftd-0041), [FTD-0096](../07_assessment/LEDGER.md#ftd-0096)
-- **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/THEOREM_MU_NO_GO_FTD0096.md`
+- **Sources:** `docs/SPEC_FTD.md`; `docs/theory/10_eft_program/derivations/THEOREM_MU_NO_GO_FTD0096.md`
 - **Calibration note:** FTD-0096 (calibration-interface theorem, 2026-04-28): mass-unit μ_FTD is calibration, not derivation, on equal footing with a_phys. Three independent closures of FTD-0094 confirm this from methodological (FTD-0097 look-elsewhere null-rejected upward), structural-mechanism (FTD-0093 Mechanism C closed negative), and dimensional (this no-go) sides. Exactly two SI-dimensional calibrations (a_phys ≡ ℓ_P and K_B = m_e) are theorem-enforced as the irreducible minimum.
 - **Notes:** Second of two SI-dimensional calibrations. Together with a_phys, completes the calibration interface.
 

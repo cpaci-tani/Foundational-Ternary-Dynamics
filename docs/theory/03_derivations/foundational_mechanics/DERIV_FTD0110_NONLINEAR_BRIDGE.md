@@ -427,7 +427,7 @@ We now formalize the two theorems that resolve the local $A_{1g}$ fraction decay
 
 - Linear-level derivation: [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](DERIV_K_FROM_OH_A1G_MULTIPLICITY.md)
 - Paper §4 (algebra-engine bridge): `dissemination/papers/PAPER_MASTER_QUADRATIC_AND_BRIDGE.tex`
-- LEDGER row: `docs/theory/07_assessment/LEDGER.md` row FTD-0110
+- LEDGER row: `docs/theory/07_assessment/core_ledgers/LEDGER.md` row FTD-0110
 - Engine implementation: `engine/src/render_bridge.cpp` (post-fix, 2026-04-27 voxel_uniform RNG)
 - Verification suite: `scripts/exploration/verify_k_derivation_2026-04-28.py` (C1-C4 PASS for the linear level; nonlinear-level verification queued)
 

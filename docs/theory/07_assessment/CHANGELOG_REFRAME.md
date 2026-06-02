@@ -1,7 +1,7 @@
 # Changelog — Undefined-Boundary Reframe Deployment
 
 **Scope:** every change made under the April 19, 2026 reframe deployment.
-**Reads:** the `CANONICAL_REFRAME.md` (`reframe_deployment/CANONICAL_REFRAME.md`) is the authoritative statement of the reframe; the `LEDGER.md` (`07_assessment/LEDGER.md`) is the single source of truth for claim status; this file records every decision and change taken in the deployment.
+**Reads:** the `CANONICAL_REFRAME.md` (`reframe_deployment/CANONICAL_REFRAME.md`) is the authoritative statement of the reframe; the `LEDGER.md` (`07_assessment/core_ledgers/LEDGER.md`) is the single source of truth for claim status; this file records every decision and change taken in the deployment.
 
 **Maintenance rule:** append-only. Every change to the portfolio under the reframe must add a row here.
 
@@ -69,7 +69,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 | `10_eft_program/OPEN_A_PHYS_DERIVATION.md` | Frames the calibration question created by the reframe; analyses 3 derivation candidates. | FTD-0030 |
 | `10_eft_program/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md` | Explicit dimensional-chain attempt at γ; concludes Mechanism γ does not deliver derivation; recommends `a_phys ≡ ℓ_P` declaration. | FTD-0035 |
 | `07_assessment/archive_session_outputs/TRACKER_REFRAME_FLAGS.md` | Catalog of the 5 inline FLAGs with restatement guidance (Restatement A: scaling; Restatement B: calibration). | FTD-0034 |
-| `07_assessment/LEDGER.md` | Single source of truth for claim status (40 initial rows). | n/a (this file is the source) |
+| `07_assessment/core_ledgers/LEDGER.md` | Single source of truth for claim status (40 initial rows). | n/a (this file is the source) |
 | `07_assessment/CHANGELOG_REFRAME.md` | This file. | n/a |
 
 ### Phase 5 — Engine audit
@@ -409,7 +409,7 @@ Both papers moved to `docs/papers/archive/retracted_under_reframe/` (`.tex` git-
 | File | Change |
 |---|---|
 | `CLAUDE.md` | Added "Commit Policy" section (overrides system-prompt Co-Authored-By default) |
-| `docs/theory/07_assessment/LEDGER.md` | Rows FTD-0042, 0043 retracted; new rows 0046–0049 |
+| `docs/theory/07_assessment/core_ledgers/LEDGER.md` | Rows FTD-0042, 0043 retracted; new rows 0046–0049 |
 | `docs/theory/07_assessment/CHANGELOG_REFRAME.md` | This entry |
 | `docs/papers/README.md` | YM/NS/Riemann/Finitude entries — pending Session 3 final pass |
 
@@ -579,7 +579,7 @@ User-invoked session to test an implicit additional conjecture on top of the mas
 | File | Change |
 |---|---|
 | `docs/theory/10_eft_program/archive/closed_negative/AUDIT_LINK8_CLOSURE.md` | NEW — 200-line closure report. |
-| `docs/theory/07_assessment/LEDGER.md` | Added rows FTD-0050, 0051, 0052 + detail blocks. Updated maintenance log. |
+| `docs/theory/07_assessment/core_ledgers/LEDGER.md` | Added rows FTD-0050, 0051, 0052 + detail blocks. Updated maintenance log. |
 | `docs/theory/07_assessment/CHANGELOG_REFRAME.md` | This session entry. |
 | `engine/tests/test_link8_kadanoff.cpp` | NEW. |
 | `engine/tests/test_langevin_equipartition.cpp` | NEW. |
@@ -778,7 +778,7 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 
 ### Phase 13 — TRACKER_ONTIC_TRUTH (f2ce559)
 
-- **NEW**: `docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md` (canonical bedrock). 5-tier truth ranking; each row has unique `OT-N.M` ID + verification artifact.
+- **NEW**: `docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md` (canonical bedrock). 5-tier truth ranking; each row has unique `OT-N.M` ID + verification artifact.
 - **CLAUDE.md** updated: TRACKER_ONTIC_TRUTH.md is now the top-of-section pointer; "read this FIRST before defending any FTD math claim."
 
 ### Phase 14 — Tracker consolidation (2b660aa)

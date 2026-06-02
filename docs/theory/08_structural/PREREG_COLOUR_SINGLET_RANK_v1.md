@@ -7,7 +7,7 @@ admissible search space, success criterion, falsifier, and method for a
 CLOSED-NEGATIVE — are pre-blessed; the audit's verdict is genuinely open.
 **Date:** 2026-05-22
 **LEDGER row:** FTD-0191 (provisional — confirm next-free id against
-`../07_assessment/LEDGER.md` at hash-lock).
+`../07_assessment/core_ledgers/LEDGER.md` at hash-lock).
 **Hash-lock:** to be SHA256-locked and git-tagged
 `preregister-colour-singlet-rank-v1` before the audit runs — see §11.
 
@@ -304,7 +304,7 @@ To lock this pre-registration before the audit runs:
    `sha256sum docs/theory/08_structural/PREREG_COLOUR_SINGLET_RANK_v1.md`.
 2. Record the SHA256 in
    [`../10_eft_program/REF_PREREGISTER_MANIFEST.md`](../10_eft_program/REF_PREREGISTER_MANIFEST.md)
-   (new row) and add a [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md)
+   (new row) and add a [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md)
    row (FTD-0191 or next-free) tagged `[PRE-REGISTRATION]`, citing this file.
 3. `git commit` the pre-registration; create a lightweight tag
    `git tag preregister-colour-singlet-rank-v1`.

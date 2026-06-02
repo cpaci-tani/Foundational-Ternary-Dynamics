@@ -11,8 +11,8 @@
 - [`SPEC_PHYSICS_BRIDGE.md`](SPEC_PHYSICS_BRIDGE.md) — physics-bridge synthesis (FTD-0121, structural-uniqueness scans)
 - [`SPEC_ALPHA_READOUT_CONTRACT.md`](SPEC_ALPHA_READOUT_CONTRACT.md) — MC-T4.3 operational-readout closure contract
 - [`SPEC_OPEN_MATH_BY_SECTOR.md`](SPEC_OPEN_MATH_BY_SECTOR.md) — 18-item bridge-complete roadmap (Phase 2 hardening targets)
-- [`../07_assessment/TRACKER_ONTIC_TRUTH.md`](../07_assessment/TRACKER_ONTIC_TRUTH.md) — bedrock truth-tier tracker (T1–T5; OT-N.M IDs)
-- [`../07_assessment/LEDGER.md`](../07_assessment/LEDGER.md) — atomic per-claim provenance (FTD-NNNN IDs)
+- [`../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md`](../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) — bedrock truth-tier tracker (T1–T5; OT-N.M IDs)
+- [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — atomic per-claim provenance (FTD-NNNN IDs)
 
 ---
 

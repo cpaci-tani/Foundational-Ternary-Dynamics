@@ -18,7 +18,7 @@ not crashes — which is why each must be explicit.
 
 ### Purpose
 
-The MockBridge in [`engine/web/js/wasm-bridge-dag.js`](engine/web/js/wasm-bridge-dag.js)
+The MockBridge in [`engine/web/js/bridge-init.js`](engine/web/js/bridge-init.js)
 is a JS-only physics engine. To keep its diagnostics, force computations,
 field samplers, and atom engine independently testable and incrementally
 extractable, each subsystem is a factory function that takes a **live reference**
@@ -188,7 +188,7 @@ and consumer-side guard).
 ### Reference exemplar
 
 `createScale0Capabilities(bridge)` in
-[`engine/web/js/wasm-bridge-dag.js`](engine/web/js/wasm-bridge-dag.js).
+[`engine/web/js/bridge-init.js`](engine/web/js/bridge-init.js).
 
 ---
 
@@ -317,7 +317,7 @@ which physics terms are active in the C++ tick. Mirrored in JS via
    relationships (e.g., `weak_transmutation` requires `dual_substrate`). When
    adding a toggle with a dependency, extend `validate()`.
 3. **JS↔C++ default values MUST match.** `MockBridge._toggles` defaults
-   (in `wasm-bridge-dag.js` constructor) MUST equal `SCALE0_TOGGLES` defaults
+   (in `bridge-init.js` constructor) MUST equal `SCALE0_TOGGLES` defaults
    (in `config/toggles.js`) MUST equal `TermToggles{}` defaults (in
    `term_toggles.h`). When they drift, the validator fires console errors.
 4. **Toggles set via `setToggle(key, value)`** propagate through the

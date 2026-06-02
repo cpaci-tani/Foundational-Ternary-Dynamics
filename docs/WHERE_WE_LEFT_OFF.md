@@ -33,7 +33,7 @@
 **Latest update (2026-05-30):** A comprehensive repository-wide reconciliation campaign has successfully resolved the late-May ledger-numbering tangle (Front A), synced all downstream navigation layers, integrated the Ginsparg-Wilson / Chiral Anomaly theorem, and rebuilt the dynamic math node map to 100% consistency.
 
 - **Duplicate Ledger IDs Resolved:** Cleared the duplicate `FTD-0224` row by reassigning the independent audit row to `FTD-0232` (preserving `Color Excess / Blocked Flow` on `FTD-0224`). Registered the Ginsparg-Wilson / Chiral Anomaly theorem under the unique canonical ID `FTD-0236` (resolving the collision with `FTD-0230`).
-- **Late-May Campaign Pre-Registrations Registered:** Added five separate, canonical rows in `docs/theory/07_assessment/LEDGER.md` for campaign resolution and pre-registration documents:
+- **Late-May Campaign Pre-Registrations Registered:** Added five separate, canonical rows in `docs/theory/07_assessment/core_ledgers/LEDGER.md` for campaign resolution and pre-registration documents:
   - **FTD-0230 / ARC-B2 — BCC Algebraic Bridge Readout:** Proves that the body-diagonal self-energy trace `16G*²` is derivable, but the odd-degree `16G*³` term remains an underdetermined project selection boundary. **[UNDERDETERMINED — Outcome B]**
   - **FTD-0231 / ARC-C1 — Alpha Quantization Readout:** Tracks the charge-quantization resolution. **[UNDERDETERMINED — Outcome B]** (reassigned from colliding `FTD-0211` row).
   - **FTD-0233 — Determinant Grading:** Closed-negative attempt analyzing G*-degree parity. **[CLOSED NEGATIVE — scoped]**
@@ -128,7 +128,7 @@ A long mixed-workstream session combining a major web-dashboard audit with a num
 
 2. **W1–W10 audit follow-up commit** (`c581af6`, 65 files, +677/−291). Closed ~30 tickets across the audit's priority queue. Major epistemic fixes: `constants.js` Layer 9 cosmic tags downgraded `[THEOREM]` → `[PARAMETRIC]`/`[SELECTION]`; Scale 4 `G_HELIOCENTRIC = 4π²` wired; Scale 5 mass labels apply `LATTICE_TO_SOLAR_MASS`; Scale 5 panel Schwarzschild formula corrected to match engine's `cbrt(M)·0.12`; cosmic-scenarios galaxies now use canonical `DM_FRACTION`/`BARYON_FRACTION`; Born rule scenario tag `[THEOREM]` → `[SELECTION]`; SU(3) identification tag `[THEOREM]` → `[SELECTION]`; Scale 6 BCC/FCC sublattice labels switched to shell-based per Moore Layer Theorem §4; `[CLOSED NEGATIVE]` and `[PARTIAL]` added to `FAQ_TAGS` allowlist (caught one self-inflicted regression mid-flight where the new tag broke bridge init).
 
-3. **`_dag` → modern-name rename consistency cleanup**. Pre-existing background-agent commit `1b68685` renamed `app_dag.js → app.js`, `wasm-bridge-dag.js → bridge-init.js`, `bridge-factory-dag.js → bridge-factory.js` but missed ~30 docstring/comment/README references. Bulk replace across `web/**/*.js`, `web/**/*.md`, `tests/**/*.spec.js` corrected all stale references. Verified dashboard boot via Playwright (29 passed, 6 pre-existing failures unrelated to renames).
+3. **`_dag` → modern-name rename consistency cleanup**. Pre-existing background-agent commit `1b68685` renamed `app.js → app.js`, `bridge-init.js → bridge-init.js`, `bridge-factory.js → bridge-factory.js` but missed ~30 docstring/comment/README references. Bulk replace across `web/**/*.js`, `web/**/*.md`, `tests/**/*.spec.js` corrected all stale references. Verified dashboard boot via Playwright (29 passed, 6 pre-existing failures unrelated to renames).
 
 4. **`x_-` structural derivation + Path A K_2-regulator exploration**. Derived 5 equivalent closed forms for `x_- = 8G*²(1−δ) = G*/(1−αG*)` from the master quadratic + Theorem 8 harmonic invariant, with the cleanest form tying `x_-` to the dual-substrate chirality split. Surfaced bridge identity `αG* = (1−δ)/2`. Tested naive Hessian-identity `ζ''(0,1/4) − ζ''(0,3/4) =? log(16·G*²)`: **CLOSED-NEGATIVE** at 80-dps (LHS = 1.81380…, RHS = 4.94207…). Broader PSLQ at 200-dps over a 24-element basis found NO integer relation for `c = ζ''(0,1/4) − ζ''(0,3/4)` in elementary basis + Catalan + Glaisher + products. Attempted K_2-regulator-of-E layer via direct Dirichlet summation of `L(E, 2)` for E: y² = x³ − x (LMFDB E_32a1, η(4z)²·η(8z)² verified vs LMFDB a-coefficients); INCONCLUSIVE at N_max=5000 due to slow Hasse-Weil convergence. Conclusion: K_2-regulator route requires Mellin-transform acceleration (multi-hour) or literature-derived closed form (Brunault–Zudilin); not session-tractable.
 
@@ -214,9 +214,9 @@ Two distinct closures landed and one was subsequently invalidated by post-hoc au
 ### What landed (committed)
 
 - `docs/theory/10_eft_program/PREREG_SPIN2_BOUNDARY_THEOREM_v1.md` (commit `d8e016b`, tag `preregister-spin2-boundary-theorem-v1`).
-- `docs/theory/10_eft_program/FOUND_SPIN2_BOUNDARY_THEOREM.md` (Arc C2 FOUND verdict).
+- `docs/theory/10_eft_program/derivations/FOUND_SPIN2_BOUNDARY_THEOREM.md` (Arc C2 FOUND verdict).
 - `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md` (commit `8c8554d`; v1 verdict).
-- `docs/theory/03_derivations/AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` (v2 invalidation audit; this session).
+- `docs/theory/07_assessment/audits/AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md` (v2 invalidation audit; this session).
 - `docs/theory/03_derivations/archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md` (archived; never hash-locked).
 - `docs/theory/03_derivations/archive/retracted/FOUND_CLOCK_HYPOTHESIS.md` (archived; verdict invalidated).
 
@@ -1057,7 +1057,7 @@ load-bearing [OPEN] item.
 ## 1 · Read in this order to recover context
 
 1. **This file.** Big picture + priority queue + bird's-eye assessment.
-2. **`docs/theory/07_assessment/LEDGER.md`** — single source of truth for
+2. **`docs/theory/07_assessment/core_ledgers/LEDGER.md`** — single source of truth for
    claim status (now ~108 rows; recent additions FTD-0093 [CLOSED NEGATIVE],
    FTD-0094 [PARAMETRIC] terminal, FTD-0102 [PARTIAL], FTD-0103 [PARTIAL],
    FTD-0104 [PARTIAL], FTD-0105 [PARTIAL], FTD-0106 [HYPOTHESIS],
@@ -1070,7 +1070,7 @@ load-bearing [OPEN] item.
    [THEOREM]s remain unchanged across 2026-04-28's work; FTD-0110's
    coefficient is tagged [DERIVED], not [THEOREM], so it does NOT add
    an 8th item to the spine.
-6. **`docs/theory/09_mathematical/EXPLR_CM_RATIO_TOWER.md`** (created
+6. **`docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md`** (created
    2026-04-27) — 9-Heegner Chowla-Selberg tower. Operationalises the CM
    uniqueness theorem with concrete numerical tabulation.
 7. **`docs/theory/10_eft_program/STATUS_EFT_CHECKLIST.md`**

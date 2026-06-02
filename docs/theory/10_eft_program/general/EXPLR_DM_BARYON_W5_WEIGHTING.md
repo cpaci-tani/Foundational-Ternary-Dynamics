@@ -11,7 +11,7 @@
 - `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` (FTD-0029, BCC sublattice structure including T_+ / T_- stella octangula split)
 - `engine/web/js/constants.js` Layer 9 (`DM_FRACTION = 17/27`, `BARYON_FRACTION = 10/27`) — the canonical voxel-counted reading
 - `docs/reference/REF_EXTERNAL_CONSTANTS.md` (CODATA / PDG / Planck 2018 reference values)
-- `docs/theory/07_assessment/LEDGER.md` (FTD-0028 site count theorem)
+- `docs/theory/07_assessment/core_ledgers/LEDGER.md` (FTD-0028 site count theorem)
 
 **Related:**
 - `engine/web/js/ui/components/faq/data.js` `dark-matter` entry (updated 2026-05-27 to cite this document)

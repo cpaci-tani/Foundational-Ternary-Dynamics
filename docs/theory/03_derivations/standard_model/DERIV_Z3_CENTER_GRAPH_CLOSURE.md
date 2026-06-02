@@ -117,7 +117,7 @@ The closure theorem is *general* finite-group fact (true for any Z_3 action on t
 - **Engine primitive:** [`../../../engine/include/ftd/color_center.h`](../../../engine/include/ftd/color_center.h) — `Z3Charge` class, `is_center_closed(...)`, `z3_omega()`, `z3_generator_z()`, `center_projector_p0()`, 3×3 complex matrix helpers.
 - **Test:** [`../../../engine/tests/test_z3_color_center.cpp`](../../../engine/tests/test_z3_color_center.cpp).
 - **CMake:** `ftd_add_test(test_z3_color_center … LABELS native)` in `engine/CMakeLists.txt`, adjacent to `test_branch_holonomy_gap`.
-- **LEDGER:** FTD-0195 (`docs/theory/07_assessment/LEDGER.md`).
+- **LEDGER:** FTD-0195 (`docs/theory/07_assessment/core_ledgers/LEDGER.md`).
 - **Sibling overlays** (same campaign): [`DERIV_BRANCH_HOLONOMY_GAP.md`](../foundational_mechanics/DERIV_BRANCH_HOLONOMY_GAP.md) (branch holonomy, FTD-0194), [`../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md`](../05_particles/EXPLR_GENERATION_GRAPH_GAMMA_D.md) (generation graph, `[CANDIDATE RECONSTRUCTION]`, FTD-0196).
 - **Related FTD claims:** the SU(3)-from-BCC-triality theorem in [`../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) (the substrate origin of the color SU(3) into which this Z_3 center embeds).
 

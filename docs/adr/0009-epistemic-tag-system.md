@@ -30,7 +30,7 @@ documentation, and `LEDGER.md`:
 | **[EMERGENT]** | Behavior arising from dynamics (not designed in) | Verify in simulation |
 | **[OPEN]** | Unresolved question | Research opportunity |
 
-Every load-bearing claim in `docs/theory/07_assessment/LEDGER.md` carries
+Every load-bearing claim in `docs/theory/07_assessment/core_ledgers/LEDGER.md` carries
 one of these tags. Code comments cite LEDGER rows by number
 (`// Implements LEDGER#C-NNN [TAG]`).
 
@@ -50,6 +50,6 @@ one of these tags. Code comments cite LEDGER rows by number
 
 ## References
 
-- Files: `CLAUDE.md` §"Epistemic Tags", `docs/theory/07_assessment/LEDGER.md`
+- Files: `CLAUDE.md` §"Epistemic Tags", `docs/theory/07_assessment/core_ledgers/LEDGER.md`
 - Cross-refs: CONTRACTS.md §5 (cross-reference policy), all DERIV_*.md and
   AUDIT_*.md docs

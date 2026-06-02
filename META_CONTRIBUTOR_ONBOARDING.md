@@ -84,8 +84,8 @@ Read these before making theory-facing edits:
 **Practical entry points**
 
 - Use [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) to pick the relevant theory lane.
-- Use [docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md) for the 5-tier bedrock-truth ranking; read this FIRST before defending any FTD math claim.
-- Use [docs/theory/07_assessment/LEDGER.md](docs/theory/07_assessment/LEDGER.md) for full per-claim provenance and tag history.
+- Use [docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) for the 5-tier bedrock-truth ranking; read this FIRST before defending any FTD math claim.
+- Use [docs/theory/07_assessment/core_ledgers/LEDGER.md](docs/theory/07_assessment/core_ledgers/LEDGER.md) for full per-claim provenance and tag history.
 - Use [docs/theory/07_assessment/REF_CLAIMS_MATRIX.md](docs/theory/07_assessment/REF_CLAIMS_MATRIX.md) when you need dependencies or falsification framing.
 
 **What feels stable**
@@ -178,7 +178,7 @@ Read these before making theory-facing edits:
 
 1. [evaluation/AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md)
 2. [evaluation/AUDIT_UNRESOLVED_ISSUES.md](evaluation/AUDIT_UNRESOLVED_ISSUES.md)
-3. [docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md)
+3. [docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md)
 4. [lean4_proof/FTD.lean](lean4_proof/FTD.lean)
 5. [dissemination/manuscript/src/index.qmd](dissemination/manuscript/src/index.qmd)
 
@@ -241,7 +241,7 @@ cd dissemination/whitepaper && pdflatex FTD_Whitepaper.tex
 1. Read [docs/SPEC_FTD.md](docs/SPEC_FTD.md).
 2. Read [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [docs/reference/REF_SCOPE_LIMITATIONS.md](docs/reference/REF_SCOPE_LIMITATIONS.md).
 3. Use [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) to choose a category.
-4. Before editing, check [docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md) and [docs/theory/07_assessment/LEDGER.md](docs/theory/07_assessment/LEDGER.md) to confirm current tag status.
+4. Before editing, check [docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) and [docs/theory/07_assessment/core_ledgers/LEDGER.md](docs/theory/07_assessment/core_ledgers/LEDGER.md) to confirm current tag status.
 5. Treat `archive/` and superseded docs as historical unless a current document sends you there.
 
 ### Engine / Runtime Contributor

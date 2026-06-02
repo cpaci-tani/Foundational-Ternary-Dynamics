@@ -7,7 +7,7 @@
 **Status:** Historical/interpretive structural atlas of the γ → ϖ → M → π → G* constant chain; **not** the canonical derivation chain for α.
 **Epistemic Tags:** [THEOREM] for structural results, [DEFINITION] for defining relations, [STANDARD] for classical analysis, [SELECTION] for ordering, [CONJECTURE] for physical interpretation
 
-> **Reevaluation note (2026-05-18).** This document predates the current FQCR / Algebraic Spine / Ontic Truth tracker stack. Its useful content is the classical-analysis atlas showing how Euler's constant γ appears in Γ(1/4), and hence in ϖ and G*. It should not be cited as deriving the physical fine-structure constant. Current canonical status lives in `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`, `docs/theory/01_reference/SPEC_FQCR.md`, and `docs/theory/07_assessment/TRACKER_ONTIC_TRUTH.md`: the G* identities and master quadratic are theorem-level; the physical identification `x_+ = 1/α` remains [STRONGLY MOTIVATED CONJECTURE].
+> **Reevaluation note (2026-05-18).** This document predates the current FQCR / Algebraic Spine / Ontic Truth tracker stack. Its useful content is the classical-analysis atlas showing how Euler's constant γ appears in Γ(1/4), and hence in ϖ and G*. It should not be cited as deriving the physical fine-structure constant. Current canonical status lives in `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`, `docs/theory/01_reference/SPEC_FQCR.md`, and `docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md`: the G* identities and master quadratic are theorem-level; the physical identification `x_+ = 1/α` remains [STRONGLY MOTIVATED CONJECTURE].
 
 ---
 
