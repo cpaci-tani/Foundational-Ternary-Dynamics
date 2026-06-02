@@ -7,14 +7,14 @@
 `alpha-operator-forcing` (`wf_a82f3af9-536`, 9 agents, ftd-lead-physicist type).
 **Net epistemic effect:** **zero promotions, zero demotions.** `x₊ = 1/α` (FTD-0013) stays
 `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`. The spine is untouched.
-**LEDGER id:** pending assignment (deferred — do not hardcode; confirm next-free at hash-lock).
+**LEDGER id:** FTD-0242 (assigned 2026-06-01; next-free verified — 0238–0241 spoken-for). Re-check for collision on merge-to-main per the concurrent-session id hazard.
 
 ---
 
 ## 1. The question
 
 The master quadratic is `x² − 16G*²x + 16G*³ = 0`, with dominant root `x₊ = 137.036` matching
-`1/α` to 1.26 ppm (`G* = Γ(1/4)/Γ(3/4) ≈ 2.95887`, **not** the lemniscate constant ϖ ≈ 2.622).
+`1/α` to 1.26 ppm (`G* = Γ(1/4)/Γ(3/4) ≈ 2.95868`, **not** the lemniscate constant ϖ ≈ 2.622).
 Read as a 2×2 operator, `(Tr, Det) = (16G*², 16G*³)`. The trace is forward-derivable `[DERIVED]`
 (`16 = |Aut(E)|²` for `E: y²=x³−x`, FTD-0006; `G*² = 2π·G_BCC(0)`, the Watson BCC self-energy,
 FTD-0002). The determinant needs an **odd** power of G*. **Is the `(Tr, Det)` operator structure —
@@ -133,6 +133,79 @@ grade) reopens no route here.
 
 ---
 
+## ⚠ §8 [CONDITIONAL — Postulate 6 is an INPUT, not a theorem; this is NOT a derivation of α]
+
+> The chain below assumes **one additional postulate that is logically independent of the five FTD
+> postulates** — it **IS** the W-CRIT-2 operator-assembly (FTD-0235 /
+> `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md`), restated as a composition rule. Granting it
+> reproduces the master quadratic and hence the known 1.26-ppm match. `x₊ = 1/α` (FTD-0013) **stays
+> `[STRONGLY MOTIVATED CONJECTURE]`; this section promotes nothing.** Read it as **"FTD + one
+> assembly-input ⟹ α-match," never "FTD derives α."** The entire content of §8 is that it *prices*
+> the MC-T4.3 gap at exactly one minimal named postulate — it does **not** discharge it.
+
+The point of §8 is bookkeeping, not derivation. §3 established that the boundary is route-invariant: the
+two halves of the readout (even trace, odd source) are each forward-forced, but their *assembly* into one
+2×2 operator is not. Here we make that single missing step **explicit and atomic**, so the cost of α is
+visible as one named input rather than a diffuse "gap."
+
+**The chain (numerics VERIFIED in-session at 40 dp; `G*` kept symbolic in the structure):**
+
+1. **FORCED trace** `[DERIVED]`. `T = 16 G*²`. The `16 = |Aut(E)|²` for `E: y²=x³−x` (FTD-0006); the
+   `G*² = 2π·G_BCC(0)` is the Watson BCC self-energy (`G_BCC(0) = G*²/2π`, FTD-0002). Numerically
+   `T = 140.0601353744…`.
+2. **FORCED odd source** `[DERIVED]`. `g = G*`. This is the J-twisted ζ-determinant ratio
+   `det_ζ(D_{3/4}) / det_ζ(D_{1/4}) = Γ(1/4)/Γ(3/4) = G*` (FTD-0234): degree 1, the `√(2π)` cancels so
+   there is no forbidden `√π` prefactor. This genuinely *lifts the bare-parity no-go* (FTD-0233): an odd
+   clean source exists. Numerically `g = 2.9586751192…`.
+3. **POSTULATE 6 — the only input** `[IMPOSED — this IS the unforced assembly W, = W-CRIT-2]`. State the
+   composition rule: **the readout determinant carries exactly ONE factor of the odd source beyond the
+   even trace** (one chiral half-turn):
+   $$\det \;=\; T\cdot g \;=\; 16G^{*2}\cdot G^* \;=\; 16G^{*3} \;=\; 414.3924377…$$
+   This is the entire logical debt. For a 2×2 operator `Tr` and `Det` are independent invariants
+   (§3, §4); fixing `T` leaves `Det` free, and nothing forward-forces that `g` lands in the determinant
+   slot rather than anywhere else. Postulate 6 *names* that choice. It is logically independent of P1–P5.
+4. **⟹ the master quadratic.** `x² − Tx + det = x² − 16G*²x + 16G*³ = 0` has
+   $$x_+ = 137.0361714582…\;,\qquad x_- = 3.0239639163…$$
+   and `x₊` matches CODATA-2022 `α⁻¹ = 137.035999177` to **1.257 ppm**.
+
+**Smuggle audit (mechanical, against `SPEC_ALPHA_READOUT_CONTRACT.md` §3 Hard Exclusion Rules).** No
+`α`, no `137`, no `x₊`, no `g_c`, and no FQCR transfer matrix `M_N(t)` (which is *defined* to have the
+master quadratic as its characteristic polynomial — circular, banned) is inserted anywhere. `T` and `g`
+are forward-forced upstream of any physical constant; **Postulate 6 is the sole input, and it is exactly
+the unforced (Tr, Det) assembly** that §3/§4 already isolated as the boundary. The value of §8 is that it
+prices the MC-T4.3 gap at **one minimal named postulate** — *not* that it derives α. Adding Postulate 6
+to FTD's axiom list would convert `x₊ = 1/α` from `[STRONGLY MOTIVATED CONJECTURE]` to `[DERIVED, modulo
+Postulate 6]`; **whether Postulate 6 is itself FTD-native is exactly the live RSI Leg-3 question (§4, §6),
+which remains `[OPEN]`.** This section does not assume Leg 3 either way.
+
+## §9 [pointers — where the realizer of Postulate 6 lives, and why it is not unit-clean]
+
+Postulate 6 asks for a single clean factor of `G*` (degree 1) — equivalently a clean `√G*` (degree ½) that
+the readout can square into the determinant slot. Two structural facts, recorded in the home docs below,
+explain why such an object **exists natively but cannot be made unit-clean**, which is *why* the assembly
+is a free choice rather than a forced one:
+
+- **The weight-½ realizer is the theta-null `θ₃(0, i)`.** At the self-dual point `τ = i`,
+  `θ₃(0,i) = π^{1/4}/Γ(3/4) = √G*/(2π)^{1/4} ≈ 1.08643` is a genuine FORCED square root
+  (`θ = √(θ²)`, and `θ₃(e^{−π})² = G*/√(2π)` is the catalogued degree-1 object). It is real, native, and
+  weight-½ — but **measure-dressed by the archimedean `(2π)^{1/4}`**; it is not a clean `√G*`. See
+  `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` (theta-null spin triplet at `τ=i`) and
+  `DERIV_SPIN_STATISTICS_BRIDGE.md` §5 (the weight-½ reading).
+- **The half-power cannot be unit-clean for an arithmetic reason.** Every native degree-½ object is
+  prime- or measure-dressed: the J-twisted `det_ζ(D_{3/4}) = 2^{1/4}√G* ≈ 2.04553` is dressed by the
+  *ramified prime* `2^{1/4}` (non-archimedean), while `θ₃(0,i)` is dressed by the *measure* `(2π)^{1/4}`
+  (archimedean). The readout's needed trace is the *unit-dressed* `4√G*` (`4 = |μ₄|`). The structural
+  reason a clean `√G*` is unavailable in one CM field — the ramified prime at 2, local–global, and the
+  ontic/epistemic seam — is the synthesis in
+  `docs/theory/09_mathematical/number_theory/EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md`.
+
+Net: Postulate 6 has a *real* candidate realizer (the weight-½ theta-null), and the shortfall between it
+and a forcing of the determinant is *exactly* one archimedean (or one ramified-prime) measure factor —
+not a missing object, but a missing way to strip the dressing. That shortfall is the MC-T4.3 obstruction,
+seen from the realizer side.
+
+---
+
 ### Provenance
 - Workflow: `alpha-operator-forcing` run `wf_a82f3af9-536` (4 routes × force+refute + synthesis).
 - Canonical anchors: `SPEC_ALPHA_READOUT_CONTRACT.md` (§3 Hard Exclusion Rules);
@@ -142,3 +215,8 @@ grade) reopens no route here.
   `FOUND_STRUCTURAL_DECOUPLING.md` (FTD-0129, the 4-leg "α is dynamical" diagnostic);
   `DERIV_ALPHA_READOUT_EMPIRICAL.md` (ARC-D1 closed-negative);
   `scripts/proofs/proof_readout_multE_zero.py`, `proof_det_identity.py`, `proof_bcc_complex_structure.py`.
+- §8/§9 (Postulate-6 pricing + realizer pointers): `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` (theta-null spin
+  triplet at `τ=i`); `DERIV_SPIN_STATISTICS_BRIDGE.md` §5 (weight-½ reading);
+  `EXPLR_GAUSSIAN_EISENSTEIN_DICHOTOMY.md` (ramified-prime / local–global / ontic–epistemic synthesis).
+  §8 numerics VERIFIED in-session at 40 dp: `T = 140.0601353744…`, `g = G* = 2.9586751192…`,
+  `det = 16G*³ = 414.3924377…`, `x₊ = 137.0361714582…` (1.257 ppm vs CODATA-2022), `x₋ = 3.0239639163…`.
