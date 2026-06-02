@@ -1,5 +1,78 @@
 # Foundational Ternary Dynamics Changelog
 
+## Phase 12 — RSI Leg 3 Conditional Theorem + Mobile-First Web Overhaul (2026-06-02)
+
+A theory-side closure attempt (RSI Leg 3 REDUCE verdict, FTD-0243), numeric
+consistency audit, web engine bug fixes, CI repair, and a comprehensive
+mobile-first responsive overhaul of the web dashboard. **No physics edited:
+golden hash `0xcd957b601d47868a` unchanged. FTD-0013 and MC-T4.3 unchanged.**
+
+### RSI Leg 3 conditional theorem (FTD-0243)
+
+- **REDUCE verdict:** four-route adversarial attack (`rsi-leg3-closure`) on
+  RSI Leg 3 found no CLOSE and no FLIP. New theorem-grade deliverables:
+  - [THEOREM] Flip ruled out: D6 three-plane excluded by Legs 1–2.
+  - [THEOREM] 3b scope: no C₃-equivariant rank-2 restriction carries
+    `(16G*²,16G*³)` — mechanism corrected from FTD-0242 (REALITY→scalar-i→C₄,
+    not the discredited spectral-conjugacy claim).
+  - [THEOREM] Reduction route-invariant: Q(G*) is the Galois-fixed field of
+    the master quadratic's ℤ/2; every forward-forced datum is blind to which
+    root is 1/α. Family det=16G*²·G*^k for k=0..3 all F-consistent.
+  - [THEOREM] Conditional: 𝔉 does not force α unless W natively realizes
+    `√(G*(4G*−1))`; W is logically independent of P1–P5.
+  - [OPEN] K-BIND: the irreducible universal negative — natively realize
+    `√(G*(4G*−1))` — undecidable without a finite axiomatization.
+- **Docs:** `docs/theory/07_assessment/audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md`
+  (FTD-0243 row added to LEDGER).
+
+### Numeric consistency audit
+
+- Canonical triple (`scripts/constants.py`, `engine/include/ftd/ontic.h`,
+  `engine/web/js/constants.js`) **VERIFIED CLEAN**.
+- Fixed 8 downstream transcription errors in manuscripts, papers, and code
+  snippets (manuscript_v2 ch08 product 414.368→414.392; manuscript 1.10b
+  G\*-power table; book appendix_a G\* 2.9587053→2.9586751; paper G\*
+  2.95867551→2.95867512; CONJ_SEVEN_TERM snippet literal; SPEC_FTD_REFERENCE;
+  scan_look_elsewhere comment 2022→2018 [value hash-locked]).
+
+### Web engine bug fix — E/B field overlay translation-offset
+
+- When B field was on and E was enabled, B streamlines visibly shifted because
+  E and B ran on consecutive rAF frames seeded from live (unsynchronized)
+  particle positions. Fixed: `sampleFieldState()` now snapshots `particleData`
+  once per sweep; `COST_STREAMLINE` halved (100→50) so E+B land in one frame.
+  Verified: B mesh vertices bit-identical before/after enabling E.
+
+### CI repair
+
+- **ruff lint**: 266 errors → 0 (added `.agents/`, `tools/`,
+  `dissemination/animations/` to ruff exclude; auto-fixed remaining F401/W293).
+- **`fail-fast: false`** added to test matrix — all Python versions now run
+  independently. All GitHub checks green.
+
+### Mobile-first web interface overhaul
+
+- **CSS Grid shell** (`app-shell.css`, `viewport-frame.css`, `tokens.css`):
+  `#app` migrated from stacked absolute positioning to CSS Grid with
+  `height: 100dvh; min-height: 100svh`; 2-row grid on desktop, 4-row compact
+  grid on mobile (tabs+status as real grid rows above browser nav bar).
+  `visualViewport` listener writes `--browser-nav-inset` so panels stay above
+  persistent browser chrome (Edge Mobile, etc.).
+- **Left-default panel** (`panel-mount-state.js`, `index.html`): DEFAULT_MOUNT
+  `'bottom'` → `'left'`; force-reset migration v2 (version key clears stale
+  stored mount once); width-aware pre-paint prevents flash on phones.
+- **Mobile polish** (`responsive.css`, `app.js`, primitives, panels, scales):
+  +20% mobile UI scale (`:root @media max-width:767px`, composing with
+  `--ui-scale-base`); 2-col controls grid; charts single-column (fixed overflow
+  on 375px); touch targets ≥44px (`--tap-min` token).
+- **Comprehensive responsive audit**: fluid `clamp()` typography on all `--fs-*`
+  tokens; 30+ CSS files swept; landscape guard (`@media max-height:500px` —
+  toolbar nowrap-scroll, sheet capped 88dvh, overlay bounds); JS overlay panels
+  viewport-aware (`conservation-micropanel`, `p1-observables` widths →
+  `min(W, calc(100vw−20px))`; `meta-pedagogy` 16 inline fonts →
+  `calc(Npx × var(--ui-scale,1))`). Zero horizontal overflow at
+  320/375/390/667×375/844×390/1280. **59 Playwright tests green**.
+
 ## Phase 11 — Engine-Flawless Audit + MC-T4.3 Route-Invariance (2026-06-01)
 
 A 16-commit lifecycle / callstack / toggle audit of the engine (branch
