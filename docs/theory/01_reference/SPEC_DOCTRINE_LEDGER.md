@@ -1,8 +1,8 @@
-# SPEC · FTD/FQCR Doctrine Ledger v1.4
+# SPEC · FTD/FQCR Doctrine Ledger v1.5
 
 **Tag:** [REFERENCE] — single-page status map. Per-element tags within (see §0 status key + §13 audit).
-**Date:** 2026-05-20
-**Version:** 1.4 (ontic-system v0.2 intake reconciliation; branch-compliance/Yilmaz gravity fenced per FTD-0184; no tag promotion).
+**Date:** 2026-06-01
+**Version:** 1.5 (MC-T4.3 route-invariance boundary recorded per FTD-0242 — α classified DYNAMICAL not structural, 0/4 FTD-native routes force the operator assembly; still [FOUNDATIONAL OBSTRUCTION], **no tag promotion**. Prior: 1.4, 2026-05-20 ontic-system v0.2 intake reconciliation; branch-compliance/Yilmaz gravity fenced per FTD-0184.).
 **LEDGER:** FTD-0145 [SYNTHESIS] — claim-aggregation roll-up; introduces no new theorems.
 **Companion docs:**
 - [`SPEC_ALGEBRAIC_SPINE.md`](SPEC_ALGEBRAIC_SPINE.md) — canonical 9-theorem reference (theorem-only, physics-free)
@@ -187,7 +187,7 @@ where `α_N⁻¹(t) = 8(G_N*)² + 4(G_N*)^{3/2} √(4G_N* − R_N(t))` is the do
 | Base coupling evaluated at `t = 1`                                    | [SELECTION — physical principle] | SPEC_FQCR.md §3.2 (a-priori interpretation of `t` is open)                               |
 | Branch quadratic `x² − 16(G_N*)²x + 16(G_N*)³R_N(t) = 0` (notational) | [THEOREM — notational identity] | SPEC_FQCR.md §2 Prop 5; reduces to spine master quadratic at `R_N(1)=1, N→∞`             |
 | `α_FTD⁻¹ ≈ 137.035999177` at `t = 1`                                  | [STRONGLY MOTIVATED CONJECTURE]  | OT-5.1; FTD-0013. Structural evidence: ~4×10⁵:1 Bayes (OT-3.3, 2.87M-poly scan with 0 Eisenstein dual-matchers); 63-discriminant Γ-product null at `h ≥ 2` (OT-3.2); Z[i] structural unification of CM Aut count and tower level k=4 (OT-1.5, FTD-0122). |
-| Identification with physical `α⁻¹` (CODATA 2022 `137.035999177(21)`)       | [STRONGLY MOTIVATED CONJECTURE]  | OT-5.1; agreement 1.26 ppm; not [DERIVED] absent a non-action injection mechanism (MC-T4.3, foundational obstruction). |
+| Identification with physical `α⁻¹` (CODATA 2022 `137.035999177(21)`)       | [STRONGLY MOTIVATED CONJECTURE]  | OT-5.1; agreement 1.26 ppm; not [DERIVED] absent a non-action injection mechanism (MC-T4.3, foundational obstruction). **2026-06-01 (FTD-0242):** the MC-T4.3 obstruction is now a **route-invariant boundary** — 0/4 FTD-native routes force the `(Tr,Det)=(16G*²,16G*³)` operator assembly (the trace and a clean odd source `G*` are forward-forced, the assembly is not — W-CRIT-2). α is classified **DYNAMICAL, not structural**; the boundary is `[STRONGLY MOTIVATED CONJECTURE]` no-go, not [THEOREM]. **No tag promotion.** |
 
 ---
 
@@ -406,13 +406,13 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 
 ### Phase 1 — Doctrine ledger and audit (this document)
 
-**Status: COMPLETE.** This v1.4 document compresses FTD's claim infrastructure into a single navigation surface. Every claim is rolled up at canonical tag from `LEDGER.md`, `TRACKER_ONTIC_TRUTH.md`, `SPEC_ALGEBRAIC_SPINE.md`, `SPEC_FQCR.md`, `SPEC_OPEN_MATH_BY_SECTOR.md`, or `CATALOG_PARAMETRIC_INSERTIONS.md`. The non-circularity audit (§13) reads out the four-layer structure (derived / selected / imported / numerical) without inventing new categories. The 2026-05-20 ontic-system reconciliation adds the FTD-0184 gravity guardrail without changing any claim tag.
+**Status: COMPLETE.** This v1.5 document compresses FTD's claim infrastructure into a single navigation surface. Every claim is rolled up at canonical tag from `LEDGER.md`, `TRACKER_ONTIC_TRUTH.md`, `SPEC_ALGEBRAIC_SPINE.md`, `SPEC_FQCR.md`, `SPEC_OPEN_MATH_BY_SECTOR.md`, or `CATALOG_PARAMETRIC_INSERTIONS.md`. The non-circularity audit (§13) reads out the four-layer structure (derived / selected / imported / numerical) without inventing new categories. The 2026-05-20 ontic-system reconciliation adds the FTD-0184 gravity guardrail without changing any claim tag. The 2026-06-01 v1.5 update records the FTD-0242 route-invariant MC-T4.3 boundary (α DYNAMICAL not structural) without changing any claim tag.
 
 ### Phase 2 — Hardening
 
 | Priority | Hardening target                                  | Canonical anchor                                                        | Status                          |
 |----------|---------------------------------------------------|-------------------------------------------------------------------------|---------------------------------|
-| 0        | Operational alpha-readout mechanism               | MC-T4.3 (`SPEC_OPEN_MATH_BY_SECTOR.md` §10.1)                            | CENTRAL FOUNDATIONAL OBSTRUCTION |
+| 0        | Operational alpha-readout mechanism               | MC-T4.3 (`SPEC_OPEN_MATH_BY_SECTOR.md` §10.1); FTD-0242 (`../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`) | CENTRAL FOUNDATIONAL OBSTRUCTION — now a **route-invariant boundary** (2026-06-01): 0/4 FTD-native routes force the operator assembly (W-CRIT-2); α DYNAMICAL not structural; two surviving exits = 6th-postulate-class assembly input or engine-native ARC-D (ARC-D1 [CLOSED NEGATIVE]). No promotion. |
 | 1        | `R_N(t)` variational/operator derivation          | MC-T3.1 (`SPEC_OPEN_MATH_BY_SECTOR.md`); FTD-0143 PRE-REG                | NOT CLOSED, slope mismatch ~2.5× |
 | 2        | Activation kernels and beta coefficients          | MC-T3.6 (new ID 2026-05-08; β-coefficient arc separate from MC-T3.5 FTD-0110 multi-scale) | OPEN |
 | 3        | Higgs residual curvature `χ_H`                    | NEW — no canonical anchor                                                | OPEN                             |

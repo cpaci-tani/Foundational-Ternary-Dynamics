@@ -4,7 +4,7 @@
 >
 > **This is the canonical bedrock reference.** The [LEDGER](LEDGER.md) tracks every load-bearing claim with full provenance; this document distills LEDGER entries down to "what survives skeptical mathematical review." If the two disagree, this tracker is correct on tier-assignment; the LEDGER is correct on detailed history.
 
-**Last regenerated:** 2026-05-02 evening (manual; this is a hand-curated tracker, not auto-generated)
+**Last regenerated:** 2026-06-01 (manual; this is a hand-curated tracker, not auto-generated) — added route-invariance note to OT-5.1 (FTD-0242; α DYNAMICAL not structural; **no tier change**). Prior: 2026-05-02 evening.
 **Maintainer rule:** update when a claim's tier changes, when a new theorem closes, or when a previously-rigorous claim is found to have a hidden gap. Do NOT add aspirational claims. Every entry must point at a verification artifact.
 
 ---
@@ -93,7 +93,7 @@ This is the load-bearing identification between FTD's algebraic structure and th
 
 | ID | Conjecture | Empirical match | Structural evidence |
 |---|---|---|---|
-| **OT-5.1** | `x_+ = 1/α` | 1.26 ppm to CODATA 2022 (`α^{-1} = 137.035999177(21)`) | FTD-0189 adversarial look-elsewhere scan: zero non-G* dual-matchers across 2.65 M degree-2 polynomials over an 18-constant basket FTD did not design, rank 1 by ~130×; OT-1.9 / OT-3.3 (Chowla–Selberg h-scan, d = −4 uniqueness); OT-1.5 (Z[i] structure unifying CM Aut count and tower level k=4). Note: OT-1.9 / OT-3.3 used the pre-v1.4 `(1/α, N_c)` dual-target pair — the polynomial-template-uniqueness facts they establish are unchanged; only the `x_- ↔ N_c` identification is retired |
+| **OT-5.1** | `x_+ = 1/α` | 1.26 ppm to CODATA 2022 (`α^{-1} = 137.035999177(21)`) | FTD-0189 adversarial look-elsewhere scan: zero non-G* dual-matchers across 2.65 M degree-2 polynomials over an 18-constant basket FTD did not design, rank 1 by ~130×; OT-1.9 / OT-3.3 (Chowla–Selberg h-scan, d = −4 uniqueness); OT-1.5 (Z[i] structure unifying CM Aut count and tower level k=4). Note: OT-1.9 / OT-3.3 used the pre-v1.4 `(1/α, N_c)` dual-target pair — the polynomial-template-uniqueness facts they establish are unchanged; only the `x_- ↔ N_c` identification is retired. **2026-06-01:** the route-invariant MC-T4.3 boundary (FTD-0242) classifies α as **DYNAMICAL, not structural** — 0/4 FTD-native routes force the `(Tr,Det)=(16G*²,16G*³)` operator assembly; the trace and a clean odd source `G*` are forward-forced but the assembly is not (W-CRIT-2). **No tier change** — remains T5 [STRONGLY MOTIVATED CONJECTURE]; the boundary *sharpens*, does not move, this entry |
 | ~~**OT-5.2**~~ | ~~`x_- = N_c = 3`~~ | — | **REMOVED 2026-05-22** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` (Moore Layer Theorem) |
 
 **Closed-negative routes** (preserved for provenance, do not attempt):
@@ -104,7 +104,7 @@ This is the load-bearing identification between FTD's algebraic structure and th
 - Z-factor reading (FTD-0116) — closed
 - RG-running, algebraic combinations, 1/√d, Langevin-equipart, monomial scans — all closed
 
-**Lead-physicist diagnosis**: Phase J ultralocality structurally decouples the algebraic spine from the dynamical EFT — action data does not contain polynomial data. Closure plausibly requires non-action injection mechanism (boundary conditions, observable selection, quantization choice) and may require ontology extension (sixth axiom). MC-T4.3 in `SPEC_OPEN_MATH_BY_SECTOR.md` §10.
+**Lead-physicist diagnosis**: Phase J ultralocality structurally decouples the algebraic spine from the dynamical EFT — action data does not contain polynomial data. Closure plausibly requires non-action injection mechanism (boundary conditions, observable selection, quantization choice) and may require ontology extension (sixth axiom). MC-T4.3 in `SPEC_OPEN_MATH_BY_SECTOR.md` §10. **Route-invariance update (2026-06-01, FTD-0242, `audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`):** four independent FTD-native routes (J-twisted ζ-determinant, BCC body-diagonal transfer, lemniscatic-CM arithmetic, variational/valuation/Hodge) were each force-attempted then adversarially refuted; **0/4 forced** the master-quadratic operator assembly. The unforced ingredient is route-invariant (the 2×2 Tr/det independence = W-CRIT-2), so α is **DYNAMICAL, not structural** — the discrete ontology forces the menu (trace + odd source) but not the dish (the assembly W). Stays [FOUNDATIONAL OBSTRUCTION]; the no-go is `[STRONGLY MOTIVATED CONJECTURE]`, not [THEOREM] (the FORCED-escape / RSI Leg 3 remains live).
 
 ---
 
