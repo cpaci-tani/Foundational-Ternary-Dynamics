@@ -20,7 +20,7 @@
 **The claim "zero free parameters" is FALSE.** External inputs required:
 - M_Planck, G_F, Λ_QCD, decay constants, phase space factors, and standard QED/QCD loop integrals.
 
-See [LEDGER.md](../07_assessment/core_ledgers/LEDGER.md), [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md), and [ROUNDTABLE_STATE_OF_FTD_2026-05-22.md](../07_assessment/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md) for the honest, rigorous state of the theory.
+See [LEDGER.md](../07_assessment/core_ledgers/LEDGER.md), [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md), for the honest, rigorous state of the theory. (State-of-theory roundtable archived: `../07_assessment/archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md`; monograph `MONOGRAPH_FTD_CONSTRUCTION.md` is the canonical replacement.)
 
 ---
 

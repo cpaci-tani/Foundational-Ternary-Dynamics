@@ -84,7 +84,7 @@ A final note. The bedrock observation — that $\chi_{-4}(n) = \mathrm{Im}(i^n)$
 
 **Round-1 paths referenced (absolute):**
 - `C:\Users\cpaci\Desktop\ftd\docs\papers\PAPER_GSTAR_INTRODUCTION.tex` — the manuscript
-- `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md` — the prior synthesis (now partially superseded; see comment in R1 §4 item 9 above)
+- `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\archive\SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md` — the prior synthesis (now partially superseded; see comment in R1 §4 item 9 above)
 - `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\LEDGER.md` — entries FTD-0154 through FTD-0170
 
 **Round-1 specific manuscript locations flagged:**
@@ -273,7 +273,7 @@ A short clean third round, not a long manufactured one: the polish landed. Round
 **All files referenced across the three rounds:**
 - `C:\Users\cpaci\Desktop\ftd\docs\papers\PAPER_GSTAR_INTRODUCTION.tex` — Paper A
 - `C:\Users\cpaci\Desktop\ftd\docs\papers\PAPER_GSTAR_FTD_BRIDGE.tex` — Paper B (created between Round 1 and Round 2)
-- `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md` — the prior synthesis (partially superseded; see Round-1 §4 item 9)
+- `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\archive\SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md` — the prior synthesis (partially superseded; see Round-1 §4 item 9)
 - `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\LEDGER.md` — entries FTD-0154 through FTD-0170
 - `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\REFEREE_REPORT_GSTAR_2026-05-19.md` — Round 1 source (consolidated here)
 - `C:\Users\cpaci\Desktop\ftd\docs\theory\07_assessment\REFEREE_REPORT_GSTAR_2026-05-19_ROUND2.md` — Round 2 source (consolidated here)

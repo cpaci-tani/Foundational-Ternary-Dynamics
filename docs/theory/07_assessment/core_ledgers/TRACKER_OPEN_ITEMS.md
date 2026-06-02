@@ -420,7 +420,7 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 **File:** `docs/SPEC_FTD.md`. Top-level spec has one unresolved note.
 
 ### 7.6 Misc status/meta files
-- `docs/theory/07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md` — 1. **[LEGACY — pre-reframe doc; superseded, do NOT cite externally. The lone `[OPEN]` here is on the untestable consciousness/reference-frame-context material now tagged [SPECULATIVE CONJECTURE]; not a live research item.]**
+- `docs/theory/07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` — 1. **[LEGACY — pre-reframe doc; superseded, do NOT cite externally. The lone `[OPEN]` here is on the untestable consciousness/reference-frame-context material now tagged [SPECULATIVE CONJECTURE]; not a live research item.]**
 - `docs/theory/META_INDEX.md` — 1.
 - `docs/reference/REF_EPISTEMIC_LABELS.md` — 2 (conventions, not physics).
 - `docs/internal/SPEC_CLAUDE.md` — 2 (internal).
@@ -548,7 +548,7 @@ Snapshot (2026-04-17):
 | `engine/web/js/bridge-init.js` | 1 |
 | `engine/include/ftd/dag_engine.h` | 1 |
 | `docs/theory/META_INDEX.md` | 1 |
-| `docs/theory/07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md` | 1 |
+| `docs/theory/07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` | 1 |
 | `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` | 1 |
 | `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md` | 1 |
 | `docs/theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` | 1 |

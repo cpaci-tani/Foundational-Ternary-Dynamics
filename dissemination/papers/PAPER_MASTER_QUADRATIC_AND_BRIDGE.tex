@@ -257,7 +257,8 @@ hence
 \[
   \Gstar\ =\ \frac{\Gamma(1/4)^{2}}{\pi\sqrt{2}}\ =\ 2.95867512\ldots
 \]
-which is twice the lemniscatic constant $\varpi/\pi$ associated with
+which equals $2\varpi/\sqrt{\pi}$, where $\varpi = \Gamma(1/4)^{2}/(2\sqrt{2\pi})$
+is the Bernoulli--Gauss lemniscate constant, associated with
 the \textsc{cm} elliptic curve $E_{-4}\colon y^{2} = x^{3} - x$
 \cite{borweinandborwein,gauss-werke}. The identity reduces to a
 $\Gamma$-function reflection relation \cite[\S 2]{spinedoc}.
@@ -272,9 +273,9 @@ real roots
 \[
   x_{\pm} = 8\Gstar^{2} \pm 4\Gstar\sqrt{4\Gstar^{2} - \Gstar}.
 \]
-Numerically $x_{+} = 137.0359990\ldots$ (matching $\alpha^{-1}$ at
+Numerically $x_{+} = 137.0361714\ldots$ (matching $\alpha^{-1}$ at
 1.26 ppm relative to the 2022 \textsc{codata} value) and
-$x_{-} = 3.024009\ldots$ (matching $N_c = 3$ at 0.80\%).
+$x_{-} = 3.023964\ldots$ (matching $N_c = 3$ at 0.80\%).
 \end{theorem}
 
 \begin{theorem}[\textsc{cm} uniqueness at $d = -4$]
@@ -527,7 +528,7 @@ $-163$ & 1.28   & 26.21   & 33.54   & 24.860  & 1.349  & no \\
 $P_{d}(x) = x^{2} - 16\rho_{d}^{2}\,x + 16\rho_{d}^{3}$ at each
 Heegner discriminant. Only $d = -4$ produces a $(x_{+}, x_{-})$ pair
 matching independent dimensionless physical constants
-($x_{+} = 1/\alpha$ at 1.26 ppm; $x_{-} = N_c$ at 0.80\%).}
+($x_{+} = 1/\alpha$ at 1.26 ppm; $x_{-} \approx 3.024$, cf.\ $N_c = 3$ at 0.80\% --- identification retired from the canonical ledger post-submission).}
 \label{tab:polys}
 \end{table}
 
@@ -590,10 +591,14 @@ tables are arithmetic facts.
 \end{epistemic}
 
 \begin{epistemic}{STRONGLY MOTIVATED CONJECTURE}
-The identification $x_{+} = 1/\alpha$ at 1.26 ppm and $x_{-} = N_c$
-at 0.80\% (the physics row of Table~\ref{tab:polys}). The structural
+The identification $x_{+} = 1/\alpha$ at 1.26 ppm (the primary physics row
+of Table~\ref{tab:polys}). The structural
 selectivity of $d = -4$ within the nine-row tower is the strongest
-non-monomial structural anchor for these identifications.
+non-monomial structural anchor for this identification.
+Note: the companion identification $x_{-} = N_c$ was carried as
+[STRONGLY MOTIVATED CONJECTURE] at the time of writing; it has since been
+retired from the canonical ledger (FTD-0014 removed); $N_c = 3$ is
+now derived from independent topological routes (see \texttt{DERIV\_NC\_FROM\_TOPOLOGY.md}).
 \end{epistemic}
 
 \begin{epistemic}{OPEN}
@@ -1521,7 +1526,7 @@ this table is a derivative summary.
 Tag & Statement & Source \\
 \midrule
 FTD-0001 & $\Gstar = \Gamma(1/4)/\Gamma(3/4)$ algebraic identity & Thm~\ref{thm:gstar} \\
-FTD-0014 & Master quadratic $x^{2} - 16\Gstar^{2}x + 16\Gstar^{3} = 0$ & Thm~\ref{thm:masterq} \\
+(spine) & Master quadratic $x^{2} - 16\Gstar^{2}x + 16\Gstar^{3} = 0$ & Thm~\ref{thm:masterq} \\
 (spine) & CM uniqueness within class-number-one fields at $d=-4$ & Thm~\ref{thm:cm-uniqueness} \\
 (spine) & Coefficient $16 = |\mathrm{Aut}(E)|^{2}$ for $E\colon y^{2}=x^{3}-x$ & Thm~\ref{thm:aut-sq} \\
 (spine) & Watson identity $W_{3} = \Gstar^{2}/(2\pi)$ & Thm~\ref{thm:watson} \\
@@ -1575,7 +1580,7 @@ $= 1/\Nbase$ [SUM/COUNT IDENTITY].}
 Statement & Evidence & Source \\
 \midrule
 $x_{+} = 1/\alpha$ at 1.26 ppm & Master quadratic root vs.\ \textsc{codata} 2022 & Thm~\ref{thm:masterq} \\
-$x_{-} = N_c$ at 0.80\% & Master quadratic root vs.\ Standard-Model & Thm~\ref{thm:masterq} \\
+$x_{-} \approx N_c$ at 0.80\% & \emph{Retired from canonical ledger post-submission (FTD-0014 removed); $N_c=3$ now from topology} & Thm~\ref{thm:masterq} \\
 Dual match property & \emph{Both} roots simultaneously match unrelated sectors; selectively isolated to $d = -4$ within Heegner tower & \S\ref{sec:cm-uniqueness} \\
 \midrule
 FTD-0110 (full claim) & Cluster-mass identification $N(A = 2\sqrt{R}) \approx R = m_X/m_e$ across $X \in \{e, \mu, \pi, K, p, \tau\}$ to $\sim$5\% & \S\ref{sec:engine}, \cite{ledger} \\

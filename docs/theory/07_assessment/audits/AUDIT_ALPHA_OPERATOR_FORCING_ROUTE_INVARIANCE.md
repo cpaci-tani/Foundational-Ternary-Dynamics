@@ -115,7 +115,7 @@ by a logically independent convention, not derived; the discrete ontology determ
   the escape, none proved it impossible.
 
 To label this `[THEOREM]` would itself violate the discipline (cf. the retracted "conformal-anomaly"
-substitution-identity facade, `docs/theory/04_coupling/DERIV_ALPHA_READOUT_RESOLUTION.md`, retracted same
+substitution-identity facade, `docs/theory/04_coupling/archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md` (archived 2026-06-02), retracted same
 session). `[CLOSED NEGATIVE]` applies only to the bare-parity route (FTD-0233, scoped) and the eleven prior
 α-derivation routes; the operator-assembly boundary remains a `[STRONGLY MOTIVATED CONJECTURE]` no-go.
 

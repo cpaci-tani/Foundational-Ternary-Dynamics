@@ -41,4 +41,4 @@
 
 ---
 
-12 active docs in this cluster (+ 0 archived).
+12 active docs in this cluster (+ 1 archived: `archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md` — retracted 2026-06-01, archived 2026-06-02).

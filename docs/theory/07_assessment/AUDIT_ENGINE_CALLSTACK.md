@@ -375,4 +375,4 @@ All four correctly push to GPU via `gpu_push_to_device()` / `host_mutated_` flag
 
 **Open follow-ups (not in this audit):**
 
-The CALLSTACK audit is closed. Remaining engine cleanup is tracked under the **bug-hunt** numbering (commit `f2a721a`): F2 γ_FTD GPU port, F3 accel_mag unification, F5 evaporation Boltzmann RNG, F8/F9 spin/RNG portability, F12 emergent_forces GPU, F15 dead phase_movement_kernel parameters. See [STATUS_2026-05-04_post_bughunt.md](STATUS_2026-05-04_post_bughunt.md) for the live tracker. Do **not** confuse the two F-numbering schemes — see that doc's §"Two F-numbering schemes" for disambiguation.
+The CALLSTACK audit is closed. Remaining engine cleanup is tracked under the **bug-hunt** numbering (commit `f2a721a`): F2 γ_FTD GPU port, F3 accel_mag unification, F5 evaporation Boltzmann RNG, F8/F9 spin/RNG portability, F12 emergent_forces GPU, F15 dead phase_movement_kernel parameters. See [STATUS_2026-05-04_post_bughunt.md](archive/STATUS_2026-05-04_post_bughunt.md) (archived 2026-06-02) for the historical tracker. Do **not** confuse the two F-numbering schemes — see that doc's §"Two F-numbering schemes" for disambiguation.

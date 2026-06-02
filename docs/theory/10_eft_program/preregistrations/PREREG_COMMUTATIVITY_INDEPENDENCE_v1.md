@@ -2,7 +2,7 @@
 
 **Tag:** [PRE-REGISTRATION] — this document locks the *design* of a closure
 attempt that would upgrade the "commutativity wall" from `[SYNTHESIS]`
-(`../../07_assessment/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md`) to a
+(`../derivations/THEOREM_COMMUTATIVITY_INDEPENDENCE.md` — supersedes archived `../../07_assessment/archive/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md`) to a
 forward-proven `[THEOREM]`. It contains **no result**. All three
 pre-blessed outcomes — FOUND / UNDERDETERMINED / CLOSED-NEGATIVE — are
 admissible; the closure attempt's verdict is genuinely open. The
@@ -22,7 +22,7 @@ sessions).
 **Supersedes:** none — first pre-registration of the commutativity
 boundary as a forward theorem.
 **Companion docs:**
-`../../07_assessment/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md` (the
+`../derivations/THEOREM_COMMUTATIVITY_INDEPENDENCE.md` (supersedes archived `../../07_assessment/archive/SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md`; the
 [SYNTHESIS] this would promote);
 `../derivations/THEOREM_A_PHYS_NO_GO.md` (FTD-0059 — the structural
 template: ring of derivables → target property absent → external input

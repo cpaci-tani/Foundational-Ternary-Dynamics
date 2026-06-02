@@ -432,7 +432,7 @@ The trit framework is not merely a "lens" on existing results. It provides:
 2. **A structural explanation** for why the same G* governs both physics and reference frame context: self-duality encompasses both real (physics) and complex (reference frame context) structure
 3. **The missing link** between the master quadratic (physics) and the reference frame context quadratic: both are downstream of the same self-dual theta function, with i emerging as a necessary consequence
 
-The complete chain — from self-duality to i to reference frame context to measurement resolution — is documented in [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md).
+The complete chain — from self-duality to i to reference frame context to measurement resolution — is documented in [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md).
 
 ---
 
@@ -441,7 +441,7 @@ The complete chain — from self-duality to i to reference frame context to meas
 - **Number theory connections:** [EXPLR_NUMBER_THEORY.md](../09_mathematical/EXPLR_NUMBER_THEORY.md)
 - **Emergence of i:** [FOUND_THE_COMPLETE_ALGEBRA_OF_i.md](../02_foundations/FOUND_THE_COMPLETE_ALGEBRA_OF_i.md)
 - **Dimensional emergence:** [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)
-- **What is genuinely new:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/AUDIT_WHAT_IS_GENUINELY_NEW.md)
+- **What is genuinely new:** [AUDIT_WHAT_IS_GENUINELY_NEW.md](../07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md)
 - **Epistemic audit:** [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 - **Reference frame context domain/source map:** [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md)
 - **Reference frame context synthesis:** [../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md)
