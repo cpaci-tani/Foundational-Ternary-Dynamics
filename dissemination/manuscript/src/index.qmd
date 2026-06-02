@@ -76,13 +76,13 @@ We do **not** claim that $\alpha$ = 1/137.036 is the unique physically possible 
 
 | # | Prediction | Value | Uncertainty | Depends On | Measures |
 |---|------------|-------|-------------|------------|----------|
-| P1 | $1/\alpha$ from quadratic | 137.036 | **0.21 ppt** (precision formula) | S1, S2, S3 | Precision QED + atom physics |
+| P1 | $1/\alpha$ from quadratic | 137.036 | **1.26 ppm** tree-level (0.21 ppt ε-fit is post-hoc, beyond CODATA precision) | S1, S2, S3 | Precision QED + atom physics |
 | P2 | No 4th generation | $N_{\text{gen}} = 3$ | Discrete | S3, C2 | Collider searches |
 | P3 | sLoop Bell parameter | $S \approx 2.71$ | ±0.02 | A4, Hilbert structure | Loophole-free Bell tests |
 
 **What would falsify the framework:**
 
-- Precision $\alpha$ incompatible with $x_+ = 137.036...$ at >1 ppt (precision formula achieves 0.21 ppt)
+- Precision $\alpha$ incompatible with $x_+ = 137.036...$ (the tree-level match is 1.26 ppm; the ε-expansion is a post-hoc fit and is not a sub-ppt prediction)
 - Discovery of 4th generation fermion with standard gauge couplings
 - Bell violations inconsistent with Hilbert space tensor structure
 
@@ -130,7 +130,7 @@ From these axioms and six fundamental constants, everything else emerges:
 | C | 1.0 | Speed of causality |
 | H | 1.0 | Planck resolution |
 | KB | 0.511 | Existence threshold |
-| ALPHA | 0.00729 | Fine structure (1/137.036, **0.21 ppt precision**) |
+| ALPHA | 0.00729 | Fine structure (1/137.036; root matches to 1.26 ppm, identification [STRONGLY MOTIVATED CONJECTURE]) |
 | PHI | 1.618 | Stability ratio |
 | GRAVITY_BIAS | 0.01 | Gravitational coupling |
 

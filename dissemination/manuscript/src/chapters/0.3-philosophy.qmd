@@ -797,10 +797,10 @@ FTD suggests a middle position:
 - The **structure** of mathematics is discovered (it follows from logic)
 - The **interpretation** is constructed (we choose what to model)
 
-The Lemniscate-Alpha derivation is striking because:
+The Lemniscate-Alpha *match* is striking because:
 - The curve is mathematically defined (discovered)
-- Its connection to physics is interpretive (constructed)
-- But the numerical agreement is remarkable (**0.21 ppt** with precision formula)
+- Its connection to physics is interpretive (constructed) — the identification $x_+=1/\alpha$ is a [STRONGLY MOTIVATED CONJECTURE], not a derivation
+- But the numerical agreement is remarkable (**1.26 ppm** at tree level; the "0.21 ppt" precision-formula figure is a post-hoc fit beyond CODATA precision)
 
 Does this mean mathematics IS physics? We do not claim this. We note the coincidence and leave interpretation to the reader.
 
