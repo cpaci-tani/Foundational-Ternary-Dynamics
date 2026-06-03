@@ -1,0 +1,84 @@
+% =============================================================================
+% dag.tex  --  The construction DAG (Figure in Part I, section "The construction map")
+% -----------------------------------------------------------------------------
+% Hand-authored, fully vector, monochrome.  Differentiation is by SHAPE + RULE
+% (never colour), mirroring the epistemic-tag tiers of the body:
+%   double circle = AXIOM seed   diamond (heavy) = the G* hub
+%   solid rounded box = theorem-grade   dashed rounded box = below-theorem
+%   small square = framework integer    tiny box = (omitted; ledger anchors live in text)
+%   solid arrow = "constructed from"     dashed arrow = "necessity conjectured / weak link"
+%
+% The generator scripts/visualization/render_node_map_tikz.py is NOT used: it
+% emits colour and a broken layout (all nodes stacked at x=0).  This figure is
+% the data-of-record's hand-set presentation; the node/edge set matches the nine
+% numbered spine results of SPEC_ALGEBRAIC_SPINE.md (seven theorem-grade, two tiered).
+% =============================================================================
+\begin{figure}[t!]
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tikzpicture}[
+      >={Stealth[length=4pt]},
+      seed/.style   ={circle, double, draw, line width=0.7pt, inner sep=2.2pt,
+                      font=\footnotesize, align=center},
+      intg/.style   ={rectangle, draw, line width=0.5pt, inner sep=3pt,
+                      font=\footnotesize, align=center},
+      hub/.style    ={diamond, draw, line width=1.2pt, inner sep=2pt, aspect=1.6,
+                      minimum width=1.25cm, minimum height=0.95cm,
+                      font=\footnotesize\bfseries, align=center},
+      thm/.style    ={rectangle, rounded corners=2pt, draw, line width=0.7pt,
+                      inner sep=3pt, font=\footnotesize, align=center, text width=2.3cm},
+      tier/.style   ={rectangle, rounded corners=2pt, draw, line width=0.5pt,
+                      dash pattern=on 2.4pt off 1.8pt, inner sep=3pt,
+                      font=\footnotesize, align=center, text width=2.3cm},
+      con/.style    ={->, draw, line width=0.6pt},
+      wk/.style     ={->, draw, line width=0.5pt, dash pattern=on 2.4pt off 1.8pt,
+                      gray!60!black},
+      lbl/.style    ={font=\scriptsize\itshape, fill=white, inner sep=1.2pt},
+    ]
+    % ---- main trunk (axiom -> integer -> hub -> quadratic -> tower) --------
+    \node[seed] (zi)  at (4.0, 0.0)  {$\mathbb{Z}[i]$\\[-1pt]\tiny\scshape axiom};
+    \node[intg] (four) at (4.0,-1.9) {$4=|\mathbb{Z}[i]^{\times}|$};
+    \node[hub]  (gs)  at (4.0,-3.9)  {$G^{*}$};
+    \node[thm]  (mq)  at (4.0,-6.9)  {Master quadratic\\ $x^2-16G^{*2}x+16G^{*3}$\\ \textsc{(t2)}};
+    \node[thm]  (tow) at (4.0,-9.4)  {Harmonic\\ invariant tower \textsc{(t8)}};
+
+    % ---- right branches off the hub G* ------------------------------------
+    \node[thm]  (wat) at (8.2,-3.1)  {Watson identity\\ $W_3=G^{*2}/2\pi$ \textsc{(t5)}};
+    \node[thm]  (qg)  at (8.2,-4.9)  {$\mathbb{Q}(G^{*})$ is\\ $\pi$-free \textsc{(t9)}};
+    \node[thm]  (cm)  at (8.2,-6.7)  {CM-curve\\ uniqueness \textsc{(t3)}};
+    \node[thm]  (bcc) at (8.2,-8.5)  {BCC complex\\ structure};
+
+    % ---- left / lower: the two below-theorem-grade results (dashed) -------
+    \node[tier] (c16) at (0.1,-6.9)  {Coefficient\\ $16=4^2$ \textsc{(t4)}\\ \tiny necessity conj.};
+    \node[tier] (pj)  at (0.1,-9.4)  {Phase-J ultra-\\ locality \textsc{(t7)}\\ \tiny $L=2$ only};
+    \node[thm]  (pg)  at (8.2,-10.3) {Phase-G geometric\\ Coulomb \textsc{(t6)}};
+
+    % ---- edges -------------------------------------------------------------
+    \draw[con] (zi)  -- (four);
+    \draw[con] (four) -- (gs);
+    \draw[con] (gs)  -- (mq);
+    \draw[con] (mq)  -- (tow);
+    % the "16 = 4^2" feed from the integer into the quadratic (curved, left)
+    \draw[con] (four) to[out=200,in=150] node[lbl,pos=0.62]{$16=4^2$} (mq.west);
+    % branches off G* -- the two lowest (bcc, pg) route via an eastward waypoint
+    % so they descend on the RIGHT of the central column, clear of the mq box.
+    \draw[con] (gs) to[out=18,in=180]  (wat.west);
+    \draw[con] (gs) to[out=-8,in=170]  (qg.west);
+    \draw[con] (gs) to[out=-30,in=170] (cm.west);
+    \draw[con] (gs) to[out=-42,in=120] (6.5,-7.5) to[out=-60,in=170] (bcc.west);
+    \draw[con] (gs) to[out=-52,in=120] (6.3,-9.0) to[out=-60,in=160] (pg.west);
+    % weak link: 16 = 4^2 necessity is conjectured
+    \draw[wk] (mq.west) to[out=180,in=0] (c16.east);
+    % Phase-J hangs off the lattice axiom (independent ultralocality fact)
+    \draw[wk] (zi.west) to[out=180,in=90] (pj.north);
+  \end{tikzpicture}}
+  \caption[The construction DAG]{\textbf{The construction DAG.}\enspace Shape
+    and rule encode epistemic status: the double-ringed circle is the lone
+    \textsc{axiom} ($\mathbb{Z}[i]$), the heavy diamond is the hub ($G^{*}$),
+    solid boxes are theorem-grade, and dashed boxes are tiered below theorem
+    grade (the coefficient-16 necessity, conjectured; Phase-J, a theorem only at
+    $L=2$). The chain runs $i \to \mathbb{Z}[i] \to 4 \to G^{*} \to{}$ master
+    quadratic $(16=4^{2}) \to{}$ spine; reading the arrows backward traces every
+    theorem-grade node to the one structural choice at the root.}
+  \label{fig:dag}
+\end{figure}

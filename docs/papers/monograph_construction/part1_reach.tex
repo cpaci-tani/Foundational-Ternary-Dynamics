@@ -1,0 +1,328 @@
+% =============================================================================
+% Part I -- The Constructive Reach
+% =============================================================================
+\noindent Part~I answers Clause~1: \textbf{what does the discrete ontology
+force?} It exhibits the algebraic spine (the theorem-grade results the
+substrate produces) in the order a mathematician would build them, each
+object from prior ones, each step independently checkable. The construction runs
+$i \to \Zi \to \Gs \to \text{master quadratic} \to \text{spine}$. It carries
+\textbf{no physics identification}: the famous numerical match $x_+ = 1/\alpha$
+is a \emph{match}, deferred to Part~III, and Part~I says so at the one place it
+is tempting to overstep.
+
+\medskip
+\noindent The spine is \textbf{nine numbered results: seven are theorem-grade,
+and two are honestly tiered below theorem grade} (the coefficient-16 identity,
+whose structural necessity is conjectural, and the Phase-J ultralocality, which
+is a theorem only at $L=2$). \Cref{sec:spine} closes by re-stating that count.
+
+\section{The seed: \texorpdfstring{$i$}{i} and \texorpdfstring{$\Zi$}{Z[i]}}\label{sec:seed}
+The construction begins with one structural choice and one group-theory fact,
+and it is worth separating them cleanly, because the honesty of everything
+downstream depends on not confusing the two.
+
+\runin{The structural choice.}\margetag{ax} The substrate is the cubic lattice of
+Part~0. Its coordinate planes carry an order-4 rotational symmetry: a $90^\circ$
+rotation of the $(x,y)$ plane sends
+$(1,0)\mapsto(0,1)\mapsto(-1,0)\mapsto(0,-1)\mapsto(1,0)$, a cycle of length~4.
+FTD's seed move is to \emph{read this order-4 planar symmetry as the arithmetic
+of the Gaussian integers} $\Zi=\{a+bi : a,b\in\Z\}$, with the $90^\circ$ rotation
+realized as multiplication by $i$. That the lattice's quarter-turn \emph{should
+be read through} $\Zi$ rather than through some other order-4 structure is a
+modelling decision, not a theorem, the discrete-ontology analogue of choosing
+to build $\C$ as $\R[i]$: natural, motivated, and a \emph{choice}. We mark it an
+\etag{ax} and flag it as such, so that no later theorem silently inherits the
+status of ``forced'' from a step that was actually ``chosen.''
+
+\runin{The group-theory facts.}\margetag{thm} Once $\Zi$ is the substrate's
+arithmetic, the following are ordinary, checkable theorems of algebra, owing
+nothing further to FTD:
+\begin{itemize}[leftmargin=1.4em, itemsep=3pt]
+  \item The unit group of $\Zi$ is $\Ziu=\{1,i,-1,-i\}\cong\Z/4$, of order
+        $|\Ziu|=4$. \emph{(Proof: $a+bi$ is a unit iff its norm $a^2+b^2=1$,
+        whose only integer solutions are $(\pm1,0)$ and $(0,\pm1)$.)}
+  \item $\Zi$ is a Euclidean domain, hence a PID and a UFD; its primes split
+        into the three Gauss classes: the ramified prime $1+i$ (norm~2), the
+        split rational primes $p\equiv 1\ (\mathrm{mod}\ 4)$, and the inert
+        rational primes $p\equiv 3\ (\mathrm{mod}\ 4)$ (Fermat's two-square
+        theorem).
+\end{itemize}
+The single integer this seed deposits into the rest of the construction is
+$4=|\Ziu|$. It reappears, squared, as the coefficient~16 of the master quadratic
+(\secref{sec:masterquad}), and the split/inert residue classes mod~4 reappear as
+the arithmetic content of one of the four $\Gs$ constructions (\secref{sec:gstar}).
+Hold the distinction firmly: $4$ is a \emph{theorem} about $\Zi$; that the
+\emph{lattice} is entitled to $\Zi$ in the first place is the axiom.
+
+\section{\texorpdfstring{$\Gs$}{G*} in four representations of differing provenance}\label{sec:gstar}
+The bridge constant is\margetag{thm}
+\[ \Gstardef. \]
+What earns $\Gs$ its place at the centre of the spine is that it admits four
+\emph{representations} of sharply differing character: a $\Gamma$-ratio, a
+lattice Green's-function period, a regularized determinant ratio, and a finite
+product. These are not four independent witnesses: three share the quarter-integer
+data, and the Watson value is itself a $\Gamma(1/4)$-period, so all four are
+representations of one and the same CM period of the lemniscatic curve. What is
+striking is that a single period wears four such different faces (arithmetic,
+lattice-analytic, spectral, and finitary), one of which (Watson's
+body-centred-cubic integral) is of genuinely independent provenance. Each is shown
+where it is cheap and cited where it is deep.
+
+\runin{Route 1: the $\Gamma$-ratio.} Directly from the definition and the
+Euler reflection formula,
+\[ \reflection, \]
+multiplying $\Gs=\Gamma(1/4)/\Gamma(3/4)$ by $\Gamma(3/4)^2$ and substituting
+gives the two standard closed forms
+\[ \Gstarclosed, \]
+where $\varpidef$ is the Bernoulli/Gauss lemniscate constant. A three-line proof,
+verified to 50 digits.
+
+\runin{Route 2: the Watson BCC period}, conditional on Watson 1939. Let $W_3$
+be the body-centred-cubic Watson integral
+\[ \watsonint. \]
+Watson's 1939 closed-form evaluation~\cite{watson1939}, consolidated by
+Glasser--Zucker~\cite{glasserZucker1980}, gives
+\[ \watsonval. \]
+The BCC sub-lattice is one of the three polyhedral layers of the substrate's
+Moore neighbourhood, so this is $\Gs$ arising from a \emph{lattice}
+quantity, a Green's-function period of an entirely different character from
+Route~1's $\Gamma$-ratio. ``Conditional on Watson 1939'' means the rigour equals
+that of the cited classical evaluation, not that it rests on a conjecture.
+Verified to 100 digits in PARI.
+
+\runin{Route 3: the $\det_\zeta$ quarter-conjugacy bridge.} Let $J$ be the
+conjugacy operator with $J^2=-I$ (multiplication by $i$; the same $Z_4$ seed of
+\secref{sec:seed}). A wavefunction on $S^1$ with the quarter-twisted boundary
+condition $\psi(\varphi+2\pi)=J\,\psi(\varphi)$, evolved by the natural
+quarter-period operator $-i\,d/d\varphi$, carries its two $J$-eigensectors on the
+shifted spectra $D_{1/4}=\{n+1/4\}_{n\ge0}$ and $D_{3/4}=\{n+3/4\}_{n\ge0}$ (the
+choice of that operator is a modelling choice, like the seed, not something
+forced). Lerch's formula for the $\zeta$-regularized
+determinant of an arithmetic progression,
+\[ \lerch, \]
+yields the determinant ratio
+\[ \detzratio, \]
+the $\sqrt{2\pi}$ cancelling. The arithmetic is the reason this route belongs to
+the same story as the seed: $4\cdot D_{1/4}=\{n\equiv1\ (\mathrm{mod}\ 4)\}$ and
+$4\cdot D_{3/4}=\{n\equiv3\ (\mathrm{mod}\ 4)\}$ are exactly the two non-trivial
+residue classes mod~4, and, restricted to primes, the split and inert prime
+classes of $\Zi$ (\secref{sec:seed}). $\Gs$ is the regularized asymmetry between
+them.
+
+\runin{Route 4: the finite-$N$ attractor.} Define the finite product
+\[ \finiteN. \]
+Every $G^{*}_N$ is computable in $O(N)$ rational operations with no transcendental
+ever invoked ($G^{*}_0=3$, $G^{*}_1=21/(5\sqrt2)\approx2.9698$,
+$G^{*}_5\approx2.95995$, $G^{*}_{20}\approx2.95878$). A Stirling expansion of
+$\Gamma(N+7/4)/\Gamma(N+5/4)\sim(N+1)^{1/2}$ gives
+\[ \finiteNrate \]
+(empirical $C\approx0.046$). This route does double duty. It is a fourth
+construction of $\Gs$, and it \textbf{discharges the Part-0
+$\varepsilon$--$L$ obligation} for $\Gs$: the undefined-boundary ontology forbids
+treating $\Gs=\lim_{N\to\infty}G^{*}_N$ as a primitive completed limit, and
+Route~4 supplies exactly the finitary restatement the ontology demands: $G^{*}_N$
+is defined for every finite $N$ and approaches $\Gs$ at the stated rate. $\Gs$ is
+therefore reachable by a convergent finite computation, no completed infinity
+required.
+
+\runin{$\Gs$ is the lemniscatic ratio, not $\varpi$.} $\Gs\approx\Gstarapprox$ is
+the ratio $\Gamma(1/4)/\Gamma(3/4)$. It is \textbf{not} the Bernoulli/Gauss
+lemniscate constant $\varpi\approx\varpiapprox$, a distinct number related by
+$\Gs=2\varpi/\sqrt\pi$. Informal usage sometimes calls both ``the lemniscate
+constant''; here they are never conflated, and the distinction is load-bearing in
+the most literal sense. The master quadratic of \secref{sec:masterquad} produces
+$x_+=\xplusnum$ \textbf{only} at $\Gs=\Gstarapprox$; substituting
+$\varpi=\varpiapprox$ into the same polynomial gives $x_+\approx107.3$, nowhere
+near $1/\alpha$.
+
+\section{The master quadratic}\label{sec:masterquad}
+With $\Gs$ in hand, the construction's central polynomial is purely algebraic.
+
+\begin{forcedbox}[The master quadratic \etag{thm}]
+Define
+\[ \masterquad. \]
+Its discriminant factors cleanly,
+\[ \discriminant \]
+which is \textbf{positive} because $\Gs>1/4$ (indeed $\Gs\approx2.96$), so both
+roots are real:
+\[ \rootsexplicit \]
+Numerically $x_+=\xplusnum$ and $x_-=\xminusnum$.
+\end{forcedbox}
+
+\noindent This is the quadratic formula applied to a polynomial whose
+coefficients are integer multiples of powers of $\Gs$; nothing more is involved.
+Verified numerically across 54 independent checks.
+
+\runin{The coefficient-16 soft spot, flagged honestly.}\margetag{cnj} The
+prefactor~16 has a tempting arithmetic reading: for the lemniscatic CM elliptic
+curve $E:y^2=x^3-x$, the automorphism group over $\overline{\Q}$ is
+$\Aut(E)=\{\pm1,\pm i\}\cong\Z/4$ (the unit group of $\Zi$ again), so
+$|\Aut(E)|=4$ and $|\Aut(E)|^2=16$. That $|\Aut(E)|^2=16$ is a \etag{thm}. But
+that the master quadratic's prefactor is \emph{forced} to equal $|\Aut(E)|^2$ (that
+two objects equal 16 \emph{for a structural reason}) is not proven: it is a
+\etag{cnj} on the structural necessity, the framework's softest mathematical
+spot. A partial unification exists (a tower-level reading supplies a reason for
+$k=4$, hence $2^k=16$, via $|\Ziu|^2=16$), but a partial unification is not a
+forcing theorem, and the honest grade stays \etag{cnj} on necessity.
+
+\runin{No physics here.} $x_+=137.036\ldots$ is, \emph{in Part~I}, a root of a
+polynomial, nothing more. The proximity to $1/\alpha$ is the motivation for
+the whole enterprise, but the identification $x_+ \leftrightarrow 1/\alpha$ is a
+\etag{smc} deferred in full to \textbf{Part~III}; it is not asserted as forced
+anywhere in the constructive Parts. The smaller root $x_-\approx\xminusapprox$ is
+a pure algebraic artifact, pinned by the Vieta relation $x_-=16\Gsss/x_+$ the
+instant $x_+$ is, and it carries no physics. The historical identification
+$x_-\leftrightarrow N_c$ is \textbf{retired}; FTD's $N_c=3$ is independently
+sourced from the Moore-neighbourhood topology, owing nothing to the polynomial's
+smaller root.
+
+\section{The spine built on top}\label{sec:spine}
+On the foundation of $\Gs$ (\secref{sec:gstar}) and the master quadratic
+(\secref{sec:masterquad}), a further family of theorem-grade results stands. Each
+is stated at its exact grade and condition; short proofs are shown, deep external
+dependencies are cited.
+
+\runin{Harmonic-invariant tower.}\margetag{thm} For each integer $k\ge3$, the
+$(1+i)$-tower master quadratic is $\towerquad$ (the $k=4$ instance is
+\secref{sec:masterquad}'s polynomial). Writing the normalized roots
+$y_\pm := x_\pm/\Gs$, at \emph{every} level $k\ge3$,
+\[ \harmonicinv. \]
+The proof is a three-line Vieta computation:
+$1/x_+ + 1/x_- = (x_+ + x_-)/(x_+ x_-)
+= (2^k\Gpow{k-2})/(2^k\Gpow{k-1}) = 1/\Gs$; multiplying through by $\Gs$ gives
+$1/y_+ + 1/y_- = 1$. Verified to 50 digits.
+
+\runin{CM-curve uniqueness}, under the trivial-multiplier criterion.\margetag{thm}
+Among all imaginary quadratic fields $K=\Q(\sqrt{-d})$, the field $\Q(i)$ ($d=1$,
+fundamental discriminant $-4$) is the \textbf{unique} one satisfying
+$|\mu_K|=|\mathrm{disc}(K)|$: for $\Q(i)$, $|\mu_K|=4$ and
+$|\mathrm{disc}(K)|=4$; for every other imaginary quadratic field the two differ.
+\emph{(Proof sketch: $|\mu_K|\in\{2,4,6\}$ with 4 only at $d=1$ and 6 only at
+$d=3$; $|\mathrm{disc}(K)|\ge3$ always, $=3$ only at $d=3$, $=4$ only at $d=1$;
+case-checking the three unit-group orders leaves $d=1$ as the sole coincidence.)}
+The trivial-multiplier criterion is load-bearing: a ``match'' here requires the
+natural root to equal the target directly. Under a looser rational-multiplier
+criterion, 20 additional non-canonical matches exist in the tested grid, and that
+reading is a \etag{sel}, not a theorem. The proof is a complete case analysis over
+all imaginary quadratic fields; the $d\le200$ computation is a redundant
+cross-check.
+
+\runin{$\Q(\Gs)$ is $\pi$-free}, conditional on Chudnovsky
+1976.\margetag{thm} $\Q(\Gs)\cap\Q(\pi)=\Q$: the field generated by $\Gs$ shares
+no algebraic content with $\Q(\pi)$ beyond the rationals. The proof reduces a
+hypothetical polynomial relation between $\Gs$ and $\pi$ (via the identity
+$\Gs\cdot\pi\cdot\sqrt2=\Gamma(1/4)^2$) to a polynomial relation between
+$\pi$ and $\Gamma(1/4)$, which Chudnovsky's 1976 algebraic-independence
+theorem~\cite{chudnovsky1984} forbids. ``Conditional'' here means the rigour
+equals that of this published, foundational transcendence result (consolidated in
+Waldschmidt~\cite{waldschmidt2000}), not that it rests on a conjecture.
+
+\runin{Tower-discriminant transcendence}, conditional on
+Schneider--Chudnovsky~\cite{schneider1937,chudnovsky1984}.\margetag{thm} For the
+tower of the harmonic invariant, the discriminant factors as $\towerdisc$. Then
+$A_k$ is rational at $k=3$ ($A_3=1$) and \textbf{transcendental over $\Q$} (i.e.\
+$A_k\notin\overline{\Q}$) at every $k\ge4$ ($A_4=4\Gs-1$, etc.): a non-rational
+polynomial with rational coefficients in the transcendental $\Gs$ takes
+transcendental values.
+
+\runin{BCC complex structure.}\margetag{thm} The 8 BCC corners under $90^\circ$
+rotation form two orbits of size~4, and, as a module over the cyclic group
+$C_4=\langle 90^\circ\text{ rotation}\rangle\cong\Z/4$,
+\[ \bccdecomp, \]
+where $V_{\mathrm{complex}}$ carries a natural $\Zi$-module structure
+$\cong\Zi^2$. Paired with it is a clean no-go: there is \textbf{no} injective
+homomorphism $\Ziu\to O_h^{\mathrm{ab}}$, since $\Ziu\cong\Z/4$ has an order-4
+element but $O_h^{\mathrm{ab}}\cong\Z/2\times\Z/2$ (Klein four) does
+not, a one-line group-order argument. Together these say the substrate's
+$\Zi$ structure lives genuinely in the BCC layer but does \textbf{not} extend to a
+global lattice-symmetry embedding. Verified in exact rationals.
+
+\runin{Lemniscatic $L$-value}, conditional on Rubin 1991.\margetag{thm} The
+central $L$-value of the lemniscatic curve $E_{\mathrm{lemn}}:y^2=x^3-x$ (Cremona
+32.a3) has the clean closed form
+\[ \Lvalueeq, \]
+via the full BSD formula for the CM rank-0 case~\cite{rubin1991}. (An earlier
+$\varpi/2$ came from a BSD-convention double-count; the corrected factor is
+$\varpi/4$, verified to 27 digits against the curve's entry in
+LMFDB~\cite{lmfdb}.)
+
+\runin{Three further results, conditional on the classical theorems named.}%
+\margetag{thm}
+The character $\chi_{-4}$ four-level unification\,---\,$\chi_{-4}$ on
+$(\Z/4\Z)^\times$ generating the entire $\Gs/\GG$ identity algebra through four
+functorial projections (lattice, Chowla--Selberg, Hecke, Dirichlet)\,---\,holds
+conditional on Deligne's period conjecture~\cite{deligne1979} in the CM case,
+itself proved unconditionally (Blasius/Anderson/Shimura). The $\eta$-tower across
+the nine class-number-one imaginary-quadratic fields,
+\[ |\eta(\tau_K)|^{2w_K} \;=\; \frac{G_K^{\,w_K}}{(2\pi|d_K|)^{w_K/2}}, \]
+holds conditional on Chowla--Selberg~\cite{chowlaSelberg1967}, unifying the
+Heegner near-integer phenomenon as a $\chi$-projection. Here $G_K$ is the
+field-specific Chowla--Selberg period (it equals $\Gs$ only for the Gaussian
+field $d=1$), so the nine fields share the \emph{form} of the identity, not
+the constant. The
+$\mathrm{Sym}^2\oplus\mathrm{Sym}^3$ structure singles out the construction's
+pair. Among the period polynomials $x^2-16\Gpow{a}x+16\Gpow{b}$ with $a<b$
+positive integers and positive discriminant (which requires only
+$b<2a+\log 4/\log\Gs\approx 2a+1.28$, i.e.\ $b\le 2a+1$ for integers), the pair
+$(a,b)=(2,3)$ is distinguished by the \emph{parity of $\Gs$ beneath its
+discriminant's radical: $\Delta_{(2,3)}=64\Gsss(4\Gs-1)$ carries an odd power of
+$\Gs$}, so $\sqrt{\Delta}=8\Gs\,\sqrtwall$ introduces the generator
+$\sqrtwall$ (the very square root that walls Part~II), whereas the
+neighbouring pairs carry an even power ($(1,3)$ gives
+$\sqrt{\Delta}\propto\sqrt{4-\Gs}$; $(1,2)$ and $(2,4)$ have $b=2a$). Equivalently,
+the squarefree radicand of $\Delta$ retains a bare factor of $\Gs$ exactly on the
+line $b=2a-1$ (the pairs $(2,3),(3,5),(4,7),\dots$, each adjoining the wall
+field $\Q(\Gs)(\sqrtwall)$), of which $(2,3)$ is the minimal member with $a<b$.
+That much is elementary algebra; the stronger reading (that $(2,3)$ is the
+\emph{unique} natural target) is a \etag{sel}\margetag{sel}, argued from
+naturalness, not asserted here as a theorem.
+
+\runin{Phase-G geometric Coulomb.}\margetag{thm} The remaining theorem-grade
+node is a lattice fact. On the cubic lattice the static potential between two
+manifested sites solves the lattice Poisson equation, and its solution is, at
+every finite $L$, exactly the periodic-lattice Poisson Green's function
+$G_L$. The emergent inverse-square Coulomb tail is therefore lattice geometry,
+carrying no fine-structure content of its own: the lattice coupling reads as a
+zero-parameter geometric object, $\alpha_r(r,L)=2\,r\,G_L(r)$, not a free
+constant. This is a finite-$L$ identity, established directly, with no continuum
+limit required.
+
+\runin{The two honestly-tiered results.} Two of the nine numbered results sit
+\emph{below} theorem grade and are stated as such:
+\begin{itemize}[leftmargin=1.4em, itemsep=4pt]
+  \item \textbf{Coefficient-16}: the value-level identity $16=|\Aut(E)|^2$
+        is true, but its structural necessity is a \etag{cnj}, as set out in
+        \secref{sec:masterquad}.\margetag{cnj}
+  \item \textbf{Phase-J partition-function ultralocality}: a
+        \etag[ at $L=2$ only]{thm}.\margetag[ at $L=2$ only]{thm} On a $2^3$
+        lattice the classical Euclidean action depends on the state field solely
+        through $\sum_i s_i^2$ (the manifested-site count) and is invariant under
+        spatial permutation of charge placement; this is proved by explicit
+        construction. The general-$L$ extension is \textbf{disconfirmed}: the
+        $L=2$ ultralocality is a Nyquist-mode counting degeneracy (every non-zero
+        momentum has $\sin(k_i)=0$), not a structural property, and at $L\ge3$ the
+        action does depend on spatial placement. The $L=2$ restriction is stated
+        plainly and is the spine's honest claim.
+\end{itemize}
+
+\runin{The canonical accounting.} That completes the spine: \textbf{nine numbered
+results, seven theorem-grade} ($\Gs$ identity, master quadratic, CM uniqueness,
+Watson identity, Phase-G geometric Coulomb, harmonic-invariant tower, $\Q(\Gs)$
+$\pi$-freeness conditional on Chudnovsky) \textbf{plus two tiered below theorem grade}
+(coefficient-16 and Phase-J $L=2$). This is the discrete ontology's firm
+ground (its answer to Clause~1), and it stands independent of any physics
+interpretation. The match to physics is a separate matter, quarantined in
+Part~III.
+
+\section{The construction map}\label{sec:map}
+\input{dag.tex}
+The spine is not a list but a dependency structure: a directed acyclic graph
+rooted in the seed. The axiom reading of the lattice's quarter-turn as $\Zi$
+(\secref{sec:seed}) deposits the integer~4; $\Gs$ is constructed four ways from
+quarter-integer data (\secref{sec:gstar}); the master quadratic $\masterquad$ is
+assembled from $\Gs$ and $16=4^2$ (\secref{sec:masterquad}); and the spine
+theorems (harmonic tower, CM uniqueness, $\Q(\Gs)$ $\pi$-freeness, the BCC
+complex structure, the $L$-value and its companions) hang off $\Gs$ and the
+quadratic in turn (\secref{sec:spine}). Reading the arrows backward is the audit
+trail: every theorem-grade node traces, through explicit and checkable steps, to
+the one structural choice at the root, and to nothing else.

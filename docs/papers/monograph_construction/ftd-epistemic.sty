@@ -1,0 +1,147 @@
+% =============================================================================
+% ftd-epistemic.sty  --  Monochrome, print-safe epistemic-tag system
+% -----------------------------------------------------------------------------
+% The honesty layer of the monograph.  Every substantive claim carries a tag;
+% the tag's *tier* (how much epistemic force it claims) is shown WITHOUT COLOUR,
+% by rule style alone, so it survives grayscale and monochrome print:
+%
+%   Tier A  FORCED        heavy solid rule   THEOREM DERIVED AXIOM
+%                                            NUMERICAL FACT MEASURED EMERGENT
+%   Tier B  CONDITIONAL   thin solid rule    SELECTION IMPOSED PARAMETRIC SYNTHESIS
+%   Tier C  CONJECTURAL   dashed rule        STRONGLY MOTIVATED CONJECTURE, CONJECTURE
+%   Tier D  BOUNDARY      double rule (wall) OPEN, CLOSED NEGATIVE, FOUNDATIONAL OBSTRUCTION
+%
+% The dashed rule echoes the document's own "not fully proven" cue; the double
+% rule is the "wall" metaphor of Part II (the square-root wall around alpha).
+%
+% USAGE
+%   \etag{thm}                 inline badge  (small caps, tier-ruled)
+%   \etag[ no-go]{smc}         optional qualifier appended inside the badge
+%   \etag[ at $L=2$ only]{thm}
+%   \margetag{thm}             same badge, placed in the outer margin
+%   \begin{forcedbox}[title]...\end{forcedbox}        marquee box, tier A rule
+%   \begin{conditionalbox}/\begin{conjecturebox}/\begin{boundarybox}
+%
+% Keys (short, lowercase; rendered as small caps).  An UNKNOWN key is a hard
+% compile error -- the built-in typo guard.
+%   ax thm der nf meas emg    (A)
+%   sel imp par syn           (B)
+%   smc cnj                   (C)
+%   opn cn fo                 (D)
+% =============================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ftd-epistemic}[2026/06/02 v1.0 FTD monochrome epistemic tags]
+
+\RequirePackage[most]{tcolorbox}   % pulls tikz; provides skins + breakable
+\RequirePackage{marginnote}        % non-floating, line-aligned margin tags
+\RequirePackage{varwidth}          % natural-width-up-to-max boxes for margin badges
+\usetikzlibrary{arrows.meta, positioning, calc, shapes.geometric, decorations.pathreplacing}
+
+% ---- tag table: key -> (tier letter, display text) ------------------------
+% display text is lowercase so \scshape renders genuine small caps.
+\newcommand{\ftd@deftag}[3]{%
+  \@namedef{ftd@tier@#1}{#2}\@namedef{ftd@disp@#1}{#3}}
+\ftd@deftag{ax}{A}{axiom}
+\ftd@deftag{thm}{A}{theorem}
+\ftd@deftag{der}{A}{derived}
+\ftd@deftag{nf}{A}{numerical fact}
+\ftd@deftag{meas}{A}{measured}
+\ftd@deftag{emg}{A}{emergent}
+\ftd@deftag{sel}{B}{selection}
+\ftd@deftag{imp}{B}{imposed}
+\ftd@deftag{par}{B}{parametric}
+\ftd@deftag{syn}{B}{synthesis}
+\ftd@deftag{smc}{C}{strongly motivated conjecture}
+\ftd@deftag{cnj}{C}{conjecture}
+\ftd@deftag{opn}{D}{open}
+\ftd@deftag{cn}{D}{closed negative}
+\ftd@deftag{fo}{D}{foundational obstruction}
+
+\newcommand{\ftd@tierletter}[1]{\@nameuse{ftd@tier@#1}}
+\newcommand{\ftd@dispof}[1]{\@nameuse{ftd@disp@#1}}
+\newcommand{\ftd@checktag}[1]{%
+  \@ifundefined{ftd@tier@#1}{%
+    \PackageError{ftd-epistemic}{Unknown epistemic tag key "#1"}%
+      {Use one of: ax thm der nf meas emg sel imp par syn smc cnj opn cn fo.}}{}}
+
+% ---- inline badge ----------------------------------------------------------
+\tikzset{
+  ftdbadge/.style       ={inner xsep=2pt, inner ysep=1.5pt, outer sep=0.5pt,
+                          font=\scshape\scriptsize, rounded corners=0pt},
+  ftdbadge/A/.style     ={ftdbadge, draw, line width=1.2pt},
+  ftdbadge/B/.style     ={ftdbadge, draw, line width=0.4pt},
+  ftdbadge/C/.style     ={ftdbadge, draw, line width=0.5pt, dash pattern=on 2.2pt off 1.6pt},
+  ftdbadge/D/.style     ={ftdbadge, draw, line width=0.35pt, double, double distance=2.2pt},
+}
+% \ctag{<key>} -- a width-bounded wrapping badge for table cells (so the long
+% tag names do not blow out a table column).
+\newcommand{\ctag}[1]{%
+  \ftd@checktag{#1}%
+  \tikz\node[ftdbadge/\ftd@tierletter{#1}, text width=1.85cm, align=flush left]
+    {\ftd@dispof{#1}};}
+
+% \etag[<qualifier>]{<key>}
+\newcommand{\etag}[2][]{%
+  \ftd@checktag{#2}%
+  \leavevmode
+  \tikz[baseline=(ftd@b.base)]{%
+    \node[ftdbadge/\ftd@tierletter{#2}] (ftd@b)
+      {\ftd@dispof{#2}\ifx\relax#1\relax\else#1\fi};}%
+}
+
+% ---- margin badge (marginnote; line-aligned; off via class nomargintags) ---
+% The margin badge WRAPS within the margin width (so long tags such as
+% "strongly motivated conjecture" fit), keeping its tier rule.  The inline
+% \etag stays single-line.
+\renewcommand*{\raggedrightmarginnote}{\raggedright}
+\renewcommand*{\marginnotevadjust}{1.2pt}
+\newcommand{\margetag}[2][]{%
+  \ifftd@margintags
+    \ftd@checktag{#2}%
+    \marginnote{\tikz\node[ftdbadge/\ftd@tierletter{#2}]{%
+        \begin{varwidth}{\dimexpr\marginparwidth-14pt\relax}%
+          \RaggedRight\ftd@dispof{#2}\ifx\relax#1\relax\else#1\fi%
+        \end{varwidth}};}%
+  \fi}
+
+% ---- marquee boxes (no fill; tier by rule style; breakable across pages) ---
+\newtcolorbox{forcedbox}[1][]{%
+  enhanced, breakable, colback=white, colframe=black, boxrule=1.2pt,
+  sharp corners, colbacktitle=white, coltitle=black, titlerule=0.4pt,
+  fonttitle=\bfseries\scshape, title={#1},
+  left=3.5mm, right=3.5mm, top=2.6mm, bottom=2.6mm,
+  before upper={\setlength{\parindent}{0pt}}}
+\newtcolorbox{conditionalbox}[1][]{%
+  enhanced, breakable, colback=white, colframe=black, boxrule=0.4pt,
+  sharp corners, colbacktitle=white, coltitle=black, titlerule=0.4pt,
+  fonttitle=\bfseries\scshape, title={#1},
+  left=3.5mm, right=3.5mm, top=2.6mm, bottom=2.6mm,
+  before upper={\setlength{\parindent}{0pt}}}
+\newtcolorbox{conjecturebox}[1][]{%
+  enhanced, breakable, colback=white, colframe=black, boxrule=0pt,
+  borderline={0.5pt}{0pt}{black, dash pattern=on 2.8pt off 2.0pt},
+  sharp corners, colbacktitle=white, coltitle=black, titlerule=0.4pt,
+  fonttitle=\bfseries\scshape, title={#1},
+  left=3.5mm, right=3.5mm, top=2.6mm, bottom=2.6mm,
+  before upper={\setlength{\parindent}{0pt}}}
+\newtcolorbox{boundarybox}[1][]{%
+  enhanced, breakable, colback=white, colframe=black, boxrule=0.35pt,
+  borderline={0.35pt}{2.6pt}{black},
+  sharp corners, colbacktitle=white, coltitle=black, titlerule=0.4pt,
+  fonttitle=\bfseries\scshape, title={#1},
+  left=3.5mm, right=3.5mm, top=2.6mm, bottom=2.6mm,
+  before upper={\setlength{\parindent}{0pt}}}
+
+% ---- legend helpers (used in the front matter) ----------------------------
+% A compact key showing the four rule treatments with a live example each.
+\newcommand{\rulekeylegend}{%
+  \begin{center}\small
+  \begin{tabular}{@{}c@{\hspace{1.5em}}l@{}}
+    \etag{thm}  & \textsc{forced} --- rigorously established (heavy rule)\\[4pt]
+    \etag{par}  & \textsc{conditional} --- calibration / selection (thin rule)\\[4pt]
+    \etag{cnj}  & \textsc{conjectural} --- evidence, no derivation (dashed rule)\\[4pt]
+    \etag{opn}  & \textsc{boundary} --- a mapped wall / open kernel (double rule)\\
+  \end{tabular}
+  \end{center}}
+
+\endinput
