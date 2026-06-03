@@ -1,4 +1,13 @@
-# FtdNoGo — Lean 4 formalization of the Commutativity Independence No-Go
+# FTD Lean Formalizations
+
+This is the single Lean 4 workspace for FTD.
+
+- `FtdNoGo/`, `FtdNoGo.lean`, and `Standalone.lean` formalize the Commutativity Independence No-Go.
+- `FTD/`, `FTD.lean`, and `FTDAlpha.lean` contain the older FTD algebra / master-quadratic formalization from the former separate Lean proof tree.
+
+The old wrapper has been merged here; use `cd lean && lake build` for the combined workspace.
+
+## FtdNoGo — Lean 4 formalization of the Commutativity Independence No-Go
 
 > **VERIFICATION STATUS (2026-05-30, toolchain `leanprover/lean4:v4.30.0`):**
 > - **`Standalone.lean` — ✅ MACHINE-CHECKED.** `lean Standalone.lean` →
@@ -102,10 +111,10 @@ Requires [`elan`](https://github.com/leanprover/elan) and Mathlib cache access.
 cd lean
 elan toolchain install $(cat lean-toolchain)   # if not already present
 lake exe cache get                              # download prebuilt Mathlib (large, ~minutes)
-lake build                                      # machine-check FtdNoGo/
+lake build                                      # machine-check FtdNoGo/ and FTD/
 ```
 
-A successful `lake build` with no `sorry` and no errors verifies `FtdNoGo/`.
+A successful `lake build` with no `sorry` and no errors verifies `FtdNoGo/` and the `FTD/` modules.
 (`grep -rn "sorry" FtdNoGo Standalone.lean` returns nothing.) This was run in
 authoring (2026-05-30): cache fetched 8459 oleans and `lake build` printed
 `Build completed successfully (8482 jobs)`. If you cannot fetch the cache,
