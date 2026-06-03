@@ -8,7 +8,7 @@
 
 > **2026-04-27 priority reading:** [`docs/WHERE_WE_LEFT_OFF.md`](docs/WHERE_WE_LEFT_OFF.md) — full-day synthesis with §10 bird's-eye assessment ("what's physically missing"). Then per topic: [`docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`](docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md) for the seven [THEOREM]s; [`docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md`](docs/theory/09_mathematical/number_theory/EXPLR_CM_RATIO_TOWER.md) for the 9-Heegner tower; [`docs/theory/10_eft_program/ANALYSIS_EMERGENT_SPECTRUM_G1.md`](docs/theory/10_eft_program/archive/campaign_complete/ANALYSIS_EMERGENT_SPECTRUM_G1.md) for FTD-0107 (deterministic cluster counts L-invariant — strongest positive structural finding); [`docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md`](docs/theory/07_assessment/AUDIT_LOOK_ELSEWHERE_RESULTS.md) for FTD-0097 (catalog over-rich at monomial level — methodological hygiene confirms FTD-0094 [PARAMETRIC]).
 
-For current documentation drift, cleanup status, and deferred remediation items, see [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
+For historical documentation-cleanup provenance and deferred remediation notes, see [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
 
 ---
 
@@ -18,7 +18,7 @@ For current documentation drift, cleanup status, and deferred remediation items,
 |-------------------|------------|
 | Understand FTD from scratch | [docs/SPEC_FTD.md](docs/SPEC_FTD.md) — **the single source of truth** |
 | Get contributor onboarding | [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — balanced guide across theory, engine, verification, and critique |
-| Audit documentation drift | [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) — cleanup ledger, status model, and remediation queue |
+| Audit documentation drift | [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md) — cleanup ledger, status model, and remediation queue |
 | Make a change without breaking sibling systems | [MAINTAINABILITY.md](MAINTAINABILITY.md) — 8 hazards + 15 step-by-step recipes + tech-debt ledger |
 | Check project health | [evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) — weighted project health scorecard and priorities |
 | See the core mathematics | [docs/theory/01_reference/MATH_MASTER_QUADRATIC.md](docs/theory/01_reference/MATH_MASTER_QUADRATIC.md) |
@@ -71,13 +71,13 @@ ftd/
 ├── CHANGELOG.md                     # Version history
 ├── CONTRIBUTING.md                  # How to contribute
 ├── CLAUDE.md                        # AI agent project instructions
-├── AUDIT_DOCUMENT_CLEANUP_LEDGER.md # Repo-wide documentation cleanup ledger
 ├── MAINTAINABILITY.md               # Field manual: hazards + recipes + tech-debt ledger
 ├── META_DOCUMENTATION_MAP.md        # THIS FILE — the card catalog
 ├── META_PROJECT_ATLAS.md            # AI agent navigation guide
 │
 ├── docs/
 │   ├── SPEC_FTD.md                  # THE authoritative FTD specification
+│   ├── audits/                      # Tracked audit ledgers and cleanup provenance
 │   ├── theory/                      # Curated theory catalog plus archive
 │   │   ├── META_INDEX.md            # Curated catalog; raw directory counts may be higher during cleanup
 │   │   ├── 01_reference/            # Master references and proofs
@@ -97,6 +97,7 @@ ftd/
 │   │   ├── REF_SYMBOL_GLOSSARY.md   # All notation and symbols
 │   │   ├── REF_SCOPE_LIMITATIONS.md # What FTD does NOT address
 │   │   ├── REF_EXPERIMENTAL_STATUS.md # Current testing/validation status
+│   │   ├── REF_DEPLOYMENT.md        # Static web deployment guide
 │   │   ├── REF_NAMING_CONVENTIONS.md  # File naming standards
 │   │   └── REF_BIBLIOGRAPHY.md      # Classical (non-FTD) sources cited by load-bearing FTD claims
 │   │
@@ -193,7 +194,7 @@ Cleanup note:
 
 - The curated index and the raw filesystem are not the same thing right now.
 - The live theory tree currently contains more active-category Markdown files than the indexed catalog because some superseded or historical-in-place documents still live outside `archive/`.
-- For current cleanup findings and raw-count context, see [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
+- For cleanup provenance and raw-count context from the 2026-04 documentation pass, see [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
 - For category boundaries and archive rules, see [docs/theory/META_STRUCTURE.md](docs/theory/META_STRUCTURE.md).
 
 The current theory categories are:

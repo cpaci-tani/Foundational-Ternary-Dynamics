@@ -67,6 +67,7 @@
 | [FOUND_THE_RATIO_AND_THE_PRODUCT.md](FOUND_THE_RATIO_AND_THE_PRODUCT.md) | [CONJECTURE] | Why physics followed the Euler-reflection product (π) and what the ratio (G*) contains. |
 | [FOUND_GSTAR_SCALE.md](FOUND_GSTAR_SCALE.md) | [CONJECTURE] | The G*ⁿ scale as the symmetric algebra of h¹(E_i) — the ring of physics. |
 | [FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md](FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md) | [FOUNDATION] | Two-layer phenomenal/noumenal ontology; reclassifies all tags by layer (FTD-0078). |
+| [FOUND_EPISTEMIC_SYMMETRIES_AND_CHIRALITY.md](FOUND_EPISTEMIC_SYMMETRIES_AND_CHIRALITY.md) | [CONJECTURE] | Postulate Six: longitudinal trajectory parity, chiral laterals/verticals, inside/outside inversion. |
 | [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md) | foundational conjecture note | Vocabulary for context-conditioned manifestation; 3³ lattice grounding. |
 | [FOUND_BORN_RULE_NULL_CONE.md](FOUND_BORN_RULE_NULL_CONE.md) | foundational derivation | The Born rule P = \|ψ\|² as null-cone geometry from i² = −1. |
 | [FOUND_FOURCIER_ONTIC_TOOL.md](FOUND_FOURCIER_ONTIC_TOOL.md) | theoretical synthesis | The Fourcier curve as the generalized distinction-drawing instrument. |
@@ -74,4 +75,4 @@
 
 ---
 
-30 active docs in this cluster (+ 0 archived).
+31 active docs in this cluster (+ 0 archived).

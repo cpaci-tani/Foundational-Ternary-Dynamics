@@ -17,7 +17,7 @@ Archived documents are in the `archive/` subdirectory.
 
 ### Structural Guides
 
-- [../../FTD_FQCR_v1_5_checkpoint_package/FTD_FQCR_v1_5_Checkpoint.md](../../FTD_FQCR_v1_5_checkpoint_package/FTD_FQCR_v1_5_Checkpoint.md) — Phase G/H Checkpoint (May 2026 ontology shift)
+- [01_reference/SPEC_FQCR_V1_5_CHECKPOINT.md](01_reference/SPEC_FQCR_V1_5_CHECKPOINT.md) — Phase G/H Checkpoint (May 2026 ontology shift)
 - [META_STRUCTURE.md](META_STRUCTURE.md) — placement rules, archive rules, and category boundaries
 - [07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) — canonical bedrock tracker (5-tier truth ranking with verification artifacts)
 - [../SPEC_FTD.md](../SPEC_FTD.md) — authoritative framework spec
@@ -191,6 +191,8 @@ Physics from first principles.
 | 3.61 | **[DERIV_NONCOMMUTATIVE_EMERGENCE.md](03_derivations/quantum_mechanics/DERIV_NONCOMMUTATIVE_EMERGENCE.md)** | **Non-Commutative Emergence:** Proof of the Boundary Partition Commutator Theorem deriving emergent noncommutative Type III₁ operator algebras from commutative lattices via regional boundary localization (closes GAP-S2) [THEOREM]. |
 | 3.62 | **[DERIV_RADIAL_METRIC_RESOLUTION.md](03_derivations/foundational_mechanics/DERIV_RADIAL_METRIC_RESOLUTION.md)** | **Radial Metric Component:** Proves the Discrete Radial Metric Projection Theorem, deriving the Schwarzschild $g_{rr} = (1-r_s/r)^{-1}$ component from local wave speed interval contraction [THEOREM]. |
 | 3.63 | **[DERIV_BORN_PROPORTIONALITY_RESOLUTION.md](03_derivations/quantum_mechanics/DERIV_BORN_PROPORTIONALITY_RESOLUTION.md)** | **Born Rule Proportionality:** Proves the Path-Integral Born Proportionality Theorem, deriving the strict $|\psi|^2$ scaling from Gaussian path integration of FTD action fluctuations (closes FTD-0187) [THEOREM]. |
+| 3.64 | [DERIV_VACUUM_ENERGY_CUTOFF.md](03_derivations/DERIV_VACUUM_ENERGY_CUTOFF.md) | **Cosmological Constant:** Derivation of the finite vacuum energy cutoff via discrete Brillouin zone integration [THEOREM]. |
+| 3.65 | [DERIV_YANG_MILLS_CONFINEMENT.md](03_derivations/DERIV_YANG_MILLS_CONFINEMENT.md) | **Yang-Mills Mass Gap:** Proof of quark confinement via Wilson Loop area-law scaling on the ternary lattice [THEOREM]. |
 | 3.64 | **[DERIV_SCALE_GROWTH_AND_COSMIC_EMERGENCE.md](03_derivations/gravity_and_cosmology/DERIV_SCALE_GROWTH_AND_COSMIC_EMERGENCE.md)** | **Scale Growth & Cosmic Emergence:** Derives comoving spatial metric stretch $a(\tau)$ and Friedmann cosmic expansion from first-principles energy injection; unifies dark energy leak ($\Omega_\Lambda = 0.683$) and dark matter halos from self-field envelope overlap ($r_{\text{eff}} \approx 15$) [THEOREM] + [SELECTION] |
 | 3.65 | **[DERIV_EMERGENT_DIFFEROMORPHISM_INVARIANCE.md](03_derivations/gravity_and_cosmology/DERIV_EMERGENT_DIFFEROMORPHISM_INVARIANCE.md)** | **Emergent diffeomorphism invariance:** Emergent $\text{Diff}(M)$ general covariance from local point-group point-filtering, proving that discrete cubic point-group anisotropies vanish asymptotically as $O((a/L)^4)$ [SELECTION] |
 
@@ -314,6 +316,7 @@ Geometry, scale, information, and recursion.
 | 8.10 | [DERIV_EXISTENTIAL_UNIT.md](08_structural/DERIV_EXISTENTIAL_UNIT.md) | **The existential unit:** 3³ minimal complete lattice; self-consistency N_c+N_base+b_3+N_eff=N_c³ uniquely gives N_c=3; O_h irrep decomposition recovers all framework integers; Vieta coefficients e₁=3³, e₂=3⁵; parity splits 13+13=N_eff+N_eff [THEOREM] |
 | 8.11 | [THEOREM_MOORE_LAYER_DECOMPOSITION.md](08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md) | **Moore Layer Theorem:** D-dimensional Moore neighborhood decomposes into flux layers whose D=3 combinatorics recover U(1)×SU(2)×SU(3), 3 generations, 4 particles per generation, matter/antimatter balance, and dark-state counting |
 | 8.12 | [DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md](08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) | **BCC multiplicative structure:** Watson identity W₃ = G*²/(2π) and SU(3) gauge group both from BCC triple-cosine eigenvalue [THEOREM for structure]; zero mode topology SC:1/FCC:2/BCC:4 = 2^k combinatorial pattern [THEOREM]; sLoop requires BCC multiplicative coupling [SELECTION] |
+| 8.13 | [EXPLR_3D_APERIODIC_MONOTILE.md](08_structural/EXPLR_3D_APERIODIC_MONOTILE.md) | **3D Aperiodic Monotile ("Einstein"):** Discovery of 12 highly non-convex candidate topologies that completely break 3D translational symmetry via Wang cube boundary generation [EMERGENT] |
 
 ---
 

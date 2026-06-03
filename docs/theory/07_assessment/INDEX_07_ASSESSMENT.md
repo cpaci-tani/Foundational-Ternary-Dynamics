@@ -47,6 +47,7 @@ Critical self-assessment of what FTD derives vs imports, and where derivations h
 | [AUDIT_WHAT_IS_GENUINELY_NEW.md](archive/AUDIT_WHAT_IS_GENUINELY_NEW.md) | **[LEGACY/provenance] [ARCHIVED 2026-06-02]** | Pre-reframe outsider-facing synthesis. **Superseded; do NOT cite externally.** Banner-marked; untestable consciousness/reference-frame-context [THEOREM] tags downgraded to [SPECULATIVE CONJECTURE]; α-comparison overclaims softened to the actual [STRONGLY MOTIVATED CONJECTURE] tag. For current status use `LEDGER.md` / `TRACKER_ONTIC_TRUTH.md` / `SPEC_ALGEBRAIC_SPINE.md`. |
 | [AUDIT_INFINITY_REFRAME.md](AUDIT_INFINITY_REFRAME.md) | [AUDIT] | Portfolio-wide triage of the completed-infinity → undefined-boundary ontology shift. |
 | [AUDIT_RATIONAL_FIT_CLAIMS.md](AUDIT_RATIONAL_FIT_CLAIMS.md) | [AUDIT] | Rigidity test applied to rational/integer fits (sin²θ_W, α_s, PMNS, Δm²); several downgraded. |
+| [REPORT_GAP_ANALYSIS.md](archive/REPORT_GAP_ANALYSIS.md) | [ARCHIVED 2026-06-02] | Historical root-level epistemic gap report; preserved as provenance, with live status controlled by LEDGER / TRACKER_OPEN_ITEMS. |
 | [AUDIT_DUAL_SUBSTRATE_PROVENANCE.md](AUDIT_DUAL_SUBSTRATE_PROVENANCE.md) | [AUDIT FINDING] | Provenance check on the dual-substrate decomposition; F1-hygiene, no spine demotion. |
 | [AUDIT_MASS_CHAIN_REDTEAM.md](AUDIT_MASS_CHAIN_REDTEAM.md) | [ADVERSARIAL CRITIQUE] | Rigorous adversarial critique of the leptonic and hadronic mass derivation chain; identifies post-hoc fitting and MeV scale calibration issues. |
 

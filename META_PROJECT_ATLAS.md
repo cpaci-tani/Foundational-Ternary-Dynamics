@@ -71,6 +71,8 @@ ftd/
 │   │   └── 0001…0013-*.md             # Per-decision records (9 retroactive + 4 from refactor sweep)
 │   ├── audits/                        # Archived audit ledgers (per sweep)
 │   │   ├── INDEX.md
+│   │   ├── AUDIT_DOCUMENT_CLEANUP_LEDGER.md # Documentation cleanup provenance
+│   │   ├── archive/                   # Historical request/report provenance
 │   │   ├── AUDIT_2026-04_pre-refactor.md   # 122-finding sweep (78 resolved, archived)
 │   │   └── AUDIT_2026-04_refactor-sweep.md # 8-phase refactor (17 commits, archived)
 │   ├── theory/                        # 115+ theory documents
@@ -87,7 +89,7 @@ ftd/
 │   │   ├── 10_eft_program/            # EFT recovery program
 │   │   └── archive/                   # superseded
 │   ├── papers/                        # PDFs + TeX sources
-│   ├── reference/                     # REF_EPISTEMIC_LABELS, REF_SYMBOL_GLOSSARY
+│   ├── reference/                     # REF_EPISTEMIC_LABELS, REF_SYMBOL_GLOSSARY, REF_DEPLOYMENT
 │   └── internal/                      # Local-only session summaries (gitignored)
 ├── engine/
 │   ├── SPEC_ENGINE.md                 # Engine architecture spec
