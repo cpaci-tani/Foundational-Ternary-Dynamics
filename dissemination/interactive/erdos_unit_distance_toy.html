@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erdős Unit Distance Toy Model</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --grid-line: rgba(255, 255, 255, 0.05);
+            --edge-color: rgba(59, 130, 246, 0.4);
+            --node-color: #38bdf8;
+            --highlight-node: #fbbf24;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            display: flex;
+            height: 100vh;
+        }
+
+        #canvas-container {
+            flex-grow: 1;
+            position: relative;
+            cursor: grab;
+        }
+
+        #canvas-container:active {
+            cursor: grabbing;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Glassmorphism Panel */
+        #control-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 340px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        p.subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        select, input[type="range"] {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        .stats-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container">
+        <canvas id="graphCanvas"></canvas>
+    </div>
+
+    <div id="control-panel">
+        <div>
+            <h1>Erdős Unit Distance</h1>
+            <p class="subtitle">Visualizing dense distance graphs on a Cartesian grid using FTD Gaussian Prime factors.</p>
+        </div>
+
+        <div class="control-group">
+            <label for="distance-select">Distance Squared (R²)</label>
+            <select id="distance-select">
+                <option value="5">5 (Prime = 5)</option>
+                <option value="25">25 (5²)</option>
+                <option value="65" selected>65 (5 × 13)</option>
+                <option value="325">325 (5² × 13)</option>
+                <option value="1105">1105 (5 × 13 × 17)</option>
+                <option value="5525">5525 (5² × 13 × 17)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label for="grid-size">Grid View Radius (N)</label>
+            <input type="range" id="grid-size" min="10" max="60" value="20">
+            <span id="grid-size-val" style="font-size: 0.8rem; text-align: right; color: var(--text-muted);">±20</span>
+        </div>
+
+        <div class="stats-box">
+            <div class="stat">
+                <span class="stat-value" id="stat-nodes">0</span>
+                <span class="stat-label">Nodes in View</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="stat-edges">0</span>
+                <span class="stat-label">Total Edges</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="stat-degree">0</span>
+                <span class="stat-label">Max Degree</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value" id="stat-density">0</span>
+                <span class="stat-label">Density (u/n)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+        const distSelect = document.getElementById('distance-select');
+        const gridRange = document.getElementById('grid-size');
+        const gridVal = document.getElementById('grid-size-val');
+
+        let R2 = parseInt(distSelect.value);
+        let N = parseInt(gridRange.value);
+        let zoom = 15; // pixels per grid unit
+        let offsetX = 0;
+        let offsetY = 0;
+
+        // Interaction state
+        let isDragging = false;
+        let lastX, lastY;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            offsetX = canvas.width / 2;
+            offsetY = canvas.height / 2;
+            draw();
+        }
+        window.addEventListener('resize', resize);
+
+        // Precompute valid integer offsets for the given R2
+        function getValidOffsets(r2) {
+            let offsets = [];
+            let max = Math.ceil(Math.sqrt(r2));
+            for (let dx = -max; dx <= max; dx++) {
+                let rem = r2 - dx * dx;
+                if (rem < 0) continue;
+                let dy = Math.round(Math.sqrt(rem));
+                if (dy * dy === rem) {
+                    offsets.push({dx, dy});
+                    if (dy !== 0) offsets.push({dx, dy: -dy});
+                }
+            }
+            return offsets;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw faint grid lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            
+            let startX = Math.floor(-offsetX / zoom);
+            let endX = Math.ceil((canvas.width - offsetX) / zoom);
+            let startY = Math.floor(-offsetY / zoom);
+            let endY = Math.ceil((canvas.height - offsetY) / zoom);
+
+            for (let x = startX; x <= endX; x++) {
+                ctx.moveTo(x * zoom + offsetX, 0);
+                ctx.lineTo(x * zoom + offsetX, canvas.height);
+            }
+            for (let y = startY; y <= endY; y++) {
+                ctx.moveTo(0, y * zoom + offsetY);
+                ctx.lineTo(canvas.width, y * zoom + offsetY);
+            }
+            ctx.stroke();
+
+            // Compute Graph
+            let offsets = getValidOffsets(R2);
+            let edges = [];
+            let nodesCount = 0;
+            let maxDegree = 0;
+            
+            ctx.strokeStyle = 'rgba(59, 130, 246, 0.4)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+
+            for (let x = -N; x <= N; x++) {
+                for (let y = -N; y <= N; y++) {
+                    nodesCount++;
+                    let degree = 0;
+                    for (let off of offsets) {
+                        let nx = x + off.dx;
+                        let ny = y + off.dy;
+                        if (nx >= -N && nx <= N && ny >= -N && ny <= N) {
+                            degree++;
+                            // Only draw edge once
+                            if (x < nx || (x === nx && y < ny)) {
+                                edges.push(1);
+                                ctx.moveTo(x * zoom + offsetX, y * zoom + offsetY);
+                                ctx.lineTo(nx * zoom + offsetX, ny * zoom + offsetY);
+                            }
+                        }
+                    }
+                    if (degree > maxDegree) maxDegree = degree;
+                }
+            }
+            ctx.stroke();
+
+            // Draw Nodes
+            ctx.fillStyle = '#38bdf8';
+            for (let x = -N; x <= N; x++) {
+                for (let y = -N; y <= N; y++) {
+                    ctx.beginPath();
+                    ctx.arc(x * zoom + offsetX, y * zoom + offsetY, 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Update Stats
+            document.getElementById('stat-nodes').innerText = nodesCount;
+            document.getElementById('stat-edges').innerText = edges.length;
+            document.getElementById('stat-degree').innerText = maxDegree;
+            document.getElementById('stat-density').innerText = (edges.length / nodesCount).toFixed(2);
+        }
+
+        // Event Listeners
+        distSelect.addEventListener('change', (e) => {
+            R2 = parseInt(e.target.value);
+            draw();
+        });
+
+        gridRange.addEventListener('input', (e) => {
+            N = parseInt(e.target.value);
+            gridVal.innerText = `±${N}`;
+            // auto adjust zoom
+            zoom = Math.min(25, (canvas.height * 0.4) / N);
+            draw();
+        });
+
+        // Panning
+        canvas.addEventListener('mousedown', e => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        window.addEventListener('mousemove', e => {
+            if (!isDragging) return;
+            offsetX += e.clientX - lastX;
+            offsetY += e.clientY - lastY;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            draw();
+        });
+
+        // Zooming
+        canvas.addEventListener('wheel', e => {
+            let zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+            let targetX = e.clientX;
+            let targetY = e.clientY;
+            
+            // Adjust offset to zoom towards mouse
+            offsetX = targetX - (targetX - offsetX) * zoomFactor;
+            offsetY = targetY - (targetY - offsetY) * zoomFactor;
+            zoom *= zoomFactor;
+            
+            if (zoom < 2) zoom = 2;
+            if (zoom > 100) zoom = 100;
+            
+            draw();
+        });
+
+        // Initialize
+        resize();
+    </script>
+</body>
+</html>
