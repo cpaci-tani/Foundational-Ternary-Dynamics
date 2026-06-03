@@ -1,8 +1,10 @@
 # FTD Documentation Cleanup Ledger
 
-**Status:** Active audit and synchronization ledger  
+**Status:** Historical cleanup provenance (moved from repo root on 2026-06-02)
 **Date:** 2026-04-11  
 **Intent:** Improve documentation trustworthiness, consistency, and navigability without deleting content
+
+> Note: counts and placement notes in this ledger describe the 2026-04-11 cleanup pass unless a later line says otherwise.
 
 This ledger is the working audit record for project documentation cleanup. It covers public and internal documentation surfaces, records where the repo currently drifts from its own maps, and separates what was synchronized in this pass from what should be deferred or preserved as historical.
 

@@ -174,6 +174,7 @@ __global__ void einstein_tile_search(long long* global_count, int L) {
     // It must NOT have any valid periodic 1x1x1 or 2x2x2 configurations.
     if (can_tile_4x4x4) {
         atomicAdd((unsigned long long*)global_count, 1);
+        printf("CANDIDATE: %d,%d,%d,%d,%d,%d\n", colors[0], colors[1], colors[2], colors[3], colors[4], colors[5]);
     }
 }
 

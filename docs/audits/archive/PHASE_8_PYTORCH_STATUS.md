@@ -153,7 +153,7 @@ Phase 8a lands as a single commit on `worktree-test-runner-unified`:
 - `scripts/proofs/watson_convergence.py`
 - `scripts/proofs/proof_d3_uniqueness.py`
 - `scripts/proofs/proof_bell_cosine_from_gauss.py`
-- `scripts/PHASE_8_PYTORCH_STATUS.md` (this file)
+- `docs/audits/archive/PHASE_8_PYTORCH_STATUS.md` (this file)
 
 No `engine/` files touched. No `pip install` executed.
 

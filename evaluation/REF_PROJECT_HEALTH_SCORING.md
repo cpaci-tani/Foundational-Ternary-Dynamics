@@ -254,7 +254,7 @@ When issuing a new scorecard:
    - [../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md](../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md)
    - [../docs/theory/07_assessment/core_ledgers/LEDGER.md](../docs/theory/07_assessment/core_ledgers/LEDGER.md)
    - [../docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](../docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md)
-   - [../AUDIT_DOCUMENT_CLEANUP_LEDGER.md](../AUDIT_DOCUMENT_CLEANUP_LEDGER.md)
+   - [../docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](../docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md)
    - [../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md)
 
 ---
