@@ -40,7 +40,7 @@ A four-route adversarial workflow (`rsi-leg3-closure`, 9 agents) attacked RSI Le
 
 ### Arc B — Numeric consistency audit
 
-The canonical triple `scripts/constants.py` / `engine/include/ftd/ontic.h` / `engine/web/js/constants.js` is **VERIFIED CLEAN** (G*=2.95867511919, 16G*²=140.0601354, 16G*³=414.3924377, x₊=137.0361714582, x₋=3.0239639163, ALPHA_INV_NIST=137.035999177; framework integers {3,4,7,13}; no G*/ϖ confusion). Eight downstream transcription errors fixed in manuscripts, papers, and code snippets. Two stale generated artifacts (manuscript_v2 monoliths, theorems.txt) remain flagged for regeneration; their sources are now correct.
+The canonical triple `scripts/constants.py` / `engine/include/ftd/ontic.h` / `engine/web/js/constants.js` is **VERIFIED CLEAN** (G*=2.95867511919, 16G*²=140.0601354, 16G*³=414.3924377, x₊=137.0361714582, x₋=3.0239639163, ALPHA_INV_NIST=137.035999177; framework integers {3,4,7,13}; no G*/ϖ confusion). Eight downstream transcription errors fixed in manuscripts, papers, and code snippets. The stale root `theorems.txt` dump was removed during root cleanup; manuscript_v2 monoliths remain flagged for regeneration, and their sources are now correct.
 
 ### Arc C — Web engine fixes
 

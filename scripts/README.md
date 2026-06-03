@@ -40,6 +40,13 @@ Plus: `tools/` (under `engine/tools/` — engine-side tooling, not Python core).
 - **Imported by**: notebooks in `dissemination/notebooks/`, build scripts, manual runs
 - **Path convention**: scripts are run from the repo root or via `python -m`
 
+## Repository hygiene
+
+- Keep executable/source Python in `scripts/`; move status and provenance notes
+  to `docs/audits/` or the relevant documentation tree.
+- Treat `results/`, `output/`, caches, compiled bytecode, and ad hoc render
+  folders as regenerated local artifacts unless explicitly whitelisted.
+
 ## Constants chain
 
 `scripts/constants.py` is the **canonical Python source**. The C++

@@ -20,6 +20,7 @@ they are renamed `AUDIT_<YYYY-MM>_<slug>.md` and moved here.
 
 | Date range | Slug | Findings | Resolved | Deferred | Not-a-bug |
 |---|---|---:|---:|---:|---:|
+| 2026-04-11 | [documentation cleanup ledger](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) | repo-wide documentation drift ledger | mixed | yes | n/a |
 | 2026-04-27 | [pre-refactor sweep](AUDIT_2026-04_pre-refactor.md) | 122 | 78 | 40 | 4 |
 | 2026-04-27 | [refactor sweep (8-phase)](AUDIT_2026-04_refactor-sweep.md) | 8 phases · 17 commits | 17 | 1 (WSL2 GPU parity) | 0 |
 
@@ -70,3 +71,5 @@ quarterly cadence so recurring drift becomes visible.
 - [META_PROJECT_ATLAS.md](../../META_PROJECT_ATLAS.md) §6, §7
 - [CONTRACTS.md §9](../../CONTRACTS.md#9--refactor-companion-contract) (refactor companion contract)
 - [docs/adr/INDEX.md](../adr/INDEX.md)
+- [archive/ORIGINAL_REQUEST_2026-05-26_ENGINE_WEB_AUDIT.md](archive/ORIGINAL_REQUEST_2026-05-26_ENGINE_WEB_AUDIT.md) — historical multi-agent request provenance
+- [archive/PHASE_8_PYTORCH_STATUS.md](archive/PHASE_8_PYTORCH_STATUS.md) — historical Python/PyTorch conversion status

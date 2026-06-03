@@ -88,6 +88,7 @@ The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-
 
 | File | Tag | Purpose |
 |---|---|---|
+| [`EXPLR_FQCR_V1_5_NEXT_FRONTIERS.md`](EXPLR_FQCR_V1_5_NEXT_FRONTIERS.md) | [OPEN] / [EXPLORATION] | Next Frontiers for FQCR v1.5: Strong-field compliance audit, finite Schwinger coefficient, flavor/CKM. |
 | [`OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`](scopes_and_specs/OPEN_FTD_TO_EFT_BRIDGE_STATUS.md) | [CLOSED NEGATIVE for QED α] / pivot | Where the QED-α bridge failed; defines the replacement target as native FTD source/flux physics. |
 | [`OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md`](scopes_and_specs/OPEN_FTD_NATIVE_ACTION_OR_MEASURE.md) | [PARTIAL] | Bridge Gate 2: linear generator derived, microscopic history measure selected; explicit nonlinear blocked effective action remains open. |
 | [`OPEN_GC_FROM_FIRST_PRINCIPLES.md`](scopes_and_specs/OPEN_GC_FROM_FIRST_PRINCIPLES.md) | [OPEN] | $g_c$ from first principles after Mechanisms A–C closures; dimensionless origin unknown. |
