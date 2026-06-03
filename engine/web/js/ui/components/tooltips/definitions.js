@@ -32,6 +32,7 @@ const SELECTOR_TOOLTIPS = [
     ['label[for="ticks-per-frame"]', 'Simulation speed control.'],
     ['#tpf-display', 'Current simulation speed expressed as ticks per rendered frame.'],
     ['#btn-settings', 'Open theme, scale, and interface settings. Keyboard shortcut: Ctrl+,'],
+    ['#btn-vtk-export', 'Copy a local ftd_sim V command that writes a ParaView/VTK research bundle for the current lattice size.'],
     ['#btn-ftd-assistant', 'Open the assistant sidebar. This is reserved for an eventual FTD-tuned local language model and research copilot.'],
     ['#btn-toolbar-menu', 'Open compact toolbar controls on smaller screens.'],
     ['#scenario-select', 'Choose the active Scale 0 lattice scenario.'],

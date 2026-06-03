@@ -152,6 +152,15 @@ export function createScale0ViewportAdapter(viewport) {
         applyFluxSlice(slice, latticeSize, axis, index) {
             viewport?.updateFluxSlice?.(slice, latticeSize, axis, index);
         },
+        applyFluxSlices(planes, latticeSize, index) {
+            viewport?.updateFluxSlices?.(planes, latticeSize, index);
+        },
+        setFluxSliceAxisEnabled(axis, on) {
+            viewport?.setFluxSliceAxisEnabled?.(axis, on);
+        },
+        getEnabledFluxSliceAxes() {
+            return viewport?.getEnabledFluxSliceAxes?.() ?? [0, 1, 2];
+        },
         applyConfinementStrings(bridge) {
             viewport?.updateConfinementStrings?.(bridge);
         },

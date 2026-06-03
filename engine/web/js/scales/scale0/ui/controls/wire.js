@@ -256,7 +256,9 @@ function wireFluxVolume(ctx, api) {
     const shapeSelect = getEl('flux-shape-select');
     if (shapeSelect) {
         shapeSelect.addEventListener('change', () => {
-            ctx.viewport.setFluxShape(parseInt(shapeSelect.value, 10));
+            const shape = parseInt(shapeSelect.value, 10);
+            ctx.viewport.setFluxShape(shape);
+            ctx.viewport.setFluxSliceShape?.(shape);
         });
     }
 
@@ -267,6 +269,7 @@ function wireFluxVolume(ctx, api) {
             const v = parseFloat(opacitySlider.value);
             opacityVal.textContent = v.toFixed(2);
             ctx.viewport.setFluxOpacity(v);
+            ctx.viewport.setFluxSliceOpacity?.(v);
         });
     }
 
@@ -277,6 +280,7 @@ function wireFluxVolume(ctx, api) {
             const v = parseFloat(scaleSlider.value);
             scaleVal.textContent = v.toFixed(1);
             ctx.viewport.setFluxPointScale(v);
+            ctx.viewport.setFluxSlicePointScale?.(v);
             api.setLatticeNeedsUpload();
         });
     }
@@ -288,6 +292,7 @@ function wireFluxVolume(ctx, api) {
             const v = parseFloat(threshSlider.value);
             threshVal.textContent = v.toFixed(3);
             ctx.viewport.setFluxThreshold(v);
+            ctx.viewport.setFluxSliceThreshold?.(v);
             api.setLatticeNeedsUpload();
         });
     }
