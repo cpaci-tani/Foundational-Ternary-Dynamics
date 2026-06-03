@@ -1,0 +1,41 @@
+Sector,Claim,Status,Notes
+Core ontology,"Γ_X=(V,E,W) as finite spatial closure",CORE DOCTRINE / DEFINITION,"Space, not spacetime"
+Core ontology,C_τ:n→n+1 as finite update tick,CORE DOCTRINE / DEFINITION,"Time as update, not continuum dimension"
+Core ontology,A_n:V→𝒜^3 address register,DEFINITION,Pointer/readout assignment
+Core ontology,A_n∼A_n+ξ_n re-addressing,CONDITIONAL THEOREM,Absolute address non-ontic
+Recurrence,u_{m+1}+u_{m-1}=s u_m,THEOREM once transfer selected,Finite closure regime equation
+Recurrence,I_m invariant,THEOREM,Two-step relational invariant
+Product/ratio,"P=aa†, R=a/a†",THEOREM,Conjugate readout split
+Constants,G*=Γ(1/4)/Γ(3/4),THEOREM / DEFINITION,Quarter-ratio anchor
+Constants,Γ(1/4)Γ(3/4)=π√2,THEOREM,Product sibling
+Constants,W_BCC=(G*)²/(2π),THEOREM,Lattice loop prefactor
+FQCR-EM,x_+=α^{-1},RECONSTRUCTION / CONJECTURE,Central alpha claim
+FQCR-EM,x_-≈N_c,RETIRED / FAILED,Do not use as color derivation
+SM,Z6 center closure,CONDITIONAL THEOREM,SM charge skeleton
+SM,sin²θ_W^lock=3/8,CONDITIONAL THEOREM,Weak trace lock
+Gravity scalar,D†WDU=κψJχ,CONDITIONAL THEOREM,Weak source law
+Gravity scalar,Jχ=ΔS/ℏ,CANDIDATE PRINCIPLE,Action-count source currency
+Gravity scalar,κψ=4π,"CONDITIONAL THEOREM, AUDIT-SENSITIVE",Under virtual angular-shell closure
+Gravity scalar,U=G_NM/(c²r),CONDITIONAL THEOREM,Weak central source
+Gravity scalar,dτ=e^{-U}dt,CONDITIONAL THEOREM / READOUT LOCK,Redshift
+Gravity scalar,dℓ_local=e^U dℓ,CONDITIONAL SPATIAL LOCK,Needed for full lensing
+Gravity scalar,n=e^{2U},CONDITIONAL THEOREM,Full weak lensing coefficient
+TT,C_ij=Uδ_ij+S_ij,DEFINITION,Spatial compliance split
+TT,Two TT modes,CONDITIONAL THEOREM,Rank-3 symmetric compliance
+TT,Finite relabeling alone forces masslessness,FAILED,Needs pointer re-addressing
+TT,Pointer re-addressing forbids primitive TT mass,CONDITIONAL THEOREM,No onsite substrate gap
+TT,s_TT(0)=2,CONDITIONAL THEOREM,Gapless TT readout
+TT,c_T=c,CONDITIONAL THEOREM,Under null-shell speed lock
+Nonlinear gravity,Q=e^{2U}e^{2S},DEFINITION / STRUCTURAL PROPOSAL,Unified compliance object
+Nonlinear gravity,Kτ[Q]+c²G^Q=κψTχ,CANDIDATE EQUATION,Nonlinear compliance candidate
+Radiation,P_TT=G_N/(5c^5)<Q‴²>,CONDITIONAL THEOREM,Under normalization lock
+Measurement,L_n=U_mem∘R_C∘Π_A,CONDITIONAL THEOREM,Finite aperture/look operator
+Measurement,Born as product-channel intensity,CANDIDATE PRINCIPLE,Useful but lossy
+Measurement,Uncertainty as finite readout complementarity,CANDIDATE PRINCIPLE / CONDITIONAL THEOREM,Incompatible finite looks
+Noetic,m_N²=λ₁(D_N†W_ND_N),CANDIDATE PRINCIPLE,Memory/update spectral inertia
+Noetic,Information meaning sources gravity,REJECTED,Only carrier/write action sources
+QED,g=2 from Clifford square,THEOREM inside Dirac layer,Standard Dirac result
+QED,Schwinger coefficient finite derivation,OPEN,Need finite loop proof
+QCD,Z3 center-neutral trace selection,THEOREM,Center closure
+QCD,Full confinement from center alone,OVERCLAIM / RETIRED,Flux tension open
+Flavor,Depth arrays,RECONSTRUCTION,CKM failed/open
