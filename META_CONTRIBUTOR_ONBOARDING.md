@@ -2,7 +2,7 @@
 
 This guide is the public, contributor-first entry point for the FTD repository. It is meant to help a new engineer or researcher understand what the project is, which documents are authoritative, where the executable surfaces live, and where the repo currently shows drift between theory, implementation, and assessment.
 
-For the current documentation drift and cleanup record, see [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
+For historical documentation cleanup provenance, see [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md).
 
 Use this document with three expectations in mind:
 
@@ -21,7 +21,7 @@ FTD is a mixed research-and-engineering repository with four public layers:
 | Theory and spec | Defines the model, ontology, derivations, and epistemic tags | [docs/SPEC_FTD.md](docs/SPEC_FTD.md), [docs/theory/META_INDEX.md](docs/theory/META_INDEX.md) |
 | Executable engine | C++ simulation engine, CUDA path, WASM bindings, and browser dashboard | [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md), [engine/CMakeLists.txt](engine/CMakeLists.txt) |
 | Verification and proofs | Python constants, tests, verification runners, proof scripts | [scripts/constants.py](scripts/constants.py), [scripts/tests/README.md](scripts/tests/README.md) |
-| Dissemination, critique, formalization | Manuscript/book/notebooks, evaluation reports, Lean formalization | [evaluation/AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md), [lean4_proof/FTD.lean](lean4_proof/FTD.lean) |
+| Dissemination, critique, formalization | Manuscript/book/notebooks, evaluation reports, Lean formalization | [evaluation/AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md), [lean/FTD.lean](lean/FTD.lean) |
 
 The repo is not just a codebase. It is also a document library, a publication pipeline, a verification harness, and an assessment archive.
 
@@ -96,7 +96,7 @@ Read these before making theory-facing edits:
 
 **Where drift is visible**
 
-- Documentation counts and version labels have needed active cleanup across the public navigation layer; use [AUDIT_DOCUMENT_CLEANUP_LEDGER.md](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) when you need the current reconciliation state.
+- Documentation counts and version labels have needed active cleanup across the public navigation layer; use [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md) for the 2026-04 cleanup provenance.
 - Claim strength differs across layers. [docs/SPEC_FTD.md](docs/SPEC_FTD.md) uses strong “derived/complete” language, while [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) explicitly downgrades many results to selection, insertion, or external physics adoption.
 
 ### 2. Engine And Runtime
@@ -179,7 +179,7 @@ Read these before making theory-facing edits:
 1. [evaluation/AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md)
 2. [evaluation/AUDIT_UNRESOLVED_ISSUES.md](evaluation/AUDIT_UNRESOLVED_ISSUES.md)
 3. [docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md)
-4. [lean4_proof/FTD.lean](lean4_proof/FTD.lean)
+4. [lean/FTD.lean](lean/FTD.lean)
 5. [dissemination/manuscript/src/index.qmd](dissemination/manuscript/src/index.qmd)
 
 **Practical entry points**

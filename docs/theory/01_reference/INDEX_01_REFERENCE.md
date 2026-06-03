@@ -33,6 +33,7 @@
 |---|---|---|
 | [SPEC_ALGEBRAIC_SPINE.md](SPEC_ALGEBRAIC_SPINE.md) | [REFERENCE] / canonical | Nine numbered algebraic results in [THEOREM]-only form, no physics interpretation. |
 | [SPEC_FQCR.md](SPEC_FQCR.md) | [REFERENCE] | FQCR capstone — five-model framework for operator-theoretic provenance of G*. |
+| [SPEC_FQCR_V1_5_CHECKPOINT.md](SPEC_FQCR_V1_5_CHECKPOINT.md) | [REFERENCE] | Phase G/H Checkpoint (May 2026 ontology shift) — finite pointer-clock gravity. |
 | [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) | mathematical monograph | G* = Γ(1/4)/Γ(3/4) derived from nine branches of mathematics; triad identity + master quadratic. |
 | [MATH_MASTER_QUADRATIC.md](MATH_MASTER_QUADRATIC.md) | [THEOREM] throughout | Self-contained pure-math treatment of the master quadratic family from lemniscate geometry. |
 | [SPEC_QUADRATIC_PHYSICS_BRIDGE.md](SPEC_QUADRATIC_PHYSICS_BRIDGE.md) | epistemic bridge (SP1–SP6) | Selection principles + physical correspondences connecting the quadratic to constants; consolidated reference. |

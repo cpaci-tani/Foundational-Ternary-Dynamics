@@ -21,14 +21,9 @@ exclude = [
     "scripts",
     "simulations",
     "special_projects",
-    # Agent scratch files and root-level utility scripts
+    # Agent scratch files
     ".agents",
     "tools",
-    "check_encoding.py",
-    "reorganize.py",
-    "fix_tags.py",
-    "reframe.py",
-    "update_links.py",
     # manim uses from manim import * by convention
     "dissemination/animations",
 ]
