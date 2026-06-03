@@ -121,6 +121,41 @@ def _save(fig, name: str) -> None:
     plt.close(fig)
 
 
+def _box(ax, x: float, y: float, w: float, h: float, *,
+         title: str, body: str, tag: str, fill: str, edge: str) -> tuple[float, float]:
+    patch = mpatches.FancyBboxPatch(
+        (x, y), w, h,
+        boxstyle="round,pad=0.012,rounding_size=0.018",
+        facecolor=fill,
+        edgecolor=edge,
+        linewidth=1.45,
+        zorder=3,
+    )
+    ax.add_patch(patch)
+    ax.text(x + 0.018, y + h - 0.04, title,
+            ha="left", va="top", fontsize=10.5, fontweight="bold",
+            color="#263238", zorder=4)
+    ax.text(x + 0.018, y + h - 0.083, body,
+            ha="left", va="top", fontsize=8.2, linespacing=1.22,
+            color="#37474f", zorder=4)
+    return (x + w / 2.0, y + h / 2.0)
+
+
+def _arrow(ax, start: tuple[float, float], end: tuple[float, float], *,
+           color: str = "#607d8b", rad: float = 0.0, lw: float = 1.7) -> None:
+    ax.add_patch(mpatches.FancyArrowPatch(
+        start, end,
+        arrowstyle="-|>",
+        mutation_scale=13,
+        linewidth=lw,
+        color=color,
+        connectionstyle=f"arc3,rad={rad}",
+        shrinkA=12,
+        shrinkB=12,
+        zorder=2,
+    ))
+
+
 def render_full_overview(data: dict) -> None:
     fig, ax = plt.subplots(figsize=(14, 10), dpi=120)
     _draw(ax, data,
@@ -133,17 +168,157 @@ def render_full_overview(data: dict) -> None:
 
 
 def render_spine_only(data: dict) -> None:
-    spine_ids = {t["id"] for t in data["layers"]["theorems"]}
-    anchored_ledger = {t["ledger_ref"] for t in data["layers"]["theorems"] if t.get("ledger_ref")}
-    visible_ids = spine_ids | anchored_ledger
+    fig, ax = plt.subplots(figsize=(13.5, 7.2), dpi=140)
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
 
-    fig, ax = plt.subplots(figsize=(12, 9), dpi=120)
-    _draw(ax, data,
-          node_filter=lambda n: n["id"] in visible_ids,
-          edge_filter=lambda e: e["type"] in ("theorem-anchors-ledger", "ledger-depends-on"),
-          title="FTD algebraic spine + anchored LEDGER claims",
-          show_labels=visible_ids,
-          label_max=30)
+    fig.suptitle(
+        "FTD construction map: seed -> G* -> master quadratic -> audited spine",
+        fontsize=15,
+        fontweight="bold",
+        y=0.965,
+        color="#263238",
+    )
+    ax.text(
+        0.5, 0.895,
+        "A dependency view for §I.5.  Arrows read backward as the audit trail; "
+        "physical readouts remain outside this theorem-grade construction.",
+        ha="center", va="center", fontsize=9.5, color="#455a64",
+    )
+
+    styles = {
+        "axiom": ("#f3e8ff", "#6a1b9a"),
+        "construction": ("#e3f2fd", "#1565c0"),
+        "theorem": ("#e8f5e9", "#2e7d32"),
+        "tiered": ("#fff8e1", "#ef6c00"),
+        "boundary": ("#f5f5f5", "#546e7a"),
+    }
+
+    seed = _box(
+        ax, 0.045, 0.665, 0.18, 0.165,
+        title="Seed",
+        body="quarter-turn read as Z[i]\none explicit modelling root",
+        tag="[AXIOM]",
+        fill=styles["axiom"][0],
+        edge=styles["axiom"][1],
+    )
+    integer_four = _box(
+        ax, 0.285, 0.665, 0.18, 0.165,
+        title="Integer 4",
+        body="order/unit count\n16 = 4^2 enters the assembly",
+        tag="framework data",
+        fill=styles["construction"][0],
+        edge=styles["construction"][1],
+    )
+    gstar = _box(
+        ax, 0.525, 0.665, 0.18, 0.165,
+        title="G*",
+        body="Gamma(1/4)/Gamma(3/4)\nfour independent constructions",
+        tag="[THEOREM]",
+        fill=styles["theorem"][0],
+        edge=styles["theorem"][1],
+    )
+    quadratic = _box(
+        ax, 0.765, 0.665, 0.19, 0.165,
+        title="Master quadratic",
+        body="x^2 - 16G*^2 x + 16G*^3\nroots x+, x-; no alpha readout",
+        tag="[THEOREM]",
+        fill=styles["theorem"][0],
+        edge=styles["theorem"][1],
+    )
+
+    _arrow(ax, (seed[0] + 0.09, seed[1]), (integer_four[0] - 0.09, integer_four[1]))
+    _arrow(ax, (integer_four[0] + 0.09, integer_four[1]), (gstar[0] - 0.09, gstar[1]))
+    _arrow(ax, (gstar[0] + 0.09, gstar[1]), (quadratic[0] - 0.095, quadratic[1]))
+
+    gstar_id = _box(
+        ax, 0.085, 0.405, 0.25, 0.145,
+        title="G*-identity branch",
+        body="T1 G* identity\nT5 Watson identity\nT9 Q(G*) pi-free",
+        tag="theorem-grade",
+        fill=styles["theorem"][0],
+        edge=styles["theorem"][1],
+    )
+    quadratic_branch = _box(
+        ax, 0.385, 0.405, 0.25, 0.145,
+        title="Quadratic branch",
+        body="T2 master polynomial\nT8 harmonic tower\nT4 coefficient 16, value-level",
+        tag="mixed tags",
+        fill=styles["tiered"][0],
+        edge=styles["tiered"][1],
+    )
+    geometry_branch = _box(
+        ax, 0.685, 0.405, 0.25, 0.145,
+        title="Geometry and finite-L branch",
+        body="T3 CM uniqueness, tiered\nT6 geometric Coulomb identity\nT7 ultralocality at L = 2",
+        tag="mixed tags",
+        fill=styles["tiered"][0],
+        edge=styles["tiered"][1],
+    )
+    subsidiaries = _box(
+        ax, 0.235, 0.205, 0.25, 0.135,
+        title="Subsidiary anchors",
+        body="S1 D = 3  |  S2 Moore integers\nS3 a_phys no-go  |  S4 Phase H",
+        tag="supporting",
+        fill=styles["construction"][0],
+        edge=styles["construction"][1],
+    )
+    ledger = _box(
+        ax, 0.545, 0.205, 0.25, 0.135,
+        title="LEDGER audit",
+        body="each claim keeps its FTD-NNNN row\nand its current epistemic tag",
+        tag="provenance",
+        fill=styles["boundary"][0],
+        edge=styles["boundary"][1],
+    )
+
+    _arrow(ax, (gstar[0], gstar[1] - 0.08), (gstar_id[0], gstar_id[1] + 0.07),
+           color="#2e7d32", rad=0.08)
+    _arrow(ax, (quadratic[0] - 0.03, quadratic[1] - 0.08),
+           (quadratic_branch[0], quadratic_branch[1] + 0.07),
+           color="#ef6c00", rad=-0.02)
+    _arrow(ax, (quadratic[0] + 0.03, quadratic[1] - 0.08),
+           (geometry_branch[0], geometry_branch[1] + 0.07),
+           color="#ef6c00", rad=-0.08)
+    _arrow(ax, (integer_four[0], integer_four[1] - 0.08),
+           (subsidiaries[0], subsidiaries[1] + 0.07),
+           color="#1565c0", rad=0.08)
+    for src in (gstar_id, quadratic_branch, geometry_branch, subsidiaries):
+        _arrow(ax, (src[0], src[1] - 0.07), (ledger[0], ledger[1] + 0.065),
+               color="#78909c", rad=0.08 if src[0] < ledger[0] else -0.08, lw=1.2)
+
+    audit = mpatches.FancyBboxPatch(
+        (0.065, 0.04), 0.87, 0.095,
+        boxstyle="round,pad=0.014,rounding_size=0.018",
+        facecolor="#ffffff",
+        edgecolor="#cfd8dc",
+        linewidth=1.0,
+        zorder=1,
+    )
+    ax.add_patch(audit)
+    ax.text(
+        0.5, 0.092,
+        "Audit rule: every theorem-grade node traces back to the seed plus explicit constructions.\n"
+        "The physics identification x+ <-> 1/alpha is intentionally not promoted by this map.",
+        ha="center", va="center", fontsize=9.2, color="#37474f",
+    )
+
+    legend_x = 0.065
+    for i, (label, key) in enumerate([
+        ("axiom/root", "axiom"),
+        ("construction", "construction"),
+        ("theorem-grade", "theorem"),
+        ("tiered or bounded", "tiered"),
+        ("audit/provenance", "boundary"),
+    ]):
+        fill, edge = styles[key]
+        x = legend_x + i * 0.17
+        ax.add_patch(mpatches.Rectangle((x, 0.855), 0.022, 0.022,
+                                        facecolor=fill, edgecolor=edge, linewidth=1.0))
+        ax.text(x + 0.028, 0.866, label, ha="left", va="center",
+                fontsize=7.8, color="#455a64")
+
     _save(fig, "spine_only")
     print("  spine_only.{svg,png}")
 
