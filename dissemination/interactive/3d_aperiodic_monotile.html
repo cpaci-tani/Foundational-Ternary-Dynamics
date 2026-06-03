@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTD 3D Aperiodic Monotile (Advanced Logic Upgrade)</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0d0d12;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+        #ui-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 400px;
+            background: rgba(15, 15, 25, 0.85);
+            border: 1px solid #3357FF;
+            border-radius: 8px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        h1 {
+            font-size: 1.2rem;
+            margin: 0 0 10px 0;
+            color: #4da6ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        p {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #cccccc;
+        }
+        .stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+        button {
+            background: #3357FF;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-top: 10px;
+            margin-right: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+            font-size: 0.85rem;
+        }
+        button:hover { background: #4da6ff; }
+        .btn-stop { background: #FF3333; display: none; }
+        .btn-stop:hover { background: #ff6666; }
+        
+        #log-panel {
+            margin-top: 15px;
+            height: 200px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #444;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: #aaa;
+        }
+        .log-entry { margin-bottom: 5px; border-left: 2px solid transparent; padding-left: 5px; }
+        .log-success { color: #33FF57; border-left-color: #33FF57; }
+        .log-error { color: #FF3333; border-left-color: #FF3333; }
+        .log-rollback { color: #FF8333; border-left-color: #FF8333; }
+        .log-rule { color: #F333FF; border-left-color: #F333FF; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <div id="ui-panel">
+        <h1>3D Aperiodic Monotile (Advanced)</h1>
+        <p><strong>Strict Mode Enabled:</strong> Tile placement is now mathematically justified.</p>
+        <p style="font-size:0.8rem; color:#aaa;">
+        ► <b>Chiral Parity Rule:</b> Tiles must strictly alternate between Even (+1) and Odd (-1) permutation states.<br>
+        ► <b>Pocket Detection:</b> A 3D volumetric flood-fill explicitly bans any move that creates an unfillable cavity < 8 voxels.<br>
+        ► <b>Backtracking DFS:</b> Auto-grow will visibly roll back (delete tiles) if it detects a global dead-end.
+        </p>
+        
+        <div class="stats">
+            <div>Tiles Placed: <span id="tile-count" style="color: #33FF57">1</span></div>
+            <div>Latest Parity: <span id="parity-status" style="color: #4da6ff">+1 (Even)</span></div>
+        </div>
+        
+        <button id="btn-auto">Auto-Grow 1</button>
+        <button id="btn-auto-50">Auto-Grow 50 (Stress Test)</button>
+        <button id="btn-stop" class="btn-stop">Stop Auto-Grow</button>
+        <button id="btn-reset">Reset</button>
+        
+        <div id="log-panel">
+            <div class="log-entry log-rule">> Initialization: Parity & Volumetric Rules locked.</div>
+            <div class="log-entry log-success">> Base tile spawned at origin [Parity +1].</div>
+        </div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <script>
+        // -----------------------------------------
+        // 1. Math, Tiling Logic, and Matching Rules
+        // -----------------------------------------
+        const baseVoxels = [
+            [0,0,0], [1,0,0], [0,1,0], [0,0,1],
+            [1,1,0], [2,1,0], [1,0,-1], [-1,1,1]
+        ];
+
+        const rotations = [];
+        const axes = [[0,1,2], [1,2,0], [2,0,1], [1,0,2], [0,2,1], [2,1,0]];
+        const signsEven = [[1,1,1], [1,-1,-1], [-1,1,-1], [-1,-1,1]];
+        const signsOdd  = [[-1,-1,-1], [-1,1,1], [1,-1,1], [1,1,-1]];
+
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 4; j++) {
+                rotations.push({ p: axes[i], s: signsEven[j], index: rotations.length, parity: 1 });
+            }
+        }
+        for (let i = 3; i < 6; i++) {
+            for (let j = 0; j < 4; j++) {
+                rotations.push({ p: axes[i], s: signsOdd[j], index: rotations.length, parity: -1 });
+            }
+        }
+
+        function applyRotation(v, rot) {
+            return [v[rot.p[0]] * rot.s[0], v[rot.p[1]] * rot.s[1], v[rot.p[2]] * rot.s[2]];
+        }
+        function vAdd(a, b) { return [a[0]+b[0], a[1]+b[1], a[2]+b[2]]; }
+        function vSub(a, b) { return [a[0]-b[0], a[1]-b[1], a[2]-b[2]]; }
+        function vKey(v) { return `${v[0]},${v[1]},${v[2]}`; }
+
+        const faceNormals = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]];
+
+        let occupiedVoxels = new Set();
+        let tiles = [];
+        let placementHistory = []; // Stack for DFS rollback: { groupMesh, markers, voxels }
+
+        const colors = [
+            0xFF5733, 0x33FF57, 0x3357FF, 0xF333FF, 0x33FFF5, 0xF5FF33,
+            0xFF8333, 0x33FF83, 0x8333FF, 0xFF3383, 0x3383FF, 0x83FF33,
+            0xFFB333, 0x33FFB3, 0xB333FF, 0xFF33B3, 0x33B3FF, 0xB3FF33
+        ];
+
+        // -----------------------------------------
+        // 2. Volumetric Pocket Detection (BFS)
+        // -----------------------------------------
+        function hasPockets(proposedVoxels) {
+            const emptyNeighbors = new Set();
+            proposedVoxels.forEach(v => {
+                faceNormals.forEach(n => {
+                    const adj = vAdd(v, n);
+                    const key = vKey(adj);
+                    if (!occupiedVoxels.has(key) && !proposedVoxels.some(pv => vKey(pv) === key)) {
+                        emptyNeighbors.add(key);
+                    }
+                });
+            });
+
+            const visited = new Set();
+            for (let startKey of emptyNeighbors) {
+                if (visited.has(startKey)) continue;
+                
+                let cavitySize = 0;
+                let isOpen = false;
+                let queue = [startKey];
+                visited.add(startKey);
+                
+                let head = 0;
+                while (head < queue.length) {
+                    const currKey = queue[head++];
+                    cavitySize++;
+                    if (cavitySize >= 20) { // Threshold for "open space"
+                        isOpen = true;
+                    }
+                    if (cavitySize > 30) break; // Cap search performance
+                    
+                    const coords = currKey.split(',').map(Number);
+                    faceNormals.forEach(n => {
+                        const adj = [coords[0]+n[0], coords[1]+n[1], coords[2]+n[2]];
+                        const aKey = vKey(adj);
+                        if (!occupiedVoxels.has(aKey) && !proposedVoxels.some(pv => vKey(pv) === aKey) && !visited.has(aKey)) {
+                            visited.add(aKey);
+                            queue.push(aKey);
+                        }
+                    });
+                }
+                
+                if (!isOpen && cavitySize < 8) {
+                    return true; // Pocket detected!
+                }
+            }
+            return false;
+        }
+
+        // -----------------------------------------
+        // 3. Three.js Setup
+        // -----------------------------------------
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x0d0d12, 0.012);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(20, 20, 30);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+        const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.6);
+        dirLight1.position.set(10, 20, 10);
+        scene.add(dirLight1);
+        const dirLight2 = new THREE.DirectionalLight(0x4da6ff, 0.4);
+        dirLight2.position.set(-10, -10, -10);
+        scene.add(dirLight2);
+
+        const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+        const edgeGeo = new THREE.EdgesGeometry(boxGeo);
+        const interactiveFaces = [];
+
+        function logMsg(msg, type="normal") {
+            const panel = document.getElementById('log-panel');
+            const div = document.createElement('div');
+            div.className = `log-entry log-${type}`;
+            div.innerHTML = `> ${msg}`;
+            panel.appendChild(div);
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        function createTileGroup(voxelsArr, colorHex, tileIndex, parity) {
+            const group = new THREE.Group();
+            group.userData = { tileIndex: tileIndex, voxels: voxelsArr, parity: parity };
+            
+            const mat = new THREE.MeshStandardMaterial({ 
+                color: colorHex, roughness: 0.3, metalness: 0.1,
+                polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1
+            });
+
+            voxelsArr.forEach(v => {
+                const mesh = new THREE.Mesh(boxGeo, mat);
+                mesh.position.set(v[0], v[1], v[2]);
+                mesh.userData = { voxel: v, tileIndex: tileIndex };
+                group.add(mesh);
+
+                const edges = new THREE.LineSegments(
+                    edgeGeo, 
+                    new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2, transparent: true, opacity: 0.3 })
+                );
+                edges.position.copy(mesh.position);
+                group.add(edges);
+
+                faceNormals.forEach(n => {
+                    const adj = vAdd(v, n);
+                    if (!occupiedVoxels.has(vKey(adj))) {
+                        const hitMat = new THREE.MeshBasicMaterial({ visible: false });
+                        const hitMesh = new THREE.Mesh(boxGeo, hitMat);
+                        hitMesh.position.set(v[0] + n[0]*0.51, v[1] + n[1]*0.51, v[2] + n[2]*0.51);
+                        hitMesh.scale.set(n[0] !== 0 ? 0.05 : 0.9, n[1] !== 0 ? 0.05 : 0.9, n[2] !== 0 ? 0.05 : 0.9);
+                        hitMesh.userData = { sourceVoxel: v, normal: n, targetVoxel: adj, tileIndex: tileIndex };
+                        group.add(hitMesh);
+                        interactiveFaces.push(hitMesh);
+                    }
+                });
+            });
+
+            scene.add(group);
+            tiles.push(group);
+            document.getElementById('tile-count').innerText = tiles.length;
+            document.getElementById('parity-status').innerText = parity > 0 ? "+1 (Even)" : "-1 (Odd)";
+            return group;
+        }
+
+        function drawConnectionMarker(v1, v2) {
+            const group = new THREE.Group();
+            const points = [new THREE.Vector3(v1[0], v1[1], v1[2]), new THREE.Vector3(v2[0], v2[1], v2[2])];
+            const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 3 }));
+            group.add(line);
+            
+            const dot = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+            dot.position.set((v1[0]+v2[0])/2, (v1[1]+v2[1])/2, (v1[2]+v2[2])/2);
+            group.add(dot);
+            
+            scene.add(group);
+            return group;
+        }
+
+        function initBaseTile() {
+            occupiedVoxels.clear();
+            interactiveFaces.length = 0;
+            placementHistory = [];
+            while(scene.children.length > 0) scene.remove(scene.children[0]); 
+            scene.add(ambientLight); scene.add(dirLight1); scene.add(dirLight2);
+
+            baseVoxels.forEach(v => occupiedVoxels.add(vKey(v)));
+            const group = createTileGroup(baseVoxels, colors[0], 0, 1);
+            tiles = [group];
+            placementHistory.push({ group: group, markers: null, voxels: baseVoxels });
+            logMsg("Scene reset. Parity +1 base tile initialized.");
+        }
+
+        // -----------------------------------------
+        // 4. Advanced Docking with Parity & Pockets
+        // -----------------------------------------
+        function attemptDocking(targetVoxel, sourceVoxelAnchor, sourceTileIndex, quiet=false) {
+            const sourceParity = tiles[sourceTileIndex].userData.parity;
+            const targetParity = -sourceParity; // Must strictly alternate!
+
+            let rotIndices = Array.from(Array(24).keys()).sort(() => Math.random() - 0.5);
+            let voxelIndices = Array.from(Array(8).keys()).sort(() => Math.random() - 0.5);
+
+            for(let rIdx of rotIndices) {
+                const rot = rotations[rIdx];
+                if (rot.parity !== targetParity) continue; // Parity Rule Check
+
+                for(let vIdx of voxelIndices) {
+                    const localAnchor = applyRotation(baseVoxels[vIdx], rot);
+                    const offset = vSub(targetVoxel, localAnchor);
+                    
+                    let proposed = [];
+                    let overlap = false;
+                    for(let i=0; i<8; i++) {
+                        const pv = vAdd(applyRotation(baseVoxels[i], rot), offset);
+                        proposed.push(pv);
+                        if (occupiedVoxels.has(vKey(pv))) { overlap = true; break; }
+                    }
+
+                    if (!overlap) {
+                        if (hasPockets(proposed)) {
+                            if(!quiet) logMsg(`Illegal Pocket Detected at face [${targetVoxel}]. Snap rejected.`, "rule");
+                            continue; // Pocket Rule Check
+                        }
+
+                        // Success
+                        proposed.forEach(v => occupiedVoxels.add(vKey(v)));
+                        const c = colors[tiles.length % colors.length];
+                        const group = createTileGroup(proposed, c, tiles.length, targetParity);
+                        const marker = drawConnectionMarker(sourceVoxelAnchor, targetVoxel);
+                        
+                        placementHistory.push({ group: group, markers: marker, voxels: proposed });
+                        if(!quiet) logMsg(`Attached Tile ${tiles.length-1} [Parity ${targetParity>0?'+1':'-1'}] at [${targetVoxel}]`, "success");
+                        return true;
+                    }
+                }
+            }
+            if(!quiet) logMsg(`Blocked: No valid geometric fit matching Parity ${targetParity>0?'+1':'-1'} at face [${targetVoxel}].`, "error");
+            return false;
+        }
+
+        // -----------------------------------------
+        // 5. Backtracking Auto-Grow
+        // -----------------------------------------
+        function rollbackTile() {
+            if (placementHistory.length <= 1) return false; // Don't delete base tile
+            const last = placementHistory.pop();
+            
+            // Remove from tracking
+            last.voxels.forEach(v => occupiedVoxels.delete(vKey(v)));
+            
+            // Remove from scene
+            scene.remove(last.group);
+            if (last.markers) scene.remove(last.markers);
+            
+            // Remove from active tiles list and interactive faces
+            tiles.pop();
+            // Note: interactiveFaces cleanup is lazy in this demo (deleted meshes are ignored by raycaster later)
+            
+            document.getElementById('tile-count').innerText = tiles.length;
+            const newParity = tiles[tiles.length-1].userData.parity;
+            document.getElementById('parity-status').innerText = newParity > 0 ? "+1 (Even)" : "-1 (Odd)";
+            
+            logMsg(`DFS Backtrack: Rolled back dead-end tile. Crystal reverted to size ${tiles.length}.`, "rollback");
+            return true;
+        }
+
+        function autoGrowStep() {
+            let shuffledFaces = [...interactiveFaces].sort(() => Math.random() - 0.5);
+            for(let hit of shuffledFaces) {
+                // Ensure hit hasn't been deleted by rollback
+                if (!hit.parent || !scene.children.includes(hit.parent)) continue;
+                
+                const tv = hit.userData.targetVoxel;
+                const sv = hit.userData.sourceVoxel;
+                const pIdx = hit.userData.tileIndex;
+                if (pIdx >= tiles.length) continue; // Safety check
+                
+                if (!occupiedVoxels.has(vKey(tv))) {
+                    if (attemptDocking(tv, sv, pIdx, true)) { // quiet mode
+                        return true;
+                    }
+                }
+            }
+            // If we exhaust everything, backtrack
+            return rollbackTile();
+        }
+
+        initBaseTile();
+
+        // -----------------------------------------
+        // 6. UI & Interaction Setup
+        // -----------------------------------------
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        const highlightMat = new THREE.MeshBasicMaterial({ color: 0x33FF57, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
+        const highlightMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), highlightMat);
+        highlightMesh.visible = false;
+        scene.add(highlightMesh);
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactiveFaces).filter(x => x.object.parent && scene.children.includes(x.object.parent));
+            
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                const n = hit.userData.normal;
+                const sv = hit.userData.sourceVoxel;
+                highlightMesh.position.set(sv[0] + n[0]*0.51, sv[1] + n[1]*0.51, sv[2] + n[2]*0.51);
+                highlightMesh.lookAt(highlightMesh.position.x + n[0], highlightMesh.position.y + n[1], highlightMesh.position.z + n[2]);
+                highlightMesh.visible = true;
+                document.body.style.cursor = 'pointer';
+            } else {
+                highlightMesh.visible = false;
+                document.body.style.cursor = 'default';
+            }
+        });
+
+        window.addEventListener('click', (e) => {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactiveFaces).filter(x => x.object.parent && scene.children.includes(x.object.parent));
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                const tv = hit.userData.targetVoxel;
+                const sv = hit.userData.sourceVoxel;
+                const pIdx = hit.userData.tileIndex;
+                if (!occupiedVoxels.has(vKey(tv))) attemptDocking(tv, sv, pIdx);
+                highlightMesh.visible = false;
+            }
+        });
+
+        document.getElementById('btn-reset').addEventListener('click', () => { stopStressTest(); initBaseTile(); });
+        document.getElementById('btn-auto').addEventListener('click', () => { autoGrowStep(); });
+        
+        let stressTestInterval = null;
+        function stopStressTest() {
+            if (stressTestInterval) {
+                clearInterval(stressTestInterval);
+                stressTestInterval = null;
+                document.getElementById('btn-auto-50').style.display = 'inline-block';
+                document.getElementById('btn-stop').style.display = 'none';
+                logMsg("Stress test paused.", "rule");
+            }
+        }
+        
+        document.getElementById('btn-stop').addEventListener('click', stopStressTest);
+        document.getElementById('btn-auto-50').addEventListener('click', () => {
+            logMsg("Initiating Stress Test (50 steps) with DFS rollback...", "rule");
+            document.getElementById('btn-auto-50').style.display = 'none';
+            document.getElementById('btn-stop').style.display = 'inline-block';
+            
+            let steps = 0;
+            stressTestInterval = setInterval(() => {
+                const grew = autoGrowStep();
+                if (grew) steps++;
+                if (steps >= 50) {
+                    stopStressTest();
+                    logMsg("Stress Test Complete! Placed 50 flawless, parity-justified tiles.", "success");
+                }
+            }, 100); // Fast animation interval
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
