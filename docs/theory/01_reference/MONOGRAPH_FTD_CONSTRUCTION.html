@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>monograph_ftd_construction</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="MONOGRAPH_FTD_CONSTRUCTION_files/libs/clipboard/clipboard.min.js"></script>
+<script src="MONOGRAPH_FTD_CONSTRUCTION_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="MONOGRAPH_FTD_CONSTRUCTION_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="MONOGRAPH_FTD_CONSTRUCTION_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="MONOGRAPH_FTD_CONSTRUCTION_files/libs/quarto-html/popper.min.js"></script>
+<script src="MONOGRAPH_FTD_CONSTRUCTION_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="MONOGRAPH_FTD_CONSTRUCTION_files/libs/quarto-html/anchor.min.js"></script>
+<link href="MONOGRAPH_FTD_CONSTRUCTION_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="MONOGRAPH_FTD_CONSTRUCTION_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="MONOGRAPH_FTD_CONSTRUCTION_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="MONOGRAPH_FTD_CONSTRUCTION_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="MONOGRAPH_FTD_CONSTRUCTION_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="the-construction-of-the-ftd-mathematics-from-a-discrete-ontology-to-its-provable-boundary" class="level1">
+<h1>The Construction of the FTD Mathematics — From a Discrete Ontology to Its Provable Boundary</h1>
+<p><strong>Tag:</strong> <code>[SYNTHESIS]</code> <strong>Date:</strong> 2026-06-02 <strong>Scope:</strong> Canonical bottom-up construction of FTD’s mathematics for an interdisciplinary / philosophy-of-physics readership; re-states existing canonical claims at their canonical tags; introduces no new mathematics.</p>
+<p><strong>Authorities this monograph summarizes (it adds nothing to them):</strong> <a href="../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md"><code>TRACKER_ONTIC_TRUTH.md</code></a> — bedrock truth tiers (T1–T5); <a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> — the nine numbered results (seven theorem-grade); <a href="../07_assessment/core_ledgers/LEDGER.md"><code>LEDGER.md</code></a> — per-claim provenance (FTD-NNNN); <a href="SPEC_DOCTRINE_LEDGER.md"><code>SPEC_DOCTRINE_LEDGER.md</code></a> — single-page status map. Where this document and any of those disagree on an epistemic tag, <strong>those documents are correct and this one has a bug</strong> — please file it.</p>
+<hr>
+<section id="how-to-read-this-monograph" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-read-this-monograph">How to read this monograph</h2>
+<p>This is a <em>construction story</em>. It builds FTD’s mathematics in the order a mathematician would build the number systems — each object from prior ones, each step independently checkable — and it asks one question at every step: <strong>does the discrete ontology force this, or not?</strong> (where “the discrete ontology” includes the one ℤ[i] modelling choice of §I.1). The answer comes with an epistemic tag, and the tag is the point. A reader from philosophy of physics is invited to scrutinize the tags first and the prose second; the tags are where the project’s honesty lives.</p>
+<p>The monograph is organized around the project’s single governing goal, stated as two clauses:</p>
+<blockquote class="blockquote">
+<p><strong>Derive everything the discrete ontology forces — and rigorously establish the boundary of what it cannot force.</strong></p>
+</blockquote>
+<p>Both clauses are deliverables. Showing that the discrete ontology <em>does not</em> fix a quantity is as much a result of this program as showing that it does; a mapped boundary is not a failure but a finding.</p>
+<hr>
+</section>
+<section id="table-of-contents" class="level2">
+<h2 class="anchored" data-anchor-id="table-of-contents">Table of contents</h2>
+<p><strong>Part 0 — The Seed</strong> <em>(this section)</em> - §0.1 — The discrete ontology - §0.2 — What a construction is - §0.3 — The epistemic contract - §0.4 — The two clauses: roadmap</p>
+<p><strong>Part I — The Constructive Reach</strong> — what the ontology <em>forces</em>; the theorem-grade spine. <em>(this section)</em> - §I.1 — The seed: <code>i</code> and <code>ℤ[i]</code> - §I.2 — <code>G*</code> constructed four ways of differing character - §I.3 — The master quadratic - §I.4 — The spine built on top - §I.5 — The construction map</p>
+<p><strong>Part II — The Boundary</strong> — what the ontology provably does <em>not</em> force; the climax — the discrete-limit-of-the-square-root wall around the electromagnetic coupling. <em>(this section)</em> - §II.1 — The readout problem - §II.2 — The four FTD-native routes - §II.3 — Route-invariance and the theorem-grade components - §II.4 — The square-root wall: K-BIND - §II.5 — The conditional theorem - §II.6 — Conclusion: α is dynamical, not structural</p>
+<p><strong>Part III — The Bridge</strong> — the physics match, quarantined at its honest tags. <em>(this section)</em> - §III.1 — The empirical match - §III.2 — The structural-uniqueness evidence (and its honest limit) - §III.3 — Retired and closed-negative (preserved for provenance) - §III.4 — What would close the gap - §III.5 — The honest physics scope</p>
+<p><strong>Coda — The map in both directions.</strong> <em>(this section)</em></p>
+<hr>
+</section>
+</section>
+<section id="part-0-the-seed" class="level1">
+<h1>Part 0 — The Seed</h1>
+<p>Part 0 lays the foundation the rest of the monograph stands on: the discrete ontology FTD posits, the standard of “construction” the document holds itself to, the tag system the reader must internalize, and the two-clause roadmap that organizes everything that follows. It contains <strong>no physics theorem and no new mathematics</strong>; it is setup.</p>
+<section id="the-discrete-ontology" class="level2">
+<h2 class="anchored" data-anchor-id="the-discrete-ontology">§0.1 — The discrete ontology</h2>
+<p>FTD posits a discrete substrate, fixed by five postulates. Each is an <code>[AXIOM]</code> — a structural commitment that defines the model and is <strong>not</strong> claimed to be derived from anything more primitive. A reader should accept them as the definition of the game, then ask what follows.</p>
+<ol type="1">
+<li><strong>Discrete space</strong> <code>[AXIOM]</code>. The substrate is a three-dimensional cubic lattice with <strong>undefined boundary</strong>: at every specified position, the axis-adjacent sites exist. This is deliberately <em>not</em> a completed-infinity totality ℤ³ taken as a single finished object — it is a lattice with no defined edge and no claim of completeness.</li>
+<li><strong>Discrete time</strong> <code>[AXIOM]</code>. Evolution proceeds in discrete ticks; there is no continuous time parameter at the substrate level.</li>
+<li><strong>Ternary states</strong> <code>[AXIOM]</code>. Each site holds a state <code>s ∈ {−1, 0, +1}</code> — the three values being the only states a site may take.</li>
+<li><strong>Local causality</strong> <code>[AXIOM]</code>. Influence is local: each site interacts only within its 26-neighbour Moore neighbourhood, and information propagates at most one lattice unit per tick.</li>
+<li><strong>Determinism</strong> <code>[AXIOM]</code>. The update rule is deterministic: the configuration at tick <code>t+1</code> is fixed by the configuration at tick <code>t</code>.</li>
+</ol>
+<p><strong>The two-layer ontology</strong> <code>[AXIOM]</code>. Riding on the lattice are two fields with distinct ontological roles:</p>
+<ul>
+<li>a <strong>flux field</strong> <code>J ∈ ℝ³</code> — a continuous vector field at each site, encoding potential energy density. It is <em>dispositional</em>: it represents what the substrate is poised to do, not what it has manifested.</li>
+<li>a <strong>state field</strong> <code>s ∈ {−1, 0, +1}</code> — the discrete ternary value above. It is <em>actual</em>: it represents manifestation, what the substrate has resolved to.</li>
+</ul>
+<p>The dispositional/actual distinction is structural to the framework and recurs throughout; the flux field carries the continuous content, the state field carries the discrete resolution.</p>
+<p><strong>Why the undefined boundary is load-bearing.</strong> The choice of an undefined-boundary lattice over a completed-infinity ℤ³ is not cosmetic; it narrows the framework’s admissible toolkit and is enforced corpus-wide. Concretely, statements of the form “in the limit <code>L → ∞</code> …” are <strong>not well-posed</strong> under this ontology without an explicit ε–L restatement (e.g., “for every <code>ε &gt; 0</code> there exists <code>L</code> such that <code>P(L)</code> is within <code>ε</code> of its continuum counterpart”). Global integrals over “all sites,” completed thermodynamic limits, and path integrals over “all configurations” are likewise not primitive moves; arbitrarily large <em>finite</em> computations, explicitly bracketed, are. The full per-claim triage of which results survive unchanged, which need finitary restatement, and which need re-derivation is recorded in <a href="../07_assessment/AUDIT_INFINITY_REFRAME.md"><code>AUDIT_INFINITY_REFRAME.md</code></a>. This commitment will matter precisely at the boundary in Part II, where the question “does the ontology force a particular limiting value?” turns on what limits the ontology is even entitled to take.</p>
+</section>
+<section id="what-a-construction-is" class="level2">
+<h2 class="anchored" data-anchor-id="what-a-construction-is">§0.2 — What a construction is</h2>
+<p>This monograph holds itself to a specific standard, and naming it up front is part of the contract with the reader.</p>
+<p><strong>A construction</strong>, in the sense used here, is the kind of thing the number systems are: <code>ℕ → ℤ → ℚ → ℝ → ℂ</code>. Each object is built <em>explicitly</em> from objects already in hand (ℤ as equivalence classes of pairs of naturals; ℚ as equivalence classes of pairs of integers; ℝ as cuts or Cauchy sequences; ℂ as ℝ²), and each construction step is <em>independently checkable</em> by a reader who accepts the prior stage. No object appears by fiat; none is assumed because it would be convenient. FTD’s mathematical core is presented in exactly this spirit — each result built from prior results and the axioms, with a stated proof or chain the reader can audit. The companion reference <a href="SPEC_MATH_FIRST_ONTOLOGY.md"><code>SPEC_MATH_FIRST_ONTOLOGY.md</code></a> fixes the ordering this monograph follows: mathematical primitives → invariant structure → admissible readouts → operational physics, with physical language entering <em>only</em> at the last layer. The constructive Parts of this monograph (I and II) live primarily in the first two layers; the physics <em>match</em> is withheld until Part III; Part II names the physical target only to state precisely what is <em>not</em> forced.</p>
+<p>Three categories must be kept strictly apart, because conflating them is the characteristic way a program of this kind overclaims:</p>
+<ul>
+<li><strong>A derivation</strong> — tagged <code>[THEOREM]</code> or <code>[DERIVED]</code> — is an <em>explicit chain</em> from the axioms or prior theorems that the document itself reproduces. The reader checks the chain. <code>[DERIVED]</code> is the honest grade when the chain is explicit but carries a non-trivial assumption; <code>[THEOREM]</code> when it does not.</li>
+<li><strong>A parametric insertion</strong> — tagged <code>[PARAMETRIC]</code> — is a standard physics formula with FTD’s constants substituted in. The numbers may fit beautifully, but the <em>mechanism is borrowed</em> from outside the framework. This is a calibration input, <strong>not</strong> a derivation, and the monograph never calls it one.</li>
+<li><strong>A match</strong> — at its strongest tagged <code>[STRONGLY MOTIVATED CONJECTURE]</code> — is a numerical coincidence between an FTD object and a physical quantity, possibly backed by uniqueness scans or sub-ppm agreement, but with <strong>no derivation chain</strong>. A match is evidence; it is not a derivation, and no amount of rhetorical momentum converts it into one.</li>
+</ul>
+<p>The discipline of this document is to state, for every load-bearing claim, which of these three it is — and to let the weak ones stay weak.</p>
+</section>
+<section id="the-epistemic-contract" class="level2">
+<h2 class="anchored" data-anchor-id="the-epistemic-contract">§0.3 — The epistemic contract</h2>
+<p>The following tag system is the instrument the whole program is governed by. A reader should internalize it before proceeding; every substantive claim sentence in this monograph carries one of these tags, and the tag — not the surrounding prose — is the claim’s actual epistemic status.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tag</th>
+<th>Meaning</th>
+<th>Reviewer expectation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>[AXIOM]</code></td>
+<td>Structural postulate; not derivable.</td>
+<td>Accept as model definition.</td>
+</tr>
+<tr class="even">
+<td><code>[THEOREM]</code></td>
+<td>Rigorously proven from axioms (or from named classical theorems with explicit citation).</td>
+<td>Check the proof.</td>
+</tr>
+<tr class="odd">
+<td><code>[DERIVED]</code></td>
+<td>Established by an explicit chain the document reproduces; weaker than <code>[THEOREM]</code> when the chain carries a non-trivial assumption.</td>
+<td>Check the chain; flag any smuggled axiom.</td>
+</tr>
+<tr class="even">
+<td><code>[SELECTION]</code></td>
+<td>Argued from consistency or naturalness; not uniquely proven.</td>
+<td>Critique the argument.</td>
+</tr>
+<tr class="odd">
+<td><code>[STRONGLY MOTIVATED CONJECTURE]</code></td>
+<td>A conjecture with substantial structural and/or empirical evidence (uniqueness scan, multi-route convergence, sub-ppm match) but <strong>no</strong> derivation chain.</td>
+<td>Critique the evidence; expect an explicit Bayes / uniqueness / look-elsewhere argument.</td>
+</tr>
+<tr class="even">
+<td><code>[CONJECTURE]</code></td>
+<td>Proposed interpretation requiring validation; weaker than the above (no structural-uniqueness backing).</td>
+<td>Demand evidence.</td>
+</tr>
+<tr class="odd">
+<td><code>[PARAMETRIC]</code></td>
+<td>A standard physics formula filled with FTD constants; numbers fit, mechanism borrowed.</td>
+<td>Treat as calibration input, not output.</td>
+</tr>
+<tr class="even">
+<td><code>[CLOSED NEGATIVE]</code></td>
+<td>A hypothesis tested and falsified; preserved for provenance to prevent re-attempt.</td>
+<td>Confirm the closure; cite it to prevent a zombie re-emergence.</td>
+</tr>
+<tr class="odd">
+<td><code>[SYNTHESIS]</code></td>
+<td>Cross-document integration of existing claims at their existing tags; not a new theorem.</td>
+<td>Verify the component claims; check that nothing was silently promoted.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The reading rule.</strong> The tags form a ladder, and the ladder has a direction:</p>
+<blockquote class="blockquote">
+<p><strong>Promotion up the ladder requires explicit justification. Demotion is free. Ambiguous cases default down.</strong></p>
+</blockquote>
+<p>A claim may be moved <em>up</em> (e.g., from <code>[CONJECTURE]</code> to <code>[DERIVED]</code>) only by exhibiting the chain or proof that warrants it. A claim may be moved <em>down</em> at any time, by anyone, for any defensible reason, with no ceremony. And where the correct tag is genuinely unclear, the convention is to assign the <em>weaker</em> tag until the stronger one is earned. This asymmetry is the safeguard against the program talking itself into believing its own conjectures.</p>
+<p><strong>This monograph is <code>[SYNTHESIS]</code>, and it promotes nothing.</strong> Everything stated in the Parts that follow appears at the tag its canonical source assigns it. If a sentence here reads as stronger than its source, that is an error in this document, not a result of the project.</p>
+</section>
+<section id="the-two-clauses-roadmap" class="level2">
+<h2 class="anchored" data-anchor-id="the-two-clauses-roadmap">§0.4 — The two clauses: roadmap</h2>
+<p>The program’s governing goal has two clauses, and the architecture of this monograph is simply those two clauses made into sections, plus a quarantined bridge to physics.</p>
+<blockquote class="blockquote">
+<p><strong>Clause 1 — Derive everything the discrete ontology forces.</strong> <strong>Clause 2 — Rigorously establish the boundary of what it cannot force.</strong></p>
+</blockquote>
+<p><strong>Clause 1 → Part I, the Constructive Reach.</strong> Part I exhibits what the five postulates <em>force</em> once their order-4 lattice symmetry is read as ℤ[i] (the single modelling <code>[AXIOM]</code> of §I.1): an algebraic spine of theorem-grade results — the constant <code>G* = Γ(1/4)/Γ(3/4)</code>, the master quadratic <code>x² − 16G*²x + 16G*³ = 0</code> and its roots, the arithmetic of the lemniscatic CM curve, and the finite combinatorics of the Moore neighbourhood. The canonical accounting (see <a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §0 and <a href="../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md"><code>TRACKER_ONTIC_TRUTH.md</code></a>) is <strong>nine numbered results, of which seven are theorem-grade</strong> and two are honestly tiered below theorem grade. These are the framework’s firm ground, independent of any physics interpretation, and Part I states each at its canonical tag.</p>
+<p><strong>Clause 2 → Part II, the Boundary — and this is the climax.</strong> Part II asks the sharp negative question: granted everything in Part I, does the discrete ontology <em>force</em> the electromagnetic coupling α? The honest answer, mapped across multiple independent attack routes, is <strong>no — not without an additional binding law.</strong> The boundary takes a concrete and memorable form: the reading that would fix α requires the substrate to <em>natively realize</em> the quantity <code>√(G*(4G*−1))</code> — the discrete limit of a square root — as an operator-assembly the lattice produces on its own, and across every FTD-native route examined the lattice does not produce it; the determinant grading and the operator assembly <code>(Tr, Det) = (16G*², 16G*³)</code> are an imposed selection, not a forced consequence (canonical sources: <a href="../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md"><code>AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md</code></a> and <a href="../07_assessment/audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md"><code>AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md</code></a>). Crucially, the boundary itself is built from theorem-grade parts: that the only obvious geometric realization is <em>ruled out</em> is a <code>[THEOREM]</code>, that the equivariant rank-2 restriction cannot carry the required spectrum within its scope is a <code>[THEOREM]</code>, and that the residual obligation is <em>route-invariant</em> (the same kernel reached in four different dialects, because <code>Q(G*)</code> is the Galois-fixed field of the master quadratic’s ℤ/2) is a <code>[THEOREM]</code>. What remains is a single, precisely-stated irreducible kernel, honestly tagged <code>[OPEN]</code>. Part II’s deliverable is therefore a <em>mapped wall</em>, with theorem-grade masonry and one clearly-marked gap — exactly the kind of boundary Clause 2 calls for.</p>
+<p><strong>The bridge → Part III, quarantined.</strong> The numerical match that motivates the whole enterprise — <code>x₊ = 137.036…</code>, agreeing with <code>1/α</code> to 1.26 ppm — is real and is the strongest structural evidence the framework holds (a unique dual-matcher across millions of candidate polynomials over a basket FTD did not design). But it is a <em>match</em>: it carries the tag <code>[STRONGLY MOTIVATED CONJECTURE]</code> (the identification <code>x₊ = 1/α</code> is LEDGER FTD-0013), it is <strong>not</strong> a derivation, and Part III presents it as such — alongside the honestly <code>[PARAMETRIC]</code> physics insertions — with no promotion.</p>
+<p><strong>The central honest headline, stated up front.</strong> The discrete ontology, <strong>once its order-4 lattice symmetry is read as ℤ[i] (the single modelling <code>[AXIOM]</code> isolated in §I.1)</strong>, forces a rich algebraic spine — <strong>seven theorem-grade results</strong> — and it <strong>provably does not force the electromagnetic coupling α without an additional binding law</strong>. Both halves are the deliverable. A program that only proved the first half would be a curiosity; a program that mapped the second half honestly is doing the harder and more useful thing — drawing, in both directions, the line of what discreteness reaches. The constant <code>G* ≈ 2.95868</code> that anchors the spine is, throughout, the lemniscatic ratio <code>Γ(1/4)/Γ(3/4)</code>; it is <strong>not</strong> the Bernoulli/Gauss lemniscate constant <code>ϖ ≈ 2.62206</code>, a distinct number with which it is never to be conflated.</p>
+<hr>
+</section>
+</section>
+<section id="part-i-the-constructive-reach" class="level1">
+<h1>Part I — The Constructive Reach</h1>
+<p>Part I answers Clause 1: <strong>what does the discrete ontology force?</strong> It exhibits the algebraic spine — the theorem-grade results the substrate produces — in the order a mathematician would build them, each object from prior ones, each step independently checkable. The construction runs <code>i → ℤ[i] → G* → master quadratic → spine</code>. It contains <strong>no physics identification</strong>: the famous numerical match <code>x₊ = 1/α</code> is a <em>match</em>, deferred to Part III, and Part I will say so at the one place it is tempting to overstep. Everything here is stated at its canonical tag from <a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> and <a href="../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md"><code>TRACKER_ONTIC_TRUTH.md</code></a>; where this document and a source disagree on a tag, the source wins.</p>
+<p>The canonical accounting, fixed in advance: the spine is <strong>nine numbered results, of which seven are theorem-grade and two are honestly tiered below theorem grade</strong> (the coefficient-16 identity, whose structural necessity is conjectural, and the Phase-J ultralocality, which is <code>[THEOREM]</code> only at <code>L = 2</code>). §I.4 closes by re-stating that count.</p>
+<section id="i.1-the-seed-i-and-ℤi" class="level2">
+<h2 class="anchored" data-anchor-id="i.1-the-seed-i-and-ℤi">§I.1 — The seed: <code>i</code> and <code>ℤ[i]</code></h2>
+<p>The construction begins with one structural choice and one group-theory fact, and it is worth separating them cleanly, because the honesty of everything downstream depends on not confusing the two.</p>
+<p><strong>The structural choice <code>[AXIOM]</code>.</strong> The substrate is the cubic lattice of Part 0. Its coordinate planes carry an order-4 rotational symmetry: a 90° rotation of the <code>(x, y)</code> plane sends <code>(1, 0) ↦ (0, 1) ↦ (−1, 0) ↦ (0, −1) ↦ (1, 0)</code>, a cycle of length 4. FTD’s seed move is to <em>read this order-4 planar symmetry as the arithmetic of the Gaussian integers</em> <code>ℤ[i] = {a + bi : a, b ∈ ℤ}</code>, with the 90° rotation realized as multiplication by <code>i</code>. That the lattice’s quarter-turn <em>should be read through</em> <code>ℤ[i]</code> rather than through some other order-4 structure is a framework commitment — a modelling decision — not a theorem. It is the discrete-ontology analogue of choosing to build <code>ℂ</code> as <code>ℝ[i]</code>: natural, motivated, and a <em>choice</em>. We tag it <code>[AXIOM]</code> (a structural reading the framework posits) and flag it as such, so that no later <code>[THEOREM]</code> silently inherits the status of “forced” from a step that was actually “chosen.”</p>
+<p><strong>The group-theory facts <code>[THEOREM]</code>.</strong> Once <code>ℤ[i]</code> is the substrate’s arithmetic, the following are ordinary, checkable theorems of algebra, owing nothing further to FTD:</p>
+<ul>
+<li>The unit group of <code>ℤ[i]</code> is <code>ℤ[i]^× = {1, i, −1, −i} ≅ ℤ/4</code>, of order <code>|ℤ[i]^×| = 4</code>. <em>(Proof: <code>a + bi</code> is a unit iff its norm <code>a² + b² = 1</code>, whose only integer solutions are <code>(±1, 0)</code> and <code>(0, ±1)</code>.)</em> <code>[THEOREM]</code></li>
+<li><code>ℤ[i]</code> is a Euclidean domain, hence a PID and a UFD; its primes split into the three Gauss classes — the ramified prime <code>1 + i</code> (norm 2), the split rational primes <code>p ≡ 1 (mod 4)</code>, and the inert rational primes <code>p ≡ 3 (mod 4)</code> (Fermat’s two-square theorem). <code>[THEOREM]</code></li>
+</ul>
+<p>The single integer that this seed deposits into the rest of the construction is <code>4 = |ℤ[i]^×|</code>. It reappears, squared, as the coefficient 16 of the master quadratic (§I.3), and the split/inert residue classes mod 4 reappear as the arithmetic content of one of the four G* constructions (§I.2). The discipline to hold here: <code>4</code> is a <em>theorem</em> about <code>ℤ[i]</code>; that the <em>lattice</em> is entitled to <code>ℤ[i]</code> in the first place is the <code>[AXIOM]</code>.</p>
+</section>
+<section id="i.2-g-constructed-four-ways-of-differing-character" class="level2">
+<h2 class="anchored" data-anchor-id="i.2-g-constructed-four-ways-of-differing-character">§I.2 — <code>G*</code> constructed four ways of differing character</h2>
+<p>The bridge constant is</p>
+<p><span class="math display">\[G^* \;=\; \frac{\Gamma(1/4)}{\Gamma(3/4)} \;=\; 2.95867511919\ldots\]</span></p>
+<p>What earns <code>G*</code> its place at the centre of the spine is not any one definition but a <em>convergence</em>: four constructions of differing character — a Γ-ratio, a lattice Green’s-function period, a regularized determinant ratio, and a finite product — all converging on the same real number. (They are not mutually unrelated: the Watson value is itself a <code>Γ(1/4)</code>-period, and three of the four routes share the quarter-integer data; what is striking is the convergence across constructions of such different <em>character</em>.) A construction story should show the construction where it is cheap and cite where it is deep; the four routes below do exactly that.</p>
+<p><strong>Route 1 — the Γ-ratio <code>[THEOREM]</code> (OT-1.2).</strong> Directly from the definition and the Euler reflection formula,</p>
+<p><span class="math display">\[\Gamma(1/4)\,\Gamma(3/4) \;=\; \frac{\pi}{\sin(\pi/4)} \;=\; \pi\sqrt 2,\]</span></p>
+<p>so multiplying <code>G* = Γ(1/4)/Γ(3/4)</code> by <code>Γ(3/4)²</code> and substituting gives the two standard closed forms</p>
+<p><span class="math display">\[G^* \;=\; \frac{\Gamma(1/4)^2}{\pi\sqrt 2} \;=\; \frac{2\varpi}{\sqrt\pi},\]</span></p>
+<p>where <code>ϖ = Γ(1/4)²/(2√(2π)) ≈ 2.62205755</code> is the Bernoulli/Gauss lemniscate constant. This is a three-line proof and the canonical statement of OT-1.2. <em>(Verified to 50 digits; <a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §1, Theorem 1, FTD-0001.)</em></p>
+<p><strong>Route 2 — the Watson BCC period <code>[THEOREM]</code>, conditional on Watson 1939 (OT-2.1).</strong> Let <code>W₃</code> be the body-centred-cubic Watson integral</p>
+<p><span class="math display">\[W_3 \;=\; \frac{1}{\pi^3}\int_0^\pi\!\!\int_0^\pi\!\!\int_0^\pi \frac{dk_1\,dk_2\,dk_3}{1 - \cos k_1 \cos k_2 \cos k_3}.\]</span></p>
+<p>Watson’s 1939 closed-form evaluation, consolidated by Glasser–Zucker (1980), gives</p>
+<p><span class="math display">\[W_3 \;=\; \frac{G^{*2}}{2\pi}.\]</span></p>
+<p>The BCC sub-lattice is one of the three polyhedral layers of the substrate’s Moore neighbourhood, so this is <code>G*</code> arising from a <em>lattice</em> quantity — a Green’s-function period — of an entirely different <em>character</em> from Route 1’s Γ-ratio (the Watson value is itself a <code>Γ(1/4)</code>-period, so this is convergence across different constructions, not across unrelated origins). The tag is <code>[THEOREM]</code> conditional on the cited classical evaluation, which means “rigour equals the source,” not “depends on a conjecture.” <em>(<a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §5, Theorem 5; verified to 100 digits in PARI.)</em></p>
+<p><strong>Route 3 — the <code>det_ζ</code> quarter-conjugacy bridge <code>[THEOREM]</code> (OT-1.7, FTD-0141).</strong> Let <code>J</code> be the conjugacy operator with <code>J² = −I</code> (multiplication by <code>i</code>; the same <code>Z₄</code> seed of §I.1). A wavefunction on <code>S¹</code> with the quarter-twisted boundary condition <code>ψ(φ + 2π) = J ψ(φ)</code> has its two <code>J</code>-eigensectors forced onto the shifted spectra <code>D_{1/4} = {n + 1/4}_{n≥0}</code> and <code>D_{3/4} = {n + 3/4}_{n≥0}</code>. Lerch’s formula for the ζ-regularized determinant of an arithmetic progression,</p>
+<p><span class="math display">\[\textstyle{\det}_\zeta\{n + a\}_{n\ge 0} \;=\; \frac{\sqrt{2\pi}}{\Gamma(a)},\]</span></p>
+<p>then yields the determinant ratio</p>
+<p><span class="math display">\[\frac{{\det}_\zeta D_{3/4}}{{\det}_\zeta D_{1/4}} \;=\; \frac{\sqrt{2\pi}/\Gamma(3/4)}{\sqrt{2\pi}/\Gamma(1/4)} \;=\; \frac{\Gamma(1/4)}{\Gamma(3/4)} \;=\; G^*,\]</span></p>
+<p>the <code>√(2π)</code> cancelling. The arithmetic content is the reason this route belongs to the same story as the seed: <code>4·D_{1/4} = {n ≡ 1 (mod 4)}</code> and <code>4·D_{3/4} = {n ≡ 3 (mod 4)}</code> are exactly the two non-trivial residue classes mod 4 — and, restricted to primes, the split and inert prime classes of <code>ℤ[i]</code> (§I.1). <code>G*</code> is the regularized asymmetry between them. <code>[THEOREM]</code>. <em>(<a href="../03_derivations/foundational_mechanics/DERIV_GSTAR_QUARTER_CONJUGACY.md"><code>DERIV_GSTAR_QUARTER_CONJUGACY.md</code></a> §5; OT-1.7.)</em></p>
+<p><strong>Route 4 — the finite-<code>N</code> attractor <code>[THEOREM]</code> (OT-1.8, FTD-0142).</strong> Define the finite product</p>
+<p><span class="math display">\[G^*_N \;:=\; (N+1)^{-1/2}\prod_{n=0}^{N}\frac{n + 3/4}{n + 1/4}.\]</span></p>
+<p>Every <code>G*_N</code> is computable in <code>O(N)</code> rational operations with no transcendental ever invoked (<code>G*_0 = 3</code>, <code>G*_1 = 21/(5√2) ≈ 2.9698</code>, <code>G*_5 ≈ 2.95995</code>, <code>G*_{20} ≈ 2.95878</code>). A Stirling expansion of <code>Γ(N + 7/4)/Γ(N + 5/4) ∼ (N+1)^{1/2}</code> gives</p>
+<p><span class="math display">\[G^*_N \;=\; G^* + \frac{C}{N^2} + O(N^{-3}), \qquad \text{so } G^*_N \to G^* \text{ at rate } O(1/N^2)\]</span></p>
+<p>(empirical <code>C ≈ 0.046</code>). This route does double duty. It is a fourth independent construction of <code>G*</code> — and it <strong>discharges the Part-0 ε–L obligation</strong> for <code>G*</code>: the undefined-boundary ontology forbids treating <code>G* = lim_{N→∞} G*_N</code> as a primitive completed limit, but Route 4 supplies precisely the finitary restatement the ontology demands — “<code>G*_N</code> is defined for every finite <code>N</code>, and approaches <code>G*</code> at the stated rate.” <code>G*</code> is therefore reachable by a convergent finite computation, no completed infinity required. <code>[THEOREM]</code>. <em>(<a href="../03_derivations/foundational_mechanics/DERIV_GSTAR_FINITE_APPROX.md"><code>DERIV_GSTAR_FINITE_APPROX.md</code></a>; verified by <a href="../../../scripts/proofs/proof_fqcr_convergence.py"><code>scripts/proofs/proof_fqcr_convergence.py</code></a>; OT-1.8.)</em></p>
+<p><strong>The warning, stated explicitly (FTD-0117).</strong> <code>G* ≈ 2.95868</code> is the lemniscatic <em>ratio</em> <code>Γ(1/4)/Γ(3/4)</code>. It is <strong>not</strong> the Bernoulli/Gauss lemniscate constant <code>ϖ ≈ 2.62206</code>, a distinct number related by <code>G* = 2ϖ/√π</code>. The two are sometimes both called “the lemniscate constant” in informal usage; they must never be conflated here. The distinction is load-bearing in the most literal sense: the master quadratic of §I.3 produces <code>x₊ = 137.036…</code> <strong>only</strong> at <code>G* = 2.95868</code>. Substituting <code>ϖ = 2.62206</code> into the same polynomial gives <code>x₊ ≈ 107.3</code>, nowhere near <code>1/α</code>. A 2026-04-30 audit (LEDGER FTD-0117) found and corrected exactly this conflation across five documents; the canonical value to cross-check against is <code>G_STAR</code> in <a href="../../../scripts/constants.py"><code>scripts/constants.py</code></a>.</p>
+</section>
+<section id="i.3-the-master-quadratic" class="level2">
+<h2 class="anchored" data-anchor-id="i.3-the-master-quadratic">§I.3 — The master quadratic</h2>
+<p>With <code>G*</code> in hand, the construction’s central polynomial is purely algebraic. Define</p>
+<p><span class="math display">\[P(x) \;=\; x^2 - 16\,G^{*2}\,x + 16\,G^{*3}.\]</span></p>
+<p>Its discriminant factors cleanly,</p>
+<p><span class="math display">\[\Delta \;=\; (16 G^{*2})^2 - 4\cdot 16 G^{*3} \;=\; 256\,G^{*4} - 64\,G^{*3} \;=\; 64\,G^{*3}\,(4G^* - 1),\]</span></p>
+<p>which is <strong>positive</strong> because <code>G* &gt; 1/4</code> (indeed <code>G* ≈ 2.96</code>), so both roots are real:</p>
+<p><span class="math display">\[x_\pm \;=\; 8\,G^{*2} \pm \sqrt{64\,G^{*4} - 16\,G^{*3}} \;=\; 8\,G^{*2} \pm 4\,G^*\sqrt{4G^{*2} - G^*}.\]</span></p>
+<p>Numerically <code>x₊ = 137.0361714582…</code> and <code>x₋ = 3.0239639163…</code>. This is the quadratic formula applied to a polynomial whose coefficients are integer multiples of powers of <code>G*</code>; nothing more is involved, and the whole of it is <code>[THEOREM]</code> (OT-1.1, FTD-0001). <em>(<a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §2; <a href="MATH_MASTER_QUADRATIC.md"><code>MATH_MASTER_QUADRATIC.md</code></a> §6; verified by <a href="../../../scripts/proofs/proof_master_verification.py"><code>scripts/proofs/proof_master_verification.py</code></a>, 54/54 PASS.)</em></p>
+<p><strong>The coefficient-16 soft spot, flagged honestly (OT-4.1, Tier 4).</strong> The prefactor 16 has a tempting arithmetic reading: for the lemniscatic CM elliptic curve <code>E : y² = x³ − x</code>, the automorphism group over <code>Q̄</code> is <code>Aut(E) = {±1, ±i} ≅ ℤ/4</code> — the unit group of <code>ℤ[i]</code> again — so <code>|Aut(E)| = 4</code> and <code>|Aut(E)|² = 16</code>. That <code>|Aut(E)|² = 16</code> is a <code>[THEOREM]</code>. But the claim that the master quadratic’s prefactor is <em>forced</em> to equal <code>|Aut(E)|²</code> — that two objects both happen to equal 16 <em>for a structural reason</em> — is <strong>not proven</strong>; it is <code>[CONJECTURE]</code> on the structural necessity. This is the framework’s softest mathematical spot (OT-4.1, the lone Tier-4 entry): “two distinct objects both equal 16; the structural reason for the coincidence is conjectured but not proved.” A partial structural unification exists (the tower-level reading of FTD-0122 supplies a reason for <code>k = 4</code>, hence <code>2^k = 16</code>, via <code>|ℤ[i]^×|² = 16</code>), but it is a partial unification, not a forcing theorem. The honest tag stays Tier-4 <code>[CONJECTURE]</code> on necessity.</p>
+<p><strong>No physics here.</strong> <code>x₊ = 137.036…</code> is, <em>in Part I</em>, a root of a polynomial — nothing more. The numerical proximity to <code>1/α</code> is real and is the motivation for the whole enterprise, but its identification <code>x₊ ↔︎ 1/α</code> is a <code>[STRONGLY MOTIVATED CONJECTURE]</code> (LEDGER FTD-0013), deferred in full to <strong>Part III</strong>; it is <strong>not</strong> asserted as forced anywhere in the constructive Parts. The smaller root <code>x₋ ≈ 3.024</code> is a pure algebraic artifact of the quadratic — fixed by the Vieta relation <code>x₋ = 16G*³/x₊</code> once <code>x₊</code> is fixed — and carries no physics: the historical identification <code>x₋ ↔︎ N_c</code> is <strong>RETIRED</strong> (the LEDGER row FTD-0014 was removed in commit <code>ca7eb61</code>); FTD’s <code>N_c = 3</code> is independently sourced (Moore Layer Theorem; <code>DERIV_NC_FROM_TOPOLOGY.md</code>, four routes).</p>
+</section>
+<section id="i.4-the-spine-built-on-top" class="level2">
+<h2 class="anchored" data-anchor-id="i.4-the-spine-built-on-top">§I.4 — The spine built on top</h2>
+<p>On the foundation of <code>G*</code> (§I.2) and the master quadratic (§I.3), a further family of theorem-grade results stands. Each is stated below at its exact canonical tag and condition, with its anchor; short proofs are shown where they are a few lines, deep external dependencies are cited.</p>
+<p><strong>Harmonic-invariant tower <code>[THEOREM]</code> (OT-1.3, FTD-0111).</strong> For each integer <code>k ≥ 3</code>, the <code>(1+i)</code>-tower master quadratic is <code>M_k(x) = x² − 2^k G*^{k−2} x + 2^k G*^{k−1}</code> (the <code>k = 4</code> instance is §I.3’s polynomial). Writing the normalized roots <code>y_± := x_±/G*</code>, then at <em>every</em> level <code>k ≥ 3</code>,</p>
+<p><span class="math display">\[\frac{1}{y_+} + \frac{1}{y_-} \;=\; 1.\]</span></p>
+<p>The proof is a three-line Vieta computation: <code>1/x₊ + 1/x₋ = (x₊ + x₋)/(x₊ x₋) = (2^k G*^{k−2})/(2^k G*^{k−1}) = 1/G*</code>; multiplying through by <code>G*</code> gives <code>1/y₊ + 1/y₋ = 1</code>. <em>(<a href="../03_derivations/electromagnetism/THEOREM_HARMONIC_INVARIANT_TOWER.md"><code>THEOREM_HARMONIC_INVARIANT_TOWER.md</code></a>; verified to 50 digits by <a href="../../../scripts/proofs/proof_harmonic_invariant_tower.py"><code>scripts/proofs/proof_harmonic_invariant_tower.py</code></a>.)</em></p>
+<p><strong>CM-curve uniqueness <code>[THEOREM]</code> (OT-1.9), under the trivial-multiplier criterion.</strong> Among all imaginary quadratic fields <code>K = ℚ(√−d)</code>, the field <code>ℚ(i)</code> (<code>d = 1</code>, fundamental discriminant <code>−4</code>) is the <strong>unique</strong> one satisfying <code>|μ_K| = |disc(K)|</code> — for <code>ℚ(i)</code>, <code>|μ_K| = 4</code> and <code>|disc(K)| = 4</code>; for every other imaginary quadratic field the two differ. <em>(Proof sketch: <code>|μ_K| ∈ {2, 4, 6}</code> with 4 only at <code>d = 1</code> and 6 only at <code>d = 3</code>; <code>|disc(K)| ≥ 3</code> always, <code>= 3</code> only at <code>d = 3</code>, <code>= 4</code> only at <code>d = 1</code>; case-checking the three unit-group orders leaves <code>d = 1</code> as the sole coincidence.)</em> The <strong>trivial-multiplier criterion is load-bearing</strong> (FTD-0124): a “match” here requires the natural root to equal the target directly; under a looser rational-multiplier criterion 20 additional non-canonical matches exist in the tested grid, and that reading is <code>[SELECTION]</code>, not <code>[THEOREM]</code>. <em>(<a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §3; the proof is a complete case analysis over all imaginary quadratic fields, the <code>d ≤ 200</code> computation is a redundant cross-check.)</em></p>
+<p><strong><code>Q(G*)</code> is π-free <code>[THEOREM]</code>, conditional on Chudnovsky 1976 (OT-2.3, FTD-0112).</strong> <code>Q(G*) ∩ Q(π) = Q</code>: the field generated by <code>G*</code> shares no algebraic content with <code>Q(π)</code> beyond the rationals. The proof reduces a hypothetical polynomial relation between <code>G*</code> and <code>π</code> — via the identity <code>G*·π·√2 = Γ(1/4)²</code> — to a polynomial relation between <code>π</code> and <code>Γ(1/4)</code>, which Chudnovsky’s 1976 algebraic-independence theorem forbids. “Conditional” means “rigour equals this published, foundational transcendence result” (consolidated in Waldschmidt 2000), not “depends on a conjecture.” <em>(<a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §9; verified by <a href="../../../scripts/proofs/proof_field_theoretic_qgstar.py"><code>scripts/proofs/proof_field_theoretic_qgstar.py</code></a>.)</em></p>
+<p><strong>Tower-discriminant transcendence <code>[THEOREM]</code>, conditional on Schneider–Chudnovsky (OT-2.2).</strong> For the tower of the harmonic invariant, the discriminant factors as <code>disc(M_k) = 2^{k+2} G*^{k−1} A_k</code> with <code>A_k := 2^{k−2} G*^{k−3} − 1</code>. Then <code>A_k</code> is rational at <code>k = 3</code> (<code>A_3 = 1</code>) and <strong>transcendental over <code>Q</code> (i.e.&nbsp;<code>A_k ∉ Q̄</code>)</strong> at every <code>k ≥ 4</code> (<code>A_4 = 4G* − 1</code>, etc.): a non-rational polynomial with rational coefficients in the transcendental <code>G*</code> takes transcendental values. <em>(<a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §8; OT-2.2.)</em></p>
+<p><strong>BCC complex structure <code>[THEOREM]</code> (OT-1.5/1.6, FTD-0122).</strong> The 8 BCC corners under 90° rotation form two orbits of size 4, and</p>
+<p><span class="math display">\[\mathbb{Z}[\mathrm{BCC}] \otimes \mathbb{Q} \;=\; V_{\mathrm{triv}}^2 \oplus V_{\mathrm{sign}}^2 \oplus V_{\mathrm{complex}}^2,\]</span></p>
+<p>where <code>V_complex</code> carries a natural <code>ℤ[i]</code>-module structure <code>≅ ℤ[i]²</code> (OT-1.5). Paired with it is a clean no-go: there is <strong>no</strong> injective homomorphism <code>ℤ[i]^× → O_h^{ab}</code>, since <code>ℤ[i]^× ≅ ℤ/4</code> has an order-4 element but <code>O_h^{ab} ≅ ℤ/2 × ℤ/2</code> (Klein four) does not — a one-line group-order argument (OT-1.6). Together these say the substrate’s <code>ℤ[i]</code> structure lives genuinely in the BCC layer but does <strong>not</strong> extend to a global lattice-symmetry embedding. <code>[THEOREM]</code>. <em>(<a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §10.X; verified by <a href="../../../scripts/proofs/proof_bcc_complex_structure.py"><code>scripts/proofs/proof_bcc_complex_structure.py</code></a>, exact rationals.)</em></p>
+<p><strong>Lemniscatic L-value <code>[THEOREM]</code>, conditional on Rubin 1991 (OT-2.4, FTD-0159).</strong> The central L-value of the lemniscatic curve <code>E_lemn : y² = x³ − x</code> (Cremona 32.a3) has the clean closed form</p>
+<p><span class="math display">\[L(E_{\mathrm{lemn}}, 1) \;=\; \frac{\varpi}{4} \;=\; \frac{G^*\sqrt\pi}{8} \;\approx\; 0.6555143885,\]</span></p>
+<p>via the full BSD formula for the CM rank-0 case (Rubin 1991). <strong>Errata note:</strong> earlier session work had <code>ϖ/2</code> from a BSD-convention double-count; the corrected factor is <code>ϖ/4</code> (FTD-0174/FTD-0159). <em>(Verified to 27 digits against LMFDB 32.a3.)</em></p>
+<p><strong>Three further <code>[THEOREM]</code>s conditional on classical results.</strong> The character <code>χ_{−4}</code> four-level unification — <code>χ_{−4}</code> on <code>(ℤ/4ℤ)^×</code> generating the entire <code>G*/G_G</code> identity algebra through four functorial projections (lattice, Chowla–Selberg, Hecke, Dirichlet) — is <code>[THEOREM]</code> conditional on Deligne’s period conjecture in the CM case, which is proved unconditionally (Blasius/Anderson/Shimura) (OT-2.5, FTD-0163). The η-tower across the nine class-number-one imaginary-quadratic fields, <code>|η(τ_K)|^{2w_K} = G_K^{w_K}/(2π|d_K|)^{w_K/2}</code>, is <code>[THEOREM]</code> conditional on Chowla–Selberg, unifying the Heegner near-integer phenomenon as a <code>χ</code>-projection (OT-2.6). The <code>Sym²⊕Sym³</code> uniqueness — among leading-period polynomials <code>x² − 16G*^a x + 16G*^b</code> with <code>a &lt; b</code> positive integers, the pair <code>(a,b) = (2,3)</code> is the unique minimal-<code>a</code> solution with integer prefactor 16, roots not scalar multiples <strong>(which forces <code>2a &gt; b</code>, i.e.&nbsp;<code>a &lt; b &lt; 2a</code> — this is what excludes e.g.&nbsp;<code>(1,3)</code>, whose roots are both <code>G*¹ × constant</code>)</strong>, and positive discriminant — is <code>[THEOREM]</code> by elementary case analysis, no external dependency (OT-2.7, FTD-0175).</p>
+<p><strong>The two honestly-tiered results.</strong> Two of the nine numbered results sit <em>below</em> theorem grade and are stated as such here:</p>
+<ul>
+<li><strong>Coefficient-16</strong> (Theorem 4; OT-4.1, Tier 4) — the value-level identity <code>16 = |Aut(E)|²</code> is true, but its structural necessity is <code>[CONJECTURE]</code>, as set out in §I.3.</li>
+<li><strong>Phase-J partition-function ultralocality</strong> (Theorem 7; OT-3.1) — <code>[THEOREM at L = 2 only]</code>. On a <code>2³</code> lattice the classical Euclidean action depends on the state field solely through <code>Σ_i s_i²</code> (the manifested-site count) and is invariant under spatial permutation of charge placement; this is proved by explicit construction. The general-<code>L</code> extension is <strong>disconfirmed</strong> — the <code>L = 2</code> ultralocality is a Nyquist-mode counting degeneracy (every non-zero momentum has <code>sin(k_i) = 0</code>), not a structural property, and at <code>L ≥ 3</code> the action does depend on spatial placement. The <code>L = 2</code> restriction is stated plainly and is the spine’s honest claim. <em>(<a href="SPEC_ALGEBRAIC_SPINE.md"><code>SPEC_ALGEBRAIC_SPINE.md</code></a> §7; disconfirmation by <code>scripts/proofs/proof_phase_j_general_L.py</code>.)</em></li>
+</ul>
+<p><strong>The canonical accounting.</strong> That completes the spine: <strong>nine numbered results, seven theorem-grade</strong> (<code>G*</code> identity, master quadratic, CM uniqueness, Watson identity, Phase-G geometric Coulomb, harmonic-invariant tower, <code>Q(G*)</code> field-theoretic characterization — Theorems 1, 2, 3, 5, 6, 8, 9) <strong>plus two honestly tiered below theorem grade</strong> (coefficient-16 and Phase-J <code>L=2</code>). This is the discrete ontology’s firm ground — its answer to Clause 1 — and it is <strong>independent of any physics interpretation</strong>. The match to physics is a separate matter, quarantined in Part III.</p>
+</section>
+<section id="i.5-the-construction-map" class="level2">
+<h2 class="anchored" data-anchor-id="i.5-the-construction-map">§I.5 — The construction map</h2>
+<p>The spine is not a list but a dependency structure: a directed acyclic graph rooted in the seed. The <code>[AXIOM]</code> reading of the lattice’s quarter-turn as <code>ℤ[i]</code> (§I.1) deposits the integer <code>4</code>; <code>G*</code> is constructed four ways from quarter-integer data (§I.2); the master quadratic <code>x² − 16G*²x + 16G*³</code> is assembled from <code>G*</code> and <code>16 = 4²</code> (§I.3); and the spine theorems — harmonic tower, CM uniqueness, <code>Q(G*)</code> π-freeness, the BCC complex structure, the L-value and its companions — hang off <code>G*</code> and the quadratic in turn (§I.4). Reading the arrows backward is the audit trail: every theorem-grade node traces, through explicit and checkable steps, to the one structural choice at the root, and to nothing else.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../scripts/visualization/results/math_node_map/spine_only.png" class="img-fluid figure-img"></p>
+<figcaption>The construction DAG — the dependency spine from the seed (i / ℤ[i]) through G* and the master quadratic to the theorem-grade spine results.</figcaption>
+</figure>
+</div>
+<p><em>Figure I.1 — The construction DAG: the <code>[AXIOM]</code> ℤ[i] reading → the framework integer 4 → G* (four routes) → the master quadratic (16 = 4²) → the audited spine branches. High-resolution <a href="../../../scripts/visualization/results/math_node_map/spine_only.svg">SVG</a> is available; the figure is regenerated from <code>scripts/verification/results/math_node_map.json</code> by <code>scripts/visualization/render_node_map.py</code>.</em></p>
+<hr>
+<hr>
+</section>
+</section>
+<section id="part-ii-the-boundary" class="level1">
+<h1>Part II — The Boundary</h1>
+<p>Part II answers Clause 2: <strong>what does the discrete ontology provably <em>not</em> force?</strong> It is the monograph’s climax, and it is the section where the program’s honesty is most directly on the line — because the quantity at stake is the one whose numerical match (<code>x₊ = 137.036…</code>, deferred to Part III) is the whole enterprise’s motivation. The temptation to call that match a derivation is exactly what this Part refuses. The result it delivers instead is a <em>mapped wall</em>: a route-invariant boundary around the electromagnetic coupling α, built from theorem-grade masonry and containing one precisely-located, honestly-marked <code>[OPEN]</code> gap.</p>
+<p>The framing must be stated before the content, because it is unusually easy to get wrong. The headline result — <strong><code>𝔉</code> (the five postulates plus the spine) does not force α</strong> — is <strong>not</strong> a single <code>[THEOREM]</code>. It is a <em>route-invariant boundary</em> assembled from theorem-grade components (a ruled-out flip, a closed scope, a route-invariant reduction) <em>plus</em> one irreducible <code>[OPEN]</code> kernel; and the overall no-go carries the tag <code>[STRONGLY MOTIVATED CONJECTURE]</code>, while the obstruction it sharpens — <strong>MC-T4.3</strong> — remains a <code>[FOUNDATIONAL OBSTRUCTION]</code>. This Part says, at every step, precisely which grade each piece holds. The honest one-line summary, in the project’s canonical phrasing: <strong>α is dynamical, not structural</strong> — the ontology forces the <em>menu</em> of ingredients but not the <em>dish</em> that assembles them. It is never “α is derived,” and it is never “α is proven underivable” in any absolute sense. <em>(Canonical sources for the whole Part: <a href="../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md"><code>AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md</code></a>, FTD-0242; <a href="../07_assessment/audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md"><code>AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md</code></a>, FTD-0243; <a href="SPEC_ALPHA_READOUT_CONTRACT.md"><code>SPEC_ALPHA_READOUT_CONTRACT.md</code></a>; <a href="../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md"><code>TRACKER_ONTIC_TRUTH.md</code></a> OT-5.1. Where this Part and a source disagree on a tag, the source wins.)</em></p>
+<section id="ii.1-the-readout-problem" class="level2">
+<h2 class="anchored" data-anchor-id="ii.1-the-readout-problem">§II.1 — The readout problem</h2>
+<p>Part I built the master quadratic <code>P(x) = x² − 16G*²x + 16G*³</code> as a pure object of the algebraic spine (§I.3): its coefficients are integer multiples of powers of <code>G*</code>, its roots <code>x₊ = 137.036…</code> and <code>x₋ = 3.024…</code> are an exercise in the quadratic formula, and the whole of it is <code>[THEOREM]</code>. To turn that polynomial toward physics, one more thing is needed, and naming it sharply is the entire content of this Part.</p>
+<p><strong>The readout move.</strong> Read the quadratic as the characteristic polynomial of a 2×2 <em>readout operator</em> <code>W</code> — an admissible operational functional on the substrate whose dominant eigenvalue is to be the measured inverse coupling. For its characteristic polynomial to be <code>P</code>, the operator must have</p>
+<p><span class="math display">\[(\operatorname{Tr} W,\ \det W) \;=\; (16G^{*2},\ 16G^{*3}).\]</span></p>
+<p>This is the <strong>operator assembly</strong>. The question that decides whether α is derived or merely matched is exactly:</p>
+<blockquote class="blockquote">
+<p><strong>Does <code>𝔉</code> — the five postulates plus the algebraic spine plus the <code>O_h</code> representation theory of the BCC corner module — <em>force</em> the assembly <code>(Tr, Det) = (16G*², 16G*³)</code>, or is that assembly an <em>imposed selection</em>?</strong> <code>[OPEN — this is the readout problem]</code></p>
+</blockquote>
+<p>This is what the canonical sources call <strong>W-CRIT-2</strong> (the readout-structure criterion; <a href="../07_assessment/audits/AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md"><code>AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md</code></a>, FTD-0235). The contract a closure must satisfy is fixed in advance and is deliberately strict: per <a href="SPEC_ALPHA_READOUT_CONTRACT.md"><code>SPEC_ALPHA_READOUT_CONTRACT.md</code></a> §2–§3, an admissible readout <code>(P, A_obs, O_EM, R, C)</code> must be stated <em>before</em> any physical value is checked, and a closure fails immediately if it inserts physical α / a CODATA value / <code>g_c</code> / <code>x₊</code>, or uses the FQCR transfer matrix <code>M_N(t)</code> — which is <em>defined</em> to have the master quadratic as its characteristic polynomial, hence circular and banned <code>[CONSTRAINT]</code>. The missing object, stated plainly in the contract, “is not another fit … [it] is an operational readout rule.” Part II’s job is to determine whether the ontology supplies one.</p>
+<p><strong>Why this is the sharp form of the obstruction.</strong> The whole of MC-T4.3 — the central foundational obstruction of the framework’s α program — comes down to this one structural question, because everything <em>around</em> it is already settled in Part I. The constant <code>G*</code> is forced (four ways, §I.2); the coefficient <code>16 = |ℤ[i]^×|²</code> is a <code>[THEOREM]</code> at the value level (§I.3); the polynomial’s roots are <code>[THEOREM]</code>. If the <em>assembly</em> were forced too, α would be <code>[DERIVED]</code>. So the entire weight of the derive-or-match verdict rests on the single hinge of whether <code>𝔉</code> produces <code>W</code>.</p>
+</section>
+<section id="ii.2-the-four-ftd-native-routes" class="level2">
+<h2 class="anchored" data-anchor-id="ii.2-the-four-ftd-native-routes">§II.2 — The four FTD-native routes</h2>
+<p>To answer the readout problem one cannot merely fail to find an assembly and call that a boundary; that would be an argument from absence. The canonical attack (FTD-0242, workflow <code>alpha-operator-forcing</code>) instead ran <strong>four FTD-native routes of differing character</strong> (later shown, in §II.3, to be four dialects of one underlying obligation — so “0 of 4” is one structural fact reached four ways, not four independent failures), each first <em>force-attempted</em> (build the strongest honest forward chain to the assembly, <code>G*</code> kept symbolic, all banned moves excluded) and then <em>adversarially refuted</em> by a second pass hunting for any smuggled step. The four routes differ in character, not in the obligation they reach:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Route</th>
+<th>FTD-native principle attempted</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>jtwist</strong></td>
+<td>the J-twisted ζ-regularized determinant operator (the candidate clean odd source)</td>
+</tr>
+<tr class="even">
+<td><strong>bcc</strong></td>
+<td>the BCC body-diagonal transfer / response operator (triple-cosine Watson)</td>
+</tr>
+<tr class="odd">
+<td><strong>cm</strong></td>
+<td>the lemniscatic-CM arithmetic of <code>E : y² = x³ − x</code> (CM by <code>ℤ[i]</code>, <code>Aut = μ₄</code>)</td>
+</tr>
+<tr class="even">
+<td><strong>novel</strong></td>
+<td>a forced variational principle / period-ring (Hodge) valuation / K-theory co-realizability</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The verdict: 0 of 4 force the assembly.</strong> <code>[STRONGLY MOTIVATED CONJECTURE no-go]</code> Every force-pass self-reported a <code>gap</code>; every refute-pass upheld <code>boundary</code>; the set of cleanly-forced routes is empty. The honest reading partitions cleanly into what the ontology <em>does</em> force and what it does <em>not</em>:</p>
+<ul>
+<li><strong>What IS forward-forced</strong> <code>[DERIVED]/[THEOREM]</code>, agreed by every route with nothing smuggled:
+<ul>
+<li>the <strong>even trace</strong> <code>16G*²</code> — <code>16 = |μ₄|²</code> for <code>E : y² = x³ − x</code> (FTD-0006); <code>G*² = 2π·G_BCC(0)</code>, the Watson BCC self-energy (FTD-0002);</li>
+<li>the <strong>existence of a clean FTD-native odd source</strong>: the J-twisted determinant ratio <code>det_ζ(D_{3/4})/det_ζ(D_{1/4}) = Γ(1/4)/Γ(3/4) = G*</code> (degree 1; the <code>√(2π)</code> cancels, so there is no forbidden <code>√π</code> prefactor — FTD-0234). This is <em>strictly stronger than trace-only</em>: it means <code>16G*³ = 16G*²·G*</code> is <strong>assemblable</strong>, which genuinely lifts the bare-parity no-go of FTD-0233.</li>
+</ul></li>
+<li><strong>What is NOT forced</strong> <code>[OPEN — the boundary]</code>:
+<ul>
+<li>the <strong>operator assembly itself</strong> — that the <em>same</em> 2×2 readout carrying <code>Tr = 16G*²</code> also has <code>det = 16G*³</code>. For a 2×2 operator, trace and determinant are <strong>independent invariants</strong>; fixing the trace leaves the determinant free. The odd scalar <code>G*</code> exists, but nothing forces the <em>gluing</em> — neither that the two invariants belong to one operator, nor that the odd scalar lands in the determinant slot rather than anywhere else. This residual is precisely the imposed master-quadratic Vieta target, <strong>W-CRIT-2</strong>. <code>[OPEN]</code></li>
+</ul></li>
+</ul>
+<p>The differing character of the four channels is what makes “0/4” load-bearing rather than anecdotal — and §II.3 turns the fact that they nonetheless reach one obligation (route-invariance) into a theorem. The tag on the overall no-go is <code>[STRONGLY MOTIVATED CONJECTURE]</code>, <strong>not</strong> <code>[THEOREM]</code>: the four routes are pre-lock adversarial refutation <em>attempts</em> — none constructed the forcing assembly, but none proved one <em>cannot</em> exist either. Labelling the boundary <code>[THEOREM]</code> on this evidence would itself violate the discipline (and would repeat the error of the retracted “conformal-anomaly” substitution-identity facade, <a href="../04_coupling/archive/retracted/DERIV_ALPHA_READOUT_RESOLUTION.md"><code>DERIV_ALPHA_READOUT_RESOLUTION.md</code></a> (archived/retracted 2026-06-02)). The boundary is a <em>boundary-mapping deliverable</em> in the exact sense of Clause 2 — and it is honestly conjecture-grade.</p>
+<p><strong>A representative route, made concrete.</strong> The boundary script <a href="../../../scripts/proofs/proof_alpha_readout_boundary.py"><code>proof_alpha_readout_boundary.py</code></a> exhibits the obstruction in the modular dialect of the boundary-condition route: at the self-dual point <code>τ = i</code> (the fixed point of the modular <code>S</code>-transformation <code>τ ↦ −1/τ</code>), the torus partition function’s modular geometry forces <code>E_6(i) = 0</code> and <code>E_4(i) ∝ G*⁴</code>, so the available invariants are <em>even</em> powers of the period <code>G*</code> (<code>G*²</code> from the Green’s-function variance, <code>G*⁴</code> from <code>E_4</code>). The required determinant <code>16G*³</code> is an <strong>odd</strong> power, which no theta/modular form on the torus generates without inserting an external scale. The script’s verdict is <code>UNDERDETERMINED</code> — the precise, mechanical statement that this route supplies the even trace but cannot force the odd determinant slot. It is one instance of the route-invariant pattern the next section names.</p>
+</section>
+<section id="ii.3-route-invariance-and-the-theorem-grade-components" class="level2">
+<h2 class="anchored" data-anchor-id="ii.3-route-invariance-and-the-theorem-grade-components">§II.3 — Route-invariance and the theorem-grade components</h2>
+<p>The deeper attack (FTD-0243, workflow <code>rsi-leg3-closure</code>) asked whether the residual gap could be closed by a sharper instrument — and in failing to close it, established three genuinely theorem-grade facts plus the reason all four routes land in the same place. These are the boundary’s <em>masonry</em>: each is <code>[THEOREM]</code>, and together they hem the open kernel of §II.4 into a single, precisely-located gap.</p>
+<p><strong>(a) The flip is ruled out</strong> <code>[THEOREM]</code>. A <em>flip</em> would be a substrate-native operator that genuinely <em>forces</em> <code>det = 16G*³</code> (flipping the verdict to “α derived”). The only geometric candidate is the <code>C₃(⟨111⟩)</code> three-plane <code>det_ζ</code> product (a <code>D6</code>-symmetric object built from three cyclically-permuted planes, each contributing one factor of <code>G*</code>). It is <strong>excluded</strong> from the rank-2 readout by the machine-checked Legs 1–2:</p>
+<ul>
+<li>a definite complex structure <code>J</code> with <code>J² = −I</code> — required by the trace via the BCC <code>V_complex = ℤ[i]²</code> structure — needs <code>mult_O(E) = 0</code> (no <code>O</code>-symmetric 2-dimensional subspace of the 8-corner module), which forces <code>O_h</code> to break to <strong>one <code>C₄</code> axis</strong>, so <code>C₃(⟨111⟩) ∉ Stab</code>;</li>
+<li>the <code>D6</code> three-plane product requires <code>C₃(⟨111⟩) ∈ Stab</code>;</li>
+<li>but <code>⟨C₄, C₃⟩ = O</code> (the full octahedral group, order 24, machine-checked) ⇒ unbroken <code>O_h</code> ⇒ no localized charge ⇒ no <code>V_complex</code> ⇒ no readout.</li>
+</ul>
+<p>So the two requirements are mutually exclusive from a single preparation. Every 2×2 that <em>does</em> realize <code>(16G*², 16G*³)</code> — e.g.&nbsp;the companion form <code>[[0, −16G*³], [1, 16G*²]]</code> — has its determinant entry <em>hand-placed</em>, which is exactly the banned W-CRIT-2 gluing, a witness for the cheap argument rather than a derivation. <code>[THEOREM — via Legs 1–2 + companion-form audit]</code> <em>(verified: <a href="../../../scripts/proofs/proof_readout_multE_zero.py"><code>proof_readout_multE_zero.py</code></a>, 6/6; <a href="../../../scripts/proofs/proof_det_identity.py"><code>proof_det_identity.py</code></a>, 7/7.)</em></p>
+<p><strong>(b) Leg 3b closes its own scope</strong> <code>[THEOREM]</code>. <em>Claim:</em> no <code>C₃(⟨111⟩)</code>-equivariant rank-2 <em>restriction</em> of the three-plane source carries <code>(Tr, Det) = (16G*², 16G*³)</code>. The mechanism (the adversarial layer corrected an earlier non-sequitur here, and the corrected chain is the canonical one): on the <code>C₃</code>-adapted basis <code>ℝ³ = R ⊕ C</code>, the unique rank-2 <code>C₃</code>-invariant subspace is the <code>C</code>-plane, whose <code>C₃</code>-commutant is <code>{xI + yK} ≅ ℂ</code> (Schur). The master-quadratic roots are real and distinct (<code>disc = 64G*³(4G*−1) &gt; 0</code>), and a <code>C₃</code>-equivariant <code>C</code>-plane operator has real-distinct spectrum <strong>iff it is non-real</strong> — which invokes the ambient scalar <code>i</code>, which (by Leg 1) is supplied only by breaking <code>O_h</code> to one <code>C₄</code> axis, whence (by Leg 2) <code>⟨C₄, C₃⟩ = O</code> and there is no readout. The chain is therefore <strong>reality ⟹ scalar-<code>i</code> ⟹ C₄ ⟹ O</strong> — the <em>same</em> wall as the rest of the program, reached from the restriction side, not an independent conjugacy fact. The reduction-collapse script <a href="../../../scripts/proofs/proof_readout_reduction_collapse.py"><code>proof_readout_reduction_collapse.py</code></a> confirms the companion mechanism dimension-free: any <code>C₃</code>-equivariant linear reduction of the three-plane object factors through the <code>C₃</code>-fixed diagonal (where <code>C₃</code> acts as the identity), collapsing the determinant grading <code>G*³ → G*¹</code>; the rank-2 compressions of <code>G*·I₃</code> have determinant <code>G*²</code> at most, never <code>G*³</code>. <code>[THEOREM — own scope]</code> (This closes 3b’s scope; it is necessary but not sufficient for the full no-go — the surviving non-<code>C₃</code>-invariant and det-by-fiat cases are exactly the open kernel.)</p>
+<p><strong>(c) The reduction is route-invariant</strong> <code>[THEOREM]</code>. All four attacks reduce to the <em>same</em> obligation in four dialects, and this is not a coincidence — it follows from one clean field-theoretic fact:</p>
+<blockquote class="blockquote">
+<p><strong><code>Q(G*)</code> is the Galois-fixed field of the master quadratic’s <code>ℤ/2</code>.</strong></p>
+</blockquote>
+<p>The quadratic’s discriminant is <code>Δ = 64G*³(4G*−1)</code>, so its splitting field over <code>Q(G*)</code> is <code>Q(G*)(√(G*(4G*−1)))</code>, with Galois group <code>ℤ/2</code> swapping <code>x₊ ↔︎ x₋</code>. Every forward-forced <em>symmetric</em> FTD-native datum — the Watson trace <code>16G*²</code>, the <code>det_ζ</code> ratio <code>G*</code>, the Chowla–Selberg periods — lives in the <code>σ</code>-fixed subfield <code>Q(G*)</code> and is therefore <strong>provably blind to which root is <code>1/α</code></strong>. The concrete witness: the family <code>det = 16G*²·G*^k</code> for <code>k = 0, 1, 2, 3</code> gives dominant roots <code>139.05 / 137.04 / 130.68 / 105.76</code> — <em>all</em> of them F-consistent, and <strong>nothing in <code>𝔉</code> selects <code>k = 1</code>.</strong> <code>[THEOREM — by Galois-fixed-field comparison]</code> <em>(verified: <a href="../../../scripts/proofs/proof_obligation_a_independence.py"><code>proof_obligation_a_independence.py</code></a> — the J-twisted <code>det_ζ</code> ratio equals <code>G*</code> (degree-1 odd source), the regularized traces <code>ζ(−1, 1/4) = ζ(−1, 3/4) = 1/96</code> are rational so the trace carries zero <code>G*</code>, and at rank 2 the regularized determinant is vacuously the ordinary product <code>x₊·x₋ = 16G*³</code> — so hitting the assembly is a </em>chosen* Vieta target, not a forced one.)*</p>
+<p>These three components are why the boundary is a <em>wall</em> and not a mere absence of progress: the obvious forcing candidate is dead (a), the equivariant restriction route is closed within its scope (b), and any remaining route is provably the <em>same</em> route in disguise (c). What is left is one gap, and §II.4 states it exactly.</p>
+</section>
+<section id="ii.4-the-square-root-wall-k-bind" class="level2">
+<h2 class="anchored" data-anchor-id="ii.4-the-square-root-wall-k-bind">§II.4 — The square-root wall: K-BIND</h2>
+<p>The three theorem-grade components hem the obstruction into a single irreducible obligation. In the four dialects of §II.3 it is one statement — the canonical sources call it <strong>K-BIND</strong> (<code>= K-3c = R* = K-GAL</code>):</p>
+<blockquote class="blockquote">
+<p><strong>K-BIND</strong> <code>[OPEN]</code>. Prove — or refute — that no substrate-native operator construction can bind the degree-1, <code>C₃</code>-agnostic odd scalar <code>G*</code> (the J-twisted <code>det_ζ</code> ratio, FTD-0234 <code>[THEOREM]</code>) into the determinant slot of the <em>same</em> 2×2 readout that carries the definite complex structure <code>i</code>, with the exponent fixed at exactly <strong>1</strong> by the substrate rather than chosen.</p>
+</blockquote>
+<p>In the field dialect this is the cleanest form, and it gives the Part its name. To fix α, the substrate must <strong>natively realize</strong> the quantity</p>
+<p><span class="math display">\[\sqrt{\,G^*(4G^*-1)\,},\]</span></p>
+<p>the <strong>squarefree generator</strong> of the quadratic extension <code>Q(G*)(√Δ)/Q(G*)</code> — equivalently, since <code>Δ = 64G*³(4G*−1)</code>, we have <code>√Δ = 8G*·√(G*(4G*−1))</code>, so this is the irrational quantity that <em>first distinguishes</em> <code>x₊</code> from <code>x₋</code>. (Every <em>symmetric</em> datum lives in <code>Q(G*)</code> and cannot tell the two roots apart, by §II.3(c); the square root is exactly the ingredient that breaks the <code>ℤ/2</code> symmetry and picks a root.) This is the discrete-limit-of-the-square-root wall: the precise place the construction halts. The substrate forces every <em>symmetric</em> ingredient of the quadratic; it does not, on present evidence, produce the <em>one antisymmetric beable</em> — the square root — that would select the physical branch. The determinant’s parity is itself basis-dependent — a rescaling migrates the odd content into the trace — so what is basis-free is not “an odd power of G<em>” but simply that the assembly W is a free choice; the √(G</em>(4G*−1)) form is the cleanest single dialect of that fact, not a basis-invariant obstruction.</p>
+<p><strong>Why it is <code>[OPEN]</code> and not closeable today.</strong> K-BIND is a <strong>universal negative</strong> over substrate-native operator constructions, and it is <em>not well-posed over the current <code>𝔉</code> (the quantifier ranges over a class <code>𝔉</code> has not finitely specified)</em> because <code>𝔉</code> contains no finite, closed generating system for the admissible operators on <code>V_complex = ℤ[i]²</code> from the lattice data (BCC corners + <code>C₄</code>-winding preparation + <code>det_ζ</code> functor). Absent such a calculus, the quantifier “no substrate-native operator” ranges over an undefined class — one cannot prove a universal over a class one has not finitely specified. The axiom that <em>would</em> close it is precisely a finite “substrate-native operator construction calculus”: an explicit closed generating system over which one could verify that no element binds the odd scalar at exponent 1 under a single stabilizer. <code>𝔉</code> does not contain it, so K-BIND stands. <code>[OPEN]</code></p>
+<p><strong>The one non-axiomatic exit is currently shut.</strong> The alternative to axiomatizing the calculus is to <em>measure</em> the binding engine-natively (the ARC-D discrete-native path of <a href="SPEC_ALPHA_READOUT_CONTRACT.md"><code>SPEC_ALPHA_READOUT_CONTRACT.md</code></a> §5D). That exit already returned <code>[CLOSED NEGATIVE]</code>: ARC-D1 found <strong>0 macroscopic cluster fissions across 2000 seeds</strong> — the lattice is topologically rigid, and a count of 0 is precision-independent (<a href="../10_eft_program/derivations/DERIV_ALPHA_READOUT_EMPIRICAL.md"><code>DERIV_ALPHA_READOUT_EMPIRICAL.md</code></a>). So neither the axiomatic route (no calculus) nor the empirical route (rigid lattice) is presently open, and K-BIND is the single remaining obligation of the entire α program.</p>
+</section>
+<section id="ii.5-the-conditional-theorem" class="level2">
+<h2 class="anchored" data-anchor-id="ii.5-the-conditional-theorem">§II.5 — The conditional theorem</h2>
+<p>What <em>is</em> provable, rigorously and unconditionally, is the conditional. This is the strongest theorem-grade statement the boundary supports, and it is the precise sense in which “α is not forced” is earned rather than asserted (FTD-0243 §5):</p>
+<blockquote class="blockquote">
+<p><strong>The conditional theorem</strong> <code>[THEOREM]</code>. <code>𝔉</code> does not force the value of α — the operator assembly <code>(Tr, Det) = (16G*², 16G*³)</code> is logically independent of <code>𝔉 = {P1–P5} ∪ {algebraic spine} ∪ {O_h rep theory of the 8-corner BCC module}</code> — <strong>unless <code>𝔉</code> is extended by a substrate-native binding law <code>W</code></strong> that fixes the readout determinant’s odd-<code>G*</code> exponent at exactly <strong>1</strong> from a single stabilizer; equivalently, that natively realizes a beable in <code>Q(G*)(√(G*(4G*−1))) \ Q(G*)</code> — the mathematical force of this conditional sits in the §II.3 components that <em>constrain</em> the structure (the ruled-out flip, the closed-scope restriction, the Galois-fixed-field route-invariance); the independence statement itself is the formal capstone once trace/determinant independence is granted.</p>
+</blockquote>
+<p>The independence half is <em>witnessed on both sides</em>, which is what makes the conditional a genuine <code>[THEOREM]</code> rather than a restatement of ignorance:</p>
+<ul>
+<li><code>𝔉 ∪ {W}</code> is <strong>consistent</strong> — the master quadratic is the explicit witness model (the assembly, once posited, is internally coherent and reproduces the 1.26-ppm match).</li>
+<li><code>𝔉 ∪ {¬W}</code> is <strong>consistent</strong> — <code>det = 16G*⁴</code> (dominant root <code>≈ 130.68</code>) and <code>det = G*</code> (dominant root <code>≈ 140.04</code>) are explicit, F-consistent alternative assemblies; nothing in <code>𝔉</code> forbids them.</li>
+</ul>
+<p>Because both <code>𝔉 ∪ {W}</code> and <code>𝔉 ∪ {¬W}</code> have models, <code>W</code> is logically independent of P1–P5 on present evidence — and <em>that</em> independence, not any failed search, is the content of “the ontology does not force the assembly.” The binding law <code>W</code> is, in the framework’s bookkeeping, a <strong>6th-postulate-class input</strong>: were it added to FTD’s axiom list it would convert <code>x₊ = 1/α</code> from <code>[STRONGLY MOTIVATED CONJECTURE]</code> to <code>[DERIVED, modulo W]</code>. Whether such a <code>W</code> is itself FTD-native is exactly the K-BIND question of §II.4, which remains <code>[OPEN]</code>; the conditional theorem assumes it neither way. <em>(Note the careful scoping: the conditional <code>[THEOREM]</code> and the components of §II.3 are theorem-grade; the <strong>unconditional</strong> no-go — “no FTD-native <code>W</code> can <em>ever</em> exist” — is the universal negative, and it is <code>[OPEN]</code>, not proven. The overall boundary therefore stays <code>[STRONGLY MOTIVATED CONJECTURE]</code>.)</em></p>
+</section>
+<section id="ii.6-conclusion-α-is-dynamical-not-structural" class="level2">
+<h2 class="anchored" data-anchor-id="ii.6-conclusion-α-is-dynamical-not-structural">§II.6 — Conclusion: α is dynamical, not structural</h2>
+<p>The deliverable of Part II is a <strong>mapped wall</strong>. Stated in the project’s canonical phrasing: <strong>the discrete ontology forces the <em>menu</em> — the even trace <code>16G*²</code> from the Watson integral, and the existence of a clean odd source <code>G*</code> from the J-twisted ζ-determinant — but it does not force the <em>dish</em>, the assembly of those ingredients into one readout operator <code>W</code>.</strong> Therefore α’s value rides on a logically independent convention, not on the postulates: <strong>α is dynamical, not structural</strong> <code>[DERIVED, from the contrast]</code> — where “derived” attaches to “the assembly is unforced on present evidence” (FTD-0242 §6), not to any proof that no future binding law W exists. The contrast with <code>N_c</code> is exact and instructive — <code>N_c = 3</code> <em>is</em> structural, forced from <code>O_h</code> and topology by four independent routes (<a href="../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md"><code>DERIV_NC_FROM_TOPOLOGY.md</code></a>) with no operator-assembly choice required; the value falls out of the symmetry. α has no such forcing; everything the ontology forces about it is consistent with infinitely many other <code>(Tr, Det)</code> pairs over the same scalar ring. This is the same epistemic status the engine already assigns to the coupling <code>g_c</code>.</p>
+<p>Accordingly, <strong>MC-T4.3 remains a <code>[FOUNDATIONAL OBSTRUCTION]</code></strong>, and <strong><code>x₊ = 1/α</code> (LEDGER FTD-0013) remains a <code>[STRONGLY MOTIVATED CONJECTURE]</code></strong> — nothing in this Part promotes either. The wall is built of theorem-grade masonry — the flip is ruled out <code>[THEOREM]</code>, Leg 3b closes its own scope <code>[THEOREM]</code>, the reduction is route-invariant <code>[THEOREM]</code>, and the conditional statement is a <code>[THEOREM]</code> — around one clearly-marked open gap, K-BIND <code>[OPEN]</code>, the square root that would break the root-swapping symmetry. The surviving exits are explicit and few: a 6th-postulate-class input <code>W</code> that <em>forces</em> the assembly (which would re-open MC-T4.3 positive), or a fresh engine-native ARC-D measurement (and ARC-D1 already returned <code>[CLOSED NEGATIVE]</code>).</p>
+<p>This is exactly what Clause 2 of the governing goal asks for. <em>“Rigorously establish the boundary of what the ontology cannot force”</em> is not a consolation prize for failing to derive α — it is a deliverable in its own right. Part II draws that line where the construction actually halts: at the discrete limit of a square root. A program that only exhibited the spine of Part I would be a curiosity; one that maps this wall, in both directions and at honest tags, is doing the thing the goal was set to do.</p>
+<hr>
+<hr>
+</section>
+</section>
+<section id="part-iii-the-bridge" class="level1">
+<h1>Part III — The Bridge</h1>
+<p>Part III is the <strong>physics quarantine</strong>. Parts I and II did their work in mathematics — naming the physical target in Part II only to state precisely what is <em>not</em> forced: an algebraic spine that the ontology <em>forces</em> (Clause 1), and a route-invariant boundary it provably does <em>not</em> force (Clause 2). This Part introduces the one ingredient that has been deliberately withheld until now — the <strong>numerical match to physics</strong> — and its single job is to state that match, and the broader physics layer around it, at the exact epistemic tag each piece carries in the canonical record. It <strong>derives nothing</strong>; it re-states, with the tags foregrounded. The reader who has internalized the epistemic contract of §0.3 should read this Part as a tagging exercise: where a sentence is tempted to say “FTD predicts,” the tag says what kind of statement it actually is.</p>
+<p>The discipline here is stricter than anywhere else in the monograph, because the physics is where overclaim is easiest and most consequential. The rule for this Part, stated once and enforced throughout: <strong>no sentence attaches <code>[THEOREM]</code> or <code>[DERIVED]</code> to α, to a particle mass, to a mass formula, or to a gauge ratio.</strong> The α match is <code>[STRONGLY MOTIVATED CONJECTURE]</code>; the rest of the construction layer is <code>[PARAMETRIC]</code> (with two lepton-anchored mass formulas at the catalog’s <code>[STRONGLY MOTIVATED CONJECTURE]</code>, stated at that tag, not promoted). Canonical sources for the whole Part: <a href="SPEC_PHYSICS_BRIDGE.md"><code>SPEC_PHYSICS_BRIDGE.md</code></a> (FTD-0121, the bridge synthesis); <a href="../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md"><code>TRACKER_ONTIC_TRUTH.md</code></a> OT-5.1; <a href="../07_assessment/core_ledgers/LEDGER.md"><code>LEDGER.md</code></a> (FTD-0013, FTD-0189, FTD-0210); <a href="../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md"><code>CATALOG_PARAMETRIC_INSERTIONS.md</code></a>; <a href="SPEC_DIMENSIONAL_MAP.md"><code>SPEC_DIMENSIONAL_MAP.md</code></a>. Where this Part and a source disagree on a tag, the source wins.</p>
+<section id="iii.1-the-empirical-match" class="level2">
+<h2 class="anchored" data-anchor-id="iii.1-the-empirical-match">§III.1 — The empirical match</h2>
+<p>Here is the match that motivates the entire enterprise, stated plainly. The master quadratic’s larger root (Part I, §I.3),</p>
+<p><span class="math display">\[x_+ \;=\; 137.0361714582\ldots,\]</span></p>
+<p>agrees with the reciprocal of the electromagnetic fine-structure constant,</p>
+<p><span class="math display">\[\alpha^{-1} \;=\; 137.035999177(21) \quad \text{(CODATA 2022)},\]</span></p>
+<p>to</p>
+<p><span class="math display">\[\frac{|x_+ - \alpha^{-1}|}{\alpha^{-1}} \;=\; 1.26\times 10^{-6} \;=\; \mathbf{1.26\ \text{ppm}}.\]</span></p>
+<p>This is a striking numerical coincidence between a forced object of the algebraic spine and a measured constant of nature, agreeing to better than two parts in a million — tighter than experimental precision on most individual QED loop observables. It is the seed of the whole program: a discrete ontology, built only to be internally coherent, throws up a polynomial whose root lands on <code>1/α</code>.</p>
+<p><strong>And it is a <em>match</em>, not a derivation <code>[STRONGLY MOTIVATED CONJECTURE]</code> (LEDGER FTD-0013).</strong> The identification <code>x₊ ↔︎ 1/α</code> is the framework’s single load-bearing physics claim, and it is honestly tagged a conjecture — the one Tier-5 entry of the bedrock tracker (OT-5.1). Part II established <em>why</em> it cannot be more: the discrete ontology does not force the operator assembly that would read <code>x₊</code> as the physical coupling — the boundary is route-invariant, and <code>α</code> is <strong>dynamical, not structural</strong> (§II.6). So the proximity of <code>x₊</code> to <code>α⁻¹</code> is real, it is the reason the project exists, and it carries no derivation chain behind it. The honest sentence is exactly the conjunction: <em>the number matches to 1.26 ppm, and the ontology does not derive that it should.</em> The tag holds both halves at once, and nothing in this Part moves it.</p>
+</section>
+<section id="iii.2-the-structural-uniqueness-evidence-and-its-honest-limit" class="level2">
+<h2 class="anchored" data-anchor-id="iii.2-the-structural-uniqueness-evidence-and-its-honest-limit">§III.2 — The structural-uniqueness evidence (and its honest limit)</h2>
+<p>A 1.26-ppm coincidence invites the obvious objection: with enough constants and enough integers, <em>some</em> simple expression will land near any target. The framework’s answer is a structural-uniqueness argument, and it is the strongest evidence the program holds.</p>
+<p><strong>The adversarial look-elsewhere scan <code>[MEASURED]</code> (FTD-0189, OT-3.3, supporting OT-5.1).</strong> Against the precise objection above, the canonical scan asked: among all degree-2 polynomials of the master quadratic’s natural form over a basket of 18 physical constants <em>that FTD did not design</em>, how many match the framework’s two targets as well as the master quadratic does? The answer is <strong>zero non-<code>G*</code> dual-matchers across 2.65 million degree-2 polynomials</strong> — the master quadratic is the <strong>unique</strong> dual-matcher in the search space, <strong>rank 1 by ~130×</strong> over the nearest competitor. Converted to a Bayesian weight against a random-coincidence null, this is <strong>~4×10⁵ : 1</strong> in favour of the structural reading, within the declared natural family (OT-3.3). Two supporting nulls sharpen the picture: the <strong>Eisenstein-family null</strong> (the Eisenstein-integer multiplier family contributes zero dual-matchers) and the <strong>Chowla–Selberg <code>h ≥ 2</code> null</strong> (no higher-class-number CM field reproduces the match through the Γ-product analogue). Within its declared search space this is a genuine measured fact, and it is the cleanest reason to take the 1.26-ppm match seriously rather than dismiss it as numerology.</p>
+<p><strong>The mandatory F10 note — what the tag does and does not do.</strong> The evidence above is strong, and it is <em>evidence</em>, not a derivation chain. The <code>[STRONGLY MOTIVATED CONJECTURE]</code> tag on <code>x₊ = 1/α</code> is precise about this in a way worth spelling out, because it is exactly the place a reader could over-read the strength. The tag <strong>labels</strong> the methodological question — <em>is the framework’s catalog of admissible constants and integers large enough that a match of this quality is, after a fully honest accounting of all the ways one could have looked, statistically unsurprising?</em> — and it does <strong>not resolve</strong> that question. The ~4×10⁵:1 figure is computed <em>within a declared natural family</em>; the look-elsewhere correction across <em>all</em> the framework’s degrees of freedom (every constant it might have admitted, every polynomial form it might have selected) is not something a single scan can close, and the project does not claim it has. The honest reading is therefore the conjunction, again: the structural-uniqueness evidence is the strongest the framework holds, it materially raises the posterior that the match is not coincidence — <em>and</em> it is evidence, not a proof, and the tag is the recognition of that residual gap, not its closure. (The Bayesian convention the framework uses would call a figure exceeding 10⁶:1 “decisive”; ~4×10⁵:1 is strong but, by that convention, deliberately short of decisive — see <a href="SPEC_PHYSICS_BRIDGE.md"><code>SPEC_PHYSICS_BRIDGE.md</code></a> §3.1.) This is the F10 discipline: a strong number is reported as a strong number, and the tag above it states what species of claim it supports.</p>
+</section>
+<section id="iii.3-retired-and-closed-negative-preserved-for-provenance" class="level2">
+<h2 class="anchored" data-anchor-id="iii.3-retired-and-closed-negative-preserved-for-provenance">§III.3 — Retired and closed-negative (preserved for provenance)</h2>
+<p>A construction story is incomplete without its dead ends, because preserving them is what stops a closed route from re-emerging as a fresh “discovery.” Three categories of negative result quarantine the physics claim from its discredited neighbours.</p>
+<p><strong>The smaller root carries no physics — <code>x₋ ↔︎ N_c</code> is RETIRED.</strong> The master quadratic’s smaller root <code>x₋ ≈ 3.024</code> was historically identified with the QCD colour number <code>N_c = 3</code> (a 0.80% match). That identification is <strong>RETIRED</strong> (FTD/FQCR Cleanup Taxonomy v1.4 §5; the LEDGER row FTD-0014 was removed in commit <code>ca7eb61</code>). As Part I noted (§I.3), <code>x₋</code> is a pure algebraic artifact, fixed by the Vieta relation <code>x₋ = 16G*³/x₊</code> the instant <code>x₊</code> is fixed; it is not an independent physical quantity. FTD’s <code>N_c = 3</code> is <strong>independently sourced</strong> — from the Moore Layer Theorem and the four convergent topological routes of <a href="../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md"><code>DERIV_NC_FROM_TOPOLOGY.md</code></a> — and owes nothing to the polynomial’s smaller root.</p>
+<p><strong>The <code>x₋</code> physical-identification search closed negative <code>[CLOSED NEGATIVE]</code> (FTD-0210).</strong> That <code>x₋</code> carries no physics is not merely asserted; it was <em>tested</em>. The pre-registered search (<code>AUDIT_X_MINUS_CLOSED_NEGATIVE.md</code>, hash-locked) evaluated <code>x₋ = G*/(1 − αG*) ≈ 3.02396</code> against <strong>exactly 25 pre-specified Standard Model observables</strong> drawn from CODATA 2022 / PDG 2024, under strict algebraic, structural, and dual-match uniqueness filters. <strong>All 25 fired the algebraic-miss falsifier; zero survived.</strong> <code>x₋</code> has no Standard Model correspondent: it is a pure coordinate/chirality artifact of the quadratic. <code>[CLOSED NEGATIVE]</code> <em>(see <a href="../10_eft_program/archive/closed_negative/AUDIT_X_MINUS_CLOSED_NEGATIVE.md"><code>AUDIT_X_MINUS_CLOSED_NEGATIVE.md</code></a>; FTD-0013 unchanged.)</em></p>
+<p><strong>The α-derivation routes are all closed <code>[CLOSED NEGATIVE]</code> (OT-5.1).</strong> Every attempt to <em>derive</em> α from FTD’s dynamics — rather than match it — has been run and falsified, and each is preserved to prevent re-attempt: <strong>R1</strong> (transverse stiffness), <strong>R2</strong> (source-current normalization), <strong>R3</strong> (two-sector response eigenvalue), <strong>R4</strong> (projected Dirac matter), the <strong>Z-factor reading</strong> (FTD-0116), <strong>RG-running</strong>, <strong>algebraic combinations</strong>, <strong>1/√d</strong>, <strong>Langevin-equipartition</strong>, and the <strong>monomial scans</strong> — <em>all</em> <code>[CLOSED NEGATIVE]</code>. The list is not a record of failure but a map: it is the empirical content of Part II’s verdict that α is dynamical, traced route by route. The single non-derivation route that remains live (the readout/observable-selection class) is precisely MC-T4.3, whose boundary Part II mapped.</p>
+</section>
+<section id="iii.4-what-would-close-the-gap" class="level2">
+<h2 class="anchored" data-anchor-id="iii.4-what-would-close-the-gap">§III.4 — What would close the gap</h2>
+<p>The gap is not a mystery; it is a precisely-located obligation, and the honest statement of the research frontier is the statement of what would discharge it. Part II already named the two exits, and they are the only two on present evidence:</p>
+<ol type="1">
+<li><strong>A 6th-postulate-class binding law <code>W</code>.</strong> An additional structural input — outside the five postulates — that <em>forces</em> the operator assembly <code>(Tr, Det) = (16G*², 16G*³)</code>, equivalently that natively realizes the antisymmetric beable <code>√(G*(4G*−1))</code> which selects the physical root (the K-BIND obligation of §II.4, <code>[OPEN]</code>). Were such a <code>W</code> added to FTD’s axiom list <em>and</em> shown to be substrate-native, it would convert <code>x₊ = 1/α</code> from <code>[STRONGLY MOTIVATED CONJECTURE]</code> to <code>[DERIVED, modulo W]</code>. Whether any FTD-native <code>W</code> exists is the open kernel of the entire α program.</li>
+<li><strong>A fresh engine-native ARC-D measurement.</strong> A discrete-native measurement of the binding directly on the substrate, bypassing imported continuum machinery. This exit is currently shut: <strong>ARC-D1 already returned <code>[CLOSED NEGATIVE]</code></strong> — 0 macroscopic cluster fissions across 2000 seeds; the lattice is topologically rigid, and a count of zero is precision-independent (§II.4).</li>
+</ol>
+<p>These are the live frontier, stated as obligations rather than promises. Neither is presently open — the axiomatic route lacks a substrate-native operator calculus, and the empirical route met a rigid lattice — and that is exactly why <code>x₊ = 1/α</code> stands where it does. The monograph claims no imminent closure; it claims to have located the gap precisely enough that either exit, if it lands, would be recognizable as a closure rather than another match.</p>
+</section>
+<section id="iii.5-the-honest-physics-scope" class="level2">
+<h2 class="anchored" data-anchor-id="iii.5-the-honest-physics-scope">§III.5 — The honest physics scope</h2>
+<p>The α match is the framework’s sharpest physics claim; the broader “construction layer” — the mass spectrum, the gauge ratios, the gravity and quantum-mechanics-emergence layers — is <strong>weaker, and tagged as such</strong>. This section is a scope statement, not a physics re-derivation, and it is deliberately short.</p>
+<p><strong>The construction layer is <code>[PARAMETRIC]</code>.</strong> The bulk of FTD’s Standard Model coverage — the six quark masses, the ~42 meson and ~48 baryon masses, the ~22 decay rates and widths, the precision-QED observables (g−2, Lamb shift), and the gauge ratios <code>sin²θ_W = 3/13</code> (3.5% error) and <code>α_s = 7/59</code> (0.63% error) (and the wider mixing-angle sector is competitor-dense — several ratios face multiple rational competitors at the same tolerance, and sin²θ₁₃ is effectively a mis-prediction per the catalog — which is exactly why these are cross-checks, not independent evidence) — consists of <strong>standard physics formulas filled with FTD constants</strong>: the functional form is borrowed from QED, chiral perturbation theory, Regge phenomenology, or the renormalization group, and FTD supplies the integers or couplings. These are <code>[PARAMETRIC]</code> insertions — calibration cross-checks against known physics, <strong>not</strong> derivations — and the monograph never calls them otherwise. The canonical enumeration is <a href="../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md"><code>CATALOG_PARAMETRIC_INSERTIONS.md</code></a>: of <strong>~162</strong> catalogued Standard Model quantities, <strong>~23 are <code>[DERIVED]</code>/<code>[THEOREM]</code></strong> (the foundational constants and a few cross-sections/null-predictions), <strong>~129 are <code>[PARAMETRIC]</code></strong>, and <strong>~10 are <code>[IMPOSED]</code>/<code>[SELECTION]</code></strong>. That distribution — a small genuinely-derived core, a large parametric cross-check layer — is the honest shape of FTD’s physics reach.</p>
+<p><strong>Two lepton-anchored mass formulas sit one tier higher — at their catalog tag, not promoted.</strong> Matching the source (<a href="../07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md"><code>CATALOG_PARAMETRIC_INSERTIONS.md</code></a> §4), the electron mass <code>m_e = m_P·√(2π)·(16/3)·α¹¹</code> (0.19% error) and the proton-electron ratio <code>m_p/m_e = N_eff/α + N_base·N_eff + N_c</code> (173 ppm error) are each tagged <code>[STRONGLY MOTIVATED CONJECTURE]</code>, not <code>[PARAMETRIC]</code> — they combine FTD’s Moore-neighbourhood integers <code>{N_base, N_eff, N_c} = {4, 13, 3}</code> with α in structurally-motivated combinations, which is harder to dismiss as a bare rational fit, but the prefactors and exponents are motivated rather than dynamically derived. Stated at that tag and no higher: they are <code>[STRONGLY MOTIVATED CONJECTURE]</code>, <strong>not</strong> derivations.</p>
+<p><strong>The gravity layer.</strong> The identification of the engine constant <code>G_N = 0.01</code> with the physical Newton constant is <strong><code>[CLOSED NEGATIVE]</code></strong> (FTD-0131); what the substrate derivation actually yields is the gravitational fine-structure ratio for one electron, <code>α_G(e,e) = (m_e/m_P)² ≈ 1.745×10⁻⁴⁵</code> (0.38% match), and that result carries one flagged interpretive step (the clock hypothesis), so it is not advanced here as a clean derivation of <code>G</code>.</p>
+<p><strong>Dimensionless vs dimensional — where the falsifiable spine lives.</strong> One structural fact organizes all of the above. FTD’s dimensional predictions (any value in MeV, seconds, or metres) are <strong>calibration-conditional</strong>: they pass through exactly two theorem-enforced anchors, <code>a_phys ≡ ℓ_P</code> (length) and <code>K_B = m_e</code> (mass), and are no firmer than those declared calibrations (<code>m_e</code> above consumes the <code>K_B = m_e</code> anchor, which is why it is not a free dimensional prediction). The <strong>dimensionless</strong> predictions — α, the lepton mass <em>ratios</em> <code>m_μ/m_e</code> and <code>m_τ/m_e</code>, the mixing angles — require no calibration and constitute the <strong>calibration-independent falsifiable spine</strong>. The canonical three-layer map is <a href="SPEC_DIMENSIONAL_MAP.md"><code>SPEC_DIMENSIONAL_MAP.md</code></a>. The reader’s takeaway for scope: the dimensionless ratios are where FTD stakes a falsifiable claim; the dimensional values inherit the status of their calibration; and the broad mass/gauge layer is a <code>[PARAMETRIC]</code> cross-check, not independent evidence.</p>
+<hr>
+<hr>
+</section>
+</section>
+<section id="coda-the-map-in-both-directions" class="level1">
+<h1>Coda — The map in both directions</h1>
+<p>The construction is complete. It is worth saying, in plain language and for the reader who came to this document from philosophy of physics rather than from lattice field theory, what the finished map shows — and what it honestly does not.</p>
+<p><strong>The two findings, stated together.</strong> A finite, discrete ontology — five postulates, no completed infinity, no primitive continuum, together with the single <code>ℤ[i]</code> reading of its order-4 symmetry (§I.1) — <strong>forces</strong> a rich theorem-grade algebraic spine: the constant <code>G* = Γ(1/4)/Γ(3/4)</code> (constructed four ways of differing character), the master quadratic and its roots, the arithmetic of the lemniscatic CM curve, the harmonic-invariant tower, the π-freeness of <code>Q(G*)</code> — <strong>seven theorem-grade results</strong> in all (Part I). And the <em>same</em> ontology <strong>provably does not force</strong> the electromagnetic coupling α without an additional binding law: the boundary is route-invariant, built from theorem-grade masonry around one precisely-located open kernel, and its honest verdict is that α is <em>dynamical, not structural</em> (Part II). <strong>Both halves are the deliverable.</strong> This is the point that is easiest to miss and most important to hold: the second finding is not the first finding’s failure. A mapped boundary — <em>this</em> is what the ontology reaches, and <em>this</em> is the precise place it stops — is a result in its own right, a different and non-trivial kind of result — one easy to mistake for a failure. A program that exhibited only the spine would be a curiosity; one that maps the wall, in both directions and at honest tags, is doing the thing the goal was set to do.</p>
+<p><strong>The least-wrong self-assessment.</strong> Stated without flattery: FTD is a <strong>philosophy-of-mathematics project with a rigorous algebraic core and suggestive — not derived — physics connections.</strong> The algebraic core is genuine: the seven theorem-grade results survive skeptical mathematical review, are tied to verification artifacts, and stand independently of any physical interpretation. The physics connection is real and is honestly weaker than the mathematics: the α match is a <code>[STRONGLY MOTIVATED CONJECTURE]</code> backed by strong structural-uniqueness evidence and no derivation chain; the broader mass-and-gauge layer is <code>[PARAMETRIC]</code>. FTD is therefore <strong>not</strong> a competitor to QED or general relativity on their empirical terms — it does not out-predict them, and it does not claim to. Its contribution is of a different kind: a demonstration, carried out at theorem grade where it can be and at honest conjecture grade where it cannot, of exactly how far a discrete ontology reaches toward physics on its own — and exactly where it needs an additional input it does not contain.</p>
+<p><strong>Where it touches the open questions.</strong> The program brushes against two genuinely open foundational questions, and it touches each at that question’s honest status, claiming no resolution. On <strong>the measurement problem</strong>, FTD’s quantum-mechanics-emergence layer (the Born rule, collapse-as-projection) is <code>[SELECTION]</code>/<code>[OPEN]</code>, not a solution — the load-bearing step “probability = normalized energy density” is unproven, and the framework records it as unproven. On <strong>the status of mathematical structure in physics</strong> — whether the unreasonable effectiveness of mathematics reflects something forced or something chosen — FTD offers an unusually crisp data point precisely <em>because</em> it draws the line: here is a case where one can exhibit, with proofs, that a discrete mathematical ontology forces a specific rich structure, and can exhibit, also with proofs, that the same ontology does not force a specific physical coupling. The effectiveness is real on the forced side and absent on the unforced side, and the boundary between them is mapped rather than asserted. That is the most the project claims, and it claims it at the tags the claim can bear.</p>
+<p><strong>The two-clause goal, closed.</strong> The value of this construction is not a derivation of physics from discreteness — that, Part II shows, the ontology does not supply. The value is the <strong>map</strong>: a faithful drawing of the line of what a finite discrete ontology reaches, <strong>honest in both directions</strong> — every theorem proved where the ontology forces, every boundary marked where it does not, and no tag promoted to make the picture prettier than it is. The constant at the centre of it all, <code>G* ≈ 2.95868</code>, is the lemniscatic ratio <code>Γ(1/4)/Γ(3/4)</code> throughout — never the distinct lemniscate constant <code>ϖ ≈ 2.62206</code>. That is the construction, and that is its honest reach.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
