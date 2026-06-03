@@ -1,7 +1,7 @@
 # NODE MAP — FTD math connectivity
 
 **Tag:** [INFRASTRUCTURE / METHODOLOGY] — descriptive navigation, not theorem-production.
-**Generated from:** `scripts/verification/results/math_node_map.json` (commit `f16a435`).
+**Generated from:** `scripts/verification/results/math_node_map.json` (commit `52bd1b4`).
 **Renderer:** `scripts/verification/parsers/mermaid_renderer.py` via `scripts/verification/build_math_node_map.py`.
 
 > **Scope discipline.** This document is descriptive: it shows which LEDGER claims and spine theorems sit in each sector and how they depend on each other. The full multi-layer graph (with identities + objects + epistemic-tag overlay) is in the interactive HTML at `dissemination/interactive/math_node_map.html`. The Markdown Mermaid blocks below cap each sector at 40 LEDGER rows for renderer-budget reasons; the full set is in the JSON + HTML.
@@ -10,12 +10,12 @@
 
 ## §1 — Reading guide
 
-**Nodes:** 13 spine theorems (T1–T9, S1–S4) + 221 LEDGER claims + 82 mathematical objects + 934 identities.
+**Nodes:** 13 spine theorems (T1–T9, S1–S4) + 222 LEDGER claims + 82 mathematical objects + 934 identities.
 **Edges:** 1275 total across 5 types (theorem→ledger anchor, ledger→ledger deps, identity→theorem witness, identity→ledger witness, object→identity participation).
 
 **Sectors (with row count):**
 
-- `engine-bridge` — 12 LEDGER rows
+- `engine-bridge` — 13 LEDGER rows
 - `physics/EM-alpha` — 22 LEDGER rows
 - `physics/EW-Higgs` — 2 LEDGER rows
 - `physics/QCD` — 11 LEDGER rows
@@ -43,9 +43,9 @@
 - `SELECTION` (9, color #fbc02d)
 - `POSITIVE` (7, color #43a047)
 - `PRE_REGISTRATION` (7, color #1976d2)
+- `CONJECTURE` (6, color #fb8c00)
 - `OPEN` (6, color #757575)
 - `RETRACTED` (6, color #424242)
-- `CONJECTURE` (5, color #fb8c00)
 - `INFRASTRUCTURE` (5, color #00897b)
 - `SMC` (4, color #f57c00)
 - `PARAMETRIC` (4, color #9e9e9e)
@@ -98,6 +98,8 @@ graph LR
     style FTD_0208 fill:#c62828,color:white,stroke:#222,stroke-width:1px
     FTD_0236["FTD-0236: Ginsparg-Wilson & Overlap Fermion Relation & In..."]
     style FTD_0236 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
+    FTD_0248["FTD-0248: Epistemic Symmetries and Chiral Trajectories"]
+    style FTD_0248 fill:#fb8c00,color:white,stroke:#222,stroke-width:1px
     T7 ==> FTD_0005
     S2 ==> FTD_0008
     S3 ==> FTD_0059
