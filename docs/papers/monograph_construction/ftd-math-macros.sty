@@ -1,0 +1,151 @@
+% =============================================================================
+% ftd-math-macros.sty  --  Canonical math macros for the FTD construction monograph
+% -----------------------------------------------------------------------------
+% ANTI-DRIFT PRINCIPLE.  Every load-bearing constant and equation of the
+% monograph is defined here ONCE and reused everywhere.  Body text must never
+% type a literal "137.036", "2.9586", or a hand-keyed master quadratic.  If a
+% canonical value ever changes, it changes here and nowhere else.
+%
+% Source of truth for the numbers:  scripts/constants.py  (G_STAR, VARPI_CLASSICAL,
+% X_PLUS, X_MINUS) and docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md (the exact
+% master-quadratic / discriminant / root forms).  See also the monograph source,
+% docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md.
+%
+% NOTE on powers of G*:  write \Gss / \Gsss / \Gsf for the integer powers (these
+% render as G^{*2} etc., matching the source), and \Gpow{<expr>} for SYMBOLIC
+% exponents.  NEVER write \Gs^{2} -- \Gs already carries a superscript, so a
+% second one is a "double superscript" LaTeX error.  That error is, in fact, a
+% useful guard: it fires the instant someone forgets and uses the wrong form.
+% =============================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ftd-math-macros}[2026/06/02 v1.0 FTD canonical math macros]
+\newcommand{\Ftheory}{\mathfrak{F}}% the postulate set (newtxmath provides \mathfrak)
+
+% ---- number systems & operators ------------------------------------------
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Zi}{\mathbb{Z}[i]}                 % the Gaussian integers
+\newcommand{\Ziu}{\mathbb{Z}[i]^{\times}}       % unit group of Z[i]
+\DeclareMathOperator{\AGM}{AGM}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Det}{det}
+\DeclareMathOperator{\disc}{disc}
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\mult}{mult}
+\newcommand{\detz}{\operatorname{det}\nolimits_{\zeta}}  % zeta-regularized det
+\providecommand{\Re}{}\renewcommand{\Re}{\operatorname{Re}}
+\providecommand{\Im}{}\renewcommand{\Im}{\operatorname{Im}}
+
+% ---- the bridge constant G* and its companion varpi ----------------------
+\newcommand{\Gs}{G^{*}}            % G*  (single symbol; never \Gs^{n})
+\newcommand{\Gss}{G^{*2}}          % G*^2
+\newcommand{\Gsss}{G^{*3}}         % G*^3
+\newcommand{\Gsf}{G^{*4}}          % G*^4
+\newcommand{\Gpow}[1]{{G^{*}}^{#1}}% G* to a symbolic power, e.g. \Gpow{k-2}
+\newcommand{\GG}{G_{\!\scriptscriptstyle\mathrm{G}}}  % Gauss's constant
+
+% ---- canonical NUMERIC values (verified vs scripts/constants.py) ----------
+\newcommand{\Gstarnum}{2.95867511919\ldots}     % G_STAR
+\newcommand{\Gstarapprox}{2.95868}              % short form used in prose
+\newcommand{\varpinum}{2.62205755}              % VARPI_CLASSICAL  (NOT G*!)
+\newcommand{\varpiapprox}{2.62206}              % short form used in prose
+\newcommand{\xplusnum}{137.0361714582\ldots}    % X_PLUS
+\newcommand{\xminusnum}{3.0239639163\ldots}     % X_MINUS
+\newcommand{\xminusapprox}{3.024}
+\newcommand{\alphainvnum}{137.035999177(21)}    % CODATA 2022 alpha^{-1}
+\newcommand{\ppmval}{1.26}                      % parts-per-million match
+\newcommand{\Lval}{0.6555143885}                % L(E_lemn,1)
+
+% ---- canonical EQUATIONS (use inside math mode / display) -----------------
+% G* definition and its closed forms (Euler reflection)
+\newcommand{\Gstardef}{\Gs \;=\; \frac{\Gamma(1/4)}{\Gamma(3/4)} \;=\; \Gstarnum}
+\newcommand{\reflection}{\Gamma(1/4)\,\Gamma(3/4) \;=\; \frac{\pi}{\sin(\pi/4)} \;=\; \pi\sqrt 2}
+\newcommand{\Gstarclosed}{\Gs \;=\; \frac{\Gamma(1/4)^2}{\pi\sqrt 2} \;=\; \frac{2\varpi}{\sqrt\pi}}
+\newcommand{\varpidef}{\varpi \;=\; \frac{\Gamma(1/4)^2}{2\sqrt{2\pi}} \;\approx\; \varpinum}
+
+% The master quadratic, its discriminant, and its roots
+\newcommand{\masterquad}{P(x) \;=\; x^{2} - 16\,\Gss\,x + 16\,\Gsss}
+% wide chains broken across two aligned lines so they fit the narrow measure
+% and the (narrower) marquee-box interiors.  Use inside \[ ... \] only.
+% The terminal punctuation lives in the LAST aligned cell (not after the block):
+% a bare comma/period after \end{aligned} would float on the math axis, high to
+% the right. These two macros are each used exactly once (the master-quadratic
+% box), so the in-macro punctuation is local and correct.
+\newcommand{\discriminant}{%
+  \begin{aligned}
+    \Delta &\;=\; (16\,\Gss)^{2} - 4\cdot 16\,\Gsss \\
+           &\;=\; 256\,\Gsf - 64\,\Gsss \;=\; 64\,\Gsss\,(4\Gs - 1),
+  \end{aligned}}
+\newcommand{\rootsexplicit}{%
+  \begin{aligned}
+    x_{\pm} &\;=\; 8\,\Gss \pm \sqrt{64\,\Gsf - 16\,\Gsss} \\
+            &\;=\; 8\,\Gss \pm 4\,\Gs\sqrt{4\,\Gss - \Gs}.
+  \end{aligned}}
+\newcommand{\sqrtwall}{\sqrt{\,\Gs(4\Gs - 1)\,}}        % the K-BIND "square-root wall"
+
+% Watson BCC period
+\newcommand{\watsonint}{%
+  W_3 \;=\; \frac{1}{\pi^{3}}\int_0^{\pi}\!\!\int_0^{\pi}\!\!\int_0^{\pi}
+  \frac{dk_1\,dk_2\,dk_3}{1 - \cos k_1 \cos k_2 \cos k_3}}
+\newcommand{\watsonval}{W_3 \;=\; \frac{\Gss}{2\pi}}
+
+% Lerch / quarter-conjugacy determinant bridge
+\newcommand{\lerch}{\detz\{n + a\}_{n\ge 0} \;=\; \frac{\sqrt{2\pi}}{\Gamma(a)}}
+\newcommand{\detzratio}{%
+  \frac{\detz D_{3/4}}{\detz D_{1/4}}
+  \;=\; \frac{\sqrt{2\pi}/\Gamma(3/4)}{\sqrt{2\pi}/\Gamma(1/4)}
+  \;=\; \frac{\Gamma(1/4)}{\Gamma(3/4)} \;=\; \Gs}
+
+% Finite-N attractor (Route 4)
+\newcommand{\finiteN}{G^{*}_{N} \;:=\; (N+1)^{-1/2}\prod_{n=0}^{N}\frac{n + 3/4}{n + 1/4}}
+\newcommand{\finiteNrate}{%
+  G^{*}_{N} \;=\; \Gs + \frac{C}{N^{2}} + O(N^{-3}),
+  \qquad\text{so } G^{*}_{N} \to \Gs \text{ at rate } O(1/N^{2})}
+
+% Harmonic-invariant tower
+\newcommand{\towerquad}{M_k(x) \;=\; x^{2} - 2^{k}\,\Gpow{k-2}\,x + 2^{k}\,\Gpow{k-1}}
+\newcommand{\harmonicinv}{\frac{1}{y_+} + \frac{1}{y_-} \;=\; 1}
+
+% Tower discriminant transcendence
+\newcommand{\towerdisc}{\disc(M_k) \;=\; 2^{k+2}\,\Gpow{k-1}\,A_k,
+  \qquad A_k := 2^{k-2}\,\Gpow{k-3} - 1}
+
+% BCC complex structure
+\newcommand{\bccdecomp}{%
+  \Z[\mathrm{BCC}] \otimes \Q
+  \;=\; V_{\mathrm{triv}}^{2} \oplus V_{\mathrm{sign}}^{2} \oplus V_{\mathrm{complex}}^{2}}
+
+% Lemniscatic L-value (Rubin 1991; errata-corrected factor varpi/4)
+\newcommand{\Lvalueeq}{%
+  L(E_{\mathrm{lemn}}, 1) \;=\; \frac{\varpi}{4} \;=\; \frac{\Gs\sqrt\pi}{8}
+  \;\approx\; \Lval}
+
+% The readout operator assembly (Part II)
+\newcommand{\assembly}{(\Tr W,\ \det W) \;=\; (16\,\Gss,\ 16\,\Gsss)}
+
+% Galois-fixed-field statement (route invariance)
+\newcommand{\splitfield}{\Q(\Gs)\bigl(\sqrtwall\bigr)\big/\Q(\Gs)}
+
+% ---- the empirical match (Part III) ---------------------------------------
+\newcommand{\xplusval}{x_+ \;=\; \xplusnum}
+\newcommand{\alphainveq}{\alpha^{-1} \;=\; \alphainvnum \quad \text{(CODATA 2022)}}
+\newcommand{\ppmmatch}{%
+  \frac{\lvert x_+ - \alpha^{-1}\rvert}{\alpha^{-1}}
+  \;=\; \ppmval\times 10^{-6} \;=\; \mathbf{\ppmval\ \text{ppm}}}
+
+% ---- framework integers & the physics-layer formulas (Part III, PARAMETRIC)
+\newcommand{\Nc}{N_c}
+\newcommand{\Nbase}{N_{\mathrm{base}}}
+\newcommand{\Neff}{N_{\mathrm{eff}}}
+\newcommand{\meformula}{m_e \;=\; m_P\,\sqrt{2\pi}\,\tfrac{16}{3}\,\alpha^{11}}
+\newcommand{\mpratio}{\frac{m_p}{m_e} \;=\; \frac{\Neff}{\alpha} + \Nbase\,\Neff + \Nc}
+\newcommand{\alphaGee}{\alpha_G(e,e) \;=\; \Bigl(\tfrac{m_e}{m_P}\Bigr)^{2} \;\approx\; 1.745\times 10^{-45}}
+\newcommand{\sinthetaW}{\sin^{2}\theta_W \;=\; \tfrac{3}{13}}
+\newcommand{\alphastrong}{\alpha_s \;=\; \tfrac{7}{59}}
+
+\endinput

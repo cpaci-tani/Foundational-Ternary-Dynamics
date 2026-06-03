@@ -1,0 +1,15 @@
+# LaTeX build artifacts (the .pdf is committed; intermediates are not)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.out
+*.run.xml
+*.toc
+*.lof
+*.lot
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+_smoke.*

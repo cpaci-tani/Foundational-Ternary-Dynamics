@@ -1,0 +1,61 @@
+% =============================================================================
+%  The Construction of the FTD Mathematics
+%  From a Discrete Ontology to Its Provable Boundary
+% -----------------------------------------------------------------------------
+%  Master file.  Build (Perl-free; latexmk unavailable on this MiKTeX):
+%     pdflatex monograph  ->  biber monograph  ->  pdflatex monograph  x2
+%  or run  build.ps1 / build.bat  in this directory.
+%
+%  This is a faithful LaTeX formalization of
+%     docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md   (tag [SYNTHESIS]).
+%  It introduces no new mathematics and promotes no tag.  Where this document
+%  and a canonical source disagree on an epistemic tag, the source is correct.
+% =============================================================================
+\documentclass{ftdmonograph}
+
+\usepackage{ftd-math-macros}     % canonical equations & constants (anti-drift)
+\usepackage{ftd-epistemic}       % the monochrome epistemic-tag system
+
+\addbibresource{references.bib}
+
+\begin{document}
+
+\frontmatter
+\input{frontmatter}
+
+\mainmatter
+\setcounter{part}{-1}            % so the first \part renders as "Part 0"
+
+\part{The Seed}\input{part0_seed}
+\part{The Constructive Reach}\input{part1_reach}
+\part{The Boundary}\input{part2_boundary}
+\part{The Bridge}\input{part3_bridge}
+
+\part*{Coda}
+\addcontentsline{toc}{part}{Coda \textmd{\textnormal{--- the map in both directions}}}
+\markboth{Coda}{Coda}   % the Coda has no \section; set its running head explicitly
+\input{coda}
+
+\backmatter
+\printbibliography[heading=bibintoc, title={Canonical sources \& references}]
+
+% ---- colophon -------------------------------------------------------------
+\clearpage
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}\small\itshape
+Colophon
+\end{center}
+\begin{center}\footnotesize
+This monograph was set in Times-like \textsc{newtx} with \LaTeX\ on the
+\texttt{ftdmonograph} class. Its design is deliberately monochrome: epistemic
+tier is carried by rule weight and style (heavy, thin, dashed,
+double), never by colour, so the argument reads identically in grayscale and
+in print, after Bringhurst's counsel that structure should be legible without
+ornament~\cite{bringhurst2004}. Every constant and equation is defined once, in
+a single macro file; every result is set at the grade it earned, and none was
+inflated in the typesetting.
+\end{center}
+\vspace*{\fill}
+
+\end{document}
