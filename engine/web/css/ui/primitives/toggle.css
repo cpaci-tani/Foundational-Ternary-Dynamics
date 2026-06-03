@@ -67,6 +67,24 @@ html[data-theme="parchment"] .view-toggle.active {
     .view-toggle { min-height: 44px; padding: 10px var(--sp-md); }
 }
 
+/* ── Flux-slice per-axis mini toggles ────────────────── */
+/* Compact xy/xz/yz buttons under the Flux Slice toggle that enable/disable
+   each mid-plane of the all-axis flux slice overlay. Inherit .view-toggle
+   theming; just tighten the footprint and lay them out in a row. */
+.flux-slice-axis-row {
+    display: flex;
+    gap: var(--sp-xs, 4px);
+    margin-top: var(--sp-xs, 4px);
+}
+.flux-slice-axis-mini {
+    flex: 1;
+    padding: 2px 0;
+    font-size: var(--fs-xs, 11px);
+    text-align: center;
+    text-transform: lowercase;
+    letter-spacing: 0.04em;
+}
+
 /* ── Dynamics toggle (.dynamics-toggle) ──────────────── */
 /* Dashed-border variant indicating a live/dangerous toggle.
    Declared after .view-toggle so same-specificity rules naturally win. */

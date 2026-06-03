@@ -512,11 +512,15 @@ export class Viewport {
     }
 
     /**
-     * Update flux slice heatmap from a 2D slice of flux magnitudes.
-     * Phase 3c: writes _fieldHeatmap which is now owned by FieldRenderer.
+     * Update the flux slice overlay from one or more 2D planes of flux
+     * magnitudes. Owned by FieldRenderer's dedicated _fluxSliceMesh.
      */
     updateFluxSlice(sliceData, latticeSize, axis, index) {
         this._fieldRenderer.updateFluxSlice(sliceData, latticeSize, axis, index);
+    }
+
+    updateFluxSlices(planes, latticeSize, index) {
+        this._fieldRenderer.updateFluxSlices(planes, latticeSize, index);
     }
 
     toggleFluxVolume(on) { this._fluxRenderer.toggleFluxVolume(on); }
@@ -535,6 +539,16 @@ export class Viewport {
     setFluxThreshold(val) { this._fluxRenderer.setFluxThreshold(val); }
     setScenarioScale(scale) { this._fluxRenderer.setScenarioScale(scale); }
     setFluxLatticeSpacing(val) { this._fluxRenderer.setFluxLatticeSpacing(val); }
+
+    // ── Flux Slice Controls ───────────────────────────────────────────
+    // Mirror the Flux Volume appearance controls onto the dedicated flux-slice
+    // mesh (FieldRenderer), plus per-axis visibility for the all-axis overlay.
+    setFluxSliceOpacity(val) { this._fieldRenderer.setFluxSliceOpacity(val); }
+    setFluxSliceShape(shapeIndex) { this._fieldRenderer.setFluxSliceShape(shapeIndex); }
+    setFluxSlicePointScale(scale) { this._fieldRenderer.setFluxSlicePointScale(scale); }
+    setFluxSliceThreshold(val) { this._fieldRenderer.setFluxSliceThreshold(val); }
+    setFluxSliceAxisEnabled(axis, on) { this._fieldRenderer.setFluxSliceAxisEnabled(axis, on); }
+    getEnabledFluxSliceAxes() { return this._fieldRenderer.getEnabledFluxSliceAxes(); }
 
     _applyScenarioScale() {
         if (this._engineMode === 'lattice' || !this._engineMode) {

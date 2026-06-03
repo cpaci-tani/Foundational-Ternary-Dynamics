@@ -41,7 +41,15 @@ export function getScale0OverlayTemplate() {
       <button class="view-toggle active" id="toggle-flux-volume"
           title="Volumetric point cloud of |J| across the whole lattice">Flux Volume</button>
       <button class="view-toggle" id="toggle-flux-slice"
-          title="2D slice through the flux field (XZ plane)">Flux Slice</button>
+          title="2D slice through the flux field — xy, xz, yz mid-planes">Flux Slice</button>
+      <div class="flux-slice-axis-row" role="group" aria-label="Flux slice planes">
+        <button class="view-toggle flux-slice-axis-mini active" id="flux-slice-axis-xy"
+            title="Toggle the xy mid-plane (z = L/2)">xy</button>
+        <button class="view-toggle flux-slice-axis-mini active" id="flux-slice-axis-xz"
+            title="Toggle the xz mid-plane (y = L/2)">xz</button>
+        <button class="view-toggle flux-slice-axis-mini active" id="flux-slice-axis-yz"
+            title="Toggle the yz mid-plane (x = L/2)">yz</button>
+      </div>
       <button class="view-toggle field-toggle" id="toggle-flux-lines"
           title="Streamlines of the J-field showing flow direction">
         <span class="field-swatch field-swatch-flux-lines"></span>Flux Lines

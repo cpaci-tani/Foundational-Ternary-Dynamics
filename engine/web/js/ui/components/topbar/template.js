@@ -14,6 +14,9 @@ export function getTopbarInlineTemplate() {
 
 export function getTopbarActionButtons() {
     return `
+        <button class="tb-btn tb-btn-vtk" id="btn-vtk-export"
+            title="Copy a local ftd_sim V command for a ParaView/VTK research bundle"
+            aria-label="Copy ParaView VTK export command">VTK</button>
         <button class="tb-btn tb-btn-knowledge" id="btn-knowledge-base" title="Open the FTD knowledge base"
             aria-label="Open the FTD knowledge base">KB</button>
         <button class="tb-btn tb-btn-faq" id="btn-faq" title="Open the FTD FAQ — hard problems, framed"
