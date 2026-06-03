@@ -32,6 +32,8 @@ void scenario_H(int lattice_size, int num_ticks, const std::string& outdir);
 void scenario_I(int lattice_size, int num_ticks, const std::string& outdir);
 void scenario_J(int lattice_size, int num_ticks, const std::string& outdir);
 void scenario_K(int lattice_size, int num_ticks, const std::string& outdir);
+void scenario_V(int lattice_size, int num_ticks, const std::string& outdir,
+                int frame_interval = 0, int spatial_stride = 1);
 
 }  // namespace cli_demos
 }  // namespace ftd

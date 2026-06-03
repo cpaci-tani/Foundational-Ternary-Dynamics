@@ -59,6 +59,7 @@ struct TermToggles {
     bool symplectic_leapfrog = false; // Scale 0: Symplectic Leapfrog wave propagation
     bool su2_gauge = false;         // Scale 0: SU(2) non-Abelian link variables
     bool su3_gauge = false;         // Scale 0: SU(3) non-Abelian link variables
+    bool symmetric_movement_order = false; // phase_movement: coordinate-independent update traversal & axis ordering
 
     // D-3 / E-1 (2026-04-27): JS scale-0 scenario library has been pushing a
     // `confinement` bool through setToggle(); without a backing field the
@@ -148,6 +149,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"symplectic_leapfrog", &TermToggles::symplectic_leapfrog, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Symplectic leapfrog wave integration"},
     {"su2_gauge",           &TermToggles::su2_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(2) non-Abelian link variables"},
     {"su3_gauge",           &TermToggles::su3_gauge,           false, true,  "",                 "",                 "", ToggleBackend::ANY, "SU(3) non-Abelian link variables"},
+    {"symmetric_movement_order", &TermToggles::symmetric_movement_order, false, true,  "movement",         "",                 "", ToggleBackend::ANY, "Coordinate-independent update traversal & axis ordering"},
     {"confinement",        &TermToggles::confinement,        false, false, "",                 "",                 "", ToggleBackend::ANY, "Linear confinement intent flag (no C++ branch yet)"},
     {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 "", ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
 };

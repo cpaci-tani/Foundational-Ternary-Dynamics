@@ -12,10 +12,11 @@
  *   I: Interference pattern with CSV export (4-source, density heatmaps)
  *   J: Pair production with CSV export (counter-propagating beams)
  *   K: Force-law profile (does 1/r^2 emerge from grad(div(J))?)
+ *   V: ParaView/VTK research export bundle
  *
  * Scenario implementations live in engine/src/cli_demos/.
  *
- * Usage: ftd_sim [scenario] [lattice_size] [num_ticks] [outdir]
+ * Usage: ftd_sim [scenario] [lattice_size] [num_ticks] [outdir] [frame_interval] [spatial_stride]
  */
 
 #include <iostream>
@@ -40,6 +41,7 @@ int main(int argc, char* argv[]) {
         else if (c == 'I' || c == 'i') scenario = 'I';
         else if (c == 'J' || c == 'j') scenario = 'J';
         else if (c == 'K' || c == 'k') scenario = 'K';
+        else if (c == 'V' || c == 'v') scenario = 'V';
         else scenario = 'D';
     }
     if (argc > 2) lattice_size = std::atoi(argv[2]);
@@ -55,6 +57,10 @@ int main(int argc, char* argv[]) {
     // Output directory for CSV-exporting scenarios (4th arg or default)
     std::string outdir = "output";
     if (argc > 4) outdir = argv[4];
+    int frame_interval = 0;
+    int spatial_stride = 1;
+    if (argc > 5) frame_interval = std::atoi(argv[5]);
+    if (argc > 6) spatial_stride = std::atoi(argv[6]);
 
     using namespace ftd::cli_demos;
     switch (scenario) {
@@ -67,6 +73,7 @@ int main(int argc, char* argv[]) {
         case 'I': scenario_I(lattice_size, num_ticks, outdir); break;
         case 'J': scenario_J(lattice_size, num_ticks, outdir); break;
         case 'K': scenario_K(lattice_size, num_ticks, outdir); break;
+        case 'V': scenario_V(lattice_size, num_ticks, outdir, frame_interval, spatial_stride); break;
         default:  scenario_default(lattice_size, num_ticks); break;
     }
 
