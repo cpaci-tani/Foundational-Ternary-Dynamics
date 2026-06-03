@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-05-23T23:30:58.210812</dc:date>
+    <dc:date>2026-06-02T13:34:16.174710</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -38,9 +38,9 @@ z
 " style="fill: #ffffff"/>
    </g>
    <g id="line2d_1">
-    <path d="M 119.136873 392.758125 
-L 139.646268 368.108279 
-" clip-path="url(#pf2640ee705)" style="fill: none; stroke: #1565c0; stroke-opacity: 0.8; stroke-width: 1.5; stroke-linecap: square"/>
+    <path d="M 24.84 121.690969 
+L 24.84 145.815092 
+" clip-path="url(#p797cd15065)" style="fill: none; stroke: #1565c0; stroke-opacity: 0.8; stroke-width: 1.5; stroke-linecap: square"/>
    </g>
    <g id="matplotlib.axis_1"/>
    <g id="matplotlib.axis_2"/>
@@ -66,7 +66,7 @@ L 395.28 22.318125
    </g>
    <g id="PathCollection_1">
     <defs>
-     <path id="C0_0_4d6f5e13a4" d="M 0 3.872983 
+     <path id="C0_0_70ffd3290c" d="M 0 3.872983 
 C 1.027127 3.872983 2.012324 3.464901 2.738613 2.738613 
 C 3.464901 2.012324 3.872983 1.027127 3.872983 -0 
 C 3.872983 -1.027127 3.464901 -2.012324 2.738613 -2.738613 
@@ -78,33 +78,33 @@ C -2.012324 3.464901 -1.027127 3.872983 0 3.872983
 z
 "/>
     </defs>
-    <g clip-path="url(#pf2640ee705)">
-     <use xlink:href="#C0_0_4d6f5e13a4" x="151.817285" y="392.758125" style="fill: #2e7d32; stroke: #222222; stroke-width: 0.5"/>
+    <g clip-path="url(#p797cd15065)">
+     <use xlink:href="#C0_0_70ffd3290c" x="24.84" y="206.001488" style="fill: #2e7d32; stroke: #222222; stroke-width: 0.5"/>
     </g>
-    <g clip-path="url(#pf2640ee705)">
-     <use xlink:href="#C0_0_4d6f5e13a4" x="139.646268" y="368.108279" style="fill: #2e7d32; stroke: #222222; stroke-width: 0.5"/>
+    <g clip-path="url(#p797cd15065)">
+     <use xlink:href="#C0_0_70ffd3290c" x="24.84" y="145.815092" style="fill: #2e7d32; stroke: #222222; stroke-width: 0.5"/>
     </g>
-    <g clip-path="url(#pf2640ee705)">
-     <use xlink:href="#C0_0_4d6f5e13a4" x="377.64" y="39.958125" style="fill: #2e7d32; stroke: #222222; stroke-width: 0.5"/>
+    <g clip-path="url(#p797cd15065)">
+     <use xlink:href="#C0_0_70ffd3290c" x="377.64" y="39.958125" style="fill: #2e7d32; stroke: #222222; stroke-width: 0.5"/>
     </g>
-    <g clip-path="url(#pf2640ee705)">
-     <use xlink:href="#C0_0_4d6f5e13a4" x="319.266922" y="39.958125" style="fill: #2e7d32; stroke: #222222; stroke-width: 0.5"/>
+    <g clip-path="url(#p797cd15065)">
+     <use xlink:href="#C0_0_70ffd3290c" x="312.796573" y="39.958125" style="fill: #2e7d32; stroke: #222222; stroke-width: 0.5"/>
     </g>
-    <g clip-path="url(#pf2640ee705)">
-     <use xlink:href="#C0_0_4d6f5e13a4" x="24.84" y="392.758125" style="fill: #bdbdbd; stroke: #222222; stroke-width: 0.5"/>
+    <g clip-path="url(#p797cd15065)">
+     <use xlink:href="#C0_0_70ffd3290c" x="24.84" y="392.758125" style="fill: #bdbdbd; stroke: #222222; stroke-width: 0.5"/>
     </g>
    </g>
    <g id="PathCollection_2">
     <defs>
-     <path id="me0b4421008" d="M 0 10 
+     <path id="me31fa76a64" d="M 0 10 
 L 10 0 
 L 0 -10 
 L -10 0 
 z
 " style="stroke: #0d47a1; stroke-width: 0.5"/>
     </defs>
-    <g clip-path="url(#pf2640ee705)">
-     <use xlink:href="#me0b4421008" x="119.136873" y="392.758125" style="fill: #1565c0; stroke: #0d47a1; stroke-width: 0.5"/>
+    <g clip-path="url(#p797cd15065)">
+     <use xlink:href="#me31fa76a64" x="24.84" y="121.690969" style="fill: #1565c0; stroke: #0d47a1; stroke-width: 0.5"/>
     </g>
    </g>
    <g id="text_1">
@@ -694,7 +694,7 @@ z
    </g>
    <g id="text_2">
     <!-- Coefficient 16 from |Aut(E)|² -->
-    <g style="fill: #222222" transform="translate(123.136873 388.758125) scale(0.07 -0.07)">
+    <g style="fill: #222222" transform="translate(28.84 117.690969) scale(0.07 -0.07)">
      <defs>
       <path id="DejaVuSans-66" d="M 2375 4863 
 L 2375 4384 
@@ -870,7 +870,7 @@ z
    </g>
    <g id="text_3">
     <!-- CM-curve uniqueness across class-numb... -->
-    <g style="fill: #222222" transform="translate(155.817285 388.758125) scale(0.07 -0.07)">
+    <g style="fill: #222222" transform="translate(28.84 202.001488) scale(0.07 -0.07)">
      <defs>
       <path id="DejaVuSans-71" d="M 947 1747 
 Q 947 1113 1208 752 
@@ -983,7 +983,7 @@ z
    </g>
    <g id="text_4">
     <!-- Coefficient 16 from \|Aut(E)\|² (Rout... -->
-    <g style="fill: #222222" transform="translate(143.646268 364.108279) scale(0.07 -0.07)">
+    <g style="fill: #222222" transform="translate(28.84 141.815092) scale(0.07 -0.07)">
      <defs>
       <path id="DejaVuSans-5c" d="M 531 4666 
 L 2156 -594 
@@ -1189,7 +1189,7 @@ z
    </g>
    <g id="text_6">
     <!-- Equianharmonic dichotomy at τ=ρ: para... -->
-    <g style="fill: #222222" transform="translate(323.266922 35.958125) scale(0.07 -0.07)">
+    <g style="fill: #222222" transform="translate(316.796573 35.958125) scale(0.07 -0.07)">
      <defs>
       <path id="DejaVuSans-64" d="M 2906 2969 
 L 2906 4863 
@@ -1466,7 +1466,7 @@ z
     </g>
     <g id="PathCollection_4">
      <g>
-      <use xlink:href="#me0b4421008" x="335.665" y="45.239375" style="fill: #1565c0; stroke: #0d47a1; stroke-width: 0.5"/>
+      <use xlink:href="#me31fa76a64" x="335.665" y="45.239375" style="fill: #1565c0; stroke: #0d47a1; stroke-width: 0.5"/>
      </g>
     </g>
     <g id="text_9">
@@ -1486,7 +1486,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pf2640ee705">
+  <clipPath id="p797cd15065">
    <rect x="7.2" y="22.318125" width="388.08" height="388.08"/>
   </clipPath>
  </defs>
