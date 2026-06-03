@@ -19,6 +19,41 @@ function isSessionToolbarNode(node) {
     return false;
 }
 
+function currentLatticeSize() {
+    const raw = document.getElementById('lattice-size')?.value;
+    const value = Number.parseInt(raw, 10);
+    return Number.isFinite(value) && value >= 4 ? value : 64;
+}
+
+function buildVtkExportCommand() {
+    const latticeSize = currentLatticeSize();
+    const ticks = 200;
+    const frameInterval = 20;
+    const spatialStride = 1;
+    return `.\\engine\\build\\Release\\ftd_sim.exe V ${latticeSize} ${ticks} .\\engine\\results\\vtk_research_ui ${frameInterval} ${spatialStride}`;
+}
+
+async function copyText(text) {
+    if (navigator.clipboard?.writeText && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+    }
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    let ok = false;
+    try {
+        ok = document.execCommand('copy');
+    } finally {
+        textarea.remove();
+    }
+    return ok;
+}
+
 export class TopbarComponent {
     constructor({ app, toolbar, toolbarRegistry = null }) {
         this.app = app;
@@ -29,6 +64,7 @@ export class TopbarComponent {
         this.assistantBackdrop = null;
         this.toolbarMenuButton = null;
         this.assistantButton = null;
+        this.vtkButton = null;
         this.onResize = null;
     }
 
@@ -134,6 +170,7 @@ export class TopbarComponent {
     _bindInteractions() {
         this.toolbarMenuButton = this.toolbar.querySelector('#btn-toolbar-menu');
         this.assistantButton = this.toolbar.querySelector('#btn-ftd-assistant');
+        this.vtkButton = this.toolbar.querySelector('#btn-vtk-export');
         const assistantClose = this.app.querySelector('#btn-assistant-close');
         const assistantLaunch = this.app.querySelector('#btn-assistant-launch');
         const assistantDraft = this.app.querySelector('#assistant-draft');
@@ -145,6 +182,7 @@ export class TopbarComponent {
         });
 
         this.assistantButton?.addEventListener('click', () => this.toggleAssistant());
+        this.vtkButton?.addEventListener('click', () => this.copyVtkCommand());
         assistantClose?.addEventListener('click', () => this.closeAssistant());
         this.assistantBackdrop?.addEventListener('click', () => this.closeAssistant());
         document.addEventListener('keydown', (event) => {
@@ -160,6 +198,31 @@ export class TopbarComponent {
         });
 
         assistantLaunch?.addEventListener('click', (event) => event.preventDefault());
+    }
+
+    async copyVtkCommand() {
+        if (!this.vtkButton) return;
+        const command = buildVtkExportCommand();
+        const originalText = this.vtkButton.textContent;
+        const originalTitle = this.vtkButton.title;
+        this.vtkButton.dataset.state = 'busy';
+        this.vtkButton.textContent = '...';
+        try {
+            const copied = await copyText(command);
+            this.vtkButton.dataset.state = copied ? 'copied' : 'failed';
+            this.vtkButton.textContent = copied ? 'OK' : 'CMD';
+            this.vtkButton.title = copied ? `Copied: ${command}` : command;
+        } catch (_err) {
+            this.vtkButton.dataset.state = 'failed';
+            this.vtkButton.textContent = 'CMD';
+            this.vtkButton.title = command;
+        }
+        window.setTimeout(() => {
+            if (!this.vtkButton) return;
+            this.vtkButton.dataset.state = '';
+            this.vtkButton.textContent = originalText || 'VTK';
+            this.vtkButton.title = originalTitle;
+        }, 2400);
     }
 
     toggleAssistant(force) {

@@ -79,6 +79,21 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
+    // Per-axis flux-slice plane toggles (xy/xz/yz). Axis index: yz=0, xz=1, xy=2.
+    // These modify which mid-planes the all-axis flux slice overlay renders; they
+    // default all-on and are independent of the volume-column badge/clear.
+    for (const [axisName, axisIdx] of [['xy', 2], ['xz', 1], ['yz', 0]]) {
+        const btnId = `flux-slice-axis-${axisName}`;
+        const axisBtn = getEl(btnId);
+        if (!axisBtn) continue;
+        axisBtn.addEventListener('click', () => {
+            const on = !readButtonActive(btnId);
+            setButtonActive(btnId, on);
+            api.viewportAdapter(ctx).setFluxSliceAxisEnabled(axisIdx, on);
+            api.setLatticeNeedsUpload();
+        });
+    }
+
     // Shared apply-toggle helper: works for both user clicks and
     // programmatic clear-column actions. `silent` means skip the
     // latticeNeedsUpload push (useful for bulk updates where we push

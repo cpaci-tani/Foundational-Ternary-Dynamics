@@ -27,8 +27,15 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
 
     if (viewportAdapter.isFluxSliceVisible()) {
         const sliceIdx = Math.floor(latticeSize / 2);
-        let slice = activeScale0.getScale0FluxSlice(1, sliceIdx);
-        if (slice && slice.length > 0) viewportAdapter.applyFluxSlice(slice, latticeSize, 1, sliceIdx);
+        // Gather every enabled axis (0=yz, 1=xz, 2=xy) and pack the mid-planes
+        // into the dedicated slice mesh in one update. Default is all three.
+        const axes = viewportAdapter.getEnabledFluxSliceAxes();
+        const planes = [];
+        for (const axis of axes) {
+            const slice = activeScale0.getScale0FluxSlice(axis, sliceIdx);
+            if (slice && slice.length > 0) planes.push({ axis, data: slice });
+        }
+        if (planes.length) viewportAdapter.applyFluxSlices(planes, latticeSize, sliceIdx);
     }
 
     state.latticeNeedsUpload = false;

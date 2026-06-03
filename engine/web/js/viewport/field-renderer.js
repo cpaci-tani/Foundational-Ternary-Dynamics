@@ -106,6 +106,17 @@ export class ViewportFieldRenderer {
 
         // State owned by FieldRenderer (every mesh starts null and is built lazily).
         this._fieldHeatmap = null;
+        // Dedicated flux-slice mesh — kept separate from _fieldHeatmap so the
+        // Flux Volume appearance controls (opacity/shape/point-size/threshold)
+        // can drive the slice without disturbing the potential-heatmap overlay,
+        // and so the buffer can size for all three mid-planes (3·N²) at any L.
+        // Per-axis enable map keyed by axis index (0=yz, 1=xz, 2=xy); frame-sync
+        // reads the enabled set each upload tick to pick which planes to gather.
+        this._fluxSliceMesh = null;
+        this._fluxSliceMeshSize = 0;
+        this._fluxSliceAxes = { 0: true, 1: true, 2: true };
+        this._fluxSlicePointScale = 1.0;
+        this._fluxSliceThreshold = 0.005;
         this._fieldVectors = null;
         this._peStreamlines = null;
         this._gravityVectors = null;
@@ -241,6 +252,16 @@ export class ViewportFieldRenderer {
             this._fieldHeatmap = null;
         }
 
+        // Flux-slice mesh sizes from 3·N² — drop it so the next updateFluxSlices()
+        // rebuilds at the new capacity (preserving the current showHeatmap state).
+        if (this._fluxSliceMesh) {
+            this._scene.remove(this._fluxSliceMesh);
+            this._fluxSliceMesh.geometry.dispose();
+            this._fluxSliceMesh.material.dispose();
+            this._fluxSliceMesh = null;
+            this._fluxSliceMeshSize = 0;
+        }
+
         // Clear draw ranges on every dynamic field mesh so stale L-data doesn't persist.
         const dynamicMeshes = [
             this._fieldVectors, this._peStreamlines, this._gravityVectors,
@@ -325,73 +346,175 @@ export class ViewportFieldRenderer {
         if (!on) this._fieldHeatmap.geometry.setDrawRange(0, 0);
     }
 
-    // ── Flux Slice (uses _fieldHeatmap mesh) ──────────────────────────
+    // ── Flux Slice (dedicated _fluxSliceMesh, all-axis) ───────────────
+    //
+    // Renders the flux magnitude on one or more lattice mid-planes
+    // (xy @ z=L/2, xz @ y=L/2, yz @ x=L/2) as a colored point cloud in a
+    // dedicated THREE.Points mesh sized for all three planes (3·N²). The
+    // Flux Volume appearance controls drive this via setFluxSlice*; per-axis
+    // visibility lives in _fluxSliceAxes and is read by frame-sync.js, which
+    // gathers the enabled planes and calls updateFluxSlices().
 
-    updateFluxSlice(sliceData, latticeSize, axis, index) {
+    _buildFluxSliceMesh(latticeSize) {
+        const maxPts = 3 * latticeSize * latticeSize;
+        const positions = new Float32Array(maxPts * 3);
+        const colors = new Float32Array(maxPts * 3);
+        const sizes = new Float32Array(maxPts);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.ShaderMaterial({
+            // Default matches the Flux Volume card's opacity slider (0.70) so
+            // the shared control is in sync from first paint.
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
+            vertexShader: PARTICLE_VERT,
+            fragmentShader: PARTICLE_FRAG,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.NormalBlending,
+        });
+        this._fluxSliceMesh = new THREE.Points(geo, mat);
+        this._fluxSliceMesh.visible = this.showHeatmap;
+        this._fluxSliceMesh.frustumCulled = false;
+        this._fluxSliceMesh.renderOrder = -1;
+        this._fluxSliceMeshSize = latticeSize;
+        this._scene.add(this._fluxSliceMesh);
+    }
+
+    /**
+     * Render one or more flux mid-planes into the dedicated slice mesh.
+     * @param {{axis:0|1|2, data:Float64Array}[]} planes  one entry per enabled axis
+     * @param {number} latticeSize  side length N
+     * @param {number} index        slice plane index along each axis (the mid-plane)
+     */
+    updateFluxSlices(planes, latticeSize, index) {
         this._syncCenterAndRadius();
-        if (!this._fieldHeatmap) this._buildFieldHeatmap();
-        const posAttr = this._fieldHeatmap.geometry.getAttribute('position');
-        const colAttr = this._fieldHeatmap.geometry.getAttribute('particleColor');
-        const sizeAttr = this._fieldHeatmap.geometry.getAttribute('size');
         const N = latticeSize;
-
-        // Find max for normalization
-        let maxFlux = 0;
+        if (!Number.isFinite(N) || N < 2) return;
+        // (Re)build if missing or the lattice resized — capacity is 3·N².
+        if (!this._fluxSliceMesh || this._fluxSliceMeshSize !== N) {
+            if (this._fluxSliceMesh) {
+                this._scene.remove(this._fluxSliceMesh);
+                this._fluxSliceMesh.geometry.dispose();
+                this._fluxSliceMesh.material.dispose();
+                this._fluxSliceMesh = null;
+            }
+            this._buildFluxSliceMesh(N);
+        }
+        const posAttr = this._fluxSliceMesh.geometry.getAttribute('position');
+        const colAttr = this._fluxSliceMesh.geometry.getAttribute('particleColor');
+        const sizeAttr = this._fluxSliceMesh.geometry.getAttribute('size');
         const total = N * N;
-        if (!sliceData || sliceData.length !== total) {
-            // Size mismatch (e.g. during async resize transition or startup lag) — skip rendering this frame
+
+        if (!planes || planes.length === 0) {
+            this._fluxSliceMesh.geometry.setDrawRange(0, 0);
             return;
         }
-        for (let i = 0; i < total; i++) {
-            if (sliceData[i] > maxFlux) maxFlux = sliceData[i];
+
+        // Shared max across every supplied plane → consistent plane-to-plane color.
+        let maxFlux = 0;
+        for (const p of planes) {
+            const d = p.data;
+            if (!d || d.length !== total) continue;
+            for (let i = 0; i < total; i++) if (d[i] > maxFlux) maxFlux = d[i];
+        }
+        if (maxFlux <= 0) {
+            this._fluxSliceMesh.geometry.setDrawRange(0, 0);
+            return;
         }
 
-        const halfN = N / 2;
         const _needsClip = this._clipActive();
+        const threshold = this._fluxSliceThreshold || 0;
+        const pointScale = this._fluxSlicePointScale || 1.0;
+        const posArr = posAttr.array;
+        const colArr = colAttr.array;
+        const sizeArr = sizeAttr.array;
+        const maxPts = posArr.length / 3;
+        const invMax = 1.0 / (maxFlux + 1e-20);
         let count = 0;
-        const maxPts = Math.min(total, MAX_FIELD_GRID);
-        for (let i = 0; i < total && count < maxPts; i++) {
-            const a = Math.floor(i / N);
-            const b = i % N;
-            let x, y, z;
-            if (axis === 0) { x = index; y = a; z = b; }
-            else if (axis === 1) { x = a; y = index; z = b; }
-            else { x = a; y = b; z = index; }
 
-            // Clip to boundary shape (F-13: skip entirely when the shape never
-            // clips — same control flow, no per-voxel call or 3 divisions).
-            if (_needsClip) {
-                const nx = (x + 0.5 - this._center) / this._radius;
-                const ny = (y + 0.5 - this._center) / this._radius;
-                const nz = (z + 0.5 - this._center) / this._radius;
-                if (!this._insideBoundary(nx, ny, nz)) continue;
+        for (const p of planes) {
+            const data = p.data;
+            const axis = p.axis;
+            if (!data || data.length !== total) continue;
+            for (let i = 0; i < total && count < maxPts; i++) {
+                const mag = data[i];
+                if (mag < threshold) continue;
+                const a = (i / N) | 0;
+                const b = i % N;
+                let x, y, z;
+                if (axis === 0) { x = index; y = a; z = b; }
+                else if (axis === 1) { x = a; y = index; z = b; }
+                else { x = a; y = b; z = index; }
+
+                // Clip to boundary shape (skip entirely when the shape never clips).
+                if (_needsClip) {
+                    const nx = (x + 0.5 - this._center) / this._radius;
+                    const ny = (y + 0.5 - this._center) / this._radius;
+                    const nz = (z + 0.5 - this._center) / this._radius;
+                    if (!this._insideBoundary(nx, ny, nz)) continue;
+                }
+
+                const c3 = count * 3;
+                posArr[c3]     = x + 0.5;
+                posArr[c3 + 1] = y + 0.5;
+                posArr[c3 + 2] = z + 0.5;
+
+                const [r, g, b2] = fluxToColor(mag, maxFlux);
+                colArr[c3]     = r;
+                colArr[c3 + 1] = g;
+                colArr[c3 + 2] = b2;
+
+                const t = mag * invMax;
+                sizeArr[count] = (1.0 + 4.0 * t) * pointScale;
+                count++;
             }
-
-            posAttr.array[count * 3]     = x + 0.5;
-            posAttr.array[count * 3 + 1] = y + 0.5;
-            posAttr.array[count * 3 + 2] = z + 0.5;
-
-            const [r, g, b2] = fluxToColor(sliceData[i], maxFlux);
-            colAttr.array[count * 3] = r;
-            colAttr.array[count * 3 + 1] = g;
-            colAttr.array[count * 3 + 2] = b2;
-
-            const t = sliceData[i] / (maxFlux + 1e-20);
-            sizeAttr.array[count] = 1.0 + 4.0 * t;
-            count++;
         }
 
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
         sizeAttr.needsUpdate = true;
-        this._fieldHeatmap.geometry.setDrawRange(0, count);
+        this._fluxSliceMesh.geometry.setDrawRange(0, count);
+    }
+
+    /** Back-compat single-plane entry (delegates to updateFluxSlices). */
+    updateFluxSlice(sliceData, latticeSize, axis, index) {
+        this.updateFluxSlices([{ axis, data: sliceData }], latticeSize, index);
     }
 
     toggleFluxSlice(on) {
-        if (!this._fieldHeatmap) this._buildFieldHeatmap();
-        this._fieldHeatmap.visible = on;
+        if (!this._fluxSliceMesh) this._buildFluxSliceMesh(this._latticeSize);
+        this._fluxSliceMesh.visible = on;
         this.showHeatmap = on;
-        if (!on) this._fieldHeatmap.geometry.setDrawRange(0, 0);
+        if (!on) this._fluxSliceMesh.geometry.setDrawRange(0, 0);
+    }
+
+    // Flux-slice appearance controls — wired in parallel with the Flux Volume
+    // card (see wire.js::wireFluxVolume + ViewportFluxRenderer.setFlux*).
+    setFluxSliceOpacity(val) {
+        if (this._fluxSliceMesh) this._fluxSliceMesh.material.uniforms.uOpacity.value = val;
+    }
+    setFluxSliceShape(shapeIndex) {
+        if (this._fluxSliceMesh) this._fluxSliceMesh.material.uniforms.shapeType.value = shapeIndex;
+    }
+    setFluxSlicePointScale(scale) {
+        this._fluxSlicePointScale = scale;   // applied on the next updateFluxSlices
+    }
+    setFluxSliceThreshold(val) {
+        this._fluxSliceThreshold = val;       // applied on the next updateFluxSlices
+    }
+
+    // Per-axis visibility (axis index 0=yz, 1=xz, 2=xy). frame-sync reads the
+    // enabled set each upload tick to decide which planes to gather + pack.
+    setFluxSliceAxisEnabled(axis, on) {
+        if (axis in this._fluxSliceAxes) this._fluxSliceAxes[axis] = !!on;
+    }
+    getEnabledFluxSliceAxes() {
+        const out = [];
+        for (const k of [0, 1, 2]) if (this._fluxSliceAxes[k]) out.push(k);
+        return out;
     }
 
     // ── Field Vectors (force arrows on XZ plane) ─────────────────────
@@ -2471,7 +2594,7 @@ export class ViewportFieldRenderer {
 
         // Simple geometry+material pairs (Points / LineSegments / Mesh).
         const simpleMeshFields = [
-            '_fieldHeatmap', '_fieldVectors', '_peStreamlines', '_gravityVectors',
+            '_fieldHeatmap', '_fluxSliceMesh', '_fieldVectors', '_peStreamlines', '_gravityVectors',
             '_eFieldLines', '_bFieldLines', '_poyntingVectors', '_divField',
             '_forceVolume', '_gravityField', '_strongForce', '_weakField',
             '_forceHeatmap',
