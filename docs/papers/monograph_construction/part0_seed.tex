@@ -1,0 +1,226 @@
+% =============================================================================
+% Part 0 -- The Seed
+% =============================================================================
+\noindent Part~0 lays the foundation the rest of the monograph stands on: the
+discrete ontology FTD posits, the standard of ``construction'' the document
+holds itself to, the tag system the reader must internalize, and the two-clause
+roadmap that organizes everything that follows. It contains \textbf{no physics
+theorem and no new mathematics}; it is setup.
+
+\section{The discrete ontology}\label{sec:ontology}
+FTD posits a discrete substrate, fixed by five postulates. Each is an
+\etag{ax}: a structural commitment that defines the model and is
+\textbf{not} claimed to be derived from anything more primitive. A reader
+should accept them as the definition of the game, then ask what follows.
+\margetag{ax}%
+\begin{enumerate}[leftmargin=2.2em, itemsep=3pt, label=\arabic*.]
+  \item \textbf{Discrete space.} The substrate is a three-dimensional cubic
+        lattice with \textbf{undefined boundary}: at every specified position,
+        the axis-adjacent sites exist. This is deliberately \emph{not} a
+        completed-infinity totality $\mathbb{Z}^3$ taken as a single finished
+        object; it is a lattice with no defined edge and no claim of
+        completeness.
+  \item \textbf{Discrete time.} Evolution proceeds in discrete ticks; there is
+        no continuous time parameter at the substrate level.
+  \item \textbf{Ternary states.} Each site holds a state $s\in\{-1,0,+1\}$, the
+        three values being the only states a site may take.
+  \item \textbf{Local causality.} Influence is local: each site interacts only
+        within its 26-neighbour Moore neighbourhood, and information propagates
+        at most one lattice unit per tick.
+  \item \textbf{Determinism.} The update rule is deterministic: the
+        configuration at tick $t+1$ is fixed by the configuration at tick $t$.
+\end{enumerate}
+
+\runin{The two-layer ontology \etag{ax}.} Riding on the lattice are two fields
+with distinct ontological roles:
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item a \textbf{flux field} $J\in\R^3$, a continuous vector field at each
+        site, encoding potential energy density. It is \emph{dispositional}: it
+        represents what the substrate is poised to do, not what it has manifested.
+  \item a \textbf{state field} $s\in\{-1,0,+1\}$, the discrete ternary value
+        above. It is \emph{actual}: it represents manifestation, what the
+        substrate has resolved to.
+\end{itemize}
+The dispositional/actual distinction is structural to the framework and recurs
+throughout; the flux field carries the continuous content, the state field
+carries the discrete resolution.
+
+\runin{Why the undefined boundary is load-bearing.} The choice of an
+undefined-boundary lattice over a completed-infinity $\mathbb{Z}^3$ is not
+cosmetic; it narrows the framework's admissible toolkit and is enforced
+corpus-wide. Concretely, statements of the form ``in the limit $L\to\infty$
+\ldots'' are \textbf{not well-posed} under this ontology without an explicit
+$\varepsilon$--$L$ restatement (e.g.\ ``for every $\varepsilon>0$ there exists
+$L$ such that $P(L)$ is within $\varepsilon$ of its continuum counterpart'').
+Global integrals over ``all sites,'' completed thermodynamic limits, and path
+integrals over ``all configurations'' are likewise not primitive moves;
+arbitrarily large \emph{finite} computations, explicitly bracketed, are. This
+commitment will matter precisely at the boundary in Part~II, where the question
+``does the ontology force a particular limiting value?'' turns on what limits the
+ontology is even entitled to take.
+
+\section{What a construction is}\label{sec:construction}
+This monograph holds itself to a specific standard, and naming it up front is
+part of the contract with the reader.
+
+\runin{A construction,} in the sense used here, is the kind of thing the number
+systems are: $\N\to\Z\to\Q\to\R\to\C$. Each object is built \emph{explicitly}
+from objects already in hand ($\Z$ as equivalence classes of pairs of naturals;
+$\Q$ as equivalence classes of pairs of integers; $\R$ as cuts or Cauchy
+sequences; $\C$ as $\R^2$), and each construction step is \emph{independently
+checkable} by a reader who accepts the prior stage. No object appears by fiat;
+none is assumed because it would be convenient. FTD's mathematical core is
+presented in exactly this spirit: each result built from prior results and
+the axioms, with a stated proof or chain the reader can audit. The ordering is
+fixed: mathematical primitives $\to$ invariant structure $\to$ admissible
+readouts $\to$ operational physics, with physical language entering \emph{only}
+at the last layer. The constructive Parts of this monograph (I and II) live in
+the first two layers; the physics \emph{match} is withheld until Part~III, and
+Part~II names the physical target only to state precisely what is \emph{not}
+forced.
+
+\medskip
+\noindent Three categories must be kept strictly apart, because conflating them
+is the characteristic way a program of this kind overclaims:
+\begin{itemize}[leftmargin=1.4em, itemsep=4pt]
+  \item \textbf{A derivation} (tagged \etag{thm} or \etag{der}) is an
+        \emph{explicit chain} from the axioms or prior theorems that the
+        document itself reproduces. The reader checks the chain. \etag{der} is
+        the honest grade when the chain is explicit but carries a non-trivial
+        assumption; \etag{thm} when it does not.
+  \item \textbf{A parametric insertion} (tagged \etag{par}) is a
+        standard physics formula with FTD's constants substituted in. The
+        numbers may fit beautifully, but the \emph{mechanism is borrowed} from
+        outside the framework: a calibration input, not a derivation.
+  \item \textbf{A match} (at its strongest tagged \etag{smc}) is a
+        numerical coincidence between an FTD object and a physical quantity,
+        possibly backed by uniqueness scans or sub-ppm agreement, but with
+        \textbf{no derivation chain}. A match is evidence, not a derivation.
+\end{itemize}
+For every load-bearing claim, this monograph states which of the three it is.
+
+\section{The epistemic contract}\label{sec:contract}
+The following tag system is the instrument the whole program is governed by. A
+reader should internalize it before proceeding; every substantive claim
+sentence in this monograph carries one of these tags, and the tag (not the
+surrounding prose) is the claim's actual epistemic status.
+
+\begingroup
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\setlength{\LTpre}{8pt}\setlength{\LTpost}{8pt}
+\begin{xltabular}{\linewidth}{@{}l >{\RaggedRight\arraybackslash}X >{\RaggedRight\arraybackslash}X@{}}
+  \toprule
+  \textsc{tag} & \textsc{meaning} & \textsc{reviewer expectation}\\
+  \midrule
+  \endfirsthead
+  \toprule
+  \textsc{tag} & \textsc{meaning} & \textsc{reviewer expectation}\\
+  \midrule
+  \endhead
+  \bottomrule
+  \endlastfoot
+  \ctag{ax} & Structural postulate; not derivable. & Accept as model definition.\\
+  \ctag{thm} & Rigorously proven from axioms (or from named classical theorems
+    with explicit citation). & Check the proof.\\
+  \ctag{der} & Established by an explicit chain the document reproduces; weaker
+    than a theorem when the chain carries a non-trivial assumption. & Check
+    the chain; flag any smuggled axiom.\\
+  \ctag{sel} & Argued from consistency or naturalness; not uniquely proven.
+    & Critique the argument.\\
+  \ctag{smc} & A conjecture with substantial structural and/or empirical
+    evidence (uniqueness scan, multi-route convergence, sub-ppm match) but
+    \textbf{no} derivation chain. & Critique the evidence; expect an explicit
+    Bayes / uniqueness / look-elsewhere argument.\\
+  \ctag{cnj} & Proposed interpretation requiring validation; weaker than the
+    above (no structural-uniqueness backing). & Demand evidence.\\
+  \ctag{par} & A standard physics formula filled with FTD constants; numbers
+    fit, mechanism borrowed. & Treat as calibration input, not output.\\
+  \ctag{cn} & A hypothesis tested and falsified; preserved for provenance to
+    prevent re-attempt. & Confirm the closure; cite it to prevent a zombie
+    re-emergence.\\
+  \ctag{syn} & Cross-document integration of existing claims at their existing
+    tags; not a new theorem. & Verify the component claims; check that nothing
+    was silently promoted.\\
+\end{xltabular}
+\endgroup
+
+\runin{The reading rule.} The tags form a ladder, and the ladder has a
+direction:
+\begin{quote}\itshape
+  Promotion up the ladder requires explicit justification. Demotion is free.
+  Ambiguous cases default down.
+\end{quote}
+\noindent A claim may be moved \emph{up} (e.g.\ from \etag{cnj} to \etag{der})
+only by exhibiting the chain or proof that warrants it. A claim may be moved
+\emph{down} at any time, by anyone, for any defensible reason, with no ceremony.
+And where the correct tag is genuinely unclear, the convention is to assign the
+\emph{weaker} tag until the stronger one is earned. This asymmetry is the
+safeguard against the program talking itself into believing its own conjectures.
+
+\medskip
+\noindent\textbf{Every result appears at the grade it has earned, and at no
+grade higher.} (Four further tags appear in the body where they are
+needed: \etag{meas} for an honest measurement, \etag{imp} for an imposed
+choice, \etag{opn} for an open problem, and \etag{fo} for a foundational
+obstruction.)
+
+\section{The two clauses: roadmap}\label{sec:roadmap}
+The program's governing goal has two clauses, and the architecture of this
+monograph is simply those two clauses made into sections, plus a quarantined
+bridge to physics.
+\begin{quote}\itshape
+  Clause 1: Derive everything the discrete ontology forces.\\
+  Clause 2: Rigorously establish the boundary of what it cannot force.
+\end{quote}
+
+\runin{Clause 1 $\to$ Part I, the Constructive Reach.} Part~I exhibits what the
+five postulates \emph{force} once their order-4 lattice symmetry is read as
+$\Zi$ (the single modelling \etag{ax} of \secref{sec:seed}): an algebraic spine
+of theorem-grade results: the constant $\Gs=\Gamma(1/4)/\Gamma(3/4)$, the master quadratic
+$\masterquad$ and its roots, the arithmetic of the lemniscatic CM curve, and the
+finite combinatorics of the Moore neighbourhood. The canonical accounting is
+\textbf{nine numbered results, of which seven are theorem-grade} and two are
+honestly tiered below theorem grade. These are the framework's firm ground,
+independent of any physics interpretation, and Part~I states each at its
+canonical tag.
+
+\runin{Clause 2 $\to$ Part II, the Boundary, and this is the climax.}
+Part~II asks the sharp negative question: granted everything in Part~I, does the
+discrete ontology \emph{force} the electromagnetic coupling $\alpha$? The honest
+answer, mapped across multiple independent attack routes, is \textbf{no, not
+without an additional binding law.} The boundary takes a concrete and memorable
+form: the reading that would fix $\alpha$ requires the substrate to
+\emph{natively realize} the quantity $\sqrtwall$ (the discrete limit of a
+square root) as an operator-assembly the lattice produces on its own, and
+across every FTD-native route examined the lattice does not produce it; the
+determinant grading and the operator assembly $\assembly$ are an imposed
+selection, not a forced consequence. The boundary itself is built from
+theorem-grade parts around one precisely-stated open kernel: a ruled-out geometric realization, a closed-scope
+restriction, and a route-invariant reduction (the same kernel reached in four
+different dialects, because $\Q(\Gs)$ is the Galois-fixed field of the master
+quadratic's $\Z/2$). Part~II's
+deliverable is therefore a \emph{mapped wall}: theorem-grade masonry around one
+clearly-marked gap, exactly the kind of boundary Clause~2 calls for.
+
+\runin{The bridge $\to$ Part III, quarantined.} The numerical match that
+motivates the whole enterprise ($x_+ = \xplusnum$, agreeing with
+$1/\alpha$ to $\ppmval$~ppm) is real and is the strongest structural
+evidence the framework holds (a unique dual-matcher across millions of candidate
+polynomials over a basket FTD did not design). But it is a \emph{match}: it
+carries the tag \etag{smc}, not a derivation, and Part~III presents it as
+such, alongside the \etag{par} physics insertions.
+
+\runin{The central honest headline, stated up front.} The discrete ontology,
+\textbf{once its order-4 lattice symmetry is read as $\Zi$ (the single modelling
+\etag{ax} isolated in \secref{sec:seed})}, forces a rich algebraic
+spine (\textbf{seven theorem-grade results}), and it \textbf{provably
+does not force the electromagnetic coupling $\alpha$ without an additional
+binding law}. Both halves are the deliverable. A program that only proved the
+first half would be a curiosity; a program that mapped the second half honestly
+is doing the harder and more useful thing: drawing, in both directions, the
+line of what discreteness reaches. The constant $\Gs\approx\Gstarapprox$ that
+anchors the spine is, throughout, the lemniscatic ratio $\Gamma(1/4)/\Gamma(3/4)$;
+it is \textbf{not} the Bernoulli/Gauss lemniscate constant
+$\varpi\approx\varpiapprox$, a distinct number with which it is never to be
+conflated.
