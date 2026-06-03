@@ -126,6 +126,7 @@ add_library(ftd_core
     # src/eft/dual_cell_continuity.cpp moved to ftd_eft (see above)
     src/eft/dual_cell_flow.cpp              # Native EFT: bare b=2 flow measurements
     src/csv_export.cpp     # RF-05: csv export bodies moved from csv_export.h
+    src/vtk_export.cpp     # ParaView/VTK XML research export bundle
     src/constructors/constructors_core.cpp
     src/constructors/constructors_atoms.cpp
     src/constructors/constructors_bulk_matter.cpp
@@ -286,6 +287,9 @@ target_link_libraries(test_audit_regression ftd_core)
 # See `.claude/plans/i-want-to-try-crispy-charm.md` Phase 4 + ADR-0008.
 ftd_add_test(test_render_bridge_golden tests/test_render_bridge_golden.cpp
              CTEST_NAME render_bridge_golden)
+
+ftd_add_test(test_symmetric_movement tests/test_symmetric_movement.cpp
+             CTEST_NAME symmetric_movement TIMEOUT 60 LABELS unit)
 
 # Wave 4b.6: test_lorentz_force + test_lorentz_invariance + test_magnetic +
 # test_magnetic_lagrangian merged into test_lorentz (self-ref target)
@@ -486,6 +490,10 @@ target_link_libraries(test_maxwell ftd_core)
 add_executable(test_csv_export tests/test_csv_export.cpp)
 target_link_libraries(test_csv_export ftd_core)
 
+# ParaView/VTK research export
+add_executable(test_vtk_export tests/test_vtk_export.cpp)
+target_link_libraries(test_vtk_export ftd_core)
+
 # Logic-first engine
 add_executable(test_logic_engine tests/test_logic_engine.cpp)
 target_link_libraries(test_logic_engine ftd_core)
@@ -618,6 +626,36 @@ add_executable(test_light tests/test_light.cpp)
 target_link_libraries(test_light ftd_core)
 
 # Phase 1: Measurement Infrastructure
+ftd_add_test(test_erdos_capset tests/test_erdos_capset.cpp
+             CTEST_NAME erdos_capset TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(test_erdos_unit_distance tests/test_erdos_unit_distance.cpp
+             CTEST_NAME erdos_unit_distance TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(test_ramsey_multicolor tests/test_ramsey_multicolor.cpp
+             CTEST_NAME ramsey_multicolor TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(test_blume_capel_glass tests/test_blume_capel_glass.cpp
+             CTEST_NAME blume_capel_glass TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(test_aperiodic_monotile tests/test_aperiodic_monotile.cpp
+             CTEST_NAME aperiodic_monotile TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(test_potts_3d tests/test_potts_3d.cpp
+             CTEST_NAME potts_3d TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(test_fox_coloring tests/test_fox_coloring.cpp
+             CTEST_NAME fox_coloring TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(test_gf3_codes tests/test_gf3_codes.cpp
+             CTEST_NAME gf3_codes TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(test_3d_ca tests/test_3d_ca.cpp
+             CTEST_NAME 3d_ca TIMEOUT 600 LABELS mathematical)
+
+ftd_add_test(campaign_vacuum_energy tests/campaign_vacuum_energy.cpp
+             CTEST_NAME vacuum_energy TIMEOUT 600 LABELS mathematical)
+
 add_executable(test_ensemble tests/test_ensemble.cpp)
 target_link_libraries(test_ensemble ftd_core)
 
@@ -1652,6 +1690,7 @@ add_test(NAME discrete_operators COMMAND test_discrete_operators)
 add_test(NAME bridge_dynamics COMMAND test_bridge_dynamics)
 add_test(NAME maxwell COMMAND test_maxwell)
 add_test(NAME csv_export COMMAND test_csv_export)
+add_test(NAME vtk_export COMMAND test_vtk_export)
 add_test(NAME logic_engine COMMAND test_logic_engine)
 # (poisson_coulomb merged into campaign_coulomb_force_law)
 # (energy_tracking + energy_conservation merged via ftd_add_test above)
