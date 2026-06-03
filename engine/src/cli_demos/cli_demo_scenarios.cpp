@@ -18,11 +18,13 @@
 #include <array>
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "ftd/cli_demos.h"
 #include "ftd/constants.h"
 #include "ftd/render_bridge.h"
 #include "ftd/csv_export.h"
+#include "ftd/vtk_export.h"
 
 namespace ftd {
 namespace cli_demos {
@@ -891,6 +893,88 @@ void scenario_K(int lattice_size, int num_ticks, const std::string& outdir) {
 
     std::cout << "\n  CSV output: " << outdir << "/force_profile.csv\n";
     std::cout << "  Done.\n";
+}
+
+// ============================================================================
+// SCENARIO V: ParaView/VTK Research Export
+// ============================================================================
+
+void scenario_V(int lattice_size, int num_ticks, const std::string& outdir,
+                int frame_interval, int spatial_stride) {
+    if (frame_interval <= 0) frame_interval = std::max(1, num_ticks / 10);
+    if (spatial_stride <= 0) spatial_stride = 1;
+
+    std::cout << "SCENARIO V: ParaView/VTK Research Export\n";
+    std::cout << "  Full-physics reference pulse, " << lattice_size
+              << "^3 lattice, " << num_ticks << " ticks\n";
+    std::cout << "  Output: " << outdir << "/\n";
+    std::cout << "  Frame interval: " << frame_interval
+              << ", spatial stride: " << spatial_stride << "\n\n";
+
+    ftd::RenderBridge engine(lattice_size);
+    engine.toggles.color_forces = true;
+    engine.toggles.strong_force = true;
+    engine.toggles.triad_binding = true;
+    engine.toggles.pair_production = true;
+    engine.toggles.exchange_force = true;
+    engine.toggles.latency_field = true;
+    engine.toggles.langevin = true;
+    engine.toggles.langevin_T = 0.005;
+    engine.toggles.langevin_gamma = 0.02;
+    engine.toggles.langevin_seed = 1;
+
+    std::string err;
+    if (!engine.toggles.validate(&err)) {
+        std::cerr << "  Toggle configuration invalid: " << err << "\n";
+        return;
+    }
+
+    const int c = lattice_size / 2;
+    const double A = 5.0 * ftd::K_GENESIS;
+    engine.inject_flux(c, c, c, {A, 0.0, 0.0});
+
+    ftd::sciviz::ExportOptions options;
+    options.output_dir = outdir;
+    options.run_name = "ftd_v_research";
+    options.frame_interval = frame_interval;
+    options.spatial_stride = spatial_stride;
+    options.export_fields = true;
+    options.export_particles = true;
+    options.export_operators = true;
+    options.export_forces = true;
+    options.export_dual_fields = true;
+    options.export_interaction_fields = true;
+    options.export_clusters = true;
+
+    ftd::sciviz::ResearchExportSession session(options);
+    if (!session.record(engine)) {
+        std::cerr << "  Initial VTK export failed.\n";
+        return;
+    }
+    std::cout << "  Exported frame 0 at tick " << engine.current_tick() << "\n";
+
+    for (int t = 0; t < num_ticks; ++t) {
+        engine.tick();
+        const bool at_interval = ((t + 1) % frame_interval == 0);
+        const bool at_end = (t + 1 == num_ticks);
+        if (at_interval || at_end) {
+            if (!session.record(engine)) {
+                std::cerr << "  VTK export failed at tick " << engine.current_tick() << ".\n";
+                return;
+            }
+            std::cout << "  Exported frame " << (session.frame_count() - 1)
+                      << " at tick " << engine.current_tick() << "\n";
+        }
+    }
+
+    if (!session.finalize()) {
+        std::cerr << "  VTK export finalization failed.\n";
+        return;
+    }
+
+    std::cout << "\n  Done. " << session.frame_count()
+              << " frames written for ParaView.\n";
+    std::cout << "  Open: " << outdir << "/fields.pvd, particles.pvd, or clusters.pvd\n";
 }
 
 }  // namespace cli_demos

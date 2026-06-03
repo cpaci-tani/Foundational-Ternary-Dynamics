@@ -85,12 +85,27 @@ struct Voxel {
   Vec3 wave_vel_R; // Right substrate wave velocity
 
   // Chirality density: chi = |psi_L|^2 - |psi_R|^2
-  // where psi_X = J_Xx + i*J_Xy (complexified transverse component).
+  // where psi_X is the complexified transverse component.
   // Replaces div(J) sign for manifestation polarity in dual-substrate mode.
+  // Noether Audit (2026-06-02): upgraded to be coordinate-independent by projecting
+  // perpendicular to the local velocity vector e_L when the particle is moving.
   double chirality_density() const {
-    double psiL2 = flux_L.x * flux_L.x + flux_L.y * flux_L.y;
-    double psiR2 = flux_R.x * flux_R.x + flux_R.y * flux_R.y;
-    return psiL2 - psiR2;
+    double speed2 = velocity.mag2();
+    if (speed2 > 1e-12) {
+      double speed = std::sqrt(speed2);
+      Vec3 e_L(velocity.x / speed, velocity.y / speed, velocity.z / speed);
+      double JL_dot = flux_L.dot(e_L);
+      double JR_dot = flux_R.dot(e_L);
+      double psiL2 = flux_L.mag2() - JL_dot * JL_dot;
+      double psiR2 = flux_R.mag2() - JR_dot * JR_dot;
+      return psiL2 - psiR2;
+    } else {
+      // If stationary, fall back to the legacy z-axis projection for backwards compatibility
+      // with existing flavor and spin-statistics unit tests.
+      double psiL2 = flux_L.x * flux_L.x + flux_L.y * flux_L.y;
+      double psiR2 = flux_R.x * flux_R.x + flux_R.y * flux_R.y;
+      return psiL2 - psiR2;
+    }
   }
 
   // Lattice velocity (nodes per G*-tick)
