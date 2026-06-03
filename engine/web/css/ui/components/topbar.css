@@ -175,6 +175,7 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 }
 
 .tb-btn-assistant,
+.tb-btn-vtk,
 .tb-btn-knowledge {
     width: auto;
     min-width: 46px;
@@ -182,6 +183,23 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     font-size: var(--fs-sm);
     font-weight: 700;
     letter-spacing: 0.06em;
+}
+
+.tb-btn-vtk {
+    color: var(--positive);
+    border-color: color-mix(in srgb, var(--positive) 52%, var(--border));
+}
+
+.tb-btn-vtk:hover,
+.tb-btn-vtk[data-state="copied"] {
+    color: var(--bg);
+    background: var(--positive);
+    border-color: var(--positive);
+}
+
+.tb-btn-vtk[data-state="failed"] {
+    color: var(--warning);
+    border-color: var(--warning);
 }
 
 /* Mobile menu button — hidden on desktop, shown on mobile. */

@@ -124,14 +124,17 @@ These are render-independent: they switch which physics terms the engine integra
 
 ## Scale 0 — Viewport volume / slice (not field flags)
 
-Two buttons in the overlay panel (`template.js`) that are **not** `fieldFlags` keys and are wired separately in `bindings.js` to the viewport adapter:
+Buttons in the overlay panel (`template.js`) that are **not** `fieldFlags` keys and are wired separately in `bindings.js` to the viewport adapter:
 
 | DOM id | Action | Wiring |
 |--------|--------|--------|
 | `#toggle-flux-volume` | show/hide flux volume render | `bindings.js` → `viewportAdapter.setFluxVolumeVisible(on)` |
-| `#toggle-flux-slice` | show/hide flux slice plane | `bindings.js` → `viewportAdapter.setFluxSliceVisible(on)` |
+| `#toggle-flux-slice` | show/hide flux slice overlay (all enabled mid-planes) | `bindings.js` → `viewportAdapter.setFluxSliceVisible(on)` |
+| `#flux-slice-axis-xy` | enable/disable the xy mid-plane (z=L/2) of the slice | `bindings.js` → `viewportAdapter.setFluxSliceAxisEnabled(2, on)` |
+| `#flux-slice-axis-xz` | enable/disable the xz mid-plane (y=L/2) of the slice | `bindings.js` → `viewportAdapter.setFluxSliceAxisEnabled(1, on)` |
+| `#flux-slice-axis-yz` | enable/disable the yz mid-plane (x=L/2) of the slice | `bindings.js` → `viewportAdapter.setFluxSliceAxisEnabled(0, on)` |
 
-They participate in the `volume` column's clear-button / badge accounting (`COL_TO_TOGGLES.volume`) but use button `.active` class as their only state (no store key). The W3-2 test scopes to `fieldFlags`-backed toggles and so does not assert these; called out here for completeness.
+`#toggle-flux-volume` / `#toggle-flux-slice` participate in the `volume` column's clear-button / badge accounting (`COL_TO_TOGGLES.volume`) but use button `.active` class as their only state (no store key). The three `#flux-slice-axis-*` buttons are sub-modifiers of the slice (default all-on) and are deliberately **excluded** from `COL_TO_TOGGLES` so they neither inflate the column badge nor get swept by the column clear. The Flux Volume card's Opacity / Shape / Point Size / Threshold controls (`wire.js::wireFluxVolume`) fan out to the slice mesh too (`viewport.setFluxSlice{Opacity,Shape,PointScale,Threshold}`). The W3-2 test scopes to `fieldFlags`-backed toggles and so does not assert these; `flux-slice-axes.spec.js` covers the slice + axis buttons + shared controls.
 
 ---
 
