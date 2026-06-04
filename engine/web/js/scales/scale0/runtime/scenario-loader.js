@@ -1,4 +1,5 @@
 import { MockBridge } from '../../../bridge-init.js';
+import { MockBridgeProxy } from '../../../bridge/mock-bridge-proxy.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
@@ -129,6 +130,24 @@ export function shouldUseFluxMock(bridge, scenarioName) {
     } catch (_e) {
         return true;
     }
+}
+
+// Phase 2: when the flag is on AND the page is cross-origin isolated
+// (SharedArrayBuffer available), run flux-*/s0-* physics in a Web Worker
+// (MockBridgeProxy) so the heavy tick never stalls render. Otherwise fall back
+// to the in-thread MockBridge (Safari/iOS, or a deploy host without COOP/COEP).
+// Set FTD_PHYSICS_WORKER false to force the in-thread path everywhere.
+const FTD_PHYSICS_WORKER = true;
+export function workerEligible(scenarioId, bridge) {
+    return FTD_PHYSICS_WORKER
+        && typeof SharedArrayBuffer !== 'undefined'
+        && globalThis.crossOriginIsolated === true
+        && shouldUseFluxMock(bridge, scenarioId);
+}
+function makeFluxMock(latticeSize, scenarioId, bridge) {
+    return workerEligible(scenarioId, bridge)
+        ? new MockBridgeProxy(latticeSize)
+        : new MockBridge(latticeSize);
 }
 
 function syncComboSliders(bridge) {
@@ -307,10 +326,10 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // scenario-seeding pass and removes the divergence-masking risk
     // the architecture audit flagged (ARC-2).
     const useFluxMock = shouldUseFluxMock(ctx.bridge, scenario.id);
-    const latticeSize = ctx.bridge.latticeSize || 32;
+    const latticeSize = ctx.bridge.latticeSize || 33;
     let fluxMock = null;
     if (useFluxMock) {
-        fluxMock = new MockBridge(latticeSize);
+        fluxMock = makeFluxMock(latticeSize, scenario.id, ctx.bridge);
         fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
         fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
         fluxMock.capabilities.scale0.setupScenario(scenario.id);
@@ -341,16 +360,32 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
     const scenarioId = state.currentScenarioId || readInputValue('scenario-select', 'flux-pulse');
     const bridge = ctx.bridge;
-    // Scale 0 now allocates ~988 bytes/site on the C++ heap (due to SU(2)/SU(3) link structures).
-    const projectedBytes = Math.ceil(newSize ** 3 * 1000 * 1.3);
-    const maxWasmMemory = 2 * 1024 * 1024 * 1024;
+    // The resize guard estimates the heap of the bridge that ACTUALLY owns this
+    // scenario — the two owners have very different per-voxel costs:
+    //   - flux-*/s0-* scenarios run on the JS MockBridge (state.fluxMock): a
+    //     handful of N³ typed arrays (flux J + wave-vel Float64×3, |J|, state,
+    //     masks) ≈ 150 bytes/voxel, bounded by the JS tab heap. Crucially the
+    //     C++ RenderBridge is NOT reallocated on a flux-* resize — this function
+    //     only sets bridge.latticeSize and builds a fresh MockBridge(newSize) —
+    //     so the C++ 1300 B/voxel cost is irrelevant and must NOT gate flux-*.
+    //     (Pre-fix this branch wrongly used 1300 B/voxel + a 2 GB cap, refusing
+    //     big flux-* lattices over memory that is never allocated.)
+    //   - empty/light/quantum run on the compiled C++ engine ≈ 1300 bytes/voxel
+    //     (Voxel + SU(2)/SU(3) link structures), bounded by the WASM heap:
+    //     8 GB on the Memory64 (wasm64) build, 2 GB on the wasm32 fallback.
+    const ownerIsMock = shouldUseFluxMock(bridge, scenarioId);
+    const bytesPerVoxel = ownerIsMock ? 150 : 1300;
+    const capGB = ownerIsMock ? 2 : (bridge?.isWasm64 ? 8 : 2);
+    const projectedBytes = Math.ceil(newSize ** 3 * bytesPerVoxel);
+    const maxBytes = capGB * 1024 * 1024 * 1024;
 
-    if (projectedBytes >= maxWasmMemory) {
+    if (projectedBytes >= maxBytes) {
         const projGB = (projectedBytes / 1024 / 1024 / 1024).toFixed(2);
-        const msg = `L=${newSize} would need ~${projGB} GB of WASM heap (max 2 GB). Refusing to resize.`;
+        const owner = ownerIsMock ? 'JS' : 'WASM';
+        const msg = `L=${newSize} would need ~${projGB} GB of ${owner} heap (max ${capGB} GB here). Refusing to resize.`;
         if (typeof window.showToast === 'function') window.showToast(msg, 'error');
         else console.warn('[Scale0] ' + msg);
-        setInputValue('lattice-size', bridge.latticeSize || 32);
+        setInputValue('lattice-size', bridge.latticeSize || 33);
         return;
     }
 
@@ -383,7 +418,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     const useFluxMock = shouldUseFluxMock(bridge, scenarioId);
     let fluxMock = null;
     if (useFluxMock) {
-        fluxMock = new MockBridge(newSize);
+        fluxMock = makeFluxMock(newSize, scenarioId, bridge);
         fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
         fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
         fluxMock.capabilities.scale0.setupScenario(scenarioId);

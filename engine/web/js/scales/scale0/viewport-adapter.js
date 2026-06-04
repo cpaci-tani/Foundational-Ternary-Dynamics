@@ -6,6 +6,7 @@ const NON_FORCE_OVERLAYS = {
     showPoynting: 'togglePoyntingVectors',
     showDivField: 'toggleDivergenceField',
     showFluxLines: 'toggleFluxStreamlines',
+    showStateField: 'toggleStateField',
     showDualSubstrate: 'toggleDualFluxVolume',
     showChirality: 'toggleChiralityField',
     showLight: 'toggleLightField',
@@ -33,6 +34,10 @@ const NON_FORCE_OVERLAYS = {
     showKineticEnergy:     'toggleKineticEnergyField',
     showFisher:            'toggleFisherField',
     showCoherence:         'toggleCoherenceField',
+    // New substrate overlays (2026-06-03)
+    showLatency:           'toggleLatencyField',
+    showGaussResidual:     'toggleGaussResidualField',
+    showMooreDecomp:       'toggleMooreDecomp',
 };
 
 const FORCE_ARROW_OVERLAYS = {
@@ -142,6 +147,10 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.toggleKineticEnergyField?.(false);
             viewport.toggleFisherField?.(false);
             viewport.toggleCoherenceField?.(false);
+            viewport.toggleStateField?.(false);
+            viewport.toggleLatencyField?.(false);
+            viewport.toggleGaussResidualField?.(false);
+            viewport.toggleMooreDecomp?.(false);
         },
         applyParticleFrame(frame) {
             viewport?.updateParticles?.(frame);
@@ -250,6 +259,9 @@ export function createScale0ViewportAdapter(viewport) {
         applyKineticEnergy(data) { viewport?.updateKineticEnergyField?.(data); },
         applyFisher(data)        { viewport?.updateFisherField?.(data); },
         applyCoherence(data)     { viewport?.updateCoherenceField?.(data); },
+        applyStateField(data)    { viewport?.updateStateField?.(data); },
+        applyLatency(data)       { viewport?.updateLatencyField?.(data); },
+        applyGaussResidual(data) { viewport?.updateGaussResidualField?.(data); },
         render() {
             viewport?.render?.();
         },

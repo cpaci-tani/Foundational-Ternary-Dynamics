@@ -886,6 +886,70 @@ export function createLatticeSamplers(state) {
         return { positions, vectors, count };
     }
 
+    // ── New substrate samplers (2026-06-03) ───────────────────────────
+
+    /**
+     * Ternary state field s(x) ∈ {-1,0,+1}. On the MockBridge the nonzero
+     * states ARE the manifested particles (void s=0 is the implicit
+     * background), so we emit one point per particle at its voxel centre.
+     * Mirrors the C++ get_state_field_sampled (which reads voxel.state).
+     * `stride` is accepted for API symmetry; the particle set is already sparse.
+     */
+    function getStateFieldSampled(_stride = 2) {
+        const ps = state._particles;
+        if (!ps || ps.length === 0) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+        const positions = scratch(32, ps.length * 3);
+        const values = scratch(33, ps.length);
+        let count = 0;
+        for (const p of ps) {
+            if (!p.state) continue;
+            positions[count * 3] = p.x + 0.5; positions[count * 3 + 1] = p.y + 0.5; positions[count * 3 + 2] = p.z + 0.5;
+            values[count] = p.state;
+            count++;
+        }
+        return { positions, values, count };
+    }
+
+    /**
+     * Gauss-constraint residual r(x) = ∇·J − s_charge. FTD-native charge is
+     * the ternary state, so a clean substrate has r ≈ 0. Mirrors the C++
+     * get_gauss_residual_sampled. State is sparse (particles), so we build a
+     * per-voxel charge lookup once, then subtract it from the divergence.
+     */
+    function getGaussResidualSampled(stride = 1) {
+        if (!state._fluxJ) return { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+        const N = state.latticeSize;
+        const J = state._fluxJ;
+        const charge = new Map();
+        for (const p of (state._particles || [])) {
+            if (!p.state) continue;
+            const px = ((Math.round(p.x) % N) + N) % N;
+            const py = ((Math.round(p.y) % N) + N) % N;
+            const pz = ((Math.round(p.z) % N) + N) % N;
+            charge.set(state._fluxIdx(px, py, pz), p.state);
+        }
+        const maxPts = Math.ceil(N / stride) ** 3;
+        const positions = scratch(34, maxPts * 3);
+        const values = scratch(35, maxPts);
+        let count = 0;
+        for (let z = 0; z < N; z += stride) {
+            for (let y = 0; y < N; y += stride) {
+                for (let x = 0; x < N; x += stride) {
+                    const xp = state._fluxIdx(x + 1, y, z), xm = state._fluxIdx(x - 1, y, z);
+                    const yp = state._fluxIdx(x, y + 1, z), ym = state._fluxIdx(x, y - 1, z);
+                    const zp = state._fluxIdx(x, y, z + 1), zm = state._fluxIdx(x, y, z - 1);
+                    const div = (J[xp * 3] - J[xm * 3]) / 2 + (J[yp * 3 + 1] - J[ym * 3 + 1]) / 2 + (J[zp * 3 + 2] - J[zm * 3 + 2]) / 2;
+                    const r = div - (charge.get(state._fluxIdx(x, y, z)) || 0);
+                    if (Math.abs(r) < 1e-6) continue;
+                    positions[count * 3] = x + 0.5; positions[count * 3 + 1] = y + 0.5; positions[count * 3 + 2] = z + 0.5;
+                    values[count] = r;
+                    count++;
+                }
+            }
+        }
+        return { positions, values, count };
+    }
+
     return {
         getEFieldSampled,
         getBFieldSampled,
@@ -905,5 +969,7 @@ export function createLatticeSamplers(state) {
         getEMForceField,
         getGravityForceField,
         getStrongForceField,
+        getStateFieldSampled,
+        getGaussResidualSampled,
     };
 }

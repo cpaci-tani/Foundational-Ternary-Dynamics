@@ -446,6 +446,11 @@
 .field-swatch-fisher         { background: linear-gradient(90deg, #40268c 0%, #bfff4d 100%); }
 .field-swatch-horizon        { background: linear-gradient(90deg, #000000 0%, #2b1833 60%, #6c1a66 100%); }
 .field-swatch-coherence      { background: linear-gradient(90deg, #7326d9 0%, #f2f2f2 50%, #ff9640 100%); }
+/* New substrate overlays (2026-06-03) */
+.field-swatch-state          { background: linear-gradient(90deg, #4072ff 0%, #ff594d 100%); }
+.field-swatch-latency        { background: linear-gradient(90deg, #1a3acc 0%, #ff3b2f 100%); }
+.field-swatch-gauss          { background: linear-gradient(90deg, #2159d9 0%, #f2f2f2 50%, #e51a33 100%); }
+.field-swatch-moore          { background: linear-gradient(90deg, #ff5252 0%, #66bb6a 50%, #42a5f5 100%); }
 
 /* Scenario epistemic status text */
 .lat-scenario-desc-text {

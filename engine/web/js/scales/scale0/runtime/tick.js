@@ -2,6 +2,24 @@ import { getScale0MemoryRecorder } from '../controller.js';
 
 export function advanceSimulation(ctx, state) {
     const latticeSize = ctx.bridge.latticeSize || 32;
+
+    // Worker-backed physics (Phase 2): the MockBridgeProxy's worker self-ticks on
+    // its own clock. Forward the desired run state (deduped in the proxy) and
+    // drive overlay/render refresh from the worker's frame counter, then return —
+    // the in-thread tick path below is for non-worker scenarios only.
+    const fm = state.fluxMock;
+    if (fm && fm.isWorker && state.useFluxMock) {
+        const run = ctx.running && !state.scrubbing && !state.rendering && !!ctx.scenarioRunning;
+        if (typeof fm.setRunning === 'function') fm.setRunning(run);
+        const fc = fm.frameCounter || 0;
+        if (fc !== state._lastWorkerFrame) {
+            state._lastWorkerFrame = fc;
+            state.latticeNeedsUpload = true;
+            state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
+        }
+        return latticeSize;
+    }
+
     // Global pause kills everything — no tick advance, no upload, no flux mock.
     if (!ctx.running) return latticeSize;
     // User is scrubbing — freeze physics so the snapshot loaded by
