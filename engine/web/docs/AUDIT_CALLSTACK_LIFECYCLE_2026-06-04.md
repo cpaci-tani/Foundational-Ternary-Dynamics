@@ -180,6 +180,18 @@ Every size ≥53 now draws ~40K dots (uniform density, no sawtooth); N=65 went 9
 Cost is bounded ~0.75 ms (constant 53³ scan for large N) — still well under the original
 1.29 ms. Tunable via the one named constant. Render-only; physics untouched.
 
+**Fix 3b — flux-volume rendering (additive glow + dim-dot floor).** Denser sampling
+exposed that the flux volume read as a "lattice of cubes": a regular grid of soft round
+points whose dim (low-flux) dots were smaller than their spacing, so the gaps showed.
+Switched the material from `NormalBlending` to **additive glow** (so overlapping soft
+dots accumulate into a continuous luminous volume, with the previously-unused `uGlow`
+uniform adding a gaussian halo), and floored the dim-dot size at `FLUX_DOT_MIN·stride`
+so low-flux dots tile rather than leave a visible grid. Verified visually via a headless
+Playwright capture loop (Three.js renders fine in Playwright Chromium, unlike the paused
+preview tool). Three tunable knobs — `FLUX_DOT_MIN` (dot size), `uGlow`, `uOpacity` —
+trade "smooth cloud" against "crisp + colorful"; current values lean crisp/colorful so
+the blue→red flux colormap reads clearly. Render-only; physics untouched.
+
 ### Bonus finding — `perf-baseline.spec.js` was stale w.r.t. the worker path
 The perf-baseline gate read the steady-state tick via `b.currentTick()` / `b._tick`,
 which the worker-default `MockBridgeProxy` doesn't expose (it self-ticks off-thread),
