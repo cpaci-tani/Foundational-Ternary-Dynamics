@@ -41,19 +41,20 @@ import { FLUX_VOL_VERT, PARTICLE_FRAG } from './shaders.js';
 // buffers size from lattice³, not the field-grid cap. Removed under D-6;
 // the canonical constant now lives in viewport/constants.js.)
 
-// Flux-volume subsample factor — adaptive point budget (2026-06-04). The draw loop
-// emits one point per `step`-th voxel per axis, so the worst-case drawn/buffer count
-// is (N/step)³. Targeting a fixed axis cap keeps that bounded (~FLUX_MAX_AXIS_POINTS³
-// ≈ 149K points) while letting bigger lattices reveal proportionally MORE structure
-// than the old fixed 1/2/4 tiers (which capped the cloud at a scale-invariant ~9K
-// dots — see AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md). Cost is ~linear in drawn
-// points and the per-upload max-scan was made ~10× cheaper, so this stays cheap.
-// Used in BOTH _buildFluxVolume (buffer sizing) and updateFluxVolume (scan + write)
-// — they MUST share this helper or the write loop would over/under-run the buffer.
+// Flux-volume sampling — adaptive point budget with a FRACTIONAL stride (2026-06-04).
+// The draw loop emits a fixed `samples`-per-axis grid spread evenly across the lattice
+// (stride = N/samples ≥ 1), so the rendered cloud has ~constant density at EVERY size.
+// This replaces the earlier integer-step (1/2/4) subsample, whose tier boundaries left
+// awkwardly sparse sizes — e.g. N=65 dropped to ⅛ density just past the step 1→2 jump.
+// For N ≤ FLUX_MAX_AXIS_POINTS every voxel is drawn (stride exactly 1, no regression at
+// small L); above it `samples` saturates and the stride grows continuously. Worst-case
+// drawn/buffer count is samples³ ≤ FLUX_MAX_AXIS_POINTS³ ≈ 149K. Used by BOTH
+// _buildFluxVolume (buffer sizing) and updateFluxVolume (scan + write) — they MUST
+// share this or the write loop would over/under-run the geometry buffer.
 // Raise FLUX_MAX_AXIS_POINTS for a denser cloud (and a larger geometry buffer).
 const FLUX_MAX_AXIS_POINTS = 53;   // 53³ ≈ 148.9K-point worst-case budget
-function fluxVolumeStep(N) {
-    return Math.max(1, Math.ceil(N / FLUX_MAX_AXIS_POINTS));
+function fluxVolumeAxisSamples(N) {
+    return Math.min(N, FLUX_MAX_AXIS_POINTS);
 }
 
 export class ViewportFluxRenderer {
@@ -111,15 +112,15 @@ export class ViewportFluxRenderer {
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
     // Renders the continuous flux field J as sparse point cloud.
     // Each voxel above threshold emits a colored dot sized by magnitude.
-    // Subsampling tiers: step=1 for L<=48, step=2 for L<=96, step=4 for L>96.
+    // Sampling: a fixed fractional-stride grid (fluxVolumeAxisSamples per axis) so the
+    // cloud has ~constant density at every L — full detail up to FLUX_MAX_AXIS_POINTS.
     // Boundary clipping uses _insideBoundary() for non-cube shapes.
 
     _buildFluxVolume(latticeSize) {
-        // Compute the subsampled grid dimension to determine buffer capacity.
-        // Subsampling mirrors updateFluxVolume via the shared fluxVolumeStep() helper
-        // so the buffer capacity matches exactly what the write loop will emit.
-        const step = fluxVolumeStep(latticeSize);
-        const sampledN = Math.ceil(latticeSize / step);
+        // Buffer capacity = the fractional-stride sample grid (samples per axis), via
+        // the shared fluxVolumeAxisSamples() helper so it matches exactly what the
+        // updateFluxVolume write loop will emit (≤ samples³ points).
+        const sampledN = fluxVolumeAxisSamples(latticeSize);
         const maxPts = sampledN * sampledN * sampledN;
         const positions = new Float32Array(maxPts * 3);
         const colors = new Float32Array(maxPts * 3);
@@ -198,23 +199,24 @@ export class ViewportFluxRenderer {
             return;
         }
 
-        // Subsample factor — hoisted ABOVE the maxFlux scan so the scan visits the
-        // SAME voxels the write loop below draws. Scanning the full N³ array for the
-        // max was the dominant per-upload cost at large L (2.1M reads at L=129, every
-        // upload, undecimated — while the write loop already subsampled). Normalising
-        // against the max of the drawn (subsampled) set is self-consistent with the
-        // rendered point cloud and cuts the scan step³×. Shares the adaptive
-        // fluxVolumeStep() helper with the render loop below + the buffer sizing.
-        const step = fluxVolumeStep(N);
+        // Fractional-stride sample grid — `samples` points per axis spread evenly
+        // across the lattice (stride = N/samples ≥ 1). Scanning + drawing this fixed
+        // grid (instead of the full N³) keeps the per-upload cost bounded AND the
+        // rendered density ~constant at every lattice size — no sparse sizes at the old
+        // integer-step tier jumps. Normalising against the max of the drawn grid is
+        // self-consistent with the rendered cloud. Shares fluxVolumeAxisSamples() with
+        // the buffer sizing + the write loop below. `| 0` is a fast floor (z<N<2³¹).
+        const samples = fluxVolumeAxisSamples(N);
+        const stride = N / samples;   // ≥ 1; exactly 1 when N ≤ FLUX_MAX_AXIS_POINTS
 
-        // Find max for normalization over the subsampled set.
+        // Find max for normalization over the sampled grid.
         let maxFlux = 0;
-        for (let z = 0; z < N; z += step) {
-            const zNN = z * N * N;
-            for (let y = 0; y < N; y += step) {
-                const zNNyN = zNN + y * N;
-                for (let x = 0; x < N; x += step) {
-                    const m = volumeData[zNNyN + x];
+        for (let iz = 0; iz < samples; iz++) {
+            const zNN = Math.min(N - 1, (iz * stride) | 0) * N * N;
+            for (let iy = 0; iy < samples; iy++) {
+                const zNNyN = zNN + Math.min(N - 1, (iy * stride) | 0) * N;
+                for (let ix = 0; ix < samples; ix++) {
+                    const m = volumeData[zNNyN + Math.min(N - 1, (ix * stride) | 0)];
                     if (m > maxFlux) maxFlux = m;
                 }
             }
@@ -234,9 +236,8 @@ export class ViewportFluxRenderer {
         const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
         const halfN = N / 2;
 
-        // `step` (subsample factor) is computed above, before the maxFlux scan, so
-        // the scan and this write loop visit exactly the same voxels:
-        //   L<=48: step=1 (≤48³≈110K pts)   L<=96: step=2 (from 96³)   L>96: step=4 (from 128³)
+        // The write loop below draws the SAME fractional-stride grid the maxFlux scan
+        // visited (samples per axis, stride = N/samples). See fluxVolumeAxisSamples().
 
         // PERF: hoist boundary-shape check OUT of the per-voxel loop. For the
         // default 'cube'/'none' boundary _insideBoundary() always returns
@@ -253,11 +254,14 @@ export class ViewportFluxRenderer {
         const colArr = colAttr.array;
         const sizeArr = sizeAttr.array;
 
-        for (let z = 0; z < N && count < maxPts; z += step) {
+        for (let iz = 0; iz < samples && count < maxPts; iz++) {
+            const z = Math.min(N - 1, (iz * stride) | 0);
             const zNN = z * N * N;
-            for (let y = 0; y < N && count < maxPts; y += step) {
+            for (let iy = 0; iy < samples && count < maxPts; iy++) {
+                const y = Math.min(N - 1, (iy * stride) | 0);
                 const zNNyN = zNN + y * N;
-                for (let x = 0; x < N && count < maxPts; x += step) {
+                for (let ix = 0; ix < samples && count < maxPts; ix++) {
+                    const x = Math.min(N - 1, (ix * stride) | 0);
                     if (needsClip) {
                         const center = N / 2;
                         const radius = N / 2;
@@ -285,7 +289,7 @@ export class ViewportFluxRenderer {
                     fluxToColorInto(colArr, c3, mag, maxFlux);
 
                     const t = mag / (maxFlux + 1e-20);
-                    const sizeScale = step > 1 ? step * 0.8 : 1.0; // compensate for subsampling
+                    const sizeScale = stride > 1 ? stride * 0.8 : 1.0; // compensate for spacing
                     sizeArr[count] = (1.0 + (MAX_SIZE - 1.0) * t) * sizeScale;
 
                     count++;
