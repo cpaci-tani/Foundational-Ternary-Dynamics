@@ -57,6 +57,14 @@ function fluxVolumeAxisSamples(N) {
     return Math.min(N, FLUX_MAX_AXIS_POINTS);
 }
 
+// Dim-dot floor size, in units of the grid spacing (`stride`). The flux volume is a soft
+// round point cloud; if the dimmest dots are smaller than the inter-sample spacing the
+// regular grid shows through as a "lattice of cubes". A floor of a few spacings makes even
+// low-flux dots overlap into a continuous haze (high-flux dots grow on top, up to the
+// fluxPointScale·10 ceiling). Tunable: raise for a smoother/denser cloud, lower for crisper
+// individual dots.
+const FLUX_DOT_MIN = 2.4;
+
 export class ViewportFluxRenderer {
     constructor({
         scene,
@@ -141,11 +149,15 @@ export class ViewportFluxRenderer {
         const mat = new THREE.ShaderMaterial({
             vertexShader: FLUX_VOL_VERT,
             fragmentShader: PARTICLE_FRAG,
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
+            // Additive glow: overlapping soft dots ACCUMULATE into a continuous luminous
+            // volume instead of reading as discrete dots on a grid. uGlow adds a gaussian
+            // halo (exp falloff) past each dot's core so neighbours blend across the gaps.
+            // depthWrite off + additive = order-independent glow on the dark substrate.
+            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.55 }, uGlow: { value: 0.18 } },
             transparent: true,
             depthWrite: false,
             depthTest: true,
-            blending: THREE.NormalBlending,
+            blending: THREE.AdditiveBlending,
         });
 
         this._fluxVolume = new THREE.Points(geo, mat);
@@ -289,8 +301,11 @@ export class ViewportFluxRenderer {
                     fluxToColorInto(colArr, c3, mag, maxFlux);
 
                     const t = mag / (maxFlux + 1e-20);
-                    const sizeScale = stride > 1 ? stride * 0.8 : 1.0; // compensate for spacing
-                    sizeArr[count] = (1.0 + (MAX_SIZE - 1.0) * t) * sizeScale;
+                    // Floor the dim dots at FLUX_DOT_MIN·stride so they tile the grid
+                    // spacing (no visible lattice); high-flux dots grow up to MAX_SIZE·stride.
+                    const lo = FLUX_DOT_MIN * stride;
+                    const hi = Math.max(MAX_SIZE, FLUX_DOT_MIN) * stride;
+                    sizeArr[count] = lo + (hi - lo) * t;
 
                     count++;
                 }
