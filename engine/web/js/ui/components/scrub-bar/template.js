@@ -17,13 +17,22 @@ export function getScrubBarTemplate() {
     el.setAttribute('aria-label', 'Playback timeline');
     el.innerHTML = `
         <div class="scrub-bar-section scrub-bar-controls">
-            <button class="tb-btn tb-btn-global" id="btn-play"
-                title="Play / Pause (Space) — freezes the simulation."
-                aria-label="Play/pause">&#9654;</button>
-            <button class="tb-btn scrub-bar-small-btn" id="btn-step"
-                title="Step (S)" aria-label="Step">&#9205;</button>
-            <button class="tb-btn scrub-bar-small-btn" id="btn-reset"
-                title="Reset (R)" aria-label="Reset">&#8634;</button>
+            <div class="tb-btn-labeled">
+                <button class="tb-btn tb-btn-global" id="btn-play"
+                    title="Play / Pause (Space) — freezes the simulation."
+                    aria-label="Play/pause">&#9654;</button>
+                <span class="tb-btn-label">play/pause</span>
+            </div>
+            <div class="tb-btn-labeled">
+                <button class="tb-btn scrub-bar-small-btn" id="btn-step"
+                    title="Step (S)" aria-label="Step">&#9205;</button>
+                <span class="tb-btn-label">step</span>
+            </div>
+            <div class="tb-btn-labeled">
+                <button class="tb-btn scrub-bar-small-btn" id="btn-reset"
+                    title="Reset (R)" aria-label="Reset">&#8634;</button>
+                <span class="tb-btn-label">reset</span>
+            </div>
         </div>
 
         <div class="scrub-bar-divider" aria-hidden="true"></div>
