@@ -3,11 +3,11 @@
  * the viewport that also hosts the primary playback controls.
  *
  * Layout (left → right):
- *   [▶] [▷] [⏵] [↺]   │   Speed ── ●   │   ⟲ [── timeline ──] 00:00   │   ● Render   ⚙
+ *   [▶] [⏵] [↺]   │   Speed ── ●   │   ⟲ [── timeline ──] 00:00   │   ● Render   ⚙
  *
  * The ids below match the original toolbar wiring (`btn-play`,
- * `btn-local-play`, `btn-step`, `btn-reset`, `ticks-per-frame`,
- * `tpf-display`) so app.js listeners keep working unchanged.
+ * `btn-step`, `btn-reset`, `ticks-per-frame`, `tpf-display`) so app.js
+ * listeners keep working unchanged.
  */
 export function getScrubBarTemplate() {
     const el = document.createElement('div');
@@ -17,18 +17,9 @@ export function getScrubBarTemplate() {
     el.setAttribute('aria-label', 'Playback timeline');
     el.innerHTML = `
         <div class="scrub-bar-section scrub-bar-controls">
-            <div class="tb-btn-labeled">
-                <button class="tb-btn tb-btn-global" id="btn-play"
-                    title="Global Play / Pause (Space) — freezes the whole simulation."
-                    aria-label="Global play/pause">&#9654;</button>
-                <span class="tb-btn-label">global</span>
-            </div>
-            <div class="tb-btn-labeled">
-                <button class="tb-btn tb-btn-local" id="btn-local-play"
-                    title="Local Play / Pause (Shift+Space) — freezes scenario physics; visualization continues."
-                    aria-label="Local play/pause">&#9655;</button>
-                <span class="tb-btn-label">local</span>
-            </div>
+            <button class="tb-btn tb-btn-global" id="btn-play"
+                title="Play / Pause (Space) — freezes the simulation."
+                aria-label="Play/pause">&#9654;</button>
             <button class="tb-btn scrub-bar-small-btn" id="btn-step"
                 title="Step (S)" aria-label="Step">&#9205;</button>
             <button class="tb-btn scrub-bar-small-btn" id="btn-reset"

@@ -9,7 +9,7 @@ export function advanceSimulation(ctx, state) {
     // the in-thread tick path below is for non-worker scenarios only.
     const fm = state.fluxMock;
     if (fm && fm.isWorker && state.useFluxMock) {
-        const run = ctx.running && !state.scrubbing && !state.rendering && !!ctx.scenarioRunning;
+        const run = ctx.running && !state.scrubbing && !state.rendering;
         if (typeof fm.setRunning === 'function') fm.setRunning(run);
         const fc = fm.frameCounter || 0;
         if (fc !== state._lastWorkerFrame) {
@@ -49,31 +49,16 @@ export function advanceSimulation(ctx, state) {
     // "tick on toggle". Overlays now sample whatever state the mock is in.
     const tickMock = !!(mockScale0 && state.useFluxMock);
 
-    // Three-level pause for Scale 0:
-    //
-    //   `running`         (global)   — gates the visualization layer (overlay
-    //                                   re-sampling, streamline re-computation,
-    //                                   render). Handled by updateFieldOverlays.
-    //   `scenarioRunning` (scenario) — gates the PHYSICS tick. Both the bridge
-    //                                   wave-equation step and the flux-mock
-    //                                   pattern generator are scenario dynamics
-    //                                   (they advance the underlying flux field
-    //                                   that everything else is computed from).
-    //                                   When scenario is paused but global is
-    //                                   on, the flux state is frozen but the
-    //                                   B/E/Φ overlays keep re-rendering against
-    //                                   that frozen state — so the visualizer
-    //                                   still "moves" (importance-sampled seeds
-    //                                   re-pick each frame) while the underlying
-    //                                   physics is held still.
-    const tickScenario = !!ctx.scenarioRunning;
+    // Past the global-pause / scrubbing / rendering guards above, `running` is
+    // true, so physics advances this frame. Tick the WASM bridge unless a JS
+    // flux mock owns the physics; tick the mock only when it IS the source.
     for (let i = 0; i < ticksToRun; i++) {
-        if (!state.useFluxMock && tickScenario) mainScale0.tickScale0();
-        if (tickMock && tickScenario) mockScale0.tickScale0();
+        if (!state.useFluxMock) mainScale0.tickScale0();
+        if (tickMock) mockScale0.tickScale0();
     }
 
-    // Mark the lattice for re-upload only if a tick actually advanced — when
-    // scenario is paused, the lattice contents haven't changed, so skipping the
+    // Mark the lattice for re-upload only if a tick actually advanced — when no
+    // tick ran this frame, the lattice contents haven't changed, so skipping the
     // upload saves the per-frame data round-trip.
     //
     // `latticeNeedsUpload` is a one-shot flag consumed (and cleared) by
@@ -84,16 +69,14 @@ export function advanceSimulation(ctx, state) {
     // is never cleared; the overlay scheduler latches its value at sweep start
     // and only re-sweeps when it has moved (skip-unchanged). Owned entirely
     // within the scale0 runtime (set here, read in field-overlays.js).
-    if (tickScenario && ticksToRun > 0) {
-        state.latticeNeedsUpload = true;
+    state.latticeNeedsUpload = true;
+    if (ticksToRun > 0) {
         state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
-    } else if (tickScenario) {
-        state.latticeNeedsUpload = true;
     }
 
     // Feed the playback timeline (no-op if the recorder hasn't been created
     // yet or if the scenario didn't tick this frame).
-    if (tickScenario && ticksToRun > 0) {
+    if (ticksToRun > 0) {
         const rec = getScale0MemoryRecorder();
         const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : mainScale0;
         rec?.onTick(activeScale0);

@@ -11,29 +11,20 @@ test.describe('Playback timeline smoke', () => {
         });
     });
 
-    test('play buttons render with labels and distinct classes', async ({ page }) => {
+    test('single play button renders (no local button or labels)', async ({ page }) => {
         await page.goto('/?engine=mock');
         await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
 
-        const state = await page.evaluate(() => {
-            const g = document.getElementById('btn-play');
-            const l = document.getElementById('btn-local-play');
-            const labels = [...document.querySelectorAll('.tb-btn-labeled .tb-btn-label')]
-                .map((s) => s.textContent?.trim());
-            return {
-                globalExists: !!g,
-                localExists: !!l,
-                globalClass: g?.className ?? '',
-                localClass:  l?.className ?? '',
-                labels,
-            };
-        });
+        const state = await page.evaluate(() => ({
+            globalExists: !!document.getElementById('btn-play'),
+            localExists:  !!document.getElementById('btn-local-play'),
+            globalClass:  document.getElementById('btn-play')?.className ?? '',
+            labelCount:   document.querySelectorAll('.tb-btn-label').length,
+        }));
         expect(state.globalExists).toBe(true);
-        expect(state.localExists).toBe(true);
+        expect(state.localExists).toBe(false);
         expect(state.globalClass).toContain('tb-btn-global');
-        expect(state.localClass).toContain('tb-btn-local');
-        expect(state.labels).toContain('global');
-        expect(state.labels).toContain('local');
+        expect(state.labelCount).toBe(0);
     });
 
     test('scrub bar mounts as a compact capsule without timeline elements', async ({ page }) => {

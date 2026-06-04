@@ -217,7 +217,7 @@ export function bindUI(ctx) {
  * after a scale switch.
  *
  * Called from app.js BEFORE wireToolbar() so that the playback
- * button IDs (btn-play, btn-local-play, btn-step, btn-reset,
+ * button IDs (btn-play, btn-step, btn-reset,
  * ticks-per-frame, tpf-display) exist in the DOM when the toolbar
  * wirer looks them up.
  */
