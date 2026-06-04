@@ -10,6 +10,7 @@
 import { MockBridge } from './mock-bridge.js';
 import { createScale0Capabilities } from './capabilities/scale0.js';
 import { viewSharedField } from './shared-field.js';
+import { SCALE0_DIRECT_READS } from './bridge-contract.js';
 
 const EMPTY_PARTS = () => ({
     positions: new Float32Array(0), colors: new Float32Array(0),
@@ -27,6 +28,7 @@ export class MockBridgeProxy {
         this._reflective = false;
         this._lastDiag = null;
         this._lastParts = null;
+        this._lastParticleList = null;   // worker-sourced particle LIST (≠ render frame)
         this._ctrl = null;
         this._ready = false;
         this._running = true;   // worker starts running on create; deduped in setRunning
@@ -42,6 +44,24 @@ export class MockBridgeProxy {
         this._worker.onerror = (e) => console.error('[Scale0 worker]', e.message || e);
 
         this.capabilities = { scale0: this._buildCaps() };
+
+        // Forward every canonical direct-read (SCALE0_DIRECT_READS) to the shadow
+        // — which reads the worker's SAB field — EXCEPT names this class already
+        // implements explicitly (getScale0ParticleList → worker-sourced, plus the
+        // getFluxVolume/getFluxSlice/getDiagnostics/inspectVoxel reads below). New
+        // samplers added to the contract are then covered without touching this
+        // file — the anti-drift fix for the one-at-a-time gap (cf. 68024ba1).
+        this._installShadowReads();
+    }
+
+    /** Install a shadow-delegating forwarder for each canonical direct-read not
+     *  already defined on this proxy. Returns a typed-empty before the worker
+     *  signals ready; reads the SAB-backed shadow afterward. */
+    _installShadowReads() {
+        for (const { name, empty } of SCALE0_DIRECT_READS) {
+            if (typeof this[name] === 'function') continue;   // explicit impl wins
+            this[name] = (...args) => (this._ready ? this._shadow[name](...args) : empty());
+        }
     }
 
     _onMessage(m) {
@@ -57,6 +77,7 @@ export class MockBridgeProxy {
         } else if (m.type === 'frame') {
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
+            if (m.particleList) this._lastParticleList = m.particleList;
         } else if (m.type === 'error') {
             console.error('[Scale0 worker]', m.where, m.msg);
         }
@@ -116,6 +137,11 @@ export class MockBridgeProxy {
     getFluxSlice(axis, index) { return this._ready ? this._shadow.getFluxSlice(axis, index) : new Float64Array(0); }
     getParticleData() { return this._lastParts ?? EMPTY_PARTS(); }
     getDiagnostics() { return this._lastDiag ?? null; }
+    // Particle LIST (x,y,z,state,charge,…) — distinct from the render frame
+    // (getParticleData). The shadow never ticks and owns no particles, so the
+    // list rides postMessage from the worker. Consumers: spectrum-panel,
+    // p1-observables-panel, physics-harness. Overrides the generic forwarder.
+    getScale0ParticleList() { return this._lastParticleList ?? []; }
     // Per-voxel probe (p1-observables-panel). Reads the shadow's SAB field; the
     // shadow's _particles is [] (the render frame is separate), so the particle
     // lookup is a safe no-op and the flux fields come from shared memory.
