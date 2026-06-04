@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTD Neutron Star | Pulsar Simulation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #020205;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+        }
+        
+        canvas { display: block; }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .panel {
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            pointer-events: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            max-width: 380px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #33FFB3, #4da6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            color: #a0a0b0;
+            line-height: 1.5;
+        }
+
+        .controls {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 13px;
+            color: #d0d0e0;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #33FFB3;
+        }
+
+        /* Custom Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .3s;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #888;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: rgba(51, 255, 179, 0.2);
+            border-color: #33FFB3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+            background-color: #33FFB3;
+            box-shadow: 0 0 10px #33FFB3;
+        }
+        
+        .controls-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui-layer">
+        <div class="panel header">
+            <h1>Neutron Star (Pulsar)</h1>
+            <p>A hyper-dense knot of degenerate SU(3) topological defects. The misaligned U(1) magnetic field sweeps the universe like a lighthouse.</p>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>
+                        <span>Rotational Velocity (RPM)</span>
+                        <span id="rpmVal">600</span>
+                    </label>
+                    <input type="range" id="rpmSlider" min="0" max="1500" step="10" value="600">
+                </div>
+                
+                <div class="toggle-container">
+                    <label for="magToggle" style="font-size: 13px; font-weight: 600; color: #d0d0e0; margin: 0; cursor:pointer;">U(1) Magnetic Field (Jets)</label>
+                    <label class="switch">
+                        <input type="checkbox" id="magToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="toggle-container">
+                    <label for="gravToggle" style="font-size: 13px; font-weight: 600; color: #d0d0e0; margin: 0; cursor:pointer;">Gravity Well (Spacetime Strain)</label>
+                    <label class="switch">
+                        <input type="checkbox" id="gravToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="controls-hint">Left Click: Rotate • Scroll: Zoom • Right Click: Pan</div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // Scene Setup
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x020205, 0.015);
+        
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 200);
+        camera.position.set(25, 15, 30);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+
+        // Lighting
+        scene.add(new THREE.AmbientLight(0x111122));
+        
+        const pointLight = new THREE.PointLight(0x33FFB3, 2, 50);
+        scene.add(pointLight);
+
+        // Core Physics Groups
+        const starGroup = new THREE.Group();
+        scene.add(starGroup);
+
+        const CORE_RADIUS = 2.0;
+
+        // 1. Degenerate Neutron Core
+        const coreGeo = new THREE.IcosahedronGeometry(CORE_RADIUS, 4);
+        const coreMat = new THREE.MeshStandardMaterial({
+            color: 0x051122,
+            emissive: 0x114488,
+            emissiveIntensity: 0.8,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        });
+        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+        starGroup.add(coreMesh);
+
+        // Solid inner mass
+        const innerGeo = new THREE.IcosahedronGeometry(CORE_RADIUS * 0.95, 3);
+        const innerMat = new THREE.MeshStandardMaterial({
+            color: 0x000000,
+            emissive: 0x051122,
+            metalness: 1.0,
+            roughness: 0.2
+        });
+        const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+        starGroup.add(innerMesh);
+
+        // 2. Misaligned U(1) Magnetic Field (Pulsar Jets)
+        const magGroup = new THREE.Group();
+        // Misalign the magnetic axis by 25 degrees (Pulsar tilt)
+        magGroup.rotation.z = THREE.MathUtils.degToRad(25);
+        starGroup.add(magGroup);
+
+        // Generate Dipole Magnetic Field Lines
+        const fieldLinesGeo = new THREE.BufferGeometry();
+        const linePoints = [];
+        const L_VALUES = [4, 6, 8, 10, 15, 20]; // Shell sizes
+        const PHI_COUNT = 12; // Lines per shell
+
+        L_VALUES.forEach(L => {
+            for (let p = 0; p < PHI_COUNT; p++) {
+                const phi = (p / PHI_COUNT) * Math.PI * 2;
+                // Parametric dipole: r = L * sin^2(theta)
+                // Draw curve from North to South pole
+                for (let t = 0; t <= 40; t++) {
+                    // Avoid exactly 0 and PI to prevent division by zero at poles
+                    const theta = 0.05 + (t / 40) * (Math.PI - 0.1); 
+                    
+                    const r = L * Math.pow(Math.sin(theta), 2);
+                    const x = r * Math.sin(theta) * Math.cos(phi);
+                    const z = r * Math.sin(theta) * Math.sin(phi);
+                    const y = r * Math.cos(theta);
+                    
+                    // Stop drawing if it enters the core
+                    if (x*x + y*y + z*z > CORE_RADIUS*CORE_RADIUS * 0.9) {
+                        linePoints.push(x, y, z);
+                    }
+                }
+            }
+        });
+
+        fieldLinesGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePoints, 3));
+        const fieldLinesMat = new THREE.PointsMaterial({
+            color: 0x33FFB3,
+            size: 0.15,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+        const magneticField = new THREE.Points(fieldLinesGeo, fieldLinesMat);
+        magGroup.add(magneticField);
+        
+        // Add Polar Jets (Intense beams)
+        const jetGeo = new THREE.CylinderGeometry(0.1, 4, 60, 16, 1, true);
+        jetGeo.translate(0, 30, 0); // Shift up so base is at 0
+        const jetMat = new THREE.MeshBasicMaterial({
+            color: 0x4da6ff,
+            transparent: true,
+            opacity: 0.15,
+            blending: THREE.AdditiveBlending,
+            side: THREE.DoubleSide,
+            depthWrite: false
+        });
+        
+        const northJet = new THREE.Mesh(jetGeo, jetMat);
+        magGroup.add(northJet);
+        
+        const southJet = new THREE.Mesh(jetGeo, jetMat);
+        southJet.rotation.x = Math.PI; // Point down
+        magGroup.add(southJet);
+
+        // 3. Spacetime Gravity Well (Spatial Contraction Grid)
+        const gridGroup = new THREE.Group();
+        scene.add(gridGroup);
+        
+        const gridPoints = [];
+        const gridColors = [];
+        const GRID_SIZE = 16;
+        const SPACING = 2.5;
+        
+        const colorBase = new THREE.Color(0x333344);
+        const colorWarp = new THREE.Color(0xff4d4d);
+
+        for (let x = -GRID_SIZE; x <= GRID_SIZE; x++) {
+            for (let y = -GRID_SIZE; y <= GRID_SIZE; y++) {
+                for (let z = -GRID_SIZE; z <= GRID_SIZE; z++) {
+                    const rBase = Math.sqrt(x*x + y*y + z*z);
+                    if (rBase < 1.0) continue; // Inside star
+                    
+                    const rPhysical = rBase * SPACING;
+                    
+                    // Discrete Spatial Contraction (Schwarzschild approximation)
+                    // d_r' = d_r * (1 - Rs/r)
+                    const strain = Math.min(0.8, (CORE_RADIUS * 1.5) / (rPhysical * rPhysical));
+                    const scale = 1.0 - strain;
+                    
+                    const posX = x * SPACING * scale;
+                    const posY = y * SPACING * scale;
+                    const posZ = z * SPACING * scale;
+                    
+                    gridPoints.push(posX, posY, posZ);
+                    
+                    // Color based on strain
+                    const c = colorBase.clone().lerp(colorWarp, strain * 2.0);
+                    gridColors.push(c.r, c.g, c.b);
+                }
+            }
+        }
+        
+        const gravGeo = new THREE.BufferGeometry();
+        gravGeo.setAttribute('position', new THREE.Float32BufferAttribute(gridPoints, 3));
+        gravGeo.setAttribute('color', new THREE.Float32BufferAttribute(gridColors, 3));
+        
+        const gravMat = new THREE.PointsMaterial({
+            size: 0.1,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.4
+        });
+        const gravityWell = new THREE.Points(gravGeo, gravMat);
+        gridGroup.add(gravityWell);
+
+        // UI Event Listeners
+        const rpmSlider = document.getElementById('rpmSlider');
+        const rpmVal = document.getElementById('rpmVal');
+        const magToggle = document.getElementById('magToggle');
+        const gravToggle = document.getElementById('gravToggle');
+
+        rpmSlider.addEventListener('input', (e) => {
+            rpmVal.textContent = e.target.value;
+        });
+
+        magToggle.addEventListener('change', (e) => {
+            magGroup.visible = e.target.checked;
+        });
+
+        gravToggle.addEventListener('change', (e) => {
+            gridGroup.visible = e.target.checked;
+        });
+
+        // Background stars
+        const starsGeo = new THREE.BufferGeometry();
+        const starsArr = [];
+        for(let i=0; i<2000; i++) {
+            const r = 100 + Math.random() * 100;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos((Math.random() * 2) - 1);
+            starsArr.push(
+                r * Math.sin(phi) * Math.cos(theta),
+                r * Math.sin(phi) * Math.sin(theta),
+                r * Math.cos(phi)
+            );
+        }
+        starsGeo.setAttribute('position', new THREE.Float32BufferAttribute(starsArr, 3));
+        const starsMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.2, transparent: true, opacity: 0.3});
+        scene.add(new THREE.Points(starsGeo, starsMat));
+
+        // Animation Loop
+        let clock = new THREE.Clock();
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const delta = clock.getDelta();
+            const rpm = parseFloat(rpmSlider.value);
+            
+            // Convert RPM to radians per second
+            // 1 RPM = (2 * PI) / 60 radians per sec
+            const rps = (rpm * Math.PI * 2) / 60;
+            
+            // Spin the star and its locked magnetic field
+            starGroup.rotation.y += rps * delta;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }, false);
+    </script>
+</body>
+</html>

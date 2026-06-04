@@ -3,7 +3,7 @@
  * the viewport that also hosts the primary playback controls.
  *
  * Layout (left → right):
- *   [▶] [▷] [⏵] [↺]   │   Speed ── ●   │   ⟲ [── timeline ──] 00:00   │   ● Render   ⚙
+ *   [▶] [▷] [⏵] [↺]   │   Speed ── ●   │   ⟲ [── timeline ──] 00:00   │   ⚙
  *
  * The ids below match the original toolbar wiring (`btn-play`,
  * `btn-local-play`, `btn-step`, `btn-reset`, `ticks-per-frame`,
