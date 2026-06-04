@@ -164,9 +164,13 @@ fixed `fluxVolumeAxisSamples(N) = min(N, FLUX_MAX_AXIS_POINTS)` grid spread even
 the lattice (stride = N/samples ≥ 1). For N ≤ 53 every voxel draws (stride 1); above it
 the grid saturates at 53³ and the stride grows continuously — so the cloud is **~constant
 density at every size**, with no awkward sparse sizes at the old integer-step (1/2/4) tier
-jumps (e.g. N=65 used to fall to ⅛ density just past the step 1→2 boundary). The helper is
-shared by **both** the buffer sizing (`_buildFluxVolume`) and the scan/write
-(`updateFluxVolume`) so they can't drift. Effect (microbench, real `updateFluxVolume`,
+jumps (e.g. N=65 used to fall to ⅛ density just past the step 1→2 boundary). The per-axis
+sample positions are **jittered** with a stable stratified golden-ratio offset
+(deterministic — no per-frame shimmer — and decorrelated per axis) so a plain
+`floor(i·stride)` at a fractional stride doesn't line the skipped voxels into evenly-spaced
+gap planes (a moiré "lattice of lattices"); the jitter collapses to an exact every-voxel
+grid at stride 1. The sampling is shared by **both** the buffer sizing (`_buildFluxVolume`)
+and the scan/write (`updateFluxVolume`) so they can't drift. Effect (microbench, real `updateFluxVolume`,
 flux-pulse-like field):
 
 | L | drawn dots before (fixed 1/2/4) | drawn dots after (fractional) | ms/call |
