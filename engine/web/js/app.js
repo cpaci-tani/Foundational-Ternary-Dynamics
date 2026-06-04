@@ -12,7 +12,7 @@ import { createBridge, MockBridge } from './bridge-init.js';
 import { getPhysicsHarness } from './physics/index.js';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js';
-import { DiagnosticsPanel, Sparkline } from './diagnostics.js';
+import { DiagnosticsPanel } from './diagnostics.js';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js';
@@ -732,17 +732,20 @@ function animate(now) {
 
     inspectorRuntime?.updateFloatingPanels();
 
-    // Update active docked panels or floated windows in real-time
-    if (activeTab === 'telemetry-grid' || floatingWindowManager.has('telemetry-grid')) {
+    // Update active docked panels or floated windows in real-time. Scale 0
+    // owns its active telemetry panel updates on the same cadence as its
+    // telemetry collection; app.js still services floated panels and panels in
+    // the other engines.
+    if (_shouldAppUpdatePanel('telemetry-grid')) {
         telemetryGridPanel?.update();
     }
-    if (activeTab === 'charts' || floatingWindowManager.has('charts')) {
+    if (_shouldAppUpdatePanel('charts')) {
         chartsPanel?.update();
     }
-    if (activeTab === 'diagnostics' || floatingWindowManager.has('diagnostics')) {
+    if (_shouldAppUpdatePanel('diagnostics')) {
         diagnosticsPanel?.update();
     }
-    if (activeTab === 'lagrangian' || floatingWindowManager.has('lagrangian')) {
+    if (_shouldAppUpdatePanel('lagrangian')) {
         lagrangianPanel?.update();
     }
 
@@ -754,6 +757,15 @@ function animate(now) {
         lastFpsTime = now;
         if (_dom.statusFps) _dom.statusFps.textContent = fpsDisplay;
     }
+}
+
+function _shouldAppUpdatePanel(panelId) {
+    const visible = activeTab === panelId || floatingWindowManager.has(panelId);
+    if (!visible) return false;
+    const scale0Owned = engineMode === 'lattice' &&
+        (panelId === 'charts' || panelId === 'diagnostics' || panelId === 'lagrangian') &&
+        activeTab === panelId;
+    return !scale0Owned;
 }
 
 // animateLattice -- REMOVED: delegated to Scale0Controller.animateLattice(ctx)
@@ -1812,12 +1824,6 @@ function clearCharts() {
     // cleared buffers on the next update().
     telemetryHub.resetScale(0);
     if (diagnostics) diagnostics.clear();
-}
-
-function formatNumber(n) {
-    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
-    return n.toString();
 }
 
 // ── Phase 1-3: Ontic / Physics / Hierarchy ────────

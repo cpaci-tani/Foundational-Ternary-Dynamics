@@ -252,6 +252,9 @@ ftd_add_test(test_constructor_contract tests/test_constructor_contract.cpp
              NO_CORE LABELS constructor observable eft_quick)
 ftd_add_test(test_native_observable_registry tests/test_native_observable_registry.cpp
              NO_CORE LABELS constructor observable eft_quick)
+ftd_add_test(test_observable_commutativity tests/test_observable_commutativity.cpp
+             CTEST_NAME observable_commutativity TIMEOUT 120
+             LABELS observable measurement eft_quick)
 
 # Engine-flawless audit (2026-06-01): tick phase-order regression + scale-engine
 # RAII/clear() lifecycle contract. Labelled "lifecycle" for the `ctest -L
@@ -1185,6 +1188,8 @@ ftd_add_test(test_reaction_operators tests/test_reaction_operators.cpp
 # Long-running production: 5-8 hours per L size on RTX 5090; smoke variant
 # completes in <30s.
 # Archived 2026-05-27 → engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_2026-04-29.cpp.
+# A later unregistered src/ duplicate with Wilson-coefficient CLI hooks was
+# archived 2026-06-04 → engine/archive/phase_b_2026-04/campaign_s_eff_nonlinear_wilson_2026-06-04.cpp.
 
 # Phase-4 fermion-emergence alternative routes (FTD-0061 extension).
 # Runs WH/Clifford anticommutator measurement under three alternative
