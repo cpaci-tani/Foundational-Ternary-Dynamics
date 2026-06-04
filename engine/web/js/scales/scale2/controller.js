@@ -246,15 +246,15 @@ export function syncAEParams(ctx) {
 
 export function animateAE(ctx) {
     const {
-        bridge, viewport, running, scenarioRunning, ticksPerFrame, inspector,
+        bridge, viewport, running, ticksPerFrame, inspector,
         fluxEnergyChart, particleChart,
         activeTab, frameCount, dom, now,
         updatePlayButton, updateOnticPanel, updateHierarchyPanel,
         setRunning, engineMode
     } = ctx;
 
-    // ── 1. Tick AE if scenario is unpaused ─────────────────────────
-    if (scenarioRunning) {
+    // ── 1. Tick AE while running ───────────────────────────────────
+    if (running) {
         const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
             try {

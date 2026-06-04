@@ -9,8 +9,7 @@
  * unification lands.
  *
  * Shortcut contract (matches pre-refactor behavior 1:1):
- *   Space            → global play/pause
- *   Shift+Space      → scenario play/pause
+ *   Space            → play/pause
  *   S                → single-step
  *   R                → reload scenario
  *   1–8 (Scale 0)    → field-visualization toggles (delegated to Scale0Controller)
@@ -24,7 +23,6 @@
  *   setRunning: (v: boolean) => void,
  *   updatePlayButton: () => void,
  *   togglePlay: () => void,
- *   toggleScenarioPlay: () => void,
  *   stepScenario: () => void,       // handles Scale0Controller.step / peTick / aeTick / etc.
  *   reloadScenario: () => void,     // handles loadAEScenario / loadPEScenario / Scale0Controller.reset
  *   Scale0Controller: object,
@@ -36,7 +34,6 @@ export function wireKeyboard(deps) {
         setRunning,
         updatePlayButton,
         togglePlay,
-        toggleScenarioPlay,
         stepScenario,
         reloadScenario,
         Scale0Controller,
@@ -49,9 +46,7 @@ export function wireKeyboard(deps) {
         switch (e.key.toLowerCase()) {
             case ' ':
                 e.preventDefault();
-                // Shift+Space toggles scenario pause; plain Space toggles global.
-                if (e.shiftKey) toggleScenarioPlay();
-                else togglePlay();
+                togglePlay();
                 break;
             case 's':
                 setRunning(false);

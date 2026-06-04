@@ -267,32 +267,12 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
 
     /* Finger-sized play controls on touch devices (32px desktop floor is
        below the WCAG 44px touch minimum). The toolbar row grows to fit. */
-    .tb-btn-global,
-    .tb-btn-local {
+    .tb-btn-global {
         min-height: var(--tap-min);
     }
 }
 
-/* ── Play-button hierarchy (global = pill + accent, local = square + outline) ── */
-
-.tb-btn-labeled {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-}
-
-.tb-btn-label {
-    font-size: var(--fs-xs);
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: lowercase;
-    color: var(--text-muted);
-    pointer-events: none;
-    line-height: 1;
-}
-
-/* Global — primary pill */
+/* ── Play button — primary pill + accent ── */
 .tb-btn-global {
     width: 44px;
     height: 32px;
@@ -321,36 +301,6 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
                            0 0 18px color-mix(in oklch, var(--accent-glow) 60%, transparent); }
 }
 
-/* Local — outline square */
-.tb-btn-local {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius, 6px);
-    background: transparent;
-    border: 1px solid var(--border-light);
-    color: var(--text-secondary);
-    font-size: var(--fs-sm);
-    transition: border-color 120ms var(--ease-out), color 120ms var(--ease-out);
-}
-.tb-btn-local:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-}
-/* Pulse when local is paused but global is running (visualization still flowing) */
-.tb-btn-local[data-state="local-paused-global-running"] {
-    animation: tb-btn-pulse 2.0s ease-in-out infinite;
-}
-@keyframes tb-btn-pulse {
-    0%, 100% { opacity: 1; }
-    50%      { opacity: 0.55; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-    #btn-play[data-paused="true"],
-    .tb-btn-local[data-state="local-paused-global-running"] { animation: none; }
-}
-
-/* Hide labels on very small screens to preserve toolbar horizontal budget */
-@media (max-width: 480px) {
-    .tb-btn-label { display: none; }
+    #btn-play[data-paused="true"] { animation: none; }
 }
