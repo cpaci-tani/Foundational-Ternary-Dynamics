@@ -14,7 +14,7 @@ import { CosmicMockBridge } from './mock-scale5.js';
  * @param {number} latticeSize - Cubic lattice dimension (default 32)
  * @returns {Promise<WasmBridge|MockBridge>}
  */
-export async function createBridge(latticeSize = 32) {
+export async function createBridge(latticeSize = 33) {
     const wasm = new WasmBridge();
     const ok = await wasm.init(latticeSize);
     if (ok) return wasm;

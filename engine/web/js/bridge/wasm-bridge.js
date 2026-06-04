@@ -42,6 +42,25 @@ import { MockBridge } from './mock-bridge.js';
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
 
+// Memory64 (wasm64) feature-detection, computed once per session. When
+// supported we load the 8 GB `ftd_core64` build (lifts the in-browser lattice
+// cap from L~117 to L~187); otherwise the 2 GB wasm32 `ftd_core` build. iOS /
+// Safari and flagged-Firefox fall back to wasm32. See
+// engine/web/docs/PLAN_WASM64_UPGRADE.md.
+let _memory64Supported = null;
+function supportsMemory64() {
+    if (_memory64Supported !== null) return _memory64Supported;
+    try {
+        // The `index: 'i64'` descriptor is the Memory64 marker; constructing it
+        // throws on engines without Memory64.
+        new WebAssembly.Memory({ initial: 1, maximum: 1, index: 'i64' });
+        _memory64Supported = true;
+    } catch (_e) {
+        _memory64Supported = false;
+    }
+    return _memory64Supported;
+}
+
 // Empty-result singletons used by WasmBridge sampler fallbacks.
 // Before RF-6 the same inline `{ positions: new Float32Array(0), ... }` literal
 // was allocated ~18× per module; the empty arrays themselves are immutable so
@@ -78,37 +97,49 @@ export class WasmBridge {
     constructor() {
         this._module = null;
         this._bridge = null;
-        this.latticeSize = 32;
+        this.latticeSize = 33;
         this.ready = false;
         this.isWasm = true;
+        this.isWasm64 = false;   // set true in init() when the Memory64 build loads
     }
 
-    async init(latticeSize = 32) {
+    async init(latticeSize = 33) {
         let size = parseInt(latticeSize, 10);
-        if (isNaN(size) || size <= 0 || size > 128) {
-            console.warn('[WasmBridge] Invalid init latticeSize:', latticeSize, '- falling back to 32');
-            size = 32;
+        if (isNaN(size) || size <= 0 || size > 257) {
+            console.warn('[WasmBridge] Invalid init latticeSize:', latticeSize, '- falling back to 33');
+            size = 33;
         }
+        // Odd lattices only — snap even N up to the next odd so phenomena
+        // center on a true center voxel.
+        if (size % 2 === 0) size += 1;
         this.latticeSize = size;
         try {
-            if (typeof globalThis.createFTDModule === 'undefined') {
+            // Feature-detect Memory64 and load the matching module. Only ONE
+            // build is ever loaded per session (the choice is deterministic per
+            // browser), so the single _wasmLoadPromise is safe with a dynamic src.
+            const use64 = supportsMemory64();
+            this.isWasm64 = use64;
+            const scriptSrc = use64 ? 'wasm/ftd_core64.js' : 'wasm/ftd_core.js';
+            const factoryName = use64 ? 'createFTDModule64' : 'createFTDModule';
+            if (typeof globalThis[factoryName] === 'undefined') {
                 if (!_wasmLoadPromise) {
                     _wasmLoadPromise = new Promise((resolve, reject) => {
                         const script = document.createElement('script');
-                        script.src = 'wasm/ftd_core.js';
+                        script.src = scriptSrc;
                         script.onload = resolve;
                         script.onerror = () => {
                             _wasmLoadPromise = null; // allow retry
-                            reject(new Error('Failed to load ftd_core.js'));
+                            reject(new Error('Failed to load ' + scriptSrc));
                         };
                         document.head.appendChild(script);
                     });
                 }
                 await _wasmLoadPromise;
             }
-            this._module = await globalThis.createFTDModule({
+            this._module = await globalThis[factoryName]({
                 locateFile: (path) => 'wasm/' + path
             });
+            debugLog('[WasmBridge] loaded ' + (use64 ? 'wasm64 (Memory64, 8 GB heap)' : 'wasm32 (2 GB heap)'));
             // Must be RenderBridge, not DagEngine: every module function in
             // ftd_wasm.cpp (setupScenario, injectParticle, injectFlux, setDt,
             // etc.) takes `ftd::RenderBridge&`. The DagEngine embind class
@@ -148,10 +179,12 @@ export class WasmBridge {
 
     reset(latticeSize) {
         let size = parseInt(latticeSize || this.latticeSize, 10);
-        if (isNaN(size) || size <= 0 || size > 128) {
-            console.warn('[WasmBridge] Invalid reset latticeSize:', latticeSize, 'or current:', this.latticeSize, '- falling back to 32');
-            size = 32;
+        if (isNaN(size) || size <= 0 || size > 257) {
+            console.warn('[WasmBridge] Invalid reset latticeSize:', latticeSize, 'or current:', this.latticeSize, '- falling back to 33');
+            size = 33;
         }
+        // Odd lattices only — snap even N up to the next odd.
+        if (size % 2 === 0) size += 1;
         this.latticeSize = size;
         console.log('[WasmBridge] reset() called. latticeSize =', this.latticeSize);
         if (this._module) {
@@ -416,6 +449,34 @@ export class WasmBridge {
     getCurlJSampled(stride = 2) {
         return _wasmCallOr(this, 'getCurlJSampled', EMPTY_FIELD_SAMPLE,
             (m, b) => m.getCurlJSampled(b, stride));
+    }
+    // Scalar / derived field samplers (2026-06-03) — bound natively in
+    // bindings_render_bridge.cpp. Before binding these fell back to EMPTY,
+    // so Curvature K / Horizon / Fisher / Coherence and the new State-field
+    // overlay rendered nothing on WASM-owned scenarios.
+    getCoherenceSampled(stride = 2) {
+        return _wasmCallOr(this, 'getCoherenceSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getCoherenceSampled(b, stride));
+    }
+    getFisherSampled(stride = 2) {
+        return _wasmCallOr(this, 'getFisherSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getFisherSampled(b, stride));
+    }
+    getLatencySampled(stride = 2) {
+        return _wasmCallOr(this, 'getLatencySampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getLatencySampled(b, stride));
+    }
+    getKretschmannSampled(stride = 2) {
+        return _wasmCallOr(this, 'getKretschmannSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getKretschmannSampled(b, stride));
+    }
+    getStateFieldSampled(stride = 2) {
+        return _wasmCallOr(this, 'getStateFieldSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getStateFieldSampled(b, stride));
+    }
+    getGaussResidualSampled(stride = 1) {
+        return _wasmCallOr(this, 'getGaussResidualSampled', EMPTY_SCALAR_SAMPLE,
+            (m, b) => m.getGaussResidualSampled(b, stride));
     }
 
     // Force-field decomposition samplers (2026-04-19). Delegated to native

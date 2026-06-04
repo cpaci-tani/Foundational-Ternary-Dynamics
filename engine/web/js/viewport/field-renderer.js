@@ -2569,6 +2569,220 @@ export class ViewportFieldRenderer {
     }
 
     // ══════════════════════════════════════════════════════════════════
+    // ── State field s — ternary {-1,0,+1} manifestation point cloud ───
+    // The literal FTD ontology (Postulate 3). Void (s=0) is the implicit
+    // background and is not drawn; manifested voxels render as a point
+    // cloud coloured by sign: s=-1 blue, s=+1 red. Data comes from the
+    // engine's ternary state buffer (getStateFieldSampled) on WASM, or the
+    // manifested-particle set on the MockBridge.
+    _buildStateField() {
+        const max = 16384;
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(max * 3);
+        const col = new Float32Array(max * 3);
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        geo.setDrawRange(0, 0);
+        const tex = this._buildSoftDiscTexture();
+        const mat = new THREE.PointsMaterial({
+            map: tex, alphaMap: tex, size: 3.4, vertexColors: true,
+            transparent: true, opacity: 0.95, depthWrite: false,
+            sizeAttenuation: true, blending: THREE.AdditiveBlending,
+        });
+        const points = new THREE.Points(geo, mat);
+        points.visible = false;
+        points.renderOrder = 4;
+        points.frustumCulled = false;
+        this._scene.add(points);
+        this._stateField = { points, geo, capacity: max };
+    }
+
+    toggleStateField(on) {
+        if (!this._stateField) this._buildStateField();
+        this._stateField.points.visible = !!on;
+        if (!on) this._stateField.geo.setDrawRange(0, 0);
+    }
+
+    updateStateField(data) {
+        this._syncCenterAndRadius();
+        if (!this._stateField) this._buildStateField();
+        const sf = this._stateField;
+        if (!sf.points.visible) return;
+        if (!data || !data.count) { sf.geo.setDrawRange(0, 0); return; }
+        const posAttr = sf.geo.attributes.position;
+        const colAttr = sf.geo.attributes.color;
+        const cap = sf.capacity;
+        const _needsClip = this._clipActive();
+        const { positions, values, count } = data;
+        let vi = 0;
+        for (let i = 0; i < count && vi < cap; i++) {
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET;
+            const py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
+            const pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            posAttr.array[vi * 3] = px;
+            posAttr.array[vi * 3 + 1] = py;
+            posAttr.array[vi * 3 + 2] = pz;
+            if (values[i] < 0) { // s = -1 → cool blue
+                colAttr.array[vi * 3] = 0.25; colAttr.array[vi * 3 + 1] = 0.45; colAttr.array[vi * 3 + 2] = 1.0;
+            } else {             // s = +1 → warm red
+                colAttr.array[vi * 3] = 1.0;  colAttr.array[vi * 3 + 1] = 0.35; colAttr.array[vi * 3 + 2] = 0.22;
+            }
+            vi++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        sf.geo.setDrawRange(0, vi);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── Generic scalar point-cloud overlays (latency, Gauss residual) ──
+    // Each owns an independent THREE.Points (keyed) so multiple can render
+    // at once. Colour comes from a per-overlay colourize(t, rgb) callback;
+    // `t` is the value normalized to [-1,1] (signed) or [0,1] (unsigned).
+    _buildScalarCloud(key, size = 16384) {
+        if (!this._scalarClouds) this._scalarClouds = {};
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(size * 3), 3));
+        geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(size * 3), 3));
+        geo.setDrawRange(0, 0);
+        const tex = this._buildSoftDiscTexture();
+        const mat = new THREE.PointsMaterial({
+            map: tex, alphaMap: tex, size: 3.0, vertexColors: true,
+            transparent: true, opacity: 0.9, depthWrite: false,
+            sizeAttenuation: true, blending: THREE.AdditiveBlending,
+        });
+        const points = new THREE.Points(geo, mat);
+        points.visible = false;
+        points.renderOrder = 4;
+        points.frustumCulled = false;
+        this._scene.add(points);
+        this._scalarClouds[key] = { points, geo, capacity: size };
+    }
+
+    _toggleScalarCloud(key, on) {
+        if (!this._scalarClouds || !this._scalarClouds[key]) this._buildScalarCloud(key);
+        this._scalarClouds[key].points.visible = !!on;
+        if (!on) this._scalarClouds[key].geo.setDrawRange(0, 0);
+    }
+
+    _updateScalarCloud(key, data, colorize, opts = {}) {
+        this._syncCenterAndRadius();
+        if (!this._scalarClouds || !this._scalarClouds[key]) this._buildScalarCloud(key);
+        const sc = this._scalarClouds[key];
+        if (!sc.points.visible) return;
+        if (!data || !data.count) { sc.geo.setDrawRange(0, 0); return; }
+        const posAttr = sc.geo.attributes.position;
+        const colAttr = sc.geo.attributes.color;
+        const cap = sc.capacity;
+        const _needsClip = this._clipActive();
+        const { positions, values, count } = data;
+        const signed = opts.signed === true;
+        let maxAbs = opts.normalizer;
+        if (!maxAbs) { maxAbs = 0; for (let i = 0; i < count; i++) { const a = Math.abs(values[i]); if (a > maxAbs) maxAbs = a; } }
+        const denom = Math.max(maxAbs, 1e-9);
+        const thr = opts.threshold !== undefined ? opts.threshold : 0.02;
+        const rgb = [0, 0, 0];
+        let vi = 0;
+        for (let i = 0; i < count && vi < cap; i++) {
+            const t = signed ? values[i] / denom : Math.abs(values[i]) / denom;
+            if (Math.abs(t) < thr) continue;
+            const px = positions[i * 3] + VOXEL_CENTER_OFFSET;
+            const py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET;
+            const pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
+            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
+            posAttr.array[vi * 3] = px;
+            posAttr.array[vi * 3 + 1] = py;
+            posAttr.array[vi * 3 + 2] = pz;
+            colorize(t, rgb);
+            colAttr.array[vi * 3] = rgb[0];
+            colAttr.array[vi * 3 + 1] = rgb[1];
+            colAttr.array[vi * 3 + 2] = rgb[2];
+            vi++;
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        sc.geo.setDrawRange(0, vi);
+    }
+
+    // Latency L ∈ [0,1] — blue (low / flat space) → red (high / gravity well).
+    toggleLatencyField(on) { this._toggleScalarCloud('latency', on); }
+    updateLatencyField(data) {
+        this._updateScalarCloud('latency', data,
+            (t, rgb) => { rgb[0] = Math.min(1, t); rgb[1] = 0.18; rgb[2] = Math.min(1, 1 - t); },
+            { normalizer: data?.normalizer || 1, threshold: 0.02 });
+    }
+
+    // Gauss residual — signed: red = positive (source excess), blue = negative.
+    toggleGaussResidualField(on) { this._toggleScalarCloud('gaussResidual', on); }
+    updateGaussResidualField(data) {
+        this._updateScalarCloud('gaussResidual', data,
+            (t, rgb) => { if (t >= 0) { rgb[0] = Math.min(1, t); rgb[1] = 0.15; rgb[2] = 0.10; } else { rgb[0] = 0.10; rgb[1] = 0.20; rgb[2] = Math.min(1, -t); } },
+            { signed: true, normalizer: data?.normalizer, threshold: 0.05 });
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    // ── Moore-neighbourhood decomposition (structural wireframe) ──────
+    // The 26-neighbour Moore cell decomposes into three polyhedral shells
+    // (Moore Layer Theorem): SC octahedron (6 face neighbours, red) + FCC
+    // cuboctahedron (12 edge neighbours, green) + BCC stella octangula
+    // (8 corner neighbours = two interpenetrating tetrahedra, blue). A
+    // static teaching glyph centred on the lattice — not a sampled field.
+    _disposeMooreDecomp() {
+        if (!this._mooreDecomp) return;
+        this._mooreDecomp.traverse((o) => { o.geometry?.dispose?.(); o.material?.dispose?.(); });
+        this._scene.remove(this._mooreDecomp);
+        this._mooreDecomp = null;
+    }
+
+    _buildMooreDecomp() {
+        this._syncCenterAndRadius();
+        const c = this._center;
+        const R = this._radius * 0.45;
+        const group = new THREE.Group();
+        const addShell = (verts, edges, color) => {
+            const pos = [];
+            for (const [a, b] of edges) {
+                pos.push(verts[a][0] * R + c, verts[a][1] * R + c, verts[a][2] * R + c);
+                pos.push(verts[b][0] * R + c, verts[b][1] * R + c, verts[b][2] * R + c);
+            }
+            const g = new THREE.BufferGeometry();
+            g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+            const m = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.85, depthWrite: false });
+            group.add(new THREE.LineSegments(g, m));
+        };
+        const dist2 = (a, b) => { const dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2]; return dx * dx + dy * dy + dz * dz; };
+        // SC — octahedron (6 face neighbours); edges join perpendicular axes.
+        const oct = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
+        const octEdges = [];
+        for (let i = 0; i < 6; i++) for (let j = i + 1; j < 6; j++) {
+            if (oct[i][0] * oct[j][0] + oct[i][1] * oct[j][1] + oct[i][2] * oct[j][2] === 0) octEdges.push([i, j]);
+        }
+        addShell(oct, octEdges, 0xff5252);
+        // FCC — cuboctahedron (12 edge neighbours), normalized to unit shell.
+        const n2 = Math.SQRT1_2;
+        const cub = [[1, 1, 0], [1, -1, 0], [-1, 1, 0], [-1, -1, 0], [1, 0, 1], [1, 0, -1], [-1, 0, 1], [-1, 0, -1], [0, 1, 1], [0, 1, -1], [0, -1, 1], [0, -1, -1]].map((v) => [v[0] * n2, v[1] * n2, v[2] * n2]);
+        const cubEdges = [];
+        for (let i = 0; i < 12; i++) for (let j = i + 1; j < 12; j++) if (Math.abs(dist2(cub[i], cub[j]) - 1) < 0.05) cubEdges.push([i, j]);
+        addShell(cub, cubEdges, 0x66bb6a);
+        // BCC — stella octangula (8 corner neighbours = two tetrahedra).
+        const n3 = 1 / Math.sqrt(3);
+        const corners = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1], [-1, 1, 1], [1, -1, 1], [1, 1, -1]].map((v) => [v[0] * n3, v[1] * n3, v[2] * n3]);
+        const tet = (o) => [[o, o + 1], [o, o + 2], [o, o + 3], [o + 1, o + 2], [o + 1, o + 3], [o + 2, o + 3]];
+        addShell(corners, [...tet(0), ...tet(4)], 0x42a5f5);
+        group.visible = false;
+        group.renderOrder = 3;
+        group.frustumCulled = false;
+        this._scene.add(group);
+        this._mooreDecomp = group;
+    }
+
+    toggleMooreDecomp(on) {
+        if (on) { this._disposeMooreDecomp(); this._buildMooreDecomp(); this._mooreDecomp.visible = true; }
+        else if (this._mooreDecomp) this._mooreDecomp.visible = false;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
     // ── |ψ|² breathing animation ──────────────────────────────────────
     _animateQuantumField() {
         if (!this._quantumField || !this._psi2Visible) return;
