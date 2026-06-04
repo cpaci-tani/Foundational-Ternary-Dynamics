@@ -80,17 +80,10 @@ let peTelemetry = null;
 //   `running`         — GLOBAL pause. When false, the entire RAF body is skipped:
 //                       no physics, no rendering work, no flux mock animation.
 //                       The single source of truth for "is anything moving?".
-//   `scenarioRunning` — SCENARIO pause. When false but `running` is true, the
-//                       scenario tick (mainScale0.tickScale0 / peTick / aeTick)
-//                       is skipped, but the flux mock continues animating and
-//                       overlays/render continue updating. Lets the user freeze
-//                       scenario-specific dynamics while watching residual field
-//                       motion. Cannot be ON when `running` is OFF.
 //   `globalTick`      — wall-clock frame counter that advances every animate()
-//                       call where `running` is true. Independent of scenario
-//                       ticks (which throttle, can advance multiple per frame).
+//                       call where `running` is true. Independent of the engine
+//                       tick (which throttles, can advance multiple per frame).
 let running = false;
-let scenarioRunning = true;
 let globalTick = 0;
 let ticksPerFrame = 1;
 let _tickAccumulator = 0; // accumulates fractional ticks for sub-1 speed
@@ -195,10 +188,6 @@ function _makeCtx() {
         get telemetryHub() { return telemetryHub; },
         get running() { return running; },
         set running(v) { running = v; },
-        // Scenario pause is a sub-state of global pause. When global is off,
-        // scenarioRunning effectively reads as false even if its raw value is true.
-        get scenarioRunning() { return running && scenarioRunning; },
-        set scenarioRunning(v) { scenarioRunning = !!v; updateLocalPlayButton(); },
         get globalTick() { return globalTick; },
         get ticksPerFrame() { return ticksPerFrame; },
         get engineMode() { return engineMode; },
@@ -775,8 +764,6 @@ function animate(now) {
 // destructures them within the same frame.
 const _scale1Ctx = {
     bridge: null, viewport: null, running: false,
-    // Effective scenarioRunning: false whenever global is paused.
-    scenarioRunning: false,
     ticksPerFrame: 1, inspector: null,
     fluxEnergyChart: null, particleChart: null, peTelemetry: null,
     activeTab: null, frameCount: 0, dom: _dom, now: 0,
@@ -789,7 +776,6 @@ function _buildScale1Ctx(now) {
     c.bridge = bridge;
     c.viewport = viewport;
     c.running = running;
-    c.scenarioRunning = running && scenarioRunning;
     c.ticksPerFrame = ticksPerFrame;
     c.inspector = inspector;
     c.fluxEnergyChart = fluxEnergyChart;
@@ -804,7 +790,6 @@ function _buildScale1Ctx(now) {
 
 const _scale2Ctx = {
     bridge: null, viewport: null, running: false,
-    scenarioRunning: false,
     ticksPerFrame: 1, inspector: null,
     fluxEnergyChart: null, particleChart: null,
     activeTab: null, frameCount: 0, dom: _dom, now: 0,
@@ -812,7 +797,7 @@ const _scale2Ctx = {
     updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
     updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
     resetAllVisualState: _resetAllVisualState,
-    setRunning: (v) => { running = v; updateLocalPlayButton(); },
+    setRunning: (v) => { running = v; },
     engineMode: null,
 };
 
@@ -821,7 +806,6 @@ function _buildScale2Ctx(now) {
     c.bridge = bridge;
     c.viewport = viewport;
     c.running = running;
-    c.scenarioRunning = running && scenarioRunning;
     c.ticksPerFrame = ticksPerFrame;
     c.inspector = inspector;
     c.fluxEnergyChart = fluxEnergyChart;
@@ -851,12 +835,6 @@ function animateAE(now) {
 function wireToolbar() {
     // Play/Pause
     document.getElementById('btn-play').addEventListener('click', togglePlay);
-    // Scenario Play/Pause — independent of global pause (button is disabled
-    // when global is off; see updateLocalPlayButton).
-    const scenBtn = document.getElementById('btn-local-play');
-    if (scenBtn) scenBtn.addEventListener('click', toggleScenarioPlay);
-    // Initial sync (so disabled state shows on load before user clicks anything).
-    updateLocalPlayButton();
 
     // Step
     document.getElementById('btn-step').addEventListener('click', () => {
@@ -1359,7 +1337,6 @@ function wireKeyboard() {
         setRunning: (v) => { running = v; },
         updatePlayButton,
         togglePlay,
-        toggleScenarioPlay,
         stepScenario: () => {
             if (engineMode === 'atoms' || engineMode === 'molecules') {
                 bridge.aeTick();
@@ -1772,17 +1749,6 @@ function buildScale3MoleculeDropdown() {
 function togglePlay() {
     running = !running;
     updatePlayButton();
-    // The scenario button's enabled-state depends on global pause; refresh it
-    // so users immediately see whether they can toggle scenario independently.
-    updateLocalPlayButton();
-}
-
-function toggleScenarioPlay() {
-    // Scenario play is meaningless when global is paused — silently no-op so
-    // the click doesn't visually flicker the icon.
-    if (!running) return;
-    scenarioRunning = !scenarioRunning;
-    updateLocalPlayButton();
 }
 
 function updatePlayButton() {
@@ -1790,20 +1756,6 @@ function updatePlayButton() {
     if (!btn) return;
     btn.innerHTML = running ? '&#9208;' : '&#9654;'; // ⏸ / ▶
     btn.dataset.paused = running ? 'false' : 'true';
-}
-
-function updateLocalPlayButton() {
-    const btn = document.getElementById('btn-local-play');
-    if (!btn) return;
-    const effective = running && scenarioRunning;
-    btn.innerHTML = effective ? '&#9209;' : '&#9655;'; // ⏹ / ▷
-    if (!running) {
-        btn.dataset.state = 'global-paused';
-    } else if (!scenarioRunning) {
-        btn.dataset.state = 'local-paused-global-running';
-    } else {
-        btn.dataset.state = 'running';
-    }
 }
 
 function clearCharts() {

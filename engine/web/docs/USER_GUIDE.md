@@ -96,12 +96,9 @@ FTD spans 11 orders of magnitude of physical phenomena, exposed as 10 scale "mod
 - The diagnostics table (scale-specific metrics)
 - The LIVE physics engine path (0→lattice, 1→PE, 2→AE, 3→AE+bonding, 4→Scale4, 5→Scale5, 6→Scale6, 11→Scale11)
 
-**Pause behavior:** Three levels of pause control:
-1. **▶/⏸ (global)** — freezes everything
-2. **Scenario play button** — freezes the scenario while still letting boundary/particles tick
-3. **Internal scrubbing/rendering** — automatic during scrub-bar navigation
-
-Know the difference: global pause is the hammer; scenario pause is the scalpel.
+**Pause behavior:** Two levels of pause control:
+1. **▶/⏸ (play/pause)** — freezes the simulation
+2. **Internal scrubbing/rendering** — automatic during scrub-bar navigation
 
 ---
 

@@ -179,14 +179,14 @@ function _resetScale1Internal(ctx) {
 
 export function animatePE(ctx) {
     const {
-        bridge, viewport, running, scenarioRunning, ticksPerFrame, inspector,
+        bridge, viewport, running, ticksPerFrame, inspector,
         fluxEnergyChart, particleChart, peTelemetry,
         activeTab, frameCount, dom, now,
         updateOnticPanel, updateHierarchyPanel
     } = ctx;
 
-    // ── 1. Tick PE simulation if scenario is unpaused ────────────────
-    if (scenarioRunning) {
+    // ── 1. Tick PE simulation while running ──────────────────────────
+    if (running) {
         const wholeTicks = _tickAcc.accumulate(ticksPerFrame);
         for (let i = 0; i < wholeTicks; i++) {
             bridge.peTick();
