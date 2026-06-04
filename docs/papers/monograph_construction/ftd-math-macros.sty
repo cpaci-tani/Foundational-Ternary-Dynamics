@@ -6,10 +6,8 @@
 % type a literal "137.036", "2.9586", or a hand-keyed master quadratic.  If a
 % canonical value ever changes, it changes here and nowhere else.
 %
-% Source of truth for the numbers:  scripts/constants.py  (G_STAR, VARPI_CLASSICAL,
-% X_PLUS, X_MINUS) and docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md (the exact
-% master-quadratic / discriminant / root forms).  See also the monograph source,
-% docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md.
+% Canonical values are centralized here so the body text never hand-keys
+% load-bearing constants or equations in multiple places.
 %
 % NOTE on powers of G*:  write \Gss / \Gsss / \Gsf for the integer powers (these
 % render as G^{*2} etc., matching the source), and \Gpow{<expr>} for SYMBOLIC
@@ -49,7 +47,7 @@
 \newcommand{\Gpow}[1]{{G^{*}}^{#1}}% G* to a symbolic power, e.g. \Gpow{k-2}
 \newcommand{\GG}{G_{\!\scriptscriptstyle\mathrm{G}}}  % Gauss's constant
 
-% ---- canonical NUMERIC values (verified vs scripts/constants.py) ----------
+% ---- canonical NUMERIC values --------------------------------------------
 \newcommand{\Gstarnum}{2.95867511919\ldots}     % G_STAR
 \newcommand{\Gstarapprox}{2.95868}              % short form used in prose
 \newcommand{\varpinum}{2.62205755}              % VARPI_CLASSICAL  (NOT G*!)
