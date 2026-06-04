@@ -27,7 +27,6 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     if (!diag) return;
 
     // ── Status bar ───────────────────────────────────────────────────────────
-    ctx.dom.statusTick.textContent      = formatSI(diag.tick);
     ctx.dom.statusPtime.textContent     = formatSI(Math.round(diag.physicalTime !== undefined ? diag.physicalTime : diag.tick));
     ctx.dom.statusParticles.textContent = diag.manifested || 0;
     ctx.dom.statusEnergy.textContent    = formatEnergy(diag.totalEnergy, 0).text;

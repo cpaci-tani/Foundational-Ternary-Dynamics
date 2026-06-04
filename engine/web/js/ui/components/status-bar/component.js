@@ -1,13 +1,12 @@
 /**
  * Status Bar Component
- * Wraps #status-bar footer and its 9 child DOM nodes.
+ * Wraps #status-bar footer and its 8 child DOM nodes.
  */
 export class StatusBarComponent {
   constructor(el) {
     this.el = el;
     this.dot       = el?.querySelector('#status-dot');
     this.state     = el?.querySelector('#status-state');
-    this.tick      = el?.querySelector('#status-tick');
     this.ptime     = el?.querySelector('#status-ptime');
     this.particles = el?.querySelector('#status-particles');
     this.energy    = el?.querySelector('#status-energy');
