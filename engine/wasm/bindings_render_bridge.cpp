@@ -220,6 +220,20 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getEMForceField",        &get_em_force_field);
     function("getStrongForceField",    &get_strong_force_field);
 
+    // Scalar / derived field samplers (2026-06-03) — vorticity, helicity,
+    // curl, coherence, Fisher, latency, Kretschmann, and the ternary state
+    // field. Light up the topology + phenomena overlays on WASM-owned
+    // scenarios (empty/light/quantum) that previously rendered nothing.
+    function("getVorticitySampled",   &get_vorticity_sampled);
+    function("getHelicitySampled",    &get_helicity_sampled);
+    function("getCurlJSampled",       &get_curlj_sampled);
+    function("getCoherenceSampled",   &get_coherence_sampled);
+    function("getFisherSampled",      &get_fisher_sampled);
+    function("getLatencySampled",     &get_latency_sampled);
+    function("getKretschmannSampled", &get_kretschmann_sampled);
+    function("getStateFieldSampled",  &get_state_field_sampled);
+    function("getGaussResidualSampled", &get_gauss_residual_sampled);
+
     // Direct Coulomb-potential ray sampling (2026-04-27) — engine-side
     // trilinear interpolation of phi_coulomb_ for the P1 Coulomb panel.
     function("sampleVAtRay",           &sample_v_at_ray);
