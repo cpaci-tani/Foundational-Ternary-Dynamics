@@ -249,7 +249,12 @@ test.describe('perf baseline', () => {
                 const b = state.useFluxMock && state.fluxMock ? state.fluxMock : window._ftdBridge;
                 if (!b) return -1;
                 if (typeof b.currentTick === 'function') return b.currentTick();
-                return typeof b._tick === 'number' ? b._tick : -1;
+                if (typeof b._tick === 'number') return b._tick;
+                // Worker-default path: the MockBridgeProxy self-ticks off-thread and
+                // exposes the tick only via diagnostics (no currentTick()/_tick here).
+                const t = b.capabilities?.scale0?.getScale0Diagnostics?.()?.tick
+                    ?? b.getDiagnostics?.()?.tick;
+                return typeof t === 'number' ? t : -1;
             });
         }, {
             timeout: 30_000,
