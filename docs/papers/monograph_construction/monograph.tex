@@ -6,10 +6,8 @@
 %     pdflatex monograph  ->  biber monograph  ->  pdflatex monograph  x2
 %  or run  build.ps1 / build.bat  in this directory.
 %
-%  This is a faithful LaTeX formalization of
-%     docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md   (tag [SYNTHESIS]).
-%  It introduces no new mathematics and promotes no tag.  Where this document
-%  and a canonical source disagree on an epistemic tag, the source is correct.
+%  This file is a standalone typeset monograph.  It introduces no new
+%  mathematics and promotes no epistemic tag.
 % =============================================================================
 \documentclass{ftdmonograph}
 
@@ -36,6 +34,16 @@
 \markboth{Coda}{Coda}   % the Coda has no \section; set its running head explicitly
 \input{coda}
 
+\part*{Glossary}
+\addcontentsline{toc}{part}{Glossary \textmd{\textnormal{--- terms used in this monograph}}}
+\markboth{Glossary}{Glossary}
+\input{glossary}
+
+\part*{Reader's Notes}
+\addcontentsline{toc}{part}{Reader's notes \textmd{\textnormal{--- reading the boundary}}}
+\markboth{Reader's Notes}{Reader's Notes}
+\input{reader_notes}
+
 \backmatter
 \printbibliography[heading=bibintoc, title={Canonical sources \& references}]
 
@@ -47,14 +55,13 @@
 Colophon
 \end{center}
 \begin{center}\footnotesize
-This monograph was set in Times-like \textsc{newtx} with \LaTeX\ on the
-\texttt{ftdmonograph} class. Its design is deliberately monochrome: epistemic
-tier is carried by rule weight and style (heavy, thin, dashed,
-double), never by colour, so the argument reads identically in grayscale and
-in print, after Bringhurst's counsel that structure should be legible without
-ornament~\cite{bringhurst2004}. Every constant and equation is defined once, in
-a single macro file; every result is set at the grade it earned, and none was
-inflated in the typesetting.
+This monograph was set in Times-like type with \LaTeX. Its design is
+deliberately monochrome: epistemic tier is carried by rule weight and style
+(heavy, thin, dashed, double), never by colour, so the argument reads
+identically in grayscale and in print, after Bringhurst's counsel that structure
+should be legible without ornament~\cite{bringhurst2004}. The typesetting is
+meant to support the same discipline as the prose: every result is shown at the
+grade it earned, and none is made stronger by presentation.
 \end{center}
 \vspace*{\fill}
 

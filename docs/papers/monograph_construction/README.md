@@ -1,10 +1,8 @@
 # The Construction of the FTD Mathematics — LaTeX monograph
 
-A platinum-standard LaTeX formalization of
-[`docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md`](../../theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md)
-(tag `[SYNTHESIS]`). It is a *faithful port*: it introduces no new mathematics
-and promotes no epistemic tag. Where this document and a canonical source
-disagree on a tag, the source is correct.
+A standalone LaTeX monograph for the construction argument. It introduces no new
+mathematics and promotes no epistemic tag; the PDF is meant to read without
+project-path breadcrumbs or internal source references.
 
 ## Build
 
@@ -16,7 +14,7 @@ pwsh -File build.ps1      # or: build.bat
 ```
 
 Engine: **pdflatex** (newtx fonts are Type1-native). Bibliography: **biblatex + biber**.
-Output: `monograph.pdf` (≈49 pp).
+Output: `monograph.pdf` (≈53 pp).
 
 ## Architecture
 
@@ -26,8 +24,10 @@ Output: `monograph.pdf` (≈49 pp).
 | `ftd-epistemic.sty` | the monochrome epistemic-tag system (`\etag`, `\margetag`, `\ctag`, marquee boxes) |
 | `ftd-math-macros.sty` | every canonical constant/equation defined **once** (anti-drift) |
 | `monograph.tex` | master file |
-| `frontmatter.tex` | title page, scope/authorities, how-to-read, tag rule-key, ToC |
+| `frontmatter.tex` | title page, scope, how-to-read, tag rule-key, ToC |
 | `part0_seed.tex` … `coda.tex` | the five movements (Parts 0–III + Coda) |
+| `glossary.tex` | plain-language definitions for uncommon terms |
+| `reader_notes.tex` | reader-facing notes on tags, the alpha boundary, and the physics layer |
 | `dag.tex` | the hand-authored native-TikZ construction DAG |
 | `references.bib` | external classical literature (Watson, Chowla–Selberg, Chudnovsky, …) |
 
@@ -50,5 +50,5 @@ An unknown tag key is a hard compile error (a built-in typo guard).
 - **Author line** is deliberately omitted on the title page (the source carries
   none; the project's grade-A paper leaves `\author{}` empty). Fill at submission
   time in `frontmatter.tex`. Do **not** fabricate a name.
-- Numeric anchors in `ftd-math-macros.sty` are cross-checked against
-  `scripts/constants.py` (`G_STAR`, `VARPI_CLASSICAL`, `X_PLUS`, `X_MINUS`).
+- Numeric anchors in `ftd-math-macros.sty` are centralized there so the body
+  text never hand-keys load-bearing constants in multiple places.
