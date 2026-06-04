@@ -4,7 +4,6 @@
  * Each entry is a snapshot object (shape defined in design-spec §1). Two
  * consumers populate this:
  *   - MemoryRecorder (live, rolling window, age-based LOD decay)
- *   - RenderController (offline, fixed-fidelity clip, no decay)
  *
  * The buffer is responsibility-light: it holds snapshots, enforces a byte
  * budget (evicting oldest when over), and exposes lookups by tick/age.
@@ -30,9 +29,16 @@ export class TimelineBuffer {
     push(snap) {
         this._snaps.push(snap);
         this._bytes += snapshotBytes({ lod: snap.lod, N: this.latticeN });
+        let dropCount = 0;
+        let dropBytes = 0;
         while (this._bytes > this.budgetBytes && this._snaps.length > 1) {
-            const drop = this._snaps.shift();
-            this._bytes -= snapshotBytes({ lod: drop.lod, N: this.latticeN });
+            const drop = this._snaps[dropCount++];
+            dropBytes += snapshotBytes({ lod: drop.lod, N: this.latticeN });
+            if (this._snaps.length - dropCount <= 1) break;
+        }
+        if (dropCount) {
+            this._snaps.splice(0, dropCount);
+            this._bytes -= dropBytes;
         }
     }
 
