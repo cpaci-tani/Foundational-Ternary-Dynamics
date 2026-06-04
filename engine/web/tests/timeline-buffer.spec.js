@@ -84,3 +84,59 @@ test('degradeSnapshot drops lattice at LOD 3', async ({ page }) => {
     expect(r.flux).toBe(null);
     expect(r.audit.energy).toBe(1.2);
 });
+
+test('MemoryRecorder defers full snapshots until sample cadence', async ({ page }) => {
+    await page.goto('/');
+    const r = await page.evaluate(async () => {
+        const { MemoryRecorder } = await import('/js/scales/scale0/timeline/memory-recorder.js');
+        const rec = new MemoryRecorder({
+            budgetBytes: 1_000_000,
+            latticeN: 4,
+            ticksPerSecond: 10,
+            tiers: [
+                { lod: 0, cadenceSeconds: 0.5, durationSeconds: 10 },
+                { lod: 1, cadenceSeconds: 1.0, durationSeconds: 10 },
+            ],
+        });
+        let tick = 0;
+        let diagCalls = 0;
+        let snapshotCalls = 0;
+        const caps = {
+            getScale0Diagnostics: () => {
+                diagCalls++;
+                return { tick };
+            },
+            getScale0Snapshot: () => {
+                snapshotCalls++;
+                return {
+                    tick,
+                    ts: 0,
+                    lod: 0,
+                    lattice: new Int8Array(4 * 4 * 4),
+                    flux: new Float32Array(3 * 4 * 4 * 4),
+                    particles: [],
+                    audit: {},
+                };
+            },
+        };
+
+        for (tick = 0; tick < 4; tick++) rec.onTick(caps);
+        const beforeCadence = snapshotCalls;
+        tick = 4;
+        rec.onTick(caps);
+
+        return {
+            beforeCadence,
+            snapshotCalls,
+            diagCalls,
+            size: rec.buffer.size,
+            latest: rec.buffer.latestTick,
+        };
+    });
+
+    expect(r.beforeCadence).toBe(0);
+    expect(r.snapshotCalls).toBe(1);
+    expect(r.diagCalls).toBe(5);
+    expect(r.size).toBe(1);
+    expect(r.latest).toBe(4);
+});

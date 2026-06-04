@@ -5,8 +5,8 @@ import { defineConfig, devices } from '@playwright/test';
  * Playwright config for the FTD web dashboard smoke suite.
  *
  * The tests boot a real Chromium against index.html served over HTTP by
- * `python -m http.server 8081 -d ..`. The webServer block below starts
- * the server before tests and tears it down after.
+ * `python serve.py 8081 --cache`. The webServer block below starts the
+ * server before tests and tears it down after.
  *
  * Why port 8081: port 8080 is commonly in use by a manually-started dev
  * server; 8081 is free for the test harness.
@@ -38,13 +38,9 @@ export default defineConfig({
 
   webServer: {
     // Parent dir of this tests/ folder is engine/web, which is the docroot.
-    // Cached http.server keeps per-test page loads fast (the wasm64 binary is
-    // large; re-fetching it per test pushes WASM init past the readiness
-    // timeout). NOTE: Phase-2 worker tests need cross-origin isolation
-    // (SharedArrayBuffer) — they must run against a COOP/COEP server that ALSO
-    // allows caching (serve.py's no-cache headers cause WASM-init timeouts here).
-    // The SAB test in scale0-sparse-tick.spec.js skips when not crossOriginIsolated.
-    command: 'python -m http.server 8081',
+    // serve.py --cache keeps per-test page loads fast while sending COOP/COEP
+    // headers, so worker/SAB coverage runs without bypassing the cached WASM.
+    command: 'python serve.py 8081 --cache',
     cwd: '..',
     port: 8081,
     reuseExistingServer: !process.env.CI,

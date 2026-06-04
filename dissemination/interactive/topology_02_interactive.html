@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTD Vacuum | Emergent Gravity</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: #05050a;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
+        }
+        
+        canvas { display: block; }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .panel {
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            pointer-events: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            max-width: 380px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #ff4d4d, #b388ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            color: #a0a0b0;
+            line-height: 1.5;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #ff4d4d, #b388ff);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 12px 16px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            box-shadow: 0 6px 20px rgba(255, 77, 77, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .btn.active {
+            background: linear-gradient(90deg, #4da6ff, #33FFB3);
+            box-shadow: 0 4px 15px rgba(77, 166, 255, 0.3);
+        }
+
+        .controls {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .controls label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #d0d0e0;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #4da6ff;
+        }
+
+        .info-panel {
+            align-self: flex-end;
+            margin-top: auto;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .info-panel.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .face-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #info-title {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        #info-desc {
+            margin: 0 0 16px 0;
+            font-size: 14px;
+            color: #d0d0e0;
+            line-height: 1.6;
+        }
+
+        .vector-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #4da6ff;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui-layer">
+        <div class="panel header">
+            <h1>Emergent Gravity Proof</h1>
+            <p>Watch as General Relativity emerges geometrically! Injecting a mass defect mathematically forces the entire aperiodic crystal to buckle and warp to minimize energy.</p>
+            
+            <button id="warpBtn" class="btn">Inject Mass (Simulate Gravity)</button>
+
+            <div class="controls">
+                <label for="explodeSlider">Lattice Expansion (Explode View)</label>
+                <input type="range" id="explodeSlider" min="0" max="4" step="0.05" value="0.2">
+            </div>
+        </div>
+        
+        <div class="panel info-panel" id="info-panel">
+            <div id="face-badge" class="face-badge">Face</div>
+            <h2 id="info-title">Vector</h2>
+            <p id="info-desc">Description</p>
+            <div class="vector-box">J = <span id="vector-val">[0, 0, 0]</span></div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // 3x3x3 Computed Tiling Map with Warped (Gravity) Coordinates
+        const latticeData = [
+          {"id": "0_0_0", "x": -1, "y": -1, "z": -1, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": -0.9711, "warp_y": -0.9711, "warp_z": -0.9711, "rot_x": 0.0144, "rot_y": -0.0144, "rot_z": 0.0144, "is_defect": false},
+          {"id": "1_0_0", "x": 0, "y": -1, "z": -1, "rot_idx": 4, "faces": [7, 3, 2, 8, 12, 6], "warp_x": 0.0, "warp_y": -0.9469, "warp_z": -0.9469, "rot_x": 0.0265, "rot_y": 0.0, "rot_z": 0.0265, "is_defect": false},
+          {"id": "2_0_0", "x": 1, "y": -1, "z": -1, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": 0.9711, "warp_y": -0.9711, "warp_z": -0.9711, "rot_x": 0.0144, "rot_y": 0.0144, "rot_z": 0.0144, "is_defect": false},
+          {"id": "0_1_0", "x": -1, "y": 0, "z": -1, "rot_idx": 1, "faces": [3, 7, 8, 2, 12, 6], "warp_x": -0.9469, "warp_y": 0.0, "warp_z": -0.9469, "rot_x": -0.0, "rot_y": -0.0265, "rot_z": 0.0265, "is_defect": false},
+          {"id": "1_1_0", "x": 0, "y": 0, "z": -1, "rot_idx": 5, "faces": [7, 3, 8, 2, 6, 12], "warp_x": 0.0, "warp_y": 0.0, "warp_z": -0.85, "rot_x": -0.0, "rot_y": 0.0, "rot_z": 0.075, "is_defect": false},
+          {"id": "2_1_0", "x": 1, "y": 0, "z": -1, "rot_idx": 1, "faces": [3, 7, 8, 2, 12, 6], "warp_x": 0.9469, "warp_y": 0.0, "warp_z": -0.9469, "rot_x": -0.0, "rot_y": 0.0265, "rot_z": 0.0265, "is_defect": false},
+          {"id": "0_2_0", "x": -1, "y": 1, "z": -1, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": -0.9711, "warp_y": 0.9711, "warp_z": -0.9711, "rot_x": -0.0144, "rot_y": -0.0144, "rot_z": 0.0144, "is_defect": false},
+          {"id": "1_2_0", "x": 0, "y": 1, "z": -1, "rot_idx": 4, "faces": [7, 3, 2, 8, 12, 6], "warp_x": 0.0, "warp_y": 0.9469, "warp_z": -0.9469, "rot_x": -0.0265, "rot_y": 0.0, "rot_z": 0.0265, "is_defect": false},
+          {"id": "2_2_0", "x": 1, "y": 1, "z": -1, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": 0.9711, "warp_y": 0.9711, "warp_z": -0.9711, "rot_x": -0.0144, "rot_y": 0.0144, "rot_z": 0.0144, "is_defect": false},
+          {"id": "0_0_1", "x": -1, "y": -1, "z": 0, "rot_idx": 1, "faces": [3, 7, 8, 2, 12, 6], "warp_x": -0.9469, "warp_y": -0.9469, "warp_z": 0.0, "rot_x": 0.0265, "rot_y": -0.0265, "rot_z": -0.0, "is_defect": false},
+          {"id": "1_0_1", "x": 0, "y": -1, "z": 0, "rot_idx": 5, "faces": [7, 3, 8, 2, 6, 12], "warp_x": 0.0, "warp_y": -0.85, "warp_z": 0.0, "rot_x": 0.075, "rot_y": 0.0, "rot_z": -0.0, "is_defect": false},
+          {"id": "2_0_1", "x": 1, "y": -1, "z": 0, "rot_idx": 1, "faces": [3, 7, 8, 2, 12, 6], "warp_x": 0.9469, "warp_y": -0.9469, "warp_z": 0.0, "rot_x": 0.0265, "rot_y": 0.0265, "rot_z": -0.0, "is_defect": false},
+          {"id": "0_1_1", "x": -1, "y": 0, "z": 0, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": -0.85, "warp_y": 0.0, "warp_z": 0.0, "rot_x": -0.0, "rot_y": -0.075, "rot_z": -0.0, "is_defect": false},
+          {"id": "1_1_1", "x": 0, "y": 0, "z": 0, "rot_idx": 4, "faces": [7, 3, 2, 8, 12, 6], "warp_x": 0, "warp_y": 0, "warp_z": 0, "rot_x": 0, "rot_y": 1.57, "rot_z": 0, "is_defect": true},
+          {"id": "2_1_1", "x": 1, "y": 0, "z": 0, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": 0.85, "warp_y": 0.0, "warp_z": 0.0, "rot_x": -0.0, "rot_y": 0.075, "rot_z": -0.0, "is_defect": false},
+          {"id": "0_2_1", "x": -1, "y": 1, "z": 0, "rot_idx": 1, "faces": [3, 7, 8, 2, 12, 6], "warp_x": -0.9469, "warp_y": 0.9469, "warp_z": 0.0, "rot_x": -0.0265, "rot_y": -0.0265, "rot_z": -0.0, "is_defect": false},
+          {"id": "1_2_1", "x": 0, "y": 1, "z": 0, "rot_idx": 5, "faces": [7, 3, 8, 2, 6, 12], "warp_x": 0.0, "warp_y": 0.85, "warp_z": 0.0, "rot_x": -0.075, "rot_y": 0.0, "rot_z": -0.0, "is_defect": false},
+          {"id": "2_2_1", "x": 1, "y": 1, "z": 0, "rot_idx": 1, "faces": [3, 7, 8, 2, 12, 6], "warp_x": 0.9469, "warp_y": 0.9469, "warp_z": 0.0, "rot_x": -0.0265, "rot_y": 0.0265, "rot_z": -0.0, "is_defect": false},
+          {"id": "0_0_2", "x": -1, "y": -1, "z": 1, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": -0.9711, "warp_y": -0.9711, "warp_z": 0.9711, "rot_x": 0.0144, "rot_y": -0.0144, "rot_z": -0.0144, "is_defect": false},
+          {"id": "1_0_2", "x": 0, "y": -1, "z": 1, "rot_idx": 4, "faces": [7, 3, 2, 8, 12, 6], "warp_x": 0.0, "warp_y": -0.9469, "warp_z": 0.9469, "rot_x": 0.0265, "rot_y": 0.0, "rot_z": -0.0265, "is_defect": false},
+          {"id": "2_0_2", "x": 1, "y": -1, "z": 1, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": 0.9711, "warp_y": -0.9711, "warp_z": 0.9711, "rot_x": 0.0144, "rot_y": 0.0144, "rot_z": -0.0144, "is_defect": false},
+          {"id": "0_1_2", "x": -1, "y": 0, "z": 1, "rot_idx": 1, "faces": [3, 7, 8, 2, 12, 6], "warp_x": -0.9469, "warp_y": 0.0, "warp_z": 0.9469, "rot_x": -0.0, "rot_y": -0.0265, "rot_z": -0.0265, "is_defect": false},
+          {"id": "1_1_2", "x": 0, "y": 0, "z": 1, "rot_idx": 5, "faces": [7, 3, 8, 2, 6, 12], "warp_x": 0.0, "warp_y": 0.0, "warp_z": 0.85, "rot_x": -0.0, "rot_y": 0.0, "rot_z": -0.075, "is_defect": false},
+          {"id": "2_1_2", "x": 1, "y": 0, "z": 1, "rot_idx": 1, "faces": [3, 7, 8, 2, 12, 6], "warp_x": 0.9469, "warp_y": 0.0, "warp_z": 0.9469, "rot_x": -0.0, "rot_y": 0.0265, "rot_z": -0.0265, "is_defect": false},
+          {"id": "0_2_2", "x": -1, "y": 1, "z": 1, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": -0.9711, "warp_y": 0.9711, "warp_z": 0.9711, "rot_x": -0.0144, "rot_y": -0.0144, "rot_z": -0.0144, "is_defect": false},
+          {"id": "1_2_2", "x": 0, "y": 1, "z": 1, "rot_idx": 4, "faces": [7, 3, 2, 8, 12, 6], "warp_x": 0.0, "warp_y": 0.9469, "warp_z": 0.9469, "rot_x": -0.0265, "rot_y": 0.0, "rot_z": -0.0265, "is_defect": false},
+          {"id": "2_2_2", "x": 1, "y": 1, "z": 1, "rot_idx": 0, "faces": [3, 7, 2, 8, 6, 12], "warp_x": 0.9711, "warp_y": 0.9711, "warp_z": 0.9711, "rot_x": -0.0144, "rot_y": 0.0144, "rot_z": -0.0144, "is_defect": false}
+        ];
+
+        const PHYSICS_MAP = {
+            2: { hex: 0x33FF57, group: 'SU(2) Weak Isospin', desc: 'Chiral parity plane bounding the weak interaction field.', vec: [-1, 1, -1] },
+            3: { hex: 0xFF3333, group: 'U(1) Electromagnetism', desc: 'Linear flux string projecting diagonally across the matrix.', vec: [1, 1, -1] },
+            6: { hex: 0x3357FF, group: 'SU(2) Weak Isospin', desc: 'Opposing chiral parity plane inducing left-handed dominance.', vec: [-1, 1, 1] },
+            7: { hex: 0xFF8333, group: 'U(1) Electromagnetism', desc: 'Maximally skewed linear flux string generating immense transverse tension.', vec: [1, 1, 1] },
+            8: { hex: 0x33FFB3, group: 'SU(3) Topological Node', desc: 'Zero-mode intersection (Jx=0). This broken symmetry anchors the strong nuclear force.', vec: [0, -1, -1] },
+            12: { hex: 0xF333FF, group: 'SU(3) Topological Node', desc: 'Secondary Zero-mode intersection (Jx=0). Confinement emerges from these dual topological defects.', vec: [0, -1, 1] }
+        };
+
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x05050a, 0.03);
+        
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(10, 8, 14);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x222233);
+        scene.add(ambientLight);
+        const dirLight1 = new THREE.DirectionalLight(0x4da6ff, 1);
+        dirLight1.position.set(15, 15, 15);
+        scene.add(dirLight1);
+        const dirLight2 = new THREE.DirectionalLight(0xb388ff, 0.8);
+        dirLight2.position.set(-15, -15, -15);
+        scene.add(dirLight2);
+
+        // Core Materials
+        const cubeMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x11111a, metalness: 0.2, roughness: 0.1,
+            transmission: 0.9, thickness: 0.5, clearcoat: 1.0,
+            clearcoatRoughness: 0.1, side: THREE.DoubleSide
+        });
+        
+        const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.5 });
+        const defectCoreMaterial = new THREE.MeshBasicMaterial({ color: 0xff3333, wireframe: true, transparent: true, opacity: 0.9 });
+        const edgeMaterial = new THREE.LineBasicMaterial({ color: 0x4da6ff, transparent: true, opacity: 0.3 });
+
+        const CUBE_SIZE = 1.8;
+        const interactables = [];
+        const voxelGroups = [];
+
+        // Build the 27 macro-lattice
+        latticeData.forEach(voxel => {
+            const group = new THREE.Group();
+            
+            // Store coordinates for gravity interpolation
+            group.userData = { 
+                flat: { x: voxel.x, y: voxel.y, z: voxel.z, rx: 0, ry: 0, rz: 0 },
+                warped: { x: voxel.warp_x, y: voxel.warp_y, z: voxel.warp_z, rx: voxel.rot_x, ry: voxel.rot_y, rz: voxel.rot_z },
+                isDefect: voxel.is_defect
+            };
+            
+            const cubeGeo = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
+            const cubeMesh = new THREE.Mesh(cubeGeo, cubeMaterial);
+            group.add(cubeMesh);
+
+            const coreGeo = new THREE.IcosahedronGeometry(0.2, 1);
+            const coreMesh = new THREE.Mesh(coreGeo, coreMaterial);
+            group.add(coreMesh); // child[1]
+
+            const edges = new THREE.EdgesGeometry(cubeGeo);
+            const line = new THREE.LineSegments(edges, edgeMaterial);
+            group.add(line);
+
+            // Face construction
+            const faceCenters = [
+                new THREE.Vector3(1, 0, 0), new THREE.Vector3(-1, 0, 0),
+                new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, -1, 0),
+                new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1)
+            ];
+            
+            const faceRotations = [
+                new THREE.Euler(0, Math.PI/2, 0), new THREE.Euler(0, -Math.PI/2, 0),
+                new THREE.Euler(-Math.PI/2, 0, 0), new THREE.Euler(Math.PI/2, 0, 0),
+                new THREE.Euler(0, 0, 0), new THREE.Euler(0, Math.PI, 0)
+            ];
+
+            const faceNames = ['+X Face', '-X Face', '+Y Face', '-Y Face', '+Z Face', '-Z Face'];
+
+            voxel.faces.forEach((colorIdx, i) => {
+                const phys = PHYSICS_MAP[colorIdx];
+                if(!phys) return;
+
+                const planeGeo = new THREE.PlaneGeometry(CUBE_SIZE, CUBE_SIZE);
+                const planeMat = new THREE.MeshBasicMaterial({ color: phys.hex, transparent: true, opacity: 0.05, depthWrite: false });
+                const plane = new THREE.Mesh(planeGeo, planeMat);
+                plane.position.copy(faceCenters[i].clone().multiplyScalar(0.91 * (CUBE_SIZE/2)));
+                plane.rotation.copy(faceRotations[i]);
+                
+                plane.userData = { id: faceNames[i], name: `Voxel [${voxel.x}, ${voxel.y}, ${voxel.z}]`, hex: phys.hex, group: phys.group, desc: phys.desc, vector: phys.vec };
+                
+                group.add(plane);
+                interactables.push(plane);
+
+                const origin = faceCenters[i].clone().multiplyScalar(0.9 * (CUBE_SIZE/2));
+                const dir = new THREE.Vector3(phys.vec[0], phys.vec[1], phys.vec[2]);
+                const length = dir.length();
+
+                if (length > 0) {
+                    dir.normalize();
+                    const arrow = new THREE.ArrowHelper(dir, origin, 1.0, phys.hex, 0.2, 0.15);
+                    if (arrow.line) arrow.line.material.linewidth = 2;
+                    group.add(arrow);
+                } else {
+                    const sphereGeo = new THREE.SphereGeometry(0.1, 16, 16);
+                    const sphereMat = new THREE.MeshStandardMaterial({ color: phys.hex, emissive: phys.hex, emissiveIntensity: 0.5 });
+                    const sphere = new THREE.Mesh(sphereGeo, sphereMat);
+                    sphere.position.copy(origin);
+                    group.add(sphere);
+                }
+            });
+
+            scene.add(group);
+            voxelGroups.push(group);
+        });
+
+        // Application State
+        let isWarped = false;
+        let lerpProgress = 0;
+
+        const explodeSlider = document.getElementById('explodeSlider');
+        const warpBtn = document.getElementById('warpBtn');
+
+        warpBtn.addEventListener('click', () => {
+            isWarped = !isWarped;
+            if(isWarped) {
+                warpBtn.classList.add('active');
+                warpBtn.textContent = 'Remove Mass (Restore Vacuum)';
+                
+                // Color the central defect red
+                voxelGroups.forEach(g => {
+                    if(g.userData.isDefect) {
+                        g.children[1].material = defectCoreMaterial;
+                        g.children[1].scale.set(1.5, 1.5, 1.5);
+                    }
+                });
+            } else {
+                warpBtn.classList.remove('active');
+                warpBtn.textContent = 'Inject Mass (Simulate Gravity)';
+                
+                // Restore core color
+                voxelGroups.forEach(g => {
+                    if(g.userData.isDefect) {
+                        g.children[1].material = coreMaterial;
+                        g.children[1].scale.set(1, 1, 1);
+                    }
+                });
+            }
+        });
+
+        // Raycasting Logic
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let hoveredObject = null;
+        
+        const infoPanel = document.getElementById('info-panel');
+        const faceBadge = document.getElementById('face-badge');
+        const infoTitle = document.getElementById('info-title');
+        const infoDesc = document.getElementById('info-desc');
+        const vectorVal = document.getElementById('vector-val');
+
+        function onPointerMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+        window.addEventListener('pointermove', onPointerMove);
+
+            // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = Date.now() * 0.001;
+
+            // Interpolation targets
+            const targetProgress = isWarped ? 1 : 0;
+            lerpProgress += (targetProgress - lerpProgress) * 0.05;
+
+            const spacing = parseFloat(explodeSlider.value);
+            const baseDist = CUBE_SIZE + spacing;
+
+            voxelGroups.forEach(group => {
+                const flat = group.userData.flat;
+                const warped = group.userData.warped;
+
+                // Interpolate Position
+                const curX = THREE.MathUtils.lerp(flat.x, warped.x, lerpProgress);
+                const curY = THREE.MathUtils.lerp(flat.y, warped.y, lerpProgress);
+                const curZ = THREE.MathUtils.lerp(flat.z, warped.z, lerpProgress);
+                
+                group.position.set(curX * baseDist, curY * baseDist, curZ * baseDist);
+                
+                // Interpolate Rotation (Torsion)
+                const rotX = THREE.MathUtils.lerp(flat.rx, warped.rx, lerpProgress);
+                const rotY = THREE.MathUtils.lerp(flat.ry, warped.ry, lerpProgress);
+                const rotZ = THREE.MathUtils.lerp(flat.rz, warped.rz, lerpProgress);
+                
+                group.rotation.set(rotX, rotY, rotZ);
+
+                if (group.userData.isDefect) {
+                    // Collapse the voxel into a dense singularity
+                    const s = THREE.MathUtils.lerp(1.0, 0.05, lerpProgress);
+                    group.scale.set(s, s, s);
+                } else {
+                    // Spatial Volume Contraction: 
+                    // Scale blocks down by exactly the max strain (15%) to prevent mesh clipping
+                    const s = THREE.MathUtils.lerp(1.0, 0.85, lerpProgress);
+                    group.scale.set(s, s, s);
+                }
+
+                // Rotate the inner core
+                const coreSpeed = (group.userData.isDefect && isWarped) ? 15.0 : 0.5;
+                group.children[1].rotation.y += 0.02 * coreSpeed;
+                group.children[1].rotation.x += 0.01 * coreSpeed;
+            });
+
+            controls.update();
+
+            // Raycaster
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(interactables);
+
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                if (hoveredObject !== object) {
+                    if (hoveredObject) hoveredObject.material.opacity = 0.05;
+                    hoveredObject = object;
+                    hoveredObject.material.opacity = 0.4;
+                    
+                    const data = hoveredObject.userData;
+                    faceBadge.textContent = `${data.id} • ${data.name}`;
+                    faceBadge.style.backgroundColor = `#${data.hex.toString(16).padStart(6, '0')}44`;
+                    faceBadge.style.color = `#${data.hex.toString(16).padStart(6, '0')}`;
+                    infoTitle.textContent = data.group;
+                    infoDesc.textContent = data.desc;
+                    vectorVal.textContent = `[${data.vector.join(', ')}]`;
+                    
+                    infoPanel.classList.add('visible');
+                }
+            } else {
+                if (hoveredObject) {
+                    hoveredObject.material.opacity = 0.05;
+                    hoveredObject = null;
+                    infoPanel.classList.remove('visible');
+                }
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }, false);
+    </script>
+</body>
+</html>

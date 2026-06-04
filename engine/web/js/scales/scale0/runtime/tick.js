@@ -9,7 +9,7 @@ export function advanceSimulation(ctx, state) {
     // the in-thread tick path below is for non-worker scenarios only.
     const fm = state.fluxMock;
     if (fm && fm.isWorker && state.useFluxMock) {
-        const run = ctx.running && !state.scrubbing && !state.rendering && !!ctx.scenarioRunning;
+        const run = ctx.running && !state.scrubbing && !!ctx.scenarioRunning;
         if (typeof fm.setRunning === 'function') fm.setRunning(run);
         const fc = fm.frameCounter || 0;
         if (fc !== state._lastWorkerFrame) {
@@ -32,11 +32,6 @@ export function advanceSimulation(ctx, state) {
     // User is scrubbing — freeze physics so the snapshot loaded by
     // hydrateToTick stays put until scrubEnd / resumeLive.
     if (state.scrubbing) return latticeSize;
-    // A render is fast-forwarding snapshots into the clip buffer — it owns
-    // bridge.tick() during that time. Letting the animate loop also tick
-    // would double-advance and corrupt both the clip and the live sim.
-    if (state.rendering) return latticeSize;
-
     const wholeTicks = state.tickAccumulator.accumulate(ctx.ticksPerFrame);
     const maxTicksPerFrame = latticeSize > 96 ? 1 : (latticeSize > 48 ? 1 : (latticeSize > 32 ? 2 : wholeTicks));
     const ticksToRun = Math.min(wholeTicks, maxTicksPerFrame);
@@ -87,8 +82,6 @@ export function advanceSimulation(ctx, state) {
     if (tickScenario && ticksToRun > 0) {
         state.latticeNeedsUpload = true;
         state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
-    } else if (tickScenario) {
-        state.latticeNeedsUpload = true;
     }
 
     // Feed the playback timeline (no-op if the recorder hasn't been created
