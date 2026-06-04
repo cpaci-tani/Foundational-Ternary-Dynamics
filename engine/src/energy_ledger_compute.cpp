@@ -6,7 +6,6 @@
 #include "ftd/energy_ledger_compute.h"
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
-#include <algorithm>
 #include <cmath>
 
 namespace ftd {
@@ -19,6 +18,9 @@ void update_energy_ledger_cpu(RenderBridge& rb) {
     const auto& v = voxels[i];
     E_field += v.flux.mag2();
     E_wave  += v.wave_vel.mag2();
+  }
+  for (int i : rb.ordered_active_indices()) {
+    const auto& v = voxels[i];
     if (v.state != 0) E_kin += 0.5 * v.velocity.mag2();
   }
   const double E_total = 0.5 * (E_field + E_wave) + E_kin;

@@ -103,7 +103,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
 
       if (t.state == 0) {
         // Move: transfer particle to target
-        t.state = v.state;
+        const int8_t moving_state = v.state;
+        rb.set_state(target, moving_state);
         t.velocity = v.velocity;
         t.remainder = v.remainder;
         t.pair_id = v.pair_id;
@@ -132,7 +133,7 @@ void phase_movement_main_loop(RenderBridge& rb) {
           }
         }
 
-        v.state = 0;
+        rb.set_state(i, 0);
         v.velocity = {};
         v.remainder = {};
         v.pair_id = -1;
@@ -155,7 +156,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
           flux_v_L = v.flux_L; flux_v_R = v.flux_R;
           flux_t_L = t.flux_L; flux_t_R = t.flux_R;
         }
-        v.state = 0; t.state = 0;
+        rb.set_state(i, 0);
+        rb.set_state(target, 0);
         v.velocity = {}; t.velocity = {};
         v.remainder = {}; t.remainder = {};
         v.pair_id = -1; t.pair_id = -1;
@@ -209,7 +211,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
 
       if (t.state == 0) {
         // Move: transfer particle to target
-        t.state = v.state;
+        const int8_t moving_state = v.state;
+        rb.set_state(target, moving_state);
         t.velocity = v.velocity;
         t.remainder = v.remainder;
         t.pair_id = v.pair_id;
@@ -238,7 +241,7 @@ void phase_movement_main_loop(RenderBridge& rb) {
           }
         }
 
-        v.state = 0;
+        rb.set_state(i, 0);
         v.velocity = {};
         v.remainder = {};
         v.pair_id = -1;
@@ -261,7 +264,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
           flux_v_L = v.flux_L; flux_v_R = v.flux_R;
           flux_t_L = t.flux_L; flux_t_R = t.flux_R;
         }
-        v.state = 0; t.state = 0;
+        rb.set_state(i, 0);
+        rb.set_state(target, 0);
         v.velocity = {}; t.velocity = {};
         v.remainder = {}; t.remainder = {};
         v.pair_id = -1; t.pair_id = -1;

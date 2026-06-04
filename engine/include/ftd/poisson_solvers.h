@@ -16,6 +16,7 @@
  */
 
 #include <vector>
+#include "ftd/engine_state.h"
 #include "lattice.h"
 #include "voxel.h"
 
@@ -37,6 +38,7 @@ void sor_sweep_18pt(std::vector<double>& phi,
 // geometric Coulomb (Phase G theorem). See
 // docs/theory/10_eft_program/DERIV_EMERGENT_COULOMB_GEOMETRIC.md Section 7.
 void gauss_project_cpu(std::vector<Voxel>& voxels,
+                       const TernaryField& state,
                        std::vector<double>& phi,
                        std::vector<double>& sor_source,
                        const Lattice& lattice,
@@ -46,7 +48,7 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
                        int sor_iters = SOR_ITERATIONS);
 
 // Coulomb Poisson: ∇²φ_C = -s. Warm-started, mean-subtracted for periodic BC.
-void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
+void solve_coulomb_poisson_cpu(const TernaryField& state,
                                std::vector<double>& phi_coulomb,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
@@ -55,6 +57,7 @@ void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
 // Latency Poisson: ∇²φ_L = 4πGρ_mass with ρ_mass = K_B|state|. Writes
 // voxel.latency = sqrt(clamp(|phi_latency|, 0, LATENCY_HORIZON_CLAMP)).
 void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
+                               const TernaryField& state,
                                std::vector<double>& phi_latency,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,

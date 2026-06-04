@@ -56,7 +56,8 @@ namespace {
 // particle_id sentinel, derives spin from the pre-write flux curl, and
 // derives color from the dominant flux axis — byte-identical with the
 // original phase_write() inline blocks.
-inline void manifest_at(Voxel& v,
+inline void manifest_at(RenderBridge& rb,
+                        Voxel& v,
                         double polarity_signal,
                         const std::vector<Vec3>& flux_pre,
                         const Lattice& lattice,
@@ -70,9 +71,9 @@ inline void manifest_at(Voxel& v,
   // assigns +1 at exactly 0 while the single path's `> 0` assigns -1 at
   // exactly 0. Preserve that by branching on `dual`.
   if (dual) {
-    v.state = (polarity_signal >= 0) ? 1 : -1;
+    rb.set_state(i, static_cast<int8_t>((polarity_signal >= 0) ? 1 : -1));
   } else {
-    v.state = (polarity_signal > 0) ? 1 : -1;
+    rb.set_state(i, static_cast<int8_t>((polarity_signal > 0) ? 1 : -1));
   }
   // ARCH-7 (2026-04-25): defer particle_id assignment until the sequential
   // post-pass so IDs match voxel-index order regardless of OMP scheduling.
@@ -120,7 +121,7 @@ void compute_near_particle_mask(RenderBridge& rb) {
     rb.near_accel_.resize(N, 0.0);
     std::fill(rb.near_accel_.begin(), rb.near_accel_.end(), 0.0);
   }
-  for (int i = 0; i < N; ++i) {
+  for (int i : rb.ordered_active_indices()) {
     if (rb.voxels_[i].state != 0) {
       rb.near_particle_[i] = 1;
       if (do_larmor) {
@@ -223,7 +224,7 @@ void phase_write_main_loop(RenderBridge& rb) {
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
           double chi = v.chirality_density();
-          manifest_at(v, chi, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/true);
+          manifest_at(rb, v, chi, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/true);
         }
       }
     } else {
@@ -274,7 +275,7 @@ void phase_write_main_loop(RenderBridge& rb) {
 
           // ARCH-7b: divergence from pre-write snapshot (race-free).
           double div = ::ftd::divergence_from_flux_array(rb.flux_pre_write_, rb.lattice_, i);
-          manifest_at(v, div, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/false);
+          manifest_at(rb, v, div, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/false);
         }
       }
     }
@@ -294,7 +295,7 @@ void phase_write_main_loop(RenderBridge& rb) {
           static_cast<std::uint64_t>(rb.toggles.langevin_seed);
       if (voxel_uniform(gseed, i, rb.tick_,
                         static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE) {
-        v.state = 0;
+        rb.set_state(i, 0);
         v.particle_id = -1;
         v.spin = 0;
         v.color = 0;

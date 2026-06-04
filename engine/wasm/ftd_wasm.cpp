@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cmath>
 #include "ftd/render_bridge.h"
+#include "ftd/field_operators.h"
 #include "ftd/lagrangian.h"
 #include "ftd/constants.h"
 #include "bindings_internal.h"
@@ -40,16 +41,9 @@ val get_particle_data(ftd::RenderBridge& rb) {
     // PERF: zero-copy via typed_memory_view. Skip void density voxels entirely
     // and return only manifested particles (state != 0).
     static std::vector<float> pos_cache, col_cache, size_cache;
-    const auto& voxels = rb.voxels();
     const int N = rb.lattice().size();
-    const int total = N * N * N;
-
-    // First pass: count visible voxels (only manifested particles, state != 0)
-    int count = 0;
-    for (int i = 0; i < total; i++) {
-        const auto& v = voxels[i];
-        if (v.state != 0) count++;
-    }
+    const auto& active = rb.ordered_active_indices();
+    const int count = static_cast<int>(active.size());
 
     if (static_cast<int>(pos_cache.size()) < count * 3) {
         pos_cache.resize(count * 3);
@@ -58,9 +52,8 @@ val get_particle_data(ftd::RenderBridge& rb) {
     }
 
     int idx = 0;
-    for (int i = 0; i < total; i++) {
-        const auto& v = voxels[i];
-        if (v.state == 0) continue;
+    for (int i : active) {
+        const int s = rb.state_at(i);
 
         auto c = rb.lattice().coord(i);
         const int o3 = idx * 3;
@@ -68,11 +61,11 @@ val get_particle_data(ftd::RenderBridge& rb) {
         pos_cache[o3 + 1] = static_cast<float>(c.y) + 0.5f;
         pos_cache[o3 + 2] = static_cast<float>(c.z) + 0.5f;
 
-        if (v.state == 1) {
+        if (s == 1) {
             col_cache[o3]     = 0.29f;
             col_cache[o3 + 1] = 0.87f;
             col_cache[o3 + 2] = 0.50f;
-        } else { // v.state == -1
+        } else { // s == -1
             col_cache[o3]     = 0.97f;
             col_cache[o3 + 1] = 0.44f;
             col_cache[o3 + 2] = 0.44f;
@@ -305,7 +298,7 @@ val get_flux_slice(ftd::RenderBridge& rb, int axis, int index) {
     static std::vector<double> cache;
     const int N = rb.lattice().size();
     const int sliceSize = N * N;
-    const auto& voxels = rb.voxels();
+    const auto& fields = rb.fields();
 
     if (static_cast<int>(cache.size()) != sliceSize) cache.resize(sliceSize);
 
@@ -316,7 +309,7 @@ val get_flux_slice(ftd::RenderBridge& rb, int axis, int index) {
             else if (axis == 1) { x = a; y = index; z = b; }
             else                { x = a; y = b; z = index; }
             int idx = rb.lattice().index(x, y, z);
-            cache[a * N + b] = voxels[idx].density();
+            cache[a * N + b] = fields.density_at(static_cast<std::size_t>(idx));
         }
     }
     return val(typed_memory_view(sliceSize, cache.data()));
@@ -335,7 +328,7 @@ val get_flux_volume(ftd::RenderBridge& rb) {
     static std::vector<double> cache;
     const int N = rb.lattice().size();
     const int total = N * N * N;
-    const auto& voxels = rb.voxels();
+    const auto& fields = rb.fields();
 
     if (static_cast<int>(cache.size()) != total) cache.resize(total);
 
@@ -350,7 +343,7 @@ val get_flux_volume(ftd::RenderBridge& rb) {
             for (int x = 0; x < N; ++x) {
                 const int js_idx  = z * N * N + y * N + x;
                 const int cpp_idx = rb.lattice().index(x, y, z);
-                cache[js_idx] = voxels[cpp_idx].density();
+                cache[js_idx] = fields.density_at(static_cast<std::size_t>(cpp_idx));
             }
         }
     }
@@ -559,6 +552,8 @@ val get_poynting_sampled(ftd::RenderBridge& rb, int stride) {
 val get_divj_sampled(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> pos_cache, val_cache;
     const int N = rb.lattice().size();
+    const auto& lat = rb.lattice();
+    const auto& fields = rb.fields();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
@@ -572,8 +567,8 @@ val get_divj_sampled(ftd::RenderBridge& rb, int stride) {
     for (int z = 0; z < N; z += stride) {
         for (int y = 0; y < N; y += stride) {
             for (int x = 0; x < N; x += stride) {
-                int idx = rb.lattice().index(x, y, z);
-                double div = rb.divergence_flux(idx);
+                int idx = lat.index(x, y, z);
+                double div = ::ftd::divergence_flux_op(fields, lat, idx);
                 if (std::abs(div) < 1e-15) continue;
                 const int o3 = count * 3;
                 pos_cache[o3]     = static_cast<float>(x) + 0.5f;
@@ -598,7 +593,7 @@ val get_flux_vector_sampled(ftd::RenderBridge& rb, int stride) {
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
-    const auto& voxels = rb.voxels();
+    const auto& fields = rb.fields();
 
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) {
         pos_cache.resize(maxPts * 3);
@@ -610,15 +605,14 @@ val get_flux_vector_sampled(ftd::RenderBridge& rb, int stride) {
         for (int y = 0; y < N; y += stride) {
             for (int x = 0; x < N; x += stride) {
                 int idx = rb.lattice().index(x, y, z);
-                const auto& v = voxels[idx];
-                if (v.density() < 1e-15) continue;
+                if (fields.density_at(static_cast<std::size_t>(idx)) < 1e-15) continue;
                 const int o3 = count * 3;
                 pos_cache[o3]     = static_cast<float>(x) + 0.5f;
                 pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f;
                 pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
-                vec_cache[o3]     = static_cast<float>(v.flux.x);
-                vec_cache[o3 + 1] = static_cast<float>(v.flux.y);
-                vec_cache[o3 + 2] = static_cast<float>(v.flux.z);
+                vec_cache[o3]     = static_cast<float>(fields.flux_x[idx]);
+                vec_cache[o3 + 1] = static_cast<float>(fields.flux_y[idx]);
+                vec_cache[o3 + 2] = static_cast<float>(fields.flux_z[idx]);
                 count++;
             }
         }
@@ -702,10 +696,10 @@ val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride) {
         vec_cache.resize(maxPts * 3);
     }
 
-    const auto& voxels = rb.voxels();
+    const auto& lat = rb.lattice();
+    const auto& fields = rb.fields();
     auto density = [&](int x, int y, int z) -> double {
-        const auto& v = voxels[rb.lattice().index(x, y, z)];
-        return std::sqrt(v.flux.x * v.flux.x + v.flux.y * v.flux.y + v.flux.z * v.flux.z);
+        return fields.density_at(static_cast<std::size_t>(lat.index(x, y, z)));
     };
 
     int count = 0;
@@ -1001,6 +995,8 @@ val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
 val get_vorticity_sampled(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> pos_cache, val_cache;
     const int N = rb.lattice().size();
+    const auto& lat = rb.lattice();
+    const auto& fields = rb.fields();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
@@ -1009,7 +1005,7 @@ val get_vorticity_sampled(ftd::RenderBridge& rb, int stride) {
     for (int z = 1; z < N - 1; z += stride)
         for (int y = 1; y < N - 1; y += stride)
             for (int x = 1; x < N - 1; x += stride) {
-                const auto c = rb.curl_flux(rb.lattice().index(x, y, z));
+                const auto c = ::ftd::curl_flux_op(fields, lat, lat.index(x, y, z));
                 const double m = c.mag();
                 if (m < 1e-15) continue;
                 const int o3 = count * 3;
@@ -1027,19 +1023,21 @@ val get_vorticity_sampled(ftd::RenderBridge& rb, int stride) {
 val get_helicity_sampled(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> pos_cache, val_cache;
     const int N = rb.lattice().size();
+    const auto& lat = rb.lattice();
+    const auto& fields = rb.fields();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& voxels = rb.voxels();
     int count = 0;
     for (int z = 1; z < N - 1; z += stride)
         for (int y = 1; y < N - 1; y += stride)
             for (int x = 1; x < N - 1; x += stride) {
-                const int idx = rb.lattice().index(x, y, z);
-                const auto& v = voxels[idx];
-                const auto c = rb.curl_flux(idx);
-                const double h = v.flux.x * c.x + v.flux.y * c.y + v.flux.z * c.z;
+                const int idx = lat.index(x, y, z);
+                const auto c = ::ftd::curl_flux_op(fields, lat, idx);
+                const double h = fields.flux_x[idx] * c.x +
+                                 fields.flux_y[idx] * c.y +
+                                 fields.flux_z[idx] * c.z;
                 if (std::abs(h) < 1e-15) continue;
                 const int o3 = count * 3;
                 pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
@@ -1056,6 +1054,8 @@ val get_helicity_sampled(ftd::RenderBridge& rb, int stride) {
 val get_curlj_sampled(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> pos_cache, vec_cache;
     const int N = rb.lattice().size();
+    const auto& lat = rb.lattice();
+    const auto& fields = rb.fields();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
@@ -1064,7 +1064,7 @@ val get_curlj_sampled(ftd::RenderBridge& rb, int stride) {
     for (int z = 1; z < N - 1; z += stride)
         for (int y = 1; y < N - 1; y += stride)
             for (int x = 1; x < N - 1; x += stride) {
-                const auto c = rb.curl_flux(rb.lattice().index(x, y, z));
+                const auto c = ::ftd::curl_flux_op(fields, lat, lat.index(x, y, z));
                 if (c.mag() < 1e-15) continue;
                 const int o3 = count * 3;
                 pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
@@ -1082,22 +1082,24 @@ val get_curlj_sampled(ftd::RenderBridge& rb, int stride) {
 val get_coherence_sampled(ftd::RenderBridge& rb, int stride) {
     static std::vector<float> pos_cache, val_cache;
     const int N = rb.lattice().size();
+    const auto& lat = rb.lattice();
+    const auto& fields = rb.fields();
     if (stride < 1) stride = 1;
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& voxels = rb.voxels();
     int count = 0;
     for (int z = 1; z < N - 1; z += stride)
         for (int y = 1; y < N - 1; y += stride)
             for (int x = 1; x < N - 1; x += stride) {
-                const int idx = rb.lattice().index(x, y, z);
-                const auto& v = voxels[idx];
-                const auto c = rb.curl_flux(idx);
-                const double jm = v.flux.mag();
+                const int idx = lat.index(x, y, z);
+                const auto c = ::ftd::curl_flux_op(fields, lat, idx);
+                const double jm = fields.density_at(static_cast<std::size_t>(idx));
                 const double cm = c.mag();
                 if (jm < 1e-10 || cm < 1e-10) continue;
-                const double C = (v.flux.x * c.x + v.flux.y * c.y + v.flux.z * c.z) / (jm * cm);
+                const double C = (fields.flux_x[idx] * c.x +
+                                  fields.flux_y[idx] * c.y +
+                                  fields.flux_z[idx] * c.z) / (jm * cm);
                 const int o3 = count * 3;
                 pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
                 val_cache[count++] = static_cast<float>(C);
@@ -1117,9 +1119,15 @@ val get_fisher_sampled(ftd::RenderBridge& rb, int stride) {
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& voxels = rb.voxels();
     const auto& lat = rb.lattice();
-    auto rhoAt = [&](int xi, int yi, int zi) { const double d = voxels[lat.index(xi, yi, zi)].density(); return d * d; };
+    const auto& fields = rb.fields();
+    auto rhoAt = [&](int xi, int yi, int zi) {
+        const int idx = lat.index(xi, yi, zi);
+        const double x = fields.flux_x[idx];
+        const double y = fields.flux_y[idx];
+        const double z = fields.flux_z[idx];
+        return x * x + y * y + z * z;
+    };
     int count = 0;
     for (int z = 1; z < N - 1; z += stride)
         for (int y = 1; y < N - 1; y += stride)
@@ -1151,19 +1159,27 @@ val get_latency_sampled(ftd::RenderBridge& rb, int stride) {
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& voxels = rb.voxels();
     const auto& lat = rb.lattice();
+    const auto& fields = rb.fields();
     const int NNN = N * N * N;
     double maxRho = 0.0;
-    for (int i = 0; i < NNN; ++i) { const double d = voxels[i].density(); const double r = d * d; if (r > maxRho) maxRho = r; }
+    for (int i = 0; i < NNN; ++i) {
+        const double r = fields.flux_x[i] * fields.flux_x[i] +
+                         fields.flux_y[i] * fields.flux_y[i] +
+                         fields.flux_z[i] * fields.flux_z[i];
+        if (r > maxRho) maxRho = r;
+    }
     if (maxRho < 1e-30) { val result = val::object(); result.set("positions", val(typed_memory_view(0, pos_cache.data()))); result.set("values", val(typed_memory_view(0, val_cache.data()))); result.set("count", 0); return result; }
     const double inv = 1.0 / maxRho;
     int count = 0;
     for (int z = 0; z < N; z += stride)
         for (int y = 0; y < N; y += stride)
             for (int x = 0; x < N; x += stride) {
-                const double d = voxels[lat.index(x, y, z)].density();
-                const double rn = std::min(d * d * inv, 0.998);
+                const int idx = lat.index(x, y, z);
+                const double rho = fields.flux_x[idx] * fields.flux_x[idx] +
+                                   fields.flux_y[idx] * fields.flux_y[idx] +
+                                   fields.flux_z[idx] * fields.flux_z[idx];
+                const double rn = std::min(rho * inv, 0.998);
                 const double L = std::sqrt(rn);
                 if (L < 1e-6) continue;
                 const int o3 = count * 3;
@@ -1186,15 +1202,26 @@ val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride) {
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& voxels = rb.voxels();
     const auto& lat = rb.lattice();
+    const auto& fields = rb.fields();
     const int NNN = N * N * N;
     if (static_cast<int>(Lgrid.size()) < NNN) Lgrid.resize(NNN);
     double maxRho = 0.0;
-    for (int i = 0; i < NNN; ++i) { const double d = voxels[i].density(); const double r = d * d; if (r > maxRho) maxRho = r; }
+    for (int i = 0; i < NNN; ++i) {
+        const double r = fields.flux_x[i] * fields.flux_x[i] +
+                         fields.flux_y[i] * fields.flux_y[i] +
+                         fields.flux_z[i] * fields.flux_z[i];
+        if (r > maxRho) maxRho = r;
+    }
     if (maxRho < 1e-30) { val result = val::object(); result.set("positions", val(typed_memory_view(0, pos_cache.data()))); result.set("values", val(typed_memory_view(0, val_cache.data()))); result.set("count", 0); return result; }
     const double inv = 1.0 / maxRho;
-    for (int i = 0; i < NNN; ++i) { const double d = voxels[i].density(); const double rn = std::min(d * d * inv, 0.998); Lgrid[i] = static_cast<float>(std::sqrt(rn)); }
+    for (int i = 0; i < NNN; ++i) {
+        const double rho = fields.flux_x[i] * fields.flux_x[i] +
+                           fields.flux_y[i] * fields.flux_y[i] +
+                           fields.flux_z[i] * fields.flux_z[i];
+        const double rn = std::min(rho * inv, 0.998);
+        Lgrid[i] = static_cast<float>(std::sqrt(rn));
+    }
     const double INV3 = 1.0 / 3.0, INV6 = 1.0 / 6.0;
     int count = 0;
     for (int z = 1; z < N - 1; z += stride)
@@ -1233,13 +1260,13 @@ val get_state_field_sampled(ftd::RenderBridge& rb, int stride) {
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& voxels = rb.voxels();
     const auto& lat = rb.lattice();
+    const auto& ternary = rb.ternary_field();
     int count = 0;
     for (int z = 0; z < N; z += stride)
         for (int y = 0; y < N; y += stride)
             for (int x = 0; x < N; x += stride) {
-                const int s = voxels[lat.index(x, y, z)].state;
+                const int s = ternary.state_at(lat.index(x, y, z));
                 if (s == 0) continue;
                 const int o3 = count * 3;
                 pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;
@@ -1262,14 +1289,14 @@ val get_gauss_residual_sampled(ftd::RenderBridge& rb, int stride) {
     const int S = (N + stride - 1) / stride;
     const int maxPts = S * S * S;
     if (static_cast<int>(pos_cache.size()) < maxPts * 3) { pos_cache.resize(maxPts * 3); val_cache.resize(maxPts); }
-    const auto& voxels = rb.voxels();
     const auto& lat = rb.lattice();
+    const auto& ternary = rb.ternary_field();
     int count = 0;
     for (int z = 0; z < N; z += stride)
         for (int y = 0; y < N; y += stride)
             for (int x = 0; x < N; x += stride) {
                 const int idx = lat.index(x, y, z);
-                const double r = rb.divergence_flux(idx) - static_cast<double>(voxels[idx].state);
+                const double r = rb.divergence_flux(idx) - static_cast<double>(ternary.state_at(idx));
                 if (std::abs(r) < 1e-6) continue;
                 const int o3 = count * 3;
                 pos_cache[o3] = static_cast<float>(x) + 0.5f; pos_cache[o3 + 1] = static_cast<float>(y) + 0.5f; pos_cache[o3 + 2] = static_cast<float>(z) + 0.5f;

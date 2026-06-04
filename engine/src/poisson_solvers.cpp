@@ -104,6 +104,7 @@ static inline double divergence_flux_at(const std::vector<Voxel>& voxels,
 }
 
 void gauss_project_cpu(std::vector<Voxel>& voxels,
+                       const TernaryField& state,
                        std::vector<double>& phi,
                        std::vector<double>& sor_source,
                        const Lattice& lattice,
@@ -130,7 +131,7 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
     } else {
       div = divergence_flux_at(voxels, lattice, i);
     }
-    sor_source[i] = div - charge_coupling * static_cast<double>(voxels[i].state);
+    sor_source[i] = div - charge_coupling * static_cast<double>(state.state_at(i));
   }
 
   for (int iter = 0; iter < sor_iters; ++iter) {
@@ -139,7 +140,7 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
 
 #pragma omp parallel for schedule(static)
   for (int i = 0; i < N; ++i) {
-    if (!exact_dual_gauss && voxels[i].state != 0) continue;
+    if (!exact_dual_gauss && state.state_at(i) != 0) continue;
     Vec3 grad_phi;
     const int iz = i % L;
     const int iy = (i / L) % L;
@@ -164,7 +165,7 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
   }
 }
 
-void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
+void solve_coulomb_poisson_cpu(const TernaryField& state,
                                std::vector<double>& phi_coulomb,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
@@ -172,14 +173,12 @@ void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
   const int N = static_cast<int>(lattice.total_sites());
   constexpr double OMEGA = SOR_OMEGA;
 
-  double charge_sum = 0.0;
-  for (int i = 0; i < N; ++i)
-    charge_sum += static_cast<double>(voxels[i].state);
+  double charge_sum = static_cast<double>(state.charge_sum());
   const double mean_charge = charge_sum / N;
 
 #pragma omp parallel for
   for (int i = 0; i < N; ++i) {
-    sor_source[i] = -(static_cast<double>(voxels[i].state) - mean_charge);
+    sor_source[i] = -(static_cast<double>(state.state_at(i)) - mean_charge);
   }
 
   for (int iter = 0; iter < sor_iters; ++iter) {
@@ -196,6 +195,7 @@ void solve_coulomb_poisson_cpu(const std::vector<Voxel>& voxels,
 }
 
 void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
+                               const TernaryField& state,
                                std::vector<double>& phi_latency,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
@@ -204,14 +204,12 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
   constexpr double OMEGA = SOR_OMEGA;
   constexpr double FOUR_PI_G = 4.0 * PI * G_N;
 
-  double mass_sum = 0.0;
-  for (int i = 0; i < N; ++i)
-    mass_sum += K_B * std::abs(voxels[i].state);
+  double mass_sum = K_B * static_cast<double>(state.manifested_count());
   const double mean_mass = mass_sum / N;
 
 #pragma omp parallel for
   for (int i = 0; i < N; ++i) {
-    const double rho_mass = K_B * std::abs(voxels[i].state);
+    const double rho_mass = K_B * std::abs(state.state_at(i));
     sor_source[i] = FOUR_PI_G * (rho_mass - mean_mass);
   }
 

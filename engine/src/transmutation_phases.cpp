@@ -16,10 +16,9 @@ namespace ftd {
 
 void weak_transmutation_cpu(RenderBridge& rb) {
   auto& voxels = rb.voxels_;
-  const auto& lattice = rb.lattice_;
-  const int N = static_cast<int>(lattice.total_sites());
+  const auto& active = rb.ordered_active_indices();
   const std::uint64_t gseed = static_cast<std::uint64_t>(rb.toggles.langevin_seed);
-  for (int i = 0; i < N; ++i) {
+  for (int i : active) {
     auto& v = voxels[i];
     if (v.state == 0) continue;
 
@@ -31,7 +30,7 @@ void weak_transmutation_cpu(RenderBridge& rb) {
       double p = 1.0 - std::exp(-(stress - WEAK_THRESHOLD) / K_B);
       if (voxel_uniform(gseed, i, rb.tick_,
                         static_cast<std::uint64_t>(VoxelRng::WeakTransmutation)) < p) {
-        v.state = -v.state;
+        rb.set_state(i, static_cast<int8_t>(-v.state));
         if (rb.toggles.dual_substrate) {
           std::swap(v.flux_L, v.flux_R);
           std::swap(v.wave_vel_L, v.wave_vel_R);
@@ -43,9 +42,8 @@ void weak_transmutation_cpu(RenderBridge& rb) {
 
 void accumulate_proper_time(RenderBridge& rb) {
   auto& voxels = rb.voxels_;
-  const auto& lattice = rb.lattice_;
-  const int N = static_cast<int>(lattice.total_sites());
-  for (int i = 0; i < N; ++i) {
+  const auto& active = rb.ordered_active_indices();
+  for (int i : active) {
     auto& v = voxels[i];
     if (v.state == 0) continue;
     double L = v.latency;
@@ -104,12 +102,12 @@ void pair_production_cpu(RenderBridge& rb) {
     // To oppose the external field (Vacuum Polarization), the dipole must point UPSTREAM.
     // So the downstream particle must be +1, and the upstream particle -1.
     // `v` is upstream, `partner` is downstream.
-    v.state = -1;
+    rb.set_state(i, -1);
     v.particle_id = pid;
     v.pair_id = pid;
 
     auto& p2 = voxels[partner];
-    p2.state = +1;
+    rb.set_state(partner, +1);
     p2.particle_id = rb.injector_.next_particle_id();
     p2.pair_id = pid;
 
@@ -120,12 +118,9 @@ void pair_production_cpu(RenderBridge& rb) {
 void triad_binding_cpu(RenderBridge& rb) {
   auto& voxels = rb.voxels_;
   const auto& lattice = rb.lattice_;
-  const int N = static_cast<int>(lattice.total_sites());
   std::vector<int> particles;
-  particles.reserve(64);
-  for (int i = 0; i < N; ++i) {
-    if (voxels[i].state != 0) particles.push_back(i);
-  }
+  const auto& active = rb.ordered_active_indices();
+  particles.assign(active.begin(), active.end());
 
   auto coord_dist = [&](int a, int b) {
     auto ca = lattice.coord(a), cb = lattice.coord(b);

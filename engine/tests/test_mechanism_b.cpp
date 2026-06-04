@@ -47,7 +47,7 @@ inline std::vector<double> measure_potential_vp(const RenderBridge& bg, int8_t s
     // Since toggles.poisson_coulomb is false during run, we must solve it manually now:
     std::vector<double> my_phi(L*L*L, 0.0);
     std::vector<double> my_sor(L*L*L, 0.0);
-    ftd::solve_coulomb_poisson_cpu(rb.voxels(), my_phi, my_sor, rb.lattice());
+    ftd::solve_coulomb_poisson_cpu(rb.ternary_field(), my_phi, my_sor, rb.lattice());
     auto phi = my_phi;
     
     // Compute spherical average of phi around the test charge
