@@ -13,7 +13,8 @@
 // transmutation_phases.cpp, injection.cpp; see ADR-0008).
 //
 // Setup (deterministic):
-//   - L = 16 lattice
+//   - L = 17 lattice (ODD — 2026-06-03: all lattices are odd so the flux
+//     pulse at (8,8,8) lands on the true center voxel (N-1)/2 = 8)
 //   - rb.force_cpu()                       (pin to CPU backend; bit-exactness)
 //   - rb.seed_rng(42)                      (genesis Born-rule reproducible)
 //   - 3 manifested particles at well-separated coordinates with known charges
@@ -198,16 +199,18 @@ static std::uint64_t compute_state_hash(const RenderBridge& rb) {
 }
 
 // ---------------------------------------------------------------------------
-// FROZEN GOLDEN HASH — captured on main @ HEAD, 2026-04-27.
+// FROZEN GOLDEN HASH.
+//   - 2026-04-27: original capture on main @ HEAD at L=16 (0xcd957b601d47868a).
+//   - 2026-06-03: RECAPTURED at L=17 — intentional config change (all lattice
+//     sizes are now odd so phenomena/flux center on a true center voxel). This
+//     is NOT a phase-extraction regression; the lattice changed 16→17, so the
+//     byte-hash necessarily changed (different voxel count + center).
 //
-// If this changes, ENGINE PHYSICS CHANGED. Phase 4 extraction commits MUST
-// keep this value bit-exact. If you are intentionally changing physics
-// (i.e. NOT a Phase 4 extraction), you must:
-//   1. State the physics-change rationale in the commit message
-//   2. Update the constant below to the new captured value
-//   3. Document the new value in the Phase 4 plan doc
+// If this changes WITHOUT a stated config/physics rationale, ENGINE PHYSICS
+// CHANGED unexpectedly. To change it intentionally: (1) state the rationale in
+// the commit, (2) update the constant below to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH = 0xcd957b601d47868aULL;
+static constexpr std::uint64_t GOLDEN_HASH = 0xc13713f0e11a96daULL;  // L=17 (odd-lattice recapture, 2026-06-03; prior L=16 = 0xcd957b601d47868a)
 
 // ---------------------------------------------------------------------------
 // Test driver
@@ -215,7 +218,7 @@ static constexpr std::uint64_t GOLDEN_HASH = 0xcd957b601d47868aULL;
 void test_golden_tick_hash() {
     section("100-tick byte-hash regression");
 
-    RenderBridge rb(16);
+    RenderBridge rb(17);     // odd lattice — true center voxel at (17-1)/2 = 8
     rb.force_cpu();          // CPU-only — bit-exact reference
     rb.seed_rng(42);         // deterministic genesis Born-rule sampling
     set_toggle_profile(rb);

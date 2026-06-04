@@ -54,6 +54,19 @@ emscripten::val get_gravity_field_sampled(ftd::RenderBridge& rb, int stride);
 emscripten::val get_em_force_field(ftd::RenderBridge& rb, int stride);
 emscripten::val get_strong_force_field(ftd::RenderBridge& rb, int stride);
 
+// Scalar / derived field samplers (2026-06-03) — mirror the MockBridge JS
+// samplers so the WASM-owned scenarios render the same topology overlays.
+// Previously unbound, so each fell back to empty on the WasmBridge.
+emscripten::val get_vorticity_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_helicity_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_curlj_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_coherence_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_fisher_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_latency_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_kretschmann_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_state_field_sampled(ftd::RenderBridge& rb, int stride);
+emscripten::val get_gauss_residual_sampled(ftd::RenderBridge& rb, int stride);
+
 // Sample the engine's Coulomb potential field along a ray from p1 to p2.
 // Returns { positions:Float32Array(3N), V:Float32Array(N), count:N } via
 // trilinear interpolation of phi_coulomb_. count=0 when phi_coulomb_ is
