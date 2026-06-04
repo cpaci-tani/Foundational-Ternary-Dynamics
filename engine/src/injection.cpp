@@ -90,8 +90,9 @@ void inject_particle_cpu(RenderBridge& rb, int x, int y, int z, int8_t state,
     return;
   }
 #endif
-  auto& v = rb.voxels()[rb.lattice().index(x, y, z)];
-  v.state = state;
+  const int idx = rb.lattice().index(x, y, z);
+  auto& v = rb.voxels()[idx];
+  rb.set_state(idx, state);
   v.flux = flux_val;
   v.spin = spin;
   v.color = color;
@@ -129,7 +130,7 @@ void inject_wavepacket_cpu(RenderBridge& rb, int cx, int cy, int cz, int8_t stat
 
   int center = lattice.index(cx, cy, cz);
   auto& vc = voxels[center];
-  vc.state = state;
+  rb.set_state(center, state);
   vc.particle_id = rb.injector().next_particle_id();
 
   int radius = static_cast<int>(GAUSSIAN_CUTOFF_SIGMA * sigma) + 1;
@@ -192,7 +193,7 @@ void create_entangled_pair_cpu(RenderBridge& rb, int x, int y, int z, const Vec3
   int id = rb.injector().next_pair_id();
   int idx = lattice.index(x, y, z);
   auto& v = voxels[idx];
-  v.state = 1;
+  rb.set_state(idx, 1);
   v.flux = flux_val;
   v.pair_id = id;
   v.particle_id = rb.injector().next_particle_id();
@@ -200,12 +201,12 @@ void create_entangled_pair_cpu(RenderBridge& rb, int x, int y, int z, const Vec3
   auto nbrs = lattice.neighbors_6(idx);
   int partner_idx = -1;
   for (int n : nbrs) {
-    if (voxels[n].state == 0) { partner_idx = n; break; }
+    if (rb.state_at(n) == 0) { partner_idx = n; break; }
   }
   if (partner_idx < 0) return;
 
   auto& partner = voxels[partner_idx];
-  partner.state = -1;
+  rb.set_state(partner_idx, -1);
   partner.flux = flux_val * -1.0;
   partner.pair_id = id;
   partner.particle_id = rb.injector().next_particle_id();

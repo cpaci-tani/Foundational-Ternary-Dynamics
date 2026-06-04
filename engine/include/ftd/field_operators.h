@@ -16,6 +16,7 @@
 #include <cassert>
 #include <cmath>
 #include <vector>
+#include "ftd/engine_state.h"
 #include "lattice.h"
 #include "voxel.h"
 
@@ -49,6 +50,15 @@ inline double divergence_flux_op(const std::vector<Voxel>& voxels, const Lattice
   return div;
 }
 
+inline double divergence_flux_op(const FieldSoA& fields, const Lattice& lattice, int idx) {
+  const auto& nbrs = lattice.neighbors_6(idx);
+  double div = 0.0;
+  div += (fields.flux_x[nbrs[0]] - fields.flux_x[nbrs[1]]) * 0.5;
+  div += (fields.flux_y[nbrs[2]] - fields.flux_y[nbrs[3]]) * 0.5;
+  div += (fields.flux_z[nbrs[4]] - fields.flux_z[nbrs[5]]) * 0.5;
+  return div;
+}
+
 // ARCH-7b: divergence variant that reads from an explicit Vec3 array
 // rather than voxels[].flux. Race-free pair to curl_from_flux_array.
 inline double divergence_from_flux_array(const std::vector<Vec3>& flux,
@@ -70,6 +80,19 @@ inline Vec3 curl_flux_op(const std::vector<Voxel>& voxels, const Lattice& lattic
            (voxels[n[0]].flux.z - voxels[n[1]].flux.z) * 0.5;
   curl.z = (voxels[n[0]].flux.y - voxels[n[1]].flux.y) * 0.5 -
            (voxels[n[2]].flux.x - voxels[n[3]].flux.x) * 0.5;
+  assert(!std::isnan(curl.x) && !std::isnan(curl.y) && !std::isnan(curl.z));
+  return curl;
+}
+
+inline Vec3 curl_flux_op(const FieldSoA& fields, const Lattice& lattice, int idx) {
+  const auto& n = lattice.neighbors_6(idx);
+  Vec3 curl;
+  curl.x = (fields.flux_z[n[2]] - fields.flux_z[n[3]]) * 0.5 -
+           (fields.flux_y[n[4]] - fields.flux_y[n[5]]) * 0.5;
+  curl.y = (fields.flux_x[n[4]] - fields.flux_x[n[5]]) * 0.5 -
+           (fields.flux_z[n[0]] - fields.flux_z[n[1]]) * 0.5;
+  curl.z = (fields.flux_y[n[0]] - fields.flux_y[n[1]]) * 0.5 -
+           (fields.flux_x[n[2]] - fields.flux_x[n[3]]) * 0.5;
   assert(!std::isnan(curl.x) && !std::isnan(curl.y) && !std::isnan(curl.z));
   return curl;
 }
@@ -110,12 +133,30 @@ inline Vec3 gradient_state_op(const std::vector<Voxel>& voxels, const Lattice& l
   return grad;
 }
 
+inline Vec3 gradient_state_op(const TernaryField& state, const Lattice& lattice, int idx) {
+  const auto& n = lattice.neighbors_6(idx);
+  Vec3 grad;
+  grad.x = (state.state_at(n[0]) - state.state_at(n[1])) * 0.5;
+  grad.y = (state.state_at(n[2]) - state.state_at(n[3])) * 0.5;
+  grad.z = (state.state_at(n[4]) - state.state_at(n[5])) * 0.5;
+  return grad;
+}
+
 inline Vec3 gradient_density_op(const std::vector<Voxel>& voxels, const Lattice& lattice, int idx) {
   const auto& n = lattice.neighbors_6(idx);
   Vec3 grad;
   grad.x = (voxels[n[0]].density() - voxels[n[1]].density()) * 0.5;
   grad.y = (voxels[n[2]].density() - voxels[n[3]].density()) * 0.5;
   grad.z = (voxels[n[4]].density() - voxels[n[5]].density()) * 0.5;
+  return grad;
+}
+
+inline Vec3 gradient_density_op(const FieldSoA& fields, const Lattice& lattice, int idx) {
+  const auto& n = lattice.neighbors_6(idx);
+  Vec3 grad;
+  grad.x = (fields.density_at(n[0]) - fields.density_at(n[1])) * 0.5;
+  grad.y = (fields.density_at(n[2]) - fields.density_at(n[3])) * 0.5;
+  grad.z = (fields.density_at(n[4]) - fields.density_at(n[5])) * 0.5;
   return grad;
 }
 
@@ -128,11 +169,39 @@ inline Vec3 gradient_divergence_op(const std::vector<Voxel>& voxels, const Latti
   return grad;
 }
 
+inline Vec3 gradient_divergence_op(const FieldSoA& fields, const Lattice& lattice, int idx) {
+  const auto& n = lattice.neighbors_6(idx);
+  Vec3 grad;
+  grad.x = (divergence_flux_op(fields, lattice, n[0]) - divergence_flux_op(fields, lattice, n[1])) * 0.5;
+  grad.y = (divergence_flux_op(fields, lattice, n[2]) - divergence_flux_op(fields, lattice, n[3])) * 0.5;
+  grad.z = (divergence_flux_op(fields, lattice, n[4]) - divergence_flux_op(fields, lattice, n[5])) * 0.5;
+  return grad;
+}
+
 inline Vec3 curl_state_velocity_op(const std::vector<Voxel>& voxels, const Lattice& lattice, int idx) {
   auto c = lattice.coord(idx);
   auto jcur = [&](int x, int y, int z) -> Vec3 {
     int ni = lattice.index(x, y, z);
     return voxels[ni].velocity * static_cast<double>(voxels[ni].state);
+  };
+  Vec3 curl;
+  curl.x = (jcur(c.x, c.y + 1, c.z).z - jcur(c.x, c.y - 1, c.z).z) * 0.5 -
+           (jcur(c.x, c.y, c.z + 1).y - jcur(c.x, c.y, c.z - 1).y) * 0.5;
+  curl.y = (jcur(c.x, c.y, c.z + 1).x - jcur(c.x, c.y, c.z - 1).x) * 0.5 -
+           (jcur(c.x + 1, c.y, c.z).z - jcur(c.x - 1, c.y, c.z).z) * 0.5;
+  curl.z = (jcur(c.x + 1, c.y, c.z).y - jcur(c.x - 1, c.y, c.z).y) * 0.5 -
+           (jcur(c.x, c.y + 1, c.z).x - jcur(c.x, c.y - 1, c.z).x) * 0.5;
+  return curl;
+}
+
+inline Vec3 curl_state_velocity_op(const TernaryField& state,
+                                   const std::vector<Voxel>& voxels,
+                                   const Lattice& lattice,
+                                   int idx) {
+  auto c = lattice.coord(idx);
+  auto jcur = [&](int x, int y, int z) -> Vec3 {
+    int ni = lattice.index(x, y, z);
+    return voxels[ni].velocity * static_cast<double>(state.state_at(ni));
   };
   Vec3 curl;
   curl.x = (jcur(c.x, c.y + 1, c.z).z - jcur(c.x, c.y - 1, c.z).z) * 0.5 -

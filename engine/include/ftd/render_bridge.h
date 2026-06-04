@@ -21,6 +21,7 @@
 #include "ftd/injector.h"
 #include "ftd/backend.h"
 #include "ftd/bridge_rng.h"
+#include "ftd/engine_state.h"
 #include "lattice.h"
 #include "voxel.h"
 #include "hilbert.h"
@@ -98,6 +99,8 @@ public:
             backend_->sync_to_host();
             backend_->mark_host_dirty();  // non-const overload — caller may mutate
         }
+        ternary_dirty_from_voxels_ = true;
+        fields_dirty_from_voxels_ = true;
         return voxels_;
     }
     const std::vector<Voxel>& voxels() const {
@@ -109,7 +112,31 @@ public:
             backend_->sync_to_host();
             backend_->mark_host_dirty();
         }
+        ternary_dirty_from_voxels_ = true;
+        fields_dirty_from_voxels_ = true;
         return voxels_[lattice_.index(x, y, z)];
+    }
+    int8_t state_at(int idx) const;
+    int8_t state_at(int x, int y, int z) const {
+        return state_at(lattice_.index(x, y, z));
+    }
+    bool is_manifested(int idx) const;
+    void set_state(int idx, int8_t state);
+    void set_state(int x, int y, int z, int8_t state) {
+        set_state(lattice_.index(x, y, z), state);
+    }
+    long long charge_sum() const;
+    const std::vector<int>& active_indices() const;
+    const std::vector<int>& ordered_active_indices() const;
+    const TernaryField& ternary_field() const;
+    const FieldSoA& fields() const;
+    Vec3 flux_at(int idx) const;
+    Vec3 wave_vel_at(int idx) const;
+    double density_at(int idx) const;
+    const EngineState& engine_state() const {
+        sync_ternary_from_voxels_if_needed();
+        sync_fields_from_voxels_if_needed();
+        return engine_state_;
     }
     int current_tick() const { return tick_; }
     double physical_time() const { return physical_time_; }
@@ -298,13 +325,19 @@ public:
     inline Vec3 laplacian_flux(int idx) const  { return ::ftd::laplacian_flux_op(voxels(), lattice_, idx); }
     inline double divergence_flux(int idx) const { return ::ftd::divergence_flux_op(voxels(), lattice_, idx); }
     inline Vec3 curl_flux(int idx) const       { return ::ftd::curl_flux_op(voxels(), lattice_, idx); }
-    inline Vec3 gradient_state(int idx) const  { return ::ftd::gradient_state_op(voxels(), lattice_, idx); }
+    inline Vec3 gradient_state(int idx) const  {
+      sync_ternary_from_voxels_if_needed();
+      return ::ftd::gradient_state_op(engine_state_.ternary, lattice_, idx);
+    }
     inline Vec3 gradient_density(int idx) const { return ::ftd::gradient_density_op(voxels(), lattice_, idx); }
     inline Vec3 gradient_divergence(int idx) const { return ::ftd::gradient_divergence_op(voxels(), lattice_, idx); }
     inline Vec3 gradient_scalar(int idx, const std::vector<double>& field) const {
       return ::ftd::gradient_scalar_op(lattice_, idx, field);
     }
-    inline Vec3 curl_state_velocity(int idx) const { return ::ftd::curl_state_velocity_op(voxels(), lattice_, idx); }
+    inline Vec3 curl_state_velocity(int idx) const {
+      sync_ternary_from_voxels_if_needed();
+      return ::ftd::curl_state_velocity_op(engine_state_.ternary, voxels(), lattice_, idx);
+    }
 
     // Hilbert space construction from current flux field
     // H_FTD = L^2(Lattice, C) where psi(v) = J_x(v) + i*J_y(v)
@@ -367,6 +400,7 @@ private:
     // directly. No explicit instantiation needed anymore.
 
     Lattice lattice_;
+    mutable EngineState engine_state_;
     std::vector<Voxel> voxels_;
     std::vector<ForceDiag> force_diag_;  // Per-voxel force breakdown (populated by phase_forces)
     std::vector<Vec3> delta_j_;  // Temporary buffer for Read phase
@@ -447,6 +481,15 @@ private:
     // flush_host_mutations() directly. Implementation lives in
     // src/backend.cpp::GpuBackend.
 #endif
+
+    mutable bool ternary_dirty_from_voxels_ = false;
+    mutable bool fields_dirty_from_voxels_ = false;
+    void sync_ternary_from_voxels() const;
+    void sync_ternary_from_voxels_if_needed() const;
+    void sync_fields_from_voxels() const;
+    void sync_fields_from_voxels_if_needed() const;
+    void mark_fields_dirty_from_voxels() const;
+    int8_t set_state_unlocked(int idx, int8_t state);
 };
 
 }  // namespace ftd

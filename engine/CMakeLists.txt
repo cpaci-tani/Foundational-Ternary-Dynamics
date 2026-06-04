@@ -263,6 +263,10 @@ ftd_add_test(test_tick_phase_order tests/test_tick_phase_order.cpp
              CTEST_NAME tick_phase_order TIMEOUT 120 LABELS lifecycle unit)
 ftd_add_test(test_engine_lifecycle tests/test_engine_lifecycle.cpp
              CTEST_NAME engine_lifecycle TIMEOUT 120 LABELS lifecycle unit)
+ftd_add_test(test_ternary_field tests/test_ternary_field.cpp
+             CTEST_NAME ternary_field TIMEOUT 120 LABELS unit foundation)
+ftd_add_test(test_field_soa tests/test_field_soa.cpp
+             CTEST_NAME field_soa TIMEOUT 120 LABELS unit foundation)
 # Conservation profile: pins the engine's REAL energy-conservation physics
 # (bare-leapfrog well-posedness, gauss-projection runaway, iteration-independent
 # gauss_violation floor). Documentation-of-reality, not a quality gate.
@@ -1410,6 +1414,10 @@ ftd_add_test(benchmark_manifestation_flow_cpu
              tests/benchmark_manifestation_flow_cpu.cpp
              CTEST_NAME benchmark_manifestation_flow_cpu TIMEOUT 600
              LABELS benchmark eft)
+ftd_add_test(benchmark_field_soa_cpu
+             tests/benchmark_field_soa_cpu.cpp
+             CTEST_NAME benchmark_field_soa_cpu TIMEOUT 600
+             LABELS benchmark)
 ftd_add_test(benchmark_alpha_convergence tests/benchmark_alpha_convergence.cpp
              CTEST_NAME benchmark_alpha_convergence TIMEOUT 7200 LABELS benchmark eft)
 if(FTD_ENABLE_CUDA)

@@ -60,7 +60,8 @@ namespace ftd {
 // of the public RNG stream definition.
 
 RenderBridge::RenderBridge(int lattice_size)
-    : lattice_(lattice_size), voxels_(lattice_.total_sites()),
+    : lattice_(lattice_size), engine_state_(lattice_.total_sites()),
+      voxels_(lattice_.total_sites()),
       force_diag_(lattice_.total_sites()),
       delta_j_(lattice_.total_sites()),
       delta_j_L_(lattice_.total_sites()),
@@ -102,6 +103,125 @@ RenderBridge::RenderBridge(int lattice_size)
 
 // Destructor must be in .cpp where GpuEngine is fully defined (unique_ptr needs it)
 RenderBridge::~RenderBridge() = default;
+
+void RenderBridge::sync_ternary_from_voxels() const {
+    engine_state_.ternary.rebuild_from_voxels(voxels_);
+    ternary_dirty_from_voxels_ = false;
+}
+
+void RenderBridge::sync_ternary_from_voxels_if_needed() const {
+    if (!ternary_dirty_from_voxels_) return;
+#ifdef _OPENMP
+    if (omp_in_parallel()) {
+#pragma omp critical(ftd_render_bridge_ternary_sync)
+        {
+            if (ternary_dirty_from_voxels_) {
+                sync_ternary_from_voxels();
+            }
+        }
+        return;
+    }
+#endif
+    sync_ternary_from_voxels();
+}
+
+void RenderBridge::sync_fields_from_voxels() const {
+    engine_state_.fields.rebuild_primary_from_voxels(voxels_);
+    fields_dirty_from_voxels_ = false;
+}
+
+void RenderBridge::sync_fields_from_voxels_if_needed() const {
+    if (!fields_dirty_from_voxels_) return;
+#ifdef _OPENMP
+    if (omp_in_parallel()) {
+#pragma omp critical(ftd_render_bridge_field_sync)
+        {
+            if (fields_dirty_from_voxels_) {
+                sync_fields_from_voxels();
+            }
+        }
+        return;
+    }
+#endif
+    sync_fields_from_voxels();
+}
+
+void RenderBridge::mark_fields_dirty_from_voxels() const {
+    fields_dirty_from_voxels_ = true;
+}
+
+int8_t RenderBridge::set_state_unlocked(int idx, int8_t state) {
+    const bool had_legacy_dirty = ternary_dirty_from_voxels_;
+    if (ternary_dirty_from_voxels_) {
+        sync_ternary_from_voxels();
+    }
+    const int8_t s = engine_state_.ternary.set_state(
+        static_cast<std::size_t>(idx), state);
+    voxels_[idx].state = s;
+    ternary_dirty_from_voxels_ = had_legacy_dirty;
+    return s;
+}
+
+void RenderBridge::set_state(int idx, int8_t state) {
+#ifdef _OPENMP
+    if (omp_in_parallel()) {
+#pragma omp critical(ftd_render_bridge_set_state)
+        {
+            set_state_unlocked(idx, state);
+        }
+        return;
+    }
+#endif
+    set_state_unlocked(idx, state);
+}
+
+int8_t RenderBridge::state_at(int idx) const {
+    sync_ternary_from_voxels_if_needed();
+    return engine_state_.ternary.state_at(static_cast<std::size_t>(idx));
+}
+
+bool RenderBridge::is_manifested(int idx) const {
+    sync_ternary_from_voxels_if_needed();
+    return engine_state_.ternary.is_manifested(static_cast<std::size_t>(idx));
+}
+
+long long RenderBridge::charge_sum() const {
+    sync_ternary_from_voxels_if_needed();
+    return engine_state_.ternary.charge_sum();
+}
+
+const std::vector<int>& RenderBridge::active_indices() const {
+    sync_ternary_from_voxels_if_needed();
+    return engine_state_.ternary.active_indices();
+}
+
+const std::vector<int>& RenderBridge::ordered_active_indices() const {
+    sync_ternary_from_voxels_if_needed();
+    return engine_state_.ternary.ordered_active_indices();
+}
+
+const TernaryField& RenderBridge::ternary_field() const {
+    sync_ternary_from_voxels_if_needed();
+    return engine_state_.ternary;
+}
+
+const FieldSoA& RenderBridge::fields() const {
+    if (backend_) backend_->sync_to_host();
+    sync_fields_from_voxels_if_needed();
+    return engine_state_.fields;
+}
+
+Vec3 RenderBridge::flux_at(int idx) const {
+    return fields().flux_at(static_cast<std::size_t>(idx));
+}
+
+Vec3 RenderBridge::wave_vel_at(int idx) const {
+    return fields().wave_vel_at(static_cast<std::size_t>(idx));
+}
+
+double RenderBridge::density_at(int idx) const {
+    return fields().density_at(static_cast<std::size_t>(idx));
+}
 
 // ARCH-4 (2026-04-25): propagates the seed to all RNG sources at once.
 // Body lives here because GpuEngine is forward-declared in render_bridge.h.
@@ -155,6 +275,7 @@ void RenderBridge::sync_observable() {
   const int N = static_cast<int>(lattice_.total_sites());
   for (int i = 0; i < N; ++i)
     voxels_[i].flux = voxels_[i].flux_L + voxels_[i].flux_R;
+  mark_fields_dirty_from_voxels();
 }
 
 void RenderBridge::create_entangled_pair(int x, int y, int z, const Vec3& flux_val) {
@@ -205,6 +326,7 @@ double RenderBridge::compute_entropy() const { return ::ftd::compute_entropy_cpu
 // phase_read_main_loop. The bit-exact gate is test_render_bridge_golden
 // (hash 0xcd957b601d47868a).
 void RenderBridge::phase_read() {
+  sync_ternary_from_voxels_if_needed();
   ::ftd::phase_read_main_loop(*this);
 }
 
@@ -276,16 +398,16 @@ void RenderBridge::phase_write() {
 
 // Thin wrappers delegating to poisson_solvers.cpp.
 void RenderBridge::gauss_project() {
-  gauss_project_cpu(voxels_, phi_, sor_source_, lattice_, toggles.dual_substrate,
+  gauss_project_cpu(voxels_, ternary_field(), phi_, sor_source_, lattice_, toggles.dual_substrate,
                     toggles.exact_dual_gauss, toggles.coulomb_charge_coupling, sor_iterations_);
 }
 
 void RenderBridge::solve_coulomb_poisson() {
-  solve_coulomb_poisson_cpu(voxels_, phi_coulomb_, sor_source_, lattice_, sor_iterations_);
+  solve_coulomb_poisson_cpu(ternary_field(), phi_coulomb_, sor_source_, lattice_, sor_iterations_);
 }
 
 void RenderBridge::solve_latency_poisson() {
-  solve_latency_poisson_cpu(voxels_, phi_latency_, sor_source_, lattice_, sor_iterations_);
+  solve_latency_poisson_cpu(voxels_, ternary_field(), phi_latency_, sor_source_, lattice_, sor_iterations_);
 }
 
 // ============================================================================
@@ -379,6 +501,8 @@ void RenderBridge::tick() {
       }
   }
 
+  sync_ternary_from_voxels_if_needed();
+
   // ARCH-2-D: GPU dispatch via Backend. CpuBackend::tick() falls through to
   // the CPU phase ladder below; GpuBackend::tick() owns the full flush →
   // engine->tick → sync_to_host sequence.
@@ -459,6 +583,9 @@ void RenderBridge::tick() {
 
   physical_time_ += dt_;
   ++tick_;
+
+  sync_ternary_from_voxels_if_needed();
+  mark_fields_dirty_from_voxels();
 
   // ── Conservation bookkeeping (fills EnergyLedger) ────────────────────
   // Cheap: a few adds + divides; no loop over N. Tests assert on
