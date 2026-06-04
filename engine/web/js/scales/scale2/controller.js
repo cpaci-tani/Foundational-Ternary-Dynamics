@@ -469,7 +469,7 @@ export function animateAE(ctx) {
             const sEnergy = formatEnergy(diag.totalEnergy, 2).text;
             const sState = running ? 'Running' : 'Idle';
 
-            if (_statusCache.tick !== sTick) { dom.statusTick.textContent = sTick; dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
+            if (_statusCache.tick !== sTick) { dom.statusPtime.textContent = sTick; _statusCache.tick = sTick; }
             if (_statusCache.particles !== sParticles) { dom.statusParticles.textContent = sParticles; _statusCache.particles = sParticles; }
             if (_statusCache.energy !== sEnergy) { dom.statusEnergy.textContent = sEnergy; _statusCache.energy = sEnergy; }
             if (_statusCache.state !== sState) {
