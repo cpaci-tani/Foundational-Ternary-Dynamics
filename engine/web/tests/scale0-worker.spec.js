@@ -73,4 +73,87 @@ test.describe('Scale-0 physics Web Worker', () => {
         const info = await fluxMockInfo(page);
         expect(info.useFluxMock, 'empty is WASM-owned — no fluxMock/worker').toBe(false);
     });
+
+    // ── Bridge-wiring regression (audit 2026-06-03) ──────────────────────────
+    // Before the fix, MockBridgeProxy forwarded only 5 direct reads, so panels
+    // that call sampler/list methods directly on the bridge (flux-slice |E|/|B|/
+    // |S|/∇·J, spectrum, p1-observables) silently blanked under the worker. The
+    // proxy now delegates the whole canonical read-surface to its SAB-backed
+    // shadow + ships a worker-sourced particle list.
+
+    test('worker-proxy direct field-sampler reads match the capability path (flux-slice wiring)', async ({ page }) => {
+        await gotoAndReady(page);
+        test.skip(!(await coiReady(page)), 'requires cross-origin isolation (serve.py --cache COOP/COEP)');
+
+        await expect.poll(async () => (await fluxMockInfo(page)).ready,
+            { timeout: 20_000, message: 'worker proxy never became ready' }).toBe(true);
+
+        const r = await page.evaluate(async () => {
+            const fm = (await import('/js/scales/scale0/state/store.js')).getScale0State().fluxMock;
+            const caps = fm.capabilities.scale0;
+            const count = (o) => (o && typeof o.count === 'number' ? o.count : null);
+            // Direct-on-bridge reads — exactly what flux-slice-panel.js:91/101/111/121
+            // and p1-observables-panel.js:780 call. Were `undefined` under the worker.
+            const direct = {
+                e: fm.getEFieldSampled(1), b: fm.getBFieldSampled(1),
+                poynting: fm.getPoyntingSampled(1), divJ: fm.getDivJSampled(1),
+                latency: fm.getLatencySampled(2),
+            };
+            // Capability path (field-overlays.js) — known-good; both hit the shadow.
+            const cap = {
+                e: caps.getScale0FieldSamples({ kind: 'e', stride: 1 }),
+                b: caps.getScale0FieldSamples({ kind: 'b', stride: 1 }),
+                poynting: caps.getScale0FieldSamples({ kind: 'poynting', stride: 1 }),
+                divJ: caps.getScale0FieldSamples({ kind: 'divJ', stride: 1 }),
+                latency: caps.getScale0FieldSamples({ kind: 'latency', stride: 2 }),
+            };
+            const out = {};
+            for (const k of Object.keys(direct)) {
+                out[k] = { defined: typeof direct[k] !== 'undefined', direct: count(direct[k]), cap: count(cap[k]) };
+            }
+            return out;
+        });
+
+        for (const k of ['e', 'b', 'poynting', 'divJ', 'latency']) {
+            expect(r[k].defined, `${k}: direct read is wired on the proxy`).toBe(true);
+            expect(r[k].direct, `${k}: direct count is a number`).not.toBeNull();
+            expect(r[k].direct, `${k}: direct read matches capability path`).toBe(r[k].cap);
+        }
+        // flux-pulse populates the field, so at least one sampler is non-empty —
+        // i.e. the flux-slice charts actually have data to draw.
+        const anyPopulated = ['e', 'b', 'poynting', 'divJ'].some((k) => (r[k].direct ?? 0) > 0);
+        expect(anyPopulated, 'at least one field sampler is non-empty (charts have data)').toBe(true);
+    });
+
+    test('MockBridgeProxy answers every canonical direct-read (anti-drift contract)', async ({ page }) => {
+        await gotoAndReady(page);
+        test.skip(!(await coiReady(page)), 'requires cross-origin isolation (serve.py --cache COOP/COEP)');
+
+        await expect.poll(async () => (await fluxMockInfo(page)).ready,
+            { timeout: 20_000, message: 'worker proxy never became ready' }).toBe(true);
+
+        const r = await page.evaluate(async () => {
+            const fm = (await import('/js/scales/scale0/state/store.js')).getScale0State().fluxMock;
+            const { SCALE0_DIRECT_READS } = await import('/js/bridge/bridge-contract.js');
+            const missing = [], threw = [], undef = [];
+            for (const { name } of SCALE0_DIRECT_READS) {
+                if (typeof fm[name] !== 'function') { missing.push(name); continue; }
+                try {
+                    const v = name === 'getForceAt' ? fm[name](1, 1, 1) : fm[name](2);
+                    if (typeof v === 'undefined') undef.push(name);
+                } catch (e) { threw.push(`${name}: ${e && e.message}`); }
+            }
+            return {
+                missing, threw, undef,
+                particleListIsArray: Array.isArray(fm.getScale0ParticleList()),
+                workerShippedList: fm._lastParticleList !== null,   // worker posted a list (B2)
+            };
+        });
+
+        expect(r.missing, 'every canonical direct-read is present on the proxy').toEqual([]);
+        expect(r.threw, 'no canonical direct-read throws on the proxy').toEqual([]);
+        expect(r.undef, 'no canonical direct-read returns undefined once ready').toEqual([]);
+        expect(r.particleListIsArray, 'getScale0ParticleList returns an array').toBe(true);
+        expect(r.workerShippedList, 'worker shipped a particle list to the proxy (B2)').toBe(true);
+    });
 });

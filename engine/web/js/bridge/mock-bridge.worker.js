@@ -21,9 +21,12 @@ let bridge = null;
 let ctrl = null;            // Int32Array view over the control SAB
 let timer = 0;
 let scenarioId = 'flux-pulse';
+let pframe = 0;                // postFrame counter — throttles the particle-list payload
+const PLIST_EVERY = 6;         // ship getScale0ParticleList() ~every 6th frame (≈10 Hz)
 const TARGET_DT = 1000 / 60;   // cap physics at ~60 Hz; tick-time-limited at large L
 
 function publishShared(N) {
+    pframe = 0;                                       // ship the particle list on the next frame
     const sab = bridge.getSharedField();
     ctrl = new Int32Array(sab.ctrl);
     Atomics.store(ctrl, CTRL.RUNNING, 1);
@@ -38,6 +41,14 @@ function postFrame() {
     let diag = null, parts = null;
     try { if (s0.getScale0Diagnostics) diag = s0.getScale0Diagnostics(); } catch (e) { /* ignore */ }
     try { if (s0.getScale0ParticleFrame) parts = s0.getScale0ParticleFrame(); } catch (e) { /* ignore */ }
+    // Particle LIST (x,y,z,state,charge,…) for spectrum / observables / harness —
+    // the main-thread shadow owns no particles, so the list must come from here.
+    // Throttled: it changes slowly and the panels sample at ≤4 Hz. Null on
+    // skipped frames → the proxy keeps its last list.
+    let particleList = null;
+    if ((pframe++ % PLIST_EVERY) === 0 && typeof bridge.getScale0ParticleList === 'function') {
+        try { particleList = bridge.getScale0ParticleList(); } catch (e) { /* ignore */ }
+    }
     if (ctrl) {
         Atomics.store(ctrl, CTRL.TICK, bridge._tick | 0);
         Atomics.store(ctrl, CTRL.PCOUNT, parts ? (parts.count | 0) : 0);
@@ -45,7 +56,7 @@ function postFrame() {
     }
     // Particle/diag payloads are small → structured-clone copy (no transfer, so
     // the bridge keeps its pre-allocated particle buffers across frames).
-    self.postMessage({ type: 'frame', tick: bridge._tick | 0, diag, parts });
+    self.postMessage({ type: 'frame', tick: bridge._tick | 0, diag, parts, particleList });
 }
 
 function loop() {
