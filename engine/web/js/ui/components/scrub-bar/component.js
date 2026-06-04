@@ -4,11 +4,9 @@
  * Usage:
  *   const bar = new ScrubBarComponent(viewportEl, {
  *       getMemoryBuffer: () => memoryRecorder.buffer,
- *       getRenderBuffer: () => renderController?.buffer ?? null,
  *       getNowTick:      () => bridge.getDiagnostics().tick,
  *       onScrub:         (tick) => scale0Controller.hydrateToTick(tick),
  *       onScrubEnd:      () => scale0Controller.resumeLive(),
- *       onRender:        (seconds) => scale0Controller.startRender(seconds),
  *   });
  *   bar.mount();
  *   // Call bar.refresh() from the animate loop ~10 Hz to redraw zones.
@@ -24,7 +22,6 @@ export class ScrubBarComponent {
         this._dragging = false;
         this._refreshSkips = 0;
         this._lastScrubTick = null;
-        this._renderSeconds = 30; // current Render-button duration (user-selectable via gear)
     }
 
     mount() {
@@ -33,11 +30,9 @@ export class ScrubBarComponent {
 
         this.stripEl     = this.el.querySelector('.scrub-bar-strip');
         this.zonesEl     = this.el.querySelector('.scrub-bar-zones');
-        this.renderEl    = this.el.querySelector('.scrub-bar-render');
         this.playheadEl  = this.el.querySelector('.scrub-bar-playhead');
         this.timeEl      = this.el.querySelector('.scrub-bar-time');
         this.resetBtn    = this.el.querySelector('.scrub-bar-reset');
-        this.renderBtn   = this.el.querySelector('.scrub-bar-render-btn');
         this.settingsBtn = this.el.querySelector('.scrub-bar-settings');
         this.popoverEl   = this.el.querySelector('.scrub-bar-settings-popover');
 
@@ -56,39 +51,11 @@ export class ScrubBarComponent {
             this.stripEl.addEventListener('pointerdown', (e) => this._beginDrag(e));
         }
 
-        if (this.renderBtn) {
-            this.renderBtn.addEventListener('click', () => {
-                // Always close the settings popover before starting a render so
-                // it doesn't cover the viewport during the progress chip animation.
-                this._setPopoverOpen(false);
-                const secs = this._renderSeconds || 30;
-                this.renderBtn.title = `Render next ${secs} seconds into a scrubbable clip`;
-                this.opts.onRender?.(secs);
-            });
-        }
-
         if (this.settingsBtn && this.popoverEl) {
             this.settingsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this._setPopoverOpen(this.popoverEl.hasAttribute('hidden'));
             });
-
-            // Duration chip clicks update the stored seconds + active-class.
-            for (const chip of this.popoverEl.querySelectorAll('[data-render-secs]')) {
-                chip.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const secs = Number(chip.dataset.renderSecs) || 30;
-                    this._renderSeconds = secs;
-                    for (const c of this.popoverEl.querySelectorAll('[data-render-secs]')) {
-                        const active = c === chip;
-                        c.classList.toggle('is-active', active);
-                        c.setAttribute('aria-checked', active ? 'true' : 'false');
-                    }
-                    if (this.renderBtn) {
-                        this.renderBtn.title = `Render next ${secs} seconds into a scrubbable clip`;
-                    }
-                });
-            }
 
             // Speed preset chips — snap the existing ticks-per-frame slider
             // to a multiplier of 1× (value 50 on the 0..100 range mapped to
@@ -245,17 +212,9 @@ export class ScrubBarComponent {
 
     _fractionToTick(frac) {
         const mem = this.opts.getMemoryBuffer?.();
-        const render = this.opts.getRenderBuffer?.();
         const now = this.opts.getNowTick?.();
         if (now == null) return null;
-        // Rendered clip wins when present — it's the dense, high-fidelity
-        // buffer the user just asked to render. The full scrub bar maps
-        // oldest→newest of the clip.
-        if (render && render.size > 0 && render.latestTick >= render.oldestTick) {
-            const span = Math.max(1, render.latestTick - render.oldestTick);
-            return render.oldestTick + Math.round(span * frac);
-        }
-        // Otherwise scrub through live "working memory" from oldest→now.
+        // Scrub through live "working memory" from oldest→now.
         // Defensive: if the buffer has stale snapshots from a previous
         // scenario (oldest > now), ignore it and pin to `now` so the scrub
         // never hydrates into wrong-scenario state. clearScale0Timeline()
@@ -286,7 +245,6 @@ export class ScrubBarComponent {
         if ((this._refreshSkips++ % 6) !== 0) return;
 
         const mem = this.opts.getMemoryBuffer?.();
-        const render = this.opts.getRenderBuffer?.();
         const now = this.opts.getNowTick?.();
         if (!mem || now == null) return;
 
@@ -312,14 +270,6 @@ export class ScrubBarComponent {
                     this.zonesEl.appendChild(div);
                 }
             }
-        }
-
-        const hasRender = !!(render && render.size > 0);
-        if (this.renderEl) {
-            this.renderEl.dataset.active = hasRender ? 'true' : 'false';
-        }
-        if (this.renderBtn) {
-            this.renderBtn.dataset.rendering = hasRender ? 'true' : 'false';
         }
 
         if (!this._dragging) {

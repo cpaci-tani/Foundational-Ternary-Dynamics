@@ -84,12 +84,6 @@ const state = {
     // would otherwise overwrite the snapshot we just loaded. Flipped true by
     // hydrateToTick and back to false by resumeLive (onScrubEnd).
     scrubbing: false,
-    // While a RenderController is fast-forwarding snapshots for a clip we
-    // also freeze the live animate loop's tick path. Otherwise the main
-    // loop and the render controller both call bridge.tick() and clobber
-    // each other's state. Flipped true by startScale0Render and back to
-    // false by the controller's 'done' / 'cancel' / 'error' listeners.
-    rendering: false,
 };
 
 export function getScale0State() {
