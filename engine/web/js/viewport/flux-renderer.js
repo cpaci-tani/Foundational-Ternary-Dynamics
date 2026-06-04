@@ -199,24 +199,45 @@ export class ViewportFluxRenderer {
             return;
         }
 
-        // Fractional-stride sample grid — `samples` points per axis spread evenly
-        // across the lattice (stride = N/samples ≥ 1). Scanning + drawing this fixed
-        // grid (instead of the full N³) keeps the per-upload cost bounded AND the
-        // rendered density ~constant at every lattice size — no sparse sizes at the old
-        // integer-step tier jumps. Normalising against the max of the drawn grid is
-        // self-consistent with the rendered cloud. Shares fluxVolumeAxisSamples() with
-        // the buffer sizing + the write loop below. `| 0` is a fast floor (z<N<2³¹).
+        // Sample grid — `samples` points per axis (stride = N/samples ≥ 1) spread across
+        // the lattice, so per-upload cost is bounded AND density is ~constant at every L.
+        // We JITTER each axis's sample positions with a stable stratified golden-ratio
+        // offset: a plain floor(i·stride) at a fractional stride (e.g. 65/53≈1.226) lines
+        // the skipped voxels up into evenly-spaced gap planes — a moiré "lattice of
+        // lattices". The jitter is deterministic (no per-frame shimmer) and decorrelated
+        // per axis (phases 0/⅓/⅔) so gap planes don't align; it collapses to an exact
+        // every-voxel grid when stride==1 (N≤53). cx/cy/cz are cached scratch (53 cap).
         const samples = fluxVolumeAxisSamples(N);
         const stride = N / samples;   // ≥ 1; exactly 1 when N ≤ FLUX_MAX_AXIS_POINTS
+        if (!this._fluxCoordsX || this._fluxCoordsX.length < samples) {
+            this._fluxCoordsX = new Int32Array(FLUX_MAX_AXIS_POINTS);
+            this._fluxCoordsY = new Int32Array(FLUX_MAX_AXIS_POINTS);
+            this._fluxCoordsZ = new Int32Array(FLUX_MAX_AXIS_POINTS);
+        }
+        const cx = this._fluxCoordsX, cy = this._fluxCoordsY, cz = this._fluxCoordsZ;
+        {
+            const GR = 0.61803398875;   // golden-ratio fract → low-discrepancy jitter
+            for (let i = 0; i < samples; i++) {
+                // Sample i sits in stratum [i·stride,(i+1)·stride); the fractional offset
+                // places it pseudo-randomly inside (always < N → no clamp needed in range).
+                const base = i * stride;
+                const vx = (base + ((i * GR) % 1) * stride) | 0;
+                const vy = (base + ((i * GR + 0.3333) % 1) * stride) | 0;
+                const vz = (base + ((i * GR + 0.6667) % 1) * stride) | 0;
+                cx[i] = vx < N ? vx : N - 1;
+                cy[i] = vy < N ? vy : N - 1;
+                cz[i] = vz < N ? vz : N - 1;
+            }
+        }
 
-        // Find max for normalization over the sampled grid.
+        // Find max for normalization over the (jittered) sampled grid.
         let maxFlux = 0;
         for (let iz = 0; iz < samples; iz++) {
-            const zNN = Math.min(N - 1, (iz * stride) | 0) * N * N;
+            const zNN = cz[iz] * N * N;
             for (let iy = 0; iy < samples; iy++) {
-                const zNNyN = zNN + Math.min(N - 1, (iy * stride) | 0) * N;
+                const zNNyN = zNN + cy[iy] * N;
                 for (let ix = 0; ix < samples; ix++) {
-                    const m = volumeData[zNNyN + Math.min(N - 1, (ix * stride) | 0)];
+                    const m = volumeData[zNNyN + cx[ix]];
                     if (m > maxFlux) maxFlux = m;
                 }
             }
@@ -236,8 +257,8 @@ export class ViewportFluxRenderer {
         const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
         const halfN = N / 2;
 
-        // The write loop below draws the SAME fractional-stride grid the maxFlux scan
-        // visited (samples per axis, stride = N/samples). See fluxVolumeAxisSamples().
+        // The write loop draws the SAME jittered sample grid the maxFlux scan visited,
+        // via the cached cx/cy/cz coords computed above.
 
         // PERF: hoist boundary-shape check OUT of the per-voxel loop. For the
         // default 'cube'/'none' boundary _insideBoundary() always returns
@@ -255,13 +276,13 @@ export class ViewportFluxRenderer {
         const sizeArr = sizeAttr.array;
 
         for (let iz = 0; iz < samples && count < maxPts; iz++) {
-            const z = Math.min(N - 1, (iz * stride) | 0);
+            const z = cz[iz];
             const zNN = z * N * N;
             for (let iy = 0; iy < samples && count < maxPts; iy++) {
-                const y = Math.min(N - 1, (iy * stride) | 0);
+                const y = cy[iy];
                 const zNNyN = zNN + y * N;
                 for (let ix = 0; ix < samples && count < maxPts; ix++) {
-                    const x = Math.min(N - 1, (ix * stride) | 0);
+                    const x = cx[ix];
                     if (needsClip) {
                         const center = N / 2;
                         const radius = N / 2;
