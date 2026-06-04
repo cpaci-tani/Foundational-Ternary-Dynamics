@@ -367,7 +367,7 @@ let onticPanel = null;
 // ── Cached DOM Elements (populated in init()) ──────────────────────
 // Avoids repeated getElementById() calls in 60fps animation loops.
 const _dom = {
-    statusTick: null, statusPtime: null, statusParticles: null,
+    statusPtime: null, statusParticles: null,
     statusEnergy: null, statusDot: null, statusState: null,
     statusFps: null, aeLegend: null,
     aeDiagCount: null, aeDiagBonds: null, aeDiagKe: null,
@@ -379,8 +379,6 @@ const _dom = {
 };
 
 function _cacheDOM() {
-    _dom.statusTick = document.getElementById('status-tick');
-    _dom.statusGlobalTick = document.getElementById('status-global-tick');
     _dom.statusPtime = document.getElementById('status-ptime');
     _dom.statusParticles = document.getElementById('status-particles');
     _dom.statusEnergy = document.getElementById('status-energy');
@@ -710,7 +708,8 @@ function animate(now) {
 
     // Global tick = wall-clock frames since global play resumed. Always advances
     // when global is running, regardless of scenario pause or per-scale tick
-    // throttling. Updated to the status bar at the same cadence as FPS.
+    // throttling. Feeds the flux-slice panel via ctx.globalTick (it has no
+    // status-bar readout — the bar shows physical time "T:" only).
     if (running) globalTick++;
 
     if (engineMode === 'meta') {
@@ -754,8 +753,6 @@ function animate(now) {
         frameCount = 0;
         lastFpsTime = now;
         if (_dom.statusFps) _dom.statusFps.textContent = fpsDisplay;
-        // Global tick refreshed at FPS cadence (no need to write to DOM 60×/s).
-        if (_dom.statusGlobalTick) _dom.statusGlobalTick.textContent = globalTick;
     }
 }
 

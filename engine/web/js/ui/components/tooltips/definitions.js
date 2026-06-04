@@ -58,7 +58,6 @@ const SELECTOR_TOOLTIPS = [
     ['#toggle-reflective', 'Toggle reflective boundaries so particles and fields bounce instead of exiting.'],
     ['.vcp-label', 'Viewport control label. These selectors adjust shared environment and boundary settings.'],
     ['#status-state', 'Current run-state indicator for the simulation loop.'],
-    ['#status-tick', 'Current integer tick of the active simulation.'],
     ['#status-ptime', 'Current physical or presentation time reported by the active scale.'],
     ['#status-particles', 'Current manifested or simulated particle count for the active scale.'],
     ['#status-energy', 'Current total energy readout reported by the active simulation.'],
@@ -300,7 +299,6 @@ function annotatePETelemetry(root) {
 function annotateStatusItems(root) {
     const groups = [
         ['#status-state', 'Current run-state indicator for the simulation loop.'],
-        ['#status-tick', 'Current integer tick of the active simulation.'],
         ['#status-ptime', 'Current physical or presentation time reported by the active scale.'],
         ['#status-particles', 'Current manifested or simulated particle count for the active scale.'],
         ['#status-energy', 'Current total energy reported by the active simulation.'],
