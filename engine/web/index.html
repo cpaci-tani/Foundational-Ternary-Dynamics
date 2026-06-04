@@ -5,6 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>FTD Engine</title>
+    <!-- Cross-origin isolation shim. On static hosts that cannot send COOP/COEP
+         (e.g. GitHub Pages), a service worker injects them so SharedArrayBuffer
+         is available and the Scale-0 physics Web Worker activates. NO-OP when the
+         server already sends the headers (the dev serve.py) — it only registers
+         when !crossOriginIsolated, and may reload the page once on first visit.
+         Loaded early so that one-time reload wastes minimal resources. -->
+    <script src="coi-serviceworker.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
