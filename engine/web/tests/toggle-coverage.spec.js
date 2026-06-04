@@ -101,7 +101,7 @@ test.describe('Scale-0 field toggle coverage', () => {
         await gotoAndReady(page);
         const inv = await buildInventory(page);
 
-        // We expect a non-trivial surface (≈32 toggles); guard against the
+        // We expect a non-trivial surface (≈36 toggles); guard against the
         // module failing to load and silently yielding an empty list.
         expect(inv.keys.length, 'fieldFlags should expose the field-toggle keys').toBeGreaterThan(10);
         expect(inv.bindings.length, 'FIELD_TOGGLE_BINDINGS should be non-empty').toBeGreaterThan(10);

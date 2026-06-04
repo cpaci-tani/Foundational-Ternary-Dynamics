@@ -37,8 +37,13 @@ export default defineConfig({
   ],
 
   webServer: {
-    // Parent dir of this tests/ folder is engine/web, which is the docroot
-    // for the dashboard. Launch http.server in the parent dir.
+    // Parent dir of this tests/ folder is engine/web, which is the docroot.
+    // Cached http.server keeps per-test page loads fast (the wasm64 binary is
+    // large; re-fetching it per test pushes WASM init past the readiness
+    // timeout). NOTE: Phase-2 worker tests need cross-origin isolation
+    // (SharedArrayBuffer) — they must run against a COOP/COEP server that ALSO
+    // allows caching (serve.py's no-cache headers cause WASM-init timeouts here).
+    // The SAB test in scale0-sparse-tick.spec.js skips when not crossOriginIsolated.
     command: 'python -m http.server 8081',
     cwd: '..',
     port: 8081,
