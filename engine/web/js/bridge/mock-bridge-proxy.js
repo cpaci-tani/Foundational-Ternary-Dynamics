@@ -17,8 +17,21 @@ const EMPTY_PARTS = () => ({
     sizes: new Float32Array(0), velocities: new Float32Array(0), count: 0,
 });
 
+// ── Live-instance accounting (debug + lifecycle test) ────────────────────────
+// Lets scale0-worker-teardown.spec.js prove no Worker threads accumulate across
+// scenario churn, resize, and scale switches. Incremented on construct, decremented
+// once on terminate() (guarded against the dispose()→terminate() double-call).
+let _liveProxies = 0, _createdProxies = 0, _terminatedProxies = 0;
+if (typeof window !== 'undefined') {
+    window.__ftdScale0Workers = () => ({
+        live: _liveProxies, created: _createdProxies, terminated: _terminatedProxies,
+    });
+}
+
 export class MockBridgeProxy {
     constructor(latticeSize) {
+        _liveProxies++; _createdProxies++;
+        this._terminated = false;
         this.isWasm = false;
         this.isWorker = true;
         this.latticeSize = (latticeSize % 2 === 0) ? latticeSize + 1 : latticeSize;
@@ -160,6 +173,7 @@ export class MockBridgeProxy {
 
     // ── Teardown ─────────────────────────────────────────────────────────────
     terminate() {
+        if (!this._terminated) { this._terminated = true; _liveProxies--; _terminatedProxies++; }
         try { this._worker.postMessage({ type: 'dispose' }); } catch (e) { /* ignore */ }
         try { this._worker.terminate(); } catch (e) { /* ignore */ }
     }

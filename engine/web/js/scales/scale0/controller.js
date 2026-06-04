@@ -147,8 +147,21 @@ export function resumeLive() {
 
 export function getScale0ScrubBar() { return _scrubBar; }
 
+// Cache the Scale-0 viewport adapter per viewport instance. animate() calls
+// viewportAdapter(ctx) 3×/frame (frame-sync, field-overlays, renderFrame) and the
+// adapter is a ~50-closure object literal — rebuilding it each call was pure
+// per-frame GC churn. The adapter only closes over `viewport` (read live on every
+// method call), so a single instance per viewport stays valid; it rebuilds only
+// when ctx.viewport identity changes (a scale switch reassigns it).
+let _vaCachedViewport = null;
+let _vaCachedAdapter = null;
 function viewportAdapter(ctx) {
-    return createScale0ViewportAdapter(ctx.viewport);
+    const vp = ctx.viewport;
+    if (vp !== _vaCachedViewport) {
+        _vaCachedViewport = vp;
+        _vaCachedAdapter = createScale0ViewportAdapter(vp);
+    }
+    return _vaCachedAdapter;
 }
 
 function renderFrame(ctx) {
