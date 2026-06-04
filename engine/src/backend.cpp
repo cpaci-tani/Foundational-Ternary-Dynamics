@@ -88,6 +88,8 @@ void GpuBackend::sync_to_host() {
             d.f_gravity  = { fd.gravity_x[i],  fd.gravity_y[i],  fd.gravity_z[i]  };
             d.f_exchange = { fd.exchange_x[i], fd.exchange_y[i], fd.exchange_z[i] };
         }
+        bridge_.sync_ternary_from_voxels();
+        bridge_.sync_fields_from_voxels();
         bridge_.gpu_dirty_    = false;
     }
 }

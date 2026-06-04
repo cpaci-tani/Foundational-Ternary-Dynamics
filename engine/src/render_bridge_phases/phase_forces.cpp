@@ -47,12 +47,11 @@ void phase_forces_solve_potentials(RenderBridge& rb) {
 }
 
 void phase_forces_build_color_cache(RenderBridge& rb) {
-  const int N = static_cast<int>(rb.lattice_.total_sites());
   // PERF: colored_sites_cache_ is a bridge member — clear+push reuses capacity,
   // no per-tick malloc.
   rb.colored_sites_cache_.clear();
   if (rb.toggles.color_forces) {
-    for (int ii = 0; ii < N; ++ii) {
+    for (int ii : rb.ordered_active_indices()) {
       if (rb.voxels_[ii].state != 0 && rb.voxels_[ii].color != 0) {
         auto cc = rb.lattice_.coord(ii);
         rb.colored_sites_cache_.push_back({cc.x, cc.y, cc.z,
@@ -63,11 +62,12 @@ void phase_forces_build_color_cache(RenderBridge& rb) {
 }
 
 void phase_forces_main_loop(RenderBridge& rb) {
-  const int N = static_cast<int>(rb.lattice_.total_sites());
   const int L = rb.lattice_.size();
+  const auto& active = rb.ordered_active_indices();
 
 #pragma omp parallel for schedule(static)
-  for (int i = 0; i < N; ++i) {
+  for (int ai = 0; ai < static_cast<int>(active.size()); ++ai) {
+    const int i = active[ai];
     auto &v = rb.voxels_[i];
     if (v.state == 0) continue;
 
