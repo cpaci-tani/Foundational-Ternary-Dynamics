@@ -869,7 +869,7 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 
 ### Completed this session (2026-04-16)
 
-- ✅ `StatusBar` component — `js/ui/components/status-bar/component.js` + `css/ui/components/status-bar.css`
+- ✅ Status bar styling — `css/ui/components/status-bar.css`; the unused JS wrapper was retired during the 2026-06-04 dead-code cleanup
 - ✅ All 9 missing panel components — `inspector-panel`, `zoo-panel`, `ontic-panel`, `physics-panel`, `planetary-panel`, `hierarchy-panel`, `cosmic-info-panel`, `meta-info-panel`, `quantum-lab-panel` (each with `component.js` + CSS stub in `css/ui/panels/`)
 - ✅ `js/ui/panels/index.js` updated to export all 13 panels
 - ✅ Playwright breakpoint tests — `tablet` at 768×1024, `desktop` at 1280×800
