@@ -41,6 +41,21 @@ import { FLUX_VOL_VERT, PARTICLE_FRAG } from './shaders.js';
 // buffers size from lattice³, not the field-grid cap. Removed under D-6;
 // the canonical constant now lives in viewport/constants.js.)
 
+// Flux-volume subsample factor — adaptive point budget (2026-06-04). The draw loop
+// emits one point per `step`-th voxel per axis, so the worst-case drawn/buffer count
+// is (N/step)³. Targeting a fixed axis cap keeps that bounded (~FLUX_MAX_AXIS_POINTS³
+// ≈ 149K points) while letting bigger lattices reveal proportionally MORE structure
+// than the old fixed 1/2/4 tiers (which capped the cloud at a scale-invariant ~9K
+// dots — see AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md). Cost is ~linear in drawn
+// points and the per-upload max-scan was made ~10× cheaper, so this stays cheap.
+// Used in BOTH _buildFluxVolume (buffer sizing) and updateFluxVolume (scan + write)
+// — they MUST share this helper or the write loop would over/under-run the buffer.
+// Raise FLUX_MAX_AXIS_POINTS for a denser cloud (and a larger geometry buffer).
+const FLUX_MAX_AXIS_POINTS = 53;   // 53³ ≈ 148.9K-point worst-case budget
+function fluxVolumeStep(N) {
+    return Math.max(1, Math.ceil(N / FLUX_MAX_AXIS_POINTS));
+}
+
 export class ViewportFluxRenderer {
     constructor({
         scene,
@@ -101,8 +116,9 @@ export class ViewportFluxRenderer {
 
     _buildFluxVolume(latticeSize) {
         // Compute the subsampled grid dimension to determine buffer capacity.
-        // Subsampling mirrors updateFluxVolume: step=4 for L>96, step=2 for L>48, else 1.
-        const step = latticeSize > 96 ? 4 : (latticeSize > 48 ? 2 : 1);
+        // Subsampling mirrors updateFluxVolume via the shared fluxVolumeStep() helper
+        // so the buffer capacity matches exactly what the write loop will emit.
+        const step = fluxVolumeStep(latticeSize);
         const sampledN = Math.ceil(latticeSize / step);
         const maxPts = sampledN * sampledN * sampledN;
         const positions = new Float32Array(maxPts * 3);
@@ -182,13 +198,29 @@ export class ViewportFluxRenderer {
             return;
         }
 
-        // Find max for normalization
+        // Subsample factor — hoisted ABOVE the maxFlux scan so the scan visits the
+        // SAME voxels the write loop below draws. Scanning the full N³ array for the
+        // max was the dominant per-upload cost at large L (2.1M reads at L=129, every
+        // upload, undecimated — while the write loop already subsampled). Normalising
+        // against the max of the drawn (subsampled) set is self-consistent with the
+        // rendered point cloud and cuts the scan step³×. Shares the adaptive
+        // fluxVolumeStep() helper with the render loop below + the buffer sizing.
+        const step = fluxVolumeStep(N);
+
+        // Find max for normalization over the subsampled set.
         let maxFlux = 0;
-        for (let i = 0; i < total; i++) {
-            if (volumeData[i] > maxFlux) maxFlux = volumeData[i];
+        for (let z = 0; z < N; z += step) {
+            const zNN = z * N * N;
+            for (let y = 0; y < N; y += step) {
+                const zNNyN = zNN + y * N;
+                for (let x = 0; x < N; x += step) {
+                    const m = volumeData[zNNyN + x];
+                    if (m > maxFlux) maxFlux = m;
+                }
+            }
         }
 
-        // Skip full scan if field is essentially zero
+        // Skip the write loop if the field is essentially zero.
         if (maxFlux < 1e-20) {
             this._fluxVolume.geometry.setDrawRange(0, 0);
             return;
@@ -202,11 +234,9 @@ export class ViewportFluxRenderer {
         const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
         const halfN = N / 2;
 
-        // Subsample for large lattices to maintain interactive frame rates:
-        //   L<=48:  step=1  → up to 48^3 = 110K points
-        //   L<=96:  step=2  → up to 48^3 = 110K points (from 96^3)
-        //   L>96:   step=4  → up to 32^3 =  32K points (from 128^3)
-        const step = N > 96 ? 4 : (N > 48 ? 2 : 1);
+        // `step` (subsample factor) is computed above, before the maxFlux scan, so
+        // the scan and this write loop visit exactly the same voxels:
+        //   L<=48: step=1 (≤48³≈110K pts)   L<=96: step=2 (from 96³)   L>96: step=4 (from 128³)
 
         // PERF: hoist boundary-shape check OUT of the per-voxel loop. For the
         // default 'cube'/'none' boundary _insideBoundary() always returns

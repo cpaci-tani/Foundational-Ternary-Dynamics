@@ -31,14 +31,19 @@ const fmReady = (page) => page.evaluate(async () => {
     return { isWorker: !!fm?.isWorker, ready: !!fm?.ready, useFluxMock: !!st?.useFluxMock };
 });
 
-// Drive a #lattice-size change to a different value and return the chosen size.
-const resizeTo = (page, size) => page.evaluate((sz) => {
+// Resize to a DIFFERENT existing dropdown option (whatever sizes the build offers)
+// and return the chosen value — robust to the actual option set, so the change
+// handler always fires a real rebuild.
+const resizeToOther = (page) => page.evaluate(() => {
     const sel = document.getElementById('lattice-size');
     if (!sel) return null;
-    sel.value = String(sz);
+    const cur = sel.value;
+    const other = [...sel.options].map((o) => o.value).find((v) => v !== cur);
+    if (!other) return null;
+    sel.value = other;
     sel.dispatchEvent(new Event('change', { bubbles: true }));
-    return sel.value;
-}, size);
+    return other;
+});
 
 test.beforeEach(async ({ page }) => { page.setDefaultTimeout(30_000); });
 
@@ -70,9 +75,8 @@ test.describe('Scale-0 worker teardown — no orphaned workers', () => {
         expect(w0.live, 'one live worker after flux-pulse boot').toBe(1);
 
         // ── (1) Lattice resize — rebuilds the fluxMock; old worker must terminate ──
-        const startSize = await page.evaluate(() => document.getElementById('lattice-size')?.value);
-        const targetSize = startSize === '65' ? '49' : '65';
-        await resizeTo(page, targetSize);
+        const targetSize = await resizeToOther(page);
+        expect(targetSize, 'a second lattice-size option exists to resize to').not.toBeNull();
         await expect.poll(async () => (await fmReady(page)).ready,
             { timeout: 20_000, message: 'worker did not re-ready after resize' }).toBe(true);
         const wResize = await invariant('after resize');
