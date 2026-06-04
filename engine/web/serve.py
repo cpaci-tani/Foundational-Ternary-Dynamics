@@ -35,9 +35,14 @@ import sys
 # but the per-test fresh page loads time out if the large wasm64 binary is
 # re-fetched every time (no-cache). The dev preview keeps no-cache (default).
 ALLOW_CACHE = False
+QUIET = False
 
 
 class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        if not QUIET:
+            super().log_message(format, *args)
+
     def end_headers(self):
         if not ALLOW_CACHE:
             self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
@@ -56,18 +61,21 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def main():
-    global ALLOW_CACHE
+    global ALLOW_CACHE, QUIET
     raw = sys.argv[1:]
     if "--cache" in raw:
         ALLOW_CACHE = True
-    args = [a for a in raw if a != "--cache"]
+    if "--quiet" in raw:
+        QUIET = True
+    args = [a for a in raw if a not in ("--cache", "--quiet")]
     port = int(args[0]) if args else 8080
     web_root = os.path.dirname(os.path.abspath(__file__))
     os.chdir(web_root)
     server = http.server.ThreadingHTTPServer(("", port), NoCacheHandler)
     server.allow_reuse_address = True
     mode = "cache" if ALLOW_CACHE else "no-cache"
-    print(f"FTD dev server: http://localhost:{port} ({mode}, COOP/COEP)  [Ctrl-C to stop]", flush=True)
+    quiet = ", quiet" if QUIET else ""
+    print(f"FTD dev server: http://localhost:{port} ({mode}, COOP/COEP{quiet})  [Ctrl-C to stop]", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
