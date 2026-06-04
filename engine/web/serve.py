@@ -29,11 +29,20 @@ import os
 import sys
 
 
+# When True (via the --cache CLI flag), the no-store headers are omitted so
+# assets cache normally. The cross-origin-isolation headers are ALWAYS sent.
+# Used by the Playwright worker tests: they need SharedArrayBuffer (COOP/COEP)
+# but the per-test fresh page loads time out if the large wasm64 binary is
+# re-fetched every time (no-cache). The dev preview keeps no-cache (default).
+ALLOW_CACHE = False
+
+
 class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
-        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-        self.send_header("Pragma", "no-cache")
-        self.send_header("Expires", "0")
+        if not ALLOW_CACHE:
+            self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
         # Cross-origin isolation → unlocks SharedArrayBuffer for the Scale-0
         # physics Web Worker (zero-copy field sharing). COOP+COEP make the page
         # crossOriginIsolated; CORP:same-origin lets every same-origin asset
@@ -47,12 +56,18 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def main():
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8080
+    global ALLOW_CACHE
+    raw = sys.argv[1:]
+    if "--cache" in raw:
+        ALLOW_CACHE = True
+    args = [a for a in raw if a != "--cache"]
+    port = int(args[0]) if args else 8080
     web_root = os.path.dirname(os.path.abspath(__file__))
     os.chdir(web_root)
     server = http.server.ThreadingHTTPServer(("", port), NoCacheHandler)
     server.allow_reuse_address = True
-    print(f"FTD dev server: http://localhost:{port} (no-cache)  [Ctrl-C to stop]", flush=True)
+    mode = "cache" if ALLOW_CACHE else "no-cache"
+    print(f"FTD dev server: http://localhost:{port} ({mode}, COOP/COEP)  [Ctrl-C to stop]", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
