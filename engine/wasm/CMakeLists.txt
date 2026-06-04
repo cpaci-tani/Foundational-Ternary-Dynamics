@@ -7,8 +7,27 @@ if(EMSCRIPTEN)
         bindings_atom.cpp             # AtomEngine Embind class + toggle map + ae_* helpers
     )
     target_link_libraries(ftd_wasm PRIVATE ftd_core)
+
+    # ── WASM32 vs WASM64 (Memory64) ───────────────────────────────────
+    # Default build is wasm32 (2 GB heap). Configure with -DFTD_MEMORY64=ON
+    # to produce the wasm64 variant (8 GB heap, lifts the lattice cap from
+    # L~117 to L~187). The two ABIs cannot share libftd_core.a, so build_wasm.bat
+    # uses separate build trees (build_wasm/ + build_wasm64/) and deploys both
+    # ftd_core.{js,wasm} (wasm32) and ftd_core64.{js,wasm} (wasm64). See
+    # engine/web/docs/PLAN_WASM64_UPGRADE.md.
+    option(FTD_MEMORY64 "Build the WASM target with 64-bit linear memory (Memory64)" OFF)
+    if(FTD_MEMORY64)
+        set(_FTD_WASM_OUTPUT "ftd_core64")
+        set(_FTD_WASM_EXPORT "createFTDModule64")
+        set(_FTD_WASM_MAX_MEM 8589934592)   # 8 GB
+    else()
+        set(_FTD_WASM_OUTPUT "ftd_core")
+        set(_FTD_WASM_EXPORT "createFTDModule")
+        set(_FTD_WASM_MAX_MEM 2147483648)   # 2 GB
+    endif()
+
     set_target_properties(ftd_wasm PROPERTIES
-        OUTPUT_NAME "ftd_core"
+        OUTPUT_NAME "${_FTD_WASM_OUTPUT}"
         SUFFIX ".js"
     )
 
@@ -30,6 +49,12 @@ if(EMSCRIPTEN)
         -O3 -flto -msimd128 -mbulk-memory -mnontrapping-fptoint -msign-ext
         -ffast-math
     )
+    # Memory64 must be set at BOTH compile and link time (it changes the
+    # pointer ABI), so it goes into the shared compile opts applied to
+    # ftd_core + ftd_wasm below, and again in target_link_options.
+    if(FTD_MEMORY64)
+        list(APPEND _FTD_WASM_OPTS -sMEMORY64=1)
+    endif()
 
     # ftd_core: drop exceptions only. RTTI must stay on because LTO sees
     # ftd_wasm's embind references to type_info for ftd_core classes
@@ -40,21 +65,35 @@ if(EMSCRIPTEN)
     # ftd_wasm: keep exceptions AND RTTI (Embind uses both for type dispatch)
     target_compile_options(ftd_wasm PRIVATE ${_FTD_WASM_OPTS})
 
+    # ftd_eft is a separate static lib that ftd_wasm also links. Under Memory64
+    # every object must share the wasm64 pointer ABI, so give ftd_eft the flag
+    # too (correctness only — leave its other flags untouched so the wasm32
+    # build is unperturbed). Without this: "wasm32 object can't be linked in
+    # wasm64 mode" at the final link.
+    if(FTD_MEMORY64)
+        target_compile_options(ftd_eft PRIVATE -sMEMORY64=1)
+    endif()
+
     target_link_options(ftd_wasm PRIVATE
         -O3 -flto -msimd128 -ffast-math
         -lembind
-        -sEXPORT_NAME=createFTDModule
+        -sEXPORT_NAME=${_FTD_WASM_EXPORT}
         -sMODULARIZE=1
         -sALLOW_MEMORY_GROWTH=1
         -sASSERTIONS=1
         # Lattice memory budget (Voxel = 232 bytes after padding):
         #   L=32 → 12 MB total bridge  | L=64 → 95 MB
         #   L=96 → 325 MB              | L=128 → 770 MB
-        # 2 GB max gives headroom for L=128 + transient resize spike.
-        -sINITIAL_MEMORY=134217728   # 128 MB — typical L<=64 startup
-        -sMAXIMUM_MEMORY=2147483648  # 2 GB — fits L=128 with margin
-        -sSTACK_SIZE=1048576         # 1 MB stack (default 64 KB is risky)
+        # wasm32: 2 GB (fits L~117). wasm64: 8 GB (fits L~187).
+        -sINITIAL_MEMORY=134217728          # 128 MB — typical L<=64 startup
+        -sMAXIMUM_MEMORY=${_FTD_WASM_MAX_MEM}
+        -sSTACK_SIZE=1048576                # 1 MB stack (default 64 KB is risky)
         -sNO_EXIT_RUNTIME=1
         -sENVIRONMENT=web
     )
+    # Memory64 link flags: 64-bit linear memory + BigInt marshalling of i64
+    # across the JS boundary (Embind needs it for 64-bit pointers).
+    if(FTD_MEMORY64)
+        target_link_options(ftd_wasm PRIVATE -sMEMORY64=1 -sWASM_BIGINT=1)
+    endif()
 endif()
