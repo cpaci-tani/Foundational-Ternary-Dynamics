@@ -1,3 +1,5 @@
+const _fluxSlicePlanes = [];
+
 export function syncRenderableData(ctx, state, viewportAdapter) {
     const latticeSize = ctx.bridge.latticeSize || 32;
     const volUpdateInterval = latticeSize > 96 ? 6 : (latticeSize > 64 ? 4 : (latticeSize > 48 ? 3 : 1));
@@ -30,12 +32,12 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
         // Gather every enabled axis (0=yz, 1=xz, 2=xy) and pack the mid-planes
         // into the dedicated slice mesh in one update. Default is all three.
         const axes = viewportAdapter.getEnabledFluxSliceAxes();
-        const planes = [];
+        _fluxSlicePlanes.length = 0;
         for (const axis of axes) {
             const slice = activeScale0.getScale0FluxSlice(axis, sliceIdx);
-            if (slice && slice.length > 0) planes.push({ axis, data: slice });
+            if (slice && slice.length > 0) _fluxSlicePlanes.push({ axis, data: slice });
         }
-        if (planes.length) viewportAdapter.applyFluxSlices(planes, latticeSize, sliceIdx);
+        if (_fluxSlicePlanes.length) viewportAdapter.applyFluxSlices(_fluxSlicePlanes, latticeSize, sliceIdx);
     }
 
     state.latticeNeedsUpload = false;

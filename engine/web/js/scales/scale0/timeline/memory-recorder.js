@@ -32,6 +32,8 @@ export class MemoryRecorder {
         const lod0 = this.tiers.find(t => t.lod === 0) || { cadenceSeconds: 0.2 };
         this.sampleEveryTicks = Math.max(1, Math.round(lod0.cadenceSeconds * ticksPerSecond));
         this._lastSampledTick = -1;
+        this._nextDecayTick = Infinity;
+        this._decayBoundaries = buildDecayBoundaries(this.tiers, ticksPerSecond);
     }
 
     /**
@@ -39,9 +41,8 @@ export class MemoryRecorder {
      * object and captures + decays as needed.
      */
     onTick(scale0Caps) {
-        const snap = scale0Caps?.getScale0Snapshot?.();
-        if (!snap) return;
-        const tick = snap.tick;
+        const tick = this._readTick(scale0Caps);
+        if (tick === null) return;
         // Tick regression (scenario reset, Clear Field, engine reseed) — the
         // previously-captured snapshots belong to a different run and their
         // tick numbers will skew the scrub bar's fraction→tick mapping.
@@ -49,19 +50,38 @@ export class MemoryRecorder {
         if (tick < this._lastSampledTick) {
             this.buffer.clear();
             this._lastSampledTick = -1;
+            this._nextDecayTick = Infinity;
         }
-        if (tick - this._lastSampledTick < this.sampleEveryTicks) {
-            this._decayPass(tick);
+
+        const shouldSample = tick - this._lastSampledTick >= this.sampleEveryTicks;
+        const shouldDecay = tick >= this._nextDecayTick;
+        if (!shouldSample && !shouldDecay) {
             return;
         }
-        this.buffer.push(snap);
-        this._lastSampledTick = tick;
+
+        if (shouldSample) {
+            const snap = scale0Caps?.getScale0Snapshot?.();
+            if (!snap) return;
+            this.buffer.push(snap);
+            this._lastSampledTick = tick;
+        }
+
         this._decayPass(tick);
+    }
+
+    _readTick(scale0Caps) {
+        const diag = scale0Caps?.getScale0Diagnostics?.();
+        if (diag && Number.isFinite(diag.tick)) return diag.tick;
+        const snap = scale0Caps?.getScale0Snapshot?.();
+        if (!snap || !Number.isFinite(snap.tick)) return null;
+        return snap.tick;
     }
 
     /** Lower-LOD any snapshot whose age has crossed a tier boundary. */
     _decayPass(nowTick) {
+        if (Number.isFinite(this._nextDecayTick) && nowTick < this._nextDecayTick) return;
         const snaps = this.buffer.snapshots();
+        let nextDecayTick = Infinity;
         for (let i = 0; i < snaps.length; i++) {
             const s = snaps[i];
             const ageTicks = nowTick - s.tick;
@@ -69,7 +89,10 @@ export class MemoryRecorder {
             if (targetLod > s.lod) {
                 this.buffer.replaceAt(i, degradeSnapshot(s, targetLod, this.latticeN));
             }
+            const next = this._nextBoundaryForSnapshot(snaps[i], nowTick);
+            if (next < nextDecayTick) nextDecayTick = next;
         }
+        this._nextDecayTick = nextDecayTick;
     }
 
     /** Map an age (in ticks) to a target LOD using the tier schedule. */
@@ -83,7 +106,35 @@ export class MemoryRecorder {
         return 3; // fell off the end → telemetry-only
     }
 
-    clear() { this.buffer.clear(); this._lastSampledTick = -1; }
+    _nextBoundaryForSnapshot(snap, nowTick) {
+        for (const boundary of this._decayBoundaries) {
+            if (boundary.targetLod <= snap.lod) continue;
+            const tick = snap.tick + boundary.ageTicks;
+            if (tick > nowTick) return tick;
+        }
+        return Infinity;
+    }
+
+    clear() {
+        this.buffer.clear();
+        this._lastSampledTick = -1;
+        this._nextDecayTick = Infinity;
+    }
+}
+
+function buildDecayBoundaries(tiers, ticksPerSecond) {
+    const out = [];
+    let accSeconds = 0;
+    for (let i = 0; i < tiers.length; i++) {
+        const duration = tiers[i].durationSeconds ?? Infinity;
+        if (!Number.isFinite(duration)) break;
+        accSeconds += duration;
+        out.push({
+            ageTicks: Math.max(1, Math.ceil(accSeconds * ticksPerSecond)),
+            targetLod: tiers[i + 1]?.lod ?? 3,
+        });
+    }
+    return out;
 }
 
 /**

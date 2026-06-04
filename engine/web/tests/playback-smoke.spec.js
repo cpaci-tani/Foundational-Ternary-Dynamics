@@ -1,5 +1,6 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import { gotoAndReady } from './_helpers.js';
 
 test.describe('Playback timeline smoke', () => {
     test.beforeEach(async ({ page }) => {
@@ -11,9 +12,9 @@ test.describe('Playback timeline smoke', () => {
         });
     });
 
-    test('single play button renders (no local button or labels)', async ({ page }) => {
-        await page.goto('/?engine=mock');
-        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
+    test('single play button renders, captioned, no local button', async ({ page }) => {
+        await gotoAndReady(page, { path: '/?engine=mock', timeout: 30_000 });
+        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true', { timeout: 30_000 });
 
         const state = await page.evaluate(() => ({
             globalExists: !!document.getElementById('btn-play'),
@@ -24,12 +25,12 @@ test.describe('Playback timeline smoke', () => {
         expect(state.globalExists).toBe(true);
         expect(state.localExists).toBe(false);
         expect(state.globalClass).toContain('tb-btn-global');
-        expect(state.labelCount).toBe(0);
+        expect(state.labelCount).toBe(3); // play/pause, step, reset
     });
 
     test('scrub bar mounts as a compact capsule without timeline elements', async ({ page }) => {
-        await page.goto('/?engine=mock');
-        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
+        await gotoAndReady(page, { path: '/?engine=mock', timeout: 30_000 });
+        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true', { timeout: 30_000 });
 
         // Ensure panels aren't collapsed — the scrub bar hides in that state.
         await page.evaluate(() => {

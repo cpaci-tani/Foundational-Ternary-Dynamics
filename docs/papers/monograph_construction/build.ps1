@@ -19,7 +19,7 @@ pdflatex @opt "$doc.tex" | Out-Null
 
 $line = (Select-String "$doc.log" -Pattern 'Output written on').Line
 $ov   = @(Select-String "$doc.log" -Pattern 'Overfull \\hbox').Count
-$un   = @(Select-String "$doc.log" -Pattern 'undefined').Count
+$un   = @(Select-String "$doc.log" -Pattern 'Citation .*undefined|Reference .*undefined|There were undefined references|There were undefined citations').Count
 Write-Host ''
 Write-Host "Done. $line"
 Write-Host "Overfull hboxes: $ov ; undefined references/citations: $un"
