@@ -56,7 +56,7 @@
 % -----------------------------------------------------------------------------
 \setstocksize{9.61in}{6.69in}
 \settrimmedsize{9.61in}{6.69in}{*}
-\settypeblocksize{7.45in}{4.15in}{*}     % ~66-72 char measure
+\settypeblocksize{7.55in}{4.25in}{*}     % quiet book measure, with a little more air
 \setlrmargins{0.92in}{*}{*}              % inner margin fixed; outer takes the slack
 \setulmargins{1.05in}{*}{*}
 \setmarginnotes{0.26in}{1.42in}{0.18in}  % sep / width / push -- the tag gutter
@@ -77,15 +77,21 @@
 % heavy-over-thin double rule (the "authority" cue formerly carried by gold).
 % Sections: small caps.  No colour anywhere.
 % -----------------------------------------------------------------------------
-% Part appearance (centred small caps + double rule beneath the title)
-\renewcommand*{\parttitlefont}{\normalfont\centering\LARGE\scshape}
-\renewcommand*{\partnamefont}{\normalfont\centering\large\scshape}
-\renewcommand*{\partnumfont}{\normalfont\large\scshape}
-\renewcommand*{\printparttitle}[1]{#1\par\vskip10pt
-  \centerline{\rule{2.1in}{1.05pt}}\vskip2.4pt\centerline{\rule{2.1in}{0.4pt}}}
+% Part appearance: a quiet display page with generous air and a strong rule.
+\renewcommand*{\parttitlefont}{\normalfont\centering\Huge\scshape}
+\renewcommand*{\partnamefont}{\normalfont\centering\small\scshape}
+\renewcommand*{\partnumfont}{\normalfont\small\scshape}
+\renewcommand*{\printparttitle}[1]{%
+  \vspace*{0.35\textheight}%
+  {\parttitlefont #1\par}%
+  \vskip12pt
+  \centerline{\rule{2.5in}{1.05pt}}\vskip3pt\centerline{\rule{2.5in}{0.35pt}}%
+}
 
 % Section appearance: small caps
-\setsecheadstyle{\normalfont\large\scshape\raggedright}
+\setsecheadstyle{\normalfont\Large\scshape\raggedright}
+\setbeforesecskip{-2.1ex plus -0.6ex minus -0.2ex}
+\setaftersecskip{1.05ex plus 0.25ex}
 
 % bold run-in leads ("\runin{The structural choice}") replace numbered subsections
 \newcommand{\runin}[1]{\par\medskip\noindent\textbf{#1}\hskip0.6em\ignorespaces}
@@ -96,11 +102,11 @@
 % -----------------------------------------------------------------------------
 \nouppercaseheads
 \makepagestyle{ftd}
-\makeoddhead{ftd}{\small\scshape\rightmark}{}{\small\thepage}
-\makeevenhead{ftd}{\small\thepage}{}{\small\scshape\rightmark}
+\makeoddhead{ftd}{\footnotesize\scshape\rightmark}{}{\footnotesize\thepage}
+\makeevenhead{ftd}{\footnotesize\thepage}{}{\footnotesize\scshape\rightmark}
 \makeoddfoot{ftd}{}{}{}
 \makeevenfoot{ftd}{}{}{}
-\makeheadrule{ftd}{\textwidth}{0.4pt}
+\makeheadrule{ftd}{\textwidth}{0.35pt}
 \makepsmarks{ftd}{%
   \createmark{section}{right}{shownumber}{}{\quad}%
 }
@@ -142,8 +148,8 @@
 \tolerance=1200
 \setlength{\emergencystretch}{2.5em} % absorb long unbreakable lines / wide badges
 \setlength{\parindent}{1.4em}
-% Make escaped underscores in \texttt file names breakable (AUDIT_FOO_BAR.md),
-% so long canonical-source paths no longer overrun the narrow measure.
+% Make escaped underscores in \texttt text breakable so long identifiers no
+% longer overrun the narrow measure.
 \renewcommand{\_}{\textunderscore\allowbreak}
 \setlength{\parskip}{0pt plus 1pt}
 \raggedbottom
@@ -158,6 +164,17 @@
 % lemniscate section ornament (monochrome) -- used between major movements
 \newcommand{\lemniscate}{%
   \par\vspace{1.1em}\begin{center}\large$\infty$\end{center}\vspace{1.1em}\par}
+
+% Reader-support lists used in the glossary and notes.
+\newenvironment{termnotes}{%
+  \begin{description}[style=nextline,leftmargin=0pt,labelsep=0pt,
+    itemsep=4pt,parsep=1pt,font=\normalfont\bfseries]}{\end{description}}
+
+% Table of contents rhythm.
+\renewcommand{\cftpartfont}{\normalfont\bfseries}
+\renewcommand{\cftpartpagefont}{\normalfont\bfseries}
+\setlength{\cftbeforepartskip}{0.95em}
+\setlength{\cftbeforesectionskip}{0.12em}
 
 % -----------------------------------------------------------------------------
 % Hyperref (print-safe: hidden links; § numbering already signals references).
