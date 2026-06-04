@@ -16,6 +16,13 @@ export function advanceSimulation(ctx, state) {
             state._lastWorkerFrame = fc;
             state.latticeNeedsUpload = true;
             state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
+            // Feed the playback timeline so scrub works for worker scenarios. The
+            // recorder throttles internally; getScale0Snapshot reads the shadow's
+            // SAB views and copies out (same call the in-thread path makes below).
+            if (run) {
+                const rec = getScale0MemoryRecorder();
+                rec?.onTick(fm.capabilities.scale0);
+            }
         }
         return latticeSize;
     }
