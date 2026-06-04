@@ -18,7 +18,9 @@
     align-items: center;
     justify-content: center;
     gap: var(--sp-md);
-    padding: var(--sp-md) var(--sp-lg);
+    /* Extra top/bottom room so the stacked button captions (play/pause, step,
+       reset) have breathing space above and below. */
+    padding: var(--sp-lg) var(--sp-lg);
     background: var(--bg-surface);
     backdrop-filter: blur(24px) saturate(1.4);
     border: var(--glass-border, 1px solid rgba(255, 255, 255, 0.12));
@@ -85,6 +87,23 @@
     color: var(--accent);
     border-color: var(--accent);
     background: color-mix(in oklch, var(--accent) 10%, transparent);
+}
+
+/* Captions stacked under each control (play/pause, step, reset) */
+.scrub-bar-controls .tb-btn-labeled {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+.scrub-bar-controls .tb-btn-label {
+    font-size: var(--fs-xs);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    text-transform: lowercase;
+    color: var(--text-dim);
+    pointer-events: none;
+    white-space: nowrap;
 }
 
 /* ── Speed group ────────────────────────────────────────────────── */
