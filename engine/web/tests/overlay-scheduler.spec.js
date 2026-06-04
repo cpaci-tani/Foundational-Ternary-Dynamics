@@ -422,16 +422,17 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
         });
 
         // PRECONDITION for the time-slice invariant: the sweep must actually
-        // carry ≥2 streamline-cost jobs (each COST_STREAMLINE=100=the whole
-        // budget). A streamline job is only emitted when its field sample is
-        // non-empty (field-overlays.js:813-820), so if this scenario yielded
-        // count=0 for E/B/flux the sweep would be scalar-only and drain in one
-        // frame — and a time-slicing assertion would then FALSE-FAIL on a
-        // correct scheduler. We therefore poll the LIVE job pool and require ≥2
-        // streamline jobs before asserting spread; if they never appear we fail
-        // with a scenario-setup message, not a time-slicing one. (We count by
-        // cost===COST_STREAMLINE across the live jobCount slots — kind-agnostic,
-        // so force-flow streamline jobs count too.)
+        // carry ≥2 streamline-cost jobs (each COST_STREAMLINE=50, half the
+        // OVERLAY_FRAME_BUDGET=100 — lowered from 100→50 in the 2026-05-31
+        // web-optimization campaign so E and B both fit one frame). A streamline
+        // job is only emitted when its field sample is non-empty, so if this
+        // scenario yielded count=0 for E/B/flux the sweep would be scalar-only
+        // and drain in one frame — and a time-slicing assertion would then
+        // FALSE-FAIL on a correct scheduler. We therefore poll the LIVE job pool
+        // and require ≥2 streamline jobs before asserting spread; if they never
+        // appear we fail with a scenario-setup message, not a time-slicing one.
+        // (We count by cost===COST_STREAMLINE across the live jobCount slots —
+        // kind-agnostic, so force-flow streamline jobs count too.)
         await expect.poll(
             () => page.evaluate(async () => {
                 const { getScale0State } = await import('./js/scales/scale0/state/store.js');
@@ -439,7 +440,7 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
                 if (!s || !s.jobs) return 0;
                 let streamlineJobs = 0;
                 for (let i = 0; i < s.jobCount; i++) {
-                    if (s.jobs[i] && s.jobs[i].cost === 100) streamlineJobs++;
+                    if (s.jobs[i] && s.jobs[i].cost === 50) streamlineJobs++;  // COST_STREAMLINE (was 100 pre-2026-05-31)
                 }
                 return streamlineJobs;
             }),
@@ -476,7 +477,7 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
                         if (s.jobs) {
                             let sl = 0;
                             for (let i = 0; i < s.jobCount; i++) {
-                                if (s.jobs[i] && s.jobs[i].cost === 100) sl++;
+                                if (s.jobs[i] && s.jobs[i].cost === 50) sl++;  // COST_STREAMLINE (was 100 pre-2026-05-31)
                             }
                             if (sl > maxStreamlineJobs) maxStreamlineJobs = sl;
                         }
