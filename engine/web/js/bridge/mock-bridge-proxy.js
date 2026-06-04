@@ -116,6 +116,10 @@ export class MockBridgeProxy {
     getFluxSlice(axis, index) { return this._ready ? this._shadow.getFluxSlice(axis, index) : new Float64Array(0); }
     getParticleData() { return this._lastParts ?? EMPTY_PARTS(); }
     getDiagnostics() { return this._lastDiag ?? null; }
+    // Per-voxel probe (p1-observables-panel). Reads the shadow's SAB field; the
+    // shadow's _particles is [] (the render frame is separate), so the particle
+    // lookup is a safe no-op and the flux fields come from shared memory.
+    inspectVoxel(x, y, z) { return this._ready ? this._shadow.inspectVoxel(x, y, z) : null; }
 
     // ── Snapshot restore (scrub) → forward buffers to the worker ─────────────
     _loadSnapshot(snap) {
