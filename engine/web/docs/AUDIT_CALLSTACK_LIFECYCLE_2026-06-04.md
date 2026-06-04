@@ -159,22 +159,26 @@ the count stayed flat. Root cause (two stacking mechanisms, both by design):
    was held scale-invariant.
 
 Not a bug, but now that Fix 1 made the upload ~10× cheaper there's headroom to show the
-extra resolution. Replaced the fixed tiers with a single shared `fluxVolumeStep(N) =
-max(1, ceil(N / FLUX_MAX_AXIS_POINTS))` helper (`FLUX_MAX_AXIS_POINTS = 53` →
-≤53³≈149K-point worst-case buffer), used by **both** the buffer sizing
-(`_buildFluxVolume`) and the scan/write (`updateFluxVolume`) so they can't drift. Effect
-(microbench, real `updateFluxVolume`, flux-pulse-like field):
+extra resolution. Replaced the integer-step subsample with a **fractional stride**: a
+fixed `fluxVolumeAxisSamples(N) = min(N, FLUX_MAX_AXIS_POINTS)` grid spread evenly across
+the lattice (stride = N/samples ≥ 1). For N ≤ 53 every voxel draws (stride 1); above it
+the grid saturates at 53³ and the stride grows continuously — so the cloud is **~constant
+density at every size**, with no awkward sparse sizes at the old integer-step (1/2/4) tier
+jumps (e.g. N=65 used to fall to ⅛ density just past the step 1→2 boundary). The helper is
+shared by **both** the buffer sizing (`_buildFluxVolume`) and the scan/write
+(`updateFluxVolume`) so they can't drift. Effect (microbench, real `updateFluxVolume`,
+flux-pulse-like field):
 
-| L | drawn dots before | drawn dots after | ms/call |
+| L | drawn dots before (fixed 1/2/4) | drawn dots after (fractional) | ms/call |
 |---|------------------|-----------------|---------|
-| 49 | 3,941 | 31,512 | 0.44 |
-| 65 | 9,176 | 9,176 | 0.14 |
-| 97 | 3,839 | 30,591 | 0.47 |
-| 129 | 8,991 | 21,234 | 0.31 |
+| 49 | 3,941 | 31,512 | 0.48 |
+| 65 | 9,176 | **39,791** | 0.76 |
+| 97 | 3,839 | 39,550 | 0.66 |
+| 129 | 8,991 | 39,922 | 0.76 |
 
-Bigger lattices now reveal proportionally more structure (L=97: 8× more dots; L=129:
-2.4×), still bounded (~149K worst-case) and still well under the original 1.29 ms cost.
-Tunable via the one named constant. Render-only; physics untouched.
+Every size ≥53 now draws ~40K dots (uniform density, no sawtooth); N=65 went 9.2K → 39.8K.
+Cost is bounded ~0.75 ms (constant 53³ scan for large N) — still well under the original
+1.29 ms. Tunable via the one named constant. Render-only; physics untouched.
 
 ### Bonus finding — `perf-baseline.spec.js` was stale w.r.t. the worker path
 The perf-baseline gate read the steady-state tick via `b.currentTick()` / `b._tick`,
@@ -187,10 +191,8 @@ passes again on the worker path; a fresh baseline was captured.
 ### Deferred (bigger lift than "safe fixes")
 Further large-L gains would require **active-box-scoped uploads** (push only the
 `_activeBox` region through the bridge→adapter→renderer path) or a flux-renderer
-rearchitecture. The adaptive budget still has an integer-`step` sawtooth at each
-~53-voxel boundary; smoothing it fully needs fractional/stochastic striding.
-Recommended as the next step if L>180 interactive editing becomes a requirement; out of
-scope for a contained pass.
+rearchitecture. Recommended as the next step if L>180 interactive editing becomes a
+requirement; out of scope for a contained pass.
 
 ---
 
