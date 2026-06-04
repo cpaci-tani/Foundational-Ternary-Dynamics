@@ -192,6 +192,18 @@ preview tool). Three tunable knobs — `FLUX_DOT_MIN` (dot size), `uGlow`, `uOpa
 trade "smooth cloud" against "crisp + colorful"; current values lean crisp/colorful so
 the blue→red flux colormap reads clearly. Render-only; physics untouched.
 
+**Fix 3c — even render positions + 3D jitter (kill grid/beat/moiré).** Two further
+artifacts surfaced under the denser sampling: (i) at fractional strides `floor(i·stride)`
+snaps samples to voxels spaced 1,1,1,2,… — a beat that bunches dots into visible *blocks*;
+(ii) the perfectly regular grid, under additive blending, aligns into *rings/rays* (moiré).
+Fixed by **decoupling render position from the field read**: dots are placed at evenly-
+spaced stratum centres (uniform, no floor() beat) and read their magnitude from the
+nearest voxel; then each dot gets a **stable 3D-hashed sub-cell jitter** (`jamp = stride`
+when subsampling, 0 at stride 1 so N≤53 stays an exact grid). The 3D hash breaks *all*
+planar alignment — unlike the earlier per-axis jitter, which left shared sheets and read
+as plaid — yielding an organic cloud with no grid/blocks/moiré at any view angle.
+Deterministic, so no per-frame shimmer. Verified face-on and iso via the capture loop.
+
 ### Bonus finding — `perf-baseline.spec.js` was stale w.r.t. the worker path
 The perf-baseline gate read the steady-state tick via `b.currentTick()` / `b._tick`,
 which the worker-default `MockBridgeProxy` doesn't expose (it self-ticks off-thread),

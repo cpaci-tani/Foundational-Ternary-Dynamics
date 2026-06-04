@@ -211,24 +211,32 @@ export class ViewportFluxRenderer {
             return;
         }
 
-        // Fractional-stride sample grid — `samples` points per axis spread evenly
-        // across the lattice (stride = N/samples ≥ 1). Scanning + drawing this fixed
-        // grid (instead of the full N³) keeps the per-upload cost bounded AND the
-        // rendered density ~constant at every lattice size — no sparse sizes at the old
-        // integer-step tier jumps. Normalising against the max of the drawn grid is
-        // self-consistent with the rendered cloud. Shares fluxVolumeAxisSamples() with
-        // the buffer sizing + the write loop below. `| 0` is a fast floor (z<N<2³¹).
+        // Sample grid — `samples` points per axis (stride = N/samples ≥ 1). The DOTS are
+        // rendered at evenly-spaced stratum centres ((i+0.5)·stride apart, exactly uniform)
+        // and each dot reads its field value from the NEAREST voxel. Rendering at the even
+        // positions — rather than at the floor()-snapped voxel — is what kills the uneven
+        // "blocks": floor(i·stride) at a fractional stride bunches voxels 1,1,1,2,… into
+        // visible bands, but the even render grid has no beat. Collapses to exact voxel
+        // centres when stride==1 (N≤53). vox[] caches the nearest-voxel index per sample.
         const samples = fluxVolumeAxisSamples(N);
         const stride = N / samples;   // ≥ 1; exactly 1 when N ≤ FLUX_MAX_AXIS_POINTS
+        if (!this._fluxVox || this._fluxVox.length < samples) {
+            this._fluxVox = new Int32Array(FLUX_MAX_AXIS_POINTS);
+        }
+        const vox = this._fluxVox;
+        for (let i = 0; i < samples; i++) {
+            const v = ((i + 0.5) * stride) | 0;   // nearest voxel to the stratum centre
+            vox[i] = v < N ? v : N - 1;
+        }
 
         // Find max for normalization over the sampled grid.
         let maxFlux = 0;
         for (let iz = 0; iz < samples; iz++) {
-            const zNN = Math.min(N - 1, (iz * stride) | 0) * N * N;
+            const zNN = vox[iz] * N * N;
             for (let iy = 0; iy < samples; iy++) {
-                const zNNyN = zNN + Math.min(N - 1, (iy * stride) | 0) * N;
+                const zNNyN = zNN + vox[iy] * N;
                 for (let ix = 0; ix < samples; ix++) {
-                    const m = volumeData[zNNyN + Math.min(N - 1, (ix * stride) | 0)];
+                    const m = volumeData[zNNyN + vox[ix]];
                     if (m > maxFlux) maxFlux = m;
                 }
             }
@@ -248,8 +256,8 @@ export class ViewportFluxRenderer {
         const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
         const halfN = N / 2;
 
-        // The write loop below draws the SAME fractional-stride grid the maxFlux scan
-        // visited (samples per axis, stride = N/samples). See fluxVolumeAxisSamples().
+        // The write loop draws dots at evenly-spaced render positions ((i+0.5)·stride),
+        // each reading the nearest voxel (vox[], same as the scan) — uniform, no beat.
 
         // PERF: hoist boundary-shape check OUT of the per-voxel loop. For the
         // default 'cube'/'none' boundary _insideBoundary() always returns
@@ -266,35 +274,47 @@ export class ViewportFluxRenderer {
         const colArr = colAttr.array;
         const sizeArr = sizeAttr.array;
 
+        // Jitter amplitude: 0 at stride==1 (N≤53 stays an exact voxel grid), else scatter
+        // each dot inside its stride-wide cell so the regular subsample grid never aligns
+        // into rows / rings / rays (the additive-blend moiré). 3D-hashed per (ix,iy,iz) so
+        // it is deterministic (no per-frame shimmer) and breaks ALL planar alignment —
+        // unlike a per-axis jitter, which leaves shared sheets and reads as plaid.
+        const jamp = stride > 1.0001 ? stride : 0;
         for (let iz = 0; iz < samples && count < maxPts; iz++) {
-            const z = Math.min(N - 1, (iz * stride) | 0);
-            const zNN = z * N * N;
+            const zNN = vox[iz] * N * N;
+            const ze = (iz + 0.5) * stride;
             for (let iy = 0; iy < samples && count < maxPts; iy++) {
-                const y = Math.min(N - 1, (iy * stride) | 0);
-                const zNNyN = zNN + y * N;
+                const zNNyN = zNN + vox[iy] * N;
+                const ye = (iy + 0.5) * stride;
                 for (let ix = 0; ix < samples && count < maxPts; ix++) {
-                    const x = Math.min(N - 1, (ix * stride) | 0);
-                    if (needsClip) {
-                        const center = N / 2;
-                        const radius = N / 2;
-                        const nx = (x + 0.5 - center) / radius;
-                        const ny = (y + 0.5 - center) / radius;
-                        const nz = (z + 0.5 - center) / radius;
-                        if (!this._insideBoundary(nx, ny, nz)) continue;
-                    }
-
-                    const mag = volumeData[zNNyN + x];
+                    const mag = volumeData[zNNyN + vox[ix]];
 
                     // Skip inactive voxels before writing any attributes,
                     // otherwise stale color/size from a prior frame leak through
                     if (mag < FLUX_THRESHOLD) continue;
 
+                    // Stable 3D sub-cell offsets in [-0.5,0.5)·jamp → organic scatter.
+                    let h = (ix * 92837111) ^ (iy * 689287499) ^ (iz * 283923481);
+                    h = (h ^ (h >>> 15)) >>> 0;
+                    const xr = (ix + 0.5) * stride + ((h & 1023) / 1024 - 0.5) * jamp;
+                    const yr = ye + (((h >>> 10) & 1023) / 1024 - 0.5) * jamp;
+                    const zr = ze + (((h >>> 20) & 1023) / 1024 - 0.5) * jamp;
+
+                    if (needsClip) {
+                        const center = N / 2;
+                        const radius = N / 2;
+                        const nx = (xr - center) / radius;
+                        const ny = (yr - center) / radius;
+                        const nz = (zr - center) / radius;
+                        if (!this._insideBoundary(nx, ny, nz)) continue;
+                    }
+
                     const c3 = count * 3;
-                    // +0.5: render at unit-cell centre so voxel 0 sits at 0.5
-                    // and voxel N-1 at N-0.5 — perfectly filling the [0,N] wireframe.
-                    posArr[c3]     = x + 0.5;
-                    posArr[c3 + 1] = y + 0.5;
-                    posArr[c3 + 2] = z + 0.5;
+                    // Jittered render position — organic scatter, no grid/moiré. Field
+                    // value (mag/color) comes from the nearest even-grid voxel (vox[]).
+                    posArr[c3]     = xr;
+                    posArr[c3 + 1] = yr;
+                    posArr[c3 + 2] = zr;
 
                     // PERF: in-place colormap write. Pre-fix this allocated a
                     // fresh [r,g,b] array per voxel -- ~1.8M allocs/sec at L=32.
