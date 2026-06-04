@@ -39,6 +39,11 @@ export const FIELD_TOGGLE_KEYS = [
     // Tier 3 additions (2026-04-18) — quantum / info
     'showFisher',         // F(x) = |∇ρ|²/ρ, ρ=|J|²  — Fisher information
     'showCoherence',      // C(x) = J_L·J_R/(|L||R|) — dual-substrate coherence
+    // New substrate overlays (2026-06-03)
+    'showStateField',     // s(x) ∈ {-1,0,+1}        — ternary manifestation field [AXIOM]
+    'showLatency',        // L(x) = √(|J|²/|J|²max)  — time-dilation / Born-Infeld latency
+    'showGaussResidual',  // ∇·J − s_charge          — Gauss-projection conservation leak
+    'showMooreDecomp',    // SC+FCC+BCC shells        — Moore Layer Theorem structural glyph
 ];
 
 export const FORCE_FIELD_KEYS = new Set([

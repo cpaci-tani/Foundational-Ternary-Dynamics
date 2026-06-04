@@ -508,3 +508,47 @@ export function computeCoherenceFrame(sampled, _state) {
         signed:    true,
     };
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// New substrate overlays (2026-06-03) — state field, latency, Gauss residual.
+// All three are pass-throughs of an engine sampler; the colouring lives in
+// the dedicated renderers (ternary for state, blue→red ramp for latency,
+// signed for the Gauss residual).
+// ══════════════════════════════════════════════════════════════════════
+
+/**
+ * Ternary state field s(x) ∈ {-1,0,+1} — the manifestation layer (Postulate
+ * 3). Pass-through of the engine's state sampler; the void (s=0) is already
+ * excluded by the sampler, so this just forwards the manifested voxels.
+ */
+export function computeStateFieldFrame(sampled, _state) {
+    const s = sampled.state;
+    if (!s || !s.count) return null;
+    return { positions: s.positions, values: s.values, count: s.count };
+}
+
+/**
+ * Latency / time-dilation field L(x) = √(|J|²/|J|²_max) ∈ [0, 0.998]. The
+ * Born-Infeld proper-time field that creates gravity wells, event horizons,
+ * and time dilation (f = 1 − L²). Pass-through; rendered as a blue→red
+ * volumetric point cloud.
+ */
+export function computeLatencyFrame(sampled, _state) {
+    const L = sampled.latency;
+    if (!L || !L.count) return null;
+    return { positions: L.positions, values: L.values, count: L.count, normalizer: 1, signed: false };
+}
+
+/**
+ * Gauss-constraint residual r(x) = ∇·J − s_charge. FTD-native charge is the
+ * ternary state, so a clean substrate would have r ≈ 0; non-zero r maps the
+ * non-variational Gauss-projection conservation leak (SPEC_ENGINE.md).
+ * Signed pass-through of the engine's gauss-residual sampler.
+ */
+export function computeGaussResidualFrame(sampled, _state) {
+    const g = sampled.gaussResidual;
+    if (!g || !g.count) return null;
+    let maxAbs = 0;
+    for (let i = 0; i < g.count; i++) { const a = Math.abs(g.values[i]); if (a > maxAbs) maxAbs = a; }
+    return { positions: g.positions, values: g.values, count: g.count, normalizer: maxAbs, signed: true };
+}

@@ -62,12 +62,16 @@ import { createAtomEngine } from './mock-atom-engine.js';
 // Called via .call(this, name) so every this.reset(), this.injectParticle(...),
 // etc., binds back to this MockBridge instance.
 import { runSetupScenario } from './scenarios/index.js';
+import { allocSharedField, viewSharedField, CTRL } from './shared-field.js';
 
 // ── Mock Bridge ────────────────────────────────────────────────────
 /** @implements {import('./bridge-contract.js').ScaleBridge} */
 export class MockBridge {
-    constructor(latticeSize = 32) {
-        this.latticeSize = latticeSize;
+    constructor(latticeSize = 33) {
+        // Odd lattices only: an odd N has a true center voxel at (N-1)/2, so
+        // point injections + symmetric flux center exactly (no half-voxel
+        // straddle / +x−x asymmetry). Snap any even N up to the next odd.
+        this.latticeSize = (latticeSize % 2 === 0) ? latticeSize + 1 : latticeSize;
         this._tick = 0;
         this._dt = 1.0;
         this._physicalTime = 0.0;
@@ -79,6 +83,23 @@ export class MockBridge {
         this._boundaryShape = 'cube';
         this._boundaryMask = null; // Uint8Array: 1=inside, 0=outside. Precomputed per shape.
         this._reflectiveBoundary = false; // When false, particles/flux dissipate past boundary (default off)
+
+        // ── Sparse (active-region) wave tick — Phase 1 (SPEC_SCALE0_LATTICE_PERF §3) ──
+        // _activeBox = inclusive bounds of nonzero flux; x1<x0 means "empty".
+        // _activeDense latches true when the wave reaches a wall / fills >40%
+        // (then _tickFlux runs the original full dense path). _sparseEps: trim
+        // threshold (0 = bit-exact). _sparseTick gates the whole optimization.
+        this._sparseTick = true;    // FTD_SPARSE_TICK — bit-exact active-region tick (SPEC §3); set false to revert to dense
+        this._activeBox = { x0: this.latticeSize, x1: -1, y0: this.latticeSize, y1: -1, z0: this.latticeSize, z1: -1 };
+        this._activeDense = false;
+        this._sparseEps = 0;
+
+        // ── SAB-backed field for the physics Web Worker — Phase 2 (PLAN_SCALE0_PHYSICS_WORKER) ──
+        // When _useSAB, _initFluxGrid backs the flux buffers with SharedArrayBuffers
+        // (held in _sharedField) so a worker host and the main-thread proxy share
+        // them zero-copy. Off for the normal in-thread bridge (plain typed arrays).
+        this._useSAB = false;
+        this._sharedField = null;
 
         // Mutable simulation parameters (combo panel)
         this._params = { kb: K_B, gn: G_N, damping: DAMPING };
@@ -596,7 +617,9 @@ export class MockBridge {
         this._fluxJ = null;
         this._fluxWV = null;
         this._fluxMag = null;
+        this._sharedField = null;   // SAB realloc at the (possibly new) size on next _initFluxGrid
         this._fluxDirty = true;
+        this._resetActiveBox();   // empty box at the (possibly new) lattice size
         // Release stale auxiliary buffers so they are reallocated at the new size
         this._stateGrid = null;
         this._selectiveDampMask = null;
@@ -676,6 +699,7 @@ export class MockBridge {
         if (this._fluxWV) this._fluxWV.fill(0);
         if (this._fluxMag) this._fluxMag.fill(0);
         this._fluxDirty = true;
+        this._resetActiveBox();
     }
 
     seedRandomFlux() {
@@ -691,6 +715,7 @@ export class MockBridge {
             this._fluxJ[idx * 3 + 2] += (Math.random() - 0.5) * amp;
         }
         this._fluxDirty = true;
+        this._activeDense = true;   // a full random fill is genuinely dense
     }
 
     setToggle(name, value) { if (name in this._toggles) this._toggles[name] = value; }
@@ -881,11 +906,29 @@ export class MockBridge {
     _initFluxGrid() {
         const N = this.latticeSize;
         const total = N * N * N;
-        this._fluxJ = new Float64Array(total * 3); // flux vector field (Jx, Jy, Jz)
-        this._fluxWV = new Float64Array(total * 3); // wave velocity (leapfrog)
-        this._fluxMag = new Float64Array(total);     // cached magnitudes
+        if (this._useSAB) {
+            // Worker mode: back every field buffer (incl. the state grid, so
+            // particle scenarios share too) with SharedArrayBuffers. The proxy
+            // attaches views over the same memory via getSharedField().
+            const sab = allocSharedField(N);
+            this._sharedField = sab;
+            const v = viewSharedField(sab);
+            this._fluxJ = v.fluxJ;
+            this._fluxWV = v.fluxWV;
+            this._fluxMag = v.fluxMag;
+            this._stateGrid = v.state;
+            v.ctrl[CTRL.N] = N;
+        } else {
+            this._fluxJ = new Float64Array(total * 3); // flux vector field (Jx, Jy, Jz)
+            this._fluxWV = new Float64Array(total * 3); // wave velocity (leapfrog)
+            this._fluxMag = new Float64Array(total);     // cached magnitudes
+        }
         this._fluxDirty = true;
     }
+
+    // Worker hosts return the SharedArrayBuffer set so the main-thread proxy can
+    // attach views over the same memory (zero-copy). Null unless _useSAB.
+    getSharedField() { return this._sharedField; }
 
     _fluxIdx(x, y, z) {
         const N = this.latticeSize;
@@ -899,6 +942,7 @@ export class MockBridge {
         this._fluxJ[idx * 3 + 1] += fy;
         this._fluxJ[idx * 3 + 2] += fz;
         this._fluxDirty = true;
+        this._expandActiveBox(x, y, z);
     }
 
     _injectWaveVel(x, y, z, wx, wy, wz) {
@@ -907,6 +951,54 @@ export class MockBridge {
         this._fluxWV[idx * 3] += wx;
         this._fluxWV[idx * 3 + 1] += wy;
         this._fluxWV[idx * 3 + 2] += wz;
+        this._expandActiveBox(x, y, z);
+    }
+
+    // ── Sparse (active-region) wave-tick helpers — SPEC_SCALE0_LATTICE_PERF §3 ──
+    _resetActiveBox() {
+        const N = this.latticeSize;
+        this._activeBox = { x0: N, x1: -1, y0: N, y1: -1, z0: N, z1: -1 };
+        this._activeDense = false;
+    }
+
+    // Grow the box to include voxel (x,y,z). Coords are wrapped like _fluxIdx so
+    // a periodic-wrap injection lands at its true voxel (clamping would drop it).
+    _expandActiveBox(x, y, z) {
+        const b = this._activeBox, N = this.latticeSize;
+        x = ((x % N) + N) % N; y = ((y % N) + N) % N; z = ((z % N) + N) % N;
+        if (x < b.x0) b.x0 = x; if (x > b.x1) b.x1 = x;
+        if (y < b.y0) b.y0 = y; if (y > b.y1) b.y1 = y;
+        if (z < b.z0) b.z0 = z; if (z > b.z1) b.z1 = z;
+    }
+
+    // Grow the box by one shell each tick (the 18-point stencil reach is ≤1
+    // voxel/tick), clamped to the lattice. Cheap O(1); keeps the box a superset
+    // of nonzero J/WV so the bounded tick stays bit-exact.
+    _growActiveBox() {
+        const b = this._activeBox, N = this.latticeSize;
+        if (b.x1 < b.x0) return;
+        b.x0 = Math.max(0, b.x0 - 1); b.x1 = Math.min(N - 1, b.x1 + 1);
+        b.y0 = Math.max(0, b.y0 - 1); b.y1 = Math.min(N - 1, b.y1 + 1);
+        b.z0 = Math.max(0, b.z0 - 1); b.z1 = Math.min(N - 1, b.z1 + 1);
+    }
+
+    // Tight rescan of nonzero J/WV bounds (O(N³)); call only occasionally (after
+    // scenario setup, and every K ticks so a damped field can shrink the box).
+    _recomputeActiveBox() {
+        const N = this.latticeSize, J = this._fluxJ, WV = this._fluxWV, eps = this._sparseEps;
+        this._resetActiveBox();
+        if (!J) return;
+        const b = this._activeBox;
+        for (let z = 0; z < N; z++) for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+            const i3 = (z * N * N + y * N + x) * 3;
+            const a = Math.abs(J[i3]) + Math.abs(J[i3 + 1]) + Math.abs(J[i3 + 2])
+                    + Math.abs(WV[i3]) + Math.abs(WV[i3 + 1]) + Math.abs(WV[i3 + 2]);
+            if (a > eps) {
+                if (x < b.x0) b.x0 = x; if (x > b.x1) b.x1 = x;
+                if (y < b.y0) b.y0 = y; if (y > b.y1) b.y1 = y;
+                if (z < b.z0) b.z0 = z; if (z > b.z1) b.z1 = z;
+            }
+        }
     }
 
     /**
@@ -1028,17 +1120,46 @@ export class MockBridge {
         const o_ymzp = o_ym + o_zp;   // (0,-1,+1)
         const o_ymzm = o_ym + o_zm;   // (0,-1,-1)
 
+        // ── Sparse (active-region) windowing ─────────────────────────────
+        // Restrict the O(N³) interior Laplacian + commit to the nonzero
+        // bounding box (+1 frontier). Skip the boundary loops + sponge while
+        // the box is interior (those voxels are zero → provably no-ops). Fall
+        // back to the full dense path once the front nears a wall (periodic
+        // wrap couples both walls) or fills >40%.
+        let sx0 = 1, sx1 = N - 2, sy0 = 1, sy1 = N - 2, sz0 = 1, sz1 = N - 2;
+        let sparseActive = false;
+        let runBoundaryWV = true;
+        if (this._sparseTick && !this._activeDense) {
+            const bx = this._activeBox;
+            if (bx.x1 < bx.x0) return;               // empty field → nothing to do
+            const Dsp = this._reflectiveBoundary ? 1 : Math.min(6, Math.max(2, Math.floor(N / 4)));
+            const margin = Dsp + 1;                  // stay clear of the sponge shell too
+            const nearWall = bx.x0 <= margin || bx.x1 >= N - 1 - margin
+                          || bx.y0 <= margin || bx.y1 >= N - 1 - margin
+                          || bx.z0 <= margin || bx.z1 >= N - 1 - margin;
+            const vol = (bx.x1 - bx.x0 + 1) * (bx.y1 - bx.y0 + 1) * (bx.z1 - bx.z0 + 1);
+            if (nearWall || vol > 0.4 * N * N * N) {
+                this._activeDense = true;            // latch dense from here on
+            } else {
+                sparseActive = true;
+                runBoundaryWV = false;
+                sx0 = Math.max(1, bx.x0 - 1); sx1 = Math.min(N - 2, bx.x1 + 1);
+                sy0 = Math.max(1, bx.y0 - 1); sy1 = Math.min(N - 2, bx.y1 + 1);
+                sz0 = Math.max(1, bx.z0 - 1); sz1 = Math.min(N - 2, bx.z1 + 1);
+            }
+        }
+
         // ── Fast interior path (no modulo, pre-computed byte offsets) ────
-        for (let z = 1; z < Nm1; z++) {
+        for (let z = sz0; z <= sz1; z++) {
             const zBase = z * NN;
-            for (let y = 1; y < Nm1; y++) {
-                const rowStart = zBase + y * N + 1;
+            for (let y = sy0; y <= sy1; y++) {
+                const rowStart = zBase + y * N + sx0;
                 // Byte offset of (x=1, y, z) in the interleaved array
                 let i3 = rowStart * 3;
                 // Flat voxel index (for stateGrid coupling); advanced in lockstep with i3
                 let vi = rowStart;
 
-                for (let x = 1; x < Nm1; x++) {
+                for (let x = sx0; x <= sx1; x++) {
                     // Laplacian via pre-computed byte offsets — no per-neighbor multiply
                     // c = 0
                     const center0 = J[i3];
@@ -1097,7 +1218,7 @@ export class MockBridge {
         // ── Slow boundary path (with modulo, handles periodic wrap) ──────
         // Only runs for voxels where z=0, z=N-1, y=0, y=N-1, x=0, or x=N-1.
         // For L=128 this is ~3% of total voxels.
-        for (let z = 0; z < N; z++) {
+        for (let z = 0; runBoundaryWV && z < N; z++) {
             const zw = z * NN;
             const zpw = ((z + 1) % N) * NN;
             const zmw = ((z - 1 + N) % N) * NN;
@@ -1195,7 +1316,7 @@ export class MockBridge {
         // are interior but x=0 or x=N-1 were not visited by the interior loop.
         // The interior loop runs x from 1..N-2, so x=0 and x=N-1 on interior
         // y,z rows need the modular path.
-        for (let z = 1; z < Nm1; z++) {
+        for (let z = 1; runBoundaryWV && z < Nm1; z++) {
             const zw = z * NN;
             const zpw = zw + NN;
             const zmw = zw - NN;
@@ -1263,7 +1384,26 @@ export class MockBridge {
         const selective = this._toggles.selective_damping;
         const total3 = total * 3;
 
-        if (selective && damp < 1.0) {
+        if (sparseActive && !(selective && damp < 1.0 && this._particles.length > 0)) {
+            // Commit only the active window. Outside it J=WV=0 ⇒ (0+WV·dt)·d with
+            // J=WV=0 is 0 (no-op), so skipping is bit-exact. effDamp reproduces the
+            // dense per-voxel factor for every no-particle case: damping off ⇒ 1;
+            // uniform damping ⇒ damp; selective + no particles ⇒ 1 (the dense
+            // selective path builds an all-zero mask ⇒ d = 1 everywhere).
+            const effDamp = (selective && damp < 1.0 && this._particles.length === 0) ? 1.0 : damp;
+            for (let z = sz0; z <= sz1; z++) {
+                for (let y = sy0; y <= sy1; y++) {
+                    let i3 = (z * NN + y * N + sx0) * 3;
+                    for (let x = sx0; x <= sx1; x++) {
+                        J[i3]     = (J[i3]     + WV[i3]     * dt) * effDamp;
+                        J[i3 + 1] = (J[i3 + 1] + WV[i3 + 1] * dt) * effDamp;
+                        J[i3 + 2] = (J[i3 + 2] + WV[i3 + 2] * dt) * effDamp;
+                        WV[i3] *= effDamp; WV[i3 + 1] *= effDamp; WV[i3 + 2] *= effDamp;
+                        i3 += 3;
+                    }
+                }
+            }
+        } else if (selective && damp < 1.0) {
             // Build near-particle mask: mark 6-connected neighbors of manifested particles
             if (!this._selectiveDampMask || this._selectiveDampMask.length !== total) {
                 this._selectiveDampMask = new Uint8Array(total);
@@ -1341,7 +1481,7 @@ export class MockBridge {
         // round-trip absorption ≳ 99.97%.
         // O(L³) cost, but only the shell voxels do non-trivial work
         // (interior voxels compute d ≥ D and short-circuit without writes).
-        if (!this._reflectiveBoundary) {
+        if (!this._reflectiveBoundary && runBoundaryWV) {
             const Nm1 = N - 1;
             const D = Math.min(6, Math.max(2, Math.floor(N / 4)));
             // Precompute the per-distance damping table: f[d] for d = 0..D
@@ -1374,6 +1514,12 @@ export class MockBridge {
         }
 
         this._fluxDirty = true;
+        if (this._sparseTick && !this._activeDense) {
+            this._growActiveBox();                          // wave front advanced ≤1 voxel
+            // Periodic tight rescan lets a damped/dissipating field shrink the
+            // box again (cheap amortized: O(N³)/32 per tick).
+            if ((this._tick & 31) === 0) this._recomputeActiveBox();
+        }
     }
 
     /** Discrete divergence of J at (x,y,z): ∇·J = Σ (J_i(v+e_i) - J_i(v-e_i)) / 2 */
@@ -1473,6 +1619,8 @@ export class MockBridge {
     getEMForceField(stride = 2)      { return this._samplers.getEMForceField(stride); }
     getGravityForceField(stride = 2) { return this._samplers.getGravityForceField(stride); }
     getStrongForceField(stride = 2)  { return this._samplers.getStrongForceField(stride); }
+    getStateFieldSampled(stride = 2)    { return this._samplers.getStateFieldSampled(stride); }
+    getGaussResidualSampled(stride = 1) { return this._samplers.getGaussResidualSampled(stride); }
 
 
     // ── ParticleEngine (Scale 1) Mock — extracted to bridge/mock-particle-engine.js
@@ -1553,7 +1701,7 @@ export class MockBridge {
     // setupScenario body extracted to bridge/scenarios/index.js as Wave 3 of
     // the large-file refactor. The extracted module is a pure move — `this`
     // binding preserved via .call() so all scenario helpers still resolve.
-    setupScenario(name) { return runSetupScenario.call(this, name); }
+    setupScenario(name) { const r = runSetupScenario.call(this, name); this._recomputeActiveBox(); return r; }
 
     /**
      * Returns derived-overlay data shaped per `kind`. Most return objects

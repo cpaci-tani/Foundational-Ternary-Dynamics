@@ -55,8 +55,16 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-flux-lines"></span>Flux Lines
       </button>
       <button class="view-toggle field-toggle" id="toggle-div-field"
-          title="Divergence of J (charge sources and sinks)">
+          title="Divergence of J (charge sources and sinks). Same quantity as Charge ρ (Topology column) — rendered here as a point cloud, there as a signed rubber sheet.">
         <span class="field-swatch field-swatch-divj"></span>&nabla;&middot;J
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-state-field"
+          title="[AXIOM] Ternary state field s ∈ {−1,0,+1} — the literal FTD manifestation layer (Postulate 3). Manifested voxels render as points (s=−1 blue, s=+1 red); the void (s=0) is the invisible background. The substrate's actual matter content, normally only seen indirectly via particles.">
+        <span class="field-swatch field-swatch-state"></span>State s
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-moore-decomp"
+          title="[THEOREM] Moore-neighbourhood decomposition (Moore Layer Theorem). The 26 neighbours split into three polyhedral shells: SC octahedron (6 faces, red) + FCC cuboctahedron (12 edges, green) + BCC stella octangula (8 corners = two tetrahedra, blue). A static structural glyph centred on the lattice — the geometric heart of FTD, not a sampled field.">
+        <span class="field-swatch field-swatch-moore"></span>Moore cell
       </button>
     </div>
 
@@ -80,7 +88,7 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-energy"></span>Poynting S
       </button>
       <button class="view-toggle field-toggle" id="toggle-light"
-          title="Photon glow — Poynting magnitude |S| rendered as bloom">
+          title="Photon glow — Poynting magnitude |S| rendered as additive bloom. Render-variant of Poynting S (same E×B energy flux), not independent physics.">
         <span class="field-swatch field-swatch-light"></span>Light
       </button>
     </div>
@@ -104,15 +112,15 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-em"></span>EM
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-gravity"
-          title="Gravitational force from density gradient (attractive)">
+          title="[SELECTION] Gravitational force modeled as G·∇|J| (density-gradient attraction). The substrate→gravity mechanism is NOT derived — the G_N identification was falsified (FTD-0131); shown as a pedagogical attractive field.">
         <span class="field-swatch field-swatch-gravity"></span>Gravity
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-strong"
-          title="Strong / color force vectors (SU(3) confinement + color)">
+          title="[SELECTION] Strong / color force vectors. Area-law confinement is a lattice-gauge [THEOREM], but the SU(3) identification needs an independent N_c = 3 source (DERIV_NC_FROM_TOPOLOGY); shown as a confining color-force field.">
         <span class="field-swatch field-swatch-strong"></span>Strong
       </button>
       <button class="view-toggle field-toggle" id="toggle-force-weak"
-          title="[PROXY — VISUALIZATION ONLY] ∇×J pseudovector field scaled by DUAL_DELTA ≈ 0.957. Renders the curl of J (parity-odd) as &quot;weak-like&quot; arrows. This is NOT the SM weak force — FTD's weak interaction lives in state transmutation (weak_transmutation toggle), not a vector field. Label retained for slot consistency; audit P1-17 clarification, 2026-05-27.">
+          title="[PROXY — VISUALIZATION ONLY] The curl ∇×J (a parity-odd pseudovector) rendered as arrows, scaled by DUAL_DELTA ≈ 0.957. This is a vector-calculus view of J, NOT the SM weak force — FTD's weak interaction is state transmutation (weak_transmutation toggle). Companion to Vorticity |∇×J| (Topology). Lives in this column only to share the force-style selector. (audit P1-17, 2026-05-27)">
         <span class="field-swatch field-swatch-weak"></span>&nabla;&times;J pseudovector
       </button>
     </div>
@@ -158,7 +166,7 @@ export function getScale0OverlayTemplate() {
         <span class="field-swatch field-swatch-em-energy"></span>EM energy u
       </button>
       <button class="view-toggle field-toggle" id="toggle-charge-density"
-          title="Charge density ρ(x) = ∇·J. FTD-native charge via Gauss. Red hills = sources, blue wells = sinks, flat where divergence-free.">
+          title="Charge density ρ(x) = ∇·J. FTD-native charge via Gauss. Red hills = sources, blue wells = sinks, flat where divergence-free. Same ∇·J buffer as the Volume column's ∇·J overlay — here as a signed rubber sheet.">
         <span class="field-swatch field-swatch-charge"></span>Charge &rho;
       </button>
       <button class="view-toggle field-toggle" id="toggle-vorticity"
@@ -172,6 +180,14 @@ export function getScale0OverlayTemplate() {
       <button class="view-toggle field-toggle" id="toggle-kretschmann"
           title="[PROXY] Kretschmann-like curvature K(x) = (∇²L)² with L = √(|J|²/|J|²_max) as mass-density proxy (MockBridge doesn't run the Poisson solver). Log-compressed so the horizon spike doesn't flatten the background. Spikes at event horizons.">
         <span class="field-swatch field-swatch-kretschmann"></span>Curvature K
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-latency"
+          title="[DERIVED] Latency / time-dilation field L(x) = √(|J|²/|J|²max) ∈ [0, 0.998]. The Born-Infeld proper-time field — f = 1 − L² is the local speed limit, so high-L regions are gravity wells where time slows; L spikes toward 1 at event horizons. Volumetric point cloud, blue (L≈0) → red (L→1).">
+        <span class="field-swatch field-swatch-latency"></span>Latency L
+      </button>
+      <button class="view-toggle field-toggle" id="toggle-gauss-residual"
+          title="[DERIVED] Gauss-constraint residual r(x) = ∇·J − s_charge. FTD-native charge is the ternary state, so a clean substrate has r ≈ 0; non-zero r maps the non-variational Gauss-projection conservation leak (SPEC_ENGINE.md). Red = positive, blue = negative residual.">
+        <span class="field-swatch field-swatch-gauss"></span>Gauss resid.
       </button>
     </div>
 

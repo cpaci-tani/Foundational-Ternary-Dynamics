@@ -190,8 +190,8 @@ export class Viewport {
 
         // Lattice reference (orchestrator-owned; cascaded to all sub-renderers
         // by setLatticeSize via onLatticeSizeChanged callbacks).
-        this.latticeSize = 32;
-        this._latticeSize = 32;  // mirrored so quantum overlays can read it too
+        this.latticeSize = 33;
+        this._latticeSize = 33;  // mirrored so quantum overlays can read it too
         this._halfN = 16;
         this._reflectiveBoundary = false;
 
@@ -727,6 +727,19 @@ export class Viewport {
     _buildHorizonField() { this._fieldRenderer._buildHorizonField(); }
     toggleHorizonField(on) { this._fieldRenderer.toggleHorizonField(on); }
     updateHorizonField(data) { this._fieldRenderer.updateHorizonField(data); }
+
+    // -- State field s (ternary {-1,0,+1} manifestation point cloud) --
+    toggleStateField(on) { this._fieldRenderer.toggleStateField(on); }
+    updateStateField(data) { this._fieldRenderer.updateStateField(data); }
+
+    // -- Latency / time-dilation + Gauss-residual scalar point clouds --
+    toggleLatencyField(on) { this._fieldRenderer.toggleLatencyField(on); }
+    updateLatencyField(data) { this._fieldRenderer.updateLatencyField(data); }
+    toggleGaussResidualField(on) { this._fieldRenderer.toggleGaussResidualField(on); }
+    updateGaussResidualField(data) { this._fieldRenderer.updateGaussResidualField(data); }
+
+    // -- Moore-neighbourhood decomposition (static structural wireframe) --
+    toggleMooreDecomp(on) { this._fieldRenderer.toggleMooreDecomp(on); }
 
     // -- Topological Sheet (deformable rubber-sheet) overlays --
     toggleGravPotentialField(on) { this._topoRenderer?.toggleGravPotential(on); }

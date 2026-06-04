@@ -34,6 +34,8 @@ export function createScale0Capabilities(bridge) {
             if (kind === 'fisher')     return bridge.getFisherSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
             if (kind === 'coherence')  return bridge.getCoherenceSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
             if (kind === 'curlJ')      return bridge.getCurlJSampled?.(stride) ?? { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
+            if (kind === 'state')      return bridge.getStateFieldSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
+            if (kind === 'gaussResidual') return bridge.getGaussResidualSampled?.(stride) ?? { positions: new Float32Array(0), values: new Float32Array(0), count: 0 };
             return { positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 };
         },
         getScale0ForceField: (type, stride = 2) => {
@@ -53,7 +55,7 @@ export function createScale0Capabilities(bridge) {
         setReflectiveBoundary: (on) => bridge.setReflectiveBoundary?.(on),
         setupScenario: (name) => bridge.setupScenario(name),
         setToggle: (key, value) => bridge.setToggle?.(key, value),
-        get latticeSize() { return bridge.latticeSize || 32; },
+        get latticeSize() { return bridge.latticeSize || 33; },
 
         /**
          * Readback current lattice state + flux into plain typed arrays plus
@@ -61,7 +63,7 @@ export function createScale0Capabilities(bridge) {
          * Returns null if the bridge lacks full readback.
          */
         getScale0Snapshot: () => {
-            const N = bridge.latticeSize || 32;
+            const N = bridge.latticeSize || 33;
             const lattice = bridge.getScale0LatticeBuffer?.();
             const flux    = bridge.getScale0FluxBuffer?.();
             const wave    = bridge.getScale0WaveBuffer?.();
@@ -101,7 +103,7 @@ export function createScale0Capabilities(bridge) {
             if (snap.lod && snap.lod > 0 && snap.lod < 3) {
                 // Lazy-load the upsampler to avoid a static import cycle.
                 // eslint-disable-next-line no-undef
-                const N = bridge.latticeSize || snap.N || 32;
+                const N = bridge.latticeSize || snap.N || 33;
                 const mod = (typeof window !== 'undefined') ? window.__ftdTimelineLod : null;
                 if (!mod) {
                     // Fallback: fail instead of corrupting state with mismatched sizes.
