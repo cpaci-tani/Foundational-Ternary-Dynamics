@@ -15,15 +15,17 @@ export function getScale0LatticeSizeToolbarTemplate() {
     return `
         <div class="tb-group tb-group-scale0 scale0-only" id="lattice-size-group">
             <label class="tb-label" for="lattice-size">Size</label>
-            <select class="tb-select" id="lattice-size" title="Lattice edge dimension (N x N x N)">
-                <option value="8">8</option>
-                <option value="16">16</option>
-                <option value="24">24</option>
-                <option value="32" selected>32</option>
-                <option value="48">48</option>
-                <option value="64">64</option>
-                <option value="96">96</option>
-                <option value="128">128</option>
+            <select class="tb-select" id="lattice-size" title="Lattice edge dimension (N x N x N) — odd so phenomena center on a true center voxel">
+                <option value="9">9</option>
+                <option value="17">17</option>
+                <option value="25">25</option>
+                <option value="33" selected>33</option>
+                <option value="49">49</option>
+                <option value="65">65</option>
+                <option value="97">97</option>
+                <option value="113">113</option>
+                <option value="145">145</option>
+                <option value="181">181</option>
             </select>
         </div>
     `;

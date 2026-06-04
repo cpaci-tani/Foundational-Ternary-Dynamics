@@ -23,6 +23,9 @@ import {
     computeKineticEnergyFrame,
     computeFisherFrame,
     computeCoherenceFrame,
+    computeStateFieldFrame,
+    computeLatencyFrame,
+    computeGaussResidualFrame,
 } from './overlay-frames.js';
 import {
     computeStreamlineParams,
@@ -65,7 +68,7 @@ export function sampleFieldState(fieldCapability, flags, stride, acScale0) {
         sampled.helicity = fieldCapability.getScale0FieldSamples({ kind: 'helicity', stride });
     if (flags.showKretschmann)
         sampled.kretschmann = fieldCapability.getScale0FieldSamples({ kind: 'kretschmann', stride });
-    if (flags.showHorizon)
+    if (flags.showHorizon || flags.showLatency)
         sampled.latency = fieldCapability.getScale0FieldSamples({ kind: 'latency', stride });
     if (flags.showFisher)
         sampled.fisher = fieldCapability.getScale0FieldSamples({ kind: 'fisher', stride });
@@ -76,6 +79,12 @@ export function sampleFieldState(fieldCapability, flags, stride, acScale0) {
     // weak overlay is active.
     if (flags.showForceWeak)
         sampled.curlJ = fieldCapability.getScale0FieldSamples({ kind: 'curlJ', stride });
+    // State field s is sparse (only manifested voxels) — sample at stride 1 so
+    // the ternary pattern isn't decimated, regardless of the sweep stride.
+    if (flags.showStateField)
+        sampled.state = fieldCapability.getScale0FieldSamples({ kind: 'state', stride: 1 });
+    if (flags.showGaussResidual)
+        sampled.gaussResidual = fieldCapability.getScale0FieldSamples({ kind: 'gaussResidual', stride: 1 });
     return sampled;
 }
 
@@ -263,7 +272,7 @@ export function buildForceOverlayData(state, fieldCapability, sampled, latticeSi
     // to stride=1 at small lattices so every voxel is caught regardless of
     // the particle-parity pattern; keep the field stride where it is so E/B
     // streamlines stay cheap.
-    const forceStride = latticeSize <= 32 ? 1 : Math.max(1, Math.min(4, Math.floor(stride / 2) || 1));
+    const forceStride = latticeSize <= 33 ? 1 : Math.max(1, Math.min(4, Math.floor(stride / 2) || 1));
 
     const items = [];
     if (state.fieldFlags.showForceEM) {
@@ -607,6 +616,9 @@ const SCALAR_JOBS = [
     ['showKineticEnergy',     (s, ctx, state) => computeKineticEnergyFrame(ctx, state),                               (va, v) => va.applyKineticEnergy(v)],
     ['showFisher',            (s, ctx, state) => computeFisherFrame(s, state),                                        (va, v) => va.applyFisher(v)],
     ['showCoherence',         (s, ctx, state) => computeCoherenceFrame(s, state),                                     (va, v) => va.applyCoherence(v)],
+    ['showStateField',        (s, ctx, state) => computeStateFieldFrame(s, state),                                    (va, v) => va.applyStateField(v)],
+    ['showLatency',           (s, ctx, state) => computeLatencyFrame(s, state),                                       (va, v) => va.applyLatency(v)],
+    ['showGaussResidual',     (s, ctx, state) => computeGaussResidualFrame(s, state),                                 (va, v) => va.applyGaussResidual(v)],
 ];
 
 // Force-flow type table, allocated ONCE at module load. Filtered into the
@@ -925,7 +937,7 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
 
 export function updateFieldOverlays(ctx, state, viewportAdapter) {
     state.fieldFrame += 1;
-    const latticeSize = ctx.bridge.latticeSize || 32;
+    const latticeSize = ctx.bridge.latticeSize || 33;
     const fieldThrottle = latticeSize > 96 ? 12 : (latticeSize > 48 ? 6 : 3);
     const sched = ensureOverlaySched(state);
 

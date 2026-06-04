@@ -35,6 +35,11 @@ export const FIELD_TOGGLE_BINDINGS = [
     ['toggle-kinetic-energy',      'showKineticEnergy'],
     ['toggle-fisher',              'showFisher'],
     ['toggle-coherence',           'showCoherence'],
+    // New substrate overlays (2026-06-03)
+    ['toggle-state-field',         'showStateField'],
+    ['toggle-latency',             'showLatency'],
+    ['toggle-gauss-residual',      'showGaussResidual'],
+    ['toggle-moore-decomp',        'showMooreDecomp'],
 ];
 
 export const FORCE_STYLE_VALUES = ['arrows', 'heatmap', 'flow', 'glyphs'];

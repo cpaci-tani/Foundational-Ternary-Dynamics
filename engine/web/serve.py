@@ -34,6 +34,15 @@ class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
         self.send_header("Pragma", "no-cache")
         self.send_header("Expires", "0")
+        # Cross-origin isolation → unlocks SharedArrayBuffer for the Scale-0
+        # physics Web Worker (zero-copy field sharing). COOP+COEP make the page
+        # crossOriginIsolated; CORP:same-origin lets every same-origin asset
+        # (JS modules, the WASM binary, the worker) satisfy COEP require-corp.
+        # All dashboard assets are same-origin, so nothing is blocked. If a
+        # cross-origin (CDN) asset is ever added it must send its own CORP/CORS.
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
+        self.send_header("Cross-Origin-Resource-Policy", "same-origin")
         super().end_headers()
 
 
