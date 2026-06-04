@@ -1,5 +1,10 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import { gotoAndReady } from './_helpers.js';
+
+async function gotoPanelMount(page) {
+    await gotoAndReady(page, { timeout: 30_000 });
+}
 
 test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
@@ -9,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('every panel descriptor exposes a unicode icon glyph', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     const report = await page.evaluate(async () => {
@@ -25,7 +30,7 @@ test('every panel descriptor exposes a unicode icon glyph', async ({ page }) => 
 });
 
 test('tab bar renders icons alongside labels', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     const tabs = await page.$$eval('#tab-bar .tab', (els) => els.map((el) => ({
@@ -45,7 +50,7 @@ test('html[data-panel-mount] is set before first paint and defaults to left on d
     // Desktop Chrome viewport is 1280px (>= 1024 side-mount minimum), so the
     // new 'left' default resolves to 'left'. The one-time migration (v2) clears
     // any stale stored mount so the new default applies; the version key is set.
-    await page.goto('/');
+    await gotoPanelMount(page);
     const state = await page.evaluate(() => ({
         mount: document.documentElement.dataset.panelMount,
         version: localStorage.getItem('ftd.panel.mount.version'),
@@ -56,13 +61,13 @@ test('html[data-panel-mount] is set before first paint and defaults to left on d
 
 test('side-mount default falls back to bottom-sheet on a narrow viewport', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/');
+    await gotoPanelMount(page);
     const mount = await page.evaluate(() => document.documentElement.dataset.panelMount);
     expect(mount).toBe('bottom'); // left default is width-gated to >= 1024px
 });
 
 test('panel-mount state module exposes read/write helpers', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     const api = await page.evaluate(async () => {
         const mod = await import('/js/ui/shell/panel-mount-state.js');
         return {
@@ -77,7 +82,7 @@ test('panel-mount state module exposes read/write helpers', async ({ page }) => 
 });
 
 test('writePanelMount persists to localStorage and updates attribute', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     const after = await page.evaluate(async () => {
         const { writePanelMount } = await import('/js/ui/shell/panel-mount-state.js');
         writePanelMount('left');
@@ -93,7 +98,7 @@ test('writePanelMount persists to localStorage and updates attribute', async ({ 
 });
 
 test('bottom-mount panel-area keeps absolute centering layout', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     // The default mount is now 'left'; switching to 'bottom' needs a frame for
     // layout to settle (the translateX(-50%) centering is width-dependent, and
     // reading mid-transition yields the identity matrix). Match the sibling
@@ -116,7 +121,7 @@ test('bottom-mount panel-area keeps absolute centering layout', async ({ page })
 });
 
 test('left-mount panel-area loses the centering transform', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.evaluate(() => { document.documentElement.dataset.panelMount = 'left'; });
     await page.waitForTimeout(50);
 
@@ -137,7 +142,7 @@ test('left-mount panel-area loses the centering transform', async ({ page }) => 
 });
 
 test('left mount docks the panel to the left edge with viewport-safe height', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(600);
 
     const box = await page.evaluate(async () => {
@@ -164,7 +169,7 @@ test('left mount docks the panel to the left edge with viewport-safe height', as
 });
 
 test('right mount docks the panel to the right edge', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(600);
 
     const box = await page.evaluate(async () => {
@@ -186,7 +191,7 @@ test('right mount docks the panel to the right edge', async ({ page }) => {
 });
 
 test('viewport stays full-bleed in every mount state', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(600);
 
     const rects = await page.evaluate(async () => {
@@ -209,7 +214,7 @@ test('viewport stays full-bleed in every mount state', async ({ page }) => {
 });
 
 test('mount toggle renders three buttons with aria-pressed reflecting current mount', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     const snapshot = await page.evaluate(() => {
@@ -228,7 +233,7 @@ test('mount toggle renders three buttons with aria-pressed reflecting current mo
 });
 
 test('clicking a toggle button switches the mount and persists it', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     // Click via DOM (bypasses any overlay that may still be fading out)
@@ -248,7 +253,7 @@ test('clicking a toggle button switches the mount and persists it', async ({ pag
 });
 
 test('keyboard shortcuts change the mount', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     await page.keyboard.press('Control+Shift+ArrowLeft');
@@ -264,7 +269,7 @@ test('keyboard shortcuts change the mount', async ({ page }) => {
 });
 
 test('side-mount collapse hides panel-area but keeps tab rail visible', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     // Set panel mount to left
@@ -301,7 +306,7 @@ test('side-mount collapse hides panel-area but keeps tab rail visible', async ({
 });
 
 test('bottom mount sets both safe-edge vars to 0px', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     const edges = await page.evaluate(async () => {
@@ -322,7 +327,7 @@ test('bottom mount sets both safe-edge vars to 0px', async ({ page }) => {
 });
 
 test('left mount sets a positive viewport-safe-left and zero right', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     const edges = await page.evaluate(async () => {
@@ -343,7 +348,7 @@ test('left mount sets a positive viewport-safe-left and zero right', async ({ pa
 });
 
 test('right mount sets a positive viewport-safe-right and zero left', async ({ page }) => {
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     const edges = await page.evaluate(async () => {
@@ -365,7 +370,7 @@ test('right mount sets a positive viewport-safe-right and zero left', async ({ p
 
 test('narrow viewport (<900px) snaps side mount to bottom without clearing localStorage', async ({ page }) => {
     await page.setViewportSize({ width: 800, height: 700 });
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     const result = await page.evaluate(async () => {
@@ -390,7 +395,7 @@ test('narrow viewport (<900px) snaps side mount to bottom without clearing local
 
 test('narrow viewport disables side-mount buttons with aria-disabled', async ({ page }) => {
     await page.setViewportSize({ width: 800, height: 700 });
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     const buttons = await page.evaluate(() => {
@@ -412,7 +417,7 @@ test('narrow viewport disables side-mount buttons with aria-disabled', async ({ 
 
 test('wide viewport (>=900px) re-enables side-mount buttons', async ({ page }) => {
     await page.setViewportSize({ width: 800, height: 700 });
-    await page.goto('/');
+    await gotoPanelMount(page);
     await page.waitForTimeout(800);
 
     await page.setViewportSize({ width: 1280, height: 800 });
