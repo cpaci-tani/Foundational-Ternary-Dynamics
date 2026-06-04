@@ -1,5 +1,6 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
+import { gotoAndReady } from './_helpers.js';
 
 test.describe('Playback timeline smoke', () => {
     test.beforeEach(async ({ page }) => {
@@ -12,8 +13,8 @@ test.describe('Playback timeline smoke', () => {
     });
 
     test('play buttons render with labels and distinct classes', async ({ page }) => {
-        await page.goto('/?engine=mock');
-        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
+        await gotoAndReady(page, { path: '/?engine=mock', timeout: 30_000 });
+        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true', { timeout: 30_000 });
 
         const state = await page.evaluate(() => {
             const g = document.getElementById('btn-play');
@@ -37,8 +38,8 @@ test.describe('Playback timeline smoke', () => {
     });
 
     test('scrub bar mounts as a compact capsule without timeline elements', async ({ page }) => {
-        await page.goto('/?engine=mock');
-        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true');
+        await gotoAndReady(page, { path: '/?engine=mock', timeout: 30_000 });
+        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true', { timeout: 30_000 });
 
         // Ensure panels aren't collapsed — the scrub bar hides in that state.
         await page.evaluate(() => {
