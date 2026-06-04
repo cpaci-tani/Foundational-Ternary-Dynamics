@@ -18,7 +18,7 @@
 export async function gotoAndReady(page, opts = {}) {
     const path = opts.path ?? '/';
     const timeout = opts.timeout ?? 15_000;
-    await page.goto(path);
+    await page.goto(path, { waitUntil: 'domcontentloaded', timeout: Math.max(timeout, 60_000) });
     await page.waitForFunction(() => !!window._ftdBridge, { timeout });
 }
 
