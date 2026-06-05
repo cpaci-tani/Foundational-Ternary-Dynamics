@@ -32,8 +32,8 @@ test.describe('Playback timeline smoke', () => {
             speedNudges:  document.querySelectorAll('[data-speed-nudge]').length,
             speedInput:   !!document.getElementById('ticks-per-frame'),
             speedDisplay: !!document.getElementById('tpf-display'),
-            timeBadge:    document.querySelector('.scrub-bar-time')?.textContent ?? '',
-            labelCount:   document.querySelectorAll('.scrub-bar .tb-btn-label').length,
+            timeBadge:    document.querySelector('.play-bar-time')?.textContent ?? '',
+            labelCount:   document.querySelectorAll('.play-bar .tb-btn-label').length,
         }));
         expect(state.globalExists).toBe(true);
         expect(state.localExists).toBe(false);
@@ -45,11 +45,11 @@ test.describe('Playback timeline smoke', () => {
         expect(state.labelCount).toBe(0);
     });
 
-    test('scrub bar mounts as a compact capsule without timeline elements', async ({ page }) => {
+    test('play bar mounts as a compact capsule without timeline elements', async ({ page }) => {
         await gotoAndReady(page, { path: '/?engine=mock', timeout: 30_000 });
         await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true', { timeout: 30_000 });
 
-        // Ensure panels aren't collapsed — the scrub bar hides in that state.
+        // Ensure panels aren't collapsed — the play bar hides in that state.
         await page.evaluate(() => {
             const app = document.getElementById('app');
             if (app && app.classList.contains('panels-collapsed')) {
@@ -58,11 +58,11 @@ test.describe('Playback timeline smoke', () => {
         });
 
         const report = await page.evaluate(() => {
-            const bar    = document.getElementById('scrub-bar');
-            const strip  = bar?.querySelector('.scrub-bar-strip');
-            const zones  = bar?.querySelector('.scrub-bar-zones');
-            const render = bar?.querySelector('.scrub-bar-render-btn');
-            const ph     = bar?.querySelector('.scrub-bar-playhead');
+            const bar    = document.getElementById('play-bar');
+            const strip  = bar?.querySelector('.play-bar-strip');
+            const zones  = bar?.querySelector('.play-bar-zones');
+            const render = bar?.querySelector('.play-bar-render-btn');
+            const ph     = bar?.querySelector('.play-bar-playhead');
             return {
                 barMounted: !!bar,
                 hasStrip: !!strip,
@@ -128,10 +128,10 @@ test.describe('Playback timeline smoke', () => {
         await expect.poll(() => activeScale0Tick(page), { timeout: 5_000 }).toBeGreaterThan(before);
         const afterMainStep = await activeScale0Tick(page);
 
-        await page.locator('.scrub-bar-settings').click();
+        await page.locator('.play-bar-settings').click();
         await page.locator('[data-step-by="10"]').click();
         await expect.poll(() => activeScale0Tick(page), { timeout: 5_000 }).toBeGreaterThanOrEqual(afterMainStep + 10);
 
-        await expect(page.locator('.scrub-bar-time')).toContainText(/^T /);
+        await expect(page.locator('.play-bar-time')).toContainText(/^T /);
     });
 });

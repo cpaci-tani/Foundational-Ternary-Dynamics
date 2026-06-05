@@ -22,8 +22,7 @@ Scale0.exitScale0();                 // tear down
 
 Plus: `getFluxMock`, `setLatticeNeedsUpload`, `setForceStyle`,
 `setFieldToggle`, `getCurrentScenarioId`, `handleShortcutKey`,
-`shouldUseFluxMock`, render-pause/resume, scrub/timeline controls,
-memory-budget reset.
+`shouldUseFluxMock`.
 
 ## Internal structure (3-folder package convention; see ADR-0004)
 
@@ -36,7 +35,6 @@ memory-budget reset.
 | `viewport-adapter.js` | Bridge to the Three.js renderer |
 | `scenario-registry.js` | Catalog + dropdown population |
 | `pedagogy.js` | Educational walkthroughs |
-| `timeline-*` | Playback/scrub infrastructure |
 
 ## Dependencies
 

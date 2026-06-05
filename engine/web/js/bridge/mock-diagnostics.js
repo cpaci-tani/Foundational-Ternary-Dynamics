@@ -13,9 +13,8 @@
  *                        AND of `_fluxMag[]` (piggyback — saves a second
  *                        full-lattice sqrt loop). Reads + mutates the
  *                        MockBridge instance so cache invalidation from
- *                        the bridge side (reset / setScale0Tick /
- *                        setScale0FluxBuffer / setScale0WaveBuffer) stays
- *                        authoritative.
+ *                        the bridge side (reset / per-tick advance /
+ *                        flux-wave injection mutators) stays authoritative.
  *
  * Extracted from `bridge-init.js` as Wave 1 ticket 3 of the large-file
  * refactor (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). The extraction is

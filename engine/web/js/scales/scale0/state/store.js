@@ -80,10 +80,6 @@ const state = {
     chiralValues: null,
     weakValues: null,
     weakVectors: null,
-    // When the user is dragging the scrub thumb we freeze physics: sim ticks
-    // would otherwise overwrite the snapshot we just loaded. Flipped true by
-    // hydrateToTick and back to false by resumeLive (onScrubEnd).
-    scrubbing: false,
 };
 
 export function getScale0State() {

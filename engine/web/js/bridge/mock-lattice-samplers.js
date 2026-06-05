@@ -16,8 +16,8 @@
  * because `state` is the live MockBridge instance (not a destructured
  * copy). Writes to `state._latencyProxy` + `state._latencyProxyTick`
  * performed by `buildLatencyProxy()` below propagate back to MockBridge,
- * and MockBridge's existing invalidation sites (`reset`, `setScale0Tick`,
- * `setScale0FluxBuffer`, `setScale0WaveBuffer`) continue to work unchanged.
+ * and MockBridge's existing invalidation sites (`reset`, the per-tick
+ * advance, flux/wave injection mutators) continue to work unchanged.
  *
  * STATE CONTRACT — `state` must expose (all live references):
  *   Read:
@@ -394,9 +394,9 @@ export function createLatticeSamplers(state) {
      *
      * Caching: writes `state._latencyProxy` + `state._latencyProxyTick`
      * through the live state reference. MockBridge's existing cache
-     * invalidation sites (reset / setScale0Tick / setScale0FluxBuffer /
-     * setScale0WaveBuffer) still apply because they mutate the same
-     * fields this helper reads/writes.
+     * invalidation sites (reset / per-tick advance / flux-wave injection
+     * mutators) still apply because they mutate the same fields this
+     * helper reads/writes.
      */
     function buildLatencyProxy() {
         if (!state._fluxJ) return null;

@@ -5,16 +5,6 @@
  * - Scale-specific field/visualization toggles
  * - Universal axes/grid controls
  * - Bottom bar environment + boundary selectors
- *
- * Top-offset strategy:
- * Chrome's compositor freezes the rendered position of elements inside a WebGL
- * canvas sibling (the Three.js canvas promotes adjacent elements to GPU layers).
- * CSS custom-property changes and even inline style overrides on already-inserted
- * elements are silently ignored.  The only reliable fix is to:
- *   1. Set a concrete px `style.top` on each element BEFORE appending it so the
- *      layer is created at the correct position from the start.
- *   2. For subsequent toolbar-height changes (resize observer), remove the element
- *      and re-append it — this destroys and recreates the compositor layer.
  */
 
 import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js';
