@@ -47,35 +47,17 @@ function buildPanel() {
     root.id = PANEL_ID;
     // chart-card class enables shared fullscreen portal styling
     root.className = 'scale0-only conservation-micropanel chart-card';
-    root.style.cssText = `
-        position: absolute;
-        top: 80px;                 /* clears the toolbar */
-        left: 12px;
-        width: min(220px, calc(100vw - 20px));
-        min-height: 156px;
-        z-index: 60;
-        padding: 10px 12px;
-        background: rgba(8, 12, 20, 0.88);
-        border: 1px solid var(--border-light, rgba(255,255,255,0.10));
-        border-radius: 6px;
-        backdrop-filter: blur(6px);
-        font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-        font-size: 12px;
-        color: var(--text-primary);
-        user-select: none;
-        transition: background 180ms ease;
-    `;
+        root.className = 'scale0-only conservation-micropanel chart-card';
     root.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:6px;">
-            <span style="font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;font-size:11px;flex:1;">CONSERVATION</span>
-            <span id="${PANEL_ID}-status" style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);">live</span>
-            <button class="chart-card-expand" type="button" title="Expand to fullscreen history"
-                aria-label="Expand conservation history"
-                style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:14px;padding:0 2px;line-height:1;">⛶</button>
+        <div class="cons-header">
+            <span class="cons-title">CONSERVATION</span>
+            <span id="${PANEL_ID}-status" class="cons-status">live</span>
+            <button class="chart-card-expand cons-btn-expand" type="button" title="Expand to fullscreen history"
+                aria-label="Expand conservation history">⛶</button>
         </div>
-        <div id="${PANEL_ID}-rows" style="display:grid;grid-template-columns:24px 1fr 12px;gap:4px 6px;align-items:center;font-variant-numeric:tabular-nums;"></div>
-        <div id="${PANEL_ID}-history" class="chart-card-plot" style="display:none;margin-top:14px;"></div>
-        <div style="margin-top:6px;font-size:10px;color:var(--text-muted);opacity:0.7;text-align:center;">
+        <div id="${PANEL_ID}-rows" class="cons-rows-grid"></div>
+        <div id="${PANEL_ID}-history" class="chart-card-plot cons-history-plot"></div>
+        <div class="cons-footer">
             Δ over ${HEADLINE_WINDOW_TICKS} ticks · click ⛶ for full ${WINDOW_TICKS}-tick history
         </div>
     `;
@@ -84,9 +66,9 @@ function buildPanel() {
 
 function renderRow(label, value, color) {
     return `
-        <span style="color:var(--text-muted);font-family:var(--font-mono);font-size:11px;">${label}</span>
-        <span style="font-family:var(--font-mono);font-size:12px;text-align:right;color:${color};white-space:pre;">${formatExp(value)}</span>
-        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};box-shadow:inset 0 0 0 1px rgba(0,0,0,0.4);"></span>
+        <span class="cons-row-label">${label}</span>
+        <span class="cons-row-val" style="color:${color};">${formatExp(value)}</span>
+        <span class="cons-row-dot" style="background:${color};"></span>
     `;
 }
 
@@ -127,7 +109,7 @@ export function mountConservationMicropanel(host, getBridge) {
     /** Render the 4 SVG sparklines used in the fullscreen modal. */
     function renderHistorySparklines() {
         if (!history.length) {
-            historyEl.innerHTML = '<div style="color:var(--text-muted);font-style:italic;font-size:12px;text-align:center;padding:20px;">Collecting history…</div>';
+            historyEl.innerHTML = '<div class="cons-history-empty">Collecting history…</div>';
             return;
         }
         const tBase = history[0].tick;
@@ -138,8 +120,8 @@ export function mountConservationMicropanel(host, getBridge) {
             { label: 'ΔQ', extract: (h) => h.totals.Q - history[0].totals.Q },
         ];
         const W = 720, ROW_H = 90;
-        let html = `<div style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);">`;
-        html += `<div style="margin-bottom:8px;color:var(--text-primary);font-size:14px;">Conservation drift — last ${history[history.length-1].tick - tBase} ticks (window ${WINDOW_TICKS})</div>`;
+        let html = `<div class="cons-history-container">`;
+        html += `<div class="cons-history-title">Conservation drift — last ${history[history.length-1].tick - tBase} ticks (window ${WINDOW_TICKS})</div>`;
         for (const s of series) {
             const values = history.map(s.extract);
             const absVals = values.map(Math.abs);
@@ -159,7 +141,7 @@ export function mountConservationMicropanel(host, getBridge) {
                 const y = (margin.top + fy * innerH).toFixed(1);
                 path += (i === 0 ? 'M' : 'L') + x + ',' + y;
             }
-            html += `<svg viewBox="0 0 ${W} ${ROW_H}" style="width:100%;height:auto;display:block;margin-bottom:6px;">`;
+            html += `<svg viewBox="0 0 ${W} ${ROW_H}" class="cons-history-svg">`;
             html += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="0.5"/>`;
             html += `<text x="8" y="${margin.top + innerH/2 + 4}" fill="var(--text-muted)" font-size="13" font-weight="600">${s.label}</text>`;
             html += `<text x="${margin.left + innerW + 8}" y="${margin.top + 8}" fill="${status}" font-size="11" font-family="var(--font-mono)">${formatExp(peakAbs)}</text>`;
@@ -245,13 +227,8 @@ export function mountConservationMicropanel(host, getBridge) {
         };
     }
 
-    // Hover affordance
-    panel.addEventListener('mouseenter', () => {
-        panel.style.background = 'rgba(8, 12, 20, 0.95)';
-    });
-    panel.addEventListener('mouseleave', () => {
-        panel.style.background = 'rgba(8, 12, 20, 0.88)';
-    });
+    // Hover affordance handled by CSS :hover
+
 
     const api = {
         update,

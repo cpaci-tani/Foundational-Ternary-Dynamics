@@ -108,22 +108,26 @@ function buildPanel(dockMode = false) {
         `;
     }
     const trailingBtn = dockMode
-        ? `<button id="${PANEL_ID}-expand" type="button" class="chart-card-expand"
-                style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:16px;padding:2px 6px;"
-                title="Expand to full-screen modal">⛶</button>`
-        : `<button id="${PANEL_ID}-collapse" type="button"
-                style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:16px;padding:2px 6px;"
-                title="Collapse">▴</button>`;
+        ? `<button id="${PANEL_ID}-expand" type="button" class="p1-header-btn" title="Expand to full-screen modal">⛶</button>`
+        : `<button id="${PANEL_ID}-collapse" type="button" class="p1-header-btn" title="Collapse">▴</button>`;
 
-    // Card style + title style are imported from _card-helpers.js (single
-    // source of truth across all Scale 0 panels). Body content uses the
-    // helpers' return values directly via interpolation.
-
-    root.innerHTML = `
-        <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-            <span style="font-weight:600;color:var(--accent);font-size:15px;letter-spacing:0.02em;">P1 Observables (live)</span>
+    const headerHTML = dockMode ? `
+        <header class="p1-panel-header">
+            <span class="p1-panel-title">Observables</span>
             ${trailingBtn}
         </header>
+    ` : `
+        <header class="p1-panel-header">
+            <span class="p1-panel-title">P1 Observables</span>
+            <div style="display:flex;gap:4px;">
+                <button class="p1-header-btn p1-btn-reset" title="Reset all simulations">↺</button>
+                <button class="p1-header-btn p1-btn-close" title="Close Panel">×</button>
+            </div>
+        </header>
+    `;
+
+    root.innerHTML = `
+        ${headerHTML}
         <div id="${PANEL_ID}-body">
             <section data-section="coulomb" style="${cardStyle(360)}">
                 <div style="${titleStyle()}">Coulomb V(r) probe</div>
@@ -135,19 +139,19 @@ function buildPanel(dockMode = false) {
             </section>
             <section data-section="hydrogen" style="${cardStyle(120)}">
                 <div style="${titleStyle()}">Hydrogen Spectrum</div>
-                <div id="${PANEL_ID}-hydrogen-body" style="font-style:italic;color:var(--text-muted);">
+                <div id="${PANEL_ID}-hydrogen-body" class="p1-empty-state">
                     Load <code>s0-seed-hydrogen</code> to see the predicted level diagram.
                 </div>
             </section>
             <section data-section="bell" style="${cardStyle(170)}">
                 <div style="${titleStyle()}">Bell CHSH</div>
-                <div id="${PANEL_ID}-bell-body" style="font-style:italic;color:var(--text-muted);">
+                <div id="${PANEL_ID}-bell-body" class="p1-empty-state">
                     Load <code>quantum-entangle</code> to interact with the CHSH correlator.
                 </div>
             </section>
             <section data-section="gravity" style="${cardStyle(140)}">
                 <div style="${titleStyle()}">Gravitational time dilation</div>
-                <div id="${PANEL_ID}-gravity-body" style="font-style:italic;color:var(--text-muted);">
+                <div id="${PANEL_ID}-gravity-body" class="p1-empty-state">
                     Load <code>s0-seed-schwarzschild</code> to see proper-time ratio.
                 </div>
             </section>
@@ -180,25 +184,10 @@ function buildPanel(dockMode = false) {
 
 function expandPanelToModal(panel, host, onClose) {
     const scrim = document.createElement('div');
-    Object.assign(scrim.style, {
-        position: 'fixed', inset: '0',
-        background: 'rgba(0, 0, 0, 0.55)',
-        zIndex: '199',
-        backdropFilter: 'blur(2px)',
-    });
+    scrim.className = 's0-expand-scrim';
     const modal = document.createElement('div');
-    Object.assign(modal.style, {
-        position: 'fixed', inset: '4vh 4vw',
-        maxWidth: '1200px',          // P1 has narrower content; cap < flux-slice's 1600
-        maxHeight: '1100px',
-        margin: 'auto',
-        zIndex: '200', overflow: 'auto',
-        background: 'rgba(8, 12, 20, 0.96)',
-        border: '1px solid rgba(120, 200, 255, 0.35)',
-        borderRadius: '8px',
-        padding: '12px 14px',
-        boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
-    });
+    modal.className = 's0-expand-modal s0-modal-narrow';
+
     let closed = false;
     const close = () => {
         if (closed) return;
@@ -217,12 +206,8 @@ function expandPanelToModal(panel, host, onClose) {
 
     const closeBtn = document.createElement('button');
     closeBtn.type = 'button';
+    closeBtn.className = 's0-expand-close';
     closeBtn.textContent = '×';
-    Object.assign(closeBtn.style, {
-        position: 'absolute', top: '8px', right: '14px',
-        background: 'none', border: 'none', color: 'var(--text-secondary, #aaa)',
-        fontSize: '24px', cursor: 'pointer', zIndex: '210',
-    });
     closeBtn.setAttribute('aria-label', 'Close expanded P1 observables');
     closeBtn.addEventListener('click', close);
 
@@ -459,7 +444,7 @@ function renderCoulombProbe(container, samples) {
     const xpx = (r) => margin.left + ((r - rmin) / (rmax - rmin || 1)) * innerW;
     const ypx = (v) => margin.top + (1 - (v - vmin) / vrange) * innerH;
 
-    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">`;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" class="p1-svg-plot">`;
     // Plot-area background — gives the chart a stable visual frame even
     // when there's no data yet.
     svg += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="1"/>`;
@@ -493,7 +478,7 @@ function renderCoulombProbe(container, samples) {
         // Empty state: centered hint inside the plot area.
         const cx = margin.left + innerW / 2;
         const cy = margin.top + innerH / 2;
-        svg += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="11" font-style="italic">Waiting for ≥2 opposite-charge particles…</text>`;
+        svg += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="11" class="p1-empty-state">Waiting for ≥2 opposite-charge particles…</text>`;
         svg += `<text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="var(--text-muted)" font-size="10" opacity="0.7">Try s0-seed-hydrogen or flux-screening</text>`;
     }
 
@@ -540,7 +525,7 @@ function renderCoulombEngineProbe(container, samples) {
     const xpx = (r) => margin.left + ((r - rmin) / (rmax - rmin || 1)) * innerW;
     const ypx = (v) => margin.top + (1 - (v - vmin) / (vmax - vmin || 1)) * innerH;
 
-    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">`;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" class="p1-svg-plot">`;
     svg += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="1"/>`;
     // Y-axis tick labels
     svg += `<text x="${margin.left - 6}" y="${margin.top + 4}" text-anchor="end" fill="var(--text-muted)" font-size="10" font-family="var(--font-mono)">${hasData ? vmax.toExponential(1) : ''}</text>`;
@@ -585,7 +570,7 @@ function renderCoulombEngineProbe(container, samples) {
     } else {
         const cx = margin.left + innerW / 2;
         const cy = margin.top + innerH / 2;
-        svg += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="11" font-style="italic">Engine field probe waiting on…</text>`;
+        svg += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" fill="var(--text-muted)" font-size="11" class="p1-empty-state">Engine field probe waiting on…</text>`;
         svg += `<text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="var(--text-muted)" font-size="10" opacity="0.7">≥2 opposite-charge particles + EM toggle on</text>`;
     }
 
@@ -628,7 +613,7 @@ function renderAnisotropyDecay(container, decayPoints) {
     const xpx = (r) => margin.left + ((r - rmin) / (rmax - rmin || 1)) * innerW;
     const ypx = (aniso) => margin.top + (1 - (aniso - amin) / (amax - amin || 1)) * innerH;
 
-    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">`;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" class="p1-svg-plot">`;
     svg += `<rect x="${margin.left}" y="${margin.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light, rgba(255,255,255,0.08))" stroke-width="1"/>`;
     
     // Y-axis tick labels
@@ -716,35 +701,34 @@ function renderBellSection(container, angles, onAngleChange, onSetOptimal) {
     if (sAbs > TSIRELSON_BOUND - 1e-3) sLabel = 'at Tsirelson 2√2';
 
     container.innerHTML = `
-        <div style="display:grid;grid-template-columns:auto 1fr auto;gap:4px 8px;font-size:12px;align-items:center;margin-bottom:4px;">
+        <div class="p1-bell-grid">
             <label>a/π</label>
-            <input id="${PANEL_ID}-bell-a"  type="range" min="-1" max="1" step="0.01" value="${angles.a}"  style="width:100%;">
-            <span id="${PANEL_ID}-bell-a-val"  style="color:var(--accent);font-variant-numeric:tabular-nums;">${angles.a.toFixed(2)}</span>
+            <input id="${PANEL_ID}-bell-a"  type="range" min="-1" max="1" step="0.01" value="${angles.a}"  class="p1-bell-slider">
+            <span id="${PANEL_ID}-bell-a-val"  class="p1-bell-val">${angles.a.toFixed(2)}</span>
             <label>a'/π</label>
-            <input id="${PANEL_ID}-bell-ap" type="range" min="-1" max="1" step="0.01" value="${angles.ap}" style="width:100%;">
-            <span id="${PANEL_ID}-bell-ap-val" style="color:var(--accent);font-variant-numeric:tabular-nums;">${angles.ap.toFixed(2)}</span>
+            <input id="${PANEL_ID}-bell-ap" type="range" min="-1" max="1" step="0.01" value="${angles.ap}" class="p1-bell-slider">
+            <span id="${PANEL_ID}-bell-ap-val" class="p1-bell-val">${angles.ap.toFixed(2)}</span>
             <label>b/π</label>
-            <input id="${PANEL_ID}-bell-b"  type="range" min="-1" max="1" step="0.01" value="${angles.b}"  style="width:100%;">
-            <span id="${PANEL_ID}-bell-b-val"  style="color:var(--accent);font-variant-numeric:tabular-nums;">${angles.b.toFixed(2)}</span>
+            <input id="${PANEL_ID}-bell-b"  type="range" min="-1" max="1" step="0.01" value="${angles.b}"  class="p1-bell-slider">
+            <span id="${PANEL_ID}-bell-b-val"  class="p1-bell-val">${angles.b.toFixed(2)}</span>
             <label>b'/π</label>
-            <input id="${PANEL_ID}-bell-bp" type="range" min="-1" max="1" step="0.01" value="${angles.bp}" style="width:100%;">
-            <span id="${PANEL_ID}-bell-bp-val" style="color:var(--accent);font-variant-numeric:tabular-nums;">${angles.bp.toFixed(2)}</span>
+            <input id="${PANEL_ID}-bell-bp" type="range" min="-1" max="1" step="0.01" value="${angles.bp}" class="p1-bell-slider">
+            <span id="${PANEL_ID}-bell-bp-val" class="p1-bell-val">${angles.bp.toFixed(2)}</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <div style="font-size:12px;color:var(--text-muted);">
+        <div class="p1-bell-flex">
+            <div class="p1-bell-stats">
                 E(a,b)=${chsh.Eab.toFixed(3)}  E(a,b')=${chsh.Eabp.toFixed(3)}<br>
                 E(a',b)=${chsh.Eapb.toFixed(3)}  E(a',b')=${chsh.Eapbp.toFixed(3)}
             </div>
-            <button id="${PANEL_ID}-bell-optimal" type="button"
-                style="background:rgba(120,200,255,0.15);border:1px solid rgba(120,200,255,0.3);color:var(--accent);padding:2px 6px;cursor:pointer;font-size:12px;border-radius:3px;">
+            <button id="${PANEL_ID}-bell-optimal" type="button" class="p1-btn-optimal">
                 set optimal
             </button>
         </div>
-        <div style="font-size:13px;line-height:1.4;">
-            S = <span style="color:${sColor};font-weight:bold;">${chsh.S.toFixed(4)}</span>
-            <span style="opacity:0.6;font-size:12px;">(|S| = ${sAbs.toFixed(4)}, ${sLabel}; classical ≤ 2; Tsirelson = 2√2 ≈ 2.8284)</span>
+        <div class="p1-bell-result">
+            S = <span class="p1-bell-result-val" style="color:${sColor};">${chsh.S.toFixed(4)}</span>
+            <span class="p1-bell-desc">(|S| = ${sAbs.toFixed(4)}, ${sLabel}; classical ≤ 2; Tsirelson = 2√2 ≈ 2.8284)</span>
         </div>
-        <div style="margin-top:3px;font-size:12px;color:var(--text-muted);opacity:0.7;line-height:1.4;">
+        <div class="p1-bell-footer">
             Singlet correlation E(a,b)=cos(a-b) per FTD's QM emergence (DERIV_QM_FROM_LATTICE / DERIV_SINGLET_FROM_VOID_EVENT). Lattice produces this when the entangled flux pair is measured at given angles; the analytic prediction is shown live. test_bell_aggregate.cpp validates S = 2√2 to 1e-12 via the same formula. <b>Lattice-statistical aggregation across many shots is follow-up.</b>
         </div>
     `;
@@ -806,7 +790,7 @@ function probeTimeDilation(bridge) {
 
 function renderGravitySection(container, probe, tickPhase) {
     if (!probe) {
-        container.innerHTML = `<div style="font-style:italic;color:var(--text-muted);">Latency proxy unavailable on this bridge.</div>`;
+        container.innerHTML = `<div class="p1-empty-state">Latency proxy unavailable on this bridge.</div>`;
         return;
     }
     const { latCenter, latCorner, tauCenter, tauCorner, ratio, latticeSize } = probe;
@@ -821,9 +805,9 @@ function renderGravitySection(container, probe, tickPhase) {
     const wellY = 22 + 14 * Math.sin(angCenter - Math.PI / 2);
 
     container.innerHTML = `
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;color:var(--text-muted);margin-bottom:4px;">
-            <div style="text-align:center;">
-                <svg viewBox="0 0 36 44" style="width:40px;height:48px;">
+        <div class="p1-gravity-grid">
+            <div class="p1-gravity-col">
+                <svg viewBox="0 0 36 44" class="p1-gravity-clock">
                     <circle cx="18" cy="22" r="16" fill="none" stroke="var(--text-muted,#666)" stroke-width="1"/>
                     <line x1="18" y1="22" x2="${farX.toFixed(2)}" y2="${farY.toFixed(2)}" stroke="#6fc" stroke-width="1.5"/>
                     <circle cx="18" cy="22" r="1.2" fill="#6fc"/>
@@ -831,8 +815,8 @@ function renderGravitySection(container, probe, tickPhase) {
                 <div>far (corner)</div>
                 <div style="color:var(--accent);">L=${latCorner.toFixed(3)}<br>τ′=${tauCorner.toFixed(3)}</div>
             </div>
-            <div style="text-align:center;">
-                <svg viewBox="0 0 36 44" style="width:40px;height:48px;">
+            <div class="p1-gravity-col">
+                <svg viewBox="0 0 36 44" class="p1-gravity-clock">
                     <circle cx="18" cy="22" r="16" fill="none" stroke="var(--text-muted,#666)" stroke-width="1"/>
                     <line x1="18" y1="22" x2="${wellX.toFixed(2)}" y2="${wellY.toFixed(2)}" stroke="#fc6" stroke-width="1.5"/>
                     <circle cx="18" cy="22" r="1.2" fill="#fc6"/>
@@ -841,11 +825,11 @@ function renderGravitySection(container, probe, tickPhase) {
                 <div style="color:#fc6;">L=${latCenter.toFixed(3)}<br>τ′=${tauCenter.toFixed(3)}</div>
             </div>
         </div>
-        <div style="font-size:13px;line-height:1.4;">
-            τ<sub>well</sub> / τ<sub>far</sub> = <span style="color:var(--accent);font-weight:bold;">${ratio.toExponential(3)}</span>
-            <span style="opacity:0.6;font-size:12px;">  (clock at well runs ${(ratio < 1 ? `${(1 / ratio).toFixed(2)}× slower` : 'as fast')} than far clock)</span>
+        <div class="p1-gravity-stats">
+            τ<sub>well</sub> / τ<sub>far</sub> = <span class="p1-gravity-ratio">${ratio.toExponential(3)}</span>
+            <span class="p1-bell-desc">  (clock at well runs ${(ratio < 1 ? `${(1 / ratio).toFixed(2)}× slower` : 'as fast')} than far clock)</span>
         </div>
-        <div style="margin-top:3px;font-size:12px;color:var(--text-muted);opacity:0.7;line-height:1.4;">
+        <div class="p1-gravity-footer">
             Lattice latency proxy L(x) ∈ [0,1] modifies effective tick rate. Proper-time rate τ′ ≈ √(1−L), analogous to GR's √(1 − 2GM/(rc²)). L=32³ lattice. test_einstein_equations.cpp validates time dilation to 0.004% match against GR after the latency-fix patch (April 13).
         </div>
     `;
@@ -871,30 +855,30 @@ function renderG2Section(container) {
     const relErrTwo = Math.abs(a_e_predicted - A_E_CODATA) / A_E_CODATA * 100;
 
     container.innerHTML = `
-        <div style="font-size:12px;line-height:1.5;">
-            <div>α (FTD ontic chain) = <span style="color:var(--accent);">${ALPHA.toExponential(6)}</span></div>
-            <div>1/α                  = <span style="color:var(--accent);">${(1 / ALPHA).toFixed(6)}</span></div>
-            <div style="margin-top:3px;border-top:1px solid var(--text-muted,#444);padding-top:3px;">
-                Schwinger first-order: a = α/(2π) = <span style="color:var(--accent);">${a_e_first.toExponential(5)}</span>
+        <div class="p1-g2-stats">
+            <div>α (FTD ontic chain) = <span class="p1-g2-val">${ALPHA.toExponential(6)}</span></div>
+            <div>1/α                  = <span class="p1-g2-val">${(1 / ALPHA).toFixed(6)}</span></div>
+            <div class="p1-g2-border">
+                Schwinger first-order: a = α/(2π) = <span class="p1-g2-val">${a_e_first.toExponential(5)}</span>
             </div>
-            <div>plus 2nd-order: ${SCHWINGER_C2.toFixed(4)}·(α/π)² = <span style="color:#fc6;">${a_e_two.toExponential(2)}</span></div>
-            <div>FTD prediction (1+2 loop) = <span style="color:var(--accent);">${a_e_predicted.toExponential(6)}</span></div>
-            <div style="margin-top:3px;border-top:1px solid var(--text-muted,#444);padding-top:3px;">
-                CODATA a_e = <span style="color:var(--accent);">${A_E_CODATA.toExponential(6)}</span>
-                <span style="opacity:0.7;">(electron, measured to 0.13 ppt)</span>
+            <div>plus 2nd-order: ${SCHWINGER_C2.toFixed(4)}·(α/π)² = <span class="p1-g2-val-warning">${a_e_two.toExponential(2)}</span></div>
+            <div>FTD prediction (1+2 loop) = <span class="p1-g2-val">${a_e_predicted.toExponential(6)}</span></div>
+            <div class="p1-g2-border">
+                CODATA a_e = <span class="p1-g2-val">${A_E_CODATA.toExponential(6)}</span>
+                <span class="p1-g2-desc">(electron, measured to 0.13 ppt)</span>
             </div>
-            <div>CODATA a_μ = <span style="color:var(--accent);">${A_MU_CODATA.toExponential(6)}</span>
-                <span style="opacity:0.7;">(muon — same Schwinger formula; mass-independent at QED order)</span>
+            <div>CODATA a_μ = <span class="p1-g2-val">${A_MU_CODATA.toExponential(6)}</span>
+                <span class="p1-g2-desc">(muon — same Schwinger formula; mass-independent at QED order)</span>
             </div>
             <div style="margin-top:3px;">
-                rel err (1-loop only): <span style="color:#fc6;">${relErrFirst.toFixed(3)}%</span>;
-                with 2-loop: <span style="color:var(--accent);">${relErrTwo.toFixed(3)}%</span>
+                rel err (1-loop only): <span class="p1-g2-val-warning">${relErrFirst.toFixed(3)}%</span>;
+                with 2-loop: <span class="p1-g2-val">${relErrTwo.toFixed(3)}%</span>
             </div>
         </div>
-        <div style="margin-top:4px;font-size:12px;color:var(--text-muted);opacity:0.7;line-height:1.4;">
+        <div class="p1-g2-footer">
             QED's a = α/(2π) − 0.328·(α/π)² + 1.181·(α/π)³ − ··· is mass-independent through the universal series. This display verifies the chain α (ontic) → a_lepton (Schwinger).
         </div>
-        <div id="${PANEL_ID}-g2-precession" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light, rgba(255,255,255,0.06));"></div>
+        <div id="${PANEL_ID}-g2-precession" class="p1-g2-precession-box"></div>
     `;
 }
 
@@ -913,10 +897,10 @@ function renderG2Section(container) {
 function renderG2PrecessionSubsection(container, state) {
     if (!state || state.trackedId == null) {
         container.innerHTML = `
-            <div style="font-size:13px;color:var(--text-muted);">
-                <div style="font-weight:600;color:var(--text-primary);margin-bottom:6px;">Live precession <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">[awaiting tracking]</span></div>
-                <div style="font-size:12px;line-height:1.5;">
-                    Click <button id="${PANEL_ID}-g2-track-btn" type="button" style="background:rgba(120,200,255,0.15);border:1px solid rgba(120,200,255,0.30);color:var(--accent);padding:3px 8px;cursor:pointer;font-size:11px;border-radius:3px;font-family:var(--font-sans);">Track first particle</button>
+            <div class="p1-g2-untracked">
+                <div class="p1-g2-untracked-title">Live precession <span class="p1-g2-untracked-label">[awaiting tracking]</span></div>
+                <div class="p1-g2-untracked-desc">
+                    Click <button id="${PANEL_ID}-g2-track-btn" type="button" class="p1-btn-track">Track first particle</button>
                     to mount a 3D spin arrow on the first manifested particle and read its precession rate against the Schwinger prediction.
                 </div>
             </div>
@@ -959,22 +943,21 @@ function renderG2PrecessionSubsection(container, state) {
     sparkSvg += `</svg>`;
 
     container.innerHTML = `
-        <div style="font-size:13px;color:var(--text-primary);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div class="p1-g2-tracked">
+            <div class="p1-g2-tracked-header">
                 <span style="font-weight:600;">Live precession</span>
-                <button id="${PANEL_ID}-g2-untrack-btn" type="button"
-                    style="background:none;border:1px solid var(--border-light);color:var(--text-muted);padding:2px 6px;cursor:pointer;font-size:10px;border-radius:3px;">untrack</button>
+                <button id="${PANEL_ID}-g2-untrack-btn" type="button" class="p1-btn-untrack">untrack</button>
             </div>
-            <div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:12px;font-family:var(--font-mono);font-variant-numeric:tabular-nums;color:var(--text-muted);">
-                <span>${tagBadge('M')}id</span><span style="text-align:right;color:var(--text-primary);">${trackedId}</span>
-                <span>${tagBadge('M')}position</span><span style="text-align:right;color:var(--text-primary);">(${position.x.toFixed(1)}, ${position.y.toFixed(1)}, ${position.z.toFixed(1)})</span>
-                <span>${tagBadge('D')}|B|</span><span style="text-align:right;color:var(--accent);">${formatExp(bMag)}</span>
-                <span>${tagBadge('D')}ω_predicted</span><span style="text-align:right;color:var(--accent);">${formatExp(omegaPredicted)}</span>
-                <span>${tagBadge('~M')}ω_measured</span><span style="text-align:right;color:var(--warning);">${formatExp(omegaMeasured)}</span>
-                <span>${tagBadge('M')}residual</span><span style="text-align:right;color:var(--warning);">${Number.isFinite(residualPct) ? residualPct.toFixed(1) + '%' : '—'}</span>
+            <div class="p1-g2-tracked-grid">
+                <span>${tagBadge('M')}id</span><span class="p1-g2-tracked-val">${trackedId}</span>
+                <span>${tagBadge('M')}position</span><span class="p1-g2-tracked-val">(${position.x.toFixed(1)}, ${position.y.toFixed(1)}, ${position.z.toFixed(1)})</span>
+                <span>${tagBadge('D')}|B|</span><span class="p1-g2-tracked-val-accent">${formatExp(bMag)}</span>
+                <span>${tagBadge('D')}ω_predicted</span><span class="p1-g2-tracked-val-accent">${formatExp(omegaPredicted)}</span>
+                <span>${tagBadge('~M')}ω_measured</span><span class="p1-g2-tracked-val-warning">${formatExp(omegaMeasured)}</span>
+                <span>${tagBadge('M')}residual</span><span class="p1-g2-tracked-val-warning">${Number.isFinite(residualPct) ? residualPct.toFixed(1) + '%' : '—'}</span>
             </div>
-            <div style="margin-top:8px;">${sparkSvg}</div>
-            <div style="margin-top:6px;font-size:11px;color:var(--text-muted);opacity:0.7;line-height:1.5;">
+            <div class="p1-g2-tracked-svg-box">${sparkSvg}</div>
+            <div class="p1-g2-tracked-footer">
                 ${tagBadge('D')}ω_predicted = (q·|B|/m_lepton)·(1+a_e). 3D arrow rotates at this rate. ${tagBadge('~M')}ω_measured = 0 currently — engine has no spin-precession physics yet (particle.spin is randomly initialized at manifestation, no torque-from-B). Residual slot is reserved; once engine adds spin dynamics, the [~M] tag promotes to [M].
             </div>
         </div>
@@ -1094,9 +1077,9 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             heroLine = `
                 <div style="${heroStyle()}">
                     ${tagBadge('M')}max |residual| =
-                    <span style="color:var(--warning);">${formatExp(m.maxAbsResidual)}</span>
+                    <span class="p1-coulomb-hero-warning">${formatExp(m.maxAbsResidual)}</span>
                 </div>
-                <div style="font-size:12px;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono);">
+                <div class="p1-coulomb-hero-sub">
                     ${tagBadge('M')}⟨|residual|⟩ = ${formatExp(m.meanAbsResidual)}
                 </div>
             `;
@@ -1115,10 +1098,10 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             `;
         }
         coulombBody.innerHTML = `
-            <div style="margin-bottom:6px;font-size:12px;color:var(--text-muted);min-height:18px;font-family:var(--font-mono);">${metaLine}</div>
-            <div id="${PANEL_ID}-coulomb-plot" style="min-height:220px;"></div>
-            <div style="margin-top:8px;min-height:48px;">${heroLine}</div>
-            <div style="margin-top:6px;font-size:11px;color:var(--text-muted);line-height:1.5;min-height:32px;">
+            <div class="p1-coulomb-meta">${metaLine}</div>
+            <div id="${PANEL_ID}-coulomb-plot" class="p1-coulomb-plot-box"></div>
+            <div class="p1-coulomb-hero">${heroLine}</div>
+            <div class="p1-coulomb-footer">
                 ${footerHTML}
             </div>
         `;
@@ -1183,8 +1166,8 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         let anisotropyDescContainer = anisotropyBody.querySelector(`#${PANEL_ID}-anisotropy-desc`);
         if (!anisotropyPlotContainer) {
             anisotropyBody.innerHTML = `
-                <div id="${PANEL_ID}-anisotropy-plot" style="min-height:130px;"></div>
-                <div id="${PANEL_ID}-anisotropy-desc" style="margin-top:6px;font-size:11px;color:var(--text-muted);line-height:1.45;"></div>
+                <div id="${PANEL_ID}-anisotropy-plot" class="p1-anisotropy-plot-box"></div>
+                <div id="${PANEL_ID}-anisotropy-desc" class="p1-anisotropy-desc-box"></div>
             `;
             anisotropyPlotContainer = anisotropyBody.querySelector(`#${PANEL_ID}-anisotropy-plot`);
             anisotropyDescContainer = anisotropyBody.querySelector(`#${PANEL_ID}-anisotropy-desc`);
@@ -1196,11 +1179,11 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         const sourceLabel = activeSource ? `charge ID ${activeSource.id} (${activeSource.state > 0 ? '+' : ''}${activeSource.state})` : 'grid center';
 
         anisotropyDescContainer.innerHTML = `
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-family:var(--font-mono);font-size:12px;font-variant-numeric:tabular-nums;">
+            <div class="p1-anisotropy-desc-flex">
                 <span>${tagBadge('M')}Source: ${sourceLabel}</span>
                 <span>${tagBadge('~M')}Anisotropy: ${minAniso.toFixed(2)}% (at r=8.5a)</span>
             </div>
-            <div style="opacity:0.75;line-height:1.4;">
+            <div class="p1-anisotropy-desc-sub">
                 ${tagBadge('D')} Rotational symmetry recovery O_h → SO(2) quantified via relative standard deviation σ_rel(r) = σ(r)/⟨E(r)⟩ × 100% over 16-point circular samplers. Note the power-law decay of grid discretization noise as r → ∞.
             </div>
         `;
@@ -1214,17 +1197,17 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
                 const relErr = Math.abs(ionEV - RYDBERG_EV_CODATA) / RYDBERG_EV_CODATA * 100;
                 hydrogenBody.insertAdjacentHTML(
                     'beforeend',
-                    `<div style="margin-top:4px;font-size:12px;color:var(--text-muted);line-height:1.4;">
-                        E₁ = <span style="color:var(--accent);">${E1eV.toFixed(3)} eV</span>
-                        &nbsp;|&nbsp; ionization = <span style="color:var(--accent);">${ionEV.toFixed(3)} eV</span>
+                    `<div class="p1-hydrogen-footer">
+                        E₁ = <span class="p1-hydrogen-val">${E1eV.toFixed(3)} eV</span>
+                        &nbsp;|&nbsp; ionization = <span class="p1-hydrogen-val">${ionEV.toFixed(3)} eV</span>
                         (CODATA: ${RYDBERG_EV_CODATA.toFixed(3)} eV; rel err ${relErr.toFixed(3)}%).
-                        <br><span style="opacity:0.6;">All levels follow E_n = -m_e·Z²·α²/(2n²) using FTD's α and m_e from the ontic chain. Lyman/Balmer/Paschen transitions shown.</span>
+                        <br><span class="p1-hydrogen-desc">All levels follow E_n = -m_e·Z²·α²/(2n²) using FTD's α and m_e from the ontic chain. Lyman/Balmer/Paschen transitions shown.</span>
                     </div>`,
                 );
                 hydrogenRenderedFor = scenarioId;
             }
         } else if (hydrogenRenderedFor !== null) {
-            hydrogenBody.innerHTML = '<div style="font-style:italic;color:var(--text-muted);">Load <code>s0-seed-hydrogen</code>, <code>s0-seed-helium</code>, or <code>s0-seed-2-hydrogen-atoms</code> to see the predicted level diagram.</div>';
+            hydrogenBody.innerHTML = '<div class="p1-empty-state">Load <code>s0-seed-hydrogen</code>, <code>s0-seed-helium</code>, or <code>s0-seed-2-hydrogen-atoms</code> to see the predicted level diagram.</div>';
             hydrogenRenderedFor = null;
         }
 
@@ -1237,7 +1220,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             // Don't re-render every tick — sliders own their own state and
             // re-render synchronously on input via onBellAngleChange.
         } else if (bellRenderedFor !== null) {
-            bellBody.innerHTML = '<div style="font-style:italic;color:var(--text-muted);">Load <code>quantum-entangle</code> to interact with the CHSH correlator.</div>';
+            bellBody.innerHTML = '<div class="p1-empty-state">Load <code>quantum-entangle</code> to interact with the CHSH correlator.</div>';
             bellRenderedFor = null;
         }
 
@@ -1250,7 +1233,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             renderGravitySection(gravityBody, probe, tickPhase);
             gravityRenderedFor = scenarioId;
         } else if (gravityRenderedFor !== null) {
-            gravityBody.innerHTML = '<div style="font-style:italic;color:var(--text-muted);">Load <code>s0-seed-schwarzschild</code> to see proper-time ratio.</div>';
+            gravityBody.innerHTML = '<div class="p1-empty-state">Load <code>s0-seed-schwarzschild</code> to see proper-time ratio.</div>';
             gravityRenderedFor = null;
         }
 

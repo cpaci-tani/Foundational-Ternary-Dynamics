@@ -176,7 +176,7 @@ export function renderCrossSections(container) {
     // SVG polar plot
     const W = 360, H = 200;
     const cx = W / 2, cy = H / 2 + 5, R = 75;
-    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%;font-family:var(--font-mono);font-size:8px">`;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" class="pc-svg-container sm">`;
 
     // Polar grid
     for (let r = 0.25; r <= 1; r += 0.25) {
@@ -215,10 +215,10 @@ export function renderCrossSections(container) {
     container.innerHTML = `
         <div class="card-title">Cross-Sections (from ontic chain)</div>
         ${svg}
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;font-size:10px">
-            <div>r<sub>e</sub> = <span style="color:var(--accent)">${r_e.toFixed(2)} fm</span></div>
-            <div>σ<sub>T</sub> = <span style="color:var(--accent)">${sigma_T.toFixed(0)} fm²</span></div>
-            <div>E<sub>pair</sub> = <span style="color:var(--accent)">${(E_pair * 1e3).toFixed(1)} keV</span></div>
-            <div>σ<sub>T</sub>/m² = <span style="color:var(--accent)">${(sigma_T * 1e-30).toExponential(2)}</span></div>
+        <div class="pc-grid-2">
+            <div>r<sub>e</sub> = <span class="pc-text-accent">${r_e.toFixed(2)} fm</span></div>
+            <div>σ<sub>T</sub> = <span class="pc-text-accent">${sigma_T.toFixed(0)} fm²</span></div>
+            <div>E<sub>pair</sub> = <span class="pc-text-accent">${(E_pair * 1e3).toFixed(1)} keV</span></div>
+            <div>σ<sub>T</sub>/m² = <span class="pc-text-accent">${(sigma_T * 1e-30).toExponential(2)}</span></div>
         </div>`;
 }

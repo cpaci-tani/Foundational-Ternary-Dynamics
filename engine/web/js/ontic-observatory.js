@@ -219,26 +219,26 @@ export function renderFcCard(obs, container) {
     const maxBar = Math.max(sp.kf, sp.kc0, 1);
 
     container.innerHTML = `
-        <div class="card-title">(f, C<sub>0</sub>) Ordered Pair <span style="color:var(--text-muted);font-weight:400">\u2014 Proposition II</span></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="card-title">(f, C<sub>0</sub>) Ordered Pair <span class="oo-card-title-sub">\u2014 Proposition II</span></div>
+        <div class="oo-fc-grid">
             <div>
-                <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">f = Update Rule</div>
-                <div style="font-family:var(--font-mono);font-size:16px;color:var(--accent)">${TICK_PHASES.length}-Phase Tick</div>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">K(f) = ${sp.kf} bits</div>
-                <div style="margin-top:6px;height:6px;background:var(--bg-input);border-radius:3px">
-                    <div style="height:100%;width:${(sp.kf / maxBar * 100).toFixed(0)}%;background:var(--accent);border-radius:3px"></div>
+                <div class="oo-fc-label">f = Update Rule</div>
+                <div class="oo-fc-value accent">${TICK_PHASES.length}-Phase Tick</div>
+                <div class="oo-fc-sub">K(f) = ${sp.kf} bits</div>
+                <div class="oo-bar-track">
+                    <div class="oo-bar-fill accent" style="width:${(sp.kf / maxBar * 100).toFixed(0)}%"></div>
                 </div>
             </div>
             <div>
-                <div style="font-size:10px;color:var(--text-muted);margin-bottom:4px">C<sub>0</sub> = Boundary Datum</div>
-                <div style="font-family:var(--font-mono);font-size:16px;color:var(--warning)">${obs._scenarioName}</div>
-                <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">K(C<sub>0</sub>) = ${sp.kc0} bits</div>
-                <div style="margin-top:6px;height:6px;background:var(--bg-input);border-radius:3px">
-                    <div style="height:100%;width:${(sp.kc0 / maxBar * 100).toFixed(0)}%;background:var(--warning);border-radius:3px"></div>
+                <div class="oo-fc-label">C<sub>0</sub> = Boundary Datum</div>
+                <div class="oo-fc-value warning">${obs._scenarioName}</div>
+                <div class="oo-fc-sub">K(C<sub>0</sub>) = ${sp.kc0} bits</div>
+                <div class="oo-bar-track">
+                    <div class="oo-bar-fill warning" style="width:${(sp.kc0 / maxBar * 100).toFixed(0)}%"></div>
                 </div>
             </div>
         </div>
-        <div style="margin-top:8px;font-size:10px;color:var(--text-muted);text-align:center">
+        <div class="oo-fc-footer">
             Complete specification requires BOTH \u2014 neither determines the other
         </div>`;
 }
@@ -249,24 +249,24 @@ export function renderObserverCard(obs, container) {
     const tri = obs.trilemmaStatus();
 
     container.innerHTML = `
-        <div class="card-title">Observer Panel <span style="color:var(--text-muted);font-weight:400">\u2014 Heuristic</span></div>
-        <div style="font-size:12px;color:var(--positive);margin-bottom:8px;font-weight:500">
+        <div class="card-title">Observer Panel <span class="oo-card-title-sub">\u2014 Heuristic</span></div>
+        <div class="oo-obs-role">
             You are the external observer providing C<sub>0</sub>
         </div>
-        <div style="font-size:11px;color:var(--text-secondary);margin-bottom:6px">
+        <div class="oo-obs-hint">
             <strong>First Perturbation P<sub>0</sub></strong> (Remark / heuristic): C<sub>0</sub> \u2212 V
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:11px">
-            <span style="color:var(--text-muted)">Manifested</span>
-            <span style="font-family:var(--font-mono);color:var(--text-primary)">${p0.nonVoidCount}</span>
-            <span style="color:var(--text-muted)">Total Flux</span>
-            <span style="font-family:var(--font-mono);color:var(--text-primary)">${p0.totalFlux.toFixed(2)}</span>
-            <span style="color:var(--text-muted)">Charge Balance</span>
-            <span style="font-family:var(--font-mono);color:var(--text-primary)">${p0.chargeBalance}</span>
+        <div class="oo-obs-grid">
+            <span class="oo-obs-grid-label">Manifested</span>
+            <span class="oo-obs-grid-val">${p0.nonVoidCount}</span>
+            <span class="oo-obs-grid-label">Total Flux</span>
+            <span class="oo-obs-grid-val">${p0.totalFlux.toFixed(2)}</span>
+            <span class="oo-obs-grid-label">Charge Balance</span>
+            <span class="oo-obs-grid-val">${p0.chargeBalance}</span>
         </div>
-        <div style="margin-top:8px;padding:6px 8px;background:var(--bg-input);border-radius:4px;font-size:10px">
-            <span style="color:var(--warning)">Trilemma Horn ${tri.horn}:</span>
-            <span style="color:var(--text-secondary)">${tri.label}</span>
+        <div class="oo-trilemma-box">
+            <span class="oo-trilemma-label">Trilemma Horn ${tri.horn}:</span>
+            <span class="oo-trilemma-desc">${tri.label}</span>
         </div>`;
 }
 
@@ -276,16 +276,16 @@ export function renderHierarchyTower(obs, container) {
     const colors = ['#60a5fa', '#4ade80', '#fbbf24', '#f87171'];
     const highestActive = levels.reduce((m, l) => l.active ? l.level : m, -1);
 
-    let html = `<div class="card-title">Aggregation Hierarchy <span style="color:var(--text-muted);font-weight:400">\u2014 Heuristic</span></div>`;
+    let html = `<div class="card-title">Aggregation Hierarchy <span class="oo-card-title-sub">\u2014 Heuristic</span></div>`;
     // Render top-to-bottom (Level 3 at top)
     for (let i = levels.length - 1; i >= 0; i--) {
         const l = levels[i];
         const bg = l.active ? colors[l.level] : 'var(--bg-input)';
         const fg = l.active ? '#000' : 'var(--text-muted)';
-        const pulse = (l.level === highestActive && l.active) ? 'animation:pulse 2s infinite' : '';
-        html += `<div style="padding:6px 10px;margin-bottom:3px;border-radius:4px;background:${bg};color:${fg};font-size:11px;font-weight:500;display:flex;justify-content:space-between;${pulse}">
+        const pulseClass = (l.level === highestActive && l.active) ? 'is-pulsing' : '';
+        html += `<div class="oo-hierarchy-row ${pulseClass}" style="background:${bg};color:${fg};">
             <span>L${l.level}: ${l.name}</span>
-            <span style="font-weight:400;font-size:10px">${l.detail}</span>
+            <span class="oo-hierarchy-detail">${l.detail}</span>
         </div>`;
     }
     container.innerHTML = html;
@@ -300,32 +300,32 @@ export function renderInfoDynamics(obs, container) {
     const barOmega = Math.min(sp.logOmega / maxVal * 100, 100);
 
     container.innerHTML = `
-        <div class="card-title">Information Dynamics <span style="color:var(--text-muted);font-weight:400">\u2014 Proposition III</span></div>
-        <div style="font-size:10px;color:var(--text-muted);margin-bottom:6px">
+        <div class="card-title">Information Dynamics <span class="oo-card-title-sub">\u2014 Proposition III</span></div>
+        <div class="oo-info-hint">
             K(f) \u226A K(C<sub>0</sub>) \u226A log<sub>2</sub>|\u03A9|
         </div>
-        <div style="margin-bottom:4px;font-size:11px">
-            <span style="color:var(--accent)">K(f)</span>
-            <span style="font-family:var(--font-mono);float:right">${sp.kf} bits</span>
-            <div style="height:4px;background:var(--bg-input);border-radius:2px;margin-top:2px">
-                <div style="height:100%;width:${(sp.kf / maxVal * 100).toFixed(0)}%;background:var(--accent);border-radius:2px"></div>
+        <div class="oo-info-row">
+            <span class="oo-info-label accent">K(f)</span>
+            <span class="oo-info-val">${sp.kf} bits</span>
+            <div class="oo-bar-track thin">
+                <div class="oo-bar-fill thin accent" style="width:${(sp.kf / maxVal * 100).toFixed(0)}%"></div>
             </div>
         </div>
-        <div style="margin-bottom:4px;font-size:11px">
-            <span style="color:var(--warning)">K(C<sub>0</sub>)</span>
-            <span style="font-family:var(--font-mono);float:right">${sp.kc0} bits</span>
-            <div style="height:4px;background:var(--bg-input);border-radius:2px;margin-top:2px">
-                <div style="height:100%;width:${(sp.kc0 / maxVal * 100).toFixed(0)}%;background:var(--warning);border-radius:2px"></div>
+        <div class="oo-info-row">
+            <span class="oo-info-label warning">K(C<sub>0</sub>)</span>
+            <span class="oo-info-val">${sp.kc0} bits</span>
+            <div class="oo-bar-track thin">
+                <div class="oo-bar-fill thin warning" style="width:${(sp.kc0 / maxVal * 100).toFixed(0)}%"></div>
             </div>
         </div>
-        <div style="margin-bottom:4px;font-size:11px">
-            <span style="color:var(--text-muted)">log<sub>2</sub>|\u03A9|</span>
-            <span style="font-family:var(--font-mono);float:right">${sp.logOmega > 1e6 ? sp.logOmega.toExponential(1) : sp.logOmega.toFixed(0)} bits</span>
-            <div style="height:4px;background:var(--bg-input);border-radius:2px;margin-top:2px">
-                <div style="height:100%;width:${barOmega.toFixed(0)}%;background:var(--text-muted);border-radius:2px"></div>
+        <div class="oo-info-row">
+            <span class="oo-info-label muted">log<sub>2</sub>|\u03A9|</span>
+            <span class="oo-info-val">${sp.logOmega > 1e6 ? sp.logOmega.toExponential(1) : sp.logOmega.toFixed(0)} bits</span>
+            <div class="oo-bar-track thin">
+                <div class="oo-bar-fill thin muted" style="width:${barOmega.toFixed(0)}%"></div>
             </div>
         </div>
-        <div style="text-align:center;margin-top:8px;font-size:12px;color:var(--text-secondary)">
-            Boundary dominates law by <span style="color:var(--warning);font-family:var(--font-mono);font-weight:600">${ratio.toFixed(1)}x</span>
+        <div class="oo-info-footer">
+            Boundary dominates law by <span class="oo-info-ratio">${ratio.toFixed(1)}x</span>
         </div>`;
 }

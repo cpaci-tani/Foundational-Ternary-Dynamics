@@ -308,6 +308,11 @@
     padding: 12px 12px;
     max-width: 100%;
     overflow: hidden;
+    position: relative;
+    width: 100%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 .flux-slice-panel.dock-mode .flux-slice-header {
     margin-bottom: 8px;
@@ -405,6 +410,48 @@
     /* viridis-like preview */
     background: linear-gradient(90deg, #440154 0%, #21918c 50%, #fde725 100%);
     border: 1px solid var(--border);
+}
+
+/* ── Expand Modal (shared across scale0 panels) ───────────────────────── */
+.s0-expand-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 199;
+    backdrop-filter: blur(2px);
+}
+
+.s0-expand-modal {
+    position: fixed;
+    inset: 4vh 4vw;
+    /* Cap on ultrawide / very tall: keeps the 5×3 tile grid from
+       ballooning awkwardly on 21:9 / 32:9 displays. */
+    max-width: 1600px;
+    max-height: 1100px;
+    margin: auto;
+    z-index: 200;
+    overflow: auto;
+    background: rgba(8, 12, 20, 0.96);
+    border: 1px solid rgba(120, 200, 255, 0.35);
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.s0-modal-narrow {
+    max-width: 1200px;
+}
+
+.s0-expand-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-secondary, #aaa);
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 210;
 }
 
 /* ── Scale 0 Field Overlay Swatches ────────────────────── */
