@@ -13,7 +13,7 @@
     transform: translateX(-50%);
     width: max-content;
     max-width: 90vw;
-    z-index: calc(var(--z-overlay, 40) + 5);
+    z-index: var(--z-playback);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,6 +30,15 @@
     pointer-events: auto;
     font-size: var(--fs-base);
     color: var(--text-secondary);
+}
+
+/* Relocate to top-left when the main panel is bottom-mounted (centered).
+   The scrub bar is mounted on #app, so this top offset includes the toolbar. */
+html[data-panel-mount="bottom"] .scrub-bar {
+    top: calc(var(--toolbar-h, calc(48px * var(--ui-scale, 1))) + 8px);
+    bottom: auto;
+    left: 12px;
+    transform: none;
 }
 
 /* Shared semantic grouping */
@@ -294,6 +303,13 @@
         transform-origin: bottom center;
         /* Move to bottom: 0 to prevent floating over the center of the canvas */
         bottom: 8px; /* Small inset so it doesn't clip the bottom edge */
+    }
+
+    html[data-panel-mount="bottom"] .scrub-bar {
+        top: auto;
+        left: 50%;
+        bottom: 8px;
+        transform: translateX(-50%);
     }
 
     /* Finger-sized playback controls on touch devices */

@@ -101,27 +101,20 @@ function buildPanel() {
     root.id = PANEL_ID;
     root.className = 'scale0-only spectrum-panel';
     root.style.cssText = `
-        position: relative;
-        width: 100%;
-        padding: 14px 14px 18px;
-        font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
-        font-size: 13px;
-        line-height: 1.45;
-        color: var(--text-primary);
         background: transparent;
     `;
     root.innerHTML = `
-        <header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-            <span style="font-weight:600;color:var(--accent);font-size:15px;letter-spacing:0.02em;">Spectrum Scanner (live)</span>
-            <span style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);">v0 · present-time</span>
+        <header class="spec-header">
+            <span class="spec-title">Spectrum Scanner (live)</span>
+            <span class="spec-subtitle">v0 · present-time</span>
         </header>
         <div id="${PANEL_ID}-body">
             <section data-section="controls" style="${cardStyle(140)}">
                 <div style="${titleStyle()}">Sweep configuration</div>
                 <div id="${PANEL_ID}-controls-body">
-                    <div style="display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;font-size:12px;">
-                        <label style="color:var(--text-muted);">Preset</label>
-                        <select id="${PANEL_ID}-preset" style="font-family:var(--font-mono);font-size:12px;padding:4px 6px;background:var(--bg-input,rgba(0,0,0,0.3));color:var(--text-primary);border:1px solid var(--border-light,rgba(255,255,255,0.1));border-radius:4px;">
+                    <div class="spec-controls-grid">
+                        <label class="spec-label">Preset</label>
+                        <select id="${PANEL_ID}-preset" class="spec-select">
                             <option value="present">Present-time (current particles)</option>
                             <option value="random" disabled>Random initial conditions [v1]</option>
                             <option value="grid" disabled>Grid scan over (charge, energy) [v1]</option>
@@ -129,11 +122,11 @@ function buildPanel() {
                         <button id="${PANEL_ID}-sweep-btn" type="button"
                             disabled
                             title="Sweep harness needs bridge.runIsolatedScan() — Sprint v1"
-                            style="background:rgba(120,200,255,0.10);border:1px solid rgba(120,200,255,0.18);color:var(--text-muted);padding:6px 12px;cursor:not-allowed;font-size:12px;border-radius:4px;font-family:var(--font-sans);">
+                            class="spec-btn-disabled">
                             Run sweep [v1]
                         </button>
                     </div>
-                    <div style="margin-top:10px;font-size:11px;color:var(--text-muted);line-height:1.5;">
+                    <div class="spec-controls-footer">
                         ${tagBadge('E')}Present-time mode shows the masses currently manifesting in the lattice (no sweep — what you see is now).
                         Sweep mode requires <code>bridge.runIsolatedScan()</code> + a clone API on RenderBridge — queued for next sprint.
                     </div>
@@ -145,11 +138,11 @@ function buildPanel() {
             </section>
             <section data-section="histogram" style="${cardStyle(220)}">
                 <div style="${titleStyle()}">Mass histogram (log scale)</div>
-                <div id="${PANEL_ID}-hist-body" style="min-height:180px;"></div>
+                <div id="${PANEL_ID}-hist-body" class="spec-hist-box"></div>
             </section>
             <section data-section="table" style="${cardStyle(180)}">
                 <div style="${titleStyle()}">Stable configurations</div>
-                <div id="${PANEL_ID}-table-body" style="max-height:240px;overflow-y:auto;"></div>
+                <div id="${PANEL_ID}-table-body" class="spec-table-box"></div>
             </section>
         </div>
     `;
@@ -160,7 +153,7 @@ function renderHistogram(container, masses) {
     const { bins, counts } = histogramize(masses);
     if (counts.length === 0) {
         container.innerHTML = `
-            <div style="display:flex;align-items:center;justify-content:center;min-height:180px;color:var(--text-muted);font-style:italic;font-size:12px;">
+            <div class="spec-hist-empty">
                 No manifested particles yet — load a particle scenario to populate the spectrum.
             </div>
         `;
@@ -172,7 +165,7 @@ function renderHistogram(container, masses) {
     const innerH = H - m.top - m.bottom;
     const maxCount = Math.max(1, ...counts);
 
-    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block;">`;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" class="spec-svg-plot">`;
     svg += `<rect x="${m.left}" y="${m.top}" width="${innerW}" height="${innerH}" fill="rgba(255,255,255,0.02)" stroke="var(--border-light)" stroke-width="1"/>`;
     // Bars
     const barW = innerW / counts.length;
@@ -217,7 +210,7 @@ function renderHistogram(container, masses) {
 
 function renderTable(container, masses, particleCount) {
     if (!masses.length) {
-        container.innerHTML = `<div style="font-style:italic;color:var(--text-muted);font-size:12px;">No stable configurations to list.</div>`;
+        container.innerHTML = `<div class="spec-table-empty">No stable configurations to list.</div>`;
         return;
     }
     // Group identical masses
@@ -236,16 +229,16 @@ function renderTable(container, masses, particleCount) {
         .sort((a, b) => b.count - a.count);
 
     let html = `
-        <table style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;font-family:var(--font-mono);">
+        <table class="spec-table">
             <colgroup>
                 <col style="width:96px"/><col style="width:56px"/><col style="width:64px"/><col/>
             </colgroup>
             <thead>
-                <tr style="position:sticky;top:0;background:var(--bg-card);">
-                    <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:500;border-bottom:1px solid var(--border-light);">Mass</th>
-                    <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:500;border-bottom:1px solid var(--border-light);">Q</th>
-                    <th style="text-align:right;padding:6px 8px;color:var(--text-muted);font-weight:500;border-bottom:1px solid var(--border-light);">Count</th>
-                    <th style="text-align:left;padding:6px 8px;color:var(--text-muted);font-weight:500;border-bottom:1px solid var(--border-light);">Δ-nearest known</th>
+                <tr class="spec-table-head-row">
+                    <th class="spec-th-right">Mass</th>
+                    <th class="spec-th-right">Q</th>
+                    <th class="spec-th-right">Count</th>
+                    <th class="spec-th-left">Δ-nearest known</th>
                 </tr>
             </thead>
             <tbody>
@@ -259,17 +252,17 @@ function renderTable(container, masses, particleCount) {
             : 'var(--text-muted)';
         html += `
             <tr>
-                <td style="text-align:right;padding:6px 8px;color:var(--accent);font-variant-numeric:tabular-nums;">${formatExp(r.mass)}</td>
-                <td style="text-align:right;padding:6px 8px;color:var(--text-muted);">—</td>
-                <td style="text-align:right;padding:6px 8px;color:var(--text-primary);font-variant-numeric:tabular-nums;">${r.count}</td>
-                <td style="text-align:left;padding:6px 8px;color:${matchColor};">${matchTxt}</td>
+                <td class="spec-td-mass">${formatExp(r.mass)}</td>
+                <td class="spec-td-q">—</td>
+                <td class="spec-td-count">${r.count}</td>
+                <td class="spec-td-match" style="color:${matchColor};">${matchTxt}</td>
             </tr>
         `;
     }
     html += `</tbody></table>`;
     if (particleCount > masses.length) {
         html += `
-            <div style="margin-top:6px;font-size:11px;color:var(--text-muted);font-style:italic;">
+            <div class="spec-table-footer">
                 ${particleCount - masses.length} void/unmanifested particles excluded.
             </div>
         `;
@@ -284,7 +277,7 @@ function renderHero(container, masses) {
         <div style="${heroStyle()}">
             ${tagBadge('E')}peaks matched / found = <span style="color:var(--accent);">${matched} / ${total}</span>
         </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">
+        <div class="spec-hero-footer">
             "matched" = within 50% of a known particle mass (e/μ/π/p). Tighter matches in the table below.
         </div>
     `;

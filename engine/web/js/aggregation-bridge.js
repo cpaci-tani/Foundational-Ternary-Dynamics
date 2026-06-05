@@ -253,35 +253,26 @@ export function renderAggregationTower(levels, details, container) {
         const active = levels[i];
         const det = details[i];
         const opacity = active ? 1.0 : 0.25;
-        const pulse = active && i === Math.max(...levels.map((v, j) => v ? j : -1))
-            ? 'animation:pulse 2s infinite' : '';
+        const pulseClass = active && i === Math.max(...levels.map((v, j) => v ? j : -1))
+            ? 'is-pulsing' : '';
 
         bars += `
-            <div style="display:flex;align-items:center;gap:8px;padding:4px 6px;
-                        border-radius:4px;background:${lvl.color}22;opacity:${opacity};${pulse}">
-                <div style="width:10px;height:10px;border-radius:50%;
-                            background:${active ? lvl.color : 'var(--text-muted)'};
-                            box-shadow:${active ? `0 0 6px ${lvl.color}` : 'none'}"></div>
-                <div style="flex:1;font-size:10px">
+            <div class="agg-row ${pulseClass}" style="background:${lvl.color}22;opacity:${opacity}">
+                <div class="agg-dot" style="background:${active ? lvl.color : 'var(--text-muted)'};box-shadow:${active ? `0 0 6px ${lvl.color}` : 'none'}"></div>
+                <div class="agg-content">
                     <div style="color:${active ? lvl.color : 'var(--text-muted)'}">
                         L${lvl.level}: ${lvl.name}
                     </div>
-                    <div style="font-size:9px;color:var(--text-muted)">${det.text}</div>
+                    <div class="agg-desc">${det.text}</div>
                 </div>
-                <div style="font-size:9px;color:var(--accent)">${det.metric}</div>
+                <div class="agg-metric">${det.metric}</div>
             </div>`;
     }
 
     container.innerHTML = `
         <div class="card-title">Aggregation Hierarchy (Appendix A)</div>
-        <style>
-            @keyframes pulse {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0.7; }
-            }
-        </style>
-        <div style="display:flex;flex-direction:column;gap:3px">${bars}</div>
-        <div style="margin-top:6px;font-size:9px;color:var(--text-muted)">
+        <div class="agg-tower-container">${bars}</div>
+        <div class="agg-footer">
             Level 3 requires |R| > ${SPATIAL_THRESHOLD} AND t/τ > ${TEMPORAL_THRESHOLD} (Theorem A.1)
         </div>`;
 }
@@ -301,26 +292,24 @@ export function renderScaleBridge(activeScale, data, container) {
     for (let i = 0; i < 3; i++) {
         const s = scales[i];
         const isActive = i === activeScale;
-        const border = isActive ? `border:1px solid var(--accent)` : `border:1px solid var(--bg-card)`;
+        const activeClass = isActive ? 'is-active' : 'is-inactive';
 
         cols += `
-            <div style="flex:1;padding:6px;border-radius:4px;${border};text-align:center;
-                        opacity:${isActive ? 1 : 0.5}">
-                <div style="font-size:10px;color:var(--accent);margin-bottom:2px">${s.label}</div>
-                <div style="font-size:20px;color:var(--text-primary)">${s.entityCount}</div>
-                <div style="font-size:8px;color:var(--text-muted)">${s.dominantForce}</div>
+            <div class="sb-col ${activeClass}">
+                <div class="sb-label">${s.label}</div>
+                <div class="sb-count">${s.entityCount}</div>
+                <div class="sb-force">${s.dominantForce}</div>
             </div>`;
 
         if (i < 2) {
-            cols += `<div style="display:flex;align-items:center;padding:0 2px;
-                            color:var(--text-muted);font-size:14px">⇄</div>`;
+            cols += `<div class="sb-arrow">⇄</div>`;
         }
     }
 
     container.innerHTML = `
         <div class="card-title">Scale Bridge (OnticEntity mapping)</div>
-        <div style="display:flex;align-items:stretch;gap:0">${cols}</div>
-        <div style="margin-top:6px;font-size:9px;color:var(--text-muted)">
+        <div class="sb-container">${cols}</div>
+        <div class="agg-footer">
             Each entity = {state, energy, boundary} — universal triple across all scales
         </div>`;
 }
@@ -335,7 +324,7 @@ export function renderEmergenceMonitor(trajectory, container) {
     const plotW = W - pad.left - pad.right;
     const plotH = H - pad.top - pad.bottom;
 
-    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%;font-family:var(--font-mono);font-size:8px">`;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" class="em-svg">`;
 
     // Axes
     svg += `<line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${H - pad.bottom}" stroke="var(--text-muted)" stroke-width="0.5"/>`;
@@ -378,11 +367,11 @@ export function renderEmergenceMonitor(trajectory, container) {
 
     const a1 = trajectory.length > 0 ? trajectory[trajectory.length - 1] : null;
     const status = a1 && a1.spatialExtent > SPATIAL_THRESHOLD && a1.temporalDepth > TEMPORAL_THRESHOLD
-        ? '<span style="color:var(--positive)">Theorem A.1 SATISFIED</span>'
-        : '<span style="color:var(--text-muted)">Theorem A.1 pending</span>';
+        ? '<span class="em-status-ok">Theorem A.1 SATISFIED</span>'
+        : '<span class="em-status-pending">Theorem A.1 pending</span>';
 
     container.innerHTML = `
         <div class="card-title">Emergence Monitor (Theorem A.1)</div>
         ${svg}
-        <div style="font-size:9px;margin-top:2px">${status} — ${trajectory.length} frames recorded</div>`;
+        <div class="em-footer">${status} — ${trajectory.length} frames recorded</div>`;
 }

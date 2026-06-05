@@ -26,7 +26,8 @@ export class ScrubBarComponent {
 
     mount() {
         if (!this.viewportEl || this.el.parentElement) return this;
-        this.viewportEl.appendChild(this.el);
+        const mountEl = document.getElementById('app') || this.viewportEl;
+        mountEl.appendChild(this.el);
 
         this.stripEl     = this.el.querySelector('.scrub-bar-strip');
         this.zonesEl     = this.el.querySelector('.scrub-bar-zones');

@@ -60,4 +60,30 @@ test.describe('Playback timeline smoke', () => {
         expect(report.hasZones).toBe(false);
         expect(report.hasPlayhead).toBe(false);
     });
+
+    test('playback controls remain clickable after switching from side to bottom mount', async ({ page }) => {
+        await gotoAndReady(page, { path: '/?engine=mock', timeout: 30_000 });
+        await page.waitForFunction(() => document.getElementById('app')?.dataset.shellReady === 'true', { timeout: 30_000 });
+        await page.waitForTimeout(600);
+
+        await expect(page.locator('html')).toHaveAttribute('data-panel-mount', 'left');
+        await page.locator('[data-panel-mount-toggle] button[data-mount="bottom"]').click();
+        await page.waitForTimeout(300);
+
+        const hit = await page.evaluate(() => {
+            const btn = document.getElementById('btn-play');
+            const rect = btn?.getBoundingClientRect();
+            if (!rect) return { closestPlay: false, targetId: null, targetClass: null };
+            const el = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            return {
+                closestPlay: !!el?.closest?.('#btn-play'),
+                targetId: el?.id ?? null,
+                targetClass: String(el?.className ?? ''),
+            };
+        });
+        expect(hit.closestPlay, `play button center was covered by ${hit.targetId || hit.targetClass}`).toBe(true);
+
+        await page.locator('#btn-play').click();
+        await expect(page.locator('#btn-play')).toHaveAttribute('data-paused', 'false');
+    });
 });
