@@ -342,11 +342,8 @@ export class FluxSlicePanel {
             // Dock mode: panel fills its host (the side-panel slot) and is always
             // visible while its tab is active. No display:none toggle, no chip.
             panel.classList.add('dock-mode');
-            panel.style.position = 'relative';
-            panel.style.width = '100%';
-            panel.style.background = 'transparent';
-            panel.style.border = 'none';
-            panel.style.boxShadow = 'none';
+            // styles moved to .flux-slice-panel.dock-mode
+
             this.visible = true;
         } else {
             panel.style.display = 'none';
@@ -934,34 +931,12 @@ export class FluxSlicePanel {
 
         // Backdrop scrim
         const scrim = document.createElement('div');
-        scrim.className = 'flux-slice-expand-scrim';
+        scrim.className = 's0-expand-scrim';
         scrim.setAttribute('role', 'presentation');
-        Object.assign(scrim.style, {
-            position: 'fixed', inset: '0',
-            background: 'rgba(0, 0, 0, 0.55)',
-            zIndex: '199',
-            backdropFilter: 'blur(2px)',
-        });
 
         // Modal frame
         const modal = document.createElement('div');
-        modal.className = 'flux-slice-expand-modal';
-        Object.assign(modal.style, {
-            position: 'fixed',
-            inset: '4vh 4vw',
-            // Cap on ultrawide / very tall: keeps the 5×3 tile grid from
-            // ballooning awkwardly on 21:9 / 32:9 displays.
-            maxWidth: '1600px',
-            maxHeight: '1100px',
-            margin: 'auto',
-            zIndex: '200',
-            overflow: 'auto',
-            background: 'rgba(8, 12, 20, 0.96)',
-            border: '1px solid rgba(120, 200, 255, 0.35)',
-            borderRadius: '8px',
-            padding: '10px 12px',
-            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
-        });
+        modal.className = 's0-expand-modal';
 
         // Move the panel root into the modal (no clone — preserve state).
         const dockSlot = document.createComment('flux-slice-panel-dock-slot');
@@ -981,11 +956,7 @@ export class FluxSlicePanel {
         const closeBtn = document.createElement('button');
         closeBtn.type = 'button';
         closeBtn.textContent = '×';
-        Object.assign(closeBtn.style, {
-            position: 'absolute', top: '8px', right: '12px',
-            background: 'none', border: 'none', color: 'var(--text-secondary, #aaa)',
-            fontSize: '24px', cursor: 'pointer', zIndex: '210',
-        });
+        closeBtn.className = 's0-expand-close';
         closeBtn.setAttribute('aria-label', 'Close expanded flux slices');
         closeBtn.addEventListener('click', close);
         modal.appendChild(closeBtn);

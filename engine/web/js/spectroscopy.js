@@ -102,7 +102,7 @@ export function renderEnergyLevels(Z, container) {
     const leftMargin = 50, rightMargin = 20, topPad = 15, botPad = 20;
     const levelWidth = W - leftMargin - rightMargin;
 
-    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%;font-family:var(--font-mono);font-size:9px">`;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" class="pc-svg-container md">`;
 
     // Draw energy levels
     for (let n = 1; n <= nMax; n++) {
@@ -144,10 +144,10 @@ export function renderEnergyLevels(Z, container) {
     container.innerHTML = `
         <div class="card-title">Energy Levels (Z=${Z})</div>
         ${svg}
-        <div style="display:flex;gap:10px;margin-top:4px;font-size:10px">
+        <div class="pc-flex-row">
             <span style="color:${SERIES_COLORS[0]}">Lyman</span>
             <span style="color:${SERIES_COLORS[1]}">Balmer</span>
             <span style="color:${SERIES_COLORS[2]}">Paschen</span>
-            <span style="color:var(--text-muted)">a<sub>0</sub>=${bohrRadiusFm(Z).toFixed(0)} fm</span>
+            <span class="pc-text-muted">a<sub>0</sub>=${bohrRadiusFm(Z).toFixed(0)} fm</span>
         </div>`;
 }

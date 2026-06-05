@@ -1,0 +1,128 @@
+/* Conservation Micropanel Styles */
+
+.conservation-micropanel {
+    position: absolute;
+    top: 80px; /* clears the toolbar */
+    left: 12px;
+    width: min(220px, calc(100vw - 20px));
+    min-height: 156px;
+    z-index: 60;
+    padding: 10px 12px;
+    background: rgba(8, 12, 20, 0.88);
+    border: 1px solid var(--border-light, rgba(255, 255, 255, 0.10));
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+    font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
+    font-size: 12px;
+    color: var(--text-primary);
+    user-select: none;
+    transition: background 180ms ease;
+}
+
+.conservation-micropanel:hover {
+    background: rgba(8, 12, 20, 0.95);
+}
+
+.cons-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    gap: 6px;
+}
+
+.cons-title {
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 11px;
+    flex: 1;
+}
+
+.cons-status {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.cons-btn-expand {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.cons-rows-grid {
+    display: grid;
+    grid-template-columns: 24px 1fr 12px;
+    gap: 4px 6px;
+    align-items: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.cons-history-plot {
+    display: none;
+    margin-top: 14px;
+}
+
+.cons-footer {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+    opacity: 0.7;
+    text-align: center;
+}
+
+/* Row Rendering */
+.cons-row-label {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+.cons-row-val {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: right;
+    white-space: pre;
+}
+
+.cons-row-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+/* History Rendering */
+.cons-history-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px;
+}
+
+.cons-history-container {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.cons-history-title {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.cons-history-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 6px;
+}

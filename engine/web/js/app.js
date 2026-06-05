@@ -1490,11 +1490,11 @@ function wireKeyboard() {
     } catch (e) { }
 
     // ── Modal open/close ──
-    if (btnOpen && modal) btnOpen.addEventListener('click', () => { modal.style.display = 'flex'; });
-    if (btnClose && modal) btnClose.addEventListener('click', () => { modal.style.display = 'none'; });
-    if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    if (btnOpen && modal) btnOpen.addEventListener('click', () => { modal.classList.add('visible'); });
+    if (btnClose && modal) btnClose.addEventListener('click', () => { modal.classList.remove('visible'); });
+    if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('visible'); });
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal?.style.display === 'flex') modal.style.display = 'none';
+        if (e.key === 'Escape' && modal?.classList.contains('visible')) modal.classList.remove('visible');
     });
 
     // ── Scale controls ──

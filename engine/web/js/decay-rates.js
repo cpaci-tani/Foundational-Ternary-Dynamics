@@ -241,27 +241,27 @@ export function renderDecayRates(container) {
                   : `${(info.lifetime_s * 1e15).toFixed(2)} fs`;
 
         rows += `<tr>
-            <td style="color:var(--text-primary)">${info.name}</td>
-            <td style="color:var(--accent)">${mass}</td>
+            <td class="pc-text-primary">${info.name}</td>
+            <td class="pc-text-accent">${mass}</td>
             <td>${tau}</td>
-            <td style="font-size:9px;color:var(--text-muted)">${info.primary_channel}</td>
+            <td class="pc-text-sm pc-text-muted">${info.primary_channel}</td>
         </tr>`;
     }
 
     container.innerHTML = `
         <div class="card-title">Decay Rates (Fermi theory + ontic masses)</div>
-        <table style="width:100%;font-size:10px;border-collapse:collapse">
+        <table class="pc-table">
             <thead>
-                <tr style="border-bottom:1px solid var(--bg-card);color:var(--text-muted)">
-                    <th style="text-align:left;padding:2px 4px">Particle</th>
-                    <th style="text-align:left;padding:2px 4px">Mass</th>
-                    <th style="text-align:left;padding:2px 4px">Lifetime</th>
-                    <th style="text-align:left;padding:2px 4px">Channel</th>
+                <tr class="pc-table-header-row">
+                    <th>Particle</th>
+                    <th>Mass</th>
+                    <th>Lifetime</th>
+                    <th>Channel</th>
                 </tr>
             </thead>
             <tbody>${rows}</tbody>
         </table>
-        <div style="margin-top:6px;font-size:9px;color:var(--text-muted)">
+        <div class="pc-footer">
             Masses from integers {N<sub>c</sub>=3, b<sub>3</sub>=7, N<sub>eff</sub>=13} via ontic chain.
             Decay formulas: standard Fermi theory (parametric insertion).
         </div>`;

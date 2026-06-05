@@ -29,21 +29,12 @@ export class ViewportOverlaysComponent {
     this.viewport = viewportEl;
     this.overlays = new Map();
     this._legends = [];
-    this._toolbarH = 0;
   }
 
   init() {
     if (!this.viewport) return this;
 
-    // Read toolbar height directly — TopbarComponent has already run and measured it.
-    // We use the concrete px value rather than a CSS custom property because Chrome's
-    // compositor layer (triggered by the adjacent WebGL canvas) freezes the rendered
-    // position and ignores subsequent CSS/style changes on already-inserted elements.
-    const toolbar = document.getElementById('toolbar');
-    this._toolbarH = toolbar ? toolbar.getBoundingClientRect().height : 0;
-
     const append = (el) => {
-      this._applyTop(el);
       return this.viewport.appendChild(el);
     };
 
@@ -54,7 +45,6 @@ export class ViewportOverlaysComponent {
     append(scale2);
     this.overlays.set('scale2', scale2);
     const legend2 = getScale2LegendTemplate();
-    this._applyTop(legend2);
     this._legends.push(legend2);
     this.viewport.appendChild(legend2);
 
@@ -62,7 +52,6 @@ export class ViewportOverlaysComponent {
     append(scale3);
     this.overlays.set('scale3', scale3);
     const legend3 = getScale3LegendTemplate();
-    this._applyTop(legend3);
     this._legends.push(legend3);
     this.viewport.appendChild(legend3);
 
@@ -120,30 +109,6 @@ export class ViewportOverlaysComponent {
       });
     }
   }
-
-  /** Apply the correct top offset as a concrete px inline style. */
-  _applyTop(el) {
-    const gapPx = 12;
-    el.style.top = `${this._toolbarH + gapPx}px`;
-  }
-
-  /**
-   * Called by AppShell when the toolbar height changes (ResizeObserver).
-   * Re-inserts each overlay so the compositor layer is recreated at the new position.
-   */
-  updateTopOffset(toolbarH) {
-    this._toolbarH = toolbarH;
-    const allTopEls = [...this.overlays.values(), ...this._legends];
-    for (const el of allTopEls) {
-      if (!el.parentElement) continue;
-      const parent = el.parentElement;
-      const next = el.nextSibling;
-      parent.removeChild(el);
-      this._applyTop(el);
-      parent.insertBefore(el, next);
-    }
-  }
-
   _mountUniversalOverlays() {
     // Unified viewport controls panel — all universal overlays in one glass card
     const panel = document.createElement('div');
