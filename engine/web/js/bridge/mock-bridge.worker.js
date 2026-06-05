@@ -109,6 +109,7 @@ self.onmessage = (e) => {
                 if (s0 && typeof s0[m.method] === 'function') s0[m.method](...(m.args || []));
                 else if (bridge && typeof bridge[m.method] === 'function') bridge[m.method](...(m.args || []));
                 if (m.method === 'setupScenario') scenarioId = (m.args && m.args[0]) || scenarioId;
+                if (m.method === 'tickScale0') postFrame();
                 break;
             }
             case 'setRunning':
