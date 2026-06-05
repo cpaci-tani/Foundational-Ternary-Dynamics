@@ -94,6 +94,26 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
+    // Flux-volume style sub-toggles (organic scatter vs grid; additive glow on/off).
+    const organicBtn = getEl('toggle-flux-organic');
+    if (organicBtn) {
+        organicBtn.addEventListener('click', () => {
+            const on = !readButtonActive('toggle-flux-organic');
+            setButtonActive('toggle-flux-organic', on);
+            api.viewportAdapter(ctx).setFluxOrganic(on);
+            api.setLatticeNeedsUpload();   // dot positions change → re-upload
+        });
+    }
+
+    const glowBtn = getEl('toggle-flux-glow');
+    if (glowBtn) {
+        glowBtn.addEventListener('click', () => {
+            const on = !readButtonActive('toggle-flux-glow');
+            setButtonActive('toggle-flux-glow', on);
+            api.viewportAdapter(ctx).setFluxGlow(on);   // live material change, no re-upload
+        });
+    }
+
     // Shared apply-toggle helper: works for both user clicks and
     // programmatic clear-column actions. `silent` means skip the
     // latticeNeedsUpload push (useful for bulk updates where we push

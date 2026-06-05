@@ -40,6 +40,12 @@ export function getScale0OverlayTemplate() {
       </div>
       <button class="view-toggle active" id="toggle-flux-volume"
           title="Volumetric point cloud of |J| across the whole lattice">Flux Volume</button>
+      <div class="flux-slice-axis-row" role="group" aria-label="Flux volume style">
+        <button class="view-toggle flux-slice-axis-mini active" id="toggle-flux-organic"
+            title="Organic scatter (cloud) vs regular lattice grid — applies at L>53">Organic</button>
+        <button class="view-toggle flux-slice-axis-mini active" id="toggle-flux-glow"
+            title="Additive glow bloom on the flux volume">Glow</button>
+      </div>
       <button class="view-toggle" id="toggle-flux-slice"
           title="2D slice through the flux field — xy, xz, yz mid-planes">Flux Slice</button>
       <div class="flux-slice-axis-row" role="group" aria-label="Flux slice planes">

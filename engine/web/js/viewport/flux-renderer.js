@@ -65,6 +65,12 @@ function fluxVolumeAxisSamples(N) {
 // individual dots.
 const FLUX_DOT_MIN = 2.4;
 
+// Flux-volume glow presets, toggled by setFluxGlow(). ON = additive bloom (weakened
+// from the original — it was too strong); OFF = flat normal-blended translucent dots.
+const FLUX_GLOW_UGLOW    = 0.06;   // gaussian halo intensity when glow on
+const FLUX_GLOW_UOPACITY = 0.34;   // per-dot opacity when glow on (additive)
+const FLUX_FLAT_UOPACITY = 0.60;   // per-dot opacity when glow off (normal blending)
+
 export class ViewportFluxRenderer {
     constructor({
         scene,
@@ -93,7 +99,9 @@ export class ViewportFluxRenderer {
         this._fluxThreshold = 0.005;
         this._scenarioScale = 1.0;
         this._fluxLatticeSpacing = 1.0;
-        this.showFlux = true;  // flux volume ON by default
+        this.showFlux = true;      // flux volume ON by default
+        this._fluxOrganic = true;  // organic (3D-jittered scatter) vs regular lattice grid
+        this._fluxGlow = true;     // additive glow bloom (weakened) vs flat translucent dots
     }
 
     setBoundaryShape(shape) {
@@ -146,18 +154,22 @@ export class ViewportFluxRenderer {
         geo.setAttribute('size', sizeAttr);
         geo.setDrawRange(0, 0);
 
+        // Glow ON = additive blend so overlapping soft dots ACCUMULATE into a continuous
+        // luminous volume (uGlow adds a gaussian halo past each dot's core); OFF = normal
+        // blend, flat translucent dots. depthWrite off so the cloud is order-independent.
+        const glow = this._fluxGlow;
         const mat = new THREE.ShaderMaterial({
             vertexShader: FLUX_VOL_VERT,
             fragmentShader: PARTICLE_FRAG,
-            // Additive glow: overlapping soft dots ACCUMULATE into a continuous luminous
-            // volume instead of reading as discrete dots on a grid. uGlow adds a gaussian
-            // halo (exp falloff) past each dot's core so neighbours blend across the gaps.
-            // depthWrite off + additive = order-independent glow on the dark substrate.
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.55 }, uGlow: { value: 0.18 } },
+            uniforms: {
+                shapeType: { value: 0 },
+                uOpacity: { value: glow ? FLUX_GLOW_UOPACITY : FLUX_FLAT_UOPACITY },
+                uGlow: { value: glow ? FLUX_GLOW_UGLOW : 0.0 },
+            },
             transparent: true,
             depthWrite: false,
             depthTest: true,
-            blending: THREE.AdditiveBlending,
+            blending: glow ? THREE.AdditiveBlending : THREE.NormalBlending,
         });
 
         this._fluxVolume = new THREE.Points(geo, mat);
@@ -279,7 +291,7 @@ export class ViewportFluxRenderer {
         // into rows / rings / rays (the additive-blend moiré). 3D-hashed per (ix,iy,iz) so
         // it is deterministic (no per-frame shimmer) and breaks ALL planar alignment —
         // unlike a per-axis jitter, which leaves shared sheets and reads as plaid.
-        const jamp = stride > 1.0001 ? stride : 0;
+        const jamp = (this._fluxOrganic && stride > 1.0001) ? stride : 0;
         for (let iz = 0; iz < samples && count < maxPts; iz++) {
             const zNN = vox[iz] * N * N;
             const ze = (iz + 0.5) * stride;
@@ -365,6 +377,24 @@ export class ViewportFluxRenderer {
     setFluxThreshold(val) {
         // Store threshold; applied in updateFluxVolume
         this._fluxThreshold = val;
+    }
+
+    // Organic (3D-jittered scatter) vs regular lattice grid. Changes dot POSITIONS, so the
+    // caller must trigger a re-upload (latticeNeedsUpload) for it to take effect.
+    setFluxOrganic(on) {
+        this._fluxOrganic = !!on;
+    }
+
+    // Additive glow bloom vs flat translucent dots. Swaps the material blend + uniforms
+    // live (picked up on the next render — no re-upload needed).
+    setFluxGlow(on) {
+        this._fluxGlow = !!on;
+        if (!this._fluxVolume) return;
+        const mat = this._fluxVolume.material;
+        mat.blending = this._fluxGlow ? THREE.AdditiveBlending : THREE.NormalBlending;
+        mat.uniforms.uOpacity.value = this._fluxGlow ? FLUX_GLOW_UOPACITY : FLUX_FLAT_UOPACITY;
+        mat.uniforms.uGlow.value = this._fluxGlow ? FLUX_GLOW_UGLOW : 0.0;
+        mat.needsUpdate = true;
     }
 
     setScenarioScale(scale) {
