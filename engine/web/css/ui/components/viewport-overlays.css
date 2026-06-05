@@ -355,38 +355,73 @@
 .s0-overlay-active {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    padding: 0 0 8px;
+    gap: 8px;
+    /* top padding leaves room for the hover-× that floats above each badge */
+    padding: 7px 2px 8px;
     margin-bottom: 4px;
     border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
 }
 .s0-overlay-active[hidden] { display: none; }
+
+/* Compact badge: swatch + label, no inline ×. */
 .s0-overlay-chip {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     max-width: 100%;
-    padding: 2px 3px 2px 6px;
+    padding: 3px 8px;
     font-size: var(--fs-xs);
-    line-height: 1.4;
-    border-radius: 10px;
-    background: color-mix(in oklch, var(--accent) 16%, transparent);
-    border: 1px solid color-mix(in oklch, var(--accent) 32%, transparent);
+    font-weight: 600;
+    line-height: 1.35;
+    border-radius: 6px;
+    background: color-mix(in oklch, var(--accent) 18%, transparent);
+    border: 1px solid color-mix(in oklch, var(--accent) 34%, transparent);
     color: var(--text-primary);
+    cursor: default;
 }
 .s0-overlay-chip-swatch { width: 8px; height: 8px; border-radius: 2px; flex: 0 0 auto; }
 .s0-overlay-chip-label {
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px;
 }
+/* Remove × — a small round button that pops in at the badge's top-right corner on
+   hover. It overlaps the corner (no hover gap) and is a DOM child of the badge, so
+   the badge stays :hover while you move onto it. */
 .s0-overlay-chip-x {
-    flex: 0 0 auto;
-    width: 15px; height: 15px;
-    display: inline-flex; align-items: center; justify-content: center;
-    border: none; background: transparent; cursor: pointer;
-    color: var(--text-muted); font-size: 12px; line-height: 1; border-radius: 4px;
-    transition: background 120ms, color 120ms;
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg-surface, #1a2030);
+    color: var(--text-primary);
+    font-size: 11px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.6);
+    pointer-events: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    transition: opacity 120ms var(--ease-out, ease), transform 120ms var(--ease-out, ease),
+                background 120ms, color 120ms, border-color 120ms;
 }
-.s0-overlay-chip-x:hover { color: #fff; background: color-mix(in oklch, var(--accent) 45%, transparent); }
+.s0-overlay-chip:hover .s0-overlay-chip-x,
+.s0-overlay-chip-x:focus-visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+}
+.s0-overlay-chip-x:hover {
+    background: color-mix(in oklch, #ff5a5a 85%, var(--bg-surface));
+    border-color: #ff5a5a;
+    color: #fff;
+}
 
 /* Search: hide individual overlay buttons that don't match the filter. */
 .s0-overlay-col .view-toggle.is-filtered-out { display: none !important; }
