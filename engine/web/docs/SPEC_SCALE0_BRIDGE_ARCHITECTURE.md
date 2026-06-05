@@ -180,8 +180,15 @@ small per-frame `postMessage`, not shared memory. The module requires cross-orig
   off the shadow but particle terms read zero — acceptable, see the 06-03 audit's Tier-1/Tier-2 split).
 
 **Worker (`bridge/mock-bridge.worker.js`):** on `create`, builds a `MockBridge(N)` with `_useSAB=true`,
-applies boundary/reflective/scenario, calls `publishShared(N)` (allocates the SAB set, posts `ready`
-with the SABs), and starts a self-ticking `setTimeout` loop (~60 Hz, tick-time-limited at large L).
+applies boundary/reflective/scenario via `applyInit` (`:75-86`), then calls `publishShared(N)`
+(`:28-35`: reads `getSharedField()` for the SAB set, posts `ready` with the SABs), and starts a
+self-ticking `setTimeout` loop (~60 Hz, tick-time-limited at large L).
+**SAB-ensure invariant (fix 2026-06-05, health audit §A.1):** `_useSAB` `_initFluxGrid` only runs
+when the scenario actually injects flux, so a **particle-only / no-flux** scenario (e.g.
+`flux-annihilation`, whose kicks all fell below the injection threshold) left `_sharedField` null and
+`publishShared` crashed on `getSharedField().ctrl`. `applyInit` now force-calls `_initFluxGrid()` if
+`getSharedField()` is still null after `setupScenario`, so every scenario mounts on the worker path
+(the state grid is SAB-backed too).
 Each frame it updates `_fluxMag` (the O(N³) magnitude — off the main thread), atomically stores
 `TICK`/`PCOUNT` and increments `FRAME`, and posts a small `frame` payload (`tick`, `diag`, `parts`,
 and `particleList` every `PLIST_EVERY`).
@@ -206,11 +213,13 @@ succeeds as `ctx.bridge`. The status chip reflects the winner (Native/WASM/Mock 
 §3; the inspector is re-pointed at the main bridge on a switch back, audit P1-1).
 
 **Scale-0 flux-mock ownership** — the one place Scale 0 may run on a **second** bridge:
-`shouldUseFluxMock(bridge, scenarioName)` (`scales/scale0/runtime/scenario-loader.js:121-132`): native
-GPU/WS → never; `flux-` prefix → always the JS mock; else probe `getFluxVolume()` and use the mock if
-the active bridge can't serve flux. `workerEligible(...)` (`:140-145`) additionally requires
-`FTD_PHYSICS_WORKER && SharedArrayBuffer && crossOriginIsolated`, and `makeFluxMock` (`:146-150`)
-builds a `MockBridgeProxy` (worker) or in-thread `MockBridge` accordingly. When a flux-mock owns the
+`shouldUseFluxMock(bridge, scenarioName)` (`scales/scale0/runtime/scenario-loader.js:70-78`): native
+GPU/WS → never; `flux-` prefix → always the JS mock; else probe `getFluxVolume()` and use the mock
+**only if** the active bridge can't serve flux. So with a working WASM bridge, **only `flux-*` runs
+on the mock**; everything else (s0-*, light-*, quantum-*) runs on WASM (verified by the all-scenario
+health sweep). `workerEligible(...)` (`:89-94`) additionally requires `FTD_PHYSICS_WORKER &&
+SharedArrayBuffer && crossOriginIsolated`, and `makeFluxMock` (`:95-99`) builds a `MockBridgeProxy`
+(worker) or in-thread `MockBridge` accordingly. When a flux-mock owns the
 scenario, `state.fluxMock` ticks and `ctx.bridge` is idle for Scale 0 (`state.useFluxMock` selects
 which one the runtime ticks/reads — see the runtime SPEC §2). The resize heap-guard estimates the
 **owning** bridge's per-voxel cost (`scenario-loader.js:356-385`): mock ≈150 B/voxel (2 GB JS cap),
