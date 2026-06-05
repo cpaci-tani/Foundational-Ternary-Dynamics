@@ -1,10 +1,13 @@
 # SPEC — Scale 0 Scenario Subsystem Architecture
 
 **Status:** foundation reference (descriptive — documents the system as built).
-**Baseline:** the working tree as of 2026-06-05 (the scenario subsystem was mid-refactor;
-this SPEC documents the *settled* working-tree state, not committed HEAD `7b228d93`).
+**Baseline:** the working tree as of 2026-06-05, reflecting this session's committed scenario
+work — forward-only time model + play-bar (`9cc1f38b`), `flux-zero-point` + the per-scenario
+boundary mechanism (`34c19160`), and the all-scenario health sweep + worker fix (`7fc4296b`).
 **Companion docs:** the gap/drift findings live in
 [`audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md);
+the per-scenario mount/telemetry + physics-sense audit in
+[`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md);
 the remediation roadmap in [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE0_SCENARIO_MODULARIZATION.md).
 Foundation companions: [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md) (the
 bridges scenarios run on) and [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md) (the
@@ -44,7 +47,7 @@ The subsystem that makes this work is spread across **four parallel definition l
             ┌──────────────── DEFINITION (static) ────────────────┐
   UI registry        JS seed impl         C++ seed impl       Metadata
   scenario-registry  bridge/scenarios/*   engine/src/         config/
-  .js (96 entries)   .js (95 scenarios)   scenarios/ (95)     scenarios.js
+  .js (97 entries)   .js (97 scenarios)   scenarios/ (96)     scenarios.js
        │                   │                    │                 │
        └─── id ────────────┴──── id ────────────┴──── id ─────────┘   (string id = the only key)
                                    │
@@ -71,23 +74,29 @@ scenario is decided per-load by `shouldUseFluxMock()` and `workerEligible()`.
 | Bridge | File | Role |
 |---|---|---|
 | **WasmBridge** | `bridge/wasm-bridge.js` | Emscripten-compiled C++ engine — the canonical fast path. `setupScenario` (`:373-376`) → `this._module.setupScenario(this._bridge, name)` → C++ `dispatch_scenario`. |
-| **MockBridge** | `bridge-init.js` / `bridge/mock-bridge.js` | Pure-JS lattice. `setupScenario(name, harness)` (`mock-bridge.js:1704`) → `runSetupScenario` (the JS dispatcher). In-thread. |
-| **MockBridgeProxy** | `bridge/mock-bridge-proxy.js` | Worker wrapper around a MockBridge running in a Web Worker; a main-thread "shadow" reads the worker's `SharedArrayBuffer`s zero-copy. `setupScenario` (`:121`). **The default deployed path** for flux/`s0-*` scenarios since 2026-06-03 (see `AUDIT_BRIDGE_WIRING_2026-06-03.md`). |
+| **MockBridge** | `bridge-init.js` / `bridge/mock-bridge.js` | Pure-JS lattice. `setupScenario(name, harness)` (`mock-bridge.js:1651`) → `runSetupScenario` (the JS dispatcher). In-thread. |
+| **MockBridgeProxy** | `bridge/mock-bridge-proxy.js` | Worker wrapper around a MockBridge running in a Web Worker; a main-thread "shadow" reads the worker's `SharedArrayBuffer`s zero-copy. `setupScenario` (`:121`). **The default deployed path for `flux-*` scenarios** since 2026-06-03 (see `AUDIT_BRIDGE_WIRING_2026-06-03.md`). |
 
 **Ownership decision** — `scales/scale0/runtime/scenario-loader.js`:
 
-- `shouldUseFluxMock(bridge, scenarioName)` (`:121-132`):
+- `shouldUseFluxMock(bridge, scenarioName)` (`:70-78`):
   1. native GPU or `WebSocketBridge` → `false` (run on the canonical engine);
   2. `scenarioName.startsWith('flux-')` → `true` (JS mock owns it);
   3. otherwise probe `bridge.getFluxVolume()`; empty/throw → `true` (mock), else `false`.
-- `workerEligible(scenarioId, bridge)` (`:140-145`): `FTD_PHYSICS_WORKER && SharedArrayBuffer
+- `workerEligible(scenarioId, bridge)` (`:89-94`): `FTD_PHYSICS_WORKER && SharedArrayBuffer
   && crossOriginIsolated && shouldUseFluxMock(...)` → use `MockBridgeProxy`, else in-thread
-  `MockBridge`. `makeFluxMock()` (`:146-150`) builds the chosen instance.
+  `MockBridge`. `makeFluxMock()` (`:95-99`) builds the chosen instance.
 
-> **Note (current behavior vs prior):** the settled `shouldUseFluxMock` no longer
-> special-cases `s0-seed-`/`s0-field-` (those early-returns were removed); those scenarios
-> now fall to the `getFluxVolume()` probe. Confirm the intended ownership for `s0-*` at
-> runtime — see the audit.
+> **Resolved ownership (verified 2026-06-05 via the all-scenario health sweep).** Only
+> `flux-*` is unconditionally mock-owned (rule 2). **Every other scenario** — `empty`,
+> `light-*`, `quantum-*`, `s0-seed-*`, `s0-field-*`, `s0-vacuum-*` — runs on the **WASM
+> engine** whenever the WASM bridge exposes a flux volume (rule 3 returns `false`), and
+> falls back to the mock only when it does not (Safari/iOS, no COOP/COEP). The sweep
+> confirmed this empirically (`flux-*` → `owner=mock`, all others → `owner=wasm`). See
+> [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md) §A.
+> *Consequence:* a **JS-only** scenario bug is latent (mock-fallback path only) — e.g. the
+> `vacuum-scenarios.js` `harness` ReferenceError (health audit §A.4), which never fires on
+> the deployed WASM path.
 
 When a fluxMock owns the scenario, **two bridges coexist**: `ctx.bridge` (the primary
 engine, idle for Scale 0 this scenario) and `state.fluxMock` (the JS mock that actually
@@ -125,13 +134,13 @@ Six prefix group files, each exporting `setupXxxScenario(name, harness, ctx)` th
 
 | Group file | prefix | `case` count |
 |---|---|---|
-| `flux-scenarios.js` | `flux-` | 20 |
+| `flux-scenarios.js` | `flux-` | 21 |
 | `light-scenarios.js` | `light-` | 4 |
 | `quantum-scenarios.js` | `quantum-` | 9 |
 | `vacuum-scenarios.js` | `s0-vacuum-` | 15 |
 | `s0-seed-scenarios.js` | `s0-seed-` | 45 |
 | `s0-field-scenarios.js` | `s0-field-` | 8 |
-| **total** | | **101** case-label occurrences = **95** unique scenarios (+ `empty`); the surplus is fall-through/duplicate `case` labels (verified via the parity inventory, §6.3) |
+| **total** | | **102** case-label occurrences = **96** unique scenarios (+ `empty`); the surplus is fall-through/duplicate `case` labels (verified via the parity inventory, §6.3) |
 
 Shared seed primitives live in `bridge/scenarios/_helpers.js`: `injectRadialEnvelope`,
 `injectParticleFull`, `injectDressedParticle`, `injectTriad`, `applyVacuumEnvironment`,
@@ -145,20 +154,20 @@ order (contract in `engine/include/ftd/scenarios.h:58-68`). `name ==` branch cou
 
 | Group file | `name ==` count |
 |---|---|
-| `flux.cpp` | 20 |
+| `flux.cpp` | 21 |
 | `light.cpp` | 4 |
 | `quantum.cpp` | 9 |
 | `vacuum.cpp` | **17** |
 | `s0_seed.cpp` | **41** |
 | `s0_field.cpp` | 8 |
-| **total** | **99** occurrences = **95** unique |
+| **total** | **100** occurrences = **96** unique |
 
 > **Raw counts ≠ unique scenarios.** These are `name ==` *occurrences*; some scenarios are
 > tested in more than one branch (e.g. `name == "a" || name == "b"`), so the deduplicated
-> set is **95 unique C++ scenarios** — exactly matching the 95 unique JS scenarios. The
-> JS↔C++ parity guard (§6.3) is **GREEN on the settled tree** (5/5, verified 2026-06-05:
-> inventory `UI 86 / JS 96 / C++ 95 / shared 95`). Do **not** read the per-file occurrence
-> counts as drift; the unique scenario sets are in parity.
+> set is **96 unique C++ scenarios** — exactly matching the 96 unique JS scenarios. The
+> JS↔C++ parity guard (§6.3) is **GREEN** (6/6, verified 2026-06-05 after adding
+> `flux-zero-point`: inventory `UI 97 / JS 97 / C++ 96 / shared 96`, +1 C++ legacy). Do
+> **not** read the per-file occurrence counts as drift; the unique scenario sets are in parity.
 
 ### 3.4 Metadata — `config/scenarios.js`
 
@@ -203,7 +212,7 @@ The shape every registry entry has (factory form, `scenario-registry.js:1-15`):
 
 `load` has **two realized forms**:
 
-1. **Factory (delegating)** — 86 of 96 entries. `load(harness, params){ harness.setupScenario(params.id || id); }`
+1. **Factory (delegating)** — 87 of 97 entries. `load(harness, params){ harness.setupScenario(params.id || id); }`
    (`:11-13`). All seeding logic lives in the JS/C++ impl layer; the registry entry is a
    pure pointer.
 2. **Custom (imperative)** — 10 entries (`s0-seed-quark-gluon-plasma` `:74-97`, nine
@@ -230,29 +239,32 @@ USER picks a scenario in #scenario-select
   ├─ api.loadScenario(ctx, id)                          // → controller.loadScenario
   └─ updateScenarioMetadata(id)                         // info panel text
 
-controller.loadScenario(ctx, id, params)   scales/scale0/controller.js:320-322
+controller.loadScenario(ctx, id, params)   scales/scale0/controller.js:215-217
   └─ loadScale0Scenario(ctx, state, viewportAdapter(ctx), id, params)
-        scales/scale0/runtime/scenario-loader.js:301-354
-     1. scenario = getScale0Scenario(id)                         :302
-     2. overlayPrefs = captureOverlayPreferences(state)          :308   (save user overlays)
-     3. useFluxMock = shouldUseFluxMock(ctx.bridge, id)          :310   (§2 ownership)
-     4. if useFluxMock: fluxMock = makeFluxMock(...);            :312-318
-          set boundary + reflective from DOM; fluxMock…setupScenario(id)
-     5. applyToggleDefaults(ctx.bridge…scale0, fluxMock…?, id)   :320   (§6.1 reset+overrides)
-     6. if fluxMock: copy each DEFAULT_TOGGLES state from DOM    :321-325
-     7. setFluxMock(fluxMock, useFluxMock)                       :327   (disposes prior mock)
-        ctx.useFluxMock / ctx.fluxMock                           :328-329
-     8. ctx.resetAllVisualState() → resetScale0VisualState       :331   (:288-299)
-        applyAuxiliaryDefaults(ctx, viewportAdapter)             :332   (tpf=50, cube, …)
-     9. harness = getPhysicsHarness(ctx.bridge)                  :269   (§5.3)
-        scenario.load(harness, params)                           :270   → harness.setupScenario(id)
+        scales/scale0/runtime/scenario-loader.js:256-301
+     1. scenario = getScale0Scenario(id)                         :257
+     2. overlayPrefs = captureOverlayPreferences(state)          :263   (save user overlays)
+     3. useFluxMock = shouldUseFluxMock(ctx.bridge, id)          :265   (§2 ownership)
+     4. if useFluxMock: fluxMock = makeFluxMock(...);            :267-272
+          setBoundaryShape(boundaryShapeFor(id))                         (§6.6 per-scenario boundary:
+          setReflectiveBoundary(reflectiveFor(id))                        SCALE0_SCENARIO_BOUNDARY ?? DOM)
+          fluxMock…setupScenario(id)
+     5. applyToggleDefaults(ctx.bridge…scale0, fluxMock…?, id)   :275   (§6.1 reset+overrides)
+     6. if fluxMock: copy each DEFAULT_TOGGLES state from DOM    :277-280
+     7. setFluxMock(fluxMock, useFluxMock)                       :282   (disposes prior mock)
+     8. ctx.resetAllVisualState() → resetScale0VisualState       :286
+        applyAuxiliaryDefaults(ctx, viewportAdapter, id)         :287   (tpf=50; boundary via §6.6 —
+                                                                          honors SCALE0_SCENARIO_BOUNDARY,
+                                                                          else resets cube + non-reflective)
+     9. harness = getPhysicsHarness(ctx.bridge)                  :289   (§5.3)
+        scenario.load(harness, params)                           :290   → harness.setupScenario(id)
                                                                           → bridge.setupScenario(id, harness)
                                                                           → JS runSetupScenario | C++ dispatch_scenario
                                                                           → inject flux / particles
-    10. setCurrentScenarioId(id)                                 :272
-        markScenarioOverrideRows(DEFAULT_TOGGLES)                :274
-        syncComboSliders(ctx.bridge)                             :275
-    11. restoreOverlayPreferences(overlayPrefs, …)               :280   (re-apply saved overlays)
+    10. setCurrentScenarioId(id)                                 :292
+        markScenarioOverrideRows(DEFAULT_TOGGLES)                :294
+        syncComboSliders(ctx.bridge)                             :295
+    11. restoreOverlayPreferences(overlayPrefs, …)               :300   (re-apply saved overlays)
 ```
 
 ### 5.2 Stages, named
@@ -260,14 +272,15 @@ controller.loadScenario(ctx, id, params)   scales/scale0/controller.js:320-322
 | Stage | Owner | Entry point |
 |---|---|---|
 | **Select** | UI | `bindings.js:48` change handler |
-| **Load** | controller → loader | `controller.js:320` → `scenario-loader.js:301` |
-| **Bridge-ownership** | loader | `shouldUseFluxMock` / `workerEligible` `:121-145` |
-| **Toggle reset** | loader | `applyToggleDefaults` `:181-228` |
-| **Init / seed** | harness → bridge → impl | `scenario.load` `:335` → `runSetupScenario` / `dispatch_scenario` |
-| **Tick** | controller | `animate` `controller.js:324-334` → `advanceSimulation` → `stepScale0` `:435-442` |
+| **Load** | controller → loader | `controller.js:215` → `scenario-loader.js:256` |
+| **Bridge-ownership** | loader | `shouldUseFluxMock` / `workerEligible` `:70-94` |
+| **Toggle reset** | loader | `applyToggleDefaults` `:136-190` |
+| **Boundary** | loader | `boundaryShapeFor` / `reflectiveFor` `:33-44` (§6.6) |
+| **Init / seed** | harness → bridge → impl | `scenario.load` `:290` → `runSetupScenario` / `dispatch_scenario` |
+| **Tick** | controller | `animate` `controller.js:219-229` → `advanceSimulation` → `stepScale0` |
 | **Teardown / switch** | implicit | next load resets; `setFluxMock` disposes prior mock `store.js:137-148` |
-| **Exit (scale switch)** | lifecycle controller | `Scale0LifecycleController.destroy` `controller.js:282-299` → `exitScale0` `:448-450` |
-| **Resize** | loader | `resizeScale0Lattice` `:356-433` |
+| **Exit (scale switch)** | lifecycle controller | `Scale0LifecycleController.destroy` `controller.js:178-194` → `exitScale0` |
+| **Resize** | loader | `resizeScale0Lattice` `:346-433` |
 
 ### 5.3 The PhysicsHarness (init surface)
 
@@ -333,7 +346,7 @@ explicit, testable boundary in the modularization roadmap.
 
 - **Source of truth:** `config/toggles.js` `SCALE0_TOGGLES` (`:14-33`, 18 entries
   `[key, default, domId]`), mirrored as a C++ comment in `engine/include/ftd/scenarios.h:49-57`.
-- **Reset:** `applyToggleDefaults` (`scenario-loader.js:181-228`) resets all 18 to default,
+- **Reset:** `applyToggleDefaults` (`scenario-loader.js:136-190`) resets all 18 to default,
   applies `SCALE0_SCENARIO_OVERRIDES[id]` (prerequisite-sorted so e.g. `dual_substrate`
   precedes `weak_transmutation` — the C++ `TermToggles::validate` dependency, documented
   `:190-204`), then `LIGHT_SCENARIO_OVERRIDES` for `light-*`.
@@ -370,7 +383,7 @@ particle-empty lattice.
 The guard is **GREEN** (6/6, 2026-06-05). It was hardened (B5) so the registry extractor
 (`:112-123`) now matches **both** the `makeScenario(...)` factory form **and** the custom
 object-literal `id:` form — the 10 custom-literal scenarios are no longer invisible (UI inventory
-86 → 96) — plus a new **orphan-metadata** assertion (every `S0_SEED_SCENARIO_METADATA` key must map
+86 → 97) — plus a new **orphan-metadata** assertion (every `S0_SEED_SCENARIO_METADATA` key must map
 to a real scenario). Before the fix the extractor matched only the factory form, and there was no
 registry ↔ metadata check.
 
@@ -389,6 +402,26 @@ Covered in §5.5: the loader's `FIELD_BUTTON_IDS` / `FIELD_BUTTON_TO_FLAG` must 
 with `store.js`'s `FIELD_TOGGLE_KEYS`. There is no programmatic link today (cf. the
 `createFieldFlags()` precedent, §8).
 
+### 6.6 Per-scenario boundary
+
+A scenario may **pin its lattice boundary** instead of inheriting the live DOM controls.
+`config/toggles.js` `SCALE0_SCENARIO_BOUNDARY` — a `{ reflective?, shape? }` map mirroring the
+`SCALE0_SCENARIO_OVERRIDES` toggle-default pattern — is consulted by the loader resolvers
+`boundaryShapeFor(id)` / `reflectiveFor(id)` (`scenario-loader.js:33-44`) at **every**
+boundary-application site: the flux-mock create (`:270-271`), `applyAuxiliaryDefaults`
+(`:120-128`), and the resize path (`:351-364`). Scenarios without an entry fall back to
+`#boundary-select` / `#toggle-reflective` (unchanged behavior).
+
+Added 2026-06-05 with `flux-zero-point`, which declares `reflective: true` so its irreducible
+energy floor is trapped rather than absorbed at the lattice edges (without it the floor bleeds
+away — not "zero-point"). This **removes a real coupling**: before, the loader read the boundary
+**only** from the DOM controls, so a scenario could not declare its own boundary need (the
+UI↔bridge coupling noted as a modular-boundary gap in §6's preamble). The same change also fixed
+a latent clobber where `applyAuxiliaryDefaults` forced `reflective=false` *after* the scenario's
+boundary had been set, so a scenario-set reflective boundary never stuck. Verified by
+`tests/scale0-zero-point.spec.js` (persistent floor) and the all-scenario sweep (other 96
+scenarios unaffected).
+
 ---
 
 ## 7. C++ scenario model & parity
@@ -403,10 +436,10 @@ Structurally 1-for-1 with the JS layer (by design — `scenarios.h:17-27`):
 | RNG | `Math.random()` (unseeded) | `thread_local mt19937(0xC0DEFACE)`, reset per dispatch `scenarios.cpp:40-68` |
 | Toggle mutation | `harness.setToggle` / bridge | `rb.toggles.<field> = …` |
 
-**Stochastic parity is statistical, not bit-exact** (`scenarios.cpp:29-42`): JS `Math.random()`
-is unseedable, so the five stochastic scenarios (`flux-random-genesis`, `flux-thermalization`,
-`flux-vacuum-foam`, `quantum-born-rule`, `quantum-casimir`) match in distribution only. The
-C++ seed gives repeatability *within* a process run.
+**Stochastic parity is statistical, not bit-exact** (`scenarios.cpp:29-43`): JS `Math.random()`
+is unseedable, so the six stochastic scenarios (`flux-random-genesis`, `flux-thermalization`,
+`flux-vacuum-foam`, `flux-zero-point`, `quantum-born-rule`, `quantum-casimir`) match in
+distribution only. The C++ seed gives repeatability *within* a process run.
 
 `ftd_wasm.cpp` is now a thin delegator to `dispatch_scenario`; pre-port it knew only 35 of the
 83 UI scenarios and the rest silently no-op'd on WASM (`scenarios.h:8-15`) — the historical
@@ -461,7 +494,7 @@ Higher payoff, larger one-time churn; the C++ seed bodies stay hand-written but 
 | Bridges | `bridge/wasm-bridge.js`, `bridge/mock-bridge.js`, `bridge/mock-bridge-proxy.js`, `bridge/bridge-contract.js` |
 | Parity | `tests/scenario-parity.spec.js` |
 
-*Counts — 96 registry entries (86 factory + 10 custom literals), 95 unique JS scenarios,
-95 unique C++ scenarios (JS↔C++ parity verified **green** 2026-06-05); raw `case` / `name ==`
-occurrences are 101 / 99. All `file:line` references are as of the 2026-06-05 settled working
-tree; re-derive from source before relying on them.*
+*Counts — 97 registry entries (87 factory + 10 custom literals), 96 unique JS scenarios,
+96 unique C++ scenarios (+1 C++ legacy; JS↔C++ parity verified **green** 6/6 2026-06-05); raw
+`case` / `name ==` occurrences are 102 / 100. All `file:line` references are as of the 2026-06-05
+working tree; re-derive from source before relying on them.*
