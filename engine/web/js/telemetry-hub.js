@@ -153,7 +153,7 @@ export class TelemetryHub {
     /**
      * Collect Scale 0 diagnostics. Implements the dual-bridge logic:
      * if a JS flux mock is active and WASM has no manifested particles,
-     * use mock flux data but keep the WASM tick counter.
+     * use the mock snapshot because it owns both the field state and tick.
      * @returns {object} the active diag snapshot
      */
     collectScale0(bridge, fluxMock, useFluxMock) {
@@ -165,7 +165,7 @@ export class TelemetryHub {
         const mockDiag = mockCaps ? mockCaps.getScale0Diagnostics() : null;
 
         const diag = (mockDiag && !wasmDiag.manifested && mockDiag.totalFlux > 0)
-            ? { ...mockDiag, tick: wasmDiag.tick }
+            ? mockDiag
             : wasmDiag;
 
         this.s0.diag = diag;
