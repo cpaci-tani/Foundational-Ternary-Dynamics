@@ -62,8 +62,8 @@ html[data-theme="parchment"] .view-toggle.active {
     background: var(--card-hover-bg);
 }
 
-/* Touch target — only on actual touch devices, not small-viewport desktops */
-@media (hover: none) and (pointer: coarse) {
+/* Touch target — on mobile devices for WCAG 2.5.5 */
+@media (max-width: 767px) {
     .view-toggle { min-height: 44px; padding: 10px var(--sp-md); }
 }
 

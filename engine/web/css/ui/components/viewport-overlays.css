@@ -323,9 +323,6 @@
     position: absolute;
     bottom: calc(28px * var(--ui-scale) + 12px);
     right: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
     padding: 10px;
     background: var(--bg-surface);
     backdrop-filter: blur(24px) saturate(1.4);
@@ -335,12 +332,98 @@
     box-shadow: var(--glass-shadow), var(--shadow-xl);
     z-index: var(--z-overlay);
     min-width: 186px;
+    transition: min-width 180ms ease, padding 180ms ease, border-radius 180ms ease;
+}
+
+.vcp-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.vcp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+}
+
+.vcp-title {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-primary);
+}
+
+.vcp-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.vcp-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Eye icon collapse button */
+.vcp-collapse-btn {
+    display: flex;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 120ms;
+}
+.vcp-collapse-btn:hover {
+    color: var(--text-primary);
+}
+
+/* Collapsed state */
+#viewport-controls-panel.is-collapsed {
+    padding: 8px;
+    min-width: 40px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#viewport-controls-panel.is-collapsed .vcp-header {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+#viewport-controls-panel.is-collapsed .vcp-title {
+    display: none;
+}
+#viewport-controls-panel.is-collapsed .vcp-collapse-btn {
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+#viewport-controls-panel.is-collapsed .vcp-content {
+    display: none;
 }
 
 .vcp-toggle-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 4px;
+}
+.overlays-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+.flux-grid {
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .vcp-toggle-grid .view-toggle {
@@ -352,7 +435,7 @@
 
 .vcp-select-row {
     display: grid;
-    grid-template-columns: 52px 1fr;
+    grid-template-columns: 60px 1fr;
     align-items: center;
     gap: 6px;
 }
@@ -391,7 +474,7 @@
 }
 .vcp-preset-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 4px;
 }
 .vcp-preset-grid .view-toggle {
@@ -439,6 +522,34 @@ body[data-reduced-motion="1"] *::after {
     }
     .vcp-select-row select {
         height: var(--tap-min);
+    }
+
+    /* The viewport remains a stacking context, children are absolutely positioned */
+    #viewport {
+        padding: calc(var(--toolbar-h) + 12px) 12px 140px 12px;
+        overflow: hidden !important; /* Prevent canvas from scrolling */
+        pointer-events: none; /* Let touches hit the 3D canvas */
+    }
+    #viewport > * {
+        pointer-events: auto; /* Re-enable for the actual panels */
+    }
+    #viewport canvas {
+        pointer-events: auto !important; /* Ensure canvas works */
+    }
+
+    #viewport-overlay,
+    .viewport-overlay-panel,
+    .viewport-overlay-bottom {
+        display: none !important;
+    }
+
+    .s0-overlay-panel.is-collapsed .s0-overlay-title {
+        display: none;
+    }
+
+    /* Move viewport controls from bottom-right to the left side */
+    #viewport-controls-panel {
+        display: none !important;
     }
 }
 

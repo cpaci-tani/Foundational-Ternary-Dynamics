@@ -20,33 +20,65 @@
  * var(--ui-scale) uses in regular properties would scale. Setting it on :root
  * makes every token recompute. The 767px-max media query matches the compact-sm/lg
  * breakpoints; desktop/tablet keep the user's exact scale. */
-@media (max-width: 767px) {
+:root {
+    --ui-scale: calc(var(--ui-scale-base, 1) * 1.2);
+}
+
+@media (min-width: 768px) {
     :root {
-        --ui-scale: calc(var(--ui-scale-base, 1) * 1.2);
+        --ui-scale: var(--ui-scale-base, 1);
     }
 }
 
 /* ── Compact toolbar (≤767px) ─────────────────────────────────────────────── */
-#app[data-layout-mode^="compact"] #toolbar {
-    flex-wrap: wrap;
+#toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
     height: auto;
     min-height: calc(48px * var(--ui-scale));
     padding: calc(8px + var(--shell-safe-top, 0px)) 10px 8px;
     gap: 8px;
-    align-content: flex-start;
+    align-items: center;
+    scrollbar-width: none; /* Firefox */
 }
-
-#app[data-layout-mode^="compact"] #toolbar .separator {
+#toolbar::-webkit-scrollbar {
     display: none;
 }
 
-#app[data-layout-mode^="compact"] #toolbar .tb-group {
+#toolbar .separator {
+    display: none;
+}
+
+#toolbar .tb-group {
     flex-wrap: wrap;
 }
 
-#app[data-layout-mode^="compact"] #viewport-overlay,
-#app[data-layout-mode^="compact"] .ae-legend {
+#viewport-overlay,
+.ae-legend {
     max-width: calc(100vw - 24px);
+}
+
+
+
+@media (min-width: 768px) {
+    #toolbar {
+        flex-wrap: nowrap;
+        height: calc(48px * var(--ui-scale));
+        padding: 0 var(--sp-xl);
+        gap: 16px;
+        align-content: stretch;
+    }
+    #toolbar .separator {
+        display: block;
+    }
+    #toolbar .tb-group {
+        flex-wrap: nowrap;
+    }
+    #viewport-overlay,
+    .ae-legend {
+        max-width: none;
+    }
 }
 
 /* Controls grids: 3/4 columns are far too cramped on a phone (labels wrap
@@ -54,21 +86,31 @@
    vertical scroll a single column would force. (grid-2 already fits.)
    Uses the viewport media query (not the data-layout-mode attribute) so it
    applies on first paint, before the breakpoint service has booted. */
-@media (max-width: 767px) {
-    #app .panel-grid-3,
-    #app .panel-grid-4 {
-        grid-template-columns: 1fr 1fr;
-    }
+.panel-grid-3,
+.panel-grid-4 {
+    grid-template-columns: 1fr 1fr;
 }
 
-#app[data-layout-mode^="compact"] #status-bar {
-    /* Tighter horizontal padding on phones (was --sp-xl ≈ 20px) so status items
-       aren't pushed off-screen; keep the safe-area-aware bottom padding. */
+#status-bar {
     padding-left: var(--sp-md);
     padding-right: var(--sp-md);
     padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
     flex-wrap: wrap;
     gap: 6px 10px;
+}
+
+@media (min-width: 768px) {
+    .panel-grid-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .panel-grid-4 {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    #status-bar {
+        padding: 0 var(--sp-xl);
+        flex-wrap: nowrap;
+        gap: 16px;
+    }
 }
 
 /* ── Tablet (≤1023px) ─────────────────────────────────────────────────────── */
@@ -98,101 +140,70 @@
  *  - env(safe-area-inset-bottom) for notched phones and Android gesture nav
  *  - Body scroll lock is applied via .body-panel-open (set by mobile-panel.js)
  */
+/* ── Mobile bottom sheet (Default) ── */
 @media (max-width: 767px) {
-    /*
-     * Specificity note: panel-dock.css has a compound compact rule
-     * (html[attr] #app[attr] #panel-area = 2,2,1) that would beat a simple
-     * (html[attr] #panel-area = 1,1,1) rule. We match it by including all
-     * data-layout-mode variants so the mobile sheet always wins at equal or
-     * higher specificity — cascade order then decides (this file comes later).
-     */
+#panel-area {
+    /* Note: Removed position: fixed !important; it now flows natively in grid */
+    border-radius: 16px 16px 0 0;
+    max-height: none !important;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: calc(60px + max(
+        env(safe-area-inset-bottom, 12px),
+        var(--browser-nav-inset, 0px)
+    ));
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+    backdrop-filter: blur(32px) saturate(1.4);
+}
 
-    /* ── Panel area — bottom sheet ── */
-    html[data-panel-mount="bottom"] #panel-area,
-    html[data-panel-mount="bottom"] #app[data-layout-mode^="compact"] #panel-area,
-    html[data-panel-mount="bottom"] #app[data-layout-mode="tablet"] #panel-area,
-    html:not([data-panel-mount]) #panel-area {
-        position: fixed !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        top: auto !important;
-        transform: translateY(0) !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-        border-radius: 16px 16px 0 0;
-        max-height: 80dvh !important;
-        min-height: 0;
-        /* Combine safe-area-inset (notch / gesture nav) with --browser-nav-inset
-           (set by the visualViewport listener for persistent browser chrome like
-           Edge Mobile's bottom nav bar). max() picks whichever is larger. */
-        padding-bottom: max(
-            env(safe-area-inset-bottom, 12px),
-            var(--browser-nav-inset, 0px)
-        );
-        transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-        backdrop-filter: blur(32px) saturate(1.4);
-    }
+/* Collapsed */
+#app.panels-collapsed #panel-area {
+    transform: translateY(110%) !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    opacity: 1 !important;
+    border-width: 1px !important;
+    pointer-events: none;
+}
 
-    /* Collapsed: slide off the bottom */
-    html[data-panel-mount="bottom"] #app.panels-collapsed #panel-area,
-    html[data-panel-mount="bottom"] #app.panels-collapsed[data-layout-mode^="compact"] #panel-area,
-    html:not([data-panel-mount]) #app.panels-collapsed #panel-area {
-        transform: translateY(110%) !important;
-        max-height: 80dvh !important;
-        min-height: 0 !important;
-        padding-top: 0 !important;
-        opacity: 1 !important;
-        border-width: 1px !important;
-        pointer-events: none;
-    }
+/* Show the grip-handle pill on mobile */
+#panel-resizer {
+    display: flex;
+}
 
-    /* Show the grip-handle pill on mobile */
-    html[data-panel-mount="bottom"] #panel-resizer {
-        display: flex;
-    }
+/* ── Tab bar — full-width strip ── */
+#tab-bar {
+    width: calc(100% - 16px);
+    left: 8px;
+    right: 8px;
+    transform: none;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-right: 8px;
+    padding-bottom: max(
+        env(safe-area-inset-bottom, 0px),
+        var(--browser-nav-inset, 0px)
+    );
+    scrollbar-width: none;
+}
 
-    /* ── Tab bar — full-width strip ── */
-    html[data-panel-mount="bottom"] #tab-bar,
-    html:not([data-panel-mount]) #tab-bar {
-        width: calc(100% - 16px);
-        left: 8px;
-        right: 8px;
-        transform: none;
-        overflow-x: auto;
-        justify-content: flex-start;
-        padding-right: 8px;
-        /* Same max() pattern as the panel — keeps tab bar above the browser
-           nav bar when both safe-area and browser chrome are present. */
-        padding-bottom: max(
-            env(safe-area-inset-bottom, 0px),
-            var(--browser-nav-inset, 0px)
-        );
-        scrollbar-width: none;
-    }
+#tab-bar::-webkit-scrollbar {
+    display: none;
+}
 
-    html[data-panel-mount="bottom"] #tab-bar::-webkit-scrollbar,
-    html:not([data-panel-mount]) #tab-bar::-webkit-scrollbar {
-        display: none;
-    }
+body.body-panel-open {
+    overflow: hidden;
+    overscroll-behavior: none;
+}
 
-    /* ── Body scroll lock when sheet is open ── */
-    body.body-panel-open {
-        overflow: hidden;
-        overscroll-behavior: none;
-    }
+#status-bar {
+    padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
+}
 
-    /* ── Status bar safe area ── */
-    #status-bar {
-        padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
-    }
-
-    /* ── Viewport overlays: keep within viewport width ── */
-    #viewport-overlay,
-    .viewport-overlay-panel {
-        max-width: calc(100vw - 16px);
-    }
+#viewport-overlay,
+.viewport-overlay-panel {
+    max-width: calc(100vw - 16px);
+}
 }
 
 /* ── Small phone extras (≤479px) ─────────────────────────────────────────── */
@@ -218,51 +229,48 @@
  * this shell file in index.html and would otherwise win on cascade order.
  * Uses max-width rather than (pointer: coarse) so it is exercised by responsive
  * emulation/resize during testing. */
-@media (max-width: 767px) {
-    /* Checkboxes in physics-toggle rows (was 16×16) */
-    #app .toggle-row input[type="checkbox"] {
-        width: 22px;
-        height: 22px;
-    }
+/* ── Mobile touch targets ── */
+#app .toggle-row input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+}
+#app .ctrl-input {
+    min-height: 44px;
+}
+#app .tb-select {
+    min-height: 44px;
+}
+#app .tb-slider::-webkit-slider-thumb,
+#app .pe-slider::-webkit-slider-thumb,
+#app .ctrl-slider-row input[type="range"]::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+}
+#app .tb-slider::-moz-range-thumb,
+#app .pe-slider::-moz-range-thumb,
+#app .ctrl-slider-row input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+}
+#app .coord-step {
+    min-height: 32px;
+    min-width: 32px;
+}
+#app #panel-scene input[type="checkbox"] {
+    width: 1.4rem;
+    height: 1.4rem;
+}
 
-    /* Text/number inputs (was 30px hardcoded) */
-    #app .ctrl-input {
-        min-height: 44px;
-    }
-
-    /* Toolbar selects: scenario / size / mode (was 32px) */
-    #app .tb-select {
-        min-height: 44px;
-    }
-
-    /* Range sliders: enlarge the thumb (the grab target). These tracks draw as
-       the input's own 6px background, so we must NOT raise the input height
-       (that would thicken the track into a bar) — the thumb renders centered
-       and overflows the thin track, giving a 24px touch target. */
+@media (min-width: 768px) {
+    #app .toggle-row input[type="checkbox"] { width: 16px; height: 16px; }
+    /* Revert touch targets where needed */
+    #app .ctrl-input { min-height: var(--ctrl-height-min); }
+    #app .tb-select { min-height: 32px; }
     #app .tb-slider::-webkit-slider-thumb,
     #app .pe-slider::-webkit-slider-thumb,
-    #app .ctrl-slider-row input[type="range"]::-webkit-slider-thumb {
-        width: 24px;
-        height: 24px;
-    }
-    #app .tb-slider::-moz-range-thumb,
-    #app .pe-slider::-moz-range-thumb,
-    #app .ctrl-slider-row input[type="range"]::-moz-range-thumb {
-        width: 24px;
-        height: 24px;
-    }
-
-    /* Coordinate stepper ▲/▼ micro-buttons (was 10px tall) */
-    #app .coord-step {
-        min-height: 32px;
-        min-width: 32px;
-    }
-
-    /* Scene-panel checkboxes (was 1.2rem) */
-    #app #panel-scene input[type="checkbox"] {
-        width: 1.4rem;
-        height: 1.4rem;
-    }
+    #app .ctrl-slider-row input[type="range"]::-webkit-slider-thumb { width: 16px; height: 16px; }
+    #app .coord-step { min-height: 20px; min-width: 20px; }
+    #app #panel-scene input[type="checkbox"] { width: 1.2rem; height: 1.2rem; }
 }
 
 /* ── Landscape phones / short viewports (height <= 500px) ─────────────────────

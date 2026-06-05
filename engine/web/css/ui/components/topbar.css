@@ -219,22 +219,37 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
     /* Show the Menu button so users can reach the secondary controls */
     #toolbar .tb-btn-mobile { display: inline-flex; }
 
+    #toolbar {
+        gap: 16px;
+    }
+
+    #toolbar .tb-group {
+        gap: 12px;
+    }
+
     #toolbar[data-topbar="enhanced"] {
-        gap: 6px 8px;
+        gap: 12px 16px;
     }
 
     .topbar-slot-context-meta {
         display: none;
     }
 
+    /* Hide the cramped Scale 0 dropdown group on mobile */
+    .topbar-slot-session {
+        display: none !important;
+    }
+
     .topbar-slot-actions {
         margin-left: 0;
+        gap: 8px;
     }
 
     /* Contextual controls are hidden until Menu expands them. */
     .topbar-slot-context {
         display: none;
-        flex-basis: 100%;
+        flex: 0 0 auto;
+        width: auto;
         padding: 8px;
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
@@ -252,12 +267,12 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
         max-width: 100%;
     }
 
-    /* On narrow screens the glass pill crowds the controls. */
+    /* On narrow screens we use horizontal scrolling instead of stacking. */
     .topbar-slot-brand,
     .topbar-slot-actions,
     .topbar-slot-session,
     .topbar-slot-sim {
-        width: 100%;
+        width: auto;
     }
 
     .topbar-slot-session .tb-group,

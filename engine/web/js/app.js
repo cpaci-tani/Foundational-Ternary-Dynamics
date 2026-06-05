@@ -643,6 +643,11 @@ async function init() {
 
         btnToggleUI.addEventListener('click', toggleUI);
 
+        const btnShowUI = document.getElementById('btn-show-ui');
+        if (btnShowUI) {
+            btnShowUI.addEventListener('click', toggleUI);
+        }
+
         // Bind keyboard shortcut (Ctrl+U)
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'u') {
@@ -1214,26 +1219,6 @@ function wireViewportToggles() {
         });
     }
 
-    // Reduced-motion toggle — persisted to localStorage and broadcast as
-    // a data-attribute on <body> so CSS + JS can both react. Paired with
-    // the user's system prefers-reduced-motion setting so either path
-    // disables continuous animation.
-    const rmBtn = document.getElementById('toggle-reduced-motion');
-    if (rmBtn) {
-        const applyRM = (on) => {
-            document.body.dataset.reducedMotion = on ? '1' : '0';
-            rmBtn.classList.toggle('active', !!on);
-            try { localStorage.setItem('ftd.reducedMotion', on ? '1' : '0'); } catch { /* ignore */ }
-            window.dispatchEvent(new CustomEvent('ftd:reduced-motion-change', { detail: { on } }));
-        };
-        let initial = false;
-        try { initial = localStorage.getItem('ftd.reducedMotion') === '1'; } catch { /* ignore */ }
-        if (!initial && window.matchMedia) {
-            try { initial = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* ignore */ }
-        }
-        applyRM(initial);
-        rmBtn.addEventListener('click', () => applyRM(!rmBtn.classList.contains('active')));
-    }
 
     // PE mode visual overlay toggles (delegated to Scale1Controller)
     const velBtn = document.getElementById('toggle-velocities');
