@@ -113,7 +113,9 @@ function makeChip(btn) {
 
     const x = document.createElement('button');
     x.type = 'button';
-    x.className = 's0-overlay-chip-x';
+    // .u-no-baseline opts the × out of the global 44px control-baseline
+    // (tokens.css) so it can render as a small em-sized circle.
+    x.className = 's0-overlay-chip-x u-no-baseline';
     x.setAttribute('aria-label', `Turn off ${text}`);
     x.textContent = '×';
     x.addEventListener('click', (e) => { e.stopPropagation(); btn.click(); });
