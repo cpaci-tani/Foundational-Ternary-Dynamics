@@ -116,8 +116,9 @@ function makeChip(btn) {
     // .u-no-baseline opts the × out of the global 44px control-baseline
     // (tokens.css) so it can render as a small em-sized circle.
     x.className = 's0-overlay-chip-x u-no-baseline';
+    // The × is drawn in CSS (::before/::after bars) so it stays exactly centered;
+    // the accessible name comes from aria-label, so no text glyph is needed.
     x.setAttribute('aria-label', `Turn off ${text}`);
-    x.textContent = '×';
     x.addEventListener('click', (e) => { e.stopPropagation(); btn.click(); });
     chip.appendChild(x);
 
