@@ -2,8 +2,8 @@
  * Scrub bar DOM template — a floating video-player strip at the bottom of
  * the viewport that also hosts the primary playback controls.
  *
- * Layout (left → right):
- *   [▶] [⏵] [↺]   │   Speed ── ●   │   ⟲ [── timeline ──] 00:00   │   ⚙
+ * Layout (left to right):
+ *   [play] [step] [reset] | [-] [speed] [+] | [now] | [settings]
  *
  * The ids below match the original toolbar wiring (`btn-play`,
  * `btn-step`, `btn-reset`, `ticks-per-frame`, `tpf-display`) so app.js
@@ -16,33 +16,33 @@ export function getScrubBarTemplate() {
     el.setAttribute('role', 'group');
     el.setAttribute('aria-label', 'Playback timeline');
     el.innerHTML = `
-        <div class="scrub-bar-section scrub-bar-controls">
-            <div class="tb-btn-labeled">
-                <button class="tb-btn tb-btn-global" id="btn-play"
-                    title="Play / Pause (Space) — freezes the simulation."
-                    aria-label="Play/pause">&#9654;</button>
-                <span class="tb-btn-label">play/pause</span>
-            </div>
-            <div class="tb-btn-labeled">
-                <button class="tb-btn scrub-bar-small-btn" id="btn-step"
-                    title="Step (S)" aria-label="Step">&#9205;</button>
-                <span class="tb-btn-label">step</span>
-            </div>
-            <div class="tb-btn-labeled">
-                <button class="tb-btn scrub-bar-small-btn" id="btn-reset"
-                    title="Reset (R)" aria-label="Reset">&#8634;</button>
-                <span class="tb-btn-label">reset</span>
-            </div>
+        <div class="scrub-bar-section scrub-bar-transport" aria-label="Transport controls">
+            <button class="tb-btn tb-btn-global scrub-bar-play-btn" id="btn-play"
+                title="Play / Pause (Space)"
+                aria-label="Play/pause">&#9654;</button>
+            <button class="tb-btn scrub-bar-small-btn" id="btn-step"
+                title="Step (S)" aria-label="Step">&#9205;</button>
+            <button class="tb-btn scrub-bar-small-btn" id="btn-reset"
+                title="Reset (R)" aria-label="Reset">&#8634;</button>
         </div>
 
         <div class="scrub-bar-divider" aria-hidden="true"></div>
 
-        <div class="scrub-bar-section scrub-bar-speed">
-            <span class="scrub-bar-speed-label">Speed</span>
-            <input type="range" class="scrub-bar-slider" id="ticks-per-frame"
-                min="0" max="100" step="0.1" value="50"
-                title="Simulation speed (ticks per animation frame)">
-            <span class="scrub-bar-speed-value" id="tpf-display">1.0</span>
+        <div class="scrub-bar-section scrub-bar-speed" aria-label="Playback speed">
+            <button class="scrub-bar-icon-btn scrub-bar-speed-nudge" type="button"
+                data-speed-nudge="-5" title="Slower" aria-label="Slower">&minus;</button>
+            <span class="scrub-bar-speed-readout" aria-live="polite">
+                <span class="scrub-bar-speed-value" id="tpf-display">1.0</span>
+                <span class="scrub-bar-speed-unit" aria-hidden="true">&times;</span>
+            </span>
+            <button class="scrub-bar-icon-btn scrub-bar-speed-nudge" type="button"
+                data-speed-nudge="5" title="Faster" aria-label="Faster">+</button>
+        </div>
+
+        <div class="scrub-bar-divider" aria-hidden="true"></div>
+
+        <div class="scrub-bar-section scrub-bar-now" aria-label="Timeline position">
+            <span class="scrub-bar-time">T 0</span>
         </div>
 
         <div class="scrub-bar-divider" aria-hidden="true"></div>
@@ -68,6 +68,13 @@ export function getScrubBarTemplate() {
                         <button type="button" class="scrub-bar-settings-chip" data-speed-preset="5"    role="radio">5&#215;</button>
                         <button type="button" class="scrub-bar-settings-chip" data-speed-preset="10"   role="radio">10&#215;</button>
                     </div>
+                </div>
+                <div class="scrub-bar-settings-row">
+                    <span class="scrub-bar-settings-label">Fine</span>
+                    <input type="range" class="scrub-bar-slider" id="ticks-per-frame"
+                        min="0" max="100" step="0.1" value="50"
+                        title="Simulation speed (ticks per animation frame)"
+                        aria-label="Simulation speed">
                 </div>
                 <!-- Step-by-N buttons — step the simulation forward by a
                      specific tick count without starting playback. Useful for
