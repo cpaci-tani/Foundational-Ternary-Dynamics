@@ -32,6 +32,7 @@ const NEWLY_PORTED_SCENARIOS = [
     ['flux-cyclotron',        'newly ported',  'flux'],
     ['flux-triad',            'newly ported',  'flux'],
     ['flux-vacuum-foam',      'newly ported',  'flux'],
+    ['flux-zero-point',       'newly added',   'flux'],
     ['flux-annihilation',     'newly ported',  'flux'],
     ['flux-nested-standing',  'newly ported',  'flux'],
     // light-* — mostly baseline (already supported) but light-prism was dropped

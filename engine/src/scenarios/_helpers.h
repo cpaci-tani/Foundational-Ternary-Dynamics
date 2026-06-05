@@ -16,7 +16,8 @@
 //  engine/src/scenarios.cpp next to dispatch_scenario() (which resets it
 //  before each run) but DECLARED here in ftd::detail so the stochastic
 //  scenarios (flux-random-genesis, flux-thermalization, flux-vacuum-foam,
-//  quantum-born-rule, quantum-casimir) can call urand() across TU boundaries.
+//  flux-zero-point, quantum-born-rule, quantum-casimir) can call urand()
+//  across TU boundaries.
 // ==========================================================================
 
 #include "ftd/render_bridge.h"

@@ -1,7 +1,7 @@
 // ==========================================================================
 //  engine/src/scenarios/flux.cpp
 //
-//  Group: flux-* (20 scenarios)
+//  Group: flux-* (21 scenarios)
 //  JS source: engine/web/js/bridge/scenarios/flux-scenarios.js
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1). Every scenario body
@@ -342,6 +342,22 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
             double rLen = std::sqrt(rx * rx + ry * ry + rz2 * rz2);
             if (rLen < 1e-12) rLen = 1;
             IF(rb, x, y, z, val * rx / rLen, val * ry / rLen, val * rz2 / rLen);
+        }
+    }
+    else if (name == "flux-zero-point") {
+        // Zero-Point Energy — the irreducible ground-state floor. Uniform
+        // low-amplitude random flux across the WHOLE lattice at 0.3·K_B
+        // (≈ 0.08, ~20× below K_GENESIS = N_c·K_B = 1.533), so nothing can
+        // manifest. genesis + damping are OFF via config/toggles.js, so the
+        // energy-conserving wave dynamics keep a persistent non-zero floor.
+        // Mirrors the JS flux-zero-point body (same amplitude); JS↔C++ parity
+        // is statistical (both stochastic). Pedagogical, not a ½ℏω derivation.
+        const double zpeAmp = K_B * 0.3;
+        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+            IF(rb, x, y, z,
+               (urand() - 0.5) * zpeAmp,
+               (urand() - 0.5) * zpeAmp,
+               (urand() - 0.5) * zpeAmp);
         }
     }
     // If we got here and matched none of the cases above, the prefix was
