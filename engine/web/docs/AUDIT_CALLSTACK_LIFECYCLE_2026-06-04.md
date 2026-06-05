@@ -218,6 +218,18 @@ on small lattices. Each control is mirrored by a second button in the bottom-rig
 Visuals panel (`-scene` ids); both buttons + the renderer flag stay in sync via shared
 `applyFluxOrganic`/`applyFluxGlow` in bindings.js.
 
+**Fix 3e — flux settings now survive a rebuild.** The opacity (and shape) sliders set the
+material uniform directly without storing the value, so any `_buildFluxVolume` rebuild
+(resize, scenario change, glow toggle) reset them to the material default — opacity
+"didn't stick". Now opacity and shape are stored as renderer state (`_fluxOpacity`,
+`_fluxShape`), and a single `_applyFluxMaterialState()` re-applies all material-driven
+settings (glow blend + halo, opacity, shape) from state at the tail of **every**
+`_buildFluxVolume`, alongside the restored `visible` and lattice-spacing. The glow toggle
+delegates to the same applier, so a user-set opacity is preserved (override beats the
+glow-mode default) instead of being clobbered. Point-size / threshold persist as before
+(re-read each frame in `updateFluxVolume`). Net: all flux-volume settings stay continuous
+across rebuilds.
+
 ### Bonus finding — `perf-baseline.spec.js` was stale w.r.t. the worker path
 The perf-baseline gate read the steady-state tick via `b.currentTick()` / `b._tick`,
 which the worker-default `MockBridgeProxy` doesn't expose (it self-ticks off-thread),

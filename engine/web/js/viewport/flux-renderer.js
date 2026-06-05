@@ -102,6 +102,8 @@ export class ViewportFluxRenderer {
         this.showFlux = true;      // flux volume ON by default
         this._fluxOrganic = true;  // organic (3D-jittered scatter) vs regular lattice grid
         this._fluxGlow = true;     // additive glow bloom (weakened) vs flat translucent dots
+        this._fluxOpacity = null;  // user opacity override (null = use the glow-mode default)
+        this._fluxShape = 0;       // point shape (0 = circle)
     }
 
     setBoundaryShape(shape) {
@@ -178,6 +180,12 @@ export class ViewportFluxRenderer {
         this._fluxVolume.renderOrder = 10; // render after background stars (order 0)
         this._fluxVolumeSize = latticeSize;
         this._scene.add(this._fluxVolume);
+        // Re-apply every persisted setting so a rebuild (resize / scenario / toggle) keeps
+        // the user's flux-volume settings continuous instead of resetting them to the
+        // freshly-built material/mesh defaults.
+        this._fluxVolume.visible = this.showFlux;
+        this._applyFluxMaterialState();                       // glow + opacity + shape
+        if (this._fluxLatticeSpacing !== 1.0) this.setFluxLatticeSpacing(this._fluxLatticeSpacing);
     }
 
     /**
@@ -197,13 +205,8 @@ export class ViewportFluxRenderer {
                 this._fluxVolume = null;
             }
             this._buildFluxVolume(latticeSize);
-            // _buildFluxVolume initialises visible=false; restore the user's current
-            // showFlux state so the volume doesn't disappear after a size change.
-            this._fluxVolume.visible = this.showFlux;
-            // Re-apply spacing if configured
-            if (this._fluxLatticeSpacing !== 1.0) {
-                this.setFluxLatticeSpacing(this._fluxLatticeSpacing);
-            }
+            // _buildFluxVolume now restores visible + re-applies every persisted material
+            // and spacing setting at its tail, so nothing extra is needed here.
         }
 
         const posAttr = this._fluxVolume.geometry.getAttribute('position');
@@ -360,13 +363,13 @@ export class ViewportFluxRenderer {
     // ── Flux Volume Controls ──────────────────────────────────────────
 
     setFluxOpacity(val) {
-        if (!this._fluxVolume) return;
-        this._fluxVolume.material.uniforms.uOpacity.value = val;
+        this._fluxOpacity = val;   // persisted; re-applied on every (re)build
+        if (this._fluxVolume) this._fluxVolume.material.uniforms.uOpacity.value = val;
     }
 
     setFluxShape(shapeIndex) {
-        if (!this._fluxVolume) return;
-        this._fluxVolume.material.uniforms.shapeType.value = shapeIndex;
+        this._fluxShape = shapeIndex | 0;   // persisted; re-applied on every (re)build
+        if (this._fluxVolume) this._fluxVolume.material.uniforms.shapeType.value = this._fluxShape;
     }
 
     setFluxPointScale(scale) {
@@ -389,11 +392,23 @@ export class ViewportFluxRenderer {
     // live (picked up on the next render — no re-upload needed).
     setFluxGlow(on) {
         this._fluxGlow = !!on;
+        this._applyFluxMaterialState();
+    }
+
+    // Single source of truth for the material-driven flux-volume settings — glow blend +
+    // halo, opacity (the user's override if set, else the glow-mode default), and point
+    // shape. Called by setFluxGlow AND at the tail of every (re)build, so user settings
+    // stay continuous instead of resetting to the freshly-built material's defaults.
+    _applyFluxMaterialState() {
         if (!this._fluxVolume) return;
         const mat = this._fluxVolume.material;
-        mat.blending = this._fluxGlow ? THREE.AdditiveBlending : THREE.NormalBlending;
-        mat.uniforms.uOpacity.value = this._fluxGlow ? FLUX_GLOW_UOPACITY : FLUX_FLAT_UOPACITY;
-        mat.uniforms.uGlow.value = this._fluxGlow ? FLUX_GLOW_UGLOW : 0.0;
+        const glow = this._fluxGlow;
+        mat.blending = glow ? THREE.AdditiveBlending : THREE.NormalBlending;
+        mat.uniforms.uGlow.value = glow ? FLUX_GLOW_UGLOW : 0.0;
+        mat.uniforms.uOpacity.value = (this._fluxOpacity != null)
+            ? this._fluxOpacity
+            : (glow ? FLUX_GLOW_UOPACITY : FLUX_FLAT_UOPACITY);
+        mat.uniforms.shapeType.value = this._fluxShape | 0;
         mat.needsUpdate = true;
     }
 
