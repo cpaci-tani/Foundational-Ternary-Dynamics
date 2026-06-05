@@ -213,8 +213,8 @@ export const SCALE0_SCENARIO_OVERRIDES = {
 // when its physics needs a specific boundary regardless of the user's current
 // DOM selection; the loader applies these at load AND on resize, and falls
 // back to the DOM controls for any scenario without an entry. (This also
-// decouples a scenario's boundary need from raw DOM reads — see the
-// scenario-lifecycle audit, finding F8.)
+// decouples a scenario's boundary need from raw DOM reads — the UI↔bridge
+// coupling noted in SPEC_SCALE0_SCENARIO_ARCHITECTURE.md §6.6.)
 //
 //   reflective: boolean → true reflects energy at the edges (trapped) instead
 //                         of absorbing it in the default sponge layers.
