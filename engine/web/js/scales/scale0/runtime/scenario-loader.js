@@ -2,7 +2,7 @@ import { getPhysicsHarness } from '../../../physics/index.js';
 import { MockBridge } from '../../../bridge-init.js';
 import { MockBridgeProxy } from '../../../bridge/mock-bridge-proxy.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
-import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES } from '../../../config/toggles.js';
+import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
 import {
     clearFluxMock,
@@ -27,6 +27,20 @@ import {
     setInputValue,
     setSelectedScenarioId,
 } from '../ui/dom.js';
+
+// ── Per-scenario boundary resolution ────────────────────────────────
+// A scenario may declare a boundary preference in SCALE0_SCENARIO_BOUNDARY
+// (config/toggles.js); when it does, that wins over the live DOM controls.
+// Otherwise fall back to the user's #boundary-select / #toggle-reflective.
+// (Keeps the scenario's boundary need out of raw DOM reads — audit F8.)
+function boundaryShapeFor(id) {
+    const b = SCALE0_SCENARIO_BOUNDARY[id];
+    return (b && b.shape) ? b.shape : readInputValue('boundary-select', 'cube');
+}
+function reflectiveFor(id) {
+    const b = SCALE0_SCENARIO_BOUNDARY[id];
+    return (b && typeof b.reflective === 'boolean') ? b.reflective : readButtonActive('toggle-reflective');
+}
 
 // Toggle-reset whitelist used by `applyToggleDefaults`.
 //
@@ -103,10 +117,16 @@ function syncComboSliders(bridge) {
     }
 }
 
-function applyAuxiliaryDefaults(ctx, viewportAdapter) {
+function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId) {
     ctx.applyTicksPerFrameFromSlider(50);
-    ctx.applyBoundaryShape('cube');
-    ctx.applyReflectiveBoundary(false);
+    // Boundary: a scenario may pin its own (SCALE0_SCENARIO_BOUNDARY); otherwise
+    // reset to the default cube + non-reflective. Without honoring the config
+    // here, this step would clobber the reflective boundary the scenario needs
+    // (it runs after the flux-mock boundary is set). flux-zero-point relies on
+    // this to keep its energy trapped → persistent floor.
+    const bnd = SCALE0_SCENARIO_BOUNDARY[scenarioId] || {};
+    ctx.applyBoundaryShape(bnd.shape ?? 'cube');
+    ctx.applyReflectiveBoundary(bnd.reflective ?? false);
     viewportAdapter.setFluxVolumeVisible(true);
     viewportAdapter.setFluxSliceVisible(false);
     setButtonActive('toggle-flux-volume', true);
@@ -247,8 +267,8 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     let fluxMock = null;
     if (useFluxMock) {
         fluxMock = makeFluxMock(latticeSize, scenario.id, ctx.bridge);
-        fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
-        fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
+        fluxMock.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenario.id));
+        fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenario.id));
         fluxMock.capabilities.scale0.setupScenario(scenario.id);
     }
 
@@ -264,7 +284,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     ctx.fluxMock = fluxMock;
 
     ctx.resetAllVisualState();
-    applyAuxiliaryDefaults(ctx, viewportAdapter);
+    applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id);
 
     const harness = getPhysicsHarness(ctx.bridge);
     scenario.load(harness, params);
@@ -333,10 +353,10 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
 
     if (bridge && bridge.capabilities && bridge.capabilities.scale0) {
         if (typeof bridge.capabilities.scale0.setBoundaryShape === 'function') {
-            bridge.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
+            bridge.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
         }
         if (typeof bridge.capabilities.scale0.setReflectiveBoundary === 'function') {
-            bridge.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
+            bridge.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
         }
     }
 
@@ -345,8 +365,8 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     let fluxMock = null;
     if (useFluxMock) {
         fluxMock = makeFluxMock(newSize, scenarioId, bridge);
-        fluxMock.capabilities.scale0.setBoundaryShape(readInputValue('boundary-select', 'cube'));
-        fluxMock.capabilities.scale0.setReflectiveBoundary(readButtonActive('toggle-reflective'));
+        fluxMock.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
+        fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
         fluxMock.capabilities.scale0.setupScenario(scenarioId);
     }
 

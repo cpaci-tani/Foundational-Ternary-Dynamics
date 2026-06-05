@@ -106,6 +106,17 @@ export const SCALE0_SCENARIO_OVERRIDES = {
         ['genesis', true, 't-genesis'],
         ['damping', true, 't-damping'],
     ],
+    'flux-zero-point': [
+        // Quiescent ground-state floor: NO manifestation (genesis off), no
+        // dissipative damping, and no Gauss projection (its non-variational
+        // operator is the conservation leak) — so the bare wave update keeps the
+        // seeded fluctuation energy. Paired with reflective boundaries
+        // (SCALE0_SCENARIO_BOUNDARY) so nothing leaks out the edges, the floor
+        // persists. The inverse of vacuum-foam (near-threshold + genesis on).
+        ['genesis', false, 't-genesis'],
+        ['damping', false, 't-damping'],
+        ['gauss_projection', false, 't-gauss'],
+    ],
     'quantum-born-rule': [
         ['genesis', true, 't-genesis'],
         ['damping', true, 't-damping'],
@@ -193,6 +204,28 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-seed-stella-octangula':    [['genesis', false, 't-genesis']],
     's0-seed-moore-cell':          [['genesis', false, 't-genesis']],
     's0-seed-moore-decomposition': [['genesis', false, 't-genesis']],
+};
+
+// ── Per-scenario BOUNDARY preference ────────────────────────────────
+// Mirrors SCALE0_SCENARIO_OVERRIDES (toggle defaults), but for the lattice
+// boundary — which the loader otherwise reads from the live DOM controls
+// (#boundary-select / #toggle-reflective). A scenario declares an entry here
+// when its physics needs a specific boundary regardless of the user's current
+// DOM selection; the loader applies these at load AND on resize, and falls
+// back to the DOM controls for any scenario without an entry. (This also
+// decouples a scenario's boundary need from raw DOM reads — see the
+// scenario-lifecycle audit, finding F8.)
+//
+//   reflective: boolean → true reflects energy at the edges (trapped) instead
+//                         of absorbing it in the default sponge layers.
+//   shape:      string  → optional 'boundary-select' value (e.g. 'cube').
+//
+// flux-zero-point needs REFLECTIVE: its whole point is an *irreducible* zero-
+// point floor, which only persists if the seeded fluctuation energy cannot
+// leak out the edges. With absorbing boundaries the floor bleeds away — which
+// would not be zero-point energy at all.
+export const SCALE0_SCENARIO_BOUNDARY = {
+    'flux-zero-point': { reflective: true },
 };
 
 // Light scenarios: pure EM wave propagation (no matter coupling)

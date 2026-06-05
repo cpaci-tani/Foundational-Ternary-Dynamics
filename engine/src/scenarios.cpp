@@ -27,7 +27,8 @@ namespace ftd {
 namespace {
 
 // Used by scenarios that call Math.random() in JS (flux-random-genesis,
-// flux-thermalization, flux-vacuum-foam, quantum-born-rule, quantum-casimir).
+// flux-thermalization, flux-vacuum-foam, flux-zero-point, quantum-born-rule,
+// quantum-casimir).
 // Thread-local so each worker thread gets its own state; reset_scenario_rng()
 // is invoked at the top of dispatch_scenario() below so repeated
 // setupScenario calls produce a reproducible sequence within a single
