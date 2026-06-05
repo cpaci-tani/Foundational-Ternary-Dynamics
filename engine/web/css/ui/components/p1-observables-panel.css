@@ -1,0 +1,348 @@
+/* P1 Observables Panel Styles */
+
+.p1-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.p1-panel-title {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 15px;
+    letter-spacing: 0.02em;
+}
+
+.p1-header-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px 6px;
+}
+
+.p1-header-btn:hover {
+    color: var(--text-primary);
+}
+
+.p1-empty-state {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+.p1-svg-plot {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Bell Section */
+.p1-bell-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 4px 8px;
+    font-size: 12px;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.p1-bell-slider {
+    width: 100%;
+}
+
+.p1-bell-val {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+}
+
+.p1-bell-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.p1-bell-stats {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.p1-btn-optimal {
+    background: rgba(120, 200, 255, 0.15);
+    border: 1px solid rgba(120, 200, 255, 0.3);
+    color: var(--accent);
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+.p1-bell-result {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.p1-bell-result-val {
+    font-weight: bold;
+}
+
+.p1-bell-desc {
+    opacity: 0.6;
+    font-size: 12px;
+}
+
+.p1-bell-footer {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--text-muted);
+    opacity: 0.7;
+    line-height: 1.4;
+}
+
+/* Gravity Section */
+.p1-gravity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.p1-gravity-col {
+    text-align: center;
+}
+
+.p1-gravity-clock {
+    width: 40px;
+    height: 48px;
+}
+
+.p1-gravity-stats {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.p1-gravity-ratio {
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.p1-gravity-footer {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--text-muted);
+    opacity: 0.7;
+    line-height: 1.4;
+}
+
+/* G2 Section */
+.p1-g2-stats {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.p1-g2-val {
+    color: var(--accent);
+}
+
+.p1-g2-val-warning {
+    color: #fc6;
+}
+
+.p1-g2-border {
+    margin-top: 3px;
+    border-top: 1px solid var(--text-muted, #444);
+    padding-top: 3px;
+}
+
+.p1-g2-desc {
+    opacity: 0.7;
+}
+
+.p1-g2-footer {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+    opacity: 0.7;
+    line-height: 1.4;
+}
+
+.p1-g2-precession-box {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-light, rgba(255, 255, 255, 0.06));
+}
+
+.p1-g2-untracked {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.p1-g2-untracked-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.p1-g2-untracked-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.p1-g2-untracked-desc {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.p1-btn-track {
+    background: rgba(120, 200, 255, 0.15);
+    border: 1px solid rgba(120, 200, 255, 0.30);
+    color: var(--accent);
+    padding: 3px 8px;
+    cursor: pointer;
+    font-size: 11px;
+    border-radius: 3px;
+    font-family: var(--font-sans);
+}
+
+.p1-g2-tracked {
+    font-size: 13px;
+    color: var(--text-primary);
+}
+
+.p1-g2-tracked-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.p1-btn-untrack {
+    background: none;
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 10px;
+    border-radius: 3px;
+}
+
+.p1-g2-tracked-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px 10px;
+    font-size: 12px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+}
+
+.p1-g2-tracked-val {
+    text-align: right;
+    color: var(--text-primary);
+}
+
+.p1-g2-tracked-val-accent {
+    text-align: right;
+    color: var(--accent);
+}
+
+.p1-g2-tracked-val-warning {
+    text-align: right;
+    color: var(--warning);
+}
+
+.p1-g2-tracked-svg-box {
+    margin-top: 8px;
+}
+
+.p1-g2-tracked-footer {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.7;
+    line-height: 1.5;
+}
+
+/* Coulomb Section */
+.p1-coulomb-meta {
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    min-height: 18px;
+    font-family: var(--font-mono);
+}
+
+.p1-coulomb-plot-box {
+    min-height: 220px;
+}
+
+.p1-coulomb-hero {
+    margin-top: 8px;
+    min-height: 48px;
+}
+
+.p1-coulomb-hero-warning {
+    color: var(--warning);
+}
+
+.p1-coulomb-hero-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+}
+
+.p1-coulomb-footer {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    min-height: 32px;
+}
+
+/* Anisotropy Section */
+.p1-anisotropy-plot-box {
+    min-height: 130px;
+}
+
+.p1-anisotropy-desc-box {
+    margin-top: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+.p1-anisotropy-desc-flex {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.p1-anisotropy-desc-sub {
+    opacity: 0.75;
+    line-height: 1.4;
+}
+
+/* Hydrogen Section */
+.p1-hydrogen-footer {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.p1-hydrogen-val {
+    color: var(--accent);
+}
+
+.p1-hydrogen-desc {
+    opacity: 0.6;
+}

@@ -8,7 +8,7 @@
 /* Reusable class for per-scale viewport toggle panels */
 .viewport-overlay-panel {
     position: absolute;
-    top: calc(var(--toolbar-h) + 12px);
+    top: 8px; /* Viewport already starts below toolbar, so no need to add --toolbar-h */
     right: 12px;
     display: flex;
     gap: 6px;
@@ -53,7 +53,7 @@
    legacy flex-wrap sizing via `.viewport-overlay-panel`. */
 #viewport-overlay {
     position: absolute;
-    top: calc(var(--toolbar-h) + 12px);
+    top: 8px;
     right: 12px;
     z-index: var(--z-overlay);
 }

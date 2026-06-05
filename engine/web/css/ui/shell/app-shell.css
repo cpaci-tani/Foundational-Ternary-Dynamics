@@ -53,6 +53,7 @@
     /* Default (desktop/tablet): 2-row grid — toolbar + canvas.
      * Tab-bar, status-bar, and panel-area remain position:absolute overlays on desktop. */
     display: grid;
+    position: relative;
     grid-template-rows: auto 1fr;
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -294,4 +295,3 @@ html.ui-hidden #btn-show-ui {
     height: 18px;
     color: #e2e8f0;
 }
-
