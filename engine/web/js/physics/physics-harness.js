@@ -77,12 +77,15 @@ export function findOppositeChargePairFromList(particles) {
 
 // ── Harness class ───────────────────────────────────────────────────
 
+import { telemetryHub } from '../telemetry-hub.js';
+
 export class PhysicsHarness {
     /**
      * @param {object} bridge - the WasmBridge or MockBridge instance
      */
     constructor(bridge) {
         this.bridge = bridge;
+        this.telemetry = telemetryHub;
     }
 
     // ── Getters: lattice state ─────────────────────────────────────
@@ -399,8 +402,36 @@ export class PhysicsHarness {
     setupScenario(name) {
         const bridge = this.bridge;
         if (typeof bridge?.setupScenario !== 'function') return false;
-        bridge.setupScenario(name);
+        bridge.setupScenario(name, this);
         return true;
+    }
+    // ── Setters: Scale 1 (Particle Engine) ─────────────────────────
+
+    /** Add a particle to the Scale-1 engine. */
+    peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) {
+        return this.bridge?.peAddParticle?.(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) ?? -1;
+    }
+
+    /** Add a locked particle to the Scale-1 engine. */
+    peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff) {
+        return this.bridge?.peAddLockedParticle?.(catalogId, charge, x, y, z, mass, r_eff) ?? -1;
+    }
+
+    // ── Setters: Scale 2/3 (Atom/Molecule Engine) ──────────────────
+
+    /** Add an atom to the Scale-2 engine. */
+    aeAddAtom(Z, x, y, z, vx = 0, vy = 0, vz = 0, charge = 0, N = -1) {
+        return this.bridge?.aeAddAtom?.(Z, x, y, z, vx, vy, vz, charge, N) ?? -1;
+    }
+
+    /** Add a locked atom to the Scale-2 engine. */
+    aeAddLockedAtom(Z, x, y, z, charge = 0, N = -1) {
+        return this.bridge?.aeAddLockedAtom?.(Z, x, y, z, charge, N) ?? -1;
+    }
+
+    /** Create a bond between two atoms in the Scale-2 engine. */
+    aeCreateBond(idA, idB, order = 1) {
+        this.bridge?.aeCreateBond?.(idA, idB, order);
     }
 }
 

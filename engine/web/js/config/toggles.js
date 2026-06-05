@@ -163,8 +163,7 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     // Use the s0-vacuum-* toggle profiles below for canonical entries.
     // Atoms — strong force for nucleus binding + gravity for electron orbit.
     's0-seed-hydrogen':       [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
-    's0-seed-helium':         [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
-    's0-seed-2-hydrogen-atoms': [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],
+    's0-seed-helium':         [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement'], ['color_forces', true, 't-color-forces'], ['strong_force', true, 't-strong-force'], ['gravity', true, 't-gravity']],    's0-seed-spark-of-life':  [['genesis', true, 't-genesis'], ['coupling', true, 't-coupling'], ['damping', true, 't-damping'], ['gauss_projection', true, 't-gauss'], ['movement', true, 't-movement'], ['confinement', false, 't-confinement']],
 
     // Field Configurations — genesis off so the field pattern stays clean
     's0-field-plane-wave':       [['genesis', false, 't-genesis']],

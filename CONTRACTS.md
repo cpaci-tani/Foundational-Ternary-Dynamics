@@ -255,25 +255,35 @@ ctx = {
 
 ## §4 — Scenario Dispatch Contract
 
+> **Authoritative reference (2026-06-05):** the full scenario subsystem — the four definition
+> layers, the load→init→tick→teardown lifecycle, and every contract below — is specified in
+> [`engine/web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](engine/web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md);
+> current drift/gaps are tracked in
+> [`engine/web/docs/audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](engine/web/docs/audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md).
+> §4 was reconciled to the settled loader on 2026-06-05 (6 groups incl. `s0-vacuum-`; the
+> `setupXxxScenario(name, harness, ctx)` signature; toggle-defaults now apply **before**
+> `setupScenario`, see step 5).
+
 ### Purpose
 
-Scenarios are partitioned into 5 prefix-named groups in
+Scenarios are partitioned into 6 prefix-named groups in
 [`engine/web/js/bridge/scenarios/`](engine/web/js/bridge/scenarios/):
-`flux-`, `light-`, `quantum-`, `s0-seed-`, `s0-field-`. The dispatcher
-in `index.js` chains them with prefix matching.
+`flux-`, `light-`, `quantum-`, `s0-vacuum-`, `s0-seed-`, `s0-field-`. The
+dispatcher in `index.js` chains them with prefix matching (first match wins).
 
 ### The contract
 
-A scenario group file exports `setupXxxScenario(name, ctx)`:
+A scenario group file exports `setupXxxScenario(name, harness, ctx)`:
 
 1. **MUST return `true`** if it handled the scenario (matched its prefix
    AND completed setup); **MUST return `false`** if the prefix did not
    match (allowing the next group in the chain to try).
 2. **MUST throw** on a known prefix with malformed scenario name (do
    not silently fall through).
-3. **MUST be called with `.call(this, ...)`** so the scenario body has
-   access to the bridge's mutation methods (`this.injectParticle`,
-   `this._injectFlux`, `this.injectWavepacket`).
+3. **Receives a `harness`** (2nd arg) exposing the injection surface
+   (`harness.injectParticle`, `harness.injectFlux`, `harness.injectWaveVel`)
+   plus `ctx = {N, mid, midF}` (3rd arg). On the legacy in-thread MockBridge
+   fallback the body is `.call`'d with the bridge as `this` instead.
 4. **MUST use shared helpers** from `_helpers.js`
    (`injectRadialEnvelope`, `injectParticleFull`, `injectDressedParticle`,
    `injectTriad`) rather than open-coding particle/flux placement.
@@ -290,9 +300,10 @@ A scenario group file exports `setupXxxScenario(name, ctx)`:
 4. If the scenario needs non-default toggles, add an entry to
    `SCALE0_SCENARIO_OVERRIDES` in
    [`engine/web/js/config/toggles.js`](engine/web/js/config/toggles.js).
-5. **Do NOT** mutate `this._toggles` directly inside the scenario body —
-   `applyToggleDefaults` runs AFTER `setupScenario` and resets to the
-   `SCALE0_TOGGLES` defaults. Use `SCALE0_SCENARIO_OVERRIDES` instead.
+5. **Prefer `SCALE0_SCENARIO_OVERRIDES`** over mutating `this._toggles` in the
+   body: `applyToggleDefaults` runs **before** `setupScenario` (2026-06-05), so a
+   body mutation persists but is invisible to the dashboard's override table and
+   won't be reset on the next load.
 
 ---
 

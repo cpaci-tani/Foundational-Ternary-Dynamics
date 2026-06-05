@@ -60,7 +60,7 @@ const FOUR_PI = 4.0 * Math.PI;
 const TWO_PI = 2.0 * Math.PI;
 
 // Scenarios where each section is meaningful
-const HYDROGEN_SCENARIOS = new Set(['s0-seed-hydrogen', 's0-seed-helium', 's0-seed-2-hydrogen-atoms']);
+const HYDROGEN_SCENARIOS = new Set(['s0-seed-hydrogen', 's0-seed-helium']);
 const BELL_SCENARIOS = new Set(['quantum-entangle']);
 const GRAVITY_SCENARIOS = new Set(['s0-seed-schwarzschild', 's0-seed-frw-patch', 's0-seed-gravitational-wave']);
 
@@ -1207,7 +1207,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
                 hydrogenRenderedFor = scenarioId;
             }
         } else if (hydrogenRenderedFor !== null) {
-            hydrogenBody.innerHTML = '<div class="p1-empty-state">Load <code>s0-seed-hydrogen</code>, <code>s0-seed-helium</code>, or <code>s0-seed-2-hydrogen-atoms</code> to see the predicted level diagram.</div>';
+            hydrogenBody.innerHTML = '<div class="p1-empty-state">Load <code>s0-seed-hydrogen</code> or <code>s0-seed-helium</code> to see the predicted level diagram.</div>';
             hydrogenRenderedFor = null;
         }
 

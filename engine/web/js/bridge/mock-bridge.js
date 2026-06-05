@@ -1701,7 +1701,13 @@ export class MockBridge {
     // setupScenario body extracted to bridge/scenarios/index.js as Wave 3 of
     // the large-file refactor. The extracted module is a pure move — `this`
     // binding preserved via .call() so all scenario helpers still resolve.
-    setupScenario(name) { const r = runSetupScenario.call(this, name); this._recomputeActiveBox(); return r; }
+    setupScenario(name, harness = null) {
+        const r = harness
+            ? runSetupScenario(name, harness)
+            : runSetupScenario.call(this, name);
+        this._recomputeActiveBox();
+        return r;
+    }
 
     /**
      * Returns derived-overlay data shaped per `kind`. Most return objects

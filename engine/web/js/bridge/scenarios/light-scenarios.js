@@ -17,13 +17,13 @@ import { K_B, C_SPEED } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier
+ * @param {PhysicsHarness} harness - physics harness instance
  * @param {{N:number, mid:number, midF:number}} ctx - precomputed lattice params
  * @returns {boolean} true if handled
  */
-export function setupLightScenario(name, ctx) {
+export function setupLightScenario(name, harness, ctx) {
     if (!name.startsWith('light-')) return false;
     const { N, mid, midF } = ctx;
-            this._initFluxGrid();
             const pi = Math.PI;
             const amp = 0.15;
             switch (name) {
@@ -45,8 +45,8 @@ export function setupLightScenario(name, ctx) {
                             const fv = [0, 0, 0], wv = [0, 0, 0];
                             fv[w.pol] = J_val;
                             wv[w.pol] = wv_val;
-                            this._injectFlux(x, y, z, fv[0], fv[1], fv[2]);
-                            this._injectWaveVel(x, y, z, wv[0], wv[1], wv[2]);
+                            harness.injectFlux(x, y, z, fv[0], fv[1], fv[2]);
+                            harness.injectWaveVel(x, y, z, wv[0], wv[1], wv[2]);
                         }
                     }
                     break;
@@ -57,7 +57,7 @@ export function setupLightScenario(name, ctx) {
                     // dipole radiation is not a pair-producer; the
                     // wave evolution would otherwise manifest ~29k
                     // particles by t=200.
-                    this._toggles.genesis = false;
+                    harness.setToggle('genesis', false);
                     const sigma = 3;
                     const dAmp = 0.5;
                     for (let x = 0; x < N; x++)
@@ -67,8 +67,8 @@ export function setupLightScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const g = dAmp * Math.exp(-r2 / (2 * sigma * sigma));
                         if (g < 1e-6) continue;
-                        this._injectFlux(x, y, z, 0, 0, g);
-                        this._injectWaveVel(x, y, z, 0, 0, g);
+                        harness.injectFlux(x, y, z, 0, 0, g);
+                        harness.injectWaveVel(x, y, z, 0, 0, g);
                     }
                     break;
                 }
@@ -77,7 +77,7 @@ export function setupLightScenario(name, ctx) {
                     // genesis=false (audit-2 2026-04-28): classical
                     // double-slit interference; should NOT manifest
                     // particles. Without this, ~31k particles by t=200.
-                    this._toggles.genesis = false;
+                    harness.setToggle('genesis', false);
                     const sigma = 2;
                     const sAmp = 0.3;
                     const slit_sep = Math.floor(N / 6);
@@ -92,8 +92,8 @@ export function setupLightScenario(name, ctx) {
                             if (g < 1e-6) continue;
                             const px = slit_x + dx, py = sy + dy;
                             if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                            this._injectFlux(px, py, z, 0, 0, g);
-                            this._injectWaveVel(px, py, z, g, 0, 0); // propagate +x
+                            harness.injectFlux(px, py, z, 0, 0, g);
+                            harness.injectWaveVel(px, py, z, g, 0, 0); // propagate +x
                         }
                     }
                     break;
@@ -112,8 +112,8 @@ export function setupLightScenario(name, ctx) {
                             for (let y = y_offsets[p] - 2; y <= y_offsets[p] + 2; y++)
                             for (let z = mid - 2; z <= mid + 2; z++) {
                                 if (y < 0 || y >= N || z < 0 || z >= N) continue;
-                                this._injectFlux(x, y, z, 0, 0, g);
-                                this._injectWaveVel(x, y, z, 0, 0, g); // outgoing +x
+                                harness.injectFlux(x, y, z, 0, 0, g);
+                                harness.injectWaveVel(x, y, z, 0, 0, g); // outgoing +x
                             }
                         }
                     }

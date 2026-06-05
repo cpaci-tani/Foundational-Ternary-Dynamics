@@ -8,8 +8,8 @@ function makeScenario(category, id, title, tags = [], epistemicStatus = '[OPEN]'
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus,
-        load({ bridge }, params = {}) {
-            bridge.setupScenario(params.id || id);
+        load(harness, params = {}) {
+            harness.setupScenario(params.id || id);
         },
     };
 }
@@ -80,7 +80,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[CONJECTURE]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             try {
                 bridge.setToggle('wave_propagation', true);
                 bridge.setToggle('gauss_projection', true);
@@ -102,6 +103,7 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Atoms & Molecules', 's0-seed-hydrogen', 'Hydrogen atom', ['seed'], '[CONJECTURE]'),
     makeScenario('Atoms & Molecules', 's0-seed-helium', 'Helium atom (⁴He, 2p+2n + 1s²)', ['seed'], '[CONJECTURE]'),
     makeScenario('Atoms & Molecules', 's0-seed-h2-bond-formation', 'H₂ covalent bond formation (dynamic)', ['seed'], '[CONJECTURE]'),
+    makeScenario('Life / Abiogenesis', 's0-seed-spark-of-life', 'Spark of Life (abiogenesis threshold)', ['seed', 'genesis', 'life', 'abiogenesis', 'autocatalytic', 'demo'], '[DEMO]'),
     makeScenario('Gauge / Topological', 's0-seed-wilson-loop', 'Wilson loop', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-flux-tube', 'Flux tube (q-qbar)', ['seed'], '[CONJECTURE]'),
     makeScenario('Gauge / Topological', 's0-seed-monopole', 'Magnetic monopole', ['seed'], '[CONJECTURE]'),
@@ -137,7 +139,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             // Required toggle state per `campaign_emergent_spectrum_2026-04-27.cpp`:
             //   wave_propagation, gauss_projection, genesis, langevin (T=0.005, γ=0.02).
             // dual_substrate must be OFF.
@@ -168,7 +171,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             try {
                 bridge.setToggle('wave_propagation', true);
                 bridge.setToggle('gauss_projection', true);
@@ -193,7 +197,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             try {
                 bridge.setToggle('wave_propagation', true);
                 bridge.setToggle('gauss_projection', true);
@@ -218,7 +223,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             // Elevated Langevin T = 0.05 (10× ic1) — drives runaway genesis
             // from pure thermal noise, no flux injection.
             try {
@@ -245,7 +251,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             // Same total flux magnitude as ic1 but along body diagonal.
             // Predicted: k = 1/3 (Z_3 about body diagonal) → 33-voxel cluster
             // if the cluster-efficiency origin is the rotation cycle around
@@ -275,7 +282,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             // Symmetrise the injection direction. Predicts: cluster has
             // full O_h symmetry — no +x/−x asymmetry as in standard ic1.
             try {
@@ -302,7 +310,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             try {
                 bridge.setToggle('wave_propagation', true);
                 bridge.setToggle('gauss_projection', true);
@@ -325,7 +334,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             try {
                 bridge.setToggle('wave_propagation', true);
                 bridge.setToggle('gauss_projection', true);
@@ -348,7 +358,8 @@ export const SCALE0_SCENARIOS = [
         defaultParams: {},
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
-        load({ bridge }, params = {}) {
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
             try {
                 bridge.setToggle('wave_propagation', true);
                 bridge.setToggle('gauss_projection', true);
@@ -389,7 +400,14 @@ export const SCALE0_SCENARIOS = [
 export const SCALE0_SCENARIO_MAP = new Map(SCALE0_SCENARIOS.map((scenario) => [scenario.id, scenario]));
 
 export function getScale0Scenario(id) {
-    return SCALE0_SCENARIO_MAP.get(id) || SCALE0_SCENARIO_MAP.get('flux-pulse');
+    const scenario = SCALE0_SCENARIO_MAP.get(id);
+    if (!scenario && id) {
+        // C6: surface a typo'd / unregistered id instead of silently loading the
+        // default. (Unknown ids legitimately fall back to flux-pulse, but quietly
+        // doing so hides bugs like the B4 orphan.)
+        console.warn(`[scenario-registry] unknown scenario id "${id}" — falling back to flux-pulse`);
+    }
+    return scenario || SCALE0_SCENARIO_MAP.get('flux-pulse');
 }
 
 export function populateScale0ScenarioSelect(select, selectedId = 'flux-pulse') {
@@ -426,4 +444,15 @@ export function validateScale0ScenarioRegistry() {
         if (!Array.isArray(scenario.requiredCapabilities)) errors.push(`capabilities:${scenario.id}`);
     }
     return { ok: errors.length === 0, errors, count: SCALE0_SCENARIOS.length };
+}
+
+// C5: run the validator once at module load so registry drift (duplicate ids,
+// bad scale/category, malformed capabilities) surfaces as a console warning
+// immediately, instead of the validator only ever being callable and never run.
+// No-op output for a healthy registry (errors === []).
+{
+    const _registryCheck = validateScale0ScenarioRegistry();
+    if (!_registryCheck.ok) {
+        console.warn('[scenario-registry] registry validation failed:', _registryCheck.errors);
+    }
 }

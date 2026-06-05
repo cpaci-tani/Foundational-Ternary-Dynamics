@@ -17,13 +17,13 @@ import { ALPHA, COULOMB_K_FORCE, K_B, C_SPEED } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier
+ * @param {PhysicsHarness} harness - physics harness instance
  * @param {{N:number, mid:number, midF:number}} ctx - precomputed lattice params
  * @returns {boolean} true if handled
  */
-export function setupS0FieldScenario(name, ctx) {
+export function setupS0FieldScenario(name, harness, ctx) {
     if (!name.startsWith('s0-field-')) return false;
     const { N, mid, midF } = ctx;
-            this._initFluxGrid();
             const mc  = Math.round(midF);
 
             switch (name) {
@@ -39,8 +39,8 @@ export function setupS0FieldScenario(name, ctx) {
                         const jz    = amp * Math.sin(phase);
                         const wz    = amp * Math.cos(phase) * C_SPEED;
                         if (Math.abs(jz) > 1e-12 || Math.abs(wz) > 1e-12) {
-                            this._injectFlux(x, y, z, 0, 0, jz);
-                            this._injectWaveVel(x, y, z, wz, 0, 0);
+                            harness.injectFlux(x, y, z, 0, 0, jz);
+                            harness.injectWaveVel(x, y, z, wz, 0, 0);
                         }
                     }
                     break;
@@ -56,7 +56,7 @@ export function setupS0FieldScenario(name, ctx) {
                     for (let x = 0; x < N; x++) {
                         const jz = amp * Math.sin(k * x);
                         if (Math.abs(jz) > 1e-12) {
-                            this._injectFlux(x, y, z, 0, 0, jz);
+                            harness.injectFlux(x, y, z, 0, 0, jz);
                         }
                         // wave_vel = 0 for standing wave (no net propagation)
                     }
@@ -70,13 +70,13 @@ export function setupS0FieldScenario(name, ctx) {
                     // manifested particles. Schwinger-effect pair production
                     // at this lattice scale is unphysical. Without this,
                     // 32767 particles (≈INT16_MAX cap) by t=30.
-                    this._toggles.genesis = false;
+                    harness.setToggle('genesis', false);
                     const eMag = 0.1;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {
                         // E = -wave_vel, so wave_vel = -E
-                        this._injectWaveVel(x, y, z, -eMag, 0, 0);
+                        harness.injectWaveVel(x, y, z, -eMag, 0, 0);
                     }
                     break;
                 }
@@ -93,7 +93,7 @@ export function setupS0FieldScenario(name, ctx) {
                         const jx = -bMag * ry / 2;
                         const jy =  bMag * rx / 2;
                         if (Math.abs(jx) > 1e-12 || Math.abs(jy) > 1e-12) {
-                            this._injectFlux(x, y, z, jx, jy, 0);
+                            harness.injectFlux(x, y, z, jx, jy, 0);
                         }
                     }
                     break;
@@ -118,8 +118,8 @@ export function setupS0FieldScenario(name, ctx) {
                         const phase = k * dx;
                         const jz    = amp * g * Math.sin(phase);
                         const wz    = amp * g * Math.cos(phase) * C_SPEED;
-                        this._injectFlux(x, y, z, 0, 0, jz);
-                        this._injectWaveVel(x, y, z, wz, 0, 0);
+                        harness.injectFlux(x, y, z, 0, 0, jz);
+                        harness.injectWaveVel(x, y, z, wz, 0, 0);
                     }
                     break;
                 }
@@ -129,8 +129,8 @@ export function setupS0FieldScenario(name, ctx) {
                     const sep  = Math.max(2, Math.floor(N / 8));
                     const half = Math.floor(sep / 2);
                     const px   = mc + half, nx = mc - half;
-                    this.injectParticle(px, mc, mc, +1);
-                    this.injectParticle(nx, mc, mc, -1);
+                    harness.injectParticle(px, mc, mc, +1);
+                    harness.injectParticle(nx, mc, mc, -1);
                     // Coulomb dressing: superposed 1/r^2 from both charges.
                     // Uses COULOMB_K_FORCE (= α/4π) named alias for convention
                     // attribution (audit P1-6 fix, 2026-05-27).
@@ -151,7 +151,7 @@ export function setupS0FieldScenario(name, ctx) {
                         jx += f2 * dx2; jy += f2 * dy2; jz += f2 * dz2;
                         const mag = Math.sqrt(jx*jx + jy*jy + jz*jz);
                         if (mag > 1e-6) {
-                            this._injectFlux(x, y, z, jx, jy, jz);
+                            harness.injectFlux(x, y, z, jx, jy, jz);
                         }
                     }
                     break;
@@ -172,7 +172,7 @@ export function setupS0FieldScenario(name, ctx) {
                         const ty =  Math.cos(theta) * amp;
                         // Stamp across all z slices at this (x,y)
                         for (let z = 0; z < N; z++) {
-                            this._injectFlux(lx, ly, z, tx, ty, 0);
+                            harness.injectFlux(lx, ly, z, tx, ty, 0);
                         }
                     }
                     break;
@@ -190,7 +190,7 @@ export function setupS0FieldScenario(name, ctx) {
                         const mag = gamma / (2 * Math.PI * r);
                         if (mag < 1e-6) continue;
                         // Azimuthal: theta_hat = (-ry/r, rx/r, 0)
-                        this._injectFlux(x, y, z, -mag * ry / r, mag * rx / r, 0);
+                        harness.injectFlux(x, y, z, -mag * ry / r, mag * rx / r, 0);
                     }
                     break;
                 }

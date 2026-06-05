@@ -8,19 +8,19 @@ export function updateDiagnosticsAndPanels(ctx, state) {
     // ── Collect via TelemetryHub (single source of truth for all bridge calls) ──
     const diag = telemetryHub.collectScale0(ctx.bridge, state.fluxMock, state.useFluxMock);
 
+    // Always collect extended telemetry if we're rendering anything that might need it
+    // (Floating panels like Telemetry Grid require this even if charts tab is closed)
+    telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
+    telemetryHub.collectScale0Lagrangian(ctx.bridge, state.fluxMock, state.useFluxMock);
+
     // New panels render from hub state directly; refresh them every frame even
     // when no diag is available (formatters show 0 for missing fields so the
     // UI stays "wired" while the bridge spins up).
     if (ctx.activeTab === 'diagnostics') {
-        telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
         ctx.diagnosticsPanel?.update();
     } else if (ctx.activeTab === 'charts') {
-        telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
-        telemetryHub.collectScale0Lagrangian(ctx.bridge, state.fluxMock, state.useFluxMock);
         ctx.chartsPanel?.update();
     } else if (ctx.activeTab === 'lagrangian') {
-        telemetryHub.collectScale0Lagrangian(ctx.bridge, state.fluxMock, state.useFluxMock);
-        telemetryHub.collectScale0Audit(ctx.bridge, state.fluxMock, state.useFluxMock);
         ctx.lagrangianPanel?.update();
     }
 

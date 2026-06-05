@@ -42,19 +42,22 @@ import { setupS0FieldScenario } from './s0-field-scenarios.js';
 
 /**
  * Dispatcher: executes a scenario by name by trying each group in order.
- * Call via `runSetupScenario.call(mockBridge, name)`.
+ * Call via `runSetupScenario(name, harness)`.
  *
  * @param {string} name - scenario identifier (flux-*, light-*, quantum-*,
  *   s0-seed-*, s0-field-*, or 'empty')
+ * @param {PhysicsHarness} harness - the active physics harness
  */
-export function runSetupScenario(name) {
-    const N = this.latticeSize;
+export function runSetupScenario(name, harness = null) {
+    const bridge = harness?.bridge ?? this;
+    const N = harness ? harness.getLatticeSize() : bridge.latticeSize;
     const mid = Math.floor(N / 2);
     // True float lattice center.  For even N this is N/2 - 0.5 (between two voxels).
     // Gaussian loops anchored at midF produce a distribution whose visual centroid
     // sits exactly at N/2 — matching the wireframe center — for ALL N.
     const midF = (N - 1) / 2;
-    this.reset();
+    if (harness) harness.reset();
+    else bridge.reset();
 
     // 'empty' is equivalent to "just reset" — handle before the prefix chain
     // so it short-circuits cleanly (no group file owns the 'empty' prefix).
@@ -64,10 +67,25 @@ export function runSetupScenario(name) {
 
     // Try each group in order. First matching prefix wins; stops immediately.
     const ctx = { N, mid, midF };
-    if (setupFluxScenario.call(this, name, ctx))    return;
-    if (setupLightScenario.call(this, name, ctx))   return;
-    if (setupQuantumScenario.call(this, name, ctx)) return;
-    if (setupVacuumScenario.call(this, name, ctx))  return;
-    if (setupS0SeedScenario.call(this, name, ctx))  return;
-    if (setupS0FieldScenario.call(this, name, ctx)) return;
+    const scenarioHarness = harness ?? {
+        bridge,
+        setToggle: (key, value) => bridge.setToggle?.(key, value),
+        injectFlux: (x, y, z, fx, fy, fz) => bridge._injectFlux?.(x, y, z, fx, fy, fz),
+        injectWaveVel: (x, y, z, vx, vy, vz) => bridge._injectWaveVel?.(x, y, z, vx, vy, vz),
+        injectParticle: (x, y, z, state, opts = {}) => {
+            bridge.injectParticle?.(x, y, z, state);
+            const last = bridge._particles?.[bridge._particles.length - 1];
+            if (!last) return null;
+            if (Number.isFinite(opts.spin)) last.spin = opts.spin;
+            if (Number.isFinite(opts.color)) last.color = opts.color;
+            if (opts.locked) last.locked = true;
+            return last;
+        },
+    };
+    if (setupFluxScenario(name, scenarioHarness, ctx))    return;
+    if (setupLightScenario(name, scenarioHarness, ctx))   return;
+    if (setupQuantumScenario(name, scenarioHarness, ctx)) return;
+    if (setupVacuumScenario(name, scenarioHarness, ctx))  return;
+    if (setupS0SeedScenario(name, scenarioHarness, ctx))  return;
+    if (setupS0FieldScenario(name, scenarioHarness, ctx)) return;
 }

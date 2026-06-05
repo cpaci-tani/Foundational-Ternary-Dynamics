@@ -17,13 +17,13 @@ import { K_B, K_GENESIS } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier
+ * @param {PhysicsHarness} harness - physics harness instance
  * @param {{N:number, mid:number, midF:number}} ctx - precomputed lattice params
  * @returns {boolean} true if handled
  */
-export function setupQuantumScenario(name, ctx) {
+export function setupQuantumScenario(name, harness, ctx) {
     if (!name.startsWith('quantum-')) return false;
     const { N, mid, midF } = ctx;
-            this._initFluxGrid();
 
             switch (name) {
                 case 'quantum-born-rule': {
@@ -38,11 +38,11 @@ export function setupQuantumScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * Math.exp(-r2 / (2 * sigma * sigma));
                         if (val > 0.001) {
-                            this._injectFlux(mid + dx, mid + dy, mid + dz,
+                            harness.injectFlux(mid + dx, mid + dy, mid + dz,
                                 val * Math.cos(theta), val * Math.sin(theta), 0);
                         }
                     }
-                    this._toggles.genesis = true;
+                    harness.setToggle('genesis', true);
                     break;
                 }
                 case 'quantum-double-slit': {
@@ -61,12 +61,12 @@ export function setupQuantumScenario(name, ctx) {
                             if (g < 1e-6) continue;
                             const px = slit_x + dx, py = sy + dy;
                             if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                            this._injectFlux(px, py, z, 0, 0, g);
-                            this._injectWaveVel(px, py, z, g, 0, 0); // propagate +x
+                            harness.injectFlux(px, py, z, 0, 0, g);
+                            harness.injectWaveVel(px, py, z, g, 0, 0); // propagate +x
                         }
                     }
-                    this._toggles.genesis = true;
-                    this._toggles.coupling = false;
+                    harness.setToggle('genesis', true);
+                    harness.setToggle('coupling', false);
                     break;
                 }
                 case 'quantum-eraser': {
@@ -86,8 +86,8 @@ export function setupQuantumScenario(name, ctx) {
                         if (g < 1e-6) continue;
                         const px = slit_x + dx, py = sy1 + dy;
                         if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                        this._injectFlux(px, py, z, 0, g, 0); // y-polarized
-                        this._injectWaveVel(px, py, z, g, 0, 0); // propagate +x
+                        harness.injectFlux(px, py, z, 0, g, 0); // y-polarized
+                        harness.injectWaveVel(px, py, z, g, 0, 0); // propagate +x
                     }
 
                     // Slit 2: z-polarized
@@ -100,8 +100,8 @@ export function setupQuantumScenario(name, ctx) {
                         if (g < 1e-6) continue;
                         const px = slit_x + dx, py = sy2 + dy;
                         if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                        this._injectFlux(px, py, z, 0, 0, g); // z-polarized
-                        this._injectWaveVel(px, py, z, g, 0, 0); // propagate +x
+                        harness.injectFlux(px, py, z, 0, 0, g); // z-polarized
+                        harness.injectWaveVel(px, py, z, g, 0, 0); // propagate +x
                     }
 
                     // Diagonal eraser (y=z polarizer) at x = N/2
@@ -110,14 +110,14 @@ export function setupQuantumScenario(name, ctx) {
                         for (let z = 0; z < N; z++) {
                             // Place locked particles along the y + z diagonal to form parallel conducting wires
                             if ((y + z) % 2 === 0) {
-                                this.injectParticle(eraserX, y, z, 1);
-                                this._particles[this._particles.length - 1].locked = true;
+                                harness.injectParticle(eraserX, y, z, 1);
+                                harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
                             }
                         }
                     }
 
-                    this._toggles.genesis = true;
-                    this._toggles.coupling = false;
+                    harness.setToggle('genesis', true);
+                    harness.setToggle('coupling', false);
                     break;
                 }
                 case 'quantum-tunnel': {
@@ -127,7 +127,7 @@ export function setupQuantumScenario(name, ctx) {
                     // The 3072 initial particles are the locked barrier
                     // (32×32×W=3 wall) and stay constant; the wave was
                     // otherwise manifesting ~28k by t=200.
-                    this._toggles.genesis = false;
+                    harness.setToggle('genesis', false);
                     const sigma = N / 12;
                     const amp = K_B * 2;
                     const packetX = Math.floor(N / 4);
@@ -141,18 +141,18 @@ export function setupQuantumScenario(name, ctx) {
                         if (val > 0.001) {
                             const x = packetX + dx, y = mid + dy, z = mid + dz;
                             if (x >= 0 && x < N && y >= 0 && y < N && z >= 0 && z < N) {
-                                this._injectFlux(x, y, z, val, 0, 0);
-                                this._injectWaveVel(x, y, z, val, 0, 0); // +x propagation
+                                harness.injectFlux(x, y, z, val, 0, 0);
+                                harness.injectWaveVel(x, y, z, val, 0, 0); // +x propagation
                             }
                         }
                     }
                     // Barrier: locked +1 particles across y-z plane
-                    const W = this._quantumBarrierWidth || 3;
+                    const W = harness.bridge._quantumBarrierWidth || 3;
                     for (let y = 0; y < N; y++)
                     for (let z = 0; z < N; z++)
                     for (let dx = 0; dx < W; dx++) {
-                        this.injectParticle(mid + dx, y, z, 1);
-                        this._particles[this._particles.length - 1].locked = true;
+                        harness.injectParticle(mid + dx, y, z, 1);
+                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
                     }
                     break;
                 }
@@ -164,10 +164,10 @@ export function setupQuantumScenario(name, ctx) {
                     // Reflective walls: locked +1 particles across y-z planes
                     for (let y = 0; y < N; y++)
                     for (let z = 0; z < N; z++) {
-                        this.injectParticle(wallA, y, z, 1);
-                        this._particles[this._particles.length - 1].locked = true;
-                        this.injectParticle(wallB, y, z, 1);
-                        this._particles[this._particles.length - 1].locked = true;
+                        harness.injectParticle(wallA, y, z, 1);
+                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
+                        harness.injectParticle(wallB, y, z, 1);
+                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
                     }
                     // Broadband flux between walls: modes n=1..8
                     for (let n = 1; n <= 8; n++) {
@@ -177,12 +177,12 @@ export function setupQuantumScenario(name, ctx) {
                         for (let z = 0; z < N; z++) {
                             const val = amp_n * Math.sin(n * Math.PI * (x - wallA) / boxLength);
                             if (Math.abs(val) > 1e-6) {
-                                this._injectFlux(x, y, z, 0, val, 0);
+                                harness.injectFlux(x, y, z, 0, val, 0);
                             }
                         }
                     }
-                    this._toggles.genesis = false;
-                    this._toggles.damping = false;
+                    harness.setToggle('genesis', false);
+                    harness.setToggle('damping', false);
                     break;
                 }
                 case 'quantum-entangle': {
@@ -194,11 +194,11 @@ export function setupQuantumScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = bigAmp * Math.exp(-r2 / (2 * 6));
                         if (val > 0.001) {
-                            this._injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
+                            harness.injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
                         }
                     }
-                    this._toggles.genesis = true;
-                    this._quantumExperimentMode = 'entangle';
+                    harness.setToggle('genesis', true);
+                    harness.bridge._quantumExperimentMode = 'entangle';
                     break;
                 }
                 case 'quantum-aharonov-bohm': {
@@ -207,14 +207,14 @@ export function setupQuantumScenario(name, ctx) {
                     // *gauge-phase* phenomenon — the packets should NOT
                     // pair-produce while traversing the solenoid. Without
                     // this, ~31k particles by t=200.
-                    this._toggles.genesis = false;
+                    harness.setToggle('genesis', false);
                     const R = Math.floor(N / 8);
                     // Confined flux tube along z at center (solenoid)
                     for (let z = 0; z < N; z++)
                     for (let dy = -R; dy <= R; dy++)
                     for (let dx = -R; dx <= R; dx++) {
                         if (dx * dx + dy * dy > R * R) continue;
-                        this._injectFlux(mid + dx, mid + dy, z, 0, 0, K_B * 0.5);
+                        harness.injectFlux(mid + dx, mid + dy, z, 0, 0, K_B * 0.5);
                     }
                     // Packet A: above solenoid, propagating +x
                     const pSigma = 3;
@@ -229,14 +229,14 @@ export function setupQuantumScenario(name, ctx) {
                             // Packet A: y = mid + R + 2
                             const ayPos = mid + R + 2 + dy;
                             if (pStartX + dx >= 0 && pStartX + dx < N && ayPos >= 0 && ayPos < N && mid + dz >= 0 && mid + dz < N) {
-                                this._injectFlux(pStartX + dx, ayPos, mid + dz, val, 0, 0);
-                                this._injectWaveVel(pStartX + dx, ayPos, mid + dz, val, 0, 0);
+                                harness.injectFlux(pStartX + dx, ayPos, mid + dz, val, 0, 0);
+                                harness.injectWaveVel(pStartX + dx, ayPos, mid + dz, val, 0, 0);
                             }
                             // Packet B: y = mid - R - 2
                             const byPos = mid - R - 2 + dy;
                             if (pStartX + dx >= 0 && pStartX + dx < N && byPos >= 0 && byPos < N && mid + dz >= 0 && mid + dz < N) {
-                                this._injectFlux(pStartX + dx, byPos, mid + dz, val, 0, 0);
-                                this._injectWaveVel(pStartX + dx, byPos, mid + dz, val, 0, 0);
+                                harness.injectFlux(pStartX + dx, byPos, mid + dz, val, 0, 0);
+                                harness.injectWaveVel(pStartX + dx, byPos, mid + dz, val, 0, 0);
                             }
                         }
                     }
@@ -244,27 +244,27 @@ export function setupQuantumScenario(name, ctx) {
                 }
                 case 'quantum-casimir': {
                     // Two parallel plates + vacuum fluctuation noise → Casimir effect
-                    const d = this._quantumCasimirSep || 6;
+                    const d = harness.bridge._quantumCasimirSep || 6;
                     const plateA = mid - Math.floor(d / 2);
                     const plateB = mid + Math.floor(d / 2);
                     // Locked +1 particles forming two plates across y-z
                     for (let y = 0; y < N; y++)
                     for (let z = 0; z < N; z++) {
-                        this.injectParticle(plateA, y, z, 1);
-                        this._particles[this._particles.length - 1].locked = true;
-                        this.injectParticle(plateB, y, z, 1);
-                        this._particles[this._particles.length - 1].locked = true;
+                        harness.injectParticle(plateA, y, z, 1);
+                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
+                        harness.injectParticle(plateB, y, z, 1);
+                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
                     }
                     // Fill entire lattice with low-amplitude random flux (vacuum foam)
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {
-                        this._injectFlux(x, y, z,
+                        harness.injectFlux(x, y, z,
                             (Math.random() - 0.5) * K_B * 0.3,
                             (Math.random() - 0.5) * K_B * 0.3,
                             (Math.random() - 0.5) * K_B * 0.3);
                     }
-                    this._toggles.genesis = false;
+                    harness.setToggle('genesis', false);
                     break;
                 }
                 case 'quantum-zeno': {
@@ -278,12 +278,12 @@ export function setupQuantumScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * Math.exp(-r2 / (2 * sigma * sigma));
                         if (val > 0.001) {
-                            this._injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
+                            harness.injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
                         }
                     }
-                    this._toggles.genesis = true;
-                    this._quantumZenoInterval = this._quantumZenoInterval || 10;
-                    this._quantumZenoMode = true;
+                    harness.setToggle('genesis', true);
+                    harness.bridge._quantumZenoInterval = harness.bridge._quantumZenoInterval || 10;
+                    harness.bridge._quantumZenoMode = true;
                     break;
                 }
             }
