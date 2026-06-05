@@ -33,9 +33,10 @@ export class ScrubBarComponent {
         this.zonesEl     = this.el.querySelector('.scrub-bar-zones');
         this.playheadEl  = this.el.querySelector('.scrub-bar-playhead');
         this.timeEl      = this.el.querySelector('.scrub-bar-time');
-        this.resetBtn    = this.el.querySelector('.scrub-bar-reset');
+        this.resetBtn    = this.el.querySelector('#btn-reset');
         this.settingsBtn = this.el.querySelector('.scrub-bar-settings');
         this.popoverEl   = this.el.querySelector('.scrub-bar-settings-popover');
+        this.speedNudgeBtns = this.el.querySelectorAll('[data-speed-nudge]');
 
         if (this.resetBtn) {
             this.resetBtn.addEventListener('click', () => {
@@ -52,17 +53,21 @@ export class ScrubBarComponent {
             this.stripEl.addEventListener('pointerdown', (e) => this._beginDrag(e));
         }
 
+        for (const btn of this.speedNudgeBtns) {
+            btn.addEventListener('click', () => {
+                this._nudgeSpeed(parseFloat(btn.dataset.speedNudge) || 0);
+            });
+        }
+
         if (this.settingsBtn && this.popoverEl) {
             this.settingsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this._setPopoverOpen(this.popoverEl.hasAttribute('hidden'));
             });
 
-            // Speed preset chips — snap the existing ticks-per-frame slider
-            // to a multiplier of 1× (value 50 on the 0..100 range mapped to
-            // 0.1..10×). The slider's existing wiring picks up the change,
-            // so we don't need a separate speed callback — just dispatch
-            // an `input` event after setting `.value`.
+            // Speed preset chips snap the existing ticks-per-frame slider.
+            // The slider's app.js wiring picks up the change, so the scrub bar
+            // only dispatches the same input event a direct slider drag emits.
             for (const chip of this.popoverEl.querySelectorAll('[data-speed-preset]')) {
                 chip.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -78,11 +83,7 @@ export class ScrubBarComponent {
                         slider.value = Math.max(0, Math.min(100, raw));
                         slider.dispatchEvent(new Event('input', { bubbles: true }));
                     }
-                    for (const c of this.popoverEl.querySelectorAll('[data-speed-preset]')) {
-                        const active = c === chip;
-                        c.classList.toggle('is-active', active);
-                        c.setAttribute('aria-checked', active ? 'true' : 'false');
-                    }
+                    this._setActiveSpeedPreset(chip);
                 });
             }
 
@@ -140,6 +141,39 @@ export class ScrubBarComponent {
         }
 
         return this;
+    }
+
+    _nudgeSpeed(rawStep) {
+        const slider = document.getElementById('ticks-per-frame');
+        if (!slider || rawStep === 0) return;
+        const min = Number.parseFloat(slider.min || '0');
+        const max = Number.parseFloat(slider.max || '100');
+        const current = Number.parseFloat(slider.value || '50');
+        const next = Math.max(min, Math.min(max, current + rawStep));
+        slider.value = String(Number(next.toFixed(1)));
+        slider.dispatchEvent(new Event('input', { bubbles: true }));
+        this._syncSpeedPresetFromSlider(next);
+    }
+
+    _setActiveSpeedPreset(activeChip) {
+        if (!this.popoverEl) return;
+        for (const chip of this.popoverEl.querySelectorAll('[data-speed-preset]')) {
+            const active = chip === activeChip;
+            chip.classList.toggle('is-active', active);
+            chip.setAttribute('aria-checked', active ? 'true' : 'false');
+        }
+    }
+
+    _syncSpeedPresetFromSlider(sliderValue) {
+        if (!this.popoverEl) return;
+        let matched = null;
+        for (const chip of this.popoverEl.querySelectorAll('[data-speed-preset]')) {
+            const mult = parseFloat(chip.dataset.speedPreset);
+            if (!Number.isFinite(mult) || mult <= 0) continue;
+            const presetValue = 50 + 20 * Math.log10(mult);
+            if (Math.abs(sliderValue - presetValue) < 0.25) matched = chip;
+        }
+        this._setActiveSpeedPreset(matched);
     }
 
     _setPopoverOpen(open) {
@@ -232,12 +266,16 @@ export class ScrubBarComponent {
         this._pendingFrac = null;
         if (this._rafId != null) { cancelAnimationFrame(this._rafId); this._rafId = null; }
         this._updatePlayhead(1);
-        if (this.timeEl) this.timeEl.textContent = 'now';
+        if (this.timeEl) this.timeEl.textContent = this._formatTickLabel(this.opts.getNowTick?.());
     }
 
     _updatePlayhead(frac) {
         if (!this.playheadEl) return;
         this.playheadEl.style.left = `${(frac * 100).toFixed(2)}%`;
+    }
+
+    _formatTickLabel(tick) {
+        return Number.isFinite(tick) ? `T ${Math.max(0, Math.round(tick))}` : 'T --';
     }
 
     /** Re-render zones + time badge. Call ~10 Hz from the animate loop. */
@@ -275,7 +313,7 @@ export class ScrubBarComponent {
 
         if (!this._dragging) {
             if (this.timeEl) {
-                this.timeEl.textContent = 'now';
+                this.timeEl.textContent = this._formatTickLabel(now);
             }
             this._updatePlayhead(1);
         } else if (this._lastScrubTick != null) {

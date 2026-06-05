@@ -106,7 +106,7 @@ export class MockBridgeProxy {
         // Reuse the real factory for all READS (wired to the shadow), then
         // override COMMAND methods to post to the worker.
         const caps = createScale0Capabilities(this._shadow);
-        caps.tickScale0 = () => {};                                       // worker self-ticks
+        caps.tickScale0 = () => this.tickOnce();
         caps.setupScenario = (name) => this.setupScenario(name);
         caps.setToggle = (k, v) => { this._toggles[k] = v; this._cmd('setToggle', k, v); };
         caps.setBoundaryShape = (s) => { this._boundaryShape = s; this._cmd('setBoundaryShape', s); };
@@ -132,6 +132,7 @@ export class MockBridgeProxy {
         this._running = v;
         this._worker.postMessage({ type: 'setRunning', value: v });
     }
+    tickOnce() { this._cmd('tickScale0'); }
 
     // ── Mutators some code calls directly on the bridge (wire.js inject UI) ───
     injectFlux(...a) { this._cmd('injectFlux', ...a); }
