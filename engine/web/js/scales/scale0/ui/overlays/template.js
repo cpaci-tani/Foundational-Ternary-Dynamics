@@ -1,8 +1,10 @@
 /**
  * Scale 0 Viewport Overlay — Field visualization controls
  *
- * Toggles are organised into four semantic columns so the panel stays
- * scannable as the feature set grows:
+ * A compact accordion: a filter box + an active-overlays strip on top, then the
+ * toggles grouped into collapsible semantic categories (the collapse / filter /
+ * active-strip behaviour lives in overlays/panel-shell.js; the toggles themselves
+ * are wired in scale0/ui/bindings.js). The categories:
  *
  *   VOLUME    — how the raw flux field is rendered (volume, slice, lines, ∇·J)
  *   FIELDS    — EM-derived vector fields (E, B, Poynting arrows, Poynting glow)
@@ -30,6 +32,12 @@ export function getScale0OverlayTemplate() {
         </button>
       </div>
     </header>
+    <div class="s0-overlay-search">
+      <input type="search" id="s0-overlay-search" class="s0-overlay-search-input"
+          placeholder="Filter overlays…" autocomplete="off" spellcheck="false"
+          aria-label="Filter visualization overlays" />
+    </div>
+    <div class="s0-overlay-active" id="s0-overlay-active" aria-label="Active overlays" hidden></div>
     <div class="s0-overlay-body">
     <div class="s0-overlay-col" data-col="volume">
       <div class="s0-overlay-col-head">
