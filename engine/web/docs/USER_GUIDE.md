@@ -135,8 +135,8 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 
 ### Stochastic scenarios
 
-Five scenarios use randomness:
-- `flux-random-genesis`, `flux-thermalization`, `flux-vacuum-foam`, `quantum-born-rule`, `quantum-casimir`
+Six scenarios use randomness:
+- `flux-random-genesis`, `flux-thermalization`, `flux-vacuum-foam`, `flux-zero-point`, `quantum-born-rule`, `quantum-casimir`
 
 The RNG is **reset to a fixed seed on every `setupScenario` call** (as of 2026-04-18), so repeated runs in the same browser session produce identical results. A page reload also produces the same sequence. This is intentional — it makes snapshot-based testing possible.
 
@@ -416,7 +416,7 @@ console.log('First vector:', e.vectors.slice(0, 3));
 ## 13. Reproducible experiments
 
 ### Seed repeatability
-Stochastic scenarios (flux-random-genesis, flux-thermalization, flux-vacuum-foam, quantum-born-rule, quantum-casimir) use a **fixed RNG seed** (`0xC0DEFACE`) that resets on every `setupScenario()` call. Repeated runs in the same browser session produce bit-exact results.
+Stochastic scenarios (flux-random-genesis, flux-thermalization, flux-vacuum-foam, flux-zero-point, quantum-born-rule, quantum-casimir) use a **fixed RNG seed** (`0xC0DEFACE`) that resets on every `setupScenario()` call. Repeated runs in the same browser session produce bit-exact results.
 
 ### What does NOT reset
 - The `_tick` counter → call `b.reset()` explicitly first if you need tick=0.
