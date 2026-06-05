@@ -286,12 +286,12 @@ export class ViewportFluxRenderer {
         const colArr = colAttr.array;
         const sizeArr = sizeAttr.array;
 
-        // Jitter amplitude: 0 at stride==1 (N≤53 stays an exact voxel grid), else scatter
-        // each dot inside its stride-wide cell so the regular subsample grid never aligns
-        // into rows / rings / rays (the additive-blend moiré). 3D-hashed per (ix,iy,iz) so
-        // it is deterministic (no per-frame shimmer) and breaks ALL planar alignment —
-        // unlike a per-axis jitter, which leaves shared sheets and reads as plaid.
-        const jamp = (this._fluxOrganic && stride > 1.0001) ? stride : 0;
+        // Jitter amplitude: when Organic is on, scatter each dot inside its stride-wide
+        // cell (full ±0.5·stride — so it works at EVERY size, incl. stride 1 / N≤53);
+        // when off, 0 → exact grid. The 3D hash per (ix,iy,iz) breaks ALL planar alignment
+        // (the additive-blend moiré / blocks) — unlike a per-axis jitter, which leaves
+        // shared sheets and reads as plaid — and is deterministic (no per-frame shimmer).
+        const jamp = this._fluxOrganic ? stride : 0;
         for (let iz = 0; iz < samples && count < maxPts; iz++) {
             const zNN = vox[iz] * N * N;
             const ze = (iz + 0.5) * stride;
