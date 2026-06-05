@@ -36,6 +36,7 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Substrate Physics', 'flux-screening', 'Charge Screening', ['substrate']),
     makeScenario('Substrate Physics', 'flux-thermalization', 'Thermalization', ['substrate']),
     makeScenario('Substrate Physics', 'flux-triad', 'Triad Formation', ['substrate']),
+    makeScenario('Substrate Physics', 'flux-zero-point', 'Zero-Point Energy', ['substrate', 'vacuum']),
     makeScenario('Light & EM', 'light-rainbow', 'Rainbow (3 Colors)', ['light', 'em']),
     makeScenario('Light & EM', 'light-dipole', 'Dipole Radiation', ['light', 'em']),
     makeScenario('Light & EM', 'light-two-slit', 'Two-Slit Interference', ['light', 'em']),

@@ -448,6 +448,31 @@ export function setupFluxScenario(name, harness, ctx) {
                     }
                     break;
                 }
+
+                case 'flux-zero-point': {
+                    // Zero-Point Energy — the irreducible ground-state floor.
+                    // Uniform LOW-amplitude random flux across the WHOLE lattice
+                    // (no envelope, no sphere), at the same 0.3·K_B the "Random
+                    // Flux" action uses — magnitude ≈ 0.08, ~20× below
+                    // K_GENESIS (= N_c·K_B = 1.533), so nothing can manifest.
+                    // With genesis + damping both OFF (config/toggles.js), the
+                    // energy-conserving wave dynamics keep this jittering
+                    // indefinitely: a persistent non-zero energy floor that never
+                    // relaxes to exactly zero (watch the energy-audit / Lagrangian
+                    // overlays) and — unlike flux-vacuum-foam — never produces a
+                    // particle. Pedagogical lattice illustration, NOT a derivation
+                    // of the QFT ½ℏω vacuum energy. Amplitude is a [SELECTION].
+                    const zpeAmp = K_B * 0.3;
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        harness.injectFlux(x, y, z,
+                            (Math.random() - 0.5) * zpeAmp,
+                            (Math.random() - 0.5) * zpeAmp,
+                            (Math.random() - 0.5) * zpeAmp);
+                    }
+                    break;
+                }
             }
             return true;
 }

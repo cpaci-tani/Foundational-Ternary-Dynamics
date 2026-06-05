@@ -1244,6 +1244,14 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
         ],
         notation: ['fluctuation density', 'transient excitation', 'threshold'],
     },
+    'flux-zero-point': {
+        summary: 'A quiescent vacuum carrying an irreducible, sub-threshold fluctuation floor — energy that stays even when nothing is manifested.',
+        body: [
+            'Zero-Point Energy here is a pedagogical lattice illustration, not a derivation of the QFT ½ℏω vacuum energy: the flux field is seeded with uniform low-amplitude (~0.3·K_B) random fluctuations everywhere, roughly 20× below the genesis threshold, with genesis and damping both OFF.',
+            'Because nothing damps it, the energy-conserving wave dynamics keep the field jittering — the energy-audit and Lagrangian-density overlays show a persistent non-zero floor that never relaxes to exactly zero, and (unlike Vacuum Fluctuations) it never crosses the manifestation threshold. Turn damping on to watch the floor decay; push the amplitude toward foam levels to see it start producing pairs.',
+        ],
+        notation: ['ground-state floor', 'sub-threshold fluctuation', 'no damping → persistent'],
+    },
     'flux-meson': { summary: 'A two-endpoint confinement picture where the connective flux behaves like a string-like tube.', notation: ['flux tube', 'V(r) ≈ σr'] },
     'flux-string-breaking': { summary: 'A confinement setup where increasing separation can trigger string breaking rather than unlimited tension growth.', notation: ['σr', 'breaking threshold'] },
     'flux-baryon': { summary: 'A three-endpoint confinement picture with triadic connective structure.', notation: ['triad', 'three-body confinement'] },
