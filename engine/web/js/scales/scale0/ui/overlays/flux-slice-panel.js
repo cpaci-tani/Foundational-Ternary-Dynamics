@@ -671,9 +671,6 @@ export class FluxSlicePanel {
         const mid = N >> 1;
         const diag = bridge.getDiagnostics?.() ?? {};
         const simTick = (diag.tick ?? 0) | 0;
-        const globalTick = (typeof window !== 'undefined' && window.__ftdCtx)
-            ? (window.__ftdCtx.globalTick | 0)
-            : simTick;
         const isRunning = (typeof window !== 'undefined' && window.__ftdCtx)
             ? !!window.__ftdCtx.running
             : true;
@@ -758,12 +755,12 @@ export class FluxSlicePanel {
             for (const axis of FluxSlicePanel.AXES) {
                 if (!this._axisVisible[axis]) continue;
                 this._paintSlice(drv, axis, slices[axis], N, norm,
-                                 axisMax[axis], simTick, globalTick, isRunning);
+                                 axisMax[axis], simTick, isRunning);
             }
         }
     }
 
-    _paintSlice(drv, axis, data, N, norm, axisFrameMax, simTick, globalTick, isRunning) {
+    _paintSlice(drv, axis, data, N, norm, axisFrameMax, simTick, isRunning) {
         const slot = this._fields[drv.key]?.slots[axis];
         if (!slot) return;
         const buf = slot.rgbaBuf;
@@ -772,7 +769,7 @@ export class FluxSlicePanel {
             const c = slot.ctx;
             c.fillStyle = '#0a0d14';
             c.fillRect(0, 0, slot.canvas.width, slot.canvas.height);
-            slot.readout.textContent = `t=${simTick} (g=${globalTick}) · max —`;
+            slot.readout.textContent = `t=${simTick} · max —`;
             return;
         }
 
@@ -840,7 +837,7 @@ export class FluxSlicePanel {
 
         const pausedTag = isRunning ? '' : ' ⏸';
         slot.readout.textContent =
-            `t=${simTick} (g=${globalTick})${pausedTag} · max ${this._fmt(axisFrameMax)}`;
+            `t=${simTick}${pausedTag} · max ${this._fmt(axisFrameMax)}`;
     }
 
     _fmt(v) {

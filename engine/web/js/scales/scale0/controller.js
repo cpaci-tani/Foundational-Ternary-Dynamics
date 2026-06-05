@@ -42,110 +42,14 @@ import { initFluxSlicePanel } from './ui/overlays/flux-slice-panel.js';
 import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js';
 import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
-import { MemoryRecorder } from './timeline/memory-recorder.js';
-import * as _lodMod from './timeline/lod.js';
-import { ScrubBarComponent } from '../../ui/components/scrub-bar/component.js';
+import { PlayBarComponent } from '../../ui/components/play-bar/component.js';
 
 const state = getScale0State();
 
-// Publish LOD helpers on window so the WASM bridge can upsample any-LOD
-// snapshots during scrub playback without creating a circular import.
-if (typeof window !== 'undefined') window.__ftdTimelineLod = _lodMod;
-
-// ── Playback timeline ─────────────────────────────────────────────────
-// Default budget split: 60% Memory / 40% Render of a 50 MB overall cap.
-// resetScale0MemoryBudget(totalBytes) lets a future Settings panel re-tune.
-const DEFAULT_MEMORY_BYTES = 30 * 1024 * 1024;
-let _memoryBudgetBytes = DEFAULT_MEMORY_BYTES;
-let _memoryRecorder = null;
-
-function getMemoryRecorder(latticeN) {
-    if (!_memoryRecorder || _memoryRecorder.latticeN !== latticeN) {
-        _memoryRecorder = new MemoryRecorder({
-            budgetBytes: _memoryBudgetBytes,
-            latticeN,
-        });
-    }
-    return _memoryRecorder;
-}
-
-export function getScale0MemoryRecorder() { return _memoryRecorder; }
-
-export function resetScale0MemoryBudget(totalBytes) {
-    _memoryBudgetBytes = Math.max(1 * 1024 * 1024, Math.floor(totalBytes * 0.6));
-    _memoryRecorder = null; // lazy rebuild on next getMemoryRecorder call
-}
-
-let _scrubBar = null;
+let _playBar = null;
 
 // ── Render mode ──────────────────────────────────────────────────────
 // Removed as part of simplifying UI and removing the render system.
-
-/**
- * Forget every recorded snapshot so the scrub bar tracks the fresh scenario
- * from tick 0. Called whenever a scenario (re)loads or the lattice resizes.
- */
-export function clearScale0Timeline() {
-    _memoryRecorder?.clear?.();
-    _scrubBar?._resetPlayhead?.();
-}
-
-/**
- * Restore the engine state to the snapshot nearest `tick` for scrub display.
- *
- * Pure "load, don't re-simulate" — we always pick the nearest stored
- * snapshot (from render buffer if active, else memory buffer) and load it
- * directly. This makes drag-scrubbing instant regardless of LOD; the price
- * is that time resolves to the sample grid (coarser with older LOD zones),
- * which is the desired trade.
- *
- * Live sim resumes from the currently-loaded snapshot when the user
- * releases the scrub thumb (see `resumeLive`).
- */
-export function hydrateToTick(ctx, tick) {
-    const mb = _memoryRecorder?.buffer;
-    if (!mb || mb.size === 0) return false;
-    const snap = _nearest(mb, tick);
-    if (!snap) return false;
-    const ok = !!ctx.bridge.capabilities.scale0.loadScale0Snapshot?.(snap);
-    if (!ok) return false;
-
-    // Freeze live physics for the duration of the drag; the scrub end hook
-    // clears this. advanceSimulation() reads state.scrubbing and short-circuits.
-    state.scrubbing = true;
-
-    // Force the next animate pass to upload the fresh lattice to the GPU and
-    // recompute field overlays against it — otherwise the viewport keeps
-    // showing the pre-scrub state even though the engine buffers changed.
-    state.latticeNeedsUpload = true;
-    state.fieldNeedsUpdate   = true;
-    return true;
-}
-
-/** Nearest-by-tick (not nearest-before) for the smoothest scrub feel. */
-function _nearest(buffer, tick) {
-    const before = buffer.nearestBefore(tick);
-    if (!before) return null;
-    const snaps = buffer.snapshots();
-    const idx = snaps.indexOf(before);
-    const after = snaps[idx + 1];
-    if (!after) return before;
-    return (tick - before.tick) <= (after.tick - tick) ? before : after;
-}
-
-/**
- * Release the scrub-induced physics freeze. Called from the scrub-bar's
- * `onScrubEnd` (pointerup / strip dblclick / reset). Leaves the engine
- * state exactly as the last hydrated snapshot set it; sim resumes ticking
- * from there on the next animate pass.
- */
-export function resumeLive() {
-    state.scrubbing = false;
-    state.latticeNeedsUpload = true;
-    state.fieldNeedsUpdate   = true;
-}
-
-export function getScale0ScrubBar() { return _scrubBar; }
 
 // Cache the Scale-0 viewport adapter per viewport instance. animate() calls
 // viewportAdapter(ctx) 3×/frame (frame-sync, field-overlays, renderFrame) and the
@@ -214,17 +118,15 @@ export function bindUI(ctx) {
         setLatticeNeedsUpload,
     });
 
-    // Pre-create the memory recorder so the first tick starts capturing.
-    getMemoryRecorder(ctx.bridge.latticeSize || 32);
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
 
-    // Ensure the scrub bar + render chip are mounted (idempotent; may
-    // have been pre-mounted by mountScale0PlaybackUI() before wireToolbar).
+    // Ensure the play bar is mounted (idempotent; may have been
+    // pre-mounted by mountScale0PlaybackUI() before wireToolbar).
     mountScale0PlaybackUI();
 }
 
 /**
- * Mount the scrub bar + render chip in the viewport. Idempotent. Safe to
+ * Mount the play bar in the viewport. Idempotent. Safe to
  * call before any Scale 0 context exists — the callbacks read the live
  * `window.__ftdCtx` at interaction time, so the controls remain functional
  * after a scale switch.
@@ -237,21 +139,15 @@ export function bindUI(ctx) {
 export function mountScale0PlaybackUI() {
     const viewportEl = document.getElementById('viewport');
     if (!viewportEl) return;
-    if (!_scrubBar) {
-        _scrubBar = new ScrubBarComponent(viewportEl, {
-            getMemoryBuffer: () => _memoryRecorder?.buffer ?? null,
-            getNowTick:      () => {
+    if (!_playBar) {
+        _playBar = new PlayBarComponent(viewportEl, {
+            getNowTick: () => {
                 const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
                 const state = getScale0State();
                 const mockScale0 = state.fluxMock?.capabilities?.scale0 || null;
                 const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : ctx?.bridge?.capabilities?.scale0;
                 return activeScale0?.getScale0Diagnostics?.()?.tick ?? 0;
             },
-            onScrub: (tick) => {
-                const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-                return ctx ? hydrateToTick(ctx, tick) : false;
-            },
-            onScrubEnd: () => resumeLive(),
         }).mount();
     }
 }
@@ -282,7 +178,6 @@ class Scale0LifecycleController extends BaseLifecycleController {
     destroy(ctx) {
         super.destroy(ctx);
         try { exitScale0(); } catch (e) { /* ignore */ }
-        try { clearScale0Timeline(); } catch (e) { /* ignore */ }
         // Dispose the four Scale-0 overlay panels on engineMode switch
         // (audit P1-4, 2026-05-27). Each has a self-driving rAF loop that
         // calls bridge.getDiagnostics() / getConservationTotals() every
@@ -327,7 +222,7 @@ export function animate(ctx) {
     updateFieldOverlays(ctx, state, viewportAdapter(ctx));
     renderFrame(ctx);
     updateDiagnosticsAndPanels(ctx, state);
-    _scrubBar?.refresh();
+    _playBar?.refresh();
     // Live flux-slice panel: cheap no-op when hidden; internally
     // gated to every Nth render frame when visible.
     if (typeof window !== 'undefined') window.__ftdFluxSlicePanel?.update?.();

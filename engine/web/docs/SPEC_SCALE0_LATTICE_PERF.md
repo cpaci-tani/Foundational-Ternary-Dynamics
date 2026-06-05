@@ -219,12 +219,13 @@ worker for reads. (This is why §1 measured reads at ~0 ms — they stay ~0.)
 
 ### 4.5 Hard parts (call out explicitly)
 
-- **Timeline / scrubbing.** The memory recorder captures field snapshots each tick and scrubbing hydrates a
-  snapshot back (`hydrateToTick`). With the worker authoritative: the recorder captures from the posted
-  frames (the shadow); scrubbing sends `pause` + displays the historical snapshot in the shadow without the
-  worker advancing. Needs a clean "display-frozen vs live" state in the proxy. **This is the riskiest seam.**
+- **~~Timeline / scrubbing.~~** ❌ **No longer applicable (2026-06-05).** The scrub-back / timeline
+  feature was removed — the simulation is forward-only (single time source). There is no memory
+  recorder and no "display-frozen vs live" state to reconcile, which *removes* what was the riskiest
+  worker seam. The only freeze state the proxy forwards is plain pause (`setRunning(false)`). See
+  `SPEC_SCALE0_RUNTIME_PIPELINE.md` §8.
 - **Synchronous-call audit.** Build-step 1 of Phase 2 is enumerating every synchronous `mock.*` / `fluxMock.*`
-  call site (scenario-loader, controller runtime, diagnostics, timeline, samplers via `capabilities/scale0`)
+  call site (scenario-loader, controller runtime, diagnostics, samplers via `capabilities/scale0`)
   and classifying each as read-from-shadow vs command-to-worker. Reads must tolerate "shadow is one tick
   behind the worker" (it always is — that's the point).
 - **Lifecycle.** Worker created on first Scale-0 mount; terminated on `destroy`; re-created on re-mount. The
@@ -233,7 +234,7 @@ worker for reads. (This is why §1 measured reads at ~0 ms — they stay ~0.)
 ### 4.6 Verification
 
 - Field-frame parity: worker-driven field hash matches a main-thread reference run after K ticks.
-- All Phase-1 specs green; add a worker-lifecycle spec (mount→tick→resize→scrub→destroy, no leaks via
+- All Phase-1 specs green; add a worker-lifecycle spec (mount→tick→resize→destroy, no leaks via
   `__ftdRAF.size()` proxy).
 - Manual: confirm UI stays at 60 FPS (drag camera, toggle overlays) while a heavy L=129 tick runs.
 
@@ -243,9 +244,9 @@ worker for reads. (This is why §1 measured reads at ~0 ms — they stay ~0.)
 - `engine/web/js/bridge/mock-bridge-proxy.js` — main-thread proxy + shadow + sampler delegation.
 - `engine/web/js/scales/scale0/runtime/scenario-loader.js` — construct the proxy instead of `MockBridge`.
 - `engine/web/serve.py` (+ deploy host) — COOP/COEP headers *if* SAB path is chosen.
-- timeline/recorder + diagnostics wiring; a worker-lifecycle Playwright spec.
+- diagnostics wiring; a worker-lifecycle Playwright spec.
 
-**Effort:** larger (multi-file, threading, scrubbing seam, header decision). **Risk:** medium — gated behind a
+**Effort:** larger (multi-file, threading, header decision). **Risk:** medium — gated behind a
 feature flag (see §6) so it can ship dark and be A/B'd against the main-thread path.
 
 ---
@@ -256,7 +257,7 @@ feature flag (see §6) so it can ship dark and be A/B'd against the main-thread 
 2. Verify: equivalence hash, re-profile, regression suite. **Ship.**
 3. (If needed) **Phase 1b** per-voxel active list behind the same abstraction.
 4. **Phase 2** worker, behind a feature flag: (a) synchronous-call audit, (b) proxy+shadow+samplers,
-   (c) command/frame protocol with transferable fallback, (d) timeline/scrub seam, (e) SAB+headers if viable.
+   (c) command/frame protocol with transferable fallback, (d) SAB+headers if viable.
 5. Verify: parity, lifecycle, manual smoothness. Flip the flag on by default for MockBridge scenarios.
 
 ## 6. Risks, flags, rollback
@@ -266,7 +267,8 @@ feature flag (see §6) so it can ship dark and be A/B'd against the main-thread 
 - **ε-prune** defaults to 0 (bit-exact); any nonzero ε is opt-in and logged.
 - **COOP/COEP** may interfere with third-party embeds / the WASM load — verify before adopting SAB; the
   transferable fallback needs no headers.
-- **Scrubbing seam** (Phase 2) is the highest-risk item — covered by a dedicated spec before flipping the flag.
+- **Forward-only** (2026-06-05): scrub/timeline removed, so the formerly highest-risk Phase-2 seam
+  (display-frozen-vs-live snapshot reconciliation) no longer exists.
 - Worst case for Phase 1 (fully dense lattice): ~one extra bounds check per tick vs today — negligible.
 
 ## 7. Open questions

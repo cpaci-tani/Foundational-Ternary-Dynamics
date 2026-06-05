@@ -1,5 +1,3 @@
-import { getScale0MemoryRecorder } from '../controller.js';
-
 export function advanceSimulation(ctx, state) {
     const latticeSize = ctx.bridge.latticeSize || 32;
 
@@ -9,29 +7,18 @@ export function advanceSimulation(ctx, state) {
     // the in-thread tick path below is for non-worker scenarios only.
     const fm = state.fluxMock;
     if (fm && fm.isWorker && state.useFluxMock) {
-        const run = ctx.running && !state.scrubbing;
-        if (typeof fm.setRunning === 'function') fm.setRunning(run);
+        if (typeof fm.setRunning === 'function') fm.setRunning(ctx.running);
         const fc = fm.frameCounter || 0;
         if (fc !== state._lastWorkerFrame) {
             state._lastWorkerFrame = fc;
             state.latticeNeedsUpload = true;
             state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
-            // Feed the playback timeline so scrub works for worker scenarios. The
-            // recorder throttles internally; getScale0Snapshot reads the shadow's
-            // SAB views and copies out (same call the in-thread path makes below).
-            if (run) {
-                const rec = getScale0MemoryRecorder();
-                rec?.onTick(fm.capabilities.scale0);
-            }
         }
         return latticeSize;
     }
 
     // Global pause kills everything — no tick advance, no upload, no flux mock.
     if (!ctx.running) return latticeSize;
-    // User is scrubbing — freeze physics so the snapshot loaded by
-    // hydrateToTick stays put until scrubEnd / resumeLive.
-    if (state.scrubbing) return latticeSize;
     const wholeTicks = state.tickAccumulator.accumulate(ctx.ticksPerFrame);
     const maxTicksPerFrame = latticeSize > 96 ? 1 : (latticeSize > 48 ? 1 : (latticeSize > 32 ? 2 : wholeTicks));
     const ticksToRun = Math.min(wholeTicks, maxTicksPerFrame);
@@ -44,7 +31,7 @@ export function advanceSimulation(ctx, state) {
     // "tick on toggle". Overlays now sample whatever state the mock is in.
     const tickMock = !!(mockScale0 && state.useFluxMock);
 
-    // Past the global-pause / scrubbing / rendering guards above, `running` is
+    // Past the worker-path and global-pause guards above, `running` is
     // true, so physics advances this frame. Tick the WASM bridge unless a JS
     // flux mock owns the physics; tick the mock only when it IS the source.
     for (let i = 0; i < ticksToRun; i++) {
@@ -67,14 +54,6 @@ export function advanceSimulation(ctx, state) {
     state.latticeNeedsUpload = true;
     if (ticksToRun > 0) {
         state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
-    }
-
-    // Feed the playback timeline (no-op if the recorder hasn't been created
-    // yet or if the scenario didn't tick this frame).
-    if (ticksToRun > 0) {
-        const rec = getScale0MemoryRecorder();
-        const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : mainScale0;
-        rec?.onTick(activeScale0);
     }
 
     return latticeSize;

@@ -6,6 +6,9 @@ this SPEC documents the *settled* working-tree state, not committed HEAD `7b228d
 **Companion docs:** the gap/drift findings live in
 [`audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md);
 the remediation roadmap in [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE0_SCENARIO_MODULARIZATION.md).
+Foundation companions: [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md) (the
+bridges scenarios run on) and [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md) (the
+per-frame loop that drives them).
 Adjacent surfaces already specced: [`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`](audits/AUDIT_BRIDGE_WIRING_2026-06-03.md)
 (bridge read-surface), [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
 (lifecycle controller / worker teardown / perf), [`TOGGLE_REGISTRY.md`](TOGGLE_REGISTRY.md),
@@ -241,16 +244,15 @@ controller.loadScenario(ctx, id, params)   scales/scale0/controller.js:320-322
         ctx.useFluxMock / ctx.fluxMock                           :328-329
      8. ctx.resetAllVisualState() → resetScale0VisualState       :331   (:288-299)
         applyAuxiliaryDefaults(ctx, viewportAdapter)             :332   (tpf=50, cube, …)
-     9. harness = getPhysicsHarness(ctx.bridge)                  :334   (§5.3)
-        scenario.load(harness, params)                           :335   → harness.setupScenario(id)
+     9. harness = getPhysicsHarness(ctx.bridge)                  :269   (§5.3)
+        scenario.load(harness, params)                           :270   → harness.setupScenario(id)
                                                                           → bridge.setupScenario(id, harness)
                                                                           → JS runSetupScenario | C++ dispatch_scenario
                                                                           → inject flux / particles
-    10. clearScale0Timeline()                                    :340   (scrub buffer)
-    11. setCurrentScenarioId(id); setSelectedScenarioId(id)      :342-343
-        markScenarioOverrideRows(DEFAULT_TOGGLES)                :344
-        syncComboSliders(ctx.bridge)                             :345
-    12. restoreOverlayPreferences(overlayPrefs, …)               :350   (re-apply saved overlays)
+    10. setCurrentScenarioId(id)                                 :272
+        markScenarioOverrideRows(DEFAULT_TOGGLES)                :274
+        syncComboSliders(ctx.bridge)                             :275
+    11. restoreOverlayPreferences(overlayPrefs, …)               :280   (re-apply saved overlays)
 ```
 
 ### 5.2 Stages, named
@@ -290,10 +292,11 @@ harness layer — `setupScenario` defers straight to whichever bridge owns the r
 
 ### 5.4 Tick, teardown, switch, resize
 
-- **Tick:** `controller.animate` (`:324-334`) runs `advanceSimulation → syncRenderableData →
-  updateFieldOverlays → renderFrame → updateDiagnosticsAndPanels`. `stepScale0` (`:435-442`)
-  ticks fluxMock or primary per `state.useFluxMock`. Physics is frozen while
-  `state.scrubbing` (timeline drag).
+- **Tick:** `controller.animate` (`:219-229`) runs `advanceSimulation → syncRenderableData →
+  updateFieldOverlays → renderFrame → updateDiagnosticsAndPanels`. `stepScale0`
+  ticks fluxMock or primary per `state.useFluxMock`. Physics advances only while `ctx.running`;
+  pause is the only freeze — the simulation is forward-only (see
+  `SPEC_SCALE0_RUNTIME_PIPELINE.md` §8).
 - **Switch (scenario→scenario):** there is **no `onExit`/`dispose` hook on a scenario**.
   Teardown is implicit: the next `loadScale0Scenario` calls `bridge.reset()` (via the seed
   dispatcher, `index.js:59-60`) and `setFluxMock` disposes the previous mock

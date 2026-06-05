@@ -3,7 +3,7 @@
 //   • READS run on a "shadow" MockBridge whose field buffers are repointed at the
 //     worker's SharedArrayBuffers — so the existing samplers / getFluxVolume /
 //     diagnostics work unchanged, reading the worker-maintained shared memory.
-//   • COMMANDS (inject/toggle/setup/scenario/scrub) postMessage to the worker.
+//   • COMMANDS (inject/toggle/setup/scenario) postMessage to the worker.
 // The shadow never ticks, so getFluxVolume never recomputes _fluxMag on the main
 // thread (the worker keeps it fresh in shared memory). See PLAN_SCALE0_PHYSICS_WORKER.md.
 
@@ -113,7 +113,6 @@ export class MockBridgeProxy {
         caps.setReflectiveBoundary = (on) => { this._reflective = on; this._cmd('setReflectiveBoundary', on); };
         caps.getScale0Diagnostics = () => this._lastDiag ?? (this._shadow.getDiagnostics ? this._shadow.getDiagnostics() : null);
         caps.getScale0ParticleFrame = () => this._lastParts ?? EMPTY_PARTS();
-        caps.loadScale0Snapshot = (snap) => this._loadSnapshot(snap);
         return caps;
     }
 
@@ -160,17 +159,6 @@ export class MockBridgeProxy {
     // shadow's _particles is [] (the render frame is separate), so the particle
     // lookup is a safe no-op and the flux fields come from shared memory.
     inspectVoxel(x, y, z) { return this._ready ? this._shadow.inspectVoxel(x, y, z) : null; }
-
-    // ── Snapshot restore (scrub) → forward buffers to the worker ─────────────
-    _loadSnapshot(snap) {
-        if (!snap || !snap.flux) return false;
-        this._cmd('setScale0FluxBuffer', snap.flux);
-        if (snap.lattice) this._cmd('setScale0LatticeBuffer', snap.lattice);
-        if (snap.wave) this._cmd('setScale0WaveBuffer', snap.wave);
-        if (typeof snap.tick === 'number') this._cmd('setScale0Tick', snap.tick);
-        if (snap.particles) this._cmd('setScale0ParticleList', snap.particles);
-        return true;
-    }
 
     // ── Teardown ─────────────────────────────────────────────────────────────
     terminate() {
