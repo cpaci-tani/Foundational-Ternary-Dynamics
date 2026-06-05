@@ -96,7 +96,7 @@ canvas {
        ────────────────────────────────────────────────────────── */
     --ctrl-pad-y:       var(--sp-sm);   /* min vertical padding inside a control   */
     --ctrl-pad-x:       var(--sp-md);   /* min horizontal padding inside a control */
-    --ctrl-height-min:  calc(28px * var(--ui-scale)); /* min hit-target height (desktop) */
+    --ctrl-height-min:  44px; /* Universal baseline touch target natively 44px */
     --tap-min:          44px;                         /* WCAG 2.5.5 touch-target floor — used in compact @media for coarse pointers */
     --row-gap:          var(--sp-sm);   /* min gap between siblings in a flex row  */
     --row-pad-y:        var(--sp-xs);   /* min vertical padding of a control row   */
