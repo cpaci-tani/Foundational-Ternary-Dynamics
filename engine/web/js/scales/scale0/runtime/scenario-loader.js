@@ -32,7 +32,8 @@ import {
 // A scenario may declare a boundary preference in SCALE0_SCENARIO_BOUNDARY
 // (config/toggles.js); when it does, that wins over the live DOM controls.
 // Otherwise fall back to the user's #boundary-select / #toggle-reflective.
-// (Keeps the scenario's boundary need out of raw DOM reads — audit F8.)
+// (Keeps a scenario's boundary need out of raw DOM reads — the UI↔bridge
+// coupling noted in SPEC_SCALE0_SCENARIO_ARCHITECTURE.md §6.6.)
 function boundaryShapeFor(id) {
     const b = SCALE0_SCENARIO_BOUNDARY[id];
     return (b && b.shape) ? b.shape : readInputValue('boundary-select', 'cube');
