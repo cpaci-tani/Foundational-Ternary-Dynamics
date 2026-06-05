@@ -83,6 +83,10 @@ const sizeHolds = (page, n) => expect.poll(
 test.describe('Scale-0 lattice resize heap guard (per-owner)', () => {
 
     test('flux-pulse (MockBridge-owned) resizes to a big centered lattice without refusal', async ({ page }) => {
+        // Heavy: resize to a large lattice = big heap alloc + re-seed + GPU
+        // re-upload. Completes in ~30-35s, which tips over the 30s default test
+        // timeout under machine load. 2× headroom avoids the flake.
+        test.setTimeout(60_000);
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
         await waitForCtx(page);

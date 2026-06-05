@@ -185,6 +185,10 @@ test.describe('lifecycle harness — scale round-trips leak nothing', () => {
     // rather than asserting on garbage.
     // ────────────────────────────────────────────────────────────────────
     test('(C) repeated mode sweeps do not grow Three.js geometries/textures unboundedly', async ({ page }) => {
+        // Heavy: 3× full mode sweep = 21 WASM/Three.js scale switches. The work
+        // finishes in ~30-35s, which tips over the 30s default test timeout on a
+        // loaded machine. Give it 2× headroom so it doesn't flake under load.
+        test.setTimeout(60_000);
         await gotoAndReady(page);
         await waitForCtxViewport(page);
         await page.waitForTimeout(SETTLE_MS);
