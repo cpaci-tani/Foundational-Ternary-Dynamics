@@ -115,8 +115,25 @@ function extractUiRegistryScenarios() {
         'utf8'
     );
     const names = new Set();
-    // Matches `makeScenario('category', 'name', ...)`
+    // Matches `makeScenario('category', 'name', ...)` (factory form)
     const re = /makeScenario\('[^']+',\s*'([^']+)'/g;
+    let m;
+    while ((m = re.exec(src))) names.add(m[1]);
+    // Also match the custom object-literal form `{ id: 'name', ... }` used by the
+    // 10 toggle-preset scenarios (quark-gluon-plasma + emergent-ic*) that the
+    // makeScenario regex misses (B5 fix, 2026-06-05).
+    const reId = /\bid:\s*'([^']+)'/g;
+    while ((m = reId.exec(src))) names.add(m[1]);
+    return names;
+}
+
+function extractMetadataScenarios() {
+    // Live S0_SEED_SCENARIO_METADATA keys (block comments stripped so the
+    // reference-only / removed entries don't count). B5/B6 guard, 2026-06-05.
+    const src = readFileSync(join(WEB_ROOT, 'js', 'config', 'scenarios.js'), 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, '');
+    const names = new Set();
+    const re = /'(s0-seed-[^']+)':\s*\{/g;
     let m;
     while ((m = re.exec(src))) names.add(m[1]);
     return names;
@@ -184,6 +201,17 @@ test.describe('Scenario parity (JS ↔ C++)', () => {
             `${missing.length} scenarios appear in the UI dropdown but have no JS implementation.\n` +
             `Add the case to a group file in engine/web/js/bridge/scenarios/ or remove from the UI registry.\n` +
             `Missing:\n  - ${missing.join('\n  - ')}`
+        ).toEqual([]);
+    });
+
+    test('every metadata entry maps to a real scenario (no orphan docs)', () => {
+        const meta = extractMetadataScenarios();
+        const js = extractJsScenarios();
+        const orphan = [...meta].filter((n) => !js.has(n));
+        expect(orphan,
+            `${orphan.length} S0_SEED_SCENARIO_METADATA entries describe scenarios with no JS ` +
+            `implementation (orphaned docs). Remove them from engine/web/js/config/scenarios.js ` +
+            `or add the scenario.\nOrphans:\n  - ${orphan.join('\n  - ')}`
         ).toEqual([]);
     });
 

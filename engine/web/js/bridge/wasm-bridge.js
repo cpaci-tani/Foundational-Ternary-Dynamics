@@ -370,7 +370,7 @@ export class WasmBridge {
         return this._module.getForceAt(this._bridge, x, y, z);
     }
 
-    setupScenario(name) {
+    setupScenario(name, harness) {
         this.reset();
         if (this._module && this._bridge)
             this._module.setupScenario(this._bridge, name);

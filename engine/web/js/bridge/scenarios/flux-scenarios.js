@@ -18,13 +18,13 @@ import { TRIAD_ANGLES } from './_helpers.js';
 
 /**
  * @param {string} name - scenario identifier
+ * @param {PhysicsHarness} harness - physics harness instance
  * @param {{N:number, mid:number, midF:number}} ctx - precomputed lattice params
  * @returns {boolean} true if handled
  */
-export function setupFluxScenario(name, ctx) {
+export function setupFluxScenario(name, harness, ctx) {
     if (!name.startsWith('flux-')) return false;
     const { N, mid, midF } = ctx;
-            this._initFluxGrid();
             const sigma = N / 10;
             const amp = K_B * 2;
 
@@ -37,7 +37,7 @@ export function setupFluxScenario(name, ctx) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * Math.exp(-r2 / (2 * sigma * sigma));
-                        if (val > 0.001) this._injectFlux(x, y, z, val, 0, 0);
+                        if (val > 0.001) harness.injectFlux(x, y, z, val, 0, 0);
                     }
                     break;
                 }
@@ -51,8 +51,8 @@ export function setupFluxScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * Math.exp(-r2 / (2 * 9));
                         if (val > 0.001) {
-                            this._injectFlux(pLx + dx, y, z, val, val * 0.5, 0);
-                            this._injectFlux(pRx + dx, y, z, -val, -val * 0.5, 0);
+                            harness.injectFlux(pLx + dx, y, z, val, val * 0.5, 0);
+                            harness.injectFlux(pRx + dx, y, z, -val, -val * 0.5, 0);
                         }
                     }
                     break;
@@ -67,8 +67,8 @@ export function setupFluxScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * Math.exp(-r2 / (2 * 9));
                         if (val > 0.001) {
-                            this._injectFlux(pLx + dx, y, z, val, 0, 0);
-                            this._injectFlux(pRx + dx, y, z, val, 0, 0);
+                            harness.injectFlux(pLx + dx, y, z, val, 0, 0);
+                            harness.injectFlux(pRx + dx, y, z, val, 0, 0);
                         }
                     }
                     break;
@@ -79,13 +79,13 @@ export function setupFluxScenario(name, ctx) {
                     // *non-dispersive localized wave*, not a pair-producer;
                     // the high amp * 10 exceeded K_GENESIS as the wave
                     // evolved, manifesting ~28k particles by t=200.
-                    this._toggles.genesis = false;
+                    harness.setToggle('genesis', false);
                     const sLo = Math.floor(midF) - 3, sHi = Math.ceil(midF) + 3;
                     for (let z = sLo; z <= sHi; z++) for (let y = sLo; y <= sHi; y++) for (let x = sLo; x <= sHi; x++) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * 10 * Math.exp(-r2 / (2 * 4));
-                        if (val > 0.001) this._injectFlux(x, y, z, val, val, 0);
+                        if (val > 0.001) harness.injectFlux(x, y, z, val, val, 0);
                     }
                     break;
                 }
@@ -97,7 +97,7 @@ export function setupFluxScenario(name, ctx) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = bigAmp * Math.exp(-r2 / (2 * 4));
-                        if (val > 0.001) this._injectFlux(x, y, z, val, 0, val * 0.5);
+                        if (val > 0.001) harness.injectFlux(x, y, z, val, 0, val * 0.5);
                     }
                     break;
                 }
@@ -107,11 +107,11 @@ export function setupFluxScenario(name, ctx) {
                     const pL = Math.floor(midF) - off, pR = Math.ceil(midF) + off;
                     const mc = Math.round(midF); // nearest integer to true center
                     // X-axis pair
-                    this.injectParticle(pL, mc, mc, 1);
-                    this.injectParticle(pR, mc, mc, -1);
+                    harness.injectParticle(pL, mc, mc, 1);
+                    harness.injectParticle(pR, mc, mc, -1);
                     // Z-axis pair
-                    this.injectParticle(mc, mc, pL, -1);
-                    this.injectParticle(mc, mc, pR, 1);
+                    harness.injectParticle(mc, mc, pL, -1);
+                    harness.injectParticle(mc, mc, pR, 1);
                     // Strong flux kicks toward center for dramatic head-on collisions
                     const pushAmp = amp * 2;
                     const kLo = Math.floor(midF) - 3, kHi = Math.ceil(midF) + 3;
@@ -123,8 +123,8 @@ export function setupFluxScenario(name, ctx) {
                         const r2R = dxR*dxR + dy*dy + dz*dz;
                         const valL = pushAmp * Math.exp(-r2L / (2 * 4));
                         const valR = pushAmp * Math.exp(-r2R / (2 * 4));
-                        if (valL > 0.001) this._injectFlux(x, y, z, valL, 0, 0);
-                        if (valR > 0.001) this._injectFlux(x, y, z, -valR, 0, 0);
+                        if (valL > 0.001) harness.injectFlux(x, y, z, valL, 0, 0);
+                        if (valR > 0.001) harness.injectFlux(x, y, z, -valR, 0, 0);
                         // Z-axis pair kicks
                         const dzL = z - pL, dzR = z - pR;
                         const dx0 = x - mc;
@@ -132,8 +132,8 @@ export function setupFluxScenario(name, ctx) {
                         const r2ZR = dx0*dx0 + dy*dy + dzR*dzR;
                         const valZL = pushAmp * Math.exp(-r2ZL / (2 * 4));
                         const valZR = pushAmp * Math.exp(-r2ZR / (2 * 4));
-                        if (valZL > 0.001) this._injectFlux(x, y, z, 0, 0, valZL);
-                        if (valZR > 0.001) this._injectFlux(x, y, z, 0, 0, -valZR);
+                        if (valZL > 0.001) harness.injectFlux(x, y, z, 0, 0, valZL);
+                        if (valZR > 0.001) harness.injectFlux(x, y, z, 0, 0, -valZR);
                     }
                     break;
                 }
@@ -145,7 +145,7 @@ export function setupFluxScenario(name, ctx) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = bigAmp * Math.exp(-r2 / (2 * 6));
-                        if (val > 0.001) this._injectFlux(x, y, z, val, val * 0.7, val * 0.3);
+                        if (val > 0.001) harness.injectFlux(x, y, z, val, val * 0.7, val * 0.3);
                     }
                     break;
                 }
@@ -162,7 +162,7 @@ export function setupFluxScenario(name, ctx) {
                         for (let dz = -4; dz <= 4; dz++) for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
                             const r2 = dx * dx + dy * dy + dz * dz;
                             const val = amp * 1.5 * Math.exp(-r2 / (2 * 6));
-                            if (val > 0.001) this._injectFlux(sx + dx, sy + dy, sz + dz, val, 0, 0);
+                            if (val > 0.001) harness.injectFlux(sx + dx, sy + dy, sz + dz, val, 0, 0);
                         }
                     }
                     break;
@@ -179,9 +179,9 @@ export function setupFluxScenario(name, ctx) {
                         const tX = -Math.sin(angle) * amp * 2;
                         const tZ = Math.cos(angle) * amp * 2;
                         const tY = amp * 0.5;
-                        this._injectFlux(rx, mc, rz, tX, tY, tZ);
-                        this._injectFlux(rx, mc + 1, rz, tX * 0.5, tY * 0.5, tZ * 0.5);
-                        this._injectFlux(rx, mc - 1, rz, tX * 0.5, -tY * 0.5, tZ * 0.5);
+                        harness.injectFlux(rx, mc, rz, tX, tY, tZ);
+                        harness.injectFlux(rx, mc + 1, rz, tX * 0.5, tY * 0.5, tZ * 0.5);
+                        harness.injectFlux(rx, mc - 1, rz, tX * 0.5, -tY * 0.5, tZ * 0.5);
                     }
                     break;
                 }
@@ -195,8 +195,8 @@ export function setupFluxScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * 1.5 * Math.exp(-r2 / (2 * 8));
                         if (val > 0.001) {
-                            this._injectFlux(pLx + dx, y, z, val, val * 0.5, -val * 0.3);
-                            this._injectFlux(pRx + dx, y, z, val, -val * 0.5, val * 0.3);
+                            harness.injectFlux(pLx + dx, y, z, val, val * 0.5, -val * 0.3);
+                            harness.injectFlux(pRx + dx, y, z, val, -val * 0.5, val * 0.3);
                         }
                     }
                     break;
@@ -217,7 +217,7 @@ export function setupFluxScenario(name, ctx) {
                                 const sx = (Math.random() - 0.5) * val;
                                 const sy = (Math.random() - 0.5) * val;
                                 const sz = (Math.random() - 0.5) * val;
-                                this._injectFlux(cx + dx, cy + dy, cz + dz, sx, sy, sz);
+                                harness.injectFlux(cx + dx, cy + dy, cz + dz, sx, sy, sz);
                             }
                         }
                     }
@@ -231,11 +231,11 @@ export function setupFluxScenario(name, ctx) {
                     const mDress = Math.max(2, Math.floor(N / 10));
                     const mL = Math.floor(midF) - mOff, mR = Math.ceil(midF) + mOff;
                     const mc = Math.round(midF);
-                    this.injectParticle(mL, mc, mc, 1);
-                    this.injectParticle(mR, mc, mc, -1);
-                    const mpIdx = this._particles.length;
-                    this._particles[mpIdx - 2].vy = 0.05;
-                    this._particles[mpIdx - 1].vy = -0.05;
+                    harness.injectParticle(mL, mc, mc, 1);
+                    harness.injectParticle(mR, mc, mc, -1);
+                    const mpIdx = harness.bridge._particles.length;
+                    harness.bridge._particles[mpIdx - 2].vy = 0.05;
+                    harness.bridge._particles[mpIdx - 1].vy = -0.05;
                     const mesonAmp = K_B * 1.5;
                     const mSigma2 = mDress * mDress;
                     const myzLo = Math.floor(midF) - mDress, myzHi = Math.ceil(midF) + mDress;
@@ -244,8 +244,8 @@ export function setupFluxScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = mesonAmp * Math.exp(-r2 / (2 * mSigma2));
                         if (val > 0.001) {
-                            this._injectFlux(mL + dx, y, z, val, 0, 0);
-                            this._injectFlux(mR + dx, y, z, -val, 0, 0);
+                            harness.injectFlux(mL + dx, y, z, val, 0, 0);
+                            harness.injectFlux(mR + dx, y, z, -val, 0, 0);
                         }
                     }
                     break;
@@ -256,11 +256,11 @@ export function setupFluxScenario(name, ctx) {
                     const sbDress = Math.max(2, Math.floor(N / 8));
                     const sbL = Math.floor(midF) - sbOff, sbR = Math.ceil(midF) + sbOff;
                     const mc = Math.round(midF);
-                    this.injectParticle(sbL, mc, mc, 1);
-                    this.injectParticle(sbR, mc, mc, -1);
-                    const sbIdx = this._particles.length;
-                    this._particles[sbIdx - 2].vx = -0.3;
-                    this._particles[sbIdx - 1].vx = 0.3;
+                    harness.injectParticle(sbL, mc, mc, 1);
+                    harness.injectParticle(sbR, mc, mc, -1);
+                    const sbIdx = harness.bridge._particles.length;
+                    harness.bridge._particles[sbIdx - 2].vx = -0.3;
+                    harness.bridge._particles[sbIdx - 1].vx = 0.3;
                     // High flux at true center for genesis when string snaps
                     const sbAmp = K_B * 3;
                     const sbLo = Math.floor(midF) - sbDress, sbHi = Math.ceil(midF) + sbDress;
@@ -268,7 +268,7 @@ export function setupFluxScenario(name, ctx) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = sbAmp * Math.exp(-r2 / (2 * sbDress));
-                        if (val > 0.001) this._injectFlux(x, y, z, val, val * 0.3, 0);
+                        if (val > 0.001) harness.injectFlux(x, y, z, val, val * 0.3, 0);
                     }
                     break;
                 }
@@ -280,20 +280,20 @@ export function setupFluxScenario(name, ctx) {
                         const angle = TRIAD_ANGLES[k];
                         const bx = Math.round(midF + bR * Math.cos(angle));
                         const bz = Math.round(midF + bR * Math.sin(angle));
-                        this.injectParticle(bx, mc, bz, 1);
-                        const bidx = this._particles.length - 1;
-                        this._particles[bidx].vx = -0.04 * Math.sin(angle);
-                        this._particles[bidx].vz = 0.04 * Math.cos(angle);
+                        harness.injectParticle(bx, mc, bz, 1);
+                        const bidx = harness.bridge._particles.length - 1;
+                        harness.bridge._particles[bidx].vx = -0.04 * Math.sin(angle);
+                        harness.bridge._particles[bidx].vz = 0.04 * Math.cos(angle);
                     }
                     const bSea = Math.max(1, Math.floor(bR / 2));
-                    this.injectParticle(mc + bSea, mc + bSea, mc, -1);
+                    harness.injectParticle(mc + bSea, mc + bSea, mc, -1);
                     // Light flux dressing centered at midF
                     const bLo = Math.floor(midF) - 3, bHi = Math.ceil(midF) + 3;
                     for (let z = bLo; z <= bHi; z++) for (let y = bLo; y <= bHi; y++) for (let x = bLo; x <= bHi; x++) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * 0.5 * Math.exp(-r2 / (2 * 4));
-                        if (val > 0.001) this._injectFlux(x, y, z, val, 0, val * 0.3);
+                        if (val > 0.001) harness.injectFlux(x, y, z, val, 0, val * 0.3);
                     }
                     break;
                 }
@@ -310,8 +310,8 @@ export function setupFluxScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * Math.exp(-r2 / (2 * 9));
                         if (val > 0.001) {
-                            this._injectFlux(xL + dx, y, z, val, 0, 0);
-                            this._injectFlux(xR + dx, y, z, val, 0, 0);
+                            harness.injectFlux(xL + dx, y, z, val, 0, 0);
+                            harness.injectFlux(xR + dx, y, z, val, 0, 0);
                         }
                     }
                     for (let x = yzLo; x <= yzHi; x++) for (let y = yzLo; y <= yzHi; y++) for (let dz = -4; dz <= 4; dz++) {
@@ -319,8 +319,8 @@ export function setupFluxScenario(name, ctx) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = amp * Math.exp(-r2 / (2 * 9));
                         if (val > 0.001) {
-                            this._injectFlux(x, y, zL + dz, 0, 0, val);
-                            this._injectFlux(x, y, zR + dz, 0, 0, val);
+                            harness.injectFlux(x, y, zL + dz, 0, 0, val);
+                            harness.injectFlux(x, y, zR + dz, 0, 0, val);
                         }
                     }
                     break;
@@ -338,15 +338,15 @@ export function setupFluxScenario(name, ctx) {
                     for (let x = 0; x < N; x++) {
                         // J = B × r / 2 for uniform B_z → J_x = -B*y/2, J_y = +B*x/2
                         const cx = x - mid, cy = y - mid;
-                        this._injectFlux(x, y, z, -bAmp * cy * 0.05, bAmp * cx * 0.05, 0);
+                        harness.injectFlux(x, y, z, -bAmp * cy * 0.05, bAmp * cx * 0.05, 0);
                     }
                     // Charged particle with velocity in +x
-                    this.injectParticle(mid, mid, mid, 1);
+                    harness.injectParticle(mid, mid, mid, 1);
                     for (let d = -3; d <= 3; d++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
                         const r2 = dx * dx + dy * dy + d * d;
                         const val = amp * Math.exp(-r2 / (2 * 4));
                         if (val > 0.001) {
-                            this._injectFlux(mid + dx, mid + dy, mid + d, val * 0.5, 0, 0);
+                            harness.injectFlux(mid + dx, mid + dy, mid + d, val * 0.5, 0, 0);
                         }
                     }
                     break;
@@ -356,7 +356,7 @@ export function setupFluxScenario(name, ctx) {
                     // Charge screening: central +1 surrounded by 6 opposite charges
                     // (from test_gpu_experiments GP-EXP-SCREENING / Debye-Hückel)
                     const shellR = Math.floor(N / 5);
-                    this.injectParticle(mid, mid, mid, 1);
+                    harness.injectParticle(mid, mid, mid, 1);
                     // 6 screening charges on face-axes
                     const scOffsets = [
                         [shellR, 0, 0], [-shellR, 0, 0],
@@ -364,7 +364,7 @@ export function setupFluxScenario(name, ctx) {
                         [0, 0, shellR], [0, 0, -shellR],
                     ];
                     for (const [ox, oy, oz] of scOffsets) {
-                        this.injectParticle(mid + ox, mid + oy, mid + oz, -1);
+                        harness.injectParticle(mid + ox, mid + oy, mid + oz, -1);
                     }
                     // Seed flux dressing around central charge (scales with L)
                     const scDress = Math.max(3, Math.floor(shellR * 0.8));
@@ -374,7 +374,7 @@ export function setupFluxScenario(name, ctx) {
                         if (r2 === 0 || r2 > scDress2) continue;
                         const r = Math.sqrt(r2);
                         const val = amp * 0.5 / r;
-                        this._injectFlux(mid + dx, mid + dy, mid + dz, val * dx / r, val * dy / r, val * dz / r);
+                        harness.injectFlux(mid + dx, mid + dy, mid + dz, val * dx / r, val * dy / r, val * dz / r);
                     }
                     break;
                 }
@@ -386,7 +386,7 @@ export function setupFluxScenario(name, ctx) {
                     for (const angle of TRIAD_ANGLES) {
                         const px = mid + Math.round(tR * Math.cos(angle));
                         const pz = mid + Math.round(tR * Math.sin(angle));
-                        this.injectParticle(px, mid, pz, 1);
+                        harness.injectParticle(px, mid, pz, 1);
                         // Flux kick toward center (binding)
                         for (let dx = -3; dx <= 3; dx++) for (let dy = -3; dy <= 3; dy++) for (let dz = -3; dz <= 3; dz++) {
                             const r2 = dx * dx + dy * dy + dz * dz;
@@ -395,7 +395,7 @@ export function setupFluxScenario(name, ctx) {
                                 const toCX = (mid - (px + dx));
                                 const toCZ = (mid - (pz + dz));
                                 const dist = Math.sqrt(toCX * toCX + toCZ * toCZ) || 1;
-                                this._injectFlux(px + dx, mid + dy, pz + dz,
+                                harness.injectFlux(px + dx, mid + dy, pz + dz,
                                     val * toCX / dist, 0, val * toCZ / dist);
                             }
                         }
@@ -417,7 +417,7 @@ export function setupFluxScenario(name, ctx) {
                             const ry = (Math.random() - 0.5) * 2;
                             const rz2 = (Math.random() - 0.5) * 2;
                             const rLen = Math.sqrt(rx * rx + ry * ry + rz2 * rz2) || 1;
-                            this._injectFlux(corner + dx, corner + dy, corner + dz,
+                            harness.injectFlux(corner + dx, corner + dy, corner + dz,
                                 val * rx / rLen, val * ry / rLen, val * rz2 / rLen);
                         }
                     }
@@ -444,7 +444,7 @@ export function setupFluxScenario(name, ctx) {
                         const ry = (Math.random() - 0.5) * 2;
                         const rz2 = (Math.random() - 0.5) * 2;
                         const rLen = Math.sqrt(rx * rx + ry * ry + rz2 * rz2) || 1;
-                        this._injectFlux(x, y, z, val * rx / rLen, val * ry / rLen, val * rz2 / rLen);
+                        harness.injectFlux(x, y, z, val * rx / rLen, val * ry / rLen, val * rz2 / rLen);
                     }
                     break;
                 }

@@ -298,6 +298,16 @@ export const S0_SEED_SCENARIO_METADATA = {
             ['Covalent bonding', '[EMERGENT]', 'Emergent flux-tube unification between the nuclei shows chemical bond formation.'],
         ],
     },
+    's0-seed-spark-of-life': {
+        title: 'Spark of Life (abiogenesis threshold)',
+        desc: 'Seeds a locked mineral-pore ring, simple precursor charge pairs, an unlocked central catalytic triad, and a deterministic six-axis flux spark. The intended read is a nonliving field bath crossing into a persistent, bounded, flux-fed pattern. This is an honest Scale 0 demo of thresholded pattern formation, not a claim that the engine derives biological life.',
+        epistemic: [
+            ['Initial condition', '[SELECTION]', 'Mineral pore, precursor pairs, central triad, and daughter pockets are selected to dramatize a plausible threshold-crossing setup.'],
+            ['Threshold manifestation', '[EMERGENT]', 'Any new manifested voxels arise from the existing genesis dynamics once local flux density exceeds K_GENESIS.'],
+            ['Autocatalytic/life interpretation', '[CONJECTURE]', 'Calling the bounded, flux-fed pattern life-like is an interpretive analogy, not a validated biological mechanism.'],
+            ['Real abiogenesis, biochemistry, replication', '[NOT SHOWN]', 'No molecular chemistry, metabolism, genetic replication, or evolutionary selection is implemented in this Scale 0 scenario.'],
+        ],
+    },
     's0-seed-gravitational-lensing': {
         title: 'Gravitational lensing (dynamic bending)',
         desc: 'Places a massive central particle Schwarzschild well at the center, and launches an off-axis z-polarized flux wave packet in +x. Bends the propagating flux wave path dynamically toward the center core.',
