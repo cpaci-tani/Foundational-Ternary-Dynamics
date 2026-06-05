@@ -537,6 +537,8 @@ export class Viewport {
     setFluxShape(shapeIndex) { this._fluxRenderer.setFluxShape(shapeIndex); }
     setFluxPointScale(scale) { this._fluxRenderer.setFluxPointScale(scale); }
     setFluxThreshold(val) { this._fluxRenderer.setFluxThreshold(val); }
+    setFluxOrganic(on) { this._fluxRenderer.setFluxOrganic(on); }
+    setFluxGlow(on) { this._fluxRenderer.setFluxGlow(on); }
     setScenarioScale(scale) { this._fluxRenderer.setScenarioScale(scale); }
     setFluxLatticeSpacing(val) { this._fluxRenderer.setFluxLatticeSpacing(val); }
 

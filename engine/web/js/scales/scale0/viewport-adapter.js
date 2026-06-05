@@ -72,6 +72,12 @@ export function createScale0ViewportAdapter(viewport) {
         setFluxVolumeVisible(on) {
             viewport?.toggleFluxVolume?.(on);
         },
+        setFluxOrganic(on) {
+            viewport?.setFluxOrganic?.(on);
+        },
+        setFluxGlow(on) {
+            viewport?.setFluxGlow?.(on);
+        },
         setFluxSliceVisible(on) {
             viewport?.toggleFluxSlice?.(on);
         },
