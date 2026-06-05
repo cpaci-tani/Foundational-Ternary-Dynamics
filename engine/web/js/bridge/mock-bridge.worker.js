@@ -75,7 +75,15 @@ function loop() {
 function applyInit(s0, m) {
     if (m.boundaryShape && s0.setBoundaryShape) s0.setBoundaryShape(m.boundaryShape);
     if (typeof m.reflective === 'boolean' && s0.setReflectiveBoundary) s0.setReflectiveBoundary(m.reflective);
-    s0.setupScenario(scenarioId);                     // allocates the SAB field
+    s0.setupScenario(scenarioId);                     // usually allocates the SAB field
+    // A scenario that injects NO flux (only particles — e.g. flux-annihilation,
+    // whose flux kicks all fall below the injection threshold) never triggers
+    // _initFluxGrid, so the SAB stays null and publishShared() below would crash
+    // on getSharedField().ctrl. Force-allocate it so particle-only scenarios
+    // mount on the worker path (the state grid is SAB-backed too).
+    if (bridge && !bridge.getSharedField() && typeof bridge._initFluxGrid === 'function') {
+        bridge._initFluxGrid();
+    }
     if (m.toggles) for (const k in m.toggles) { try { s0.setToggle && s0.setToggle(k, m.toggles[k]); } catch (e) { /* ignore */ } }
 }
 
