@@ -666,7 +666,7 @@ body[data-reduced-motion="1"] *::after {
 
     /* The viewport remains a stacking context, children are absolutely positioned */
     #viewport {
-        padding: calc(var(--toolbar-h) + 12px) 12px 140px 12px;
+        padding: 12px 12px 140px 12px;
         overflow: hidden !important; /* Prevent canvas from scrolling */
         pointer-events: none; /* Let touches hit the 3D canvas */
     }

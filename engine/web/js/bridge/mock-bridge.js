@@ -139,7 +139,7 @@ export class MockBridge {
         this._energyCacheTick = -1;
         // Cached latency-proxy lattice (|J|²-derived L(x) for Kretschmann +
         // horizon samplers). Rebuilt lazily per tick; invalidated explicitly
-        // on reset(), scrub (setScale0Tick), and flux/wave buffer writes.
+        // on reset() and flux/wave injection writes.
         this._latencyProxy = null;
         this._latencyProxyTick = -1;
         this._cachedFieldEnergy = 0;
@@ -154,8 +154,8 @@ export class MockBridge {
 
         // Lattice samplers — factory takes the live MockBridge instance so
         // cache writes (_latencyProxy, _latencyProxyTick) propagate back
-        // here and all existing invalidation sites (reset / setScale0Tick
-        // / setScale0FluxBuffer / setScale0WaveBuffer) continue to work.
+        // here and all existing invalidation sites (reset / per-tick advance
+        // / flux-wave injection mutators) continue to work.
         this._samplers = createLatticeSamplers(this);
         // Diagnostics provider — same live-reference contract.
         this._diagnostics = createDiagnosticsProvider(this);
@@ -546,64 +546,11 @@ export class MockBridge {
 
     run(n) { for (let i = 0; i < n; i++) this.tick(); }
 
-    // ── Snapshot / load hooks for the playback TimelineBuffer ───────
-    // Read methods return fresh copies (snapshots must survive past the next tick).
-    getScale0LatticeBuffer() {
-        if (!this._stateGrid) {
-            const N = this.latticeSize;
-            this._stateGrid = new Int8Array(N * N * N);
-        }
-        return new Int8Array(this._stateGrid);
-    }
-    getScale0FluxBuffer() {
-        if (!this._fluxJ) {
-            const N = this.latticeSize;
-            this._fluxJ = new Float64Array(N * N * N * 3);
-        }
-        return new Float32Array(this._fluxJ);
-    }
-    getScale0WaveBuffer() {
-        if (!this._fluxWV) {
-            const N = this.latticeSize;
-            this._fluxWV = new Float64Array(N * N * N * 3);
-        }
-        return new Float32Array(this._fluxWV);
-    }
+    // Particle LIST (x,y,z,state,charge,…) — fresh copies so callers can't
+    // mutate engine state. Consumers: spectrum-panel, p1-observables-panel,
+    // physics-harness.
     getScale0ParticleList() {
         return Array.isArray(this._particles) ? this._particles.map((p) => ({ ...p })) : [];
-    }
-
-    // Write methods copy into existing buffers so array identity is preserved
-    // (cached indices elsewhere in the engine stay valid).
-    setScale0LatticeBuffer(buf) {
-        if (!this._stateGrid || !buf || buf.length !== this._stateGrid.length) return;
-        this._stateGrid.set(buf);
-        // Invalidate per-tick caches that depend on state.
-        this._energyCacheTick = -1;
-    }
-    setScale0FluxBuffer(buf) {
-        if (!this._fluxJ || !buf || buf.length !== this._fluxJ.length) return;
-        this._fluxJ.set(buf);
-        this._energyCacheTick = -1;
-        // Flux changed → derived per-tick caches (latency proxy, magnitude
-        // cache) are now stale even though _tick is unchanged.
-        this._latencyProxyTick = -1;
-    }
-    setScale0WaveBuffer(buf) {
-        if (!this._fluxWV || !buf || buf.length !== this._fluxWV.length) return;
-        this._fluxWV.set(buf);
-        this._energyCacheTick = -1;
-        this._latencyProxyTick = -1;
-    }
-    setScale0Tick(t) {
-        if (typeof t === 'number' && isFinite(t)) this._tick = t | 0;
-        // Scrub hydration teleports _tick; every per-tick cache is now
-        // definitionally stale. Invalidate them so the next frame rebuilds.
-        this._energyCacheTick = -1;
-        this._latencyProxyTick = -1;
-    }
-    setScale0ParticleList(list) {
-        if (Array.isArray(list)) this._particles = list.map((p) => ({ ...p }));
     }
 
     reset(latticeSize) {

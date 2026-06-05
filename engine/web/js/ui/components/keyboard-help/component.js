@@ -3,7 +3,7 @@
  * keyboard shortcut the dashboard supports.
  *
  * The list below is hand-maintained because shortcuts are bound across
- * half a dozen places (app.js, scale-specific bindings, scrub-bar
+ * half a dozen places (app.js, scale-specific bindings, play-bar
  * component). Grouped by category so each section reads like a real
  * reference card.
  *

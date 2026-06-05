@@ -17,7 +17,7 @@
     --z-tabs:             100;
     --z-status:           100;
     --z-panel-toggle:     101;
-    --z-playback:         110;  /* scrub/playback controls that must stay clickable above docked panels */
+    --z-playback:         110;  /* playback controls that must stay clickable above docked panels */
 
     /* Floating secondaries */
     --z-sidebar-backdrop: 149;

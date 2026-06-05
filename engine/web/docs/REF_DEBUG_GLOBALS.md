@@ -10,12 +10,9 @@ a sign a missing export or factory is needed in the relevant module.
 
 | Global | Type | Source | Purpose |
 |---|---|---|---|
-| `window.__ftdCtx` | object | [scale0/controller.js](../js/scales/scale0/controller.js) | Live Scale-0 controller context: `{ bridge, viewport, controls, globalTick, running, … }`. Bridge accessor for panels, scenario-loader, and ad-hoc console probes. |
+| `window.__ftdCtx` | object | [scale0/controller.js](../js/scales/scale0/controller.js) | Live Scale-0 controller context: `{ bridge, viewport, controls, running, frameCount, … }`. Bridge accessor for panels, scenario-loader, and ad-hoc console probes. (The `globalTick` render-frame counter was removed 2026-06-05 — the engine tick is the single time source.) |
 | `window.__ftdScale0State` | function `() ⇒ State` | [scale0/state/store.js](../js/scales/scale0/state/store.js) | Returns a snapshot of the Scale-0 store: `currentScenarioId`, `useFluxMock`, `fluxMock`, field-overlay flags, etc. Polled per-frame by panels via the function form so reads stay live. |
 | `window.__ftdRAF` | object | [lib/raf-coordinator.js](../js/lib/raf-coordinator.js) | The shared rAF coordinator singleton. Use `__ftdRAF.size()` to inspect current subscriber count, `__ftdRAF.clear()` for HMR/test teardown. |
-| `window.__ftdTimelineLod` | module namespace | [scale0/controller.js](../js/scales/scale0/controller.js) | Lazy-imported timeline LoD helpers. Read by `bridge-init.js` to pick a snapshot stride during scrub. |
-| `window.__ftdStartRender` | function `(seconds=5) ⇒ void` | scale0/controller.js | Console helper: kick off the offline render controller for `N` seconds of simulated lattice time. |
-| `window.__ftdCancelRender` | function | scale0/controller.js | Cancel a running offline render. |
 | `window.__ftdFluxSlicePanel` | object \| null | [overlays/flux-slice-panel.js](../js/scales/scale0/ui/overlays/flux-slice-panel.js) | Singleton handle to the live flux-slice panel. Cleared by the panel's `dispose()` so detached subtrees become GC-eligible. |
 | `window.__ftdConservationPanel` | object \| null | [overlays/conservation-micropanel.js](../js/scales/scale0/ui/overlays/conservation-micropanel.js) | Singleton handle to the conservation micropanel; same lifecycle rules as flux-slice. |
 | `window.__ftdSpectrumPanel` | object \| null | [overlays/spectrum-panel.js](../js/scales/scale0/ui/overlays/spectrum-panel.js) | Singleton handle to the spectrum scanner panel. |

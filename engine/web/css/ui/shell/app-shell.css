@@ -25,16 +25,7 @@
  */
 
 /* ── Layout tokens updated by JS ────────────────────────────────────────── */
-/* --toolbar-h is set live by TopbarComponent's ResizeObserver so that all
-   viewport overlays stay below the actual toolbar regardless of row count.
-   Registered via @property so Chrome properly re-evaluates calc() expressions
-   that reference it when the value changes (unregistered custom properties
-   are lazily re-evaluated and can get stuck on the initial computed value). */
-@property --toolbar-h {
-    syntax: '<length>';
-    inherits: true;
-    initial-value: 0px;
-}
+
 
 /* The visual-viewport listener (app-shell.js) writes these on <html>. */
 @property --visual-viewport-height {
@@ -70,8 +61,6 @@
     --visual-viewport-height: var(--app-height);
     --browser-nav-inset: 0px;
 
-    /* Keep existing toolbar-h seed (overwritten by ResizeObserver) */
-    --toolbar-h: calc(48px * var(--ui-scale));
 }
 
 /* ── Toolbar: always the first grid row ──────────────────────────────────── */
@@ -224,11 +213,9 @@ html.ui-hidden #toolbar,
 html.ui-hidden #tab-bar,
 html.ui-hidden #panel-area,
 html.ui-hidden #status-bar,
-html.ui-hidden .timeline-container,
 html.ui-hidden .hud-overlay,
 html.ui-hidden .overlay-card,
-html.ui-hidden .scrub-bar,
-html.ui-hidden .render-chip,
+html.ui-hidden .play-bar,
 html.ui-hidden .panel-mount-toggle,
 html.ui-hidden .pull-strip-container,
 html.ui-hidden .toast-container,
