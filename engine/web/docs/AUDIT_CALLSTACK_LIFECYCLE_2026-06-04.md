@@ -211,7 +211,12 @@ lattice grid; re-uploads since dot positions change), **Glow** switches additive
 flat normal-blended dots (live material swap). The default additive glow was too strong, so
 it's weakened (`uGlow` 0.18→0.06, `uOpacity` 0.55→0.34). Wired through the standard chain
 template.js → bindings.js → viewport-adapter → viewport → flux-renderer; `setFluxGlow`
-swaps `material.blending`+uniforms live, `setFluxOrganic` flips the jitter flag.
+swaps `material.blending`+uniforms live, `setFluxOrganic` flips the jitter flag. The
+Organic jitter applies at **every** size (`jamp = organic ? stride : 0`) — an earlier
+`stride > 1` gate made the toggle a no-op at N≤53 (where stride is 1), so it "did nothing"
+on small lattices. Each control is mirrored by a second button in the bottom-right Scene
+Visuals panel (`-scene` ids); both buttons + the renderer flag stay in sync via shared
+`applyFluxOrganic`/`applyFluxGlow` in bindings.js.
 
 ### Bonus finding — `perf-baseline.spec.js` was stale w.r.t. the worker path
 The perf-baseline gate read the steady-state tick via `b.currentTick()` / `b._tick`,
