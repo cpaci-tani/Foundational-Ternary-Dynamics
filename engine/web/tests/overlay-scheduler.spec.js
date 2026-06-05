@@ -396,6 +396,10 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
     //       per-frame gap stays bounded even as streamlines come online.
     // ────────────────────────────────────────────────────────────────────
     test('work-budget: a heavy streamline overlay set spreads its build across frames (≤1 streamline/frame)', async ({ page }) => {
+        // Heavy: particle-rich scenario + streamline-heavy overlay set + a
+        // multi-frame timing capture. Completes in ~30s, which tips over the 30s
+        // default test timeout under machine load. 2× headroom avoids the flake.
+        test.setTimeout(60_000);
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
         await waitForScale0Ctx(page);
