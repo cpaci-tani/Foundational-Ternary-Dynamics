@@ -218,8 +218,11 @@ export class ViewportSceneCore {
             case 'front': dist = N * 1.6; pos = [c, c, c + dist]; break;
             case 'side':  dist = N * 1.6; pos = [c + dist, c, c]; break;
             case 'top':   dist = N * 1.6; pos = [c, c + dist, c + 0.001]; break;  // tiny Z offset so OrbitControls can roll freely
-            case 'iso':   dist = N * 1.6; pos = [c + dist * 0.25, c + dist * 0.15, c + dist]; break;
-            case 'moore': dist = Math.max(6, N * 0.35); pos = [c + dist * 0.6, c + dist * 0.4, c + dist]; break;
+            case 'corner':
+                dist = N * 1.6;
+                const d = dist / Math.sqrt(3);
+                pos = [c + d, c + d, c + d];
+                break;
             default: return false;
         }
         this._controls.target.set(c, c, c);

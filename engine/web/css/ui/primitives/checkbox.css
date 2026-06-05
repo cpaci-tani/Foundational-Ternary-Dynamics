@@ -21,6 +21,15 @@ input[type="checkbox"] {
     justify-content: center;
 }
 
+/* Touch target minimum for checkboxes on mobile */
+@media (max-width: 767px) {
+    .toggle-row input[type="checkbox"] {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+
 .toggle-row input[type="checkbox"]:checked {
     background: var(--accent-dim);
     border-color: var(--accent);

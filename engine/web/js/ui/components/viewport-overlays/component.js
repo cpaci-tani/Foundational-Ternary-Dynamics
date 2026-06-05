@@ -149,71 +149,91 @@ export class ViewportOverlaysComponent {
     const panel = document.createElement('div');
     panel.id = 'viewport-controls-panel';
     panel.innerHTML = `
-      <div class="vcp-toggle-grid">
-        <button class="view-toggle active scale4-hide" id="toggle-axes" title="XYZ axis indicator">Axes</button>
-        <button class="view-toggle active scale4-hide" id="toggle-grid" title="Reference grid (XZ plane)">Grid</button>
-        <button class="view-toggle" id="toggle-reflective" title="Reflective boundary conditions">Reflect</button>
+      <div class="vcp-header">
+        <span class="vcp-title">SCENE</span>
+        <button class="vcp-collapse-btn" aria-label="Toggle Visuals" title="Toggle Visuals">&#128065;&#xFE0E;</button>
       </div>
-      <!-- Camera preset buttons — snap the orbit camera to a named viewpoint.
-           All positions are computed from the current lattice size, so the
-           preset reads the same at every N. Only shows for Scale 0 (lattice
-           mode); other scales have their own camera logic. -->
-      <div class="vcp-label-row scale0-only"><span class="vcp-label">Camera</span></div>
-      <div class="vcp-preset-grid scale0-only">
-        <button class="view-toggle vcp-preset-btn" data-cam-preset="front" title="Face-on view (looking -Z)">Front</button>
-        <button class="view-toggle vcp-preset-btn" data-cam-preset="side"  title="Side view (looking -X)">Side</button>
-        <button class="view-toggle vcp-preset-btn" data-cam-preset="top"   title="Top-down (looking -Y)">Top</button>
-        <button class="view-toggle vcp-preset-btn" data-cam-preset="iso"   title="Isometric default">Iso</button>
-        <button class="view-toggle vcp-preset-btn" data-cam-preset="moore" title="Zoomed into the 3×3×3 Moore neighborhood around the lattice center — ideal for seed scenarios">Moore</button>
-        <button class="view-toggle vcp-preset-btn" data-cam-preset="fit"   title="Frame the active flux volume to fit the viewport">Fit</button>
-      </div>
-      <!-- Reduced motion toggle — freezes all continuous UI animations
-           (particle smooth-follow tweens, dash flow, quantum breathing).
-           Useful for screenshots and for users sensitive to motion. Sets
-           body[data-reduced-motion="1"] + broadcasts a custom event so
-           any listener can honour the preference.  -->
-      <div class="vcp-toggle-grid vcp-motion-row">
-        <button class="view-toggle" id="toggle-reduced-motion"
-            title="Freeze all continuous animation (breathing, dash flow). Overlay/physics simulation is unaffected.">
-          Reduced Motion
-        </button>
-      </div>
-      <div class="vcp-select-row">
-        <span class="vcp-label">Env</span>
-        <select id="bg-select">
-          <option value="none">None</option>
-          <optgroup label="Cosmic">
-            <option value="stars" selected>Star Field</option>
-            <option value="nebula">Nebula</option>
-            <option value="foam">Quantum Foam</option>
-            <option value="beyond">The Beyond</option>
-            <option value="storm">Flux Storm</option>
-          </optgroup>
-          <optgroup label="360°">
-            <option value="studio">Studio</option>
-            <option value="workshop">Workshop</option>
-            <option value="sunset">Sunset</option>
-            <option value="night">Night Sky</option>
-            <option value="forest">Forest</option>
-            <option value="urban">Urban</option>
-          </optgroup>
-        </select>
-      </div>
-      <div class="vcp-select-row">
-        <span class="vcp-label">Boundary</span>
-        <select id="boundary-select">
-          <option value="cube" selected>Cube</option>
-          <option value="sphere">Sphere</option>
-          <option value="dodecahedron">Dodecahedron</option>
-          <option value="icosahedron">Icosahedron</option>
-          <option value="octahedron">Octahedron</option>
-          <option value="cylinder">Cylinder</option>
-          <option value="torus">Torus</option>
-          <option value="none">None</option>
-        </select>
+      <div class="vcp-content">
+        <div class="vcp-section">
+          <div class="vcp-toggle-grid overlays-grid">
+            <button class="view-toggle active scale4-hide" id="toggle-axes" title="XYZ axis indicator">Axes</button>
+            <button class="view-toggle active scale4-hide" id="toggle-grid" title="Reference grid (XZ plane)">Grid</button>
+            <button class="view-toggle" id="toggle-reflective" title="Reflective boundary conditions">Reflect</button>
+          </div>
+        </div>
+
+        <div class="vcp-section scale0-only">
+          <div class="vcp-label-row"><span class="vcp-label">Camera</span></div>
+          <div class="vcp-preset-grid">
+            <button class="view-toggle vcp-preset-btn" data-cam-preset="front" title="Face-on view (looking -Z)">Front</button>
+            <button class="view-toggle vcp-preset-btn" data-cam-preset="side"  title="Side view (looking -X)">Side</button>
+            <button class="view-toggle vcp-preset-btn" data-cam-preset="top"   title="Top-down view (looking -Y)">Top</button>
+            <button class="view-toggle vcp-preset-btn" data-cam-preset="corner" title="Diagonal corner view">Corner</button>
+          </div>
+        </div>
+
+        <div class="vcp-section scale0-only">
+          <div class="vcp-label-row"><span class="vcp-label">Flux</span></div>
+          <div class="vcp-toggle-grid flux-grid">
+            <button class="view-toggle active" id="toggle-flux-organic-scene" title="Organic scatter (cloud) vs regular lattice grid">Organic</button>
+            <button class="view-toggle active" id="toggle-flux-glow-scene" title="Additive glow bloom on the flux volume">Glow</button>
+          </div>
+        </div>
+
+        <div class="vcp-section">
+          <div class="vcp-select-row">
+            <span class="vcp-label">Env</span>
+            <select id="bg-select">
+              <option value="none">None</option>
+              <optgroup label="Cosmic">
+                <option value="stars" selected>Star Field</option>
+                <option value="nebula">Nebula</option>
+                <option value="foam">Quantum Foam</option>
+                <option value="beyond">The Beyond</option>
+                <option value="storm">Flux Storm</option>
+              </optgroup>
+              <optgroup label="360°">
+                <option value="studio">Studio</option>
+                <option value="workshop">Workshop</option>
+                <option value="sunset">Sunset</option>
+                <option value="night">Night Sky</option>
+                <option value="forest">Forest</option>
+                <option value="urban">Urban</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="vcp-select-row">
+            <span class="vcp-label">Bounds</span>
+            <select id="boundary-select">
+              <option value="cube" selected>Cube</option>
+              <option value="sphere">Sphere</option>
+              <option value="dodecahedron">Dodecahedron</option>
+              <option value="icosahedron">Icosahedron</option>
+              <option value="octahedron">Octahedron</option>
+              <option value="cylinder">Cylinder</option>
+              <option value="torus">Torus</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+        </div>
       </div>
     `;
     this.viewport.appendChild(panel);
+
+    // Wire up universal panel collapse state
+    const btn = panel.querySelector('.vcp-collapse-btn');
+    const lsKey = 'ftd.overlay.universal.collapsed';
+    const apply = (collapsed) => {
+        panel.classList.toggle('is-collapsed', !!collapsed);
+        btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    };
+    try { apply(localStorage.getItem(lsKey) === '1'); } catch { /* ignore */ }
+    btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const next = !panel.classList.contains('is-collapsed');
+        apply(next);
+        try { localStorage.setItem(lsKey, next ? '1' : '0'); } catch { /* ignore */ }
+    });
   }
 
   cleanup() {
