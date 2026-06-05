@@ -355,8 +355,8 @@
 .s0-overlay-active {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px 8px;   /* row-gap leaves room for the hover-× floating above each badge */
-    padding: 13px 2px 8px;
+    gap: 8px 14px;   /* column-gap leaves room for the hover-× at each badge's right end */
+    padding: 8px 10px;
     margin-bottom: 4px;
     border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
 }
@@ -383,16 +383,16 @@
 .s0-overlay-chip-label {
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px;
 }
-/* Remove × — a small round button that pops in at the badge's top-right corner on
-   hover. It overlaps the corner (no hover gap) and is a DOM child of the badge, so
-   the badge stays :hover while you move onto it. */
+/* Remove × — a small round button that pops in at the badge's right end on hover,
+   vertically centred. It overlaps the edge (no hover gap) and is a DOM child of the
+   badge, so the badge stays :hover while you move onto it. */
 .s0-overlay-chip-x {
     position: absolute;
-    /* Horizontally centred above the badge; a touch of overlap (top:-1.1em with a
-       1.5em circle leaves ~0.4em into the badge) keeps the hover continuous. */
-    left: 50%;
-    top: -1.1em;
-    transform: translateX(-50%) scale(0.6);
+    /* Vertically centred at the badge's right end; ~1em of the 1.5em circle overlaps
+       the badge (right:-0.5em) so the hover stays continuous. */
+    top: 50%;
+    right: -0.5em;
+    transform: translateY(-50%) scale(0.6);
     /* Circle sized in em so it scales with the badge font (responsive to --ui-scale).
        min-*: 0 + .u-no-baseline on the element together defeat the global 44px
        control-baseline (tokens.css) that would otherwise stretch it into an oval. */
@@ -422,7 +422,7 @@
 .s0-overlay-chip:hover .s0-overlay-chip-x,
 .s0-overlay-chip-x:focus-visible {
     opacity: 1;
-    transform: translateX(-50%) scale(1);
+    transform: translateY(-50%) scale(1);
     pointer-events: auto;
 }
 .s0-overlay-chip-x:hover {
