@@ -95,23 +95,24 @@ export function bindScale0UI(ctx, api) {
     }
 
     // Flux-volume style sub-toggles (organic scatter vs grid; additive glow on/off).
-    const organicBtn = getEl('toggle-flux-organic');
-    if (organicBtn) {
-        organicBtn.addEventListener('click', () => {
-            const on = !readButtonActive('toggle-flux-organic');
-            setButtonActive('toggle-flux-organic', on);
-            api.viewportAdapter(ctx).setFluxOrganic(on);
-            api.setLatticeNeedsUpload();   // dot positions change → re-upload
-        });
+    // Each control has TWO buttons — one in the Volume overlay column, one in the
+    // bottom-right Scene Visuals panel — kept in sync via these shared appliers.
+    const applyFluxOrganic = (on) => {
+        setButtonActive('toggle-flux-organic', on);
+        setButtonActive('toggle-flux-organic-scene', on);
+        api.viewportAdapter(ctx).setFluxOrganic(on);
+        api.setLatticeNeedsUpload();   // dot positions change → re-upload
+    };
+    const applyFluxGlow = (on) => {
+        setButtonActive('toggle-flux-glow', on);
+        setButtonActive('toggle-flux-glow-scene', on);
+        api.viewportAdapter(ctx).setFluxGlow(on);   // live material change, no re-upload
+    };
+    for (const id of ['toggle-flux-organic', 'toggle-flux-organic-scene']) {
+        getEl(id)?.addEventListener('click', () => applyFluxOrganic(!readButtonActive('toggle-flux-organic')));
     }
-
-    const glowBtn = getEl('toggle-flux-glow');
-    if (glowBtn) {
-        glowBtn.addEventListener('click', () => {
-            const on = !readButtonActive('toggle-flux-glow');
-            setButtonActive('toggle-flux-glow', on);
-            api.viewportAdapter(ctx).setFluxGlow(on);   // live material change, no re-upload
-        });
+    for (const id of ['toggle-flux-glow', 'toggle-flux-glow-scene']) {
+        getEl(id)?.addEventListener('click', () => applyFluxGlow(!readButtonActive('toggle-flux-glow')));
     }
 
     // Shared apply-toggle helper: works for both user clicks and
