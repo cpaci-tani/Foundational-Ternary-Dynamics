@@ -13,6 +13,7 @@ import {
     setForceStyleButtons,
 } from './dom.js';
 import { COL_TO_TOGGLES } from './overlays/presets.js';
+import { initOverlayPanelShell } from './overlays/panel-shell.js';
 
 let _bound = false;
 
@@ -199,6 +200,10 @@ export function bindScale0UI(ctx, api) {
     // Initial badge sync on first bind so counts reflect whatever toggles
     // the scenario loader set up during boot.
     updateOverlayBadges();
+
+    // Wire the panel shell: per-category accordion collapse, the active-overlays
+    // strip, and the filter. Self-contained + idempotent (overlays/panel-shell.js).
+    initOverlayPanelShell();
 }
 
 export function handleScale0ShortcutKey(key) {
