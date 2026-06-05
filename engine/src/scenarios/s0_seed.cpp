@@ -327,6 +327,89 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         dp(rb, mc, mc, mc + 1, -1, -1, 0, 2, K_B * 0.8, false);
         dp(rb, mc, mc, mc - 1, -1, +1, 0, 2, K_B * 0.8, false);
     }
+    else if (name == "s0-seed-spark-of-life") {
+        // Honest demo: a nonliving mineral-pore-like boundary, simple
+        // precursor charge pairs, and a flux spark that can cross the
+        // existing K_GENESIS manifestation threshold.
+        const int ringR = std::max(5, N / 8);
+        constexpr int ringSites = 16;
+        for (int i = 0; i < ringSites; ++i) {
+            const double angle = (2.0 * PI * i) / ringSites;
+            const int px = RND(mc + ringR * std::cos(angle));
+            const int py = RND(mc + ringR * std::sin(angle));
+            const int state = (i % 2 == 0) ? +1 : -1;
+            IPF(rb, px, py, mc, state, state, 0);
+            LOCK(rb, px, py, mc);
+        }
+
+        // Four incoming precursor charge pairs, each dressed with
+        // sub-threshold flux and nudged inward toward the pore.
+        const int precursorR = std::max(ringR + 4, N / 4);
+        const double precursorSpeed = 0.12 * C_SPEED;
+        for (int k = 0; k < 4; ++k) {
+            const double angle = (2.0 * PI * k) / 4.0;
+            const double dirX = std::cos(angle);
+            const double dirY = std::sin(angle);
+            const double tanX = -dirY;
+            const double tanY = dirX;
+            for (int j = 0; j < 2; ++j) {
+                const int side = (j == 0) ? -1 : +1;
+                const int state = (j == 0) ? +1 : -1;
+                const int px = RND(mc + precursorR * dirX + side * tanX);
+                const int py = RND(mc + precursorR * dirY + side * tanY);
+                dp(rb, px, py, mc, state, state, ((k + j) % 3) + 1,
+                   1.6, K_B * 0.7, false);
+                SET_VEL(rb, px, py, mc, -dirX * precursorSpeed,
+                        -dirY * precursorSpeed, 0);
+            }
+        }
+
+        // Central unlocked catalytic triad: color-labelled, not locked, so
+        // the ordinary Scale-0 dynamics own its fate.
+        const int triR = std::max(2, N / 18);
+        const int catalystCharges[3] = {+1, -1, +1};
+        const int catalystColors[3] = {1, 2, 3};
+        tri(rb, mc, mc, mc, catalystCharges, catalystColors, triR, false);
+
+        // Six-axis deterministic spark. Per-axis amplitude is chosen so
+        // the vector-budget scale is 6*K_GENESIS.
+        const double spark = 6.0 * K_GENESIS / std::sqrt(6.0);
+        IF(rb, mc + 1, mc, mc, +spark, 0, 0);
+        IF(rb, mc - 1, mc, mc, -spark, 0, 0);
+        IF(rb, mc, mc + 1, mc, 0, +spark, 0);
+        IF(rb, mc, mc - 1, mc, 0, -spark, 0);
+        IF(rb, mc, mc, mc + 1, 0, 0, +spark);
+        IF(rb, mc, mc, mc - 1, 0, 0, -spark);
+
+        // Two daughter pockets stay below K_GENESIS at setup; if they
+        // bloom, it is because dynamics feed them.
+        auto daughter_pocket = [&](int cx, int cy, int cz, int sign) {
+            constexpr int radius = 4;
+            constexpr double sigma = 2.0;
+            const double amp = 0.75 * K_GENESIS;
+            for (int dz = -radius; dz <= radius; ++dz)
+            for (int dy = -radius; dy <= radius; ++dy)
+            for (int dx = -radius; dx <= radius; ++dx) {
+                const int x = cx + dx;
+                const int y = cy + dy;
+                const int z = cz + dz;
+                if (x < 0 || x >= N || y < 0 || y >= N || z < 0 || z >= N) continue;
+                const int r2i = dx*dx + dy*dy + dz*dz;
+                if (r2i == 0 || r2i > radius * radius) continue;
+                const double r2 = static_cast<double>(r2i);
+                const double r = std::sqrt(r2);
+                const double val = amp * std::exp(-r2 / (2.0 * sigma * sigma));
+                if (val < 0.001) continue;
+                IF(rb, x, y, z,
+                   sign * val * dx / r,
+                   sign * val * dy / r,
+                   sign * val * dz / r);
+            }
+        };
+        const int daughterR = std::max(ringR + 2, N / 6);
+        daughter_pocket(mc - daughterR, mc, mc + 2, +1);
+        daughter_pocket(mc + daughterR, mc, mc - 2, -1);
+    }
     // ── Quarks (LHC additions) ──
     else if (name == "s0-seed-up-quark" || name == "s0-seed-down-quark" ||
              name == "s0-seed-strange-quark" || name == "s0-seed-charm-quark" ||

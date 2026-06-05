@@ -22,15 +22,29 @@ import {
     injectTriad,
 } from './_helpers.js';
 
+function makeBridgeHarness(bridge) {
+    return {
+        bridge,
+        setToggle: (key, value) => bridge.setToggle?.(key, value),
+        injectFlux: (x, y, z, fx, fy, fz) => bridge._injectFlux?.(x, y, z, fx, fy, fz),
+        injectWaveVel: (x, y, z, vx, vy, vz) => bridge._injectWaveVel?.(x, y, z, vx, vy, vz),
+        injectParticle: (x, y, z, state) => bridge.injectParticle?.(x, y, z, state),
+    };
+}
+
 /**
  * @param {string} name - scenario identifier
- * @param {{N:number, mid:number, midF:number}} ctx - precomputed lattice params
+ * @param {PhysicsHarness|{N:number, mid:number, midF:number}} harnessOrCtx
+ * @param {{N:number, mid:number, midF:number}=} maybeCtx - precomputed lattice params
  * @returns {boolean} true if handled
  */
-export function setupS0SeedScenario(name, ctx) {
+export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
     if (!name.startsWith('s0-seed-')) return false;
+    const harness = maybeCtx ? harnessOrCtx : makeBridgeHarness(this);
+    const ctx = maybeCtx ?? harnessOrCtx;
+    const bridge = harness.bridge ?? this;
     const { N, mid, midF } = ctx;
-            this._initFluxGrid();
+            bridge._initFluxGrid();
             const mc = Math.round(midF);
 
             switch (name) {
@@ -46,26 +60,26 @@ export function setupS0SeedScenario(name, ctx) {
 
                 case 's0-seed-octahedron': {
                     // Shell 1: 6 face-neighbors at L2 distance 1 (SC sublattice)
-                    this.injectParticle(mc, mc, mc, -1);  // center anchor
+                    harness.injectParticle(mc, mc, mc, -1);  // center anchor
                     const octOffsets = [
                         [1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]
                     ];
                     for (const [dx,dy,dz] of octOffsets) {
-                        this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                        harness.injectParticle(mc+dx, mc+dy, mc+dz, +1);
                     }
                     break;
                 }
 
                 case 's0-seed-cuboctahedron': {
                     // Shell 2: 12 edge-neighbors at L2 distance sqrt(2) (FCC sublattice)
-                    this.injectParticle(mc, mc, mc, -1);  // center anchor
+                    harness.injectParticle(mc, mc, mc, -1);  // center anchor
                     const cubOffsets = [
                         [1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],
                         [1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],
                         [0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1]
                     ];
                     for (const [dx,dy,dz] of cubOffsets) {
-                        this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                        harness.injectParticle(mc+dx, mc+dy, mc+dz, +1);
                     }
                     break;
                 }
@@ -73,13 +87,13 @@ export function setupS0SeedScenario(name, ctx) {
                 case 's0-seed-stella-octangula': {
                     // Shell 3: 8 corner-neighbors at L2 distance sqrt(3) (BCC sublattice)
                     // Two interpenetrating tetrahedra
-                    this.injectParticle(mc, mc, mc, -1);  // center anchor
+                    harness.injectParticle(mc, mc, mc, -1);  // center anchor
                     const stelOffsets = [
                         [1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],
                         [-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1]
                     ];
                     for (const [dx,dy,dz] of stelOffsets) {
-                        this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                        harness.injectParticle(mc+dx, mc+dy, mc+dz, +1);
                     }
                     break;
                 }
@@ -90,13 +104,13 @@ export function setupS0SeedScenario(name, ctx) {
                     // seed should *stay* a 27-site geometric seed. Genesis
                     // contamination drove it to ~30k particles by t=200,
                     // erasing the polyhedral structure.
-                    this._toggles.genesis = false;
-                    this.injectParticle(mc, mc, mc, -1);  // center anchor
+                    harness.setToggle('genesis', false);
+                    harness.injectParticle(mc, mc, mc, -1);  // center anchor
                     for (let dx = -1; dx <= 1; dx++)
                     for (let dy = -1; dy <= 1; dy++)
                     for (let dz = -1; dz <= 1; dz++) {
                         if (dx === 0 && dy === 0 && dz === 0) continue;
-                        this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                        harness.injectParticle(mc+dx, mc+dy, mc+dz, +1);
                     }
                     break;
                 }
@@ -126,7 +140,7 @@ export function setupS0SeedScenario(name, ctx) {
                     //   • The 8 BCC corner positions (±1,±1,±1) DO NOT manifest.
                     //
                     // See: docs/theory/08_structural/EXPLR_25_VOXEL_CLUSTER_GEOMETRY.md
-                    this._injectFlux(mc, mc, mc, 10.0 * K_GENESIS, 0, 0);
+                    harness.injectFlux(mc, mc, mc, 10.0 * K_GENESIS, 0, 0);
                     break;
                 }
 
@@ -136,8 +150,8 @@ export function setupS0SeedScenario(name, ctx) {
                     // 2-3 voxels each at the two collision points.
                     // Toggles set by scenario-registry.js at load.
                     const q = Math.max(1, Math.floor(N / 4));
-                    this._injectFlux(mc - q, mc, mc, +5.0 * K_GENESIS, 0, 0);
-                    this._injectFlux(mc + q, mc, mc, -5.0 * K_GENESIS, 0, 0);
+                    harness.injectFlux(mc - q, mc, mc, +5.0 * K_GENESIS, 0, 0);
+                    harness.injectFlux(mc + q, mc, mc, -5.0 * K_GENESIS, 0, 0);
                     break;
                 }
 
@@ -146,7 +160,7 @@ export function setupS0SeedScenario(name, ctx) {
                     // 0.5·K_GENESIS at centre — below the gap. Pre-registered
                     // outcome: 0 manifested voxels (negative control).
                     // Toggles set by scenario-registry.js at load.
-                    this._injectFlux(mc, mc, mc, 0.5 * K_GENESIS, 0, 0);
+                    harness.injectFlux(mc, mc, mc, 0.5 * K_GENESIS, 0, 0);
                     break;
                 }
 
@@ -166,7 +180,7 @@ export function setupS0SeedScenario(name, ctx) {
                     // the cluster-efficiency origin. If Z_4 reading correct,
                     // expect ~33-voxel cluster (vs 25 for axial).
                     const A_diag = 10.0 * K_GENESIS / Math.sqrt(3);
-                    this._injectFlux(mc, mc, mc, A_diag, A_diag, A_diag);
+                    harness.injectFlux(mc, mc, mc, A_diag, A_diag, A_diag);
                     break;
                 }
 
@@ -177,12 +191,12 @@ export function setupS0SeedScenario(name, ctx) {
                     // outward. Tests whether the cluster is fully O_h-symmetric
                     // when the injection direction is symmetrised away.
                     const a_iso = 10.0 * K_GENESIS / Math.sqrt(6);
-                    this._injectFlux(mc + 1, mc, mc, +a_iso, 0, 0);
-                    this._injectFlux(mc - 1, mc, mc, -a_iso, 0, 0);
-                    this._injectFlux(mc, mc + 1, mc, 0, +a_iso, 0);
-                    this._injectFlux(mc, mc - 1, mc, 0, -a_iso, 0);
-                    this._injectFlux(mc, mc, mc + 1, 0, 0, +a_iso);
-                    this._injectFlux(mc, mc, mc - 1, 0, 0, -a_iso);
+                    harness.injectFlux(mc + 1, mc, mc, +a_iso, 0, 0);
+                    harness.injectFlux(mc - 1, mc, mc, -a_iso, 0, 0);
+                    harness.injectFlux(mc, mc + 1, mc, 0, +a_iso, 0);
+                    harness.injectFlux(mc, mc - 1, mc, 0, -a_iso, 0);
+                    harness.injectFlux(mc, mc, mc + 1, 0, 0, +a_iso);
+                    harness.injectFlux(mc, mc, mc - 1, 0, 0, -a_iso);
                     break;
                 }
 
@@ -190,22 +204,22 @@ export function setupS0SeedScenario(name, ctx) {
                     // Clean axial cluster (A=20, T=0). Higher amplitude
                     // compensates for CPU genesis-drain so cluster is
                     // visible in dashboard. Run ~200 ticks for clearest view.
-                    this._injectFlux(mc, mc, mc, 20.0 * K_GENESIS, 0, 0);
+                    harness.injectFlux(mc, mc, mc, 20.0 * K_GENESIS, 0, 0);
                     break;
                 }
                 case 's0-seed-emergent-ic1-diagonal-viz': {
                     const A_dv = 20.0 * K_GENESIS / Math.sqrt(3);
-                    this._injectFlux(mc, mc, mc, A_dv, A_dv, A_dv);
+                    harness.injectFlux(mc, mc, mc, A_dv, A_dv, A_dv);
                     break;
                 }
                 case 's0-seed-emergent-ic1-isotropic-viz': {
                     const a_iv = 20.0 * K_GENESIS / Math.sqrt(6);
-                    this._injectFlux(mc + 1, mc, mc, +a_iv, 0, 0);
-                    this._injectFlux(mc - 1, mc, mc, -a_iv, 0, 0);
-                    this._injectFlux(mc, mc + 1, mc, 0, +a_iv, 0);
-                    this._injectFlux(mc, mc - 1, mc, 0, -a_iv, 0);
-                    this._injectFlux(mc, mc, mc + 1, 0, 0, +a_iv);
-                    this._injectFlux(mc, mc, mc - 1, 0, 0, -a_iv);
+                    harness.injectFlux(mc + 1, mc, mc, +a_iv, 0, 0);
+                    harness.injectFlux(mc - 1, mc, mc, -a_iv, 0, 0);
+                    harness.injectFlux(mc, mc + 1, mc, 0, +a_iv, 0);
+                    harness.injectFlux(mc, mc - 1, mc, 0, -a_iv, 0);
+                    harness.injectFlux(mc, mc, mc + 1, 0, 0, +a_iv);
+                    harness.injectFlux(mc, mc, mc - 1, 0, 0, -a_iv);
                     break;
                 }
 
@@ -219,22 +233,22 @@ export function setupS0SeedScenario(name, ctx) {
                     // All 3 shells with alternating states so they are
                     // visually distinguishable: shell 1 (+1), shell 2 (-1),
                     // shell 3 (+1), center (-1).
-                    this.injectParticle(mc, mc, mc, -1);  // center
+                    harness.injectParticle(mc, mc, mc, -1);  // center
                     // Shell 1 — octahedron (face) — state +1
                     for (const [dx,dy,dz] of [
                         [1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]
-                    ]) this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                    ]) harness.injectParticle(mc+dx, mc+dy, mc+dz, +1);
                     // Shell 2 — cuboctahedron (edge) — state -1
                     for (const [dx,dy,dz] of [
                         [1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],
                         [1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],
                         [0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1]
-                    ]) this.injectParticle(mc+dx, mc+dy, mc+dz, -1);
+                    ]) harness.injectParticle(mc+dx, mc+dy, mc+dz, -1);
                     // Shell 3 — stella octangula (corner) — state +1
                     for (const [dx,dy,dz] of [
                         [1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],
                         [-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1]
-                    ]) this.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                    ]) harness.injectParticle(mc+dx, mc+dy, mc+dz, +1);
                     break;
                 }
 
@@ -248,9 +262,9 @@ export function setupS0SeedScenario(name, ctx) {
                 case 's0-seed-helium':
                 case 's0-seed-h2-bond-formation': {
                     const dp  = (cx, cy, cz, st, sp, co, sig, amp, lock = false) =>
-                        injectDressedParticle(this, cx, cy, cz, st, sp, co, sig, amp, lock);
+                        injectDressedParticle(harness, cx, cy, cz, st, sp, co, sig, amp, lock);
                     const tri = (cx, cy, cz, charges, colors, rad, lock = true) =>
-                        injectTriad(this, cx, cy, cz, charges, colors, rad, lock);
+                        injectTriad(harness, cx, cy, cz, charges, colors, rad, lock);
                     if (name === 's0-seed-hydrogen') {
                         const oR=Math.max(4,Math.floor(N/6)), bR=Math.max(2,Math.floor(N/12));
                         tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc,mc,mc+oR, -1,-1,0, 2,K_B);
@@ -301,6 +315,73 @@ export function setupS0SeedScenario(name, ctx) {
                     break;
                 }
 
+                case 's0-seed-spark-of-life': {
+                    // Demo only: a mineral-pore-like seed plus flux-fed
+                    // threshold crossing, not a biochemical or replication
+                    // claim.
+                    const ringR = Math.max(5, Math.floor(N / 8));
+                    const ringSites = 16;
+                    for (let i = 0; i < ringSites; i++) {
+                        const angle = 2 * Math.PI * i / ringSites;
+                        const px = Math.round(mc + ringR * Math.cos(angle));
+                        const py = Math.round(mc + ringR * Math.sin(angle));
+                        const state = (i % 2 === 0) ? +1 : -1;
+                        injectParticleFull(harness, px, py, mc, state, {
+                            spin: state,
+                            color: 0,
+                            locked: true,
+                        });
+                    }
+
+                    const precursorR = Math.max(ringR + 4, Math.floor(N / 4));
+                    const precursorSpeed = 0.12 * C_SPEED;
+                    for (let k = 0; k < 4; k++) {
+                        const angle = 2 * Math.PI * k / 4;
+                        const dirX = Math.cos(angle);
+                        const dirY = Math.sin(angle);
+                        const tanX = -dirY;
+                        const tanY = dirX;
+                        for (let j = 0; j < 2; j++) {
+                            const side = (j === 0) ? -1 : +1;
+                            const state = (j === 0) ? +1 : -1;
+                            const px = Math.round(mc + precursorR * dirX + side * tanX);
+                            const py = Math.round(mc + precursorR * dirY + side * tanY);
+                            injectDressedParticle(harness, px, py, mc, state,
+                                state, ((k + j) % 3) + 1, 1.6, K_B * 0.7, false);
+                            const list = harness.bridge?._particles;
+                            const p = list ? list[list.length - 1] : null;
+                            if (p) {
+                                p.vx = -dirX * precursorSpeed;
+                                p.vy = -dirY * precursorSpeed;
+                                p.vz = 0;
+                            }
+                        }
+                    }
+
+                    const triR = Math.max(2, Math.floor(N / 18));
+                    injectTriad(harness, mc, mc, mc, [+1, -1, +1], [1, 2, 3], triR, false);
+
+                    const spark = 6.0 * K_GENESIS / Math.sqrt(6.0);
+                    harness.injectFlux(mc + 1, mc, mc, +spark, 0, 0);
+                    harness.injectFlux(mc - 1, mc, mc, -spark, 0, 0);
+                    harness.injectFlux(mc, mc + 1, mc, 0, +spark, 0);
+                    harness.injectFlux(mc, mc - 1, mc, 0, -spark, 0);
+                    harness.injectFlux(mc, mc, mc + 1, 0, 0, +spark);
+                    harness.injectFlux(mc, mc, mc - 1, 0, 0, -spark);
+
+                    const daughterPocket = (cx, cy, cz, sign) => {
+                        injectRadialEnvelope(harness, cx, cy, cz, sign, 2.0, 0.75 * K_GENESIS, {
+                            radius: 4,
+                            minR2: 0,
+                            minVal: 0.001,
+                        });
+                    };
+                    const daughterR = Math.max(ringR + 2, Math.floor(N / 6));
+                    daughterPocket(mc - daughterR, mc, mc + 2, +1);
+                    daughterPocket(mc + daughterR, mc, mc - 2, -1);
+                    break;
+                }
+
                 // ─────────────────────────────────────────────────────
                 // LHC Standard Model scenarios (added 2026-04-17)
                 // ─────────────────────────────────────────────────────
@@ -326,8 +407,8 @@ export function setupS0SeedScenario(name, ctx) {
                         case 's0-seed-bottom-quark':  charge=-1; color=2; ampBoost=1.4;  break;
                         case 's0-seed-top-quark':     charge=+1; color=3; ampBoost=2.5;  break;
                     }
-                    this.injectParticle(mc, mc, mc, charge);
-                    const lastQ = this._particles[this._particles.length - 1];
+                    harness.injectParticle(mc, mc, mc, charge);
+                    const lastQ = harness.bridge._particles[harness.bridge._particles.length - 1];
                     lastQ.color = color;
                     lastQ.spin = (charge > 0) ? +1 : -1;
 
@@ -348,7 +429,7 @@ export function setupS0SeedScenario(name, ctx) {
                         // labelling recovers `color` consistently.
                         const axisBias = [0, 0, 0];
                         axisBias[color - 1] = 0.5;
-                        this._injectFlux(mc+dx, mc+dy, mc+dz,
+                        harness.injectFlux(mc+dx, mc+dy, mc+dz,
                             sign*g*(dx/r + axisBias[0]),
                             sign*g*(dy/r + axisBias[1]),
                             sign*g*(dz/r + axisBias[2]));
@@ -375,7 +456,7 @@ export function setupS0SeedScenario(name, ctx) {
                         const sx = Math.sin(0.19*x + 0.23*y + 0.29*z);
                         const sy = Math.sin(0.37*x + 0.13*y + 0.17*z);
                         const sz = Math.sin(0.11*x + 0.31*y + 0.41*z);
-                        this._injectFlux(x, y, z,
+                        harness.injectFlux(x, y, z,
                             vevAmp + noise*sx,
                             vevAmp + noise*sy,
                             vevAmp + noise*sz);
@@ -395,7 +476,7 @@ export function setupS0SeedScenario(name, ctx) {
                     //
                     // genesis=false: same fix as photon (audit 2026-04-28) —
                     // a free gauge-boson wave should not pair-produce.
-                    this._toggles.genesis = false;
+                    harness.setToggle('genesis', false);
                     const sigma = 3;
                     const gAmp = K_B * 2;
                     const startX = Math.max(4, Math.floor(N / 4));
@@ -409,8 +490,8 @@ export function setupS0SeedScenario(name, ctx) {
                         const r2 = dx*dx + dy*dy + dz*dz;
                         const gg = gAmp * Math.exp(-r2 / (2 * sigma * sigma));
                         if (gg < 1e-6) continue;
-                        this._injectFlux(x, y, z, 0, gg, 0);      // J_y polarised
-                        this._injectWaveVel(x, y, z, gg, 0, 0);    // propagate +x
+                        harness.injectFlux(x, y, z, 0, gg, 0);      // J_y polarised
+                        harness.injectWaveVel(x, y, z, gg, 0, 0);    // propagate +x
                     }
                     break;
                 }
@@ -428,8 +509,8 @@ export function setupS0SeedScenario(name, ctx) {
                     // Now the scenario auto-enables both toggles so the
                     // decay actually fires by default. Both are in the
                     // scenario-mutable whitelist (CONTRACTS.md §s0-seed).
-                    this._toggles.weak_transmutation = true;
-                    this._toggles.dual_substrate = true;
+                    harness.setToggle('weak_transmutation', true);
+                    harness.setToggle('dual_substrate', true);
                     const bdR = Math.max(2, Math.floor(N/10));
                     // Three-vertex neutron-ish triangle.
                     for (let k = 0; k < 3; k++) {
@@ -437,12 +518,12 @@ export function setupS0SeedScenario(name, ctx) {
                         const bx = Math.round(mc + bdR * Math.cos(ang));
                         const by = Math.round(mc + bdR * Math.sin(ang));
                         const charge = (k === 0) ? +1 : -1;
-                        this.injectParticle(bx, by, mc, charge);
+                        harness.injectParticle(bx, by, mc, charge);
                     }
                     // Leptonic output preseeded, offset along +z so they
                     // can be visually associated with the decay direction.
                     const leptonR = Math.max(4, Math.floor(N/5));
-                    this.injectParticle(mc, mc, mc + leptonR, -1);      // electron
+                    harness.injectParticle(mc, mc, mc + leptonR, -1);      // electron
                     // Neutrino-like: no manifested state, soft L/R flux
                     const nuSig = 2, nuR = 4;
                     for (let dz2=-nuR; dz2<=nuR; dz2++)
@@ -452,7 +533,7 @@ export function setupS0SeedScenario(name, ctx) {
                         if (r22 > nuR*nuR) continue;
                         const g = K_B * 0.3 * Math.exp(-r22/(2*nuSig*nuSig));
                         if (g < 1e-3) continue;
-                        this._injectFlux(mc+dx2, mc-leptonR+dy2, mc+dz2, g*0.55, g*0.45, 0);
+                        harness.injectFlux(mc+dx2, mc-leptonR+dy2, mc+dz2, g*0.55, g*0.45, 0);
                     }
                     // Toggle activation (weak_transmutation + dual_substrate)
                     // is handled via SCALE0_SCENARIO_OVERRIDES in
@@ -476,19 +557,19 @@ export function setupS0SeedScenario(name, ctx) {
                     const half = Math.floor(aSep / 2);
 
                     // Electron on left, moving right.
-                    this.injectParticle(mc - half, mc, mc, -1);
-                    const eP = this._particles[this._particles.length - 1];
+                    harness.injectParticle(mc - half, mc, mc, -1);
+                    const eP = harness.bridge._particles[harness.bridge._particles.length - 1];
                     eP.vx = +0.3 * C_SPEED;
 
                     // Positron on right, moving left.
-                    this.injectParticle(mc + half, mc, mc, +1);
-                    const pP = this._particles[this._particles.length - 1];
+                    harness.injectParticle(mc + half, mc, mc, +1);
+                    const pP = harness.bridge._particles[harness.bridge._particles.length - 1];
                     pP.vx = -0.3 * C_SPEED;
 
                     // Dress each with a small flux envelope so they are
                     // visible as lepton-like lumps before collision.
-                    injectRadialEnvelope(this, mc - half, mc, mc, -1, 2, K_B, { radius: 4 });
-                    injectRadialEnvelope(this, mc + half, mc, mc, +1, 2, K_B, { radius: 4 });
+                    injectRadialEnvelope(harness, mc - half, mc, mc, -1, 2, K_B, { radius: 4 });
+                    injectRadialEnvelope(harness, mc + half, mc, mc, +1, 2, K_B, { radius: 4 });
                     break;
                 }
 
@@ -501,8 +582,8 @@ export function setupS0SeedScenario(name, ctx) {
                     for (const dz of [-qOffset, qOffset]) {
                         const charge = (quarkIndex % 2 === 0) ? +1 : -1;
                         const color = (quarkIndex % 3) + 1; // R=1, G=2, B=3
-                        this.injectParticle(mc + dx, mc + dy, mc + dz, charge);
-                        const q = this._particles[this._particles.length - 1];
+                        harness.injectParticle(mc + dx, mc + dy, mc + dz, charge);
+                        const q = harness.bridge._particles[harness.bridge._particles.length - 1];
                         q.color = color;
                         q.spin = (charge > 0) ? +1 : -1;
 
@@ -537,8 +618,8 @@ export function setupS0SeedScenario(name, ctx) {
                         const wy = amp * Math.sin(phi) * Math.sin(theta) * C_SPEED;
                         const wz = amp * Math.cos(phi) * C_SPEED;
 
-                        this._injectFlux(mc + dx, mc + dy, mc + dz, jx, jy, jz);
-                        this._injectWaveVel(mc + dx, mc + dy, mc + dz, wx, wy, wz);
+                        harness.injectFlux(mc + dx, mc + dy, mc + dz, jx, jy, jz);
+                        harness.injectWaveVel(mc + dx, mc + dy, mc + dz, wx, wy, wz);
                     }
                     break;
                 }
@@ -546,7 +627,7 @@ export function setupS0SeedScenario(name, ctx) {
                 case 's0-seed-gravitational-lensing': {
                     // Schwarzschild well at the center:
                     const sHalf = midF, rs = 3.0;
-                    this.injectParticle(mc, mc, mc, +1);
+                    harness.injectParticle(mc, mc, mc, +1);
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {
@@ -554,7 +635,7 @@ export function setupS0SeedScenario(name, ctx) {
                         const r = Math.max(Math.sqrt(rx * rx + ry * ry + rz * rz), 0.5);
                         const mg = G_N * (K_B * rs) / (r * r);
                         if (mg < 1e-6) continue;
-                        this._injectFlux(x, y, z, -mg * rx / r, -mg * ry / r, -mg * rz / r);
+                        harness.injectFlux(x, y, z, -mg * rx / r, -mg * ry / r, -mg * rz / r);
                     }
 
                     // Off-axis photon pulse launched at x0 = N/4, propagating in +x:
@@ -581,8 +662,8 @@ export function setupS0SeedScenario(name, ctx) {
                         const phase = k * dx;
                         const jz = amp * g * Math.sin(phase);
                         const wz = amp * g * Math.cos(phase) * C_SPEED;
-                        this._injectFlux(x, y, z, 0, 0, jz);
-                        this._injectWaveVel(x, y, z, wz, 0, 0);
+                        harness.injectFlux(x, y, z, 0, 0, jz);
+                        harness.injectWaveVel(x, y, z, wz, 0, 0);
                     }
                     break;
                 }
@@ -590,21 +671,21 @@ export function setupS0SeedScenario(name, ctx) {
                 // ── Level 6: Gauge / Topological ─────────────────────
                 case 's0-seed-wilson-loop': {
                     const R = Math.max(3, Math.floor(N/8)), wAmp = K_B;
-                    for (let x=mc-R; x<=mc+R; x++) this._injectFlux(x, mc-R, mc, wAmp, 0, 0);
-                    for (let y=mc-R; y<=mc+R; y++) this._injectFlux(mc+R, y, mc, 0, wAmp, 0);
-                    for (let x=mc+R; x>=mc-R; x--) this._injectFlux(x, mc+R, mc, -wAmp, 0, 0);
-                    for (let y=mc+R; y>=mc-R; y--) this._injectFlux(mc-R, y, mc, 0, -wAmp, 0);
-                    this.injectParticle(mc-R,mc-R,mc,+1); this.injectParticle(mc+R,mc-R,mc,+1);
-                    this.injectParticle(mc+R,mc+R,mc,+1); this.injectParticle(mc-R,mc+R,mc,+1);
+                    for (let x=mc-R; x<=mc+R; x++) harness.injectFlux(x, mc-R, mc, wAmp, 0, 0);
+                    for (let y=mc-R; y<=mc+R; y++) harness.injectFlux(mc+R, y, mc, 0, wAmp, 0);
+                    for (let x=mc+R; x>=mc-R; x--) harness.injectFlux(x, mc+R, mc, -wAmp, 0, 0);
+                    for (let y=mc+R; y>=mc-R; y--) harness.injectFlux(mc-R, y, mc, 0, -wAmp, 0);
+                    harness.injectParticle(mc-R,mc-R,mc,+1); harness.injectParticle(mc+R,mc-R,mc,+1);
+                    harness.injectParticle(mc+R,mc+R,mc,+1); harness.injectParticle(mc-R,mc+R,mc,+1);
                     break;
                 }
                 case 's0-seed-flux-tube': {
                     const ftSep=Math.max(6,Math.floor(N/4)), ftH=Math.floor(ftSep/2);
-                    this.injectParticle(mc-ftH,mc,mc,+1); this.injectParticle(mc+ftH,mc,mc,-1);
+                    harness.injectParticle(mc-ftH,mc,mc,+1); harness.injectParticle(mc+ftH,mc,mc,-1);
                     const ftSig=1.5;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=mc-ftH;x<=mc+ftH;x++) {
                         const dy2=y-mc,dz2=z-mc,p2=dy2*dy2+dz2*dz2;
-                        const g=K_B*Math.exp(-p2/(2*ftSig*ftSig)); if(g>0.001) this._injectFlux(x,y,z,g,0,0);
+                        const g=K_B*Math.exp(-p2/(2*ftSig*ftSig)); if(g>0.001) harness.injectFlux(x,y,z,g,0,0);
                     }
                     break;
                 }
@@ -615,8 +696,8 @@ export function setupS0SeedScenario(name, ctx) {
                         const r=Math.max(Math.sqrt(rx*rx+ry*ry+rz*rz),1.0);
                         const mg=1.0/(4*Math.PI*r*r); if(mg<1e-6) continue;
                         const rxy=Math.sqrt(rx*rx+ry*ry);
-                        if(rxy<0.5){this._injectFlux(x,y,z,0,0,mg);continue;}
-                        this._injectFlux(x,y,z, -ry/rxy*mg, rx/rxy*mg, 0);
+                        if(rxy<0.5){harness.injectFlux(x,y,z,0,0,mg);continue;}
+                        harness.injectFlux(x,y,z, -ry/rxy*mg, rx/rxy*mg, 0);
                     }
                     break;
                 }
@@ -625,7 +706,7 @@ export function setupS0SeedScenario(name, ctx) {
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
                         const rx=x-iHalf,ry=y-iHalf,rz=z-iHalf,r2=rx*rx+ry*ry+rz*rz,r=Math.sqrt(r2);
                         const mg=iSize/(r2+iSize*iSize); if(mg<1e-6||r<0.5) continue;
-                        this._injectFlux(x,y,z, mg*rx/r, mg*ry/r, mg*rz/r);
+                        harness.injectFlux(x,y,z, mg*rx/r, mg*ry/r, mg*rz/r);
                     }
                     break;
                 }
@@ -638,26 +719,26 @@ export function setupS0SeedScenario(name, ctx) {
                     // gravitational-coupling knob in the same direction
                     // as a physical Schwarzschild well.
                     const sHalf=midF, rs=3.0;
-                    this.injectParticle(mc,mc,mc,+1);
+                    harness.injectParticle(mc,mc,mc,+1);
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
                         const rx=x-sHalf,ry=y-sHalf,rz=z-sHalf;
                         const r=Math.max(Math.sqrt(rx*rx+ry*ry+rz*rz),0.5);
                         const mg=G_N * (K_B*rs)/(r*r); if(mg<1e-6) continue;
-                        this._injectFlux(x,y,z, -mg*rx/r, -mg*ry/r, -mg*rz/r);
+                        harness.injectFlux(x,y,z, -mg*rx/r, -mg*ry/r, -mg*rz/r);
                     }
                     break;
                 }
                 case 's0-seed-frw-patch': {
                     const frwStride=Math.round(1.0/Math.cbrt(0.01)); let frwSign=1;
                     for (let z=0;z<N;z+=frwStride) for (let y=0;y<N;y+=frwStride) for (let x=0;x<N;x+=frwStride) {
-                        this.injectParticle(x,y,z,frwSign); frwSign=-frwSign;
+                        harness.injectParticle(x,y,z,frwSign); frwSign=-frwSign;
                     }
                     break;
                 }
                 case 's0-seed-gravitational-wave': {
                     const gwWl=Math.max(4,Math.floor(N/4)), gwK=2*Math.PI/gwWl, gwAmp=0.1;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
-                        const v=gwAmp*Math.sin(gwK*x); if(Math.abs(v)>1e-6) this._injectFlux(x,y,z, 0,v,0);
+                        const v=gwAmp*Math.sin(gwK*x); if(Math.abs(v)>1e-6) harness.injectFlux(x,y,z, 0,v,0);
                     }
                     break;
                 }
@@ -668,19 +749,19 @@ export function setupS0SeedScenario(name, ctx) {
                     for (let i=0;i<slN;i++) {
                         const a=2*Math.PI*i/slN;
                         const px=Math.round(mc+slR*Math.cos(a)), py=Math.round(mc+slR*Math.sin(a));
-                        this.injectParticle(px,py,mc,+1);
-                        this._injectFlux(px,py,mc, -Math.sin(a)*slA, Math.cos(a)*slA, 0);
+                        harness.injectParticle(px,py,mc,+1);
+                        harness.injectFlux(px,py,mc, -Math.sin(a)*slA, Math.cos(a)*slA, 0);
                     }
                     break;
                 }
                 case 's0-seed-observer-cell': {
-                    this.injectParticle(mc,mc,mc,+1);
+                    harness.injectParticle(mc,mc,mc,+1);
                     for (const [dx,dy,dz] of [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]])
-                        this.injectParticle(mc+dx,mc+dy,mc+dz,-1);
+                        harness.injectParticle(mc+dx,mc+dy,mc+dz,-1);
                     for (const [dx,dy,dz] of [[1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],[1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],[0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1]])
-                        this.injectParticle(mc+dx,mc+dy,mc+dz,+1);
+                        harness.injectParticle(mc+dx,mc+dy,mc+dz,+1);
                     for (const [dx,dy,dz] of [[1,1,1],[1,1,-1],[1,-1,1],[1,-1,-1],[-1,1,1],[-1,1,-1],[-1,-1,1],[-1,-1,-1]])
-                        this.injectParticle(mc+dx,mc+dy,mc+dz,-1);
+                        harness.injectParticle(mc+dx,mc+dy,mc+dz,-1);
                     break;
                 }
             }

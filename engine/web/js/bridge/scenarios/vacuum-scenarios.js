@@ -41,9 +41,9 @@ export function setupVacuumScenario(name, ctx) {
         case 's0-vacuum-electron': {
             // Mirror of s0-seed-electron — unit negative charge + radial-inward
             // flux envelope at scale K_B. Vacuum: nothing else in the lattice.
-            this.injectParticle(mc, mc, mc, -1);
+            harness.injectParticle(mc, mc, mc, -1);
             const envR = Math.max(3, Math.floor(N / 6));
-            injectRadialEnvelope(this, midF, midF, midF, -1, envR / 2, K_B * 1.5,
+            injectRadialEnvelope(harness, midF, midF, midF, -1, envR / 2, K_B * 1.5,
                 { radius: envR, minR2: 0.25 });
             return true;
         }
@@ -55,9 +55,9 @@ export function setupVacuumScenario(name, ctx) {
             // framework integers but have no spatial form; envelope amplitude
             // is a [SELECTION] visualization cue.
             const boost = (name === 's0-vacuum-tau') ? 2.25 : 1.80;
-            this.injectParticle(mc, mc, mc, -1);
+            harness.injectParticle(mc, mc, mc, -1);
             const envR = Math.max(3, Math.floor(N / 6));
-            injectRadialEnvelope(this, midF, midF, midF, -1, envR / 2, K_B * boost,
+            injectRadialEnvelope(harness, midF, midF, midF, -1, envR / 2, K_B * boost,
                 { radius: envR, minR2: 0.25 });
             return true;
         }
@@ -67,7 +67,7 @@ export function setupVacuumScenario(name, ctx) {
             // propagating +x. c = 1/√3 [THEOREM] from cubic-lattice CFL.
             // genesis=false (audit 2026-04-28): a free EM wave should not
             // spontaneously pair-produce.
-            this._toggles.genesis = false;
+            harness.setToggle('genesis', false);
             const sigma = 3;
             const pAmp = K_B * 2;
             const pStartX = Math.max(4, Math.floor(N / 4));
@@ -81,8 +81,8 @@ export function setupVacuumScenario(name, ctx) {
                 const r2 = dx * dx + dy * dy + dz * dz;
                 const g = pAmp * Math.exp(-r2 / (2 * sigma * sigma));
                 if (g < 1e-6) continue;
-                this._injectFlux(x, y, z, 0, 0, g);
-                this._injectWaveVel(x, y, z, g, 0, 0);
+                harness.injectFlux(x, y, z, 0, 0, g);
+                harness.injectWaveVel(x, y, z, g, 0, 0);
             }
             return true;
         }
@@ -90,15 +90,15 @@ export function setupVacuumScenario(name, ctx) {
         case 's0-vacuum-w-boson': {
             // Mirror of s0-seed-w-boson — charged (s=+1) localized lump
             // with chirality bias on Jx (left-handed coupling).
-            injectParticleFull(this, mc, mc, mc, +1, { spin: +1 });
-            injectRadialEnvelope(this, mc, mc, mc, +1, 1.8, K_B * 1.6,
+            injectParticleFull(harness, mc, mc, mc, +1, { spin: +1 });
+            injectRadialEnvelope(harness, mc, mc, mc, +1, 1.8, K_B * 1.6,
                 { radius: 5, axisBias: [1.3, 1, 1] });
             return true;
         }
 
         case 's0-vacuum-z-boson': {
             // Mirror of s0-seed-z-boson — neutral, balanced inward envelope.
-            injectRadialEnvelope(this, mc, mc, mc, -1, 2.0, K_B * 1.8, { radius: 6 });
+            injectRadialEnvelope(harness, mc, mc, mc, -1, 2.0, K_B * 1.8, { radius: 6 });
             return true;
         }
 
@@ -114,7 +114,7 @@ export function setupVacuumScenario(name, ctx) {
                 const g = hAmp * Math.exp(-r2 / (2 * hSig * hSig));
                 if (g < 1e-3) continue;
                 const iso = g / Math.sqrt(3);
-                this._injectFlux(mc+dx, mc+dy, mc+dz, iso, iso, iso);
+                harness.injectFlux(mc+dx, mc+dy, mc+dz, iso, iso, iso);
             }
             return true;
         }
@@ -123,7 +123,7 @@ export function setupVacuumScenario(name, ctx) {
             // Mirror of s0-seed-proton-l4 — 3 vertices on equilateral
             // triangle, charges [+1,+1,-1], colors [1,2,3].
             const bR = Math.max(2, Math.floor(N / 8));
-            injectTriad(this, mc, mc, mc, [+1, +1, -1], [1, 2, 3], bR);
+            injectTriad(harness, mc, mc, mc, [+1, +1, -1], [1, 2, 3], bR);
             return true;
         }
 
@@ -131,7 +131,7 @@ export function setupVacuumScenario(name, ctx) {
             // Mirror of s0-seed-neutron — same triad geometry as proton,
             // charges [+1,-1,-1] (net 0).
             const bR = Math.max(2, Math.floor(N / 8));
-            injectTriad(this, mc, mc, mc, [+1, -1, -1], [1, 2, 3], bR);
+            injectTriad(harness, mc, mc, mc, [+1, -1, -1], [1, 2, 3], bR);
             return true;
         }
 
@@ -139,8 +139,8 @@ export function setupVacuumScenario(name, ctx) {
             // Mirror of s0-seed-pion — quark-antiquark dipole on x-axis.
             const sp = Math.max(3, Math.floor(N / 8));
             const hf = Math.floor(sp / 2);
-            injectDressedParticle(this, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5, true);
-            injectDressedParticle(this, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5, true);
+            injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5, true);
+            injectDressedParticle(harness, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5, true);
             return true;
         }
 
@@ -167,7 +167,7 @@ export function setupVacuumScenario(name, ctx) {
                 if (r22 > eR*eR) continue;
                 const gg = K_B * 0.3 * boost * Math.exp(-r22 / (2 * sig * sig));
                 if (gg < 0.001) continue;
-                this._injectFlux(mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0);
+                harness.injectFlux(mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0);
             }
             return true;
         }
@@ -185,8 +185,8 @@ export function setupVacuumScenario(name, ctx) {
             const hf = Math.floor(sp / 2);
             // Use injectDressedParticle with state=0 — this gives a void core
             // at each vertex with the radial flux envelope still applied.
-            injectDressedParticle(this, mc + hf, mc, mc, 0, +1, 1, 2, K_B * 0.5, true);
-            injectDressedParticle(this, mc - hf, mc, mc, 0, -1, 1, 2, K_B * 0.5, true);
+            injectDressedParticle(harness, mc + hf, mc, mc, 0, +1, 1, 2, K_B * 0.5, true);
+            injectDressedParticle(harness, mc - hf, mc, mc, 0, -1, 1, 2, K_B * 0.5, true);
             return true;
         }
 
@@ -201,8 +201,8 @@ export function setupVacuumScenario(name, ctx) {
             const sp = Math.max(3, Math.floor(N / 8));
             const hf = Math.floor(sp / 2);
             const kBoost = 1.88;
-            injectDressedParticle(this, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5 * kBoost, true);
-            injectDressedParticle(this, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5 * kBoost, true);
+            injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5 * kBoost, true);
+            injectDressedParticle(harness, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5 * kBoost, true);
             return true;
         }
 
