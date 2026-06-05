@@ -51,16 +51,16 @@
 #app {
     /* ── Grid shell ── */
     /* Default (desktop/tablet): 2-row grid — toolbar + canvas.
-     * Tab-bar and status-bar remain position:absolute overlays on desktop,
-     * exactly as before. The grid exists primarily to give #app a concrete
-     * height (dvh) so the canvas fills the actual visible window. */
+     * Tab-bar, status-bar, and panel-area remain position:absolute overlays on desktop. */
     display: grid;
     grid-template-rows: auto 1fr;
     grid-template-columns: 1fr;
+    grid-template-areas:
+        "toolbar"
+        "viewport";
 
     /* Use dvh/svh (with vh fallback from tokens.css) so the shell height
-       matches the actual visible browser window, not the layout viewport.
-       This prevents content from sliding behind Edge Mobile's bottom nav bar. */
+       matches the actual visible browser window, not the layout viewport. */
     height: var(--app-height);
     min-height: var(--app-min-height);
     overflow: hidden;
@@ -74,10 +74,8 @@
 }
 
 /* ── Toolbar: always the first grid row ──────────────────────────────────── */
-/* position:relative overrides topbar.css's position:absolute so the element
-   participates in the grid track sizing (absolutely-positioned items don't). */
 #toolbar {
-    grid-row: 1;
+    grid-area: toolbar;
     position: relative !important;
     top: unset !important; left: unset !important;
     width: 100%;
@@ -85,7 +83,7 @@
 
 /* ── Viewport: always the second grid row (1fr = fills remaining space) ───── */
 #viewport {
-    grid-row: 2;
+    grid-area: viewport;
     position: relative !important;
     top: unset !important; left: unset !important;
     overflow: hidden;
@@ -93,44 +91,41 @@
     width: 100%;
 }
 
-/* ── Tab-bar and status-bar: desktop stays as positioned overlays ─────────── */
-/* On desktop/tablet, these float over the canvas exactly as before — the canvas
-   fills the full area below the toolbar, and the status-bar/tab-bar overlay it
-   from the bottom. This matches the original design intent. */
+/* ── Mobile (≤767px): Native Grid Placement ───────────────────────────────── */
+@media (max-width: 767px) {
+    #app {
+        /* 5-row grid: toolbar | canvas | panel | tabs | status */
+        grid-template-rows: auto 1fr 30dvh auto auto;
+        grid-template-areas:
+            "toolbar"
+            "viewport"
+            "panel"
+            "tabs"
+            "status";
+    }
 
-/* ── Mobile (compact modes only): 4-row grid for browser-nav-bar safety ─────
- * On mobile we push tab-bar and status-bar OUT of the canvas into their own
- * grid rows BELOW the canvas.  This means:
- *   - the canvas ends before the browser nav bar (not behind it)
- *   - the status bar is visible above the nav bar
- *   - the bottom-sheet panel and tab strip sit in proper grid rows
- *
- * The data-layout-mode^="compact" selector matches both compact-sm (≤479px)
- * and compact-lg (≤767px) from layout-state.js. */
-#app[data-layout-mode^="compact"] {
-    grid-template-rows: auto 1fr auto auto; /* toolbar | canvas | tabs | status */
-    grid-template-areas:
-        "toolbar"
-        "viewport"
-        "tabs"
-        "status";
-}
+    #panel-area {
+        grid-area: panel;
+        position: relative !important;
+        top: unset !important; left: unset !important; right: unset !important; bottom: unset !important;
+        transform: none !important;
+        width: 100%;
+    }
 
-/* position:relative + grid-area pull these out of positioned-overlay mode
-   and into grid-flow so they size the auto rows properly. !important beats
-   position:absolute in the component CSS (topbar.css, workspace-tabs.css…). */
-#app[data-layout-mode^="compact"] #tab-bar {
-    grid-area: tabs;
-    position: relative !important;
-    top: unset !important; left: unset !important;
-    bottom: unset !important; right: unset !important;
-    width: 100%;
-}
-#app[data-layout-mode^="compact"] #status-bar {
-    grid-area: status;
-    position: relative !important;
-    bottom: unset !important; left: unset !important;
-    width: 100%;
+    #tab-bar {
+        grid-area: tabs;
+        position: relative !important;
+        top: unset !important; left: unset !important;
+        bottom: unset !important; right: unset !important;
+        width: 100%;
+    }
+
+    #status-bar {
+        grid-area: status;
+        position: relative !important;
+        bottom: unset !important; left: unset !important;
+        width: 100%;
+    }
 }
 
 #app[data-shell-ready="true"] {
@@ -251,8 +246,16 @@ html.ui-hidden #viewport {
     padding: 0 !important;
 }
 
-/* Floating UI Toggle Button (Top Right) */
+/* Floating UI Toggle Button (Moved to toolbar, SVG styling only) */
 #btn-toggle-ui {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Floating Show UI Button (Visible only when UI is hidden) */
+#btn-show-ui {
+    display: none;
     position: fixed;
     top: 12px;
     right: 12px;
@@ -262,24 +265,27 @@ html.ui-hidden #viewport {
     border: 1px solid rgba(255, 255, 255, 0.15);
     color: #e2e8f0;
     border-radius: 6px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    transition: background 0.2s, transform 0.2s;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-#btn-toggle-ui:hover {
+#btn-show-ui:hover {
     background: rgba(45, 65, 95, 0.9);
-    border-color: rgba(255, 255, 255, 0.3);
     transform: scale(1.05);
 }
 
-#btn-toggle-ui:active {
+#btn-show-ui:active {
     transform: scale(0.95);
+}
+
+html.ui-hidden #btn-show-ui {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #btn-toggle-ui svg {

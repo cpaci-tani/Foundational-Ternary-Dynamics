@@ -15,24 +15,24 @@ export function createSelectionCard() {
         <label class="ctrl-label ctrl-label-xs" style="color:#f87171">X</label>
         <input type="number" class="ctrl-input ctrl-input-coord" id="sel-x" value="16" min="0" max="31" aria-label="Selection x">
         <div class="coord-stepper-btns">
-          <button type="button" class="sel-coord-step" data-step="1" data-for="sel-x" aria-label="Increment x">&#9650;</button>
-          <button type="button" class="sel-coord-step" data-step="-1" data-for="sel-x" aria-label="Decrement x">&#9660;</button>
+          <button type="button" class="coord-step sel-coord-step" data-step="1" data-for="sel-x" aria-label="Increment x">&#9650;</button>
+          <button type="button" class="coord-step sel-coord-step" data-step="-1" data-for="sel-x" aria-label="Decrement x">&#9660;</button>
         </div>
       </div>
       <div class="coord-stepper" data-axis="y">
         <label class="ctrl-label ctrl-label-xs" style="color:#4ade80">Y</label>
         <input type="number" class="ctrl-input ctrl-input-coord" id="sel-y" value="16" min="0" max="31" aria-label="Selection y">
         <div class="coord-stepper-btns">
-          <button type="button" class="sel-coord-step" data-step="1" data-for="sel-y" aria-label="Increment y">&#9650;</button>
-          <button type="button" class="sel-coord-step" data-step="-1" data-for="sel-y" aria-label="Decrement y">&#9660;</button>
+          <button type="button" class="coord-step sel-coord-step" data-step="1" data-for="sel-y" aria-label="Increment y">&#9650;</button>
+          <button type="button" class="coord-step sel-coord-step" data-step="-1" data-for="sel-y" aria-label="Decrement y">&#9660;</button>
         </div>
       </div>
       <div class="coord-stepper" data-axis="z">
         <label class="ctrl-label ctrl-label-xs" style="color:#60a5fa">Z</label>
         <input type="number" class="ctrl-input ctrl-input-coord" id="sel-z" value="16" min="0" max="31" aria-label="Selection z">
         <div class="coord-stepper-btns">
-          <button type="button" class="sel-coord-step" data-step="1" data-for="sel-z" aria-label="Increment z">&#9650;</button>
-          <button type="button" class="sel-coord-step" data-step="-1" data-for="sel-z" aria-label="Decrement z">&#9660;</button>
+          <button type="button" class="coord-step sel-coord-step" data-step="1" data-for="sel-z" aria-label="Increment z">&#9650;</button>
+          <button type="button" class="coord-step sel-coord-step" data-step="-1" data-for="sel-z" aria-label="Decrement z">&#9660;</button>
         </div>
       </div>
     </div>

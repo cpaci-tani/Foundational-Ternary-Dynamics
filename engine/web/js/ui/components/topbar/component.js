@@ -117,7 +117,7 @@ export class TopbarComponent {
                 brandSlot.appendChild(node);
                 return;
             }
-            if (node.id === 'btn-settings') {
+            if (node.id === 'btn-settings' || node.id === 'btn-toggle-ui') {
                 actionsSlot.appendChild(node);
                 return;
             }

@@ -25,171 +25,179 @@
     --panel-mount-bottom-offset: calc(28px * var(--ui-scale) + var(--panel-mount-gap));
 }
 
-/* ── Left mount ───────────────────────────────────────────────────────── */
-/* Icon rail sits at the far-left edge; panel opens to the right of the rail. */
-html[data-panel-mount="left"] #panel-area {
-    position: fixed;
-    top: var(--panel-mount-top-offset);
-    bottom: var(--panel-mount-bottom-offset);
-    left: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
-    right: auto;
-    transform: none;
-    width: var(--panel-width-left);
-    max-width: 50vw;
-    min-width: min(320px, calc(100vw - 100px));
-    max-height: none;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0 var(--sp-lg) var(--sp-lg);
-}
+/* ── Desktop-only Side Mounts (>=768px) ───────────────────────────────── */
+/* On mobile (<=767px), everything becomes a bottom sheet (see responsive.css). */
+@media (min-width: 768px) {
 
-/* ── Right mount ──────────────────────────────────────────────────────── */
-/* Icon rail sits at the far-right edge; panel opens to the left of the rail. */
-html[data-panel-mount="right"] #panel-area {
-    position: fixed;
-    top: var(--panel-mount-top-offset);
-    bottom: var(--panel-mount-bottom-offset);
-    right: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
-    left: auto;
-    transform: none;
-    width: var(--panel-width-right);
-    max-width: 50vw;
-    min-width: min(320px, calc(100vw - 100px));
-    max-height: none;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0 var(--sp-lg) var(--sp-lg);
-}
+    /* ── Left mount ───────────────────────────────────────────────────────── */
+    /* Icon rail sits at the far-left edge; panel opens to the right of the rail. */
+    html[data-panel-mount="left"] #panel-area {
+        position: fixed;
+        top: var(--panel-mount-top-offset);
+        bottom: var(--panel-mount-bottom-offset);
+        left: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
+        right: auto;
+        transform: none;
+        width: var(--panel-width-left);
+        max-width: 50vw;
+        min-width: min(320px, calc(100vw - 100px));
+        max-height: none;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0 var(--sp-lg) var(--sp-lg);
+    }
 
-/* Collapsed in side mount: hide the panel, keep the icon rail visible */
-html[data-panel-mount="left"]  #app.panels-collapsed #panel-area,
-html[data-panel-mount="right"] #app.panels-collapsed #panel-area {
-    display: none;
-    transform: none;
-}
+    /* ── Right mount ──────────────────────────────────────────────────────── */
+    /* Icon rail sits at the far-right edge; panel opens to the left of the rail. */
+    html[data-panel-mount="right"] #panel-area {
+        position: fixed;
+        top: var(--panel-mount-top-offset);
+        bottom: var(--panel-mount-bottom-offset);
+        right: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
+        left: auto;
+        transform: none;
+        width: var(--panel-width-right);
+        max-width: 50vw;
+        min-width: min(320px, calc(100vw - 100px));
+        max-height: none;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 0 var(--sp-lg) var(--sp-lg);
+    }
 
-/* ── Hide the vertical (height) resizer in side mounts ───────────────── */
-html[data-panel-mount="left"]  #panel-resizer,
-html[data-panel-mount="right"] #panel-resizer {
-    display: none;
-}
+    /* Collapsed in side mount: hide the panel, keep the icon rail visible */
+    html[data-panel-mount="left"]  #app.panels-collapsed #panel-area,
+    html[data-panel-mount="right"] #app.panels-collapsed #panel-area {
+        display: none;
+        transform: none;
+    }
 
-/* ── Inner panel grids collapse to 1 column when the sidebar is narrow ── */
-html[data-panel-mount="left"]  .panel-grid-3,
-html[data-panel-mount="right"] .panel-grid-3,
-html[data-panel-mount="left"]  .panel-grid-2,
-html[data-panel-mount="right"] .panel-grid-2 {
-    grid-template-columns: 1fr;
-}
+    /* ── Hide the vertical (height) resizer in side mounts ───────────────── */
+    html[data-panel-mount="left"]  #panel-resizer,
+    html[data-panel-mount="right"] #panel-resizer {
+        display: none;
+    }
 
-/* ── Tab bar reorients as a vertical icon rail on the inner edge ─────── */
-html[data-panel-mount="left"] #tab-bar,
-html[data-panel-mount="right"] #tab-bar {
-    position: fixed;
-    top: var(--panel-mount-top-offset);
-    bottom: var(--panel-mount-bottom-offset);
-    left: auto;
-    right: auto;
-    transform: none;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    padding: 4px;
-    background: var(--bg-surface);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--tabs-shadow);
-    width: 44px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: none;
-}
+    /* ── Inner panel grids collapse to 1 column when the sidebar is narrow ── */
+    html[data-panel-mount="left"]  .panel-grid-3,
+    html[data-panel-mount="right"] .panel-grid-3,
+    html[data-panel-mount="left"]  .panel-grid-2,
+    html[data-panel-mount="right"] .panel-grid-2 {
+        grid-template-columns: 1fr;
+    }
 
-html[data-panel-mount="left"] #tab-bar::-webkit-scrollbar,
-html[data-panel-mount="right"] #tab-bar::-webkit-scrollbar {
-    display: none;
-}
+    /* ── Tab bar reorients as a vertical icon rail on the inner edge ─────── */
+    html[data-panel-mount="left"] #tab-bar,
+    html[data-panel-mount="right"] #tab-bar {
+        position: fixed;
+        top: var(--panel-mount-top-offset);
+        bottom: var(--panel-mount-bottom-offset);
+        left: auto;
+        right: auto;
+        transform: none;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 4px;
+        background: var(--bg-surface);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        box-shadow: var(--tabs-shadow);
+        width: 44px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: none;
+    }
 
-/* Rail anchors to the outer viewport edge and stays visible even when collapsed */
-html[data-panel-mount="left"] #tab-bar {
-    left: var(--panel-mount-gap);
-}
+    html[data-panel-mount="left"] #tab-bar::-webkit-scrollbar,
+    html[data-panel-mount="right"] #tab-bar::-webkit-scrollbar {
+        display: none;
+    }
 
-html[data-panel-mount="right"] #tab-bar {
-    right: var(--panel-mount-gap);
-}
+    /* Rail anchors to the outer viewport edge and stays visible even when collapsed */
+    html[data-panel-mount="left"] #tab-bar {
+        left: var(--panel-mount-gap);
+    }
 
-/* Make the inner strip vertical too */
-html[data-panel-mount="left"]  #tab-bar .workspace-tabs-strip,
-html[data-panel-mount="right"] #tab-bar .workspace-tabs-strip {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
-    overflow: visible;
-    flex: 1 1 auto;
-}
+    html[data-panel-mount="right"] #tab-bar {
+        right: var(--panel-mount-gap);
+    }
 
-/* Hide the mobile dropdown in side-mount */
-html[data-panel-mount="left"]  #tab-bar .workspace-tabs-mobile,
-html[data-panel-mount="right"] #tab-bar .workspace-tabs-mobile {
-    display: none !important;
-}
+    /* Make the inner strip vertical too */
+    html[data-panel-mount="left"]  #tab-bar .workspace-tabs-strip,
+    html[data-panel-mount="right"] #tab-bar .workspace-tabs-strip {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+        overflow: visible;
+        flex: 1 1 auto;
+    }
 
-html[data-panel-mount="left"] #tab-bar .tab,
-html[data-panel-mount="right"] #tab-bar .tab {
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-md);
-    border: 1px solid transparent;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: background var(--dur-fast) var(--ease-out),
-                color var(--dur-fast) var(--ease-out);
-    flex-shrink: 0;
-}
+    /* Hide the mobile dropdown in side-mount */
+    html[data-panel-mount="left"]  #tab-bar .workspace-tabs-mobile,
+    html[data-panel-mount="right"] #tab-bar .workspace-tabs-mobile {
+        display: none !important;
+    }
 
-html[data-panel-mount="left"] #tab-bar .tab .tab-label,
-html[data-panel-mount="right"] #tab-bar .tab .tab-label {
-    display: none;
-}
+} /* End desktop side mounts */
 
-html[data-panel-mount="left"] #tab-bar .tab .tab-icon,
-html[data-panel-mount="right"] #tab-bar .tab .tab-icon {
-    font-size: 18px;
-    line-height: 1;
-}
+@media (min-width: 768px) {
+    html[data-panel-mount="left"] #tab-bar .tab,
+    html[data-panel-mount="right"] #tab-bar .tab {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-md);
+        border: 1px solid transparent;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: background var(--dur-fast) var(--ease-out),
+                    color var(--dur-fast) var(--ease-out);
+        flex-shrink: 0;
+    }
 
-html[data-panel-mount="left"] #tab-bar .tab.active,
-html[data-panel-mount="right"] #tab-bar .tab.active {
-    background: var(--state-hover-bg);
-    color: var(--text-primary);
-    border-color: var(--accent);
-}
+    html[data-panel-mount="left"] #tab-bar .tab .tab-label,
+    html[data-panel-mount="right"] #tab-bar .tab .tab-label {
+        display: none;
+    }
 
-/* Collapse toggle pinned to the top of the rail */
-html[data-panel-mount="left"] #tab-bar #btn-panel-toggle,
-html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
-    order: -1;             /* flex first regardless of DOM order */
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    border-left: none;
-    border-bottom: 1px solid var(--border);   /* separator below collapse btn */
-    border-top: none;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: var(--radius-md);
+    html[data-panel-mount="left"] #tab-bar .tab .tab-icon,
+    html[data-panel-mount="right"] #tab-bar .tab .tab-icon {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    html[data-panel-mount="left"] #tab-bar .tab.active,
+    html[data-panel-mount="right"] #tab-bar .tab.active {
+        background: var(--state-hover-bg);
+        color: var(--text-primary);
+        border-color: var(--accent);
+    }
+
+    /* Collapse toggle pinned to the top of the rail */
+    html[data-panel-mount="left"] #tab-bar #btn-panel-toggle,
+    html[data-panel-mount="right"] #tab-bar #btn-panel-toggle {
+        order: -1;             /* flex first regardless of DOM order */
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: 0;
+        border-left: none;
+        border-bottom: 1px solid var(--border);   /* separator below collapse btn */
+        border-top: none;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: var(--radius-md);
+    }
 }
 
 /* ── Touch targets: enlarge the vertical icon rail on small phones ──────────

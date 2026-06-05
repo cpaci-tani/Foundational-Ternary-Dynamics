@@ -121,8 +121,7 @@
 
     <div id="app" class="mode-lattice" data-active-scale="0" data-shell-ready="false" data-layout-mode="desktop"
         data-orientation="landscape">
-        <!-- Floating UI Toggle Button (Top Right) -->
-        <button id="btn-toggle-ui" title="Hide UI (Ctrl+U)" aria-label="Toggle UI"></button>
+        <!-- Floating UI Toggle Button moved to toolbar -->
         <!-- ── Toolbar ──────────────────────────────── -->
         <!-- Scale toolbar contributions are rendered by each scale's register-*-ui.js -->
         <nav id="toolbar" aria-label="Simulation controls">
@@ -143,7 +142,11 @@
             </div>
             <button class="tb-btn tb-btn-settings" id="btn-settings" title="Settings (Ctrl+,)"
                 aria-label="Settings">&#9881;&#xFE0E;</button>
+            <button class="tb-btn tb-btn-toggle-ui" id="btn-toggle-ui" title="Hide UI (Ctrl+U)" aria-label="Toggle UI"></button>
         </nav>
+
+        <!-- Visible only when UI is hidden -->
+        <button id="btn-show-ui" title="Show UI (Ctrl+U)">Show UI</button>
 
         <!-- Settings modal is rendered by js/ui/components/settings-modal -->
 

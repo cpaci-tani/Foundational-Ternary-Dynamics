@@ -279,23 +279,34 @@
     .scrub-bar-icon-btn { transition: none; }
 }
 
-/* Mobile: wrap across rows, roomier radius */
-@media (max-width: 600px) {
+/* Mobile: scale down the capsule so it fits on one line and doesn't occlude the canvas/panels */
+@media (max-width: 767px) {
     .scrub-bar {
         flex-wrap: wrap;
-        width: 95vw;
-        border-radius: var(--radius-md);
-        gap: var(--sp-sm);
-        padding: var(--sp-sm) var(--sp-md);
+        width: max-content;
+        max-width: 100vw;
+        box-sizing: border-box;
+        justify-content: center;
+        border-radius: var(--radius-xl);
+        gap: var(--sp-xs);
+        padding: var(--sp-xs) var(--sp-sm);
+        transform: translateX(-50%);
+        transform-origin: bottom center;
+        /* Move to bottom: 0 to prevent floating over the center of the canvas */
+        bottom: 8px; /* Small inset so it doesn't clip the bottom edge */
     }
 
-    /* Finger-sized playback controls on touch devices (28px desktop floor
-       is below the WCAG 44px touch minimum). */
+    /* Finger-sized playback controls on touch devices */
     .scrub-bar-controls .tb-btn-global,
     .scrub-bar .scrub-bar-small-btn,
     .scrub-bar-icon-btn,
     .scrub-bar-slider,
     .scrub-bar-settings-chip {
-        min-height: var(--tap-min);
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .scrub-bar-controls .tb-btn-label {
+        font-size: var(--fs-base); /* Increased from fs-xs */
     }
 }

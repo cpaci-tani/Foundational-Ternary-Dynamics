@@ -95,6 +95,13 @@ include(FtdAddTest)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+# ftd_cognition — sidecar ternary memory/retrieval substrate for LLM/agent
+# workflows. Deliberately independent of ftd_core / RenderBridge / Voxel.
+add_library(ftd_cognition STATIC
+    src/cognition/cognitive_lattice.cpp
+)
+target_include_directories(ftd_cognition PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
 # ftd_eft — leaf library for EFT objects shared between ftd_core and ftd_cuda.
 # Solves a static-archive link-order issue (2026-05-03): gpu_engine.cu
 # (in libftd_cuda.a) calls DualCellContinuity::DualCellContinuity(int);
@@ -267,6 +274,13 @@ ftd_add_test(test_ternary_field tests/test_ternary_field.cpp
              CTEST_NAME ternary_field TIMEOUT 120 LABELS unit foundation)
 ftd_add_test(test_field_soa tests/test_field_soa.cpp
              CTEST_NAME field_soa TIMEOUT 120 LABELS unit foundation)
+add_executable(test_cognitive_lattice tests/test_cognitive_lattice.cpp)
+target_include_directories(test_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(test_cognitive_lattice PRIVATE ftd_cognition)
+add_test(NAME cognitive_lattice COMMAND test_cognitive_lattice)
+set_tests_properties(cognitive_lattice PROPERTIES TIMEOUT 120)
+set_property(TEST cognitive_lattice APPEND PROPERTY LABELS unit cognition)
+set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS cognitive_lattice)
 # Conservation profile: pins the engine's REAL energy-conservation physics
 # (bare-leapfrog well-posedness, gauss-projection runaway, iteration-independent
 # gauss_violation floor). Documentation-of-reality, not a quality gate.
@@ -1418,6 +1432,13 @@ ftd_add_test(benchmark_field_soa_cpu
              tests/benchmark_field_soa_cpu.cpp
              CTEST_NAME benchmark_field_soa_cpu TIMEOUT 600
              LABELS benchmark)
+add_executable(benchmark_cognitive_lattice tests/benchmark_cognitive_lattice.cpp)
+target_include_directories(benchmark_cognitive_lattice PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(benchmark_cognitive_lattice PRIVATE ftd_cognition)
+add_test(NAME benchmark_cognitive_lattice COMMAND benchmark_cognitive_lattice)
+set_tests_properties(benchmark_cognitive_lattice PROPERTIES TIMEOUT 600)
+set_property(TEST benchmark_cognitive_lattice APPEND PROPERTY LABELS benchmark cognition)
+set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS benchmark_cognitive_lattice)
 ftd_add_test(benchmark_alpha_convergence tests/benchmark_alpha_convergence.cpp
              CTEST_NAME benchmark_alpha_convergence TIMEOUT 7200 LABELS benchmark eft)
 if(FTD_ENABLE_CUDA)

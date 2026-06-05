@@ -22,7 +22,7 @@ export function getTopbarActionButtons() {
         <button class="tb-btn tb-btn-faq" id="btn-faq" title="Open the FTD FAQ — hard problems, framed"
             aria-label="Open the FTD FAQ">FAQ</button>
         <button class="tb-btn tb-btn-assistant" id="btn-ftd-assistant" title="Open the FTD assistant sidebar"
-            aria-label="Open the FTD assistant sidebar">FTD</button>
+            aria-label="Open the FTD assistant sidebar" style="display: none;">FTD</button>
         <button class="tb-btn tb-btn-mobile" id="btn-toolbar-menu" title="Show mode controls"
             aria-label="Show mode controls" aria-expanded="false" aria-controls="toolbar-secondary-panel">Menu</button>
     `;

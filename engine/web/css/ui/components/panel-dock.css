@@ -1,26 +1,28 @@
-/* ── Base panel-area styles (bottom mount — default) ── */
-html[data-panel-mount="bottom"] #panel-area,
-html:not([data-panel-mount]) #panel-area {
-    position: absolute;
-    bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + 72px * var(--ui-scale));
-    left: 50%;
-    transform: translateX(-50%);
-    width: 92vw;
-    max-width: 1400px;
-    z-index: var(--z-panel);
-    min-height: 260px;
-    max-height: calc(85vh - 120px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: var(--bg-surface);
-    backdrop-filter: blur(32px) saturate(1.4);
-    border: 1px solid var(--border);
-    border-top: 1px solid var(--border-light);
-    border-radius: var(--radius-xl);
-    /* Zero top padding — the resizer occupies the top edge of the panel */
-    padding: 0 var(--sp-xl) var(--sp-xl);
-    box-shadow: var(--dock-shadow);
-    transition: all var(--dur-base) var(--ease-out);
+/* ── Desktop floating panel-area styles (bottom mount — default) ── */
+@media (min-width: 768px) {
+    html[data-panel-mount="bottom"] #panel-area,
+    html:not([data-panel-mount]) #panel-area {
+        position: absolute !important;
+        bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + 72px * var(--ui-scale));
+        left: 50%;
+        transform: translateX(-50%);
+        width: 92vw;
+        max-width: 1400px;
+        z-index: var(--z-panel);
+        min-height: 260px;
+        max-height: calc(85vh - 120px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: var(--bg-surface);
+        backdrop-filter: blur(32px) saturate(1.4);
+        border: 1px solid var(--border);
+        border-top: 1px solid var(--border-light);
+        border-radius: var(--radius-xl);
+        /* Zero top padding — the resizer occupies the top edge of the panel */
+        padding: 0 var(--sp-xl) var(--sp-xl);
+        box-shadow: var(--dock-shadow);
+        transition: all var(--dur-base) var(--ease-out);
+    }
 }
 
 /* Mount-agnostic shell: applied to every mount */
