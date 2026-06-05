@@ -204,6 +204,15 @@ planar alignment — unlike the earlier per-axis jitter, which left shared sheet
 as plaid — yielding an organic cloud with no grid/blocks/moiré at any view angle.
 Deterministic, so no per-frame shimmer. Verified face-on and iso via the capture loop.
 
+**Fix 3d — user toggles (Organic / Glow) + weakened default glow.** Exposed the two
+levers as Scale-0 view sub-toggles under "Flux Volume" (`toggle-flux-organic`,
+`toggle-flux-glow`): **Organic** switches the 3D-jitter scatter on/off (off = the regular
+lattice grid; re-uploads since dot positions change), **Glow** switches additive bloom vs
+flat normal-blended dots (live material swap). The default additive glow was too strong, so
+it's weakened (`uGlow` 0.18→0.06, `uOpacity` 0.55→0.34). Wired through the standard chain
+template.js → bindings.js → viewport-adapter → viewport → flux-renderer; `setFluxGlow`
+swaps `material.blending`+uniforms live, `setFluxOrganic` flips the jitter flag.
+
 ### Bonus finding — `perf-baseline.spec.js` was stale w.r.t. the worker path
 The perf-baseline gate read the steady-state tick via `b.currentTick()` / `b._tick`,
 which the worker-default `MockBridgeProxy` doesn't expose (it self-ticks off-thread),
