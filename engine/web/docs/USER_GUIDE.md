@@ -96,9 +96,10 @@ FTD spans 11 orders of magnitude of physical phenomena, exposed as 10 scale "mod
 - The diagnostics table (scale-specific metrics)
 - The LIVE physics engine path (0→lattice, 1→PE, 2→AE, 3→AE+bonding, 4→Scale4, 5→Scale5, 6→Scale6, 11→Scale11)
 
-**Pause behavior:** Two levels of pause control:
-1. **▶/⏸ (play/pause)** — freezes the simulation
-2. **Internal scrubbing/rendering** — automatic during scrub-bar navigation
+**Pause behavior:** The **▶/⏸ (play/pause)** button freezes the simulation. The engine tick is the
+single time source, so nothing in the lattice advances while paused — but the render loop keeps
+running, so you can still orbit the camera and toggle overlays. Only *recorded* sim time stops; the
+observer's clock keeps flowing.
 
 ---
 
@@ -429,11 +430,15 @@ Stochastic scenarios (flux-random-genesis, flux-thermalization, flux-vacuum-foam
   Object.entries(savedToggles).forEach(([k, v]) => window._ftdBridge.setToggle(k, v));
   ```
 
-### Scrub bar for reproducible navigation
-The scrub bar (below the viewport) lets you rewind to any tick within the last 10K. It does NOT replay simulation — it replays snapshots. Perfect for:
-- Finding the exact tick where a particle manifested
-- Comparing two overlays at the same tick
-- Making a repeatable screenshot at a specific time
+### Play bar — forward navigation
+The play bar (below the viewport) hosts play/pause, single-step, reset, speed, and a forward "T N"
+tick readout. The simulation is **forward-only** — there is no rewind — but the step controls make
+forward navigation precise:
+- **Step (S)** advances exactly one tick — frame-by-frame to catch the tick a particle manifests.
+- **Step-by-N** (gear ▸ Step: +1 / +10 / +100) jumps a fixed number of ticks while paused.
+- **Speed** (gear ▸ Speed, or the − / + nudges) sets ticks-per-frame — slow a fast event down or
+  speed a slow one up. Scale 0 only.
+- **Reset (R)** re-seeds the current scenario from tick 0 for a repeatable run + screenshot.
 
 ---
 

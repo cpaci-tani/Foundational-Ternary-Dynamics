@@ -65,7 +65,6 @@ export class TopbarComponent {
         this.toolbarMenuButton = null;
         this.assistantButton = null;
         this.vtkButton = null;
-        this.onResize = null;
     }
 
     init() {
@@ -76,23 +75,10 @@ export class TopbarComponent {
         this.toolbar.dataset.topbar = 'enhanced';
         this._ensureAssistantSidebar();
         this._bindInteractions();
-        this._watchToolbarHeight();
         return this;
     }
 
-    _watchToolbarHeight() {
-        this._syncToolbarHeight();
-        this._toolbarRO = new ResizeObserver(() => this._syncToolbarHeight());
-        this._toolbarRO.observe(this.toolbar);
-    }
 
-    _syncToolbarHeight() {
-        const h = this.toolbar.getBoundingClientRect().height;
-        if (h > 0) {
-            this.app.style.setProperty('--toolbar-h', `${h}px`);
-            this.onResize?.(h);
-        }
-    }
 
     _rebuildToolbar() {
         const existingChildren = Array.from(this.toolbar.children).filter((node) => !(node.classList?.contains('separator')));

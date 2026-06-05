@@ -27,7 +27,6 @@ import {
     setInputValue,
     setSelectedScenarioId,
 } from '../ui/dom.js';
-import { clearScale0Timeline } from '../controller.js';
 
 // Toggle-reset whitelist used by `applyToggleDefaults`.
 //
@@ -269,11 +268,6 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     const harness = getPhysicsHarness(ctx.bridge);
     scenario.load(harness, params);
-
-    // Bridge.tick just reset to 0 — any snapshots still in the timeline are
-    // from the previous scenario and their tick numbers no longer match the
-    // new sim. Wipe them so the scrub bar re-anchors on the fresh scenario.
-    clearScale0Timeline();
 
     setCurrentScenarioId(scenario.id);
     setSelectedScenarioId(scenario.id);

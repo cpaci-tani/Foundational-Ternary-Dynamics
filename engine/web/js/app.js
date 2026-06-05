@@ -80,11 +80,7 @@ let peTelemetry = null;
 //   `running`         — GLOBAL pause. When false, the entire RAF body is skipped:
 //                       no physics, no rendering work, no flux mock animation.
 //                       The single source of truth for "is anything moving?".
-//   `globalTick`      — wall-clock frame counter that advances every animate()
-//                       call where `running` is true. Independent of the engine
-//                       tick (which throttles, can advance multiple per frame).
 let running = false;
-let globalTick = 0;
 let ticksPerFrame = 1;
 let _tickAccumulator = 0; // accumulates fractional ticks for sub-1 speed
 let activeTab = 'controls';
@@ -188,7 +184,6 @@ function _makeCtx() {
         get telemetryHub() { return telemetryHub; },
         get running() { return running; },
         set running(v) { running = v; },
-        get globalTick() { return globalTick; },
         get ticksPerFrame() { return ticksPerFrame; },
         get engineMode() { return engineMode; },
         get activeTab() { return activeTab; },
@@ -594,7 +589,7 @@ async function init() {
     onticPanel.initOnticPhysicsHierarchy();
 
     _loadProgress(70, 'Wiring controls...');
-    // Scrub bar owns the playback buttons (play/local/step/reset/speed).
+    // Play bar owns the playback buttons (play/step/reset/speed).
     // Mount it before wireToolbar so those button IDs exist in the DOM
     // when the toolbar wirer attaches its listeners.
     Scale0Controller.mountScale0PlaybackUI();
@@ -699,12 +694,6 @@ async function init() {
 // after Phase B.1) drive physics + render from this rAF loop.
 function animate(now) {
     requestAnimationFrame(animate);
-
-    // Global tick = wall-clock frames since global play resumed. Always advances
-    // when global is running, regardless of scenario pause or per-scale tick
-    // throttling. Feeds the flux-slice panel via ctx.globalTick (it has no
-    // status-bar readout — the bar shows physical time "T:" only).
-    if (running) globalTick++;
 
     if (engineMode === 'meta') {
         Scale6Controller.updateMeta(_makeCtx(), 1 / 60);

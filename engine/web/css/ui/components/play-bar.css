@@ -5,7 +5,7 @@
  * Sized and spaced strictly in accordance with design tokens.
  * ─────────────────────────────────────────────────────────────────── */
 
-.scrub-bar {
+.play-bar {
     position: absolute;
     left: 50%;
     /* Clear the status bar at the bottom of the viewport (~28px tall) */
@@ -31,16 +31,16 @@
 }
 
 /* Relocate to top-left when the main panel is bottom-mounted (centered).
-   The scrub bar is mounted on #app, so this top offset includes the toolbar. */
-html[data-panel-mount="bottom"] .scrub-bar {
-    top: calc(var(--toolbar-h, calc(48px * var(--ui-scale, 1))) + 8px);
+   The play bar is mounted on #app, so this top offset includes the toolbar. */
+html[data-panel-mount="bottom"] .play-bar {
+    top: calc(48px * var(--ui-scale, 1) + 8px);
     bottom: auto;
     left: 12px;
     transform: none;
 }
 
 /* Shared semantic grouping */
-.scrub-bar-section {
+.play-bar-section {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -49,7 +49,7 @@ html[data-panel-mount="bottom"] .scrub-bar {
 }
 
 /* ── Divider between sections ───────────────────────────────────── */
-.scrub-bar-divider {
+.play-bar-divider {
     width: 1px;
     height: calc(32px * var(--ui-scale, 1));
     background: color-mix(in oklch, var(--border) 70%, transparent);
@@ -59,13 +59,13 @@ html[data-panel-mount="bottom"] .scrub-bar {
 }
 
 /* ── Transport group (play / step / reset) ───────────────── */
-.scrub-bar-transport {
+.play-bar-transport {
     gap: 7px;
 }
 
-.scrub-bar .tb-btn-global,
-.scrub-bar .scrub-bar-small-btn,
-.scrub-bar-icon-btn {
+.play-bar .tb-btn-global,
+.play-bar .play-bar-small-btn,
+.play-bar-icon-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -79,7 +79,7 @@ html[data-panel-mount="bottom"] .scrub-bar {
                 box-shadow var(--dur-fast) var(--ease-out);
 }
 
-.scrub-bar .tb-btn-global {
+.play-bar .tb-btn-global {
     width: calc(52px * var(--ui-scale, 1));
     height: calc(42px * var(--ui-scale, 1));
     border-radius: 14px;
@@ -93,14 +93,14 @@ html[data-panel-mount="bottom"] .scrub-bar {
                 0 0 18px color-mix(in oklch, var(--accent) 22%, transparent);
 }
 
-.scrub-bar .tb-btn-global:hover {
+.play-bar .tb-btn-global:hover {
     transform: translateY(-1px);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16),
                 0 0 24px color-mix(in oklch, var(--accent) 34%, transparent);
 }
 
-.scrub-bar .scrub-bar-small-btn,
-.scrub-bar-icon-btn {
+.play-bar .play-bar-small-btn,
+.play-bar-icon-btn {
     width: calc(36px * var(--ui-scale, 1));
     height: calc(36px * var(--ui-scale, 1));
     font-size: var(--fs-md);
@@ -110,8 +110,8 @@ html[data-panel-mount="bottom"] .scrub-bar {
     color: var(--text-muted);
 }
 
-.scrub-bar .scrub-bar-small-btn:hover,
-.scrub-bar-icon-btn:hover {
+.play-bar .play-bar-small-btn:hover,
+.play-bar-icon-btn:hover {
     color: var(--accent);
     border-color: var(--accent);
     background: color-mix(in oklch, var(--accent) 10%, transparent);
@@ -119,12 +119,12 @@ html[data-panel-mount="bottom"] .scrub-bar {
 }
 
 /* ── Speed group ────────────────────────────────────────────────── */
-.scrub-bar-speed {
+.play-bar-speed {
     gap: 5px;
     min-width: calc(132px * var(--ui-scale, 1));
 }
 
-.scrub-bar-speed-readout {
+.play-bar-speed-readout {
     min-width: calc(54px * var(--ui-scale, 1));
     height: calc(34px * var(--ui-scale, 1));
     display: inline-flex;
@@ -138,12 +138,12 @@ html[data-panel-mount="bottom"] .scrub-bar {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
-.scrub-bar-speed-nudge {
+.play-bar-speed-nudge {
     font-size: var(--fs-lg);
     font-weight: 700;
 }
 
-.scrub-bar-slider {
+.play-bar-slider {
     width: 100%;
     height: calc(30px * var(--ui-scale, 1));
     appearance: none;
@@ -151,17 +151,17 @@ html[data-panel-mount="bottom"] .scrub-bar {
     cursor: pointer;
     margin: 0;
 }
-.scrub-bar-slider::-webkit-slider-runnable-track {
+.play-bar-slider::-webkit-slider-runnable-track {
     height: 6px;
     border-radius: var(--radius-xl);
     background: color-mix(in oklch, var(--bg-card) 80%, transparent);
 }
-.scrub-bar-slider::-moz-range-track {
+.play-bar-slider::-moz-range-track {
     height: 6px;
     border-radius: var(--radius-xl);
     background: color-mix(in oklch, var(--bg-card) 80%, transparent);
 }
-.scrub-bar-slider::-webkit-slider-thumb {
+.play-bar-slider::-webkit-slider-thumb {
     appearance: none;
     width: 16px;
     height: 16px;
@@ -171,7 +171,7 @@ html[data-panel-mount="bottom"] .scrub-bar {
     margin-top: -5px;
     cursor: grab;
 }
-.scrub-bar-slider::-moz-range-thumb {
+.play-bar-slider::-moz-range-thumb {
     width: 16px;
     height: 16px;
     border: 0;
@@ -180,7 +180,7 @@ html[data-panel-mount="bottom"] .scrub-bar {
     box-shadow: 0 0 8px var(--accent-glow);
     cursor: grab;
 }
-.scrub-bar-speed-value {
+.play-bar-speed-value {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
     font-size: var(--fs-sm);
@@ -189,16 +189,16 @@ html[data-panel-mount="bottom"] .scrub-bar {
     text-align: center;
 }
 
-.scrub-bar-speed-unit {
+.play-bar-speed-unit {
     color: var(--text-muted);
     font-size: var(--fs-xs);
 }
 
-.scrub-bar-now {
+.play-bar-now {
     min-width: calc(46px * var(--ui-scale, 1));
 }
 
-.scrub-bar-time {
+.play-bar-time {
     height: calc(34px * var(--ui-scale, 1));
     display: inline-flex;
     align-items: center;
@@ -214,18 +214,18 @@ html[data-panel-mount="bottom"] .scrub-bar {
 }
 
 /* Active-state styling for the gear while its popover is open. */
-.scrub-bar-settings.is-open {
+.play-bar-settings.is-open {
     color: var(--accent);
     border-color: var(--accent);
     background: color-mix(in oklch, var(--accent) 12%, transparent);
 }
 
 /* ── Settings popover ───────────────────────────────────────────── */
-.scrub-bar-actions {
+.play-bar-actions {
     position: relative;
 }
 
-.scrub-bar-settings-popover {
+.play-bar-settings-popover {
     position: absolute;
     right: 0;
     bottom: calc(100% + var(--sp-md));
@@ -241,30 +241,30 @@ html[data-panel-mount="bottom"] .scrub-bar {
     flex-direction: column;
     gap: var(--sp-md);
     z-index: 10;
-    animation: scrub-bar-popover-in var(--dur-fast) var(--ease-out);
+    animation: play-bar-popover-in var(--dur-fast) var(--ease-out);
 }
 
-html[data-panel-mount="bottom"] .scrub-bar-settings-popover {
+html[data-panel-mount="bottom"] .play-bar-settings-popover {
     top: calc(100% + var(--sp-md));
     bottom: auto;
 }
 
-.scrub-bar-settings-popover[hidden] {
+.play-bar-settings-popover[hidden] {
     display: none;
 }
 
-@keyframes scrub-bar-popover-in {
+@keyframes play-bar-popover-in {
     from { opacity: 0; transform: translateY(4px) scale(0.98); }
     to   { opacity: 1; transform: translateY(0)   scale(1);    }
 }
 
-.scrub-bar-settings-row {
+.play-bar-settings-row {
     display: flex;
     flex-direction: column;
     gap: var(--sp-xs);
 }
 
-.scrub-bar-settings-label {
+.play-bar-settings-label {
     font-size: var(--fs-xs);
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -272,13 +272,13 @@ html[data-panel-mount="bottom"] .scrub-bar-settings-popover {
     color: var(--text-dim);
 }
 
-.scrub-bar-settings-options {
+.play-bar-settings-options {
     display: flex;
     gap: var(--sp-xs);
     flex-wrap: wrap;
 }
 
-.scrub-bar-settings-chip {
+.play-bar-settings-chip {
     flex: 1 1 auto;
     min-height: calc(26px * var(--ui-scale, 1));
     padding: var(--ctrl-pad-y) var(--ctrl-pad-x);
@@ -293,12 +293,12 @@ html[data-panel-mount="bottom"] .scrub-bar-settings-popover {
                 color var(--dur-fast) var(--ease-out),
                 border-color var(--dur-fast) var(--ease-out);
 }
-.scrub-bar-settings-chip:hover {
+.play-bar-settings-chip:hover {
     color: var(--accent);
     border-color: var(--accent);
     background: color-mix(in oklch, var(--accent) 8%, transparent);
 }
-.scrub-bar-settings-chip.is-active {
+.play-bar-settings-chip.is-active {
     color: var(--accent);
     border-color: var(--accent);
     background: color-mix(in oklch, var(--accent) 16%, transparent);
@@ -306,14 +306,14 @@ html[data-panel-mount="bottom"] .scrub-bar-settings-popover {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .scrub-bar-settings-popover { animation: none; }
-    .scrub-bar-small-btn,
-    .scrub-bar-icon-btn { transition: none; }
+    .play-bar-settings-popover { animation: none; }
+    .play-bar-small-btn,
+    .play-bar-icon-btn { transition: none; }
 }
 
 /* Mobile: scale down the capsule so it fits on one line and doesn't occlude the canvas/panels */
 @media (max-width: 767px) {
-    .scrub-bar {
+    .play-bar {
         flex-wrap: wrap;
         width: max-content;
         max-width: calc(100vw - 16px);
@@ -328,7 +328,7 @@ html[data-panel-mount="bottom"] .scrub-bar-settings-popover {
         bottom: 8px; /* Small inset so it doesn't clip the bottom edge */
     }
 
-    html[data-panel-mount="bottom"] .scrub-bar {
+    html[data-panel-mount="bottom"] .play-bar {
         top: auto;
         left: 50%;
         bottom: 8px;
@@ -336,27 +336,27 @@ html[data-panel-mount="bottom"] .scrub-bar-settings-popover {
     }
 
     /* Finger-sized playback controls on touch devices */
-    .scrub-bar .tb-btn-global,
-    .scrub-bar .scrub-bar-small-btn,
-    .scrub-bar-icon-btn,
-    .scrub-bar-slider,
-    .scrub-bar-settings-chip {
+    .play-bar .tb-btn-global,
+    .play-bar .play-bar-small-btn,
+    .play-bar-icon-btn,
+    .play-bar-slider,
+    .play-bar-settings-chip {
         min-height: 44px;
         min-width: 44px;
     }
 
-    .scrub-bar-divider {
+    .play-bar-divider {
         display: none;
     }
 
-    .scrub-bar-settings-popover {
+    .play-bar-settings-popover {
         right: 50%;
         bottom: calc(100% + var(--sp-sm));
         transform: translateX(50%);
         max-width: calc(100vw - 24px);
     }
 
-    html[data-panel-mount="bottom"] .scrub-bar-settings-popover {
+    html[data-panel-mount="bottom"] .play-bar-settings-popover {
         top: auto;
         bottom: calc(100% + var(--sp-sm));
     }

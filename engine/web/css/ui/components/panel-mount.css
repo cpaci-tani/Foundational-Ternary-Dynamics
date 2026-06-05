@@ -19,9 +19,9 @@
     --viewport-safe-right: 0px;
 }
 
-/* Computed on #app so var(--toolbar-h) resolves to the live measured value */
+/* Top offset is relative to the viewport grid cell, so no toolbar-h is needed */
 #app {
-    --panel-mount-top-offset:    calc(var(--toolbar-h) + var(--panel-mount-gap));
+    --panel-mount-top-offset:    var(--panel-mount-gap);
     --panel-mount-bottom-offset: calc(28px * var(--ui-scale) + var(--panel-mount-gap));
 }
 
@@ -32,7 +32,8 @@
     /* ── Left mount ───────────────────────────────────────────────────────── */
     /* Icon rail sits at the far-left edge; panel opens to the right of the rail. */
     html[data-panel-mount="left"] #panel-area {
-        position: fixed;
+        position: absolute;
+        grid-area: viewport;
         top: var(--panel-mount-top-offset);
         bottom: var(--panel-mount-bottom-offset);
         left: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
@@ -50,7 +51,8 @@
     /* ── Right mount ──────────────────────────────────────────────────────── */
     /* Icon rail sits at the far-right edge; panel opens to the left of the rail. */
     html[data-panel-mount="right"] #panel-area {
-        position: fixed;
+        position: absolute;
+        grid-area: viewport;
         top: var(--panel-mount-top-offset);
         bottom: var(--panel-mount-bottom-offset);
         right: calc(var(--panel-mount-gap) + 44px + 6px);  /* 44px rail + 6px gap */
@@ -89,7 +91,8 @@
     /* ── Tab bar reorients as a vertical icon rail on the inner edge ─────── */
     html[data-panel-mount="left"] #tab-bar,
     html[data-panel-mount="right"] #tab-bar {
-        position: fixed;
+        position: absolute;
+        grid-area: viewport;
         top: var(--panel-mount-top-offset);
         bottom: var(--panel-mount-bottom-offset);
         left: auto;

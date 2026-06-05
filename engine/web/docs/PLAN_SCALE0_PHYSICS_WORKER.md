@@ -2,6 +2,14 @@
 
 > **Status: `[IMPLEMENTED + VERIFIED]` 2026-06-03.** All 6 tasks landed — SAB-backed buffers, the worker (`mock-bridge.worker.js`), the proxy + shadow (`mock-bridge-proxy.js`), live wiring (scenario-loader `workerEligible` + tick.js), the scrubbing seam (recorder feed + snapshot capture/restore), and the worker spec (`scale0-worker.spec.js`) + caching-COOP test server (`serve.py --cache`). Verified live: the main-thread per-frame cost at L=145 dropped ~80× (127 ms → 1.6 ms); the worker self-ticks ~60 fps in a foreground tab; in-thread fallback intact on non-isolated browsers. **Follow-ups:** (a) a separate Playwright project to run `scale0-worker.spec.js` against `serve.py --cache` in CI (it skips on the default http.server suite); (b) the deploy host must send COOP/COEP for the worker path (else graceful in-thread fallback); (c) the `p1-observables-panel` console throw (auto-handled — investigate); (d) verify particle-derived overlays (genesis/annihilation) under the worker's particle frame.
 
+> **⚠ Superseded in part (2026-06-05):** the **scrubbing / timeline seam** built under this plan
+> (Task 5; the recorder feed + snapshot capture/restore) was **removed wholesale**. The simulation is
+> now forward-only — the engine tick is the single time source, there is no reverse/scrub. Every
+> reference below to scrubbing, `getScale0Snapshot`/`loadScale0Snapshot`, the `MemoryRecorder`, the
+> `timeline/` module, or the `setScale0*Buffer`/`getScale0*Buffer` bridge hooks is **historical** — that
+> code no longer exists. The rest of the worker migration (SAB buffers, proxy+shadow, command/frame
+> protocol, fallback) stands. See `SPEC_SCALE0_RUNTIME_PIPELINE.md` §8.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax.
 
 **Goal:** Run the Scale-0 JS physics (`MockBridge` tick + `_fluxMag` + diagnostics) in a dedicated Web Worker that shares its field buffers with the main thread via `SharedArrayBuffer`, so render + UI stay at 60 FPS regardless of how long each tick takes — fixing the broad/default-scenario FPS drop that Phase 1 (sparse tick) does not.
@@ -298,7 +306,14 @@ export function workerEligible(scenarioId, bridge) {
 
 ---
 
-## Task 5: Scrubbing / timeline seam
+## Task 5: Scrubbing / timeline seam — ❌ REMOVED (2026-06-05)
+
+> **Removed.** This seam was built (2026-06-03) and then removed wholesale on 2026-06-05: the
+> simulation is now forward-only (the engine tick is the single time source). The snapshot
+> capture/restore surface this task depended on — `getScale0Snapshot`/`loadScale0Snapshot`,
+> `MemoryRecorder`, `timeline/`, and the `setScale0*Buffer`/`getScale0*Buffer` bridge hooks — no
+> longer exists. See `SPEC_SCALE0_RUNTIME_PIPELINE.md` §8. The steps below are retained for
+> provenance only.
 
 **Files:** Modify `mock-bridge-proxy.js`, `controller.js` (hydrate/resume), `timeline/memory-recorder.js` if needed.
 
