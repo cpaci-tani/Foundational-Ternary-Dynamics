@@ -409,9 +409,7 @@
     border-radius: 50%;
     background: var(--bg-surface, #1a2030);
     color: var(--text-primary);
-    font-size: 1em;
-    font-weight: 700;
-    line-height: 1;
+    font-size: 1em;   /* keeps the em sizing meaningful; the × itself is drawn below */
     cursor: pointer;
     opacity: 0;
     pointer-events: none;
@@ -419,6 +417,22 @@
     transition: opacity 120ms var(--ease-out, ease), transform 120ms var(--ease-out, ease),
                 background 120ms, color 120ms, border-color 120ms;
 }
+/* Draw the × from two bars rather than a font glyph, so it is mathematically
+   centred on both axes regardless of the font's glyph metrics. The bars scale
+   with the circle (em units) and inherit currentColor for the hover swap. */
+.s0-overlay-chip-x::before,
+.s0-overlay-chip-x::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.78em;
+    height: 0.14em;
+    border-radius: 0.07em;
+    background: currentColor;
+}
+.s0-overlay-chip-x::before { transform: translate(-50%, -50%) rotate(45deg); }
+.s0-overlay-chip-x::after  { transform: translate(-50%, -50%) rotate(-45deg); }
 .s0-overlay-chip:hover .s0-overlay-chip-x,
 .s0-overlay-chip-x:focus-visible {
     opacity: 1;
