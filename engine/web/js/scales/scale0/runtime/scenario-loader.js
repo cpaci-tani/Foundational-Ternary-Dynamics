@@ -1,3 +1,4 @@
+import { getPhysicsHarness } from '../../../physics/index.js';
 import { MockBridge } from '../../../bridge-init.js';
 import { MockBridgeProxy } from '../../../bridge/mock-bridge-proxy.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
@@ -15,6 +16,7 @@ import {
     setForceStyle,
 } from '../state/store.js';
 import {
+    FIELD_TOGGLE_BINDINGS,
     markScenarioOverrideRows,
     readButtonActive,
     readCheckboxValue,
@@ -43,87 +45,20 @@ import { clearScale0Timeline } from '../controller.js';
 // (b) restore the previous value at scenario-end. Don't leave the
 // mutation hanging — that's the toggle-leak vector ARC-1 audited.
 const DEFAULT_TOGGLES = SCALE0_TOGGLES;
-const FIELD_BUTTON_IDS = [
-    'toggle-e-field',
-    'toggle-b-field',
-    'toggle-poynting',
-    'toggle-div-field',
-    'toggle-flux-lines',
-    'toggle-force-em',
-    'toggle-force-gravity',
-    'toggle-force-strong',
-    'toggle-force-weak',
-    'toggle-dual-substrate',
-    'toggle-chirality',
-    'toggle-light',
-    'toggle-dark-halo',
-    'toggle-damping-zones',
-    'toggle-genesis-iso',
-    'toggle-confinement',
-    // Tier 1 quantum overlays — treated as persistent user preferences
-    'toggle-psi-squared',
-    'toggle-phase',
-    'toggle-lagrangian-density',
-    'toggle-entropy-density',
-    'toggle-grav-potential',
-    'toggle-em-energy',
-    'toggle-charge-density',
-    'toggle-vorticity',
-    // Tier 1/2/3 (2026-04-18).
-    'toggle-helicity',
-    'toggle-kretschmann',
-    'toggle-horizon',
-    'toggle-e-pressure',
-    'toggle-b-pressure',
-    'toggle-kinetic-energy',
-    'toggle-fisher',
-    'toggle-coherence',
-];
-
-// Map every overlay button id → corresponding state flag so we can round-trip
-// the user's overlay preferences across scenario switches.
-const FIELD_BUTTON_TO_FLAG = {
-    'toggle-e-field':              'showEField',
-    'toggle-b-field':              'showBField',
-    'toggle-poynting':             'showPoynting',
-    'toggle-div-field':            'showDivField',
-    'toggle-flux-lines':           'showFluxLines',
-    'toggle-force-em':             'showForceEM',
-    'toggle-force-gravity':        'showForceGravity',
-    'toggle-force-strong':         'showForceStrong',
-    'toggle-force-weak':           'showForceWeak',
-    'toggle-dual-substrate':       'showDualSubstrate',
-    'toggle-chirality':            'showChirality',
-    'toggle-light':                'showLight',
-    'toggle-dark-halo':            'showDarkMatterHalo',
-    'toggle-damping-zones':        'showDampingZones',
-    'toggle-genesis-iso':          'showGenesisIsosurface',
-    'toggle-confinement':          'showConfinement',
-    'toggle-psi-squared':          'showPsiSquared',
-    'toggle-phase':                'showPhase',
-    'toggle-lagrangian-density':   'showLagrangianDensity',
-    'toggle-entropy-density':      'showEntropyDensity',
-    'toggle-grav-potential':       'showGravPotential',
-    'toggle-em-energy':             'showEmEnergy',
-    'toggle-charge-density':        'showChargeDensity',
-    'toggle-vorticity':             'showVorticity',
-    'toggle-helicity':              'showHelicity',
-    'toggle-kretschmann':           'showKretschmann',
-    'toggle-horizon':               'showHorizon',
-    'toggle-e-pressure':            'showEPressure',
-    'toggle-b-pressure':            'showBPressure',
-    'toggle-kinetic-energy':        'showKineticEnergy',
-    'toggle-fisher':                'showFisher',
-    'toggle-coherence':             'showCoherence',
-};
+// Round-trip the user's overlay preferences across scenario switches. Both maps
+// are DERIVED from the canonical button↔flag list in ui/dom.js
+// (FIELD_TOGGLE_BINDINGS, shared with bindings.js) so this can never drift behind
+// it again — the old hand-maintained mirror had silently fallen 4 overlays behind
+// (the 2026-06-03 substrate overlays: state-field / latency / gauss-residual /
+// moore-decomp were missing). B1 fix, 2026-06-05.
+const FIELD_BUTTON_IDS = FIELD_TOGGLE_BINDINGS.map(([id]) => id);
+const FIELD_BUTTON_TO_FLAG = Object.fromEntries(FIELD_TOGGLE_BINDINGS);
 
 export function shouldUseFluxMock(bridge, scenarioName) {
     if (bridge && (bridge.isNativeGPU || bridge.constructor.name === 'WebSocketBridge')) {
         return false;
     }
     if (scenarioName.startsWith('flux-')) return true;
-    if (scenarioName.startsWith('s0-seed-')) return true;
-    if (scenarioName.startsWith('s0-field-')) return true;
     try {
         const probe = bridge.getFluxVolume && bridge.getFluxVolume();
         return !(probe && probe.length > 0);
@@ -308,23 +243,6 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // chosen overlays every time they pick a new scenario.
     const overlayPrefs = captureOverlayPreferences(state);
 
-    ctx.resetAllVisualState();
-    applyAuxiliaryDefaults(ctx, viewportAdapter);
-
-    const mainScale0 = ctx.bridge.capabilities.scale0;
-    scenario.load({ bridge: ctx.bridge, capabilities: mainScale0, params }, params);
-
-    // Bridge.tick just reset to 0 — any snapshots still in the timeline are
-    // from the previous scenario and their tick numbers no longer match the
-    // new sim. Wipe them so the scrub bar re-anchors on the fresh scenario.
-    clearScale0Timeline();
-
-    // Allocate a parallel JS MockBridge ("fluxMock") ONLY when
-    // `shouldUseFluxMock` says it will own the physics for this
-    // scenario. For WASM-canonical scenarios (quantum-*, light-*) the
-    // mock is unused — skipping it saves an L³ buffer + a redundant
-    // scenario-seeding pass and removes the divergence-masking risk
-    // the architecture audit flagged (ARC-2).
     const useFluxMock = shouldUseFluxMock(ctx.bridge, scenario.id);
     const latticeSize = ctx.bridge.latticeSize || 33;
     let fluxMock = null;
@@ -335,7 +253,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
         fluxMock.capabilities.scale0.setupScenario(scenario.id);
     }
 
-    applyToggleDefaults(mainScale0, fluxMock?.capabilities?.scale0 ?? null, scenario.id);
+    applyToggleDefaults(ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0 ?? null, scenario.id);
     if (fluxMock) {
         for (const [key, , elId] of DEFAULT_TOGGLES) {
             fluxMock.capabilities.scale0.setToggle(key, readCheckboxValue(elId));
@@ -343,6 +261,20 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     }
 
     setFluxMock(fluxMock, useFluxMock);
+    ctx.useFluxMock = useFluxMock;
+    ctx.fluxMock = fluxMock;
+
+    ctx.resetAllVisualState();
+    applyAuxiliaryDefaults(ctx, viewportAdapter);
+
+    const harness = getPhysicsHarness(ctx.bridge);
+    scenario.load(harness, params);
+
+    // Bridge.tick just reset to 0 — any snapshots still in the timeline are
+    // from the previous scenario and their tick numbers no longer match the
+    // new sim. Wipe them so the scrub bar re-anchors on the fresh scenario.
+    clearScale0Timeline();
+
     setCurrentScenarioId(scenario.id);
     setSelectedScenarioId(scenario.id);
     markScenarioOverrideRows(DEFAULT_TOGGLES);
@@ -401,7 +333,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     } else {
         bridge.latticeSize = newSize;
     }
-    getScale0Scenario(scenarioId).load({ bridge }, { id: scenarioId });
+    getScale0Scenario(scenarioId).load(getPhysicsHarness(bridge), { id: scenarioId });
     ctx.viewport.setLatticeSize(newSize);
     viewportAdapter.setFluxVolumeVisible(ctx.viewport.showFlux);
 

@@ -23,7 +23,7 @@ export const TRIAD_ANGLES = Object.freeze([0, 2 * Math.PI / 3, 4 * Math.PI / 3])
  * Center may be integer or floating-point (for half-voxel-centred
  * envelopes — set `opts.minR2 = 0.25` to skip the singular core).
  *
- * @param {object} bridge      MockBridge instance with `_injectFlux`
+ * @param {PhysicsHarness} harness    PhysicsHarness instance
  * @param {number} cx,cy,cz    centre (continuous OK)
  * @param {number} sign        +1 outward, -1 inward
  * @param {number} sigma       Gaussian sigma
@@ -34,7 +34,7 @@ export const TRIAD_ANGLES = Object.freeze([0, 2 * Math.PI / 3, 4 * Math.PI / 3])
  * @param {number} [opts.minVal]    drop samples below this magnitude (default 0.001)
  * @param {number[]} [opts.axisBias] per-axis multipliers [bx, by, bz] (default [1,1,1])
  */
-export function injectRadialEnvelope(bridge, cx, cy, cz, sign, sigma, amp, opts = {}) {
+export function injectRadialEnvelope(harness, cx, cy, cz, sign, sigma, amp, opts = {}) {
     const radius = opts.radius ?? Math.ceil(3 * sigma);
     const radius2 = radius * radius;
     const minR2 = opts.minR2 ?? 0;
@@ -56,7 +56,7 @@ export function injectRadialEnvelope(bridge, cx, cy, cz, sign, sigma, amp, opts 
         const r = Math.sqrt(r2);
         const val = amp * Math.exp(-r2 / sigma2);
         if (val < minVal) continue;
-        bridge._injectFlux(x, y, z,
+        harness.injectFlux(x, y, z,
             sign * val * bx * dx / r,
             sign * val * by * dy / r,
             sign * val * bz * dz / r);
@@ -68,9 +68,9 @@ export function injectRadialEnvelope(bridge, cx, cy, cz, sign, sigma, amp, opts 
  * to the just-injected entry. Mirrors the C++ `IPF` macro. Returns
  * the post-mutation particle reference (or null if injection failed).
  */
-export function injectParticleFull(bridge, cx, cy, cz, state, attrs = {}) {
-    bridge.injectParticle(cx, cy, cz, state);
-    const list = bridge._particles;
+export function injectParticleFull(harness, cx, cy, cz, state, attrs = {}) {
+    harness.injectParticle(cx, cy, cz, state);
+    const list = harness.bridge._particles;
     const last = list ? list[list.length - 1] : null;
     if (!last) return null;
     if (Number.isFinite(attrs.color) && attrs.color >= 0) last.color = attrs.color;
@@ -85,10 +85,10 @@ export function injectParticleFull(bridge, cx, cy, cz, state, attrs = {}) {
  * sign tracking the particle state (positive → outward, negative →
  * inward). Mirrors the C++ `dp(...)` helper used by `s0_seed.cpp`.
  */
-export function injectDressedParticle(bridge, cx, cy, cz, state, spin, color, sigma, amp, locked = false) {
-    injectParticleFull(bridge, cx, cy, cz, state, { spin, color, locked });
+export function injectDressedParticle(harness, cx, cy, cz, state, spin, color, sigma, amp, locked = false) {
+    injectParticleFull(harness, cx, cy, cz, state, { spin, color, locked });
     const sign = state > 0 ? 1 : -1;
-    injectRadialEnvelope(bridge, cx, cy, cz, sign, sigma, amp);
+    injectRadialEnvelope(harness, cx, cy, cz, sign, sigma, amp);
 }
 
 /**
@@ -97,12 +97,12 @@ export function injectDressedParticle(bridge, cx, cy, cz, state, spin, color, si
  * charge + color and alternating spin (+1, -1, +1). Mirrors the C++
  * `tri(...)` helper.
  */
-export function injectTriad(bridge, cx, cy, cz, charges, colors, rad, locked = true) {
+export function injectTriad(harness, cx, cy, cz, charges, colors, rad, locked = true) {
     for (let k = 0; k < 3; k++) {
         const ang = TRIAD_ANGLES[k];
         const qx = Math.round(cx + rad * Math.cos(ang));
         const qy = Math.round(cy + rad * Math.sin(ang));
-        injectDressedParticle(bridge, qx, qy, cz, charges[k],
+        injectDressedParticle(harness, qx, qy, cz, charges[k],
             (k % 2 === 0) ? 1 : -1, colors[k], 2, K_B * 0.5, locked);
     }
 }
@@ -118,13 +118,13 @@ export function injectTriad(bridge, cx, cy, cz, charges, colors, rad, locked = t
  * `absorbing_boundary` toggle (separate spec) would mutate, so all 15
  * vacuum scenarios pick up the new behavior with one edit.
  *
- * @param {object} bridge      MockBridge instance
+ * @param {PhysicsHarness} harness      PhysicsHarness instance
  * @param {{N:number, mid:number, midF:number}} ctx  precomputed lattice params
  */
-export function applyVacuumEnvironment(bridge, ctx) {
+export function applyVacuumEnvironment(harness, ctx) {
     // No-op in v1. Reserved extension point — see SPEC_VACUUM_PARTICLE_SCENARIOS.md.
-    // Reads ctx + bridge to make the dependency explicit (and silence linters
+    // Reads ctx + harness to make the dependency explicit (and silence linters
     // when this becomes non-trivial in v2).
-    void bridge;
+    void harness;
     void ctx;
 }

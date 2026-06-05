@@ -1323,9 +1323,7 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
     // Audit-4 2026-04-28: KB entries for s0-seed-{positron, pion, proton-l4, neutron}
     // removed — these scenarios moved to s0-vacuum-* canonical entries.
     's0-seed-hydrogen': { summary: 'A lattice-level atom seed placing one light negative constituent around a heavy positive center.', notation: ['central potential', 'bound pair'] },
-    's0-seed-helium': { summary: 'An α-particle (²p+²n) nucleus surrounded by a 1s² electron shell — 14 manifested vertices total.', notation: ['α-particle', '4 nucleon triads', '1s² shell'] },
-    's0-seed-2-hydrogen-atoms': { summary: 'Two independent hydrogen atoms placed side-by-side. NOT a covalent H₂ molecule (no shared bonding orbital between the protons).', notation: ['side-by-side atoms', 'no shared bond'] },
-    's0-seed-wilson-loop': { summary: 'A loop configuration intended to foreground holonomy and confinement-style area intuition.', notation: ['Wilson loop', 'area law', 'holonomy'] },
+    's0-seed-helium': { summary: 'An α-particle (²p+²n) nucleus surrounded by a 1s² electron shell — 14 manifested vertices total.', notation: ['α-particle', '4 nucleon triads', '1s² shell'] },    's0-seed-wilson-loop': { summary: 'A loop configuration intended to foreground holonomy and confinement-style area intuition.', notation: ['Wilson loop', 'area law', 'holonomy'] },
     's0-seed-flux-tube': { summary: 'A tube-like field bridge between separated endpoints.', notation: ['flux tube', 'σr'] },
     's0-seed-monopole': { summary: 'A monopole-style pedagogical seed for source-like field geometry.', notation: ['radial field', 'topological charge?'] },
     's0-seed-instanton': { summary: 'A localized topological event seed emphasizing global sector changes rather than static shape alone.', notation: ['topological event', 'instanton'] },

@@ -360,9 +360,10 @@ export function createDiagnosticsProvider(state) {
             velocity: 0,                    // g_c·s·(v·J) (zero without particles)
             gauss: 0,                       // Gauss constraint (zero in free wave)
             dissipation,                    // γ·½|J|²
-            total,
-            hamiltonian: total,
-            totalAction: total,
+            total: waveEnergy - fieldEnergy,
+            hamiltonian: waveEnergy + fieldEnergy,
+            action: (state._cachedAction || 0) + (waveEnergy - fieldEnergy) * state._params.dt,
+            totalAction: (state._cachedAction || 0) + (waveEnergy - fieldEnergy) * state._params.dt,
             gaussViolation: 0, maxGaussError: 0,
             totalFluxMag, totalWaveEnergy: waveEnergy,
             manifested: N, locked: 0
