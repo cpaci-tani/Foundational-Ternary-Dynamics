@@ -61,7 +61,7 @@ const AXES = [
 
 const SECTION_HELP = {
     slices: 'Per-axis 2D slices through the lattice mid-planes (yz / xz / xy). Pick a quantity (L / K / |F| / f) — a gravitational wave appears as a band propagating across the planes. [proxy]: |J|²-derived, not the C++ Poisson field.',
-    telemetry: 'Scalar gravity telemetry. L = latency potential, K = Kretschmann curvature, |F| = gravity force. Time-dilation is the peak clock-slowdown 1−√(1−L²); horizon-proximity flags L→1. Gravity PE is the pairwise bound energy. All [proxy].',
+    telemetry: 'Scalar gravity telemetry. L = latency potential, K = Kretschmann curvature, |F| = gravity force. Time-dilation is the peak clock-slowdown 1−√(1−L²); horizon-proximity flags L→1. Gravity PE is the pairwise bound energy. Top rows are |J|²-derived [proxy]; the bottom block is the genuine C++ Poisson latency field [C++] (voxel.latency, field-energy-sourced), shown when the engine runs it.',
     delta: 'How gravity RESPONDS as you mutate fields. Sparklines track L_max / K_max / |F|_mean / dilation% over recent field updates; "Δ since last change" latches the previous field-version and shows the jump. Inject / toggle / seed and watch it move.',
 };
 
@@ -124,7 +124,23 @@ function deltaSpan(cur, base) {
 
 // ── section renderers ─────────────────────────────────────────────────────────
 
-function renderTelemetry(container, m) {
+// Real C++ latency (Poisson) sub-block — the genuine voxel.latency field,
+// distinct from the |J|² proxy rows. Honest: shows "inactive — proxy only" when
+// the engine isn't running the latency solver / there is no source.
+function renderCppBlock(agg) {
+    const head = `<div style="margin:8px 0 4px;padding-top:6px;border-top:1px solid var(--border-subtle,rgba(255,255,255,.09));font-size:11px;font-weight:600;color:var(--text-secondary);" title="The genuine voxel.latency from the engine's Poisson solver (∇²L=4πGρ), with ρ sourced from field-energy density ½|J|² — an [IMPOSED] engine model. Distinct from the |J|² proxy rows above.">Real C++ latency field (Poisson) ⓘ</div>`;
+    if (!agg || !agg.active)
+        return head + `<div style="font-size:11px;color:var(--text-muted);padding:3px 0;">${tagBadge('C++')}inactive — proxy only (no latency source)</div>`;
+    let html = head;
+    html += row('L (mean / max)', `${formatExp(agg.latencyMean)} / ${formatExp(agg.latencyMax)}`, 'C++', undefined, 'Real Poisson latency potential voxel.latency, sourced from field energy.');
+    html += row('Lapse f_min', formatFixed(agg.fMin, 5), 'C++', undefined, 'Min lapse f = 1 − L_max² (deepest real time dilation).');
+    html += row('Time-dilation (peak)', `${formatExp(agg.dilationMaxPct)} %`, 'C++', undefined, '(1 − √f_min)·100 from the real latency field.');
+    html += row('γ_ftd (max)', formatFixed(agg.gammaMax, 5), 'C++', undefined, 'Max generalized Lorentz factor √f/√(f²−v²).');
+    html += row('Active voxels', String(agg.voxelCount), 'C++', undefined, 'Voxels carrying non-zero real latency.');
+    return html;
+}
+
+function renderTelemetry(container, m, agg) {
     const horizonColor = m.horizon >= 0.95 ? 'var(--negative)' : m.horizon >= 0.5 ? 'var(--caution)' : 'var(--positive)';
     let html = '';
     if (m.horizon >= 0.95) html += `<div style="${heroStyle()};color:var(--negative);margin-bottom:6px;">⚠ horizon — L_max ${formatFixed(m.horizon, 3)}</div>`;
@@ -137,6 +153,7 @@ function renderTelemetry(container, m) {
     html += row('Gravity PE', formatExp(m.gravPE), 'D', undefined, 'Pairwise bound energy −Σ G_N·K_B²/r over manifested particles (0 with no particles).');
     html += row('G_N / α_G', `${formatFixed(m.gnG, 3)} / ${m.alphaG.toExponential(2)}`, 'D', undefined, 'Framework gravitational coupling and the gravitational fine-structure reference.');
     html += `<div class="grav-hist-row"><span>L ${miniHist(m.histL)}</span><span>K ${miniHist(m.histK)}</span><span>|F| ${miniHist(m.histF)}</span></div>`;
+    html += renderCppBlock(agg);
     container.innerHTML = html;
 }
 
@@ -205,6 +222,7 @@ export function mountGravityPanel(host, getBridge) {
 
     let activeKind = 'latency';
     let lastMetrics = null;
+    let lastAgg = null;
     let bridgeId = null;
     let history = [];     // [{ ver, Lmax, Kmax, Fmean, dil }]
     let latched = null;   // metric vector at the previous field-version
@@ -266,8 +284,10 @@ export function mountGravityPanel(host, getBridge) {
 
         const m = computeGravity(caps);
         lastMetrics = m;
+        const agg = caps.getScale0GravityMetricAgg?.() || null;
+        lastAgg = agg;
         paintSlices(caps);
-        renderTelemetry(telBody, m);
+        renderTelemetry(telBody, m, agg);
 
         const ver = (getScale0State()?.fieldDataVersion) | 0;
         if (ver !== lastVer) {
@@ -296,6 +316,7 @@ export function mountGravityPanel(host, getBridge) {
         update,
         element: panel,
         get lastMetrics() { return lastMetrics; },
+        get lastAgg() { return lastAgg; },
         get activeKind() { return activeKind; },
         setKind: (k) => { activeKind = k; const caps = getCaps(); if (caps) paintSlices(caps); },
         get historyLength() { return history.length; },

@@ -107,6 +107,36 @@ static val get_energy_ledger(ftd::RenderBridge& rb) {
     return result;
 }
 
+// ── Gravity panel (Phase 2): REAL C++ latency field ──────────────────
+// Distinct from the |J|² web proxy: voxel.latency from the Poisson solver.
+static val get_gravity_metric_agg(ftd::RenderBridge& rb) {
+    const ftd::GravityMetricAgg a = rb.gravity_metric_agg();
+    val r = val::object();
+    r.set("latencyMax",     a.latency_max);
+    r.set("latencyMean",    a.latency_mean);
+    r.set("fMin",           a.f_min);
+    r.set("gammaMax",       a.gamma_max);
+    r.set("dilationMaxPct", a.dilation_max_pct);
+    r.set("voxelCount",     a.voxel_count);
+    r.set("active",         a.active);
+    return r;
+}
+
+// Dense latency volume, transposed to the JS z-slowest layout exactly like
+// get_flux_volume (so the panel slices it with the same vidx as |J|).
+static val get_latency_volume(ftd::RenderBridge& rb) {
+    static std::vector<double> cache;
+    const int N = rb.lattice().size();
+    const int total = N * N * N;
+    if (static_cast<int>(cache.size()) != total) cache.resize(total);
+    const auto& vox = rb.voxels();
+    for (int z = 0; z < N; ++z)
+        for (int y = 0; y < N; ++y)
+            for (int x = 0; x < N; ++x)
+                cache[z * N * N + y * N + x] = vox[rb.lattice().index(x, y, z)].latency;
+    return val(typed_memory_view(total, cache.data()));
+}
+
 // ── Time step control ────────────────────────────────────────────────
 static void set_dt(ftd::RenderBridge& rb, double dt) { rb.set_dt(dt); }
 static double get_dt(ftd::RenderBridge& rb) { return rb.dt(); }
@@ -205,6 +235,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     // Bulk flux extraction (for flux volume visualization)
     function("getFluxSlice",       &get_flux_slice);
     function("getFluxVolume",      &get_flux_volume);
+    function("getGravityMetricAgg", &get_gravity_metric_agg);
+    function("getLatencyVolume",   &get_latency_volume);
 
     // Bulk sampled vector field exports (for field line / arrow visualization)
     function("getEFieldSampled",      &get_e_field_sampled);

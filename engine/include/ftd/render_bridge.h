@@ -134,6 +134,10 @@ public:
     Vec3 flux_at(int idx) const;
     Vec3 wave_vel_at(int idx) const;
     double density_at(int idx) const;
+    // Phase 2 gravity panel: reduced stats of the real C++ latency field
+    // (voxel.latency, distinct from the |J|² web proxy). The dense latency
+    // volume itself is exported (layout-transposed) directly in the WASM binding.
+    GravityMetricAgg gravity_metric_agg() const; // reduced L/f/γ/dilation stats
     const EngineState& engine_state() const {
         sync_ternary_from_voxels_if_needed();
         sync_fields_from_voxels_if_needed();

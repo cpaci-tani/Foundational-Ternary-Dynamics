@@ -223,6 +223,31 @@ double RenderBridge::density_at(int idx) const {
     return fields().density_at(static_cast<std::size_t>(idx));
 }
 
+GravityMetricAgg RenderBridge::gravity_metric_agg() const {
+    GravityMetricAgg a;
+    const auto& vox = voxels();
+    const int N = static_cast<int>(vox.size());
+    double lat_sum = 0.0;
+    int count = 0;
+    for (int i = 0; i < N; ++i) {
+        const double L = vox[i].latency;
+        if (L <= 0.0) continue;
+        if (L > a.latency_max) a.latency_max = L;
+        const double g = vox[i].gamma_ftd();
+        if (g > a.gamma_max) a.gamma_max = g;
+        lat_sum += L;
+        ++count;
+    }
+    a.voxel_count = count;
+    if (count > 0) {
+        a.latency_mean = lat_sum / count;
+        a.f_min = 1.0 - a.latency_max * a.latency_max;
+        a.dilation_max_pct = (1.0 - std::sqrt(std::max(0.0, a.f_min))) * 100.0;
+    }
+    a.active = (toggles.latency_field || toggles.field_energy_gravity) && count > 0;
+    return a;
+}
+
 // ARCH-4 (2026-04-25): propagates the seed to all RNG sources at once.
 // Body lives here because GpuEngine is forward-declared in render_bridge.h.
 void RenderBridge::seed_rng(unsigned int seed) {
@@ -407,7 +432,8 @@ void RenderBridge::solve_coulomb_poisson() {
 }
 
 void RenderBridge::solve_latency_poisson() {
-  solve_latency_poisson_cpu(voxels_, ternary_field(), phi_latency_, sor_source_, lattice_, sor_iterations_);
+  solve_latency_poisson_cpu(voxels_, ternary_field(), phi_latency_, sor_source_, lattice_, sor_iterations_,
+                            toggles.field_energy_gravity);
 }
 
 // ============================================================================

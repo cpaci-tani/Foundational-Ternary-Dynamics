@@ -199,18 +199,31 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
                                std::vector<double>& phi_latency,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
-                               int sor_iters) {
+                               int sor_iters,
+                               bool include_field_energy) {
   const int N = static_cast<int>(lattice.total_sites());
   constexpr double OMEGA = SOR_OMEGA;
   constexpr double FOUR_PI_G = 4.0 * PI * G_N;
 
-  double mass_sum = K_B * static_cast<double>(state.manifested_count());
-  const double mean_mass = mass_sum / N;
+  // [IMPOSED] Gravitating density = particle rest mass (K_B|state|) plus, when
+  // include_field_energy is set, the local field-energy density
+  // ½(|J|²+|wave_vel|²) — the same ½|·|² convention as the energy audit
+  // (diagnostics_compute.cpp). Motivated by GR sourcing gravity from the full
+  // stress-energy so a flux-only configuration (e.g. a gravity wave) carries a
+  // real potential; the coupling is imposed in the engine, not derived.
+  double rho_sum = K_B * static_cast<double>(state.manifested_count());
+  if (include_field_energy) {
+    for (int i = 0; i < N; ++i)
+      rho_sum += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
+  }
+  const double mean_rho = rho_sum / N;
 
 #pragma omp parallel for
   for (int i = 0; i < N; ++i) {
-    const double rho_mass = K_B * std::abs(state.state_at(i));
-    sor_source[i] = FOUR_PI_G * (rho_mass - mean_mass);
+    double rho = K_B * std::abs(state.state_at(i));
+    if (include_field_energy)
+      rho += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
+    sor_source[i] = FOUR_PI_G * (rho - mean_rho);
   }
 
   for (int iter = 0; iter < sor_iters; ++iter) {
