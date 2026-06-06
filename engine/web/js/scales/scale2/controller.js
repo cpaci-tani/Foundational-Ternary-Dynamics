@@ -249,7 +249,7 @@ export function animateAE(ctx) {
         bridge, viewport, running, ticksPerFrame, inspector,
         fluxEnergyChart, particleChart,
         activeTab, frameCount, dom, now,
-        updatePlayButton, updateOnticPanel, updateHierarchyPanel,
+        updatePlayButton, updateOnticPanel,
         setRunning, engineMode
     } = ctx;
 
@@ -524,9 +524,6 @@ export function animateAE(ctx) {
                 break;
             case 'inspector':
                 inspector.update();
-                break;
-            case 'hierarchy':
-                if (updateHierarchyPanel) updateHierarchyPanel();
                 break;
         }
     }

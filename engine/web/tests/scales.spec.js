@@ -184,8 +184,7 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
                 raycastThreshold: !!document.getElementById('raycast-threshold'),
                 peInspectorEmpty: !!document.getElementById('pe-inspector-empty'),
                 aeInspectorContent: !!document.getElementById('ae-inspector-content'),
-                hierarchyPanel: !!document.getElementById('panel-hierarchy'),
-                hierarchyTower: !!document.getElementById('hierarchy-tower'),
+                hierarchyPanelRemoved: !document.getElementById('panel-hierarchy'),
                 scale5ScenarioSelect: !!document.getElementById('cosmic-scenario-select'),
                 scale5CameraSelect: !!document.getElementById('cosmic-camera-select'),
                 scale5Telemetry: !!document.getElementById('cosmic-telemetry'),
@@ -241,8 +240,7 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
     expect(shell.ui.raycastThreshold).toBe(true);
     expect(shell.ui.peInspectorEmpty).toBe(true);
     expect(shell.ui.aeInspectorContent).toBe(true);
-    expect(shell.ui.hierarchyPanel).toBe(true);
-    expect(shell.ui.hierarchyTower).toBe(true);
+    expect(shell.ui.hierarchyPanelRemoved).toBe(true);
     expect(shell.ui.scale5ScenarioSelect).toBe(true);
     expect(shell.ui.scale5CameraSelect).toBe(true);
     expect(shell.ui.scale5Telemetry).toBe(true);
