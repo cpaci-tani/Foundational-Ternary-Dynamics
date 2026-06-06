@@ -670,6 +670,24 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             IF(rb, x, y, z, -mg * rx / r, -mg * ry / r, -mg * rz / r);
         }
     }
+    else if (name == "s0-seed-massive-body") {
+        // A dense ball of LOCKED rest mass. Gravity is sourced from REAL manifested
+        // mass (rho_mass = M_REST*|state|) by the latency-Poisson solver (enable
+        // latency_field), NOT the |J|^2 field-energy proxy. Locked => static body
+        // (skipped by movement + evaporation), so it is a stable gravitational source.
+        const double sHalf = (N - 1) / 2.0;
+        // Small compact body so the latency well is sub-horizon with a visible
+        // 1/r tail (a dense large ball saturates to a black hole — that's the
+        // schwarzschild scenario). ~33 voxels at L=33 -> latencyMax ~0.5.
+        const int R = std::min(2, std::max(1, N / 16));
+        const double R2 = static_cast<double>(R) * R;
+        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+            double rx = x - sHalf, ry = y - sHalf, rz = z - sHalf;
+            if (rx*rx + ry*ry + rz*rz > R2) continue;
+            IP(rb, x, y, z, +1);
+            LOCK(rb, x, y, z);
+        }
+    }
     else if (name == "s0-seed-gravitational-wave") {
         const int gwWl = std::max(4, N / 4);
         const double gwK = 2.0 * PI / gwWl, gwAmp = 0.1;

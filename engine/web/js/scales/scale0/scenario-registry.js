@@ -112,6 +112,7 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Gravity', 's0-seed-schwarzschild', 'Schwarzschild well', ['seed'], '[CONJECTURE]'),
     makeScenario('Gravity', 's0-seed-gravitational-lensing', 'Gravitational lensing (dynamic bending)', ['seed'], '[CONJECTURE]'),
     makeScenario('Gravity', 's0-seed-gravitational-wave', 'Gravitational wave', ['seed'], '[CONJECTURE]'),
+    makeScenario('Gravity', 's0-seed-massive-body', 'Massive body (real mass)', ['seed'], '[DERIVED]'),
     makeScenario('Reference frame context / Observer', 's0-seed-sloop', 'sLoop (self-referential ring)', ['seed'], '[CONJECTURE]'),
     makeScenario('Reference frame context / Observer', 's0-seed-observer-cell', 'Observer cell (3³ lattice)', ['seed'], '[CONJECTURE]'),
     makeScenario('Field Configurations', 's0-field-plane-wave', 'Plane wave', ['field']),
