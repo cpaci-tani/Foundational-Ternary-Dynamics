@@ -218,7 +218,7 @@ void phase_write_main_loop(RenderBridge& rb) {
       // Genesis (dual): chirality density for polarity.
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
-        double p = 1.0 - std::exp(-excess / K_B);
+        double p = 1.0 - std::exp(-excess / K_MANIFEST);
         const std::uint64_t gseed =
             static_cast<std::uint64_t>(rb.toggles.langevin_seed);
         if (voxel_uniform(gseed, i, rb.tick_,
@@ -262,7 +262,7 @@ void phase_write_main_loop(RenderBridge& rb) {
       // Genesis (single): divergence for polarity.
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
-        double p = 1.0 - std::exp(-excess / K_B);
+        double p = 1.0 - std::exp(-excess / K_MANIFEST);
         const std::uint64_t gseed =
             static_cast<std::uint64_t>(rb.toggles.langevin_seed);
         if (voxel_uniform(gseed, i, rb.tick_,
@@ -281,7 +281,7 @@ void phase_write_main_loop(RenderBridge& rb) {
     }
 
     // Evaporation (shared single + dual): low TOTAL wave energy → return to void.
-    constexpr double EVAP_ENERGY = K_B * K_B * EVAP_THRESHOLD;
+    constexpr double EVAP_ENERGY = K_MANIFEST * K_MANIFEST * EVAP_THRESHOLD;
     (void)EVAP_ENERGY;  // declared in original code; unused but preserved.
     double local_energy = v.flux.mag2() + v.wave_vel.mag2();
     {
@@ -290,7 +290,7 @@ void phase_write_main_loop(RenderBridge& rb) {
         local_energy += rb.voxels_[n].flux.mag2() + rb.voxels_[n].wave_vel.mag2();
     }
     if ((do_genesis || do_evaporation) && v.state != 0 && !v.locked) {
-      double evap_prob = std::exp(-local_energy / (K_B * K_B));
+      double evap_prob = std::exp(-local_energy / (K_MANIFEST * K_MANIFEST));
       const std::uint64_t gseed =
           static_cast<std::uint64_t>(rb.toggles.langevin_seed);
       if (voxel_uniform(gseed, i, rb.tick_,
