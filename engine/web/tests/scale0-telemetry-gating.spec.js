@@ -67,7 +67,9 @@ test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
         test.skip(!pre.worker, 'worker path inactive (no cross-origin isolation) — gating freeze is a worker observable');
 
         // ── Phase A: no consumer → audit FREEZES while the sim keeps ticking ──
-        await page.waitForTimeout(900);            // want-mask propagates, worker stops the audit pass
+        // 1500ms (not 900): under heavy load the diagnostics loop sends the
+        // want-mask later, so the worker takes longer to stop the audit pass.
+        await page.waitForTimeout(1500);           // want-mask propagates, worker stops the audit pass
         const a0 = await readProbe(page);
         await page.waitForTimeout(800);
         const a1 = await readProbe(page);

@@ -135,7 +135,7 @@ self.onmessage = (e) => {
                 // Mutators are forwarded verbatim. Some live on capabilities.scale0
                 // (setupScenario/setToggle/setBoundaryShape/setReflectiveBoundary),
                 // some on the bridge itself (injectFlux/clearField/seedRandomFlux/
-                // setParam/setDt/setScale0*Buffer). Try the capability first.
+                // setParam/setDt). Try the capability first.
                 const s0 = bridge && bridge.capabilities && bridge.capabilities.scale0;
                 if (s0 && typeof s0[m.method] === 'function') s0[m.method](...(m.args || []));
                 else if (bridge && typeof bridge[m.method] === 'function') bridge[m.method](...(m.args || []));

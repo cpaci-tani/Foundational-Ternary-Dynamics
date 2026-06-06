@@ -174,10 +174,15 @@ small per-frame `postMessage`, not shared memory. The module requires cross-orig
   `_sparseTick=false` (it never ticks on the main thread). Direct reads (`getFluxVolume`,
   `getFluxSlice`, `inspectVoxel`, the `SCALE0_DIRECT_READS` set) delegate to the shadow → zero-copy
   reads straight off the SABs. Before `ready` they return empty/null fallbacks.
-- The **particle list** is the exception: the shadow owns no particles, so the worker ships
-  `getScale0ParticleList()` in the periodic frame payload (every `PLIST_EVERY` frames) and the proxy
-  serves the latest (`getScale0ParticleList` override; the field terms of audit/Lagrangian read live
-  off the shadow but particle terms read zero — acceptable, see the 06-03 audit's Tier-1/Tier-2 split).
+- **Audit + Lagrangian + the particle list** ride the periodic `frame` payload — **not** the shadow.
+  The shadow never ticks, so a shadow sweep of `getEnergyAudit`/`getLagrangian` would read all-zero
+  (the bug fixed by `b319fd90`). Instead the **worker** computes them and posts scalars; the proxy
+  serves the latest (`_lastAudit`/`_lastLagrangian`/`_lastParticleList`, exposed via the
+  `getScale0EnergyAudit`/`getScale0Lagrangian` caps **and** bare `getEnergyAudit()`/`getLagrangian()`
+  forwarders). Under demand-gating (`FTD_TELEMETRY_ONDEMAND`, 2026-06-05) the worker computes audit +
+  Lagrangian **only when a visible consumer's want-mask is set**, at a cadence decoupled from the tick
+  — see [`SPEC_SCALE0_PERF_TELEMETRY_PANELS.md`](SPEC_SCALE0_PERF_TELEMETRY_PANELS.md) §5.
+  (`getScale0ParticleList` ships every `PLIST_EVERY` frames.)
 
 **Worker (`bridge/mock-bridge.worker.js`):** on `create`, builds a `MockBridge(N)` with `_useSAB=true`,
 applies boundary/reflective/scenario via `applyInit` (`:75-86`), then calls `publishShared(N)`
@@ -191,7 +196,7 @@ when the scenario actually injects flux, so a **particle-only / no-flux** scenar
 (the state grid is SAB-backed too).
 Each frame it updates `_fluxMag` (the O(N³) magnitude — off the main thread), atomically stores
 `TICK`/`PCOUNT` and increments `FRAME`, and posts a small `frame` payload (`tick`, `diag`, `parts`,
-and `particleList` every `PLIST_EVERY`).
+`audit` + `lag` when the telemetry want-mask is set, and `particleList` every `PLIST_EVERY`).
 
 **Teardown:** `terminate()` decrements the live counter, posts `dispose`, and calls
 `worker.terminate()`; `dispose()` is an alias (idempotent, guarded against the double-call). The

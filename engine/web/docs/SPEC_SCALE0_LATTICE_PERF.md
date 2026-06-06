@@ -14,6 +14,14 @@ direct per-frame profile (below), not assumptions. Two complementary phases:
 
 ## 1. Problem & evidence (measured 2026-06-03, Chrome/wasm64, default `flux-pulse`, 14 overlays active)
 
+> **⚠ Superseded for the worker-mode + all-panels-live case (2026-06-05).** This table predates two
+> things: (a) the worker became the default Scale-0 path (so the tick is *off* the main thread, inverting
+> the "tick dominates" accounting), and (b) the energy-audit + Lagrangian sidepanels were wired live, which
+> added an unconditional O(N³) audit pass **every worker tick** (~14 ms/tick at L=97, measured). That
+> regression and its fix (demand-gating) are covered by
+> [`SPEC_SCALE0_PERF_TELEMETRY_PANELS.md`](SPEC_SCALE0_PERF_TELEMETRY_PANELS.md). Re-measure in worker
+> mode before relying on the numbers below.
+
 Per-frame component cost vs lattice size, timed via `preview_eval` on the live bridge:
 
 | L | voxels | **physics tick** | render draw | getFluxVolume | overlays (×14) | diagnostics |
