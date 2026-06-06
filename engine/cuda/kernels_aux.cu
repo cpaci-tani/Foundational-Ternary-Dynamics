@@ -119,11 +119,11 @@ __global__ void weak_transmutation_kernel(
 
     double stress = div_mag + curl_mag + grad_mag;
 
-    constexpr double weak_threshold = K_GENESIS;  // = 3 * K_B
+    constexpr double weak_threshold = K_GENESIS;  // = N_c·K_MANIFEST
     if (stress <= weak_threshold) return;
 
-    // Probabilistic flip: p = 1 - exp(-(stress - threshold) / K_B)
-    double p = 1.0 - exp(-(stress - weak_threshold) / K_B);
+    // Probabilistic flip: p = 1 - exp(-(stress - threshold) / K_MANIFEST)
+    double p = 1.0 - exp(-(stress - weak_threshold) / K_MANIFEST);
     double r = ::ftd::voxel_uniform(rng_seed, i, tick,
                 static_cast<unsigned long long>(::ftd::VoxelRng::WeakTransmutation));
     if (r >= p) return;
@@ -203,8 +203,8 @@ __global__ void pair_production_kernel(
     constexpr double PAIR_THRESHOLD = 2.0 * K_GENESIS;
     if (rho < PAIR_THRESHOLD) return;
 
-    // Probabilistic: p = 1 - exp(-(rho - threshold) / K_B)
-    double p = 1.0 - exp(-(rho - PAIR_THRESHOLD) / K_B);
+    // Probabilistic: p = 1 - exp(-(rho - threshold) / K_MANIFEST)
+    double p = 1.0 - exp(-(rho - PAIR_THRESHOLD) / K_MANIFEST);
     double r = ::ftd::voxel_uniform(rng_seed, i, tick,
                 static_cast<unsigned long long>(::ftd::VoxelRng::PairProduction));
     if (r >= p) return;

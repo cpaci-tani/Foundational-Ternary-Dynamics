@@ -112,8 +112,8 @@ int main() {
     check("G_N denominator = (7+3)^2 = 100",
           (ftd::B_3 + ftd::N_C) * (ftd::B_3 + ftd::N_C) == 100);
 
-    // K_GENESIS = N_C * K_B (factor 3 is the framework integer N_C)
-    check_close("K_GENESIS = N_C * K_B", ftd::K_GENESIS, ftd::N_C * ftd::K_B, 1e-15);
+    // K_GENESIS = N_C * K_MANIFEST (factor 3 is the framework integer N_C; kinetics scale, unified-mass Phase 0)
+    check_close("K_GENESIS = N_C * K_MANIFEST", ftd::K_GENESIS, ftd::N_C * ftd::K_MANIFEST, 1e-15);
 
     // DAMPING = ALPHA [IMPOSED — identification gamma = alpha is a parameter choice (ASSUMP.6)]
     // See: EXPLR_VACUUM_DRAG_DERIVATION.md, SPEC_SIX_ALGORITHMS.md (Algorithm 5)

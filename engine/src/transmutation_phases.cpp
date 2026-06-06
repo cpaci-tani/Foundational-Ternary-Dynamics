@@ -27,7 +27,7 @@ void weak_transmutation_cpu(RenderBridge& rb) {
                       : rb.compute_stress(i);
 
     if (stress > WEAK_THRESHOLD) {
-      double p = 1.0 - std::exp(-(stress - WEAK_THRESHOLD) / K_B);
+      double p = 1.0 - std::exp(-(stress - WEAK_THRESHOLD) / K_MANIFEST);
       if (voxel_uniform(gseed, i, rb.tick_,
                         static_cast<std::uint64_t>(VoxelRng::WeakTransmutation)) < p) {
         rb.set_state(i, static_cast<int8_t>(-v.state));
@@ -67,7 +67,7 @@ void pair_production_cpu(RenderBridge& rb) {
     double jmag = v.flux.mag();
     if (jmag <= K_GENESIS) continue;
 
-    double p = 1.0 - std::exp(-(jmag - K_GENESIS) / K_B);
+    double p = 1.0 - std::exp(-(jmag - K_GENESIS) / K_MANIFEST);
     if (voxel_uniform(gseed, i, rb.tick_,
                       static_cast<std::uint64_t>(VoxelRng::PairProduction)) >= p) continue;
 
