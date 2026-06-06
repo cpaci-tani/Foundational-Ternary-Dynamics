@@ -20,7 +20,7 @@ const NAMES = [
     's0-seed-octahedron','s0-seed-cuboctahedron','s0-seed-stella-octangula',
     's0-seed-moore-cell','s0-seed-moore-decomposition','s0-seed-observer-cell',
     's0-seed-monopole','s0-seed-instanton','s0-seed-sloop',
-    's0-seed-frw-patch','s0-seed-schwarzschild','s0-seed-gravitational-wave',
+    's0-seed-schwarzschild','s0-seed-gravitational-wave',
     's0-seed-wilson-loop','s0-seed-flux-tube',
     // Emergent (9)
     's0-seed-emergent-ic1','s0-seed-emergent-ic1-viz',

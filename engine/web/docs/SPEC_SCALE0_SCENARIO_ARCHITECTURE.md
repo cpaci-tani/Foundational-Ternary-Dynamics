@@ -47,7 +47,7 @@ The subsystem that makes this work is spread across **four parallel definition l
             ┌──────────────── DEFINITION (static) ────────────────┐
   UI registry        JS seed impl         C++ seed impl       Metadata
   scenario-registry  bridge/scenarios/*   engine/src/         config/
-  .js (97 entries)   .js (97 scenarios)   scenarios/ (96)     scenarios.js
+  .js (96 entries)   .js (96 scenarios)   scenarios/ (95)     scenarios.js
        │                   │                    │                 │
        └─── id ────────────┴──── id ────────────┴──── id ─────────┘   (string id = the only key)
                                    │
@@ -95,8 +95,9 @@ scenario is decided per-load by `shouldUseFluxMock()` and `workerEligible()`.
 > confirmed this empirically (`flux-*` → `owner=mock`, all others → `owner=wasm`). See
 > [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md) §A.
 > *Consequence:* a **JS-only** scenario bug is latent (mock-fallback path only) — e.g. the
-> `vacuum-scenarios.js` `harness` ReferenceError (health audit §A.4), which never fires on
-> the deployed WASM path.
+> `vacuum-scenarios.js` `harness` ReferenceError that affected every `s0-vacuum-*` on the mock
+> path but never the deployed WASM path (health audit §A.4; **fixed** 2026-06-05, guarded by a
+> `?engine=mock` test in `tests/scale0-scenario-health.spec.js`).
 
 When a fluxMock owns the scenario, **two bridges coexist**: `ctx.bridge` (the primary
 engine, idle for Scale 0 this scenario) and `state.fluxMock` (the JS mock that actually
@@ -138,9 +139,9 @@ Six prefix group files, each exporting `setupXxxScenario(name, harness, ctx)` th
 | `light-scenarios.js` | `light-` | 4 |
 | `quantum-scenarios.js` | `quantum-` | 9 |
 | `vacuum-scenarios.js` | `s0-vacuum-` | 15 |
-| `s0-seed-scenarios.js` | `s0-seed-` | 45 |
+| `s0-seed-scenarios.js` | `s0-seed-` | 44 |
 | `s0-field-scenarios.js` | `s0-field-` | 8 |
-| **total** | | **102** case-label occurrences = **96** unique scenarios (+ `empty`); the surplus is fall-through/duplicate `case` labels (verified via the parity inventory, §6.3) |
+| **total** | | **101** case-label occurrences = **95** unique scenarios (+ `empty`); the surplus is fall-through/duplicate `case` labels (verified via the parity inventory, §6.3) |
 
 Shared seed primitives live in `bridge/scenarios/_helpers.js`: `injectRadialEnvelope`,
 `injectParticleFull`, `injectDressedParticle`, `injectTriad`, `applyVacuumEnvironment`,
@@ -158,16 +159,17 @@ order (contract in `engine/include/ftd/scenarios.h:58-68`). `name ==` branch cou
 | `light.cpp` | 4 |
 | `quantum.cpp` | 9 |
 | `vacuum.cpp` | **17** |
-| `s0_seed.cpp` | **41** |
+| `s0_seed.cpp` | **40** |
 | `s0_field.cpp` | 8 |
-| **total** | **100** occurrences = **96** unique |
+| **total** | **99** occurrences = **95** unique |
 
 > **Raw counts ≠ unique scenarios.** These are `name ==` *occurrences*; some scenarios are
 > tested in more than one branch (e.g. `name == "a" || name == "b"`), so the deduplicated
-> set is **96 unique C++ scenarios** — exactly matching the 96 unique JS scenarios. The
+> set is **95 unique C++ scenarios** — exactly matching the 95 unique JS scenarios. The
 > JS↔C++ parity guard (§6.3) is **GREEN** (6/6, verified 2026-06-05 after adding
-> `flux-zero-point`: inventory `UI 97 / JS 97 / C++ 96 / shared 96`, +1 C++ legacy). Do
-> **not** read the per-file occurrence counts as drift; the unique scenario sets are in parity.
+> `flux-zero-point` and removing `frw-patch`: inventory `UI 96 / JS 96 / C++ 95 / shared 95`,
+> +1 C++ legacy). Do **not** read the per-file occurrence counts as drift; the unique scenario
+> sets are in parity.
 
 ### 3.4 Metadata — `config/scenarios.js`
 
@@ -212,7 +214,7 @@ The shape every registry entry has (factory form, `scenario-registry.js:1-15`):
 
 `load` has **two realized forms**:
 
-1. **Factory (delegating)** — 87 of 97 entries. `load(harness, params){ harness.setupScenario(params.id || id); }`
+1. **Factory (delegating)** — 86 of 96 entries. `load(harness, params){ harness.setupScenario(params.id || id); }`
    (`:11-13`). All seeding logic lives in the JS/C++ impl layer; the registry entry is a
    pure pointer.
 2. **Custom (imperative)** — 10 entries (`s0-seed-quark-gluon-plasma` `:74-97`, nine
@@ -383,7 +385,7 @@ particle-empty lattice.
 The guard is **GREEN** (6/6, 2026-06-05). It was hardened (B5) so the registry extractor
 (`:112-123`) now matches **both** the `makeScenario(...)` factory form **and** the custom
 object-literal `id:` form — the 10 custom-literal scenarios are no longer invisible (UI inventory
-86 → 97) — plus a new **orphan-metadata** assertion (every `S0_SEED_SCENARIO_METADATA` key must map
+86 → 96) — plus a new **orphan-metadata** assertion (every `S0_SEED_SCENARIO_METADATA` key must map
 to a real scenario). Before the fix the extractor matched only the factory form, and there was no
 registry ↔ metadata check.
 
@@ -419,7 +421,7 @@ away — not "zero-point"). This **removes a real coupling**: before, the loader
 UI↔bridge coupling noted as a modular-boundary gap in §6's preamble). The same change also fixed
 a latent clobber where `applyAuxiliaryDefaults` forced `reflective=false` *after* the scenario's
 boundary had been set, so a scenario-set reflective boundary never stuck. Verified by
-`tests/scale0-zero-point.spec.js` (persistent floor) and the all-scenario sweep (other 96
+`tests/scale0-zero-point.spec.js` (persistent floor) and the all-scenario sweep (other 95
 scenarios unaffected).
 
 ---
@@ -494,7 +496,7 @@ Higher payoff, larger one-time churn; the C++ seed bodies stay hand-written but 
 | Bridges | `bridge/wasm-bridge.js`, `bridge/mock-bridge.js`, `bridge/mock-bridge-proxy.js`, `bridge/bridge-contract.js` |
 | Parity | `tests/scenario-parity.spec.js` |
 
-*Counts — 97 registry entries (87 factory + 10 custom literals), 96 unique JS scenarios,
-96 unique C++ scenarios (+1 C++ legacy; JS↔C++ parity verified **green** 6/6 2026-06-05); raw
-`case` / `name ==` occurrences are 102 / 100. All `file:line` references are as of the 2026-06-05
+*Counts — 96 registry entries (86 factory + 10 custom literals), 95 unique JS scenarios,
+95 unique C++ scenarios (+1 C++ legacy; JS↔C++ parity verified **green** 6/6 2026-06-05); raw
+`case` / `name ==` occurrences are 101 / 99. All `file:line` references are as of the 2026-06-05
 working tree; re-derive from source before relying on them.*

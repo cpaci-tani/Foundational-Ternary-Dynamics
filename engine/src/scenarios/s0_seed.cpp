@@ -670,14 +670,6 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             IF(rb, x, y, z, -mg * rx / r, -mg * ry / r, -mg * rz / r);
         }
     }
-    else if (name == "s0-seed-frw-patch") {
-        int frwStride = RND(1.0 / std::cbrt(0.01));
-        int frwSign = 1;
-        for (int z = 0; z < N; z += frwStride) for (int y = 0; y < N; y += frwStride) for (int x = 0; x < N; x += frwStride) {
-            IP(rb, x, y, z, frwSign);
-            frwSign = -frwSign;
-        }
-    }
     else if (name == "s0-seed-gravitational-wave") {
         const int gwWl = std::max(4, N / 4);
         const double gwK = 2.0 * PI / gwWl, gwAmp = 0.1;

@@ -728,13 +728,6 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     }
                     break;
                 }
-                case 's0-seed-frw-patch': {
-                    const frwStride=Math.round(1.0/Math.cbrt(0.01)); let frwSign=1;
-                    for (let z=0;z<N;z+=frwStride) for (let y=0;y<N;y+=frwStride) for (let x=0;x<N;x+=frwStride) {
-                        harness.injectParticle(x,y,z,frwSign); frwSign=-frwSign;
-                    }
-                    break;
-                }
                 case 's0-seed-gravitational-wave': {
                     const gwWl=Math.max(4,Math.floor(N/4)), gwK=2*Math.PI/gwWl, gwAmp=0.1;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {

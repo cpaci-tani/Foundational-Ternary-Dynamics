@@ -159,4 +159,42 @@ test.describe('Scale-0 all-scenario health sweep', () => {
         expect(errs, 'flux-annihilation should not log a worker error in isolation').toEqual([]);
         expect(snap.manifested + snap.particles, 'flux-annihilation should mount its 4 particles').toBeGreaterThan(0);
     });
+
+    // s0-vacuum-* runs on the WASM engine by default, so the all-scenario sweep
+    // (above) exercises the C++ path. This guards the **MockBridge fallback**
+    // path (Safari / no-COOP-COEP), where setupVacuumScenario used to throw a
+    // `harness`/`this` ReferenceError (health audit §A.4). Force ?engine=mock so
+    // vacuum scenarios run on the JS MockBridge.
+    test('s0-vacuum-* mounts on the MockBridge fallback path (no harness ReferenceError)', async ({ page }) => {
+        const consoleErrors = attachConsoleWatcher(page);
+        await gotoAndReady(page, { path: '/?engine=mock' });
+        await waitForCtx(page);
+
+        const sample = ['s0-vacuum-electron', 's0-vacuum-proton', 's0-vacuum-photon', 's0-vacuum-higgs'];
+        /** @type {Record<string, number>} */
+        const mounted = {};
+        for (const id of sample) {
+            await page.evaluate((scenarioId) => {
+                const sel = document.getElementById('scenario-select');
+                if (![...sel.options].some((o) => o.value === scenarioId)) sel.add(new Option(scenarioId, scenarioId));
+                sel.value = scenarioId;
+                sel.dispatchEvent(new Event('change', { bubbles: true }));
+            }, id);
+            await page.waitForTimeout(550);
+            mounted[id] = await page.evaluate(async () => {
+                const { getScale0State } = await import('/js/scales/scale0/state/store.js');
+                const st = getScale0State();
+                const bridge = (st.useFluxMock && st.fluxMock) ? st.fluxMock : window.__ftdCtx.bridge;
+                const caps = bridge.capabilities.scale0;
+                const p = (caps.getScale0ParticleFrame?.() || {}).count ?? 0;
+                let maxFlux = 0;
+                try { const fv = bridge.getFluxVolume?.(); if (fv) for (let i = 0; i < fv.length; i++) { const a = Math.abs(fv[i]); if (a > maxFlux) maxFlux = a; } } catch { /* ignore */ }
+                return p + (maxFlux > 1e-6 ? 1 : 0);
+            });
+        }
+        const errs = realErrors(consoleErrors);
+        console.log(`[vacuum mock-path] mounted=${JSON.stringify(mounted)} errors=${JSON.stringify(errs)}`);
+        expect(errs, 's0-vacuum-* must not throw on the MockBridge path').toEqual([]);
+        for (const id of sample) expect(mounted[id], `${id} should mount on the mock path`).toBeGreaterThan(0);
+    });
 });
