@@ -86,7 +86,13 @@ export function shouldUseFluxMock(bridge, scenarioName) {
 // (MockBridgeProxy) so the heavy tick never stalls render. Otherwise fall back
 // to the in-thread MockBridge (Safari/iOS, or a deploy host without COOP/COEP).
 // Set FTD_PHYSICS_WORKER false to force the in-thread path everywhere.
-const FTD_PHYSICS_WORKER = true;
+// Window-overridable (default true) so tests can force the synchronous in-thread
+// MockBridge — e.g. audit-regression's manual `b.tick()` + immediate
+// `b.getEnergyAudit()` pattern, which the async worker proxy cannot serve. Set
+// `window.__ftdPhysicsWorker = false` before load to opt out.
+const FTD_PHYSICS_WORKER = (typeof window !== 'undefined' && window.__ftdPhysicsWorker !== undefined)
+    ? !!window.__ftdPhysicsWorker
+    : true;
 export function workerEligible(scenarioId, bridge) {
     return FTD_PHYSICS_WORKER
         && typeof SharedArrayBuffer !== 'undefined'

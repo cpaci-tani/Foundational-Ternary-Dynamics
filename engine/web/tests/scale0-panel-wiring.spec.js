@@ -32,6 +32,16 @@ async function waitForCtx(page) {
 }
 
 test.describe('Scale-0 panel wiring (diagnostics + audit + Lagrangian)', () => {
+    // This spec verifies the telemetry WIRING CONTRACT — every scenario's audit +
+    // Lagrangian are plumbed — by reading the bridge directly WITHOUT opening a
+    // panel. That is the legacy always-collect mode, orthogonal to the UI
+    // demand-gating policy (FTD_TELEMETRY_ONDEMAND, default-on, exercised by
+    // scale0-telemetry-gating.spec.js). Pin the flag OFF here so gating can't
+    // freeze the worker-proxy audit values this contract test reads.
+    test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => { window.__ftdTelemetryOnDemand = false; });
+    });
+
     test('every scenario wires diagnostics, energy-audit and Lagrangian telemetry', async ({ page }) => {
         test.setTimeout(360_000);
         await gotoAndReady(page);
