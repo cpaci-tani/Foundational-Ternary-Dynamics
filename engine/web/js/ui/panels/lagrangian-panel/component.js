@@ -6,6 +6,8 @@ import { TermRow } from './term-row.js';
 import { terms, actionRows, constantRows } from './descriptors/scale0.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import * as consts from '../../../constants.js';
+import { PerfFlags } from '../../../config/perf-flags.js';
+import { isPanelLive } from '../panel-visibility.js';
 
 const LS_HIDDEN = 'ftd.chart.lagrangian.hidden';
 
@@ -130,7 +132,9 @@ export class LagrangianPanelComponent {
     }
 
     update() {
-        if (!this.el.classList.contains('active')) return;
+        // V2: live when the active tab OR a non-collapsed floated window (fixes
+        // the Lagrangian panel freezing while floated). Legacy: active tab only.
+        if (PerfFlags.panelRenderV2 ? !isPanelLive(this.el) : !this.el.classList.contains('active')) return;
         for (const entry of this.cards.values()) entry.chart.update();
         for (const t of this.tables) t.update();
     }
