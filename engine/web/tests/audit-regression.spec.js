@@ -106,6 +106,19 @@ async function totalEnergy(page) {
 
 test.describe('Audit regression — scenario invariants', () => {
 
+    // These invariants drive the bridge with a SYNCHRONOUS manual-tick pattern
+    // (`b.tick()` then immediately read `b.getEnergyAudit()`), which the async
+    // worker proxy (the default for flux-*) cannot serve — the proxy has no bare
+    // tick() and its audit lags a frame. Force the in-thread MockBridge (the
+    // pattern's original, valid bridge) and pin telemetry to always-collect.
+    // Gating itself is covered by scale0-telemetry-gating.spec.js.
+    test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => {
+            window.__ftdPhysicsWorker = false;       // synchronous in-thread bridge
+            window.__ftdTelemetryOnDemand = false;   // legacy always-collect (defensive)
+        });
+    });
+
     test('a) locked triad stays put while unlocked electron drifts (s0-seed-hydrogen)', async ({ page }) => {
         page.on('pageerror', (e) => console.error('PAGEERROR:', e.message));
         page.on('console', (msg) => console.log('BROWSER:', msg.text()));
