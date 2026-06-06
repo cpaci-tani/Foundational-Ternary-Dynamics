@@ -201,14 +201,19 @@ test('all three panels mount without error and render expected structure', async
     expect(chartsReport.cardCount).toBe(chartsReport.activeChips);
     expect(chartsReport.uplotCount).toBeGreaterThan(0);
 
-    // Lagrangian: chart + term row + 2 tables.
+    // Lagrangian: one small-multiple chart per visible term + term row + 2 tables.
     await openTab('lagrangian');
     const lagReport = await page.evaluate(() => ({
-        chart: document.querySelectorAll('#lag-plot-host .uplot').length,
-        terms: document.querySelectorAll('.lag-term-toggle').length,
-        tables: document.querySelectorAll('.lag-data-col .diag-section').length,
+        charts:  document.querySelectorAll('.lag-charts-grid .uplot').length,
+        cards:   document.querySelectorAll('.lag-charts-grid .chart-card:not(.is-leaving)').length,
+        checked: document.querySelectorAll('.lag-term-toggle input:checked').length,
+        terms:   document.querySelectorAll('.lag-term-toggle').length,
+        tables:  document.querySelectorAll('.lag-data-col .diag-section').length,
     }));
-    expect(lagReport.chart).toBe(1);
+    // One uPlot chart per visible (checked) term — stacked, not a single overlay.
+    expect(lagReport.charts).toBeGreaterThan(0);
+    expect(lagReport.charts).toBe(lagReport.checked);
+    expect(lagReport.cards).toBe(lagReport.charts);
     expect(lagReport.terms).toBeGreaterThan(0);
     expect(lagReport.tables).toBe(2);
 

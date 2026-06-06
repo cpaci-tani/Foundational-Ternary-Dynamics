@@ -1,11 +1,11 @@
 /**
- * TermRow — renders the Lagrangian term-toggle row. Each checkbox mirrors
- * its corresponding uPlot legend series; the StackedAreaChart pushes
- * state back via an onLegendChange callback.
+ * TermRow — renders the Lagrangian term-toggle row. Each checkbox shows/hides
+ * that term's small-multiple chart card in the grid (the panel adds/removes the
+ * card on toggle).
  *
  *   const row = new TermRow(terms, { onToggle(key, checked) {…} });
  *   parentEl.appendChild(row.el);
- *   row.setChecked(key, bool); // called from chart legend sync
+ *   row.setChecked(key, bool); // external sync, if needed
  */
 
 import { renderMathInHtml } from '../../math-format/render.js';
