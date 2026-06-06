@@ -388,13 +388,13 @@ __global__ void genesis_kernel(
     double fx = flux_x[i], fy = flux_y[i], fz = flux_z[i];
     double density = sqrt(fx*fx + fy*fy + fz*fz);
 
-    constexpr double k_genesis = 3.0 * K_B;
+    constexpr double k_genesis = K_GENESIS;   // = N_c·K_MANIFEST (kinetics trigger)
     if (density <= k_genesis) return;
 
     // Exponential CDF genesis probability (matches CPU)
-    // p = 1 - exp(-(density - K_GENESIS) / K_B)
+    // p = 1 - exp(-(density - K_GENESIS) / K_MANIFEST)
     double z_gen = density - k_genesis;
-    double p = 1.0 - exp(-z_gen / K_B);
+    double p = 1.0 - exp(-z_gen / K_MANIFEST);
     // BH-F5 (2026-05-05): SplitMix64 stream replaces curand. Bit-exact CPU↔GPU.
     double r = ::ftd::voxel_uniform(rng_seed, i, tick,
                 static_cast<unsigned long long>(::ftd::VoxelRng::GenesisManifest));
@@ -507,7 +507,7 @@ __global__ void evaporation_kernel(
                       + wv_x[j]*wv_x[j] + wv_y[j]*wv_y[j] + wv_z[j]*wv_z[j];
     }
 
-    constexpr double EVAP_THRESHOLD = K_B * K_B * 1e-6;
+    constexpr double EVAP_THRESHOLD = K_MANIFEST * K_MANIFEST * 1e-6;
     if (local_energy < EVAP_THRESHOLD) {
         const int8_t old_state = state[i];
         state[i] = 0;

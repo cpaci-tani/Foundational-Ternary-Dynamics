@@ -246,7 +246,7 @@ int ontic_audit() {
     std::cout << "\n--- Layer 6: Mass Scale ---\n";
     std::cout << std::setprecision(15);
     check("K_B > 0 (electron mass scale)", K_B > 0);
-    check_close("K_GENESIS = N_c * K_B", K_GENESIS, N_C * K_B, 1e-15);
+    check_close("K_GENESIS = N_c * K_MANIFEST", K_GENESIS, N_C * K_MANIFEST, 1e-15);
     // Ontic formula (dimensionless): m_e/m_P = sqrt(2pi) * (16/3) * alpha^11
     double me_mp_ratio = std::sqrt(2.0 * PI) * (16.0 / 3.0) * std::pow(ALPHA, 11);
     std::cout << "    m_e/m_P (ontic)        = " << me_mp_ratio << "\n";
