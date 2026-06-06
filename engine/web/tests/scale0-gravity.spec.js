@@ -41,6 +41,21 @@ test.describe('Scale-0 Gravity Observatory', () => {
         expect(Number.isFinite(tel.gravPE), 'gravity PE finite').toBe(true);
         expect(tel.gnG, 'G_N = 0.01').toBeCloseTo(0.01, 5);
 
+        // Real C++ latency (Phase 2): the field-energy gravity source populates
+        // the genuine voxel.latency Poisson field on the GW scenario, shown in
+        // the panel tagged [C++] (distinct from the |J|² proxy rows above).
+        await expect.poll(async () => page.evaluate(() => window.__ftdGravityPanel?.lastAgg?.active),
+            { timeout: 12_000, message: 'real C++ latency should activate on the GW scenario' }).toBe(true);
+        const cpp = await page.evaluate(() => ({
+            latencyMax: window.__ftdGravityPanel.lastAgg.latencyMax,
+            voxelCount: window.__ftdGravityPanel.lastAgg.voxelCount,
+            txt: document.getElementById('panel-gravity')?.textContent || '',
+        }));
+        expect(cpp.latencyMax, 'real latency max > 0').toBeGreaterThan(0);
+        expect(cpp.voxelCount, 'real latency field populated').toBeGreaterThan(0);
+        expect(cpp.txt.includes('Real C++ latency field'), '[C++] block rendered').toBe(true);
+        expect(cpp.txt.includes('[C++]'), '[C++] tag present').toBe(true);
+
         // Slices: at least one of the 3 axis tiles painted non-background pixels.
         const anyPainted = await page.evaluate(() => {
             let bright = 0;
