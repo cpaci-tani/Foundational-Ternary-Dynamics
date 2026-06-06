@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>spec_scale0_bridge_architecture</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/clipboard/clipboard.min.js"></script>
+<script src="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/quarto-html/popper.min.js"></script>
+<script src="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/quarto-html/anchor.min.js"></script>
+<link href="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="SPEC_SCALE0_BRIDGE_ARCHITECTURE_files/libs/bootstrap/bootstrap-9e3ffae467580fdb927a41352e75a2e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="spec-scale-0-bridge-layer-architecture" class="level1">
+<h1>SPEC — Scale 0 Bridge Layer Architecture</h1>
+<p><strong>Status:</strong> foundation reference (descriptive — documents the system as built). <strong>Scope:</strong> the <strong>bridge layer</strong> that the Scale-0 scenario subsystem and runtime pipeline sit on — the four bridge implementations, the capability-factory pattern, the bridge contract + direct-read surface, the Web-Worker proxy + SharedArrayBuffer design, bridge selection, and dispose/lifecycle. <strong>Companions:</strong> <a href="SPEC_SCALE0_SCENARIO_ARCHITECTURE.md"><code>SPEC_SCALE0_SCENARIO_ARCHITECTURE.md</code></a> (scenarios sit on these bridges), <a href="SPEC_SCALE0_RUNTIME_PIPELINE.md"><code>SPEC_SCALE0_RUNTIME_PIPELINE.md</code></a> (the per-frame loop drives them). Point-in-time audits: <a href="audits/AUDIT_BRIDGE_WIRING_2026-06-03.md"><code>audits/AUDIT_BRIDGE_WIRING_2026-06-03.md</code></a> (read-surface under the worker), <a href="AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md"><code>AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md</code></a> (lifecycle/teardown). Worker design: <a href="PLAN_SCALE0_PHYSICS_WORKER.md"><code>PLAN_SCALE0_PHYSICS_WORKER.md</code></a>.</p>
+<p><strong>Path convention:</strong> JS paths relative to <code>engine/web/js/</code>; docs relative to <code>engine/web/docs/</code>. Every claim carries a <code>file:line</code> — re-derive from source before relying on it (the discipline that keeps these docs honest; counts/line numbers are as of 2026-06-05).</p>
+<hr>
+<section id="the-30-second-model" class="level2">
+<h2 class="anchored" data-anchor-id="the-30-second-model">1. The 30-second model</h2>
+<p>A <strong>bridge</strong> is the uniform object the whole dashboard talks to for physics: <code>ctx.bridge</code>. It owns the lattice/particle state and exposes <code>setupScenario</code>, <code>tick</code>, samplers, diagnostics, and toggles. There are <strong>four implementations</strong> behind one symmetric surface, chosen by capability and environment:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Bridge</th>
+<th>File</th>
+<th>Role</th>
+<th><code>isWasm</code>/<code>isNativeGPU</code>/<code>isWorker</code></th>
+<th>Ready</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>WebSocketBridge</strong></td>
+<td><code>ws-bridge.js</code></td>
+<td>Native C++ engine (auto-GPU on CUDA) over <code>ws://127.0.0.1:9100</code> — the fastest path when <code>ws_server.exe</code> is running</td>
+<td><code>isNativeGPU: true</code></td>
+<td>async (connect)</td>
+</tr>
+<tr class="even">
+<td><strong>WasmBridge</strong></td>
+<td><code>bridge/wasm-bridge.js</code></td>
+<td>Emscripten C++ engine in-browser — the canonical path</td>
+<td><code>isWasm: true</code></td>
+<td>async (<code>init</code>)</td>
+</tr>
+<tr class="odd">
+<td><strong>MockBridge</strong></td>
+<td><code>bridge/mock-bridge.js</code></td>
+<td>Pure-JS reference lattice — offline/parity/fallback</td>
+<td>(all false)</td>
+<td>sync (immediate)</td>
+</tr>
+<tr class="even">
+<td><strong>MockBridgeProxy</strong></td>
+<td><code>bridge/mock-bridge-proxy.js</code></td>
+<td>Worker wrapper around a MockBridge; main thread reads its <code>SharedArrayBuffer</code>s zero-copy</td>
+<td><code>isWorker: true</code></td>
+<td>async (worker <code>ready</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>All four present the <strong>same surface</strong> via two mechanisms: the <strong>capability factory</strong> (§3) for the <code>bridge.capabilities.scaleN.*</code> namespace, and the <strong>bridge contract</strong> (§4) for the direct read/mutate methods. The scenario subsystem and the runtime pipeline are written against that surface and never branch on bridge type — <em>except</em> the two places that must: scenario bridge-ownership (<code>shouldUseFluxMock</code>, §6) and the worker read-surface (§5).</p>
+<pre><code>            ctx.bridge  (one of four impls)
+                 │  capabilities.scale0.*   (factory — §3)
+                 │  direct reads/mutates     (contract  — §4)
+   ┌─────────────┼───────────────┬───────────────────┐
+WebSocketBridge  WasmBridge   MockBridge        MockBridgeProxy
+  (native GPU)    (WASM C++)   (JS reference)   (Worker + SAB shadow — §5)</code></pre>
+<hr>
+</section>
+<section id="the-four-bridges" class="level2">
+<h2 class="anchored" data-anchor-id="the-four-bridges">2. The four bridges</h2>
+<section id="websocketbridge-native-gpu-ws-bridge.js" class="level3">
+<h3 class="anchored" data-anchor-id="websocketbridge-native-gpu-ws-bridge.js">2.1 WebSocketBridge — native GPU (<code>ws-bridge.js</code>)</h3>
+<p>A drop-in bridge that forwards to a native C++ <code>RenderBridge</code> (auto-GPU on CUDA builds) running as <code>ws_server.exe</code> on <code>ws://127.0.0.1:9100</code>. Probed <strong>first</strong> at boot (§6); if the socket connects it becomes <code>ctx.bridge</code>. Flags: <code>isNativeGPU: true</code>, <code>isWasm: false</code>. It throttles high-frequency diagnostics queries and lazily constructs a fallback <code>MockBridge</code> for any method the protocol doesn’t implement. No explicit <code>dispose()</code> — the socket closes on page unload. (Absent <code>ws_server.exe</code>, the connection fails fast and boot falls through to WASM; the <code>ws://…:9100</code> connection error is known-benign console noise, filtered by <code>tests/_helpers.js</code> <code>KNOWN_NOISE</code>.)</p>
+</section>
+<section id="wasmbridge-emscripten-c-bridgewasm-bridge.js" class="level3">
+<h3 class="anchored" data-anchor-id="wasmbridge-emscripten-c-bridgewasm-bridge.js">2.2 WasmBridge — Emscripten C++ (<code>bridge/wasm-bridge.js</code>)</h3>
+<p>The canonical in-browser path. <code>init(latticeSize)</code> (<code>:116-142</code>) loads the WASM module via a <strong>singleton load promise</strong> (<code>_wasmLoadPromise</code>, prevents duplicate <code>&lt;script&gt;</code> injection) and sets <code>ready=true</code>. It selects wasm32 vs wasm64 at load time (§7). Key surface:</p>
+<ul>
+<li><code>setupScenario(name, harness)</code> (<code>:373-376</code>) → <code>this._module.setupScenario(this._bridge, name)</code> (the C++ <code>dispatch_scenario</code>).</li>
+<li><code>reset(latticeSize)</code> (<code>:180-230</code>) <strong>destroys and re-allocates</strong> the C++ <code>RenderBridge</code> at the same voxel count (drops <code>_pe</code>/<code>_ae</code>/<code>_aeFallback</code> first) to bound peak memory.</li>
+<li>The <strong><code>_wasmCallOr</code> guard</strong> (<code>:89-93</code>) wraps ~20 sampler methods that may be absent from the module, returning frozen <code>EMPTY_FIELD_SAMPLE</code>/<code>EMPTY_SCALAR_SAMPLE</code> singletons (<code>:68-83</code>) so a missing sampler degrades to empty without a per-call allocation. Every heap read returns an Emscripten <code>typed_memory_view</code> (memory-model-agnostic — see the wasm64 spot-check in the 06-03 audit).</li>
+<li>Scale 1 (ParticleEngine) is delegated to C++; Scale 2 (AtomEngine) is currently forced to a JS MockBridge fallback (<code>_aeHasWasm: false</code>, the Planck-unit conversion shim is unbuilt).</li>
+</ul>
+</section>
+<section id="mockbridge-pure-js-bridgemock-bridge.js" class="level3">
+<h3 class="anchored" data-anchor-id="mockbridge-pure-js-bridgemock-bridge.js">2.3 MockBridge — pure JS (<code>bridge/mock-bridge.js</code>)</h3>
+<p>The reference physics implementation: offline testing, JS↔︎C++ parity, and the Scale-2/3 fallback. <code>ready</code> immediately (no async init); snaps even lattice sizes to odd. Internal state: <code>_tick</code>, <code>_dt</code>, <code>_particles[]</code>, and the flux buffers <code>_fluxJ</code>/<code>_fluxWV</code> (Float64×3), <code>_fluxMag</code> (Float64), <code>_stateGrid</code> (Int8) allocated by <code>_initFluxGrid</code> — backed by <code>SharedArrayBuffer</code>s when <code>_useSAB</code> is set (the worker path, §5). It composes focused factories: lattice samplers, the diagnostics provider (energy caching, <code>bridge/mock-diagnostics.js</code>), the ParticleEngine, the AtomEngine, and the scenario dispatcher (<code>runSetupScenario</code>). <code>setupScenario(name, harness)</code> (<code>:1704</code>) dispatches to the JS scenario library. Sparse-tick optimization (<code>_sparseTick</code>/<code>_activeBox</code>, <code>SPEC_SCALE0_LATTICE_PERF</code> §3) restricts work to the active flux region, falling back to dense when the wave fills the box.</p>
+</section>
+<section id="mockbridgeproxy-web-worker-bridgemock-bridge-proxy.js" class="level3">
+<h3 class="anchored" data-anchor-id="mockbridgeproxy-web-worker-bridgemock-bridge-proxy.js">2.4 MockBridgeProxy — Web Worker (<code>bridge/mock-bridge-proxy.js</code>)</h3>
+<p>A main-thread proxy whose physics runs in a Web Worker so the heavy O(N³) tick never stalls render. The <strong>default deployed Scale-0 path</strong> since 2026-06-03 (cross-origin-isolation enabled). Flags: <code>isWorker: true</code>. Architecture in §5. A live counter <code>window.__ftdScale0Workers()</code> → <code>{live, created, terminated}</code> backs <code>tests/scale0-worker-teardown.spec.js</code> (worker conservation).</p>
+<hr>
+</section>
+</section>
+<section id="the-capability-factory-pattern" class="level2">
+<h2 class="anchored" data-anchor-id="the-capability-factory-pattern">3. The capability-factory pattern</h2>
+<p>The four bridges expose <strong>raw</strong> methods on themselves (<code>bridge.tick()</code>, <code>bridge.getFluxVolume()</code>), but those vary in signature/presence. The dashboard talks to a <strong>symmetric</strong> per-scale surface instead: <code>bridge.capabilities.scale0.*</code>. This is installed once at module load by <code>installCapabilityGetter(proto)</code> (<code>bridge/capabilities/install.js:22-36</code>), a lazy, cached getter on each bridge prototype:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Object</span><span class="op">.</span><span class="fu">defineProperty</span>(proto<span class="op">,</span> <span class="st">'capabilities'</span><span class="op">,</span> {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">configurable</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">get</span>() {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span><span class="kw">this</span><span class="op">.</span><span class="at">_capabilities</span>) <span class="kw">this</span><span class="op">.</span><span class="at">_capabilities</span> <span class="op">=</span> {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">scale0</span><span class="op">:</span> <span class="fu">createScale0Capabilities</span>(<span class="kw">this</span>)<span class="op">,</span>   <span class="co">// closes over the bridge instance</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">scale1</span><span class="op">:</span> <span class="fu">createScale1Capabilities</span>(<span class="kw">this</span>)<span class="op">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">scale2</span><span class="op">:</span> <span class="fu">createScale2Capabilities</span>(<span class="kw">this</span>)<span class="op">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">this</span><span class="op">.</span><span class="at">_capabilities</span><span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>createScale0Capabilities(bridge)</code> (<code>bridge/capabilities/scale0.js</code>) returns an object whose every method closes over that bridge: <code>tickScale0: () =&gt; bridge.tick()</code>, <code>setupScenario: (name) =&gt; bridge.setupScenario(name)</code> (<code>:56</code>), <code>getScale0FieldSamples({kind, stride})</code> (a dispatcher over <code>e</code>/<code>b</code>/<code>poynting</code>/<code>divJ</code>/<code>vorticity</code>/<code>helicity</code>/<code>kretschmann</code>/<code>latency</code>/<code>fisher</code>/<code>coherence</code>/<code>curlJ</code>/ <code>state</code>/<code>gaussResidual</code>), <code>getScale0Diagnostics</code>, <code>getScale0EnergyAudit</code>, <code>getScale0Lagrangian</code>, <code>setToggle</code>, <code>setBoundaryShape</code>, etc. (The snapshot/scrub capability pair was removed 2026-06-05 — the simulation is forward-only; see <code>SPEC_SCALE0_RUNTIME_PIPELINE.md</code> §8.)</p>
+<p><strong>Why the indirection:</strong> (1) a guaranteed-present, uniform surface so callers never branch on bridge type; (2) namespace isolation (raw methods stay on the instance, the scale surface lives under <code>.capabilities.scaleN</code>); (3) lazy + cached per instance. The factory is also installed on the <strong>worker’s</strong> MockBridge prototype, so the same <code>capabilities.scale0.tickScale0()</code> drives physics off-thread. Contract: <code>CONTRACTS.md</code> §2.</p>
+<hr>
+</section>
+<section id="the-bridge-contract-direct-read-surface" class="level2">
+<h2 class="anchored" data-anchor-id="the-bridge-contract-direct-read-surface">4. The bridge contract + direct-read surface</h2>
+<p><code>bridge/bridge-contract.js</code> is the documentation-and-anti-drift layer. The <code>ScaleBridge</code> typedef (<code>:19-58</code>) lists every method both bridges must implement with matching shape — identity (<code>isWasm</code>, <code>ready</code>, <code>latticeSize</code>), lifecycle (<code>reset</code>), scenarios (<code>setupScenario</code>), diagnostics, the particle list, the field samplers, and the 2D slice. No class formally <code>implements</code> it (JS has no nominal interfaces); the parity is by convention + the regression tests.</p>
+<p>The load-bearing export is <strong><code>SCALE0_DIRECT_READS</code></strong> (<code>:80-110</code>) — the canonical list of read methods consumers call <strong>directly</strong> on the bridge object (not via <code>capabilities.scale0.*</code>). Under the worker proxy the bridge is a <code>MockBridgeProxy</code>; it must forward every one of these to its shadow, or the consumer silently blanks. The list is the single source of truth, consumed by both <code>mock-bridge-proxy.js</code> (installs one shadow-delegating forwarder per name) and the worker spec. This is the <strong>reference example of a contract done right</strong> — one named export wired into both the implementation and its regression test, so adding a sampler to one place can’t silently break charts. (History: <code>inspectVoxel</code> was patched in one-at-a-time in <code>68024ba1</code> before this list existed.) Full treatment: <code>audits/AUDIT_BRIDGE_WIRING_2026-06-03.md</code>.</p>
+<hr>
+</section>
+<section id="the-worker-proxy-architecture-sab-shadow" class="level2">
+<h2 class="anchored" data-anchor-id="the-worker-proxy-architecture-sab-shadow">5. The worker-proxy architecture (SAB shadow)</h2>
+<p>The worker path decouples the heavy tick from the render loop while keeping reads cheap.</p>
+<p><strong>Shared memory</strong> — <code>bridge/shared-field.js</code> is the single source of truth for the layout: one <code>SharedArrayBuffer</code> per buffer (<code>fluxJ</code>/<code>fluxWV</code> Float64×3, <code>fluxMag</code> Float64, <code>state</code> Int8; <code>FIELD_BYTES</code> <code>:10-15</code>) plus a small <strong>Int32 control SAB</strong> (<code>CTRL = {FRAME, N, TICK, RUNNING, PCOUNT, LEN:8}</code> <code>:19</code>) carrying the frame counter and a few live integers via <code>Atomics</code>. <code>allocSharedField(N)</code> allocates the set; <code>viewSharedField(sab)</code> builds typed-array views — <strong>used identically on the worker side and the main-thread shadow</strong> (both see the same memory). Float64 scalars (energies) ride the small per-frame <code>postMessage</code>, not shared memory. The module requires cross-origin isolation (COOP/COEP via <code>serve.py</code>); callers gate on <code>crossOriginIsolated</code>.</p>
+<p><strong>Main thread (<code>MockBridgeProxy</code>):</strong> - <code>setupScenario(name)</code> posts a <code>create</code> message (N, scenarioId, toggles, boundary) and flips <code>_ready=false</code>; mutators (<code>injectFlux</code>, <code>setToggle</code>, …) post <code>command</code> messages via <code>_cmd</code>. - A <strong>shadow <code>MockBridge</code></strong> has its flux/state buffers <strong>repointed</strong> to the worker’s SABs, with <code>_sparseTick=false</code> (it never ticks on the main thread). Direct reads (<code>getFluxVolume</code>, <code>getFluxSlice</code>, <code>inspectVoxel</code>, the <code>SCALE0_DIRECT_READS</code> set) delegate to the shadow → zero-copy reads straight off the SABs. Before <code>ready</code> they return empty/null fallbacks. - The <strong>particle list</strong> is the exception: the shadow owns no particles, so the worker ships <code>getScale0ParticleList()</code> in the periodic frame payload (every <code>PLIST_EVERY</code> frames) and the proxy serves the latest (<code>getScale0ParticleList</code> override; the field terms of audit/Lagrangian read live off the shadow but particle terms read zero — acceptable, see the 06-03 audit’s Tier-1/Tier-2 split).</p>
+<p><strong>Worker (<code>bridge/mock-bridge.worker.js</code>):</strong> on <code>create</code>, builds a <code>MockBridge(N)</code> with <code>_useSAB=true</code>, applies boundary/reflective/scenario, calls <code>publishShared(N)</code> (allocates the SAB set, posts <code>ready</code> with the SABs), and starts a self-ticking <code>setTimeout</code> loop (~60 Hz, tick-time-limited at large L). Each frame it updates <code>_fluxMag</code> (the O(N³) magnitude — off the main thread), atomically stores <code>TICK</code>/<code>PCOUNT</code> and increments <code>FRAME</code>, and posts a small <code>frame</code> payload (<code>tick</code>, <code>diag</code>, <code>parts</code>, and <code>particleList</code> every <code>PLIST_EVERY</code>).</p>
+<p><strong>Teardown:</strong> <code>terminate()</code> decrements the live counter, posts <code>dispose</code>, and calls <code>worker.terminate()</code>; <code>dispose()</code> is an alias (idempotent, guarded against the double-call). The worker’s <code>dispose</code> clears its timer and disposes its MockBridge. <code>setFluxMock</code> disposes the prior proxy before overwriting (<code>state/store.js:137-148</code>) — verified by <code>scale0-worker-teardown.spec.js</code>.</p>
+<hr>
+</section>
+<section id="bridge-selection-boot-scale-switches-and-scale-0-flux-mock-ownership" class="level2">
+<h2 class="anchored" data-anchor-id="bridge-selection-boot-scale-switches-and-scale-0-flux-mock-ownership">6. Bridge selection — boot, scale switches, and Scale-0 flux-mock ownership</h2>
+<p><strong>Boot probe order</strong> (<code>app.js</code>, ~<code>:468-523</code>): <code>?engine=mock</code> forces MockBridge; otherwise try <strong>native</strong> (<code>tryNativeBridge</code> → WebSocketBridge on <code>ws://127.0.0.1:9100</code>), then <strong>WASM</strong> (<code>createBridge</code> → <code>WasmBridge.init</code>, falling back to MockBridge on failure), landing on whichever succeeds as <code>ctx.bridge</code>. The status chip reflects the winner (Native/WASM/Mock · GPU/CPU).</p>
+<p><strong>Scale switches</strong> (<code>app.js</code> <code>switchEngineMode</code>): Scales 0–3 <strong>reuse the single app-level <code>ctx.bridge</code></strong>; Scales 4 (planetary) and 5 (cosmic) construct their own bridge inside their <code>loadScenario</code> and may swap <code>ctx.bridge</code> (so callers must re-read <code>ctx.bridge</code> each frame — <code>CONTRACTS.md</code> §3; the inspector is re-pointed at the main bridge on a switch back, audit P1-1).</p>
+<p><strong>Scale-0 flux-mock ownership</strong> — the one place Scale 0 may run on a <strong>second</strong> bridge: <code>shouldUseFluxMock(bridge, scenarioName)</code> (<code>scales/scale0/runtime/scenario-loader.js:121-132</code>): native GPU/WS → never; <code>flux-</code> prefix → always the JS mock; else probe <code>getFluxVolume()</code> and use the mock if the active bridge can’t serve flux. <code>workerEligible(...)</code> (<code>:140-145</code>) additionally requires <code>FTD_PHYSICS_WORKER &amp;&amp; SharedArrayBuffer &amp;&amp; crossOriginIsolated</code>, and <code>makeFluxMock</code> (<code>:146-150</code>) builds a <code>MockBridgeProxy</code> (worker) or in-thread <code>MockBridge</code> accordingly. When a flux-mock owns the scenario, <code>state.fluxMock</code> ticks and <code>ctx.bridge</code> is idle for Scale 0 (<code>state.useFluxMock</code> selects which one the runtime ticks/reads — see the runtime SPEC §2). The resize heap-guard estimates the <strong>owning</strong> bridge’s per-voxel cost (<code>scenario-loader.js:356-385</code>): mock ≈150 B/voxel (2 GB JS cap), C++ ≈1300 B/voxel (8 GB wasm64 / 2 GB wasm32).</p>
+<hr>
+</section>
+<section id="wasm32-vs-wasm64-memory64" class="level2">
+<h2 class="anchored" data-anchor-id="wasm32-vs-wasm64-memory64">7. wasm32 vs wasm64 (Memory64)</h2>
+<p><code>WasmBridge</code> feature-detects Memory64 once per session (<code>supportsMemory64()</code>, <code>:51-62</code>: construct a <code>new WebAssembly.Memory({index:'i64'})</code> and catch). Supported → load <code>wasm/ftd_core64.js</code> (<code>createFTDModule64</code>, 8 GB heap); unsupported (iOS/Safari, flagged Firefox) → <code>wasm/ftd_core.js</code> (<code>createFTDModule</code>, 2 GB heap). <code>this.isWasm64</code> records the choice; exactly one build loads per session (the <code>_wasmLoadPromise</code> singleton). The build sets <code>-sMEMORY64=1 -sWASM_BIGINT=1</code> (<code>engine/wasm/CMakeLists.txt</code>); all heap reads go through <code>typed_memory_view</code> (no manual JS pointer arithmetic), so the JS side is memory-model-agnostic (06-03 audit A5). Heap cap feeds the resize guard (§6).</p>
+<hr>
+</section>
+<section id="dispose-lifecycle" class="level2">
+<h2 class="anchored" data-anchor-id="dispose-lifecycle">8. Dispose / lifecycle</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Bridge</th>
+<th><code>reset()</code></th>
+<th><code>dispose()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>WebSocketBridge</strong></td>
+<td>reconnect</td>
+<td>implicit (socket closes on unload)</td>
+</tr>
+<tr class="even">
+<td><strong>WasmBridge</strong> (<code>:238-251</code>)</td>
+<td>destroy + re-allocate the C++ RenderBridge at the same N (drops PE/AE first)</td>
+<td><code>delete()</code> the C++ RenderBridge + ParticleEngine + AtomEngine, dispose the JS AE fallback, drop the lazy harness, <code>ready=false</code> — idempotent</td>
+</tr>
+<tr class="odd">
+<td><strong>MockBridge</strong></td>
+<td>clear particles/fields, reset <code>_tick</code>, re-init flux buffers</td>
+<td>typed arrays GC’d on dereference; engines cleared by the owning controller</td>
+</tr>
+<tr class="even">
+<td><strong>MockBridgeProxy</strong> (<code>:176-182</code>)</td>
+<td>re-<code>create</code> on the worker</td>
+<td><code>terminate()</code>: decrement live counter, post <code>dispose</code>, <code>worker.terminate()</code> — idempotent</td>
+</tr>
+</tbody>
+</table>
+<p>Scenario switches reset via <code>setupScenario</code>→<code>reset</code> inside the dispatcher; scale switches dispose panels + the flux-mock via the lifecycle controller (<code>scales/scale0/controller.js</code> <code>mount</code>/<code>destroy</code>, audit 06-04). Lifecycle validity (no leaked rAF subscribers / GPU memory / workers across switches) is verified end-to-end in <code>AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md</code> (71/71) and <code>scale0-worker-teardown.spec.js</code>.</p>
+<hr>
+</section>
+<section id="quick-reference-files" class="level2">
+<h2 class="anchored" data-anchor-id="quick-reference-files">9. Quick reference — files</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concern</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Native GPU bridge</td>
+<td><code>ws-bridge.js</code></td>
+</tr>
+<tr class="even">
+<td>WASM bridge</td>
+<td><code>bridge/wasm-bridge.js</code></td>
+</tr>
+<tr class="odd">
+<td>JS reference bridge</td>
+<td><code>bridge/mock-bridge.js</code> (+ <code>bridge/mock-diagnostics.js</code>)</td>
+</tr>
+<tr class="even">
+<td>Worker proxy</td>
+<td><code>bridge/mock-bridge-proxy.js</code> + <code>bridge/mock-bridge.worker.js</code> + <code>bridge/shared-field.js</code></td>
+</tr>
+<tr class="odd">
+<td>Capability factory</td>
+<td><code>bridge/capabilities/install.js</code> + <code>scale0.js</code>/<code>scale1.js</code>/<code>scale2.js</code></td>
+</tr>
+<tr class="even">
+<td>Contract + direct-reads</td>
+<td><code>bridge/bridge-contract.js</code></td>
+</tr>
+<tr class="odd">
+<td>Construction / re-export shim</td>
+<td><code>bridge/bridge-init.js</code></td>
+</tr>
+<tr class="even">
+<td>Selection / boot probe</td>
+<td><code>app.js</code> (native → WASM → mock); flux-mock: <code>scales/scale0/runtime/scenario-loader.js:121-150</code></td>
+</tr>
+</tbody>
+</table>
+<p><em><code>file:line</code> references are as of the 2026-06-05 source; re-derive before relying on them. The capability-getter and SAB layout (§3, §5) were verified verbatim; the rest is mapped from source with file:line and should be re-confirmed for exact line numbers.</em></p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
