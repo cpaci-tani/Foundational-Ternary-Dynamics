@@ -296,15 +296,21 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     const harness = getPhysicsHarness(ctx.bridge);
     scenario.load(harness, params);
 
-    // Absorbing edges — set LAST, after scenario.load (which resets the engine
-    // toggles on the physics bridge). Without this the set never reaches the
-    // running bridge (the dual-bridge routing tangle). Scoped to the gravity/wave
-    // family (SCALE0_ABSORBING_SCENARIOS) so every other scenario keeps its full
-    // flux volume — enabling the sponge broadly collapsed many volumes to a
-    // damped slab. Engine side: render_bridge.cpp Rule 5b.
-    const wantAbsorb = SCALE0_ABSORBING_SCENARIOS.has(scenario.id);
-    ctx.bridge.capabilities.scale0.setToggle?.('absorbing_boundary', wantAbsorb);
-    fluxMock?.capabilities?.scale0?.setToggle?.('absorbing_boundary', wantAbsorb);
+    // Gravity/wave family (SCALE0_ABSORBING_SCENARIOS): set LAST, after
+    // scenario.load (which resets the engine toggles under the dual-bridge
+    // routing) so these actually reach the running bridge. Two things:
+    //   • absorbing_boundary — outgoing waves disperse into the void at the
+    //     faces (render_bridge.cpp Rule 5b). Scoped here so other scenarios keep
+    //     their full flux volume (enabling it broadly collapsed volumes to slabs).
+    //   • latency_field + field_energy_gravity — run the REAL latency Poisson
+    //     ([IMPOSED] sourced from field-energy density), so the gravity panel can
+    //     show the genuine C++ potential, not only the |J|² proxy.
+    const isGravity = SCALE0_ABSORBING_SCENARIOS.has(scenario.id);
+    for (const sc of [ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0]) {
+        sc?.setToggle?.('absorbing_boundary', isGravity);
+        sc?.setToggle?.('latency_field', isGravity);
+        sc?.setToggle?.('field_energy_gravity', isGravity);
+    }
 
     setCurrentScenarioId(scenario.id);
     setSelectedScenarioId(scenario.id);

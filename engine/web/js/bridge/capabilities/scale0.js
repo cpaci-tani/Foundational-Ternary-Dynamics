@@ -55,6 +55,12 @@ export function createScale0Capabilities(bridge) {
         setReflectiveBoundary: (on) => bridge.setReflectiveBoundary?.(on),
         setupScenario: (name) => bridge.setupScenario(name),
         setToggle: (key, value) => bridge.setToggle?.(key, value),
+        // Phase 2 gravity panel: REAL C++ latency field (voxel.latency Poisson),
+        // distinct from the |J|² proxy. Both bridges expose these (WASM = real,
+        // MockBridge = inactive stub), so the panel contract is symmetric.
+        getScale0GravityMetricAgg: () => bridge.getGravityMetricAgg?.()
+            ?? { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 },
+        getScale0LatencyVolume: () => bridge.getLatencyVolume?.() ?? new Float64Array(0),
         get latticeSize() { return bridge.latticeSize || 33; },
     };
 }
