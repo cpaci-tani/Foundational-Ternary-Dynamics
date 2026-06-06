@@ -1,6 +1,8 @@
 # SPEC — Scale-0 Performance: Telemetry Demand-Gating, Panel Rendering, and Config Hardening
 
-**Status:** `[DESIGN — awaiting approval]`  ·  **Date:** 2026-06-05  ·  **Scope:** `engine/web` Scale-0
+**Status:** `[PARTIALLY IMPLEMENTED — 2026-06-05]` — Phase 1 + Phase 2 shipped, verified, and **on by
+default**; Phase 3 partial (G done); Phase 3-F, the §6.2/§6.3 render items, and Phase 4-N deferred (see
+§9 status).  ·  **Date:** 2026-06-05  ·  **Scope:** `engine/web` Scale-0
 consumption-side per-frame cost (telemetry collection, sidepanel rendering, overlay sampling, GC
 hygiene, worker-path config). The **producer** side (the wave tick + worker offload) is covered by
 [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md) and is already shipped — this spec is the
@@ -248,6 +250,21 @@ and use it in all four panels' `update()`. Add the missing self-guard to `diagno
 
 After each phase: re-run the Phase-0 harness (gains confirmed, no regression) **and** the regression suite
 (§11).
+
+### Implementation status (2026-06-05)
+
+| Item | Status | Notes |
+|---|---|---|
+| **Phase 1** (demand-gate telemetry, `FTD_TELEMETRY_ONDEMAND`) | ✅ shipped, default ON | Measured ~14.3 ms/tick audit pass reclaimed at L=97. `scale0-telemetry-gating.spec.js`; flag-off verified across all ~95 scenarios + smoke. |
+| **Phase 2** (`isPanelLive` predicate + telemetry-grid caching/gate, `FTD_PANEL_RENDER_V2`) | ✅ shipped, default ON | Fixes floated charts/Lagrangian freeze + collapsed-grid 60 Hz. `scale0-panel-render.spec.js`. |
+| **§6.2** uPlot no-rescale | ⏳ deferred | Needs per-chart range tracking; risk of visual clipping. The 30 Hz cap already halves the floated-grid repaint rate. |
+| **§6.3** overlay `sampleFieldState` amortization | ⏳ deferred | Must preserve the per-sweep coherence snapshot — careful change. |
+| **Phase 3-G** `Int8Array(N³)` audit scratch hoist | ✅ shipped | Persistent grow-in-place; bit-identical. |
+| **Phase 3-M** dead-code sweep | ✅ done | `MemoryRecorder`/`globalTick`/`timeline/`/`*Scale0*Buffer` confirmed gone (one stale worker comment fixed). |
+| **Phase 3-F** conservation/spectrum/p1 wrong-bridge | ⏳ deferred | Routing to the worker entangles with the Phase-1 want-set (an always-on consumer would defeat gating); needs a visibility gate + conditional want-mask. Tracked. |
+| **Phase 3-H/L** `getFluxSlice` double-buffer / empty-particle skip | ⏳ deferred | Marginal GC (off-by-default overlays); Phase 1 already reduced audit frequency. |
+| **Phase 4-O** doc reconciliation (stale §5 shadow note + §1 table) | ✅ done | This commit. |
+| **Phase 4-N** COOP/COEP indicator | ⏳ deferred | Verify prod headers; add a "worker path active?" status chip. |
 
 ---
 

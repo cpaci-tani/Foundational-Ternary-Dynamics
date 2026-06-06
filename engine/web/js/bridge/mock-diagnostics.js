@@ -119,20 +119,34 @@ export function createDiagnosticsProvider(state) {
             const J = state._fluxJ;
             const WV = state._fluxWV;
             // Build a per-voxel state map so divergence's source term s(x)
-            // can be looked up. Single allocation per call (~Int8Array of
-            // size N³); GC-friendly.
-            // Sparse: only manifested particles contribute. Skip the
-            // allocation if there are none.
+            // can be looked up. Only manifested particles contribute, so the map
+            // is sparse: skip it entirely when there are no particles.
+            //
+            // Persistent grow-in-place scratch (SPEC_SCALE0_PERF §7-G): a fresh
+            // Int8Array(N³) per audit is ~2 MB/call at L=129 and churns GC on the
+            // audit cadence. Instead keep one buffer (reallocated only on resize)
+            // and clear just the voxels stamped last call — O(particles), and the
+            // map stays all-zero outside this call's particles (bit-identical).
             let stateMap = null;
             if (state._particles.length > 0) {
-                stateMap = new Int8Array(N * N * N);
+                if (!state._derivedStateMap || state._derivedStateMapN !== N) {
+                    state._derivedStateMap = new Int8Array(N * N * N);
+                    state._derivedStateMapN = N;
+                    state._derivedStateMapDirty = [];
+                }
+                stateMap = state._derivedStateMap;
+                const dirty = state._derivedStateMapDirty;
+                for (let i = 0; i < dirty.length; i++) stateMap[dirty[i]] = 0;
+                dirty.length = 0;
                 for (let i = 0; i < state._particles.length; i++) {
                     const p = state._particles[i];
                     if (p.state === 0) continue;
                     const px = ((p.x | 0) % N + N) % N;
                     const py = ((p.y | 0) % N + N) % N;
                     const pz = ((p.z | 0) % N + N) % N;
-                    stateMap[pz * N * N + py * N + px] = p.state;
+                    const cell = pz * N * N + py * N + px;
+                    stateMap[cell] = p.state;
+                    dirty.push(cell);
                 }
             }
 
