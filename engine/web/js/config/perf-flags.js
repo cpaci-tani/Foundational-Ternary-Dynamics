@@ -18,8 +18,11 @@ function _flag(winKey, def) {
 
 export const PerfFlags = {
     /** Phase 1 — demand-gate the audit/Lagrangian telemetry streams on consumer
-     *  visibility + field-version change (main thread + worker want-mask). */
-    get telemetryOnDemand() { return _flag('__ftdTelemetryOnDemand', false); },
+     *  visibility + field-version change (main thread + worker want-mask).
+     *  DEFAULT ON (2026-06-05): verified by scale0-telemetry-gating.spec.js +
+     *  the all-scenario panel-wiring gate. Set `window.__ftdTelemetryOnDemand =
+     *  false` to restore the legacy always-collect behavior (instant rollback). */
+    get telemetryOnDemand() { return _flag('__ftdTelemetryOnDemand', true); },
 
     /** Phase 2 — panel/overlay render optimizations (collapsed-grid gate,
      *  no-rescale chart draws, overlay sample amortization). */
