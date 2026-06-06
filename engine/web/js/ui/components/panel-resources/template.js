@@ -450,29 +450,6 @@ export function getPhysicsPanelTemplate() {
     `;
 }
 
-export function getHierarchyPanelTemplate() {
-    return `
-        <div class="panel" id="panel-hierarchy">
-            <div class="panel-resource-shell panel-resource-shell-padded">
-                <div class="panel-resource-grid panel-resource-grid-3">
-                    <div class="card panel-resource-card" id="hierarchy-tower">
-                        <div class="card-title">Aggregation Levels</div>
-                        <div class="panel-resource-empty">Loading...</div>
-                    </div>
-                    <div class="card panel-resource-card" id="hierarchy-bridge">
-                        <div class="card-title">Scale Bridge</div>
-                        <div class="panel-resource-empty">Loading...</div>
-                    </div>
-                    <div class="card panel-resource-card" id="hierarchy-emergence">
-                        <div class="card-title">Emergence Monitor</div>
-                        <div class="panel-resource-empty">Loading...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
 export function getPlanetaryPanelTemplate() {
     return `
         <div class="panel" id="panel-planetary">

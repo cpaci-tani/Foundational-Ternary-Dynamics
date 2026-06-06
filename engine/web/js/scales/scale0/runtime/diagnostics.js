@@ -84,8 +84,5 @@ export function updateDiagnosticsAndPanels(ctx, state) {
         case 'inspector':
             ctx.inspector.update();
             break;
-        case 'hierarchy':
-            ctx.updateHierarchyPanel();
-            break;
     }
 }
