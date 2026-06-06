@@ -1,6 +1,10 @@
 # SPEC — Scale-0 Lattice Spectroscopy (Spectrum panel redesign) + Hierarchy panel removal
 
-**Status:** `[DESIGN — approved direction; details delegated "do what makes the most sense — this is a science tool"]`
+**Status:** `[IMPLEMENTED — 2026-06-06]` — hierarchy panel removed; Lattice Spectroscopy shipped + verified
+(`scale0-spectrum.spec.js` confirms Parseval ≈ 1 on the live lattice; `scales.spec` + all-96-scenario health
+green). One simplification from §7: **Deep Measure runs on the main thread** (full-res via the stride-1
+sampler → M=64 FFT ≈ a few ms, one-time on click) rather than worker-offloaded — fast enough that the
+worker protocol was unnecessary; revisit only if it stalls at very large L.
 **Date:** 2026-06-06 · **Scope:** `engine/web` Scale-0 — replace the particle-mass "Spectrum Scanner"
 with a field-spectroscopy instrument; remove the Hierarchy panel.
 
