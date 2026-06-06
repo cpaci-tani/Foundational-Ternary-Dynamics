@@ -58,6 +58,15 @@ void phase_write_main_loop(RenderBridge& rb);
 /// regardless of OMP thread scheduling (ARCH-7).
 void phase_write_assign_pending_ids(RenderBridge& rb);
 
+/// Absorbing-boundary sponge: a graduated quadratic-ramp damping shell at the
+/// lattice faces (width D = min(6, max(2, N/4)), f(d) = (d/D)²) applied to the
+/// observable flux/wave_vel AND the dual L/R substrates, so outgoing waves
+/// disperse into the void at the edges instead of wrapping/reflecting. Mirrors
+/// the MockBridge JS sponge. Invoked from tick() ONLY when
+/// toggles.absorbing_boundary is on (default off → golden-tick hash +
+/// conservation tests unchanged).
+void apply_absorbing_boundary(RenderBridge& rb);
+
 // =============================================================================
 // Phase 4b — phase_forces decomposition (2026-04-27)
 //
