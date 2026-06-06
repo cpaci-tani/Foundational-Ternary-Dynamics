@@ -25,6 +25,16 @@ let pframe = 0;                // postFrame counter — throttles the particle-l
 const PLIST_EVERY = 6;         // ship getScale0ParticleList() ~every 6th frame (≈10 Hz)
 const TARGET_DT = 1000 / 60;   // cap physics at ~60 Hz; tick-time-limited at large L
 
+// Telemetry mask + cadence (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5.2). Until the main
+// thread sends a mask (FTD_TELEMETRY_ONDEMAND off → it never does), the worker stays
+// in LEGACY mode and computes audit/Lagrangian every tick (pre-2026-06-05 behavior,
+// the exact rollback path). Once managed, it computes them only when a consumer wants
+// them AND at a decoupled ~panel cadence — the audit pass is a full O(N³).
+let telManaged = false;
+let wantAudit = true, wantLag = true;
+let telFrame = 0;
+const TELEMETRY_EVERY = 4;     // compute audit/Lagrangian ~every 4th tick when managed
+
 function publishShared(N) {
     pframe = 0;                                       // ship the particle list on the next frame
     const sab = bridge.getSharedField();
@@ -44,9 +54,16 @@ function postFrame() {
     // Energy audit + Lagrangian: small scalar objects, but the main-thread shadow
     // never ticks, so the diagnostics audit-rows, conservation panel, and the whole
     // Lagrangian panel are dead unless the worker (which owns the real state) posts
-    // them. Both reuse the per-tick energy cache → cheap after getScale0Diagnostics.
-    try { if (s0.getScale0EnergyAudit) audit = s0.getScale0EnergyAudit(); } catch (e) { /* ignore */ }
-    try { if (s0.getScale0Lagrangian) lag = s0.getScale0Lagrangian(); } catch (e) { /* ignore */ }
+    // them. ensureFieldDerivedCache (the audit's curl/Poynting/div pass) is a full
+    // O(N³) — gate it on a visible consumer + a decoupled cadence once managed.
+    let doAudit = wantAudit, doLag = wantLag;
+    if (telManaged) {
+        const due = (telFrame++ % TELEMETRY_EVERY) === 0;
+        doAudit = wantAudit && due;
+        doLag = wantLag && due;
+    }
+    try { if (doAudit && s0.getScale0EnergyAudit) audit = s0.getScale0EnergyAudit(); } catch (e) { /* ignore */ }
+    try { if (doLag && s0.getScale0Lagrangian) lag = s0.getScale0Lagrangian(); } catch (e) { /* ignore */ }
     // Particle LIST (x,y,z,state,charge,…) for spectrum / observables / harness —
     // the main-thread shadow owns no particles, so the list must come from here.
     // Throttled: it changes slowly and the panels sample at ≤4 Hz. Null on
@@ -128,6 +145,11 @@ self.onmessage = (e) => {
             }
             case 'setRunning':
                 if (ctrl) Atomics.store(ctrl, CTRL.RUNNING, m.value ? 1 : 0);
+                break;
+            case 'setTelemetryMask':
+                telManaged = true;
+                wantAudit = !!m.audit; wantLag = !!m.lag;
+                telFrame = 0;          // compute next frame (catch-up on panel open)
                 break;
             case 'dispose':
                 if (timer) { clearTimeout(timer); timer = 0; }

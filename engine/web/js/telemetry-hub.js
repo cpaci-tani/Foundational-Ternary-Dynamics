@@ -71,6 +71,13 @@ export class TelemetryHub {
         this.s4  = { diag: null };
         this.s5  = { diag: null, cosmic: null };
 
+        // Demand-gated telemetry bookkeeping (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5).
+        // The audit / Lagrangian streams collect only when a consumer is visible AND
+        // the field version advanced (or a panel just opened — catch-up edge).
+        this._lastAuditVersion = -1;
+        this._prevWantAudit = false;
+        this._prevWantLag = false;
+
         // ── Scale 0 — Lattice / Flux ────────────────────
         // Core diagnostics (500-sample history)
         this.flux      = new RingBuffer(500);  // totalFlux
@@ -414,6 +421,9 @@ export class TelemetryHub {
                 ]) b.clear();
                 this.s0 = { diag: null, audit: null, lagrangian: null };
                 this._initialEnergy = null;
+                this._lastAuditVersion = -1;
+                this._prevWantAudit = false;
+                this._prevWantLag = false;
                 break;
             case 1:
                 for (const b of [

@@ -187,6 +187,9 @@ function _makeCtx() {
         get ticksPerFrame() { return ticksPerFrame; },
         get engineMode() { return engineMode; },
         get activeTab() { return activeTab; },
+        // Is a telemetry consumer visible? (active dock tab OR a floated window.)
+        // Drives demand-gated telemetry collection (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5.1).
+        isPanelVisible: (panelId) => activeTab === panelId || floatingWindowManager.has(panelId),
         get frameCount() { return frameCount; },
         get dom() { return _dom; },
         updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
