@@ -2,6 +2,8 @@ import { getChartsPanelTemplate } from './template.js';
 import { ChartCard } from './chart-card.js';
 import { charts as scale0Charts } from './descriptors/scale0.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
+import { PerfFlags } from '../../../config/perf-flags.js';
+import { isPanelLive } from '../panel-visibility.js';
 
 const LS_ACTIVE = 'ftd.charts.active';
 
@@ -86,7 +88,9 @@ export class ChartsPanelComponent {
     }
 
     update() {
-        if (!this.el.classList.contains('active')) return;
+        // V2: live when the active tab OR a non-collapsed floated window (fixes
+        // charts freezing while floated). Legacy: active tab only (§6.4).
+        if (PerfFlags.panelRenderV2 ? !isPanelLive(this.el) : !this.el.classList.contains('active')) return;
         for (const card of this.cards.values()) card.update();
     }
 

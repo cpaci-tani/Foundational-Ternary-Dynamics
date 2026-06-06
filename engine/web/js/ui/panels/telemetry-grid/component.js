@@ -1,5 +1,10 @@
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { getChartTheme, resolveChartColor } from '../../charts/theme.js';
+import { PerfFlags } from '../../../config/perf-flags.js';
+import { isPanelLive } from '../panel-visibility.js';
+
+const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz cap for floated panels (SPEC_SCALE0_PERF §6.1)
+const MAX_SPARK = 500;              // ring-buffer cap; per-channel buffers preallocated to this
 
 // Create a single synchronized cursor registry for all sparklines in the grid
 const telemetrySync = uPlot.sync("telemetry-grid-sync");
@@ -177,12 +182,32 @@ export class TelemetryGridPanelComponent {
 
             // eslint-disable-next-line no-undef
             const u = new uPlot(uopts, [[], []], plotContainer);
-            this.charts.set(chan.key, u);
+
+            // Cache the value <span> + preallocate the sparkline buffers ONCE so
+            // update() neither queries the DOM nor allocates per frame (§6.1). xs
+            // is a static index ramp; ys is refilled each update.
+            const valueEl = card.querySelector('.telemetry-card-value');
+            const xs = new Float64Array(MAX_SPARK);
+            for (let i = 0; i < MAX_SPARK; i++) xs[i] = i;
+            const ys = new Float64Array(MAX_SPARK);
+
+            this.charts.set(chan.key, { u, valueEl, xs, ys });
         });
     }
 
     update() {
-        if (!this.el.classList.contains('active') && !this.el.closest('.floating-window')) return;
+        if (PerfFlags.panelRenderV2) {
+            // Don't redraw an invisible panel: skip when collapsed/hidden, and cap
+            // floated panels (driven every frame by app.js) to ~30 Hz (§6.1). A
+            // docked active tab is driven at ~20 Hz already, so the cap only bites
+            // the floated 60 Hz case.
+            if (!isPanelLive(this.el)) return;
+            const now = performance.now();
+            if (this._lastDraw && (now - this._lastDraw) < PANEL_MIN_INTERVAL_MS) return;
+            this._lastDraw = now;
+        } else if (!this.el.classList.contains('active') && !this.el.closest('.floating-window')) {
+            return;
+        }
 
         const app = document.getElementById('app');
         const currentScale = app?.dataset.activeScale || '0';
@@ -196,8 +221,8 @@ export class TelemetryGridPanelComponent {
         }
 
         activeChannels.forEach((chan) => {
-            const chart = this.charts.get(chan.key);
-            if (!chart) return;
+            const entry = this.charts.get(chan.key);
+            if (!entry) return;
 
             // Resolve ring buffer source path from telemetryHub
             const pathParts = chan.buffer.split('.');
@@ -208,27 +233,14 @@ export class TelemetryGridPanelComponent {
 
             if (!buf || buf.count === 0) return;
 
-            const n = buf.count;
-            const xs = new Float64Array(n);
-            const ys = new Float64Array(n);
+            // Reuse the preallocated buffers + cached value element — no per-frame
+            // allocation and no DOM query (§6.1).
+            const { u, valueEl, xs, ys } = entry;
+            const n = Math.min(buf.count, MAX_SPARK);
+            for (let i = 0; i < n; i++) ys[i] = buf.get(i);
 
-            for (let i = 0; i < n; i++) {
-                xs[i] = i;
-                ys[i] = buf.get(i);
-            }
-
-            // Update uPlot sparkline data
-            chart.setData([xs, ys], true);
-
-            // Update formatted label value
-            const latestVal = buf.last();
-            const card = this.container.querySelector(`[data-channel-key="${chan.key}"]`);
-            if (card) {
-                const valDisplay = card.querySelector('.telemetry-card-value');
-                if (valDisplay) {
-                    valDisplay.textContent = this.formatValue(latestVal, chan.unit);
-                }
-            }
+            u.setData([xs.subarray(0, n), ys.subarray(0, n)], true);
+            if (valueEl) valueEl.textContent = this.formatValue(buf.last(), chan.unit);
         });
     }
 
@@ -250,12 +262,12 @@ export class TelemetryGridPanelComponent {
     }
 
     reflowCharts() {
-        this.charts.forEach((chart, key) => {
+        this.charts.forEach((entry, key) => {
             const card = this.container.querySelector(`[data-channel-key="${key}"]`);
             if (card) {
                 const plotContainer = card.querySelector('.telemetry-card-plot');
                 if (plotContainer && plotContainer.clientWidth > 0) {
-                    chart.setSize({
+                    entry.u.setSize({
                         width: plotContainer.clientWidth,
                         height: 70
                     });
@@ -269,7 +281,7 @@ export class TelemetryGridPanelComponent {
             this._ro.disconnect();
             this._ro = null;
         }
-        this.charts.forEach((chart) => chart.destroy());
+        this.charts.forEach((entry) => entry.u.destroy());
         this.charts.clear();
     }
 }

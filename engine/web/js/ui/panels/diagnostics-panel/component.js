@@ -8,6 +8,8 @@
 import { DiagnosticsTable } from './table.js';
 import { sections as scale0Sections } from './descriptors/scale0.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
+import { PerfFlags } from '../../../config/perf-flags.js';
+import { isPanelLive } from '../panel-visibility.js';
 
 export class DiagnosticsPanelComponent {
     constructor(panelEl) {
@@ -31,11 +33,15 @@ export class DiagnosticsPanelComponent {
         this.el.dataset.component = 'diagnostics-panel';
         // Populate cells immediately so rows never show init em-dash
         // (formatters render 0 for missing/null/undefined).
-        this.update();
+        this.update(true);
         return this;
     }
 
-    update() {
+    update(force = false) {
+        // V2: self-gate on visibility (incl. collapse) so a hidden or
+        // floated-collapsed diagnostics panel doesn't redraw ~23 sparklines.
+        // `force` lets init() populate once regardless. Legacy: caller-gated (§6.4).
+        if (!force && PerfFlags.panelRenderV2 && !isPanelLive(this.el)) return;
         for (const t of this.tables) t.update();
     }
 
