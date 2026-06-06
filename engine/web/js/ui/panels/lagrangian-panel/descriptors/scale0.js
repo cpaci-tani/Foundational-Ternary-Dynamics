@@ -1,6 +1,7 @@
 /**
  * Scale 0 Lagrangian panel descriptor.
- * `terms` drives the stacked-area chart + term-checkbox row.
+ * `terms` drives the per-term small-multiple charts + term-checkbox row (each
+ * term renders as its own mini line-chart, stacked in the grid — not overlaid).
  * `actionRows` and `constantRows` drive the two sidecar tables.
  */
 
