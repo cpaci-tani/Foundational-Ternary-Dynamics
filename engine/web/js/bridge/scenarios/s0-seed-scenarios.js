@@ -728,6 +728,19 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     }
                     break;
                 }
+                case 's0-seed-massive-body': {
+                    // A dense ball of LOCKED rest mass. Gravity from REAL manifested
+                    // mass (rho = M_REST*|state|) via the latency-Poisson solver
+                    // (latency_field on), not the |J|^2 field-energy proxy. Locked => static.
+                    const R = Math.min(2, Math.max(1, Math.floor(N/16)));
+                    const R2 = R*R;
+                    for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
+                        const rx=x-midF, ry=y-midF, rz=z-midF;
+                        if (rx*rx+ry*ry+rz*rz > R2) continue;
+                        harness.injectParticle(x, y, z, +1, { locked: true });
+                    }
+                    break;
+                }
                 case 's0-seed-gravitational-wave': {
                     const gwWl=Math.max(4,Math.floor(N/4)), gwK=2*Math.PI/gwWl, gwAmp=0.1;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
