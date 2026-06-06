@@ -6,7 +6,6 @@ export { ZooPanelComponent, initZooPanel } from './zoo-panel/component.js';
 export { OnticPanelComponent, initOnticPanel } from './ontic-panel/component.js';
 export { PhysicsPanelComponent, initPhysicsPanel } from './physics-panel/component.js';
 export { PlanetaryPanelComponent, initPlanetaryPanel } from './planetary-panel/component.js';
-export { HierarchyPanelComponent, initHierarchyPanel } from './hierarchy-panel/component.js';
 export { CosmicInfoPanelComponent, initCosmicInfoPanel } from './cosmic-info-panel/component.js';
 export { MetaInfoPanelComponent, initMetaInfoPanel } from './meta-info-panel/component.js';
 export { ScenePanelComponent, initScenePanel } from './scene-panel/component.js';

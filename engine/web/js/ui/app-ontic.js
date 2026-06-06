@@ -28,9 +28,6 @@ import {
     renderInfoDynamics
 } from '../ontic-observatory.js';
 import {
-    renderAggregationTower, renderScaleBridge, renderEmergenceMonitor
-} from '../aggregation-bridge.js';
-import {
     ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS,
     ALPHA, K_B, G_STAR, VARPI, X_PLUS, X_MINUS,
 } from '../constants.js';
@@ -38,13 +35,13 @@ import {
 /**
  * Build the ontic-panel provider bound to the given deps.
  * @returns { populateConstants, initOnticPhysicsHierarchy,
- *            renderOnticChainSummary, updateOnticPanel, updateHierarchyPanel,
+ *            renderOnticChainSummary, updateOnticPanel,
  *            getOnticDiagnostics, getRawDiagnostics }
  */
 export function createOnticPanel(deps) {
     const {
         getBridge, getEngineMode,
-        getObservatory, getAggregateDetector, getEmergenceMonitor,
+        getObservatory,
         getPhysicsZ, setPhysicsZ,
     } = deps;
 
@@ -97,9 +94,8 @@ export function createOnticPanel(deps) {
             });
         }
 
-        // Initial render of ontic + hierarchy panels
+        // Initial render of ontic panels
         updateOnticPanel();
-        updateHierarchyPanel();
     }
 
     function renderOnticChainSummary(container) {
@@ -145,32 +141,6 @@ export function createOnticPanel(deps) {
         if (obsCard) renderObserverCard(observatory, obsCard);
         if (hierCard) renderOnticHierarchy(observatory, hierCard);
         if (infoCard) renderInfoDynamics(observatory, infoCard);
-    }
-
-    function updateHierarchyPanel() {
-        const aggregateDetector = getAggregateDetector();
-        const emergenceMonitor = getEmergenceMonitor();
-        if (!aggregateDetector || !emergenceMonitor) return;
-
-        const diagData = getOnticDiagnostics();
-
-        // Record emergence data
-        emergenceMonitor.record(diagData);
-
-        // Aggregation tower
-        const { levels, details } = aggregateDetector.detect(diagData);
-        const towerEl = document.getElementById('hierarchy-tower');
-        if (towerEl) renderAggregationTower(levels, details, towerEl);
-
-        // Scale bridge
-        const engineMode = getEngineMode();
-        const scaleIdx = engineMode === 'atoms' ? 2 : engineMode === 'particles' ? 1 : 0;
-        const bridgeEl = document.getElementById('hierarchy-bridge');
-        if (bridgeEl) renderScaleBridge(scaleIdx, diagData, bridgeEl);
-
-        // Emergence monitor
-        const emergeEl = document.getElementById('hierarchy-emergence');
-        if (emergeEl) renderEmergenceMonitor(emergenceMonitor.getTrajectory(), emergeEl);
     }
 
     /**
@@ -271,7 +241,6 @@ export function createOnticPanel(deps) {
         initOnticPhysicsHierarchy,
         renderOnticChainSummary,
         updateOnticPanel,
-        updateHierarchyPanel,
         getOnticDiagnostics,
         getRawDiagnostics,
         refreshPhysicsPanel,

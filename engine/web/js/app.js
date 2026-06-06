@@ -193,7 +193,6 @@ function _makeCtx() {
         get frameCount() { return frameCount; },
         get dom() { return _dom; },
         updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
-        updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
         resetAllVisualState: _resetAllVisualState,
         _resetAllVisualState,
         updatePlayButton,
@@ -777,7 +776,6 @@ const _scale1Ctx = {
     fluxEnergyChart: null, particleChart: null, peTelemetry: null,
     activeTab: null, frameCount: 0, dom: _dom, now: 0,
     updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
-    updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
 };
 
 function _buildScale1Ctx(now) {
@@ -804,7 +802,6 @@ const _scale2Ctx = {
     activeTab: null, frameCount: 0, dom: _dom, now: 0,
     updatePlayButton,
     updateOnticPanel:   () => onticPanel?.updateOnticPanel(),
-    updateHierarchyPanel: () => onticPanel?.updateHierarchyPanel(),
     resetAllVisualState: _resetAllVisualState,
     setRunning: (v) => { running = v; },
     engineMode: null,
@@ -1047,8 +1044,6 @@ function wireTabs() {
             if (peTelemetry) peTelemetry.drawCharts();
         } else if (target === 'physics') {
             onticPanel?.refreshPhysicsPanel();
-        } else if (target === 'hierarchy') {
-            onticPanel?.updateHierarchyPanel();
         }
     };
 
@@ -1758,7 +1753,7 @@ function clearCharts() {
 // ── Phase 1-3: Ontic / Physics / Hierarchy ────────
 // Moved to ui/app-ontic.js as Wave 2 ticket 7 of the large-file refactor.
 // Call via onticPanel.initOnticPhysicsHierarchy / updateOnticPanel /
-// updateHierarchyPanel / refreshPhysicsPanel / getOnticDiagnostics /
+// refreshPhysicsPanel / getOnticDiagnostics /
 // getRawDiagnostics / renderOnticChainSummary. See
 // docs/SPEC_REFACTOR_LARGE_FILES.md §4.
 

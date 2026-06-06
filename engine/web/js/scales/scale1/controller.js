@@ -182,7 +182,7 @@ export function animatePE(ctx) {
         bridge, viewport, running, ticksPerFrame, inspector,
         fluxEnergyChart, particleChart, peTelemetry,
         activeTab, frameCount, dom, now,
-        updateOnticPanel, updateHierarchyPanel
+        updateOnticPanel
     } = ctx;
 
     // ── 1. Tick PE simulation while running ──────────────────────────
@@ -341,9 +341,6 @@ export function animatePE(ctx) {
                 break;
             case 'inspector':
                 inspector.update();
-                break;
-            case 'hierarchy':
-                updateHierarchyPanel();
                 break;
         }
     }
