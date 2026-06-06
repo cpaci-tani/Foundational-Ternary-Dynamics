@@ -561,6 +561,13 @@ void RenderBridge::tick() {
   if (toggles.movement)
     phase_movement();
 
+  // Rule 5b: Absorbing-boundary sponge — disperse outgoing waves into the void
+  // at the lattice faces. Runs AFTER gauss/forces/movement (the last flux
+  // writers) so the damped edge shell is NOT refilled by the Gauss projection.
+  // Gated; default off → golden-tick hash + conservation tests unchanged.
+  if (toggles.absorbing_boundary)
+    apply_absorbing_boundary(*this);
+
 
   // Self-field floor moved to Rule 3b (after Gauss, before forces) in Phase 3.
   // No second floor here — eliminates the double-injection energy leak.

@@ -2,7 +2,7 @@ import { getPhysicsHarness } from '../../../physics/index.js';
 import { MockBridge } from '../../../bridge-init.js';
 import { MockBridgeProxy } from '../../../bridge/mock-bridge-proxy.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
-import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY } from '../../../config/toggles.js';
+import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY, SCALE0_ABSORBING_SCENARIOS } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
 import {
     clearFluxMock,
@@ -295,6 +295,16 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     const harness = getPhysicsHarness(ctx.bridge);
     scenario.load(harness, params);
+
+    // Absorbing edges — set LAST, after scenario.load (which resets the engine
+    // toggles on the physics bridge). Without this the set never reaches the
+    // running bridge (the dual-bridge routing tangle). Scoped to the gravity/wave
+    // family (SCALE0_ABSORBING_SCENARIOS) so every other scenario keeps its full
+    // flux volume — enabling the sponge broadly collapsed many volumes to a
+    // damped slab. Engine side: render_bridge.cpp Rule 5b.
+    const wantAbsorb = SCALE0_ABSORBING_SCENARIOS.has(scenario.id);
+    ctx.bridge.capabilities.scale0.setToggle?.('absorbing_boundary', wantAbsorb);
+    fluxMock?.capabilities?.scale0?.setToggle?.('absorbing_boundary', wantAbsorb);
 
     setCurrentScenarioId(scenario.id);
     setSelectedScenarioId(scenario.id);
