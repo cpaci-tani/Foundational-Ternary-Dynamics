@@ -263,6 +263,7 @@ bool* find_toggle(ftd::TermToggles& t, const std::string& name) {
     if (name == "pair_production")  return &t.pair_production;
     if (name == "exchange_force")   return &t.exchange_force;
     if (name == "latency_field")    return &t.latency_field;
+    if (name == "absorbing_boundary") return &t.absorbing_boundary;
     return nullptr;
 }
 
