@@ -88,6 +88,11 @@ export class MockBridgeProxy {
             this._ctrl = v.ctrl;
             this._ready = true;
         } else if (m.type === 'frame') {
+            // Keep the shadow's tick-keyed caches (buildLatencyProxy → latency /
+            // Kretschmann telemetry) live: without this the shadow tick stays 0
+            // and those proxies freeze at frame 1 on the worker path. Guard against
+            // a late frame arriving after teardown nulls the shadow.
+            if (this._shadow) this._shadow._tick = m.tick | 0;
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
             if (m.particleList) this._lastParticleList = m.particleList;
