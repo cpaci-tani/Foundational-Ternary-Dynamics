@@ -31,12 +31,19 @@ const M_LIVE = 32;            // live FFT grid (band-limited)
 const M_DEEP = 64;            // Deep Measure FFT grid (full band)
 
 const METRIC_KINDS = [
-    { kind: 'vorticity',   name: 'Vorticity',   sym: 'ω',  unit: '|∇×J|' },
-    { kind: 'helicity',    name: 'Helicity',    sym: 'H',  unit: 'J·∇×J' },
-    { kind: 'coherence',   name: 'Coherence',   sym: 'C',  unit: '' },
-    { kind: 'fisher',      name: 'Fisher info', sym: 'I',  unit: '' },
-    { kind: 'kretschmann', name: 'Kretschmann', sym: 'K',  unit: 'curv' },
+    { kind: 'vorticity',   name: 'Vorticity',   sym: 'ω',  desc: 'ω = |∇×J| — local rotation / swirl of the flux field; high where the field circulates.' },
+    { kind: 'helicity',    name: 'Helicity',    sym: 'H',  desc: 'H = J·(∇×J) — linking / handedness of field lines; nonzero for helical (Beltrami) flows.' },
+    { kind: 'coherence',   name: 'Coherence',   sym: 'C',  desc: 'Phase coherence — how ordered (vs random / turbulent) the field is locally.' },
+    { kind: 'fisher',      name: 'Fisher info', sym: 'I',  desc: 'Fisher information — local distinguishability / how sharply the field varies.' },
+    { kind: 'kretschmann', name: 'Kretschmann', sym: 'K',  desc: 'Kretschmann scalar — the effective curvature the field imprints on the substrate.' },
 ];
+
+const SECTION_HELP = {
+    spectrum: 'Spatial energy spectrum E(k): the FFT power spectrum of the flux field J — which spatial scales hold the field energy (a turbulence-style spectrum). Peak λ* is the dominant wavelength; slope p<0 = energy at large scales, p>0 = small-scale (UV) buildup; Parseval ≈ 1 confirms the transform is correct. Deep Measure resolves the full k-range (the live view is band-limited to large scales).',
+    topology: 'Topological structure of the field. Gauss violation: how well ∇·E = ρ holds. Defects: monopole-like sources/sinks of div·J. Flux tubes: connected coherent |J| structures (confinement strings). Chirality: left vs right handedness asymmetry.',
+    metrics: 'Field metrics with their spatial distributions. Each row shows the metric RMS plus a histogram of its per-voxel values — the histogram shape reveals structure (uniform / peaked / bimodal) a single mean would hide.',
+    energy: 'How the field energy partitions across channels (E-field / B-field / wave / total), the net Poynting flux |S|, and the energy drift since the run started.',
+};
 
 function liveStride(L) { return Math.max(1, Math.min(6, Math.round(L / 40))); }
 
@@ -142,18 +149,23 @@ function renderSpectrum(container, r, isDeep) {
 
 // ── Render: ② topology ───────────────────────────────────────────────────────
 
-function row(label, value, tag = 'D', color = 'var(--text-primary)') {
-    return `<div class="spec-row"><span class="spec-row-l">${tagBadge(tag)}${label}</span><span class="spec-row-v" style="color:${color}">${value}</span></div>`;
+function row(label, value, tag = 'D', color = 'var(--text-primary)', tip = '') {
+    const t = tip ? ` title="${tip}"` : '';
+    return `<div class="spec-row"><span class="spec-row-l"${t}>${tagBadge(tag)}${label}</span><span class="spec-row-v" style="color:${color}">${value}</span></div>`;
 }
 
 function renderTopology(container, t) {
     const gaugeOk = t.gauss < 1e-4;
     container.innerHTML =
-        row('Gauss violation Σ(∇·E−ρ)²', formatExp(t.gauss), 'M', gaugeOk ? 'var(--positive)' : 'var(--warning)') +
-        row('  max |Gauss error|', formatExp(t.gaussMax), 'M', 'var(--text-muted)') +
-        row('Defects (src / sink / net)', `${t.defects.sources} / ${t.defects.sinks} / ${t.defects.net >= 0 ? '+' : ''}${t.defects.net}`, 'D') +
-        row('Flux tubes (count / largest)', `${t.tubes.count} / ${t.tubes.largest}`, 'D') +
-        row('Chirality (E asym / wv asym)', `${formatFixed(t.chir.eAsym, 3)} / ${formatFixed(t.chir.wvAsym, 3)}`, 'M');
+        row('Gauss violation Σ(∇·E−ρ)²', formatExp(t.gauss), 'M', gaugeOk ? 'var(--positive)' : 'var(--warning)',
+            'Sum of squared Gauss-law residuals ∇·E−ρ over the lattice. Near 0 (green) = the constraint holds; large = drift.') +
+        row('  max |Gauss error|', formatExp(t.gaussMax), 'M', 'var(--text-muted)', 'The worst single-voxel Gauss-law residual.') +
+        row('Defects (src / sink / net)', `${t.defects.sources} / ${t.defects.sinks} / ${t.defects.net >= 0 ? '+' : ''}${t.defects.net}`, 'D', undefined,
+            'Monopole-like sources (div·J>0) and sinks (div·J<0) above half the peak |div·J|; net = signed imbalance. A proxy, not a quantized charge.') +
+        row('Flux tubes (count / largest)', `${t.tubes.count} / ${t.tubes.largest}`, 'D', undefined,
+            'Connected components of |J| above a threshold (6-neighbour, periodic) — coherent flux bundles / confinement strings: count and largest size.') +
+        row('Chirality (E asym / wv asym)', `${formatFixed(t.chir.eAsym, 3)} / ${formatFixed(t.chir.wvAsym, 3)}`, 'M', undefined,
+            'Left/right handedness asymmetry (L−R)/(L+R) for the E-field and wave channels. 0 = balanced.');
 }
 
 // ── Render: ③ metrics + distributions ────────────────────────────────────────
@@ -172,7 +184,7 @@ function miniHist(hist, w = 90, h = 22) {
 function renderMetrics(container, metrics) {
     let html = '';
     for (const m of metrics) {
-        html += `<div class="spec-metric-row">
+        html += `<div class="spec-metric-row" title="${m.desc}">
             <span class="spec-metric-name">${m.sym} <span class="spec-metric-sub">${m.name}</span></span>
             <span class="spec-metric-val">${formatExp(m.stats.rms)}<span class="spec-metric-unit">rms</span></span>
             <span class="spec-metric-hist">${miniHist(m.hist)}</span>
@@ -192,7 +204,7 @@ function renderEnergy(container, audit, entropy) {
         { k: 'Field',   v: audit.fieldEnergy ?? 0, c: 'var(--accent)' },
     ];
     const total = parts.reduce((a, p) => a + Math.max(0, p.v), 0) || 1;
-    let bar = `<div class="spec-energy-bar">`;
+    let bar = `<div class="spec-energy-bar" title="Stacked share of the field energy across channels — hover a segment for its value.">`;
     for (const p of parts) { const pct = Math.max(0, p.v) / total * 100; bar += `<span style="width:${pct.toFixed(1)}%;background:${p.c}" title="${p.k}: ${formatExp(p.v)}"></span>`; }
     bar += `</div><div class="spec-energy-legend">`;
     for (const p of parts) bar += `<span><i style="background:${p.c}"></i>${p.k} ${formatExp(p.v)}</span>`;
@@ -200,9 +212,9 @@ function renderEnergy(container, audit, entropy) {
     const px = audit.totalPoynting?.x ?? 0, py = audit.totalPoynting?.y ?? 0, pz = audit.totalPoynting?.z ?? 0;
     const pMag = Math.hypot(px, py, pz);
     container.innerHTML = bar +
-        row('Poynting |S|', formatExp(pMag), 'M') +
-        row('Energy drift', `${formatFixed(audit.energyDrift ?? 0, 3)} %`, 'M') +
-        row('Entropy', formatExp(entropy ?? 0), 'M');
+        row('Poynting |S|', formatExp(pMag), 'M', undefined, 'Magnitude of the net Poynting flux S = E×B — the field energy transport.') +
+        row('Energy drift', `${formatFixed(audit.energyDrift ?? 0, 3)} %`, 'M', undefined, 'Percentage change in total field energy since the run started — a conservation check.') +
+        row('Entropy', formatExp(entropy ?? 0), 'M', undefined, 'Field entropy from the diagnostics — a disorder measure.');
 }
 
 // ── Panel shell ──────────────────────────────────────────────────────────────
@@ -217,7 +229,7 @@ function buildPanel() {
             <span class="spec-mode" id="${PANEL_ID}-mode">live</span>
         </header>
         <section style="${cardStyle(230)}">
-            <div style="${titleStyle()}">Energy spectrum E(k)</div>
+            <div style="${titleStyle()}" title="${SECTION_HELP.spectrum}">Energy spectrum E(k) ⓘ</div>
             <div id="${PANEL_ID}-spec" class="spec-hist-box"></div>
             <div class="spec-actions">
                 <button id="${PANEL_ID}-deep" type="button" class="spec-btn" title="Full-resolution snapshot spectrum + topology of the current tick">Deep Measure</button>
@@ -225,15 +237,15 @@ function buildPanel() {
             </div>
         </section>
         <section style="${cardStyle(150)}">
-            <div style="${titleStyle()}">Topology</div>
+            <div style="${titleStyle()}" title="${SECTION_HELP.topology}">Topology ⓘ</div>
             <div id="${PANEL_ID}-topo"></div>
         </section>
         <section style="${cardStyle(170)}">
-            <div style="${titleStyle()}">Field metrics &amp; distributions</div>
+            <div style="${titleStyle()}" title="${SECTION_HELP.metrics}">Field metrics &amp; distributions ⓘ</div>
             <div id="${PANEL_ID}-metrics"></div>
         </section>
         <section style="${cardStyle(130)}">
-            <div style="${titleStyle()}">Energy partition</div>
+            <div style="${titleStyle()}" title="${SECTION_HELP.energy}">Energy partition ⓘ</div>
             <div id="${PANEL_ID}-energy"></div>
         </section>
     `;
