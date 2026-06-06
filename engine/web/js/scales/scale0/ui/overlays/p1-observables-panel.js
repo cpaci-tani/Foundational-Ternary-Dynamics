@@ -62,7 +62,7 @@ const TWO_PI = 2.0 * Math.PI;
 // Scenarios where each section is meaningful
 const HYDROGEN_SCENARIOS = new Set(['s0-seed-hydrogen', 's0-seed-helium']);
 const BELL_SCENARIOS = new Set(['quantum-entangle']);
-const GRAVITY_SCENARIOS = new Set(['s0-seed-schwarzschild', 's0-seed-frw-patch', 's0-seed-gravitational-wave']);
+const GRAVITY_SCENARIOS = new Set(['s0-seed-schwarzschild', 's0-seed-gravitational-wave']);
 
 // Default CHSH angles for E(a,b) = cos(a-b): a=0, a'=π/2, b=π/4, b'=3π/4 → S = 2√2
 const DEFAULT_BELL_ANGLES = { a: 0, ap: 0.5, b: 0.25, bp: 0.75 };  // in units of π
