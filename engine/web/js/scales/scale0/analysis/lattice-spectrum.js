@@ -161,6 +161,28 @@ export function energySpectrum(comps, srcN, M, boxL) {
     return { k: Array.from(kMid), E: Array.from(Esum), kNyq, totalE, sumReal, M, boxL };
 }
 
+/**
+ * Reconstruct dense jx/jy/jz grids (srcN³) from a SPARSE flux-vector sample set
+ * (getFluxVectorSampled skips near-zero voxels — those are genuine zeros). Sample
+ * positions are voxel+0.5 at `stride` spacing. srcN = ceil(L/stride); stride 1 ⇒
+ * the full field. Returns { jx, jy, jz, srcN } for energySpectrum().
+ */
+export function denseVectorGridFromSamples(samples, L, stride) {
+    const srcN = Math.ceil(L / stride);
+    const Nc = srcN * srcN * srcN;
+    const jx = new Float64Array(Nc), jy = new Float64Array(Nc), jz = new Float64Array(Nc);
+    const pos = samples.positions, vec = samples.vectors, count = samples.count | 0;
+    for (let i = 0; i < count; i++) {
+        const gx = Math.round((pos[i * 3] - 0.5) / stride);
+        const gy = Math.round((pos[i * 3 + 1] - 0.5) / stride);
+        const gz = Math.round((pos[i * 3 + 2] - 0.5) / stride);
+        if (gx < 0 || gx >= srcN || gy < 0 || gy >= srcN || gz < 0 || gz >= srcN) continue;
+        const idx = (gz * srcN + gy) * srcN + gx;
+        jx[idx] = vec[i * 3]; jy[idx] = vec[i * 3 + 1]; jz[idx] = vec[i * 3 + 2];
+    }
+    return { jx, jy, jz, srcN };
+}
+
 /** Dominant mode: the k bin with the most energy; λ* = 2π/k*. */
 export function spectralPeak(k, E) {
     let bi = -1, bv = -Infinity;
