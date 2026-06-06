@@ -161,3 +161,62 @@ html[data-panel-mount="left"] .lag-data-col,
 html[data-panel-mount="right"] .lag-data-col {
     gap: var(--sp-md);
 }
+
+/* ── Lagrangian small multiples (2026-06-05: stack, don't overlay) ───────
+ * Replaces the single stacked-area chart (whose translucent cumulative bands
+ * read as an overlay) with one mini line-chart per term. Each card auto-scales
+ * to its own range, so terms spanning orders of magnitude are all legible, and
+ * signed terms can show negative excursions. Reuses the shared `.chart-card`
+ * chrome (charts-panel.css). */
+.lag-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--sp-md, 10px);
+}
+
+.lag-term-card { padding: 10px; }
+
+.lag-term-card .chart-card-head { margin-bottom: 6px; }
+
+.lag-term-card .chart-card-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+}
+
+.lag-term-card .chart-card-title .lag-term-swatch {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--legend-color, var(--accent));
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+
+/* Shorter plots than the single big chart — these are at-a-glance sparklines.
+ * Equal specificity to `.lag-chart-col .chart-card-plot`; wins by source order. */
+.lag-term-card .chart-card-plot {
+    aspect-ratio: auto;
+    min-height: 120px;
+    max-height: 160px;
+}
+
+/* Narrow docks / phones: one card per row. */
+html[data-panel-mount="left"] .lag-charts-grid,
+html[data-panel-mount="right"] .lag-charts-grid {
+    grid-template-columns: 1fr;
+}
+#app[data-layout-mode^="compact"] .lag-charts-grid {
+    grid-template-columns: 1fr;
+}
+@media (max-width: 479px) {
+    .lag-charts-grid { grid-template-columns: 1fr; }
+}
+
+html[data-panel-mount="left"] .lag-term-card .chart-card-plot,
+html[data-panel-mount="right"] .lag-term-card .chart-card-plot {
+    min-height: 110px;
+    max-height: 150px;
+}
