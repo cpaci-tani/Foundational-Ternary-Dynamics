@@ -238,6 +238,14 @@ export const SCALE0_ABSORBING_SCENARIOS = new Set([
     's0-seed-gravitational-lensing',
 ]);
 
+// Scenarios whose gravity comes from REAL manifested rest mass (rho = M_REST·|state|)
+// via the latency-Poisson solver — the faithful gravity source (SPEC_FTD_LAGRANGIAN
+// §4.2), distinct from the |J|² field-energy proxy above. The scenario-loader enables
+// latency_field for these WITHOUT field_energy_gravity (the mass is the source).
+export const SCALE0_MASS_GRAVITY_SCENARIOS = new Set([
+    's0-seed-massive-body',
+]);
+
 // Light scenarios: pure EM wave propagation (no matter coupling)
 export const LIGHT_SCENARIO_OVERRIDES = [
     ['selective_damping', true, 't-selective'],
