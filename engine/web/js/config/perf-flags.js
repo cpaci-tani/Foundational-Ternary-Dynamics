@@ -24,7 +24,11 @@ export const PerfFlags = {
      *  false` to restore the legacy always-collect behavior (instant rollback). */
     get telemetryOnDemand() { return _flag('__ftdTelemetryOnDemand', true); },
 
-    /** Phase 2 — panel/overlay render optimizations (collapsed-grid gate,
-     *  no-rescale chart draws, overlay sample amortization). */
-    get panelRenderV2() { return _flag('__ftdPanelRenderV2', false); },
+    /** Phase 2 — panel render optimizations: the unified isPanelLive predicate
+     *  (active OR non-collapsed floated; fixes floated charts/Lagrangian
+     *  freezing + adds the collapsed-grid gate), the telemetry-grid ~30 Hz cap,
+     *  and its preallocated/cached per-channel buffers. DEFAULT ON (2026-06-05),
+     *  verified by scale0-panel-render.spec.js. Set window.__ftdPanelRenderV2 =
+     *  false to restore the legacy per-panel behavior (instant rollback). */
+    get panelRenderV2() { return _flag('__ftdPanelRenderV2', true); },
 };
