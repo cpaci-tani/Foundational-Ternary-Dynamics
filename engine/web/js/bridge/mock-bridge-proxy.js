@@ -140,6 +140,15 @@ export class MockBridgeProxy {
     }
     tickOnce() { this._cmd('tickScale0'); }
 
+    /** Tell the worker which expensive telemetry streams a visible consumer needs
+     *  (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5.2). Deduped — only posts on change. */
+    setTelemetryMask(wantAudit, wantLag) {
+        const a = !!wantAudit, l = !!wantLag;
+        if (this._maskAudit === a && this._maskLag === l) return;
+        this._maskAudit = a; this._maskLag = l;
+        this._worker.postMessage({ type: 'setTelemetryMask', audit: a, lag: l });
+    }
+
     // ── Mutators some code calls directly on the bridge (wire.js inject UI) ───
     injectFlux(...a) { this._cmd('injectFlux', ...a); }
     injectParticle(...a) { this._cmd('injectParticle', ...a); }
@@ -157,6 +166,11 @@ export class MockBridgeProxy {
     getFluxSlice(axis, index) { return this._ready ? this._shadow.getFluxSlice(axis, index) : new Float64Array(0); }
     getParticleData() { return this._lastParts ?? EMPTY_PARTS(); }
     getDiagnostics() { return this._lastDiag ?? null; }
+    // Bare energy-audit / Lagrangian. Some code calls these DIRECTLY on the bridge
+    // (physics-harness.js → conservation panel), not via capabilities.scale0. Serve
+    // the last worker-posted snapshot; the shadow never ticks so its own are zero.
+    getEnergyAudit() { return this._lastAudit ?? null; }
+    getLagrangian() { return this._lastLagrangian ?? null; }
     // Particle LIST (x,y,z,state,charge,…) — distinct from the render frame
     // (getParticleData). The shadow never ticks and owns no particles, so the
     // list rides postMessage from the worker. Consumers: spectrum-panel,
