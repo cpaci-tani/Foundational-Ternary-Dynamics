@@ -162,7 +162,6 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-seed-instanton':           [['genesis', false, 't-genesis']],
     // Gravity — latency field on for Schwarzschild
     's0-seed-schwarzschild':       [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
-    's0-seed-frw-patch':           [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
     's0-seed-gravitational-wave':  [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
     // Self-reference / observation pedagogy seeds (Scale 0)
     's0-seed-sloop':               [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement']],
