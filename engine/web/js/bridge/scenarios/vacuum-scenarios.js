@@ -10,8 +10,11 @@
  * 10 of the 15 cases are wrappers around existing s0-seed-* injectors;
  * 5 are net-new in this file: 3 neutrino flavors + π⁰ + K±.
  *
- * Call pattern: `setupVacuumScenario.call(mockBridge, name, ctx)`
- * where ctx = { N, mid, midF }.
+ * Call pattern: `setupVacuumScenario(name, harness, ctx)` — identical to the other
+ * five scenario group files; `harness` is the PhysicsHarness and `ctx = { N, mid,
+ * midF }`. (Was previously declared `(name, ctx)` with a stray `this`/`harness`
+ * mix — a refactor inconsistency that threw a ReferenceError on the MockBridge
+ * fallback path; fixed 2026-06-05, health audit §A.4.)
  * Returns true if handled, false otherwise.
  */
 
@@ -26,16 +29,17 @@ import {
 
 /**
  * @param {string} name  scenario identifier (must start with 's0-vacuum-')
+ * @param {PhysicsHarness} harness  physics harness instance
  * @param {{N:number, mid:number, midF:number}} ctx
  * @returns {boolean} true iff handled
  */
-export function setupVacuumScenario(name, ctx) {
+export function setupVacuumScenario(name, harness, ctx) {
     if (!name.startsWith('s0-vacuum-')) return false;
     const { N, mid, midF } = ctx;
     const mc = Math.round(midF);
 
-    this._initFluxGrid();
-    applyVacuumEnvironment(this, ctx);
+    harness.bridge?._initFluxGrid?.();
+    applyVacuumEnvironment(harness, ctx);
 
     switch (name) {
         case 's0-vacuum-electron': {

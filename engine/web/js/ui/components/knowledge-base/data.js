@@ -1336,7 +1336,6 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
     's0-seed-monopole': { summary: 'A monopole-style pedagogical seed for source-like field geometry.', notation: ['radial field', 'topological charge?'] },
     's0-seed-instanton': { summary: 'A localized topological event seed emphasizing global sector changes rather than static shape alone.', notation: ['topological event', 'instanton'] },
     's0-seed-schwarzschild': { summary: 'A gravity-facing well configuration for central-potential and horizon intuition.', notation: ['Φ(r)', '\\(r_s\\)'] },
-    's0-seed-frw-patch': { summary: 'A cosmological patch seed that frames the lattice with scale-factor language.', notation: ['a(t)', 'expansion patch'] },
     's0-seed-gravitational-wave': { summary: 'A wave-like spacetime-analogue configuration for strain and propagation intuition.', notation: ['h_μν', 'wave strain'] },
     's0-seed-sloop': { summary: 'A self-referential ring seed connected to the project’s sLoop language.', notation: ['sLoop', 'fixed point', 'recursive closure'] },
     's0-seed-observer-cell': { summary: 'A compact 3³ observer-style seed for local recursive organization.', notation: ['3³ cell', 'observer geometry'] },

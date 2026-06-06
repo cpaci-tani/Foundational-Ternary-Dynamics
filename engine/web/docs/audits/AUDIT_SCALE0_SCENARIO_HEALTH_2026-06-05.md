@@ -37,18 +37,19 @@ is latent (fallback path only); a defect in **both** JS and C++ ships.
 
 | | Result |
 |---|---|
-| Scenarios audited | **97** |
+| Scenarios audited | **97** at audit time → **96** after retiring `frw-patch` (see §B.2) |
 | Mount + telemetry | **97 / 97** (after fixing **1** broken scenario) |
 | Broken, found + **FIXED** | `flux-annihilation` (worker create crash → mounted nothing) — `7fc4296b` |
-| Latent bug (open) | `vacuum-scenarios.js` calls an undefined `harness` → every `s0-vacuum-*` throws on the **MockBridge fallback** path (deployed WASM path unaffected) |
-| Dead code | `_quantumZenoMode` / `_quantumExperimentMode` set, never read |
+| Latent bug, **FIXED** | `vacuum-scenarios.js` called an undefined `harness` → every `s0-vacuum-*` threw on the **MockBridge fallback** path; signature realigned + mock-path test added (2026-06-05) |
+| Dead code (open) | `_quantumZenoMode` / `_quantumExperimentMode` set, never read |
 | Telemetry defect (open) | WASM `totalEnergy` is a `K_B·N³` rest baseline (~18363.8) that swamps scenario energy; mock omits it — WASM energy readout is non-informative |
-| Physics-sense | substrate-native categories are **genuine and well-tagged** (`flux-zero-point` + the FTD-0107 `ic*` set are the honesty gold standard). The problems concentrate in **Gravity/Cosmology** (2 mislabels + 2 honest-but-misnamed viz) and the **named quantum *effects*** (setup geometry without the effect's readout). |
+| Physics-sense → action | retired the cosmology scenario (`frw-patch`); kept the gravity ones (owner decision). Substrate-native categories are **genuine and well-tagged** (`flux-zero-point` + the FTD-0107 `ic*` set are the honesty gold standard); the named quantum *effects* still implement setup geometry without the effect's readout. |
 
 **Two headlines.** (1) The scenarios are mechanically healthy — only one was
-actually broken, now fixed and guarded. (2) Where scenarios stop "making sense on
-the lattice" is **Gravity/Cosmology** — Scale 4–5 physics a 33³ substrate cannot
-carry, and one (`frw-patch`) doesn't even implement its named physics.
+actually broken, now fixed and guarded. (2) Where scenarios stopped "making sense on
+the lattice" was **cosmology** — Scale 4–5 physics a 33³ substrate cannot carry;
+`frw-patch` (which didn't even implement FRW cosmology) was retired, the gravity
+visualizations kept.
 
 ---
 
@@ -94,7 +95,7 @@ Same centre-vs-particle mismatch (A1): the "dramatic head-on collision" kicks
 The worker fix makes it *mount*; it does not make the kicks work. Fix = position
 the kick loop around the particles.
 
-### A.4 `vacuum-scenarios.js` references an undefined `harness` · **[OPEN, latent]**
+### A.4 `vacuum-scenarios.js` references an undefined `harness` · **[FIXED 2026-06-05]**
 
 `setupVacuumScenario(name, ctx)` is declared **2-arg** (`vacuum-scenarios.js:32`)
 but the dispatcher calls it **3-arg** `(name, harness, ctx)` like every sibling
@@ -103,10 +104,12 @@ but the dispatcher calls it **3-arg** `(name, harness, ctx)` like every sibling
 (`:44, :46, :58, …`) hit a **free variable that doesn't exist** → `ReferenceError`.
 The C++ mirror (`vacuum.cpp`) is correct, so the **deployed WASM path is fine** —
 only the MockBridge *fallback* throws when any `s0-vacuum-*` is selected (Safari /
-no-COOP-COEP). **Fix:** signature → `(name, harness, ctx)`, `this`→`harness.bridge`,
-mirroring the other five group files; add a MockBridge-path Playwright test (WASM
-coverage can't catch it). *(This is why `s0-vacuum-*` shows `owner=wasm` in the
-sweep — the bug is on the path the sweep didn't exercise.)*
+no-COOP-COEP). **Fixed 2026-06-05:** signature → `(name, harness, ctx)`,
+`this`→`harness.bridge` (the whole switch body already used `harness` correctly —
+only the signature + two stragglers were wrong); guarded by a `?engine=mock` test in
+`scale0-scenario-health.spec.js` (electron/proton/photon/higgs mount, no error).
+*(This is why `s0-vacuum-*` shows `owner=wasm` in the sweep — the bug was on the path
+the sweep didn't exercise.)*
 
 ### A.5 Dead quantum measurement-mode flags · **[OPEN, dead code]**
 
@@ -156,17 +159,25 @@ console errors across all 97.
 interference / tunneling / mode quantization); `quantum-born-rule` is a defensible
 Born-rule *demo*.
 
-### B.2 Gravity/Cosmology + Reference frame (code-grounded)
+### B.2 Gravity + Reference frame (code-grounded)
 
-- **`s0-seed-frw-patch`** (`s0-seed-scenarios.js:731-737`, `s0_seed.cpp:673-680`) —
-  injects an **alternating +1/−1 charge checkerboard** on a stride-5 sublattice. No
-  scale factor a(t), no metric, no fluid. **`[MISLABEL]`** — zero relation to FRW
-  cosmology. → **retire or relabel** "stride-5 charge checkerboard".
-- **`s0-seed-gravitational-wave`** (`:738-743`) — `Jy = A·sin(kx)`, a **transverse
-  flux (spin-1-like) wave**, formally identical to `s0-field-plane-wave`. A real GW
-  is a **spin-2 metric (h_μν) quadrupolar strain**; FTD's emergent spin-2 mode is
-  **[OPEN]** (Frontier 4). **`[MISLABEL]`** → retire as a duplicate or relabel
-  "transverse flux wave"; do not present as a GW until spin-2 closes.
+> **Owner decision (2026-06-05): removed the cosmology scenario, kept the gravity
+> ones.** `s0-seed-frw-patch` was retired across all layers; the category
+> `Gravity / Cosmology` → `Gravity` (it now holds only schwarzschild, lensing,
+> gravitational-wave). The gravity visualizations were kept — they read well in the
+> dashboard — with the label caveats below standing.
+
+- **`s0-seed-frw-patch`** — **`[REMOVED 2026-06-05]`.** It injected an **alternating
+  +1/−1 charge checkerboard** on a stride-5 sublattice — no scale factor a(t), no
+  metric, no fluid; zero relation to FRW cosmology. Retired from the registry, the
+  JS/C++ impls, toggles, knowledge-base, and the gravity-observables set (the
+  separate `ctor::frw_patch` *constructor* in the C++ constructor library is a
+  different subsystem and was left intact).
+- **`s0-seed-gravitational-wave`** (`s0-seed-scenarios.js:732`, `s0_seed.cpp:674`) —
+  **KEPT** (owner: works well as a visualization). Code-honest caveat stands:
+  `Jy = A·sin(kx)` is a **transverse flux (spin-1-like) wave**, not the **spin-2
+  metric (h_μν) quadrupolar strain** of a real GW (FTD's emergent spin-2 mode is
+  **[OPEN]**, Frontier 4). Tag it `[VISUALISATION]`, not a literal GW claim.
 - **`s0-seed-schwarzschild`** (`:713-730`) — static inward flux bias; the comment
   itself says *"a visualization aid, NOT engine gravity (does not gate on the
   gravity toggle …)"*. **`[VISUALISATION]`** — honest in-code, misnamed in the UI.
@@ -201,22 +212,21 @@ geometry is already correct.
 ## C. Recommendations (prioritized)
 
 1. **[DONE]** Fix `flux-annihilation` worker crash (A1) — `7fc4296b`.
-2. **[bug]** Fix the `vacuum-scenarios.js` `harness` signature (A4) — restores all
-   `s0-vacuum-*` on the MockBridge fallback path; add a MockBridge-path test.
-3. **[telemetry]** Reconcile WASM vs mock energy convention (A2).
-4. **[physics-sense]** Gravity/Cosmology surgery (B.2): **retire/relabel**
-   `frw-patch` and `gravitational-wave`; relabel `schwarzschild`/`lensing` as
-   explicit visualizations (or regroup out of a "Gravity" heading that implies
-   simulated gravity).
-5. **[physics-sense]** Relabel the named quantum effects "… (setup)" (B.3); delete
-   the dead `_quantumZeno*` / `_quantumExperimentMode` flags (A.5).
-6. **[hygiene]** `observer-cell` retire-as-duplicate or relabel (B.2); strip
+2. **[DONE]** Fix the `vacuum-scenarios.js` `harness` signature (A4) — all
+   `s0-vacuum-*` restored on the MockBridge fallback path; mock-path test added.
+3. **[DONE]** Retire the cosmology scenario `frw-patch` + rename `Gravity / Cosmology`
+   → `Gravity` (B.2; owner decision — the gravity visualizations were kept).
+4. **[telemetry, open]** Reconcile WASM vs mock energy convention (A2).
+5. **[physics-sense, open]** Relabel the named quantum effects "… (setup)" (B.3);
+   delete the dead `_quantumZeno*` / `_quantumExperimentMode` flags (A.5).
+6. **[hygiene, open]** `observer-cell` retire-as-duplicate or relabel (B.2); strip
    `spark-of-life`'s `autocatalytic`/`abiogenesis` tags; relabel
    `monopole`/`instanton` as "field ansatz".
-7. **[scenario quality]** Fix `flux-annihilation`'s dead kicks (A3).
+7. **[scenario quality, open]** Fix `flux-annihilation`'s dead kicks (A3); the kept
+   `gravitational-wave` carries a `[VISUALISATION]` label caveat (not a literal GW).
 
-The substrate-native categories need **no retraction**; the Gravity/Cosmology
-category needs the most surgery, and the named quantum effects need either a
+The substrate-native categories need **no retraction**; the cosmology scenario was
+the most clear-cut removal, and the named quantum effects need either a
 readout or an honest "(setup)" label.
 
 ---
