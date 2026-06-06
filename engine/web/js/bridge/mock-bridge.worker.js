@@ -38,9 +38,15 @@ function postFrame() {
     if (!bridge) return;
     bridge._updateFluxMag();                          // O(N³) magnitude — off the main thread
     const s0 = bridge.capabilities.scale0;
-    let diag = null, parts = null;
+    let diag = null, parts = null, audit = null, lag = null;
     try { if (s0.getScale0Diagnostics) diag = s0.getScale0Diagnostics(); } catch (e) { /* ignore */ }
     try { if (s0.getScale0ParticleFrame) parts = s0.getScale0ParticleFrame(); } catch (e) { /* ignore */ }
+    // Energy audit + Lagrangian: small scalar objects, but the main-thread shadow
+    // never ticks, so the diagnostics audit-rows, conservation panel, and the whole
+    // Lagrangian panel are dead unless the worker (which owns the real state) posts
+    // them. Both reuse the per-tick energy cache → cheap after getScale0Diagnostics.
+    try { if (s0.getScale0EnergyAudit) audit = s0.getScale0EnergyAudit(); } catch (e) { /* ignore */ }
+    try { if (s0.getScale0Lagrangian) lag = s0.getScale0Lagrangian(); } catch (e) { /* ignore */ }
     // Particle LIST (x,y,z,state,charge,…) for spectrum / observables / harness —
     // the main-thread shadow owns no particles, so the list must come from here.
     // Throttled: it changes slowly and the panels sample at ≤4 Hz. Null on
@@ -56,7 +62,7 @@ function postFrame() {
     }
     // Particle/diag payloads are small → structured-clone copy (no transfer, so
     // the bridge keeps its pre-allocated particle buffers across frames).
-    self.postMessage({ type: 'frame', tick: bridge._tick | 0, diag, parts, particleList });
+    self.postMessage({ type: 'frame', tick: bridge._tick | 0, diag, parts, particleList, audit, lag });
 }
 
 function loop() {
