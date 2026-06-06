@@ -196,20 +196,20 @@ struct Voxel {
     return std::sqrt(f) / std::sqrt(arg);
   }
 
-  // Born-Infeld core: -K_B · √(f² - v²)/√f when latency active.
-  // Reduces to standard -K_B·√(1-v²) when L=0.
+  // Born-Infeld core: -M_REST · √(f² - v²)/√f when latency active.
+  // Reduces to standard -M_REST·√(1-v²) when L=0. (M_REST = K_B; rest-mass role.)
   double born_infeld_core() const {
     if (latency == 0.0) {
       double bw = speed() * speed();
       if (bw >= 1.0) return 0.0;
-      return -K_B * std::sqrt(1.0 - bw);
+      return -M_REST * std::sqrt(1.0 - bw);
     }
     double f = 1.0 - latency * latency;
     if (f <= 0.0) return 0.0;
     double v2 = speed() * speed();
     double arg = f * f - v2;
     if (arg <= 0.0) return 0.0;
-    return -K_B * std::sqrt(arg) / std::sqrt(f);
+    return -M_REST * std::sqrt(arg) / std::sqrt(f);
   }
 };
 

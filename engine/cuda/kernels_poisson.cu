@@ -442,10 +442,10 @@ void launch_solve_latency(GpuBuffers& bufs,
     int threads = 256;
     int blocks = (N + threads - 1) / threads;
 
-    // Step 1: Compute RHS = 4*pi*G * K_B * |state|
+    // Step 1: Compute RHS = 4*pi*G * M_REST * |state|
     // (DC mode is automatically zeroed by Green's function, equivalent
     // to the CPU's mean-subtraction of rho_mass.)
-    const double FOUR_PI_G_K_B = 4.0 * PI * G_N * K_B;
+    const double FOUR_PI_G_K_B = 4.0 * PI * G_N * M_REST;
     compute_latency_rhs<<<blocks, threads>>>(
         bufs.d_state, bufs.d_phi_latency, FOUR_PI_G_K_B, N
     );

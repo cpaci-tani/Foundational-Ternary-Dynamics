@@ -354,7 +354,7 @@ public:
     inline double born_probability(int idx) const {
       double rho = voxels()[idx].density();
       if (rho < K_GENESIS) return 0.0;
-      return 1.0 - std::exp(-(rho - K_GENESIS) / K_B);
+      return 1.0 - std::exp(-(rho - K_GENESIS) / K_MANIFEST);
     }
     void create_entangled_pair(int x, int y, int z, const Vec3& flux_val);
 
