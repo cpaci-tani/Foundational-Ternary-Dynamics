@@ -91,6 +91,8 @@ export class MockBridgeProxy {
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
             if (m.particleList) this._lastParticleList = m.particleList;
+            if (m.audit) this._lastAudit = m.audit;
+            if (m.lag) this._lastLagrangian = m.lag;
         } else if (m.type === 'error') {
             console.error('[Scale0 worker]', m.where, m.msg);
         }
@@ -113,6 +115,11 @@ export class MockBridgeProxy {
         caps.setReflectiveBoundary = (on) => { this._reflective = on; this._cmd('setReflectiveBoundary', on); };
         caps.getScale0Diagnostics = () => this._lastDiag ?? (this._shadow.getDiagnostics ? this._shadow.getDiagnostics() : null);
         caps.getScale0ParticleFrame = () => this._lastParts ?? EMPTY_PARTS();
+        // Energy audit + Lagrangian come from the worker (the shadow never ticks,
+        // so its audit/Lagrangian are all-zero). Serve the last worker-posted
+        // snapshot; fall back to the shadow only before the first frame arrives.
+        caps.getScale0EnergyAudit = () => this._lastAudit ?? (this._shadow.getEnergyAudit ? this._shadow.getEnergyAudit() : null);
+        caps.getScale0Lagrangian = () => this._lastLagrangian ?? (this._shadow.getLagrangian ? this._shadow.getLagrangian() : null);
         return caps;
     }
 
