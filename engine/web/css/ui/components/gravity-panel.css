@@ -1,0 +1,119 @@
+/* Gravity Observatory panel */
+
+.gravity-panel {
+    position: relative;
+    width: 100%;
+    padding: 14px 14px 18px;
+    font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-primary);
+    background: transparent;
+}
+
+.grav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.grav-title { font-weight: 600; color: var(--accent); font-size: 15px; letter-spacing: 0.02em; }
+
+.grav-mode {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    padding: 2px 8px;
+    border: 1px solid var(--border-light, rgba(255, 255, 255, 0.12));
+    border-radius: 10px;
+}
+
+/* ① quantity selector + slice tiles */
+.grav-qsel { display: flex; gap: 6px; margin-bottom: 10px; }
+
+.grav-qbtn {
+    flex: 1;
+    background: rgba(120, 200, 255, 0.08);
+    border: 1px solid rgba(120, 200, 255, 0.18);
+    color: var(--text-muted);
+    padding: 5px 0;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 5px;
+    font-family: var(--font-mono);
+}
+.grav-qbtn:hover { background: rgba(120, 200, 255, 0.16); }
+.grav-qbtn.active { background: rgba(120, 200, 255, 0.26); color: var(--text-primary); border-color: rgba(120, 200, 255, 0.45); }
+
+.grav-slice-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+.grav-tile { display: flex; flex-direction: column; gap: 3px; }
+.grav-tile canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    image-rendering: pixelated;
+    border: 1px solid var(--border-light, rgba(255, 255, 255, 0.08));
+    border-radius: 4px;
+    background: #0a0d14;
+}
+.grav-tile-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+.grav-tile-readout { font-variant-numeric: tabular-nums; }
+
+/* ② telemetry rows + histograms */
+.grav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    font-size: 12px;
+}
+.grav-row-l { color: var(--text-muted); }
+.grav-row-v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.grav-hist-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+.grav-hist-row span { display: flex; align-items: center; gap: 3px; }
+.grav-mini-hist { width: 70px; height: 20px; display: block; }
+
+/* ③ Δ-trace sparklines */
+.grav-spark-row {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    grid-template-areas: "label spark now" "label spark delta";
+    align-items: center;
+    gap: 0 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.grav-spark-label { grid-area: label; font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); }
+.grav-spark { grid-area: spark; width: 100%; height: 26px; display: block; }
+.grav-spark-now { grid-area: now; font-size: 10px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-primary); text-align: right; }
+.grav-spark-delta { grid-area: delta; font-size: 10px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text-muted); text-align: right; }
+.grav-delta-na { color: var(--text-muted); }
+
+.grav-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 12px;
+    text-align: center;
+}

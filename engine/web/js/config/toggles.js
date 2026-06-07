@@ -227,6 +227,25 @@ export const SCALE0_SCENARIO_BOUNDARY = {
     'flux-zero-point': { reflective: true },
 };
 
+// Scenarios whose outgoing waves should disperse into the void at the lattice
+// faces via the WASM C++ absorbing sponge (render_bridge.cpp Rule 5b). Scoped to
+// the gravity/wave family on purpose: enabling the sponge for every scenario
+// collapsed many full flux volumes to a damped slab. All other scenarios render
+// their flux volume unchanged.
+export const SCALE0_ABSORBING_SCENARIOS = new Set([
+    's0-seed-schwarzschild',
+    's0-seed-gravitational-wave',
+    's0-seed-gravitational-lensing',
+]);
+
+// Scenarios whose gravity comes from REAL manifested rest mass (rho = M_REST·|state|)
+// via the latency-Poisson solver — the faithful gravity source (SPEC_FTD_LAGRANGIAN
+// §4.2), distinct from the |J|² field-energy proxy above. The scenario-loader enables
+// latency_field for these WITHOUT field_energy_gravity (the mass is the source).
+export const SCALE0_MASS_GRAVITY_SCENARIOS = new Set([
+    's0-seed-massive-body',
+]);
+
 // Light scenarios: pure EM wave propagation (no matter coupling)
 export const LIGHT_SCENARIO_OVERRIDES = [
     ['selective_damping', true, 't-selective'],

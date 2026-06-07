@@ -369,7 +369,9 @@ MEV_PER_GEV = 1000
 # =============================================================================
 
 K_B = 0.511           # MeV — electron mass / manifestation threshold
-K_GENESIS = K_B * N_c # 1.533 MeV — genesis threshold (fill all N_c color channels)
+M_REST = K_B          # rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0 (FTD-0130)
+K_MANIFEST = K_B      # genesis/evaporation kinetics scale (= K_B); unified-mass Phase 0 (FTD-0130)
+K_GENESIS = K_MANIFEST * N_c # 1.533 MeV — genesis threshold (fill all N_c color channels; kinetics)
 C_SPEED = 1.0 / np.sqrt(3.0)  # CFL speed limit on cubic lattice
 C_WAVE = C_SPEED      # Wave propagation speed = speed limit
 DAMPING = ALPHA        # Dissipation rate gamma = alpha

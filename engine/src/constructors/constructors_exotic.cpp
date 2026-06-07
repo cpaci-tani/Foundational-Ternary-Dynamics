@@ -26,6 +26,12 @@ StampResult schwarzschild(RenderBridge& rb, Coord center, double r_s) {
 
     StampResult result{"schwarzschild", 7, center, {}};
 
+    // Outgoing waves should disperse into the void at the lattice faces, not
+    // wrap/reflect. Enable the absorbing sponge here so it lands on whatever
+    // bridge actually runs this scenario (the JS toggle path can't reliably
+    // reach the WASM physics bridge under the dual-bridge routing).
+    rb.toggles.absorbing_boundary = true;
+
     for (int x = 0; x < N; ++x)
     for (int y = 0; y < N; ++y)
     for (int z = 0; z < N; ++z) {
@@ -90,6 +96,10 @@ StampResult gravitational_wave(RenderBridge& rb, Vec3 direction,
 
     Coord center{N / 2, N / 2, N / 2};
     StampResult result{"gravitational_wave", 7, center, {}};
+
+    // Absorbing edges so the propagating wave disperses into the void instead of
+    // wrapping (see schwarzschild() above for the dual-bridge rationale).
+    rb.toggles.absorbing_boundary = true;
 
     for (int x = 0; x < N; ++x)
     for (int y = 0; y < N; ++y)

@@ -56,11 +56,14 @@ void solve_coulomb_poisson_cpu(const TernaryField& state,
 
 // Latency Poisson: ∇²φ_L = 4πGρ_mass with ρ_mass = K_B|state|. Writes
 // voxel.latency = sqrt(clamp(|phi_latency|, 0, LATENCY_HORIZON_CLAMP)).
+// When include_field_energy is true, the source also includes the local
+// field-energy density ½(|J|²+|wave_vel|²) (see term_toggles.field_energy_gravity).
 void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
                                const TernaryField& state,
                                std::vector<double>& phi_latency,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
-                               int sor_iters = SOR_ITERATIONS);
+                               int sor_iters = SOR_ITERATIONS,
+                               bool include_field_energy = false);
 
 }  // namespace ftd
