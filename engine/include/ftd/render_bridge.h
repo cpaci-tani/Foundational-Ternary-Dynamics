@@ -77,6 +77,11 @@ class RenderBridge {
     friend void phase_forces_build_color_cache(RenderBridge&);
     friend void phase_forces_main_loop(RenderBridge&);
     friend void phase_forces_integrate_clusters(RenderBridge&);  // unified-mass Phase 2: rigid-body cluster inertia
+    // Test access (test_cluster_inertia.cpp): the cluster-inertia falsifier
+    // injects a FIXED total force into force_diag_ and reads V_COM back, both
+    // of which are private. A friend keeps the test honest (no public mutator
+    // for force_diag_) and does not alter struct layout (golden-safe).
+    friend void test_cluster_inertia_inject_force(RenderBridge&, int idx, const Vec3& f);
     // Phase 4c (2026-04-27): phase_read + phase_movement decomposition. See
     // engine/src/render_bridge_phases/phase_read.cpp and phase_movement.cpp.
     friend void phase_read_main_loop(RenderBridge&);
