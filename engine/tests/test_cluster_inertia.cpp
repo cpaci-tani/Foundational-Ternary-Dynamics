@@ -310,16 +310,137 @@ void test_noop_guard_when_toggle_off() {
           "property (the pass must be a strict no-op when the toggle is off).");
 }
 
+// ===========================================================================
+// CI-5: THE EQUIVALENCE PRINCIPLE — universal free-fall, a INDEPENDENT of N.
+// ---------------------------------------------------------------------------
+// CI-1 (above) held the TOTAL force F fixed as N grew, isolating the inertial
+// 1/N signature: a = F/(N·M_REST) ⇒ a ∝ 1/N. CI-5 is the exact COMPLEMENT and
+// the textbook EP discriminator: hold the PER-VOXEL force f fixed instead. Then
+// the cluster force scales with the cluster's own mass,
+//
+//     F_cluster = Σ_members f = N·f         (f = per-voxel force, same for all)
+//
+// and the unified inertial mass N·M_REST CANCELS it exactly:
+//
+//     a_COM = F_cluster/(N·M_REST) = (N·f)/(N·M_REST) = f/M_REST.
+//
+// The N's cancel ⇒ a_COM is the SAME for every cluster regardless of how many
+// voxels it contains. Two clusters of DIFFERENT N released in the SAME uniform
+// per-voxel field fall with the SAME acceleration — universal free-fall, the
+// operational equivalence principle. (For a real FTD field this f is exactly
+// what gravity/EM deliver: a uniform per-voxel pull whose cluster total ∝ N,
+// see the CI-1 header. CI-5 supplies that uniform f directly so latency/gravity
+// can stay OFF and the arithmetic is Newtonian-clean.)
+//
+// EPISTEMIC STATUS — this is a DEMONSTRATION, not a derivation. The EP itself
+// (rest = inertial = gravitational, one M_REST) is the FTD ACTION's [THEOREM]
+// (SPEC_FTD_LAGRANGIAN §4.1↔§4.2). The ENGINE exhibiting it here is CONDITIONAL
+// on the [IMPOSED] cluster-inertia mechanism (FTD-0250): the rigid-body
+// collective-coordinate reduction a_COM = F_cluster/(N·M_REST) is imposed on the
+// engine, not derived from the per-voxel dynamics (that reduction is [OPEN]).
+// So CI-5 shows the imposed mechanism is internally EP-consistent; it does not
+// derive the EP from the substrate.
+//
+// CONSTRUCTION: two well-separated LOCKED cubes in ONE bridge — N=8 (edge 2) at
+// a low corner, N=27 (edge 3) at a high corner. At L=16 the cubes occupy
+// [1,2]³ and [11,13]³; their nearest faces are 9 voxels apart, far beyond
+// 26-Moore adjacency (≤1), so the flood-fill resolves them as TWO distinct
+// clusters. The SAME uniform per-voxel f = {1e-3,0,0} is injected into EVERY
+// member of BOTH, so F_cluster = N·f for each. One direct call integrates both.
+// ===========================================================================
+void test_equivalence_principle_universal_freefall() {
+    section("CI-5: EQUIVALENCE PRINCIPLE — a_COM independent of N (universal free-fall) [DEMONSTRATION, not derivation; conditional on [IMPOSED] FTD-0250]");
+
+    const int L = 16;
+    RenderBridge rb(L);
+    rb.force_cpu();
+    rb.seed_rng(1234);
+    configure_clean(rb);   // forces+cluster_inertia ON, gravity+latency OFF ⇒ L=0
+
+    // Two separated locked cubes of DIFFERENT N in the same lattice.
+    const std::vector<int> cubeA = build_locked_cube(rb, /*edge=*/2, /*origin=*/1);   // N=8,  [1,2]^3
+    const std::vector<int> cubeB = build_locked_cube(rb, /*edge=*/3, /*origin=*/11);  // N=27, [11,13]^3
+    const int NA = static_cast<int>(cubeA.size());
+    const int NB = static_cast<int>(cubeB.size());
+
+    // SAME uniform per-voxel force into EVERY member of BOTH cubes ⇒
+    // F_cluster(A) = NA·f, F_cluster(B) = NB·f (the gravitational/source side
+    // scales with N, exactly as a real field would).
+    const Vec3 f{1e-3, 0.0, 0.0};
+    for (int idx : cubeA) test_cluster_inertia_inject_force(rb, idx, f);
+    for (int idx : cubeB) test_cluster_inertia_inject_force(rb, idx, f);
+
+    // One direct integration step resolves both clusters.
+    phase_forces_integrate_clusters(rb);
+
+    // Read each cluster's COM acceleration (V_COM written to every member; L=0,
+    // so a = V_COM.x/dt is the clean Newtonian acceleration).
+    const double aA = rb.voxel_at(1, 1, 1).velocity.x   / rb.dt();
+    const double aB = rb.voxel_at(11, 11, 11).velocity.x / rb.dt();
+    const double a_predicted = f.x / M_REST;                 // f/M_REST, N-independent
+    const double Fclus_A = NA * f.x;                         // source/gravitational side
+    const double Fclus_B = NB * f.x;
+
+    std::printf("    [CI-5] uniform per-voxel f.x=%.3e   M_REST=%.3f   dt=1\n", f.x, M_REST);
+    std::printf("    [CI-5]   cluster   N    F_cluster=N*f    a_COM            f/M_REST\n");
+    std::printf("    [CI-5]      A     %3d   %.10e   %.10e   %.10e\n", NA, Fclus_A, aA, a_predicted);
+    std::printf("    [CI-5]      B     %3d   %.10e   %.10e   %.10e\n", NB, Fclus_B, aB, a_predicted);
+
+    // (a) EP — the two clusters of different N accelerate EQUALLY (≤1%).
+    const double rel_AB = std::abs(aA - aB) / std::abs(aB);
+    std::printf("    [CI-5] |a(N=8) - a(N=27)| / a(N=27) = %.2e  (EP: should be ~0)\n", rel_AB);
+    check("CI-5a: EP — a_COM(N=8) == a_COM(N=27) within 1% (universal free-fall, a independent of N)",
+          rel_AB < 0.01,
+          "Two locked clusters of different N in the SAME uniform per-voxel field "
+          "accelerated by DIFFERENT amounts: the unified inertial mass N*M_REST is "
+          "NOT cancelling the N-scaling of F_cluster=N*f, so the imposed "
+          "cluster-inertia mechanism violates the equivalence principle.");
+
+    // (b) Each cluster's a_COM equals the N-independent value f.x/M_REST (≤1%).
+    auto check_universal = [&](const char* tag, int N, double a) {
+        const double rel = std::abs(a - a_predicted) / a_predicted;
+        char name[112];
+        std::snprintf(name, sizeof(name),
+                      "CI-5b: %s (N=%d) a_COM == f/M_REST within 1%% (rel=%.2e)", tag, N, rel);
+        check(name, rel < 0.01,
+              "Cluster a_COM departed from the N-independent free-fall value "
+              "f/M_REST by >1%. At L=0 and f=1e-3 the gamma_FTD correction is "
+              "<6 ppm, so this is a real deviation in the cluster integrator.");
+    };
+    check_universal("cube A", NA, aA);
+    check_universal("cube B", NB, aB);
+
+    // (c) The SOURCE side scales with N while a stays constant — i.e. the two
+    //     N-dependencies (F_cluster ∝ N on the force side, mass ∝ N on the
+    //     inertia side) genuinely cancel. Assert F_cluster ∝ N exactly.
+    const double ratio_F = Fclus_B / Fclus_A;     // = NB/NA = 27/8 = 3.375
+    const double ratio_N = static_cast<double>(NB) / NA;
+    std::printf("    [CI-5] F_cluster(B)/F_cluster(A) = %.6f   NB/NA = %.6f\n", ratio_F, ratio_N);
+    check("CI-5c: F_cluster proportional to N (NB/NA = 27/8) while a_COM is N-independent",
+          std::abs(ratio_F - ratio_N) < 1e-9,
+          "F_cluster did not scale as N: the source/gravitational side is not "
+          "growing with cluster mass, so the EP cancellation a=f/M_REST is "
+          "coincidental rather than the N's genuinely cancelling.");
+
+    // Non-vacuity: there must actually be acceleration, and the two cubes must
+    // really differ in N (otherwise CI-5a is trivially satisfied).
+    check("CI-5: acceleration is non-trivial and N differs (test is non-vacuous)",
+          aA > 1e-9 && aB > 1e-9 && NA != NB,
+          "Either a_COM ~ 0 (force never reached the integrator) or the two "
+          "cubes had equal N — the EP comparison would be vacuous.");
+}
+
 }  // namespace test
 }  // namespace ftd
 
 int main() {
     ftd::test::init("test_cluster_inertia");
 
-    ftd::test::test_inertia_scales_as_inverse_N();   // CI-1 (a) + (b)
-    ftd::test::test_rigid_body_velocity();           // CI-2
-    ftd::test::test_zero_force_no_motion();          // CI-3
-    ftd::test::test_noop_guard_when_toggle_off();    // CI-4
+    ftd::test::test_inertia_scales_as_inverse_N();           // CI-1 (a) + (b): a ∝ 1/N (inertia)
+    ftd::test::test_rigid_body_velocity();                   // CI-2
+    ftd::test::test_zero_force_no_motion();                  // CI-3
+    ftd::test::test_noop_guard_when_toggle_off();            // CI-4
+    ftd::test::test_equivalence_principle_universal_freefall(); // CI-5: a independent of N (EP)
 
     return ftd::test::finalize();
 }
