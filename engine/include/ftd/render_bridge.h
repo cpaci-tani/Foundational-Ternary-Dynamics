@@ -76,6 +76,7 @@ class RenderBridge {
     friend void phase_forces_solve_potentials(RenderBridge&);
     friend void phase_forces_build_color_cache(RenderBridge&);
     friend void phase_forces_main_loop(RenderBridge&);
+    friend void phase_forces_integrate_clusters(RenderBridge&);  // unified-mass Phase 2: rigid-body cluster inertia
     // Phase 4c (2026-04-27): phase_read + phase_movement decomposition. See
     // engine/src/render_bridge_phases/phase_read.cpp and phase_movement.cpp.
     friend void phase_read_main_loop(RenderBridge&);
