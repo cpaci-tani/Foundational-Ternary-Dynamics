@@ -31,9 +31,19 @@ namespace ontic {
 // We use K_B = 0.511 MeV as the practical simulation value.
 inline constexpr double K_B = 0.511;
 
+// ── FTD-0130 role disentanglement (unified-mass Phase 0, 2026-06-06) ──────────
+// K_B conflated four roles. Split here into named constants so the genuinely-
+// independent genesis kinetics can vary without perturbing the rest-mass scale.
+// All numerically equal to K_B today ⇒ no-op / golden-hash-safe; the separation
+// is architectural (the consuming SITES are repointed). The FTD action forces
+// the rest/inertial/gravitational roles to be ONE number (SPEC_FTD_LAGRANGIAN
+// §4.1↔§4.2), so those stay fused as M_REST; only K_MANIFEST is independent.
+inline constexpr double M_REST     = K_B;   // rest = inertial = gravitational mass quantum (= m_e)
+inline constexpr double K_MANIFEST = K_B;   // genesis + evaporation Boltzmann/kinetics scale
+
 // Genesis threshold: energy needed to CREATE a new particle.
-// Must fill all N_c color channels: K_GENESIS = N_c · K_B
-inline constexpr double K_GENESIS = K_B * N_C;
+// Must fill all N_c color channels: K_GENESIS = N_c · K_MANIFEST (kinetics, not mass)
+inline constexpr double K_GENESIS = K_MANIFEST * N_C;
 
 // ============================================================================
 // Layer 6c: Mass Ratios (from framework integers)

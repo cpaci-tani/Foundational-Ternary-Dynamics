@@ -2,7 +2,7 @@ import { getPhysicsHarness } from '../../../physics/index.js';
 import { MockBridge } from '../../../bridge-init.js';
 import { MockBridgeProxy } from '../../../bridge/mock-bridge-proxy.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
-import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY } from '../../../config/toggles.js';
+import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY, SCALE0_ABSORBING_SCENARIOS, SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
 import {
     clearFluxMock,
@@ -295,6 +295,28 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     const harness = getPhysicsHarness(ctx.bridge);
     scenario.load(harness, params);
+
+    // Gravity/wave family (SCALE0_ABSORBING_SCENARIOS): set LAST, after
+    // scenario.load (which resets the engine toggles under the dual-bridge
+    // routing) so these actually reach the running bridge. Two things:
+    //   • absorbing_boundary — outgoing waves disperse into the void at the
+    //     faces (render_bridge.cpp Rule 5b). Scoped here so other scenarios keep
+    //     their full flux volume (enabling it broadly collapsed volumes to slabs).
+    //   • latency_field — run the REAL latency Poisson so the gravity panel shows
+    //     the genuine C++ potential, not only the |J|² proxy. Source is the
+    //     [IMPOSED] field-energy density (field_energy_gravity) for the FLUX
+    //     scenarios, OR real manifested rest mass M_REST·|state| for the
+    //     MASS-gravity scenarios (SCALE0_MASS_GRAVITY_SCENARIOS, e.g. massive-body).
+    const isFluxGravity = SCALE0_ABSORBING_SCENARIOS.has(scenario.id);
+    const isMassGravity = SCALE0_MASS_GRAVITY_SCENARIOS.has(scenario.id);
+    for (const sc of [ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0]) {
+        sc?.setToggle?.('absorbing_boundary', isFluxGravity);
+        sc?.setToggle?.('latency_field', isFluxGravity || isMassGravity);
+        sc?.setToggle?.('field_energy_gravity', isFluxGravity);
+        // Mass-gravity body is a STATIC pre-seeded rest mass: disable genesis so the
+        // body's self-field (Gauss flux) cannot trigger runaway manifestation.
+        if (isMassGravity) sc?.setToggle?.('genesis', false);
+    }
 
     setCurrentScenarioId(scenario.id);
     setSelectedScenarioId(scenario.id);

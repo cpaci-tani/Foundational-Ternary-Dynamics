@@ -381,12 +381,12 @@ __global__ void genesis_dual_kernel(
     double fx = obs_x[i], fy = obs_y[i], fz = obs_z[i];
     double density = sqrt(fx*fx + fy*fy + fz*fz);
 
-    constexpr double k_genesis = 3.0 * K_B;
+    constexpr double k_genesis = K_GENESIS;   // = N_c·K_MANIFEST (kinetics trigger)
     if (density <= k_genesis) return;
 
     // Exponential CDF genesis probability (matches CPU, dual-substrate)
     double z_gen = density - k_genesis;
-    double p = 1.0 - exp(-z_gen / K_B);
+    double p = 1.0 - exp(-z_gen / K_MANIFEST);
     // BH-F5 (2026-05-05): SplitMix64 stream replaces curand. Bit-exact CPU↔GPU.
     double r = ::ftd::voxel_uniform(rng_seed, i, tick,
                 static_cast<unsigned long long>(::ftd::VoxelRng::GenesisManifest));

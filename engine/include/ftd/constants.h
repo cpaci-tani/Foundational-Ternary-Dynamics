@@ -141,6 +141,8 @@ using ontic::M_Z;
 
 // Layer 6: Mass scale
 using ontic::K_B;
+using ontic::M_REST;     // rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0
+using ontic::K_MANIFEST; // genesis/evaporation kinetics scale (= K_B); unified-mass Phase 0
 using ontic::K_GENESIS;
 
 // Layer 6c: Mass ratios
@@ -327,7 +329,7 @@ inline constexpr double EXCHANGE_RANGE_SQ = EXCHANGE_RANGE * EXCHANGE_RANGE;
 inline constexpr int SOR_ITERATIONS = 6;
 inline constexpr double SOR_OMEGA = 1.75;
 
-// Evaporation: particle dies when 7-site neighborhood energy < K_B² × this
+// Evaporation: particle dies when 7-site neighborhood energy < K_MANIFEST² × this
 inline constexpr double EVAP_THRESHOLD = 1e-6;
 
 // Numerical underflow guards

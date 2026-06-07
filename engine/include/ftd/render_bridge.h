@@ -70,11 +70,18 @@ class RenderBridge {
     friend void snapshot_flux_pre_write(RenderBridge&);
     friend void phase_write_main_loop(RenderBridge&);
     friend void phase_write_assign_pending_ids(RenderBridge&);
+    friend void apply_absorbing_boundary(RenderBridge&);
     // Phase 4b (2026-04-27): phase_forces decomposition. See
     // engine/src/render_bridge_phases/phase_forces.cpp.
     friend void phase_forces_solve_potentials(RenderBridge&);
     friend void phase_forces_build_color_cache(RenderBridge&);
     friend void phase_forces_main_loop(RenderBridge&);
+    friend void phase_forces_integrate_clusters(RenderBridge&);  // unified-mass Phase 2: rigid-body cluster inertia
+    // Test access (test_cluster_inertia.cpp): the cluster-inertia falsifier
+    // injects a FIXED total force into force_diag_ and reads V_COM back, both
+    // of which are private. A friend keeps the test honest (no public mutator
+    // for force_diag_) and does not alter struct layout (golden-safe).
+    friend void test_cluster_inertia_inject_force(RenderBridge&, int idx, const Vec3& f);
     // Phase 4c (2026-04-27): phase_read + phase_movement decomposition. See
     // engine/src/render_bridge_phases/phase_read.cpp and phase_movement.cpp.
     friend void phase_read_main_loop(RenderBridge&);
@@ -133,6 +140,10 @@ public:
     Vec3 flux_at(int idx) const;
     Vec3 wave_vel_at(int idx) const;
     double density_at(int idx) const;
+    // Phase 2 gravity panel: reduced stats of the real C++ latency field
+    // (voxel.latency, distinct from the |J|² web proxy). The dense latency
+    // volume itself is exported (layout-transposed) directly in the WASM binding.
+    GravityMetricAgg gravity_metric_agg() const; // reduced L/f/γ/dilation stats
     const EngineState& engine_state() const {
         sync_ternary_from_voxels_if_needed();
         sync_fields_from_voxels_if_needed();
@@ -349,7 +360,7 @@ public:
     inline double born_probability(int idx) const {
       double rho = voxels()[idx].density();
       if (rho < K_GENESIS) return 0.0;
-      return 1.0 - std::exp(-(rho - K_GENESIS) / K_B);
+      return 1.0 - std::exp(-(rho - K_GENESIS) / K_MANIFEST);
     }
     void create_entangled_pair(int x, int y, int z, const Vec3& flux_val);
 
