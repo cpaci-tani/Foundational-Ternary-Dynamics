@@ -218,7 +218,7 @@ void phase_write_main_loop(RenderBridge& rb) {
       // Genesis (dual): chirality density for polarity.
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
-        double p = 1.0 - std::exp(-excess / K_B);
+        double p = 1.0 - std::exp(-excess / K_MANIFEST);
         const std::uint64_t gseed =
             static_cast<std::uint64_t>(rb.toggles.langevin_seed);
         if (voxel_uniform(gseed, i, rb.tick_,
@@ -262,7 +262,7 @@ void phase_write_main_loop(RenderBridge& rb) {
       // Genesis (single): divergence for polarity.
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
-        double p = 1.0 - std::exp(-excess / K_B);
+        double p = 1.0 - std::exp(-excess / K_MANIFEST);
         const std::uint64_t gseed =
             static_cast<std::uint64_t>(rb.toggles.langevin_seed);
         if (voxel_uniform(gseed, i, rb.tick_,
@@ -281,7 +281,7 @@ void phase_write_main_loop(RenderBridge& rb) {
     }
 
     // Evaporation (shared single + dual): low TOTAL wave energy → return to void.
-    constexpr double EVAP_ENERGY = K_B * K_B * EVAP_THRESHOLD;
+    constexpr double EVAP_ENERGY = K_MANIFEST * K_MANIFEST * EVAP_THRESHOLD;
     (void)EVAP_ENERGY;  // declared in original code; unused but preserved.
     double local_energy = v.flux.mag2() + v.wave_vel.mag2();
     {
@@ -290,7 +290,7 @@ void phase_write_main_loop(RenderBridge& rb) {
         local_energy += rb.voxels_[n].flux.mag2() + rb.voxels_[n].wave_vel.mag2();
     }
     if ((do_genesis || do_evaporation) && v.state != 0 && !v.locked) {
-      double evap_prob = std::exp(-local_energy / (K_B * K_B));
+      double evap_prob = std::exp(-local_energy / (K_MANIFEST * K_MANIFEST));
       const std::uint64_t gseed =
           static_cast<std::uint64_t>(rb.toggles.langevin_seed);
       if (voxel_uniform(gseed, i, rb.tick_,
@@ -311,6 +311,41 @@ void phase_write_assign_pending_ids(RenderBridge& rb) {
   for (int i = 0; i < N_total; ++i) {
     if (rb.voxels_[i].particle_id == -2) {
       rb.voxels_[i].particle_id = rb.injector_.next_particle_id();
+    }
+  }
+}
+
+// Absorbing-boundary sponge — see render_bridge_phases.h. Quadratic ramp
+// f(d) = (d/D)² over a shell of width D at every lattice face: f(0)=0 (Dirichlet
+// wall), grading to 1 at d=D so the impedance change is gradual and reflects
+// very little (~99.97% round-trip absorption at D=6). Damps the observable
+// flux/wave_vel AND the dual L/R substrates (the observable is recomputed from
+// them each tick, so damping only the observable would be overwritten). Byte-
+// identical intent with the MockBridge JS sponge. O(N³) walk, but interior
+// voxels (d≥D) short-circuit without writes.
+void apply_absorbing_boundary(RenderBridge& rb) {
+  const Lattice& lat = rb.lattice_;
+  const int N = lat.size();
+  const int Nm1 = N - 1;
+  const int D = std::min(6, std::max(2, N / 4));
+  const double invD = 1.0 / static_cast<double>(D);
+  for (int z = 0; z < N; ++z) {
+    const int dz = std::min(z, Nm1 - z);
+    for (int y = 0; y < N; ++y) {
+      const int dyz = std::min(std::min(y, Nm1 - y), dz);
+      // NOTE: do NOT short-circuit the whole row on dyz>=D — the x-FACES of an
+      // interior y/z row (dx<D) still need damping. Skipping them damped only the
+      // y/z faces and left the x faces full, collapsing the volume to a slab.
+      for (int x = 0; x < N; ++x) {
+        const int d = std::min(std::min(x, Nm1 - x), dyz);
+        if (d >= D) continue;  // per-voxel interior skip (symmetric on all 6 faces)
+        const double r = d * invD;
+        const double fd = r * r;
+        Voxel& v = rb.voxels_[lat.index(x, y, z)];
+        v.flux *= fd; v.wave_vel *= fd;
+        v.flux_L *= fd; v.flux_R *= fd;
+        v.wave_vel_L *= fd; v.wave_vel_R *= fd;
+      }
     }
   }
 }

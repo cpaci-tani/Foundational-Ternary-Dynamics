@@ -99,7 +99,9 @@ export const ALPHA_G_APPROX = 5.91e-39;               // gravitational hierarchy
  * empirical electron mass.
  */
 export const K_B       = 0.511;                       // electron mass in MeV
-export const K_GENESIS = N_C * K_B;                   // genesis threshold = 1.533
+export const M_REST     = K_B;                        // rest/inertial/gravitational mass quantum (= K_B); unified-mass Phase 0 (FTD-0130)
+export const K_MANIFEST = K_B;                        // genesis/evaporation kinetics scale (= K_B); unified-mass Phase 0 (FTD-0130)
+export const K_GENESIS = N_C * K_MANIFEST;            // genesis threshold = 1.533 (kinetics, not mass)
 export const C_SPEED   = 0.57735026918962576451;      // 1/sqrt(3) [DERIVED from CFL]
 export const C_WAVE    = C_SPEED;
 

@@ -256,4 +256,88 @@ void phase_forces_main_loop(RenderBridge& rb) {
   }
 }
 
+// ── Phase 2 (unified mass): rigid-body cluster inertia ────────────────────
+// A connected cluster of N LOCKED manifested voxels (same state sign, 26-Moore
+// connectivity) carries inertial mass N·M_REST. Its centre of mass integrates
+// a_COM = F_cluster/(N·M_REST) using the SAME γ_FTD momentum scheme as the
+// per-voxel loop, with the per-mass force F_cluster/(N·M_REST) in place of
+// f_total; the resulting V_COM is written to every member (rigid body).
+//
+// The per-voxel loop already skips locked voxels (the `if (!v.locked)` guard
+// above), so this pass is purely ADDITIVE: with cluster_inertia OFF it never
+// runs and the golden hash is byte-identical. F_cluster is reconstructed
+// EXACTLY from force_diag_ (= f_coulomb + f_gravity + f_strong + f_magnetic =
+// f_em + f_grav + f_lorentz + f_color, written for every voxel above).
+//
+// Phase 2 is the INERTIAL (velocity) response only — locked members stay frozen
+// in POSITION (phase_movement still skips them); turning V_COM into an actual
+// lattice trajectory is Phase 3. The traversal is sequential + deterministic so
+// the float-summation order is fixed (bit-exact; the GPU path runs this same
+// host code on synced data → bit-exact CPU↔GPU by construction).
+void phase_forces_integrate_clusters(RenderBridge& rb) {
+  const auto& active = rb.ordered_active_indices();
+  if (active.empty()) return;
+
+  std::vector<char> visited(rb.voxels_.size(), 0);
+  std::vector<int>  stack;
+  std::vector<int>  members;
+  const double C  = C_SPEED;
+  const double C2 = C * C;
+
+  for (int seed : active) {
+    if (visited[seed]) continue;
+    visited[seed] = 1;
+    auto& sv = rb.voxels_[seed];
+    if (sv.state == 0 || !sv.locked) continue;
+    const int sign = (sv.state > 0) ? 1 : -1;
+
+    // Flood-fill this locked, same-sign cluster (26-connectivity).
+    members.clear();
+    stack.clear();
+    stack.push_back(seed);
+    int    N = 0;
+    Vec3   F_cluster{};
+    Vec3   sum_vel{};
+    double sum_lat = 0.0;
+    while (!stack.empty()) {
+      const int cur = stack.back();
+      stack.pop_back();
+      auto& cv = rb.voxels_[cur];
+      members.push_back(cur);
+      ++N;
+      const auto& fd = rb.force_diag_[cur];
+      F_cluster = F_cluster + fd.f_coulomb + fd.f_gravity + fd.f_strong + fd.f_magnetic;
+      sum_vel   = sum_vel + cv.velocity;
+      sum_lat  += cv.latency;
+      for (int nb : rb.lattice_.neighbors_26(cur)) {
+        if (visited[nb]) continue;
+        auto& nv = rb.voxels_[nb];
+        if (nv.state == 0 || !nv.locked) continue;
+        if (((nv.state > 0) ? 1 : -1) != sign) continue;
+        visited[nb] = 1;
+        stack.push_back(nb);
+      }
+    }
+    if (N == 0) continue;
+
+    // γ_FTD integration of the COM at inertial mass m = N·M_REST.
+    // Identical algebra to the per-voxel loop with v→V_COM, f_total→F_cluster/m.
+    const double m        = static_cast<double>(N) * M_REST;
+    Vec3         V_COM    = sum_vel * (1.0 / N);
+    const double L        = sum_lat / N;            // mean member latency
+    const double L2       = L * L;
+    const double one_L2   = std::max(1.0 - L2, BANDWIDTH_FLOOR);
+    double       budget   = V_COM.mag2() / C2 + L2;
+    if (budget > 1.0 - BANDWIDTH_FLOOR) budget = 1.0 - BANDWIDTH_FLOOR;
+    const double gamma_in = 1.0 / std::sqrt(1.0 - budget);
+    Vec3         q        = V_COM * gamma_in;                 // P/m
+    q = q + (F_cluster * (1.0 / m)) * rb.dt_;                 // a = F/m
+    const double q2       = q.mag2();
+    const double scale    = C * std::sqrt(one_L2 / (C2 + q2));
+    V_COM = q * scale;
+
+    for (int midx : members) rb.voxels_[midx].velocity = V_COM;
+  }
+}
+
 }  // namespace ftd

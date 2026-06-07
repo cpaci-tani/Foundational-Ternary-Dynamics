@@ -223,6 +223,31 @@ double RenderBridge::density_at(int idx) const {
     return fields().density_at(static_cast<std::size_t>(idx));
 }
 
+GravityMetricAgg RenderBridge::gravity_metric_agg() const {
+    GravityMetricAgg a;
+    const auto& vox = voxels();
+    const int N = static_cast<int>(vox.size());
+    double lat_sum = 0.0;
+    int count = 0;
+    for (int i = 0; i < N; ++i) {
+        const double L = vox[i].latency;
+        if (L <= 0.0) continue;
+        if (L > a.latency_max) a.latency_max = L;
+        const double g = vox[i].gamma_ftd();
+        if (g > a.gamma_max) a.gamma_max = g;
+        lat_sum += L;
+        ++count;
+    }
+    a.voxel_count = count;
+    if (count > 0) {
+        a.latency_mean = lat_sum / count;
+        a.f_min = 1.0 - a.latency_max * a.latency_max;
+        a.dilation_max_pct = (1.0 - std::sqrt(std::max(0.0, a.f_min))) * 100.0;
+    }
+    a.active = (toggles.latency_field || toggles.field_energy_gravity) && count > 0;
+    return a;
+}
+
 // ARCH-4 (2026-04-25): propagates the seed to all RNG sources at once.
 // Body lives here because GpuEngine is forward-declared in render_bridge.h.
 void RenderBridge::seed_rng(unsigned int seed) {
@@ -407,7 +432,8 @@ void RenderBridge::solve_coulomb_poisson() {
 }
 
 void RenderBridge::solve_latency_poisson() {
-  solve_latency_poisson_cpu(voxels_, ternary_field(), phi_latency_, sor_source_, lattice_, sor_iterations_);
+  solve_latency_poisson_cpu(voxels_, ternary_field(), phi_latency_, sor_source_, lattice_, sor_iterations_,
+                            toggles.field_energy_gravity);
 }
 
 // ============================================================================
@@ -437,6 +463,10 @@ void RenderBridge::phase_forces() {
   ::ftd::phase_forces_solve_potentials(*this);
   ::ftd::phase_forces_build_color_cache(*this);
   ::ftd::phase_forces_main_loop(*this);
+  // Phase 2 (unified mass): rigid-body cluster inertia. Default-off, additive —
+  // the per-voxel loop already skips locked voxels, so when the toggle is off
+  // this is a no-op and the golden hash is byte-identical.
+  if (toggles.cluster_inertia) ::ftd::phase_forces_integrate_clusters(*this);
 }
 
 
@@ -560,6 +590,13 @@ void RenderBridge::tick() {
   // Rule 5: Movement + collisions + annihilation
   if (toggles.movement)
     phase_movement();
+
+  // Rule 5b: Absorbing-boundary sponge — disperse outgoing waves into the void
+  // at the lattice faces. Runs AFTER gauss/forces/movement (the last flux
+  // writers) so the damped edge shell is NOT refilled by the Gauss projection.
+  // Gated; default off → golden-tick hash + conservation tests unchanged.
+  if (toggles.absorbing_boundary)
+    apply_absorbing_boundary(*this);
 
 
   // Self-field floor moved to Rule 3b (after Gauss, before forces) in Phase 3.

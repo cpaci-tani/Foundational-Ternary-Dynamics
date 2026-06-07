@@ -287,6 +287,14 @@ set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS cognitive_lattice)
 ftd_add_test(test_conservation_profile tests/test_conservation_profile.cpp
              CTEST_NAME conservation_profile TIMEOUT 120 LABELS unit conservation)
 
+# Cluster inertia (unified-mass Phase 2, 2026-06-06): verifies the [IMPOSED]
+# rigid-body cluster integrator a_COM = F_cluster/(N*M_REST). The falsifier is
+# a proportional-to-1/N: a fixed total force injected directly into force_diag_,
+# integrated by one direct call to phase_forces_integrate_clusters, gives
+# a_COM*N constant across N in {1, 8, 27}.
+ftd_add_test(test_cluster_inertia tests/test_cluster_inertia.cpp
+             CTEST_NAME cluster_inertia TIMEOUT 120 LABELS unit mass)
+
 # Foundational
 add_executable(test_constants tests/test_constants.cpp)
 target_link_libraries(test_constants ftd_core)
