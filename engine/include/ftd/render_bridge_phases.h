@@ -96,6 +96,20 @@ void phase_forces_build_color_cache(RenderBridge& rb);
 /// voxel velocity/accel_mag and rb.force_diag_.
 void phase_forces_main_loop(RenderBridge& rb);
 
+/// Unified-mass Phase 2 — rigid-body cluster inertia. Flood-fills each
+/// connected (26-Moore) cluster of LOCKED, same-sign manifested voxels,
+/// reconstructs F_cluster from rb.force_diag_ (f_coulomb+f_gravity+f_strong+
+/// f_magnetic), and integrates the COM at inertial mass N·M_REST
+/// (a_COM = F_cluster/(N·M_REST)), writing the resulting V_COM to every
+/// member. Reads rb.voxels_.{state,locked,velocity,latency}, rb.force_diag_,
+/// rb.lattice_, rb.dt_; writes member velocities only. Gated by
+/// toggles.cluster_inertia at the call site (default OFF ⇒ additive / golden-
+/// safe). The GPU mirror (GpuBackend::tick) reuses this verbatim on synced
+/// host data so the CPU and GPU paths are bit-exact by construction.
+/// (Also friend-declared in render_bridge.h for force_diag_ access; this is
+/// the namespace-scope declaration that qualified ::ftd:: call sites need.)
+void phase_forces_integrate_clusters(RenderBridge& rb);
+
 // =============================================================================
 // Phase 4c — phase_read + phase_movement decomposition (2026-04-27)
 //
