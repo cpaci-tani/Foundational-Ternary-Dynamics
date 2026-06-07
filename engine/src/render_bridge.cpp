@@ -463,6 +463,10 @@ void RenderBridge::phase_forces() {
   ::ftd::phase_forces_solve_potentials(*this);
   ::ftd::phase_forces_build_color_cache(*this);
   ::ftd::phase_forces_main_loop(*this);
+  // Phase 2 (unified mass): rigid-body cluster inertia. Default-off, additive —
+  // the per-voxel loop already skips locked voxels, so when the toggle is off
+  // this is a no-op and the golden hash is byte-identical.
+  if (toggles.cluster_inertia) ::ftd::phase_forces_integrate_clusters(*this);
 }
 
 
