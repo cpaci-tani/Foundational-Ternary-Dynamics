@@ -389,6 +389,18 @@ export class WasmBridge {
             (m, b) => m.getFluxVolume(b));
     }
 
+    // Phase 2 gravity panel: REAL C++ latency field (voxel.latency), not the |J|² proxy.
+    getGravityMetricAgg() {
+        return _wasmCallOr(this, 'getGravityMetricAgg',
+            { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 },
+            (m, b) => m.getGravityMetricAgg(b));
+    }
+
+    getLatencyVolume() {
+        return _wasmCallOr(this, 'getLatencyVolume', new Float64Array(0),
+            (m, b) => m.getLatencyVolume(b));
+    }
+
     // ── Bulk Vector Field Exports (Scale 0 field visualization) ──────
     // RF-6: the two-line module-presence / method-presence guard is factored
     // into _wasmCallOr. When the WASM module or a specific method is missing,

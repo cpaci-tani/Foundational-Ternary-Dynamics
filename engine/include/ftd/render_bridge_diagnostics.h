@@ -56,6 +56,18 @@ struct AggregateProfile {
     int site_count = 0;         // sites with |J| > threshold
 };
 
+// Phase 2 (gravity panel): aggregate of the REAL C++ latency field
+// (voxel.latency from the Poisson solver), distinct from the |J|² web proxy.
+struct GravityMetricAgg {
+    double latency_max = 0.0;      // max voxel.latency (real gravity potential L)
+    double latency_mean = 0.0;     // mean over voxels with L>0
+    double f_min = 1.0;            // min lapse f = 1 - L_max² (deepest dilation)
+    double gamma_max = 1.0;        // max gamma_ftd()
+    double dilation_max_pct = 0.0; // (1 - sqrt(f_min))·100
+    int voxel_count = 0;           // voxels with latency > 0
+    bool active = false;           // latency machinery on AND a non-trivial field
+};
+
 struct EnergyAudit {
     double field_energy = 0.0;     // ½·sum |J|^2 over all sites (canonical ½ convention)
     double wave_energy = 0.0;      // ½·sum |wave_vel|^2 over all sites

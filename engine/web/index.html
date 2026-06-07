@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="css/ui/components/p1-observables-panel.css">
     <link rel="stylesheet" href="css/ui/components/conservation-micropanel.css">
     <link rel="stylesheet" href="css/ui/components/spectrum-panel.css">
+    <!-- gravity-panel.css is injected async by gravity-panel.js (off the render-blocking boot path) -->
     <link rel="stylesheet" href="css/ui/components/assistant-sidebar.css">
     <link rel="stylesheet" href="css/ui/components/settings-modal.css">
     <link rel="stylesheet" href="css/ui/components/keyboard-help.css">
@@ -212,6 +213,8 @@
 
             <!-- Spectrum scanner panel is rendered by js/scales/scale0/ui/overlays/spectrum-panel.js -->
             <div class="panel scale0-only" id="panel-spectrum"></div>
+            <!-- Gravity Observatory panel is rendered by js/scales/scale0/ui/overlays/gravity-panel.js -->
+            <div class="panel scale0-only" id="panel-gravity"></div>
 
             <!-- Cosmic and Meta info panels are rendered by js/ui/components/panel-resources -->
             <!-- Verify panel is rendered by js/verify-panel/component.js -->

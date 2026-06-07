@@ -10,6 +10,7 @@
 
 #include "ftd/backend.h"
 #include "ftd/render_bridge.h"
+#include "ftd/render_bridge_phases.h"   // phase_forces_integrate_clusters (GPU cluster-inertia mirror)
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
@@ -58,6 +59,41 @@ void GpuBackend::tick() {
     // Download device buffers so RenderBridge::accumulate_proper_time() and
     // update_energy_ledger() see fresh state.
     sync_to_host();
+
+    // ── Unified-mass Phase 2: rigid-body cluster inertia (GPU mirror) ───────
+    // The cluster pass has NO GPU kernel; it is a HOST-SIDE reduction by design.
+    // A device-side segmented/atomic reduction would sum F_cluster and Σvelocity
+    // in nondeterministic float order and break the bit-exact golden / gpu_parity
+    // gates. Instead we reuse the CPU free function verbatim on the synced host
+    // RenderBridge, so the GPU result is bit-exact-by-construction identical to
+    // the CPU path (same host arithmetic, same traversal order).
+    //
+    // PLACEMENT / PARITY: the CPU path runs this between phase_forces and
+    // phase_movement (render_bridge.cpp:469). Here it runs AFTER the whole GPU
+    // tick (post-movement, post-download). That is observably IDENTICAL because
+    // the pass only writes `velocity` on LOCKED voxels, and movement — on BOTH
+    // backends — skips locked voxels entirely (CPU phase_movement_main_loop:63
+    // `if (v.state==0 || v.locked ...) continue;`; GPU phase_movement_kernel:421
+    // `if (state[i]==0 || locked[i]) return;`). So the locked-velocity write is
+    // never consumed by movement; computing it before vs. after movement yields
+    // the same final state. Running post-sync also lets us reuse the per-tick
+    // download (state/velocity/locked/latency + force_diag scatter) that
+    // sync_to_host() already performed for the energy ledger.
+    //
+    // sync_to_host() above has populated bridge_.voxels_ (state, velocity,
+    // locked, latency) and bridge_.force_diag_ (f_coulomb/f_gravity/f_strong/
+    // f_magnetic) — exactly the inputs phase_forces_integrate_clusters reads,
+    // and bridge_.lattice_ is backend-independent. Default-OFF: when the toggle
+    // is clear this whole block is skipped, so GPU runs are unchanged.
+    if (bridge_.toggles.cluster_inertia) {
+        // Reuse the CPU integrator verbatim — do NOT reimplement the flood-fill.
+        phase_forces_integrate_clusters(bridge_);
+        // Upload the rewritten host velocity back to the device so subsequent
+        // ticks / diagnostics see the cluster's COM velocity. push_to_device()
+        // re-uploads the full host voxel array (only locked velocities changed),
+        // keeping device == host; gpu_dirty_ stays false (state is consistent).
+        push_to_device();
+    }
 }
 
 void GpuBackend::set_dt(double dt) {
