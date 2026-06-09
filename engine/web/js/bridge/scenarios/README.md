@@ -4,9 +4,11 @@
 Each scenario is a setup function that injects particles + flux into the
 bridge to seed an initial condition.
 
-> **Architecture reference:** the full subsystem (definition layers, lifecycle,
-> contracts) is specified in
+> **Architecture references:** the full Scale 0 subsystem (definition layers,
+> lifecycle, contracts) is specified in
 > [engine/web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md](../../../docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md).
+> The broader cross-scale scenario map lives at
+> [engine/SCENARIO_ARCHITECTURE.md](../../../../SCENARIO_ARCHITECTURE.md).
 
 ## Public API
 
@@ -49,7 +51,7 @@ A scenario group file exports `setupXxxScenario(name, harness, ctx)`:
 4. MUST use shared helpers from `_helpers.js` for radial envelopes and triad placement.
 5. MUST mirror the C++ scenario body (positions, charges, locked flags). When drift is intentional (e.g., visual cue not matching strict physics), document it inline.
 
-See [CONTRACTS.md §4](../../../../CONTRACTS.md#4--scenario-dispatch-contract) for the cross-module contract.
+See [CONTRACTS.md §4](../../../../../CONTRACTS.md#4--scenario-dispatch-contract) for the cross-module contract.
 
 ## How to extend
 
@@ -62,7 +64,7 @@ See [CONTRACTS.md §4](../../../../CONTRACTS.md#4--scenario-dispatch-contract) f
 ### Adding a new scenario group (new prefix)
 1. Create `<prefix>-scenarios.js` exporting `setupXxxScenario(name, harness, ctx)`.
 2. Add it to the dispatch chain in `index.js`.
-3. Update [META_PROJECT_ATLAS.md](../../../../META_PROJECT_ATLAS.md) §2 directory tree to list the new group.
+3. Update [META_PROJECT_ATLAS.md](../../../../../META_PROJECT_ATLAS.md) §2 directory tree to list the new group.
 
 ## Anti-patterns (do not do this)
 
@@ -73,6 +75,7 @@ See [CONTRACTS.md §4](../../../../CONTRACTS.md#4--scenario-dispatch-contract) f
 ## Related docs
 
 - [engine/web/docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md](../../../docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md) — architecture
-- [CONTRACTS.md §4](../../../../CONTRACTS.md#4--scenario-dispatch-contract) — cross-module contract
+- [engine/SCENARIO_ARCHITECTURE.md](../../../../SCENARIO_ARCHITECTURE.md) — cross-scale scenario architecture
+- [CONTRACTS.md §4](../../../../../CONTRACTS.md#4--scenario-dispatch-contract) — cross-module contract
 - [engine/web/docs/USER_GUIDE.md](../../../docs/USER_GUIDE.md) §scenarios
 - C++ mirror: `engine/src/scenarios/`

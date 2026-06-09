@@ -12,6 +12,8 @@ the remediation roadmap in [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE
 Foundation companions: [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md) (the
 bridges scenarios run on) and [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md) (the
 per-frame loop that drives them).
+Cross-scale companion: [`engine/SCENARIO_ARCHITECTURE.md`](../../SCENARIO_ARCHITECTURE.md)
+(scenario lifecycle and seed architecture across all dashboard scales).
 Adjacent surfaces already specced: [`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`](audits/AUDIT_BRIDGE_WIRING_2026-06-03.md)
 (bridge read-surface), [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
 (lifecycle controller / worker teardown / perf), [`TOGGLE_REGISTRY.md`](TOGGLE_REGISTRY.md),
