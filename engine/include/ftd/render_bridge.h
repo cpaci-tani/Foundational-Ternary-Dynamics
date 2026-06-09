@@ -2,13 +2,17 @@
 /**
  * Render-Bridge Tick Engine
  *
- * Implements the G*-tick dynamics with Read/Write sub-phases.
- * Each tick:
- *   1. Read phase (sqrt(G*) sub-tick): compute Delta_J from 6 face neighbors
- *   2. Write phase (sqrt(G*) sub-tick): commit updated J, round to grid
- *   3. Update latency L from local density
- *   4. Enforce bandwidth: if v^2 + L^2 >= 1, scale velocity down
- *   5. Advance proper time: tau += G* * sqrt(1 - v^2 - L^2)
+ * Implements the Scale-0 lattice tick dynamics with staged read/write loops
+ * and toggle-gated extension phases. The full call graph is documented in
+ * engine/CALLSTACKS.md; the short CPU path is:
+ *   1. phase_read(): wave/coupling deltas
+ *   2. phase_write(): flux commit, damping/noise, genesis/evaporation
+ *   3. optional pair production
+ *   4. Gauss projection
+ *   5. optional latency Poisson
+ *   6. forces, then movement/collisions
+ *   7. optional boundary, weak, triad, and proper-time phases
+ *   8. tick/time/dirty-flag/energy-ledger bookkeeping
  */
 
 #include <vector>

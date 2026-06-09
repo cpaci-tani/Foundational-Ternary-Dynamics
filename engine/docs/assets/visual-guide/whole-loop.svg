@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="360" viewBox="0 0 980 360" role="img" aria-labelledby="title desc">
+  <title id="title">FTD simulation learning loop</title>
+  <desc id="desc">A circular workflow from scenario selection, through seeding and ticking, to rendering and interpretation.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2855a5"/>
+    </marker>
+    <filter id="shadow" x="-15%" y="-25%" width="130%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#18345a" flood-opacity="0.14"/>
+    </filter>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#eef6f3"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .label{font:700 18px system-ui,Segoe UI,sans-serif;fill:#14233b}
+    .sub{font:500 13px system-ui,Segoe UI,sans-serif;fill:#526173}
+    .node{filter:url(#shadow);stroke-width:2}
+    .path{fill:none;stroke:#2855a5;stroke-width:3.2;stroke-linecap:round;marker-end:url(#arrow)}
+    .caption{font:700 22px system-ui,Segoe UI,sans-serif;fill:#10213a}
+  </style>
+  <rect width="980" height="360" rx="24" fill="url(#bg)"/>
+  <text class="caption" x="38" y="52">How the sim becomes a question machine</text>
+  <text class="sub" x="40" y="78">Seed a starting condition, let local rules run, then ask what pattern actually emerged.</text>
+
+  <path class="path" d="M 234 138 C 302 84, 391 72, 462 108"/>
+  <path class="path" d="M 588 110 C 672 78, 785 96, 835 168"/>
+  <path class="path" d="M 825 242 C 772 315, 660 333, 578 294"/>
+  <path class="path" d="M 452 292 C 374 326, 269 306, 221 240"/>
+  <path class="path" d="M 169 184 C 160 170, 160 154, 169 142"/>
+
+  <g class="node">
+    <rect x="54" y="112" width="188" height="94" rx="18" fill="#ffffff" stroke="#81a9e8"/>
+    <circle cx="88" cy="159" r="21" fill="#dbeafe" stroke="#4b7bd8" stroke-width="2"/>
+    <text class="label" x="122" y="151">Choose</text>
+    <text class="label" x="122" y="174">a scenario</text>
+  </g>
+  <g class="node">
+    <rect x="380" y="74" width="210" height="94" rx="18" fill="#ffffff" stroke="#72c3a3"/>
+    <circle cx="416" cy="121" r="21" fill="#dbf7eb" stroke="#2f9b71" stroke-width="2"/>
+    <text class="label" x="450" y="113">Seed initial</text>
+    <text class="label" x="450" y="136">conditions</text>
+  </g>
+  <g class="node">
+    <rect x="748" y="152" width="178" height="94" rx="18" fill="#ffffff" stroke="#f1b76c"/>
+    <circle cx="784" cy="199" r="21" fill="#fff0d7" stroke="#d98924" stroke-width="2"/>
+    <text class="label" x="818" y="191">Run local</text>
+    <text class="label" x="818" y="214">tick rules</text>
+  </g>
+  <g class="node">
+    <rect x="384" y="238" width="210" height="94" rx="18" fill="#ffffff" stroke="#bb96e8"/>
+    <circle cx="420" cy="285" r="21" fill="#f0e7ff" stroke="#8a56d7" stroke-width="2"/>
+    <text class="label" x="454" y="277">Render and</text>
+    <text class="label" x="454" y="300">measure</text>
+  </g>
+  <g class="node">
+    <rect x="58" y="218" width="196" height="94" rx="18" fill="#ffffff" stroke="#f08c8c"/>
+    <circle cx="94" cy="265" r="21" fill="#ffe4e6" stroke="#d74d55" stroke-width="2"/>
+    <text class="label" x="128" y="257">Ask what</text>
+    <text class="label" x="128" y="280">emerged</text>
+  </g>
+</svg>

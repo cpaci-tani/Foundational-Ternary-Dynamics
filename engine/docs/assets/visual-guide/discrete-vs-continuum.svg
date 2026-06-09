@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520" role="img" aria-labelledby="title desc">
+  <title id="title">Discrete perspective compared with continuum habit</title>
+  <desc id="desc">Two pipelines compare starting from smooth equations with starting from lattice states and measuring emergent smoothness.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#315b9d"/>
+    </marker>
+    <filter id="shadow" x="-16%" y="-22%" width="132%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#142033" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+  <style>
+    .h{font:800 25px system-ui,Segoe UI,sans-serif;fill:#10213a}
+    .p{font:500 14px system-ui,Segoe UI,sans-serif;fill:#526173}
+    .panel{fill:#fff;stroke-width:2.5;filter:url(#shadow)}
+    .pill{fill:#f8fbff;stroke-width:2}
+    .head{font:800 20px system-ui,Segoe UI,sans-serif;fill:#14233b}
+    .label{font:800 15px system-ui,Segoe UI,sans-serif;fill:#14233b}
+    .small{font:500 12.5px system-ui,Segoe UI,sans-serif;fill:#5b6675}
+    .arrow{fill:none;stroke:#315b9d;stroke-width:2.5;marker-end:url(#arrow)}
+  </style>
+  <rect width="1000" height="520" rx="24" fill="#fbfcff"/>
+  <text class="h" x="38" y="48">Why the discrete view matters</text>
+  <text class="p" x="40" y="74">The sim does not reject continuum thinking; it asks what local discrete machinery can make it appear.</text>
+
+  <rect class="panel" x="58" y="116" width="398" height="282" rx="22" stroke="#79a9e8"/>
+  <rect class="panel" x="544" y="116" width="398" height="282" rx="22" stroke="#63bf95"/>
+  <text class="head" x="90" y="158">Continuum habit</text>
+  <text class="head" x="576" y="158">Discrete habit</text>
+
+  <g>
+    <rect class="pill" x="100" y="190" width="260" height="48" rx="14" stroke="#79a9e8"/>
+    <text class="label" x="128" y="220">Assume smooth space</text>
+    <rect class="pill" x="100" y="266" width="260" height="48" rx="14" stroke="#79a9e8"/>
+    <text class="label" x="128" y="296">Write a differential law</text>
+    <rect class="pill" x="100" y="342" width="260" height="48" rx="14" stroke="#79a9e8"/>
+    <text class="label" x="128" y="372">Solve or approximate</text>
+    <path class="arrow" d="M 230 238 V 261"/>
+    <path class="arrow" d="M 230 314 V 337"/>
+  </g>
+
+  <g>
+    <rect class="pill" x="586" y="178" width="278" height="44" rx="14" stroke="#63bf95"/>
+    <text class="label" x="615" y="206">Choose site states</text>
+    <rect class="pill" x="586" y="244" width="278" height="44" rx="14" stroke="#63bf95"/>
+    <text class="label" x="615" y="272">Choose local update rule</text>
+    <rect class="pill" x="586" y="310" width="278" height="44" rx="14" stroke="#63bf95"/>
+    <text class="label" x="615" y="338">Run many ticks</text>
+    <rect class="pill" x="586" y="376" width="278" height="44" rx="14" stroke="#63bf95"/>
+    <text class="label" x="615" y="404">Measure emergent smoothness</text>
+    <path class="arrow" d="M 725 222 V 239"/>
+    <path class="arrow" d="M 725 288 V 305"/>
+    <path class="arrow" d="M 725 354 V 371"/>
+  </g>
+
+  <rect x="332" y="438" width="338" height="54" rx="18" fill="#fff4dc" stroke="#e2a244" stroke-width="2.5" filter="url(#shadow)"/>
+  <text class="label" x="389" y="461">Compare predictions, limits, artifacts</text>
+  <text class="small" x="400" y="480">smooth behavior becomes an effective regime to test</text>
+  <path class="arrow" d="M 360 390 C 400 420, 430 430, 470 438"/>
+  <path class="arrow" d="M 702 420 C 660 433, 625 437, 604 438"/>
+</svg>

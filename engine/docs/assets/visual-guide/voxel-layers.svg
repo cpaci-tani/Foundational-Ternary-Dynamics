@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img" aria-labelledby="title desc">
+  <title id="title">One voxel stores discrete state and field information</title>
+  <desc id="desc">A voxel diagram showing discrete state, flux, wave velocity, motion registers, and labels.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#315b9d"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#122033" flood-opacity="0.14"/>
+    </filter>
+    <linearGradient id="cube" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#dbeafe"/>
+      <stop offset="1" stop-color="#c4f1df"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .h{font:800 24px system-ui,Segoe UI,sans-serif;fill:#10213a}
+    .p{font:500 14px system-ui,Segoe UI,sans-serif;fill:#546273}
+    .label{font:800 17px system-ui,Segoe UI,sans-serif;fill:#14233b}
+    .small{font:500 13px system-ui,Segoe UI,sans-serif;fill:#5d6878}
+    .card{fill:#fff;stroke-width:2;filter:url(#shadow)}
+    .link{fill:none;stroke:#315b9d;stroke-width:2.5;marker-end:url(#arrow)}
+  </style>
+  <rect width="980" height="520" rx="24" fill="#fbfcff"/>
+  <text class="h" x="38" y="52">One voxel is a tiny local bookkeeping system</text>
+  <text class="p" x="40" y="78">Discrete actuality and field capacity live together at each lattice site.</text>
+
+  <g transform="translate(78 135)">
+    <polygon points="95,35 205,90 205,220 95,275 -15,220 -15,90" fill="url(#cube)" stroke="#4976b7" stroke-width="3"/>
+    <polygon points="95,35 205,90 95,145 -15,90" fill="#f0f7ff" stroke="#4976b7" stroke-width="2"/>
+    <polygon points="205,90 205,220 95,275 95,145" fill="#cdeee4" stroke="#4976b7" stroke-width="2"/>
+    <polygon points="95,145 95,275 -15,220 -15,90" fill="#d9e9ff" stroke="#4976b7" stroke-width="2"/>
+    <g stroke="#6f92cc" stroke-width="1.4" opacity="0.75">
+      <path d="M 40 118 L 150 63"/>
+      <path d="M 40 248 L 150 193"/>
+      <path d="M -15 155 L 95 210 L 205 155"/>
+      <path d="M 40 63 L 40 248"/>
+      <path d="M 150 63 L 150 248"/>
+    </g>
+    <circle cx="95" cy="160" r="26" fill="#fff" stroke="#315b9d" stroke-width="3"/>
+    <text class="label" x="77" y="166">site</text>
+  </g>
+
+  <g>
+    <rect class="card" x="390" y="112" width="236" height="78" rx="14" stroke="#6aa6e8"/>
+    <text class="label" x="414" y="143">State s</text>
+    <text class="small" x="414" y="166">-1, 0, or +1: actual manifestation</text>
+
+    <rect class="card" x="682" y="112" width="236" height="78" rx="14" stroke="#63bf95"/>
+    <text class="label" x="706" y="143">Flux J</text>
+    <text class="small" x="706" y="166">vector field: latent capacity</text>
+
+    <rect class="card" x="390" y="222" width="236" height="78" rx="14" stroke="#edae55"/>
+    <text class="label" x="414" y="253">Wave velocity</text>
+    <text class="small" x="414" y="276">field momentum for staggered updates</text>
+
+    <rect class="card" x="682" y="222" width="236" height="78" rx="14" stroke="#ad8ae8"/>
+    <text class="label" x="706" y="253">Motion registers</text>
+    <text class="small" x="706" y="276">velocity and fractional remainder</text>
+
+    <rect class="card" x="536" y="344" width="236" height="78" rx="14" stroke="#ea7c83"/>
+    <text class="label" x="560" y="375">Labels</text>
+    <text class="small" x="560" y="398">id, spin, color, pair, lock state</text>
+  </g>
+
+  <path class="link" d="M 315 238 C 350 210, 352 160, 386 151"/>
+  <path class="link" d="M 315 238 C 438 196, 551 162, 677 151"/>
+  <path class="link" d="M 315 238 C 350 250, 356 263, 386 263"/>
+  <path class="link" d="M 315 238 C 436 246, 552 263, 677 263"/>
+  <path class="link" d="M 315 238 C 410 336, 474 383, 532 383"/>
+
+  <path d="M 626 151 C 648 134, 658 134, 679 151" fill="none" stroke="#63bf95" stroke-width="2.4" marker-end="url(#arrow)"/>
+  <path d="M 679 262 C 642 294, 592 297, 558 303" fill="none" stroke="#edae55" stroke-width="2.4" marker-end="url(#arrow)"/>
+  <text class="small" x="622" y="208">field and state update each other locally</text>
+</svg>

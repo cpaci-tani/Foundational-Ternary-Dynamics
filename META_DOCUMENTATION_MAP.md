@@ -17,6 +17,7 @@ For historical documentation-cleanup provenance and deferred remediation notes, 
 | If you want to... | Start here |
 |-------------------|------------|
 | Understand FTD from scratch | [docs/SPEC_FTD.md](docs/SPEC_FTD.md) — **the single source of truth** |
+| Understand how the simulator works visually | [engine/VISUAL_GUIDE.md](engine/VISUAL_GUIDE.md) — guided diagrams for scenarios, ticks, manifestation, and discrete emergence |
 | Get contributor onboarding | [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — balanced guide across theory, engine, verification, and critique |
 | Audit documentation drift | [docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md](docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md) — cleanup ledger, status model, and remediation queue |
 | Make a change without breaking sibling systems | [MAINTAINABILITY.md](MAINTAINABILITY.md) — 8 hazards + 15 step-by-step recipes + tech-debt ledger |
@@ -44,10 +45,11 @@ For historical documentation-cleanup provenance and deferred remediation notes, 
 4. [FOUND_THE_EXISTENCE_FILTER.md](docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md) — E(x) = Re(x) and the Born rule
 
 ### For Programmers
-1. [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md) — Engine architecture and API
-2. [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — Public contributor guide
-3. `engine/` — C++ simulation engine with Three.js web dashboard
-4. `engine/tests/` — Large native test surface; see `engine/SPEC_ENGINE.md` for the current breakdown
+1. [engine/VISUAL_GUIDE.md](engine/VISUAL_GUIDE.md) — Visual guide to the simulation mental model
+2. [engine/SPEC_ENGINE.md](engine/SPEC_ENGINE.md) — Engine architecture and API
+3. [META_CONTRIBUTOR_ONBOARDING.md](META_CONTRIBUTOR_ONBOARDING.md) — Public contributor guide
+4. `engine/` — C++ simulation engine with Three.js web dashboard
+5. `engine/tests/` — Large native test surface; see `engine/SPEC_ENGINE.md` for the current breakdown
 
 ### For Experimentalists
 1. [SPEC_NOVEL_PREDICTIONS.md](docs/theory/01_reference/SPEC_NOVEL_PREDICTIONS.md) — Falsifiable predictions catalog
@@ -125,6 +127,7 @@ ftd/
 │
 ├── engine/                          # C++ simulation engine (see engine/SPEC_ENGINE.md for current version details)
 │   ├── SPEC_ENGINE.md               # Engine reference document
+│   ├── VISUAL_GUIDE.md              # Visual learner's guide to sim flow and discrete emergence
 │   ├── include/ftd/                 # 29 headers (ontic.h is the constant chain; scenarios.h for Scale-0 library)
 │   ├── src/                         # 14 source files
 │   ├── tests/                       # Large CTest surface (CPU, campaign, optional GPU)

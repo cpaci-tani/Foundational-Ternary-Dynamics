@@ -4,6 +4,10 @@
 **Updated:** 2026-04-18
 **Audience:** Researchers, contributors, and curious physicists who want to get real work out of the dashboard
 
+**Companion:** [engine/VISUAL_GUIDE.md](../../VISUAL_GUIDE.md) is the visual
+conceptual guide to how the simulation works, what it teaches, and why the
+discrete perspective matters.
+
 ---
 
 ## Table of Contents
