@@ -163,6 +163,12 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     // Gravity — latency field on for Schwarzschild
     's0-seed-schwarzschild':       [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
     's0-seed-gravitational-wave':  [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
+    // Time-dilation scenarios. gravity-well + twin-clocks reuse the real-mass
+    // body (latency_field is enabled by SCALE0_MASS_GRAVITY_SCENARIOS below);
+    // horizon reuses the seed-bias Schwarzschild well (gravity toggle proxy).
+    's0-seed-time-gravity-well':   [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
+    's0-seed-time-twin-clocks':    [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
+    's0-seed-time-horizon':        [['genesis', false, 't-genesis'], ['gravity', true, 't-gravity']],
     // Self-reference / observation pedagogy seeds (Scale 0)
     's0-seed-sloop':               [['genesis', false, 't-genesis'], ['confinement', true, 't-confinement']],
     's0-seed-observer-cell':       [['genesis', false, 't-genesis']],
@@ -236,6 +242,13 @@ export const SCALE0_ABSORBING_SCENARIOS = new Set([
     's0-seed-schwarzschild',
     's0-seed-gravitational-wave',
     's0-seed-gravitational-lensing',
+    // Time-dilation scenarios reuse the flux gravity wells (gravitational-wave /
+    // Schwarzschild). Membership here enables latency_field + field_energy_gravity
+    // so the Time panel's dτ/dt proxy (built from the |J|² latency sampler) has a
+    // real well, and the genuine C++ Poisson latency activates for the [C++] block.
+    's0-seed-time-gravity-well',
+    's0-seed-time-twin-clocks',
+    's0-seed-time-horizon',
 ]);
 
 // Scenarios whose gravity comes from REAL manifested rest mass (rho = M_REST·|state|)

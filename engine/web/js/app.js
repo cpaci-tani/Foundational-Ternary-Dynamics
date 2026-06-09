@@ -52,6 +52,7 @@ import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observabl
 import { initConservationMicropanel } from './scales/scale0/ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './scales/scale0/ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './scales/scale0/ui/overlays/gravity-panel.js';
+import { initTimePanel } from './scales/scale0/ui/overlays/time-panel.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
 // Keyboard shortcut handler extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
@@ -537,6 +538,7 @@ async function init() {
     initConservationMicropanel();
     initSpectrumPanel();
     initGravityPanel();
+    initTimePanel();
     // Scene panel — curated render controls (FOV / exposure / bloom / fog / ...).
     // Scales 0–3 only (gated by panel-registry); unmounted cleanly when
     // the user switches to a separate-renderer scale like 4/5/12.

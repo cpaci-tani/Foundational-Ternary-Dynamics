@@ -1,0 +1,164 @@
+/* Time Observatory panel — mirrors gravity-panel.css chrome. */
+
+.time-panel {
+    position: relative;
+    width: 100%;
+    padding: 14px 14px 18px;
+    font-family: var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--text-primary);
+    background: transparent;
+}
+
+.time-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.time-title { font-weight: 600; color: var(--accent); font-size: 15px; letter-spacing: 0.02em; }
+
+.time-mode {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    padding: 2px 8px;
+    border: 1px solid var(--border-light, rgba(255, 255, 255, 0.12));
+    border-radius: 10px;
+    white-space: nowrap;
+}
+
+/* key/value rows */
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 2px 0;
+}
+
+.time-row-l { color: var(--text-secondary); font-size: 12px; }
+
+.time-row-v {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* [C++] sub-block */
+.time-cpp-head {
+    margin: 8px 0 4px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.09));
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.time-cpp-inactive {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 3px 0;
+}
+
+/* charts + sparklines */
+.time-chart { width: 100%; height: auto; display: block; }
+.time-spark { width: 100%; height: auto; display: block; }
+
+.time-chart-xlabel {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-align: right;
+    margin: 1px 0 6px;
+    font-family: var(--font-mono);
+}
+
+.time-subhead {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 8px 0 2px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.09));
+}
+
+/* legends */
+.time-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin-bottom: 4px;
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.time-legend-item { display: inline-flex; align-items: center; gap: 4px; }
+
+.time-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 3px;
+    border-radius: 1px;
+}
+
+.time-swatch-dash {
+    background-image: repeating-linear-gradient(90deg, currentColor 0 3px, transparent 3px 6px);
+}
+
+/* provenance footer */
+.time-provenance {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-style: italic;
+}
+
+/* imposed-v slider */
+.time-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.time-slider-row label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.time-vval { font-family: var(--font-mono); color: var(--accent); }
+
+.time-vslider {
+    flex: 1;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.time-readout-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto 1fr;
+    gap: 2px 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    align-items: baseline;
+}
+
+.time-rg-v {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    text-align: right;
+}
+
+/* empty state */
+.time-empty {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 8px 0;
+}
