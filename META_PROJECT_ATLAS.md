@@ -44,6 +44,7 @@ read [CLAUDE.md](CLAUDE.md) → read [docs/WHERE_WE_LEFT_OFF.md](docs/WHERE_WE_L
 | Run GPU campaign | WSL2 only: `wsl.exe -d Ubuntu-22.04 -- bash -c "cd /mnt/c/Users/cpaci/Desktop/ftd && engine/build_wsl/<test>"` | per CLAUDE.md mandate |
 | Find session-resume context | `docs/WHERE_WE_LEFT_OFF.md` | always start here when resuming |
 | Find project epistemic state | `CLAUDE.md` §"Current epistemic state" | versioned per session |
+| Understand the simulation visually | `engine/VISUAL_GUIDE.md` | scenarios, tick cycle, manifestation, and discrete emergence |
 | Read engine architecture | `engine/SPEC_ENGINE.md` | living doc |
 | Read FTD theory spec | `docs/SPEC_FTD.md` | authoritative |
 
@@ -93,6 +94,7 @@ ftd/
 │   └── internal/                      # Local-only session summaries (gitignored)
 ├── engine/
 │   ├── SPEC_ENGINE.md                 # Engine architecture spec
+│   ├── VISUAL_GUIDE.md                # Visual guide to sim flow and discrete emergence
 │   ├── CMakeLists.txt
 │   ├── README.md                      # Build / test / run instructions
 │   ├── include/ftd/                   # ~30 headers

@@ -1,9 +1,23 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-06-01 (post engine-flawless lifecycle/callstack/toggle audit — see the 2026-06-01 entry directly below; no physics edited, golden hash unchanged)
+**Last updated:** 2026-06-07 (system documentation pass: end-to-end tick ladder, loop dynamics, manifestation lifecycle, and stale toggle/constant wording reconciled; no engine behavior edited)
 **Engine version:** 2.18.0 (post May 2026 — BH-F* GPU plumbing sweep, SplitMix64 RNG portability Option A, trim-the-fat rounds 2-4, `ftd_eft` library extraction, F9 Tier-1 + F11.A Tier-3 audit closures)
 **Test count:** 257 C++ test source files (211 active CMake targets after 2026-05-04 trim-the-fat round 4) + 18 Playwright specs + 25 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+
+### 2026-06-07 — Engine System Documentation Pass
+
+Documentation-only reconciliation of `engine/SPEC_ENGINE.md`,
+`engine/ARCHITECTURE.md`, `engine/CALLSTACKS.md`,
+`engine/SCENARIO_ARCHITECTURE.md`, `engine/VISUAL_GUIDE.md`, and
+`engine/README.md`. This pass explains the end-to-end Scale 0 system through
+loop dynamics and manifestation, maps feature callstacks and scenario seed
+architecture, adds a learner-facing visual guide to the discrete simulation
+perspective, aligns CPU
+and GPU tick-ladder wording, updates the `TermToggles` count to the current
+registry, corrects stale integration-scheme and latency-field language, and
+keeps physics claim status deferred to the project ledgers. No code or physics
+behavior changed.
 
 ### 2026-06-01 — Engine-Flawless Lifecycle/Callstack/Toggle Audit (16 commits)
 
@@ -270,7 +284,9 @@ Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered seq
 - **Colour force re-tagged** `[PHENOMENOLOGICAL FIT]` (was `[EMERGENT]`). Colour labelling is emergent; the three-regime force law is imposed. Genuine SU(3) derivation tracked in `TRACKER_OPEN_ITEMS.md` §1.3 + §2.4.
 - **Velocity clamp re-tagged** `[APPROXIMATION — NON-RELATIVISTIC CLAMP]`. Proper `γ_FTD` momentum integration is `[OPEN]`.
 - **Gravity regime banner** at `G_N` in `ontic.h`: explicit that engine runs at lattice-toy strength (~10³⁷× physical). Every gravity-benchmark claim must state the regime.
-- **Integration-scheme notes** added in `phase_read` header: the Moore Laplacian is consistent but not isotropic at O(h²); the advance pair is forward Euler, not symplectic leapfrog.
+- **Integration-scheme notes** added in `phase_read` header. Historical note: the
+  wording in that sweep was superseded by later leapfrog/isotropy audits and by
+  the current §4.3 staggered-update description.
 
 ### April 17, 2026: Dashboard UX refresh
 - **Panels redesign** (`docs/superpowers/specs/2026-04-16-panels-redesign-design.md`): diagnostics / charts / lagrangian tabs rebuilt on vendored uPlot 1.6.30 + a shared descriptor-driven table primitive. 27 diagnostic rows with physics-accurate units, 20 inline sparklines, chip-picker chart grid, stacked-area Lagrangian.
@@ -307,11 +323,78 @@ Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered seq
 
 ---
 
+## 0. System Narrative: From Field Capacity to Manifested Events
+
+Scale 0 is the engine's discrete substrate. It does not begin with continuous
+space plus particles. It begins with a finite cubic lattice, local update loops,
+and two coupled voxel layers:
+
+| Layer | Engine fields | Interpretation in the simulation |
+|---|---|---|
+| Discrete state | `state in {-1, 0, +1}` | Void, negative manifestation, positive manifestation |
+| Flux field | `flux`, `wave_vel` | Dispositional vector field and its staggered wave velocity |
+| Kinematics | `velocity`, `remainder` | Sub-lattice motion registers for manifested sites |
+| Labels | `particle_id`, `pair_id`, `spin`, `color`, `locked` | Identity, pair correlation, internal labels, bound-state locks |
+| Optional sectors | `flux_L/R`, `wave_vel_L/R`, `latency`, `tau` | Dual substrate and latency/proper-time extensions |
+
+The continuous-looking physics in the dashboard and diagnostics is an emergent
+large-scale behavior of repeated local steps. Each tick stages the work so that
+parallel field loops read stable snapshots, while collision and lifecycle events
+mutate state only after the relevant local information has been collected.
+
+### 0.1 Runtime Loop Families
+
+The Scale 0 engine is best understood as a composition of loops:
+
+| Loop family | Main implementation | Mutability discipline | Role |
+|---|---|---|---|
+| Field read | `phase_read.cpp` | Read voxel snapshot, write delta buffers | 18-point Moore Laplacian, state-flux coupling, curl source |
+| Field write | `phase_write.cpp` | Parallel voxel mutation | Staggered wave commit, damping/noise, genesis, evaporation |
+| Constraint | `poisson_solvers.cpp` | Project flux | Gauss, Coulomb, and latency Poisson solves |
+| Force | `phase_forces.cpp` | Update force diagnostics and velocities | Field-mediated force integration with bandwidth-limited velocity |
+| Movement | `phase_movement.cpp` | Sequential guarded mutation | Integer moves, bounces, annihilation, self-field transfer |
+| Lifecycle extensions | `transmutation_phases.cpp` | Toggle-gated mutation | Pair production, weak transmutation, triad binding, proper time |
+
+This "loop dynamics" language refers to the engine execution loops and local
+lattice dynamics. Theory-side perturbative loop-coefficient derivations live in
+the theory/proof corpus and are not runtime kernels in Scale 0.
+
+### 0.2 Manifestation Lifecycle
+
+Manifestation is the state transition from high latent flux in a void cell to
+an actual ternary site. The main path lives in `phase_write()`:
+
+```
+void site
+  + flux density above K_GENESIS
+  + deterministic stochastic draw below p
+  -> state = +1 or -1
+  -> spin/color inferred from local field geometry
+  -> pending particle_id assigned
+  -> deterministic ID resolution in voxel-index order
+```
+
+After manifestation, later phases can project the constraint, apply forces,
+move the particle, bounce it, annihilate it with an opposite sign, evaporate it
+back to void, flip it through weak transmutation, create correlated pairs, or
+lock compact triads when the relevant toggles are enabled.
+
+### 0.3 CPU/GPU Parity Model
+
+The CPU path keeps `std::vector<Voxel>` as the authoritative array-of-structures
+state. The CUDA path mirrors those fields into structure-of-arrays device
+buffers. Host mutations are flushed to the GPU before a device tick; host reads
+download the device state lazily. Both paths preserve the same logical phase
+order even when solver implementations differ (CPU SOR vs GPU spectral/FFT
+machinery where available).
+
+---
+
 ## 1. Architecture: Logic-First Engine (v2.0)
 
 The engine was rewritten from ~1382 lines of phenomenological code to a logic-first design. Only behaviors derivable from the axioms {3D lattice, ternary states, flux field, local causality, action principle} remain. Everything else was archived to `archive/engine_v1_phenomenological/`.
 
-**Six rules, nothing else:**
+**Core rules (default Scale 0 substrate):**
 
 1. **Flux wave equation**: dJ/dt = c^2 nabla^2 J (only possible local linear dynamics for a vector field)
 2. **State-flux coupling**: source term g_c * grad(s) + g_c * curl(s*v) (from dS/dJ = 0)
@@ -320,16 +403,17 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 5. **Field-mediated forces**: F = -alpha * s * grad(phi_C) + G_N * grad(rho) + alpha * s * (v x B) where B = curl(J) (Poisson Coulomb + Lorentz magnetic + gravity)
 6. **Movement + Collision**: remainder accumulation, speed limit C_SPEED = C_WAVE = 1/sqrt(3), annihilation on contact
 
-**What was removed** (archived in `archive/engine_v1_phenomenological/`):
+**What was removed from the default core** (archived in `archive/engine_v1_phenomenological/`):
 - Pairwise Coulomb, Yukawa, exchange, Lorentz forces
 - QCD running coupling, color Yukawa
-- Weak transmutation, binding/triad locking, noetic/reference frame context coupling
-- Latency/bandwidth/proper-time system
+- Noetic/reference frame context coupling in the Scale 0 runtime
+- Earlier always-on phenomenological latency/bandwidth/proper-time machinery
 
 **Toggle-gated extensions** (default OFF, for pedagogy and exploration):
 - Larmor radiation: acceleration-dependent damping (v2.11)
 - Dual substrate: J_L + J_R chirality physics
 - Color forces, strong force, weak transmutation, triad binding, pair production, exchange force
+- Latency field and proper-time accumulation when `latency_field` is enabled
 
 ### Scale 5: Cosmic Engine (v2.12)
 
@@ -364,6 +448,9 @@ The `ParticleEngine`, `AtomEngine`, and `CosmicEngine` all rely on a dynamically
 engine/
   CMakeLists.txt              # Build system -- all targets and test registration
   SPEC_ENGINE.md              # This document
+  VISUAL_GUIDE.md             # Learner-facing visual guide to sim flow and discreteness
+  CALLSTACKS.md               # Feature-by-feature runtime callstack map
+  SCENARIO_ARCHITECTURE.md    # Scenario lifecycle, bridge ownership, and seed architecture
   print_ontic.py              # Utility to print ontic chain values
   include/ftd/
     scale_engine.h            # [v2.12] Abstract base class for all scale engines (111L)
@@ -374,7 +461,7 @@ engine/
     lattice.h                 # Lattice class -- 3D cubic grid with periodic boundaries (59L)
     render_bridge.h           # RenderBridge -- main engine API, tick(), diagnostics() (239L)
     lagrangian.h              # 4-term Lagrangian + Rayleigh dissipation (218L)
-    term_toggles.h            # 20 runtime toggles for pedagogy system (62L)
+    term_toggles.h            # Scale 0 runtime toggle registry (33 booleans + typed config fields)
     csv_export.h              # Header-only CSV export (flux field, density slice, timeseries) (385L)
     particle_engine.h         # ParticleEngine : ScaleEngine -- Scale 1 particles (247L)
     atom_engine.h             # AtomEngine -- Scale 2 composite atoms + bonds (327L)
@@ -397,7 +484,7 @@ engine/
     gpu_atom_engine.h         # GPU AtomEngine bindings
     gpu_particle_engine.h     # GPU ParticleEngine bindings
   src/
-    render_bridge.cpp         # Logic-first engine -- 6-phase tick cycle (1538L)
+    render_bridge.cpp         # Logic-first engine -- CPU tick ladder and backend handoff
     lagrangian.cpp            # compute_lagrangian_diagnostics() -- 4 active terms (166L)
     main.cpp                  # CLI entry point (scenarios A-K) (937L)
     particle_engine.cpp       # ParticleEngine: Velocity Verlet + analytical forces (394L)
@@ -541,36 +628,93 @@ Scenarios: `A` (Coulomb electron-proton), `B` (pair production from flux), `D` (
 
 ## 4. The Tick Cycle
 
-Each call to `RenderBridge::tick()` executes these phases in order.
-Every phase is gated by the corresponding `TermToggles` boolean.
+Each call to `RenderBridge::tick()` validates the active `TermToggles`, syncs
+the ternary mirrors if needed, then either delegates to the GPU backend or runs
+the CPU phase ladder. Not every phase is enabled in every run; the bracketed
+toggle tells where a phase enters.
 
 ```
-tick() {
-  1.  phase_read()          [wave_propagation || coupling]
-  2.  phase_write()         [always runs; damping/genesis gated internally]
-  3.  gauss_project()       [gauss_projection]
-  4.  phase_forces()        [forces]
-  5.  phase_movement()      [movement]
-  6.  ++tick_
-}
+RenderBridge::tick()
+  0.  validate toggles
+  0b. sync_ternary_from_voxels_if_needed()
+  1.  phase_read()                 [wave_propagation || coupling]
+  2.  phase_write()                [always; damping/genesis/evaporation gated inside]
+  2b. pair_production_cpu()        [pair_production]
+  3.  gauss_project()              [gauss_projection]
+  3b. solve_latency_poisson()      [latency_field]
+  4.  phase_forces()               [forces]
+  5.  phase_movement()             [movement]
+  5b. apply_absorbing_boundary()   [absorbing_boundary]
+  6.  weak_transmutation_cpu()     [weak_transmutation]
+  7.  triad_binding_cpu()          [triad_binding]
+  8.  accumulate_proper_time()     [latency_field]
+  9.  physical_time_ += dt_; ++tick_
+  10. sync/dirty flags/energy ledger updates
 ```
 
-### Phase details
+### 4.1 CPU phase details
 
-| Phase | Toggle | What it does |
-|-------|--------|-------------|
-| `phase_read` | `wave_propagation`, `coupling` | Computes delta_J: Laplacian wave equation (c^2 nabla^2 J) + state-flux coupling (g_c grad(s)) + Biot-Savart (g_c curl(s*v)). Dual-substrate path when enabled: independent Laplacians for J_L and J_R |
-| `phase_write` | `damping`, `genesis`, `selective_damping`, `larmor_radiation` | Leapfrog: wave_vel += delta_J, flux += wave_vel. Damping: uniform (default), selective (near-particle only), or Larmor-modulated (acceleration-dependent). Genesis: \|J\| > K_GENESIS -> manifest (polarity from div(J), spin from curl(J), color from dominant axis). Evaporation: 7-site neighborhood energy < K_B^2 * 1e-6 -> void. Dual-substrate: independent leapfrog for L/R, observable sync |
-| `gauss_project` | `gauss_projection` | SOR Poisson solver (omega=1.75, 30 iterations, warm-started): violation = div(J)-state, solve nabla^2 phi = violation, then J -= grad(phi) at **void sites only** (manifested sites skipped -- Phase 4 Approach B). Dual-substrate: Gauss sync propagates correction to J_L and J_R equally |
-| `phase_forces` | `forces`, `gravity`, `lorentz_force`, `poisson_coulomb` | **Field-mediated only**: F_EM = -alpha*s*grad(phi_C) (Poisson, default) or -alpha*s*grad(div(J)) (legacy). Poisson solver: SOR omega=1.75, 30 iterations, warm-started. F_Lorentz = alpha*s*(v x B) where B=curl(J). F_grav = G_N*grad(rho) (tier-2 stencil). Optional: color_forces, strong_force, exchange_force (toggle-gated, default OFF). Per-particle force breakdown stored in `ForceDiag` |
-| `phase_movement` | `movement` | Clears `moved_` flag buffer. Remainder accumulation, integer moves when remainder >= 1. Collisions: void->move, same-sign->bounce, opposite-sign->annihilate. Speed bounded by the γ_FTD integrator upstream (in `phase_forces`), which guarantees `v² /C² + L² < 1` by construction — no clamp here. Self-field and particle_id carried to new site. |
+| Phase | Main toggles | What it does |
+|-------|--------------|-------------|
+| `phase_read` | `wave_propagation`, `coupling` | Parallel read-only voxel loop. Computes `delta_J` from the 18-point Moore Laplacian, `G_C * grad(state)`, and `G_C * curl(state * velocity)`. Dual-substrate mode computes separate L/R deltas and recombines observables after write. |
+| `phase_write` | `damping`, `genesis`, `evaporation`, `selective_damping`, `larmor_radiation`, `langevin`, `symplectic_leapfrog` | Parallel commit loop. Advances the staggered wave pair (`wave_vel += delta_J`, `flux += wave_vel`; explicit `dt` factors when `symplectic_leapfrog` is enabled), applies damping/noise, performs genesis and evaporation, snapshots pre-write fields for deterministic labels, and resolves pending manifestation IDs after the parallel section. |
+| `pair_production_cpu` | `pair_production` | Creates neighboring correlated `-1/+1` pairs from high-flux voids, consumes local wave/flux energy, assigns shared pair IDs, and conserves charge locally. |
+| `gauss_project` | `gauss_projection`, `exact_dual_gauss` | Builds `source = div(J) - coulomb_charge_coupling * state`, solves a warm-started SOR Poisson problem, then subtracts `grad(phi)` from flux. Ordinary mode skips manifested sites during correction; exact dual mode synchronizes the split L/R fields. |
+| `solve_latency_poisson` | `latency_field`, `field_energy_gravity` | Builds a mass/field-energy source, solves a latency potential, and stores bounded `latency` values for time dilation and bandwidth accounting. |
+| `phase_forces` | `forces`, `poisson_coulomb`, `emergent_forces`, `gravity`, `lorentz_force`, `color_forces`, `strong_force`, `exchange_force`, `cluster_inertia` | Iterates manifested sites. Default EM path solves Coulomb potential and applies `-ALPHA * state * grad(phi_C)`; emergent-force mode uses direct flux gradients instead. Adds gravity, Lorentz, and optional particle-sector forces, writes `ForceDiag`, and integrates velocity using the `gamma_FTD` bandwidth budget. |
+| `phase_movement` | `movement`, `symmetric_movement_order` | Sequential guarded mutation. Accumulates sub-lattice remainders, moves into void targets, bounces same-sign collisions, annihilates opposite signs, carries self-field to moved particles, and bursts field energy on annihilation. |
+| `apply_absorbing_boundary` | `absorbing_boundary` | Damps the outer shell after movement to reduce periodic wraparound artifacts in selected runs. |
+| `weak_transmutation_cpu` | `weak_transmutation` | Stress-threshold stochastic polarity flips. In dual-substrate mode the L/R fluxes are swapped with the flip. |
+| `triad_binding_cpu` | `triad_binding` | Detects compact same-sign triples and locks them as bound structures. |
+| `accumulate_proper_time` | `latency_field` | Updates `tau` for manifested sites using the latency/speed bandwidth factor. |
+
+### 4.2 GPU phase ladder
+
+When a CUDA backend is active, `RenderBridge::tick()` delegates to
+`backend_->tick()`. `GpuBackend` flushes host mutations to device buffers, copies
+the current toggles into `GpuEngine`, runs the device tick, and marks the host
+shadow dirty until diagnostics or voxel access require a download.
+
+`GpuEngine::tick()` preserves the same logical order:
+
+```
+gpu_phase_read()
+gpu_phase_write()
+gpu_pair_production()        [pair_production]
+gpu_gauss_project()          [gauss_projection]
+gpu_latency_solve()          [latency_field]
+gpu_phase_forces()           [forces]
+gpu_pairwise_extensions()    [color/strong/exchange/triad-related toggles]
+gpu_phase_movement()         [movement]
+gpu_weak_transmutation()     [weak_transmutation]
+tick_++
+```
+
+The main backend difference is numerical plumbing: the CPU path uses
+warm-started SOR buffers for Poisson solves, while the GPU path uses device-side
+parallel kernels and spectral/FFT solvers where the CUDA implementation supports
+them.
+
+### 4.3 Integration-scheme notes
+
+- The field advance is a staggered update. The default unit-tick form is
+  `wave_vel += delta_J; flux += wave_vel`. The `symplectic_leapfrog` toggle
+  applies the same staggered update with explicit `dt` factors.
+- The 18-point Moore Laplacian uses face weight `1/3`, edge weight `1/6`, and
+  self weight `-4`, giving the documented isotropy behavior through the
+  tested order.
+- The velocity update in `phase_forces` uses the `gamma_FTD` bandwidth budget
+  rather than a late hard clamp in `phase_movement`.
 
 ---
 
 ## 5. Constants Hierarchy
 
-All physics constants derive from two inputs: **D = 3** (spatial dimensions) and **varpi** (lemniscate constant).
-The derivation chain lives in `ontic.h` (9+ layers). `constants.h` re-exports everything into `ftd::`.
+The ontic reference chain computes many framework constants from **D = 3**
+(spatial dimensions) and **varpi** (lemniscate constant). Active engine kernels
+use a smaller subset of those values plus simulation-scale parameters. This
+section documents code usage; derivation status and parameter/derivation
+distinctions are tracked in the theory ledgers.
 
 ### Ontic chain summary (ontic.h)
 
@@ -582,7 +726,7 @@ The derivation chain lives in `ontic.h` (9+ layers). `constants.h` re-exports ev
 | 1 | `VARPI`, `GAUSS_CONSTANT_M`, `PI` | Elliptic geometry |
 | 2 | `PF`, `G_STAR`, `SQRT_GSTAR` | Universal operator: G* = Gamma(1/4)/Gamma(3/4) ≈ 2.9587 |
 | 2b | `K_CRIT`, `X_BORN` | Euler's identity / emergence of i |
-| 3 | `COEFFICIENT` (16 G*^2), `X_PLUS` (137.036 = 1/alpha), `X_MINUS` (3.024 ~ N_c) | Master quadratic |
+| 3 | `COEFFICIENT` (16 G*^2), `X_PLUS` (tree-level 1/alpha), `X_MINUS` (retired as an `N_C` source; mathematical root only) | Master quadratic |
 | 3b | `DELTA_SQ`, `DELTA_APPROX` | Dual-substrate splitting: delta^2 = (4G*-1)/(4G*) |
 | 4 | `D_SPATIAL`=3, `N_C`=3, `N_GEN`=3, `N_F`=6, `N_BASE`=4, `B_3`=7, `N_EFF`=13 | Framework integers |
 | 5 | `ALPHA`, `G_C`, `G_N`=0.01, `SIN2_WEINBERG` | Coupling constants |
@@ -663,9 +807,13 @@ Each lattice site is represented by the `Voxel` struct (`voxel.h`, 175L):
 
 Observable: `flux = flux_L + flux_R`. Chirality: `chirality_density() = |psi_L|^2 - |psi_R|^2`.
 
-### Deprecated fields (kept for binary compatibility)
+### Latency and proper-time fields
 
-`latency`, `tau`, `drag`, `attention`, `sloop_depth`, `is_sloop` -- always zero in v2.0+.
+`latency` and `tau` are active when `latency_field` is enabled. `latency` is a
+bounded gravitational-potential proxy solved by the latency Poisson path;
+`tau` accumulates proper time for manifested particles. Older noetic/reference
+frame context fields such as `drag`, `attention`, and sLoop markers are not
+part of the current `Voxel` runtime surface.
 
 ### Derived quantities
 
@@ -673,9 +821,9 @@ Observable: `flux = flux_L + flux_R`. Chirality: `chirality_density() = |psi_L|^
 |--------|---------|
 | `density()` | `|flux|` |
 | `speed()` | `|velocity|` |
-| `bandwidth_used()` | `speed^2 + latency^2` |
-| `gamma_ftd()` | `1/sqrt(1 - bandwidth_used)` |
-| `born_infeld_core()` | `-K_B * sqrt(1 - bandwidth_used)` |
+| `bandwidth_used()` | `v^2` when `latency == 0`; otherwise `v^2 / f`, where `f = 1 - latency^2` |
+| `gamma_ftd()` | `1/sqrt(1 - v^2)` when `latency == 0`; otherwise `sqrt(f) / sqrt(f^2 - v^2)` |
+| `born_infeld_core()` | `-M_REST * sqrt(1 - v^2)` when `latency == 0`; otherwise `-M_REST * sqrt(f^2 - v^2) / sqrt(f)` |
 
 ### ForceDiag struct
 
@@ -731,44 +879,62 @@ Forces are computed in `phase_forces()` as **field-mediated** interactions. No p
 
 ## 8. TermToggles
 
-The `TermToggles` struct provides **20 runtime booleans** for the pedagogy system. Core rules default ON; extensions default OFF.
+The `TermToggles` struct is a table-driven Scale 0 runtime registry. As of the
+2026-06-07 documentation pass it contains **33 boolean toggles** in
+`TOGGLE_SPECS[]` plus **6 typed configuration fields** that are intentionally
+kept outside the boolean table.
 
-### Core toggles (logic-derived, default ON)
+Adding a new boolean toggle requires a struct field and one registry row; the
+helper methods (`validate`, `enable_all`, `disable_all`,
+`cpu_runtime_warnings`) consume the table.
 
-| Toggle | Gates |
-|--------|-------|
-| `wave_propagation` | Laplacian wave equation in phase_read |
-| `coupling` | g_c * grad(s) source term in phase_read |
-| `damping` | Dissipation flux *= (1-alpha) in phase_write |
-| `genesis` | Manifestation + evaporation in phase_write |
-| `gauss_projection` | Gauss constraint div(J) = s (SOR solver) |
-| `forces` | Field-mediated EM + gravity |
-| `gravity` | F_grav = G_N * grad(rho) in phase_forces |
-| `movement` | Velocity integration + collision handling |
-| `poisson_coulomb` | Poisson-based Coulomb (default). false = legacy grad(div J) |
-| `lorentz_force` | Magnetic Lorentz force F = alpha*s*(v x B) |
+### 8.1 Boolean toggle groups
 
-### Extension toggles (default ON — promoted from OFF based on physics validation)
+| Group | Toggles | Role |
+|---|---|---|
+| Core field/state | `wave_propagation`, `coupling`, `damping`, `genesis`, `evaporation`, `gauss_projection` | Wave propagation, state coupling, dissipation, manifestation/evaporation, Gauss projection |
+| Forces and motion | `forces`, `gravity`, `poisson_coulomb`, `emergent_forces`, `lorentz_force`, `movement` | Field-mediated force modes and kinematic update |
+| Field extensions | `dual_substrate`, `exact_dual_gauss`, `latency_field`, `field_energy_gravity`, `symplectic_leapfrog` | Split substrate, latency/proper-time sector, explicit-`dt` wave integration |
+| Damping/noise/boundary | `selective_damping`, `larmor_radiation`, `langevin`, `absorbing_boundary`, `symmetric_movement_order` | Damping modes, stochastic thermostat, boundary sponge, traversal artifact control |
+| Particle-sector extensions | `color_forces`, `weak_transmutation`, `strong_force`, `triad_binding`, `pair_production`, `exchange_force`, `cluster_inertia`, `confinement` | Color/strong/exchange explorations, weak flips, pair production, bound clusters, confinement intent flag |
+| Gauge/validation flags | `su2_gauge`, `su3_gauge`, `strict_validation` | Non-Abelian-gauge intent flags and strict validation behavior |
 
-| Toggle | Default | Description |
-|--------|---------|-------------|
-| `selective_damping` | ON | Only damp sites near particles; vacuum waves propagate without loss |
-| `dual_substrate` | ON | Split flux into J_L + J_R substrates with chirality |
-| `weak_transmutation` | ON | Stress-threshold polarity flip (+1 <-> -1) |
+### 8.2 Defaults and validation
 
-### Extension toggles (default OFF — for exploration)
+Defaults are specified per row in `TOGGLE_SPECS[]`. Core substrate behavior
+defaults on (`wave_propagation`, `coupling`, `damping`, `genesis`,
+`gauss_projection`, `forces`, `gravity`, `poisson_coulomb`, `movement`,
+`lorentz_force`). Some promoted extension toggles also default on
+(`selective_damping`, `dual_substrate`, `weak_transmutation`). Exploration
+toggles such as `pair_production`, `latency_field`, `langevin`, color/strong
+extensions, and exact dual Gauss are default off.
 
-| Toggle | Description |
-|--------|-------------|
-| `larmor_radiation` | Acceleration-dependent damping (requires `selective_damping`) |
-| `color_forces` | SU(3)-inspired color-dependent pairwise force |
-| `strong_force` | Yukawa short-range nuclear force |
-| `triad_binding` | Detect 3-particle triads, set locked=true |
-| `pair_production` | Correlated +1/-1 pairs from high-flux void |
-| `exchange_force` | Pauli exclusion repulsion (same-spin) |
-| `latency_field` | Poisson-based latency field for gravity potential |
+`validate()` enforces dependencies and conflicts. Important examples:
 
-`enable_all()` enables core toggles; extensions remain OFF. `disable_all()` turns everything OFF.
+| Rule | Reason |
+|---|---|
+| `poisson_coulomb` conflicts with `emergent_forces` | Avoids running two mutually exclusive EM force models |
+| `lorentz_force` requires `forces` | Lorentz is part of the force phase |
+| `selective_damping` requires `damping` | It refines the damping path rather than replacing the master switch |
+| `weak_transmutation` requires `dual_substrate` | Current CPU/GPU implementation uses chirality/split-substrate state |
+| `triad_binding` requires `color_forces` | Triad detection depends on color labels/interaction context |
+| `field_energy_gravity` requires `latency_field` | Field energy enters through the latency Poisson source |
+
+`enable_all()` applies each table row's default value for bulk-managed toggles;
+it does not blindly turn every experimental flag on. `disable_all()` turns
+bulk-managed booleans off while preserving direct control of non-bulk/internal
+flags as defined by the registry.
+
+### 8.3 Non-boolean configuration fields
+
+| Field | Type | Purpose |
+|---|---|---|
+| `bcc_stencil` | `BccStencilMode` | Selects the sublattice stencil path for `phase_read`; non-default modes require single-substrate validation. |
+| `langevin_site_filter` | `SiteClass` | Selects which parity/site class the Langevin thermostat targets. |
+| `langevin_T` | `double` | Target Langevin temperature. |
+| `langevin_gamma` | `double` | Langevin damping/noise rate. |
+| `langevin_seed` | `unsigned int` | Deterministic stochastic seed. |
+| `coulomb_charge_coupling` | `double` | Scalar in the Gauss-law source term. |
 
 ---
 
@@ -792,7 +958,10 @@ The 4-term Lagrangian (in `lagrangian.h`) provides the variational foundation:
 
 ### Scale 0: Voxel (RenderBridge)
 
-The lattice engine. Each site is a Voxel with ternary state + continuous flux. Forces are field-mediated via discrete differential operators. Tick cycle: phase_read -> phase_write -> gauss_project -> phase_forces -> phase_movement.
+The lattice engine. Each site is a Voxel with ternary state + continuous flux.
+Forces are field-mediated via discrete differential operators. The current tick
+ladder is documented in §4: read/write, optional pair production, Gauss,
+latency, forces, movement, boundary, weak/triad, proper-time, and ledger sync.
 
 ### Scale 1: Particle (ParticleEngine)
 
@@ -833,14 +1002,14 @@ Files: `scale.h` (68L), `scale_bridge.cpp` (202L).
 
 ### Summary
 
-| Category | Files | Checks |
-|----------|-------|--------|
-| Unit tests (test_*) | 108 | ~600+ |
-| Campaign tests (campaign_*) | 47 | ~400+ |
-| Five Minds campaigns | 5 | 15 |
-| **Total** | **175+** | **1000+** |
+Current project-level count is listed in the header: **257 C++ test source
+files**, **211 active CMake targets** after the 2026-05-04 trim-the-fat pass,
+plus 18 Playwright specs and 25 Python test files. CTest labels include
+`unit`, `physics`, `golden`, `slow`, and `gpu`; CUDA targets are conditional on
+`FTD_ENABLE_CUDA`.
 
-All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests (4 files) conditional on `FTD_ENABLE_CUDA`. GPU parity: 21/21 PASS. Five Minds campaigns: 15/15 PASS.
+The category list below is a representative map of the suite rather than a
+line-by-line target registry.
 
 ### Test categories
 
@@ -973,7 +1142,7 @@ All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests
 
 | Method | Description |
 |--------|-------------|
-| `tick()` | Advance one tick (all 5 phases) |
+| `tick()` | Advance one tick through the current toggle-gated phase ladder |
 | `diagnostics()` | Returns `Diagnostics` struct (counts, flux totals, charge) |
 | `energy_audit()` | Returns `EnergyAudit` (field/wave/KE/PE breakdown, Gauss violation) — one-shot snapshot |
 | `energy_ledger()` | Returns `const EnergyLedger&` — per-tick conservation drift (auto-populated on CPU path). Tests assert `abs(.residual) < tol` to refuse energy-drift regressions. GPU: call `update_energy_ledger()` manually after a device→host sync. |
@@ -1001,7 +1170,7 @@ All tests registered as CTests (170 CPU+GPU + 5 Five Minds campaigns). GPU tests
 | `physical_time()` | Current tick * dt |
 | `dt()` / `set_dt(val)` | Get/set timestep |
 | `seed_rng(seed)` | Set RNG seed for reproducibility |
-| `toggles` | Public `TermToggles` struct (20 booleans) |
+| `toggles` | Public `TermToggles` struct (33 boolean toggles + typed config fields) |
 
 ### Scenario library
 
@@ -1044,10 +1213,11 @@ inject_wavepacket()                 d_wave_vel_*, d_velocity_*
 diagnostics()                       tick() loop:
 energy_audit()                        1. phase_read
 sync_to_host()                        2. phase_write
-                                      3. gauss (FFT)
-                                      4. coulomb (FFT)
-                                      5. forces
-                                      6. movement
+                                      2b. pair production [optional]
+                                      3. gauss / coulomb / latency solves
+                                      4. forces + optional particle sectors
+                                      5. movement
+                                      6. weak/triad/proper-time extensions
 ```
 
 ### FFT Poisson Solver

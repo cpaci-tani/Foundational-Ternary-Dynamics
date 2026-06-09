@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="720" viewBox="0 0 1000 720" role="img" aria-labelledby="title desc">
+  <title id="title">Scale 0 tick cycle</title>
+  <desc id="desc">A staged tick cycle from validation through field reads, writes, manifestation, projections, forces, movement, and diagnostics.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#325e9e"/>
+    </marker>
+    <filter id="shadow" x="-12%" y="-20%" width="124%" height="145%">
+      <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#142033" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+  <style>
+    .h{font:800 25px system-ui,Segoe UI,sans-serif;fill:#10213a}
+    .p{font:500 14px system-ui,Segoe UI,sans-serif;fill:#526173}
+    .lane{font:800 13px system-ui,Segoe UI,sans-serif;letter-spacing:.07em;fill:#65748a}
+    .box{fill:#fff;stroke-width:2;filter:url(#shadow)}
+    .label{font:800 16px system-ui,Segoe UI,sans-serif;fill:#14233b}
+    .small{font:500 12.5px system-ui,Segoe UI,sans-serif;fill:#5c6878}
+    .arrow{fill:none;stroke:#325e9e;stroke-width:2.4;marker-end:url(#arrow)}
+  </style>
+  <rect width="1000" height="720" rx="24" fill="#fbfcff"/>
+  <text class="h" x="38" y="48">One Scale 0 tick is a staged local update</text>
+  <text class="p" x="40" y="74">Field loops can be parallel; movement and collisions are ordered because they mutate occupied cells.</text>
+
+  <text class="lane" x="90" y="124">CONTROL</text>
+  <text class="lane" x="90" y="268">FIELD</text>
+  <text class="lane" x="90" y="430">CONSTRAINTS AND FORCES</text>
+  <text class="lane" x="90" y="592">LIFECYCLE AND ACCOUNTING</text>
+
+  <line x1="70" y1="140" x2="930" y2="140" stroke="#d7e2ef"/>
+  <line x1="70" y1="284" x2="930" y2="284" stroke="#d7e2ef"/>
+  <line x1="70" y1="446" x2="930" y2="446" stroke="#d7e2ef"/>
+  <line x1="70" y1="608" x2="930" y2="608" stroke="#d7e2ef"/>
+
+  <g>
+    <rect class="box" x="210" y="104" width="170" height="74" rx="14" stroke="#79a9e8"/>
+    <text class="label" x="236" y="135">Validate toggles</text>
+    <text class="small" x="236" y="157">check dependencies</text>
+    <rect class="box" x="460" y="104" width="170" height="74" rx="14" stroke="#79a9e8"/>
+    <text class="label" x="492" y="135">Sync mirrors</text>
+    <text class="small" x="492" y="157">host/device state</text>
+  </g>
+
+  <g>
+    <rect class="box" x="150" y="248" width="170" height="74" rx="14" stroke="#63bf95"/>
+    <text class="label" x="178" y="279">Read loop</text>
+    <text class="small" x="178" y="301">neighbor deltas</text>
+    <rect class="box" x="400" y="248" width="185" height="74" rx="14" stroke="#63bf95"/>
+    <text class="label" x="428" y="279">Write loop</text>
+    <text class="small" x="428" y="301">advance flux fields</text>
+    <rect class="box" x="670" y="248" width="185" height="74" rx="14" stroke="#edae55"/>
+    <text class="label" x="700" y="279">Manifestation</text>
+    <text class="small" x="700" y="301">genesis / evaporation</text>
+  </g>
+
+  <g>
+    <rect class="box" x="115" y="410" width="190" height="74" rx="14" stroke="#ad8ae8"/>
+    <text class="label" x="145" y="441">Gauss project</text>
+    <text class="small" x="145" y="463">constraint operator</text>
+    <rect class="box" x="390" y="410" width="190" height="74" rx="14" stroke="#ad8ae8"/>
+    <text class="label" x="419" y="441">Latency field</text>
+    <text class="small" x="419" y="463">optional time sector</text>
+    <rect class="box" x="665" y="410" width="190" height="74" rx="14" stroke="#ea7c83"/>
+    <text class="label" x="708" y="441">Forces</text>
+    <text class="small" x="708" y="463">update velocities</text>
+  </g>
+
+  <g>
+    <rect class="box" x="150" y="572" width="190" height="74" rx="14" stroke="#f0bd69"/>
+    <text class="label" x="188" y="603">Movement</text>
+    <text class="small" x="188" y="625">ordered collision logic</text>
+    <rect class="box" x="425" y="572" width="190" height="74" rx="14" stroke="#f0bd69"/>
+    <text class="label" x="455" y="603">Extra sectors</text>
+    <text class="small" x="455" y="625">weak flips, triads</text>
+    <rect class="box" x="700" y="572" width="190" height="74" rx="14" stroke="#79a9e8"/>
+    <text class="label" x="725" y="603">Diagnostics</text>
+    <text class="small" x="725" y="625">energy and frames</text>
+  </g>
+
+  <path class="arrow" d="M 380 141 H 455"/>
+  <path class="arrow" d="M 545 178 C 545 213, 235 205, 235 242"/>
+  <path class="arrow" d="M 320 285 H 395"/>
+  <path class="arrow" d="M 585 285 H 665"/>
+  <path class="arrow" d="M 762 322 C 762 365, 210 362, 210 404"/>
+  <path class="arrow" d="M 305 447 H 385"/>
+  <path class="arrow" d="M 580 447 H 660"/>
+  <path class="arrow" d="M 760 484 C 760 530, 245 525, 245 566"/>
+  <path class="arrow" d="M 340 609 H 420"/>
+  <path class="arrow" d="M 615 609 H 695"/>
+  <path class="arrow" d="M 795 646 C 890 690, 932 92, 632 141"/>
+</svg>
