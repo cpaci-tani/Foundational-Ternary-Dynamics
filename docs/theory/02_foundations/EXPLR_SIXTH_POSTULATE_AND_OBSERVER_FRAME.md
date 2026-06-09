@@ -236,6 +236,71 @@ written relative to it; there is no view from nowhere. The hypothesis under expl
 
 ---
 
-*Status: `[EXPLORATION]` / `[OPEN]`. Two formalizations (`§6a`, `§6b`) are closed-negative **within
-this exploration** and preserved to prevent re-attempt. No canonical claim is promoted or demoted.
-The frame-of-reference postulate (§9) is an open direction, not a result.*
+## 11 · Round 3 (2026-06-09): the kinematic Frame Postulate — adversarially scoped down
+
+The §9 kinematic face was run through a three-lens savant round (constructive / logical-relation /
+falsifier). Verdict: **the naive form fails; a heavily-scoped form survives as
+`[STRONGLY MOTIVATED CONJECTURE]`.** Results preserved here.
+
+### 11a · The falsifier's kills (do not re-attempt the naive form)
+1. **Discreteness obstruction, sharpened:** rotations have finite subgroups (O_h survives on the
+   lattice and can plausibly restore to SO(3) in the IR); **boosts have no discrete subgroup**
+   (the boost group is non-compact). "Boost invariance emerges in the IR" is therefore a
+   *categorically harder* claim than rotation-restoration, and nothing in the corpus currently
+   addresses it.
+2. **The free-sector gap (CPSUV):** FTD-0252's L⁻² convergence was measured on **free wave clocks
+   only**. In interacting lattice theories, UV Lorentz violation generically **percolates to the IR
+   via loop corrections** (Collins–Perez–Sudarsky–Urrutia–Vucetich) absent fine-tuning. FTD's
+   interacting sector (genesis + Gauss + Langevin) is **untested** on this point — the single
+   biggest evidence gap.
+3. **Tautology charge:** as naively stated, the postulate *asserts* the hard content (boost
+   invariance + isotropy restoration + reversibility) and relabels the result "Einstein." The cone
+   (forced) was the easy part; any local update rule has one.
+4. **Type-check failure:** "the lattice rest frame is unobservable in the IR" is an L→∞ claim —
+   not well-posed under the undefined-boundary ontology (`AUDIT_INFINITY_REFRAME`). Must be ε-L
+   restated: *for every ε there is L such that frame-detection at resolution ε fails* — and even
+   that is currently an assertion, with FTD-0252's diagonals (⟨111⟩, L≤193) still non-converged.
+
+### 11b · The structural discovery: the two candidate axioms live at DIFFERENT LEVELS
+The logical-relation lens resolved the §9 "reversibility vs relativity-principle" question, with
+the **telegrapher/Cattaneo equation** as the decisive wedge (hyperbolic + dissipative + Lorentz-
+covariant):
+- The **relativity principle** constrains the **kinematics** (the transformation group between
+  frames; group closure = reversible *transformations*) — it forces a hyperbolic, clock-bearing
+  sector to exist but **permits dissipative overlays** (telegrapher).
+- **Reversibility** (FTD-0253) constrains the **dynamics** — it forces the hyperbolic sector to be
+  the *whole* dynamics (no dissipation) but **permits preferred frames** (FTD's own engine is the
+  counterexample: reversible wave dynamics on a frame-preferring lattice).
+- **Neither subsumes the other** (hypotheses (b),(d) falsified; (a),(c) each partial). They overlap
+  on hyperbolicity and diverge on dissipation-tolerance vs frame-preference. Together they force
+  the unique dissipation-free Lorentzian structure.
+- Resolution of the apparent tension with the constructive lens's finding (von Ignatowsky's group
+  closure "smuggles reversibility"): group closure is reversibility **of the transformations**
+  (kinematic level), not of the dynamics — consistent with the telegrapher counterexample.
+
+This sharpens §9's caution into a result-shaped statement: **"the 6th postulate" is not one axiom —
+the metric needs a kinematic axiom (frame-invariance) AND a dynamical axiom (reversibility), and
+FTD-0253 named only the second.** Whether a single frame-primitive can carry both is the live
+question — asserting it would repeat the §6 conflation error.
+
+### 11c · The minimal defensible claim (current honest form)
+> Free massless-wave dynamics on the ⟨100⟩ axis at v ≲ 0.85 approach the relativistic dilation form
+> with residual ∝ L⁻² (FTD-0252, `[MEASURED — scoped]`). This is *consistent with* — but very far
+> from establishing — an emergent frame-invariance. Unestablished: diagonal axes (L ≳ 257 needed),
+> boost-group emergence (no discrete subgroup exists), the interacting sector (CPSUV risk), and an
+> ε-L-well-posed statement of frame-unobservability. Tag: `[STRONGLY MOTIVATED CONJECTURE]`,
+> scoped exactly as above.
+
+### 11d · The decisive pre-registerable experiment (queued, not run)
+**Three-axis isotropy-restoration sweep:** inject the same soft mode along ⟨100⟩/⟨110⟩/⟨111⟩ at
+L ∈ {65, 129, 193, 257}; measure the dilation residual power law per axis. Prediction if
+frame-invariance emerges: all three axes converge with the same exponent p ≈ 2. Falsifier: diagonal
+exponents differ by >0.5 or saturate. This *completes* FTD-0252's own open item (diagonals need
+L ≳ 257) and is the cheapest decisive advance. A follow-up campaign on an **interacting** clock
+(genesis/Langevin on) would address the CPSUV gap — the genuinely novel attack surface this round
+surfaced. **Pre-registration required before any run** (per FTD-0203 discipline).
+
+*Round-3 status: naive kinematic Frame Postulate `[FALSIFIED as stated]`; scoped form `[SMC]`;
+kinematic/dynamical two-axiom split = the round's load-bearing structural finding; engine
+experiment queued `[OPEN]`.*
+
