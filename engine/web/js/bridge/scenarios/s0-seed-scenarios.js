@@ -749,6 +749,30 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     break;
                 }
 
+                // ── Time-dilation scenarios (2026-06-07) ───────────────
+                // Thin reuse wrappers for the Time Observatory panel. Each
+                // delegates to an existing gravity seed so the latency well
+                // (gravitational clock-slowdown) is real; no new physics.
+                //
+                // NOTE: the latency SAMPLER (getLatencySampled, both bridges)
+                // builds the dτ/dt proxy from the |J|² flux field — so the Time
+                // panel needs a FLUX-producing well, not the locked-rest-mass
+                // body (whose flux is 0 and whose real Poisson latency is only
+                // surfaced via the [C++] getGravityMetricAgg block). The
+                // gravitational-wave / Schwarzschild seeds inject flux, giving a
+                // measurable latency well on every bridge.
+                //   gravity-well + twin-clocks → the gravitational-wave flux well
+                //   horizon                    → the seed-bias Schwarzschild well
+                case 's0-seed-time-gravity-well':
+                case 's0-seed-time-twin-clocks': {
+                    setupS0SeedScenario('s0-seed-gravitational-wave', harness, ctx);
+                    break;
+                }
+                case 's0-seed-time-horizon': {
+                    setupS0SeedScenario('s0-seed-schwarzschild', harness, ctx);
+                    break;
+                }
+
                 // ── Level 8: Reference frame context / Observer ────────────────
                 case 's0-seed-sloop': {
                     const slR=Math.max(3,Math.floor(N/8)), slN=12, slA=K_B;

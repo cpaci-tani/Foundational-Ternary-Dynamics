@@ -113,6 +113,13 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Gravity', 's0-seed-gravitational-lensing', 'Gravitational lensing (dynamic bending)', ['seed'], '[CONJECTURE]'),
     makeScenario('Gravity', 's0-seed-gravitational-wave', 'Gravitational wave', ['seed'], '[CONJECTURE]'),
     makeScenario('Gravity', 's0-seed-massive-body', 'Massive body (real mass)', ['seed'], '[DERIVED]'),
+    // Time — gravitational clock-slowdown demos for the Time Observatory panel.
+    // Thin reuse wrappers over the flux gravity wells (gravitational-wave /
+    // Schwarzschild seeds); the dτ/dt readout is the |J|² latency proxy [~M]
+    // (the real Poisson latency is surfaced in the panel's [C++] block).
+    makeScenario('Time', 's0-seed-time-gravity-well', 'Gravity well (dτ/dt across a well)', ['seed', 'time', 'gravity'], '[CONJECTURE]'),
+    makeScenario('Time', 's0-seed-time-twin-clocks', 'Twin clocks (Δτ deep vs far)', ['seed', 'time', 'gravity'], '[CONJECTURE]'),
+    makeScenario('Time', 's0-seed-time-horizon', 'Horizon well (deep dilation)', ['seed', 'time', 'gravity'], '[CONJECTURE]'),
     makeScenario('Reference frame context / Observer', 's0-seed-sloop', 'sLoop (self-referential ring)', ['seed'], '[CONJECTURE]'),
     makeScenario('Reference frame context / Observer', 's0-seed-observer-cell', 'Observer cell (3³ lattice)', ['seed'], '[CONJECTURE]'),
     makeScenario('Field Configurations', 's0-field-plane-wave', 'Plane wave', ['field']),
