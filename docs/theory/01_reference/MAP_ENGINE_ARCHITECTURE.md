@@ -1,11 +1,11 @@
 # Foundational Ternary Dynamics (FTD) C++ Engine: Complete Architectural Map & Gap Analysis
 
-**Version:** 5.40 (sync to CLAUDE.md & post-2026-05-08 FTD/FQCR doctrine-ledger)
-**Date:** 2026-05-26
+**Version:** 5.41 (sync to 2026-06-07 engine-system documentation pass)
+**Date:** 2026-06-07
 **Subject:** Master FTD C++ Engine Architecture & Verification Report
 **Target:** `docs/theory/01_reference/MAP_ENGINE_ARCHITECTURE.md`
 **Classification:** Canonical Capstone Reference [REFERENCE / SYNTHESIS / ANALYSIS]
-**Authoritative References:** `docs/SPEC_FTD.md`, `engine/SPEC_ENGINE.md`, `CLAUDE.md`, `AGENTS.md`
+**Authoritative References:** `docs/SPEC_FTD.md`, `engine/SPEC_ENGINE.md`, `engine/VISUAL_GUIDE.md`, `engine/SCENARIO_ARCHITECTURE.md`, `CLAUDE.md`, `AGENTS.md`
 
 ---
 
@@ -15,12 +15,16 @@ The **Foundational Ternary Dynamics (FTD)** C++ simulation engine (v2.18.0) is a
 1. **Discrete State Field ($s \in \{-1, 0, +1\}$)** representing manifested matter, antimatter, or void.
 2. **Continuous Flux Field ($J \in \mathbb{R}^3$)** representing dispositional energy-momentum density.
 
-Rather than imposing standard phenomenological formulas directly, all physical constants (e.g., fine structure constant $\alpha \approx 1/137.036$, number of colors $N_c = 3$, electron mass amplitude $K_B = 0.511$) cascade from only two first-principles inputs—**dimension $D=3$** and the elliptic **lemniscate constant $\varpi$**—through the **Ontic Derivation Chain** (`ontic.h`).
+The engine imports framework constants and simulation parameters through the
+Ontic Derivation Chain (`ontic.h`) and `constants.h`. This map documents code
+usage and architecture. Derivation status, calibrations, retired
+identifications, and parameter-insertion boundaries remain governed by the
+theory ledgers and `AUDIT_EPISTEMIC_AUDIT.md`.
 
 This map synthesizes:
 * **Section 1 (Inventory & Map):** Decoupled directory boundaries, file-by-file inventory, structural invariants, and production vs. experimental boundaries.
 * **Section 2 (Dependencies & Flows):** `#include` inclusion tree, compilation circularity prevention, the 11-step execution pipeline, multi-scale orchestration, AoS-to-SoA data mapping, lazy synchronization, and CUDA kernel targets.
-* **Section 3 (Structural Documentation & Gaps):** Exhaustive table-driven documentation of all 29 runtime toggles, explicit mathematical-to-code mapping of the ontic chain, `DagEngine` sparse-voxel stubs, and recommendations for performance scaling.
+* **Section 3 (Structural Documentation & Gaps):** Table-driven documentation of the current 33 boolean Scale 0 runtime toggles plus typed configuration fields, explicit mathematical-to-code mapping of the ontic chain, `DagEngine` sparse-voxel stubs, and recommendations for performance scaling.
 
 ---
 
@@ -32,6 +36,9 @@ The codebase is organized into highly decoupled directories. Component boundarie
 engine/
 ├── CMakeLists.txt                    # Top-level build config; declares all ctest targets
 ├── SPEC_ENGINE.md                    # Authority on engine internals and tick phases
+├── VISUAL_GUIDE.md                   # Learner-facing guide to sim flow and discrete emergence
+├── CALLSTACKS.md                     # Feature-by-feature runtime callstack map
+├── SCENARIO_ARCHITECTURE.md          # Scenario lifecycle, bridge ownership, and seed architecture
 ├── README.md                         # Quickstart guide, architecture table, and limitations
 │
 ├── include/ftd/                      # 28 Public Headers (Declaration Layer)
@@ -57,7 +64,7 @@ engine/
 #### 1.1.1 Core Include Layer (`engine/include/ftd/`)
 * **`ontic.h`**: The umbrella header that re-exports the entire 9-layer Ontic Derivation Chain. Consists of highly modular headers under `include/ftd/ontic/`:
   * `lemniscate.h`: Modular seeds, elliptic geometry ($\varpi$, Gauss $M$, $\pi$), universal operators ($G^*$), and the emergence of imaginary unit $i$ at $k_{crit} = 4/G^*$.
-  * `master_quadratic.h`: The master quadratic equation $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ yielding $x_+ = 1/\alpha \approx 137.036$ and $x_- = N_c \approx 3.024$. Contains dual-substrate allocations.
+  * `master_quadratic.h`: The master quadratic equation $x^2 - 16(G^*)^2 x + 16(G^*)^3 = 0$ yielding $x_+ \approx 137.036$ as the tree-level reciprocal-alpha root. The smaller root $x_- \approx 3.024$ is retained as a mathematical root; its old identification with $N_c$ is retired in the ledgers. Contains dual-substrate allocations.
   * `gauge_couplings.h`: Precision coupling calculations (CODATA 2022 matching via 4-term loop expansions), $G_N = 0.01$ (scaled lattice gravity), and QCD running definitions.
   * `particle_masses.h`: Standard Model mass scale definitions ($K_B = 0.511$ MeV, $K_{genesis} = 3 K_B$) and the Higgs VEV ($V_{Higgs} = 246.09$ GeV, $M_{Higgs} = 124.8$ GeV).
   * `neutrino.h`: Seesaw mechanism equations and PMNS neutrino mixing parameters.
@@ -67,7 +74,7 @@ engine/
 * **`voxel.h` & `lattice.h`**: Voxel struct and coordinates/neighbor geometry helpers.
 * **`render_bridge.h`**: The main Scale 0 execution engine managing the flat voxel grid, 6-phase CPU tick cycle, SOR iterations, self-field injection, and device-host handshakes.
 * **`render_bridge_diagnostics.h`**: Holds POD diagnostic structures (`Diagnostics`, `AggregateProfile`, `EnergyAudit`, `EnergyLedger`, `EMFieldDiag`) to prevent compilation fan-out.
-* **`term_toggles.h`**: A table-driven, unified registry mapping **29 runtime boolean toggles** (e.g., `wave_propagation`, `poisson_coulomb`, `selective_damping`, `dual_substrate`, `strong_force`) alongside CSV-based dependency and conflict validation logic.
+* **`term_toggles.h`**: A table-driven, unified registry mapping **33 runtime boolean toggles** (e.g., `wave_propagation`, `poisson_coulomb`, `selective_damping`, `dual_substrate`, `strong_force`) plus 6 typed configuration fields, alongside CSV-based dependency and conflict validation logic.
 * **`field_operators.h`**: Inline free-function stencils for spatial operators (Laplacians, divergences, curls, and gradients) executing on `std::vector<Voxel>`.
 * **`lagrangian.h`**: Defines the 4-term lattice Lagrangian density and Rayleigh dissipation function parameters.
 * **`scale_engine.h` & `scale.h`**: Polymorphic scale engine and coarsening/refinement definitions.
@@ -90,7 +97,7 @@ To eliminate structural bloat, the Scale 0 `tick()` pipeline is decomposed into 
 * **`phase_movement.cpp`**: Updates remainder registers, translates particles across voxel bounds, checks periodic wrapping, and executes same-sign bouncing vs opposite-sign annihilation.
 
 #### 1.1.3 Core Engines & Bridges
-* **`render_bridge.cpp`**: Allocates the voxel lattice, triggers the 6-phase tick loop, updates `EnergyLedger`, manages WebSocket handshakes, and interfaces with execution backends.
+* **`render_bridge.cpp`**: Allocates the voxel lattice, triggers the current toggle-gated CPU tick ladder, updates `EnergyLedger`, manages WebSocket handshakes, and interfaces with execution backends.
 * **`scale_bridge.cpp`**: Handles cross-scale coarsening and refinement.
 * **`lagrangian.cpp`**: Evaluates the 4 active terms (wave kinetic, wave potential, interaction, mass gap) and Rayleigh dissipation.
 * **`ontic_audit.cpp`**: Self-checks the mathematical precision of the ontic cascade and validates CODATA tolerances.
@@ -333,7 +340,11 @@ Data transfers over the PCI-Express bus are high-latency operations. The engine 
 
 ## 6. Runtime Toggles Registry & Physical Interpretations (M3 Analysis)
 
-The C++ engine's behavior is controlled by a unified, table-driven registry in `term_toggles.h`. This table documents all **29 active boolean toggles**, mapping their default configurations, dependencies, conflicts, and physical meanings:
+The C++ engine's behavior is controlled by a unified, table-driven registry in
+`term_toggles.h`. The current Scale 0 registry contains **33 active boolean
+toggles** plus 6 typed configuration fields. The table below summarizes the
+boolean surface; `engine/SPEC_ENGINE.md` and `term_toggles.h` remain the live
+source of truth for dependency strings and defaults:
 
 | Toggle Name | Default | Dependencies | Conflicts | Backends | Detailed Physical Meaning / Simulation Role |
 | :--- | :---: | :--- | :--- | :---: | :--- |
@@ -364,6 +375,10 @@ The C++ engine's behavior is controlled by a unified, table-driven registry in `
 | **`symplectic_leapfrog`**| `false`| `wave_propagation`| None | `ANY` | Scale 0: Symplectic wave integration for high-stability wave propagation. |
 | **`su2_gauge`** | `false` | None | None | `ANY` | Scale 0: Reconfigures stencils to incorporate SU(2) non-Abelian link variables. |
 | **`su3_gauge`** | `false` | None | None | `ANY` | Scale 0: Reconfigures stencils to incorporate SU(3) non-Abelian link variables. |
+| **`symmetric_movement_order`** | `false` | `movement` | None | `ANY` | Phase-movement: randomized traversal/axis ordering to reduce coordinate-order artifacts. |
+| **`absorbing_boundary`** | `false` | `wave_propagation` | None | `ANY` | Tick: sponge boundary damping at lattice faces for non-periodic wave experiments. |
+| **`field_energy_gravity`** | `false` | `latency_field` | None | `ANY` | Latency Poisson can source from field-energy density as well as rest-mass sites. |
+| **`cluster_inertia`** | `false` | `forces` | None | `ANY` | Rigid-body integration path for locked clusters using additive inertial mass. |
 | **`confinement`** | `false` | None | None | `ANY` | Intent flag: Aliased to JS scenarios representing linear confinement regime (no C++ branch). |
 | **`strict_validation`** | `false` | None | None | `ANY` | When active, throws an exception on the first `TermToggles::validate()` failure. |
 
@@ -372,6 +387,7 @@ These parameterized properties live outside the table-driven registry:
 * **`bcc_stencil` (`BccStencilMode`):** Controls sub-lattice stencil modes. Options: `FULL`, `FACE_ONLY`, `CORNER_ONLY`. Validation requires `dual_substrate = false` if non-default.
 * **`langevin_site_filter` (`SiteClass`):** Selects which lattice parity sectors the Langevin thermostat targets (e.g., `ALL_SITES`, `EVEN_SITES`, `ODD_SITES`).
 * **`langevin_T` & `langevin_gamma`:** Langevin thermodynamic parameters.
+* **`langevin_seed`:** Deterministic stochastic seed used by the Langevin/genesis RNG paths.
 * **`coulomb_charge_coupling`:** Explicit scalar modifying the strength of the Gauss projection source.
 
 ---
@@ -389,7 +405,7 @@ The first-principles cascade implemented in `engine/include/ftd/ontic/` maps dir
 | **BCC Lattice Self-Energy** | $I_1 = G^{*2}/(2\pi) \approx 1.393$ | `I_1_BCC` / `W_3` (`lemniscate.h`) |
 | **Critical Coupling Parameter** | $k_{crit} = 4/G^* \approx 1.352$ | `K_CRIT` (`lemniscate.h`) |
 | **Master Quadratic Root ($x_+$)**| $x_+ \approx 137.036$ (leads to $1/\alpha$) | `X_PLUS` (`master_quadratic.h`) |
-| **Master Quadratic Root ($x_-$)**| $x_- \approx 3.024$ (leads to $N_c = 3$) | `X_MINUS` (`master_quadratic.h`) |
+| **Master Quadratic Root ($x_-$)**| $x_- \approx 3.024$ (mathematical root; retired as an $N_c$ source) | `X_MINUS` (`master_quadratic.h`) |
 | **Precision-Corrected Root** | $x_+ - c_1 |\epsilon| + c_2 |\epsilon|^2 - \dots$ | `X_PLUS_PRECISION` (`master_quadratic.h`) |
 | **Vieta Product Root ($x_-$)** | $x_- = 16 G^{*3} / x_+^{prec}$ | `X_MINUS_PRECISION` (`master_quadratic.h`) |
 | **Chiral Substrate Energies** | $E_{L, R} = S(1 \pm \delta)/2$ | `E_LEFT_APPROX` / `E_RIGHT_APPROX` |

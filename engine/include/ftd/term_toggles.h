@@ -1,6 +1,6 @@
 #pragma once
 // Runtime toggles for the logic-first engine.
-// 25 boolean toggles + 5 non-bool config fields.
+// 33 boolean toggles + 6 non-bool config fields.
 //
 // Phase 6 (2026-04-27): redesign as a TABLE-DRIVEN registry. Adding a new
 // boolean toggle now requires ONE edit (a row in TOGGLE_SPECS[]) instead
