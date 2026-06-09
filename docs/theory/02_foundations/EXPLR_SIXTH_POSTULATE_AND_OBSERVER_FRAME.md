@@ -464,3 +464,52 @@ The only `[OPEN]` positive probes left are *measurements*, not philosophy: the t
 (§11d) and, independently, the stochastic-actualization/arrow postulate (§13e) — each pre-registerable,
 neither claimed.
 
+---
+
+## 15 · Spin-off (2026-06-09): the Spekkens placement → does FTD make a falsifiable QM divergence? **No.**
+
+A *distinct, positive* line opened from §13d's Spekkens characterization (not a reopening of the closed
+unification arc): if FTD is a Spekkens-type (non-contextual) model, and quantum **contextuality** is
+experimentally observed (Kochen-Specker; the Peres-Mermin square = *state-independent* contextuality),
+does FTD make a falsifiable FTD≠QM prediction? Two lenses, one constructive + one falsifier; **they
+split, and the falsifier wins the crux.**
+
+### 15a · The adjudication
+- **Confirmed (`[THEOREM]`, already known — FTD-0226/0243):** the substrate is **non-contextual** —
+  every beable is a function of one configuration space, so a global non-contextual value assignment
+  exists (Birkhoff–von Neumann + Fine). This is algebra, not geometry: the continuous flux does **not**
+  evade Kochen-Specker.
+- **The claimed novelty FAILS.** The constructive case rested on "Peres-Mermin has no measurement
+  *settings* to correlate, so superdeterminism cannot buy state-independent contextuality." **False:**
+  state-independent contextuality still requires *choosing which compatible context to measure* per run,
+  and that choice is a lattice observable — so shared-causal-history superdeterminism correlates it with
+  the hidden flux exactly as it does Bell settings. **Superdeterminism buys contextuality too, by the
+  same retrofit.** So FTD does **not** predict non-contextual statistics where experiment shows
+  contextual ones. No falsifiable divergence.
+- **The "falsification" was a strawman regardless:** FTD never claims the *substrate* reproduces QM. The
+  substrate is non-contextual *by admission*; contextuality lives in the imported layer (the measurement
+  map M / superdeterminism). Attacking "FTD predicts non-contextuality" attacks a position FTD doesn't
+  hold.
+
+### 15b · The honest, deflating finding
+Superdeterminism bridges substrate → **all** of quantum contextuality (not just Bell), as a fit-anything
+retrofit with no independent predictive content. Therefore, **at the QM level FTD makes no novel
+prediction — it is empirically QM-equivalent, i.e. an *interpretation* (the 't Hooft position), not a
+distinct physical theory.** This is `[OBSERVATION]`, and it sharpens (does not contradict) FTD-0238: the
+commutativity boundary is not just "non-commutativity is imported" but specifically "**the entire
+contextuality content of QM is carried by the superdeterminism import, which is empirically adequate and
+explanatorily empty.**"
+
+### 15c · The one genuine open item this surfaced
+The corpus itself admits (per the Bell-analysis audit) that the **sLoop-vs-superdeterminism distinction
+is "asserted but not proven."** FTD's docs want the sLoop (necessary, structural) to be *more* than
+generic superdeterminism (accidental, retrofit) — but that distinction is currently unestablished. If it
+*could* be made rigorous, it would be the difference between "FTD is an empty retrofit of QM" and "FTD
+explains why the correlations are necessary." That is the real, pre-existing `[OPEN]` the QM front turns
+on — orthogonal to the (failed) contextuality-divergence framing.
+
+*Spin-off status: **no falsifiable FTD≠QM divergence** (superdeterminism retrofits contextuality just as
+it does Bell); substrate non-contextuality `[THEOREM]` (known); **FTD's QM content is interpretational,
+not predictive** `[OBSERVATION]`, sharpening FTD-0238; the sLoop-≠-superdeterminism distinction is the
+genuine `[OPEN]`. No canon promoted; the QM-foundations front is now thoroughly mapped.*
+
