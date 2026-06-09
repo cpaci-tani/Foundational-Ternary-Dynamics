@@ -37,6 +37,13 @@ git tag -l <tag-name>            # tag listing
 The launcher script `engine/tools/run_emergent_spectrum_g1.sh` wraps
 the FTD-0107 invocation; see `commit a0983ca` for the script body.
 
+## Campaign 2 — dynamical time dilation (2026-06-07)
+
+| FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0252** dynamical time dilation (v1) | `preregister-dynamical-time-dilation-v1` (owner-deferred — see pre-reg header) | (pending owner commit) | runner `engine/tests/campaign_time_dilation.cpp` SHA256 `ea29260b20dcbcadbaeec5e79125d099bad77313f346fe28df74454f07fff331`; analysis `scripts/exploration/analyze_time_dilation.py` SHA256 `323b2e7d4dce9a2a0211007a0bc39492f48acdba43813bdd93e99a655a513bad` | `--Llist=33,49,65,97,129` | `engine/results/time_dilation_2026-06-07/` | [`PREREG_DYNAMICAL_TIME_DILATION_v1.md`](../03_derivations/foundational_mechanics/PREREG_DYNAMICAL_TIME_DILATION_v1.md) → `ANALYSIS_DYNAMICAL_TIME_DILATION.md` (verdict OTHER) |
+| **FTD-0252** v2 (IR limit) | `preregister-dynamical-time-dilation-v2` (owner-deferred) | (pending) | runner SHA256 `28c99f87f82b82bb25eea14be7e72ae4c422307e955840ac92c7dbd75b3b1140` (mode `--nperp-fixed=3`); analysis `scripts/exploration/analyze_time_dilation_v2.py` SHA256 `9a7559046f8bac01f5644a4f908f080ff220d6d7492a85cd90e90a72c5d9046c` | `--nperp-fixed=3 --Llist=33,65,97,129,193` | `engine/results/time_dilation_v2_2026-06-07/` | [`PREREG_DYNAMICAL_TIME_DILATION_v2.md`](../03_derivations/foundational_mechanics/PREREG_DYNAMICAL_TIME_DILATION_v2.md) → `ANALYSIS_DYNAMICAL_TIME_DILATION.md` §v2 (IR_CONFIRMED, scoped) |
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
