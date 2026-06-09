@@ -79,7 +79,7 @@ All three are equivalent reformulations of: *can the substrate natively produce 
 >
 > **`W` is logically independent of P1–P5 on present evidence:**
 > - `𝔉 ∪ {W}` is consistent: the master quadratic is the explicit witness model.
-> - `𝔉 ∪ {¬W}` is consistent: `det = 16G*⁴` (dominant root 130.68) and `det = G*` (dominant root 139.05) are explicit F-consistent alternatives — nothing in F forbids them.
+> - `𝔉 ∪ {¬W}` is consistent: `det = 16G*⁴` (dominant root 130.68) and `det = G*` (dominant root 140.04) are explicit F-consistent alternatives — nothing in F forbids them.
 
 **What is theorem-grade vs conjecture-grade:**
 
