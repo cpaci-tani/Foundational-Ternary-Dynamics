@@ -287,6 +287,31 @@ set_property(GLOBAL APPEND PROPERTY FTD_ALL_TESTS cognitive_lattice)
 ftd_add_test(test_conservation_profile tests/test_conservation_profile.cpp
              CTEST_NAME conservation_profile TIMEOUT 120 LABELS unit conservation)
 
+# Substrate measurement-angle probe (2026-06-07): exploratory Stage-1 probe of
+# which substrate phase carries a native dynamical angle under bare wave+Gauss
+# (transverse spatial = frozen; symplectic {q,p} = winds at omega(k); L/R =
+# mirror). Read-only on physics phases -> golden-gate-safe. See
+# .claude/plans/plan-an-intuitive-path-twinkling-gizmo.md.
+ftd_add_test(test_substrate_angle_probe tests/test_substrate_angle_probe.cpp
+             CTEST_NAME substrate_angle_probe TIMEOUT 120 LABELS unit measurement)
+
+# Campaign 2 — dynamical time dilation (2026-06-07): does a moving lattice clock
+# dilate as √(1−v²) [L²/γ] or 1−v [L¹/FTD-0208]? Wave clock via the single-tick
+# dispersion eigenvalue; effective mass from transverse momentum. Reads NO
+# voxel.tau (circular). Checks are sanity-only; the L²/L¹ verdict is drawn
+# post-lock in analyze_time_dilation.py. See
+# .claude/plans/plan-an-intuitive-path-twinkling-gizmo.md (Campaign 2).
+ftd_add_test(campaign_time_dilation tests/campaign_time_dilation.cpp
+             CTEST_NAME time_dilation TIMEOUT 600 LABELS measurement relativity)
+
+# FTD-0253 demo (2026-06-07): same lattice + same Laplacian (same locality cone),
+# 2nd-order WAVE vs 1st-order DIFFUSION. Shows the causal cone is shared but the
+# metric (clock / ballistic ruler / reversibility) appears ONLY in 2nd order —
+# the Lorentzian metric is not forced by the postulates. Read-only on engine
+# physics. See docs/theory/02_foundations/FOUND_SPACETIME_FORCING_BOUNDARY.md.
+ftd_add_test(test_spacetime_forcing_demo tests/test_spacetime_forcing_demo.cpp
+             CTEST_NAME spacetime_forcing_demo TIMEOUT 180 LABELS measurement relativity)
+
 # Cluster inertia (unified-mass Phase 2, 2026-06-06): verifies the [IMPOSED]
 # rigid-body cluster integrator a_COM = F_cluster/(N*M_REST). The falsifier is
 # a proportional-to-1/N: a fixed total force injected directly into force_diag_,
