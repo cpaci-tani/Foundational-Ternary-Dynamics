@@ -304,3 +304,77 @@ surfaced. **Pre-registration required before any run** (per FTD-0203 discipline)
 kinematic/dynamical two-axiom split = the round's load-bearing structural finding; engine
 experiment queued `[OPEN]`.*
 
+---
+
+## 12 · Round 4 (2026-06-09): the grand unification — **object-level CLOSED-NEGATIVE**, schema survives as navigation only
+
+The highest-risk question was put directly: can a **single frame primitive** carry both axiom-halves —
+and, the grand prize, subsume all five §1/§8 holes as sections of one "redundancy bundle"? Three lenses
+(constructive / logical / falsifier), falsifier from the start. **Verdict: object-level unification is
+`[CLOSED NEGATIVE within this exploration]`; only a navigational schema survives, at `[OBSERVATION]`.**
+
+### 12a · The three kills
+1. **Type-heterogeneity (the kill-shot).** The five holes are not one type. **Reversibility and
+   non-commutativity are *properties*** — of the dynamics and of the observable algebra respectively —
+   **not sections/choices/frames at all.** The other three (measurement basis, observer/system cut,
+   decoder `M_O`) *are* choices, but sections of **three different bundles over incompatible base
+   spaces** (Hilbert space / partition lattice / model-space). Calling all five "frames" is the same
+   property↔choice metaphor-laundering that killed §6b's `I(readout;field)` (which conflated correlation
+   with semantics). A schema that miscategorises two of its five members is already broken.
+2. **Round-3 pre-falsification confirmed.** Even within the *metric* face, kinematic reversibility
+   (frame-change invertibility / group closure) is **logically independent** of dynamical reversibility
+   (dissipation-freedom) — the telegrapher equation (hyperbolic + dissipative + Lorentz-covariant) is
+   the standing counterexample: an invertible *family of frames* observing an *irreversible* evolution.
+   So "frame" cannot carry both axiom-halves for the two most closely-related holes; it will not do so
+   across five.
+3. **The Stone's-theorem rescue is relabeling, not derivation.** Defining "frame" to *include
+   time-translation as a group* does force a self-adjoint generator (Stone ⟹ unitary ⟹ reversible) —
+   but the **semigroup-vs-group distinction IS the reversibility question** (FTD-0253: determinism ≠
+   reversibility, P5 gives only a semigroup). Requiring the group structure assumes what it claims to
+   derive; it smuggles reversibility into the frame *definition*. Legitimate as an axiom choice,
+   worthless as a unification.
+
+### 12b · No canonical redundancy bundle in FTD (the referent is missing)
+"Frame = section of *the* substrate redundancy" presupposes one redundancy. FTD has **several unrelated
+ones**: the **Moore-layer gauge** `U(1)×SU(2)×SU(3)` is **topologically forced** (counts which J-components
+a sublattice excites — *not* chosen); the **Domain-A/B context-selection** bifurcation (from the master-
+quadratic discriminant) *is* a genuine chosen redundancy; the **observer/system cut** lives in the
+partition lattice. Different categories, disjoint bases. "One frame primitive" has **no referent** in the
+actual infrastructure.
+
+### 12c · Vacuity
+Even granting the schema, "everything the substrate doesn't fix is a 'frame'" **predicts nothing and
+forbids nothing** — it cannot be used to *derive* that (say) reversibility is missing; the derivation
+had to be done first and the label applied after. This is the data-processing-inequality-triviality
+pattern again (§6b): true-by-construction, content-free.
+
+### 12d · What survives — and a refinement to the §1/§8 framing
+- **Survivor (`[OBSERVATION]`/`[SCHEMA]`, navigational only):** the five gaps share a *recurring shape* —
+  *the substrate is frame-free (frame-covariant); selective/interpretive physics is frame-relative.*
+  Useful as a map label for where the boundaries cluster. **It is not an explanation, not a primitive,
+  and not a unification.**
+- **Refinement of the "five holes" table (§1/§8):** the holes are **heterogeneous in type** — two are
+  *missing properties* (non-commutativity of the algebra; reversibility of the dynamics) and three are
+  *missing choice-structures* (measurement basis; observer/system cut; decoder `M_O`); the binding-law
+  `W` (α) is a fourth, distinct, *operator-assembly* gap. They are five different things that share only
+  the meta-fact of being unforced by P1–P5. The honest §9c/§11c position — "frames are a candidate for
+  the measurement/meaning/metric *cluster*, with non-commutativity and reversibility as residue" — was
+  already correct and is now sharpened: **the cluster is itself not one object.**
+- **Corpus-hygiene flag (for a later, separate pass):** FTD's "frame"/"reference-frame" vocabulary
+  quietly spans the *chosen* context-selection redundancy and the *topologically-forced* Moore-layer
+  gauge. These are different kinds of object; a future cleanup should not let the shared word imply a
+  shared structure. (Flag only — no edit made here.)
+
+*Round-4 status: **object-level frame-unification `[CLOSED NEGATIVE within this exploration]`** (type-
+heterogeneity + round-3 pre-falsification + no-referent + vacuity); **schema-level `[OBSERVATION]`,
+navigational only**; the kinematic/dynamical two-axiom split (§11b) and the type-heterogeneity of the
+five holes (§12a/§12d) are the durable structural findings. No canonical claim promoted or demoted.*
+
+---
+
+*Arc summary (rounds 1–4): four conjectures attacked, four scoped-or-killed, zero canon touched. The
+durable yield is **boundaries, not theorems** — meaning is model-conditional (§7); the metric needs two
+different-level axioms not one (§11b); the five 6th-postulate holes are genuinely heterogeneous in type
+and do not unify under a single frame primitive (§12). The one queued positive probe is the three-axis
+L≤257 isotropy sweep (§11d), `[OPEN]`, pre-registration required.*
+
