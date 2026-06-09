@@ -378,3 +378,89 @@ different-level axioms not one (§11b); the five 6th-postulate holes are genuine
 and do not unify under a single frame primitive (§12). The one queued positive probe is the three-axis
 L≤257 isotropy sweep (§11d), `[OPEN]`, pre-registration required.*
 
+---
+
+## 13 · Round 5 (2026-06-09): the consolidation bet — Instantiation → non-commutativity — **theorem-level CLOSED-NEGATIVE**
+
+The last live consolidation ("go big"): can a single **stochastic-Instantiation** postulate purchase
+*both* the actualization face *and* the quantum-non-commutativity face — the latter emergent via
+sequential Born-sampling with Gauss back-reaction (A-then-B ≠ B-then-A)? Three lenses, falsifier armed.
+**Verdict: the non-commutativity half is `[CLOSED NEGATIVE within this exploration]` at theorem
+strength; the actualization half survives, but separately and unfreely.** This *confirms and sharpens*
+the existing commutativity boundary (FTD-0226/0228/0251; `THEOREM_COMMUTATIVITY_INDEPENDENCE`;
+SYNTHESIS FTD-0238) — it is not a new boundary, it closes the one new route (stochasticity).
+
+### 13a · The theorem chain (this is what makes it definitive)
+1. FTD's substrate observable algebra is **commutative** — every beable (`s`, `J_a`, `v`, `L`) is a real
+   function on one configuration space Ω; pointwise real multiplication commutes (`THEOREM_COMMUTATIVITY_INDEPENDENCE`, FTD-0243, `[THEOREM]`).
+2. **Birkhoff–von Neumann (1936):** a commutative algebra ⟹ a **distributive (Boolean)** event lattice.
+3. **Fine's theorem (1982):** a Boolean lattice ⟹ a **global joint distribution** over all contexts ⟹
+   **no Bell/KS violation** ⟹ classical.
+4. **Stochasticity is orthogonal to this wall.** Born-sampling `|J|²` draws from a joint distribution
+   that *exists* (over the definite hidden flux λ = J); it cannot make that distribution *nonexistent*,
+   which is what non-commutativity requires. The commutativity wall is at the *algebra* level, not the
+   *determinism* level — so the one new ingredient (stochasticity) buys nothing against it.
+
+### 13b · Why the back-reaction is not the rescue (the sharp discriminator)
+The Gauss back-reaction (`div J = ρ`) does make sequential instantiation **order-dependent** — but both
+composites remain **functions of the commuting J**, so a joint distribution over J persists.
+**Order-dependence ≠ complementarity.** Concretely, this is the **Leggett-Garg "clumsiness loophole"**:
+a classical system whose measurement physically disturbs it (billiard balls) violates LG *without* any
+quantum coherence. FTD's back-reaction is exactly classical measurement-disturbance, not incompatible
+observables.
+
+### 13c · The phase escape is blocked
+The only rescue would be a genuinely *inaccessible* phase. But the substrate's symplectic phase is
+**co-measurable**: `[q,p] = 0` to machine zero (~10⁻¹⁶, FTD-0251 `[MEASURED]`), while `{q,p} ≠ 0` is
+only the Poisson bracket (a structure on beables, not the observable product). Born-sampling a
+*classical* phase yields classical interference-of-probabilities (Spekkens), not quantum amplitude
+interference.
+
+### 13d · The positive yield — FTD is a **Spekkens-type epistemic model** (sharpened characterization)
+The clean placement this round buys: **commutative ontic substrate (the flux λ = J) + an observer
+epistemic restriction (the self-blind-spot / sLoop partial access) = QM *phenomenology* without
+genuine non-commutativity** — structurally a Spekkens toy-model regime. This sharpens FTD-0238's
+"commutative substrate derives the period algebra; QM/relativity are the imported non-commutative
+layer" into a named model class, and it explains *why* FTD's existing `S = 2√2` (`DERIV_SINGLET_FROM_VOID_EVENT`)
+needs its two imports — the **complexification** `J → ψ` (`[SELECTION]`) and **superdeterminism**
+(measurement-independence dropped, the 't Hooft route, a 6th-postulate-class input) — to clear the Bell
+wall. Both are honestly imports, not derivations.
+
+### 13e · The honest split (do not over-credit the survivor)
+The conjecture conflated **three independent things**; separated:
+- **Stochastic actualization / the arrow** (void → definite): genuinely `[OPEN]` and viable as a
+  6th-postulate-class input — FTD-0226 closed only the *deterministic* map, so this door is still open.
+- **Born `|·|²` statistics**: **already separately `[CLOSED NEGATIVE]`** (FTD-0200, threshold-crossing
+  ↛ Born) — *not* a free residue of stochastic instantiation; must not be claimed as one.
+- **Emergent non-commutativity via order-dependence**: `[CLOSED NEGATIVE]` (this round, theorem-level).
+
+This *confirms round 4's type-heterogeneity finding from the other side*: stochasticity (Type-2 choice)
+and non-commutativity (Type-1 property) are independent — one cannot purchase the other.
+
+*Round-5 status: **Instantiation → non-commutativity `[CLOSED NEGATIVE within this exploration]`**
+(Birkhoff–von Neumann + Fine + FTD-0226/0251); the LG back-reaction route = the clumsiness loophole; the
+phase route blocked by `[q,p]=0`. **Positive yield:** FTD characterized as a Spekkens-type epistemic
+model (sharpens FTD-0238). **Survivor:** stochastic actualization/the arrow remains `[OPEN]`, but neither
+Born statistics (FTD-0200) nor non-commutativity comes free with it. LEDGER row for the non-commutativity
+closure (suggested FTD-0254 `[CLOSED NEGATIVE]`) flagged for owner ID-assignment. No canon promoted.*
+
+---
+
+## 14 · Arc terminus (rounds 1–5)
+
+Five conjectures, five adversarial verdicts (kill / kill / scope / kill / theorem-kill), **zero canon
+promoted, one canon boundary *refined* (FTD-0253 §7, the two-axiom result)**. The "find the unifying
+6th postulate" program is **exhausted**, and the exhaustion is itself the result: the 6th-postulate holes
+are **irreducibly plural** — type-heterogeneous (§12), and for the QM hole, theorem-level-separate from
+the stochastic-actualization hole (§13). Durable yield, all `[BOUNDARY]`/`[OBSERVATION]`-grade:
+1. meaning is **model-conditional** (`I(S;source|M_O)`); FTD has no observer-model object (§7);
+2. the Lorentzian metric needs **two** independent axioms — kinematic (relativity principle) + dynamical
+   (reversibility) — not one (§11b; now FTD-0253 §7);
+3. the five holes are **heterogeneous in type** and do not unify under one frame primitive (§12);
+4. FTD is a **Spekkens-type epistemic model** — commutative ontic + epistemic restriction; stochasticity
+   does not escape commutativity (§13; sharpens FTD-0238).
+
+The only `[OPEN]` positive probes left are *measurements*, not philosophy: the three-axis isotropy sweep
+(§11d) and, independently, the stochastic-actualization/arrow postulate (§13e) — each pre-registerable,
+neither claimed.
+
