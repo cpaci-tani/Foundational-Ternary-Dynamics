@@ -43,6 +43,7 @@ import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js';
 import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './ui/overlays/gravity-panel.js';
+import { initTimePanel } from './ui/overlays/time-panel.js';
 import { PlayBarComponent } from '../../ui/components/play-bar/component.js';
 
 const state = getScale0State();
@@ -175,6 +176,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
         try { initConservationMicropanel(); } catch (e) { /* ignore */ }
         try { initSpectrumPanel(); } catch (e) { /* ignore */ }
         try { initGravityPanel(); } catch (e) { /* ignore */ }
+        try { initTimePanel(); } catch (e) { /* ignore */ }
     }
 
     destroy(ctx) {
@@ -192,6 +194,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
             try { window.__ftdP1Panel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdSpectrumPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdGravityPanel?.dispose?.(); } catch (e) { /* ignore */ }
+            try { window.__ftdTimePanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdFluxSlicePanel?.dispose?.(); } catch (e) { /* ignore */ }
         }
     }

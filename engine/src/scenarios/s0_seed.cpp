@@ -696,6 +696,37 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             if (std::fabs(v) > 1e-6) IF(rb, x, y, z, 0, v, 0);
         }
     }
+    // ── Time-dilation scenarios (2026-06-07) ──
+    // Thin reuse mirrors for the Time Observatory panel. Each reproduces an
+    // existing gravity seed so the latency well (gravitational clock-slowdown)
+    // is real; no new physics. The latency SAMPLER builds dτ/dt from the |J|²
+    // flux field, so these reuse FLUX-producing wells (a locked-rest-mass body
+    // has zero flux → no proxy latency). Kept in sync with the JS delegating
+    // cases in engine/web/js/bridge/scenarios/s0-seed-scenarios.js.
+    else if (name == "s0-seed-time-gravity-well" || name == "s0-seed-time-twin-clocks") {
+        // == s0-seed-gravitational-wave: a sinusoidal flux well that the
+        // field-energy latency solver turns into a measurable dτ/dt field.
+        const int gwWl = std::max(4, N / 4);
+        const double gwK = 2.0 * PI / gwWl, gwAmp = 0.1;
+        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+            double v = gwAmp * std::sin(gwK * x);
+            if (std::fabs(v) > 1e-6) IF(rb, x, y, z, 0, v, 0);
+        }
+    }
+    else if (name == "s0-seed-time-horizon") {
+        // == s0-seed-schwarzschild: seed-bias inflow toward a central mass — a
+        // stronger (near-horizon) well for the deepest time-dilation demo.
+        const double sHalf = (N - 1) / 2.0, rs = 3.0;
+        IP(rb, mc, mc, mc, +1);
+        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+            double rx = x - sHalf, ry = y - sHalf, rz = z - sHalf;
+            double r = std::sqrt(rx*rx + ry*ry + rz*rz);
+            if (r < 0.5) r = 0.5;
+            double mg = K_B * rs / (r * r);
+            if (mg < 1e-6) continue;
+            IF(rb, x, y, z, -mg * rx / r, -mg * ry / r, -mg * rz / r);
+        }
+    }
     // ── Level 8: Reference frame context / Observer ──
     else if (name == "s0-seed-sloop") {
         const int slR = std::max(3, N / 8);
