@@ -1,0 +1,50 @@
+=== arm F (fine axial grid, L=32) — DESCRIPTIVE staircase table ===
+   A    | N_mean   (orbit milestones for reference: 1, 7, 19, 27)
+   8.5 | 1.80
+   9.0 | 2.00
+   9.5 | 3.00
+  10.0 | 4.00
+  10.5 | 5.20
+  11.0 | 6.00
+  11.5 | 7.80
+  12.0 | 8.40
+  12.5 | 10.40
+  13.0 | 11.80
+  13.5 | 13.40
+  14.0 | 16.40
+  14.5 | 18.00
+  15.0 | 19.80
+  15.5 | 20.80
+  16.0 | 21.60
+  17.0 | 24.20
+  18.0 | 24.60
+
+C1 knee localization (F + frozen FTD-0261 bulk): knee_A=13.5 knee_N=14.6 p_lo=4.52 p_hi=1.66 (rms 0.042)
+C1 verdict: knee_N in block band [19, 33]? NO
+
+=== arm D (body-diagonal, L=32) ===
+  10.0 | 4.67
+  12.0 | 13.33
+  14.0 | 19.00
+  16.0 | 20.33
+  18.0 | 21.33
+  20.0 | 25.67
+  24.0 | 35.33
+C2 A=14.0: N_diag/N_axial = 1.159 band (0.6, 1.67) -> OK
+C2 A=16.0: N_diag/N_axial = 0.941 band (0.6, 1.67) -> OK
+C2 verdict: DIR-CONSISTENT
+[descriptive] diag broken fit: knee_A=14.0 knee_N=21.1
+
+=== arms L24/L48 (axial) vs L=32 (arm F), sub-knee ===
+C3 A=10.0 L24: N/N_L32 = 1.500 -> OK
+C3 A=10.0 L48: N/N_L32 = 1.083 -> OK
+C3 A=12.0 L24: N/N_L32 = 1.071 -> OK
+C3 A=12.0 L48: N/N_L32 = 0.952 -> OK
+C3 A=14.0 L24: N/N_L32 = 1.077 -> OK
+C3 A=14.0 L48: N/N_L32 = 1.057 -> OK
+C3 verdict: 6/6 in band -> L-INVARIANT-SUBKNEE
+[descriptive] bulk A=20.0: L24=26.3 L48=28.7 (L32 ref 27.4)
+[descriptive] bulk A=30.0: L24=45.0 L48=45.0 (L32 ref 45.0)
+
+================ OUTCOME ================
+GEOM-PARTIAL: two of three invariances hold; see component verdicts.
