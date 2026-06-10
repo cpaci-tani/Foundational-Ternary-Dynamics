@@ -417,11 +417,11 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 
 | Parameter | SM Status | FTD Formula | FTD Value | PDG | Error | Tag |
 |-----------|-----------|-------------|-----------|-----|-------|-----|
-| $m_e$ | Free | $M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | 0.5096 MeV | 0.5110 MeV | 0.19% | [THEOREM] |
-| $m_\mu/m_e$ | Free | $3 \times 7 \times 10 - 3 = 207$ | 207 | 206.77 | 0.11% | [THEOREM] |
-| $m_\tau/m_e$ | Free | $(N_{\text{eff}} + N_{\text{base}}) \times 207 - 2N_c b_3 = 3477$ | 3477 | 3477.2 | 0.007% | [THEOREM] |
-| $m_\mu$ | Derived | $207 \times m_e$ | 105.5 MeV | 105.66 MeV | 0.15% | [THEOREM] |
-| $m_\tau$ | Derived | $3477 \times m_e$ | 1776.9 MeV | 1776.86 MeV | 0.007% | [THEOREM] |
+| $m_e$ | Free | $M_P\sqrt{2\pi}(16/3)\alpha^{11}$ | 0.5096 MeV | 0.5110 MeV | 0.19% | [SELECTION] |
+| $m_\mu/m_e$ | Free | $3 \times 7 \times 10 - 3 = 207$ | 207 | 206.77 | 0.11% | [STRUCTURALLY MOTIVATED PARAMETRIC] |
+| $m_\tau/m_e$ | Free | $(N_{\text{eff}} + N_{\text{base}}) \times 207 - 2N_c b_3 = 3477$ | 3477 | 3477.2 | 0.007% | [STRUCTURALLY MOTIVATED PARAMETRIC] |
+| $m_\mu$ | Derived | $207 \times m_e$ | 105.5 MeV | 105.66 MeV | 0.15% | [STRUCTURALLY MOTIVATED PARAMETRIC] |
+| $m_\tau$ | Derived | $3477 \times m_e$ | 1776.9 MeV | 1776.86 MeV | 0.007% | [STRUCTURALLY MOTIVATED PARAMETRIC] |
 
 ## 5.4 Hadronic Masses
 
@@ -490,21 +490,21 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 | $\Lambda_{\text{QCD}}$ | ~217 MeV (dimensional transmutation) | ~217(25) MeV | [THEOREM] | DERIV_LAMBDA_QCD_DERIVATION |
 | Confinement string tension | From Wilson loop area law | ~0.18 GeV$^2$ | [SELECTION] | DERIV_LATTICE_SU3_GAUGE |
 
-## 6.5 Weak Decay Rates (~50 processes) [THEOREM via $G_F$]
+## 6.5 Weak Decay Rates (~50 processes) [PARAMETRIC INSERTION]
 
 With $G_F$ now derived, all weak decay rate computations use only FTD-derived inputs inserted into the Fermi decay formula $\Gamma = G_F^2 m^5/(192\pi^3) \times |V_{ij}|^2 \times f^2 \times \Phi$:
 
 | Category | Count | Representative | Accuracy | Tag |
 |----------|-------|---------------|----------|-----|
-| Lepton decays | 3 | $\mu \to e\bar{\nu}_e\nu_\mu$: $\tau_\mu = 2.197$ $\mu$s | < 0.01% | [THEOREM] |
-| Pion decays | 4 | $\pi^\pm \to \mu\nu$: $\tau = 26.0$ ns | < 1% | [THEOREM] ($f_\pi$ input) |
-| Kaon decays | 6 | $K^\pm \to \mu\nu$: $\tau = 12.4$ ns | ~1% | [THEOREM] ($f_K$ input) |
+| Lepton decays | 3 | $\mu \to e\bar{\nu}_e\nu_\mu$: $\tau_\mu = 2.197$ $\mu$s | < 0.01% | [PARAMETRIC INSERTION] |
+| Pion decays | 4 | $\pi^\pm \to \mu\nu$: $\tau = 26.0$ ns | < 1% | [PARAMETRIC INSERTION] ($f_\pi$ input) |
+| Kaon decays | 6 | $K^\pm \to \mu\nu$: $\tau = 12.4$ ns | ~1% | [PARAMETRIC INSERTION] ($f_K$ input) |
 | Charm decays | 8 | $D^0 \to K^-\pi^+$: BR consistent | ~5% | [PARAMETRIC] |
 | Beauty decays | 10 | $B^0 \to D^*\ell\nu$: consistent | ~5% | [PARAMETRIC] |
 | Hyperon decays | 6 | $\Lambda \to p\pi^-$: consistent | ~3% | [PARAMETRIC] |
-| $\tau$ lepton decays | 5 | $\tau \to \mu\bar{\nu}_\mu\nu_\tau$: consistent | < 1% | [THEOREM] |
-| Top quark width | 1 | $t \to Wb$: $\Gamma_t \approx 1.4$ GeV | ~2% | [THEOREM] |
-| W/Z widths | 2 | $\Gamma_W = 2.085$ GeV, $\Gamma_Z = 2.495$ GeV | < 0.5% | [THEOREM] |
+| $\tau$ lepton decays | 5 | $\tau \to \mu\bar{\nu}_\mu\nu_\tau$: consistent | < 1% | [PARAMETRIC INSERTION] |
+| Top quark width | 1 | $t \to Wb$: $\Gamma_t \approx 1.4$ GeV | ~2% | [PARAMETRIC INSERTION] |
+| W/Z widths | 2 | $\Gamma_W = 2.085$ GeV, $\Gamma_Z = 2.495$ GeV | < 0.5% | [PARAMETRIC INSERTION] |
 
 **Honest caveat:** The functional form of the Fermi decay formula is standard physics, not derived from the FTD action. What FTD provides is the numerical values of all coupling constants and masses entering that formula. The upgrade from [PARAMETRIC INSERTION] to [THEOREM] applies because no external measured quantity is needed as input.
 
@@ -666,7 +666,7 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-14 | $m_H = (N_{\text{eff}}/\alpha^2) \cdot m_e = 124.8$ GeV | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0017) | SM-6, SM-12 |
 | SM-15 | $G_F = 1/(\sqrt{2}\,v^2)$ derived | [THEOREM] | SM-13 |
 | SM-16 | $M_W = 80.36$ GeV, $M_Z = 91.19$ GeV | [THEOREM] | SM-10, SM-13 |
-| SM-17 | $g_c = \sqrt{\alpha}$ | [SELECTION / QED-facing correspondence] | Inherits SM-4; native FTD source-flux coupling is normalized separately |
+| SM-17 | $g_c = \sqrt{\alpha}$ | [SELECTION] | Inherits SM-4; native FTD source-flux coupling is normalized separately |
 | SM-18 | $g - 2 = \alpha/(2\pi)$ from one-loop vertex correction | [THEOREM] | SM-7, SM-17, lattice Feynman rules |
 | SM-19 | QED beta function $\beta = 2\alpha^2/(3\pi)$ | [THEOREM] | SM-7, one-loop vacuum polarization |
 | SM-20 | QCD beta function $\beta_0 = 7$ | [THEOREM] | SM-5, SM-8 |
@@ -676,9 +676,9 @@ The capstone achievement is not any single derivation but the structural claim: 
 | SM-24 | Kerr metric from vortical flux | [THEOREM] | SM-23 + angular momentum |
 | SM-25 | Reissner-Nordstrom from EM anti-saturation | [THEOREM] | SM-23 + charge |
 | SM-26 | $\alpha_G = 2\pi(16/3)^2(N_{\text{eff}} + 3/b_3)^2\alpha^{20}$ | [THEOREM] | SM-4, SM-6 |
-| SM-27 | $m_\mu/m_e = 207$, $m_\tau/m_e = 3477$ | [THEOREM] | SM-6, integer arithmetic |
+| SM-27 | $m_\mu/m_e = 207$, $m_\tau/m_e = 3477$ | [STRUCTURALLY MOTIVATED PARAMETRIC] | SM-6, integer arithmetic |
 | SM-28 | CKM $\delta = \arctan(7/3) = 66.8°$ | [THEOREM] | SM-6 |
-| SM-29 | ~50 weak decay rates use only FTD-derived inputs | [THEOREM] | SM-15, SM-27, CKM/PMNS elements |
+| SM-29 | ~50 weak decay rates use only FTD-derived inputs | [PARAMETRIC INSERTION] | SM-15, SM-27, CKM/PMNS elements |
 | SM-30 | Manifestation = electroweak phase transition | [THEOREM] | $\mathcal{L}_{\text{RB}}$ + feedback dynamics |
 | SM-31 | $N_{\text{base}} = 2^{(D+1)/2} = 4$ | [SELECTION] | $D = 3$ + spinor dimension argument |
 | SM-32 | Mexican hat potential from BI + manifestation feedback | [SELECTION] | SM-30, Born-Infeld nonlinearity |
@@ -697,9 +697,13 @@ The capstone achievement is not any single derivation but the structural claim: 
 
 | Tag | Count |
 |-----|-------|
-| [THEOREM] | 31 |
+| [THEOREM] | 24 |
 | [SELECTION] | 7 |
+| [STRUCTURALLY MOTIVATED PARAMETRIC] | 4 |
 | [CONJECTURE] | 2 |
+| [STRONGLY MOTIVATED CONJECTURE] | 1 |
+| [PARAMETRIC] | 1 |
+| [PARAMETRIC INSERTION] | 1 |
 | [OPEN] | 0 |
 | **Total** | **40** |
 
