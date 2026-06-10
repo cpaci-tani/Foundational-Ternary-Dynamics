@@ -239,6 +239,18 @@ canvas {
     --chart-pe-force:      var(--chart-gauss);
     --chart-pe-force-mean: #fb923c;
 
+    /* Scale 2/3 atom-engine chart colors */
+    --chart-ae-total:    var(--chart-total);
+    --chart-ae-ke:       var(--chart-positive);
+    --chart-ae-pe-ionic: var(--chart-negative);
+    --chart-ae-pe-vdw:   #2dd4bf;
+    --chart-ae-pe-bond:  #fb923c;
+    --chart-ae-temp:     var(--chart-flux);
+    --chart-ae-atoms:    var(--chart-energy);
+    --chart-ae-bonds:    var(--chart-eb);
+    --chart-ae-momentum: var(--chart-entropy);
+    --chart-ae-drift:    var(--chart-gauss);
+
     /* Legend palette (lagrangian term colors) — dark defaults */
     --legend-field-kinetic:  #66bb6a;
     --legend-field-gradient: #26a69a;

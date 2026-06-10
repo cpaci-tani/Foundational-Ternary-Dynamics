@@ -73,6 +73,8 @@ html[data-theme="parchment"] {
     --chart-entropy:  #1d4ed8;
     --chart-pe-gravity:    #57534e;
     --chart-pe-force-mean: #b45309;
+    --chart-ae-pe-vdw:     #115e59;
+    --chart-ae-pe-bond:    #b45309;
 
     --legend-field-kinetic:  #166534;
     --legend-field-gradient: #115e59;

@@ -474,6 +474,9 @@ export class TelemetryHub {
             const selectId = app?.dataset.activeScale === '3' ? 'mol-scenario-select' : 'ae-scenario-select';
             const scenarioSelect = document.getElementById(selectId);
             scenario = scenarioSelect?.selectedOptions?.[0]?.textContent || scenarioSelect?.value || '';
+            // Molecule option labels carry literal markup (e.g. "H<sub>2</sub>") —
+            // strip tags so the diagnostics text row doesn't show raw HTML.
+            scenario = scenario.replace(/<[^>]*>/g, '');
         }
         this.s2.runtime = runtime ? { scenario, ...runtime } : { scenario };
 
