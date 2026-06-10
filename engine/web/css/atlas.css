@@ -1,0 +1,37 @@
+/* FTD Ontology Atlas — flat professional dark theme. */
+:root{
+  --bg:#0e0f13; --panel:#16181f; --panel-2:#1d2029; --border:#2a2e3a;
+  --text:#e7e9ee; --text-dim:#9aa0ad; --accent:#378ADD;
+  --full:#378ADD; --manifestation:#639922; --derived:#1D9E75;
+  --imposed:#9c9a92; --partial:#EF9F27; --epistemic:#7F77DD; --declined:#E24B4A;
+  --r:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg);color:var(--text);overflow:hidden;
+  font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+#atlas-root{
+  display:grid;height:100vh;
+  grid-template-columns:264px 1fr 300px;
+  grid-template-rows:58px 1fr 100px;
+  grid-template-areas:"top top top" "panel viewport detail" "stepper stepper stepper";
+  gap:1px;background:var(--border);
+}
+#atlas-top{grid-area:top;display:flex;align-items:center;gap:16px;padding:0 18px;background:var(--panel)}
+#atlas-top h1{font-size:16px;font-weight:600;margin:0;letter-spacing:.2px;white-space:nowrap}
+#atlas-tagline{margin:0;font-size:12px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mode-switch{margin-left:auto;display:inline-flex;border:1px solid var(--border);border-radius:999px;overflow:hidden}
+#mode-switch button{background:transparent;color:var(--text-dim);border:0;padding:6px 16px;font:inherit;cursor:pointer}
+#mode-switch button.active{background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--accent)}
+#reset-view{background:var(--panel-2);color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}
+#reset-view:hover{color:var(--text)}
+#layer-panel{grid-area:panel;background:var(--panel);overflow-y:auto;padding:14px}
+#detail-panel{grid-area:detail;background:var(--panel);overflow-y:auto;padding:16px}
+#viewport{grid-area:viewport;position:relative;background:#0b0c10;overflow:hidden}
+#atlas-canvas,#atlas-overlay{position:absolute;inset:0;width:100%;height:100%;display:block}
+#atlas-overlay{pointer-events:none}
+#chain-stepper{grid-area:stepper;background:var(--panel);padding:10px 18px;overflow-x:auto}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
