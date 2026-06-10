@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FTD Ontology Atlas</title>
+  <link rel="stylesheet" href="css/atlas.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="atlas-root">
+    <header id="atlas-top">
+      <h1>FTD Ontology Atlas</h1>
+      <p id="atlas-tagline">Every field, and the chain that links them — coloured by what is actually real.</p>
+      <div id="mode-switch" role="tablist" aria-label="View mode">
+        <button data-mode="guided" class="active" role="tab" aria-selected="true">Guided</button>
+        <button data-mode="free" role="tab" aria-selected="false">Free explore</button>
+      </div>
+      <button id="reset-view" type="button" title="Reset camera">⤢ reset</button>
+    </header>
+    <aside id="layer-panel" aria-label="Layers"></aside>
+    <main id="viewport">
+      <canvas id="atlas-canvas"></canvas>
+      <svg id="atlas-overlay" aria-hidden="true"></svg>
+    </main>
+    <aside id="detail-panel" aria-label="Detail"></aside>
+    <footer id="chain-stepper"></footer>
+  </div>
+  <script type="module" src="js/atlas/atlas-main.js"></script>
+</body>
+</html>
