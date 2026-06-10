@@ -8,6 +8,7 @@
 **Supersedes:** CLAUDE.md (v5.17), docs/internal/SPEC_CLAUDE.md (v5.24), SPEC_FTD_FORMAL.md, SPEC_THE_COMPLETE_PROOF_RIGOROUS.md
 
 > **🧭 NAVIGATION (2026-05-08):** For the single-page status map across all 14 doctrine sectors with canonical tags, see [`docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md`](theory/01_reference/SPEC_DOCTRINE_LEDGER.md) (FTD-0145 [SYNTHESIS]).
+> **🏛 CONSTITUTION (2026-06-09):** The standalone-framework constitution — postulates + framework commitments (FC-0/FC-1/FC-2) + calibrations + the computational-EFT catalog + the deviation-prediction spine — is [`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md`](theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md) (FTD-0254 [SYNTHESIS] + [AXIOM]-class declarations; promotes nothing). On any conflict: LEDGER > constitution > this overview.
 >
 > **🔑 CRITICAL NOTICE (2026-04-19, supplemental 2026-04-28):** This document's body predates the April 19 audit cycle and the 2026-04-28 FTD-0110 derivation. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination, and one [OPEN]/[CONJECTURE] item was promoted to [DERIVED at linear level]. Specifically:
 >
