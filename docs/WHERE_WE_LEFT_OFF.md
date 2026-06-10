@@ -12,6 +12,17 @@
 
 ---
 
+## 0.27 · 2026-06-10 — FTD-0262: SM cluster↔mass identification on the current stack — IDENT-NULL (anchor holds; no specialness at the SM ratios)
+
+The mass-identification re-assessment, pre-registered with the circular/non-circular separation made explicit in the design (lock `2adf80b1`, tag `preregister-sm-mass-ident-current-stack-v1`; priors IDENT-NULL 65 / BROKEN 15 / MIXED 15 / STRUCTURE 5 — **the 65 % favorite landed**). 65 seed-runs, 0 failures, canonical coupling-ON protocol.
+
+- **E — anchor PASS (non-circular):** the electron (R = 1) as the **1-voxel minimal manifestation** is exact and time-stable, 20/20 seed-runs across A ∈ {1.5, 2, 3, 5} — the discrete-object face of the `M_REST = m_e` calibration survives the corrected engine untouched.
+- **S — self-consistency CONSISTENT (pre-flagged circular):** the FTD-0261 law inverted at R_μ/R_π predicted the off-grid points to **3.6 % / 3.0 %** (N̄(62.59) = 199.4 vs 206.8; N̄(72.46) = 281.3 vs 273.1) — worthless for the identification by design, but a genuine off-grid extrapolation validation of the law.
+- **P — specialness SMOOTH (the verdict-bearer):** local slope **p_local = 2.052** across the 7-point μ-window whose mean (204.2) sits right at R_μ — N(A) rises monotonically straight through the muon mass ratio with no plateau; π-window 1.983 concurs. **The engine assigns the SM ratios no attractor structure.**
+- **Outcome — IDENT-NULL:** FTD-0110's `[SMC]` identification keeps its tag (it already said conjecture); what changed is the precision of its support inventory: **historical stack-pinned quantitative matches + the current-stack electron anchor + nothing else.** K/p/τ deferred (beyond law grid + L=32 validity; less urgent under this verdict). Docs: `PREREG_SM_MASS_IDENT_CURRENT_STACK_v1.md`, `ANALYSIS_SM_MASS_IDENT_CURRENT_STACK_v1.md`; LEDGER FTD-0262; run of record `engine/results/sm_mass_ident_2026-06-10/`. **Remaining [OPEN] (narrowed):** the sub-knee onset mechanism (A ≈ 16, p ≈ 3.7) and whether any config realizes the linear theorem's ¼. **Nothing promoted.**
+
+---
+
 ## 0.26 · 2026-06-10 — FTD-0261: the current-stack N(A) law MEASURED (broken power, knee A≈16); thermostat = pure friction; FTD-0259 thermal-knee reading closed
 
 The successor campaign to the FTD-0260 resolution — one pre-registered run (lock `be63223e`, tag `preregister-na-law-current-stack-v1`; coupling-ON canonical protocol; **V-1 rig gate PASS 5/5** vs the current-stack T5b anchors — the discriminator program's first VALID run) answering both open questions:
