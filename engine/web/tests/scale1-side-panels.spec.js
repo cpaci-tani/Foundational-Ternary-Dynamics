@@ -141,23 +141,25 @@ test.describe('Scale 1 side panels', () => {
 
     test('energy drift re-baselines on scenario switch', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
-        // First scenario establishes a drift baseline. Micro-BH emits Hawking
-        // radiation, so its total energy (and thus drift) moves a lot...
-        await runScale1(page, 'pe-micro-bh');
+        // First scenario establishes a drift baseline (hydrogen total energy
+        // ~ -5.8e-5 sim units)...
+        await runScale1(page, 'pe-hydrogen');
 
         // Telemetry collection is demand-gated: open diagnostics NOW so
-        // collectScale1 runs and _peInitialEnergy is set to micro-BH's energy
+        // collectScale1 runs and _peInitialEnergy is set to hydrogen's energy
         // (without this the stale-baseline bug never arms).
         await openPanel(page, 'diagnostics');
         await page.waitForTimeout(800);
 
         // ...then switching scenarios must reset telemetryHub scale-1 state
         // (peEnergyDrift buffer + _peInitialEnergy), so drift is measured
-        // against the NEW scenario's initial energy, not micro-BH's.
-        await selectPEScenario(page, 'pe-hydrogen');
+        // against the NEW scenario's initial energy, not hydrogen's. W-pair
+        // seeds at a very different total energy (~ -9.7e-5), so a stale
+        // hydrogen baseline reads as ~25% drift immediately.
+        await selectPEScenario(page, 'pe-w-pair');
         await expect.poll(
             () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
-            { timeout: 10_000, message: 'pe-hydrogen did not seed particles' },
+            { timeout: 10_000, message: 'pe-w-pair did not seed particles' },
         ).toBeGreaterThan(1);
         await page.evaluate(() => {
             const btn = document.getElementById('btn-play');
@@ -173,8 +175,8 @@ test.describe('Scale 1 side panels', () => {
         expect(driftText).toBeTruthy();
         const drift = Number(driftText);
         expect(Number.isFinite(drift)).toBe(true);
-        // With a stale micro-BH baseline this jumps to hundreds of percent;
-        // re-baselined it stays small (hydrogen conserves energy well).
+        // With a stale hydrogen baseline this reads ~25%; re-baselined it
+        // stays small (w-pair conserves energy well over a short run).
         expect(Math.abs(drift)).toBeLessThan(10);
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
