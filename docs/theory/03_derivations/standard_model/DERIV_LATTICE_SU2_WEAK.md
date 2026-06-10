@@ -341,7 +341,7 @@ D = 3 (lattice axiom)
 
 No free parameters. No fitting. The Fermi constant is derived.
 
-## 6.3 What This Means for Decay Rates [IMPOSED]
+## 6.3 What This Means for Decay Rates [PARAMETRIC INSERTION]
 
 The Fermi constant G_F appears in the formula for every weak decay. Previously, G_F was listed as an "external input" in AUDIT_EPISTEMIC_AUDIT.md. With the derivation above, G_F is now traced to FTD axioms.
 
@@ -351,11 +351,11 @@ $$\Gamma = \frac{G_F^2\,m^5}{192\pi^3} \times |V_{ij}|^2 \times \Phi$$
 
 where:
 - G_F: now **[THEOREM]** (derived above)
-- m: fermion mass, already **[THEOREM]** (from mass formulas)
-- |V_{ij}|: CKM/PMNS matrix element, already **[THEOREM]** (DERIV_COMPLETE_PARTICLE_PHYSICS.md)
-- Φ: phase space factor, a **kinematic** quantity (determined by masses, which are [THEOREM])
+- m: fermion mass, derived or structurally motivated parametric (from mass formulas)
+- |V_{ij}|: CKM/PMNS matrix element, structurally motivated parametric (DERIV_COMPLETE_PARTICLE_PHYSICS.md)
+- Φ: phase space factor, a **kinematic** quantity (determined by masses, which are derived/parametric)
 
-**All four factors are now FTD-derived.** The functional form of the decay rate (Fermi's golden rule + phase space integration) is adopted from standard QFT [SELECTION] — it is the universal relationship between coupling, mass, and rate in any unitary quantum theory. But every numerical input is [THEOREM].
+**All four factors are now FTD-derived.** The functional form of the decay rate (Fermi's golden rule + phase space integration) is adopted from standard QFT [SELECTION] — it is the universal relationship between coupling, mass, and rate in any unitary quantum theory. But every numerical input is derived or parametric.
 
 ## 6.4 Reclassification of Epistemic Status
 
@@ -365,7 +365,7 @@ where:
 
 **After this document:**
 - G_F = [THEOREM] (derived from v)
-- ~50 decay rates = [IMPOSED]† (all numerical inputs now FTD-derived, substitution identity into standard QFT kinematics)
+- ~50 decay rates = [PARAMETRIC INSERTION]† (all numerical inputs now FTD-derived, substitution identity into standard QFT kinematics)
 
 †**Important caveat.** The functional forms are still adopted from standard QFT. What has changed is that *all numerical inputs* are now derived within FTD.
 
@@ -492,7 +492,7 @@ where:
 | SU2-11 | ~50 decay rates: all numerical inputs FTD-derived | **[PARAMETRIC INSERTION]** | Functional forms imported from QFT; numerical inputs derived (§7) | SU2-8, masses, CKM |
 | SU2-12 | ρ = M²_W/(M²_Z cos²θ_W) = 1 | **[THEOREM]** | SU(2) doublet structure (§3.3) | SU2-1 |
 
-†Functional forms adopted from standard QFT [SELECTION]. Numerical inputs are [THEOREM].
+†Functional forms adopted from standard QFT [SELECTION]. Numerical inputs are derived or structurally motivated parametric.
 
 ---
 

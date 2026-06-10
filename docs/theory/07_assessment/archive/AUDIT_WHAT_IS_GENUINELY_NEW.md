@@ -317,7 +317,7 @@ where $b_0^{(5)} = 23/3$ ($n_f = 5$ at $M_Z$), and $M_Z$ is derived from FTD's H
 
 FTD provides the *inputs* to these frameworks but does not derive the frameworks themselves. The trit framework does not help here --- it is about constants, not dynamics.
 
-### Gap 5: Reference frame context Predictions Untestable [OPEN]
+### Gap 5: Reference frame context Predictions Untestable [CLOSED DECLINED]
 
 **The figures are mathematically specific but untestable:**
 - $K_C = \sqrt{G^{*3}/2} \approx 3.5986$ ("reference frame context threshold")
