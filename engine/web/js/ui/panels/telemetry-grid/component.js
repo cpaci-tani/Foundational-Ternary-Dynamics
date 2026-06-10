@@ -62,18 +62,21 @@ const CHANNELS = {
         { key: 'peSeparation', title: '2-Body Separation', buffer: 'peSeparation',  color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
         { key: 'peRadialVel',  title: 'Radial Velocity',   buffer: 'peRadialVelocity', color: 'var(--chart-pe-radial, #ef4444)', unit: 'c' }
     ],
-    // Scale 2 & 3: Atoms & Molecules
+    // Scale 2 & 3: Atoms & Molecules — one shared channel set (same engine).
+    // AE energies/temperature/momentum are SIM UNITS (implicit k_B = 1,
+    // audit P0-10): unit strings say "(sim)", never MeV / MK / Kelvin.
+    // Assigned to both '2' and '3' below this object literal.
     '2': [
-        { key: 'aeEnergy',   title: 'Total Energy',    buffer: 'aeEnergy',  color: 'var(--chart-energy, #42a5f5)', unit: 'MeV' },
-        { key: 'aeKE',       title: 'Kinetic Energy',  buffer: 'aeKE',      color: 'var(--chart-positive, #4ade80)', unit: 'MeV' },
-        { key: 'aeTemp',     title: 'Temperature',     buffer: 'aeTemp',    color: 'var(--chart-flux, #fb8c00)',   unit: 'MK' },
-        { key: 'aeBonds',    title: 'Bond Count',      buffer: 'aeBonds',   color: 'var(--chart-eb, #a78bfa)',    unit: 'ct' }
-    ],
-    '3': [
-        { key: 'aeEnergy',   title: 'Total Energy',    buffer: 'aeEnergy',  color: 'var(--chart-energy, #42a5f5)', unit: 'MeV' },
-        { key: 'aeKE',       title: 'Kinetic Energy',  buffer: 'aeKE',      color: 'var(--chart-positive, #4ade80)', unit: 'MeV' },
-        { key: 'aeTemp',     title: 'Temperature',     buffer: 'aeTemp',    color: 'var(--chart-flux, #fb8c00)',   unit: 'MK' },
-        { key: 'aeBonds',    title: 'Bond Count',      buffer: 'aeBonds',   color: 'var(--chart-eb, #a78bfa)',    unit: 'ct' }
+        { key: 'aeEnergy',    title: 'Total Energy',    buffer: 'aeEnergy',    color: 'var(--chart-ae-total, #e8e8e8)',    unit: '(sim)' },
+        { key: 'aeKE',        title: 'Kinetic Energy',  buffer: 'aeKE',        color: 'var(--chart-ae-ke, #4ade80)',       unit: '(sim)' },
+        { key: 'aePEIonic',   title: 'PE (Ionic)',      buffer: 'aePEIonic',   color: 'var(--chart-ae-pe-ionic, #f87171)', unit: '(sim)' },
+        { key: 'aePEVdw',     title: 'PE (vdW)',        buffer: 'aePEVdw',     color: 'var(--chart-ae-pe-vdw, #2dd4bf)',   unit: '(sim)' },
+        { key: 'aePEBond',    title: 'PE (Bond)',       buffer: 'aePEBond',    color: 'var(--chart-ae-pe-bond, #fb923c)',  unit: '(sim)' },
+        { key: 'aeTemp',      title: 'Temperature',     buffer: 'aeTemp',      color: 'var(--chart-ae-temp, #fb8c00)',     unit: '(sim)' },
+        { key: 'aeAtomCount', title: 'Atom Count',      buffer: 'aeAtomCount', color: 'var(--chart-ae-atoms, #42a5f5)',    unit: 'ct' },
+        { key: 'aeBonds',     title: 'Bond Count',      buffer: 'aeBonds',     color: 'var(--chart-ae-bonds, #a78bfa)',    unit: 'ct' },
+        { key: 'aeMomentum',  title: 'Momentum |p|',    buffer: 'aeMomentum',  color: 'var(--chart-ae-momentum, #60a5fa)', unit: '(sim)' },
+        { key: 'aeDrift',     title: 'Energy Drift',    buffer: 'aeDrift',     color: 'var(--chart-ae-drift, #fbbf24)',    unit: '%' }
     ],
     // Scale 5: Cosmic N-body
     '5': [
@@ -82,6 +85,8 @@ const CHANNELS = {
         { key: 'csDM',       title: 'Dark Matter Frac',buffer: 'csDM',      color: 'var(--chart-eb, #a78bfa)',    unit: '%' }
     ]
 };
+// Scale 3 (molecules) runs the same AtomEngine as Scale 2 — identical channels.
+CHANNELS['3'] = CHANNELS['2'];
 
 export class TelemetryGridPanelComponent {
     constructor(panelEl) {

@@ -7,6 +7,7 @@
 import { DiagnosticsTable } from './table.js';
 import { sections as scale0Sections } from './descriptors/scale0.js';
 import { sections as scale1Sections } from './descriptors/scale1.js';
+import { sections as scale2Sections } from './descriptors/scale2.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
@@ -37,6 +38,19 @@ export class DiagnosticsPanelComponent {
                 this.tables.push(table);
             }
             this.el.insertBefore(scale1Root, scale0Root.nextSibling);
+
+            // Scales 2 + 3 share the AtomEngine, so ONE descriptor root serves
+            // both — `.scale-ae` is shown when data-active-scale is 2 or 3
+            // (css/scale-visibility.css). The legacy AE stat-card block stays
+            // below for per-element nuclear/electron-binding drill-down.
+            const aeRoot = document.createElement('div');
+            aeRoot.className = 'scale-ae diag-ae-root';
+            for (const section of scale2Sections) {
+                const table = new DiagnosticsTable(section, telemetryHub);
+                aeRoot.appendChild(table.el);
+                this.tables.push(table);
+            }
+            this.el.insertBefore(aeRoot, scale1Root.nextSibling);
             this.el.dataset.panelRedesignMounted = '1';
         }
         this.el.dataset.component = 'diagnostics-panel';
