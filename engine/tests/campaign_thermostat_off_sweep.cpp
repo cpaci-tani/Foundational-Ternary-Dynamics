@@ -121,8 +121,12 @@ struct SeedResult {
 SeedResult run_seed(int L, std::uint32_t seed, double A,
                     int burn, int window, int stride,
                     bool thermostat_on, double gamma, double T,
-                    bool coupling_on, bool diag) {
+                    bool coupling_on, bool diag, bool force_cpu) {
     ftd::RenderBridge rb(L);
+    if (force_cpu) {
+        rb.force_cpu();
+        rb.set_sor_iterations(150);
+    }
     rb.toggles.disable_all();
     rb.toggles.wave_propagation = true;
     rb.toggles.gauss_projection = true;
@@ -176,6 +180,7 @@ int main(int argc, char** argv) {
     bool diag = false;         // FTD-0263 direction arm
     double gamma = 0.02;
     double T = 0.005;
+    bool force_cpu = false;
     std::string tag = "run";
     std::string output_dir = "engine/results/thermostat_off_sweep_default/";
 
@@ -193,6 +198,7 @@ int main(int argc, char** argv) {
         else if (a == "--coupling=on")             coupling_on = true;
         else if (a == "--dir=diag")                diag = true;
         else if (a == "--dir=axial")               diag = false;
+        else if (a == "--cpu")                     force_cpu = true;
         else if (a.rfind("--gamma=", 0) == 0)      gamma = std::atof(a.c_str() + 8);
         else if (a.rfind("--T=", 0) == 0)          T = std::atof(a.c_str() + 4);
         else if (a.rfind("--tag=", 0) == 0)        tag = a.substr(6);
@@ -206,11 +212,11 @@ int main(int argc, char** argv) {
                            / ("sweep_" + tag + "_A" + abuf + ".csv");
 
     std::printf("thermostat_off_sweep: tag=%s L=%d A=%.2f thermostat=%s coupling=%s gamma=%.4f T=%.5f "
-                "seeds=%d burn=%d window=%d stride=%d\n",
+                "seeds=%d burn=%d window=%d stride=%d backend=%s\n",
                 tag.c_str(), L, A, thermostat_on ? "on" : "off",
                 coupling_on ? "on" : "off",
                 thermostat_on ? gamma : 0.0, thermostat_on ? T : 0.0,
-                n_seeds, burn, window, stride);
+                n_seeds, burn, window, stride, force_cpu ? "cpu" : "default");
     std::fflush(stdout);
 
     std::FILE* f = std::fopen(out_csv.string().c_str(), "w");
@@ -224,7 +230,7 @@ int main(int argc, char** argv) {
     for (int s = 0; s < n_seeds; ++s) {
         const std::uint32_t seed = 0xE0102000u + static_cast<std::uint32_t>(s);
         const SeedResult r = run_seed(L, seed, A, burn, window, stride,
-                                      thermostat_on, gamma, T, coupling_on, diag);
+                                      thermostat_on, gamma, T, coupling_on, diag, force_cpu);
         const double k = r.n_mean / (A * A);
         std::fprintf(f, "%s,%d,%.4f,%.4f,%.5f,%s,%s,0x%X,%d,%.4f,%d,%d,%.6f\n",
                      tag.c_str(), L, A,
