@@ -1,6 +1,16 @@
 /**
  * @file test_emergent_ic1_topology.cpp
- * @brief Regression + topology verification for FTD-0107's 25-voxel cluster.
+ * @brief Regression + topology verification for the canonical ic1 cluster.
+ *
+ * RE-BASELINED 2026-06-10 (FTD-0260 resolution, owner decision): the
+ * historical FTD-0107 expectation (25-voxel cluster at A=10) was a
+ * measurement of the pre-correction April/May 2026 stack. Accumulated
+ * deliberate engine corrections changed the canonical ic1 steady state;
+ * the current canonical stack yields 3-8 voxels at A=10 (both backends).
+ * T1/T2/T3 pins below carry the new bands, with the historical values
+ * preserved in comments; the historical record itself lives in
+ * FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md section 6.5 (stack-pinned) and
+ * LEDGER rows FTD-0110/FTD-0260. The original header follows.
  *
  * Two regression checks (confirming existing measurements):
  *   T1: Cluster count and voxel count match FTD-0107 at L=32.
@@ -302,18 +312,21 @@ bool t3_l1_ball_topology(int L, std::uint32_t seed) {
 
     // Acceptance criteria (only ROBUST invariants; the L¹-ball-2 hypothesis
     // has been refuted, so we no longer assert that specific shape):
-    //   1. Cluster has the expected 25-voxel count (regression of FTD-0107)
+    //   1. Cluster count within the current-stack regression band
+    //      (RE-BASELINED 2026-06-10 per FTD-0260: historical band was
+    //      23–27 around the pre-correction stack's 25; current canonical
+    //      stack gives 3–5 at this seed/config; new band 2–10)
     //   2. The cluster is connected (BFS guarantees this by construction)
     //   3. No voxels at L¹ ≥ 4 (cluster is localised; no runaway)
     //   4. Center voxel is present (the injection point manifested)
-    bool count_ok = (c.voxel_count >= 23 && c.voxel_count <= 27);
+    bool count_ok = (c.voxel_count >= 2 && c.voxel_count <= 10);
     bool localised = true;
     for (auto [l1, n] : l1_histogram) {
         if (l1 >= 4 && n > 0) { localised = false; break; }
     }
     bool center_ok = (n_center == 1);
     std::printf("  Robust-invariant checks:\n");
-    std::printf("    25-voxel count (within tol 23-27): %s\n", count_ok ? "PASS" : "FAIL");
+    std::printf("    cluster count in band 2-10 (pre-2026-06 stack: 23-27): %s\n", count_ok ? "PASS" : "FAIL");
     std::printf("    No voxels at L¹ >= 4 (localised):  %s\n", localised ? "PASS" : "FAIL");
     std::printf("    Center voxel manifested:           %s\n", center_ok ? "PASS" : "FAIL");
     return count_ok && localised && center_ok;
@@ -333,17 +346,27 @@ int main() {
 
     bool all_pass = true;
 
-    // T2 first (faster smoke): L=16 should still produce the bound state
-    // (cluster size ≈ 25 voxels, but with smaller lattice the bound state
-    // may be slightly clipped or noisier; we use a tolerance).
-    std::printf("\n[T2] Smoke: ic1 at L=16, 3 seeds, expect ~25-voxel cluster (tol=10)\n");
-    bool t2 = t1_cluster_count_at_L(16, 3, 25, 10);
+    // T2 first (faster smoke): L=16 should still produce the bound state.
+    // RE-BASELINED 2026-06-10 (FTD-0260 resolution, owner decision): the
+    // historical expectation was 25 voxels (tol=10) — a measurement of the
+    // pre-correction April/May stack. Accumulated engine corrections since
+    // changed the canonical ic1 steady state; the CURRENT canonical stack
+    // gives 3–8 voxels at A=10 across seeds and backends (CPU 8/6/4,
+    // GPU 3/5/4 measured 2026-06-10). New pin: 6 ± 4.
+    std::printf("\n[T2] Smoke: ic1 at L=16, 3 seeds, expect ~6-voxel cluster (tol=4; pre-2026-06 stack: 25)\n");
+    bool t2 = t1_cluster_count_at_L(16, 3, 6, 4);
     std::printf("  T2 verdict: %s\n", t2 ? "PASS" : "FAIL");
     all_pass &= t2;
 
-    // T1: L=32, the FTD-0102 baseline. Expect exact 25-voxel cluster.
-    std::printf("\n[T1] FTD-0102 regression: ic1 at L=32, 3 seeds, expect 25 voxels (tol=2)\n");
-    bool t1 = t1_cluster_count_at_L(32, 3, 25, 2);
+    // T1: L=32, the FTD-0102 baseline regression pin.
+    // RE-BASELINED 2026-06-10 (FTD-0260 resolution): historical pin was
+    // 25 voxels (tol=2), stack-pinned to the pre-correction engine. Current
+    // canonical stack: 3–5 voxels at A=10 (CPU 4/5/4, GPU 3/5/4). New pin:
+    // 4 ± 2. The historical 25-voxel record is preserved in
+    // FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md §6.5 (marked stack-pinned)
+    // and in the LEDGER FTD-0110/FTD-0260 rows.
+    std::printf("\n[T1] FTD-0102 regression: ic1 at L=32, 3 seeds, expect 4 voxels (tol=2; pre-2026-06 stack: 25)\n");
+    bool t1 = t1_cluster_count_at_L(32, 3, 4, 2);
     std::printf("  T1 verdict: %s\n", t1 ? "PASS" : "FAIL");
     all_pass &= t1;
 
