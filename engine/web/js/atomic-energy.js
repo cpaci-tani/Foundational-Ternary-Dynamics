@@ -4,7 +4,8 @@
  * Computes physical atomic energies for all 118 elements:
  *   - Nuclear binding energy (Bethe-Weizsäcker semi-empirical mass formula)
  *   - Total rest mass energy (protons + neutrons + electrons - binding)
- *   - Electron binding energy (approximate from Slater's rules)
+ *   - Electron binding energy (Thomas-Fermi total: −20.93·Z^(7/3) eV;
+ *     NOT Slater shell-by-shell — see approxElectronBinding)
  *   - Binding energy per nucleon (classic B/A curve peaking at Fe-56)
  *
  * All energies in MeV unless noted otherwise.
