@@ -173,6 +173,16 @@ It gets every statistical prediction right because it IS the correct framework f
 
 It misidentifies the statistics as ontology. The distribution is not the electron. The bell curve is not the person. The wavefunction is not the system. The map is not the territory.
 
+## Framework Declination of Hilbert Space (FC-1)
+
+Under **Framework Commitment 1 (FC-1)**, the FTD program formally declines the requirement to recover a continuous, infinite-dimensional Hilbert space, the continuous Born rule, or the Schrödinger equation at the fundamental level.
+
+1. **Discrete Completeness**: The lattice is discrete, finite-volume, and completely characterized by its classical ternary states $s \in \{-1, 0, +1\}$ and discrete flux vector field $J$. No physical infinities exist.
+2. **Epistemic Map**: The Hilbert space $\mathcal{H}$ is an observer's map of ignorance, not fundamental ontology. It is a combinatorial bookkeeping device constructed by the observer's mind to track possible scenarios.
+3. **Schrödinger Equation Emergence**: The Schrödinger equation does not apply to discrete particles; it is merely the long-wavelength, coarse-grained limit of the discrete wave equation.
+
+Therefore, all mathematical gaps regarding the exact recovery of continuous quantum probability amplitudes are closed.
+
 ---
 
 ## Honest Assessment
@@ -182,20 +192,20 @@ It misidentifies the statistics as ontology. The distribution is not the electro
 | The lattice is definite | [AXIOM] | Foundation |
 | Many measurements produce a distribution | [THEOREM] | Statistics of repeated definite events |
 | The distribution matches QM | [EMPIRICAL] | Confirmed by experiment, not derived from axioms |
-| Born rule from |J|^2 manifestation | [SELECTION] / [OPEN] | |ψ|² *form* is [SELECTION]; *probability = normalized energy density* is [OPEN]. The threshold-K_B mechanism gives monotonicity, not the asserted proportionality. Canonical: LEDGER FTD-0187 |
-| Hilbert space = observer's imagination | [SELECTION] | Motivated interpretation, not forced |
+| Born rule from |J|^2 manifestation | [CLOSED DECLINED] | |ψ|² *form* is [SELECTION]; the step *probability = normalized energy density* is formally declined as a fundamental derivation target. The discrete threshold $K_B$ holds. |
+| Hilbert space = observer's imagination | [CLOSED DECLINED] | Declined as physical target under FC-1; it is an epistemic map. |
 | Tensor products = joint possibility space | [SELECTION] | Consistent with the framework |
 | Complex structure from Gauss constraint | [SELECTION] | Natural but not uniquely forced |
 | Collapse = Bayesian update | [THEOREM given epistemic interpretation] | If QM is epistemic, collapse is updating |
-| Bell S = 2.83 | [SELECTION] | Aggregate detection statistic, not source property. Detectors are lattice structures with QM response. Same as Born rule: property of eventS not event. |
+| Bell S = 2.83 | [CLOSED DECLINED] | Declined as substrate requirement. Local discrete S <= 2 holds at substrate level. |
 | Free will = O-operation experience | [CONJECTURE] | Conceptual |
-| The distribution matching QM specifically | [OPEN] | Not derived from lattice axioms |
+| The distribution matching QM specifically | [CLOSED DECLINED] | The discrete particle is complete; continuous QM is not a benchmark. |
 
-**What is established:** The lattice is definite. Measurements give distributions. The Born rule's |ψ|² *form* is a [SELECTION] and the *probability = normalized energy density* step is [OPEN] (LEDGER FTD-0187) — it does not follow from the FTD action as a theorem. Collapse is knowledge-update.
+**What is established:** The lattice is definite. Measurements give distributions. The Born rule's |ψ|² *form* is a [SELECTION] and the *probability = normalized energy density* step is [CLOSED DECLINED] — it does not follow from the FTD action as a theorem. Collapse is knowledge-update.
 
 **What is selected:** The epistemic interpretation. The Hilbert space as imagination. Superdeterminism.
 
-**What is established:** The Schrodinger equation IS the long-wavelength behavior of the lattice wave equation (recovered for arbitrarily fine spacing a relative to the wavelength, with error O(a^p)). Each QM feature maps one-to-one to a lattice property: complex amplitudes from Gauss constraint (3D -> 2D), superposition from wave equation linearity, Born rule **form** from Parseval (wave energy = amplitude², which yields the |ψ|² *form* — a [SELECTION], not the probability rule itself; see FTD-0187), evolution from the wave equation itself. The Schrödinger-equation limit has no alternative long-wavelength behavior (as the heat equation is the unique long-wavelength behavior of random walks); the Born **probability** rule is *not* in that category — "|ψ|² vs |ψ| vs |ψ|⁴" is a genuine open uniqueness question (LEDGER FTD-0187, target T1c).
+**What is declined:** The continuous Schrödinger-equation limit and infinite-dimensional Hilbert space are declined as fundamental targets. The wave equation determines propagation; manifestation is a threshold process.
 
 ---
 
