@@ -450,6 +450,11 @@ export function loadPEScenario(ctx, name) {
 
     bridge.initPE();
 
+    // Re-baseline hub telemetry (pe* ring buffers + _peInitialEnergy drift
+    // reference) so the new scenario doesn't inherit the previous one's
+    // energy baseline (mirrors loadAEScenario's resetScale(2) wiring).
+    telemetryHub.resetScale(1);
+
     // Reset black hole state from any prior scenario
     _bhActive      = false;
     _bhHawkingTick = 0;

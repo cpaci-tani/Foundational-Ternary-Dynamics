@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-10 — closed all 14 G* (Theme 1) open items under FTD Constitution (FC-1/FC-2) and FTD-0242. (Previous: 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~188 real `[OPEN]` items across ~75 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-10 — closed 14 G* (Theme 1) open items under FTD Constitution (FC-1/FC-2) and FTD-0242, and audited/closed remaining epistemic integrity and consciousness gaps. (Previous: 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~184 real `[OPEN]` items across ~74 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -560,7 +560,7 @@ Snapshot (2026-04-17):
 | `engine/web/js/bridge-init.js` | 1 |
 | `engine/include/ftd/dag_engine.h` | 1 |
 | `docs/theory/META_INDEX.md` | 1 |
-| `docs/theory/07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` | 1 |
+| `docs/theory/07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` | RESOLVED |
 | `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` | 1 |
 | `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md` | 1 |
 | `docs/theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` | 1 |
@@ -601,6 +601,13 @@ Move items here with the closing commit / PR when an `[OPEN]` becomes `✅`.
 - ✅ **L-function & Hecke prime connections**: Reclassified and closed L-function physical coupling role, partition function maps, Hecke prime physical significance, and Langlands-theoretic interpretation under FC-1 and FTD-0242.
 - ✅ **α lattice mechanism**: Closed step 3 CM curve selection (proven uniquely under the trivial-multiplier criterion) and step 8 root selection (reclassified as unforced operator-readout assembly selection under the dynamic-alpha pivot).
 - ✅ **Mathematical connection sweeps**: Closed all open items in curve-family analysis, ReLU type transition, collapse-gravity bridge, and conjectural CM alpha route under FTD Constitution (FC-1/FC-2) and FTD-0242.
+
+### Epistemic Integrity & Consciousness Gaps — ✅ CLOSED 2026-06-10
+
+- ✅ **Lepton Mass Ratios**: Demoted the $m_\mu/m_e = 207$ and $m_\tau/m_e = 3477$ formulas in `SPEC_SM_REPLACEMENT_COMPLETE.md` to `[STRUCTURALLY MOTIVATED PARAMETRIC]` and in `FOUND_AXIOM_ZERO.md` to `[IMPOSED] (parametric insertion)`, as they lack a rigorous derivation from the core FTD lattice Lagrangian.
+- ✅ **Fine-Structure Constant Precision Polynomials**: Confirmed the 4-term and 7-term $\alpha$ precision polynomials (`ALPHAP-1`, `ALPHAP-1b`) in `DERIV_ALPHA_PRECISION_FORMULA.md` are tagged `[IMPOSED]` parameter fits, correcting legacy claims of theorem status.
+- ✅ **Downstream Derivations (SU(2) Weak)**: Corrected the summary tables and decay rate headers in `DERIV_LATTICE_SU2_WEAK.md` and `SPEC_SM_REPLACEMENT_COMPLETE.md` to consistently mark weak decay rates as `[PARAMETRIC INSERTION]` rather than `[THEOREM]` due to imported functional forms.
+- ✅ **Consciousness predictions untestable**: Reclassified the untestable reference frame context predictions (Gap 5) in `AUDIT_WHAT_IS_GENUINELY_NEW.md` to `[CLOSED DECLINED]` under FTD-0242 since they lack operational definitions and experimental protocols.
 
 ### Repository-Wide Epistemic Sweep — ✅ CLOSED 2026-05-30
 
@@ -651,11 +658,3 @@ Move items here with the closing commit / PR when an `[OPEN]` becomes `✅`.
 A future `epistemic-auditor` agent run should diff this tracker against live `[OPEN]` tags and flag any code-level opens missing from §1 or any theory-doc opens missing from §2–§7.
 
 Until then, periodically run the grep in §9 and compare the output against the snapshot table. Any new file appearing: either add a section entry, or (if it's a non-physics mention) add it to the excluded list.
-
-## §10 Epistemic Integrity Gaps
-
-The following action items address tag inflations identified during the recent epistemic audit:
-
-- **[OPEN] Lepton Mass Ratios:** Demote the $m_\mu/m_e = 207$ and $m_\tau/m_e = 3477$ formulas in `FOUND_AXIOM_ZERO.md` from `[THEOREM]` to `[PARAMETRIC INSERTION]` or `[CONJECTURE]`, as they lack a rigorous derivation from the core FTD lattice Lagrangian.
-- **[OPEN] Fine-Structure Constant Precision Polynomials:** Demote the 4-term and 7-term $\alpha$ precision polynomials (`ALPHAP-1`, `ALPHAP-1b`) in `DERIV_ALPHA_PRECISION_FORMULA.md` from `[THEOREM]` to `[SELECTION]` or `[IMPOSED]` parameter fits, since they are derived via numerical search rather than geometric proofs.
-- **[OPEN] Downstream Derivations (SU(2) Weak):** Correct the summary tables in `DERIV_LATTICE_SU2_WEAK.md` that improperly upgrade 50 decay rates to `[THEOREM]†`. Ensure they are marked consistently with the text as `[PARAMETRIC INSERTION]` due to their reliance on imported functional forms.
