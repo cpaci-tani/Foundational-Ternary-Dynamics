@@ -199,19 +199,18 @@ export function createLayers(THREE, scene, data) {
   // ── ψ⊥ — translucent disk at origin; hue cycles (arg ψ rotation) ───────
   {
     const root = new THREE.Group();
-    const mat = new THREE.MeshBasicMaterial({ color: 0x1d9e75, transparent: true, opacity: 0.22, side: THREE.DoubleSide, depthWrite: false });
-    const disk = new THREE.Mesh(new THREE.CircleGeometry(0.85, 48), mat);
+    const mat = new THREE.MeshBasicMaterial({ color: 0x1d9e75, transparent: true, opacity: 0.12, side: THREE.DoubleSide, depthWrite: false });
+    const disk = new THREE.Mesh(new THREE.CircleGeometry(0.6, 48), mat);
     // disk lies in the x-y plane (the transverse J_x+iJ_y plane); default normal +z is fine.
     root.add(disk);
     const rim = new THREE.Mesh(
-      new THREE.TorusGeometry(0.85, 0.01, 10, 64),
+      new THREE.TorusGeometry(0.6, 0.008, 10, 64),
       new THREE.MeshBasicMaterial({ color: 0x1d9e75, transparent: true, opacity: 0.7 }),
     );
     root.add(rim);
-    const hsl = { h: 0, s: 0.6, l: 0.5 };
     const update = (t) => {
-      const h = (t * 0.08) % 1;                      // slow hue cycle = arg ψ winding
-      mat.color.setHSL(h, 0.55, 0.5);
+      const h = 0.5 + 0.08 * Math.sin(t * 0.5);      // gentle teal↔cyan drift = arg ψ winding
+      mat.color.setHSL(h, 0.5, 0.5);
     };
     makeLayer('psi', 'derived', root, new THREE.Vector3(0, 0, 0), update);
   }
