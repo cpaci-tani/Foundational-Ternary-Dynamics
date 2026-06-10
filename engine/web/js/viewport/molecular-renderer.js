@@ -39,6 +39,8 @@ export class MolecularRenderer {
         this._aeForceVdw = null;
         this._aeForceBond = null;
         this._aeForceNet = null;
+        this._aeDipoles = null;
+        this._hbondLines = null;
         this._elementLabels = null;
         this._labelPool = null;
         // Optional function (Z) -> neutron count. External callers may
@@ -536,6 +538,92 @@ export class MolecularRenderer {
     toggleAEForceBond(on)  { if (!this._aeForceBond)  this._buildAEForceArrows(); this._aeForceBond.visible = on; }
     toggleAEForceNet(on)   { if (!this._aeForceNet)   this._buildAEForceArrows(); this._aeForceNet.visible = on; }
 
+    // ── Per-Atom Dipole-Moment Arrows ─────────────────────────────────
+
+    _buildAEDipoleArrows() {
+        const maxAtoms = 200;
+        const vertices = new Float32Array(maxAtoms * 6); // 2 verts per atom
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({ color: 0xe879f9, linewidth: 2, transparent: true, opacity: 0.85 });
+        this._aeDipoles = new THREE.LineSegments(geo, mat);
+        this._aeDipoles.frustumCulled = false;
+        this._aeDipoles.visible = false;
+        this.scene.add(this._aeDipoles);
+    }
+
+    updateAEDipoles(positions, dipoles, count) {
+        if (!this._aeDipoles) this._buildAEDipoleArrows();
+        if (!dipoles || count === 0) {
+            this._aeDipoles.geometry.setDrawRange(0, 0);
+            return;
+        }
+        const scale = 2.0; // visual scale; dipole magnitudes are O(bond length · Δχ)
+        const n = Math.min(count, 200);
+        const posAttr = this._aeDipoles.geometry.getAttribute('position');
+        for (let i = 0; i < n; i++) {
+            const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
+            const mx = dipoles[i * 3], my = dipoles[i * 3 + 1], mz = dipoles[i * 3 + 2];
+            const mag = Math.sqrt(mx * mx + my * my + mz * mz);
+            // Log-compress like the force arrows so large dipoles stay on screen
+            const k = mag > 1e-10 ? scale * Math.log1p(mag) / mag : 0;
+            posAttr.array[i * 6]     = px;
+            posAttr.array[i * 6 + 1] = py;
+            posAttr.array[i * 6 + 2] = pz;
+            posAttr.array[i * 6 + 3] = px + mx * k;
+            posAttr.array[i * 6 + 4] = py + my * k;
+            posAttr.array[i * 6 + 5] = pz + mz * k;
+        }
+        posAttr.needsUpdate = true;
+        this._aeDipoles.geometry.setDrawRange(0, n * 2);
+    }
+
+    toggleAEDipoles(on) {
+        if (!this._aeDipoles) this._buildAEDipoleArrows();
+        this._aeDipoles.visible = on;
+        if (!on) this._aeDipoles.geometry.setDrawRange(0, 0);
+    }
+
+    // ── Hydrogen-Bond Dashed Lines (donor-H···acceptor) ───────────────
+
+    _buildHBondLines() {
+        const MAX_PAIRS = 256;
+        const vertices = new Float32Array(MAX_PAIRS * 6); // 2 verts per pair
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineDashedMaterial({
+            color: 0x7dd3fc, dashSize: 0.35, gapSize: 0.25,
+            transparent: true, opacity: 0.85,
+        });
+        this._hbondLines = new THREE.LineSegments(geo, mat);
+        this._hbondLines.frustumCulled = false;
+        this._hbondLines.visible = false;
+        this.scene.add(this._hbondLines);
+    }
+
+    updateHBondLines(segments, count) {
+        if (!this._hbondLines) this._buildHBondLines();
+        const n = Math.min(count || 0, 256);
+        if (!segments || n === 0) {
+            this._hbondLines.geometry.setDrawRange(0, 0);
+            return;
+        }
+        const posAttr = this._hbondLines.geometry.getAttribute('position');
+        posAttr.array.set(segments.subarray(0, n * 6));
+        posAttr.needsUpdate = true;
+        this._hbondLines.geometry.setDrawRange(0, n * 2);
+        // LineDashedMaterial requires per-vertex line distances or nothing renders.
+        this._hbondLines.computeLineDistances();
+    }
+
+    toggleHBondLines(on) {
+        if (!this._hbondLines) this._buildHBondLines();
+        this._hbondLines.visible = on;
+        if (!on) this._hbondLines.geometry.setDrawRange(0, 0);
+    }
+
     /**
      * Bulk visibility — called by Viewport.setEngineMode's hideAllOverlays().
      * Touches every mesh/group this renderer owns. Nulls left uncreated stay null.
@@ -552,6 +640,8 @@ export class MolecularRenderer {
         if (this._aeForceVdw) this._aeForceVdw.visible = on;
         if (this._aeForceBond) this._aeForceBond.visible = on;
         if (this._aeForceNet) this._aeForceNet.visible = on;
+        if (this._aeDipoles) this._aeDipoles.visible = on;
+        if (this._hbondLines) this._hbondLines.visible = on;
     }
 
     /**

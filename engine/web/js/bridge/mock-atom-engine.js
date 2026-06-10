@@ -1102,6 +1102,92 @@ export function createAtomEngine(state) {
     function aeClear()                { resetAE(); }
 
     /**
+     * Per-atom velocities for the velocity-vector overlay. Positions are
+     * already in every aeGetAtomData() frame, so only velocities ship here.
+     */
+    function aeGetVelocities() {
+        if (!state._ae) return { velocities: new Float32Array(0), count: 0 };
+        const atoms = state._ae.atoms;
+        const velocities = new Float32Array(atoms.length * 3);
+        for (let i = 0; i < atoms.length; i++) {
+            velocities[i * 3]     = atoms[i].vx;
+            velocities[i * 3 + 1] = atoms[i].vy;
+            velocities[i * 3 + 2] = atoms[i].vz;
+        }
+        return { velocities, count: atoms.length };
+    }
+
+    /**
+     * Per-atom dipole moments for the dipole-arrow overlay. Recomputes the
+     * bond-χ-difference dipoles directly so arrows work even when the
+     * dipole-dipole FORCE toggle is off (the force path only refreshes
+     * them when enabled).
+     */
+    function aeGetDipoles() {
+        if (!state._ae) return { dipoles: new Float32Array(0), count: 0 };
+        _aeComputeDipoleMoments();
+        const atoms = state._ae.atoms;
+        const dipoles = new Float32Array(atoms.length * 3);
+        for (let i = 0; i < atoms.length; i++) {
+            dipoles[i * 3]     = atoms[i].dipole_x || 0;
+            dipoles[i * 3 + 1] = atoms[i].dipole_y || 0;
+            dipoles[i * 3 + 2] = atoms[i].dipole_z || 0;
+        }
+        return { dipoles, count: atoms.length };
+    }
+
+    /**
+     * Donor-H···acceptor pairs for the dashed H-bond line overlay.
+     * ELIGIBILITY mirrors hbondForce exactly: H (Z=1) covalently bonded to
+     * an electronegative donor (N/O/F), candidate acceptor electronegative,
+     * not the donor itself, not covalently bonded to the H.
+     * [VISUALIZATION] display gates on top (the force itself has no hard
+     * cutoff): H···A range ≤ 4.0·σ_hb and cos²θ_DHA ≥ 0.25 with the
+     * D→H · H→A alignment positive — bounds drawing to geometrically
+     * meaningful H-bonds. 4.0·σ_hb covers the ae-water-dimer SEED
+     * separation (10.6 at σ_hb = 3) so the forming bond is annotated from
+     * tick 0; the angular gate excludes the away-facing H (15.2, cos<0.5).
+     * @returns {{segments: Float32Array, count: number}} count line
+     *          segments, 6 floats each (hx,hy,hz, ax,ay,az).
+     */
+    function aeGetHBondPairs() {
+        if (!state._ae) return { segments: new Float32Array(0), count: 0 };
+        _aeBuildBondLookup();
+        const atoms = state._ae.atoms;
+        const isElecNeg = (Z) => Z === 7 || Z === 8 || Z === 9;
+        const segs = [];
+        for (let i = 0; i < atoms.length; i++) {
+            const h = atoms[i];
+            if (h.Z !== 1) continue;
+            let donorIdx = -1;
+            for (const b of h.bonds) {
+                const didx = state._aeIdToIdx.get(b.partner_id);
+                if (didx !== undefined && isElecNeg(atoms[didx].Z)) { donorIdx = didx; break; }
+            }
+            if (donorIdx < 0) continue;
+            const donor = atoms[donorIdx];
+            for (let j = 0; j < atoms.length; j++) {
+                if (j === i || j === donorIdx) continue;
+                const a = atoms[j];
+                if (!isElecNeg(a.Z)) continue;
+                if (_aeIsBonded(h.id, a.id)) continue;
+                const dx = a.x - h.x, dy = a.y - h.y, dz = a.z - h.z;
+                const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                const sig_hb = (h.vdw_sigma + a.vdw_sigma) / 2;
+                if (!(r > 1e-10) || sig_hb <= 0) continue;
+                if (r > 4.0 * sig_hb) continue;
+                const dhx = h.x - donor.x, dhy = h.y - donor.y, dhz = h.z - donor.z;
+                const dh_mag = Math.sqrt(dhx * dhx + dhy * dhy + dhz * dhz);
+                if (dh_mag < 1e-30) continue;
+                const cos_theta = (dhx * dx + dhy * dy + dhz * dz) / (dh_mag * r);
+                if (cos_theta <= 0 || cos_theta * cos_theta < 0.25) continue;
+                segs.push(h.x, h.y, h.z, a.x, a.y, a.z);
+            }
+        }
+        return { segments: new Float32Array(segs), count: segs.length / 6 };
+    }
+
+    /**
      * Snapshot of the live AE runtime parameters + physics toggle states.
      * Read by telemetryHub.collectScale2 so the diagnostics panel reports
      * engine truth (not DOM checkbox state). Mirrors peGetToggle's role on
@@ -1185,5 +1271,6 @@ export function createAtomEngine(state) {
         aeSetHBonds, aeSetAngleStrain, aeSetDipoleDipole,
         aeSetThermostat, aeSetThermostatTemp, aeSetElectronegativity,
         aeAtomCount, aeClear, aeInspectAtom, aeGetRuntimeState,
+        aeGetVelocities, aeGetDipoles, aeGetHBondPairs,
     };
 }
