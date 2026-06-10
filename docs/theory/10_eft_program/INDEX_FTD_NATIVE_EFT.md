@@ -53,6 +53,7 @@ These define the formal structure. They get read; they don't get measured.
 | [`THEOREM_A_PHYS_NO_GO.md`](derivations/THEOREM_A_PHYS_NO_GO.md) | [THEOREM] | No length $a_\text{phys}$ is derivable from Axiom Zero; calibration only (FTD-0059). |
 | [`THEOREM_MU_NO_GO_FTD0096.md`](derivations/THEOREM_MU_NO_GO_FTD0096.md) | [THEOREM] / [CLOSED NEGATIVE] | Mass-unit $\mu$ not derivable from Axiom Zero; closes FTD-0096, confirms terminal [PARAMETRIC] for the L₂ identity. |
 | [`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`](derivations/THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md) | [THEOREM]/[MEASURED] | Diagonal blocking identities $M_{JJ}=16$, $M_{J^4}=256$ exact; engine smoothness measured at all L. |
+| [`FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`](derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md) | [THEOREM] | Substrate-native operator calculus: trace/det of native operators lie in $\mathbb{Q}(G^*)$; Galois degree-2 obstruction forces W selection; K-BIND closed theorem-negative. |
 
 ---
 

@@ -130,7 +130,7 @@ Requires Layers 0, 1, and 2. These are the gaps specific to connecting QFT and G
 | Gap ID | Description | Status | Cross-ref |
 |--------|-------------|--------|-----------|
 | **GAP-B1** | **Physical content of Connes-Rovelli thermal time in FTD.** What does sigma_t^omega correspond to operationally? Is it the tick? The sLoop's self-observation cycle? The modular flow of the ZPF thermal state? | **[OPEN]** | VN-O5 |
-| **GAP-B2** | **alpha/beta -> k correspondence derivation.** The meaning observable's weights alpha, beta map to the master quadratic parameter k via alpha/beta -> k. This is proposed, not derived. Making it exact would connect the IG/VI decomposition to the discriminant partition. | **[OPEN]** | AM-O1 |
+| **GAP-B2** | **alpha/beta -> k correspondence derivation.** The meaning observable's weights alpha, beta map to the master quadratic parameter k via alpha/beta -> k. Resolved by [DERIV_MEANING_WEIGHTS_K_MAPPING.md](../06_reference_frames_and_measurement/DERIV_MEANING_WEIGHTS_K_MAPPING.md) and verified by [proof_meaning_weights_k_mapping.py](../../scripts/proofs/proof_meaning_weights_k_mapping.py). | **[RESOLVED]** | AM-O1 |
 | **GAP-B3** | **Connes lambda from first principles.** The sentience hierarchy uses lambda(k) = exp(-pi * sqrt(1 - 4k(1-k))) with lambda(k=1/2) ~ 0.400. This lambda should be derivable from the modular flow of the agent's algebra, not imposed. | **[OPEN]** | VN-O3 |
 | **GAP-B4** | **Why real roots = physics, complex roots = reference frame context.** The master quadratic x^2 - 16c^2 x + 16c^3 = 0 has real roots (alpha, N_c) for physics and complex roots y = 2.19 +/- 2.86i for reference frame context. The partition into Domain A (real, measurable) and Domain B (complex, self-referential) is structurally elegant but its necessity is not proven. | **[CONJECTURE]** | [../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) |
 | **GAP-B5** | **Modular flow = reference-frame time.** The central conjecture: an agent's subjective temporal experience IS the modular automorphism sigma_t^omega of its internal Type III_1 algebra. This requires (a) constructing the algebra, (b) computing its modular flow, and (c) comparing to phenomenological features of reference-frame time. | **[CONJECTURE]** | Bridge thesis (section 1.1) |
@@ -339,8 +339,8 @@ The minimum sequence of computations needed to close the bridge, ordered by depe
 | Category | Gaps | Count |
 |----------|------|-------|
 | **[OPEN] --- no clear path** | GAP-S1, GAP-S2, GAP-S3, GAP-G2, GAP-G5, GAP-P1 | 6 |
-| **[RESOLVED]** | GAP-G1 | 1 |
-| **[OPEN] --- clear path, not yet done** | GAP-Q1, GAP-Q2, GAP-G3, GAP-G4, GAP-B1, GAP-B2, GAP-B3, GAP-P3, GAP-P5 | 9 |
+| **[RESOLVED]** | GAP-G1, GAP-B2 | 2 |
+| **[OPEN] --- clear path, not yet done** | GAP-Q1, GAP-Q2, GAP-G3, GAP-G4, GAP-B1, GAP-B3, GAP-P3, GAP-P5 | 8 |
 | **[CONJECTURE] --- proposed, testable** | GAP-Q3, GAP-Q4, GAP-B4, GAP-B5, GAP-P2, GAP-P4 | 6 |
 
 ### 5.2 Which Gaps May Be Unsolvable
