@@ -64,6 +64,9 @@ const _srcParticlesBuf = [];    // reusable {x,y,z} array for field seed generat
 // -- Black hole scenario state ----------------------------------------
 let _bhActive       = false;
 let _bhHawkingTick  = 0;
+// [IMPOSED] pedagogical toy values — the micro-BH demo is Newtonian
+// gravity + a visual horizon/emission cadence, NOT a GR solver (see
+// USER_GUIDE §Scale 1). Mass/horizon/interval chosen for legibility.
 const _BH_HAWKING_INTERVAL = 300;
 const _BH_HORIZON_R = 3.0;
 const _BH_MASS      = 5000;

@@ -77,11 +77,23 @@ export const ALPHA_EFT = G_C * G_C;                   // EFT-derived fine struct
 export const ALPHA     = ALPHA_EFT;
 export const ALPHA_TREE      = 1.0 / X_PLUS;          // tree-level (reference only)
 export const ALPHA_PRECISION = ALPHA;                  // alias; matches CODATA
+// G_N is the LATTICE-NATURAL gravity coupling used by the engines, in
+// engine units. [IMPOSED] — the 1/(b₃+N_c)² reading is a numerical
+// coincidence with NO substrate justification, and its identification
+// with physical Newton G is FALSIFIED (FTD-0131; the substrate route
+// instead yields α_G(e,e) = (m_e/m_P)² ≈ 1.745e-45 to 0.38%). Treat
+// G_N = 0.01 as a calibration input, not an FTD output. Heliocentric
+// demos use G_HELIOCENTRIC below, not this.
 export const G_N   = 1.0 / ((B_3 + N_C) * (B_3 + N_C));  // = 0.01
-export const SIN2_WEINBERG = N_C / N_EFF;             // sin^2(theta_W) = 3/13
+// [PARAMETRIC, demoted 2026-04-19 / FTD-0018] — integer-combination
+// matches to measured couplings (3.5% and ~few-% level), NOT derivations.
+export const SIN2_WEINBERG = N_C / N_EFF;             // sin^2(theta_W) = 3/13 (IR match)
 export const ALPHA_WEAK = ALPHA / SIN2_WEINBERG;
-export const ALPHA_S_MZ = B_3 / (B_3 + 4.0 * N_EFF); // QCD coupling at M_Z
-export const ALPHA_G_APPROX = 5.91e-39;               // gravitational hierarchy
+export const ALPHA_S_MZ = B_3 / (B_3 + 4.0 * N_EFF); // QCD coupling at M_Z = 7/59 [PARAMETRIC]
+// External reference value: α_G(p,p) = G·m_p²/(ħc) ≈ 5.906e-39 (CODATA
+// inputs; verified 2026-06-10). Hierarchy-scale display only — not an
+// FTD output and not the engine G_N above.
+export const ALPHA_G_APPROX = 5.91e-39;
 
 // ── Layer 6: Mass / Energy Scales ───────────────────────────────────
 /**
@@ -203,6 +215,10 @@ export const M_MU_PHYS     = 105.6583755;              // muon (MeV)
 export const M_TAU_PHYS    = 1776.86;                  // tau (MeV)
 export const M_P_PHYS      = 938.27208816;             // proton (MeV)
 export const M_N_PHYS      = 939.56542;                // neutron (MeV)
+// Neutron/proton mass ratio ≈ 1.0013784, computed from the PDG values
+// above. Use this (not a hand-rounded 1.001) wherever atom masses are
+// assembled in proton-mass units (atomic-props.js, mock-atom-engine.js).
+export const NEUTRON_PROTON_MASS_RATIO = M_N_PHYS / M_P_PHYS;
 export const M_PI_CH_PHYS  = 139.57039;                // charged pion (MeV)
 export const M_PI_0_PHYS   = 134.9768;                 // neutral pion (MeV)
 export const M_K_CH_PHYS   = 493.677;                  // charged kaon (MeV)
