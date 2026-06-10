@@ -118,6 +118,9 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
   const int Nm1 = L - 1;
   constexpr double OMEGA = SOR_OMEGA;
 
+  const double charge_sum = static_cast<double>(state.charge_sum());
+  const double mean_charge = charge_sum / N;
+
 #pragma omp parallel for schedule(static)
   for (int i = 0; i < N; ++i) {
     const int iz = i % L;
@@ -131,14 +134,23 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
     } else {
       div = divergence_flux_at(voxels, lattice, i);
     }
-    sor_source[i] = div - charge_coupling * static_cast<double>(state.state_at(i));
+    sor_source[i] = div - charge_coupling * (static_cast<double>(state.state_at(i)) - mean_charge);
   }
 
   for (int iter = 0; iter < sor_iters; ++iter) {
     sor_sweep_18pt(phi, sor_source, lattice, OMEGA);
   }
 
+  double phi_sum = 0.0;
+  for (int i = 0; i < N; ++i) {
+    phi_sum += phi[i];
+  }
+  const double phi_mean = phi_sum / N;
 #pragma omp parallel for schedule(static)
+  for (int i = 0; i < N; ++i) {
+    phi[i] -= phi_mean;
+  }
+
   for (int i = 0; i < N; ++i) {
     if (!exact_dual_gauss && state.state_at(i) != 0) continue;
     Vec3 grad_phi;
