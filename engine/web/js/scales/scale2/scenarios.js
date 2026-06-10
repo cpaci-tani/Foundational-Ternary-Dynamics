@@ -25,6 +25,7 @@
  */
 
 import { allElements, tablePosition, getElement } from '../../elements.js';
+import { NEUTRON_PROTON_MASS_RATIO } from '../../constants.js';
 
 
 // ═════════════════════════════════════════════════════════════════════
@@ -492,7 +493,7 @@ export function setupAEScenario(name, ctx) {
                 const el = getElement(Z);
                 if (inspector && el) {
                     const N = el.neutrons || 0;
-                    const mass = (Z + N * 1.001).toFixed(2);
+                    const mass = (Z + N * NEUTRON_PROTON_MASS_RATIO).toFixed(2);
                     const period = el.row <= 7 ? el.row : (el.row === 8 ? '6 (Ln)' : '7 (An)');
                     inspector.setScenarioInfo({
                         title: el.name,
