@@ -1207,6 +1207,16 @@ ftd_add_test(campaign_amplitude_time_series tests/campaign_amplitude_time_series
              CTEST_NAME campaign_amplitude_time_series TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0260 (2026-06-09): thermostat-OFF discriminator for the FTD-0110 k(A)
+# drift. Faithful clone of the campaign_amplitude_time_series protocol with
+# the Langevin thermostat switchable per arm (--thermostat=on|off, --gamma,
+# --T). Pre-registered in PREREG_THERMOSTAT_OFF_AMPLITUDE_SWEEP_v1.md;
+# follows the FTD-0259 Mechanism-alpha closure (Mechanism gamma elevated).
+# Default invocation is a 1-seed smoke run; the sweep is driven by flags.
+ftd_add_test(campaign_thermostat_off_sweep tests/campaign_thermostat_off_sweep.cpp
+             CTEST_NAME campaign_thermostat_off_sweep TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
