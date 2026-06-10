@@ -12,6 +12,18 @@
 
 ---
 
+## 0.28 · 2026-06-10 — FTD-0263: the 27-block onset hypothesis — GEOM-PARTIAL (the sharp reading killed by its own band; the onset is local, smooth, elbowed at N ≈ 15)
+
+The sub-knee mechanism attack, with the **aesthetic-capture guard written into the design** (the 27-block is FTD's foundational object; the verdict hung only on three frozen kill-tests). Lock `5e26ac7b`, tag `preregister-subknee-block-hypothesis-v1`; 147 seed-runs, 0 failures; **PARTIAL (prior 30 %) landed — the favored CONFIRMED (45 %) did not.**
+
+- **C1 FAILED (the decisive one):** the half-step fine grid resolves the elbow at **knee_A = 13.5, knee_N = 14.6** (p_lo = 4.52 / p_hi = 1.66) — outside the pre-registered block band [19, 33]. The cluster is *not* filling the 27-block to its boundary.
+- **C2 PASSED:** body-diagonal injection reproduces axial cluster sizes through the onset (ratios 1.159 / 0.941 at A = 14 / 16).
+- **C3 PASSED 6/6:** the sub-knee curve is lattice-size invariant (L = 24/48 vs 32).
+- **Descriptive:** **no orbit staircase** — N̄ climbs smoothly through every milestone {7, 19, 27} (voxel-wise Boltzmann-smeared accretion, not shell-filling); post-hoc shoulder near N ≈ 25 at A = 16–18 noted unweighted. **Bonus finding:** the *bulk* branch is L-invariant too — **N(A = 30) = 45.0 exactly at L = 24, 32, and 48** — the current-stack law is intrinsic/local physics, not finite-size (the corrected engine retains FTD-0107-style absolute-scale locality).
+- **Net:** the sharp 27-block reading is disfavored by its own kill-line; the onset stays `[OPEN]` under a **six-point constraint profile** (elbow N ≈ 15; dir-invariant; L-invariant; smooth; thermostat-free-surviving; T-independent). β (genesis-kink on the local envelope) is qualitatively compatible with five of six and owes a quantitative elbow account — the natural next derivation attempt. Docs: `PREREG_SUBKNEE_BLOCK_HYPOTHESIS_v1.md`, `ANALYSIS_SUBKNEE_BLOCK_HYPOTHESIS_v1.md`; LEDGER FTD-0263; run of record `engine/results/subknee_block_2026-06-10/`. **Nothing promoted; no spine claim moved — an engine-realization proposal failed, the 27-block's mathematical roles are untouched.**
+
+---
+
 ## 0.27 · 2026-06-10 — FTD-0262: SM cluster↔mass identification on the current stack — IDENT-NULL (anchor holds; no specialness at the SM ratios)
 
 The mass-identification re-assessment, pre-registered with the circular/non-circular separation made explicit in the design (lock `2adf80b1`, tag `preregister-sm-mass-ident-current-stack-v1`; priors IDENT-NULL 65 / BROKEN 15 / MIXED 15 / STRUCTURE 5 — **the 65 % favorite landed**). 65 seed-runs, 0 failures, canonical coupling-ON protocol.
