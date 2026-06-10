@@ -14,6 +14,7 @@ import {
     AE_THERMOSTAT_TAU,
     PAULING_CHI,
     ATOMIC_RADII_PM,
+    NEUTRON_PROTON_MASS_RATIO,
 } from './constants.js';
 
 // ── Re-exports for back-compat ──────────────────────────────────────
@@ -70,7 +71,10 @@ export function valenceElectrons(Z) {
 }
 
 export function computeAtomicProps(Z, N = 0) {
-    const mass = Z + N * 1.001;
+    // Mass in PROTON-MASS units: Z protons + N neutrons, with the
+    // neutron/proton ratio derived from the canonical PDG masses
+    // (≈1.0013784 — replaces the hand-rounded 1.001, 2026-06-10).
+    const mass = Z + N * NEUTRON_PROTON_MASS_RATIO;
     // Simulation-tuned radius (LJ scale, NOT physical). Theme D2
     // follow-up: swap to ATOMIC_RADII_PM-derived sim units once the MD
     // tuning is recalibrated; for now this monotone form preserves
