@@ -1,12 +1,12 @@
 /**
- * DiagnosticsPanelComponent — composes Scale 0 diagnostics tables from the
- * scale0 descriptor. Non-Scale-0 content (Scale 1 PE telemetry, etc.) is
- * still rendered by the legacy panel-resources template until descriptors
- * are added for those scales.
+ * DiagnosticsPanelComponent — composes scale-specific diagnostics tables from
+ * descriptors. Scale 1 also keeps the detailed PE telemetry block below the
+ * descriptor summary for per-particle/orbital drill-down.
  */
 
 import { DiagnosticsTable } from './table.js';
 import { sections as scale0Sections } from './descriptors/scale0.js';
+import { sections as scale1Sections } from './descriptors/scale1.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
@@ -28,6 +28,15 @@ export class DiagnosticsPanelComponent {
                 this.tables.push(table);
             }
             this.el.insertBefore(scale0Root, this.el.firstChild);
+
+            const scale1Root = document.createElement('div');
+            scale1Root.className = 'scale1-only diag-scale1-root';
+            for (const section of scale1Sections) {
+                const table = new DiagnosticsTable(section, telemetryHub);
+                scale1Root.appendChild(table.el);
+                this.tables.push(table);
+            }
+            this.el.insertBefore(scale1Root, scale0Root.nextSibling);
             this.el.dataset.panelRedesignMounted = '1';
         }
         this.el.dataset.component = 'diagnostics-panel';

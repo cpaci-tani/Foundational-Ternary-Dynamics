@@ -65,6 +65,8 @@ html[data-theme="nord"] {
     --chart-eb:       #b48ead;
     --chart-gauss:    #ebcb8b;
     --chart-entropy:  #88c0d0;
+    --chart-pe-gravity:    #d8dee9;
+    --chart-pe-force-mean: #d08770;
 
     --legend-field-kinetic:  #a3be8c;
     --legend-field-gradient: #8fbcbb;

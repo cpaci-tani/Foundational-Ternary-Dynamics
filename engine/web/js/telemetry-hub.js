@@ -66,7 +66,7 @@ export class TelemetryHub {
     constructor() {
         // ── Latest snapshots per scale ──────────────────
         this.s0  = { diag: null, audit: null, lagrangian: null };
-        this.s1  = { diag: null, extended: null };
+        this.s1  = { diag: null, extended: null, runtime: null };
         this.s2  = { diag: null };  // also used for scale3
         this.s4  = { diag: null };
         this.s5  = { diag: null, cosmic: null };
@@ -137,11 +137,24 @@ export class TelemetryHub {
         // ── Scale 1 — Particle Engine (200-sample) ─────
         this.peKE       = new RingBuffer(200);
         this.pePE       = new RingBuffer(200);
+        this.peCoulombPE = new RingBuffer(200);
+        this.peGravityPE = new RingBuffer(200);
         this.peTotal    = new RingBuffer(200);  // KE + PE
+        this.peEnergyDrift = new RingBuffer(200);
         this.peCount    = new RingBuffer(200);
+        this.peLockedCount = new RingBuffer(200);
+        this.peMobileCount = new RingBuffer(200);
         this.peMomentum = new RingBuffer(200);
         this.peAngMom   = new RingBuffer(200);
         this.peVirial   = new RingBuffer(200);
+        this.peTemperature = new RingBuffer(200);
+        this.peRmsVelocity = new RingBuffer(200);
+        this.peSystemRadius = new RingBuffer(200);
+        this.peMaxForce = new RingBuffer(200);
+        this.peMeanForce = new RingBuffer(200);
+        this.peSeparation = new RingBuffer(200);
+        this.peRadialVelocity = new RingBuffer(200);
+        this._peInitialEnergy = null;
 
         // ── Scale 2/3 — Atom / Molecule Engine (200-sample)
         this.aeKE     = new RingBuffer(200);
@@ -289,20 +302,127 @@ export class TelemetryHub {
         const ke  = diag.totalKE       || diag.kineticEnergy || 0;
         const pe  = diag.totalPE       || diag.potentialEnergy || 0;
         const cnt = diag.particleCount || diag.count || 0;
+        const coulombPE = diag.coulombPE || 0;
+        const gravityPE = diag.gravityPE || 0;
+        const totalEnergy = diag.totalEnergy ?? (ke + pe);
+        const pMag = diag.totalMomentum ?? diag.momentum ??
+            Math.sqrt((diag.momentumX || 0) ** 2 + (diag.momentumY || 0) ** 2 + (diag.momentumZ || 0) ** 2);
+        const lMag = diag.totalAngMom ?? diag.angularMomentum ??
+            Math.sqrt((diag.angMomX || 0) ** 2 + (diag.angMomY || 0) ** 2 + (diag.angMomZ || 0) ** 2);
+        const virial = diag.virialRatio ?? (pe !== 0 ? (2 * ke / Math.abs(pe)) : 0);
+        if (this._peInitialEnergy === null && Math.abs(totalEnergy) > 1e-12) {
+            this._peInitialEnergy = totalEnergy;
+        }
+        const energyDrift = this._peInitialEnergy
+            ? ((totalEnergy - this._peInitialEnergy) / Math.abs(this._peInitialEnergy)) * 100
+            : 0;
+        const temperature = cnt > 0 ? (2 / 3) * ke / cnt : 0;
+        const toggleNames = [
+            'coulomb', 'gravity', 'damping', 'lorentz', 'exchange',
+            'strong', 'magnetic_dipole', 'spin_orbit', 'radiation',
+            'relativistic', 'relativistic_verlet',
+        ];
+        const toggles = {};
+        for (const name of toggleNames) toggles[name] = !!bridge.peGetToggle?.(name);
+        let scenario = '';
+        let softening = 0;
+        if (typeof document !== 'undefined') {
+            const scenarioSelect = document.getElementById('pe-scenario-select');
+            scenario = scenarioSelect?.selectedOptions?.[0]?.textContent || scenarioSelect?.value || '';
+            softening = Number.parseFloat(document.getElementById('pe-soft-slider')?.value || '0') || 0;
+        }
+        this.s1.runtime = {
+            scenario,
+            dt: bridge.peGetDt?.() ?? 0,
+            softening,
+            toggles,
+            capabilities: bridge.peGetBackendCapabilities?.() ?? null,
+        };
 
         this.peKE.push(ke);
         this.pePE.push(pe);
-        this.peTotal.push(ke + pe);
+        this.peCoulombPE.push(coulombPE);
+        this.peGravityPE.push(gravityPE);
+        this.peTotal.push(totalEnergy);
+        this.peEnergyDrift.push(energyDrift);
         this.peCount.push(cnt);
-        this.peMomentum.push(diag.totalMomentum || diag.momentum || 0);
-        this.peAngMom.push(diag.totalAngMom || diag.angularMomentum || 0);
-        this.peVirial.push(diag.virialRatio || 0);
+        this.peMomentum.push(pMag);
+        this.peAngMom.push(lMag);
+        this.peVirial.push(virial);
+        this.peTemperature.push(temperature);
         return diag;
     }
 
     collectScale1Extended(bridge) {
         const ext = bridge.peGetExtendedData?.();
-        if (ext) this.s1.extended = ext;
+        if (ext) {
+            this.s1.extended = ext;
+            const n = ext.count || 0;
+            let locked = 0;
+            let v2sum = 0;
+            let totalMass = 0;
+            let cmx = 0, cmy = 0, cmz = 0;
+            let maxForce = 0;
+            let sumForce = 0;
+
+            for (let i = 0; i < n; i++) {
+                if (ext.locked?.[i]) locked++;
+                const m = ext.masses?.[i] || 0;
+                const px = ext.positions?.[i * 3] || 0;
+                const py = ext.positions?.[i * 3 + 1] || 0;
+                const pz = ext.positions?.[i * 3 + 2] || 0;
+                const vx = ext.velocities?.[i * 3] || 0;
+                const vy = ext.velocities?.[i * 3 + 1] || 0;
+                const vz = ext.velocities?.[i * 3 + 2] || 0;
+                const fx = ext.forces?.[i * 3] || 0;
+                const fy = ext.forces?.[i * 3 + 1] || 0;
+                const fz = ext.forces?.[i * 3 + 2] || 0;
+                const fMag = Math.sqrt(fx * fx + fy * fy + fz * fz);
+                maxForce = Math.max(maxForce, fMag);
+                sumForce += fMag;
+                v2sum += vx * vx + vy * vy + vz * vz;
+                totalMass += m;
+                cmx += m * px;
+                cmy += m * py;
+                cmz += m * pz;
+            }
+
+            if (totalMass > 0) {
+                cmx /= totalMass;
+                cmy /= totalMass;
+                cmz /= totalMass;
+            }
+
+            let systemRadius = 0;
+            for (let i = 0; i < n; i++) {
+                const dx = (ext.positions?.[i * 3] || 0) - cmx;
+                const dy = (ext.positions?.[i * 3 + 1] || 0) - cmy;
+                const dz = (ext.positions?.[i * 3 + 2] || 0) - cmz;
+                systemRadius = Math.max(systemRadius, Math.sqrt(dx * dx + dy * dy + dz * dz));
+            }
+
+            let separation = 0;
+            let radialVelocity = 0;
+            if (n === 2) {
+                const dx = (ext.positions?.[3] || 0) - (ext.positions?.[0] || 0);
+                const dy = (ext.positions?.[4] || 0) - (ext.positions?.[1] || 0);
+                const dz = (ext.positions?.[5] || 0) - (ext.positions?.[2] || 0);
+                const dvx = (ext.velocities?.[3] || 0) - (ext.velocities?.[0] || 0);
+                const dvy = (ext.velocities?.[4] || 0) - (ext.velocities?.[1] || 0);
+                const dvz = (ext.velocities?.[5] || 0) - (ext.velocities?.[2] || 0);
+                separation = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                radialVelocity = separation > 0 ? (dx * dvx + dy * dvy + dz * dvz) / separation : 0;
+            }
+
+            this.peLockedCount.push(locked);
+            this.peMobileCount.push(Math.max(0, n - locked));
+            this.peRmsVelocity.push(n > 0 ? Math.sqrt(v2sum / n) : 0);
+            this.peSystemRadius.push(systemRadius);
+            this.peMaxForce.push(maxForce);
+            this.peMeanForce.push(n > 0 ? sumForce / n : 0);
+            this.peSeparation.push(separation);
+            this.peRadialVelocity.push(radialVelocity);
+        }
         return ext;
     }
 
@@ -380,10 +500,22 @@ export class TelemetryHub {
         if (!d) return null;
         const ke = d.totalKE || d.kineticEnergy || 0;
         const n  = d.particleCount || d.count || 1;
+        const ext = this.s1.extended;
+        let rmsVelocity = d.rmsVelocity || 0;
+        if (!rmsVelocity && ext?.velocities && ext.count > 0) {
+            let v2 = 0;
+            for (let i = 0; i < ext.count; i++) {
+                const vx = ext.velocities[i * 3] || 0;
+                const vy = ext.velocities[i * 3 + 1] || 0;
+                const vz = ext.velocities[i * 3 + 2] || 0;
+                v2 += vx * vx + vy * vy + vz * vz;
+            }
+            rmsVelocity = Math.sqrt(v2 / ext.count);
+        }
         return {
             temperature:    (2 / 3) * ke / n,   // equipartition T = 2KE/3N
-            virialRatio:    d.virialRatio || 0,
-            rmsVelocity:    d.rmsVelocity || 0,
+            virialRatio:    d.virialRatio ?? (d.totalPE ? 2 * ke / Math.abs(d.totalPE) : 0),
+            rmsVelocity,
         };
     }
 
@@ -427,10 +559,16 @@ export class TelemetryHub {
                 break;
             case 1:
                 for (const b of [
-                    this.peKE, this.pePE, this.peTotal, this.peCount,
+                    this.peKE, this.pePE, this.peCoulombPE, this.peGravityPE,
+                    this.peTotal, this.peEnergyDrift, this.peCount,
+                    this.peLockedCount, this.peMobileCount,
                     this.peMomentum, this.peAngMom, this.peVirial,
+                    this.peTemperature, this.peRmsVelocity, this.peSystemRadius,
+                    this.peMaxForce, this.peMeanForce,
+                    this.peSeparation, this.peRadialVelocity,
                 ]) b.clear();
-                this.s1 = { diag: null, extended: null };
+                this.s1 = { diag: null, extended: null, runtime: null };
+                this._peInitialEnergy = null;
                 break;
             case 2:
             case 3:

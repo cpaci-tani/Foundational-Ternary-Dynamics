@@ -1599,6 +1599,9 @@ export class MockBridge {
     peSetSpinOrbit(e)                                                { return this._peEngine.peSetSpinOrbit(e); }
     peSetRadiation(e)                                                { return this._peEngine.peSetRadiation(e); }
     peSetRelativistic(e)                                             { return this._peEngine.peSetRelativistic(e); }
+    peSetRelativisticVerlet(e)                                       { return this._peEngine.peSetRelativisticVerlet(e); }
+    peGetToggle(name)                                                { return this._peEngine.peGetToggle(name); }
+    peGetBackendCapabilities()                                       { return this._peEngine.peGetBackendCapabilities(); }
     peParticleCount()                                                { return this._peEngine.peParticleCount(); }
     peClear()                                                        { return this._peEngine.peClear(); }
     peGetParticleTypes()                                             { return this._peEngine.peGetParticleTypes(); }

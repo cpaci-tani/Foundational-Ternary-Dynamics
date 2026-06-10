@@ -29,7 +29,7 @@
  * per-call object allocation.
  */
 
-import { ALPHA, ALPHA_EFT, K_B, G_C } from '../constants.js';
+import { ALPHA, ALPHA_EFT, K_B, G_C, G_N, COULOMB_K_FORCE } from '../constants.js';
 import { debugLog } from '../core/log.js';
 import { getById as catalogGetById } from '../particle-catalog.js';
 // AtomEngine (Scale 2/3) runs through the MockBridge JS implementation while
@@ -520,6 +520,21 @@ export class WasmBridge {
             this._pe = new this._module.ParticleEngine();
         }
         this._peParticleTypes = new Map();
+        this._peParticleMeta = new Map();
+        this._peSoftening = 1.0;
+        this._peToggleState = {
+            coulomb: true,
+            gravity: true,
+            damping: true,
+            lorentz: false,
+            exchange: false,
+            strong: false,
+            magnetic_dipole: false,
+            spin_orbit: false,
+            radiation: false,
+            relativistic: false,
+            relativistic_verlet: false,
+        };
     }
 
     resetPE() {
@@ -527,6 +542,7 @@ export class WasmBridge {
             this._module.peClear(this._pe);
         }
         if (this._peParticleTypes) this._peParticleTypes.clear();
+        if (this._peParticleMeta) this._peParticleMeta.clear();
     }
 
     peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) {
@@ -534,6 +550,7 @@ export class WasmBridge {
         if (!this._module || !this._pe) return -1;
         const id = this._module.peAddParticle(this._pe, charge, x, y, z, vx, vy, vz, mass, r_eff);
         this._peParticleTypes.set(id, catalogId);
+        this._peParticleMeta.set(id, { catalogId, charge, mass, rEff: r_eff, locked: false, vx, vy, vz });
         return id;
     }
 
@@ -542,6 +559,7 @@ export class WasmBridge {
         if (!this._module || !this._pe) return -1;
         const id = this._module.peAddLockedParticle(this._pe, charge, x, y, z, mass, r_eff);
         this._peParticleTypes.set(id, catalogId);
+        this._peParticleMeta.set(id, { catalogId, charge, mass, rEff: r_eff, locked: true, vx: 0, vy: 0, vz: 0 });
         return id;
     }
 
@@ -549,32 +567,240 @@ export class WasmBridge {
         if (this._module && this._pe) this._pe.tick();
     }
 
+    _emptyPEParticleData() {
+        return {
+            positions: new Float32Array(0),
+            velocities: new Float32Array(0),
+            colors: new Float32Array(0),
+            sizes: new Float32Array(0),
+            charges: new Int8Array(0),
+            ids: new Int32Array(0),
+            masses: new Float64Array(0),
+            rEff: new Float32Array(0),
+            locked: new Uint8Array(0),
+            spins: new Int8Array(0),
+            colorIds: new Int8Array(0),
+            count: 0,
+        };
+    }
+
+    _metaForPEId(id) {
+        const direct = this._peParticleMeta?.get(id);
+        if (direct) return direct;
+        const catalogId = this._peParticleTypes?.get(id);
+        const cat = catalogId ? catalogGetById(catalogId) : null;
+        return {
+            catalogId,
+            charge: 0,
+            mass: cat ? cat.mass_mev : K_B,
+            rEff: 0.1,
+            locked: false,
+            vx: 0,
+            vy: 0,
+            vz: 0,
+        };
+    }
+
+    _augmentPEParticleData(raw) {
+        if (!raw || !raw.count) return this._emptyPEParticleData();
+        const n = raw.count;
+        const ids = raw.ids || new Int32Array(n);
+        const charges = raw.charges || new Int8Array(n);
+        const velocities = (raw.velocities && raw.velocities.length >= n * 3)
+            ? raw.velocities
+            : new Float32Array(n * 3);
+        const masses = (raw.masses && raw.masses.length >= n)
+            ? raw.masses
+            : new Float64Array(n);
+        const rEff = (raw.rEff && raw.rEff.length >= n)
+            ? raw.rEff
+            : new Float32Array(n);
+        const locked = (raw.locked && raw.locked.length >= n)
+            ? raw.locked
+            : new Uint8Array(n);
+        const spins = (raw.spins && raw.spins.length >= n)
+            ? raw.spins
+            : new Int8Array(n);
+        const colorIds = (raw.colorIds && raw.colorIds.length >= n)
+            ? raw.colorIds
+            : new Int8Array(n);
+
+        for (let i = 0; i < n; i++) {
+            const meta = this._metaForPEId(ids[i]);
+            if (!raw.velocities || raw.velocities.length < n * 3) {
+                velocities[i * 3] = meta.vx || 0;
+                velocities[i * 3 + 1] = meta.vy || 0;
+                velocities[i * 3 + 2] = meta.vz || 0;
+            }
+            if (!raw.masses || raw.masses.length < n) masses[i] = meta.mass || K_B;
+            if (!raw.rEff || raw.rEff.length < n) rEff[i] = meta.rEff || 0.1;
+            if (!raw.locked || raw.locked.length < n) locked[i] = meta.locked ? 1 : 0;
+            if (!raw.charges || raw.charges.length < n) charges[i] = meta.charge || 0;
+        }
+
+        return {
+            positions: raw.positions || new Float32Array(n * 3),
+            velocities,
+            colors: raw.colors || new Float32Array(n * 3),
+            sizes: raw.sizes || new Float32Array(n),
+            charges,
+            ids,
+            masses,
+            rEff,
+            locked,
+            spins,
+            colorIds,
+            count: n,
+        };
+    }
+
+    _peToggleValue(name, fallback = false) {
+        if (this._module && this._pe && typeof this._module.peGetToggle === 'function') {
+            return !!this._module.peGetToggle(this._pe, name);
+        }
+        if (this._peToggleState && Object.prototype.hasOwnProperty.call(this._peToggleState, name)) {
+            return !!this._peToggleState[name];
+        }
+        return fallback;
+    }
+
+    _computePEForcesFromData(data) {
+        const n = data?.count || 0;
+        const positions = data?.positions || new Float32Array(0);
+        const forces = new Float32Array(n * 3);
+        const soft = this._peSoftening ?? 1.0;
+        const soft2 = soft * soft;
+        const doCoulomb = this._peToggleValue('coulomb', true);
+        const doGravity = this._peToggleValue('gravity', false);
+        let maxForce = 0;
+
+        for (let i = 0; i < n; i++) {
+            const ix = positions[i * 3];
+            const iy = positions[i * 3 + 1];
+            const iz = positions[i * 3 + 2];
+            for (let j = i + 1; j < n; j++) {
+                const dx = positions[j * 3] - ix;
+                const dy = positions[j * 3 + 1] - iy;
+                const dz = positions[j * 3 + 2] - iz;
+                const r2 = dx * dx + dy * dy + dz * dz + soft2;
+                if (r2 < 1e-40) continue;
+                const invR = 1 / Math.sqrt(r2);
+                const invR2 = invR * invR;
+                const fc = doCoulomb ? -COULOMB_K_FORCE * data.charges[i] * data.charges[j] * invR2 : 0;
+                const fg = doGravity ? G_N * data.masses[i] * data.masses[j] * invR2 : 0;
+                const fr = (fc + fg) * invR;
+                const fx = fr * dx;
+                const fy = fr * dy;
+                const fz = fr * dz;
+                const i3 = i * 3;
+                const j3 = j * 3;
+                forces[i3] += fx;
+                forces[i3 + 1] += fy;
+                forces[i3 + 2] += fz;
+                forces[j3] -= fx;
+                forces[j3 + 1] -= fy;
+                forces[j3 + 2] -= fz;
+            }
+        }
+
+        for (let i = 0; i < n; i++) {
+            const fx = forces[i * 3];
+            const fy = forces[i * 3 + 1];
+            const fz = forces[i * 3 + 2];
+            const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
+            if (mag > maxForce) maxForce = mag;
+        }
+
+        return { positions, forces, count: n, maxForce };
+    }
+
+    _computePEPotentialFromData(data) {
+        const n = data?.count || 0;
+        const positions = data?.positions || new Float32Array(0);
+        const soft = this._peSoftening ?? 1.0;
+        const soft2 = soft * soft;
+        const doCoulomb = this._peToggleValue('coulomb', true);
+        const doGravity = this._peToggleValue('gravity', false);
+        let coulombPE = 0;
+        let gravityPE = 0;
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j < n; j++) {
+                const dx = positions[j * 3] - positions[i * 3];
+                const dy = positions[j * 3 + 1] - positions[i * 3 + 1];
+                const dz = positions[j * 3 + 2] - positions[i * 3 + 2];
+                const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
+                if (r < 1e-30) continue;
+                if (doCoulomb) coulombPE += ALPHA * data.charges[i] * data.charges[j] / (4 * Math.PI * r);
+                if (doGravity) gravityPE -= G_N * data.masses[i] * data.masses[j] / r;
+            }
+        }
+        return { coulombPE, gravityPE, totalPE: coulombPE + gravityPE };
+    }
+
     peGetParticleData() {
         if (!this._module || !this._pe)
-            return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), charges: new Int8Array(0), ids: new Int32Array(0), count: 0 };
-        return this._module.getPEParticleData(this._pe);
+            return this._emptyPEParticleData();
+        return this._augmentPEParticleData(this._module.getPEParticleData(this._pe));
     }
 
     peGetDiagnostics() {
         if (!this._module || !this._pe)
             return { tick: 0, particleCount: 0, totalKE: 0, totalPE: 0, coulombPE: 0, gravityPE: 0, totalEnergy: 0, momentumX: 0, momentumY: 0, momentumZ: 0, angMomX: 0, angMomY: 0, angMomZ: 0 };
         const d = this._module.getPEDiagnostics(this._pe);
-        // Add decomposed PE if not already present from WASM
-        if (d.coulombPE === undefined) { d.coulombPE = d.totalPE; d.gravityPE = 0; }
+        // Older WASM builds did not expose decomposed active PE. Reconstruct it
+        // from the augmented particle frame so the UI does not mislabel energy.
+        if (d.coulombPE === undefined || d.gravityPE === undefined) {
+            const pe = this._computePEPotentialFromData(this.peGetParticleData());
+            d.coulombPE = pe.coulombPE;
+            d.gravityPE = pe.gravityPE;
+            d.totalPE = pe.totalPE;
+            d.totalEnergy = (d.totalKE || 0) + pe.totalPE;
+        }
         return d;
     }
 
     peGetExtendedData() {
-        // WASM PE doesn't expose extended data yet — stub returns null
-        return null;
+        if (!this._module || !this._pe) return null;
+        if (typeof this._module.getPEExtendedData === 'function') {
+            const ext = this._module.getPEExtendedData(this._pe);
+            return ext && ext.count ? ext : null;
+        }
+        const data = this.peGetParticleData();
+        if (!data || data.count === 0) return null;
+        const forceFrame = this._computePEForcesFromData(data);
+        const n = data.count;
+        const accelerations = new Float64Array(n * 3);
+        for (let i = 0; i < n; i++) {
+            const m = data.masses[i] || K_B;
+            if (m > 1e-30 && !data.locked[i]) {
+                accelerations[i * 3] = forceFrame.forces[i * 3] / m;
+                accelerations[i * 3 + 1] = forceFrame.forces[i * 3 + 1] / m;
+                accelerations[i * 3 + 2] = forceFrame.forces[i * 3 + 2] / m;
+            }
+        }
+        return {
+            count: n,
+            ids: data.ids,
+            charges: data.charges,
+            masses: data.masses,
+            positions: data.positions,
+            velocities: data.velocities,
+            forces: forceFrame.forces,
+            accelerations,
+            locked: data.locked,
+            rEff: data.rEff,
+            spins: data.spins,
+            colorIds: data.colorIds,
+        };
     }
 
     peGetForces() {
-        // WASM PE doesn't expose forces directly yet — use MockBridge-style computation
-        const data = this.peGetParticleData();
-        if (!data || data.count === 0)
+        if (!this._module || !this._pe)
             return { positions: new Float32Array(0), forces: new Float32Array(0), count: 0, maxForce: 0 };
-        return { positions: data.positions, forces: new Float32Array(data.count * 3), count: data.count, maxForce: 0 };
+        if (typeof this._module.getPEForces === 'function') {
+            return this._module.getPEForces(this._pe);
+        }
+        return this._computePEForcesFromData(this.peGetParticleData());
     }
 
     peGetFieldSources() {
@@ -587,7 +813,7 @@ export class WasmBridge {
         const masses = new Float32Array(n);
         for (let i = 0; i < n; i++) {
             charges[i] = data.charges[i]; // Int8 → Float32
-            masses[i] = 1.0; // default mass; field sampling uses Coulomb only
+            masses[i] = data.masses?.[i] ?? this._metaForPEId(data.ids?.[i] ?? -1).mass ?? K_B;
         }
         return { positions: data.positions, charges, masses, count: n };
     }
@@ -600,9 +826,11 @@ export class WasmBridge {
         return 1.0;
     }
     peSetSoftening(s) {
+        this._peSoftening = s;
         if (this._module && this._pe) this._module.peSetSoftening(this._pe, s);
     }
     peSetCoulomb(e) {
+        if (this._peToggleState) this._peToggleState.coulomb = !!e;
         if (!this._module || !this._pe) return;
         // Prefer dedicated setter; fall back to generic toggle if available.
         // Coulomb defaults to ON in the C++ ParticleEngine constructor,
@@ -615,9 +843,11 @@ export class WasmBridge {
         // else: Coulomb defaults to true in C++; no-op is acceptable
     }
     peSetDamping(e) {
+        if (this._peToggleState) this._peToggleState.damping = !!e;
         if (this._module && this._pe) this._module.peSetDamping(this._pe, e);
     }
     peSetGravity(e) {
+        if (this._peToggleState) this._peToggleState.gravity = !!e;
         if (this._module && this._pe) this._module.peSetGravity(this._pe, e);
     }
 
@@ -625,6 +855,7 @@ export class WasmBridge {
     // Use the generic peSetToggle if available, otherwise no-op gracefully.
     // These default to OFF in the C++ ParticleEngine constructor.
     _peToggle(name, e) {
+        if (this._peToggleState) this._peToggleState[name] = !!e;
         if (!this._module || !this._pe) return;
         if (typeof this._module.peSetToggle === 'function') {
             this._module.peSetToggle(this._pe, name, e);
@@ -637,6 +868,21 @@ export class WasmBridge {
     peSetSpinOrbit(e)      { this._peToggle('spin_orbit', e); }
     peSetRadiation(e)      { this._peToggle('radiation', e); }
     peSetRelativistic(e)   { this._peToggle('relativistic', e); }
+    peSetRelativisticVerlet(e) { this._peToggle('relativistic_verlet', e); }
+    peGetToggle(name)      { return this._peToggleValue(name, false); }
+
+    peGetBackendCapabilities() {
+        return {
+            velocities: true,
+            masses: true,
+            locked: true,
+            forces: true,
+            extended: true,
+            nativeExtended: !!(this._module && typeof this._module.getPEExtendedData === 'function'),
+            nativeForces: !!(this._module && typeof this._module.getPEForces === 'function'),
+            advancedForces: !!(this._module && typeof this._module.peSetToggle === 'function'),
+        };
+    }
 
     peParticleCount() {
         if (this._module && this._pe) return this._module.peParticleCount(this._pe);
@@ -646,39 +892,61 @@ export class WasmBridge {
     peGetParticleTypes() { return this._peParticleTypes || new Map(); }
 
     peInspectParticle(id) {
-        // WASM doesn't have a dedicated inspect function yet;
-        // compute client-side from particle data
         if (!this._module || !this._pe) return null;
-        const data = this.peGetParticleData();
-        if (!data || data.count === 0) return null;
+        const ext = this.peGetExtendedData();
+        if (!ext || ext.count === 0) return null;
 
         // Find particle by id
         let idx = -1;
-        for (let i = 0; i < data.count; i++) {
-            if (data.ids[i] === id) { idx = i; break; }
+        for (let i = 0; i < ext.count; i++) {
+            if (ext.ids[i] === id) { idx = i; break; }
         }
         if (idx < 0) return null;
 
-        const px = data.positions[idx * 3], py = data.positions[idx * 3 + 1], pz = data.positions[idx * 3 + 2];
-        const vx = data.velocities ? data.velocities[idx * 3] : 0;
-        const vy = data.velocities ? data.velocities[idx * 3 + 1] : 0;
-        const vz = data.velocities ? data.velocities[idx * 3 + 2] : 0;
-        const charge = data.charges[idx];
+        const px = ext.positions[idx * 3], py = ext.positions[idx * 3 + 1], pz = ext.positions[idx * 3 + 2];
+        const vx = ext.velocities[idx * 3], vy = ext.velocities[idx * 3 + 1], vz = ext.velocities[idx * 3 + 2];
+        const charge = ext.charges[idx];
+        const mass = ext.masses[idx] || this._metaForPEId(id).mass || K_B;
         const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        const fx = ext.forces?.[idx * 3] || 0;
+        const fy = ext.forces?.[idx * 3 + 1] || 0;
+        const fz = ext.forces?.[idx * 3 + 2] || 0;
 
-        // Look up mass from particle catalog via type map
-        const catId = this._peParticleTypes.get(id);
-        const catEntry = catId ? catalogGetById(catId) : null;
-        const mass = catEntry ? catEntry.mass_mev : 1.0;
+        let nearestId = -1;
+        let nearestDist = Infinity;
+        let fCoulombNearest = 0;
+        let orbitalR = -1;
+        const soft2 = (this._peSoftening || 1.0) ** 2;
+        for (let i = 0; i < ext.count; i++) {
+            if (i === idx) continue;
+            const dx = ext.positions[i * 3] - px;
+            const dy = ext.positions[i * 3 + 1] - py;
+            const dz = ext.positions[i * 3 + 2] - pz;
+            const r2Raw = dx * dx + dy * dy + dz * dz;
+            const r = Math.sqrt(r2Raw);
+            if (r < nearestDist) {
+                nearestDist = r;
+                nearestId = ext.ids[i];
+                if (this._peToggleValue('coulomb', true)) {
+                    fCoulombNearest = Math.abs(COULOMB_K_FORCE * charge * ext.charges[i] / (r2Raw + soft2));
+                } else {
+                    fCoulombNearest = 0;
+                }
+            }
+            if (charge !== 0 && ext.charges[i] !== 0 && Math.sign(charge) !== Math.sign(ext.charges[i])) {
+                if (orbitalR < 0 || r < orbitalR) orbitalR = r;
+            }
+        }
 
         return {
             id, charge, mass,
             x: px, y: py, z: pz,
             vx, vy, vz,
             speed, ke: 0.5 * mass * speed * speed,
-            locked: false,
-            nearestId: -1, nearestDist: Infinity,
-            orbitalR: -1, fCoulombNearest: 0, fNetMag: 0,
+            locked: !!ext.locked?.[idx],
+            nearestId, nearestDist,
+            orbitalR, fCoulombNearest,
+            fNetMag: Math.sqrt(fx * fx + fy * fy + fz * fz),
         };
     }
 

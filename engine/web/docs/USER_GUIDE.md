@@ -14,7 +14,7 @@ discrete perspective matters.
 1. [Quick start (60 seconds)](#1-quick-start-60-seconds)
 2. [The two backends — and which one you're on](#2-the-two-backends--and-which-one-youre-on)
 3. [The 10 Scales](#3-the-10-scales)
-4. [Scenarios — 84 ways to seed Scale 0](#4-scenarios--84-ways-to-seed-scale-0)
+4. [Scenarios — Scale 0 seeds](#4-scenarios--scale-0-seeds)
 5. [Toggles — the physics kill switches](#5-toggles--the-physics-kill-switches)
 6. [Overlays — what you're looking at](#6-overlays--what-youre-looking-at)
 7. [Diagnostics, charts, and the Lagrangian panel](#7-diagnostics-charts-and-the-lagrangian-panel)
@@ -64,8 +64,8 @@ The dashboard has **two simulation backends**:
 
 | Backend | How activated | Perf | Scale 0 coverage |
 |---|---|---|---|
-| **WASM** (default) | Auto-loaded from `wasm/ftd_core.wasm` on page load | ~2× faster than Mock; uses SIMD + LTO | 84/84 scenarios (as of 2026-04-18) |
-| **MockBridge** (JS fallback) | Used if WASM fails to load, OR you toggle via `?dev=1` URL param | Slower but modifiable without rebuild | 83 scenarios |
+| **WASM** (default) | Auto-loaded from `wasm/ftd_core.wasm` on page load | ~2× faster than Mock; uses SIMD + LTO | Registered Scale 0 scenarios |
+| **MockBridge** (JS fallback) | Used if WASM fails to load, OR you toggle via `?dev=1` URL param | Slower but modifiable without rebuild | Registered Scale 0 scenarios |
 
 **Which am I on?** Look at the `Engine` label top-left:
 - `WASM Engine` (green) — you're on the compiled C++ path.
@@ -84,7 +84,7 @@ FTD spans 11 orders of magnitude of physical phenomena, exposed as 10 scale "mod
 | # | Mode | What it shows | Typical scenario |
 |---|---|---|---|
 | **0** | Lattice / Substrate | Raw flux field J(x) + wave equation + 3³ voxel dynamics | `flux-pulse`, `flux-cascade` |
-| **1** | Particles | N-body Coulomb + gravity (PE engine) | `pe-hydrogen`, `pe-coulomb-scattering` |
+| **1** | Particles | Continuous N-body ParticleEngine: Coulomb, optional Newtonian gravity, backend-supported advanced terms | `pe-hydrogen`, `pe-scattering` |
 | **2** | Atoms | Electron orbitals, nuclear shells, periodic table | `ae-carbon`, `ae-hydrogen` |
 | **3** | Molecules | Bonded atoms, vdW + LJ + bond springs | `mol-h2`, `mol-water`, `mol-caffeine` |
 | **4** | Planetary | N-body gravity, Kepler orbits, exoplanet systems | `planetary-solar-system`, `planetary-trappist-1` |
@@ -107,7 +107,7 @@ observer's clock keeps flowing.
 
 ---
 
-## 4. Scenarios — 84 ways to seed Scale 0
+## 4. Scenarios — Scale 0 seeds
 
 A scenario is a **preset initial condition**. Picking one from the dropdown:
 1. Resets the lattice to vacuum (tick = 0)
@@ -122,7 +122,7 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 | `light-*` | 4 | EM wave pedagogy: rainbow (3-color), dipole radiation, two-slit, photon race (linearity) |
 | `quantum-*` | 8 | Quantum experiments: Born rule, double-slit with genesis, tunneling, particle-in-a-box (quantum well), entanglement, Aharonov-Bohm, Casimir, Zeno |
 | `s0-seed-*` | 43 | FTD-derived particle configurations: leptons, hadrons, quarks, Moore geometries, gauge bosons, gravity seeds, reference frame context seeds |
-| `s0-field-*` | 8 | Analytical field configurations: plane wave, uniform E, uniform B, electric dipole, magnetic dipole, vortex line |
+| `s0-field-*` | 9 | Analytical field configurations: plane wave, uniform E, uniform B, photon pulse, FTD-0253 spacetime-forcing boundary, electric dipole, magnetic dipole, vortex line |
 
 ### Notable scenarios worth trying first
 
@@ -135,6 +135,7 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 - **`s0-seed-hydrogen`** — Proton triad + electron orbital seed.
 - **`s0-seed-moore-decomposition`** — All 3 Moore shells (octahedron + cuboctahedron + stella octangula) with alternating parity. The geometric heart of the theory.
 - **`s0-seed-sloop`** — 12-vertex self-reference ring for reference frame context pedagogy.
+- **`s0-field-spacetime-forcing-boundary`** — FTD-0253 wave-side seed: a clean center pulse for the forced locality cone. The scenario forces flux volume/slice visibility and a low display threshold so the seed is visible. Use `demos/spacetime-forcing-boundary.html` for the labelled WAVE vs DIFFUSION counterfactual.
 - **`s0-field-vortex-line`** — Long vortex line (length much greater than the visible region) → watch (1/r) azimuthal flux circulation.
 
 ### Stochastic scenarios
@@ -143,6 +144,16 @@ Six scenarios use randomness:
 - `flux-random-genesis`, `flux-thermalization`, `flux-vacuum-foam`, `flux-zero-point`, `quantum-born-rule`, `quantum-casimir`
 
 The RNG is **reset to a fixed seed on every `setupScenario` call** (as of 2026-04-18), so repeated runs in the same browser session produce identical results. A page reload also produces the same sequence. This is intentional — it makes snapshot-based testing possible.
+
+### Scale 1 particle scenarios
+
+Scale 1 uses the continuous ParticleEngine, not the Scale 0 voxel manifestation rules. Scenario presets now set both physics and overlays:
+
+- Coulomb atom/pair demos enable Coulomb, disable gravity/damping, and show velocity, trail, Coulomb-potential, and net-force overlays.
+- Scattering demos emphasize velocity, E-field, trail, and force overlays.
+- `pe-micro-bh` is a Newtonian gravity toy: Coulomb off, gravity on, gravity-field overlay on. The horizon and emission cadence are visual/pedagogical choices, not a GR solver.
+- Nuclear/isotope scenarios use locked neutral/charged cores to show composition and Coulomb motion. They are not nuclear binding or beta-decay calculations unless a supporting force term is explicitly enabled and documented.
+- `pe-w-pair` enables backend-supported relativistic correction where available, but it is still a charged-pair dynamics demo rather than a weak-interaction event generator.
 
 ---
 
@@ -199,7 +210,7 @@ These render as colored rubber-sheets hovering at different Y-heights to prevent
 - **B field lines** — streamlines of `∇×J`.
 - **Poynting vectors** — energy flow S = E×B.
 - **Flux streamlines** — J itself, following gradient lines.
-- **Force glyphs** — stacked arrows at particle positions (EM + gravity + strong, each a separate color).
+- **Force glyphs** — particle-position arrows. Scale 1 shows the current net particle force; Scale 0 force decompositions remain separate lattice overlays.
 
 ### Volumetric overlays
 - **Flux volume** — 3D density cloud colored by |J|.
@@ -269,8 +280,8 @@ Click any voxel in the viewport → the **Inspector panel** (bottom-right, or to
 
 For particles (Scale 1+), the Inspector shows:
 - Nearest neighbors with distances
-- Force decomposition (Coulomb, gravity, strong, weak, bond spring, vdW, angle strain)
-- Bound partners (for molecular scales)
+- Scale 1 identity, mass, charge, locked state, velocity, kinetic energy, nearest interaction, and net force
+- Scale 2/3 molecular force terms such as bond spring, vdW, angle strain, and bound partners where that engine owns the data
 
 **Shortcut:** Double-click any voxel to focus the camera on it without opening the Inspector.
 

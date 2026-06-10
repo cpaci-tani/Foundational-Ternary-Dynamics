@@ -71,6 +71,8 @@ html[data-theme="parchment"] {
     --chart-eb:       #6d28d9;
     --chart-gauss:    #92400e;
     --chart-entropy:  #1d4ed8;
+    --chart-pe-gravity:    #57534e;
+    --chart-pe-force-mean: #b45309;
 
     --legend-field-kinetic:  #166534;
     --legend-field-gradient: #115e59;

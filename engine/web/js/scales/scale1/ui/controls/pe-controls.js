@@ -18,14 +18,14 @@ export function createPeControlsCard() {
         title="Coulomb: F = -alpha * q_i * q_j / (4*pi*r^2) (EM pairwise)">Coulomb</label>
     </div>
     <div class="toggle-row">
-      <input type="checkbox" id="pe-gravity" checked>
+      <input type="checkbox" id="pe-gravity">
       <label for="pe-gravity"
         title="Gravity: F = +G_N * m_i * m_j / r^2 (always attractive)">Gravity</label>
     </div>
 
     <div class="combo-section-label">Dynamics</div>
     <div class="toggle-row">
-      <input type="checkbox" id="pe-damping" checked>
+      <input type="checkbox" id="pe-damping">
       <label for="pe-damping"
         title="Velocity damping: v *= (1 - DAMPING*dt) per tick">Damping</label>
     </div>
@@ -39,10 +39,9 @@ export function createPeControlsCard() {
       particle-engine force step (_computeForces / Velocity-Verlet integrator)
       reads ONLY state._pe.coulomb, state._pe.gravity and state._pe.damping —
       the 7 advanced flags are written but never consumed, so the toggles are
-      no-ops in the shipped JS engine. They were advertising non-functional
-      physics. The WASM bridge forwards them to a real _peToggle, so the markup
-      is preserved (commented, not deleted) for re-enable if/when the JS engine
-      grows the corresponding force terms or a WASM PE is wired by default.
+      no-ops in the shipped JS engine. The WASM bridge forwards them to real
+      ParticleEngine toggles, so the markup is preserved (commented, not
+      deleted) for re-enable behind backend capability checks.
     -->
     <!--
     <details class="toggle-details">
