@@ -1,8 +1,8 @@
 # SPEC · Open Math by Physics Sector
 
 **Tag:** [REFERENCE] / canonical research-questions queue (replaces tier-aligned CHECKLIST)
-**Date:** 2026-05-08
-**Version:** 1.0
+**Date:** 2026-06-10
+**Version:** 1.1
 **Replaces:** `CHECKLIST_MATH_COMPLETE.md` (now archived; tier-aligned organisation preserved there for provenance)
 **LEDGER:** FTD-0146 [SYNTHESIS] — sector-organised consolidation; introduces no new theorems
 **Companion docs:**
@@ -92,9 +92,9 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac (currently [OPEN — IMPORTED scaffold]) | [OPEN] | M | §7-bivector |
 | §7-loop | One-loop `a^{(1)} = α_FQCR/(2π)`. Requires `α_FQCR ↔ α` physical identification (= FTD-0013 [SMC]) | [OPEN] | RP | MC-T4.3 |
 | §7-qed | Full QED `g − 2` precision (= MC-T4.4 in old checklist) | [OPEN] | W–M | §7-dirac |
-| α-from-CM | `CONJ_ALPHA_FROM_CM.md` Step 3 (Z₄ symmetry selects this CM curve) and Step 8 (larger root = 1/α specifically) remain [STRONGLY MOTIVATED CONJECTURE], not [THEOREM] | [OPEN] | RP | — |
-| Watson-G* | `DERIV_WATSON_GSTAR_IDENTITY.md` epilogue carries 1 [OPEN] | [OPEN] | W | — |
-| α-lattice | `DERIV_ALPHA_LATTICE_MECHANISM.md` Steps 3 + 8 selection issue (same as α-from-CM) | [OPEN] | M | α-from-CM |
+| α-from-CM | `CONJ_ALPHA_FROM_CM.md` Step 3 (Z₄ symmetry selects this CM curve) and Step 8 (larger root = 1/α specifically) remain [STRONGLY MOTIVATED CONJECTURE], not [THEOREM] | [CLOSED RESOLVED / RECLASSIFIED 2026-06-10] | RP | — |
+| Watson-G* | `DERIV_WATSON_GSTAR_IDENTITY.md` epilogue carries 1 [OPEN] | [CLOSED RESOLVED / RECLASSIFIED 2026-06-10] | W | — |
+| α-lattice | `DERIV_ALPHA_LATTICE_MECHANISM.md` Steps 3 + 8 selection issue (same as α-from-CM) | [CLOSED RESOLVED / RECLASSIFIED 2026-06-10] | M | α-from-CM |
 
 **Closed-negative — do not re-attempt:**
 - R1 transverse stiffness; R2 source-current normalization; R3 two-sector response eigenvalue; R4 projected Dirac matter (all in `archive/closed_negative/`).

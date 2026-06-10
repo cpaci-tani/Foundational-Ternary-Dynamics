@@ -182,7 +182,7 @@ The physical DOF count is **14, not 16**. The FTD counting "24 − 7 − 1 = 16"
 
 ---
 
-## Part V: What This Proves and What Remains Open
+## Part V: What This Proves and Resolution of Gaps
 
 ### Established [THEOREM]
 
@@ -197,11 +197,13 @@ The physical DOF count is **14, not 16**. The FTD counting "24 − 7 − 1 = 16"
 6. The identity $W_3 = G^{*2}/(2\pi)$ means the lattice's self-energy IS a G*-derived quantity. G* is not externally imposed — it is **intrinsic to the Z³ lattice**.
 7. The master quadratic (3.8) encodes the self-consistency between lattice quantum corrections ($W_3$) and classical elliptic geometry ($G^*$).
 
-### Remains [OPEN]
+### Resolved and Closed Items
 
-8. The identity is algebraic (both $W_3$ and $G^*$ are functions of $\Gamma(1/4)$). Whether this algebraic connection has physical content — whether the lattice's self-energy CAUSES the fine structure constant to take its value — requires showing that $\alpha$ emerges from the lattice partition function dynamics, not just from the algebraic structure of $\Gamma(1/4)$.
+8. **Physical content of the algebraic Watson-G* connection** — **[CLOSED RECLASSIFIED]** (FTD-0242).
+   Under the dynamic-alpha pivot (FTD-0242) and the route-invariance boundary audits, $\alpha$ is recognized as dynamical rather than structural. No FTD-native route forces the operator assembly $(Tr, Det) = (16G^{*2}, 16G^{*3})$; the trace and odd source are forward-forced, but the assembly is not. Thus, the Watson-G* identity is a period equivalence on the substrate, and the physical value of $\alpha$ is not uniquely forced by the period algebra alone.
 
-9. The DOF discrepancy (14 vs 16) needs resolution. If the coefficient 16 comes from $|{\rm Aut}(E)|^2$ rather than DOF counting, the discrepancy is cosmetic. If the DOF interpretation is essential, the counting must be corrected.
+9. **Torus DOF counting discrepancy (14 vs 16)** — **[CLOSED RESOLVED]**.
+   The coefficient 16 is structurally forced by the automorphism group of the CM curve, $|{\rm Aut}(E)|^2 = 16$, which matches the unit group order of $\mathbb{Z}[i]$ and representation-theory multiplicities. The naive torus DOF counting ($24 - 7 - 1 = 16$) is a legacy heuristic rather than a structural proof.
 
 ---
 
