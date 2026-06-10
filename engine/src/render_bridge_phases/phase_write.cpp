@@ -169,6 +169,7 @@ void phase_write_main_loop(RenderBridge& rb) {
   rb.rng_state_->reseed_thread_pool(rb.thread_seeds_.data(),
                                     static_cast<std::size_t>(num_threads));
 
+  // ---- Loop 1: Leapfrog integration, Langevin OU, and Damping ----
 #pragma omp parallel for
   for (int i = 0; i < N; ++i) {
     auto &v = rb.voxels_[i];
@@ -214,19 +215,6 @@ void phase_write_main_loop(RenderBridge& rb) {
       // Update observable field: flux = J_L + J_R
       v.flux = v.flux_L + v.flux_R;
       v.wave_vel = v.wave_vel_L + v.wave_vel_R;
-
-      // Genesis (dual): chirality density for polarity.
-      if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
-        double excess = v.density() - K_GENESIS;
-        double p = 1.0 - std::exp(-excess / K_MANIFEST);
-        const std::uint64_t gseed =
-            static_cast<std::uint64_t>(rb.toggles.langevin_seed);
-        if (voxel_uniform(gseed, i, rb.tick_,
-                          static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
-          double chi = v.chirality_density();
-          manifest_at(rb, v, chi, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/true);
-        }
-      }
     } else {
       // ---- Single-substrate leapfrog integration (non-dual path) ----
       if (rb.toggles.symplectic_leapfrog) {
@@ -245,9 +233,16 @@ void phase_write_main_loop(RenderBridge& rb) {
         const double T = rb.toggles.langevin_T;
         const double sigma = std::sqrt(2.0 * gamma * T);
         const double one_minus_gamma = 1.0 - gamma;
-        v.wave_vel.x = one_minus_gamma * v.wave_vel.x + sigma * rng.thread_normal(tids);
-        v.wave_vel.y = one_minus_gamma * v.wave_vel.y + sigma * rng.thread_normal(tids);
-        v.wave_vel.z = one_minus_gamma * v.wave_vel.z + sigma * rng.thread_normal(tids);
+        const std::uint64_t gseed = static_cast<std::uint64_t>(rb.toggles.langevin_seed);
+        const double nx = ::ftd::voxel_normal(gseed, i, rb.tick_,
+            static_cast<std::uint64_t>(::ftd::VoxelRng::LangevinNoiseX));
+        const double ny = ::ftd::voxel_normal(gseed, i, rb.tick_,
+            static_cast<std::uint64_t>(::ftd::VoxelRng::LangevinNoiseY));
+        const double nz = ::ftd::voxel_normal(gseed, i, rb.tick_,
+            static_cast<std::uint64_t>(::ftd::VoxelRng::LangevinNoiseZ));
+        v.wave_vel.x = one_minus_gamma * v.wave_vel.x + sigma * nx;
+        v.wave_vel.y = one_minus_gamma * v.wave_vel.y + sigma * ny;
+        v.wave_vel.z = one_minus_gamma * v.wave_vel.z + sigma * nz;
       } else if (do_damping && should_damp) {
         double eff_damping = damping_factor;
         if (do_larmor && selective && rb.near_particle_[i]) {
@@ -258,13 +253,42 @@ void phase_write_main_loop(RenderBridge& rb) {
         v.flux *= eff_damping;
         v.wave_vel *= eff_damping;
       }
+    }
+  }
 
+  // ---- Snapshot the updated flux field (post-write) to rb.flux_pre_write_ ----
+  // (which is now acting as post-write snapshot) to avoid cross-thread races.
+  if (do_genesis) {
+    rb.flux_pre_write_.resize(N);
+#pragma omp parallel for
+    for (int i = 0; i < N; ++i) {
+      rb.flux_pre_write_[i] = rb.voxels_[i].flux;
+    }
+  }
+
+  // ---- Loop 2: Genesis and Evaporation ----
+#pragma omp parallel for
+  for (int i = 0; i < N; ++i) {
+    auto &v = rb.voxels_[i];
+    const std::uint64_t gseed =
+        static_cast<std::uint64_t>(rb.toggles.langevin_seed);
+
+    if (dual) {
+      // Genesis (dual): chirality density for polarity.
+      if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
+        double excess = v.density() - K_GENESIS;
+        double p = 1.0 - std::exp(-excess / K_MANIFEST);
+        if (voxel_uniform(gseed, i, rb.tick_,
+                          static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
+          double chi = v.chirality_density();
+          manifest_at(rb, v, chi, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/true);
+        }
+      }
+    } else {
       // Genesis (single): divergence for polarity.
       if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
         double excess = v.density() - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_MANIFEST);
-        const std::uint64_t gseed =
-            static_cast<std::uint64_t>(rb.toggles.langevin_seed);
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
           // Latent Heat of Manifestation: consume wave energy.
@@ -273,7 +297,7 @@ void phase_write_main_loop(RenderBridge& rb) {
           if (jmag > K_GENESIS_FLUX_EPSILON)
             v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag);
 
-          // ARCH-7b: divergence from pre-write snapshot (race-free).
+          // divergence from the post-write snapshot (race-free).
           double div = ::ftd::divergence_from_flux_array(rb.flux_pre_write_, rb.lattice_, i);
           manifest_at(rb, v, div, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/false);
         }
@@ -281,8 +305,6 @@ void phase_write_main_loop(RenderBridge& rb) {
     }
 
     // Evaporation (shared single + dual): low TOTAL wave energy → return to void.
-    constexpr double EVAP_ENERGY = K_MANIFEST * K_MANIFEST * EVAP_THRESHOLD;
-    (void)EVAP_ENERGY;  // declared in original code; unused but preserved.
     double local_energy = v.flux.mag2() + v.wave_vel.mag2();
     {
       const auto& nbrs = rb.lattice_.neighbors_6(i);
@@ -291,8 +313,6 @@ void phase_write_main_loop(RenderBridge& rb) {
     }
     if ((do_genesis || do_evaporation) && v.state != 0 && !v.locked) {
       double evap_prob = std::exp(-local_energy / (K_MANIFEST * K_MANIFEST));
-      const std::uint64_t gseed =
-          static_cast<std::uint64_t>(rb.toggles.langevin_seed);
       if (voxel_uniform(gseed, i, rb.tick_,
                         static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE) {
         rb.set_state(i, 0);
