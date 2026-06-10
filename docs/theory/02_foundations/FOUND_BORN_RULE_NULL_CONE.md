@@ -179,11 +179,10 @@ The Wick rotation i ↔ t converts one into the other. This suggests that quantu
 
    The Born rule ($\Delta = 0$) and the Dirac equation ($\Delta < 0$) are two faces of the same null cone. The Born rule is the boundary; the Dirac equation is the interior. The complex roots $x = a \pm bi$ oscillate as $e^{ibt}$, which is the fermion's wavefunction evolution. The spinor structure required by the Dirac equation is not imported — it is the null-cone geometry of $i^2 + a^2 + b^2 = 0$ itself.
 
-### Remains [OPEN]
+### Remains [CLOSED DECLINED]
 
-9. Can the Born rule be fully derived from the null-cone geometry without the imposed sampling rule? The current treatment (SPEC_FTD.md) still classifies the sampling rule as [IMPOSED]. The null-cone argument explains the *form* (quadratic) but not the *interpretation* (probability).
-
-10. Does the full (1+3)D null cone t² = x² + y² + z² in Minkowski space arise from a higher version of equation (*) involving three real directions? This would be i² + a² + b² + c² = 0, which is the quaternionic norm |q|² = 1 for q = i + aj + bk + c. The connection to quaternions and SU(2) gauge structure is suggestive but unexplored.
+9. **Derivation of probability interpretation from geometry**: **[CLOSED DECLINED]** The derivation of the continuous probability interpretation from the null-cone geometry is declined. The discrete threshold $K_B$ on the lattice governs all physical manifestation events, and continuous probability is an observer-layer epistemic approximation.
+10. **Higher dimensional quaternionic null-cone recovery**: **[CLOSED DECLINED]** The quaternionic extension is declined under FC-1; the discrete cubic lattice ($D=3$) is complete, and infinite-dimensional or quaternionic continuums are not fundamental target objects.
 
 ---
 

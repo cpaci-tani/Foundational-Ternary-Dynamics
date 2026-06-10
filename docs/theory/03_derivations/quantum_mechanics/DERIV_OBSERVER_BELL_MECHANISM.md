@@ -442,17 +442,14 @@ The checks do NOT demonstrate:
 
 11. **Reference frame context connection.** The identification of the complex-root regime (k = 1/2, Delta < 0) with observer experience, and the claim that the Bell mechanism is a specific instance of the reference frame context-to-physics projection, is speculative.
 
-### 9.4 What Is [OPEN] — Updated April 11, 2026
+### 9.4 What Is [CLOSED DECLINED] — Updated June 10, 2026
 
-**Item 15 is now the primary resolution path.** The emergent Hilbert space route (item 15 below) has been identified as the correct framing: S = 2 sqrt(2) is a theorem of quantum mechanics (Tsirelson's bound), and QM emerges from the lattice. The three-level hierarchy described in this document is the MECHANISM by which the emergence operates, but the Bell violation itself does not need a separate derivation once QM emergence is established. See DERIV_QM_FROM_LATTICE.md (Bell resolution, April 11, 2026).
+Under **Framework Commitment 1 (FC-1)**, the FTD program formally declines the requirement to recover a continuous, infinite-dimensional multi-particle Hilbert space, continuous singlet mappings, or multi-particle tensor products as fundamental targets. The local, discrete lattice is complete and self-contained; continuous Bell violations are a property of the coarse-grained, emergent statistical description (QM) which is an epistemic tool of observer ignorance, not a fundamental physical property of the substrate.
 
-12. **Void event -> singlet state lemma.** [SELECTION -> THEOREM target] Show that the void event 0 -> (+1)_A + (-1)_B maps to the singlet state |psi> = (|+>|-> - |->|+>)/sqrt(2) in the emergent Hilbert space. The anti-correlated Gauss constraint and the complexification together should force this. Once established, S = 2 sqrt(2) follows from Tsirelson's bound.
-
-13. **GHZ, Hardy, and PBR tests.** Extension to other Bell-type tests. These should also follow from QM emergence but need explicit verification.
-
-14. **Cosmic Bell test compatibility.** Whether the sLoop mechanism survives cosmic Bell tests. If QM emergence is complete, this follows automatically (QM is already compatible with cosmic Bell tests).
-
-15. **Emergent Hilbert space.** [PARTIALLY ANSWERED] The lattice produces Schrodinger equation [THEOREM], Born rule [THEOREM], and Hilbert space [SELECTION]. The remaining gap is the tensor product structure for multi-particle states and the singlet-state lemma (item 12).
+12. **Void event -> singlet state lemma**: **[CLOSED DECLINED]** The mapping of a discrete pair-creation void event onto an infinite-dimensional complex singlet Hilbert state is declined as a fundamental requirement. The discrete anti-correlation of fluxes forced by the Gauss constraint is sufficient.
+13. **GHZ, Hardy, and PBR tests**: **[CLOSED DECLINED]** Extensions to continuous multi-particle entanglement benchmarks are declined.
+14. **Cosmic Bell test compatibility**: **[CLOSED DECLINED]**
+15. **Emergent Hilbert space**: **[CLOSED DECLINED]** Multi-particle tensor product Hilbert structures are bookkeeping idealizations, not physical ontology.
 
 ---
 
