@@ -2,6 +2,7 @@ import { getChartsPanelTemplate } from './template.js';
 import { ChartCard } from './chart-card.js';
 import { charts as scale0Charts } from './descriptors/scale0.js';
 import { charts as scale1Charts } from './descriptors/scale1.js';
+import { charts as scale2Charts } from './descriptors/scale2.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
@@ -12,17 +13,28 @@ const LS_ACTIVE_PREFIX = 'ftd.charts.active.';
 const CHARTS_BY_SCALE = Object.freeze({
     '0': scale0Charts,
     '1': scale1Charts,
+    // Scales 2 (atoms) and 3 (molecules) share the AtomEngine and therefore
+    // the same chart descriptors / hub buffers.
+    '2': scale2Charts,
+    '3': scale2Charts,
 });
 
 function getScaleCharts(scale) {
     return CHARTS_BY_SCALE[String(scale)] || scale0Charts;
 }
 
-function loadActiveSet(defaults, scale) {
+function loadActiveSet(defaults, scale, descriptors) {
     try {
         let raw = localStorage.getItem(LS_ACTIVE_PREFIX + scale);
         if (!raw && String(scale) === '0') raw = localStorage.getItem(LS_ACTIVE_LEGACY);
-        if (raw) return new Set(JSON.parse(raw));
+        if (raw) {
+            // Intersect with the scale's current descriptor ids: before a scale
+            // had its own descriptors it fell back to scale-0 charts, so stored
+            // sets can hold foreign ids that would otherwise render zero cards.
+            const validIds = new Set(descriptors.map((c) => c.id));
+            const stored = new Set(JSON.parse(raw).filter((id) => validIds.has(id)));
+            if (stored.size > 0) return stored;
+        }
     } catch {}
     return new Set(defaults);
 }
@@ -65,7 +77,7 @@ export class ChartsPanelComponent {
         this.el.dataset.activeScale = scale;
 
         const defaults = this.descriptors.filter((c) => c.defaultActive).map((c) => c.id);
-        this.active = loadActiveSet(defaults, scale);
+        this.active = loadActiveSet(defaults, scale, this.descriptors);
 
         this._destroyAllCards();
         this._renderChipStrip();
