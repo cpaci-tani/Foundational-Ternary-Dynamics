@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mechanism β v2 — Back-Reaction & Threshold Shift</title>
+<!-- KaTeX for beautiful math formulas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+<style>
+  :root {
+    --bg-color: #06060a;
+    --card-bg: #0b0c10;
+    --border-color: #1b1e24;
+    --text-primary: #f0f3f6;
+    --text-secondary: #8b949e;
+    --accent-gold: #ffd54f;
+    --accent-cyan: #00e5ff;
+    --accent-red: #ff3333;
+    --accent-green: #33cc66;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  body {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  header {
+    background: linear-gradient(180deg, #0e1117 0%, var(--bg-color) 100%);
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px 24px;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 1.5em;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    background: linear-gradient(90deg, #fff, var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  header p {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+  }
+
+  .main-container {
+    display: flex;
+    flex: 1;
+    gap: 16px;
+    padding: 16px;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .col-sidebar {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .col-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .col-right {
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-title {
+    font-size: 0.75em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Custom tabs in Sidebar */
+  .case-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .case-btn {
+    background: #0d1117;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    font-size: 0.8em;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .case-btn:hover {
+    background: #161b22;
+    color: var(--text-primary);
+  }
+
+  .case-btn.active {
+    background: #1f242c;
+    border-color: var(--accent-gold);
+    color: var(--text-primary);
+    box-shadow: 0 0 8px rgba(255, 213, 79, 0.2);
+  }
+
+  .case-btn span.name {
+    font-weight: 600;
+  }
+
+  .case-btn span.desc {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+  }
+
+  /* Sliders and controls */
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .control-group label {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .control-group label span.val {
+    font-family: monospace;
+    color: var(--accent-gold);
+    font-weight: 600;
+  }
+
+  .control-group input[type=range] {
+    width: 100%;
+    accent-color: var(--accent-gold);
+    background: #161b22;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+  }
+
+  .toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.8em;
+  }
+
+  .toggle-container input[type=checkbox] {
+    accent-color: var(--accent-gold);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .btn {
+    flex: 1;
+    background: #21262d;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .btn:hover {
+    background: #30363d;
+  }
+
+  .btn.primary {
+    background: var(--accent-gold);
+    color: #000;
+    font-weight: 600;
+    border: none;
+  }
+
+  .btn.primary:hover {
+    background: #ffca28;
+  }
+
+  /* Visualizer Canvas container */
+  .canvas-container {
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #030305;
+    width: 600px;
+    height: 600px;
+    cursor: grab;
+  }
+
+  .canvas-container:active {
+    cursor: grabbing;
+  }
+
+  canvas {
+    display: block;
+  }
+
+  /* HUD overlay inside visualizer */
+  .hud-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(11, 12, 16, 0.85);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.72em;
+    pointer-events: none;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+  }
+
+  .hud-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .hud-label {
+    color: var(--text-secondary);
+  }
+
+  .hud-val {
+    font-weight: bold;
+    color: var(--text-primary);
+  }
+
+  .hud-val.gold { color: var(--accent-gold); }
+  .hud-val.cyan { color: var(--accent-cyan); }
+  .hud-val.red { color: var(--accent-red); }
+  .hud-val.green { color: var(--accent-green); }
+
+  .verdict-banner {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(11, 12, 16, 0.95);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px 24px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    width: 80%;
+  }
+
+  .verdict-banner.show {
+    opacity: 1;
+  }
+
+  .verdict-title {
+    font-size: 0.9em;
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .verdict-desc {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    line-height: 1.3;
+  }
+
+  /* Physics HUD right panel */
+  .formula-card {
+    font-size: 0.72em;
+    line-height: 1.5;
+  }
+
+  .formula-card p {
+    margin-bottom: 8px;
+  }
+
+  .formula-block {
+    background: #0d1117;
+    border-radius: 6px;
+    padding: 8px;
+    margin: 6px 0;
+    overflow-x: auto;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+  }
+
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+
+  .help-tip {
+    font-size: 0.7em;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MECH β v2: ENVELOPE BACK-REACTION</h1>
+  <p>Symplectic wave evolution, manifestation threshold shift, and discrete Gauss projection loop</p>
+</header>
+
+<div class="main-container">
+  
+  <!-- LEFT COLUMN: SIDEBAR CONTROLS -->
+  <div class="col-sidebar">
+    <div class="card">
+      <div class="card-title">Comparative Cases</div>
+      <div class="case-selector">
+        <button class="case-btn active" id="case1-btn" onclick="setCase(1)">
+          <span class="name">Case 1: Naive Envelope</span>
+          <span class="desc">Linear wave propagation without central back-reaction. Threshold is A ≈ 5.62.</span>
+        </button>
+        <button class="case-btn" id="case2-btn" onclick="setCase(2)">
+          <span class="name">Case 2: Drains Only</span>
+          <span class="desc">Kinetic energy (50%) and flux drains applied to central site upon manifestation.</span>
+        </button>
+        <button class="case-btn" id="case3-btn" onclick="setCase(3)">
+          <span class="name">Case 3: Full Back-Reaction</span>
+          <span class="desc">Drains + Gauss projection (subtracts ∇ϕ) subtracting Coulomb field. Shifts threshold to A ≈ 8.5.</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Simulation Parameters</div>
+      
+      <div class="control-group">
+        <label>Center Injection Amplitude A <span class="val" id="valA">8.50</span></label>
+        <input type="range" id="sliderA" min="1.0" max="12.0" step="0.1" value="8.5">
+      </div>
+
+      <div class="control-group">
+        <label>Langevin Temperature T_L <span class="val" id="valTemp">0.0050</span></label>
+        <input type="range" id="sliderTemp" min="0.0" max="0.015" step="0.0005" value="0.005">
+      </div>
+
+      <div class="toggle-container">
+        <span>Enable Langevin Noise</span>
+        <input type="checkbox" id="checkNoise" checked>
+      </div>
+
+      <div class="control-group">
+        <label>Simulation Speed <span class="val" id="valSpeed">1.0x</span></label>
+        <input type="range" id="sliderSpeed" min="0.1" max="2.0" step="0.1" value="1.0">
+      </div>
+
+      <div class="control-group">
+        <label>Render Grid Mode</label>
+        <select id="selectRenderMode" style="background:#0d1117; border:1px solid var(--border-color); color:var(--text-primary); padding:6px; border-radius:4px; font-size:0.85em;">
+          <option value="active">Active Nodes Only (|J| > 0.05)</option>
+          <option value="box">Central 7x7x7 Region</option>
+          <option value="full">Full 16x16x16 Grid (Faint)</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" id="play-btn" onclick="togglePlay()">Pause</button>
+        <button class="btn" onclick="stepSim()">Step</button>
+        <button class="btn" onclick="resetSim()">Reset</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">3D Camera View</div>
+      <div class="help-tip" style="text-align:left; line-height:1.4;">
+        Drag on the 3D visualizer to rotate the grid around the X/Y axes.<br><br>
+        Scroll/Pinch to zoom in/out.<br><br>
+        Double-click visualizer to reset camera to standard isometric view.
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER COLUMN: 3D GRID VISUALIZER -->
+  <div class="col-center">
+    <div class="canvas-container" id="canvas-container">
+      <canvas id="canvas3d" width="600" height="600"></canvas>
+      
+      <!-- HUD info overlay -->
+      <div class="hud-overlay">
+        <div class="hud-row">
+          <span class="hud-label">Tick / Steps:</span>
+          <span class="hud-val" id="hudTick">0 / 15</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">Center State s:</span>
+          <span class="hud-val cyan" id="hudCenterState">0</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">Center Flux |J_0|:</span>
+          <span class="hud-val gold" id="hudCenterJ">0.000</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">Neighbor Flux |J_1|:</span>
+          <span class="hud-val cyan" id="hudNeighborJ">0.000</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">K_genesis (Threshold):</span>
+          <span class="hud-val" style="color:var(--text-secondary)">1.533</span>
+        </div>
+        <div class="hud-row">
+          <span class="hud-label">Voxel Manifest Prob:</span>
+          <span class="hud-val red" id="hudManifestProb">0.0%</span>
+        </div>
+      </div>
+
+      <!-- Verdict Banner popup -->
+      <div class="verdict-banner" id="verdictBanner">
+        <div class="verdict-title" id="verdictTitle">THRESHOLD EXCEEDED</div>
+        <div class="verdict-desc" id="verdictDesc">The outgoing wave is strong enough to trigger neighbor voxel manifestation.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: GRAPH & THEORY -->
+  <div class="col-right">
+    <!-- Graph Card -->
+    <div class="card" style="flex: 1; min-height: 250px; display: flex; flex-direction: column;">
+      <div class="card-title">Flux Profile |J(r=1)| vs Tick</div>
+      <div style="flex:1; position:relative; min-height: 180px;">
+        <canvas id="graphCanvas" style="width:100%; height:100%; background:#07070a; border:1px solid var(--border-color); border-radius:4px;"></canvas>
+      </div>
+    </div>
+
+    <!-- Physics Rules card -->
+    <div class="card formula-card">
+      <div class="card-title">Mathematical Physics</div>
+      <p>The 3D wave equations propagation is governed by the 18-point discrete Laplacian stencil:</p>
+      <div class="formula-block">
+        $$\alpha = \frac{1}{18}$$
+        $$\nabla^2_{18} J_c = 2\sum_{\text{Faces}} J_f + \sum_{\text{Edges}} J_e - 24 J_c$$
+        $$v(t+1) = v(t) + \alpha \nabla^2_{18} J(t)$$
+        $$J(t+1) = J(t) + v(t+1)$$
+      </div>
+      <p>Under Case 3, central manifestation locks a charge \(s = -1\). The Gauss projection subtracts the static field gradient:</p>
+      <div class="formula-block">
+        $$\nabla^2_{18} \phi = \text{div}(J) - s$$
+        $$J \leftarrow J - \nabla \phi \quad (\text{for } s == 0 \text{ sites})$$
+      </div>
+      <div class="card-title" style="margin-top: 10px; border-bottom: none; padding-bottom: 0;">Color Codes</div>
+      <div class="legend-row">
+        <div class="legend-color" style="background: var(--text-secondary);"></div>
+        <span>Void Voxel (\(s=0, |J| < 0.05\))</span>
+      </div>
+      <div class="legend-row">
+        <div class="legend-color" style="background: var(--accent-cyan); box-shadow: 0 0 6px var(--accent-cyan);"></div>
+        <span>Manifested Center Voxel (\(s=-1\))</span>
+      </div>
+      <div class="legend-row">
+        <div class="legend-color" style="background: #3b5998;"></div>
+        <span>Wavefront (\(0.05 \le |J| < 1.533\))</span>
+      </div>
+      <div class="legend-row">
+        <div class="legend-color" style="background: var(--accent-red); box-shadow: 0 0 6px var(--accent-red);"></div>
+        <span>Triggered Neighbor Voxel (\(|J| \ge 1.533\))</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // === CONSTANTS & SIMULATION SETUP ===
+  const L = 16;             // grid size
+  const SIZE = L * L * L;
+  const C = 8;              // center coordinate
+  const ALPHA = 1.0 / 18.0;
+  const K_GENESIS = 1.533;
+  const K_MANIFEST = 0.511;
+
+  // Stencil coordinates relative offset
+  const L2 = L * L;
+  const L_MINUS_1 = L - 1;
+
+  // Center voxel flat index
+  const centerIdx = C * L2 + C * L + C;
+
+  // Neighbors indices
+  const neighborIndices = [
+    (C+1) * L2 + C * L + C,
+    (C-1) * L2 + C * L + C,
+    C * L2 + (C+1) * L + C,
+    C * L2 + (C-1) * L + C,
+    C * L2 + C * L + (C+1),
+    C * L2 + C * L + (C-1)
+  ];
+
+  // Fields
+  let jx = new Float32Array(SIZE);
+  let jy = new Float32Array(SIZE);
+  let jz = new Float32Array(SIZE);
+
+  let vx = new Float32Array(SIZE);
+  let vy = new Float32Array(SIZE);
+  let vz = new Float32Array(SIZE);
+
+  let state = new Int8Array(SIZE);
+  let div = new Float32Array(SIZE);
+  let phi = new Float32Array(SIZE);
+
+  // Temporary arrays for stencil calculation
+  let lapX = new Float32Array(SIZE);
+  let lapY = new Float32Array(SIZE);
+  let lapZ = new Float32Array(SIZE);
+
+  // Simulation parameters
+  let paramA = 8.5;
+  let paramTemp = 0.005;
+  let paramNoise = true;
+  let paramCase = 1;
+  let paramSpeed = 1.0;
+  let paramRenderMode = 'active'; // 'active', 'box', 'full'
+
+  // State flags
+  let tick = 0;
+  let centerManifested = false;
+  let isPlaying = true;
+  let loopTimer = 0; // used to wait at tick 15
+
+  // History tracking for chart
+  let historyTicks = [];
+  let historyJ1 = [];
+
+  // Webgl/Canvas mouse interaction
+  let pitch = 0.6154; // standard isometric elevation (~35.26 deg)
+  let yaw = Math.PI / 4;    // standard isometric azimuth (45 deg)
+  let zoom = 1.1;
+  let isDragging = false;
+  let prevMouseX = 0;
+  let prevMouseY = 0;
+
+  // Normal distribution Box-Muller generator
+  function randomNormal() {
+    let u = 0, v = 0;
+    while(u === 0) u = Math.random();
+    while(v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  }
+
+  // Index helper with periodic boundary checks
+  function idx(x, y, z) {
+    x = (x + L) % L;
+    y = (y + L) % L;
+    z = (z + L) % L;
+    return x * L2 + y * L + z;
+  }
+
+  // Stencil computation
+  function computeLaplacian(f, lap) {
+    for (let x = 0; x < L; x++) {
+      const xm1 = (x > 0 ? x - 1 : L_MINUS_1) * L2;
+      const xp1 = (x < L_MINUS_1 ? x + 1 : 0) * L2;
+      const x_coord = x * L2;
+
+      for (let y = 0; y < L; y++) {
+        const ym1 = (y > 0 ? y - 1 : L_MINUS_1) * L;
+        const yp1 = (y < L_MINUS_1 ? y + 1 : 0) * L;
+        const y_coord = y * L;
+
+        for (let z = 0; z < L; z++) {
+          const zm1 = z > 0 ? z - 1 : L_MINUS_1;
+          const zp1 = z < L_MINUS_1 ? z + 1 : 0;
+          const z_coord = z;
+
+          const i = x_coord + y_coord + z_coord;
+
+          // -24 * f_c
+          let val = -24.0 * f[i];
+
+          // 6 Faces (weight 2.0)
+          val += 2.0 * (
+            f[xm1 + y_coord + z_coord] + f[xp1 + y_coord + z_coord] +
+            f[x_coord + ym1 + z_coord] + f[x_coord + yp1 + z_coord] +
+            f[x_coord + y_coord + zm1] + f[x_coord + y_coord + zp1]
+          );
+
+          // 12 Edges (weight 1.0)
+          // XY plane
+          val += f[xm1 + ym1 + z_coord] + f[xm1 + yp1 + z_coord] +
+                 f[xp1 + ym1 + z_coord] + f[xp1 + yp1 + z_coord];
+          // XZ plane
+          val += f[xm1 + y_coord + zm1] + f[xm1 + y_coord + zp1] +
+                 f[xp1 + y_coord + zm1] + f[xp1 + y_coord + zp1];
+          // YZ plane
+          val += f[x_coord + ym1 + zm1] + f[x_coord + ym1 + zp1] +
+                 f[x_coord + yp1 + zm1] + f[x_coord + yp1 + zp1];
+
+          lap[i] = val;
+        }
+      }
+    }
+  }
+
+  // Poisson solver (checkerboard Red-Black SOR)
+  function solvePoissonSOR(divField, stateField, phiField, maxIters = 6, omega = 1.75) {
+    phiField.fill(0.0);
+
+    let sumState = 0;
+    for (let i = 0; i < SIZE; i++) sumState += stateField[i];
+    const meanCharge = sumState / SIZE;
+
+    const source = new Float32Array(SIZE);
+    for (let i = 0; i < SIZE; i++) {
+      source[i] = divField[i] - (stateField[i] - meanCharge);
+    }
+
+    for (let iter = 0; iter < maxIters; iter++) {
+      for (let parity = 0; parity < 2; parity++) {
+        for (let x = 0; x < L; x++) {
+          const xm1 = (x > 0 ? x - 1 : L_MINUS_1) * L2;
+          const xp1 = (x < L_MINUS_1 ? x + 1 : 0) * L2;
+          const x_coord = x * L2;
+
+          for (let y = 0; y < L; y++) {
+            const ym1 = (y > 0 ? y - 1 : L_MINUS_1) * L;
+            const yp1 = (y < L_MINUS_1 ? y + 1 : 0) * L;
+            const y_coord = y * L;
+
+            for (let z = 0; z < L; z++) {
+              if ((x + y + z) % 2 !== parity) continue;
+
+              const zm1 = z > 0 ? z - 1 : L_MINUS_1;
+              const zp1 = z < L_MINUS_1 ? z + 1 : 0;
+              const z_coord = z;
+
+              const i = x_coord + y_coord + z_coord;
+
+              let face_sum = phiField[xm1 + y_coord + z_coord] + phiField[xp1 + y_coord + z_coord] +
+                             phiField[x_coord + ym1 + z_coord] + phiField[x_coord + yp1 + z_coord] +
+                             phiField[x_coord + y_coord + zm1] + phiField[x_coord + y_coord + zp1];
+
+              let edge_sum = phiField[xm1 + ym1 + z_coord] + phiField[xm1 + yp1 + z_coord] +
+                             phiField[xp1 + ym1 + z_coord] + phiField[xp1 + yp1 + z_coord] +
+                             phiField[xm1 + y_coord + zm1] + phiField[xm1 + y_coord + zp1] +
+                             phiField[xp1 + y_coord + zm1] + phiField[xp1 + y_coord + zp1] +
+                             phiField[x_coord + ym1 + zm1] + phiField[x_coord + ym1 + zp1] +
+                             phiField[x_coord + yp1 + zm1] + phiField[x_coord + yp1 + zp1];
+
+              const gs = (face_sum / 3.0 + edge_sum / 6.0 - source[i]) / 4.0;
+              phiField[i] += omega * (gs - phiField[i]);
+            }
+          }
+        }
+      }
+    }
+
+    let sumPhi = 0;
+    for (let i = 0; i < SIZE; i++) sumPhi += phiField[i];
+    const meanPhi = sumPhi / SIZE;
+    for (let i = 0; i < SIZE; i++) phiField[i] -= meanPhi;
+  }
+
+  function computeDivergence(jx, jy, jz, divField) {
+    for (let x = 0; x < L; x++) {
+      const xm1 = (x > 0 ? x - 1 : L_MINUS_1) * L2;
+      const xp1 = (x < L_MINUS_1 ? x + 1 : 0) * L2;
+      const x_coord = x * L2;
+
+      for (let y = 0; y < L; y++) {
+        const ym1 = (y > 0 ? y - 1 : L_MINUS_1) * L;
+        const yp1 = (y < L_MINUS_1 ? y + 1 : 0) * L;
+        const y_coord = y * L;
+
+        for (let z = 0; z < L; z++) {
+          const zm1 = z > 0 ? z - 1 : L_MINUS_1;
+          const zp1 = z < L_MINUS_1 ? z + 1 : 0;
+          const z_coord = z;
+
+          const i = x_coord + y_coord + z_coord;
+
+          const jx_xp1 = jx[xp1 + y_coord + z_coord];
+          const jx_xm1 = jx[xm1 + y_coord + z_coord];
+          const jy_yp1 = jy[x_coord + yp1 + z_coord];
+          const jy_ym1 = jy[x_coord + ym1 + z_coord];
+          const jz_zp1 = jz[x_coord + y_coord + zp1];
+          const jz_zm1 = jz[x_coord + y_coord + zm1];
+
+          divField[i] = 0.5 * (jx_xp1 - jx_xm1) + 
+                       0.5 * (jy_yp1 - jy_ym1) + 
+                       0.5 * (jz_zp1 - jz_zm1);
+        }
+      }
+    }
+  }
+
+  function applyGaussProjection(jx, jy, jz, phiField, stateField) {
+    for (let x = 0; x < L; x++) {
+      const xm1 = (x > 0 ? x - 1 : L_MINUS_1) * L2;
+      const xp1 = (x < L_MINUS_1 ? x + 1 : 0) * L2;
+      const x_coord = x * L2;
+
+      for (let y = 0; y < L; y++) {
+        const ym1 = (y > 0 ? y - 1 : L_MINUS_1) * L;
+        const yp1 = (y < L_MINUS_1 ? y + 1 : 0) * L;
+        const y_coord = y * L;
+
+        for (let z = 0; z < L; z++) {
+          const zm1 = z > 0 ? z - 1 : L_MINUS_1;
+          const zp1 = z < L_MINUS_1 ? z + 1 : 0;
+          const z_coord = z;
+
+          const i = x_coord + y_coord + z_coord;
+
+          if (stateField[i] === 0) {
+            const grad_phix = 0.5 * (phiField[xp1 + y_coord + z_coord] - phiField[xm1 + y_coord + z_coord]);
+            const grad_phiy = 0.5 * (phiField[x_coord + yp1 + z_coord] - phiField[x_coord + ym1 + z_coord]);
+            const grad_phiz = 0.5 * (phiField[x_coord + y_coord + zp1] - phiField[x_coord + y_coord + zm1]);
+
+            jx[i] -= grad_phix;
+            jy[i] -= grad_phiy;
+            jz[i] -= grad_phiz;
+          }
+        }
+      }
+    }
+  }
+
+  // Reset function
+  function resetSim() {
+    tick = 0;
+    centerManifested = false;
+    loopTimer = 0;
+
+    jx.fill(0.0);
+    jy.fill(0.0);
+    jz.fill(0.0);
+    vx.fill(0.0);
+    vy.fill(0.0);
+    vz.fill(0.0);
+    state.fill(0);
+    div.fill(0.0);
+    phi.fill(0.0);
+
+    // Initial Injection at Center
+    jx[centerIdx] = paramA * K_GENESIS;
+
+    // Reset History
+    historyTicks = [0];
+    historyJ1 = [0.0];
+
+    document.getElementById('verdictBanner').classList.remove('show');
+    updateHUD();
+    drawGraph();
+  }
+
+  // Single step of wave evolution
+  function stepSim() {
+    if (tick >= 15) return;
+
+    // 1. Read phase: Laplacians
+    computeLaplacian(jx, lapX);
+    computeLaplacian(jy, lapY);
+    computeLaplacian(jz, lapZ);
+
+    // 2. Write phase: update velocity and flux
+    for (let i = 0; i < SIZE; i++) {
+      vx[i] += ALPHA * lapX[i];
+      vy[i] += ALPHA * lapY[i];
+      vz[i] += ALPHA * lapZ[i];
+
+      jx[i] += vx[i];
+      jy[i] += vy[i];
+      jz[i] += vz[i];
+    }
+
+    // 3. Langevin noise (optional thermal fluctuations)
+    if (paramNoise && paramTemp > 0) {
+      const sigmaJ = Math.sqrt(2.0 / 3.0 * paramTemp);
+      for (let i = 0; i < SIZE; i++) {
+        jx[i] += randomNormal() * sigmaJ;
+        jy[i] += randomNormal() * sigmaJ;
+        jz[i] += randomNormal() * sigmaJ;
+      }
+    }
+
+    // 4. Genesis check (Center Manifestation at t=1)
+    if (tick === 0 && paramCase > 1) { // checking center after tick 0 propagation
+      const jmag_center = Math.sqrt(jx[centerIdx]**2 + jy[centerIdx]**2 + jz[centerIdx]**2);
+      if (jmag_center > K_GENESIS) {
+        const p_man = 1.0 - Math.exp(-(jmag_center - K_GENESIS) / K_MANIFEST);
+        // Stochastically trigger center manifestation
+        if (Math.random() < p_man) {
+          centerManifested = true;
+          state[centerIdx] = -1; // Charge manifestation (negative)
+
+          // Kinetic Velocity Drain (50% reduction)
+          vx[centerIdx] *= 0.5;
+          vy[centerIdx] *= 0.5;
+          vz[centerIdx] *= 0.5;
+
+          // Latent Heat (Flux Drain)
+          const drain = Math.max(0.0, 1.0 - K_GENESIS / jmag_center);
+          jx[centerIdx] *= drain;
+          jy[centerIdx] *= drain;
+          jz[centerIdx] *= drain;
+        }
+      }
+    }
+
+    // 5. Gauss projection (only in Case 3 and if manifested)
+    if (centerManifested && paramCase === 3) {
+      computeDivergence(jx, jy, jz, div);
+      solvePoissonSOR(div, state, phi, 6, 1.75);
+      applyGaussProjection(jx, jy, jz, phi, state);
+    }
+
+    // Measure average nearest neighbor flux
+    let sumJ1 = 0;
+    for (let i = 0; i < neighborIndices.length; i++) {
+      const idx = neighborIndices[i];
+      sumJ1 += Math.sqrt(jx[idx]**2 + jy[idx]**2 + jz[idx]**2);
+    }
+    const avgJ1 = sumJ1 / 6.0;
+
+    tick++;
+    historyTicks.push(tick);
+    historyJ1.push(avgJ1);
+
+    updateHUD();
+    drawGraph();
+
+    // Check end condition
+    if (tick === 15) {
+      triggerVerdict(avgJ1);
+    }
+  }
+
+  // Verdict calculation at Tick 15
+  function triggerVerdict(finalJ1) {
+    const banner = document.getElementById('verdictBanner');
+    const title = document.getElementById('verdictTitle');
+    const desc = document.getElementById('verdictDesc');
+
+    // Calculate manifestation probability at neighbor (Monte Carlo simulation over Langevin noise)
+    const samples = 100;
+    let sumProb = 0;
+    const sigmaJ = Math.sqrt(2.0 / 3.0 * paramTemp);
+
+    for (let s = 0; s < samples; s++) {
+      let rx = finalJ1 + (paramNoise ? randomNormal() * sigmaJ : 0);
+      let ry = (paramNoise ? randomNormal() * sigmaJ : 0);
+      let rz = (paramNoise ? randomNormal() * sigmaJ : 0);
+      let mag = Math.sqrt(rx*rx + ry*ry + rz*rz);
+      let excess = Math.max(0.0, mag - K_GENESIS);
+      sumProb += 1.0 - Math.exp(-excess / K_MANIFEST);
+    }
+    const P_manifest = sumProb / samples;
+
+    document.getElementById('hudManifestProb').textContent = (P_manifest * 100).toFixed(1) + '%';
+
+    if (P_manifest > 0.05) {
+      banner.style.borderColor = 'var(--accent-red)';
+      title.textContent = "SECOND SHELL MANIFESTED";
+      title.style.color = "var(--accent-red)";
+      desc.textContent = `At A = ${paramA.toFixed(1)}, the neighbor flux reaches a peak of ${finalJ1.toFixed(3)}, exceeding the genesis threshold with a probability of ${(P_manifest * 100).toFixed(1)}%.`;
+    } else {
+      banner.style.borderColor = 'var(--accent-green)';
+      title.textContent = "SECOND SHELL SUPPRESSED";
+      title.style.color = "var(--accent-green)";
+      desc.textContent = `Central back-reactions successfully drained the outgoing wave. Peak neighbor flux is restricted to ${finalJ1.toFixed(3)} (manifestation prob: ${(P_manifest * 100).toFixed(1)}%).`;
+    }
+
+    banner.classList.add('show');
+  }
+
+  function updateHUD() {
+    document.getElementById('hudTick').textContent = `${tick} / 15`;
+    document.getElementById('hudCenterState').textContent = centerManifested ? "-1 (Manifested)" : "0 (Void)";
+    
+    const centerJ = Math.sqrt(jx[centerIdx]**2 + jy[centerIdx]**2 + jz[centerIdx]**2);
+    document.getElementById('hudCenterJ').textContent = centerJ.toFixed(3);
+
+    let sumJ1 = 0;
+    for (let i = 0; i < neighborIndices.length; i++) {
+      const idx = neighborIndices[i];
+      sumJ1 += Math.sqrt(jx[idx]**2 + jy[idx]**2 + jz[idx]**2);
+    }
+    const avgJ1 = sumJ1 / 6.0;
+    document.getElementById('hudNeighborJ').textContent = avgJ1.toFixed(3);
+
+    // Calculate instantaneous probability
+    const excess = Math.max(0.0, avgJ1 - K_GENESIS);
+    const instProb = 1.0 - Math.exp(-excess / K_MANIFEST);
+    document.getElementById('hudManifestProb').textContent = (instProb * 100).toFixed(1) + '%';
+  }
+
+  // === 3D RENDER ENGINE (GLOSSY SPHERES & WIRES) ===
+  const canvas3d = document.getElementById('canvas3d');
+  const ctx3d = canvas3d.getContext('2d');
+  const cx = canvas3d.width / 2;
+  const cy = canvas3d.height / 2;
+
+  function project3D(dx, dy, dz) {
+    // scale coordinates
+    const scaleFactor = 22 * zoom;
+
+    // Yaw rotation (azimuth)
+    const cosY = Math.cos(yaw);
+    const sinY = Math.sin(yaw);
+    const x1 = dx * cosY - dy * sinY;
+    const y1 = dx * sinY + dy * cosY;
+    const z1 = dz;
+
+    // Pitch rotation (elevation)
+    const cosP = Math.cos(pitch);
+    const sinP = Math.sin(pitch);
+    const x2 = x1;
+    const y2 = y1 * cosP - z1 * sinP;
+    const z2 = y1 * sinP + z1 * cosP;
+
+    return {
+      x: cx + x2 * scaleFactor,
+      y: cy + y2 * scaleFactor,
+      depth: z2
+    };
+  }
+
+  function drawGlossySphere(ctx, px, py, r, h, s, l, opacity = 1.0) {
+    ctx.beginPath();
+    ctx.arc(px, py, r, 0, 2 * Math.PI);
+    
+    const grad = ctx.createRadialGradient(
+      px - r * 0.3, py - r * 0.3, r * 0.1,
+      px, py, r
+    );
+    grad.addColorStop(0, `hsla(0, 0%, 100%, ${opacity})`);
+    grad.addColorStop(0.3, `hsla(${h}, ${s}%, ${l}%, ${opacity})`);
+    grad.addColorStop(1, `hsla(${h}, ${s}%, ${l * 0.4}%, ${opacity})`);
+    
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Subtle edge outline
+    ctx.strokeStyle = `rgba(0, 0, 0, ${opacity * 0.4})`;
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  function render3DGrid() {
+    ctx3d.clearRect(0, 0, canvas3d.width, canvas3d.height);
+    
+    // Draw background subtle gradient
+    ctx3d.fillStyle = '#030305';
+    ctx3d.fillRect(0, 0, canvas3d.width, canvas3d.height);
+
+    // Draw camera rotate helper text
+    ctx3d.fillStyle = 'var(--text-secondary)';
+    ctx3d.font = '10px monospace';
+    ctx3d.textAlign = 'center';
+    ctx3d.fillText("ROTATE: Drag Mouse  |  ZOOM: Scroll", cx, canvas3d.height - 15);
+
+    // Filter nodes to render depending on parameter settings
+    const drawList = [];
+    const minD = -4, maxD = 4; // Render region size
+
+    for (let dx = minD; dx <= maxD; dx++) {
+      for (let dy = minD; dy <= maxD; dy++) {
+        for (let dz = minD; dz <= maxD; dz++) {
+          const flatI = idx(C + dx, C + dy, C + dz);
+          const stateVal = state[flatI];
+          const Jmag = Math.sqrt(jx[flatI]**2 + jy[flatI]**2 + jz[flatI]**2);
+
+          let shouldRender = false;
+          if (paramRenderMode === 'full') {
+            shouldRender = true;
+          } else if (paramRenderMode === 'box') {
+            if (Math.abs(dx) <= 3 && Math.abs(dy) <= 3 && Math.abs(dz) <= 3) {
+              shouldRender = true;
+            }
+          } else if (paramRenderMode === 'active') {
+            // center voxel, neighbors, or any voxel with significant flux
+            if ((dx === 0 && dy === 0 && dz === 0) || Jmag > 0.05 || stateVal !== 0) {
+              shouldRender = true;
+            }
+          }
+
+          if (shouldRender) {
+            const proj = project3D(dx, dy, dz);
+            drawList.push({
+              dx, dy, dz,
+              px: proj.x,
+              py: proj.y,
+              depth: proj.depth,
+              stateVal,
+              Jmag,
+              flatI
+            });
+          }
+        }
+      }
+    }
+
+    // Sort by depth (ascending: back to front)
+    drawList.sort((a, b) => a.depth - b.depth);
+
+    // Draw faint grid lines first if rendering box or full grid
+    if (paramRenderMode !== 'active') {
+      ctx3d.strokeStyle = 'rgba(27, 30, 36, 0.25)';
+      ctx3d.lineWidth = 0.5;
+      for (let i = 0; i < drawList.length; i++) {
+        const nodeA = drawList[i];
+        // Check neighbors to the right/up/front
+        for (let j = i + 1; j < drawList.length; j++) {
+          const nodeB = drawList[j];
+          const dist = Math.abs(nodeA.dx - nodeB.dx) + Math.abs(nodeA.dy - nodeB.dy) + Math.abs(nodeA.dz - nodeB.dz);
+          if (dist === 1) {
+            ctx3d.beginPath();
+            ctx3d.moveTo(nodeA.px, nodeA.py);
+            ctx3d.lineTo(nodeB.px, nodeB.py);
+            ctx3d.stroke();
+          }
+        }
+      }
+    }
+
+    // Draw nodes and flux vectors
+    for (let i = 0; i < drawList.length; i++) {
+      const node = drawList[i];
+      const Jmag = node.Jmag;
+
+      // Draw flux vector arrows if flux is active
+      if (Jmag > 0.08) {
+        const fI = node.flatI;
+        const Jx_val = jx[fI];
+        const Jy_val = jy[fI];
+        const Jz_val = jz[fI];
+
+        // Project arrow tip
+        const arrowScale = 12 / Jmag; // normalize arrow length slightly for visualization
+        const tipProj = project3D(
+          node.dx + Jx_val * arrowScale * 0.1, 
+          node.dy + Jy_val * arrowScale * 0.1, 
+          node.dz + Jz_val * arrowScale * 0.1
+        );
+
+        ctx3d.beginPath();
+        ctx3d.moveTo(node.px, node.py);
+        ctx3d.lineTo(tipProj.x, tipProj.y);
+
+        // Vector color proportional to magnitude (blue to red)
+        const hue = Math.max(0, 220 - (Jmag / K_GENESIS) * 220);
+        ctx3d.strokeStyle = `hsla(${hue}, 80%, 55%, ${Math.min(1.0, Jmag * 2)})`;
+        ctx3d.lineWidth = 1 + Jmag * 1.5;
+        ctx3d.stroke();
+
+        // Arrow head dot
+        ctx3d.beginPath();
+        ctx3d.arc(tipProj.x, tipProj.y, 1.5, 0, 2 * Math.PI);
+        ctx3d.fillStyle = `hsla(${hue}, 80%, 55%, ${Math.min(1.0, Jmag * 2)})`;
+        ctx3d.fill();
+      }
+
+      // Draw Voxel Sphere
+      let r = 4;
+      let h = 220, s = 10, l = 35; // default faint grey
+      let opacity = 0.25;
+
+      if (node.dx === 0 && node.dy === 0 && node.dz === 0) {
+        // Center Voxel
+        r = 12;
+        opacity = 1.0;
+        if (node.stateVal === -1) {
+          h = 180; s = 100; l = 50; // Cyan charge s = -1
+        } else {
+          h = 45; s = 80; l = 55;  // Inactive Gold
+        }
+      } else if (Jmag > 0.05) {
+        // Wavefront
+        r = 5 + Math.min(6, Jmag * 3.5);
+        opacity = Math.min(0.95, 0.4 + Jmag * 0.5);
+
+        if (Jmag >= K_GENESIS) {
+          h = 0; s = 100; l = 50; // Manifesting neighbor (Red)
+        } else {
+          // Color based on flux strength (cyan -> blue -> orange)
+          h = Math.max(0, 200 - (Jmag / K_GENESIS) * 160);
+          s = 85;
+          l = 50;
+        }
+      } else if (paramRenderMode === 'full') {
+        opacity = 0.1;
+        r = 2;
+      } else if (paramRenderMode === 'box') {
+        opacity = 0.15;
+        r = 3;
+      }
+
+      drawGlossySphere(ctx3d, node.px, node.py, r, h, s, l, opacity);
+
+      // Label nearest neighbors when active
+      if (Math.abs(node.dx) + Math.abs(node.dy) + Math.abs(node.dz) === 1 && Jmag > 0.2) {
+        ctx3d.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx3d.font = '8px monospace';
+        ctx3d.textAlign = 'center';
+        ctx3d.fillText(`r=1`, node.px, node.py - r - 2);
+      }
+    }
+  }
+
+  // === CUSTOM GRAPH PLOTTER ===
+  const graphCanvas = document.getElementById('graphCanvas');
+  const graphCtx = graphCanvas.getContext('2d');
+
+  function drawGraph() {
+    const W = graphCanvas.width = graphCanvas.parentElement.clientWidth;
+    const H = graphCanvas.height = graphCanvas.parentElement.clientHeight;
+    
+    graphCtx.clearRect(0, 0, W, H);
+    graphCtx.fillStyle = '#07070a';
+    graphCtx.fillRect(0, 0, W, H);
+
+    const margin = { top: 20, right: 15, bottom: 25, left: 35 };
+    const chartW = W - margin.left - margin.right;
+    const chartH = H - margin.top - margin.bottom;
+
+    // Draw grid lines and axes
+    graphCtx.strokeStyle = '#1b1e24';
+    graphCtx.lineWidth = 1;
+    graphCtx.beginPath();
+    graphCtx.moveTo(margin.left, margin.top);
+    graphCtx.lineTo(margin.left, H - margin.bottom);
+    graphCtx.lineTo(W - margin.right, H - margin.bottom);
+    graphCtx.stroke();
+
+    // Y-Axis Ticks (from 0.0 to 4.0)
+    graphCtx.fillStyle = 'var(--text-secondary)';
+    graphCtx.font = '9px monospace';
+    graphCtx.textAlign = 'right';
+    graphCtx.textBaseline = 'middle';
+    
+    const maxVal = 4.0;
+    for (let i = 0; i <= 4; i++) {
+      const val = (i * maxVal) / 4;
+      const y = H - margin.bottom - (val / maxVal) * chartH;
+      graphCtx.fillText(val.toFixed(1), margin.left - 6, y);
+      
+      // Horizontal grid line
+      if (i > 0) {
+        graphCtx.strokeStyle = 'rgba(27, 30, 36, 0.4)';
+        graphCtx.beginPath();
+        graphCtx.moveTo(margin.left, y);
+        graphCtx.lineTo(W - margin.right, y);
+        graphCtx.stroke();
+      }
+    }
+
+    // X-Axis Ticks (from 0 to 15)
+    graphCtx.textAlign = 'center';
+    graphCtx.textBaseline = 'top';
+    for (let t = 0; t <= 15; t += 3) {
+      const x = margin.left + (t / 15) * chartW;
+      graphCtx.fillText(t.toString(), x, H - margin.bottom + 6);
+    }
+
+    // Draw Genesis Threshold line (Y = 1.533)
+    const yThreshold = H - margin.bottom - (K_GENESIS / maxVal) * chartH;
+    graphCtx.strokeStyle = 'var(--accent-red)';
+    graphCtx.lineWidth = 1;
+    graphCtx.setLineDash([4, 4]);
+    graphCtx.beginPath();
+    graphCtx.moveTo(margin.left, yThreshold);
+    graphCtx.lineTo(W - margin.right, yThreshold);
+    graphCtx.stroke();
+    graphCtx.setLineDash([]);
+
+    graphCtx.fillStyle = 'var(--accent-red)';
+    graphCtx.font = '8px monospace';
+    graphCtx.textAlign = 'right';
+    graphCtx.fillText(`K_genesis = 1.533`, W - margin.right - 4, yThreshold - 6);
+
+    // Plot Data line
+    if (historyTicks.length > 0) {
+      graphCtx.beginPath();
+      for (let i = 0; i < historyTicks.length; i++) {
+        const x = margin.left + (historyTicks[i] / 15) * chartW;
+        const y = H - margin.bottom - (historyJ1[i] / maxVal) * chartH;
+        if (i === 0) graphCtx.moveTo(x, y);
+        else graphCtx.lineTo(x, y);
+      }
+
+      let strokeColor = 'var(--accent-cyan)';
+      if (paramCase === 1) strokeColor = 'var(--text-primary)';
+      else if (paramCase === 2) strokeColor = 'var(--accent-gold)';
+
+      graphCtx.strokeStyle = strokeColor;
+      graphCtx.lineWidth = 2.5;
+      graphCtx.stroke();
+
+      // Shaded area under curve
+      graphCtx.lineTo(margin.left + (historyTicks[historyTicks.length-1] / 15) * chartW, H - margin.bottom);
+      graphCtx.lineTo(margin.left, H - margin.bottom);
+      const grad = graphCtx.createLinearGradient(0, margin.top, 0, H - margin.bottom);
+      grad.addColorStop(0, strokeColor.replace(')', ', 0.15)'));
+      grad.addColorStop(1, strokeColor.replace(')', ', 0.0)'));
+      graphCtx.fillStyle = grad;
+      graphCtx.fill();
+    }
+  }
+
+  // === INTERACTIVE EVENT LISTENERS ===
+  const sliderA = document.getElementById('sliderA');
+  const sliderTemp = document.getElementById('sliderTemp');
+  const sliderSpeed = document.getElementById('sliderSpeed');
+  const checkNoise = document.getElementById('checkNoise');
+  const selectRenderMode = document.getElementById('selectRenderMode');
+  const playBtn = document.getElementById('play-btn');
+
+  sliderA.addEventListener('input', (e) => {
+    paramA = parseFloat(e.target.value);
+    document.getElementById('valA').textContent = paramA.toFixed(2);
+    resetSim();
+  });
+
+  sliderTemp.addEventListener('input', (e) => {
+    paramTemp = parseFloat(e.target.value);
+    document.getElementById('valTemp').textContent = paramTemp.toFixed(4);
+    updateHUD();
+  });
+
+  sliderSpeed.addEventListener('input', (e) => {
+    paramSpeed = parseFloat(e.target.value);
+    document.getElementById('valSpeed').textContent = paramSpeed.toFixed(1) + 'x';
+  });
+
+  checkNoise.addEventListener('change', (e) => {
+    paramNoise = e.target.checked;
+  });
+
+  selectRenderMode.addEventListener('change', (e) => {
+    paramRenderMode = e.target.value;
+  });
+
+  function setCase(c) {
+    paramCase = c;
+    document.getElementById('case1-btn').classList.toggle('active', c === 1);
+    document.getElementById('case2-btn').classList.toggle('active', c === 2);
+    document.getElementById('case3-btn').classList.toggle('active', c === 3);
+    resetSim();
+  }
+
+  function togglePlay() {
+    isPlaying = !isPlaying;
+    playBtn.textContent = isPlaying ? "Pause" : "Play";
+  }
+
+  // Mouse Drag to Rotate Camera
+  canvas3d.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    prevMouseX = e.clientX;
+    prevMouseY = e.clientY;
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+
+  canvas3d.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - prevMouseX;
+    const deltaY = e.clientY - prevMouseY;
+    
+    yaw += deltaX * 0.007;
+    pitch += deltaY * 0.007;
+    
+    // limit pitch to prevent flipping upside down
+    pitch = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, pitch));
+
+    prevMouseX = e.clientX;
+    prevMouseY = e.clientY;
+  });
+
+  // Scroll to zoom
+  canvas3d.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    zoom -= e.deltaY * 0.001;
+    zoom = Math.max(0.4, Math.min(3.0, zoom));
+  });
+
+  // Double click reset camera
+  canvas3d.addEventListener('dblclick', () => {
+    pitch = 0.6154;
+    yaw = Math.PI / 4;
+    zoom = 1.1;
+  });
+
+  // === MAIN GAME LOOP ===
+  let lastTime = 0;
+  let accumulatedTime = 0;
+
+  function mainLoop(time) {
+    if (!lastTime) lastTime = time;
+    const deltaTime = time - lastTime;
+    lastTime = time;
+
+    if (isPlaying) {
+      accumulatedTime += deltaTime * paramSpeed;
+      // Fixed timestep of 100ms per tick (10 ticks/sec at 1.0x speed)
+      const stepTime = 120; // ms
+      
+      while (accumulatedTime >= stepTime) {
+        accumulatedTime -= stepTime;
+        if (tick < 15) {
+          stepSim();
+        } else {
+          // Wait at final frame before looping
+          loopTimer += stepTime;
+          if (loopTimer >= 2200) { // 2.2 seconds pause
+            resetSim();
+          }
+        }
+      }
+    }
+
+    render3DGrid();
+    requestAnimationFrame(mainLoop);
+  }
+
+  // Initial call
+  resetSim();
+  requestAnimationFrame(mainLoop);
+  
+</script>
+</body>
+</html>
