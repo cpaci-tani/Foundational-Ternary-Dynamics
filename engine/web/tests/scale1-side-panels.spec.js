@@ -145,6 +145,12 @@ test.describe('Scale 1 side panels', () => {
         // radiation, so its total energy (and thus drift) moves a lot...
         await runScale1(page, 'pe-micro-bh');
 
+        // Telemetry collection is demand-gated: open diagnostics NOW so
+        // collectScale1 runs and _peInitialEnergy is set to micro-BH's energy
+        // (without this the stale-baseline bug never arms).
+        await openPanel(page, 'diagnostics');
+        await page.waitForTimeout(800);
+
         // ...then switching scenarios must reset telemetryHub scale-1 state
         // (peEnergyDrift buffer + _peInitialEnergy), so drift is measured
         // against the NEW scenario's initial energy, not micro-BH's.
