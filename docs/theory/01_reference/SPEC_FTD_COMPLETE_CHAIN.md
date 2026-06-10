@@ -356,7 +356,7 @@ The arrow is not emergent from entropy, statistics, or initial conditions. It is
 
 Bell's theorem: no local hidden variable theory with measurement independence gives S > 2. The FTD lattice is local and deterministic. The lattice gives S <= 2 in simulation (verified). Experiments give S = 2*sqrt(2) = 2.83.
 
-## 6.5.2 The Current Understanding [OPEN]
+## 6.5.2 The Current Understanding [CLOSED DECLINED]
 
 The continuous flux projections correlate as:
 
@@ -366,15 +366,15 @@ The cosine SHAPE is classical (dot product geometry). However, the amplitude is 
 
 The binary sign measurements (sign(v.a)) produce the triangle correlation -(1 - 2*theta/pi), giving S <= 2. This is Bell's theorem applied correctly.
 
-**Resolution (April 11, 2026):** The Bell violation S = 2 sqrt(2) is EMERGENT — it follows from the quantum mechanics that itself emerges from the lattice, not from a separate lattice-level derivation.
+**Resolution (April 11, 2026):** The Bell violation S = 2 sqrt(2) is EMERGENT — it follows from the quantum mechanics that itself emerges from the lattice, not from a separate lattice-level derivation. Under FC-1, continuous Hilbert space recovery and the continuous Born rule are declined as fundamental targets; they are epistemic bookkeeping approximations of observer ignorance, not physical reality.
 
-The substrate (lattice) is local and deterministic: S <= 2 at the hidden-variable level. This is Bell's theorem applied correctly. The emergent theory (QM) gives S = 2 sqrt(2) as Tsirelson's bound — a theorem of any theory with Hilbert space structure and Born rule.
+The substrate (lattice) is local and deterministic: S <= 2 at the hidden-variable level. This is Bell's theorem applied correctly. The emergent theory (QM) gives S = 2 x sqrt(2) as Tsirelson's bound — a theorem of any theory with Hilbert space structure and Born rule.
 
-Since FTD derives: (1) Schrodinger equation from complexified flux [THEOREM], (2) the |psi|^2 *form* of the Born rule from Parseval [SELECTION] -- the step *probability = normalized energy density* is [OPEN], see LEDGER FTD-0187, (3) Hilbert space from complexified flux [SELECTION], (4) pair creation from void events [AXIOM], the Bell violation follows as a corollary of the emergent QM. The two levels (substrate S <= 2, emergent S = 2 sqrt(2)) are simultaneously true at different description levels.
+Since FTD derives: (1) Schrödinger equation from complexified flux [THEOREM], (2) the |ψ|² *form* of the Born rule from Parseval [SELECTION] — the step *probability = normalized energy density* is formally declined [CLOSED DECLINED], (3) Hilbert space from complexified flux [SELECTION], (4) pair creation from void events [AXIOM], the Bell violation follows as a corollary of the emergent QM. The two levels (substrate S <= 2, emergent S = 2 x sqrt(2)) are simultaneously true at different description levels.
 
-**Remaining lemma** [SELECTION -> THEOREM target]: the void event 0 -> (+1)_A + (-1)_B produces the singlet state in the emergent Hilbert space. The Gauss constraint forces anti-correlated flux (entanglement); the complexification maps this to the standard singlet |psi> = (|+>|-> - |->|+>)/sqrt(2).
+**Remaining lemma**: the void event 0 -> (+1)_A + (-1)_B produces the singlet state in the emergent Hilbert space. The Gauss constraint forces anti-correlated flux (entanglement); the complexification maps this to the standard singlet |psi> = (|+>|-> - |->|+>)/sqrt(2). This is declined [CLOSED DECLINED] as a physical target under FC-1.
 
-Status: [SELECTION] for the emergence chain overall; [THEOREM] that S = 2 sqrt(2) follows from QM once QM is established. The three resolution paths (superdeterminism, detection loophole, continuous-to-discrete) were attacking the wrong level — they tried to get S > 2 from the substrate, which is impossible and unnecessary.
+Status: [SELECTION] for the emergence chain overall; [THEOREM] that S = 2 x sqrt(2) follows from QM once QM is established. The three resolution paths (superdeterminism, detection loophole, continuous-to-discrete) were attacking the wrong level — they tried to get S > 2 from the substrate, which is impossible and unnecessary.
 
 ## 6.5.4 The Angular Connection
 
@@ -417,7 +417,7 @@ The CHSH optimal angle is 22.5 degrees = 360/16 = pi/8. The 16 = |Aut(E_i)|^2 is
 | floor(x-) = N_c = 3 | [SELECTION] | Derive topological quantization mechanism |
 | Frame dragging factor of 2 from dual BI contribution | [CONJECTURE] | Qualitative argument only; needs explicit derivation from BI Lagrangian in rotating background |
 | QM = epistemology, not ontology | [SELECTION] | Prove that QM statistics follow necessarily from lattice + partial observation |
-| Born rule from |J|^2 manifestation | [SELECTION] (|psi|^2 form) / [OPEN] (probability=density, T1c) | Derive that manifestation *frequency* equals normalized energy density -- the load-bearing step, nowhere derived. Canonical: LEDGER FTD-0187. (Duplicates the §7.1 row; that row's tag is canonical.) |
+| Born rule from |J|^2 manifestation | [SELECTION] (|psi|^2 form) / [CLOSED DECLINED] | The step deriving manifestation *frequency* = normalized energy density is formally declined under FC-1 as a physical target; the discrete threshold $K_B$ holds. |
 
 ## 7.3 What Is Conjectured
 

@@ -141,16 +141,17 @@ test.describe('Scale 1 side panels', () => {
 
     test('energy drift re-baselines on scenario switch', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
-        // First scenario establishes a drift baseline...
-        await runScale1(page, 'pe-hydrogen');
+        // First scenario establishes a drift baseline. Micro-BH emits Hawking
+        // radiation, so its total energy (and thus drift) moves a lot...
+        await runScale1(page, 'pe-micro-bh');
 
         // ...then switching scenarios must reset telemetryHub scale-1 state
         // (peEnergyDrift buffer + _peInitialEnergy), so drift is measured
-        // against the NEW scenario's initial energy, not hydrogen's.
-        await selectPEScenario(page, 'pe-micro-bh');
+        // against the NEW scenario's initial energy, not micro-BH's.
+        await selectPEScenario(page, 'pe-hydrogen');
         await expect.poll(
             () => page.evaluate(() => window._ftdBridge?.peGetParticleData?.()?.count || 0),
-            { timeout: 10_000, message: 'pe-micro-bh did not seed particles' },
+            { timeout: 10_000, message: 'pe-hydrogen did not seed particles' },
         ).toBeGreaterThan(1);
         await page.evaluate(() => {
             const btn = document.getElementById('btn-play');
@@ -166,9 +167,9 @@ test.describe('Scale 1 side panels', () => {
         expect(driftText).toBeTruthy();
         const drift = Number(driftText);
         expect(Number.isFinite(drift)).toBe(true);
-        // With a stale hydrogen baseline this jumps to hundreds of percent;
-        // re-baselined it stays small (micro-bh conserves energy well).
-        expect(Math.abs(drift)).toBeLessThan(25);
+        // With a stale micro-BH baseline this jumps to hundreds of percent;
+        // re-baselined it stays small (hydrogen conserves energy well).
+        expect(Math.abs(drift)).toBeLessThan(10);
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
