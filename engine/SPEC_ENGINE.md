@@ -988,7 +988,9 @@ Composite atoms with inter-atomic forces and covalent bonding. Three forces:
 
 Automatic bond formation (r < 1.2 sigma_avg) and breaking (r > 2 r_eq). `compute_atomic_properties(Z, N)` derives all parameters from ontic constants.
 
-Files: `atom_engine.h` (215L), `atom_engine.cpp` (427L).
+**JS <-> C++ constant divergence (deliberate, [IMPOSED] both sides).** The C++ AtomEngine derives force prefactors from the ontic chain (Coulomb `ALPHA/(4pi)` in `atom/atom_forces.cpp`; bond spring `ALPHA*K_B/r_eq^2*order` in `atom_engine.cpp`), while the web mock (`web/js/bridge/mock-atom-engine.js`) uses visualization-scale MD tunings from `web/js/constants.js` (`AE_K_COULOMB = 2.0`, `AE_K_BOND = 50.0`, plus a 3.5*r_eq break threshold vs C++'s 2*r_eq). Both parameter sets are calibrations, not derivations; force magnitudes and equilibrium time scales are NOT expected to match across backends. **The JS mock is the production Scale-2/3 backend** — `wasm-bridge.js` `_aeHasWasm` is deliberately disabled (audit P1-2, deferred feature D-11) until a Planck-unit <-> Bohr-unit conversion shim exists, so every browser Scale-2/3 readout comes from the JS engine. Cross-backend numeric comparisons of AE outputs are meaningless until that shim lands.
+
+Files: `atom_engine.h` (215L), `atom_engine.cpp` (427L), `src/atom/atom_forces.cpp`, `web/js/bridge/mock-atom-engine.js` (production web backend).
 
 ### Scale Bridge
 

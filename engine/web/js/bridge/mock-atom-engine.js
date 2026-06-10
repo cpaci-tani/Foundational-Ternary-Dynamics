@@ -792,6 +792,9 @@ export function createAtomEngine(state) {
                     const dx = aj.x - ai.x, dy = aj.y - ai.y, dz = aj.z - ai.z;
                     const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
                     const sig_avg = (ai.vdw_sigma + aj.vdw_sigma) / 2;
+                    // [IMPOSED] auto-bond capture radius 1.2·σ_avg (and the
+                    // 0.2·Δχ electronegativity widening) are empirical
+                    // visualization tunings, not literature bond criteria.
                     let bond_threshold = 1.2 * sig_avg;
                     if (state._ae.electronegativity) {
                         const chi_diff = Math.abs(ai.electronegativity - aj.electronegativity);
@@ -806,7 +809,10 @@ export function createAtomEngine(state) {
                     }
                 }
             }
-            // Bond breaking — break only when stretched far beyond equilibrium
+            // Bond breaking — break only when stretched far beyond equilibrium.
+            // [IMPOSED] the 3.5·r_eq break threshold is an empirical stability
+            // tuning (prevents flicker re-bonding), not a physical dissociation
+            // criterion.
             for (const a of atoms) {
                 a.bonds = a.bonds.filter(b => {
                     const jIdx = state._aeIdToIdx.get(b.partner_id);
