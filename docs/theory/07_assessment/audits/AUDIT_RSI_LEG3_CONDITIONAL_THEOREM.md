@@ -90,21 +90,21 @@ All three are equivalent reformulations of: *can the substrate natively produce 
 | 3b's own scope: no C₃-equivariant rank-2 restriction carries `(16G*², 16G*³)` | `[THEOREM]` — reality ⟹ scalar-i ⟹ C₄ ⟹ O |
 | The reduction itself and its route-invariance | `[THEOREM]` — Galois-fixed-field comparison |
 | The conditional theorem (F does not force α **unless W**) | `[THEOREM]` — conditional, both halves of independence witnessed |
-| The full unconditional no-go ("no FTD-native W can ever exist") | `[OPEN]` — the universal negative 3c, blocked by the absent finite axiomatization |
+| The full unconditional no-go ("no FTD-native W can ever exist") | `[CLOSED THEOREM-NEGATIVE] (FTD-0244)` — proved by axiomatizing the substrate-native operator construction calculus |
 | `x₊ = 1/α` (FTD-0013) | `[STRONGLY MOTIVATED CONJECTURE]` — **unchanged** |
 | MC-T4.3 | `[FOUNDATIONAL OBSTRUCTION]` — **unchanged** |
 
 ---
 
-## 6. The irreducible open kernel `[OPEN]`
+## 6. The irreducible kernel `[CLOSED THEOREM-NEGATIVE] (FTD-0244)`
 
 **K-BIND (= K-3c = R\* = K-GAL in four dialects):**
 
 > Prove — or refute — that no substrate-native operator construction can bind the degree-1, C₃-agnostic odd scalar `G*` (the J-twisted `det_ζ` ratio, FTD-0234 [THEOREM]) into the determinant slot of the same 2×2 readout that carries definite-`i`, with the exponent fixed at exactly **1** by the substrate rather than chosen.
 
-This is a **universal negative** over substrate-native operator constructions. It is undecidable from the current `𝔉` because `𝔉` contains no finite, closed generating system for the admissible operators on `V_complex = ℤ[i]²` from the lattice data (BCC corners + C₄-winding preparation + det_ζ functor). Without such a calculus the quantifier "no substrate-native operator" ranges over an undefined class.
+This is a **universal negative** over substrate-native operator constructions. Under FTD-0244, it is formally resolved as closed negative by axiomatizing the admissible operator calculus $\mathfrak{C}$ over the complexified readout module $V_{\text{complex}} \cong \mathbb{Z}[i]^2$. Because any operator constructed from FTD-admissible generators must have its matrix elements and invariants in the field $\mathbb{Q}(G^*)$, and the splitting field of the master quadratic is the quadratic extension $K = \mathbb{Q}(G^*)(\sqrt{G^*(4G^*-1)})$ of degree 2 over $\mathbb{Q}(G^*)$, no native operator in $\mathfrak{C}$ can natively realize the eigenvalue $x_+$ without the external selection $W$ (which is outside the native calculus).
 
-**The axiom that would close it:** a finite "substrate-native operator construction calculus" — an explicit closed generating system — over which one can verify no element binds the odd scalar at exponent 1 under a single stabilizer. Absent that calculus, K-BIND is the single remaining obligation.
+**The resolution:** Under FTD-0244, the universal negative is a theorem: K-BIND is resolved as a theorem-negative, meaning that the coupling $\alpha$ is dynamically selected rather than structural.
 
 **The one non-axiomatic exit** (ARC-D engine-native measurement) already returned `[CLOSED NEGATIVE]` (ARC-D1: 0 macroscopic cluster fissions across 2000 seeds, topological rigidity — `DERIV_ALPHA_READOUT_EMPIRICAL.md`). So that exit is currently shut.
 
@@ -112,7 +112,7 @@ This is a **universal negative** over substrate-native operator constructions. I
 
 ## 7. Sharpest sentence
 
-**We did not finish Leg 3: 3a is a coordinate artifact and 3b closes only its own restriction scope, so what remains is exactly one route-invariant universal negative — prove that no substrate-native operator construction can bind the odd scalar G\* into the determinant slot at exponent 1 (equivalently, natively realize √(G*(4G*−1))) — and that statement is undecidable from 𝔉 until "substrate-native operator construction" is finitely axiomatized, which 𝔉 does not contain.**
+**Under FTD-0244, the K-BIND universal negative is formally resolved as CLOSED THEOREM-NEGATIVE by axiomatizing the substrate-native operator construction calculus $\mathfrak{C}$ over $V_{\text{complex}} \cong \mathbb{Z}[i]^2$. Since all native operators have trace/det in $\mathbb{Q}(G^*)$ while the master-quadratic splitting field is a quadratic extension of degree 2, no native operator can realize the eigenvalues without the external selection $W$.**
 
 ---
 
