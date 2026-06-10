@@ -594,17 +594,22 @@ ParticleDiagnostics ParticleEngine::diagnostics() const {
             Vec3 r_vec = particles_[j].position - particles_[i].position;
             double r = std::sqrt(r_vec.mag2() + soft_ * soft_);
 
-            // Coulomb PE: alpha * qi * qj / (4*pi*r)
-            d.total_pe += ALPHA * particles_[i].charge * particles_[j].charge
-                        / (4.0 * PI * r);
+            // Coulomb PE: alpha * qi * qj / (4*pi*r). Report only when the
+            // Coulomb force is active so diagnostics describe the active
+            // Hamiltonian rather than an always-on reference potential.
+            if (toggles.coulomb) {
+                d.coulomb_pe += ALPHA * particles_[i].charge * particles_[j].charge
+                              / (4.0 * PI * r);
+            }
 
             // Gravitational PE: -G_N * mi * mj / r
             if (toggles.gravity) {
-                d.total_pe -= G_N * particles_[i].mass * particles_[j].mass / r;
+                d.gravity_pe -= G_N * particles_[i].mass * particles_[j].mass / r;
             }
         }
     }
 
+    d.total_pe = d.coulomb_pe + d.gravity_pe;
     d.total_energy = d.total_ke + d.total_pe;
     return d;
 }

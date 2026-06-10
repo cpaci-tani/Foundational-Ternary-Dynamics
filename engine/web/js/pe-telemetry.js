@@ -13,6 +13,7 @@ import { Sparkline } from './diagnostics.js';
 import { ALPHA, G_N, COULOMB_K_FORCE } from './constants.js';
 import { formatEnergy, formatVelocity, formatLength, formatForce, formatTemperature } from './units.js';
 import { createCachedCanvasRect } from './dom-utils.js';
+import { resolveChartColor } from './ui/charts/theme.js';
 
 const TS_LEN = 200;  // Time-series buffer length (longer than sparkline 80)
 
@@ -209,18 +210,18 @@ export class PETelemetryPanel {
 
         // Time-series charts
         this._tsEnergy = new TimeSeriesChart(document.getElementById('pet-ts-energy'), [
-            { color: '#60a5fa' },  // KE
-            { color: '#f87171' },  // PE
-            { color: '#e5e7eb' },  // Total
+            { color: resolveChartColor('var(--chart-pe-ke, #4ade80)') },
+            { color: resolveChartColor('var(--chart-pe-coulomb, #f87171)') },
+            { color: resolveChartColor('var(--chart-pe-total, #e8e8e8)') },
         ]);
         this._tsMomentum = new TimeSeriesChart(document.getElementById('pet-ts-momentum'), [
-            { color: '#4ade80' },
+            { color: resolveChartColor('var(--chart-pe-momentum, #a78bfa)') },
         ]);
         this._tsAngmom = new TimeSeriesChart(document.getElementById('pet-ts-angmom'), [
-            { color: '#a78bfa' },
+            { color: resolveChartColor('var(--chart-pe-angmom, #60a5fa)') },
         ]);
         this._tsVirial = new TimeSeriesChart(document.getElementById('pet-ts-virial'), [
-            { color: '#fb923c' },
+            { color: resolveChartColor('var(--chart-pe-virial, #fbbf24)') },
         ]);
         this._tsVirial.setRefLine(1.0);
 

@@ -138,7 +138,9 @@ struct ParticleDiagnostics {
     int tick = 0;
     int particle_count = 0;
     double total_ke = 0.0;       // sum 0.5 * m * v^2
-    double total_pe = 0.0;       // sum alpha * qi * qj / (4*pi*rij)
+    double total_pe = 0.0;       // active potential terms only
+    double coulomb_pe = 0.0;     // active Coulomb PE (zero when disabled)
+    double gravity_pe = 0.0;     // active Newtonian gravity PE (zero when disabled)
     double total_energy = 0.0;   // KE + PE
     Vec3 total_momentum;         // sum m * v
     Vec3 total_angular_momentum; // sum r x (m*v)

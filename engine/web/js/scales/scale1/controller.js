@@ -41,7 +41,7 @@ import {
     expandPEToCloud, updateTrailHistory,
     getCloudParticleMap, getTrailHistory, clearCloudAndTrails
 } from './pe-cloud-expander.js';
-import { setupPEScenario } from './scenarios.js';
+import { setupPEScenario, getPEScenarioPreset } from './scenarios.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 
@@ -92,6 +92,89 @@ export function setTrails(on)      { _showTrails      = on; }
 // Re-export cloud/trail accessors so external consumers have a single
 // import surface (controller.js) and need not know about the split file.
 export { getCloudParticleMap, getTrailHistory };
+
+function setButtonActive(id, on) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.toggle('active', !!on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+}
+
+function setCheckbox(id, on) {
+    const el = document.getElementById(id);
+    if (el) el.checked = !!on;
+}
+
+function setSliderValue(id, value, digits) {
+    const slider = document.getElementById(id);
+    if (!slider || value === undefined || value === null) return;
+    slider.value = String(value);
+    const valueEl = document.getElementById(id.replace('-slider', '-value'));
+    if (valueEl) valueEl.textContent = Number(value).toFixed(digits);
+}
+
+function applyPEPhysicsPreset(bridge, preset) {
+    const p = preset.physics || {};
+    bridge.peSetCoulomb?.(!!p.coulomb);
+    bridge.peSetGravity?.(!!p.gravity);
+    bridge.peSetDamping?.(!!p.damping);
+    bridge.peSetLorentz?.(!!p.lorentz);
+    bridge.peSetExchange?.(!!p.exchange);
+    bridge.peSetStrong?.(!!p.strong);
+    bridge.peSetMagneticDipole?.(!!p.magnetic_dipole);
+    bridge.peSetSpinOrbit?.(!!p.spin_orbit);
+    bridge.peSetRadiation?.(!!p.radiation);
+    bridge.peSetRelativistic?.(!!p.relativistic);
+    bridge.peSetRelativisticVerlet?.(!!p.relativistic_verlet);
+
+    if (p.dt !== undefined) {
+        bridge.peSetDt?.(p.dt);
+        setSliderValue('pe-dt-slider', p.dt, 1);
+    }
+    if (p.softening !== undefined) {
+        bridge.peSetSoftening?.(p.softening);
+        setSliderValue('pe-soft-slider', p.softening, 2);
+    }
+
+    setCheckbox('pe-coulomb', p.coulomb);
+    setCheckbox('pe-gravity', p.gravity);
+    setCheckbox('pe-damping', p.damping);
+    setCheckbox('pe-lorentz-p', p.lorentz);
+    setCheckbox('pe-exchange', p.exchange);
+    setCheckbox('pe-strong', p.strong);
+    setCheckbox('pe-magnetic-dipole', p.magnetic_dipole);
+    setCheckbox('pe-spin-orbit', p.spin_orbit);
+    setCheckbox('pe-radiation', p.radiation);
+    setCheckbox('pe-relativistic', p.relativistic);
+    setButtonActive('toggle-pe-gravity', p.gravity);
+    setButtonActive('toggle-pe-damping', p.damping);
+}
+
+function applyPEOverlayPreset(viewport, preset) {
+    const o = preset.overlays || {};
+    _showVelocities = !!o.velocities;
+    _showTrails = !!o.trails;
+    _showPEEField = !!o.efield;
+    _showPEPotential = !!o.potential;
+    _showPEGravField = !!o.gravityField;
+    _showPEForces = !!o.forces;
+
+    setButtonActive('toggle-velocities', _showVelocities);
+    setButtonActive('toggle-trails', _showTrails);
+    setButtonActive('toggle-pe-efield', _showPEEField);
+    setButtonActive('toggle-pe-potential', _showPEPotential);
+    setButtonActive('toggle-pe-gravity-field', _showPEGravField);
+    setButtonActive('toggle-pe-forces', _showPEForces);
+
+    if (!viewport) return;
+    viewport.toggleVelocityVectors(_showVelocities);
+    viewport.toggleTrails(_showTrails);
+    viewport.togglePEStreamlines(_showPEEField);
+    viewport.toggleFieldHeatmap(_showPEPotential);
+    viewport.toggleFieldVectors(_showPEPotential);
+    viewport.toggleGravityVectors(_showPEGravField);
+    viewport.toggleParticleForces(_showPEForces);
+}
 
 
 // =====================================================================
@@ -246,7 +329,7 @@ export function animatePE(ctx) {
     }
 
     // ── 5. PE Field Overlays (individual force decomposition) ───────
-    if (_showPEPotential && running && peData.count > 0) {
+    if (_showPEPotential && peData.count > 0) {
         if (!_fieldGrid) _fieldGrid = generateGridXZ(25, 20);
         const src   = bridge.peGetFieldSources();
         const field = samplePECoulombOnly(src, _fieldGrid.positions, _fieldGrid.count);
@@ -257,7 +340,8 @@ export function animatePE(ctx) {
     }
 
     // Coulomb E-field streamlines (3D, throttled every 5 frames)
-    if (_showPEEField && running && peData.count > 0 && frameCount % 5 === 0) {
+    const refreshStreamlines = running ? frameCount % 5 === 0 : (!_diagPushedWhilePaused || frameCount % 30 === 0);
+    if (_showPEEField && peData.count > 0 && refreshStreamlines) {
         const src     = bridge.peGetFieldSources();
         const fieldFn = makePECoulombFieldFn(src, 0.5);
         while (_srcParticlesBuf.length < src.count) _srcParticlesBuf.push({ x: 0, y: 0, z: 0 });
@@ -275,7 +359,7 @@ export function animatePE(ctx) {
     }
 
     // Gravity field vectors (XZ plane)
-    if (_showPEGravField && running && peData.count > 0) {
+    if (_showPEGravField && peData.count > 0) {
         if (!_fieldGrid) _fieldGrid = generateGridXZ(25, 20);
         const src   = bridge.peGetFieldSources();
         const field = samplePEGravityField(src, _fieldGrid.positions, _fieldGrid.count);
@@ -284,7 +368,7 @@ export function animatePE(ctx) {
     }
 
     // Per-particle net force arrows
-    if (_showPEForces && running && peData.count > 0) {
+    if (_showPEForces && peData.count > 0) {
         const fd = bridge.peGetForces();
         viewport.updateParticleForces(fd.positions, fd.forces, fd.count, fd.maxForce);
     }
@@ -355,6 +439,7 @@ export function loadPEScenario(ctx, name) {
     const { bridge, viewport } = ctx;
 
     if (!bridge.initPE) return;
+    const preset = getPEScenarioPreset(name);
 
     // Delegate to app.js master reset (clears charts, trails, field cache,
     // and resets all toggle buttons across all scales)
@@ -369,32 +454,17 @@ export function loadPEScenario(ctx, name) {
         viewport.setEventHorizon(false, 0);
     }
 
-    // ── PE physics defaults for atomic-scale simulations ────────────
-    bridge.peSetCoulomb(true);
-    bridge.peSetDamping(false);
-    bridge.peSetGravity(false);
-    bridge.peSetSoftening(0.1);
-
-    // Sync toggle checkboxes to match engine state
-    const peCoulombEl = document.getElementById('pe-coulomb');
-    const peGravityEl = document.getElementById('pe-gravity');
-    const peDampingEl = document.getElementById('pe-damping');
-    if (peCoulombEl) peCoulombEl.checked = true;
-    if (peGravityEl) peGravityEl.checked = false;
-    if (peDampingEl) peDampingEl.checked = false;
-
-    // Sync dt to slider value
-    const dtSlider = document.getElementById('pe-dt-slider');
-    if (dtSlider) bridge.peSetDt(parseFloat(dtSlider.value));
+    applyPEPhysicsPreset(bridge, preset);
 
     // ── Orbital velocity helper ─────────────────────────────────────
     // Plummer force: F = alpha * |Q| * r / (4pi * (r^2 + soft^2)^(3/2))
     // Equilibrium:   m * v^2 / r = F
-    //            ->  v = sqrt(alpha * |Q| * r / (4pi * m * (r^2 + soft^2)))
+    //            ->  v = sqrt(alpha * |Q| * r^2 / (4pi * m * (r^2 + soft^2)^(3/2)))
     const ALPHA_PE = ALPHA;
-    const soft2 = 0.01;  // 0.1^2
+    const soft = preset.physics.softening ?? 0.1;
+    const soft2 = soft * soft;
     const orbitalV = (m, r, Q = 1) =>
-        Math.sqrt(ALPHA_PE * Q * r / (4 * Math.PI * m * (r * r + soft2)));
+        Math.sqrt(ALPHA_PE * Q * r * r / (4 * Math.PI * m * Math.pow(r * r + soft2, 1.5)));
 
     // ── Particle masses (MeV) ───────────────────────────────────────
     const constants = {
@@ -411,6 +481,9 @@ export function loadPEScenario(ctx, name) {
     };
 
     const result = setupPEScenario(name, { bridge, viewport, constants });
+    applyPEOverlayPreset(viewport, preset);
+    _diagPushedWhilePaused = false;
+    _lastCloudData = null;
 
     // Apply BH state hint from scenario (only pe-micro-bh sets bhActive=true)
     if (result && result.bhActive) {

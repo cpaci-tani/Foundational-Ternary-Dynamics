@@ -973,9 +973,11 @@ F_EM   = -alpha * q_i * q_j * r_hat / (4pi * (r^2 + soft^2))
 F_grav = +G_N * m_i * m_j * r_hat / (r^2 + soft^2)
 ```
 
-**Velocity Verlet** (symplectic): half-kick -> drift -> recompute -> half-kick. dt configurable, softening=1.0.
+**Velocity Verlet** (symplectic): half-kick -> drift -> recompute -> half-kick. `dt` and softening are configurable; the C++ default softening is 1.0 and web scenario presets commonly set 0.1 for atomic-scale demos.
 
-Files: `particle_engine.h` (108L), `particle_engine.cpp` (234L).
+Diagnostics report the active Hamiltonian only: Coulomb PE is zero when the Coulomb toggle is off, gravity PE is zero when gravity is off, and `total_pe = coulomb_pe + gravity_pe`. The WASM Scale 1 binding exposes particle positions, velocities, masses, locked flags, effective radii, charges, IDs, extended telemetry, and snapshot force vectors so browser overlays can be backend-true.
+
+Files: `particle_engine.h`, `particle_engine.cpp`, `wasm/bindings_particle.cpp`, and `web/js/scales/scale1/*`.
 
 ### Scale 2: Atom (AtomEngine)
 

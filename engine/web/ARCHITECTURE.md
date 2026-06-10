@@ -616,10 +616,11 @@ requestAnimationFrame
         -> wholeTicks = tickAccumulator.accumulate(ticksPerFrame)
         -> repeat bridge.peTick()
      -> pData = bridge.peGetParticleData()
-     -> particle types / force sources / force overlays
+     -> particle types / field sources / snapshot forces
      -> expand to particle cloud representation
      -> viewport.updateParticles(cloud)
-     -> optional trails / velocity vectors / field heatmaps
+     -> scenario-selected trails / velocity vectors / field heatmaps
+        (overlays render while paused; only engine ticks stop)
      -> viewport.render()
      -> diag = bridge.peGetDiagnostics()
      -> extra = bridge.peGetExtendedData()
@@ -634,8 +635,16 @@ loadPEScenario(name)
      -> ctx.resetAllVisualState()
      -> bridge.initPE()
      -> reset PE-specific state
-     -> seed scenario particles and toggles
+     -> apply scenario physics preset
+     -> seed scenario particles
+     -> apply scenario overlay preset
 ```
+
+The Scale 1 bridge contract includes particle positions, velocities, masses,
+charges, IDs, locked flags, effective radii, diagnostics, extended telemetry,
+and force vectors. The JS bridge keeps a compatibility sidecar so the UI still
+has honest mass/force overlays if an older WASM artifact is used before a
+rebuild.
 
 ### 9.3 Scale 2 `atoms`
 
@@ -961,9 +970,9 @@ as siblings under `bridge/`, `viewport/`, `ui/`, and `app-wire/`:
   `ui/app-ontic.js`; keyboard handler to `app-wire/keyboard.js` (RF-9
   partial; wireToolbar/wireControls/wireViewportToggles deferred)
 
-The JS scenario library (`bridge/scenarios/`) is the most visible piece
-— 83 scenarios split across 5 prefix groups (`flux-`, `light-`,
-`quantum-`, `s0-seed-`, `s0-field-`), dispatched through
+The JS scenario library (`bridge/scenarios/`) is the most visible piece:
+registered scenarios are split across prefix groups (`flux-`, `light-`,
+`quantum-`, `s0-vacuum-`, `s0-seed-`, `s0-field-`), dispatched through
 `scenarios/index.js`. Same scenarios are also available natively via
 `ftd::dispatch_scenario` on the C++ side.
 

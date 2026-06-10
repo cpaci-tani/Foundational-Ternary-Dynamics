@@ -16,5 +16,19 @@ export function createScale1Capabilities(bridge) {
         tickScale1: () => bridge.peTick?.(),
         getScale1ParticleFrame: () => bridge.peGetParticleData?.(),
         getScale1Diagnostics: () => bridge.peGetDiagnostics?.(),
+        getScale1ExtendedData: () => bridge.peGetExtendedData?.(),
+        getScale1Forces: () => bridge.peGetForces?.(),
+        getScale1FieldSources: () => bridge.peGetFieldSources?.(),
+        getScale1ParticleTypes: () => bridge.peGetParticleTypes?.(),
+        getScale1Capabilities: () => bridge.peGetBackendCapabilities?.() ?? {
+            velocities: false,
+            masses: false,
+            locked: false,
+            forces: false,
+            extended: false,
+            nativeExtended: false,
+            nativeForces: false,
+            advancedForces: false,
+        },
     };
 }

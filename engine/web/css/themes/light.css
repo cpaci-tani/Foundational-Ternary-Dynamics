@@ -71,6 +71,8 @@ html[data-theme="light"] {
     --chart-eb:       #5b21b6;
     --chart-gauss:    #92400e;
     --chart-entropy:  #1e40af;
+    --chart-pe-gravity:    #475569;
+    --chart-pe-force-mean: #b45309;
 
     --legend-field-kinetic:  #166534;
     --legend-field-gradient: #0f766e;
