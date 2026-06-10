@@ -649,7 +649,12 @@ rebuild.
 ### 9.3 Scale 2 `atoms`
 
 Scale 2 uses the AE-style API, but today that API resolves to the JS
-fallback instead of the WASM `AtomEngine`.
+fallback instead of the WASM `AtomEngine`. Every `ae*` read surface must be
+forwarded in FOUR places (`mock-atom-engine.js` impl + `mock-bridge.js` +
+`wasm-bridge.js` + `ws-bridge.js`) — a missing forward on the default
+WasmBridge is invisible until a toggle calls it (the 2026-06-10 B10 fix:
+`aeGetForceDecomposition` was never forwarded, so force-arrow toggles threw
+every compute frame on the production page).
 
 Frame stack:
 
@@ -666,9 +671,16 @@ requestAnimationFrame
      -> atomData = bridge.aeGetAtomData()
      -> viewport.updateParticles(...)
      -> update bonds / shells / lobes / labels / force arrows / field overlay
+     -> kinetic/electrostatic structure overlays (flag-gated):
+        -> bridge.aeGetVelocities()  -> viewport.updateVelocityVectors(...)
+        -> bridge.aeGetDipoles()     -> viewport.updateAEDipoles(...)
+        -> bridge.aeGetHBondPairs()  -> viewport.updateHBondLines(...)
      -> viewport.render()
-     -> diag = bridge.aeGetDiagnostics()
-     -> inspector / drift / panels
+     -> every 3rd frame: telemetryHub.collectScale2(bridge)
+        -> s2.diag snapshot + s2.runtime (aeGetRuntimeState + scenario label)
+        -> 10 ring buffers (KE / PE ionic,vdW,bond / total / temp / atoms /
+           bonds / |p| / drift vs hub-owned initial-energy reference)
+     -> legacy aeDiag* DOM block + inspector
 ```
 
 Scenario load stack:
@@ -678,10 +690,20 @@ loadAEScenario(name)
   -> Scale2Controller.loadAEScenario(...)
      -> ctx.resetAllVisualState()
      -> bridge.initAE()
+     -> telemetryHub.resetScale(2)      // re-zero buffers + drift baseline
      -> reset AE toggles
      -> sync AE params from UI
-     -> seed atoms / clusters / special scenarios
+     -> seed atoms / clusters / special scenarios (setupAEScenario)
+     -> applyAEVisualPreset(getAEScenarioPreset(name))
+        // declarative visual defaults: flags + toolbar checkboxes +
+        // force/field/velocity/dipole/H-bond buttons + viewport layers
 ```
+
+Side panels: the charts panel, diagnostics panel, and telemetry grid all
+register Scale 2 descriptors for BOTH `'2'` and `'3'` (one AtomEngine ⇒ one
+descriptor set; the diagnostics root is `.scale-ae`-classed so the same
+tables serve both scales). AE units are sim units — "(sim)" labels, never
+MeV/Kelvin (audit P0-10).
 
 ### 9.4 Scale 3 `molecules`
 
@@ -693,6 +715,7 @@ loadMoleculeScenario(name)
   -> Scale3Controller.loadMoleculeScenario(...)
      -> ctx.resetAllVisualState()
      -> bridge.initAE()
+     -> telemetryHub.resetScale(2)   // scale 3 shares the s2 buffers
      -> reset AE toggles and sync params
      -> load molecule from molecules.js
      -> if available: bridge.aePreBond()

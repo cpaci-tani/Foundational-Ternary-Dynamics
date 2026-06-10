@@ -99,7 +99,6 @@ let fpsDisplay = 0;
 //   'meta'          (Scale 12) — 3^3 existential unit (MetaUnit)
 // Transitions: switchEngineMode() is the SOLE entry point for mode changes.
 let engineMode = 'lattice';
-let _aeInitialEnergy = null; // for AE energy drift tracking
 let _showBonds = true;
 let _showOrbitalClouds = true; // orbital electron clouds in AE mode
 let bgManager = null;          // BackgroundManager instance
@@ -338,9 +337,6 @@ function _resetAllVisualState() {
     }
     const bondSelect = document.getElementById('bond-style-select');
     if (bondSelect) bondSelect.value = 'cylinders';
-
-    // ── AE energy drift reference ──
-    _aeInitialEnergy = null;
 }
 
 // Phase 1-3 state

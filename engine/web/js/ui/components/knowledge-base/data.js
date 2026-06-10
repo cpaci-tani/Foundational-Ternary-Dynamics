@@ -833,13 +833,17 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 body: [
                     'Scale 2 organizes the simulation into atom-like and bond-like structures for inspection and pedagogy.',
                     'For users trying to understand how structure emerges upward from the lattice and particle layers, this is the next abstraction tier.',
+                    'Beyond the force-arrow channels (Coulomb, van der Waals, bond, net), three structure overlays expose quantities the engine computes per atom: velocity vectors (kinetic state), dipole-moment arrows (built from bond electronegativity differences), and dashed donor-H···acceptor lines that annotate geometrically eligible hydrogen bonds.',
+                    'All Scale 2 energies, temperatures, and momenta are sim units (implicit k_B = 1) — panel labels say “(sim)”, never MeV or Kelvin. The temperature readout is the bare equipartition statistic 2·KE/(3N).',
                 ],
                 bullets: [
                     'Atom-focused view.',
                     'Includes derived molecular and bonding information.',
                     'Bridges particle-level behavior to chemistry-like structure.',
+                    'Structure overlays: velocities, dipole arrows, H-bond lines (display gates only — the underlying forces have no hard cutoff).',
+                    'Scenario presets light the overlays relevant to each demo (ionic → F_C + field; water → H-bond lines; thermal → velocities).',
                 ],
-                notation: ['Scale 2'],
+                notation: ['Scale 2', 'T = 2·KE/(3N) (sim)', 'μ ∝ Σ r·Δχ'],
                 tags: ['scales', 'atoms'],
             },
             {
