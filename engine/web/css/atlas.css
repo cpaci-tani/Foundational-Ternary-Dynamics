@@ -34,4 +34,52 @@ body{
 #atlas-overlay{pointer-events:none}
 #chain-stepper{grid-area:stepper;background:var(--panel);padding:10px 18px;overflow-x:auto}
 button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ── Left: grouped layer toggles ──────────────────────────────────────── */
+.atlas-group{margin-bottom:14px}
+.atlas-group-head{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 2px;user-select:none}
+.atlas-group-label{font-size:11px;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+.atlas-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.atlas-row{display:flex;align-items:center;gap:8px;padding:3px 2px 3px 24px}
+.atlas-row-sym{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;font-size:12px;min-width:34px;text-align:center}
+.atlas-row-name{flex:1;text-align:left;background:transparent;border:0;color:var(--text);font:inherit;font-size:13px;cursor:pointer;padding:2px 4px;border-radius:6px}
+.atlas-row-name:hover{background:var(--panel-2);color:#fff}
+.atlas-master,.atlas-row-cb{accent-color:var(--accent);cursor:pointer}
+
+/* ── Right: detail panel ──────────────────────────────────────────────── */
+.atlas-detail{display:flex;flex-direction:column;height:100%}
+.atlas-detail-body{flex:1}
+.atlas-detail-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.atlas-badge{width:46px;height:46px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  border:1px solid;border-radius:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:16px;font-weight:600}
+.atlas-detail-title{font-size:16px;font-weight:600;line-height:1.25}
+.atlas-detail-def{margin:0 0 12px;font-size:13px;color:var(--text);line-height:1.55}
+.atlas-detail-math{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--panel-2);
+  border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-bottom:12px;color:#cfe6ff;overflow-x:auto;white-space:nowrap}
+.atlas-detail-tag{font-size:13px;font-weight:700;letter-spacing:.2px;margin-bottom:6px}
+.atlas-detail-doc{font-size:11px;color:var(--text-dim);margin-bottom:12px}
+.atlas-detail-flows{font-size:12px;color:var(--text-dim);padding-top:10px;border-top:1px solid var(--border)}
+.atlas-detail-footer{margin-top:14px;padding-top:10px;border-top:1px solid var(--border);
+  font-size:10.5px;line-height:1.5;color:var(--text-dim)}
+
+/* ── Bottom: chain stepper ────────────────────────────────────────────── */
+.atlas-stepper{display:flex;align-items:center;gap:14px;height:100%}
+.atlas-play{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:1px solid var(--border);
+  background:var(--panel-2);color:var(--accent);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.atlas-play:hover{background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.atlas-track{display:flex;align-items:flex-start;gap:2px;flex:1;overflow-x:auto;overflow-y:hidden;padding-bottom:4px}
+.atlas-node{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;width:62px;
+  background:transparent;border:0;cursor:pointer;color:var(--text-dim);padding:4px 2px;border-radius:8px;position:relative}
+.atlas-node::before{content:"";position:absolute;top:8px;left:-1px;right:50%;height:2px;background:var(--border);z-index:0}
+.atlas-node:first-of-type::before{display:none}
+.atlas-node-dot{width:14px;height:14px;border-radius:50%;z-index:1;
+  box-shadow:0 0 0 3px var(--panel);transition:transform .15s,box-shadow .15s}
+.atlas-node-cap{font-size:9.5px;line-height:1.2;text-align:center;max-width:60px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.atlas-node:hover{color:var(--text)}
+.atlas-node:hover .atlas-node-cap{white-space:normal}
+.atlas-node.active{color:var(--text)}
+.atlas-node.active .atlas-node-dot{transform:scale(1.4);box-shadow:0 0 0 3px var(--panel),0 0 10px 1px currentColor}
+.atlas-node.active .atlas-node-cap{font-weight:600;white-space:normal}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
