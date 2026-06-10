@@ -1,0 +1,72 @@
+=== arm N (thermostat ON) — per-amplitude ===
+   A   |  N_mean  |  k=N/A^2 | status
+    2 |     1.00 |   0.2500 | TRIVIAL
+    4 |     1.00 |   0.0625 | TRIVIAL
+    6 |     1.00 |   0.0278 | TRIVIAL
+    8 |     1.40 |   0.0219 | TRIVIAL
+   10 |     4.00 |   0.0400 | OK
+   12 |     8.40 |   0.0583 | OK
+   14 |    16.40 |   0.0837 | OK
+   16 |    21.60 |   0.0844 | OK
+   20 |    27.40 |   0.0685 | OK
+   25 |    32.60 |   0.0522 | OK
+   30 |    45.00 |   0.0500 | OK
+   40 |    91.80 |   0.0574 | OK
+   50 |   130.20 |   0.0521 | OK
+   70 |   260.20 |   0.0531 | OK
+   90 |   383.34 |   0.0473 | OK
+
+V-1 rig gate vs current-stack T5b anchors: 5/5 -> PASS
+
+=== law fits (arm N, OK points only) ===
+L1  N = k*A^2        : k=0.0574            log10-RMS=0.0956  AIC=-49.6
+L2  N = c*A^p        : c=0.0795, p=1.901  log10-RMS=0.0908  AIC=-48.8
+L3  knee @A=16        : p_lo=3.690, p_hi=1.861  log10-RMS=0.0366  AIC=-62.8
+
+CHARACTERIZATION VERDICT: CLEAN-LAW: L3 wins (AIC margin 13.1)
+
+=== arm X (thermostat OFF) — per-amplitude ===
+    2 |     1.00 |   0.2500 | TRIVIAL
+    4 |     1.00 |   0.0625 | TRIVIAL
+    6 |     1.00 |   0.0278 | TRIVIAL
+    8 |     2.00 |   0.0312 | OK
+   10 |     5.00 |   0.0500 | OK
+   12 |    14.67 |   0.1019 | OK
+   14 |    22.33 |   0.1139 | OK
+   16 |    24.67 |   0.0964 | OK
+   20 |    39.33 |   0.0983 | OK
+   25 |    51.03 |   0.0816 | OK
+   30 |    75.93 |   0.0844 | OK
+   40 |   147.75 |   0.0923 | OK
+   50 |   296.12 |   0.1184 | OK
+   70 |   833.73 |   0.1701 | OK
+   90 |  1461.33 |   0.1804 | FLOODED
+
+common-grid ratios R(A) = N_X/N_N:
+   A=10   R=1.250
+   A=12   R=1.746
+   A=14   R=1.362
+   A=16   R=1.142
+   A=20   R=1.436
+   A=25   R=1.565
+   A=30   R=1.687
+   A=40   R=1.610
+   A=50   R=2.274
+   A=70   R=3.204
+median R = 1.610 over 10 points
+GAMMA VERDICT: OUTCOME A — thermostat materially shapes the current-stack N(A) (Mechanism gamma ACTIVE at engine level).
+[descriptive] G_g0.01: A=30 gamma=0.0100 T=0.00500 n_mean=59.00 k=0.0656
+[descriptive] G_g0.01: A=30 gamma=0.0100 T=0.00500 n_mean=60.00 k=0.0667
+[descriptive] G_g0.01: A=30 gamma=0.0100 T=0.00500 n_mean=54.00 k=0.0600
+[descriptive] G_g0.04: A=30 gamma=0.0400 T=0.00500 n_mean=32.00 k=0.0356
+[descriptive] G_g0.04: A=30 gamma=0.0400 T=0.00500 n_mean=32.00 k=0.0356
+[descriptive] G_g0.04: A=30 gamma=0.0400 T=0.00500 n_mean=32.00 k=0.0356
+[descriptive] T_T0: A=30 gamma=0.0200 T=0.00000 n_mean=46.00 k=0.0511
+[descriptive] T_T0: A=30 gamma=0.0200 T=0.00000 n_mean=45.00 k=0.0500
+[descriptive] T_T0: A=30 gamma=0.0200 T=0.00000 n_mean=45.00 k=0.0500
+[descriptive] T_T0.0025: A=30 gamma=0.0200 T=0.00250 n_mean=45.00 k=0.0500
+[descriptive] T_T0.0025: A=30 gamma=0.0200 T=0.00250 n_mean=45.00 k=0.0500
+[descriptive] T_T0.0025: A=30 gamma=0.0200 T=0.00250 n_mean=45.00 k=0.0500
+[descriptive] T_T0.01: A=30 gamma=0.0200 T=0.01000 n_mean=44.00 k=0.0489
+[descriptive] T_T0.01: A=30 gamma=0.0200 T=0.01000 n_mean=46.00 k=0.0511
+[descriptive] T_T0.01: A=30 gamma=0.0200 T=0.01000 n_mean=47.00 k=0.0522
