@@ -1,6 +1,7 @@
 import { setInspectorSectionVisibility } from '../chrome.js';
 import { getElement, elementSymbol, cpkColor } from '../../elements.js';
 import { getMolecule } from '../../molecules.js';
+import { NEUTRON_PROTON_MASS_RATIO } from '../../constants.js';
 import {
     formatPosition,
     formatVec3,
@@ -189,7 +190,7 @@ export function updateAEMoleculeInfo(target, molId) {
         for (const atom of atoms) {
             const element = getElement(atom.Z);
             const neutrons = element ? element.neutrons : 0;
-            totalMass += atom.Z + neutrons * 1.001;
+            totalMass += atom.Z + neutrons * NEUTRON_PROTON_MASS_RATIO;
         }
         target.aeMolFields.mass.textContent = `${totalMass.toFixed(2)} AMU`;
     }

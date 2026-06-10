@@ -30,10 +30,11 @@
  * below 100000 (typical simulations have <1000 atoms).
  */
 
-import { N_BASE } from '../constants.js';
+import { NEUTRON_PROTON_MASS_RATIO } from '../constants.js';
 import {
-    AE_EPS_BASE, AE_K_COULOMB, AE_K_BOND, AE_SPEED_MAX,
-    AE_H_BOND_EPS, AE_K_ANGLE, AE_THERMOSTAT_TAU, AE_CHI_TABLE,
+    AE_K_COULOMB, AE_K_BOND, AE_SPEED_MAX,
+    AE_H_BOND_EPS, AE_K_ANGLE, AE_THERMOSTAT_TAU,
+    computeAtomicProps,
 } from '../atomic-props.js';
 import { cpkColor, defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from '../elements.js';
 import { debugLog } from '../core/log.js';
@@ -104,20 +105,13 @@ function _covalentValence(Z) {
 const AROMATIC_ORDER = 1.5;
 const MAX_BOND_ORDER = 3;
 
-/**
- * Atomic properties from atomic number Z + neutron count N.
- */
-function computeAtomicProps(Z, N = 0) {
-    const mass = Z + N * 1.001;
-    const z_cbrt = Math.cbrt(Z);
-    const radius = z_cbrt > 0 ? 1.0 / z_cbrt : 1.0;
-    const vdw_epsilon = AE_EPS_BASE * Math.pow(Z, 2.0 / 3.0);
-    const vdw_sigma = radius * N_BASE;
-    const max_bonds = elemMaxBonds(Z);
-    const electronegativity = (Z >= 1 && Z <= 18) ? AE_CHI_TABLE[Z]
-                            : (Z > 18 ? 1.5 + 0.3 * Math.log(Z) : 0);
-    return { mass, radius, vdw_epsilon, vdw_sigma, max_bonds, electronegativity };
-}
+// Atomic properties (mass in proton units, LJ radius/ε/σ, max bonds,
+// electronegativity) come from the canonical atomic-props.js
+// implementation. A stale LOCAL shadow copy lived here until 2026-06-10;
+// it still carried the pre-Theme-D3 electronegativity bug (log-formula
+// for ALL Z>18 — χ(Fe)≈2.48 vs Pauling 1.83) and a hand-rounded 1.001
+// neutron/proton ratio. De-duplicated so the engine and the rest of the
+// app share one table-first, PDG-ratio implementation.
 
 /**
  * Build the atom-engine provider bound to the given bridge-like state.
@@ -1221,7 +1215,7 @@ export function createAtomEngine(state) {
         if (!state._ae) return null;
         const a = state._ae.atoms.find(at => at.id === id);
         if (!a) return null;
-        const mass = a.Z + a.N * 1.001;
+        const mass = a.Z + a.N * NEUTRON_PROTON_MASS_RATIO;  // proton-mass units (PDG ratio)
         const speed = Math.sqrt(a.vx * a.vx + a.vy * a.vy + a.vz * a.vz);
         const ke = 0.5 * mass * speed * speed;
 

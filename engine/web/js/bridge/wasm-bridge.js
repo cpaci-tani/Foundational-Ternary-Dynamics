@@ -306,6 +306,10 @@ export class WasmBridge {
             let state = 0;
             if (g > 0.7) state = 1;
             else if (r > 0.8) state = -1;
+
+            const voxel = this.inspectVoxel(x, y, z);
+            const isLocked = voxel ? !!voxel.locked : false;
+
             list.push({
                 id: i,
                 x, y, z,
@@ -314,7 +318,7 @@ export class WasmBridge {
                 q: state,
                 color: 0,
                 spin: 1,
-                locked: pd.sizes[i] > 8.0
+                locked: isLocked
             });
         }
         return list;
