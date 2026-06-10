@@ -124,6 +124,14 @@ export function setupS0FieldScenario(name, harness, ctx) {
                     break;
                 }
 
+                case 's0-field-spacetime-forcing-boundary': {
+                    // FTD-0253 visible seed: the wave half of
+                    // test_spacetime_forcing_demo.cpp. The diffusion half is a
+                    // counterfactual shown in /demos/spacetime-forcing-boundary.html.
+                    harness.injectFlux(mc, mc, mc, 0, 0, 1.0);
+                    break;
+                }
+
                 case 's0-field-electric-dipole': {
                     // Two charges along x-axis separated by N/8
                     const sep  = Math.max(2, Math.floor(N / 8));

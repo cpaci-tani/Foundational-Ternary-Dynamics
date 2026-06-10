@@ -85,6 +85,12 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             IW(rb, x, y, z, wz, 0, 0);
         }
     }
+    else if (name == "s0-field-spacetime-forcing-boundary") {
+        // FTD-0253 visible seed: the wave half of
+        // test_spacetime_forcing_demo.cpp. The diffusion half is a
+        // counterfactual shown in engine/web/demos/spacetime-forcing-boundary.html.
+        IF(rb, mc, mc, mc, 0.0, 0.0, 1.0);
+    }
     else if (name == "s0-field-electric-dipole") {
         const int sep  = std::max(2, N / 8);
         const int half = sep / 2;
