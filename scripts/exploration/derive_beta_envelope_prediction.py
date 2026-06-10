@@ -1,4 +1,4 @@
-"""FTD-0264: Mechanism beta — parameter-free envelope prediction of the
+"""FTD-0265: Mechanism beta — parameter-free envelope prediction of the
 sub-knee onset (derivation attempt against the FTD-0263 constraint profile).
 
 MODEL (stated before compute). Pre-genesis the engine dynamics is exactly

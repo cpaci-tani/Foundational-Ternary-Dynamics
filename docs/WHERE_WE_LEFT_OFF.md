@@ -12,6 +12,12 @@
 
 ---
 
+## 0.29 · 2026-06-10 — FTD-0265: Mechanism β, envelope variant — BETA-PARTIAL; the initial-crossing approximation dies informatively
+
+The derivation attempt against the FTD-0263 constraint profile (thresholds frozen in the runner docstring before compute; priors PARTIAL 40 % — landed). The parameter-free model — pre-genesis dynamics is exactly linear, so the per-voxel envelope `e(δ) = max_t |J(δ,t)|` is pure lattice geometry (18-pt stencil, symplectic Euler, α = 1/18 pinned by the FTD-0251 dispersion, self-check ✓), and β predicts `N(A) = #{δ : e(δ) > 1/A}` with K_GENESIS cancelling — **fails the shape test decisively in both Gauss-projector variants** (log₁₀-RMS 0.749 / 0.583 vs frozen 0.20): it **over-counts the cluster 3–6×** (25–33 predicted vs 4.0 measured at A = 10) and puts onsets ~1.7× low (second voxel at A ≈ 4.6–5.8 vs measured ≈ 8.75). The lone T1 elbow-band pass is recorded as **evidentially hollow** (knee_A = 5.8 vs measured 13.5; near-degenerate break; the frozen criterion checked knee-N only — pre-reg weakness recorded, not repaired). **The informative death:** "the cluster = everyone who ever crossed threshold" is wrong — far more voxels transiently graze the threshold than join the steady cluster. **Sharpened [OPEN]: sustained-kinetics β** — dwell-time-weighted Boltzmann crossing (`p = 1 − exp(−excess/K_MANIFEST)` integrated over residence above threshold) + post-pulse survival (Gauss self-sourcing vs evaporation); both corrections act in the observed failure directions. Seventh constraint added to the FTD-0263 profile: **~3–6× suppression of transient crossings vs envelope counting.** Docs: `DERIV_BETA_ENVELOPE_ATTEMPT_v1.md`; LEDGER FTD-0265 (renumbered from a drafted 0264 on collision with the concurrent session's blocked-effective-action row — id-grep discipline). **Nothing promoted.**
+
+---
+
 ## 0.28 · 2026-06-10 — FTD-0263: the 27-block onset hypothesis — GEOM-PARTIAL (the sharp reading killed by its own band; the onset is local, smooth, elbowed at N ≈ 15)
 
 The sub-knee mechanism attack, with the **aesthetic-capture guard written into the design** (the 27-block is FTD's foundational object; the verdict hung only on three frozen kill-tests). Lock `5e26ac7b`, tag `preregister-subknee-block-hypothesis-v1`; 147 seed-runs, 0 failures; **PARTIAL (prior 30 %) landed — the favored CONFIRMED (45 %) did not.**
