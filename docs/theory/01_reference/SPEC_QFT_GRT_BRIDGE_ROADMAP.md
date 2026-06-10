@@ -4,8 +4,11 @@
 
 **Date:** February 18, 2026
 **Framework:** Foundational Ternary Dynamics v5.26
-**Status:** Research roadmap with gap inventory
+**Status:** Research roadmap with gap inventory (Superseded by FTD Constitution FC-1)
 **Authors:** cpaci & Claude (Opus 4.6)
+
+> [!NOTE]
+> **Constitutional Override (June 2026):** The exploratory goals of this roadmap regarding the recovery of standard Hilbert space, quantum non-commutativity, and the Born rule have been superseded by the FTD Constitution ([`SPEC_FTD_FRAMEWORK_V1.md`](SPEC_FTD_FRAMEWORK_V1.md), FTD-0254) and the Prediction Ledger ([`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`](SPEC_PREDICTION_LEDGER_DEVIATIONS.md), FTD-0258). Under **Framework Commitment 1 (FC-1)**, FTD declines the measurement-map import $M$ and declares the commutative substrate algebra $A_5$ to be complete. FTD does not treat standard quantum mechanics as a benchmark to be recovered; rather, FTD is the dominant physical description, and where it structurally deviates from standard QM (such as in the Rice upcrossing detection statistics of `PL-1`), FTD predicts the substrate.
 
 ---
 
