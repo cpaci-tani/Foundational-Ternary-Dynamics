@@ -1648,6 +1648,9 @@ export class MockBridge {
     aeInspectAtom(id)                                                 { return this._aeEngine.aeInspectAtom(id); }
     aeClear()                                                         { return this._aeEngine.aeClear(); }
     aeGetRuntimeState()                                               { return this._aeEngine.aeGetRuntimeState(); }
+    aeGetVelocities()                                                 { return this._aeEngine.aeGetVelocities(); }
+    aeGetDipoles()                                                    { return this._aeEngine.aeGetDipoles(); }
+    aeGetHBondPairs()                                                 { return this._aeEngine.aeGetHBondPairs(); }
 
     // setupScenario body extracted to bridge/scenarios/index.js as Wave 3 of
     // the large-file refactor. The extracted module is a pure move — `this`

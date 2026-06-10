@@ -820,6 +820,14 @@ export class Viewport {
     toggleAEForceVdw(on)           { this._molRenderer.toggleAEForceVdw(on); }
     toggleAEForceBond(on)          { this._molRenderer.toggleAEForceBond(on); }
     toggleAEForceNet(on)           { this._molRenderer.toggleAEForceNet(on); }
+    updateAEDipoles(positions, dipoles, count) {
+        this._molRenderer.updateAEDipoles(positions, dipoles, count);
+    }
+    toggleAEDipoles(on)            { this._molRenderer.toggleAEDipoles(on); }
+    updateHBondLines(segments, count) {
+        this._molRenderer.updateHBondLines(segments, count);
+    }
+    toggleHBondLines(on)           { this._molRenderer.toggleHBondLines(on); }
 
     // ══════════════════════════════════════════════════════════════════
 
