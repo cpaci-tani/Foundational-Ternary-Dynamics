@@ -26,7 +26,7 @@ export function getScale1OverlayTemplate() {
       <span class="field-swatch field-swatch-pe-forces"></span>Forces
     </button>
     <span class="field-sep"></span>
-    <button class="view-toggle dynamics-toggle active" id="toggle-pe-gravity" title="Toggle gravitational force (dynamics)">
+    <button class="view-toggle dynamics-toggle" id="toggle-pe-gravity" title="Toggle gravitational force (dynamics)">
       Gravity
     </button>
     <button class="view-toggle dynamics-toggle" id="toggle-pe-damping" title="Toggle velocity damping (dynamics)">

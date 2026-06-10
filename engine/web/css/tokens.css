@@ -221,6 +221,24 @@ canvas {
     --chart-gauss:    #fbbf24;
     --chart-entropy:  #60a5fa;
 
+    /* Scale 1 particle-engine chart colors */
+    --chart-pe-total:      var(--chart-total);
+    --chart-pe-ke:         var(--chart-positive);
+    --chart-pe-coulomb:    var(--chart-negative);
+    --chart-pe-gravity:    #94a3b8;
+    --chart-pe-drift:      var(--chart-gauss);
+    --chart-pe-count:      var(--chart-flux);
+    --chart-pe-locked:     var(--chart-gauss);
+    --chart-pe-mobile:     var(--chart-energy);
+    --chart-pe-momentum:   var(--chart-eb);
+    --chart-pe-angmom:     var(--chart-entropy);
+    --chart-pe-virial:     var(--chart-gauss);
+    --chart-pe-vrms:       var(--chart-positive);
+    --chart-pe-radius:     var(--chart-energy);
+    --chart-pe-radial:     var(--chart-negative);
+    --chart-pe-force:      var(--chart-gauss);
+    --chart-pe-force-mean: #fb923c;
+
     /* Legend palette (lagrangian term colors) — dark defaults */
     --legend-field-kinetic:  #66bb6a;
     --legend-field-gradient: #26a69a;

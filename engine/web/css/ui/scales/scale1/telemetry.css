@@ -1,29 +1,29 @@
 /* ── PE Telemetry Panel ─────────────────────────────────────────────────── */
 
-#pe-telemetry { margin-top: 12px; }
-.pe-telem-section { margin-bottom: 10px; }
+#pe-telemetry { margin-top: var(--sp-lg); }
+.pe-telem-section { margin-bottom: var(--sp-md); }
 .pe-telem-title {
     font-size: var(--fs-sm); font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.8px; color: var(--accent); margin-bottom: 8px;
+    letter-spacing: 0.08em; color: var(--accent); margin-bottom: var(--sp-sm);
 }
 .pe-conservation-row {
-    display: grid; grid-template-columns: 50px 1fr 20px 80px;
-    align-items: center; gap: 6px; margin-bottom: 4px;
+    display: grid; grid-template-columns: 50px minmax(0, 1fr) 20px 80px;
+    align-items: center; gap: var(--sp-sm); margin-bottom: var(--sp-xs);
     font-family: var(--font-mono); font-size: var(--fs-sm);
 }
-.pe-cons-label { color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.5px; }
+.pe-cons-label { color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.05em; }
 .pe-cons-value { color: var(--text-primary); }
 .pe-cons-alarm { width: 8px; height: 8px; border-radius: 50%; background: transparent; }
 .pe-cons-alarm.alarm-green { background: var(--positive); }
 .pe-cons-alarm.alarm-yellow { background: var(--warning); }
 .pe-cons-alarm.alarm-red { background: var(--negative); }
 .pe-cons-spark { height: 20px; }
-.pe-telem-details { margin-top: 10px; }
+.pe-telem-details { margin-top: var(--sp-md); }
 .pe-telem-details summary { cursor: pointer; }
 .pe-telem-summary {
     font-size: var(--fs-sm); font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.8px; color: var(--text-secondary);
-    padding: 4px 0; border-bottom: 1px solid var(--border);
+    letter-spacing: 0.08em; color: var(--text-secondary);
+    padding: var(--sp-xs) 0; border-bottom: 1px solid var(--border);
 }
 .pe-table-wrap { max-height: 200px; overflow-y: auto; }
 .pe-table {
@@ -32,18 +32,16 @@
 .pe-table th {
     position: sticky; top: 0; background: var(--bg-surface);
     color: var(--text-muted); font-size: var(--fs-xs); text-transform: uppercase;
-    letter-spacing: 0.5px; padding: 4px 6px; text-align: right;
+    letter-spacing: 0.05em; padding: var(--sp-xs) var(--sp-sm); text-align: right;
     border-bottom: 1px solid var(--border);
 }
 .pe-table th:first-child, .pe-table td:first-child { text-align: left; }
 .pe-table td {
-    padding: 3px 6px; text-align: right; color: var(--text-primary);
+    padding: var(--sp-xs) var(--sp-sm); text-align: right; color: var(--text-primary);
     border-bottom: 1px solid var(--border);
 }
 .pe-table tr:hover { background: var(--state-hover-bg); }
-.pe-ts-label {
-    font-size: var(--fs-xs); color: var(--text-muted); margin-top: 6px; margin-bottom: 2px;
-}
+.pe-ts-label { font-size: var(--fs-xs); color: var(--text-muted); margin-top: var(--sp-sm); margin-bottom: var(--sp-xs); }
 .pe-ts-chart { width: 100%; height: 60px; }
 
 /* PE Inspector */
@@ -62,8 +60,8 @@
 .pe-insp-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: var(--sp-sm);
+    margin-bottom: var(--sp-sm);
 }
 .pe-insp-name {
     font-size: var(--fs-md);
@@ -76,12 +74,12 @@
 }
 
 /* ── Scale 1 Field Overlay Swatches ────────────────────── */
-.field-swatch-pe-velocities { background: #ffa726; }
-.field-swatch-pe-trails     { background: #ab47bc; }
-.field-swatch-pe-efield     { background: #42a5f5; }
-.field-swatch-pe-potential  { background: linear-gradient(90deg, #ef5350, #42a5f5); }
-.field-swatch-pe-gravity    { background: #78909c; }
-.field-swatch-pe-forces     { background: #66bb6a; }
+.field-swatch-pe-velocities { background: var(--chart-pe-vrms); }
+.field-swatch-pe-trails     { background: var(--chart-pe-momentum); }
+.field-swatch-pe-efield     { background: var(--chart-pe-mobile); }
+.field-swatch-pe-potential  { background: linear-gradient(90deg, var(--chart-pe-coulomb), var(--chart-pe-mobile)); }
+.field-swatch-pe-gravity    { background: var(--chart-pe-gravity); }
+.field-swatch-pe-forces     { background: var(--chart-pe-force); }
 
 /* ── Responsive: compact phones ─────────────────────────────────────────── */
 /* The conservation row reserves 150px across three fixed columns (label /

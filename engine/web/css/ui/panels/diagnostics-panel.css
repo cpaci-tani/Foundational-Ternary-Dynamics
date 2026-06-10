@@ -132,12 +132,12 @@
 .pe-telemetry-row-gap-tight { margin-top: 4px; }
 
 /* Time-series legend inline chips */
-.pe-ts-legend-ke    { color: #60a5fa; }
-.pe-ts-legend-pe    { color: #f87171; }
-.pe-ts-legend-total { color: #e5e7eb; }
-.pe-ts-legend-mom   { color: #4ade80; }
-.pe-ts-legend-angm  { color: #a78bfa; }
-.pe-ts-legend-vir   { color: #fb923c; }
+.pe-ts-legend-ke    { color: var(--chart-pe-ke); }
+.pe-ts-legend-pe    { color: var(--chart-pe-coulomb); }
+.pe-ts-legend-total { color: var(--chart-pe-total); }
+.pe-ts-legend-mom   { color: var(--chart-pe-momentum); }
+.pe-ts-legend-angm  { color: var(--chart-pe-angmom); }
+.pe-ts-legend-vir   { color: var(--chart-pe-virial); }
 
 /* Phase-space canvas sizing inside orbital card */
 .pet-phase-canvas {
@@ -172,13 +172,23 @@
     gap: var(--sp-xl);
 }
 
+.diag-scale1-root {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-lg);
+    margin-bottom: var(--sp-lg);
+}
+
 @media (max-width: 720px) {
     .diag-scale0-root { grid-template-columns: 1fr; }
+    .diag-scale1-root { grid-template-columns: 1fr; }
 }
 
 /* Sidebar mounts: 380px panel can't fit two columns of diagnostic tables */
 html[data-panel-mount="left"] .diag-scale0-root,
-html[data-panel-mount="right"] .diag-scale0-root {
+html[data-panel-mount="right"] .diag-scale0-root,
+html[data-panel-mount="left"] .diag-scale1-root,
+html[data-panel-mount="right"] .diag-scale1-root {
     grid-template-columns: 1fr;
     gap: var(--sp-md);
 }

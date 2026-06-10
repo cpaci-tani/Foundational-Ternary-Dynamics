@@ -38,6 +38,88 @@
  *   (to keep imports local to their users) and threaded through here.
  */
 
+const BASE_PHYSICS = Object.freeze({
+    coulomb: true,
+    gravity: false,
+    damping: false,
+    lorentz: false,
+    exchange: false,
+    strong: false,
+    magnetic_dipole: false,
+    spin_orbit: false,
+    radiation: false,
+    relativistic: false,
+    relativistic_verlet: false,
+    dt: 1.0,
+    softening: 0.1,
+});
+
+const ATOMIC_OVERLAYS = Object.freeze({
+    velocities: true,
+    trails: true,
+    efield: false,
+    potential: true,
+    gravityField: false,
+    forces: true,
+});
+
+const SCATTERING_OVERLAYS = Object.freeze({
+    velocities: true,
+    trails: true,
+    efield: true,
+    potential: false,
+    gravityField: false,
+    forces: true,
+});
+
+const GRAVITY_OVERLAYS = Object.freeze({
+    velocities: true,
+    trails: true,
+    efield: false,
+    potential: false,
+    gravityField: true,
+    forces: true,
+});
+
+const CUSTOM_OVERLAYS = Object.freeze({
+    velocities: false,
+    trails: false,
+    efield: false,
+    potential: false,
+    gravityField: false,
+    forces: false,
+});
+
+const PRESET_OVERRIDES = Object.freeze({
+    'pe-scattering':          { overlays: SCATTERING_OVERLAYS },
+    'pe-omega-scattering':    { overlays: SCATTERING_OVERLAYS },
+    'pe-meson-scattering':    { overlays: SCATTERING_OVERLAYS },
+    'pe-muon-scattering':     { overlays: SCATTERING_OVERLAYS },
+    'pe-three-body':          { overlays: { ...ATOMIC_OVERLAYS, efield: true } },
+    'pe-w-pair':              { physics: { relativistic: true, relativistic_verlet: true } },
+    'pe-micro-bh': {
+        physics: {
+            coulomb: false,
+            gravity: true,
+            damping: false,
+            softening: 1.0,
+        },
+        overlays: GRAVITY_OVERLAYS,
+    },
+    'pe-custom': {
+        overlays: CUSTOM_OVERLAYS,
+    },
+});
+
+export function getPEScenarioPreset(name) {
+    const override = PRESET_OVERRIDES[name] || {};
+    return {
+        physics: { ...BASE_PHYSICS, ...(override.physics || {}) },
+        overlays: { ...ATOMIC_OVERLAYS, ...(override.overlays || {}) },
+        status: override.status || 'Scale 1 continuous N-body demo',
+    };
+}
+
 
 /**
  * Execute the scenario body for the given name.
@@ -81,7 +163,7 @@ export function setupPEScenario(name, ctx) {
         case 'pe-positronium': {
             const r = 5;
             const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r / (4 * Math.PI * me * (sep * sep + soft2)));
+            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * me * Math.pow(sep * sep + soft2, 1.5)));
             bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
             bridge.peAddParticle('positron', 1, -r, 0, 0, 0, -v, 0, me, RE);
             break;
@@ -130,7 +212,7 @@ export function setupPEScenario(name, ctx) {
         case 'pe-true-muonium': {
             const r = 3;
             const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r / (4 * Math.PI * mmu * (sep * sep + soft2)));
+            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mmu * Math.pow(sep * sep + soft2, 1.5)));
             bridge.peAddParticle('antimuon', 1, r, 0, 0, 0, v, 0, mmu, RE);
             bridge.peAddParticle('muon', -1, -r, 0, 0, 0, -v, 0, mmu, RE);
             break;
@@ -140,7 +222,7 @@ export function setupPEScenario(name, ctx) {
         case 'pe-tauonium': {
             const r = 2;
             const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r / (4 * Math.PI * mtau * (sep * sep + soft2)));
+            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mtau * Math.pow(sep * sep + soft2, 1.5)));
             bridge.peAddParticle('antitau', 1, r, 0, 0, 0, v, 0, mtau, RE);
             bridge.peAddParticle('tau', -1, -r, 0, 0, 0, -v, 0, mtau, RE);
             break;
@@ -188,7 +270,7 @@ export function setupPEScenario(name, ctx) {
         case 'pe-antiprotonic-hydrogen': {
             const r = 3;
             const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r / (4 * Math.PI * mp * (sep * sep + soft2)));
+            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mp * Math.pow(sep * sep + soft2, 1.5)));
             bridge.peAddParticle('proton', 1, r, 0, 0, 0, v, 0, mp, RE);
             bridge.peAddParticle('antiproton', -1, -r, 0, 0, 0, -v, 0, mp, RE);
             break;
@@ -200,7 +282,7 @@ export function setupPEScenario(name, ctx) {
         case 'pe-pion-orbit': {
             const r = 4;
             const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r / (4 * Math.PI * mpi * (sep * sep + soft2)));
+            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mpi * Math.pow(sep * sep + soft2, 1.5)));
             bridge.peAddParticle('pion_plus', 1, r, 0, 0, 0, v, 0, mpi, RE);
             bridge.peAddParticle('pion_minus', -1, -r, 0, 0, 0, -v, 0, mpi, RE);
             break;
@@ -210,7 +292,7 @@ export function setupPEScenario(name, ctx) {
         case 'pe-kaon-pair': {
             const r = 4;
             const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r / (4 * Math.PI * mK * (sep * sep + soft2)));
+            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mK * Math.pow(sep * sep + soft2, 1.5)));
             bridge.peAddParticle('kaon_plus', 1, r, 0, 0, 0, v, 0, mK, RE);
             bridge.peAddParticle('kaon_minus', -1, -r, 0, 0, 0, -v, 0, mK, RE);
             break;
@@ -266,7 +348,7 @@ export function setupPEScenario(name, ctx) {
         case 'pe-w-pair': {
             const r = 2;
             const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r / (4 * Math.PI * mW * (sep * sep + soft2)));
+            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mW * Math.pow(sep * sep + soft2, 1.5)));
             bridge.peAddParticle('w_plus', 1, r, 0, 0, 0, v, 0, mW, RE);
             bridge.peAddParticle('w_minus', -1, -r, 0, 0, 0, -v, 0, mW, RE);
             break;
@@ -296,25 +378,13 @@ export function setupPEScenario(name, ctx) {
         // [SELECTION] M_BH=5000 MeV, radii, Hawking rate are pedagogical choices
         // [EMERGENT] C_SPEED cap creates inspiral zone at r < ~10
         case 'pe-micro-bh': {
-            // Override: gravity dominates, no Coulomb
-            bridge.peSetCoulomb(false);
-            bridge.peSetGravity(true);
-            bridge.peSetDamping(false);
-            bridge.peSetSoftening(1.0);
-            const peCoulombEl2 = document.getElementById('pe-coulomb');
-            const peGravityEl2 = document.getElementById('pe-gravity');
-            const peDampingEl2 = document.getElementById('pe-damping');
-            if (peCoulombEl2) peCoulombEl2.checked = false;
-            if (peGravityEl2) peGravityEl2.checked = true;
-            if (peDampingEl2) peDampingEl2.checked = false;
-
             // BH locked at origin -- neutral, enormous mass
             bridge.peAddLockedParticle('neutron', 0, 0, 0, 0, BH_MASS, 0.5);
 
             // Gravity-only orbital velocity with Plummer softening
             const soft2_bh = 1.0;
             const gravOrbitalV = (r) =>
-                Math.sqrt(G_N * BH_MASS * r / Math.pow(r * r + soft2_bh, 1.5));
+                Math.sqrt(G_N * BH_MASS * r * r / Math.pow(r * r + soft2_bh, 1.5));
 
             // ZONE 1: Inspiral donors at r=8 (v_circ > C_SPEED -- will spiral in)
             const r_fall = 8, v_fall = 0.45;

@@ -146,9 +146,32 @@ int main() {
     }
 
     // ================================================================
-    // Section 6: enable_all() and minimal()
+    // Section 6: Diagnostics reflect active force toggles
     // ================================================================
-    std::cout << "\n--- Section 6: enable_all() / minimal() ---\n";
+    std::cout << "\n--- Section 6: Diagnostics active Hamiltonian ---\n";
+    {
+        ftd::ParticleEngine pe;
+        pe.set_damping_enabled(false);
+        pe.add_particle(+1, {0, 0, 0});
+        pe.add_particle(-1, {10, 0, 0});
+
+        pe.toggles.coulomb = false;
+        pe.toggles.gravity = false;
+        auto d_off = pe.diagnostics();
+        check("Diagnostics: Coulomb OFF -> coulomb_pe = 0", std::abs(d_off.coulomb_pe) < 1e-30);
+        check("Diagnostics: all potentials OFF -> total_pe = 0", std::abs(d_off.total_pe) < 1e-30);
+
+        pe.toggles.coulomb = true;
+        auto d_on = pe.diagnostics();
+        check("Diagnostics: Coulomb ON -> coulomb_pe nonzero", std::abs(d_on.coulomb_pe) > 1e-10);
+        check("Diagnostics: total_pe equals active components",
+              std::abs(d_on.total_pe - (d_on.coulomb_pe + d_on.gravity_pe)) < 1e-30);
+    }
+
+    // ================================================================
+    // Section 7: enable_all() and minimal()
+    // ================================================================
+    std::cout << "\n--- Section 7: enable_all() / minimal() ---\n";
     {
         ftd::ParticleToggles t;
         t.enable_all();
