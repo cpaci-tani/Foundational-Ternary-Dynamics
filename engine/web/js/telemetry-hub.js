@@ -67,7 +67,7 @@ export class TelemetryHub {
         // ── Latest snapshots per scale ──────────────────
         this.s0  = { diag: null, audit: null, lagrangian: null };
         this.s1  = { diag: null, extended: null, runtime: null };
-        this.s2  = { diag: null };  // also used for scale3
+        this.s2  = { diag: null, runtime: null };  // also used for scale3
         this.s4  = { diag: null };
         this.s5  = { diag: null, cosmic: null };
 
@@ -157,10 +157,22 @@ export class TelemetryHub {
         this._peInitialEnergy = null;
 
         // ── Scale 2/3 — Atom / Molecule Engine (200-sample)
-        this.aeKE     = new RingBuffer(200);
-        this.aeTemp   = new RingBuffer(200);
-        this.aeEnergy = new RingBuffer(200);
-        this.aeBonds  = new RingBuffer(200);
+        // All values are SIM UNITS (implicit k_B = 1; audit P0-10) — panels
+        // label them "(sim)", never MeV / Kelvin. No aeMaxForce buffer on
+        // purpose: aeGetForceDecomposition is O(N²) and visibility-gated, so
+        // an always-collected force channel would either pay that cost every
+        // tick or sit dead when arrows are hidden (the B1 dead-buffer class).
+        this.aeKE        = new RingBuffer(200);
+        this.aeTemp      = new RingBuffer(200);
+        this.aeEnergy    = new RingBuffer(200);
+        this.aeBonds     = new RingBuffer(200);
+        this.aePEIonic   = new RingBuffer(200);
+        this.aePEVdw     = new RingBuffer(200);
+        this.aePEBond    = new RingBuffer(200);
+        this.aeMomentum  = new RingBuffer(200);
+        this.aeAtomCount = new RingBuffer(200);
+        this.aeDrift     = new RingBuffer(200);
+        this._aeInitialEnergy = null;
 
         // ── Scale 5 — Cosmic (200-sample) ──────────────
         this.csBodies = new RingBuffer(200);
@@ -433,10 +445,48 @@ export class TelemetryHub {
         if (!diag) return null;
         this.s2.diag = diag;
 
-        this.aeKE.push(diag.kineticEnergy || 0);
+        // Field names per mock-atom-engine.js aeGetDiagnostics() — the only
+        // AE backend (WASM AtomEngine disabled, wasm-bridge._aeHasWasm).
+        // B1 fix 2026-06-10: this previously read diag.kineticEnergy /
+        // diag.totalPotential, fields that do not exist, so aeKE and
+        // aeEnergy pushed 0 forever.
+        const ke = diag.totalKE || 0;
+        const totalEnergy = diag.totalEnergy ?? (
+            ke + (diag.totalPEIonic || 0) + (diag.totalPEVdw || 0) + (diag.totalPEBond || 0)
+        );
+        const pMag = Math.sqrt(
+            (diag.momentumX || 0) ** 2 + (diag.momentumY || 0) ** 2 + (diag.momentumZ || 0) ** 2
+        );
+        if (this._aeInitialEnergy === null && Math.abs(totalEnergy) > 1e-12) {
+            this._aeInitialEnergy = totalEnergy;
+        }
+        const energyDrift = this._aeInitialEnergy
+            ? ((totalEnergy - this._aeInitialEnergy) / Math.abs(this._aeInitialEnergy)) * 100
+            : 0;
+
+        // Runtime snapshot (engine truth for the diagnostics descriptors).
+        // Scenario label from the DOM: scale 3 owns mol-scenario-select,
+        // scale 2 owns ae-scenario-select (mirrors collectScale1).
+        const runtime = bridge.aeGetRuntimeState?.() ?? null;
+        let scenario = '';
+        if (typeof document !== 'undefined') {
+            const app = document.getElementById('app');
+            const selectId = app?.dataset.activeScale === '3' ? 'mol-scenario-select' : 'ae-scenario-select';
+            const scenarioSelect = document.getElementById(selectId);
+            scenario = scenarioSelect?.selectedOptions?.[0]?.textContent || scenarioSelect?.value || '';
+        }
+        this.s2.runtime = runtime ? { scenario, ...runtime } : { scenario };
+
+        this.aeKE.push(ke);
         this.aeTemp.push(diag.temperature || 0);
-        this.aeEnergy.push((diag.kineticEnergy || 0) + (diag.totalPotential || diag.potentialEnergy || 0));
+        this.aeEnergy.push(totalEnergy);
         this.aeBonds.push(diag.bondCount || 0);
+        this.aePEIonic.push(diag.totalPEIonic || 0);
+        this.aePEVdw.push(diag.totalPEVdw || 0);
+        this.aePEBond.push(diag.totalPEBond || 0);
+        this.aeMomentum.push(pMag);
+        this.aeAtomCount.push(diag.atomCount || 0);
+        this.aeDrift.push(energyDrift);
         return diag;
     }
 
@@ -572,8 +622,13 @@ export class TelemetryHub {
                 break;
             case 2:
             case 3:
-                for (const b of [this.aeKE, this.aeTemp, this.aeEnergy, this.aeBonds]) b.clear();
-                this.s2 = { diag: null };
+                for (const b of [
+                    this.aeKE, this.aeTemp, this.aeEnergy, this.aeBonds,
+                    this.aePEIonic, this.aePEVdw, this.aePEBond,
+                    this.aeMomentum, this.aeAtomCount, this.aeDrift,
+                ]) b.clear();
+                this.s2 = { diag: null, runtime: null };
+                this._aeInitialEnergy = null;
                 break;
             case 5:
                 for (const b of [this.csBodies, this.csHubble, this.csDM]) b.clear();
