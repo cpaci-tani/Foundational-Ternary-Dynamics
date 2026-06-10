@@ -61,7 +61,7 @@ for the canonical shape and the rules that govern who reads/writes what.
 1. User changes the scenario dropdown
 2. `bindings.js` calls `loadScenario(ctx, name)`
 3. `runtime/scenario-loader.js`:
-   a. Checks `shouldUseFluxMock` (flux-/s0-seed-/s0-field-/quantum- → MockBridge)
+   a. Checks `shouldUseFluxMock` (`flux-*`, explicit mock-owned demos such as `s0-field-spacetime-forcing-boundary`, or bridge-without-flux-volume → MockBridge)
    b. Allocates fluxMock if needed
    c. Calls `bridge.setupScenario(name)` → routes to `bridge/scenarios/index.js` dispatcher
    d. `applyToggleDefaults` resets to `SCALE0_TOGGLES` then applies `SCALE0_SCENARIO_OVERRIDES[name]` (prerequisite-first sort)

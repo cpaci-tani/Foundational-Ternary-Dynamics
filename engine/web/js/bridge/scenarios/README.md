@@ -1,6 +1,6 @@
 # engine/web/js/bridge/scenarios — Scenario library
 
-**Purpose.** 96 Scale-0 scenarios partitioned into 6 prefix-named domains.
+**Purpose.** Scale-0 scenarios partitioned into 6 prefix-named domains.
 Each scenario is a setup function that injects particles + flux into the
 bridge to seed an initial condition.
 
@@ -19,17 +19,17 @@ capability surface). When no harness is passed, the dispatcher builds a thin
 
 ## Internal structure
 
-| Group | File | Count | Domain |
-|---|---|---:|---|
-| `flux-*` | `flux-scenarios.js` | 20 | Substrate physics: pulses, dipoles, standing waves, vortices, dual substrate, baryon, meson, cyclotron, screening, thermalization, foam |
-| `light-*` | `light-scenarios.js` | 4 | EM dynamics: rainbow, dipole radiation, two-slit, photon race |
-| `quantum-*` | `quantum-scenarios.js` | 9 | QM phenomena: Born rule, double slit, eraser, tunnel, well, entanglement, Aharonov-Bohm, Casimir, Zeno |
-| `s0-vacuum-*` | `vacuum-scenarios.js` | 15 | Single particle in vacuum: leptons, neutrinos, gauge bosons, baryons, mesons |
-| `s0-seed-*` | `s0-seed-scenarios.js` | 45 | SM particles: quarks, bosons, atoms, molecules, gauge / topological, gravity, observers, emergent clusters |
-| `s0-field-*` | `s0-field-scenarios.js` | 8 | Field configurations: plane waves, uniform E/B, photon pulse, dipoles, vortex |
+| Group | File | Domain |
+|---|---|---|
+| `flux-*` | `flux-scenarios.js` | Substrate physics: pulses, dipoles, standing waves, vortices, dual substrate, baryon, meson, cyclotron, screening, thermalization, foam |
+| `light-*` | `light-scenarios.js` | EM dynamics: rainbow, dipole radiation, two-slit, photon race |
+| `quantum-*` | `quantum-scenarios.js` | QM phenomena: Born rule, double slit, eraser, tunnel, well, entanglement, Aharonov-Bohm, Casimir, Zeno |
+| `s0-vacuum-*` | `vacuum-scenarios.js` | Single particle in vacuum: leptons, neutrinos, gauge bosons, baryons, mesons |
+| `s0-seed-*` | `s0-seed-scenarios.js` | SM particles: quarks, bosons, atoms, molecules, gauge / topological, gravity, observers, emergent clusters |
+| `s0-field-*` | `s0-field-scenarios.js` | Field configurations: plane waves, uniform E/B, photon pulse, FTD-0253 spacetime forcing, dipoles, vortex |
 
-(Counts are `case`-label occurrences, deduped to 95 unique scenarios + `empty`;
-re-derive from source via `tests/scenario-parity.spec.js` — it is the drift guard.)
+Re-derive inventory counts from source via `tests/scenario-parity.spec.js`;
+it is the drift guard.
 
 Plus:
 - `index.js` — dispatcher (chains the 6 group files in prefix order)
