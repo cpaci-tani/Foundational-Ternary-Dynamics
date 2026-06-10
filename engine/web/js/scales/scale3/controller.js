@@ -45,6 +45,7 @@ import { getMolecule, loadMolecule } from '../../molecules.js';
 import { SCALE2_TOGGLES } from '../../config/toggles.js';
 import { animateAE, syncAEParams } from '../scale2/controller.js';
 import { Scale3ControlsComponent } from './ui/controls/component.js';
+import { telemetryHub } from '../../telemetry-hub.js';
 
 
 // =====================================================================
@@ -104,6 +105,10 @@ export function loadMoleculeScenario(ctx, name) {
     if (!bridge.initAE) return;
     ctx.resetAllVisualState();
     bridge.initAE();
+
+    // Re-baseline hub telemetry — Scale 3 shares the s2 buffers/drift
+    // reference with Scale 2 (resetScale treats 2 and 3 identically).
+    telemetryHub.resetScale(2);
 
     // Reset toggles to defaults (bonding ON for molecules) then sync sliders
     _resetAETogglesToDefaults(bridge);

@@ -580,6 +580,8 @@ export class WebSocketBridge {
     aeGetAtomData() { return this._ensureFallback().aeGetAtomData(); }
     aeGetDiagnostics() { return this._ensureFallback().aeGetDiagnostics(); }
     aeGetFieldSources() { return this._ensureFallback().aeGetFieldSources(); }
+    aeGetForceDecomposition(want) { return this._ensureFallback().aeGetForceDecomposition(want); }
+    aeGetRuntimeState() { return this._ensureFallback().aeGetRuntimeState(); }
     aeSetDt(dt) { this._ensureFallback().aeSetDt(dt); }
     aeGetDt() { return this._ensureFallback().aeGetDt(); }
     aeSetSoftening(s) { this._ensureFallback().aeSetSoftening(s); }

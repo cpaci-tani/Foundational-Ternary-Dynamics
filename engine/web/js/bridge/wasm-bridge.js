@@ -1054,6 +1054,19 @@ export class WasmBridge {
         return this._ensureAEFallback().aeGetFieldSources();
     }
 
+    // Per-atom force decomposition (ionic/vdW/bond/net) for the Scale 2/3
+    // force-arrow overlays. JS-fallback-only (like aeGetFieldSources) — the
+    // WASM AtomEngine path is disabled (see _aeHasWasm). This forward was
+    // MISSING until 2026-06-10: on the default WASM page every force-arrow
+    // toggle made animateAE throw a TypeError each compute frame (B10).
+    aeGetForceDecomposition(want) {
+        return this._ensureAEFallback().aeGetForceDecomposition(want);
+    }
+
+    aeGetRuntimeState() {
+        return this._ensureAEFallback().aeGetRuntimeState();
+    }
+
     aeSetDt(dt) {
         if (this._aeHasWasm && this._module && this._ae) this._module.aeSetDt(this._ae, dt);
         else this._ensureAEFallback().aeSetDt(dt);
