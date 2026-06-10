@@ -94,9 +94,11 @@ export function computeAtomicProps(Z, N = 0) {
         }
     }
     if (electronegativity === 0 && Z > 86) {
-        // Pauling values not tabulated for Z > 86; fall back to the
-        // logarithmic guess. Keep the formula explicit so future audits
-        // can spot it.
+        // [IMPOSED] Pauling values not tabulated for Z > 86; fall back to
+        // this logarithmic guess. It is NOT from Pauling or any literature
+        // source — an uncited interpolation kept only because superheavy
+        // elements have no measured χ. Keep the formula explicit so future
+        // audits can spot it.
         electronegativity = 1.5 + 0.3 * Math.log(Z);
     }
     return { mass, radius, vdw_epsilon, vdw_sigma, max_bonds, electronegativity };

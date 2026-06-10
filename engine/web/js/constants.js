@@ -361,6 +361,18 @@ export const LAPLACIAN_EDGE_WEIGHT = 1.0 / 6.0;
 // Tuning parameters for the atom-engine LJ + bond molecular dynamics.
 // Calibrated empirically against small-molecule equilibrium geometries
 // (H₂, H₂O, NH₃, CH₄). Not derived from the FTD chain.
+//
+// DELIBERATE JS ↔ C++ DIVERGENCE (documented 2026-06-10): the C++
+// AtomEngine derives its force prefactors from the ontic chain
+// (Coulomb: ALPHA/(4π) ≈ 0.00183 in atom_forces.cpp; bond spring:
+// ALPHA·K_B/r_eq²·order in atom_engine.cpp), while these JS values
+// (AE_K_COULOMB = 2.0, AE_K_BOND = 50.0) are visualization-scale MD
+// tunings chosen for legible dynamics at interactive frame rates. The
+// two backends are NOT expected to produce matching force magnitudes
+// or equilibrium time scales. The JS mock is the PRODUCTION Scale-2/3
+// backend (wasm-bridge.js `_aeHasWasm` is deliberately disabled until
+// the Planck-unit↔Bohr-unit conversion shim exists). See
+// engine/SPEC_ENGINE.md §Scale 2 "JS ↔ C++ constant divergence".
 export const AE_EPS_BASE       = 0.005;
 export const AE_K_COULOMB      = 2.0;
 export const AE_K_BOND         = 50.0;
