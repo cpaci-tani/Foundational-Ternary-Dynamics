@@ -1106,12 +1106,9 @@
           } else if (Jmag > 0.05) {
             // Wavefront propagation
             const tColor = Math.min(1.0, Jmag / K_GENESIS);
-            const color = new THREE.Color().interpolateColors(
-              new THREE.Color(0x3b5998), // Faint slate blue
-              new THREE.Color(0xff8800), // Vibrant orange
-              tColor
-            );
-            voxel.material.color.copy(color);
+            const colorA = new THREE.Color(0x3b5998); // Faint slate blue
+            const colorB = new THREE.Color(0xff8800); // Vibrant orange
+            voxel.material.color.copy(colorA).lerp(colorB, tColor);
             voxel.material.emissive.setHex(0x000000);
             voxel.material.opacity = 0.4 + tColor * 0.45;
             voxel.mesh.scale.setScalar(0.7 + tColor * 0.3);
