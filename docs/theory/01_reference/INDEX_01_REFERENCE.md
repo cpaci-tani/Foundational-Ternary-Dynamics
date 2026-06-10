@@ -9,12 +9,13 @@
 
 ## Read first
 
-1. [SPEC_ALGEBRAIC_SPINE.md](SPEC_ALGEBRAIC_SPINE.md) — the nine numbered algebraic results (seven theorem-grade + two honestly-tiered), physics-free. The rigorous core.
-2. [SPEC_DOCTRINE_LEDGER.md](SPEC_DOCTRINE_LEDGER.md) — single-page status map across spine + FQCR + bridge; start here for "what is the status of X".
-3. [SPEC_FQCR.md](SPEC_FQCR.md) — Finite Quarter-Conjugacy Recurrence capstone; operator-theoretic provenance of G* (Models I–V).
-4. [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) — standalone mathematical monograph deriving G* from nine branches of mathematics.
-5. [SPEC_MATH_FIRST_ONTOLOGY.md](SPEC_MATH_FIRST_ONTOLOGY.md) — canonical ordering principle: ontology = finite invariant structure, physics = stable readout of it.
-6. [SPEC_FTD_REFERENCE.md](SPEC_FTD_REFERENCE.md) — the framework-wide reference document (entry point for the whole theory).
+1. [SPEC_FTD_FRAMEWORK_V1.md](SPEC_FTD_FRAMEWORK_V1.md) — **the constitution** (FTD-0254): postulates + framework commitments (FC-0/FC-1/FC-2) + calibrations + the computational-EFT catalog + the supersession matrix + framework-level falsification criteria. The forward-facing statement of what FTD is, declines, and stakes.
+2. [SPEC_ALGEBRAIC_SPINE.md](SPEC_ALGEBRAIC_SPINE.md) — the nine numbered algebraic results (seven theorem-grade + two honestly-tiered), physics-free. The rigorous core.
+3. [SPEC_DOCTRINE_LEDGER.md](SPEC_DOCTRINE_LEDGER.md) — single-page status map across spine + FQCR + bridge; start here for "what is the status of X".
+4. [SPEC_FQCR.md](SPEC_FQCR.md) — Finite Quarter-Conjugacy Recurrence capstone; operator-theoretic provenance of G* (Models I–V).
+5. [MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md](MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md) — standalone mathematical monograph deriving G* from nine branches of mathematics.
+6. [SPEC_MATH_FIRST_ONTOLOGY.md](SPEC_MATH_FIRST_ONTOLOGY.md) — canonical ordering principle: ontology = finite invariant structure, physics = stable readout of it.
+7. [SPEC_FTD_REFERENCE.md](SPEC_FTD_REFERENCE.md) — the framework-wide reference document (entry point for the whole theory).
 
 ---
 
@@ -22,6 +23,7 @@
 
 | File | Tag | Purpose |
 |---|---|---|
+| [SPEC_FTD_FRAMEWORK_V1.md](SPEC_FTD_FRAMEWORK_V1.md) | [SYNTHESIS] + [AXIOM]-class FC declarations | **The constitution (FTD-0254, 2026-06-09)**: three registers (Postulates / Framework Commitments FC-0,FC-1,FC-2 / Calibrations); two-orthogonal-fields ontology (FTD-0257); computational-EFT IR catalog; supersession matrix; framework falsification criteria. Declarations, not derivations — promotes nothing. |
 | [SPEC_DOCTRINE_LEDGER.md](SPEC_DOCTRINE_LEDGER.md) | [REFERENCE] / [SYNTHESIS] | Doctrine Ledger v1.4 — single-page status map; per-element tags; introduces no new theorems. |
 | [SPEC_MATH_FIRST_ONTOLOGY.md](SPEC_MATH_FIRST_ONTOLOGY.md) | [REFERENCE] / [SYNTHESIS] / [OPEN PROGRAM] | Canonical math-first ontology + readout-ordering principle (FTD-0153). |
 | [SPEC_OPEN_MATH_BY_SECTOR.md](SPEC_OPEN_MATH_BY_SECTOR.md) | [REFERENCE] | Sector-organised open research-questions queue, 10 SM sectors (FTD-0146); replaces tier-aligned checklist. |
@@ -67,7 +69,8 @@
 | [SPEC_FTD_REFERENCE.md](SPEC_FTD_REFERENCE.md) | framework reference | FTD complete reference v5.29 — framework-wide entry point. |
 | [SPEC_FTD_COMPLETE_CHAIN.md](SPEC_FTD_COMPLETE_CHAIN.md) | proof chain (per-link tags) | The complete FTD argument in one place: from i to α, every link tagged. |
 | [SPEC_NOVEL_PREDICTIONS.md](SPEC_NOVEL_PREDICTIONS.md) | prediction specification | Catalog of every falsifiable prediction FTD makes that the SM does not; pre-diction vs post-diction flagged. |
+| [SPEC_PREDICTION_LEDGER_DEVIATIONS.md](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) | [SYNTHESIS] registry | **The structural deviation spine (FTD-0258, 2026-06-09)**: six deviations from the QM/SR *formalism* (PL-1..PL-6) with protocols, scope caveats, kill conditions; PL-2 carries the mandatory lab-Bell honesty block. No row promoted by inclusion. |
 
 ---
 
-25 active docs in this cluster (+ 0 archived).
+27 active docs in this cluster (+ 0 archived).
