@@ -12,6 +12,7 @@ export function createScene(canvas) {
   renderer.setClearColor(0x0b0c10, 1);
 
   const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0b0c10);
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
   camera.position.set(3, 2, 4.4);
   camera.lookAt(0, 0, 0);
@@ -35,7 +36,7 @@ export function createScene(canvas) {
   function buildComposer(w, h) {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.6, 0.5, 0.82);
+    bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.42, 0.5, 0.86);
     composer.addPass(bloom);
   }
   function size() {
