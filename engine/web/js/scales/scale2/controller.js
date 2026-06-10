@@ -195,6 +195,9 @@ export function resetScale2(ctx) {
         viewport.toggleFieldHeatmap(false);
         viewport.toggleFieldVectors(false);
         viewport.toggleBondLines(false);
+        viewport.toggleVelocityVectors?.(false);
+        viewport.toggleAEDipoles?.(false);
+        viewport.toggleHBondLines?.(false);
         viewport.updateElementLabels(null);
     }
 }
@@ -469,6 +472,26 @@ export function animateAE(ctx) {
             });
             viewport.updateAEForces(atomData.positions, forceData, forceData.count);
         }
+    }
+
+    // ── 7b. Kinetic/electrostatic structure overlays ────────────────
+    // Velocity vectors, dipole arrows, dashed H-bond lines. All three are
+    // cheap O(N)/O(N·acceptors) reads; updated only while their flag is on.
+    if (_showAEVelocities && atomData.count > 0) {
+        const vel = bridge.aeGetVelocities?.();
+        if (vel && vel.count > 0) {
+            viewport.updateVelocityVectors(atomData.positions, vel.velocities, vel.count);
+        }
+    }
+    if (_showAEDipoles && atomData.count > 0) {
+        const dip = bridge.aeGetDipoles?.();
+        if (dip && dip.count > 0) {
+            viewport.updateAEDipoles(atomData.positions, dip.dipoles, dip.count);
+        }
+    }
+    if (_showAEHBondLines && atomData.count > 0) {
+        const hb = bridge.aeGetHBondPairs?.();
+        if (hb) viewport.updateHBondLines(hb.segments, hb.count);
     }
 
     // ── 8. Update element labels ───────────────────────────────────

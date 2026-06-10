@@ -1067,6 +1067,10 @@ export class WasmBridge {
         return this._ensureAEFallback().aeGetRuntimeState();
     }
 
+    aeGetVelocities()  { return this._ensureAEFallback().aeGetVelocities(); }
+    aeGetDipoles()     { return this._ensureAEFallback().aeGetDipoles(); }
+    aeGetHBondPairs()  { return this._ensureAEFallback().aeGetHBondPairs(); }
+
     aeSetDt(dt) {
         if (this._aeHasWasm && this._module && this._ae) this._module.aeSetDt(this._ae, dt);
         else this._ensureAEFallback().aeSetDt(dt);

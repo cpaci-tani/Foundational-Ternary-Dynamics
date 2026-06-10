@@ -8,6 +8,9 @@ export function getScale2OverlayTemplate() {
   container.className = 'scale2-only viewport-overlay-panel';
   container.innerHTML = `
     <button class="view-toggle" id="toggle-ae-field" title="Show force field heatmap + vectors">Fields</button>
+    <button class="view-toggle" id="toggle-ae-velocities" title="Per-atom velocity vectors">Velocities</button>
+    <button class="view-toggle" id="toggle-ae-dipoles" title="Per-atom dipole-moment arrows (from bond electronegativity differences)">Dipoles</button>
+    <button class="view-toggle" id="toggle-ae-hbonds" title="Dashed donor-H&#183;&#183;&#183;acceptor hydrogen-bond lines">H-Bonds</button>
   `;
   return container;
 }

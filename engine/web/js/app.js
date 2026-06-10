@@ -328,6 +328,7 @@ function _resetAllVisualState() {
     for (const id of [
         'ae-show-shells', 'ae-show-shell-bounds', 'ae-show-lobes',
         'ae-force-ionic', 'ae-force-vdw', 'ae-force-bond', 'ae-force-net',
+        'toggle-ae-velocities', 'toggle-ae-dipoles', 'toggle-ae-hbonds',
     ]) {
         const el = document.getElementById(id);
         if (el) {
@@ -1280,6 +1281,27 @@ function wireViewportToggles() {
             viewport.toggleFieldHeatmap(aeFieldOn);
             viewport.toggleFieldVectors(aeFieldOn);
         });
+    }
+
+    // AE kinetic/electrostatic structure overlays (Scale 2 deep pass):
+    // velocity vectors, dipole arrows, dashed H-bond lines. Flags drive
+    // per-frame updates in Scale2Controller.animateAE; the viewport toggle
+    // controls layer visibility immediately.
+    const aeStructureToggles = [
+        ['toggle-ae-velocities', 'showAEVelocities', (on) => viewport.toggleVelocityVectors(on)],
+        ['toggle-ae-dipoles', 'showAEDipoles', (on) => viewport.toggleAEDipoles(on)],
+        ['toggle-ae-hbonds', 'showAEHBondLines', (on) => viewport.toggleHBondLines(on)],
+    ];
+    for (const [btnId, flagKey, vpToggle] of aeStructureToggles) {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            btn.addEventListener('click', () => {
+                const isOn = btn.classList.toggle('active');
+                btn.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+                Scale2Controller.setAEVisualToggle(flagKey, isOn);
+                vpToggle(isOn);
+            });
+        }
     }
 
     // Scale 3 bonds toggle
