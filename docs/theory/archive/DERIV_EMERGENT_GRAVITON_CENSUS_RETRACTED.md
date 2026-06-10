@@ -1,16 +1,24 @@
-# The Emergent Graviton Census: Deriving the Massless Spin-2 Metric Perturbation from Flux Bilinears
+# The Emergent Graviton Census: Deriving the Massless Spin-2 Metric Perturbation from Flux Bilinears [RETRACTED]
 
-**Tag:** `[THEORY]`
-**Date:** 2026-05-29
-**Status:** `[THEOREM]` — derives the spin-2 massless graviton tensor from the symmetric, traceless bilinear product of the flux vector field.
-**Authoritative Reference:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md), [`CLAUDE.md](../../CLAUDE.md).
+**Tag:** `[RETRACTED]`
+**Date:** 2026-05-29 (Original); Retracted 2026-06-10
+**Status:** `[RETRACTED]` — This document is preserved for historical provenance only. Its central claim that the bilinear flux tensor $h_{ij} = J_i J_j - \frac{1}{3}\delta_{ij}|J|^2$ propagates as an independent massless spin-2 graviton has been disproven.
+**Authoritative References:** [`FOUND_SPIN2_BOUNDARY_THEOREM.md`](../10_eft_program/derivations/FOUND_SPIN2_BOUNDARY_THEOREM.md) (FTD-0209), [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../10_eft_program/reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) (FTD-0193), and [`CLAUDE.md`](../../CLAUDE.md).
+
+---
+
+## Executive Summary (Retraction Notice)
+
+This document is **formally retracted**. 
+
+While the group-theoretic decomposition in Section 2 is mathematically correct—showing that the symmetric, traceless bilinear tensor $h_{ij}$ transforms as a 5-dimensional spin-2 representation under $SO(3)$ and splits into $E_g \oplus T_{2g}$ under octahedral symmetries—the physical claim that it propagates as a massless spin-2 graviton state is incorrect:
+1. **No Propagating Pole**: The spin-2 boundary theorem ([`FOUND_SPIN2_BOUNDARY_THEOREM.md`](../10_eft_program/derivations/FOUND_SPIN2_BOUNDARY_THEOREM.md)) proves that the transverse-traceless projection of the $h_{ij}$ correlator has no isolated pole (representing a single-particle massless state), but only a two-particle branch-cut continuum.
+2. **Empirical Falsification**: The Frontier 4 engine measurement campaign ([`REPORT_GRAVITON_SUBSTRATE_MODE.md`](../10_eft_program/reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md), FTD-0193) confirms that the flux-quadrupole TT response is identical to the spin-1 control at 11/12 k-points to 7 significant digits. The bilinear operator simply carries the spin-1 excitations of the underlying vector flux field $J$ rather than hosting a new emergent collective spin-2 state.
+
+Therefore, the FTD substrate carries no emergent spin-2 graviton mode, and General Relativity's spin-2 metric perturbation is an imported (Branch-B) structure, as documented in [`DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE.md`](../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_NONLINEAR_FROM_LATTICE.md).
 
 ---
 
-## Abstract
-This document formally resolves the spin representation-content gap **(GAP-10.1)** and the spin-1 graviton mismatch **(FTD-0189)** in Foundational Ternary Dynamics (FTD). While the elementary vector field $J$ carries only helicity $\pm 1$ (spin-1) excitations, we prove that the metric perturbation tensor $h_{\mu\nu}$ emerges necessarily as a **symmetric, traceless rank-2 bilinear product** of the flux field. By evaluating the character decompositions of this tensor, we demonstrate that it carries exactly the 5-dimensional spin-2 representation under the continuous rotation group $SO(3)$, and decomposes stably into $E_g \oplus T_{2g}$ under the discrete octahedral point group $O_h$ of the cubic lattice.
-
----
 
 ## 1. The Spin Mismatch Problem (FTD-0189)
 
