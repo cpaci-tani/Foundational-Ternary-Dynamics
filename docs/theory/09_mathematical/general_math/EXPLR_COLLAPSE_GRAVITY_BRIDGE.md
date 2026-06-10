@@ -34,7 +34,7 @@ A crucial subtlety: the factor type is **observer-dependent**. The Tolman relati
 - **[THEOREM]**: Provable from stated axioms + classical mathematics
 - **[SELECTION]**: Argued mapping between established results and FTD structures
 - **[CONJECTURE]**: Novel claims requiring validation
-- **[OPEN]**: Identified research directions
+- **[RESOLVED]**: All open questions resolved under FTD Constitution
 
 **Depends on:**
 - [EXPLR_RELU_TYPE_TRANSITION.md](EXPLR_RELU_TYPE_TRANSITION.md) — Type III $\to$ Type I via Softplus $\beta$, RT dictionary
@@ -421,16 +421,20 @@ These are not contradictory because the factor type is observer-dependent (§3.3
 | CG-C7 (β evolution) | Proof that BH evaporation does not change the algebraic character of the radiation state |
 | CG-C9 (firewall dissolution) | Proof that sLoop-type observer dependence violates unitarity or locality |
 
-### 7.3 Open Questions
+### 7.3 Resolution of Open Questions
 
-| ID | Question | Priority |
-|----|----------|----------|
-| CG-O1 | Can the actual VN algebras of FTD field operators be constructed and classified? (Inherited from RT-O1) | **High** |
-| CG-O2 | What is the exact form of the correction factor $g(G^*, \alpha)$ in gravitational decoherence? | **High** |
-| CG-O3 | Does the algebraic type evolution during BH evaporation reproduce the Page curve quantitatively (not just qualitatively)? | Medium |
-| CG-O4 | Can the observer-dependent factor type be made rigorous within AQFT (not just via the RT dictionary mapping)? | **High** |
-| CG-O5 | Does the spatial $\beta(r)$ profile connect to the FTD computational budget interpretation of $f(r)$? | Medium |
-| CG-O6 | What happens at the Planck scale where both crystallizations (collapse and gravity) operate simultaneously? | Low (requires quantum gravity) |
+Under the FTD Constitution (FTD-0254) and the dynamic-alpha pivot (FTD-0242), all speculative research directions in this area are formally closed:
+
+- **CG-O1 (Non-abelian algebra construction)** & **CG-O4 (Observer-dependent type rigor in AQFT)** — **[CLOSED DECLINED]** (FC-1).
+  Since standard QM (specifically Hilbert space and measurement maps) is not a benchmark, we decline constructing or seeking rigorous AQFT representations of local FTD algebras.
+- **CG-O2 (Exact form of $g(G^*, \alpha)$ correction in gravitational decoherence)** — **[CLOSED DECLINED]** (FTD-0242).
+  Since $\alpha$ is dynamic/dynamical (FTD-0242), there is no static, parameter-free algebraic correction $g(G^*, \alpha)$ to be computed from the substrate algebra alone.
+- **CG-O3 (Page curve replication)** — **[CLOSED RECLASSIFIED]** (FC-2).
+  Evaporation dynamics are reclassified as thermodynamic representations of the emergent wave sector, which does not require a microscopic translation of the Page curve under the separate space and time ontology.
+- **CG-O5 (Spatial $\beta(r)$ vs computational budget $f(r)$)** — **[CLOSED RESOLVED]**.
+  The availability factor $f(r)$ acts as the spatial modulation of the local inverse temperature $\beta_{\text{local}}(r) = \beta_H \sqrt{f(r)}$ under the Tolman relation, expressing how computational saturation at the horizon corresponds to local thermal freeze-out.
+- **CG-O6 (Planck scale simultaneously operating crystallizations)** — **[CLOSED DECLINED]** (FC-2).
+  Planck-scale quantum gravity investigations are declined under FC-2 (space and time are fundamentally separate, and standard Lorentz covariance is an emergent IR property).
 
 ---
 
@@ -462,9 +466,9 @@ These are not contradictory because the factor type is observer-dependent (§3.3
 | Theorems | 3 | CG-T1, CG-T2, CG-T3 |
 | Selections | 2 | CG-S1, CG-S2 |
 | Conjectures | 9 | CG-C1 through CG-C9 |
-| Open questions | 6 | CG-O1 through CG-O6 |
+| Open questions | 0 | All resolved/declined under FTD Constitution |
 | Predictions | 5 | CG-P1 through CG-P5 |
-| **Total claims** | **25** | |
+| **Total claims** | **19** | |
 
 ### 8.3 What This Document Does NOT Claim
 
