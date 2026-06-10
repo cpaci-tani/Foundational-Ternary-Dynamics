@@ -1,7 +1,7 @@
 # INDEX · Core Physics Derivations
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-22
+**Date:** 2026-06-09 (incremental: FTD-0259 Mechanism-α closure registered; two stale FTD-0110 "nonlinear closure" tag lines corrected to the post-audit canonical position — bridge [OPEN])
 **Status:** [REFERENCE] — local navigation index for `docs/theory/03_derivations/`.
 **Purpose:** This is the largest theory cluster — the working derivations that turn the FTD axioms and the algebraic spine into physics: the master quadratic and its consequences, the Standard Model gauge sectors, QED/QFT machinery, gravity, quantum-mechanics foundations, the G\* provenance chain, and the FTD-0110 cluster-mass bridge. Read this cluster when you need the explicit chain behind a physics claim; check each doc's own epistemic tag, because most mix [THEOREM]/[DERIVED] algebra with [SELECTION]/[CONJECTURE] physical identifications.
 
@@ -131,8 +131,9 @@ The linear→nonlinear bridge connecting cluster size to particle mass.
 
 | File | Tag | Purpose |
 |---|---|---|
-| [DERIV_K_FROM_OH_A1G_MULTIPLICITY.md](foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) | [DERIVED] (linear level derived; nonlinear closure resolved by DERIV_FTD0110_NONLINEAR_BRIDGE.md) | `k = 1/N_base = 1/4` from O_h representation theory of the 27-block. |
-| [DERIV_FTD0110_NONLINEAR_BRIDGE.md](foundational_mechanics/DERIV_FTD0110_NONLINEAR_BRIDGE.md) | [DERIVED] | Nonlinear-bridge closure: O_h-equivariance + Orbit-Equipartition + Timescale Separation. |
+| [DERIV_K_FROM_OH_A1G_MULTIPLICITY.md](foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md) | [DERIVED at linear level] (nonlinear coefficient origin [OPEN]/[SMC] per the 2026-05-27 audit) | `k = 1/N_base = 1/4` from O_h representation theory of the 27-block. |
+| [DERIV_FTD0110_NONLINEAR_BRIDGE.md](foundational_mechanics/DERIV_FTD0110_NONLINEAR_BRIDGE.md) | Bridge-I [DERIVED]; **§6 closure REVERTED** by [AUDIT_FTD0110_2026-05-27_RESOLUTION.md](../07_assessment/audits/AUDIT_FTD0110_2026-05-27_RESOLUTION.md) — bridge [OPEN] | Global O_h-equivariance (solid) + the disputed §6 theorems (carry the audit's CAUTION banner). |
+| [EXPLR_FTD0110_MECHANISM_ALPHA_LEAKAGE_CLOSED.md](foundational_mechanics/EXPLR_FTD0110_MECHANISM_ALPHA_LEAKAGE_CLOSED.md) | [VERIFIED lemma] + [CLOSED NEGATIVE — Mechanism α leakage family] (FTD-0259, 2026-06-09) | λ(r) → (2/3)/r² verified; parameter-free drift model falsified; genesis is basis-free so irrep re-projection ≠ harvest loss; queued α projection calculation retired; Langevin knee A* = 12.8 elevates Mechanism γ; decisive next: thermostat-OFF re-sweep. |
 | [DERIV_FTD0110_FREE_ENERGY_LANDSCAPE.md](foundational_mechanics/DERIV_FTD0110_FREE_ENERGY_LANDSCAPE.md) | [DERIVED] framework / [PARTIAL] parameters | Cluster phenomenology as a multi-basin free-energy landscape. |
 | [DERIV_FTD0110_VARIANCE_ENTROPY.md](foundational_mechanics/DERIV_FTD0110_VARIANCE_ENTROPY.md) | [PARTIAL] | Cluster-size variance as boundary entropy; tested against engine data. |
 | [EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md](foundational_mechanics/EXPLR_FTD_0110_NONLINEAR_BRIDGE_ANALYSIS.md) | [PARTIAL] (exploratory) | Sharpens the [OPEN] nonlinear-bridge gap; does not close it. |
