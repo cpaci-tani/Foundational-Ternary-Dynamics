@@ -1,10 +1,11 @@
-# DERIV — Mechanism β, envelope variant (FTD-0264): BETA-PARTIAL — the initial-crossing approximation fails shape and scale; the sustain/survival physics is load-bearing
+# DERIV — Mechanism β, envelope variant (FTD-0265): BETA-PARTIAL — the initial-crossing approximation fails shape and scale; the sustain/survival physics is load-bearing
 
 **Tag:** `[COMPUTED — BETA-PARTIAL per frozen rules]`; substantively **`[CLOSED NEGATIVE — for the envelope-only (initial-crossing, sharp-kinetics) variant of Mechanism β]`** + a sharpened `[OPEN]`. **Nothing promoted.**
 **Date:** 2026-06-10
 **Runner (frozen thresholds in docstring, stated before compute):** [`scripts/exploration/derive_beta_envelope_prediction.py`](../../../scripts/exploration/derive_beta_envelope_prediction.py); output log preserved in this doc's tables. Priors: PARTIAL 40 % (**landed**) / SUPPORTED 30 / FAIL 30.
 **Targets:** the FTD-0263 constraint profile (elbow N ≈ 14.6; the F-arm staircase; onset facts).
-**LEDGER:** FTD-0264.
+**LEDGER:** FTD-0265 (renumbered from a drafted 0264 on collision with the concurrent blocked-effective-action row).
+**Companion:** [`ANALYSIS_BETA_ENVELOPE_MODEL_v1.md`](ANALYSIS_BETA_ENVELOPE_MODEL_v1.md) — a parallel write-up of the same runner from the concurrent session (same verdict; carries the corrected symplectic-Euler dispersion estimator note). This DERIV doc is the verdict of record per the LEDGER row.
 
 ---
 
