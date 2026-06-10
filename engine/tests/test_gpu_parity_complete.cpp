@@ -152,12 +152,23 @@ static void gpc_03_genesis() {
     // Energy comparison — wider tolerance due to stochastic divergence
     CHECK_CLOSE(ga.total_energy, ca.total_energy,
                 std::abs(ca.total_energy) * 0.1 + 1e-8, "GPC-03 energy");
-    // Independent RNGs: particle counts may differ by more than 2.
-    // We verify both engines produced SOME genesis events.
+    // Independent RNGs: particle counts may differ realization-to-realization,
+    // so exact equality is not expected. STRENGTHENED 2026-06-10 (FTD-0260):
+    // the previous existence-only check (count >= 1 on each backend) could
+    // never detect quantitative genesis drift between backends — a 6x
+    // phenomenology split would pass it forever. New criterion: counts must
+    // agree within a 3x band (catches order-of-magnitude divergence while
+    // tolerating stochastic spread from independent RNG streams).
     std::printf("  INFO: CPU particles=%d, GPU particles=%d\n",
                 ca.manifested_count, ga.manifested_count);
     CHECK(ca.manifested_count >= 1, "GPC-03 CPU genesis occurred");
     CHECK(ga.manifested_count >= 1, "GPC-03 GPU genesis occurred");
+    {
+        const int lo = std::min(ca.manifested_count, ga.manifested_count);
+        const int hi = std::max(ca.manifested_count, ga.manifested_count);
+        CHECK(hi <= 3 * lo,
+              "GPC-03 genesis counts within 3x band (quantitative parity)");
+    }
     CHECK(std::isfinite(ca.total_energy) && std::isfinite(ga.total_energy),
           "GPC-03 energy finite on both");
 }
