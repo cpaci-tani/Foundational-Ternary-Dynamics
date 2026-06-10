@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>FTD-0253 Spacetime Forcing Boundary</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0f1115;
+            --band: #171b21;
+            --panel: #1e242c;
+            --panel-2: #242b34;
+            --line: #35404d;
+            --text: #eef3f7;
+            --muted: #a8b4c2;
+            --teal: #5cd6c8;
+            --amber: #f0b35b;
+            --blue: #7da9ff;
+            --rose: #f0797f;
+            --good: #8edc87;
+            --shadow: rgba(0, 0, 0, 0.28);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            min-width: 320px;
+        }
+
+        a { color: var(--teal); }
+
+        header {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: end;
+            padding: 24px clamp(16px, 3vw, 40px) 18px;
+            border-bottom: 1px solid var(--line);
+            background: #12161b;
+        }
+
+        h1, h2, h3, p { margin: 0; }
+
+        h1 {
+            font-size: clamp(1.45rem, 2.4vw, 2.25rem);
+            line-height: 1.12;
+            letter-spacing: 0;
+        }
+
+        h2 {
+            font-size: 1.05rem;
+            line-height: 1.25;
+            letter-spacing: 0;
+        }
+
+        h3 {
+            font-size: 0.92rem;
+            line-height: 1.25;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+            max-width: 860px;
+            color: var(--muted);
+            line-height: 1.45;
+            font-size: 0.96rem;
+        }
+
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .chip, button, .link-button {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel-2);
+            color: var(--text);
+            font: inherit;
+            font-size: 0.85rem;
+            line-height: 1;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 9px;
+            color: var(--muted);
+        }
+
+        .link-button {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 0 10px;
+            text-decoration: none;
+        }
+
+        button {
+            min-height: 36px;
+            padding: 0 12px;
+            cursor: pointer;
+        }
+
+        button:hover, .link-button:hover { border-color: var(--teal); }
+
+        main {
+            display: grid;
+            gap: 18px;
+            padding: 18px clamp(16px, 3vw, 40px) 34px;
+        }
+
+        .band {
+            background: var(--band);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: 0 14px 40px var(--shadow);
+            overflow: hidden;
+        }
+
+        .band-header {
+            display: flex;
+            gap: 14px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .status {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+
+        .dual {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1px;
+            background: var(--line);
+        }
+
+        .pane {
+            background: var(--panel);
+            padding: 14px;
+            min-width: 0;
+        }
+
+        .pane-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+        }
+
+        .swatch.wave { background: var(--teal); }
+        .swatch.diff { background: var(--amber); }
+
+        .canvas-wrap {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #090b0f;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .metric {
+            padding: 9px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #171c23;
+            min-width: 0;
+        }
+
+        .metric span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.75rem;
+            line-height: 1.25;
+        }
+
+        .metric strong {
+            display: block;
+            margin-top: 4px;
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: clamp(0.88rem, 1.6vw, 1.02rem);
+            line-height: 1.2;
+            overflow-wrap: anywhere;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.8fr);
+            gap: 1px;
+            background: var(--line);
+        }
+
+        .notes {
+            background: var(--panel);
+            padding: 14px 16px;
+            line-height: 1.5;
+            color: var(--muted);
+        }
+
+        .notes ul {
+            margin: 10px 0 0;
+            padding-left: 18px;
+        }
+
+        .notes li + li { margin-top: 6px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border-top: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        code {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 0.92em;
+            color: var(--blue);
+        }
+
+        .good { color: var(--good); }
+        .wave-color { color: var(--teal); }
+        .diff-color { color: var(--amber); }
+        .warn { color: var(--rose); }
+
+        @media (max-width: 860px) {
+            header {
+                grid-template-columns: 1fr;
+                align-items: start;
+            }
+            .nav { justify-content: flex-start; }
+            .dual, .chart-row { grid-template-columns: 1fr; }
+            .metrics { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <div class="chip">FTD-0253</div>
+            <h1>Spacetime forcing boundary</h1>
+            <p class="subtitle">
+                Same lattice and same local stencil: the causal cone is shared.
+                The clock, reversible energy bookkeeping, and ballistic ruler
+                appear only in the second-order wave branch.
+            </p>
+        </div>
+        <nav class="nav" aria-label="Related artifacts">
+            <a class="link-button" href="../index.html">Dashboard</a>
+            <a class="link-button" href="../docs/SPEC_SPACETIME_FORCING_DEMO.md">Demo spec</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="band" aria-labelledby="point-title">
+            <div class="band-header">
+                <div>
+                    <h2 id="point-title">Point pulse replay</h2>
+                    <p class="subtitle">Scalar z-component replay of the C++ initial condition at L=48, dt=0.2.</p>
+                </div>
+                <div class="controls">
+                    <button id="run">Run</button>
+                    <button id="step">Step</button>
+                    <button id="audit">Run to t=160</button>
+                    <button id="reset">Reset</button>
+                    <span class="status" id="tick-status">t=0</span>
+                </div>
+            </div>
+            <div class="dual">
+                <article class="pane" aria-labelledby="wave-title">
+                    <div class="pane-title">
+                        <h3 id="wave-title"><span class="swatch wave"></span> WAVE: second order</h3>
+                        <span class="status">d2J/dt2 = c^2 lap(J)</span>
+                    </div>
+                    <div class="canvas-wrap"><canvas id="wave-canvas" width="480" height="480"></canvas></div>
+                    <div class="metrics">
+                        <div class="metric"><span>front radius now</span><strong id="wave-front">0.000</strong></div>
+                        <div class="metric"><span>rms radius now</span><strong id="wave-rms">0.000</strong></div>
+                        <div class="metric"><span>energy J+v</span><strong id="wave-energy">1.000</strong></div>
+                        <div class="metric"><span>growth 40->160</span><strong id="wave-growth">pending</strong></div>
+                    </div>
+                </article>
+                <article class="pane" aria-labelledby="diff-title">
+                    <div class="pane-title">
+                        <h3 id="diff-title"><span class="swatch diff"></span> DIFF: first order counterfactual</h3>
+                        <span class="status">dJ/dt = D lap(J)</span>
+                    </div>
+                    <div class="canvas-wrap"><canvas id="diff-canvas" width="480" height="480"></canvas></div>
+                    <div class="metrics">
+                        <div class="metric"><span>front radius now</span><strong id="diff-front">0.000</strong></div>
+                        <div class="metric"><span>rms radius now</span><strong id="diff-rms">0.000</strong></div>
+                        <div class="metric"><span>energy J</span><strong id="diff-energy">1.000</strong></div>
+                        <div class="metric"><span>growth 40->160</span><strong id="diff-growth">pending</strong></div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="band" aria-labelledby="clock-title">
+            <div class="band-header">
+                <div>
+                    <h2 id="clock-title">Standing-mode clock</h2>
+                    <p class="subtitle">The same stencil eigenmode used by the test: wave oscillates, diffusion decays.</p>
+                </div>
+                <span class="status">mode n=4, T=300</span>
+            </div>
+            <div class="chart-row">
+                <div class="pane">
+                    <div class="canvas-wrap" style="aspect-ratio: 2.4 / 1;"><canvas id="clock-chart" width="960" height="400"></canvas></div>
+                </div>
+                <div class="notes">
+                    <p><span class="wave-color">Wave</span> crosses zero and returns, so the mode functions as a clock.</p>
+                    <p style="margin-top:8px;"><span class="diff-color">Diffusion</span> contracts monotonically, so it has locality but no reversible clock.</p>
+                    <ul>
+                        <li>Shared: local Moore-stencil support.</li>
+                        <li>Wave-only: oscillation, ballistic ruler, reversible energy ledger.</li>
+                        <li>Not shown: a derivation of the Lorentzian metric from P1-P5.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="band" aria-labelledby="baseline-title">
+            <div class="band-header">
+                <div>
+                    <h2 id="baseline-title">Pinned C++ baseline</h2>
+                    <p class="subtitle">Source: <code>engine/tests/test_spacetime_forcing_demo.cpp</code>, CTest name <code>spacetime_forcing_demo</code>.</p>
+                </div>
+                <span class="chip good">9/9 PASS</span>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Observable</th><th>WAVE</th><th>DIFFUSION</th><th>Interpretation</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>front at t=8</td>
+                        <td>7.211</td>
+                        <td>7.211</td>
+                        <td>Same locality cone under the same Laplacian stencil.</td>
+                    </tr>
+                    <tr>
+                        <td>rms growth, t=40 to t=160</td>
+                        <td>about 4.68</td>
+                        <td>about 2.46</td>
+                        <td>Wave branch is ballistic-leaning; diffusion is sqrt(t)-leaning.</td>
+                    </tr>
+                    <tr>
+                        <td>clock and reversibility</td>
+                        <td>oscillatory; amplitude preserved</td>
+                        <td>monotone decay; energy dissipates</td>
+                        <td>Metric behavior rides on the second-order/reversible action choice.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script type="module">
+        const L = 48;
+        const TOTAL = L * L * L;
+        const MID = L / 2;
+        const DT = 0.2;
+        const C_SPEED = 1 / Math.sqrt(3);
+        const C2 = C_SPEED * C_SPEED;
+        const DIFF_D = C2 / 4;
+        const W_FACE = 1 / 3;
+        const W_EDGE = 1 / 6;
+        const FRONT_EPS = 1e-12;
+        const T_MID = 40;
+        const T_LATE = 160;
+
+        const $ = (id) => document.getElementById(id);
+        const fmt = (x, digits = 3) => Number.isFinite(x) ? x.toFixed(digits) : 'pending';
+
+        function index(x, y, z) {
+            return z * L * L + y * L + x;
+        }
+
+        function makeNeighbors() {
+            const table = new Int32Array(TOTAL * 18);
+            let p = 0;
+            for (let z = 0; z < L; z++) {
+                const zp = (z + 1) % L;
+                const zm = (z - 1 + L) % L;
+                for (let y = 0; y < L; y++) {
+                    const yp = (y + 1) % L;
+                    const ym = (y - 1 + L) % L;
+                    for (let x = 0; x < L; x++) {
+                        const xp = (x + 1) % L;
+                        const xm = (x - 1 + L) % L;
+                        table[p++] = index(xp, y, z);
+                        table[p++] = index(xm, y, z);
+                        table[p++] = index(x, yp, z);
+                        table[p++] = index(x, ym, z);
+                        table[p++] = index(x, y, zp);
+                        table[p++] = index(x, y, zm);
+                        table[p++] = index(xp, yp, z);
+                        table[p++] = index(xp, ym, z);
+                        table[p++] = index(xm, yp, z);
+                        table[p++] = index(xm, ym, z);
+                        table[p++] = index(xp, y, zp);
+                        table[p++] = index(xp, y, zm);
+                        table[p++] = index(xm, y, zp);
+                        table[p++] = index(xm, y, zm);
+                        table[p++] = index(x, yp, zp);
+                        table[p++] = index(x, yp, zm);
+                        table[p++] = index(x, ym, zp);
+                        table[p++] = index(x, ym, zm);
+                    }
+                }
+            }
+            return table;
+        }
+
+        const NEIGHBORS = makeNeighbors();
+
+        class Grid {
+            constructor(withVelocity) {
+                this.j = new Float64Array(TOTAL);
+                this.v = withVelocity ? new Float64Array(TOTAL) : null;
+                this.lap = new Float64Array(TOTAL);
+            }
+
+            clear() {
+                this.j.fill(0);
+                this.v?.fill(0);
+                this.lap.fill(0);
+            }
+        }
+
+        const wave = new Grid(true);
+        const diff = new Grid(false);
+        const scratchCanvas = document.createElement('canvas');
+        scratchCanvas.width = L;
+        scratchCanvas.height = L;
+        const scratchCtx = scratchCanvas.getContext('2d');
+        let tick = 0;
+        let running = false;
+        let targetTick = null;
+        let waveRmsMid = null;
+        let diffRmsMid = null;
+        let waveGrowth = null;
+        let diffGrowth = null;
+
+        function computeLaplacian(src, out) {
+            for (let i = 0, p = 0; i < TOTAL; i++, p += 18) {
+                const face = src[NEIGHBORS[p]] + src[NEIGHBORS[p + 1]]
+                    + src[NEIGHBORS[p + 2]] + src[NEIGHBORS[p + 3]]
+                    + src[NEIGHBORS[p + 4]] + src[NEIGHBORS[p + 5]];
+                const edge = src[NEIGHBORS[p + 6]] + src[NEIGHBORS[p + 7]]
+                    + src[NEIGHBORS[p + 8]] + src[NEIGHBORS[p + 9]]
+                    + src[NEIGHBORS[p + 10]] + src[NEIGHBORS[p + 11]]
+                    + src[NEIGHBORS[p + 12]] + src[NEIGHBORS[p + 13]]
+                    + src[NEIGHBORS[p + 14]] + src[NEIGHBORS[p + 15]]
+                    + src[NEIGHBORS[p + 16]] + src[NEIGHBORS[p + 17]];
+                out[i] = W_FACE * face + W_EDGE * edge - 4 * src[i];
+            }
+        }
+
+        function waveStep(g) {
+            computeLaplacian(g.j, g.lap);
+            for (let i = 0; i < TOTAL; i++) {
+                g.v[i] += C2 * g.lap[i] * DT;
+                g.j[i] += g.v[i] * DT;
+            }
+        }
+
+        function diffStep(g) {
+            computeLaplacian(g.j, g.lap);
+            for (let i = 0; i < TOTAL; i++) {
+                g.j[i] += DIFF_D * g.lap[i] * DT;
+            }
+        }
+
+        function initPoint() {
+            wave.clear();
+            diff.clear();
+            wave.j[index(MID, MID, MID)] = 1;
+            diff.j[index(MID, MID, MID)] = 1;
+            tick = 0;
+            running = false;
+            targetTick = null;
+            waveRmsMid = null;
+            diffRmsMid = null;
+            waveGrowth = null;
+            diffGrowth = null;
+            renderAll();
+        }
+
+        function metrics(g, includeVelocity) {
+            let eJ = 0;
+            let eJV = 0;
+            let num = 0;
+            let den = 0;
+            let front = 0;
+            for (let z = 0; z < L; z++) {
+                const dz = z - MID;
+                for (let y = 0; y < L; y++) {
+                    const dy = y - MID;
+                    for (let x = 0; x < L; x++) {
+                        const i = index(x, y, z);
+                        const j = g.j[i];
+                        const e = j * j;
+                        eJ += e;
+                        if (includeVelocity) eJV += e + g.v[i] * g.v[i];
+                        const r2 = (x - MID) * (x - MID) + dy * dy + dz * dz;
+                        num += e * r2;
+                        den += e;
+                        if (Math.abs(j) > FRONT_EPS) {
+                            const r = Math.sqrt(r2);
+                            if (r > front) front = r;
+                        }
+                    }
+                }
+            }
+            return {
+                front,
+                rms: den > 1e-30 ? Math.sqrt(num / den) : 0,
+                energy: includeVelocity ? eJV : eJ,
+            };
+        }
+
+        function captureMilestones() {
+            if (tick === T_MID) {
+                waveRmsMid = metrics(wave, true).rms;
+                diffRmsMid = metrics(diff, false).rms;
+            }
+            if (tick === T_LATE) {
+                const wm = metrics(wave, true).rms;
+                const dm = metrics(diff, false).rms;
+                waveGrowth = waveRmsMid > 1e-9 ? wm / waveRmsMid : null;
+                diffGrowth = diffRmsMid > 1e-9 ? dm / diffRmsMid : null;
+            }
+        }
+
+        function stepOnce() {
+            waveStep(wave);
+            diffStep(diff);
+            tick += 1;
+            captureMilestones();
+        }
+
+        function colorRamp(value, scale) {
+            const t = Math.min(1, Math.abs(value) / (scale || 1));
+            const base = 12 + Math.round(18 * t);
+            if (value >= 0) {
+                return [base, Math.round(64 + 150 * t), Math.round(72 + 130 * t)];
+            }
+            return [Math.round(70 + 190 * t), Math.round(48 + 120 * t), base];
+        }
+
+        function renderSlice(canvas, grid) {
+            const ctx = canvas.getContext('2d');
+            const img = ctx.createImageData(L, L);
+            const z = MID;
+            let maxAbs = 0;
+            for (let y = 0; y < L; y++) {
+                for (let x = 0; x < L; x++) {
+                    const a = Math.abs(grid.j[index(x, y, z)]);
+                    if (a > maxAbs) maxAbs = a;
+                }
+            }
+            for (let y = 0; y < L; y++) {
+                for (let x = 0; x < L; x++) {
+                    const value = grid.j[index(x, y, z)];
+                    const [r, g, b] = colorRamp(value, maxAbs);
+                    const p = (y * L + x) * 4;
+                    img.data[p] = r;
+                    img.data[p + 1] = g;
+                    img.data[p + 2] = b;
+                    img.data[p + 3] = 255;
+                }
+            }
+            scratchCtx.putImageData(img, 0, 0);
+            ctx.imageSmoothingEnabled = false;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(scratchCanvas, 0, 0, canvas.width, canvas.height);
+        }
+
+        function drawClockChart() {
+            const canvas = $('clock-chart');
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width;
+            const H = canvas.height;
+            const pad = 42;
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = '#11161c';
+            ctx.fillRect(0, 0, W, H);
+            ctx.strokeStyle = '#35404d';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 4; i++) {
+                const y = pad + (H - 2 * pad) * i / 4;
+                ctx.beginPath();
+                ctx.moveTo(pad, y);
+                ctx.lineTo(W - pad, y);
+                ctx.stroke();
+            }
+            const series = clockSeries(300);
+            drawLine(ctx, series.wave, '#5cd6c8', pad, W, H);
+            drawLine(ctx, series.diff, '#f0b35b', pad, W, H);
+            ctx.fillStyle = '#a8b4c2';
+            ctx.font = '22px ui-monospace, monospace';
+            ctx.fillText('q(t) / q0', pad, 28);
+            ctx.fillStyle = '#5cd6c8';
+            ctx.fillText('WAVE', W - pad - 210, 28);
+            ctx.fillStyle = '#f0b35b';
+            ctx.fillText('DIFF', W - pad - 105, 28);
+        }
+
+        function clockSeries(nTicks) {
+            const nMode = 4;
+            const k = 2 * Math.PI * nMode / L;
+            const lambda = 2 * (Math.cos(k) - 1);
+            let qw = 1;
+            let vw = 0;
+            let qd = 1;
+            const waveSeries = [];
+            const diffSeries = [];
+            for (let t = 0; t <= nTicks; t++) {
+                waveSeries.push(qw);
+                diffSeries.push(qd);
+                vw += C2 * lambda * qw * DT;
+                qw += vw * DT;
+                qd += DIFF_D * lambda * qd * DT;
+            }
+            return { wave: waveSeries, diff: diffSeries };
+        }
+
+        function drawLine(ctx, values, color, pad, W, H) {
+            const xScale = (W - 2 * pad) / (values.length - 1);
+            const yScale = (H - 2 * pad) / 2.4;
+            const y0 = H / 2;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            values.forEach((v, i) => {
+                const x = pad + i * xScale;
+                const y = y0 - v * yScale;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+        }
+
+        function renderAll() {
+            const wm = metrics(wave, true);
+            const dm = metrics(diff, false);
+            renderSlice($('wave-canvas'), wave);
+            renderSlice($('diff-canvas'), diff);
+            $('tick-status').textContent = `t=${tick}`;
+            $('wave-front').textContent = fmt(wm.front);
+            $('diff-front').textContent = fmt(dm.front);
+            $('wave-rms').textContent = fmt(wm.rms);
+            $('diff-rms').textContent = fmt(dm.rms);
+            $('wave-energy').textContent = fmt(wm.energy, 5);
+            $('diff-energy').textContent = fmt(dm.energy, 5);
+            $('wave-growth').textContent = waveGrowth ? fmt(waveGrowth, 2) : 'pending';
+            $('diff-growth').textContent = diffGrowth ? fmt(diffGrowth, 2) : 'pending';
+            $('run').textContent = running ? 'Pause' : 'Run';
+        }
+
+        function loop() {
+            if (running) {
+                stepOnce();
+                if (targetTick != null && tick >= targetTick) {
+                    running = false;
+                    targetTick = null;
+                }
+                renderAll();
+            }
+            requestAnimationFrame(loop);
+        }
+
+        $('run').addEventListener('click', () => {
+            running = !running;
+            targetTick = null;
+            renderAll();
+        });
+        $('step').addEventListener('click', () => {
+            if (!running) {
+                stepOnce();
+                renderAll();
+            }
+        });
+        $('audit').addEventListener('click', () => {
+            running = true;
+            targetTick = T_LATE;
+            renderAll();
+        });
+        $('reset').addEventListener('click', initPoint);
+
+        drawClockChart();
+        initPoint();
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>

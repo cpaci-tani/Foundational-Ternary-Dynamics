@@ -122,6 +122,11 @@ FTD-0252); not a postulate change (P1–P5 are unchanged — this *maps* what th
   DIFFUSION decays monotonically (no clock) + dissipates `Σ|J|² → 0.068` (irreversible) + spreads
   **diffusively** (`∝√t`, ×2.46 ≈ √4). So the Lorentzian metric empirically rides on the 2nd-order/reversible
   choice, **not** on the shared locality cone — FTD-0253 made vivid.
+- **User-visible web artifact — DONE (2026-06-10):** Scale-0 scenario
+  `s0-field-spacetime-forcing-boundary` exposes the WAVE branch as a clean center-pulse seed, and
+  `engine/web/demos/spacetime-forcing-boundary.html` shows the labelled WAVE-vs-DIFFUSION counterfactual
+  replay. Supporting run note: `engine/web/docs/SPEC_SPACETIME_FORCING_DEMO.md`. This promotes visibility
+  only; it does **not** promote any claim or add a derivation.
 - **Theory — analysed (2026-06-07): finiteness does NOT motivate reversibility; it opposes it.** The 't Hooft
   hope is that a *finite* deterministic substrate must be reversible (information-preserving). But (i) finite +
   deterministic does **not** force reversibility — the "eventually periodic" theorem permits transients flowing
