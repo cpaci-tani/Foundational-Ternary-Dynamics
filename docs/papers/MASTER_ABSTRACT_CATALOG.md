@@ -362,6 +362,13 @@ substance.
 
 ---
 
+## PAPER_QUANTUM_DECLINATION_AND_EPISTEMIC_MAPPING.md
+**Path:** `docs/papers/src/PAPER_QUANTUM_DECLINATION_AND_EPISTEMIC_MAPPING.md`
+
+Under Framework Commitment 1 (FC-1) of Foundational Ternary Dynamics (FTD), we formally decline the requirement to recover a continuous, infinite-dimensional Hilbert space, continuous wavefunctions, or the continuous Schrödinger equation as physical entities. We argue that the physical territory is strictly discrete, local, finite-volume, and deterministic, governed by a 3D cubic lattice $\mathbb{Z}^3$ supporting a discrete ternary state field $s \in \{-1, 0, +1\}$ and a continuous real vector flux field $\mathbf{J} \in \mathbb{R}^3$. We show that: (i) superposition is the classical wave propagation of the real vector flux field $\mathbf{J}$ coupled with the discrete manifestation threshold $K_B$; (ii) qubits are 2D transverse projections of the 3D flux field arising naturally from the Gauss constraint $\nabla \cdot \mathbf{J} = 0$, with complex amplitudes as an observer's coordinate choice; (iii) measurement is the discrete tick ($O$-operation) and collapse is a Bayesian update of observer ignorance; (iv) Bell's theorem is resolved via substrate local realism ($S \le 2$) versus emergent quantum violation ($S = 2\sqrt{2}$) arising from the observer's complexified representation; and (v) continuous rotational covariance is an emergent long-wavelength property of the discrete lattice wave equation, with Noether's theorem applying via discrete point-group symmetries.
+
+---
+
 ## PAPER_RATIO_AND_PRODUCT.tex
 **Path:** `docs/papers/src/PAPER_RATIO_AND_PRODUCT.tex`
 
