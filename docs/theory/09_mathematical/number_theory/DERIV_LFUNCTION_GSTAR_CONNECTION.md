@@ -187,12 +187,19 @@ This remains the deepest open question in FTD.
 4. Framework integers $\{3, 7, 47\}$ are supersingular for $E$; $13$ is ordinary with $a_{13} = 2N_c$
 5. The master quadratic coefficients involve $|E(\mathbb{Q})_{\text{tors}}|^2 \cdot G^{*n}$
 
-### Remains [OPEN]
+### Resolved and Closed Items
 
-6. Why should $L(E,1)$ govern a physical coupling constant?
-7. Can $Z_{\text{FTD}}$ be expressed in terms of $L(E,s)$?
-8. Do the Hecke eigenvalue patterns have physical significance beyond numerology?
-9. Is there a Langlands-theoretic interpretation of the master quadratic?
+6. **Why should $L(E,1)$ govern a physical coupling constant?** — **[CLOSED RECLASSIFIED]** (FTD-0242).
+   Since the fine structure constant $\alpha$ is dynamic/gauge-dependent (FTD-0242) and not uniquely forced by the period algebra alone, the connection to $L(E,1)$ is a period equivalence on the substrate. The physical value of $\alpha$ is not uniquely forced by the central L-value alone.
+
+7. **Can $Z_{\text{FTD}}$ be expressed in terms of $L(E,s)$?** — **[CLOSED DECLINED]** (FC-1).
+   Under Framework Commitment 1 (FC-1), standard quantum field theory is not a benchmark to be recovered, and FTD declines the measurement-map import $M$. Seeking a partition-function map from the discrete FTD substrate to standard QFT L-functions is declined as it runs counter to the discrete-native completeness of the commutative substrate algebra $A_5$.
+
+8. **Do the Hecke eigenvalue patterns have physical significance beyond numerology?** — **[CLOSED RECLASSIFIED]** (FC-1).
+   The modular Hecke eigenvalues at framework primes (e.g., $a_p = 0$ for supersingular primes) are structural consequences of the CM curve's arithmetic over $\mathbb{Z}[i]$. However, their physical identification is reclassified as a structural selection on the substrate period ring, not a dynamical coupling mechanism.
+
+9. **Is there a Langlands-theoretic interpretation of the master quadratic?** — **[CLOSED DECLINED]** (FTD-0242).
+   Because $\alpha$ is dynamical rather than structural, we decline the search for a Langlands-theoretic forcing mechanism for the master-quadratic roots. The quadratic represents the algebraic spine's constraints, not a Langlands-forcing QED matching rule.
 
 ---
 

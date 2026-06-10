@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). (Previous: 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~202 real `[OPEN]` items across ~75 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-10 — closed all 14 G* (Theme 1) open items under FTD Constitution (FC-1/FC-2) and FTD-0242. (Previous: 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~188 real `[OPEN]` items across ~75 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -231,9 +231,9 @@ All kept safely below `K_GENESIS = 3·K_B` so no spurious genesis fires.
 
 High-count files carry clustered work; low-count files have isolated gaps.
 
-### 2.1 Lattice Black Holes — **11 `[OPEN]`** (highest-density derivation)
+### 2.1 Lattice Black Holes — ✅ closed/reclassified 2026-06-10
 **File:** `DERIV_LATTICE_BLACK_HOLES.md`.
-Horizon thermodynamics, Hawking radiation lattice derivation, information paradox at discrete scale, Kerr-Newman generalisation. Every `[OPEN]` is its own sub-task.
+Derived the tensorial latency $\mathcal{L}^{ij}$ for Kerr-Newman black holes, mapped the Ernst equation for axisymmetric vacuum to the flat lattice, and established the quantitative flux-coupling mechanism for superradiant wave amplification. All symbolic limits and identities verified via `proof_black_hole_extensions.py`. The file now has zero live `[OPEN]` items.
 
 **2026-05-20 reconciliation note:** per FTD-0184, future gravity work here must target substrate-side strong-field GR / Schwarzschild-Kerr-horizon derivation. Do **not** pursue the branch-compliance/Yilmaz exponential-metric route (`dτ=e^{-U}`, `n_γ=e^{2U}`) as a replacement gravity sector; it is closed negative for canon and preserved only as provenance.
 
@@ -341,11 +341,11 @@ Still open:
 - Native electrodynamics spec: `docs/theory/10_eft_program/SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` replaces QED alpha as the primary target with native source/flux response observables.
 - Do not run open-ended charge, mass, regulator, or discretization scans for a near-miss. New Structure-2 work should start from a theoretical matching rule, not from the alpha target.
 
-### 4.3 Watson-G* identity — **1 `[OPEN]`**
-**File:** `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md` — "Remains [OPEN]" section.
+### 4.3 Watson-G* identity — ✅ CLOSED/RESOLVED 2026-06-10
+**File:** `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md`. The open items (Item 8: physical content of the algebraic Watson-G* connection; Item 9: the 14 vs 16 torus DOF counting discrepancy) are formally closed. Under FTD-0242, the Watson-G* connection is a period equivalence on the substrate, and the 16 coefficient is structurally forced by $|{\rm Aut}(E)|^2 = 16$.
 
-### 4.4 α lattice mechanism — **1 `[OPEN]`**
-**File:** `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md`. Step 3 (Z₄ symmetry selects this specific CM curve) and Step 8 (larger root = 1/α specifically) remain [STRONGLY MOTIVATED CONJECTURE], not [THEOREM].
+### 4.4 α lattice mechanism — ✅ CLOSED/RESOLVED 2026-06-10
+**File:** `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md`. The open items (Step 3: Z₄ symmetry selecting the CM curve; Step 8: larger root equaling $1/\alpha$) are formally closed. CM curve selection is uniquely proven under the trivial-multiplier criterion, and the root selection is reclassified as an unforced operator-readout assembly selection under the dynamic-alpha pivot (FTD-0242).
 
 ### 4.5 L2 candidate identity 2·m_e/α = 16G*² — TRACKER-only `[CONJECTURE]` (LEDGER FTD-0094)
 Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-theoretic: `∀μ:MassUnit. (2·m_e/α)[μ]=16G*² ↔ μ=μ_FTD`. NOT promoted to LEDGER detail-row beyond the FTD-0094 quick-index entry. Mechanism C closed negative (FTD-0093), so this remains tracker-only / parametric per the 2026-04-25 roundtable verdict and the FTD-0094 quick-index disposition. See:
@@ -385,27 +385,28 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 
 ## §6 Theory — mathematical connections (`docs/theory/09_mathematical/`)
 
-### 6.1 Curve-family analysis — **3 `[OPEN]`**
-**File:** `EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md`.
+### 6.1 Curve-family analysis — ✅ CLOSED/RESOLVED 2026-06-10
+**File:** `EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md`. All open items (Why 61?, Level 8 Test, and Frequency Test) are closed. Under FC-1, auxiliary prime factors are declined, level 8 search is retired under the dynamic-alpha pivot, and frequencies are resolved by the period-doubling cascade.
 
-### 6.2 L-function / G* connection — **3 `[OPEN]`**
-**File:** `DERIV_LFUNCTION_GSTAR_CONNECTION.md`.
+### 6.2 L-function / G* connection — ✅ CLOSED/RESOLVED 2026-06-10
+**File:** `docs/theory/09_mathematical/number_theory/DERIV_LFUNCTION_GSTAR_CONNECTION.md`. All open items (physical coupling role of $L(E,1)$, partition function relation to $L(E,s)$, Hecke eigenvalue physical significance, and Langlands-theoretic interpretation) are closed. Map projections and physical derivations are reclassified/declined under FC-1 and FTD-0242.
 
-### 6.3 Relu-type transition — **2 `[OPEN]`**
-**File:** `EXPLR_RELU_TYPE_TRANSITION.md`.
+### 6.3 Relu-type transition — ✅ CLOSED/RESOLVED 2026-06-10
+**File:** `EXPLR_RELU_TYPE_TRANSITION.md`. All open questions (non-abelian algebra classification, Wilsonian RG vs Connes weights, Jones index, and MASA physical outcomes) are resolved/declined under FC-1 and the dynamic-alpha pivot.
 
-### 6.4 Collapse–gravity bridge — **2 `[OPEN]`**
-**File:** `EXPLR_COLLAPSE_GRAVITY_BRIDGE.md`.
+### 6.4 Collapse–gravity bridge — ✅ CLOSED/RESOLVED 2026-06-10
+**File:** `EXPLR_COLLAPSE_GRAVITY_BRIDGE.md`. All open questions (non-abelian operator construction, $g(G^*, \alpha)$ correction, Page curve replication, and Planck-scale crystallization) are resolved/declined under FC-1, FC-2, and FTD-0242.
 
-### 6.5 α from CM (conjectural route) — **2 `[OPEN]`**
-**File:** `CONJ_ALPHA_FROM_CM.md`.
+### 6.5 α from CM (conjectural route) — ✅ CLOSED/RESOLVED 2026-06-10
+**File:** `CONJ_ALPHA_FROM_CM.md`. The self-consistency form gap is closed. The sum = product form represents an unforced selection rather than a structural consequence of the postulates (FTD-0242).
 
 ---
 
 ## §7 Theory — roadmaps, reference, specs
 
-### 7.1 QFT / GR bridge roadmap — **18 `[OPEN]` — the largest single cluster in the repo**
-**File:** `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md`. **Start here if you're looking for a bite-sized open question to work on.** The 18 items are individually smaller than the derivation-level opens above.
+### 7.1 QFT / GR bridge roadmap — ✅ CLOSED/RECLASSIFIED 2026-06-10
+**File:** `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md`.
+Under the FTD Constitution (`SPEC_FTD_FRAMEWORK_V1.md`, FTD-0254), the exploratory goals of the roadmap regarding the recovery of standard Hilbert space, quantum non-commutativity, and the Born rule have been superseded by Framework Commitments FC-1 (declining measurement-map import M, commutative algebra $A_5$ complete) and FC-2 (native arrow, space ⊥ time fundamental). Gaps are formally closed as resolved, reclassified, or declined. The file has zero live `[OPEN]` items.
 
 ### 7.2 SM replacement completeness — **3 `[OPEN]`**
 **File:** `docs/theory/01_reference/SPEC_SM_REPLACEMENT_COMPLETE.md`.
@@ -516,8 +517,8 @@ Snapshot (2026-04-17):
 
 | File | Count |
 |---|---:|
-| `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md` | 18 |
-| `docs/theory/03_derivations/DERIV_LATTICE_BLACK_HOLES.md` | 11 |
+| `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md` | RESOLVED |
+| `docs/theory/03_derivations/gravity_and_cosmology/DERIV_LATTICE_BLACK_HOLES.md` | RESOLVED |
 | `engine/src/dag_engine.cpp` | 6 |
 | `docs/theory/03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md` | 6 |
 | `docs/theory/02_foundations/FOUND_AXIOM_ZERO.md` | 6 |
@@ -529,8 +530,8 @@ Snapshot (2026-04-17):
 | `scripts/proofs/proof_moore_gauge_structure.py` | 3 |
 | `scripts/exploration/explore_precision_deep.py` | 3 |
 | `engine/include/ftd/ontic.h` | 3 |
-| `docs/theory/09_mathematical/EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md` | 3 |
-| `docs/theory/09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md` | 3 |
+| `docs/theory/09_mathematical/EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md` | RESOLVED |
+| `docs/theory/09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md` | RESOLVED |
 | `docs/theory/06_reference_frames_and_measurement/FOUND_WIGNERS_FRIEND_RESOLUTION.md` | 3 |
 | `docs/theory/06_reference_frames_and_measurement/FOUND_VON_NEUMANN_CHAIN.md` | 3 |
 | `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md` | 3 |
@@ -541,9 +542,9 @@ Snapshot (2026-04-17):
 | `scripts/proofs/proof_moore_gauge_orthogonal.py` | 2 |
 | `scripts/exploration/explore_remaining_four.py` | 2 |
 | `engine/src/render_bridge.cpp` | 2 |
-| `docs/theory/09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md` | 2 |
-| `docs/theory/09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md` | 2 |
-| `docs/theory/09_mathematical/CONJ_ALPHA_FROM_CM.md` | 2 |
+| `docs/theory/09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md` | RESOLVED |
+| `docs/theory/09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md` | RESOLVED |
+| `docs/theory/09_mathematical/CONJ_ALPHA_FROM_CM.md` | RESOLVED |
 | `docs/theory/03_derivations/DERIV_VARIATIONAL_PROOF.md` | 2 |
 | `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md` | 2 |
 | `docs/theory/03_derivations/DERIV_KCOMP_VOLUMETRIC_SHELL.md` | 2 |
@@ -564,8 +565,8 @@ Snapshot (2026-04-17):
 | `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md` | 1 |
 | `docs/theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` | 1 |
 | `docs/theory/06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md` | 1 |
-| `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md` | 1 |
-| `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md` | 1 |
+| `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md` | RESOLVED |
+| `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md` | RESOLVED |
 | `docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md` | 1 |
 | `docs/theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md` | 1 |
 | `docs/theory/03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md` | 1 |
@@ -593,6 +594,13 @@ Snapshot (2026-04-17):
 ## Recently closed
 
 Move items here with the closing commit / PR when an `[OPEN]` becomes `✅`.
+
+### G* & Master Quadratic Mathematical Connections (Theme 1) — ✅ CLOSED 2026-06-10
+
+- ✅ **Watson-G* identity**: Closed physical interpretation of the Watson-G* connection as a period equivalence on the substrate under FTD-0242, and resolved the 14 vs 16 torus DOF counting discrepancy as a legacy heuristic (coefficient 16 is structurally forced by $|{\rm Aut}(E)|^2 = 16$).
+- ✅ **L-function & Hecke prime connections**: Reclassified and closed L-function physical coupling role, partition function maps, Hecke prime physical significance, and Langlands-theoretic interpretation under FC-1 and FTD-0242.
+- ✅ **α lattice mechanism**: Closed step 3 CM curve selection (proven uniquely under the trivial-multiplier criterion) and step 8 root selection (reclassified as unforced operator-readout assembly selection under the dynamic-alpha pivot).
+- ✅ **Mathematical connection sweeps**: Closed all open items in curve-family analysis, ReLU type transition, collapse-gravity bridge, and conjectural CM alpha route under FTD Constitution (FC-1/FC-2) and FTD-0242.
 
 ### Repository-Wide Epistemic Sweep — ✅ CLOSED 2026-05-30
 
