@@ -26,13 +26,18 @@
  *   --thermostat=on|off  arm switch (default on). off => langevin toggle FALSE
  *                        (no friction, no noise: fluctuation-dissipation ties
  *                        sigma = sqrt(2*gamma*T), so gamma=0 kills both).
+ *   --coupling=on|off  g_c*grad(s) state->flux source term (default off =
+ *                        v1-compatible). The v2 re-characterization campaign
+ *                        passes --coupling=on, aligning with the canonical
+ *                        test_emergent_ic1_topology protocol (PREREG_NA_LAW_
+ *                        CURRENT_STACK_v1.md).
  *   --gamma=X          Langevin friction when on (default 0.02, historical)
  *   --T=X              Langevin temperature when on (default 0.005, historical)
  *   --tag=S            arm label used in the output filename (default "run")
  *   --output-dir=PATH  output directory
  *
  * Output: {output-dir}/sweep_{tag}_A{A}.csv with one row per seed:
- *   tag,L,A,gamma,T,thermostat,seed,n_samples,n_mean,n_min,n_max,k_mean
+ *   tag,L,A,gamma,T,thermostat,coupling,seed,n_samples,n_mean,n_min,n_max,k_mean
  *
  * Returns 0 if every seed produced at least one sample.
  */
@@ -111,12 +116,14 @@ struct SeedResult {
 
 SeedResult run_seed(int L, std::uint32_t seed, double A,
                     int burn, int window, int stride,
-                    bool thermostat_on, double gamma, double T) {
+                    bool thermostat_on, double gamma, double T,
+                    bool coupling_on) {
     ftd::RenderBridge rb(L);
     rb.toggles.disable_all();
     rb.toggles.wave_propagation = true;
     rb.toggles.gauss_projection = true;
     rb.toggles.genesis          = true;
+    rb.toggles.coupling         = coupling_on;
     rb.toggles.dual_substrate   = false;
     if (thermostat_on) {
         rb.toggles.langevin       = true;
@@ -156,6 +163,7 @@ int main(int argc, char** argv) {
     int window = 500;
     int stride = 10;
     bool thermostat_on = true;
+    bool coupling_on = false;  // v1-compatible default; v2 passes --coupling=on
     double gamma = 0.02;
     double T = 0.005;
     std::string tag = "run";
@@ -171,6 +179,8 @@ int main(int argc, char** argv) {
         else if (a.rfind("--stride=", 0) == 0)     stride = std::atoi(a.c_str() + 9);
         else if (a == "--thermostat=off")          thermostat_on = false;
         else if (a == "--thermostat=on")           thermostat_on = true;
+        else if (a == "--coupling=off")            coupling_on = false;
+        else if (a == "--coupling=on")             coupling_on = true;
         else if (a.rfind("--gamma=", 0) == 0)      gamma = std::atof(a.c_str() + 8);
         else if (a.rfind("--T=", 0) == 0)          T = std::atof(a.c_str() + 4);
         else if (a.rfind("--tag=", 0) == 0)        tag = a.substr(6);
@@ -183,9 +193,10 @@ int main(int argc, char** argv) {
     const fs::path out_csv = fs::path(output_dir)
                            / ("sweep_" + tag + "_A" + abuf + ".csv");
 
-    std::printf("thermostat_off_sweep: tag=%s L=%d A=%.2f thermostat=%s gamma=%.4f T=%.5f "
+    std::printf("thermostat_off_sweep: tag=%s L=%d A=%.2f thermostat=%s coupling=%s gamma=%.4f T=%.5f "
                 "seeds=%d burn=%d window=%d stride=%d\n",
                 tag.c_str(), L, A, thermostat_on ? "on" : "off",
+                coupling_on ? "on" : "off",
                 thermostat_on ? gamma : 0.0, thermostat_on ? T : 0.0,
                 n_seeds, burn, window, stride);
     std::fflush(stdout);
@@ -195,18 +206,19 @@ int main(int argc, char** argv) {
         std::fprintf(stderr, "ERROR: cannot open %s\n", out_csv.string().c_str());
         return 1;
     }
-    std::fprintf(f, "tag,L,A,gamma,T,thermostat,seed,n_samples,n_mean,n_min,n_max,k_mean\n");
+    std::fprintf(f, "tag,L,A,gamma,T,thermostat,coupling,seed,n_samples,n_mean,n_min,n_max,k_mean\n");
 
     bool all_ok = true;
     for (int s = 0; s < n_seeds; ++s) {
         const std::uint32_t seed = 0xE0102000u + static_cast<std::uint32_t>(s);
         const SeedResult r = run_seed(L, seed, A, burn, window, stride,
-                                      thermostat_on, gamma, T);
+                                      thermostat_on, gamma, T, coupling_on);
         const double k = r.n_mean / (A * A);
-        std::fprintf(f, "%s,%d,%.4f,%.4f,%.5f,%s,0x%X,%d,%.4f,%d,%d,%.6f\n",
+        std::fprintf(f, "%s,%d,%.4f,%.4f,%.5f,%s,%s,0x%X,%d,%.4f,%d,%d,%.6f\n",
                      tag.c_str(), L, A,
                      thermostat_on ? gamma : 0.0, thermostat_on ? T : 0.0,
                      thermostat_on ? "on" : "off",
+                     coupling_on ? "on" : "off",
                      seed, r.n_samples, r.n_mean, r.n_min, r.n_max, k);
         std::printf("  seed 0x%X: n_mean=%.2f n_range=[%d,%d] k=%.4f\n",
                     seed, r.n_mean, r.n_min, r.n_max, k);
