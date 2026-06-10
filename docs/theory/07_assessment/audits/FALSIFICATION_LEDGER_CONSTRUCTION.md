@@ -46,7 +46,7 @@ Recomputed every load-bearing identity (G* and three closed forms, discriminant,
 
 ## 2 · Epistemic-Tag Auditor (role: sentence-level tag coverage + accuracy)
 
-Audited all 464 lines vs `TRACKER_ONTIC_TRUTH`, `SPEC_ALGEBRAIC_SPINE` §0, `LEDGER`, `CATALOG_PARAMETRIC_INSERTIONS`, `SPEC_DOCTRINE_LEDGER`. The five mandated load-bearing checks **all PASS**: `x₊=1/α` stays `[SMC]` (5 occurrences, never derived); MC-T4.3 = `[FOUNDATIONAL OBSTRUCTION]` + no-go = `[SMC]` not `[THEOREM]`; coefficient-16 Tier-4 `[CONJECTURE]`; Phase-J `[THEOREM at L=2]`; Part II's only `[THEOREM]`s are flip/3b/route-invariance/conditional, K-BIND `[OPEN]`. **No untagged substantive claim. No promotion.**
+Audited all 464 lines vs `TRACKER_ONTIC_TRUTH`, `SPEC_ALGEBRAIC_SPINE` §0, `LEDGER`, `CATALOG_PARAMETRIC_INSERTIONS`, `SPEC_DOCTRINE_LEDGER`. The five mandated load-bearing checks **all PASS**: `x₊=1/α` stays `[SMC]` (5 occurrences, never derived); MC-T4.3 = `[FOUNDATIONAL OBSTRUCTION]` + no-go = `[SMC]` not `[THEOREM]`; coefficient-16 Tier-4 `[CONJECTURE]`; Phase-J `[THEOREM at L=2]`; Part II's only `[THEOREM]`s are flip/3b/route-invariance/conditional, K-BIND `[CLOSED THEOREM-NEGATIVE] (FTD-0244)`. **No untagged substantive claim. No promotion.**
 
 | # | Item | Verdict | Fix |
 |---|---|---|---|
@@ -68,7 +68,7 @@ Machine-verified the group theory (NumPy) and recomputed all boundary numerics (
 
 | # | Item | Verdict | Fix |
 |---|---|---|---|
-| BP-1..5 | core numerics, flip, 3b, route-invariance, K-BIND/no-go | SURVIVES (all) | none |
+| BP-1..5 | core numerics, flip, 3b, route-invariance, K-BIND/no-go (resolved) | SURVIVES (all) | none |
 | BP-6 | §II.5 witness "det=G* (≈139.05)" numerically wrong (det=G*→140.04; 139.05=det=16G*²) | WEAK (logic unaffected) | **F1 applied** → 140.04 |
 | BP-7 | 5th-route attack | boundary HOLDS (0/5 forced) | none — strengthens §II.3c |
 | BP-8 | no-go tagging discipline | SURVIVES | none |
