@@ -30,6 +30,7 @@
 | [FOUND_THE_EXISTENCE_FILTER.md](FOUND_THE_EXISTENCE_FILTER.md) | formal synthesis with projection hierarchy | E(x) = Re(x) as the first of four ℂ → ℝ projections; Born rule reconstruction; Tomita–Takesaki modular conjugation correspondence. |
 | [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) | foundational synthesis (canonical live replacement) | Observable-algebra partition (Domain A phenomenal / Domain B noumenal); `Activate_C` formalized in lattice language. |
 | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | technical synthesis (per-step epistemic tags) | Consolidates 15+ docs into the linear frame-relative-projection chain; complex-root frame-relative-eigenmode branch; modular-flow bridge. |
+| [DERIV_MEANING_WEIGHTS_K_MAPPING.md](DERIV_MEANING_WEIGHTS_K_MAPPING.md) | [THEOREM] | Exact mathematical mapping between $k$ and the meaning weights $\alpha, \beta$, resolving GAP-B2. |
 
 ---
 
