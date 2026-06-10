@@ -20,8 +20,8 @@ golden hash `0xcd957b601d47868a` unchanged. FTD-0013 and MC-T4.3 unchanged.**
     root is 1/α. Family det=16G*²·G*^k for k=0..3 all F-consistent.
   - [THEOREM] Conditional: 𝔉 does not force α unless W natively realizes
     `√(G*(4G*−1))`; W is logically independent of P1–P5.
-  - [OPEN] K-BIND: the irreducible universal negative — natively realize
-    `√(G*(4G*−1))` — undecidable without a finite axiomatization.
+  - [CLOSED THEOREM-NEGATIVE under FTD-0244] K-BIND: the irreducible universal negative — natively realize
+    `√(G*(4G*−1))` — proven undecidable due to a degree-2 Galois obstruction.
 - **Docs:** `docs/theory/07_assessment/audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md`
   (FTD-0243 row added to LEDGER).
 
