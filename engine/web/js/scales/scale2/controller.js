@@ -46,7 +46,7 @@ import {
     syncAEParamsFromUI, resetAETogglesToDefaults, aeSetPhase3,
     bindScale2ControlsUI
 } from './ui-bindings.js';
-import { setupAEScenario } from './scenarios.js';
+import { setupAEScenario, getAEScenarioPreset } from './scenarios.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 // Re-export for app.js startup wiring
@@ -72,6 +72,11 @@ let _forceFrame          = 0;       // throttle: compute forces every 2nd frame
 let _showOrbitalClouds   = true;    // orbital electron clouds in AE mode
 let _showAEField         = false;   // force field overlay (heatmap + vectors)
 let _showBonds           = true;    // bond rendering (shared with Scale 3)
+
+// -- Kinetic/electrostatic structure overlays (Scale 2 deep pass) -----
+let _showAEVelocities    = false;   // per-atom velocity vectors
+let _showAEDipoles       = false;   // per-atom dipole-moment arrows
+let _showAEHBondLines    = false;   // dashed donor-H···acceptor lines
 
 // -- Element legend cache (avoid DOM rebuilds) -----------------------
 let _prevLegendKey       = '';
@@ -162,6 +167,9 @@ export function resetScale2(ctx) {
     _showOrbitalClouds = true;
     _showAEField       = false;
     _showBonds         = true;
+    _showAEVelocities  = false;
+    _showAEDipoles     = false;
+    _showAEHBondLines  = false;
     _prevLegendKey     = '';
     _aeLabelBuf        = [];
     _aeMergeCap        = 0;
@@ -209,6 +217,9 @@ export function getAEVisualState() {
         showOrbitalClouds: _showOrbitalClouds,
         showAEField:       _showAEField,
         showBonds:         _showBonds,
+        showAEVelocities:  _showAEVelocities,
+        showAEDipoles:     _showAEDipoles,
+        showAEHBondLines:  _showAEHBondLines,
     };
 }
 
@@ -225,9 +236,87 @@ export function setAEVisualToggle(key, value) {
         case 'showOrbitalClouds': _showOrbitalClouds = value; break;
         case 'showAEField':       _showAEField       = value; break;
         case 'showBonds':         _showBonds         = value; break;
+        case 'showAEVelocities':  _showAEVelocities  = value; break;
+        case 'showAEDipoles':     _showAEDipoles     = value; break;
+        case 'showAEHBondLines':  _showAEHBondLines  = value; break;
         default:
             console.warn(`[Scale2] Unknown visual toggle: ${key}`);
     }
+}
+
+
+// =====================================================================
+// Scenario visual presets (mirror of scale1's applyPEOverlayPreset)
+// =====================================================================
+
+function _setButtonActive(id, on) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.toggle('active', !!on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+}
+
+function _setCheckbox(id, on) {
+    const el = document.getElementById(id);
+    if (el) el.checked = !!on;
+}
+
+/**
+ * Apply a scenario's visual preset: module flags, DOM controls (shared
+ * scale-2/3 toolbar checkboxes, bond-style select, force/field buttons),
+ * and viewport layer visibility. Runs AFTER setupAEScenario so the
+ * preset is the last writer over resetScale2's defaults.
+ */
+function applyAEVisualPreset(viewport, preset) {
+    const v = preset?.visuals;
+    if (!v) return;
+
+    _showOrbitalClouds = !!v.clouds;
+    _showNucleusShells = !!v.shells;
+    _bondStyle         = v.bondStyle || 'cylinders';
+    _showShellBounds   = !!v.shellBounds;
+    _showOrbitalLobes  = !!v.lobes;
+    _showAEField       = !!v.field;
+    _showAEForceIonic  = !!v.forceIonic;
+    _showAEForceVdw    = !!v.forceVdw;
+    _showAEForceBond   = !!v.forceBond;
+    _showAEForceNet    = !!v.forceNet;
+    _showAEVelocities  = !!v.velocities;
+    _showAEDipoles     = !!v.dipoles;
+    _showAEHBondLines  = !!v.hbondLines;
+
+    _setCheckbox('ae-show-clouds', _showOrbitalClouds);
+    _setCheckbox('ae-show-shells', _showNucleusShells);
+    _setCheckbox('ae-show-shell-bounds', _showShellBounds);
+    _setCheckbox('ae-show-lobes', _showOrbitalLobes);
+    const bondSelect = document.getElementById('bond-style-select');
+    if (bondSelect) bondSelect.value = _bondStyle;
+    _setButtonActive('ae-force-ionic', _showAEForceIonic);
+    _setButtonActive('ae-force-vdw', _showAEForceVdw);
+    _setButtonActive('ae-force-bond', _showAEForceBond);
+    _setButtonActive('ae-force-net', _showAEForceNet);
+    _setButtonActive('toggle-ae-field', _showAEField);
+    _setButtonActive('toggle-ae-velocities', _showAEVelocities);
+    _setButtonActive('toggle-ae-dipoles', _showAEDipoles);
+    _setButtonActive('toggle-ae-hbonds', _showAEHBondLines);
+
+    if (!viewport) return;
+    viewport.toggleNucleusShells(_showNucleusShells);
+    viewport.toggleOrbitalShells(_showShellBounds);
+    viewport.toggleOrbitalLobes(_showOrbitalLobes);
+    viewport.toggleBondCylinders(_bondStyle === 'cylinders');
+    viewport.toggleBondLines(_bondStyle === 'lines');
+    viewport.toggleAEForceIonic(_showAEForceIonic);
+    viewport.toggleAEForceVdw(_showAEForceVdw);
+    viewport.toggleAEForceBond(_showAEForceBond);
+    viewport.toggleAEForceNet(_showAEForceNet);
+    viewport.toggleFieldHeatmap(_showAEField);
+    viewport.toggleFieldVectors(_showAEField);
+    // Velocity / dipole / H-bond layers are updated per-frame in animateAE
+    // when their flags are on (and hidden by their toggles when off).
+    viewport.toggleVelocityVectors?.(_showAEVelocities);
+    viewport.toggleAEDipoles?.(_showAEDipoles);
+    viewport.toggleHBondLines?.(_showAEHBondLines);
 }
 
 
@@ -561,6 +650,10 @@ export function loadAEScenario(ctx, name) {
         bridge, viewport, inspector,
         helpers: { setPhase3: aeSetPhase3 },
     });
+
+    // Apply the scenario's visual preset (flags + DOM controls + viewport
+    // layers). Last writer after resetAllVisualState + setupAEScenario.
+    applyAEVisualPreset(viewport, getAEScenarioPreset(name));
 
     // Capture initial energy reference for drift tracking (before first tick)
     const initDiag = bridge.aeGetDiagnostics();
