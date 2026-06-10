@@ -1427,6 +1427,11 @@ ftd_add_test(test_langevin_gpu_cpu_parity
              CTEST_NAME langevin_gpu_cpu_parity TIMEOUT 300
              LABELS unit native gpu eft)
 
+ftd_add_test(test_cpu_gpu_divergence
+             tests/test_cpu_gpu_divergence.cpp
+             CTEST_NAME cpu_gpu_divergence TIMEOUT 100
+             LABELS unit native gpu)
+
 # TEST-009: Phase-H coulomb_charge_coupling regression. Pins the three
 # documented values (1.0, 0.2141, 0.3028) by asserting they produce
 # distinct field energies and never NaN out.
