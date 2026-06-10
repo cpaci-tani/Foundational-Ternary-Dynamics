@@ -16,5 +16,10 @@ export function createScale2Capabilities(bridge) {
         tickScale2: () => bridge.aeTick?.(),
         getScale2AtomFrame: () => bridge.aeGetAtomData?.(),
         getScale2Diagnostics: () => bridge.aeGetDiagnostics?.(),
+        // Scale 2 deep pass (2026-06-10): read surfaces consumed by the
+        // force-arrow overlay, AE field overlay, and diagnostics descriptors.
+        getScale2ForceDecomposition: (want) => bridge.aeGetForceDecomposition?.(want),
+        getScale2FieldSources: () => bridge.aeGetFieldSources?.(),
+        getScale2RuntimeState: () => bridge.aeGetRuntimeState?.(),
     };
 }

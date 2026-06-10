@@ -541,6 +541,10 @@ export function loadAEScenario(ctx, name) {
     ctx.resetAllVisualState();
     bridge.initAE();
 
+    // Re-baseline hub telemetry (ring buffers + drift reference) so the new
+    // scenario doesn't inherit the previous one's energy baseline (A6).
+    telemetryHub.resetScale(2);
+
     // Reset all AE toggles to defaults, then sync sliders from UI
     resetAETogglesToDefaults(bridge);
     syncAEParamsFromUI(bridge);

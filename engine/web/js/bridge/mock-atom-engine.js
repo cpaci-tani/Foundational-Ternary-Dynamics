@@ -1095,6 +1095,36 @@ export function createAtomEngine(state) {
     function aeAtomCount()            { return state._ae ? state._ae.atoms.length : 0; }
     function aeClear()                { resetAE(); }
 
+    /**
+     * Snapshot of the live AE runtime parameters + physics toggle states.
+     * Read by telemetryHub.collectScale2 so the diagnostics panel reports
+     * engine truth (not DOM checkbox state). Mirrors peGetToggle's role on
+     * Scale 1, returned as one object because AE toggles are only ever
+     * consumed together.
+     */
+    function aeGetRuntimeState() {
+        if (!state._ae) return null;
+        const ae = state._ae;
+        return {
+            dt: ae.dt,
+            softening: ae.soft,
+            thermostatTemp: ae.thermostat_temp,
+            toggles: {
+                ionic: !!ae.ionic,
+                vdw: !!ae.vdw,
+                bonds_force: !!ae.bonds_force,
+                bonding: !!ae.bonding,
+                damping: !!ae.damping,
+                speed_limit: !!ae.speed_limit,
+                h_bonds: !!ae.h_bonds,
+                angle_strain: !!ae.angle_strain,
+                dipole_dipole: !!ae.dipole_dipole,
+                thermostat: !!ae.thermostat,
+                electronegativity: !!ae.electronegativity,
+            },
+        };
+    }
+
     function aeInspectAtom(id) {
         if (!state._ae) return null;
         const a = state._ae.atoms.find(at => at.id === id);
@@ -1148,6 +1178,6 @@ export function createAtomEngine(state) {
         aeSetIonic, aeSetVdw, aeSetBondsForce, aeSetSpeedLimit,
         aeSetHBonds, aeSetAngleStrain, aeSetDipoleDipole,
         aeSetThermostat, aeSetThermostatTemp, aeSetElectronegativity,
-        aeAtomCount, aeClear, aeInspectAtom,
+        aeAtomCount, aeClear, aeInspectAtom, aeGetRuntimeState,
     };
 }
