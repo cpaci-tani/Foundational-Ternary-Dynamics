@@ -26,6 +26,9 @@
  *   --thermostat=on|off  arm switch (default on). off => langevin toggle FALSE
  *                        (no friction, no noise: fluctuation-dissipation ties
  *                        sigma = sqrt(2*gamma*T), so gamma=0 kills both).
+ *   --dir=axial|diag   injection direction (default axial = {A*K_GENESIS,0,0};
+ *                        diag = body-diagonal, components A*K_GENESIS/sqrt(3),
+ *                        same magnitude -- the FTD-0263 direction-invariance arm).
  *   --coupling=on|off  g_c*grad(s) state->flux source term (default off =
  *                        v1-compatible). The v2 re-characterization campaign
  *                        passes --coupling=on, aligning with the canonical
@@ -46,6 +49,7 @@
 #include "ftd/render_bridge.h"
 #include "ftd/voxel.h"
 
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -117,7 +121,7 @@ struct SeedResult {
 SeedResult run_seed(int L, std::uint32_t seed, double A,
                     int burn, int window, int stride,
                     bool thermostat_on, double gamma, double T,
-                    bool coupling_on) {
+                    bool coupling_on, bool diag) {
     ftd::RenderBridge rb(L);
     rb.toggles.disable_all();
     rb.toggles.wave_propagation = true;
@@ -134,7 +138,12 @@ SeedResult run_seed(int L, std::uint32_t seed, double A,
     }
     rb.seed_rng(seed);
 
-    rb.inject_flux(L / 2, L / 2, L / 2, {A * ftd::K_GENESIS, 0, 0});
+    if (diag) {
+        const double c3 = A * ftd::K_GENESIS / std::sqrt(3.0);
+        rb.inject_flux(L / 2, L / 2, L / 2, {c3, c3, c3});
+    } else {
+        rb.inject_flux(L / 2, L / 2, L / 2, {A * ftd::K_GENESIS, 0, 0});
+    }
     rb.run(burn);
 
     SeedResult r;
@@ -164,6 +173,7 @@ int main(int argc, char** argv) {
     int stride = 10;
     bool thermostat_on = true;
     bool coupling_on = false;  // v1-compatible default; v2 passes --coupling=on
+    bool diag = false;         // FTD-0263 direction arm
     double gamma = 0.02;
     double T = 0.005;
     std::string tag = "run";
@@ -181,6 +191,8 @@ int main(int argc, char** argv) {
         else if (a == "--thermostat=on")           thermostat_on = true;
         else if (a == "--coupling=off")            coupling_on = false;
         else if (a == "--coupling=on")             coupling_on = true;
+        else if (a == "--dir=diag")                diag = true;
+        else if (a == "--dir=axial")               diag = false;
         else if (a.rfind("--gamma=", 0) == 0)      gamma = std::atof(a.c_str() + 8);
         else if (a.rfind("--T=", 0) == 0)          T = std::atof(a.c_str() + 4);
         else if (a.rfind("--tag=", 0) == 0)        tag = a.substr(6);
@@ -212,7 +224,7 @@ int main(int argc, char** argv) {
     for (int s = 0; s < n_seeds; ++s) {
         const std::uint32_t seed = 0xE0102000u + static_cast<std::uint32_t>(s);
         const SeedResult r = run_seed(L, seed, A, burn, window, stride,
-                                      thermostat_on, gamma, T, coupling_on);
+                                      thermostat_on, gamma, T, coupling_on, diag);
         const double k = r.n_mean / (A * A);
         std::fprintf(f, "%s,%d,%.4f,%.4f,%.5f,%s,%s,0x%X,%d,%.4f,%d,%d,%.6f\n",
                      tag.c_str(), L, A,
