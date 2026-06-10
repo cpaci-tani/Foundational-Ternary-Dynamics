@@ -204,6 +204,8 @@ python -m http.server 8080 -d engine/web
 
 Then open `http://localhost:8080`.
 
+Or just go to: https://williamcpaci-tani.github.io/Foundational-Ternary-Dynamics/
+
 ### GPU Campaigns
 
 CUDA campaigns are expected to run through WSL2 Ubuntu-22.04, not Windows-native CUDA. The current hardware profile and command conventions are recorded in [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md).
