@@ -44,13 +44,23 @@ const CHANNELS = {
     ],
     // Scale 1: Particle Engine
     '1': [
-        { key: 'peTotal',    title: 'Total Energy',    buffer: 'peTotal',   color: 'var(--chart-energy, #42a5f5)', unit: 'MeV' },
-        { key: 'peKE',       title: 'Kinetic Energy',  buffer: 'peKE',      color: 'var(--chart-positive, #4ade80)', unit: 'MeV' },
-        { key: 'pePE',       title: 'Potential Energy',buffer: 'pePE',      color: 'var(--chart-negative, #f87171)', unit: 'MeV' },
-        { key: 'peCount',    title: 'Particle Count',  buffer: 'peCount',   color: 'var(--chart-flux, #fb8c00)',   unit: 'ct' },
-        { key: 'peMomentum', title: 'Total Momentum',  buffer: 'peMomentum',color: 'var(--chart-eb, #a78bfa)',    unit: 'MeV/c' },
-        { key: 'peAngMom',   title: 'Angular Momentum',buffer: 'peAngMom',  color: 'var(--chart-entropy, #60a5fa)', unit: 'J·s' },
-        { key: 'peVirial',   title: 'Virial Ratio',    buffer: 'peVirial',  color: 'var(--chart-gauss, #fbbf24)',  unit: 'V' }
+        { key: 'peTotal',      title: 'Total Energy',      buffer: 'peTotal',       color: 'var(--chart-pe-total, #e8e8e8)',   unit: 'MeV' },
+        { key: 'peKE',         title: 'Kinetic Energy',    buffer: 'peKE',          color: 'var(--chart-pe-ke, #4ade80)',      unit: 'MeV' },
+        { key: 'peCoulombPE',  title: 'Coulomb PE',        buffer: 'peCoulombPE',   color: 'var(--chart-pe-coulomb, #f87171)', unit: 'MeV' },
+        { key: 'peGravityPE',  title: 'Gravity PE',        buffer: 'peGravityPE',   color: 'var(--chart-pe-gravity, #94a3b8)', unit: 'MeV' },
+        { key: 'peDrift',      title: 'Energy Drift',      buffer: 'peEnergyDrift', color: 'var(--chart-pe-drift, #fbbf24)',   unit: '%' },
+        { key: 'peCount',      title: 'Particle Count',    buffer: 'peCount',       color: 'var(--chart-pe-count, #fb8c00)',   unit: 'ct' },
+        { key: 'peLocked',     title: 'Locked Particles',  buffer: 'peLockedCount', color: 'var(--chart-pe-locked, #fbbf24)',  unit: 'ct' },
+        { key: 'peMobile',     title: 'Mobile Particles',  buffer: 'peMobileCount', color: 'var(--chart-pe-mobile, #42a5f5)',  unit: 'ct' },
+        { key: 'peMomentum',   title: 'Total Momentum',    buffer: 'peMomentum',    color: 'var(--chart-pe-momentum, #a78bfa)', unit: 'MeV/c' },
+        { key: 'peAngMom',     title: 'Angular Momentum',  buffer: 'peAngMom',      color: 'var(--chart-pe-angmom, #60a5fa)',  unit: 'hbar' },
+        { key: 'peVirial',     title: 'Virial Ratio',      buffer: 'peVirial',      color: 'var(--chart-pe-virial, #fbbf24)', unit: 'V' },
+        { key: 'peVrms',       title: 'RMS Velocity',      buffer: 'peRmsVelocity', color: 'var(--chart-pe-vrms, #4ade80)',   unit: 'c' },
+        { key: 'peRadius',     title: 'System Radius',     buffer: 'peSystemRadius',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
+        { key: 'peMaxForce',   title: 'Max Net Force',     buffer: 'peMaxForce',    color: 'var(--chart-pe-force, #fbbf24)',  unit: 'F' },
+        { key: 'peMeanForce',  title: 'Mean Net Force',    buffer: 'peMeanForce',   color: 'var(--chart-pe-force-mean, #fb923c)', unit: 'F' },
+        { key: 'peSeparation', title: '2-Body Separation', buffer: 'peSeparation',  color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
+        { key: 'peRadialVel',  title: 'Radial Velocity',   buffer: 'peRadialVelocity', color: 'var(--chart-pe-radial, #ef4444)', unit: 'c' }
     ],
     // Scale 2 & 3: Atoms & Molecules
     '2': [
@@ -110,9 +120,10 @@ export class TelemetryGridPanelComponent {
 
     rebuildGrid() {
         // Destroy existing uPlots
-        this.charts.forEach((chart) => chart.destroy());
+        this.charts.forEach((entry) => entry?.u?.destroy?.());
         this.charts.clear();
         this.container.innerHTML = '';
+        this.el.dataset.activeScale = this.activeScale;
 
         const activeChannels = CHANNELS[this.activeScale] || [];
 
@@ -212,12 +223,13 @@ export class TelemetryGridPanelComponent {
         const app = document.getElementById('app');
         const currentScale = app?.dataset.activeScale || '0';
 
-        const activeChannels = CHANNELS[this.activeScale] || [];
+        let activeChannels = CHANNELS[this.activeScale] || [];
 
         // Rebuild cards if user switched scales OR if channels length changed (e.g. from HMR)
         if (currentScale !== this.activeScale || this.charts.size !== activeChannels.length) {
             this.activeScale = currentScale;
             this.rebuildGrid();
+            activeChannels = CHANNELS[this.activeScale] || [];
         }
 
         activeChannels.forEach((chan) => {

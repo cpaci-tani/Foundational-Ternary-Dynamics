@@ -550,6 +550,9 @@ export class WebSocketBridge {
     peSetSpinOrbit(e) { this._ensureFallback().peSetSpinOrbit(e); }
     peSetRadiation(e) { this._ensureFallback().peSetRadiation(e); }
     peSetRelativistic(e) { this._ensureFallback().peSetRelativistic(e); }
+    peSetRelativisticVerlet(e) { this._ensureFallback().peSetRelativisticVerlet(e); }
+    peGetToggle(name) { return this._ensureFallback().peGetToggle(name); }
+    peGetBackendCapabilities() { return this._ensureFallback().peGetBackendCapabilities(); }
     peParticleCount() { return this._ensureFallback().peParticleCount(); }
     peClear() { this._ensureFallback().peClear(); }
     peGetParticleTypes() { return this._ensureFallback().peGetParticleTypes(); }

@@ -5,23 +5,23 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    gap: 12px;
-    padding: 6px;
+    gap: var(--sp-lg);
+    padding: var(--sp-sm);
     overflow: auto;
 }
 
 .telemetry-grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 10px;
+    gap: var(--sp-md);
     flex: 1;
 }
 
 .telemetry-card {
-    background: rgba(18, 26, 47, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    padding: 12px;
+    background: color-mix(in oklch, var(--bg-card) 72%, transparent);
+    border: 1px solid color-mix(in oklch, var(--border) 82%, transparent);
+    border-radius: var(--radius);
+    padding: var(--sp-md);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -35,11 +35,11 @@
 }
 
 .telemetry-card:hover {
-    background: rgba(25, 36, 60, 0.4);
-    border-color: rgba(0, 229, 255, 0.2);
+    background: color-mix(in oklch, var(--bg-elevated) 76%, transparent);
+    border-color: color-mix(in oklch, var(--accent) 36%, var(--border));
     box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.25),
-        0 0 10px rgba(0, 229, 255, 0.05);
+        var(--shadow-md),
+        0 0 10px color-mix(in oklch, var(--accent-glow) 14%, transparent);
 }
 
 .telemetry-card-head {
@@ -53,18 +53,19 @@
 .telemetry-card-title {
     font-size: var(--fs-xs);
     font-weight: 600;
-    color: var(--text-dim, #94a3b8);
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.06em;
 }
 
 .telemetry-card-value {
     font-size: var(--fs-2xl);
-    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-family: var(--font-mono);
     font-weight: 500;
-    color: var(--text-primary, #ffffff);
+    color: var(--text-primary);
     margin-top: 2px;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    text-shadow: 0 0 10px color-mix(in oklch, var(--text-primary) 10%, transparent);
+    font-variant-numeric: tabular-nums;
 }
 
 .telemetry-card-plot {
@@ -97,7 +98,7 @@
 
 /* Modern collapsing hover styling for uPlot cursors in synchronization */
 .telemetry-sync-line {
-    border-left: 1px dashed rgba(0, 229, 255, 0.6) !important;
+    border-left: 1px dashed color-mix(in oklch, var(--accent) 60%, transparent) !important;
 }
 
 .telemetry-grid-empty {
@@ -106,11 +107,11 @@
     align-items: center;
     justify-content: center;
     height: 150px;
-    color: var(--text-dim, #94a3b8);
+    color: var(--text-muted);
     font-size: var(--fs-sm);
-    border: 1px dashed rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.01);
+    border: 1px dashed color-mix(in oklch, var(--border) 70%, transparent);
+    border-radius: var(--radius);
+    background: color-mix(in oklch, var(--bg-surface) 55%, transparent);
 }
 
 /* ── Responsive: collapse the auto-fit grid + shrink cards on phones ─────────
@@ -125,6 +126,11 @@
     .telemetry-card {
         min-height: 96px;
     }
+}
+
+html[data-panel-mount="left"] .telemetry-grid-container,
+html[data-panel-mount="right"] .telemetry-grid-container {
+    grid-template-columns: 1fr;
 }
 
 /* Landscape phones (667×375 / 844×390): the card min-height stacks past the

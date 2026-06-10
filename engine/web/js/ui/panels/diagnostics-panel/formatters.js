@@ -24,11 +24,16 @@ function formatScalar(v) {
 }
 
 /**
- * @param {number|number[]} value
- * @param {{ kind?: 'scalar'|'vector'|'pair'|'triple' }} [opts]
+ * @param {number|number[]|string|boolean} value
+ * @param {{ kind?: 'scalar'|'vector'|'pair'|'triple'|'text'|'boolean' }} [opts]
  */
 export function formatValue(value, opts = {}) {
     const kind = opts.kind || 'scalar';
+    if (kind === 'text') {
+        if (value === null || value === undefined || value === '') return DASH;
+        return String(value);
+    }
+    if (kind === 'boolean') return value ? 'on' : 'off';
     if (kind === 'scalar') return formatScalar(value);
     if (!Array.isArray(value)) return DASH;
     if (kind === 'vector') return value.map(formatScalar).join(', ');

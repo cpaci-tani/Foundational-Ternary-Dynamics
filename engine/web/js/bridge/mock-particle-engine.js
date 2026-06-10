@@ -61,7 +61,8 @@ export function createParticleEngine(state) {
         state._pe = {
             particles: [], nextId: 0, tick: 0, dt: 1.0, soft: 0.1, coulomb: true, damping: false, gravity: false,
             lorentz: false, exchange: false, strong: false, magnetic_dipole: false,
-            spin_orbit: false, radiation: false, relativistic: false
+            spin_orbit: false, radiation: false, relativistic: false,
+            relativistic_verlet: false
         };
         state._peParticleTypes = new Map();
     }
@@ -72,6 +73,7 @@ export function createParticleEngine(state) {
             state._pe.nextId = 0;
             state._pe.tick = 0;
             state._pe.forces = null;
+            state._pe.forcesN = 0;
         }
         if (state._peParticleTypes) state._peParticleTypes.clear();
     }
@@ -253,7 +255,12 @@ export function createParticleEngine(state) {
     }
 
     function peGetParticleData() {
-        if (!state._pe) return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), charges: new Int8Array(0), ids: new Int32Array(0), velocities: new Float32Array(0), count: 0 };
+        if (!state._pe) return {
+            positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0),
+            charges: new Int8Array(0), ids: new Int32Array(0), velocities: new Float32Array(0),
+            masses: new Float64Array(0), rEff: new Float32Array(0), locked: new Uint8Array(0),
+            spins: new Int8Array(0), colorIds: new Int8Array(0), count: 0
+        };
         const ps = state._pe.particles;
         const count = ps.length;
         // Reuse pre-allocated buffers to avoid GC pressure (grow only when needed)
@@ -265,10 +272,15 @@ export function createParticleEngine(state) {
                 charges: new Int8Array(count),
                 ids: new Int32Array(count),
                 velocities: new Float32Array(count * 3),
+                masses: new Float64Array(count),
+                rEff: new Float32Array(count),
+                locked: new Uint8Array(count),
+                spins: new Int8Array(count),
+                colorIds: new Int8Array(count),
                 cap: count
             };
         }
-        const { positions, colors, sizes, charges, ids, velocities } = state._peBufs;
+        const { positions, colors, sizes, charges, ids, velocities, masses, rEff, locked, spins, colorIds } = state._peBufs;
         for (let i = 0; i < count; i++) {
             const p = ps[i];
             positions[i * 3] = p.x;
@@ -284,8 +296,13 @@ export function createParticleEngine(state) {
             if (sizes[i] > 60) sizes[i] = 60;
             charges[i] = p.charge;
             ids[i] = p.id;
+            masses[i] = p.mass;
+            rEff[i] = p.r_eff;
+            locked[i] = p.locked ? 1 : 0;
+            spins[i] = p.spin || 0;
+            colorIds[i] = p.color || 0;
         }
-        return { positions, colors, sizes, charges, ids, velocities, count };
+        return { positions, colors, sizes, charges, ids, velocities, masses, rEff, locked, spins, colorIds, count };
     }
 
     function peGetFieldSources() {
@@ -314,7 +331,8 @@ export function createParticleEngine(state) {
     }
 
     function peGetForces() {
-        if (!state._pe || !state._pe.forces) return { positions: new Float32Array(0), forces: new Float32Array(0), count: 0, maxForce: 0 };
+        if (!state._pe) return { positions: new Float32Array(0), forces: new Float32Array(0), count: 0, maxForce: 0 };
+        if (!state._pe.forces || state._pe.forcesN !== state._pe.particles.length) _peComputeForces();
         const ps = state._pe.particles;
         const F = state._pe.forces;  // flat Float64Array [fx0,fy0,fz0, fx1,fy1,fz1, ...]
         const n = ps.length;
@@ -422,6 +440,20 @@ export function createParticleEngine(state) {
     function peSetSpinOrbit(e)       { if (state._pe) state._pe.spin_orbit = e; }
     function peSetRadiation(e)       { if (state._pe) state._pe.radiation = e; }
     function peSetRelativistic(e)    { if (state._pe) state._pe.relativistic = e; }
+    function peSetRelativisticVerlet(e) { if (state._pe) state._pe.relativistic_verlet = e; }
+    function peGetToggle(name)       { return state._pe ? !!state._pe[name] : false; }
+    function peGetBackendCapabilities() {
+        return {
+            velocities: true,
+            masses: true,
+            locked: true,
+            forces: true,
+            extended: true,
+            nativeExtended: false,
+            nativeForces: false,
+            advancedForces: false,
+        };
+    }
     function peParticleCount()       { return state._pe ? state._pe.particles.length : 0; }
     function peClear()               { resetPE(); }
     function peGetParticleTypes()    { return state._peParticleTypes || new Map(); }
@@ -500,6 +532,7 @@ export function createParticleEngine(state) {
         peSetCoulomb, peSetDamping, peSetGravity, peSetLorentz,
         peSetExchange, peSetStrong, peSetMagneticDipole,
         peSetSpinOrbit, peSetRadiation, peSetRelativistic,
+        peSetRelativisticVerlet, peGetToggle, peGetBackendCapabilities,
         peParticleCount, peClear, peGetParticleTypes,
         peInspectParticle,
     };
