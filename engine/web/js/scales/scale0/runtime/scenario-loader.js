@@ -67,11 +67,28 @@ const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 // moore-decomp were missing). B1 fix, 2026-06-05.
 const FIELD_BUTTON_IDS = FIELD_TOGGLE_BINDINGS.map(([id]) => id);
 const FIELD_BUTTON_TO_FLAG = Object.fromEntries(FIELD_TOGGLE_BINDINGS);
+// Scenarios in this list are intentionally owned by the JS scenario harness for
+// the user-visible dashboard path. Keep the C++ mirror branch in place for
+// parity and future WASM rebuilds, but do not depend on a checked-in WASM bundle
+// already containing the new branch.
+const SCALE0_MOCK_OWNED_SCENARIOS = new Set([
+    's0-field-spacetime-forcing-boundary',
+]);
+const SCALE0_SCENARIO_VISUAL_PROFILES = {
+    's0-field-spacetime-forcing-boundary': {
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.6,
+        fluxThreshold: 0.001,
+        fluxOpacity: 0.85,
+    },
+};
 
 export function shouldUseFluxMock(bridge, scenarioName) {
     if (bridge && (bridge.isNativeGPU || bridge.constructor.name === 'WebSocketBridge')) {
         return false;
     }
+    if (SCALE0_MOCK_OWNED_SCENARIOS.has(scenarioName)) return true;
     if (scenarioName.startsWith('flux-')) return true;
     try {
         const probe = bridge.getFluxVolume && bridge.getFluxVolume();
@@ -122,6 +139,47 @@ function syncComboSliders(bridge) {
             display.textContent = value.toFixed(slider.fmt);
         }
     }
+}
+
+function setDisplayText(id, text) {
+    if (typeof document === 'undefined') return;
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+}
+
+function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenarioId) {
+    const profile = SCALE0_SCENARIO_VISUAL_PROFILES[scenarioId];
+    if (!profile || !ctx?.viewport) return;
+
+    if (profile.fluxVolume === true) {
+        viewportAdapter.setFluxVolumeVisible(true);
+        setButtonActive('toggle-flux-volume', true);
+    }
+    if (profile.fluxSlice === true) {
+        viewportAdapter.setFluxSliceVisible(true);
+        setButtonActive('toggle-flux-slice', true);
+    }
+    if (typeof profile.fluxPointScale === 'number') {
+        ctx.viewport.setFluxPointScale(profile.fluxPointScale);
+        ctx.viewport.setFluxSlicePointScale?.(profile.fluxPointScale);
+        setInputValue('flux-point-scale', profile.fluxPointScale);
+        setDisplayText('flux-point-scale-val', profile.fluxPointScale.toFixed(1));
+    }
+    if (typeof profile.fluxThreshold === 'number') {
+        ctx.viewport.setFluxThreshold(profile.fluxThreshold);
+        ctx.viewport.setFluxSliceThreshold?.(profile.fluxThreshold);
+        setInputValue('flux-threshold', profile.fluxThreshold);
+        setDisplayText('flux-threshold-val', profile.fluxThreshold.toFixed(3));
+    }
+    if (typeof profile.fluxOpacity === 'number') {
+        ctx.viewport.setFluxOpacity(profile.fluxOpacity);
+        ctx.viewport.setFluxSliceOpacity?.(profile.fluxOpacity);
+        setInputValue('flux-opacity', profile.fluxOpacity);
+        setDisplayText('flux-opacity-val', profile.fluxOpacity.toFixed(2));
+    }
+
+    state.latticeNeedsUpload = true;
+    markFieldDirty();
 }
 
 function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId) {
@@ -327,6 +385,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // Restore the captured overlay preferences. Runs last so it overrides any
     // defaults applied by applyAuxiliaryDefaults or resetScale0VisualState.
     restoreOverlayPreferences(overlayPrefs, state, viewportAdapter);
+    applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario.id);
 
     state.fieldNeedsUpdate = true;
     recomputeAnyFieldActive();

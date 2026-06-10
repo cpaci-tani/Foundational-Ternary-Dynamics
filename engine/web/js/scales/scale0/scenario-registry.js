@@ -127,6 +127,7 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Field Configurations', 's0-field-uniform-e', 'Uniform E field', ['field']),
     makeScenario('Field Configurations', 's0-field-uniform-b', 'Uniform B field', ['field']),
     makeScenario('Field Configurations', 's0-field-photon-pulse', 'Photon pulse', ['field']),
+    makeScenario('Field Configurations', 's0-field-spacetime-forcing-boundary', 'Spacetime forcing boundary (FTD-0253)', ['field', 'spacetime', 'locality', 'demo'], '[DEMO]+[BOUNDARY]'),
     makeScenario('Field Configurations', 's0-field-electric-dipole', 'Electric dipole', ['field']),
     makeScenario('Field Configurations', 's0-field-magnetic-dipole', 'Magnetic dipole', ['field']),
     makeScenario('Field Configurations', 's0-field-vortex-line', 'Vortex line', ['field']),
