@@ -27,6 +27,83 @@
 import { allElements, tablePosition, getElement } from '../../elements.js';
 
 
+// ═════════════════════════════════════════════════════════════════════
+// Per-scenario VISUAL presets (mirror of scale1/scenarios.js overlays)
+// ═════════════════════════════════════════════════════════════════════
+//
+// Physics toggles are set imperatively inside each scenario body below;
+// these presets cover the VISUAL layer only (what overlays/toggles light
+// up when the scenario loads). Applied by the controller's
+// applyAEVisualPreset AFTER setupAEScenario, so the preset is the last
+// writer over resetScale2's defaults.
+//
+// Note: the force-arrow `net` channel = ionic + vdW + bond only —
+// angle-strain / H-bond / dipole forces are NOT in the decomposition
+// (mock-atom-engine aeGetForceDecomposition), so VSEPR presets light
+// forceNet without claiming to show the angle force itself.
+
+const BASE_VISUALS = Object.freeze({
+    clouds: true,            // orbital electron clouds
+    shells: true,            // nucleus strong-force glow
+    bondStyle: 'cylinders',  // 'cylinders' | 'lines' | 'off'
+    shellBounds: false,      // translucent shell boundary spheres
+    lobes: false,            // p/d/f orbital lobes
+    field: false,            // force-field heatmap + vectors
+    forceIonic: false,
+    forceVdw: false,
+    forceBond: false,
+    forceNet: false,
+    velocities: false,       // per-atom velocity vectors
+    dipoles: false,          // per-atom dipole-moment arrows
+    hbondLines: false,       // dashed donor-H···acceptor lines
+});
+
+const IONIC_VISUALS    = Object.freeze({ forceIonic: true, field: true });
+const VDW_VISUALS      = Object.freeze({ forceVdw: true });
+const COVALENT_VISUALS = Object.freeze({ forceBond: true });
+const VSEPR_VISUALS    = Object.freeze({ forceNet: true });
+const WATER_VISUALS    = Object.freeze({ hbondLines: true });
+
+const AE_PRESET_OVERRIDES = Object.freeze({
+    'ae-periodic':              { clouds: false, shells: false },  // 118 atoms — perf
+    'ae-hydrogen-atom':         { shellBounds: true },
+    'ae-rutherford-scattering': { forceNet: true, velocities: true },
+    'ae-he-cluster':            VDW_VISUALS,
+    'ae-ar-cluster':            VDW_VISUALS,
+    'ae-noble-mix':             VDW_VISUALS,
+    'ae-collision':             { forceVdw: true, velocities: true },
+    'ae-nacl-form':             IONIC_VISUALS,
+    'ae-nacl-lattice':          IONIC_VISUALS,
+    'ae-mgf2':                  IONIC_VISUALS,
+    'ae-h2-form':               COVALENT_VISUALS,
+    'ae-o2-form':               COVALENT_VISUALS,
+    'ae-ch4-form':              COVALENT_VISUALS,
+    'ae-fe-bcc':                COVALENT_VISUALS,
+    'ae-cu-fcc':                COVALENT_VISUALS,
+    'ae-water-dimer':           WATER_VISUALS,
+    'ae-water-cluster':         WATER_VISUALS,
+    'ae-vsepr-linear':          VSEPR_VISUALS,
+    'ae-vsepr-tetrahedral':     VSEPR_VISUALS,
+    'ae-vsepr-bent':            VSEPR_VISUALS,
+    'ae-thermal-gas':           { shells: false, velocities: true },
+    'ae-custom':                {},
+});
+
+/**
+ * Visual preset for a scenario. ae-el-* (single elements) get shell
+ * boundary spheres like ae-hydrogen-atom; everything else resolves via
+ * the override table on top of BASE_VISUALS.
+ * @param {string} name - scenario identifier (ae-*)
+ * @returns {{ visuals: object }}
+ */
+export function getAEScenarioPreset(name) {
+    const override = name.startsWith('ae-el-')
+        ? { shellBounds: true }
+        : (AE_PRESET_OVERRIDES[name] || {});
+    return { visuals: { ...BASE_VISUALS, ...override } };
+}
+
+
 /**
  * Execute the scenario body for the given name.
  * @param {string} name - scenario identifier (ae-*)
