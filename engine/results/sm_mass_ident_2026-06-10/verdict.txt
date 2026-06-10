@@ -1,0 +1,27 @@
+=== E (electron anchor, R=1 <-> 1 voxel) ===
+  A=1.5: per-seed [n_min,n_max] = [1,1] [1,1] [1,1] [1,1] [1,1] -> OK
+  A=2.0: per-seed [n_min,n_max] = [1,1] [1,1] [1,1] [1,1] [1,1] -> OK
+  A=3.0: per-seed [n_min,n_max] = [1,1] [1,1] [1,1] [1,1] [1,1] -> OK
+  A=5.0: per-seed [n_min,n_max] = [1,1] [1,1] [1,1] [1,1] [1,1] -> OK
+E verdict: PASS
+
+=== S (law-inverted SM points; SELF-CONSISTENCY ONLY — circular) ===
+  mu: A=62.59  N_mean=199.4  target R=206.8  N/R=0.964  band [0.843,1.186] -> OK
+  pi: A=72.46  N_mean=281.3  target R=273.1  N/R=1.030  band [0.843,1.186] -> OK
+S verdict: CONSISTENT
+
+=== P (specialness probe: local slope on the mu-window) ===
+  A=56.0   N_mean=166.7
+  A=58.0   N_mean=175.7
+  A=60.0   N_mean=191.0
+  A=62.59  N_mean=199.4
+  A=64.0   N_mean=217.3
+  A=66.0   N_mean=231.0
+  A=68.0   N_mean=248.3
+  p_local = 2.052  (law slope ~1.9; SMOOTH threshold 0.95)
+  window-mean N = 204.2  (R_mu = 206.8; near = True)
+P verdict: SMOOTH
+[descriptive] pi-window slope = 1.983 (4 pts)
+
+================ OUTCOME ================
+IDENT-NULL: anchor holds; law self-consistency holds; NO structural specialness at R_mu. The cluster<->mass identification gains no current-stack support beyond the electron anchor; its quantitative evidence basis remains historical (stack-pinned).
