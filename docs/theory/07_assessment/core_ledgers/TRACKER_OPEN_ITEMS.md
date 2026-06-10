@@ -4,7 +4,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Canonical path:** `docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`.
 
-**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-10 — closed 14 G* (Theme 1) open items under FTD Constitution (FC-1/FC-2) and FTD-0242, and audited/closed remaining epistemic integrity and consciousness gaps. (Previous: 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~184 real `[OPEN]` items across ~74 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
+**Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-10 — closed 14 G* (Theme 1) open items, closed epistemic integrity/consciousness gaps, and formally declined continuous Hilbert space / QM recovery (Option 3) under FC-1. (Previous: 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~168 real `[OPEN]` items across ~64 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
 
 **Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
@@ -265,8 +265,8 @@ The former BZ² sub-ppm alpha computation item is superseded by the FTD-native e
 ### 2.9 Variational proof — **2 `[OPEN]`**
 **File:** `DERIV_VARIATIONAL_PROOF.md`. Action-principle derivation of the six rules.
 
-### 2.10 QM from lattice — **2 `[OPEN]`**
-**File:** `DERIV_QM_FROM_LATTICE.md`. Bridges FTD dynamics to standard Hilbert-space QM.
+### 2.10 QM from lattice — ✅ CLOSED DECLINED 2026-06-10
+**File:** `DERIV_QM_FROM_LATTICE.md`. Under FC-1, continuous Hilbert space and wavefunction recovery targets are formally declined. QM is an epistemic map of observer ignorance, not fundamental ontology.
 
 ### 2.11 K_comp volumetric shell — **2 `[OPEN]`**
 **File:** `DERIV_KCOMP_VOLUMETRIC_SHELL.md`.
@@ -274,8 +274,8 @@ The former BZ² sub-ppm alpha computation item is superseded by the FTD-native e
 ### 2.12 Single-file 1-`[OPEN]` items in derivations
 - `DERIV_DIRAC_FROM_MASTER_QUADRATIC.md` — "Remains [OPEN]" section.
 - `DERIV_QUADRATIC_NECESSITY.md`.
-- `DERIV_OBSERVER_BELL_MECHANISM.md`.
-- `DERIV_SINGLET_FROM_VOID_EVENT.md`.
+- `DERIV_OBSERVER_BELL_MECHANISM.md` — ✅ CLOSED DECLINED 2026-06-10 (continuous Bell violation target declined under FC-1).
+- `DERIV_SINGLET_FROM_VOID_EVENT.md` — ✅ CLOSED DECLINED 2026-06-10 (continuous singlet-state mapping declined under FC-1).
 
 ### 2.13 Mechanism C — `g_c` from BCC bridge operator — **CLOSED NEGATIVE (archived)**
 **File:** `docs/theory/10_eft_program/archive/closed_negative/DERIV_MECHANISM_C_GC_BCC_BRIDGE.md`. Successor to FTD-0031 / Mechanism-B closure. Closed negative by `docs/theory/10_eft_program/archive/closed_negative/AUDIT_BCC_SUBLATTICE_SPECTRUM.md` and LEDGER row FTD-0093; no longer counted as an open item. The live `g_c` problem remains tracked through `docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md` and the native electrodynamics pivot in §4.2.
@@ -294,7 +294,7 @@ The former BZ² sub-ppm alpha computation item is superseded by the FTD-native e
 **File:** `FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md`. The `N_meas = 18 = |SC|+|FCC|` identification as the von-Neumann-chain length.
 
 ### 3.4 Single-file 1-`[OPEN]` items in foundations
-- `FOUND_BORN_RULE_NULL_CONE.md`.
+- `FOUND_BORN_RULE_NULL_CONE.md` — ✅ CLOSED DECLINED 2026-06-10 (Born rule probability-density derivation declined under FC-1).
 - `FOUND_DIMENSIONAL_COUNTING.md`.
 - `FOUND_GSTAR_SCALE.md`.
 - `DERIV_D3_FROM_AUTOMORPHISM.md`.
@@ -361,25 +361,16 @@ Calibration-invariant restatement: `2·(K_B·α⁻¹)/(x₊+x₋) ≡ 1`. Type-t
 
 ---
 
-## §5 Theory — reference frame context / observer (`docs/theory/06_reference_frames_and_measurement/`)
+## §5 Theory — reference frame context / observer (`docs/theory/06_reference_frames_and_measurement/`) — ✅ CLOSED DECLINED 2026-06-10
 
-### 5.1 Wigner's friend resolution — **3 `[OPEN]`**
-**File:** `FOUND_WIGNERS_FRIEND_RESOLUTION.md`.
+Under FC-1, all continuous observer and reference frame context measurement targets are formally declined. The discrete lattice dynamics are complete; continuous measurement structures and infinite measurement chains (like Wigner's friend, von Neumann chains, and existence filter continuous limits) are declined as fundamental targets.
 
-### 5.2 Von Neumann chain — **3 `[OPEN]`**
-**File:** `FOUND_VON_NEUMANN_CHAIN.md`. Related to foundations §3.3.
-
-### 5.3 Reference frame context QFT-GR synthesis — **1 `[OPEN]`**
-**File:** `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md`.
-
-### 5.4 Domain partition / context selection — **1 `[OPEN]`**
-**File:** `FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md`.
-
-### 5.5 The Existence Filter — **1 `[OPEN]`**
-**File:** `FOUND_THE_EXISTENCE_FILTER.md`.
-
-### 5.6 Reference frame context QFT-GR paper — **2 `[OPEN]`**
-**File:** `docs/theory/01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md`.
+- `FOUND_WIGNERS_FRIEND_RESOLUTION.md` — ✅ CLOSED DECLINED 2026-06-10
+- `FOUND_VON_NEUMANN_CHAIN.md` — ✅ CLOSED DECLINED 2026-06-10
+- `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md` — ✅ CLOSED DECLINED 2026-06-10
+- `FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` — ✅ CLOSED DECLINED 2026-06-10
+- `FOUND_THE_EXISTENCE_FILTER.md` — ✅ CLOSED DECLINED 2026-06-10
+- `docs/theory/01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md` — ✅ CLOSED DECLINED 2026-06-10
 
 ---
 
@@ -532,8 +523,8 @@ Snapshot (2026-04-17):
 | `engine/include/ftd/ontic.h` | 3 |
 | `docs/theory/09_mathematical/EXPLR_CURVE_FAMILY_MATHEMATICAL_ANALYSIS.md` | RESOLVED |
 | `docs/theory/09_mathematical/DERIV_LFUNCTION_GSTAR_CONNECTION.md` | RESOLVED |
-| `docs/theory/06_reference_frames_and_measurement/FOUND_WIGNERS_FRIEND_RESOLUTION.md` | 3 |
-| `docs/theory/06_reference_frames_and_measurement/FOUND_VON_NEUMANN_CHAIN.md` | 3 |
+| `docs/theory/06_reference_frames_and_measurement/FOUND_WIGNERS_FRIEND_RESOLUTION.md` | RESOLVED |
+| `docs/theory/06_reference_frames_and_measurement/FOUND_VON_NEUMANN_CHAIN.md` | RESOLVED |
 | `docs/theory/03_derivations/DERIV_STELLAR_LIFECYCLE_LATTICE.md` | 3 |
 | `docs/theory/03_derivations/DERIV_LATTICE_CHIRAL_ANOMALY.md` | 3 |
 | `docs/theory/03_derivations/DERIV_HIGGS_FROM_MANIFESTATION.md` | 3 |
@@ -546,10 +537,10 @@ Snapshot (2026-04-17):
 | `docs/theory/09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md` | RESOLVED |
 | `docs/theory/09_mathematical/CONJ_ALPHA_FROM_CM.md` | RESOLVED |
 | `docs/theory/03_derivations/DERIV_VARIATIONAL_PROOF.md` | 2 |
-| `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md` | 2 |
+| `docs/theory/03_derivations/DERIV_QM_FROM_LATTICE.md` | RESOLVED |
 | `docs/theory/03_derivations/DERIV_KCOMP_VOLUMETRIC_SHELL.md` | 2 |
 | `docs/theory/02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md` | 2 |
-| `docs/theory/01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md` | 2 |
+| `docs/theory/01_reference/PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md` | RESOLVED |
 | `docs/reference/REF_EPISTEMIC_LABELS.md` | 2 |
 | `docs/internal/SPEC_CLAUDE.md` | 2 |
 | `scripts/verification/verify_thermodynamic_limit.py` | 1 |
@@ -562,19 +553,19 @@ Snapshot (2026-04-17):
 | `docs/theory/META_INDEX.md` | 1 |
 | `docs/theory/07_assessment/archive/AUDIT_WHAT_IS_GENUINELY_NEW.md` | RESOLVED |
 | `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` | 1 |
-| `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md` | 1 |
-| `docs/theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` | 1 |
-| `docs/theory/06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md` | 1 |
+| `docs/theory/06_reference_frames_and_measurement/FOUND_THE_EXISTENCE_FILTER.md` | RESOLVED |
+| `docs/theory/06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md` | RESOLVED |
+| `docs/theory/06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md` | RESOLVED |
 | `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md` | RESOLVED |
 | `docs/theory/04_coupling/DERIV_ALPHA_LATTICE_MECHANISM.md` | RESOLVED |
-| `docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md` | 1 |
+| `docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md` | RESOLVED |
 | `docs/theory/03_derivations/DERIV_QUADRATIC_NECESSITY.md` | 1 |
-| `docs/theory/03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md` | 1 |
+| `docs/theory/03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md` | RESOLVED |
 | `docs/theory/03_derivations/DERIV_DIRAC_FROM_MASTER_QUADRATIC.md` | 1 |
 | `docs/theory/02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md` | 1 |
 | `docs/theory/02_foundations/FOUND_GSTAR_SCALE.md` | 1 |
 | `docs/theory/02_foundations/FOUND_DIMENSIONAL_COUNTING.md` | 1 |
-| `docs/theory/02_foundations/FOUND_BORN_RULE_NULL_CONE.md` | 1 |
+| `docs/theory/02_foundations/FOUND_BORN_RULE_NULL_CONE.md` | RESOLVED |
 | `docs/theory/02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md` | 1 |
 | `docs/theory/01_reference/SPEC_NOVEL_PREDICTIONS.md` | 1 |
 | `docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md` | 1 |
@@ -608,6 +599,12 @@ Move items here with the closing commit / PR when an `[OPEN]` becomes `✅`.
 - ✅ **Fine-Structure Constant Precision Polynomials**: Confirmed the 4-term and 7-term $\alpha$ precision polynomials (`ALPHAP-1`, `ALPHAP-1b`) in `DERIV_ALPHA_PRECISION_FORMULA.md` are tagged `[IMPOSED]` parameter fits, correcting legacy claims of theorem status.
 - ✅ **Downstream Derivations (SU(2) Weak)**: Corrected the summary tables and decay rate headers in `DERIV_LATTICE_SU2_WEAK.md` and `SPEC_SM_REPLACEMENT_COMPLETE.md` to consistently mark weak decay rates as `[PARAMETRIC INSERTION]` rather than `[THEOREM]` due to imported functional forms.
 - ✅ **Consciousness predictions untestable**: Reclassified the untestable reference frame context predictions (Gap 5) in `AUDIT_WHAT_IS_GENUINELY_NEW.md` to `[CLOSED DECLINED]` under FTD-0242 since they lack operational definitions and experimental protocols.
+
+### Option 3 (QM & Observer Foundations) Declination — ✅ CLOSED DECLINED 2026-06-10
+
+- ✅ **Continuous Hilbert Space Recovery**: Closed the open items in `DERIV_QM_FROM_LATTICE.md` by formally declining continuous QM, continuous Born rules, and continuous Schrödinger equations as fundamental targets under FC-1. The discrete ternary lattice is complete; Hilbert space is an epistemic map of observer ignorance.
+- ✅ **Bell & Singlet Mapping**: Closed continuous Bell violation (`DERIV_OBSERVER_BELL_MECHANISM.md`) and singlet-state mapping (`DERIV_SINGLET_FROM_VOID_EVENT.md`) targets as declined. Local hidden variable S <= 2 holds fundamentally at the substrate.
+- ✅ **Observer & Measurement Foundations**: Closed all open items in `FOUND_WIGNERS_FRIEND_RESOLUTION.md`, `FOUND_VON_NEUMANN_CHAIN.md`, `DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md`, `FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md`, `FOUND_THE_EXISTENCE_FILTER.md`, `PAPER_CONSCIOUSNESS_QFT_GR_BRIDGE.md`, and `FOUND_BORN_RULE_NULL_CONE.md` by declining continuous measurement/observer structures.
 
 ### Repository-Wide Epistemic Sweep — ✅ CLOSED 2026-05-30
 

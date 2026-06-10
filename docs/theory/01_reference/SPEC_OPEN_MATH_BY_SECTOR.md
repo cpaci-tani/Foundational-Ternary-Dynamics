@@ -195,18 +195,18 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** Emergence of QM from FTD substrate; Bell violation; Lorentz invariance recovery; observer mechanisms.
 
-**Status snapshot:** Bell `S = 2√2` [SELECTION, FTD-0023] — **not derived**. Moore-Laplacian isotropy verified at O(h²) and O(h⁴) (rotationally invariant correction `(h²/12)·(∇²)²f`); empirical 11–20% pairwise diff at L=48–64 (high-k dispersion artifact present in every cubic-lattice FD scheme). Continuum-limit Lorentz recovery [OPEN].
+**Status snapshot:** Bell `S = 2√2` [CLOSED DECLINED] — the continuous Hilbert space and Bell violation recovery targets are formally declined under FC-1. Moore-Laplacian isotropy verified at O(h²) and O(h⁴) (rotationally invariant correction `(h²/12)·(∇²)²f`); empirical 11–20% pairwise diff at L=48–64 (high-k dispersion artifact present in every cubic-lattice FD scheme). Continuum-limit Lorentz recovery [OPEN].
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
 | W-CRIT-3 | Lorentz invariance recovery: relational reinterpretation step from "isotropic Laplacian + emergent SR-like dispersion" to "Lorentz invariance" | [OPEN] | M–RP | — |
-| W-CRIT-4 | Bell violation rigorous: explicit construction of an sLoop process producing `S > 2` from the 5 axioms; OR honest acceptance that FTD reproduces Bell *bound* (Tsirelson) via emergent QM but not the violation mechanism | [OPEN] | M–RP | — |
-| QM-lattice | `DERIV_QM_FROM_LATTICE.md` 2 [OPEN] (Hilbert-space construction is constructed not emergent per QIS evaluation) | [OPEN] | RP | — |
-| Wigner | `FOUND_WIGNERS_FRIEND_RESOLUTION.md` 3 [OPEN] | [OPEN] | M | — |
-| vN-chain | `FOUND_VON_NEUMANN_CHAIN.md` 3 [OPEN] (related to N_meas = 18 = `\|SC\| + \|FCC\|` identification) | [OPEN] | M | — |
-| Bell-mech | `DERIV_OBSERVER_BELL_MECHANISM.md` 1 [OPEN] | [OPEN] | M | W-CRIT-4 |
-| Born | `FOUND_BORN_RULE_NULL_CONE.md` 1 [OPEN] | [OPEN] | W–M | — |
-| Existence | `FOUND_THE_EXISTENCE_FILTER.md` 1 [OPEN] | [OPEN] | M | — |
+| W-CRIT-4 | Bell violation rigorous: explicit construction of an sLoop process producing `S > 2` from the 5 axioms | [CLOSED DECLINED] | — | — |
+| QM-lattice | `DERIV_QM_FROM_LATTICE.md` (Hilbert-space / QM recovery declined under FC-1) | [CLOSED DECLINED] | — | — |
+| Wigner | `FOUND_WIGNERS_FRIEND_RESOLUTION.md` (Wigner's friend resolution declined under FC-1) | [CLOSED DECLINED] | — | — |
+| vN-chain | `FOUND_VON_NEUMANN_CHAIN.md` (Von Neumann chain / continuous measurement mapping declined under FC-1) | [CLOSED DECLINED] | — | — |
+| Bell-mech | `DERIV_OBSERVER_BELL_MECHANISM.md` (Bell mechanism declined under FC-1) | [CLOSED DECLINED] | — | — |
+| Born | `FOUND_BORN_RULE_NULL_CONE.md` (Born rule null-cone geometry declined under FC-1) | [CLOSED DECLINED] | — | — |
+| Existence | `FOUND_THE_EXISTENCE_FILTER.md` (Existence filter open items declined under FC-1) | [CLOSED DECLINED] | — | — |
 
 **Sources:** SPEC_DOCTRINE_LEDGER.md §1, §7; LEDGER FTD-0023; AUDIT_WEAKNESSES_MASTER.md W-CRIT-3, W-CRIT-4; TRACKER_OPEN_ITEMS.md §§2.10, 5.1–5.6.
 

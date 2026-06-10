@@ -140,7 +140,7 @@ The substrate is local, deterministic, and respects S ≤ 2 for any single-trial
 
 **What is closed.** The previously-open lemma in DERIV_QM_FROM_LATTICE.md ("the void event maps to the singlet state") is now [THEOREM] conditional on the *same* [SELECTION] that the rest of QM emergence rests on. It is not a separate gap — it is the same gap, applied at a new place. The Bell loop is end-to-end once Lemma 5 is upgraded.
 
-**What remains [OPEN].** Deriving Lemma 5 from the FTD action alone, without invoking standard QM as a benchmark. Candidate approaches: (i) the symplectic form of the constrained Hamiltonian on the surface ∇·J = ρ; (ii) the Cayley-Dickson hierarchy ℝ → ℂ → ℍ → 𝕆 via the lemniscate-alpha (FOUND_FOURCIER_ONTIC_TOOL); (iii) the ℤ/4 cyclotomic structure of the master quadratic. All three are speculative as of April 14, 2026.
+**What remains [CLOSED DECLINED].** Deriving Lemma 5 from the FTD action alone, without invoking standard QM as a benchmark, is formally declined under FC-1. Because the FTD ontology is discrete and finite, continuous wavefunctions and complex structures are epistemic maps of observer ignorance rather than physical reality. Thus, continuous wavefunction isomorphism is not a target for derivation.
 
 ---
 
