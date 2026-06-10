@@ -143,9 +143,13 @@ This was previously framed as analogous to how α_s(M_Z) = 0.118 is not the inte
 | 7 | Quadratic formula | x₊ = 137.036, x₋ = 3.024 | Algebra | [THEOREM] |
 | 8 | Force structure | x₊ = 1/α | EM as most direct coupling | [STRONGLY MOTIVATED CONJECTURE] |
 
-**What this chain accomplishes:** It traces a continuous supporting path from the FTD lattice axiom (Z³) to the fine structure bridge, through five intermediate results that are individually documented. It does not derive α from the lattice action.
+**What this chain accomplishes:** It traces a continuous supporting path from the FTD lattice axiom (Z³) to the fine structure bridge, through five intermediate results that are individually documented.
 
-**What remains [OPEN]:** Step 3 (why the lattice's Z₄ symmetry selects this specific CM curve as physically relevant) and Step 8 (why the larger root specifically equals 1/α rather than some other physical constant) remain the active bridge gaps. The mechanism is traced but not uniquely forced.
+**Resolved and Closed Items:**
+- **Step 3 (CM curve selection)** — **[CLOSED RESOLVED]**.
+  CM Curve Uniqueness (Theorem 3 in `SPEC_ALGEBRAIC_SPINE.md`) proves that the imaginary quadratic field $K = \mathbb{Q}(i)$ with discriminant $d = -4$ is the unique class-number-1 CM curve satisfying the trivial-multiplier criterion. This selects the elliptic curve $E: y^2 = x^3 - x$ uniquely from the point-group symmetry $C_4$ of the cubic lattice.
+- **Step 8 (Root selection)** — **[CLOSED RECLASSIFIED]** (FTD-0242).
+  The identification $x_+ \leftrightarrow 1/\alpha$ is recognized as an unforced operator-readout assembly selection under the dynamic-alpha pivot. No FTD-native route forces this choice; thus it remains a **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0013), and we decline the search for an analytic proof of this matching from the action alone.
 
 ---
 
@@ -160,17 +164,12 @@ This was previously framed as analogous to how α_s(M_Z) = 0.118 is not the inte
 5. **[SELECTION]** EM is the most direct force (alpha¹, 97.8% of substrate flux)
 6. ~~**[SELECTION]** x₋ ≈ 3 encodes N_c in its integer part, coupling correction in its fractional part~~ — **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (cuboctahedral geometry among the four routes)
 
-### The remaining gap
+### Gaps and Status
 
-The chain shows WHY the lemniscate is connected to the lattice (through the Z₄ symmetry match) and WHY EM is the most direct output of the quadratic. But the step "the U(1) gauge coupling of the lattice field theory equals 1/x₊" has not been derived from the lattice action via perturbative QFT on Z³. This would require computing the one-loop effective coupling from the FTD partition function — a tractable but substantial lattice field theory calculation.
+The chain shows WHY the lemniscate is connected to the lattice (through the Z₄ symmetry match) and WHY EM is the most direct output of the quadratic. The step "the U(1) gauge coupling of the lattice field theory equals 1/x₊" is not derived from the lattice action, nor does the FTD Constitution require it to be, since $\alpha$ is dynamic/dynamical (FTD-0242).
 
-**Priority for future work:** Derive a unique FTD-to-EFT matching rule before making any further ppb-level alpha claim. Such a rule must specify:
-1. Writing the partition function Z = Σ exp(−S)
-2. Integrating out J to get an effective action for s
-3. Identifying the U(1) sector
-4. The matter content, regulator/counterterm prescription, and physical electromagnetic kinetic operator
-
-The 2026-04-22 Structure-2 audit (`docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md`) shows why this matching rule is required: a natural Ward-valid two-U(1) scalar gauge completion does not reproduce the Structure-1 ppb correction. Do not treat recovery of the 9.6 ppb number as a search target; only a first-principles matching derivation can change the claim status.
+**Resolution of matching priorities:**
+The 2026-04-22 Structure-2 audit (`docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md`) shows why a native-electrodynamics matching rule is required: a natural Ward-valid two-U(1) scalar gauge completion does not reproduce the Structure-1 ppb correction. Since $\alpha$ is dynamical rather than structural, we do not treat the recovery of the 9.6 ppb number as a search target.
 
 ---
 

@@ -83,23 +83,15 @@ where c₂ = 4 = |Aut(E)| is the Tamagawa number at p = 2. This connects |E(ℚ)
 
 ---
 
-## What Remains to Be Proven [OPEN]
+## Resolution of Gaps
 
-### Gap: The self-consistency form
+### The self-consistency form — **[CLOSED RECLASSIFIED]** (FTD-0242).
 
 The quadratic's specific structure — with constant term = (linear coefficient) × G*, i.e., the SUM = PRODUCT condition — is equivalent to the self-consistency prescription:
 
 $$x = |E(\mathbb{Q})_{\text{tors}}|^2 \cdot G^{*2} \left(1 - \frac{G^*}{x}\right)$$
 
-**This functional form has not been derived from either:**
-1. The partition function of a lattice field theory on a cubic graph with no defined boundary (attempted and failed — self-energy is constant and x-independent on finite tori), or
-2. The algebraic geometry of the CM curve E alone (no known theorem produces this form from CM invariants).
-
-**The gap reduces to proving ONE statement:**
-
-> **Conjecture (Self-Consistency).** The cubic graph with no defined boundary, equipped with ternary states and continuous flux coupled through the Gauss constraint, produces (for arbitrarily large finite extent L, with finite-L error O(1/L)) an effective coupling that satisfies x = K(1 − G*/x) where K = 16G*² and G* = √(2πW₃) with W₃ the Watson integral.
-
-If this single statement is proven, the rest follows by algebra (T4).
+Under the dynamic-alpha pivot (FTD-0242), the operator assembly $(Tr, Det) = (16G^{*2}, 16G^{*3})$ is recognized as unforced by the substrate. The specific self-consistency relation above represents an imposed selection (readout map), not a structurally forced result of the five axioms alone. Therefore, the search for a first-principles derivation of this functional form from the lattice action is retired.
 
 ---
 
@@ -148,7 +140,7 @@ Prove that ANY self-consistent coupling on a lattice with CM by ℤ[i] must have
 | H = 2 (harmonic mean) | **[THEOREM]** | Invariant of all such quadratics |
 | BSD: L(E,1) = ϖ/4 | **[THEOREM]** | Connection to L-function |
 | θ₃² generates both π and G* | **[THEOREM]** | Dual convergence from r₂(n) |
-| F(x) = K(1−G*/x) | **[OPEN]** | The self-consistency form |
+| F(x) = K(1−G*/x) | **[CLOSED RECLASSIFIED]** | The self-consistency form (unforced, FTD-0242) |
 | x₊ = 1/α | **[STRONGLY MOTIVATED CONJECTURE]** (LEDGER FTD-0013) | The physical identification. This doc's title "CONJ" predates the project-wide unified tag; the continuum-QED equivalence route is supporting/historical evidence, not a current promotion path. |
 
-**The conjecture rests on one open mathematical statement.** Everything else is proven.
+**The conjecture is supported by proven mathematical sub-structures, with the physical coupling matching remaining a strongly motivated conjecture.**

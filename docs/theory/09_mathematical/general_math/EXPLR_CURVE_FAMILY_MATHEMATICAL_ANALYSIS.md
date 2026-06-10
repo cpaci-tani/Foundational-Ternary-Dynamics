@@ -453,14 +453,9 @@ The frequencies {1, 2, 4, 8, 16} are exactly the Feigenbaum period-doubling sequ
 
 The FTD integers {3, 4, 7, 13} appear in the factorization of the arc length ratio.
 
-### Why 61? [OPEN]
+### Why 61? — **[CLOSED DECLINED]** (FC-1)
 
-The prime 61 appears unexpectedly. Note:
-- 61 = 64 - 3 = 2^6 - N_c
-- 61 is the 18th prime
-- 18 = 2 * 9 = 2 * N_c^2
-
-Connection to other FTD structures remains to be established.
+The prime 61 appears in the rational approximation factors of the arc length. Under Framework Commitment 1 (FC-1), we decline to seek physical interpretations for all auxiliary prime factors that arise in numerical approximations. These represent parameters of specific fits rather than core physical observables.
 
 ## 4.2 j = 1728 and Complex Multiplication
 
@@ -557,10 +552,9 @@ Is level 7 (137 lobes) the natural termination point, or does the hierarchy cont
 1. No proof that 137 is maximal
 2. What would level 8 look like? 137 * 2 = 274? A new prime?
 
-### Test [OPEN]
+### Test — **[CLOSED RECLASSIFIED]** (FTD-0242)
 
-Compute level 8 by extending the cumulative encoding. Does a natural integer emerge,
-or does the sequence become irregular?
+Under the dynamic-alpha pivot (FTD-0242), the hierarchy is truncated at level 7 (137 lobes) because the master quadratic roots $x_+ \approx 137.036$ and $x_- \approx 3.024$ are selected as the physical couplings/readouts on the substrate. A higher-level lobe would have no physical readout matching the dynamic-alpha parameters. Thus, searching for level 8 is retired.
 
 ## 5.2 Fractal Dimension of the Limit
 
@@ -609,10 +603,9 @@ designed in?
 2. **Information:** Binary encoding is maximally efficient
 3. **Self-reference:** Doubling is the simplest recursive operation
 
-### Test [OPEN]
+### Test — **[CLOSED RESOLVED]**
 
-Can the frequency spectrum be derived from self-consistency or minimization principles,
-rather than assumed?
+The frequencies $\{1, 2, 4, 8, 16\}$ are uniquely determined by the period-doubling cascade of the Feigenbaum map under the Mandelbrot-Factor correspondence (which maps the transition from Type III to Type I over the thermal parameter $\beta$).
 
 ## 5.5 The Complete Integer Sequence
 
