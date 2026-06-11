@@ -317,7 +317,7 @@ These results follow from $G^*$, the master quadratic, and integer arithmetic al
 
 | # | Result | Formula | Status (2026-05-01) |
 |---|--------|---------|--------|
-| 1 | Fine structure constant | $1/\alpha = x_+ = 137.036$ | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, identification x_+ ↔ 1/α is conjecture) |
+| 1 | Fine structure constant | $1/\alpha = x_+ = 137.036$ | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, identification x_+  1/α is conjecture) |
 | 2 | Color charge number | $N_c = 3$ (independently sourced, [SELECTION]) | The historical identification `N_c = \lfloor x_- \rfloor` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The smaller root `x_- ≈ 3.024` is a mathematical artifact of $P(x)$ only. `N_c = 3` follows from D=3 (color = spatial flux axis ⟹ SU(D)=SU(3)) [SELECTION] — see `DERIV_LATTICE_SU3_GAUGE.md` (Theorem 1.1) and `DERIV_NC_FROM_TOPOLOGY.md` (D=3 with geometric/topological corroboration; the routes are not independent). |
 | 3 | Weak mixing angle | $\sin^2\theta_W = N_c/N_{\text{eff}} = 3/13$ | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted 2026-04-19; 3.5% accuracy) |
 | 4 | Strong coupling at $M_Z$ | $\alpha_s = b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | [PARAMETRIC] (LEDGER FTD-0020, demoted 2026-04-19) |
@@ -397,7 +397,7 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 
 | Parameter | SM Status | FTD Formula | FTD Value | PDG/CODATA | Error | Tag |
 |-----------|-----------|-------------|-----------|------------|-------|-----|
-| $1/\alpha$ | Free (19.1) | $x_+$ from master quadratic | 137.036 | 137.035999177(21) | 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, the *identification* x_+ ↔ 1/α is conjecture) |
+| $1/\alpha$ | Free (19.1) | $x_+$ from master quadratic | 137.036 | 137.035999177(21) | 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] (LEDGER FTD-0013; the polynomial is [THEOREM] FTD-0001, the *identification* x_+  1/α is conjecture) |
 | $\alpha_s(M_Z)$ | Free (19.2) | $b_3/(b_3 + 4N_{\text{eff}}) = 7/59$ | 0.11864 | 0.1179(9) | 0.6% | [PARAMETRIC] (LEDGER FTD-0020, demoted 2026-04-19) |
 | $\sin^2\theta_W$ | Free (19.3) | $N_c/N_{\text{eff}} = 3/13$ | 0.23077 | 0.23122(4) | 0.2% | [STRUCTURALLY MOTIVATED PARAMETRIC] (LEDGER FTD-0018, demoted 2026-04-19) |
 | $g_c$ | N/A | $\sqrt{\alpha}$ | 0.08542 | -- | -- | [PARAMETRIC] (LEDGER FTD-0031; Mechanisms A, B, C all closed-negative) |

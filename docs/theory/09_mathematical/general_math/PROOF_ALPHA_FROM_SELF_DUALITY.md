@@ -162,7 +162,7 @@ The factor G* sets the scale (the natural unit of the curve), and |Aut(E)|² = 1
 
 $$\Lambda(E, 1) = (+1) \cdot \Lambda(E, 2-1) = \Lambda(E, 1)$$
 
-This is an identity. The L-function is invariant under s ↔ 2−s at the center. ■
+This is an identity. The L-function is invariant under s  2−s at the center. ■
 
 ### Step 4: Trace Equals Norm [THEOREM — the key step]
 
@@ -176,7 +176,7 @@ In the CM field K = Q(i), the Galois group Gal(K/Q) = {id, σ} where σ is compl
 
 For the global coupling — unlike the local Frobenius at a specific prime — there is no external reference that distinguishes trace from norm. The coupling must be **self-consistent**: the value going in (read through the trace projection) must equal the value coming out (read through the norm projection).
 
-The self-duality of the L-function (Step 3) is the arithmetic manifestation of this: the functional equation s ↔ 2−s provides no asymmetry at s = 1, so the two projections are interchangeable. A coupling that is self-dual under the functional equation must satisfy Tr = N.
+The self-duality of the L-function (Step 3) is the arithmetic manifestation of this: the functional equation s  2−s provides no asymmetry at s = 1, so the two projections are interchangeable. A coupling that is self-dual under the functional equation must satisfy Tr = N.
 
 **Formally:** The coupling polynomial is the characteristic polynomial of an element of K acting on a 2-dimensional space. Self-duality means this element is invariant under the Galois involution σ. The invariant elements of the norm-trace pairing satisfy Tr = N. ■
 
@@ -250,7 +250,7 @@ Tr = N (self-consistency at L-function center)
 u² − 16G*u + 16G* = 0
  ↓ quadratic formula
 x₊ = 137.036  →  1/α (by axiom; FTD-0013 [SMC])
-x₋ = 3.024    (math artifact of P(x); x_- ↔ N_c RETIRED v1.4 §5;
+x₋ = 3.024    (math artifact of P(x); x_-  N_c RETIRED v1.4 §5;
                 LEDGER FTD-0014 removed in commit ca7eb61;
                 N_c = 3 independently sourced via DERIV_NC_FROM_TOPOLOGY.md)
  ↓

@@ -93,7 +93,7 @@ computation on a frozen catalog; it is not, and contains no, search.
 | 2 — BCC sublattice | `O_h` with the triple-cosine `ℤ₃`-triality | on the 8 BCC corner-sites → `SU(3)`-shadow |
 | 3 — `ℤ[i]^×` | `ℤ₄ = ⟨i⟩` (cyclic, order 4 = `N_base`) | multiplication on `ℤ[i]`; conjugation `c:i↦−i` |
 | 4 — 27-block irreps | `O_h` acting; `A_{1g}` (mult 4), `T_{1u}`, `E_g`, … | on the 27-dim permutation module |
-| 5 — dual substrate | `ℤ₂ = ⟨P : J_L ↔ J_R⟩` | on `(J_L, J_R)` |
+| 5 — dual substrate | `ℤ₂ = ⟨P : J_L  J_R⟩` | on `(J_L, J_R)` |
 | 6 — framework integers | *not groups* — `{3,4,7,13}` | — (invariants, not actions) |
 
 `|O_h| = 48` is computed (signed-permutation enumeration); the conjugation
@@ -237,7 +237,7 @@ the catalog's `U(1)`-shadows.
 **Tag of the result.** The assembled candidate-B object is
 `[SELECTION PRINCIPLE — open]`: the catalog contains its ingredients and B
 is the natural reading, but uniqueness/forcedness is not argued. The
-conditional shadow-match Q10c (B's continuum completion ↔ `(1,2)₁/₂`) is
+conditional shadow-match Q10c (B's continuum completion  `(1,2)₁/₂`) is
 `[CONJECTURE]`: structural consistency is not derivation (GTCA F1/F10).
 
 ---

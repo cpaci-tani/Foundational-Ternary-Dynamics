@@ -359,7 +359,7 @@ $$\Gamma(\pi^0 \to \gamma\gamma) = \frac{\alpha^2\, m_{\pi}^3}{64\pi^3\, f_{\pi}
 | $\alpha$ | $1/137.036$ | Master quadratic | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) |
 | $m_{\pi^0}$ | 135.0 MeV | FTD mass formula | [STRONGLY MOTIVATED CONJECTURE] |
 | $f_{\pi}$ | 92.0 MeV | Adopted from experiment | [IMPOSED] |
-| $N_c(Q_u^2 - Q_d^2)$ | 1 | Derived (see Section 5.3); $N_c = 3$ independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem | [SELECTION] (the historical FTD-0014 `x_- ↔ N_c` route is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
+| $N_c(Q_u^2 - Q_d^2)$ | 1 | Derived (see Section 5.3); $N_c = 3$ independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and Moore Layer Theorem | [SELECTION] (the historical FTD-0014 `x_-  N_c` route is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
 
 Substituting:
 

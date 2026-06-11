@@ -58,9 +58,9 @@ where f^{abc} are the totally antisymmetric SU(3) structure constants. In the fl
 
 | Generator | Matrix | Physical Action |
 |-----------|--------|-----------------|
-| λ¹, λ² | Off-diagonal (r↔g) | Rotates flux between x and y |
-| λ⁴, λ⁵ | Off-diagonal (r↔b) | Rotates flux between x and z |
-| λ⁶, λ⁷ | Off-diagonal (g↔b) | Rotates flux between y and z |
+| λ¹, λ² | Off-diagonal (rg) | Rotates flux between x and y |
+| λ⁴, λ⁵ | Off-diagonal (rb) | Rotates flux between x and z |
+| λ⁶, λ⁷ | Off-diagonal (gb) | Rotates flux between y and z |
 | λ³ | Diagonal | r-g color charge difference |
 | λ⁸ | Diagonal | (r+g-2b)/√3 color charge |
 
@@ -238,15 +238,15 @@ This arises from:
 ## 4.4 What the BI Nonlinearity Does and Does Not Provide [SELECTION]
 
 **What BI provides:**
-- ✅ A natural mechanism for self-interactions (the √ generates all orders)
-- ✅ Correct power counting (cubic and quartic vertices at leading order)
-- ✅ UV regularization (BI has a maximum field strength K_B)
-- ✅ Gauge invariance (BI is a gauge-invariant functional of F_μν)
+-  A natural mechanism for self-interactions (the √ generates all orders)
+-  Correct power counting (cubic and quartic vertices at leading order)
+-  UV regularization (BI has a maximum field strength K_B)
+-  Gauge invariance (BI is a gauge-invariant functional of F_μν)
 
 **What BI does not uniquely determine:**
-- ❌ The specific structure constants f^{abc} (these come from SU(3), not from BI)
-- ❌ The relative coefficients of 3- and 4-gluon vertices (these are fixed by gauge invariance, which is imposed on top of BI)
-- ❌ Higher-order (6-gluon, 8-gluon, ...) vertices (BI produces them, but they are suppressed by 1/K_B^n)
+-  The specific structure constants f^{abc} (these come from SU(3), not from BI)
+-  The relative coefficients of 3- and 4-gluon vertices (these are fixed by gauge invariance, which is imposed on top of BI)
+-  Higher-order (6-gluon, 8-gluon, ...) vertices (BI produces them, but they are suppressed by 1/K_B^n)
 
 **Honest assessment:** The three- and four-gluon vertices are [SELECTION] — they are motivated by the BI structure but ultimately require the imposition of SU(3) gauge invariance to fix their form. The BI Lagrangian provides the nonlinearity; the gauge group provides the algebraic structure.
 
@@ -450,8 +450,8 @@ Combined with the lattice UV finiteness, this ensures that the QCD beta function
 
 | ID | Claim | Status | Key Evidence | Depends On |
 |----|-------|--------|-------------|------------|
-| SU3-1 | Color = flux axis alignment (J_x,J_y,J_z ↔ r,g,b) | **[SELECTION]** | Geometric interpretation; 3 axes ↔ 3 colors | D=3 lattice axiom |
-| SU3-2 | N_c = 3 from lattice dimensionality | **[SELECTION]** (D = 3 lattice axiom + complexification) | D=3 → SU(D) = SU(3). *(Prior reference to FTD-0014 / master-quadratic-root `x₋ ≈ 3.024` is removed: the `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` is sourced from the D = 3 axiom + topology routes in `DERIV_NC_FROM_TOPOLOGY.md`.)* | Postulate 1 (D = 3) |
+| SU3-1 | Color = flux axis alignment (J_x,J_y,J_z  r,g,b) | **[SELECTION]** | Geometric interpretation; 3 axes  3 colors | D=3 lattice axiom |
+| SU3-2 | N_c = 3 from lattice dimensionality | **[SELECTION]** (D = 3 lattice axiom + complexification) | D=3 → SU(D) = SU(3). *(Prior reference to FTD-0014 / master-quadratic-root `x₋ ≈ 3.024` is removed: the `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` is sourced from the D = 3 axiom + topology routes in `DERIV_NC_FROM_TOPOLOGY.md`.)* | Postulate 1 (D = 3) |
 | SU3-3 | Gell-Mann matrices as flux rotation generators | **[THEOREM]** | Standard SU(3) algebra on complexified ℝ³ | SU3-2 |
 | SU3-4 | Gluon propagator G^{ab}_μν(k) | **[THEOREM]** | Extension of Thm 1.1 to color-octet sector | DERIV_QFT_GRT_BRIDGE.md |
 | SU3-5 | UV finiteness (compact BZ) | **[THEOREM]** | Same argument as U(1): finite sum | DERIV_LATTICE_LOOP_CORRECTIONS.md |

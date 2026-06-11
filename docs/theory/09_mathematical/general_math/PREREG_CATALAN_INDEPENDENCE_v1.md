@@ -8,7 +8,7 @@
 **Companion docs:**
 - [`docs/papers/PAPER_GSTAR_INTRODUCTION.tex`](../../papers/PAPER_GSTAR_INTRODUCTION.tex) Conjecture 19.2 (the conjecture statement + PSLQ evidence as stated in the paper).
 - [`docs/theory/09_mathematical/REF_GUILLERA_CORPUS_MAP.md`](REF_GUILLERA_CORPUS_MAP.md) (the surrounding AGM/period framework).
-- [`docs/theory/09_mathematical/ROADMAP_IDENTITY_PRIORITIES.md`](ROADMAP_IDENTITY_PRIORITIES.md) (Bundle 1 in the synonymy-graph roadmap -- Catalan ↔ {G_G, π, x_+, x_-} -- FO-blocked, this PREREG is the boundary documentation).
+- [`docs/theory/09_mathematical/ROADMAP_IDENTITY_PRIORITIES.md`](ROADMAP_IDENTITY_PRIORITIES.md) (Bundle 1 in the synonymy-graph roadmap -- Catalan  {G_G, π, x_+, x_-} -- FO-blocked, this PREREG is the boundary documentation).
 - `scripts/verification/verify_gstar_paper.py` (the verified-identity corpus the conjecture lives at the edge of).
 
 > **Pre-registration discipline.** Sections §§2-6 are committed before any *further* PSLQ campaign runs. After commit: SHA256 -> `REF_PREREGISTER_MANIFEST.md`, git tag applied. Any post-hoc edit to §§2-6 invalidates v1; a v2 is required before any extended-precision PSLQ campaign or alternative-basis scan is run. **No closure attempt is run as part of this pre-registration.** The closure attempt -- proving the conjecture, or finding the falsifying integer relation -- is downstream work, gated on either (a) new transcendence-theory machinery becoming available to the project, or (b) substantial GPU/CPU time being committed to extended-precision PSLQ.

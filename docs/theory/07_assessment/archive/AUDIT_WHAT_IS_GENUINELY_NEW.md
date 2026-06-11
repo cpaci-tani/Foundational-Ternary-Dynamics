@@ -9,9 +9,9 @@
 >   74%/26% spatial-temporal split (`cos²θ = G*/4`), the period-12 cycle, the
 >   EEG 52.54° prediction — is **untestable speculation**, not theorems; tags
 >   on those items are downgraded to `[SPECULATIVE CONJECTURE]` in place below;
-> - `x₊ ↔ 1/α` is a `[STRONGLY MOTIVATED CONJECTURE]` (a 1.26 ppm *match*),
+> - `x₊  1/α` is a `[STRONGLY MOTIVATED CONJECTURE]` (a 1.26 ppm *match*),
 >   **not** a derivation — see `AUDIT_MASTER_QUADRATIC.md`; the historical
->   `x₋ ↔ N_c` identification is RETIRED (LEDGER FTD-0014 removed);
+>   `x₋  N_c` identification is RETIRED (LEDGER FTD-0014 removed);
 > - the "Derives α to ppm: FTD Yes" comparison table and the "most important
 >   result since the Standard Model" framing **overstate the record** and are
 >   softened/retracted below.
@@ -108,7 +108,7 @@ where the coefficient 16 counts physical degrees of freedom on the minimal $2 \t
 | Root | Value | Physical Identity | Accuracy |
 |------|-------|-------------------|----------|
 | $x_+$ | 137.0361714582 | $1/\alpha$ (fine structure constant) — **match, not derivation; [STRONGLY MOTIVATED CONJECTURE]** | 1.26 ppm |
-| $x_-$ | 3.0240 | mathematical artifact of $P(x)$; no physics identification (the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | n/a |
+| $x_-$ | 3.0240 | mathematical artifact of $P(x)$; no physics identification (the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | n/a |
 
 **Status:** $G^*$ is [THEOREM] (FTD-0002). The coefficient 16 is [THEOREM] (FTD-0006/0007). The polynomial is [THEOREM] (FTD-0001). The identification $x_+ = 1/\alpha$ is a **[STRONGLY MOTIVATED CONJECTURE]** (FTD-0013) — a 1.26 ppm *match*, **not** a derivation (see `AUDIT_MASTER_QUADRATIC.md`). *(The historical paired identification $x_- \to N_c$ as FTD-0014 is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* The 1.26 ppm proximity on $x_+$ is striking but its physical reading remains conjectural.
 

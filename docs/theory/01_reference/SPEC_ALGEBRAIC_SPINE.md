@@ -113,8 +113,8 @@ because G* > 1/4 (Theorem 1). See
 
 **LEDGER:** FTD-0001 (Master Quadratic Polynomial + Roots, [THEOREM]);
 the polynomial coefficients are deterministic functions of G*. The
-physical identification x+ ↔ 1/α is tracked separately under FTD-0013
-([STRONGLY MOTIVATED CONJECTURE]). The x− ↔ N_c identification was
+physical identification x+  1/α is tracked separately under FTD-0013
+([STRONGLY MOTIVATED CONJECTURE]). The x−  N_c identification was
 historically tracked as FTD-0014; it is **RETIRED** per v1.4 §5 (LEDGER
 row removed in commit `ca7eb61`) — x− ≈ 3.024 is a mathematical artifact
 of the polynomial only.
@@ -126,7 +126,7 @@ RG flow, a partition function, or any dynamical object. It is a
 quadratic polynomial in one variable. The numerical proximity x+ ≈ 1/α
 is recorded separately in §11 (and as a physics identification in
 FTD-0013). The proximity x− ≈ N_c is mathematical only; the physics
-identification x− ↔ N_c is retired per v1.4 §5.
+identification x−  N_c is retired per v1.4 §5.
 
 ---
 
@@ -136,7 +136,7 @@ identification x− ↔ N_c is retired per v1.4 §5.
 
 **Criterion declaration (load-bearing, FTD-0124).** This theorem holds under the **trivial-multiplier criterion**: a "match" requires the natural root x_± of P_d(x) to equal the target dimensionless constant directly (q = 1 in the rational-multiplier search). The analogous statement under the **rational-multiplier criterion** (allow rescaling by any q ≤ 200 with framework-integer factorability) FAILS — 20 additional non-canonical matches exist in the 5814-grid. **Cite this criterion explicitly when invoking Theorem 3.**
 
-**Statement.** Let E_d denote the CM elliptic curve with complex multiplication by the ring of integers of K = ℚ(√−d) for d a fundamental imaginary-quadratic discriminant. Construct the analogue of P(x) (Theorem 2) using the lemniscatic-analogue constant G*_d defined via the Γ-product `G*_d := ∏_{a=1}^{|d|−1} Γ(a/|d|)^{χ_d(a)}` (which reproduces canonical G* exactly at d = −4). Among the 63 fundamental discriminants checked (h ∈ {1, 2, 3, 4} with |d| ≤ 907), the discriminant d = −4 is the **unique** value for which both roots simultaneously match dimensionless physical constants under the trivial-multiplier criterion at master-quadratic precision (1.26 ppm on x_+ vs 1/α; the historical 0.80% match on x_− vs N_c used the pre-v1.4 target pair — `x_- ↔ N_c` is retired per v1.4 §5).
+**Statement.** Let E_d denote the CM elliptic curve with complex multiplication by the ring of integers of K = ℚ(√−d) for d a fundamental imaginary-quadratic discriminant. Construct the analogue of P(x) (Theorem 2) using the lemniscatic-analogue constant G*_d defined via the Γ-product `G*_d := ∏_{a=1}^{|d|−1} Γ(a/|d|)^{χ_d(a)}` (which reproduces canonical G* exactly at d = −4). Among the 63 fundamental discriminants checked (h ∈ {1, 2, 3, 4} with |d| ≤ 907), the discriminant d = −4 is the **unique** value for which both roots simultaneously match dimensionless physical constants under the trivial-multiplier criterion at master-quadratic precision (1.26 ppm on x_+ vs 1/α; the historical 0.80% match on x_− vs N_c used the pre-v1.4 target pair — `x_-  N_c` is retired per v1.4 §5).
 
 The mathematical privilege of the lemniscatic curve is grounded in the following uniqueness theorem.
 
@@ -216,7 +216,7 @@ subsidiary results, not one of the six theorems.
 See `docs/theory/08_structural/EXPLR_COEFFICIENT_16.md` and
 `MONOGRAPH_GSTAR_BRIDGE_CONSTANT.md` §6.
 
-**LEDGER:** FTD-0006 (Coefficient 16 from |Aut(E)|² — Route A, [THEOREM]). *(Previous pointer to FTD-0014 was a typo; FTD-0014 was the unrelated x_- ↔ N_c identification, now retired per v1.4 §5 / commit `ca7eb61`.)*
+**LEDGER:** FTD-0006 (Coefficient 16 from |Aut(E)|² — Route A, [THEOREM]). *(Previous pointer to FTD-0014 was a typo; FTD-0014 was the unrelated x_-  N_c identification, now retired per v1.4 §5 / commit `ca7eb61`.)*
 
 **Dependencies:** Theorems 1, 2; basic CM curve theory.
 
@@ -408,8 +408,8 @@ $$\alpha_{\text{tree}} \;=\; \frac{1}{2 G^*} \;-\; \frac{\sqrt{4 G^* - 1}}{4\,G^
 
 equivalent to `16 G*³ α² − 16 G*² α + 1 = 0`. This is FTD-0001 in
 algebraically legible form; it is not a new claim and does not change
-the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊ ↔ 1/α identification
-(see §11). The x_- ↔ N_c identification was retired per v1.4 §5 (see §11).
+the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊  1/α identification
+(see §11). The x_-  N_c identification was retired per v1.4 §5 (see §11).
 
 **What it does NOT claim.**
 - Selection of `k = 4` as the "physics level" of the tower. The tower
@@ -683,7 +683,7 @@ rank 1 by ~130×. That is structural evidence of polynomial-template
 uniqueness; it is not a derivation of α from FTD axioms.
 
 The polynomial's smaller root, `x_- = 3.0240…`, is a mathematical
-artifact of the quadratic. **The identification `x_- ↔ N_c` is
+artifact of the quadratic. **The identification `x_-  N_c` is
 RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — the original LEDGER
 row FTD-0014 was removed in commit `ca7eb61`. FTD's `N_c = 3` is
 independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes)
@@ -811,7 +811,7 @@ in meters) goes through the **calibration interface**: exactly two
 SI-dimensional anchors (`a_phys ≡ ℓ_P` and `K_B = m_e`) are
 theorem-enforced as the irreducible minimum (FTD-0059 + FTD-0096).
 
-The full dimensionless ↔ dimensional bridge — including the seven
+The full dimensionless  dimensional bridge — including the seven
 theorems, the four dimensionless physical predictions
 (α, N_c, m_μ/m_e, m_τ/m_e), the three calibration declarations, and
 one worked dimensional application — is catalogued at:

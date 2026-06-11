@@ -282,7 +282,7 @@ FTD provides an ontological interpretation for QM phenomena:
 - Tunneling ✓ (sub-threshold flux leakage)
 - Spin-1/2 topology ✓ (720° from lemniscate geometry)
 - Measurement/collapse ✓ (manifestation threshold)
-- Bell violations ⚠️ **[SELECTION]** (three-level observer hierarchy: substrate S=2 → observer S=2√2 via complexification + sLoop; see [DERIV_OBSERVER_BELL_MECHANISM.md](../quantum_mechanics/DERIV_OBSERVER_BELL_MECHANISM.md))
+- Bell violations  **[SELECTION]** (three-level observer hierarchy: substrate S=2 → observer S=2√2 via complexification + sLoop; see [DERIV_OBSERVER_BELL_MECHANISM.md](../quantum_mechanics/DERIV_OBSERVER_BELL_MECHANISM.md))
 
 ## 4.2 Conceptual Dissolution
 

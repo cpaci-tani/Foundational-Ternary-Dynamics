@@ -111,7 +111,7 @@ $$\frac{x_+}{x_-} = \frac{1 + \sqrt{1 - 1/(4G^*)}}{1 - \sqrt{1 - 1/(4G^*)}} = \f
 
 **Numerical verification:** x₊/x₋ = 137.036/3.024 = 45.315
 
-**Key observation [SELECTION] (historical, partially superseded by v1.4):** PF does **not** cancel from the root ratio. This is consistent with the PF cancellation rule [PF-7], which states that PF cancels in dimensionless observables *within a single physics sector*. Under the historical paired identification, the root ratio x₊/x₋ was read as spanning two sectors — electromagnetic (x₊ = 1/α) and strong (x₋ ≈ N_c). *(The `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; the "two-sector" reading depended on it.)* The ratio's PF-non-cancellation remains an algebraic statement about the polynomial's coefficients; the physics-sector interpretation post-v1.4 is single-root (`x_+ ↔ 1/α`) plus a mathematical artifact (`x_-`).
+**Key observation [SELECTION] (historical, partially superseded by v1.4):** PF does **not** cancel from the root ratio. This is consistent with the PF cancellation rule [PF-7], which states that PF cancels in dimensionless observables *within a single physics sector*. Under the historical paired identification, the root ratio x₊/x₋ was read as spanning two sectors — electromagnetic (x₊ = 1/α) and strong (x₋ ≈ N_c). *(The `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; the "two-sector" reading depended on it.)* The ratio's PF-non-cancellation remains an algebraic statement about the polynomial's coefficients; the physics-sector interpretation post-v1.4 is single-root (`x_+  1/α`) plus a mathematical artifact (`x_-`).
 
 PF survival in the cross-sector ratio was historically taken to confirm that PF plays a structural role determining how G* distributes content across the two physics sectors — that reading depends on the now-retired paired identification.
 
@@ -325,7 +325,7 @@ PF = pi/4 = 0.785                    G* = varpi/sqrt(PF) = 2.959
       +------------------------------------+
       |                                    |
  x_+ = 137.036 = 1/alpha            x_- = 3.024 (math artifact;
- (EM coupling, FTD-0013 [SMC])      x_- ↔ N_c RETIRED v1.4 §5)
+ (EM coupling, FTD-0013 [SMC])      x_-  N_c RETIRED v1.4 §5)
 
       |                                    |
       +-------- PRECISION FORMULA ---------+

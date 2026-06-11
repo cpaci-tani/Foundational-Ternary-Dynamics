@@ -43,7 +43,7 @@ Verbatim from the abstract:
 
 > The measured α_r(r, L) is **not a coupling constant at all**: the engine's emergent-mode Gauss law is ∇·J = s with no coupling constant, so α_r(r, L) = 2r G_L(r) is a parameter-free lattice-Green's-function prediction whose zero-free-parameter match to measurement is R² = 1.0000 (median 0.07% relative error) across 16 points at L=384 in the Coulomb-tail regime. The "plateau at 3.6× α_ref" is the value of the periodic lattice Poisson kernel at r/L ≈ 0.31 on a cubic torus — pure geometry, no fine-structure content. This code path carries no α.
 
-**Assessment:** this IS the BCC-orthogonality-aware framing. The paper explicitly identifies the 3.6× "plateau" as a geometric property of the cubic lattice Poisson kernel, NOT as a physical α comparison. There is no claim here that engine-α converges to QED-α; instead there's an explicit disclaimer that "this code path carries no α". ✅ No caveat needed.
+**Assessment:** this IS the BCC-orthogonality-aware framing. The paper explicitly identifies the 3.6× "plateau" as a geometric property of the cubic lattice Poisson kernel, NOT as a physical α comparison. There is no claim here that engine-α converges to QED-α; instead there's an explicit disclaimer that "this code path carries no α".  No caveat needed.
 
 ### β-function measurement — FRAMING IS HONEST
 
@@ -58,9 +58,9 @@ Pre-registration / measurement table:
 | Pre-reg | Measured | Verdict |
 |---|---|---|
 | α_eff(L=64) = 1/137.036 ± 15% | 0.120 (16× α_ref); asymptotic 0.033 (4.5× α_ref) | **✗ magnitude off** |
-| β(g) matches one of QED/QCD/trivial/new | β_measured / β_QED ≈ −160 | **⚠ qualitative only** |
+| β(g) matches one of QED/QCD/trivial/new | β_measured / β_QED ≈ −160 | ** qualitative only** |
 
-**Assessment:** the β-function result is flagged EXPLICITLY as a quantitative mismatch of 2–3 orders of magnitude. "This document reports the measurements against the pre-registration without retrofitting either to match the other." ✅ No caveat needed.
+**Assessment:** the β-function result is flagged EXPLICITLY as a quantitative mismatch of 2–3 orders of magnitude. "This document reports the measurements against the pre-registration without retrofitting either to match the other."  No caveat needed.
 
 ### Day-2 Rutherford α-extraction — CONSISTENT WITH ABOVE
 
@@ -70,7 +70,7 @@ Pre-registration / measurement table:
 
 Rutherford α = 0.042 ± 0.005 is declared 5.8× α_ref and [MEASURED]-tagged.
 
-**Assessment:** The 5× gap is explicitly named as an engine-physics result, not claimed to converge to α_QED. Phase G analytical result shows α_r is lattice-kernel geometry. ✅ No caveat needed.
+**Assessment:** The 5× gap is explicitly named as an engine-physics result, not claimed to converge to α_QED. Phase G analytical result shows α_r is lattice-kernel geometry.  No caveat needed.
 
 ### Phase H (EXPLICIT α COUPLING) — WOULD NEED THE CAVEAT
 
@@ -86,13 +86,13 @@ Rutherford α = 0.042 ± 0.005 is declared 5.8× α_ref and [MEASURED]-tagged.
 
 ### EWSB, Ward identities, condensate mass — NO BCC OVERLAP
 
-EWSB amplitude threshold, Ward identity floor, condensate spectroscopy (Day-2) all measure *field-theory-native* quantities (phase transition, divergence residuals, mass gaps). None is identified with a physical coupling α or with a QED observable. The (SC+FCC)/2 structure of the engine's operator is the thing being measured; the BCC sub-operator is not claimed as part of the measurement target. ✅ No caveat needed.
+EWSB amplitude threshold, Ward identity floor, condensate spectroscopy (Day-2) all measure *field-theory-native* quantities (phase transition, divergence residuals, mass gaps). None is identified with a physical coupling α or with a QED observable. The (SC+FCC)/2 structure of the engine's operator is the thing being measured; the BCC sub-operator is not claimed as part of the measurement target.  No caveat needed.
 
 ### SU(3) / color charge claims — DEPEND ON CONSISTENT FRAMING
 
 `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` Part II identifies SU(3) with the BCC triple-cosine eigenvalue. But this derivation lives at the **counting / structural** layer (argument from symmetry and representation theory), NOT at the **engine-dynamics** layer. The engine's `color_forces` toggle implements a phenomenological SU(3)-inspired pairwise force; it does not claim to derive SU(3) dynamics from the coupling stencil. No EFT campaign document claims engine-measured αs matches the physical QCD coupling.
 
-**Assessment:** Consistent with scope discipline (LEDGER FTD-0029 tags the BCC multiplicative structure as SELECTION, not THEOREM). ✅ No caveat needed on current framing.
+**Assessment:** Consistent with scope discipline (LEDGER FTD-0029 tags the BCC multiplicative structure as SELECTION, not THEOREM).  No caveat needed on current framing.
 
 ---
 

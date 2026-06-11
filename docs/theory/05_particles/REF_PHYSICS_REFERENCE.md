@@ -115,54 +115,54 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 
 | Constant | FTD Formula | Value | Exp | Error | Status |
 |----------|-------------|-------|-----|-------|--------|
-| α (fine structure) | 1/x₊ from master quadratic | 1/137.036 | 1/137.036 | 1.26 ppm | ✅ |
-| α_s(M_Z) | b₇/(b₇+4N_eff) = 7/59 | 0.1186 | 0.1179 | 0.6% | ✅ |
-| sin²θ_W | N_c/N_eff = 3/13 | 0.2308 | 0.2312 | 0.17% | ✅ |
+| α (fine structure) | 1/x₊ from master quadratic | 1/137.036 | 1/137.036 | 1.26 ppm |  |
+| α_s(M_Z) | b₇/(b₇+4N_eff) = 7/59 | 0.1186 | 0.1179 | 0.6% |  |
+| sin²θ_W | N_c/N_eff = 3/13 | 0.2308 | 0.2312 | 0.17% |  |
 
 #### Lepton Masses (3/3)
 
 | Particle | FTD Formula | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
-| Electron | K_B threshold | 0.5110 MeV | 0.5110 MeV | 0.04% | ✅ |
-| Muon | 3b₇(b₇+N_c)-N_c = 207 m_e | 105.66 MeV | 105.66 MeV | 0.11% | ✅ |
-| Tau | (N_eff+N_base)×207-42 = 3477 m_e | 1776.74 MeV | 1776.86 MeV | **0.007%** | ✅ |
+| Electron | K_B threshold | 0.5110 MeV | 0.5110 MeV | 0.04% |  |
+| Muon | 3b₇(b₇+N_c)-N_c = 207 m_e | 105.66 MeV | 105.66 MeV | 0.11% |  |
+| Tau | (N_eff+N_base)×207-42 = 3477 m_e | 1776.74 MeV | 1776.86 MeV | **0.007%** |  |
 
 #### Quark Masses (6/6)
 
 | Particle | FTD Formula | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
-| Up | N_base + sin²θ_W | 2.16 MeV | 2.16 MeV | 0.09% | ✅ |
-| Down | 2N_base + 1 + α×N_eff | 4.65 MeV | 4.67 MeV | 0.48% | ✅ |
-| Strange | N_eff(N_eff+1) + 1 | 93.5 MeV | 93.4 MeV | 0.12% | ✅ |
-| Charm | Complex integer formula | 1.270 GeV | 1.270 GeV | **0.01%** | ✅ |
-| Bottom | T(127) + 42 | 4.18 GeV | 4.18 GeV | 0.14% | ✅ |
-| Top | 8170 × 41 m_e | 172.9 GeV | 172.7 GeV | 0.12% | ✅ |
+| Up | N_base + sin²θ_W | 2.16 MeV | 2.16 MeV | 0.09% |  |
+| Down | 2N_base + 1 + α×N_eff | 4.65 MeV | 4.67 MeV | 0.48% |  |
+| Strange | N_eff(N_eff+1) + 1 | 93.5 MeV | 93.4 MeV | 0.12% |  |
+| Charm | Complex integer formula | 1.270 GeV | 1.270 GeV | **0.01%** |  |
+| Bottom | T(127) + 42 | 4.18 GeV | 4.18 GeV | 0.14% |  |
+| Top | 8170 × 41 m_e | 172.9 GeV | 172.7 GeV | 0.12% |  |
 
 #### Boson Masses (4/4)
 
 | Particle | FTD Formula | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
-| Photon | Unbroken U(1) | 0 | < 10⁻¹⁸ eV | exact | ✅ |
-| W | 67/(8α²) × m_e | 80.36 GeV | 80.38 GeV | **0.016%** | ✅ |
-| Z | m_W × √(13/10) | 91.01 GeV | 91.19 GeV | 0.20% | ✅ |
-| Higgs | 13/α² × m_e | 124.8 GeV | 125.1 GeV | 0.24% | ✅ |
+| Photon | Unbroken U(1) | 0 | < 10⁻¹⁸ eV | exact |  |
+| W | 67/(8α²) × m_e | 80.36 GeV | 80.38 GeV | **0.016%** |  |
+| Z | m_W × √(13/10) | 91.01 GeV | 91.19 GeV | 0.20% |  |
+| Higgs | 13/α² × m_e | 124.8 GeV | 125.1 GeV | 0.24% |  |
 
 #### CKM Matrix (4/4 parameters)
 
 | Parameter | FTD Formula | Predicted | Exp | Error | Status |
 |-----------|-------------|-----------|-----|-------|--------|
-| θ₁₂ (Cabibbo) | arcsin√(N_c/N_eff) | 12.9° | 13.0° | 0.8% | ✅ |
-| θ₂₃ | 10α rad | 2.4° | 2.4° | ~1% | ✅ |
-| θ₁₃ | 13α² rad | 0.20° | 0.20° | ~2% | ✅ |
-| δ_CP | arctan(b₃/N_c) | 66.8° | 68° | 1.8% | ✅ |
+| θ₁₂ (Cabibbo) | arcsin√(N_c/N_eff) | 12.9° | 13.0° | 0.8% |  |
+| θ₂₃ | 10α rad | 2.4° | 2.4° | ~1% |  |
+| θ₁₃ | 13α² rad | 0.20° | 0.20° | ~2% |  |
+| δ_CP | arctan(b₃/N_c) | 66.8° | 68° | 1.8% |  |
 
 #### Neutrino Parameters (3/3)
 
 | Parameter | FTD Formula | Predicted | Exp | Error | Status |
 |-----------|-------------|-----------|-----|-------|--------|
-| θ₁₂ (solar) | Related to CKM | 33.1° | 33.4° | 1.0% | ✅ |
-| θ₂₃ (atmospheric) | π/4 - corrections | 46.2° | 45° | 2.7% | ✅ |
-| θ₁₃ (reactor) | From seesaw | 8.5° | 8.6° | 1.1% | ✅ |
+| θ₁₂ (solar) | Related to CKM | 33.1° | 33.4° | 1.0% |  |
+| θ₂₃ (atmospheric) | π/4 - corrections | 46.2° | 45° | 2.7% |  |
+| θ₁₃ (reactor) | From seesaw | 8.5° | 8.6° | 1.1% |  |
 
 ### 2.2 Composite Particle Masses
 
@@ -170,8 +170,8 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 
 | Particle | FTD Formula | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
-| Proton | N_eff/α + T(10) | 938.27 MeV | 938.27 MeV | **0.017%** | ✅ |
-| Neutron | m_p + (φ² - 12α)m_e | 939.57 MeV | 939.57 MeV | 0.53% | ✅ |
+| Proton | N_eff/α + T(10) | 938.27 MeV | 938.27 MeV | **0.017%** |  |
+| Neutron | m_p + (φ² - 12α)m_e | 939.57 MeV | 939.57 MeV | 0.53% |  |
 
 #### Pseudoscalar Mesons (12/12)
 
@@ -189,11 +189,11 @@ Pions, kaons, η, η', D mesons, B mesons — all to < 0.1% accuracy. See comple
 
 | Decay | FTD Prediction | Experimental | Error | Status |
 |-------|----------------|--------------|-------|--------|
-| τ_μ (muon) | 2.197 μs | 2.197 μs | **< 0.01%** | ✅ |
-| τ_τ (tau) | 290.3 fs | 290.3 fs | < 0.1% | ✅ |
-| τ_π± | 26.0 ns | 26.0 ns | < 0.1% | ✅ |
-| τ_K± | 12.4 ns | 12.4 ns | < 0.5% | ✅ |
-| τ_n (neutron) | 880 s | 878.4 s | 0.2% | ✅ |
+| τ_μ (muon) | 2.197 μs | 2.197 μs | **< 0.01%** |  |
+| τ_τ (tau) | 290.3 fs | 290.3 fs | < 0.1% |  |
+| τ_π± | 26.0 ns | 26.0 ns | < 0.1% |  |
+| τ_K± | 12.4 ns | 12.4 ns | < 0.5% |  |
+| τ_n (neutron) | 880 s | 878.4 s | 0.2% |  |
 
 ### 2.4 Running Couplings
 
@@ -210,9 +210,9 @@ Pions, kaons, η, η', D mesons, B mesons — all to < 0.1% accuracy. See comple
 
 | Observable | FTD Prediction | Experimental | Status |
 |------------|----------------|--------------|--------|
-| n_s (spectral index) | 0.966 | 0.9649 ± 0.0042 | 0.2σ ✅ |
-| r (tensor-to-scalar) | 0.007 | < 0.036 | compatible ✅ |
-| η (baryon asymmetry) | ~10⁻¹⁰ | 6.1 × 10⁻¹⁰ | order ✅ |
+| n_s (spectral index) | 0.966 | 0.9649 ± 0.0042 | 0.2σ  |
+| r (tensor-to-scalar) | 0.007 | < 0.036 | compatible  |
+| η (baryon asymmetry) | ~10⁻¹⁰ | 6.1 × 10⁻¹⁰ | order  |
 
 ### 2.6 Coverage Summary
 

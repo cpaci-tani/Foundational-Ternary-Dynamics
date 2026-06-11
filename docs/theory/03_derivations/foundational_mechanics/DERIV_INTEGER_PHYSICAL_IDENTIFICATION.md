@@ -21,7 +21,7 @@ The four framework integers {N_c = 3, N_base = 4, b_3 = 7, N_eff = 13} are each 
 
 **Origin (revised post-v1.4):** `N_c = 3` is independently sourced via the Moore Layer Theorem and `DERIV_NC_FROM_TOPOLOGY.md` (four independent topology routes). The historical identification `N_c = floor(x_-) = 3` via the master quadratic's smaller root is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The smaller root `x_- ≈ 3.024` is now a mathematical artifact of $P(x)$ only.
 
-**Self-referential identity (historical):** D = 3 is the unique spatial dimension where floor(x_-) = D (proven in DERIV_D3_FROM_AUTOMORPHISM.md). Under the historical paired identification, this read: "the dimension selects itself: the lattice lives in D = 3 dimensions, and the gap equation on that lattice returns N_c = D = 3." Post-v1.4, the mathematical statement floor(x_-) = D survives as a pure-math fact about the master quadratic across dimensions; the N_c = D physical reading depended on the now-retired `x_- ↔ N_c` identification and is no longer load-bearing.
+**Self-referential identity (historical):** D = 3 is the unique spatial dimension where floor(x_-) = D (proven in DERIV_D3_FROM_AUTOMORPHISM.md). Under the historical paired identification, this read: "the dimension selects itself: the lattice lives in D = 3 dimensions, and the gap equation on that lattice returns N_c = D = 3." Post-v1.4, the mathematical statement floor(x_-) = D survives as a pure-math fact about the master quadratic across dimensions; the N_c = D physical reading depended on the now-retired `x_-  N_c` identification and is no longer load-bearing.
 
 ### N_base = 4: Spinor Dimension [THEOREM]
 

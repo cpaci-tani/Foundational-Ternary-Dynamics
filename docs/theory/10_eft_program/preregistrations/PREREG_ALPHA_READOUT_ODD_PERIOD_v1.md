@@ -32,7 +32,7 @@ where `D_{1/4}, D_{3/4}` are the quarter-twisted spectra of the conjugacy operat
 2. `Det(T) = 16G*³`, where the **extra degree-1 factor `G*` is the J-twisted ζ-regularized-determinant ratio** `det_ζ(D_{3/4})/det_ζ(D_{1/4}) = G*` (Model I), arising **STRUCTURALLY** — *because the operator determinant `Det(T)` IS a ζ-regularized determinant of the J-twisted spectrum* — **not** by asserting `Det = Tr·G*`, **not** by importing the FQCR `M_N`, **not** via a selected prefactor;
 3. and the construction is admissible under §5?
 
-**The single decisive hinge (LOCKED):** whether the identity **`Det(T) ↔ (J-twisted det_ζ ratio) × (energy content)`** is a *forced structural property* of the readout operator, or an unforced selection. Everything turns on this. The √(2π)-cancellation in Model I removes the prefactor objection; the *only* remaining question is whether the determinant is **compelled** to carry the J-twisted det_ζ ratio.
+**The single decisive hinge (LOCKED):** whether the identity **`Det(T)  (J-twisted det_ζ ratio) × (energy content)`** is a *forced structural property* of the readout operator, or an unforced selection. Everything turns on this. The √(2π)-cancellation in Model I removes the prefactor objection; the *only* remaining question is whether the determinant is **compelled** to carry the J-twisted det_ζ ratio.
 
 ---
 
@@ -56,7 +56,7 @@ Target: `Det(T) = 16G*³` reproduced forward. Numerical comparison (to `16G*³` 
 
 - **OP1 — assertion.** `Det(T) = 16G*³` (or `Det = Tr·G*`) is *asserted/posited* rather than derived from the operator's structure. (This is the defect FTD-0230/0231 had.)
 - **OP2 — M_N import.** The FQCR Model V matrix is imported as scaffold.
-- **OP3 — unforced det↔det_ζ link.** No structural reason is given that the readout operator's determinant *is* the J-twisted ζ-regularized determinant; the identification is a choice. (The decisive falsifier.)
+- **OP3 — unforced detdet_ζ link.** No structural reason is given that the readout operator's determinant *is* the J-twisted ζ-regularized determinant; the identification is a choice. (The decisive falsifier.)
 - **OP4 — prefactor.** A transcendental prefactor (√π, etc.) is selected to make the value land.
 - **OP5 — insertion.** The master quadratic / `G*` value / Theorem 8 inserted.
 - **OP6 — CODATA.** Any empirical α value enters.
@@ -76,7 +76,7 @@ Target: `Det(T) = 16G*³` reproduced forward. Numerical comparison (to `16G*³` 
 
 1. Read Model I in full (`DERIV_GSTAR_QUARTER_CONJUGACY.md`): the precise objects `D_{1/4}, D_{3/4}`, the det_ζ definition, and the `J²=−I` provenance.
 2. Construct the readout operator `T` on `V_complex` forward; identify its J-twisted spectrum.
-3. **Test the hinge:** is `Det(T)` *structurally* the ζ-regularized determinant of that spectrum (a forced identity, e.g. via the transfer-operator/partition-function ↔ det_ζ correspondence), or must it be asserted? State the argument and which way OP1/OP3 fall.
+3. **Test the hinge:** is `Det(T)` *structurally* the ζ-regularized determinant of that spectrum (a forced identity, e.g. via the transfer-operator/partition-function  det_ζ correspondence), or must it be asserted? State the argument and which way OP1/OP3 fall.
 4. If forced: assemble `Det = 16 · G*² · (det_ζ ratio) = 16G*³`; verify no OP4 prefactor; confirm the √(2π) cancellation.
 5. Apply OP1–OP7 mechanically.
 6. Numerical check (only if 1–5 pass).

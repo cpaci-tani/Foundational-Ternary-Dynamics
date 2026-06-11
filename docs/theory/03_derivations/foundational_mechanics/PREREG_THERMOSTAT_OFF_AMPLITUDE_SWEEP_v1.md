@@ -41,7 +41,7 @@ Historical reference `k_hist(A)`: the 11 values of `FOUND_LATTICE_SPACING_GAUGE_
 
 ## 5 · Outcome → tag map (pre-blessed)
 
-- **A:** Mechanism γ `[CONFIRMED — dominant at engine level]`; the substrate-native coefficient is **consistent with the linear theorem's k = ¼** in the deep band `[MEASURED]`; FTD-0110's nonlinear bridge reframes to "linear theorem + thermostat correction" — the *bridge-to-substrate* question collapses, the thermostat correction becomes the new (smaller) `[OPEN]`. **No promotion of FTD-0110's cluster↔mass identification (stays `[SMC]`); the linear theorem's tag is unchanged (already `[DERIVED]`).**
+- **A:** Mechanism γ `[CONFIRMED — dominant at engine level]`; the substrate-native coefficient is **consistent with the linear theorem's k = ¼** in the deep band `[MEASURED]`; FTD-0110's nonlinear bridge reframes to "linear theorem + thermostat correction" — the *bridge-to-substrate* question collapses, the thermostat correction becomes the new (smaller) `[OPEN]`. **No promotion of FTD-0110's clustermass identification (stays `[SMC]`); the linear theorem's tag is unchanged (already `[DERIVED]`).**
 - **B:** Mechanism γ `[CLOSED NEGATIVE]` as dominant; with α closed (FTD-0259), surviving candidates are β (genesis-kink) and front-energetics; bridge stays `[OPEN]`.
 - **C:** `[PARTIAL]` — thermostat contribution quantified (`1 − D_X/D_C`); residual non-thermal drift becomes the sharpened `[OPEN]`.
 
@@ -57,4 +57,4 @@ Historical reference `k_hist(A)`: the 11 values of `FOUND_LATTICE_SPACING_GAUGE_
 
 ## 7 · What this is NOT
 
-Not a derivation of k(A) under the thermostat (no closed-form γ-model is locked here); not a test of the cluster↔mass identification; not anything about α, FTD-0013, or Born. Engine-level mechanism attribution only.
+Not a derivation of k(A) under the thermostat (no closed-form γ-model is locked here); not a test of the clustermass identification; not anything about α, FTD-0013, or Born. Engine-level mechanism attribution only.

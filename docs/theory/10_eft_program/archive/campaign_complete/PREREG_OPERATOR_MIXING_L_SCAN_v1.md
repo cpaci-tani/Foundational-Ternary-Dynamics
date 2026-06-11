@@ -19,7 +19,7 @@ R3a is the first sub-phase of the central R3 deliverable of the FTD-EFT roadmap:
 The extension is meaningful because:
 
 - The 2026-04-26 baseline (FTD-0098/0099/0100) measured M_ab(b=2) at L=16/32 only. AUDIT_CONTINUUM_LIMIT noted "cond(S) monotonically improving (factor 18 over L=16→L=64)" but the L=64 sample size (2 seeds, 8 b=2 blocks) was bootstrap-noise-limited. Per `AUDIT_OPERATOR_SPECTRUM.md`'s 2026-04-25 note, all five operators classified as "relevant" (Δ < D = 4) at L=32 — the marginal/irrelevant tier was not recovered, and "full classification requires L ≥ 64 + multi-scenario ensemble".
-- Post-2026-05-05 the engine has bit-exact CPU↔GPU stochastic operations via the SplitMix64 portability fix (commits `c1a4f88` + `c8e03a5`). Measurements are now per-voxel deterministic rather than ensemble-equivalent; tighter tolerances are defensible.
+- Post-2026-05-05 the engine has bit-exact CPUGPU stochastic operations via the SplitMix64 portability fix (commits `c1a4f88` + `c8e03a5`). Measurements are now per-voxel deterministic rather than ensemble-equivalent; tighter tolerances are defensible.
 - R3d's $S_\text{eff}$ write-up needs at least 3 L points to fit the leading-order Wilson coefficient drift; 4 points (16, 32, 64, 96, 128) gives one redundant constraint as a sanity-check.
 
 ---
@@ -137,11 +137,11 @@ Aggregated cross-L analysis lands in `ANALYSIS_OPERATOR_MIXING_L_SCAN.md` after 
 
 This pre-registration is committed **at HEAD `00f41fe`**, post the BH-F5/F8/F9 RNG portability closure (commits `c1a4f88` + `c8e03a5`). Specifically:
 
-- Genesis Boltzmann probability uses SplitMix64 stream `voxel_uniform(seed, idx, tick, GenesisManifest)` — bit-exact CPU↔GPU.
-- Genesis zero-curl spin fallback uses `voxel_uniform(seed, idx, tick, GenesisSpin) < 0.5 ? +1 : -1` — bit-exact CPU↔GPU (BH-F8 fix).
-- Langevin OU noise uses `voxel_normal(seed, idx, tick, LangevinNoiseX/Y/Z)` Box-Muller per axis — bit-exact CPU↔GPU.
+- Genesis Boltzmann probability uses SplitMix64 stream `voxel_uniform(seed, idx, tick, GenesisManifest)` — bit-exact CPUGPU.
+- Genesis zero-curl spin fallback uses `voxel_uniform(seed, idx, tick, GenesisSpin) < 0.5 ? +1 : -1` — bit-exact CPUGPU (BH-F8 fix).
+- Langevin OU noise uses `voxel_normal(seed, idx, tick, LangevinNoiseX/Y/Z)` Box-Muller per axis — bit-exact CPUGPU.
 
-Per-voxel CPU↔GPU agreement under stochastic toggles holds at machine epsilon for all measurements covered by this pre-reg. The campaign runs on GPU (canonical) with CPU smoke as cross-validation.
+Per-voxel CPUGPU agreement under stochastic toggles holds at machine epsilon for all measurements covered by this pre-reg. The campaign runs on GPU (canonical) with CPU smoke as cross-validation.
 
 ---
 

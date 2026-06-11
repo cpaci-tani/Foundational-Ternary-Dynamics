@@ -309,7 +309,7 @@ Bosons can occupy the same state (condensation) because they are **waves**, not 
 | Boson | Physical Role | FTD Role |
 |-------|--------------|----------|
 | **Photon** | EM force | Flux wave in void (J ≠ 0, s = 0) |
-| **W±** | Weak charged | Domain transition (0 ↔ ±1) |
+| **W±** | Weak charged | Domain transition (0  ±1) |
 | **Z** | Weak neutral | Void self-interaction |
 | **Gluon** | Strong force | Color flux (x₋ domain structure) |
 | **Higgs** | Mass giver | Void condensate (excitation of s = 0) |

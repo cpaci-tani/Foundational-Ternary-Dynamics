@@ -7,17 +7,17 @@
 **Status (post-audit, 2026-04-19; supplemental 2026-04-28):** ~5 firm [THEOREM]s + ~8 [STRONGLY MOTIVATED CONJECTURE]s + 1 [DERIVED at linear level] (FTD-0110 ¼ coefficient, NEW 2026-04-28) + ~10 [STRUCTURALLY MOTIVATED PARAMETRIC] + remainder [PARAMETRIC] / [OPEN]
 **Supersedes:** CLAUDE.md (v5.17), docs/internal/SPEC_CLAUDE.md (v5.24), SPEC_FTD_FORMAL.md, SPEC_THE_COMPLETE_PROOF_RIGOROUS.md
 
-> **🧭 NAVIGATION (2026-05-08):** For the single-page status map across all 14 doctrine sectors with canonical tags, see [`docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md`](theory/01_reference/SPEC_DOCTRINE_LEDGER.md) (FTD-0145 [SYNTHESIS]).
-> **🏛 CONSTITUTION (2026-06-09):** The standalone-framework constitution — postulates + framework commitments (FC-0/FC-1/FC-2) + calibrations + the computational-EFT catalog + the deviation-prediction spine — is [`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md`](theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md) (FTD-0254 [SYNTHESIS] + [AXIOM]-class declarations; promotes nothing). On any conflict: LEDGER > constitution > this overview.
+> ** NAVIGATION (2026-05-08):** For the single-page status map across all 14 doctrine sectors with canonical tags, see [`docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md`](theory/01_reference/SPEC_DOCTRINE_LEDGER.md) (FTD-0145 [SYNTHESIS]).
+> ** CONSTITUTION (2026-06-09):** The standalone-framework constitution — postulates + framework commitments (FC-0/FC-1/FC-2) + calibrations + the computational-EFT catalog + the deviation-prediction spine — is [`docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md`](theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md) (FTD-0254 [SYNTHESIS] + [AXIOM]-class declarations; promotes nothing). On any conflict: LEDGER > constitution > this overview.
 >
-> **🔑 CRITICAL NOTICE (2026-04-19, supplemental 2026-04-28):** This document's body predates the April 19 audit cycle and the 2026-04-28 FTD-0110 derivation. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination, and one [OPEN]/[CONJECTURE] item was promoted to [DERIVED at linear level]. Specifically:
+> ** CRITICAL NOTICE (2026-04-19, supplemental 2026-04-28):** This document's body predates the April 19 audit cycle and the 2026-04-28 FTD-0110 derivation. The mathematical CONTENT remains mostly accurate, but epistemic tags throughout are now **STALE**. Several "PROVEN" / [THEOREM] markers were downgraded after rigorous re-examination, and one [OPEN]/[CONJECTURE] item was promoted to [DERIVED at linear level]. Specifically:
 >
 > - **"C1 PROVEN: x₊ = 1/α via Complex Multiplication uniqueness"** → read as [STRONGLY MOTIVATED CONJECTURE]. The polynomial identity is proven; the physical identification is an SMC bridge (1.26 ppm match, structurally unique but not dynamically derived).
-> - **"C2 PROVEN: x₋ → N_c = 3"** → **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; the `x_- ↔ N_c` identification is dropped (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD comes from independent structural sources — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
+> - **"C2 PROVEN: x₋ → N_c = 3"** → **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; the `x_-  N_c` identification is dropped (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD comes from independent structural sources — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 > - **sin²θ_W, sin²θ_13, α_s, PMNS angles** → downgraded to [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC].
 > - **"< 0.001 ppt with 7-term expansion"** framing → explicitly retracted; the 7-term series is a post-hoc [CONJECTURE] fit to CODATA digits beyond experimental precision.
 > - **"Thermodynamic limit"** language throughout → the framework now commits to undefined-boundary ontology, not completed-infinity ℤ³.
-> - **Cluster-mass identification (FTD-0110, 2026-04-28)** → was [OPEN] / [CONJECTURE] in the body; the cluster-efficiency coefficient `k = 1/N_base = 1/4` is now [DERIVED at linear level] from O_h representation theory (`mult(A_{1g}) = 4` in the 27-block; δ_center A_{1g}-pure; mean A_{1g}-mode energy fraction 1/4). See [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The full nonlinear-engine cluster-↔-mass identification across 5 SM particles to ~5% remains [STRONGLY MOTIVATED CONJECTURE] until the linear→nonlinear bridge is proved.
+> - **Cluster-mass identification (FTD-0110, 2026-04-28)** → was [OPEN] / [CONJECTURE] in the body; the cluster-efficiency coefficient `k = 1/N_base = 1/4` is now [DERIVED at linear level] from O_h representation theory (`mult(A_{1g}) = 4` in the 27-block; δ_center A_{1g}-pure; mean A_{1g}-mode energy fraction 1/4). See [`docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md). The full nonlinear-engine cluster--mass identification across 5 SM particles to ~5% remains [STRONGLY MOTIVATED CONJECTURE] until the linear→nonlinear bridge is proved.
 >
 > **For current state, read first:** [`docs/WHERE_WE_LEFT_OFF.md`](WHERE_WE_LEFT_OFF.md).
 > **Full audit trail:** [`docs/theory/07_assessment/AUDIT_MASTER_QUADRATIC.md`](theory/07_assessment/AUDIT_MASTER_QUADRATIC.md), [`AUDIT_RATIONAL_FIT_CLAIMS.md`](theory/07_assessment/AUDIT_RATIONAL_FIT_CLAIMS.md), [`AUDIT_INFINITY_REFRAME.md`](theory/07_assessment/AUDIT_INFINITY_REFRAME.md).
@@ -223,7 +223,7 @@ Time advances in discrete steps called "ticks." The tick counter t ∈ **N** ser
 
 *Note*: This implies absolute simultaneity within the simulation, which differs from relativistic physics.
 
-### LATTICE ↔ PHYSICAL CALIBRATION (a_phys ≡ ℓ_P)
+### LATTICE  PHYSICAL CALIBRATION (a_phys ≡ ℓ_P)
 
 Predictions in lattice units must be converted to physical units to compare with experiment. The framework declares the following calibration:
 
@@ -242,7 +242,7 @@ Consequences:
 
 This is the same epistemic position as every effective field theory's matching to experiment at one renormalisation point, made explicit. See `docs/theory/07_assessment/AUDIT_INFINITY_REFRAME.md` Section 3 (Interpretation D) for the framework-level discussion.
 
-**Reference map.** The full dimensionless ↔ dimensional bridge — the seven algebraic-spine theorems, the four dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e), the three calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys = √3·ℓ_P/c`, `K_B = m_e`), and one worked dimensional application (m_e in MeV) — is catalogued in `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) and `docs/theory/01_reference/dimensional_map.json` (canonical data). When drafting papers or replying to reviewers about whether a claim is dimensionless or calibration-conditional, cite the map entry by id.
+**Reference map.** The full dimensionless  dimensional bridge — the seven algebraic-spine theorems, the four dimensionless physical predictions (α, N_c, m_μ/m_e, m_τ/m_e), the three calibration declarations theorem-enforced by FTD-0059 + FTD-0096 (`a_phys ≡ ℓ_P`, `t_phys = √3·ℓ_P/c`, `K_B = m_e`), and one worked dimensional application (m_e in MeV) — is catalogued in `docs/theory/01_reference/SPEC_DIMENSIONAL_MAP.md` (rendered) and `docs/theory/01_reference/dimensional_map.json` (canonical data). When drafting papers or replying to reviewers about whether a claim is dimensionless or calibration-conditional, cite the map entry by id.
 
 ### POSTULATE 3: Ternary States (J-primary, s as manifestation; values grounded in Axiom 0)
 Each voxel v ∈ **L** carries a flux field J(v, t) ∈ ℝ³ (the dispositional layer) and a discrete state s(v, t) ∈ {i², 0, |i²|} = {−1, 0, +1} (the manifestation layer). **J is primary; s is the action of J via the Genesis threshold rule** (§3.3): when |J(v, t)| crosses the manifestation threshold K_B, the void voxel manifests as s = ±1 according to the sign of the flux divergence; otherwise s = 0. Thus s is not an independent field — it is the discrete observable layer that records when J's local intensity crosses K_B.
@@ -609,7 +609,7 @@ where:
 ```
 stress(v) = |∇·J| + |∇×J| + |∇ρ|
 if stress(v) > WEAK_THRESHOLD:
-    polarity may flip (+1 ↔ -1 via transmutation)
+    polarity may flip (+1  -1 via transmutation)
 ```
 
 *Interpretation*: High field stress enables "transmutation." This is a rough analog of weak interactions but lacks the gauge structure of electroweak theory.
@@ -617,9 +617,9 @@ if stress(v) > WEAK_THRESHOLD:
 ## 6.6 Limitations of Force Modeling
 
 - Forces are phenomenological (Yukawa, Coulomb forms borrowed from established physics)
-- ✅ U(1) gauge symmetry **emerges** from Gauss constraint (verified in simulation; see §14.3)
-- ⬜ SU(2) gauge symmetry not addressed
-- ✅ SU(3) color structure **simulated** via flux axis interpretation (see APPENDIX_A)
+-  U(1) gauge symmetry **emerges** from Gauss constraint (verified in simulation; see §14.3)
+-  SU(2) gauge symmetry not addressed
+-  SU(3) color structure **simulated** via flux axis interpretation (see APPENDIX_A)
 - Lorentz covariance is approximate (emerges at scales >> lattice spacing; see §14.2)
 - Renormalization is not addressed
 - Coupling constants are parameters, not predictions (but see G* observation in §7.4)
@@ -650,9 +650,9 @@ The following are now **derived**, not input parameters:
 
 | Feature | Value | Status | Derivation |
 |---------|-------|--------|------------|
-| Fine structure α | 1/137.036 | ✅ **[THEOREM]** | Master quadratic from G* (1.26 ppm) |
-| Electron mass m_e | 0.511 MeV | ✅ **[THEOREM]** | m_e = m_P √(2π) (16/3) α¹¹ (0.19%) |
-| Higgs VEV v | 246 GeV | ✅ **[THEOREM]** | v = m_P √(2π) α⁸ (0.05%) |
+| Fine structure α | 1/137.036 |  **[THEOREM]** | Master quadratic from G* (1.26 ppm) |
+| Electron mass m_e | 0.511 MeV |  **[THEOREM]** | m_e = m_P √(2π) (16/3) α¹¹ (0.19%) |
+| Higgs VEV v | 246 GeV |  **[THEOREM]** | v = m_P √(2π) α⁸ (0.05%) |
 
 ### Still Imposed (Structural) **[IMPOSED]**
 
@@ -666,7 +666,7 @@ The following are now **derived**, not input parameters:
 
 ### Derivation Status Summary
 
-> **Research Program**: ✅ **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md).
+> **Research Program**:  **COMPLETED (within stated assumptions)** — Coupling constants (α = 1/137.036, N_c ≈ 3) and the electron mass are obtained from proposed relations within the framework. The physical identifications are ledgered as conjectural or selection-level where appropriate. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md).
 
 > **Epistemic Status**: FTD has evolved from a simulation framework to a **principled theoretical framework**. The CM/master-quadratic arithmetic is theorem-level, but the identification of x₊ with 1/α remains a strongly motivated conjecture and the ppb one-loop correction is scheme-conditional after the 2026-04-22 Structure-2 audit. This does not constitute independent physical confirmation.
 
@@ -717,9 +717,9 @@ These define the model's fundamental scales:
 
 | Parameter | Value | Dimensions | Role | Status |
 |-----------|-------|------------|------|--------|
-| C | 1.0 | [L]/[T] | Maximum propagation speed | ⬜ Axiomatic |
-| H | 1.0 | [L] | Planck-scale unit (lattice spacing) | ⬜ Axiomatic |
-| KB | 0.511 | dimensionless | Manifestation threshold | ✅ **DERIVED**: m_e = m_P √(2π) (16/3) α¹¹ |
+| C | 1.0 | [L]/[T] | Maximum propagation speed |  Axiomatic |
+| H | 1.0 | [L] | Planck-scale unit (lattice spacing) |  Axiomatic |
+| KB | 0.511 | dimensionless | Manifestation threshold |  **DERIVED**: m_e = m_P √(2π) (16/3) α¹¹ |
 
 ## 7.3 Coupling Parameters
 
@@ -727,10 +727,10 @@ These define the model's fundamental scales:
 |-----------|-------|------------|------|--------|
 | α (ALPHA) | 0.00729 | dimensionless | Fine structure constant | **STRONGLY MOTIVATED CONJECTURE** from x₊ (§7.4); ppb corrections scheme-conditional |
 | g_c | ~α^(1/2) | dimensionless | State-flux coupling | Conditional on α identification |
-| G_N (GRAVITY_BIAS) | 0.01 | dimensionless | Gravitational coupling | ✅ Derived (1/(b₃+N_c)²) |
-| α_G | 5.91×10⁻³⁹ | dimensionless | Gravitational hierarchy | ✅ Derived (2π(16/3)²(N_eff+3/7)²α²⁰, 0.06%) |
-| γ (DECAY_RATE) | 0.00729 = α | [T]⁻¹ | Dissipation rate | ⚠️ **[IMPOSED]** (see §4.3, ASSUMP.6) |
-| φ (PHI) | 1.618... | dimensionless | Golden ratio | ⬜ Mathematical constant |
+| G_N (GRAVITY_BIAS) | 0.01 | dimensionless | Gravitational coupling |  Derived (1/(b₃+N_c)²) |
+| α_G | 5.91×10⁻³⁹ | dimensionless | Gravitational hierarchy |  Derived (2π(16/3)²(N_eff+3/7)²α²⁰, 0.06%) |
+| γ (DECAY_RATE) | 0.00729 = α | [T]⁻¹ | Dissipation rate |  **[IMPOSED]** (see §4.3, ASSUMP.6) |
+| φ (PHI) | 1.618... | dimensionless | Golden ratio |  Mathematical constant |
 
 ## 7.3.1 The Electron Mass Derivation
 
@@ -770,7 +770,7 @@ produces two roots:
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
 | x₋ | 3.024 | mathematical artifact of P(x); no physics identification | n/a |
 
-**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊ ↔ 1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The `x₋ ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
+**Status**: The polynomial and roots are **[THEOREM]** algebraically; the physical identification `x₊  1/α` is **[STRONGLY MOTIVATED CONJECTURE]** in the master ledger (FTD-0013). The `x₋  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). The one-loop ppb correction is scheme-conditional after the 2026-04-22 Structure-2 audit. See [docs/theory/07_assessment/core_ledgers/LEDGER.md](theory/07_assessment/core_ledgers/LEDGER.md) and [docs/theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md](theory/10_eft_program/archive/closed_negative/AUDIT_STRUCTURE2_WARD_VALIDATION.md).
 
 ### 7.4.1 Lemniscate Selection: Four Algebraic Criteria
 
@@ -802,7 +802,7 @@ The coefficient 16 in the master quadratic is over-derived via four convergent r
 | Base squared | N_base² = 4² (dimensional closure) | 16 |
 | Precision formula | Historical precision-fit evidence; not a derivation of coefficient 16 or α (see §16.2.1) | 16 |
 
-The convergent routes provide structural evidence for coefficient 16. They do not promote the physical identification `x₊ ↔ 1/α` above its current LEDGER tag (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The `x₋ ↔ N_c` identification is retired (v1.4 §5).
+The convergent routes provide structural evidence for coefficient 16. They do not promote the physical identification `x₊  1/α` above its current LEDGER tag (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The `x₋  N_c` identification is retired (v1.4 §5).
 
 ## 7.5 Derivation Summary
 
@@ -810,10 +810,10 @@ The convergent routes provide structural evidence for coefficient 16. They do no
 |-------|--------|
 | G* produces an x₊ root matching 1/α to 1.26 ppm | [STRONGLY MOTIVATED CONJECTURE] for the physical identification |
 | G* mathematical provenance | [THEOREM]-level within the algebraic spine; not an α derivation by itself |
-| Elliptic fibration from FTD | ✅ Proven (simulations/elliptic_fibration_proof.py) |
-| CM selection (j=1728) | ✅ Proven (simulations/cm_selection_proof.py) |
+| Elliptic fibration from FTD |  Proven (simulations/elliptic_fibration_proof.py) |
+| CM selection (j=1728) |  Proven (simulations/cm_selection_proof.py) |
 | Coefficient 16 from lattice | Structurally motivated; exact status tracked in the algebraic-spine/ledger docs |
-| √2 from Gauss constraint | ✅ Derived (simulations/critical_coupling_selection.py) |
+| √2 from Gauss constraint |  Derived (simulations/critical_coupling_selection.py) |
 
 For related theoretical context, see also [LEMNISCATE_HIERARCHY_WHITEPAPER.md](theory/04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md).
 
@@ -975,16 +975,16 @@ The model proposes that quantum-like phenomena may emerge from:
 ## 11.3 What Is and Is Not Claimed
 
 **UPDATE (v4.0)**: The theoretical foundations now establish:
-- ✅ **Hilbert space construction**: H_FTD = L²(Lattice, ℂ) from complexified flux
-- ✅ **Born rule derivation**: P(v) = |ψ(v)|²/||ψ||² follows from manifestation statistics
-- ✅ **Bell locality**: Pure lattice dynamics give S≤2, consistent with local deterministic axioms. QM's S>2 is an aggregate statistical property, not a substrate requirement
-- ✅ **Measurement resolution**: Collapse = manifestation triggered by observer coupling
+-  **Hilbert space construction**: H_FTD = L²(Lattice, ℂ) from complexified flux
+-  **Born rule derivation**: P(v) = |ψ(v)|²/||ψ||² follows from manifestation statistics
+-  **Bell locality**: Pure lattice dynamics give S≤2, consistent with local deterministic axioms. QM's S>2 is an aggregate statistical property, not a substrate requirement
+-  **Measurement resolution**: Collapse = manifestation triggered by observer coupling
 
 **What remains open**:
-- ⬜ Full QFT correspondence (beyond U(1) sector)
-- ⬜ Experimental validation (simulations are internal, not lab tests)
-- ⬜ Characterization of substrate-to-aggregate transition (how QM statistics emerge from lattice)
-- ⬜ Demonstration that ensemble averaging over lattice states yields quantum correlations
+-  Full QFT correspondence (beyond U(1) sector)
+-  Experimental validation (simulations are internal, not lab tests)
+-  Characterization of substrate-to-aggregate transition (how QM statistics emerge from lattice)
+-  Demonstration that ensemble averaging over lattice states yields quantum correlations
 
 See docs/theory/ for derivations.
 
@@ -1013,7 +1013,7 @@ RULE (Pair Production):
 ## 12.3 Critical Evaluation
 
 **v5.24 UPDATE**: The shared-origin mechanism produces:
-- ✅ Classical correlations from pre-established properties (S ≤ 2 from lattice)
+-  Classical correlations from pre-established properties (S ≤ 2 from lattice)
 - Quantum teleportation protocols (when Hilbert space structure is imposed)
 - Entanglement entropy scaling
 - Contextuality (within imposed QM formalism)
@@ -1189,7 +1189,7 @@ The following aspects of known physics are **not** present in the current model:
 - Weak isospin and hypercharge are absent
 - Higgs mechanism is not implemented
 
-### Gravity — ✅ NOW DERIVED
+### Gravity —  NOW DERIVED
 
 > **UPDATE (v4.1)**: The gravity sector development is complete within the model.
 
@@ -1657,46 +1657,46 @@ F(v) = F_grav + F_elec + F_mag + F_strong + F_weak
 | CLAIM.4 | Shells → orbitals | Interpretive |
 | CLAIM.5 | Gravity emerges from rules | Partially demonstrated |
 | CLAIM.6 | EM emerges from rules | Partially demonstrated |
-| CLAIM.7 | QM behavior emerges | ✅ **VERIFIED** (v4.0: Hilbert space constructed) |
-| CLAIM.8 | QM statistics emerge from substrate aggregation | ⚠️ **[SELECTION]** — Three-level observer hierarchy: substrate S=2, independent complex S=√2, sLoop/entangled S=2√2. Complexification + sLoop joint coupling. See DERIV_OBSERVER_BELL_MECHANISM.md |
-| CLAIM.9 | U(1) gauge symmetry emerges | ✅ **VERIFIED** (OPEN.3 simulation) |
-| CLAIM.10 | SU(3) emerges from geometry | ✅ **VERIFIED** (OPEN.4 simulation) |
-| CLAIM.11 | Lorentz invariance is relational | ✅ **VERIFIED** (OPEN.2 simulation) |
+| CLAIM.7 | QM behavior emerges |  **VERIFIED** (v4.0: Hilbert space constructed) |
+| CLAIM.8 | QM statistics emerge from substrate aggregation |  **[SELECTION]** — Three-level observer hierarchy: substrate S=2, independent complex S=√2, sLoop/entangled S=2√2. Complexification + sLoop joint coupling. See DERIV_OBSERVER_BELL_MECHANISM.md |
+| CLAIM.9 | U(1) gauge symmetry emerges |  **VERIFIED** (OPEN.3 simulation) |
+| CLAIM.10 | SU(3) emerges from geometry |  **VERIFIED** (OPEN.4 simulation) |
+| CLAIM.11 | Lorentz invariance is relational |  **VERIFIED** (OPEN.2 simulation) |
 | CLAIM.12 | Void is dispositional substrate | **Proposed** (Section 1.1) |
-| CLAIM.13 | Update rules derived from action | ✅ **VERIFIED** (v4.0: S[s,J] → Euler-Lagrange) |
-| CLAIM.14 | Continuum limit → Maxwell | ✅ **VERIFIED** (v4.0: lattice → field theory) |
-| CLAIM.15 | Continuum limit → Schrödinger | ✅ **VERIFIED** (v4.0: non-relativistic limit) |
-| CLAIM.16 | Thermodynamics from microstates | ✅ **VERIFIED** (v4.0: Boltzmann statistics) |
-| CLAIM.17 | Spinors from frame topology | ✅ **VERIFIED** (v4.0: π₁(SO(3)) = ℤ₂) |
-| CLAIM.18 | Time's arrow from boundary | ✅ **VERIFIED** (v4.0: low-entropy past) |
-| CLAIM.19 | Measurement = manifestation | ✅ **VERIFIED** (v4.0: threshold = collapse) |
+| CLAIM.13 | Update rules derived from action |  **VERIFIED** (v4.0: S[s,J] → Euler-Lagrange) |
+| CLAIM.14 | Continuum limit → Maxwell |  **VERIFIED** (v4.0: lattice → field theory) |
+| CLAIM.15 | Continuum limit → Schrödinger |  **VERIFIED** (v4.0: non-relativistic limit) |
+| CLAIM.16 | Thermodynamics from microstates |  **VERIFIED** (v4.0: Boltzmann statistics) |
+| CLAIM.17 | Spinors from frame topology |  **VERIFIED** (v4.0: π₁(SO(3)) = ℤ₂) |
+| CLAIM.18 | Time's arrow from boundary |  **VERIFIED** (v4.0: low-entropy past) |
+| CLAIM.19 | Measurement = manifestation |  **VERIFIED** (v4.0: threshold = collapse) |
 
 ## 21.4 Open Questions
 
 | ID | Question | Status | Reference |
 |----|----------|--------|-----------|
-| OPEN.1 | How do aggregate QM statistics (S>2) emerge from substrate-level dynamics (S≤2)? | ⚠️ **[SELECTION]** | Three-level observer Bell mechanism: complexification (Gauss constraint → psi = J_x + iJ_y) + sLoop joint coupling. Net: S_substrate × √2 = S_observer. Verified 4/4 checks. See DERIV_OBSERVER_BELL_MECHANISM.md |
-| OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? | ✅ **VERIFIED** | Wave isotropy, Coulomb isotropy, time dilation isotropy all confirmed |
-| OPEN.3 | Can U(1) gauge emergence be verified in simulation? | ✅ **VERIFIED** | 2 transverse modes, longitudinal suppressed <3% |
-| OPEN.4 | Can SU(3) color interpretation be made rigorous? | ✅ **VERIFIED** | N_c≈3.024 from geometry, color neutrality, confinement all confirmed |
-| OPEN.5 | Can coupling constants be derived within FTD assumptions? | ⚠️ **[PARTIAL / SMC]** | Algebraic-spine constants have theorem-level provenance, but the physical coupling identifications (especially x₊ ↔ 1/α) remain [STRONGLY MOTIVATED CONJECTURE]. See SPEC_ALGEBRAIC_SPINE.md, SPEC_FQCR.md, TRACKER_ONTIC_TRUTH.md, and LEDGER.md. |
-| OPEN.6 | What is the testable difference between sLoop and superdeterminism? | ⬜ **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
-| OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? | ⬜ **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
-| OPEN.8 | Can particle masses be derived from FTD? | ✅ **DERIVED** | m_e = m_P √(2π) (16/3) α¹¹ (0.19% accuracy); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
-| OPEN.9 | What determines the complexity functional C(g)? | ⬜ **OPEN** | Candidates: MDL, departure from unification, parameter counting |
-| OPEN.10 | Can spinor behavior emerge from framed flux? | ✅ **VERIFIED** | 720° symmetry, exchange antisymmetry, Pauli exclusion all confirmed |
-| OPEN.11 | Can CKM matrix be derived from FTD? | ✅ **DERIVED** | All elements to 3-6% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
-| OPEN.12 | Can PMNS mixing be derived from FTD? | ✅ **DERIVED** | All three angles to 1-3% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
-| OPEN.13 | Can CP violation be predicted? | ✅ **DERIVED** | Jarlskog J = 3.9×10⁻⁵ (27%), CKM phase δ = 68° (1.5%) |
-| OPEN.14 | Can neutrino masses be derived? | ✅ **DERIVED** | Δm²₃₁ exact match, see-saw mechanism with m_D ~ m_τ × α |
-| OPEN.15 | What is the UV distribution P_UV? | ⬜ **OPEN** | Maximum entropy? Conformal? Big Bang initial conditions? |
-| OPEN.16 | What determines G_N? | ✅ **DERIVED** | α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ (0.06% accuracy) |
-| OPEN.17 | Why does a 3D lattice exist? | ✅ **DERIVED (v5.0)** | D=3 uniquely selected by atomic stability + gauge renormalizability + Fibonacci constraint |
-| OPEN.18 | Can GR be derived with correct coefficient? | ✅ **DERIVED (v5.0)** | R_μν - ½g_μν R = 8πG T_μν; coefficient from lattice geometry |
-| OPEN.19 | Can inflation observables be derived? | ✅ **DERIVED (v5.0)** | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |
-| OPEN.20 | Can baryogenesis be explained? | ✅ **DERIVED (v5.0)** | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
-| OPEN.21 | Is x₊ = 1/α a theorem or conjecture? | ⚠️ **[STRONGLY MOTIVATED CONJECTURE]** | Master-quadratic algebra is theorem-level; the physical identification x₊ ↔ 1/α is empirical/structural, not dynamically derived. |
-| OPEN.22 | Is `x₋ → N_c = 3` a theorem? | **RETIRED (v1.4 §5)** | The `x_- ↔ N_c` identification is dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. The small root `x_- ≈ 3.024` is a mathematical artifact of P(x). `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). |
+| OPEN.1 | How do aggregate QM statistics (S>2) emerge from substrate-level dynamics (S≤2)? |  **[SELECTION]** | Three-level observer Bell mechanism: complexification (Gauss constraint → psi = J_x + iJ_y) + sLoop joint coupling. Net: S_substrate × √2 = S_observer. Verified 4/4 checks. See DERIV_OBSERVER_BELL_MECHANISM.md |
+| OPEN.2 | Under what conditions does Lorentz invariance emerge at large scales? |  **VERIFIED** | Wave isotropy, Coulomb isotropy, time dilation isotropy all confirmed |
+| OPEN.3 | Can U(1) gauge emergence be verified in simulation? |  **VERIFIED** | 2 transverse modes, longitudinal suppressed <3% |
+| OPEN.4 | Can SU(3) color interpretation be made rigorous? |  **VERIFIED** | N_c≈3.024 from geometry, color neutrality, confinement all confirmed |
+| OPEN.5 | Can coupling constants be derived within FTD assumptions? |  **[PARTIAL / SMC]** | Algebraic-spine constants have theorem-level provenance, but the physical coupling identifications (especially x₊  1/α) remain [STRONGLY MOTIVATED CONJECTURE]. See SPEC_ALGEBRAIC_SPINE.md, SPEC_FQCR.md, TRACKER_ONTIC_TRUTH.md, and LEDGER.md. |
+| OPEN.6 | What is the testable difference between sLoop and superdeterminism? |  **OPEN** | Proposed: sLoop predicts tunable S(f); requires experimental test |
+| OPEN.7 | Does the relational Lorentz interpretation satisfy all experimental tests? |  **OPEN** | Theoretically consistent; Planck-scale departures proposed as test |
+| OPEN.8 | Can particle masses be derived from FTD? |  **DERIVED** | m_e = m_P √(2π) (16/3) α¹¹ (0.19% accuracy); see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md |
+| OPEN.9 | What determines the complexity functional C(g)? |  **OPEN** | Candidates: MDL, departure from unification, parameter counting |
+| OPEN.10 | Can spinor behavior emerge from framed flux? |  **VERIFIED** | 720° symmetry, exchange antisymmetry, Pauli exclusion all confirmed |
+| OPEN.11 | Can CKM matrix be derived from FTD? |  **DERIVED** | All elements to 3-6% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
+| OPEN.12 | Can PMNS mixing be derived from FTD? |  **DERIVED** | All three angles to 1-3% accuracy; see FLAVOR_PHYSICS_DERIVATION.md |
+| OPEN.13 | Can CP violation be predicted? |  **DERIVED** | Jarlskog J = 3.9×10⁻⁵ (27%), CKM phase δ = 68° (1.5%) |
+| OPEN.14 | Can neutrino masses be derived? |  **DERIVED** | Δm²₃₁ exact match, see-saw mechanism with m_D ~ m_τ × α |
+| OPEN.15 | What is the UV distribution P_UV? |  **OPEN** | Maximum entropy? Conformal? Big Bang initial conditions? |
+| OPEN.16 | What determines G_N? |  **DERIVED** | α_G = 2π(16/3)²(N_eff + 3/7)²α²⁰ (0.06% accuracy) |
+| OPEN.17 | Why does a 3D lattice exist? |  **DERIVED (v5.0)** | D=3 uniquely selected by atomic stability + gauge renormalizability + Fibonacci constraint |
+| OPEN.18 | Can GR be derived with correct coefficient? |  **DERIVED (v5.0)** | R_μν - ½g_μν R = 8πG T_μν; coefficient from lattice geometry |
+| OPEN.19 | Can inflation observables be derived? |  **DERIVED (v5.0)** | n_s = 0.966 (0.2σ from Planck), r = 0.022 (below bounds) |
+| OPEN.20 | Can baryogenesis be explained? |  **DERIVED (v5.0)** | η ~ 10⁻¹⁰ from CP violation + Sakharov conditions |
+| OPEN.21 | Is x₊ = 1/α a theorem or conjecture? |  **[STRONGLY MOTIVATED CONJECTURE]** | Master-quadratic algebra is theorem-level; the physical identification x₊  1/α is empirical/structural, not dynamically derived. |
+| OPEN.22 | Is `x₋ → N_c = 3` a theorem? | **RETIRED (v1.4 §5)** | The `x_-  N_c` identification is dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. The small root `x_- ≈ 3.024` is a mathematical artifact of P(x). `N_c = 3` in FTD is independently sourced (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). |
 
 See `packages/backend/simulation/open_question_tests.py` and `packages/backend/simulation/flavor_physics_tests.py` for simulation implementations.
 
@@ -1729,65 +1729,65 @@ A computational simulation based on:
 ## 22.4 What Has Been Verified (In Simulation)
 
 ### Structural Emergence
-- ✅ **U(1) gauge emergence** (2 transverse modes, longitudinal suppression)
-- ✅ **Bound structures** (triads persist, shells form)
-- ✅ **Force-like behaviors** (attraction, repulsion, binding)
-- ✅ **Wave propagation** (flux waves at speed C)
+-  **U(1) gauge emergence** (2 transverse modes, longitudinal suppression)
+-  **Bound structures** (triads persist, shells form)
+-  **Force-like behaviors** (attraction, repulsion, binding)
+-  **Wave propagation** (flux waves at speed C)
 
 ### Quantum-Like Features
-- ✅ **Interference patterns** (flux superposition)
-- ✅ **Spinor behavior** (720° symmetry from framed flux)
-- ✅ **Bell locality**: Substrate gives S≤2 (expected for local axioms). Aggregate QM statistics (S>2) understood as ensemble property; emergence mechanism characterized as three-level observer hierarchy (April 2026); S = 2 sqrt(2) follows from Tsirelson's bound once QM emergence is established
-- ✅ **Born rule** (derived from flux concentration statistics)
+-  **Interference patterns** (flux superposition)
+-  **Spinor behavior** (720° symmetry from framed flux)
+-  **Bell locality**: Substrate gives S≤2 (expected for local axioms). Aggregate QM statistics (S>2) understood as ensemble property; emergence mechanism characterized as three-level observer hierarchy (April 2026); S = 2 sqrt(2) follows from Tsirelson's bound once QM emergence is established
+-  **Born rule** (derived from flux concentration statistics)
 
 ### Constants and Phenomenology (historical v5.0 block; current tags live in LEDGER.md)
-- ⚠️ **Fine structure constant α = 1/137.036** ([STRONGLY MOTIVATED CONJECTURE] via x₊ identification; 1.26 ppm)
-- ⚠️ **Color charge number N_c = 3** (the `x₋` identification is RETIRED v1.4 §5; `N_c = 3` from independent structural sources — Moore Layer Theorem, `DERIV_NC_FROM_TOPOLOGY.md`, Z₃ center closure)
-- ⚠️ **Electron mass m_e = 0.511 MeV** (selection/parametric chain depending on α; see LEDGER)
-- ⚠️ **Tau mass m_τ = 1.777 GeV** (selection/parametric chain; see LEDGER)
-- ⚠️ **Proton mass m_p = 938.3 MeV** (selection/parametric chain; see LEDGER)
-- ⚠️ **Higgs VEV v = 246 GeV** (structurally motivated parametric chain; see LEDGER)
-- ⚠️ **CKM/PMNS matrices** (flavor-physics claims require their local ledger tags)
-- ⚠️ **CP violation δ = 66.8°** (structural/selection status depends on local derivation)
-- ⚠️ **Neutrino masses** (uses seesaw mechanism in FTD framework; check local tag)
-- ⚠️ **Gravitational hierarchy α_G** (depends on α and framework integers; check local tag)
+-  **Fine structure constant α = 1/137.036** ([STRONGLY MOTIVATED CONJECTURE] via x₊ identification; 1.26 ppm)
+-  **Color charge number N_c = 3** (the `x₋` identification is RETIRED v1.4 §5; `N_c = 3` from independent structural sources — Moore Layer Theorem, `DERIV_NC_FROM_TOPOLOGY.md`, Z₃ center closure)
+-  **Electron mass m_e = 0.511 MeV** (selection/parametric chain depending on α; see LEDGER)
+-  **Tau mass m_τ = 1.777 GeV** (selection/parametric chain; see LEDGER)
+-  **Proton mass m_p = 938.3 MeV** (selection/parametric chain; see LEDGER)
+-  **Higgs VEV v = 246 GeV** (structurally motivated parametric chain; see LEDGER)
+-  **CKM/PMNS matrices** (flavor-physics claims require their local ledger tags)
+-  **CP violation δ = 66.8°** (structural/selection status depends on local derivation)
+-  **Neutrino masses** (uses seesaw mechanism in FTD framework; check local tag)
+-  **Gravitational hierarchy α_G** (depends on α and framework integers; check local tag)
 
 ### Cosmology (v5.0 - New)
-- ✅ **Inflation spectral index n_s = 0.966** (0.2σ from Planck measurement)
-- ✅ **Tensor-to-scalar ratio r = 0.022** (well below experimental bounds)
-- ✅ **Baryogenesis η ~ 10⁻¹⁰** (correct order of magnitude)
-- ✅ **Dark matter = sub-threshold flux** (0 < |J| < K_B)
+-  **Inflation spectral index n_s = 0.966** (0.2σ from Planck measurement)
+-  **Tensor-to-scalar ratio r = 0.022** (well below experimental bounds)
+-  **Baryogenesis η ~ 10⁻¹⁰** (correct order of magnitude)
+-  **Dark matter = sub-threshold flux** (0 < |J| < K_B)
 
 ### Particle Physics Coverage (v5.17 - Honest Assessment)
 **Note:** These are **PARAMETRIC INSERTIONS** — FTD values inserted into standard physics formulas (Fermi theory, HQET, ChPT). The functional forms are **imported**, not derived.
-- ⚠️ **22 decay rates/widths**: Uses Fermi decay formula with FTD masses/couplings
-- ⚠️ **14 running coupling scales**: Uses standard RG with FTD beta coefficients
-- ⚠️ **42 mesons**: Uses chiral perturbation theory with FTD quark masses
-- ⚠️ **48 baryons**: Uses quark model + Regge trajectories with FTD parameters
-- ⚠️ **4 decay constants**: Pattern-matched, not derived from dynamics
+-  **22 decay rates/widths**: Uses Fermi decay formula with FTD masses/couplings
+-  **14 running coupling scales**: Uses standard RG with FTD beta coefficients
+-  **42 mesons**: Uses chiral perturbation theory with FTD quark masses
+-  **48 baryons**: Uses quark model + Regge trajectories with FTD parameters
+-  **4 decay constants**: Pattern-matched, not derived from dynamics
 
 **Honest summary:** FTD provides input parameters; standard QFT provides the physics.
 
 ## 22.5 What Remains Open
 
 ### Resolved / Addressed in This Program (v4.1)
-- ~~Derivation of coupling constants within FTD assumptions~~ ✅ **ADDRESSED (within assumptions)** (G* via FTD + self-consistency + CM selection; see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
-- ~~Derivation of particle masses within FTD assumptions~~ ✅ **ADDRESSED (within assumptions)** (m_e = m_P √(2π) (16/3) α¹¹; see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
-- ~~Uniqueness of integers {3,4,7,13}~~ ✅ **RESOLVED** (self-consistency proof; see SELF_CONSISTENCY.md)
-- ~~Gravity sector~~ ✅ **ADDRESSED (within assumptions)**
-- ~~Flavor physics (CKM, PMNS)~~ ✅ **ADDRESSED (within assumptions)**
+- ~~Derivation of coupling constants within FTD assumptions~~  **ADDRESSED (within assumptions)** (G* via FTD + self-consistency + CM selection; see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
+- ~~Derivation of particle masses within FTD assumptions~~  **ADDRESSED (within assumptions)** (m_e = m_P √(2π) (16/3) α¹¹; see archive/ARCH_LEMNISCATE_ALPHA_PAPER.md)
+- ~~Uniqueness of integers {3,4,7,13}~~  **RESOLVED** (self-consistency proof; see SELF_CONSISTENCY.md)
+- ~~Gravity sector~~  **ADDRESSED (within assumptions)**
+- ~~Flavor physics (CKM, PMNS)~~  **ADDRESSED (within assumptions)**
 
 ### Historical v5.0 Resolutions (reclassified by later audits)
-- ~~**Numerical value of G_N**~~ ✅ **DERIVED** — α_G = 2π(16/3)²(N_eff + 3/7)²α^20 gives 0.01% accuracy
-- ~~**Why a 3D discrete lattice exists**~~ ✅ **DERIVED (v5.0)** — D = 3 is uniquely selected (see §22.5.1)
-- ~~**C1: x₊ = 1/α**~~ ⚠️ **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — CM/uniqueness evidence supports the bridge but does not derive the physical identification.
-- ~~**C2: x₋ → N_c = 3**~~ **RETIRED (2026-05-22, v1.4 §5)** — `x_- ↔ N_c` identification dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD from independent structural sources.
-- ~~**GR with 8πG**~~ ✅ **DERIVED** — Einstein equations with correct coefficient
-- ~~**Inflation mechanism**~~ ✅ **DERIVED** — n_s = 0.966, r = 0.022
-- ~~**Baryogenesis**~~ ✅ **DERIVED** — η ~ 10⁻¹⁰
+- ~~**Numerical value of G_N**~~  **DERIVED** — α_G = 2π(16/3)²(N_eff + 3/7)²α^20 gives 0.01% accuracy
+- ~~**Why a 3D discrete lattice exists**~~  **DERIVED (v5.0)** — D = 3 is uniquely selected (see §22.5.1)
+- ~~**C1: x₊ = 1/α**~~  **RECLASSIFIED: [STRONGLY MOTIVATED CONJECTURE]** — CM/uniqueness evidence supports the bridge but does not derive the physical identification.
+- ~~**C2: x₋ → N_c = 3**~~ **RETIRED (2026-05-22, v1.4 §5)** — `x_-  N_c` identification dropped; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD from independent structural sources.
+- ~~**GR with 8πG**~~  **DERIVED** — Einstein equations with correct coefficient
+- ~~**Inflation mechanism**~~  **DERIVED** — n_s = 0.966, r = 0.022
+- ~~**Baryogenesis**~~  **DERIVED** — η ~ 10⁻¹⁰
 
 ### Genuinely Open (v5.27)
-- ~~Substrate-to-aggregate transition~~ ⚠️ **[SELECTION]** — Three-level observer Bell mechanism identified: complexification + sLoop joint coupling. Net: S_substrate × √2 = S_observer. See DERIV_OBSERVER_BELL_MECHANISM.md. Dynamical derivation of joint probability from S[s,J] remains future work.
+- ~~Substrate-to-aggregate transition~~  **[SELECTION]** — Three-level observer Bell mechanism identified: complexification + sLoop joint coupling. Net: S_substrate × √2 = S_observer. See DERIV_OBSERVER_BELL_MECHANISM.md. Dynamical derivation of joint probability from S[s,J] remains future work.
 - Sub-ppm precision tests of α
 - Detection of Planck-scale Lorentz departures
 
@@ -1841,12 +1841,12 @@ This model is a **discrete substrate framework** — it proposes that reality is
 
 Evaluation criteria and status (updated for v5.24):
 
-1. Internal consistency — ✅ **ESTABLISHED** (rules derived from action principle)
-2. Qualitative plausibility — ✅ **DEMONSTRATED** (structures, forces, hierarchies, gauge emergence)
-3. Derivation from principles — ⚠️ **PARTIAL** (~20 genuine derivations; rest uses imported physics)
-4. Substrate-to-observable mapping — ⚠️ **INCOMPLETE** (how aggregate QM statistics emerge from lattice is open)
-5. Quantitative accuracy — ⚠️ **MIXED** (~20 genuine predictions < 1% error; rest are parametric fits)
-6. Novel predictions — ⚠️ **POSTDICTIONS** (most results fit known data; few pre-observation tests)
+1. Internal consistency —  **ESTABLISHED** (rules derived from action principle)
+2. Qualitative plausibility —  **DEMONSTRATED** (structures, forces, hierarchies, gauge emergence)
+3. Derivation from principles —  **PARTIAL** (~20 genuine derivations; rest uses imported physics)
+4. Substrate-to-observable mapping —  **INCOMPLETE** (how aggregate QM statistics emerge from lattice is open)
+5. Quantitative accuracy —  **MIXED** (~20 genuine predictions < 1% error; rest are parametric fits)
+6. Novel predictions —  **POSTDICTIONS** (most results fit known data; few pre-observation tests)
 
 **v5.17 Honest Status:**
 - **~20 Genuine Derivations**: α, sin²θ_W, mass ratios, mixing angles (from G* and {3,4,7,13})

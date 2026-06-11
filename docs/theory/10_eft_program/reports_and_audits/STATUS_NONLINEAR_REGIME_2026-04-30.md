@@ -10,7 +10,7 @@
 
 ## 0 · One-paragraph summary
 
-Over 2026-04-29 + 2026-04-30, FTD-0112's nonlinear S_eff campaign produced the first quantitative measurement of the engine's blocked operator-mixing matrix at production statistics, with three categories of structural findings: **(i) four of nine active diagonal entries are now theorem-grade identities** of the blocking convention (JJ, J4 exact b⁴ and b⁸; stateSq, reactionDensity following Theorem 3's b³ + 2b³ρ̄ form); **(ii) the 9-op active subspace decomposes empirically into three nearly-isolated sub-blocks** (SPATIAL, DENSITY bridge, REACTION-FLUX) with SPATIAL ↔ REACTION-FLUX completely decoupled at 5σ over 20,000 snapshots — a structural reflection of FTD's two-layer ontology; **(iii) per-operator distributions are highly non-Gaussian** (skewness 1.1 to 26 across operators), establishing that the engine has Gaussian β-functions (FTD-0070) but non-Gaussian operator distributions, an independent structural property of the nonlinear regime. Gates B (conservation) and C (RG semigroup at 0.172 < 0.30) PASS at L=32 LARGE; Gate A diagonal PASSES (9/9); off-diagonal Gate A bootstrap-stderr-limited; Gate D queued for v2 perturbation campaign with shift predictions calibrated against measured per-operator skewness. The engine's "math-based EFT" therefore has substantial measured structural content with a clear path to closure.
+Over 2026-04-29 + 2026-04-30, FTD-0112's nonlinear S_eff campaign produced the first quantitative measurement of the engine's blocked operator-mixing matrix at production statistics, with three categories of structural findings: **(i) four of nine active diagonal entries are now theorem-grade identities** of the blocking convention (JJ, J4 exact b⁴ and b⁸; stateSq, reactionDensity following Theorem 3's b³ + 2b³ρ̄ form); **(ii) the 9-op active subspace decomposes empirically into three nearly-isolated sub-blocks** (SPATIAL, DENSITY bridge, REACTION-FLUX) with SPATIAL  REACTION-FLUX completely decoupled at 5σ over 20,000 snapshots — a structural reflection of FTD's two-layer ontology; **(iii) per-operator distributions are highly non-Gaussian** (skewness 1.1 to 26 across operators), establishing that the engine has Gaussian β-functions (FTD-0070) but non-Gaussian operator distributions, an independent structural property of the nonlinear regime. Gates B (conservation) and C (RG semigroup at 0.172 < 0.30) PASS at L=32 LARGE; Gate A diagonal PASSES (9/9); off-diagonal Gate A bootstrap-stderr-limited; Gate D queued for v2 perturbation campaign with shift predictions calibrated against measured per-operator skewness. The engine's "math-based EFT" therefore has substantial measured structural content with a clear path to closure.
 
 ---
 
@@ -27,7 +27,7 @@ In chronological order:
 | `AUDIT_S_EFF_SMOKE_VALIDATION.md` | architecture validation finding reaction-quiet steady state | DONE |
 | `THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md` | Theorems 1, 2, 3 proving diagonal blocking identities | proved + verified at machine precision |
 | `scripts/exploration/verify_blocking_diagonal_identities_2026-04-30.py` | numerical verification of all 3 theorems | 7 test classes PASS |
-| `ANALYSIS_OFFDIAGONAL_ASYMMETRY.md` | off-diagonal structure: 5-class → 3 sectors, complete SPATIAL↔REACTION-FLUX decoupling | quantitative 5σ test |
+| `ANALYSIS_OFFDIAGONAL_ASYMMETRY.md` | off-diagonal structure: 5-class → 3 sectors, complete SPATIALREACTION-FLUX decoupling | quantitative 5σ test |
 | `PROTOCOL_S_EFF_NONLINEAR_v2_DESIGN.md` | v2 Gate D design leveraging sector decoupling | DRAFT, awaiting hash-lock pre-conditions |
 | `AUDIT_GAUSSIANITY_v1_LARGE.md` | per-operator skewness measurement (1.1–26) — engine ensemble non-Gaussian | DONE |
 | `STATUS_NONLINEAR_REGIME_2026-04-30.md` | this consolidated status doc | THIS DOC |
@@ -214,17 +214,17 @@ The structural reading: at L=32, the engine's nonlinear regime is "small enough"
 
 Where the program stands today:
 
-✅ **Bare Gaussian fixed point** (FTD-0070): closed.
-✅ **Algebraic spine** (8 theorems in `SPEC_ALGEBRAIC_SPINE.md`): closed.
-✅ **Diagonal RG-eigenvalue spectrum** (M_aa for 9 active operators measured at L=32 LARGE): closed.
-✅ **Theorem-grade convention identities** (4 of 9 diagonals): closed.
-✅ **Sector decomposition of operator basis**: closed (empirical, structural reading from two-layer ontology).
-✅ **Per-operator non-Gaussianity profile**: measured.
-✅ **RG semigroup self-consistency at L=32 LARGE** (Gate C): PASS.
-🟡 **Sector decomposition at L=64 LARGE**: PENDING (in flight).
-🟡 **L=64 LARGE Gate C confirmation**: PENDING.
-🟡 **Off-diagonal Gate A** (29% PASS): bootstrap-stderr-limited; sector inversion path identified for v2.
-⏳ **Gate D self-consistency** (S_eff Wilsonian closure): v2 design ready, perturbation campaign queued.
+ **Bare Gaussian fixed point** (FTD-0070): closed.
+ **Algebraic spine** (8 theorems in `SPEC_ALGEBRAIC_SPINE.md`): closed.
+ **Diagonal RG-eigenvalue spectrum** (M_aa for 9 active operators measured at L=32 LARGE): closed.
+ **Theorem-grade convention identities** (4 of 9 diagonals): closed.
+ **Sector decomposition of operator basis**: closed (empirical, structural reading from two-layer ontology).
+ **Per-operator non-Gaussianity profile**: measured.
+ **RG semigroup self-consistency at L=32 LARGE** (Gate C): PASS.
+ **Sector decomposition at L=64 LARGE**: PENDING (in flight).
+ **L=64 LARGE Gate C confirmation**: PENDING.
+ **Off-diagonal Gate A** (29% PASS): bootstrap-stderr-limited; sector inversion path identified for v2.
+ **Gate D self-consistency** (S_eff Wilsonian closure): v2 design ready, perturbation campaign queued.
 
 The engine has a substantial measured nonlinear EFT structure. What remains is closing Gate D, confirming structural patterns at L=64 LARGE, and (longer-term) extending to L=128 for continuum-limit clarity.
 
@@ -232,4 +232,4 @@ The engine has a substantial measured nonlinear EFT structure. What remains is c
 
 ## 7 · Single-line summary
 
-**FTD's nonlinear EFT now has measured: a 9-op operator-mixing matrix M_ab(b=2) at L=32 LARGE with 4 of 9 diagonals at theorem-grade (JJ b⁴, J4 b⁸, stateSq + reactionDensity at b³ + correlation correction); a sector decomposition into SPATIAL/DENSITY/REACTION-FLUX with SPATIAL ↔ REACTION-FLUX completely decoupled at 5σ; per-operator skewnesses 1.1 to 26 establishing the engine has Gaussian β-functions but non-Gaussian operator distributions; Gates B + C PASS at L=32 LARGE; Gate D queued for v2 perturbation campaign with shift predictions calibrated against measured skewness; L=64 LARGE confirmation in flight; the math-based-EFT framing has Gaussian fixed point + theorem-grade diagonal anchors + structural sector decomposition + measured non-Gaussian higher-order content as four independent pieces of native-EFT structural content delivered tonight.**
+**FTD's nonlinear EFT now has measured: a 9-op operator-mixing matrix M_ab(b=2) at L=32 LARGE with 4 of 9 diagonals at theorem-grade (JJ b⁴, J4 b⁸, stateSq + reactionDensity at b³ + correlation correction); a sector decomposition into SPATIAL/DENSITY/REACTION-FLUX with SPATIAL  REACTION-FLUX completely decoupled at 5σ; per-operator skewnesses 1.1 to 26 establishing the engine has Gaussian β-functions but non-Gaussian operator distributions; Gates B + C PASS at L=32 LARGE; Gate D queued for v2 perturbation campaign with shift predictions calibrated against measured skewness; L=64 LARGE confirmation in flight; the math-based-EFT framing has Gaussian fixed point + theorem-grade diagonal anchors + structural sector decomposition + measured non-Gaussian higher-order content as four independent pieces of native-EFT structural content delivered tonight.**

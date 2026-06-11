@@ -118,7 +118,7 @@ For this derivation, the canonical (weak-field) form is sufficient. The Born-Inf
 
 ## 3.1 The Established Result
 
-**2026-05-24 FTD-0189 ripple correction:** Theorem 14.1 of `DERIV_RELATIVITY_DERIVATION.md` was retagged from `[THEOREM]` to `[SELECTION/CONDITIONAL]` per the 2026-05-21 FTD-0189 audit — the proof rests on the h ↔ J correspondence (Conjecture 10.1), which is `[CONJECTURE]` rather than derived. Step 3 below inherits this conditionality. Substrate spin-2 emergence (the h_μν construction Conjecture 10.1 would require) was tested via FTD-0193 (2026-05-22) and `[CLOSED NEGATIVE]` in the probed regime L∈{32,64}.
+**2026-05-24 FTD-0189 ripple correction:** Theorem 14.1 of `DERIV_RELATIVITY_DERIVATION.md` was retagged from `[THEOREM]` to `[SELECTION/CONDITIONAL]` per the 2026-05-21 FTD-0189 audit — the proof rests on the h  J correspondence (Conjecture 10.1), which is `[CONJECTURE]` rather than derived. Step 3 below inherits this conditionality. Substrate spin-2 emergence (the h_μν construction Conjecture 10.1 would require) was tested via FTD-0193 (2026-05-22) and `[CLOSED NEGATIVE]` in the probed regime L∈{32,64}.
 
 From the flux wave equation and the metric perturbation, the linearized Einstein equations are (Theorem 14.1, DERIV_RELATIVITY_DERIVATION.md):
 
@@ -296,7 +296,7 @@ By Birkhoff's theorem, the unique spherically symmetric vacuum solution is the S
 
 $$ds^2 = f \, c^2 dt^2 - \frac{dr^2}{f} - r^2 d\Omega^2, \quad f = 1 - \frac{r_s}{r}$$
 
-This is **exactly** the metric derived from the Born-Infeld Lagrangian in DERIV_LATTICE_SCHWARZSCHILD.md. ✅
+This is **exactly** the metric derived from the Born-Infeld Lagrangian in DERIV_LATTICE_SCHWARZSCHILD.md. 
 
 ## Check 2: Weak-Field → Poisson Equation
 
@@ -307,7 +307,7 @@ In the weak-field, static limit:
 
 $$\nabla^2 \Phi = 4\pi G \rho$$
 
-This is Poisson's equation — the Newtonian limit. FTD derives this as $\nabla^2\mathcal{L} = 4\pi G\rho$ in SPEC_FTD_LAGRANGIAN.md. ✅
+This is Poisson's equation — the Newtonian limit. FTD derives this as $\nabla^2\mathcal{L} = 4\pi G\rho$ in SPEC_FTD_LAGRANGIAN.md. 
 
 ## Check 3: Gravitational Waves
 
@@ -315,17 +315,17 @@ Setting $T_{\mu\nu} = 0$ in the linearized equations:
 
 $$\Box \bar{h}_{\mu\nu} = 0$$
 
-This gives transverse-traceless waves with 2 polarizations propagating at speed $c$. Matches LIGO/Virgo observations ($|c_{GW} - c|/c < 10^{-15}$). Derived as Theorem 15.1-15.3 in DERIV_RELATIVITY_DERIVATION.md. ✅
+This gives transverse-traceless waves with 2 polarizations propagating at speed $c$. Matches LIGO/Virgo observations ($|c_{GW} - c|/c < 10^{-15}$). Derived as Theorem 15.1-15.3 in DERIV_RELATIVITY_DERIVATION.md. 
 
 ## Check 4: Conservation Consistency
 
-The Bianchi identity $\nabla_\mu G^{\mu\nu} = 0$ is a mathematical identity. Combined with the field equations, it implies $\nabla_\mu T^{\mu\nu} = 0$. This is **independently derived** from the wave equation (Theorem 2.2, DERIV_QFT_GRT_BRIDGE.md). ✅
+The Bianchi identity $\nabla_\mu G^{\mu\nu} = 0$ is a mathematical identity. Combined with the field equations, it implies $\nabla_\mu T^{\mu\nu} = 0$. This is **independently derived** from the wave equation (Theorem 2.2, DERIV_QFT_GRT_BRIDGE.md). 
 
 The conservation law is derived from **both** the geometric side (Bianchi) and the matter side (Noether). This mutual consistency is a non-trivial structural check.
 
 ## Check 5: Kerr Metric
 
-The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which is independently derived from FTD's vortical flux patterns in DERIV_LATTICE_KERR.md. ✅
+The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which is independently derived from FTD's vortical flux patterns in DERIV_LATTICE_KERR.md. 
 
 ---
 

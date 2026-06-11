@@ -1,7 +1,7 @@
 # EXPLR — FTD-0110 Mechanism α (multi-block irrep leakage): quantified and CLOSED as the drift mechanism
 
 **Document type:** Exploratory quantitative test (closes one mechanism class; redirects the queued calculation)
-**Status:** `[VERIFIED]` (the 2/3 leakage lemma) + `[CLOSED NEGATIVE — for the leakage-aggregation family of Mechanism α as the k(A)-drift mechanism]` + `[METHODOLOGICAL]` (log-vs-power undecidability) + `[OBSERVATION]` (the Langevin knee) + `[OPEN — redirected]` (the bridge itself). **Nothing promoted; FTD-0110's tags unchanged (linear [DERIVED]; nonlinear bridge [OPEN]; cluster↔mass identification [SMC]).**
+**Status:** `[VERIFIED]` (the 2/3 leakage lemma) + `[CLOSED NEGATIVE — for the leakage-aggregation family of Mechanism α as the k(A)-drift mechanism]` + `[METHODOLOGICAL]` (log-vs-power undecidability) + `[OBSERVATION]` (the Langevin knee) + `[OPEN — redirected]` (the bridge itself). **Nothing promoted; FTD-0110's tags unchanged (linear [DERIVED]; nonlinear bridge [OPEN]; clustermass identification [SMC]).**
 **Date:** 2026-06-09
 **LEDGER row:** FTD-0259
 **Runner:** [`scripts/exploration/explore_ftd0110_mechanism_alpha_leakage.py`](../../../scripts/exploration/explore_ftd0110_mechanism_alpha_leakage.py) (pre-stated predictions P1–P3 in the docstring, written before compute — in-session pre-registration)
@@ -57,5 +57,5 @@ The data is **flat through A = 10** (k = 0.250, 0.252) with first drop at A = 15
 - Mechanism α leakage-aggregation family as the k(A)-drift mechanism: `[CLOSED NEGATIVE]` (pre-stated criterion; parameter-free; family-bracketed; structural diagnosis §3).
 - Log-vs-power: `[METHODOLOGICAL — undecidable by form-fitting at this drift size]`.
 - Langevin knee A* = 12.8 match: `[OBSERVATION]` — elevates Mechanism γ; not a confirmation.
-- FTD-0110 status: **unchanged** — linear k = ¼ `[DERIVED]`; nonlinear bridge `[OPEN]` (per the 2026-05-27 audit; the stale TRACKER "CLOSED" line is corrected in this commit); cluster↔mass identification `[STRONGLY MOTIVATED CONJECTURE]`. **Nothing promoted.**
+- FTD-0110 status: **unchanged** — linear k = ¼ `[DERIVED]`; nonlinear bridge `[OPEN]` (per the 2026-05-27 audit; the stale TRACKER "CLOSED" line is corrected in this commit); clustermass identification `[STRONGLY MOTIVATED CONJECTURE]`. **Nothing promoted.**
 - Python is the quick-check platform here; every verdict-bearing number above is reproducible from the runner; the canonical discriminator is the engine experiment of §5.

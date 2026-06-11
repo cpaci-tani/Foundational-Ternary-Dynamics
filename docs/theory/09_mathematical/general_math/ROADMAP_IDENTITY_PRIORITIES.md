@@ -35,8 +35,8 @@ The graph **is**:
 |---|---|
 | `n_checks` (distinct `check()` call sites) | 100 |
 | `n_objects` (named participants after EXCLUDE filter) | 72 |
-| `n_edges_bipartite` (identity ↔ object) | 216 |
-| `n_edges_pairwise` (object ↔ object, per identity) | 181 |
+| `n_edges_bipartite` (identity  object) | 216 |
+| `n_edges_pairwise` (object  object, per identity) | 181 |
 | Mean valence per object | 3.00 |
 | Median valence per object | 1 (long isolated tail) |
 
@@ -76,7 +76,7 @@ A full leaf list is in `scripts/verification/results/synonymy_graph.json` (searc
 
 Bundles are ranked by **expected centrality gain** (how many new edges into the high-valence core), with a difficulty band and a one-line value statement. Difficulty: **D** = desk/AGM, **W** = week (literature-sweep + implementation), **M** = month (genuine math beyond existing infrastructure), **FO** = frontier-open (transcendence-theory frontier).
 
-### Bundle 1 -- The Catalan ↔ {G_G, π, x_+, x_-} bridge (4 edges, **FO**-blocked)
+### Bundle 1 -- The Catalan  {G_G, π, x_+, x_-} bridge (4 edges, **FO**-blocked)
 
 **Plan source:** plan §A3 candidate 1.
 **Current state:** Catalan G ≈ 0.91596 does not currently appear in the synonymy graph (zero edges to anything). It enters the FTD corpus only via the §19 algebraic-independence conjecture in the G\* paper (Conjecture 19.2; PSLQ to 80 digits, no integer relation at coefficient bound 10^12).
@@ -85,7 +85,7 @@ Bundles are ranked by **expected centrality gain** (how many new edges into the 
 **Centrality gain if closed:** +4 edges, joining Catalan to two top-valence nodes (G_G, π) and to both master-quadratic roots. Would also reduce the open-conjectures list in the G\* paper.
 **Recommendation:** Author the PREREG (Session D1 of the plan) to lock the falsification basis. Do **not** spend research time attempting to close it without new tooling -- the PSLQ evidence is already the strongest currently-feasible signal.
 
-### Bundle 2 -- Γ(1/5) ↔ {G_G, π, E-series, R_5} (≈12 edges, **W**)
+### Bundle 2 -- Γ(1/5)  {G_G, π, E-series, R_5} (≈12 edges, **W**)
 
 **Plan source:** plan §A3 candidate 2 + Session B2 (C3 higher-Γ catalogue).
 **Current state:** `R5 = Γ(1/5) Γ(4/5)`-like entries currently appear at valence 1 (single check `D4`). The §L (Eisenstein) and §M (quasimodular) blocks are saturated at τ = i (G_G hub) and τ = ρ (G_ρ hub); the τ corresponding to disc -20 / level 5 is not yet in the corpus.
@@ -94,7 +94,7 @@ Bundles are ranked by **expected centrality gain** (how many new edges into the 
 **Centrality gain:** ≈12 edges -- adds `Gamma_1_5`, `Gamma_1_7`, `Gamma_1_8`, `Gamma_1_12` as mid-valence nodes; cross-links to G_G via the higher AGM tower; joins the isolated `W5_raw` node back to the core if combined with bundle 5.
 **Recommendation:** Schedule for Session B2 if pursued. The catalogue is well-trodden in the literature; extending `verify_gstar_paper.py` with ≈20 new checks is mechanical once the references are pinned. The novelty for a *paper* is low; the novelty for the *graph* is high.
 
-### Bundle 3 -- η(i/2), η(2i), η(i/3) ↔ {G_G, θ-functions} (≈6 edges, **D**)
+### Bundle 3 -- η(i/2), η(2i), η(i/3)  {G_G, θ-functions} (≈6 edges, **D**)
 
 **Plan source:** plan §A3 candidate 3.
 **Current state:** `eta_i_half` and `eta_2i` appear at valence 2 each; the cross-link to θ-functions is partial (the θ block uses `theta2_i`, `theta3_i`, `theta4_i` with valence 3, 1, 1). The Hauptmodul identity `eta(i/2) eta(2i) = ...` -- a standard CM tower identity -- would join all of these.
@@ -103,19 +103,19 @@ Bundles are ranked by **expected centrality gain** (how many new edges into the 
 **Centrality gain:** ≈6 edges -- doubles the valence of `eta_i_half`, `eta_2i`, `theta3_i`, `theta4_i`; tightens the τ = i modular sub-network.
 **Recommendation:** Highest-leverage **D**-difficulty target. Convert to ≈6 new `check()` entries with cross-references to the textbook source. Excellent first-extension target for any future session on the corpus.
 
-### Bundle 4 -- j(i) = 1728 ↔ Master quadratic (≈3 edges, **D**)
+### Bundle 4 -- j(i) = 1728  Master quadratic (≈3 edges, **D**)
 
 **Plan source:** plan §A3 candidate 4.
 **Current state:** `j_i` at valence 1 (`L11: j(i) = 1728`). The CM-uniqueness argument in `EXPLR_CM_RATIO_TOWER.md` connects j(i) = 1728 to the master-quadratic coefficient 16 (via |Aut(E)| = 4 and the (j, |Aut|) correspondence), but no explicit identity links `j_i` to `Gstar`, `x_plus`, or `x_minus`.
-**What would close it:** make the j-↔-coefficient-16 connection explicit as a verifiable identity (e.g. `16 = |Aut(E_{j=1728})|^2`; cross-check that `Gstar = R_4 = Γ(1/4)/Γ(3/4)` is the CM ratio at the τ = i lattice). Some of this is already in the §C and §L blocks; the missing edge is the explicit `j_i ↔ coefficient_16` cross-reference.
+**What would close it:** make the j--coefficient-16 connection explicit as a verifiable identity (e.g. `16 = |Aut(E_{j=1728})|^2`; cross-check that `Gstar = R_4 = Γ(1/4)/Γ(3/4)` is the CM ratio at the τ = i lattice). Some of this is already in the §C and §L blocks; the missing edge is the explicit `j_i  coefficient_16` cross-reference.
 **Difficulty:** D (a single afternoon, mostly book-keeping).
 **Centrality gain:** ≈3 edges; pulls `j_i` into the master-quadratic neighbourhood and reduces the isolated-leaf count by 1.
 **Recommendation:** Schedule alongside Bundle 3.
 
-### Bundle 5 -- W^(5) ↔ Γ(1/5) (≈2 edges, **W**)
+### Bundle 5 -- W^(5)  Γ(1/5) (≈2 edges, **W**)
 
 **Plan source:** plan §A3 candidate 5.
-**Current state:** `W5_raw` at valence 1. The Bailey-Borwein-Crandall closed form for W^(5) involves Γ(1/5)-products (analogous to W^(3) ↔ G_G^2 and W^(4) ↔ AGM-quartic forms).
+**Current state:** `W5_raw` at valence 1. The Bailey-Borwein-Crandall closed form for W^(5) involves Γ(1/5)-products (analogous to W^(3)  G_G^2 and W^(4)  AGM-quartic forms).
 **What would close it:** the BBC formula plus its mpmath verification. **Combine with Bundle 2** -- the Γ(1/5) edges are needed before W^(5) can connect through them.
 **Difficulty:** W (when bundled with Bundle 2).
 **Centrality gain:** ≈2 edges; pulls `W5_raw` into the Γ(1/5)-extended core.
@@ -129,12 +129,12 @@ These are edges the synonymy graph does **not** carry but that load-bearing FTD 
 
 | Missing edge | Where it's claimed | Why it matters | Priority |
 |---|---|---|---|
-| `G_G^4 ↔ Γ(1/4)^8/(64 π^6)` | G\* paper Theorem 12.5 (after critic fix) | Verified post-fix; verify_gstar_paper.py already covers via B5; redundant edge but worth a duplicate `check()` for the explicit G_G^4 form | D, low |
-| `G_rho ↔ cubic-AGM closed form` (Theorem 18.1) | G\* paper §18 | Verified in `proof_quartic_quarter_constants.py` and `investigate_p2_cubic_agm.py`; not yet in `verify_gstar_paper.py` | D, medium -- pull `M_3(1, 2^{-1/3})` in as a new node |
-| `Catalan ↔ algebraic-independence basis` | G\* paper §19 Conjecture 19.2 | Conjecture, not theorem; PSLQ-only evidence; PREREG candidate per Bundle 1 | FO, **PREREG-only** per Session D1 |
-| `W^(3)_BCC ↔ K(1/√2)^2 / π^2` | already at G2 line 174 | Verified; no action | -- |
-| `omega_E ↔ G_G ↔ Gstar` triangle | A3, A4, E2, E3 (all verified) | Verified; no action | -- |
-| `E_2(τ) at τ=i ↔ 3/π` | M1 line 365 | Verified; the cross-link to `Delta_i = (E_4^3 - E_6^2)/1728` is implicit but not a separate `check()` -- one D-difficulty addition would tighten | D, low |
+| `G_G^4  Γ(1/4)^8/(64 π^6)` | G\* paper Theorem 12.5 (after critic fix) | Verified post-fix; verify_gstar_paper.py already covers via B5; redundant edge but worth a duplicate `check()` for the explicit G_G^4 form | D, low |
+| `G_rho  cubic-AGM closed form` (Theorem 18.1) | G\* paper §18 | Verified in `proof_quartic_quarter_constants.py` and `investigate_p2_cubic_agm.py`; not yet in `verify_gstar_paper.py` | D, medium -- pull `M_3(1, 2^{-1/3})` in as a new node |
+| `Catalan  algebraic-independence basis` | G\* paper §19 Conjecture 19.2 | Conjecture, not theorem; PSLQ-only evidence; PREREG candidate per Bundle 1 | FO, **PREREG-only** per Session D1 |
+| `W^(3)_BCC  K(1/√2)^2 / π^2` | already at G2 line 174 | Verified; no action | -- |
+| `omega_E  G_G  Gstar` triangle | A3, A4, E2, E3 (all verified) | Verified; no action | -- |
+| `E_2(τ) at τ=i  3/π` | M1 line 365 | Verified; the cross-link to `Delta_i = (E_4^3 - E_6^2)/1728` is implicit but not a separate `check()` -- one D-difficulty addition would tighten | D, low |
 
 ---
 
@@ -178,7 +178,7 @@ Adding a new `check()` to `verify_gstar_paper.py` automatically regenerates the 
 
 ## §8 -- Successor: the corpus-wide math node map (FTD-0207, 2026-05-23)
 
-This roadmap is **G\*-paper-scoped** -- the synonymy graph it ranks covers only `verify_gstar_paper.py`'s 100 verified identities (72 objects, 216 bipartite edges). Subsequent work (FTD-0207) generalises the extraction across the full ~131-script corpus and adds a multi-layer structure (mathematical objects ↔ identities ↔ spine theorems ↔ LEDGER claims with epistemic-tag overlay) rendered in four complementary output formats.
+This roadmap is **G\*-paper-scoped** -- the synonymy graph it ranks covers only `verify_gstar_paper.py`'s 100 verified identities (72 objects, 216 bipartite edges). Subsequent work (FTD-0207) generalises the extraction across the full ~131-script corpus and adds a multi-layer structure (mathematical objects  identities  spine theorems  LEDGER claims with epistemic-tag overlay) rendered in four complementary output formats.
 
 The corpus-wide map does NOT supersede this roadmap -- the priority bundles in §3 remain the right ranking for G\*-paper-internal extensions. The corpus-wide map answers a different question: *"how do all of FTD's verified pieces connect across the whole project?"* The G\*-paper-scoped synonymy graph answers: *"which identity should be added next to the G\* paper's verification corpus?"*
 

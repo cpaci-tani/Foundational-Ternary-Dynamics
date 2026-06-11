@@ -124,7 +124,7 @@ The bare algebraic identity is $1/x_+ + 1/x_- = 1/G^*$ (Vieta). Under the histor
 
 $$ \boxed{\ \alpha + \frac{1}{N_c} = \frac{1}{G^*}\ }\quad\text{(historical slogan, retired)} $$
 
-**Post-v1.4 status (2026-05-22):** the paired identification `x_- ↔ N_c` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+ ↔ 1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]); the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$ with no current physics identification. The algebraic identity $1/x_+ + 1/x_- = 1/G^*$ stands; the physics-notation slogan above is preserved here only for historical reference. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
+**Post-v1.4 status (2026-05-22):** the paired identification `x_-  N_c` is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]); the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$ with no current physics identification. The algebraic identity $1/x_+ + 1/x_- = 1/G^*$ stands; the physics-notation slogan above is preserved here only for historical reference. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.
 
 **This is the entire physical content of the master quadratic in one line.**
 

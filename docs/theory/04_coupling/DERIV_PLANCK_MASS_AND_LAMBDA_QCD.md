@@ -168,12 +168,12 @@ $$\boxed{\Lambda^{(5)}_{\overline{MS}} = 218 \pm 5\;\text{MeV} \quad\text{(FTD, 
 
 | Component | FTD-Derived? | Status |
 |-----------|-------------|--------|
-| $\alpha_s(M_Z) = 7/59$ | ✅ Yes | [PARAMETRIC] (FTD-0020) |
-| $M_Z = 91.19$ GeV | ✅ Yes | [SELECTION] (uses v and sin²θ_W) |
-| $b_0 = 23/3$ | ⚠️ Partially | [THEOREM] for N_c=3, [EXTERNAL] for the Feynman diagram calculation |
-| $b_1 = 116/3$ | ❌ No | [EXTERNAL] (two-loop perturbative QCD) |
-| Dimensional transmutation | ❌ No | [EXTERNAL] (standard QCD mechanism) |
-| $\Lambda^{(5)} = 218$ MeV | ✅ Result | [SELECTION] (FTD inputs + external mechanism) |
+| $\alpha_s(M_Z) = 7/59$ |  Yes | [PARAMETRIC] (FTD-0020) |
+| $M_Z = 91.19$ GeV |  Yes | [SELECTION] (uses v and sin²θ_W) |
+| $b_0 = 23/3$ |  Partially | [THEOREM] for N_c=3, [EXTERNAL] for the Feynman diagram calculation |
+| $b_1 = 116/3$ |  No | [EXTERNAL] (two-loop perturbative QCD) |
+| Dimensional transmutation |  No | [EXTERNAL] (standard QCD mechanism) |
+| $\Lambda^{(5)} = 218$ MeV |  Result | [SELECTION] (FTD inputs + external mechanism) |
 
 **Bottom line:** Λ_QCD is derived from FTD inputs via standard QCD machinery. The *inputs* (α_s, M_Z) are genuinely FTD-derived. The *mechanism* (dimensional transmutation, RG running) is imported from standard QCD. This makes Λ_QCD a [SELECTION], not a [THEOREM].
 

@@ -90,11 +90,11 @@ When matter and antimatter are adjacent, both return to void.
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Manifestation threshold | K_B | 0.511 MeV | m_e = M_P √(2π)(16/3)α¹¹ | ⚠️ CONJECTURE (0.19% fit) |
-| Planck mass | M_P | 1.22 × 10¹⁹ GeV | Lattice spacing identification | ❌ INPUT |
-| Fine structure constant | α | 1/137.036 | Master quadratic from G* | ⚠️ CONJECTURE (1.26 ppm) |
-| Genesis probability form | 1 − e^(−x) | Exponential | Chosen for smoothness | ⚠️ SELECTION |
-| Polarity rule | sign(∇·**J**) | ±1 | Symmetry breaking mechanism | ⚠️ IMPOSED |
+| Manifestation threshold | K_B | 0.511 MeV | m_e = M_P √(2π)(16/3)α¹¹ |  CONJECTURE (0.19% fit) |
+| Planck mass | M_P | 1.22 × 10¹⁹ GeV | Lattice spacing identification |  INPUT |
+| Fine structure constant | α | 1/137.036 | Master quadratic from G* |  CONJECTURE (1.26 ppm) |
+| Genesis probability form | 1 − e^(−x) | Exponential | Chosen for smoothness |  SELECTION |
+| Polarity rule | sign(∇·**J**) | ±1 | Symmetry breaking mechanism |  IMPOSED |
 
 ---
 
@@ -122,10 +122,10 @@ When matter and antimatter are adjacent, both return to void.
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Speed of causality | C | 1 lattice unit/tick | Axiomatic maximum | ⬜ AXIOM |
-| Simulation speed | C_sim | 0.5 voxels/tick | CFL stability condition | ⚠️ IMPOSED |
-| Wave damping | δ | 0.05 | Phenomenological | ⚠️ IMPOSED |
-| Lattice spacing | H | 1 = Planck length | Scale identification | ⚠️ IMPOSED |
+| Speed of causality | C | 1 lattice unit/tick | Axiomatic maximum |  AXIOM |
+| Simulation speed | C_sim | 0.5 voxels/tick | CFL stability condition |  IMPOSED |
+| Wave damping | δ | 0.05 | Phenomenological |  IMPOSED |
+| Lattice spacing | H | 1 = Planck length | Scale identification |  IMPOSED |
 
 ### What emerges from Algorithm 2 alone
 
@@ -191,8 +191,8 @@ IF s(v) = 0 everywhere:
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| State-flux coupling | g_c | ~√α ≈ 0.085 | From action principle S[s,J] | ✅ DERIVED |
-| Fine structure constant | α | 1/137.036 | g_c² = α | ✅ DERIVED |
+| State-flux coupling | g_c | ~√α ≈ 0.085 | From action principle S[s,J] |  DERIVED |
+| Fine structure constant | α | 1/137.036 | g_c² = α |  DERIVED |
 
 ---
 
@@ -231,11 +231,11 @@ IF s(v) = 0 everywhere:
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Fine structure constant | α | 1/137.036 | Master quadratic x₊ | ✅ DERIVED (1.26 ppm) |
-| Magnetic coupling | β | 0.01 | Related to α | ⚠️ IMPOSED |
-| Photon mass | m_γ | 0 (exact) | U(1) gauge symmetry | ✅ EMERGENT |
-| Photon polarizations | — | 2 | 3 components − 1 constraint | ✅ EMERGENT |
-| Charge values | q | {0, ±1/3, ±2/3, ±1} | Fractional from N_c = 3 | ✅ DERIVED |
+| Fine structure constant | α | 1/137.036 | Master quadratic x₊ |  DERIVED (1.26 ppm) |
+| Magnetic coupling | β | 0.01 | Related to α |  IMPOSED |
+| Photon mass | m_γ | 0 (exact) | U(1) gauge symmetry |  EMERGENT |
+| Photon polarizations | — | 2 | 3 components − 1 constraint |  EMERGENT |
+| Charge values | q | {0, ±1/3, ±2/3, ±1} | Fractional from N_c = 3 |  DERIVED |
 
 ### EM Continuum Limit
 
@@ -279,18 +279,18 @@ IF s(v) = 0 everywhere:
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Strong coupling (sim) | g_s | 1.0 | Phenomenological | ⚠️ IMPOSED |
-| Strong coupling (theory) | α_s(M_Z) | 7/59 = 0.1186 | From b₃ = 7 | ⚠️ PARAMETRIC (0.6% fit) |
-| Pion mass scale | m_π | 0.15 | Sets Yukawa range | ⚠️ IMPOSED |
-| Number of colors | N_c | 3 | Master quadratic x₋ | ⚠️ RETIRED (root-ident); topological THEOREM |
-| Beta function coeff | b₃ | 7 | Framework integer | ✅ THEOREM (CM sequence) |
-| Functional form | Yukawa | — | Borrowed from nuclear physics | ⚠️ IMPORTED |
+| Strong coupling (sim) | g_s | 1.0 | Phenomenological |  IMPOSED |
+| Strong coupling (theory) | α_s(M_Z) | 7/59 = 0.1186 | From b₃ = 7 |  PARAMETRIC (0.6% fit) |
+| Pion mass scale | m_π | 0.15 | Sets Yukawa range |  IMPOSED |
+| Number of colors | N_c | 3 | Master quadratic x₋ |  RETIRED (root-ident); topological THEOREM |
+| Beta function coeff | b₃ | 7 | Framework integer |  THEOREM (CM sequence) |
+| Functional form | Yukawa | — | Borrowed from nuclear physics |  IMPORTED |
 
 ---
 
 ## 4C. Weak Force
 
-**What it is:** High-stress flux configurations can flip particle identity (+1 ↔ −1). This is how neutrons decay, how the Sun shines, how radioactivity works.
+**What it is:** High-stress flux configurations can flip particle identity (+1  −1). This is how neutrons decay, how the Sun shines, how radioactivity works.
 
 | Component | Formula | Notes |
 |-----------|---------|-------|
@@ -308,13 +308,13 @@ The weak force is the only force that **changes particle identity.** EM and stro
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Weak mixing angle | sin²θ_W | 3/13 = 0.2308 | N_c/N_eff | ⚠️ PARAMETRIC (0.19% fit) |
-| Stress threshold | σ_weak | 10.0 | Phenomenological | ⚠️ IMPOSED |
-| W boson mass | m_W | 80.4 GeV | 67/(8α²) × m_e | ⚠️ CONJECTURE (0.06% fit) |
-| Z boson mass | m_Z | 91.2 GeV | m_W × √(13/10) | ⚠️ CONJECTURE (0.09% fit) |
-| Fermi constant | G_F | 1.17 × 10⁻⁵ GeV⁻² | Required input | ❌ INPUT |
-| CP violation phase | δ | 66.8° | arctan(7/3) | ⚠️ CONJECTURE (2.1% fit) |
-| Cabibbo angle | θ_C | 13.16° | sin(θ_C) = G*/N_eff | ⚠️ CONJECTURE (1.2% fit) |
+| Weak mixing angle | sin²θ_W | 3/13 = 0.2308 | N_c/N_eff |  PARAMETRIC (0.19% fit) |
+| Stress threshold | σ_weak | 10.0 | Phenomenological |  IMPOSED |
+| W boson mass | m_W | 80.4 GeV | 67/(8α²) × m_e |  CONJECTURE (0.06% fit) |
+| Z boson mass | m_Z | 91.2 GeV | m_W × √(13/10) |  CONJECTURE (0.09% fit) |
+| Fermi constant | G_F | 1.17 × 10⁻⁵ GeV⁻² | Required input |  INPUT |
+| CP violation phase | δ | 66.8° | arctan(7/3) |  CONJECTURE (2.1% fit) |
+| Cabibbo angle | θ_C | 13.16° | sin(θ_C) = G*/N_eff |  CONJECTURE (1.2% fit) |
 
 ### CKM Matrix (Quark Flavor Mixing via W Boson)
 
@@ -351,7 +351,7 @@ The weak force is the only force that **changes particle identity.** EM and stro
 
 | Component | Formula | Value | Origin |
 |-----------|---------|-------|--------|
-| **Full formula** | α_G = 2π(16/3)²(N_eff + 3/b₃)² × α²⁰ | 5.909 × 10⁻³⁹ | ✅ DERIVED |
+| **Full formula** | α_G = 2π(16/3)²(N_eff + 3/b₃)² × α²⁰ | 5.909 × 10⁻³⁹ |  DERIVED |
 | 2π | Action principle normalization | 6.283 | From S[s,J] |
 | (16/3)² | (N_base²/N_c)² = \|Aut(E)\|⁴/N_c² | 28.44 | Curve geometry |
 | (94/7)² | (N_eff + N_c/b₃)² | 180.3 | Framework integers |
@@ -369,11 +369,11 @@ The weak force is the only force that **changes particle identity.** EM and stro
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Gravitational coupling (sim) | G_N | 0.01 | 1/(b₃+N_c)² | ❌ RETRACTED (1/100 model); sim coupling is IMPOSED |
-| Gravitational fine structure | α_G | 5.91 × 10⁻³⁹ | 2π(16/3)²(94/7)²α²⁰ | ✅ THEOREM (postulate-cond) |
-| Newton's constant | G | 6.678 × 10⁻¹¹ | α_G × ℏc/m_p² | ✅ THEOREM (postulate-cond) |
-| Hierarchy exponent | k | 20 = 13 + 7 | N_eff + b₃ | ✅ THEOREM (sum rule) |
-| Hierarchy ratio | α/α_G | ~10³⁶ | α¹⁻²⁰ × prefactor | ✅ THEOREM (ratio) |
+| Gravitational coupling (sim) | G_N | 0.01 | 1/(b₃+N_c)² |  RETRACTED (1/100 model); sim coupling is IMPOSED |
+| Gravitational fine structure | α_G | 5.91 × 10⁻³⁹ | 2π(16/3)²(94/7)²α²⁰ |  THEOREM (postulate-cond) |
+| Newton's constant | G | 6.678 × 10⁻¹¹ | α_G × ℏc/m_p² |  THEOREM (postulate-cond) |
+| Hierarchy exponent | k | 20 = 13 + 7 | N_eff + b₃ |  THEOREM (sum rule) |
+| Hierarchy ratio | α/α_G | ~10³⁶ | α¹⁻²⁰ × prefactor |  THEOREM (ratio) |
 
 ### The Contextual Relevance Spectrum (Φ = GM/Rc²)
 
@@ -398,16 +398,16 @@ The weak force is the only force that **changes particle identity.** EM and stro
 | **Carrier mass** | 0 | 0 (confined) | 80-91 GeV | 0 |
 | **Range** | Infinite | ~1 fm | ~0.002 fm | Infinite |
 | **Coupling** | α = 1/137 | α_s ≈ 0.12 | G_F = 10⁻⁵ GeV⁻² | α_G ≈ 10⁻³⁹ |
-| **FTD coupling derived?** | ✅ Yes (1.26 ppm) | ✅ Yes (0.6%) | ✅ sin²θ_W (0.19%) | ✅ Yes (0.06%) |
+| **FTD coupling derived?** |  Yes (1.26 ppm) |  Yes (0.6%) |  sin²θ_W (0.19%) |  Yes (0.06%) |
 | **Acts on** | Electric charge | Color charge | Weak isospin (left-handed) | Mass-energy (all) |
-| **Changes identity?** | No | No | **Yes** (u↔d, ν↔e) | No |
+| **Changes identity?** | No | No | **Yes** (ud, νe) | No |
 | **Self-interacting?** | No (photons pass through each other) | **Yes** (gluons grab gluons) | Yes (W,Z interact) | Yes (gravity gravitates) |
 | **FTD mechanism** | Charge gradient | Yukawa between same-sign neighbors | Stress-induced polarity flip | Density gradient |
-| **Functional form** | ✅ Derived (Green's function) | ✅ Derived (massive propagator) | ⚠️ [SELECTION] (threshold) | ✅ Derived (Green's function) |
+| **Functional form** |  Derived (Green's function) |  Derived (massive propagator) |  [SELECTION] (threshold) |  Derived (Green's function) |
 | **Entropy role** | Leak rate (α = γ) | Locks minimum-cost configs | Rearranges entropy budget | Cumulative α-coupling |
 | **Relative to α** | α¹ | α^(~0.6) at M_Z | α⁸ (sets W mass) | α²⁰ |
 
-> **Derivation:** All four force functional forms emerge from lattice Green's functions of the flux wave equation. Coulomb and gravity are gradients of the massless Green's function G₀(r) → 1/(4πr); the strong force is the gradient of the massive propagator G_m(r) → e^{-mr}/(4πr); the Lorentz force arises from the curl structure J ↔ A. See [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) for the complete derivation with 18 verified tests.
+> **Derivation:** All four force functional forms emerge from lattice Green's functions of the flux wave equation. Coulomb and gravity are gradients of the massless Green's function G₀(r) → 1/(4πr); the strong force is the gradient of the massive propagator G_m(r) → e^{-mr}/(4πr); the Lorentz force arises from the curl structure J  A. See [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) for the complete derivation with 18 verified tests.
 
 ---
 
@@ -446,8 +446,8 @@ Bound structures (locked triads = protons, locked shells = atoms) are exempt fro
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Dissipation rate | γ | α = 1/137.036 | Identified with fine structure constant | ⚠️ IMPOSED (ASSUMP.6) |
-| Tick duration | τ | 1 = Planck time (5.4 × 10⁻⁴⁴ s) | Scale identification | ⚠️ IMPOSED |
+| Dissipation rate | γ | α = 1/137.036 | Identified with fine structure constant |  IMPOSED (ASSUMP.6) |
+| Tick duration | τ | 1 = Planck time (5.4 × 10⁻⁴⁴ s) | Scale identification |  IMPOSED |
 
 ### What time dilation really is
 
@@ -492,9 +492,9 @@ Bound structures (locked triads = protons, locked shells = atoms) are exempt fro
 
 | Parameter | Symbol | Value | Derivation | Status |
 |-----------|--------|-------|------------|--------|
-| Binding threshold | 2 neighbors | Integer | Geometric stability | ⚠️ SELECTION |
-| Neighborhood | Moore (26-connected) | Cubic lattice | Axiomatic | ⬜ AXIOM |
-| Binding energy scale | K_B × φ | ~0.83 MeV per triad | Phenomenological | ⚠️ IMPOSED |
+| Binding threshold | 2 neighbors | Integer | Geometric stability |  SELECTION |
+| Neighborhood | Moore (26-connected) | Cubic lattice | Axiomatic |  AXIOM |
+| Binding energy scale | K_B × φ | ~0.83 MeV per triad | Phenomenological |  IMPOSED |
 | Golden ratio | φ | 1.618... | Mathematical constant | — |
 
 ---

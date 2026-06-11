@@ -1,6 +1,6 @@
 # Mechanism γ — Attempt to Fix `a_phys` from the Gravitational Coupling
 
-> **[CLOSED NEGATIVE 2026-04-19]** — Mechanism γ does not deliver a first-principles `a_phys`. The framework's disposition is the fallback in §4: declare `a_phys ≡ ℓ_P` as a calibration. This declaration is now authoritative in `docs/SPEC_FTD.md` ("LATTICE ↔ PHYSICAL CALIBRATION") and recorded in `docs/theory/07_assessment/core_ledgers/LEDGER.md` as rows **FTD-0030 (RESOLVED-BY-CALIBRATION)** and **FTD-0041 (CALIBRATION)**. See also `docs/WHERE_WE_LEFT_OFF.md` §4.
+> **[CLOSED NEGATIVE 2026-04-19]** — Mechanism γ does not deliver a first-principles `a_phys`. The framework's disposition is the fallback in §4: declare `a_phys ≡ ℓ_P` as a calibration. This declaration is now authoritative in `docs/SPEC_FTD.md` ("LATTICE  PHYSICAL CALIBRATION") and recorded in `docs/theory/07_assessment/core_ledgers/LEDGER.md` as rows **FTD-0030 (RESOLVED-BY-CALIBRATION)** and **FTD-0041 (CALIBRATION)**. See also `docs/WHERE_WE_LEFT_OFF.md` §4.
 >
 > **Note on a later document.** A file named `../retracted/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` claims to supersede this one with a `[THEOREM]` tag and `a_phys ≈ 4.39 ℓ_P`. That claim was **retracted on 2026-04-23** (see preamble in that file): its "derivation" silently swaps the `K_B = m_e` mass calibration for `ℏ_lat = 1`, which is the same class of calibration-shuffle this ATTEMPT document already identified (§2.3). The authoritative closure is the one in this document and in FTD-0030/0041, not the retracted SUCCESS claim.
 
@@ -24,7 +24,7 @@ The framework supplies:
 Two physical anchors must be read in:
 
 - **`c`-anchor:** `c_lat × (a_phys / t_phys) = c_phys = 2.998 × 10⁸ m/s`. Hence `t_phys = a_phys × √3 / c_phys`.
-- **`K_B`-anchor:** the framework already calibrates `K_B = 0.511 lattice` ↔ `m_e = 0.511 MeV/c²`. So one lattice mass-unit corresponds to `M_unit = m_e / K_B = 0.511 MeV / 0.511 = 1 MeV/c² ≈ 1.783 × 10⁻³⁰ kg`.
+- **`K_B`-anchor:** the framework already calibrates `K_B = 0.511 lattice`  `m_e = 0.511 MeV/c²`. So one lattice mass-unit corresponds to `M_unit = m_e / K_B = 0.511 MeV / 0.511 = 1 MeV/c² ≈ 1.783 × 10⁻³⁰ kg`.
 
 These two anchors are the only ingredients besides `G_N(lattice)`. Dimensional analysis on Newton's constant:
 

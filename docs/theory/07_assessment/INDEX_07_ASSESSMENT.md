@@ -101,7 +101,7 @@ Point-in-time verification artifacts; live state lives in the canonical trackers
 | File | Tag | Purpose |
 |---|---|---|
 | [AUDIT_SESSION_2026_04_24.md](archive/AUDIT_SESSION_2026_04_24.md) | [AUDIT] **[ARCHIVED 2026-06-02]** | Verifies every numerical/algebraic claim made during the 2026-04-24 session; absorbed into canonical trackers. |
-| [STATUS_2026-05-04_post_bughunt.md](archive/STATUS_2026-05-04_post_bughunt.md) | session artifact **[ARCHIVED 2026-06-02]** | Engine status snapshot after the CPU↔GPU parity bug-hunt; superseded by LEDGER + WHERE_WE_LEFT_OFF. |
+| [STATUS_2026-05-04_post_bughunt.md](archive/STATUS_2026-05-04_post_bughunt.md) | session artifact **[ARCHIVED 2026-06-02]** | Engine status snapshot after the CPUGPU parity bug-hunt; superseded by LEDGER + WHERE_WE_LEFT_OFF. |
 
 ---
 

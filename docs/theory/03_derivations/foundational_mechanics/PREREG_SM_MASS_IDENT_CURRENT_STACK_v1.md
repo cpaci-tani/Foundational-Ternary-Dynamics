@@ -1,9 +1,9 @@
-# PREREG — SM Cluster↔Mass Identification Re-Assessment on the Current Stack v1
+# PREREG — SM ClusterMass Identification Re-Assessment on the Current Stack v1
 
 **Status:** `[PRE-REGISTRATION — design locked before any run]`
 **Date:** 2026-06-10
 **LEDGER row:** FTD-0262 (reserved)
-**Provenance:** the remaining half of the FTD-0260/0261 successor item. FTD-0110's cluster↔mass identification (`mass = N·m_e`; SM matches at A = 2√R) is `[SMC]` with **stack-pinned historical evidence only**; FTD-0261 measured the current-stack law (broken power, knee A≈16, `N = 0.0795·A^1.901` global). This campaign asks what identification content survives on the canonical stack — designed explicitly to separate circular from non-circular evidence (the anti-target rule forbids fishing; every criterion is frozen here).
+**Provenance:** the remaining half of the FTD-0260/0261 successor item. FTD-0110's clustermass identification (`mass = N·m_e`; SM matches at A = 2√R) is `[SMC]` with **stack-pinned historical evidence only**; FTD-0261 measured the current-stack law (broken power, knee A≈16, `N = 0.0795·A^1.901` global). This campaign asks what identification content survives on the canonical stack — designed explicitly to separate circular from non-circular evidence (the anti-target rule forbids fishing; every criterion is frozen here).
 **Runner (frozen, unchanged from FTD-0261):** `engine/tests/campaign_thermostat_off_sweep.cpp` — SHA256 `2795b5b52af27cfb8a684ba7ac08b17dd9db5c6761d25b039cbadcdbe9667bc4`
 **Analysis (frozen):** `scripts/exploration/analyze_sm_mass_ident_current_stack.py` — SHA256 `502bedb8cac3001737b994dffbda916dfda0bcb0aed874fac9d4c073a95e3137`
 **Git tag:** `preregister-sm-mass-ident-current-stack-v1` (applied at the lock commit).

@@ -1,4 +1,4 @@
-# MAP · Lagrangian Term ↔ Engine Implementation
+# MAP · Lagrangian Term  Engine Implementation
 
 **Tag:** [REFERENCE]
 **Date:** 2026-05-05
@@ -14,7 +14,7 @@ Cross-reference is line-anchored at HEAD `8b1a750` (post the 2026-05-04/05 Tier-
 
 ---
 
-## §1 — Three-term action (analytical) ↔ Six-term engine decomposition (computational)
+## §1 — Three-term action (analytical)  Six-term engine decomposition (computational)
 
 `SPEC_FTD_LAGRANGIAN.md` §3.3 writes the **analytical** action as three terms in $\mathcal{L}_\text{matter}$ plus a gravitational sector. The engine tracks **six** independent per-site terms because the field-sector kinetic + gradient (Terms 5, 6) are the weak-field expansion of the Born-Infeld core (Term 1), tracked separately for diagnostic purposes — not double-counted (see SPEC §3.6 footnote and `lagrangian.h:75-76`).
 

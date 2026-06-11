@@ -51,7 +51,7 @@ re-derivation.
 | τ_proton = ∞ ("charge conservation is exact") | Restate as "at every finite tick, Σs is conserved" — holds pointwise in time, no completed-infinity time needed |
 | N_monopole = 0 (∇·(∇×J) = 0 identity) | Local vector-calculus identity; pointwise |
 | D = 3 from \|Aut(E)\|² = 2^D·(D−1)! | Algebraic identity |
-| Dual-prediction evidence for x+ ↔ 1/α, x- ↔ N_c | Algebraic match, no limit invoked |
+| Dual-prediction evidence for x+  1/α, x-  N_c | Algebraic match, no limit invoked |
 | Watson identity G*²/(2π) as ALGEBRAIC identity | Chowla-Selberg: closed-form relation between gamma values and a period. Computable to any finite precision. Does NOT require a "completed infinite lattice sum." |
 
 These are the firm content of FTD under the reframe. They total **~5

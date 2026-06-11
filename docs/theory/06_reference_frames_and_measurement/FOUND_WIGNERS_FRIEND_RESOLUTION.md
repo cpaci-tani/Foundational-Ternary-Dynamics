@@ -107,7 +107,7 @@ $$\text{Type III}_1 \;\xrightarrow{\rtimes_\sigma \mathbb{R}}\; \text{Type II}_\
 | **Irreversible** | The discrete state $s \in \{-1, +1\}$ has been crystallized from the continuous flux; thermal fluctuations at finite $\beta$ cannot reverse a $\beta \to \infty$ transition |
 | **Finite-speed** | The result propagates at $C = 1$ (one lattice unit per tick) [AXIOM] |
 
-**Epistemic status:** The identification of measurement with ReLU crystallization is [SELECTION]. The mathematical structure of the Type III₁ → Type I transition is established ([CLASSICAL] for factor classification; [CONJECTURE] for the Heaviside MASA selection step). The claim that this transition IS measurement — not merely analogous to it — is argued from the structural correspondence (Softplus axioms ↔ KMS condition ↔ modular automorphisms), but the identification has not been independently verified experimentally. This is the strongest unverified claim in this document.
+**Epistemic status:** The identification of measurement with ReLU crystallization is [SELECTION]. The mathematical structure of the Type III₁ → Type I transition is established ([CLASSICAL] for factor classification; [CONJECTURE] for the Heaviside MASA selection step). The claim that this transition IS measurement — not merely analogous to it — is argued from the structural correspondence (Softplus axioms  KMS condition  modular automorphisms), but the identification has not been independently verified experimentally. This is the strongest unverified claim in this document.
 
 ### 3.2 The Friend's Measurement Is Real [SELECTION]
 
@@ -412,7 +412,7 @@ This is the algebraic expression of multi-observer consistency: disagreement ari
 
 | ID | Statement | Argument basis |
 |----|-----------|---------------|
-| §3.1 | Measurement = ReLU crystallization (Type III₁ → Type I) | Structural correspondence: Softplus axioms ↔ KMS condition |
+| §3.1 | Measurement = ReLU crystallization (Type III₁ → Type I) | Structural correspondence: Softplus axioms  KMS condition |
 | §3.2 | Friend's measurement is ontologically real | Follows from §3.1 + locality |
 | §3.3 | Wigner's superposition is epistemic | Follows from §3.2 + $C = 1$ speed limit |
 | §5.1–5.5 | Reference frame context = self-referential closure = chain termination | Algebraic structure argument |

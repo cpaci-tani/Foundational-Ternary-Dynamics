@@ -43,7 +43,7 @@ These two numbers (I_SC = 0.015, I_BCC = 0.023) are **different UV regularizatio
 **What this does not change:**
 - The algebraic identity 16·G*² = 256·L(E,1)²/π (THEOREM) is untouched.
 - The tree-level match x_+ − 1/α_CODATA = 1.258 ppm is untouched.
-- The existing LEDGER status of FTD-0013 (x+ ↔ 1/α, STRONGLY MOTIVATED CONJECTURE) is untouched.
+- The existing LEDGER status of FTD-0013 (x+  1/α, STRONGLY MOTIVATED CONJECTURE) is untouched.
 - `DERIV_ONE_LOOP_LATTICE_ALPHA.md`'s [DERIVED] tag is still valid *given a=2/3 and the SC regularization*, as that document honestly states.
 
 What needs cleaning up is the claim that the one-loop result is **scheme-independent** or **continuum-limit-universal**. Priorities 3 and 5 argue it is not.

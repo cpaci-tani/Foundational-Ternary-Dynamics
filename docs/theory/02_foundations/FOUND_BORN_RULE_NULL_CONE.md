@@ -78,7 +78,7 @@ This is the **absolute conic** of projective geometry. Every real rotation prese
 
 **Physical meaning:** The connection between the Born rule (probability on the unit circle) and spin (SU(2) action on the Riemann sphere) is not a coincidence — both are aspects of the same null-cone geometry. The Riemann sphere IS the space of pure quantum states (the Bloch sphere), and its identification with the isotropic cone explains why quantum measurement (Born rule) and quantum spin (SU(2)) share the same mathematical structure.
 
-### 2.4 The Wick Rotation: Euclidean ↔ Lorentzian [THEOREM]
+### 2.4 The Wick Rotation: Euclidean  Lorentzian [THEOREM]
 
 In (1+2)-dimensional Minkowski space with metric ds² = dt² − dx² − dy², a null vector satisfies:
 
@@ -150,7 +150,7 @@ Both are null-cone conditions:
 1. **Quantum:** i² + a² + b² = 0, signature (−, +, +), x₀ = i evaluated
 2. **Relativistic:** t² − x² − y² = 0, signature (+, −, −), continuous coordinates
 
-The Wick rotation i ↔ t converts one into the other. This suggests that quantum probability and relativistic causality are **dual aspects of the same geometric structure** — the null cone of a (1+2)D space whose signature is determined by whether the self-referential direction (i) is treated as evaluated (quantum) or as a coordinate (relativistic).
+The Wick rotation i  t converts one into the other. This suggests that quantum probability and relativistic causality are **dual aspects of the same geometric structure** — the null cone of a (1+2)D space whose signature is determined by whether the self-referential direction (i) is treated as evaluated (quantum) or as a coordinate (relativistic).
 
 ---
 

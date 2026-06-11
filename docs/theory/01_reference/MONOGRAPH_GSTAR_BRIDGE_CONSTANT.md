@@ -256,7 +256,7 @@ More directly: G*² = 2·Γ(1/4)⁴/(4π²) = Γ(1/4)⁴/(2π²). And 2π·W₃ 
 
 **The connection to FTD:** The cubic lattice Z³ has 26 neighbors in the Moore neighborhood, decomposing by distance as SC(6) + FCC(12) + BCC(8). Watson proved that the BCC component's Green's function is W₃ = Γ(1/4)⁴/(4π³). The identity G*² = 2πW₃ connects the BCC self-energy to the CM curve period. This is the bridge between lattice physics and elliptic curve theory.
 
-**Eisenstein-Watson identity (2D ↔ 3D bridge).** [THEOREM, verified at 50 digits] The 2D Eisenstein series of weight 4 at the Gaussian-lattice point τ = i and Watson's 3D BCC integral satisfy
+**Eisenstein-Watson identity (2D  3D bridge).** [THEOREM, verified at 50 digits] The 2D Eisenstein series of weight 4 at the Gaussian-lattice point τ = i and Watson's 3D BCC integral satisfy
 
 $$E_4(i) \;=\; \tfrac{3}{4}\,W_3^2 \;=\; \tfrac{3}{16}\cdot\tfrac{G^{*4}}{\pi^2} \;=\; \tfrac{3}{64}\cdot\tfrac{\Gamma(1/4)^8}{\pi^6}$$
 
@@ -342,7 +342,7 @@ Applied to a = 1/4 and a = 3/4 and subtracted, the `√(2π)` factors cancel:
 
 $$\log G^* \;=\; \zeta'(0,\, 1/4) \,-\, \zeta'(0,\, 3/4)$$
 
-This is the **Stirling-complement form** of G*: the antisymmetric pair `(1/4, 3/4)` kills every Bernoulli term in the Stirling expansion (those terms are *symmetric* in `z ↔ 1−z`), leaving only the L-derivative residual.
+This is the **Stirling-complement form** of G*: the antisymmetric pair `(1/4, 3/4)` kills every Bernoulli term in the Stirling expansion (those terms are *symmetric* in `z  1−z`), leaving only the L-derivative residual.
 
 **Derivation.** Repackage as a Dirichlet L-derivative. The character `χ_{−4}` (non-trivial mod 4, the same character that classifies Q(i) inside Q(ζ₄), per Derivation 7) gives
 

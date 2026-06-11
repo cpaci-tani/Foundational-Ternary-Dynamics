@@ -148,14 +148,14 @@ A more rigorous test (5σ threshold over the L=32 LARGE bootstrap, 20,000 snapsh
 
 | direction | entries | > 5σ | strength |
 |---|---:|---:|---|
-| SPATIAL ↔ SPATIAL | 20 | **10** | strong within-sector mixing |
+| SPATIAL  SPATIAL | 20 | **10** | strong within-sector mixing |
 | REACTION-FLUX → SPATIAL | 10 | **0** | DECOUPLED |
 | SPATIAL → REACTION-FLUX | 10 | **0** | DECOUPLED |
 | DENSITY (stateSq, reactionDensity) → SPATIAL | 10 | 2 | weak partial coupling |
 | SPATIAL → DENSITY | 10 | 2 | weak partial coupling |
-| DENSITY ↔ REACTION-FLUX | 8 | 0–1 | mostly DECOUPLED |
-| REACTION-FLUX ↔ REACTION-FLUX | 2 | 0 | sigma-dominated |
-| DENSITY ↔ DENSITY | 2 | 0 | sigma-dominated |
+| DENSITY  REACTION-FLUX | 8 | 0–1 | mostly DECOUPLED |
+| REACTION-FLUX  REACTION-FLUX | 2 | 0 | sigma-dominated |
+| DENSITY  DENSITY | 2 | 0 | sigma-dominated |
 
 **Headline structural finding (5σ at 20k snapshots):**
 
