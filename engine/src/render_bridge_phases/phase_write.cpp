@@ -275,8 +275,9 @@ void phase_write_main_loop(RenderBridge& rb) {
 
     if (dual) {
       // Genesis (dual): chirality density for polarity.
-      if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
-        double excess = v.density() - K_GENESIS;
+      if (do_genesis && v.state == 0 && v.flux.mag2() > K_GENESIS * K_GENESIS) {
+        double dens = std::sqrt(v.flux.mag2());
+        double excess = dens - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_MANIFEST);
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
@@ -286,14 +287,15 @@ void phase_write_main_loop(RenderBridge& rb) {
       }
     } else {
       // Genesis (single): divergence for polarity.
-      if (do_genesis && v.state == 0 && v.density() > K_GENESIS) {
-        double excess = v.density() - K_GENESIS;
+      if (do_genesis && v.state == 0 && v.flux.mag2() > K_GENESIS * K_GENESIS) {
+        double dens = std::sqrt(v.flux.mag2());
+        double excess = dens - K_GENESIS;
         double p = 1.0 - std::exp(-excess / K_MANIFEST);
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
           // Latent Heat of Manifestation: consume wave energy.
           v.wave_vel *= (1.0 - K_GENESIS_KINETIC_DRAIN);
-          double jmag = v.flux.mag();
+          double jmag = dens;
           if (jmag > K_GENESIS_FLUX_EPSILON)
             v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag);
 
@@ -305,13 +307,13 @@ void phase_write_main_loop(RenderBridge& rb) {
     }
 
     // Evaporation (shared single + dual): low TOTAL wave energy → return to void.
-    double local_energy = v.flux.mag2() + v.wave_vel.mag2();
-    {
-      const auto& nbrs = rb.lattice_.neighbors_6(i);
-      for (int n : nbrs)
-        local_energy += rb.voxels_[n].flux.mag2() + rb.voxels_[n].wave_vel.mag2();
-    }
     if ((do_genesis || do_evaporation) && v.state != 0 && !v.locked) {
+      double local_energy = v.flux.mag2() + v.wave_vel.mag2();
+      {
+        const auto& nbrs = rb.lattice_.neighbors_6(i);
+        for (int n : nbrs)
+          local_energy += rb.voxels_[n].flux.mag2() + rb.voxels_[n].wave_vel.mag2();
+      }
       double evap_prob = std::exp(-local_energy / (K_MANIFEST * K_MANIFEST));
       if (voxel_uniform(gseed, i, rb.tick_,
                         static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE) {
@@ -321,6 +323,7 @@ void phase_write_main_loop(RenderBridge& rb) {
         v.color = 0;
       }
     }
+
   }
 }
 
