@@ -207,6 +207,31 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     harness.injectFlux(mc, mc, mc, 20.0 * K_GENESIS, 0, 0);
                     break;
                 }
+                case 's0-seed-cluster-law': {
+                    // FTD-0269: genesis-burst N(A) cluster-size law (interactive).
+                    // A=10 default; the dashboard fire panel re-injects at a
+                    // user-chosen A to sweep the broken-power law N(A).
+                    // Toggles set by scenario-registry.js at load.
+                    harness.injectFlux(mc, mc, mc, 10.0 * K_GENESIS, 0, 0);
+                    break;
+                }
+                case 's0-seed-cluster-law-subknee': {
+                    // FTD-0269 answer-key: sub-knee (A=12, T=0). Compact
+                    // 27-block cascade. Toggles set by registry at load.
+                    harness.injectFlux(mc, mc, mc, 12.0 * K_GENESIS, 0, 0);
+                    break;
+                }
+                case 's0-seed-cluster-law-knee': {
+                    // FTD-0269 answer-key: the knee (A=16, T=0) — 27-block escape.
+                    harness.injectFlux(mc, mc, mc, 16.0 * K_GENESIS, 0, 0);
+                    break;
+                }
+                case 's0-seed-cluster-law-superknee': {
+                    // FTD-0269 answer-key: super-knee (A=40, T=0) — bulk volume,
+                    // N = k_eff*A^2.
+                    harness.injectFlux(mc, mc, mc, 40.0 * K_GENESIS, 0, 0);
+                    break;
+                }
                 case 's0-seed-emergent-ic1-diagonal-viz': {
                     const A_dv = 20.0 * K_GENESIS / Math.sqrt(3);
                     harness.injectFlux(mc, mc, mc, A_dv, A_dv, A_dv);
