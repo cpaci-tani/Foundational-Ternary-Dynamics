@@ -394,9 +394,9 @@ A discrete computational framework for simulating physical systems from explicit
 - 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py`
 - Complete Standard Model computation: `scripts/proofs/proof_complete_sm.py`
 
-**Honest accounting:** ~50 predictions tested (20 structural theorems, 20 G*-derived, 10 novel cube predictions), ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. Manuscript v2: 83 chapters (26 new + 57 editorial pass). April 11 audit: 267/267 Python tests pass, 54/54 master verification pass, 3 META_INDEX overclaims fixed. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
+**Honest accounting:** ~23 derived/theorem-grade claims, ~129 parametric insertions (FTD values in standard QFT formulas), ~10 imposed/selected, ~50+ external physics adopted. 50 physics tests pass across three tiers. June 10, 2026 checkpoint: 255/255 Python tests pass, 54/54 master verification pass, 211/211 CTest pass. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md).
 
-**Engine-theory bridge (April 13, 2026):** 20-benchmark suite connects engine output to theory. Coulomb 1/r^2 converges (B+), hydrogen 1/n^2 < 0.001% (A+), color forces correct (A+), Higgs threshold exact (A+), Bell S=2.000 (A+), Born lattice bias 10x (A-). EFT reconstruction: alpha = G_C^2 (derived, not input). Added Wilson loops (12/17, flux tube detected), gluon dynamics (7/11, linear E(r)), budget equation (0.2% at r=6). LATENCY FIX unlocked GR: time dilation 0.004% match, BH gravitational wells L_peak=0.62. Three theorem papers: continuum limit -> QED, singlet from void event, N_c from topology. WASM rebuilt and deployed. 148/166 CTest passing. Scientific status: C+ -> B+.
+**Engine-theory bridge (April 13, 2026):** 20-benchmark suite connects engine output to theory. Coulomb 1/r^2 converges (B+), hydrogen 1/n^2 < 0.001% (A+), color forces correct (A+), Higgs threshold exact (A+), Bell S=2.000 (A+), Born lattice bias 10x (A-). EFT reconstruction: alpha = G_C^2 (derived, not input). Added Wilson loops (12/17, flux tube detected), gluon dynamics (7/11, linear E(r)), budget equation (0.2% at r=6). LATENCY FIX unlocked GR: time dilation 0.004% match, BH gravitational wells L_peak=0.62. Three theorem papers: continuum limit -> QED, singlet from void event, N_c from topology. WASM rebuilt and deployed. 211/211 CTest passing (June 2026). Scientific status: C+ -> B+.
 
 ---
 
@@ -406,47 +406,47 @@ A discrete computational framework for simulating physical systems from explicit
 ftd/                                     # Project root
 ├── docs/
 │   ├── SPEC_FTD.md              # Framework overview (defers to the canonical hierarchy in META_STRUCTURE.md)
-│   ├── theory/                   # ~298 active theory documents (10 categories, each with a local INDEX_ file) + local archive subdirs
-│   │   ├── META_INDEX.md         # Complete catalog
-│   │   ├── 01_reference/         # Master references and proofs
-│   │   ├── 02_foundations/       # Ontological emergence
-│   │   ├── 03_derivations/       # Core physics derivations
-│   │   ├── 04_coupling/          # Coupling constants
-│   │   ├── 05_particles/         # Particle physics
-│   │   ├── 06_reference_frames_and_measurement/ # Frame-relative-projection layer + measurement (formerly framed as "reference frame context"; directory name preserved for backward compatibility, see REF_REFERENCE_FRAME_VOCABULARY.md)
-│   │   ├── 07_assessment/        # Epistemic audits
-│   │   ├── 08_structural/        # Geometry and information theory
-│   │   ├── 09_mathematical/      # Number theory and connections
-│   │   └── archive/              # Superseded/historical documents
+│   ├── theory/                   # 586 theory documents across 10 categories + 118 archived
+│   │   ├── META_INDEX.md         # Curated catalog
+│   │   ├── 01_reference/         # Master references, algebraic spine, construction monograph
+│   │   ├── 02_foundations/       # Ontological emergence, lattice physics
+│   │   ├── 03_derivations/       # Core physics derivations (QM, EM, gravity, SM sectors)
+│   │   ├── 04_coupling/          # Coupling constants and precision
+│   │   ├── 05_particles/         # Particle physics applications
+│   │   ├── 06_reference_frames_and_measurement/ # Frame-relative-projection layer + measurement
+│   │   ├── 07_assessment/        # Epistemic audits, ledgers, campaigns
+│   │   ├── 08_structural/        # Moore theorem, geometry, BCC structure
+│   │   ├── 09_mathematical/      # Number theory, CM curves, L-values
+│   │   ├── 10_eft_program/       # Native EFT recovery program + pre-registrations
+│   │   └── archive/              # 118 archived documents (provenance preserved)
 │   ├── reference/                # REF_EPISTEMIC_LABELS, REF_SYMBOL_GLOSSARY, etc.
-│   ├── papers/                   # Published/submitted PDFs and TeX sources
-│   └── internal/                 # Session summaries, exploration scripts
-├── engine/                       # C++ simulation engine (v2.14)
+│   ├── papers/                   # 66 LaTeX source files + compiled PDFs
+│   └── internal/                 # Session summaries, exploration scripts (gitignored)
+├── engine/                       # C++ simulation engine (v2.18.0)
 │   ├── SPEC_ENGINE.md            # Engine reference document
-│   ├── include/ftd/              # 29 headers (ontic.h, voxel.h, lattice.h, scenarios.h, etc.)
-│   ├── src/                      # 14 source files
-│   ├── tests/                    # 169+ test files (120 unit + 49 campaign + 4 GPU)
-│   ├── cuda/                     # GPU acceleration
+│   ├── include/ftd/              # 59 headers (ontic.h, voxel.h, lattice.h, scenarios.h, etc.)
+│   ├── src/                      # 22 source files
+│   ├── tests/                    # 298 test source files (211 active CTest targets)
+│   ├── cuda/                     # GPU acceleration (WSL2 + RTX 5090)
 │   ├── wasm/                     # Emscripten bindings
-│   └── web/                      # Browser dashboard (Three.js, modular JS)
-├── scripts/                      # ALL Python scripts (~149 scripts)
+│   └── web/                      # Browser dashboard (Three.js, 868 JS files, 5 CSS themes)
+├── scripts/                      # 520 Python scripts (139K LOC)
 │   ├── constants.py              # Canonical shared constants (single source of truth)
-│   ├── verification/             # Formal derivation verification (40 scripts)
-│   ├── proofs/                   # Formal mathematical proofs with error bounds (57 scripts)
-│   ├── experiments/              # Bell tests, CERN analysis, physics sims (17 scripts)
-│   ├── exploration/              # Focused research investigations (25+ scripts)
-│   ├── tests/                    # Python test suites — pytest (11 scripts)
+│   ├── verification/             # Formal derivation verification (61 scripts)
+│   ├── proofs/                   # Formal mathematical proofs with error bounds (143 scripts)
+│   ├── experiments/              # Bell tests, CERN analysis, physics sims (19 scripts)
+│   ├── exploration/              # Focused research investigations (195+ scripts)
+│   ├── tests/                    # Python test suites — pytest (14 scripts)
 │   │   └── comprehensive/        # 7-tier verification framework
-│   ├── visualization/            # Publication figure generation (11 scripts)
-│   └── runners/                  # Test protocol runners (2 scripts)
+│   ├── visualization/            # Publication figure generation (23 scripts)
+│   ├── benchmarks/               # Engine vs theory benchmarks (6 scripts)
+│   └── runners/                  # Test protocol runners (3 scripts)
 ├── evaluation/                   # Multi-domain assessment & certification
 ├── dissemination/                # All publication/outreach content
-│   ├── manuscript/               # 96-chapter Quarto book (src/ + media/images/)
-│   ├── manuscript_v2/            # 83-chapter physicist-targeted rewrite
 │   ├── whitepaper/               # LaTeX whitepaper + figures
-│   ├── book/                     # "The Golden Thread" narrative (53 .qmd files)
-│   ├── notebooks/                # 12 Jupyter pedagogy notebooks
-│   └── interactive/              # 8+ standalone HTML simulations (forces, photon, Hamiltonian bridge, ternary cube)
+│   ├── papers/                   # Additional compiled LaTeX papers
+│   ├── interactive/              # 31 standalone HTML simulations
+│   └── notebooks/                # Jupyter pedagogy notebooks
 ├── models/                       # Physics derivation package (gitignored)
 ├── archive/                      # Curated historical record (gitignored; see docs/theory/archive/ for archived theory docs)
 ├── META_DOCUMENTATION_MAP.md     # Master catalog / card catalog
@@ -457,8 +457,8 @@ ftd/                                     # Project root
 
 ## C++ Engine
 
-**Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release --parallel 24` (Maximize CPU threads on the AMD 9950X3D)
-**Test**: `cd engine/build && ctest -j 24 --output-on-failure -C Release` (Always use parallel execution to avoid sequential runs taking forever)
+**Build**: `cmake -S engine -B engine/build && cmake --build engine/build --config Release --parallel 32` (Maximize CPU threads on the AMD 9950X3D)
+**Test**: `cd engine/build && ctest -j 32 --output-on-failure -C Release` (Always use parallel execution to avoid sequential runs taking forever)
 **WASM**: `engine\build_wasm.bat` (Windows wrapper; runs emcmake/emmake + deploys to `engine/web/wasm/`). Manual: `emcmake cmake -S engine -B engine/build_wasm -DCMAKE_BUILD_TYPE=Release && emmake cmake --build engine/build_wasm --target ftd_wasm`
 **Web UI**: `python engine/web/serve.py 8080` (no-cache dev server — emits `Cache-Control: no-store` on every response so JS edits hit the browser without manual hard-refresh). Plain fallback: `python -m http.server 8080 -d engine/web` (caches aggressively; expect to bounce + hard-refresh after edits).
 
@@ -477,7 +477,7 @@ ftd/                                     # Project root
 
 Logic-first: only 6 rules derived from axioms. All phenomenological features are toggle-gated extensions (default OFF).
 
-**Tick cycle:** phase_read → phase_write → gauss_project → phase_forces → phase_movement → tick++
+**Tick cycle (10 phases):** phase_read → phase_write → pair_production → gauss_project → latency_solve → phase_forces → phase_movement → boundary → weak/triad → proper_time
 
 ---
 
@@ -543,7 +543,6 @@ Logic-first: only 6 rules derived from axioms. All phenomenological features are
 - **Master Verification** (April 2026): `scripts/proofs/proof_master_verification.py` (54/54 checks)
 - **BCC Unification** (April 2026): `docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`
 - **Observer Formalism** (April 2026): `docs/theory/02_foundations/FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md` (Part II: 3³ lattice grounding)
-- **Manuscript v2**: `dissemination/manuscript_v2/CHECKLIST.md` (83 chapters, physicist-targeted)
 - **Engine-Theory Bridge** (April 13, 2026): `engine/tests/benchmark_engine_theory.cpp` (20 benchmarks)
 - **Emergent Alpha** (April 13, 2026): `engine/tests/benchmark_emergent_alpha.cpp` (6 EFT experiments)
 - **Benchmark Harness**: `scripts/benchmarks/benchmark_engine_vs_theory.py` (Python analysis)
@@ -573,7 +572,7 @@ Alpha is now a DERIVED quantity in the engine:
 - G_C (wave equation coupling) is the fundamental lattice parameter
 - All force computations use `ALPHA_EFT` (= G_C²), not hardcoded `ALPHA`
 - New toggle `emergent_forces` computes force from flux gradient without Poisson solver
-- 20-benchmark suite validates: Coulomb convergence (B+), hydrogen spectrum (A+), color forces (A+), Higgs threshold (A+), Bell S=2 (A+), Born lattice bias (A-), 139/179 CTest passing
+- 20-benchmark suite validates: Coulomb convergence (B+), hydrogen spectrum (A+), color forces (A+), Higgs threshold (A+), Bell S=2 (A+), Born lattice bias (A-); 211/211 CTest passing (June 2026)
 
 ---
 
