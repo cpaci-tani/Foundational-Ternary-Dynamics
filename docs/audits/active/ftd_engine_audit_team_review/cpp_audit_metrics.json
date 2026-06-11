@@ -2,13 +2,13 @@
   "build": {
     "success": true,
     "code": 0,
-    "duration_sec": 2.922,
+    "duration_sec": 2.964,
     "log_file": "architecture/cpp_build.log"
   },
   "tests": {
     "success": false,
     "code": 8,
-    "duration_sec": 3747.391,
+    "duration_sec": 858.488,
     "log_file": "performance/ctests.log"
   }
 }

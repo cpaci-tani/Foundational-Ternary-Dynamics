@@ -1202,8 +1202,8 @@ function wireViewportToggles() {
             // Transient visual pulse so the user sees the preset was applied,
             // without leaving any button stuck in an active state (these
             // are momentary actions, not persistent toggles).
-            btn.classList.add('vcp-preset-flash');
-            setTimeout(() => btn.classList.remove('vcp-preset-flash'), 260);
+            btn.classList.add('status-preset-flash');
+            setTimeout(() => btn.classList.remove('status-preset-flash'), 260);
         });
     }
 
@@ -1382,7 +1382,6 @@ function wireKeyboard() {
     const DEFAULT_SETTINGS = Object.freeze({
         scale: 1.0,
         theme: 'default',
-        motion: 'system',
         density: 'comfortable',
         panelWidth: 'standard',
         tooltips: 'on',
@@ -1392,7 +1391,6 @@ function wireKeyboard() {
     const STORAGE_KEYS = Object.freeze({
         scale: 'ftd-ui-scale',
         theme: 'ftd-theme',
-        motion: 'ftd-motion',
         density: 'ftd-density',
         panelWidth: 'ftd-panel-width',
         tooltips: 'ftd-tooltips',
@@ -1445,15 +1443,7 @@ function wireKeyboard() {
         persist(STORAGE_KEYS.theme, name);
     }
 
-    function applyMotion(mode) {
-        if (mode === 'system') {
-            root.removeAttribute('data-motion');
-        } else {
-            root.dataset.motion = mode;
-        }
-        setChoiceGroup('motion', mode);
-        persist(STORAGE_KEYS.motion, mode);
-    }
+
 
     function applyDensity(mode) {
         root.dataset.density = mode;
@@ -1491,7 +1481,6 @@ function wireKeyboard() {
         const savedScale = localStorage.getItem(STORAGE_KEYS.scale);
         applyScale(savedScale ? parseFloat(savedScale) : DEFAULT_SETTINGS.scale);
         applyTheme(localStorage.getItem(STORAGE_KEYS.theme) || DEFAULT_SETTINGS.theme);
-        applyMotion(localStorage.getItem(STORAGE_KEYS.motion) || DEFAULT_SETTINGS.motion);
         applyDensity(localStorage.getItem(STORAGE_KEYS.density) || DEFAULT_SETTINGS.density);
         applyPanelWidth(localStorage.getItem(STORAGE_KEYS.panelWidth) || DEFAULT_SETTINGS.panelWidth);
         applyTooltipMode(localStorage.getItem(STORAGE_KEYS.tooltips) || DEFAULT_SETTINGS.tooltips);
@@ -1523,8 +1512,7 @@ function wireKeyboard() {
             const setting = button.dataset.setting;
             const value = button.dataset.value;
             if (!setting || !value) return;
-            if (setting === 'motion') applyMotion(value);
-            else if (setting === 'density') applyDensity(value);
+            if (setting === 'density') applyDensity(value);
             else if (setting === 'panel-width') applyPanelWidth(value);
             else if (setting === 'tooltips') applyTooltipMode(value);
             else if (setting === 'status-bar') applyStatusBar(value);
@@ -1536,7 +1524,6 @@ function wireKeyboard() {
         btnReset.addEventListener('click', () => {
             applyScale(DEFAULT_SETTINGS.scale);
             applyTheme(DEFAULT_SETTINGS.theme);
-            applyMotion(DEFAULT_SETTINGS.motion);
             applyDensity(DEFAULT_SETTINGS.density);
             applyPanelWidth(DEFAULT_SETTINGS.panelWidth);
             applyTooltipMode(DEFAULT_SETTINGS.tooltips);

@@ -81,6 +81,31 @@ static void inject_flux(ftd::RenderBridge& rb, int x, int y, int z,
 // so the WASM wrappers were dead code. Dropped during the W1-W3 extraction.
 // If a future binding needs to expose them to JS, add them here.
 
+static void inject_uniform_flux_add(ftd::RenderBridge& rb, double fx, double fy, double fz) {
+    const int L = rb.lattice().size();
+    ftd::Vec3 f(fx, fy, fz);
+    
+    // Hoist the voxels() accessor OUTSIDE the loop. Calling rb.voxels() 32,768 times 
+    // triggers 32,768 backend syncs and dirty-flag sets per frame, cratering performance.
+    auto& vox = rb.voxels();
+    bool dual = rb.toggles.dual_substrate;
+    ftd::Vec3 half = f * 0.5;
+    
+    for (int x = 0; x < L; ++x) {
+        for (int y = 0; y < L; ++y) {
+            for (int z = 0; z < L; ++z) {
+                int idx = rb.lattice().index(x, y, z);
+                auto& v = vox[idx];
+                v.flux = v.flux + f;
+                if (dual) {
+                    v.flux_L = v.flux_L + half;
+                    v.flux_R = v.flux_R + half;
+                }
+            }
+        }
+    }
+}
+
 static void create_entangled_pair(ftd::RenderBridge& rb, int x, int y, int z,
                                    double fx, double fy, double fz) {
     rb.create_entangled_pair(x, y, z, ftd::Vec3(fx, fy, fz));
@@ -278,6 +303,7 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("injectParticle",     &inject_particle_simple);
     function("injectWavepacket",   &inject_wavepacket_simple);
     function("injectFlux",         &inject_flux);
+    function("injectUniformFluxAdd", &inject_uniform_flux_add);
     function("createEntangledPair", &create_entangled_pair);
 
     // Time step control

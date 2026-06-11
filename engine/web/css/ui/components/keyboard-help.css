@@ -145,7 +145,4 @@
     text-align: center;
 }
 
-/* Respect reduced-motion — no entry animation. */
-body[data-reduced-motion="1"] .kbd-help-overlay {
-    backdrop-filter: none;
-}
+

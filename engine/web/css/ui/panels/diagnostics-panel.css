@@ -203,16 +203,11 @@ html[data-panel-mount="right"] .diag-table {
     font-size: var(--fs-sm);
 }
 
-html[data-panel-mount="left"] .diag-trend,
-html[data-panel-mount="right"] .diag-trend {
-    width: 80px;
-}
-
-/* Side-mount squeeze: tighten the value column so the narrower panel
- * keeps enough room for the metric label without truncation. */
-html[data-panel-mount="left"] .diag-value,
-html[data-panel-mount="right"] .diag-value {
-    width: 100px;
+html[data-panel-mount="left"] .diag-table thead th,
+html[data-panel-mount="right"] .diag-table thead th,
+html[data-panel-mount="left"] .diag-table tbody td,
+html[data-panel-mount="right"] .diag-table tbody td {
+    padding-inline: 7px;
 }
 
 .diag-section-title {
@@ -236,6 +231,15 @@ html[data-panel-mount="right"] .diag-value {
     font-feature-settings: "tnum";
 }
 
+.diag-table:not(.diag-table-static) .diag-col-metric { width: 29%; }
+.diag-table:not(.diag-table-static) .diag-col-value  { width: 18%; }
+.diag-table:not(.diag-table-static) .diag-col-unit   { width: 10%; }
+.diag-table:not(.diag-table-static) .diag-col-stat   { width: 14.333%; }
+
+.diag-table-static .diag-col-metric { width: 45%; }
+.diag-table-static .diag-col-value  { width: 37%; }
+.diag-table-static .diag-col-unit   { width: 18%; }
+
 .diag-table thead th {
     text-align: left;
     font-size: var(--fs-sm);
@@ -249,29 +253,47 @@ html[data-panel-mount="right"] .diag-value {
 
 .diag-table tbody td {
     padding: 8px 10px;
-    border-bottom: 1px solid var(--border);
     vertical-align: middle;
 }
 
-.diag-table tbody tr:nth-child(odd) td {
+.diag-table tbody tr.diag-band-odd td {
     background: color-mix(in oklch, var(--bg-surface) 96%, var(--text-primary) 4%);
+}
+
+.diag-data-row:not(.diag-has-trend) td,
+.diag-trend-row td {
+    border-bottom: 1px solid var(--border);
+}
+
+.diag-data-row.diag-has-trend td {
+    padding-bottom: 2px;
+    border-bottom: 0;
+}
+
+.diag-trend-row td {
+    padding-top: 0;
+    padding-bottom: 9px;
 }
 
 .diag-metric { color: var(--text-secondary); }
 
-.diag-value {
-    /* Fixed width + left alignment keeps values flush-left so magnitude
-     * changes (e.g. 0 → 4173.09) don't shift neighbouring columns. Chosen
-     * to fit triple-format reads like "53 / 47 / 52" and "0, 0, 0" while
-     * staying compact. Side-mount override narrows this further below. */
-    width: 130px;
+.diag-value,
+.diag-stat {
     text-align: left;
     font-family: var(--font-mono);
-    color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.diag-value {
+    color: var(--text-primary);
     transition: color var(--dur-base, 180ms) var(--ease-out, ease);
+}
+
+.diag-stat {
+    font-size: var(--fs-sm);
+    color: color-mix(in oklch, var(--text-secondary) 76%, var(--text-muted));
 }
 
 .diag-row-positive .diag-value { color: var(--success, #4ade80); }
@@ -282,13 +304,8 @@ html[data-panel-mount="right"] .diag-value {
     text-transform: lowercase;
     letter-spacing: 0.04em;
     color: var(--text-muted);
-    width: 48px;
 }
 
-.diag-trend {
-    width: 110px;
-    padding-right: 4px;
-}
 .diag-spark-host {
     width: 100%;
     height: 26px;

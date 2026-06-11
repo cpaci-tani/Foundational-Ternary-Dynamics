@@ -261,8 +261,25 @@ export class WasmBridge {
     }
 
     injectFlux(x, y, z, fx, fy, fz) {
-        if (this._module && this._bridge)
+        if (!this._bridge) return;
+        try {
             this._module.injectFlux(this._bridge, x, y, z, fx, fy, fz);
+        } catch (e) {
+            console.error('WASM injectFlux failed:', e);
+        }
+    }
+
+    injectUniformFluxAdd(fx, fy, fz) {
+        if (!this._bridge) return;
+        try {
+            if (typeof this._module.injectUniformFluxAdd === 'function') {
+                this._module.injectUniformFluxAdd(this._bridge, fx, fy, fz);
+            } else {
+                console.warn('WASM injectUniformFluxAdd not found. Did you rebuild?');
+            }
+        } catch (e) {
+            console.error('WASM injectUniformFluxAdd failed:', e);
+        }
     }
 
     createEntangledPair(x, y, z, fx, fy, fz) {
@@ -307,8 +324,11 @@ export class WasmBridge {
             if (g > 0.7) state = 1;
             else if (r > 0.8) state = -1;
 
-            const voxel = this.inspectVoxel(x, y, z);
-            const isLocked = voxel ? !!voxel.locked : false;
+            // ARC-PERF (2026-06-10): Calling `this.inspectVoxel` inside this loop
+            // for 35,000 particles caused 35,000 C++ embind calls per frame,
+            // tanking the browser to single digits. We assume locked=false here 
+            // since true particle tracking happens at Scale 1.
+            const isLocked = false;
 
             list.push({
                 id: i,

@@ -43,6 +43,7 @@ export class MolecularRenderer {
         this._hbondLines = null;
         this._elementLabels = null;
         this._labelPool = null;
+        this._canvasPool = [];
         // Optional function (Z) -> neutron count. External callers may
         // assign through `viewport._molRenderer._defaultNeutronCount`; if
         // left null the `updateNucleusShells` pathway falls back to the
@@ -660,10 +661,16 @@ export class MolecularRenderer {
     // is a canvas-textured sprite positioned at the atom center.
 
     _makeTextSprite(text, color = '#ffffff', fontSize = 48) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 128;
-        canvas.height = 64;
+        let canvas;
+        if (this._canvasPool && this._canvasPool.length > 0) {
+            canvas = this._canvasPool.pop();
+        } else {
+            canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 64;
+        }
         const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 128, 64);
         ctx.font = `bold ${fontSize}px 'Inter', 'Segoe UI', sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -711,6 +718,7 @@ export class MolecularRenderer {
                 sprite = pool[i];
                 // Update texture if symbol changed
                 if (sprite._symbol !== lb.symbol) {
+                    if (this._canvasPool && sprite.material.map.image) this._canvasPool.push(sprite.material.map.image);
                     sprite.material.map.dispose();
                     sprite.material.dispose();
                     const newSprite = this._makeTextSprite(lb.symbol, lb.color || '#ffffff');
@@ -739,6 +747,7 @@ export class MolecularRenderer {
     clearElementLabels() {
         if (!this._elementLabels) return;
         for (const sprite of this._labelPool) {
+            if (this._canvasPool && sprite.material.map.image) this._canvasPool.push(sprite.material.map.image);
             sprite.material.map.dispose();
             sprite.material.dispose();
         }

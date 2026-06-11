@@ -65,7 +65,7 @@ void phase_forces_main_loop(RenderBridge& rb) {
   const int L = rb.lattice_.size();
   const auto& active = rb.ordered_active_indices();
 
-#pragma omp parallel for schedule(static)
+#pragma omp parallel for schedule(dynamic, 64)
   for (int ai = 0; ai < static_cast<int>(active.size()); ++ai) {
     const int i = active[ai];
     auto &v = rb.voxels_[i];

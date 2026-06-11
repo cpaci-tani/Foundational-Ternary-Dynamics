@@ -205,12 +205,30 @@ static std::uint64_t compute_state_hash(const RenderBridge& rb) {
 //     sizes are now odd so phenomena/flux center on a true center voxel). This
 //     is NOT a phase-extraction regression; the lattice changed 16→17, so the
 //     byte-hash necessarily changed (different voxel count + center).
+//   - 2026-06-10: re-pinned to 0xebaa6f314f66db3f (origin/main baseline).
+//   - 2026-06-11: RE-PINNED to 0x56fa28acb5b9fe88 — DETERMINISM RESTORATION,
+//     not a physics change. The 0xebaa6f value was captured while the engine was
+//     non-deterministic run-to-run: three multi-thread races floated the hash —
+//     (1) OpenMP float `reduction(+)` on the Poisson phi-sum / field-energy
+//     loops (gauge-irrelevant to grad φ, but leaked into absolute-φ audit
+//     scalars such as coulomb_pe); (2) a genesis/evaporation read-write race
+//     (evaporation read neighbour flux live while genesis wrote a firing voxel's
+//     flux); (3) the 8-colour SOR sweep racing at the PERIODIC seam on the ODD
+//     L=17 lattice (wrap maps Nm1→0, both even ⇒ same colour ⇒ two boundary
+//     cells become racing stencil-neighbours). All three are now fixed in
+//     poisson_solvers.cpp + phase_write.cpp so the parallel CPU path is bit-
+//     exact to a fully-sequential lexicographic sweep. 0x56fa28acb5b9fe88 is
+//     that canonical sequential value (single-thread produced it throughout);
+//     it is now reproduced identically by OMP_NUM_THREADS=1 and the full thread
+//     pool. The per-voxel state/flux field is unchanged where it was already
+//     deterministic; the race-affected boundary φ and audit scalars now take
+//     their well-defined sequential values.
 //
 // If this changes WITHOUT a stated config/physics rationale, ENGINE PHYSICS
 // CHANGED unexpectedly. To change it intentionally: (1) state the rationale in
 // the commit, (2) update the constant below to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH = 0xebaa6f314f66db3fULL;  // L=17 (aligned to origin/main baseline, 2026-06-10)
+static constexpr std::uint64_t GOLDEN_HASH = 0x56fa28acb5b9fe88ULL;  // L=17, deterministic (races fixed 2026-06-11)
 
 // ---------------------------------------------------------------------------
 // Test driver

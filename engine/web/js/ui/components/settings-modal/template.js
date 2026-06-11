@@ -76,18 +76,10 @@ export function getSettingsModalTemplate() {
                 <div class="settings-section">
                     <div class="settings-label-row">
                         <label class="settings-label">Experience</label>
-                        <p class="settings-copy">Tune motion, helper surfaces, and what chrome stays visible.</p>
+                        <p class="settings-copy">Tune helper surfaces and what chrome stays visible.</p>
                     </div>
 
-                    <div class="settings-subsection">
-                        <label class="settings-label">Motion</label>
-                        <div class="settings-choice-grid">
-                            <button class="settings-choice active" type="button" data-setting="motion" data-value="system">System</button>
-                            <button class="settings-choice" type="button" data-setting="motion" data-value="full">Full</button>
-                            <button class="settings-choice" type="button" data-setting="motion" data-value="reduced">Reduced</button>
-                        </div>
-                        <p class="settings-help">Use your system preference, keep all motion, or reduce animation and transitions.</p>
-                    </div>
+
 
                     <div class="settings-subsection">
                         <label class="settings-label">Tooltips</label>

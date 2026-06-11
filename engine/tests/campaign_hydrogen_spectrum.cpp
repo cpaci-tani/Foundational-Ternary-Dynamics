@@ -1065,6 +1065,7 @@ static void section_hydrogen_spectrum_legacy() {
     // With q_proton = +1, q_electron = -1, both mass K_B
 
     ftd::ParticleEngine pe;
+    pe.set_dt(100.0);  // CRITICAL: speed up evolution to avoid hanging
     pe.set_damping_enabled(false);  // CRITICAL: damping drains orbital energy
 
     // Predicted Bohr radius in ParticleEngine units
@@ -1120,6 +1121,9 @@ static void section_hydrogen_spectrum_legacy() {
 
         // Sample every 1% of total
         if (step % (total_steps / 100 + 1) == 0 || step == 0) {
+            if (step > 0 && step % (total_steps / 10 + 1) == 0) {
+                std::cout << "  Progress: " << (step * 100 / total_steps) << "%\n";
+            }
             auto& parts = pe.particles();
             if (parts.size() < 2) break;
 

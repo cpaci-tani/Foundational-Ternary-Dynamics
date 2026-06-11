@@ -171,5 +171,9 @@ int main(int argc, char** argv) {
     std::cout << "================================================================\n";
     std::cout << "  DONE (exploratory; analyze with scripts/exploration/explore_cluster_relaxation.py)\n";
     std::cout << "================================================================\n";
+
+    if (outdir == ".") {
+        std::remove("relaxation_summary.csv");
+    }
     return 0;
 }
