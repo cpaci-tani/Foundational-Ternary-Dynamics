@@ -171,6 +171,8 @@ dissemination/                papers, whitepaper, book/manuscript, notebooks
 
 Important note: [docs/SPEC_FTD.md](docs/SPEC_FTD.md) is a readable framework specification, but its body contains historical tag drift. For claim status, use [LEDGER.md](docs/theory/07_assessment/core_ledgers/LEDGER.md) and [TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md).
 
+Reproducibility and data policy: the repository tracks source, theory, proofs, and verification scripts — not regenerable run outputs. Engine campaign and exploration data (CSV/JSON dumps under `engine/results/` and `scripts/exploration/results/`) are local-only; each pre-registered measurement is instead reproducible from its git tag plus the frozen runner/analysis script SHA recorded in [REF_PREREGISTER_MANIFEST.md](docs/theory/10_eft_program/REF_PREREGISTER_MANIFEST.md).
+
 ---
 
 ## Complete Corpus At A Glance
@@ -179,7 +181,7 @@ Important note: [docs/SPEC_FTD.md](docs/SPEC_FTD.md) is a readable framework spe
 |-----------|-------|--------|
 | **Theory documents** | 586 files (11.8 MB) | 10 categories + archives |
 | **Archived provenance** | 118 documents | Retractions, closed-negatives, campaign-completes |
-| **Ledger entries** | 254 unique IDs | FTD-0001 through FTD-0267, never-delete policy |
+| **Ledger entries** | 256 unique IDs | FTD-0001 through FTD-0269, never-delete policy |
 | **C++ engine** | 59 headers, 22 sources | v2.18.0, 27K LOC, 10-phase tick cycle |
 | **Engine tests** | 298 source files | 211 active CTest targets, all passing |
 | **Python scripts** | 520 files | 139K LOC across 9 subdirectories |
