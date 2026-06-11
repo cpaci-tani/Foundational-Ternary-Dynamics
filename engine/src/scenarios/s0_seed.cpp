@@ -229,6 +229,61 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.dual_substrate   = false;
         IF(rb, mc, mc, mc, 20.0 * K_GENESIS, 0, 0);
     }
+    else if (name == "s0-seed-cluster-law") {
+        // FTD-0269: the genesis-burst N(A) cluster-size law (interactive).
+        // Canonical ic1 stack + A=10 point injection (the campaign baseline).
+        // The dashboard fire panel re-injects at a user-chosen A to sweep the
+        // broken-power law N(A): a geometry-limited cascade inside the 27-block
+        // below the knee (A~16), an energy budget N = k_eff*A^2 above it.
+        // See docs/theory/.../ANALYSIS_FTD0110_NA_LAW.md (verdict BOUNDARY).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.005;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        IF(rb, mc, mc, mc, 10.0 * K_GENESIS, 0, 0);
+    }
+    else if (name == "s0-seed-cluster-law-subknee") {
+        // FTD-0269 answer-key: sub-knee regime (A=12). Compact 27-block
+        // cascade; GPU campaign cluster ~ 8 voxels (FTD-0261). T=0 for a clean
+        // deterministic view (no thermal background).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.0;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        IF(rb, mc, mc, mc, 12.0 * K_GENESIS, 0, 0);
+    }
+    else if (name == "s0-seed-cluster-law-knee") {
+        // FTD-0269 answer-key: the knee (A=16) — the 27-block escape where the
+        // geometry-limited cascade hands off to the energy budget. GPU campaign
+        // cluster ~ 21 voxels (FTD-0261). T=0.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.0;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        IF(rb, mc, mc, mc, 16.0 * K_GENESIS, 0, 0);
+    }
+    else if (name == "s0-seed-cluster-law-superknee") {
+        // FTD-0269 answer-key: super-knee regime (A=40) — bulk-lattice volume
+        // expansion, N = k_eff*A^2. GPU campaign cluster ~ 92 voxels (FTD-0261).
+        // T=0.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.0;
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+        IF(rb, mc, mc, mc, 40.0 * K_GENESIS, 0, 0);
+    }
     else if (name == "s0-seed-emergent-ic1-diagonal-viz") {
         // Clean body-diagonal cluster (D3g shape comparison).
         rb.toggles.wave_propagation = true;
