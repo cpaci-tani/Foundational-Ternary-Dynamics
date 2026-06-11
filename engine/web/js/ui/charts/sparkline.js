@@ -2,7 +2,7 @@
  * Sparkline — micro uPlot for table Trend cells and chart-chip previews.
  * No axes, no legend, no cursor, no title. ~24px tall by default.
  *
- *   new Sparkline(container, { buffer, color, height? });
+ *   new Sparkline(container, { buffer, color, height?, visibleSamples? });
  *   spark.update();
  *   spark.destroy();
  */
@@ -15,9 +15,10 @@ export class Sparkline {
         this.buffer    = opts.buffer;
         this.color     = resolveChartColor(opts.color || 'var(--accent, #6366f1)');
         this.height    = opts.height || 24;
+        this.visibleSamples = Math.max(2, opts.visibleSamples || this.buffer?.size || 80);
         this._destroyed = false;
 
-        const size = this.buffer?.size || 80;
+        const size = Math.min(this.buffer?.size || 80, this.visibleSamples);
         this.xs = new Float64Array(size);
         this.ys = new Float64Array(size);
 
@@ -48,14 +49,15 @@ export class Sparkline {
 
     update() {
         if (this._destroyed || !this.buffer) return;
-        const n = this.buffer.count;
+        const n = Math.min(this.buffer.count, this.visibleSamples);
         if (n < 2) {
             this.uplot.setData([new Float64Array(0), new Float64Array(0)], true);
             return;
         }
         const xs = this.xs.subarray(0, n);
         const ys = this.ys.subarray(0, n);
-        for (let i = 0; i < n; i++) { xs[i] = i; ys[i] = this.buffer.get(i); }
+        const start = this.buffer.count - n;
+        for (let i = 0; i < n; i++) { xs[i] = i; ys[i] = this.buffer.get(start + i); }
         this.uplot.setData([xs, ys], true);
     }
 

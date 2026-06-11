@@ -102,6 +102,13 @@ export class SpinArrowManager {
         //   lastPos, getSpinFn, lastUpdate
         // }
         this._tracked = new Map();
+
+        // Reusable objects for update loop to prevent GC thrashing
+        this._tempVec = new THREE.Vector3();
+        this._tempTarget = new THREE.Vector3();
+        this._tempQuat = new THREE.Quaternion();
+        this._axisLocal = new THREE.Vector3(0, 0, 1);
+        this._axialQ = new THREE.Quaternion();
     }
 
     /**
@@ -184,7 +191,8 @@ export class SpinArrowManager {
             if (t.getPosition) {
                 const p = t.getPosition();
                 if (p) {
-                    t.group.position.lerp(new THREE.Vector3(p.x, p.y, p.z), 0.3);
+                    this._tempVec.set(p.x, p.y, p.z);
+                    t.group.position.lerp(this._tempVec, 0.3);
                 }
             }
 
@@ -194,11 +202,9 @@ export class SpinArrowManager {
                 if (s && Number.isFinite(s.sx) && Number.isFinite(s.sy) && Number.isFinite(s.sz)) {
                     const len = Math.sqrt(s.sx * s.sx + s.sy * s.sy + s.sz * s.sz);
                     if (len > 1e-6) {
-                        // Build target quaternion that rotates +Z to (sx,sy,sz)
-                        const target = new THREE.Vector3(s.sx / len, s.sy / len, s.sz / len);
-                        const q = new THREE.Quaternion();
-                        q.setFromUnitVectors(new THREE.Vector3(0, 0, 1), target);
-                        t.targetQuat.copy(q);
+                        this._tempTarget.set(s.sx / len, s.sy / len, s.sz / len);
+                        this._tempQuat.setFromUnitVectors(this._axisLocal, this._tempTarget);
+                        t.targetQuat.copy(this._tempQuat);
                     }
                     if (Number.isFinite(s.omega_z)) {
                         t.omega = s.omega_z;
@@ -215,9 +221,8 @@ export class SpinArrowManager {
             if (t.theta < 0) t.theta += Math.PI * 2;
 
             // Compose: orientation quaternion × axial-spin quaternion
-            const axisLocal = new THREE.Vector3(0, 0, 1);
-            const axialQ = new THREE.Quaternion().setFromAxisAngle(axisLocal, t.theta);
-            t.inner.quaternion.copy(t.currentQuat).multiply(axialQ);
+            this._axialQ.setFromAxisAngle(this._axisLocal, t.theta);
+            t.inner.quaternion.copy(t.currentQuat).multiply(this._axialQ);
         }
     }
 

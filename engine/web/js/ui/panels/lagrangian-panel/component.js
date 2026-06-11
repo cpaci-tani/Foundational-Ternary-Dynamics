@@ -64,7 +64,8 @@ export class LagrangianPanelComponent {
         const dataCol = this.el.querySelector('.lag-data-col');
         const actionTable = new DiagnosticsTable(
             { id: 'lag-action', title: 'Action & Constraints', rows: actionRows },
-            hubView
+            hubView,
+            { resetScope: 0 }
         );
         const constantsTable = new DiagnosticsTable(
             { id: 'lag-constants', title: 'Ontic Constants', rows: constantRows, variant: 'static' },
@@ -104,7 +105,8 @@ export class LagrangianPanelComponent {
         const chart = new UPlotChart(plotEl, {
             id:     'lag-term-' + term.key,
             title:  '',
-            series: [{ key: term.key, label: term.label, color: term.color, buffer: term.buffer }],
+            tooltipTitle: term.label,
+            series: [{ key: term.key, label: term.label, color: term.color, buffer: term.buffer, unit: term.unit }],
             xLabel: 'tick', yLabel: 'ℒ',
             hub:    telemetryHub.lag,
         });

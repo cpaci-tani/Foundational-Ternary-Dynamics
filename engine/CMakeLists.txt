@@ -390,6 +390,8 @@ ftd_add_test(test_cluster_genealogy tests/test_cluster_genealogy.cpp)
 ftd_add_test(campaign_cluster_fission_fusion tests/campaign_cluster_fission_fusion.cpp TIMEOUT 1800)
 ftd_add_test(campaign_cluster_relaxation tests/campaign_cluster_relaxation.cpp TIMEOUT 1800)
 ftd_add_test(campaign_alpha_readout_scattering tests/campaign_alpha_readout_scattering.cpp TIMEOUT 3600)
+ftd_add_test(campaign_higgs_bi_pair_production tests/campaign_higgs_bi_pair_production.cpp TIMEOUT 1800)
+ftd_add_test(campaign_ew_phase_transition tests/campaign_ew_phase_transition.cpp TIMEOUT 1800)
 
 # Class C Phase C.3: coupling readout sweeps for EM charge scaling and Yukawa fitting.
 ftd_add_test(test_coupling_readout_sweeps tests/test_coupling_readout_sweeps.cpp)
@@ -1037,6 +1039,10 @@ ftd_add_test(test_native_engine_transport_flow tests/test_native_engine_transpor
 ftd_add_test(test_fractional_heat_flow tests/test_fractional_heat_flow.cpp
              CTEST_NAME fractional_heat_flow TIMEOUT 600 LABELS native eft)
 
+# Native scale flow measurement (Stage 1 for native electrodynamics)
+ftd_add_test(campaign_native_scale_flow tests/campaign_native_scale_flow.cpp
+             CTEST_NAME campaign_native_scale_flow TIMEOUT 1800 LABELS native eft observable)
+
 # Manifestation background unit tests (Plan B scale-flow campaign).
 ftd_add_test(test_manifestation_background tests/test_manifestation_background.cpp
              CTEST_NAME manifestation_background TIMEOUT 120 LABELS native eft)
@@ -1224,6 +1230,16 @@ ftd_add_test(campaign_thermostat_off_sweep tests/campaign_thermostat_off_sweep.c
 # event counters (CPU path). Default invocation is a 1-amplitude smoke run.
 ftd_add_test(campaign_genesis_trajectory tests/campaign_genesis_trajectory.cpp
              CTEST_NAME campaign_genesis_trajectory TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
+# FTD-0110 (2026-06-11): genesis FIRING GEOMETRY. Sibling of the FTD-0267
+# trajectory runner; logs the per-fired-voxel O_h shell (center/SC/FCC/BCC/...)
+# of the one-shot burst via a read-only POST-TICK STATE DIFF (golden-neutral by
+# construction -- no engine edits, no RNG, no control flow). Validates the
+# nonlinear-bridge forward model (scripts/exploration/genesis_na_law_forward.py)
+# on the firing SET, not just the count. Frozen under PREREG_FTD0110_NA_LAW_v1.
+ftd_add_test(campaign_genesis_geometry tests/campaign_genesis_geometry.cpp
+             CTEST_NAME campaign_genesis_geometry TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the

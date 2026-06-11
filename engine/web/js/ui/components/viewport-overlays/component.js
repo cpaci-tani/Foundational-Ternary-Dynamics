@@ -4,7 +4,7 @@
  * Orchestrates:
  * - Scale-specific field/visualization toggles
  * - Universal axes/grid controls
- * - Bottom bar environment + boundary selectors
+ * - Bottom status-bar scene/environment controls
  */
 
 import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js';
@@ -100,94 +100,99 @@ export class ViewportOverlaysComponent {
     }
   }
   _mountUniversalOverlays() {
-    // Unified viewport controls panel — all universal overlays in one glass card
-    const panel = document.createElement('div');
-    panel.id = 'viewport-controls-panel';
-    panel.innerHTML = `
-      <div class="vcp-header">
-        <span class="vcp-title">SCENE</span>
-        <button class="vcp-collapse-btn" aria-label="Toggle Visuals" title="Toggle Visuals">&#128065;&#xFE0E;</button>
-      </div>
-      <div class="vcp-content">
-        <div class="vcp-section">
-          <div class="vcp-toggle-grid overlays-grid">
-            <button class="view-toggle active scale4-hide" id="toggle-axes" title="XYZ axis indicator">Axes</button>
-            <button class="view-toggle active scale4-hide" id="toggle-grid" title="Reference grid (XZ plane)">Grid</button>
-            <button class="view-toggle" id="toggle-reflective" title="Reflective boundary conditions">Reflect</button>
-          </div>
-        </div>
+    const statusBar = document.getElementById('status-bar');
+    if (!statusBar || document.getElementById('status-scene-controls')) return;
 
-        <div class="vcp-section scale0-only">
-          <div class="vcp-label-row"><span class="vcp-label">Camera</span></div>
-          <div class="vcp-preset-grid">
-            <button class="view-toggle vcp-preset-btn" data-cam-preset="front" title="Face-on view (looking -Z)">Front</button>
-            <button class="view-toggle vcp-preset-btn" data-cam-preset="side"  title="Side view (looking -X)">Side</button>
-            <button class="view-toggle vcp-preset-btn" data-cam-preset="top"   title="Top-down view (looking -Y)">Top</button>
-            <button class="view-toggle vcp-preset-btn" data-cam-preset="corner" title="Diagonal corner view">Corner</button>
-          </div>
-        </div>
+    const controls = document.createElement('div');
+    controls.id = 'status-scene-controls';
+    controls.className = 'status-item status-scene-controls';
+    controls.innerHTML = `
+      <span class="status-scene-label">Scene</span>
 
-        <div class="vcp-section scale0-only">
-          <div class="vcp-label-row"><span class="vcp-label">Flux</span></div>
-          <div class="vcp-toggle-grid flux-grid">
-            <button class="view-toggle active" id="toggle-flux-organic-scene" title="Organic scatter (cloud) vs regular lattice grid">Organic</button>
-            <button class="view-toggle active" id="toggle-flux-glow-scene" title="Additive glow bloom on the flux volume">Glow</button>
-          </div>
+      <details class="status-menu">
+        <summary class="status-menu-trigger">View</summary>
+        <div class="status-menu-panel status-menu-grid" role="group" aria-label="Scene view toggles">
+          <button class="view-toggle active scale4-hide" id="toggle-axes" type="button" title="XYZ axis indicator">Axes</button>
+          <button class="view-toggle active scale4-hide" id="toggle-grid" type="button" title="Reference grid (XZ plane)">Grid</button>
+          <button class="view-toggle" id="toggle-reflective" type="button" title="Reflective boundary conditions">Reflect</button>
         </div>
+      </details>
 
-        <div class="vcp-section">
-          <div class="vcp-select-row">
-            <span class="vcp-label">Env</span>
-            <select id="bg-select">
-              <option value="none">None</option>
-              <optgroup label="Cosmic">
-                <option value="stars" selected>Star Field</option>
-                <option value="nebula">Nebula</option>
-                <option value="foam">Quantum Foam</option>
-                <option value="beyond">The Beyond</option>
-                <option value="storm">Flux Storm</option>
-              </optgroup>
-              <optgroup label="360°">
-                <option value="studio">Studio</option>
-                <option value="workshop">Workshop</option>
-                <option value="sunset">Sunset</option>
-                <option value="night">Night Sky</option>
-                <option value="forest">Forest</option>
-                <option value="urban">Urban</option>
-              </optgroup>
-            </select>
-          </div>
-          <div class="vcp-select-row">
-            <span class="vcp-label">Bounds</span>
-            <select id="boundary-select">
-              <option value="cube" selected>Cube</option>
-              <option value="sphere">Sphere</option>
-              <option value="dodecahedron">Dodecahedron</option>
-              <option value="icosahedron">Icosahedron</option>
-              <option value="octahedron">Octahedron</option>
-              <option value="cylinder">Cylinder</option>
-              <option value="torus">Torus</option>
-              <option value="none">None</option>
-            </select>
-          </div>
+      <details class="status-menu scale0-only">
+        <summary class="status-menu-trigger">Camera</summary>
+        <div class="status-menu-panel status-menu-grid status-menu-grid-2" role="group" aria-label="Camera presets">
+          <button class="view-toggle status-preset-btn" type="button" data-cam-preset="front" title="Face-on view (looking -Z)">Front</button>
+          <button class="view-toggle status-preset-btn" type="button" data-cam-preset="side" title="Side view (looking -X)">Side</button>
+          <button class="view-toggle status-preset-btn" type="button" data-cam-preset="top" title="Top-down view (looking -Y)">Top</button>
+          <button class="view-toggle status-preset-btn" type="button" data-cam-preset="corner" title="Diagonal corner view">Corner</button>
         </div>
-      </div>
+      </details>
+
+      <label class="status-select-label" for="bg-select">
+        <span>Env</span>
+        <select id="bg-select">
+          <option value="none">None</option>
+          <optgroup label="Cosmic">
+            <option value="stars" selected>Star Field</option>
+            <option value="nebula">Nebula</option>
+            <option value="foam">Quantum Foam</option>
+            <option value="beyond">The Beyond</option>
+            <option value="storm">Flux Storm</option>
+          </optgroup>
+          <optgroup label="360°">
+            <option value="studio">Studio</option>
+            <option value="workshop">Workshop</option>
+            <option value="sunset">Sunset</option>
+            <option value="night">Night Sky</option>
+            <option value="forest">Forest</option>
+            <option value="urban">Urban</option>
+          </optgroup>
+        </select>
+      </label>
+
+      <label class="status-select-label" for="boundary-select">
+        <span>Bounds</span>
+        <select id="boundary-select">
+          <option value="cube" selected>Cube</option>
+          <option value="sphere">Sphere</option>
+          <option value="dodecahedron">Dodecahedron</option>
+          <option value="icosahedron">Icosahedron</option>
+          <option value="octahedron">Octahedron</option>
+          <option value="cylinder">Cylinder</option>
+          <option value="torus">Torus</option>
+          <option value="none">None</option>
+        </select>
+      </label>
     `;
-    this.viewport.appendChild(panel);
 
-    // Wire up universal panel collapse state
-    const btn = panel.querySelector('.vcp-collapse-btn');
-    const lsKey = 'ftd.overlay.universal.collapsed';
-    const apply = (collapsed) => {
-        panel.classList.toggle('is-collapsed', !!collapsed);
-        btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    const fpsItem = document.getElementById('status-fps')?.closest('.status-item');
+    statusBar.insertBefore(controls, fpsItem || null);
+    this._wireStatusMenus(controls);
+  }
+
+  _wireStatusMenus(root) {
+    const menus = Array.from(root.querySelectorAll('.status-menu'));
+    const closeOthers = (current) => {
+      for (const menu of menus) {
+        if (menu !== current) menu.removeAttribute('open');
+      }
     };
-    try { apply(localStorage.getItem(lsKey) === '1'); } catch { /* ignore */ }
-    btn.addEventListener('click', (ev) => {
-        ev.stopPropagation();
-        const next = !panel.classList.contains('is-collapsed');
-        apply(next);
-        try { localStorage.setItem(lsKey, next ? '1' : '0'); } catch { /* ignore */ }
+
+    for (const menu of menus) {
+      menu.querySelector('summary')?.addEventListener('click', () => closeOthers(menu));
+      menu.addEventListener('toggle', () => {
+        if (menu.open) closeOthers(menu);
+      });
+    }
+
+    document.addEventListener('click', (ev) => {
+      if (root.contains(ev.target)) return;
+      closeOthers(null);
+    });
+
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key !== 'Escape') return;
+      closeOthers(null);
     });
   }
 

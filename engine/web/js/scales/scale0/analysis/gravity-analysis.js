@@ -46,15 +46,31 @@ export function gravityPEFromPositions(positions, count) {
     if (!positions || !count) return 0;
     const K2 = K_B * K_B;
     let pe = 0;
-    for (let i = 0; i < count; i++) {
+    
+    // ARC-PERF (2026-06-10): Pairwise O(N^2) on 35,000 particles is 612M iterations,
+    // which freezes the browser. We sub-sample heavily for dense fields and 
+    // scale the result proportionally. Gravity is long-range, so this proxy is robust.
+    let stride = 1;
+    if (count > 500) stride = Math.ceil(count / 500);
+    
+    let sampledCount = 0;
+    for (let i = 0; i < count; i += stride) {
+        sampledCount++;
         const xi = positions[i * 3], yi = positions[i * 3 + 1], zi = positions[i * 3 + 2];
-        for (let j = i + 1; j < count; j++) {
+        for (let j = i + stride; j < count; j += stride) {
             const dx = xi - positions[j * 3], dy = yi - positions[j * 3 + 1], dz = zi - positions[j * 3 + 2];
             const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
             if (r < 1e-6) continue;
             pe -= G_N * K2 / r;
         }
     }
+    
+    if (stride > 1 && sampledCount > 1) {
+        const actualPairs = (count * (count - 1)) / 2;
+        const sampledPairs = (sampledCount * (sampledCount - 1)) / 2;
+        pe *= (actualPairs / sampledPairs);
+    }
+    
     return pe;
 }
 

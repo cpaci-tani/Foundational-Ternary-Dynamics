@@ -25,7 +25,7 @@ import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { rampViridis, rampEmEnergy, rampVorticity } from '../../../../viewport/color-ramps.js';
 
 const PANEL_ID = 'gravity-panel';
-const HZ = 2;
+const HZ = 'auto'; // 60 FPS minimum as requested
 
 // Load the panel stylesheet via a JS-injected (async, NON-render-blocking) link
 // instead of a <head> <link>, and only on first show. A render-blocking <link>
@@ -143,7 +143,11 @@ function renderCppBlock(agg) {
 function renderTelemetry(container, m, agg) {
     const horizonColor = m.horizon >= 0.95 ? 'var(--negative)' : m.horizon >= 0.5 ? 'var(--caution)' : 'var(--positive)';
     let html = '';
-    if (m.horizon >= 0.95) html += `<div style="${heroStyle()};color:var(--negative);margin-bottom:6px;">⚠ horizon — L_max ${formatFixed(m.horizon, 3)}</div>`;
+    
+    // ARC-UI (2026-06-10): Always render the div with visibility hidden when inactive
+    // to prevent the entire telemetry block from jumping up and down (layout jitter).
+    const warnVis = m.horizon >= 0.95 ? 'visible' : 'hidden';
+    html += `<div style="${heroStyle()};color:var(--negative);margin-bottom:6px;visibility:${warnVis};">⚠ horizon — L_max ${formatFixed(m.horizon, 3)}</div>`;
     html += row('Latency L (mean / max)', `${formatFixed(m.L.mean, 3)} / ${formatFixed(m.L.max, 3)}`, 'M', undefined, 'Latency potential — the gravity-well depth proxy. max→1 ⇒ event horizon.');
     html += row('Kretschmann K (mean / max)', `${formatExp(m.K.mean)} / ${formatExp(m.K.max)}`, 'M', undefined, 'Curvature (∇²L)² — concentration = strong bending.');
     html += row('Force |F| (mean / max)', `${formatExp(m.F.mean)} / ${formatExp(m.F.max)}`, 'M', undefined, 'Gravity force magnitude G_N·|∇ρ|.');

@@ -27,12 +27,14 @@ export class RingBuffer {
         this.size  = size;
         this.head  = 0;
         this.count = 0;
+        this.total = 0;
     }
 
     push(value) {
         this.data[this.head] = isFinite(value) ? value : 0;
         this.head = (this.head + 1) % this.size;
         if (this.count < this.size) this.count++;
+        this.total++;
     }
 
     get(i) {
@@ -57,7 +59,7 @@ export class RingBuffer {
         return m === Infinity ? 0 : m;
     }
 
-    clear() { this.head = 0; this.count = 0; }
+    clear() { this.head = 0; this.count = 0; this.total = 0; }
 }
 
 // ── Telemetry Hub ────────────────────────────────────────────────────────────
@@ -86,6 +88,15 @@ export class TelemetryHub {
         this._lastTick1Ext = -1;
         this._lastTick2 = -1;
         this._lastTick5 = -1;
+
+        // Incremented by resetScale(); consumers with their own derived state
+        // can cheaply clear when the active scene/scale baseline changes.
+        this._resetVersions = {
+            0: 0,
+            1: 0,
+            2: 0,
+            5: 0,
+        };
 
         // ── Scale 0 — Lattice / Flux ────────────────────
         // Core diagnostics (500-sample history)
@@ -638,7 +649,15 @@ export class TelemetryHub {
 
     // ── Reset ────────────────────────────────────────────────────────────────
 
+    getResetVersion(scale) {
+        return this._resetVersions?.[scale] ?? 0;
+    }
+
     resetScale(scale) {
+        const resetKey = scale === 3 ? 2 : scale;
+        if (Object.prototype.hasOwnProperty.call(this._resetVersions, resetKey)) {
+            this._resetVersions[resetKey]++;
+        }
         switch (scale) {
             case 0:
                 for (const b of [

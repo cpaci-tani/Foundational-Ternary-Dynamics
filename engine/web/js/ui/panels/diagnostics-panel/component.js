@@ -24,7 +24,7 @@ export class DiagnosticsPanelComponent {
             const scale0Root = document.createElement('div');
             scale0Root.className = 'scale0-only diag-scale0-root';
             for (const section of scale0Sections) {
-                const table = new DiagnosticsTable(section, telemetryHub);
+                const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 0 });
                 scale0Root.appendChild(table.el);
                 this.tables.push(table);
             }
@@ -33,7 +33,7 @@ export class DiagnosticsPanelComponent {
             const scale1Root = document.createElement('div');
             scale1Root.className = 'scale1-only diag-scale1-root';
             for (const section of scale1Sections) {
-                const table = new DiagnosticsTable(section, telemetryHub);
+                const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 1 });
                 scale1Root.appendChild(table.el);
                 this.tables.push(table);
             }
@@ -46,7 +46,7 @@ export class DiagnosticsPanelComponent {
             const aeRoot = document.createElement('div');
             aeRoot.className = 'scale-ae diag-ae-root';
             for (const section of scale2Sections) {
-                const table = new DiagnosticsTable(section, telemetryHub);
+                const table = new DiagnosticsTable(section, telemetryHub, { resetScope: 2 });
                 aeRoot.appendChild(table.el);
                 this.tables.push(table);
             }

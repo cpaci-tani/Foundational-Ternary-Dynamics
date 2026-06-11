@@ -20,3 +20,78 @@
 .uplot .u-legend .u-series.u-off { opacity: 0.35; }
 
 .uplot .u-axis { font-variant-numeric: tabular-nums; }
+
+.chart-hover-scope {
+    position: relative;
+}
+
+.chart-hover-tooltip {
+    position: absolute;
+    z-index: 3;
+    min-width: 170px;
+    max-width: min(280px, calc(100% - 16px));
+    padding: 9px 10px;
+    border: 1px solid var(--tooltip-border);
+    border-radius: var(--radius, 8px);
+    background: var(--tooltip-bg);
+    color: var(--tooltip-text);
+    box-shadow: var(--tooltip-shadow);
+    backdrop-filter: var(--tooltip-backdrop);
+    pointer-events: none;
+    font-family: var(--font-mono, JetBrains Mono, monospace);
+    font-size: var(--fs-xs, 11px);
+    line-height: 1.35;
+}
+
+.chart-hover-tooltip[hidden] {
+    display: none;
+}
+
+.chart-hover-title {
+    font-family: var(--font-body, Inter, sans-serif);
+    font-size: var(--fs-xs, 11px);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--tooltip-kicker);
+    margin-bottom: 5px;
+}
+
+.chart-hover-meta,
+.chart-hover-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 7px;
+}
+
+.chart-hover-meta {
+    color: var(--tooltip-muted);
+    margin-bottom: 6px;
+}
+
+.chart-hover-meta strong,
+.chart-hover-row strong {
+    color: var(--tooltip-text);
+    font-weight: 600;
+    text-align: right;
+}
+
+.chart-hover-rows {
+    display: grid;
+    gap: 4px;
+}
+
+.chart-hover-swatch {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--chart-hover-color, var(--accent));
+}
+
+.chart-hover-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--tooltip-muted);
+}

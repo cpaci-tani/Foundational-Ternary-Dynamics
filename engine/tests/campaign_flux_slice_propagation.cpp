@@ -273,5 +273,14 @@ int main() {
 
     std::cerr << "\n  Done. Per-slice CSVs written to working directory.\n";
     std::cerr << "  Summary CSV emitted on stdout.\n";
+
+    if (std::getenv("FTD_KEEP_CSV") == nullptr) {
+        for (int t : capture_ticks) {
+            char fname[64];
+            std::snprintf(fname, sizeof(fname), "slice_xy_t%03d.csv", t); std::remove(fname);
+            std::snprintf(fname, sizeof(fname), "slice_xz_t%03d.csv", t); std::remove(fname);
+            std::snprintf(fname, sizeof(fname), "slice_yz_t%03d.csv", t); std::remove(fname);
+        }
+    }
     return 0;
 }
