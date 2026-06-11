@@ -2,7 +2,7 @@
 
 **The Card Catalog** — Find any document in two clicks.
 
-**Last updated:** June 2, 2026 (RSI Leg 3 conditional theorem FTD-0243; numeric consistency audit; E/B overlay bug fix; CI repair; mobile-first responsive overhaul — CLAUDE.md v5.44; FTD-0013 unchanged; 59 Playwright green)
+**Last updated:** June 10, 2026 (comprehensive corpus checkpoint — verified 586 theory docs, 520 Python scripts, 298 C++ test files, 211 CTest targets all passing, 254 ledger entries through FTD-0267)
 **Framework version:** v1.5 (Phase G/H Checkpoint)
 **Engine version:** v2.18.0
 
@@ -23,10 +23,9 @@ For historical documentation-cleanup provenance and deferred remediation notes, 
 | Make a change without breaking sibling systems | [MAINTAINABILITY.md](MAINTAINABILITY.md) — 8 hazards + 15 step-by-step recipes + tech-debt ledger |
 | Check project health | [evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md](evaluation/AUDIT_PROJECT_HEALTH_SCORECARD.md) — weighted project health scorecard and priorities |
 | See the core mathematics | [docs/theory/01_reference/MATH_MASTER_QUADRATIC.md](docs/theory/01_reference/MATH_MASTER_QUADRATIC.md) |
-| Assess what's genuinely derived | [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) (~35 genuine) |
+| Assess what's genuinely derived | [docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) (~23 genuine derivations, ~129 parametric) |
 | Find an unresolved item to work on | [docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md](docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) — every `[OPEN]` across code + theory in one ledger |
-| Run the verification suite | `python scripts/tests/run_all_tests.py` |
-| Read the manuscript (book) | `cd dissemination/manuscript && quarto render` |
+| Run the verification suite | `python scripts/proofs/proof_master_verification.py` |
 
 ---
 
@@ -57,7 +56,7 @@ For historical documentation-cleanup provenance and deferred remediation notes, 
 3. `scripts/experiments/` — Bell tests, CERN analysis, physics simulations
 
 ### For Skeptics
-1. [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — Honest accounting (~30 genuine, ~50 parametric)
+1. [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — Honest accounting (~23 genuine derivations, ~129 parametric)
 2. [AUDIT_HIDDEN_SELECTIONS.md](docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md) — Every implicit assumption made explicit
 3. [AUDIT_BELL_ANALYSIS.md](docs/theory/07_assessment/AUDIT_BELL_ANALYSIS.md) — Bell inequality theory and simulation
 4. [AUDIT_WEAKNESSES_MASTER.md](evaluation/AUDIT_WEAKNESSES_MASTER.md) — Master weakness compilation
@@ -128,8 +127,8 @@ ftd/
 ├── engine/                          # C++ simulation engine (see engine/SPEC_ENGINE.md for current version details)
 │   ├── SPEC_ENGINE.md               # Engine reference document
 │   ├── VISUAL_GUIDE.md              # Visual learner's guide to sim flow and discrete emergence
-│   ├── include/ftd/                 # 29 headers (ontic.h is the constant chain; scenarios.h for Scale-0 library)
-│   ├── src/                         # 14 source files
+│   ├── include/ftd/                 # 59 headers (ontic.h is the constant chain; scenarios.h for Scale-0 library)
+│   ├── src/                         # 22 source files
 │   ├── tests/                       # Large CTest surface (CPU, campaign, optional GPU)
 │   ├── cuda/                        # GPU acceleration
 │   ├── wasm/                        # Emscripten WASM bindings
@@ -163,19 +162,10 @@ ftd/
 │   └── AUDIT_WEAKNESSES_MASTER.md   # Master weakness compilation (18 agents)
 │
 ├── dissemination/                   # Publication pipeline
-│   ├── manuscript/                  # Quarto manuscript (original)
-│   ├── manuscript_v2/               # Complete rewrite for physicists (April 2026)
-│   │   ├── CHECKLIST.md             # Live progress tracker
-│   │   ├── src/
-│   │   │   ├── _quarto.yml          # 17-part book config
-│   │   │   ├── index.qmd            # Introduction
-│   │   │   ├── preface.qmd          # Preface
-│   │   │   └── chapters/            # 83 .qmd files (26 new + 57 from v1)
-│   │   └── media/ -> ../manuscript/media  # Symlink to shared images
-│   ├── book/                        # Narrative companion book
 │   ├── whitepaper/                  # LaTeX academic paper
+│   ├── papers/                      # Additional compiled LaTeX papers
 │   ├── notebooks/                   # Jupyter pedagogy tutorials
-│   ├── interactive/                 # Standalone HTML simulations and explainers
+│   ├── interactive/                 # 31 standalone HTML simulations and explainers
 │   └── FTD_Symbol_Cheatsheet.html   # Interactive symbol reference (~130 cards)
 │
 ├── models/                          # Physics derivation package
@@ -228,7 +218,7 @@ The current theory categories are:
 | [DERIV_DAY2_CAMPAIGN.md](docs/theory/10_eft_program/archive/phase_0_f_campaign/DERIV_DAY2_CAMPAIGN.md) | Day-2 + Phase F: matched-stencil CG, EWSB threshold map, spectroscopy, Rutherford cross-check, 4-point continuum plateau (α_∞ ≈ 3.6× α_ref) |
 | [STATUS_CUDA_BUILD.md](docs/internal/STATUS_CUDA_BUILD.md) | WSL2 + CUDA 13 build path (30× GPU speedup on RTX 5090) |
 | [PAPER_FTD_AS_WILSONIAN_EFT.tex](dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.tex) | Wilsonian-EFT manuscript |
-| [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) | ~162 SM quantities audited: ~23 derivations, ~129 parametric, ~10 imposed/selected |
+| [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md) | SM quantities audited: ~23 derivations, ~129 parametric, ~10 imposed/selected (162 rows total) |
 
 ---
 
