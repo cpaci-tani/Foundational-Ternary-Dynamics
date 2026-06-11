@@ -126,12 +126,26 @@ export function mountDeBroglieClockPanel(harness) {
         return mc;
     }
 
+    // Toggles + scalar the clean rest-mode run reconfigures; snapshotted before
+    // the run and restored after, so the scenario resumes its play state (clock
+    // ON, wave ON) and the Time Observatory's Card E keeps winding.
+    const SNAP_KEYS = ['wave_propagation', 'de_broglie_clock', 'coupling', 'damping',
+        'selective_damping', 'genesis', 'gauss_projection', 'forces', 'lorentz_force',
+        'movement', 'dual_substrate', 'weak_transmutation'];
+
     async function run(w0) {
         if (busy) return;
         busy = true;
         const c = (typeof window !== 'undefined') ? window.__ftdCtx : null;
         const wasRunning = !!(c && c.running);
         if (c) c.running = false;
+        // Snapshot the scenario's play-state so we can restore it after the run.
+        const snap = {};
+        try {
+            const b0 = bridge();
+            for (const k of SNAP_KEYS) snap[k] = b0.getToggle ? b0.getToggle(k) : undefined;
+            snap.__omega0 = (typeof b0.getOmega0 === 'function') ? b0.getOmega0() : undefined;
+        } catch (e) { /* noop */ }
         try {
             const mc = setupRestMode(w0);
             const b = bridge();
@@ -155,8 +169,15 @@ export function mountDeBroglieClockPanel(harness) {
             const expected = 2 * Math.PI / w0;
             status.textContent = `omega0=${w0.toFixed(2)}  T_meas=${period ? period.toFixed(1) : '?'}  (2π/ω₀=${expected.toFixed(1)})`;
         } finally {
-            // Leave the clock toggle off so it does not leak to other scenarios.
-            try { harness.setToggle('de_broglie_clock', false); } catch (e) { /* noop */ }
+            // Restore the scenario's play-state (clock ON + wave ON), so the
+            // 3D view resumes and the Time Observatory's Card E keeps winding.
+            // The de_broglie_clock leak to OTHER scenarios is prevented at the
+            // loader level (it is in SCALE0_TOGGLES, reset on every scenario load).
+            try {
+                const b1 = bridge();
+                for (const k of SNAP_KEYS) if (snap[k] !== undefined) harness.setToggle(k, snap[k]);
+                if (snap.__omega0 !== undefined && typeof b1.setOmega0 === 'function') b1.setOmega0(snap.__omega0);
+            } catch (e) { /* noop */ }
             if (c) c.running = wasRunning;
             busy = false;
         }

@@ -30,6 +30,12 @@ export const SCALE0_TOGGLES = [
     ['strong_force',     false, 't-strong-force'],
     ['exchange_force',   false, 't-exchange'],
     ['weak_transmutation', false, 't-weak'],
+    // FTD-0271 de Broglie internal clock. Listed here so it RESETS to false on
+    // every scenario load (the −ω₀²·J mass term must not leak to other
+    // scenarios' manifested voxels). It has no dashboard checkbox ('t-de-broglie'
+    // is absent — the setCheckbox/readCheckbox helpers no-op on a missing id);
+    // the s0-seed-de-broglie-clock scenario re-enables it in its registry load().
+    ['de_broglie_clock', false, 't-de-broglie'],
 ];
 
 // ── Engine toggles deliberately NOT in SCALE0_TOGGLES ───────────────
