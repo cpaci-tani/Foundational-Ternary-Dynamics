@@ -5,20 +5,16 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Engine v2.18.0](https://img.shields.io/badge/engine-v2.18.0-orange.svg)](engine/SPEC_ENGINE.md)
 
-Foundational Ternary Dynamics is a discrete-first research framework for asking a precise question:
+**Foundational Ternary Dynamics (FTD)** is a discrete-first research framework built to investigate a specific hypothesis: what happens if discreteness is fundamental, and continuity is simply an emergent large-scale approximation of local finite dynamics?
 
-> What does physics look like if discreteness is more fundamental than a continuous substrate, and continuity is the large-scale language that emerges from local finite dynamics?
+This project does not aim to discard continuum physics, which remains phenomenally successful. Rather, it attempts to reconstruct physics from a strictly finite, local, and deterministic substrate, and rigorously document where that reconstruction succeeds and where it halts.
 
-FTD is not an argument that continuous science has failed. Standard continuum physics remains the most successful operational description we have. This project asks what can be rebuilt when the primitive ontology is instead a finite, local, deterministic substrate, and where that rebuilding honestly stops.
+Key principles of the repository:
+- **Rigorous algebraic core:** The framework is built around $Z[i]$, the lemniscatic constant $G^* = \Gamma(1/4)/\Gamma(3/4)$, a central master quadratic, and BCC/Moore geometry.
+- **Honest tracking:** The numerical match $x_+ \approx 137.036$ near $1/\alpha$ is structurally interesting, but it is explicitly tracked as a `[STRONGLY MOTIVATED CONJECTURE]`, not a derivation. The framework's ontology provides the ingredients, but does not strictly force the operator assembly required for a physical coupling.
+- **Scientific provenance:** Negative results and closed routes are preserved in the archive. Documenting what discreteness *cannot* force is as important as deriving what it can.
 
-The current public posture is deliberately narrow:
-
-- FTD has a rigorous algebraic core: a finite-invariant construction around `Z[i]`, `G* = Gamma(1/4)/Gamma(3/4)`, the master quadratic, BCC/Moore geometry, and several verified no-go results.
-- The famous match `x_+ ~= 137.036` with `1/alpha` is real and structurally interesting, but it is still a `[STRONGLY MOTIVATED CONJECTURE]`, not a derivation of the electromagnetic coupling.
-- The newest alpha-readout audits classify alpha as **dynamical, not structural**: the discrete ontology forces useful ingredients, but not the operator assembly that would make the match a physical coupling without an additional binding law.
-- Negative results are part of the science here. Closed routes are preserved because mapping what discreteness cannot force is as important as deriving what it can.
-
-For the live state, start with [Where We Left Off](docs/WHERE_WE_LEFT_OFF.md), then the [Construction Monograph](docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md), [Doctrine Ledger](docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md), [Ontic Truth Tracker](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md), and [Master Claim Ledger](docs/theory/07_assessment/core_ledgers/LEDGER.md).
+To get started, read [Where We Left Off](docs/WHERE_WE_LEFT_OFF.md), followed by the [Construction Monograph](docs/theory/01_reference/MONOGRAPH_FTD_CONSTRUCTION.md), the [Doctrine Ledger](docs/theory/01_reference/SPEC_DOCTRINE_LEDGER.md), and the claim trackers in `docs/theory/07_assessment/core_ledgers/`.
 
 ---
 
@@ -198,11 +194,11 @@ Important note: [docs/SPEC_FTD.md](docs/SPEC_FTD.md) is a readable framework spe
 
 | Suite | Result |
 |-------|--------|
-| Master verification (54 checks) | ✅ All pass |
-| Physics battery (50 tests, 3 tiers) | ✅ All pass |
-| Complete SM computation (46 observables) | ✅ All computed |
-| Python pytest (255 tests) | ✅ All pass |
-| C++ CTest (211 targets) | ✅ All pass |
+| Master verification (54 checks) |  All pass |
+| Physics battery (50 tests, 3 tiers) |  All pass |
+| Complete SM computation (46 observables) |  All computed |
+| Python pytest (255 tests) |  All pass |
+| C++ CTest (211 targets) |  All pass |
 
 ---
 
@@ -241,17 +237,11 @@ CUDA campaigns are expected to run through WSL2 Ubuntu-22.04, not Windows-native
 
 ---
 
-## What This Project Is Not
+## Scope and Limitations
 
-FTD is not a completed replacement for QED, the Standard Model, or general relativity.
+FTD is not a completed replacement for the Standard Model or general relativity. We do not claim to have derived the fine-structure constant from the substrate postulates, nor do we treat numerical coincidences as proof.
 
-It does not claim that the fine-structure constant is derived from the five substrate postulates.
-
-It does not treat numerical agreement as proof.
-
-It does not treat failed derivation routes as embarrassing debris. They are part of the map.
-
-The least-wrong self-assessment from the corpus is this: FTD is a discrete-first philosophy-of-mathematics and computational-physics program with a rigorous algebraic core, suggestive physics bridges, a serious simulation engine, and unusually explicit boundaries around what has not been derived.
+Instead, FTD operates as a discrete-first computational physics program. It contains a rigid algebraic core, suggestive phenomenological bridges, a high-performance C++/CUDA simulation engine, and strictly enforced epistemic boundaries detailing exactly what has—and has not—been derived.
 
 ---
 
