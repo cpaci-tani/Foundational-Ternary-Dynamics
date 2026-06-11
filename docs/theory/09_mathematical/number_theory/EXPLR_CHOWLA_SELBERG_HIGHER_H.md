@@ -171,7 +171,7 @@ searched 2.87M polynomials in the EXTENDED Gaussian-integer-tower
 family + Eisenstein-integer-tower family.
 
 **Result**: 0 dual-matchers in Eisenstein family. 1 dual-matcher in
-extended Gaussian family (the master quadratic itself). *(Note: "dual-matcher" here refers to the historical target pair `(1/α, N_c)` used by the scan; the `x_- ↔ N_c` identification is **retired** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact about the master quadratic is **independent of the target identification** and stands.)*
+extended Gaussian family (the master quadratic itself). *(Note: "dual-matcher" here refers to the historical target pair `(1/α, N_c)` used by the scan; the `x_-  N_c` identification is **retired** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact about the master quadratic is **independent of the target identification** and stands.)*
 
 **Interpretation**: this is INDIRECT evidence for the d = −4 structural
 privilege. Eisenstein integers Z[ω] (CM ring of curves with j = 0,

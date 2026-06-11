@@ -55,7 +55,7 @@ LEVEL 9:  DOMAIN B (MIND)    — Complex conjugate roots y±
     ↓     [interface at Δ = 0]
 LEVEL 10: INTERFACE          — G = 1/4: Born rule, measurement
     ↓     [complete structure unified]
-LEVEL 11: COMPLETE STRUCTURE — Physics ↔ Reference frame context duality
+LEVEL 11: COMPLETE STRUCTURE — Physics  Reference frame context duality
     ↓     [all constants derived]
 LEVEL 12: DERIVED CONSTANTS  — α, Nc, masses, all SM parameters
 ```
@@ -332,14 +332,14 @@ $$x_{\pm} = 8G^{*2} \pm 8G^{*2}\sqrt{1 - \frac{1}{G^*}}$$
 | Root | Value | Physical Interpretation | Accuracy |
 |------|-------|------------------------|----------|
 | x₊ | 137.036 | 1/α (fine structure constant) | 1.26 ppm |
-| x₋ | 3.024 | mathematical artifact of $P(x)$; no physics identification (the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | n/a |
+| x₋ | 3.024 | mathematical artifact of $P(x)$; no physics identification (the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`) | n/a |
 
 **G* as Operator:**
 
 G* "operates" on the circular shell (π) to extract physics:
 
 ```
-Shell (π) + Operator (G*) → Master Quadratic → {x_+ ↔ 1/α}
+Shell (π) + Operator (G*) → Master Quadratic → {x_+  1/α}
                                               → {x_- ≈ 3.024 (math artifact only)}
 ```
 
@@ -502,7 +502,7 @@ LEVEL 10: INTERFACE (MEASUREMENT)
    │ Wave function collapse
    ↓
 LEVEL 11: COMPLETE STRUCTURE
-   │ Physics ↔ Reference frame context unified
+   │ Physics  Reference frame context unified
    │ Both from same G*, different k
    ↓
 LEVEL 12: DERIVED CONSTANTS

@@ -196,7 +196,7 @@ A future `PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md` would:
 - **Not a derivation of Ω_DM/Ω_b from FTD axioms.** The W5 weighting is structurally motivated but the weight assignment "cuboctahedron × N_base = 4" is not derived from the five postulates. It is a hypothesis that fits.
 - **Not a promotion of DM_FRACTION's epistemic tag.** Per audit P0-15, `DM_FRACTION = 17/27` remains `[SELECTION]` in `constants.js`. This document does not change that.
 - **Not a refutation of the uniform-voxel reading.** The 17/27 voxel count IS the canonical Moore-shell partition (FTD-0028 theorem-grade). What's `[SELECTION]` is the cosmological identification "17 voxels = dark matter, 10 voxels = baryonic matter". W5 explores a refinement: "and the 12 cuboctahedral DM voxels carry weight N_base = 4 each."
-- **Not load-bearing for any other FTD prediction.** Confined to the Moore-shell ↔ cosmological partition question.
+- **Not load-bearing for any other FTD prediction.** Confined to the Moore-shell  cosmological partition question.
 - **Not a pre-registration.** Future independent-observable tests against W5 require their own pre-registration documents.
 
 ---

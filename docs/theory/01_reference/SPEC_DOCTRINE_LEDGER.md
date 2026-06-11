@@ -169,9 +169,9 @@ The exponent quadruple `(k, d; ℓ, m) = (4, 6; 3, 2)` is a structural choice; p
 
 **Branch quadratic (FQCR Model V, Prop 5).**
 `x² − 16 (G_N*)² x + 16 (G_N*)³ R_N(t) = 0`
-At `R_N(1) = 1` and `N → ∞`, this reduces *exactly* to the spine master quadratic `x² − 16 G*² x + 16 G*³ = 0` (Theorem 2; OT-1.1; FTD-0001). *(Note: prior reference to FTD-0014 here is removed — that LEDGER row, which carried the `x_- ↔ N_c` identification, was retired per v1.4 §5 and removed in commit `ca7eb61`.)*
+At `R_N(1) = 1` and `N → ∞`, this reduces *exactly* to the spine master quadratic `x² − 16 G*² x + 16 G*³ = 0` (Theorem 2; OT-1.1; FTD-0001). *(Note: prior reference to FTD-0014 here is removed — that LEDGER row, which carried the `x_-  N_c` identification, was retired per v1.4 §5 and removed in commit `ca7eb61`.)*
 
-**Self-dual readout.** `t = 1` is the fixed point of the modular involution `t ↔ 1/t`. The base coupling
+**Self-dual readout.** `t = 1` is the fixed point of the modular involution `t  1/t`. The base coupling
 `α_FTD⁻¹ := lim_{N→∞} α_N⁻¹(1) ≈ 137.035999177`
 where `α_N⁻¹(t) = 8(G_N*)² + 4(G_N*)^{3/2} √(4G_N* − R_N(t))` is the dominant root.
 
@@ -223,7 +223,7 @@ with `G_N* = (N+1)^{−1/2} · det L_{3/4,N} / det L_{1/4,N}` (Lerch's formula, 
 | Photon as finite edge connection / `F = dA` lattice gauge structure  | **[OPEN — IMPORTED scaffold]**   | Standard lattice-gauge formalism. FTD-0074 (flux 1-form readout) closed-negative for Clifford. |
 | Dirac Clifford square gives Pauli term `i q Σ^{μν} F_{μν}`            | **[OPEN — IMPORTED scaffold]**   | External Clifford structure. Cite FTD-0073 mode-erasure for the FTD-side obstruction.    |
 | Tree-level `g = 2`                                                   | **[OPEN — IMPORTED scaffold]**   | External QED, awaiting FTD-side derivation                                               |
-| One-loop `a^{(1)} = α_FQCR/(2π)`                                     | **[OPEN — IMPORTED bridge]**     | Requires `α_FQCR ↔ α` physical identification, which is itself FTD-0013 [STRONGLY MOTIVATED CONJECTURE]. Cannot be promoted above its dependencies. |
+| One-loop `a^{(1)} = α_FQCR/(2π)`                                     | **[OPEN — IMPORTED bridge]**     | Requires `α_FQCR  α` physical identification, which is itself FTD-0013 [STRONGLY MOTIVATED CONJECTURE]. Cannot be promoted above its dependencies. |
 | Full QED `g − 2` precision                                           | [OPEN]                           | MC-T4.4 in SPEC_OPEN_MATH_BY_SECTOR.md                                                    |
 
 ---
@@ -311,7 +311,7 @@ These integer-depth matrices are **proposed candidate scaffolding**. They have *
 
 | Claim                                                                | Tag                              | Source                                                                                  |
 |----------------------------------------------------------------------|----------------------------------|-----------------------------------------------------------------------------------------|
-| `N_c = 3` from `C³` / `Z_3` triality / `Z_6` closure                 | [SELECTION] (algebraic) — `N_c = 3` independently sourced; the historical `x_- ↔ N_c` identification is **RETIRED** (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) | `DERIV_NC_FROM_TOPOLOGY.md`; Moore Layer Theorem                              |
+| `N_c = 3` from `C³` / `Z_3` triality / `Z_6` closure                 | [SELECTION] (algebraic) — `N_c = 3` independently sourced; the historical `x_-  N_c` identification is **RETIRED** (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) | `DERIV_NC_FROM_TOPOLOGY.md`; Moore Layer Theorem                              |
 | `SU(3)_c` as internal-frame symmetry                                 | [IMPORTED — structural match]    | Standard SM                                                                              |
 | `b_3 = (11 N_c − 2 n_f)/3` formula                                   | [IMPORTED COEFFICIENT]           | Standard one-loop QCD                                                                    |
 | `b_3 = 7` for `N_c = 3, n_f = 6`                                     | [THEOREM once formula imported, conditional on independent `N_c = 3` source + SM `n_f = 6` input] | Direct substitution                                            |
@@ -386,7 +386,7 @@ These have proof chains entirely inside FTD's axiom set or its rigorous algebrai
 
 ### §13.4 · Numerically reconstructed ([STRONGLY MOTIVATED CONJECTURE] / [NUMERICAL FACT])
 
-`α_FTD⁻¹ ≈ 137.035999177` (1.26 ppm; `x_+ ↔ 1/α`, FTD-0013); `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵` (0.38%, postulate-conditional); CKM estimates from `q*` powers; structural uniqueness scans (2.87M-poly with 0 Eisenstein dual-matchers under the historical `(1/α, N_c)` target pair; 63-discriminant Γ-product null at `h ≥ 2`; ~4×10⁵:1 Bayes weight; FTD-0189 adversarial 2.65M-polynomial scan over an 18-constant FTD-undesigned basket: 0 non-G\* dual-matchers, rank 1 by ~130×). *(Note: `x_- = 3.024 ≈ N_c = 3` (0.80%) framing is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The `x_-` value is a mathematical artifact of $P(x)$; `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)*
+`α_FTD⁻¹ ≈ 137.035999177` (1.26 ppm; `x_+  1/α`, FTD-0013); `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵` (0.38%, postulate-conditional); CKM estimates from `q*` powers; structural uniqueness scans (2.87M-poly with 0 Eisenstein dual-matchers under the historical `(1/α, N_c)` target pair; 63-discriminant Γ-product null at `h ≥ 2`; ~4×10⁵:1 Bayes weight; FTD-0189 adversarial 2.65M-polynomial scan over an 18-constant FTD-undesigned basket: 0 non-G\* dual-matchers, rank 1 by ~130×). *(Note: `x_- = 3.024 ≈ N_c = 3` (0.80%) framing is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The `x_-` value is a mathematical artifact of $P(x)$; `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)*
 
 **Anchor:** `TRACKER_ONTIC_TRUTH.md` T3 + T5; `SPEC_PHYSICS_BRIDGE.md` (FTD-0121 SYNTHESIS).
 
@@ -446,13 +446,13 @@ This is the strongest possible FTD self-claim. **Achievability is conditional on
 | §2          | SPEC_ALGEBRAIC_SPINE.md §1, §5; SPEC_FQCR.md §2 Props 1, 2                                          | FTD-0001, FTD-0141, FTD-0142, FTD-0117                         | OT-1.2, OT-1.7, OT-1.8, OT-2.1|
 | §3          | SPEC_FQCR.md §1, §2 Props 3, 4 (Model III)                                                          | FTD-0141, FTD-0142                                             | (algebraic; standard rep theory)|
 | §4          | ../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md; SPEC_ALGEBRAIC_SPINE.md §1                  | FTD-0001                                                       | OT-1.2                       |
-| §5          | SPEC_ALGEBRAIC_SPINE.md §2 (Theorem 2); SPEC_FQCR.md §2 Prop 5, §3                                  | FTD-0001 (master quadratic), FTD-0013 (`x_+ ↔ 1/α`), FTD-0143 PRE-REG; FTD-0014 (`x_- ↔ N_c`) **RETIRED** v1.4 §5, row removed in commit `ca7eb61` | OT-1.1, OT-3.3, OT-5.1 |
+| §5          | SPEC_ALGEBRAIC_SPINE.md §2 (Theorem 2); SPEC_FQCR.md §2 Prop 5, §3                                  | FTD-0001 (master quadratic), FTD-0013 (`x_+  1/α`), FTD-0143 PRE-REG; FTD-0014 (`x_-  N_c`) **RETIRED** v1.4 §5, row removed in commit `ca7eb61` | OT-1.1, OT-3.3, OT-5.1 |
 | §6          | SPEC_FQCR.md §1, §2, §3                                                                             | FTD-0141, FTD-0142                                             | OT-1.7, OT-1.8               |
 | §7          | ../09_mathematical/DERIV_MODE_ERASURE_AND_SPIN_ALGEBRA.md                                           | **FTD-0073 (CLOSED NEGATIVE for site-local Clifford)**, FTD-0074 | (no T-tier; closed-negative)|
 | §8          | LEDGER.md (FTD-0018 sin²θ_W demotion); standard SU(5) GUT                                          | FTD-0018 (PARAMETRIC at M_Z)                                   | (T5/parametric)              |
 | §9          | LEDGER.md (FTD-0017 Higgs)                                                                          | FTD-0017                                                       | (parametric)                 |
 | §10         | CATALOG_PARAMETRIC_INSERTIONS.md (flavor section)                                                   | (catalog rows)                                                 | (parametric scaffold)        |
-| §11         | LEDGER.md (FTD-0020 α_s; FTD-0025 confinement night-audit); standard QCD; `DERIV_NC_FROM_TOPOLOGY.md` (independent `N_c = 3` routes) | FTD-0020, FTD-0025 (annotated 2026-05-03); FTD-0014 (`x_- ↔ N_c`) **RETIRED** v1.4 §5 | OT-5.2 (`x_- ↔ N_c`) **retired** |
+| §11         | LEDGER.md (FTD-0020 α_s; FTD-0025 confinement night-audit); standard QCD; `DERIV_NC_FROM_TOPOLOGY.md` (independent `N_c = 3` routes) | FTD-0020, FTD-0025 (annotated 2026-05-03); FTD-0014 (`x_-  N_c`) **RETIRED** v1.4 §5 | OT-5.2 (`x_-  N_c`) **retired** |
 | §12         | ../03_derivations/DERIV_NEWTON_FROM_SUBSTRATE.md; SPEC_ALGEBRAIC_SPINE.md §6 (Phase G) | **FTD-0131** ([SMC] for prediction inherited from FTD-0015 + [DERIVED chain]), **FTD-0184** (branch-compliance/Yilmaz route [CLOSED NEGATIVE]; strong-field substrate gravity [OPEN]), FTD-0004, FTD-0110, FTD-0015 | OT-1.4, OT-3.4 |
 | §13         | LEDGER.md (full); CATALOG_PARAMETRIC_INSERTIONS.md; TRACKER_ONTIC_TRUTH.md (T1–T5)                  | (roll-up)                                                      | (roll-up)                    |
 | §14         | SPEC_OPEN_MATH_BY_SECTOR.md (MC-T4.3, MC-T3.1, MC-T3.6, T4.4)                                        | (roadmap)                                                      | (roadmap)                    |

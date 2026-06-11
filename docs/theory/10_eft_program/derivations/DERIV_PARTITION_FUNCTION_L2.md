@@ -177,11 +177,11 @@ This computation tightens the Phase I audit:
   "one-loop effective coupling" claim assumes a path integral that
   has never been constructed.
 
-- **The master quadratic's single physics identification** `x_+ ↔ 1/α` (FTD-0013 [STRONGLY MOTIVATED CONJECTURE])
+- **The master quadratic's single physics identification** `x_+  1/α` (FTD-0013 [STRONGLY MOTIVATED CONJECTURE])
   remains the primary evidence for the lattice's relevance to α. It
   lives entirely in the motivic/algebraic structure (Watson identity,
   CM curve periods, Moore-neighbourhood integers) — NOT in the
-  dynamical action. *(The historical paired identification `x_- ↔ N_c` ("dual-prediction") is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. Polynomial-template-uniqueness is now carried by FTD-0189's adversarial scan.)*
+  dynamical action. *(The historical paired identification `x_-  N_c` ("dual-prediction") is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. Polynomial-template-uniqueness is now carried by FTD-0189's adversarial scan.)*
 
 ## 9 · Reproducibility
 

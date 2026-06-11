@@ -14,13 +14,13 @@ bug was a Windows-specific CMake generator issue.
 
 | Step | Status |
 |---|---|
-| WSL2 Ubuntu 22.04 install | ✅ `wsl --install -d Ubuntu-22.04 --no-launch` |
-| NVIDIA CUDA 13.0 toolkit in Ubuntu | ✅ via `cuda-keyring_1.1-1_all.deb` + apt |
-| RTX 5090 GPU passthrough to WSL2 | ✅ nvidia-smi inside Ubuntu shows the card |
-| `ftd_cuda` + `ftd_core` build | ✅ ~45s clean (Ninja + GCC 11 + nvcc 13.0) |
-| `benchmark_beta_function --quick` runtime on GPU | ✅ 0.54s (was > 60s CPU) |
-| Full-precision L=256 β scan runtime | ✅ 4m40s (CPU took > 2h and didn't finish L=128) |
-| GPU / CPU parity for α_fit at L=64,128 | ✅ 2% agreement (0.123 vs 0.120, 0.134 vs 0.131) |
+| WSL2 Ubuntu 22.04 install |  `wsl --install -d Ubuntu-22.04 --no-launch` |
+| NVIDIA CUDA 13.0 toolkit in Ubuntu |  via `cuda-keyring_1.1-1_all.deb` + apt |
+| RTX 5090 GPU passthrough to WSL2 |  nvidia-smi inside Ubuntu shows the card |
+| `ftd_cuda` + `ftd_core` build |  ~45s clean (Ninja + GCC 11 + nvcc 13.0) |
+| `benchmark_beta_function --quick` runtime on GPU |  0.54s (was > 60s CPU) |
+| Full-precision L=256 β scan runtime |  4m40s (CPU took > 2h and didn't finish L=128) |
+| GPU / CPU parity for α_fit at L=64,128 |  2% agreement (0.123 vs 0.120, 0.134 vs 0.131) |
 
 ### Build script
 

@@ -180,12 +180,12 @@ Per `WHERE_WE_LEFT_OFF.md` §10, the load-bearing gap in FTD is the absence of a
 
 **This document advances the question structurally** but does NOT close it:
 
-- ✅ **Identifies 25 as a clean structural number**: the second centered octahedral number, the L¹-ball-radius-2 count.
-- ✅ **Links the cluster to a specific Moore-26 sub-decomposition**: SC + FCC + face2 + center, EXCLUDING BCC.
-- ✅ **Identifies a complementarity** between the cluster's substrate (SC+FCC) and the algebraic spine's substrate (BCC). This is the cleanest structural connection FTD has yet found between the two pillars.
-- ⚠ **Does NOT derive radius=2 from FTD axioms**. The "WHY radius 2" question stays [OPEN] as a structural derivation challenge.
-- ⚠ **Does NOT verify the L¹-ball topology positionally**. Engine instrumentation needed.
-- ⚠ **Does NOT promote any physics interpretation**. The cluster is engine-native phenomenology; mass / charge / particle-identity readings remain [OPEN].
+-  **Identifies 25 as a clean structural number**: the second centered octahedral number, the L¹-ball-radius-2 count.
+-  **Links the cluster to a specific Moore-26 sub-decomposition**: SC + FCC + face2 + center, EXCLUDING BCC.
+-  **Identifies a complementarity** between the cluster's substrate (SC+FCC) and the algebraic spine's substrate (BCC). This is the cleanest structural connection FTD has yet found between the two pillars.
+-  **Does NOT derive radius=2 from FTD axioms**. The "WHY radius 2" question stays [OPEN] as a structural derivation challenge.
+-  **Does NOT verify the L¹-ball topology positionally**. Engine instrumentation needed.
+-  **Does NOT promote any physics interpretation**. The cluster is engine-native phenomenology; mass / charge / particle-identity readings remain [OPEN].
 
 **Net contribution**: the bridge between algebra and engine, while not yet closed, has its first concrete candidate: the **complementary-Moore-decomposition hypothesis** that the engine bound state realizes the SC+FCC content while the algebraic spine encodes the BCC content. This hypothesis is testable via engine measurements on the SC+FCC vs BCC sub-stencils — exactly the kind of structural test CLAUDE.md's epistemic discipline asks for.
 

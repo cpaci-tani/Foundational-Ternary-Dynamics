@@ -19,8 +19,8 @@
 
 | Phase | Pre-reg (SPEC) | Measured | Verdict |
 |---|---|---|---|
-| **1A rotational anisotropy** | δ(L/4) < 0.02; p > 0 for δ(r) ∝ (a/r)^p | Analytical A1–A4 all pass: plane-wave anisotropy detected at δ_pointwise ~ 0.6; isotropic noise δ < 0.005 · C(0) | ✅ infrastructure validated |
-| **1B Lorentz recovery** | Residual < 1% for r > 4a, at L = 64 | 0.4–1.9% for r ∈ [2, 8]; rises to 4.7% at r = 12, 9.8% near r = L/4 zero-crossing | **⚠ Partial:** hits pre-reg only for r ≤ 4 |
+| **1A rotational anisotropy** | δ(L/4) < 0.02; p > 0 for δ(r) ∝ (a/r)^p | Analytical A1–A4 all pass: plane-wave anisotropy detected at δ_pointwise ~ 0.6; isotropic noise δ < 0.005 · C(0) |  infrastructure validated |
+| **1B Lorentz recovery** | Residual < 1% for r > 4a, at L = 64 | 0.4–1.9% for r ∈ [2, 8]; rises to 4.7% at r = 12, 9.8% near r = L/4 zero-crossing | ** Partial:** hits pre-reg only for r ≤ 4 |
 | **1C Ward identities** | Gauss ≤ 1e-8 "machine precision"; composite ≤ 1e-3 | Vacuum Gauss: 2.6e-2 max, RMS/\|J\| = 10%, SOR-limited; composite passes at 1e-2 | **✗ Pre-reg mismatch:** SOR tolerance dominates (pre-reg too optimistic) |
 
 **Net:** Phase 1 establishes that the FTD engine, as built, *approaches* the
@@ -67,14 +67,14 @@ invariance recovery is quantified by
 ### Results (synthetic tests only; engine-dynamics extension deferred)
 
 - **A1 uniform flux** — both correlators identical to machine precision
-  (max pointwise residual ≤ 1e-9). ✅
+  (max pointwise residual ≤ 1e-9). 
 - **A2 plane wave polarised along x with k_x = 2π/L** — face and diagonal
-  correlators differ substantially at r = L/4 (= π/2 phase). ✅
+  correlators differ substantially at r = L/4 (= π/2 phase). 
 - **A3 isotropic Gaussian noise on L = 24** — direction-class residual at
   r = 1 is 0.005·C(0), consistent with expected 1/√L³ ≈ 0.009 sampling
-  noise. ✅
+  noise. 
 - **A4 fit-engine sanity** — given synthetic C(r) = exp(−r/5), recovers
-  ξ = 5.000 ± 0.002, R² = 0.99998. ✅
+  ξ = 5.000 ± 0.002, R² = 0.99998. 
 
 ### What's *not* yet measured
 
@@ -165,11 +165,11 @@ toggles"); the relaxation is documented in the benchmark source.
 
 | Test | Configuration | Pre-reg (SPEC §4.3) | Measured | Verdict |
 |---|---|---|---|---|
-| **W1** Gauss, vacuum | empty L³=16 lattice | ≤ 1e-8 | < 1e-9 | ✅ matches |
+| **W1** Gauss, vacuum | empty L³=16 lattice | ≤ 1e-8 | < 1e-9 |  matches |
 | **W2** Gauss, charge pair | L=16, +1/−1 at r=4, 20 ticks | ≤ 1e-8 ("machine precision") | max 2.6e-2, RMS/\|J\| = 10% | ✗ **SOR-limited, pre-reg violated** |
-| **W3** Continuity dipole | L=16, +1/−1 at r=2, 2 ticks | ≤ 1e-6 | < 10 (max; typical O(1/dt) at particle voxels) | ⚠ integer ρ artifact |
-| **W4** Composite ⟨∇·J·J⟩ vs ⟨ρ·J⟩ | L=16, displaced charges, 20 ticks | ≤ 1e-3 | max < 1e-2, RMS 4e-4 | ⚠ close; 10× above pre-reg |
-| **W5** Vertex Γ_μ(p,p) = ∂Σ/∂p^μ | — | [OPEN] | [OPEN] | ✅ documented deferral |
+| **W3** Continuity dipole | L=16, +1/−1 at r=2, 2 ticks | ≤ 1e-6 | < 10 (max; typical O(1/dt) at particle voxels) |  integer ρ artifact |
+| **W4** Composite ⟨∇·J·J⟩ vs ⟨ρ·J⟩ | L=16, displaced charges, 20 ticks | ≤ 1e-3 | max < 1e-2, RMS 4e-4 |  close; 10× above pre-reg |
+| **W5** Vertex Γ_μ(p,p) = ∂Σ/∂p^μ | — | [OPEN] | [OPEN] |  documented deferral |
 
 ### Why W2 misses pre-reg by six orders of magnitude
 

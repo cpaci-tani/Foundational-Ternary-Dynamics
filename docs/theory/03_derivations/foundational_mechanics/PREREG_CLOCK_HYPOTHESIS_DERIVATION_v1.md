@@ -69,7 +69,7 @@ The closure attempt may use ONLY the following primitives (frozen 2026-05-24 at 
 
 1. **SPEC §3.7 bandwidth constraint** `v < f`, `v = |Δ_tJ|/K_B`, `f = 1 - ℒ²` — derived from Born-Infeld action.
 2. **Born-Infeld action measure as Lagrangian density** `S = -K_B ∫√((f²-v²)/f) dt` per SPEC §3.3, treated as a function of (v, ℒ) not yet identified with time.
-3. **Substrate manifestation rate** — rate at which threshold-crossing events (|J|² ↔ K_GENESIS² / K_EVAP²) occur per universal tick T_U.
+3. **Substrate manifestation rate** — rate at which threshold-crossing events (|J|²  K_GENESIS² / K_EVAP²) occur per universal tick T_U.
 4. **Engine tick T_U** — universal discrete tick advancing all sites in lockstep; calibrated to `√3·ℓ_P/c` per FTD-0041 / FTD-0096.
 5. **D4 substrate clock** — counting process on manifested-site transitions.
 6. **FTD axioms 1–5** from `SPEC_FTD.md` (cubic lattice, discrete time, ternary states, 26-Moore locality, determinism).

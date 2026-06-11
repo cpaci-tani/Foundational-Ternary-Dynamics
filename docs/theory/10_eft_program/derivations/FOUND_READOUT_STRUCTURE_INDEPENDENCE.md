@@ -151,7 +151,7 @@ master quadratic as characteristic polynomial. It is a concrete `ℂ`-linear ope
 independent** of `𝔉`: not derivable from it, yet consistent with it — exactly as the parallel
 postulate is independent of Euclid's other four (`THEOREM_A_PHYS_NO_GO` template). The "extra
 factor" `Det/Tr = G*` binding the two invariants is the imposed Vieta relation (W-CRIT-2), a
-sixth-postulate-class selection, not a forced det↔det_ζ identity. ∎(modulo final review)
+sixth-postulate-class selection, not a forced detdet_ζ identity. ∎(modulo final review)
 
 ---
 
@@ -177,7 +177,7 @@ sixth-postulate-class selection, not a forced det↔det_ζ identity. ∎(modulo 
 - **W-CRIT-2** ("master quadratic imposed not derived") → **resolved as a boundary theorem.**
   W-CRIT-1 (framework-integer circularity) is informed but not closed by it.
 - **MC-T4.3's BCC/quantization observable-readout route** → `[CLOSED NEGATIVE — boundary]`.
-- The standing FTD-0234/0235 `[UNDERDETERMINED]` det↔det_ζ verdict → **settled INDEPENDENT.**
+- The standing FTD-0234/0235 `[UNDERDETERMINED]` detdet_ζ verdict → **settled INDEPENDENT.**
 - **Surviving positive route** for an α derivation: **ARC-D (engine-native measurement)** or a new
   postulate supplying `W`. Both are outside the admissible set `𝔉` of this theorem.
 - **Spine untouched:** `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; the

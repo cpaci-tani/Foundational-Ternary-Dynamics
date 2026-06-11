@@ -87,7 +87,7 @@ characterization μ that is independent of m_e. Then:
 
 ```
 ∀ μ : MassUnit.
-    (2·m_e / α) [μ]   ≡   16 G*²    ↔    μ = μ_FTD
+    (2·m_e / α) [μ]   ≡   16 G*²        μ = μ_FTD
 ```
 
 This reads: L2 holds, in the unit system μ, **if and only if** μ equals some

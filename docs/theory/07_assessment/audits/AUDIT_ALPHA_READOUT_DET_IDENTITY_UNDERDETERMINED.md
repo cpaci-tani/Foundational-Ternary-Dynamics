@@ -1,4 +1,4 @@
-# AUDIT — det↔det_ζ Structural Identity: UNDERDETERMINED
+# AUDIT — detdet_ζ Structural Identity: UNDERDETERMINED
 
 **Tag:** `[UNDERDETERMINED]` (pre-reg §6 UNDERDETERMINED). **No spine claim moved.**
 **Date:** 2026-05-28
@@ -78,7 +78,7 @@ structural impossibility (the coefficients are forward-computable scalars).
 | Independent review of the "FOUND" | FTD-0232 | overclaim → **UNDERDETERMINED** |
 | Determinant grading (parity) | FTD-0233 | **CLOSED-NEGATIVE — scoped** (frozen set *excluding* det_ζ; superseded as operative obstruction) |
 | Odd period via J-twisted det_ζ | FTD-0234 | **UNDERDETERMINED** (clean odd scalar `G*` exists; `Det=Tr·G*` unforced) |
-| det↔det_ζ identity (this) | FTD-0235 | **UNDERDETERMINED** (assemblable from forward scalars but unforced) |
+| detdet_ζ identity (this) | FTD-0235 | **UNDERDETERMINED** (assemblable from forward scalars but unforced) |
 
 **Consolidated honest status:** the ARC-C1/B2 BCC/quantization observable readout is
 **UNDERDETERMINED** — the EM-coupling coefficients `16G*²`, `16G*³` are forward-computable
@@ -88,7 +88,7 @@ the spine is untouched (`x₊=1/α` FTD-0013 stays `[STRONGLY MOTIVATED CONJECTU
 Surviving routes: ARC-D (engine-native measurement) or a new postulate that *forces*
 the operator structure. The path that would make this FOUND: a derived reason the
 readout operator's determinant carries exactly one extra factor of the det_ζ scalar
-relative to its trace (a genuine, forced det↔det_ζ correspondence).
+relative to its trace (a genuine, forced detdet_ζ correspondence).
 
 ---
 

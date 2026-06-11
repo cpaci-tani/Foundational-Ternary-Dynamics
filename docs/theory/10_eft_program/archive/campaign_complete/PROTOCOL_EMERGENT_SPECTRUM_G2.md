@@ -29,7 +29,7 @@ Subsequent work (2026-04-28, FTD-0110 [DERIVED at linear level], `DERIV_K_FROM_O
 
 All other parameters carry over from G1 unchanged: N_BURN = 200, N_SAMPLES = 50, SAMPLE_STRIDE = 50, stable_threshold = 100 ticks, 5 seeds × 5 IC classes = 25 ensembles, GPU on RTX 5090 via WSL2 (`engine/build_wsl/`).
 
-**Estimated wall time:** L=64 took 54 min for 25 ensembles (G1 actual). L=128 has 8× volume; per-tick GPU time scales sub-linearly with volume on RTX 5090 (per G1 §2 reasoning). Realistic estimate: **~4–8 GPU hours**. Allow up to 12 hours for safety margin given the 8× volume jump and finite host↔device snapshot overhead.
+**Estimated wall time:** L=64 took 54 min for 25 ensembles (G1 actual). L=128 has 8× volume; per-tick GPU time scales sub-linearly with volume on RTX 5090 (per G1 §2 reasoning). Realistic estimate: **~4–8 GPU hours**. Allow up to 12 hours for safety margin given the 8× volume jump and finite hostdevice snapshot overhead.
 
 ---
 

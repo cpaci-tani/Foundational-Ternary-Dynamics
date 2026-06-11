@@ -141,7 +141,7 @@ Step 7 is **moot in the present verdict** (step 5 already returned CLOSED-NEGATI
 | No site-local Clifford embedding | **NO** | (Plaquette bivectors are non-site-local by construction.) |
 | No `g_c` insertion | **NO** | (g_c does not appear.) |
 | No "visual" / "geometric analogy" as measurement rule | **NO** | (The operational protocol is the FTD-0086 verbatim measurement protocol, not a geometric analogy.) |
-| No `x_+ ↔ 1/α` identification before deriving the readout | **NO** | (The construction does not assume the identification; the step-5 verdict is precisely that the identification cannot be derived from this route.) |
+| No `x_+  1/α` identification before deriving the readout | **NO** | (The construction does not assume the identification; the step-5 verdict is precisely that the identification cannot be derived from this route.) |
 | No retroactive editing of the pre-reg | **NO** | (This audit document is separate from the pre-reg; the pre-reg is unedited.) |
 | No spine tag moves before ARC-3 | **NO** | (No tag move occurs in this audit.) |
 | CLOSED-NEGATIVE stays a live option | **YES** (this is what landed) | (Verdict is CLOSED-NEGATIVE per §6 (c).) |

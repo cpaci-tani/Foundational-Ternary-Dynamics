@@ -1,6 +1,6 @@
 # AUDIT — Determinant-Grading Forward Derivation: CLOSED-NEGATIVE (G\*-degree parity no-go)
 
-> **⚠ SCOPE CORRECTION (2026-05-28, post owner review).** This CLOSED-NEGATIVE is
+> ** SCOPE CORRECTION (2026-05-28, post owner review).** This CLOSED-NEGATIVE is
 > **scoped to the frozen ingredients that EXCLUDE the J-twisted det_ζ ratio.** That
 > ratio (`= G*`, a clean forward **odd** scalar; FQCR Model I) — admitted in FTD-0234 —
 > supplies the missing odd G\*-degree directly, so the parity argument here is **not the

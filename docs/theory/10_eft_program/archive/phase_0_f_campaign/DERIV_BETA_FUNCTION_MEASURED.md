@@ -26,8 +26,8 @@
 | Pre-reg (SPEC §5.2 / §5.3) | Measured | Verdict |
 |---|---|---|
 | α_eff(L=64) = 1/137.036 ± 15% | slope fit: 0.120 (16× α_ref); asymptotic: 0.033 (4.5× α_ref) | **✗ magnitude off** |
-| α_eff monotonic under blocking | Asymptotic: 0.033 → 0.035 (6%, stable). Yukawa: 0.18 → 0.71 (4× growth). | **⚠ method-dependent** |
-| β(g) matches one of QED/QCD/trivial/new | Best-method ratio β_measured / β_QED ≈ −160 (sign consistent, magnitude far off) | **⚠ qualitative match, quantitative mismatch** |
+| α_eff monotonic under blocking | Asymptotic: 0.033 → 0.035 (6%, stable). Yukawa: 0.18 → 0.71 (4× growth). | ** method-dependent** |
+| β(g) matches one of QED/QCD/trivial/new | Best-method ratio β_measured / β_QED ≈ −160 (sign consistent, magnitude far off) | ** qualitative match, quantitative mismatch** |
 | Scaling dimension Δ invariant across blocking | Not extracted in Phase 2 (deferred to Phase 3) | Phase 3 |
 
 ### Physics finding
@@ -261,10 +261,10 @@ Per the pre-registration rules committed in Phase 0:
 
 | SPEC §5 entry | Pre-reg | Measured | Held to pre-reg? |
 |---|---|---|---|
-| §5.1 charge conservation under blocking | exact | exact (B1-B7 pass) | ✅ yes |
+| §5.1 charge conservation under blocking | exact | exact (B1-B7 pass) |  yes |
 | §5.2 α_eff(L=64) | 1/137 ± 15% | 0.033 (slope: 0.120) | ✗ no |
-| §5.2 α_eff trend monotonic | yes | asymptotic: near-stable; slope/Yukawa: method-dependent | ⚠ partial |
-| §5.3 β(g) measurable | yes (error bars not straddling zero) | yes: β_asym = −8.3e−3 with finite numerics | ✅ yes |
+| §5.2 α_eff trend monotonic | yes | asymptotic: near-stable; slope/Yukawa: method-dependent |  partial |
+| §5.3 β(g) measurable | yes (error bars not straddling zero) | yes: β_asym = −8.3e−3 with finite numerics |  yes |
 | §5.3 β fits one of four categories | match QED / QCD / no-flow / new | qualitative match to QED sign; new quantitative prediction | **category "new quantitative prediction"** |
 | §5.4 Δ scaling-dimension agreement | 5% across L=64 / L=32 | not measured in Phase 2 | Phase 3 |
 

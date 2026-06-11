@@ -36,7 +36,7 @@ This is pure algebra — the quartic IS the master quadratic viewed from charge 
 
 ### 1.1 From Couplings to Charges
 
-The master quadratic's roots x+ and x- live in **coupling space**: x+ ≈ 137.036 and x- ≈ 3.024. The readings x+ ↔ 1/alpha and x- ↔ N_c are [STRONGLY MOTIVATED CONJECTURE]. Conditional on that bridge, the natural physical quantity is the **charge squared** e^2 = 1/x, which appears directly in interaction vertices.
+The master quadratic's roots x+ and x- live in **coupling space**: x+ ≈ 137.036 and x- ≈ 3.024. The readings x+  1/alpha and x-  N_c are [STRONGLY MOTIVATED CONJECTURE]. Conditional on that bridge, the natural physical quantity is the **charge squared** e^2 = 1/x, which appears directly in interaction vertices.
 
 The substitution x = 1/e^2 transforms from coupling space (where quantities are large: 137, 3) to charge space (where quantities are small: 0.0073, 0.33).
 

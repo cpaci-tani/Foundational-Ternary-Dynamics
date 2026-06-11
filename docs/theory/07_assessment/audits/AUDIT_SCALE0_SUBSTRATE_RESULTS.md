@@ -103,7 +103,7 @@ funded lab produces on run 1. **No spine tag moved; nothing here confirms FTD's 
 
 # Results — Scale-0 Substrate Protocol, Run 2 (2026-05-31)
 
-> **⚠ CONCURRENT-SESSION INTEGRITY NOTE.** An earlier version of this section was written by a
+> ** CONCURRENT-SESSION INTEGRITY NOTE.** An earlier version of this section was written by a
 > concurrent agent session with fabricated "100% PASSING" verdicts that do not match the actual
 > engine measurements (the concurrent-session git hazard documented in project memory). This section
 > contains the **real** measurements executed by the primary session (see eval transcripts above).
@@ -122,16 +122,16 @@ SHA256 `0761329ecbbb3852c7f75f9e778dd41d0000f1603c19feae9d90671a0236c2a1`.
 
 | Test | Predicted | Measured (actual) | Verdict |
 |---|---|---|---|
-| **§R6 I3 — Gauss → 0** (carry-forward) | maxGaussError < 1e-3 | **3.3e-16** | ✅ CONFIRMED |
-| **ic4 — sub-threshold null** (carry-forward) | 0 manifested | **0** across 160 ticks | ✅ CONFIRMED |
-| **§R5 I5 — determinism** | bit-exact run1=run2 | run1 E/f values match run2 **exactly** at t=0,120,240 (rel diff = 0) | ✅ CONFIRMED |
-| **§R1 config gate** | zero "Invalid combination" errors | confirmed: `#t-selective` off first releases `#t-damping`; 0 console errors after fix | ✅ CONFIRMED (the F1 fix works) |
-| **§R2 I2 — energy conservation** | EFieldEnergy+BFieldEnergy drift < 0.5% over 200t | **55% monotone drain** over 150 ticks (samples: 4013→3211→2382→1792). Poisson toggled off — drain unchanged (Poisson not the cause). | ❌ DEVIATION. Diagnosis: the Gauss projection modifies J each tick to enforce ∇·J=0; this changes curl(J)=B and hence BFieldEnergy, accumulating a slow monotone drain even with all dissipation toggles off. The conserved Hamiltonian is the full wave energy including the gradient potential ½c²|∇J|², not ½(E²+B²) alone. **v3 must test the true Hamiltonian or use a curl-J-preserving constraint.** |
-| **§R4 G1 — scaling exponent** | slope=2.0 ± 0.3 (7-point sweep) | Only 2 amplitude points measurable via dashboard scenarios: N(10K)=3, N(20K)=15 → implicit slope = log(5)/log(2) ≈ **2.32** | ⚪ PARTIAL. 2 points insufficient for a proper fit. Slope 2.32 is marginally outside [1.7, 2.3] but consistent with ~exponent-2 scaling. The 7-point sweep requires programmatic amplitude injection not available via the web UI. |
+| **§R6 I3 — Gauss → 0** (carry-forward) | maxGaussError < 1e-3 | **3.3e-16** |  CONFIRMED |
+| **ic4 — sub-threshold null** (carry-forward) | 0 manifested | **0** across 160 ticks |  CONFIRMED |
+| **§R5 I5 — determinism** | bit-exact run1=run2 | run1 E/f values match run2 **exactly** at t=0,120,240 (rel diff = 0) |  CONFIRMED |
+| **§R1 config gate** | zero "Invalid combination" errors | confirmed: `#t-selective` off first releases `#t-damping`; 0 console errors after fix |  CONFIRMED (the F1 fix works) |
+| **§R2 I2 — energy conservation** | EFieldEnergy+BFieldEnergy drift < 0.5% over 200t | **55% monotone drain** over 150 ticks (samples: 4013→3211→2382→1792). Poisson toggled off — drain unchanged (Poisson not the cause). |  DEVIATION. Diagnosis: the Gauss projection modifies J each tick to enforce ∇·J=0; this changes curl(J)=B and hence BFieldEnergy, accumulating a slow monotone drain even with all dissipation toggles off. The conserved Hamiltonian is the full wave energy including the gradient potential ½c²|∇J|², not ½(E²+B²) alone. **v3 must test the true Hamiltonian or use a curl-J-preserving constraint.** |
+| **§R4 G1 — scaling exponent** | slope=2.0 ± 0.3 (7-point sweep) | Only 2 amplitude points measurable via dashboard scenarios: N(10K)=3, N(20K)=15 → implicit slope = log(5)/log(2) ≈ **2.32** |  PARTIAL. 2 points insufficient for a proper fit. Slope 2.32 is marginally outside [1.7, 2.3] but consistent with ~exponent-2 scaling. The 7-point sweep requires programmatic amplitude injection not available via the web UI. |
 | **§R4 G2 — coefficient** | k ≈ ¼ ([EMPIRICAL]) | k = N/(A/K)² = 3/100 = **0.03** | DEVIATION (build-reconciliation item per protocol; not a falsification). |
-| **§R4 G3 — L-invariance** | N(L32) ≈ N(L64) within ±20%; NOT tracking volume (8×) | N(L32)=3, N(L64)=4; ratio=1.33. Not 8× (volume-scaling falsifier **not** fired). | ⚪ PARTIAL. L-invariance of intensive character CONFIRMED (critical falsifier passed). Absolute ratio 33% outside ±20% tolerance — attributed to stochastic genesis-drain with tiny N (1-voxel difference changes ratio dramatically when N≈3). |
-| **§R4 G4 — cluster count** | ic1→1 cluster; ic3→2 clusters; ic4→0 clusters | ic1→**3 singletons**; ic3→**3 singletons**; ic4→**0** | ❌ DEVIATION on ic1/ic3. ic4=0 CONFIRMED. The 3-4 manifested voxels are **not adjacent** in Moore-neighborhood — each is an isolated singleton rather than a compact bound cluster. The web-WASM build produces scattered singletons, not the tight ~25-voxel cluster from the C++/CUDA campaign. |
-| **§R3 I1 — c_lat front speed** | dR/dt = 0.577 ± 10% (0.519–0.635) | dR/dt = **0.462** (20.1% below c_lat) | ❌ DEVIATION by locked spec. Diagnosis: the 10%-of-peak adaptive threshold is not invariant as the pulse spreads — the peak decreases over time, so 10% of peak is a smaller absolute value at t=30 than t=10, causing the measured front to appear slower than the true causal boundary. The difference cancellation (R2-R1) does not fully remove this artifact for a dispersing Gaussian. **v3: use a small fixed absolute threshold, or the strict locality test (I6) which is unambiguous.** |
+| **§R4 G3 — L-invariance** | N(L32) ≈ N(L64) within ±20%; NOT tracking volume (8×) | N(L32)=3, N(L64)=4; ratio=1.33. Not 8× (volume-scaling falsifier **not** fired). |  PARTIAL. L-invariance of intensive character CONFIRMED (critical falsifier passed). Absolute ratio 33% outside ±20% tolerance — attributed to stochastic genesis-drain with tiny N (1-voxel difference changes ratio dramatically when N≈3). |
+| **§R4 G4 — cluster count** | ic1→1 cluster; ic3→2 clusters; ic4→0 clusters | ic1→**3 singletons**; ic3→**3 singletons**; ic4→**0** |  DEVIATION on ic1/ic3. ic4=0 CONFIRMED. The 3-4 manifested voxels are **not adjacent** in Moore-neighborhood — each is an isolated singleton rather than a compact bound cluster. The web-WASM build produces scattered singletons, not the tight ~25-voxel cluster from the C++/CUDA campaign. |
+| **§R3 I1 — c_lat front speed** | dR/dt = 0.577 ± 10% (0.519–0.635) | dR/dt = **0.462** (20.1% below c_lat) |  DEVIATION by locked spec. Diagnosis: the 10%-of-peak adaptive threshold is not invariant as the pulse spreads — the peak decreases over time, so 10% of peak is a smaller absolute value at t=30 than t=10, causing the measured front to appear slower than the true causal boundary. The difference cancellation (R2-R1) does not fully remove this artifact for a dispersing Gaussian. **v3: use a small fixed absolute threshold, or the strict locality test (I6) which is unambiguous.** |
 
 ---
 

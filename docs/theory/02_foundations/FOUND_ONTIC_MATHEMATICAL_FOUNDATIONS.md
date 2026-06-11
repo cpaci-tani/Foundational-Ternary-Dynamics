@@ -117,9 +117,9 @@ The ordering γ → ϖ → M → π → G* is not by numerical magnitude but by 
 
 | Level | Constant | Value | Requires | Encodes |
 |-------|----------|-------|----------|---------|
-| **0** | γ | 0.5772... | Integers + limit | Discrete ↔ continuous bridge |
+| **0** | γ | 0.5772... | Integers + limit | Discrete  continuous bridge |
 | **1** | ϖ | 2.6221... | γ (via Γ), integer 4 | Self-crossing geometry (lemniscate) |
-| **2** | M | 1.1981... | AGM iteration | Arithmetic ↔ geometric bridge |
+| **2** | M | 1.1981... | AGM iteration | Arithmetic  geometric bridge |
 | **3** | π | 3.1416... | ϖ × M | Circular closure |
 | **4** | G* | 2.9587... | √2, ϖ, π | Master quadratic coefficient → α |
 

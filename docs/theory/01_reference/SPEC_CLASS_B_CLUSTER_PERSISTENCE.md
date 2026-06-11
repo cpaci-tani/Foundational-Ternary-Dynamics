@@ -326,7 +326,7 @@ bound:     total_manifested ≈ const     ∧  centroid stationary            �
 decay:     total_manifested decreases   ∧  centroid stationary            ∧  rms_radius bounded
 ```
 
-Mask persistence alone can confuse soliton ↔ decay and bound ↔ flooding. Centroid drift + total_manifested + RMS radius distinguish all four.
+Mask persistence alone can confuse soliton  decay and bound  flooding. Centroid drift + total_manifested + RMS radius distinguish all four.
 
 **Next-session priorities**:
 1. Build a Phase B.3 protocol using the triplet metric and re-classify all amplitudes A ∈ {6, ..., 16}·K_GENESIS at L=32, 64
@@ -511,7 +511,7 @@ After 13 diagnostic tests over 2026-05-04, Phase B has built a mature picture of
 
 1. **Cluster decay channel is `weak_transmutation`** (default-ON in engine), not Boltzmann thermal evaporation. Energy-based protocols (Langevin heating, damping cooling) do not produce decay; matrix-element-driven channels do.
 
-2. **Persistence metrics need triplet form**: simple mask-persistence systematically conflates soliton↔decay (cluster moves) and bound↔flooding (mask voxels stay manifested as lattice floods). The triplet `(n_total, centroid_drift, rms_radius)` distinguishes all four regimes.
+2. **Persistence metrics need triplet form**: simple mask-persistence systematically conflates solitondecay (cluster moves) and boundflooding (mask voxels stay manifested as lattice floods). The triplet `(n_total, centroid_drift, rms_radius)` distinguishes all four regimes.
 
 3. **Binding lifetime τ_bind is the cleanest dimensionless engine observable**: at (defaults+color+triad, A=7, L=32), τ_bind = 210 ticks deterministic across 5 seeds (zero spread on first_growth tick). This is the candidate Phase B falsifiable observable for engine-vs-PDG ratio comparison.
 
@@ -1382,7 +1382,7 @@ The N_c = mult(T_{1u}) identification is more L-invariant than N_base across the
 
 2. **FTD-0110's cluster-size = mass identification does NOT directly imply dynamical stability.** A=10·K_GENESIS (electron-identified by *size*) is *unstable* under the resolved Phase B.3 protocol — the cluster fully dissolves by tick ~135-160 across both L=32 and L=64. The size identification (FTD-0110's `N(A) ≈ ¼·(A/K_GENESIS)²`) is a *static* prediction; dynamical stability is a separate question the original derivation did not address. **This is consistent with SM particle physics** where size (mass) and stability are independent — most particles are unstable; only the lightest of each conserved-quantum-number class is stable.
 
-3. **The simple τ_e (first e⁻¹ crossing) metric is misleading for medium/large clusters.** They show dip-and-recover dynamics, not monotonic Boltzmann decay. The `weak_transmutation` channel stochastically flips +1 ↔ -1; some flipped voxels annihilate, others restabilize. The equilibrium mask fraction is set by *rate balance*, not by exponential lifetime.
+3. **The simple τ_e (first e⁻¹ crossing) metric is misleading for medium/large clusters.** They show dip-and-recover dynamics, not monotonic Boltzmann decay. The `weak_transmutation` channel stochastically flips +1  -1; some flipped voxels annihilate, others restabilize. The equilibrium mask fraction is set by *rate balance*, not by exponential lifetime.
 
 **Implications for Phase B.3 deliverable**:
 

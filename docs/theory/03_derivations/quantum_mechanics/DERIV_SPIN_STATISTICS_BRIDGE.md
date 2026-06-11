@@ -149,7 +149,7 @@ Each harmonic frequency in the Lemniscate-Alpha corresponds to a level in the Ca
 
 **Theorem (Lobe Creation).** New lobes appear only at ontologically significant algebraic transitions — the loss of total order (ℝ → ℂ) and the loss of associativity (ℍ → 𝕆). Intermediate transitions (loss of commutativity) refine existing lobes without creating new ones.
 
-**[SELECTION]**: The mapping between algebraic property loss and physical gauge structure is motivated by the parallels (non-commutativity ↔ non-abelian gauge groups; non-associativity ↔ color confinement) but is not uniquely determined by the axioms.
+**[SELECTION]**: The mapping between algebraic property loss and physical gauge structure is motivated by the parallels (non-commutativity  non-abelian gauge groups; non-associativity  color confinement) but is not uniquely determined by the axioms.
 
 ## §1.6 The Z/6Z Structure: Particle × Color [THEOREM]
 
@@ -242,13 +242,13 @@ Fermions correspond to the **PF component** of G*: the lattice constraint that d
 
 $$x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
-produces x₊ = 137.036 (≈ 1/α) and x₋ = 3.024 (mathematical artifact of $P(x)$; the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`). In PF notation (see [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md), Theorem 1.1):
+produces x₊ = 137.036 (≈ 1/α) and x₋ = 3.024 (mathematical artifact of $P(x)$; the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`). In PF notation (see [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md), Theorem 1.1):
 
 $$x^2 - \frac{16\varpi^2}{\text{PF}} \, x + \frac{16\varpi^3}{\text{PF}^{3/2}} = 0.$$
 
 The linear coefficient 16ϖ²/PF contains ϖ² (continuous) divided by PF (discrete). The constant term 16ϖ³/PF^{3/2} contains ϖ³ (continuous) divided by PF^{3/2} (discrete). Setting either ϖ = 0 or PF = 0 destroys the equation — no roots exist. Sending PF or ϖ to arbitrarily large values pushes the roots into degenerate regimes incompatible with physical constants.
 
-**Corollary (historical, weakened by v1.4 §5 retirement of `x_- ↔ N_c`).** Under the historical paired identification, "bosons and fermions cannot exist independently — any universe with electromagnetic coupling (α from x₊) necessarily contains color confinement (N_c from x₋), and vice versa." Post-v1.4, the load-bearing tie from `x_-` to color is removed; the algebraic statement (the polynomial's coefficients couple continuous and discrete invariants) survives, but the physics-side coupling-between-sectors reading depends on the now-retired identification. ∎
+**Corollary (historical, weakened by v1.4 §5 retirement of `x_-  N_c`).** Under the historical paired identification, "bosons and fermions cannot exist independently — any universe with electromagnetic coupling (α from x₊) necessarily contains color confinement (N_c from x₋), and vice versa." Post-v1.4, the load-bearing tie from `x_-` to color is removed; the algebraic statement (the polynomial's coefficients couple continuous and discrete invariants) survives, but the physics-side coupling-between-sectors reading depends on the now-retired identification. ∎
 
 ---
 
@@ -278,7 +278,7 @@ The critical coefficient k_crit = 4/G* is the boundary where the imaginary unit 
 
 When Δ > 0, the quadratic has two real distinct roots x₊, x₋. These roots are independently specifiable — knowing x₊ does not uniquely determine x₋ (beyond the constraints imposed by Vieta's relations).
 
-Under root exchange x₊ ↔ x₋, the Vieta relations remain invariant:
+Under root exchange x₊  x₋, the Vieta relations remain invariant:
 
 $$x_+ + x_- = kG^{*2} \quad (\text{invariant}), \qquad x_+ \cdot x_- = kG^{*3} \quad (\text{invariant}).$$
 
@@ -290,7 +290,7 @@ $$|\psi(x_+, x_-)\rangle = |\psi(x_-, x_+)\rangle.$$
 
 When Δ < 0, the quadratic has complex conjugate roots y = a + bi, y* = a − bi. These roots are necessarily paired — one cannot exist without the other (since the polynomial has real coefficients, complex roots always appear in conjugate pairs).
 
-Under root exchange y ↔ y*:
+Under root exchange y  y*:
 
 $$\text{Im}(y) \to \text{Im}(y^*) = -\text{Im}(y).$$
 
@@ -454,7 +454,7 @@ THE TWO LEMNISCATES
 │
 └── BOTH → G* → master quadratic x² − 16G*²x + 16G*³ = 0
     ├── x₊ = 137.036 ≈ 1/α  (fine structure constant, FTD-0013 [SMC])
-    ├── x₋ = 3.024   (math artifact of P(x); x_- ↔ N_c RETIRED v1.4 §5)
+    ├── x₋ = 3.024   (math artifact of P(x); x_-  N_c RETIRED v1.4 §5)
     ├── Discriminant Δ = kG*³(kG*−4):
     │   ├── Δ > 0: real roots      → BOSONIC statistics  (symmetric exchange)
     │   ├── Δ = 0: degenerate      → MEASUREMENT boundary (Born rule)
@@ -476,7 +476,7 @@ THE TWO LEMNISCATES
 | SSB-7 | 16 = gauge DoF = spinor bilinears | [THEOREM] | Lattice DoF counting, D = 3 | Recount in D = 3 |
 | SSB-8 | Lemniscates prior to SO(3) | [SELECTION] | Ontological argument | Derive lemniscate from SO(3) |
 | SSB-9 | Z/6Z = particle × color | [THEOREM] | OT-7 verification | Recompute lobe doublet structure |
-| SSB-10 | Cayley-Dickson ↔ physical structure | [SELECTION] | Hierarchy table §1.5 | Find counterexample |
+| SSB-10 | Cayley-Dickson  physical structure | [SELECTION] | Hierarchy table §1.5 | Find counterexample |
 | SSB-11 | Full exchange statistics from root phases | [CONJECTURE] | §3.2, §3.3 | Derive quantitative statistics |
 | SSB-12 | θ₃² as joint partition function | [CONJECTURE] | §5.3 | Derive from S[s,J] |
 | SSB-13 | θ₃(0,i)=√G*/(2π)^{1/4} is the weight-½ spin object; shortfall = archimedean measure | [OBSERVATION] | §5.4 | Mathematical fact (16 dp); promotes nothing |
@@ -508,13 +508,13 @@ The following remain to be formalized:
 | SSB-1 | Bernoulli ℤ₂ from self-intersection | [THEOREM] | FOUND_ONTOLOGICAL_GENESIS MIT-1 |
 | SSB-2 | Lemniscate-Alpha winding w = −2 | [THEOREM] | FOUND_FOURCIER_ONTIC_TOOL OT-8 |
 | SSB-3 | Two-road G* agreement (6.41 ppm) | [SELECTION] | FOUND_ONTOLOGICAL_GENESIS MIT-5; rigidity verdict in AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md (2026-05-01) |
-| SSB-4 | ℤ₂ topology ↔ spin-1/2 identification | [SELECTION] | DERIV_QM_RESOLVED §2.7 |
+| SSB-4 | ℤ₂ topology  spin-1/2 identification | [SELECTION] | DERIV_QM_RESOLVED §2.7 |
 | SSB-5 | G* inseparability (boson-fermion) | [THEOREM] | DERIV_DISCRETE_CONTINUOUS_BRIDGE §1.1 |
-| SSB-6 | Discriminant trichotomy ↔ statistics | [SELECTION] | DERIV_DISCRETE_CONTINUOUS_BRIDGE §3 |
+| SSB-6 | Discriminant trichotomy  statistics | [SELECTION] | DERIV_DISCRETE_CONTINUOUS_BRIDGE §3 |
 | SSB-7 | Dual role of 16 | [THEOREM] | ontic.h Layer 3 |
 | SSB-8 | Ontological priority of lemniscates | [SELECTION] | FOUND_ONTIC_MATHEMATICAL_FOUNDATIONS |
 | SSB-9 | Z/6Z = Z/2Z × Z/3Z (quark sector) | [THEOREM] | FOUND_FOURCIER_ONTIC_TOOL OT-7 |
-| SSB-10 | Cayley-Dickson ↔ gauge hierarchy | [SELECTION] | FOUND_FOURCIER_ONTIC_TOOL OT-3, OT-4 |
+| SSB-10 | Cayley-Dickson  gauge hierarchy | [SELECTION] | FOUND_FOURCIER_ONTIC_TOOL OT-3, OT-4 |
 | SSB-11 | Quantitative exchange statistics | [CONJECTURE] | (future work) |
 | SSB-12 | θ₃² joint partition function | [CONJECTURE] | DERIV_DISCRETE_CONTINUOUS_BRIDGE §5 |
 | SSB-13 | θ₃(0,i) weight-½ spin object; archimedean shortfall | [OBSERVATION] | §5.4; MONOGRAPH Derivation 5; AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE §8–§9 |

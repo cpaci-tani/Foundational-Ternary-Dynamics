@@ -115,7 +115,7 @@ This says nothing new about whether the construction matches the **experimental*
 | Real, sorted eigenvalues from cubic | `[THEOREM]` (Smith-1961 stable cubic for Hermitian 3×3) | Standard linear algebra. |
 | Orthonormal eigenvectors / unitarity of `V` | `[THEOREM]` (Hermitian linear algebra) | Standard. |
 | `Γ_F(d)` → flavour generations | `[SELECTION]` (the labelling `Γ_U` = Γ_F(3), `Γ_D` = Γ_F(2)) | Interpretation, not derivation. |
-| `\|V_{ij}\|` ↔ experimental CKM | `[CANDIDATE RECONSTRUCTION]` overall; the equality is `[CONJECTURE]` at best | A structural resemblance is not a derivation (GTCA F1/F10). |
+| `\|V_{ij}\|`  experimental CKM | `[CANDIDATE RECONSTRUCTION]` overall; the equality is `[CONJECTURE]` at best | A structural resemblance is not a derivation (GTCA F1/F10). |
 
 The LEDGER row (FTD-0196) records: the `Γ_F(d)` flavour graph as `[CANDIDATE RECONSTRUCTION]`, and the CKM-like overlap as `[RECONSTRUCTION / diagnostic]`.
 

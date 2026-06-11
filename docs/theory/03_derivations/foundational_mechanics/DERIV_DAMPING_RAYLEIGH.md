@@ -53,7 +53,7 @@ CALLSTACK F9 (per `AUDIT_ENGINE_CALLSTACK.md`, RESOLVED-AS-DOCUMENTED) marks thi
 
 A heuristic chain that rationalises DAMPING = α:
 
-**Step 1.** The state-flux coupling $L_\text{coupling} = -g_c s (\nabla\cdot\mathbf{J})$ converts flux energy into particle binding at the two-vertex level. The Born-rate for one tick of flux ↔ particle exchange is $\propto g_c^2 = \alpha$.
+**Step 1.** The state-flux coupling $L_\text{coupling} = -g_c s (\nabla\cdot\mathbf{J})$ converts flux energy into particle binding at the two-vertex level. The Born-rate for one tick of flux  particle exchange is $\propto g_c^2 = \alpha$.
 
 **Step 2.** By energy conservation, the rate at which flux loses energy (per tick) near a manifested particle equals the rate at which the particle gains binding energy. So flux decay rate $\sim \alpha$.
 
@@ -93,7 +93,7 @@ For the current FTD-EFT roadmap:
 The rate-α-Rayleigh choice is consistent with:
 - Energy conservation (cumulative-balance tests pass to the documented tolerance).
 - Wave-equation stability (leapfrog runs at CFL = $1/\sqrt 3$ for arbitrarily many ticks under default toggles without drift).
-- Observed evaporation timescales matching SM-particle lifetime predictions to ~5–18% (per FTD-0110 cluster-↔-mass identification).
+- Observed evaporation timescales matching SM-particle lifetime predictions to ~5–18% (per FTD-0110 cluster--mass identification).
 
 It is **not** consistent with arbitrarily different damping rates: tests with DAMPING set to 0.001 or 0.1 break either energy conservation or evaporation kinetics. The engine has a window of operating points, but α is the preferred default.
 

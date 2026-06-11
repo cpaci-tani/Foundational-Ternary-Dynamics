@@ -106,7 +106,7 @@ The two roots of the master quadratic live in sharply separated phases:
 
 The identification of $x_-$ with the QCD confined phase rests on:
 
-1. ~~$\lfloor x_- \rfloor = 3 = N_c$~~ — **the `x_- ↔ N_c` identification is RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). $\lfloor x_- \rfloor = 3$ is a numerical fact about the polynomial root; the load-bearing match to $N_c$ is no longer in force. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem.
+1. ~~$\lfloor x_- \rfloor = 3 = N_c$~~ — **the `x_-  N_c` identification is RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). $\lfloor x_- \rfloor = 3$ is a numerical fact about the polynomial root; the load-bearing match to $N_c$ is no longer in force. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` and the Moore Layer Theorem.
 2. Area-law Wilson loops (confinement)
 3. $g^2(x_-) = 0.331$ is $O(1)$, consistent with strong coupling
 4. The phase separation mirrors the EM/QCD hierarchy in nature

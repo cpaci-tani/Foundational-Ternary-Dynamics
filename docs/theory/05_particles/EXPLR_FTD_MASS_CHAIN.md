@@ -7,7 +7,7 @@
 
 ---
 
-> **⚠ Epistemic status (read first).** This document is an **arithmetic synthesis**, *not* an "unbroken physical derivation." Its steps carry **mixed** status:
+> ** Epistemic status (read first).** This document is an **arithmetic synthesis**, *not* an "unbroken physical derivation." Its steps carry **mixed** status:
 > - The **algebraic spine** — the $G^*$ identity, the master-quadratic polynomial, and its roots — is `[THEOREM]` (pure number theory; stands independent of any physics).
 > - Every **physical identification** — $x_+\!\leftrightarrow\!1/\alpha$, the 4-term $\alpha$ fit, $m_e\!\leftrightarrow\!0.511$ MeV, the proton/neutron mass formulas — is `[STRONGLY MOTIVATED CONJECTURE]`, `[HIGH-PRECISION PARAMETRIC]`, `[COORDINATE COINCIDENCE]`, or `[PARAMETRIC FITTING]`.
 >
@@ -35,8 +35,8 @@ The mass scale is **calibrated** to the electron mass (mass-unit $\equiv m_e$); 
 graph TD
     Substrate["Discrete Space-Time (D=3, dt=1)"] --> Gstar["Lemniscatic Bridge Constant G*<br/>G* = Γ(1/4)/Γ(3/4) ≈ 2.9586751<br/>(identity THEOREM; physical role SELECTION)"]
     Gstar --> Master["Master Quadratic Polynomial (THEOREM)<br/>x² - 16(G*)² x + 16(G*)³ = 0"]
-    Master --> xplus["Root x₊ (THEOREM)<br/>x₊ ≈ 137.036<br/>(x₊↔1/α: STRONGLY MOTIVATED CONJECTURE)"]
-    Master --> xminus["Root x₋ (math artifact)<br/>x₋ ≈ 3.024<br/>(x₋↔N_c: RETIRED, FTD-0014)"]
+    Master --> xplus["Root x₊ (THEOREM)<br/>x₊ ≈ 137.036<br/>(x₊1/α: STRONGLY MOTIVATED CONJECTURE)"]
+    Master --> xminus["Root x₋ (math artifact)<br/>x₋ ≈ 3.024<br/>(x₋N_c: RETIRED, FTD-0014)"]
     
     xplus --> QED["4-term α fit (HIGH-PRECISION PARAMETRIC)<br/>alpha⁻¹ = 137.035999177"]
     

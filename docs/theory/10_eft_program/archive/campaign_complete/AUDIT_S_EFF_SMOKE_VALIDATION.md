@@ -13,16 +13,16 @@ End-to-end smoke validation of the S_eff campaign infrastructure on WSL2 RTX 509
 
 | Component | Status |
 |---|---|
-| Reaction operators O7-O10 (`engine/include/ftd/eft/reaction_operators.h`) | ✅ COMPLETE — 4/4 unit tests PASS |
-| Campaign binary (`engine/tests/campaign_s_eff_nonlinear_2026-04-29.cpp`) | ✅ COMPLETE — builds clean, runs end-to-end |
-| 10-op evaluation on snapshot pairs | ✅ COMPLETE — 6 spatial + 4 reaction ops |
-| Snapshot-pair sampling (before/after 1 tick) | ✅ COMPLETE — 0 Q-violations across all smoke runs |
-| 10×10 covariance + bootstrap framework | ✅ COMPLETE — Gauss-Jordan inversion + 100-sample bootstrap |
-| RG semigroup test (M(b=4) ≈ M(b=2)²) | ✅ COMPLETE — Frobenius ratio diagnostic |
-| Per-op variance diagnostic | ✅ COMPLETE — surfaces which ops cause matrix singularity |
-| `--scenario={langevin-pure, genesis-rich, pair-rich, mixed-balanced}` flag | ✅ COMPLETE — all 4 scenarios runnable |
-| `--L`, `--N-seeds`, `--N-samples`, `--N-burn`, `--b4`, `--smoke` flags | ✅ COMPLETE |
-| CTest registration (label `s_eff_campaign`) | ✅ COMPLETE |
+| Reaction operators O7-O10 (`engine/include/ftd/eft/reaction_operators.h`) |  COMPLETE — 4/4 unit tests PASS |
+| Campaign binary (`engine/tests/campaign_s_eff_nonlinear_2026-04-29.cpp`) |  COMPLETE — builds clean, runs end-to-end |
+| 10-op evaluation on snapshot pairs |  COMPLETE — 6 spatial + 4 reaction ops |
+| Snapshot-pair sampling (before/after 1 tick) |  COMPLETE — 0 Q-violations across all smoke runs |
+| 10×10 covariance + bootstrap framework |  COMPLETE — Gauss-Jordan inversion + 100-sample bootstrap |
+| RG semigroup test (M(b=4) ≈ M(b=2)²) |  COMPLETE — Frobenius ratio diagnostic |
+| Per-op variance diagnostic |  COMPLETE — surfaces which ops cause matrix singularity |
+| `--scenario={langevin-pure, genesis-rich, pair-rich, mixed-balanced}` flag |  COMPLETE — all 4 scenarios runnable |
+| `--L`, `--N-seeds`, `--N-samples`, `--N-burn`, `--b4`, `--smoke` flags |  COMPLETE |
+| CTest registration (label `s_eff_campaign`) |  COMPLETE |
 
 The campaign infrastructure is **production-ready at the code level**.
 

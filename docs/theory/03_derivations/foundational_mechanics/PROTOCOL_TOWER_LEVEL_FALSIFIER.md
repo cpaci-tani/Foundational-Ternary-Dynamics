@@ -17,7 +17,7 @@ A natural follow-up question is: *do other levels of the tower carry physical co
 - The framework integers `{N_c = 3, N_base = 4, b_3 = 7, N_eff = 13}` index four levels. `k = N_base = 4` is empirically matched. Do `k ∈ {3, 7, 13}` also carry content?
 - More generally, does any level `k ≠ 4` produce a tower observable (`x_+`, `x_-`, `1/y_+`, `1/y_-`) that matches a known dimensionless physics constant?
 
-A post-hoc exploratory scan (`scripts/exploration/explore_tower_level_scan.py`) was run on 2026-04-29 (late evening) and found no positive matches at any level `k ≠ 4` other than the `k = 4` `1/y_-` ↔ `cos²(θ_13)` complement, which is automatic from the harmonic invariant and therefore non-independent. The exploratory scan **falsified the framework-integer-as-tower-index hypothesis** at the level the scan could probe (1% tolerance, 16 candidate constants).
+A post-hoc exploratory scan (`scripts/exploration/explore_tower_level_scan.py`) was run on 2026-04-29 (late evening) and found no positive matches at any level `k ≠ 4` other than the `k = 4` `1/y_-`  `cos²(θ_13)` complement, which is automatic from the harmonic invariant and therefore non-independent. The exploratory scan **falsified the framework-integer-as-tower-index hypothesis** at the level the scan could probe (1% tolerance, 16 candidate constants).
 
 But: that scan was post-hoc, and per FTD-0097 / CLAUDE.md fishing-discipline, post-hoc scans cannot be cited as evidence. **A future blind run, with prior pre-registration of the catalog, level range, precision threshold, and look-elsewhere correction, is required before any positive match at `k ≠ 4` can be admitted as evidence.** This document specifies that pre-registration.
 
@@ -116,7 +116,7 @@ Total tests = `13 × 4 × 22 = 1144`.
 4. Compare measured outcome against the verdict matrix.
 5. Report verdict in a `MEASUREMENT_TOWER_LEVEL_SCAN.md` document linked to the tag.
 
-The post-hoc scan run on 2026-04-29 produced 1 verified match (`k=4` `x_+` ↔ `α⁻¹`) and 1 automatic-from-harmonic match (`k=4` `1/y_-` ↔ `cos²θ_13`) and 0 matches at any `k ∈ {3, 7, 13}`. **Under this verdict matrix, that outcome would be "NULL CONSISTENT" — framework-integer-as-tower-index hypothesis structurally consistent with no signal**. But because the scan was post-hoc, its results CANNOT be reported as evidence. The blind re-run is required.
+The post-hoc scan run on 2026-04-29 produced 1 verified match (`k=4` `x_+`  `α⁻¹`) and 1 automatic-from-harmonic match (`k=4` `1/y_-`  `cos²θ_13`) and 0 matches at any `k ∈ {3, 7, 13}`. **Under this verdict matrix, that outcome would be "NULL CONSISTENT" — framework-integer-as-tower-index hypothesis structurally consistent with no signal**. But because the scan was post-hoc, its results CANNOT be reported as evidence. The blind re-run is required.
 
 ---
 

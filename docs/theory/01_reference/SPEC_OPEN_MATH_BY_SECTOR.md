@@ -53,7 +53,7 @@ This tracker organises **mathematical research gaps** by physics sector (10 sect
 6. Gravity / GR
 7. Quantum foundations / Bell / Lorentz
 8. Cosmology
-9. Engine ↔ Algebra bridge
+9. Engine  Algebra bridge
 10. Cross-cutting / Foundational obstructions
 
 Each sector has: **scope · status snapshot · open math table · closed-negative reminders (if any) · sources**. Closed items are noted briefly for sector context only; full provenance lives in `LEDGER.md`.
@@ -70,7 +70,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 |---|---|---|---|---|
 | MC-T1.1-ext | `L ≥ 3` ultralocality proof or disproof for matched-stencil with Gauss-constraint-allowed configurations | [CLOSED NEGATIVE — disproof established 2026-05-23 per `scripts/proofs/proof_phase_j_general_L.py`; Theorem 7 retagged `[DISCONFIRMED for general L]` in SPEC_ALGEBRAIC_SPINE.md §7] | W (closed) | — |
 | MC-T2.3-4 | Structural theorem for `d = −4` privilege beyond 63-discriminant numerical scan. **Effort downgraded 2026-05-08 (W2.6 audit, M → D-W)**: FTD-0122 / OT-1.5 already established `Z[BCC] ⊗ Q ≅ V_triv² ⊕ V_sign² ⊕ V_complex²` with `V_complex` carrying natural `Z[i]`-module structure. Among class-number-1 imaginary-quadratic fields `{d=1,2,3,7,11,19,43,67,163}`, **only `d=4` (`Q(i)`) has `\|O^×\| = 4`** (others have order 2 or 6 (`Q(ω)`)). The closure is a one-page argument under the `\|Z[i]^×\| = 4` unit-group condition: `d = −4` is the unique CM ring whose unit group has order 4, and FTD-0122's complex structure on V_complex requires exactly this. Ancillary routes (`L(E, 1)` analytical structure, Galois-theoretic) remain optional. | [CLOSED — resolved 2026-05-26 via unit-group uniqueness theorem in SPEC_ALGEBRAIC_SPINE.md §3] | D-W (closed) | FTD-0122 (already closed) |
-| δ_c | `δ_c = x_- − 3 ≈ 0.024`: closed-form for the residual between the smaller root `x_- = 16G*³α` and the integer 3. (Historical framing: `δ_c = x_- − N_c`; **superseded** by v1.4 §5 retirement of the `x_- ↔ N_c` identification — LEDGER FTD-0014 removed in commit `ca7eb61`. The numerical question — closed form for `16G*³α − 3` — stands as a pure-math question independent of any physics identification.) Three candidate expressions match only 0.65–5% (engine `ontic.h` Layer 4) | [OPEN] | W–M | — |
+| δ_c | `δ_c = x_- − 3 ≈ 0.024`: closed-form for the residual between the smaller root `x_- = 16G*³α` and the integer 3. (Historical framing: `δ_c = x_- − N_c`; **superseded** by v1.4 §5 retirement of the `x_-  N_c` identification — LEDGER FTD-0014 removed in commit `ca7eb61`. The numerical question — closed form for `16G*³α − 3` — stands as a pure-math question independent of any physics identification.) Three candidate expressions match only 0.65–5% (engine `ontic.h` Layer 4) | [OPEN] | W–M | — |
 
 **Closed (sector context):** Theorems 1–9 (FTD-0001, OT-1.1–1.8, 2.1–2.3, 4.1, 3.4 partial), MC-T1.1 (route b, Theorem 7 retagged `[THEOREM at L=2]`), **MC-T1.1-ext (CLOSED NEGATIVE 2026-05-23, general-L ultralocality disproved per `proof_phase_j_general_L.py`; Theorem 7 spine entry retagged `[DISCONFIRMED for general L]`)**, MC-T1.2 (Theorem 3 retagged `[NUMERICAL FACT, h=1 only]`), MC-T1.3 (Q(G*) verification), MC-T1.4 (per-voxel mass gap), MC-T1.5 (BCC complex-structure Roles 1+3 [DERIVED]; Roles 2+4 NO-GO), MC-T2.1 + MC-T2.2 (extended polynomial scan, ~4×10⁵:1 Bayes), MC-T2.3 items 1–3 (63-disc Γ-product null at h ≥ 2), MC-T2.3-4 (CLOSED 2026-05-26, unit-group uniqueness proof integrated).
 
@@ -80,7 +80,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 # §2 · Electromagnetism / Fine structure (α)
 
-**Scope:** `x_+ ↔ 1/α` identification (FTD's central physics claim); QED bridge from FTD substrate.
+**Scope:** `x_+  1/α` identification (FTD's central physics claim); QED bridge from FTD substrate.
 
 **Status snapshot:** `x_+ = 137.0362` matches `1/α` to 1.26 ppm as **[STRONGLY MOTIVATED CONJECTURE]** (OT-5.1, FTD-0013). Coefficient 16 = `\|Aut(E)\|²` is structural identification at OT-4.1 [T4]. Doctrine §7 bivector/Dirac/QED bridge sector all [OPEN] per FTD-0073 mode-erasure closure.
 
@@ -90,7 +90,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | **TEST4-GEN** | **Alpha arithmetic generativity test.** Pre-registers the Balmer-to-Bohr gate: the same lemniscatic CM/FQCR rigidity that produces the alpha candidate must generate one additional independent physical dimensionless observable or relation with no new tuned freedom. *(Historical exclusion: the `x_- ≈ N_c` match was previously called out as not counting as the prize; that identification is now **RETIRED** entirely per v1.4 §5 — see `DERIV_NC_FROM_TOPOLOGY.md` for the independent `N_c = 3` sources.)* Target declaration must precede numerical comparison. | [PRE-REGISTRATION] | D-W | MC-T4.3; `PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md` |
 | §7-bivector | Lorentzian signature from bivector duality on FTD lattice. Requires non-site-local Clifford construction compatible with FTD-0073 (site-local Clifford [CLOSED NEGATIVE] under pointwise-threshold dynamics) | [OPEN] | RP | — |
 | §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac (currently [OPEN — IMPORTED scaffold]) | [OPEN] | M | §7-bivector |
-| §7-loop | One-loop `a^{(1)} = α_FQCR/(2π)`. Requires `α_FQCR ↔ α` physical identification (= FTD-0013 [SMC]) | [OPEN] | RP | MC-T4.3 |
+| §7-loop | One-loop `a^{(1)} = α_FQCR/(2π)`. Requires `α_FQCR  α` physical identification (= FTD-0013 [SMC]) | [OPEN] | RP | MC-T4.3 |
 | §7-qed | Full QED `g − 2` precision (= MC-T4.4 in old checklist) | [OPEN] | W–M | §7-dirac |
 | α-from-CM | `CONJ_ALPHA_FROM_CM.md` Step 3 (Z₄ symmetry selects this CM curve) and Step 8 (larger root = 1/α specifically) remain [STRONGLY MOTIVATED CONJECTURE], not [THEOREM] | [CLOSED RESOLVED / RECLASSIFIED 2026-06-10] | RP | — |
 | Watson-G* | `DERIV_WATSON_GSTAR_IDENTITY.md` epilogue carries 1 [OPEN] | [CLOSED RESOLVED / RECLASSIFIED 2026-06-10] | W | — |
@@ -129,7 +129,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** SU(3)_c sector; confinement; color charge; strong CP.
 
-**Status snapshot:** `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. *(The historical identification `x_- ↔ N_c` (0.80%, OT-5.2, FTD-0014) is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* `b_3 = (11 N_c − 2 n_f)/3 = 7` [IMPORTED COEFFICIENT, THEOREM once formula imported]. `α_s = 7/59` [PARAMETRIC, FTD-0020 demoted 2026-04-19]. Confinement substrate-derivation has **structural obstruction recognised 2026-05-03 night audit**: no Phase-G analog for area-law behavior because confinement is intrinsically non-classical (lives in `Z = ∫dU exp(−S)`) and FTD substrate is deterministic.
+**Status snapshot:** `N_c = 3` is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem. *(The historical identification `x_-  N_c` (0.80%, OT-5.2, FTD-0014) is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* `b_3 = (11 N_c − 2 n_f)/3 = 7` [IMPORTED COEFFICIENT, THEOREM once formula imported]. `α_s = 7/59` [PARAMETRIC, FTD-0020 demoted 2026-04-19]. Confinement substrate-derivation has **structural obstruction recognised 2026-05-03 night audit**: no Phase-G analog for area-law behavior because confinement is intrinsically non-classical (lives in `Z = ∫dU exp(−S)`) and FTD substrate is deterministic.
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
@@ -234,7 +234,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 ---
 
-# §9 · Engine ↔ Algebra bridge
+# §9 · Engine  Algebra bridge
 
 **Scope:** Connecting algebraic spine theorems to engine empirical observations. The bridge that makes engine-as-instrument scientifically forceful rather than confirmation-bias-prone.
 
@@ -248,7 +248,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | L128-G2 | L=128 G2 follow-up to FTD-0107 — engine-side L-invariance test (32, 64, 128). Pre-registration template ready | [OPEN] | D–W | — |
 | FTD-0110-NL | Linear→nonlinear bridge proof: instrument engine to log per-irrep energy fractions during steady-state run, verify {3/8, 1/8, 3/8, 1/8} A_{1g} distribution holds within Langevin-noise envelope. Closing this promotes FTD-0110's main claim from [STRONGLY MOTIVATED CONJECTURE] to [DERIVED]/[THEOREM]-grade | [OPEN] | W–M | — |
 
-**Closed (sector context):** MC-T3.2 m_e exponent `n = 11` [DERIVED] (2026-05-02); MC-T3.3 (SC+FCC)/2 ↔ BCC bridge — **closed-negative for identity** (no Watson-integral identity), **closed-positive for symmetry** (shared O_h symmetry forces leading-order agreement); 25-voxel cluster size at canonical amplitude A=10 [DERIVED at linear level] (FTD-0110 closure 2026-04-28).
+**Closed (sector context):** MC-T3.2 m_e exponent `n = 11` [DERIVED] (2026-05-02); MC-T3.3 (SC+FCC)/2  BCC bridge — **closed-negative for identity** (no Watson-integral identity), **closed-positive for symmetry** (shared O_h symmetry forces leading-order agreement); 25-voxel cluster size at canonical amplitude A=10 [DERIVED at linear level] (FTD-0110 closure 2026-04-28).
 
 **Sources:** SPEC_DOCTRINE_LEDGER.md §13.5; `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`; LEDGER FTD-0107, FTD-0110, FTD-0095; TRACKER_OPEN_ITEMS.md §7.7.
 
@@ -260,13 +260,13 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Status snapshot:** MC-T4.3 is the **central foundational obstruction**. All natural action-level α-injection routes [CLOSED NEGATIVE]. Convergent diagnostic across 4 independent engine tests confirms the master quadratic value `α = 1/x_+` does not flow into engine matter-sector dynamical observables under any classical-gauge protocol tested. Lead-physicist diagnosis: structural decoupling via Phase J ultralocality. **Closure may require ontology extension beyond the 5 axioms.**
 
-**Update 2026-05-28 (FTD-0224):** the four ARC mechanism classes of `SPEC_ALPHA_READOUT_CONTRACT.md` have now each been attacked. **ARC-A** (boundary-condition) and **ARC-B1** (observable-selection, catalog items 4/6/7) closed `[CLOSED NEGATIVE]`. **ARC-B2 / ARC-C1** (BCC-bridge / quantization) reached **UNDERDETERMINED** — the 2026-05-27 "FOUND-at-ARC-2" verdicts were an **overclaim**, corrected 2026-05-28: the determinant grading `16G*³` is an *asserted* master-quadratic Vieta target, not a forward det↔det_ζ identity (the J-twisted ζ-reg determinant ratio `=G*` is a genuine clean odd source, but `Det = Tr·G*` is not forced — `16G*³ = x₊x₋` is an ordinary product, and a 2×2's trace and determinant are independent). See `AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md` + the three pre-registered attempts (FTD-0224). **Surviving route: ARC-D** (engine-native measurement) or a `[CONJECTURE — new postulate]`. MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; no spine tag moved.
+**Update 2026-05-28 (FTD-0224):** the four ARC mechanism classes of `SPEC_ALPHA_READOUT_CONTRACT.md` have now each been attacked. **ARC-A** (boundary-condition) and **ARC-B1** (observable-selection, catalog items 4/6/7) closed `[CLOSED NEGATIVE]`. **ARC-B2 / ARC-C1** (BCC-bridge / quantization) reached **UNDERDETERMINED** — the 2026-05-27 "FOUND-at-ARC-2" verdicts were an **overclaim**, corrected 2026-05-28: the determinant grading `16G*³` is an *asserted* master-quadratic Vieta target, not a forward detdet_ζ identity (the J-twisted ζ-reg determinant ratio `=G*` is a genuine clean odd source, but `Det = Tr·G*` is not forced — `16G*³ = x₊x₋` is an ordinary product, and a 2×2's trace and determinant are independent). See `AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md` + the three pre-registered attempts (FTD-0224). **Surviving route: ARC-D** (engine-native measurement) or a `[CONJECTURE — new postulate]`. MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; no spine tag moved.
 
 **Update 2026-06-01 (FTD-0242):** the operator-forcing question (W-CRIT-2) was sharpened to a **route-invariant boundary**. Four independent FTD-native routes — J-twisted ζ-determinant, BCC body-diagonal transfer operator, lemniscatic CM arithmetic of `E: y²=x³−x`, and a forced variational/period-ring/K-theory channel — were each force-attempted then adversarially refuted: **0 of 4 forced** (`cleanForcedRoutes = []`). Forward-forced `[DERIVED]`: the trace `16G*²` and the existence of a clean FTD-native odd source (`det_ζ(D_{3/4})/det_ζ(D_{1/4}) = G*`, which genuinely lifts the bare parity no-go so `16G*³ = 16G*²·G*` is *assemblable*). **Not** forced: the operator assembly itself — for a 2×2, trace and determinant are independent invariants, so the det_ζ ratio supplies the odd scalar but forces neither the gluing nor that it lands in the determinant slot (the imposed master-quadratic Vieta target). Conclusion: **α is dynamical, not structural**; the boundary is `[STRONGLY MOTIVATED CONJECTURE no-go]`, **not** `[THEOREM]` (RSI Leg 3 stays open). MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; no spine tag moved. See `../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md` (FTD-0242).
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| **MC-T4.3** | **Algebraic-spine ↔ physical electromagnetic readout mechanism. Central FTD claim.** `SPEC_ALPHA_READOUT_CONTRACT.md` formalizes the closure contract: specify `(P, A_obs, O_EM, R, C)` before target-checking; avoid alpha input; survive structural-decoupling diagnostics; explain why the output is an operational EM coupling rather than a distinguished number. Candidate mechanisms: boundary-condition / observable-selection / quantization-readout / discrete-native measurement. Prior on near-term closure: low | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
+| **MC-T4.3** | **Algebraic-spine  physical electromagnetic readout mechanism. Central FTD claim.** `SPEC_ALPHA_READOUT_CONTRACT.md` formalizes the closure contract: specify `(P, A_obs, O_EM, R, C)` before target-checking; avoid alpha input; survive structural-decoupling diagnostics; explain why the output is an operational EM coupling rather than a distinguished number. Candidate mechanisms: boundary-condition / observable-selection / quantization-readout / discrete-native measurement. Prior on near-term closure: low | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
 | MC-T4.1 | Two-layer ontology axiomatization. **Reframed 2026-05-02 to documentation alignment** — substantive ontology already J-primary via SPEC_FTD.md §1.1 graded-monism table + Genesis rule. Postulate 3 textual update remaining | [OPEN — documentation] | D | — |
 | MC-T4.2 | Phase-2 EFT non-Gaussian flow at `b ≥ 4`. Gates 6/7 of bridge contract. Phase-2 b=4, b=8 measurements show Gaussian fixed point holding within 1σ; non-Gaussian mixing matrix uncomputed | [OPEN] | M–RP | — |
 | FTD-0096-mass | µ-from-ℓ_P missing arrow (mass-unit version): mass-unit derivation from `ℓ_P` without passing through `m_e`. The LENGTH analogue is [CLOSED THEOREM-NEGATIVE]; the MASS-UNIT version is still [OPEN] | [OPEN] | M | — |
@@ -363,7 +363,7 @@ Effort: D (scan execution; analysis already templated).
    W-COSMO-3    ── needs §3, §9
    stellar      ── needs §6
 
-§9 engine ↔ algebra
+§9 engine  algebra
    MC-T3.1      ── (no deps; supports MC-T3.5)
    MC-T3.4      ── (no deps)
    MC-T3.5      ── BLOCKED on MC-T3.1   [FTD-0110 multi-scale boundary correction; §9 engine-bridge]
@@ -405,7 +405,7 @@ These are explicit no-go results. Re-attempting them without new structural insi
 | FTD-0025 night-2026-05-03 | §4 | All three confinement substrate-derivation routes closed-negative |
 | FTD-0018, FTD-0019, FTD-0020, FTD-0021, FTD-0022 | §3, §4 | sin²θ_W = 3/13, sin²θ_13 = 1/52, α_s = 7/59, PMNS angles, 7-term α series — all retagged [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC] in 2026-04-19 demotion wave |
 | FTD-0042, FTD-0043 | §4, §7 | Yang-Mills mass gap and Navier-Stokes regularity papers RETRACTED 2026-04-19; FTD-0044 per-voxel mass gap survives as the load-bearing residual theorem |
-| FTD-0079 | §1, §9 | (SC+FCC)/2 ↔ BCC Watson-integral identity (no exact identity exists; finite-L stencil mismatch ~3% bounds engine accuracy) |
+| FTD-0079 | §1, §9 | (SC+FCC)/2  BCC Watson-integral identity (no exact identity exists; finite-L stencil mismatch ~3% bounds engine accuracy) |
 
 For complete closed-negative provenance see `LEDGER.md` per-row entries.
 

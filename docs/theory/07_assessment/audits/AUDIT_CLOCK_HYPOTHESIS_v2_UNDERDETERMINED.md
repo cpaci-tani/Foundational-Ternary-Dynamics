@@ -84,11 +84,11 @@ The honest reading: F-d and F-f would fire at the §4 budget-conservation step u
 
 | Discipline requirement | v1 status | v2 status |
 |---|---|---|
-| Pre-reg file committed | ✅ commit `4c15ba1` | ❌ untracked (`??`) |
-| Pre-reg git tag applied | ✅ `preregister-clock-hypothesis-derivation-v1` exists | ❌ `preregister-clock-hypothesis-derivation-v2` does **NOT** exist (`git tag --list` 2026-05-25) |
-| SHA256 in REF_PREREGISTER_MANIFEST.md | ✅ `9feb9d5...` | ❌ no committed entry (REF_PREREGISTER_MANIFEST.md is itself modified-uncommitted) |
-| Pre-reg committed BEFORE result authored | ✅ v1 audit timestamp 2026-05-25 07:19 vs v1 pre-reg commit 4c15ba1 | ❌ both files mtime `2026-05-25 19:47` (same minute) — pre-reg never had a state-locked moment to which subsequent edits could be flagged "post-hoc invalidating" |
-| Independent adversarial reviewer (per pre-reg §9 step 9) | ✅ independent `general-purpose` agent caught under-claim | ⚠️ FOUND §10 cites "independent `self` subagent" — this is a same-process review, not an independent reviewer; the v1 mechanism (separate agent dispatch) was not replicated |
+| Pre-reg file committed |  commit `4c15ba1` |  untracked (`??`) |
+| Pre-reg git tag applied |  `preregister-clock-hypothesis-derivation-v1` exists |  `preregister-clock-hypothesis-derivation-v2` does **NOT** exist (`git tag --list` 2026-05-25) |
+| SHA256 in REF_PREREGISTER_MANIFEST.md |  `9feb9d5...` |  no committed entry (REF_PREREGISTER_MANIFEST.md is itself modified-uncommitted) |
+| Pre-reg committed BEFORE result authored |  v1 audit timestamp 2026-05-25 07:19 vs v1 pre-reg commit 4c15ba1 |  both files mtime `2026-05-25 19:47` (same minute) — pre-reg never had a state-locked moment to which subsequent edits could be flagged "post-hoc invalidating" |
+| Independent adversarial reviewer (per pre-reg §9 step 9) |  independent `general-purpose` agent caught under-claim |  FOUND §10 cites "independent `self` subagent" — this is a same-process review, not an independent reviewer; the v1 mechanism (separate agent dispatch) was not replicated |
 
 **Net process verdict:** the v2 attempt's only F9 mitigation was the same-process self-review claimed in FOUND §10. The git-tag-as-immutability lock — the mechanism that *prevents* post-hoc editing of the design after seeing the result — was bypassed. Per v2 §1 line 16, this invalidates v2.
 

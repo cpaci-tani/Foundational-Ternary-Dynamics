@@ -71,7 +71,7 @@ These are derived from the master quadratic, lemniscatic constant G*, and the fo
 
 3. x₊ = 137.0361714582 = 1/α
    Accuracy: 1.26 ppm from CODATA 2022
-   Status: ✅ GENUINELY DERIVED (conditional on SP1-SP4)
+   Status:  GENUINELY DERIVED (conditional on SP1-SP4)
 ```
 
 **7-Term Precision Formula (v5.12+, extended v5.28):**
@@ -116,8 +116,8 @@ Gap closed: 99.2%. Loop parameter g²I₁ = 0.061 (perturbative).
 
 | Ratio | Formula | Value | Accuracy | Status |
 |-------|---------|-------|----------|--------|
-| sin²θ_W | N_c/N_eff | 3/13 = 0.2308 | 0.19% | ✅ GENUINE |
-| α_s(M_Z) | b₃/(b₃+4N_eff) | 7/59 = 0.1186 | 0.6% | ✅ GENUINE |
+| sin²θ_W | N_c/N_eff | 3/13 = 0.2308 | 0.19% |  GENUINE |
+| α_s(M_Z) | b₃/(b₃+4N_eff) | 7/59 = 0.1186 | 0.6% |  GENUINE |
 
 **Note:** These are RATIOS derived algebraically from the integers. The functional forms (electroweak mixing, RG running) are imported from Standard Model.
 
@@ -125,8 +125,8 @@ Gap closed: 99.2%. Loop parameter g²I₁ = 0.061 (perturbative).
 
 | Ratio | Formula | Value | Accuracy | Status |
 |-------|---------|-------|----------|--------|
-| m_μ/m_e | 3b₃(b₃+N_c) - N_c | 207 | 0.11% | ✅ GENUINE |
-| m_τ/m_e | (N_eff+N_base)×207 - 2N_c×b₃ | 3477 | 0.007% | ✅ GENUINE |
+| m_μ/m_e | 3b₃(b₃+N_c) - N_c | 207 | 0.11% |  GENUINE |
+| m_τ/m_e | (N_eff+N_base)×207 - 2N_c×b₃ | 3477 | 0.007% |  GENUINE |
 
 **Verified Integer Arithmetic:**
 ```
@@ -147,15 +147,15 @@ Where T(10) = 10×11/2 = 55 (triangular number)
 
 **Accuracy:** 0.017% — This is extraordinary.
 
-**Status:** ✅ GENUINE (uses derived α, not imported)
+**Status:**  GENUINE (uses derived α, not imported)
 
 ### I.5 Gauge Symmetry Emergence
 
 | Symmetry | Mechanism | Status |
 |----------|-----------|--------|
-| U(1) | Gauss constraint → Helmholtz decomposition | ✅ DERIVED |
-| SU(2) | Ternary states {+1, 0, -1} form doublet; π₁(SO(3)) = ℤ₂ | ✅ DERIVED |
-| SU(3) | Three spatial dimensions; octonionic structure | ✅ DERIVED |
+| U(1) | Gauss constraint → Helmholtz decomposition |  DERIVED |
+| SU(2) | Ternary states {+1, 0, -1} form doublet; π₁(SO(3)) = ℤ₂ |  DERIVED |
+| SU(3) | Three spatial dimensions; octonionic structure |  DERIVED |
 
 **Critic response (Gell-Mann):** These proofs show the gauge groups CAN emerge from the lattice structure, but they don't explain why these groups govern the forces. The proofs are mathematically sound but reverse-engineered to match known physics.
 
@@ -223,12 +223,12 @@ These use FTD-derived parameters (α, mass ratios, integers) but insert them int
 
 | Ratio | Formula | Status |
 |-------|---------|--------|
-| m_u/m_e | N_base + sin²θ_W | ⚠️ PARAMETRIC |
-| m_d/m_e | 2N_base + 1 + α×N_eff | ⚠️ PARAMETRIC |
-| m_s/m_e | N_eff(N_eff+1) + 1 = 183 | ⚠️ PARAMETRIC |
-| m_c/m_e | Complex formula = 2485 | ⚠️ PARAMETRIC |
-| m_b/m_e | T(127) + 42 = 8170 | ⚠️ PARAMETRIC |
-| m_t/m_b | N_eff×N_c + 2 = 41 | ⚠️ PARAMETRIC |
+| m_u/m_e | N_base + sin²θ_W |  PARAMETRIC |
+| m_d/m_e | 2N_base + 1 + α×N_eff |  PARAMETRIC |
+| m_s/m_e | N_eff(N_eff+1) + 1 = 183 |  PARAMETRIC |
+| m_c/m_e | Complex formula = 2485 |  PARAMETRIC |
+| m_b/m_e | T(127) + 42 = 8170 |  PARAMETRIC |
+| m_t/m_b | N_eff×N_c + 2 = 41 |  PARAMETRIC |
 
 **Why "Parametric":** These formulas are not derived from dynamics. They are integer combinations FITTED to match known quark masses. The fit is excellent, but the mechanism is not explained.
 
@@ -241,7 +241,7 @@ These use FTD-derived parameters (α, mass ratios, integers) but insert them int
 
 **FTD contribution:** b₀ = b₃ = 7 (derived from framework integers)
 
-**Status:** ⚠️ PARAMETRIC — The functional form is standard RG running. FTD provides only the coefficient.
+**Status:**  PARAMETRIC — The functional form is standard RG running. FTD provides only the coefficient.
 
 ### II.3 All 42 Meson Masses
 
@@ -252,7 +252,7 @@ m_P² ∝ (m_q + m_q̄) × Λ_QCD³ / f_P²
 
 **FTD contribution:** The quark mass ratios {m_q}
 
-**Status:** ⚠️ PARAMETRIC — The mechanism (chiral symmetry breaking) is external. FTD provides inputs only.
+**Status:**  PARAMETRIC — The mechanism (chiral symmetry breaking) is external. FTD provides inputs only.
 
 ### II.4 All 48 Baryon Masses
 
@@ -268,7 +268,7 @@ M_n,L = M₀ + ΔM × √[n(n+1)/2 + L(L+1)]
 
 **FTD contribution:** ΔM ≈ 300 MeV ~ Λ_QCD × √N_c
 
-**Status:** ⚠️ PARAMETRIC — The spectroscopic structure is imported. FTD provides the scale.
+**Status:**  PARAMETRIC — The spectroscopic structure is imported. FTD provides the scale.
 
 ### II.5 CKM Matrix Elements
 
@@ -279,7 +279,7 @@ V_CKM = 3×3 unitary matrix with 4 parameters (3 angles + 1 phase)
 
 **FTD contribution:** θ₁₂ from N_c/N_eff, phase from arctan(7/3)
 
-**Status:** ⚠️ PARAMETRIC — The matrix structure is from electroweak theory. FTD provides angle values.
+**Status:**  PARAMETRIC — The matrix structure is from electroweak theory. FTD provides angle values.
 
 ---
 
@@ -293,7 +293,7 @@ These are theoretical frameworks used by FTD **without derivation from lattice a
 Γ_decay = (G_F² m⁵)/(192π³) × |V_CKM|² × f² × phase_space
 ```
 
-**Status:** ❌ EXTERNAL — The entire weak decay mechanism is imported wholesale.
+**Status:**  EXTERNAL — The entire weak decay mechanism is imported wholesale.
 
 **FTD's use:** Inserts derived masses and CKM elements into Fermi formula.
 
@@ -301,13 +301,13 @@ These are theoretical frameworks used by FTD **without derivation from lattice a
 
 All D and B meson lifetimes use Shifman-Voloshin-Wise heavy quark expansion.
 
-**Status:** ❌ EXTERNAL — This is sophisticated QCD phenomenology, not lattice dynamics.
+**Status:**  EXTERNAL — This is sophisticated QCD phenomenology, not lattice dynamics.
 
 ### III.3 Chiral Perturbation Theory
 
 Pion, kaon, eta masses and interactions use chiral symmetry breaking.
 
-**Status:** ❌ EXTERNAL — The Goldstone mechanism is not derived from FTD axioms.
+**Status:**  EXTERNAL — The Goldstone mechanism is not derived from FTD axioms.
 
 ### III.4 QCD Beta Function Form
 
@@ -315,7 +315,7 @@ Pion, kaon, eta masses and interactions use chiral symmetry breaking.
 dg/d(log μ) = -b₀ g³/(16π²) - b₁ g⁵/(16π²)² - ...
 ```
 
-**Status:** ❌ EXTERNAL — The RG structure is from continuum QFT. FTD provides coefficients only.
+**Status:**  EXTERNAL — The RG structure is from continuum QFT. FTD provides coefficients only.
 
 ### III.5 Higgs Mechanism
 
@@ -326,7 +326,7 @@ m_W = gv/2, m_Z = m_W/cos θ_W
 
 where v = 246 GeV is the Higgs vacuum expectation value.
 
-**Status:** ❌ EXTERNAL — Spontaneous symmetry breaking is not derived from discrete dynamics.
+**Status:**  EXTERNAL — Spontaneous symmetry breaking is not derived from discrete dynamics.
 
 ---
 
@@ -350,9 +350,9 @@ where v = 246 GeV is the Higgs vacuum expectation value.
 
 **Claim:** sLoop mechanism produces quantum correlations (S > 2) as aggregate ensemble behavior.
 
-**Previous status (v1.0):** "Mechanism undemonstrated" ❌
+**Previous status (v1.0):** "Mechanism undemonstrated" 
 
-**Updated status (v2.0):** Structurally characterized via lemniscate loop experiments. ⚠️
+**Updated status (v2.0):** Structurally characterized via lemniscate loop experiments. 
 
 **What is now established:**
 
@@ -367,7 +367,7 @@ where v = 246 GeV is the Higgs vacuum expectation value.
 
 4. **What remains open:** The substrate-to-aggregate transition. The lattice gives S ≤ 2 at the single-event level. The open question is whether ensemble averaging over sLoop-coupled lemniscate measurements produces S > 2 in aggregate. The i-phase/π-phase result provides a mechanism (non-abelian topology) but does not yet close the gap.
 
-**Status:** ⚠️ STRUCTURALLY CHARACTERIZED — Upgraded from "undemonstrated" but not yet "proven." The mechanism is identified (lemniscate non-commutativity + i-phase entanglement); the aggregate emergence remains to be demonstrated explicitly.
+**Status:**  STRUCTURALLY CHARACTERIZED — Upgraded from "undemonstrated" but not yet "proven." The mechanism is identified (lemniscate non-commutativity + i-phase entanglement); the aggregate emergence remains to be demonstrated explicitly.
 
 **Scripts:** `scripts/experiments/bell_lattice_test.py` [NOTE: bell_lemniscate_loop.py no longer exists]
 **Theory:** AUDIT_BELL_ANALYSIS.md
@@ -392,7 +392,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 
 **Relation to manifestation:** The manifestation threshold (|J| > K_B) acts as a ReLU on the ontic field: max(Re(ψ²), 0). This is the bridge between the ontic quadratic and the epistemic Born rule — threshold crossing statistics reproduce |ψ|². **[CONJECTURE — falsified in 6-neighbour substrate per FTD-0200 (2026-05-23); status under canonical 26-neighbour engine OPEN.]** The simplest pre-registered substrate test (`preregister-threshold-crossing-born-v1`) yields Rice upcrossing statistics, not `|ψ|²`; see `docs/theory/06_reference_frames_and_measurement/EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md`.
 
-**Status:** ✅ REFRAMED — Born rule is [EMERGENT] from manifestation statistics (as before), but now understood as epistemic inference rather than fundamental law. The ontic/epistemic distinction is [THEOREM]; the physical interpretation is [SELECTION].
+**Status:**  REFRAMED — Born rule is [EMERGENT] from manifestation statistics (as before), but now understood as epistemic inference rather than fundamental law. The ontic/epistemic distinction is [THEOREM]; the physical interpretation is [SELECTION].
 
 **Script:** `scripts/experiments/born_rule_convergence.py`
 
@@ -405,18 +405,18 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
 - Path integral connection to Feynman rules is standard lattice field theory
 - No novel amplitude calculations from FTD axioms
 
-**Status:** ⚠️ PARTIAL — Connection exists but is not FTD-specific.
+**Status:**  PARTIAL — Connection exists but is not FTD-specific.
 
 ### Gap 4: Lorentz Covariance
 
 **Claim:** Emerges at scales >> lattice spacing
 
 **Reality:**
-- Time dilation from speed limit c = 1: ✅ Derived
-- Full Lorentz boost invariance: ❌ Asserted, not derived
-- Rotational isotropy: ❌ Broken by cubic lattice (partially mitigated by cuboctahedral geometry option)
+- Time dilation from speed limit c = 1:  Derived
+- Full Lorentz boost invariance:  Asserted, not derived
+- Rotational isotropy:  Broken by cubic lattice (partially mitigated by cuboctahedral geometry option)
 
-**Status:** ⚠️ PARTIAL — Speed limit works; full covariance is an open question.
+**Status:**  PARTIAL — Speed limit works; full covariance is an open question.
 
 ### Gap 5: Λ_QCD Derivation
 
@@ -430,7 +430,7 @@ The Born rule P(v) = |ψ(v)|² is **epistemic** — it is what embedded observer
       ~ 200 MeV ✓
 ```
 
-**Status:** ⚠️ REQUIRES VERIFICATION — This would close the loop if validated.
+**Status:**  REQUIRES VERIFICATION — This would close the loop if validated.
 
 ### Gap 5.5: SP5 Circularity Table (propagated from BRIDGE §5.4)
 
@@ -459,13 +459,13 @@ The cleanest way to use the framework integers $\{N_c, N_{\mathrm{base}}, b_3, N
 **Claim:** Reference frame context quadratic produces y = 2.19 ± 2.86i with K_C = √(G*³/2) ≈ 3.60 and phase angle 52.54°.
 
 **Reality:**
-- The mathematics is exact: the reference frame context quadratic with k = 1/2 and G* has negative discriminant → complex roots ✅
-- K_C = √(G*³/2) ≈ 3.5986 — exact from the quadratic ✅
-- Phase angle 52.54° = arctan(2.86/2.19) is computed exactly ✅
-- **No experimental protocol exists** to test the 52.54° prediction in neural data ❌
-- **No neuroscience collaboration** has been established ❌
+- The mathematics is exact: the reference frame context quadratic with k = 1/2 and G* has negative discriminant → complex roots 
+- K_C = √(G*³/2) ≈ 3.5986 — exact from the quadratic 
+- Phase angle 52.54° = arctan(2.86/2.19) is computed exactly 
+- **No experimental protocol exists** to test the 52.54° prediction in neural data 
+- **No neuroscience collaboration** has been established 
 
-**Status:** ⚠️ MATHEMATICALLY SPECIFIC BUT UNTESTED — The reference frame context extension provides the most specific predictions of any reference frame context-physics framework (sLoop axioms, historical Mandelbrot-era correspondences, quantitative threshold K_C = √(G*³/2), phase 52.54°), but zero contact with experimental neuroscience exists. See [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) and [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) for the live source map.
+**Status:**  MATHEMATICALLY SPECIFIC BUT UNTESTED — The reference frame context extension provides the most specific predictions of any reference frame context-physics framework (sLoop axioms, historical Mandelbrot-era correspondences, quantitative threshold K_C = √(G*³/2), phase 52.54°), but zero contact with experimental neuroscience exists. See [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](../06_reference_frames_and_measurement/DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) and [FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md](../06_reference_frames_and_measurement/FOUND_DOMAIN_PARTITION_AND_CONTEXT_SELECTION.md) for the live source map.
 
 ---
 

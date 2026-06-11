@@ -120,18 +120,18 @@ The C++ simulation engine (`engine/`) is **feature-complete** with all 12 update
 
 | Phase | Status |
 |-------|--------|
-| 1. Time Gating | ✅ Implemented |
-| 2. Entropy | ✅ Implemented |
-| 3. Existence Transitions | ✅ Implemented |
-| 4. Wave Propagation | ✅ Implemented |
-| 5. Field Computation | ✅ Implemented |
-| 6. Force Accumulation | ✅ Implemented |
-| 7. Integration | ✅ Implemented |
-| 8. Movement | ✅ Implemented |
-| 9. Collisions | ✅ Implemented |
-| 10. Transmutation | ✅ Implemented |
-| 11. Binding | ✅ Implemented |
-| 12. Increment | ✅ Implemented |
+| 1. Time Gating |  Implemented |
+| 2. Entropy |  Implemented |
+| 3. Existence Transitions |  Implemented |
+| 4. Wave Propagation |  Implemented |
+| 5. Field Computation |  Implemented |
+| 6. Force Accumulation |  Implemented |
+| 7. Integration |  Implemented |
+| 8. Movement |  Implemented |
+| 9. Collisions |  Implemented |
+| 10. Transmutation |  Implemented |
+| 11. Binding |  Implemented |
+| 12. Increment |  Implemented |
 
 - **GUI:** Qt6 native interface (`engine/qt_gui/`) with 9 panels and OpenGL viewport
 - **Tests:** 61 CTests (variational proof, forces, SM sectors)

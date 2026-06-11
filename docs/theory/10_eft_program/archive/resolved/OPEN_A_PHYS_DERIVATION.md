@@ -1,7 +1,7 @@
 # CLOSED — Deriving `a_phys` from Lattice Invariants
 
 **Tag:** [CLOSED — RESOLVED BY THEOREM] — see `../../THEOREM_A_PHYS_NO_GO.md` (2026-04-23). Mechanisms α, β, γ, δ are all ruled out as instances of a single structural impossibility proven at the ring-of-Axiom-Zero-invariants level. Authoritative disposition: `a_phys ≡ ℓ_P` as CALIBRATION.
-**Status:** **Resolved by theorem (2026-04-23).** Previously RESOLVED-BY-CALIBRATION (2026-04-19). The calibration is declared in `docs/SPEC_FTD.md` §"LATTICE ↔ PHYSICAL CALIBRATION (a_phys ≡ ℓ_P)" and recorded in `docs/theory/07_assessment/core_ledgers/LEDGER.md` rows **FTD-0030**, **FTD-0041**, and **FTD-0059** (no-go theorem). Every dimensional FTD prediction is conditional on this calibration; dimensionless predictions (α, mass ratios, mixing angles) constitute the calibration-independent falsifiable spine.
+**Status:** **Resolved by theorem (2026-04-23).** Previously RESOLVED-BY-CALIBRATION (2026-04-19). The calibration is declared in `docs/SPEC_FTD.md` §"LATTICE  PHYSICAL CALIBRATION (a_phys ≡ ℓ_P)" and recorded in `docs/theory/07_assessment/core_ledgers/LEDGER.md` rows **FTD-0030**, **FTD-0041**, and **FTD-0059** (no-go theorem). Every dimensional FTD prediction is conditional on this calibration; dimensionless predictions (α, mass ratios, mixing angles) constitute the calibration-independent falsifiable spine.
 
 ---
 

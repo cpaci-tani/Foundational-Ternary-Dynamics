@@ -103,7 +103,7 @@ $$c_{\uparrow\uparrow} = c_{\downarrow\downarrow} = 0.$$
 *Lemma 3 (spin anti-correlation, total spin zero).* For **S**² = 0 the state lies in the j = 0 (singlet) irrep. Restricting to S_z = 0 leaves only $|{\uparrow\downarrow}\rangle$ and $|{\downarrow\uparrow}\rangle$:
 $$|\Psi_{AB}\rangle = c_+ |{\uparrow\downarrow}\rangle + c_- |{\downarrow\uparrow}\rangle, \quad |c_+|^2 + |c_-|^2 = 1.$$
 
-*Lemma 4 (exchange antisymmetry).* Under σ: A ↔ B, $\sigma|\Psi_{AB}\rangle = c_+|{\downarrow\uparrow}\rangle + c_-|{\uparrow\downarrow}\rangle = -|\Psi_{AB}\rangle$ forces c_+ = −c_−. Choose $c_+ = 1/\sqrt{2}$ (phase convention), $c_- = -1/\sqrt{2}$:
+*Lemma 4 (exchange antisymmetry).* Under σ: A  B, $\sigma|\Psi_{AB}\rangle = c_+|{\downarrow\uparrow}\rangle + c_-|{\uparrow\downarrow}\rangle = -|\Psi_{AB}\rangle$ forces c_+ = −c_−. Choose $c_+ = 1/\sqrt{2}$ (phase convention), $c_- = -1/\sqrt{2}$:
 $$|\Psi_{AB}\rangle = \frac{1}{\sqrt{2}}\big(|{\uparrow\downarrow}\rangle - |{\downarrow\uparrow}\rangle\big).$$
 
 *Lemma 2 (rotational invariance, consistency check).* This state is the unique j = 0 state of two spin-1/2 particles, hence is the unique SU(2)-invariant state in H_A ⊗ H_B. The vacuum had no preferred axis, so rotational invariance is required. The singlet has zero net helicity, satisfying h_A + h_B = 0. Consistent. ∎

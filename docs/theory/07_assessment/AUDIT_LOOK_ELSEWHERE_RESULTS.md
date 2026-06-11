@@ -15,12 +15,12 @@
 
 Per PROTOCOL §2 the scan executes ONLY after the runner is hash-locked and tagged. Verified:
 
-- ✅ Runner committed at git rev `ebc5178` (FTD-0097 tooling commit)
-- ✅ SHA256 = `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f` inscribed in PROTOCOL §2 line 128 (commit `f11dcaa`)
-- ✅ Tag `preregister-look-elsewhere-scan-v1` applied at the SHA256-lock commit
-- ✅ Tag pushed to origin
-- ✅ Scan executed AFTER the tag (no post-tag runner edits; verifiable via `git log tools/scan_look_elsewhere.py`)
-- ✅ All hits at ε ≤ 10⁻³ enumerated in `hits_eps_1e-3.csv` (421 entries; cherry-picking closure per PROTOCOL §6(b) achieved)
+-  Runner committed at git rev `ebc5178` (FTD-0097 tooling commit)
+-  SHA256 = `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f` inscribed in PROTOCOL §2 line 128 (commit `f11dcaa`)
+-  Tag `preregister-look-elsewhere-scan-v1` applied at the SHA256-lock commit
+-  Tag pushed to origin
+-  Scan executed AFTER the tag (no post-tag runner edits; verifiable via `git log tools/scan_look_elsewhere.py`)
+-  All hits at ε ≤ 10⁻³ enumerated in `hits_eps_1e-3.csv` (421 entries; cherry-picking closure per PROTOCOL §6(b) achieved)
 
 Author isolation handled via §6(b) (deterministic runner + complete enumeration).
 
@@ -122,7 +122,7 @@ The three pre-declared diagnostic controls each anchor a different question:
 
 | Diagnostic | Hits at 10⁻⁴ | Interpretation |
 |---|---|---|
-| **alpha_inv** (1/α = 137.036) | **0** | Catalog cannot reach 1/α at 10⁻⁴ precision. The FTD claim x_+ ≈ 1/α at 1.26 ppm comes from the **master quadratic root** (not a monomial). The scan does NOT directly support OR refute the structural claim — it shows the monomial space alone is insufficient. *(Historical: "The dual prediction (x_+ AND x_− simultaneously) lives outside the scan's polynomial space by construction." The dual-prediction framing depended on the now-retired `x_- ↔ N_c` identification per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The polynomial-template uniqueness fact about the master quadratic survives independently and is now carried by FTD-0189's adversarial scan.)* |
+| **alpha_inv** (1/α = 137.036) | **0** | Catalog cannot reach 1/α at 10⁻⁴ precision. The FTD claim x_+ ≈ 1/α at 1.26 ppm comes from the **master quadratic root** (not a monomial). The scan does NOT directly support OR refute the structural claim — it shows the monomial space alone is insufficient. *(Historical: "The dual prediction (x_+ AND x_− simultaneously) lives outside the scan's polynomial space by construction." The dual-prediction framing depended on the now-retired `x_-  N_c` identification per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The polynomial-template uniqueness fact about the master quadratic survives independently and is now carried by FTD-0189's adversarial scan.)* |
 | **sin2_theta_W** (0.22290) | 4 raw / 2 dedup | The catalog DOES match sin²θ_W at 10⁻⁴ via various polynomial expressions. FTD's existing PARAMETRIC tag (3/13 ≈ 0.231 at 3.5% off) is not improved here — the new 4 hits all match at the proper experimental value (0.22289–0.22292), not the 3/13 approximation. Says: catalog absorbs sin²θ_W via different polynomial routes. |
 | **m_tau_over_m_e** (3477.23) | **0** | FTD has a DERIVED formula for m_tau/m_e in the LEDGER. The catalog at degree ≤ 4 with the chosen atoms cannot reach 3477.23 at 10⁻⁴ — meaning **the FTD derivation of m_tau/m_e uses higher-order combinations than the scan's degree-4 cap, OR uses atoms not in the catalog**. This is informative methodologically: it suggests FTD's claim base is more selective than the scanned space at this specific target. |
 

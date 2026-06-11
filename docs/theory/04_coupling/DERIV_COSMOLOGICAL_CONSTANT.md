@@ -234,7 +234,7 @@ $$\Omega_\Lambda = \frac{3.86 \times 10^{-47}}{5.65 \times 10^{-47}} = 0.683$$
 
 **Observed:** $\Omega_\Lambda = 0.685 \pm 0.007$ (Planck 2018)
 
-**Agreement:** 0.3% ✅
+**Agreement:** 0.3% 
 
 ---
 

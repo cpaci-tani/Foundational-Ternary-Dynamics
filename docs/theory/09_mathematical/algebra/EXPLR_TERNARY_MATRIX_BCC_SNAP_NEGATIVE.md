@@ -106,7 +106,7 @@ The pre-registration explicitly fenced these off this run:
 ## 7 · Cross-references
 
 - [`PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md`](PREREG_TERNARY_MATRIX_BCC_SNAP_v1.md) — the pre-registration manifest (locked construction, prediction, outcome map).
-- [`REF_GUILLERA_CORPUS_MAP.md`](../general_math/REF_GUILLERA_CORPUS_MAP.md) — Guillera fence (§0); explanation of why this test does not constitute a Guillera↔physics bridge regardless of outcome.
+- [`REF_GUILLERA_CORPUS_MAP.md`](../general_math/REF_GUILLERA_CORPUS_MAP.md) — Guillera fence (§0); explanation of why this test does not constitute a Guilleraphysics bridge regardless of outcome.
 - [`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`](../08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md) — canonical BCC formalism; the BCC eigenvalue `σ_BCC(k)` is a *momentum-space scalar*, not a position-space matrix iteration. This run did not test that result; it tested a different object the user proposed.
 - [`SPEC_ALGEBRAIC_SPINE.md`](../01_reference/SPEC_ALGEBRAIC_SPINE.md) — Theorems 1–9 (unaffected).
 - [`DERIV_COLLAPSE_MECHANISM.md`](../06_reference_frames_and_measurement/DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal; the present run does not engage it.

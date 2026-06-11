@@ -14,7 +14,7 @@ A newcomer to this cluster should read these in order:
 1. [PROOF_ALPHA_FROM_SELF_DUALITY.md](general_math/PROOF_ALPHA_FROM_SELF_DUALITY.md) — α⁻¹ = 137.036 from one CM elliptic curve; the spine's flagship chain.
 2. [DERIV_LFUNCTION_GSTAR_CONNECTION.md](number_theory/DERIV_LFUNCTION_GSTAR_CONNECTION.md) — G\* = 8·L(E,1)/√π; ties the framework to BSD-level number theory.
 3. [EXPLR_PATHS_TO_ALPHA.md](general_math/EXPLR_PATHS_TO_ALPHA.md) — honest exhaustive survey: no derivation of α exists beyond the [SMC] spine route.
-4. [EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md](general_math/EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md) — the master quadratic is the unique dual-matcher in its polynomial family (target pair `(1/α, N_c)` reflects the pre-v1.4 framing; `x_- ↔ N_c` retired per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact is independent of the target identification).
+4. [EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md](general_math/EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md) — the master quadratic is the unique dual-matcher in its polynomial family (target pair `(1/α, N_c)` reflects the pre-v1.4 framing; `x_-  N_c` retired per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61` — but the polynomial-template-uniqueness fact is independent of the target identification).
 5. [MATH_FAMILY_OF_RACES.md](general_math/MATH_FAMILY_OF_RACES.md) — the Γ-ratio family G\* belongs to; structural context for q = 4.
 6. [EXPLR_NUMBER_THEORY.md](general_math/EXPLR_NUMBER_THEORY.md) — where the framework integers {3, 4, 7, 13} come from across pure mathematics.
 

@@ -25,7 +25,7 @@ So binding ≠ sharp, and the gap is exactly the **symmetric conjugate budget**.
 
 | Piece | Role | FTD source | Status |
 |---|---|---|---|
-| **ℤ/2** (transposition) | swaps two bases | **`J²=−I`** reduces mod 2 to `[[0,1],[1,0]]` — order 2, swaps `a↔b`, **fixes `a⊕b`** | **FTD-native** ✓ (the quarter-conjugacy) — but only *part* of S₃ |
+| **ℤ/2** (transposition) | swaps two bases | **`J²=−I`** reduces mod 2 to `[[0,1],[1,0]]` — order 2, swaps `ab`, **fixes `a⊕b`** | **FTD-native** ✓ (the quarter-conjugacy) — but only *part* of S₃ |
 | **ℤ/3** (3-cycle) | cyclically permutes all three bases (gives transitivity) | candidate: the cube **body-diagonal C₃** / the **N_c = 3** axis-rotation | **FTD candidate — UNVERIFIED** |
 
 So `J²=−I` — the structure this whole thread has circled (`i = J`, the BCC complex structure) — **is** a load-bearing ingredient of the epistemic budget, but it supplies only the ℤ/2. Sharpness additionally needs a **ℤ/3 acting on the same three bases**, whose natural FTD candidate is the same 3-fold structure that gives **N_c = 3 / SU(3)** (the body diagonal). That two of FTD's deepest structures (the quarter-conjugacy and the 3-fold colour axis) converge on the epistemic budget is striking — but the ℤ/3 action on the budget is **conjecture, not verified** (it is the next target, B-QM-1″).

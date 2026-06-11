@@ -73,7 +73,7 @@ structure *i* needs the stabilizer broken to one C₄ axis, since `mult_O(E) = 0
 the odd `G*³` as a C₃-symmetric three-plane product needs C₃ about ⟨111⟩ unbroken; `⟨C₄,C₃⟩ = O`, so the
 two are mutually exclusive from one preparation). **Legs 1–2 of this are machine-checked theorem-grade**
 (`mult_O(E)=0`; corner module `= A1⊕A2⊕T1⊕T2`; `⟨C₄,C₃⟩=O`, order 24). **Leg 3 is NOT** — the
-hash-locked `PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1` (§5) marks exactly this as an **⛔ OPEN OBLIGATION
+hash-locked `PREREG_READOUT_STRUCTURE_INDEPENDENCE_v1` (§5) marks exactly this as an ** OPEN OBLIGATION
 (the crux)**, with the FORCED-escape (a reducible / 3-dimensional / infinite-descended single operator
 co-realizing both invariants without recollapsing) **explicitly still live**.
 
@@ -133,7 +133,7 @@ grade) reopens no route here.
 
 ---
 
-## ⚠ §8 [CONDITIONAL — Postulate 6 is an INPUT, not a theorem; this is NOT a derivation of α]
+##  §8 [CONDITIONAL — Postulate 6 is an INPUT, not a theorem; this is NOT a derivation of α]
 
 > The chain below assumes **one additional postulate that is logically independent of the five FTD
 > postulates** — it **IS** the W-CRIT-2 operator-assembly (FTD-0235 /
