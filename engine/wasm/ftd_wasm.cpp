@@ -205,6 +205,9 @@ val inspect_voxel(ftd::RenderBridge& rb, int x, int y, int z) {
     result.set("fluxY",      v.flux.y);
     result.set("fluxZ",      v.flux.z);
     result.set("density",    v.density());
+    // FTD-0271: de Broglie clock phase (advanced as omega0*d(tau) when on).
+    result.set("phase",      v.phase);
+    result.set("tau",        v.tau);
     // Wave velocity
     result.set("waveVelX",   v.wave_vel.x);
     result.set("waveVelY",   v.wave_vel.y);

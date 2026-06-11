@@ -176,6 +176,16 @@ export class WasmBridge {
         if (this._module && this._bridge) return this._module.getPhysicalTime(this._bridge);
         return 0.0;
     }
+    // FTD-0271: de Broglie internal-clock frequency omega0 (KG mass term).
+    setOmega0(w) {
+        if (this._module && this._bridge && typeof this._module.setOmega0 === 'function')
+            this._module.setOmega0(this._bridge, w);
+    }
+    getOmega0() {
+        if (this._module && this._bridge && typeof this._module.getOmega0 === 'function')
+            return this._module.getOmega0(this._bridge);
+        return 1.0;
+    }
 
     reset(latticeSize) {
         let size = parseInt(latticeSize || this.latticeSize, 10);

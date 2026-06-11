@@ -811,6 +811,31 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         };
         for (int i = 0; i < 8; i++) IP(rb, mc+stel[i][0], mc+stel[i][1], mc+stel[i][2], -1);
     }
+    else if (name == "s0-seed-de-broglie-clock") {
+        // FTD-0271: de Broglie internal clock (single-particle pilot wave).
+        // A central manifested block carries a uniform flux J0. When the
+        // de_broglie_clock toggle is ON (the de-broglie-clock-panel enables it),
+        // the Klein-Gordon mass term -omega0^2*J makes the block's flux
+        // oscillate at the rest-frame Compton frequency omega0 -- the internal
+        // clock. [CONDITIONAL -- DERIVED-GIVEN-IMPOSED-INPUT]: omega0~M_REST is
+        // IMPOSED (A0: FTD's native flux is massless); Schrodinger + de Broglie
+        // are textbook Klein-Gordon, not an FTD prediction. The block interior
+        // is the k=0 rest mode (uniform => Laplacian 0), so the centre voxel
+        // oscillates at a clean omega0. genesis/damping OFF so the block
+        // persists; the panel drives the clock and reads centre |J|(t).
+        rb.toggles.wave_propagation = true;
+        rb.toggles.genesis          = false;
+        rb.toggles.damping          = false;
+        rb.toggles.dual_substrate   = false;
+        const int half = 3;            // 7x7x7 central manifested block
+        const double J0 = 0.08;
+        for (int dx = -half; dx <= half; ++dx)
+            for (int dy = -half; dy <= half; ++dy)
+                for (int dz = -half; dz <= half; ++dz) {
+                    IP(rb, mc + dx, mc + dy, mc + dz, +1);
+                    IF(rb, mc + dx, mc + dy, mc + dz, J0, 0, 0);
+                }
+    }
     return true;
 }
 

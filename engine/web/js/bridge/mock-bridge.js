@@ -102,7 +102,7 @@ export class MockBridge {
         this._sharedField = null;
 
         // Mutable simulation parameters (combo panel)
-        this._params = { kb: K_B, gn: G_N, damping: DAMPING };
+        this._params = { kb: K_B, gn: G_N, damping: DAMPING, omega0: 1.0 };
 
         // Toggle states (mirror engine TermToggles from term_toggles.h)
         // NOTE: gravity defaults to false here to match config/toggles.js SCALE0_TOGGLES.
@@ -118,6 +118,8 @@ export class MockBridge {
             weak_transmutation: false,
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
+            // FTD-0271: de Broglie internal clock (KG mass term -omega0^2*J).
+            de_broglie_clock: false,
         };
 
         // Visual settings (shared with viewport for size control)
@@ -241,6 +243,12 @@ export class MockBridge {
         this._physicalTime += this._dt;
         // Tick flux grid (wave equation) — gated by toggle; no-op if _fluxJ is null
         if (this._toggles.wave_propagation) this._tickFlux();
+        // FTD-0271: de Broglie internal clock with the wave term OFF. Each
+        // manifested voxel is the k=0 rest-frame SHO J'' = -omega0^2 J at
+        // exactly omega0 (no spatial Laplacian). Mirrors the C++ engine, where
+        // the leapfrog runs unconditionally; here _tickFlux only runs with the
+        // wave term, so the clock-only case needs its own minimal leapfrog.
+        else if (this._toggles.de_broglie_clock) this._tickClockOnly();
         // Genesis: spontaneous pair creation from super-threshold flux
         if (this._toggles.genesis && this._fluxJ) {
             const Ng = this.latticeSize;
@@ -579,7 +587,7 @@ export class MockBridge {
         // scenario's proxy when both happen to sit at _tick === 0.
         this._latencyProxy = null;
         this._latencyProxyTick = -1;
-        this._params = { kb: K_B, gn: G_N, damping: DAMPING };
+        this._params = { kb: K_B, gn: G_N, damping: DAMPING, omega0: 1.0 };
         // Reset toggles to defaults (must match constructor and config/toggles.js)
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
@@ -592,6 +600,8 @@ export class MockBridge {
             weak_transmutation: false,
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
+            // FTD-0271: de Broglie internal clock (KG mass term -omega0^2*J).
+            de_broglie_clock: false,
         };
         // Rebuild boundary mask for new lattice size
         this._rebuildBoundaryMask();
@@ -625,6 +635,9 @@ export class MockBridge {
     }
 
     setParam(name, value) { if (name in this._params) this._params[name] = value; }
+    // FTD-0271: de Broglie internal-clock frequency (parity with WasmBridge.setOmega0).
+    setOmega0(w) { this._params.omega0 = w; }
+    getOmega0() { return this._params.omega0 ?? 1.0; }
     getParam(name) { return this._params[name] ?? null; }
 
     injectFlux(x, y, z, fx, fy, fz) {
@@ -964,6 +977,30 @@ export class MockBridge {
      * Damping modes: uniform (all voxels) or selective (only near particles,
      * preserving free-wave propagation in empty space).
      */
+    // FTD-0271: minimal KG clock leapfrog used when wave_propagation is OFF.
+    // Each manifested voxel oscillates as J'' = -omega0^2 J at exactly omega0
+    // (the k=0 rest-frame internal clock), so the omega0 slider directly sets
+    // the frequency. No spatial Laplacian, no damping/coupling.
+    _tickClockOnly() {
+        if (!this._fluxJ || this._particles.length === 0) return;
+        const N = this.latticeSize, NN = N * N;
+        const dt = this._dt ?? 1.0;
+        const w0 = this._params.omega0 ?? 1.0;
+        const w2dt = w0 * w0 * dt;
+        const J = this._fluxJ, WV = this._fluxWV;
+        for (const p of this._particles) {
+            if (p.state === 0) continue;
+            const px = ((Math.round(p.x) % N) + N) % N;
+            const py = ((Math.round(p.y) % N) + N) % N;
+            const pz = ((Math.round(p.z) % N) + N) % N;
+            const i3 = (pz * NN + py * N + px) * 3;
+            for (let c = 0; c < 3; c++) {
+                WV[i3 + c] -= w2dt * J[i3 + c];
+                J[i3 + c] += WV[i3 + c] * dt;
+            }
+        }
+    }
+
     _tickFlux() {
         if (!this._fluxJ) return;
         const N = this.latticeSize;
@@ -1322,6 +1359,26 @@ export class MockBridge {
                         WV[i3p2] += gc_half * (stateGrid[zp] - stateGrid[zm]);
                     }
                 }
+            }
+        }
+
+        // FTD-0271: de Broglie internal clock — Klein-Gordon mass term.
+        // WV -= omega0^2 * dt * J at manifested (state != 0) voxels, applied
+        // after the Laplacian WV update and before the commit so the leapfrog
+        // integrates it (mirrors phase_read.cpp). With the toggle OFF this is a
+        // dead branch, so the mock's default behaviour is unchanged.
+        if (this._toggles.de_broglie_clock && this._particles.length > 0) {
+            const w0 = this._params.omega0 ?? 1.0;
+            const w2dt = w0 * w0 * dt;
+            for (const p of this._particles) {
+                if (p.state === 0) continue;
+                const px = ((Math.round(p.x) % N) + N) % N;
+                const py = ((Math.round(p.y) % N) + N) % N;
+                const pz = ((Math.round(p.z) % N) + N) % N;
+                const i3 = (pz * NN + py * N + px) * 3;
+                WV[i3]     -= w2dt * J[i3];
+                WV[i3 + 1] -= w2dt * J[i3 + 1];
+                WV[i3 + 2] -= w2dt * J[i3 + 2];
             }
         }
 
