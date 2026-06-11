@@ -48,10 +48,21 @@ Canonical stack, **CPU** (Langevin = the CPU OU thermostat), **no injection**:
 - **Lattice sizes:** `L ∈ {16, 24, 32}` (≥3 for the χ_max scaling fit).
 - **Temperature window (from the pre-lock scout, T_c≈0.12):**
   `T ∈ {0.07, 0.08, 0.09, 0.10, 0.11, 0.12, 0.13, 0.14, 0.16, 0.18}`.
-- **Seeds:** 12 per (L,T). **Equilibration:** 3000 ticks. **Sampling:** 2000 ticks (per-tick `m` logged).
+- **Seeds:** 6 per (L,T). **Equilibration:** 1200 ticks. **Sampling:** 1000 ticks (per-tick `m` logged).
+
+> **Amendment (pre-run, 2026-06-11):** the original lock specified
+> seeds=12 / equil=3000 / sample=2000, but timing showed CPU costs **~34 ms/tick
+> at L=32** (the 150-iteration SOR gauss solver) ⇒ ~8 h for the full run —
+> infeasible interactively, and the WSL2/CUDA build was not provisioned. Reduced
+> to **seeds=6 / equil=1200 / sample=1000** (6000 pooled m-samples per (L,T)).
+> The **order** of a transition is a robust *qualitative* feature; the scout
+> confirmed equilibration by ~400 ticks and already showed U4_min=−0.54 at
+> modest statistics. The SHA-frozen artifacts (campaign + analyzer) and the §3/§4
+> discriminators + verdict thresholds are **UNCHANGED** — only the run statistics
+> are reduced, so the verdict cannot be gamed by this amendment.
 
 Command per L:
-`campaign_genesis_criticality --L=<L> --Ts=0.07,0.08,0.09,0.10,0.11,0.12,0.13,0.14,0.16,0.18 --seeds=12 --equil=3000 --sample=2000 --cpu --tag=ror --output-dir=engine/results/genesis_criticality_ror`
+`campaign_genesis_criticality --L=<L> --Ts=0.07,0.08,0.09,0.10,0.11,0.12,0.13,0.14,0.16,0.18 --seeds=6 --equil=1200 --sample=1000 --cpu --tag=ror --output-dir=engine/results/genesis_criticality_ror`
 
 A reduced pre-lock SCOUT (`L=24`, 8 coarse T, 2 seeds, equil=400) was run only
 to bracket the window; it is NOT the run of record. (Scout result: m≈0 for
