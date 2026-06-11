@@ -97,7 +97,7 @@ a single `libftd_core.a` cannot serve both.
      and on wasm64 they work.
    - WasmBridge range bound (`> 129` in `init`/`reset`) → raise to match (e.g. 257).
 
-5. **32-bit boundary audit** — the JS↔C++ data path. Lattice `index()` is `int` (safe to L≤1290 — fine).
+5. **32-bit boundary audit** — the JSC++ data path. Lattice `index()` is `int` (safe to L≤1290 — fine).
    The real items: verify Embind `typed_memory_view(count, ptr)` doesn't silently truncate `count` at
    uint32 for large arrays in `engine/wasm/ftd_wasm.cpp` samplers (`get_flux_volume`, `get_*_sampled`);
    and the uint32 particle-count header in `ws_server.cpp` (safe ≤256, only matters if the native cap is

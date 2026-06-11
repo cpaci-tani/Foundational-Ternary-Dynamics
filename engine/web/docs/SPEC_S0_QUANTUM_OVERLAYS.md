@@ -161,8 +161,8 @@ Short reference. Each is a one-pass CPU computation from existing fields and can
 
 | Toggle | Formula | Swatch | Priority |
 |---|---|---|---|
-| `\|E\|² − \|B\|²` | Lorentz scalar | diverging blue↔red | Medium |
-| `E·B` | Lorentz pseudoscalar; CP-violation indicator | cyclic violet↔orange | Medium |
+| `\|E\|² − \|B\|²` | Lorentz scalar | diverging bluered | Medium |
+| `E·B` | Lorentz pseudoscalar; CP-violation indicator | cyclic violetorange | Medium |
 | **Momentum density** | `p = -iℏ∇ψ` (real part from dual substrate) | vector arrows | Medium |
 | **Angular momentum** | `L = r × p` | vector arrows, cyan | Low |
 | **Temperature T(x)** | Local ⟨KE⟩ over neighborhood | thermal (blue→red) | Medium |

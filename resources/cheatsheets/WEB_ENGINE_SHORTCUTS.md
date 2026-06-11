@@ -12,9 +12,9 @@ Then open http://localhost:8080.
 
 | Action | Shortcut | Button |
 |---|---|---|
-| Global play / pause (freeze whole sim) | `Space` | ▶ "global" |
+| Global play / pause (freeze whole sim) | `Space` |  "global" |
 | Local play / pause (freeze scenario, keep viz) | `Shift + Space` | ▷ "local" |
-| Single step | `S` | ⏭ |
+| Single step | `S` |  |
 | Reset scenario | `R` | ↺ |
 | Speed (ticks per frame) | — | slider (0–100 → 0×–3×) |
 
@@ -32,7 +32,7 @@ Then open http://localhost:8080.
 | Action | Shortcut | Button |
 |---|---|---|
 | Render scenario forward (N seconds) | — | "Render" circle-dot |
-| Choose render duration (10 / 30 / 60 s) | — | ⚙ gear → popover |
+| Choose render duration (10 / 30 / 60 s) | — |  gear → popover |
 | Cancel an in-flight render | — | ✕ on the floating Render chip |
 
 When a render is running:

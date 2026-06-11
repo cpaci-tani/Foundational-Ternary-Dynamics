@@ -27,10 +27,10 @@ does this one.)
    bare `{ bridge }` where the refactored factory `load` now expects a `PhysicsHarness`. An
    **existing test that was green in the 06-04 audit now fails.** This is fresh, actionable
    feedback on uncommitted work — see **A1**.
-2. **JS↔C++ parity is healthy** — the guard passes 5/5 and the unique scenario sets match
+2. **JSC++ parity is healthy** — the guard passes 5/5 and the unique scenario sets match
    exactly (95 = 95). An earlier raw-occurrence-count "drift" reading was wrong; corrected in
    the SPEC. The real definition-layer gaps are narrower and live in the *unguarded* edges
-   (registry custom-literals, registry↔metadata) — see **B5/B6**.
+   (registry custom-literals, registrymetadata) — see **B5/B6**.
 3. **The subsystem's coupling is concentrated in three hand-maintained mirrors** that have each
    drifted or duplicated: the overlay round-trip list (**B1**), the two parallel toggle
    mechanisms (**B2/B3**), and the orphaned scenario id (**B4**). All three are exactly the
@@ -88,7 +88,7 @@ architecture-*decision* items (the A-vs-B call) deferred per the roadmap + ADR 0
 | **B2** | Med | VERIFIED·static | Two parallel toggle mechanisms — declarative `SCALE0_SCENARIO_OVERRIDES` vs imperative `setToggle` in 10 custom-`load()` registry entries | `toggles.js:82` / `scenario-registry.js:74-375` |
 | **B3** | ~~Med-High~~ **Closed** | VERIFIED·runtime (not reproduced) | Theorized `langevin` leak from custom-`load()` scenarios — runtime shows the bridge reset clears it on every load; no leak. Guard: `scale0-toggle-leak.spec.js` | `scenario-registry.js:88,154,…` |
 | **B4** | Low-Med | VERIFIED·static | `s0-seed-2-hydrogen-atoms` is orphaned: it has a toggle-override, KB entry, and a panel that *instructs users to load it*, but no registry/impl entry — it can't be selected | `toggles.js:167` |
-| **B5** | Low | VERIFIED·static | Parity guard's registry extractor regex matches only `makeScenario(...)` → the 10 custom-literal scenarios are unguarded; no registry↔metadata assertion exists | `scenario-parity.spec.js:112-123` |
+| **B5** | Low | VERIFIED·static | Parity guard's registry extractor regex matches only `makeScenario(...)` → the 10 custom-literal scenarios are unguarded; no registrymetadata assertion exists | `scenario-parity.spec.js:112-123` |
 | **B6** | Low | VERIFIED·static | Metadata covers only `s0-seed-*`+`quantum-*`; `flux/light/s0-field/s0-vacuum` have none; registry `epistemicStatus` not synced to metadata tags | `config/scenarios.js:57` |
 | **C1** | Med | VERIFIED·static | No scenario lifecycle hooks (`onEnter`/`onExit`/`dispose`); teardown is implicit via `reset()`/`setFluxMock` | `scenario-registry.js:1-15` |
 | **C2** | Med | VERIFIED·static | "Current scenario" state is scattered (store, DOM `<select>`, `ctx`, bridge tick); unknown ids silently resolve to `flux-pulse` | `store.js:174` / `scenario-registry.js:402` |
@@ -183,16 +183,16 @@ entry (`ui/components/knowledge-base/data.js:1327`), and the P1 observables pane
 (which has `s0-seed-h2-bond-formation`, a different id) **nor** any JS/C++ impl (no `case` /
 `name ==`). So the override is dead code, and the panel instructs users to load a scenario that
 isn't in the dropdown. **Fix:** either add the scenario (registry + impl) or remove the four
-dangling references. A registry↔references check (B5) would have caught it.
+dangling references. A registryreferences check (B5) would have caught it.
 
 ### B5 / B6 — Unguarded definition edges *(Low)*
 
 **B5.** The parity guard's UI extractor (`scenario-parity.spec.js:112-123`) regex
 `makeScenario\('[^']+',\s*'([^']+)'` matches only the *factory* form, so assertion 4 silently
 skips the 10 custom-literal scenarios (they happen to be implemented today — nothing is broken —
-but a future rename wouldn't be caught). There is **no** assertion that registry ↔ metadata
+but a future rename wouldn't be caught). There is **no** assertion that registry  metadata
 agree (B4 is the symptom). **Fix:** broaden the extractor to also match `id:` literals and add a
-registry↔metadata coverage assertion (Direction A's core deliverable).
+registrymetadata coverage assertion (Direction A's core deliverable).
 
 **B6.** `S0_SEED_SCENARIO_METADATA` (`config/scenarios.js:57-327`) covers only `s0-seed-*` (and
 ~22 live entries; many commented for provenance); `QUANTUM_SCENARIO_DESCRIPTIONS` covers
@@ -230,7 +230,7 @@ table. **Fix:** one descriptor carrying both (Direction B), or a coverage lint (
 
 ## What's healthy (don't "fix")
 
-- **JS↔C++ parity** — 5/5 green, 95 unique scenarios on each side fully shared
+- **JSC++ parity** — 5/5 green, 95 unique scenarios on each side fully shared
   (`scenario-parity.spec.js`). The guard does its job for the factory-form scenarios.
 - **The bridge direct-read contract** — `bridge/bridge-contract.js` `SCALE0_DIRECT_READS`
   (`:80-110`) is the reference example of a contract done right: one named export consumed by both
@@ -246,7 +246,7 @@ table. **Fix:** one descriptor carrying both (Direction B), or a coverage lint (
 
 | Check | Command / source | Result |
 |---|---|---|
-| JS↔C++↔registry parity | `npx playwright test scenario-parity.spec.js` | **5/5 pass**; inventory `UI 86 / JS 96 / C++ 95 / shared 95` |
+| JSC++registry parity | `npx playwright test scenario-parity.spec.js` | **5/5 pass**; inventory `UI 86 / JS 96 / C++ 95 / shared 95` |
 | Resize on factory scenario (A1) | `npx playwright test scale0-resize-guard.spec.js --grep "without refusal"` | **FAIL** — `mockLattice` 33 ≠ 145 (fluxMock not rebuilt) |
 | Overlay set drift (B1) | grep `showStateField`/`toggle-state-field` across `js/` vs `scenario-loader.js:47-119` | 4 new overlays user-facing, absent from loader maps |
 | Orphan id (B4) | grep `2-hydrogen-atoms` across `js/` | 3 references, 0 registry/impl entries |

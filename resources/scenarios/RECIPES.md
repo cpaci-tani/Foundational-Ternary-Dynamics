@@ -114,7 +114,7 @@ See: `docs/theory/03_derivations/DERIV_SINGLET_FROM_VOID_EVENT.md`.
 2. Let it run for 10 seconds of sim time.
 3. Drag the scrub thumb backwards → the canvas re-shows earlier states (hydrated from the memory recorder).
 4. Release near "now" → sim resumes from there.
-5. Click the ⚙ gear in the scrub bar → pick **60s** duration.
+5. Click the  gear in the scrub bar → pick **60s** duration.
 6. Click the Render button → the canvas fast-forwards through 60 seconds of sim; the progress chip tracks it.
 7. After "Render complete", scrub the newly-populated green band in the strip — that's the rendered future at 15 fps.
 

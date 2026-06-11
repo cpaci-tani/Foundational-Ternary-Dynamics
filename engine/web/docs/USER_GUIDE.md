@@ -51,7 +51,7 @@ You should see:
 **First experiment:**
 1. Scale dropdown stays at `Scale 0 — Lattice`.
 2. Scenario dropdown: pick `Flux Pulse`.
-3. Click ▶ Play. A Gaussian flux blob at the center expands spherically. Watch it bounce off the cube walls and interfere with itself (the wave equation in action).
+3. Click  Play. A Gaussian flux blob at the center expands spherically. Watch it bounce off the cube walls and interfere with itself (the wave equation in action).
 4. Click ■ (reset) → pick `Genesis Cascade`. Above-threshold flux → watch particles spontaneously manifest (±1 voxel states light up).
 
 You've just run two self-consistent simulations of the FTD substrate. Every deeper feature below builds on this loop.
@@ -100,7 +100,7 @@ FTD spans 11 orders of magnitude of physical phenomena, exposed as 10 scale "mod
 - The diagnostics table (scale-specific metrics)
 - The LIVE physics engine path (0→lattice, 1→PE, 2→AE, 3→AE+bonding, 4→Scale4, 5→Scale5, 6→Scale6, 11→Scale11)
 
-**Pause behavior:** The **▶/⏸ (play/pause)** button freezes the simulation. The engine tick is the
+**Pause behavior:** The **/ (play/pause)** button freezes the simulation. The engine tick is the
 single time source, so nothing in the lattice advances while paused — but the render loop keeps
 running, so you can still orbit the camera and toggle overlays. Only *recorded* sim time stops; the
 observer's clock keeps flowing.
@@ -194,7 +194,7 @@ The controls panel (bottom-right by default) exposes ~20 physics toggles. Each c
 | **larmor_radiation** | Enable acceleration-dependent damping (radiation reaction) | OFF |
 | **dual_substrate** | Track J_L, J_R independently (parity-violating mode) | ON |
 | **color_forces** | SU(3)-inspired color-dependent pairwise force | OFF |
-| **weak_transmutation** | Chirality-stress-driven polarity flip (+1 ↔ −1) | ON |
+| **weak_transmutation** | Chirality-stress-driven polarity flip (+1  −1) | ON |
 | **strong_force** | Yukawa short-range nuclear force | OFF |
 | **triad_binding** | Detect 3-particle triads, mark them `locked = true` | OFF |
 | **pair_production** | Correlated ±1 pairs from high-flux void regions | OFF |
@@ -556,7 +556,7 @@ cd engine/web/tests && npx playwright test wasm-scenario-coverage.spec.js
 cd engine/web/tests && npx playwright test animation-clock-freeze.spec.js
 cd engine/web/tests && npx playwright test perf-baseline.spec.js
 
-# JS↔C++ scenario parity guard (new 2026-04-19):
+# JSC++ scenario parity guard (new 2026-04-19):
 # Fails CI if a scenario exists in the JS group files but not in
 # engine/src/scenarios.cpp (or vice versa). Fast — runs in <1s.
 cd engine/web/tests && npx playwright test scenario-parity.spec.js

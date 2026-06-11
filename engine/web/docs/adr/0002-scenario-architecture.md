@@ -14,10 +14,10 @@ toggle profile (`config/toggles.js`). Full treatment in
 [`../SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](../SPEC_SCALE0_SCENARIO_ARCHITECTURE.md).
 
 The 2026-06-05 audit ([`../audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](../audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md))
-found JS↔C++ parity healthy (guarded, green) but the *other* edges unguarded and drifting: a stale
+found JSC++ parity healthy (guarded, green) but the *other* edges unguarded and drifting: a stale
 overlay round-trip mirror (`B1`), two parallel toggle mechanisms one of which leaks (`B2`/`B3`),
 an orphaned scenario id referenced in three places but implemented in none (`B4`), and partial
-metadata with no registry↔metadata check (`B5`/`B6`). The recurring shape is the
+metadata with no registrymetadata check (`B5`/`B6`). The recurring shape is the
 hand-maintained-mirror hazard that `store.js createFieldFlags()` already fixed programmatically.
 
 The roadmap ([`../PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](../PLAN_SCALE0_SCENARIO_MODULARIZATION.md))
@@ -29,7 +29,7 @@ deferring this decision until Tier 1's guards provide evidence.
 **TBD.** Choose one once Tier 1 lands:
 
 - **Direction A — keep four layers, guard every edge.** Extend the parity guard to custom-literal
-  registry entries, add registry↔metadata + overlay-set↔canonical-keys assertions, and document
+  registry entries, add registrymetadata + overlay-setcanonical-keys assertions, and document
   the toggle/metadata contracts as named, tested boundaries. Lower risk; the four layers remain.
 - **Direction A + T2.1 — guard, then unify toggles only.** Direction A plus collapsing the 10
   imperative custom-`load()` toggle setups into declarative param-carrying profiles (closes the

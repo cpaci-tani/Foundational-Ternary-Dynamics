@@ -10,7 +10,7 @@ The old wrapper has been merged here; use `cd lean && lake build` for the combin
 ## FtdNoGo — Lean 4 formalization of the Commutativity Independence No-Go
 
 > **VERIFICATION STATUS (2026-05-30, toolchain `leanprover/lean4:v4.30.0`):**
-> - **`Standalone.lean` — ✅ MACHINE-CHECKED.** `lean Standalone.lean` →
+> - **`Standalone.lean` —  MACHINE-CHECKED.** `lean Standalone.lean` →
 >   **exit 0, stderr 0 bytes**, the `#check`s print the real signatures
 >   (`ocommutator A B = fun x => 0`, etc. — no `sorry`), and
 >   **`#print axioms standalone_core` → `[propext, Classical.choice,
@@ -20,7 +20,7 @@ The old wrapper has been merged here; use `cd lean && lake build` for the combin
 >   multiplication genuinely commutes — proved via `Int.mul_comm` + `omega`),
 >   not a hypothesis. *(History: the first draft erred by using Mathlib-only
 >   typeclasses; rewritten core-only and re-verified.)*
-> - **`FtdNoGo/` (Mathlib version) — ✅ MACHINE-CHECKED.** `lake build` →
+> - **`FtdNoGo/` (Mathlib version) —  MACHINE-CHECKED.** `lake build` →
 >   **`Build completed successfully (8482 jobs)`, exit 0**, all six
 >   `FtdNoGo/*` modules built, no errors (after patching v4.30.0 issues:
 >   catch-all `import Mathlib`; `Poisson.lean` `ℝ`/`pderiv_X`/`norm_num`;
@@ -79,7 +79,7 @@ mathematics, not the physical faithfulness of the encoding.**
 | Independence / consistency model | `noncommutativity_is_external` | `Independence.lean` |
 | Postulate encoding (P1–P5) | `Voxel, Fields, Config, Update, IsLocal, moore` | `Postulates.lean` |
 | Bundled core theorem | `commutativity_independence_core` | `Main.lean` |
-| **✅ verified Mathlib-free mirror** (axiom-clean) | `standalone_core` + the 4 pillars | `Standalone.lean` |
+| ** verified Mathlib-free mirror** (axiom-clean) | `standalone_core` + the 4 pillars | `Standalone.lean` |
 
 The independence half is consistency-by-model: the matrix algebra witnesses
 that adding a non-commutative measurement structure `M` to the (commutative)
@@ -91,7 +91,7 @@ shows).
 
 ## Build / verify
 
-### Fast path — the Mathlib-free core (✅ verified this session, seconds)
+### Fast path — the Mathlib-free core ( verified this session, seconds)
 
 ```sh
 cd lean
@@ -103,7 +103,7 @@ authoring (2026-05-30, v4.30.0): exit 0, stderr 0 bytes, the `#check`s print
 the real signatures, and `#print axioms standalone_core` →
 `[propext, Classical.choice, Quot.sound]` only (no `sorryAx`).
 
-### Full path — the Mathlib rendering (✅ verified this session, canonical API)
+### Full path — the Mathlib rendering ( verified this session, canonical API)
 
 Requires [`elan`](https://github.com/leanprover/elan) and Mathlib cache access.
 

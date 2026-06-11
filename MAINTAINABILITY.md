@@ -19,7 +19,7 @@ accidentally violating a project invariant.
   - [1.3 Module boundaries](#13-module-boundaries)
 - [Part 2 — Hazards and Recipes](#part-2--hazards-and-recipes)
   - [2.1 Hazards](#21-hazards)
-    - [H1 — Panel-registry ↔ DOM-stub contract](#h1--panel-registry--dom-stub-contract)
+    - [H1 — Panel-registry  DOM-stub contract](#h1--panel-registry--dom-stub-contract)
     - [H2 — renderMathInHtml(escapeHtml(x)) rule](#h2--rendermathinhtmlescapehtmlx-rule)
     - [H3 — Epistemic-tag discipline](#h3--epistemic-tag-discipline)
     - [H4 — Constants single source of truth](#h4--constants-single-source-of-truth)
@@ -171,7 +171,7 @@ hit it), **Cause** (the project invariant being violated), **Fix**
 (the exact corrective action). Linked to a recent commit so you can
 read the pattern in context.
 
-#### H1 — Panel-registry ↔ DOM-stub contract
+#### H1 — Panel-registry  DOM-stub contract
 
 - **Symptom.** Your new tab doesn't appear in the tab bar, or the
   tab appears but clicking it shows an empty panel. Playwright gets

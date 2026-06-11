@@ -9,7 +9,7 @@
 **Replacements:**
 
 - **Canonical manuscript:** `dissemination/manuscript_v2/src/` (single source of truth).
-- **Per-chapter authoring:** see `dissemination/manuscript_v2/PROPAGATION_RULE.md` for the v2 src ↔ vol1 propagation policy.
+- **Per-chapter authoring:** see `dissemination/manuscript_v2/PROPAGATION_RULE.md` for the v2 src  vol1 propagation policy.
 - **Published-grade companion papers:** `dissemination/papers/PAPER_A_PI_FREE_GENERATOR.tex` + `PAPER_B_BCC_COMPLEX_STRUCTURE.tex` + `PAPER_FTD_AS_WILSONIAN_EFT.tex`.
 
 **Documentation builder note:** the documentation-builder agent's audit (2026-05-02) flagged v1 build as `FAIL — Jupyter not installed`. Build pipelines should skip this directory.

@@ -52,7 +52,7 @@ When editing a file in **`vol1/`** or **`vol2/`** directly:
 
 1. **Don't.** Edit `src/chapters/` first, then propagate. This prevents accidental divergence.
 
-### manuscript_v1 ↔ manuscript_v2
+### manuscript_v1  manuscript_v2
 
 The two manuscript versions are **different products** with overlapping but not identical content:
 
@@ -63,7 +63,7 @@ There is **no chapter-level identity** between the two. v2 is a partial rewrite,
 
 The inventory agent's earlier "share ~57 chapters verbatim" finding was a heuristic by title-similarity, not by file-equality. **Do not assume v1 and v2 share verbatim content.** Diff before propagating.
 
-### Identification mapping (v1 ↔ v2)
+### Identification mapping (v1  v2)
 
 A canonical mapping table from v1 chapter numbers to v2 chapter numbers does not currently exist. Until it does, the safe rule is:
 

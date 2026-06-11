@@ -63,7 +63,7 @@ The subsystem that makes this work is spread across **four parallel definition l
 
 The string **id** is the *only* thing that links the four definition layers. There is no
 shared schema, no generated table, and only one of the three impl/registry edges
-(JS↔C++) has an automated drift guard (§6.3). This is the central architectural fact
+(JSC++) has an automated drift guard (§6.3). This is the central architectural fact
 the modularization roadmap addresses.
 
 ---
@@ -168,7 +168,7 @@ order (contract in `engine/include/ftd/scenarios.h:58-68`). `name ==` branch cou
 > **Raw counts ≠ unique scenarios.** These are `name ==` *occurrences*; some scenarios are
 > tested in more than one branch (e.g. `name == "a" || name == "b"`), so the deduplicated
 > set is **95 unique C++ scenarios** — exactly matching the 95 unique JS scenarios. The
-> JS↔C++ parity guard (§6.3) is **GREEN** (6/6, verified 2026-06-05 after adding
+> JSC++ parity guard (§6.3) is **GREEN** (6/6, verified 2026-06-05 after adding
 > `flux-zero-point` and removing `frw-patch`: inventory `UI 96 / JS 96 / C++ 95 / shared 95`,
 > +1 C++ legacy). Do **not** read the per-file occurrence counts as drift; the unique scenario
 > sets are in parity.
@@ -334,7 +334,7 @@ Because `resetScale0VisualState` (`:288-299`) clears every field overlay, the lo
 the user's overlay buttons before the reset (`captureOverlayPreferences` `:237-248`) and
 re-applies them after (`restoreOverlayPreferences` `:257-286`). Both walk `FIELD_BUTTON_IDS`
 and `FIELD_BUTTON_TO_FLAG`, which — since the B1 fix (2026-06-05) — are **derived** from
-`ui/dom.js` `FIELD_TOGGLE_BINDINGS`, the canonical **36-entry** button↔flag map shared with
+`ui/dom.js` `FIELD_TOGGLE_BINDINGS`, the canonical **36-entry** buttonflag map shared with
 `bindings.js` and kept in lockstep with `store.js` `FIELD_TOGGLE_KEYS` (also 36). Before the fix
 they were a hand-maintained 32-entry mirror that had fallen behind the four 2026-06-03 substrate
 overlays (`showStateField`/`showLatency`/`showGaussResidual`/`showMooreDecomp`).
@@ -373,7 +373,7 @@ The caller must `reset()` the lattice before seeding. Enforced inside the dispat
 contract states the same (`scenarios.h:46-47`). Seed bodies therefore assume a flux-zero,
 particle-empty lattice.
 
-### 6.3 JS ↔ C++ parity
+### 6.3 JS  C++ parity
 
 `tests/scenario-parity.spec.js` is a source-text lint (no WASM load) with four assertions
 (`:128-188`):
@@ -389,7 +389,7 @@ The guard is **GREEN** (6/6, 2026-06-05). It was hardened (B5) so the registry e
 object-literal `id:` form — the 10 custom-literal scenarios are no longer invisible (UI inventory
 86 → 96) — plus a new **orphan-metadata** assertion (every `S0_SEED_SCENARIO_METADATA` key must map
 to a real scenario). Before the fix the extractor matched only the factory form, and there was no
-registry ↔ metadata check.
+registry  metadata check.
 
 ### 6.4 Bridge direct-read surface
 
@@ -420,7 +420,7 @@ Added 2026-06-05 with `flux-zero-point`, which declares `reflective: true` so it
 energy floor is trapped rather than absorbed at the lattice edges (without it the floor bleeds
 away — not "zero-point"). This **removes a real coupling**: before, the loader read the boundary
 **only** from the DOM controls, so a scenario could not declare its own boundary need (the
-UI↔bridge coupling noted as a modular-boundary gap in §6's preamble). The same change also fixed
+UIbridge coupling noted as a modular-boundary gap in §6's preamble). The same change also fixed
 a latent clobber where `applyAuxiliaryDefaults` forced `reflective=false` *after* the scenario's
 boundary had been set, so a scenario-set reflective boundary never stuck. Verified by
 `tests/scale0-zero-point.spec.js` (persistent floor) and the all-scenario sweep (other 95
@@ -465,7 +465,7 @@ generalize that principle to the scenario definition.
 Leave the registry / JS impl / C++ impl / metadata layers where they are, but:
 
 - extend the parity guard (§6.3) to cover **custom-literal** registry entries and add a
-  **registry ↔ metadata** assertion;
+  **registry  metadata** assertion;
 - add a runtime call (or test) to `validateScale0ScenarioRegistry()`;
 - document the toggle whitelist + overlay round-trip as named, tested boundaries.
 
@@ -499,6 +499,6 @@ Higher payoff, larger one-time churn; the C++ seed bodies stay hand-written but 
 | Parity | `tests/scenario-parity.spec.js` |
 
 *Counts — 96 registry entries (86 factory + 10 custom literals), 95 unique JS scenarios,
-95 unique C++ scenarios (+1 C++ legacy; JS↔C++ parity verified **green** 6/6 2026-06-05); raw
+95 unique C++ scenarios (+1 C++ legacy; JSC++ parity verified **green** 6/6 2026-06-05); raw
 `case` / `name ==` occurrences are 101 / 99. All `file:line` references are as of the 2026-06-05
 working tree; re-derive from source before relying on them.*
