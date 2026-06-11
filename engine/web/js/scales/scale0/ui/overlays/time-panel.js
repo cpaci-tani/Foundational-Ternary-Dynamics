@@ -279,6 +279,35 @@ function renderCardD(container, vImposed) {
     container.innerHTML = html;
 }
 
+// Card E — de Broglie internal clock (FTD-0271). The manifested cluster carries
+// a Klein-Gordon rest-mass clock: dφ/dt = ω₀·dτ/dt, so the internal phase φ
+// winds at ω₀ at rest and RED-SHIFTS as √(1−v²) when moving — the same dilation
+// Card D shows, now driving a particle's own clock. ω₀∝M_REST is [IMPOSED]
+// (FTD's native flux is massless); the covariant rate is FTD-sourced (FTD-0252).
+function renderCardE(container, db) {
+    if (!db.hasData) {
+        container.innerHTML = `<div class="time-empty">de Broglie clock idle — load the “De Broglie Clock (pilot wave)” scenario (or enable the de_broglie_clock toggle) and press play. The manifested cluster's flux then oscillates at ω₀.</div>`;
+        return;
+    }
+    const { active, omega0, phase, speed, clockRate } = db;
+    const period = omega0 > 1e-9 ? (2 * Math.PI / omega0) : Infinity;
+    const redshift = omega0 > 1e-9 ? clockRate / omega0 : 1;   // = √(1−v²)
+    const TWO_PI = 2 * Math.PI;
+    const phaseWrapped = ((phase % TWO_PI) + TWO_PI) % TWO_PI;   // clock-hand angle
+    const turns = Math.floor(phase / TWO_PI);                    // completed cycles
+    let html = `<div style="${heroStyle()}" title="The manifested cluster's internal de Broglie phase, winding at dφ/dt = ω₀·dτ/dt (the rest-frame Compton clock). Shown wrapped to [0, 2π) — the clock hand.">φ = ${formatFixed(phaseWrapped, 3)} rad</div>`;
+    html += `<div style="font-size:11px;color:var(--text-muted);margin:2px 0 8px;">${tagBadge(active ? 'M' : '~M')}internal clock phase (centre voxel) — ${active ? 'running' : 'idle'}</div>`;
+    html += row('ω₀ (Compton freq.)', formatFixed(omega0, 3), 'IMPOSED', undefined, 'de Broglie internal-clock frequency ω₀∝M_REST. IMPOSED — FTD\'s native flux is massless (no restoring term); the substrate fixes the shape, not the absolute scale (no ℏ).');
+    html += row('Clock active', active ? 'ON' : 'OFF', 'M', active ? 'var(--positive)' : 'var(--text-muted)', 'de_broglie_clock toggle: adds the Klein-Gordon mass term −ω₀²·J at manifested voxels.');
+    html += row('cycles ticked', String(turns), 'M', undefined, 'Completed clock cycles = ⌊φ/2π⌋ since the clock started.');
+    html += row('Period 2π/ω₀', Number.isFinite(period) ? `${formatFixed(period, 2)} ticks` : '—', 'D', undefined, 'Rest-frame oscillation period of the cluster\'s flux.');
+    html += row('cluster speed v', formatFixed(speed, 4), 'M', undefined, 'Speed of the manifested cluster at the sampled voxel (units of c).');
+    html += row('dφ/dt = ω₀·√(1−v²)', formatFixed(clockRate, 5), 'M', undefined, 'Local clock rate: the internal phase winds slower for a moving cluster. dτ/dt is FTD\'s own measured proper-time (FTD-0252).');
+    html += row('clock red-shift √(1−v²)', formatFixed(redshift, 5), 'M', redshift < 1 ? 'var(--caution,#fb8c00)' : undefined, 'The moving clock\'s slowdown vs a rest clock — the de Broglie clock inheriting the Card-D time dilation. =1 at rest.');
+    html += `<div class="time-provenance" title="Schrödinger + de Broglie are textbook Klein-Gordon consequences of the imposed clock; confirming them on the lattice is correctness, not an FTD derivation. The covariant clock RATE is FTD-sourced (FTD-0252 measured dτ/dt∝√(1−v²)).">${tagBadge('CONDITIONAL')}ω₀∝M_REST is IMPOSED; de Broglie λ∝1/v is a Klein-Gordon identity given the clock — not an FTD prediction. The covariant rate is FTD-sourced (FTD-0252).</div>`;
+    container.innerHTML = html;
+}
+
 // ── panel shell ─────────────────────────────────────────────────────────────
 
 function buildPanel() {
@@ -290,6 +319,7 @@ function buildPanel() {
         b: 'Measured proper-time rate dτ/dt as a function of radius from the mass center (solid [~M]) vs a weak-field prediction curve (dashed [D]), with a residual. Clocks slow toward the well.',
         c: 'Two fixed probes — deep (near the mass) and far (near the box edge) — each accumulate proper time τ = Σ√f·dt. The far clock outruns the deep clock; Δτ is the live twin/GPS offset.',
         d: 'Kinematic time dilation. The √(1−v²) [T] and FTD γ(v) [D] curves vs this session’s baked FTD-0252 measured points [M] (offline campaign). The velocity is [IMPOSED] (rigid translation is [BOUNDARY-blocked]). Inset: the departure from exact γ vanishes as L⁻² — γ emerges in the IR.',
+        e: 'The de Broglie internal clock (FTD-0271). With the de_broglie_clock toggle on, the manifested cluster carries a Klein-Gordon rest-mass clock: its internal phase φ winds at dφ/dt = ω₀·dτ/dt — ω₀ at rest, red-shifting as √(1−v²) when moving (the Card-D dilation now ticking a particle\'s own clock). ω₀∝M_REST is [IMPOSED] (native flux is massless); the covariant rate is FTD-sourced [M] (FTD-0252). [CONDITIONAL] — not an FTD prediction.',
     };
     root.innerHTML = `
         <header class="time-header">
@@ -312,6 +342,10 @@ function buildPanel() {
             <div style="${titleStyle()}" title="${SECTION_HELP.d}">D · Kinematic dilation (imposed v) ⓘ</div>
             <div id="${PANEL_ID}-card-d"></div>
         </section>
+        <section style="${cardStyle(200)}">
+            <div style="${titleStyle()}" title="${SECTION_HELP.e}">E · De Broglie internal clock (FTD-0271) ⓘ</div>
+            <div id="${PANEL_ID}-card-e"></div>
+        </section>
     `;
     return root;
 }
@@ -323,7 +357,7 @@ export function mountTimePanel(host, getBridge) {
     host.appendChild(panel);
 
     const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
-    const cardA = el('card-a'), cardB = el('card-b'), cardC = el('card-c'), cardD = el('card-d');
+    const cardA = el('card-a'), cardB = el('card-b'), cardC = el('card-c'), cardD = el('card-d'), cardE = el('card-e');
 
     let lastMetrics = null;     // { physicalTime, fMin, dtauMin, gammaMax }
     let bridgeId = null;
@@ -430,6 +464,29 @@ export function mountTimePanel(host, getBridge) {
 
         // Card D is slider/event-driven; keep it fresh too (cheap).
         renderD();
+
+        // Card E — de Broglie internal clock (FTD-0271). Read the toggle + ω₀
+        // off the bridge, and sample the centre voxel for the clock phase φ and
+        // cluster speed (clock rate dφ/dt = ω₀·√(1−v²)). Only the WASM engine
+        // exposes voxel.phase; the MockBridge has no per-voxel clock phase.
+        const dbActive = (typeof b.getToggle === 'function') ? !!b.getToggle('de_broglie_clock') : false;
+        const omega0 = (typeof b.getOmega0 === 'function') ? b.getOmega0() : 1.0;
+        let phase = 0, speed = 0, hasPhase = false;
+        if (typeof b.inspectVoxel === 'function') {
+            const L = caps.latticeSize || diag.latticeSize || 33;
+            const mc = Math.round((L - 1) / 2);
+            const vox = b.inspectVoxel(mc, mc, mc);
+            if (vox && vox.phase !== undefined) {
+                phase = vox.phase || 0;
+                speed = vox.speed || 0;
+                hasPhase = true;
+            }
+        }
+        const clockRateNow = omega0 * Math.sqrt(Math.max(0, 1 - speed * speed));
+        renderCardE(cardE, {
+            hasData: dbActive || (hasPhase && phase !== 0),
+            active: dbActive, omega0, phase, speed, clockRate: clockRateNow,
+        });
     }
 
     // Defer the rAF update loop + stylesheet to first show. A light 2 Hz arm poll

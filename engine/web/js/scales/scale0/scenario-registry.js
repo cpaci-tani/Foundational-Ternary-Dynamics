@@ -579,15 +579,35 @@ export const SCALE0_SCENARIOS = [
         epistemicStatus: '[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT, FTD-0271]',
         load(harness, params = {}) {
             const bridge = harness.bridge || harness;
+            bridge.setupScenario(params.id || 's0-seed-de-broglie-clock');
+            // Set the toggles AFTER setupScenario (the C++ branch sets its own
+            // wave/genesis/damping, and would otherwise clobber these). The block
+            // is 343 same-sign +1 charges: forces + movement OFF so it does NOT
+            // self-repel/disperse — a stable cluster whose internal clock winds.
             try {
                 bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('coupling', true);             // G_C·∇s sources the flux flower
                 bridge.setToggle('genesis', false);
                 bridge.setToggle('damping', false);
                 bridge.setToggle('selective_damping', false);   // requires damping
                 bridge.setToggle('weak_transmutation', false);   // requires dual_substrate
                 bridge.setToggle('dual_substrate', false);
+                bridge.setToggle('forces', false);              // no Coulomb self-repulsion
+                bridge.setToggle('movement', false);            // block stays put
+                bridge.setToggle('lorentz_force', false);       // requires forces
+                // Gauss projection OFF: its non-variational SOR Poisson solver is
+                // the energy-conservation leak, and with the clock + wave + no
+                // damping it can drive the flux up until the solver fails to
+                // converge (hang). The pure Klein-Gordon wave J''=c²∇²J−ω₀²J +
+                // coupling is linear and energy-conserving — STABLE, and the flux
+                // field lines still render the flower from the raw J.
+                bridge.setToggle('gauss_projection', false);
+                // Run the de Broglie clock during normal play so the cluster's
+                // internal phase φ winds at ω₀ and the Time Observatory's Card E
+                // shows it live. Reset off for other scenarios via SCALE0_TOGGLES.
+                bridge.setToggle('de_broglie_clock', true);
+                if (typeof bridge.setOmega0 === 'function') bridge.setOmega0(0.30);
             } catch (e) { console.warn('[de-broglie-clock]', e); }
-            bridge.setupScenario(params.id || 's0-seed-de-broglie-clock');
             // Show the manifested block.
             setTimeout(() => {
                 const stateBtn = document.getElementById('toggle-state-field');
