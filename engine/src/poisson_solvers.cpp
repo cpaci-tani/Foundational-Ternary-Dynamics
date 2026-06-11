@@ -122,19 +122,21 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
   const double mean_charge = charge_sum / N;
 
 #pragma omp parallel for schedule(static)
-  for (int i = 0; i < N; ++i) {
-    const int iz = i % L;
-    const int iy = (i / L) % L;
-    const int ix = i / LL;
-    double div;
-    if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
-      div = (voxels[i+LL].flux.x - voxels[i-LL].flux.x) * 0.5
-          + (voxels[i+L].flux.y  - voxels[i-L].flux.y)  * 0.5
-          + (voxels[i+1].flux.z  - voxels[i-1].flux.z)  * 0.5;
-    } else {
-      div = divergence_flux_at(voxels, lattice, i);
+  for (int ix = 0; ix < L; ++ix) {
+    for (int iy = 0; iy < L; ++iy) {
+      for (int iz = 0; iz < L; ++iz) {
+        const int i = ix * LL + iy * L + iz;
+        double div;
+        if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+          div = (voxels[i+LL].flux.x - voxels[i-LL].flux.x) * 0.5
+              + (voxels[i+L].flux.y  - voxels[i-L].flux.y)  * 0.5
+              + (voxels[i+1].flux.z  - voxels[i-1].flux.z)  * 0.5;
+        } else {
+          div = divergence_flux_at(voxels, lattice, i);
+        }
+        sor_source[i] = div - charge_coupling * (static_cast<double>(state.state_at(i)) - mean_charge);
+      }
     }
-    sor_source[i] = div - charge_coupling * (static_cast<double>(state.state_at(i)) - mean_charge);
   }
 
   for (int iter = 0; iter < sor_iters; ++iter) {
@@ -151,28 +153,31 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
     phi[i] -= phi_mean;
   }
 
-  for (int i = 0; i < N; ++i) {
-    if (!exact_dual_gauss && state.state_at(i) != 0) continue;
-    Vec3 grad_phi;
-    const int iz = i % L;
-    const int iy = (i / L) % L;
-    const int ix = i / LL;
-    if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
-      grad_phi.x = (phi[i+LL] - phi[i-LL]) * 0.5;
-      grad_phi.y = (phi[i+L]  - phi[i-L])  * 0.5;
-      grad_phi.z = (phi[i+1]  - phi[i-1])  * 0.5;
-    } else {
-      const auto& n = lattice.neighbors_6(ix, iy, iz);
-      grad_phi.x = (phi[n[0]] - phi[n[1]]) * 0.5;
-      grad_phi.y = (phi[n[2]] - phi[n[3]]) * 0.5;
-      grad_phi.z = (phi[n[4]] - phi[n[5]]) * 0.5;
-    }
-    voxels[i].flux -= grad_phi;
+#pragma omp parallel for schedule(static)
+  for (int ix = 0; ix < L; ++ix) {
+    for (int iy = 0; iy < L; ++iy) {
+      for (int iz = 0; iz < L; ++iz) {
+        const int i = ix * LL + iy * L + iz;
+        if (!exact_dual_gauss && state.state_at(i) != 0) continue;
+        Vec3 grad_phi;
+        if (iz > 0 && iz < Nm1 && iy > 0 && iy < Nm1 && ix > 0 && ix < Nm1) {
+          grad_phi.x = (phi[i+LL] - phi[i-LL]) * 0.5;
+          grad_phi.y = (phi[i+L]  - phi[i-L])  * 0.5;
+          grad_phi.z = (phi[i+1]  - phi[i-1])  * 0.5;
+        } else {
+          const auto& n = lattice.neighbors_6(ix, iy, iz);
+          grad_phi.x = (phi[n[0]] - phi[n[1]]) * 0.5;
+          grad_phi.y = (phi[n[2]] - phi[n[3]]) * 0.5;
+          grad_phi.z = (phi[n[4]] - phi[n[5]]) * 0.5;
+        }
+        voxels[i].flux -= grad_phi;
 
-    if (dual_substrate) {
-      Vec3 half_corr = grad_phi * 0.5;
-      voxels[i].flux_L -= half_corr;
-      voxels[i].flux_R -= half_corr;
+        if (dual_substrate) {
+          Vec3 half_corr = grad_phi * 0.5;
+          voxels[i].flux_L -= half_corr;
+          voxels[i].flux_R -= half_corr;
+        }
+      }
     }
   }
 }
@@ -225,8 +230,12 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
   // real potential; the coupling is imposed in the engine, not derived.
   double rho_sum = M_REST * static_cast<double>(state.manifested_count());
   if (include_field_energy) {
-    for (int i = 0; i < N; ++i)
-      rho_sum += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
+    double field_energy_sum = 0.0;
+#pragma omp parallel for reduction(+:field_energy_sum)
+    for (int i = 0; i < N; ++i) {
+      field_energy_sum += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
+    }
+    rho_sum += field_energy_sum;
   }
   const double mean_rho = rho_sum / N;
 
