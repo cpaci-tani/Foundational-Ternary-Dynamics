@@ -819,6 +819,24 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                         harness.injectParticle(mc+dx,mc+dy,mc+dz,-1);
                     break;
                 }
+                case 's0-seed-de-broglie-clock': {
+                    // FTD-0271: de Broglie internal clock. Central manifested
+                    // 7^3 block carrying a uniform flux J0; the de-broglie-clock
+                    // panel turns on the de_broglie_clock toggle so the KG mass
+                    // term -omega0^2*J makes the block's flux oscillate at omega0
+                    // (the rest-frame Compton clock). [CONDITIONAL] -- omega0 is
+                    // IMPOSED; mirrors the C++ s0_seed.cpp branch for parity.
+                    harness.setToggle('genesis', false);
+                    harness.setToggle('damping', false);
+                    const J0 = 0.08, half = 3;
+                    for (let dx = -half; dx <= half; dx++)
+                        for (let dy = -half; dy <= half; dy++)
+                            for (let dz = -half; dz <= half; dz++) {
+                                harness.injectParticle(mc+dx, mc+dy, mc+dz, +1);
+                                harness.injectFlux(mc+dx, mc+dy, mc+dz, J0, 0, 0);
+                            }
+                    break;
+                }
             }
             return true;
 }

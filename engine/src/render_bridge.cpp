@@ -556,7 +556,11 @@ void RenderBridge::tick() {
   }
 
   // Rule 1: Wave propagation + state-flux coupling
-  if (toggles.wave_propagation || toggles.coupling)
+  // FTD-0271: the de Broglie clock's KG mass term -omega0^2*J is computed in
+  // phase_read (it writes delta_j), so phase_read must run when the clock is on
+  // even if the wave and coupling terms are both off (the pure k=0 rest-frame
+  // clock: each manifested voxel oscillates at omega0 with no spatial term).
+  if (toggles.wave_propagation || toggles.coupling || toggles.de_broglie_clock)
     phase_read();
 
   // Rule 2: Commit flux, damping, manifestation/evaporation
