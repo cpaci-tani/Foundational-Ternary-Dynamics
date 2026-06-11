@@ -42,7 +42,7 @@
 |------|-------|--------|-----------------|-------|
 | `docs/papers/src/DERIV_ALPHA_PRECISION.tex` | 579 | current | **LIKELY** (precision-cascade fit, post-hoc-series concerns) | YES |
 | `docs/papers/src/DERIV_SOFTPLUS_RELU_DUALITY.tex` | 646 | current | LIKELY-NOT | UNKNOWN |
-| `docs/papers/src/FOUND_ONTIC_INCOMPLETENESS.tex` | 618 | current | **LIKELY** (incompleteness ↔ infinity ontology) | UNKNOWN |
+| `docs/papers/src/FOUND_ONTIC_INCOMPLETENESS.tex` | 618 | current | **LIKELY** (incompleteness  infinity ontology) | UNKNOWN |
 | `docs/papers/src/FTD_Discrete_Continuous_Bridge.tex` | 843 | current | **LIKELY** (continuum-limit framing) | UNKNOWN |
 | `docs/papers/src/FTD_One_Unit_Final.tex` | 543 | current | UNKNOWN | UNKNOWN |
 | `docs/papers/src/PAPER_0A_PERIOD_DESCENT.tex` | 353 | current | UNKNOWN | UNKNOWN |
@@ -308,7 +308,7 @@ Ordered by combined likelihood-of-affected × downstream-citation-impact:
 6. **`dissemination/manuscript_v2/src/chapters/P1-epistemic-framework.qmd`** (81 L) — sets epistemic ground rules
 7. **`docs/papers/src/PAPER_1A_WATSON_LATTICE_BRIDGE.tex`** (301 L) — Watson identity is infinite-lattice integral
 8. **`dissemination/manuscript_v2/src/chapters/06-bcc-eigenvalue-watson.qmd`** (121 L) — same as above, in manuscript
-9. **`docs/papers/src/FOUND_ONTIC_INCOMPLETENESS.tex`** (618 L) — incompleteness ↔ infinity
+9. **`docs/papers/src/FOUND_ONTIC_INCOMPLETENESS.tex`** (618 L) — incompleteness  infinity
 10. **`docs/papers/src/FTD_Discrete_Continuous_Bridge.tex`** (843 L) — continuum-limit framing
 11. **`docs/papers/DERIV_CLOSURE_RENORMALIZATION.tex`** (797 L) — RG / closure
 12. **`docs/papers/PAPER_GSTAR_BRIDGE_CONSTANT.tex`** (658 L) — G* identities

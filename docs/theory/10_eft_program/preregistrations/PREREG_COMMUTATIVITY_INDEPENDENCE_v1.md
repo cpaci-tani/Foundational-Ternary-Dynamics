@@ -41,7 +41,7 @@ and `../../01_reference/SPEC_FTD_LAGRANGIAN.md`;
 precedent for §11);
 `../../../../lean/` (Lean 4 formalization of the **algebraic core** — Claims
 A/C, the F-a Poisson≠commutator distinction, and the independence consistency
-model; see `lean/README.md`. **Status: ✅ MACHINE-CHECKED (2026-05-30,
+model; see `lean/README.md`. **Status:  MACHINE-CHECKED (2026-05-30,
 toolchain v4.30.0)** — both renderings verify: the Mathlib-free core
 `lean/Standalone.lean` (`lean Standalone.lean` → exit 0, axioms
 `[propext, Quot.sound]`, no `sorry`) and the canonical Mathlib development

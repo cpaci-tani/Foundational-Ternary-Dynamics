@@ -1,10 +1,10 @@
-# SCOPE — Attacking the det↔det_ζ Identity (MC-T4.3's single load-bearing hinge), v1
+# SCOPE — Attacking the detdet_ζ Identity (MC-T4.3's single load-bearing hinge), v1
 
 **Tag:** `[SCOPING / OPEN]` — this document scopes the highest-leverage open problem in the α-readout program. **It contains no result. It does not claim FOUND. It does not close MC-T4.3.** Its purpose is to state precisely what a genuine attempt would have to establish, what is already in hand, and what the prior-favoured outcome is — so that a future attempt is rigorous in whichever direction it lands.
 **Date:** 2026-05-30
 **LEDGER:** proposed new row **FTD-0240** (see §7; confirm next-free against `../../07_assessment/core_ledgers/LEDGER.md` at registration. Canonical LEDGER max is FTD-0237, but **FTD-0238 and FTD-0239 are already provisionally claimed by concurrent working-tree docs** — the ARC-A1-v2 boundary trio `PREREG_ALPHA_READOUT_BOUNDARY_v2.md` / `SYNTHESIS_COMMUTATIVITY_BOUNDARY_2026-05-30.md` (both 0238) and `DERIV_ALPHA_READOUT_BOUNDARY.md` (0239) — so the next genuinely free id is **0240**. Confirm at registration; this is exactly the duplicate-id pattern the 2026-05-30 ledger-cleanup campaign closed, so it must be resolved before any of 0238/0239/0240 is canonized.).
 **Scopes:** the determinant-grading hinge first localized by `AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md` (FTD-0234) and ruled **UNDERDETERMINED** by `AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` (FTD-0235). This memo does **not** supersede those audits; it lays out the work that would be needed to move FTD-0235's verdict in either direction.
-**Builds on (all `[THEOREM]`/`[UNDERDETERMINED]`, none re-derived here):** FTD-0233 (parity scoping), FTD-0234 (J-twisted det_ζ ratio = G\* is a clean odd scalar), FTD-0235 (det↔det_ζ identity UNDERDETERMINED), FTD-0122 (BCC complex structure $V_{\text{complex}}\cong\mathbb{Z}[i]^2$), Watson identity (`THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md`), FTD-0237 (Gaussian/Eisenstein dichotomy — why no Eisenstein forcing can supply the odd term).
+**Builds on (all `[THEOREM]`/`[UNDERDETERMINED]`, none re-derived here):** FTD-0233 (parity scoping), FTD-0234 (J-twisted det_ζ ratio = G\* is a clean odd scalar), FTD-0235 (detdet_ζ identity UNDERDETERMINED), FTD-0122 (BCC complex structure $V_{\text{complex}}\cong\mathbb{Z}[i]^2$), Watson identity (`THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md`), FTD-0237 (Gaussian/Eisenstein dichotomy — why no Eisenstein forcing can supply the odd term).
 
 > **GTCA discipline note.** This is a P5/P4 scoping memo, run wide-aperture. The central FOUND-vs-UNDERDETERMINED tension is held open deliberately (Tension Register), not collapsed. Every forward-looking statement is tagged. The prior-favoured outcome (UNDERDETERMINED) is stated as a prior, not a result. Engineering any step toward FOUND inside this memo would invalidate the next real attempt — so no construction is performed here.
 
@@ -46,7 +46,7 @@ H1 and H2 together mean **the scalar $16G^{*3}$ is forward-computable** ($16G^{*
 
 A genuine FOUND requires an **operator $T$** and a proof that all three of the following hold simultaneously, each `[THEOREM]`/`[DERIVED]`:
 
-**Obligation A — det↔det_ζ (the hinge).** Exhibit an FTD-native operator $T$ for which $\det T$ **is** the ζ-regularized determinant of $T$'s own J-twisted spectrum,
+**Obligation A — detdet_ζ (the hinge).** Exhibit an FTD-native operator $T$ for which $\det T$ **is** the ζ-regularized determinant of $T$'s own J-twisted spectrum,
 $$\det\nolimits_\zeta T \;=\; \exp\!\big(-\zeta_T'(0)\big), \qquad \zeta_T(s) := \sum_{\lambda \in \operatorname{spec}(T)} \lambda^{-s},$$
 and for which this ζ-regularized determinant **equals** $16G^{*3}$ as a *forced* consequence of $T$'s structure — not as an imposed match. The proof obligation is to show the equality $\det T = 16G^{*3}$ follows from $\zeta_T'(0)$, i.e. that the odd $G^*$ is *produced by* the determinant's spectral structure, not inserted.
 
@@ -88,7 +88,7 @@ This is why FTD-0237's "no Eisenstein twin" result matters here: the natural pla
 
 > the discrete ontology (five postulates + the BCC complex structure + the FQCR det_ζ scalar) **does not force** the readout operator's determinant grading — i.e. the master-quadratic operator structure is *not* determined by discreteness alone.
 
-That is a map of how far discreteness reaches into the EM sector. It would feed directly into the FTD-0186 boundary-theorem program and would make precise what a **sixth postulate** (or **engine-native dynamics**, the surviving ARC-D route) would have to supply: a forced det↔det_ζ correspondence, i.e. a dynamical reason the determinant carries exactly one extra det_ζ factor relative to the trace. Either verdict — FOUND, UNDERDETERMINED-as-boundary, or CLOSED-NEGATIVE — advances the goal. **The one outcome that would be a failure is an *engineered* FOUND that assembled $16G^{*3}$ by choosing entries and called the assembly a derivation.** This memo exists to prevent that.
+That is a map of how far discreteness reaches into the EM sector. It would feed directly into the FTD-0186 boundary-theorem program and would make precise what a **sixth postulate** (or **engine-native dynamics**, the surviving ARC-D route) would have to supply: a forced detdet_ζ correspondence, i.e. a dynamical reason the determinant carries exactly one extra det_ζ factor relative to the trace. Either verdict — FOUND, UNDERDETERMINED-as-boundary, or CLOSED-NEGATIVE — advances the goal. **The one outcome that would be a failure is an *engineered* FOUND that assembled $16G^{*3}$ by choosing entries and called the assembly a derivation.** This memo exists to prevent that.
 
 ---
 
@@ -102,7 +102,7 @@ Ordered, so a future attempt has a checklist. **No step is performed here.**
 4. **Test co-realizability (Obligation C).** Determine the axis-count each invariant needs (trace: the two-component $\mathbb{Z}[i]^2$; determinant: three planes) and whether one $O_h$-breaking preparation supplies both, or whether they demand incompatible breakings. This is the most promising route to a clean *negative*.
 5. **Apply FTD-0235 falsifiers V1–V7 mechanically.** Numerical confirmation only after all pass. Verdict per the FTD-0235 pre-reg's three pre-blessed outcomes (FOUND / UNDERDETERMINED / CLOSED-NEGATIVE).
 
-**Admissible ingredients** (frozen, per FTD-0234/0235): the FTD-0234 set + the J-twisted ζ-regularized determinant relation $\det_\zeta T = \exp(-\zeta_T'(0))$ + the $O_h/C_4/V_{\text{complex}}$ representation theory (FTD-0122). **Out of scope:** asserting $\det = \operatorname{Tr}\cdot G^*$ or $\det = 16G^{*3}$ without the det↔det_ζ derivation; importing the FQCR $M_N$ matrix as scaffold; inserting the master quadratic / its roots / Theorem 8; a transcendental prefactor; any CODATA value.
+**Admissible ingredients** (frozen, per FTD-0234/0235): the FTD-0234 set + the J-twisted ζ-regularized determinant relation $\det_\zeta T = \exp(-\zeta_T'(0))$ + the $O_h/C_4/V_{\text{complex}}$ representation theory (FTD-0122). **Out of scope:** asserting $\det = \operatorname{Tr}\cdot G^*$ or $\det = 16G^{*3}$ without the detdet_ζ derivation; importing the FQCR $M_N$ matrix as scaffold; inserting the master quadratic / its roots / Theorem 8; a transcendental prefactor; any CODATA value.
 
 ---
 
@@ -111,7 +111,7 @@ Ordered, so a future attempt has a checklist. **No step is performed here.**
 This memo does not edit the LEDGER (per task constraint). The proposed registration:
 
 - **Row:** **FTD-0240** (next genuinely free; FTD-0237 is canonical max in `core_ledgers/LEDGER.md`, but 0238 and 0239 are already claimed by concurrent working-tree boundary docs — see the LEDGER line at the top of this memo). **Confirm 0240 is still free at registration time.**
-- **Title:** "det↔det_ζ identity attack scope (MC-T4.3 hinge) — v1".
+- **Title:** "detdet_ζ identity attack scope (MC-T4.3 hinge) — v1".
 - **Tag:** `[SCOPING / OPEN]`.
 - **Status:** open; prior-favoured outcome UNDERDETERMINED; depends on FTD-0234 (H2), FTD-0235 (standing verdict), FTD-0122, FTD-0237 (even-power wall / no-Eisenstein-twin), Watson bridge.
 - **Relation to ARC-A1 v2 (FTD-0238/0239):** that boundary-torus route reaches UNDERDETERMINED via the **same even-power wall** ($E_6$ generates only even powers at $\tau=i$) but for the **boundary readout** (modular filtering of the bulk spectrum), whereas this memo scopes the **operator-determinant identity** (FTD-0235). The two are **complementary, non-overlapping** routes to the same odd-term obstruction; the shared even-power wall is mutually corroborating. Neither supersedes the other.

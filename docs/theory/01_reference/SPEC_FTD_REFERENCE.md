@@ -6,7 +6,7 @@
 
 ---
 
-## ⚠️ EPISTEMIC NOTICE
+##  EPISTEMIC NOTICE
 
 **This document uses FTD conformed and conjectured parameters in standard physics formulas.**
 
@@ -170,7 +170,7 @@ x₊ = (-b + √D) / 2 = (140.0601 + 134.0122) / 2 = 137.0361714582
 x₋ = (-b - √D) / 2 = (140.0601 - 134.0122) / 2 = 3.0239639163
 ```
 - **x₊ = 137.0361714582** → 1/α (fine structure constant, 1.26 ppm accuracy)
-- **x₋ = 3.0239639163** → mathematical artifact of `P(x)`; no physics identification (the historical `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`)
+- **x₋ = 3.0239639163** → mathematical artifact of `P(x)`; no physics identification (the historical `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`)
 
 ### Why x₊ = 1/α [STRONGLY MOTIVATED CONJECTURE]
 The identification x₊ = 1/α depends on five selection principles (see [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md)):
@@ -216,7 +216,7 @@ Tau:  (13+4) × 207 - 2 × 3 × 7 = 17 × 207 - 42 = 3519 - 42 = 3477 ✓
 
 Quark masses are scale- and scheme-dependent (e.g. MS-bar at $\mu = 2\text{ GeV}$). 
 
-> **⚠️ RETRACTED 2026-05-27:** All previous quark mass ratio conjectures (Up, Down, Strange, Charm, Bottom, Top) are officially **retracted** per strict epistemic discipline (FTD-0221). They are recognized as post-hoc continuous-integer matches with no ab-initio C++ engine dynamical basis.
+> ** RETRACTED 2026-05-27:** All previous quark mass ratio conjectures (Up, Down, Strange, Charm, Bottom, Top) are officially **retracted** per strict epistemic discipline (FTD-0221). They are recognized as post-hoc continuous-integer matches with no ab-initio C++ engine dynamical basis.
 > 
 > For the new, rigorous discrete-native mass paradigm (mass as voxel cardinality $N \in \mathbb{N}$), see the foundational spec:
 > *   [`FOUND_DISCRETE_NATIVE_MASS_GENERATION.md`](../05_particles/FOUND_DISCRETE_NATIVE_MASS_GENERATION.md)
@@ -267,7 +267,7 @@ Neutron-proton difference:
 
 #### Absolute Neutrino Mass Scale [RETRACTED]
 
-> **⚠️ RETRACTED 2026-05-27:** The absolute neutrino mass scale seesaw parameterization ($m_D = v\alpha$, $M_R = (3/4)v/\alpha^4$) is officially **retracted** per strict epistemic discipline (FTD-0221). It is recognized as a post-hoc continuous-QFT fit that is not native to the discrete lattice.
+> ** RETRACTED 2026-05-27:** The absolute neutrino mass scale seesaw parameterization ($m_D = v\alpha$, $M_R = (3/4)v/\alpha^4$) is officially **retracted** per strict epistemic discipline (FTD-0221). It is recognized as a post-hoc continuous-QFT fit that is not native to the discrete lattice.
 > 
 > The discrete-native program will measure cluster persistence (Class B) and interactions (Class C) in C++ to determine physical lifetimes and couplings directly from relational grid coordinates.
 
@@ -423,7 +423,7 @@ Error: **0.01%**
 
 **Measurement:** Collapse = manifestation when |J| > KB
 
-**Bell Violations:** ⚠️ [SELECTION] — The three-level observer Bell mechanism resolves how aggregate S > 2 emerges from substrate S ≤ 2. Two factors: complexification (Gauss constraint → psi = J_x + iJ_y, changing correlation shape) and sLoop coupling (shared substrate → non-factorizable joint probability, doubling correlation strength). Net: S_substrate × √2 = S_observer. Numerically verified (4/4 checks). See [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) and [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md).
+**Bell Violations:**  [SELECTION] — The three-level observer Bell mechanism resolves how aggregate S > 2 emerges from substrate S ≤ 2. Two factors: complexification (Gauss constraint → psi = J_x + iJ_y, changing correlation shape) and sLoop coupling (shared substrate → non-factorizable joint probability, doubling correlation strength). Net: S_substrate × √2 = S_observer. Numerically verified (4/4 checks). See [DERIV_OBSERVER_BELL_MECHANISM.md](../03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) and [AUDIT_BELL_ANALYSIS.md](../07_assessment/AUDIT_BELL_ANALYSIS.md).
 
 ---
 
@@ -637,7 +637,7 @@ A correction term was proposed:
 1/α = x₊ + ε/1111 = 137.0361714582 + 3/1111 = 137.0388717...
 ```
 
-> **⚠️ This correction worsens the prediction.** The corrected value deviates by ~21 ppm from CODATA (vs 1.26 ppm for the uncorrected formula). The correction adds +0.0027 when the standard formula is already 0.00017 too high.
+> ** This correction worsens the prediction.** The corrected value deviates by ~21 ppm from CODATA (vs 1.26 ppm for the uncorrected formula). The correction adds +0.0027 when the standard formula is already 0.00017 too high.
 
 **Further issues with the original derivation:**
 
@@ -906,28 +906,28 @@ All core mathematical claims have been independently verified using Python/SciPy
 
 | Claim | Formula | Result | Status |
 |-------|---------|--------|--------|
-| G* calculation | √2·Γ(1/4)²/(2π) | 2.9586751192 | ✅ VERIFIED |
-| Master quadratic | x² - 16G*²x + 16G*³ = 0 | Roots match | ✅ VERIFIED |
-| Fine structure 1/α | x₊ = 137.0361714582 | 1.26 ppm error | ✅ VERIFIED |
-| Color number | x₋ = 3.0239639163 | 0.80% error | ✅ VERIFIED |
-| Framework integers | {3,4,7,13} constraints | All satisfied | ✅ VERIFIED |
-| Vieta relations | x₊+x₋=16G*², x₊×x₋=16G*³ | Exact | ✅ VERIFIED |
-| Electron mass | m_P·√(2π)·(16/3)·α¹¹ | 0.19% error | ✅ VERIFIED |
-| Higgs VEV | m_P·√(2π)·α⁸ | 0.055% error | ✅ VERIFIED |
-| Weinberg angle | sin²θ_W = 3/13 | 0.19% error | ✅ VERIFIED |
-| Strong coupling | α_s = 7/59 | 0.63% error | ✅ VERIFIED |
-| Gravitational α_G | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | 0.01% error | ✅ VERIFIED |
-| CP phase | δ = arctan(7/3) | 2.14% error | ✅ VERIFIED |
-| PMNS θ₁₂ | arcsin(√(3/10)) | 0.69% error | ✅ VERIFIED |
-| PMNS θ₂₃ | arcsin(√(16/29)) | 2.50% error | ✅ VERIFIED |
-| PMNS θ₁₃ | arcsin(√(1/52)) | 6.99% error | ✅ VERIFIED |
-| Neutrino mass ratio | (7+3)²/3 = 100/3 | 1.47% error | ✅ VERIFIED |
-| Neutrino Δm²₂₁ | seesaw: m_D=v×α, M_R=(3/4)v/α⁴ | 0.8% error | ✅ VERIFIED |
-| Neutrino Σm_ν | 58.1 meV < 120 meV | Satisfies Planck+BAO | ✅ VERIFIED |
-| G*-L(E,1) identity | G* = 4√(2/π)·L(E,1) | 15-digit match | ✅ VERIFIED |
-| Inflation n_s | 1 - 2/(169/3) | 0.10σ from Planck | ✅ VERIFIED |
-| Inflation r | 4α(3/4) = 0.0219 | Below bound | ✅ VERIFIED |
-| Baryon asymmetry η | ~6.7×10⁻¹⁰ | Correct magnitude | ✅ VERIFIED |
+| G* calculation | √2·Γ(1/4)²/(2π) | 2.9586751192 |  VERIFIED |
+| Master quadratic | x² - 16G*²x + 16G*³ = 0 | Roots match |  VERIFIED |
+| Fine structure 1/α | x₊ = 137.0361714582 | 1.26 ppm error |  VERIFIED |
+| Color number | x₋ = 3.0239639163 | 0.80% error |  VERIFIED |
+| Framework integers | {3,4,7,13} constraints | All satisfied |  VERIFIED |
+| Vieta relations | x₊+x₋=16G*², x₊×x₋=16G*³ | Exact |  VERIFIED |
+| Electron mass | m_P·√(2π)·(16/3)·α¹¹ | 0.19% error |  VERIFIED |
+| Higgs VEV | m_P·√(2π)·α⁸ | 0.055% error |  VERIFIED |
+| Weinberg angle | sin²θ_W = 3/13 | 0.19% error |  VERIFIED |
+| Strong coupling | α_s = 7/59 | 0.63% error |  VERIFIED |
+| Gravitational α_G | 2π(16/3)²(n_eff+3/b_3)²α²⁰ | 0.01% error |  VERIFIED |
+| CP phase | δ = arctan(7/3) | 2.14% error |  VERIFIED |
+| PMNS θ₁₂ | arcsin(√(3/10)) | 0.69% error |  VERIFIED |
+| PMNS θ₂₃ | arcsin(√(16/29)) | 2.50% error |  VERIFIED |
+| PMNS θ₁₃ | arcsin(√(1/52)) | 6.99% error |  VERIFIED |
+| Neutrino mass ratio | (7+3)²/3 = 100/3 | 1.47% error |  VERIFIED |
+| Neutrino Δm²₂₁ | seesaw: m_D=v×α, M_R=(3/4)v/α⁴ | 0.8% error |  VERIFIED |
+| Neutrino Σm_ν | 58.1 meV < 120 meV | Satisfies Planck+BAO |  VERIFIED |
+| G*-L(E,1) identity | G* = 4√(2/π)·L(E,1) | 15-digit match |  VERIFIED |
+| Inflation n_s | 1 - 2/(169/3) | 0.10σ from Planck |  VERIFIED |
+| Inflation r | 4α(3/4) = 0.0219 | Below bound |  VERIFIED |
+| Baryon asymmetry η | ~6.7×10⁻¹⁰ | Correct magnitude |  VERIFIED |
 
 ### Statistical Assessment
 

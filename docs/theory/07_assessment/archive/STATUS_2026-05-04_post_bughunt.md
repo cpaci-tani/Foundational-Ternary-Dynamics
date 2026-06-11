@@ -1,6 +1,6 @@
 # Engine Status Snapshot — Post Bug-Hunt Round (2026-05-04, updated 2026-05-05)
 
-**Scope:** verification pass after the CPU↔GPU parity bug-hunt landed (commit `f2a721a`) and the FTD-0110 Bridge-II demotion (commit `2f67503`). Read-only on physics — no derivation tags get touched, no LEDGER entries get edited. This is a session artifact; live state remains in `LEDGER.md`, `TRACKER_OPEN_ITEMS.md`, and `WHERE_WE_LEFT_OFF.md`.
+**Scope:** verification pass after the CPUGPU parity bug-hunt landed (commit `f2a721a`) and the FTD-0110 Bridge-II demotion (commit `2f67503`). Read-only on physics — no derivation tags get touched, no LEDGER entries get edited. This is a session artifact; live state remains in `LEDGER.md`, `TRACKER_OPEN_ITEMS.md`, and `WHERE_WE_LEFT_OFF.md`.
 
 **HEAD:** `255c1dd` (post-Tier-A polish, 2026-05-05). Pre-Tier-A baseline was `b4f1dcf` (the FTD-0110 cluster-geometry diagnostic + baseline-drift finding commit).
 
@@ -19,12 +19,12 @@ The fourth commit also fixed a bonus bug: `launch_phase_write_dual` was running 
 
 ## Tier B substantive parity — landed 2026-05-05
 
-Four commits resolving the major bug-hunt deferred parity items. Each closes a real CPU↔GPU physics divergence at unit mass.
+Four commits resolving the major bug-hunt deferred parity items. Each closes a real CPUGPU physics divergence at unit mass.
 
 | Commit | Title |
 |---|---|
 | `37c3fcd` | docs(audit): RNG portability design note for BH-F5/F8/F9 |
-| `10f00f9` | engine(forces): unify CPU↔GPU accel_mag definition (BH-F3) |
+| `10f00f9` | engine(forces): unify CPUGPU accel_mag definition (BH-F3) |
 | `c887948` | engine(cuda): port emergent_forces mode to GPU (BH-F12) |
 | `2504c9b` | engine(cuda): port γ_FTD momentum integration to GPU (BH-F2) |
 
@@ -32,7 +32,7 @@ Four commits resolving the major bug-hunt deferred parity items. Each closes a r
 
 **BH-F12** ported the EFT `emergent_forces` mode to GPU. Pre-fix, setting `toggles.emergent_forces=true` silently fell through to legacy gradient on GPU — particles diverged from CPU starting tick 1. The GPU dispatcher now correctly skips the Coulomb solve when in emergent mode (mirrors CPU `phase_forces_solve_potentials()`).
 
-**BH-F2** replaced GPU's naive `vel += f*dt; if (|v| > C) clamp` with the same γ_FTD momentum integration the CPU has used since 2026-04-17. GPU now honours the FTD bandwidth postulate `v²/C² + L² < 1`. Known limitation noted in commit message: colour force is added later by `color_force_kernel` and integrates non-relativistically, so CPU↔GPU velocity is bit-exact only when `color_forces` is OFF or magnitudes are non-relativistic.
+**BH-F2** replaced GPU's naive `vel += f*dt; if (|v| > C) clamp` with the same γ_FTD momentum integration the CPU has used since 2026-04-17. GPU now honours the FTD bandwidth postulate `v²/C² + L² < 1`. Known limitation noted in commit message: colour force is added later by `color_force_kernel` and integrates non-relativistically, so CPUGPU velocity is bit-exact only when `color_forces` is OFF or magnitudes are non-relativistic.
 
 **BH-F5/F8/F9** design note ([DESIGN_RNG_PORTABILITY.md](../../../engine/docs/DESIGN_RNG_PORTABILITY.md)) presents two options for the remaining stochastic-RNG divergence (CPU SplitMix64 vs GPU cuRAND Philox4_32_10). Awaiting user decision on Option A (bit-exact via shared SplitMix64, ~150 LOC) vs Option B (accept ensemble equivalence, ~50 LOC). Recommendation: Option A.
 
@@ -63,7 +63,7 @@ F2, F3, F5, F8, F9, F12, F15 — momentum integration, acceleration magnitude, B
 | Gate | Result | Time | Significance |
 |---|---|---|---|
 | `render_bridge_golden` | **PASS** | 1.45s | Hash `0xcd957b601d47868a` at L=16, 100 ticks bit-exact |
-| `gpu_parity_complete` | **PASS** | 10.24s | 20 physics domains bit-identical CPU↔GPU |
+| `gpu_parity_complete` | **PASS** | 10.24s | 20 physics domains bit-identical CPUGPU |
 | `sim_parity` | **PASS** | 18.91s | 100 + 500 ticks parity holds |
 
 **Spot-check sweep (9/9 PASS, 165s total):** `energy_conservation`, `energy_conservation_tight`, `toggle_matrix`, `langevin_gpu_cpu_parity`, `color_binding_and_structure`, `force_diag_parity`, `genesis`, `baryogenesis`, `gpu_parity`.
@@ -102,7 +102,7 @@ c2ff5e2  phase II.2-C + II.2-D: gauge-link verification + limit consistency CLOS
 75c185d  FTD-0112 engine extension: reaction-sector operators O7-O10 + unit tests
 ```
 
-(`f2a721a` is HEAD-prior bug-hunt — F4 confirmed not the cause per b4f1dcf commit message.) The Wilson-Dirac chain (`16b1b38`, `c2ff5e2`, `514cdb3`) is the most likely candidate — Wilson-Dirac sits in the same kernel/launcher infrastructure as genesis. `843c6f6` (`flush_host_mutations` ordering) is also a strong candidate since it changed CPU↔GPU memory semantics.
+(`f2a721a` is HEAD-prior bug-hunt — F4 confirmed not the cause per b4f1dcf commit message.) The Wilson-Dirac chain (`16b1b38`, `c2ff5e2`, `514cdb3`) is the most likely candidate — Wilson-Dirac sits in the same kernel/launcher infrastructure as genesis. `843c6f6` (`flush_host_mutations` ordering) is also a strong candidate since it changed CPUGPU memory semantics.
 
 Decision branches once bisect locates the offending commit:
 
@@ -183,7 +183,7 @@ Both failures are **test–fix interactions, not physics regressions**. The bug-
 
 ### §3.7 (test) gpu_continuity_ledger stale assumptions
 
-`engine/tests/test_gpu_continuity_ledger.cpp:225-264` (GCL-6 + GCL-9). Stale post-F6. The cleanest fix is option (a): add `toggles.evaporation` as a distinct flag in `engine/include/ftd/term_toggles.h`, gate `evaporation_kernel` on `do_genesis || toggles.evaporation`, and update GCL-6 to call a new `toggles_with_evaporation_only()` helper. This preserves F6's intent (genesis-disabling tests don't get surprise evaporation) while still letting evaporation be tested in isolation. Low risk, ~10 LOC. **✅ LANDED 2026-05-05 in commit `255c1dd`** (also fixed bonus dual-path F6 gap).
+`engine/tests/test_gpu_continuity_ledger.cpp:225-264` (GCL-6 + GCL-9). Stale post-F6. The cleanest fix is option (a): add `toggles.evaporation` as a distinct flag in `engine/include/ftd/term_toggles.h`, gate `evaporation_kernel` on `do_genesis || toggles.evaporation`, and update GCL-6 to call a new `toggles_with_evaporation_only()` helper. This preserves F6's intent (genesis-disabling tests don't get surprise evaporation) while still letting evaporation be tested in isolation. Low risk, ~10 LOC. ** LANDED 2026-05-05 in commit `255c1dd`** (also fixed bonus dual-path F6 gap).
 
 ### Post-Tier-A + Tier-B sweep tally (2026-05-05)
 

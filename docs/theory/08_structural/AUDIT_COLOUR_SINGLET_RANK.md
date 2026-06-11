@@ -114,7 +114,7 @@ III, VII — the §4-cited defining document). A dual-substrate vector field
 | Mode | Sector | Colour-singlet? | Forced internal symmetry |
 |---|---|---|---|
 | `J = J_L + J_R` | EM transverse vector | yes | `U(1)_EM` — the residual readout (lock *output*) |
-| `φ = J_L − J_R` | weak / chirality pseudovector | yes | **parity `ℤ₂`** (`J_L ↔ J_R`) only |
+| `φ = J_L − J_R` | weak / chirality pseudovector | yes | **parity `ℤ₂`** (`J_L  J_R`) only |
 | `\|J\|` | gravity scalar | yes | none — a scalar has no internal `U(1)` |
 | orientation of `J_R` | colour / `SU(3)` | **no — coloured** | BCC triality — excluded by D2 |
 

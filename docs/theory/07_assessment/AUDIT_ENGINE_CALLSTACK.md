@@ -4,7 +4,7 @@
 **Scope:** `ftd::RenderBridge` — the production Scale-0 engine — and its GPU counterpart `ftd::gpu::GpuEngine`. Traces every call path from `tick()` to leaf functions; checks CPU/GPU parity; flags dead code, silent no-ops, and inconsistent naming.
 **Companion:** [`TRACKER_OPEN_ITEMS.md`](core_ledgers/TRACKER_OPEN_ITEMS.md).
 
-**STATUS 2026-04-17 (end of day):** all 10 findings ✅ RESOLVED.
+**STATUS 2026-04-17 (end of day):** all 10 findings  RESOLVED.
 
 **STATUS 2026-05-05 (re-verification at HEAD `b4f1dcf`):** Phase-1 explore agent walked every finding against live source; all CALLSTACK fixes confirmed in place. Per-finding RESOLVED annotations in §3 cite the exact `file:line` at HEAD where each fix lives. The verification test referenced in the original status line — `tests/test_callstack_audit_fixes.cpp` — was renamed/folded into `tests/test_audit_regression.cpp` during the engine refactor sweep; `test_callstack_audit_fixes.cpp` no longer exists.
 
@@ -83,7 +83,7 @@ RenderBridge::tick()                             [src/render_bridge.cpp:1362]
 │       ├─ stress = dual ? compute_stress_left(i) : compute_stress(i)
 │       └─ if stress > WEAK_THRESHOLD AND rng < 1−exp(−…/K_B):
 │           ├─ v.state *= −1
-│           └─ [dual] swap flux_L ↔ flux_R, wave_vel_L ↔ wave_vel_R
+│           └─ [dual] swap flux_L  flux_R, wave_vel_L  wave_vel_R
 │
 ├─ proper-time loop (inline)                     [gated: latency_field]
 │   └─ foreach manifested voxel:
@@ -156,7 +156,7 @@ The self-field floor was removed in Phase 4 (Energy Conservation). The member `s
 
 **Action:** Remove the assignment; keep the member default-initialised to 0 so `energy_audit()` still returns a consistent struct.
 
-**✅ RESOLVED at `b4f1dcf` (2026-05-05 verification):** the per-tick reset is gone. `engine/src/render_bridge.cpp:414-417` documents the removal inline ("Rule 3b: Self-field floor REMOVED (Phase 4 — Energy Conservation)"). The member `self_field_injection_` is still default-initialised to 0 at `engine/include/ftd/render_bridge.h:387` and read by `energy_audit()` at `engine/src/render_bridge.cpp:514`, exactly as the action prescribed. No write path produces a non-zero value anywhere in the engine.
+** RESOLVED at `b4f1dcf` (2026-05-05 verification):** the per-tick reset is gone. `engine/src/render_bridge.cpp:414-417` documents the removal inline ("Rule 3b: Self-field floor REMOVED (Phase 4 — Energy Conservation)"). The member `self_field_injection_` is still default-initialised to 0 at `engine/include/ftd/render_bridge.h:387` and read by `energy_audit()` at `engine/src/render_bridge.cpp:514`, exactly as the action prescribed. No write path produces a non-zero value anywhere in the engine.
 
 ### F2 · Four toggles are silently no-op on CPU (real correctness gap)
 
@@ -164,10 +164,10 @@ The self-field floor was removed in Phase 4 (Energy Conservation). The member `s
 
 | Toggle | CPU implementation? | GPU implementation |
 |---|---|---|
-| `pair_production` | ❌ none | `gpu_pair_production()` at phase 2b |
-| `strong_force` | ❌ none | `launch_strong_force()` in `gpu_particle_forces` |
-| `exchange_force` | ❌ none | `launch_exchange_force()` in `gpu_particle_forces` |
-| `triad_binding` | ❌ none | `gpu_triad_detection()` at phase 4c |
+| `pair_production` |  none | `gpu_pair_production()` at phase 2b |
+| `strong_force` |  none | `launch_strong_force()` in `gpu_particle_forces` |
+| `exchange_force` |  none | `launch_exchange_force()` in `gpu_particle_forces` |
+| `triad_binding` |  none | `gpu_triad_detection()` at phase 4c |
 
 If a user flips any of these on in CPU mode, the engine runs as if they were off — silently. No warning, no error. **This is the highest-severity finding in this audit.**
 
@@ -180,7 +180,7 @@ If a user flips any of these on in CPU mode, the engine runs as if they were off
 
 **Recommendation:** Option 1 now (5 minutes), Option 2 later per-toggle when a benchmark needs them in CPU mode.
 
-**✅ RESOLVED at `b4f1dcf` (2026-05-05 verification):** Option 1 (warning) **AND** Option 2 (CPU port) both landed:
+** RESOLVED at `b4f1dcf` (2026-05-05 verification):** Option 1 (warning) **AND** Option 2 (CPU port) both landed:
 
 - **CPU ports** for `pair_production` and `triad_binding` shipped: `engine/src/render_bridge.cpp:407-408` gates `pair_production_cpu()` and `:445-446` gates `triad_binding_cpu()`; thin dispatchers at `:471-472` route into `engine/src/render_bridge_phases/transmutation_phases.cpp` implementations.
 - **Runtime warnings** for the still-GPU-only toggles `strong_force` and `exchange_force` are emitted by `cpu_runtime_warnings()` (declared in `engine/include/ftd/term_toggles.h:242`) and printed by `engine/src/render_bridge.cpp:386-395` once per RenderBridge instance via the `cpu_warnings_emitted_` flag (`engine/include/ftd/render_bridge.h:367`). Per-toggle warning strings live in the `TOGGLE_SPECS[]` table at `term_toggles.h:135-138`.
@@ -197,7 +197,7 @@ Adding `validate()` to the GPU branch is a one-line add and would catch the F2 c
 
 **Action:** Move `validate()` before the GPU fork.
 
-**✅ RESOLVED at `b4f1dcf` (2026-05-05 verification):** `engine/src/render_bridge.cpp:345-373` runs `toggles.validate()` **before** the GPU fork (`:378`). Comment at `:345-346` cites the audit by ID. ARCH-3 hardening on top: violations under `strict_validation` raise `std::logic_error` (or abort under WASM `-fno-exceptions`); otherwise warnings are deduped via `last_validation_warn_` so tests don't spam stderr.
+** RESOLVED at `b4f1dcf` (2026-05-05 verification):** `engine/src/render_bridge.cpp:345-373` runs `toggles.validate()` **before** the GPU fork (`:378`). Comment at `:345-346` cites the audit by ID. ARCH-3 hardening on top: violations under `strict_validation` raise `std::logic_error` (or abort under WASM `-fno-exceptions`); otherwise warnings are deduped via `last_validation_warn_` so tests don't spam stderr.
 
 ### F4 · Proper-time accumulation runs only on CPU
 
@@ -209,7 +209,7 @@ If `toggles.latency_field` is on in GPU mode, the latency field `v.latency` IS c
 
 **Action:** Add `launch_proper_time_update()` kernel + `gpu_proper_time()` wrapper, call it after `gpu_solve_latency()`. Or, document explicitly that proper-time accumulation is CPU-only (simpler now, kernel later).
 
-**✅ RESOLVED at `b4f1dcf` (2026-05-05 verification):** The simpler path was taken: GPU tick syncs voxels back to host, then `accumulate_proper_time()` runs host-side at `engine/src/render_bridge.cpp:380-381` immediately after `backend_->tick()` returns. Implementation at `engine/src/render_bridge_phases/transmutation_phases.cpp:40-55` operates on the synced voxel array, gated on `toggles.latency_field`. No GPU kernel needed; `voxel.tau` is correctly accumulated in both backends. (If a perf-sensitive workload ever needs to skip the sync, the kernel option remains available — but no current benchmark requires it.)
+** RESOLVED at `b4f1dcf` (2026-05-05 verification):** The simpler path was taken: GPU tick syncs voxels back to host, then `accumulate_proper_time()` runs host-side at `engine/src/render_bridge.cpp:380-381` immediately after `backend_->tick()` returns. Implementation at `engine/src/render_bridge_phases/transmutation_phases.cpp:40-55` operates on the synced voxel array, gated on `toggles.latency_field`. No GPU kernel needed; `voxel.tau` is correctly accumulated in both backends. (If a perf-sensitive workload ever needs to skip the sync, the kernel option remains available — but no current benchmark requires it.)
 
 ### F5 · CPU inlines weak_transmutation / proper_time — no extraction
 
@@ -221,7 +221,7 @@ The GPU path has dedicated methods (`gpu_weak_transmutation`, and no tau at all)
 
 **Action:** Extract to `RenderBridge::weak_transmutation()` and `RenderBridge::accumulate_proper_time()` private methods. Code move only, no behaviour change.
 
-**✅ RESOLVED at `b4f1dcf` (2026-05-05 verification):** Both loops extracted in the R2 refactor (2026-04-18). `engine/src/render_bridge.cpp:438-451` calls `weak_transmutation_cpu()` and `accumulate_proper_time()` as gated helpers; bodies live at `engine/src/render_bridge_phases/transmutation_phases.cpp:15-38` (weak) and `:40-55` (proper-time). Both loops are now independently testable; tests can call them via the bridge's private-method dispatchers at `engine/src/render_bridge.cpp:471-472` (or via the free functions in `transmutation_phases.cpp`). Comments cite the audit by ID at the call sites.
+** RESOLVED at `b4f1dcf` (2026-05-05 verification):** Both loops extracted in the R2 refactor (2026-04-18). `engine/src/render_bridge.cpp:438-451` calls `weak_transmutation_cpu()` and `accumulate_proper_time()` as gated helpers; bodies live at `engine/src/render_bridge_phases/transmutation_phases.cpp:15-38` (weak) and `:40-55` (proper-time). Both loops are now independently testable; tests can call them via the bridge's private-method dispatchers at `engine/src/render_bridge.cpp:471-472` (or via the free functions in `transmutation_phases.cpp`). Comments cite the audit by ID at the call sites.
 
 ### F6 · Two different Poisson solvers silently coexist
 
@@ -234,17 +234,17 @@ This means CPU and GPU produce numerically different constraint-residual profile
 
 **Action:** Add an SPEC_ENGINE.md note under "GPU Acceleration" about the solver difference.
 
-**✅ RESOLVED at `b4f1dcf` (2026-05-05 verification):** `engine/SPEC_ENGINE.md:937-946` has the "FFT Poisson Solver" section explicitly noting "Replaces CPU's iterative SOR with spectral method via cuFFT" with the convergence-residual contrast ("Exact: Gauss violation = 0.0 (vs CPU SOR ~ 1.14)"). Lines 940-946 spell out: "solve the SAME Poisson equation but with different numerical methods (SOR iterative vs FFT spectral). CPU output carries a residual ≤ 10⁻⁴". Header file commentary at `engine/include/ftd/poisson_solvers.h:13` provides the same info from the source side. The solver-divergence convention is now first-class documentation, not implicit.
+** RESOLVED at `b4f1dcf` (2026-05-05 verification):** `engine/SPEC_ENGINE.md:937-946` has the "FFT Poisson Solver" section explicitly noting "Replaces CPU's iterative SOR with spectral method via cuFFT" with the convergence-residual contrast ("Exact: Gauss violation = 0.0 (vs CPU SOR ~ 1.14)"). Lines 940-946 spell out: "solve the SAME Poisson equation but with different numerical methods (SOR iterative vs FFT spectral). CPU output carries a residual ≤ 10⁻⁴". Header file commentary at `engine/include/ftd/poisson_solvers.h:13` provides the same info from the source side. The solver-divergence convention is now first-class documentation, not implicit.
 
 ### F7 · Naming inconsistency: `solve_latency_poisson` vs `gpu_solve_latency`
 
-CPU: `solve_latency_poisson()`. GPU: `gpu_solve_latency()`. Elsewhere the pattern is `phase_read` ↔ `gpu_phase_read`, so the GPU side should be `gpu_solve_latency_poisson()` for consistency.
+CPU: `solve_latency_poisson()`. GPU: `gpu_solve_latency()`. Elsewhere the pattern is `phase_read`  `gpu_phase_read`, so the GPU side should be `gpu_solve_latency_poisson()` for consistency.
 
 **Severity:** Trivial.
 
 **Action:** Rename when convenient. Non-blocking.
 
-**✅ RESOLVED at `b4f1dcf` (2026-05-05 verification):** GPU method is now `gpu_solve_latency_poisson()`; declaration at `engine/include/ftd/gpu_engine.h:93` carries the rationale comment ("Wave 5: GPU latency Poisson. Renamed from gpu_solve_latency (F7 callstack audit 2026-04-17) for parity with CPU solve_latency_poisson"). CPU pair lives at `engine/src/render_bridge.cpp:280` as `RenderBridge::solve_latency_poisson()`. Naming follows the project's `phase_X` ↔ `gpu_phase_X` convention.
+** RESOLVED at `b4f1dcf` (2026-05-05 verification):** GPU method is now `gpu_solve_latency_poisson()`; declaration at `engine/include/ftd/gpu_engine.h:93` carries the rationale comment ("Wave 5: GPU latency Poisson. Renamed from gpu_solve_latency (F7 callstack audit 2026-04-17) for parity with CPU solve_latency_poisson"). CPU pair lives at `engine/src/render_bridge.cpp:280` as `RenderBridge::solve_latency_poisson()`. Naming follows the project's `phase_X`  `gpu_phase_X` convention.
 
 ### F8 · `ALPHA_EFT` vs `ALPHA` used inconsistently in phase_forces
 
@@ -259,7 +259,7 @@ Since 2026-04-17, `ALPHA_EFT = G_C² = ALPHA` (all three are numerically equal a
 
 **Action:** Pick one constant (prefer `ALPHA`) and use it throughout. The `ALPHA_EFT` alias stays available for pedagogy.
 
-**✅ RESOLVED at `b4f1dcf` (2026-05-05 verification):** All EM-force modes in `engine/src/render_bridge_phases/phase_forces.cpp` now use bare `ALPHA` per the action's "prefer ALPHA" guidance: line 102 (poisson_coulomb mode), line 105 (gauss-constraint mode), line 134 (lorentz). The static_assert in `engine/include/ftd/constants.h` guarantees `ALPHA == ALPHA_EFT == G_C²` to 1e-8, so the choice is purely about source-code clarity. The lingering `// ALPHA == ALPHA_EFT (G_C² identity)` reminder comments at those three sites are vestigial; cleanup of those comments will land in a follow-up commit (CS-F8 cosmetic finalisation).
+** RESOLVED at `b4f1dcf` (2026-05-05 verification):** All EM-force modes in `engine/src/render_bridge_phases/phase_forces.cpp` now use bare `ALPHA` per the action's "prefer ALPHA" guidance: line 102 (poisson_coulomb mode), line 105 (gauss-constraint mode), line 134 (lorentz). The static_assert in `engine/include/ftd/constants.h` guarantees `ALPHA == ALPHA_EFT == G_C²` to 1e-8, so the choice is purely about source-code clarity. The lingering `// ALPHA == ALPHA_EFT (G_C² identity)` reminder comments at those three sites are vestigial; cleanup of those comments will land in a follow-up commit (CS-F8 cosmetic finalisation).
 
 ### F9 · `DAMPING` does three jobs
 
@@ -274,7 +274,7 @@ Setting `damping = false` disables all three, which mixes concerns. Energy-conse
 
 **Action:** None in code. Keep the comment in `ontic.h:771` clear.
 
-**✅ RESOLVED-AS-DOCUMENTED at `b4f1dcf` (2026-05-05 verification):** No code change required by the audit. `engine/include/ftd/ontic.h:771` still carries the `[IMPOSED]`-tagged comment explaining DAMPING's three roles (physical dissipation / leapfrog stability margin at CFL = 1/√3 / evaporation drag). Tests that flip `damping = false` (notably the energy-conservation suite) implicitly measure all three concerns together; this is a documented limitation of the conservation-smoke-test methodology, not a bug.
+** RESOLVED-AS-DOCUMENTED at `b4f1dcf` (2026-05-05 verification):** No code change required by the audit. `engine/include/ftd/ontic.h:771` still carries the `[IMPOSED]`-tagged comment explaining DAMPING's three roles (physical dissipation / leapfrog stability margin at CFL = 1/√3 / evaporation drag). Tests that flip `damping = false` (notably the energy-conservation suite) implicitly measure all three concerns together; this is a documented limitation of the conservation-smoke-test methodology, not a bug.
 
 ### F10 · EnergyLedger reports drift_frac using L² pseudo-Hamiltonian, not true H
 
@@ -286,7 +286,7 @@ Setting `damping = false` disables all three, which mixes concerns. Energy-conse
 
 **Action:** Leave as-is. Upgrading to the true discrete Hamiltonian would require computing `|∇J|²` over the whole lattice every tick — unnecessary cost for what's essentially a conservation smoke test.
 
-**✅ RESOLVED-AS-DOCUMENTED at `b4f1dcf` (2026-05-05 verification):** No code change required by the audit. `update_energy_ledger()` still uses the L²-indicator `E_total = ½(Σ|J|² + Σ|v|²) + E_kin`. `test_leapfrog_integrator_audit` and the broader energy-conservation suite assert on cumulative injection/dissipation balance (which is correct), not per-tick residual (which can spike during wavefront sloshing). Cost-benefit for upgrading to the true discrete Hamiltonian remains unfavourable.
+** RESOLVED-AS-DOCUMENTED at `b4f1dcf` (2026-05-05 verification):** No code change required by the audit. `update_energy_ledger()` still uses the L²-indicator `E_total = ½(Σ|J|² + Σ|v|²) + E_kin`. `test_leapfrog_integrator_audit` and the broader energy-conservation suite assert on cumulative injection/dissipation balance (which is correct), not per-tick residual (which can spike during wavefront sloshing). Cost-benefit for upgrading to the true discrete Hamiltonian remains unfavourable.
 
 ## 4. CPU-only toggles vs TermToggles declarations
 
@@ -294,27 +294,27 @@ Full cross-reference:
 
 | Toggle | CPU | GPU | Tests |
 |---|---|---|---|
-| `wave_propagation` | ✅ | ✅ | constants, wavepacket, continuity |
-| `coupling` | ✅ | ✅ | continuity |
-| `damping` | ✅ | ✅ | dissipation |
-| `genesis` | ✅ | ✅ | bridge_dynamics |
-| `gauss_projection` | ✅ (SOR) | ✅ (FFT) | gauss, em_energy_conservation |
-| `forces` | ✅ | ✅ | coulomb, gravity |
-| `gravity` | ✅ | ✅ | gravity_attraction |
-| `poisson_coulomb` | ✅ | ✅ | coulomb_isotropy |
-| `movement` | ✅ | ✅ | wavepacket, gamma_ftd_momentum |
-| `lorentz_force` | ✅ | ✅ | campaign_lorentz_measure |
-| `selective_damping` | ✅ | ✅ | (no dedicated test — covered by em_energy_conservation) |
-| `larmor_radiation` | ✅ | ✅ (?) | campaign_larmor |
-| `dual_substrate` | ✅ | ✅ | dual_substrate |
-| `weak_transmutation` | ✅ (inline) | ✅ | (no dedicated test) |
-| `latency_field` | ✅ | ✅ (no proper_time) | test_einstein_equations |
-| `emergent_forces` | ✅ | ? | benchmark_emergent_alpha |
-| **`color_forces`** | **✅ (inline in phase_forces)** | **✅ (separate particle_forces)** | GP-COLOR |
-| **`pair_production`** | **❌ (F2)** | ✅ | — |
-| **`strong_force`** | **❌ (F2)** | ✅ | GP-STRONG |
-| **`exchange_force`** | **❌ (F2)** | ✅ | GP-EXCHANGE |
-| **`triad_binding`** | **❌ (F2)** | ✅ | — |
+| `wave_propagation` |  |  | constants, wavepacket, continuity |
+| `coupling` |  |  | continuity |
+| `damping` |  |  | dissipation |
+| `genesis` |  |  | bridge_dynamics |
+| `gauss_projection` |  (SOR) |  (FFT) | gauss, em_energy_conservation |
+| `forces` |  |  | coulomb, gravity |
+| `gravity` |  |  | gravity_attraction |
+| `poisson_coulomb` |  |  | coulomb_isotropy |
+| `movement` |  |  | wavepacket, gamma_ftd_momentum |
+| `lorentz_force` |  |  | campaign_lorentz_measure |
+| `selective_damping` |  |  | (no dedicated test — covered by em_energy_conservation) |
+| `larmor_radiation` |  |  (?) | campaign_larmor |
+| `dual_substrate` |  |  | dual_substrate |
+| `weak_transmutation` |  (inline) |  | (no dedicated test) |
+| `latency_field` |  |  (no proper_time) | test_einstein_equations |
+| `emergent_forces` |  | ? | benchmark_emergent_alpha |
+| **`color_forces`** | ** (inline in phase_forces)** | ** (separate particle_forces)** | GP-COLOR |
+| **`pair_production`** | ** (F2)** |  | — |
+| **`strong_force`** | ** (F2)** |  | GP-STRONG |
+| **`exchange_force`** | ** (F2)** |  | GP-EXCHANGE |
+| **`triad_binding`** | ** (F2)** |  | — |
 
 ## 5. Diagnostics / Data Access Paths
 
@@ -362,16 +362,16 @@ All four correctly push to GPU via `gpu_push_to_device()` / `host_mutated_` flag
 
 | # | Finding | Severity | Effort | Priority | Status @ HEAD |
 |---|---|---|---|---|---|
-| F2 | 4 toggles silently no-op on CPU | Medium-high | Low (warning) / Medium (impl) | **High** — Option 1 ASAP | ✅ pair_production + triad_binding ported to CPU; strong_force + exchange_force surface a one-shot warning |
-| F4 | Proper-time accumulation is CPU-only | Medium | Medium | Mid | ✅ host-side `accumulate_proper_time()` runs after GPU sync |
-| F8 | ALPHA/ALPHA_EFT cosmetic mixing | Trivial | Low | Low | ✅ standardised on `ALPHA` in EM-force paths (vestigial comments queued for cosmetic cleanup) |
-| F5 | Inline loops in tick() not extracted | Low | Low | Low (cleanup) | ✅ extracted to `transmutation_phases.cpp` |
-| F3 | GPU path skips validate() | Low | Trivial | Low | ✅ validate runs before GPU fork |
-| F6 | Two Poisson solvers documented implicitly | Low | Low (docs) | Low | ✅ explicit SPEC_ENGINE.md §"FFT Poisson Solver" |
-| F7 | Naming inconsistency: `solve_latency_poisson` vs `gpu_solve_latency` | Trivial | Trivial | Low | ✅ GPU renamed to `gpu_solve_latency_poisson` |
-| F1 | `self_field_injection_ = 0.0` is a dead write | Trivial | Trivial | Trivial | ✅ assignment removed; member retained for `energy_audit()` API |
-| F9 | DAMPING does three jobs (documented) | Documented | — | None | ✅ no-action by design |
-| F10 | EnergyLedger uses L² pseudo-H (documented) | Documented | — | None | ✅ no-action by design |
+| F2 | 4 toggles silently no-op on CPU | Medium-high | Low (warning) / Medium (impl) | **High** — Option 1 ASAP |  pair_production + triad_binding ported to CPU; strong_force + exchange_force surface a one-shot warning |
+| F4 | Proper-time accumulation is CPU-only | Medium | Medium | Mid |  host-side `accumulate_proper_time()` runs after GPU sync |
+| F8 | ALPHA/ALPHA_EFT cosmetic mixing | Trivial | Low | Low |  standardised on `ALPHA` in EM-force paths (vestigial comments queued for cosmetic cleanup) |
+| F5 | Inline loops in tick() not extracted | Low | Low | Low (cleanup) |  extracted to `transmutation_phases.cpp` |
+| F3 | GPU path skips validate() | Low | Trivial | Low |  validate runs before GPU fork |
+| F6 | Two Poisson solvers documented implicitly | Low | Low (docs) | Low |  explicit SPEC_ENGINE.md §"FFT Poisson Solver" |
+| F7 | Naming inconsistency: `solve_latency_poisson` vs `gpu_solve_latency` | Trivial | Trivial | Low |  GPU renamed to `gpu_solve_latency_poisson` |
+| F1 | `self_field_injection_ = 0.0` is a dead write | Trivial | Trivial | Trivial |  assignment removed; member retained for `energy_audit()` API |
+| F9 | DAMPING does three jobs (documented) | Documented | — | None |  no-action by design |
+| F10 | EnergyLedger uses L² pseudo-H (documented) | Documented | — | None |  no-action by design |
 
 **Open follow-ups (not in this audit):**
 

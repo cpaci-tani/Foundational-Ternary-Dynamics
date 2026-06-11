@@ -78,7 +78,7 @@ The lattice-ED program: the Maxwell-exploit thread (FTD-0113…0120) and EM-regi
 | [DERIV_LATTICE_LIENARD_WIECHERT.md](electromagnetism/DERIV_LATTICE_LIENARD_WIECHERT.md) | [DERIVED] | Lattice boosted Coulomb at uniform velocity + lattice Cherenkov pole. |
 | [DERIV_LATTICE_LW_EXTENSIONS.md](electromagnetism/DERIV_LATTICE_LW_EXTENSIONS.md) | [DERIVED] / [PARTIAL DERIVED] (Q5) | Q5–Q8 closure: Larmor, Cherenkov rate, extended sources, source-half audit. |
 | [DERIV_LATTICE_HODGE_DUALITY.md](electromagnetism/DERIV_LATTICE_HODGE_DUALITY.md) | [DERIVED] | Lattice Bianchi identities (`d² = 0`) on the vertex-centered stencil. |
-| [DERIV_EM_REGIMES_UNIFIED.md](electromagnetism/DERIV_EM_REGIMES_UNIFIED.md) | [PARTIAL — DERIVED / SELECTION] | The three engine EM-force modes: Poisson↔Legacy equivalent, Emergent distinct. |
+| [DERIV_EM_REGIMES_UNIFIED.md](electromagnetism/DERIV_EM_REGIMES_UNIFIED.md) | [PARTIAL — DERIVED / SELECTION] | The three engine EM-force modes: PoissonLegacy equivalent, Emergent distinct. |
 | [DERIV_DAMPING_RAYLEIGH.md](foundational_mechanics/DERIV_DAMPING_RAYLEIGH.md) | [IMPOSED — with motivation] | The Rayleigh dissipation coefficient DAMPING = α; three-roles diagnosis. |
 | [DERIV_HEAT_EQUATION_FROM_RATIO.md](foundational_mechanics/DERIV_HEAT_EQUATION_FROM_RATIO.md) | [THEOREM] | Heat equation + arrow of time from the Euler reflection ratio; α as the dissipation parameter. |
 

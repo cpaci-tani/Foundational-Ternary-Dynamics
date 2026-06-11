@@ -31,7 +31,7 @@ The natural 4×4 matrix from the linear theorem (`DERIV_K_FROM_OH_A1G_MULTIPLICI
 | FCC | (-2.61, -4.00, -4.72) |
 | BCC | (-1.92, -4.19, -4.55) |
 
-**Observation:** the CENTER↔BCC and SC↔FCC pairing reflects the structural duality between innermost/outermost and middle orbits in the 27-block (they have the same eigenvalue spectrum). This is itself a structural fact worth noting.
+**Observation:** the CENTERBCC and SCFCC pairing reflects the structural duality between innermost/outermost and middle orbits in the 27-block (they have the same eigenvalue spectrum). This is itself a structural fact worth noting.
 
 **SM match:** none of these eigenvalue triples match any obvious SM constant or ratio. The numerical values are O(1) and concentrated in [-1.9, -4.7]; SM ratios span 10²-10³.
 
@@ -124,9 +124,9 @@ This is itself a fact about FTD's structure: the dual-prediction is specifically
 ### 3.2 · Open question: is there a 3-mode FTD constant pair?
 
 Maybe FTD has multiple INDEPENDENT 2-mode systems, each describing a different physical pairing. E.g.:
-- (1/α, N_c) — EM ↔ color
-- Some other pair — weak ↔ ?
-- Another pair — Higgs ↔ ?
+- (1/α, N_c) — EM  color
+- Some other pair — weak  ?
+- Another pair — Higgs  ?
 
 If true, FTD's full structure is a collection of 2×2 mixing matrices, not a single higher-rank one. This would be consistent with the spine theorems but would require identifying additional master-quadratic-like polynomials for other physical pairings.
 
@@ -166,7 +166,7 @@ It is NOT promoted. The 0.2% match could be coincidental given the scan over p. 
 
 The 3×3 generalization brainstorm yielded:
 
-1. **Sub-blocks of A_{1g}**: structural duality observed (CENTER↔BCC, SC↔FCC) but no SM match
+1. **Sub-blocks of A_{1g}**: structural duality observed (CENTERBCC, SCFCC) but no SM match
 2. **Fully-symmetric 3×3**: cannot give 3 distinct eigenvalues
 3. **Various 3×3 forms**: no clean SM triple emerges
 4. **Lepton mass triple**: not naturally produced; post-hoc near-match flagged as fishing

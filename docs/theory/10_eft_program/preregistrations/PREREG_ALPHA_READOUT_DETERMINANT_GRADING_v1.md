@@ -8,7 +8,7 @@
 **Governs / refines:** the ARC-B2 (FTD-0230) and ARC-C1 (FTD-0231) attempts, on the *one* step the independent review found unjustified. It does not re-open their genuine `[THEOREM]` content.
 **Companion docs:** `SPEC_ALPHA_READOUT_CONTRACT.md` (FTD-0152), `AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md` (the review that localized this gap), `DERIV_BCC_COMPLEX_STRUCTURE.md` (FTD-0122, `V_complex ≅ Z[i]²`), `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` (Watson identity), `AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md` (FTD-0231, Gate 4).
 
-> **Pre-registration discipline.** §§1–6 are committed and git-tagged **before** the attempt is run. After commit: SHA256 → `REF_PREREGISTER_MANIFEST.md`, tag applied. Any post-hoc edit to §§1–6 invalidates v1; a v2 is required. The result lands in a separate doc (`FOUND_*` / `AUDIT_*_CLOSED_NEGATIVE.md` / `AUDIT_*_UNDERDETERMINED.md`), never as edits here. B-9 (no same-minute mtime pre-reg↔result) and B-10 (separately-dispatched independent review) apply.
+> **Pre-registration discipline.** §§1–6 are committed and git-tagged **before** the attempt is run. After commit: SHA256 → `REF_PREREGISTER_MANIFEST.md`, tag applied. Any post-hoc edit to §§1–6 invalidates v1; a v2 is required. The result lands in a separate doc (`FOUND_*` / `AUDIT_*_CLOSED_NEGATIVE.md` / `AUDIT_*_UNDERDETERMINED.md`), never as edits here. B-9 (no same-minute mtime pre-regresult) and B-10 (separately-dispatched independent review) apply.
 
 ---
 

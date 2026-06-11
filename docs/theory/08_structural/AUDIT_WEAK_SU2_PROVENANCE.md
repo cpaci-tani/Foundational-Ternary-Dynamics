@@ -35,7 +35,7 @@ both fire on load-bearing steps.
 
 **What FTD genuinely has** `[DERIVED]`: the `SU(2)` **skeleton** — the
 Cartan `T₃ = ŝ/2` (the ternary state-charge operator) and the Weyl-`ℤ₂`
-(the transmutation flip `+1 ↔ −1`). This is exactly the skeleton Q10
+(the transmutation flip `+1  −1`). This is exactly the skeleton Q10
 already credited. The skeleton is the skeleton of *any* rank-1 structure;
 it does not single out `SU(2)`.
 
@@ -92,7 +92,7 @@ independent check.
 | S2 | §1.1 | `{+1,−1}` labelled "the weak isospin doublet" | **count-match** — the label rests on `\|{+1,−1}\| = 2 = dim(SU(2) fundamental)`; §1.1's "it follows from the structure of the state-flux coupling" is asserted, not shown |
 | S3 | §1.2, Thm 1.1 | "the Pauli matrices restricted to `{+1,−1}` generate `su(2)`" | **count-match** — the proof is verbatim "the Pauli matrices satisfy `[σ_i,σ_j]=2iε_{ijk}σ_k`": a *generic* fact about any `ℂ²`, not an FTD derivation. **Load-bearing.** |
 | S4 | §2.2 | `T₃ = ŝ/2`, `ŝ` the ternary state-charge operator | `[DERIVED]` — **genuine** FTD Cartan |
-| S5 | §1.2, §2.1 | transmutation `+1 ↔ −1` identified with `T₊, T₋` | the flip is `[DERIVED]` (CLAUDE.md Ch 6.5 stress-threshold rule) — but it is the **Weyl-`ℤ₂`**, a discrete reflection, not a continuous `su(2)` ladder operator; the identification conflates skeleton with group |
+| S5 | §1.2, §2.1 | transmutation `+1  −1` identified with `T₊, T₋` | the flip is `[DERIVED]` (CLAUDE.md Ch 6.5 stress-threshold rule) — but it is the **Weyl-`ℤ₂`**, a discrete reflection, not a continuous `su(2)` ladder operator; the identification conflates skeleton with group |
 | S6 | §1.2 | off-diagonal generators `T₁ = ½σ₁`, `T₂ = ½σ₂` | `[IMPORTED]` — written as Pauli matrices; **no FTD construction**. Fires **F-e**. |
 
 **Load-bearing steps** (D4 — removal collapses the `SU(2)` conclusion):

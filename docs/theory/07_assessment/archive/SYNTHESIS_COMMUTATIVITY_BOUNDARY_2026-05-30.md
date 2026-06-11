@@ -61,7 +61,7 @@ identification** with the EM coupling is `[STRONGLY MOTIVATED CONJECTURE]` and i
 — the substrate gives Rice/Gaussian, not Born). **Exploratory corroboration (NOT evidence,
 NOT a LEDGER claim):** the 2026-05-30 dissipation-N engine pass returned a comprehensive null
 (`docs/internal/EXPLORATORY_CLUSTER_THERMODYNAMICS_2026-05-30.md`, local-only) — clusters
-neither fission nor fuse, cost↔N is trivial equipartition, no internal-clock signal.
+neither fission nor fuse, costN is trivial equipartition, no internal-clock signal.
 
 **The pattern:** in every row the "missing piece" is the *same structure*.
 

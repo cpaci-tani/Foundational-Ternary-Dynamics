@@ -587,7 +587,7 @@ The BCC channel is required for any observation that accesses the self-consisten
 | SC+FCC (18) | 1.2193 | different | no |
 | Moore (26) | 1.1571 | different | no |
 
-With n_DOF = 16, only the BCC Watson integral gives K = 16 * 2pi * G*^2/(2pi) = 16G*^2, reproducing the master quadratic with roots x+ ≈ 137.036 and x- ≈ 3.024. The physical readings x+ ↔ 1/alpha and x- ↔ N_c remain [STRONGLY MOTIVATED CONJECTURE]. All other sublattices give the wrong coefficient.
+With n_DOF = 16, only the BCC Watson integral gives K = 16 * 2pi * G*^2/(2pi) = 16G*^2, reproducing the master quadratic with roots x+ ≈ 137.036 and x- ≈ 3.024. The physical readings x+  1/alpha and x-  N_c remain [STRONGLY MOTIVATED CONJECTURE]. All other sublattices give the wrong coefficient.
 
 **Why BCC is special — the multiplicative structure:**
 

@@ -256,7 +256,7 @@ This resolves **FTD-0095** and upgrades it to **[THEOREM]**.
 
 #### 4.6.3 Slogan upgrade
 
-Previous slogan in `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_*` (where present): *"the master quadratic predicts α and N_c"* — the dual-prediction framing is **retired** along with the `x_- ↔ N_c` identification (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`). The live framing is single-root: *"the master quadratic predicts 1/α as its larger root"*.
+Previous slogan in `docs/theory/02_foundations/FOUND_MASTER_QUADRATIC_*` (where present): *"the master quadratic predicts α and N_c"* — the dual-prediction framing is **retired** along with the `x_-  N_c` identification (v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`). The live framing is single-root: *"the master quadratic predicts 1/α as its larger root"*.
 
 Adopted as active and fully resolved:
 
@@ -317,7 +317,7 @@ The integers $\{3, 4, 7, 13\}$ were identified from **known physics**, then show
 
 | Integer | Physical origin | Mathematical constraint |
 |---------|----------------|----------------------|
-| $N_c = 3$ | Number of quark colors (QCD) | $L_3 - 1 = 3$ (historical: $x_- \approx 3.024$ — the `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
+| $N_c = 3$ | Number of quark colors (QCD) | $L_3 - 1 = 3$ (historical: $x_- \approx 3.024$ — the `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`) |
 | $N_{\mathrm{base}} = 4$ | Spacetime dimensions / $L_3$ | $L_3 = 4$; unique Lucas perfect square |
 | $b_3 = 7$ | QCD one-loop beta coefficient | $L_4 = 7$; crossover index $F_7 = T_7$ |
 | $N_{\mathrm{eff}} = 13$ | Closure parameter | $F_7 = T_7 = 13$; 6th prime |
@@ -407,7 +407,7 @@ SP3 (k = |Aut(E)|² = 16) ───┤
                     ┌─────────┴─────────┐
                     ▼                   ▼
                x₊ = 137.036       x₋ = 3.024  (mathematical artifact;
-                    │                   no physics ID; `x₋ ↔ N_c` RETIRED v1.4 §5)
+                    │                   no physics ID; `x₋  N_c` RETIRED v1.4 §5)
 SP4 (x₊ = 1/α) ───┤
                     ▼
               α = 1/137.036
@@ -420,14 +420,14 @@ SP5 (integers) ────┤
             sin²θ_W = 3/13 (uses N_c independently sourced; see DERIV_NC_FROM_TOPOLOGY.md)
 ```
 
-**Observation:** The tree-level result $x_+ = 137.036$ depends only on SP1 + SP2 + SP3. The physical identification adds SP4 (`x_+ = 1/α`). The extended physics adds SP5. The historical `x_- ↔ N_c` identification is retired per v1.4 §5; the smaller root is a mathematical artifact of $P(x)$ only. The dependency is cumulative and each layer adds epistemic risk.
+**Observation:** The tree-level result $x_+ = 137.036$ depends only on SP1 + SP2 + SP3. The physical identification adds SP4 (`x_+ = 1/α`). The extended physics adds SP5. The historical `x_-  N_c` identification is retired per v1.4 §5; the smaller root is a mathematical artifact of $P(x)$ only. The dependency is cumulative and each layer adds epistemic risk.
 
 ### 7.3 Conditional Theorem Template
 
 Given SP1–SP3:
 1. $G^* = \Gamma(1/4)/\Gamma(3/4) = \sqrt{2} \cdot \Gamma(1/4)^2/(2\pi) \approx 2.9587$ **[THEOREM]**
 2. $x_+ = 8G^{*2}(1 + \sqrt{1 - 1/G^*}) = 137.036\ldots$ **[THEOREM]**
-3. $x_- = 8G^{*2}(1 - \sqrt{1 - 1/G^*}) = 3.024\ldots$ **[THEOREM]** (mathematical artifact of $P(x)$; the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5)
+3. $x_- = 8G^{*2}(1 - \sqrt{1 - 1/G^*}) = 3.024\ldots$ **[THEOREM]** (mathematical artifact of $P(x)$; the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5)
 
 Adding SP4:
 4. $\alpha = 1/x_+ = 1/137.036\ldots$ **[CONDITIONAL on SP4]** — the single live physics identification of the master quadratic.
@@ -867,7 +867,7 @@ The historical identification of $\lfloor x_- \rfloor$ with $N_c = 3$ is **RETIR
 
 ### 19.3 Status
 
-> **`x_+ ↔ 1/α`**: [STRONGLY MOTIVATED CONJECTURE] (FTD-0013). **`x_- ↔ N_c`**: RETIRED (v1.4 §5).
+> **`x_+  1/α`**: [STRONGLY MOTIVATED CONJECTURE] (FTD-0013). **`x_-  N_c`**: RETIRED (v1.4 §5).
 
 ---
 

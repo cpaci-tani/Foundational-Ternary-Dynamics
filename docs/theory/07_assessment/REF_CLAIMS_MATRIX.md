@@ -539,7 +539,7 @@ $$\frac{8}{G^*} \approx e$$
 ### Implications
 
 1. **Exact unity relation:** k_c × c_cusp × 2N_base = 1 connects reference frame context coefficient to Mandelbrot geometry
-2. **Domain duality:** Physics (bounded) ↔ Reference frame context (escaping) via cardioid boundary
+2. **Domain duality:** Physics (bounded)  Reference frame context (escaping) via cardioid boundary
 3. **Generations from periods:** Period-2,3,4 bulbs may correspond to three particle generations
 4. **Universal dynamics:** Both Mandelbrot and FTD involve iteration, stability, and critical boundaries
 

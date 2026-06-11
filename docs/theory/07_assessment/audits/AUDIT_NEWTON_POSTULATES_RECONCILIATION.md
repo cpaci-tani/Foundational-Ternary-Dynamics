@@ -144,7 +144,7 @@ Either outcome is honest progress on Arc B and serves the Wilsonian-reframe succ
 ## §3 — FTD-0189 ripple analysis (load-bearing for Arc C2)
 
 `SPEC_DOCTRINE_LEDGER.md` cross-references and FTD-0189 LEDGER row (sampled): the 2026-05-21 audit retagged:
-- Theorem 14.1 (`DERIV_RELATIVITY_DERIVATION.md`): "linearized Einstein [THEOREM]" → `[SELECTION/CONDITIONAL]` (rests on h ↔ J correspondence)
+- Theorem 14.1 (`DERIV_RELATIVITY_DERIVATION.md`): "linearized Einstein [THEOREM]" → `[SELECTION/CONDITIONAL]` (rests on h  J correspondence)
 - Theorem 15.3 (`DERIV_RELATIVITY_DERIVATION.md`): "graviton = transverse flux modes [THEOREM]" → `[CONJECTURE]` + spin-count flag (2 transverse J-modes = helicity-±1, not ±2)
 
 **Does FTD-0189 audit propagate to SPEC §4.2, §4.3, §4.1?**

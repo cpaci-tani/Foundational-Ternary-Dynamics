@@ -226,7 +226,7 @@ New rows:
 
 Unchanged:
 - **FTD-0001** (master quadratic as algebraic identity) — remains [THEOREM] at the number-theoretic layer.
-- **FTD-0013, FTD-0014** (physical identifications x₊ ↔ 1/α, x₋ ↔ N_c) — remain [STRONGLY MOTIVATED CONJECTURE]. Link 8 closure does NOT demote these; they live on the dual-match + CM-curve-uniqueness evidence (FTD-0003), not on any RG-flow derivation.
+- **FTD-0013, FTD-0014** (physical identifications x₊  1/α, x₋  N_c) — remain [STRONGLY MOTIVATED CONJECTURE]. Link 8 closure does NOT demote these; they live on the dual-match + CM-curve-uniqueness evidence (FTD-0003), not on any RG-flow derivation.
 
 ### In the framework narrative
 

@@ -1,6 +1,6 @@
 # DERIV · The Three EM-Force Regimes as Different Blocking Limits
 
-**Tag:** [PARTIAL — DERIVED for Poisson↔Legacy equivalence; SELECTION for Emergent regime]
+**Tag:** [PARTIAL — DERIVED for PoissonLegacy equivalence; SELECTION for Emergent regime]
 **Date:** 2026-05-05
 **Status:** [DERIVED] for the equivalence between Poisson Coulomb and Legacy Gradient modes (both are computational routes to the same force derived from `L_coupling = -g_c s (∇·J)`). [SELECTION] for the relationship between these two and the Emergent mode (`L_vc = -g_c s |J|_t2` with single-vertex coupling) — emergent is a *different* effective coupling that becomes selected under different blocking assumptions, not a third regime of the same Lagrangian term.
 **Purpose:** Phase R2 of the FTD-EFT roadmap. Closes part of `STATUS_EFT_CHECKLIST.md` §7 ("Resolve exact Gauss representation for production") and clarifies the engine's three-mode toggle structure (Poisson Coulomb / direct gradient / emergent forces — see `engine/src/render_bridge_phases/phase_forces.cpp:80-106`).
@@ -40,7 +40,7 @@ The three modes:
 | **Poisson Coulomb** | `poisson_coulomb=true` (default) | $F = -\alpha\,s\,\nabla\phi_C$, with $\nabla^2\phi_C = -s$ | $\alpha = G_C^2$ (two-vertex) |
 | **Legacy gradient** | both above false | $F = -\alpha\,s\,\nabla(\nabla\cdot\mathbf{J})$ | $\alpha = G_C^2$ (two-vertex) |
 
-`toggles.validate()` per `term_toggles.h:127, 143` enforces `emergent_forces` ↔ `poisson_coulomb` mutual exclusivity. Legacy is the fallback when neither is set.
+`toggles.validate()` per `term_toggles.h:127, 143` enforces `emergent_forces`  `poisson_coulomb` mutual exclusivity. Legacy is the fallback when neither is set.
 
 ---
 
@@ -90,7 +90,7 @@ Both expressions reduce to the same continuum Coulomb force $\mathbf{F} = -\alph
 
 **They agree** in the limit $L \to \infty$ for smooth field configurations. They *disagree* at finite L by terms that are Wilsonian-irrelevant (suppressed by $1/L$ in the long-range Coulomb regime). $\square$
 
-**Engine artifact for the agreement**: `test_em_force_modes_consistency` (or equivalent — locate via `ctest -N | grep em_force`) measures the Poisson↔Legacy agreement and reports the residual at standard L; expected $O(1/L)$. (If this test does not exist, it should be added to `gpu_parity_complete` as a parity row in R3a.)
+**Engine artifact for the agreement**: `test_em_force_modes_consistency` (or equivalent — locate via `ctest -N | grep em_force`) measures the PoissonLegacy agreement and reports the residual at standard L; expected $O(1/L)$. (If this test does not exist, it should be added to `gpu_parity_complete` as a parity row in R3a.)
 
 ---
 

@@ -229,7 +229,7 @@ $$\boxed{g_c^2 = \alpha = \frac{1}{x_+} = \frac{1}{137.036}}$$
 
 **Derivation:**
 
-1. The coupling describes state ↔ flux transitions
+1. The coupling describes state  flux transitions
 2. The probability per lattice crossing = 1/(total modes)
 3. Total modes = x₊ (from master quadratic)
 4. Therefore g_c² = 1/x₊ = α
@@ -300,7 +300,7 @@ $$e_{\text{FTD}} = \sqrt{\alpha} = g_c$$
 
 $$\boxed{g_c = \sqrt{\alpha} = \sqrt{1/137.036} = 0.08542...}$$
 
-**Status:** [SELECTION] — the chain uses the Born rule (premise 3 — [SELECTION]/[OPEN], not [THEOREM], per LEDGER FTD-0187) and the x₊↔1/α identification; the result g_c=√α therefore inherits [SELECTION] status, consistent with GC-5/GC-6/GC-7 below
+**Status:** [SELECTION] — the chain uses the Born rule (premise 3 — [SELECTION]/[OPEN], not [THEOREM], per LEDGER FTD-0187) and the x₊1/α identification; the result g_c=√α therefore inherits [SELECTION] status, consistent with GC-5/GC-6/GC-7 below
 
 ---
 

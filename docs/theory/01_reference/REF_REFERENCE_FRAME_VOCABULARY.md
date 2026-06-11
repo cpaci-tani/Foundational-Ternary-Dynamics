@@ -62,7 +62,7 @@ These are different things. A static subset has structural reference but no acti
 | **Trajectory selection** | noun | The act of an active-frame system choosing among dynamically-allowed futures. |
 | **Endogenous causation** | noun | Causation originating from inside the system rather than from boundary conditions or external drives. |
 
-### Structural ↔ Dynamical relationship
+### Structural  Dynamical relationship
 
 | Term | Meaning |
 |---|---|

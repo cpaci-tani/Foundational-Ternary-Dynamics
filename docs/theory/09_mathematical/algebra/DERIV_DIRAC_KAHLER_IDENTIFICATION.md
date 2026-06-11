@@ -203,14 +203,14 @@ After A1 + A2, the Branch-B accounting is **sharper**:
 
 | Component | FTD provides? | Status |
 |---|---|---|
-| Spinor structure (Cl(3,0) Dirac-Kähler) | ✅ | Branch-A (A1, FTD-0088) |
-| SU(2) gauge structure (bivector subalgebra) | ✅ approximate (1% deviation) | Branch-A (FTD-0086) |
-| C_3 ⊂ SU(3) for color | ✅ discrete only | Branch-A (FTD-0077) |
-| Single fermion mass scale | ✅ in principle | Branch-A (with G*, α input) |
-| Three generations (flavor count) | ⚠️ structurally consistent | Branch-B selection respecting Moore-26 |
-| Mass hierarchy ($m_\mu/m_e$, etc.) | ❌ A2 no-go | Branch-B selection |
-| CKM/PMNS mixing | ❌ no structural input | Branch-B selection |
-| Yukawa coupling structure | ❌ no structural input | Branch-B selection |
+| Spinor structure (Cl(3,0) Dirac-Kähler) |  | Branch-A (A1, FTD-0088) |
+| SU(2) gauge structure (bivector subalgebra) |  approximate (1% deviation) | Branch-A (FTD-0086) |
+| C_3 ⊂ SU(3) for color |  discrete only | Branch-A (FTD-0077) |
+| Single fermion mass scale |  in principle | Branch-A (with G*, α input) |
+| Three generations (flavor count) |  structurally consistent | Branch-B selection respecting Moore-26 |
+| Mass hierarchy ($m_\mu/m_e$, etc.) |  A2 no-go | Branch-B selection |
+| CKM/PMNS mixing |  no structural input | Branch-B selection |
+| Yukawa coupling structure |  no structural input | Branch-B selection |
 
 **FTD provides the algebraic and structural skeleton; Branch-B provides the flavor-and-mass content.**
 

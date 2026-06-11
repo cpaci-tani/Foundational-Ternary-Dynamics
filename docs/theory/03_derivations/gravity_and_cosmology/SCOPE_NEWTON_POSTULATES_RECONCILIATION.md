@@ -86,7 +86,7 @@ Arc B P2's genuine target then becomes: substrate-derive (or honestly tier-flag)
 
 `SPEC_DOCTRINE_LEDGER.md` §14 priority 6 cites FTD-0184 (branch-compliance/Yilmaz route [CLOSED NEGATIVE]) and FTD-0131 (partial closure with 2 postulates flagged). The 2026-05-21 FTD-0189 Step-0 audit retagged some related claims in `DERIV_RELATIVITY_DERIVATION.md`:
 
-- Theorem 14.1 "linearized Einstein [THEOREM]" → `[SELECTION/CONDITIONAL]` (rests on h↔J correspondence)
+- Theorem 14.1 "linearized Einstein [THEOREM]" → `[SELECTION/CONDITIONAL]` (rests on hJ correspondence)
 - Theorem 15.3 "graviton = transverse flux modes [THEOREM]" → `[CONJECTURE] + spin-count flag` (spin-content error: 2 transverse J-modes = helicity-±1, not ±2)
 
 **Does FTD-0189's audit apply to SPEC_FTD_LAGRANGIAN.md §4.2 (Poisson) or §4.3 (Born-Infeld → Schwarzschild)?**

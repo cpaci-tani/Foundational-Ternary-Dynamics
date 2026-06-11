@@ -58,7 +58,7 @@ Paradigm cases: m_e in MeV, G_N in SI units, any quantity carrying physical unit
 
 **Scope.** The boundary theorem concerns the **STRUCTURAL vs NON-UNIVERSAL DYNAMICAL** split (both dimensionless). CALIBRATION-CONDITIONAL is recorded for completeness — it is already mapped by `SPEC_DIMENSIONAL_MAP.md` — and is not the theorem's subject.
 
-**Tie-break rule (locked).** The discriminator classifies *claims*, not *symbols*. If a symbol carries both a structural and a dynamical reading — e.g. N_c, where *the integer 3 as a colour count* is structural but *the match x_− = 3.024 ↔ N_c* is a `[STRONGLY MOTIVATED CONJECTURE]` identification — the two readings are entered as **separate quantity-claims**: the count is STRUCTURAL, the root-identification is NON-UNIVERSAL DYNAMICAL (it identifies a continuous algebraic root with a physical sector).
+**Tie-break rule (locked).** The discriminator classifies *claims*, not *symbols*. If a symbol carries both a structural and a dynamical reading — e.g. N_c, where *the integer 3 as a colour count* is structural but *the match x_− = 3.024  N_c* is a `[STRONGLY MOTIVATED CONJECTURE]` identification — the two readings are entered as **separate quantity-claims**: the count is STRUCTURAL, the root-identification is NON-UNIVERSAL DYNAMICAL (it identifies a continuous algebraic root with a physical sector).
 
 ---
 

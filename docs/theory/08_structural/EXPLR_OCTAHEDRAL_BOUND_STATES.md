@@ -284,5 +284,5 @@ The polytope-duality reading was elegant and seemed to map cleanly onto the exis
 
 The strongest positive structural finding (FTD-0107: 25-voxel cluster, deterministic, L-invariant) survives and is now **harder to interpret structurally** than this document claimed. The cluster shape involves all four Moore sub-stencils (center, SC, FCC, BCC), not the SC+FCC+face2 subset. The "WHY 25 voxels?" question persists; the morning's polytope-duality answer is wrong.
 
-The structural gap (algebra ↔ engine) remains the load-bearing problem.
+The structural gap (algebra  engine) remains the load-bearing problem.
 

@@ -1,6 +1,6 @@
 # Foundational Resolution — Alpha Quantization Readout (ARC-C1)
 
-> **⚠ CORRECTION (2026-05-28): verdict downgraded FOUND → UNDERDETERMINED.**
+> ** CORRECTION (2026-05-28): verdict downgraded FOUND → UNDERDETERMINED.**
 > An independent adversarial review (`AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md`)
 > plus three pre-registered closure attempts
 > (`AUDIT_ALPHA_READOUT_DETERMINANT_GRADING_CLOSED_NEGATIVE.md` FTD-0233,
@@ -128,7 +128,7 @@ We verify the derivation against all 10 F-rules:
 - **F-c (Dominant selection): PASS.** Selected uniquely by fixed-point stability under coarse-graining.
 - **F-d (Operational protocol): PASS.** The protocol defines a localized preparation $P$ and self-energy back-reaction $O_{\text{EM}}$.
 - **F-e (No site-local Clifford): PASS.** The bivector and complex subspaces span the 8 corners of the BCC unit cell, making the construction non-site-local from step 1.
-- **F-j (No reverse-engineering): ~~PASS~~ FIRES [CORRECTED 2026-05-28].** §3 Selection 1 *admits* the trace/determinant `16G*²`/`16G*³` are "epistemic selections designed to couple ... to the algebraic master quadratic ... rather than ... first-principles derivations" — i.e. the target coefficients are pasted as scaffold. The Watson Green's function yields only the *even*-degree `G*²`; the determinant's *odd* `16G*³` is the asserted Vieta target, not a forward consequence (FTD-0233 parity no-go; FTD-0235 det↔det_ζ no-go). F-j fires.
+- **F-j (No reverse-engineering): ~~PASS~~ FIRES [CORRECTED 2026-05-28].** §3 Selection 1 *admits* the trace/determinant `16G*²`/`16G*³` are "epistemic selections designed to couple ... to the algebraic master quadratic ... rather than ... first-principles derivations" — i.e. the target coefficients are pasted as scaffold. The Watson Green's function yields only the *even*-degree `G*²`; the determinant's *odd* `16G*³` is the asserted Vieta target, not a forward consequence (FTD-0233 parity no-go; FTD-0235 detdet_ζ no-go). F-j fires.
 
 ---
 

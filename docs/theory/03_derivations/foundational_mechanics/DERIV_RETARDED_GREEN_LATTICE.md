@@ -192,7 +192,7 @@ feature, not a defect.
    campaign that bridges the static and wave-propagation toggles.
 
 4. **Hodge duality on the lattice.** Independent of (★), the question
-   "does FTD's stencil preserve the Hodge duality `F ↔ ⋆F` of Maxwell?"
+   "does FTD's stencil preserve the Hodge duality `F  ⋆F` of Maxwell?"
    — and if it doesn't, what is the lattice-scale duality-breaking
    parameter? — is a separate open direction in the same Maxwell-exploit
    thread.

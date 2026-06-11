@@ -15,7 +15,7 @@ PROTOCOL v1 specified Gate D (S_eff self-consistency) but did not implement it. 
 - Gates B (conservation) and C (RG semigroup) PASSING.
 - Gate A (per-entry stderr) RESPLIT: diagonal 9/9 PASS, off-diagonal bootstrap-stderr-limited.
 - Theorems 1, 2, 3 promoting 4 of 9 diagonals to [THEOREM]+[MEASURED] grade.
-- A discovered **partial block-diagonalization** of M_ab(b=2): SPATIAL ↔ REACTION-FLUX completely decoupled at 5σ; DENSITY sector bridges them weakly.
+- A discovered **partial block-diagonalization** of M_ab(b=2): SPATIAL  REACTION-FLUX completely decoupled at 5σ; DENSITY sector bridges them weakly.
 
 The sector decomposition makes Gate D **dramatically simpler** than the original PROTOCOL §6 design anticipated. v2 leverages this structure.
 
@@ -190,7 +190,7 @@ The ordering matches the empirical decoupling found at L=32 LARGE. If the sector
 Before tagging `preregister-s-eff-nonlinear-v2`:
 
 1. **L=64 LARGE confirmation** (in flight as `biadbkhy6`, ~2.5h wall) must show:
-   - SPATIAL ↔ REACTION-FLUX still 0 / 20 entries at 5σ
+   - SPATIAL  REACTION-FLUX still 0 / 20 entries at 5σ
    - DENSITY-bridge weak couplings (2 / 10 each direction) preserved at L=64
    - Gate C (RG semigroup) PASS at L=64
 
@@ -241,4 +241,4 @@ This is the original PROTOCOL §10 single-line goal. It is now achievable with a
 
 ## 8 · Single-line summary
 
-**The v2 protocol leverages the discovered sector decomposition (SPATIAL ↔ REACTION-FLUX completely decoupled at 5σ over 20,000 snapshots) to design Gate D self-consistency tests at the per-sector level: 7 perturbation runs of size 5 seeds × 500 samples × 30 min each, perturbing one operator at a time and checking that the diagonal `M_aa` shift matches linear-Wilsonian prediction (or invariance for theorem-grade diagonals); per-sector sub-block inversion at cond < 1e6 replaces full 9×9 inversion at cond ≈ 1e13; the v2 design is hash-lockable once L=64 LARGE confirms sector decoupling persists at the larger lattice and once C++ engine wiring for `--wilson-coefficient=<name>:<value>` lands; passing all 7 Gate D tests at L=64 LARGE would close FTD-0112 to the [MEASURED · S_eff self-consistent within errors] level — the original PROTOCOL §10 fully-closed math-based EFT verdict.**
+**The v2 protocol leverages the discovered sector decomposition (SPATIAL  REACTION-FLUX completely decoupled at 5σ over 20,000 snapshots) to design Gate D self-consistency tests at the per-sector level: 7 perturbation runs of size 5 seeds × 500 samples × 30 min each, perturbing one operator at a time and checking that the diagonal `M_aa` shift matches linear-Wilsonian prediction (or invariance for theorem-grade diagonals); per-sector sub-block inversion at cond < 1e6 replaces full 9×9 inversion at cond ≈ 1e13; the v2 design is hash-lockable once L=64 LARGE confirms sector decoupling persists at the larger lattice and once C++ engine wiring for `--wilson-coefficient=<name>:<value>` lands; passing all 7 Gate D tests at L=64 LARGE would close FTD-0112 to the [MEASURED · S_eff self-consistent within errors] level — the original PROTOCOL §10 fully-closed math-based EFT verdict.**

@@ -72,7 +72,7 @@ Five probe results map the boundary:
 | 2 | FTD-0231 (ARC-C1) | charge quantization gives the `ℤ[i]` structure via `O_h→C₄` | [UNDERDETERMINED] |
 | 3 | FTD-0233 | `G*`-degree parity (scoped) | [CLOSED NEGATIVE — scoped] |
 | 4 | FTD-0234 | J-twisted det_ζ ratio `= G*` is a clean forward **odd** scalar (degree 1) | [THEOREM] |
-| 5 | FTD-0235 | `det↔det_ζ` identity; `(Tr,Det)` independent for a `2×2` | [UNDERDETERMINED] |
+| 5 | FTD-0235 | `detdet_ζ` identity; `(Tr,Det)` independent for a `2×2` | [UNDERDETERMINED] |
 
 **Why this pre-registration exists.** Those five are a *map* of the boundary
 (worked instances), not a *theorem* sealing it. The standing verdict is
@@ -186,7 +186,7 @@ about a body diagonal `⟨111⟩` — the only admissible source of the **odd** 
   as `[THEOREM]`-grade imports, and the **discharged legs of §5** as established.
 
 **The proof MAY NOT use:**
-- Asserting `det = Tr·G*` or `det = 16G*³` without a forward det↔det_ζ derivation
+- Asserting `det = Tr·G*` or `det = 16G*³` without a forward detdet_ζ derivation
   (the W-CRIT-2 move; B-1/F-a).
 - Importing the master quadratic, its roots, `α`, or any CODATA value as a premise (B-5/F-d).
 - The FQCR `M_N` matrix or any chosen-entry `2×2` as scaffold for `det` (B-2).
@@ -200,7 +200,7 @@ The proof, to count as INDEPENDENT, must establish the conjunction below. **Two
 legs are already discharged (machine-checked / classical); they are locked here as
 established, and the genuine open work is Leg 3 + the independence half.**
 
-- **Leg 1 — trace side ✅ DISCHARGED (this commit).** The `O`-permutation module of
+- **Leg 1 — trace side  DISCHARGED (this commit).** The `O`-permutation module of
   the 8 cube-corner (BCC) sites decomposes `ℚ[corners] ≅ A₁ ⊕ A₂ ⊕ T₁ ⊕ T₂`, and
   the 2-dimensional irrep `E` has **`mult_O(E) = 0`**. Therefore there is **no
   `O`-symmetric 2-dimensional subspace** on which a complex structure (`J²=−I`,
@@ -210,11 +210,11 @@ established, and the genuine open work is Leg 3 + the independence half.**
   **Verified:** `scripts/proofs/proof_readout_multE_zero.py` (group order 24;
   `mult E = 0`; constituent count 4; dims `1+1+3+3=8`).
   This upgrades the former "Lemma 3 premise" to character-theory grade.
-- **Leg 2 — group core ✅ DISCHARGED.** `⟨C₄(⟨001⟩), C₃(⟨111⟩)⟩ = O` (a 4-cycle and
+- **Leg 2 — group core  DISCHARGED.** `⟨C₄(⟨001⟩), C₃(⟨111⟩)⟩ = O` (a 4-cycle and
   a 3-cycle generate `S₄`). So any `Stab` containing both is all of `O` = unbroken
   = no localized charge = no `V_complex`. (Verified in the same script: generated
   group order 24.)
-- **Leg 3 — determinant side ⛔ OPEN OBLIGATION (the crux).** Establish that the
+- **Leg 3 — determinant side  OPEN OBLIGATION (the crux).** Establish that the
   odd term `16G*³` *genuinely requires* `C₃(⟨111⟩) ∈ Stab` — i.e. that the only
   forward (non-asserted) source of the odd `G*` is the C₃-symmetric three-plane
   det_ζ product (Leg-1's `C₃ ∉ Stab` then collides with it) — **and** that the

@@ -17,7 +17,7 @@ source material but overstated in summary headings. Tree-level result is
 **post-hoc fit** and should be demoted from any "< 0.001 ppt derivation"
 framing. *(Historical:)* The dual-prediction property (x+ matches 1/α, x- matches N_c=3
 simultaneously from the same polynomial) was the strongest structural
-evidence as of 2026-04-19. **2026-05-22 update:** the `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now carried by FTD-0189's adversarial polynomial-template scan (2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket: 0 non-G\* dual-matchers, rank 1 by ~130×) — independent of the historical target-pair framing.
+evidence as of 2026-04-19. **2026-05-22 update:** the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now carried by FTD-0189's adversarial polynomial-template scan (2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket: 0 non-G\* dual-matchers, rank 1 by ~130×) — independent of the historical target-pair framing.
 
 ---
 
@@ -190,13 +190,13 @@ is:
 
 - Numerical: 1/α ≈ 137.036, master quadratic gives 137.036, match to
   1.26 ppm.
-- ~~Dual: x- = 3.024 matches N_c = 3, simultaneously.~~ — **2026-05-22 update:** the `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The dual-prediction argument no longer carries structural weight; FTD-0189's adversarial polynomial-template scan (0 non-G\* dual-matchers across 2.65 M polynomials over an 18-constant FTD-undesigned basket) is the new canonical structural-uniqueness evidence. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
+- ~~Dual: x- = 3.024 matches N_c = 3, simultaneously.~~ — **2026-05-22 update:** the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The dual-prediction argument no longer carries structural weight; FTD-0189's adversarial polynomial-template scan (0 non-G\* dual-matchers across 2.65 M polynomials over an 18-constant FTD-undesigned basket) is the new canonical structural-uniqueness evidence. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.
 - Structural: in FTD's gauge-theory narrative, x+ is the "largest
   coupling" → identified with U(1) electromagnetism. *(The historical
   "x- = second coupling → SU(3) color" reading depended on the
-  retired `x_- ↔ N_c` identification.)*
+  retired `x_-  N_c` identification.)*
 
-The structural-uniqueness argument (originally the dual-prediction §2.5, now FTD-0189 polynomial-template uniqueness) strengthens the `x_+ ↔ 1/α` identification considerably beyond "one-digit coincidence," but it is still not a dynamical
+The structural-uniqueness argument (originally the dual-prediction §2.5, now FTD-0189 polynomial-template uniqueness) strengthens the `x_+  1/α` identification considerably beyond "one-digit coincidence," but it is still not a dynamical
 derivation of α from first principles. The engine-side test of this
 identification (via Phase H's explicit coupling) now works — but that
 only verifies the plumbing, not the uniqueness of α as the output.
@@ -238,7 +238,7 @@ physical content beyond the 11-digit measurement."
 
 ### What is [SELECTION]
 
-- Curve choice E: y² = x³ − x (defensible via Watson ↔ BCC, but axiom
+- Curve choice E: y² = x³ − x (defensible via Watson  BCC, but axiom
   of 3D cubic lattice is an input).
 - Degree-2 polynomial form (two independent motivational arguments,
   neither forcing).
@@ -262,7 +262,7 @@ proof of an identity, but it was much stronger than either single-root
 match alone, and it was the piece of the argument most worth taking
 seriously.
 
-**2026-05-22 update.** The `x_- ↔ N_c` identification is **retired** per v1.4 §5; the dual-prediction framing is no longer load-bearing. The polynomial-template-uniqueness fact, however, is **independent of the target identification** and has been substantially strengthened by FTD-0189: the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket (0 non-G\* dual-matchers; rank 1 by ~130×). This is the new canonical structural-uniqueness evidence going forward.
+**2026-05-22 update.** The `x_-  N_c` identification is **retired** per v1.4 §5; the dual-prediction framing is no longer load-bearing. The polynomial-template-uniqueness fact, however, is **independent of the target identification** and has been substantially strengthened by FTD-0189: the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket (0 non-G\* dual-matchers; rank 1 by ~130×). This is the new canonical structural-uniqueness evidence going forward.
 
 ## 7 · Recommendations — status as of 2026-04-19
 
@@ -371,7 +371,7 @@ in CLAUDE.md remains misleading even after the 7-term retraction.
 with 7-term expansion" framing with:
 - "1.26 ppm tree-level" on 1/α
 - *(Historical:)* Dual-prediction via x_- ≈ N_c (0.80%) — **subsequently retired** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (2026-05-22); LEDGER FTD-0014 removed in commit `ca7eb61`. The structural-uniqueness evidence is now FTD-0189's adversarial polynomial-template scan.
-- [STRONGLY MOTIVATED CONJECTURE] tag on the physical identification `x_+ ↔ 1/α` (FTD-0013)
+- [STRONGLY MOTIVATED CONJECTURE] tag on the physical identification `x_+  1/α` (FTD-0013)
 - 7-term expansion explicitly flagged as [CONJECTURE] post-hoc fit
   beyond experimental precision
 
@@ -385,7 +385,7 @@ scripts/proofs/audit_gap_equation_convergence.py      # Phase I Item 1: L → �
 docs/theory/10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md  # Phase I Item 3: g_c scoping
 docs/theory/09_mathematical/MATH_MASTER_QUADRATIC.md  # the 250-page math layer
 docs/theory/09_mathematical/DERIV_QUADRATIC_NECESSITY.md  # why degree 2 (honest [SELECTION])
-docs/theory/08_structural/DERIV_WATSON_GSTAR_IDENTITY.md  # BCC ↔ period bridge
+docs/theory/08_structural/DERIV_WATSON_GSTAR_IDENTITY.md  # BCC  period bridge
 docs/theory/08_structural/DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md  # BCC / Watson
 docs/theory/07_assessment/AUDIT_HIDDEN_SELECTIONS.md  # existing catalog of selections
 ```

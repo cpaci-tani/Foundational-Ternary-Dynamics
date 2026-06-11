@@ -142,7 +142,7 @@ stays auditable.
 **Periodic consistency check.** Before any release or external submission — and as a
 healthy cadence between them — run the read-only audit agents and clear their findings:
 
-- `epistemic-auditor` — tag coverage, derivation-vs-insertion accuracy, broken cross-references, `META_INDEX` ↔ filesystem sync.
+- `epistemic-auditor` — tag coverage, derivation-vs-insertion accuracy, broken cross-references, `META_INDEX`  filesystem sync.
 - `constants-sentinel` — numerical-constant drift across `scripts/constants.py` and the C++/JS mirrors.
 
 **Keep the canonical set small.** The checklist above *is* the maintenance cost — every

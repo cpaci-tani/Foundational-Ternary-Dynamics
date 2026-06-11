@@ -104,7 +104,7 @@ This **independently confirms** the terminal [PARAMETRIC] tag that the LEDGER (2
 
 ### 5.2 The dimensional-ring of FTD has exactly two calibrations
 
-Per FTD-0059 §4.2, dimensional FTD predictions require exactly one calibration per independent SI dimension. The base set is `{L, T, M, E}`; with `c_lat ↔ c_phys` linking length-time and `c² = E/M` linking mass-energy, the irreducible calibration count is **two**: `a_phys ≡ ℓ_P` (length) and `K_B = m_e` (mass).
+Per FTD-0059 §4.2, dimensional FTD predictions require exactly one calibration per independent SI dimension. The base set is `{L, T, M, E}`; with `c_lat  c_phys` linking length-time and `c² = E/M` linking mass-energy, the irreducible calibration count is **two**: `a_phys ≡ ℓ_P` (length) and `K_B = m_e` (mass).
 
 This document closes FTD-0096 by confirming that **mass cannot be reduced further** — the second calibration is structurally required.
 
@@ -116,7 +116,7 @@ The cluster-mass identification of FTD-0110 (`N(A = 2√R) = R · m_e^{phys}/m_e
 
 ### 5.4 Updated calibration narrative for SPEC_FTD.md
 
-The current calibration declaration in `SPEC_FTD.md` ("LATTICE ↔ PHYSICAL CALIBRATION") declares two calibrations as design choices. With this theorem, the declaration becomes a **theorem-enforced minimum**: exactly two calibrations are required by the no-go, and any third calibration would over-determine the system.
+The current calibration declaration in `SPEC_FTD.md` ("LATTICE  PHYSICAL CALIBRATION") declares two calibrations as design choices. With this theorem, the declaration becomes a **theorem-enforced minimum**: exactly two calibrations are required by the no-go, and any third calibration would over-determine the system.
 
 Suggested SPEC_FTD update text:
 
@@ -178,7 +178,7 @@ Three independent closures from different directions all agree: the L₂ identit
 - LEDGER row FTD-0093 (Mechanism C closure): `docs/theory/07_assessment/core_ledgers/LEDGER.md`
 - LEDGER row FTD-0097 (look-elsewhere scan): `docs/theory/07_assessment/core_ledgers/LEDGER.md`
 - Open-item tracker: [`archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md`](archive/closed_negative/OPEN_MU_FROM_LP_MISSING_ARROW.md) — marked CLOSED RESOLVED-BY-THEOREM
-- SPEC_FTD calibration declaration: `docs/SPEC_FTD.md` (LATTICE ↔ PHYSICAL CALIBRATION section)
+- SPEC_FTD calibration declaration: `docs/SPEC_FTD.md` (LATTICE  PHYSICAL CALIBRATION section)
 - Sympathetic audit identifying this as closeable: `docs/theory/07_assessment/AUDIT_PAPER_SYMPATHETIC_2026-04-28.md`
 
 ---

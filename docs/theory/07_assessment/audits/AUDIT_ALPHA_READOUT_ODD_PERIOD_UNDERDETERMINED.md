@@ -18,7 +18,7 @@ The determinant-grading no-go (FTD-0233) showed: within the frozen ingredients (
 
 2. **GAP — the link to the operator determinant is unforced (OP3).** The readout operator `T` on `V_complex` is **finite** (2 eigenvalues `x₊ ≈ 137`, `x₋ ≈ 3`); the det_ζ ratio is a ratio of regularized determinants of two **infinite** S¹ progressions `{n+¼}`, `{n+¾}`. Numerically the det_ζ ratio is **G\* ≈ 2.96**, **not** the operator determinant **16G\*³ ≈ 414**, and `T`'s spectrum `{x₊, x₋}` is **not** the J-twisted spectrum `{n+¼}`. Relating them *requires asserting* `Det(T) = Tr(T) · (det_ζ ratio) = 16G*² · G* = 16G*³` — the **same "det = trace × G\*" factorization** the resolution docs assert, now in det_ζ clothing. FQCR Model I §7 *itself* disclaims deriving the master quadratic. No structural compulsion forces the identification → **OP3 fires → UNDERDETERMINED.**
 
-So the determinant grading is **more rescuable than the bare parity no-go suggested** (there is a clean odd source), but it is **not yet rescued** (the forced det↔det_ζ identity is missing). The ARC-C1/B2 "FOUND" remains an overclaim; honest status **UNDERDETERMINED**.
+So the determinant grading is **more rescuable than the bare parity no-go suggested** (there is a clean odd source), but it is **not yet rescued** (the forced detdet_ζ identity is missing). The ARC-C1/B2 "FOUND" remains an overclaim; honest status **UNDERDETERMINED**.
 
 ---
 
@@ -31,7 +31,7 @@ So the determinant grading is **more rescuable than the bare parity no-go sugges
 **Step 3 (the hinge) — fails.** Is `Det(T)` *structurally* the J-twisted ζ-regularized determinant? No:
 - `T` is finite-dimensional (degree-2 char poly, 2 eigenvalues); the det_ζ ratio is built from infinite spectra.
 - `det_ζ ratio = G* ≈ 2.96 ≠ Det(T) = 16G*³ ≈ 414`; and `spec(T) = {x₊, x₋} ≠ {n+¼}` (script §3).
-- A *transfer-operator ↔ ζ-regularized-determinant* correspondence is **suggestive** (determinants of infinite transfer operators are ζ-regularized in legitimate physics) but is **not exhibited** here for `T`; one must **assert** `Det(T) = Tr(T)·(det_ζ ratio)`. That assertion is the unforced factorization → **OP1/OP3**.
+- A *transfer-operator  ζ-regularized-determinant* correspondence is **suggestive** (determinants of infinite transfer operators are ζ-regularized in legitimate physics) but is **not exhibited** here for `T`; one must **assert** `Det(T) = Tr(T)·(det_ζ ratio)`. That assertion is the unforced factorization → **OP1/OP3**.
 
 **Step 5 — falsifier checklist:**
 
@@ -39,7 +39,7 @@ So the determinant grading is **more rescuable than the bare parity no-go sugges
 |---|---|---|
 | OP1 (assertion) | **YES** | `Det = Tr·G*` is still posited, not derived from `T`'s structure |
 | OP2 (M_N import) | no | `M_N` not imported |
-| **OP3 (unforced det↔det_ζ link)** | **YES (decisive)** | no structural reason `T`'s finite determinant *is* the infinite J-twisted det_ζ ratio |
+| **OP3 (unforced detdet_ζ link)** | **YES (decisive)** | no structural reason `T`'s finite determinant *is* the infinite J-twisted det_ζ ratio |
 | OP4 (prefactor) | **no** ✓ | the det_ζ ratio is clean — *this is the genuine advance* |
 | OP5 (insertion) | no | `G*` is *derived* via Model I `[THEOREM]`, not inserted as a value |
 | OP6 (CODATA) | no | none |
@@ -57,9 +57,9 @@ The J-twisted det_ζ ratio is a genuine, clean, forward, FTD-native odd-degree G
 
 ## 3 · The precise v2 target (what would make it FOUND)
 
-> **Prove (or refute) that the readout operator's determinant is the J-twisted ζ-regularized determinant of its own spectrum** — i.e. exhibit `T` as a (regularized) transfer operator whose ζ-regularized determinant *is* `det_ζ(D_{3/4})/det_ζ(D_{1/4})` content, so that `Det(T) = 16G*³` follows by a forced det↔det_ζ identity, not by assertion.
+> **Prove (or refute) that the readout operator's determinant is the J-twisted ζ-regularized determinant of its own spectrum** — i.e. exhibit `T` as a (regularized) transfer operator whose ζ-regularized determinant *is* `det_ζ(D_{3/4})/det_ζ(D_{1/4})` content, so that `Det(T) = 16G*³` follows by a forced detdet_ζ identity, not by assertion.
 
-Concretely, a v2 attempt should either (a) construct `T` as a genuine infinite-dimensional transfer operator whose spectrum carries the `{n+¼}`/`{n+¾}` J-twisted structure and whose ζ-regularized determinant therefore equals the Model I ratio; or (b) prove no such `T` exists with the right *finite* eigenvalues `{x₊, x₋}` simultaneously, which would convert this UNDERDETERMINED to CLOSED-NEGATIVE. The hinge is entirely the **det↔det_ζ structural identity**; everything else (the clean odd source, the absence of a prefactor, `16 = |μ₄|²`, `G*²` from Watson) is in hand.
+Concretely, a v2 attempt should either (a) construct `T` as a genuine infinite-dimensional transfer operator whose spectrum carries the `{n+¼}`/`{n+¾}` J-twisted structure and whose ζ-regularized determinant therefore equals the Model I ratio; or (b) prove no such `T` exists with the right *finite* eigenvalues `{x₊, x₋}` simultaneously, which would convert this UNDERDETERMINED to CLOSED-NEGATIVE. The hinge is entirely the **detdet_ζ structural identity**; everything else (the clean odd source, the absence of a prefactor, `16 = |μ₄|²`, `G*²` from Watson) is in hand.
 
 ---
 
@@ -69,9 +69,9 @@ Concretely, a v2 attempt should either (a) construct `T` as a genuine infinite-d
 |---|---|---|
 | `AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW` | the committed "FOUND" claims | overclaim; honest = **UNDERDETERMINED**; gap = the determinant's odd G\* power |
 | `AUDIT_..._DETERMINANT_GRADING_CLOSED_NEGATIVE` (FTD-0233) | frozen ingredients only | **CLOSED-NEGATIVE** — no odd source (parity); only `√Watson` (F4) |
-| `AUDIT_..._ODD_PERIOD_UNDERDETERMINED` (FTD-0234, this) | + J-twisted det_ζ | **UNDERDETERMINED** — clean odd source *exists* (det_ζ), but det↔det_ζ link unforced |
+| `AUDIT_..._ODD_PERIOD_UNDERDETERMINED` (FTD-0234, this) | + J-twisted det_ζ | **UNDERDETERMINED** — clean odd source *exists* (det_ζ), but detdet_ζ link unforced |
 
-**Consolidated honest reading:** the ARC-C1/B2 FOUND **overclaims** (the determinant grading is asserted, confirmed twice). But the EM-coupling readout is **closer to derivable than a flat no-go** — there is a clean, FTD-native odd-degree period (the J-twisted det_ζ ratio), and the entire remaining obstruction is one stated structural identity (`Det(T) ↔` J-twisted det_ζ). MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`, now with a **sharp, single-identity frontier.**
+**Consolidated honest reading:** the ARC-C1/B2 FOUND **overclaims** (the determinant grading is asserted, confirmed twice). But the EM-coupling readout is **closer to derivable than a flat no-go** — there is a clean, FTD-native odd-degree period (the J-twisted det_ζ ratio), and the entire remaining obstruction is one stated structural identity (`Det(T) ` J-twisted det_ζ). MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`, now with a **sharp, single-identity frontier.**
 
 Spine untouched: `x₊ = 1/α` (FTD-0013) `[STRONGLY MOTIVATED CONJECTURE]`; `G*`, master quadratic, coefficient 16 — unchanged. Contract §7 forbids tag moves before ARC-3 regardless.
 
@@ -79,8 +79,8 @@ Spine untouched: `x₊ = 1/α` (FTD-0013) `[STRONGLY MOTIVATED CONJECTURE]`; `G*
 
 ## 5 · Provenance & discipline
 
-- **Deferred commit (owner-authorized).** Pre-reg SHA `a5c97b73…` recorded in-session before the analysis; design (incl. the det↔det_ζ hinge as the locked question) frozen pre-attempt. Canonization: commit pre-reg first, verdict separately (B-9), independent review (B-10).
+- **Deferred commit (owner-authorized).** Pre-reg SHA `a5c97b73…` recorded in-session before the analysis; design (incl. the detdet_ζ hinge as the locked question) frozen pre-attempt. Canonization: commit pre-reg first, verdict separately (B-9), independent review (B-10).
 - **Compute, not recall.** All facts in `proof_odd_period_jtwisted.py` (6/6), cross-checked vs `constants.py` `G_STAR`.
-- **GTCA F9 (collusion bias) guarded.** The owner's hint pointed at a positive outcome; it was *partially* vindicated (clean odd source found) but **not** rubber-stamped into a FOUND — the unforced det↔det_ζ link (OP3) is reported honestly as the blocker. The verdict is the structural finding, not the prior.
+- **GTCA F9 (collusion bias) guarded.** The owner's hint pointed at a positive outcome; it was *partially* vindicated (clean odd source found) but **not** rubber-stamped into a FOUND — the unforced detdet_ζ link (OP3) is reported honestly as the blocker. The verdict is the structural finding, not the prior.
 
 *Progress and boundary, both mapped: a clean odd lemniscatic period is forward-available (the J-twisted det_ζ), and the EM-readout's closure now reduces to one provable-or-refutable structural identity.*

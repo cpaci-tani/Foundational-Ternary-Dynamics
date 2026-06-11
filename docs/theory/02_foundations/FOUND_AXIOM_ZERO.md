@@ -276,7 +276,7 @@ The roots are:
 
 **The discriminant trichotomy** [THEOREM]: The generalized master quadratic $x^2 - kG^{*2}x + kG^{*3} = 0$ has discriminant $\Delta = kG^{*3}(kG^* - 4)$. One quadratic, three regimes:
 
-- $\Delta > 0$ ($k = 16$, physical): **real roots** — bosonic sector (the larger root $x_+$ identified with $1/\alpha$, [STRONGLY MOTIVATED CONJECTURE]; the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$, with the historical `x_- ↔ N_c` identification **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`)
+- $\Delta > 0$ ($k = 16$, physical): **real roots** — bosonic sector (the larger root $x_+$ identified with $1/\alpha$, [STRONGLY MOTIVATED CONJECTURE]; the smaller root $x_- \approx 3.024$ is a mathematical artifact of $P(x)$, with the historical `x_-  N_c` identification **RETIRED** per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`)
 - $\Delta = 0$ ($k = 4/G^*$, critical): **degenerate root** — the Born rule / measurement boundary
 - $\Delta < 0$ ($k < 4/G^*$): **complex roots** — the Dirac equation emerges; complex roots $x = a \pm bi$ yield $e^{ibt}$ oscillations, which IS the fermion wavefunction. The fermion sector is not imported from external physics — it is derived from the complex regime of the same master quadratic that produces $\alpha$.
 
@@ -352,7 +352,7 @@ The polynomial is **not** the L → ∞ limit of any finite-L self-consistency e
 - An explicit L=2 partition-function calculation (`DERIV_PARTITION_FUNCTION_L2.md`) shows the action is ultralocal at finite L and carries no master-quadratic signature.
 - The undefined-boundary ontology (`AUDIT_INFINITY_REFRAME.md`) does not admit "L → ∞" as a load-bearing step.
 
-What the polynomial is: an algebraic object that the lattice produces from local invariants. What it predicts: x₊ matches 1/α to 1.26 ppm and x₋ matches N_c to 0.8%. The physical identification x₊ ↔ 1/α, x₋ ↔ N_c rests on (i) the dual match across two unrelated physical constants from one polynomial, and (ii) the structural uniqueness of E among class-number-1 CM curves in giving this match (Option 3 scan). Both are evidential. Neither is a dynamical derivation. The identification is [STRONGLY MOTIVATED CONJECTURE].
+What the polynomial is: an algebraic object that the lattice produces from local invariants. What it predicts: x₊ matches 1/α to 1.26 ppm and x₋ matches N_c to 0.8%. The physical identification x₊  1/α, x₋  N_c rests on (i) the dual match across two unrelated physical constants from one polynomial, and (ii) the structural uniqueness of E among class-number-1 CM curves in giving this match (Option 3 scan). Both are evidential. Neither is a dynamical derivation. The identification is [STRONGLY MOTIVATED CONJECTURE].
 
 **Update (April 2026):** The coefficient 16 is now [THEOREM] via FOUND_DIMENSIONAL_COUNTING.md Section 5.4: n_DOF = z_BCC x 2 = 8 x 2 = 16 (BCC coordination number times non-void ternary states). This derivation is complementary to the |Aut(E)|^2 = 16 route from the CM curve's automorphism group. The finite-torus DOF discrepancy (14 vs 16 in Coulomb gauge) remains a separate technical issue documented in DERIV_WATSON_GSTAR_IDENTITY.md Section 4.2.
 
@@ -771,7 +771,7 @@ Level 5: G* = Γ(1/4)/Γ(3/4), ϖ = Γ(1/4)²/(2√(2π))   [THEOREM]
 Level 6: 16 = 2^D(D-1)! → D = 3                     [THEOREM]
 Level 7: Z[i]³ → Moore-26 = 6+12+8 decomposition    [THEOREM]
 Level 8: Master quadratic x² − 16G*²x + 16G*³ = 0    [SELECTION S1]
-Level 9: x₊ ↔ 1/α                                    [SMC physical identification (FTD-0013); algebraic roots theorem-level. x₋ ↔ N_c RETIRED v1.4 §5; LEDGER FTD-0014 removed in commit ca7eb61. N_c=3 independently sourced.]
+Level 9: x₊  1/α                                    [SMC physical identification (FTD-0013); algebraic roots theorem-level. x₋  N_c RETIRED v1.4 §5; LEDGER FTD-0014 removed in commit ca7eb61. N_c=3 independently sourced.]
 Level 10: Ladder walk {4,3,3,6} sums to 16          [THEOREM]
 Level 11: Walk ordering → particle scales           [SELECTION S2]
 Level 12: Lepton masses, m_H, m_p/m_e, etc.         [THEOREM from 11]

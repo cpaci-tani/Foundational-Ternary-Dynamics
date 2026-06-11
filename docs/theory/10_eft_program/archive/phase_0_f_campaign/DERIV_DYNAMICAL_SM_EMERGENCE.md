@@ -34,7 +34,7 @@
 |---|---|---|---|
 | 4A Dynamical EWSB | Branch A if ⟨\|J\|⟩ stable + W/Z mass gap at 10% of M_W, Branch B if not | ⟨\|J\|⟩ = 0.48 × initial; no charges | **Branch B** — stays [SELECTION] |
 | 4B Three-generation dynamical emergence | 12 species if topological claim holds dynamically | 0 species manifested in 1 000 ticks | **Null result**: does not support dynamical claim |
-| 4C Continuum α_eff(∞) | 1/137.036 ± 1% | 0.0214, ratio 2.94× | **⚠ closer than Phase 2C, but 3× too large** |
+| 4C Continuum α_eff(∞) | 1/137.036 ± 1% | 0.0214, ratio 2.94× | ** closer than Phase 2C, but 3× too large** |
 
 Per the pre-registration rules: none of these outcomes has been
 adjusted to match expectations. Branch B was explicitly pre-committed
