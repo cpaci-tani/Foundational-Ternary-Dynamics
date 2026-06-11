@@ -275,11 +275,31 @@ engine/cuda/einstein
 engine/cuda/einstein_gpu
 
 # Scripts result artifacts (regenerable from each generator script).
+# NOTE: these globs match only direct children; the whole-dir rule in the
+# 2026-06-11 cleanup block below also catches nested result subtrees.
 scripts/exploration/results/*.csv
 scripts/exploration/results/*.md
 scripts/exploration/results/*.txt
 scripts/experiments/results/
 scripts/visualization/results/3d_models/
+
+# === 2026-06-11 professional public-facing cleanup ===
+# Campaign/exploration outputs are local-only by policy: reproducibility comes
+# from the pre-registration git tags + frozen script SHAs (REF_PREREGISTER_
+# MANIFEST.md), not from committing regenerable data dumps. Source scripts
+# (.py/.c) and the curated scripts/exploration/outputs/ keepers stay tracked.
+
+# Root-level run scratch / telemetry / plots (campaign byproducts)
+/*_telemetry.csv
+/*_out.txt
+/*.png
+/clean_gitignore.py
+
+# Top-level exploration run dumps + nested result subtrees
+scripts/exploration/results/
+scripts/exploration/*.txt
+scripts/exploration/*.csv
+scripts/exploration/*.png
 
 # Compiled Windows binaries.
 *.exe
