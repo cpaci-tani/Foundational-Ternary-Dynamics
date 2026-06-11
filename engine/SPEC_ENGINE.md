@@ -61,7 +61,7 @@ Both status / correction only — no architecture or physics changes.
 
 ### 2026-05-09 — BH-F* GPU plumbing sweep + RNG portability (Option A)
 
-Multi-week GPU-port effort consolidating CPU↔GPU parity across the BH
+Multi-week GPU-port effort consolidating CPUGPU parity across the BH
 feature batch. Centerpiece: a shared portable RNG that makes GPU outputs
 bit-exact with the CPU path for stochastic toggles.
 
@@ -73,16 +73,16 @@ bit-exact with the CPU path for stochastic toggles.
   the CPU, giving per-voxel bit-exact parity at unit mass under Langevin
   / stochastic toggles. The anchor for all subsequent GPU campaign work.
 - **BH-F2** γ_FTD momentum integration ported to GPU (`2504c9b`).
-- **BH-F3** CPU↔GPU `accel_mag` definition unified (`10f00f9`).
+- **BH-F3** CPUGPU `accel_mag` definition unified (`10f00f9`).
 - **BH-F12** `emergent_forces` mode ported to GPU (`c887948`).
-- Prior CPU↔GPU parity bug-hunt (`f2a721a`, F1/F4/F6) + locked-particle
+- Prior CPUGPU parity bug-hunt (`f2a721a`, F1/F4/F6) + locked-particle
   skip in `phase_forces_kernel` (`2fa326f`) + `inject_flux_cpu`
   `flush_host_mutations` fix (`843c6f6`).
 - Toggle cleanup: `toggles.evaporation` flag with dual-path propagation
   (`255c1dd`); dead `wv_x/y/z` params removed from `phase_movement_kernel`
   (`2881238`); `ALPHA == ALPHA_EFT` vestigial comments dropped (`56985a4`).
 
-Net: the BH feature batch now has uniform CPU↔GPU parity and a portable
+Net: the BH feature batch now has uniform CPUGPU parity and a portable
 deterministic RNG. WSL2 GPU re-verification of the new ports is on the
 standing queue.
 
@@ -97,7 +97,7 @@ exploratory ctest targets, paired with an effort to drive pass rate to 100%.
 - **Round 4** (`08c517e`): −5397 LOC, 30 Phase B exploratory tests
   (cluster_persistence arc consolidation under FTD-0136).
 - **`ftd_eft` static library extracted** (`11c7212`): fixes a circular
-  `ftd_core ↔ ftd_cuda` link-order issue; unblocks 42 previously Not-Run
+  `ftd_core  ftd_cuda` link-order issue; unblocks 42 previously Not-Run
   tests.
 - **100% pass at WSL2** (`c62ae8e`, `3c8dda0`): GPU energy 0.5-factor fix
   + 13 individual test fixes + maxwell M1b/M5a fixes; 6 multi-hour
@@ -265,7 +265,7 @@ Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered seq
 | 1.7 | GPU-path `EnergyLedger` | Hook needed | `tick()`'s GPU path now calls `gpu_sync_to_host()` + `update_energy_ledger()` |
 | 1.9 | Muon / tau spatial seeds | JS feature | Two new scale-0 scenarios (`s0-seed-muon`, `s0-seed-tau`) with full epistemic metadata |
 
-**All six viable engine opens are now ✅ CLOSED.** Three remaining §1 items are explicitly `[BLOCKED]` (DagEngine stubs, dynamical SU(3), δ_c closed form) on upstream work. See [`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) for the full ledger.
+**All six viable engine opens are now  CLOSED.** Three remaining §1 items are explicitly `[BLOCKED]` (DagEngine stubs, dynamical SU(3), δ_c closed form) on upstream work. See [`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`](../docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) for the full ledger.
 
 ### April 17, 2026: Open items tracker + cleanup sweep
 - **`docs/theory/07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`** — new canonical ledger of every `[OPEN]` across engine code, theory derivations, foundations, particles, reference frame context, math connections, and bridges. 275 occurrences across 83 files, organised + auto-refreshable.
@@ -1320,7 +1320,7 @@ ftd_core (C++ library)
 
 ```
 +----------------------------------------------------------------+
-|  FTD Engine v2.14     [Engine ▼]                     [⚙]       |  Toolbar
+|  FTD Engine v2.14     [Engine ▼]                     []       |  Toolbar
 +----------------------------------------------------------------+
 |                                    [Visualization ▾]           |  Overlay (collapsible)
 |                                     VOLUME  FIELDS  FORCES     |
@@ -1330,8 +1330,8 @@ ftd_core (C++ library)
 |         (particles, wireframe, field overlays)                  |
 |                                                                 |
 |   ┌──────────────────── Scrub Bar ────────────────────┐         |
-|   │ [▶] [▷] [⏵] [↺] │ Speed─●─ │ ⟲ [──timeline──] t  │         |
-|   │  global  local            │       Render ⚙     │         |
+|   │ [] [▷] [⏵] [↺] │ Speed─●─ │ ⟲ [──timeline──] t  │         |
+|   │  global  local            │       Render      │         |
 |   └─────────────────────────────────────────────────────┘      |
 +----+----+-----+----+----+----+----+----+-----------------------+
 | Ctrl|Diag|Chart|Lag |Insp|Zoo |Hrk |QL  | Dock tabs            |

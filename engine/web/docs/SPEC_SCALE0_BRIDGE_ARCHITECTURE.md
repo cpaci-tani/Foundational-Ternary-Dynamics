@@ -77,7 +77,7 @@ The canonical in-browser path. `init(latticeSize)` (`:116-142`) loads the WASM m
 
 ### 2.3 MockBridge — pure JS (`bridge/mock-bridge.js`)
 
-The reference physics implementation: offline testing, JS↔C++ parity, and the Scale-2/3 fallback.
+The reference physics implementation: offline testing, JSC++ parity, and the Scale-2/3 fallback.
 `ready` immediately (no async init); snaps even lattice sizes to odd. Internal state: `_tick`,
 `_dt`, `_particles[]`, and the flux buffers `_fluxJ`/`_fluxWV` (Float64×3), `_fluxMag` (Float64),
 `_stateGrid` (Int8) allocated by `_initFluxGrid` — backed by `SharedArrayBuffer`s when `_useSAB`

@@ -14,7 +14,7 @@ direct per-frame profile (below), not assumptions. Two complementary phases:
 
 ## 1. Problem & evidence (measured 2026-06-03, Chrome/wasm64, default `flux-pulse`, 14 overlays active)
 
-> **⚠ Superseded for the worker-mode + all-panels-live case (2026-06-05).** This table predates two
+> ** Superseded for the worker-mode + all-panels-live case (2026-06-05).** This table predates two
 > things: (a) the worker became the default Scale-0 path (so the tick is *off* the main thread, inverting
 > the "tick dominates" accounting), and (b) the energy-audit + Lagrangian sidepanels were wired live, which
 > added an unconditional O(N³) audit pass **every worker tick** (~14 ms/tick at L=97, measured). That
@@ -190,11 +190,11 @@ path stays on the main thread (out of scope, already fast).
 ```
 main thread                              worker thread
 ───────────                              ─────────────
-MockBridgeProxy  ──commands(postMessage)──▶  MockBridge (authoritative, sparse tick)
+MockBridgeProxy  ──commands(postMessage)──  MockBridge (authoritative, sparse tick)
   · shadow {_fluxJ,_fluxWV,_fluxMag,        │  runs tickScale0() on its own cadence
      _stateGrid,_particles,latticeSize,     │
      _boundaryMask}                          ▼
-  · samplers/getFluxVolume/diagnostics  ◀──field frame (SAB or transferable)
+  · samplers/getFluxVolume/diagnostics  ──field frame (SAB or transferable)
     run on the shadow (already buffer-based)
 ```
 
@@ -227,7 +227,7 @@ worker for reads. (This is why §1 measured reads at ~0 ms — they stay ~0.)
 
 ### 4.5 Hard parts (call out explicitly)
 
-- **~~Timeline / scrubbing.~~** ❌ **No longer applicable (2026-06-05).** The scrub-back / timeline
+- **~~Timeline / scrubbing.~~**  **No longer applicable (2026-06-05).** The scrub-back / timeline
   feature was removed — the simulation is forward-only (single time source). There is no memory
   recorder and no "display-frozen vs live" state to reconcile, which *removes* what was the riskiest
   worker seam. The only freeze state the proxy forwards is plain pause (`setRunning(false)`). See

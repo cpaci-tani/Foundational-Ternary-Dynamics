@@ -70,13 +70,13 @@ FTD-specific vocabulary with one-line definitions. Canonical symbol list: `docs/
 
 ## Relationships to standard physics
 
-- **Flux J** ↔ vector potential A (gauge-fixed, Coulomb gauge)
-- **∇·J** ↔ charge density ρ (Gauss's law is a constraint, not a consequence, in FTD)
-- **|J|² = |J_L|² + |J_R|²** ↔ |ψ|² (Born rule at Tier 1)
-- **arg(J_L + i J_R)** ↔ quantum phase φ
-- **Ternary state s** ↔ particle presence + sign of charge
-- **Moore neighborhood** ↔ gauge-group origin (see above)
-- **Lattice spacing 2/D** ↔ UV cutoff in φ³ EFT
+- **Flux J**  vector potential A (gauge-fixed, Coulomb gauge)
+- **∇·J**  charge density ρ (Gauss's law is a constraint, not a consequence, in FTD)
+- **|J|² = |J_L|² + |J_R|²**  |ψ|² (Born rule at Tier 1)
+- **arg(J_L + i J_R)**  quantum phase φ
+- **Ternary state s**  particle presence + sign of charge
+- **Moore neighborhood**  gauge-group origin (see above)
+- **Lattice spacing 2/D**  UV cutoff in φ³ EFT
 
 ## Cross-references
 

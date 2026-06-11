@@ -14,7 +14,7 @@
 
 **ISOTROPIC** within the diagnostic tolerances.
 
-- xy ↔ xz anisotropy-ratio max difference: `0.000e+00` (4-fold symmetry around seed axis)
+- xy  xz anisotropy-ratio max difference: `0.000e+00` (4-fold symmetry around seed axis)
 - yz transverse anisotropy max |ratio−1|: `1.758e-02` (azimuthal isotropy)
 
 ## Per-plane diagnostics

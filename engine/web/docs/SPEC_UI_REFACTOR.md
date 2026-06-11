@@ -852,16 +852,16 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 0 | Shell JS/CSS skeleton, AppShell instantiated in `app.js` | ✅ Done |
-| 1 | Shared CSS primitives (button, toggle, slider, card, etc.) | ✅ Done |
-| 2 | Shell components extracted (topbar, panel-dock, workspace-tabs, loading-overlay, viewport-frame) | ✅ Done |
-| 3 | Registry-based panel system (toolbar-registry, panel-registry, overlay-registry) | ✅ Done |
-| 4 | Shared panel wrappers (all 13 panels) | ✅ Done — all panels have `component.js` + owned CSS stub |
-| 5 | Viewport overlay component extracted | ✅ Done — `js/ui/components/viewport-overlays/component.js` |
-| 6 | Scale toolbar contributions registered | ✅ Done — all scales have `register-scaleN-ui.js` + `toolbar/component.js` |
-| 7 | Scale 0 pilot migration | ✅ Done — `scales/scale0/ui/` fully componentized |
-| 8 | Remaining scale migrations (1–5, 11, 12) | ✅ Done — all scales have `register-scaleN-ui.js`, toolbar, controls, overlays |
-| 9 | Retire transitional buckets (`layout.css`, `components.css`) | ✅ Done — `components.css` deleted earlier; `layout.css` stubbed 2026-04-16 (rules migrated to `tokens.css`, `scale-visibility.css`, `themes/*.css`, `css/ui/shell/responsive.css`, `css/ui/components/*`) |
+| 0 | Shell JS/CSS skeleton, AppShell instantiated in `app.js` |  Done |
+| 1 | Shared CSS primitives (button, toggle, slider, card, etc.) |  Done |
+| 2 | Shell components extracted (topbar, panel-dock, workspace-tabs, loading-overlay, viewport-frame) |  Done |
+| 3 | Registry-based panel system (toolbar-registry, panel-registry, overlay-registry) |  Done |
+| 4 | Shared panel wrappers (all 13 panels) |  Done — all panels have `component.js` + owned CSS stub |
+| 5 | Viewport overlay component extracted |  Done — `js/ui/components/viewport-overlays/component.js` |
+| 6 | Scale toolbar contributions registered |  Done — all scales have `register-scaleN-ui.js` + `toolbar/component.js` |
+| 7 | Scale 0 pilot migration |  Done — `scales/scale0/ui/` fully componentized |
+| 8 | Remaining scale migrations (1–5, 11, 12) |  Done — all scales have `register-scaleN-ui.js`, toolbar, controls, overlays |
+| 9 | Retire transitional buckets (`layout.css`, `components.css`) |  Done — `components.css` deleted earlier; `layout.css` stubbed 2026-04-16 (rules migrated to `tokens.css`, `scale-visibility.css`, `themes/*.css`, `css/ui/shell/responsive.css`, `css/ui/components/*`) |
 
 ### Pending work
 
@@ -869,20 +869,20 @@ Scale 0 should be the pilot because it already has the strongest modularization 
 
 ### Completed this session (2026-04-16)
 
-- ✅ Status bar styling — `css/ui/components/status-bar.css`; the unused JS wrapper was retired during the 2026-06-04 dead-code cleanup
-- ✅ All 9 missing panel components — `inspector-panel`, `zoo-panel`, `ontic-panel`, `physics-panel`, `planetary-panel`, `hierarchy-panel`, `cosmic-info-panel`, `meta-info-panel`, `quantum-lab-panel` (each with `component.js` + CSS stub in `css/ui/panels/`)
-- ✅ `js/ui/panels/index.js` updated to export all 13 panels
-- ✅ Playwright breakpoint tests — `tablet` at 768×1024, `desktop` at 1280×800
-- ✅ Status bar CSS migrated out of `layout.css` → `css/ui/components/status-bar.css`
-- ✅ Telemetry Hub — `js/telemetry-hub.js` owns all ring buffers and bridge calls
-- ✅ **Charts panel** componentized — `js/ui/panels/charts-panel/{component.js,template.js}`; `<div id="panel-charts">` in `index.html` reduced to empty mount root
-- ✅ **Lagrangian panel** componentized — `js/ui/panels/lagrangian-panel/{component.js,template.js}`; mount root only in `index.html`
-- ✅ **Reference frame context panel** componentized — `js/ui/panels/reference frame context-panel/{component.js,template.js}`; 140 lines of subtab/canvas markup removed from `index.html`
-- ✅ **Settings modal** componentized — `js/ui/components/settings-modal/{component.js,template.js}`; mounted by `initSettingsModal()` in `app.js`, 80 lines of theme swatches + scale slider removed from `index.html`
-- ✅ **`index.html` shrunk** from 516 → 187 lines (−64%)
-- ✅ **`layout.css` retired** — content migrated: accessibility + theme transitions + `#app` root → `tokens.css`; theme-specific `.card` rules → `themes/{light,parchment}.css`; legacy class-based scale-visibility rules dropped (redundant with `data-active-scale` canonical rules + JS `applyScaleFilter`). File kept as a stub so cached HTML continues to 200 OK.
-- ✅ Browser verification — preview boot clean (0 console errors, 40/40 stylesheets load), scale switching (Scale 0 → Scale 11) preserves correct tab filtering, panel mounts, and viewport rendering
-- ✅ **Scale 0 controls fully modularised** — all Scale 0 control-panel wiring moved out of `app.js` into a dedicated [scales/scale0/ui/controls/wire.js](../js/scales/scale0/ui/controls/wire.js):
+-  Status bar styling — `css/ui/components/status-bar.css`; the unused JS wrapper was retired during the 2026-06-04 dead-code cleanup
+-  All 9 missing panel components — `inspector-panel`, `zoo-panel`, `ontic-panel`, `physics-panel`, `planetary-panel`, `hierarchy-panel`, `cosmic-info-panel`, `meta-info-panel`, `quantum-lab-panel` (each with `component.js` + CSS stub in `css/ui/panels/`)
+-  `js/ui/panels/index.js` updated to export all 13 panels
+-  Playwright breakpoint tests — `tablet` at 768×1024, `desktop` at 1280×800
+-  Status bar CSS migrated out of `layout.css` → `css/ui/components/status-bar.css`
+-  Telemetry Hub — `js/telemetry-hub.js` owns all ring buffers and bridge calls
+-  **Charts panel** componentized — `js/ui/panels/charts-panel/{component.js,template.js}`; `<div id="panel-charts">` in `index.html` reduced to empty mount root
+-  **Lagrangian panel** componentized — `js/ui/panels/lagrangian-panel/{component.js,template.js}`; mount root only in `index.html`
+-  **Reference frame context panel** componentized — `js/ui/panels/reference frame context-panel/{component.js,template.js}`; 140 lines of subtab/canvas markup removed from `index.html`
+-  **Settings modal** componentized — `js/ui/components/settings-modal/{component.js,template.js}`; mounted by `initSettingsModal()` in `app.js`, 80 lines of theme swatches + scale slider removed from `index.html`
+-  **`index.html` shrunk** from 516 → 187 lines (−64%)
+-  **`layout.css` retired** — content migrated: accessibility + theme transitions + `#app` root → `tokens.css`; theme-specific `.card` rules → `themes/{light,parchment}.css`; legacy class-based scale-visibility rules dropped (redundant with `data-active-scale` canonical rules + JS `applyScaleFilter`). File kept as a stub so cached HTML continues to 200 OK.
+-  Browser verification — preview boot clean (0 console errors, 40/40 stylesheets load), scale switching (Scale 0 → Scale 11) preserves correct tab filtering, panel mounts, and viewport rendering
+-  **Scale 0 controls fully modularised** — all Scale 0 control-panel wiring moved out of `app.js` into a dedicated [scales/scale0/ui/controls/wire.js](../js/scales/scale0/ui/controls/wire.js):
   - **18 physics toggles** (previously 14 were wired in `app.js` and 4 new ones — `t-color-forces`, `t-strong-force`, `t-exchange`, `t-weak` — existed in the markup but had no event handlers; now all wired from `SCALE0_TOGGLES` config as the single source of truth)
   - **Injection controls** (`inj-state-pos/neg`, `inj-x/y/z`, `btn-center`, `btn-random`, `btn-inject`, `btn-inject-wave`, `btn-inject-flux`, `btn-inject-pair`)
   - **Parameter sliders** (`combo-kb`, `combo-gn`, `combo-damp`)

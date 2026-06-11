@@ -2,7 +2,7 @@
 
 > **Status: `[IMPLEMENTED + VERIFIED]` 2026-06-03.** All 6 tasks landed — SAB-backed buffers, the worker (`mock-bridge.worker.js`), the proxy + shadow (`mock-bridge-proxy.js`), live wiring (scenario-loader `workerEligible` + tick.js), the scrubbing seam (recorder feed + snapshot capture/restore), and the worker spec (`scale0-worker.spec.js`) + caching-COOP test server (`serve.py --cache`). Verified live: the main-thread per-frame cost at L=145 dropped ~80× (127 ms → 1.6 ms); the worker self-ticks ~60 fps in a foreground tab; in-thread fallback intact on non-isolated browsers. **Follow-ups:** (a) a separate Playwright project to run `scale0-worker.spec.js` against `serve.py --cache` in CI (it skips on the default http.server suite); (b) the deploy host must send COOP/COEP for the worker path (else graceful in-thread fallback); (c) the `p1-observables-panel` console throw (auto-handled — investigate); (d) verify particle-derived overlays (genesis/annihilation) under the worker's particle frame.
 
-> **⚠ Superseded in part (2026-06-05):** the **scrubbing / timeline seam** built under this plan
+> ** Superseded in part (2026-06-05):** the **scrubbing / timeline seam** built under this plan
 > (Task 5; the recorder feed + snapshot capture/restore) was **removed wholesale**. The simulation is
 > now forward-only — the engine tick is the single time source, there is no reverse/scrub. Every
 > reference below to scrubbing, `getScale0Snapshot`/`loadScale0Snapshot`, the `MemoryRecorder`, the
@@ -306,7 +306,7 @@ export function workerEligible(scenarioId, bridge) {
 
 ---
 
-## Task 5: Scrubbing / timeline seam — ❌ REMOVED (2026-06-05)
+## Task 5: Scrubbing / timeline seam —  REMOVED (2026-06-05)
 
 > **Removed.** This seam was built (2026-06-03) and then removed wholesale on 2026-06-05: the
 > simulation is now forward-only (the engine tick is the single time source). The snapshot
@@ -327,7 +327,7 @@ export function workerEligible(scenarioId, bridge) {
 
 **Files:** Modify `tests/playwright.config.js`; create `tests/scale0-worker.spec.js`.
 
-- [ ] **Step 1:** The worker tests need cross-origin isolation (SAB) **and** caching. ⚠ Observed 2026-06-03: pointing `webServer.command` at the existing `serve.py` (COOP/COEP **but no-cache**) makes Playwright's per-test fresh page loads re-fetch+recompile the large wasm64 binary, so `gotoAndReady`'s `window._ftdBridge` wait times out (resize-guard + flux-slice went from green → 25s timeout). Fix: add a **caching COOP/COEP test server** — either (a) a `--cache` flag on `serve.py` that omits the `no-store`/`Pragma`/`Expires` headers while keeping COOP/COEP/CORP, then set `command: 'python serve.py 8081 --cache'`; or (b) a small dedicated test server. Confirm `crossOriginIsolated === true` in a test AND that `gotoAndReady` stays well under timeout. (The dev preview keeps the no-cache `serve.py` — only Playwright's many fresh loads need caching.)
+- [ ] **Step 1:** The worker tests need cross-origin isolation (SAB) **and** caching.  Observed 2026-06-03: pointing `webServer.command` at the existing `serve.py` (COOP/COEP **but no-cache**) makes Playwright's per-test fresh page loads re-fetch+recompile the large wasm64 binary, so `gotoAndReady`'s `window._ftdBridge` wait times out (resize-guard + flux-slice went from green → 25s timeout). Fix: add a **caching COOP/COEP test server** — either (a) a `--cache` flag on `serve.py` that omits the `no-store`/`Pragma`/`Expires` headers while keeping COOP/COEP/CORP, then set `command: 'python serve.py 8081 --cache'`; or (b) a small dedicated test server. Confirm `crossOriginIsolated === true` in a test AND that `gotoAndReady` stays well under timeout. (The dev preview keeps the no-cache `serve.py` — only Playwright's many fresh loads need caching.)
 - [ ] **Step 2:** Write `scale0-worker.spec.js`: (a) on a flux scenario the proxy is used (`__ftdState.fluxMock.isWorker === true`); (b) the worker frame counter advances over ~1 s (physics runs); (c) the shadow flux field is populated; (d) field **parity**: a short worker run vs an in-thread `MockBridge` run from the same seed match within tolerance (the worker self-ticks on wall-clock, so compare field *structure*/energy, not bit-exact tick counts); (e) resize + scrub + mode-switch leave no leaked worker (`__ftdRAF` + a worker-count probe).
 - [ ] **Step 3:** Run the full Scale-0 suite under `serve.py` (toggle-coverage, scenario-parity, wasm-scenario-coverage, flux-slice-axes, scale0-resize-guard, scale0-sparse-tick, scale0-worker) → all green. Flip nothing else; `FTD_PHYSICS_WORKER` stays on for SAB-capable browsers, off elsewhere via `workerEligible`. Commit (on go-ahead).
 

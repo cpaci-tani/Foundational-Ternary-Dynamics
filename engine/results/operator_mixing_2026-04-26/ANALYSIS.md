@@ -317,7 +317,7 @@ The s² diagonal entry comes out to **integer 8.0 = 2³ = b³**, with bootstrap 
 
 The factor of 8 IS the b³ cell-volume scaling — `M_stateSq,stateSq = b³ = 8`. Per-step Δ = D − log₂(8) = 4 − 3 = 1. **This is the trivial scaling of an integrated, volume-weighted operator.** The non-trivial s² physics enters through the OFF-DIAGONAL entries of column 6 (how flux operators feed into s² under blocking).
 
-## C.4 — Asymmetric flux↔state mixing (physical finding)
+## C.4 — Asymmetric fluxstate mixing (physical finding)
 
 The 6×6 matrix has an extreme asymmetry between row 6 (s² → flux) and column 6 (flux → s²):
 
@@ -335,7 +335,7 @@ This asymmetry is the cleanest *structural* finding from FTD-0100 and the most d
 | Does the canonical FTD-0098 ensemble (3×K_GENESIS) saturate s²? | YES (every snapshot reaches identical <s²>) |
 | Does any (burn, inj-mult, lT) parameter combination unlock s²? | YES (`inj-mult=1.0`; also `lT=0.05` partially) |
 | Does the 6×6 measurement land at [MEASUREMENT]? | NO — still [PARTIAL] (10/36 entries < 30% rel-err vs 30/36 threshold) |
-| Does the 6×6 reveal new physics not visible in 5×5? | YES — asymmetric flux↔state mixing, M_stateSq,stateSq = b³ trivial scaling, 4 positive Wilson eigenvalues |
+| Does the 6×6 reveal new physics not visible in 5×5? | YES — asymmetric fluxstate mixing, M_stateSq,stateSq = b³ trivial scaling, 4 positive Wilson eigenvalues |
 | Should the canonical mixing-matrix campaign use inj-mult=1.0 going forward? | RECOMMENDED — captures full 6×6 structure; FTD-0098 over-saturated |
 
 **F2 closes [POSITIVE]**: the s² zero-variance degeneracy is not a fundamental feature of FTD; it's a parameter-regime artifact of the FTD-0098 baseline (3×K_GENESIS over-injection). Injecting at the genesis threshold (1×K_GENESIS) puts the system on the boundary where s² fluctuates and the full 6×6 mixing matrix becomes measurable.

@@ -1,4 +1,4 @@
-# RNG Portability Design — CPU↔GPU Bit-Exact Stochastic Operations
+# RNG Portability Design — CPUGPU Bit-Exact Stochastic Operations
 
 **Status:** [DESIGN — awaiting implementation choice]
 **Date:** 2026-05-05
@@ -6,7 +6,7 @@
 
 ## Problem statement
 
-The 2026-05-04 bug-hunt audit (commit `f2a721a`) flagged three deferred CPU↔GPU parity bugs whose root cause is shared:
+The 2026-05-04 bug-hunt audit (commit `f2a721a`) flagged three deferred CPUGPU parity bugs whose root cause is shared:
 
 - **BH-F5** — evaporation Boltzmann probability uses different RNG streams: CPU `voxel_uniform()` (SplitMix64) at `engine/src/render_bridge_phases/phase_write.cpp:53-64`; GPU `curandGenerateUniformDouble` (Philox4_32_10 internally) at `engine/cuda/gpu_engine.cu:256`.
 - **BH-F8** — genesis spin fallback (when curl is zero, spin is chosen randomly): CPU at `phase_write.cpp:104-106`; GPU has no equivalent fallback at all (it leaves spin uninitialised on the genesis-with-zero-curl path).
@@ -16,7 +16,7 @@ All three boil down to: **the same physical operation reads different random str
 
 ## Two options
 
-The choice is structural — it determines whether "CPU↔GPU bit-exact at unit mass" extends to stochastic operations or stays a property only of the deterministic core.
+The choice is structural — it determines whether "CPUGPU bit-exact at unit mass" extends to stochastic operations or stays a property only of the deterministic core.
 
 ### Option A — bit-exact via shared SplitMix64
 
@@ -39,7 +39,7 @@ double voxel_uniform_d(uint64_t seed, int voxel_idx, int tick, uint64_t salt) {
 Salt enum (`VoxelRng::GenesisManifest = 1`, `GenesisSpin = 2`, `Evaporation = 3`) lives in a shared header consumed by both CPU and GPU. New stochastic kernels add a new salt value; CPU and GPU automatically agree.
 
 **Pros:**
-- Per-voxel CPU↔GPU bit-exact agreement at unit mass for all stochastic operations.
+- Per-voxel CPUGPU bit-exact agreement at unit mass for all stochastic operations.
 - Eliminates the per-tick `curandGenerateUniformDouble` call + the `bufs_.d_random` buffer (modest perf win — one cudaMalloc-equivalent + one kernel launch saved per tick when langevin is off; offset by `voxel_uniform_d` being inline per thread).
 - Removes a hidden dependency on cuRAND's internal version-specific state advancement.
 - Aligns with FTD's "deterministic logic-first" project philosophy and CLAUDE.md's epistemic discipline.
@@ -61,7 +61,7 @@ Keep cuRAND Philox on GPU. Document that CPU and GPU stochastic operations agree
 - **Per-voxel assertions** in `gpu_parity_complete` and similar tests: replace with **ensemble assertions** — total manifest count over T ticks within ±5%, charge balance within ±3, mean particle lifetime within 10%.
 - **Bit-exact gates** like the golden hash: confirm they don't run with stochastic toggles ON. If they do (current state: `genesis = true` is a default but the golden test seed is fixed across CPU/GPU runs), audit and either pin to one backend or relax the gate.
 
-Add a CONVENTION note to `engine/SPEC_ENGINE.md`: "CPU and GPU diverge at per-voxel level for any operation that reads `voxel_uniform()` (CPU) or cuRAND state (GPU). Statistical agreement is asserted at ensemble level. Tests that need bit-exact CPU↔GPU agreement must disable all stochastic toggles."
+Add a CONVENTION note to `engine/SPEC_ENGINE.md`: "CPU and GPU diverge at per-voxel level for any operation that reads `voxel_uniform()` (CPU) or cuRAND state (GPU). Statistical agreement is asserted at ensemble level. Tests that need bit-exact CPUGPU agreement must disable all stochastic toggles."
 
 **Pros:**
 - Minimal code change (~50 LOC of test relaxation + documentation).
@@ -69,7 +69,7 @@ Add a CONVENTION note to `engine/SPEC_ENGINE.md`: "CPU and GPU diverge at per-vo
 - No risk to the existing golden hash gate (which already runs with genesis on but matches because... wait, this is exactly the divergence). On audit: `render_bridge_golden` currently produces hash `0xcd957b601d47868a` at L=16, 100 ticks. If genesis stochastic operations diverge between CPU and GPU, the hash should fire. **The fact that it doesn't suggests the golden test happens to run the CPU path only.** Verify before declaring this option safe.
 
 **Cons:**
-- "Bit-exact CPU↔GPU" claim becomes scope-restricted to deterministic operations — a documentation-and-marketing-grade weakening.
+- "Bit-exact CPUGPU" claim becomes scope-restricted to deterministic operations — a documentation-and-marketing-grade weakening.
 - Larger error bars on every future stochastic parity test.
 - Each new stochastic kernel needs its own ensemble assertion design.
 - Does not align with FTD's deterministic-engine philosophy — invites a slow drift toward "GPU is fast but approximate, CPU is canonical".
@@ -82,7 +82,7 @@ Add a CONVENTION note to `engine/SPEC_ENGINE.md`: "CPU and GPU diverge at per-vo
 
 **Option A (bit-exact via shared SplitMix64).** Three reasons:
 
-1. **Project philosophy.** FTD is sold and tested as a deterministic logic-first physics engine; "CPU↔GPU bit-exact" is a load-bearing claim in `engine/SPEC_ENGINE.md` and the golden-hash gate. Option B silently scopes that claim down. Option A keeps it.
+1. **Project philosophy.** FTD is sold and tested as a deterministic logic-first physics engine; "CPUGPU bit-exact" is a load-bearing claim in `engine/SPEC_ENGINE.md` and the golden-hash gate. Option B silently scopes that claim down. Option A keeps it.
 
 2. **Future-proofing.** Every stochastic kernel that lands in the future (currently 3, plausibly 5-8 if the FTD-0136 Phase B program lands) hits the same divergence under Option B and needs its own ensemble assertion. Option A makes the bit-exact agreement automatic.
 
@@ -117,6 +117,6 @@ Single commit:
 
 ## Open question for the user
 
-Which option? My recommendation is **A** for the philosophy + future-proofing reasons above, but B is defensible if the project decides "CPU↔GPU bit-exact" is intentionally scope-restricted to deterministic operations.
+Which option? My recommendation is **A** for the philosophy + future-proofing reasons above, but B is defensible if the project decides "CPUGPU bit-exact" is intentionally scope-restricted to deterministic operations.
 
 Either way, this is one commit (or a small commit chain), and the work is bounded. The decision gate is whether you want CPU-equivalence on stochastic kernels as a structural property of the engine, or as an ensemble-level approximation.

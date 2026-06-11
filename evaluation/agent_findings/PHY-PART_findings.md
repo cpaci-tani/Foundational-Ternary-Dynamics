@@ -24,10 +24,10 @@ Numerically accurate but epistemically problematic.
 
 | Prediction | FTD Value | Experimental | Error | Status |
 |-----------|-----------|--------------|-------|--------|
-| Tau mass | 1776.9 MeV | 1776.86 MeV | **0.002%** | ✅ Derived |
-| Charm mass | 1.268 GeV | 1.270 GeV | 0.16% | ⚠️ Fitted |
-| Proton mass | 938.32 MeV | 938.27 MeV | **0.005%** | ✅ Derived |
-| n-p diff | 1.294 MeV | 1.293 MeV | 0.08% | ✅ Derived |
+| Tau mass | 1776.9 MeV | 1776.86 MeV | **0.002%** |  Derived |
+| Charm mass | 1.268 GeV | 1.270 GeV | 0.16% |  Fitted |
+| Proton mass | 938.32 MeV | 938.27 MeV | **0.005%** |  Derived |
+| n-p diff | 1.294 MeV | 1.293 MeV | 0.08% |  Derived |
 
 ### S2: Rigorous α = 1/137.036 Derivation
 - Lemniscate-Alpha curve with power-of-2 frequencies
@@ -37,8 +37,8 @@ Numerically accurate but epistemically problematic.
 - **Error: 1.26 ppm** vs CODATA
 
 ### S3: Integer Arithmetic Lepton Masses
-- m_μ/m_e = 3×b₃×(b₃+N_c) - N_c = 207 ✅
-- m_τ/m_e = (N_eff+N_base)×207 - 2×N_c×b₃ = 3477 ✅
+- m_μ/m_e = 3×b₃×(b₃+N_c) - N_c = 207 
+- m_τ/m_e = (N_eff+N_base)×207 - 2×N_c×b₃ = 3477 
 - Pure integer arithmetic, not fits
 
 ### S4: Simple PMNS Angle Ratios
@@ -65,9 +65,9 @@ Numerically accurate but epistemically problematic.
 ### W3: CKM Mixing Has Large Errors [MAJOR]
 | Element | FTD | Experiment | Error |
 |---------|-----|-----------|-------|
-| θ₁₂ | 28.7° | 13.04° | **120%** ❌ |
-| θ₂₃ | 0.42° | 2.38° | **82%** ❌ |
-| θ₁₃ | 0.0065° | 0.201° | **97%** ❌ |
+| θ₁₂ | 28.7° | 13.04° | **120%**  |
+| θ₂₃ | 0.42° | 2.38° | **82%**  |
+| θ₁₃ | 0.0065° | 0.201° | **97%**  |
 | δ_CP | 66.8° | 65.4° | 2.1% ✓ |
 
 Only CP phase matches; mixing angles fail badly.

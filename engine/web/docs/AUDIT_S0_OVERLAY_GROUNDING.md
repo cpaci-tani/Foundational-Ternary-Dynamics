@@ -144,7 +144,7 @@ Data source: where the field values come from (WASM C++ binding, JS compute, or 
 | Action | Overlays |
 |---|---|
 | **KEEP as-is** (genuine substrate or clearly-labeled proxy) | Flux Volume, Flux Slice, Flux Lines, ∇·J, E, B, Poynting, EM, \|ψ\|², Phase, ℒ, Entropy, EM energy, Charge ρ, Vorticity, Helicity, P₊, P₋, Kinetic, Dual J, Chirality, Confinement |
-| **KEEP + cross-label** | ∇·J ↔ Charge ρ; Poynting ↔ Light |
+| **KEEP + cross-label** | ∇·J  Charge ρ; Poynting  Light |
 | **KEEP + soften tooltip** | Gravity (FTD-0131), Strong (SU(3) id is [SELECTION]) |
 | **FIX — relabel/recolumn** | ∇×J pseudovector (out of the FORCES "weak" slot) |
 | **WIRE to real engine — JS-only** (from `getFluxVolume` + native vorticity/helicity samplers) | Coherence C, DM Halo, Genesis, Damping, Curvature K, Horizon, Fisher F |
@@ -168,7 +168,7 @@ Data source: where the field values come from (WASM C++ binding, JS compute, or 
 Acted on this audit:
 
 - **Honesty fixes (no rebuild)** — Gravity/Strong tooltips softened to `[SELECTION]`;
-  ∇·J↔Charge ρ and Light↔Poynting cross-labeled; ∇×J tightened so it no longer reads as the
+  ∇·JCharge ρ and LightPoynting cross-labeled; ∇×J tightened so it no longer reads as the
   weak force (kept in FORCES for the shared style selector; full recolumn out of the force
   scheduler is a noted follow-up).
 - **8 unbound samplers wired to the real engine** — `getVorticitySampled`, `getHelicitySampled`,

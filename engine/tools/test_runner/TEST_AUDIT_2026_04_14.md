@@ -508,7 +508,7 @@ or block a future GPU port of AtomEngine.
 
 All four items from the original audit follow-up list have been addressed:
 
-1. **✅ SHIPPED — `gpu::GpuEngine::solve_latency_poisson()`** (commit `6f8b9bc`,
+1. ** SHIPPED — `gpu::GpuEngine::solve_latency_poisson()`** (commit `6f8b9bc`,
    Wave 5.1). Latency Poisson now runs on GPU via cuFFT Green's function
    + dedicated kernels for mass_density, latency→voxel, and tau/bandwidth
    accumulation. Eliminates 5 `force_cpu()` sites in
@@ -517,7 +517,7 @@ All four items from the original audit follow-up list have been addressed:
    22/25 (parity with CPU — 3 remaining are pre-existing EIN-2
    periodic-BC 1/r convergence issues).
 
-2. **✅ SHIPPED — `gpu::AtomEngine` Phase 1** (commit `51a625b`, Wave 5.3).
+2. ** SHIPPED — `gpu::AtomEngine` Phase 1** (commit `51a625b`, Wave 5.3).
    `engine/cuda/atom_engine_gpu.cu` ships an O(N²) pair-force kernel for
    ionic Coulomb + van der Waals Lennard-Jones 12-6. `AtomEngine::use_gpu_`
    defaults to true when CUDA is available, falls back to CPU Barnes-Hut
@@ -529,7 +529,7 @@ All four items from the original audit follow-up list have been addressed:
    - Ionic: max abs err 5.9e-23, rel err 1.6e-16 (double-precision noise)
    - Ionic+vdW: max abs err 1.55e-10 (out of 9.4e-9 CPU total)
 
-3. **✅ SHIPPED — `gpu::ParticleEngine` Phase 1** (commit `b186d46`, Wave 5.4).
+3. ** SHIPPED — `gpu::ParticleEngine` Phase 1** (commit `b186d46`, Wave 5.4).
    `engine/cuda/particle_engine_gpu.cu` ships an O(N²) pair-force kernel
    for Coulomb (using `ALPHA_EFT = G_C²`) + Newtonian gravity. Falls back
    to CPU Barnes-Hut whenever any advanced toggle is on (strong, exchange,
@@ -544,7 +544,7 @@ All four items from the original audit follow-up list have been addressed:
    - Gravity: max abs err 2.40e-21, rel err 1.79e-16
    - Total: max abs err 2.40e-21
 
-4. **✅ ADDRESSED — Auto-push host voxel mutations to GPU** (commit `4bcddfc`,
+4. ** ADDRESSED — Auto-push host voxel mutations to GPU** (commit `4bcddfc`,
    Wave 5.2). `RenderBridge::voxels()` now sets a `host_mutated_` flag;
    `gpu_flush_host_mutations()` is called at the top of every GPU tick
    to re-upload modified voxels. This closes the campaign_einstein gap
