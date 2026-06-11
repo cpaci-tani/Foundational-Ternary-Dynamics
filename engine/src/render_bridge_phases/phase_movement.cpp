@@ -51,7 +51,10 @@ void phase_movement_main_loop(RenderBridge& rb) {
   std::fill(rb.moved_.begin(), rb.moved_.end(), 0);
 
   if (rb.toggles.symmetric_movement_order) {
-    std::vector<int> indices(N);
+    if (static_cast<int>(rb.movement_indices_.size()) != N) {
+      rb.movement_indices_.resize(N);
+    }
+    auto& indices = rb.movement_indices_;
     std::iota(indices.begin(), indices.end(), 0);
     std::uint64_t seed = (static_cast<std::uint64_t>(rb.toggles.langevin_seed) << 32) ^ static_cast<std::uint64_t>(rb.tick_);
     unsigned int seed_32 = static_cast<unsigned int>(seed ^ (seed >> 32));

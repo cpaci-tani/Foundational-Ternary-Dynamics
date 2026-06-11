@@ -453,6 +453,11 @@ private:
     // Phase forces: ColoredSite list reused tick-to-tick (only filled when color_forces ON)
     struct ColoredSiteCache { int cx, cy, cz; int8_t state, color; };
     std::vector<ColoredSiteCache> colored_sites_cache_;
+    // PERF: per-tick scratch buffers for cluster integration and movement order
+    std::vector<char> cluster_visited_;
+    std::vector<int>  cluster_stack_;
+    std::vector<int>  cluster_members_;
+    std::vector<int>  movement_indices_;
 
     double self_field_injection_ = 0.0;  // Energy injected by self-field floor this tick
     int tick_ = 0;

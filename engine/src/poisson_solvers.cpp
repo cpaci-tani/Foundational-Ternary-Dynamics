@@ -78,8 +78,8 @@ void sor_sweep_18pt(std::vector<double>& phi,
           if (isInterior) continue;
           if (((x + y + z) & 1) != color) continue;
           const int idx = z * LL + y * L + x;
-          const auto& face = lattice.neighbors_6(idx);
-          const auto& edge = lattice.neighbors_12(idx);
+          const auto& face = lattice.neighbors_6(z, y, x);
+          const auto& edge = lattice.neighbors_12(z, y, x);
           double face_sum = 0.0, edge_sum = 0.0;
           for (int n : face) face_sum += phi[n];
           for (int n : edge) edge_sum += phi[n];
@@ -162,7 +162,7 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
       grad_phi.y = (phi[i+L]  - phi[i-L])  * 0.5;
       grad_phi.z = (phi[i+1]  - phi[i-1])  * 0.5;
     } else {
-      const auto& n = lattice.neighbors_6(i);
+      const auto& n = lattice.neighbors_6(ix, iy, iz);
       grad_phi.x = (phi[n[0]] - phi[n[1]]) * 0.5;
       grad_phi.y = (phi[n[2]] - phi[n[3]]) * 0.5;
       grad_phi.z = (phi[n[4]] - phi[n[5]]) * 0.5;
