@@ -2,13 +2,13 @@
   "proof_chain": {
     "success": true,
     "code": 0,
-    "duration_sec": 1.142,
+    "duration_sec": 0.498,
     "log_file": "mathematics/proof_master_verification.log"
   },
   "physics_battery": {
     "success": true,
     "code": 0,
-    "duration_sec": 1.372,
+    "duration_sec": 0.432,
     "log_file": "mathematics/test_all_physics.log"
   }
 }

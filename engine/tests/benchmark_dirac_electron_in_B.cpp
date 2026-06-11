@@ -315,5 +315,8 @@ int main(int argc, char** argv) {
 
     const bool ok = (dE_rel < 0.01) && (dN_rel < 1e-4) && cent_bounded && spin_oscillates;
     std::cout << "Phase II.3 verdict: " << (ok ? "PASS" : "FAIL") << "\n";
+    if (std::getenv("FTD_KEEP_CSV") == nullptr) {
+        std::remove(csv_path.c_str());
+    }
     return ok ? 0 : 1;
 }

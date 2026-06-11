@@ -273,7 +273,19 @@ void phase_write_main_loop(RenderBridge& rb) {
   rb.evaporation_events_this_tick_ = 0;
 
   // ---- Loop 2: Genesis and Evaporation ----
-#pragma omp parallel for
+  // SEQUENTIAL — DETERMINISM REQUIREMENT (golden gate). This loop carries a
+  // genuine cross-thread read-write hazard: evaporation reads neighbour
+  // voxels_[n].flux / wave_vel *live* (below), while genesis on another thread
+  // writes a firing voxel's OWN flux / wave_vel (the K_GENESIS drain). The
+  // evaporation outcome therefore depends on which neighbours fired genesis
+  // first, so no race-free PARALLEL ordering reproduces the canonical
+  // linear-index result — only a fixed sequential order does. The RNG here is
+  // the stateless index-keyed voxel_uniform(gseed, i, tick, …) (no per-thread
+  // state), and real work fires only on the rare supercritical / manifested
+  // voxels, so the sequential cost is negligible next to the parallel wave /
+  // forces / SOR phases. Do NOT re-parallelise without an order-independent
+  // formulation (e.g. all decisions read a frozen pre-genesis snapshot — which
+  // would change physics relative to the live-read reference).
   for (int i = 0; i < N; ++i) {
     auto &v = rb.voxels_[i];
     const std::uint64_t gseed =

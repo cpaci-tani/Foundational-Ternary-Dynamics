@@ -39,50 +39,74 @@ void sor_sweep_18pt(std::vector<double>& phi,
   const int o_ypzp = o_yp + o_zp, o_ypzm = o_yp + o_zm;
   const int o_ymzp = o_ym + o_zp, o_ymzm = o_ym + o_zm;
 
-  // NOTE: Red-Black SOR sweeps for an 18-point Laplacian MUST run sequentially
-  // to remain deterministic and avoid read-write race conditions.
-  // Proof: In a 3D grid, any edge-sharing neighbor (distance sqrt(2), e.g. x+1, y+1, z)
-  // has coordinate sum (x+1)+(y+1)+z = x+y+z+2, which has the EXACT SAME color
-  // (parity of x+y+z) as the center voxel. Because the 18-point stencil includes
-  // 12 edge-sharing neighbors, a Red update reads from other Red voxels. Parallelizing
-  // this sweep causes threads to concurrently read and write Red values, breaking
-  // bit-exact golden determinism.
-  for (int color = 0; color < 2; ++color) {
-    for (int z = 1; z < Nm1; ++z) {
-      for (int y = 1; y < Nm1; ++y) {
-        const int parity_yz = (y + z) & 1;
-        const int x_start = 1 + ((color ^ (parity_yz ^ 1)) & 1);
-        int idx = z * LL + y * L + x_start;
-        for (int x = x_start; x < Nm1; x += 2, idx += 2) {
-          const double face_sum = phi[idx + o_xp] + phi[idx + o_xm]
-                                + phi[idx + o_yp] + phi[idx + o_ym]
-                                + phi[idx + o_zp] + phi[idx + o_zm];
-          const double edge_sum = phi[idx + o_xpyp] + phi[idx + o_xpym]
-                                + phi[idx + o_xmyp] + phi[idx + o_xmym]
-                                + phi[idx + o_xpzp] + phi[idx + o_xpzm]
-                                + phi[idx + o_xmzp] + phi[idx + o_xmzm]
-                                + phi[idx + o_ypzp] + phi[idx + o_ypzm]
-                                + phi[idx + o_ymzp] + phi[idx + o_ymzm];
+// NOTE: Standard 2-color Red-Black sweeps fail for the 18-point Laplacian because
+  // the stencil includes 12 edge-sharing neighbors (radius-1 diagonals), which
+  // create read-write races within the same Red/Black partition.
+  // Instead, we use an 8-color (2x2x2) coloring scheme.
+  //
+  // DETERMINISM (golden gate): the 2x2x2 parity coloring is race-free ONLY for
+  // INTERIOR cells, whose 18-point neighbours never leave the lattice. The
+  // lattice has PERIODIC boundary conditions (lattice.h), and on an ODD lattice
+  // the wrap maps coord Nm1 (even) → 0 (even): a face/edge neighbour of a
+  // boundary cell can wrap to ANOTHER boundary cell of the SAME colour, so two
+  // same-colour boundary cells become stencil-neighbours and racing — a genuine
+  // read-write race, not a ULP reduction issue, that floats phi run-to-run.
+  // Fix: update interior cells in PARALLEL (8-colour, race-free) and boundary
+  // cells SEQUENTIALLY in lexicographic order per colour. This is bit-exact to a
+  // fully-sequential lexicographic sweep because (a) within a colour every cell
+  // reads only other-colour (frozen) neighbours, so interior update order is
+  // irrelevant; (b) same-colour interior/boundary cells are never neighbours
+  // (adjacency is an odd offset → different colour; only a wrap, i.e. two
+  // boundary cells, yields a same-colour pair), so the interior/boundary split
+  // does not change reads; (c) the seam boundary↔boundary same-colour pairs are
+  // resolved in the same lexicographic order by the sequential boundary pass.
+  // Boundary cells are O(L^2) (a small fraction for large L), so the parallel
+  // interior sweep — the valuable hot loop — is preserved.
+  for (int color = 0; color < 8; ++color) {
+    int start_x = color & 1;
+    int start_y = (color >> 1) & 1;
+    int start_z = (color >> 2) & 1;
+
+    // --- Interior cells: PARALLEL (fast path; never wraps → race-free) ---
+#pragma omp parallel for schedule(static)
+    for (int ix = start_x; ix < L; ix += 2) {
+      if (ix == 0 || ix == Nm1) continue;  // x-face → boundary pass
+      for (int iy = start_y; iy < L; iy += 2) {
+        if (iy == 0 || iy == Nm1) continue;  // y-face → boundary pass
+        for (int iz = start_z; iz < L; iz += 2) {
+          if (iz == 0 || iz == Nm1) continue;  // z-face → boundary pass
+          int idx = ix * LL + iy * L + iz;
+
+          double face_sum = phi[idx + o_xp] + phi[idx + o_xm]
+                          + phi[idx + o_yp] + phi[idx + o_ym]
+                          + phi[idx + o_zp] + phi[idx + o_zm];
+          double edge_sum = phi[idx + o_xpyp] + phi[idx + o_xpym]
+                          + phi[idx + o_xmyp] + phi[idx + o_xmym]
+                          + phi[idx + o_xpzp] + phi[idx + o_xpzm]
+                          + phi[idx + o_xmzp] + phi[idx + o_xmzm]
+                          + phi[idx + o_ypzp] + phi[idx + o_ypzm]
+                          + phi[idx + o_ymzp] + phi[idx + o_ymzm];
+
           const double gs = (INV3 * face_sum + INV6 * edge_sum - source[idx]) * INV4;
           phi[idx] += omega * (gs - phi[idx]);
         }
       }
     }
 
-    for (int z = 0; z < L; ++z) {
-      const bool zEdge = (z == 0 || z == Nm1);
-      for (int y = 0; y < L; ++y) {
-        const bool yEdge = (y == 0 || y == Nm1);
-        for (int x = 0; x < L; ++x) {
-          const bool isInterior = !zEdge && !yEdge && x != 0 && x != Nm1;
-          if (isInterior) continue;
-          if (((x + y + z) & 1) != color) continue;
-          const int idx = z * LL + y * L + x;
-          const auto& face = lattice.neighbors_6(z, y, x);
-          const auto& edge = lattice.neighbors_12(z, y, x);
+    // --- Boundary cells: SEQUENTIAL lexicographic (slow path; wraps at seam) ---
+    for (int ix = start_x; ix < L; ix += 2) {
+      for (int iy = start_y; iy < L; iy += 2) {
+        for (int iz = start_z; iz < L; iz += 2) {
+          if (ix > 0 && ix < Nm1 && iy > 0 && iy < Nm1 && iz > 0 && iz < Nm1)
+            continue;  // interior → already done in the parallel pass
+          int idx = ix * LL + iy * L + iz;
+
           double face_sum = 0.0, edge_sum = 0.0;
+          const auto& face = lattice.neighbors_6(ix, iy, iz);
+          const auto& edge = lattice.neighbors_12(ix, iy, iz);
           for (int n : face) face_sum += phi[n];
           for (int n : edge) edge_sum += phi[n];
+
           const double gs = (INV3 * face_sum + INV6 * edge_sum - source[idx]) * INV4;
           phi[idx] += omega * (gs - phi[idx]);
         }
@@ -143,6 +167,14 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
     sor_sweep_18pt(phi, sor_source, lattice, OMEGA);
   }
 
+  // Sequential sum — DETERMINISM REQUIREMENT (golden gate). Float `+` under an
+  // OpenMP reduction is not order-stable across threads, so a parallel reduction
+  // floats phi_mean by ULPs run-to-run. The phi-mean shift is gauge-irrelevant
+  // to grad(phi) (physics unchanged), but it leaks into absolute-phi audit
+  // scalars (e.g. coulomb_pe) and breaks the bit-reproducible golden hash. This
+  // is a single O(N) pass, dwarfed by the iterative SOR sweeps above, so the
+  // cost of sequential summation is negligible. The 8-color SOR sweep stays
+  // parallel (race-free, deterministic).
   double phi_sum = 0.0;
   for (int i = 0; i < N; ++i) {
     phi_sum += phi[i];
@@ -202,6 +234,9 @@ void solve_coulomb_poisson_cpu(const TernaryField& state,
     sor_sweep_18pt(phi_coulomb, sor_source, lattice, OMEGA);
   }
 
+  // Sequential sum — DETERMINISM REQUIREMENT (golden gate); see note in
+  // gauss_project_cpu. coulomb_pe in the energy audit reads absolute phi_coulomb
+  // values, so a floated phi_mean here is the primary path that broke the hash.
   double phi_sum = 0.0;
   for (int i = 0; i < N; ++i)
     phi_sum += phi_coulomb[i];
@@ -230,8 +265,10 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
   // real potential; the coupling is imposed in the engine, not derived.
   double rho_sum = M_REST * static_cast<double>(state.manifested_count());
   if (include_field_energy) {
+    // Sequential sum — DETERMINISM REQUIREMENT (golden gate); see note in
+    // gauss_project_cpu. field_energy_sum sources the latency potential, so a
+    // floated value here is not gauge-cancelled and reaches voxel latency.
     double field_energy_sum = 0.0;
-#pragma omp parallel for reduction(+:field_energy_sum)
     for (int i = 0; i < N; ++i) {
       field_energy_sum += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
     }
@@ -251,6 +288,8 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
     sor_sweep_18pt(phi_latency, sor_source, lattice, OMEGA);
   }
 
+  // Sequential sum — DETERMINISM REQUIREMENT (golden gate); see note in
+  // gauss_project_cpu. voxel latency reads absolute phi_latency values.
   double phi_sum = 0.0;
   for (int i = 0; i < N; ++i)
     phi_sum += phi_latency[i];

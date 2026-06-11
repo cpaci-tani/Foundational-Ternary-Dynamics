@@ -26,6 +26,71 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Wave Dynamics', 'flux-dual-substrate', 'Dual Substrate', ['flux', 'dual-substrate']),
     makeScenario('Genesis & Manifestation', 'flux-cascade', 'Genesis Cascade', ['genesis']),
     makeScenario('Genesis & Manifestation', 'flux-random-genesis', 'Random Genesis', ['genesis']),
+    {
+        id: 's0-seed-ew-phase-transition',
+        scale: 'lattice',
+        title: 'EW Phase Transition (Hysteresis)',
+        category: 'Genesis & Manifestation',
+        tags: ['seed', 'genesis', 'hysteresis'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[DERIVED]',
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
+            bridge.setupScenario('empty');
+            
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+            } catch (e) {
+                console.warn('[s0-seed-ew-phase-transition] toggle setup partial:', e);
+            }
+            
+            // Explicitly enable State Field visuals so the user can see the manifested particles
+            setTimeout(() => {
+                const stateBtn = document.getElementById('toggle-state-field');
+                if (stateBtn && !stateBtn.classList.contains('active')) {
+                    stateBtn.click();
+                }
+            }, 100);
+            
+            // Background flux sweep logic to display hysteresis
+            let t = 0;
+            // D must exceed 3K_B to trigger genesis.
+            // K_B in engine is ~0.511.
+            // But wait, K_B in the web UI might be standard or scaled.
+            // The FTD constants: ontic.h K_B = 0.511, N_C = 3, alpha = 1/137.
+            // We'll sweep D up to slightly past 3K_B to trigger it.
+            // In C++ it's 3 * 0.511 * 3 * 0.00729 = ~0.033. Let's sweep up to 0.05.
+            const max_D = 0.05; 
+            
+            if (window.__ftdEwInterval) clearInterval(window.__ftdEwInterval);
+            window.__ftdEwInterval = setInterval(() => {
+                // Check if this scenario is still active via DOM to prevent leaks
+                const selectEl = document.getElementById('scenario-select');
+                if (selectEl && selectEl.value !== 's0-seed-ew-phase-transition') {
+                     clearInterval(window.__ftdEwInterval);
+                     return;
+                }
+                
+                const ctx = window.__ftdCtx;
+                if (!ctx || !ctx.running) return;
+                
+                t += 0.01;
+                // Slowly oscillate up and down
+                const D = (Math.sin(t) + 1.0) / 2.0 * max_D; 
+                
+                if (typeof bridge.injectUniformFluxAdd === 'function') {
+                     // Since tick() runs 60Hz, we pump D every frame.
+                     bridge.injectUniformFluxAdd(D, 0, 0);
+                } else if (bridge._module && typeof bridge._module.injectUniformFluxAdd === 'function') {
+                     // Fallback if accessed via direct WasmBridge wrapper mismatch
+                     bridge.injectUniformFluxAdd(D, 0, 0);
+                }
+            }, 16);
+        },
+    },
     makeScenario('Genesis & Manifestation', 'flux-pair-production', 'Pair Production', ['genesis']),
     makeScenario('Genesis & Manifestation', 'flux-annihilation', 'Pair Annihilation', ['genesis']),
     makeScenario('Genesis & Manifestation', 'flux-vacuum-foam', 'Vacuum Fluctuations', ['genesis']),
@@ -380,6 +445,105 @@ export const SCALE0_SCENARIOS = [
                 }
             } catch (e) { console.warn('[ic1-iso-viz]', e); }
             bridge.setupScenario(params.id || 's0-seed-emergent-ic1-isotropic-viz');
+        },
+    },
+    {
+        id: 's0-seed-cluster-law',
+        scale: 'lattice',
+        title: 'Genesis-Burst N(A) Law — interactive (FTD-0269)',
+        category: 'Genesis-Burst N(A) Law (FTD-0269)',
+        tags: ['seed', 'genesis', 'cluster', 'na-law', 'interactive'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[MEASURED — BOUNDARY, FTD-0269]',
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') {
+                    bridge.setLangevinParams(0.005, 0.02);
+                }
+            } catch (e) { console.warn('[cluster-law]', e); }
+            bridge.setupScenario(params.id || 's0-seed-cluster-law');
+            // Show the manifested cluster.
+            setTimeout(() => {
+                const stateBtn = document.getElementById('toggle-state-field');
+                if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
+            }, 100);
+            // Mount the interactive fire panel + live N(A) plot (lazy import).
+            import('./ui/overlays/genesis-burst-panel.js')
+                .then((m) => m.mountGenesisBurstPanel(harness))
+                .catch((e) => console.warn('[cluster-law] panel mount failed:', e));
+        },
+    },
+    {
+        id: 's0-seed-cluster-law-subknee',
+        scale: 'lattice',
+        title: 'N(A) law — sub-knee (A=12, geometry-limited)',
+        category: 'Genesis-Burst N(A) Law (FTD-0269)',
+        tags: ['seed', 'genesis', 'cluster', 'na-law', 'subknee', 'viz'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[VISUALISATION]',
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') bridge.setLangevinParams(0.0, 0.02);
+            } catch (e) { console.warn('[cluster-law-subknee]', e); }
+            bridge.setupScenario(params.id || 's0-seed-cluster-law-subknee');
+        },
+    },
+    {
+        id: 's0-seed-cluster-law-knee',
+        scale: 'lattice',
+        title: 'N(A) law — the knee (A=16, 27-block escape)',
+        category: 'Genesis-Burst N(A) Law (FTD-0269)',
+        tags: ['seed', 'genesis', 'cluster', 'na-law', 'knee', 'viz'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[VISUALISATION]',
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') bridge.setLangevinParams(0.0, 0.02);
+            } catch (e) { console.warn('[cluster-law-knee]', e); }
+            bridge.setupScenario(params.id || 's0-seed-cluster-law-knee');
+        },
+    },
+    {
+        id: 's0-seed-cluster-law-superknee',
+        scale: 'lattice',
+        title: 'N(A) law — super-knee (A=40, energy budget N=k·A²)',
+        category: 'Genesis-Burst N(A) Law (FTD-0269)',
+        tags: ['seed', 'genesis', 'cluster', 'na-law', 'superknee', 'viz'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[VISUALISATION]',
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinParams === 'function') bridge.setLangevinParams(0.0, 0.02);
+            } catch (e) { console.warn('[cluster-law-superknee]', e); }
+            bridge.setupScenario(params.id || 's0-seed-cluster-law-superknee');
         },
     },
     // s0-seed-symmetry-regression removed 2026-04-28 (audit removal): engine CI

@@ -55,7 +55,7 @@ const SELECTOR_TOOLTIPS = [
     ['#toggle-axes', 'Show or hide the global axis indicator in the viewport.'],
     ['#toggle-grid', 'Show or hide the global reference grid beneath the simulation.'],
     ['#toggle-reflective', 'Toggle reflective boundaries so particles and fields bounce instead of exiting.'],
-    ['.vcp-label', 'Viewport control label. These selectors adjust shared environment and boundary settings.'],
+    ['.status-scene-label, .status-select-label', 'Status-bar Scene controls for shared view, camera, environment, and boundary settings.'],
     ['#status-state', 'Current run-state indicator for the simulation loop.'],
     ['#status-ptime', 'Current physical or presentation time reported by the active scale.'],
     ['#status-particles', 'Current manifested or simulated particle count for the active scale.'],

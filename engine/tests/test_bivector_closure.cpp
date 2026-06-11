@@ -116,8 +116,7 @@ void enable_full_nonlocal(ftd::TermToggles& t) {
     t.emergent_forces   = true;
     t.pair_production   = true;
     t.weak_transmutation= true;
-    t.exchange_force    = true;
-    t.strong_force      = true;
+    t.dual_substrate    = true;
     t.triad_binding     = true;
     t.color_forces      = true;
 }

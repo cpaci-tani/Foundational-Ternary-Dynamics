@@ -252,5 +252,11 @@ int main(int argc, char** argv) {
     std::cout << "================================================================\n";
     std::cout << "  DONE (exploratory; analyze with scripts/exploration/explore_cluster_fission_fusion.py)\n";
     std::cout << "================================================================\n";
+    
+    // Cleanup artifacts if run in the default working directory (e.g. by CTest)
+    if (outdir == ".") {
+        std::remove("fusion_outcomes.csv");
+        std::remove("fission_events.csv");
+    }
     return 0;
 }

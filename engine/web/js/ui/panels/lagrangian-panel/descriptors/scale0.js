@@ -6,13 +6,13 @@
  */
 
 export const terms = [
-    { key: 'fieldKinetic',  label: 'Field KE',    color: 'var(--legend-field-kinetic,  #66bb6a)', buffer: 'fieldKinetic',  includeByDefault: true },
-    { key: 'fieldGradient', label: 'Gradient',    color: 'var(--legend-field-gradient, #26a69a)', buffer: 'fieldGradient', includeByDefault: true },
-    { key: 'bornInfeld',    label: 'Born-Infeld', color: 'var(--legend-bi,             #ef5350)', buffer: 'bornInfeld',    includeByDefault: true },
-    { key: 'coupling',      label: 'Coupling',    color: 'var(--legend-coupling,       #fb8c00)', buffer: 'coupling',      includeByDefault: true },
-    { key: 'velocity',      label: 'Velocity',    color: 'var(--legend-velocity,       #fdd835)', buffer: 'velocity',      includeByDefault: true },
-    { key: 'gauss',         label: 'Gauss',       color: 'var(--legend-gauss,          #42a5f5)', buffer: 'gauss',         includeByDefault: true },
-    { key: 'dissipation',   label: 'Dissipation', color: 'var(--legend-dissipation,    #78909c)', buffer: 'dissipation',   includeByDefault: true },
+    { key: 'fieldKinetic',  label: 'Field KE',    color: 'var(--legend-field-kinetic,  #66bb6a)', buffer: 'fieldKinetic',  unit: 'E*',  includeByDefault: true },
+    { key: 'fieldGradient', label: 'Gradient',    color: 'var(--legend-field-gradient, #26a69a)', buffer: 'fieldGradient', unit: 'E*',  includeByDefault: true },
+    { key: 'bornInfeld',    label: 'Born-Infeld', color: 'var(--legend-bi,             #ef5350)', buffer: 'bornInfeld',    unit: 'E*',  includeByDefault: true },
+    { key: 'coupling',      label: 'Coupling',    color: 'var(--legend-coupling,       #fb8c00)', buffer: 'coupling',      unit: 'E*',  includeByDefault: true },
+    { key: 'velocity',      label: 'Velocity',    color: 'var(--legend-velocity,       #fdd835)', buffer: 'velocity',      unit: 'E*',  includeByDefault: true },
+    { key: 'gauss',         label: 'Gauss',       color: 'var(--legend-gauss,          #42a5f5)', buffer: 'gauss',         unit: 'E*²', includeByDefault: true },
+    { key: 'dissipation',   label: 'Dissipation', color: 'var(--legend-dissipation,    #78909c)', buffer: 'dissipation',   unit: 'E*',  includeByDefault: true },
 ];
 
 export const actionRows = [
