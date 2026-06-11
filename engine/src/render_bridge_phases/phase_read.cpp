@@ -48,6 +48,9 @@ void phase_read_main_loop(RenderBridge& rb) {
   const bool dual = rb.toggles.dual_substrate;
   const double cw2 = C_WAVE * C_WAVE;
 
+  const TernaryField& state = rb.ternary_field();
+  const Lattice& lat = rb.lattice_;
+
   // Isotropic 18-point Laplacian weights.
   // For interior voxels we skip all modulo ops (same technique as sor_sweep_18pt):
   //   coord decomposition:  iz = i % L  (stride 1), iy = (i/L) % L (stride L), ix = i/LL (stride LL)
@@ -105,8 +108,8 @@ void phase_read_main_loop(RenderBridge& rb) {
 
           // Coupling source: split equally between L and R substrates
           if (do_coupling) {
-            Vec3 grad_s = rb.gradient_state(i) * (G_C * 0.5);
-            Vec3 curl_sv = rb.curl_state_velocity(i) * (G_C * 0.5);
+            Vec3 grad_s = ::ftd::gradient_state_op(state, lat, ix, iy, iz) * (G_C * 0.5);
+            Vec3 curl_sv = ::ftd::curl_state_velocity_op(state, rb.voxels_, lat, ix, iy, iz) * (G_C * 0.5);
             rb.delta_j_L_[i] += grad_s + curl_sv;
             rb.delta_j_R_[i] += grad_s + curl_sv;
           }
@@ -157,8 +160,8 @@ void phase_read_main_loop(RenderBridge& rb) {
           }
 
           if (do_coupling) {
-            rb.delta_j_[i] += rb.gradient_state(i) * G_C;
-            rb.delta_j_[i] += rb.curl_state_velocity(i) * G_C;
+            rb.delta_j_[i] += ::ftd::gradient_state_op(state, lat, ix, iy, iz) * G_C;
+            rb.delta_j_[i] += ::ftd::curl_state_velocity_op(state, rb.voxels_, lat, ix, iy, iz) * G_C;
           }
         }
       }

@@ -142,6 +142,15 @@ inline Vec3 gradient_state_op(const TernaryField& state, const Lattice& lattice,
   return grad;
 }
 
+inline Vec3 gradient_state_op(const TernaryField& state, const Lattice& lattice, int x, int y, int z) {
+  const auto& n = lattice.neighbors_6(x, y, z);
+  Vec3 grad;
+  grad.x = (state.state_at(n[0]) - state.state_at(n[1])) * 0.5;
+  grad.y = (state.state_at(n[2]) - state.state_at(n[3])) * 0.5;
+  grad.z = (state.state_at(n[4]) - state.state_at(n[5])) * 0.5;
+  return grad;
+}
+
 inline Vec3 gradient_density_op(const std::vector<Voxel>& voxels, const Lattice& lattice, int idx) {
   const auto& n = lattice.neighbors_6(idx);
   Vec3 grad;
@@ -210,6 +219,24 @@ inline Vec3 curl_state_velocity_op(const TernaryField& state,
            (jcur(c.x + 1, c.y, c.z).z - jcur(c.x - 1, c.y, c.z).z) * 0.5;
   curl.z = (jcur(c.x + 1, c.y, c.z).y - jcur(c.x - 1, c.y, c.z).y) * 0.5 -
            (jcur(c.x, c.y + 1, c.z).x - jcur(c.x, c.y - 1, c.z).x) * 0.5;
+  return curl;
+}
+
+inline Vec3 curl_state_velocity_op(const TernaryField& state,
+                                   const std::vector<Voxel>& voxels,
+                                   const Lattice& lattice,
+                                   int x, int y, int z) {
+  const auto& n = lattice.neighbors_6(x, y, z);
+  auto jcur = [&](int ni) -> Vec3 {
+    return voxels[ni].velocity * static_cast<double>(state.state_at(ni));
+  };
+  Vec3 curl;
+  curl.x = (jcur(n[2]).z - jcur(n[3]).z) * 0.5 -
+           (jcur(n[4]).y - jcur(n[5]).y) * 0.5;
+  curl.y = (jcur(n[4]).x - jcur(n[5]).x) * 0.5 -
+           (jcur(n[0]).z - jcur(n[1]).z) * 0.5;
+  curl.z = (jcur(n[0]).y - jcur(n[1]).y) * 0.5 -
+           (jcur(n[2]).x - jcur(n[3]).x) * 0.5;
   return curl;
 }
 
