@@ -63,7 +63,8 @@ Pre-registered in [`PREREG_TIME_DILATION_L257_BLIND_v1.md`](../03_derivations/fo
 - **Locked predictions (registry table-level fit, knee frozen at 16; bands ±2·RMS = ±0.14 dex):**
   - **N(35) = 72.6**, band [52.5, 100.4]
   - **N(60) = 180.9**, band [130.9, 250.1]
-- **Protocol when run:** the FTD-0261 rig unchanged (`campaign_cluster_relaxation`, L=32, γ=0.02, T=0.005, 8 seeds, coupling-ON); verdict = inside/outside band per point; no re-fitting.
+- **Protocol when run:** the FTD-0261 rig unchanged (`campaign_thermostat_off_sweep` arm-N invocation: L=32, γ=0.02, T=0.005, thermostat=on, coupling=on, 8 seeds, 50 samples/seed); verdict = inside/outside band per point; no re-fitting.
+- **Verdict (run 2026-06-11, same session, after the bands were committed in `3f909301`): BOTH INSIDE — 2/2 CONFIRMED.** N̄(35) = **66.1** (8 seeds, range 59–70; −8.9% from the point prediction) and N̄(60) = **192.3** (range 187–199; +6.3%). k_eff = 0.054/0.053 at the two points, consistent with FTD-0261's asymptotic ≈ 0.05. Run of record `engine/results/ep2_na_blind_2026-06-11/`. The FTD-0261 broken-power law now has two blind interpolation confirmations in addition to its fit.
 
 ### EP-3 — k⁴ anisotropy extrapolation to L ∈ {512, 768} ⟶ **VERIFIED THIS SESSION**
 
