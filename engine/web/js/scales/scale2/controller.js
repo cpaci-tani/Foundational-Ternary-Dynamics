@@ -103,7 +103,7 @@ const _tickAcc = createTickAccumulator();
 
 // -- Paused-state dedup (avoid redundant work when simulation idle) --
 let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
-let _diagPushedWhilePaused = false;
+
 
 
 // =====================================================================
@@ -181,7 +181,7 @@ export function resetScale2(ctx) {
     _tickAcc.reset();
 
     _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
-    _diagPushedWhilePaused = false;
+
 
     if (viewport) {
         viewport.toggleNucleusShells(true);
@@ -572,7 +572,7 @@ export function animateAE(ctx) {
     viewport.render();
 
     // ── 11. AE diagnostics (throttled to every 3rd frame) ──────────
-    if (frameCount % 3 === 0 && (running || !_diagPushedWhilePaused)) {
+    if (frameCount % 3 === 0) {
         const diag = telemetryHub.collectScale2(bridge);
 
         if (diag) {
@@ -626,8 +626,7 @@ export function animateAE(ctx) {
             particleChart.push(diagAdapted);
         }
 
-        if (!running) _diagPushedWhilePaused = true;
-        else _diagPushedWhilePaused = false;
+
 
         switch (activeTab) {
             case 'charts':
