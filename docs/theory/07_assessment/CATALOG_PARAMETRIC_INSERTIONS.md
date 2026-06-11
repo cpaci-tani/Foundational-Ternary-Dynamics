@@ -178,6 +178,25 @@ The CKM matrix is parametrized via standard Wolfenstein (λ, A, ρ, η) form. FT
 
 ---
 
+## 10b · Atomic Dynamics & Structure — EMPIRICAL / [PARAMETRIC] / ABSENT (FTD-0270)
+
+Full inventory: [`AUDIT_ATOMIC_DYNAMICS_STATUS.md`](AUDIT_ATOMIC_DYNAMICS_STATUS.md). FTD derives ~0% of atomic quantum dynamics; the ingredients below are standard chemistry/QM with FTD constants, empirical lookups, or absent. (Listed here because the catalog previously omitted the atomic domain.)
+
+| Quantity | Origin | FTD status | Source |
+|---|---|---|---|
+| Orbital clouds (s,p,d,f) | hydrogenic wavefns + Slater screening, applied universally, display-tuned | EMPIRICAL / visualization | `orbitals.js` |
+| Slater shielding / Z_eff | Slater's 1930 empirical rules | EMPIRICAL | `quantum-chemistry.js` |
+| Atomic radius | `R_BOHR / Z^{1/3}` (Thomas-Fermi) | EMPIRICAL | `atom_engine.h` |
+| Periodic table / valence / max-bonds | 118-element hard-coded tables | EMPIRICAL lookup | `elements.js`, `atom_engine.h` |
+| Inter-atomic forces (ionic/vdW/covalent) | classical Coulomb / Lennard-Jones / harmonic | [PARAMETRIC] | `atom_forces.cpp` |
+| Quantum kinetic operator / ℏ / discrete levels | — | ABSENT / [DECLINED] (FC-1) | — |
+| Pauli exclusion (multi-electron) / exchange energy | — | [CONJECTURE] / ABSENT | `phase_forces.cpp:200` (CPU no-op) |
+| Fine structure / spin-orbit / hyperfine | — | ABSENT | — |
+
+**Structural reason** (FTD-0270): FTD's flux wave equation is 2nd-order in time → linear dispersion ω∝k (cavity-like), the wrong dispersion for the hydrogen Rydberg 1/n² (which needs the Schrödinger ω∝k²). And the electron is a manifested cluster, not a wavefunction. Atomic spectra are not substrate-derivable.
+
+---
+
 ## 11 · Neutrino Absolute Masses — [SELECTION]
 
 | Quantity | Value | Mechanism | Tag | Source |
