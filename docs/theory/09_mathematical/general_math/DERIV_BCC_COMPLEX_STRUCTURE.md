@@ -108,7 +108,7 @@ These two occurrences of "4" are **the same group-theoretic 4**: the order of `Z
 
 By contrast, Roles 2 and 4 give the integer 4 with *different* group-theoretic content:
 
-- **Role 2**: `O_h^ab ≅ Z/2 × Z/2` (Klein four), **not cyclic Z/4**. There is **no injective homomorphism** `Z[i]^× = Z/4 ↪ O_h^ab = Z/2 × Z/2`, because Z/4 contains an element (`i`) of order 4, but every element of Z/2 × Z/2 has order ≤ 2. The only homomorphism `Z/4 → Z/2 × Z/2` factors through the quotient `Z/4 / {±1} = Z/2`, killing the element of order 4. Roles 1 and 2 are therefore **order coincidences**, not group-theoretic identifications.
+- **Role 2**: `O_h^ab ≅ Z/2 × Z/2` (Klein four), **not cyclic Z/4**. There is **no injective homomorphism** `Z[i]^× = Z/4  O_h^ab = Z/2 × Z/2`, because Z/4 contains an element (`i`) of order 4, but every element of Z/2 × Z/2 has order ≤ 2. The only homomorphism `Z/4 → Z/2 × Z/2` factors through the quotient `Z/4 / {±1} = Z/2`, killing the element of order 4. Roles 1 and 2 are therefore **order coincidences**, not group-theoretic identifications.
 - **Role 4**: The 27-block decomposes under `O_h` into 4 orbits `{center, face-neighbours, edge-neighbours, vertex-neighbours}` of sizes `(1, 6, 12, 8)`. Because the four orbits have *different sizes*, no group can permute them into each other in a non-trivial way — the only `Z[i]^×` action on the 4-orbit set is the trivial one. The count "4" here is the number of distinct orbit-types, a structural feature of the cube but **not** a manifestation of `|Z[i]^×|`.
 
 ### 3.3 Net assessment

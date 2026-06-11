@@ -1,6 +1,6 @@
 # Foundational Resolution — BCC Algebraic Bridge Readout (ARC-B2)
 
-> **⚠ CORRECTION (2026-05-28): infinite-aperture verdict downgraded FOUND → UNDERDETERMINED.**
+> ** CORRECTION (2026-05-28): infinite-aperture verdict downgraded FOUND → UNDERDETERMINED.**
 > The **finite-block CLOSED-NEGATIVE** (§3 Theorem 2) is correct and stands. The
 > **infinite-aperture "FOUND-at-ARC-2"** (§4/§7) is an overclaim: the Watson limit
 > supplies only the *even*-degree self-energy `G*²/(2π)`; the master-quadratic
@@ -133,7 +133,7 @@ $$ \text{Tr}(T_{\text{BCC}}) = 16 G^{*2} $$
 recovers the exact, unperturbed master quadratic at tree level ($R_{\text{conn}} = 1$):
 $$ x^2 - 16 G^{*2} x + 16 G^{*3} = 0 $$
 
-> **~~[FOUND Verdict for Infinite Aperture (ARC-2 Level)]~~ [UNDERDETERMINED — CORRECTED 2026-05-28]:** In the infinite-aperture limit, the self-energy projects to the transcendental period $G^{*2}/(2\pi)$ — supplying the trace `16G*²`. But `Det(T_BCC) = 16G*³` just above is **posited**, not derived: the Watson limit yields `G*²` (even degree), and the determinant's odd `16G*³` is the asserted master-quadratic Vieta target (FTD-0233 parity no-go; FTD-0235 det↔det_ζ no-go). The master quadratic is **not** recovered without target insertion.
+> **~~[FOUND Verdict for Infinite Aperture (ARC-2 Level)]~~ [UNDERDETERMINED — CORRECTED 2026-05-28]:** In the infinite-aperture limit, the self-energy projects to the transcendental period $G^{*2}/(2\pi)$ — supplying the trace `16G*²`. But `Det(T_BCC) = 16G*³` just above is **posited**, not derived: the Watson limit yields `G*²` (even degree), and the determinant's odd `16G*³` is the asserted master-quadratic Vieta target (FTD-0233 parity no-go; FTD-0235 detdet_ζ no-go). The master quadratic is **not** recovered without target insertion.
 
 ---
 
@@ -155,7 +155,7 @@ We check the completed derivation against all 10 F-rules:
 - **F-c (Dominant selection): PASS.** Selected uniquely by fixed-point stability under coarse-graining.
 - **F-d (Operational protocol): PASS.** The protocol defines a localized preparation $P$ and self-energy back-reaction $O_{\text{EM}}$.
 - **F-e (No site-local Clifford): PASS.** The bivector and complex subspaces span the 8 corners of the BCC unit cell, making the construction non-site-local from step 1.
-- **F-j (No reverse-engineering): ~~PASS~~ FIRES [CORRECTED 2026-05-28].** Only `16G*²` (the trace) emerges from the Watson Green's function (even degree in G\*). The determinant `16G*³` (odd degree) is *posited* in §4 (`Det(T_BCC) = 16G*³`), not derived — it is the master-quadratic Vieta target pasted as scaffold (FTD-0233 parity no-go; FTD-0235 det↔det_ζ no-go). F-j fires.
+- **F-j (No reverse-engineering): ~~PASS~~ FIRES [CORRECTED 2026-05-28].** Only `16G*²` (the trace) emerges from the Watson Green's function (even degree in G\*). The determinant `16G*³` (odd degree) is *posited* in §4 (`Det(T_BCC) = 16G*³`), not derived — it is the master-quadratic Vieta target pasted as scaffold (FTD-0233 parity no-go; FTD-0235 detdet_ζ no-go). F-j fires.
 
 ---
 

@@ -3,7 +3,7 @@
 **Document type:** Reference specification (synthesis)
 **Status:** [SYNTHESIS] — crystallizes the bridge between FTD's mathematical spine and the Standard Model constant 1/α as it currently stands
 **Created:** 2026-05-01 evening (closing session on tractable open gaps)
-**2026-05-22 update:** The `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The single load-bearing physics identification is now `x_+ ↔ 1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The polynomial-template-uniqueness argument (FTD-0189) is independent of the target identification and remains intact. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
+**2026-05-22 update:** The `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). The single load-bearing physics identification is now `x_+  1/α` (FTD-0013, [STRONGLY MOTIVATED CONJECTURE]). The polynomial-template-uniqueness argument (FTD-0189) is independent of the target identification and remains intact. `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 **Provenance:** Closes the "physics bridge" by making its logical structure crisp; consolidates `EXPLR_TOWER_MULTIPLIER_UNIQUENESS.md` + `EXPLR_POLYNOMIAL_LOOK_ELSEWHERE.md` + `EXPLR_PATHS_TO_ALPHA.md` into a single reference position
 **Related:** `SPEC_ALGEBRAIC_SPINE.md` (the algebraic spine — nine numbered results: six theorem-grade + three honestly-tiered, see §0); `SPEC_FQCR.md` (operator-theoretic restatement); `SPEC_ALPHA_READOUT_CONTRACT.md` (MC-T4.3 closure contract); `TRACKER_ONTIC_TRUTH.md` (tier assignments); `SPEC_OPEN_MATH_BY_SECTOR.md` (MC-T4.3); LEDGER FTD-0001/0013 (the conjecture; FTD-0014 retired); FTD-0097 (look-elsewhere monomial); FTD-0189 (adversarial polynomial-template uniqueness, the canonical structural-uniqueness evidence); FTD-0117 (G\* notational fix)
 
@@ -24,12 +24,12 @@ x_- ≈   3.023964
 These are forced by the spine theorems (no free parameters). The larger
 root `x_+` matches the QED fine-structure constant reciprocal `1/α` to
 **1.26 ppm**. The smaller root `x_- ≈ 3.024` is a mathematical artifact
-of the polynomial only; the historical identification `x_- ↔ N_c` is
+of the polynomial only; the historical identification `x_-  N_c` is
 **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014
 removed in commit `ca7eb61`).
 
 The mathematical content (theorems + uniqueness) is established. The
-empirical match (the IDENTIFICATION `x_+ ↔ 1/α`) is conjectural. The
+empirical match (the IDENTIFICATION `x_+  1/α`) is conjectural. The
 bridge between them is the structural rigidity of the math + the
 precision of the empirical match + the uniqueness of the master
 quadratic's polynomial template within the natural family (FTD-0189
@@ -96,7 +96,7 @@ Setting `y = x/G*`, the master quadratic gives:
 This is a mathematical identity between the two roots `y_± = x_±/G*` of
 the rescaled polynomial. The physics-notation slogan "α + 1/N_c = 1/G*"
 that previously paired the two roots is **retired** along with the
-`x_- ↔ N_c` identification (v1.4 §5); only `x_+ ↔ 1/α` remains as a
+`x_-  N_c` identification (v1.4 §5); only `x_+  1/α` remains as a
 live physics identification.
 
 ### 1.4 · Closed-form for x_+ (Theorem 8 corollary)
@@ -172,7 +172,7 @@ FTD master quadratic:  x_+ = 137.036171...              (algebraic)
 ```
 
 The smaller root `x_- ≈ 3.024` is a mathematical artifact of the
-polynomial only; the identification `x_- ↔ N_c` is **RETIRED** per
+polynomial only; the identification `x_-  N_c` is **RETIRED** per
 v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in
 FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four
 routes) and the Moore Layer Theorem.
@@ -210,7 +210,7 @@ non-statistical structural theorem would be needed.
 
 ### 3.2 · What the bridge LOGICALLY says
 
-**The disciplined statement (revised post-v1.4 retirement of `x_- ↔ N_c`):**
+**The disciplined statement (revised post-v1.4 retirement of `x_-  N_c`):**
 
 > *Within FTD's natural polynomial complexity class (degree-2 polynomials
 > with coefficients in Z[1..64]·Q(G*)^[0..5]), the master quadratic is
@@ -223,20 +223,20 @@ non-statistical structural theorem would be needed.
 > 18-constant basket FTD did not design (FTD-0189, rank 1 by ~130×).
 > The polynomial form itself is fixed by the algebraic spine once G*,
 > coefficient 16, and degree 2 are accepted. The empirical match
-> `x_+ ↔ 1/α` is at 1.26 ppm. The Bayesian strength of evidence for the
+> `x_+  1/α` is at 1.26 ppm. The Bayesian strength of evidence for the
 > structural reading over random coincidence is ~4×10^5:1 within the
 > natural family. The single live physics identification `x_+ = 1/α`
 > remains formally [STRONGLY MOTIVATED CONJECTURE] because no derivation
 > chain from FTD axioms to physical α has been established despite
 > multiple session-scale attempts. The historical identification
-> `x_- ↔ N_c` is retired (v1.4 §5).*
+> `x_-  N_c` is retired (v1.4 §5).*
 
 ### 3.3 · What the bridge does NOT say
 
 - Does NOT say α is derived from FTD axioms.
-- Does NOT say the empirical match `x_+ ↔ 1/α` is impossible to be
+- Does NOT say the empirical match `x_+  1/α` is impossible to be
   coincidental.
-- Does NOT say `x_- ↔ N_c` is a current physics identification
+- Does NOT say `x_-  N_c` is a current physics identification
   (retired v1.4 §5).
 - Does NOT say FTD's framework is empirically falsified or
   empirically validated as the unique correct theory.
@@ -385,7 +385,7 @@ unique dual-matcher across 2.65 M degree-2 polynomials over an
 18-constant FTD-undesigned basket; rank 1 by ~130×). The single live
 physics identification `x_+ = 1/α` remains [STRONGLY MOTIVATED
 CONJECTURE] absent a derivation chain from FTD axioms to physical α;
-the historical `x_- ↔ N_c` identification is retired (v1.4 §5;
+the historical `x_-  N_c` identification is retired (v1.4 §5;
 LEDGER FTD-0014 removed in commit `ca7eb61`). This is the bridge as
 currently finished at the algebraic layer — strong enough for external
 publication of the mathematical core (Paper A scope), not yet closed

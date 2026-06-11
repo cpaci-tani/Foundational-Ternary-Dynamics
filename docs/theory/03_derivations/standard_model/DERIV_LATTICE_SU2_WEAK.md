@@ -43,7 +43,7 @@ $$[T_i, T_j] = i\varepsilon_{ijk} T_k$$
 
 **Proof.** Direct computation. The Pauli matrices satisfy [σ_i, σ_j] = 2iε_{ijk}σ_k, hence [T_i, T_j] = iε_{ijk}T_k. □
 
-**Epistemic note (2026-05-22 — Q12 provenance audit, FTD-0192).** The computation above is a *generic* fact: every 2-dimensional complex space admits an su(2) action, and the Pauli matrices satisfy the su(2) relations by definition. It is therefore **not** an FTD derivation of SU(2). The genuine FTD content here is the **skeleton** only — the Cartan T₃ = ŝ/2 (the ternary state-charge operator, §2.2) and the Weyl-ℤ₂ (the transmutation flip +1↔−1, §2.1) are substrate-grounded; the off-diagonal generators T₁, T₂ are the imported Pauli matrices, with no construction from lattice dynamics. The identification of the ternary doublet {|+⟩, |−⟩} with the SU(2) fundamental rests on the count dim = 2. Per the pre-registered Q12 provenance audit ([`../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md`](../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md), verdict COUNT-MATCH), claim SU2-1 (§9) is tagged **[SELECTION]**. Theorem 1.1's mathematical statement stands as standard linear algebra; what is corrected is the framing — it does not derive SU(2) *from FTD*.
+**Epistemic note (2026-05-22 — Q12 provenance audit, FTD-0192).** The computation above is a *generic* fact: every 2-dimensional complex space admits an su(2) action, and the Pauli matrices satisfy the su(2) relations by definition. It is therefore **not** an FTD derivation of SU(2). The genuine FTD content here is the **skeleton** only — the Cartan T₃ = ŝ/2 (the ternary state-charge operator, §2.2) and the Weyl-ℤ₂ (the transmutation flip +1−1, §2.1) are substrate-grounded; the off-diagonal generators T₁, T₂ are the imported Pauli matrices, with no construction from lattice dynamics. The identification of the ternary doublet {|+⟩, |−⟩} with the SU(2) fundamental rests on the count dim = 2. Per the pre-registered Q12 provenance audit ([`../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md`](../08_structural/AUDIT_WEAK_SU2_PROVENANCE.md), verdict COUNT-MATCH), claim SU2-1 (§9) is tagged **[SELECTION]**. Theorem 1.1's mathematical statement stands as standard linear algebra; what is corrected is the framing — it does not derive SU(2) *from FTD*.
 
 The raising and lowering operators are:
 
@@ -82,12 +82,12 @@ $$W^-: \quad |+\rangle \to |-\rangle \qquad (\text{transmutation operator } T_-)
 
 ```
 if stress(v) > WEAK_THRESHOLD:
-    polarity may flip (+1 ↔ -1 via transmutation)
+    polarity may flip (+1  -1 via transmutation)
 ```
 
 We now **reinterpret** this stress-threshold transmutation as W boson exchange:
 - The "stress" threshold = the energy cost of creating a virtual W boson (≈ M_W ≈ 80 GeV)
-- The polarity flip (+1 ↔ −1) = the T± action on the ternary doublet
+- The polarity flip (+1  −1) = the T± action on the ternary doublet
 - The "stress" field = the W boson field strength
 
 This is not a new mechanism — it is a reinterpretation of the existing transmutation rule in the language of gauge theory.
@@ -183,7 +183,7 @@ $$\mathcal{V}^{CC}_\mu = -i\frac{g}{\sqrt{2}}\,\gamma_\mu\,\frac{1 - \gamma_5}{2
 
 This has two crucial features:
 1. **V−A structure:** The projector (1 − γ₅)/2 selects left-handed fermions only
-2. **Isospin flip:** The operator T± changes the ternary state (+1 ↔ −1)
+2. **Isospin flip:** The operator T± changes the ternary state (+1  −1)
 
 **Lattice realization.** On the FTD lattice, this vertex arises from the coupling between the ternary state and the weak flux field J^W_a (where a = 1,2,3 is the SU(2) adjoint index):
 
@@ -479,7 +479,7 @@ where:
 
 | ID | Claim | Status | Evidence | Depends On |
 |----|-------|--------|----------|------------|
-| SU2-1 | SU(2) generators from ternary doublet {|+⟩, |−⟩} | **[SELECTION]** | Pauli relations hold on any ℂ² (generic linear algebra); the FTD-doublet ↔ SU(2)-fundamental identification is a count-match (dim = 2) — Q12 audit, FTD-0192; see §1.2 epistemic note | Ternary state space |
+| SU2-1 | SU(2) generators from ternary doublet {|+⟩, |−⟩} | **[SELECTION]** | Pauli relations hold on any ℂ² (generic linear algebra); the FTD-doublet  SU(2)-fundamental identification is a count-match (dim = 2) — Q12 audit, FTD-0192; see §1.2 epistemic note | Ternary state space |
 | SU2-2 | Void |0⟩ is SU(2) singlet | **[THEOREM]** | T_i|0⟩ = 0 (§1.3) | SU2-1 |
 | SU2-3 | W± = transmutation operators T± | **[SELECTION]** | Consistent with stress-threshold mechanism (§2.1) | SU2-1, Ch. 6.5 |
 | SU2-4 | Z⁰ = diagonal T₃ coupling | **[SELECTION]** | Consistent with neutral-current phenomenology (§2.2) | SU2-1 |

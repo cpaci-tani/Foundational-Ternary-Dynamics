@@ -63,13 +63,13 @@ inventing it ad hoc.
 
 ## Physics invariants preserved across all 17 commits
 
-- ✅ Golden hash `0xcd957b601d47868a` (100-tick deterministic byte-hash) bit-exact across Phases 4a/4b/4c/5/6/7
-- ✅ `audit_regression` 14-15/15 PASS at every commit
-- ✅ Locked-particle pair forces (Phase 1 / dc329d6 fix preserved)
-- ✅ Absorbing-boundary sponge layer (drains 73% over 30 ticks, preserved)
-- ✅ ½ energy convention (field/wave/E_L/E_R/wv_L/wv_R/coulomb_pe — preserved)
-- ✅ Coulomb PE = ½·Σ α·q·φ pair-PE convention
-- ✅ Dual-substrate E_L vs wv_L split
+-  Golden hash `0xcd957b601d47868a` (100-tick deterministic byte-hash) bit-exact across Phases 4a/4b/4c/5/6/7
+-  `audit_regression` 14-15/15 PASS at every commit
+-  Locked-particle pair forces (Phase 1 / dc329d6 fix preserved)
+-  Absorbing-boundary sponge layer (drains 73% over 30 ticks, preserved)
+-  ½ energy convention (field/wave/E_L/E_R/wv_L/wv_R/coulomb_pe — preserved)
+-  Coulomb PE = ½·Σ α·q·φ pair-PE convention
+-  Dual-substrate E_L vs wv_L split
 
 ## Patterns codified
 
@@ -92,7 +92,7 @@ inventing it ad hoc.
   |---|---:|---|
   | `test_render_bridge_golden` | 16 | **PASS** — hash `0xcd957b601d47868a` bit-exact on CUDA backend |
   | `test_gpu_parity_complete` | 32 | **70/0 PASS** — all 20 physics domains (wave, EM, genesis, annihilation, Born-Infeld, energy, gravity, Lorentz, Gauss, damping, wavepacket, interference, dual-substrate, Coulomb, anti-correlated pair, confinement, transmutation, Larmor, ontic constants, 1000-tick drift) |
-  | `test_force_diag_parity` | — | **7/7 PASS** — strong-force CPU↔GPU bit-exact (`|a−b| = 0.000e+00`) |
+  | `test_force_diag_parity` | — | **7/7 PASS** — strong-force CPUGPU bit-exact (`|a−b| = 0.000e+00`) |
   | `test_sim_parity` | 16 | **PASS** — TotalFieldEnergy parity ≤ 1e-2 at 100 ticks AND 500 ticks |
   | `test_gpu_parity` (legacy) | 8 | 20/1 — GP2 single-tick field-energy diff 1.91% vs 1% tolerance; structural CPU-SOR-vs-GPU-FFT discretization asymmetry, NOT a refactor regression (golden hash captures this code path bit-exact) |
   | `ftd_parity_violation` | — | 2 "fails" — physically expected V-A asymmetry (J_L-only weak coupling); not a refactor concern |

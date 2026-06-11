@@ -58,7 +58,7 @@ This curve has Complex Multiplication by Z[i], the Gaussian integers — which a
 
 **The connection:** The cubic lattice Z³ has Z₄ rotational symmetry. The unique elliptic curve with Z₄ automorphisms is E: y² = x³ − x. The lattice's symmetry **selects** the curve.
 
-**Status:** The Z₄ ↔ Aut(E) correspondence is [THEOREM]. The claim that this correspondence is the *reason* the curve governs the physics is [SELECTION] — it is motivated by the symmetry match but not proven to be the unique mechanism.
+**Status:** The Z₄  Aut(E) correspondence is [THEOREM]. The claim that this correspondence is the *reason* the curve governs the physics is [SELECTION] — it is motivated by the symmetry match but not proven to be the unique mechanism.
 
 ### 2.2 The Curve's Period Is G* [THEOREM]
 
@@ -124,7 +124,7 @@ $$\frac{1}{\alpha}\bigg|_{G^*=3} = 141 \quad \longrightarrow \quad \frac{1}{\alp
 1. **Integer part** floor(x₋) = 3 = N_c (the number of color charges, from the cuboctahedral geometry)
 2. **Fractional part** 0.024 = the coupling correction that connects color charge to electromagnetic coupling through the shared quadratic structure
 
-**2026-05-22 update.** The `x_- ↔ N_c` identification — including the "integer part = N_c" reading — is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes; the cuboctahedral geometry referenced above is one of them) and the Moore Layer Theorem. The smaller root `x_- ≈ 3.024` is now a mathematical artifact of the polynomial only; the integer/fractional decomposition above is preserved as historical commentary.
+**2026-05-22 update.** The `x_-  N_c` identification — including the "integer part = N_c" reading — is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md` (four routes; the cuboctahedral geometry referenced above is one of them) and the Moore Layer Theorem. The smaller root `x_- ≈ 3.024` is now a mathematical artifact of the polynomial only; the integer/fractional decomposition above is preserved as historical commentary.
 
 This was previously framed as analogous to how α_s(M_Z) = 0.118 is not the integer 3 but encodes N_c = 3 through the QCD beta function. Post-v1.4, the analogy depends on the retired identification and is no longer load-bearing.
 

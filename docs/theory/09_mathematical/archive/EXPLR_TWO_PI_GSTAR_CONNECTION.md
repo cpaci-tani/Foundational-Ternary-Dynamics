@@ -125,8 +125,8 @@ that `π` plays for the circle (half-arc-length, period of the
 inverse function, etc.). One can write a naïve analogy:
 
 ```
-Circle period: 2π           ↔  Phase G "circular" amplitude: 1/(2π)
-Lemniscate period: 2ϖ       ↔  candidate "lemniscatic" amplitude: 1/(2ϖ)?
+Circle period: 2π             Phase G "circular" amplitude: 1/(2π)
+Lemniscate period: 2ϖ         candidate "lemniscatic" amplitude: 1/(2ϖ)?
 ```
 
 The candidate `1/(2G*) ≈ 0.1907` is the lemniscate-period analog of

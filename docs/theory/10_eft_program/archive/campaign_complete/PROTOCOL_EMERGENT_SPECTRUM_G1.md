@@ -33,7 +33,7 @@ The deterministic-cluster-count finding (#2) is the **most novel positive struct
 
 All other parameters (IC class definitions, threshold latencies, stable-cluster threshold ≥ 100 ticks, GPU on RTX 5090) carry over from the base protocol unchanged.
 
-Estimated wall time: L=32 took ~30 min for 25 ensembles. L=64 has 8× volume; per-tick GPU time scales sub-linearly with volume due to better parallelism, but more host↔device sync per snapshot. Realistic estimate: **~2-4 GPU hours**.
+Estimated wall time: L=32 took ~30 min for 25 ensembles. L=64 has 8× volume; per-tick GPU time scales sub-linearly with volume due to better parallelism, but more hostdevice sync per snapshot. Realistic estimate: **~2-4 GPU hours**.
 
 ---
 

@@ -325,11 +325,11 @@ $$B_6 = \frac{1}{42}$$
 
 By von Staudt-Clausen: denom(B_{2n}) = ∏(p-1|2n) p. For n = 3: (p-1)|6 for p ∈ {2, 3, 7}.
 
-### 7.5 Route 5: The Mass Gap δ (historical — `x_- ↔ N_c` retired)
+### 7.5 Route 5: The Mass Gap δ (historical — `x_-  N_c` retired)
 
 $$\delta = x_- - 3 = 3.024 - 3 = 0.024 \approx \frac{1}{42} = 0.0238...$$
 
-Error: 0.8%. The "gap" between the continuous root x₋ and the integer 3 is approximately 1/42. *(Historical framing wrote this as `\delta = x_- - N_c`; that framing depended on the now-retired `x_- ↔ N_c` identification per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. The numerical question — closed form for `x_- − 3` — stands as a pure-math question; `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
+Error: 0.8%. The "gap" between the continuous root x₋ and the integer 3 is approximately 1/42. *(Historical framing wrote this as `\delta = x_- - N_c`; that framing depended on the now-retired `x_-  N_c` identification per v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. The numerical question — closed form for `x_- − 3` — stands as a pure-math question; `N_c = 3` in FTD is independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
 
 ### 7.6 Route 6: The Tau Mass Correction
 
@@ -506,7 +506,7 @@ The self-dual nome $q = e^{-\pi}$ connects: $1/q = e^{\pi} \approx \pi + b_3 + N
 | Master quadratic | x_- = 3.024 -> floor(x_-) = 3 | Yes |
 | Color confinement | N_c > 2 for stable confinement | Yes |
 
-**Uniqueness argument (historical, post-v1.4 caveat):** N_c = 2 fails (no stable baryons, gauge anomalies); the integer-counting `x_-` arguments (e.g. "N_c = 4 fails (x_- != 4), N_c >= 5 fails (master quadratic gives x_- ~ 3.024)") depended on the now-retired `x_- ↔ N_c` identification per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD is now sourced independently via `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
+**Uniqueness argument (historical, post-v1.4 caveat):** N_c = 2 fails (no stable baryons, gauge anomalies); the integer-counting `x_-` arguments (e.g. "N_c = 4 fails (x_- != 4), N_c >= 5 fails (master quadratic gives x_- ~ 3.024)") depended on the now-retired `x_-  N_c` identification per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD is now sourced independently via `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 
 #### N_base = 4 (Base Harmonics)
 

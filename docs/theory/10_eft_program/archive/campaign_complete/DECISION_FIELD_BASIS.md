@@ -14,7 +14,7 @@ The FTD lattice supports two natural field-variable conventions:
 **Collocated $(s, J)$ at vertices.** State $s \in \{-1, 0, +1\}$ and flux $\mathbf{J} \in \mathbb{R}^3$ both live at lattice vertices $\mathbf{v} \in \mathbb{Z}^3$. Used by:
 
 - The engine's production data structures (`engine/include/ftd/voxel.h` — `Voxel::state`, `Voxel::flux` are vertex-collocated).
-- All current measurement campaigns (FTD-0098/0099/0100 mixing-matrix, FTD-0107 cluster-tracker, FTD-0110 cluster-↔-mass, all Phase-G/I/J/II Wilson-Dirac work).
+- All current measurement campaigns (FTD-0098/0099/0100 mixing-matrix, FTD-0107 cluster-tracker, FTD-0110 cluster--mass, all Phase-G/I/J/II Wilson-Dirac work).
 - The algebraic spine (`SPEC_ALGEBRAIC_SPINE.md` — nine numbered results: six theorem-grade + three honestly-tiered, see §0).
 - The canonical Lagrangian (`SPEC_FTD_LAGRANGIAN.md` v3.2 §3, fields at vertices).
 

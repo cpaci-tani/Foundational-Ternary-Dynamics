@@ -152,7 +152,7 @@ graph LR
     style FTD_0238 fill:#1976d2,color:white,stroke:#222,stroke-width:1px
     FTD_0239["FTD-0239: ARC-A1 v2 boundary-closure execution"]
     style FTD_0239 fill:#bdbdbd,color:white,stroke:#222,stroke-width:1px
-    FTD_0240["FTD-0240: det↔det_ζ identity attack scope (MC-T4.3 hinge)..."]
+    FTD_0240["FTD-0240: detdet_ζ identity attack scope (MC-T4.3 hinge)..."]
     style FTD_0240 fill:#757575,color:white,stroke:#222,stroke-width:1px
     FTD_0115 --> FTD_0004
     FTD_0115 --> FTD_0113
@@ -435,7 +435,7 @@ graph LR
     style FTD_0121 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0112["FTD-0112: Field-theoretic characterization of `Q(G*)` as ..."]
     style FTD_0112 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
-    FTD_0110["FTD-0110: Cluster-size↔mass identification: bound-state s..."]
+    FTD_0110["FTD-0110: Cluster-sizemass identification: bound-state s..."]
     style FTD_0110 fill:#388e3c,color:white,stroke:#222,stroke-width:1px
     FTD_0105["FTD-0105: Lemniscatic replacement for the 2-sphere in Ein..."]
     style FTD_0105 fill:#ffb74d,color:white,stroke:#222,stroke-width:1px
@@ -626,7 +626,7 @@ graph LR
     style FTD_0009 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
     FTD_0012["FTD-0012: Discriminant trichotomy (bosons/critical/fermions)"]
     style FTD_0012 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
-    FTD_0013["FTD-0013: x₊ ↔ 1/α (1.26 ppm)"]
+    FTD_0013["FTD-0013: x₊  1/α (1.26 ppm)"]
     style FTD_0013 fill:#f57c00,color:white,stroke:#222,stroke-width:1px
     FTD_0153["FTD-0153: Math-First Ontology"]
     style FTD_0153 fill:#00897b,color:white,stroke:#222,stroke-width:1px
@@ -700,7 +700,7 @@ graph LR
 
 ## §3 — Object backbone (top-30 by valence)
 
-Edges = pairs of objects co-participating in ≥ 3 verified identities. Shows the connective tissue of the corpus (G_G ↔ π ↔ G\* ↔ Γ-tower).
+Edges = pairs of objects co-participating in ≥ 3 verified identities. Shows the connective tissue of the corpus (G_G  π  G\*  Γ-tower).
 
 ```mermaid
 graph LR

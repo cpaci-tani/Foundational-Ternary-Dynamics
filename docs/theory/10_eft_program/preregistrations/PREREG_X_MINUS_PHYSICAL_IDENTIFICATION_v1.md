@@ -5,7 +5,7 @@
 **Date:** 2026-05-27
 **Hash-lock target tag:** `preregister-x-minus-physical-identification-v1`
 **LEDGER row reservation:** FTD-0210 (provisional; confirm next-free identifier against `../07_assessment/core_ledgers/LEDGER.md` at hash-lock).
-**Supersedes:** none — first pre-registration of an x_- physical-identification search after the 2026-05-2X retirement of FTD-0014 (the original `x_- ↔ N_c` identification, removed in commit `ca7eb61` per FTD/FQCR Cleanup Taxonomy v1.4 §5).
+**Supersedes:** none — first pre-registration of an x_- physical-identification search after the 2026-05-2X retirement of FTD-0014 (the original `x_-  N_c` identification, removed in commit `ca7eb61` per FTD/FQCR Cleanup Taxonomy v1.4 §5).
 **Companion docs:**
 - `../01_reference/SPEC_ALGEBRAIC_SPINE.md` §§2, 5 (master quadratic; coefficient 16; nine-theorem spine context)
 - `../01_reference/SPEC_DOCTRINE_LEDGER.md` §§13.5, 14 (closed-negative reminders; hardening targets; "earn the map" framing)
@@ -20,7 +20,7 @@
 
 > **Pre-registration discipline.** Sections §§2–9 are committed before the search is run. After commit: SHA256 → `REF_PREREGISTER_MANIFEST.md`, git tag applied. Any post-hoc edit to §§2–9 invalidates v1; a v2 is required before the search is run or re-run. The search's result lands in a separate doc (`FOUND_*`, `AUDIT_*`, or `AUDIT_*_CLOSED_NEGATIVE.md`), never as edits to this file.
 
-**Purpose.** Lock, *before* any numerical match-search runs, (a) what would count as an admissible FTD-internal physical identification of `x_-`, (b) what would **falsify** any candidate identification, and (c) the banned-moves list that prevents this search from devolving into a re-litigation of the retired FTD-0014 `x_- ↔ N_c` reading or into a generic numerical-coincidence fishing expedition.
+**Purpose.** Lock, *before* any numerical match-search runs, (a) what would count as an admissible FTD-internal physical identification of `x_-`, (b) what would **falsify** any candidate identification, and (c) the banned-moves list that prevents this search from devolving into a re-litigation of the retired FTD-0014 `x_-  N_c` reading or into a generic numerical-coincidence fishing expedition.
 
 ---
 
@@ -30,11 +30,11 @@
 `x² − 16 G*² x + 16 G*³ = 0` (FTD-0001 / `SPEC_ALGEBRAIC_SPINE.md` §2; theorem-grade) has two roots:
 
 - `x_+ = 8G*²(1 + δ) ≈ 137.036` — conjecturally identified with `1/α` (FTD-0013, `[STRONGLY MOTIVATED CONJECTURE]`, 1.26 ppm match)
-- `x_- = 8G*²(1 − δ) = G*/(1 − αG*) ≈ 3.024` — currently **algebraically derived but physically unidentified** (the original `x_- ↔ N_c` reading was retired in commit `ca7eb61` per FTD/FQCR Cleanup Taxonomy v1.4 §5)
+- `x_- = 8G*²(1 − δ) = G*/(1 − αG*) ≈ 3.024` — currently **algebraically derived but physically unidentified** (the original `x_-  N_c` reading was retired in commit `ca7eb61` per FTD/FQCR Cleanup Taxonomy v1.4 §5)
 
 where `δ = √(1 − P_*/(S²/4)) = √((4G* − 1)/(4G*))` and `αG* = (1 − δ)/2`. The two roots satisfy the harmonic sum rule `1/x_+ + 1/x_- = S/P_* = 1/G*`. **All algebraic facts above are theorem-grade (link ② of the spine, with the recent x_- derivation as a direct consequence of FTD-0001 + FTD-0013).**
 
-**FTD-0014 retirement summary.** The original identification `x_- ↔ N_c` (number of QCD colors) was retired because:
+**FTD-0014 retirement summary.** The original identification `x_-  N_c` (number of QCD colors) was retired because:
 (i) N_c = 3 has independent first-principles structural derivations from topology (`DERIV_NC_FROM_TOPOLOGY.md`, four routes), the Moore Layer Theorem (`THEOREM_MOORE_LAYER_DECOMPOSITION.md`), and master-quadratic dual-prediction was redundant with these.
 (ii) `x_- ≈ 3.024` is an L/R-symmetric algebraic number; N_c is a strong-coupling parameter on an L/R-symmetric gauge sector — the physical match was structurally well-formed but the alignment was 0.80% (poor relative to other FTD identifications), and the cleaner independent N_c derivations made the master-quadratic identification surplus to requirements.
 (iii) The FTD/FQCR Cleanup Taxonomy v1.4 §5 standard for retiring a load-bearing identification was met: structurally redundant + cleaner alternative exists + retaining the identification costs F10 tag-drift risk.
@@ -87,7 +87,7 @@ This restates the master quadratic in chirality coordinates.
 
 **FTD-0189 dual-match uniqueness** — `PREREG_ADVERSARIAL_LOOK_ELSEWHERE_v1.md` established that across 2.65M degree-2 polynomials over an 18-constant basket FTD did not design, the master quadratic is the unique dual-matcher to `(1/α, N_c)` at FTD's empirical precision. This is the methodological template for §2(3) of the present pre-registration: any candidate `(1/α, Q_phys)` pair must remain uniquely matched by the master quadratic under the same adversarial scan, otherwise the structural-uniqueness evidence dilutes.
 
-**FTD-0014 retirement** — commit `ca7eb61` per FTD/FQCR Cleanup Taxonomy v1.4 §5. The identification `x_- ↔ N_c` was structurally redundant with `DERIV_NC_FROM_TOPOLOGY.md` (four independent routes) and Moore Layer Theorem (`THEOREM_MOORE_LAYER_DECOMPOSITION.md`); the alignment was 0.80% (poor relative to other FTD predictions); F10 tag-drift risk made retention costly. The retirement is the canonical record; this pre-registration's banned-move B-2 specifically forbids re-litigating it.
+**FTD-0014 retirement** — commit `ca7eb61` per FTD/FQCR Cleanup Taxonomy v1.4 §5. The identification `x_-  N_c` was structurally redundant with `DERIV_NC_FROM_TOPOLOGY.md` (four independent routes) and Moore Layer Theorem (`THEOREM_MOORE_LAYER_DECOMPOSITION.md`); the alignment was 0.80% (poor relative to other FTD predictions); F10 tag-drift risk made retention costly. The retirement is the canonical record; this pre-registration's banned-move B-2 specifically forbids re-litigating it.
 
 **Path A status (2026-05-27 numerical check) — CLOSED-NEGATIVE for the naive Hessian-identity hypothesis.** The companion math-side route — deriving `(S, P_*) = (16G*², 16G*³)` from higher-order ζ-determinant invariants of the J-chain — was tested at 80-digit precision via `scripts/exploration/check_zeta_hessian_gstar2.py`. Specifically, the candidate identity
 $$\zeta''(0,1/4) - \zeta''(0,3/4) \;\stackrel{?}{=}\; \pm\log(16\,G^{*2})$$
@@ -167,7 +167,7 @@ The companion ζ-Hessian-derivation work (Path A of the 2026-05-27 plan; numeric
 Tag consequences:
 - The identification is tagged `[DERIVED]` only if the structural argument is itself `[THEOREM]`/`[DERIVED]`-grade from existing FTD theorems; otherwise `[SELECTION]`.
 - The retired FTD-0014 row remains retired; a new ledger row is opened (FTD-0210 or next-free) for the FOUND identification.
-- FTD-0013 (x_+ ↔ 1/α) gains structural support from the now-explained dual-match property but is *not* promoted by this verdict alone; promotion requires its own separate ratification (per `SPEC_ALPHA_READOUT_CONTRACT.md` §7).
+- FTD-0013 (x_+  1/α) gains structural support from the now-explained dual-match property but is *not* promoted by this verdict alone; promotion requires its own separate ratification (per `SPEC_ALPHA_READOUT_CONTRACT.md` §7).
 - No spine theorem is created or modified.
 
 **UNDERDETERMINED.** Exactly two of §2(1)+(2)+(3) are satisfied by a candidate, with the third borderline. Specifically:
@@ -243,7 +243,7 @@ Any single firing → verdict is at best UNDERDETERMINED for that candidate; if 
 
 - **B-2 — No L/R-symmetric candidates.** Re-litigating FTD-0014 (N_c, generation count, color factors, total fermion content, etc.) is automatically forbidden. The retirement provenance in commit `ca7eb61` is the canonical record; any move to re-open the N_c reading requires its OWN separate pre-registration with explicit justification for revisiting the retired decision, NOT this one.
 
-- **B-3 — No FTD-0189 threshold relaxation.** The dual-match uniqueness criterion (D5) inherits FTD-0189's standard; lowering this threshold would silently weaken the structural-uniqueness evidence that x_+ ↔ 1/α currently rests on.
+- **B-3 — No FTD-0189 threshold relaxation.** The dual-match uniqueness criterion (D5) inherits FTD-0189's standard; lowering this threshold would silently weaken the structural-uniqueness evidence that x_+  1/α currently rests on.
 
 - **B-4 — No post-hoc basket adjustment.** The §4.A basket is frozen at hash-lock. Adding observables after looking at numerical results is fishing; removing observables is selection bias. F-d catches both.
 

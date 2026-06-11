@@ -95,7 +95,7 @@ This is reminiscent of standard QFT lattice EFT: there is a finite-volume sweet 
 
 ```
 direction       | L=24    | L=32    | L=48    | L=64
-SPATIAL ↔ SPATIAL | 11/20 | 10/20 | 12/20 | 10/20
+SPATIAL  SPATIAL | 11/20 | 10/20 | 12/20 | 10/20
 SPATIAL → RF    | 0/10    | 0/10    | 2/10    | 2/10
 RF → SPATIAL    | 0/10    | 0/10    | 0/10    | 0/10   ← **L-INDEPENDENT decoupling**
 SPATIAL → D     | 3/10    | 2/10    | 4/10    | 6/10
@@ -115,7 +115,7 @@ This is the **L-independent backbone** of the sector decomposition.
 - **SPATIAL → REACTION-FLUX**: 0 at L≤32, 2/10 at L≥48. Some weak coupling emerges with L, but only ~20% of entries — still mostly decoupled.
 - **SPATIAL → DENSITY**: 3, 2, 4, 6 — DENSITY bridge thickens with L. At L=64 the spatial sector drives DENSITY couplings.
 - **DENSITY → SPATIAL**: 2, 2, 2, 4 — bridge directionality emerges only at L=64.
-- **SPATIAL ↔ SPATIAL**: stable around 10-12/20 — internal mixing is L-independent.
+- **SPATIAL  SPATIAL**: stable around 10-12/20 — internal mixing is L-independent.
 
 So as L grows, the DENSITY bridge thickens (more cross-sector couplings emerge through density), but the REACTION-FLUX sector itself remains quarantined from direct SPATIAL coupling.
 
@@ -141,23 +141,23 @@ cond(S) improvements at larger L (6.4e13 → 1.7e12) translate to more off-diago
 
 ### 5.1 · L-independent backbone (theorem-grade)
 
-✅ **Bare Gaussian fixed point** (FTD-0070): closed.
-✅ **Algebraic spine** (8 theorems): closed.
-✅ **Theorems 1, 2** (M_JJ = b⁴, M_J4 = b⁸): verified at L = 24, 32, 48, 64 to machine precision.
-✅ **Theorem 3** (charge-density blocking): structure verified at all 4 L; ρ̄_intra-block measured to flow from ~0 at L=24 to ~−0.15 at L=64.
-✅ **REACTION-FLUX → SPATIAL = 0 sector decoupling**: L-INDEPENDENT at 5σ over 80,000 snapshots.
+ **Bare Gaussian fixed point** (FTD-0070): closed.
+ **Algebraic spine** (8 theorems): closed.
+ **Theorems 1, 2** (M_JJ = b⁴, M_J4 = b⁸): verified at L = 24, 32, 48, 64 to machine precision.
+ **Theorem 3** (charge-density blocking): structure verified at all 4 L; ρ̄_intra-block measured to flow from ~0 at L=24 to ~−0.15 at L=64.
+ **REACTION-FLUX → SPATIAL = 0 sector decoupling**: L-INDEPENDENT at 5σ over 80,000 snapshots.
 
 These pieces of FTD's nonlinear EFT structure are L-independent. They define the **convention-level + ontology-level** content of the EFT.
 
 ### 5.2 · L-dependent flow content
 
-🟡 **Five non-theorem diagonals** (`divJ², curlJ², JdotDivJ, stateSq, reactionDensity, genesisFlux, JdotDeltaS`) show monotone or near-monotone L-dependence. These are **real RG flow content** under continuum approach.
+ **Five non-theorem diagonals** (`divJ², curlJ², JdotDivJ, stateSq, reactionDensity, genesisFlux, JdotDeltaS`) show monotone or near-monotone L-dependence. These are **real RG flow content** under continuum approach.
 
 Some flow toward apparent fixed points (stateSq → ~6.7, reactionDensity → ~6.5). Others continue drifting (genesisFlux magnitude shrinking, JdotDeltaS shrinking). L=128 would clarify whether the apparent fixed points stabilize.
 
 ### 5.3 · L=32 as the unique self-consistency window
 
-🎯 **Gate C (RG semigroup) PASSES only at L=32**. The L=32 LARGE measurement is therefore a uniquely-self-consistent finite-L EFT measurement, with both the small-L coarse-grid noise and the large-L irreducible physics below threshold.
+ **Gate C (RG semigroup) PASSES only at L=32**. The L=32 LARGE measurement is therefore a uniquely-self-consistent finite-L EFT measurement, with both the small-L coarse-grid noise and the large-L irreducible physics below threshold.
 
 For paper drafting: the cleanest "math-based EFT" claim is **at L=32, T=0.100, pair-rich**, where Gates B + C + A-diagonal all PASS. The L=24, 48, 64 measurements characterize the L-dependent behavior around this sweet spot.
 
@@ -173,7 +173,7 @@ For paper drafting: the cleanest "math-based EFT" claim is **at L=32, T=0.100, p
 
 **Q4**: Theorem 4 attempt: derive analytic L-dependence of `divJ²` and `curlJ²` from the matched-stencil CG projector + blocking convention. Their drift (-15.7 → -17.5 for divJ²) might be derivable rather than measured.
 
-**Q5**: Does the SPATIAL ↔ SPATIAL within-sector coupling pattern (10-12/20 at all L) decompose into specific operator pairs that are present vs absent at all L?
+**Q5**: Does the SPATIAL  SPATIAL within-sector coupling pattern (10-12/20 at all L) decompose into specific operator pairs that are present vs absent at all L?
 
 ---
 

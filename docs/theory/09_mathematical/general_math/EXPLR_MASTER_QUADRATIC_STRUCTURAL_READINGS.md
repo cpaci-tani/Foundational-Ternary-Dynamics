@@ -1,6 +1,6 @@
 # EXPLR — Master Quadratic Structural Readings: Volumetric, 2×2 Mixing-Matrix, and Conjugate-Lattice Interpretations
 
-**Status:** [STRUCTURAL OBSERVATION] — three structural re-framings of the master quadratic `x² − 16·G*²·x + 16·G*³ = 0`. None is a new theorem; each is an interpretive picture of existing spine theorems (FTD-0001/0003/0004/0013/0111; historical FTD-0014 references throughout this document refer to the now-retired `x_- ↔ N_c` identification, **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+ ↔ 1/α` (FTD-0013); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. All "dual prediction" prose below is preserved as historical interpretation but no longer load-bearing). Per-section tags preserved from sources: the volumetric reading is [STRUCTURAL OBSERVATION] correcting the abstract 2×2 presentation; the 2×2 mixing-matrix reading is [STRUCTURAL OBSERVATION]; the conjugate-lattice reading is [STRUCTURAL OBSERVATION] with Reading 3 (|Aut(E × E)|) structurally cleanest.
+**Status:** [STRUCTURAL OBSERVATION] — three structural re-framings of the master quadratic `x² − 16·G*²·x + 16·G*³ = 0`. None is a new theorem; each is an interpretive picture of existing spine theorems (FTD-0001/0003/0004/0013/0111; historical FTD-0014 references throughout this document refer to the now-retired `x_-  N_c` identification, **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. The live single-root identification is `x_+  1/α` (FTD-0013); `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. All "dual prediction" prose below is preserved as historical interpretation but no longer load-bearing). Per-section tags preserved from sources: the volumetric reading is [STRUCTURAL OBSERVATION] correcting the abstract 2×2 presentation; the 2×2 mixing-matrix reading is [STRUCTURAL OBSERVATION]; the conjugate-lattice reading is [STRUCTURAL OBSERVATION] with Reading 3 (|Aut(E × E)|) structurally cleanest.
 **Date:** 2026-05-21
 **Consolidates:** `EXPLR_VOLUMETRIC_READING_OF_MASTER_QUADRATIC.md`, `EXPLR_MASTER_QUADRATIC_AS_MIXING_MATRIX.md`, `EXPLR_CONJUGATE_LATTICE_INTERPRETATIONS.md` (merged 2026-05-21)
 
@@ -465,7 +465,7 @@ applied to the master quadratic, which is already verified in
 The master quadratic has coefficient `16 = N_base² = |Aut(E)|²` (Theorem 4). Why is it specifically squared? Three candidate interpretations of "the conjugate":
 
 1. **Real-space dual:** SC + BCC interpenetrating sublattices, each with N_base = 4 A_{1g} modes.
-2. **Reciprocal-space dual:** SC ↔ BCC mutually reciprocal in k-space; joint A_{1g} mode space = 4 × 4 = 16.
+2. **Reciprocal-space dual:** SC  BCC mutually reciprocal in k-space; joint A_{1g} mode space = 4 × 4 = 16.
 3. **Number-theoretic conjugate:** |Aut(E × E)| = |Aut(E)|² = 16 for the product variety of the unique CM curve.
 
 This part evaluates all three.
@@ -503,7 +503,7 @@ The "16" then counts joint real-space ⊗ k-space mode pairs.
 ### C.2.2 · Why this is suggestive but not derived
 
 **Suggestive:**
-- Real ↔ reciprocal duality is a genuine 3D structural fact about cubic lattices
+- Real  reciprocal duality is a genuine 3D structural fact about cubic lattices
 - Both spaces have O_h symmetry, both have 4 A_{1g} modes by the same Theorem 4 logic
 - Tensor product naturally gives 4 × 4 = 16
 
@@ -529,7 +529,7 @@ Aut(E) × Aut(E) ⊆ Aut(E × E)
 |Aut(E) × Aut(E)| = |Aut(E)|² = 4 × 4 = 16
 ```
 
-(The full Aut(E × E) also includes the swap E_1 ↔ E_2, giving Z_4² ⋊ Z_2 of order 32, but the "diagonal" subgroup has exactly 16 elements — independent action on each factor.)
+(The full Aut(E × E) also includes the swap E_1  E_2, giving Z_4² ⋊ Z_2 of order 32, but the "diagonal" subgroup has exactly 16 elements — independent action on each factor.)
 
 ### C.3.2 · Why this is the cleanest reading
 
@@ -570,7 +570,7 @@ The three readings rank by structural cleanness:
 
 1. **Reading 3 (|Aut(E × E)|)**: cleanest. Direct from Theorems 3 and 4. The squaring 4² = 16 captures independent automorphism action on the two-sector product variety.
 
-2. **Reading 2 (real ↔ reciprocal duality)**: suggestive but requires additional physical interpretation of how the master quadratic engages joint real-k-space mode space.
+2. **Reading 2 (real  reciprocal duality)**: suggestive but requires additional physical interpretation of how the master quadratic engages joint real-k-space mode space.
 
 3. **Reading 1 (interpenetrating SC + BCC sublattices)**: reduces to standard 27-block analysis; not a separate "conjugate" structure.
 
@@ -639,7 +639,7 @@ The chain is closed: Theorems 3, 4, 8 + level-k=4 selection → master quadratic
 
 ## C.7 · Conjugate-lattice reading — single-line summary
 
-**The squaring `16 = |Aut(E)|² = N_base²` in the master quadratic admits three readings: (1) interpenetrating SC+BCC sublattices, which REDUCES to the standard 27-block analysis; (2) real-space ↔ reciprocal-space duality, suggestive but requiring additional physical interpretation; (3) automorphism count of the product variety E × E for the unique class-number-1 CM curve, which is the structurally cleanest reading and connects three spine theorems (3, 4, 8) into a unified picture of "two copies of E correspond to two sectors (EM, color) of the dual prediction, with independent Z_4 = Aut(E) action on each sector giving |Aut(E)|² = 16 automorphism pairs"; this is the recommended interpretation for Paper A and complements (rather than competes with) the 2×2 mixing matrix reading and the volumetric pathway.**
+**The squaring `16 = |Aut(E)|² = N_base²` in the master quadratic admits three readings: (1) interpenetrating SC+BCC sublattices, which REDUCES to the standard 27-block analysis; (2) real-space  reciprocal-space duality, suggestive but requiring additional physical interpretation; (3) automorphism count of the product variety E × E for the unique class-number-1 CM curve, which is the structurally cleanest reading and connects three spine theorems (3, 4, 8) into a unified picture of "two copies of E correspond to two sectors (EM, color) of the dual prediction, with independent Z_4 = Aut(E) action on each sector giving |Aut(E)|² = 16 automorphism pairs"; this is the recommended interpretation for Paper A and complements (rather than competes with) the 2×2 mixing matrix reading and the volumetric pathway.**
 
 ---
 

@@ -103,7 +103,7 @@ The lemniscatic catalogue therefore shows a UNIFORM 4 (rather than a mix of inte
 | Entry | Content |
 |---|---|
 | FTD-0008 | Moore-neighbourhood integers; N_base = 4 first appears |
-| FTD-0110 | Cluster↔mass identification; N_base from O_h A_{1g} multiplicity |
+| FTD-0110 | Clustermass identification; N_base from O_h A_{1g} multiplicity |
 | FTD-0111 | (1+i)-tower harmonic invariant; level k = 4 |
 | FTD-0122 | BCC complex-structure theorem; V_complex ≅ ℤ[i]² |
 | FTD-0127 | G* parity-twist; χ_{−4} conductor 4 |

@@ -124,7 +124,7 @@ Worst 12 entries by stderr/|value|:
   ...
 ```
 
-The cross-channel reaction operators (genesisFlux↔JdotDeltaS, reactionDensity↔genesisFlux) have stderr exceeding |value| by 8–10×. This is consistent with the small absolute scale of the reaction-sector cross-couplings (most entries < 1.0) versus a uniform bootstrap noise floor (~1.0–10.0 absolute units across all matrix entries in this regime). **Larger ensemble is the standard fix.**
+The cross-channel reaction operators (genesisFluxJdotDeltaS, reactionDensitygenesisFlux) have stderr exceeding |value| by 8–10×. This is consistent with the small absolute scale of the reaction-sector cross-couplings (most entries < 1.0) versus a uniform bootstrap noise floor (~1.0–10.0 absolute units across all matrix entries in this regime). **Larger ensemble is the standard fix.**
 
 ---
 

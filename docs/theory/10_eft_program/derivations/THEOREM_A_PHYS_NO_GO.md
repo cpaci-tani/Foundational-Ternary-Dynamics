@@ -53,14 +53,14 @@ The theorem extends (Corollary 3.1) to every non-trivial SI dimension: mass, tim
 
 ### 4.2 · Calibration dimension count
 
-Every dimensional FTD prediction is conditional on exactly **one calibration per independent SI dimension** spanned by the prediction. With `c_phys` as the dimensional bridge linking length ↔ time and `c² = E/M` linking energy ↔ mass, fixing two calibrations (one length, one mass) closes the set {L, T, M, E}:
+Every dimensional FTD prediction is conditional on exactly **one calibration per independent SI dimension** spanned by the prediction. With `c_phys` as the dimensional bridge linking length  time and `c² = E/M` linking energy  mass, fixing two calibrations (one length, one mass) closes the set {L, T, M, E}:
 
 - `a_phys ≡ ℓ_P` fixes length.
 - `K_B = m_e` fixes mass.
-- `c_lat = 1/√3 ↔ c_phys` promotes the length fix to a time fix.
+- `c_lat = 1/√3  c_phys` promotes the length fix to a time fix.
 - `c² = E/M` promotes the mass fix to an energy fix.
 
-This is the calibration basis declared in `docs/SPEC_FTD.md` "LATTICE ↔ PHYSICAL CALIBRATION." Adding a third independent dimensional anchor (e.g., a separately-calibrated `ℏ`) would over-determine the system and must be checked for consistency with the two primary anchors — the retracted `archive/retracted/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` failed this consistency check.
+This is the calibration basis declared in `docs/SPEC_FTD.md` "LATTICE  PHYSICAL CALIBRATION." Adding a third independent dimensional anchor (e.g., a separately-calibrated `ℏ`) would over-determine the system and must be checked for consistency with the two primary anchors — the retracted `archive/retracted/DERIV_A_PHYS_MECHANISM_GAMMA_SUCCESS.md` failed this consistency check.
 
 ### 4.3 · Dimensionless predictions are the falsifiable spine
 
@@ -105,7 +105,7 @@ This is the same epistemic position occupied by every effective field theory at 
 ## 7 · Pointers
 
 ```
-docs/SPEC_FTD.md                                                   # LATTICE ↔ PHYSICAL CALIBRATION
+docs/SPEC_FTD.md                                                   # LATTICE  PHYSICAL CALIBRATION
 docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_DELTA_ATTEMPT.md  # Mechanism δ (closure)
 docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md  # Mechanism γ (closure)
 docs/theory/10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md                # closed open-problem doc

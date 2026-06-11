@@ -106,7 +106,7 @@ Status legend: `[x]` fixed · `[~]` partial · `[d]` deferred (with reason) · `
 ## Track E — Toggle wiring + validation (Wave-2 Agent C)
 
 - [x] **E-1** `confinement` toggle no longer silently ignored by WASM (same as D-3)
-- [x] **E-2 / RF-9** 5 new validator dependency checks (langevin↔larmor, selective_damping, pair_production, bcc_stencil, triad_binding)
+- [x] **E-2 / RF-9** 5 new validator dependency checks (langevinlarmor, selective_damping, pair_production, bcc_stencil, triad_binding)
 
 **Track E: 2 fixed**
 

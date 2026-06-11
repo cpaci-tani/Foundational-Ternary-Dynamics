@@ -60,7 +60,7 @@ Direct rational-approximant scan over `q ≤ 1000`:
 
 ### 1.3 · Cross-doc tag drift caught and fixed
 
-`SPEC_SM_REPLACEMENT_COMPLETE.md §4.4` listed spin-statistics as "Derived from `π_1(SO(3)) = ℤ_2`". The underlying derivation `DERIV_SPIN_STATISTICS_BRIDGE.md §1.4` (SSB-4) tags the curve-↔-SO(3) identification step as **[SELECTION]**, not [DERIVED]. The summary table inflated the source tag. Corrected 2026-05-01 to match. F10-class hygiene fix.
+`SPEC_SM_REPLACEMENT_COMPLETE.md §4.4` listed spin-statistics as "Derived from `π_1(SO(3)) = ℤ_2`". The underlying derivation `DERIV_SPIN_STATISTICS_BRIDGE.md §1.4` (SSB-4) tags the curve--SO(3) identification step as **[SELECTION]**, not [DERIVED]. The summary table inflated the source tag. Corrected 2026-05-01 to match. F10-class hygiene fix.
 
 ---
 
@@ -193,7 +193,7 @@ Three claim updates needed:
 
 1. **SSB-3 ("Two-road G\* agreement")** currently tagged [THEOREM]. Recommendation: **retag to [SELECTION] with quantitative qualifier**. The two-road agreement at 6.41 ppm is real, but among ~4.3% of natural Cayley-Dickson curves with comparable matches, so the agreement does not uniquely select the canonical curve. The structural meaning of the agreement requires further argument.
 
-2. **SSB-4 ("ℤ₂ topology ↔ spin-1/2 identification")** is correctly tagged [SELECTION]; no change needed but should explicitly cite this audit.
+2. **SSB-4 ("ℤ₂ topology  spin-1/2 identification")** is correctly tagged [SELECTION]; no change needed but should explicitly cite this audit.
 
 3. **§1.3 narrative** describing the canonical curve as the "true ontological" curve should be softened. Many natural Cayley-Dickson curves admit similar matches; the canonical curve's privileged status is not established by the arc-length / multiplier route.
 

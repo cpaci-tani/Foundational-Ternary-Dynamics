@@ -168,7 +168,7 @@ For arbitrarily large L, $G^{\text{BCC}}_L(0)$ approaches $I_1 = G^{*2}/(2\pi)$ 
 
 $$x^2 = 16 G^{*2} \cdot x - 16 G^{*3}$$
 
-which is exactly the master quadratic with roots $x_+ = 137.036$ (identified with $1/\alpha$ at 1.26 ppm, FTD-0013 [STRONGLY MOTIVATED CONJECTURE]) and $x_- = 3.024$ (mathematical artifact of $P(x)$; the historical `x_- ↔ N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`).
+which is exactly the master quadratic with roots $x_+ = 137.036$ (identified with $1/\alpha$ at 1.26 ppm, FTD-0013 [STRONGLY MOTIVATED CONJECTURE]) and $x_- = 3.024$ (mathematical artifact of $P(x)$; the historical `x_-  N_c` identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`).
 
 **Epistemic status:** [THEOREM] — the identity chain is algebraically exact. The gap equation form is [SELECTION].
 
@@ -374,7 +374,7 @@ The entire structure traces from $i^2 + 1 = 0$:
 i² + 1 = 0
   ├─> Null cone: i² + a² + b² = 0
   │     ├─> Quadratic metric: a² + b² = 1 (U(1) phases on lattice)
-  │     ├─> Wick rotation: Euclidean ↔ Minkowski
+  │     ├─> Wick rotation: Euclidean  Minkowski
   │     └─> Riemann sphere CP¹ (isotropic cone projectivization)
   │
   ├─> CM by Z[i]: lemniscatic elliptic curve

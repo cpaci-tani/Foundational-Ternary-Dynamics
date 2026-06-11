@@ -1,6 +1,6 @@
 # The Alpha Readout Resolution: Bridging the Conformed Root to Physical Couplings
 
-> ## ⛔ [RETRACTED] — 2026-06-01. This document does NOT resolve MC-T4.3.
+> ##  [RETRACTED] — 2026-06-01. This document does NOT resolve MC-T4.3.
 >
 > **Status: retracted substitution-identity facade. Preserved for provenance; do not re-attempt or cite as a result.**
 >

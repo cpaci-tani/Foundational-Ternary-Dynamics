@@ -183,11 +183,11 @@ This is a real structural challenge. Possible resolutions:
 
 (R3) is the cleanest if it works, because it preserves the framework's structural boundary. Under (R3), the t-scale map would need to compress all three lepton thresholds into the $(0.062, 1)$ interval — concretely:
 
-- $t = 1$ ↔ $\mu \ll m_e$ (deep IR; α = 137.036)
-- $t \approx 0.5$ ↔ $\mu \approx m_e$ (electron threshold)
-- $t \approx 0.2$ ↔ $\mu \approx m_\mu$ (muon threshold)
-- $t \approx 0.07$ ↔ $\mu \approx m_\tau$ (tau threshold)
-- $t = 0.062$ ↔ $\mu = $ Landau-pole-analog or unification scale
+- $t = 1$  $\mu \ll m_e$ (deep IR; α = 137.036)
+- $t \approx 0.5$  $\mu \approx m_e$ (electron threshold)
+- $t \approx 0.2$  $\mu \approx m_\mu$ (muon threshold)
+- $t \approx 0.07$  $\mu \approx m_\tau$ (tau threshold)
+- $t = 0.062$  $\mu = $ Landau-pole-analog or unification scale
 
 This requires a t-scale map of the form $\mu(t) = m_e \cdot f(t)$ where $f$ is a specific squashing function. The form is constrained by the threshold positions and by the slopes at each plateau.
 

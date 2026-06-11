@@ -537,10 +537,10 @@ If Path 1 also fails: accept Path 2/3.
 
 | Grade | Test | (x,y) | (x,z) | (y,z) |
 |---|---|:---:|:---:|:---:|
-| 0 (scalar) | Casimir present, $S > 100$ | ✅ 808 | ✅ 954 | ✅ 1005 |
-| 1 (vector) | Third-axis suppressed, $\|V_{\text{third}}\|/\|V_{\text{active}}\| < 30\%$ | ✅ 6% | ✅ 0.3% | ✅ 0.3% |
-| 2 (bivector) | Matching plaquette dominates by 2× | ✅ 8× | ✅ 23× | ✅ 47× |
-| 3 (pseudoscalar) | Suppressed, $\|T\| < S/10$ | ✅ 8.4× | ✅ 8.6× | ✅ 8.7× |
+| 0 (scalar) | Casimir present, $S > 100$ |  808 |  954 |  1005 |
+| 1 (vector) | Third-axis suppressed, $\|V_{\text{third}}\|/\|V_{\text{active}}\| < 30\%$ |  6% |  0.3% |  0.3% |
+| 2 (bivector) | Matching plaquette dominates by 2× |  8× |  23× |  47× |
+| 3 (pseudoscalar) | Suppressed, $\|T\| < S/10$ |  8.4× |  8.6× |  8.7× |
 
 **This restores partial confidence in the FTD-0086 Branch-A claim.** The F-double-prime iterated-closure failure (FTD-0087) is now most likely a **4-injection dynamical-noise issue**, not an algebraic defect. The Cl(3,0) skeleton is internally consistent at 2-injection order.
 

@@ -133,7 +133,7 @@ Despite the fitting, some connections appear genuine:
 
 | Connection | Why It's Real |
 |------------|---------------|
-| G* ↔ Γ(1/4) ↔ elliptic curves ↔ zeta | Mathematical ancestry |
+| G*  Γ(1/4)  elliptic curves  zeta | Mathematical ancestry |
 | t₁ ≈ (9/2)π to high precision | Zeros DO cluster near half-integer multiples of π |
 | Precision of fitted formulas | Too precise for random chance |
 
@@ -150,19 +150,19 @@ Despite the fitting, some connections appear genuine:
 
 | Test | Result | Status |
 |------|--------|--------|
-| t₁ formula (2.1 ppb) | Verified | ✅ CONFIRMED |
-| π(42) = 13 = N_eff | Exact | ✅ CONFIRMED |
-| B₆ = 1/42 = 1/(2N_c×b₃) | Exact | ✅ CONFIRMED |
-| Euler_{2,3,7}(2) = 49/32 | Exact | ✅ CONFIRMED |
-| t₁×t₂/t₃ = 12 - 16α | 233 ppm | ✅ NEW DISCOVERY |
+| t₁ formula (2.1 ppb) | Verified |  CONFIRMED |
+| π(42) = 13 = N_eff | Exact |  CONFIRMED |
+| B₆ = 1/42 = 1/(2N_c×b₃) | Exact |  CONFIRMED |
+| Euler_{2,3,7}(2) = 49/32 | Exact |  CONFIRMED |
+| t₁×t₂/t₃ = 12 - 16α | 233 ppm |  NEW DISCOVERY |
 
 ### 2.7 What FAILED Validation
 
 | Test | Result | Status |
 |------|--------|--------|
-| Higher zeros (t₂, t₃, ...) | No simple pattern | ❌ Does not extend |
-| Zero spacing | ~14% off | ❌ Not predictive |
-| ζ(1/2) from FTD | ~0.1% best | ⚠️ Approximate only |
+| Higher zeros (t₂, t₃, ...) | No simple pattern |  Does not extend |
+| Zero spacing | ~14% off |  Not predictive |
+| ζ(1/2) from FTD | ~0.1% best |  Approximate only |
 
 ---
 

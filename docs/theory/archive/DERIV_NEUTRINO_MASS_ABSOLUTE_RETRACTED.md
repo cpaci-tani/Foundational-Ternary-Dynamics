@@ -248,7 +248,7 @@ G* = Gamma(1/4) / Gamma(3/4) = 2.9587... [THEOREM]
 Master Quadratic: x^2 - 16*G*^2*x + 16*G*^3 = 0 [THEOREM]
   |
   +---> x_+ = 1/alpha = 137.036 [STRONGLY MOTIVATED CONJECTURE] (FTD-0013; roots themselves [THEOREM])
-  +---> x_- ~ 3.024 (math artifact of P(x); x_- ↔ N_c RETIRED v1.4 §5;
+  +---> x_- ~ 3.024 (math artifact of P(x); x_-  N_c RETIRED v1.4 §5;
                      LEDGER FTD-0014 removed in commit ca7eb61;
                      N_c = 3 independently sourced via DERIV_NC_FROM_TOPOLOGY.md)
   |

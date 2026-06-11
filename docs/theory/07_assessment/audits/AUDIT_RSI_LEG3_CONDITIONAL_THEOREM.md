@@ -59,7 +59,7 @@ All four attacks (3b-residual, 3c universal-negative, independence-half, Galois 
 
 > **Q(G\*) is the Galois-fixed field of the master quadratic's ℤ/2.**
 
-The master quadratic `x² − 16G*²x + 16G*³ = 0` has discriminant `disc = 64G*³(4G*−1)`, so its splitting field over Q(G\*) is `Q(G*)(√(G*(4G*−1)))`. The Galois group is ℤ/2, swapping `x₊ ↔ x₋`. Every forward-forced FTD-native symmetric datum — the Watson trace `16G*²`, the det_ζ ratio `G*`, the Chowla-Selberg periods — lives in `Q(G*)` (the σ-fixed subfield) and is **provably blind to which root is 1/α**. Verified concretely: the family `det = 16G*²·G*^k` for k = 0, 1, 2, 3 gives dominant roots 139.05 / **137.04** / 130.68 / 105.76 — all F-consistent, and **nothing in F selects k = 1**. `[THEOREM — by Galois-fixed-field comparison]`
+The master quadratic `x² − 16G*²x + 16G*³ = 0` has discriminant `disc = 64G*³(4G*−1)`, so its splitting field over Q(G\*) is `Q(G*)(√(G*(4G*−1)))`. The Galois group is ℤ/2, swapping `x₊  x₋`. Every forward-forced FTD-native symmetric datum — the Watson trace `16G*²`, the det_ζ ratio `G*`, the Chowla-Selberg periods — lives in `Q(G*)` (the σ-fixed subfield) and is **provably blind to which root is 1/α**. Verified concretely: the family `det = 16G*²·G*^k` for k = 0, 1, 2, 3 gives dominant roots 139.05 / **137.04** / 130.68 / 105.76 — all F-consistent, and **nothing in F selects k = 1**. `[THEOREM — by Galois-fixed-field comparison]`
 
 The four kernels:
 

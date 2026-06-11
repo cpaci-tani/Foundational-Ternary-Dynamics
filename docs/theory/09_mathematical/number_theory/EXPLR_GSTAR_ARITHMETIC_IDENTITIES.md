@@ -360,7 +360,7 @@ $$\frac{\pi\sqrt{2}}{\Gamma(3/4)^2} \;=\; \frac{\Gamma(1/4)\cdot\Gamma(3/4)}{\Ga
 
 End of derivation.
 
-## B.2 · The π ↔ G\* analogy
+## B.2 · The π  G\* analogy
 
 The synthesis is most useful when stated as a parallel structure:
 
@@ -597,8 +597,8 @@ This Result is one more entry in the multiple-4 catalogue: the conductor of the 
 
 ## C.7 · What the parity-twist reading is NOT
 
-- **Not a derivation of α.** The single live identification `x_+ ≈ 1/α` (1.26 ppm) remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); this Result extends the algebraic spine's *characterization* of G\*, not its bridge to physics. *(The historical "dual-prediction" framing paired with `x_- ↔ N_c` is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
-- **Not a connection to ζ's critical line.** Strong claim "FTD ↔ Riemann critical line" is FALSIFIED in the strong form (PSLQ on ζ(1/2) returned None in every tested basis). The partial true form is "FTD ↔ L(s, χ_{−4}) boundary of critical strip"; the center of either critical line is outside the algebraic spine's reach as currently stated.
+- **Not a derivation of α.** The single live identification `x_+ ≈ 1/α` (1.26 ppm) remains [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); this Result extends the algebraic spine's *characterization* of G\*, not its bridge to physics. *(The historical "dual-prediction" framing paired with `x_-  N_c` is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
+- **Not a connection to ζ's critical line.** Strong claim "FTD  Riemann critical line" is FALSIFIED in the strong form (PSLQ on ζ(1/2) returned None in every tested basis). The partial true form is "FTD  L(s, χ_{−4}) boundary of critical strip"; the center of either critical line is outside the algebraic spine's reach as currently stated.
 - **Not an extension of the spine to higher L-functions.** Result D as stated applies to ζ vs L(s, χ_{−4}) at conductor 4. Higher conductors would require analogous `G*_q` constants (related to FTD-0123's Γ-product analogue `G*_d := ∏ Γ(a/|d|)^{χ_d(a)}`) and analogous parity-twist identifications. Whether the structure generalizes cleanly is an OPEN extension.
 - **Not a new spine theorem.** The spine count is unchanged — nine numbered results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0). This is filed as a subsidiary of Theorem 9 (FTD-0112), not as Theorem 10.
 

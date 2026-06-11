@@ -1,7 +1,7 @@
 # FTD Native EFT Checklist
 
 **Date:** 2026-05-05 (R1 refresh; previous: 2026-04-26 — FTD-0098/0099/0100 mixing-matrix measurements)
-**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4); GPU full-tick ledgers in place; microscopic native action selected as a constrained history measure (`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`); first nonlinear operator-mixing matrix $M_{ab}(b=2)$ measured 2026-04-26 (FTD-0098/0099/0100, asymmetric flux↔state mixing structure recovered); blocking-diagonal identities $M_{JJ}=16$, $M_{J^4}=256$ established as [THEOREM] (`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`, 2026-04-30); structural-decoupling diagnosis L-independent at L∈{24,32,48,64} (`ANALYSIS_GATE_C_VS_L.md`, 2026-04-30); engine-side CPU↔GPU parity bugs F1/F4/F6 + diagnostics + F3 + F12 + F2 + F15 all closed (2026-05-04/05). **Full nonlinear effective EFT $S_\text{eff}$ remains open** — central R3 deliverable of the FTD-EFT roadmap.
+**Status:** [PARTIAL] Native Gaussian bridge closed at theorem + GPU-measured level (§4); GPU full-tick ledgers in place; microscopic native action selected as a constrained history measure (`DERIV_FTD_NATIVE_COMPLETE_HISTORY_ACTION.md`); first nonlinear operator-mixing matrix $M_{ab}(b=2)$ measured 2026-04-26 (FTD-0098/0099/0100, asymmetric fluxstate mixing structure recovered); blocking-diagonal identities $M_{JJ}=16$, $M_{J^4}=256$ established as [THEOREM] (`THEOREM_BLOCKING_DIAGONAL_IDENTITIES.md`, 2026-04-30); structural-decoupling diagnosis L-independent at L∈{24,32,48,64} (`ANALYSIS_GATE_C_VS_L.md`, 2026-04-30); engine-side CPUGPU parity bugs F1/F4/F6 + diagnostics + F3 + F12 + F2 + F15 all closed (2026-05-04/05). **Full nonlinear effective EFT $S_\text{eff}$ remains open** — central R3 deliverable of the FTD-EFT roadmap.
 
 This checklist tracks what is required for FTD to count as a real, native EFT
 rather than a collection of projected continuum comparisons. It follows the
@@ -258,8 +258,8 @@ Per the user's 2026-04-26 reorientation toward "use the engine as a primary inst
 
 **Status of the algebraic spine (refreshed 2026-05-05; nine numbered results — six theorem-grade + three honestly-tiered — per `SPEC_ALGEBRAIC_SPINE.md` §0):**
 - FTD-0001 G* algebraic identity — [THEOREM]
-- FTD-0013 master quadratic single physics identification (x₊ ↔ 1/α) — [STRONGLY MOTIVATED CONJECTURE]. *(Historical formulation here read "dual prediction (x₊ ≈ 1/α, x₋ ≈ N_c)"; the `x_- ↔ N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
-- ~~FTD-0014 master quadratic algebraic identity x² − 16G*²x + 16G*³ = 0~~ — *(citation correction: the master quadratic algebraic identity is **FTD-0001** [THEOREM], not FTD-0014; FTD-0014 carried the `x_- ↔ N_c` physics identification and is **retired** per v1.4 §5, row removed in commit `ca7eb61`.)*
+- FTD-0013 master quadratic single physics identification (x₊  1/α) — [STRONGLY MOTIVATED CONJECTURE]. *(Historical formulation here read "dual prediction (x₊ ≈ 1/α, x₋ ≈ N_c)"; the `x_-  N_c` identification is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 — LEDGER FTD-0014 removed in commit `ca7eb61`. `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`.)*
+- ~~FTD-0014 master quadratic algebraic identity x² − 16G*²x + 16G*³ = 0~~ — *(citation correction: the master quadratic algebraic identity is **FTD-0001** [THEOREM], not FTD-0014; FTD-0014 carried the `x_-  N_c` physics identification and is **retired** per v1.4 §5, row removed in commit `ca7eb61`.)*
 - FTD-0015 CM-curve uniqueness h=1 — [NUMERICAL FACT, h=1 only] (downgraded 2026-05-02 — see MC-T1.2)
 - FTD-0016 coefficient 16 = |Aut(E)|² — [THEOREM]
 - Phase G geometric Coulomb α_r(r,L) = 2r·G_L(r) — [THEOREM]
@@ -276,7 +276,7 @@ These are independent of the engine-as-instrument campaigns and stand on number-
 
 The following items closed or substantively advanced since the previous checklist refresh (2026-04-26):
 
-**2026-04-27 evening**: FTD-0107 cluster-tracker findings — deterministic L-invariant cluster counts at L ∈ {32, 64} from canonical genesis injection. 5/5 seed reproducibility. Cluster-↔-mass identification candidate bridge.
+**2026-04-27 evening**: FTD-0107 cluster-tracker findings — deterministic L-invariant cluster counts at L ∈ {32, 64} from canonical genesis injection. 5/5 seed reproducibility. Cluster--mass identification candidate bridge.
 
 **2026-04-28**: FTD-0110 linear-level closure. $k = 1/N_\text{base} = 1/4$ derived from O_h representation theory (`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`). Cluster-size formula $N(A) \approx \tfrac{1}{4}(A/K_\text{GENESIS})^2$ at the linear level — closes the long-standing "why 25 voxels at A=10" question structurally.
 
@@ -296,7 +296,7 @@ The following items closed or substantively advanced since the previous checklis
 
 **2026-05-05 evening** (BH-F5/F8/F9 RNG portability — Option A landed): commits `c1a4f88` (shared SplitMix64 header + CPU refactor) + `c8e03a5` (GPU plumbing in genesis_kernel, genesis_dual_kernel, phase_write_kernel, wave_update_kernel, launchers, gpu_engine dispatch). Both backends now share `engine/include/ftd/voxel_rng.h`'s SplitMix64 stream for: (a) genesis Boltzmann probability; (b) genesis zero-curl spin fallback (BH-F8 fix — pre-fix GPU assigned deterministic +1 vs CPU's stochastic ±1); (c) Langevin OU Gaussian noise (Box-Muller of two SplitMix64 uniforms per axis). Verified: golden hash bit-exact, gpu_parity_complete PASS at 41s (3-4× slower than pre-fix due to in-kernel Box-Muller transcendentals; parity holds per-voxel), genesis/baryogenesis/toggle_matrix PASS. Out of scope: weak_transmutation + pair_production kernels still use cuRAND (separate BH-F5 follow-up); GPU evaporation criterion uses deterministic threshold while CPU is stochastic Boltzmann (a CRITERION divergence, not RNG portability — separately deferred).
 
-**Engine-side CPU↔GPU parity work is now substantially complete.** All bug-hunt audit items from the 2026-05-04 commit `f2a721a` body — F1, F2, F3, F4, F5 (genesis/Langevin RNG portion), F6, F8, F9, F12, F15 — are closed at HEAD `c8e03a5`. Residual items are: (i) deterministic-vs-stochastic GPU evaporation criterion, (ii) weak_transmutation + pair_production cuRAND-to-SplitMix64 migration, (iii) FTD-0110 baseline drift bisect (research, separate session). None of these block the R3a measurement campaign.
+**Engine-side CPUGPU parity work is now substantially complete.** All bug-hunt audit items from the 2026-05-04 commit `f2a721a` body — F1, F2, F3, F4, F5 (genesis/Langevin RNG portion), F6, F8, F9, F12, F15 — are closed at HEAD `c8e03a5`. Residual items are: (i) deterministic-vs-stochastic GPU evaporation criterion, (ii) weak_transmutation + pair_production cuRAND-to-SplitMix64 migration, (iii) FTD-0110 baseline drift bisect (research, separate session). None of these block the R3a measurement campaign.
 
 ---
 

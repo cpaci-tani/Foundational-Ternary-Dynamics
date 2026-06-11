@@ -35,7 +35,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 - **Substantive rewrites required:** FOUND_AXIOM_ZERO, DERIV_MASTER_QUADRATIC_GAP_EQUATION, DERIV_PATH_INTEGRAL_CONSTRUCTION, DERIV_VON_NEUMANN_CONSTRUCTION, SPEC_FTD §Postulate 1.
 - **Mechanical RESTATE:** 38 documents (5 parallel sweep batches).
 - **RETRACTED:** "Master quadratic as L → ∞ limit of finite-L gap equation" (FTD-0032).
-- **DEMOTED:** Type III₁ classification SELECTION → HYPOTHESIS (FTD-0033); x₊ ↔ 1/α and x₋ ↔ N_c THEOREM → STRONGLY MOTIVATED CONJECTURE (FTD-0013, FTD-0014); 7-term α series CONJECTURE (was implied derivation) (FTD-0022); sin²θ_W, sin²θ_13, α_s, PMNS angles → PARAMETRIC / STRUCTURALLY MOTIVATED PARAMETRIC (FTD-0018-21, per Option 4 audit on the same day).
+- **DEMOTED:** Type III₁ classification SELECTION → HYPOTHESIS (FTD-0033); x₊  1/α and x₋  N_c THEOREM → STRONGLY MOTIVATED CONJECTURE (FTD-0013, FTD-0014); 7-term α series CONJECTURE (was implied derivation) (FTD-0022); sin²θ_W, sin²θ_13, α_s, PMNS angles → PARAMETRIC / STRUCTURALLY MOTIVATED PARAMETRIC (FTD-0018-21, per Option 4 audit on the same day).
 - **NEW [OPEN]:** `a_phys` (lattice → physical length conversion) — created as load-bearing problem (FTD-0030).
 
 ### Phase 4 — Restatement and re-derivation
@@ -45,7 +45,7 @@ Shifted the framework's foundational ontology from completed-infinity ℤ³ to u
 | File | Change | LEDGER row |
 |---|---|---|
 | `02_foundations/FOUND_AXIOM_ZERO.md` | Position clause restated to undefined-boundary; §3.2/§4.2/§4.3 restated as algebraic-identity claims (gap-equation thermodynamic-limit framing withdrawn); chain table Step 0 updated. | FTD-0036 |
-| `03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | **Full rewrite.** Title changed to "Algebraic Identity and Physical Match." Coefficient 16 presented via two finite-combinatorial routes (\|Aut(E)\|² + z_BCC·2). Discriminant trichotomy preserved. Physical identification x₊↔1/α, x₋↔N_c moved to STRONGLY MOTIVATED CONJECTURE anchored on dual match + CM uniqueness. Gap-equation/thermodynamic-limit narrative withdrawn. | FTD-0001, FTD-0013, FTD-0014, FTD-0032 |
+| `03_derivations/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md` | **Full rewrite.** Title changed to "Algebraic Identity and Physical Match." Coefficient 16 presented via two finite-combinatorial routes (\|Aut(E)\|² + z_BCC·2). Discriminant trichotomy preserved. Physical identification x₊1/α, x₋N_c moved to STRONGLY MOTIVATED CONJECTURE anchored on dual match + CM uniqueness. Gap-equation/thermodynamic-limit narrative withdrawn. | FTD-0001, FTD-0013, FTD-0014, FTD-0032 |
 | `03_derivations/DERIV_PATH_INTEGRAL_CONSTRUCTION.md` | §1.2 configuration-space framing restated to undefined-boundary; §1.4 IR-finiteness corollary restated; §5.5 "thermodynamic limit" theorem restated as scaling property of {F_N} family with explicit "no exact non-analyticity at any finite N" caveat. | n/a (theorem-level, finitary statement) |
 | `06_reference_frames_and_measurement/DERIV_VON_NEUMANN_CONSTRUCTION.md` | Type III₁ demoted SELECTION → HYPOTHESIS. Sections 5–6 restated as "Araki–Woods inductive-limit scaffold yields Type III₁ *if* applied"; Section 7 numerical-verification rows tagged [HYPOTHESIS] (Scaffold) for III₁ items; Section 8 epistemic accounting updated. | FTD-0033 |
 | `docs/SPEC_FTD.md` | Postulate 1 restated to "undefined-boundary cubic lattice"; DEF.1 updated; finite-size-effects note updated. | FTD-0036 |
@@ -154,7 +154,7 @@ Inventory agent (`INVENTORY_PORTFOLIO.md`) cataloged 280 artifacts outside `docs
 - 267 editable sources, 13 PDF-only (sources need recovery before reframe action).
 - ~85 likely-affected by reframe (heuristic), ~155 likely-not, ~40 unknown.
 - **Structural finding 1:** manuscript_v2 has `vol1/src/chapters/` + `vol2/src/chapters/` split mirroring a subset of consolidated `src/chapters/` (83 files). Confirm authoritative location before any edit.
-- **Structural finding 2:** manuscript_v1 ↔ manuscript_v2 share ~57 chapters verbatim (numbered 3.x–13.x, 14.x, 15.1) — edits to v1 inherited chapters MUST be propagated to v2's copy or they diverge.
+- **Structural finding 2:** manuscript_v1  manuscript_v2 share ~57 chapters verbatim (numbered 3.x–13.x, 14.x, 15.1) — edits to v1 inherited chapters MUST be propagated to v2's copy or they diverge.
 - **Highest-priority targets:** `FTD_Finitude_Theorem.tex`, `FTD_Thermodynamic_Limit.pdf` (PDF-only — needs source), `PAPER_FTD_AS_WILSONIAN_EFT.tex`, the whitepaper.
 - 36-chapter historical-narrative section of `book/` (chapters 00–35) is essentially exempt; only chapters 36–45 carry foundational claims.
 - `dissemination/papers/` contains exactly one paper (the EFT flagship).
@@ -176,7 +176,7 @@ Inventory agent (`INVENTORY_PORTFOLIO.md`) cataloged 280 artifacts outside `docs
 4. **Broader-portfolio Phase 4:** restatement across `docs/papers/`, `dissemination/manuscript_v2/`, `dissemination/whitepaper/`, etc. Inventory + classification feed (`INVENTORY_PORTFOLIO.md`, `FLAGGED_PASSAGES_PAPERS.md`).
 5. **`SPEC_FTD.md` declaration of `a_phys ≡ ℓ_P`:** add explicit calibration paragraph; update every dimensional prediction with calibration-conditional language.
 6. **Consistency pass (Phase 6.2 full):** cross-doc citation/terminology check across the entire reframed portfolio.
-7. **Verification (Phase 7 full):** ledger ↔ portfolio consistency; no untagged claims; no contradictions.
+7. **Verification (Phase 7 full):** ledger  portfolio consistency; no untagged claims; no contradictions.
 
 ---
 
@@ -231,7 +231,7 @@ Agent task: replace each `[FLAG: re-derivation needed]` marker with the chosen r
 
 ### Decision 4 — `a_phys ≡ ℓ_P` calibration declared
 
-Added to `SPEC_FTD.md` between Postulate 2 and Postulate 3 (new section "LATTICE ↔ PHYSICAL CALIBRATION"):
+Added to `SPEC_FTD.md` between Postulate 2 and Postulate 3 (new section "LATTICE  PHYSICAL CALIBRATION"):
 
 - One voxel ≡ one Planck length (ℓ_P ≈ 1.616 × 10⁻³⁵ m).
 - One tick ≡ √3 · ℓ_P / c ≈ 9.34 × 10⁻⁴⁴ s.
@@ -268,7 +268,7 @@ Recommended: run `git log --all --diff-filter=D --name-only -- 'docs/papers/*.te
 - `manuscript_v2/src/chapters/` is **single source of truth** for v2 chapter content.
 - `vol1/src/chapters/` and `vol2/src/chapters/` are **publication snapshots**; edits flow from src/chapters → vol1/vol2, never reverse.
 - **Verified:** vol1 and vol2 files are NOT symlinks — they are independent copies that have already diverged from src/chapters.
-- v1 ↔ v2 are **different products** with overlapping but not identical content. No chapter-level identity; reframe edits to v1 do not propagate to v2.
+- v1  v2 are **different products** with overlapping but not identical content. No chapter-level identity; reframe edits to v1 do not propagate to v2.
 - **Edit discipline:** for any reframe edit, identify all chapter locations covering the same topic; apply the edit to all of them; log in CHANGELOG_REFRAME.md.
 
 ### Yang-Mills + Navier-Stokes RE-DERIVE assessment (REDERIVE_REPORT_YM_NS.md)
@@ -317,7 +317,7 @@ The YM/NS report flagged a portfolio-level concern that top-level documents may 
 
 | File | Purpose |
 |---|---|
-| `dissemination/manuscript_v2/PROPAGATION_RULE.md` | Manuscript propagation rule (v1 ↔ v2 ↔ vol1 ↔ vol2) |
+| `dissemination/manuscript_v2/PROPAGATION_RULE.md` | Manuscript propagation rule (v1  v2  vol1  vol2) |
 | `docs/theory/07_assessment/archive_session_outputs/TRACKER_PDF_ONLY_PAPERS.md` | 13 PDF-only papers triage + recovery options |
 | `docs/theory/07_assessment/archive_session_outputs/REDERIVE_REPORT_YM_NS.md` | YM + NS paper RE-DERIVE assessments |
 
@@ -427,7 +427,7 @@ Both papers moved to `docs/papers/archive/retracted_under_reframe/` (`.tex` git-
 
 ### Summary
 
-Owner directed: "do one last thorough sweep and maintenance cleanup. Deploy all agents possible." Session 4 deployed **13 agents in three waves** (10 parallel sweep + 1 follow-up parametric back-prop + 2 verification: test + docs-build). Net result: ~120 additional surgical edits across the portfolio; 3 physicist-found bugs fixed; 7 historical session-output files archived; LEDGER ↔ doc tag back-propagation gap closed (~80 tag corrections across 17 files); META_INDEX brought up to date with 6 new audit rows; 6 new audit deliverables generated.
+Owner directed: "do one last thorough sweep and maintenance cleanup. Deploy all agents possible." Session 4 deployed **13 agents in three waves** (10 parallel sweep + 1 follow-up parametric back-prop + 2 verification: test + docs-build). Net result: ~120 additional surgical edits across the portfolio; 3 physicist-found bugs fixed; 7 historical session-output files archived; LEDGER  doc tag back-propagation gap closed (~80 tag corrections across 17 files); META_INDEX brought up to date with 6 new audit rows; 6 new audit deliverables generated.
 
 ### Wave 1 — 10 parallel agents
 
@@ -522,7 +522,7 @@ From parametric back-prop:
 - `AUDIT_WHAT_IS_GENUINELY_NEW.md` rows 13-20 broader rebuild
 
 From refactoring (P2/P3):
-- CANONICAL_REFRAME ↔ AUDIT_INFINITY_REFRAME consolidation
+- CANONICAL_REFRAME  AUDIT_INFINITY_REFRAME consolidation
 - LEDGER citation standardisation
 - Add `INDEX.md` to `07_assessment/` segregating Live / Reference / Archive
 
@@ -592,7 +592,7 @@ User-invoked session to test an implicit additional conjecture on top of the mas
 ### Epistemic status after this session
 
 - **Firm theorems unchanged:** FTD-0001 (master quadratic algebraic identity), FTD-0002, FTD-0003, FTD-0004, FTD-0005, FTD-0006, FTD-0007, FTD-0008, FTD-0010, FTD-0011, FTD-0044.
-- **STRONGLY MOTIVATED CONJECTURE unchanged:** FTD-0013 (x₊ ↔ 1/α), FTD-0014 (x₋ ↔ N_c), FTD-0015 (m_e formula), FTD-0016 (m_p/m_e formula).
+- **STRONGLY MOTIVATED CONJECTURE unchanged:** FTD-0013 (x₊  1/α), FTD-0014 (x₋  N_c), FTD-0015 (m_e formula), FTD-0016 (m_p/m_e formula).
 - **NEW CLOSED NEGATIVE:** FTD-0050 — master quadratic is NOT the characteristic polynomial of an RG step on the current engine.
 - **NEW INFRASTRUCTURE:** FTD-0051 — Langevin thermostat operational.
 - **NEW OPEN:** FTD-0052 — s-field Metropolis (deferred).

@@ -75,11 +75,11 @@ Attempt to derive `Ω_clock(v, t)` as a function of `(v, ℒ)` from primitives P
 
 ### §5.1 — Action measure as energy-per-tick
 
-`ℒ_matter(v, t) = -K_B · √((f²-v²)/f)` per SPEC §3.3 [THEOREM]. This is honest extraction from §4 admissibility item 2. ✅
+`ℒ_matter(v, t) = -K_B · √((f²-v²)/f)` per SPEC §3.3 [THEOREM]. This is honest extraction from §4 admissibility item 2. 
 
 ### §5.2 — Per-tick action quantum
 
-At rest: `ℒ_matter|_{v=0} = -K_B · √f`. General: `ℒ_matter(v, ℒ) = -K_B · √(f - v²/f)`. Mathematical unpacking. ✅
+At rest: `ℒ_matter|_{v=0} = -K_B · √f`. General: `ℒ_matter(v, ℒ) = -K_B · √(f - v²/f)`. Mathematical unpacking. 
 
 ### §5.3 — Transition rate identification [F-d + F-f FIRE per adversarial review]
 
@@ -118,17 +118,17 @@ IF the §5.3 unstated assumption is accepted (transition rate = Lagrangian magni
 
 **But this is conditional on the §5.3 unstated assumption** (per §5.3 acknowledgment); without that assumption, the reduction does not hold from §4 primitives alone.
 
-### §7.2 — Catalog of candidate justifications for `Ω_clock/Ω_0 ↔ dτ/dt` (EXPANDED per adversarial review)
+### §7.2 — Catalog of candidate justifications for `Ω_clock/Ω_0  dτ/dt` (EXPANDED per adversarial review)
 
 The v1 draft listed candidates (a)-(e) all firing F-a/F-e/F-b. **Adversarial review identified two missing candidates (c)+(d) below that should have been enumerated:**
 
 | Route | Status | F-rule status |
 |---|---|---|
-| (a) "Substrate clock measures proper time because clocks do" | ❌ F-a fires (ideal-clock postulate) | Excluded |
-| (b) Reparametrization-invariance argument | ❌ F-e fires (standard relativistic-particle theory) | Excluded |
-| (c) **CALIBRATION-DECLARATION route via FTD-0041** | ⚠️ **NOT ATTEMPTED at v1** | OPEN — admissible via §4 catalog item 4 (engine tick T_U ≡ √3·ℓ_P/c is in catalog); whether the calibration provides an independent operational definition of proper time without invoking GR clock postulate is UNTESTED at v1. **v2 pre-reg should attempt.** |
-| (d) **BANDWIDTH-INTERNAL-TIME route via SPEC §3.7** | ⚠️ **NOT ENUMERATED at v1** | OPEN — proper time = fraction of per-tick bandwidth budget spent on internal-clock transitions rather than spatial motion. This is substrate-internal (not GR-imported); whether it fires F-rules or closes the gap is UNTESTED. **v2 pre-reg should attempt.** |
-| (e) "Substrate-clock rate IS dτ/dt because both have same functional form" | ❌ F-b fires (target-formula matching as justification) | Excluded |
+| (a) "Substrate clock measures proper time because clocks do" |  F-a fires (ideal-clock postulate) | Excluded |
+| (b) Reparametrization-invariance argument |  F-e fires (standard relativistic-particle theory) | Excluded |
+| (c) **CALIBRATION-DECLARATION route via FTD-0041** |  **NOT ATTEMPTED at v1** | OPEN — admissible via §4 catalog item 4 (engine tick T_U ≡ √3·ℓ_P/c is in catalog); whether the calibration provides an independent operational definition of proper time without invoking GR clock postulate is UNTESTED at v1. **v2 pre-reg should attempt.** |
+| (d) **BANDWIDTH-INTERNAL-TIME route via SPEC §3.7** |  **NOT ENUMERATED at v1** | OPEN — proper time = fraction of per-tick bandwidth budget spent on internal-clock transitions rather than spatial motion. This is substrate-internal (not GR-imported); whether it fires F-rules or closes the gap is UNTESTED. **v2 pre-reg should attempt.** |
+| (e) "Substrate-clock rate IS dτ/dt because both have same functional form" |  F-b fires (target-formula matching as justification) | Excluded |
 
 **Adversarial review verdict on §7.2:** the v1 catalog was **non-exhaustive**. The CLOSED-NEGATIVE verdict requires demonstration of exhaustion (per pre-reg §6 Outcome C wording: "No derivation chain from §4 primitives produces dτ/dt = √(f - v²/f) without F-falsifier firing"). Declared non-pursuit of routes (c) and (d) is NOT exhaustion. The honest verdict is UNDERDETERMINED with routes (c) and (d) queued for v2 attempt.
 
@@ -140,16 +140,16 @@ Per pre-reg §7. v1 draft self-claim was 0/10 fire. **Independently verified by 
 
 | Rule | Description | v1 self-claim | Adversarial verdict | Justification |
 |---|---|---|---|---|
-| F-a | No ideal-clock postulate import | PASS | ✅ PASS | Honest; §7.2 (a) correctly identified as F-a firing |
-| F-b | No insertion of target formula | PASS | ⚠️ PASS-WITH-CONCERN | `Ω_clock` derivation rests on §5.3 identification which is itself the GR-Lagrangian structure reflected back; not strictly insertion but adjacent |
-| F-c | No fitted constants | PASS | ✅ PASS | `Ω_0` defined structurally |
-| **F-d** | **Operational bandwidth-constraint unpacking** | PASS | ❌ **FIRES** | **§5.3's `S_trans ~ K_B · (constant)` is vague invocation without per-voxel per-tick operational form; precisely the unpacking-failure F-d catches** |
-| F-e | No "standard relativistic-particle theory" appeals | PASS | ✅ PASS | Honest; §7.2 (b) correctly identified as F-e firing |
-| **F-f** | **Each step cites §4 primitive** | PASS | ❌ **FIRES** | **§5.3 does not cite which §4 primitive justifies "transition rate = Lagrangian magnitude / S_trans." P3 (substrate manifestation rate) is named but is itself the quantity being characterized, not a derivation source for the characterization.** |
-| F-g | No Born-Infeld with hidden GR import | PASS | ⚠️ PASS-WITH-CONCERN | §5 uses Born-Infeld; F-d/F-f firings at §5.3 are gap, not smuggle |
-| F-h | No Schwarzschild comparison before §10 | PASS | ✅ PASS | §7.1 is mathematical limit check, not numerical comparison |
-| F-i | No look-elsewhere | PASS | ✅ PASS | Single mechanism; no mid-derivation switch |
-| F-j | No SPEC §4.3 as scaffold | PASS | ✅ PASS | §5 derives independently |
+| F-a | No ideal-clock postulate import | PASS |  PASS | Honest; §7.2 (a) correctly identified as F-a firing |
+| F-b | No insertion of target formula | PASS |  PASS-WITH-CONCERN | `Ω_clock` derivation rests on §5.3 identification which is itself the GR-Lagrangian structure reflected back; not strictly insertion but adjacent |
+| F-c | No fitted constants | PASS |  PASS | `Ω_0` defined structurally |
+| **F-d** | **Operational bandwidth-constraint unpacking** | PASS |  **FIRES** | **§5.3's `S_trans ~ K_B · (constant)` is vague invocation without per-voxel per-tick operational form; precisely the unpacking-failure F-d catches** |
+| F-e | No "standard relativistic-particle theory" appeals | PASS |  PASS | Honest; §7.2 (b) correctly identified as F-e firing |
+| **F-f** | **Each step cites §4 primitive** | PASS |  **FIRES** | **§5.3 does not cite which §4 primitive justifies "transition rate = Lagrangian magnitude / S_trans." P3 (substrate manifestation rate) is named but is itself the quantity being characterized, not a derivation source for the characterization.** |
+| F-g | No Born-Infeld with hidden GR import | PASS |  PASS-WITH-CONCERN | §5 uses Born-Infeld; F-d/F-f firings at §5.3 are gap, not smuggle |
+| F-h | No Schwarzschild comparison before §10 | PASS |  PASS | §7.1 is mathematical limit check, not numerical comparison |
+| F-i | No look-elsewhere | PASS |  PASS | Single mechanism; no mid-derivation switch |
+| F-j | No SPEC §4.3 as scaffold | PASS |  PASS | §5 derives independently |
 
 **Corrected falsifier summary: 2/10 fire (F-d, F-f).** Per pre-reg §7: "Any single firing → at most Outcome B or Outcome C; not Outcome A." Adversarial-review verdict: **Outcome B (UNDERDETERMINED)** given the F-rule firings AND the unexhausted §4-admissible routes (c), (d).
 
@@ -179,11 +179,11 @@ All 8 banned moves: PASS per both executor self-check and adversarial review. Ex
 
 **Reviewer's 5 caveats (all incorporated in this finalized AUDIT doc per pre-reg §6 Outcome B):**
 
-1. **§5.3 honest re-statement** ✅ — addressed in §5.3 above with `[UNDERIVED IN v1 CATALOG]` tag and F-d/F-f firing acknowledgment
-2. **§7.2 catalog expansion** ✅ — addressed in §7.2 above with routes (c) calibration-declaration and (d) bandwidth-internal-time added as UNTESTED
-3. **Tag consequences updated to UNDERDETERMINED, not CLOSED-NEGATIVE** ✅ — SPEC §4.3 + §8 L-1 retain `[THEOREM modulo clock hypothesis]`; clock hypothesis NOT promoted to explicit `[AXIOM]`; LEDGER FTD-0208 tagged `[UNDERDETERMINED]` per §0 + §12 below
-4. **v2 pre-reg scope-out** ✅ — queued in §13 below as follow-up work; will be authored as `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md` per the reviewer's recommended scope
-5. **Honest mid-paragraph acknowledgment in §0** ✅ — §0 leads with "The v1 closure attempt is INCOMPLETE, not closed-negative"
+1. **§5.3 honest re-statement**  — addressed in §5.3 above with `[UNDERIVED IN v1 CATALOG]` tag and F-d/F-f firing acknowledgment
+2. **§7.2 catalog expansion**  — addressed in §7.2 above with routes (c) calibration-declaration and (d) bandwidth-internal-time added as UNTESTED
+3. **Tag consequences updated to UNDERDETERMINED, not CLOSED-NEGATIVE**  — SPEC §4.3 + §8 L-1 retain `[THEOREM modulo clock hypothesis]`; clock hypothesis NOT promoted to explicit `[AXIOM]`; LEDGER FTD-0208 tagged `[UNDERDETERMINED]` per §0 + §12 below
+4. **v2 pre-reg scope-out**  — queued in §13 below as follow-up work; will be authored as `PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md` per the reviewer's recommended scope
+5. **Honest mid-paragraph acknowledgment in §0**  — §0 leads with "The v1 closure attempt is INCOMPLETE, not closed-negative"
 
 ---
 

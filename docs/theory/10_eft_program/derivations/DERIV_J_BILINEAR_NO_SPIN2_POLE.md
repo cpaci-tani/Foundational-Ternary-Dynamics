@@ -127,7 +127,7 @@ The TT projector at wavevector k is
 
 $$ P^{TT}_{ijkl}(k) = \tfrac{1}{2}(P^T_{ik} P^T_{jl} + P^T_{il} P^T_{jk}) - \tfrac{1}{2} P^T_{ij} P^T_{kl} $$
 
-(symmetric in (ij)↔(kl), traceless on each pair). Contracting `P^{TT}` with the bilinear correlator §3.2 yields the **TT-projected bilinear correlator**:
+(symmetric in (ij)(kl), traceless on each pair). Contracting `P^{TT}` with the bilinear correlator §3.2 yields the **TT-projected bilinear correlator**:
 
 $$ \langle O_{ij} O_{kl} \rangle_c^{TT} = P^{TT}_{ijkl}(k) \cdot \Pi^{TT}(k, \omega) $$
 
@@ -225,7 +225,7 @@ The Arc C2 boundary theorem at P3 pre-reg should therefore state (C2-2) with thi
 ## §8 — Honest limits
 
 - **§5.2 conjecture is structural, not constructive.** A rigorous proof that no canonical-toggle-set interaction can create a spin-2 pole would require either (a) a full interaction-vertex enumeration with explicit no-pole verification per vertex, or (b) an axiom-level argument that no new propagating mode can emerge from the canonical toggle set. (a) is tedious but tractable; (b) requires deeper substrate-physics theorems that are themselves Arc C1 / Doctrine §12 territory. The `[SMC]` tag honestly reflects this gap.
-- **L > 64 not addressed.** The free-theory §3 result is L-independent in form (the bubble integral has the same analytic structure at any L). But the empirical validation §4 is at L ∈ {32, 64}; FTD-0193 §5 documents L=128 as deferred for engineering reasons (host↔device transfer + CPU-side operator cost). The boundary theorem's scope claim must respect this — extending to "for all L" requires Arc C1's GPU-port work.
+- **L > 64 not addressed.** The free-theory §3 result is L-independent in form (the bubble integral has the same analytic structure at any L). But the empirical validation §4 is at L ∈ {32, 64}; FTD-0193 §5 documents L=128 as deferred for engineering reasons (hostdevice transfer + CPU-side operator cost). The boundary theorem's scope claim must respect this — extending to "for all L" requires Arc C1's GPU-port work.
 - **Derivative bilinears `[∂J · ∂J]_TT` not separately verified.** §2.1 noted the same analysis applies to "stress" observable; this needs explicit verification (probably trivial, but should be done at P1 (b) deliverable).
 - **§3.3 lattice analog of bubble-integral analysis.** The continuum textbook result (Peskin-Schroeder §10.2) translates straightforwardly to the lattice via finite-BZ residue calculus, but a careful lattice-QFT reference would strengthen this. Candidate references: Montvay & Münster *Quantum Fields on a Lattice*, §3. Cite at P3 pre-reg time.
 

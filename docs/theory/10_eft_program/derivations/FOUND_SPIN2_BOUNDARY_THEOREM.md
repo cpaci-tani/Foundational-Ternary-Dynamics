@@ -59,12 +59,12 @@ Verify DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY §3 linear-spectrum derivation:
 
 | Sub-step | Source | Status |
 |---|---|---|
-| 3.1 J-sector spectrum: 3 components per voxel; Gauss removes 1 longitudinal; 2 transverse spin-1 modes propagate at `ω(k) = C·ω_L(k)` | DERIV §3.1 [THEOREM] | ✅ verified; standard lattice gauge theory; empirically confirmed by FTD-0193 §2 spin-1 control (12/12 k-points at 0.02-3% precision) |
-| 3.2 ℒ-sector spectrum: latency satisfies static Poisson `∇²_L ℒ = 4πG ρ_mass`; no `Δ_t²` term; quasi-static; 1 mode per k (Green's function response only); no propagating spin-0 graviton | DERIV §3.2 [THEOREM] (cites SPEC §4.2 + FTD-0004 Phase G) | ✅ verified; first-order-in-time constrained scalar; matches engine's `solve_latency_poisson_cpu` (gap (iv) CLOSED POSITIVE per AUDIT §3.5) |
-| 3.3 Combined: 2 transverse spin-1 (propagating) + 1 quasi-static scalar = **no rank-2 propagating mode** in linear spectrum | DERIV §3.3 [THEOREM] | ✅ verified by composition |
-| 3.4 Canonical-toggle extension: interactions in canonical set (state-flux coupling, velocity coupling, thresholds, Langevin) do not introduce new fundamental field beyond {J, s, ℒ} | DERIV §3.4 [SMC] | ✅ structural argument; empirically validated FTD-0193 spin-1 control unchanged under canonical toggles |
+| 3.1 J-sector spectrum: 3 components per voxel; Gauss removes 1 longitudinal; 2 transverse spin-1 modes propagate at `ω(k) = C·ω_L(k)` | DERIV §3.1 [THEOREM] |  verified; standard lattice gauge theory; empirically confirmed by FTD-0193 §2 spin-1 control (12/12 k-points at 0.02-3% precision) |
+| 3.2 ℒ-sector spectrum: latency satisfies static Poisson `∇²_L ℒ = 4πG ρ_mass`; no `Δ_t²` term; quasi-static; 1 mode per k (Green's function response only); no propagating spin-0 graviton | DERIV §3.2 [THEOREM] (cites SPEC §4.2 + FTD-0004 Phase G) |  verified; first-order-in-time constrained scalar; matches engine's `solve_latency_poisson_cpu` (gap (iv) CLOSED POSITIVE per AUDIT §3.5) |
+| 3.3 Combined: 2 transverse spin-1 (propagating) + 1 quasi-static scalar = **no rank-2 propagating mode** in linear spectrum | DERIV §3.3 [THEOREM] |  verified by composition |
+| 3.4 Canonical-toggle extension: interactions in canonical set (state-flux coupling, velocity coupling, thresholds, Langevin) do not introduce new fundamental field beyond {J, s, ℒ} | DERIV §3.4 [SMC] |  structural argument; empirically validated FTD-0193 spin-1 control unchanged under canonical toggles |
 
-**Tag (C2-1):** [THEOREM] at free-theory + Gauss-only; [SMC] at canonical-toggle. ✅
+**Tag (C2-1):** [THEOREM] at free-theory + Gauss-only; [SMC] at canonical-toggle. 
 
 ---
 
@@ -74,16 +74,16 @@ Verify DERIV_J_BILINEAR_NO_SPIN2_POLE.md §3 bubble-integral analysis (load-bear
 
 | Sub-step | Source | Status |
 |---|---|---|
-| 3.1 Wick contraction `⟨O_ij O_kl⟩_c` factorizes into sum of `⟨JJ⟩⟨JJ⟩` products | DERIV_J_BILINEAR §3.1 [THEOREM] | ✅ standard Wick's theorem on Gaussian J |
-| 3.2 Momentum-space bubble integral `Π(k,ω) = ∫(d⁴p) G_J(p)·G_J(k−p)` with two J-propagator poles | DERIV_J_BILINEAR §3.2 [THEOREM] | ✅ direct Fourier transform |
-| 3.3 Bubble integral analytic structure: branch cut at `|ω|² ≥ 4C²ω_L²(k/2)` — **no isolated pole** | DERIV_J_BILINEAR §3.3 [THEOREM] | ✅ standard QFT (Peskin-Schroeder §10.2 continuum; Montvay-Münster §3 lattice analog) |
-| 3.4 TT projection `P^{TT}_{ijkl}` preserves branch-cut-only structure in TT-form factor `Π^{TT}(k,ω)` | DERIV_J_BILINEAR §3.4 [THEOREM at free-theory level] | ✅ tensor algebra; no pole introduced by projection |
-| Empirical validation: FTD-0193 §4 — flux-quadrupole TT ω identical to spin-1 control ω at 11/12 k-points to 7 sig figs at L=64 | REPORT_GRAVITON_SUBSTRATE_MODE.md §4 [VERIFIED] | ✅ canonical-toggle empirical floor |
-| §5.2 Canonical-toggle extension argument: interactions don't add new propagating modes | DERIV_J_BILINEAR §5 [SMC] | ✅ structural argument |
+| 3.1 Wick contraction `⟨O_ij O_kl⟩_c` factorizes into sum of `⟨JJ⟩⟨JJ⟩` products | DERIV_J_BILINEAR §3.1 [THEOREM] |  standard Wick's theorem on Gaussian J |
+| 3.2 Momentum-space bubble integral `Π(k,ω) = ∫(d⁴p) G_J(p)·G_J(k−p)` with two J-propagator poles | DERIV_J_BILINEAR §3.2 [THEOREM] |  direct Fourier transform |
+| 3.3 Bubble integral analytic structure: branch cut at `|ω|² ≥ 4C²ω_L²(k/2)` — **no isolated pole** | DERIV_J_BILINEAR §3.3 [THEOREM] |  standard QFT (Peskin-Schroeder §10.2 continuum; Montvay-Münster §3 lattice analog) |
+| 3.4 TT projection `P^{TT}_{ijkl}` preserves branch-cut-only structure in TT-form factor `Π^{TT}(k,ω)` | DERIV_J_BILINEAR §3.4 [THEOREM at free-theory level] |  tensor algebra; no pole introduced by projection |
+| Empirical validation: FTD-0193 §4 — flux-quadrupole TT ω identical to spin-1 control ω at 11/12 k-points to 7 sig figs at L=64 | REPORT_GRAVITON_SUBSTRATE_MODE.md §4 [VERIFIED] |  canonical-toggle empirical floor |
+| §5.2 Canonical-toggle extension argument: interactions don't add new propagating modes | DERIV_J_BILINEAR §5 [SMC] |  structural argument |
 
 **Caveat-2 (per adversarial review Gap-2, addressed here):** the continuum bubble-integral branch-cut conclusion (DERIV_J_BILINEAR §3.3 [THEOREM]) strictly applies in the `L → ∞` (continuum-spectral) limit. At finite L, the propagator's "pole" is a discrete set of frequencies, so the strict continuum branch cut becomes a *dense set of two-particle resonance peaks whose envelope is the continuum spectral function*. **FTD-0193's L=64 empirical confirmation IS the lattice test** — the engine measurement directly validated this transfer, with 11/12 k-points showing the spin-1-frequency-dominated bilinear response exactly per the bubble-integral prediction. The [THEOREM] vs [SMC] split is operationally honest: [THEOREM] holds at the free-theory continuum-spectral level; [SMC] at the canonical-toggle finite-L realization is what FTD-0193 measured.
 
-**Tag (C2-2):** [THEOREM] at free-theory + Gauss-only continuum-spectral level; [SMC] at canonical-toggle finite-L per FTD-0193 empirical floor. ✅
+**Tag (C2-2):** [THEOREM] at free-theory + Gauss-only continuum-spectral level; [SMC] at canonical-toggle finite-L per FTD-0193 empirical floor. 
 
 ---
 
@@ -95,10 +95,10 @@ Verify DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY §5 composition:
 
 | Premise | Source | Status |
 |---|---|---|
-| (i) Linear spectrum has no rank-2 propagating mode | (C2-1) §4 above [THEOREM] | ✅ verified |
-| (ii) Only candidate non-site-local rank-2 observables in §4 catalog are J-bilinears (flux-quadrupole `O_ij` and stress `Õ_ij`) — group-theoretic uniqueness | DERIV_J_BILINEAR §2.2 + §5.1 [THEOREM via Sym²(V) − Tr(V⊗V)/3 decomposition for V=3-vector rep] | ✅ verified (with sub-case walk per Caveat-1 below) |
-| (iii) J-bilinears' TT projection has no isolated pole | (C2-2) §5 above [THEOREM] | ✅ verified |
-| **Conclusion:** No substrate-derived emergent graviton exists in §4 catalog at free-theory + Gauss-only level | Composition (i) ∧ (ii) ∧ (iii) [THEOREM] | ✅ verified by logical composition |
+| (i) Linear spectrum has no rank-2 propagating mode | (C2-1) §4 above [THEOREM] |  verified |
+| (ii) Only candidate non-site-local rank-2 observables in §4 catalog are J-bilinears (flux-quadrupole `O_ij` and stress `Õ_ij`) — group-theoretic uniqueness | DERIV_J_BILINEAR §2.2 + §5.1 [THEOREM via Sym²(V) − Tr(V⊗V)/3 decomposition for V=3-vector rep] |  verified (with sub-case walk per Caveat-1 below) |
+| (iii) J-bilinears' TT projection has no isolated pole | (C2-2) §5 above [THEOREM] |  verified |
+| **Conclusion:** No substrate-derived emergent graviton exists in §4 catalog at free-theory + Gauss-only level | Composition (i) ∧ (ii) ∧ (iii) [THEOREM] |  verified by logical composition |
 
 **Caveat-1 (per adversarial review Gap-1, addressed here) — §5.1 uniqueness sub-case walk.** DERIV_J_BILINEAR §2.2 asserts "from a 3-vector J-field without introducing new fundamental fields, the only local rank-2 observables built without higher-derivative or non-local operators are bilinears in J or its derivatives." This excludes three candidate sub-cases that an adversarial reader could pick at:
 
@@ -110,7 +110,7 @@ The §5.1 uniqueness should therefore read: **"uniqueness of *propagating-mode-c
 
 **Critical F-h check (load-bearing):** the (C2-3) [THEOREM]-grade tag rests on the **structural argument** above (rep-theoretic uniqueness with sub-cases handled + bubble-integral analytic structure + linear-spectrum mode count), NOT on FTD-0193 empirics. FTD-0193 is the **empirical FLOOR for the canonical-toggle [SMC] tag**, not the [THEOREM] proof. The composition argument stands without empirics. **F-h passes.**
 
-**Tag (C2-3):** [THEOREM] at free-theory + Gauss-only (composition, with sub-cases explicit per Caveat-1); [SMC] at canonical-toggle (inherits from C2-2). ✅
+**Tag (C2-3):** [THEOREM] at free-theory + Gauss-only (composition, with sub-cases explicit per Caveat-1); [SMC] at canonical-toggle (inherits from C2-2). 
 
 ---
 
@@ -120,9 +120,9 @@ Verify DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY §6 + reference to FTD-0189 audi
 
 | Sub-step | Source | Status |
 |---|---|---|
-| 6.1 Deser-bootstrap chain in DERIV_EINSTEIN_FIELD_EQUATIONS.md Step 5: h_μν enters as Conjecture 10.1 (posited) per FTD-0189 audit | DERIV_EINSTEIN_FIELD_EQUATIONS §1 + Step 3 + Step 5 (retagged 2026-05-24 per FTD-0189 ripple per commit `9e85bd7`) | ✅ EFE-6/8/9 now [SELECTION/CONDITIONAL] per ripple housekeeping |
-| 6.2 Conjecture 10.1 status: **[CLOSED NEGATIVE for *substrate emergence* in the probed regime per FTD-0193]**; **importation as effective-theory scaffold per (C2-4) is *unaffected*** | FTD-0193 + REPORT_GRAVITON_SUBSTRATE_MODE.md §6 | ✅ empirical floor confirmed (Caveat-4: scope explicit) |
-| 6.3 Net for (C2-4): full nonlinear GR matched via Deser-bootstrap of posited h_μν; NOT substrate-derived | Composition 6.1 + 6.2 | ✅ [REFERENCE] tag (not derivation) |
+| 6.1 Deser-bootstrap chain in DERIV_EINSTEIN_FIELD_EQUATIONS.md Step 5: h_μν enters as Conjecture 10.1 (posited) per FTD-0189 audit | DERIV_EINSTEIN_FIELD_EQUATIONS §1 + Step 3 + Step 5 (retagged 2026-05-24 per FTD-0189 ripple per commit `9e85bd7`) |  EFE-6/8/9 now [SELECTION/CONDITIONAL] per ripple housekeeping |
+| 6.2 Conjecture 10.1 status: **[CLOSED NEGATIVE for *substrate emergence* in the probed regime per FTD-0193]**; **importation as effective-theory scaffold per (C2-4) is *unaffected*** | FTD-0193 + REPORT_GRAVITON_SUBSTRATE_MODE.md §6 |  empirical floor confirmed (Caveat-4: scope explicit) |
+| 6.3 Net for (C2-4): full nonlinear GR matched via Deser-bootstrap of posited h_μν; NOT substrate-derived | Composition 6.1 + 6.2 |  [REFERENCE] tag (not derivation) |
 
 **Caveat-4 (per adversarial review Gap-3, addressed here) — Conjecture 10.1 scope-bounding.** The Conjecture 10.1 status is **explicitly limited**: `[CLOSED NEGATIVE for *substrate emergence* in the probed regime (L ≤ 64, J-bilinear observables, dual substrate per FTD-0193 measurement); importation as effective-theory scaffold per (C2-4) is *unaffected*]`. The conjecture is NOT globally falsified — h_μν remains importable as effective-theory scaffold within the Deser-bootstrap chain; that is precisely the matching/import statement (C2-4) makes precise. This caveat guards against a reader interpreting Conjecture 10.1 as globally falsified, which it is not.
 
@@ -140,7 +140,7 @@ Per pre-reg D7: Arc B P2 verdict determines the scalar-sector statement. Status 
   - **Branch B (Arc B P2 = CLOSED-NEGATIVE):** scalar sector stops at "g_00 form via Phase G + clock-hypothesis AXIOM"; this boundary theorem's "scalar sector" statement reads as "FTD substrate-derivable scalar gravity reaches Schwarzschild g_00 form via Phase G + the clock-hypothesis AXIOM tagged in SPEC §4.3".
 - **Verdict on (C2-3) is unaffected by Arc B P2 branch** per DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY §8 (the boundary theorem's spin-2 forbiddenness depends only on (C2-1) ∧ (C2-2) ∧ §5.1 uniqueness, all of which are independent of the clock hypothesis).
 
-**Compliance check:** F-j (Arc B P2 verdict must be stated) — ✅ satisfied via D7 Branch C dual-branch statement.
+**Compliance check:** F-j (Arc B P2 verdict must be stated) —  satisfied via D7 Branch C dual-branch statement.
 
 ---
 
@@ -150,16 +150,16 @@ Per pre-reg §7. Each rule: fired (FAIL) or passed (PASS) with one-sentence just
 
 | Rule | Description | Status | Justification |
 |---|---|---|---|
-| **F-a** | No import of h_μν as derivation input | ✅ PASS | No (C2-1), (C2-2), or (C2-3) prose uses "h_μν" as derivation primitive; only cited in (C2-4) as the posited input per FTD-0189 |
-| **F-b** | No Deser bootstrap as substrate-emergence evidence | ✅ PASS | (C2-4) §7 explicitly tags Deser as [REFERENCE] for effective-theory matching, NOT as substrate emergence |
-| **F-c** | No invocation of "Lovelock implies substrate-derived GR" | ✅ PASS | Lovelock not cited as positive substrate-derivation evidence anywhere in walk-through |
-| **F-d** | Non-separability demonstrated empirically AND analytically | ✅ PASS | §5 cites both FTD-0193 §4 empirical (11/12 k-points L=64) AND DERIV_J_BILINEAR §3 + §3.4 analytical (bubble-integral branch-cut structure) |
-| **F-e** | Boundary scope explicitly states L ∈ {32, 64} + §4 catalog | ✅ PASS | §3 + §13 explicitly scope to L ≤ 64 probed regime + §4 frozen catalog; theorem does NOT claim "for all L" without Arc C1 evidence |
-| **F-f** | Respects §4 frozen catalog | ✅ PASS | No non-§4-catalog observables invoked; §5.1 uniqueness argument is within catalog, with sub-cases per Caveat-1 |
-| **F-g** | No re-invocation of closed-negative routes (FTD-0073, FTD-0184, FTD-0050) | ✅ PASS | None cited as positive evidence; FTD-0073 is referenced as background context for site-local Clifford closure, not as a derivation primitive |
-| **F-h** | No conflation of FTD-0193 empirics with axiomatic forbiddenness | ✅ PASS | §6 (C2-3) walk-through explicitly grounds [THEOREM] tag on the structural composition argument with sub-cases per Caveat-1; FTD-0193 cited as empirical FLOOR for [SMC] canonical-toggle tag, not as proof of axiomatic forbiddenness. **Load-bearing falsifier; adversarial review confirmed correct handling.** |
-| **F-i** | No look-elsewhere across rank-2 observables | ✅ PASS | §5.1 uniqueness argument fixes the candidates (J-bilinear `O_ij` + `Õ_ij` plus sub-cases per Caveat-1); no observable-substitution mid-walk |
-| **F-j** | Arc B P2 verdict stated | ✅ PASS | §8 D7 Branch C explicit dual-branch statement (Arc B P2 verdict pending; both branches A and B documented) |
+| **F-a** | No import of h_μν as derivation input |  PASS | No (C2-1), (C2-2), or (C2-3) prose uses "h_μν" as derivation primitive; only cited in (C2-4) as the posited input per FTD-0189 |
+| **F-b** | No Deser bootstrap as substrate-emergence evidence |  PASS | (C2-4) §7 explicitly tags Deser as [REFERENCE] for effective-theory matching, NOT as substrate emergence |
+| **F-c** | No invocation of "Lovelock implies substrate-derived GR" |  PASS | Lovelock not cited as positive substrate-derivation evidence anywhere in walk-through |
+| **F-d** | Non-separability demonstrated empirically AND analytically |  PASS | §5 cites both FTD-0193 §4 empirical (11/12 k-points L=64) AND DERIV_J_BILINEAR §3 + §3.4 analytical (bubble-integral branch-cut structure) |
+| **F-e** | Boundary scope explicitly states L ∈ {32, 64} + §4 catalog |  PASS | §3 + §13 explicitly scope to L ≤ 64 probed regime + §4 frozen catalog; theorem does NOT claim "for all L" without Arc C1 evidence |
+| **F-f** | Respects §4 frozen catalog |  PASS | No non-§4-catalog observables invoked; §5.1 uniqueness argument is within catalog, with sub-cases per Caveat-1 |
+| **F-g** | No re-invocation of closed-negative routes (FTD-0073, FTD-0184, FTD-0050) |  PASS | None cited as positive evidence; FTD-0073 is referenced as background context for site-local Clifford closure, not as a derivation primitive |
+| **F-h** | No conflation of FTD-0193 empirics with axiomatic forbiddenness |  PASS | §6 (C2-3) walk-through explicitly grounds [THEOREM] tag on the structural composition argument with sub-cases per Caveat-1; FTD-0193 cited as empirical FLOOR for [SMC] canonical-toggle tag, not as proof of axiomatic forbiddenness. **Load-bearing falsifier; adversarial review confirmed correct handling.** |
+| **F-i** | No look-elsewhere across rank-2 observables |  PASS | §5.1 uniqueness argument fixes the candidates (J-bilinear `O_ij` + `Õ_ij` plus sub-cases per Caveat-1); no observable-substitution mid-walk |
+| **F-j** | Arc B P2 verdict stated |  PASS | §8 D7 Branch C explicit dual-branch statement (Arc B P2 verdict pending; both branches A and B documented) |
 
 **Falsifier summary: 0/10 falsifiers fire.** Independently confirmed by adversarial reviewer (§11).
 
@@ -171,14 +171,14 @@ Per pre-reg §8. Each rule: invoked (FAIL) or not (PASS) with justification. **I
 
 | Rule | Description | Status | Justification |
 |---|---|---|---|
-| **B-1** | No tag-promotion of DERIV docs beyond current dual tags before result-doc lands | ✅ PASS | DERIV docs' tags unchanged in this walk-through; result-doc promotes ONLY the boundary-theorem-as-a-whole tag (FTD-0209), not constituent DERIV-doc tags |
-| **B-2** | No re-derivation of (C2-2) bubble structure beyond pre-reg authorization | ✅ PASS | §5 walks DERIV_J_BILINEAR §3 mechanically; Caveat-2 (finite-L lattice acknowledgment) is scope clarification, not substantive amendment |
-| **B-3** | No metaphysical priors ("graviton must exist somewhere") | ✅ PASS | No such priors invoked |
-| **B-4** | No LIGO/Virgo as substrate-spin-2 evidence | ✅ PASS | LIGO/Virgo not cited in walk-through (consistent with (C2-4) matched-GR framing) |
-| **B-5** | No [THEOREM]/[SMC] tag conflation in result-doc | ✅ PASS | Each clause's dual tag (free-theory vs canonical-toggle) preserved explicitly throughout §4-§7 and in §12 finalization |
-| **B-6** | No silent extension of §4 catalog | ✅ PASS | All observable references within `PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md` §4 catalog; Caveat-1 sub-cases (higher J-multilinears, ℒ-bilinears, J-ℒ cross-bilinears) are within-catalog refinements |
-| **B-7** | "Standard QFT result" claims cite canonical references | ✅ PASS | DERIV_J_BILINEAR §3 explicitly cites Peskin-Schroeder §10.2 + Montvay-Münster §3 |
-| **B-8** | (C2-3) [THEOREM] promotion with explicit dual-tag handling | ✅ PASS | §6 explicit "[THEOREM] at free-theory + Gauss-only (composition with sub-cases); [SMC] at canonical-toggle"; not collapsed to single tag |
+| **B-1** | No tag-promotion of DERIV docs beyond current dual tags before result-doc lands |  PASS | DERIV docs' tags unchanged in this walk-through; result-doc promotes ONLY the boundary-theorem-as-a-whole tag (FTD-0209), not constituent DERIV-doc tags |
+| **B-2** | No re-derivation of (C2-2) bubble structure beyond pre-reg authorization |  PASS | §5 walks DERIV_J_BILINEAR §3 mechanically; Caveat-2 (finite-L lattice acknowledgment) is scope clarification, not substantive amendment |
+| **B-3** | No metaphysical priors ("graviton must exist somewhere") |  PASS | No such priors invoked |
+| **B-4** | No LIGO/Virgo as substrate-spin-2 evidence |  PASS | LIGO/Virgo not cited in walk-through (consistent with (C2-4) matched-GR framing) |
+| **B-5** | No [THEOREM]/[SMC] tag conflation in result-doc |  PASS | Each clause's dual tag (free-theory vs canonical-toggle) preserved explicitly throughout §4-§7 and in §12 finalization |
+| **B-6** | No silent extension of §4 catalog |  PASS | All observable references within `PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md` §4 catalog; Caveat-1 sub-cases (higher J-multilinears, ℒ-bilinears, J-ℒ cross-bilinears) are within-catalog refinements |
+| **B-7** | "Standard QFT result" claims cite canonical references |  PASS | DERIV_J_BILINEAR §3 explicitly cites Peskin-Schroeder §10.2 + Montvay-Münster §3 |
+| **B-8** | (C2-3) [THEOREM] promotion with explicit dual-tag handling |  PASS | §6 explicit "[THEOREM] at free-theory + Gauss-only (composition with sub-cases); [SMC] at canonical-toggle"; not collapsed to single tag |
 
 **Banned-moves summary: 0/8 invoked.** Independently confirmed by adversarial reviewer (§11).
 
@@ -227,7 +227,7 @@ Per pre-reg §8. Each rule: invoked (FAIL) or not (PASS) with justification. **I
 ## §13 — Honest limits + scope hedges
 
 - **Scope limit:** §4 frozen catalog observables only. Doctrine §12 candidate principles (finite-trace `s_m` variation, graph spectral curvature, finite adjacency deformation) outside scope — Arc C1 territory if pursued.
-- **L-scope (Caveat-3 per adversarial review Gap-3 framing):** L ∈ {32, 64} empirically probed (FTD-0193). Theorem at free-theory level is L-independent in form (bubble integral has same analytic structure at any L, per Caveat-2's continuum-spectral framing), but canonical-toggle [SMC] tier's empirical floor is at L ≤ 64. **L > 64 is [OPEN] empirically — but the [OPEN] tag is *instrumentation-bounded, not theorem-bounded*.** Specifically: L=128 was attempted twice and deferred for engineering reasons (host↔device transfer + CPU-side operator computation at L³=2M voxels per REPORT_GRAVITON_SUBSTRATE_MODE §5), not for methodological reasons. The boundary theorem at the free-theory level extends predictively to L > 64 modulo Arc C1 GPU-port engineering work.
+- **L-scope (Caveat-3 per adversarial review Gap-3 framing):** L ∈ {32, 64} empirically probed (FTD-0193). Theorem at free-theory level is L-independent in form (bubble integral has same analytic structure at any L, per Caveat-2's continuum-spectral framing), but canonical-toggle [SMC] tier's empirical floor is at L ≤ 64. **L > 64 is [OPEN] empirically — but the [OPEN] tag is *instrumentation-bounded, not theorem-bounded*.** Specifically: L=128 was attempted twice and deferred for engineering reasons (hostdevice transfer + CPU-side operator computation at L³=2M voxels per REPORT_GRAVITON_SUBSTRATE_MODE §5), not for methodological reasons. The boundary theorem at the free-theory level extends predictively to L > 64 modulo Arc C1 GPU-port engineering work.
 - **Arc B P2 verdict:** pending; D7 Branch C dual-branch statement covers both outcomes for the scalar-sector clause.
 - **F9 risk handled:** prior-favoured Outcome A was "easy" because DERIV docs already did the substantive work. §9 F-h is the load-bearing falsifier specifically designed to catch the "structural argument vs empirical floor" conflation; adversarial reviewer independently verified F-h handling. The structural composition argument `(C2-1) ∧ (C2-2) ∧ §5.1 uniqueness` (with sub-cases per Caveat-1) stands independent of FTD-0193 empirics.
 - **F10 risk handled:** the [THEOREM] tag at free-theory level is *recognition* of the structural fact (linear spectrum + bilinear analytic structure forbid spin-2 pole in §4 catalog); it does NOT fix the substrate-derived-gravity question more broadly. Substrate gravity content remains scalar (FTD-0131 modulo clock hypothesis pending Arc B P2) + vector (J spin-1); the upper end remains effective-theory matching per (C2-4). The boundary is mapped honestly, not enlarged.

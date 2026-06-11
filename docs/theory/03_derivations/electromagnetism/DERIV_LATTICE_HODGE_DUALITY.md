@@ -37,7 +37,7 @@ discretization error.
 the difference operator being centered. They are **independent of the
 choice of Laplacian stencil** — G6, G18, G26, or any element of the
 isotropic family `(a, b, c)` with `a + 4b + 4c = 1` and `6b + 12c = 1`
-preserves them. Therefore Hodge duality `F ↔ ⋆F` is preserved on FTD's
+preserves them. Therefore Hodge duality `F  ⋆F` is preserved on FTD's
 lattice for the entire G18-family of canonical stencils, including the
 production engine choice `c = 0`.
 
@@ -120,7 +120,7 @@ correction terms.
 
 ### 2.4 · No hidden duality-breaking parameter
 
-A potential worry was that FTD's stencil might break `F ↔ ⋆F` at
+A potential worry was that FTD's stencil might break `F  ⋆F` at
 lattice scale, introducing a duality-breaking constant analogous to
 the way some lattice gauge theories break chiral symmetry at lattice
 scale. **There is no such parameter for FTD.** The Bianchi identities
@@ -177,7 +177,7 @@ not a structural compromise.
   FTD's G18-family stencil and the observation that Hodge duality
   is independent of the Laplacian stencil choice within the family.
 
-- **NOT a result about Lorentz invariance.** Hodge duality `F ↔ ⋆F`
+- **NOT a result about Lorentz invariance.** Hodge duality `F  ⋆F`
   is a discrete-differential-geometry property; Lorentz invariance is
   a separate question about the relationship between space and time
   derivatives. Lorentz anisotropy at lattice scale is being audited

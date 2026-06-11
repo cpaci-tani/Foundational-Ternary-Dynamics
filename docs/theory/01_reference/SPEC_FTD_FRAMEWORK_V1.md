@@ -162,13 +162,13 @@ The framework's honest map of which numbers its ontology fixes:
 | `N_c = 3` | **Forced** `[THEOREM]` from lattice topology (four independent routes) — **not** from `x₋` | [`DERIV_NC_FROM_TOPOLOGY.md`](../03_derivations/standard_model/DERIV_NC_FROM_TOPOLOGY.md) |
 | `N_base = 4`, `N_eff = 13`, `b₃ = 7` | **Forced** `[THEOREM]` (Moore-neighborhood integers) | FTD-0008 |
 | **α** | **Dynamical, not structural.** No FTD-native route forces the readout assembly `(Tr, Det) = (16G*², 16G*³)` — route-invariantly (0/4, FTD-0242; conditional theorem FTD-0243: `𝔉` does not force α unless a binding law W natively realizes `√(G*(4G*−1))`; **K-BIND `[CLOSED THEOREM-NEGATIVE] (FTD-0244)**). The identification `x₊ = 1/α` (1.26 ppm) stays `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013, OT-5.1) — its uniqueness evidence (FTD-0189 scan: sole dual-matcher among 2.65 M polynomials) is evidence, not derivation. | [`AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md`](../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md); [`AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md`](../07_assessment/audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md) |
-| `x₋` | **No physical correspondent.** The `x₋ ↔ N_c` identification is RETIRED; the pre-registered 25-observable search returned `[CLOSED NEGATIVE]` (FTD-0210) — `x₋` is a coordinate/chirality artifact of the quadratic. | LEDGER FTD-0210 |
+| `x₋` | **No physical correspondent.** The `x₋  N_c` identification is RETIRED; the pre-registered 25-observable search returned `[CLOSED NEGATIVE]` (FTD-0210) — `x₋` is a coordinate/chirality artifact of the quadratic. | LEDGER FTD-0210 |
 | `g_c`, `sin²θ_W = 3/13`, `α_s = 7/59` | `[PARAMETRIC]` terminal — all first-principles routes closed negative | LEDGER FTD-0031/0093; demotions 2026-04-19 |
 | `K_GENESIS = N_c·K_MANIFEST` | engine kinetics scale; threshold dynamics `[IMPOSED]`, EWSB transition `[MEASURED]` §5.1 | FTD-0130/FTD-0250 Phase 0 |
 
 ### 3.3 The calibration register `[DECLARED]`
 
-Per the calibration-discipline block of [`docs/SPEC_FTD.md`](../../SPEC_FTD.md) (§ "Lattice ↔ Physical Calibration") and the dimensional map [`SPEC_DIMENSIONAL_MAP.md`](SPEC_DIMENSIONAL_MAP.md):
+Per the calibration-discipline block of [`docs/SPEC_FTD.md`](../../SPEC_FTD.md) (§ "Lattice  Physical Calibration") and the dimensional map [`SPEC_DIMENSIONAL_MAP.md`](SPEC_DIMENSIONAL_MAP.md):
 
 - `a_phys ≡ ℓ_P` (one voxel = one Planck length) — a **gauge choice** (FTD-0137), not a derivation; the no-go theorem FTD-0059 proves no derivation from Axiom Zero exists.
 - `M_REST = m_e` (the rest/inertial/gravitational mass quantum; formerly the mass-anchor role of `K_B`, type-separated in the unified-mass arc) and `t_phys = √3·ℓ_P/c`.
@@ -313,7 +313,7 @@ The framework's epistemics are operational, not aspirational: **pre-registration
 
 ### 6.4 Queued arcs (explicitly not part of this constitution's critical path)
 
-K-BIND (§3.2, the irreducible α obligation); the ℤ/3 sharpness gap (§2.5); the FTD-0110 nonlinear bridge via Mechanism α (FTD-0203); the FTD-0250 collective-coordinate reduction; FTD-0252 v3 follow-ups (sign-crossing-robust exponent fit; L = 257 diagonals; git tags); the GUID+XYZ frame-self-identification `FOUND_` doc; the FTD-0189↔FTD-0243 LEDGER id double-booking cleanup; the FTD-0248 "Postulate Six" title disambiguation; the `docs/SPEC_FTD.md` editorial alignment; `SPEC_DOCTRINE_LEDGER.md` v1.5 refresh carrying the FC register.
+K-BIND (§3.2, the irreducible α obligation); the ℤ/3 sharpness gap (§2.5); the FTD-0110 nonlinear bridge via Mechanism α (FTD-0203); the FTD-0250 collective-coordinate reduction; FTD-0252 v3 follow-ups (sign-crossing-robust exponent fit; L = 257 diagonals; git tags); the GUID+XYZ frame-self-identification `FOUND_` doc; the FTD-0189FTD-0243 LEDGER id double-booking cleanup; the FTD-0248 "Postulate Six" title disambiguation; the `docs/SPEC_FTD.md` editorial alignment; `SPEC_DOCTRINE_LEDGER.md` v1.5 refresh carrying the FC register.
 
 ---
 

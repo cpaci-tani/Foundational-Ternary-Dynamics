@@ -310,7 +310,7 @@ This is not a conventional "something vs nothing" division. The void state 0 is 
 
 The ternary decomposition determines the electroweak gauge weights:
 
-**SU(2) isospin (weight = 2):** The SU(2) gauge group rotates between the two determined states +1 ↔ −1. The W bosons mediate transitions between the two ways of being actual. The weight equals the number of active states: w_SU(2) = 2.
+**SU(2) isospin (weight = 2):** The SU(2) gauge group rotates between the two determined states +1  −1. The W bosons mediate transitions between the two ways of being actual. The weight equals the number of active states: w_SU(2) = 2.
 
 **U(1) hypercharge (weight = 1):** The U(1) gauge group distinguishes determined from undetermined — the boundary between actual (±1) and potential (0). The hypercharge couples to the single charge quantum number that separates the two categories. Weight: w_U(1) = 1.
 

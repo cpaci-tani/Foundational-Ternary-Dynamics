@@ -142,5 +142,5 @@ docs/theory/10_eft_program/THEOREM_A_PHYS_NO_GO.md          # formal no-go theor
 docs/theory/10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md        # closed open problem
 docs/theory/10_eft_program/archive/closed_negative/DERIV_A_PHYS_MECHANISM_GAMMA_ATTEMPT.md  # Mechanism γ closure
 docs/theory/07_assessment/core_ledgers/LEDGER.md                         # FTD-0030, FTD-0041, FTD-0059
-docs/SPEC_FTD.md                                            # LATTICE ↔ PHYSICAL CALIBRATION
+docs/SPEC_FTD.md                                            # LATTICE  PHYSICAL CALIBRATION
 ```

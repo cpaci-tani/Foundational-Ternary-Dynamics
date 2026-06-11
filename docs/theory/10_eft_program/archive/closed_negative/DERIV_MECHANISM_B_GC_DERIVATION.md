@@ -3,7 +3,7 @@
 **Tag:** [CLOSED NEGATIVE] — the matching procedure does not produce a first-principles value of `g_c`. The obstruction is not the no-go theorem (`g_c` is dimensionless), but the **circularity** of the matching reference: every continuum target available to the matching is itself either (i) outside Axiom-Zero `R`, or (ii) the master quadratic root `x_+`, which is what `g_c` was supposed to predict independently.
 **Date:** 2026-04-25
 **LEDGER row:** FTD-0031 (was OPEN; this document recommends → CLOSED NEGATIVE pending owner sign-off).
-**Dependencies:** FTD-0001 (master quadratic), FTD-0013 (`x_+ ↔ 1/α`), FTD-0030/0041 (`a_phys ≡ ℓ_P` calibration), FTD-0050 (engine BCC-orthogonality, Link 8 closure), FTD-0059 (no-go theorem for dimensional Axiom-Zero outputs), Phase G (`DERIV_EMERGENT_COULOMB_GEOMETRIC.md`), Phase H (Phase G §7), `OPEN_GC_FROM_FIRST_PRINCIPLES.md`.
+**Dependencies:** FTD-0001 (master quadratic), FTD-0013 (`x_+  1/α`), FTD-0030/0041 (`a_phys ≡ ℓ_P` calibration), FTD-0050 (engine BCC-orthogonality, Link 8 closure), FTD-0059 (no-go theorem for dimensional Axiom-Zero outputs), Phase G (`DERIV_EMERGENT_COULOMB_GEOMETRIC.md`), Phase H (Phase G §7), `OPEN_GC_FROM_FIRST_PRINCIPLES.md`.
 **Supersedes:** the implicit "Mechanism B is partially started" status in `OPEN_GC_FROM_FIRST_PRINCIPLES.md` §2.2.
 
 ---
@@ -44,7 +44,7 @@ calibration, not derivation. **Mechanism B asks whether `g_c` can be
 fixed by a lattice → continuum matching procedure of the form**
 
 ```
-  1/g_R²(μ)  =  1/g_c²  +  b_0 log(μ a)  +  O(g_c²)                  (♦)
+  1/g_R²(μ)  =  1/g_c²  +  b_0 log(μ a)  +  O(g_c²)                  ()
 ```
 
 without using `α_ref` (or any quantity equivalent to it) as an external
@@ -56,7 +56,7 @@ This document is the post-mortem.
 
 ## 2 · What "matching" requires
 
-A bare-to-renormalised matching of the form (♦) requires three
+A bare-to-renormalised matching of the form () requires three
 structural ingredients:
 
 | Ingredient | What it must be | Where it lives in FTD |
@@ -90,7 +90,7 @@ the Phase-G/Phase-H theory are:
 - **Source vertex:** factor `g_c` — the only place coupling enters.
 - **Self-energy / vacuum polarisation:** *zero at tree level and at one loop*, because the action is quadratic in `J` once `s` is fixed (Gauss constraint), and `J`-loops with no `J`-self-interaction give a Gaussian determinant that depends on `D(k)` only.
 
-So **the "1-loop matching coefficient `b_0`" of equation (♦) is zero
+So **the "1-loop matching coefficient `b_0`" of equation () is zero
 on the FTD side of the match**. There is nothing for the lattice
 β-function to pick up at one loop in the Phase-G/Phase-H reduced
 theory: the only dimension-4 operator with non-trivial coefficient is
@@ -124,7 +124,7 @@ run.
 If the lattice β-function is zero at every loop accessible to the
 classical engine (§3), then matching becomes trivial: the bare
 coupling equals the renormalised coupling at every scale. **The
-matching condition (♦) reduces to a *boundary* condition, not a flow
+matching condition () reduces to a *boundary* condition, not a flow
 equation:**
 
 ```
@@ -202,25 +202,25 @@ uniqueness theorem (FTD-0014), the master quadratic root in disguise.
 
 ## 5 · Diagnostic of the obstruction
 
-The matching procedure (♦) requires *two* dimensionless numbers on the
+The matching procedure () requires *two* dimensionless numbers on the
 right-hand side: the lattice cutoff coupling `1/g_c²` and the continuum
 target `1/g_R²(μ)`. Mechanism B succeeds if and only if **both** are
 specifiable from Axiom-Zero invariants without using each other.
 
 For FTD as currently constituted:
 
-- The lattice side (left of ♦) is what we want to derive.
-- The continuum side (right of ♦) has no Axiom-Zero target other than `1/x_+`.
+- The lattice side (left of ) is what we want to derive.
+- The continuum side (right of ) has no Axiom-Zero target other than `1/x_+`.
 - The Phase-G theorem forces `b_0 = 0` at the level the engine can compute, so there is no flow to break the circularity (no scale-dependent term to match against an experimental scale-dependent observable).
 
 **The diagnosis:** Mechanism B does not produce a first-principles
 `g_c` because the "matching" reduces to a tautology
 
 ```
-  g_c  =  √(2π · 1/x_+)   ⟺   x_+ ↔ 1/α   (FTD-0013).            (5.1)
+  g_c  =  √(2π · 1/x_+)   ⟺   x_+  1/α   (FTD-0013).            (5.1)
 ```
 
-The two statements (5.1) carry the same information. If `x_+ ↔ 1/α` is
+The two statements (5.1) carry the same information. If `x_+  1/α` is
 [STRONGLY MOTIVATED CONJECTURE] (current LEDGER status of FTD-0013),
 then `g_c = √(2π α_ref)` is **also** [STRONGLY MOTIVATED CONJECTURE],
 with no independent derivation.
@@ -276,7 +276,7 @@ structural grounds:
     source-side multiplicative factor, with no propagator
     renormalisation (§3).
 (b) The Phase-G/Phase-H reduced action has zero one-loop β
-    coefficient, collapsing the matching equation (♦) to a tautology
+    coefficient, collapsing the matching equation () to a tautology
     (§4).
 (c) The only Axiom-Zero-derivable dimensionless number that hits the
     required value of `g_c²` is `2π / x_+`, making Mechanism B
@@ -309,7 +309,7 @@ an emergent dynamical outcome must be retracted or sharpened to "α is
 identified with `1/x_+` via the master quadratic (algebraic
 [THEOREM]) and the source coupling `g_c = √(2π/x_+)` is set
 consistently with this identification (one calibration, not two)." The
-engine reproduces QED Coulomb at small r if and only if `x_+ ↔ 1/α`
+engine reproduces QED Coulomb at small r if and only if `x_+  1/α`
 holds — which is the FTD-0013 conjecture, restated.
 
 ---

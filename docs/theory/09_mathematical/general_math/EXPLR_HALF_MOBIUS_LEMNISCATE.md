@@ -157,7 +157,7 @@ The mapping works because:
 
 1. **Enantiomers are complex conjugates.** The L-singlet and R-singlet are mirror images — identical in all real-valued properties (energy, bond lengths) but opposite in their chiral (imaginary) component. Complex conjugate roots y and y* have identical real part Re(y) = Re(y*) but opposite imaginary parts Im(y) = −Im(y*). The chiral property IS the imaginary part.
 
-2. **Singlets are antisymmetric; triplets are symmetric.** The singlet wavefunction is antisymmetric under particle exchange (S = 0: ↑↓ − ↓↑). The triplet is symmetric (S = 1: ↑↑, ↓↓, or ↑↓ + ↓↑). Complex root exchange y ↔ y* flips Im(y), producing antisymmetry. Real root exchange x₊ ↔ x₋ leaves Vieta relations invariant, producing symmetry.
+2. **Singlets are antisymmetric; triplets are symmetric.** The singlet wavefunction is antisymmetric under particle exchange (S = 0: ↑↓ − ↓↑). The triplet is symmetric (S = 1: ↑↑, ↓↓, or ↑↓ + ↓↑). Complex root exchange y  y* flips Im(y), producing antisymmetry. Real root exchange x₊  x₋ leaves Vieta relations invariant, producing symmetry.
 
 3. **The twist IS the imaginary part.** The orbital twist angle per revolution is:
    - +90° for L-singlet → +i (the Z₄ eigenvalue)
@@ -387,9 +387,9 @@ The elements are:
 
 | Claim | Statement | Tag | Strength |
 |-------|-----------|-----|----------|
-| EXPLR-HM-1 | pJT switching ↔ discriminant sign change | [SELECTION] | Strong structural analogy |
+| EXPLR-HM-1 | pJT switching  discriminant sign change | [SELECTION] | Strong structural analogy |
 | EXPLR-HM-2 | Z₄ eigenvalue as topological quantum number | [SELECTION] | Mathematically clean |
-| EXPLR-HM-3 | N_eff = 13 ↔ C₁₃ ring size | [CONJECTURE] | May be coincidence |
+| EXPLR-HM-3 | N_eff = 13  C₁₃ ring size | [CONJECTURE] | May be coincidence |
 | EXPLR-HM-4 | θ₃ self-duality → orbital/Berry agreement | [SELECTION] | Elegant but indirect |
 | EXPLR-HM-5 | Half-Möbius = quaternionic level of Cayley-Dickson | [SELECTION] | Consistent with hierarchy |
 | EXPLR-HM-6 | Z₄ more fundamental than Z₂ for spin | [SELECTION] | Experimentally motivated |

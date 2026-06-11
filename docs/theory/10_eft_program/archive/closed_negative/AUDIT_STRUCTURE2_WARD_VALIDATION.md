@@ -53,7 +53,7 @@ Therefore the tested Structure-2 scalar gauge completions do **not** reproduce t
 Recommended tag language:
 
 - CM/master quadratic: **[THEOREM]** where already proven.
-- `x_+ ↔ 1/alpha` tree-level match: **[STRONGLY MOTIVATED CONJECTURE]** or empirical arithmetic match, not theorem.
+- `x_+  1/alpha` tree-level match: **[STRONGLY MOTIVATED CONJECTURE]** or empirical arithmetic match, not theorem.
 - Structure-1 one-loop ppb correction: **[SELECTION]** or **[CONJECTURE]**, scheme-conditional.
 - Structure-2 scalar gauge completion tested here: **negative audit result**.
 - FTD-to-EFT matching principle: **[OPEN]**.

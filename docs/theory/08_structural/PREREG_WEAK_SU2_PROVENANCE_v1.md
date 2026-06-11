@@ -97,7 +97,7 @@ law being constructed. A count-match is `[SELECTION]` at best; it is
 **D3 — The chirality mode `φ = J_L − J_R`.** The difference mode of the
 dual substrate `(J_L, J_R)`; per `FOUND_FORCE_STRUCTURE.md` Parts III/VII,
 a real 3-component pseudovector. Its **forced** internal symmetry, as
-established by the Q11 audit, is the parity `ℤ₂` (`J_L ↔ J_R`).
+established by the Q11 audit, is the parity `ℤ₂` (`J_L  J_R`).
 
 **D4 — Load-bearing step.** A step of the claimed derivation whose removal
 collapses the `SU(2)` conclusion. The audit identifies the load-bearing

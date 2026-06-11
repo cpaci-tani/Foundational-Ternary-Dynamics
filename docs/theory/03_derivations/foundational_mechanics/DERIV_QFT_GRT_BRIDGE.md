@@ -295,7 +295,7 @@ The flux field J plays two simultaneous roles:
 
 | Role | Identification | Description |
 |------|----------------|-------------|
-| **QFT** | J ↔ A_μ (vector potential) | Mediates electromagnetic interaction via propagator G_L(k) |
+| **QFT** | J  A_μ (vector potential) | Mediates electromagnetic interaction via propagator G_L(k) |
 | **GRT** | J sources T_μν | Gravitational field via energy-momentum content |
 
 This dual role is not an analogy — it is a mathematical identity. The SAME lattice Green's function G_L serves as:
@@ -533,7 +533,7 @@ The three terms correspond to direct (t-channel²), interference (t-u cross, neg
 | QB-9 | T^00 = ½|∂_t J|² + ½C²|∇J|² (energy density) | [THEOREM] | QB-7 | Energy density wrong sign/form |
 | QB-10 | Linearized Einstein with derived T_μν | [THEOREM] | QB-7, DERIV_RELATIVITY Thm 14.1 | Einstein equations fail |
 | QB-11 | Same Green's function for QFT and GRT | [SELECTION] | QB-1, §3.1 | Different propagators needed |
-| QB-12 | Scale separation: QFT ↔ GRT regimes | [SELECTION] | QB-3, §3.2 | Scale overlap causes contradiction |
+| QB-12 | Scale separation: QFT  GRT regimes | [SELECTION] | QB-3, §3.2 | Scale overlap causes contradiction |
 | QB-13 | Running coupling α(Q) with lattice UV cutoff | [SELECTION] | QB-4, standard QED | Running α wrong |
 | QB-14 | UV regularization intrinsic to lattice | [SELECTION] | Lattice structure | Lattice doesn't regularize |
 | QB-15 | Lattice photon propagator has correct gauge structure | [THEOREM] | Lorenz gauge + Ward identity (Thm 1.5) | Gauge-dependent physical observables |

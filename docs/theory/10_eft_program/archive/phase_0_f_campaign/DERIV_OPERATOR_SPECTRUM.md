@@ -22,7 +22,7 @@
 
 | Op | Naive Δ | Measured Δ | R² | Valid? | Matches pre-reg bracket? |
 |---|---|---|---|---|---|
-| JJ      | 2.0 | **0.531** | 0.997 | ✓ | ✅ relevant (≤ 2.5) |
+| JJ      | 2.0 | **0.531** | 0.997 | ✓ |  relevant (≤ 2.5) |
 | divJ2   | 4.0 | 0.458     | 0.918 | ✓ | ✗ expected 3–5 |
 | curlJ2  | 4.0 | 0.391     | 0.959 | ✓ | ✗ expected 3–5 |
 | JdotDivJ | 5.0 | 0.563     | 0.370 | ✓ (low R²) | ✗ expected ≥ 4.5 |

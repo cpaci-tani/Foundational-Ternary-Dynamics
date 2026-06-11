@@ -223,9 +223,9 @@ For external presentation:
 
 ## §12 The minimum-dimension framework (cluster-size scaling and SM identification)
 
-> **Consolidation note (2026-05-21):** This section absorbs the unique content of `FOUND_MINIMUM_DIMENSIONS.md` ([FOUNDATION] / [HYPOTHESIS] cluster-size scaling / [CONJECTURE]→[STRONGLY MOTIVATED CONJECTURE] SM identification, dated 2026-04-27, depends on SPEC_FTD.md §LATTICE↔PHYSICAL CALIBRATION + FTD-0107). That document's §1 calibration-anchor exposition merely restated the `a_phys ≡ ℓ_P` declaration already covered above (§4.1, §7.2) and is not repeated here. What follows is the source's distinct content: the static/dynamical minima tables, the engine-measured cluster-size scaling law, the SM-particle identification, and the analysis of the ¼ coefficient. **Epistemic framing under the gauge-freedom position:** every minimum below is concrete *under the Planck-primary gauge of §4.1*; under the dimensionless-only canonical gauge (§4.4) the dimensionless ratios (cluster size N, mass ratios) are gauge-invariant and the absolute lengths/times are downstream of the declaration. The cluster-size scaling law and the SM identification themselves are dimensionless and gauge-invariant.
+> **Consolidation note (2026-05-21):** This section absorbs the unique content of `FOUND_MINIMUM_DIMENSIONS.md` ([FOUNDATION] / [HYPOTHESIS] cluster-size scaling / [CONJECTURE]→[STRONGLY MOTIVATED CONJECTURE] SM identification, dated 2026-04-27, depends on SPEC_FTD.md §LATTICEPHYSICAL CALIBRATION + FTD-0107). That document's §1 calibration-anchor exposition merely restated the `a_phys ≡ ℓ_P` declaration already covered above (§4.1, §7.2) and is not repeated here. What follows is the source's distinct content: the static/dynamical minima tables, the engine-measured cluster-size scaling law, the SM-particle identification, and the analysis of the ¼ coefficient. **Epistemic framing under the gauge-freedom position:** every minimum below is concrete *under the Planck-primary gauge of §4.1*; under the dimensionless-only canonical gauge (§4.4) the dimensionless ratios (cluster size N, mass ratios) are gauge-invariant and the absolute lengths/times are downstream of the declaration. The cluster-size scaling law and the SM identification themselves are dimensionless and gauge-invariant.
 
-> **⚠ STACK-PINNED DATA BANNER (2026-06-10, FTD-0260 resolution — owner decision).** Every engine-measured number in §12 (the cluster-size scaling law `N(A) ≈ ¼·A²`, the k(A) drift table, and the SM-particle cluster matches) is a measurement of the **pre-correction April/May 2026 engine stack**. Accumulated deliberate engine corrections since then changed the canonical ic1 phenomenology: the **current canonical stack** yields N(A=10) ≈ 4 (not 25) and k ≈ 0.04–0.09 above the knee on both CPU and CUDA backends (current-stack control table: `engine/results/thermostat_off_sweep_2026-06-09/` arm C; canonical test re-baselined the same day). Per the owner's 2026-06-10 decision the current stack is canonical; this section's tables are preserved **as the historical record of the pre-correction stack** and may not be cited as current-engine measurements. The `N ≈ A²/4` law and the SM-identification evidence are therefore **stack-pinned**; re-characterization of the current-stack N(A) law is `[OPEN]` (LEDGER FTD-0260; `ANALYSIS_THERMOSTAT_OFF_SWEEP_v1_INVALID.md` §4).
+> ** STACK-PINNED DATA BANNER (2026-06-10, FTD-0260 resolution — owner decision).** Every engine-measured number in §12 (the cluster-size scaling law `N(A) ≈ ¼·A²`, the k(A) drift table, and the SM-particle cluster matches) is a measurement of the **pre-correction April/May 2026 engine stack**. Accumulated deliberate engine corrections since then changed the canonical ic1 phenomenology: the **current canonical stack** yields N(A=10) ≈ 4 (not 25) and k ≈ 0.04–0.09 above the knee on both CPU and CUDA backends (current-stack control table: `engine/results/thermostat_off_sweep_2026-06-09/` arm C; canonical test re-baselined the same day). Per the owner's 2026-06-10 decision the current stack is canonical; this section's tables are preserved **as the historical record of the pre-correction stack** and may not be cited as current-engine measurements. The `N ≈ A²/4` law and the SM-identification evidence are therefore **stack-pinned**; re-characterization of the current-stack N(A) law is `[OPEN]` (LEDGER FTD-0260; `ANALYSIS_THERMOSTAT_OFF_SWEEP_v1_INVALID.md` §4).
 
 ### §12.0 Summary
 
@@ -366,7 +366,7 @@ Combined T5b + T6 + T7 measurements of k(A) = N(A)/A²:
 
 k(A) shows a clean monotonic decline from ~0.25 at low A to ~0.20 at A=120, with ~3% scatter from Langevin variance. Approximate fit: `k(A) ≈ ¼ · (1 − 0.07·log₁₀(A/2))` for A ∈ [2, 120].
 
-**The Δ vs R "deviations" are precisely captured by k(A)** — they are NOT a failure of the cluster-size ↔ mass identification. Concretely, at the predicted amplitude A=2√R, the engine produces a cluster of size 4·k(A)·R. For A < 30, 4·k ≈ 1 and N ≈ R. For A > 50, 4·k drifts to ~0.83 and N drops to ~0.83·R. **The match between measured N and the independently-measured k(A)·A² product is sharp** at every particle: the deviations are structural, not noise.
+**The Δ vs R "deviations" are precisely captured by k(A)** — they are NOT a failure of the cluster-size  mass identification. Concretely, at the predicted amplitude A=2√R, the engine produces a cluster of size 4·k(A)·R. For A < 30, 4·k ≈ 1 and N ≈ R. For A > 50, 4·k drifts to ~0.83 and N drops to ~0.83·R. **The match between measured N and the independently-measured k(A)·A² product is sharp** at every particle: the deviations are structural, not noise.
 
 #### §12.4.2 What this is, and what it is NOT
 
@@ -500,7 +500,7 @@ All of these decompose into 4 because of the i-cycle.
 - The k(A) drift from 0.25 → 0.20 at high A is a **correction term** to this ideal value, plausibly from lattice finite-size effects (cluster approaches L³ scale) or evaporation saturation.
 - The relationship **`m/m_e = N · N_base = N · 4 = A²`** ties the SM mass ladder to the framework integer N_base.
 
-**Decisive test D3a — already discriminated by CPU↔GPU asymmetry.**
+**Decisive test D3a — already discriminated by CPUGPU asymmetry.**
 
 Inspecting the engine reveals that the CPU and CUDA genesis paths apply DIFFERENT energy-drain rules at the manifestation event:
 
@@ -582,7 +582,7 @@ Apply the 4-fold rotation R_x : (x, y, z) → (x, −z, y) to the deterministic 
 
 - **Centre + axial voxels (5 of 23)**: fixed points of R_x, trivially preserved.
 - **−x hemisphere (8 of 23)**: full Z₄_x invariance — every populated orbit is a complete 4-cycle.
-- **+x hemisphere (8 of 23)**: BCC corners are Z₄_x invariant (4 of 4); FCC edges are reduced to Z_2 (2 of 4 — only the y-axis members survive, the z-axis members are absent). This Z₂ ⊂ Z₄ retention is exactly the symmetry breaking expected from a J_x injection — the y↔−y reflection is preserved but the y↔z rotation is broken.
+- **+x hemisphere (8 of 23)**: BCC corners are Z₄_x invariant (4 of 4); FCC edges are reduced to Z_2 (2 of 4 — only the y-axis members survive, the z-axis members are absent). This Z₂ ⊂ Z₄ retention is exactly the symmetry breaking expected from a J_x injection — the y−y reflection is preserved but the yz rotation is broken.
 - **Transverse equatorial orbits (yz FCC + yz face2)**: entirely absent. These voxels lie in the plane orthogonal to the injection direction at the cluster's outer L¹=2 shell — they don't manifest because the wave amplitude there is below threshold at steady state.
 
 **Net structural reading:** the cluster's BCC shell is Z₄_x-symmetric on both hemispheres; the FCC shell is Z₄_x-symmetric only on the −x hemisphere (away from the injection direction). The injection axis is the symmetry-breaking direction — exactly as expected from a directional source. **In the absence of the directional injection, the bound state is predicted to be fully Z₄-symmetric** — testable via D3h (NEW): inject an isotropic spherical pulse and re-measure the deterministic core.
@@ -626,7 +626,7 @@ This is why N_base = 4 (not 24) sets the cluster-efficiency coefficient. The inj
 
 **Cluster shape vs size:** while the cluster SIZE is direction-invariant, the cluster SHAPE differs between axial and diagonal injection (centroid and bbox shift with the injection direction — see browser preview for visual comparison via `s0-seed-emergent-ic1-diagonal` vs `s0-seed-emergent-ic1`). The structural finding: **what manifests depends on direction; how many manifest depends only on N_base = 4.**
 
-D3g is the cleanest discriminator yet for the ¼ origin. With N_base confirmed and engine-parameter falsified (CPU↔GPU asymmetry), the path to a [THEOREM] tag now requires deriving k = 1/N_base from first principles — i.e., showing that the lattice's 4 1-dim irreps directly imply genesis-manifestation efficiency = 1/4. This is a representation-theoretic computation on the cubic point group, not an empirical measurement.
+D3g is the cleanest discriminator yet for the ¼ origin. With N_base confirmed and engine-parameter falsified (CPUGPU asymmetry), the path to a [THEOREM] tag now requires deriving k = 1/N_base from first principles — i.e., showing that the lattice's 4 1-dim irreps directly imply genesis-manifestation efficiency = 1/4. This is a representation-theoretic computation on the cubic point group, not an empirical measurement.
 
 **Test plan to identify the origin:**
 
@@ -696,7 +696,7 @@ This is a complete cross-check loop. The structural finding is robust to the eng
 
 ### §12.9 Single-line summary (minimum-dimension framework)
 
-**Under `a_phys ≡ ℓ_P` and `K_B = m_e` (the Planck-primary gauge of §4.1), every minimum in FTD is concrete: 1 voxel = 1 ℓ_P linear; 1 tick ≈ 10⁻⁴⁴ s; 1.5 MeV manifestation threshold; 1-voxel minimum stable particle (≡ electron); cluster size N ≈ ¼·(A/K_GENESIS)² selects bound-state mass — and engine measurement T6 confirms the cluster-size↔mass identification at e/μ/π to within 0/1.1/2.0% across 5 seeds, with structural drift at heavier particles tracking the empirical k(A) curve.**
+**Under `a_phys ≡ ℓ_P` and `K_B = m_e` (the Planck-primary gauge of §4.1), every minimum in FTD is concrete: 1 voxel = 1 ℓ_P linear; 1 tick ≈ 10⁻⁴⁴ s; 1.5 MeV manifestation threshold; 1-voxel minimum stable particle (≡ electron); cluster size N ≈ ¼·(A/K_GENESIS)² selects bound-state mass — and engine measurement T6 confirms the cluster-sizemass identification at e/μ/π to within 0/1.1/2.0% across 5 seeds, with structural drift at heavier particles tracking the empirical k(A) curve.**
 
 ### §12.10 Changelog (minimum-dimension framework, from FOUND_MINIMUM_DIMENSIONS.md)
 

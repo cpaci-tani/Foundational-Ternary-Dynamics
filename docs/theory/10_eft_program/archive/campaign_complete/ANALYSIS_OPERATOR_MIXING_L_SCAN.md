@@ -4,7 +4,7 @@
 **Date:** 2026-05-06
 **LEDGER row:** FTD-0140
 **Pre-reg:** [`PREREG_OPERATOR_MIXING_L_SCAN_v1.md`](PREREG_OPERATOR_MIXING_L_SCAN_v1.md) (commit `f3fa700`, tag `preregister-operator-mixing-l-scan-v1`, SHA256 `290005066803b2cada8be9820c50f35ef3f810ae61fba53d436d9a393a5c2f0d`).
-**Backend anchor:** HEAD `00f41fe` post BH-F5/F8/F9 RNG portability closure (commits `c1a4f88` + `c8e03a5`). Per-voxel CPU↔GPU bit-exact under stochastic toggles.
+**Backend anchor:** HEAD `00f41fe` post BH-F5/F8/F9 RNG portability closure (commits `c1a4f88` + `c8e03a5`). Per-voxel CPUGPU bit-exact under stochastic toggles.
 **Wall time:** ~20 minutes total across all six configs (RTX 5090 / WSL2). Pre-reg risk register estimated 42h; the estimate was over-padded by a factor of ~125. Reproduction recipe in `REF_PREREGISTER_MANIFEST.md`.
 
 ---
@@ -15,11 +15,11 @@ The R3a L-scan extends the 2026-04-26 FTD-0098/0099/0100 baseline (L ∈ {16, 32
 
 | Pre-reg criterion | Result | Verdict |
 |---|---|---|
-| §4.1 Numerical integrity (Gauss residual ≤ 1e-7, bootstrap convergence, finite eigenvalues) | All configs PASS internal "all gates PASS" | ✅ PASS |
-| §4.2 Theorem-grade M_JJ ≈ 16 ± mach.eps | M_JJ ∈ [16.005, 17.003] across L; deviations within bootstrap stderr | ✅ PASS within noise |
-| §4.3 cond(S) monotone-decreasing in L | 5.8e7 (L=16) → 8.7e6 (L=32) → 8.6e6 (L=64) → 2.6e6 (L=96) → 6.3e6 (L=128) | ✅ PASS — overall trend; non-strict at L=96→128 |
-| §4.4 ≥ 3 operators marginal/irrelevant at L=128 | Only 1/6 (divJ²) crosses threshold | ❌ FAIL — informative null |
-| §4.5 RG semigroup relerr ≤ 0.10 at L=128 | Relerr stays > 1.0 at all three L | ❌ FAIL — structural finding |
+| §4.1 Numerical integrity (Gauss residual ≤ 1e-7, bootstrap convergence, finite eigenvalues) | All configs PASS internal "all gates PASS" |  PASS |
+| §4.2 Theorem-grade M_JJ ≈ 16 ± mach.eps | M_JJ ∈ [16.005, 17.003] across L; deviations within bootstrap stderr |  PASS within noise |
+| §4.3 cond(S) monotone-decreasing in L | 5.8e7 (L=16) → 8.7e6 (L=32) → 8.6e6 (L=64) → 2.6e6 (L=96) → 6.3e6 (L=128) |  PASS — overall trend; non-strict at L=96→128 |
+| §4.4 ≥ 3 operators marginal/irrelevant at L=128 | Only 1/6 (divJ²) crosses threshold |  FAIL — informative null |
+| §4.5 RG semigroup relerr ≤ 0.10 at L=128 | Relerr stays > 1.0 at all three L |  FAIL — structural finding |
 
 The §4.4 + §4.5 failures are not measurement bugs — they are structural properties of the FTD-native operator basis under the chosen ensemble that the R3 $S_\text{eff}$ derivation will need to accommodate.
 

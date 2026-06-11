@@ -105,7 +105,7 @@ Abbreviations used in **backs-Part** column: `0`=Part 0 Seed, `I`=Part I Constru
 | `02_foundations/FOUND_GSTAR_SCALE.md` | none | KEEP-supporting | G* scale conjecture; conjectural context, not a monograph claim |
 | `02_foundations/FOUND_LADDER_GENERATING_RULE.md` | I | KEEP-supporting | α-power ladder exponent identity; supports Part I §I.4 spine |
 | `02_foundations/FOUND_LADDER_WALK_FROM_OH_STRUCTURE.md` | I | KEEP-supporting | O_h ladder-walk (FTD-0084); supports Part I framework integers |
-| `02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md` | none | KEEP-supporting | Reference table of phenomena ↔ lattice definitions; infrastructure |
+| `02_foundations/FOUND_LATTICE_PHYSICS_INTUITIONS.md` | none | KEEP-supporting | Reference table of phenomena  lattice definitions; infrastructure |
 | `02_foundations/FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md` | none | KEEP-supporting | Lattice spacing as gauge freedom (FTD-0137); methodology, outside monograph scope |
 | `02_foundations/FOUND_MASTER_QUADRATIC_BARE_STRUCTURE.md` | I | KEEP-supporting | Master quadratic stripped to bare algebra (FTD-0082); supports Part I §I.3 |
 | `02_foundations/FOUND_MASTER_QUADRATIC_UNIFIED_MOTIVATION.md` | I | KEEP-supporting | Two independent routes converge on same polynomial (FTD-0081); supports Part I §I.3 |
@@ -221,7 +221,7 @@ Abbreviations used in **backs-Part** column: `0`=Part 0 Seed, `I`=Part I Constru
 | `04_coupling/DERIV_ALPHA_PRECISION_FORMULA.md` | III | KEEP-supporting | 7-term precision series [CONJECTURE]; Part III §III.2 evidence context |
 | `04_coupling/DERIV_ALPHA_READOUT_RESOLUTION.md` | III | ARCHIVE-superseded | Retracted (banner-marked 2026-06-01): substitution-identity facade; Part III §III.3 closed-negative provenance only |
 | `04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md` | none | KEEP-supporting | Λ from lattice vacuum energy [SELECTION]; physics beyond monograph scope |
-| `04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md` | I | KEEP-supporting | Master quadratic as lattice↔lemniscate connector; supports Part I §I.3 |
+| `04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md` | I | KEEP-supporting | Master quadratic as latticelemniscate connector; supports Part I §I.3 |
 | `04_coupling/DERIV_GSTAR_PF_BRIDGE.md` | I | KEEP-supporting | G*=ϖ/√(PF) decomposition; supports Part I §I.2 G* structure |
 | `04_coupling/DERIV_LAMBDA_QCD_DERIVATION.md` | none | KEEP-supporting | Λ_QCD via dimensional transmutation [SELECTION]; physics detail |
 | `04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md` | none | KEEP-supporting | Lemniscate hierarchy white paper; physics context |
@@ -301,7 +301,7 @@ Abbreviations used in **backs-Part** column: `0`=Part 0 Seed, `I`=Part I Constru
 | `07_assessment/SYNTHESIS_GSTAR_BEDROCK_2026-05-19.md` | none | ARCHIVE-absorbed | G*-bedrock polymath [SYNTHESIS]; the monograph absorbs this into Part I §I.2 narrative |
 | `07_assessment/audits/AUDIT_ALPHA_EXTRACTION.md` | II | KEEP-supporting | Phase-F α extraction audit (category-error resolved by Phase G); Part II §II.2 provenance |
 | `07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md` | II | KEEP-canonical | Route-invariant boundary audit (FTD-0242); primary Part II §II.2/§II.3 citation |
-| `07_assessment/audits/AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` | II | KEEP-supporting | det↔det_ζ identity [UNDERDETERMINED] (FTD-0235); Part II §II.2 Route 1 provenance |
+| `07_assessment/audits/AUDIT_ALPHA_READOUT_DET_IDENTITY_UNDERDETERMINED.md` | II | KEEP-supporting | detdet_ζ identity [UNDERDETERMINED] (FTD-0235); Part II §II.2 Route 1 provenance |
 | `07_assessment/audits/AUDIT_ALPHA_READOUT_ODD_PERIOD_UNDERDETERMINED.md` | II | KEEP-supporting | J-twisted det_ζ ratio [UNDERDETERMINED] (FTD-0234); Part II §II.2 provenance |
 | `07_assessment/audits/AUDIT_ARC_C1_B2_FOUND_INDEPENDENT_REVIEW.md` | II | KEEP-supporting | ARC-C1/B2 FOUND→UNDERDETERMINED correction (FTD-0232); Part II §II.2 provenance |
 | `07_assessment/audits/AUDIT_CHARGE_QUANTIZATION_NO_CHEAT.md` | II | KEEP-supporting | Charge quantization audit; Part II boundary provenance |
@@ -417,7 +417,7 @@ Abbreviations used in **backs-Part** column: `0`=Part 0 Seed, `I`=Part I Constru
 | `09_mathematical/general_math/REF_GUILLERA_CORPUS_MAP.md` | I | KEEP-supporting | Guillera Ramanujan-type series corpus; supports Part I §I.2 G* computation routes |
 | `09_mathematical/general_math/REF_QCR_TRILOGY_BRIDGE.md` | I | KEEP-supporting | External QCR trilogy mapped to FQCR; Part I FQCR context |
 | `09_mathematical/general_math/ROADMAP_IDENTITY_PRIORITIES.md` | none | KEEP-supporting | Identity priorities roadmap; research-queue context |
-| `09_mathematical/general_math/THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md` | I | KEEP-supporting | BCC Green's function ↔ reflection ratio [THEOREM]; supports Part I §I.2 |
+| `09_mathematical/general_math/THEOREM_BCC_WATSON_REFLECTION_BRIDGE.md` | I | KEEP-supporting | BCC Green's function  reflection ratio [THEOREM]; supports Part I §I.2 |
 | `09_mathematical/number_theory/DERIV_INTEGER_4_UNIFICATION.md` | I | KEEP-canonical | Lemniscatic 4s + |μ_K|=|disc(K)| uniqueness [THEOREM] (FTD-0181); Part I §I.4 (OT-1.9) |
 | `09_mathematical/number_theory/DERIV_LFUNCTION_GSTAR_CONNECTION.md` | I | KEEP-canonical | G*=8·L(E,1)/√π [THEOREM]; Part I §I.2 core identity |
 | `09_mathematical/number_theory/DERIV_MASTER_QUADRATIC_CM_LVALUES.md` | I | KEEP-canonical | Coefficients as Deligne L-values: 16G*²=2⁹·L(Sym²E,1) [THEOREM]; Part I §I.3 (OT-2.5) |
@@ -453,7 +453,7 @@ Abbreviations used in **backs-Part** column: `0`=Part 0 Seed, `I`=Part I Constru
 | `10_eft_program/derivations/DERIV_J_BILINEAR_NO_SPIN2_POLE.md` | none | KEEP-supporting | J-bilinear no-spin-2-pole theorem; EFT detail |
 | `10_eft_program/derivations/DERIV_PARTITION_FUNCTION_L2.md` | I | KEEP-canonical | Phase J partition function ultralocality [THEOREM at L=2] (OT-3.1); cited by Part I close |
 | `10_eft_program/derivations/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` | II | KEEP-supporting | Spin-2 boundary theorem free theory; Part II §II.2 boundary evidence |
-| `10_eft_program/derivations/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` | none | KEEP-supporting | State↔flux EFT dictionary; EFT detail |
+| `10_eft_program/derivations/DERIV_STATE_FLUX_TO_EFT_DICTIONARY.md` | none | KEEP-supporting | Stateflux EFT dictionary; EFT detail |
 | `10_eft_program/derivations/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md` | II | KEEP-supporting | ARC-C (quantization) FOUND→UNDERDETERMINED (FTD-0231); Part II §II.2 provenance |
 | `10_eft_program/derivations/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md` | II | KEEP-supporting | ARC-B2 FOUND→UNDERDETERMINED (FTD-0230); Part II §II.2 provenance |
 | `10_eft_program/derivations/FOUND_COLOR_CONFINEMENT_RESOLUTION.md` | none | KEEP-supporting | Color confinement [FOUND] (FTD-0217); physics |
@@ -473,7 +473,7 @@ Abbreviations used in **backs-Part** column: `0`=Part 0 Seed, `I`=Part I Constru
 | `10_eft_program/preregistrations/PREREG_ALPHA_READOUT_BCC_BRIDGE_v1.md` | II | KEEP-supporting | ARC-B2 BCC readout pre-reg (FTD-0230); Part II §II.2 provenance |
 | `10_eft_program/preregistrations/PREREG_ALPHA_READOUT_BOUNDARY_v2.md` | II | KEEP-supporting | ARC-A1 v2 pre-reg (FTD-0238); Part II §II.2 provenance |
 | `10_eft_program/preregistrations/PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md` | II | KEEP-supporting | ARC determinant grading pre-reg (FTD-0233, CLOSED NEGATIVE); Part II §II.2 provenance |
-| `10_eft_program/preregistrations/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md` | II | KEEP-supporting | det↔det_ζ identity pre-reg (FTD-0235); Part II §II.2 provenance |
+| `10_eft_program/preregistrations/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md` | II | KEEP-supporting | detdet_ζ identity pre-reg (FTD-0235); Part II §II.2 provenance |
 | `10_eft_program/preregistrations/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md` | II | KEEP-supporting | ARC-B1 observable-selection pre-reg (FTD-0198); Part II §II.2 provenance |
 | `10_eft_program/preregistrations/PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md` | II | KEEP-supporting | ARC odd-period pre-reg (FTD-0234); Part II §II.2 provenance |
 | `10_eft_program/preregistrations/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md` | II | KEEP-supporting | ARC quantization pre-reg (FTD-0231); Part II §II.2 provenance |
