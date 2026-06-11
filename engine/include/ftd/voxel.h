@@ -123,6 +123,13 @@ struct Voxel {
   // Accumulated each tick for manifested particles when latency_field is ON.
   double tau = 0.0;
 
+  // FTD-0271 (A5): de Broglie clock phase φ, advanced as dφ = ω₀·dτ when the
+  // de_broglie_clock toggle is ON. Sources the clock's *covariant rate* from
+  // FTD's own (FTD-0252-measured) proper-time dilation √(1−v²), leaving only
+  // the scalar ω₀∝M_REST imposed. Read-only diagnostic; NOT mixed into the
+  // golden state hash, so adding it is golden-neutral.
+  double phase = 0.0;
+
   // Is this voxel part of a bound structure?
   bool locked = false;
 

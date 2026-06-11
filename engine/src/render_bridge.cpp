@@ -538,7 +538,7 @@ void RenderBridge::tick() {
   // engine->tick → sync_to_host sequence.
   if (backend_ && backend_->kind() == Backend::Kind::Gpu) {
     backend_->tick();
-    if (toggles.latency_field)
+    if (toggles.latency_field || toggles.de_broglie_clock)
       accumulate_proper_time();
     update_energy_ledger();
     return;
@@ -615,7 +615,9 @@ void RenderBridge::tick() {
 
   // Rule 8: Proper time accumulation (gravity sector).
   // F5 (callstack audit 2026-04-17): extracted to accumulate_proper_time().
-  if (toggles.latency_field)
+  // FTD-0271 (A5): also run when the de Broglie clock is on (latency_field may
+  // be off) so the clock phase advances; at L=0 dτ=√(1−v²) gives the SR rate.
+  if (toggles.latency_field || toggles.de_broglie_clock)
     accumulate_proper_time();
 
   physical_time_ += dt_;
