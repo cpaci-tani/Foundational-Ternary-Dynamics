@@ -278,9 +278,19 @@ void phase_forces_integrate_clusters(RenderBridge& rb) {
   const auto& active = rb.ordered_active_indices();
   if (active.empty()) return;
 
-  std::vector<char> visited(rb.voxels_.size(), 0);
-  std::vector<int>  stack;
-  std::vector<int>  members;
+  const std::size_t N_voxels = rb.voxels_.size();
+  if (rb.cluster_visited_.size() != N_voxels) {
+    rb.cluster_visited_.resize(N_voxels, 0);
+  }
+  std::fill(rb.cluster_visited_.begin(), rb.cluster_visited_.end(), 0);
+  auto& visited = rb.cluster_visited_;
+
+  rb.cluster_stack_.clear();
+  auto& stack = rb.cluster_stack_;
+
+  rb.cluster_members_.clear();
+  auto& members = rb.cluster_members_;
+
   const double C  = C_SPEED;
   const double C2 = C * C;
 
