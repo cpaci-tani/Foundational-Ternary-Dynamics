@@ -128,7 +128,7 @@ See [AUDIT_EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.m
 
 ## Theory Corpus Map
 
-The theory directory is the scientific corpus of the project: roughly 400 active Markdown documents plus archived provenance. Use [META_INDEX.md](docs/theory/META_INDEX.md) as the catalog.
+The theory directory is the scientific corpus of the project: **586 documents** (11.8 MB) across 10 categories plus **118 archived** documents preserving provenance. Use [META_INDEX.md](docs/theory/META_INDEX.md) as the catalog.
 
 | Directory | Role |
 |---|---|
@@ -174,6 +174,35 @@ dissemination/                papers, whitepaper, book/manuscript, notebooks
 ```
 
 Important note: [docs/SPEC_FTD.md](docs/SPEC_FTD.md) is a readable framework specification, but its body contains historical tag drift. For claim status, use [LEDGER.md](docs/theory/07_assessment/core_ledgers/LEDGER.md) and [TRACKER_ONTIC_TRUTH.md](docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md).
+
+---
+
+## Complete Corpus At A Glance
+
+| Component | Count | Detail |
+|-----------|-------|--------|
+| **Theory documents** | 586 files (11.8 MB) | 10 categories + archives |
+| **Archived provenance** | 118 documents | Retractions, closed-negatives, campaign-completes |
+| **Ledger entries** | 254 unique IDs | FTD-0001 through FTD-0267, never-delete policy |
+| **C++ engine** | 59 headers, 22 sources | v2.18.0, 27K LOC, 10-phase tick cycle |
+| **Engine tests** | 298 source files | 211 active CTest targets, all passing |
+| **Python scripts** | 520 files | 139K LOC across 9 subdirectories |
+| **Python tests** | 255 passing | pytest suite, 4 skipped |
+| **Interactive demos** | 31 HTML files | Standalone browser simulations |
+| **LaTeX papers** | 70 .tex files | Across docs/papers/ and dissemination/papers/ |
+| **Web dashboard** | 868 JS files | Three.js + WASM, 5 CSS themes, 180K LOC |
+| **Total commits** | 1,119 | Changelog: 3,574 lines |
+| **Total LOC** | ~346K | C++ 27K + Web 180K + Python 139K |
+
+### Verification Status (June 10, 2026)
+
+| Suite | Result |
+|-------|--------|
+| Master verification (54 checks) | ✅ All pass |
+| Physics battery (50 tests, 3 tiers) | ✅ All pass |
+| Complete SM computation (46 observables) | ✅ All computed |
+| Python pytest (255 tests) | ✅ All pass |
+| C++ CTest (211 targets) | ✅ All pass |
 
 ---
 
@@ -235,7 +264,7 @@ This repository is licensed under the Creative Commons Attribution-NonCommercial
   author = {William J. cpaci-tani III},
   title  = {Foundational Ternary Dynamics},
   year   = {2026},
-  note   = {Version 5.44 corpus checkpoint, engine 2.18.0},
+  note   = {Version 5.47 corpus checkpoint, engine 2.18.0},
   url    = {https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics}
 }
 ```

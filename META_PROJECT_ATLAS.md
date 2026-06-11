@@ -2,7 +2,7 @@
 
 **Audience: LLM agents and humans needing to find code/docs fast.**
 **Update trigger: any directory creation, public-API change, or architectural decision.**
-**Last refreshed: 2026-06-01 (post engine-flawless lifecycle/callstack/toggle audit, 16 commits on branch `flawless-engine-2026-06-01`; prior baseline: 2026-04-27 8-phase refactor sweep, 17 commits 2db67ca…87158ae).**
+**Last refreshed: 2026-06-10 (post engine-flawless lifecycle/callstack/toggle audit, 16 commits on branch `flawless-engine-2026-06-01`; prior baseline: 2026-04-27 8-phase refactor sweep, 17 commits 2db67ca…87158ae).**
 
 This file is the entry point for navigating the FTD codebase. If you are a
 fresh agent looking at this project for the first time, read this file →
@@ -76,8 +76,8 @@ ftd/
 │   │   ├── archive/                   # Historical request/report provenance
 │   │   ├── AUDIT_2026-04_pre-refactor.md   # 122-finding sweep (78 resolved, archived)
 │   │   └── AUDIT_2026-04_refactor-sweep.md # 8-phase refactor (17 commits, archived)
-│   ├── theory/                        # 115+ theory documents
-│   │   ├── META_INDEX.md              # Catalog
+│   ├── theory/                        # 586 theory documents
+│   │   ├── META_INDEX.md              # Catalog (586 files, 11.8 MB)
 │   │   ├── 01_reference/              # SPEC_ALGEBRAIC_SPINE, SPEC_FTD_COMPLETE_CHAIN
 │   │   ├── 02_foundations/            # FOUND_*.md
 │   │   ├── 03_derivations/            # DERIV_*.md
@@ -97,7 +97,7 @@ ftd/
 │   ├── VISUAL_GUIDE.md                # Visual guide to sim flow and discrete emergence
 │   ├── CMakeLists.txt
 │   ├── README.md                      # Build / test / run instructions
-│   ├── include/ftd/                   # ~30 headers
+│   ├── include/ftd/                   # 59 headers
 │   │   ├── ontic/                     # 9-layer derivation chain (README.md inside)
 │   │   ├── eft/                       # EFT recovery program headers
 │   │   ├── render_bridge.h            # Main API (369 LOC; diagnostic structs in render_bridge_diagnostics.h since Phase 1)
@@ -110,7 +110,7 @@ ftd/
 │   │   ├── voxel.h, lattice.h, vec3.h # Core types
 │   │   ├── test_telemetry.h           # NDJSON test API (154 LOC declarations only; impl in tests/support/, Phase 7)
 │   │   └── ...
-│   ├── src/                           # ~45 .cpp files
+│   ├── src/                           # 22 .cpp files
 │   │   ├── render_bridge.cpp          # 545 LOC orchestrator (Phase 4 reduced from 1231 LOC)
 │   │   ├── render_bridge_phases/      # Phase 4 extractions (892 LOC physics body)
 │   │   │   ├── phase_write.cpp        # 317 LOC — Phase 4a (RF-4 manifest_at dedup)
@@ -128,7 +128,7 @@ ftd/
 │   │   ├── cosmic/                    # CE phase decomposition
 │   │   ├── constructors/              # Shared lattice builders
 │   │   └── eft/                       # EFT recovery TUs
-│   ├── cuda/                          # ~12 CUDA TUs (README.md inside)
+│   ├── cuda/                          # 19 CUDA files (README.md inside)
 │   │   ├── kernels_stencil_single.cu  # 759 LOC — Phase 5: single-substrate kernels
 │   │   ├── kernels_stencil_dual.cu    # 565 LOC — Phase 5: dual-substrate kernels
 │   │   ├── kernels_aux.cu             # 286 LOC — Phase 5: weak_transmutation + pair_production
@@ -142,11 +142,11 @@ ftd/
 │   │   ├── bindings_render_bridge.cpp # RenderBridge bindings + auto-generated toggle map (Phase 6)
 │   │   ├── bindings_particle.cpp, bindings_atom.cpp
 │   │   └── bindings_internal.h
-│   ├── tests/                         # 250+ test files (README.md inside)
+│   ├── tests/                         # 298 test source files, 211 active CTest targets (README.md inside)
 │   │   ├── test_*.cpp                 # Unit tests (use test_telemetry.h)
 │   │   ├── benchmark_*.cpp            # Engine-theory bridge tests
 │   │   ├── campaign_*.cpp             # Long-running measurement campaigns
-│   │   ├── test_render_bridge_golden.cpp # Phase 4 golden-tick gate (hash 0xcd957b601d47868a)
+│   │   ├── test_render_bridge_golden.cpp # Phase 4 golden-tick gate (hash 0xebaa6f314f66db3f)
 │   │   ├── test_audit_regression.cpp  # 14-15/15 audit fix coverage
 │   │   └── support/                   # Phase 7 ftd_test_support library
 │   │       ├── test_telemetry.cpp     # 312 LOC impl (was header-only, parsed 155+ times)
@@ -369,7 +369,7 @@ now been verified end-to-end on WSL2 + RTX 5090:
 
 | Test | L | Result |
 |---|---:|---|
-| `test_render_bridge_golden` | 16 | hash `0xcd957b601d47868a` bit-exact on CUDA backend |
+| `test_render_bridge_golden` | 17 | hash `0xebaa6f314f66db3f` bit-exact on CUDA backend |
 | `test_gpu_parity_complete` | 32 | 70/0 PASS across 20 physics domains |
 | `test_force_diag_parity` | — | 7/7 PASS (`|a−b| = 0.000e+00` on strong force) |
 | `test_sim_parity` | 16 | TotalFieldEnergy parity ≤ 1e-2 at 100 + 500 ticks |
@@ -426,7 +426,7 @@ for the full ledger; commits chained below.
 | 8 | 3d — ParticleRenderer | [1506079](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/1506079) | →3542 |
 | 9 | 3a — SceneCore | [1499a11](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/1499a11) | →3307 |
 | 10 | 3c — FieldRenderer | [506805b](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/506805b) | **→1256** (5 sub-renderers in place) |
-| 11 | 4 pre-flight — Golden-tick test | [8afc8be](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/8afc8be) | hash `0xcd957b601d47868a` (gate) |
+| 11 | 4 pre-flight — Golden-tick test | [8afc8be](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/8afc8be) | hash `0xebaa6f314f66db3f` (gate) |
 | 12 | 4a — phase_write | [9ef51b7](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/9ef51b7) | render_bridge.cpp 1231→972; RF-4 dedup |
 | 13 | 4b — phase_forces | [76d2afe](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/76d2afe) | →759 |
 | 14 | 4c — phase_read+movement | [be2aa8c](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/be2aa8c) | **→545** |
@@ -435,7 +435,7 @@ for the full ledger; commits chained below.
 | 17 | 7 — Test fixture + telemetry impl | [87158ae](https://github.com/williamcpaci-tani/Foundational-Ternary-Dynamics/commit/87158ae) | test_telemetry.h 412→154; ftd_test_support library; CTest LABELS |
 
 Physics invariants preserved across all 17 commits:
-- Golden hash `0xcd957b601d47868a` (100-tick deterministic) **bit-exact** across Phases 4a, 4b, 4c, 5, 6, 7
+- Golden hash `0xebaa6f314f66db3f` (100-tick deterministic) **bit-exact** across Phases 4a, 4b, 4c, 5, 6, 7
 - `audit_regression` 14-15/15 PASS at every commit
 - Locked-particle pair forces, absorbing-boundary sponge layer, ½-energy convention, Coulomb PE convention, dual-substrate split — all preserved
 
@@ -471,4 +471,4 @@ Physics invariants preserved across all 17 commits:
 
 ---
 
-*Project version: FTD/FQCR v1.5 | Engine version: v2.15 | Atlas refreshed 2026-05-22*
+*Project version: FTD v5.47 | Engine version: v2.18.0 | Atlas refreshed 2026-06-10*
