@@ -154,6 +154,13 @@ public:
         return engine_state_;
     }
     int current_tick() const { return tick_; }
+    // Observation-only genesis/evaporation event counters (FTD-0267).
+    // Reset at the top of phase_write_main_loop() and atomically incremented
+    // at the genesis-manifest and evaporation decision points. Pure telemetry:
+    // they touch no physics state, RNG draw, or control flow, so the golden
+    // hash is preserved by construction (gated by test_render_bridge_golden).
+    long long genesis_events_this_tick() const { return genesis_events_this_tick_; }
+    long long evaporation_events_this_tick() const { return evaporation_events_this_tick_; }
     double physical_time() const { return physical_time_; }
     double dt() const { return dt_; }
     void set_dt(double dt);
@@ -461,6 +468,9 @@ private:
 
     double self_field_injection_ = 0.0;  // Energy injected by self-field floor this tick
     int tick_ = 0;
+    // FTD-0267 observation-only telemetry (see accessor docstring above).
+    long long genesis_events_this_tick_ = 0;
+    long long evaporation_events_this_tick_ = 0;
     int sor_iterations_ = SOR_ITERATIONS;  // Configurable SOR iterations (default 6)
     double dt_ = 1.0;             // Time step multiplier (≥1.0). Scales damping, forces, movement.
     double physical_time_ = 0.0;  // Accumulated physical time (sum of dt_ per tick)
