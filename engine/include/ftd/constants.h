@@ -260,6 +260,14 @@ inline constexpr double WEAK_THRESHOLD = K_GENESIS;
 // PHI now in ontic.h Layer 8b as [THEOREM] (emerges from Softplus fixed point)
 inline constexpr double BINDING_ENERGY = K_B * PHI;
 
+// FTD-0271: de Broglie internal-clock frequency ω₀ [rad/tick]. The KG mass
+// term is −ω₀²·J. ω₀∝M_REST is [IMPOSED] (native flux is massless, A0); the
+// proportionality M_REST→ω₀[rad/tick] is [SELECTION] (no ℏ in the substrate —
+// the lattice fixes the de Broglie *shape* λ∝1/v, never the absolute scale).
+// This is a reference value only; the engine reads toggles.omega0 at runtime.
+// Stability bound for the leapfrog integrator: ω₀·dt < 2.
+inline constexpr double OMEGA0_COMPTON = M_REST;  // = K_B = 0.511
+
 // Exchange repulsion strength scale (Fermi pressure)
 // From DERIV_SPIN_STATISTICS_BRIDGE: the discriminant trichotomy produces
 // an antisymmetric exchange term between identical fermions.

@@ -43,6 +43,8 @@ void weak_transmutation_cpu(RenderBridge& rb) {
 void accumulate_proper_time(RenderBridge& rb) {
   auto& voxels = rb.voxels_;
   const auto& active = rb.ordered_active_indices();
+  const bool db_clock = rb.toggles.de_broglie_clock;
+  const double omega0 = rb.toggles.omega0;
   for (int i : active) {
     auto& v = voxels[i];
     if (v.state == 0) continue;
@@ -51,8 +53,17 @@ void accumulate_proper_time(RenderBridge& rb) {
     if (f <= 0.0) continue;
     double v2 = v.speed() * v.speed();
     double arg = f * f - v2;
-    if (arg > 0.0)
-      v.tau += std::sqrt(arg) / std::sqrt(f);
+    if (arg > 0.0) {
+      const double delta_tau = std::sqrt(arg) / std::sqrt(f);
+      v.tau += delta_tau;
+      // FTD-0271 (A5): advance the de Broglie clock phase dφ = ω₀·dτ. With
+      // L=0 this is dτ=1/tick at rest and √(1−v²) when moving — so the clock
+      // automatically red-shifts by the SR factor. The covariant clock *rate*
+      // is sourced by FTD's own proper-time (FTD-0252 measured dτ/dt∝√(1−v²)),
+      // leaving only the scalar ω₀∝M_REST imposed → [IMPOSED]→[SELECTION].
+      if (db_clock)
+        v.phase += omega0 * delta_tau;
+    }
   }
 }
 

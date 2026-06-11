@@ -48,6 +48,15 @@ void phase_read_main_loop(RenderBridge& rb) {
   const bool dual = rb.toggles.dual_substrate;
   const double cw2 = C_WAVE * C_WAVE;
 
+  // FTD-0271: de Broglie internal clock — Klein-Gordon rest-mass term −ω₀²·J
+  // applied at manifested (state≠0) voxels. delta_j is acceleration (∂²J/∂t²),
+  // so the leapfrog integrator turns −ω₀²·J into the KG dispersion ω²=c²k²+ω₀²
+  // and a static cluster's flux oscillates at ω₀. The clock is [IMPOSED]
+  // (native flux is massless, A0). Strictly additive and gated below; with the
+  // toggle OFF this is a dead branch, so the golden hash is unaffected.
+  const bool do_db_clock = rb.toggles.de_broglie_clock;
+  const double omega0_sq = rb.toggles.omega0 * rb.toggles.omega0;
+
   const TernaryField& state = rb.ternary_field();
   const Lattice& lat = rb.lattice_;
 
@@ -113,6 +122,12 @@ void phase_read_main_loop(RenderBridge& rb) {
             rb.delta_j_L_[i] += grad_s + curl_sv;
             rb.delta_j_R_[i] += grad_s + curl_sv;
           }
+
+          // FTD-0271: de Broglie internal clock — KG mass term −ω₀²·J at matter.
+          if (do_db_clock && rb.voxels_[i].state != 0) {
+            rb.delta_j_L_[i] -= rb.voxels_[i].flux_L * omega0_sq;
+            rb.delta_j_R_[i] -= rb.voxels_[i].flux_R * omega0_sq;
+          }
         }
       }
     }
@@ -162,6 +177,11 @@ void phase_read_main_loop(RenderBridge& rb) {
           if (do_coupling) {
             rb.delta_j_[i] += ::ftd::gradient_state_op(state, lat, ix, iy, iz) * G_C;
             rb.delta_j_[i] += ::ftd::curl_state_velocity_op(state, rb.voxels_, lat, ix, iy, iz) * G_C;
+          }
+
+          // FTD-0271: de Broglie internal clock — KG mass term −ω₀²·J at matter.
+          if (do_db_clock && rb.voxels_[i].state != 0) {
+            rb.delta_j_[i] -= rb.voxels_[i].flux * omega0_sq;
           }
         }
       }
