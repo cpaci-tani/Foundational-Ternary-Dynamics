@@ -25,31 +25,37 @@ const J0 = 0.08;
 function buildPanel() {
     const p = document.createElement('div');
     p.id = PANEL_ID;
+    // Top-centre over the 3D scene: #viewport is full-width, so its left/right
+    // edges sit under the dashboard and the #viewport-overlay field controls —
+    // anchoring to an edge collides with them. The centre band is clear.
     p.style.cssText = [
-        'position:absolute', 'top:12px', 'right:12px', 'z-index:40', 'width:300px',
-        'padding:12px 14px', 'border-radius:12px', 'font-family:var(--font-sans,sans-serif)',
-        'font-size:12px', 'background:var(--color-background-primary,rgba(20,20,24,0.92))',
-        'border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25))',
-        'color:var(--color-text-primary,#eee)', 'box-shadow:0 2px 12px rgba(0,0,0,0.3)',
+        'position:absolute', 'top:12px', 'left:50%', 'transform:translateX(-50%)',
+        'z-index:45', 'width:288px',
+        'padding:11px 13px', 'border-radius:10px', 'font-family:var(--font-sans,sans-serif)',
+        'font-size:12px', 'background:var(--color-background-primary,#16161c)',
+        'border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18))',
+        'color:var(--color-text-primary,#eee)', 'box-shadow:0 6px 24px rgba(0,0,0,0.45)',
+        'backdrop-filter:blur(2px)',
     ].join(';');
+    const CANVAS_BG = '#0c0c11';   // opaque so the scene/controls never bleed through
     p.innerHTML = `
-        <div style="font-weight:500;margin-bottom:8px">De Broglie internal clock &mdash; FTD-0271</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-            <span>&omega;&#8320;</span>
+        <div style="font-weight:600;margin-bottom:8px;letter-spacing:0.2px">De Broglie internal clock <span style="color:var(--color-text-tertiary,#888);font-weight:400">&middot; FTD-0271</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+            <span style="opacity:0.8">&omega;&#8320;</span>
             <input id="${PANEL_ID}-slider" type="range" min="0.05" max="1.0" step="0.01" value="0.30" style="flex:1">
-            <span id="${PANEL_ID}-wval" style="width:30px;text-align:right">0.30</span>
+            <span id="${PANEL_ID}-wval" style="width:30px;text-align:right;font-variant-numeric:tabular-nums">0.30</span>
         </div>
         <div style="display:flex;gap:6px;margin-bottom:8px">
-            <button id="${PANEL_ID}-run" style="flex:1;padding:5px;border-radius:8px;cursor:pointer">Run clock</button>
-            <button id="${PANEL_ID}-clear" style="padding:5px 8px;border-radius:8px;cursor:pointer">Clear</button>
+            <button id="${PANEL_ID}-run" style="flex:1;padding:6px;border-radius:7px;cursor:pointer;border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18));background:var(--color-background-secondary,rgba(255,255,255,0.06));color:inherit">Run clock</button>
+            <button id="${PANEL_ID}-clear" style="padding:6px 9px;border-radius:7px;cursor:pointer;border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18));background:transparent;color:inherit">Clear</button>
         </div>
-        <div id="${PANEL_ID}-status" style="margin-bottom:6px;color:var(--color-text-secondary,#aaa);min-height:15px">ready</div>
-        <div style="font-size:10px;color:var(--color-text-tertiary,#888);margin-bottom:2px">centre flux J&#8339;(t) &mdash; live engine</div>
-        <canvas id="${PANEL_ID}-clock" width="276" height="120" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
-        <div style="font-size:10px;color:var(--color-text-tertiary,#888);margin:6px 0 2px">de Broglie &lambda;(v) &mdash; analytic, &lambda;&prop;1/v</div>
-        <canvas id="${PANEL_ID}-debroglie" width="276" height="96" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
-        <div style="margin-top:8px;font-size:10px;color:var(--color-text-tertiary,#888);line-height:1.45">
-            <b>[CONDITIONAL]</b> the clock &omega;&#8320;&prop;M<sub>REST</sub> is <b>IMPOSED</b> (FTD's native
+        <div id="${PANEL_ID}-status" style="margin-bottom:7px;color:var(--color-text-secondary,#aaa);min-height:14px;font-variant-numeric:tabular-nums">ready</div>
+        <div style="font-size:10px;color:var(--color-text-tertiary,#888);margin-bottom:3px">centre flux J&#8339;(t) &mdash; live engine</div>
+        <canvas id="${PANEL_ID}-clock" width="262" height="92" style="width:100%;display:block;border-radius:6px;background:${CANVAS_BG}"></canvas>
+        <div style="font-size:10px;color:var(--color-text-tertiary,#888);margin:7px 0 3px">de Broglie &lambda;(v) &mdash; analytic, &lambda;&prop;1/v</div>
+        <canvas id="${PANEL_ID}-debroglie" width="262" height="70" style="width:100%;display:block;border-radius:6px;background:${CANVAS_BG}"></canvas>
+        <div style="margin-top:9px;padding-top:8px;border-top:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.12));font-size:10px;color:var(--color-text-tertiary,#888);line-height:1.45">
+            <b style="color:var(--color-text-secondary,#aaa)">[CONDITIONAL]</b> the clock &omega;&#8320;&prop;M<sub>REST</sub> is <b>IMPOSED</b> (FTD's native
             flux is massless); de Broglie &lambda;&prop;1/v is a Klein-Gordon identity
             <i>given</i> the clock &mdash; not an FTD prediction.
         </div>`;
