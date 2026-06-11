@@ -90,6 +90,7 @@ export class Sparkline {
     clear() {
         this._head = 0;
         this._count = 0;
+        this.draw();
     }
 }
 

@@ -1765,10 +1765,10 @@ function updatePlayButton() {
 }
 
 function clearCharts() {
-    // Reset the hub's ring buffers for Scale 0 — charts share these buffers, so
+    // Reset the hub's ring buffers for all scales — charts share these buffers, so
     // clearing at the hub level is sufficient; uPlot instances redraw from the
     // cleared buffers on the next update().
-    telemetryHub.resetScale(0);
+    telemetryHub.resetAll();
     if (diagnostics) diagnostics.clear();
 }
 

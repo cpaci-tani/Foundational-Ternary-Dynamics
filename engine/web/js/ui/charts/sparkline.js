@@ -49,7 +49,10 @@ export class Sparkline {
     update() {
         if (this._destroyed || !this.buffer) return;
         const n = this.buffer.count;
-        if (n < 2) return;
+        if (n < 2) {
+            this.uplot.setData([new Float64Array(0), new Float64Array(0)], true);
+            return;
+        }
         const xs = this.xs.subarray(0, n);
         const ys = this.ys.subarray(0, n);
         for (let i = 0; i < n; i++) { xs[i] = i; ys[i] = this.buffer.get(i); }

@@ -106,7 +106,10 @@ export class StackedAreaChart {
         if (this._destroyed) return;
         const firstBuf = this.hub.lag[this.series[0].buffer];
         const n = firstBuf?.count || 0;
-        if (n < 2) return;
+        if (n < 2) {
+            this.uplot.setData(this._emptyData(), true);
+            return;
+        }
 
         const xs = this.xs.subarray(0, n);
         for (let i = 0; i < n; i++) xs[i] = i;
