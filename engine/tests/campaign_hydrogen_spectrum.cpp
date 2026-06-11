@@ -16,6 +16,15 @@
  * Wave 4c.9 consolidation (2026-04-14). Self-ref target: the OLD
  * campaign_hydrogen_spectrum.cpp body is preserved as
  * section_hydrogen_spectrum_legacy().
+ *
+ * EPISTEMIC NOTE (2026-06-11, FTD-0270): this is a CLASSICAL Kepler/virial
+ * check, NOT a quantum eigenvalue derivation. It places classical orbits at
+ * r_n = n^2 * a_0 and verifies total energy scales as 1/n^2 — which is generic
+ * to ANY 1/r force (Bohr/Kepler) and carries no quantum content. The Rydberg
+ * SCALE is calibrated via ALPHA and K_B, not derived. FTD has no quantum
+ * kinetic operator and no discrete energy levels; see
+ * docs/theory/07_assessment/AUDIT_ATOMIC_DYNAMICS_STATUS.md. Do not cite this
+ * as "FTD derives the hydrogen spectrum."
  */
 
 #define _USE_MATH_DEFINES
