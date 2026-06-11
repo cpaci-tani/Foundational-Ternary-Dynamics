@@ -1,6 +1,6 @@
 # Foundational Ternary Dynamics (FTD) — Project Instructions
 
-**Version:** 5.33 (sync to CLAUDE.md, post-2026-04-27 engine-as-instrument cycle + look-elsewhere scan)
+**Version:** 5.47 (sync to CLAUDE.md, post-2026-04-27 engine-as-instrument cycle + look-elsewhere scan)
 **Full specification:** [`docs/SPEC_FTD.md`](docs/SPEC_FTD.md)
 **Authoritative project instructions:** [`CLAUDE.md`](CLAUDE.md) — this file (AGENTS.md) is a sibling reference; if the two disagree, CLAUDE.md wins.
 
@@ -53,7 +53,7 @@ A discrete computational framework for simulating physical systems from explicit
 **Five postulates:** Discrete space (3D cubic lattice), discrete time (ticks), ternary states, local causality (26-neighbor Moore), determinism.
 
 **Key results** (within framework assumptions):
-- Fine structure constant α = 1/137.036 derived from lemniscatic constant G* (1.26 ppm tree-level; 9.6 ppb one-loop; < 0.001 ppt with 7-term expansion)
+- Fine structure constant α = 1/137.036 from lemniscatic constant G* (1.26 ppm tree-level) — identification x₊ = 1/α is [STRONGLY MOTIVATED CONJECTURE]
 - Loop coefficients c1–c3 derived from lattice Feynman diagrams: c1 = 9/47 (0.8%), c2 = 5/64 via gauge factor 13/9 (0.07%), c3 = 4/141 via gauge factor 11/6 (0.33%)
 - Electron mass m_e = m_P √(2π) (16/3) α¹¹ (0.19% error)
 - Higgs mass m_H = (N_eff/α²)·m_e = 124.8 GeV (0.24% error), λ_H = m_H²/(2v²)
@@ -71,7 +71,7 @@ A discrete computational framework for simulating physical systems from explicit
 - 50 physics predictions tested across three tiers: `scripts/exploration/test_all_physics.py`
 - Complete Standard Model computation: `scripts/proofs/proof_complete_sm.py`
 
-**Honest accounting:** ~50 predictions tested (20 structural theorems, 20 G*-derived, 10 novel cube predictions), ~50 parametric insertions (FTD values in standard QFT formulas), ~50+ external physics adopted. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md).
+**Honest accounting:** ~23 derived/theorem-grade claims, ~129 parametric insertions (FTD values in standard QFT formulas), ~10 imposed/selected, ~50+ external physics adopted. 50 physics tests pass across three tiers. See [EPISTEMIC_AUDIT.md](docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) and [CATALOG_PARAMETRIC_INSERTIONS.md](docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md).
 
 ---
 
@@ -80,49 +80,50 @@ A discrete computational framework for simulating physical systems from explicit
 ```
 ftd/                                     # Project root
 ├── docs/
-│   ├── SPEC_FTD.md              # THE authoritative FTD specification (single source of truth)
-│   ├── theory/                   # 115 core theory documents (10 categories)
-│   │   ├── META_INDEX.md         # Complete catalog
-│   │   ├── 01_reference/         # Master references and proofs
-│   │   ├── 02_foundations/       # Ontological emergence
-│   │   ├── 03_derivations/       # Core physics derivations
-│   │   ├── 04_coupling/          # Coupling constants
-│   │   ├── 05_particles/         # Particle physics
+│   ├── SPEC_FTD.md              # THE authoritative FTD specification
+│   ├── theory/                   # 586 theory documents across 10 categories + archives
+│   │   ├── META_INDEX.md         # Curated catalog
+│   │   ├── 01_reference/         # Master references, algebraic spine, construction monograph
+│   │   ├── 02_foundations/       # Ontological emergence, lattice physics
+│   │   ├── 03_derivations/       # Core physics derivations (QM, EM, gravity, SM sectors)
+│   │   ├── 04_coupling/          # Coupling constants and precision
+│   │   ├── 05_particles/         # Particle physics applications
 │   │   ├── 06_reference_frames_and_measurement/     # Reference frame context and measurement
-│   │   ├── 07_assessment/        # Epistemic audits
-│   │   ├── 08_structural/        # Geometry and information theory
-│   │   ├── 09_mathematical/      # Number theory and connections
-│   │   └── archive/              # Superseded/historical documents
+│   │   ├── 07_assessment/        # Epistemic audits, ledgers, campaigns
+│   │   ├── 08_structural/        # Moore theorem, geometry, BCC structure
+│   │   ├── 09_mathematical/      # Number theory, CM curves, L-values
+│   │   ├── 10_eft_program/       # Native EFT recovery program + pre-registrations
+│   │   └── archive/              # 118 archived documents (provenance preserved)
 │   ├── reference/                # REF_EPISTEMIC_LABELS, REF_SYMBOL_GLOSSARY, etc.
-│   ├── papers/                   # Published/submitted PDFs and TeX sources
-│   └── internal/                 # Session summaries, exploration scripts
-├── engine/                       # C++ simulation engine (v2.11)
+│   ├── papers/                   # 66 LaTeX source files + compiled PDFs
+│   └── internal/                 # Session summaries, exploration scripts (gitignored)
+├── engine/                       # C++ simulation engine (v2.18.0)
 │   ├── SPEC_ENGINE.md            # Engine reference document
-│   ├── include/ftd/              # 28 headers (ontic.h, voxel.h, lattice.h, etc.)
-│   ├── src/                      # 7 source files
-│   ├── tests/                    # 169+ test files (120 unit + 49 campaign + 4 GPU)
-│   ├── cuda/                     # GPU acceleration
+│   ├── include/ftd/              # 59 headers (ontic.h, voxel.h, lattice.h, etc.)
+│   ├── src/                      # 22 source files
+│   ├── tests/                    # 298 test source files (211 active CTest targets)
+│   ├── cuda/                     # GPU acceleration (WSL2 + RTX 5090)
 │   ├── wasm/                     # Emscripten bindings
-│   └── web/                      # Browser dashboard (Three.js, 28 JS modules)
-├── scripts/                      # ALL Python scripts (~149 scripts)
+│   └── web/                      # Browser dashboard (Three.js, 868 JS files, 5 CSS themes)
+├── scripts/                      # 520 Python scripts (138K LOC)
 │   ├── constants.py              # Canonical shared constants (single source of truth)
-│   ├── verification/             # Formal derivation verification (40 scripts)
-│   ├── proofs/                   # Formal mathematical proofs with error bounds (57 scripts)
-│   ├── experiments/              # Bell tests, CERN analysis, physics sims (17 scripts)
-│   ├── exploration/              # Focused research investigations (25+ scripts)
-│   ├── tests/                    # Python test suites — pytest (11 scripts)
+│   ├── verification/             # Formal derivation verification (61 scripts)
+│   ├── proofs/                   # Formal mathematical proofs with error bounds (143 scripts)
+│   ├── experiments/              # Bell tests, CERN analysis, physics sims (19 scripts)
+│   ├── exploration/              # Focused research investigations (195+ scripts)
+│   ├── tests/                    # Python test suites — pytest (14 scripts)
 │   │   └── comprehensive/        # 7-tier verification framework
-│   ├── visualization/            # Publication figure generation (11 scripts)
-│   └── runners/                  # Test protocol runners (2 scripts)
+│   ├── visualization/            # Publication figure generation (23 scripts)
+│   ├── benchmarks/               # Engine vs theory benchmarks (6 scripts)
+│   └── runners/                  # Test protocol runners (3 scripts)
 ├── evaluation/                   # Multi-domain assessment & certification
 ├── dissemination/                # All publication/outreach content
-│   ├── manuscript/               # 96-chapter Quarto book (src/ + media/images/)
 │   ├── whitepaper/               # LaTeX whitepaper + figures
-│   ├── book/                     # "The Golden Thread" narrative (53 .qmd files)
-│   ├── notebooks/                # 12 Jupyter pedagogy notebooks
-│   └── interactive/              # 8+ standalone HTML simulations (forces, photon, Hamiltonian bridge, ternary cube)
+│   ├── papers/                   # 4 additional compiled LaTeX papers
+│   ├── interactive/              # 31 standalone HTML simulations
+│   └── notebooks/                # Jupyter pedagogy notebooks
 ├── models/                       # Physics derivation package (gitignored)
-├── archive/                      # Curated historical record (gitignored; see docs/theory/archive/ for archived theory docs)
+├── archive/                      # Curated historical record (gitignored)
 ├── META_DOCUMENTATION_MAP.md     # Master catalog / card catalog
 └── META_PROJECT_ATLAS.md         # AI agent navigation guide
 ```
@@ -151,7 +152,7 @@ ftd/                                     # Project root
 
 Logic-first: only 6 rules derived from axioms. All phenomenological features are toggle-gated extensions (default OFF).
 
-**Tick cycle:** phase_read → phase_write → gauss_project → phase_forces → phase_movement → tick++
+**Tick cycle (10 phases):** phase_read → phase_write → pair_production → gauss_project → latency_solve → phase_forces → phase_movement → boundary → weak/triad → proper_time
 
 ---
 
