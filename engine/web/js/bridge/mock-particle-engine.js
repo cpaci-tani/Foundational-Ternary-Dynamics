@@ -336,8 +336,14 @@ export function createParticleEngine(state) {
         const ps = state._pe.particles;
         const F = state._pe.forces;  // flat Float64Array [fx0,fy0,fz0, fx1,fy1,fz1, ...]
         const n = ps.length;
-        const positions = new Float32Array(n * 3);
-        const forces = new Float32Array(n * 3);
+        if (!state._peForcesBufs || state._peForcesBufs.cap < n) {
+            state._peForcesBufs = {
+                positions: new Float32Array(n * 3),
+                forces: new Float32Array(n * 3),
+                cap: n
+            };
+        }
+        const { positions, forces } = state._peForcesBufs;
         let maxF = 0;
         for (let i = 0; i < n; i++) {
             const i3 = i * 3;

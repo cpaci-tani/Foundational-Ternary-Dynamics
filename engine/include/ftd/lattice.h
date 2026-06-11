@@ -56,30 +56,108 @@ public:
         return r < 0 ? r + size_ : r;
     }
 
+    // Coordinate-based neighbor methods to avoid decoding indices via divisions/modulos
+    std::array<int, 6> neighbors_6(int x, int y, int z) const {
+        int xm = (x == 0) ? size_ - 1 : x - 1;
+        int xp = (x == size_ - 1) ? 0 : x + 1;
+        int ym = (y == 0) ? size_ - 1 : y - 1;
+        int yp = (y == size_ - 1) ? 0 : y + 1;
+        int zm = (z == 0) ? size_ - 1 : z - 1;
+        int zp = (z == size_ - 1) ? 0 : z + 1;
+
+        int size2 = size_ * size_;
+        return {
+            xp * size2 + y * size_ + z,
+            xm * size2 + y * size_ + z,
+            x * size2 + yp * size_ + z,
+            x * size2 + ym * size_ + z,
+            x * size2 + y * size_ + zp,
+            x * size2 + y * size_ + zm
+        };
+    }
+
+    std::array<int, 12> neighbors_12(int x, int y, int z) const {
+        int xm = (x == 0) ? size_ - 1 : x - 1;
+        int xp = (x == size_ - 1) ? 0 : x + 1;
+        int ym = (y == 0) ? size_ - 1 : y - 1;
+        int yp = (y == size_ - 1) ? 0 : y + 1;
+        int zm = (z == 0) ? size_ - 1 : z - 1;
+        int zp = (z == size_ - 1) ? 0 : z + 1;
+
+        int size2 = size_ * size_;
+        return {
+            // xy-plane edges (z fixed)
+            xp * size2 + yp * size_ + z, xp * size2 + ym * size_ + z,
+            xm * size2 + yp * size_ + z, xm * size2 + ym * size_ + z,
+            // xz-plane edges (y fixed)
+            xp * size2 + y * size_ + zp, xp * size2 + y * size_ + zm,
+            xm * size2 + y * size_ + zp, xm * size2 + y * size_ + zm,
+            // yz-plane edges (x fixed)
+            x * size2 + yp * size_ + zp, x * size2 + yp * size_ + zm,
+            x * size2 + ym * size_ + zp, x * size2 + ym * size_ + zm
+        };
+    }
+
+    std::array<int, 8> neighbors_8_corner(int x, int y, int z) const {
+        int xm = (x == 0) ? size_ - 1 : x - 1;
+        int xp = (x == size_ - 1) ? 0 : x + 1;
+        int ym = (y == 0) ? size_ - 1 : y - 1;
+        int yp = (y == size_ - 1) ? 0 : y + 1;
+        int zm = (z == 0) ? size_ - 1 : z - 1;
+        int zp = (z == size_ - 1) ? 0 : z + 1;
+
+        int size2 = size_ * size_;
+        return {
+            xp * size2 + yp * size_ + zp, xp * size2 + yp * size_ + zm,
+            xp * size2 + ym * size_ + zp, xp * size2 + ym * size_ + zm,
+            xm * size2 + yp * size_ + zp, xm * size2 + yp * size_ + zm,
+            xm * size2 + ym * size_ + zp, xm * size2 + ym * size_ + zm
+        };
+    }
+
+    std::array<int, 26> neighbors_26(int x, int y, int z) const {
+        int xm = (x == 0) ? size_ - 1 : x - 1;
+        int xp = (x == size_ - 1) ? 0 : x + 1;
+        int ym = (y == 0) ? size_ - 1 : y - 1;
+        int yp = (y == size_ - 1) ? 0 : y + 1;
+        int zm = (z == 0) ? size_ - 1 : z - 1;
+        int zp = (z == size_ - 1) ? 0 : z + 1;
+
+        int size2 = size_ * size_;
+        return {
+            // dx = -1
+            xm * size2 + ym * size_ + zm, xm * size2 + ym * size_ + z, xm * size2 + ym * size_ + zp,
+            xm * size2 + y * size_ + zm,  xm * size2 + y * size_ + z,  xm * size2 + y * size_ + zp,
+            xm * size2 + yp * size_ + zm, xm * size2 + yp * size_ + z, xm * size2 + yp * size_ + zp,
+
+            // dx = 0
+            x * size2 + ym * size_ + zm,  x * size2 + ym * size_ + z,  x * size2 + ym * size_ + zp,
+            x * size2 + y * size_ + zm,                                x * size2 + y * size_ + zp,
+            x * size2 + yp * size_ + zm,  x * size2 + yp * size_ + z,  x * size2 + yp * size_ + zp,
+
+            // dx = 1
+            xp * size2 + ym * size_ + zm, xp * size2 + ym * size_ + z, xp * size2 + ym * size_ + zp,
+            xp * size2 + y * size_ + zm,  xp * size2 + y * size_ + z,  xp * size2 + y * size_ + zp,
+            xp * size2 + yp * size_ + zm, xp * size2 + yp * size_ + z, xp * size2 + yp * size_ + zp
+        };
+    }
+
     // 6 face-sharing neighbors (for Laplacian)
     std::array<int, 6> neighbors_6(int idx) const {
-        auto [x, y, z] = coord(idx);
-        return {
-            index(x+1, y, z), index(x-1, y, z),
-            index(x, y+1, z), index(x, y-1, z),
-            index(x, y, z+1), index(x, y, z-1)
-        };
+        int z = idx % size_;
+        int xy = idx / size_;
+        int y = xy % size_;
+        int x = xy / size_;
+        return neighbors_6(x, y, z);
     }
 
     // 12 edge-sharing neighbors (for isotropic 18-point Laplacian)
     std::array<int, 12> neighbors_12(int idx) const {
-        auto [x, y, z] = coord(idx);
-        return {
-            // xy-plane edges (z fixed)
-            index(x+1, y+1, z), index(x+1, y-1, z),
-            index(x-1, y+1, z), index(x-1, y-1, z),
-            // xz-plane edges (y fixed)
-            index(x+1, y, z+1), index(x+1, y, z-1),
-            index(x-1, y, z+1), index(x-1, y, z-1),
-            // yz-plane edges (x fixed)
-            index(x, y+1, z+1), index(x, y+1, z-1),
-            index(x, y-1, z+1), index(x, y-1, z-1)
-        };
+        int z = idx % size_;
+        int xy = idx / size_;
+        int y = xy % size_;
+        int x = xy / size_;
+        return neighbors_12(x, y, z);
     }
 
     // 8 body-diagonal (corner) neighbors at (±1, ±1, ±1).
@@ -87,26 +165,20 @@ public:
     // (Watson's I_1 integral, see ontic/lemniscate.h:147).
     // See sublattice.h for the BCC-projected Laplacian using these.
     std::array<int, 8> neighbors_8_corner(int idx) const {
-        auto [x, y, z] = coord(idx);
-        return {
-            index(x+1, y+1, z+1), index(x+1, y+1, z-1),
-            index(x+1, y-1, z+1), index(x+1, y-1, z-1),
-            index(x-1, y+1, z+1), index(x-1, y+1, z-1),
-            index(x-1, y-1, z+1), index(x-1, y-1, z-1)
-        };
+        int z = idx % size_;
+        int xy = idx / size_;
+        int y = xy % size_;
+        int x = xy / size_;
+        return neighbors_8_corner(x, y, z);
     }
 
     // 26 Moore neighborhood neighbors
     std::array<int, 26> neighbors_26(int idx) const {
-        auto [x, y, z] = coord(idx);
-        std::array<int, 26> result;
-        int n = 0;
-        for (int dx = -1; dx <= 1; ++dx)
-            for (int dy = -1; dy <= 1; ++dy)
-                for (int dz = -1; dz <= 1; ++dz)
-                    if (dx != 0 || dy != 0 || dz != 0)
-                        result[n++] = index(x+dx, y+dy, z+dz);
-        return result;
+        int z = idx % size_;
+        int xy = idx / size_;
+        int y = xy % size_;
+        int x = xy / size_;
+        return neighbors_26(x, y, z);
     }
 
 private:
