@@ -1,6 +1,8 @@
-# Derivation — Genesis-Throttled Cluster Formation (The Nonlinear Bridge)
+# Genesis-Throttled Cluster Formation (early exploratory model)
 
-**Tag:** [DERIVED]
+> **SUPERSEDED 2026-06-11 by [`ANALYSIS_FTD0110_NA_LAW.md`](ANALYSIS_FTD0110_NA_LAW.md) (FTD-0269, verdict BOUNDARY).** This document's `[DERIVED]` tag and "the bridge is closed" claim were an overclaim: the model here omits the Gauss-projection boost and the coupling source, matches only 3 genesis counts (A=10/14/30), and mislocates the knee at 23.5 (empirical 16). The pre-registered successor model includes the FFT-exact Gauss boost, reproduces the law's *shape* (knee 14, super-knee exponent 2.07) and the sub-knee firing geometry, and finds the law is **engine-emergent (BOUNDARY)** — its calibration is set by engine-tuning constants (kinetic drain, Langevin friction, √α), not framework constants. The FTD-0110 nonlinear bridge stays `[OPEN]`. Retained below for provenance.
+
+**Tag:** [SUPERSEDED — exploratory; see ANALYSIS_FTD0110_NA_LAW.md]
 **Date:** 2026-06-10
 **LEDGER row:** FTD-0110
 **Verification scripts:** 
@@ -46,7 +48,7 @@ The analytical model (with no free parameters) was compared against the June 10 
 | $A = 14$ | 14.9 ± 0.3 | 16.2 | **[PASS]** |
 | $A = 30$ | 45.3 ± 0.7 | 47.0 | **[PASS]** |
 
-The match at $A=14$ and $A=30$ successfully resolves the long-standing FTD-0110 gap.
+The match at $A=14$ and $A=30$ is a 3-point count match only (it fails at $A=9$, derives neither exponent, and omits the Gauss boost); it does **not** close FTD-0110. See the superseding analysis.
 
 ---
 
@@ -74,6 +76,6 @@ This isolates the role of the **Gauss projection** ($\nabla(\nabla^2)^{-1} \rho_
 
 ---
 
-## 5 · Conclusion
+## 5 · Conclusion (superseded)
 
-The FTD-0110 nonlinear bridge is closed. The mechanism is **Genesis Throttling**: the center voxel's manifestation violently drains the local flux field, and only those voxels whose wave-equation-evolved flux *already* exceeds threshold before the drain-wave arrives are able to manifest.
+The genesis-throttling *mechanism* (center manifestation drains local flux; only voxels whose evolved flux already exceeds threshold before the drain-wave arrives manifest) is qualitatively correct and carried forward. The *closure claim* is withdrawn: see [`ANALYSIS_FTD0110_NA_LAW.md`](ANALYSIS_FTD0110_NA_LAW.md). The bridge is `[OPEN]`; the N(A) law is engine-emergent (BOUNDARY), with the Gauss-projection boost (omitted here) as the decisive sub-knee ingredient and engine-tuning constants setting the calibration.
