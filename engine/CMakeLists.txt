@@ -1257,6 +1257,15 @@ ftd_add_test(campaign_genesis_geometry tests/campaign_genesis_geometry.cpp
              CTEST_NAME campaign_genesis_geometry TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# RG-spectrum probe (2026-06-11): ORDER of the genesis/manifestation transition.
+# Pure Langevin-thermal drive (no injection); logs the steady-state manifested
+# fraction m time series across L x T x seeds for a finite-size-scaling analysis
+# (Binder U4, susceptibility, P(m)) -> GENESIS-CRITICAL vs GENESIS-FIRST-ORDER.
+# Run directly (not via ctest); analyzer: scripts/exploration/analyze_genesis_criticality.py.
+ftd_add_test(campaign_genesis_criticality tests/campaign_genesis_criticality.cpp
+             CTEST_NAME campaign_genesis_criticality TIMEOUT 3600
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
