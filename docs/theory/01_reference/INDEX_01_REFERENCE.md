@@ -71,7 +71,8 @@
 | [SPEC_FTD_COMPLETE_CHAIN.md](SPEC_FTD_COMPLETE_CHAIN.md) | proof chain (per-link tags) | The complete FTD argument in one place: from i to α, every link tagged. |
 | [SPEC_NOVEL_PREDICTIONS.md](SPEC_NOVEL_PREDICTIONS.md) | prediction specification | Catalog of every falsifiable prediction FTD makes that the SM does not; pre-diction vs post-diction flagged. |
 | [SPEC_PREDICTION_LEDGER_DEVIATIONS.md](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) | [SYNTHESIS] registry | **The structural deviation spine (FTD-0258, 2026-06-09)**: six deviations from the QM/SR *formalism* (PL-1..PL-6) with protocols, scope caveats, kill conditions; PL-2 carries the mandatory lab-Bell honesty block. No row promoted by inclusion. |
+| [SPEC_PREDICTIONS_FORWARD_2026.md](SPEC_PREDICTIONS_FORWARD_2026.md) | [SYNTHESIS] registry | **Forward predictions on behalf of the framework (FTD-0268, 2026-06-11)**: lab-facing FP rows (first-order EWPT/GW, κ_λ = 1.0089, LV nulls, structural nulls) + engine-native blind EP rows (hash-locked L=257 time-dilation extension, N(A) interpolation bands, k⁴ extension to L=768) + the anti-overclaim guard and the honest Higgs-status digest. No row promoted by inclusion. |
 
 ---
 
-28 active docs in this cluster (+ 0 archived).
+29 active docs in this cluster (+ 0 archived).
