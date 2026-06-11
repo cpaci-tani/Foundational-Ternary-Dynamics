@@ -38,14 +38,14 @@ Scope: everything not already tracked in [SPEC_UI_REFACTOR.md](./SPEC_UI_REFACTO
 
 | Scale | `controller.js` | `register-ui.js` | `toolbar/` | `overlays/template.js` | `controls/component.js` | `controls/wire.js` | `bindings.js` | `dom.js` | Wiring location |
 |---|---|---|---|---|---|---|---|---|---|
-| 0 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | **owned by scale** |
-| 1 | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | **app.js** |
-| 2 | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | **app.js** |
-| 3 | ✅ | ✅ | ✅ | ✅ | stub (inherits 2) | N/A | ❌ | ❌ | app.js (via scale 2) |
-| 4 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | **app.js (17 lookups)** |
-| 5 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | app.js (minimal) |
-| 11 | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | **app.js** |
-| 12 | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | minimal, mostly static |
+| 0 |  |  |  |  |  |  |  |  | **owned by scale** |
+| 1 |  |  |  |  |  |  |  |  | **app.js** |
+| 2 |  |  |  |  |  |  |  |  | **app.js** |
+| 3 |  |  |  |  | stub (inherits 2) | N/A |  |  | app.js (via scale 2) |
+| 4 |  |  |  |  |  |  |  |  | **app.js (17 lookups)** |
+| 5 |  |  |  |  |  |  |  |  | app.js (minimal) |
+| 11 |  |  |  |  |  |  |  |  | **app.js** |
+| 12 |  |  |  |  |  |  |  |  | minimal, mostly static |
 
 Seven scales still need some form of migration; Scale 1 and Scale 2 are the highest-value next targets since `SCALE{1,2}_TOGGLES` config exists but isn't wired through, meaning toggle drift risk today.
 
@@ -81,10 +81,10 @@ Net: ~100 removable by introducing `.ontic-obs-*`, `.meta-ped-*` classes and a s
 
 ### Responsive coverage gaps
 
-- `compact` (<768) ✅
-- `tablet` (768–1023) ✅
-- `desktop` (default) ✅
-- `wide` (≥1440) ❌ — spec describes multi-column panels and side-by-side inspector+diagnostics at this size but no CSS implements it
+- `compact` (<768) 
+- `tablet` (768–1023) 
+- `desktop` (default) 
+- `wide` (≥1440)  — spec describes multi-column panels and side-by-side inspector+diagnostics at this size but no CSS implements it
 - 360–479 sm-compact: field-swatch button grids have no horizontal scroll fallback
 
 ---

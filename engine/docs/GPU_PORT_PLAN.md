@@ -201,7 +201,7 @@ careful work + debugging.
 | Risk | Mitigation |
 |---|---|
 | CPU/GPU numerical drift | Parity tests with strict 1e-12 tolerance on pair forces, 1e-10 on integration |
-| Host↔device sync overhead dominates for small N | Document it; explicit `AtomEngine::use_gpu(false)` to disable for tiny simulations |
+| Hostdevice sync overhead dominates for small N | Document it; explicit `AtomEngine::use_gpu(false)` to disable for tiny simulations |
 | Barnes-Hut on GPU is hard | Phase 1 uses O(N²) — Barnes-Hut is Phase 3 |
 | H-bond needs bond table walks | Phase 2 — upload bond table with atoms each tick |
 | Dipole-dipole needs dipole_moment recomputation | Phase 2 — add compute_dipole_moments_kernel |

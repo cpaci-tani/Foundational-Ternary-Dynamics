@@ -78,14 +78,14 @@ correct**; the failures were environmental headroom.
 > three heavy tests so a loaded machine doesn't flake them. Tracked, not required.
 
 ### False-alarm corrections (so future audits don't re-raise them)
-- ❌ **"Scale-0 leaks ~75 event listeners per scale switch / stale re-entry from
+-  **"Scale-0 leaks ~75 event listeners per scale switch / stale re-entry from
   `_bound`."** FALSE. `bindScale0UI()` is `_bound`-guarded ([bindings.js:24]) and
   called from `bindUI()` **once at boot** ([controller.js:186]) — **not** from the
   per-switch `mount()`/`destroy()`. Listeners bind once to app-lifetime DOM via the
   shared live-reading `ctx`; nothing accumulates per switch. Verified by reading the
   call graph and by `lifecycle-harness` (B/E) showing the rAF-subscriber count
   returns to baseline across full mode sweeps and 10× rapid cycling.
-- ❌ **"Flux mocks leak on scenario churn."** Already handled by `setFluxMock`
+-  **"Flux mocks leak on scenario churn."** Already handled by `setFluxMock`
   disposing the prior mock ([store.js:142-145]); now also regression-tested (§3).
 
 ---

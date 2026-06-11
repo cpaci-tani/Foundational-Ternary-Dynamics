@@ -16,7 +16,7 @@
 | Scale 0 (Lattice) | Viewport volume/slice (not in `fieldFlags`) | 2 | Wired via `bindings.js` (`setFluxVolumeVisible` / `setFluxSliceVisible`) |
 | Scale 2/3 (Atoms/Molecules) | Atom-engine physics toggles | 11 | Wired via `SCALE2_TOGGLES` → bridge |
 
-The **field/overlay toggles are the W3-2 deliverable's focus** — they are the family the audit mis-flagged, and the family with a clean DOM-id ↔ state-key mapping that a click test can exercise exhaustively.
+The **field/overlay toggles are the W3-2 deliverable's focus** — they are the family the audit mis-flagged, and the family with a clean DOM-id  state-key mapping that a click test can exercise exhaustively.
 
 ---
 
@@ -35,7 +35,7 @@ Web toggle state-of-truth is currently split across **three files** with **three
 ### Source 3 — DOM template (dynamically rendered)
 **File:** [`engine/web/js/scales/scale0/ui/overlays/template.js`](../js/scales/scale0/ui/overlays/template.js)
 Builds a `<div id="viewport-overlay">` via `document.createElement` and an HTML string containing **34 `<button class="view-toggle ...">` elements** (32 `field-toggle` + 2 volume/slice). **This is the audit's blind spot:** these buttons exist only after this template runs at Scale-0 boot — `index.html` contains none of them.
-The **DOM-id ↔ state-key mapping** is declared in [`engine/web/js/scales/scale0/ui/dom.js`](../js/scales/scale0/ui/dom.js) as `FIELD_TOGGLE_BINDINGS` (32 `[buttonId, fieldKey]` pairs). The **click wiring** is in [`engine/web/js/scales/scale0/ui/bindings.js`](../js/scales/scale0/ui/bindings.js): for each `[buttonId, fieldKey]` it attaches a click handler that calls `setToggleState(buttonId, fieldKey, on)`, which `setButtonActive(...)` + `setFieldToggle(fieldKey, on)` + syncs viewport overlay visibility. The `on` value is `!readButtonActive(buttonId)` — i.e. the click flips relative to the button's current `.active` class.
+The **DOM-id  state-key mapping** is declared in [`engine/web/js/scales/scale0/ui/dom.js`](../js/scales/scale0/ui/dom.js) as `FIELD_TOGGLE_BINDINGS` (32 `[buttonId, fieldKey]` pairs). The **click wiring** is in [`engine/web/js/scales/scale0/ui/bindings.js`](../js/scales/scale0/ui/bindings.js): for each `[buttonId, fieldKey]` it attaches a click handler that calls `setToggleState(buttonId, fieldKey, on)`, which `setButtonActive(...)` + `setFieldToggle(fieldKey, on)` + syncs viewport overlay visibility. The `on` value is `!readButtonActive(buttonId)` — i.e. the click flips relative to the button's current `.active` class.
 
 > **Cross-reference (not duplicated here): the C++ side.** The simulation's authoritative toggle table is `TOGGLE_SPECS[]` in [`engine/include/ftd/term_toggles.h`](../../include/ftd/term_toggles.h) (27 boolean toggles + 5 non-bool config fields, table-driven per ADR-0013). Source 1 (`SCALE0_TOGGLES`) is the **JS whitelist subset** of that table that the dashboard surfaces; `config/toggles.js` documents in-line which `TermToggles` fields are deliberately omitted (research controls: `triad_binding`, `pair_production`, `latency_field`, `exact_dual_gauss`, `emergent_forces`, `langevin`, `langevin_site_filter`, `bcc_stencil`, `strict_validation`). This doc maps the **web** surface; for the engine-truth table read `term_toggles.h`.
 
@@ -43,7 +43,7 @@ The **DOM-id ↔ state-key mapping** is declared in [`engine/web/js/scales/scale
 The field/overlay family is already in good shape: `FIELD_TOGGLE_KEYS` (store) and `FIELD_TOGGLE_BINDINGS` (dom) are kept in **exact 1:1 lockstep** (verified: 32 = 32, no orphan either way). The remaining fragmentation is the **three-prefix / three-dispatch** split:
 - Field toggles use the `toggle-*` id prefix + `setFieldToggle` (render store).
 - Physics toggles use the `t-*` id prefix + `bridge.setToggle` (sim bridge).
-- The id↔key pairing for field toggles lives in `dom.js`, but the button **HTML** lives in `template.js` and the key **list** lives in `store.js` — three files must stay consistent for one family.
+- The idkey pairing for field toggles lives in `dom.js`, but the button **HTML** lives in `template.js` and the key **list** lives in `store.js` — three files must stay consistent for one family.
 
 A future (separate-ticket) consolidation could co-locate the field-toggle triplet — emit `template.js` buttons *from* `FIELD_TOGGLE_BINDINGS` rather than hand-authoring 32 `<button>` lines — so adding an overlay is one edit (a key in `store.js` + a binding row) instead of three. That would also make the audit's grep blind-spot structurally impossible to recur. **No behavior change is made by this doc or its companion test.**
 
@@ -51,7 +51,7 @@ A future (separate-ticket) consolidation could co-locate the field-toggle triple
 
 ## Scale 0 — Field / overlay toggles (the 32)
 
-DOM id ↔ state key ↔ column, all sourced from `dom.js::FIELD_TOGGLE_BINDINGS` (id↔key), `store.js::FIELD_TOGGLE_KEYS` (key canon), `template.js` (button HTML), `presets.js::COL_TO_TOGGLES` (column grouping). **Source of truth = `store.js` key list; rendered + wired as described above.** "Wired" is asserted by the companion live click test, not by this table.
+DOM id  state key  column, all sourced from `dom.js::FIELD_TOGGLE_BINDINGS` (idkey), `store.js::FIELD_TOGGLE_KEYS` (key canon), `template.js` (button HTML), `presets.js::COL_TO_TOGGLES` (column grouping). **Source of truth = `store.js` key list; rendered + wired as described above.** "Wired" is asserted by the companion live click test, not by this table.
 
 | # | DOM id | State key (`fieldFlags.*`) | Column | Wired |
 |---|--------|----------------------------|--------|-------|
@@ -88,7 +88,7 @@ DOM id ↔ state key ↔ column, all sourced from `dom.js::FIELD_TOGGLE_BINDINGS
 | 31 | `#toggle-fisher` | `showFisher` | stress-energy | ✓ |
 | 32 | `#toggle-coherence` | `showCoherence` | stress-energy | ✓ |
 
-**id ↔ key derivation rule:** the key is the kebab-cased id with the `toggle-` prefix stripped and `show` prepended in camelCase — *almost*. It is **not** algorithmically derivable in every case (`toggle-genesis-iso → showGenesisIsosurface`, `toggle-dark-halo → showDarkMatterHalo`, `toggle-div-field → showDivField`). The authoritative mapping is therefore the **explicit `FIELD_TOGGLE_BINDINGS` table in `dom.js`** — the companion test reads that table directly rather than reconstructing ids, so it never drifts from the code.
+**id  key derivation rule:** the key is the kebab-cased id with the `toggle-` prefix stripped and `show` prepended in camelCase — *almost*. It is **not** algorithmically derivable in every case (`toggle-genesis-iso → showGenesisIsosurface`, `toggle-dark-halo → showDarkMatterHalo`, `toggle-div-field → showDivField`). The authoritative mapping is therefore the **explicit `FIELD_TOGGLE_BINDINGS` table in `dom.js`** — the companion test reads that table directly rather than reconstructing ids, so it never drifts from the code.
 
 ### State-only field flags (no DOM button)
 **None.** Every one of the 32 `FIELD_TOGGLE_KEYS` has a corresponding `FIELD_TOGGLE_BINDINGS` row and a rendered button. (Programmatically verified: `FIELD_TOGGLE_KEYS \ keys(FIELD_TOGGLE_BINDINGS) = ∅`.) The companion test keeps a state-only branch anyway, so if a future key is added without a button the test self-detects it and exercises it via `setFieldToggle` directly.
@@ -162,4 +162,4 @@ Sim-side toggles for the atom engine (`AtomToggles`), dispatched via the Scale-2
 
 1. **The 2026-05-27 audit over-counted Scale-0 field toggles as orphans.** Root cause: the buttons are dynamically rendered by `overlays/template.js` at boot, not authored in `index.html`; a literal grep of `index.html` returns zero matches. They are real, rendered, and wired.
 2. **All 32 Scale-0 field/overlay toggles are wired.** `FIELD_TOGGLE_KEYS` (store, 32) and `FIELD_TOGGLE_BINDINGS` (dom, 32) are in exact 1:1 lockstep — no orphan button, no buttonless key, no duplicate id. The companion [`toggle-coverage.spec.js`](../tests/toggle-coverage.spec.js) proves each one flips its `fieldFlags` key on click and flips back on second click, with zero real console errors across the full sweep.
-3. **Three scattered sources** (physics-term whitelist in `config/toggles.js`; field-flag store in `state/store.js`; button HTML in `ui/overlays/template.js` + id↔key map in `ui/dom.js` + click wiring in `ui/bindings.js`). The field-toggle id↔key map is already lockstep-verified; the residual fragmentation is the per-family three-file spread, for which a future single-source-render consolidation is recommended (not implemented here).
+3. **Three scattered sources** (physics-term whitelist in `config/toggles.js`; field-flag store in `state/store.js`; button HTML in `ui/overlays/template.js` + idkey map in `ui/dom.js` + click wiring in `ui/bindings.js`). The field-toggle idkey map is already lockstep-verified; the residual fragmentation is the per-family three-file spread, for which a future single-source-render consolidation is recommended (not implemented here).

@@ -14,7 +14,7 @@ needed to make those claims auditable.
 ## How to use
 
 - Each ticket has an ID (`BUG-NNN`, `RF-NNN`, `TEST-NNN`, `ARCH-NNN`).
-- Status: ☐ open, ◐ in-progress, ✅ done, ⊗ closed-won't-do (with reason).
+- Status: ☐ open, ◐ in-progress,  done, ⊗ closed-won't-do (with reason).
 - When a ticket closes, leave it in the doc with the date + commit/file refs.
   Don't delete — this is the living history of engine quality work.
 - Add new tickets as the agent audits or as users find issues.
@@ -26,9 +26,9 @@ needed to make those claims auditable.
 
 | ID | Status | Title | Where |
 |---|---|---|---|
-| BUG-001 | ✅ | `next_particle_id_++` race: `int` → `std::atomic<int>`, removed `omp critical(genesis_id)` | [render_bridge.h:401](include/ftd/render_bridge.h:401), [render_bridge.cpp:436,503](src/render_bridge.cpp:436) |
-| BUG-002 | ✅ | GPU annihilation flux race: snapshot `flux[i]/[target]` to registers before scatter loop | [kernels_forces.cu:391-415](cuda/kernels_forces.cu:391) |
-| BUG-003 | ✅ | GPU `run(N)` ledger divergence: dropped fast-path; CPU and GPU now identical per-tick ledger | [render_bridge.cpp:1091](src/render_bridge.cpp:1091) |
+| BUG-001 |  | `next_particle_id_++` race: `int` → `std::atomic<int>`, removed `omp critical(genesis_id)` | [render_bridge.h:401](include/ftd/render_bridge.h:401), [render_bridge.cpp:436,503](src/render_bridge.cpp:436) |
+| BUG-002 |  | GPU annihilation flux race: snapshot `flux[i]/[target]` to registers before scatter loop | [kernels_forces.cu:391-415](cuda/kernels_forces.cu:391) |
+| BUG-003 |  | GPU `run(N)` ledger divergence: dropped fast-path; CPU and GPU now identical per-tick ledger | [render_bridge.cpp:1091](src/render_bridge.cpp:1091) |
 | BUG-004 | ⊗ | GPU Langevin per-tick re-seed | **FALSE POSITIVE** — guard at [gpu_engine.cu:138](cuda/gpu_engine.cu:138) correctly returns early when seed matches; cuRAND continues sequence as intended. Equipartition test passes (4%). |
 | BUG-005 | ⊗ | Proper-time `arg = f² - v²` units mismatch | **FALSE POSITIVE** — `velocity` in engine convention has c=1 (see `gamma_ftd()` at [voxel.h:174](include/ftd/voxel.h:174)). `C_SPEED = 1/√3` is the wave-propagation CFL constant, separate. |
 | BUG-006 | ⊗ | CPU/GPU `latency_field` phase ordering disagreement | **FALSE POSITIVE** — both paths run `accumulate_proper_time` → `update_energy_ledger` in same order. |
@@ -39,15 +39,15 @@ needed to make those claims auditable.
 
 | ID | Status | Title | Where |
 |---|---|---|---|
-| CD-001 | ✅ | Removed stale-G* fallback (G_STAR=2.9586830685, 27 ppm drift) | [scripts/benchmarks/benchmark_engine_vs_theory.py:38](../scripts/benchmarks/benchmark_engine_vs_theory.py:38) |
-| CD-002 | ✅ | Same fallback removed | [scripts/benchmarks/analyze_convergence.py:13](../scripts/benchmarks/analyze_convergence.py:13) |
-| CD-003 | ✅ | alpha_inv 137.035999177 → 137.035999177 (CODATA-2022) in test fixtures | [scripts/tests/test_verify_manifest_builder.py](../scripts/tests/test_verify_manifest_builder.py) |
-| CD-004 | ✅ | G* mistranscription 2.9586788 → 2.958675119188639 | [scripts/exploration/lattice_3x3x3_center.py:102](../scripts/exploration/lattice_3x3x3_center.py:102) |
-| CD-005 | ✅ | Same mistranscription fixed | [scripts/exploration/five_minds_round5.py:274](../scripts/exploration/five_minds_round5.py:274) |
-| CD-006 | ✅ | Tree-level alpha now imports from canonical | [scripts/proofs/gauss_constrained_green_v2.py:316](../scripts/proofs/gauss_constrained_green_v2.py:316) |
-| CD-007 | ✅ | Truncated 5-digit G_STAR literal → canonical import | [scripts/visualization/viz_transfer_matrix.py:290](../scripts/visualization/viz_transfer_matrix.py:290) |
-| CD-008 | ✅ | Truncated 4-digit G_STAR → canonical | [scripts/exploration/lattice_partition_L2.py:67](../scripts/exploration/lattice_partition_L2.py:67) |
-| CD-009 | ✅ | Added `G_C` and `ALPHA_EFT` to canonical Python (matches C++ static_assert) | [scripts/constants.py](../scripts/constants.py) |
+| CD-001 |  | Removed stale-G* fallback (G_STAR=2.9586830685, 27 ppm drift) | [scripts/benchmarks/benchmark_engine_vs_theory.py:38](../scripts/benchmarks/benchmark_engine_vs_theory.py:38) |
+| CD-002 |  | Same fallback removed | [scripts/benchmarks/analyze_convergence.py:13](../scripts/benchmarks/analyze_convergence.py:13) |
+| CD-003 |  | alpha_inv 137.035999177 → 137.035999177 (CODATA-2022) in test fixtures | [scripts/tests/test_verify_manifest_builder.py](../scripts/tests/test_verify_manifest_builder.py) |
+| CD-004 |  | G* mistranscription 2.9586788 → 2.958675119188639 | [scripts/exploration/lattice_3x3x3_center.py:102](../scripts/exploration/lattice_3x3x3_center.py:102) |
+| CD-005 |  | Same mistranscription fixed | [scripts/exploration/five_minds_round5.py:274](../scripts/exploration/five_minds_round5.py:274) |
+| CD-006 |  | Tree-level alpha now imports from canonical | [scripts/proofs/gauss_constrained_green_v2.py:316](../scripts/proofs/gauss_constrained_green_v2.py:316) |
+| CD-007 |  | Truncated 5-digit G_STAR literal → canonical import | [scripts/visualization/viz_transfer_matrix.py:290](../scripts/visualization/viz_transfer_matrix.py:290) |
+| CD-008 |  | Truncated 4-digit G_STAR → canonical | [scripts/exploration/lattice_partition_L2.py:67](../scripts/exploration/lattice_partition_L2.py:67) |
+| CD-009 |  | Added `G_C` and `ALPHA_EFT` to canonical Python (matches C++ static_assert) | [scripts/constants.py](../scripts/constants.py) |
 
 ---
 
@@ -55,14 +55,14 @@ needed to make those claims auditable.
 
 | ID | Status | Title | Where |
 |---|---|---|---|
-| TEST-001 | ✅ | Determinism regression (4/4 protocols, single-thread CPU) | [test_determinism.cpp](tests/test_determinism.cpp) |
-| TEST-002 | ✅ | Closed-negative regression guards (FTD-0061/73 mode-erasure, FTD-0074 flux separable) | [test_closed_negatives.cpp](tests/test_closed_negatives.cpp) |
-| TEST-003 | ✅ | CPU-only warning capture (strong_force, exchange_force) | [test_cpu_warnings.cpp](tests/test_cpu_warnings.cpp) |
-| TEST-004 | ✅ | OMP multi-threaded determinism | **CLOSED 2026-04-25.** ARCH-7 fixed particle-ID race; ARCH-7b fixed genesis flux read/write race via pre-write snapshot. Determinism test 4/4 PASS at 32 threads (system default). |
-| TEST-005 | ✅ | Toggle pairwise smoke matrix: 78 (i,j) pairs of 13 OFF-default toggles, 5 ticks each, no crash / no NaN / validator rejects cleanly. 78/78 pass. (done 2026-04-25, [test_toggle_matrix.cpp](tests/test_toggle_matrix.cpp)) |
+| TEST-001 |  | Determinism regression (4/4 protocols, single-thread CPU) | [test_determinism.cpp](tests/test_determinism.cpp) |
+| TEST-002 |  | Closed-negative regression guards (FTD-0061/73 mode-erasure, FTD-0074 flux separable) | [test_closed_negatives.cpp](tests/test_closed_negatives.cpp) |
+| TEST-003 |  | CPU-only warning capture (strong_force, exchange_force) | [test_cpu_warnings.cpp](tests/test_cpu_warnings.cpp) |
+| TEST-004 |  | OMP multi-threaded determinism | **CLOSED 2026-04-25.** ARCH-7 fixed particle-ID race; ARCH-7b fixed genesis flux read/write race via pre-write snapshot. Determinism test 4/4 PASS at 32 threads (system default). |
+| TEST-005 |  | Toggle pairwise smoke matrix: 78 (i,j) pairs of 13 OFF-default toggles, 5 ticks each, no crash / no NaN / validator rejects cleanly. 78/78 pass. (done 2026-04-25, [test_toggle_matrix.cpp](tests/test_toggle_matrix.cpp)) |
 | TEST-006 | ☐ | L-scaling sweeps in core physics tests (Coulomb/Wilson/Born) | Most tests pin a single L; bulk-leakage artifacts invisible. Add slope test across L ∈ {8,16,32,64}. |
-| TEST-007 | ✅ | Symplectic-leapfrog conservation contract (corrected framing): no secular drift across two disjoint windows + bounded oscillation amplitude + endpoint drift < 50%. PASS at 5e-5 inter-window drift over 5000 ticks. (Original 1e-12 per-tick framing was wrong for second-order leapfrog — it conserves a shadow Hamiltonian, not strict total energy.) (done 2026-04-25, [test_energy_conservation_tight.cpp](tests/test_energy_conservation_tight.cpp)) |
-| TEST-008 | ☐ | GPU/CPU same-seed Langevin trajectory parity | `test_langevin_equipartition` runs single L, single (γ,T), CPU only. Add (γ,T,L) sweep + CPU↔GPU comparison. |
+| TEST-007 |  | Symplectic-leapfrog conservation contract (corrected framing): no secular drift across two disjoint windows + bounded oscillation amplitude + endpoint drift < 50%. PASS at 5e-5 inter-window drift over 5000 ticks. (Original 1e-12 per-tick framing was wrong for second-order leapfrog — it conserves a shadow Hamiltonian, not strict total energy.) (done 2026-04-25, [test_energy_conservation_tight.cpp](tests/test_energy_conservation_tight.cpp)) |
+| TEST-008 | ☐ | GPU/CPU same-seed Langevin trajectory parity | `test_langevin_equipartition` runs single L, single (γ,T), CPU only. Add (γ,T,L) sweep + CPUGPU comparison. |
 | TEST-009 | ☐ | Phase-H `coulomb_charge_coupling` regression at 3 settings | New numeric knob (1.0 / 0.2141 / 0.3028); no test pins behaviour at non-default values. |
 
 ---
@@ -71,17 +71,17 @@ needed to make those claims auditable.
 
 | ID | Status | Title | LOC delta | Where |
 |---|---|---|---|---|
-| RF-1 | ✅ (foundation) | `tests/test_helpers.h` with `check`, `check_close`, voxel inspectors, Counter | +130 (header) | [tests/test_helpers.h](tests/test_helpers.h) |
+| RF-1 |  (foundation) | `tests/test_helpers.h` with `check`, `check_close`, voxel inspectors, Counter | +130 (header) | [tests/test_helpers.h](tests/test_helpers.h) |
 | RF-1b | ◐ | Mass-migrate 65 canonical-signature tests to test_helpers.h | −2,000 (target) | 1 reference migration done ([test_voxel_properties.cpp](tests/test_voxel_properties.cpp)). 64 to go. |
-| RF-2 | ✅ | Toggle presets + `prepare_bridge` helpers in test_helpers.h | n/a | [tests/test_helpers.h](tests/test_helpers.h) |
-| RF-3 | ✅ | Pair-force CUDA: extracted `decode_xyz_d`, `periodic_delta_d` | −16 LOC, **eliminates 4-way periodic-wrap bug-fix risk** | [kernels_forces.cu](cuda/kernels_forces.cu) — 4 callsites collapsed (color, yukawa, exchange, triad) |
-| RF-4 | ✅ (partial) | Stencil: extracted `effective_damping`, `scale_field_pair` | −12 LOC, **single Larmor formula source of truth** | [kernels_stencil.cu](cuda/kernels_stencil.cu) — phase_write + phase_write_dual |
+| RF-2 |  | Toggle presets + `prepare_bridge` helpers in test_helpers.h | n/a | [tests/test_helpers.h](tests/test_helpers.h) |
+| RF-3 |  | Pair-force CUDA: extracted `decode_xyz_d`, `periodic_delta_d` | −16 LOC, **eliminates 4-way periodic-wrap bug-fix risk** | [kernels_forces.cu](cuda/kernels_forces.cu) — 4 callsites collapsed (color, yukawa, exchange, triad) |
+| RF-4 |  (partial) | Stencil: extracted `effective_damping`, `scale_field_pair` | −12 LOC, **single Larmor formula source of truth** | [kernels_stencil.cu](cuda/kernels_stencil.cu) — phase_write + phase_write_dual |
 | RF-4b | ⊗ | Full template-collapse single/dual-substrate stencils | **DEFERRED** — 1434 LOC at risk, kernel signatures propagate; risk-to-LOC tradeoff bad. The Larmor extraction (RF-4) captured highest-value duplication. |
 | RF-5 | ☐ | Split `cuda/kernels_stencil.cu` (1434 LOC) into `kernels_phase.cu` / `kernels_genesis.cu` / `kernels_transmutation.cu` | 0 net, faster nvcc incremental builds | After RF-4b decision; mechanical split. |
 | RF-6 | ☐ | Split test files >500 LOC: `test_gpu_physics.cpp` (2618), `test_gpu_experiments.cpp` (1676), `campaign_dark_sector.cpp` (1762), `test_constructors.cpp` (1354) | 0 net, faster CTest parallelism | Mechanical split by section. |
 | RF-7 | ☐ | Trim `render_bridge.h` public API surface (40+ methods) | −60 LOC header, faster TU rebuild for ~140 includers | Move 8 inline operator delegators to .cpp; PIMPL the RNG/Langevin internals. |
-| RF-8 | ✅ | Added `BANDWIDTH_FLOOR` constant in `constants.h`; replaced 3 bare `1e-6` literals at [render_bridge.cpp:822,828](src/render_bridge.cpp). (done 2026-04-25) |
-| RF-9 | ✅ | PIMPL'd RNG state via `BridgeRng` (forward-declared in `bridge_rng.h`, full impl in `bridge_rng.cpp`). `<random>` dropped from `render_bridge.h`; replaced 3 RNG members with `std::unique_ptr<BridgeRng>`. Migrated 9 call sites in render_bridge.cpp + 2 in transmutation_phases.cpp to PIMPL'd accessors (`sample_uniform`, `thread_uniform`, `thread_normal`, `reseed_thread_pool`). 1 test (`test_benchmark.cpp`) needed explicit `<random>`. RF-9 regression suite 8/8 PASS (determinism, strict_validation, cpu_warnings, toggle_matrix, closed_negatives, open5, phase_h_regression, eft_phase_h_coupling). CPU langevin parity 100%. (done 2026-04-25) | [bridge_rng.h](include/ftd/bridge_rng.h), [bridge_rng.cpp](src/bridge_rng.cpp), [render_bridge.h:14-29,479-484](include/ftd/render_bridge.h) |
+| RF-8 |  | Added `BANDWIDTH_FLOOR` constant in `constants.h`; replaced 3 bare `1e-6` literals at [render_bridge.cpp:822,828](src/render_bridge.cpp). (done 2026-04-25) |
+| RF-9 |  | PIMPL'd RNG state via `BridgeRng` (forward-declared in `bridge_rng.h`, full impl in `bridge_rng.cpp`). `<random>` dropped from `render_bridge.h`; replaced 3 RNG members with `std::unique_ptr<BridgeRng>`. Migrated 9 call sites in render_bridge.cpp + 2 in transmutation_phases.cpp to PIMPL'd accessors (`sample_uniform`, `thread_uniform`, `thread_normal`, `reseed_thread_pool`). 1 test (`test_benchmark.cpp`) needed explicit `<random>`. RF-9 regression suite 8/8 PASS (determinism, strict_validation, cpu_warnings, toggle_matrix, closed_negatives, open5, phase_h_regression, eft_phase_h_coupling). CPU langevin parity 100%. (done 2026-04-25) | [bridge_rng.h](include/ftd/bridge_rng.h), [bridge_rng.cpp](src/bridge_rng.cpp), [render_bridge.h:14-29,479-484](include/ftd/render_bridge.h) |
 
 ---
 
@@ -89,14 +89,14 @@ needed to make those claims auditable.
 
 | ID | Status | Title | Effort | Where |
 |---|---|---|---|---|
-| ARCH-1 | ✅ | Split `RenderBridge` god-class — Injector + RenderBridgeView extracted; delegators deprecated; 17/17 regression pass. (Cleanup 2026-05-27: the `RenderBridgeView` type alias in `bridge_view.h` was deleted as never-consumed scaffolding; the existing const-ref convention in diagnostics_compute.cpp / energy_ledger_compute.cpp continues to satisfy the read-only contract. Injector portion retained.) | done 2026-04-25 | [injector.h](include/ftd/injector.h), [render_bridge.h](include/ftd/render_bridge.h) |
-| ARCH-2 | ✅ | Backend abstraction — full migration. All ifdef blocks collapsed; `use_gpu_` flag deleted; 6 inject friends dropped; 18/18 regression pass | done 2026-04-25 | [backend.h](include/ftd/backend.h), [backend.cpp](src/backend.cpp), [render_bridge.h](include/ftd/render_bridge.h), [render_bridge.cpp](src/render_bridge.cpp) |
-| ARCH-3 | ✅ | Toggle validator strictness: dedup repeated warnings (one per unique error string) + opt-in `strict_validation` toggle that throws std::logic_error. 3 contract tests added (test_strict_validation). | done 2026-04-25 | [render_bridge.cpp:tick()](src/render_bridge.cpp), [term_toggles.h:strict_validation](include/ftd/term_toggles.h) |
-| ARCH-4 | ✅ | `seed_rng()` now propagates to: bridge mt19937 + thread_rngs_ (via langevin_seed_initialized_=false) + toggles.langevin_seed (cuRAND picks up next tick) + direct gpu_->set_rng_seed() call. Determinism test PASS. | done 2026-04-25 | [render_bridge.h:seed_rng](include/ftd/render_bridge.h), [render_bridge.cpp:seed_rng](src/render_bridge.cpp) |
+| ARCH-1 |  | Split `RenderBridge` god-class — Injector + RenderBridgeView extracted; delegators deprecated; 17/17 regression pass. (Cleanup 2026-05-27: the `RenderBridgeView` type alias in `bridge_view.h` was deleted as never-consumed scaffolding; the existing const-ref convention in diagnostics_compute.cpp / energy_ledger_compute.cpp continues to satisfy the read-only contract. Injector portion retained.) | done 2026-04-25 | [injector.h](include/ftd/injector.h), [render_bridge.h](include/ftd/render_bridge.h) |
+| ARCH-2 |  | Backend abstraction — full migration. All ifdef blocks collapsed; `use_gpu_` flag deleted; 6 inject friends dropped; 18/18 regression pass | done 2026-04-25 | [backend.h](include/ftd/backend.h), [backend.cpp](src/backend.cpp), [render_bridge.h](include/ftd/render_bridge.h), [render_bridge.cpp](src/render_bridge.cpp) |
+| ARCH-3 |  | Toggle validator strictness: dedup repeated warnings (one per unique error string) + opt-in `strict_validation` toggle that throws std::logic_error. 3 contract tests added (test_strict_validation). | done 2026-04-25 | [render_bridge.cpp:tick()](src/render_bridge.cpp), [term_toggles.h:strict_validation](include/ftd/term_toggles.h) |
+| ARCH-4 |  | `seed_rng()` now propagates to: bridge mt19937 + thread_rngs_ (via langevin_seed_initialized_=false) + toggles.langevin_seed (cuRAND picks up next tick) + direct gpu_->set_rng_seed() call. Determinism test PASS. | done 2026-04-25 | [render_bridge.h:seed_rng](include/ftd/render_bridge.h), [render_bridge.cpp:seed_rng](src/render_bridge.cpp) |
 | ARCH-5 | ☐ | Device-side energy-ledger reduction (avoid 3 MB PCIe download per tick) | ~80 LOC | [gpu_engine.cu:454](cuda/gpu_engine.cu) — TODO comment already exists |
 | ARCH-6 | ☐ | `voxels()` non-const accessor should use `voxels_mut()` rename to avoid spurious GPU sync invalidation | ~40 LOC + audit | [render_bridge.h:154-163](include/ftd/render_bridge.h) |
-| ARCH-7 | ✅ | OMP-deterministic genesis: particle-ID assignment moved to sequential post-pass in voxel-index order. Combined with ARCH-7b closes TEST-004 fully. | done 2026-04-25 | [render_bridge.cpp:phase_write post-pass](src/render_bridge.cpp) |
-| ARCH-7b | ✅ | Phase-ordering: pre-write flux snapshot (`flux_pre_write_`) populated before parallel-for. Genesis polarity (divergence) and spin (curl) read from the snapshot via new `divergence_from_flux_array` / `curl_from_flux_array` operators. Eliminates cross-thread flux race. **TEST-004 fully closed** — multi-thread determinism 4/4 PASS at 32 threads. | done 2026-04-25 | [render_bridge.cpp:phase_write](src/render_bridge.cpp), [field_operators.h](include/ftd/field_operators.h) |
+| ARCH-7 |  | OMP-deterministic genesis: particle-ID assignment moved to sequential post-pass in voxel-index order. Combined with ARCH-7b closes TEST-004 fully. | done 2026-04-25 | [render_bridge.cpp:phase_write post-pass](src/render_bridge.cpp) |
+| ARCH-7b |  | Phase-ordering: pre-write flux snapshot (`flux_pre_write_`) populated before parallel-for. Genesis polarity (divergence) and spin (curl) read from the snapshot via new `divergence_from_flux_array` / `curl_from_flux_array` operators. Eliminates cross-thread flux race. **TEST-004 fully closed** — multi-thread determinism 4/4 PASS at 32 threads. | done 2026-04-25 | [render_bridge.cpp:phase_write](src/render_bridge.cpp), [field_operators.h](include/ftd/field_operators.h) |
 
 ---
 
@@ -133,7 +133,7 @@ These are tracked here so the GPU-priority directive doesn't lose them. Each is 
 | OPEN-2 | ☐ | Pre-existing hydrogen-spectrum test failures (HEM-3/5/6, PH4) | 4 failures unrelated to Round 1-3 work. Coulomb-vs-gravity force-direction tuning issues. |
 | OPEN-3 | ☐ | `continuity` test flaky under `ctest -j 4` parallel run | Passes in isolation, fails under GPU resource contention. CTest infrastructure issue, not algorithmic. |
 | OPEN-4 | ☐ | Test fixture deduplication for ~275 RenderBridge construction patterns | Original RF-2 scope; deferred until RF-1b mass migration progresses. |
-| OPEN-5 | ✅ | Root cause: GpuEngine has its own `toggles` field (default dual_substrate=true), and inject_flux/particle/wavepacket branched on the GPU's local toggles. Tests setting `rb.toggles.dual_substrate=false` BEFORE first tick hit the GPU default. Fix: surgical `gpu->toggles.dual_substrate = rb.toggles.dual_substrate` sync immediately before each GPU inject call ([injection.cpp](src/injection.cpp)). Pinned by [test_open5_legacy_flux_l.cpp](tests/test_open5_legacy_flux_l.cpp) — 3/3 PASS. (done 2026-04-25.) |
+| OPEN-5 |  | Root cause: GpuEngine has its own `toggles` field (default dual_substrate=true), and inject_flux/particle/wavepacket branched on the GPU's local toggles. Tests setting `rb.toggles.dual_substrate=false` BEFORE first tick hit the GPU default. Fix: surgical `gpu->toggles.dual_substrate = rb.toggles.dual_substrate` sync immediately before each GPU inject call ([injection.cpp](src/injection.cpp)). Pinned by [test_open5_legacy_flux_l.cpp](tests/test_open5_legacy_flux_l.cpp) — 3/3 PASS. (done 2026-04-25.) |
 | OPEN-6 | ◐ | `action_stationarity` (Particle EL residual RMS / max < 1e-10) + `asymptotic_freedom` (AF-6a: Force nonzero at all separations) — physics-tuning thresholds, not architecture/correctness bugs. **Deferred to physics review.** Both are pre-existing tolerance issues that should be re-examined by someone with the physics calibration context, not mechanically fixed. |
 | OPEN-7 | ☐ | Multi-bridge GPU Langevin produces zero wave_vel on subsequent GPU bridges (single-bridge worked when filed). Test-008 deferred GPU portion as a result. See [test_langevin_gpu_cpu_parity.cpp](tests/test_langevin_gpu_cpu_parity.cpp) header comment. |
 | OPEN-8 | ☐ | Single-bridge GPU `langevin_equipartition` produces deterministic zero `wave_vel` (regression observed during RF-9 verification, **NOT caused by RF-9** — CPU langevin parity passes; my changes only touched CPU path). **Investigation 2026-04-25:** initial hypothesis (non-const `voxels()` accessor uploading stale host state via `push_to_device` and clobbering cuRAND output) was **falsified**: even with `const auto& vox = ((const RenderBridge&)rb).voxels()` (which routes via const overload that does NOT mark `host_mutated_=true`), the burn-in `rb.run(N_BURN)` still produces zero `wave_vel`. So the bug is in the GPU compute path itself, not the host-shadow round-trip. cuRAND noise gen is correctly gated at [gpu_engine.cu:242-247](cuda/gpu_engine.cu); `phase_write_kernel` correctly uses `langevin_noise[]` at [kernels_stencil.cu:286-293](cuda/kernels_stencil.cu); `gauss_project` only modifies flux (not wave_vel). Suspect a different mechanism — possibly cuRAND state uninitialized between bridge ctor and first phase_write (the `set_rng_seed` early-return path). Defensive const-cast retained in [test_langevin_equipartition.cpp:88-93](tests/test_langevin_equipartition.cpp) for code hygiene; doesn't fix the bug. |
@@ -146,7 +146,7 @@ These are tracked here so the GPU-priority directive doesn't lose them. Each is 
 
 **Phased plan:**
 
-1. **Phase A — inventory.** ✅ COMPLETE (2026-04-25). Full catalogue:
+1. **Phase A — inventory.**  COMPLETE (2026-04-25). Full catalogue:
 
    | Category | Count | Methods |
    |---|---|---|
@@ -181,11 +181,11 @@ These are tracked here so the GPU-priority directive doesn't lose them. Each is 
 
 ### ARCH-1 — Closure report (2026-04-25)
 
-**Phase A (inventory):** ✅ Full RenderBridge public-API catalogue: 51 methods + 1 public field across 10 categories. 11 friend declarations on extracted CPU functions.
+**Phase A (inventory):**  Full RenderBridge public-API catalogue: 51 methods + 1 public field across 10 categories. 11 friend declarations on extracted CPU functions.
 
-**Phase B (Diagnostician via RenderBridgeView):** ✅ originally created `bridge_view.h` — `using RenderBridgeView = const RenderBridge&;`. Existing diagnostic free functions in `diagnostics_compute.cpp` and `energy_ledger_compute.cpp` already take const ref; the type alias was intended to formalise the contract for forward-looking PIMPL/value-view migrations. **Retracted 2026-05-27 cleanup:** the type alias accumulated zero consumers — no source file ever included `bridge_view.h` or used the `RenderBridgeView` name in a signature. The file was deleted as orphan scaffolding. The const-ref discipline continues without the alias; a future PIMPL migration can reintroduce the type when there is concrete take-up.
+**Phase B (Diagnostician via RenderBridgeView):**  originally created `bridge_view.h` — `using RenderBridgeView = const RenderBridge&;`. Existing diagnostic free functions in `diagnostics_compute.cpp` and `energy_ledger_compute.cpp` already take const ref; the type alias was intended to formalise the contract for forward-looking PIMPL/value-view migrations. **Retracted 2026-05-27 cleanup:** the type alias accumulated zero consumers — no source file ever included `bridge_view.h` or used the `RenderBridgeView` name in a signature. The file was deleted as orphan scaffolding. The const-ref discipline continues without the alias; a future PIMPL migration can reintroduce the type when there is concrete take-up.
 
-**Phase C (Injector extraction):** ✅ Created [injector.h](include/ftd/injector.h) (61 LOC). Moved `next_particle_id_` (`std::atomic<int>`) and `next_pair_id_` (`int`) from RenderBridge into a dedicated Injector class. Added `Injector& injector()` accessor on RenderBridge. Migrated 7 call sites:
+**Phase C (Injector extraction):**  Created [injector.h](include/ftd/injector.h) (61 LOC). Moved `next_particle_id_` (`std::atomic<int>`) and `next_pair_id_` (`int`) from RenderBridge into a dedicated Injector class. Added `Injector& injector()` accessor on RenderBridge. Migrated 7 call sites:
 - `src/render_bridge.cpp` — 2 genesis paths use `injector_.next_particle_id()`
 - `src/transmutation_phases.cpp` — 2 pair-production paths
 - `src/injection.cpp` — 3 injection paths + 1 entangled-pair path
@@ -194,7 +194,7 @@ The Injector encapsulates the BUG-001 atomic semantics behind named methods; fut
 
 **Phase D (delegator removal):** ⊘ DEFERRED. The 8 inline discrete-operator delegators are used by **29 test/source files**. Mass-migrating them without per-call-site verification is high-risk. Documented the deprecation intent inline in render_bridge.h; new code should prefer `::ftd::laplacian_flux_op(...)` etc. directly. Mechanical migration tracked as future work.
 
-**Phase E (verify):** ✅ 17/17 regression tests pass: determinism, closed_negatives, cpu_warnings, smallest_particle_emergence, genesis, baryogenesis, annihilation × 2, gpu_parity_complete, master_quadratic × 2, ladder_walk_from_oh, gpu_continuity_ledger, color_binding, voxel_properties, plaquette_bivector, clifford_multigrade.
+**Phase E (verify):**  17/17 regression tests pass: determinism, closed_negatives, cpu_warnings, smallest_particle_emergence, genesis, baryogenesis, annihilation × 2, gpu_parity_complete, master_quadratic × 2, ladder_walk_from_oh, gpu_continuity_ledger, color_binding, voxel_properties, plaquette_bivector, clifford_multigrade.
 
 **LOC summary:**
 - `render_bridge.h`: 428 → 445 (+17, due to Injector accessor + Phase D deprecation comment)
@@ -209,15 +209,15 @@ The Injector encapsulates the BUG-001 atomic semantics behind named methods; fut
 
 **Goal:** collapse 14 `#ifdef FTD_ENABLE_CUDA` blocks in render_bridge.cpp + 6 in render_bridge.h into a `Backend` interface with virtual dispatch. Migration is INCREMENTAL — interface added in parallel to existing `use_gpu_` flag, one method migrated at a time with regression at each step.
 
-**Phase A — Backend interface:** ✅ Created [include/ftd/backend.h](include/ftd/backend.h). Abstract `Backend` class with `tick()`, `set_dt(double)`, `sync_to_host()`, `mark_host_dirty()`, `kind()`. `enum class Kind { Cpu, Gpu }` for tests that need to assert which backend is active.
+**Phase A — Backend interface:**  Created [include/ftd/backend.h](include/ftd/backend.h). Abstract `Backend` class with `tick()`, `set_dt(double)`, `sync_to_host()`, `mark_host_dirty()`, `kind()`. `enum class Kind { Cpu, Gpu }` for tests that need to assert which backend is active.
 
-**Phase B — Wiring:** ✅ Created [src/backend.cpp](src/backend.cpp) with `CpuBackend` and `GpuBackend` implementations. Added to engine/CMakeLists.txt. RenderBridge now holds `std::unique_ptr<Backend> backend_` alongside the existing `use_gpu_` flag during the migration. Constructor instantiates `GpuBackend` when CUDA is enabled (matches GPU-default policy), otherwise `CpuBackend`. `force_cpu()` swaps to `CpuBackend`.
+**Phase B — Wiring:**  Created [src/backend.cpp](src/backend.cpp) with `CpuBackend` and `GpuBackend` implementations. Added to engine/CMakeLists.txt. RenderBridge now holds `std::unique_ptr<Backend> backend_` alongside the existing `use_gpu_` flag during the migration. Constructor instantiates `GpuBackend` when CUDA is enabled (matches GPU-default policy), otherwise `CpuBackend`. `force_cpu()` swaps to `CpuBackend`.
 
-**Phase C — `set_dt` migration:** ✅ Replaced `if (use_gpu_ && gpu_) gpu_->set_dt(dt)` with `backend_->set_dt(dt)`. First of 14 ifdef blocks closed.
+**Phase C — `set_dt` migration:**  Replaced `if (use_gpu_ && gpu_) gpu_->set_dt(dt)` with `backend_->set_dt(dt)`. First of 14 ifdef blocks closed.
 
-**Phase D — Public accessors:** ✅ Added `Backend& backend()`, `const Backend& backend() const`, and `Backend::Kind backend_kind() const` to RenderBridge so tests can assert which backend is actually executing.
+**Phase D — Public accessors:**  Added `Backend& backend()`, `const Backend& backend() const`, and `Backend::Kind backend_kind() const` to RenderBridge so tests can assert which backend is actually executing.
 
-**Phase E — Verify:** ✅ 14/14 regression tests pass on GPU default (determinism, closed_negatives, cpu_warnings, smallest_particle_emergence, genesis, baryogenesis, annihilation × 2, gpu_parity_complete, master_quadratic_identities/uniqueness, ladder_walk_from_oh, gpu_continuity_ledger, color_binding_and_structure).
+**Phase E — Verify:**  14/14 regression tests pass on GPU default (determinism, closed_negatives, cpu_warnings, smallest_particle_emergence, genesis, baryogenesis, annihilation × 2, gpu_parity_complete, master_quadratic_identities/uniqueness, ladder_walk_from_oh, gpu_continuity_ledger, color_binding_and_structure).
 
 **LOC summary:**
 - `backend.h`: NEW (+90 LOC)
@@ -230,19 +230,19 @@ The Injector encapsulates the BUG-001 atomic semantics behind named methods; fut
 
 | ID | Status | Title |
 |---|---|---|
-| ARCH-2-A | ✅ | Migrate `gpu_sync_to_host` ifdef → `backend_->sync_to_host()` (done 2026-04-25) |
-| ARCH-2-B | ✅ | Migrate `gpu_push_to_device` → `backend_->push_to_device()` (done 2026-04-25) |
-| ARCH-2-C | ✅ | Migrate `gpu_flush_host_mutations` → `backend_->flush_host_mutations()` (done 2026-04-25) |
-| ARCH-2-D | ✅ | Migrate `RenderBridge::tick()` GPU branch → `backend_->tick()` (done 2026-04-25) |
-| ARCH-2-E | ✅ | `RenderBridge::run()` already on tick() loop (BUG-003 fix); no migration needed |
-| ARCH-2-F | ✅ | Migrate `phi_latency()` lazy-fetch → `backend_->mirror_phi_latency()` (done 2026-04-25) |
-| ARCH-2-G | ✅ | Migrate `voxels()` non-const accessor → backend dispatch (done 2026-04-25) |
-| ARCH-2-H | ✅ | Migrate `voxel_at(x,y,z)` non-const accessor → backend dispatch (done 2026-04-25) |
-| ARCH-2-I | ✅ | Migrate `inject_*_cpu` GPU-fast-path branches; **6 of 11 friend declarations dropped** (done 2026-04-25). Added `backend().mark_gpu_dirty()` and `gpu_engine_ptr()` accessor. |
-| ARCH-2-J | ✅ | DELETED the 3 private GPU sync delegators (`gpu_sync_to_host`, `gpu_push_to_device`, `gpu_flush_host_mutations`); all callers route through `backend_->...()` directly (done 2026-04-25). |
-| ARCH-2-K | ✅ | `continuity_step()` migrated through public `gpu_engine_ptr()` accessor (done 2026-04-25). |
+| ARCH-2-A |  | Migrate `gpu_sync_to_host` ifdef → `backend_->sync_to_host()` (done 2026-04-25) |
+| ARCH-2-B |  | Migrate `gpu_push_to_device` → `backend_->push_to_device()` (done 2026-04-25) |
+| ARCH-2-C |  | Migrate `gpu_flush_host_mutations` → `backend_->flush_host_mutations()` (done 2026-04-25) |
+| ARCH-2-D |  | Migrate `RenderBridge::tick()` GPU branch → `backend_->tick()` (done 2026-04-25) |
+| ARCH-2-E |  | `RenderBridge::run()` already on tick() loop (BUG-003 fix); no migration needed |
+| ARCH-2-F |  | Migrate `phi_latency()` lazy-fetch → `backend_->mirror_phi_latency()` (done 2026-04-25) |
+| ARCH-2-G |  | Migrate `voxels()` non-const accessor → backend dispatch (done 2026-04-25) |
+| ARCH-2-H |  | Migrate `voxel_at(x,y,z)` non-const accessor → backend dispatch (done 2026-04-25) |
+| ARCH-2-I |  | Migrate `inject_*_cpu` GPU-fast-path branches; **6 of 11 friend declarations dropped** (done 2026-04-25). Added `backend().mark_gpu_dirty()` and `gpu_engine_ptr()` accessor. |
+| ARCH-2-J |  | DELETED the 3 private GPU sync delegators (`gpu_sync_to_host`, `gpu_push_to_device`, `gpu_flush_host_mutations`); all callers route through `backend_->...()` directly (done 2026-04-25). |
+| ARCH-2-K |  | `continuity_step()` migrated through public `gpu_engine_ptr()` accessor (done 2026-04-25). |
 | ARCH-2-L | ◐ | Constructor's GPU init message kept as-is (cosmetic); could move to `GpuBackend` ctor as future cleanup. |
-| ARCH-2-M | ✅ | **`use_gpu_` flag DELETED** (2026-04-25). Backend selection is now owned solely by `backend_->kind()`. force_cpu() swaps to CpuBackend; gpu_engine_ptr() checks the kind. |
+| ARCH-2-M |  | **`use_gpu_` flag DELETED** (2026-04-25). Backend selection is now owned solely by `backend_->kind()`. force_cpu() swaps to CpuBackend; gpu_engine_ptr() checks the kind. |
 
 The migration order matters: ARCH-2-J must come BEFORE ARCH-2-I (the injection migration depends on backend-owned sync methods). Recommended sequence: A → B → C → J → I → D → E → F → G → H → K → L → M.
 
@@ -342,11 +342,11 @@ than a pile of successful demos.
 
 | ID | Status | Title | Notes |
 |---|---|---|---|
-| FORM-001 | ✅ | Draft engine constructor contract | `SPEC_ENGINE_CONSTRUCTOR_CONTRACT.md` maps constructor domains to engine obligations. |
-| FORM-002 | ✅ | Add constructor-domain metadata helper | Done 2026-04-26: `ftd::test::ConstructorContract`, `valid_contract`, and `contract()` emit human output or NDJSON `event=contract`. |
-| FORM-003 | ✅ | Add native observable registry | Done 2026-04-26: seed descriptor registry for ledgers, blocked operators, field energy, state histogram, flux correlator, and Gauss violation. |
-| FORM-004 | ✅ | Add CTest labels for constructor domains | Done 2026-04-26: first constructor-critical tests labeled with `constructor`, `ledger`, `observable`, `blocking`, and GPU/EFT labels where applicable. |
-| FORM-005 | ✅ | Define an "EFT quick suite" label | Done 2026-04-26: `eft_quick` first slice covers constructor metadata, observable registry, GPU continuity ledger, transport flow, blocking, Ward, matched-Poisson, and sim observables. |
+| FORM-001 |  | Draft engine constructor contract | `SPEC_ENGINE_CONSTRUCTOR_CONTRACT.md` maps constructor domains to engine obligations. |
+| FORM-002 |  | Add constructor-domain metadata helper | Done 2026-04-26: `ftd::test::ConstructorContract`, `valid_contract`, and `contract()` emit human output or NDJSON `event=contract`. |
+| FORM-003 |  | Add native observable registry | Done 2026-04-26: seed descriptor registry for ledgers, blocked operators, field energy, state histogram, flux correlator, and Gauss violation. |
+| FORM-004 |  | Add CTest labels for constructor domains | Done 2026-04-26: first constructor-critical tests labeled with `constructor`, `ledger`, `observable`, `blocking`, and GPU/EFT labels where applicable. |
+| FORM-005 |  | Define an "EFT quick suite" label | Done 2026-04-26: `eft_quick` first slice covers constructor metadata, observable registry, GPU continuity ledger, transport flow, blocking, Ward, matched-Poisson, and sim observables. |
 | FORM-006 | ☐ | Production Gauss representation decision record | Choose collocated, source-core, or dual-cell face flux; update tests and docs. |
 | FORM-007 | ☐ | Formal propagation-bound tests | For each state-changing toggle, assert finite support and no nonlocal writes outside declared neighborhood/phase. |
 | FORM-008 | ☐ | Closure-domain declarations | Make periodic lattice, blocked cell, and open-boundary campaigns declare their accounting surface. |

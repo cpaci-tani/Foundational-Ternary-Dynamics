@@ -281,7 +281,7 @@ These four items are ~90 minutes of work and unblock the rest.
 
 All five phases complete. Browser verified after each phase (0 failed stylesheets, visual parity preserved).
 
-### Phase A — Token completion ✅
+### Phase A — Token completion 
 
 **Added to `tokens.css`:**
 - Radius scale: `--radius-sm` (4px), `--radius-md` (8px)
@@ -295,7 +295,7 @@ All five phases complete. Browser verified after each phase (0 failed stylesheet
 
 **Removed:** duplicate `transition:` block at tokens.css lines 115–124. Single canonical block at 166+ now uses `var(--dur-base) var(--ease-out)`.
 
-### Phase C — Z-index discipline ✅
+### Phase C — Z-index discipline 
 
 **[z-layers.css](../css/ui/shell/z-layers.css)** extended with new tokens: `--z-field-overlay`, `--z-panel-toggle`, `--z-status`, `--z-sidebar-backdrop`, `--z-sidebar`. Values renumbered so peer layers share a stop.
 
@@ -315,7 +315,7 @@ All five phases complete. Browser verified after each phase (0 failed stylesheet
 
 **Exception retained:** `zoo-panel.css:13 z-index: 1` for sticky `<th>` local stacking context (documented inline).
 
-### Phase B — Purge inline styles ✅
+### Phase B — Purge inline styles 
 
 `grep 'style="' engine/web/js/ui` dropped from **106 → 26**. `engine/web/js/scales` dropped from **71 → 2**. Remaining are all genuinely dynamic (JS-toggled `display`, CSS custom-property passthrough).
 
@@ -334,7 +334,7 @@ All five phases complete. Browser verified after each phase (0 failed stylesheet
 - Ctrl helpers in [field.css](../css/ui/primitives/field.css): `.ctrl-slider-row`, `.ctrl-select-full`, `.ctrl-label-{xs,sm,md}`, `.ctrl-input-coord`, `.ctrl-row-compact`, `.ctrl-btn-compact`, `.ctrl-btn-row-fill`, `.ctrl-btn-flex-1`, `.ctrl-footnote`, `.ctrl-details-summary`, `.ctrl-action-row`, `.toggle-row-disabled`, `.lat-scenario-desc-text`.
 - Settings modal theme swatches (20 inline colors) → `[data-theme]` attribute selectors in [settings-modal.css](../css/ui/components/settings-modal.css), reducing the template to semantic markup only.
 
-### Phase D — Split omnibus files ✅
+### Phase D — Split omnibus files 
 
 | File | Before | After | Notes |
 |---|---|---|---|
@@ -357,7 +357,7 @@ All five phases complete. Browser verified after each phase (0 failed stylesheet
 
 No file now exceeds 250 lines in `css/ui/components/`.
 
-### Phase E — `!important` cleanup ✅
+### Phase E — `!important` cleanup 
 
 Dropped from **30 → 13** declarations. Every remaining use is intentional:
 - **6** in [scale-visibility.css](../css/scale-visibility.css): `display: none` overrides — these must beat any component `display: flex/grid` default.
@@ -380,7 +380,7 @@ Dropped from **30 → 13** declarations. Every remaining use is intentional:
 | Literal `z-index` in `css/ui/` | 14 | 1 | **−93%** (only the local sticky-header remains) |
 | `!important` declarations | 30 | 13 | **−57%** |
 | Undefined `var()` refs | 3 | 0 | **−100%** |
-| File > 300 lines | 2 | 0 | ✅ |
-| Duplicate transition blocks | yes | no | ✅ |
+| File > 300 lines | 2 | 0 |  |
+| Duplicate transition blocks | yes | no |  |
 
 Design tokens are now the single source of truth, panel-specific styles live with their components, and the cascade resolves naturally in all but the 13 necessary-override cases.

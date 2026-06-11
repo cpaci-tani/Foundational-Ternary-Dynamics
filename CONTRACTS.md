@@ -327,7 +327,7 @@ which physics terms are active in the C++ tick. Mirrored in JS via
 2. **Toggle dependencies are enforced by `validate()`**. Currently checks 13
    relationships (e.g., `weak_transmutation` requires `dual_substrate`). When
    adding a toggle with a dependency, extend `validate()`.
-3. **JS↔C++ default values MUST match.** `MockBridge._toggles` defaults
+3. **JSC++ default values MUST match.** `MockBridge._toggles` defaults
    (in `bridge-init.js` constructor) MUST equal `SCALE0_TOGGLES` defaults
    (in `config/toggles.js`) MUST equal `TermToggles{}` defaults (in
    `term_toggles.h`). When they drift, the validator fires console errors.

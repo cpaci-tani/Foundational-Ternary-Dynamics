@@ -226,8 +226,8 @@ sector is now clean.
 
 ### Short-term (already applied in this session)
 
-1. ✅ `force_cpu()` on latency-dependent tests
-2. ✅ Sign convention flip in `test_einstein_equations`
+1.  `force_cpu()` on latency-dependent tests
+2.  Sign convention flip in `test_einstein_equations`
 
 ### Medium-term (next engineer session)
 

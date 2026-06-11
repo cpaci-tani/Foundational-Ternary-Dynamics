@@ -281,7 +281,7 @@ graph TD
  * @purpose <one sentence — what does this file own?>
  * @consumers <key files that import/include this>
  * @contract <CONTRACTS.md#section-name if applicable>
- * @related <paired files: CPU↔GPU, JS↔C++ mirrors>
+ * @related <paired files: CPUGPU, JSC++ mirrors>
  * @epistemic [THEOREM]/[CONJECTURE]/[IMPOSED] <if physics-bearing>
  */
 ```
@@ -308,7 +308,7 @@ Reference exemplar: [`engine/web/js/bridge/mock-diagnostics.js`](engine/web/js/b
 Three rules. Every refactor PR must satisfy them:
 
 1. **Physics-bearing code cites LEDGER.** Any function implementing a load-bearing claim writes `// Implements LEDGER#C-NNN [TAG]`. Validated by grep (every `[THEOREM]` tag in code resolves to a LEDGER row).
-2. **JS↔C++ mirrors cross-link reciprocally.** If `wasm-bridge.js` mirrors a C++ class, both files carry `@related` headers pointing to each other. Validated by reciprocal-link CI check.
+2. **JSC++ mirrors cross-link reciprocally.** If `wasm-bridge.js` mirrors a C++ class, both files carry `@related` headers pointing to each other. Validated by reciprocal-link CI check.
 3. **Public-API consumers cite their contract.** Any file calling `createBridge`, a capability factory, or a STATE CONTRACT module carries a comment naming the relevant `CONTRACTS.md` section.
 
 ---
