@@ -2,7 +2,7 @@
   "regression_suite": {
     "success": true,
     "code": 0,
-    "duration_sec": 29.078,
+    "duration_sec": 134.159,
     "log_file": "ui_ux/playwright_regression.log"
   }
 }
