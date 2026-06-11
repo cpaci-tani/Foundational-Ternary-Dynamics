@@ -1217,6 +1217,15 @@ ftd_add_test(campaign_thermostat_off_sweep tests/campaign_thermostat_off_sweep.c
              CTEST_NAME campaign_thermostat_off_sweep TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0267 (2026-06-10): genesis-vs-survival per-tick trajectory. Tests the
+# beta arc's post-genesis-survival conclusion in the canonical engine -- does
+# genesis overshoot (~23 at A=10) and post-genesis attrition decay to the
+# steady cluster (~4)? Uses the FTD-0267 observation-only genesis/evaporation
+# event counters (CPU path). Default invocation is a 1-amplitude smoke run.
+ftd_add_test(campaign_genesis_trajectory tests/campaign_genesis_trajectory.cpp
+             CTEST_NAME campaign_genesis_trajectory TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
