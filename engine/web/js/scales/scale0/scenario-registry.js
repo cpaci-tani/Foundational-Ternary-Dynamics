@@ -568,6 +568,37 @@ export const SCALE0_SCENARIOS = [
     makeScenario('Vacuum Particles', 's0-vacuum-pion-charged',      'Charged pion in vacuum (π±)',             ['vacuum', 'meson'],    '[CONJECTURE]'),
     makeScenario('Vacuum Particles', 's0-vacuum-pion-neutral',      'Neutral pion in vacuum (π⁰)',             ['vacuum', 'meson'],    '[CONJECTURE]'),
     makeScenario('Vacuum Particles', 's0-vacuum-kaon-charged',      'Charged kaon in vacuum (K±)',             ['vacuum', 'meson'],    '[CONJECTURE]'),
+    {
+        id: 's0-seed-de-broglie-clock',
+        scale: 'lattice',
+        title: 'De Broglie Clock (pilot wave) — interactive (FTD-0271)',
+        category: 'Quantum Foundations',
+        tags: ['seed', 'quantum', 'de-broglie', 'pilot-wave', 'interactive'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT, FTD-0271]',
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('genesis', false);
+                bridge.setToggle('damping', false);
+                bridge.setToggle('selective_damping', false);   // requires damping
+                bridge.setToggle('weak_transmutation', false);   // requires dual_substrate
+                bridge.setToggle('dual_substrate', false);
+            } catch (e) { console.warn('[de-broglie-clock]', e); }
+            bridge.setupScenario(params.id || 's0-seed-de-broglie-clock');
+            // Show the manifested block.
+            setTimeout(() => {
+                const stateBtn = document.getElementById('toggle-state-field');
+                if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
+            }, 100);
+            // Mount the de Broglie clock panel (omega0 slider + live |J|(t) + lambda(v)).
+            import('./ui/overlays/de-broglie-clock-panel.js')
+                .then((m) => m.mountDeBroglieClockPanel(harness))
+                .catch((e) => console.warn('[de-broglie-clock] panel mount failed:', e));
+        },
+    },
 ];
 
 export const SCALE0_SCENARIO_MAP = new Map(SCALE0_SCENARIOS.map((scenario) => [scenario.id, scenario]));

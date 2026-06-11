@@ -165,6 +165,12 @@ static val get_latency_volume(ftd::RenderBridge& rb) {
 // ── Time step control ────────────────────────────────────────────────
 static void set_dt(ftd::RenderBridge& rb, double dt) { rb.set_dt(dt); }
 static double get_dt(ftd::RenderBridge& rb) { return rb.dt(); }
+
+// FTD-0271: de Broglie internal-clock frequency omega0 (rad/tick). The toggle
+// de_broglie_clock is set via setToggle (auto-exposed from TOGGLE_SPECS); this
+// scalar setter lets the UI sweep omega0 (the KG mass term -omega0^2*J).
+static void set_omega0(ftd::RenderBridge& rb, double w) { rb.toggles.omega0 = w; }
+static double get_omega0(ftd::RenderBridge& rb) { return rb.toggles.omega0; }
 static double get_physical_time(ftd::RenderBridge& rb) { return rb.physical_time(); }
 
 // ── Scenario setup ───────────────────────────────────────────────────
@@ -309,6 +315,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     // Time step control
     function("setDt",              &set_dt);
     function("getDt",              &get_dt);
+    function("setOmega0",          &set_omega0);
+    function("getOmega0",          &get_omega0);
     function("getPhysicalTime",    &get_physical_time);
 
     // Scenarios
