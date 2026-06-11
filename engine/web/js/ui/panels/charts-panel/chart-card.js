@@ -36,6 +36,7 @@ export class ChartCard {
         this.chart = new UPlotChart(plotEl, {
             id:     descriptor.id,
             title:  '',
+            tooltipTitle: descriptor.title,
             series: descriptor.series,
             xLabel: descriptor.xLabel,
             yLabel: descriptor.yLabel,

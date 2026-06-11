@@ -84,6 +84,7 @@ int main() {
         rb.toggles.wave_propagation = true;
         rb.toggles.coupling = false;     // No coupling — pure genesis test
         rb.toggles.forces = false;
+        rb.toggles.lorentz_force = false;
         rb.toggles.gravity = false;
         rb.toggles.movement = false;
 

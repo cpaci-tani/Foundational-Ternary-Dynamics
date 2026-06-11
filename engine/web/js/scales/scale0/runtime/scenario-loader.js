@@ -1,6 +1,7 @@
 import { getPhysicsHarness } from '../../../physics/index.js';
 import { MockBridge } from '../../../bridge-init.js';
 import { MockBridgeProxy } from '../../../bridge/mock-bridge-proxy.js';
+import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY, SCALE0_ABSORBING_SCENARIOS, SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
 import { getScale0Scenario } from '../scenario-registry.js';
@@ -320,6 +321,7 @@ export function resetScale0VisualState(ctx, state, viewportAdapter) {
 
 export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params = {}) {
     const scenario = getScale0Scenario(scenarioId);
+    telemetryHub.resetScale(0);
 
     // Preserve the user's current overlay-toggle preferences across the reset.
     // ctx.resetAllVisualState() → resetScale0VisualState() wipes every field
@@ -435,6 +437,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     } else {
         bridge.latticeSize = newSize;
     }
+    telemetryHub.resetScale(0);
     getScale0Scenario(scenarioId).load(getPhysicsHarness(bridge), { id: scenarioId });
     ctx.viewport.setLatticeSize(newSize);
     viewportAdapter.setFluxVolumeVisible(ctx.viewport.showFlux);

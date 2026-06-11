@@ -353,14 +353,42 @@
 .s0-overlay-search-input:focus { border-color: var(--accent); }
 
 .s0-overlay-active {
+    --s0-active-badge-h: 24px;
+    --s0-active-pad-y: 8px;
+    --s0-active-row-gap: 8px;
+    --s0-active-col-gap: 14px;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 14px;   /* column-gap leaves room for the hover-× at each badge's right end */
-    padding: 8px 10px;
+    align-content: flex-start;
+    gap: var(--s0-active-row-gap) var(--s0-active-col-gap);
+    height: calc(
+        (var(--s0-active-badge-h) * 3)
+        + (var(--s0-active-row-gap) * 2)
+        + (var(--s0-active-pad-y) * 2)
+    );
+    padding: var(--s0-active-pad-y) 16px var(--s0-active-pad-y) 10px;
     margin-bottom: 4px;
     border-bottom: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--accent) 42%, transparent) transparent;
 }
 .s0-overlay-active[hidden] { display: none; }
+
+.s0-overlay-active::-webkit-scrollbar {
+    width: 6px;
+}
+
+.s0-overlay-active::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.s0-overlay-active::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--accent) 36%, transparent);
+}
 
 /* Compact badge: swatch + label, no inline ×. */
 .s0-overlay-chip {
@@ -369,10 +397,11 @@
     align-items: center;
     gap: 5px;
     max-width: 100%;
-    padding: 3px 8px;
+    height: var(--s0-active-badge-h);
+    padding: 0 8px;
     font-size: var(--fs-xs);
     font-weight: 600;
-    line-height: 1.35;
+    line-height: 1;
     border-radius: 6px;
     background: color-mix(in oklch, var(--accent) 18%, transparent);
     border: 1px solid color-mix(in oklch, var(--accent) 34%, transparent);
@@ -457,200 +486,6 @@
     }
 }
 
-/* ── Unified Viewport Controls Panel ── */
-/* Replaces the old viewport-bottom-bar (left) + viewport-overlay-bottom (right) */
-#viewport-controls-panel {
-    position: absolute;
-    bottom: calc(28px * var(--ui-scale) + 12px);
-    right: 12px;
-    padding: 10px;
-    background: var(--bg-surface);
-    backdrop-filter: blur(24px) saturate(1.4);
-    border: var(--glass-border, 1px solid rgba(255, 255, 255, 0.12));
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--glass-shadow), var(--shadow-xl);
-    z-index: var(--z-overlay);
-    min-width: 186px;
-    transition: min-width 180ms ease, padding 180ms ease, border-radius 180ms ease;
-}
-
-.vcp-content {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.vcp-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    margin-bottom: 10px;
-}
-
-.vcp-title {
-    font-size: var(--fs-xs);
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--text-primary);
-}
-
-.vcp-section {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-.vcp-section:last-child {
-    margin-bottom: 0;
-}
-
-/* Eye icon collapse button */
-.vcp-collapse-btn {
-    display: flex;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 120ms;
-}
-.vcp-collapse-btn:hover {
-    color: var(--text-primary);
-}
-
-/* Collapsed state */
-#viewport-controls-panel.is-collapsed {
-    padding: 8px;
-    min-width: 40px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-#viewport-controls-panel.is-collapsed .vcp-header {
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-#viewport-controls-panel.is-collapsed .vcp-title {
-    display: none;
-}
-#viewport-controls-panel.is-collapsed .vcp-collapse-btn {
-    width: 24px;
-    height: 24px;
-    margin: 0;
-    font-size: 16px;
-    color: var(--text-primary);
-}
-#viewport-controls-panel.is-collapsed .vcp-content {
-    display: none;
-}
-
-.vcp-toggle-grid {
-    display: grid;
-    gap: 4px;
-}
-.overlays-grid {
-    grid-template-columns: repeat(3, 1fr);
-}
-.flux-grid {
-    grid-template-columns: repeat(2, 1fr);
-}
-
-.vcp-toggle-grid .view-toggle {
-    padding: 5px 6px;
-    font-size: var(--fs-xs);
-    text-align: center;
-    white-space: nowrap;
-}
-
-.vcp-select-row {
-    display: grid;
-    grid-template-columns: 60px 1fr;
-    align-items: center;
-    gap: 6px;
-}
-
-.vcp-label {
-    font-size: var(--fs-xs);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    white-space: nowrap;
-}
-
-.vcp-select-row select {
-    height: 28px;
-    padding: 0 6px;
-    font-size: var(--fs-xs);
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text-primary);
-    cursor: pointer;
-    outline: none;
-    width: 100%;
-}
-
-.vcp-select-row select:hover {
-    border-color: var(--border-light);
-}
-
-/* Camera preset grid — 3 columns, momentary-press buttons. */
-.vcp-label-row {
-    display: flex;
-    align-items: center;
-    padding: 2px 0 0;
-}
-.vcp-preset-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 4px;
-}
-.vcp-preset-grid .view-toggle {
-    padding: 4px 4px;
-    font-size: var(--fs-xs);
-    text-align: center;
-}
-.vcp-preset-btn {
-    transition: background 120ms, border-color 120ms, color 120ms;
-}
-.vcp-preset-flash {
-    background: color-mix(in oklch, var(--accent) 35%, transparent) !important;
-    border-color: var(--accent) !important;
-    color: #fff !important;
-}
-
-/* Reduced-motion button row */
-.vcp-motion-row .view-toggle {
-    grid-column: 1 / -1;
-    padding: 4px 6px;
-    font-size: var(--fs-xs);
-    letter-spacing: 0.04em;
-}
-
-/* When reduced-motion is enabled, freeze every CSS animation/transition that
-   would otherwise play continuously. Physics simulation continues normally —
-   this only affects purely-decorative UI motion (dash flow, button hover
-   transitions, overlay-panel transitions). */
-body[data-reduced-motion="1"] *,
-body[data-reduced-motion="1"] *::before,
-body[data-reduced-motion="1"] *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-}
-
 /* ── Touch targets (coarse pointers / small viewports) ──────────────────────
    The overlay collapse chevrons are 22px squares on desktop; the camera
    select is 28px tall. Grow them to a finger-sized hit area on mobile. */
@@ -660,10 +495,6 @@ body[data-reduced-motion="1"] *::after {
         width: 32px;
         height: 32px;
     }
-    .vcp-select-row select {
-        height: var(--tap-min);
-    }
-
     /* The viewport remains a stacking context, children are absolutely positioned */
     #viewport {
         padding: 12px 12px 140px 12px;
@@ -687,10 +518,6 @@ body[data-reduced-motion="1"] *::after {
         display: none;
     }
 
-    /* Move viewport controls from bottom-right to the left side */
-    #viewport-controls-panel {
-        display: none !important;
-    }
 }
 
 /* ── Side-mount overlay swap ──────────────────────────────────────────────── */
@@ -700,7 +527,6 @@ body[data-reduced-motion="1"] *::after {
    on the right (default). */
 html[data-panel-mount="right"] .viewport-overlay-panel,
 html[data-panel-mount="right"] #viewport-overlay,
-html[data-panel-mount="right"] #viewport-controls-panel,
 html[data-panel-mount="right"] .viewport-overlay-bottom {
     right: auto;
     left: 12px;

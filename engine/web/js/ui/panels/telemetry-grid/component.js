@@ -1,10 +1,12 @@
 import { telemetryHub } from '../../../telemetry-hub.js';
+import { ChartHoverTooltip, formatChartValue } from '../../charts/chart-hover-tooltip.js';
 import { getChartTheme, resolveChartColor } from '../../charts/theme.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
 
 const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz cap for floated panels (SPEC_SCALE0_PERF §6.1)
-const MAX_SPARK = 500;              // ring-buffer cap; per-channel buffers preallocated to this
+const GRID_VISIBLE_SAMPLES = 120;   // display window; source ring buffers still retain their full history
+const MAX_SPARK = GRID_VISIBLE_SAMPLES;
 
 // Create a single synchronized cursor registry for all sparklines in the grid
 const telemetrySync = uPlot.sync("telemetry-grid-sync");
@@ -125,7 +127,14 @@ export class TelemetryGridPanelComponent {
 
     rebuildGrid() {
         // Destroy existing uPlots
-        this.charts.forEach((entry) => entry?.u?.destroy?.());
+        this.charts.forEach((entry) => {
+            entry.hoverTarget?.removeEventListener('pointerenter', entry.onPointerEnter);
+            entry.hoverTarget?.removeEventListener('pointerleave', entry.onPointerLeave);
+            entry.hoverTarget?.removeEventListener('mouseenter', entry.onPointerEnter);
+            entry.hoverTarget?.removeEventListener('mouseleave', entry.onPointerLeave);
+            entry.tooltip?.destroy();
+            entry?.u?.destroy?.();
+        });
         this.charts.clear();
         this.container.innerHTML = '';
         this.el.dataset.activeScale = this.activeScale;
@@ -156,6 +165,7 @@ export class TelemetryGridPanelComponent {
             this.container.appendChild(card);
 
             const plotContainer = card.querySelector('.telemetry-card-plot');
+            let entry = null;
 
             // 2. Prepare high-performance sparkline configurations
             const strokeColor = resolveChartColor(chan.color);
@@ -193,21 +203,42 @@ export class TelemetryGridPanelComponent {
                         points: { show: false }
                     }
                 ],
-                padding: [4, 0, 4, 0]
+                padding: [4, 0, 4, 0],
+                hooks: {
+                    setCursor: [
+                        () => { if (entry) this.renderTooltip(entry, chan); },
+                    ],
+                },
             };
 
             // eslint-disable-next-line no-undef
             const u = new uPlot(uopts, [[], []], plotContainer);
+            const tooltip = new ChartHoverTooltip(plotContainer);
 
             // Cache the value <span> + preallocate the sparkline buffers ONCE so
             // update() neither queries the DOM nor allocates per frame (§6.1). xs
             // is a static index ramp; ys is refilled each update.
             const valueEl = card.querySelector('.telemetry-card-value');
             const xs = new Float64Array(MAX_SPARK);
-            for (let i = 0; i < MAX_SPARK; i++) xs[i] = i;
             const ys = new Float64Array(MAX_SPARK);
 
-            this.charts.set(chan.key, { u, valueEl, xs, ys });
+            entry = { u, valueEl, xs, ys, tooltip, hoverActive: false, lastN: 0, color: strokeColor };
+            entry.onPointerEnter = () => {
+                entry.hoverActive = true;
+                this.renderTooltip(entry, chan);
+            };
+            entry.onPointerLeave = () => {
+                entry.hoverActive = false;
+                entry.tooltip.hide();
+            };
+            const hoverTarget = u.over || plotContainer;
+            entry.hoverTarget = hoverTarget;
+            hoverTarget.addEventListener('pointerenter', entry.onPointerEnter);
+            hoverTarget.addEventListener('pointerleave', entry.onPointerLeave);
+            hoverTarget.addEventListener('mouseenter', entry.onPointerEnter);
+            hoverTarget.addEventListener('mouseleave', entry.onPointerLeave);
+
+            this.charts.set(chan.key, entry);
         });
     }
 
@@ -253,11 +284,39 @@ export class TelemetryGridPanelComponent {
             // Reuse the preallocated buffers + cached value element — no per-frame
             // allocation and no DOM query (§6.1).
             const { u, valueEl, xs, ys } = entry;
-            const n = Math.min(buf.count, MAX_SPARK);
-            for (let i = 0; i < n; i++) ys[i] = buf.get(i);
+            const n = Math.min(buf.count, GRID_VISIBLE_SAMPLES);
+            const start = Math.max(0, buf.count - n);
+            const xStart = Math.max(0, (buf.total ?? buf.count) - n);
+            for (let i = 0; i < n; i++) {
+                xs[i] = xStart + i;
+                ys[i] = buf.get(start + i);
+            }
+            entry.lastN = n;
 
             u.setData([xs.subarray(0, n), ys.subarray(0, n)], true);
             if (valueEl) valueEl.textContent = this.formatValue(buf.last(), chan.unit);
+            if (entry.hoverActive) this.renderTooltip(entry, chan);
+        });
+    }
+
+    renderTooltip(entry, chan) {
+        if (!entry.hoverActive || !entry.u || entry.lastN < 2) return;
+        const idx = entry.u.cursor?.idx;
+        if (idx == null || idx < 0 || idx >= entry.lastN) {
+            entry.tooltip.hide();
+            return;
+        }
+        entry.tooltip.render({
+            title: chan.title,
+            xLabel: 'sample',
+            xValue: entry.xs[idx],
+            rows: [{
+                label: chan.title,
+                color: entry.color,
+                value: formatChartValue(entry.ys[idx], chan.unit),
+            }],
+            anchorLeft: entry.u.cursor?.left ?? 0,
+            anchorTop: entry.u.cursor?.top ?? 0,
         });
     }
 
@@ -298,7 +357,14 @@ export class TelemetryGridPanelComponent {
             this._ro.disconnect();
             this._ro = null;
         }
-        this.charts.forEach((entry) => entry.u.destroy());
+        this.charts.forEach((entry) => {
+            entry.hoverTarget?.removeEventListener('pointerenter', entry.onPointerEnter);
+            entry.hoverTarget?.removeEventListener('pointerleave', entry.onPointerLeave);
+            entry.hoverTarget?.removeEventListener('mouseenter', entry.onPointerEnter);
+            entry.hoverTarget?.removeEventListener('mouseleave', entry.onPointerLeave);
+            entry.tooltip?.destroy();
+            entry.u.destroy();
+        });
         this.charts.clear();
     }
 }

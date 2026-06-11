@@ -15,11 +15,11 @@ export const charts = [
         yLabel: 'E (sim)',
         defaultActive: true,
         series: [
-            { key: 'ke',      label: 'KE',       color: 'var(--chart-ae-ke, #4ade80)',       buffer: 'aeKE' },
-            { key: 'ionic',   label: 'PE Ionic', color: 'var(--chart-ae-pe-ionic, #f87171)', buffer: 'aePEIonic' },
-            { key: 'vdw',     label: 'PE vdW',   color: 'var(--chart-ae-pe-vdw, #2dd4bf)',   buffer: 'aePEVdw' },
-            { key: 'bond',    label: 'PE Bond',  color: 'var(--chart-ae-pe-bond, #fb923c)',  buffer: 'aePEBond' },
-            { key: 'total',   label: 'Total',    color: 'var(--chart-ae-total, #e8e8e8)',    buffer: 'aeEnergy' },
+            { key: 'ke',      label: 'KE',       color: 'var(--chart-ae-ke, #4ade80)',       buffer: 'aeKE', unit: '(sim)' },
+            { key: 'ionic',   label: 'PE Ionic', color: 'var(--chart-ae-pe-ionic, #f87171)', buffer: 'aePEIonic', unit: '(sim)' },
+            { key: 'vdw',     label: 'PE vdW',   color: 'var(--chart-ae-pe-vdw, #2dd4bf)',   buffer: 'aePEVdw', unit: '(sim)' },
+            { key: 'bond',    label: 'PE Bond',  color: 'var(--chart-ae-pe-bond, #fb923c)',  buffer: 'aePEBond', unit: '(sim)' },
+            { key: 'total',   label: 'Total',    color: 'var(--chart-ae-total, #e8e8e8)',    buffer: 'aeEnergy', unit: '(sim)' },
         ],
     },
     {
@@ -29,7 +29,7 @@ export const charts = [
         yLabel: 'T (sim)',
         defaultActive: true,
         series: [
-            { key: 'temp', label: 'T (sim)', color: 'var(--chart-ae-temp, #fb8c00)', buffer: 'aeTemp' },
+            { key: 'temp', label: 'T (sim)', color: 'var(--chart-ae-temp, #fb8c00)', buffer: 'aeTemp', unit: '(sim)' },
         ],
     },
     {
@@ -39,8 +39,8 @@ export const charts = [
         yLabel: 'ct',
         defaultActive: true,
         series: [
-            { key: 'atoms', label: 'Atoms', color: 'var(--chart-ae-atoms, #42a5f5)', buffer: 'aeAtomCount' },
-            { key: 'bonds', label: 'Bonds', color: 'var(--chart-ae-bonds, #a78bfa)', buffer: 'aeBonds' },
+            { key: 'atoms', label: 'Atoms', color: 'var(--chart-ae-atoms, #42a5f5)', buffer: 'aeAtomCount', unit: 'ct' },
+            { key: 'bonds', label: 'Bonds', color: 'var(--chart-ae-bonds, #a78bfa)', buffer: 'aeBonds', unit: 'ct' },
         ],
     },
     {
@@ -50,7 +50,7 @@ export const charts = [
         yLabel: '|p| (sim)',
         defaultActive: false,
         series: [
-            { key: 'p', label: '|p|', color: 'var(--chart-ae-momentum, #60a5fa)', buffer: 'aeMomentum' },
+            { key: 'p', label: '|p|', color: 'var(--chart-ae-momentum, #60a5fa)', buffer: 'aeMomentum', unit: '(sim)' },
         ],
     },
     {
@@ -60,7 +60,7 @@ export const charts = [
         yLabel: '%',
         defaultActive: false,
         series: [
-            { key: 'drift', label: 'Drift %', color: 'var(--chart-ae-drift, #fbbf24)', buffer: 'aeDrift' },
+            { key: 'drift', label: 'Drift %', color: 'var(--chart-ae-drift, #fbbf24)', buffer: 'aeDrift', unit: '%' },
         ],
     },
 ];

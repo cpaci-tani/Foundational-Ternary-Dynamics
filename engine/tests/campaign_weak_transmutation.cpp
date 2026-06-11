@@ -31,23 +31,13 @@
 #include <iomanip>
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
+#include "ftd/test_telemetry.h"
 
-int failures = 0;
 
-void check(const char* name, bool condition) {
-    if (condition) {
-        std::cout << "  PASS  " << name << "\n";
-    } else {
-        std::cout << "  FAIL  " << name << "\n";
-        ++failures;
-    }
-}
 
 int main() {
-    std::cout << "================================================================\n";
-    std::cout << "  CAMPAIGN: Weak Transmutation (Phase 6) — 4 Checks\n";
-    std::cout << "================================================================\n";
-    std::cout << std::fixed << std::setprecision(6);
+    ftd::test::init("campaign_weak_transmutation");
+    ftd::test::section("weak_sector");
 
     const int L = 32;
     const int mid = L / 2;
@@ -112,6 +102,7 @@ int main() {
     {
         // Run multiple trials (probabilistic transmutation)
         for (int trial = 0; trial < total_trials; ++trial) {
+            std::cout << "  Trial " << (trial+1) << "/" << total_trials << "...\n";
             ftd::RenderBridge rb(L);
             rb.seed_rng(1000 + trial);
             rb.toggles.genesis = false;
@@ -150,6 +141,7 @@ int main() {
     int flipped_off = 0;
     {
         for (int trial = 0; trial < total_trials; ++trial) {
+            std::cout << "  Trial " << (trial+1) << "/" << total_trials << "...\n";
             ftd::RenderBridge rb(L);
             rb.seed_rng(1000 + trial);
             rb.toggles.genesis = false;
@@ -179,34 +171,29 @@ int main() {
     }
 
     // ================================================================
-    // Checks
-    // ================================================================
     std::cout << "\n--- Checks ---\n";
 
     // WT1: Isolated particle stress below threshold
-    check("WT1: Isolated warm particle stress < WEAK_THRESHOLD",
+    ftd::test::check("WT1: Isolated warm particle stress < WEAK_THRESHOLD",
           stress_isolated < ftd::WEAK_THRESHOLD);
 
     // WT2: High-flux injection creates stress above threshold
-    check("WT2: High-flux injection stress > WEAK_THRESHOLD",
+    ftd::test::check("WT2: High-flux injection stress > WEAK_THRESHOLD",
           stress_high > ftd::WEAK_THRESHOLD);
 
     // WT3: At least some transmutations occurred with toggle ON + high stress
-    check("WT3: Transmutation occurs when stress > threshold (toggle ON)",
+    ftd::test::check("WT3: Transmutation occurs when stress > threshold (toggle ON)",
           flipped_count > 0);
 
     // WT4: No transmutations when toggle OFF
-    check("WT4: No transmutation when toggle OFF (backward compatibility)",
+    ftd::test::check("WT4: No transmutation when toggle OFF (backward compatibility)",
           flipped_off == 0);
 
-    std::cout << "\n================================================================\n";
-    std::cout << "  RESULT: " << (failures == 0 ? "ALL PASSED" : "FAILURES DETECTED")
-              << " (" << failures << " failures)\n";
     std::cout << "  NOTE: Transmutation probability and threshold are [IMPOSED]\n";
     std::cout << "  from electroweak theory. The stress formula is [IMPOSED]\n";
     std::cout << "  (|div J| + |curl J| + |grad rho|). What [EMERGES] is that\n";
     std::cout << "  high field stress environments trigger state transitions,\n";
     std::cout << "  analogous to weak decay in high-density nuclear matter.\n";
-    std::cout << "================================================================\n";
-    return failures;
+
+    return ftd::test::finalize();
 }

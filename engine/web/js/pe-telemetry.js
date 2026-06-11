@@ -13,9 +13,11 @@ import { Sparkline } from './diagnostics.js';
 import { ALPHA, G_N, COULOMB_K_FORCE } from './constants.js';
 import { formatEnergy, formatVelocity, formatLength, formatForce, formatTemperature } from './units.js';
 import { createCachedCanvasRect } from './dom-utils.js';
+import { ChartHoverTooltip, formatChartValue } from './ui/charts/chart-hover-tooltip.js';
 import { resolveChartColor } from './ui/charts/theme.js';
 
 const TS_LEN = 200;  // Time-series buffer length (longer than sparkline 80)
+const TS_VISIBLE_LEN = 120;
 
 // ── Multi-trace time-series chart ────────────────────────────────────
 class TimeSeriesChart {
@@ -30,6 +32,32 @@ class TimeSeriesChart {
         this._refLine = null; // optional horizontal reference line
         // Phase C.3: cache rect dimensions; refreshed by ResizeObserver
         this._rectCache = canvas ? createCachedCanvasRect(canvas) : null;
+        this._hoverActive = false;
+        this._hoverPoint = null;
+        this._lastDraw = null;
+        if (canvas?.parentElement) {
+            this._tooltip = new ChartHoverTooltip(canvas.parentElement);
+            const enter = (event) => {
+                this._hoverActive = true;
+                this._setHoverPoint(event);
+                this._renderTooltip();
+            };
+            const move = (event) => {
+                this._setHoverPoint(event);
+                this._renderTooltip();
+            };
+            const leave = () => {
+                this._hoverActive = false;
+                this._hoverPoint = null;
+                this._tooltip.hide();
+            };
+            canvas.addEventListener('pointerenter', enter);
+            canvas.addEventListener('pointermove', move);
+            canvas.addEventListener('pointerleave', leave);
+            canvas.addEventListener('mouseenter', enter);
+            canvas.addEventListener('mousemove', move);
+            canvas.addEventListener('mouseleave', leave);
+        }
     }
 
     setRefLine(val) { this._refLine = val; }
@@ -45,6 +73,18 @@ class TimeSeriesChart {
 
     _get(trace, i) {
         return trace.buf[(trace.head - trace.count + i + TS_LEN) % TS_LEN];
+    }
+
+    _setHoverPoint(event) {
+        if (!this.canvas?.parentElement) return;
+        const parentRect = this.canvas.parentElement.getBoundingClientRect();
+        const canvasRect = this.canvas.getBoundingClientRect();
+        this._hoverPoint = {
+            x: event.clientX - canvasRect.left,
+            y: event.clientY - canvasRect.top,
+            left: event.clientX - parentRect.left,
+            top: event.clientY - parentRect.top,
+        };
     }
 
     draw() {
@@ -64,14 +104,16 @@ class TimeSeriesChart {
         ctx.clearRect(0, 0, w, h);
 
         let totalCount = 0;
-        for (const t of this.traces) totalCount += t.count;
+        for (const t of this.traces) totalCount += Math.min(t.count, TS_VISIBLE_LEN);
         if (totalCount === 0) return;
 
         // Find global min/max across all traces
         let min = Infinity, max = -Infinity;
         for (const t of this.traces) {
-            for (let i = 0; i < t.count; i++) {
-                const v = this._get(t, i);
+            const n = Math.min(t.count, TS_VISIBLE_LEN);
+            const start = Math.max(0, t.count - n);
+            for (let i = 0; i < n; i++) {
+                const v = this._get(t, start + i);
                 if (isFinite(v)) {
                     if (v < min) min = v;
                     if (v > max) max = v;
@@ -98,12 +140,17 @@ class TimeSeriesChart {
         }
 
         // Draw each trace
+        const n = Math.min(this.traces[0]?.count || 0, TS_VISIBLE_LEN);
+        const start = Math.max(0, (this.traces[0]?.count || 0) - n);
         for (const t of this.traces) {
-            if (t.count < 2) continue;
+            const traceN = Math.min(t.count, TS_VISIBLE_LEN);
+            const traceStart = Math.max(0, t.count - traceN);
+            if (traceN < 2) continue;
             ctx.beginPath();
             for (let i = 0; i < t.count; i++) {
-                const x = (i / (t.count - 1)) * w;
-                const v = this._get(t, i);
+                if (i >= traceN) break;
+                const x = (i / (traceN - 1)) * w;
+                const v = this._get(t, traceStart + i);
                 const y = h - ((v - min) / range) * (h - 4) - 2;
                 if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             }
@@ -111,10 +158,37 @@ class TimeSeriesChart {
             ctx.lineWidth = 1.2;
             ctx.stroke();
         }
+        this._lastDraw = { width: w, height: h, n, start };
+        if (this._hoverActive) this._renderTooltip();
+    }
+
+    _renderTooltip() {
+        if (!this._tooltip || !this._hoverActive || !this._hoverPoint || !this._lastDraw) return;
+        const { width, n, start } = this._lastDraw;
+        if (n < 2 || width <= 0) {
+            this._tooltip.hide();
+            return;
+        }
+        const idx = Math.max(0, Math.min(n - 1, Math.round((this._hoverPoint.x / width) * (n - 1))));
+        const rows = this.traces.map((trace) => ({
+            label: trace.label || 'Value',
+            color: trace.color,
+            value: formatChartValue(this._get(trace, start + idx), trace.unit || ''),
+        }));
+        this._tooltip.render({
+            title: this.title || 'Telemetry',
+            xLabel: 'sample',
+            xValue: start + idx,
+            rows,
+            anchorLeft: this._hoverPoint.left,
+            anchorTop: this._hoverPoint.top,
+        });
     }
 
     clear() {
         for (const t of this.traces) { t.head = 0; t.count = 0; }
+        this._lastDraw = null;
+        this._tooltip?.hide();
         this.draw();
     }
 }
@@ -215,19 +289,23 @@ export class PETelemetryPanel {
 
         // Time-series charts
         this._tsEnergy = new TimeSeriesChart(document.getElementById('pet-ts-energy'), [
-            { color: resolveChartColor('var(--chart-pe-ke, #4ade80)') },
-            { color: resolveChartColor('var(--chart-pe-coulomb, #f87171)') },
-            { color: resolveChartColor('var(--chart-pe-total, #e8e8e8)') },
+            { label: 'KE', color: resolveChartColor('var(--chart-pe-ke, #4ade80)'), unit: 'MeV' },
+            { label: 'PE', color: resolveChartColor('var(--chart-pe-coulomb, #f87171)'), unit: 'MeV' },
+            { label: 'Total', color: resolveChartColor('var(--chart-pe-total, #e8e8e8)'), unit: 'MeV' },
         ]);
+        this._tsEnergy.title = 'Energy';
         this._tsMomentum = new TimeSeriesChart(document.getElementById('pet-ts-momentum'), [
-            { color: resolveChartColor('var(--chart-pe-momentum, #a78bfa)') },
+            { label: '|p|', color: resolveChartColor('var(--chart-pe-momentum, #a78bfa)'), unit: 'MeV/c' },
         ]);
+        this._tsMomentum.title = 'Momentum';
         this._tsAngmom = new TimeSeriesChart(document.getElementById('pet-ts-angmom'), [
-            { color: resolveChartColor('var(--chart-pe-angmom, #60a5fa)') },
+            { label: '|L|', color: resolveChartColor('var(--chart-pe-angmom, #60a5fa)'), unit: 'hbar' },
         ]);
+        this._tsAngmom.title = 'Angular Momentum';
         this._tsVirial = new TimeSeriesChart(document.getElementById('pet-ts-virial'), [
-            { color: resolveChartColor('var(--chart-pe-virial, #fbbf24)') },
+            { label: '2K/|U|', color: resolveChartColor('var(--chart-pe-virial, #fbbf24)'), unit: 'ratio' },
         ]);
+        this._tsVirial.title = 'Virial';
         this._tsVirial.setRefLine(1.0);
 
         // Phase space chart

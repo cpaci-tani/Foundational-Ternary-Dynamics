@@ -1,8 +1,9 @@
 {
   "regression_suite": {
-    "success": true,
-    "code": 0,
-    "duration_sec": 134.159,
+    "success": false,
+    "code": -1,
+    "duration_sec": 49.18,
+    "error": "'charmap' codec can't encode character '\\u2265' in position 130: character maps to <undefined>",
     "log_file": "ui_ux/playwright_regression.log"
   }
 }

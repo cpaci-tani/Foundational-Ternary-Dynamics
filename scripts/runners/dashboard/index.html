@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTD CTest Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Fira+Code&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="glass-header">
+            <div class="logo">
+                <h1>FTD <span>Engine Tests</span></h1>
+            </div>
+            <div class="controls">
+                <div class="stats">
+                    <span id="stat-passed" class="stat pass">0 Passed</span>
+                    <span id="stat-failed" class="stat fail">0 Failed</span>
+                    <span id="stat-running" class="stat run">0 Running</span>
+                    <span id="stat-pending" class="stat pend">0 Pending</span>
+                </div>
+                <button id="cancel-btn" class="btn-secondary" style="display: none;">Cancel All</button>
+                <button id="start-btn" class="btn-primary">Run Suite</button>
+            </div>
+        </header>
+
+        <main>
+            <div id="test-grid">
+                <!-- Test Cards Injected Here -->
+            </div>
+        </main>
+
+        <aside id="log-panel" class="log-panel hidden">
+            <div class="log-header">
+                <h2 id="log-title">Test Logs</h2>
+                <button id="close-log-btn" class="btn-icon">&times;</button>
+            </div>
+            <pre id="log-content" class="log-content"></pre>
+        </aside>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
