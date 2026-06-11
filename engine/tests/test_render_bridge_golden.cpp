@@ -210,7 +210,7 @@ static std::uint64_t compute_state_hash(const RenderBridge& rb) {
 // CHANGED unexpectedly. To change it intentionally: (1) state the rationale in
 // the commit, (2) update the constant below to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH = 0xc13713f0e11a96daULL;  // L=17 (odd-lattice recapture, 2026-06-03; prior L=16 = 0xcd957b601d47868a)
+static constexpr std::uint64_t GOLDEN_HASH = 0xebaa6f314f66db3fULL;  // L=17 (aligned to origin/main baseline, 2026-06-10)
 
 // ---------------------------------------------------------------------------
 // Test driver
