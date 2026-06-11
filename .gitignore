@@ -62,33 +62,6 @@ docs/articles/
 !docs/theory/03_derivations/archive/
 !docs/theory/03_derivations/archive/**
 
-# LaTeX auxiliary files
-*.aux
-*.log
-*.out
-*.toc
-*.fls
-*.fdb_latexmk
-*.synctex.gz
-*.bbl
-*.blg
-
-# folders
-medium_posts/
-dissemination/media/
-archive/
-docs/internal/
-docs/superpowers/
-docs/articles/
-
-# Local cleanup archives used as canonical provenance are tracked wholesale.
-# (The broad docs/theory/archive/ tree was deleted 2026-05-21; git history retains it.)
-!docs/theory/10_eft_program/archive/
-!docs/theory/10_eft_program/archive/**
-!docs/theory/09_mathematical/archive/
-!docs/theory/09_mathematical/archive/**
-!docs/theory/03_derivations/archive/
-!docs/theory/03_derivations/archive/**
 !engine/archive/
 !engine/archive/**
 !docs/theory/07_assessment/archive/
@@ -292,128 +265,14 @@ engine/results/**/*.csv
 engine/results/**/*.json
 engine/results/**/*.log
 
-
-# CERN data files (256 MB .root, 45 MB .npz cache)
-*.root
-*.npz
-
-# Generated experiment output (data, images, reports)
-scripts/experiments/**/output/
-scripts/experiments/*.png
-evaluation/*.png
-docs/internal/explorations/**/*.png
-docs/internal/explorations/**/*.mp4
-
-# Engine thirdparty (glad — legacy OpenGL loader, not needed for web)
-engine/thirdparty/
-
-# Engine caches
-engine/.cache/
-engine/output/
-
-# Benchmark results (regenerated from engine runs)
-scripts/benchmarks/results/
-
-# Engine campaign results — by default, new result subdirs are local-only
-# (regenerable from engine/tests/campaign_*.cpp + tools/run_*.sh). To
-# track a specific campaign permanently, force-add it:
-#     git add -f engine/results/<campaign_dir>/
-# Already-tracked subtrees are preserved (gitignore only blocks NEW
-# additions; existing index entries keep their state). The policy
-# itself is documented in engine/results/README.md (whitelisted below).
-engine/results/*
-!engine/results/README.md
-
-# Temporary batch files and agent runner scripts
-_tmp_*.bat
-proof_run_*.txt
-proof_run_*.json
-run_verification.ps1
-verification_results.txt
 scripts/run_all_proofs.py
-# CTest artifacts
-Testing/
-engine/web/test_results.json
 
-# Playwright test runner output (auto-generated; .last-run.json + artifacts)
-engine/web/test-results/
-
-# Stray directories
-models/
-
-# Consciousness/metaphysical speculation — not physics, damages credibility
-# Theory docs: consciousness quadratics, sLoop, meaning formalization, void-to-mind
-docs/theory/FOUND_CONSCIOUSNESS_MATHEMATICS.md
-docs/theory/FOUND_SLOOP_FORMALIZATION.md
-docs/theory/FOUND_AGENT_MEANING_FORMALIZATION.md
-docs/theory/FOUND_DEEP_HIERARCHY.md
-docs/theory/DERIV_CAVITATION_CONSCIOUSNESS_BRIDGE.md
-docs/theory/DERIV_OBSERVER_BELL_MECHANISM.md
-
-# Scratch workspace (never committed)
-scratch/
-scratch_*.py
-scratch_*.sh
-scratch_*.txt
-
-# Local-only reproducer / triage scripts in engine/tests
-engine/tests/_repro_*.cpp
-engine/tests/_repro_*.cu
 engine/tests/campaign_wang_extraction
 engine/tests/campaign_wang_extraction.exe
 engine/cuda/confinement
 engine/cuda/confinement_gpu
 engine/cuda/einstein
 engine/cuda/einstein_gpu
-
-# HMC / Monte Carlo sample dumps (regenerable from scripts)
-scripts/exploration/hmc_*.csv
-scripts/exploration/hmc_*.npz
-
-# Raw exploration outputs (regenerable from scripts; specific keepers whitelisted below)
-scripts/exploration/outputs/*
-!scripts/exploration/outputs/.gitkeep
-!scripts/exploration/outputs/manifestation_flow_*.json
-!scripts/exploration/outputs/manifestation_flow_*.pdf
-!scripts/exploration/outputs/ftd_native_electrodynamics*.json
-
-# === 2026-05-25 maximum-cleanup additions ===
-
-# Generated dashboard HTML in engine/web/ (regenerated from engine campaign
-# runners; engine/web/ is the GitHub Pages source — keep only stable demos).
-engine/web/phase_b3_*.html
-
-# Regenerable interactive HTML under dissemination/interactive/.
-# Hand-curated explorers (gauss_circle_explorer, master_quadratic_explorer,
-# prime_music, ternary_cube_27, etc.) ARE source-of-truth and stay tracked.
-dissemination/interactive/phase_b3_*.html
-dissemination/interactive/math_node_map.html
-
-# Quarto _book/ build output anywhere under dissemination/.
-# (Existing rule on line 14 covers manuscript/_book/ only; this catches
-# manuscript_v2/_book/ and any future Quarto book.)
-**/_book/
-
-# Compiled paper PDFs sit next to .tex sources (regenerable via latexmk).
-# Source-of-truth is the .tex; PDFs are build artifacts.
-docs/papers/*.pdf
-!docs/papers/PAPER_GSTAR_INTRODUCTION.pdf
-!docs/papers/PAPER_GSTAR_FTD_BRIDGE.pdf
-dissemination/papers/*.pdf
-!dissemination/papers/PAPER_FTD_AS_WILSONIAN_EFT.pdf
-dissemination/manuscript_v2/src/*.pdf
-
-# Generated publication figures in docs/papers/figures/ (older staging dir).
-# The src/figures/ sibling is already covered by lines 57–58.
-docs/papers/figures/*.png
-docs/papers/figures/*.pdf
-
-# Engine campaign result subtrees. The rule on line 159 already blocks NEW
-# subdirs; this de-tracks previously force-added campaign output. Recipes
-# are locked via pre-registration git tags (see REF_PREREGISTER_MANIFEST.md).
-engine/results/**/*.csv
-engine/results/**/*.json
-engine/results/**/*.log
 
 # Scripts result artifacts (regenerable from each generator script).
 scripts/exploration/results/*.csv
@@ -428,10 +287,10 @@ scripts/visualization/results/3d_models/
 # Ignore all dotfiles (private/hidden files)
 .*
 # Keep Git tracking configuration active
-!.gitignore
 !.gitattributes
 !.github/
 !.githooks/
 
 # Ignore run_wsl.sh script
 run_wsl.sh
+.gitignore
