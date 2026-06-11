@@ -77,7 +77,7 @@ particle's volumetric signature when rendered:
 - **proton/neutron** — composite color-triplet seed (already implemented in s0-seed-proton-l4)
 - **W/Z/H** — high-amplitude unstable seed; decays within ~tens of ticks
 - **π⁰** — neutral 2-component oscillator that couples to the EM channel; decays to 2γ radiating outward
-- **K±** — pion-style injector with elevated amplitude. The FTD-0110 cluster-size↔mass map (`A = 2·√(m/m_e)`) gives the K-amplitude. **[PARAMETRIC]**: the kaon mass itself is not derived in FTD; the amplitude is set to reproduce the observed mass via the FTD-0110 map.
+- **K±** — pion-style injector with elevated amplitude. The FTD-0110 cluster-sizemass map (`A = 2·√(m/m_e)`) gives the K-amplitude. **[PARAMETRIC]**: the kaon mass itself is not derived in FTD; the amplitude is set to reproduce the observed mass via the FTD-0110 map.
 
 The "shape" the user sees is whatever the engine produces — the existing
 volumetric flux/charge density renderer is the answer. Atlas does not

@@ -17,7 +17,7 @@ mirror for the deployed WASM path) — verdicts cite `file:line`, not names.
 **WASM bridge → C++ scenarios** (`engine/src/scenarios/*.cpp`) for everything
 *except* `flux-*`, which always runs on the JS flux mock / worker
 (`shouldUseFluxMock`, `scenario-loader.js:70-78`: `flux-*` → mock; all others →
-WASM when the WASM bridge has a flux volume, mock only as fallback). JS↔C++
+WASM when the WASM bridge has a flux volume, mock only as fallback). JSC++
 parity is guarded (97 = 97 registry/JS, 96 C++ + 1 legacy). So a **JS-only** bug
 is latent (fallback path only); a defect in **both** JS and C++ ships.
 

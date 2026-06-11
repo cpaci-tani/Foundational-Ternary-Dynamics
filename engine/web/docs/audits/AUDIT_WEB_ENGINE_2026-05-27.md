@@ -28,7 +28,7 @@ by path only.
 | # | Ticket | File:line |
 |---|---|---|
 | P0-1 | Scale 4 uses lattice `G_N = 0.01` for heliocentric AU·M_sun·yr scenarios → Earth year wrong by factor ~63×. `G_HELIOCENTRIC = 4π²` exists in `constants.js:275` and is never imported. | `bridge/mock-scale4.js:35,66` |
-| P0-2 | `PROTON_RATIO` formula drift JS ↔ C++. JS (canonical, FTD-0016): `N_eff/α + N_base·N_eff + N_c ≈ 1836.47`. C++ + `proof_complete_sm.py`: pre-F9 wrong formula ≈ 3520 (1.91× too large). `engine/tests/campaign_triad_binding.cpp:154-159` will silently fail. | JS `constants.js:101` vs C++ `engine/include/ftd/ontic/particle_masses.h:52-55` |
+| P0-2 | `PROTON_RATIO` formula drift JS  C++. JS (canonical, FTD-0016): `N_eff/α + N_base·N_eff + N_c ≈ 1836.47`. C++ + `proof_complete_sm.py`: pre-F9 wrong formula ≈ 3520 (1.91× too large). `engine/tests/campaign_triad_binding.cpp:154-159` will silently fail. | JS `constants.js:101` vs C++ `engine/include/ftd/ontic/particle_masses.h:52-55` |
 | P0-3 | Telemetry hub Hubble key mismatch — Scale-5 emits `hubbleParameter`, hub reads `hubble`/`hubbleParam`. `csHubble` ring buffer is dead-on-arrival. | `telemetry-hub.js:324` vs `bridge/mock-scale5.js:307` |
 | P0-4 | `WebSocketBridge` has no `bridge.capabilities` getter installed; `installCapabilityGetter` is only mounted on Mock + Wasm prototypes. `scales/scale0/runtime/tick.js:19` will throw `TypeError` on native-GPU mode. | `ws-bridge.js` (missing surface) + `bridge-init.js:36-37` |
 | P0-5 | Scale 4 `setInterval` captures `ctx.running` from snapshot — planetary mode cannot be paused after load. | `scales/scale4/controller.js:65-88` |
@@ -40,7 +40,7 @@ by path only.
 | P0-11 | Scale 2 `Electron B.E.` tooltip says "Slater-shielded hydrogenic orbitals"; implementation is Thomas-Fermi `−20.93·Z^(7/3) eV`. | `definitions.js:214` vs `atomic-energy.js:143-146` |
 | P0-12 | Scale 3 acetylene central C–C distance 4.0 exceeds the auto-bond threshold 2.64 — the advertised "C≡C triple bond" never forms. | `molecules.js:267`, threshold at `bridge/mock-atom-engine.js:409` |
 | P0-13 | Scale 3 auto-bonding writes `order: 1` unconditionally. Every double / triple / aromatic bond renders as a single line: O₂, N₂, CO₂, ethylene, acetylene, carbonyls, benzene. Molecule panel strings advertise the multi-orders verbatim. | `bridge/mock-atom-engine.js:413-414`, renderer at `viewport/molecular-renderer.js:215` |
-| P0-14 | Retired `x₋ ↔ N_c` identification (FTD-0014 RETIRED per Cleanup Taxonomy v1.4 §5, removed in commit `ca7eb61`) still surfaces in the Ontic-Chain panel and the canonical constants file. | `ui/app-ontic.js:111`, `constants.js:42` |
+| P0-14 | Retired `x₋  N_c` identification (FTD-0014 RETIRED per Cleanup Taxonomy v1.4 §5, removed in commit `ca7eb61`) still surfaces in the Ontic-Chain panel and the canonical constants file. | `ui/app-ontic.js:111`, `constants.js:42` |
 | P0-15 | `constants.js` tags `Omega_Lambda = 2/3`, `DM_FRACTION = 17/27`, `BARYON_FRACTION = 10/27`, and `GAMMA_ADIABATIC = 5/3` as `[THEOREM]`. The FAQ honestly tags Ω_Λ as `[PARAMETRIC]` and 17/27 as `[SELECTION]` with the "does not match Planck 2018" still-open. Internal dashboard contradiction. | `constants.js:430-439` vs `ui/components/faq/data.js:124,147` |
 | P0-16 | Born rule scenario description tagged `[THEOREM]`; FAQ tags the same claim `[SELECTION]` with explicit "10× lattice bias unaccounted for" caveat. | `config/scenarios.js:10` vs `ui/components/faq/data.js:57` |
 | P0-17 | Scale 6 BCC/FCC sublattice labeling swapped. Per-site `userData.sublattice` is computed from coord-sum parity (`'BCC'` if even, `'FCC'` if odd), but Moore Layer Theorem §4 says the canonical mapping is shell-based (octahedron = SC, cuboctahedron = FCC, cube corners = BCC). Cube corners are therefore mislabeled `'FCC'`. | `meta-unit.js:150` vs `docs/theory/08_structural/THEOREM_MOORE_LAYER_DECOMPOSITION.md §4` |
@@ -80,7 +80,7 @@ by path only.
 | P2-4 | `Genesis Iso` and `DM Halo` Scale 0 overlays are near-identical fluxMag scans (one gates `mag < K_GENESIS`, the other `\|mag − K_GENESIS\| < band`). Merge into one parametrized shell-scan. | `viewport/field-renderer.js:1423-1463, 1591-1631` |
 | P2-5 | Scale 6 split-brain naming: controller at `scales/scale6/`, toolbar at `scales/scale12/ui/`. Class is `Scale6LifecycleController`, CSS class is `.scale12-only`, registry key is `'12'`. Pick one number or rename to `MetaLifecycleController` + drop the numeric key. | `scales/scale6/` + `scales/scale12/ui/` |
 | P2-6 | `ALPHA_S` name collision inside C++: `constants.h:219` ships `ALPHA_S = 1.0` (lattice imposed), `gauge_couplings.h:145` ships `ALPHA_S_MZ = 7/59`. Mirror JS resolution — rename to `ALPHA_S_LATTICE`. | C++ engine headers |
-| P2-7 | JS `STRONG_*` block ↔ C++ `COLOR_*` block: values match, names disagree. Add C++ aliases or rename JS. | `constants.js:327-334` vs `engine/include/ftd/constants.h:219,228` + `constants_gpu.cuh:14-17` |
+| P2-7 | JS `STRONG_*` block  C++ `COLOR_*` block: values match, names disagree. Add C++ aliases or rename JS. | `constants.js:327-334` vs `engine/include/ftd/constants.h:219,228` + `constants_gpu.cuh:14-17` |
 | P2-8 | `OMEGA_LAMBDA` JS vs `OMEGA_LAMBDA_CONJ` C++ name drift. The `_CONJ` suffix in C++ (post 2026-05-08 audit) marks `[CONJECTURE]` status; JS dropped it. Either add `_CONJ` to JS export or expose `using` alias in C++. | JS `constants.js:431` vs C++ `master_quadratic.h:135` |
 | P2-9 | Scale 0 hardcoded `kGen = 1.533` (`field-renderer.js:1429`) — should import `K_GENESIS`. Confinement-string magic number `J2_threshold_dist2 = 120` is unmotivated. Bare `1/3`, `1/6` Laplacian weights (`mock-lattice-samplers.js:390`) should import `LAPLACIAN_FACE_WEIGHT`, `LAPLACIAN_EDGE_WEIGHT`. | per cell |
 | P2-10 | `createListenerBag`, `throttleBySize` exported by `scales/scale-utils.js` with zero importers (superseded by `BaseLifecycleController.bindEvent`). Delete. | `scales/scale-utils.js:102-108, 161-184` |
@@ -214,11 +214,11 @@ standard pedagogy). See §B for removals, §C for keepers needing correction.
 | Scale 6 BCC/FCC sublattice labels | Coord-sum parity (cube corners labeled FCC) | Moore Layer Theorem §4: octahedron=SC, cuboctahedron=FCC, cube corners=BCC. Either rename userData field to `parityClass` (acknowledge it's a parity partition) or fix mapping to shell-based. | `meta-unit.js:150` |
 | Scale 6 gerade/ungerade labels | "first nonzero coord positive" heuristic colors antipodal half-orbits | The visual 13+13 split is correct as inversion fundamental domain, but it is not g/u irrep parity. Rename `'gerade'/'ungerade'` to `'orbit_rep'/'antipode'`. | `meta-unit.js:74-85,407,25-26` |
 | Scale 6 per-shell irrep labels | `oct = T_1u`, `cuboct = T_2g + E_g`, `cube = A_2u + T_1u` | Incomplete decompositions: 6-site orbit = A_1g ⊕ E_g ⊕ T_1u (dim 6); 12-site orbit decomposes into 6 irreps; 8-site orbit = A_1g ⊕ A_2u ⊕ T_2g ⊕ T_1u (dim 8). Either give full decomposition or link to FTD-0110 character-table derivation. | `meta-unit.js:95-100` vs `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md §2.1` |
-| Retired `x₋ ↔ N_c` row | Surfaced in Ontic Chain panel as "x₋ ≈ N_c (color charges)" | FTD-0014 RETIRED per Cleanup Taxonomy v1.4 §5. Either remove row or restate as "mathematical root of master quadratic; identification with N_c is RETIRED". | `ui/app-ontic.js:111`, `constants.js:42` |
+| Retired `x₋  N_c` row | Surfaced in Ontic Chain panel as "x₋ ≈ N_c (color charges)" | FTD-0014 RETIRED per Cleanup Taxonomy v1.4 §5. Either remove row or restate as "mathematical root of master quadratic; identification with N_c is RETIRED". | `ui/app-ontic.js:111`, `constants.js:42` |
 | `[THEOREM]` overclaims in `constants.js` | Ω_Λ = 2/3, DM 17/27, baryon 10/27, γ = 5/3 all tagged `[THEOREM]` | FAQ tags Ω_Λ as `[PARAMETRIC]` and 17/27 as `[SELECTION]` with still-open "doesn't match Planck 2018". Internal contradiction. Match the FAQ. | `constants.js:430-439` |
 | Born rule `[THEOREM]` | scenario description claim | FAQ tags it `[SELECTION]` with "10× lattice bias unaccounted". Downgrade scenarios.js to match. | `config/scenarios.js:10` vs `ui/components/faq/data.js:57` |
 | SU(3) identification `[THEOREM]` | Scenario claim | The factorization is `[THEOREM]`; the *identification with SM strong-force gauge group* is `[SELECTION]`, as U(1) and SU(2) entries in the same scenario correctly tag. Match U(1)/SU(2). | `config/scenarios.js:260` vs `:244,252` |
-| `[THEOREM]` header in constants.js | "[THEOREM] Values are taken from the C++ ontic.h derivation chain … all physics" | Chain is `[THEOREM]` only up to `x_+`; downstream of `x_+ ↔ 1/α` is `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013). Strip blanket tag. | `constants.js:5` |
+| `[THEOREM]` header in constants.js | "[THEOREM] Values are taken from the C++ ontic.h derivation chain … all physics" | Chain is `[THEOREM]` only up to `x_+`; downstream of `x_+  1/α` is `[STRONGLY MOTIVATED CONJECTURE]` (FTD-0013). Strip blanket tag. | `constants.js:5` |
 | Mass closed-form `[THEOREM]` tags | `m_e`, m_μ/m_e, m_τ/m_e, m_p/m_e all `[THEOREM]` in scenario table | These are value-level identifications inheriting FTD-0013 `[STRONGLY MOTIVATED CONJECTURE]`. Also update `m_e` error 0.27% → 0.19% (CLAUDE.md). | `config/scenarios.js:56,74,84,229` |
 | Higgs self-coupling `[DERIVED]` | `λ_H = m_H²/(2v²) ≈ 0.129` | SM tree-level formula filled with FTD m_H — pure parametric insertion. Retag `[PARAMETRIC]`. | `config/scenarios.js:105` |
 | Thomas-Fermi `[DERIVED]` | "Standard derivation: integrate the Thomas-Fermi electron density …" | Standard Lieb–Simon TF theory; no FTD axiom enters. Retag `[IMPOSED]` or `[EXTERNAL]`. | `constants.js:393-398` |
@@ -242,9 +242,9 @@ Cross-cutting (sorted by LOC delta × confidence / risk):
 | D-6 | Centralize `MAX_PARTICLES`, `MAX_FIELD_GRID`, `VOXEL_CENTER_OFFSET` into `viewport/constants.js` (declared 4× in viewport modules) | viewport.js + 3 sub-renderers + new constants file | ±0 LOC, eliminates drift risk | Low |
 | D-7 | Split p1-observables-panel.js (1396 LOC) by section (Coulomb, Hydrogen, Bell, Gravity, g−2) into 5 children + thin parent; same pattern for flux-slice-panel.js (1117 LOC) | scales/scale0/ui/overlays/ | 0 net, ≤300 LOC each | Med |
 | D-8 | Sub-renderer split of field-renderer.js (2311 LOC) by mesh family — Force / Quantum / Cosmic sub-renderers | viewport/field-renderer.js → 3-4 children | 0 net, ~700 LOC each | High (defer until visual-regression harness) |
-| D-9 | Consolidate JS `STRONG_*` ↔ C++ `COLOR_*` naming. Add C++ alias block or rename JS. Resolves P2-7. | engine/include/ftd/constants.h, constants_gpu.cuh | Small | Low |
+| D-9 | Consolidate JS `STRONG_*`  C++ `COLOR_*` naming. Add C++ alias block or rename JS. Resolves P2-7. | engine/include/ftd/constants.h, constants_gpu.cuh | Small | Low |
 | D-10 | Three bridge facades — install `capabilities` getter on `WebSocketBridge` (resolves P0-4). Optionally extract `BridgeBase` for shared contract enforcement. | bridge/{mock,wasm,bridge-factory-dag,bridge-contract}.js, ws-bridge.js | +20 / −0 | Med |
-| D-11 | Promote AE WASM check from hardcoded false (`wasm-bridge.js:625-629`) to a binding-availability probe (resolves P1-2). | bridge/wasm-bridge.js + the JS↔WASM scale-conversion shim | +50 to fully port AE; small to enable probe | Med-High |
+| D-11 | Promote AE WASM check from hardcoded false (`wasm-bridge.js:625-629`) to a binding-availability probe (resolves P1-2). | bridge/wasm-bridge.js + the JSWASM scale-conversion shim | +50 to fully port AE; small to enable probe | Med-High |
 | D-12 | Delete `Scale1LifecycleController` empty stub (forwards `destroy` only; class wrapper without value) | scales/scale1/controller.js:103-131 | −20 | Low |
 | D-13 | Strip `-dag.js` suffix on next touch — `app.js`, `bridge-init.js`, `bridge/bridge-factory.js` (DAG sibling no longer exists) | 3 file renames + ~30 import updates | 0 net | Low |
 | D-14 | Scale 6 directory naming — consolidate `scale6/` controller + `scale12/` toolbar under one numeric key; rename class `Scale6LifecycleController` → `MetaLifecycleController` | scales/scale6/, scales/scale12/, css scale12-only class, index.html | Small | Low |
@@ -290,7 +290,7 @@ Cross-cutting (sorted by LOC delta × confidence / risk):
 | `MountToggleComponent` adds 3 listeners (root click, window keydown, window resize) with no destroy method — re-mounting double-binds | `ui/components/panel-dock/mount-toggle.js:75-77` |
 | Four Scale 0 panels (`p1-observables`, `conservation-micropanel`, `spectrum`, `flux-slice`) have `dispose()` but never called on engineMode switch — keep ticking against lattice bridge in non-lattice scales | `scales/scale0/ui/overlays/*` |
 
-### Tooltip ↔ DOM matchers
+### Tooltip  DOM matchers
 
 | Issue | File:line |
 |---|---|
@@ -354,7 +354,7 @@ JS / C++ / Python ontic chain (-1 through Layer 7) is in lockstep. Drift surface
 - **P0:** `PROTON_RATIO` formula — JS uses canonical FTD-0016 (`N_eff/α + N_base·N_eff + N_c ≈ 1836.47`); C++ + `proof_complete_sm.py:190` ship pre-F9 wrong formula (~3520). `engine/tests/campaign_triad_binding.cpp:154-159` checks against 1836.15 → guaranteed failure. JS comment at `constants.js:99-100` documents the bad formula but the bad formula still ships in C++/Py.
 - **P1:** `X_MINUS_PRECISION` (C++ `master_quadratic.h:80`) missing in JS + Py. Any `1/X_MINUS` derived quantity drifts at the 6th digit relative to C++.
 - **P1:** `ALPHA_S` collision inside C++: `constants.h:219` = 1.0 (lattice imposed) vs `gauge_couplings.h:145` = 7/59 (M_Z scale). JS resolves with `STRONG_ALPHA_S` vs `ALPHA_S_MZ`; mirror this in C++.
-- **P1:** `STRONG_*` JS ↔ `COLOR_*` C++ — values match, names disagree.
+- **P1:** `STRONG_*` JS  `COLOR_*` C++ — values match, names disagree.
 - **P2:** `OMEGA_LAMBDA` JS vs `OMEGA_LAMBDA_CONJ` C++ — `_CONJ` suffix in C++ marks `[CONJECTURE]`; JS dropped it.
 - **P2:** JS Layer-8 (reference frame context) constants `PHI`, `K_NOETIC`, etc. exist in C++ + Py but not JS; JS Layer-9 cosmic constants (DM_FRACTION, BARYON_FRACTION, GAMMA_ADIABATIC) exist in JS + C++ but not Py.
 
@@ -447,7 +447,7 @@ H-12. **`G_N` framework-integer reading status surfacing.** The FAQ entry on FTD
 - FAQ at `ui/components/faq/data.js` is the most epistemically honest text surface in the codebase. Drift sits in `constants.js` JSDoc tags, `app-ontic.js` panel labels, and `config/scenarios.js` `[THEOREM]` overclaims — not in the FAQ.
 - `BaseLifecycleController` (`lifecycle.js`) handles listener/timer/Three.js-dispose recursion cleanly; Scale 4/5/6 use it well (modulo the camera-restore gap).
 - Scale 11 deletion confirmed clean across JS source. Doc and test-helper references are stale (P2-13).
-- `engine/web/tests/scenario-parity.spec.js` is the right regression gate for JS↔C++ scenario drift and is passing.
+- `engine/web/tests/scenario-parity.spec.js` is the right regression gate for JSC++ scenario drift and is passing.
 - No occurrence of retracted "1.23×" Phase-F or "160× QED β" claims in the web codebase (positive audit result).
 - Cleanup of the pre-F9 `PROTON_RATIO` formula is complete on the JS side; remaining work is to propagate the same fix to C++ + `proof_complete_sm.py`.
 

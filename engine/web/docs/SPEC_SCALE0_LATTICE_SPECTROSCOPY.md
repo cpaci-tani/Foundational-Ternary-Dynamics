@@ -27,7 +27,7 @@ content came from `onticPanel.updateHierarchyPanel`). Removal scope:
   handler `handlePanelActivated`), the `case 'hierarchy'` in `diagnostics.js`, and the
   `onticPanel.updateHierarchyPanel` definition (app-ontic / ontic-observatory) if unused elsewhere.
 - `panel-resources` template hierarchy content (if any).
-- Tests: `validatePanelRegistry` stays green (it cross-checks registry↔DOM, so both sides must drop
+- Tests: `validatePanelRegistry` stays green (it cross-checks registryDOM, so both sides must drop
   together); update `scales.spec.js` / any spec asserting the hierarchy tab.
 
 **Guard:** after removal, `validatePanelRegistry(panelArea)` must return `ok:true` (no registry entry
@@ -74,7 +74,7 @@ E(k) vs k. This is the standard turbulence-style energy spectrum (Parseval ⇒ �
 **Self-validation (the science check).** With the unitary normalization, `Σ_k E(k)` must equal
 `Σ_x |J(x)|²` (Parseval) which ties to the audit's `fieldEnergy` (= ½Σ|J|² over the same support). The
 panel computes the ratio `ΣE(k) / (2·fieldEnergy)` and displays it as a **consistency check** (≈1.00 ⇒
-the instrument is correct); a drift flags a bug or a support/scaling mismatch. Tag **[M↔D]**.
+the instrument is correct); a drift flags a bug or a support/scaling mismatch. Tag **[MD]**.
 
 **Derived readouts** under the plot:
 - **Peak mode k\*** = argmaxₖ E(k); **dominant wavelength λ\* = 2π/k\*** (in voxels). **[D]**

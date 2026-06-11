@@ -43,7 +43,7 @@ don't construct a bridge and therefore have no banner — that's expected.
 ## Status by Pillar (per CLAUDE.md framing)
 
 - **Pillar 1 (Lorentz invariance):** PASS — anisotropy 0.0000%, matched-Poisson <1e-8, Ward identities OK
-- **Pillar 2 (β-function):** PASS smoke — β = −4.28 with reproducible seeds (note: smoke parameters T=0.005, γ=0.01, single L-pair 16↔32)
+- **Pillar 2 (β-function):** PASS smoke — β = −4.28 with reproducible seeds (note: smoke parameters T=0.005, γ=0.01, single L-pair 1632)
 - **Pillar 3 (Einstein/GR):** PASS — energy conservation, Lorentz contraction, gravitational redshift all detected
 - **Pillar 4 (Wigner/discrete-symmetry):** PASS — octahedral 6-axis isotropy 9 ppm, parity, CPT 0.3 ppm
 - **Pillar 5 (Operator-basis spectrum):** PARTIAL PASS — JJ relevant operator matches naive Δ=2 → measured 0.5 (4× consistent with diffusive scaling rather than relativistic); 4 of 6 operators give valid R²>0.5 fits at L=32

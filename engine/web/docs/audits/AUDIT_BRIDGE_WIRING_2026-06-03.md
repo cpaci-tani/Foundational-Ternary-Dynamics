@@ -1,4 +1,4 @@
-# FTD Web Engine — Scale-0 Bridge↔UI Wiring Audit (2026-06-03)
+# FTD Web Engine — Scale-0 BridgeUI Wiring Audit (2026-06-03)
 
 Focused audit of the Scale-0 bridge read-surface after the WASM64 + worker-physics
 upgrade (`38c2bb63`) and the cross-origin-isolation enablement that followed
@@ -66,18 +66,18 @@ fluxMock is the `MockBridgeProxy`.
 
 | Consumer (file:line) | Method | Access | Worker status | Tier |
 |---|---|---|---|---|
-| `scales/scale0/runtime/field-overlays.js:51-87` | all field samplers | Capability | ✅ works (shadow/SAB) | — |
-| `telemetry-hub.js:164` `collectScale0` | `getScale0Diagnostics` | Capability (proxy overrides → `_lastDiag`) | ✅ works | — |
-| `telemetry-hub.js:201/256` audit+Lagrangian | `getScale0EnergyAudit` / `getScale0Lagrangian` | Capability → shadow | ⚠️ field terms live; **particle terms empty** (shadow `_particles=[]`) | 2 |
-| `scales/scale0/ui/overlays/flux-slice-panel.js:91/101/111/121` | `getEFieldSampled` / `getBFieldSampled` / `getPoyntingSampled` / `getDivJSampled` | **Direct** (`?.`) | ❌ **blank |E| |B| |S| ∇·J slices** | 1 |
-| `scales/scale0/ui/overlays/spectrum-panel.js:88` | `getScale0ParticleList` | **Direct** (`?.`) | ❌ empty spectrum | 2 |
-| `scales/scale0/ui/overlays/p1-observables-panel.js:780` | `getLatencySampled` | **Direct** (`?.`) | ❌ empty (graceful) | 1 |
-| `p1-observables-panel.js:1084/1262/1302/1327` | `getScale0ParticleList` | **Direct** (`?.`) | ❌ empty particle reads | 2 |
-| `physics/physics-harness.js:107/117` | `getEnergyAudit` | **Direct** (`?.`) | ❌ null (graceful) | 1/2 |
-| `physics/physics-harness.js:138` | `getScale0ParticleList` | **Direct** (`?.`) | ❌ empty | 2 |
-| `physics/physics-harness.js:167/172/177` | `getEFieldSampled` / `getBFieldSampled` / `getLatencySampled` | **Direct** (`?.`) | ❌ empty (graceful) | 1 |
-| `physics/physics-harness.js:201` | `getEFieldSampled(1)` | **Direct** (`typeof` guard at :200) | ❌ null before fix (guard short-circuits) | 1 |
-| `inspector/scales/lattice.js:102` | `getForceAt` | **Direct** (`typeof` guard) | ❌ no force (guarded) | 2 |
+| `scales/scale0/runtime/field-overlays.js:51-87` | all field samplers | Capability |  works (shadow/SAB) | — |
+| `telemetry-hub.js:164` `collectScale0` | `getScale0Diagnostics` | Capability (proxy overrides → `_lastDiag`) |  works | — |
+| `telemetry-hub.js:201/256` audit+Lagrangian | `getScale0EnergyAudit` / `getScale0Lagrangian` | Capability → shadow |  field terms live; **particle terms empty** (shadow `_particles=[]`) | 2 |
+| `scales/scale0/ui/overlays/flux-slice-panel.js:91/101/111/121` | `getEFieldSampled` / `getBFieldSampled` / `getPoyntingSampled` / `getDivJSampled` | **Direct** (`?.`) |  **blank |E| |B| |S| ∇·J slices** | 1 |
+| `scales/scale0/ui/overlays/spectrum-panel.js:88` | `getScale0ParticleList` | **Direct** (`?.`) |  empty spectrum | 2 |
+| `scales/scale0/ui/overlays/p1-observables-panel.js:780` | `getLatencySampled` | **Direct** (`?.`) |  empty (graceful) | 1 |
+| `p1-observables-panel.js:1084/1262/1302/1327` | `getScale0ParticleList` | **Direct** (`?.`) |  empty particle reads | 2 |
+| `physics/physics-harness.js:107/117` | `getEnergyAudit` | **Direct** (`?.`) |  null (graceful) | 1/2 |
+| `physics/physics-harness.js:138` | `getScale0ParticleList` | **Direct** (`?.`) |  empty | 2 |
+| `physics/physics-harness.js:167/172/177` | `getEFieldSampled` / `getBFieldSampled` / `getLatencySampled` | **Direct** (`?.`) |  empty (graceful) | 1 |
+| `physics/physics-harness.js:201` | `getEFieldSampled(1)` | **Direct** (`typeof` guard at :200) |  null before fix (guard short-circuits) | 1 |
+| `inspector/scales/lattice.js:102` | `getForceAt` | **Direct** (`typeof` guard) |  no force (guarded) | 2 |
 
 **Tier 1 (field/flux/state-derived):** computable on the shadow straight from the
 SAB buffers → fixable by forwarding the direct read to `this._shadow`.

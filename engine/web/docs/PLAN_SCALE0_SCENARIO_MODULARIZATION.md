@@ -49,14 +49,14 @@ is committed so the resize-guard spec stays green.
 
 | Ticket | Closes | Change | LOC | Risk |
 |---|---|---|---|---|
-| **T1.1** | `B5` | Broaden the parity registry extractor (`scenario-parity.spec.js:112-123`) to also match custom-literal `id:` entries; add a **registry↔metadata** coverage assertion (every registry id either has metadata or is on an explicit "no-metadata-by-design" allowlist). | ~25 | Low |
+| **T1.1** | `B5` | Broaden the parity registry extractor (`scenario-parity.spec.js:112-123`) to also match custom-literal `id:` entries; add a **registrymetadata** coverage assertion (every registry id either has metadata or is on an explicit "no-metadata-by-design" allowlist). | ~25 | Low |
 | **T1.2** | `B1` | Add a lockstep test: the overlay capture/restore set must equal `store.js` `FIELD_TOGGLE_KEYS` (catches the next B1-class drift). Pairs with T0.2. | ~15 | Low |
 | **T1.3** | `C5` | Invoke `validateScale0ScenarioRegistry()` — a dev-mode `console.warn` at boot **and** a one-line unit assertion in the Playwright suite. | ~8 | Low |
 | **T1.4** | `C3` | Collapse the dual injection surface: have the dispatcher's no-harness fallback (`index.js:70-84`) construct/borrow a `PhysicsHarness` instead of an ad-hoc literal, so the seed API is defined once. | ~−15 | Med |
 | **T1.5** | `B6` | Decide metadata policy: either a coverage lint (warn on registry scenarios without metadata) or an explicit "metadata = s0-seed/quantum only" declaration documented in the SPEC. (Cheap either way; pick one.) | ~10 | Low |
 
-Exit criterion for Tier 1: **no silent cross-layer drift is possible** — every edge (JS↔C++,
-registry↔JS, registry↔metadata, overlay-set↔canonical-keys) is guarded by a test that fails on
+Exit criterion for Tier 1: **no silent cross-layer drift is possible** — every edge (JSC++,
+registryJS, registrymetadata, overlay-setcanonical-keys) is guarded by a test that fails on
 divergence.
 
 ---
@@ -79,14 +79,14 @@ T2.1 is the high-value slice; T2.2/T2.3 are the comprehensive end-state.
 
 ```
 T0.1 (regression) ─┐
-T0.2 ──────────────┼─▶ T1.2 (lockstep test depends on T0.2's single map)
+T0.2 ──────────────┼─ T1.2 (lockstep test depends on T0.2's single map)
 T0.3, T0.4 ────────┘
 T1.1, T1.3, T1.5 ── independent (any order)
 T1.4 ───────────── independent
             (Tier 1 complete: all edges guarded)
                      │
                      ▼  evidence check: still painful?
-T2.1 ────────────▶ T2.3 ────────────▶ T2.2 (only if justified)
+T2.1 ──────────── T2.3 ──────────── T2.2 (only if justified)
 ```
 
 Land each ticket as its own small, revertable commit (the engine's post-`cccb38f` safety posture,

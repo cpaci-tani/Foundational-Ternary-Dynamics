@@ -184,7 +184,7 @@ closure + 30-file cleanup.
 - (b) Amp scan at L=64 full physics (31 amplitudes): two stability islands
   at A∈{9.0–9.5} (n∈{20,23}, pure-R, matter:anti≈7:3) and A=13.0 (n=34,
   matter:anti=25:9≈7:3) embedded between flooding regimes filling ~90% of
-  the lattice. F1 hazard around A=13↔N_eff=13 explicitly flagged.
+  the lattice. F1 hazard around A=13N_eff=13 explicitly flagged.
 - (c) Toggle bisection at L=32 (15 configs): clean attribution map.
   pair_production and strong_force DECAY in isolation, SUSTAIN/DAMP under
   full physics. Toggle interactions are non-linear; "sum greater than
@@ -260,7 +260,7 @@ Both ingredients (G* and N_base²) are intrinsically 3D-volumetric.
 explores three readings of 16 = N_base²:
 
 - Reading 1 (SC + BCC interpenetrating): REDUCES to standard 27-block
-- Reading 2 (real ↔ reciprocal duality): suggestive
+- Reading 2 (real  reciprocal duality): suggestive
 - **Reading 3 (|Aut(E × E)| product variety): CLEANEST** — connects
   Theorems 3, 4, 8 into unified picture
 
@@ -403,7 +403,7 @@ Eight sub-questions Q1-Q8 closed across 6 commits:
   threshold v_th ≈ 6.62% c_lat at L=16.
 
 - **FTD-0116 [CLOSED NEGATIVE]:** "Z_FTD = G\*²" hypothesis floated
-  and falsified. Initially the Q4 examination of `1/(2π) ↔ G\*` reading
+  and falsified. Initially the Q4 examination of `1/(2π)  G\*` reading
   was over-aggressively closed; collaborator pushback reopened it as a
   [HYPOTHESIS] reading G\*² as the FTD lattice Z-factor analog. Q4a
   numerical test (proof_z_factor_q4a.py at L ∈ {8,16,32,64,96,128})
@@ -509,7 +509,7 @@ Verification suite C1–C4 all PASS in
 `scripts/exploration/verify_k_derivation_2026-04-28.py`. New theory doc:
 `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`.
 
-The full cluster-↔-mass identification (FTD-0110 main claim) remains
+The full cluster--mass identification (FTD-0110 main claim) remains
 **[STRONGLY MOTIVATED CONJECTURE]** for the nonlinear-engine regime —
 the linear→nonlinear bridge isn't formally proved, but the empirical
 5/5-seed × 11-amplitude × 5-SM-particle cross-check holds to ~5% across
@@ -1366,13 +1366,13 @@ in ≤5 words; every file ≤1000 LOC (excluding data catalogs).
 
 ### Verification
 
-- ✅ `cmake --build engine/build --config Release` — clean, all 155 C++ tests compile
-- ✅ `emmake cmake --build engine/build_wasm --target ftd_wasm` — 357 KB deployed to `engine/web/wasm/`
-- ✅ `pytest scripts/tests/` (ex-comprehensive): **85/85 pass** in 2.25s
-- ✅ `wasm-scenario-coverage.spec.js`: **44/44 pass**
-- ✅ `scenario-parity.spec.js`: **5/5 pass**
-- ✅ `animation-clock-freeze.spec.js`: **1/1 pass**
-- ⚠️ 22 Playwright failures (panel-mount + playback-smoke + scales tooltip)
+-  `cmake --build engine/build --config Release` — clean, all 155 C++ tests compile
+-  `emmake cmake --build engine/build_wasm --target ftd_wasm` — 357 KB deployed to `engine/web/wasm/`
+-  `pytest scripts/tests/` (ex-comprehensive): **85/85 pass** in 2.25s
+-  `wasm-scenario-coverage.spec.js`: **44/44 pass**
+-  `scenario-parity.spec.js`: **5/5 pass**
+-  `animation-clock-freeze.spec.js`: **1/1 pass**
+-  22 Playwright failures (panel-mount + playback-smoke + scales tooltip)
   verified **pre-existing** via git-stash A/B test — not regressions from
   this refactor.
 
@@ -1403,7 +1403,7 @@ After this refactor:
 Seven refactoring-analyst tickets landed across two sessions: audit-driven
 critical fixes, a second pass of extractions, and four follow-up tickets
 (RF-2/5/6/7) that consolidated remaining duplication and added a CI guard
-against JS↔WASM scenario drift.
+against JSWASM scenario drift.
 
 ### Audit-driven fixes
 
@@ -1433,8 +1433,8 @@ against JS↔WASM scenario drift.
 - **RF-7 template-rename codemod**: 30 renames across 10 files so every
   overlay/scrub-bar template file exports `get*Template` (matched majority).
 - **RF-5 scenario parity guard** (`engine/web/tests/scenario-parity.spec.js`):
-  5 Playwright assertions covering JS cases ↔ C++ branches, UI registry
-  entries ↔ JS implementations, and legacy ftd_wasm.cpp switch allowlist.
+  5 Playwright assertions covering JS cases  C++ branches, UI registry
+  entries  JS implementations, and legacy ftd_wasm.cpp switch allowlist.
   Inventory summary: UI=84, JS group files=84, C++ scenarios.cpp=83, shared=83.
   Any future drift now fails CI before reaching users.
 - **RF-6 WasmBridge guard consolidation**: added `_wasmCallOr(bridge, method,
@@ -1673,7 +1673,7 @@ metadata (verified by cross-diff). 7 C++ tests still green.
 
 ## Engine v2.14.2 — Callstack audit fixes (April 17, 2026)
 
-All 10 findings from the callstack audit ✅ resolved. Plus a new
+All 10 findings from the callstack audit  resolved. Plus a new
 verification test and the highest-severity finding (F2 — CPU-only
 no-op toggles) fully mitigated through CPU ports + runtime warnings.
 
@@ -1730,8 +1730,8 @@ moore_laplacian_isotropy, gamma_ftd_momentum, callstack_audit_fixes.
 
 ### Tracker update
 
-§1.10 (F2) now marked ✅ CLOSED. Callstack audit document updated with
-"STATUS: all 10 findings ✅ RESOLVED" banner at top.
+§1.10 (F2) now marked  CLOSED. Callstack audit document updated with
+"STATUS: all 10 findings  RESOLVED" banner at top.
 
 ## Engine v2.14.1 — Callstack audit (April 17, 2026)
 
@@ -1815,7 +1815,7 @@ The single genuine physics upgrade was **§1.2 γ_FTD momentum** — replacing a
 
 ### Doc updates
 
-- `TRACKER_OPEN_ITEMS.md`: 6 new ✅ CLOSED entries, Recently-Closed section reorganised, live count refreshed to ~202.
+- `TRACKER_OPEN_ITEMS.md`: 6 new  CLOSED entries, Recently-Closed section reorganised, live count refreshed to ~202.
 - `SPEC_ENGINE.md`: new summary banner + `phase_movement` and §719 clamp-discussion rewritten for γ_FTD integration.
 - `engine/README.md`: tick-cycle notes corrected (isotropy + leapfrog + γ-momentum).
 - `resources/cheatsheets/ENGINE_TICK_CYCLE.md`: phase 2 and phase 5 narratives updated.
@@ -1973,7 +1973,7 @@ honesty-sweep tests (leapfrog_integrator_audit,
 moore_laplacian_isotropy, particle_engine PE12).
 
 ### Tracker
-§1.5 marked ✅ CLOSED. **Three engine open items closed** today:
+§1.5 marked  CLOSED. **Three engine open items closed** today:
 §1.4 leapfrog (already symplectic), §1.8 Moore Laplacian (already
 isotropic), §1.5 α precision (now first-class in engine).
 
@@ -2025,7 +2025,7 @@ Results:
 - `engine/README.md` tick-cycle notes — rewritten.
 
 ### Tracker update
-§1.8 marked **✅ CLOSED 2026-04-17** with Taylor expansion and empirical
+§1.8 marked ** CLOSED 2026-04-17** with Taylor expansion and empirical
 evidence. Together with §1.4 (also closed), the wave-equation layer is
 now free of engine open items. **Next:** §1.5 ALPHA_PRECISION rollout
 (simple swap), then §1.2 γ_FTD momentum, then §1.7 GPU EnergyLedger.
@@ -2057,7 +2057,7 @@ Earlier "forward Euler" notes were corrected in:
 - `resources/cheatsheets/ENGINE_TICK_CYCLE.md` phase 2 integrator note.
 
 ### Tracker update
-`TRACKER_OPEN_ITEMS.md §1.4` marked **✅ CLOSED 2026-04-17** with the
+`TRACKER_OPEN_ITEMS.md §1.4` marked ** CLOSED 2026-04-17** with the
 evidence summary. Next engine item to tackle per the dependency graph:
 **§1.8 Moore-Laplacian anisotropy** (radial-symmetry benchmark), then
 **§1.5 ALPHA_PRECISION rollout**, then **§1.2 γ_FTD momentum**, then
@@ -2154,7 +2154,7 @@ up the EnergyLedger.
 
 ### Architecture consolidation
 - **`DagEngine` is now explicitly experimental.** Added a prominent
-  "⚠ EXPERIMENTAL — DO NOT USE IN PRODUCTION" banner to `dag_engine.h`
+  " EXPERIMENTAL — DO NOT USE IN PRODUCTION" banner to `dag_engine.h`
   explaining that `gauss_project` / `phase_forces` / `phase_movement`
   are stubs and the production path is `RenderBridge`. The class is
   kept because `SparseVoxelDAG` is useful future infrastructure for
@@ -3687,8 +3687,8 @@ Complete implementation and execution of the 5-Phase Verification Protocol defin
 
 | Metric | Value | Target | Status |
 |--------|-------|--------|--------|
-| Classical Bell S | 2.0 | ≤ 2.0 | ✅ PASS |
-| **Quantum Bell S** | **2.828427** | > 2.7 | ✅ **PASS** |
+| Classical Bell S | 2.0 | ≤ 2.0 |  PASS |
+| **Quantum Bell S** | **2.828427** | > 2.7 |  **PASS** |
 | Tsirelson Bound | 2√2 = 2.828... | — | **ACHIEVED** |
 
 The quantum Bell test implements the full Hilbert space tensor product formalism:
@@ -3735,10 +3735,10 @@ The quantum Bell test implements the full Hilbert space tensor product formalism
 
 | Law | Violation | Target | Status |
 |-----|-----------|--------|--------|
-| Charge | 0 | exact | ✅ PASS (exact) |
-| Energy (symplectic) | 14.3% oscillation | < 15% bounded | ✅ PASS |
-| Energy (damping>0) | Decreases | — | ✅ PASS |
-| Momentum | 4.7e-12 | < 10⁻⁶ | ✅ PASS |
+| Charge | 0 | exact |  PASS (exact) |
+| Energy (symplectic) | 14.3% oscillation | < 15% bounded |  PASS |
+| Energy (damping>0) | Decreases | — |  PASS |
+| Momentum | 4.7e-12 | < 10⁻⁶ |  PASS |
 
 Note: Symplectic integrators have **bounded** energy oscillation (doesn't accumulate),
 unlike non-symplectic integrators which show monotonic drift.
@@ -3747,10 +3747,10 @@ unlike non-symplectic integrators which show monotonic drift.
 
 | Test | Result | Details |
 |------|--------|---------|
-| Large lattice (64³) | ✅ PASS | 262,144 voxels, 3 MB, stable |
-| Long evolution (1000 ticks) | ✅ PASS | Bounded energy oscillation |
-| Parameter sensitivity | ✅ PASS | All CFL-safe values stable |
-| Boundary conditions | ✅ PASS | Periodic wrapping verified |
+| Large lattice (64³) |  PASS | 262,144 voxels, 3 MB, stable |
+| Long evolution (1000 ticks) |  PASS | Bounded energy oscillation |
+| Parameter sensitivity |  PASS | All CFL-safe values stable |
+| Boundary conditions |  PASS | Periodic wrapping verified |
 
 #### Significance
 
@@ -3763,8 +3763,8 @@ unlike non-symplectic integrators which show monotonic drift.
 
 | Claim | Previous | Current |
 |-------|----------|---------|
-| CLAIM.8 (Bell violations via sLoop) | SIMULATED | ⚠️ **[SELECTION]** — Three-level observer hierarchy verified (4/4 Monte Carlo). See DERIV_OBSERVER_BELL_MECHANISM.md. Previous "VERIFIED" label was overstated. |
-| OPEN.1 (Bell quantitative) | OPEN | ⚠️ **[SELECTION]** — Mechanism identified and numerically verified; not uniquely proven. Previous "VERIFIED" label was overstated. |
+| CLAIM.8 (Bell violations via sLoop) | SIMULATED |  **[SELECTION]** — Three-level observer hierarchy verified (4/4 Monte Carlo). See DERIV_OBSERVER_BELL_MECHANISM.md. Previous "VERIFIED" label was overstated. |
+| OPEN.1 (Bell quantitative) | OPEN |  **[SELECTION]** — Mechanism identified and numerically verified; not uniquely proven. Previous "VERIFIED" label was overstated. |
 
 ---
 
