@@ -63,6 +63,10 @@ class TimeSeriesChart {
         }
         ctx.clearRect(0, 0, w, h);
 
+        let totalCount = 0;
+        for (const t of this.traces) totalCount += t.count;
+        if (totalCount === 0) return;
+
         // Find global min/max across all traces
         let min = Infinity, max = -Infinity;
         for (const t of this.traces) {
@@ -111,6 +115,7 @@ class TimeSeriesChart {
 
     clear() {
         for (const t of this.traces) { t.head = 0; t.count = 0; }
+        this.draw();
     }
 }
 
@@ -473,7 +478,7 @@ export class PETelemetryPanel {
 
     _drawPhaseSpace() {
         const canvas = this._phaseCanvas;
-        if (!canvas || this._phaseBuf.length < 2) return;
+        if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
         const rect = this._phaseRectCache ? this._phaseRectCache.get() : canvas.getBoundingClientRect();
@@ -486,6 +491,8 @@ export class PETelemetryPanel {
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
         ctx.clearRect(0, 0, w, h);
+
+        if (this._phaseBuf.length < 2) return;
 
         const buf = this._phaseBuf;
         const n = buf.length;
@@ -555,6 +562,7 @@ export class PETelemetryPanel {
         this._initialMomentum = null;
         this._initialAngmom = null;
         this._phaseBuf.clear();
+        this._drawPhaseSpace();
         for (const s of Object.values(this._sparks)) s.clear();
         this._tsEnergy.clear();
         this._tsMomentum.clear();

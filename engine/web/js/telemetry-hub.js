@@ -78,6 +78,15 @@ export class TelemetryHub {
         this._prevWantAudit = false;
         this._prevWantLag = false;
 
+        // Last tick trackers for pause freezing
+        this._lastTick0 = -1;
+        this._lastAuditTick = -1;
+        this._lastLagTick = -1;
+        this._lastTick1 = -1;
+        this._lastTick1Ext = -1;
+        this._lastTick2 = -1;
+        this._lastTick5 = -1;
+
         // ── Scale 0 — Lattice / Flux ────────────────────
         // Core diagnostics (500-sample history)
         this.flux      = new RingBuffer(500);  // totalFlux
@@ -202,21 +211,26 @@ export class TelemetryHub {
 
         this.s0.diag = diag;
 
-        // 500-sample buffers for charts
-        this.flux.push(diag.totalFlux     || 0);
-        this.energy.push(diag.totalEnergy || 0);
-        this.manifested.push(diag.manifested || 0);
-        this.entropy.push(diag.entropy    || 0);
-        this.positive.push(diag.positive  || 0);
-        this.negative.push(diag.negative  || 0);
-        this.charges.push((diag.positive || 0) - (diag.negative || 0));
+        const currentTick = diag.tick || 0;
+        if (currentTick !== this._lastTick0) {
+            this._lastTick0 = currentTick;
 
-        // 80-sample sparkline buffers
-        this.sp.manifested.push(diag.manifested || 0);
-        this.sp.charges.push((diag.positive || 0) - (diag.negative || 0));
-        this.sp.flux.push(diag.totalFlux  || 0);
-        this.sp.energy.push(diag.totalEnergy || 0);
-        this.sp.entropy.push(diag.entropy || 0);
+            // 500-sample buffers for charts
+            this.flux.push(diag.totalFlux     || 0);
+            this.energy.push(diag.totalEnergy || 0);
+            this.manifested.push(diag.manifested || 0);
+            this.entropy.push(diag.entropy    || 0);
+            this.positive.push(diag.positive  || 0);
+            this.negative.push(diag.negative  || 0);
+            this.charges.push((diag.positive || 0) - (diag.negative || 0));
+
+            // 80-sample sparkline buffers
+            this.sp.manifested.push(diag.manifested || 0);
+            this.sp.charges.push((diag.positive || 0) - (diag.negative || 0));
+            this.sp.flux.push(diag.totalFlux  || 0);
+            this.sp.energy.push(diag.totalEnergy || 0);
+            this.sp.entropy.push(diag.entropy || 0);
+        }
 
         return diag;
     }
@@ -253,25 +267,30 @@ export class TelemetryHub {
             }
             audit.energyDrift = drift;
 
-            this.ebDiff.push(eF - bF);
-            this.gauss.push(audit.gaussViolation || 0);
+            const currentTick = this.s0.diag?.tick || 0;
+            if (currentTick !== this._lastAuditTick) {
+                this._lastAuditTick = currentTick;
 
-            // Per-field trend buffers (drive diagnostics table sparklines)
-            this.aud.fieldEnergy.push(       audit.fieldEnergy        || 0);
-            this.aud.waveEnergy.push(        audit.waveEnergy         || 0);
-            this.aud.particleKE.push(        audit.particleKE         || 0);
-            this.aud.coulombPE.push(         audit.coulombPE          || 0);
-            this.aud.eFieldEnergy.push(      eF);
-            this.aud.bFieldEnergy.push(      bF);
-            this.aud.poyntingMag.push(       pMag);
-            this.aud.maxGaussError.push(     audit.maxGaussError      || 0);
-            this.aud.selfFieldInjection.push(audit.selfFieldInjection || 0);
-            this.aud.eLeftEnergy.push(       audit.ELTotal || audit.eLTotal || 0);
-            this.aud.eRightEnergy.push(      audit.ERTotal || audit.eRTotal || 0);
-            this.aud.chirality.push(         audit.chiralityTotal     || 0);
-            this.aud.waveLeft.push(          audit.wvLTotal           || 0);
-            this.aud.waveRight.push(         audit.wvRTotal           || 0);
-            this.aud.energyDrift.push(       drift);
+                this.ebDiff.push(eF - bF);
+                this.gauss.push(audit.gaussViolation || 0);
+
+                // Per-field trend buffers (drive diagnostics table sparklines)
+                this.aud.fieldEnergy.push(       audit.fieldEnergy        || 0);
+                this.aud.waveEnergy.push(        audit.waveEnergy         || 0);
+                this.aud.particleKE.push(        audit.particleKE         || 0);
+                this.aud.coulombPE.push(         audit.coulombPE          || 0);
+                this.aud.eFieldEnergy.push(      eF);
+                this.aud.bFieldEnergy.push(      bF);
+                this.aud.poyntingMag.push(       pMag);
+                this.aud.maxGaussError.push(     audit.maxGaussError      || 0);
+                this.aud.selfFieldInjection.push(audit.selfFieldInjection || 0);
+                this.aud.eLeftEnergy.push(       audit.ELTotal || audit.eLTotal || 0);
+                this.aud.eRightEnergy.push(      audit.ERTotal || audit.eRTotal || 0);
+                this.aud.chirality.push(         audit.chiralityTotal     || 0);
+                this.aud.waveLeft.push(          audit.wvLTotal           || 0);
+                this.aud.waveRight.push(         audit.wvRTotal           || 0);
+                this.aud.energyDrift.push(       drift);
+            }
         }
         return audit;
     }
@@ -290,16 +309,21 @@ export class TelemetryHub {
 
         this.s0.lagrangian = lag;
         if (lag) {
-            this.lag.fieldKinetic.push( Math.abs(lag.fieldKinetic  || 0));
-            this.lag.fieldGradient.push(Math.abs(lag.fieldGradient || 0));
-            this.lag.bornInfeld.push(   Math.abs(lag.bornInfeld    || 0));
-            this.lag.coupling.push(     Math.abs(lag.coupling      || 0));
-            this.lag.velocity.push(     Math.abs(lag.velocity      || 0));
-            this.lag.gauss.push(        Math.abs(lag.gauss         || 0));
-            this.lag.dissipation.push(  Math.abs(lag.dissipation   || 0));
-            this.lag.total.push(         lag.total                  || 0);
-            this.lag.hamiltonian.push(   lag.hamiltonian            || 0);
-            this.lag.action.push(        lag.totalAction            || 0);
+            const currentTick = this.s0.diag?.tick || 0;
+            if (currentTick !== this._lastLagTick) {
+                this._lastLagTick = currentTick;
+
+                this.lag.fieldKinetic.push( Math.abs(lag.fieldKinetic  || 0));
+                this.lag.fieldGradient.push(Math.abs(lag.fieldGradient || 0));
+                this.lag.bornInfeld.push(   Math.abs(lag.bornInfeld    || 0));
+                this.lag.coupling.push(     Math.abs(lag.coupling      || 0));
+                this.lag.velocity.push(     Math.abs(lag.velocity      || 0));
+                this.lag.gauss.push(        Math.abs(lag.gauss         || 0));
+                this.lag.dissipation.push(  Math.abs(lag.dissipation   || 0));
+                this.lag.total.push(         lag.total                  || 0);
+                this.lag.hamiltonian.push(   lag.hamiltonian            || 0);
+                this.lag.action.push(        lag.totalAction            || 0);
+            }
         }
         return lag;
     }
@@ -351,17 +375,22 @@ export class TelemetryHub {
             capabilities: bridge.peGetBackendCapabilities?.() ?? null,
         };
 
-        this.peKE.push(ke);
-        this.pePE.push(pe);
-        this.peCoulombPE.push(coulombPE);
-        this.peGravityPE.push(gravityPE);
-        this.peTotal.push(totalEnergy);
-        this.peEnergyDrift.push(energyDrift);
-        this.peCount.push(cnt);
-        this.peMomentum.push(pMag);
-        this.peAngMom.push(lMag);
-        this.peVirial.push(virial);
-        this.peTemperature.push(temperature);
+        const currentTick = diag.tick || 0;
+        if (currentTick !== this._lastTick1) {
+            this._lastTick1 = currentTick;
+
+            this.peKE.push(ke);
+            this.pePE.push(pe);
+            this.peCoulombPE.push(coulombPE);
+            this.peGravityPE.push(gravityPE);
+            this.peTotal.push(totalEnergy);
+            this.peEnergyDrift.push(energyDrift);
+            this.peCount.push(cnt);
+            this.peMomentum.push(pMag);
+            this.peAngMom.push(lMag);
+            this.peVirial.push(virial);
+            this.peTemperature.push(temperature);
+        }
         return diag;
     }
 
@@ -426,14 +455,19 @@ export class TelemetryHub {
                 radialVelocity = separation > 0 ? (dx * dvx + dy * dvy + dz * dvz) / separation : 0;
             }
 
-            this.peLockedCount.push(locked);
-            this.peMobileCount.push(Math.max(0, n - locked));
-            this.peRmsVelocity.push(n > 0 ? Math.sqrt(v2sum / n) : 0);
-            this.peSystemRadius.push(systemRadius);
-            this.peMaxForce.push(maxForce);
-            this.peMeanForce.push(n > 0 ? sumForce / n : 0);
-            this.peSeparation.push(separation);
-            this.peRadialVelocity.push(radialVelocity);
+            const currentTick = this.s1.diag?.tick || 0;
+            if (currentTick !== this._lastTick1Ext) {
+                this._lastTick1Ext = currentTick;
+
+                this.peLockedCount.push(locked);
+                this.peMobileCount.push(Math.max(0, n - locked));
+                this.peRmsVelocity.push(n > 0 ? Math.sqrt(v2sum / n) : 0);
+                this.peSystemRadius.push(systemRadius);
+                this.peMaxForce.push(maxForce);
+                this.peMeanForce.push(n > 0 ? sumForce / n : 0);
+                this.peSeparation.push(separation);
+                this.peRadialVelocity.push(radialVelocity);
+            }
         }
         return ext;
     }
@@ -480,16 +514,21 @@ export class TelemetryHub {
         }
         this.s2.runtime = runtime ? { scenario, ...runtime } : { scenario };
 
-        this.aeKE.push(ke);
-        this.aeTemp.push(diag.temperature || 0);
-        this.aeEnergy.push(totalEnergy);
-        this.aeBonds.push(diag.bondCount || 0);
-        this.aePEIonic.push(diag.totalPEIonic || 0);
-        this.aePEVdw.push(diag.totalPEVdw || 0);
-        this.aePEBond.push(diag.totalPEBond || 0);
-        this.aeMomentum.push(pMag);
-        this.aeAtomCount.push(diag.atomCount || 0);
-        this.aeDrift.push(energyDrift);
+        const currentTick = diag.tick || 0;
+        if (currentTick !== this._lastTick2) {
+            this._lastTick2 = currentTick;
+
+            this.aeKE.push(ke);
+            this.aeTemp.push(diag.temperature || 0);
+            this.aeEnergy.push(totalEnergy);
+            this.aeBonds.push(diag.bondCount || 0);
+            this.aePEIonic.push(diag.totalPEIonic || 0);
+            this.aePEVdw.push(diag.totalPEVdw || 0);
+            this.aePEBond.push(diag.totalPEBond || 0);
+            this.aeMomentum.push(pMag);
+            this.aeAtomCount.push(diag.atomCount || 0);
+            this.aeDrift.push(energyDrift);
+        }
         return diag;
     }
 
@@ -500,12 +539,18 @@ export class TelemetryHub {
         const diag = cosmicBridge.getDiagnostics?.();
         if (!diag) return null;
         this.s5.diag = diag;
-        this.csBodies.push(diag.bodyCount  || diag.count || 0);
-        // Bridge emits diag.hubbleParameter; keep legacy aliases for forward-compat.
-        // (audit P0-3 fix, 2026-05-27 — csHubble was dead-on-arrival because
-        // neither 'hubble' nor 'hubbleParam' matched the emitted key.)
-        this.csHubble.push(diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0);
-        this.csDM.push(    diag.darkMatter || diag.dmFraction  || 0);
+
+        const currentTick = diag.tick || 0;
+        if (currentTick !== this._lastTick5) {
+            this._lastTick5 = currentTick;
+
+            this.csBodies.push(diag.bodyCount  || diag.count || 0);
+            // Bridge emits diag.hubbleParameter; keep legacy aliases for forward-compat.
+            // (audit P0-3 fix, 2026-05-27 — csHubble was dead-on-arrival because
+            // neither 'hubble' nor 'hubbleParam' matched the emitted key.)
+            this.csHubble.push(diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0);
+            this.csDM.push(    diag.darkMatter || diag.dmFraction  || 0);
+        }
         return diag;
     }
 
@@ -609,6 +654,9 @@ export class TelemetryHub {
                 this._lastAuditVersion = -1;
                 this._prevWantAudit = false;
                 this._prevWantLag = false;
+                this._lastTick0 = -1;
+                this._lastAuditTick = -1;
+                this._lastLagTick = -1;
                 break;
             case 1:
                 for (const b of [
@@ -622,6 +670,8 @@ export class TelemetryHub {
                 ]) b.clear();
                 this.s1 = { diag: null, extended: null, runtime: null };
                 this._peInitialEnergy = null;
+                this._lastTick1 = -1;
+                this._lastTick1Ext = -1;
                 break;
             case 2:
             case 3:
@@ -632,10 +682,12 @@ export class TelemetryHub {
                 ]) b.clear();
                 this.s2 = { diag: null, runtime: null };
                 this._aeInitialEnergy = null;
+                this._lastTick2 = -1;
                 break;
             case 5:
                 for (const b of [this.csBodies, this.csHubble, this.csDM]) b.clear();
                 this.s5 = { diag: null, cosmic: null };
+                this._lastTick5 = -1;
                 break;
         }
     }

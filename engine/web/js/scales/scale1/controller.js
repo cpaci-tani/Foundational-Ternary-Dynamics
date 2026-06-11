@@ -77,7 +77,7 @@ const _tickAcc = createTickAccumulator();
 
 // -- Paused-state dedup (avoid redundant work when simulation idle) ----
 let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
-let _diagPushedWhilePaused = false;
+
 let _lastCloudData = null;         // cached cloud output when paused
 
 
@@ -243,7 +243,7 @@ function _resetScale1Internal(ctx) {
 
     // Clear paused-state caches
     _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
-    _diagPushedWhilePaused = false;
+
     _lastCloudData = null;
 
     // Clear viewport overlays if available
@@ -343,7 +343,7 @@ export function animatePE(ctx) {
     }
 
     // Coulomb E-field streamlines (3D, throttled every 5 frames)
-    const refreshStreamlines = running ? frameCount % 5 === 0 : (!_diagPushedWhilePaused || frameCount % 30 === 0);
+    const refreshStreamlines = running ? frameCount % 5 === 0 : (frameCount % 30 === 0);
     if (_showPEEField && peData.count > 0 && refreshStreamlines) {
         const src     = bridge.peGetFieldSources();
         const fieldFn = makePECoulombFieldFn(src, 0.5);
@@ -380,7 +380,7 @@ export function animatePE(ctx) {
     viewport.render();
 
     // ── 7. PE diagnostics (throttled to every 3rd frame) ────────────
-    if (frameCount % 3 === 0 && (running || !_diagPushedWhilePaused)) {
+    if (frameCount % 3 === 0) {
         const diag = telemetryHub.collectScale1(bridge);
         const ext = telemetryHub.collectScale1Extended(bridge);
 
@@ -415,8 +415,7 @@ export function animatePE(ctx) {
             particleChart.push(diagAdapted);
         }
 
-        if (!running) _diagPushedWhilePaused = true;
-        else _diagPushedWhilePaused = false;
+
 
         switch (activeTab) {
             case 'diagnostics':
@@ -490,7 +489,7 @@ export function loadPEScenario(ctx, name) {
 
     const result = setupPEScenario(name, { bridge, viewport, constants });
     applyPEOverlayPreset(viewport, preset);
-    _diagPushedWhilePaused = false;
+
     _lastCloudData = null;
 
     // Apply BH state hint from scenario (only pe-micro-bh sets bhActive=true)
