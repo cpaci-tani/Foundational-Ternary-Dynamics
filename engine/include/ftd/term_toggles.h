@@ -63,6 +63,7 @@ struct TermToggles {
     bool absorbing_boundary = false; // tick: graduated sponge layer — outgoing waves disperse into the void at lattice faces (no reflect/wrap)
     bool field_energy_gravity = false; // [IMPOSED] latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²), not only particle rest mass, so flux-only configs (gravity waves) carry a real potential. Requires latency_field.
     bool cluster_inertia = false;   // [IMPOSED] phase_forces: rigid-body integrate LOCKED clusters at inertial mass N·M_REST (a_COM = F_cluster/(N·M_REST)). Unified-mass Phase 2. Additive (per-voxel loop already skips locked); requires forces.
+    bool de_broglie_clock = false;  // [IMPOSED] phase_read: Klein-Gordon rest-mass term −ω₀²·J at manifested (state!=0) voxels, so a static cluster's flux oscillates at the de Broglie internal clock frequency ω₀∝M_REST (FTD-0271). Native flux is massless (A0), so the clock is imposed, not forced. Additive; default OFF ⇒ golden-neutral.
 
     // D-3 / E-1 (2026-04-27): JS scale-0 scenario library has been pushing a
     // `confinement` bool through setToggle(); without a backing field the
@@ -96,6 +97,12 @@ struct TermToggles {
 
     // Phase H (Apr 2026): explicit coupling constant in the Gauss law source.
     double coulomb_charge_coupling = 1.0;
+
+    // FTD-0271 (2026-06-11): de Broglie internal-clock frequency ω₀ [rad/tick],
+    // used only when de_broglie_clock == true. The KG mass term is −ω₀²·J.
+    // ω₀∝M_REST is [IMPOSED] (native flux is massless); M_REST→ω₀ scale is
+    // [SELECTION] (no ℏ in the substrate). Stability bound: ω₀·dt < 2.
+    double omega0 = 1.0;
 
     // ── Generated helpers — bodies live in this header (header-only,
     // POD struct preserved). Implementations below TOGGLE_SPECS[]. ────
@@ -156,6 +163,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"absorbing_boundary", &TermToggles::absorbing_boundary, false, true,  "wave_propagation", "",                 "", ToggleBackend::ANY, "Sponge boundary: outgoing waves disperse into the void at lattice faces"},
     {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 "", ToggleBackend::ANY, "[IMPOSED] Latency Poisson sources from field-energy density (½|J|²) so flux configs gravitate"},
     {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "forces",           "",                 "", ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_REST)"},
+    {"de_broglie_clock",   &TermToggles::de_broglie_clock,   false, false, "wave_propagation", "",                 "", ToggleBackend::ANY, "[IMPOSED] de Broglie internal clock: Klein-Gordon mass term -omega0^2*J at manifested voxels (FTD-0271)"},
     {"confinement",        &TermToggles::confinement,        false, false, "",                 "",                 "", ToggleBackend::ANY, "Linear confinement intent flag (no C++ branch yet)"},
     {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 "", ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
 };

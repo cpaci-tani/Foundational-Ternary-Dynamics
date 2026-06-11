@@ -320,6 +320,21 @@ ftd_add_test(test_spacetime_forcing_demo tests/test_spacetime_forcing_demo.cpp
 ftd_add_test(test_cluster_inertia tests/test_cluster_inertia.cpp
              CTEST_NAME cluster_inertia TIMEOUT 120 LABELS unit mass)
 
+# FTD-0271 (2026-06-11): de Broglie internal clock. The de_broglie_clock toggle
+# adds the Klein-Gordon mass term -omega0^2*J at manifested voxels (phase_read).
+# Phase A: a static cluster's flux oscillates at omega0 (k=0 rest mode).
+# Phase A5: the clock phase d(phi)=omega0*d(tau) red-shifts as sqrt(1-v^2),
+# sourcing the covariant clock rate from FTD's own proper-time (FTD-0252).
+ftd_add_test(test_de_broglie_clock tests/test_de_broglie_clock.cpp
+             CTEST_NAME de_broglie_clock TIMEOUT 120 LABELS unit quantum)
+ftd_add_test(test_de_broglie_redshift tests/test_de_broglie_redshift.cpp
+             CTEST_NAME de_broglie_redshift TIMEOUT 120 LABELS unit quantum)
+# Phase E: the guidance MEASUREMENT (the heart of pilot-wave). Asks whether the
+# discrete cluster follows the flux phase gradient grad(S). Prints a verdict
+# token (EMERGENT/ABSENT/INCONCLUSIVE); CTest checks non-vacuity only.
+ftd_add_test(campaign_de_broglie_guidance tests/campaign_de_broglie_guidance.cpp
+             CTEST_NAME de_broglie_guidance TIMEOUT 180 LABELS campaign quantum)
+
 # Foundational
 add_executable(test_constants tests/test_constants.cpp)
 target_link_libraries(test_constants ftd_core)
