@@ -1,9 +1,13 @@
 /**
  * Electron Orbital Cloud Generator + Nuclear Structure
  *
- * Generates physically-accurate electron probability clouds for each element
- * using quantum mechanical orbital shapes (s, p, d, f), Slater's rules for
- * effective nuclear charge, and rejection sampling from real spherical harmonics.
+ * VISUALIZATION ONLY (not a physics derivation — FTD-0270): generates electron
+ * probability clouds by rejection-sampling HYDROGENIC wavefunctions (s,p,d,f
+ * spherical harmonics + Laguerre radial) with Slater's empirical screening,
+ * applied universally to all elements and tuned for display. This is NOT a
+ * multi-electron solve and makes no claim that the cloud matches the true
+ * electron density of, e.g., carbon. FTD does not derive atomic orbitals; see
+ * docs/theory/07_assessment/AUDIT_ATOMIC_DYNAMICS_STATUS.md.
  *
  * Also renders nuclear structure: protons (red) and neutrons (blue) as dense
  * point clusters at the atom center, with nuclear radius scaling as A^(1/3).
