@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-28T06:17:40Z",
+  "timestamp": "2026-06-11T00:14:54Z",
   "subsystems": {
     "cpp": {
       "build": {
@@ -19,13 +19,13 @@
       "proof_chain": {
         "success": true,
         "code": 0,
-        "duration_sec": 4.123,
+        "duration_sec": 1.142,
         "log_file": "mathematics/proof_master_verification.log"
       },
       "physics_battery": {
         "success": true,
         "code": 0,
-        "duration_sec": 4.119,
+        "duration_sec": 1.372,
         "log_file": "mathematics/test_all_physics.log"
       }
     },
@@ -33,7 +33,7 @@
       "regression_suite": {
         "success": true,
         "code": 0,
-        "duration_sec": 29.078,
+        "duration_sec": 134.159,
         "log_file": "ui_ux/playwright_regression.log"
       }
     }
