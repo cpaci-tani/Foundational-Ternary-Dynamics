@@ -613,10 +613,43 @@ export const SCALE0_SCENARIOS = [
                 const stateBtn = document.getElementById('toggle-state-field');
                 if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
             }, 100);
-            // Mount the de Broglie clock panel (omega0 slider + live |J|(t) + lambda(v)).
-            import('./ui/overlays/de-broglie-clock-panel.js')
-                .then((m) => m.mountDeBroglieClockPanel(harness))
-                .catch((e) => console.warn('[de-broglie-clock] panel mount failed:', e));
+            // No floating panel: the de Broglie clock runs during normal play and
+            // the cluster's internal phase φ is surfaced in the docked Time
+            // Observatory panel (Card E). omega0 defaults to 0.30 above.
+        },
+    },
+    {
+        id: 's0-seed-thermal-ignition',
+        scale: 'lattice',
+        title: 'Thermal Ignition — lattice condensation (FTD-0274)',
+        category: 'Quantum Foundations',
+        tags: ['seed', 'thermal', 'temperature', 'condensation', 'first-order', 'interactive'],
+        defaultParams: {},
+        requiredCapabilities: ['scale0'],
+        epistemicStatus: '[MEASURED — BOUNDARY, FTD-0274]',
+        load(harness, params = {}) {
+            const bridge = harness.bridge || harness;
+            bridge.setupScenario(params.id || 's0-seed-thermal-ignition');
+            // Reinforce the thermal toggles AFTER setupScenario. A Langevin bath
+            // warms the void; the panel's temperature slider drives langevin_T
+            // across the first-order condensation point T_up~0.05. Real WASM only
+            // (the JS MockBridge has no Langevin thermostat).
+            try {
+                bridge.setToggle('wave_propagation', true);
+                bridge.setToggle('gauss_projection', true);
+                bridge.setToggle('genesis', true);
+                bridge.setToggle('langevin', true);
+                bridge.setToggle('dual_substrate', false);
+                if (typeof bridge.setLangevinTemp === 'function') bridge.setLangevinTemp(0.03);
+            } catch (e) { console.warn('[thermal-ignition]', e); }
+            // Show the manifested voxels (the condensate "particles").
+            setTimeout(() => {
+                const stateBtn = document.getElementById('toggle-state-field');
+                if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
+            }, 100);
+            // Temperature control + telemetry live in the docked Thermo side panel
+            // (js/scales/scale0/ui/overlays/thermo-panel.js, registry id 'thermo') —
+            // no floating overlay.
         },
     },
 ];

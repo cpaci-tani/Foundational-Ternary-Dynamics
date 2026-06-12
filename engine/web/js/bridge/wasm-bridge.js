@@ -188,6 +188,16 @@ export class WasmBridge {
             return this._module.getOmega0(this._bridge);
         return 1.0;
     }
+    // FTD-0274: live Langevin bath temperature (thermal-ignition panel).
+    setLangevinTemp(t) {
+        if (this._module && this._bridge && typeof this._module.setLangevinTemp === 'function')
+            this._module.setLangevinTemp(this._bridge, t);
+    }
+    getLangevinTemp() {
+        if (this._module && this._bridge && typeof this._module.getLangevinTemp === 'function')
+            return this._module.getLangevinTemp(this._bridge);
+        return 0.0;
+    }
 
     reset(latticeSize) {
         let size = parseInt(latticeSize || this.latticeSize, 10);
