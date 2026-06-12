@@ -9,7 +9,7 @@
 
 import { MockBridge } from './mock-bridge.js';
 import { createScale0Capabilities } from './capabilities/scale0.js';
-import { viewSharedField } from './shared-field.js';
+import { viewSharedField, CTRL } from './shared-field.js';
 import { SCALE0_DIRECT_READS } from './bridge-contract.js';
 
 const EMPTY_PARTS = () => ({
@@ -87,6 +87,9 @@ export class MockBridgeProxy {
             sh._fluxDirty = false;           // worker maintains _fluxMag; never recompute on read
             this._ctrl = v.ctrl;
             this._ready = true;
+            if (this._pendingTicksPerFrame !== undefined) {
+                Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(this._pendingTicksPerFrame * 1000));
+            }
         } else if (m.type === 'frame') {
             // Keep the shadow's tick-keyed caches (buildLatencyProxy → latency /
             // Kretschmann telemetry) live: without this the shadow tick stays 0
@@ -142,6 +145,12 @@ export class MockBridgeProxy {
         if (v === this._running) return;          // dedupe — tick.js calls this every frame
         this._running = v;
         this._worker.postMessage({ type: 'setRunning', value: v });
+    }
+    setTicksPerFrame(v) {
+        this._pendingTicksPerFrame = v;
+        if (this._ctrl) {
+            Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(v * 1000));
+        }
     }
     tickOnce() { this._cmd('tickScale0'); }
 

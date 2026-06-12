@@ -112,6 +112,19 @@ export class Viewport {
         this.camera = new THREE.PerspectiveCamera(45, 1, 0.001, 2000);
         this.camera.position.set(60, 45, 60);
 
+        // Define getter/setter on camera.far to track base value set by controllers
+        this._baseFar = 2000;
+        this._actualFar = 2000;
+        Object.defineProperty(this.camera, 'far', {
+            get: () => this._actualFar,
+            set: (val) => {
+                this._baseFar = val;
+                this._actualFar = val;
+            },
+            configurable: true,
+            enumerable: true
+        });
+
         // Renderer
         this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
         this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -126,7 +139,7 @@ export class Viewport {
         this.controls.rotateSpeed = 0.6;
         this.controls.zoomSpeed = 1.2;
         this.controls.minDistance = 0.01;
-        this.controls.maxDistance = 500;
+        this.controls.maxDistance = 100000000;
 
         // Visual settings for particle size and opacity. Shared with
         // ViewportParticleRenderer (Phase 3d) — both sides hold a reference
@@ -395,6 +408,45 @@ export class Viewport {
         this.camera.position.copy(this.controls.target).add(dir);
         this.controls.update();
         return true;
+    }
+
+    getReferenceDistance() {
+        const mode = this._engineMode || 'lattice';
+        switch (mode) {
+            case 'lattice':
+                return (this.latticeSize || 32) * 1.6666;
+            case 'particles':
+            case 'atoms':
+            case 'molecules':
+                return 64.03;
+            case 'planetary':
+                return 11.18;
+            case 'cosmic':
+                return 570.09;
+            case 'meta':
+                return 7.89;
+            default:
+                return (this.latticeSize || 32) * 1.6666;
+        }
+    }
+
+    setZoomMagnitude(factor) {
+        if (!Number.isFinite(factor) || factor <= 0) return;
+        const refDist = this.getReferenceDistance();
+        const targetDist = refDist / factor;
+
+        const minD = this.controls.minDistance || 0.01;
+        const maxD = this.controls.maxDistance || 100000000;
+        const clampedDist = Math.max(minD, Math.min(maxD, targetDist));
+
+        const dir = this.camera.position.clone().sub(this.controls.target);
+        if (dir.lengthSq() === 0) {
+            dir.set(0, 0, 1);
+        }
+        dir.normalize().multiplyScalar(clampedDist);
+        this.camera.position.copy(this.controls.target).add(dir);
+        this.controls.update();
+        this.render();
     }
 
     setWireframeBrightness(val) { this._sceneCore?.setWireframeBrightness(val); }
@@ -974,6 +1026,14 @@ export class Viewport {
     setBloomParams(params) { this._sceneCore?.setBloomParams(params); }
 
     render() {
+        // Dynamically adjust camera.far to prevent culling at extreme zoom out
+        const dist = this.camera.position.distanceTo(this.controls.target);
+        const desiredFar = Math.max(this._baseFar || 2000, dist * 5);
+        if (this._actualFar !== desiredFar) {
+            this._actualFar = desiredFar;
+            this.camera.updateProjectionMatrix();
+        }
+
         this.controls.update();
         // Animation clock is advanced externally via advanceAnimationClock()
         // so this call is safe to make unconditionally — it just reads the

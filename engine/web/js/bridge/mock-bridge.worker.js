@@ -82,14 +82,41 @@ function postFrame() {
     self.postMessage({ type: 'frame', tick: bridge._tick | 0, diag, parts, particleList, audit, lag });
 }
 
+const _tickAcc = (() => {
+    let _acc = 0.0;
+    return {
+        accumulate(ticksPerFrame) {
+            _acc += ticksPerFrame;
+            const whole = Math.floor(_acc);
+            _acc -= whole;
+            return whole;
+        },
+        reset() { _acc = 0.0; }
+    };
+})();
+
 function loop() {
     timer = 0;
     if (!bridge) return;
     const t0 = performance.now();
     if (ctrl && Atomics.load(ctrl, CTRL.RUNNING)) {
-        try { bridge.capabilities.scale0.tickScale0(); }
+        try {
+            const tpfRaw = Atomics.load(ctrl, CTRL.TICKS_PER_FRAME);
+            const tpf = tpfRaw > 0 ? tpfRaw / 1000 : 1.0;
+            const wholeTicks = _tickAcc.accumulate(tpf);
+            
+            const N = bridge.latticeSize || 32;
+            const maxTicks = N > 96 ? 1 : (N > 48 ? 1 : (N > 32 ? 2 : wholeTicks));
+            const ticksToRun = Math.min(wholeTicks, maxTicks);
+            
+            for (let i = 0; i < ticksToRun; i++) {
+                bridge.capabilities.scale0.tickScale0();
+            }
+            if (ticksToRun > 0) {
+                postFrame();
+            }
+        }
         catch (e) { self.postMessage({ type: 'error', where: 'tick', msg: String(e && e.message || e) }); }
-        postFrame();
     }
     const elapsed = performance.now() - t0;
     timer = setTimeout(loop, Math.max(0, TARGET_DT - elapsed));   // period = max(tickTime, 16ms)
@@ -115,6 +142,7 @@ self.onmessage = (e) => {
     try {
         switch (m.type) {
             case 'create': {
+                _tickAcc.reset();
                 scenarioId = m.scenarioId || 'flux-pulse';
                 bridge = new MockBridge(m.N);
                 bridge._useSAB = true;
@@ -125,6 +153,7 @@ self.onmessage = (e) => {
             }
             case 'resize': {
                 if (!bridge) break;
+                _tickAcc.reset();
                 scenarioId = m.scenarioId || scenarioId;
                 bridge.reset(m.N);
                 applyInit(bridge.capabilities.scale0, m);

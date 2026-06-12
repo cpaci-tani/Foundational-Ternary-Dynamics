@@ -22,7 +22,7 @@
 import { BaseLifecycleController } from '../../lifecycle.js';
 import { CosmicRenderer } from '../../cosmic-renderer.js';
 import { CosmicMockBridge } from '../../bridge/mock-scale5.js';
-import { createStatusBarCache, hideScale0Overlays } from '../scale-utils.js';
+import { createStatusBarCache, hideScale0Overlays, createTickAccumulator } from '../scale-utils.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 // ---------------------------------------------------------------------------
@@ -57,6 +57,8 @@ function formatCosmicTelemetry(tel) {
 // Module-level state
 // ---------------------------------------------------------------------------
 
+const _tickAcc = createTickAccumulator();
+
 class Scale5LifecycleController extends BaseLifecycleController {
     constructor() {
         super();
@@ -69,6 +71,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
     }
 
     loadCosmicScenario(ctx, scenarioName = 'cosmic-galaxy') {
+        _tickAcc.reset();
         ctx._resetAllVisualState();
         ctx.running = false;
         ctx.updatePlayButton();
@@ -132,7 +135,7 @@ class Scale5LifecycleController extends BaseLifecycleController {
         viewport.camera.far = 50000;
         viewport.camera.updateProjectionMatrix();
         viewport.controls.minDistance = 5;
-        viewport.controls.maxDistance = 5000;
+        viewport.controls.maxDistance = 100000000;
 
         // Initial render
         const data = this.bridge.getCosmicData();
@@ -240,7 +243,10 @@ export function animateCosmic(ctx) {
 
     if (isPhysicsFrame) {
         if (ctx.running) {
-            bridge.run(Math.max(1, Math.round(ctx.ticksPerFrame)));
+            const wholeTicks = _tickAcc.accumulate(ctx.ticksPerFrame);
+            if (wholeTicks > 0) {
+                bridge.run(wholeTicks);
+            }
         }
 
         const data = bridge.getCosmicData();
