@@ -1,7 +1,21 @@
 # ANALYSIS (scout) — Min/max temperature + ignition map of the FTD lattice (FTD-0274)
 
-**Status:** `[MEASURED — scout]` (bracketing run, not yet a pre-registered run of
-record). **Date:** 2026-06-11. **Artifacts:** `engine/tests/campaign_thermal_ignition.cpp`,
+> **SUPERSEDED (2026-06-12) by the FTD-0275 run of record**
+> ([`ANALYSIS_THERMAL_PHASE_MAP_v1.md`](ANALYSIS_THERMAL_PHASE_MAP_v1.md),
+> pre-registered, tag `preregister-thermal-phase-map-v1`). Three scout readings
+> are revised: **(Q1)** "T_up rises with L" is **confirmed and quantified**
+> (≈ L^1.36 across L = 16–48 with seed statistics); **(Q2)** the "no ceiling" /
+> safety-valve `[CONJECTURE]` of §2 is **FALSIFIED as a mechanism** — a
+> genesis-disabled ablation is equally stable to T = 12, so the Langevin OU
+> thermostat's mean-reversion (not the manifestation rule) is what bounds the
+> energy (the *no-runaway observation* still stands); **(Q3)** the scout's
+> "local injection never detonates" (§3, tested only in cold vacuum) is
+> **superseded** — a large spark (A = 60) in a *near-critical* bath (f = 0.90)
+> detonates. Read the FTD-0275 analysis for the canonical statements; this scout
+> is retained for provenance.
+
+**Status:** `[MEASURED — scout; SUPERSEDED by FTD-0275]` (bracketing run, not a
+pre-registered run of record). **Date:** 2026-06-11. **Artifacts:** `engine/tests/campaign_thermal_ignition.cpp`,
 results `engine/results/thermal_ignition/*.csv` (local). Follows the FTD-0273 mass/energy
 work and the thermodynamic reading of FTD-0272's first-order genesis transition.
 
