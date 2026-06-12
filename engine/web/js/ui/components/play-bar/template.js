@@ -70,6 +70,17 @@ export function getPlayBarTemplate() {
                     </div>
                 </div>
                 <div class="play-bar-settings-row">
+                    <span class="play-bar-settings-label">Zoom</span>
+                    <div class="play-bar-settings-options" role="radiogroup" aria-label="Zoom preset">
+                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="0.2"  role="radio">0.2&#215;</button>
+                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="0.5"  role="radio">0.5&#215;</button>
+                        <button type="button" class="play-bar-settings-chip is-active" data-zoom-preset="1"  role="radio" aria-checked="true">1&#215;</button>
+                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="2"    role="radio">2&#215;</button>
+                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="5"    role="radio">5&#215;</button>
+                        <button type="button" class="play-bar-settings-chip" data-zoom-preset="10"   role="radio">10&#215;</button>
+                    </div>
+                </div>
+                <div class="play-bar-settings-row">
                     <span class="play-bar-settings-label">Fine</span>
                     <input type="range" class="play-bar-slider" id="ticks-per-frame"
                         min="0" max="100" step="0.1" value="50"

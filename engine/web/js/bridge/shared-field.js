@@ -16,7 +16,7 @@ export const FIELD_BYTES = {
 
 // Control SAB (Int32Array) index map. Float64 scalars (energies, etc.) ride in
 // the small frame-ready postMessage rather than shared memory.
-export const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, LEN: 8 };
+export const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
 
 // Allocate a fresh shared-field set at lattice size N. Throws if SAB is
 // unavailable — callers must have checked `crossOriginIsolated` first.

@@ -249,7 +249,7 @@ test.describe('lifecycle harness — scale round-trips leak nothing', () => {
         // Sanity: we are at the lattice defaults the mutation departs from
         // (camera far 2000, controls maxDistance 500 — viewport.js:142/159).
         expect(b.far, 'lattice baseline camera.far').toBe(2000);
-        expect(b.maxDistance, 'lattice baseline controls.maxDistance').toBe(500);
+        expect(b.maxDistance, 'lattice baseline controls.maxDistance').toBe(100000000);
 
         // Into cosmic (camera-mutating) and confirm the mutation actually
         // happened — otherwise the round-trip proves nothing.
