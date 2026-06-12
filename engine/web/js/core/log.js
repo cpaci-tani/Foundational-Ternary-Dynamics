@@ -29,6 +29,7 @@ const DEBUG_ENABLED = (() => {
 
 export function debugLog(...args) {
     if (DEBUG_ENABLED) {
+        // eslint-disable-next-line no-console
         console.log(...args);
     }
 }

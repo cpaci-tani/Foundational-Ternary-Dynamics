@@ -221,7 +221,7 @@ export function mountGravityPanel(host, getBridge) {
     host.appendChild(panel);
 
     const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
-    const telBody = el('telemetry'), deltaBody = el('delta'), modeBadge = el('mode');
+    const telBody = el('telemetry'), deltaBody = el('delta');
     const tiles = AXES.map((a) => ({ axis: a.axis, tag: a.tag, canvas: el(`tile-${a.axis}`), readout: el(`rd-${a.axis}`) }));
 
     let activeKind = 'latency';

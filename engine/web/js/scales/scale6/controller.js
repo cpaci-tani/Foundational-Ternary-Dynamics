@@ -20,7 +20,7 @@
 
 import { BaseLifecycleController } from '../../lifecycle.js';
 import { MetaUnit } from '../../meta-unit.js';
-import { buildMetaInfoPanel, buildSiteInspectPanel } from '../../meta-pedagogy.js';
+import { buildMetaInfoPanel } from '../../meta-pedagogy.js';
 import { debugLog } from '../../core/log.js';
 
 // ---------------------------------------------------------------------------

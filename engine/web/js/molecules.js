@@ -229,7 +229,6 @@ const MOLECULES = [
         atoms: (() => {
             const cc = 2.2;  // C-C bond within auto-bond range
             const ch = 3.2;  // C-H distance
-            const t = 1 / Math.sqrt(3);
             const atoms = [
                 { Z: 6, x: -cc / 2, y: 0, z: 0 },
                 { Z: 6, x:  cc / 2, y: 0, z: 0 },

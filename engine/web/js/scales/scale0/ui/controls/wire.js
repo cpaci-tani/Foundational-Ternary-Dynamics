@@ -367,7 +367,7 @@ function wireSelection(ctx) {
         const insp = ctx.inspector;
         if (insp) {
             insp._selectedPos = { x, y, z };
-            import('../../../../../inspector/scales/lattice.js')
+            import('../../../../inspector/scales/lattice.js')
                 .then(m => m.showLatticeInspector(insp))
                 .catch(() => {});
         }

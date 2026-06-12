@@ -13,7 +13,7 @@
  * Unit system: G = G_N = 0.01 (FTD ontic chain).
  */
 
-import { G_N } from '../constants.js';
+import { G_N, C_SPEED } from '../constants.js';
 
 // Fixed softening per body type (Gadget-2 convention: constant, energy-conserving).
 // 2026-04-26 (Wave 2H): the prior "mirrored from mock-scale5.js" note
@@ -291,7 +291,7 @@ export function computeCosmicForces(TYPE) {
 
     // Stellar radiation pressure on gas.
     const radMaxR2 = 400;
-    const radInvC = 1.0 / (4 * Math.PI * 0.577);
+    const radInvC = 1.0 / (4 * Math.PI * C_SPEED);
     for (let si = 0; si < nStar; si++) {
         const star = bodies[starIdx[si]];
         if (!(star.luminosity > 0)) continue;

@@ -1,11 +1,12 @@
 /**
  * Scale-0 / Scale-1 / Scale-2 scenario dispatcher — MockBridge side.
  *
- * Wave 3 tickets 8-13 of the large-file refactor (docs/SPEC_REFACTOR_LARGE_FILES.md §4).
+ * Scenario extraction from the bridge modularization pass documented in
+ * engine/web/docs/INDEX.md.
  *
  * The 86-scenario switch body originally lived inline in MockBridge. It was
  * first lifted into this single file as a monolith (to de-risk the move),
- * then split into 5 prefix-based group files:
+ * then split into 6 prefix-based group files:
  *
  *   flux-scenarios.js      — 20 flux-* scenarios (Scale 0 substrate, QCD,
  *                             cyclotron, screening, triad, thermalization,
@@ -14,6 +15,7 @@
  *                             photon-race)
  *   quantum-scenarios.js   — 8 quantum-* scenarios (born, double-slit, tunnel,
  *                             well, entangle, aharonov-bohm, casimir, zeno)
+ *   vacuum-scenarios.js    — s0-vacuum-* single-particle vacuum scenarios
  *   s0-seed-scenarios.js   — 49 s0-seed-* scenarios (SM particles, Moore
  *                             geometries, quarks, gauge bosons, gravity,
  *                             reference frame context/observer seeds)

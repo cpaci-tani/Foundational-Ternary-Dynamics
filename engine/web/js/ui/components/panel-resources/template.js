@@ -6,7 +6,7 @@ export function getScaleControlsBlocksTemplate() {
                 <div class="card">
                     <div class="card-title">FTD Sandbox Physics</div>
                     <div class="scale-info-mono">
-                        <div>Gravity ($G_N$): <span>0.01</span></div>
+                        <div>Gravity ($G_N$): <span id="planetary-ctrl-gravity">0.01</span></div>
                         <div>Verlet $\\Delta t$: <span>0.0001 (N-body)</span></div>
                     </div>
                 </div>

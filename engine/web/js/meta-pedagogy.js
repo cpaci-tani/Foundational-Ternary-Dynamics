@@ -6,7 +6,7 @@
  * highlight the corresponding geometry in the 3D view.
  */
 
-import { N_C, N_BASE, B_3, N_EFF } from './constants.js';
+import { N_BASE } from './constants.js';
 
 function selfConsistencyValue(n) {
     const lhs = n + N_BASE + (n + N_BASE) + (n * n + N_BASE);

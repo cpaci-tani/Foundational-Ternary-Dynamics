@@ -86,7 +86,7 @@ export class AppShell {
             app: this.app,
             getMutexPartners: () => [this.knowledgeBase],
         }).init();
-        const viewportOverlays = new ViewportOverlaysComponent(this.getRegion('viewport')).init();
+        new ViewportOverlaysComponent(this.getRegion('viewport')).init();
         this.workspaceTabs = new WorkspaceTabsComponent(this.getRegion('tabs'), this.scaleUiRegistry.panels).init();
         this.panelDockView = new PanelDockComponent(this.getRegion('panels')).init();
         this.tooltips = new TooltipComponent({ app: this.app }).init();

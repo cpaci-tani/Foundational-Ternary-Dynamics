@@ -11,11 +11,6 @@
  *   EmergenceMonitor     — track emergence trajectory over time
  */
 
-import {
-    ALPHA, K_B, N_C, N_BASE, B_3, N_EFF, D_SPATIAL,
-    G_STAR, ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS
-} from './constants.js';
-
 // ── Aggregation Level Definitions (Appendix A) ──────────────────────
 
 export const AGGREGATION_LEVELS = [
@@ -53,7 +48,6 @@ export class AggregateDetector {
             tick = 0,
             particleCount = 0,
             boundCount = 0,
-            latticeSize = 64,
             spatialExtent = 0,
             relaxTime = 100
         } = data;

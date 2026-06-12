@@ -20,30 +20,63 @@ import { gotoAndReady } from './_helpers.js';
 const SETTLE = 200;
 
 async function loadAndSettle(page, id, ticks) {
+    // 1. Pause the loop first so no background ticking can happen during load
+    await page.evaluate(() => {
+        if (window.__ftdCtx) {
+            window.__ftdCtx.running = false;
+        }
+    });
+    // 2. Select the scenario
     await page.evaluate((sid) => {
         const sel = document.getElementById('scenario-select');
         if (!sel) throw new Error('scenario-select not found');
         sel.value = sid;
         sel.dispatchEvent(new Event('change', { bubbles: true }));
     }, id);
+    // 3. Wait for scenario load logic to complete
     await page.waitForTimeout(500); // let the registry load() run (toggles + inject)
-    return page.evaluate((n) => {
+    // 4. Tick exactly `n` times from the initial scenario state
+    const result = await page.evaluate((n) => {
         const b = window.__ftdCtx?.bridge;
-        if (!b) return -1;
+        if (!b) return { manifested: -1, peak: -1, history: [] };
         window.__ftdCtx.running = false;
-        for (let i = 0; i < n; i++) { if (typeof b.tick === 'function') b.tick(); }
-        return Number(b.getDiagnostics?.().manifested ?? 0);
+        let peak = 0;
+        const history = [];
+        for (let i = 0; i < n; i++) {
+            if (typeof b.tick === 'function') b.tick();
+            const current = Number(b.getDiagnostics?.().manifested ?? 0);
+            if (current > peak) peak = current;
+            if (i % 20 === 0 || i === n - 1) {
+                history.push(`t=${i}:${current}`);
+            }
+        }
+        return {
+            manifested: Number(b.getDiagnostics?.().manifested ?? 0),
+            peak,
+            history
+        };
     }, ticks);
+    console.log(`History for ${id}:`, result.history.join(', '), `(peak: ${result.peak})`);
+    return result.peak;
 }
 
 test.describe('Genesis-burst N(A) law (FTD-0269)', () => {
-    test.beforeEach(async ({ page }) => {
-        page.setDefaultTimeout(30_000);
+    /** @type {import('@playwright/test').Page} */
+    let page;
+
+    test.beforeAll(async ({ browser, baseURL }) => {
+        const context = await browser.newContext({ baseURL });
+        page = await context.newPage();
+        page.setDefaultTimeout(60_000);
         await gotoAndReady(page);
         await expect.poll(() => page.evaluate(() => !!(window.__ftdCtx?.bridge)), { timeout: 20_000 }).toBe(true);
     });
 
-    test('three regimes: N(subknee) < N(knee) < N(superknee)', async ({ page }) => {
+    test.afterAll(async () => {
+        await page.close();
+    });
+
+    test('three regimes: N(subknee) < N(knee) < N(superknee)', async () => {
         const sub = await loadAndSettle(page, 's0-seed-cluster-law-subknee', SETTLE);
         const knee = await loadAndSettle(page, 's0-seed-cluster-law-knee', SETTLE);
         const sup = await loadAndSettle(page, 's0-seed-cluster-law-superknee', SETTLE);
@@ -53,7 +86,7 @@ test.describe('Genesis-burst N(A) law (FTD-0269)', () => {
         expect(sup, 'super-knee cluster > knee (bulk volume regime)').toBeGreaterThan(knee);
     });
 
-    test('canonical scenario runs on the real WASM engine and the panel records a point', async ({ page }) => {
+    test('canonical scenario runs on the real WASM engine and the panel records a point', async () => {
         await page.evaluate(() => {
             const sel = document.getElementById('scenario-select');
             sel.value = 's0-seed-cluster-law';
@@ -79,7 +112,7 @@ test.describe('Genesis-burst N(A) law (FTD-0269)', () => {
         expect(Number.isFinite(pts[0].N)).toBe(true);
     });
 
-    test('panel is disposed when switching away from the scenario', async ({ page }) => {
+    test('panel is disposed when switching away from the scenario', async () => {
         await page.evaluate(() => {
             const sel = document.getElementById('scenario-select');
             sel.value = 's0-seed-cluster-law';

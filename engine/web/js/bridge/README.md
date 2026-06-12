@@ -8,9 +8,9 @@ modules they compose to provide a uniform external surface.
 ## Public API
 
 Consumers import from one of:
-- `../bridge-init.js` — 42-LOC re-export shim (post-Phase 2 split, commits 2db67ca…87158ae). Surfaces `MockBridge`, `WasmBridge`, and capability factories from this directory.
-- `./mock-bridge.js` (1578 LOC, `MockBridge` class — Phase 2a)
-- `./wasm-bridge.js` (715 LOC, `WasmBridge` class — Phase 2b)
+- `../bridge-init.js` — re-export shim. Surfaces `MockBridge`, `WasmBridge`, and capability factories from this directory.
+- `./mock-bridge.js` (`MockBridge` class)
+- `./wasm-bridge.js` (`WasmBridge` class — thin wrapper over Embind RenderBridge)
 - `./capabilities/scale0.js`, `./capabilities/scale1.js`, `./capabilities/scale2.js`, `./capabilities/install.js` — capability factories (Phase 2c)
 - `./mock-diagnostics.js`, `./mock-particle-engine.js`, `./mock-lattice-samplers.js`, `./mock-atom-engine.js` — live-ref factories that `MockBridge` composes
 - `./scenarios/` — scenario dispatcher; see `./scenarios/README.md`
@@ -19,12 +19,12 @@ Consumers import from one of:
 
 ## Internal structure
 
-Phase 2 split (post-refactor): `bridge-init.js` shrank from 2395 → 42 LOC; the bridge classes and their capability surfaces now live in this directory.
+The bridge classes and their capability surfaces live in this directory; `bridge-init.js` remains the compatibility import surface.
 
 | File | Role |
 |---|---|
-| `mock-bridge.js` | `MockBridge` class (Phase 2a; 1578 LOC) |
-| `wasm-bridge.js` | `WasmBridge` class (Phase 2b; 715 LOC) — thin wrapper over Embind RenderBridge |
+| `mock-bridge.js` | `MockBridge` class |
+| `wasm-bridge.js` | `WasmBridge` class — thin wrapper over Embind RenderBridge |
 | `capabilities/install.js` | Wires `bridge.capabilities.{scale0,scale1,scale2}` onto a bridge instance |
 | `capabilities/scale0.js` | Scale-0 capability factory (lattice / substrate surface) |
 | `capabilities/scale1.js` | Scale-1 capability factory (particle surface) |
@@ -36,7 +36,7 @@ Phase 2 split (post-refactor): `bridge-init.js` shrank from 2395 → 42 LOC; the
 | `mock-scale4.js` | Planetary N-body bridge (PlanetaryMockBridge class) |
 | `mock-scale5.js` | Cosmic bridge (CosmicMockBridge class) |
 | `boundary.js` | Pure functions for boundary-shape geometry |
-| `scenarios/` | 5 scenario group files + dispatcher (see scenarios/README.md) |
+| `scenarios/` | 6 scenario group files + dispatcher (see scenarios/README.md) |
 | `bridge-contract.js` | JSDoc typedef of the ScaleBridge interface (no runtime code) |
 
 ## Dependencies

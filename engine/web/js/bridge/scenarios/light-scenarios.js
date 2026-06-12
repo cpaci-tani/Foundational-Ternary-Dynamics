@@ -2,7 +2,7 @@
  * Light scenarios — light-* group.
  *
  * Extracted from bridge/scenarios/index.js as part of Wave 3 tickets 8-13
- * of the large-file refactor (docs/SPEC_REFACTOR_LARGE_FILES.md §4). This
+ * of the bridge modularization pass documented in engine/web/docs/INDEX.md. This
  * is a pure move — scenario bodies preserved verbatim; only the outer
  * `if (name.startsWith('light-')) { ... }` wrapper was lifted out
  * and replaced with an early `return false` when the prefix does not
@@ -13,7 +13,7 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { K_B, C_SPEED } from '../../constants.js';
+import { C_SPEED } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -23,7 +23,7 @@ import { K_B, C_SPEED } from '../../constants.js';
  */
 export function setupLightScenario(name, harness, ctx) {
     if (!name.startsWith('light-')) return false;
-    const { N, mid, midF } = ctx;
+    const { N, mid } = ctx;
             const pi = Math.PI;
             const amp = 0.15;
             switch (name) {

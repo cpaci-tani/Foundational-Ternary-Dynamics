@@ -28,7 +28,6 @@ import {
     nucleonCount,
     nuclearShellRadius,
     R0_NUCLEAR,
-    POINTS_PER_NUCLEON,
 } from './orbitals/nuclear-cloud.js';
 
 const L_NAMES = ['s', 'p', 'd', 'f'];

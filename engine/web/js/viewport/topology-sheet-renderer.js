@@ -2,7 +2,7 @@
  * viewport/topology-sheet-renderer.js — deformable rubber-sheet visualization
  *
  * Extracted from viewport.js as refactoring-analyst ticket RF-1 of the
- * post-Wave-3 cleanup (docs/SPEC_REFACTOR_LARGE_FILES.md addendum).
+ * post-modularization cleanup (see engine/web/docs/INDEX.md).
  *
  * ## What this owns
  *

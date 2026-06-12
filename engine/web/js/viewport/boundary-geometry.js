@@ -2,7 +2,7 @@
  * viewport/boundary-geometry.js — Three.js boundary wireframe builders
  *
  * Extracted from viewport.js as refactoring-analyst ticket RF-4 of the
- * post-Wave-3 cleanup (docs/SPEC_REFACTOR_LARGE_FILES.md addendum).
+ * post-modularization cleanup (see engine/web/docs/INDEX.md).
  *
  * Pure geometry — no state beyond the returned Three.js Group. No access to
  * `this` on the viewport, no scene reference, no material ownership. Callers

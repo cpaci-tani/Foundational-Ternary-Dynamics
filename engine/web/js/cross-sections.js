@@ -5,7 +5,7 @@
  * All energies in MeV, lengths in fm, cross-sections in fm².
  */
 
-import { ALPHA, K_B, M_E_PHYS, PI_FTD, N_C, B_3, N_EFF, HBAR_C_MEV_FM } from './constants.js';
+import { ALPHA, K_B, M_E_PHYS, PI_FTD, HBAR_C_MEV_FM } from './constants.js';
 
 // ── Classical Electron Radius ────────────────────────────────────────
 

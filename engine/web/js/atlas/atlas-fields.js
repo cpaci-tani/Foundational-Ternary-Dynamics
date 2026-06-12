@@ -19,8 +19,6 @@ const CHARGES = [
   { pos: { x: 0.4, y: 0, z: 0 }, q: -1 },
 ];
 const MASSES = [{ pos: { x: 0, y: -0.25, z: 0 }, m: 0.6 }];
-const PSI_K = { x: 5, y: 0, z: 0 };
-const PSI_X0 = { x: 0, y: 0, z: 0 };
 
 // ── Ontological group colours (must match atlas-content.js GROUPS) ─────────
 const COL = {
@@ -37,7 +35,6 @@ const WARM = 0xe0a030, COOL = 0x50a0e0;
 const RED = 0xe24b4a, BLUE = 0x378add, TEAL = 0x1d9e75, GOLD = 0xef9f27, PURPLE = 0x7f77dd, GREY = 0x9c9a92;
 
 const v3 = (THREE, p) => new THREE.Vector3(p.x, p.y, p.z);
-const TAU = Math.PI * 2;
 
 // Blue ramp by normalised magnitude m∈[0,1]: dark→bright blue.
 function blueRamp(THREE, m) {

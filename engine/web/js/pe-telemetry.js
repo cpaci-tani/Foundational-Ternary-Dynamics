@@ -10,8 +10,8 @@
  */
 
 import { Sparkline } from './diagnostics.js';
-import { ALPHA, G_N, COULOMB_K_FORCE } from './constants.js';
-import { formatEnergy, formatVelocity, formatLength, formatForce, formatTemperature } from './units.js';
+import { G_N, COULOMB_K_FORCE } from './constants.js';
+import { formatEnergy, formatVelocity, formatLength, formatTemperature } from './units.js';
 import { createCachedCanvasRect } from './dom-utils.js';
 import { ChartHoverTooltip, formatChartValue } from './ui/charts/chart-hover-tooltip.js';
 import { resolveChartColor } from './ui/charts/theme.js';

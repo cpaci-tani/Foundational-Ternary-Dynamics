@@ -1,4 +1,4 @@
-import { defaultNeutronCount as elemNeutrons, maxBonds as elemMaxBonds } from './elements.js';
+import { maxBonds as elemMaxBonds } from './elements.js';
 import {
     N_BASE,
     // Wave 2E (2026-04-26): all AE_* tuning constants now live in
