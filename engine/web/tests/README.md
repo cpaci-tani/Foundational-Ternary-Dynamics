@@ -6,7 +6,18 @@ scale switching, listener cleanup, scenario contracts, and known regressions.
 
 ## Running
 
-From this directory (`engine/web/tests/`):
+Node tooling runs from the repository root:
+
+```bash
+npm install
+npm run lint
+npm run lint:css
+npm run typecheck
+npm run build
+node engine/web/tests/verify_web_consistency.js
+```
+
+Playwright specs run from `engine/web/tests/`:
 
 ```bash
 # one-time setup

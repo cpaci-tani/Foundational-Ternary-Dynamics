@@ -73,4 +73,14 @@ Programmatic verification is enforced via `engine/web/tests/verify_web_consisten
 1. **Constant Leaks Check**: Scans all Javascript modules recursively (excluding comments and string literals) to verify that no duplicate literal representations of fine structure ($137.036$), mass anchors ($0.511$), or universal constants ($2.95867$) exist.
 2. **Telemetry Binding Check**: Programmatically instantiates `TelemetryHub` and matches its properties against the buffer keys defined in `telemetry-grid/component.js` to ensure zero runtime binding failures.
 
-The verification script completed with exit code `0`, confirming complete system alignment.
+Current supporting checks:
+
+```bash
+npm run lint
+npm run lint:css
+npm run typecheck
+npm run build
+node engine/web/tests/verify_web_consistency.js
+```
+
+The verification script completed with exit code `0`, confirming complete system alignment. `npm run build` may emit Vite advisory warnings for legacy non-module scripts and bundle size; those are not failures.
