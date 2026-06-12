@@ -139,3 +139,41 @@ FTD-0252); not a postulate change (P1–P5 are unchanged — this *maps* what th
   6th-postulate-class input the postulates neither force nor internally motivate — its only motivation is
   *external* (matching observed approximate unitarity). This **tightens** §2/§4: the Lorentzian metric is
   conditional on an input that FTD's own foundational finiteness commitment argues *against*. `[SYNTHESIS]`
+
+## 7 · Addendum (2026-06-09): the missing ingredient is TWO axioms at two levels, not one
+
+**Status: `[SYNTHESIS]` / `[BOUNDARY refinement]` — sharpens §5's "not a proof that reversibility is the
+*unique* missing principle" into a precise two-axiom statement. Nothing promoted; P1–P5 unchanged; the
+cone `[THEOREM]`, the metric posited, FTD-0208/0243 all stand.** Provenance: the adversarial savant
+rounds recorded in `EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md` §11–§12.
+
+This note named **reversibility** as the 6th-postulate-class input the metric rides on. That is the
+**dynamical half**. There is a second, logically independent **kinematic half** — Einstein's **relativity
+principle** (no privileged frame; the limiting speed frame-invariant) — and **neither subsumes the other**:
+
+- **The relativity principle constrains the kinematics** — the transformation *group* between frames
+  (group closure = invertibility of frame-*changes*). It forces a hyperbolic, clock-bearing sector to
+  **exist**, but **permits dissipative overlays**. *Witness:* the **telegrapher/Cattaneo equation** —
+  hyperbolic + dissipative + Lorentz-covariant — an invertible family of frames observing an
+  irreversible evolution.
+- **Reversibility constrains the dynamics** — it forces the hyperbolic sector to be the **whole**
+  dynamics (dissipation-free), but **permits preferred frames**. *Witness:* FTD's own engine —
+  exactly-symplectic (reversible) wave dynamics on a frame-preferring lattice with UV-anisotropic
+  dispersion.
+- **Independence is two-directional:** frame-change invertibility (kinematic group closure) ≠
+  time-evolution invertibility (dynamical reversibility). The standard von Ignatowsky-style derivations
+  blur this by assuming the transformations form a group *and* tacitly treating the dynamics as
+  exhausted by the covariant sector. The one apparent rescue — defining frames to include
+  time-translation *as a group*, then invoking Stone's theorem (group ⟹ self-adjoint generator ⟹
+  unitary) — is **relabeling, not derivation**: the semigroup-vs-group distinction for time-evolution
+  **is** the reversibility question (P5 gives only determinism, i.e. a semigroup), so requiring the
+  group structure assumes the conclusion.
+
+**Net statement:** the Lorentzian metric is conditional on **two** independent 6th-postulate-class
+inputs — *(i)* the relativity principle (kinematic: forces the clock-bearing hyperbolic sector and
+frame-invariance) and *(ii)* reversibility (dynamical: forces that sector to be everything). Together,
+and only together, they force the unique dissipation-free Lorentzian structure. This note's original
+framing named only *(ii)*; the boundary is hereby mapped one axiom wider. (Isotropy/SO(3)-restoration
+remains the *third*, separately-evidenced IR-emergent piece per §5 and FTD-0252 — measured on ⟨100⟩
+only; the decisive three-axis L ≲ 257 sweep is queued in `EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md`
+§11d, pre-registration required.)
