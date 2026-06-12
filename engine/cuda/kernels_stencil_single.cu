@@ -371,6 +371,7 @@ __global__ void genesis_kernel(
     int* __restrict__ ledger_reaction,
     int next_pid,  // starting particle ID for this batch
     int L,
+    double kinetic_drain,  // FTD-0276: runtime drain fraction (default 0.5)
     // BH-F5/F8/F9 (2026-05-05): per-voxel deterministic SplitMix64 RNG via
     // shared engine/include/ftd/voxel_rng.h. Replaces the d_random buffer
     // pre-filled by curandGenerateUniformDouble. Bit-exact CPU↔GPU.
@@ -415,12 +416,12 @@ __global__ void genesis_kernel(
     // manifesting site. Parity with CPU phase_write.cpp:269-273 (audit F4,
     // 2026-05-04). Pre-fix the GPU created particles "for free" — no
     // wave-energy or flux cost — breaking energy conservation at every
-    // genesis event. Drain factor K_GENESIS_KINETIC_DRAIN (= 0.5) on
-    // wave_vel; flux scaled by max(0, 1 - K_GENESIS/|J|) to reduce density
-    // at the new particle's site to the K_GENESIS threshold.
-    wave_vel_x[i] *= (1.0 - K_GENESIS_KINETIC_DRAIN);
-    wave_vel_y[i] *= (1.0 - K_GENESIS_KINETIC_DRAIN);
-    wave_vel_z[i] *= (1.0 - K_GENESIS_KINETIC_DRAIN);
+    // genesis event. Drain factor kinetic_drain (default 0.5, runtime toggle
+    // since FTD-0276) on wave_vel; flux scaled by max(0, 1 - K_GENESIS/|J|) to
+    // reduce density at the new particle's site to the K_GENESIS threshold.
+    wave_vel_x[i] *= (1.0 - kinetic_drain);
+    wave_vel_y[i] *= (1.0 - kinetic_drain);
+    wave_vel_z[i] *= (1.0 - kinetic_drain);
     double jmag = sqrt(fx*fx + fy*fy + fz*fz);
     if (jmag > K_GENESIS_FLUX_EPSILON) {
         double drain_scale = fmax(0.0, 1.0 - k_genesis / jmag);
@@ -543,6 +544,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
                         bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                         bool do_langevin, double langevin_gamma, double langevin_T,
                         uint8_t langevin_site_filter,
+                        double kinetic_drain,
                         unsigned long long rng_seed, int tick) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
@@ -585,6 +587,7 @@ void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_dampin
             bufs.d_spin, bufs.d_color, bufs.d_particle_id,
             bufs.d_ledger_reaction,
             0, L,
+            kinetic_drain,
             rng_seed, tick
         );
         CUDA_CHECK(cudaGetLastError());

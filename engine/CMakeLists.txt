@@ -1257,6 +1257,14 @@ ftd_add_test(campaign_genesis_geometry tests/campaign_genesis_geometry.cpp
              CTEST_NAME campaign_genesis_geometry TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0276 Leg A (2026-06-12): does cluster efficiency k_eff scale as drain²?
+# Sweeps the runtime kinetic_drain toggle x amplitude x seed, reporting the
+# settled manifested count N. Tests the FOUND_LATTICE_SPACING_GAUGE_FREEDOM §12
+# hypothesis k = drain² = 0.25 against the FTD-0261 stack.
+ftd_add_test(campaign_drain_scan tests/campaign_drain_scan.cpp
+             CTEST_NAME campaign_drain_scan TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # RG-spectrum probe (2026-06-11): ORDER of the genesis/manifestation transition.
 # Pure Langevin-thermal drive (no injection); logs the steady-state manifested
 # fraction m time series across L x T x seeds for a finite-size-scaling analysis

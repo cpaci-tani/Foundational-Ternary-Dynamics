@@ -43,6 +43,7 @@ namespace ftd { namespace gpu { namespace kernels {
                             bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
                             bool do_langevin, double langevin_gamma, double langevin_T,
                             uint8_t langevin_site_filter,
+                            double kinetic_drain,
                             unsigned long long rng_seed, int tick);
     void launch_gauss_project(GpuBuffers& bufs,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
@@ -271,6 +272,7 @@ void GpuEngine::gpu_phase_write() {
                                     toggles.langevin_gamma,
                                     toggles.langevin_T,
                                     static_cast<uint8_t>(toggles.langevin_site_filter),
+                                    toggles.kinetic_drain,
                                     rng_seed, tick);
     }
 
