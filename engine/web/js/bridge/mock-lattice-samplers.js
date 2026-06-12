@@ -10,7 +10,7 @@
  * overlay that consumes these samples.
  *
  * Extracted from `bridge-init.js` as Wave 1 ticket 2 of the
- * large-file refactor (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). The
+ * bridge modularization pass documented in engine/web/docs/INDEX.md. The
  * extraction is a move, not a rewrite — every sampler body is preserved
  * verbatim, and the latency-proxy cache-invalidation chain stays intact
  * because `state` is the live MockBridge instance (not a destructured
@@ -41,11 +41,10 @@
  */
 
 import {
-    ALPHA, K_B,
+    K_B,
     COULOMB_K_FORCE,
     STRONG_ALPHA_S, STRONG_RUN_COEFF, STRONG_R_COULOMB, STRONG_R_LINEAR,
     STRONG_TRANSITION_DENOM, STRONG_LINEAR_DENOM,
-    STRONG_COLOR_REPEL, STRONG_COLOR_ATTRACT,
     LAPLACIAN_FACE_WEIGHT, LAPLACIAN_EDGE_WEIGHT,
 } from '../constants.js';
 

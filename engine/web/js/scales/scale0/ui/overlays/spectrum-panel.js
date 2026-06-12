@@ -16,7 +16,7 @@
  */
 
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
-import { cardStyle, titleStyle, heroStyle, tagBadge, formatExp, formatFixed } from './_card-helpers.js';
+import { cardStyle, titleStyle, tagBadge, formatExp, formatFixed } from './_card-helpers.js';
 import {
     energySpectrum, spectralPeak, spectralSlope, denseVectorGridFromSamples,
 } from '../../analysis/lattice-spectrum.js';

@@ -1,7 +1,6 @@
 import {
     readPanelMount,
     writePanelMount,
-    getValidMounts,
     resolveEffectiveMount,
     getSideMountMinWidth,
 } from '../../shell/panel-mount-state.js';

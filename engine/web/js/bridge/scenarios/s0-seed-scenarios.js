@@ -2,7 +2,7 @@
  * S0Seed scenarios — s0-seed-* group.
  *
  * Extracted from bridge/scenarios/index.js as part of Wave 3 tickets 8-13
- * of the large-file refactor (docs/SPEC_REFACTOR_LARGE_FILES.md §4). This
+ * of the bridge modularization pass documented in engine/web/docs/INDEX.md. This
  * is a pure move — scenario bodies preserved verbatim; only the outer
  * `if (name.startsWith('s0-seed-')) { ... }` wrapper was lifted out
  * and replaced with an early `return false` when the prefix does not
@@ -43,7 +43,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
     const harness = maybeCtx ? harnessOrCtx : makeBridgeHarness(this);
     const ctx = maybeCtx ?? harnessOrCtx;
     const bridge = harness.bridge ?? this;
-    const { N, mid, midF } = ctx;
+    const { N, midF } = ctx;
             bridge._initFluxGrid();
             const mc = Math.round(midF);
 

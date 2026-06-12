@@ -18,7 +18,7 @@
  *                       force glyph + heatmap overlays
  *
  * Extracted from viewport.js as part of the large-file refactor (Wave 1
- * ticket 1 in docs/SPEC_REFACTOR_LARGE_FILES.md). The extraction is
+ * ticket from the viewport modularization pass; see engine/web/docs/INDEX.md. The extraction is
  * mechanical — these functions had zero `this` access and zero side
  * effects, so moving them to module scope is a pure rename from
  * `this._rampX(...)` to `rampX(...)` at every call site.

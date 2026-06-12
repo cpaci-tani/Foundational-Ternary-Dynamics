@@ -1,0 +1,26 @@
+{
+  "name": "foundational-ternary-dynamics",
+  "version": "5.47.0",
+  "description": "Foundational Ternary Dynamics (FTD) web engine dashboard",
+  "type": "module",
+  "scripts": {
+    "dev": "vite engine/web --config vite.config.js",
+    "build": "vite build engine/web --config vite.config.js",
+    "lint": "eslint \"engine/web/js/**/*.js\"",
+    "lint:css": "stylelint \"engine/web/css/**/*.css\"",
+    "typecheck": "tsc --noEmit",
+    "depcruise": "depcruise engine/web/js --config .dependency-cruiser.json"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.0",
+    "@typescript-eslint/parser": "^7.7.0",
+    "dependency-cruiser": "^16.2.4",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "stylelint": "^16.3.1",
+    "stylelint-config-standard": "^36.0.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.8"
+  }
+}

@@ -571,7 +571,7 @@ engine/web/
 │
 └── docs/
     ├── SPEC_UI_REFACTOR.md     — Architecture history
-    ├── SPEC_CSS_REVAMP.md      — Five-phase CSS refactor
+    ├── historical/SPEC_CSS_REVAMP.md — Five-phase CSS refactor provenance
     └── SPEC_THEME_DESIGN.md    — THIS FILE
 ```
 

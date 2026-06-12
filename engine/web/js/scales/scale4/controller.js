@@ -10,6 +10,7 @@ import { PlanetaryMockBridge } from '../../bridge/mock-scale4.js';
 import { PlanetaryRenderer } from '../../planetary-renderer.js';
 import { rafCoordinator } from '../../lib/raf-coordinator.js';
 import { hideScale0Overlays } from '../scale-utils.js';
+import { telemetryHub } from '../../telemetry-hub.js';
 
 // F-6: drive the planetary loop from the shared rAF coordinator instead of
 // setInterval(…, 16). 60 Hz matches the old ~16 ms cadence (1000/16 ≈ 62.5),
@@ -144,6 +145,10 @@ class Scale4LifecycleController extends BaseLifecycleController {
                     if (f > 0 && this.bridge) this.bridge.run(f);
                 }
 
+                if (this.bridge) {
+                    telemetryHub.collectScale4(this.bridge);
+                }
+
                 if (this.bridge && this.renderer) {
                     const currentData = this.bridge.getPlanetaryData();
                     this.renderer.update(currentData);
@@ -260,10 +265,15 @@ class Scale4LifecycleController extends BaseLifecycleController {
      */
     _updateOverlayStatus() {
         const statusEl = document.getElementById('planetary-overlay-status');
-        if (!statusEl) return;
-        statusEl.textContent = this._gravityMode === 'physical'
-            ? 'Orbital mechanics — Physical (Keplerian AU/M☉/yr; Earth year = 1 sim yr)'
-            : 'Orbital mechanics — Decorative (visual cadence; not AU/yr-faithful)';
+        if (statusEl) {
+            statusEl.textContent = this._gravityMode === 'physical'
+                ? 'Orbital mechanics — Physical (Keplerian AU/M☉/yr; Earth year = 1 sim yr)'
+                : 'Orbital mechanics — Decorative (visual cadence; not AU/yr-faithful)';
+        }
+        const gravEl = document.getElementById('planetary-ctrl-gravity');
+        if (gravEl && this.bridge) {
+            gravEl.textContent = this.bridge.G.toFixed(this._gravityMode === 'physical' ? 3 : 2);
+        }
     }
 
     step() {

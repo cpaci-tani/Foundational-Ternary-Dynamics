@@ -87,6 +87,7 @@ export class TelemetryHub {
         this._lastTick1 = -1;
         this._lastTick1Ext = -1;
         this._lastTick2 = -1;
+        this._lastTick4 = -1;
         this._lastTick5 = -1;
 
         // Incremented by resetScale(); consumers with their own derived state
@@ -95,6 +96,7 @@ export class TelemetryHub {
             0: 0,
             1: 0,
             2: 0,
+            4: 0,
             5: 0,
         };
 
@@ -194,6 +196,17 @@ export class TelemetryHub {
         this.aeDrift     = new RingBuffer(200);
         this._aeInitialEnergy = null;
 
+        // ── Scale 4 — Planetary (200-sample) ───────────
+        this.plKE            = new RingBuffer(200);
+        this.plPE            = new RingBuffer(200);
+        this.plTotal         = new RingBuffer(200);
+        this.plEnergyDrift   = new RingBuffer(200);
+        this.plCount         = new RingBuffer(200);
+        this.plMomentum      = new RingBuffer(200);
+        this.plVirial        = new RingBuffer(200);
+        this.plSystemRadius  = new RingBuffer(200);
+        this._plInitialEnergy = null;
+
         // ── Scale 5 — Cosmic (200-sample) ──────────────
         this.csBodies = new RingBuffer(200);
         this.csHubble = new RingBuffer(200);
@@ -204,8 +217,8 @@ export class TelemetryHub {
 
     /**
      * Collect Scale 0 diagnostics. Implements the dual-bridge logic:
-     * if a JS flux mock is active and WASM has no manifested particles,
-     * use the mock snapshot because it owns both the field state and tick.
+     * if a JS flux mock is active, use its snapshot because it owns the
+     * field state, particles, and tick for that scenario.
      * @returns {object} the active diag snapshot
      */
     collectScale0(bridge, fluxMock, useFluxMock) {
@@ -216,9 +229,7 @@ export class TelemetryHub {
         const wasmDiag = mainCaps.getScale0Diagnostics();
         const mockDiag = mockCaps ? mockCaps.getScale0Diagnostics() : null;
 
-        const diag = (mockDiag && !wasmDiag.manifested && mockDiag.totalFlux > 0)
-            ? mockDiag
-            : wasmDiag;
+        const diag = mockDiag || wasmDiag;
 
         this.s0.diag = diag;
 
@@ -543,6 +554,96 @@ export class TelemetryHub {
         return diag;
     }
 
+    // ── Scale 4 collection ──────────────────────────────────────────────────
+
+    collectScale4(bridge) {
+        if (!bridge) return null;
+        const diag = bridge.getDiagnostics?.();
+        if (!diag) return null;
+        this.s4.diag = diag;
+
+        const currentTick = diag.tick || 0;
+        if (currentTick !== this._lastTick4) {
+            this._lastTick4 = currentTick;
+
+            const bodies = bridge._bodies || [];
+            const N = bodies.length;
+
+            let ke = 0;
+            let pe = 0;
+            let sumPx = 0, sumPy = 0, sumPz = 0;
+            let totalMass = 0;
+            let sumMx = 0, sumMy = 0, sumMz = 0;
+
+            for (let i = 0; i < N; i++) {
+                const b = bodies[i];
+                const m = b.mass || 0;
+                totalMass += m;
+                ke += 0.5 * m * (b.vx * b.vx + b.vy * b.vy + b.vz * b.vz);
+                sumPx += m * b.vx;
+                sumPy += m * b.vy;
+                sumPz += m * b.vz;
+                sumMx += m * b.x;
+                sumMy += m * b.y;
+                sumMz += m * b.z;
+            }
+
+            const G = bridge.G || 0.01;
+            for (let i = 0; i < N; i++) {
+                const bi = bodies[i];
+                const mi = bi.mass || 0;
+                for (let j = i + 1; j < N; j++) {
+                    const bj = bodies[j];
+                    const mj = bj.mass || 0;
+                    const dx = bi.x - bj.x;
+                    const dy = bi.y - bj.y;
+                    const dz = bi.z - bj.z;
+                    const r2 = dx * dx + dy * dy + dz * dz;
+                    pe -= G * mi * mj / Math.sqrt(r2 + 1e-6);
+                }
+            }
+
+            const totalEnergy = ke + pe;
+            const momentum = Math.sqrt(sumPx * sumPx + sumPy * sumPy + sumPz * sumPz);
+
+            let systemRadius = 0;
+            if (totalMass > 0) {
+                const comX = sumMx / totalMass;
+                const comY = sumMy / totalMass;
+                const comZ = sumMz / totalMass;
+                for (let i = 0; i < N; i++) {
+                    const b = bodies[i];
+                    const dx = b.x - comX;
+                    const dy = b.y - comY;
+                    const dz = b.z - comZ;
+                    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                    if (dist > systemRadius) {
+                        systemRadius = dist;
+                    }
+                }
+            }
+
+            const virial = pe !== 0 ? (2 * ke / Math.abs(pe)) : 0;
+
+            if (this._plInitialEnergy === null && Math.abs(totalEnergy) > 1e-12) {
+                this._plInitialEnergy = totalEnergy;
+            }
+            const drift = this._plInitialEnergy
+                ? ((totalEnergy - this._plInitialEnergy) / Math.abs(this._plInitialEnergy)) * 100
+                : 0;
+
+            this.plKE.push(ke);
+            this.plPE.push(pe);
+            this.plTotal.push(totalEnergy);
+            this.plEnergyDrift.push(drift);
+            this.plCount.push(N);
+            this.plMomentum.push(momentum);
+            this.plVirial.push(virial);
+            this.plSystemRadius.push(systemRadius);
+        }
+        return diag;
+    }
+
     // ── Scale 5 collection ──────────────────────────────────────────────────
 
     collectScale5(cosmicBridge) {
@@ -556,11 +657,12 @@ export class TelemetryHub {
             this._lastTick5 = currentTick;
 
             this.csBodies.push(diag.bodyCount  || diag.count || 0);
-            // Bridge emits diag.hubbleParameter; keep legacy aliases for forward-compat.
-            // (audit P0-3 fix, 2026-05-27 — csHubble was dead-on-arrival because
-            // neither 'hubble' nor 'hubbleParam' matched the emitted key.)
             this.csHubble.push(diag.hubbleParameter || diag.hubble || diag.hubbleParam || 0);
-            this.csDM.push(    diag.darkMatter || diag.dmFraction  || 0);
+
+            const counts = diag.countsByType || [];
+            const total = diag.bodyCount || 1;
+            const dmFraction = ((counts[3] || 0) / total) * 100;
+            this.csDM.push(dmFraction);
         }
         return diag;
     }
@@ -703,6 +805,15 @@ export class TelemetryHub {
                 this._aeInitialEnergy = null;
                 this._lastTick2 = -1;
                 break;
+            case 4:
+                for (const b of [
+                    this.plKE, this.plPE, this.plTotal, this.plEnergyDrift,
+                    this.plCount, this.plMomentum, this.plVirial, this.plSystemRadius
+                ]) b.clear();
+                this.s4 = { diag: null };
+                this._plInitialEnergy = null;
+                this._lastTick4 = -1;
+                break;
             case 5:
                 for (const b of [this.csBodies, this.csHubble, this.csDM]) b.clear();
                 this.s5 = { diag: null, cosmic: null };
@@ -712,7 +823,7 @@ export class TelemetryHub {
     }
 
     resetAll() {
-        for (const scale of [0, 1, 2, 5]) this.resetScale(scale);
+        for (const scale of [0, 1, 2, 4, 5]) this.resetScale(scale);
     }
 }
 

@@ -5,7 +5,7 @@
  * All energies in MeV (natural units where K_B = m_e = 0.511 MeV).
  */
 
-import { ALPHA, K_B, M_E_PHYS, PI_FTD, N_C, B_3, N_EFF, HBAR_C_MEV_FM } from './constants.js';
+import { ALPHA, M_E_PHYS, PI_FTD, HBAR_C_MEV_FM } from './constants.js';
 
 // ── Energy Levels ───────────────────────────────────────────────────
 //
@@ -96,8 +96,6 @@ export function renderEnergyLevels(Z, container) {
     const nMax = 6;
     const trans = spectralSeries(Z, nMax);
     const E1 = hydrogenEnergyLevel(1, Z);
-    const E_ion = ionizationEnergy(Z);
-
     const W = 360, H = 200;
     const leftMargin = 50, rightMargin = 20, topPad = 15, botPad = 20;
     const levelWidth = W - leftMargin - rightMargin;

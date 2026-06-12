@@ -14,8 +14,10 @@ export function updateDiagnosticsAndPanels(ctx, state) {
         // Demand-gate the EXPENSIVE audit/Lagrangian streams on a visible consumer
         // + a field-version change. Keeping collectScale0 (above) unconditional means
         // the primary sparkline history is never interrupted (SPEC_SCALE0_PERF §3).
+        const wantsConservationAudit = typeof window !== 'undefined' && !!window.__ftdConservationPanel;
         const wantAudit = ctx.isPanelVisible('diagnostics') || ctx.isPanelVisible('charts')
-            || ctx.isPanelVisible('lagrangian') || ctx.isPanelVisible('telemetry-grid');
+            || ctx.isPanelVisible('lagrangian') || ctx.isPanelVisible('telemetry-grid')
+            || wantsConservationAudit;
         const wantLag = ctx.isPanelVisible('charts') || ctx.isPanelVisible('lagrangian')
             || ctx.isPanelVisible('telemetry-grid');
 

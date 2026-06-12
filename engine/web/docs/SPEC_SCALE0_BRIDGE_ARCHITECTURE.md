@@ -7,7 +7,7 @@ surface, the Web-Worker proxy + SharedArrayBuffer design, bridge selection, and 
 **Companions:** [`SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](SPEC_SCALE0_SCENARIO_ARCHITECTURE.md)
 (scenarios sit on these bridges), [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md)
 (the per-frame loop drives them). Point-in-time audits: [`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`](audits/AUDIT_BRIDGE_WIRING_2026-06-03.md)
-(read-surface under the worker), [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
+(read-surface under the worker), [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
 (lifecycle/teardown). Worker design: [`PLAN_SCALE0_PHYSICS_WORKER.md`](PLAN_SCALE0_PHYSICS_WORKER.md).
 
 **Path convention:** JS paths relative to `engine/web/js/`; docs relative to `engine/web/docs/`.
@@ -257,7 +257,7 @@ guard (§6).
 Scenario switches reset via `setupScenario`→`reset` inside the dispatcher; scale switches dispose
 panels + the flux-mock via the lifecycle controller (`scales/scale0/controller.js` `mount`/`destroy`,
 audit 06-04). Lifecycle validity (no leaked rAF subscribers / GPU memory / workers across switches)
-is verified end-to-end in `AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md` (71/71) and
+is verified end-to-end in `audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md` (71/71) and
 `scale0-worker-teardown.spec.js`.
 
 ---
@@ -272,7 +272,7 @@ is verified end-to-end in `AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md` (71/71) and
 | Worker proxy | `bridge/mock-bridge-proxy.js` + `bridge/mock-bridge.worker.js` + `bridge/shared-field.js` |
 | Capability factory | `bridge/capabilities/install.js` + `scale0.js`/`scale1.js`/`scale2.js` |
 | Contract + direct-reads | `bridge/bridge-contract.js` |
-| Construction / re-export shim | `bridge/bridge-init.js` |
+| Construction / re-export shim | `bridge-init.js` |
 | Selection / boot probe | `app.js` (native → WASM → mock); flux-mock: `scales/scale0/runtime/scenario-loader.js:121-150` |
 
 *`file:line` references are as of the 2026-06-05 source; re-derive before relying on them. The

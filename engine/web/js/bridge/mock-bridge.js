@@ -23,8 +23,7 @@
  * shim. See .claude/plans/i-want-to-try-crispy-charm.md Phase 2.
  */
 
-import { getById as catalogGetById } from '../particle-catalog.js';
-import { ALPHA, ALPHA_EFT, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON, R_BOHR, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF,
+import { ALPHA, ALPHA_EFT, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, N_BASE, G_STAR, VARPI, N_C, B_3, N_EFF,
     COULOMB_K_FORCE,
     STRONG_ALPHA_S, STRONG_RUN_COEFF, STRONG_R_COULOMB, STRONG_R_LINEAR,
     STRONG_TRANSITION_DENOM, STRONG_LINEAR_DENOM,
@@ -34,7 +33,6 @@ import { ALPHA, ALPHA_EFT, K_B, K_GENESIS, DAMPING, G_N, G_C, C_SPEED, M_PROTON,
 // frame is wasteful (L-5 cleanup from AUDIT_LEDGER pre-refactor sweep).
 const K_GENESIS_SQ = K_GENESIS * K_GENESIS;
 
-import { debugLog } from '../core/log.js';
 import { insideBoundary, reflectIntoBoundary } from './boundary.js';
 // Lattice samplers (17 methods + buildLatencyProxy helper) live in their
 // own module as of Wave 1 ticket 2 of the large-file refactor. MockBridge
@@ -62,7 +60,7 @@ import { createAtomEngine } from './mock-atom-engine.js';
 // Called via .call(this, name) so every this.reset(), this.injectParticle(...),
 // etc., binds back to this MockBridge instance.
 import { runSetupScenario } from './scenarios/index.js';
-import { allocSharedField, viewSharedField, CTRL } from './shared-field.js';
+import { MockWaveEngine } from './mock-wave-engine.js';
 
 // ── Mock Bridge ────────────────────────────────────────────────────
 /** @implements {import('./bridge-contract.js').ScaleBridge} */
@@ -72,6 +70,10 @@ export class MockBridge {
         // point injections + symmetric flux center exactly (no half-voxel
         // straddle / +x−x asymmetry). Snap any even N up to the next odd.
         this.latticeSize = (latticeSize % 2 === 0) ? latticeSize + 1 : latticeSize;
+
+        // Instantiate the wave engine first so getters/setters delegate to it during construction.
+        this.waveEngine = new MockWaveEngine(this);
+
         this._tick = 0;
         this._dt = 1.0;
         this._physicalTime = 0.0;
@@ -84,41 +86,28 @@ export class MockBridge {
         this._boundaryMask = null; // Uint8Array: 1=inside, 0=outside. Precomputed per shape.
         this._reflectiveBoundary = false; // When false, particles/flux dissipate past boundary (default off)
 
-        // ── Sparse (active-region) wave tick — Phase 1 (SPEC_SCALE0_LATTICE_PERF §3) ──
-        // _activeBox = inclusive bounds of nonzero flux; x1<x0 means "empty".
-        // _activeDense latches true when the wave reaches a wall / fills >40%
-        // (then _tickFlux runs the original full dense path). _sparseEps: trim
-        // threshold (0 = bit-exact). _sparseTick gates the whole optimization.
-        this._sparseTick = true;    // FTD_SPARSE_TICK — bit-exact active-region tick (SPEC §3); set false to revert to dense
+        // ── Sparse (active-region) wave tick ──
+        this._sparseTick = true;
         this._activeBox = { x0: this.latticeSize, x1: -1, y0: this.latticeSize, y1: -1, z0: this.latticeSize, z1: -1 };
         this._activeDense = false;
         this._sparseEps = 0;
 
-        // ── SAB-backed field for the physics Web Worker — Phase 2 (PLAN_SCALE0_PHYSICS_WORKER) ──
-        // When _useSAB, _initFluxGrid backs the flux buffers with SharedArrayBuffers
-        // (held in _sharedField) so a worker host and the main-thread proxy share
-        // them zero-copy. Off for the normal in-thread bridge (plain typed arrays).
+        // ── SAB-backed field ──
         this._useSAB = false;
         this._sharedField = null;
 
         // Mutable simulation parameters (combo panel)
         this._params = { kb: K_B, gn: G_N, damping: DAMPING, omega0: 1.0 };
 
-        // Toggle states (mirror engine TermToggles from term_toggles.h)
-        // NOTE: gravity defaults to false here to match config/toggles.js SCALE0_TOGGLES.
-        // Scenarios that need gravity enable it via SCALE0_SCENARIO_OVERRIDES.
+        // Toggle states
         this._toggles = {
             wave_propagation: true, coupling: true, damping: true, genesis: true,
             gauss_projection: true, forces: true, gravity: false, movement: true,
             poisson_coulomb: true, lorentz_force: false, selective_damping: true,
             larmor_radiation: false, dual_substrate: false, confinement: false,
-            // weak_transmutation requires dual_substrate (operates on J_L/J_R).
-            // Default OFF to satisfy the C++ TermToggles validator and stop
-            // the spurious console-error spam on every scenario load.
             weak_transmutation: false,
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
-            // FTD-0271: de Broglie internal clock (KG mass term -omega0^2*J).
             de_broglie_clock: false,
         };
 
@@ -137,37 +126,47 @@ export class MockBridge {
         this._forceGravity = [];  // per-particle gravity force {x,y,z}
         this._forceStrong = [];   // per-particle strong/confinement force {x,y,z}
 
-        // Cached energy sums — avoids redundant O(L^3) loops across getDiagnostics/getEnergyAudit/getLagrangian
+        // Cached energy sums
         this._energyCacheTick = -1;
-        // Cached latency-proxy lattice (|J|²-derived L(x) for Kretschmann +
-        // horizon samplers). Rebuilt lazily per tick; invalidated explicitly
-        // on reset() and flux/wave injection writes.
         this._latencyProxy = null;
         this._latencyProxyTick = -1;
         this._cachedFieldEnergy = 0;
         this._cachedWaveEnergy = 0;
         this._cachedFluxMag = 0;
 
-        // Cached sponge-layer damping table, rebuilt on demand when D changes
-        // (M-9 cleanup — was a fresh Float32Array(D+1) every absorbing tick).
-        this._spongeTable = null;
-        // Last scatter count for stateGrid zeroing optimization (M-11).
-        this._lastStateScatterCount = 0;
-
-        // Lattice samplers — factory takes the live MockBridge instance so
-        // cache writes (_latencyProxy, _latencyProxyTick) propagate back
-        // here and all existing invalidation sites (reset / per-tick advance
-        // / flux-wave injection mutators) continue to work.
+        // Lattice samplers, diagnostics provider, particle engine, atom engine
         this._samplers = createLatticeSamplers(this);
-        // Diagnostics provider — same live-reference contract.
         this._diagnostics = createDiagnosticsProvider(this);
-        // Scale-1 Particle Engine — same live-reference contract (mutates
-        // state._pe, _peParticleTypes, _peBufs, _peFieldBufs on this instance).
         this._peEngine = createParticleEngine(this);
-        // Scale-2 Atom Engine — same live-reference contract (mutates state._ae
-        // and the bond lookup caches on this instance).
         this._aeEngine = createAtomEngine(this);
     }
+
+    get _fluxJ() { return this.waveEngine?._fluxJ; }
+    set _fluxJ(v) { if (this.waveEngine) this.waveEngine._fluxJ = v; }
+    get _fluxWV() { return this.waveEngine?._fluxWV; }
+    set _fluxWV(v) { if (this.waveEngine) this.waveEngine._fluxWV = v; }
+    get _fluxMag() { return this.waveEngine?._fluxMag; }
+    set _fluxMag(v) { if (this.waveEngine) this.waveEngine._fluxMag = v; }
+    get _stateGrid() { return this.waveEngine?._stateGrid; }
+    set _stateGrid(v) { if (this.waveEngine) this.waveEngine._stateGrid = v; }
+    get _sharedField() { return this.waveEngine?._sharedField; }
+    set _sharedField(v) { if (this.waveEngine) this.waveEngine._sharedField = v; }
+    get _fluxDirty() { return this.waveEngine?._fluxDirty; }
+    set _fluxDirty(v) { if (this.waveEngine) this.waveEngine._fluxDirty = v; }
+    get _activeBox() { return this.waveEngine?._activeBox; }
+    set _activeBox(v) { if (this.waveEngine) this.waveEngine._activeBox = v; }
+    get _activeDense() { return this.waveEngine?._activeDense; }
+    set _activeDense(v) { if (this.waveEngine) this.waveEngine._activeDense = v; }
+    get _sparseTick() { return this.waveEngine?._sparseTick; }
+    set _sparseTick(v) { if (this.waveEngine) this.waveEngine._sparseTick = v; }
+    get _sparseEps() { return this.waveEngine?._sparseEps; }
+    set _sparseEps(v) { if (this.waveEngine) this.waveEngine._sparseEps = v; }
+    get _reflectiveBoundary() { return this.waveEngine?._reflectiveBoundary; }
+    set _reflectiveBoundary(v) { if (this.waveEngine) this.waveEngine._reflectiveBoundary = v; }
+    get _boundaryShape() { return this.waveEngine?._boundaryShape; }
+    set _boundaryShape(v) { if (this.waveEngine) this.waveEngine._boundaryShape = v; }
+    get _boundaryMask() { return this.waveEngine?._boundaryMask; }
+    set _boundaryMask(v) { if (this.waveEngine) this.waveEngine._boundaryMask = v; }
 
     /**
      * Compute and cache field/wave energy sums from _fluxJ/_fluxWV.
@@ -563,6 +562,7 @@ export class MockBridge {
 
     reset(latticeSize) {
         this.latticeSize = latticeSize || this.latticeSize;
+        if (this.waveEngine) this.waveEngine.latticeSize = this.latticeSize;
         this._tick = 0;
         this._dt = 1.0;
         this._physicalTime = 0.0;
@@ -743,7 +743,7 @@ export class MockBridge {
 
     // Diagnostics readouts moved to bridge/mock-diagnostics.js as Wave 1
     // ticket 3. MockBridge forwards via this._diagnostics (constructed in
-    // the ctor). See docs/SPEC_REFACTOR_LARGE_FILES.md §4.
+    // the ctor). See engine/web/docs/INDEX.md for modularization provenance.
     getDiagnostics() { return this._diagnostics.getDiagnostics(); }
     getEnergyAudit() { return this._diagnostics.getEnergyAudit(); }
     getLagrangian()  { return this._diagnostics.getLagrangian(); }
@@ -864,734 +864,63 @@ export class MockBridge {
     // Lightweight 3D wave equation on a small grid for flux visualization
     // when WASM is unavailable.
     _initFluxGrid() {
-        const N = this.latticeSize;
-        const total = N * N * N;
-        if (this._useSAB) {
-            // Worker mode: back every field buffer (incl. the state grid, so
-            // particle scenarios share too) with SharedArrayBuffers. The proxy
-            // attaches views over the same memory via getSharedField().
-            const sab = allocSharedField(N);
-            this._sharedField = sab;
-            const v = viewSharedField(sab);
-            this._fluxJ = v.fluxJ;
-            this._fluxWV = v.fluxWV;
-            this._fluxMag = v.fluxMag;
-            this._stateGrid = v.state;
-            v.ctrl[CTRL.N] = N;
-        } else {
-            this._fluxJ = new Float64Array(total * 3); // flux vector field (Jx, Jy, Jz)
-            this._fluxWV = new Float64Array(total * 3); // wave velocity (leapfrog)
-            this._fluxMag = new Float64Array(total);     // cached magnitudes
-        }
-        this._fluxDirty = true;
+        this.waveEngine._initFluxGrid();
     }
 
-    // Worker hosts return the SharedArrayBuffer set so the main-thread proxy can
-    // attach views over the same memory (zero-copy). Null unless _useSAB.
-    getSharedField() { return this._sharedField; }
+    getSharedField() {
+        return this.waveEngine.getSharedField();
+    }
 
     _fluxIdx(x, y, z) {
-        const N = this.latticeSize;
-        return ((z + N) % N) * N * N + ((y + N) % N) * N + ((x + N) % N);
+        return this.waveEngine._fluxIdx(x, y, z);
     }
 
     _injectFlux(x, y, z, fx, fy, fz) {
-        if (!this._fluxJ) this._initFluxGrid();
-        const idx = this._fluxIdx(x, y, z);
-        this._fluxJ[idx * 3] += fx;
-        this._fluxJ[idx * 3 + 1] += fy;
-        this._fluxJ[idx * 3 + 2] += fz;
-        this._fluxDirty = true;
-        this._expandActiveBox(x, y, z);
+        this.waveEngine._injectFlux(x, y, z, fx, fy, fz);
     }
 
     _injectWaveVel(x, y, z, wx, wy, wz) {
-        if (!this._fluxWV) this._initFluxGrid();
-        const idx = this._fluxIdx(x, y, z);
-        this._fluxWV[idx * 3] += wx;
-        this._fluxWV[idx * 3 + 1] += wy;
-        this._fluxWV[idx * 3 + 2] += wz;
-        this._expandActiveBox(x, y, z);
+        this.waveEngine._injectWaveVel(x, y, z, wx, wy, wz);
     }
 
-    // ── Sparse (active-region) wave-tick helpers — SPEC_SCALE0_LATTICE_PERF §3 ──
     _resetActiveBox() {
-        const N = this.latticeSize;
-        this._activeBox = { x0: N, x1: -1, y0: N, y1: -1, z0: N, z1: -1 };
-        this._activeDense = false;
+        this.waveEngine._resetActiveBox();
     }
 
-    // Grow the box to include voxel (x,y,z). Coords are wrapped like _fluxIdx so
-    // a periodic-wrap injection lands at its true voxel (clamping would drop it).
     _expandActiveBox(x, y, z) {
-        const b = this._activeBox, N = this.latticeSize;
-        x = ((x % N) + N) % N; y = ((y % N) + N) % N; z = ((z % N) + N) % N;
-        if (x < b.x0) b.x0 = x; if (x > b.x1) b.x1 = x;
-        if (y < b.y0) b.y0 = y; if (y > b.y1) b.y1 = y;
-        if (z < b.z0) b.z0 = z; if (z > b.z1) b.z1 = z;
+        this.waveEngine._expandActiveBox(x, y, z);
     }
 
-    // Grow the box by one shell each tick (the 18-point stencil reach is ≤1
-    // voxel/tick), clamped to the lattice. Cheap O(1); keeps the box a superset
-    // of nonzero J/WV so the bounded tick stays bit-exact.
     _growActiveBox() {
-        const b = this._activeBox, N = this.latticeSize;
-        if (b.x1 < b.x0) return;
-        b.x0 = Math.max(0, b.x0 - 1); b.x1 = Math.min(N - 1, b.x1 + 1);
-        b.y0 = Math.max(0, b.y0 - 1); b.y1 = Math.min(N - 1, b.y1 + 1);
-        b.z0 = Math.max(0, b.z0 - 1); b.z1 = Math.min(N - 1, b.z1 + 1);
+        this.waveEngine._growActiveBox();
     }
 
-    // Tight rescan of nonzero J/WV bounds (O(N³)); call only occasionally (after
-    // scenario setup, and every K ticks so a damped field can shrink the box).
     _recomputeActiveBox() {
-        const N = this.latticeSize, J = this._fluxJ, WV = this._fluxWV, eps = this._sparseEps;
-        this._resetActiveBox();
-        if (!J) return;
-        const b = this._activeBox;
-        for (let z = 0; z < N; z++) for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
-            const i3 = (z * N * N + y * N + x) * 3;
-            const a = Math.abs(J[i3]) + Math.abs(J[i3 + 1]) + Math.abs(J[i3 + 2])
-                    + Math.abs(WV[i3]) + Math.abs(WV[i3 + 1]) + Math.abs(WV[i3 + 2]);
-            if (a > eps) {
-                if (x < b.x0) b.x0 = x; if (x > b.x1) b.x1 = x;
-                if (y < b.y0) b.y0 = y; if (y > b.y1) b.y1 = y;
-                if (z < b.z0) b.z0 = z; if (z > b.z1) b.z1 = z;
-            }
-        }
+        this.waveEngine._recomputeActiveBox();
     }
 
-    /**
-     * Flux wave propagation: leapfrog integration of the 3D vector wave equation.
-     *
-     * Physics: WV (wave velocity) += c^2 * Laplacian(J) + G_C * grad(s)
-     *          J  += WV  (then both are damped)
-     *
-     * The Laplacian uses an 18-point isotropic stencil (6 face neighbors at
-     * weight 1/3 + 12 edge neighbors at weight 1/6 - 4*center) which cancels
-     * O(k^4) anisotropy for faithful wave propagation on a cubic lattice.
-     *
-     * The coupling term G_C * grad(s) sources the flux field from the discrete
-     * state field s in {-1, 0, +1}, implementing the Euler-Lagrange equation.
-     *
-     * Damping modes: uniform (all voxels) or selective (only near particles,
-     * preserving free-wave propagation in empty space).
-     */
-    // FTD-0271: minimal KG clock leapfrog used when wave_propagation is OFF.
-    // Each manifested voxel oscillates as J'' = -omega0^2 J at exactly omega0
-    // (the k=0 rest-frame internal clock), so the omega0 slider directly sets
-    // the frequency. No spatial Laplacian, no damping/coupling.
     _tickClockOnly() {
-        if (!this._fluxJ || this._particles.length === 0) return;
-        const N = this.latticeSize, NN = N * N;
-        const dt = this._dt ?? 1.0;
-        const w0 = this._params.omega0 ?? 1.0;
-        const w2dt = w0 * w0 * dt;
-        const J = this._fluxJ, WV = this._fluxWV;
-        for (const p of this._particles) {
-            if (p.state === 0) continue;
-            const px = ((Math.round(p.x) % N) + N) % N;
-            const py = ((Math.round(p.y) % N) + N) % N;
-            const pz = ((Math.round(p.z) % N) + N) % N;
-            const i3 = (pz * NN + py * N + px) * 3;
-            for (let c = 0; c < 3; c++) {
-                WV[i3 + c] -= w2dt * J[i3 + c];
-                J[i3 + c] += WV[i3 + c] * dt;
-            }
-        }
+        this.waveEngine._tickClockOnly();
     }
 
     _tickFlux() {
-        if (!this._fluxJ) return;
-        const N = this.latticeSize;
-        // CFL stability: c * dt <= dx = 1. C_SPEED = 1/sqrt(3) so dt <= sqrt(3).
-        // Violating CFL causes silent exponential blow-up — assert early.
-        // _params.dt was a dead branch — never set anywhere. Drop it (M-6).
-        const dt = this._dt ?? 1.0;
-        if (dt * C_SPEED > 1.0 + 1e-9) {
-            if (!this._cflWarned) {
-                console.warn(`[FTD] CFL violation: dt*c=${(dt*C_SPEED).toFixed(4)} > 1. Reduce dt (max = sqrt(3) ~= 1.732).`);
-                this._cflWarned = true;
-            }
-        }
-        // c2 absorbs dt so the WV update reads `WV += c2dt * laplacian` and
-        // the J commit reads `J = (J + WV*dt) * damp`. This makes the
-        // leapfrog respect setDt(dt) (C-arch-2 / H-4 fix).
-        const c2 = C_SPEED * C_SPEED * dt;
-        // Clamp damping into [0,1] so a stray param > 1 cannot flip the sign of
-        // J/WV every tick and produce exponential blow-up (L-4 cleanup).
-        const damp = this._toggles.damping
-            ? Math.max(0, Math.min(1, 1.0 - this._params.damping))
-            : 1.0;
-        const J = this._fluxJ;
-        const WV = this._fluxWV;
-        const NN = N * N;
-        const NNN = N * N * N;
-
-        // Build state grid from particles for coupling term: g_c * grad(s)
-        // State field s ∈ {-1, 0, +1} mapped onto the lattice
-        // PERF: skip the entire NNN-byte fill+scan when no particles exist.
-        // The hot stencil loop checks `stateGrid` (null) to skip the coupling
-        // branch, so empty-lattice scenarios pay zero cost here. At L=128
-        // this saves ~2M Int8 writes per tick.
-        let stateGrid = null;
-        const doCoupling = this._toggles.coupling && this._particles.length > 0;
-        if (doCoupling) {
-            if (!this._stateGrid || this._stateGrid.length !== NNN) {
-                this._stateGrid = new Int8Array(NNN);
-            }
-            stateGrid = this._stateGrid;
-            // Skip the O(L³) zero-fill when the grid is already clean (no
-            // prior scatter in the last tick). Worst case (steady-state
-            // particle count) we still pay one fill, but empty/low-count
-            // ticks become free (M-11 cleanup).
-            if (this._lastStateScatterCount > 0) stateGrid.fill(0);
-            let scatterCount = 0;
-            for (const p of this._particles) {
-                if (p.state === 0) continue;
-                const px = ((Math.round(p.x) % N) + N) % N;
-                const py = ((Math.round(p.y) % N) + N) % N;
-                const pz = ((Math.round(p.z) % N) + N) % N;
-                stateGrid[pz * NN + py * N + px] = p.state;
-                scatterCount++;
-            }
-            this._lastStateScatterCount = scatterCount;
-        }
-
-        // 18-point isotropic Laplacian: (1/3)*face + (1/6)*edge - 4*center
-        // Cancels O(k^4) anisotropy for faithful wave propagation (matches C++ engine)
-        const W_FACE = 1.0 / 3.0;
-        const W_EDGE = 1.0 / 6.0;
-        const gc_half = G_C * 0.5;
-        const Nm1 = N - 1;
-
-        // ── PERFORMANCE: Interior/boundary split ─────────────────────────
-        // Interior voxels (1..N-2 in all axes) need no modular arithmetic for
-        // neighbor indexing — a straight +/-1, +/-N, +/-NN offset suffices.
-        // Boundary voxels (where any coordinate is 0 or N-1) use the original
-        // modular path. For L=128 this makes ~97% of voxels take the fast path,
-        // eliminating ~18 modulo ops per voxel on the interior.
-        //
-        // The inner c=0,1,2 component loop is unrolled to avoid loop overhead
-        // and let the JIT keep values in scalar registers.
-        //
-        // Pre-computed byte offsets: neighbor flat indices differ from the center
-        // by constant amounts (±1, ±N, ±NN and combinations). Multiplying by 3
-        // gives byte offsets into the interleaved J/WV arrays. These are computed
-        // once and reused for all ~2M interior voxels, saving ~36 multiplies per
-        // voxel (18 neighbors × 2 for face0/edge0 indexing).
-
-        // ── Pre-computed byte offsets for 18-neighbor stencil ────────────
-        // Each offset is relative to i3 = idx*3 in the interleaved J/WV arrays.
-        // Face neighbors: ±1 in x, ±N in y, ±NN in z (6 total)
-        const o_xp = 3;           // (+1,0,0)
-        const o_xm = -3;          // (-1,0,0)
-        const o_yp = N * 3;       // (0,+1,0)
-        const o_ym = -N * 3;      // (0,-1,0)
-        const o_zp = NN * 3;      // (0,0,+1)
-        const o_zm = -NN * 3;     // (0,0,-1)
-        // Edge neighbors: combinations of two axes (12 total)
-        const o_xpyp = o_xp + o_yp;   // (+1,+1,0)
-        const o_xpym = o_xp + o_ym;   // (+1,-1,0)
-        const o_xmyp = o_xm + o_yp;   // (-1,+1,0)
-        const o_xmym = o_xm + o_ym;   // (-1,-1,0)
-        const o_xpzp = o_xp + o_zp;   // (+1,0,+1)
-        const o_xpzm = o_xp + o_zm;   // (+1,0,-1)
-        const o_xmzp = o_xm + o_zp;   // (-1,0,+1)
-        const o_xmzm = o_xm + o_zm;   // (-1,0,-1)
-        const o_ypzp = o_yp + o_zp;   // (0,+1,+1)
-        const o_ypzm = o_yp + o_zm;   // (0,+1,-1)
-        const o_ymzp = o_ym + o_zp;   // (0,-1,+1)
-        const o_ymzm = o_ym + o_zm;   // (0,-1,-1)
-
-        // ── Sparse (active-region) windowing ─────────────────────────────
-        // Restrict the O(N³) interior Laplacian + commit to the nonzero
-        // bounding box (+1 frontier). Skip the boundary loops + sponge while
-        // the box is interior (those voxels are zero → provably no-ops). Fall
-        // back to the full dense path once the front nears a wall (periodic
-        // wrap couples both walls) or fills >40%.
-        let sx0 = 1, sx1 = N - 2, sy0 = 1, sy1 = N - 2, sz0 = 1, sz1 = N - 2;
-        let sparseActive = false;
-        let runBoundaryWV = true;
-        if (this._sparseTick && !this._activeDense) {
-            const bx = this._activeBox;
-            if (bx.x1 < bx.x0) return;               // empty field → nothing to do
-            const Dsp = this._reflectiveBoundary ? 1 : Math.min(6, Math.max(2, Math.floor(N / 4)));
-            const margin = Dsp + 1;                  // stay clear of the sponge shell too
-            const nearWall = bx.x0 <= margin || bx.x1 >= N - 1 - margin
-                          || bx.y0 <= margin || bx.y1 >= N - 1 - margin
-                          || bx.z0 <= margin || bx.z1 >= N - 1 - margin;
-            const vol = (bx.x1 - bx.x0 + 1) * (bx.y1 - bx.y0 + 1) * (bx.z1 - bx.z0 + 1);
-            if (nearWall || vol > 0.4 * N * N * N) {
-                this._activeDense = true;            // latch dense from here on
-            } else {
-                sparseActive = true;
-                runBoundaryWV = false;
-                sx0 = Math.max(1, bx.x0 - 1); sx1 = Math.min(N - 2, bx.x1 + 1);
-                sy0 = Math.max(1, bx.y0 - 1); sy1 = Math.min(N - 2, bx.y1 + 1);
-                sz0 = Math.max(1, bx.z0 - 1); sz1 = Math.min(N - 2, bx.z1 + 1);
-            }
-        }
-
-        // ── Fast interior path (no modulo, pre-computed byte offsets) ────
-        for (let z = sz0; z <= sz1; z++) {
-            const zBase = z * NN;
-            for (let y = sy0; y <= sy1; y++) {
-                const rowStart = zBase + y * N + sx0;
-                // Byte offset of (x=1, y, z) in the interleaved array
-                let i3 = rowStart * 3;
-                // Flat voxel index (for stateGrid coupling); advanced in lockstep with i3
-                let vi = rowStart;
-
-                for (let x = sx0; x <= sx1; x++) {
-                    // Laplacian via pre-computed byte offsets — no per-neighbor multiply
-                    // c = 0
-                    const center0 = J[i3];
-                    const face0 = J[i3 + o_xp] + J[i3 + o_xm]
-                                + J[i3 + o_yp] + J[i3 + o_ym]
-                                + J[i3 + o_zp] + J[i3 + o_zm];
-                    const edge0 = J[i3 + o_xpyp] + J[i3 + o_xpym]
-                                + J[i3 + o_xmyp] + J[i3 + o_xmym]
-                                + J[i3 + o_xpzp] + J[i3 + o_xpzm]
-                                + J[i3 + o_xmzp] + J[i3 + o_xmzm]
-                                + J[i3 + o_ypzp] + J[i3 + o_ypzm]
-                                + J[i3 + o_ymzp] + J[i3 + o_ymzm];
-                    WV[i3] += c2 * (W_FACE * face0 + W_EDGE * edge0 - 4.0 * center0);
-
-                    // c = 1
-                    const i3p1 = i3 + 1;
-                    const center1 = J[i3p1];
-                    const face1 = J[i3p1 + o_xp] + J[i3p1 + o_xm]
-                                + J[i3p1 + o_yp] + J[i3p1 + o_ym]
-                                + J[i3p1 + o_zp] + J[i3p1 + o_zm];
-                    const edge1 = J[i3p1 + o_xpyp] + J[i3p1 + o_xpym]
-                                + J[i3p1 + o_xmyp] + J[i3p1 + o_xmym]
-                                + J[i3p1 + o_xpzp] + J[i3p1 + o_xpzm]
-                                + J[i3p1 + o_xmzp] + J[i3p1 + o_xmzm]
-                                + J[i3p1 + o_ypzp] + J[i3p1 + o_ypzm]
-                                + J[i3p1 + o_ymzp] + J[i3p1 + o_ymzm];
-                    WV[i3p1] += c2 * (W_FACE * face1 + W_EDGE * edge1 - 4.0 * center1);
-
-                    // c = 2
-                    const i3p2 = i3 + 2;
-                    const center2 = J[i3p2];
-                    const face2 = J[i3p2 + o_xp] + J[i3p2 + o_xm]
-                                + J[i3p2 + o_yp] + J[i3p2 + o_ym]
-                                + J[i3p2 + o_zp] + J[i3p2 + o_zm];
-                    const edge2 = J[i3p2 + o_xpyp] + J[i3p2 + o_xpym]
-                                + J[i3p2 + o_xmyp] + J[i3p2 + o_xmym]
-                                + J[i3p2 + o_xpzp] + J[i3p2 + o_xpzm]
-                                + J[i3p2 + o_xmzp] + J[i3p2 + o_xmzm]
-                                + J[i3p2 + o_ypzp] + J[i3p2 + o_ypzm]
-                                + J[i3p2 + o_ymzp] + J[i3p2 + o_ymzm];
-                    WV[i3p2] += c2 * (W_FACE * face2 + W_EDGE * edge2 - 4.0 * center2);
-
-                    // State-flux coupling (interior fast path)
-                    if (doCoupling && stateGrid) {
-                        WV[i3]     += gc_half * (stateGrid[vi + 1] - stateGrid[vi - 1]);
-                        WV[i3p1]   += gc_half * (stateGrid[vi + N] - stateGrid[vi - N]);
-                        WV[i3p2]   += gc_half * (stateGrid[vi + NN] - stateGrid[vi - NN]);
-                    }
-
-                    i3 += 3; // advance byte offset to next x voxel
-                    vi++;    // advance flat voxel index in lockstep
-                }
-            }
-        }
-
-        // ── Slow boundary path (with modulo, handles periodic wrap) ──────
-        // Only runs for voxels where z=0, z=N-1, y=0, y=N-1, x=0, or x=N-1.
-        // For L=128 this is ~3% of total voxels.
-        for (let z = 0; runBoundaryWV && z < N; z++) {
-            const zw = z * NN;
-            const zpw = ((z + 1) % N) * NN;
-            const zmw = ((z - 1 + N) % N) * NN;
-            const zBoundary = (z === 0 || z === Nm1);
-            for (let y = 0; y < N; y++) {
-                const yw = y * N;
-                const ypw = ((y + 1) % N) * N;
-                const ymw = ((y - 1 + N) % N) * N;
-                const yBoundary = (y === 0 || y === Nm1);
-
-                // Skip interior rows — they were already processed above
-                if (!zBoundary && !yBoundary) continue;
-
-                for (let x = 0; x < N; x++) {
-                    const xpx = (x + 1) % N;
-                    const xmx = (x - 1 + N) % N;
-                    const idx = zw + yw + x;
-
-                    // 6 face neighbors
-                    const xp = zw + yw + xpx;
-                    const xm = zw + yw + xmx;
-                    const yp = zw + ypw + x;
-                    const ym = zw + ymw + x;
-                    const zp = zpw + yw + x;
-                    const zm = zmw + yw + x;
-
-                    // 12 edge neighbors
-                    const xpyp = zw + ypw + xpx;
-                    const xpym = zw + ymw + xpx;
-                    const xmyp = zw + ypw + xmx;
-                    const xmym = zw + ymw + xmx;
-                    const xpzp = zpw + yw + xpx;
-                    const xpzm = zmw + yw + xpx;
-                    const xmzp = zpw + yw + xmx;
-                    const xmzm = zmw + yw + xmx;
-                    const ypzp = zpw + ypw + x;
-                    const ypzm = zmw + ypw + x;
-                    const ymzp = zpw + ymw + x;
-                    const ymzm = zmw + ymw + x;
-
-                    const i3 = idx * 3;
-
-                    // c = 0
-                    const center0 = J[i3];
-                    const face0 = J[xp * 3] + J[xm * 3]
-                                + J[yp * 3] + J[ym * 3]
-                                + J[zp * 3] + J[zm * 3];
-                    const edge0 = J[xpyp * 3] + J[xpym * 3]
-                                + J[xmyp * 3] + J[xmym * 3]
-                                + J[xpzp * 3] + J[xpzm * 3]
-                                + J[xmzp * 3] + J[xmzm * 3]
-                                + J[ypzp * 3] + J[ypzm * 3]
-                                + J[ymzp * 3] + J[ymzm * 3];
-                    WV[i3] += c2 * (W_FACE * face0 + W_EDGE * edge0 - 4.0 * center0);
-
-                    // c = 1
-                    const i3p1 = i3 + 1;
-                    const center1 = J[i3p1];
-                    const face1 = J[xp * 3 + 1] + J[xm * 3 + 1]
-                                + J[yp * 3 + 1] + J[ym * 3 + 1]
-                                + J[zp * 3 + 1] + J[zm * 3 + 1];
-                    const edge1 = J[xpyp * 3 + 1] + J[xpym * 3 + 1]
-                                + J[xmyp * 3 + 1] + J[xmym * 3 + 1]
-                                + J[xpzp * 3 + 1] + J[xpzm * 3 + 1]
-                                + J[xmzp * 3 + 1] + J[xmzm * 3 + 1]
-                                + J[ypzp * 3 + 1] + J[ypzm * 3 + 1]
-                                + J[ymzp * 3 + 1] + J[ymzm * 3 + 1];
-                    WV[i3p1] += c2 * (W_FACE * face1 + W_EDGE * edge1 - 4.0 * center1);
-
-                    // c = 2
-                    const i3p2 = i3 + 2;
-                    const center2 = J[i3p2];
-                    const face2 = J[xp * 3 + 2] + J[xm * 3 + 2]
-                                + J[yp * 3 + 2] + J[ym * 3 + 2]
-                                + J[zp * 3 + 2] + J[zm * 3 + 2];
-                    const edge2 = J[xpyp * 3 + 2] + J[xpym * 3 + 2]
-                                + J[xmyp * 3 + 2] + J[xmym * 3 + 2]
-                                + J[xpzp * 3 + 2] + J[xpzm * 3 + 2]
-                                + J[xmzp * 3 + 2] + J[xmzm * 3 + 2]
-                                + J[ypzp * 3 + 2] + J[ypzm * 3 + 2]
-                                + J[ymzp * 3 + 2] + J[ymzm * 3 + 2];
-                    WV[i3p2] += c2 * (W_FACE * face2 + W_EDGE * edge2 - 4.0 * center2);
-
-                    // State-flux coupling (boundary path)
-                    if (doCoupling && stateGrid) {
-                        WV[i3]     += gc_half * (stateGrid[xp] - stateGrid[xm]);
-                        WV[i3p1]   += gc_half * (stateGrid[yp] - stateGrid[ym]);
-                        WV[i3p2]   += gc_half * (stateGrid[zp] - stateGrid[zm]);
-                    }
-                }
-            }
-        }
-
-        // Also process boundary x-edges that were skipped: rows where z and y
-        // are interior but x=0 or x=N-1 were not visited by the interior loop.
-        // The interior loop runs x from 1..N-2, so x=0 and x=N-1 on interior
-        // y,z rows need the modular path.
-        for (let z = 1; runBoundaryWV && z < Nm1; z++) {
-            const zw = z * NN;
-            const zpw = zw + NN;
-            const zmw = zw - NN;
-            for (let y = 1; y < Nm1; y++) {
-                const yw = y * N;
-                const ypw = yw + N;
-                const ymw = yw - N;
-
-                // Process x=0 and x=N-1 for this interior (y,z) row
-                for (const x of [0, Nm1]) {
-                    const xpx = (x + 1) % N;
-                    const xmx = (x - 1 + N) % N;
-                    const idx = zw + yw + x;
-
-                    const xp = zw + yw + xpx;
-                    const xm = zw + yw + xmx;
-                    const yp = zw + ypw + x;
-                    const ym = zw + ymw + x;
-                    const zp = zpw + yw + x;
-                    const zm = zmw + yw + x;
-
-                    const xpyp = zw + ypw + xpx;
-                    const xpym = zw + ymw + xpx;
-                    const xmyp = zw + ypw + xmx;
-                    const xmym = zw + ymw + xmx;
-                    const xpzp = zpw + yw + xpx;
-                    const xpzm = zmw + yw + xpx;
-                    const xmzp = zpw + yw + xmx;
-                    const xmzm = zmw + yw + xmx;
-                    const ypzp = zpw + ypw + x;
-                    const ypzm = zmw + ypw + x;
-                    const ymzp = zpw + ymw + x;
-                    const ymzm = zmw + ymw + x;
-
-                    const i3 = idx * 3;
-                    const center0 = J[i3];
-                    const face0 = J[xp * 3] + J[xm * 3] + J[yp * 3] + J[ym * 3] + J[zp * 3] + J[zm * 3];
-                    const edge0 = J[xpyp*3]+J[xpym*3]+J[xmyp*3]+J[xmym*3]+J[xpzp*3]+J[xpzm*3]+J[xmzp*3]+J[xmzm*3]+J[ypzp*3]+J[ypzm*3]+J[ymzp*3]+J[ymzm*3];
-                    WV[i3] += c2 * (W_FACE * face0 + W_EDGE * edge0 - 4.0 * center0);
-
-                    const i3p1 = i3 + 1;
-                    const center1 = J[i3p1];
-                    const face1 = J[xp*3+1]+J[xm*3+1]+J[yp*3+1]+J[ym*3+1]+J[zp*3+1]+J[zm*3+1];
-                    const edge1 = J[xpyp*3+1]+J[xpym*3+1]+J[xmyp*3+1]+J[xmym*3+1]+J[xpzp*3+1]+J[xpzm*3+1]+J[xmzp*3+1]+J[xmzm*3+1]+J[ypzp*3+1]+J[ypzm*3+1]+J[ymzp*3+1]+J[ymzm*3+1];
-                    WV[i3p1] += c2 * (W_FACE * face1 + W_EDGE * edge1 - 4.0 * center1);
-
-                    const i3p2 = i3 + 2;
-                    const center2 = J[i3p2];
-                    const face2 = J[xp*3+2]+J[xm*3+2]+J[yp*3+2]+J[ym*3+2]+J[zp*3+2]+J[zm*3+2];
-                    const edge2 = J[xpyp*3+2]+J[xpym*3+2]+J[xmyp*3+2]+J[xmym*3+2]+J[xpzp*3+2]+J[xpzm*3+2]+J[xmzp*3+2]+J[xmzm*3+2]+J[ypzp*3+2]+J[ypzm*3+2]+J[ymzp*3+2]+J[ymzm*3+2];
-                    WV[i3p2] += c2 * (W_FACE * face2 + W_EDGE * edge2 - 4.0 * center2);
-
-                    if (doCoupling && stateGrid) {
-                        WV[i3]   += gc_half * (stateGrid[xp] - stateGrid[xm]);
-                        WV[i3p1] += gc_half * (stateGrid[yp] - stateGrid[ym]);
-                        WV[i3p2] += gc_half * (stateGrid[zp] - stateGrid[zm]);
-                    }
-                }
-            }
-        }
-
-        // FTD-0271: de Broglie internal clock — Klein-Gordon mass term.
-        // WV -= omega0^2 * dt * J at manifested (state != 0) voxels, applied
-        // after the Laplacian WV update and before the commit so the leapfrog
-        // integrates it (mirrors phase_read.cpp). With the toggle OFF this is a
-        // dead branch, so the mock's default behaviour is unchanged.
-        if (this._toggles.de_broglie_clock && this._particles.length > 0) {
-            const w0 = this._params.omega0 ?? 1.0;
-            const w2dt = w0 * w0 * dt;
-            for (const p of this._particles) {
-                if (p.state === 0) continue;
-                const px = ((Math.round(p.x) % N) + N) % N;
-                const py = ((Math.round(p.y) % N) + N) % N;
-                const pz = ((Math.round(p.z) % N) + N) % N;
-                const i3 = (pz * NN + py * N + px) * 3;
-                WV[i3]     -= w2dt * J[i3];
-                WV[i3 + 1] -= w2dt * J[i3 + 1];
-                WV[i3 + 2] -= w2dt * J[i3 + 2];
-            }
-        }
-
-        // Commit: J += WV, J *= damp (selective or uniform)
-        // Unrolled component loop and flat stride for cache-friendly access.
-        const total = N * N * N;
-        const selective = this._toggles.selective_damping;
-        const total3 = total * 3;
-
-        if (sparseActive && !(selective && damp < 1.0 && this._particles.length > 0)) {
-            // Commit only the active window. Outside it J=WV=0 ⇒ (0+WV·dt)·d with
-            // J=WV=0 is 0 (no-op), so skipping is bit-exact. effDamp reproduces the
-            // dense per-voxel factor for every no-particle case: damping off ⇒ 1;
-            // uniform damping ⇒ damp; selective + no particles ⇒ 1 (the dense
-            // selective path builds an all-zero mask ⇒ d = 1 everywhere).
-            const effDamp = (selective && damp < 1.0 && this._particles.length === 0) ? 1.0 : damp;
-            for (let z = sz0; z <= sz1; z++) {
-                for (let y = sy0; y <= sy1; y++) {
-                    let i3 = (z * NN + y * N + sx0) * 3;
-                    for (let x = sx0; x <= sx1; x++) {
-                        J[i3]     = (J[i3]     + WV[i3]     * dt) * effDamp;
-                        J[i3 + 1] = (J[i3 + 1] + WV[i3 + 1] * dt) * effDamp;
-                        J[i3 + 2] = (J[i3 + 2] + WV[i3 + 2] * dt) * effDamp;
-                        WV[i3] *= effDamp; WV[i3 + 1] *= effDamp; WV[i3 + 2] *= effDamp;
-                        i3 += 3;
-                    }
-                }
-            }
-        } else if (selective && damp < 1.0) {
-            // Build near-particle mask: mark 6-connected neighbors of manifested particles
-            if (!this._selectiveDampMask || this._selectiveDampMask.length !== total) {
-                this._selectiveDampMask = new Uint8Array(total);
-            }
-            this._selectiveDampMask.fill(0);
-            for (const p of this._particles) {
-                const px = ((p.x % N) + N) % N;
-                const py = ((p.y % N) + N) % N;
-                const pz = ((p.z % N) + N) % N;
-                const pidx = pz * N * N + py * N + px;
-                this._selectiveDampMask[pidx] = 1;
-                // 6-connected face neighbors
-                const offsets = [
-                    [(px + 1) % N, py, pz], [(px - 1 + N) % N, py, pz],
-                    [px, (py + 1) % N, pz], [px, (py - 1 + N) % N, pz],
-                    [px, py, (pz + 1) % N], [px, py, (pz - 1 + N) % N],
-                ];
-                for (const [nx, ny, nz] of offsets) {
-                    this._selectiveDampMask[nz * N * N + ny * N + nx] = 1;
-                }
-            }
-            // Apply: damp both J and WV near particles (matching C++ engine), lossless elsewhere
-            for (let i = 0; i < total; i++) {
-                const d = this._selectiveDampMask[i] ? damp : 1.0;
-                const i3 = i * 3;
-                J[i3]     = (J[i3]     + WV[i3]     * dt) * d;
-                J[i3 + 1] = (J[i3 + 1] + WV[i3 + 1] * dt) * d;
-                J[i3 + 2] = (J[i3 + 2] + WV[i3 + 2] * dt) * d;
-                WV[i3]     *= d;
-                WV[i3 + 1] *= d;
-                WV[i3 + 2] *= d;
-            }
-        } else {
-            // Uniform damping on both J and WV (or no damping if damp === 1.0)
-            // Flat stride through the entire array for maximum cache coherence
-            for (let k = 0; k < total3; k += 3) {
-                J[k]     = (J[k]     + WV[k]     * dt) * damp;
-                J[k + 1] = (J[k + 1] + WV[k + 1] * dt) * damp;
-                J[k + 2] = (J[k + 2] + WV[k + 2] * dt) * damp;
-                WV[k]     *= damp;
-                WV[k + 1] *= damp;
-                WV[k + 2] *= damp;
-            }
-        }
-
-        // Boundary containment: zero flux & wave velocity outside boundary shape
-        // Uses precomputed mask to avoid per-voxel _insideBoundary() calls
-        // When reflective boundary is off, flux propagates freely past the shape
-        if (this._boundaryMask && this._reflectiveBoundary) {
-            for (let idx = 0; idx < total; idx++) {
-                if (!this._boundaryMask[idx]) {
-                    J[idx * 3] = 0; J[idx * 3 + 1] = 0; J[idx * 3 + 2] = 0;
-                    WV[idx * 3] = 0; WV[idx * 3 + 1] = 0; WV[idx * 3 + 2] = 0;
-                }
-            }
-        }
-
-        // ── Absorbing boundary / sponge layer (reflective = OFF) ─────────
-        // The wave-equation stencil above uses periodic wrap (modulo N) at
-        // x ∈ {0, N-1} etc., so without intervention the lattice is a
-        // 3-torus and energy never leaves. When the user disables the
-        // reflective toggle they expect flux to dissipate into the abyss
-        // beyond the lattice edge — so we drain it here via a graded
-        // sponge layer.
-        //
-        // Strategy: a depth-D shell (D = min(6, ⌊N/4⌋)). At each voxel
-        // whose minimum distance to any lattice face is d ∈ [0, D−1], a
-        // multiplicative damping factor f(d) is applied to both J and WV
-        // every tick. f is monotone: f(0) = 0 (Dirichlet), grading
-        // smoothly toward 1 at d = D so the impedance change is gradual
-        // and reflects very little. With f given by f(d) = (d/D)² (a
-        // quadratic ramp), an outgoing wave traversing the layer is
-        // attenuated by ∏_{d=1}^{D−1} (d/D)² ≈ ((D−1)!/D^(D−1))² per pass.
-        // For D = 6 that's 0.012, i.e. < 1% of the wave reaches the wall;
-        // round-trip absorption ≳ 99.97%.
-        // O(L³) cost, but only the shell voxels do non-trivial work
-        // (interior voxels compute d ≥ D and short-circuit without writes).
-        if (!this._reflectiveBoundary && runBoundaryWV) {
-            const Nm1 = N - 1;
-            const D = Math.min(6, Math.max(2, Math.floor(N / 4)));
-            // Precompute the per-distance damping table: f[d] for d = 0..D
-            // f(D) = 1.0 (no damping), f(0) = 0 (zero out). Cached on
-            // this._spongeTable; rebuilt only when D changes (M-9).
-            if (!this._spongeTable || this._spongeTable.length !== D + 1) {
-                const tbl = new Float32Array(D + 1);
-                for (let d = 0; d <= D; d++) {
-                    const r = d / D;
-                    tbl[d] = r * r;  // quadratic ramp
-                }
-                this._spongeTable = tbl;
-            }
-            const f = this._spongeTable;
-            for (let z = 0; z < N; z++) {
-                const dz = Math.min(z, Nm1 - z);
-                for (let y = 0; y < N; y++) {
-                    const dy = Math.min(y, Nm1 - y);
-                    for (let x = 0; x < N; x++) {
-                        const dx = Math.min(x, Nm1 - x);
-                        const d = Math.min(dx, dy, dz);
-                        if (d >= D) continue;
-                        const fd = f[d];
-                        const i3 = (z * N * N + y * N + x) * 3;
-                        J[i3]   *= fd; J[i3+1] *= fd; J[i3+2] *= fd;
-                        WV[i3]  *= fd; WV[i3+1]*= fd; WV[i3+2]*= fd;
-                    }
-                }
-            }
-        }
-
-        this._fluxDirty = true;
-        if (this._sparseTick && !this._activeDense) {
-            this._growActiveBox();                          // wave front advanced ≤1 voxel
-            // Periodic tight rescan lets a damped/dissipating field shrink the
-            // box again (cheap amortized: O(N³)/32 per tick).
-            if ((this._tick & 31) === 0) this._recomputeActiveBox();
-        }
+        this.waveEngine._tickFlux();
     }
 
-    /** Discrete divergence of J at (x,y,z): ∇·J = Σ (J_i(v+e_i) - J_i(v-e_i)) / 2 */
     _divergenceAt(x, y, z) {
-        const N = this.latticeSize;
-        const J = this._fluxJ;
-        const idx = (c, xx, yy, zz) => {
-            const i = ((zz % N) + N) % N * N * N + ((yy % N) + N) % N * N + ((xx % N) + N) % N;
-            return J[i * 3 + c];
-        };
-        return (idx(0, x + 1, y, z) - idx(0, x - 1, y, z)
-              + idx(1, x, y + 1, z) - idx(1, x, y - 1, z)
-              + idx(2, x, y, z + 1) - idx(2, x, y, z - 1)) * 0.5;
+        return this.waveEngine._divergenceAt(x, y, z);
     }
 
     _updateFluxMag() {
-        if (!this._fluxDirty || !this._fluxJ) return;
-        const total = this.latticeSize ** 3;
-        const J = this._fluxJ;
-        const M = this._fluxMag;
-        for (let i = 0, k = 0; i < total; i++, k += 3) {
-            const jx = J[k], jy = J[k + 1], jz = J[k + 2];
-            M[i] = Math.sqrt(jx * jx + jy * jy + jz * jz);
-        }
-        this._fluxDirty = false;
+        this.waveEngine._updateFluxMag();
     }
 
-    /**
-     * Returns a per-call snapshot of the requested mid-plane (Float64Array
-     * of length N²). Pre-2026-04-26 this returned a SHARED `_sliceBuf` to
-     * skip allocation; callers (e.g. the flux-slice panel sampling 3
-     * planes back-to-back) had to `.slice()` defensively. Audit Theme B
-     * found multiple consumers retaining the reference across calls and
-     * silently reading the next-call's data, so the contract was changed
-     * to always return a fresh buffer. Cost at L=128 is one ~128 KB
-     * allocation per call — negligible vs. the GC churn the prior
-     * sharing scheme was intended to avoid.
-     */
     getFluxSlice(axis, index) {
-        if (!this._fluxJ) this._initFluxGrid();
-        this._updateFluxMag();
-        const N = this.latticeSize;
-        const data = new Float64Array(N * N);
-        for (let a = 0; a < N; a++) {
-            for (let b = 0; b < N; b++) {
-                let idx;
-                if (axis === 0) idx = this._fluxIdx(index, a, b);
-                else if (axis === 1) idx = this._fluxIdx(a, index, b);
-                else idx = this._fluxIdx(a, b, index);
-                data[a * N + b] = this._fluxMag[idx];
-            }
-        }
-        return data;
+        return this.waveEngine.getFluxSlice(axis, index);
     }
 
-    /**
-     * Returns the live `_fluxMag` Float64Array (length N³). The buffer
-     * is mutated in place every tick by `_updateFluxMag`, so callers
-     * MUST treat the return as read-only-this-frame. Common usage is to
-     * upload directly into a 3D texture without retention. If you need
-     * a stable copy (e.g. cross-frame diff, replay buffer), call
-     * `.slice()` at the call site — the volume can be large (16 MB at
-     * L=128), so we don't pay that cost on every reader's behalf.
-     */
     getFluxVolume() {
-        if (!this._fluxJ) this._initFluxGrid();
-        this._updateFluxMag();
-        return this._fluxMag;
+        return this.waveEngine.getFluxVolume();
     }
 
     // ── Bulk Sampled Vector Field Exports (Scale 0 field visualization) ──
@@ -1599,7 +928,7 @@ export class MockBridge {
     // All 17 samplers + the latency-proxy helper moved to
     // bridge/mock-lattice-samplers.js. MockBridge forwards via
     // this._samplers (constructed in the ctor above).
-    // See docs/SPEC_REFACTOR_LARGE_FILES.md §4 for the full rationale.
+    // See engine/web/docs/INDEX.md for the bridge modularization provenance.
 
     getEFieldSampled(stride = 2)     { return this._samplers.getEFieldSampled(stride); }
     getBFieldSampled(stride = 2)     { return this._samplers.getBFieldSampled(stride); }

@@ -12,7 +12,7 @@
  *   - _elementLabels    sprite-based chemical symbols
  *
  * Extracted from viewport.js as Wave 2 ticket 4 of the large-file refactor
- * (see docs/SPEC_REFACTOR_LARGE_FILES.md §5). Every body is preserved
+ * (see engine/web/docs/INDEX.md). Every body is preserved
  * verbatim; the only structural change is that these visuals now live on
  * a MolecularRenderer instance that viewport.js composes rather than
  * inherits. Viewport retains a thin delegator for each method so external

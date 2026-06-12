@@ -6,7 +6,7 @@
 scheduler, the diagnostics/telemetry path, the shared rAF coordinator, and the forward-only time model.
 **Companions:** [`SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](SPEC_SCALE0_SCENARIO_ARCHITECTURE.md)
 (what seeds the lattice), [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md)
-(what the loop ticks/reads). Perf history: [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md),
+(what the loop ticks/reads). Perf history: [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md),
 [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md), [`PLAN_SCALE0_SPARSE_TICK.md`](PLAN_SCALE0_SPARSE_TICK.md).
 
 **Path convention:** JS paths relative to `engine/web/js/`; `scale0/` = `scales/scale0/`. Every claim

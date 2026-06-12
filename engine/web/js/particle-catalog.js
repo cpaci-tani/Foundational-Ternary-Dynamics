@@ -17,8 +17,7 @@
  */
 
 import {
-    ALPHA, G_STAR, K_B, N_C, N_BASE, B_3, N_EFF,
-    PI_FTD as PI, M_E, MU_RATIO, TAU_RATIO, PROTON_RATIO,
+    M_E, MU_RATIO, TAU_RATIO,
     M_P_PHYS, M_N_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS,
     M_PI_CH_PHYS, M_PI_0_PHYS, M_K_CH_PHYS, M_K_0_PHYS,
     M_DELTA_PHYS,
@@ -32,7 +31,7 @@ import {
     // ×1e-3 unit-mismatch with the canonical *_PHYS values (see TODO
     // Theme H comments at each neutrino entry).
     M_W_PHYS, M_Z_PHYS, M_HIGGS_PHYS,
-    M_LAMBDA_PHYS, M_XI_0_PHYS, M_XI_M_PHYS, M_DELTA_0_PHYS,
+    M_LAMBDA_PHYS, M_XI_0_PHYS, M_XI_M_PHYS,
     M_ETA_PHYS, M_RHO_PHYS, M_J_PSI_PHYS, M_UPSILON_PHYS,
 } from './constants.js';
 

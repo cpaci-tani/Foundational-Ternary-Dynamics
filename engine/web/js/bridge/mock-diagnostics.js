@@ -16,8 +16,8 @@
  *                        the bridge side (reset / per-tick advance /
  *                        flux-wave injection mutators) stays authoritative.
  *
- * Extracted from `bridge-init.js` as Wave 1 ticket 3 of the large-file
- * refactor (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). The extraction is
+ * Extracted from `bridge-init.js` during the bridge modularization pass
+ * documented in engine/web/docs/INDEX.md. The extraction is
  * a move, not a rewrite — bodies preserved verbatim; the only structural
  * change is that `this._xxx` field reads/writes go through the live
  * `state` reference instead of direct `this.` access.
@@ -48,7 +48,7 @@
  * protected by Risk 3 in the refactor spec — do NOT destructure `state`.
  */
 
-import { ALPHA, COULOMB_K_PE } from '../constants.js';
+import { COULOMB_K_PE } from '../constants.js';
 
 /**
  * Build the diagnostics object bound to the given bridge-like state.
@@ -364,7 +364,6 @@ export function createDiagnosticsProvider(state) {
         const waveEnergy = state._cachedWaveEnergy;
         const totalFluxMag = state._cachedFluxMag;
         const dissipation = (fieldEnergy + waveEnergy) * state._params.damping;
-        const total = waveEnergy + fieldEnergy;
         return {
             fieldKinetic: waveEnergy,       // ½|wave_vel|² (field kinetic energy)
             fieldGradient: -fieldEnergy,    // -½c²|∇J|² (approximated from field energy)

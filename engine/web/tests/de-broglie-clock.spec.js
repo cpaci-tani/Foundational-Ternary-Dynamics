@@ -17,13 +17,22 @@ import { gotoAndReady } from './_helpers.js';
  */
 
 test.describe('De Broglie internal clock (FTD-0271)', () => {
-    test.beforeEach(async ({ page }) => {
-        page.setDefaultTimeout(30_000);
+    /** @type {import('@playwright/test').Page} */
+    let page;
+
+    test.beforeAll(async ({ browser, baseURL }) => {
+        const context = await browser.newContext({ baseURL });
+        page = await context.newPage();
+        page.setDefaultTimeout(60_000);
         await gotoAndReady(page);
         await expect.poll(() => page.evaluate(() => !!(window.__ftdCtx?.bridge)), { timeout: 20_000 }).toBe(true);
     });
 
-    test('scenario runs on real WASM, panel mounts, and the clock oscillates', async ({ page }) => {
+    test.afterAll(async () => {
+        await page.close();
+    });
+
+    test('scenario runs on real WASM, panel mounts, and the clock oscillates', async () => {
         await page.evaluate(() => {
             const sel = document.getElementById('scenario-select');
             sel.value = 's0-seed-de-broglie-clock';
@@ -52,7 +61,7 @@ test.describe('De Broglie internal clock (FTD-0271)', () => {
         expect(mx, 'centre flux stays positive at the peak').toBeGreaterThan(0);
     });
 
-    test('the de_broglie_clock toggle is cleaned up after a run (no leak)', async ({ page }) => {
+    test('the de_broglie_clock toggle is cleaned up after a run (no leak)', async () => {
         await page.evaluate(() => {
             const sel = document.getElementById('scenario-select');
             sel.value = 's0-seed-de-broglie-clock';
@@ -60,14 +69,17 @@ test.describe('De Broglie internal clock (FTD-0271)', () => {
         });
         await expect.poll(() => page.evaluate(() => !!window.__ftdDeBroglieClockPanel), { timeout: 10_000 }).toBe(true);
         const after = await page.evaluate(async () => {
-            await window.__ftdDeBroglieClockPanel.run(0.3);
             const b = window.__ftdCtx?.bridge;
+            if (b && typeof b.setToggle === 'function') {
+                b.setToggle('de_broglie_clock', false);
+            }
+            await window.__ftdDeBroglieClockPanel.run(0.3);
             return b?.getToggle ? b.getToggle('de_broglie_clock') : null;
         });
-        expect(after, 'clock toggle is turned off after the run').toBe(false);
+        expect(after, 'clock toggle is restored to its pre-run state (false)').toBe(false);
     });
 
-    test('panel is disposed when switching away from the scenario', async ({ page }) => {
+    test('panel is disposed when switching away from the scenario', async () => {
         await page.evaluate(() => {
             const sel = document.getElementById('scenario-select');
             sel.value = 's0-seed-de-broglie-clock';

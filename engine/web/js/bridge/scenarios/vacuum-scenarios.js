@@ -35,7 +35,7 @@ import {
  */
 export function setupVacuumScenario(name, harness, ctx) {
     if (!name.startsWith('s0-vacuum-')) return false;
-    const { N, mid, midF } = ctx;
+    const { N, midF } = ctx;
     const mc = Math.round(midF);
 
     harness.bridge?._initFluxGrid?.();

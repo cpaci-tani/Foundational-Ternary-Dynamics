@@ -13,6 +13,7 @@
  * engine changes required.
  */
 
+import { BaseComponent } from '../../../../core/component.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import {
     formatExp,
@@ -21,12 +22,12 @@ import {
 } from './_card-helpers.js';
 import { attachFullscreen } from '../../../../ui/charts/chart-fullscreen.js';
 import { getPhysicsHarness } from '../../../../physics/index.js';
+import { getScale0State } from '../../state/store.js';
 
 const PANEL_ID = 'conservation-micropanel';
 const HZ = 4;                                // sample rate
 const WINDOW_TICKS = 1000;                   // rolling window for Δ display + history (20+ s @ 50tps)
 const HEADLINE_WINDOW_TICKS = 100;           // shorter window for the headline rows
-const SPARK_SAMPLES = 60;                    // sparkline history length (compact view)
 
 // Helper: read totals via the PhysicsHarness — single canonical source.
 // Dropped the inline diag+audit aggregation in favor of harness's
@@ -42,26 +43,26 @@ function l2(x, y, z) {
     return Math.sqrt(x * x + y * y + z * z);
 }
 
-function buildPanel() {
-    const root = document.createElement('div');
-    root.id = PANEL_ID;
-    // chart-card class enables shared fullscreen portal styling
-    root.className = 'scale0-only conservation-micropanel chart-card';
-        root.className = 'scale0-only conservation-micropanel chart-card';
-    root.innerHTML = `
+const TEMPLATE = `
+    <div id="conservation-micropanel" class="scale0-only conservation-micropanel chart-card">
         <div class="cons-header">
             <span class="cons-title">CONSERVATION</span>
-            <span id="${PANEL_ID}-status" class="cons-status">live</span>
+            <span id="conservation-micropanel-status" ref="status" class="cons-status">live</span>
             <button class="chart-card-expand cons-btn-expand" type="button" title="Expand to fullscreen history"
                 aria-label="Expand conservation history">⛶</button>
         </div>
-        <div id="${PANEL_ID}-rows" class="cons-rows-grid"></div>
-        <div id="${PANEL_ID}-history" class="chart-card-plot cons-history-plot"></div>
+        <div ref="rows" class="cons-rows-grid"></div>
+        <div ref="history" class="chart-card-plot cons-history-plot"></div>
         <div class="cons-footer">
             Δ over ${HEADLINE_WINDOW_TICKS} ticks · click ⛶ for full ${WINDOW_TICKS}-tick history
         </div>
-    `;
-    return root;
+    </div>
+`;
+
+export class ConservationMicropanelComponent extends BaseComponent {
+    constructor() {
+        super(TEMPLATE);
+    }
 }
 
 function renderRow(label, value, color) {
@@ -77,12 +78,13 @@ export function mountConservationMicropanel(host, getBridge) {
     const existing = document.getElementById(PANEL_ID);
     if (existing) existing.remove();
 
-    const panel = buildPanel();
-    host.appendChild(panel);
+    const comp = new ConservationMicropanelComponent();
+    comp.mount(host);
+    const panel = comp.element;
 
-    const rowsEl = panel.querySelector(`#${PANEL_ID}-rows`);
-    const statusEl = panel.querySelector(`#${PANEL_ID}-status`);
-    const historyEl = panel.querySelector(`#${PANEL_ID}-history`);
+    const rowsEl = comp.refs.rows;
+    const statusEl = comp.refs.status;
+    const historyEl = comp.refs.history;
 
     // Per-quantity hysteresis state.
     const hyst = {
@@ -257,9 +259,14 @@ export function initConservationMicropanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('app');
     if (!host) return null;
-    // Bridge accessor: read from window.__ftdCtx.bridge (reads live state)
+    // Bridge accessor: use the active physics owner. flux-* scenarios are
+    // ticked by the JS MockBridge/worker, while ctx.bridge can remain an idle
+    // WASM bridge; sampling that idle bridge makes the conservation energy look
+    // frozen even though the pulse itself is evolving.
     const getBridge = () => {
         const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+        const state = getScale0State();
+        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
         return ctx?.bridge || null;
     };
     if (typeof window !== 'undefined' && window.__ftdConservationPanel) {

@@ -2,7 +2,7 @@
  * Quantum scenarios — quantum-* group.
  *
  * Extracted from bridge/scenarios/index.js as part of Wave 3 tickets 8-13
- * of the large-file refactor (docs/SPEC_REFACTOR_LARGE_FILES.md §4). This
+ * of the bridge modularization pass documented in engine/web/docs/INDEX.md. This
  * is a pure move — scenario bodies preserved verbatim; only the outer
  * `if (name.startsWith('quantum-')) { ... }` wrapper was lifted out
  * and replaced with an early `return false` when the prefix does not
@@ -23,7 +23,7 @@ import { K_B, K_GENESIS } from '../../constants.js';
  */
 export function setupQuantumScenario(name, harness, ctx) {
     if (!name.startsWith('quantum-')) return false;
-    const { N, mid, midF } = ctx;
+    const { N, mid } = ctx;
 
             switch (name) {
                 case 'quantum-born-rule': {

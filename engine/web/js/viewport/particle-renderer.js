@@ -322,7 +322,6 @@ export class ViewportParticleRenderer {
         const rawCount = Math.min(data.count, MAX_PARTICLES);
 
         // Clip particles to current boundary shape
-        const halfN = this._halfN;
         const _bs = this._getBoundaryShape();
         const needsClip = _bs && _bs !== 'none' && _bs !== 'cube';
         let count = 0;

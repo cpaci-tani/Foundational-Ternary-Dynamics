@@ -137,5 +137,5 @@ lands it must return via `typed_memory_view` (not raw pointers) and be re-checke
 | **B4** canonical direct-read list in `bridge-contract.js` consumed by B1 + the contract test | future drift (new sampler not forwarded → CI fails, not a silent blank chart) |
 
 **Verification:** Playwright `scale0-worker.spec.js` under `serve.py 8081 --cache`
-(COOP/COEP) — see `engine/web/PLAN_SCALE0_PHYSICS_WORKER.md` and the plan file for
-this work.
+(COOP/COEP) — see `engine/web/docs/PLAN_SCALE0_PHYSICS_WORKER.md` and the plan
+file for this work.

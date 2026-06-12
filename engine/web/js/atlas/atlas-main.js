@@ -203,4 +203,4 @@ requestAnimationFrame(() => {
   requestAnimationFrame(frame);
 });
 
-console.log('[atlas] boot');
+console.info('[atlas] boot');

@@ -1272,6 +1272,37 @@ ftd_add_test(campaign_genesis_hysteresis tests/campaign_genesis_hysteresis.cpp
              CTEST_NAME campaign_genesis_hysteresis TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# Bridge probe: do genesis clusters carry an O_h/Moore quantum-number signature?
+# Axial (1-component) injection across the FTD-0110 amplitude ladder; scans the
+# settled cluster's shell occupancy + charge sign + flux-vector components.
+# Geometric fingerprint (smooth in A) => pillars decoupled; particle-specific
+# multi-component structure => a real bridge signature.
+ftd_add_test(campaign_genesis_moore_signature tests/campaign_genesis_moore_signature.cpp
+             CTEST_NAME campaign_genesis_moore_signature TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
+# FTD-0273 Phase 0 (2026-06-11): determinism GATE for the cluster energy-
+# spectroscopy program (mass as flux-energy in flip-quanta). Re-proves that the
+# langevin-OFF supercritical-injection genesis harness is bit-deterministic and
+# OpenMP-thread-invariant (omp1 == pool) before any energy number is trusted.
+# Read-only / golden-neutral.
+ftd_add_test(campaign_determinism_gate tests/campaign_determinism_gate.cpp
+             CTEST_NAME campaign_determinism_gate TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
+# FTD-0273 Phase 1: cluster energy spectroscopy — settled flux energy above the
+# vacuum floor, in flip-quantum (½·K_GENESIS²) units, vs injection amplitude;
+# emergent attractor (genuine) + frozen O_h seeds (ledger-read control only).
+ftd_add_test(campaign_cluster_energy_spectroscopy tests/campaign_cluster_energy_spectroscopy.cpp
+             CTEST_NAME campaign_cluster_energy_spectroscopy TIMEOUT 3600
+             LABELS native eft observable engine_as_instrument)
+
+# FTD-0273 Phase 2: quark quantization — colored-cluster energy + color phenomena
+# (3-regime confinement force F(r), color-singlet triad binding). Observational.
+ftd_add_test(campaign_quark_quantization tests/campaign_quark_quantization.cpp
+             CTEST_NAME campaign_quark_quantization TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
