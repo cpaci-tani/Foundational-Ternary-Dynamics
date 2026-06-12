@@ -171,6 +171,12 @@ static double get_dt(ftd::RenderBridge& rb) { return rb.dt(); }
 // scalar setter lets the UI sweep omega0 (the KG mass term -omega0^2*J).
 static void set_omega0(ftd::RenderBridge& rb, double w) { rb.toggles.omega0 = w; }
 static double get_omega0(ftd::RenderBridge& rb) { return rb.toggles.omega0; }
+// FTD-0274: live Langevin bath temperature. The thermal-ignition panel sweeps
+// langevin_T across the first-order condensation point T_up~0.05 to ignite the
+// lattice (void -> condensate); there is no maximum temperature (manifestation
+// is a safety valve absorbing arbitrary heat).
+static void set_langevin_temp(ftd::RenderBridge& rb, double t) { rb.toggles.langevin_T = t; }
+static double get_langevin_temp(ftd::RenderBridge& rb) { return rb.toggles.langevin_T; }
 static double get_physical_time(ftd::RenderBridge& rb) { return rb.physical_time(); }
 
 // ── Scenario setup ───────────────────────────────────────────────────
@@ -315,6 +321,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     // Time step control
     function("setDt",              &set_dt);
     function("getDt",              &get_dt);
+    function("setLangevinTemp",    &set_langevin_temp);
+    function("getLangevinTemp",    &get_langevin_temp);
     function("setOmega0",          &set_omega0);
     function("getOmega0",          &get_omega0);
     function("getPhysicalTime",    &get_physical_time);

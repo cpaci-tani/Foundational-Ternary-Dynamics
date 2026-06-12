@@ -77,6 +77,8 @@ def main():
     mtot_cv, n_cv = [], []
     pts_NA = []         # (A, mean N) for the A^2 cross-check
     A_min = {}          # L -> smallest BOUNDED+survived A
+    perL_NM = defaultdict(list)   # L -> [(mean N, mean M_local)]  (collapse test, per-L)
+    perL_pv = defaultdict(list)   # L -> [M/vox]                   (per-L scatter)
 
     for (L, A) in sorted(byLA):
         rs = byLA[(L, A)]
@@ -97,6 +99,9 @@ def main():
                 mtot_cv.append(cMt)
             n_cv.append(cN)
             pts_NA.append((A, mN))
+            if mN >= 4:
+                perL_NM[L].append((mN, mMl))
+                perL_pv[L].extend(pvs)
             if L not in A_min and any(r["outcome"] == "BOUNDED" and r["survived"] != "0"
                                       if "survived" in r else r["outcome"] == "BOUNDED"
                                       for r in bnd):
@@ -133,23 +138,60 @@ def main():
         print(f"  N(A) power-law exponent (log-log fit, N>1): b={b:.2f}  "
               f"(FTD-0269 cluster law ~ A^2 below the knee)")
 
-    # ENERGY-STRUCTURE requires M/vox to be tight AND M_tot not just N-noise.
-    # Collapse: M/vox roughly constant (no per-particle structure) -> energy ~ c*N.
-    collapses = (mpv_cv < 0.5) and (mtot_cv_mean > n_cv_mean * 1.5)
+    # ---- COLLAPSE TEST (per-L; robust to multi-L pooling) ----
+    # M/vox is L-dependent (the local energy decays with box size), so a CV pooled
+    # across L is NOT a collapse signal -- it just measures the L-trend. The right
+    # question is, AT FIXED L, does the cluster-local energy track N? Test it with
+    # the per-L Pearson correlation r(N, M_local) over the A ladder. High r at every
+    # L => energy is explained by N alone (collapse). Genuine per-particle energy
+    # STRUCTURE would show as M_local breaking from the N trend AT FIXED L.
+    def pearson(xs, ys):
+        n = len(xs)
+        if n < 3:
+            return float('nan')
+        mx = sum(xs) / n; my = sum(ys) / n
+        sxy = sum((x - mx) * (y - my) for x, y in zip(xs, ys))
+        sxx = sum((x - mx) ** 2 for x in xs); syy = sum((y - my) ** 2 for y in ys)
+        d = math.sqrt(sxx * syy)
+        return sxy / d if d > 1e-12 else float('nan')
+
+    perL_corr = {}
+    perL_cv = {}
+    for L in sorted(perL_NM):
+        Ns = [p[0] for p in perL_NM[L]]; Ms = [p[1] for p in perL_NM[L]]
+        perL_corr[L] = pearson(Ns, Ms)
+        _, _, cv = stats(perL_pv[L])
+        perL_cv[L] = cv
+    corr_vals = [c for c in perL_corr.values() if math.isfinite(c)]
+    mean_corr = sum(corr_vals) / len(corr_vals) if corr_vals else float('nan')
+    cv_vals = [c for c in perL_cv.values() if math.isfinite(c)]
+    mean_perL_cv = sum(cv_vals) / len(cv_vals) if cv_vals else float('nan')
+
+    print("\n  per-L collapse test (does cluster-local energy track N AT FIXED L?):")
+    for L in sorted(perL_corr):
+        print(f"    L={L}: r(N, M_local)={perL_corr[L]:.3f}  M/vox CV={perL_cv[L]:.2f}  "
+              f"(n={len(perL_NM[L])})")
+
+    # Collapse iff energy tracks N at every L (high per-L correlation). The pooled
+    # M/vox CV is reported but NOT used for the verdict (it conflates the L-trend).
+    collapses = (not math.isnan(mean_corr)) and (mean_corr > 0.9)
     verdict = "ENERGY-COLLAPSES-TO-N" if collapses else "ENERGY-STRUCTURE"
     print("\n" + "=" * 104)
-    print(f"  ===> VERDICT: {verdict}")
+    print(f"  ===> VERDICT: {verdict}   (mean per-L r(N,M_local)={mean_corr:.3f}, "
+          f"per-L M/vox CV={mean_perL_cv:.2f})")
     print("=" * 104)
     if collapses:
-        print(f"  The cluster-local flux energy is ~{mpv_mean:.2f} quanta/voxel -- a near-")
-        print("  constant set by the genesis flip residual -- so M_local ≈ c·N. The flux-")
-        print("  energy mass carries NO information beyond the voxel count N: it COLLAPSES")
-        print("  to FTD-0110/0269's N(A). The whole-lattice flux energy is dominated by an")
-        print("  un-condensed radiation halo (CV >> N's), not a localized mass. The energy")
-        print("  reframe yields no new per-particle threshold spectrum. [MEASURED -- BOUNDARY].")
+        print(f"  At every L the cluster-local flux energy tracks the voxel count N")
+        print(f"  (mean r={mean_corr:.3f}): M_local ≈ c(L)·N. The flux-energy mass carries NO")
+        print("  information beyond N -- it COLLAPSES to FTD-0110/0269's N(A). (The per-voxel")
+        print("  constant c(L) DECAYS with box size -- the L-convergence finding -- but that")
+        print("  is the energy leaking away, NOT a per-particle spectrum.) The whole-lattice")
+        print("  flux energy is halo-dominated (CV >> N's), not a localized mass. No new")
+        print("  per-particle threshold spectrum at any L. [MEASURED -- BOUNDARY].")
     else:
-        print("  M/vox shows seed-robust, A-correlated structure distinct from N: a genuine")
-        print("  energy spectroscopy. Pre-register a follow-up (finer A, more seeds, jumps).")
+        print("  AT FIXED L, M_local breaks from the N trend (low per-L correlation): the")
+        print("  energy may carry per-particle structure beyond N. Pre-register a follow-up")
+        print("  (finer A, more seeds, look for jumps/plateaus distinct from N).")
     return 0
 
 

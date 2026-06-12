@@ -1303,6 +1303,13 @@ ftd_add_test(campaign_quark_quantization tests/campaign_quark_quantization.cpp
              CTEST_NAME campaign_quark_quantization TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0274 scout: thermal ignition — min/max temperature axis of the lattice
+# (T_up condensation, T_down hysteresis, T_max CFL/causality ceiling) + the
+# bounded-vs-detonation ignition threshold A*(L). Read-only / golden-neutral.
+ftd_add_test(campaign_thermal_ignition tests/campaign_thermal_ignition.cpp
+             CTEST_NAME campaign_thermal_ignition TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.

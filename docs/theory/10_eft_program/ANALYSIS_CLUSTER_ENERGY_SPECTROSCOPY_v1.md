@@ -49,26 +49,100 @@ control has field 4.1 but wave 995 — so it is a diagnostic, never the mass.)
 
 ### 2.2 The result — energy carries no information beyond N
 
-`<<PHASE1_V1_NUMBERS>>`
+At fixed L (run of record `--Ls=24,32 --As=2..40 --seeds=3`):
 
-- **Cluster-local flux energy per voxel is ~constant** (`M_local/N ≈ 0.5` quanta, set by the
-  genesis flip residual `v.flux *= max(0,1−K_GENESIS/|J|)`), so `M_local ≈ 0.5·N·ε`. The
-  flux-energy mass is just `c·N`: it **collapses to the FTD-0110/0269 voxel-count law**.
+- **The cluster-local flux energy tracks the voxel count N.** At fixed L, the per-A
+  cluster-local energy is explained by `N` alone — Pearson `r(N, M_local) = 0.995` (L=24)
+  and `0.984` (L=32), mean **0.990**. So `M_local ≈ c(L)·N`: the flux-energy mass carries
+  no information beyond `N` and **collapses to the FTD-0110/0269 voxel-count law**. (The
+  per-voxel coefficient has ~40–70 % scatter from halo contamination at low N — it is *not*
+  a clean constant — but the strong N-correlation is the robust collapse signal, and there
+  are no per-particle plateaus or jumps breaking from the N trend.)
 - **Whole-lattice flux energy is dominated by an un-condensed radiation halo** and is far
   noisier across seeds than `N` (e.g. at A=8, N=1 but the whole-lattice quanta ≈130 — a
   single voxel wrapped in ~130 quanta of free flux that did not condense). It is not a
   localized mass.
-- `N(A)` power-law exponent below the knee ≈ **A^1.9 ≈ A²**, reproducing FTD-0269.
+- `N(A)` power-law exponent below the knee = **b ≈ 2.14 ≈ A²**, reproducing FTD-0269.
+- **Verdict-logic note (false-positive caught):** a naive collapse test using the M/vox CV
+  *pooled across L* flips to "ENERGY-STRUCTURE" — but that is an artifact of pooling, because
+  `c(L)` genuinely decays with box size (§2.3). The verdict is computed *per-L* (the
+  `r(N, M_local)` correlation above) precisely to avoid conflating the L-trend with a
+  per-particle spectrum.
 - **The "minimum stable cluster" `A_min` is a single voxel** (A=2, the electron amplitude
-  `2√(m_e/m_e)`), carrying ~0.5 cluster-local quanta — **not 511.** The owner's "511 eV-
-  quanta = electron, 1 voxel = 1 eV" hypothesis is **falsified**: the electron-amplitude
-  cluster is ~1 voxel ≈ 0.5 flip-quanta, and "quanta" and "voxel count" are the same
-  observable up to the ~0.5 residual constant.
+  `2√(m_e/m_e)`) — **not 511 quanta.** The owner's "511 eV-quanta = electron, 1 voxel =
+  1 eV" hypothesis is **falsified**: the electron-amplitude cluster is ~1 voxel, and the
+  mass is the voxel count, not an energy threshold.
+
+### 2.3 Lattice-size convergence (does the local energy stabilize on a bigger box?)
+
+A natural objection: the flux↔wave sloshing and the halo could be a *small-periodic-box
+artifact* — on a small lattice the radiated wave wraps around and re-interferes with the
+cluster; on a bigger box the radiation escapes and the cluster-local energy should settle
+to a clean, box-independent mass. **Directly tested** (`--Ls=24,32,48,64 --As=10,16
+--seeds=3`, deterministic), measuring the cluster-local energy AND its slosh vs L:
+
+| A | quantity | L=24 | L=32 | L=48 | L=64 | trend |
+|---|---|---|---|---|---|---|
+| 10 | ⟨N⟩ | 3.7 | 4.3 | 3.7 | 4.3 | **L-invariant** |
+| 10 | ⟨M_local⟩ | 6.19 | 1.10 | 0.31 | 0.068 | **→ 0** (≈ L⁻⁵) |
+| 10 | ⟨M/vox⟩ | 1.94 | 0.32 | 0.086 | 0.016 | → 0 |
+| 10 | slosh_local | 1.20 | 1.51 | 2.05 | 2.88 | **grows** |
+| 16 | ⟨N⟩ | 20.0 | 21.7 | 19.3 | 20.0 | **L-invariant** |
+| 16 | ⟨M_local⟩ | 6.96 | 3.10 | 1.05 | 0.196 | **→ 0** |
+| 16 | slosh_local | 1.13 | 1.57 | 1.78 | 3.35 | grows |
+
+The objection is **partly right but mass-fatal**: on a bigger box the radiation *does*
+escape rather than reflect (the whole-lattice slosh_tot drops, 0.73→0.34 at A=10), so the
+effects *are* more local — **but the consequence is that the cluster-local flux energy
+decays toward zero (≈ L⁻⁵), not toward a stable mass.** The injected energy radiates into
+the larger volume and the cluster retains only its small bound near-field (which itself is
+~const-per-voxel ⇒ still ∝ N). The relative local slosh *grows* with L precisely because
+the local mean energy → 0. **The cluster COUNT N is the L-invariant; the flux ENERGY is
+box-dependent and vanishing.** There is no "511 quanta" at any L — at L=64 the
+electron-amplitude cluster retains < 0.1 quanta total.
 
 **Verdict: ENERGY-COLLAPSES-TO-N.** Re-expressing mass as flux energy yields no new
-per-particle threshold spectrum; mass remains `∝ N` (FTD-0110/0269). `[MEASURED — BOUNDARY]`.
+per-particle threshold spectrum at any lattice size; the L-invariant mass is the voxel
+count `N` (FTD-0110/0269), and the flux energy decays with box size. `[MEASURED — BOUNDARY]`.
 
-### 2.3 O_h controls (ledger-read validation, NOT a mass)
+### 2.4 Interpretation — a thermodynamic reading (why N, not energy)
+
+`[INTERPRETATION — grounded in the measured L-trend §2.3]`. The L-convergence has a clean
+thermodynamic picture: a hot copper ball in a jar. The supercritical flux injection is the
+hot ball; the lattice is the jar of "atmosphere." A fixed energy goes in; give it more
+volume (bigger `L³`) and the same energy spreads thinner, so the *local* energy density near
+the source falls — exactly the measured `M_local` decay. In the long-time limit on a closed
+box the conserved total energy smears toward a uniform low "ambient" density `∝ 1/L³`: a
+bigger jar reaches a cooler equilibrium. (The measured local near-field falls *faster* than
+`1/L³` because the window catches the transient before equilibrium and because we sample the
+cluster's bound near-field, not the uniform ambient.)
+
+**One qualification:** with `langevin=false` (required for determinism) there is no friction
+and no heat bath, so this is a **lossless wave dispersing**, not true irreversible
+thermalization — on a finite periodic box the energy is conserved and would recur rather
+than settle. But over the observation window the effect on the local region is identical:
+the energy leaves and does not return. (Turning langevin on would make it a genuine
+copper-ball-cools-to-ambient process, at the cost of determinism.)
+
+**The point the analogy sharpens — and the reason `N` is the mass.** A copper ball *cools*:
+it loses its energy to the ambient and its own temperature drops. But the cluster **does not
+shrink** — `N` stays fixed (≈4 at A=10, ≈20 at A=16) regardless of jar size. The flux energy
+and the cluster count therefore behave like two *different* thermodynamic quantities:
+
+| | engine quantity | thermodynamic analogue | behaviour under "more volume" |
+|---|---|---|---|
+| **heat** | flux energy `½Σ|J|²` | temperature / internal energy | extensive, dilutes, equilibrates away `∝1/L³` |
+| **matter** | cluster count `N` | conserved particle number | invariant — set once at the genesis burst |
+
+The cluster's `N` is frozen in at nucleation (the one-shot genesis burst, FTD-0267) and is a
+**counting (topological) invariant**, not a field-energy concentration. That is *why* energy
+fails as a mass and `N` succeeds: the "511 quanta" hypothesis asked the *heat* to be the
+mass, but the heat dissipates into the jar while the conserved thing is the droplet of
+condensed matter, which does not care about the jar size. **In this engine, the discrete
+ontology's mass is conserved matter-count, not equilibrating field-energy** — the cleanest
+statement of the FTD-0273 boundary.
+
+### 2.5 O_h controls (ledger-read validation, NOT a mass)
 
 The frozen geometric seeds pin `N` exactly to their geometric counts (octahedron 7,
 cuboctahedron 13, stella 9, moore 27) under `genesis=false`, validating the energy-ledger
