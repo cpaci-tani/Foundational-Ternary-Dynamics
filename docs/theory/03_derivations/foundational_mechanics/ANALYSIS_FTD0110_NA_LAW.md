@@ -86,6 +86,19 @@ qualitative super-knee boundary into a quantitative map (knee/exponent vs γ), a
 drain-derivation attempt (is 0.5 forced by `1 − 1/N_base` or similar?) would test exit (i).
 Neither is attempted here; the BOUNDARY verdict stands on the frozen v1 criteria.
 
+## 4a · Golden-gate disclosure
+
+During the FTD-0269 campaign the 8-color-SOR Gauss optimization introduced
+**non-deterministic energy-audit reductions** in the existing golden gate (4 distinct
+`total_energy` hashes across nominally identical runs). The genesis *field* is
+bit-reproducible — verified by the `campaign_genesis_geometry` instrument, which produced
+identical firing-geometry results across all runs at the same seed. Consequently the
+BOUNDARY verdict rests on the geometry + N-count outcomes, which are sound; the
+golden-hash coverage does not extend to the energy audit on the current stack. A
+deterministic-reduction fix and re-pin are queued as a background task. This golden-hash
+issue is separate from the three race conditions fixed in the FTD-0273 determinism-gate
+campaign.
+
 ## 5 · No promotions
 
 FTD-0013, MC-T4.3, and the SM cluster-mass identification are untouched. The linear k=¼

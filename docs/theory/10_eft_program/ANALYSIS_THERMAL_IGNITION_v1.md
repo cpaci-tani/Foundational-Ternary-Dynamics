@@ -37,7 +37,7 @@ Heating the void by ramping `langevin_T` (no injection), the manifestation fract
   to T=0 (`T_down`→0) — the maximal hysteresis of FTD-0272 (the gauss/coupling self-field
   latches every voxel above K_GENESIS; no damping to relax it). `[MEASURED]`.
 
-## 2. Maximum — there is NONE (the manifestation safety valve)
+## 2. Maximum — none found in this scout (the manifestation safety valve)
 
 Prior `[HYPOTHESIS]`: discreteness imposes a CFL/causality ceiling `T_max ~ c²` (where
 thermal velocity `√(3T)` reaches the max signal speed `c=1/√3`). **FALSIFIED by
@@ -50,14 +50,16 @@ lattice **still stable** (m=1 condensed, no CFL blow-up, `T_kin ∝ T_set` linea
 | T_kin | 0.53 | 1.21 | 3.07 | 6.14 | 9.19 |
 | stable | ✓ | ✓ | ✓ | ✓ | ✓ |
 
-**Why no ceiling:** (i) the Langevin OU process is mean-reverting (unconditionally stable),
-and (ii) the **manifestation rule is a safety valve** — when `|J|` exceeds K_GENESIS the
-voxel condenses, capping the flux and absorbing the energy into the bounded state field
-instead of a runaway wave. Discreteness *alone* would give a CFL ceiling; **FTD's genesis
-nonlinearity removes it.** The discrete lattice has a sharp temperature *floor*
-(condensation) but **no temperature ceiling** — you cannot explode it by overheating. The
-"explosion" is the *condensation itself* (first-order, global, autocatalytic), not a
-high-T instability. `[MEASURED — BOUNDARY]`.
+**Why no ceiling `[CONJECTURE]`:** (i) the Langevin OU process is mean-reverting
+(unconditionally stable), and (ii) the **manifestation rule acts as a safety valve** —
+when `|J|` exceeds K_GENESIS the voxel condenses, capping the flux and absorbing the
+energy into the bounded state field instead of a runaway wave (this mechanism has not been
+ablated; the safety-valve interpretation is inferred from the finite-T scan, not confirmed
+by a controlled genesis-disabled comparison). Discreteness *alone* would give a CFL
+ceiling; **FTD's genesis nonlinearity appears to remove it** `[CONJECTURE]`. The discrete
+lattice has a sharp temperature *floor* (condensation) but **no ceiling was found up to
+T_set=6 (T_kin ≈ 27× c²) in this scout**. The "explosion" is the *condensation itself*
+(first-order, global, autocatalytic), not a high-T instability. `[MEASURED — scout]`.
 
 ## 3. Ignition — local injection never detonates; the explosion is global/thermal
 
@@ -76,7 +78,7 @@ just below T_up — may trigger global detonation; the "spark in a flammable atm
 | 0 | static | absolute zero — void or frozen condensate |
 | 0 → T_up | thermal vacuum | flux fluctuates, never manifests (metastable) |
 | **T_up ≈ 0.05** (rises with L) | **condensation** | first-order void→matter; the "explosion" |
-| T_up → ∞ | hot condensate | m=1; T_kin ∝ T_set, **no ceiling** (safety valve) |
+| T_up → ∞ | hot condensate | m=1; T_kin ∝ T_set, **no ceiling found** (up to T_set=6, T_kin ≈ 27× c²; mechanism `[CONJECTURE]`) |
 
 ## 5. Epistemic accounting
 
