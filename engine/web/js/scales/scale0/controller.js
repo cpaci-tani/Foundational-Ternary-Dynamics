@@ -45,6 +45,7 @@ import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './ui/overlays/gravity-panel.js';
 import { appRegistry } from '../../core/registry.js';
 import { initTimePanel } from './ui/overlays/time-panel.js';
+import { initThermoPanel } from './ui/overlays/thermo-panel.js';
 import { PlayBarComponent } from '../../ui/components/play-bar/component.js';
 
 const state = getScale0State();
@@ -179,6 +180,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
         try { initSpectrumPanel(); } catch (e) { /* ignore */ }
         try { initGravityPanel(); } catch (e) { /* ignore */ }
         try { initTimePanel(); } catch (e) { /* ignore */ }
+        try { initThermoPanel(); } catch (e) { /* ignore */ }
     }
 
     destroy(ctx) {
@@ -198,6 +200,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
             try { window.__ftdSpectrumPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdGravityPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdTimePanel?.dispose?.(); } catch (e) { /* ignore */ }
+            try { window.__ftdThermoPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdFluxSlicePanel?.dispose?.(); } catch (e) { /* ignore */ }
         }
     }

@@ -836,6 +836,25 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
                     IF(rb, mc + dx, mc + dy, mc + dz, J0, 0, 0);
                 }
     }
+    else if (name == "s0-seed-thermal-ignition") {
+        // FTD-0274: the lattice's thermodynamic axis made visible. A Langevin
+        // heat bath warms the void; at the first-order condensation point
+        // T_up ~= 0.05 the WHOLE lattice manifests at once (m: 0 -> 1) -- the
+        // genesis "explosion". The manifested voxels ARE the condensate
+        // "particles". Cooling stays pinned (self-sustaining condensate;
+        // FTD-0272 hysteresis), and there is NO maximum temperature: the
+        // manifestation rule is a safety valve that absorbs arbitrary heat
+        // (T_kin tested to 27x c^2 with no CFL blow-up). The thermal-ignition
+        // panel drives langevin_T across T_up; start just below it (metastable
+        // thermal vacuum). No injection -- the bath does everything.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.genesis          = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.03;   // metastable thermal vacuum (below T_up~0.05)
+        rb.toggles.langevin_gamma   = 0.02;
+        rb.toggles.dual_substrate   = false;
+    }
     return true;
 }
 
