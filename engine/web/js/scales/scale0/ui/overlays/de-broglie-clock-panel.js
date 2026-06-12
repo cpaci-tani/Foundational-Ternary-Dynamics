@@ -15,6 +15,8 @@
 // textbook Klein-Gordon identities GIVEN the clock — this is lattice
 // correctness, NOT an FTD prediction. The footer states this; do not promote it.
 
+import { BaseComponent } from '../../../../core/component.js';
+
 const PANEL_ID = 'de-broglie-clock-panel';
 const SCENARIO_ID = 's0-seed-de-broglie-clock';
 const C2 = 1.0 / 3.0;               // lattice c^2 (C_WAVE = 1/sqrt(3))
@@ -22,44 +24,35 @@ const RUN_TICKS = 160;
 const BLOCK_HALF = 3;               // 7^3 central manifested block
 const J0 = 0.08;
 
-function buildPanel() {
-    const p = document.createElement('div');
-    p.id = PANEL_ID;
-    // Top-centre over the 3D scene: #viewport is full-width, so its left/right
-    // edges sit under the dashboard and the #viewport-overlay field controls —
-    // anchoring to an edge collides with them. The centre band is clear.
-    p.style.cssText = [
-        'position:absolute', 'top:12px', 'left:50%', 'transform:translateX(-50%)',
-        'z-index:45', 'width:288px',
-        'padding:11px 13px', 'border-radius:10px', 'font-family:var(--font-sans,sans-serif)',
-        'font-size:12px', 'background:var(--color-background-primary,#16161c)',
-        'border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18))',
-        'color:var(--color-text-primary,#eee)', 'box-shadow:0 6px 24px rgba(0,0,0,0.45)',
-        'backdrop-filter:blur(2px)',
-    ].join(';');
-    const CANVAS_BG = '#0c0c11';   // opaque so the scene/controls never bleed through
-    p.innerHTML = `
+const TEMPLATE = `
+    <div id="de-broglie-clock-panel" style="position:absolute; top:12px; left:50%; transform:translateX(-50%); z-index:45; width:288px; padding:11px 13px; border-radius:10px; font-family:var(--font-sans,sans-serif); font-size:12px; background:var(--color-background-primary,#16161c); border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18)); color:var(--color-text-primary,#eee); box-shadow:0 6px 24px rgba(0,0,0,0.45); backdrop-filter:blur(2px)">
         <div style="font-weight:600;margin-bottom:8px;letter-spacing:0.2px">De Broglie internal clock <span style="color:var(--color-text-tertiary,#888);font-weight:400">&middot; FTD-0271</span></div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
             <span style="opacity:0.8">&omega;&#8320;</span>
-            <input id="${PANEL_ID}-slider" type="range" min="0.05" max="1.0" step="0.01" value="0.30" style="flex:1">
-            <span id="${PANEL_ID}-wval" style="width:30px;text-align:right;font-variant-numeric:tabular-nums">0.30</span>
+            <input ref="slider" type="range" min="0.05" max="1.0" step="0.01" value="0.30" style="flex:1">
+            <span ref="wval" style="width:30px;text-align:right;font-variant-numeric:tabular-nums">0.30</span>
         </div>
         <div style="display:flex;gap:6px;margin-bottom:8px">
-            <button id="${PANEL_ID}-run" style="flex:1;padding:6px;border-radius:7px;cursor:pointer;border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18));background:var(--color-background-secondary,rgba(255,255,255,0.06));color:inherit">Run clock</button>
-            <button id="${PANEL_ID}-clear" style="padding:6px 9px;border-radius:7px;cursor:pointer;border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18));background:transparent;color:inherit">Clear</button>
+            <button ref="run" style="flex:1;padding:6px;border-radius:7px;cursor:pointer;border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18));background:var(--color-background-secondary,rgba(255,255,255,0.06));color:inherit">Run clock</button>
+            <button ref="clear" style="padding:6px 9px;border-radius:7px;cursor:pointer;border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.18));background:transparent;color:inherit">Clear</button>
         </div>
-        <div id="${PANEL_ID}-status" style="margin-bottom:7px;color:var(--color-text-secondary,#aaa);min-height:14px;font-variant-numeric:tabular-nums">ready</div>
+        <div ref="status" style="margin-bottom:7px;color:var(--color-text-secondary,#aaa);min-height:14px;font-variant-numeric:tabular-nums">ready</div>
         <div style="font-size:10px;color:var(--color-text-tertiary,#888);margin-bottom:3px">centre flux J&#8339;(t) &mdash; live engine</div>
-        <canvas id="${PANEL_ID}-clock" width="262" height="92" style="width:100%;display:block;border-radius:6px;background:${CANVAS_BG}"></canvas>
+        <canvas ref="clock" width="262" height="92" style="width:100%;display:block;border-radius:6px;background:#0c0c11"></canvas>
         <div style="font-size:10px;color:var(--color-text-tertiary,#888);margin:7px 0 3px">de Broglie &lambda;(v) &mdash; analytic, &lambda;&prop;1/v</div>
-        <canvas id="${PANEL_ID}-debroglie" width="262" height="70" style="width:100%;display:block;border-radius:6px;background:${CANVAS_BG}"></canvas>
+        <canvas ref="debroglie" width="262" height="70" style="width:100%;display:block;border-radius:6px;background:#0c0c11"></canvas>
         <div style="margin-top:9px;padding-top:8px;border-top:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.12));font-size:10px;color:var(--color-text-tertiary,#888);line-height:1.45">
             <b style="color:var(--color-text-secondary,#aaa)">[CONDITIONAL]</b> the clock &omega;&#8320;&prop;M<sub>REST</sub> is <b>IMPOSED</b> (FTD's native
             flux is massless); de Broglie &lambda;&prop;1/v is a Klein-Gordon identity
             <i>given</i> the clock &mdash; not an FTD prediction.
-        </div>`;
-    return p;
+        </div>
+    </div>
+`;
+
+export class DeBroglieClockPanelComponent extends BaseComponent {
+    constructor() {
+        super(TEMPLATE);
+    }
 }
 
 export function mountDeBroglieClockPanel(harness) {
@@ -68,12 +61,12 @@ export function mountDeBroglieClockPanel(harness) {
     if (typeof window !== 'undefined' && window.__ftdDeBroglieClockPanel) {
         try { window.__ftdDeBroglieClockPanel.dispose(); } catch (e) { /* noop */ }
     }
-    const panel = buildPanel();
-    host.appendChild(panel);
+    const comp = new DeBroglieClockPanelComponent();
+    comp.mount(host);
+    const panel = comp.element;
 
-    const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
-    const slider = el('slider'), wval = el('wval'), status = el('status');
-    const clockCv = el('clock'), dbCv = el('debroglie');
+    const slider = comp.refs.slider, wval = comp.refs.wval, status = comp.refs.status;
+    const clockCv = comp.refs.clock, dbCv = comp.refs.debroglie;
     const clockCtx = clockCv.getContext('2d'), dbCtx = dbCv.getContext('2d');
     let trace = [];     // centre J_x(t) samples from the last run
     let busy = false;
@@ -84,8 +77,8 @@ export function mountDeBroglieClockPanel(harness) {
         lastOmega0 = parseFloat(slider.value);
         drawDeBroglie(lastOmega0);   // analytic curve updates live with omega0
     });
-    el('run').addEventListener('click', () => run(parseFloat(slider.value)));
-    el('clear').addEventListener('click', () => { trace = []; drawClock(); status.textContent = 'cleared'; });
+    comp.refs.run.addEventListener('click', () => run(parseFloat(slider.value)));
+    comp.refs.clear.addEventListener('click', () => { trace = []; drawClock(); status.textContent = 'cleared'; });
 
     function bridge() { return harness.bridge || harness; }
 

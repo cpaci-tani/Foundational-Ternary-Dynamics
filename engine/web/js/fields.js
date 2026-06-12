@@ -6,10 +6,8 @@
  * (Scale 1) and AtomEngine (Scale 2).
  */
 
-import { ALPHA, G_N, COULOMB_K_FORCE } from './constants.js';
+import { G_N, COULOMB_K_FORCE } from './constants.js';
 import { AE_K_COULOMB } from './atomic-props.js';
-
-const FOUR_PI = 4.0 * Math.PI;
 
 // ── Grid Generation ──────────────────────────────────────────────────
 

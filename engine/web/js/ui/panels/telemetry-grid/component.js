@@ -1,15 +1,12 @@
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { ChartHoverTooltip, formatChartValue } from '../../charts/chart-hover-tooltip.js';
-import { getChartTheme, resolveChartColor } from '../../charts/theme.js';
+import { resolveChartColor } from '../../charts/theme.js';
 import { PerfFlags } from '../../../config/perf-flags.js';
 import { isPanelLive } from '../panel-visibility.js';
 
 const PANEL_MIN_INTERVAL_MS = 33;   // ~30 Hz cap for floated panels (SPEC_SCALE0_PERF §6.1)
 const GRID_VISIBLE_SAMPLES = 120;   // display window; source ring buffers still retain their full history
 const MAX_SPARK = GRID_VISIBLE_SAMPLES;
-
-// Create a single synchronized cursor registry for all sparklines in the grid
-const telemetrySync = uPlot.sync("telemetry-grid-sync");
 
 // ── Telemetry Channel Definitions per Active Scale ──────────────────────────
 const CHANNELS = {
@@ -80,6 +77,17 @@ const CHANNELS = {
         { key: 'aeMomentum',  title: 'Momentum |p|',    buffer: 'aeMomentum',  color: 'var(--chart-ae-momentum, #60a5fa)', unit: '(sim)' },
         { key: 'aeDrift',     title: 'Energy Drift',    buffer: 'aeDrift',     color: 'var(--chart-ae-drift, #fbbf24)',    unit: '%' }
     ],
+    // Scale 4: Planetary N-body
+    '4': [
+        { key: 'plTotal',      title: 'Total Energy',      buffer: 'plTotal',       color: 'var(--chart-pe-total, #e8e8e8)',   unit: '(sim)' },
+        { key: 'plKE',         title: 'Kinetic Energy',    buffer: 'plKE',          color: 'var(--chart-pe-ke, #4ade80)',      unit: '(sim)' },
+        { key: 'plPE',         title: 'Potential Energy',  buffer: 'plPE',          color: 'var(--chart-pe-coulomb, #f87171)', unit: '(sim)' },
+        { key: 'plDrift',      title: 'Energy Drift',      buffer: 'plEnergyDrift', color: 'var(--chart-pe-drift, #fbbf24)',   unit: '%' },
+        { key: 'plCount',      title: 'Body Count',        buffer: 'plCount',       color: 'var(--chart-pe-count, #fb8c00)',   unit: 'ct' },
+        { key: 'plMomentum',   title: 'Total Momentum',    buffer: 'plMomentum',    color: 'var(--chart-pe-momentum, #a78bfa)', unit: '(sim)' },
+        { key: 'plVirial',     title: 'Virial Ratio',      buffer: 'plVirial',      color: 'var(--chart-pe-virial, #fbbf24)', unit: 'V' },
+        { key: 'plRadius',     title: 'System Radius',     buffer: 'plSystemRadius',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' }
+    ],
     // Scale 5: Cosmic N-body
     '5': [
         { key: 'csBodies',   title: 'Body Count',      buffer: 'csBodies',  color: 'var(--chart-flux, #fb8c00)',   unit: 'ct' },
@@ -145,8 +153,6 @@ export class TelemetryGridPanelComponent {
             this.container.innerHTML = `<div class="telemetry-grid-empty">No telemetry channels defined for Scale ${this.activeScale}</div>`;
             return;
         }
-
-        const theme = getChartTheme();
 
         activeChannels.forEach((chan) => {
             // 1. Create card DOM wrapper

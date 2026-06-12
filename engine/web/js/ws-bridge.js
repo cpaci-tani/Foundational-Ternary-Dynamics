@@ -14,7 +14,7 @@
 
 import { debugLog } from './core/log.js';
 import { MockBridge } from './bridge/mock-bridge.js';
-import { runSetupScenario } from './bridge/scenarios/index.js';
+import { K_B } from './constants.js';
 
 const EMPTY_FIELD_SAMPLE = Object.freeze({
     positions: new Float32Array(0),
@@ -410,7 +410,7 @@ export class WebSocketBridge {
         this._ensureFallback().injectWavepacket(x, y, z, state);
     }
 
-    createEntangledPair(x, y, z, fx = 0.511, fy = 0, fz = 0) {
+    createEntangledPair(x, y, z, fx = K_B, fy = 0, fz = 0) {
         this._sendAndForget({ cmd: 'create_pair', x, y, z, fx, fy, fz });
         this._ensureFallback().createEntangledPair(x, y, z, fx, fy, fz);
     }

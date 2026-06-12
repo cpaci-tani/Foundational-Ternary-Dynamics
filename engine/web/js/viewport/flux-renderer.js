@@ -269,8 +269,6 @@ export class ViewportFluxRenderer {
         const maxPts = posAttr.array.length / 3;
         const MAX_SIZE = (this._fluxPointScale || 1.0) * 10.0;
         const FLUX_THRESHOLD = this._fluxThreshold !== undefined ? this._fluxThreshold : 0.005;
-        const halfN = N / 2;
-
         // The write loop draws dots at evenly-spaced render positions ((i+0.5)·stride),
         // each reading the nearest voxel (vox[], same as the scan) — uniform, no beat.
 

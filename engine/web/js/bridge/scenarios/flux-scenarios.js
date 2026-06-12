@@ -2,7 +2,7 @@
  * Flux scenarios — flux-* group.
  *
  * Extracted from bridge/scenarios/index.js as part of Wave 3 tickets 8-13
- * of the large-file refactor (docs/SPEC_REFACTOR_LARGE_FILES.md §4). This
+ * of the bridge modularization pass documented in engine/web/docs/INDEX.md. This
  * is a pure move — scenario bodies preserved verbatim; only the outer
  * `if (name.startsWith('flux-')) { ... }` wrapper was lifted out
  * and replaced with an early `return false` when the prefix does not
@@ -436,7 +436,6 @@ export function setupFluxScenario(name, harness, ctx) {
                         const dx = x - mid, dy = y - mid, dz = z - mid;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         if (r2 > foamR * foamR) continue;
-                        const r = Math.sqrt(r2);
                         const envelope = Math.exp(-r2 / (2 * foamR * foamR * 0.5));
                         const val = (foamBase + foamVar * Math.random()) * envelope;
                         // Random flux direction

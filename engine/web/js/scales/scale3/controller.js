@@ -42,8 +42,6 @@
 
 import { BaseLifecycleController } from '../../lifecycle.js';
 import { getMolecule, loadMolecule } from '../../molecules.js';
-import { SCALE2_TOGGLES } from '../../config/toggles.js';
-import { animateAE, syncAEParams } from '../scale2/controller.js';
 import { Scale3ControlsComponent } from './ui/controls/component.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 

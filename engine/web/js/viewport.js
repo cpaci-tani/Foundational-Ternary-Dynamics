@@ -51,33 +51,11 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // EffectComposer / RenderPass / UnrealBloomPass moved to viewport/scene-core.js (Phase 3a).
 // getById moved with applyParticleColors / updateTrails to viewport/particle-renderer.js (Phase 3d).
-import { potentialToColor, magnitudeToColor, fluxToColor, fluxToColorInto } from './fields.js';
-import { K_B } from './constants.js';
-import {
-    rampViridis,
-    rampCyclicHSL,
-    rampDivergingRdBu,
-    rampGrayscale,
-    rampGravWell,
-    rampEmEnergy,
-    rampCharge,
-    rampVorticity,
-    rampHelicity,
-    rampKretschmann,
-    rampEPressure,
-    rampBPressure,
-    rampKineticEnergy,
-    rampFisher,
-    rampCoherence,
-    FORCE_PALETTES,
-    lerpPalette,
-    RAMP_BY_NAME,
-} from './viewport/color-ramps.js';
 // Molecular rendering (bonds, orbital shells/lobes, AE force arrows,
 // element labels, nucleus glow) extracted to its own module as Wave 2
 // ticket 4 of the large-file refactor. Viewport composes a
 // MolecularRenderer and delegates every public method through a thin
-// wrapper. See docs/SPEC_REFACTOR_LARGE_FILES.md §5.
+// wrapper. See engine/web/docs/INDEX.md for modularization provenance.
 import { MolecularRenderer } from './viewport/molecular-renderer.js';
 import { SpinArrowManager } from './viewport/spin-arrow-manager.js';
 // Boundary wireframe builders + containment predicate — extracted to keep
@@ -121,14 +99,6 @@ import { ViewportFieldRenderer } from './viewport/field-renderer.js';
 // were centralized into viewport/constants.js (D-6). They were unused in
 // this orchestrator (every buffer allocation lives in the Phase-3
 // sub-renderers), so they are not re-imported here.
-
-// PARTICLE_VERT / FLUX_VOL_VERT GLSL strings were centralized into
-// viewport/shaders.js (D-1). They are unused in this orchestrator (all
-// ShaderMaterial construction lives in the Phase-3 sub-renderers), so
-// they are not re-imported here. PARTICLE_FRAG is imported below only to
-// preserve the existing export surface of this module.
-import { PARTICLE_FRAG } from './viewport/shaders.js';
-
 
 export class Viewport {
     constructor(container) {

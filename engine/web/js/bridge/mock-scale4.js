@@ -97,8 +97,6 @@ export class PlanetaryMockBridge {
         this.G = G_BY_MODE[this._gravityMode];
 
         const T = PlanetaryMockBridge.TYPE;
-        const TAU = Math.PI * 2;
-
         if (name === 'planetary-solar') {
             // Sun
             this.addBody(T.STAR, 1.0, 1.0, 0, 0, 0, 0, 0, 0);
@@ -131,7 +129,6 @@ export class PlanetaryMockBridge {
             // Figure-8 (Chenciner-Montgomery 2000). Requires G=1, so temporarily override.
             // The G=1.0 below is the intentional figure-8 unit convention
             // (Chenciner–Montgomery natural units) and is NOT a physics value.
-            const savedG = this.G;
             this.G = 1.0;
             this.addBody(T.STAR, 1.0, 0.5, 0.97000436, -0.24308753, 0, 0.466203685, 0.43236573, 0);
             this.addBody(T.STAR, 1.0, 0.5, -0.97000436, 0.24308753, 0, 0.466203685, 0.43236573, 0);

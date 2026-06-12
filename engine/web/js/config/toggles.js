@@ -10,6 +10,116 @@
  * Human coders: add new toggles here, not in app.js or bridge-init.js.
  */
 
+/**
+ * @typedef {('empty' |
+ * 'flux-pulse' |
+ * 'flux-dipole' |
+ * 'flux-standing' |
+ * 'flux-nested-standing' |
+ * 'flux-soliton' |
+ * 'flux-interference' |
+ * 'flux-vortex' |
+ * 'flux-dual-substrate' |
+ * 'flux-cascade' |
+ * 'flux-random-genesis' |
+ * 'flux-pair-production' |
+ * 'flux-annihilation' |
+ * 'flux-vacuum-foam' |
+ * 'flux-meson' |
+ * 'flux-string-breaking' |
+ * 'flux-baryon' |
+ * 'flux-cyclotron' |
+ * 'flux-screening' |
+ * 'flux-thermalization' |
+ * 'flux-triad' |
+ * 'flux-zero-point' |
+ * 'light-rainbow' |
+ * 'light-dipole' |
+ * 'light-two-slit' |
+ * 'light-photon-race' |
+ * 'quantum-born-rule' |
+ * 'quantum-double-slit' |
+ * 'quantum-eraser' |
+ * 'quantum-tunnel' |
+ * 'quantum-well' |
+ * 'quantum-entangle' |
+ * 'quantum-aharonov-bohm' |
+ * 'quantum-casimir' |
+ * 'quantum-zeno' |
+ * 's0-seed-up-quark' |
+ * 's0-seed-down-quark' |
+ * 's0-seed-strange-quark' |
+ * 's0-seed-charm-quark' |
+ * 's0-seed-bottom-quark' |
+ * 's0-seed-top-quark' |
+ * 's0-seed-higgs-field' |
+ * 's0-seed-gluon' |
+ * 's0-seed-beta-decay' |
+ * 's0-seed-ee-annihilation' |
+ * 's0-seed-hydrogen' |
+ * 's0-seed-helium' |
+ * 's0-seed-h2-bond-formation' |
+ * 's0-seed-spark-of-life' |
+ * 's0-seed-wilson-loop' |
+ * 's0-seed-flux-tube' |
+ * 's0-seed-monopole' |
+ * 's0-seed-instanton' |
+ * 's0-seed-schwarzschild' |
+ * 's0-seed-gravitational-lensing' |
+ * 's0-seed-gravitational-wave' |
+ * 's0-seed-massive-body' |
+ * 's0-seed-time-gravity-well' |
+ * 's0-seed-time-twin-clocks' |
+ * 's0-seed-time-horizon' |
+ * 's0-seed-sloop' |
+ * 's0-seed-observer-cell' |
+ * 's0-field-plane-wave' |
+ * 's0-field-standing-wave' |
+ * 's0-field-uniform-e' |
+ * 's0-field-uniform-b' |
+ * 's0-field-photon-pulse' |
+ * 's0-field-spacetime-forcing-boundary' |
+ * 's0-field-electric-dipole' |
+ * 's0-field-magnetic-dipole' |
+ * 's0-field-vortex-line' |
+ * 's0-seed-octahedron' |
+ * 's0-seed-cuboctahedron' |
+ * 's0-seed-stella-octangula' |
+ * 's0-seed-moore-cell' |
+ * 's0-seed-moore-decomposition' |
+ * 's0-vacuum-electron' |
+ * 's0-vacuum-muon' |
+ * 's0-vacuum-tau' |
+ * 's0-vacuum-electron-neutrino' |
+ * 's0-vacuum-muon-neutrino' |
+ * 's0-vacuum-tau-neutrino' |
+ * 's0-vacuum-photon' |
+ * 's0-vacuum-w-boson' |
+ * 's0-vacuum-z-boson' |
+ * 's0-vacuum-higgs' |
+ * 's0-vacuum-proton' |
+ * 's0-vacuum-neutron' |
+ * 's0-vacuum-pion-charged' |
+ * 's0-vacuum-pion-neutral' |
+ * 's0-vacuum-kaon-charged' |
+ * 's0-seed-ew-phase-transition' |
+ * 's0-seed-quark-gluon-plasma' |
+ * 's0-seed-emergent-ic1' |
+ * 's0-seed-emergent-ic3-collision' |
+ * 's0-seed-emergent-ic4-subthreshold' |
+ * 's0-seed-emergent-ic2-thermal-runaway' |
+ * 's0-seed-emergent-ic1-diagonal' |
+ * 's0-seed-emergent-ic1-isotropic' |
+ * 's0-seed-emergent-ic1-viz' |
+ * 's0-seed-emergent-ic1-diagonal-viz' |
+ * 's0-seed-emergent-ic1-isotropic-viz' |
+ * 's0-seed-cluster-law' |
+ * 's0-seed-cluster-law-subknee' |
+ * 's0-seed-cluster-law-knee' |
+ * 's0-seed-cluster-law-superknee' |
+ * 's0-seed-de-broglie-clock')} ScenarioId
+ */
+
 // Scale 0 (Lattice) — physics term toggles matching TermToggles in term_toggles.h
 export const SCALE0_TOGGLES = [
     ['wave_propagation', true,  't-wave'],
@@ -85,6 +195,8 @@ export const SCALE2_TOGGLES = [
 // Scale 0 scenario-specific toggle overrides.
 // Maps scenario name to array of [toggleKey, value, domId].
 // When a scenario loads, these overrides are applied AFTER defaults reset.
+//
+// @type {Partial<Record<ScenarioId, Array<[string, boolean, string]>>>}
 export const SCALE0_SCENARIO_OVERRIDES = {
     'flux-dual-substrate': [
         ['dual_substrate', true, 't-dual'],
@@ -248,6 +360,8 @@ export const SCALE0_SCENARIO_OVERRIDES = {
 // point floor, which only persists if the seeded fluctuation energy cannot
 // leak out the edges. With absorbing boundaries the floor bleeds away — which
 // would not be zero-point energy at all.
+//
+// @type {Partial<Record<ScenarioId, { reflective?: boolean, shape?: string }>>}
 export const SCALE0_SCENARIO_BOUNDARY = {
     'flux-zero-point': { reflective: true },
 };
@@ -257,6 +371,8 @@ export const SCALE0_SCENARIO_BOUNDARY = {
 // the gravity/wave family on purpose: enabling the sponge for every scenario
 // collapsed many full flux volumes to a damped slab. All other scenarios render
 // their flux volume unchanged.
+//
+// @type {Set<ScenarioId>}
 export const SCALE0_ABSORBING_SCENARIOS = new Set([
     's0-seed-schwarzschild',
     's0-seed-gravitational-wave',
@@ -274,6 +390,8 @@ export const SCALE0_ABSORBING_SCENARIOS = new Set([
 // via the latency-Poisson solver — the faithful gravity source (SPEC_FTD_LAGRANGIAN
 // §4.2), distinct from the |J|² field-energy proxy above. The scenario-loader enables
 // latency_field for these WITHOUT field_energy_gravity (the mass is the source).
+//
+// @type {Set<ScenarioId>}
 export const SCALE0_MASS_GRAVITY_SCENARIOS = new Set([
     's0-seed-massive-body',
 ]);

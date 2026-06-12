@@ -39,7 +39,7 @@ import { dirname, join } from 'node:path';
  *     PERF_BASELINE_RESET=1 npx playwright test tests/perf-baseline.spec.js
  *                                                             # re-baseline
  *
- * See docs/SPEC_REFACTOR_LARGE_FILES.md §8 for the gating rationale.
+ * See engine/web/docs/INDEX.md for the bridge modularization provenance.
  */
 
 const __filename = fileURLToPath(import.meta.url);

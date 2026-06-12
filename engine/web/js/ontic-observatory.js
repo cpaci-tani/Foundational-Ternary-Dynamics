@@ -21,9 +21,7 @@
  */
 
 import {
-    ALPHA, K_B, G_N, G_C, G_STAR, VARPI, X_PLUS, X_MINUS,
-    N_C, N_BASE, B_3, N_EFF, D_SPATIAL, DAMPING, C_SPEED,
-    ONTIC_TOTAL_CONSTANTS, ONTIC_LAYERS, TICK_PHASES,
+    ONTIC_TOTAL_CONSTANTS, TICK_PHASES,
 } from './constants.js';
 
 // ── Kolmogorov complexity estimates ──────────────────────────────────
@@ -215,7 +213,6 @@ export class OnticObservatory {
 /** Render the (f, C_0) ordered pair card */
 export function renderFcCard(obs, container) {
     const sp = obs.spectrum();
-    const ratio = obs.dominanceRatio();
     const maxBar = Math.max(sp.kf, sp.kc0, 1);
 
     container.innerHTML = `

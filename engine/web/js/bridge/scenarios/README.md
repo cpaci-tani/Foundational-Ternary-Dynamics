@@ -59,7 +59,7 @@ See [CONTRACTS.md §4](../../../../../CONTRACTS.md#4--scenario-dispatch-contract
 1. Add a `case 'new-scenario-id':` to the relevant group file (matching the prefix).
 2. Mirror the body in `engine/src/scenarios/<group>.cpp`.
 3. Register in `engine/web/js/scales/scale0/scenario-registry.js`.
-4. If non-default toggles are needed: add an entry to `SCALE0_SCENARIO_OVERRIDES` in `engine/web/js/config/toggles.js`. **Prefer** that over mutating toggles in the scenario body — the loader applies defaults + overrides **before** `setupScenario` runs (so a body mutation persists, but is invisible to the override table the dashboard shows and won't be reset on the next load).
+4. If non-default toggles are needed: add an entry to `SCALE0_SCENARIO_OVERRIDES` in `engine/web/js/config/toggles.js`. Prefer this for declarative, user-visible defaults. Scenario bodies may still make local setup calls for a physical seed, but they should not hide persistent UI policy in bridge internals.
 
 ### Adding a new scenario group (new prefix)
 1. Create `<prefix>-scenarios.js` exporting `setupXxxScenario(name, harness, ctx)`.
@@ -68,7 +68,7 @@ See [CONTRACTS.md §4](../../../../../CONTRACTS.md#4--scenario-dispatch-contract
 
 ## Anti-patterns (do not do this)
 
-- Direct `this._toggles.foo = true` inside a scenario body (runs **after** the toggle reset, so it persists un-tracked — use `SCALE0_SCENARIO_OVERRIDES`)
+- Direct `this._toggles.foo = true` inside a scenario body for UI policy. Use `SCALE0_SCENARIO_OVERRIDES` so scenario defaults stay visible to the loader, dashboard, and tests.
 - Bypass `_helpers.js` and re-implement triad geometry (drift risk vs C++ side)
 - Forget to register the scenario in `scenario-registry.js` (the dashboard dropdown won't see it; the parity guard now also checks this)
 

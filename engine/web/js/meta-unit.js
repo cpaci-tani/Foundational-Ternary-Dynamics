@@ -9,7 +9,6 @@ import {
     makeWireframe,
     makeAxisLine,
     makeMirrorPlane,
-    findAllEdges,
     edgesAtDistance,
 } from './meta-unit-geometry.js';
 

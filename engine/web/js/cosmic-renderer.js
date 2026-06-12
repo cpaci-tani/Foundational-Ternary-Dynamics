@@ -196,7 +196,6 @@ export class CosmicRenderer extends BaseRenderer {
 
                 // Fuel stage overlay: modulate color to show evolutionary state
                 const fuelStage = bodyData.fuel_stages ? bodyData.fuel_stages[s.i] : 0;
-                const fuelFrac = bodyData.fuel_fractions ? bodyData.fuel_fractions[s.i] : 1.0;
                 if (fuelStage === 1) {
                     // Red giant: force reddish color, larger sprite
                     c[j*3] = 1.0 * br; c[j*3+1] = 0.3 * br; c[j*3+2] = 0.05 * br;

@@ -2,7 +2,7 @@
  * S0Field scenarios — s0-field-* group.
  *
  * Extracted from bridge/scenarios/index.js as part of Wave 3 tickets 8-13
- * of the large-file refactor (docs/SPEC_REFACTOR_LARGE_FILES.md §4). This
+ * of the bridge modularization pass documented in engine/web/docs/INDEX.md. This
  * is a pure move — scenario bodies preserved verbatim; only the outer
  * `if (name.startsWith('s0-field-')) { ... }` wrapper was lifted out
  * and replaced with an early `return false` when the prefix does not
@@ -13,7 +13,7 @@
  * Returns true if the scenario was handled, false otherwise.
  */
 
-import { ALPHA, COULOMB_K_FORCE, K_B, C_SPEED } from '../../constants.js';
+import { COULOMB_K_FORCE, K_B, C_SPEED } from '../../constants.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -23,7 +23,7 @@ import { ALPHA, COULOMB_K_FORCE, K_B, C_SPEED } from '../../constants.js';
  */
 export function setupS0FieldScenario(name, harness, ctx) {
     if (!name.startsWith('s0-field-')) return false;
-    const { N, mid, midF } = ctx;
+    const { N, midF } = ctx;
             const mc  = Math.round(midF);
 
             switch (name) {

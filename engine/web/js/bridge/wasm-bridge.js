@@ -29,7 +29,7 @@
  * per-call object allocation.
  */
 
-import { ALPHA, ALPHA_EFT, K_B, G_C, G_N, COULOMB_K_FORCE } from '../constants.js';
+import { ALPHA, K_B, G_N, COULOMB_K_FORCE } from '../constants.js';
 import { debugLog } from '../core/log.js';
 import { getById as catalogGetById } from '../particle-catalog.js';
 // AtomEngine (Scale 2/3) runs through the MockBridge JS implementation while
@@ -101,6 +101,8 @@ export class WasmBridge {
         this.ready = false;
         this.isWasm = true;
         this.isWasm64 = false;   // set true in init() when the Memory64 build loads
+        this._lastScale0Audit = null;
+        this._lastScale0AuditTick = -1;
     }
 
     async init(latticeSize = 33) {
@@ -145,7 +147,7 @@ export class WasmBridge {
             // etc.) takes `ftd::RenderBridge&`. The DagEngine embind class
             // only exposes .tick/.clear and cannot be passed to those
             // functions (embind throws BindingError on type mismatch).
-            console.log('[WasmBridge] init() - constructing initial RenderBridge with L =', this.latticeSize);
+            debugLog('[WasmBridge] init() - constructing initial RenderBridge with L =', this.latticeSize);
             try {
                 this._bridge = new this._module.RenderBridge(this.latticeSize);
             } catch (err) {
@@ -196,7 +198,7 @@ export class WasmBridge {
         // Odd lattices only — snap even N up to the next odd.
         if (size % 2 === 0) size += 1;
         this.latticeSize = size;
-        console.log('[WasmBridge] reset() called. latticeSize =', this.latticeSize);
+        debugLog('[WasmBridge] reset() called. latticeSize =', this.latticeSize);
         if (this._module) {
             // Bridge-H2 (audit 2026-04-27): the C++ ParticleEngine and
             // AtomEngine handles cached on `this._pe`/`this._ae` are
@@ -207,6 +209,8 @@ export class WasmBridge {
             // and the lazy-attached physics harness.
             if (this._pe) { try { this._pe.delete?.(); } catch {} this._pe = null; }
             if (this._ae) { try { this._ae.delete?.(); } catch {} this._ae = null; }
+            this._lastScale0Audit = null;
+            this._lastScale0AuditTick = -1;
             if (this._aeFallback?.dispose) {
                 try { this._aeFallback.dispose(); } catch {}
                 this._aeFallback = null;
@@ -224,18 +228,18 @@ export class WasmBridge {
             // is unreachable for any sane lattice size.
             // RenderBridge (not DagEngine) — see init() above for rationale.
             if (this._bridge) {
-                console.log('[WasmBridge] reset() - deleting old RenderBridge...');
+                debugLog('[WasmBridge] reset() - deleting old RenderBridge...');
                 this._bridge.delete();
                 this._bridge = null;
             }
-            console.log('[WasmBridge] reset() - constructing new RenderBridge with L =', this.latticeSize);
+            debugLog('[WasmBridge] reset() - constructing new RenderBridge with L =', this.latticeSize);
             try {
                 this._bridge = new this._module.RenderBridge(this.latticeSize);
             } catch (err) {
                 console.error('[WasmBridge] Fatal: failed to construct new RenderBridge(' + this.latticeSize + '):', err);
                 throw err;
             }
-            console.log('[WasmBridge] reset() - RenderBridge constructed successfully.');
+            debugLog('[WasmBridge] reset() - RenderBridge constructed successfully.');
         }
     }
 
@@ -248,6 +252,8 @@ export class WasmBridge {
     dispose() {
         if (this._pe) { try { this._pe.delete?.(); } catch {} this._pe = null; }
         if (this._ae) { try { this._ae.delete?.(); } catch {} this._ae = null; }
+        this._lastScale0Audit = null;
+        this._lastScale0AuditTick = -1;
         if (this._aeFallback?.dispose) {
             try { this._aeFallback.dispose(); } catch {}
             this._aeFallback = null;
@@ -261,19 +267,24 @@ export class WasmBridge {
     }
 
     injectParticle(x, y, z, state) {
-        if (this._module && this._bridge)
+        if (this._module && this._bridge) {
             this._module.injectParticle(this._bridge, x, y, z, state);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     injectWavepacket(x, y, z, state) {
-        if (this._module && this._bridge)
+        if (this._module && this._bridge) {
             this._module.injectWavepacket(this._bridge, x, y, z, state);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     injectFlux(x, y, z, fx, fy, fz) {
         if (!this._bridge) return;
         try {
             this._module.injectFlux(this._bridge, x, y, z, fx, fy, fz);
+            this._invalidateScale0AuditCache();
         } catch (e) {
             console.error('WASM injectFlux failed:', e);
         }
@@ -284,6 +295,7 @@ export class WasmBridge {
         try {
             if (typeof this._module.injectUniformFluxAdd === 'function') {
                 this._module.injectUniformFluxAdd(this._bridge, fx, fy, fz);
+                this._invalidateScale0AuditCache();
             } else {
                 console.warn('WASM injectUniformFluxAdd not found. Did you rebuild?');
             }
@@ -293,8 +305,10 @@ export class WasmBridge {
     }
 
     createEntangledPair(x, y, z, fx, fy, fz) {
-        if (this._module && this._bridge)
+        if (this._module && this._bridge) {
             this._module.createEntangledPair(this._bridge, x, y, z, fx, fy, fz);
+            this._invalidateScale0AuditCache();
+        }
     }
 
     setToggle(name, value) {
@@ -362,7 +376,19 @@ export class WasmBridge {
                 spinUp: 0, spinDown: 0, colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
                 angMomX: 0, angMomY: 0, angMomZ: 0
             };
-        return this._module.getDiagnostics(this._bridge);
+        const d = this._module.getDiagnostics(this._bridge);
+        const audit = this._getScale0AuditForTick(d?.tick ?? this.currentTick());
+        if (audit && Number.isFinite(audit.totalEnergy)) {
+            // Native Diagnostics::total_energy is the Born-Infeld vacuum
+            // baseline summed over every voxel, so for Scale-0 WASM scenarios
+            // it reads as a large constant (e.g. 33^3 * M_REST) even while the
+            // flux/wave Hamiltonian evolves. The dashboard's energy rows and
+            // status bar use MockBridge's convention: field + wave + particle
+            // kinetic energy. Normalize the WASM adapter to that same channel.
+            d.vacuumBaselineEnergy = d.totalEnergy;
+            d.totalEnergy = audit.totalEnergy;
+        }
+        return d;
     }
 
     getEnergyAudit() {
@@ -375,7 +401,24 @@ export class WasmBridge {
                 coulombPE: 0, chargeTotal: 0, manifested: 0,
                 ELTotal: 0, ERTotal: 0, chiralityTotal: 0, wvLTotal: 0, wvRTotal: 0,
             };
-        return this._module.getEnergyAudit(this._bridge);
+        return this._getScale0AuditForTick(this.currentTick());
+    }
+
+    _getScale0AuditForTick(tick) {
+        if (!this._module || !this._bridge) return null;
+        const t = Number.isFinite(tick) ? tick : this.currentTick();
+        if (this._lastScale0Audit && this._lastScale0AuditTick === t) {
+            return this._lastScale0Audit;
+        }
+        const audit = this._module.getEnergyAudit(this._bridge);
+        this._lastScale0Audit = audit;
+        this._lastScale0AuditTick = t;
+        return audit;
+    }
+
+    _invalidateScale0AuditCache() {
+        this._lastScale0Audit = null;
+        this._lastScale0AuditTick = -1;
     }
 
     getLagrangian() {
@@ -404,7 +447,7 @@ export class WasmBridge {
         return this._module.getForceAt(this._bridge, x, y, z);
     }
 
-    setupScenario(name, harness) {
+    setupScenario(name, _harness) {
         this.reset();
         if (this._module && this._bridge)
             this._module.setupScenario(this._bridge, name);

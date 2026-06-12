@@ -1,8 +1,8 @@
 # FTD Web Dashboard — Smoke Suite
 
 Playwright-based smoke suite for `engine/web/index.html`. Boots a real
-Chromium against the dashboard served from `python -m http.server` and
-verifies scale switching, listener cleanup, and a few known regressions.
+Chromium against the dashboard served by `engine/web/serve.py` and verifies
+scale switching, listener cleanup, scenario contracts, and known regressions.
 
 ## Running
 
@@ -30,25 +30,20 @@ npx playwright test -g "Scale sweep"
 ```
 
 The config uses Playwright's `webServer` block to start / stop
-`python -m http.server 8081` automatically, so you do not need to run
-the dev server separately. Port **8081** is chosen so it does not
-collide with the 8080 that many developers leave running manually.
+`python ../serve.py 8081 --cache --quiet` automatically, so you do not need to
+run the dev server separately. Port **8081** is chosen so it does not collide
+with the 8080 that many developers leave running manually.
 
 ## What the suite covers
 
-- **Scale sweep**: each of the 7 engine modes (`lattice`, `particles`,
-  `atoms`, `molecules`, `planetary`, `cosmic`, `meta`) loads without
-  console errors or failed network requests. (Scale 11 / reference frame
-  context was deleted; the suite no longer drives it.)
+- **Scale sweep**: each live engine mode (`lattice`, `particles`, `atoms`,
+  `molecules`, `planetary`, `cosmic`, `meta`) loads without console errors or
+  failed network requests.
 - **Bridge initialization**: `window._ftdBridge` becomes non-null within
   15 s of page load.
 - **Phase B.1 regression**: `window._cosmicInterval` is never set after
   the Scale 5 refactor (cosmic mode now drives physics from the rAF
   loop instead of a parallel `setInterval`).
-- **Phase B.2 regression**: re-entering reference frame context mode does not leak
-  event listeners. A warmup cycle runs first so that one-time init
-  listeners land on the untracked baseline, then 5 further cycles are
-  monitored for growth.
 - **Constants contract**: `constants.js` still exports `K_B`, `ALPHA`,
   `G_STAR` as named values and `K_B === 0.511`.
 - **Empirical/WASM subset**: `npm run test:empirical` combines scenario
@@ -64,10 +59,14 @@ collide with the 8080 that many developers leave running manually.
   resource leak is zero across scales.
 - **Claim reconciliation**: `reconcile-claims` re-asserts the four prior
   web-layer fixes still hold (guards against silent regression).
-- **Toggle coverage**: `toggle-coverage` exercises all 32 Scale-0 field
-  toggles, confirming each is reachable and round-trips through the UI.
+- **Toggle coverage**: `toggle-coverage` exercises the canonical Scale-0 field
+  toggle binding map, confirming each toggle is reachable and round-trips
+  through the UI.
 - **Overlay scheduler**: `overlay-scheduler` checks the overlay-scheduler
   invariants (no double-schedule, clean teardown).
+- **Scale-0 telemetry contracts**: targeted specs assert scenario energy
+  telemetry, vacuum/non-vacuum audit wiring, and the conservation micropanel
+  remain connected to live diagnostics.
 
 ## What the suite does NOT cover
 

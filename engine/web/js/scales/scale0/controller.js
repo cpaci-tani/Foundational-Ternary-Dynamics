@@ -43,6 +43,7 @@ import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js';
 import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
 import { initGravityPanel } from './ui/overlays/gravity-panel.js';
+import { appRegistry } from '../../core/registry.js';
 import { initTimePanel } from './ui/overlays/time-panel.js';
 import { PlayBarComponent } from '../../ui/components/play-bar/component.js';
 
@@ -121,6 +122,7 @@ export function bindUI(ctx) {
     });
 
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
+    appRegistry.register('scale0Ctx', ctx);
 
     // Ensure the play bar is mounted (idempotent; may have been
     // pre-mounted by mountScale0PlaybackUI() before wireToolbar).
@@ -189,6 +191,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
         // non-lattice scales. dispose() unsubscribes the rAF, removes the
         // DOM subtree, and clears its window singleton. Each is idempotent
         // and re-created on the next Scale-0 mount via its init*() call.
+        appRegistry.unregister('scale0Ctx');
         if (typeof window !== 'undefined') {
             try { window.__ftdConservationPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdP1Panel?.dispose?.(); } catch (e) { /* ignore */ }

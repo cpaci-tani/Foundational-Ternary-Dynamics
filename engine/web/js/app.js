@@ -7,9 +7,7 @@
  */
 
 import { createBridge, MockBridge } from './bridge-init.js';
-// PhysicsHarness factory — lazily attached per-bridge by panels and
-// overlays that need the canonical read/write surface.
-import { getPhysicsHarness } from './physics/index.js';
+import { appRegistry } from './core/registry.js';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js';
 import { DiagnosticsPanel } from './diagnostics.js';
@@ -18,9 +16,7 @@ import { telemetryHub } from './telemetry-hub.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js';
 import { getElement } from './elements.js';
-import { getCategories, getMoleculesByCategory, getMolecule, loadMolecule } from './molecules.js';
-import { atomicEnergy } from './atomic-energy.js';
-import { formatEnergy } from './units.js';
+import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
 // ── Scale Controllers (extracted from inline code) ─────────────────
@@ -33,13 +29,14 @@ import * as Scale4Controller from './scales/scale4/controller.js';
 import * as Scale5Controller from './scales/scale5/controller.js';
 import * as Scale6Controller from './scales/scale6/controller.js';
 import { OnticObservatory } from './ontic-observatory.js';
+import { K_B } from './constants.js';
 // renderEnergyLevels, renderCrossSections, renderDecayRates, renderFcCard,
 // renderObserverCard, renderOnticHierarchy, renderInfoDynamics moved to
 // ui/app-ontic.js (Wave 2 ticket 7).
-import { TICK_PHASES, K_B, K_GENESIS, C_SPEED } from './constants.js';
-// ALPHA, G_STAR, VARPI, X_PLUS, X_MINUS, ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS
+// ALPHA, G_STAR, VARPI, X_PLUS, X_MINUS, TICK_PHASES, K_B,
+// K_GENESIS, C_SPEED, ONTIC_LAYERS, ONTIC_TOTAL_CONSTANTS
 // now imported directly by ui/app-ontic.js.
-import { AggregateDetector, ScaleBridgeVisualizer, EmergenceMonitor } from './aggregation-bridge.js';
+import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
 import { PETelemetryPanel } from './pe-telemetry.js';
@@ -342,7 +339,6 @@ function _resetAllVisualState() {
 // Phase 1-3 state
 let observatory = null;
 let aggregateDetector = null;
-let scaleBridgeViz = null;
 let emergenceMonitor = null;
 let _physicsZ = 1; // current Z for physics tab
 // Ontic panel provider (Wave 2 ticket 7) — bound to live-state getters so
@@ -517,12 +513,14 @@ async function init() {
             }
         }
     }
+    appRegistry.register('activeBridge', bridge);
 
     // Create 3D viewport
     _loadProgress(40, 'Building 3D viewport...');
     const viewportContainer = document.getElementById('viewport');
     viewport = new Viewport(viewportContainer);
     viewport.setLatticeSize(latticeSize);
+    appRegistry.register('viewport', viewport);
 
     _loadProgress(50, 'Creating panels...');
     // Initialize panel component wrappers (Phase 4)
@@ -536,6 +534,12 @@ async function init() {
     initSpectrumPanel();
     initGravityPanel();
     initTimePanel();
+    appRegistry.register('panel:fluxSlice', window.__ftdFluxSlicePanel);
+    appRegistry.register('panel:p1Observables', window.__ftdP1Panel);
+    appRegistry.register('panel:conservation', window.__ftdConservationPanel);
+    appRegistry.register('panel:spectrum', window.__ftdSpectrumPanel);
+    appRegistry.register('panel:gravity', window.__ftdGravityPanel);
+    appRegistry.register('panel:time', window.__ftdTimePanel);
     // Scene panel — curated render controls (FOV / exposure / bloom / fog / ...).
     // Scales 0–3 only (gated by panel-registry); unmounted cleanly when
     // the user switches to a separate-renderer scale like 4/5/12.
@@ -587,7 +591,6 @@ async function init() {
     _loadProgress(60, 'Initializing observatory...');
     observatory = new OnticObservatory();
     aggregateDetector = new AggregateDetector();
-    scaleBridgeViz = new ScaleBridgeVisualizer();
     emergenceMonitor = new EmergenceMonitor(500);
     onticPanel.initOnticPhysicsHierarchy();
 
@@ -1764,7 +1767,7 @@ function clearCharts() {
 // Call via onticPanel.initOnticPhysicsHierarchy / updateOnticPanel /
 // refreshPhysicsPanel / getOnticDiagnostics /
 // getRawDiagnostics / renderOnticChainSummary. See
-// docs/SPEC_REFACTOR_LARGE_FILES.md §4.
+// Bridge modularization provenance is cataloged in docs/INDEX.md.
 
 // ── Launch ───────────────────────────────────────────────────────────
 init().catch(err => {

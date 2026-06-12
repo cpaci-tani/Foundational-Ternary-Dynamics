@@ -15,7 +15,7 @@ per-frame loop that drives them).
 Cross-scale companion: [`engine/SCENARIO_ARCHITECTURE.md`](../../SCENARIO_ARCHITECTURE.md)
 (scenario lifecycle and seed architecture across all dashboard scales).
 Adjacent surfaces already specced: [`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`](audits/AUDIT_BRIDGE_WIRING_2026-06-03.md)
-(bridge read-surface), [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
+(bridge read-surface), [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
 (lifecycle controller / worker teardown / perf), [`TOGGLE_REGISTRY.md`](TOGGLE_REGISTRY.md),
 [`SPEC_VACUUM_PARTICLE_SCENARIOS.md`](SPEC_VACUUM_PARTICLE_SCENARIOS.md).
 
@@ -321,7 +321,7 @@ harness layer — `setupScenario` defers straight to whichever bridge owns the r
 - **Exit (Scale 0 → another scale):** `Scale0LifecycleController.destroy` (`controller.js:282-299`)
   disposes the four overlay panels and calls `exitScale0()` → `clearFluxMock()` (disposes +
   nulls the mock). `mount` (`:264-280`) re-creates panels idempotently on re-entry.
-  (Lifecycle validity verified end-to-end in `AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`.)
+  (Lifecycle validity verified end-to-end in `audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`.)
 - **Resize:** `resizeScale0Lattice` (`:356-433`) heap-guards the new size, resizes the
   bridge, then **re-loads the scenario** via `getScale0Scenario(id).load(getPhysicsHarness(bridge), { id })`
   (`:400`) — fixed 2026-06-05 (A1). Pre-fix this passed a bare `{ bridge }`, which the refactored

@@ -341,7 +341,7 @@ export function animateAE(ctx) {
         bridge, viewport, running, ticksPerFrame, inspector,
         fluxEnergyChart, particleChart,
         activeTab, frameCount, dom, now,
-        updatePlayButton, updateOnticPanel,
+        updatePlayButton,
         setRunning, engineMode
     } = ctx;
 
