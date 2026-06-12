@@ -87,6 +87,13 @@ void base_toggles(ftd::RenderBridge& rb) {
     rb.toggles.dual_substrate   = false;
 }
 
+// NOTE (2026-06-12, post-FTD-0275-lock): the CSV FILE* is set line-buffered at
+// open (setvbuf below) so a mid-run interruption does not lose the unflushed
+// tail (the v1 run of record lost the L=64 ramp tail to an un-flushed full-block
+// buffer on kill; see ANALYSIS_THERMAL_PHASE_MAP_v1.md §4). This I/O-hygiene fix
+// changes no physics and no verdict logic; the §3 pre-registration hash covers
+// the v1 source as run.
+
 struct Probe { double m, T_kin, wave_e, total_e; bool stable; };
 
 Probe probe(ftd::RenderBridge& rb, int L) {
@@ -146,6 +153,7 @@ int main(int argc, char** argv) {
     const fs::path out_csv = fs::path(output_dir) / ("thermal_ignition_" + tag + ".csv");
     std::FILE* f = std::fopen(out_csv.string().c_str(), "w");
     if (!f) { std::fprintf(stderr, "cannot open %s\n", out_csv.string().c_str()); return 1; }
+    std::setvbuf(f, nullptr, _IOLBF, 0);   // line-buffered: survive mid-run kill
     std::fprintf(f, "mode,L,phase,drive,m,T_kin,wave_e,total_e,stable,outcome,seed\n");
 
     std::printf("thermal_ignition: mode=%s Ls=%s Tmax=%.3f dT=%.3f settle=%d  "
