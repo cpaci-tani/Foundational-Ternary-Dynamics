@@ -89,7 +89,7 @@ class Scale4LifecycleController extends BaseLifecycleController {
         viewport.camera.far = 1000;
         viewport.camera.updateProjectionMatrix();
         viewport.controls.minDistance = 0.01;
-        viewport.controls.maxDistance = 100;
+        viewport.controls.maxDistance = 100000000;
         viewport.camera.position.set(0, 5, 10);
         viewport.camera.lookAt(0, 0, 0);
         viewport.controls.target.set(0, 0, 0);
