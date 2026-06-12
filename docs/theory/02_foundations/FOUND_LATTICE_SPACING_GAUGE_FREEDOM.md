@@ -496,7 +496,9 @@ All of these decompose into 4 because of the i-cycle.
 
 **Consequences if confirmed:**
 
-- The ¼ is **not engine-parameter-dependent** — it follows from the algebraic structure (i-cycle / N_base / Cl(3,0)). Engine parameters K_GENESIS_KINETIC_DRAIN, K_EVAP_RATE etc. would NOT change k, only renormalise the cluster lifetime.
+> **CURRENT-STACK CORRECTION (2026-06-12, FTD-0276 Leg A — `DERIV_KINETIC_DRAIN_FROM_QUADRATURE.md`):** the first bullet below — "the ¼ is *not* engine-parameter-dependent; K_GENESIS_KINETIC_DRAIN would NOT change k" — is **FALSIFIED on the current stack.** A pre-registered drain scan (`preregister-drain-scaling-v1`) measured the sub-knee `k_eff = N̄/A²` changing ~5× across drain (0.147 at drain 0.125 → 0.029 at drain 0.75), with `k_eff ∝ drain^{−0.93}` (≈ 1/drain). The cluster efficiency is decisively drain-set, not a parameter-independent structural ¼; and the `k = drain² = 0.25` reading two paragraphs above is also closed negative (`k_eff(0.5) = 0.059 ≠ 0.25`). The historical ¼ was a property of the pre-FTD-0260 stack; the current stack gives `k_eff ≈ 0.05` (FTD-0261), and that value is engine-set (the FTD-0269 BOUNDARY). The **linear** k=¼ theorem (FTD-0110, O_h representation theory) is mathematics and is untouched — only the engine-side parameter-independence claim is falsified.
+
+- The ¼ is **not engine-parameter-dependent** — it follows from the algebraic structure (i-cycle / N_base / Cl(3,0)). Engine parameters K_GENESIS_KINETIC_DRAIN, K_EVAP_RATE etc. would NOT change k, only renormalise the cluster lifetime. *(↑ FALSIFIED on the current stack — see the FTD-0276 banner above.)*
 - The k(A) drift from 0.25 → 0.20 at high A is a **correction term** to this ideal value, plausibly from lattice finite-size effects (cluster approaches L³ scale) or evaporation saturation.
 - The relationship **`m/m_e = N · N_base = N · 4 = A²`** ties the SM mass ladder to the framework integer N_base.
 
