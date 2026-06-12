@@ -15,6 +15,7 @@
  */
 
 import { getPlayBarTemplate } from './template.js';
+import { appRegistry } from '../../../core/registry.js';
 
 export class PlayBarComponent {
     constructor(viewportEl, opts) {
@@ -63,6 +64,20 @@ export class PlayBarComponent {
                         slider.dispatchEvent(new Event('input', { bubbles: true }));
                     }
                     this._setActiveSpeedPreset(chip);
+                });
+            }
+
+            // Zoom preset chips set the camera's zoom magnitude in the active viewport
+            for (const chip of this.popoverEl.querySelectorAll('[data-zoom-preset]')) {
+                chip.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const factor = parseFloat(chip.dataset.zoomPreset);
+                    if (!Number.isFinite(factor) || factor <= 0) return;
+                    const viewport = appRegistry.get('viewport');
+                    if (viewport) {
+                        viewport.setZoomMagnitude(factor);
+                    }
+                    this._setActiveZoomPreset(chip);
                 });
             }
 
@@ -142,6 +157,44 @@ export class PlayBarComponent {
         this._setActiveSpeedPreset(matched);
     }
 
+    _setActiveZoomPreset(activeChip) {
+        if (!this.popoverEl) return;
+        for (const chip of this.popoverEl.querySelectorAll('[data-zoom-preset]')) {
+            const active = chip === activeChip;
+            chip.classList.toggle('is-active', active);
+            chip.setAttribute('aria-checked', active ? 'true' : 'false');
+        }
+    }
+
+    _syncZoomPresetFromCamera() {
+        if (!this.popoverEl) return;
+        const viewport = appRegistry.get('viewport');
+        if (!viewport || !viewport.camera || !viewport.controls) return;
+
+        const currentDist = viewport.camera.position.distanceTo(viewport.controls.target);
+        const refDist = viewport.getReferenceDistance ? viewport.getReferenceDistance() : null;
+        if (!refDist) return;
+
+        const currentZoom = refDist / currentDist;
+
+        let bestChip = null;
+        let minDiff = Infinity;
+
+        const chips = this.popoverEl.querySelectorAll('[data-zoom-preset]');
+        for (const chip of chips) {
+            const factor = parseFloat(chip.dataset.zoomPreset);
+            if (!Number.isFinite(factor) || factor <= 0) continue;
+            const diff = Math.abs(Math.log(currentZoom / factor));
+            if (diff < minDiff) {
+                minDiff = diff;
+                bestChip = chip;
+            }
+        }
+
+        const threshold = 0.25;
+        this._setActiveZoomPreset(minDiff < threshold ? bestChip : null);
+    }
+
     _setPopoverOpen(open) {
         if (!this.popoverEl || !this.settingsBtn) return;
         if (open) {
@@ -166,6 +219,7 @@ export class PlayBarComponent {
         if (this.timeEl && now != null) {
             this.timeEl.textContent = this._formatTickLabel(now);
         }
+        this._syncZoomPresetFromCamera();
     }
 
     unmount() {

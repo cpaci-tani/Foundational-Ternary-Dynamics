@@ -228,6 +228,9 @@ function applyTicksPerFrameFromSlider(value) {
     ticksPerFrame = sliderValueToSpeed(parseFloat(value), engineMode);
     _tickAccumulator = 0;
     if (display) display.textContent = speedLabel(ticksPerFrame);
+    if (bridge && typeof bridge.setTicksPerFrame === 'function') {
+        bridge.setTicksPerFrame(ticksPerFrame);
+    }
 }
 
 function applyBoundaryShape(shape) {
