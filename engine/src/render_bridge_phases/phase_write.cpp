@@ -315,8 +315,9 @@ void phase_write_main_loop(RenderBridge& rb) {
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
 #pragma omp atomic
           ++rb.genesis_events_this_tick_;  // FTD-0267 telemetry (observation only)
-          // Latent Heat of Manifestation: consume wave energy.
-          v.wave_vel *= (1.0 - K_GENESIS_KINETIC_DRAIN);
+          // Latent Heat of Manifestation: consume wave energy. FTD-0276: the
+          // drain fraction is a runtime toggle (default 0.5 = legacy constant).
+          v.wave_vel *= (1.0 - rb.toggles.kinetic_drain);
           double jmag = dens;
           if (jmag > K_GENESIS_FLUX_EPSILON)
             v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag);
