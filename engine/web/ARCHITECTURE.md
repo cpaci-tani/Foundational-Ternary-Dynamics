@@ -214,10 +214,35 @@ the current code.
 3. Large modules remain: `viewport/field-renderer.js`, `bridge/mock-bridge.js`,
    `scales/scale0/ui/overlays/p1-observables-panel.js`, and
    `bridge/wasm-bridge.js`.
-4. Static tooling is light. Tests are strong, but there is no lint/type/import
-   boundary gate yet.
+4. Dependency-boundary tooling is still incomplete. ESLint, Stylelint,
+   TypeScript `--noEmit`, and Vite build checks exist, but dependency-cruiser
+   is not yet configured as a passing import-boundary gate.
 5. Debug globals (`window.__ftd*`, `window._ftdBridge`) are useful but should be
    treated as escape hatches, not normal module boundaries.
+
+---
+
+## Static Tooling
+
+Run from repository root:
+
+```bash
+npm run lint
+npm run lint:css
+npm run typecheck
+npm run build
+node engine/web/tests/verify_web_consistency.js
+```
+
+Current lint policy:
+
+- Unused imports and locals are warnings/errors to clean up.
+- Unused function parameters are ignored because lifecycle, event, and bridge
+  implementations often preserve shared signatures.
+- Intentionally unused variables should use a leading `_`.
+
+`npm run build` is expected to complete. Vite may still report advisory
+warnings for legacy non-module scripts and large chunks.
 
 ---
 
