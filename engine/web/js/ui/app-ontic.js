@@ -2,7 +2,7 @@
  * Ontic Observatory / Physics / Hierarchy panel glue.
  *
  * Extracted from `app.js` as Wave 2 ticket 7 of the large-file refactor
- * (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). This is a move, not a rewrite —
+ * (see engine/web/docs/INDEX.md). This is a move, not a rewrite —
  * function bodies preserved verbatim; the only structural change is that
  * accesses to `app`-scope mutable state (bridge, engineMode, observatory,
  * aggregateDetector, emergenceMonitor, _physicsZ) go through a getter bag.

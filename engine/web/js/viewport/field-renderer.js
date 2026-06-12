@@ -27,8 +27,9 @@
  */
 
 import * as THREE from 'three';
-import { potentialToColor, magnitudeToColor, fluxToColor, potentialToColorInto, magnitudeToColorInto } from '../fields.js';
-import { K_B, K_GENESIS } from '../constants.js';
+import { fluxToColor, potentialToColorInto, magnitudeToColorInto } from '../fields.js';
+import { K_GENESIS } from '../constants.js';
+import { buildStreamlineMesh, buildArrowFieldMesh } from './mesh-factory.js';
 
 // Confinement-string visual: draw a color-pair proximity glyph between any
 // two particles whose squared separation is below this cutoff. [IMPOSED]
@@ -702,39 +703,11 @@ export class ViewportFieldRenderer {
     //    FluxRenderer + ParticleRenderer via Viewport orchestrator) ────
 
     _buildStreamlineMesh(maxVerts, opacity = 0.7) {
-        const positions = new Float32Array(maxVerts * 3);
-        const colors = new Float32Array(maxVerts * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity,
-            blending: THREE.AdditiveBlending, depthWrite: false,
-        });
-        const mesh = new THREE.LineSegments(geo, mat);
-        mesh.visible = false;
-        mesh.frustumCulled = false;
-        this._scene.add(mesh);
-        return mesh;
+        return buildStreamlineMesh(this._scene, maxVerts, opacity);
     }
 
     _buildArrowFieldMesh(maxArrows, opacity = 0.7) {
-        const positions = new Float32Array(maxArrows * 2 * 3);
-        const colors    = new Float32Array(maxArrows * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('color',    new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity,
-            depthWrite: false,
-        });
-        const mesh = new THREE.LineSegments(geo, mat);
-        mesh.visible = false;
-        mesh.frustumCulled = false;
-        this._scene.add(mesh);
-        return mesh;
+        return buildArrowFieldMesh(this._scene, maxArrows, opacity);
     }
 
     _writeArrowFieldIntoMesh(mesh, fieldData, colors, magCacheKey, arrowBase = 1.5, thresholdFrac = 0.03) {
@@ -755,7 +728,6 @@ export class ViewportFieldRenderer {
             if (m > maxMag) maxMag = m;
         }
         const threshold = maxMag * thresholdFrac;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         const [br, bg, bb] = colors.base;
         const [tr, tg, tb] = colors.tip;
@@ -808,7 +780,6 @@ export class ViewportFieldRenderer {
         const posAttr = mesh.geometry.getAttribute('position');
         const colAttr = mesh.geometry.getAttribute('color');
         const maxVerts = posAttr.array.length / 3;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         const rgb = [0, 0, 0];
         const lineCount = streamlines.count;
@@ -938,7 +909,6 @@ export class ViewportFieldRenderer {
             if (m > maxMag) maxMag = m;
         }
         const threshold = maxMag * 0.05;
-        const halfN = this._halfN;
         const arrowBase = 2.0;
 
         // Gather all active indices (F-16: reused Int32Array, ascending order).
@@ -1022,7 +992,6 @@ export class ViewportFieldRenderer {
             if (a > maxVal) maxVal = a;
         }
         const threshold = maxVal * 0.01;
-        const halfN = this._halfN;
 
         // Gather active indices (F-16: reused Int32Array, ascending order).
         const activeIndices = this._ensureActiveIdx(count);
@@ -1123,7 +1092,6 @@ export class ViewportFieldRenderer {
             if (m > maxMag) maxMag = m;
         }
         const threshold = maxMag * 0.05;
-        const halfN = this._halfN;
         const arrowBase = 2.0;
 
         // Gather all active indices (F-16: reused Int32Array, ascending order).
@@ -1243,7 +1211,6 @@ export class ViewportFieldRenderer {
 
         const pal = FORCE_PALETTES.weak;
         const threshold = maxVal * 0.08;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         let vi = 0;
 
@@ -1361,7 +1328,6 @@ export class ViewportFieldRenderer {
         }
         if (maxMag < 1e-15) maxMag = 1;
         const threshold = maxMag * 0.02;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         const sizeBase = 15 + 10 * (this._latticeSize / 64);
         let vi = 0;
@@ -1578,7 +1544,6 @@ export class ViewportFieldRenderer {
         }
         if (maxMag < 1e-15) maxMag = 1;
         const threshold = maxMag * 0.03;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         const scaleBase = 0.8;
         let vi = 0;
@@ -1929,7 +1894,6 @@ export class ViewportFieldRenderer {
         const maxVerts = posAttr.array.length / 3;
 
         let vi = 0;
-        const kb = bridge.getParam ? bridge.getParam('kb') : K_B;
         const J2_threshold_dist2 = CONFINEMENT_PAIR_DIST2;
 
         const ptData = bridge.getParticleData();
@@ -2083,7 +2047,6 @@ export class ViewportFieldRenderer {
         const threshold = maxVal * 0.02;
         let vi = 0;
 
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
 
         for (let i = 0; i < lCount && vi < maxPts; i++) {
@@ -2159,7 +2122,6 @@ export class ViewportFieldRenderer {
             if (a > maxVal) maxVal = a;
         }
         const threshold = maxVal * 0.02;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         let vi = 0;
 
@@ -2236,7 +2198,6 @@ export class ViewportFieldRenderer {
             if (m > maxMag) maxMag = m;
         }
         const threshold = maxMag * 0.03;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         let vi = 0;
 
@@ -2335,7 +2296,6 @@ export class ViewportFieldRenderer {
         const posAttr = this._quantumField.geometry.getAttribute('position');
         const colAttr = this._quantumField.geometry.getAttribute('color');
         const maxPts = posAttr.array.length / 3;
-        const halfN = this._halfN;
         const { positions, values, count } = data;
 
         const signed = options.signed === true;
@@ -2428,7 +2388,6 @@ export class ViewportFieldRenderer {
         const posAttr = this._phaseNeedles.geometry.getAttribute('position');
         const colAttr = this._phaseNeedles.geometry.getAttribute('color');
         const maxSegments = posAttr.array.length / 6;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         const len = 1.2;
         const { positions, values, count } = data;
@@ -2492,7 +2451,6 @@ export class ViewportFieldRenderer {
         const posAttr = this._quantumField.geometry.getAttribute('position');
         const colAttr = this._quantumField.geometry.getAttribute('color');
         const maxPts = posAttr.array.length / 3;
-        const halfN = this._halfN;
         const _needsClip = this._clipActive();
         const { positions, values, count } = data;
         const JITTER_SCALE = 0.8;

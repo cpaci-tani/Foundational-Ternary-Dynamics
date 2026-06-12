@@ -153,8 +153,9 @@ export function computeGravPotentialFrame(ctx, sampled, state) {
     // lowest-pass-filter analogue at fixed resolution — good enough to show
     // wells and peaks qualitatively.
     if (!sampled.fluxVector?.count) return null;
-    if (typeof ctx.bridge?.getGravPotentialSamples === 'function') {
-        const data = ctx.bridge.getGravPotentialSamples();
+    const activeBridge = (state?.useFluxMock && state?.fluxMock) ? state.fluxMock : ctx.bridge;
+    if (typeof activeBridge?.getGravPotentialSamples === 'function') {
+        const data = activeBridge.getGravPotentialSamples();
         if (data?.count > 0) return data;
     }
     const buf = ensureTier1Buffers(state, sampled.fluxVector.count);
@@ -424,7 +425,8 @@ export function computeBPressureFrame(sampled, state) {
  * bump at each particle's location proportional to K.
  */
 export function computeKineticEnergyFrame(ctx, state) {
-    const particleCap = ctx.bridge?.capabilities?.scale0;
+    const activeBridge = (state?.useFluxMock && state?.fluxMock) ? state.fluxMock : ctx.bridge;
+    const particleCap = activeBridge?.capabilities?.scale0;
     if (!particleCap || typeof particleCap.getScale0ParticleFrame !== 'function') return null;
     const frame = particleCap.getScale0ParticleFrame();
     if (!frame || !frame.count) return null;

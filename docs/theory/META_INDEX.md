@@ -305,6 +305,7 @@ What is genuinely derived vs. claimed.
 | 7.51 | [AUDIT_GSTAR_PAPER_MULTI_ROUND.md](07_assessment/AUDIT_GSTAR_PAPER_MULTI_ROUND.md) | **G\* paper multi-round referee report (consolidated 2026-05-21):** the three-round adversarial referee pass on the G\* introduction paper (2026-05-19). Merges `REFEREE_REPORT_GSTAR_2026-05-19.md` (Round 1) + `_ROUND2.md` + `_ROUND3.md` |
 | 7.52 | [ROUNDTABLE_STATE_OF_FTD_2026-05-22.md](07_assessment/archive/ROUNDTABLE_STATE_OF_FTD_2026-05-22.md) | **State-of-the-theory roundtable (2026-05-22, [SYNTHESIS]) [ARCHIVED 2026-06-02]:** five-expert-persona roundtable over a full deep read of all 312 active theory-content documents. Monograph `MONOGRAPH_FTD_CONSTRUCTION.md` is the canonical replacement for its construction narrative. |
 | 7.53 | [AUDIT_MASS_CHAIN_REDTEAM.md](07_assessment/AUDIT_MASS_CHAIN_REDTEAM.md) |  **(2026-05-29) Mass Chain Red-Team Critique (6pp).** *Adversarial red-team audit of the leptonic and hadronic mass derivation chain.* Critical assessment of post-hoc fitting, coordinate-level SI unit mismatches, 172-ppm residuals, and the decoupling between analytical formulas and C++ engine dynamics. [ADVERSARIAL CRITIQUE] |
+| 7.54 | [AUDIT_WEB_ENGINE_CONSISTENCY.md](07_assessment/AUDIT_WEB_ENGINE_CONSISTENCY.md) | **(2026-06-11) Web engine consistency audit.** Independent consistency audit and alignment of FTD web engine scales, telemetry channels, and constants, including verification of telemetry key bindings and removal of duplicate literal constants. |
 
 ---
 

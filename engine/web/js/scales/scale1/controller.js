@@ -21,7 +21,6 @@
  */
 
 import { BaseLifecycleController } from '../../lifecycle.js';
-import { getById } from '../../particle-catalog.js';
 import { formatEnergy } from '../../units.js';
 import {
     generateGridXZ, samplePECoulombOnly,
@@ -267,8 +266,7 @@ export function animatePE(ctx) {
     const {
         bridge, viewport, running, ticksPerFrame, inspector,
         fluxEnergyChart, particleChart, peTelemetry,
-        activeTab, frameCount, dom, now,
-        updateOnticPanel
+        activeTab, frameCount, dom, now
     } = ctx;
 
     // ── 1. Tick PE simulation while running ──────────────────────────

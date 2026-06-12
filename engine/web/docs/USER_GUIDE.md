@@ -77,9 +77,9 @@ The dashboard has **two simulation backends**:
 
 ---
 
-## 3. The 10 Scales
+## 3. The Live Scales
 
-FTD spans 11 orders of magnitude of physical phenomena, exposed as 10 scale "modes" you can switch between:
+FTD spans multiple physical regimes exposed as live scale "modes" you can switch between:
 
 | # | Mode | What it shows | Typical scenario |
 |---|---|---|---|
@@ -90,7 +90,6 @@ FTD spans 11 orders of magnitude of physical phenomena, exposed as 10 scale "mod
 | **4** | Planetary | N-body gravity, Kepler orbits, exoplanet systems | `planetary-solar-system`, `planetary-trappist-1` |
 | **5** | Cosmic | Lambda-CDM, Hubble flow, galaxy formation, BH | `cosmic-lcdm`, `cosmic-stellar-lifecycle` |
 | **6** | Meta | Moore neighborhood geometry (octahedron, cuboctahedron, stella octangula) | `meta-decomposition` |
-| **11** | Reference frame context | sLoop self-reference, master quadratic θ_C | `reference frame context-sloop` |
 | **12** | Hamiltonian bridge | Phi polynomials, cyclotomic structure | *(pedagogy only)* |
 | **23** | Scale 2-3 shared | Shared rendering pipeline for atoms + molecules | *(internal)* |
 
@@ -98,7 +97,7 @@ FTD spans 11 orders of magnitude of physical phenomena, exposed as 10 scale "mod
 - The viewport camera and boundary
 - The toolbar (scale-specific scenario/controls)
 - The diagnostics table (scale-specific metrics)
-- The LIVE physics engine path (0→lattice, 1→PE, 2→AE, 3→AE+bonding, 4→Scale4, 5→Scale5, 6→Scale6, 11→Scale11)
+- The live physics engine path (0→lattice, 1→PE, 2→AE, 3→AE+bonding, 4→Scale4, 5→Scale5, 6→Scale6)
 
 **Pause behavior:** The **/ (play/pause)** button freezes the simulation. The engine tick is the
 single time source, so nothing in the lattice advances while paused — but the render loop keeps
@@ -114,14 +113,15 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 2. Injects flux / particles / wave velocity according to the scenario's definition
 3. Optionally flips toggles (e.g. `quantum-casimir` disables `genesis`)
 
-### The 5 scenario groups
+### The 6 scenario groups
 
 | Prefix | Count | What it's for |
 |---|---|---|
 | `flux-*` | 20 | Pure Scale-0 substrate physics: pulses, dipoles, solitons, vortices, annihilation, QCD mesons/baryons/string-breaking, cyclotron, screening, thermalization, vacuum foam |
 | `light-*` | 4 | EM wave pedagogy: rainbow (3-color), dipole radiation, two-slit, photon race (linearity) |
 | `quantum-*` | 8 | Quantum experiments: Born rule, double-slit with genesis, tunneling, particle-in-a-box (quantum well), entanglement, Aharonov-Bohm, Casimir, Zeno |
-| `s0-seed-*` | 43 | FTD-derived particle configurations: leptons, hadrons, quarks, Moore geometries, gauge bosons, gravity seeds, reference frame context seeds |
+| `s0-vacuum-*` | 15 | Single-particle vacuum scenarios for leptons, neutrinos, gauge bosons, baryons, and mesons |
+| `s0-seed-*` | 43 | FTD-derived particle configurations: leptons, hadrons, quarks, Moore geometries, gauge bosons, gravity seeds, observer/self-reference seeds |
 | `s0-field-*` | 9 | Analytical field configurations: plane wave, uniform E, uniform B, photon pulse, FTD-0253 spacetime-forcing boundary, electric dipole, magnetic dipole, vortex line |
 
 ### Notable scenarios worth trying first
@@ -134,7 +134,7 @@ A scenario is a **preset initial condition**. Picking one from the dropdown:
 - **`quantum-casimir`** — Two reflective plates + vacuum noise. Energy eigenstates between plates.
 - **`s0-seed-hydrogen`** — Proton triad + electron orbital seed.
 - **`s0-seed-moore-decomposition`** — All 3 Moore shells (octahedron + cuboctahedron + stella octangula) with alternating parity. The geometric heart of the theory.
-- **`s0-seed-sloop`** — 12-vertex self-reference ring for reference frame context pedagogy.
+- **`s0-seed-sloop`** — 12-vertex self-reference ring for observer-structure pedagogy.
 - **`s0-field-spacetime-forcing-boundary`** — FTD-0253 wave-side seed: a clean center pulse for the forced locality cone. The scenario forces flux volume/slice visibility and a low display threshold so the seed is visible. Use `demos/spacetime-forcing-boundary.html` for the labelled WAVE vs DIFFUSION counterfactual.
 - **`s0-field-vortex-line`** — Long vortex line (length much greater than the visible region) → watch (1/r) azimuthal flux circulation.
 
@@ -569,7 +569,8 @@ cd engine/build && ctest -C Release --timeout 60 -j4
 
 - `engine/SPEC_ENGINE.md` — engine architecture
 - `engine/web/ARCHITECTURE.md` — web dashboard architecture
-- `engine/web/docs/SPEC_REFACTOR_LARGE_FILES.md` — the recent large-file split spec (14 tickets across 3 waves)
+- `engine/web/ARCHITECTURE.md` — current web dashboard architecture
+- `engine/web/docs/INDEX.md` — documentation map and active/historical split
 - `engine/include/ftd/scenarios.h` — scenario library public API
 - `docs/SPEC_FTD.md` — the FTD theory spec (foundational)
 - `docs/theory/META_INDEX.md` — theory document catalog
@@ -597,4 +598,4 @@ All are live in `engine/include/ftd/constants.h` (C++) and `engine/web/js/consta
 
 ---
 
-**You're now equipped to run the FTD dashboard as a research tool, not just a demo. Questions beyond this guide should go to `engine/web/docs/SPEC_REFACTOR_LARGE_FILES.md` (technical architecture), `docs/SPEC_FTD.md` (physics), or open a discussion thread.**
+**You're now equipped to run the FTD dashboard as a research tool, not just a demo. Questions beyond this guide should go to `engine/web/ARCHITECTURE.md` (technical architecture), `engine/web/docs/INDEX.md` (documentation map), `docs/SPEC_FTD.md` (physics), or open a discussion thread.**

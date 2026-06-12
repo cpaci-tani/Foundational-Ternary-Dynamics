@@ -7,9 +7,9 @@
  */
 
 import {
-    ALPHA, K_B, M_E_PHYS, PI_FTD, N_C, B_3, N_EFF, N_BASE,
+    ALPHA, K_B, M_E_PHYS, PI_FTD,
     MU_RATIO, TAU_RATIO, M_PROTON,
-    SIN2_WEINBERG, M_W, M_Z, G_FERMI, G_FERMI_MEV, HBAR_C_MEV_FM,
+    G_FERMI_MEV,
     M_P_PHYS, M_PI_CH_PHYS, M_PI_0_PHYS, DELTA_NP,
     HBAR_MEV_S, AMU_MEV,
     V_UD, G_A, F_N, F_PI,
@@ -92,17 +92,9 @@ export function tauLifetime() {
  * Experimental: 878.4 ± 0.5 s
  */
 export function neutronLifetime() {
-    // Use DELTA_NP (PDG-exact neutron-proton mass split = 1.29333184 MeV)
-    // directly rather than subtracting framework M_PROTON from PDG M_NEUTRON.
-    // The old expression (M_NEUTRON - M_PROTON) mixed PDG and framework
-    // anchors and would silently drift if K_B were rescaled. Audit P1-5,
-    // 2026-05-27.
-    const dM = DELTA_NP;
     // Phase space factor for neutron beta decay
     // Use M_E_PHYS (PDG) here since the lifetime is compared against the
     // PDG-measured neutron lifetime; using K_B would shift τ by ~0.2%.
-    const x = dM / M_E_PHYS;
-    // f(x) ≈ x*sqrt(x^2-1)*(x^2 - 9/4*x + 4/3) — Wilkinson approximation
     // V_UD, F_N, G_A imported from constants.js (PDG / lattice values)
 
     const numerator = 2.0 * PI_FTD * PI_FTD * PI_FTD;

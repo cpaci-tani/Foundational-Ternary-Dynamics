@@ -210,7 +210,7 @@ export class FloatingWindowManager {
     }
 
     dockAll() {
-        for (const [id, win] of this.windows) {
+        for (const [_id, win] of this.windows) {
             win.dock();
         }
     }

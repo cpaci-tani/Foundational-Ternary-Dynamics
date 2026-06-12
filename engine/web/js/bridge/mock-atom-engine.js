@@ -6,8 +6,8 @@
  * Includes Berendsen thermostat, electronegativity-sensitive auto-bonding,
  * 1-2 / 1-3 exclusion, and a Velocity Verlet integrator.
  *
- * Extracted from `bridge-init.js` as Wave 2 ticket 6 of the large-file
- * refactor (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). This is a move, not
+ * Extracted from `bridge-init.js` during the bridge modularization pass
+ * documented in engine/web/docs/INDEX.md. This is a move, not
  * a rewrite — method bodies preserved verbatim; the only structural change
  * is that `this.*` field accesses go through the live `state` reference.
  *

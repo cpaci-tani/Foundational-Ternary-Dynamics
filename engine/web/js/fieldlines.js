@@ -889,7 +889,6 @@ function sampleByFieldMagnitude(fieldData, count, exponent = 1.5, jitter = 0.5) 
     const stratum = total / count;
     let cum = 0;
     let target = stratum * Math.random(); // random offset in first stratum
-    let s = 0;
     for (let i = 0; i < nSamples && seeds.length < count; i++) {
         cum += weights[i];
         while (cum >= target && seeds.length < count) {

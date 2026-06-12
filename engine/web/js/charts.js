@@ -12,8 +12,6 @@
 import { createCachedCanvasRect } from './dom-utils.js';
 import { RingBuffer } from './telemetry-hub.js';
 
-const BUFFER_SIZE = 500;
-
 // Phase C.3: per-canvas cached rect (ResizeObserver-backed). Avoids
 // forcing a layout reflow on every frame's drawChart() call.
 const _rectCaches = new WeakMap();
@@ -27,7 +25,7 @@ function _cachedRect(canvas) {
 }
 
 // ── Chart Renderer ───────────────────────────────────────────────────
-function drawChart(canvas, series, options = {}) {
+function drawChart(canvas, series) {
     if (!canvas) return;
     const rect = _cachedRect(canvas);
     const w = rect.width;

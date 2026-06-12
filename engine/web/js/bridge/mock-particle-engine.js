@@ -3,7 +3,7 @@
  *
  * N-body Coulomb + gravity dynamics with a Velocity Verlet integrator.
  * Extracted from `bridge-init.js` as Wave 2 ticket 5 of the large-file
- * refactor (see docs/SPEC_REFACTOR_LARGE_FILES.md §4). This is a move, not
+ * bridge modularization pass documented in engine/web/docs/INDEX.md. This is a move, not
  * a rewrite — method bodies are preserved verbatim; the only structural
  * change is that `this.*` field accesses go through the live `state`
  * reference and that boundary reflection calls go through

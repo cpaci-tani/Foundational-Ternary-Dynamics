@@ -311,6 +311,10 @@ scripts/exploration/*.png
 !.github/
 !.githooks/
 
+# Generated web documentation renders. Keep Markdown sources tracked.
+engine/web/docs/*.html
+engine/web/docs/*_files/
+
 # Ignore run_wsl.sh script
 run_wsl.sh
 .gitignore

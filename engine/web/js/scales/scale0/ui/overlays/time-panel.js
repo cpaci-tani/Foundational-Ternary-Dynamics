@@ -385,11 +385,6 @@ export function mountTimePanel(host, getBridge) {
         renderD();
     });
 
-    function getCaps() {
-        const b = getBridge?.();
-        return b?.capabilities?.scale0 || null;
-    }
-
     // Sample the latency field once per tick: returns the radial profile + the
     // two twin-probe latencies. The DEEP probe sits at the well floor (the
     // highest latency = slowest clock); the FAR probe sits at the shallowest

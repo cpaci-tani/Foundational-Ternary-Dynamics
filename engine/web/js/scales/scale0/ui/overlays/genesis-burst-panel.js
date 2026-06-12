@@ -12,6 +12,7 @@
 // N, then restores. The 3D cluster itself is best viewed via the fixed-A
 // `*-subknee/-knee/-superknee` answer-key scenarios (clean T=0 view).
 
+import { BaseComponent } from '../../../../core/component.js';
 import { K_GENESIS } from '../../../../constants.js';
 
 const PANEL_ID = 'genesis-burst-panel';
@@ -26,38 +27,33 @@ const K_EFF = 0.052;
 const KNEE_A = 16;
 const SWEEP_GRID = [10, 12, 14, 16, 20, 25, 30, 40, 50, 70, 90];
 
-const css = (s) => `var(--color-${s})`;
-
-function buildPanel() {
-    const p = document.createElement('div');
-    p.id = PANEL_ID;
-    p.style.cssText = [
-        'position:absolute', 'top:12px', 'right:12px', 'z-index:40', 'width:300px',
-        'padding:12px 14px', 'border-radius:12px', 'font-family:var(--font-sans,sans-serif)',
-        'font-size:12px', 'background:var(--color-background-primary,rgba(20,20,24,0.92))',
-        'border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25))',
-        'color:var(--color-text-primary,#eee)', 'box-shadow:0 2px 12px rgba(0,0,0,0.3)',
-    ].join(';');
-    p.innerHTML = `
+const TEMPLATE = `
+    <div id="genesis-burst-panel" style="position:absolute; top:12px; right:12px; z-index:40; width:300px; padding:12px 14px; border-radius:12px; font-family:var(--font-sans,sans-serif); font-size:12px; background:var(--color-background-primary,rgba(20,20,24,0.92)); border:0.5px solid var(--color-border-secondary,rgba(255,255,255,0.25)); color:var(--color-text-primary,#eee); box-shadow:0 2px 12px rgba(0,0,0,0.3)">
         <div style="font-weight:500;margin-bottom:8px">Genesis-burst N(A) law &mdash; FTD-0269</div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
             <span>A</span>
-            <input id="${PANEL_ID}-slider" type="range" min="5" max="90" step="1" value="16" style="flex:1">
-            <span id="${PANEL_ID}-aval" style="width:24px;text-align:right">16</span>
+            <input ref="slider" type="range" min="5" max="90" step="1" value="16" style="flex:1">
+            <span ref="aval" style="width:24px;text-align:right">16</span>
         </div>
         <div style="display:flex;gap:6px;margin-bottom:8px">
-            <button id="${PANEL_ID}-fire" style="flex:1;padding:5px;border-radius:8px;cursor:pointer">Fire</button>
-            <button id="${PANEL_ID}-sweep" style="flex:1;padding:5px;border-radius:8px;cursor:pointer">Sweep</button>
-            <button id="${PANEL_ID}-clear" style="padding:5px 8px;border-radius:8px;cursor:pointer">Clear</button>
+            <button ref="fire" style="flex:1;padding:5px;border-radius:8px;cursor:pointer">Fire</button>
+            <button ref="sweep" style="flex:1;padding:5px;border-radius:8px;cursor:pointer">Sweep</button>
+            <button ref="clear" style="padding:5px 8px;border-radius:8px;cursor:pointer">Clear</button>
         </div>
-        <div id="${PANEL_ID}-status" style="margin-bottom:6px;color:var(--color-text-secondary,#aaa);min-height:15px">ready</div>
-        <canvas id="${PANEL_ID}-plot" width="276" height="200" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
+        <div ref="status" style="margin-bottom:6px;color:var(--color-text-secondary,#aaa);min-height:15px">ready</div>
+        <canvas ref="plot" width="276" height="200" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
         <div style="margin-top:6px;font-size:11px;color:var(--color-text-tertiary,#888);line-height:1.4">
             <span style="color:#378ADD">&#9679;</span> live (CPU WASM) &nbsp;
             <span style="color:#BA7517">&#9675;</span> GPU campaign &nbsp;
             <span style="color:#639922">&#8211;</span> N=k&middot;A&sup2;
-        </div>`;
-    return p;
+        </div>
+    </div>
+`;
+
+export class GenesisBurstPanelComponent extends BaseComponent {
+    constructor() {
+        super(TEMPLATE);
+    }
 }
 
 export function mountGenesisBurstPanel(harness) {
@@ -66,19 +62,19 @@ export function mountGenesisBurstPanel(harness) {
     if (typeof window !== 'undefined' && window.__ftdGenesisBurstPanel) {
         try { window.__ftdGenesisBurstPanel.dispose(); } catch (e) { /* noop */ }
     }
-    const panel = buildPanel();
-    host.appendChild(panel);
+    const comp = new GenesisBurstPanelComponent();
+    comp.mount(host);
+    const panel = comp.element;
 
-    const el = (id) => panel.querySelector(`#${PANEL_ID}-${id}`);
-    const slider = el('slider'), aval = el('aval'), status = el('status'), canvas = el('plot');
+    const slider = comp.refs.slider, aval = comp.refs.aval, status = comp.refs.status, canvas = comp.refs.plot;
     const ctx2d = canvas.getContext('2d');
     const points = [];   // [{ A, N }]
     let busy = false;
 
     slider.addEventListener('input', () => { aval.textContent = slider.value; });
-    el('fire').addEventListener('click', () => fire(parseInt(slider.value, 10)));
-    el('sweep').addEventListener('click', () => sweep());
-    el('clear').addEventListener('click', () => { points.length = 0; draw(); status.textContent = 'cleared'; });
+    comp.refs.fire.addEventListener('click', () => fire(parseInt(slider.value, 10)));
+    comp.refs.sweep.addEventListener('click', () => sweep());
+    comp.refs.clear.addEventListener('click', () => { points.length = 0; draw(); status.textContent = 'cleared'; });
 
     function bridge() { return harness.bridge || harness; }
 

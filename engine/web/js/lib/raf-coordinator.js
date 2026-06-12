@@ -24,7 +24,6 @@
  *     doesn't kill the loop
  */
 
-const TARGET_FPS = 60;                      // rAF tick rate
 const VISIBILITY_PAUSE_THRESHOLD_HZ = 30;   // subscribers slower than this pause when hidden
 const ERROR_BUDGET = 10;                    // consecutive throws before auto-unsubscribe
 
@@ -102,7 +101,6 @@ class RAFCoordinator {
 
     _tick() {
         const now = performance.now();
-        const dt = now - this._lastTickMs;
         this._lastTickMs = now;
         for (const sub of this._subs.values()) {
             // When tab hidden, suspend all subs slower than threshold.

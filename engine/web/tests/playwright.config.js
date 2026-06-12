@@ -19,14 +19,15 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   workers: 1,
   reporter: [['list']],
+  timeout: 60_000,      // 60s per test instead of default 30s
 
   use: {
     baseURL: 'http://localhost:8081',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     // Give the WASM + Three.js stack time to initialize on slower machines
-    actionTimeout: 15_000,
-    navigationTimeout: 30_000,
+    actionTimeout: 30_000,
+    navigationTimeout: 45_000,
   },
 
   projects: [

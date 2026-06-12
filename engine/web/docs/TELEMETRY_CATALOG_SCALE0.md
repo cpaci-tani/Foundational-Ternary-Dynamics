@@ -7,8 +7,7 @@
 
 **Scale 0** is the flux-lattice engine. Its telemetry flows through a single
 hub (`engine/web/js/telemetry-hub.js`) that every consumer reads from.
-Per-scale catalogs for Scales 1, 2, 3, 4, 5, 6, 11 will follow this same
-shape.
+Future per-scale catalogs should follow this same shape.
 
 ---
 

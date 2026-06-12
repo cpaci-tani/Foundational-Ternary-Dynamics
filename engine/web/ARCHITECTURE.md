@@ -1,1097 +1,239 @@
-# FTD Web Engine — Architecture
+# FTD Web Engine Architecture
 
-This document explains how the browser dashboard under `engine/web/`
-actually runs today: startup, control flow, frame scheduling, bridge
-selection, rendering ownership, and the exact call stacks that matter
-when debugging.
+**Status:** active architecture map, refreshed after the June 2026 cleanup pass.
+**Scope:** `engine/web/` browser runtime, UI shell, bridges, scale controllers,
+rendering, docs, and tests. The C++ engine is documented in
+`engine/SPEC_ENGINE.md`.
 
-The C++ engine itself is documented in `engine/SPEC_ENGINE.md`. This
-document is about the web runtime that sits on top of it.
-
-Epistemic companion: see `engine/web/docs/audits/AUDIT_WEB_ARCHITECTURE_EPISTEMIC_STATUS.md`
-for a checklist of which claims here are source-verified, which are
-documentation compressions, and which still need live-runtime
-verification.
-
-If this file disagrees with the code, the code wins. Update the doc in
-the same change.
+If this file disagrees with code, the code wins. Update this file and
+`docs/INDEX.md` in the same cleanup when a major boundary changes.
 
 ---
 
-## 1. Scope and layout
+## Current Runtime Shape
 
-The web engine is not a single renderer. It is a browser shell that
-hosts several distinct simulation modes:
+The web engine is a native ES-module browser app. There is no bundler: the sole
+HTML app entry point is `index.html`, which loads `js/app.js`; Three.js is
+provided through the import map in `index.html`.
 
-- Scale 0 `lattice`: substrate / flux / manifested particles
-- Scale 1 `particles`: ParticleEngine (PE)
-- Scale 2 `atoms`: AtomEngine-style atomic UI
-- Scale 3 `molecules`: same AE runtime as Scale 2, different loaders
-- Scale 4 `planetary`: standalone N-body mock
-- Scale 5 `cosmic`: standalone cosmic mock
-- Scale 11 `reference frame context`: flux-only pedagogical mode
-- `meta`: existential-unit mode
-
-Important directory landmarks:
-
-```text
-engine/web/
-├── index.html
-├── ARCHITECTURE.md
-├── css/
-├── wasm/
-│   ├── ftd_core.js
-│   └── ftd_core.wasm
-├── js/
-│   ├── app.js
-│   ├── viewport.js
-│   ├── inspector.js
-│   ├── bridge-init.js
-│   ├── ws-bridge.js
-│   ├── bridge/
-│   │   ├── bridge-factory.js
-│   │   ├── boundary.js
-│   │   ├── mock-diagnostics.js
-│   │   ├── mock-lattice-samplers.js
-│   │   ├── mock-particle-engine.js
-│   │   ├── mock-atom-engine.js
-│   │   ├── mock-scale4.js
-│   │   ├── mock-scale5.js
-│   │   └── scenarios/
-│   │       ├── index.js
-│   │       ├── flux-scenarios.js
-│   │       ├── light-scenarios.js
-│   │       ├── quantum-scenarios.js
-│   │       ├── s0-seed-scenarios.js
-│   │       └── s0-field-scenarios.js
-│   ├── viewport/
-│   │   ├── color-ramps.js
-│   │   ├── molecular-renderer.js
-│   │   ├── boundary-geometry.js     # (NEW Apr 2026 RF-4) pure wireframe builders + insideBoundary
-│   │   └── topology-sheet-renderer.js # (NEW Apr 2026 RF-1) 11 rubber-sheet visualizations
-│   ├── app-wire/
-│   │   └── keyboard.js              # (NEW Apr 2026 RF-9 partial) keyboard shortcuts
-│   ├── ui/
-│   │   ├── app-ontic.js             # (NEW Apr 2026) ontic-mode plumbing extracted from app.js
-│   │   ├── charts/ components/ panels/ primitives/ scale-registry/ shell/
-│   └── scales/
-│       ├── scale0/
-│       │   ├── controller.js
-│       │   ├── scenario-registry.js
-│       │   ├── viewport-adapter.js
-│       │   ├── runtime/
-│       │   ├── state/
-│       │   └── ui/
-│       ├── scale1/controller.js
-│       ├── scale2/controller.js
-│       ├── scale3/controller.js
-│       ├── scale4/controller.js
-│       ├── scale5/controller.js
-│       ├── scale6/controller.js
-│       └── scale11/controller.js
-└── tests/
-```
-
-`index.html` loads exactly one module entry:
-
-```html
-<script type="module" src="js/app.js?v=..."></script>
-```
-
-There is no bundler. Everything else is pulled in by native ES-module
-imports. Three.js is provided via import map.
-
----
-
-## 2. Architectural picture
-
-At the highest level the runtime looks like this:
-
-```text
-Browser DOM
-  -> index.html
-  -> js/app.js
-     -> bridge selection
-        -> WebSocketBridge (optional native server)
-        -> WasmBridge (default real browser engine)
-        -> MockBridge (fallback)
-     -> shared Viewport / Inspector / panels
-     -> per-scale controller
-        -> bridge tick/query APIs
-        -> scene updates
-        -> viewport.render()
-```
-
-There are three main layers:
-
-1. Application shell
-   `app.js` owns startup, global state, shared context
-   construction, mode switching, and the main
-   `requestAnimationFrame` loop. After the Scale 0 refactor it is still
-   the composition root, but it no longer owns Scale 0 field-toggle,
-   force-style, boundary, or scenario-selector wiring.
-
-2. Scale controllers
-   Each controller owns scenario loading plus the per-frame logic for a
-   mode. Scale 0 now also owns its own UI binding, internal runtime
-   phases, state store, and scenario registry. Controllers are leaves:
-   they do not import `app.js`.
-
-3. Simulation backends
-   The active controller talks to a bridge. That bridge may be a native
-   WebSocket server, a browser WASM `RenderBridge` / `ParticleEngine`,
-   or one of several JavaScript mocks.
-
-One more boundary now matters in practice:
-
-4. Capability and presentation adapters
-   Scale 0 talks to `bridge.capabilities.scale0` rather than poking at
-   bridge internals, and talks to `viewport.js` through a dedicated
-   `viewport-adapter.js` facade rather than treating `viewport` as one
-   undifferentiated API surface.
-
----
-
-## 3. Entry point and boot sequence
-
-The browser boot path is:
+At runtime:
 
 ```text
 index.html
-  -> load js/app.js
-  -> init()
-     -> _cacheDOM()
-     -> tryNativeBridge(latticeSize)
-        -> WebSocketBridge.connect()
-     -> if native unavailable: createBridge(latticeSize)
-        -> new WasmBridge()
-        -> WasmBridge.init(latticeSize)
-           -> inject wasm/ftd_core.js if needed
-           -> createFTDModule({ locateFile })
-           -> new module.RenderBridge(latticeSize)
-        -> if WASM init fails: new MockBridge(latticeSize)
-     -> new Viewport(...)
-     -> new DiagnosticsPanel / charts / Inspector / PETelemetryPanel
-     -> initOnticPhysicsHierarchy()
-     -> wireToolbar() / wireTabs() / wireControls() / wireViewportToggles()
-     -> initZoo(bridge)
-     -> Scale0Controller.bindUI(_makeCtx())
-     -> new BackgroundManager(viewport.scene)
-     -> Scale0Controller.loadScenario(_makeCtx(), 'flux-pulse')
-     -> requestAnimationFrame(animate)
+  -> js/app.js                         composition root
+     -> AppShell                       toolbar, tabs, panels, responsive shell
+     -> bridge selection               native WebSocket -> WASM -> JS mock
+     -> Viewport                       shared Three.js scene facade
+     -> per-scale controller           scale lifecycle + animation
+     -> telemetryHub                   shared telemetry buffers
 ```
 
-Key facts:
+The active dashboard scales are:
 
-- The app always tries the native WebSocket bridge first in `init()`.
-- `createBridge()` does not probe WebSocket. It only tries WASM, then
-  falls back to `MockBridge`.
-- The default boot scenario is `flux-pulse`.
-- A loading overlay is shown during startup and hidden after the default
-  scenario is loaded.
+| Scale | Mode value | Controller | Role |
+|---|---|---|---|
+| 0 | `lattice` | `js/scales/scale0/controller.js` | substrate, flux, scenarios, overlays |
+| 1 | `particles` | `js/scales/scale1/controller.js` | particle engine |
+| 2 | `atoms` | `js/scales/scale2/controller.js` | atom engine UI |
+| 3 | `molecules` | `js/scales/scale3/controller.js` | molecular UI over AE-style runtime |
+| 4 | `planetary` | `js/scales/scale4/controller.js` | planetary sandbox |
+| 5 | `cosmic` | `js/scales/scale5/controller.js` | cosmic sandbox |
+| Meta | `meta` | `js/scales/scale6/controller.js` with `scale12` UI registration | existential unit / Moore geometry view |
 
-### Why `RenderBridge`, not `DagEngine`
-
-`WasmBridge.init()` must instantiate `module.RenderBridge`, not
-`module.DagEngine`. The exported helper functions in
-`engine/wasm/ftd_wasm.cpp` such as `setupScenario`, `injectFlux`,
-`getParticleData`, `getDiagnostics`, and the sampled-field accessors all
-accept `ftd::RenderBridge&`. `DagEngine` is bound, but it is not the
-type the web helper functions operate on.
+Scale 11 / reference-frame-context mode is no longer a live scale in the web
+tree. Older audit and refactor documents that mention it are historical.
 
 ---
 
-## 4. Global ownership model
+## Directory Hierarchy
 
-`app.js` is the application root and owns the following long-lived
-objects:
+```text
+engine/web/
+├── index.html                 browser entry
+├── serve.py                   dev/test server with COOP/COEP headers
+├── ARCHITECTURE.md            this file
+├── docs/
+│   ├── INDEX.md               documentation navigation
+│   ├── SPEC_*.md              active specs
+│   ├── PLAN_*.md              active implementation plans
+│   ├── audits/                point-in-time audits
+│   ├── historical/            tracked provenance, no longer active guidance
+│   └── adr/                   architecture decision records
+├── css/
+│   ├── tokens.css             semantic tokens
+│   ├── ui/primitives/         buttons, fields, tabs, toggles, etc.
+│   ├── ui/components/         shell and component CSS
+│   ├── ui/panels/             panel CSS
+│   ├── ui/scales/             scale-specific CSS
+│   └── themes/                theme overrides
+├── js/
+│   ├── app.js                 composition root and cross-scale wiring
+│   ├── telemetry-hub.js       shared telemetry buffers
+│   ├── bridge-init.js         bridge re-export + capability installation
+│   ├── bridge/                bridge implementations and scenario seeds
+│   ├── physics/               physics harness adapters
+│   ├── scales/                per-scale controllers
+│   ├── ui/                    shell, panels, components, charts
+│   └── viewport/              focused renderer modules
+├── tests/                     Playwright + node web tests
+└── wasm/                      generated Emscripten artifacts consumed by WASM bridge
+```
 
-- `bridge`
-- `viewport`
-- `inspector`
-- diagnostics panels and charts
-- global play state: `running`
-- speed state: `ticksPerFrame`
-- active mode: `engineMode`
-- active UI tab: `activeTab`
-- shared frame counter: `frameCount`
-- background manager and top-level UI wiring
-
-Controllers do not receive snapshots. `_makeCtx()` builds a context
-object with getters and setters, so controllers read and write the live
-module-level state.
-
-The shared app context also now exposes a few app-shell services that
-Scale 0 uses instead of reaching into the shell indirectly:
-
-- `pauseSimulation()`
-- `applyTicksPerFrameFromSlider(...)`
-- `applyBoundaryShape(...)`
-- `applyReflectiveBoundary(...)`
-- `switchToQuantumLabTab()`
-
-Example: a controller reading `ctx.running` is reading the real app
-state, not a copied boolean.
+Generated doc renders (`docs/*.html`, `docs/*_files/`) are local artifacts and
+are ignored. Markdown is the tracked source of truth.
 
 ---
 
-## 5. Schedulers and the main loop
+## Layer Responsibilities
 
-### 5.1 Main scheduler
+### Application Shell
 
-For every mode except planetary physics, `app.js` owns a single
-unconditional `requestAnimationFrame` loop:
+`js/app.js` is still the composition root. It owns bridge initialization, global
+play state, mode switching, top-level service construction, and the shared
+`requestAnimationFrame` dispatch.
 
-```text
-function animate(now) {
-  requestAnimationFrame(animate);   // schedule first
-  dispatch by engineMode;
-  bgManager.update(...);
-  floating UI tracking;
-  FPS bookkeeping;
-}
-```
+`js/ui/shell/app-shell.js` owns the modern shell surface: toolbar registration,
+panel registry validation, responsive state, panel docking, mobile behavior,
+tooltips, knowledge base, FAQ, and keyboard help.
 
-Dispatch table:
+Architectural state: healthy direction, but `app.js` remains a large legacy root
+and should continue shrinking as scale-specific control wiring moves into each
+scale package.
 
-- `lattice` -> `Scale0Controller.animateLattice(_makeCtx())`
-- `particles` -> `animatePE(now)` -> `Scale1Controller.animatePE(...)`
-- `atoms` -> `animateAE(now)` -> `Scale2Controller.animateAE(...)`
-- `molecules` -> `animateAE(now)` -> `Scale2Controller.animateAE(...)`
-- `cosmic` -> `Scale5Controller.animateCosmic(_makeCtx())`
-- `meta` -> `Scale6Controller.updateMeta(_makeCtx(), 1 / 60)`
-- `reference frame context` -> `Scale11Controller.animateReference frame context(...)`
-- `planetary` -> no physics work here; Scale 4 runs its own interval
+### Scale Controllers
 
-The next rAF is scheduled first so the loop survives a later exception
-better than a tail-scheduled loop.
-
-### 5.2 Planetary special case
-
-Scale 4 is intentionally different. `Scale4Controller.loadScenario()`
-starts a `setInterval(..., 16)` loop that owns planetary stepping and
-render refresh:
+Controllers are leaves imported by `app.js`; they do not import `app.js`.
+Scale 0 is the most mature package:
 
 ```text
-Scale4Controller.loadScenario(...)
-  -> _startPlanetaryLoop(ctx)
-     -> setInterval(...)
-        -> if running: _planetaryBridge.run(f)
-        -> _planetaryRenderer.update(...)
-        -> ctx.inspector.update()
-        -> ctx.viewport.render()
+js/scales/scale0/
+├── controller.js
+├── runtime/          tick, frame sync, overlays, diagnostics, scenario loader
+├── state/            state store and dirty flags
+├── ui/               bindings, controls, overlays, toolbar registration
+├── analysis/         analysis helpers
+├── scenario-registry.js
+└── viewport-adapter.js
 ```
 
-The main rAF continues to exist, but does no planetary physics.
+Scale 1-5 and Meta are more mixed: they have controllers and some registered UI
+modules, but still rely more heavily on the app root and shared viewport APIs.
 
-### 5.3 Cosmic special case
+### Bridge Layer
 
-Scale 5 used to have its own interval. It no longer does. Cosmic now
-runs on the main rAF loop, but physics only advances on every other
-frame to preserve a roughly 30 Hz simulation cadence while rendering
-camera motion smoothly at rAF frequency.
+The bridge is the physics boundary. Current implementations:
+
+| Bridge | Path | Role |
+|---|---|---|
+| `WebSocketBridge` | `js/ws-bridge.js` | native server bridge when available |
+| `WasmBridge` | `js/bridge/wasm-bridge.js` | canonical in-browser C++ bridge |
+| `MockBridge` | `js/bridge/mock-bridge.js` | JS fallback/reference bridge |
+| `MockBridgeProxy` | `js/bridge/mock-bridge-proxy.js` | worker-backed JS bridge for Scale 0 flux/mock scenarios |
+
+All bridge consumers should prefer `bridge.capabilities.scaleN.*` surfaces.
+Direct bridge reads are allowed only when listed by the bridge contract or when a
+panel deliberately uses a debug/global path.
+
+Authoritative bridge details live in
+`docs/SPEC_SCALE0_BRIDGE_ARCHITECTURE.md` and `js/bridge/README.md`.
+
+### Rendering
+
+`js/viewport.js` is the public facade used by controllers. It delegates a large
+amount of work to focused modules under `js/viewport/`, especially:
+
+- `scene-core.js`
+- `particle-renderer.js`
+- `flux-renderer.js`
+- `field-renderer.js`
+- `molecular-renderer.js`
+- `topology-sheet-renderer.js`
+
+Architectural state: partially decomposed. `field-renderer.js` is still a large
+module and remains a prime candidate for focused decomposition once visual/test
+coverage is sufficient.
+
+### Telemetry
+
+`js/telemetry-hub.js` is the dashboard telemetry source of truth. Scale 0
+runtime collection happens through `js/scales/scale0/runtime/diagnostics.js`.
+Panels and charts should read hub buffers/descriptors rather than ad hoc bridge
+queries unless the panel is intentionally live-sampling an active owner.
+
+The Scale-0 telemetry catalog lives at `docs/TELEMETRY_CATALOG_SCALE0.md`.
 
 ---
 
-## 6. Control-flow call stacks
+## Main Loop
 
-### 6.1 Play
-
-Play does not tick the engine directly. It only flips state:
-
-```text
-Play button / keyboard
-  -> togglePlay()
-     -> running = !running
-     -> updatePlayButton()
-```
-
-Actual ticking happens later inside the active controller's frame loop.
-
-### 6.2 Step
-
-Step is direct and mode-specific:
+The app root owns the primary `requestAnimationFrame` loop and dispatches to the
+active scale. Scale 0 has a five-stage pipeline:
 
 ```text
-Step button
-  -> running = false
-  -> updatePlayButton()
-  -> switch by engineMode
-     -> reference frame context: Scale11Controller.step(...)
-     -> atoms/molecules: bridge.aeTick()
-     -> particles: bridge.peTick()
-     -> cosmic: Scale5Controller.step(...)
-     -> planetary: Scale4Controller.step()
-     -> meta: Scale6Controller.step(...)
-     -> lattice: Scale0Controller.step(_makeCtx())
+advanceSimulation
+  -> syncRenderableData
+  -> updateFieldOverlays
+  -> renderFrame
+  -> updateDiagnosticsAndPanels
 ```
 
-### 6.3 Reset
+Floating/low-frequency panels use `js/lib/raf-coordinator.js` rather than each
+owning a separate rAF loop.
 
-Reset is also mode-specific and reloads the active scenario:
-
-```text
-Reset button
-  -> running = false
-  -> updatePlayButton()
-  -> switch by engineMode
-     -> cosmic: Scale5Controller.loadCosmicScenario(...)
-     -> meta: Scale6Controller.loadMetaScenario(...)
-     -> reference frame context: loadReference frame contextScenario(...)
-     -> molecules: loadMoleculeScenario(...)
-     -> atoms: loadAEScenario(...)
-     -> particles: loadPEScenario(...)
-     -> lattice: Scale0Controller.reset(_makeCtx())
-```
-
-### 6.4 Mode switch
-
-All mode changes are routed through one function:
-
-```text
-engine-mode <select>
-  -> change listener in wireControls()
-  -> switchEngineMode(mode)
-     -> engineMode = mode
-     -> running = false
-     -> updatePlayButton()
-     -> toggle root CSS mode classes
-     -> set #app[data-active-scale]
-     -> hide/show tabs by data-scales
-     -> if leaving lattice: Scale0Controller.exit(_makeCtx())
-     -> inspector.setEngineMode(mode)
-     -> viewport.setEngineMode(mode)
-     -> setZooMode(mode)
-     -> applyTicksPerFrameFromSlider(current slider)
-     -> cleanup old scale:
-        -> Scale11Controller.resetScale11(...)
-        -> Scale5Controller.resetScale5(...)
-        -> Scale4Controller.dispose(...)
-        -> Scale6Controller.resetScale6(...)
-     -> load target scenario:
-        -> lattice enter hook is currently a no-op
-        -> Scale0Controller.loadScenario(...)
-        -> loadPEScenario(...)
-        -> loadAEScenario(...)
-        -> loadMoleculeScenario(...)
-        -> Scale4Controller.loadScenario(...)
-        -> Scale5Controller.loadCosmicScenario(...)
-        -> Scale6Controller.loadMetaScenario(...)
-        -> loadReference frame contextScenario(...)
-     -> Scale0Controller.setLatticeNeedsUpload()
-     -> frameCount = 0
-```
-
-This is the most important lifecycle transition in the app. When
-debugging stale state, start here.
+Scale 4/5 have specialized physics cadence inside their controllers; check the
+controller before assuming Scale-0 timing semantics.
 
 ---
 
-## 7. Bridge hierarchy
+## Documentation Map
 
-### 7.1 Bridge families
+Start with `docs/INDEX.md`.
 
-There is not one universal backend:
+Primary active references:
 
-```text
-app.js bridge variable
-  -> WebSocketBridge      optional native server bridge
-  -> WasmBridge           browser default real engine
-     -> RenderBridge      Scale 0 substrate
-     -> ParticleEngine    Scale 1
-     -> AtomEngine        compiled, but not currently used by web UI
-  -> MockBridge           JS fallback for Scale 0 and AE fallback logic
+- `docs/SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`
+- `docs/SPEC_SCALE0_RUNTIME_PIPELINE.md`
+- `docs/SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`
+- `docs/USER_GUIDE.md`
+- `docs/TOGGLE_REGISTRY.md`
+- `docs/TELEMETRY_CATALOG_SCALE0.md`
+- root `CONTRACTS.md` for cross-project interface summaries
 
-Scale 4 -> PlanetaryMockBridge
-Scale 5 -> CosmicMockBridge
-Scale 11 -> temporary flux-only MockBridge swap
-```
-
-### 7.2 Selection policy
-
-Real startup order is:
-
-1. `tryNativeBridge(latticeSize)` in `app.js`
-2. if native unavailable: `createBridge(latticeSize)`
-3. inside `createBridge()`:
-   `WasmBridge.init()` -> else `new MockBridge()`
-
-So the selection decision is split across two files:
-
-- `app.js` chooses native vs browser-local
-- `bridge-factory.js` chooses WASM vs mock
-
-### 7.3 Native bridge behavior
-
-`ws-bridge.js` talks to `ws://localhost:9100`. If the server is absent,
-the startup attempt returns `null`, and the bridge then keeps an
-exponential reconnect loop alive. The console noise is expected in a
-browser-only session.
-
-### 7.4 WASM bridge behavior
-
-`WasmBridge` is a facade over Emscripten module functions. It owns:
-
-- `this._module` from `createFTDModule(...)`
-- `this._bridge` as `new module.RenderBridge(...)`
-- optional PE object `this._pe`
-- optional AE object `this._ae`
-
-Scale 0 and Scale 1 are truly backed by C++ in the browser today.
-
-As of the Scale 0 modularity pass, both `WasmBridge` and `MockBridge`
-also expose lazily-built capability surfaces:
-
-- `bridge.capabilities.scale0`
-- `bridge.capabilities.scale1`
-- `bridge.capabilities.scale2`
-
-Scale 0 uses these capability objects as its backend contract.
-
-### 7.5 AtomEngine reality
-
-`AtomEngine` is compiled and bound in `ftd_wasm.cpp`, but the web UI
-does not currently use the WASM AE runtime. In `bridge-init.js`,
-`_aeHasWasm` is hardcoded to `false` because the WASM engine uses
-Planck-scaled units while the web atom/molecule UI uses Bohr-scaled
-simulation units.
-
-That means:
-
-- `bridge.initAE()`
-- `bridge.aeTick()`
-- `bridge.aeGetAtomData()`
-- `bridge.aeGetDiagnostics()`
-
-all route to a JavaScript fallback implementation today.
+Historical/provenance docs live in `docs/historical/` or `docs/audits/`.
+Do not use historical docs as active implementation guidance without checking
+the current code.
 
 ---
 
-## 8. JS <-> WASM <-> C++ boundary
+## Known Architectural Debt
 
-`engine/wasm/ftd_wasm.cpp` registers the browser-facing binding layer:
-
-- `class_<ftd::RenderBridge>("RenderBridge")`
-- `class_<ftd::ParticleEngine>("ParticleEngine")`
-- `class_<ftd::AtomEngine>("AtomEngine")`
-- free functions such as:
-  `getParticleData`, `getDiagnostics`, `getFluxVolume`,
-  `getFluxSlice`, `setupScenario`, `getPEParticleData`,
-  `getPEDiagnostics`, `getAEAtomData`, `getAEDiagnostics`, and many
-  field / toggle helpers
-
-This is the boundary between JavaScript orchestration and C++ physics.
-
-The most important substrate path is:
-
-```text
-JS controller
-  -> WasmBridge.tick()
-  -> embind RenderBridge.tick()
-  -> C++ RenderBridge::tick()
-```
-
-Inside `RenderBridge::tick()` the CPU path is:
-
-```text
-RenderBridge::tick()
-  -> validate toggle dependencies
-  -> if wave_propagation || coupling: phase_read()
-  -> phase_write()
-  -> if gauss_projection: gauss_project()
-  -> if latency_field: solve_latency_poisson()
-  -> if forces: phase_forces()
-  -> if movement: phase_movement()
-  -> if weak_transmutation: weak-transmutation block
-  -> update physical_time_
-  -> ++tick_
-```
-
-If CUDA is enabled and active in a native build, `RenderBridge::tick()`
-can instead delegate to the GPU backend before updating `physical_time_`
-and `tick_`.
-
-The Scale 1 path is analogous:
-
-```text
-Scale1Controller.animatePE(...)
-  -> bridge.peTick()
-  -> WasmBridge.peTick()
-  -> this._pe.tick()
-  -> C++ ParticleEngine::tick()
-```
+1. `js/app.js` still owns too much direct DOM wiring and cross-scale glue.
+2. Scenario definitions still span registry, metadata, JS seed bodies, C++
+   seed bodies, and toggle profiles. ADR `docs/adr/0002-scenario-architecture.md`
+   remains the decision point.
+3. Large modules remain: `viewport/field-renderer.js`, `bridge/mock-bridge.js`,
+   `scales/scale0/ui/overlays/p1-observables-panel.js`, and
+   `bridge/wasm-bridge.js`.
+4. Static tooling is light. Tests are strong, but there is no lint/type/import
+   boundary gate yet.
+5. Debug globals (`window.__ftd*`, `window._ftdBridge`) are useful but should be
+   treated as escape hatches, not normal module boundaries.
 
 ---
 
-## 9. Per-scale runtime stacks
+## Test Architecture
 
-This section is the practical debugging map.
+The Playwright suite under `tests/` is the main web regression harness. It
+covers scale switching, worker path, lifecycle, panel rendering, scenario
+parity, all-scenario Scale-0 telemetry, and several physics/protocol checks.
 
-### 9.1 Scale 0 `lattice`
+Run from `engine/web/tests/`:
 
-Scale 0 is the most complex mode because it mixes:
-
-- real substrate stepping through `RenderBridge`
-- optional JS `MockBridge` flux ownership for some scenarios
-- heavy field / volume / overlay rendering through `viewport.js`
-- its own package-local state store, runtime phase modules, scenario
-  registry, and UI bindings
-
-Scale 0 now follows the target module contract more closely than the
-other scales. Its public controller surface is:
-
-- `bindUI(ctx)`
-- `enter(ctx, options)` (currently a no-op lifecycle placeholder)
-- `exit(ctx)`
-- `loadScenario(ctx, scenarioId, params?)`
-- `animate(ctx)`
-- `step(ctx)`
-- `reset(ctx)`
-- `resize(ctx, newSize)`
-
-Frame stack:
-
-```text
-requestAnimationFrame
-  -> app.animate(now)
-  -> Scale0Controller.animate(ctx)
-     -> advanceSimulation(ctx, state)
-        -> bridge.capabilities.scale0.tickScale0()
-        -> optional state.fluxMock.capabilities.scale0.tickScale0()
-     -> syncRenderableData(ctx, state, viewportAdapter)
-        -> getScale0ParticleFrame()
-        -> getScale0FluxVolume() / getScale0FluxSlice()
-        -> viewportAdapter.applyParticleFrame(...)
-     -> updateFieldOverlays(ctx, state, viewportAdapter)
-        -> sampleFieldState(...)
-        -> buildElectromagneticOverlayData(...)
-        -> buildForceOverlayData(...)
-        -> buildDerivedSubstrateData(...)
-        -> applyOverlayFrame(...)
-     -> viewportAdapter.render()
-     -> updateDiagnosticsAndPanels(ctx, state)
-        -> getScale0Diagnostics()
-        -> getScale0EnergyAudit()
-        -> getScale0Lagrangian()
-        -> update charts / inspector / panels / ontic / hierarchy
+```bash
+npm test
+npx playwright test scale0-scenario-telemetry-contract.spec.js
 ```
 
-Scenario load stack:
-
-```text
-Scale0Controller.loadScenario(ctx, scenarioId)
-  -> ctx.resetAllVisualState()
-  -> applyAuxiliaryDefaults(...)
-  -> getScale0Scenario(scenarioId)
-  -> scenario.load({ bridge, capabilities }, params)
-  -> new MockBridge(L)
-  -> fluxMock.capabilities.scale0.setupScenario(scenarioId)
-  -> apply toggle defaults and scenario overrides
-  -> setFluxMock(fluxMock, shouldUseFluxMock(...))
-  -> mark overrides and resync sliders
-  -> state.latticeNeedsUpload = true
-```
-
-Important nuance:
-
-- `_useFluxMock` means the JS mock owns the physics for that scenario.
-- This is forced for `flux-*`, `s0-seed-*`, and `s0-field-*` scenarios,
-  and also when real flux-volume export is unavailable.
-- The `scenario-select` dropdown is now populated from
-  `scale0/scenario-registry.js` rather than being treated as the sole
-  source of truth.
-
-### 9.2 Scale 1 `particles`
-
-Scale 1 is the cleanest real C++ browser path after lattice.
-
-Frame stack:
-
-```text
-requestAnimationFrame
-  -> app.animate(now)
-  -> animatePE(now)
-  -> Scale1Controller.animatePE(ctx)
-     -> if running:
-        -> wholeTicks = tickAccumulator.accumulate(ticksPerFrame)
-        -> repeat bridge.peTick()
-     -> pData = bridge.peGetParticleData()
-     -> particle types / field sources / snapshot forces
-     -> expand to particle cloud representation
-     -> viewport.updateParticles(cloud)
-     -> scenario-selected trails / velocity vectors / field heatmaps
-        (overlays render while paused; only engine ticks stop)
-     -> viewport.render()
-     -> diag = bridge.peGetDiagnostics()
-     -> extra = bridge.peGetExtendedData()
-     -> update inspector / telemetry / panels
-```
-
-Scenario load stack:
-
-```text
-loadPEScenario(name)
-  -> Scale1Controller.loadPEScenario(...)
-     -> ctx.resetAllVisualState()
-     -> bridge.initPE()
-     -> reset PE-specific state
-     -> apply scenario physics preset
-     -> seed scenario particles
-     -> apply scenario overlay preset
-```
-
-The Scale 1 bridge contract includes particle positions, velocities, masses,
-charges, IDs, locked flags, effective radii, diagnostics, extended telemetry,
-and force vectors. The JS bridge keeps a compatibility sidecar so the UI still
-has honest mass/force overlays if an older WASM artifact is used before a
-rebuild.
-
-### 9.3 Scale 2 `atoms`
-
-Scale 2 uses the AE-style API, but today that API resolves to the JS
-fallback instead of the WASM `AtomEngine`. Every `ae*` read surface must be
-forwarded in FOUR places (`mock-atom-engine.js` impl + `mock-bridge.js` +
-`wasm-bridge.js` + `ws-bridge.js`) — a missing forward on the default
-WasmBridge is invisible until a toggle calls it (the 2026-06-10 B10 fix:
-`aeGetForceDecomposition` was never forwarded, so force-arrow toggles threw
-every compute frame on the production page).
-
-Frame stack:
-
-```text
-requestAnimationFrame
-  -> app.animate(now)
-  -> animateAE(now)
-  -> Scale2Controller.animateAE(ctx)
-     -> if running:
-        -> wholeTicks = tickAccumulator.accumulate(ticksPerFrame)
-        -> repeat bridge.aeTick()
-           -> WasmBridge.aeTick()
-           -> _ensureAEFallback().aeTick()
-     -> atomData = bridge.aeGetAtomData()
-     -> viewport.updateParticles(...)
-     -> update bonds / shells / lobes / labels / force arrows / field overlay
-     -> kinetic/electrostatic structure overlays (flag-gated):
-        -> bridge.aeGetVelocities()  -> viewport.updateVelocityVectors(...)
-        -> bridge.aeGetDipoles()     -> viewport.updateAEDipoles(...)
-        -> bridge.aeGetHBondPairs()  -> viewport.updateHBondLines(...)
-     -> viewport.render()
-     -> every 3rd frame: telemetryHub.collectScale2(bridge)
-        -> s2.diag snapshot + s2.runtime (aeGetRuntimeState + scenario label)
-        -> 10 ring buffers (KE / PE ionic,vdW,bond / total / temp / atoms /
-           bonds / |p| / drift vs hub-owned initial-energy reference)
-     -> legacy aeDiag* DOM block + inspector
-```
-
-Scenario load stack:
-
-```text
-loadAEScenario(name)
-  -> Scale2Controller.loadAEScenario(...)
-     -> ctx.resetAllVisualState()
-     -> bridge.initAE()
-     -> telemetryHub.resetScale(2)      // re-zero buffers + drift baseline
-     -> reset AE toggles
-     -> sync AE params from UI
-     -> seed atoms / clusters / special scenarios (setupAEScenario)
-     -> applyAEVisualPreset(getAEScenarioPreset(name))
-        // declarative visual defaults: flags + toolbar checkboxes +
-        // force/field/velocity/dipole/H-bond buttons + viewport layers
-```
-
-Side panels: the charts panel, diagnostics panel, and telemetry grid all
-register Scale 2 descriptors for BOTH `'2'` and `'3'` (one AtomEngine ⇒ one
-descriptor set; the diagnostics root is `.scale-ae`-classed so the same
-tables serve both scales). AE units are sim units — "(sim)" labels, never
-MeV/Kelvin (audit P0-10).
-
-### 9.4 Scale 3 `molecules`
-
-Scale 3 reuses Scale 2's animation loop exactly. The difference is the
-loader:
-
-```text
-loadMoleculeScenario(name)
-  -> Scale3Controller.loadMoleculeScenario(...)
-     -> ctx.resetAllVisualState()
-     -> bridge.initAE()
-     -> telemetryHub.resetScale(2)   // scale 3 shares the s2 buffers
-     -> reset AE toggles and sync params
-     -> load molecule from molecules.js
-     -> if available: bridge.aePreBond()
-     -> one-tick stability dry-run:
-        -> preData = bridge.aeGetAtomData()
-        -> bridge.aeTick()
-        -> postData = bridge.aeGetAtomData()
-     -> reset AE again
-     -> reload molecule for actual run
-```
-
-So the Scale 3 steady-state frame stack is the Scale 2 stack.
-
-### 9.5 Scale 4 `planetary`
-
-Scale 4 is fully standalone relative to the main bridge.
-
-Load stack:
-
-```text
-switchEngineMode('planetary')
-  -> Scale4Controller.loadScenario(ctx, name)
-     -> hide lattice-specific visuals
-     -> _planetaryBridge = new PlanetaryMockBridge()
-     -> _planetaryBridge.setupScenario(name)
-     -> _planetaryRenderer = new PlanetaryRenderer(...)
-     -> inspector.setPlanetaryContext(...)
-     -> _startPlanetaryLoop(ctx)
-```
-
-Frame stack:
-
-```text
-setInterval(..., 16)
-  -> if running:
-     -> accumulate fractional ticks
-     -> _planetaryBridge.run(f)
-  -> currentData = _planetaryBridge.getPlanetaryData()
-  -> _planetaryRenderer.update(currentData)
-  -> ctx.inspector.update()
-  -> ctx.viewport.render()
-```
-
-Step path:
-
-```text
-Scale4Controller.step()
-  -> _planetaryBridge.run(1)
-  -> _planetaryRenderer.update(...)
-```
-
-### 9.6 Scale 5 `cosmic`
-
-Scale 5 has its own bridge and renderer, but uses the app's rAF loop.
-
-Load stack:
-
-```text
-Scale5Controller.loadCosmicScenario(ctx, name)
-  -> ctx.resetAllVisualState()
-  -> _cosmicBridge = new CosmicMockBridge()
-  -> _cosmicBridge.setupScenario(name)
-  -> _cosmicRenderer = new CosmicRenderer(...)
-  -> camera configuration
-  -> initial renderer update
-  -> auto-play behavior
-```
-
-Frame stack:
-
-```text
-requestAnimationFrame
-  -> app.animate(now)
-  -> Scale5Controller.animateCosmic(ctx)
-     -> isPhysicsFrame = (ctx.frameCount & 1) === 0
-     -> if physics frame and running:
-        -> _cosmicBridge.run(round(ticksPerFrame))
-     -> if physics frame:
-        -> data = _cosmicBridge.getCosmicData()
-        -> diag = _cosmicBridge.getDiagnostics()
-        -> _cosmicRenderer.update(data, diag)
-     -> viewport.render()
-```
-
-### 9.7 `meta`
-
-The meta controller is mostly a scene-object animator:
-
-```text
-requestAnimationFrame
-  -> app.animate(now)
-  -> Scale6Controller.updateMeta(ctx, 1 / 60)
-     -> metaUnit.update(dt)
-     -> viewport.render()
-```
-
-Load stack:
-
-```text
-Scale6Controller.loadMetaScenario(ctx)
-  -> ctx.resetAllVisualState()
-  -> hide lattice visuals
-  -> metaUnit = new MetaUnit(...)
-  -> build pedagogy/info panel
-  -> wire geometry toggle controls
-```
-
-Important naming note:
-
-- the controller lives in `scales/scale6/`
-- but `app.js` maps `meta` to UI scale index `12`
-
-That mismatch is intentional historical numbering, not a typo.
-
-### 9.8 Scale 11 `reference frame context`
-
-Scale 11 is the strangest lifecycle because it swaps out the active
-bridge.
-
-Load stack:
-
-```text
-loadReference frame contextScenario(name)
-  -> Scale11Controller.loadReference frame contextScenario(ctx, name)
-     -> ctx._resetAllVisualState()
-     -> if !_csEngine: _csEngine = new Reference frame contextEngine(viewport.scene)
-     -> if !_csPedagogy: create pedagogy helpers and wire subtabs
-     -> if !_savedBridge:
-        -> _savedBridge = ctx.bridge
-        -> ctx.bridge = new MockBridge(32)
-     -> configure flux-only toggles on swapped bridge
-     -> seed scenario flux and metadata
-```
-
-Frame stack:
-
-```text
-requestAnimationFrame
-  -> app.animate(now)
-  -> Scale11Controller.animateReference frame context(ctx, now)
-     -> if running:
-        -> wholeTicks = tickAccumulator.accumulate(ticksPerFrame)
-        -> scenario-specific injections
-        -> repeat ctx.bridge.tick()
-     -> extract flux / energy diagnostics from swapped bridge
-     -> _csEngine.update(...)
-     -> update reference frame context DOM panels
-     -> viewport.render()
-```
-
-Exit stack:
-
-```text
-switch away from reference frame context
-  -> Scale11Controller.resetScale11(ctx)
-     -> _csEngine.dispose()
-     -> if _savedBridge:
-        -> ctx.bridge = _savedBridge
-        -> _savedBridge = null
-     -> reset iteration state
-     -> restore lattice particle visibility
-```
-
-This is the only place where the active bridge is intentionally mutated
-mid-session.
-
----
-
-## 10. Rendering ownership
-
-### 10.1 Shared viewport
-
-`viewport.js` is the shared rendering host for almost every mode. It
-owns:
-
-- `scene`
-- `camera`
-- `renderer`
-- `OrbitControls`
-- shared particle cloud
-- many overlay meshes and helper layers
-- `render()`
-
-It is effectively a scene-and-overlay god object. See
-`docs/adr/0001-viewport-decomposition.md`.
-
-### 10.2 Specialized scene owners
-
-Several modes add their own content into the shared scene:
-
-- `PlanetaryRenderer`
-- `CosmicRenderer`
-- `MetaUnit`
-- `Reference frame contextEngine`
-
-These specialized renderers usually receive:
-
-- `viewport.scene`
-- `viewport.camera`
-- `viewport.renderer`
-
-So the scene is shared, but content ownership is mode-specific.
-
-### 10.3 Inspector
-
-`inspector.js` is the main read-side query path from the view back into
-the simulation:
-
-- lattice mode: raycast -> voxel query / bridge inspection
-- particles mode: clicked cloud point -> PE particle mapping
-- atoms/molecules mode: clicked cloud point -> atom mapping
-- planetary/cosmic: controller-specific context objects
-
-When debugging "I clicked something and the panel is wrong", inspect the
-controller-specific inspector context first.
-
----
-
-## 11. Scenario loading rules
-
-Across the app, scenario loading generally means:
-
-1. clear visual leakage from the previous scenario
-2. reset or initialize the relevant backend
-3. seed entities / flux / bodies
-4. sync UI controls back into the bridge
-5. mark render buffers dirty
-
-Two important exceptions:
-
-- Scale 0 resize is not the same as scenario load. Resize preserves the
-  user's existing toggles and re-creates the bridge.
-- Scale 11 intentionally preserves pedagogy helpers across re-entry to
-  avoid listener leaks and redundant setup.
-
----
-
-## 12. Current realities and caveats
-
-These are not theoretical concerns. They are true of the current code.
-
-- `viewport.js` is large and central. Many rendering behaviors still
-  converge there.
-- `bridge-init.js` is still sizeable because it combines real bridge
-  code and mock-fallback code. Scenario logic no longer lives here —
-  it was extracted to `bridge/scenarios/` (see "Recent refactor" below).
-- The native WebSocket bridge will keep trying to reconnect forever.
-  Console reconnect logs are normal if no native server is running.
-- The web AE path is still JS fallback even though `AtomEngine` is bound
-  in WASM.
-- Scale numbering is mixed:
-  folder names follow refactor extraction history,
-  while UI `data-active-scale` follows the broader ontological numbering.
-- Scale 0 has dual data ownership in some scenarios:
-  real bridge plus `_fluxMock`. That is intentional.
-
-### Recent refactor (April 2026)
-
-A 14-ticket "large files" refactor pass followed by an audit-driven
-cleanup pass (RF-1/3/4/5/6/7/8/10) reshaped the web tree. The three
-fattest modules all shrank in place, and the extracted concerns landed
-as siblings under `bridge/`, `viewport/`, `ui/`, and `app-wire/`:
-
-- `bridge-init.js` 5736 → 2132 LOC — scenarios, diagnostics, lattice
-  samplers, and particle/atom mock engines pulled out; `_wasmCallOr`
-  helper + 3 frozen empty-result singletons replaced ~80 LOC of
-  early-return boilerplate across 8 sampler methods (RF-6)
-- `viewport.js` 5325 → 3900 LOC — color ramps, molecular rendering,
-  boundary geometry (RF-4), and 11 rubber-sheet visualizations (RF-1)
-  moved to `viewport/`; shared streamline and arrow-field helpers
-  (`_buildStreamlineMesh`/`_writeStreamlinesIntoMesh` RF-3,
-  `_buildArrowFieldMesh`/`_writeArrowFieldIntoMesh` RF-2) dedupe 6
-  copy-paste build+update pairs
-- `app.js` 1898 → 1723 LOC — ontic-mode plumbing moved to
-  `ui/app-ontic.js`; keyboard handler to `app-wire/keyboard.js` (RF-9
-  partial; wireToolbar/wireControls/wireViewportToggles deferred)
-
-The JS scenario library (`bridge/scenarios/`) is the most visible piece:
-registered scenarios are split across prefix groups (`flux-`, `light-`,
-`quantum-`, `s0-vacuum-`, `s0-seed-`, `s0-field-`), dispatched through
-`scenarios/index.js`. Same scenarios are also available natively via
-`ftd::dispatch_scenario` on the C++ side.
-
-A CI guard (`tests/scenario-parity.spec.js`, RF-5) catches any future
-drift between JS and C++ scenario inventories before it reaches users.
-
-Template exports are now uniformly named `get*Template` (RF-7 codemod
-across 10 files), and Playwright specs share helpers from
-`tests/_helpers.js` (RF-8).
-
-See `engine/web/docs/SPEC_REFACTOR_LARGE_FILES.md` for the full ticket
-list, LOC deltas, and per-extraction rationale.
-
----
-
-## 13. Testing
-
-Web-level regression coverage lives under `engine/web/tests/` and is
-primarily Playwright smoke coverage:
-
-- modes load without console errors or missing assets
-- bridge initializes
-- scale transitions work
-- specific regression guards such as cosmic interval cleanup are covered
-- Scale 0 module-contract and scenario-registry wiring are covered
-
-This is not physics-validation coverage. Physics correctness still lives
-in:
-
-- `engine/tests/` for C++ CTest coverage
-- `scripts/tests/` and related Python verification code
-
----
-
-## 14. Debugging guide
-
-When tracing runtime behavior, start at these files:
-
-- boot problems:
-  `engine/web/index.html`, `engine/web/js/app.js`,
-  `engine/web/js/bridge/bridge-factory.js`,
-  `engine/web/js/ws-bridge.js`,
-  `engine/web/js/bridge-init.js`
-- substrate frame behavior:
-  `engine/web/js/scales/scale0/controller.js`,
-  `engine/src/render_bridge.cpp`,
-  `engine/wasm/ftd_wasm.cpp`
-- particle mode:
-  `engine/web/js/scales/scale1/controller.js`,
-  `engine/include/ftd/particle_engine.h`,
-  `engine/wasm/ftd_wasm.cpp`
-- atom/molecule mode:
-  `engine/web/js/scales/scale2/controller.js`,
-  `engine/web/js/scales/scale3/controller.js`,
-  `engine/web/js/bridge-init.js`
-- rendering bugs:
-  `engine/web/js/viewport.js`,
-  `engine/web/js/inspector.js`
-- mode-switch bugs and leaked state:
-  `engine/web/js/app.js` `switchEngineMode()`
-
-If you only remember one call stack, remember this one:
-
-```text
-UI event
-  -> app.js
-  -> scale controller
-  -> bridge facade
-  -> optional WASM/native boundary
-  -> simulation tick/query
-  -> viewport update
-  -> viewport.render()
-```
-
-That is the web engine in one line.
-
----
-
-## 15. Adding a new scale
-
-To add a scale cleanly:
-
-1. Create `js/scales/scale{N}/controller.js`.
-2. Export a loader plus the runtime functions the mode needs, usually
-   `animate...`, `load...Scenario`, and `reset...`.
-3. Wire the controller into `app.js`:
-   imports, `animate()` dispatch, and `switchEngineMode()`.
-4. Add the mode to the UI in `index.html`.
-5. Reuse shared helpers from `scales/scale-utils.js`.
-6. Decide explicitly whether the mode:
-   uses the shared `bridge`,
-   owns a private bridge,
-   uses the shared rAF loop,
-   or needs its own scheduler.
-7. Update this document with the new mode's call stack.
-
-Keep the controller's ownership boundaries obvious. The easiest way to
-create bugs in this codebase is to make it unclear which layer owns
-state, scheduling, or scene cleanup.
+The configured server is `python serve.py 8081 --cache --quiet` from
+`engine/web/`; it sends COOP/COEP headers so SharedArrayBuffer and the worker
+path are available.

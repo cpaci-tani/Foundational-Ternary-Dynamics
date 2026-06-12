@@ -353,7 +353,8 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     ctx.resetAllVisualState();
     applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id);
 
-    const harness = getPhysicsHarness(ctx.bridge);
+    const activeBridge = (useFluxMock && fluxMock) ? fluxMock : ctx.bridge;
+    const harness = getPhysicsHarness(activeBridge);
     scenario.load(harness, params);
 
     // Gravity/wave family (SCALE0_ABSORBING_SCENARIOS): set LAST, after

@@ -44,6 +44,12 @@ const KNOWN_LEGACY_ONLY = new Set([
     'production', 'scattering', 'triad', 'vacuum', 'wave',
 ]);
 
+// Scenarios that are delegated to another scenario in their JS load() method,
+// so they don't need a standalone JS mock-bridge case or C++ implementation.
+const DELEGATED_SCENARIOS = new Set([
+    's0-seed-ew-phase-transition',
+]);
+
 // ── Extractors ──────────────────────────────────────────────────────
 
 function extractJsScenarios() {
@@ -139,6 +145,19 @@ function extractMetadataScenarios() {
     return names;
 }
 
+function extractTogglesTypedefScenarios() {
+    const src = readFileSync(join(WEB_ROOT, 'js', 'config', 'toggles.js'), 'utf8');
+    const typedefMatch = src.match(/@typedef\s*\{([^}]+)\}\s*ScenarioId/);
+    if (!typedefMatch) return new Set();
+    const re = /'([^']+)'/g;
+    const names = new Set();
+    let m;
+    while ((m = re.exec(typedefMatch[1]))) {
+        names.add(m[1]);
+    }
+    return names;
+}
+
 // ── Tests ───────────────────────────────────────────────────────────
 
 test.describe('Scenario parity (JS ↔ C++)', () => {
@@ -195,12 +214,29 @@ test.describe('Scenario parity (JS ↔ C++)', () => {
         const js = extractJsScenarios();
         const missing = [];
         for (const name of ui) {
+            if (DELEGATED_SCENARIOS.has(name)) continue;
             if (!js.has(name)) missing.push(name);
         }
         expect(missing,
             `${missing.length} scenarios appear in the UI dropdown but have no JS implementation.\n` +
             `Add the case to a group file in engine/web/js/bridge/scenarios/ or remove from the UI registry.\n` +
             `Missing:\n  - ${missing.join('\n  - ')}`
+        ).toEqual([]);
+    });
+
+    test('ScenarioId JSDoc typedef in toggles.js matches UI registry scenarios exactly', () => {
+        const ui = extractUiRegistryScenarios();
+        const typedefScenarios = extractTogglesTypedefScenarios();
+
+        const missingInTypedef = [...ui].filter(name => !typedefScenarios.has(name));
+        const extraInTypedef = [...typedefScenarios].filter(name => !ui.has(name));
+
+        expect(missingInTypedef,
+            `The JSDoc @typedef ScenarioId in toggles.js is missing these scenarios:\n  - ${missingInTypedef.join('\n  - ')}`
+        ).toEqual([]);
+
+        expect(extraInTypedef,
+            `The JSDoc @typedef ScenarioId in toggles.js contains these unregistered/unknown scenarios:\n  - ${extraInTypedef.join('\n  - ')}`
         ).toEqual([]);
     });
 
