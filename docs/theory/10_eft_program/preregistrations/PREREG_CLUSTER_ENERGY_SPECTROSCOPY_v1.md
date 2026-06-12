@@ -11,7 +11,7 @@ carries energy (`½|J|²`); manifestation (a void voxel flipping to `±1`) is a 
 **threshold** event (`|J| > K_GENESIS`). Define the single-voxel **flip quantum**
 
 ```
-ε ≡ ½·K_GENESIS²,   K_GENESIS = K_MANIFEST·N_C = 0.511·3 = 1.533,   ε ≈ 1.1755
+ε ≡ ½·K_GENESIS²,   K_GENESIS = K_MANIFEST·N_C = 0.511·3 = 1.533,   ε ≈ 1.1750
 ```
 
 and re-express a stable cluster's **mass** as its settled flux energy *above the vacuum

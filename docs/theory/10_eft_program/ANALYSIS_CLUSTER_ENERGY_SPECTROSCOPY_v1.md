@@ -9,7 +9,7 @@ outcome:** BOUNDARY — confirmed.
 
 The owner proposed separating **flux** (a continuous field that just carries energy
 `½|J|²`) from **manifestation** (a per-voxel threshold flip at `|J|>K_GENESIS`), defining
-a single-voxel **flip quantum** `ε ≡ ½·K_GENESIS² ≈ 1.1755` (`K_GENESIS = K_MANIFEST·N_C =
+a single-voxel **flip quantum** `ε ≡ ½·K_GENESIS² ≈ 1.1750` (`K_GENESIS = K_MANIFEST·N_C =
 0.511·3 = 1.533`), and re-expressing a cluster's **mass** as its flux energy above the
 vacuum floor in ε-units — *decoupled from `m_e`*, with the explicit hypothesis "≈511
 quanta in a cluster = an electron."
@@ -45,7 +45,7 @@ controls). The **manifested count `N` is the stable cluster identity**; the inst
 flux energy is not. So the mass proxy is the time-averaged flux energy over a window, and
 "BOUNDED" is judged by N-stability, not energy drift. (`total_energy` is dominated by
 spurious `wave_vel` pumped by the non-variational Gauss projection — e.g. the moore-cell
-control has field 4.1 but wave 995 — so it is a diagnostic, never the mass.)
+control has field ~3.3 but wave ~1,900 — so it is a diagnostic, never the mass.)
 
 ### 2.2 The result — energy carries no information beyond N
 
@@ -84,7 +84,7 @@ to a clean, box-independent mass. **Directly tested** (`--Ls=24,32,48,64 --As=10
 | A | quantity | L=24 | L=32 | L=48 | L=64 | trend |
 |---|---|---|---|---|---|---|
 | 10 | ⟨N⟩ | 3.7 | 4.3 | 3.7 | 4.3 | **L-invariant** |
-| 10 | ⟨M_local⟩ | 6.19 | 1.10 | 0.31 | 0.068 | **→ 0** (≈ L⁻⁵) |
+| 10 | ⟨M_local⟩ | 2.97 | 1.10 | 0.31 | 0.068 | **→ 0** (≈ L⁻³·⁸) |
 | 10 | ⟨M/vox⟩ | 1.94 | 0.32 | 0.086 | 0.016 | → 0 |
 | 10 | slosh_local | 1.20 | 1.51 | 2.05 | 2.88 | **grows** |
 | 16 | ⟨N⟩ | 20.0 | 21.7 | 19.3 | 20.0 | **L-invariant** |
@@ -94,7 +94,7 @@ to a clean, box-independent mass. **Directly tested** (`--Ls=24,32,48,64 --As=10
 The objection is **partly right but mass-fatal**: on a bigger box the radiation *does*
 escape rather than reflect (the whole-lattice slosh_tot drops, 0.73→0.34 at A=10), so the
 effects *are* more local — **but the consequence is that the cluster-local flux energy
-decays toward zero (≈ L⁻⁵), not toward a stable mass.** The injected energy radiates into
+decays toward zero (≈ L⁻³·⁸), not toward a stable mass.** The injected energy radiates into
 the larger volume and the cluster retains only its small bound near-field (which itself is
 ~const-per-voxel ⇒ still ∝ N). The relative local slosh *grows* with L precisely because
 the local mean energy → 0. **The cluster COUNT N is the L-invariant; the flux ENERGY is
