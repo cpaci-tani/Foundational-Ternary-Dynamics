@@ -75,5 +75,5 @@ necessarily active implementation guidance.
 ## Generated Artifacts Policy
 
 Markdown is the tracked source of truth. Generated HTML renders and Quarto
-sidecar folders under `docs/` are ignored by `engine/web/.gitignore` and should
-not be committed.
+sidecar folders under `engine/web/docs/` are ignored by the repository root
+`.gitignore` and should not be committed.
