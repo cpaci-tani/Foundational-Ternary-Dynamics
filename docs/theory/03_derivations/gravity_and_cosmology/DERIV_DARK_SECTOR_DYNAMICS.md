@@ -139,6 +139,17 @@ Every manifested particle builds a self-field envelope through the coupling sour
 | Peak flux | 0.0316 | J_peak at particle site neighbors |
 | Power-law exponent | -0.69 | log-log fit for r >= 7 |
 
+> **FTD-0290 (2026-06-13) — the -0.69 above is falsified as a forced value.** A
+> pre-registered GPU L-grid {64,96,128,160} audit (`preregister-halo-forcedness-v1`)
+> found -0.69 is the L=64 transient; the windowed exponent **converges to -1.25** at
+> L >= 128, and the lossless (selective-ON) self-field **box-fills** the periodic
+> lattice (`r_eff ~ L/2`, not a localized object). Frozen verdict **INDETERMINATE**
+> (box-fill => not a forced localized halo; convergent => not a simple drift artifact);
+> the only forced, localized self-field is the damped (selective-OFF) Coulomb near-field
+> (~ -2.15). Consequence: the dark-matter halo is not a forced localized shape, so the
+> SPARC rotation-curve target is not founded. See
+> [`ANALYSIS_HALO_FORCEDNESS_v1.md`](../../10_eft_program/ANALYSIS_HALO_FORCEDNESS_v1.md).
+
 ## 4.2 Dark Matter Properties [SELECTION]
 
 All lattice sites with r > 0 from the manifested seed have s = 0 (void). Their flux carries:
