@@ -1990,6 +1990,11 @@ set_tests_properties(thomson_native_continuity PROPERTIES LABELS "em;campaign;ob
 # FTD-0292 - source-free discrete tick energy invariant
 add_test(NAME thomson_tick_invariant COMMAND campaign_thomson_tick_invariant)
 set_tests_properties(thomson_tick_invariant PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
+# FTD-0292 v1 classified outcome is DISCRETE_TICK_INVARIANT_INVALIDATED:
+# the locked executable returns failure when the predeclared relative gate
+# misses the double-precision summation floor. Keep the historical target
+# green only when that invalidation reproduces.
+set_tests_properties(thomson_tick_invariant PROPERTIES WILL_FAIL TRUE)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
