@@ -128,6 +128,7 @@ export class MockBridge {
         this._thomsonFluxBaseline = null;
         this._thomsonFluxPrev = null;
         this._thomsonFluxVelocity = null;
+        this._thomsonResidualCache = null;
 
         // Cached energy sums
         this._energyCacheTick = -1;
@@ -633,6 +634,7 @@ export class MockBridge {
         this._thomsonFluxBaseline = null;
         this._thomsonFluxPrev = null;
         this._thomsonFluxVelocity = null;
+        this._thomsonResidualCache = null;
         // Latency proxy is a derived per-tick cache; invalidate on reset so
         // a post-reset scenario load can't accidentally serve the prior
         // scenario's proxy when both happen to sit at _tick === 0.
@@ -830,6 +832,152 @@ export class MockBridge {
         return { x, y, z, mag: Math.sqrt(x * x + y * y + z * z), energy: eSum, radius };
     }
 
+    _seedThomsonPlaneWave(target) {
+        const N = target.latticeSize;
+        const modeN = 4;
+        const amp = 0.05;
+        const k = 2 * Math.PI * modeN / N;
+        const omega = 2 * C_SPEED * Math.abs(Math.sin(k / 2));
+        for (let z = 0; z < N; z++)
+        for (let y = 0; y < N; y++)
+        for (let x = 0; x < N; x++) {
+            const jy = amp * Math.sin(k * x);
+            const wy = -omega * amp * Math.cos(k * x);
+            if (Math.abs(jy) > 1e-12) target.injectFlux(x, y, z, 0, jy, 0);
+            if (Math.abs(wy) > 1e-12) target._injectWaveVel(x, y, z, 0, wy, 0);
+        }
+    }
+
+    _makeThomsonBaselineBridge({ beam = false, charge = false, locked = false } = {}) {
+        const b = new MockBridge(this.latticeSize);
+        b.reset(this.latticeSize);
+        for (const [key, value] of Object.entries(this._toggles)) {
+            b.setToggle(key, value);
+        }
+        if (charge) {
+            const mc = Math.round((this.latticeSize - 1) * 0.5);
+            b.injectParticle(mc, mc, mc, -1);
+            const electron = b._particles[b._particles.length - 1];
+            if (electron) {
+                electron.locked = !!locked;
+                electron.spin = -1;
+                electron.color = 0;
+            }
+        }
+        if (beam) this._seedThomsonPlaneWave(b);
+        return b;
+    }
+
+    _thomsonResidualSignature(electron) {
+        return JSON.stringify({
+            L: this.latticeSize,
+            locked: !!electron?.locked,
+            wave_propagation: !!this._toggles.wave_propagation,
+            coupling: !!this._toggles.coupling,
+            forces: !!this._toggles.forces,
+            movement: !!this._toggles.movement,
+            poisson_coulomb: !!this._toggles.poisson_coulomb,
+            emergent_forces: !!this._toggles.emergent_forces,
+            gauss_projection: !!this._toggles.gauss_projection,
+        });
+    }
+
+    _computeThomsonResidual(electron) {
+        if (!this._fluxJ || !this._fluxWV) return null;
+        const signature = this._thomsonResidualSignature(electron);
+        if (!this._thomsonResidualCache ||
+            this._thomsonResidualCache.signature !== signature ||
+            this._thomsonResidualCache.tick > this._tick) {
+            this._thomsonResidualCache = {
+                signature,
+                tick: 0,
+                beam: this._makeThomsonBaselineBridge({ beam: true, charge: false, locked: false }),
+                charge: this._makeThomsonBaselineBridge({ beam: false, charge: true, locked: !!electron?.locked }),
+            };
+        }
+        const cache = this._thomsonResidualCache;
+        while (cache.tick < this._tick) {
+            cache.beam.tick();
+            cache.charge.tick();
+            cache.tick++;
+        }
+        if (!cache.beam._fluxJ || !cache.beam._fluxWV || !cache.charge._fluxJ || !cache.charge._fluxWV) {
+            return null;
+        }
+
+        const N = this.latticeSize;
+        const mc = Math.round((N - 1) * 0.5);
+        const radius = 8;
+        const r2max = radius * radius;
+        let l2 = 0, sumAbs = 0, maxAbs = 0, energy = 0;
+        let localEnergy = 0, localSx = 0, localSy = 0, localSz = 0;
+        let compX2 = 0, compY2 = 0, compZ2 = 0;
+        let plusNorm2 = 0;
+        const total = N * N * N;
+        for (let vi = 0; vi < total; vi++) {
+            const base = vi * 3;
+            const diffs = [
+                (this._fluxJ[base] || 0) - (cache.beam._fluxJ[base] || 0) - (cache.charge._fluxJ[base] || 0),
+                (this._fluxJ[base + 1] || 0) - (cache.beam._fluxJ[base + 1] || 0) - (cache.charge._fluxJ[base + 1] || 0),
+                (this._fluxJ[base + 2] || 0) - (cache.beam._fluxJ[base + 2] || 0) - (cache.charge._fluxJ[base + 2] || 0),
+                (this._fluxWV[base] || 0) - (cache.beam._fluxWV[base] || 0) - (cache.charge._fluxWV[base] || 0),
+                (this._fluxWV[base + 1] || 0) - (cache.beam._fluxWV[base + 1] || 0) - (cache.charge._fluxWV[base + 1] || 0),
+                (this._fluxWV[base + 2] || 0) - (cache.beam._fluxWV[base + 2] || 0) - (cache.charge._fluxWV[base + 2] || 0),
+            ];
+            const plusVals = [
+                this._fluxJ[base] || 0, this._fluxJ[base + 1] || 0, this._fluxJ[base + 2] || 0,
+                this._fluxWV[base] || 0, this._fluxWV[base + 1] || 0, this._fluxWV[base + 2] || 0,
+            ];
+            const e = 0.5 * diffs.reduce((s, v) => s + v * v, 0);
+            energy += e;
+            for (const d of diffs) {
+                const ad = Math.abs(d);
+                l2 += d * d;
+                sumAbs += ad;
+                if (ad > maxAbs) maxAbs = ad;
+            }
+            plusNorm2 += plusVals.reduce((s, v) => s + v * v, 0);
+            compX2 += diffs[0] * diffs[0] + diffs[3] * diffs[3];
+            compY2 += diffs[1] * diffs[1] + diffs[4] * diffs[4];
+            compZ2 += diffs[2] * diffs[2] + diffs[5] * diffs[5];
+
+            const x = vi % N;
+            const y = Math.floor(vi / N) % N;
+            const z = Math.floor(vi / (N * N));
+            let dx = x - mc, dy = y - mc, dz = z - mc;
+            if (dx > N / 2) dx -= N; else if (dx < -N / 2) dx += N;
+            if (dy > N / 2) dy -= N; else if (dy < -N / 2) dy += N;
+            if (dz > N / 2) dz -= N; else if (dz < -N / 2) dz += N;
+            if (dx * dx + dy * dy + dz * dz <= r2max) {
+                localEnergy += e;
+                localSx += dx * e;
+                localSy += dy * e;
+                localSz += dz * e;
+            }
+        }
+        const l2Mag = Math.sqrt(l2);
+        const local = localEnergy > 0 ? {
+            x: localSx / localEnergy,
+            y: localSy / localEnergy,
+            z: localSz / localEnergy,
+        } : { x: 0, y: 0, z: 0 };
+        local.mag = Math.sqrt(local.x * local.x + local.y * local.y + local.z * local.z);
+        return {
+            tick: this._tick,
+            l2: l2Mag,
+            relL2: l2Mag / Math.max(Math.sqrt(plusNorm2), 1e-300),
+            maxAbs,
+            meanAbs: sumAbs / Math.max(total * 6, 1),
+            energy,
+            localEnergy,
+            localCentroid: local,
+            transverseCentroid: Math.sqrt(local.y * local.y + local.z * local.z),
+            compX: Math.sqrt(compX2),
+            compY: Math.sqrt(compY2),
+            compZ: Math.sqrt(compZ2),
+        };
+    }
+
     getThomsonScatteringMetrics() {
         if (!this._fluxJ || !this._fluxWV) {
             return { active: false, reason: 'no field buffers' };
@@ -895,6 +1043,7 @@ export class MockBridge {
         }
         const poynting = audit?.totalPoynting ?? { x: 0, y: 0, z: 0 };
         const poyntingMag = Math.sqrt((poynting.x ?? 0) ** 2 + (poynting.y ?? 0) ** 2 + (poynting.z ?? 0) ** 2);
+        const excess = this._computeThomsonResidual(electron);
         return {
             active: true,
             tick: this._tick,
@@ -942,6 +1091,7 @@ export class MockBridge {
                 delta: fluxDelta,
                 velocity: this._thomsonFluxVelocity || { x: 0, y: 0, z: 0, mag: 0 },
             },
+            excessResidual: excess,
             poynting: { ...poynting, mag: poyntingMag },
         };
     }

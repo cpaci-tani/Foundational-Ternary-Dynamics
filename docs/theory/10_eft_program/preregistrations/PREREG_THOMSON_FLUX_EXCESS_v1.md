@@ -2,11 +2,13 @@
 
 **FTD ID:** FTD-0289
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0288 Thomson unlocked recoil
 **Engine artifact:** `engine/tests/campaign_thomson_flux_excess.cpp`
 **Artifact SHA256:** `1f562ac9e9e0f3fdeb72bce00fda2c00f70117271439ef27d418d05c29ec7589`
+**Lock commit:** `acb4005a`
 **Lock tag:** `preregister-thomson-flux-excess-v1`
+**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_FLUX_EXCESS_v1.md`
 
 ---
 

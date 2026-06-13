@@ -125,6 +125,18 @@ diagnostic qE hook. The native emergent arm recoils deterministically; legacy
 does not. The diagnostic qE arm responds transversely but remains imposed. No
 alpha, Thomson cross-section, or QED amplitude claim is promoted.
 
+## Thomson flux-excess discriminator (FTD-0289; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0289** Thomson flux-excess discriminator | `preregister-thomson-flux-excess-v1` | `acb4005a` | engine artifact `engine/tests/campaign_thomson_flux_excess.cpp` SHA256 `1f562ac9e9e0f3fdeb72bce00fda2c00f70117271439ef27d418d05c29ec7589` | build target `campaign_thomson_flux_excess`; run `ctest --test-dir engine/build -C Release -R "^thomson_flux_excess$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_FLUX_EXCESS_v1.md`](ANALYSIS_THOMSON_FLUX_EXCESS_v1.md): `NATIVE_EMERGENT_EXCESS_FLUX_DEFLECTION_DETECTED` |
+
+This campaign follows FTD-0288. It subtracts the free propagating wave and the
+charge-only field from the charge-plus-beam run. Locked and legacy residuals
+stay at machine noise; the native emergent flux-gradient path leaves an
+above-gate residual. The frozen transverse-centroid subtype does not fire. No
+alpha, Thomson cross-section, or QED amplitude claim is promoted.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
