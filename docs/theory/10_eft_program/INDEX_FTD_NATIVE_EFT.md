@@ -107,6 +107,7 @@ The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-
 | [`ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md`](ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md) | [MIXED RESULT] | FTD-0280 through FTD-0283 atomic campaign: H/He replay confirmed, live engine hook confirmed, exchange/correlation wall confirmed, no-new-knob ladder fails Z²-scaling gate. |
 | [`ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`](ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md) | [INVALIDATED PROTOCOL] | FTD-0285 run of record: explicit coupling scales as expected, but the frozen absolute Phase-G gate fails for the finite live-engine protocol; no alpha claim promoted. |
 | [`ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v1.md`](ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v1.md) | [MEASUREMENT ANALYSIS -- ENERGY FUNCTIONAL MISMATCH] | FTD-0286 run of record: matched projection converged, but the field-energy observable still misses the analytic Phase-G normalization by about half; no alpha claim promoted. |
+| [`ANALYSIS_THOMSON_RECOIL_OBSERVATORY_v1.md`](ANALYSIS_THOMSON_RECOIL_OBSERVATORY_v1.md) | [OBSERVATION -- LINEAR SUPERPOSITION, NO MECHANICAL RECOIL] | FTD-0287 dashboard/campaign companion: locked-charge plane-wave observatory shows field-level linear superposition to machine precision; no nonlinear Thomson scattering, recoil, or alpha claim promoted. |
 
 ---
 
@@ -179,4 +180,4 @@ Archived material is preserved for provenance — cite it to explain "why this r
 
 ---
 
-**Live document count:** 57 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 12 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 4 STATUS/ANALYSIS, 17 PREREG, 3 Frontier-4 graviton, 8 AUDIT.
+**Live document count:** 58 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 12 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 5 STATUS/ANALYSIS, 17 PREREG, 3 Frontier-4 graviton, 8 AUDIT.
