@@ -18,9 +18,10 @@ the problem.
 > (`../preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md` plus
 > `../ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`), invalidated its own
 > finite-protocol absolute Phase-G gate. It did not find dynamical alpha.
-> The next step must be a v2 that first validates the live-engine estimator
-> under the same dynamic protocol before asking the no-alpha-vs-Postulate-W
-> question again.
+> The next step is now FTD-0286
+> (`../preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`): validate
+> the production live-engine estimator against the existing matched-stencil EFT
+> projector before asking the no-alpha-vs-Postulate-W question again.
 
 ---
 
