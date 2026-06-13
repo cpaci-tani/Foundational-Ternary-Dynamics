@@ -22,6 +22,10 @@ the problem.
 > (`../preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`): validate
 > the production live-engine estimator against the existing matched-stencil EFT
 > projector before asking the no-alpha-vs-Postulate-W question again.
+> FTD-0286 returned `ENERGY_FUNCTIONAL_MISMATCH`: matched projection converged,
+> but the field-energy observable still missed the analytic Phase-G
+> normalization by about half. The next coupling-selection attempt must first
+> derive or directly measure the finite-cell observable.
 
 ---
 
