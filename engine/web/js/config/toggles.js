@@ -315,6 +315,15 @@ export const SCALE0_SCENARIO_OVERRIDES = {
         ['movement', false, 't-movement'],
         ['poisson_coulomb', false, 't-poisson'],
     ],
+    's0-field-thomson-unlocked-recoil': [
+        ['coupling', true, 't-coupling'],
+        ['damping', false, 't-damping'],
+        ['genesis', false, 't-genesis'],
+        ['gauss_projection', false, 't-gauss'],
+        ['forces', true, 't-forces'],
+        ['movement', true, 't-movement'],
+        ['poisson_coulomb', false, 't-poisson'],
+    ],
     's0-field-spacetime-forcing-boundary': [
         // Pure wave-equation half of FTD-0253: keep the center pulse below
         // genesis and remove non-wave phases so the dashboard seed matches

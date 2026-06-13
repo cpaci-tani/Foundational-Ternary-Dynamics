@@ -75,15 +75,24 @@ const FIELD_BUTTON_TO_FLAG = Object.fromEntries(FIELD_TOGGLE_BINDINGS);
 const SCALE0_MOCK_OWNED_SCENARIOS = new Set([
     's0-field-spacetime-forcing-boundary',
     's0-field-thomson-scattering',
+    's0-field-thomson-unlocked-recoil',
 ]);
 const SCALE0_INLINE_MOCK_SCENARIOS = new Set([
     's0-field-thomson-scattering',
+    's0-field-thomson-unlocked-recoil',
 ]);
 const SCALE0_SCENARIO_VISUAL_PROFILES = {
     's0-field-spacetime-forcing-boundary': {
         fluxVolume: true,
         fluxSlice: true,
         fluxPointScale: 2.6,
+        fluxThreshold: 0.001,
+        fluxOpacity: 0.85,
+    },
+    's0-field-thomson-unlocked-recoil': {
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.4,
         fluxThreshold: 0.001,
         fluxOpacity: 0.85,
     },

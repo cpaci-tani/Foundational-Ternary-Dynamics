@@ -2,7 +2,7 @@
 
 **FTD ID:** FTD-0288
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0287 Thomson recoil observatory
 **Engine artifact:** `engine/tests/campaign_thomson_unlocked_recoil.cpp`
 **Artifact SHA256:** `f43194598188bab303eecbdebcf99655118f90d2024279ed3a8a56607d864acc`
