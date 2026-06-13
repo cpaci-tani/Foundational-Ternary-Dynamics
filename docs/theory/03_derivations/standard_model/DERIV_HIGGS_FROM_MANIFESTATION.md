@@ -541,7 +541,7 @@ The absence of BSM physics at the LHC is **consistent** with FTD: the hierarchy 
 | HIGGS-2 | BI expansion gives parabolic + quartic | **[THEOREM]** | V_BI = ρ₀²/(2K_B) + ρ₀⁴/(8K_B³) + ... |
 | HIGGS-3 | Manifestation feedback → Mexican hat | **[SELECTION]** | μ²_eff = (1 − 2g_c²⟨s²⟩)/K_B < 0 when feedback strong |
 | HIGGS-4 | VEV: v = M_P√(2π)α⁸ = 246.08 GeV | **[SELECTION]** | 0.05% vs PDG 246.22 GeV |
-| HIGGS-5 | m_H = v√(6/23) = 125.69 GeV | **[SELECTION]** | 0.47% vs PDG 125.25 GeV |
+| HIGGS-5 | m_H = v√(6/23) = 125.69 GeV | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | 0.47% vs PDG 125.25 GeV |
 | HIGGS-6 | Goldstone counting: 3 + 1 = 4 | **[THEOREM]** | 3 transverse + 1 radial = dim(SU(2)×U(1)) |
 | HIGGS-7 | Hierarchy resolved by lattice UV cutoff | **[SELECTION]** | v/M_P = √(2π)α⁸ derived, not tuned |
 | HIGGS-8 | λ = 3/23 from ternary decomposition | **[SELECTION]** | 1.05% vs SM ~0.129 |
