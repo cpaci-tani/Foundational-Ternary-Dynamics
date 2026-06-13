@@ -1,5 +1,18 @@
 # ANALYSIS — Hydrogen-like spectrum on the FTD lattice: HYDROGEN-CONFIRMED (FTD-0278 Leg 1)
 
+> **CORRECTED 2026-06-12 — see [`CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md`](CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md).**
+> A 4-lens adversarial audit (independently re-verified) found that the **"n=2 multiplet /
+> O_h T1u triple / Rydberg ladder"** claims below are **OVERCLAIMED**: in most record cells
+> only the 1s is bound (n_bound=1 at a₀=4), and the "exactly degenerate T1u triple" is
+> **torus momentum degeneracy, not bound 2p orbitals** (F-C passes even for a *repulsive*
+> core — it is non-probative and is **RETRACTED**). **What stands, narrowed:
+> HYDROGEN-1s-CONFIRMED** — the 1s ground state is genuinely bound and Coulombic (F-A), and
+> its binding approaches the continuum-Rydberg scale (F-B), both reinterpreted as
+> ground-state statements (gap12 is 1s-dominated). The §0–§2 "Rydberg ladder + O_h
+> multiplet" headline is withdrawn; read the CORRECTION for the precise surviving claim.
+> FTD-0279 (helium, ground-state SCF) is unaffected.
+
+
 **Status:** `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` (pre-registered run of record).
 **Date:** 2026-06-12.
 **Pre-registration:** [`PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md`](../../10_eft_program/preregistrations/PREREG_HYDROGEN_LATTICE_SPECTRUM_v1.md),
