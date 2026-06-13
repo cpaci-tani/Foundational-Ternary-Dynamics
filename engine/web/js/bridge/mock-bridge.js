@@ -748,6 +748,69 @@ export class MockBridge {
     getEnergyAudit() { return this._diagnostics.getEnergyAudit(); }
     getLagrangian()  { return this._diagnostics.getLagrangian(); }
 
+    getThomsonScatteringMetrics() {
+        if (!this._fluxJ || !this._fluxWV) {
+            return { active: false, reason: 'no field buffers' };
+        }
+        this._ensureEnergyCache();
+        const audit = this.getEnergyAudit();
+        const N = this.latticeSize;
+        const mc = Math.round((N - 1) * 0.5);
+        const center = this.inspectVoxel(mc, mc, mc);
+        const electron = this._particles.find((p) => (p.state ?? 0) < 0);
+
+        const energyInSphere = (cx, cy, cz, radius) => {
+            let e = 0;
+            const r2max = radius * radius;
+            for (let dz = -radius; dz <= radius; dz++)
+            for (let dy = -radius; dy <= radius; dy++)
+            for (let dx = -radius; dx <= radius; dx++) {
+                if (dx * dx + dy * dy + dz * dz > r2max) continue;
+                const x = ((cx + dx) % N + N) % N;
+                const y = ((cy + dy) % N + N) % N;
+                const z = ((cz + dz) % N + N) % N;
+                const idx = this._fluxIdx(x, y, z) * 3;
+                const jx = this._fluxJ[idx], jy = this._fluxJ[idx + 1], jz = this._fluxJ[idx + 2];
+                const wx = this._fluxWV[idx], wy = this._fluxWV[idx + 1], wz = this._fluxWV[idx + 2];
+                e += 0.5 * (jx * jx + jy * jy + jz * jz + wx * wx + wy * wy + wz * wz);
+            }
+            return e;
+        };
+
+        const lateralY = ((mc + 10) % N + N) % N;
+        const forwardX = ((mc + 10) % N + N) % N;
+        return {
+            active: true,
+            tick: this._tick,
+            latticeSize: N,
+            center: {
+                x: mc, y: mc, z: mc,
+                fluxY: center?.fluxY ?? 0,
+                waveVelX: center?.waveVelX ?? 0,
+                waveVelY: center?.waveVelY ?? 0,
+                waveVelZ: center?.waveVelZ ?? 0,
+            },
+            electron: electron ? {
+                id: electron.id,
+                state: electron.state,
+                locked: !!electron.locked,
+                x: electron.x, y: electron.y, z: electron.z,
+                vx: electron.vx ?? 0,
+                vy: electron.vy ?? 0,
+                vz: electron.vz ?? 0,
+            } : null,
+            energy: {
+                centerR3: energyInSphere(mc, mc, mc, 3),
+                lateralYPlus10R3: energyInSphere(mc, lateralY, mc, 3),
+                forwardXPlus10R3: energyInSphere(forwardX, mc, mc, 3),
+                field: audit?.fieldEnergy ?? 0,
+                wave: audit?.waveEnergy ?? 0,
+                total: audit?.totalEnergy ?? 0,
+            },
+            poynting: audit?.totalPoynting ?? { x: 0, y: 0, z: 0 },
+        };
+    }
+
     /**
      * Release the heavy internal buffers and break references that
      * prevent GC. Call from `setFluxMock` (state/store.js) when a

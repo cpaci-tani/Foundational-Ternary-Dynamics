@@ -78,6 +78,7 @@
  * 's0-field-uniform-e' |
  * 's0-field-uniform-b' |
  * 's0-field-photon-pulse' |
+ * 's0-field-thomson-scattering' |
  * 's0-field-spacetime-forcing-boundary' |
  * 's0-field-electric-dipole' |
  * 's0-field-magnetic-dipole' |
@@ -305,6 +306,15 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-field-uniform-e':        [['genesis', false, 't-genesis']],
     's0-field-uniform-b':        [['genesis', false, 't-genesis']],
     's0-field-photon-pulse':     [['genesis', false, 't-genesis']],
+    's0-field-thomson-scattering': [
+        ['coupling', true, 't-coupling'],
+        ['damping', false, 't-damping'],
+        ['genesis', false, 't-genesis'],
+        ['gauss_projection', false, 't-gauss'],
+        ['forces', false, 't-forces'],
+        ['movement', false, 't-movement'],
+        ['poisson_coulomb', false, 't-poisson'],
+    ],
     's0-field-spacetime-forcing-boundary': [
         // Pure wave-equation half of FTD-0253: keep the center pulse below
         // genesis and remove non-wave phases so the dashboard seed matches

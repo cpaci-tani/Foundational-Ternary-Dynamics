@@ -1,7 +1,7 @@
 // ==========================================================================
 //  engine/src/scenarios/s0_field.cpp
 //
-//  Group: s0-field-* (8 scenarios)
+//  Group: s0-field-* (9 scenarios)
 //  JS source: engine/web/js/bridge/scenarios/s0-field-scenarios.js
 //
 //  Split out of engine/src/scenarios.cpp (ticket S1).
@@ -83,6 +83,34 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             double wz = amp * g * std::cos(phase) * C_SPEED;
             IF(rb, x, y, z, 0, 0, jz);
             IW(rb, x, y, z, wz, 0, 0);
+        }
+    }
+    else if (name == "s0-field-thomson-scattering") {
+        // Fixed electron-like scattering observatory:
+        // one locked negative charge at the center plus a y-polarized plane
+        // wave propagating along +x. This is a visualization/instrument setup,
+        // not a derivation of alpha.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.coupling = true;
+        rb.toggles.damping = false;
+        rb.toggles.genesis = false;
+        rb.toggles.gauss_projection = false;
+        rb.toggles.forces = false;
+        rb.toggles.movement = false;
+        rb.toggles.poisson_coulomb = false;
+
+        IP(rb, mc, mc, mc, -1);
+        rb.voxels()[rb.lattice().index(mc, mc, mc)].locked = true;
+
+        const int mode_n = 4;
+        const double amp = 0.05;
+        const double k = 2.0 * PI * static_cast<double>(mode_n) / static_cast<double>(N);
+        const double omega = 2.0 * C_SPEED * std::fabs(std::sin(k * 0.5));
+        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+            const double jy = amp * std::sin(k * x);
+            const double wy = -omega * amp * std::cos(k * x);
+            if (std::fabs(jy) > 1e-12) IF(rb, x, y, z, 0, jy, 0);
+            if (std::fabs(wy) > 1e-12) IW(rb, x, y, z, 0, wy, 0);
         }
     }
     else if (name == "s0-field-spacetime-forcing-boundary") {

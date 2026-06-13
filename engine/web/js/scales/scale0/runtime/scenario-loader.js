@@ -74,6 +74,10 @@ const FIELD_BUTTON_TO_FLAG = Object.fromEntries(FIELD_TOGGLE_BINDINGS);
 // already containing the new branch.
 const SCALE0_MOCK_OWNED_SCENARIOS = new Set([
     's0-field-spacetime-forcing-boundary',
+    's0-field-thomson-scattering',
+]);
+const SCALE0_INLINE_MOCK_SCENARIOS = new Set([
+    's0-field-thomson-scattering',
 ]);
 const SCALE0_SCENARIO_VISUAL_PROFILES = {
     's0-field-spacetime-forcing-boundary': {
@@ -113,6 +117,7 @@ const FTD_PHYSICS_WORKER = (typeof window !== 'undefined' && window.__ftdPhysics
     : true;
 export function workerEligible(scenarioId, bridge) {
     return FTD_PHYSICS_WORKER
+        && !SCALE0_INLINE_MOCK_SCENARIOS.has(scenarioId)
         && typeof SharedArrayBuffer !== 'undefined'
         && globalThis.crossOriginIsolated === true
         && shouldUseFluxMock(bridge, scenarioId);
