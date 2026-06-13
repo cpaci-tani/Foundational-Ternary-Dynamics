@@ -137,6 +137,18 @@ stay at machine noise; the native emergent flux-gradient path leaves an
 above-gate residual. The frozen transverse-centroid subtype does not fire. No
 alpha, Thomson cross-section, or QED amplitude claim is promoted.
 
+## Thomson radiation shell meter (FTD-0290; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0290** Thomson radiation shell meter | `preregister-thomson-radiation-shells-v1` | `8ccfee7b` | engine artifact `engine/tests/campaign_thomson_radiation_shells.cpp` SHA256 `a47de9c1bb52f92a6dc35471f4eba516fb76acaf9b66abd3de44dd6431d67edf` | build target `campaign_thomson_radiation_shells`; run `ctest --test-dir engine/build -C Release -R "^thomson_radiation_shells$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md`](ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md): `NO_BASELINE_SUBTRACTED_OUTWARD_POWER` |
+
+This campaign follows FTD-0289. It computes `S_res = (-W_res) × curl(J_res)`
+from the baseline-subtracted residual field and sums outward radial Poynting
+power on fixed shells `{5,7,9,11,13,15}`. Locked and legacy shell powers are
+machine-zero; the native emergent trace remains below the frozen gate. No
+radiation, Thomson cross-section, QED amplitude, or alpha claim is promoted.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
