@@ -87,17 +87,18 @@ It does not search couplings. It freezes three distinct outcomes before any
 future no-alpha-input engine measurement: native unit response (`NATIVE-NULL`),
 external matching/Postulate-W, and a much stricter `DYNAMICAL-FOUND` branch.
 
-## Alpha no-alpha engine probe (FTD-0285; 2026-06-13, lock pending)
+## Alpha no-alpha engine probe (FTD-0285; 2026-06-13, locked/run invalidated)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0285** alpha no-alpha engine probe | `preregister-alpha-no-alpha-engine-probe-v1` (to be applied before run of record) | (pending lock) | engine artifact `engine/tests/campaign_alpha_no_alpha_probe.cpp` SHA256 `883a917358077f626e90f5affacabd8e565f48fd1cc00aa775ac6e4c7ffbdade` | build target `campaign_alpha_no_alpha_probe`; run `ctest --test-dir engine/build -C Release -R "^alpha_no_alpha_probe$" --output-on-failure` | console/CTest output; analysis doc pending after run | [`PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`](preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md) (pre-reg only until tag/run) |
+| **FTD-0285** alpha no-alpha engine probe | `preregister-alpha-no-alpha-engine-probe-v1` | `cce615b0` | engine artifact `engine/tests/campaign_alpha_no_alpha_probe.cpp` SHA256 `883a917358077f626e90f5affacabd8e565f48fd1cc00aa775ac6e4c7ffbdade` | build target `campaign_alpha_no_alpha_probe`; run `ctest --test-dir engine/build -C Release -R "^alpha_no_alpha_probe$" --output-on-failure` | console/CTest output | [`ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`](ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md): `INVALIDATED_PROTOCOL_OR_ENGINE_DRIFT` |
 
 This probe is the first FTD-0284 engine artifact. Its native arm disables
 known alpha leak paths (`coupling`, damping, force/Poisson/Lorentz hooks) and
 tests whether the no-alpha Gauss projection yields unit geometric Coulomb or
 the master-quadratic normalization. Its Postulate-W arm is a positive control,
-not a derivation.
+not a derivation. The v1 run invalidated the absolute Phase-G gate for this
+finite live-engine protocol; it did not produce a dynamical alpha result.
 
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
