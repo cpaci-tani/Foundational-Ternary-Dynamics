@@ -1,6 +1,9 @@
 import { createTickAccumulator } from '../../scale-utils.js';
 
 export const FIELD_TOGGLE_KEYS = [
+    // Visual-only overlay flags — toggling these affects rendering ONLY.
+    // They never change physics toggles, tick cadence, or scenario physics.
+    // Derived quantities are read from the active bridge's last-tick state.
     'showEField',
     'showBField',
     'showPoynting',

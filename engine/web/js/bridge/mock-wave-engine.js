@@ -38,6 +38,9 @@ export class MockWaveEngine {
         this._sparseEps = 0;
 
         this._spongeTable = null;
+
+        /** Per-axis reusable slice buffers (§7-H — avoids N² alloc per upload). */
+        this._fluxSliceBufs = [null, null, null];
     }
 
     _initFluxGrid() {
@@ -580,11 +583,23 @@ export class MockWaveEngine {
         this._fluxDirty = false;
     }
 
+    _fluxSliceBuffer(axis) {
+        const N = this.latticeSize;
+        const need = N * N;
+        let buf = this._fluxSliceBufs[axis];
+        if (!buf || buf.length !== need) {
+            buf = new Float64Array(need);
+            this._fluxSliceBufs[axis] = buf;
+        }
+        return buf;
+    }
+
     getFluxSlice(axis, index) {
         if (!this._fluxJ) this._initFluxGrid();
         this._updateFluxMag();
         const N = this.latticeSize;
-        const data = new Float64Array(N * N);
+        const ax = axis | 0;
+        const data = this._fluxSliceBuffer(ax >= 0 && ax <= 2 ? ax : 0);
         for (let a = 0; a < N; a++) {
             for (let b = 0; b < N; b++) {
                 let idx;

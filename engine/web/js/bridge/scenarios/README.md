@@ -34,6 +34,22 @@ it is the drift guard.
 Plus:
 - `index.js` — dispatcher (chains the 6 group files in prefix order)
 - `_helpers.js` — shared primitives (`injectRadialEnvelope`, `injectParticleFull`, `injectDressedParticle`, `injectTriad`, `applyVacuumEnvironment`, `TRIAD_ANGLES`)
+- `physics-lattice.js` — reference-lattice scaling (`PHYSICS_REFERENCE_L = 33`); see below
+
+## Fixed-voxel physics vs visual scaling
+
+Changing lattice size **N** adds or removes total volume. Localized setup
+(particles, Gaussian blobs, dipole separation, dressed electrons) uses
+**fixed voxel counts** via `ctx.vox()`, `ctx.sigma()`, and `ctx.band()` —
+an electron's dressing radius stays ~4 voxels whether N is 33 or 129; larger
+lattices leave more empty space for waves to propagate through.
+
+Values are authored at **`PHYSICS_REFERENCE_L = 33`** but do **not** scale
+with N. Deliberate exceptions (corner heat at `N/4`, infinite-well walls,
+plane-wave `k = 2πn/N`) still use N so box-filling patterns use the extra volume.
+
+The **`flux-point-scale`** slider is render-only (glyph size); it does not
+change injected physics.
 
 ## Dependencies
 
@@ -47,7 +63,7 @@ A scenario group file exports `setupXxxScenario(name, harness, ctx)`:
 
 1. Returns `true` if it handled the scenario; `false` if the prefix didn't match.
 2. Throws on a known prefix with malformed scenario name (do not silently fall through).
-3. Receives a `harness` (2nd arg) exposing injection methods (`harness.injectParticle`, `harness.injectFlux`, `harness.injectWaveVel`); `ctx = {N, mid, midF}` (3rd arg) carries precomputed lattice-center params. On the legacy in-thread MockBridge fallback the body is `.call`'d with the bridge as `this`.
+3. Receives a `harness` (2nd arg) exposing injection methods (`harness.injectParticle`, `harness.injectFlux`, `harness.injectWaveVel`); `ctx` (3rd arg) carries `{ N, mid, midF, vox, sigma, band, … }` from `physics-lattice.js`. On the legacy in-thread MockBridge fallback the body is `.call`'d with the bridge as `this`.
 4. MUST use shared helpers from `_helpers.js` for radial envelopes and triad placement.
 5. MUST mirror the C++ scenario body (positions, charges, locked flags). When drift is intentional (e.g., visual cue not matching strict physics), document it inline.
 

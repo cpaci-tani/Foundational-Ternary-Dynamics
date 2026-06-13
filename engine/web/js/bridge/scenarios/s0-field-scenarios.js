@@ -23,7 +23,7 @@ import { COULOMB_K_FORCE, K_B, C_SPEED } from '../../constants.js';
  */
 export function setupS0FieldScenario(name, harness, ctx) {
     if (!name.startsWith('s0-field-')) return false;
-    const { N, midF } = ctx;
+    const { N, midF, vox, sigma: sig } = ctx;
             const mc  = Math.round(midF);
 
             switch (name) {
@@ -101,11 +101,11 @@ export function setupS0FieldScenario(name, harness, ctx) {
 
                 case 's0-field-photon-pulse': {
                     // Gaussian-enveloped plane wave, z-polarized, propagating +x
-                    const sigma  = Math.max(3, Math.floor(N / 8));
+                    const pulseSigma = sig(4);
                     const amp    = K_B * 2;
-                    const lambdaEff = 4 * sigma;
+                    const lambdaEff = 4 * pulseSigma;
                     const k      = 2 * Math.PI / lambdaEff;
-                    const cutR   = 3.0 * sigma;
+                    const cutR   = 3.0 * pulseSigma;
                     const cutR2  = cutR * cutR;
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
@@ -113,7 +113,7 @@ export function setupS0FieldScenario(name, harness, ctx) {
                         const dx = x - mc, dy = y - mc, dz = z - mc;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         if (r2 > cutR2) continue;
-                        const g     = Math.exp(-r2 / (2 * sigma * sigma));
+                        const g     = Math.exp(-r2 / (2 * pulseSigma * pulseSigma));
                         if (g < 1e-6) continue;
                         const phase = k * dx;
                         const jz    = amp * g * Math.sin(phase);
@@ -195,7 +195,7 @@ export function setupS0FieldScenario(name, harness, ctx) {
 
                 case 's0-field-electric-dipole': {
                     // Two charges along x-axis separated by N/8
-                    const sep  = Math.max(2, Math.floor(N / 8));
+                    const sep  = vox(4);
                     const half = Math.floor(sep / 2);
                     const px   = mc + half, nx = mc - half;
                     harness.injectParticle(px, mc, mc, +1);
@@ -228,7 +228,7 @@ export function setupS0FieldScenario(name, harness, ctx) {
 
                 case 's0-field-magnetic-dipole': {
                     // Current loop in the xy-plane, moment along z
-                    const loopR = Math.max(3, Math.floor(N / 8));
+                    const loopR = vox(4);
                     const amp   = K_B;
                     // For each angular position, find nearest lattice sites
                     const nAngles = Math.max(36, loopR * 8);
