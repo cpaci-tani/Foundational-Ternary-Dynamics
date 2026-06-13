@@ -2,11 +2,13 @@
 
 **FTD ID:** FTD-0290
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0289 Thomson flux-excess discriminator
 **Engine artifact:** `engine/tests/campaign_thomson_radiation_shells.cpp`
 **Artifact SHA256:** `a47de9c1bb52f92a6dc35471f4eba516fb76acaf9b66abd3de44dd6431d67edf`
+**Lock commit:** `8ccfee7b`
 **Lock tag:** `preregister-thomson-radiation-shells-v1`
+**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md`
 
 ---
 
