@@ -8,6 +8,13 @@ CONJECTURE] to [THEOREM].
 mechanisms, and the tests that would discriminate. Does NOT solve
 the problem.
 
+> **2026-06-13 continuation note.** FTD-0242 and FTD-0244 sharpened this from
+> "find an operator readout" to "test whether dynamics selects a coupling."
+> The next registered step is FTD-0284,
+> `../preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`: a lock-pending
+> discriminator that keeps native unit response, external Postulate-W matching,
+> and any future no-alpha-input engine measurement formally separate.
+
 ---
 
 ## 1 · The problem stated precisely

@@ -120,6 +120,7 @@ Methodology committed before measurement. See `REF_PREREGISTER_MANIFEST.md` for 
 | [`PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md`](preregistrations/PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md) | [PRE-REGISTRATION] | FTD-0233: Determinant Grading Pre-Registration locking design and verification. |
 | [`PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md`](preregistrations/PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md) | [PRE-REGISTRATION] | FTD-0234: J-twisted det_ζ ratio odd-period Pre-Registration locking design and verification. |
 | [`PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md`](preregistrations/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md) | [PRE-REGISTRATION] | FTD-0235: detdet_ζ identity Pre-Registration locking design and verification. |
+| [`PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`](preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md) | [PRE-REGISTRATION -- LOCK PENDING] | FTD-0284: Alpha dynamical readout discriminator after FTD-0242/0244; freezes native-vs-Postulate-W outcomes before any no-alpha-input engine coupling measurement. |
 | [`PREREG_ATOMIC_SECTOR_HARDENING_v1.md`](preregistrations/PREREG_ATOMIC_SECTOR_HARDENING_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0280: atomic-sector replay/manifest hardening for FTD-0278/0279; run confirmed replay. See `ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md`. |
 | [`PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md`](preregistrations/PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0281: engine-native live Coulomb clock hook; hook smoke confirmed, FFT spectroscopy verdict still downstream. |
 | [`PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md`](preregistrations/PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0282: fixed-import negative boundary confirmed for exchange, ortho/para splitting, and correlation under I1+I2+I3. |
@@ -174,4 +175,4 @@ Archived material is preserved for provenance — cite it to explain "why this r
 
 ---
 
-**Live document count:** 56 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 12 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 4 STATUS/ANALYSIS, 16 PREREG, 3 Frontier-4 graviton, 8 AUDIT.
+**Live document count:** 57 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 12 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 4 STATUS/ANALYSIS, 17 PREREG, 3 Frontier-4 graviton, 8 AUDIT.
