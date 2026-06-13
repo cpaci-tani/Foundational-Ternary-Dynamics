@@ -104,6 +104,14 @@ struct TermToggles {
     // [SELECTION] (no ℏ in the substrate). Stability bound: ω₀·dt < 2.
     double omega0 = 1.0;
 
+    // FTD-0276 (2026-06-12): runtime kinetic-drain knob. Fraction of wave_vel
+    // consumed at a genesis manifestation event (latent heat of mass-gap
+    // creation; v.wave_vel *= (1 − kinetic_drain)). Default 0.5 reproduces the
+    // legacy constexpr K_GENESIS_KINETIC_DRAIN exactly (golden-neutral). Honored
+    // on both CPU and GPU single-substrate paths. Exposed to test whether the
+    // cluster-efficiency k_eff scales as drain² (Leg A of FTD-0276).
+    double kinetic_drain = 0.5;
+
     // ── Generated helpers — bodies live in this header (header-only,
     // POD struct preserved). Implementations below TOGGLE_SPECS[]. ────
     bool validate(std::string* err = nullptr) const;
