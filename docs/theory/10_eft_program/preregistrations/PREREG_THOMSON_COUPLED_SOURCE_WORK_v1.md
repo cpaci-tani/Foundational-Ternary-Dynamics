@@ -2,11 +2,11 @@
 
 **FTD ID:** FTD-0296
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED/PENDING RUN]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0295 Source-free discrete tick local continuity v2
 **Engine artifact:** `engine/tests/campaign_thomson_coupled_source_work.cpp`
 **Artifact SHA256:** `95747a57895973577e0054d075752b79e74173507097652e31498b125d7ec88e`
-**Lock commit:** pending pre-run lock commit
+**Lock commit:** `5d88062e`
 **Lock tag:** `preregister-thomson-coupled-source-work-v1`
 **Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md`
 
