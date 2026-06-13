@@ -793,6 +793,10 @@ target_link_libraries(campaign_alpha_no_alpha_probe ftd_core)
 add_executable(campaign_alpha_estimator_validation tests/campaign_alpha_estimator_validation.cpp)
 target_link_libraries(campaign_alpha_estimator_validation ftd_core)
 
+# FTD-0287 - Thomson dashboard observatory companion campaign.
+add_executable(campaign_thomson_recoil_observatory tests/campaign_thomson_recoil_observatory.cpp)
+target_link_libraries(campaign_thomson_recoil_observatory ftd_core)
+
 # Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
 # Tests whether the flux field's circulation is quantised (i.e., can
 # topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
@@ -1948,6 +1952,9 @@ set_tests_properties(alpha_no_alpha_probe PROPERTIES LABELS "eft;alpha;campaign"
 # FTD-0286 - alpha estimator validation
 add_test(NAME alpha_estimator_validation COMMAND campaign_alpha_estimator_validation)
 set_tests_properties(alpha_estimator_validation PROPERTIES LABELS "eft;alpha;campaign" TIMEOUT 600)
+# FTD-0287 - Thomson dashboard observatory companion campaign
+add_test(NAME thomson_recoil_observatory COMMAND campaign_thomson_recoil_observatory)
+set_tests_properties(thomson_recoil_observatory PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
