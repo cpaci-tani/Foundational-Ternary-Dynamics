@@ -113,6 +113,18 @@ returned `ENERGY_FUNCTIONAL_MISMATCH`: matched projection converged, but the
 field-energy observable still missed the analytic normalization. It does not
 include a Postulate-W arm and cannot promote `x_+ = 1/alpha`.
 
+## Thomson unlocked recoil (FTD-0288; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0288** Thomson unlocked recoil | `preregister-thomson-unlocked-recoil-v1` | `7260b274` | engine artifact `engine/tests/campaign_thomson_unlocked_recoil.cpp` SHA256 `f43194598188bab303eecbdebcf99655118f90d2024279ed3a8a56607d864acc` | build target `campaign_thomson_unlocked_recoil`; run `ctest --test-dir engine/build -C Release -R "^thomson_unlocked_recoil$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_UNLOCKED_RECOIL_v1.md`](ANALYSIS_THOMSON_UNLOCKED_RECOIL_v1.md): `NATIVE_EMERGENT_FLUX_GRADIENT_RECOIL_DETECTED` |
+
+This campaign follows FTD-0287. It unlocks the charge and separates native
+legacy force, native emergent flux-gradient force, and an explicitly imposed
+diagnostic qE hook. The native emergent arm recoils deterministically; legacy
+does not. The diagnostic qE arm responds transversely but remains imposed. No
+alpha, Thomson cross-section, or QED amplitude claim is promoted.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
