@@ -801,6 +801,10 @@ target_link_libraries(campaign_thomson_recoil_observatory ftd_core)
 add_executable(campaign_thomson_unlocked_recoil tests/campaign_thomson_unlocked_recoil.cpp)
 target_link_libraries(campaign_thomson_unlocked_recoil ftd_core)
 
+# FTD-0289 - baseline-subtracted Thomson flux-excess discriminator.
+add_executable(campaign_thomson_flux_excess tests/campaign_thomson_flux_excess.cpp)
+target_link_libraries(campaign_thomson_flux_excess ftd_core)
+
 # Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
 # Tests whether the flux field's circulation is quantised (i.e., can
 # topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
@@ -1962,6 +1966,9 @@ set_tests_properties(thomson_recoil_observatory PROPERTIES LABELS "em;campaign;o
 # FTD-0288 - unlocked Thomson recoil native/diagnostic discriminator
 add_test(NAME thomson_unlocked_recoil COMMAND campaign_thomson_unlocked_recoil)
 set_tests_properties(thomson_unlocked_recoil PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
+# FTD-0289 - baseline-subtracted Thomson flux-excess discriminator
+add_test(NAME thomson_flux_excess COMMAND campaign_thomson_flux_excess)
+set_tests_properties(thomson_flux_excess PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
