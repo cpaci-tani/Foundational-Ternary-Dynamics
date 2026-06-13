@@ -164,7 +164,7 @@ void phase_forces_main_loop(RenderBridge& rb) {
         // Three-regime force profile (matches GPU kernels_forces.cu):
         //   r < COLOR_COULOMB_RADIUS:    Coulomb (asymptotic freedom)
         //   transition:                  Flux tube stretching
-        //   r >= COLOR_TRANSITION_RADIUS: Linear confinement (constant string tension)
+        //   r >= COLOR_TRANSITION_RADIUS: Harmonic confinement (F ∝ r, V ∝ r²)
         double F_mag;
         if (r < COLOR_COULOMB_RADIUS) {
           F_mag = as * cf / r2;

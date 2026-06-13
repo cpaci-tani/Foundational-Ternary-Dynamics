@@ -98,7 +98,13 @@ class GenesisField:
     def __init__(self, L, amplitude, seed,
                  use_gauss=True, gauss_mode="fft", sor_iters=150,
                  use_coupling=True, drain=DEFAULT_DRAIN,
-                 charge_coupling=1.0):
+                 charge_coupling=1.0, gamma=0.0):
+        # FTD-0276 Leg B (2026-06-12): gamma = extra wave_vel friction per tick,
+        # modelling the DISSIPATIVE part of the engine Langevin OU drift
+        # (v ← v(1−γ); thermal kick √(2γT)ξ NOT added — this is a deterministic
+        # friction map, not a thermal bath). Default 0.0 reproduces the
+        # FTD-0269-locked behavior byte-for-byte (the v1 lock binds the file at
+        # its lock commit; this no-op-default knob is a post-lock extension).
         self.L = L
         self.N = L * L * L
         self.A = amplitude
@@ -109,6 +115,7 @@ class GenesisField:
         self.use_coupling = use_coupling
         self.drain = drain
         self.charge_coupling = charge_coupling
+        self.gamma = gamma
 
         self.flux = np.zeros((self.N, 3))
         self.wave_vel = np.zeros((self.N, 3))
@@ -239,6 +246,8 @@ class GenesisField:
         self.flux += self.wave_vel
         self.flux *= (1.0 - DAMPING)
         self.wave_vel *= (1.0 - DAMPING)
+        if self.gamma:                       # FTD-0276 Leg B friction knob (no-op at 0.0)
+            self.wave_vel *= (1.0 - self.gamma)
 
         jmag2 = np.sum(self.flux ** 2, axis=1)
         cand = np.where((self.state == 0) & (jmag2 > K_GENESIS ** 2))[0]
@@ -314,6 +323,8 @@ def main():
     ap.add_argument("--sor-iters", type=int, default=150)
     ap.add_argument("--coupling", choices=["on", "off"], default="on")
     ap.add_argument("--drain", type=float, default=DEFAULT_DRAIN)
+    ap.add_argument("--gamma", type=float, default=0.0,
+                    help="FTD-0276 Leg B: extra wave_vel friction per tick (0=v1 default)")
     ap.add_argument("--sweep", action="store_true",
                     help="run the FTD-0261 11-point amplitude grid")
     ap.add_argument("--firing", action="store_true",
@@ -325,7 +336,7 @@ def main():
 
     kw = dict(use_gauss=(args.gauss == "on"), gauss_mode=args.gauss_mode,
               sor_iters=args.sor_iters, use_coupling=(args.coupling == "on"),
-              drain=args.drain)
+              drain=args.drain, gamma=args.gamma)
 
     print(f"# FTD-0110 N(A) forward model | L={args.L} seeds={args.seeds} "
           f"gauss={args.gauss}/{args.gauss_mode} coupling={args.coupling} drain={args.drain}")
