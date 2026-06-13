@@ -55,6 +55,8 @@ void phase_read_main_loop(RenderBridge& rb) {
   // (native flux is massless, A0). Strictly additive and gated below; with the
   // toggle OFF this is a dead branch, so the golden hash is unaffected.
   const bool do_db_clock = rb.toggles.de_broglie_clock;
+  const bool do_db_clock_coulomb = do_db_clock && rb.toggles.db_clock_coulomb;
+  const double omega0 = rb.toggles.omega0;
   const double omega0_sq = rb.toggles.omega0 * rb.toggles.omega0;
 
   const TernaryField& state = rb.ternary_field();
@@ -123,8 +125,15 @@ void phase_read_main_loop(RenderBridge& rb) {
             rb.delta_j_R_[i] += grad_s + curl_sv;
           }
 
-          // FTD-0271: de Broglie internal clock — KG mass term −ω₀²·J at matter.
-          if (do_db_clock && rb.voxels_[i].state != 0) {
+          // FTD-0271/0281: de Broglie clock. The legacy clock is a matter-site
+          // rest term. The FTD-0281 diagnostic is the operator-spectroscopy
+          // version: all clocked field sites feel V=-phi_C, matching
+          // omega_eff^2 = omega0^2 + 2*omega0*V from FTD-0278.
+          if (do_db_clock_coulomb) {
+            const double omega_eff_sq = omega0_sq - 2.0 * omega0 * rb.phi_coulomb_[i];
+            rb.delta_j_L_[i] -= rb.voxels_[i].flux_L * omega_eff_sq;
+            rb.delta_j_R_[i] -= rb.voxels_[i].flux_R * omega_eff_sq;
+          } else if (do_db_clock && rb.voxels_[i].state != 0) {
             rb.delta_j_L_[i] -= rb.voxels_[i].flux_L * omega0_sq;
             rb.delta_j_R_[i] -= rb.voxels_[i].flux_R * omega0_sq;
           }
@@ -179,8 +188,12 @@ void phase_read_main_loop(RenderBridge& rb) {
             rb.delta_j_[i] += ::ftd::curl_state_velocity_op(state, rb.voxels_, lat, ix, iy, iz) * G_C;
           }
 
-          // FTD-0271: de Broglie internal clock — KG mass term −ω₀²·J at matter.
-          if (do_db_clock && rb.voxels_[i].state != 0) {
+          // FTD-0271/0281: de Broglie clock. See the dual-substrate branch
+          // above for the FTD-0281 all-site Coulomb-coupled diagnostic.
+          if (do_db_clock_coulomb) {
+            const double omega_eff_sq = omega0_sq - 2.0 * omega0 * rb.phi_coulomb_[i];
+            rb.delta_j_[i] -= rb.voxels_[i].flux * omega_eff_sq;
+          } else if (do_db_clock && rb.voxels_[i].state != 0) {
             rb.delta_j_[i] -= rb.voxels_[i].flux * omega0_sq;
           }
         }

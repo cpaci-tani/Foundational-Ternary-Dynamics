@@ -329,6 +329,8 @@ ftd_add_test(test_de_broglie_clock tests/test_de_broglie_clock.cpp
              CTEST_NAME de_broglie_clock TIMEOUT 120 LABELS unit quantum)
 ftd_add_test(test_de_broglie_redshift tests/test_de_broglie_redshift.cpp
              CTEST_NAME de_broglie_redshift TIMEOUT 120 LABELS unit quantum)
+ftd_add_test(test_db_clock_coulomb tests/test_db_clock_coulomb.cpp
+             CTEST_NAME db_clock_coulomb TIMEOUT 120 LABELS unit quantum atomic)
 # Phase E: the guidance MEASUREMENT (the heart of pilot-wave). Asks whether the
 # discrete cluster follows the flux phase gradient grad(S). Prints a verdict
 # token (EMERGENT/ABSENT/INCONCLUSIVE); CTest checks non-vacuity only.

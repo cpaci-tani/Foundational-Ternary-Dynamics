@@ -560,6 +560,15 @@ void RenderBridge::tick() {
   // phase_read (it writes delta_j), so phase_read must run when the clock is on
   // even if the wave and coupling terms are both off (the pure k=0 rest-frame
   // clock: each manifested voxel oscillates at omega0 with no spatial term).
+  //
+  // FTD-0281: db_clock_coulomb is a CPU/RenderBridge spectroscopy diagnostic
+  // for the FTD-0278 operator. It needs the live Coulomb potential before
+  // phase_read so the diagonal KG term can read V(r) on the same tick. Forces
+  // are validation-conflicted with this toggle, so this pre-read solve is the
+  // only Coulomb solve in the v1 diagnostic phase order.
+  if (toggles.db_clock_coulomb)
+    solve_coulomb_poisson();
+
   if (toggles.wave_propagation || toggles.coupling || toggles.de_broglie_clock)
     phase_read();
 
