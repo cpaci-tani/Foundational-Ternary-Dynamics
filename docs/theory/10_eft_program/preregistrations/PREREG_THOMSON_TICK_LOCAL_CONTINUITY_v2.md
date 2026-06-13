@@ -2,11 +2,11 @@
 
 **FTD ID:** FTD-0295
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED/PENDING RUN]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0294 Source-free discrete tick local continuity v1
 **Engine artifact:** `engine/tests/campaign_thomson_tick_local_continuity_v2.cpp`
 **Artifact SHA256:** `9b48ca418e784ba98e35708563214b22c78cf2580f880fda9fa923cef4c7a804`
-**Lock commit:** pending pre-run lock commit
+**Lock commit:** `1d4a29a5`
 **Lock tag:** `preregister-thomson-tick-local-continuity-v2`
 **Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v2.md`
 
