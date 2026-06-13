@@ -161,6 +161,29 @@ locked-linear residual controls pass, but the candidate current fails the
 free-wave balance gate, so no native radiation, source, Thomson cross-section,
 QED amplitude, or alpha claim is promoted.
 
+## Source-free discrete tick energy invariant v1 (FTD-0292; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0292** Source-free discrete tick energy invariant v1 | `preregister-thomson-tick-invariant-v1` | `87f0cda2` | engine artifact `engine/tests/campaign_thomson_tick_invariant.cpp` SHA256 `5e6e2b77796d8a91f02bc7b2a85c9c862dd1f4e91b832be19ae5d5b41c455e16` | build target `campaign_thomson_tick_invariant`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_invariant$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_INVARIANT_v1.md`](ANALYSIS_THOMSON_TICK_INVARIANT_v1.md): `DISCRETE_TICK_INVARIANT_INVALIDATED` |
+
+This campaign follows FTD-0291. It tests the modified energy of the source-free
+tick with ordinary double accumulation. The modified energy stayed much tighter
+than naive energy but missed the frozen relative gate; v1 is a numeric-gate
+invalidation, not a promoted theorem.
+
+## Source-free discrete tick energy invariant v2 (FTD-0293; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0293** Source-free discrete tick energy invariant v2 | `preregister-thomson-tick-invariant-v2` | `83863d5e` | engine artifact `engine/tests/campaign_thomson_tick_invariant_v2.cpp` SHA256 `c362d35e1a2c61216982bb7ae2c8cf4ee916e59f1e3bcc77a62cee993caa8b5f` | build target `campaign_thomson_tick_invariant_v2`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_invariant_v2$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_INVARIANT_v2.md`](ANALYSIS_THOMSON_TICK_INVARIANT_v2.md): `DISCRETE_TICK_MODIFIED_ENERGY_CONFIRMED` |
+
+This campaign keeps the v1 update, initial condition, invariant formula, and
+gates, but measures with long-double Kahan accumulation. It confirms the
+source-free modified tick energy while the naive continuum energy visibly
+drifts. No radiation, Thomson cross-section, QED amplitude, or alpha claim is
+promoted.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |

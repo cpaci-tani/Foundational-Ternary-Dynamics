@@ -2,11 +2,11 @@
 
 **FTD ID:** FTD-0293
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED/PENDING RUN]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0292 Source-free discrete tick energy invariant v1
 **Engine artifact:** `engine/tests/campaign_thomson_tick_invariant_v2.cpp`
 **Artifact SHA256:** `c362d35e1a2c61216982bb7ae2c8cf4ee916e59f1e3bcc77a62cee993caa8b5f`
-**Lock commit:** pending pre-run lock commit
+**Lock commit:** `83863d5e`
 **Lock tag:** `preregister-thomson-tick-invariant-v2`
 **Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_TICK_INVARIANT_v2.md`
 
