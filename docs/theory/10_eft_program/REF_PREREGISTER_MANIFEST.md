@@ -125,6 +125,20 @@ diagnostic qE hook. The native emergent arm recoils deterministically; legacy
 does not. The diagnostic qE arm responds transversely but remains imposed. No
 alpha, Thomson cross-section, or QED amplitude claim is promoted.
 
+## Halo-exponent forcedness audit (FTD-0290; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0290** halo-exponent forcedness | `preregister-halo-forcedness-v1` | `168148e0` | engine `engine/tests/campaign_halo_forcedness.cpp` SHA256 `84f7c407bbdc3bd8e9530235f828dec68c90a9b48f3a39896635609ae92b188e`; analyzer `scripts/exploration/analyze_halo_forcedness.py` SHA256 `44f09ac4d01b3be40359266bf56bb77526524499e85d165316d60762c8c5ad76`; wrapper `scripts/exploration/run_halo_constant_sweeps.py` SHA256 `384bd0481dd332c3e339f4eed8dcbba1be392b85e7d8076a899d8f89abeee896` | GPU `engine/build_wsl`; `--arm=det --Ls=64,96,128,160 --selective=on,off --toggles=minimal --ticks=1500` | `engine/results/halo_forcedness/halo_forcedness_v1.csv` | [`ANALYSIS_HALO_FORCEDNESS_v1.md`](ANALYSIS_HALO_FORCEDNESS_v1.md): `INDETERMINATE (frozen); SPARC boundary` |
+
+Gate (Step 1) of the dark-matter / SPARC rotation-curve program. The lossless dark-matter
+halo (`selective_damping = ON`, §4.2) **box-fills** the periodic lattice (`r_eff ≈ L/2`)
+yet its windowed exponent **converges to −1.25** (the doc's −0.69 is an L=64 transient,
+**falsified**) → R1 **INDETERMINATE** (box-fill ⇒ not localized-forced; convergent ⇒ not
+drift-tuned). The damped Coulomb near-field (`selective OFF`) is the only forced, localized
+self-field (−2.15, localized, R0 PASS). **SPARC not founded** (box-fill ⇒ no localized
+scale). Golden `0x56fa28acb5b9fe88` green; observation-only; zero promotions.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
