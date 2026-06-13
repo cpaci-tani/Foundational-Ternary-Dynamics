@@ -1,5 +1,19 @@
 # ANALYSIS -- Atomic paradigm campaign FTD-0280 through FTD-0283
 
+> **CROSS-CUTTING CORRECTION (2026-06-12, from a parallel session's adversarial audit —
+> [`../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md`](../03_derivations/foundational_mechanics/CORRECTION_FTD0278_HYDROGEN_MULTIPLET.md)).**
+> The FTD-0278 hydrogen **"n=2 multiplet / O_h T1u triple / Rydberg ladder"** was found
+> OVERCLAIMED and corrected to **HYDROGEN-1s-CONFIRMED**: in most record cells only the 1s
+> is bound, and the "exactly degenerate T1u triple" is **torus momentum degeneracy, not
+> bound 2p orbitals** (independently verified: the degeneracy survives a *repulsive* core).
+> **Bearing on this campaign:** `gap12` is **1s-dominated** (the most-negative term is the
+> 1s), so the **FTD-0283** `gap12/Z²` ladder is effectively a *1s-binding-vs-Z²* test — its
+> falsification (spread 0.397 > 0.25) **STANDS**, now understood as the finite-lattice 1s
+> not scaling cleanly as Z² (consistent with this campaign's NEGATIVE-BOUNDARY verdict).
+> **FTD-0282** (exchange/correlation wall) is unaffected in substance (it concerns
+> unrepresented physics, not the multiplet) but should not cite a confirmed n=2 multiplet.
+> FTD-0281 (the engine hook) and the helium replay are unaffected.
+
 **Status:** `[MIXED RESULT -- CONDITIONAL SECTOR HARDENED; NO-NEW-KNOB LADDER FALSIFIED]`  
 **Date:** 2026-06-13  
 **Lock commit:** `fe55b42f`  
