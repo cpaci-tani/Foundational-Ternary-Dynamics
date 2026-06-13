@@ -2,13 +2,13 @@
 
 **FTD ID:** FTD-0297
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0296 Fixed-charge coupled tick source/work continuity
 **Engine artifact:** `engine/tests/campaign_thomson_moving_recoil_accounting.cpp`
 **Artifact SHA256:** `aae604ea897943102273f89b819735283804474d26a2a531f769835dc46f5c89`
-**Lock commit:** pending pre-run commit
+**Lock commit:** `0ba544f5`
 **Lock tag:** `preregister-thomson-moving-recoil-accounting-v1`
-**Run analysis:** pending
+**Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md`
 
 ---
 

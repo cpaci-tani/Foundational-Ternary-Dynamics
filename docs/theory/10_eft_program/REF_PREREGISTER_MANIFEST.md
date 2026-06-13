@@ -215,6 +215,17 @@ locked charge and movement off. The native source/work term closes the
 finite-volume balance at roundoff. Moving-source recoil accounting remains the
 next open target.
 
+## Thomson moving-recoil source/work accounting (FTD-0297; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0297** Thomson moving-recoil source/work accounting | `preregister-thomson-moving-recoil-accounting-v1` | `0ba544f5` | engine artifact `engine/tests/campaign_thomson_moving_recoil_accounting.cpp` SHA256 `aae604ea897943102273f89b819735283804474d26a2a531f769835dc46f5c89` | build target `campaign_thomson_moving_recoil_accounting`; run `ctest --test-dir engine/build -C Release -R "^thomson_moving_recoil_accounting$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md`](ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md): `SUBVOXEL_RECOIL_ACCOUNTED_BY_ADDITIVE_SOURCE_WORK` |
+
+This campaign unlocks the charge in native legacy and native emergent modes.
+The emergent mode recoils deterministically, but the fixed 200-tick protocol
+has zero integer transport events, so the additive source/work balance still
+closes at roundoff. Integer transport work remains open.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
