@@ -2,11 +2,11 @@
 
 **FTD ID:** FTD-0294
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED/PENDING RUN]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0293 Source-free discrete tick energy invariant v2
 **Engine artifact:** `engine/tests/campaign_thomson_tick_local_continuity.cpp`
 **Artifact SHA256:** `6b137c83016b9aefb10d47d22df0094487ab761c06e167870a209004ada99aa3`
-**Lock commit:** pending pre-run lock commit
+**Lock commit:** `7ebc236e`
 **Lock tag:** `preregister-thomson-tick-local-continuity-v1`
 **Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`
 
