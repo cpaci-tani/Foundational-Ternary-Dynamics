@@ -12,6 +12,7 @@ import { BellComponent } from './p1-observables/bell.js';
 import { GravityComponent } from './p1-observables/gravity.js';
 import { G2Component } from './p1-observables/g2.js';
 import { ThomsonComponent } from './p1-observables/thomson.js';
+import { FineStructureComponent } from './p1-observables/fine-structure.js';
 
 const PANEL_ID = 'p1-observables-panel';
 const UPDATE_INTERVAL_MS = 250;            // 4 Hz; observables are slow signals
@@ -174,6 +175,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
     const gravityComp = new GravityComponent();
     const g2Comp = new G2Component();
     const thomsonComp = new ThomsonComponent();
+    const fineStructureComp = new FineStructureComponent();
 
     coulombComp.mount(bodyEl);
     anisotropyComp.mount(bodyEl);
@@ -182,6 +184,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
     gravityComp.mount(bodyEl);
     g2Comp.mount(bodyEl);
     thomsonComp.mount(bodyEl);
+    fineStructureComp.mount(bodyEl);
 
     function update() {
         const now = performance.now();
@@ -198,6 +201,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
         gravityComp.update(bridge, scenarioId, now);
         g2Comp.update(bridge);
         thomsonComp.update(bridge, scenarioId);
+        fineStructureComp.update(bridge, scenarioId);
     }
 
     const HZ = Math.round(1000 / UPDATE_INTERVAL_MS);
@@ -215,6 +219,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
             gravityComp.unmount();
             g2Comp.unmount();
             thomsonComp.unmount();
+            fineStructureComp.unmount();
             if (activeModal) { try { activeModal.close(); } catch {} activeModal = null; }
             if (expandBtnRef && expandClickHandler) {
                 expandBtnRef.removeEventListener('click', expandClickHandler);

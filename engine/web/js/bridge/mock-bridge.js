@@ -125,6 +125,9 @@ export class MockBridge {
         this._forceEM = [];       // per-particle EM force {x,y,z}
         this._forceGravity = [];  // per-particle gravity force {x,y,z}
         this._forceStrong = [];   // per-particle strong/confinement force {x,y,z}
+        this._thomsonFluxBaseline = null;
+        this._thomsonFluxPrev = null;
+        this._thomsonFluxVelocity = null;
 
         // Cached energy sums
         this._energyCacheTick = -1;
@@ -627,6 +630,9 @@ export class MockBridge {
         this._forceGravity = [];
         this._forceStrong = [];
         this._energyCacheTick = -1;
+        this._thomsonFluxBaseline = null;
+        this._thomsonFluxPrev = null;
+        this._thomsonFluxVelocity = null;
         // Latency proxy is a derived per-tick cache; invalidate on reset so
         // a post-reset scenario load can't accidentally serve the prior
         // scenario's proxy when both happen to sit at _tick === 0.
@@ -793,6 +799,37 @@ export class MockBridge {
     getEnergyAudit() { return this._diagnostics.getEnergyAudit(); }
     getLagrangian()  { return this._diagnostics.getLagrangian(); }
 
+    _localFluxEnergyCentroid(cx, cy, cz, radius) {
+        if (!this._fluxJ || !this._fluxWV) {
+            return { x: 0, y: 0, z: 0, mag: 0, energy: 0, radius };
+        }
+        const N = this.latticeSize;
+        const r2max = radius * radius;
+        let eSum = 0;
+        let sx = 0, sy = 0, sz = 0;
+        for (let dz = -radius; dz <= radius; dz++)
+        for (let dy = -radius; dy <= radius; dy++)
+        for (let dx = -radius; dx <= radius; dx++) {
+            if (dx * dx + dy * dy + dz * dz > r2max) continue;
+            const x = ((cx + dx) % N + N) % N;
+            const y = ((cy + dy) % N + N) % N;
+            const z = ((cz + dz) % N + N) % N;
+            const idx = this._fluxIdx(x, y, z) * 3;
+            const jx = this._fluxJ[idx] || 0, jy = this._fluxJ[idx + 1] || 0, jz = this._fluxJ[idx + 2] || 0;
+            const wx = this._fluxWV[idx] || 0, wy = this._fluxWV[idx + 1] || 0, wz = this._fluxWV[idx + 2] || 0;
+            const e = 0.5 * (jx * jx + jy * jy + jz * jz + wx * wx + wy * wy + wz * wz);
+            eSum += e;
+            sx += dx * e;
+            sy += dy * e;
+            sz += dz * e;
+        }
+        if (eSum <= 0) return { x: 0, y: 0, z: 0, mag: 0, energy: 0, radius };
+        const x = sx / eSum;
+        const y = sy / eSum;
+        const z = sz / eSum;
+        return { x, y, z, mag: Math.sqrt(x * x + y * y + z * z), energy: eSum, radius };
+    }
+
     getThomsonScatteringMetrics() {
         if (!this._fluxJ || !this._fluxWV) {
             return { active: false, reason: 'no field buffers' };
@@ -830,10 +867,47 @@ export class MockBridge {
             if (d < -N / 2) d += N;
             return d;
         };
+        const fluxCentroid = this._localFluxEnergyCentroid(mc, mc, mc, 8);
+        if (!this._thomsonFluxBaseline) {
+            this._thomsonFluxBaseline = {
+                tick: this._tick,
+                x: fluxCentroid.x,
+                y: fluxCentroid.y,
+                z: fluxCentroid.z,
+            };
+        }
+        const fluxDelta = {
+            x: fluxCentroid.x - this._thomsonFluxBaseline.x,
+            y: fluxCentroid.y - this._thomsonFluxBaseline.y,
+            z: fluxCentroid.z - this._thomsonFluxBaseline.z,
+        };
+        fluxDelta.mag = Math.sqrt(fluxDelta.x * fluxDelta.x + fluxDelta.y * fluxDelta.y + fluxDelta.z * fluxDelta.z);
+        if (!this._thomsonFluxPrev) {
+            this._thomsonFluxPrev = { tick: this._tick, ...fluxDelta };
+            this._thomsonFluxVelocity = { x: 0, y: 0, z: 0, mag: 0 };
+        } else if (this._tick > this._thomsonFluxPrev.tick) {
+            const dt = this._tick - this._thomsonFluxPrev.tick;
+            const vx = (fluxDelta.x - this._thomsonFluxPrev.x) / dt;
+            const vy = (fluxDelta.y - this._thomsonFluxPrev.y) / dt;
+            const vz = (fluxDelta.z - this._thomsonFluxPrev.z) / dt;
+            this._thomsonFluxVelocity = { x: vx, y: vy, z: vz, mag: Math.sqrt(vx * vx + vy * vy + vz * vz) };
+            this._thomsonFluxPrev = { tick: this._tick, ...fluxDelta };
+        }
+        const poynting = audit?.totalPoynting ?? { x: 0, y: 0, z: 0 };
+        const poyntingMag = Math.sqrt((poynting.x ?? 0) ** 2 + (poynting.y ?? 0) ** 2 + (poynting.z ?? 0) ** 2);
         return {
             active: true,
             tick: this._tick,
             latticeSize: N,
+            toggles: {
+                wave_propagation: !!this._toggles.wave_propagation,
+                coupling: !!this._toggles.coupling,
+                forces: !!this._toggles.forces,
+                movement: !!this._toggles.movement,
+                poisson_coulomb: !!this._toggles.poisson_coulomb,
+                emergent_forces: !!this._toggles.emergent_forces,
+                gauss_projection: !!this._toggles.gauss_projection,
+            },
             center: {
                 x: mc, y: mc, z: mc,
                 fluxY: center?.fluxY ?? 0,
@@ -863,7 +937,12 @@ export class MockBridge {
                 wave: audit?.waveEnergy ?? 0,
                 total: audit?.totalEnergy ?? 0,
             },
-            poynting: audit?.totalPoynting ?? { x: 0, y: 0, z: 0 },
+            fluxCentroid: {
+                ...fluxCentroid,
+                delta: fluxDelta,
+                velocity: this._thomsonFluxVelocity || { x: 0, y: 0, z: 0, mag: 0 },
+            },
+            poynting: { ...poynting, mag: poyntingMag },
         };
     }
 
