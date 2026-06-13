@@ -11,6 +11,13 @@ const SCENARIO_IDS = new Set([
     's0-field-thomson-unlocked-recoil',
 ]);
 
+const FTD0289_CANONICAL = {
+    l2: 4.2546065759857619e-4,
+    relL2: 5.4899329705502643e-5,
+    maxAbs: 6.3648580289611865e-5,
+    localEnergy: 3.2674008350733898e-8,
+};
+
 const TEMPLATE = `
     <section data-section="thomson" ref="root" style="${cardStyle(260)};display:none;">
         <div ref="title" style="${titleStyle()}">Flux recoil observatory</div>
@@ -70,6 +77,8 @@ export class ThomsonComponent extends BaseComponent {
         const fc = m.fluxCentroid || {};
         const fd = fc.delta || {};
         const fv = fc.velocity || {};
+        const xr = m.excessResidual || {};
+        const xc = xr.localCentroid || {};
         const electron = m.electron
             ? `id ${m.electron.id}, locked=${m.electron.locked ? 'yes' : 'no'}`
             : 'not found';
@@ -94,9 +103,20 @@ export class ThomsonComponent extends BaseComponent {
             ${row('forward energy x+10', formatExp(e.forwardXPlus10R3))}
             ${row('Poynting Px', formatExp(p.x ?? 0))}
             ${row('Poynting |P|', formatExp(p.mag ?? 0))}
+            ${row('live excess |R|', formatExp(xr.l2 ?? 0), 'E')}
+            ${row('live excess rel', formatExp(xr.relL2 ?? 0), 'E')}
+            ${row('live excess max', formatExp(xr.maxAbs ?? 0), 'E')}
+            ${row('live excess local E', formatExp(xr.localEnergy ?? 0), 'E')}
+            ${row('live excess centroid', `${formatExp(xc.x ?? 0)}, ${formatExp(xc.y ?? 0)}, ${formatExp(xc.z ?? 0)}`, 'E')}
+            ${unlocked ? `
+                ${row('FTD-0289 C++ |R|', formatExp(FTD0289_CANONICAL.l2), 'M')}
+                ${row('FTD-0289 C++ rel', formatExp(FTD0289_CANONICAL.relL2), 'M')}
+                ${row('FTD-0289 C++ max', formatExp(FTD0289_CANONICAL.maxAbs), 'M')}
+                ${row('FTD-0289 local E', formatExp(FTD0289_CANONICAL.localEnergy), 'M')}
+            ` : ''}
             <div style="margin-top:8px;color:var(--text-muted);font-size:12px;line-height:1.35;">
                 ${tagBadge(unlocked ? 'M' : '~M')}${unlocked
-                    ? 'FTD-0288 channel: native emergent flux-gradient recoil. Primary observable is flux-energy centroid motion, not particle recoil.'
+                    ? 'Live JS residual uses plus minus beam minus charge inside the visual bridge. Exact C++ FTD-0289 run above is canonical; no alpha or cross-section claim.'
                     : 'Locked field observatory: FTD-0287 measured linear superposition with no unlocked flux-gradient recoil.'}
             </div>
         `;

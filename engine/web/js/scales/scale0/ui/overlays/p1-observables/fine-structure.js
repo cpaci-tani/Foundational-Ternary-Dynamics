@@ -20,6 +20,11 @@ const SCENARIO_IDS = new Set([
     's0-field-thomson-unlocked-recoil',
 ]);
 
+const FTD0289_CANONICAL = {
+    relL2: 5.4899329705502643e-5,
+    maxAbs: 6.3648580289611865e-5,
+};
+
 const TEMPLATE = `
     <section data-section="fine-structure" ref="root" style="${cardStyle(300)};display:none;">
         <div style="${titleStyle()}">Fine structure instrument</div>
@@ -83,6 +88,8 @@ export class FineStructureComponent extends BaseComponent {
         const fd = fc.delta || {};
         const p = m?.poynting || {};
         const e = m?.energy || {};
+        const xr = m?.excessResidual || {};
+        const xc = xr.localCentroid || {};
         const pyOverPx = Math.abs(p.x ?? 0) > 1e-15 ? (p.y ?? 0) / p.x : 0;
 
         this.refs.body.innerHTML = `
@@ -105,8 +112,14 @@ export class FineStructureComponent extends BaseComponent {
             ${row('|P|', formatExp(p.mag ?? 0), 'M')}
             ${row('P_y / P_x', formatExp(pyOverPx), 'M')}
             ${row('field / wave E', `${formatExp(e.field ?? 0)} / ${formatExp(e.wave ?? 0)}`, 'M')}
+            ${row('live residual |R|', formatExp(xr.l2 ?? 0), 'E')}
+            ${row('live residual rel', formatExp(xr.relL2 ?? 0), 'E')}
+            ${row('live comp x/y/z', `${formatExp(xr.compX ?? 0)} / ${formatExp(xr.compY ?? 0)} / ${formatExp(xr.compZ ?? 0)}`, 'E')}
+            ${row('live local centroid', `${formatExp(xc.x ?? 0)}, ${formatExp(xc.y ?? 0)}, ${formatExp(xc.z ?? 0)}`, 'E')}
+            ${row('FTD-0289 C++ rel R', formatExp(FTD0289_CANONICAL.relL2), 'M')}
+            ${row('FTD-0289 C++ max R', formatExp(FTD0289_CANONICAL.maxAbs), 'M')}
             <div style="margin-top:8px;color:var(--text-muted);font-size:12px;line-height:1.35;">
-                ${tagBadge('T')}α is the dashboard's configured coupling constant. ${tagBadge('E')}Flux recoil is measured from the lattice field; it is not an α derivation.
+                ${tagBadge('T')}α is the dashboard's configured coupling constant. ${tagBadge('E')}Live residual is visual-bridge telemetry. ${tagBadge('M')}FTD-0289 is the C++ run of record, not an α derivation.
             </div>
         `;
     }
