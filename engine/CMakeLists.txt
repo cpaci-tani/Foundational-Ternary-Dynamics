@@ -1292,6 +1292,15 @@ ftd_add_test(campaign_halo_forcedness tests/campaign_halo_forcedness.cpp
              CTEST_NAME halo_forcedness TIMEOUT 1800
              LABELS native eft observable engine_as_instrument cosmology)
 
+# FTD-0291 (2026-06-13): proton stability audit. The proton is uud=(+1,+1,-1)
+# (mixed sign), but triad_binding locks ONLY 3 same-state particles -> the lock
+# CANNOT fire on a real proton. Measures whether the unlocked uud triad persists
+# or DECAYS (evaporation/transmutation) under native dynamics, vs a lockable uuu
+# same-sign triple. Read-only / golden-neutral (new TU, no physics edits).
+ftd_add_test(campaign_proton_stability tests/campaign_proton_stability.cpp
+             CTEST_NAME proton_stability TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument particle)
+
 # RG-spectrum probe (2026-06-11): ORDER of the genesis/manifestation transition.
 # Pure Langevin-thermal drive (no injection); logs the steady-state manifested
 # fraction m time series across L x T x seeds for a finite-size-scaling analysis
