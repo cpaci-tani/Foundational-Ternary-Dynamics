@@ -53,24 +53,24 @@ the FTD-0107 invocation; see `commit a0983ca` for the script body.
 
 Platform: current canonical post-optimization stack atop HEAD `761daa75` + uncommitted 8-color-SOR Gauss optimization (owner-declared canonical 2026-06-11); physics-diff fingerprint SHA256 `961916b56569d1409984994121f51f3b897c02fe993ebf2ce0e2b03b3d07e381`. Genesis/flux field verified bit-reproducible (identical-seed firing geometry); golden-hash energy-audit non-determinism is a separate flagged regression that does not touch the genesis field. Three-outcome scheme: PROMOTE (framework-only model hits knee∈[14,18] + p_lo∈[3.3,4.1] + p_hi∈[1.6,2.1] + curve-RMS≤0.10 + shell-L1≤0.30) / BOUNDARY (drain or √α-coupling load-bearing) / FALSIFY. Priors PROMOTE 35 / BOUNDARY 45 / FALSIFY-UNDET 20. Supersedes the over-tagged `DERIV_FTD0110_GENESIS_THROTTLE.md`.
 
-## Atomic sector hardening — replay/manifest package (FTD-0280; 2026-06-13, lock pending)
+## Atomic sector hardening — replay/manifest package (FTD-0280; 2026-06-13, locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0280** atomic sector hardening | `preregister-atomic-sector-hardening-v1` (to be applied at lock) | lock pending | `scripts/exploration/atomic_sector_hardening.py` SHA256 `0575bc9154f3760f1cd6049f24f3ce5bf18bed6eeb5d3a0bd0c9b04585fdc83d` | `--verify-locks --manifest`; optional locked replay `--replay-records --out-dir <dir>` | `scripts/exploration/results/atomic_sector_hardening_2026-06-13/` | [`PREREG_ATOMIC_SECTOR_HARDENING_v1.md`](preregistrations/PREREG_ATOMIC_SECTOR_HARDENING_v1.md) -> post-run analysis/LEDGER row only after tag + replay |
+| **FTD-0280** atomic sector hardening | `preregister-atomic-sector-hardening-v1` | `fe55b42f` | `scripts/exploration/atomic_sector_hardening.py` SHA256 `0575bc9154f3760f1cd6049f24f3ce5bf18bed6eeb5d3a0bd0c9b04585fdc83d` | `--verify-locks --manifest`; locked replay `--replay-records --out-dir <dir>` | `scripts/exploration/results/atomic_sector_hardening_2026-06-13/` | [`ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md`](ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md): `ATOMIC-SECTOR-REPLAY-CONFIRMED` |
 
 This campaign adds no physics claim. It verifies the FTD-0278/0279 script hashes,
 prereg tags, manifest provenance, and replay verdicts. The underlying result class
 remains `[CONDITIONAL -- DERIVED-GIVEN-IMPOSED-INPUT]`; FTD-0270, FC-1, FTD-0013,
 and MC-T4.3 remain unchanged.
 
-## Atomic next-three campaigns (FTD-0281/0282/0283; 2026-06-13, lock pending)
+## Atomic next-three campaigns (FTD-0281/0282/0283; 2026-06-13, locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0281** DB-clock Coulomb spectroscopy | `preregister-db-clock-coulomb-spectroscopy-v1` (to be applied at lock) | lock pending | engine hook: `db_clock_coulomb`; smoke test SHA256 `1be528966c02d21b739677e46735d39ad22e3c636d709b4254c49f5017b8fd28` | `ctest -R "db_clock_coulomb\|render_bridge_golden"` | `scripts/exploration/results/atomic_next_three_2026-06-13/` | [`PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md`](preregistrations/PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md) -> FFT analysis only after tag + locked campaign |
-| **FTD-0282** exchange/correlation wall | `preregister-atomic-exchange-correlation-wall-v1` (to be applied at lock) | lock pending | `scripts/exploration/atomic_next_three_campaigns.py` SHA256 `f7ef3f73427a90674d70695bbc875fb2de9984e77e691ea7160fd27c31925df8` | `--ftd-0282-wall-record` | `scripts/exploration/results/atomic_next_three_2026-06-13/` | [`PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md`](preregistrations/PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md) |
-| **FTD-0283** no-new-knob ladder | `preregister-atomic-no-new-knob-ladder-v1` (to be applied at lock) | lock pending | `scripts/exploration/atomic_next_three_campaigns.py` SHA256 `f7ef3f73427a90674d70695bbc875fb2de9984e77e691ea7160fd27c31925df8` | `--ftd-0283-ladder-record` | `scripts/exploration/results/atomic_next_three_2026-06-13/` | [`PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md`](preregistrations/PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md) |
+| **FTD-0281** DB-clock Coulomb spectroscopy | `preregister-db-clock-coulomb-spectroscopy-v1` | `fe55b42f` | engine hook: `db_clock_coulomb`; smoke test SHA256 `1be528966c02d21b739677e46735d39ad22e3c636d709b4254c49f5017b8fd28` | `ctest -R "db_clock_coulomb\|render_bridge_golden"` | `scripts/exploration/results/atomic_next_three_2026-06-13/` | [`ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md`](ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md): `DB-CLOCK-COULOMB-HOOK-CONFIRMED`; FFT verdict still downstream |
+| **FTD-0282** exchange/correlation wall | `preregister-atomic-exchange-correlation-wall-v1` | `fe55b42f` | `scripts/exploration/atomic_next_three_campaigns.py` SHA256 `f7ef3f73427a90674d70695bbc875fb2de9984e77e691ea7160fd27c31925df8` | `--ftd-0282-wall-record` | `scripts/exploration/results/atomic_next_three_2026-06-13/` | [`ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md`](ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md): `EXCHANGE-CORRELATION-WALL-CONFIRMED` |
+| **FTD-0283** no-new-knob ladder | `preregister-atomic-no-new-knob-ladder-v1` | `fe55b42f` | `scripts/exploration/atomic_next_three_campaigns.py` SHA256 `f7ef3f73427a90674d70695bbc875fb2de9984e77e691ea7160fd27c31925df8` | `--ftd-0283-ladder-record` | `scripts/exploration/results/atomic_next_three_2026-06-13/` | [`ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md`](ANALYSIS_ATOMIC_PARADIGM_CAMPAIGN_v1.md): `NO-NEW-KNOB-LADDER-NOT-CONFIRMED / Z2-SCALING-FAIL` |
 
 These campaigns are deliberately split. FTD-0281 verifies live-engine semantics
 before any FFT-spectrum claim. FTD-0282 is a negative-boundary test, not a fit.
