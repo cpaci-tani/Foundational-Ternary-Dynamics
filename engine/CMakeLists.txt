@@ -785,6 +785,10 @@ target_link_libraries(test_eft_matched_poisson ftd_core)
 add_executable(test_phase_h_coupling tests/test_phase_h_coupling.cpp)
 target_link_libraries(test_phase_h_coupling ftd_core)
 
+# FTD-0285 - no-alpha-input alpha discriminator with Postulate-W control.
+add_executable(campaign_alpha_no_alpha_probe tests/campaign_alpha_no_alpha_probe.cpp)
+target_link_libraries(campaign_alpha_no_alpha_probe ftd_core)
+
 # Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
 # Tests whether the flux field's circulation is quantised (i.e., can
 # topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
@@ -1934,6 +1938,9 @@ set_tests_properties(eft_matched_poisson PROPERTIES
 # Phase H — coupling scaling test
 add_test(NAME eft_phase_h_coupling COMMAND test_phase_h_coupling)
 set_tests_properties(eft_phase_h_coupling PROPERTIES LABELS "eft" TIMEOUT 180)
+# FTD-0285 - no-alpha-input alpha discriminator
+add_test(NAME alpha_no_alpha_probe COMMAND campaign_alpha_no_alpha_probe)
+set_tests_properties(alpha_no_alpha_probe PROPERTIES LABELS "eft;alpha;campaign" TIMEOUT 600)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)

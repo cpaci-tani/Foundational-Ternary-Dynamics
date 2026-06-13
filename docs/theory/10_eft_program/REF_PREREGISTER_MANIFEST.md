@@ -76,16 +76,28 @@ These campaigns are deliberately split. FTD-0281 verifies live-engine semantics
 before any FFT-spectrum claim. FTD-0282 is a negative-boundary test, not a fit.
 FTD-0283 uses a fixed ion set and dimensionless scaling gates only.
 
-## Alpha dynamical readout discriminator (FTD-0284; 2026-06-13, lock pending)
+## Alpha dynamical readout discriminator (FTD-0284; 2026-06-13, locked)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0284** alpha dynamical readout | `preregister-alpha-dynamical-readout-v1` (to be applied before any engine run) | (pending lock) | `scripts/proofs/proof_alpha_dynamical_readout_contract.py` SHA256 `5a4509ad24dc9be1354b31dfa5336eb573e0eaaafa2e8607fda489748f3af390` | `--verify-static --manifest`; future engine run must freeze its own artifact first | n/a for v1 static contract; future run output TBD | [`PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`](preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md) (pre-reg only; no measurement result yet) |
+| **FTD-0284** alpha dynamical readout | `preregister-alpha-dynamical-readout-v1` | `1584fe95` | `scripts/proofs/proof_alpha_dynamical_readout_contract.py` SHA256 `5a4509ad24dc9be1354b31dfa5336eb573e0eaaafa2e8607fda489748f3af390` | `--verify-static --manifest`; future engine run must freeze its own artifact first | n/a for v1 static contract; future run output TBD | [`PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`](preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md) (pre-reg only; no measurement result yet) |
 
 This discriminator continues the alpha program after FTD-0242 and FTD-0244.
 It does not search couplings. It freezes three distinct outcomes before any
 future no-alpha-input engine measurement: native unit response (`NATIVE-NULL`),
 external matching/Postulate-W, and a much stricter `DYNAMICAL-FOUND` branch.
+
+## Alpha no-alpha engine probe (FTD-0285; 2026-06-13, lock pending)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0285** alpha no-alpha engine probe | `preregister-alpha-no-alpha-engine-probe-v1` (to be applied before run of record) | (pending lock) | engine artifact `engine/tests/campaign_alpha_no_alpha_probe.cpp` SHA256 `883a917358077f626e90f5affacabd8e565f48fd1cc00aa775ac6e4c7ffbdade` | build target `campaign_alpha_no_alpha_probe`; run `ctest --test-dir engine/build -C Release -R "^alpha_no_alpha_probe$" --output-on-failure` | console/CTest output; analysis doc pending after run | [`PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`](preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md) (pre-reg only until tag/run) |
+
+This probe is the first FTD-0284 engine artifact. Its native arm disables
+known alpha leak paths (`coupling`, damping, force/Poisson/Lorentz hooks) and
+tests whether the no-alpha Gauss projection yields unit geometric Coulomb or
+the master-quadratic normalization. Its Postulate-W arm is a positive control,
+not a derivation.
 
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 

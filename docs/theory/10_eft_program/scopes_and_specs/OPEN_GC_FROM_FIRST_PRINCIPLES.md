@@ -10,10 +10,14 @@ the problem.
 
 > **2026-06-13 continuation note.** FTD-0242 and FTD-0244 sharpened this from
 > "find an operator readout" to "test whether dynamics selects a coupling."
-> The next registered step is FTD-0284,
-> `../preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`: a lock-pending
-> discriminator that keeps native unit response, external Postulate-W matching,
-> and any future no-alpha-input engine measurement formally separate.
+> FTD-0284,
+> `../preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`, is now locked
+> as the discriminator that keeps native unit response, external Postulate-W
+> matching, and any future no-alpha-input engine measurement formally separate.
+> The next registered engine artifact is FTD-0285,
+> `../preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`: a fixed
+> live-engine no-alpha Gauss-projection probe with a Postulate-W positive
+> control and no coupling search.
 
 ---
 
