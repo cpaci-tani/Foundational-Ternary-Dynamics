@@ -14,10 +14,13 @@ the problem.
 > `../preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`, is now locked
 > as the discriminator that keeps native unit response, external Postulate-W
 > matching, and any future no-alpha-input engine measurement formally separate.
-> The next registered engine artifact is FTD-0285,
-> `../preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`: a fixed
-> live-engine no-alpha Gauss-projection probe with a Postulate-W positive
-> control and no coupling search.
+> The first registered engine artifact, FTD-0285
+> (`../preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md` plus
+> `../ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`), invalidated its own
+> finite-protocol absolute Phase-G gate. It did not find dynamical alpha.
+> The next step must be a v2 that first validates the live-engine estimator
+> under the same dynamic protocol before asking the no-alpha-vs-Postulate-W
+> question again.
 
 ---
 
