@@ -1,8 +1,8 @@
 # DERIV: Discrete Tick Energy Invariant
 
 **Date:** 2026-06-13
-**Status:** [THEOREM -- SOURCE-FREE LINEAR TICK ENERGY AND LOCAL CURRENT] / [OPEN -- COUPLED SOURCE WORK]
-**Campaigns:** FTD-0292, FTD-0293, FTD-0294, FTD-0295
+**Status:** [THEOREM -- LINEAR TICK ENERGY, LOCAL CURRENT, AND ADDITIVE SOURCE WORK] / [OPEN -- MOVING-SOURCE RECOIL WORK]
+**Campaigns:** FTD-0292, FTD-0293, FTD-0294, FTD-0295, FTD-0296
 **Engine anchors:** `phase_read` + `phase_write`
 
 ---
@@ -18,8 +18,10 @@ J' = J + W'
 ```
 
 where `L` is the engine's symmetric 18-neighbor Laplacian and `c = C_WAVE`.
-It does not include state coupling, particle motion, damping, Gauss projection,
-dual substrate, pair production, weak terms, or de Broglie clock terms.
+It includes additive phase-read source terms of the form `W' = W - KJ + S`
+when `S` is evaluated before the write. It does not include particle motion,
+damping, Gauss projection, dual substrate, pair production, weak terms, or de
+Broglie clock terms.
 
 ---
 
@@ -196,17 +198,56 @@ free-wave control: it balanced the wrong energy.
 
 ---
 
-## 7. Open Work
+## 7. Additive Source Work
+
+For an additive source tick:
+
+```text
+W* = W - KJ
+W' = W* + S
+J' = J + W'
+```
+
+the same modified energy obeys a finite-volume source/work law:
+
+```text
+Delta H_V + Phi_out_source_free(boundary V) - Work_V = 0
+```
+
+where the boundary current is the source-free current evaluated with `W*`, and:
+
+```text
+Work_i = W*_i dot S_i + 0.5 |S_i|^2 + 0.5 J_i dot (K S)_i
+```
+
+For the engine's state-flux source:
+
+```text
+S = G_C (grad_state + curl_state_velocity)
+```
+
+FTD-0296 confirmed the fixed-charge case:
+
+```text
+max_abs_work = 0.00912169070541427734478
+max_abs_balance = 4.42910139987484630097e-16
+max_scale_rel_balance = 2.20455860816464694277e-16
+verdict = FIXED_CHARGE_SOURCE_WORK_CONTINUITY_CONFIRMED
+```
+
+---
+
+## 8. Open Work
 
 Next target:
 
 ```text
-Derive source/work terms for state coupling in
-Delta H_V + Phi_out = Work/source
+Extend the accounting through unlocked recoil:
+phase_forces + phase_movement + flux redistribution.
 ```
 
-Then return to the charge-plus-beam recoil setup with the source-free boundary
-current already fixed.
+The fixed-source result covers the additive source in phase_read/phase_write.
+It does not yet cover moving charges or post-write particle transport.
 
 No radiation, Thomson cross-section, QED amplitude, or alpha claim follows
 from this theorem alone.
