@@ -26,9 +26,8 @@ export function advanceSimulation(ctx, state) {
     const mainScale0 = ctx.bridge.capabilities.scale0;
     const mockScale0 = state.fluxMock?.capabilities?.scale0 || null;
     // Only tick the mock bridge when it IS the physics source. Merely
-    // enabling a derived-overlay (darkMatterHalo, genesisIsosurface) used to
-    // start the mock's tick loop as a side effect — that made the scene
-    // "tick on toggle". Overlays now sample whatever state the mock is in.
+    // enabling a visual overlay must NOT start or alter the physics tick —
+    // overlays read the last-tick field state via the lazy sample cache.
     const tickMock = !!(mockScale0 && state.useFluxMock);
 
     // Past the worker-path and global-pause guards above, `running` is

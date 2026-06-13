@@ -35,7 +35,7 @@ import {
  */
 export function setupVacuumScenario(name, harness, ctx) {
     if (!name.startsWith('s0-vacuum-')) return false;
-    const { N, midF } = ctx;
+    const { N, midF, vox, sigma: sig } = ctx;
     const mc = Math.round(midF);
 
     harness.bridge?._initFluxGrid?.();
@@ -46,8 +46,8 @@ export function setupVacuumScenario(name, harness, ctx) {
             // Mirror of s0-seed-electron — unit negative charge + radial-inward
             // flux envelope at scale K_B. Vacuum: nothing else in the lattice.
             harness.injectParticle(mc, mc, mc, -1);
-            const envR = Math.max(3, Math.floor(N / 6));
-            injectRadialEnvelope(harness, midF, midF, midF, -1, envR / 2, K_B * 1.5,
+            const envR = vox(5);
+            injectRadialEnvelope(harness, midF, midF, midF, -1, sig(2.5), K_B * 1.5,
                 { radius: envR, minR2: 0.25 });
             return true;
         }
@@ -60,8 +60,8 @@ export function setupVacuumScenario(name, harness, ctx) {
             // is a [SELECTION] visualization cue.
             const boost = (name === 's0-vacuum-tau') ? 2.25 : 1.80;
             harness.injectParticle(mc, mc, mc, -1);
-            const envR = Math.max(3, Math.floor(N / 6));
-            injectRadialEnvelope(harness, midF, midF, midF, -1, envR / 2, K_B * boost,
+            const envR = vox(5);
+            injectRadialEnvelope(harness, midF, midF, midF, -1, sig(2.5), K_B * boost,
                 { radius: envR, minR2: 0.25 });
             return true;
         }
@@ -72,10 +72,10 @@ export function setupVacuumScenario(name, harness, ctx) {
             // genesis=false (audit 2026-04-28): a free EM wave should not
             // spontaneously pair-produce.
             harness.setToggle('genesis', false);
-            const sigma = 3;
+            const pSigma = sig(3);
             const pAmp = K_B * 2;
-            const pStartX = Math.max(4, Math.floor(N / 4));
-            const halfR = 8;
+            const pStartX = vox(8);
+            const halfR = vox(8);
             for (let z = 0; z < N; z++)
             for (let y = 0; y < N; y++)
             for (let dx = -halfR; dx <= halfR; dx++) {
@@ -83,7 +83,7 @@ export function setupVacuumScenario(name, harness, ctx) {
                 if (x < 0 || x >= N) continue;
                 const dy = y - midF, dz = z - midF;
                 const r2 = dx * dx + dy * dy + dz * dz;
-                const g = pAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                const g = pAmp * Math.exp(-r2 / (2 * pSigma * pSigma));
                 if (g < 1e-6) continue;
                 harness.injectFlux(x, y, z, 0, 0, g);
                 harness.injectWaveVel(x, y, z, g, 0, 0);
@@ -126,7 +126,7 @@ export function setupVacuumScenario(name, harness, ctx) {
         case 's0-vacuum-proton': {
             // Mirror of s0-seed-proton-l4 — 3 vertices on equilateral
             // triangle, charges [+1,+1,-1], colors [1,2,3].
-            const bR = Math.max(2, Math.floor(N / 8));
+            const bR = vox(4);
             injectTriad(harness, mc, mc, mc, [+1, +1, -1], [1, 2, 3], bR);
             return true;
         }
@@ -134,14 +134,14 @@ export function setupVacuumScenario(name, harness, ctx) {
         case 's0-vacuum-neutron': {
             // Mirror of s0-seed-neutron — same triad geometry as proton,
             // charges [+1,-1,-1] (net 0).
-            const bR = Math.max(2, Math.floor(N / 8));
+            const bR = vox(4);
             injectTriad(harness, mc, mc, mc, [+1, -1, -1], [1, 2, 3], bR);
             return true;
         }
 
         case 's0-vacuum-pion-charged': {
             // Mirror of s0-seed-pion — quark-antiquark dipole on x-axis.
-            const sp = Math.max(3, Math.floor(N / 8));
+            const sp = vox(4);
             const hf = Math.floor(sp / 2);
             injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5, true);
             injectDressedParticle(harness, mc - hf, mc, mc, -1, -1, 1, 2, K_B * 0.5, true);
@@ -185,7 +185,7 @@ export function setupVacuumScenario(name, harness, ctx) {
             //
             // Mass m_π0 = 135.0 MeV (vs m_π± = 139.6 MeV); the small splitting
             // is [OPEN] in FTD; here we use the charged-pion amplitude.
-            const sp = Math.max(3, Math.floor(N / 8));
+            const sp = vox(4);
             const hf = Math.floor(sp / 2);
             // Use injectDressedParticle with state=0 — this gives a void core
             // at each vertex with the radial flux envelope still applied.
@@ -202,7 +202,7 @@ export function setupVacuumScenario(name, harness, ctx) {
             // rather than deriving it. Mass itself is [OPEN] in FTD.
             //
             //   K-amp / π-amp ≈ √(m_K / m_π) ≈ 1.88
-            const sp = Math.max(3, Math.floor(N / 8));
+            const sp = vox(4);
             const hf = Math.floor(sp / 2);
             const kBoost = 1.88;
             injectDressedParticle(harness, mc + hf, mc, mc, +1, +1, 1, 2, K_B * 0.5 * kBoost, true);
