@@ -204,6 +204,17 @@ This campaign keeps the v1 density/current unchanged and gates the relative
 residual against finite-volume energy scale. It confirms source-free local
 tick continuity. Coupled source/work terms remain the next open target.
 
+## Fixed-charge coupled tick source/work continuity (FTD-0296; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0296** Fixed-charge coupled tick source/work continuity | `preregister-thomson-coupled-source-work-v1` | `5d88062e` | engine artifact `engine/tests/campaign_thomson_coupled_source_work.cpp` SHA256 `95747a57895973577e0054d075752b79e74173507097652e31498b125d7ec88e` | build target `campaign_thomson_coupled_source_work`; run `ctest --test-dir engine/build -C Release -R "^thomson_coupled_source_work$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md`](ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md): `FIXED_CHARGE_SOURCE_WORK_CONTINUITY_CONFIRMED` |
+
+This campaign adds the engine's additive state-flux source term with one
+locked charge and movement off. The native source/work term closes the
+finite-volume balance at roundoff. Moving-source recoil accounting remains the
+next open target.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
