@@ -23,20 +23,20 @@ import { K_B, K_GENESIS } from '../../constants.js';
  */
 export function setupQuantumScenario(name, harness, ctx) {
     if (!name.startsWith('quantum-')) return false;
-    const { N, mid } = ctx;
+    const { N, mid, vox, sigma } = ctx;
 
             switch (name) {
                 case 'quantum-born-rule': {
                     // Random-phase Gaussian flux pulse → Born rule P = |ψ|² statistics
-                    const sigma = N / 8;
+                    const bornSigma = sigma(4.125);
                     const amp = K_B * 2;
                     const theta = Math.random() * 2 * Math.PI;
-                    const pulseR = Math.min(Math.ceil(sigma * 3), mid - 1);
+                    const pulseR = Math.min(Math.ceil(bornSigma * 3), mid - 1);
                     for (let dz = -pulseR; dz <= pulseR; dz++)
                     for (let dy = -pulseR; dy <= pulseR; dy++)
                     for (let dx = -pulseR; dx <= pulseR; dx++) {
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * sigma * sigma));
+                        const val = amp * Math.exp(-r2 / (2 * bornSigma * bornSigma));
                         if (val > 0.001) {
                             harness.injectFlux(mid + dx, mid + dy, mid + dz,
                                 val * Math.cos(theta), val * Math.sin(theta), 0);
@@ -47,17 +47,18 @@ export function setupQuantumScenario(name, harness, ctx) {
                 }
                 case 'quantum-double-slit': {
                     // Two coherent line sources with genesis → interference + manifestation
-                    const sigma = 2;
+                    const slitSigma = sigma(2);
+                    const slitHw = vox(4);
                     const sAmp = 0.3;
-                    const slit_sep = Math.floor(N / 6);
-                    const slit_x = Math.floor(N / 4);
+                    const slit_sep = vox(5);
+                    const slit_x = vox(8);
                     const slit_ys = [mid - slit_sep, mid + slit_sep];
                     for (const sy of slit_ys) {
                         for (let z = 0; z < N; z++)
-                        for (let dy = -4; dy <= 4; dy++)
-                        for (let dx = -4; dx <= 4; dx++) {
+                        for (let dy = -slitHw; dy <= slitHw; dy++)
+                        for (let dx = -slitHw; dx <= slitHw; dx++) {
                             const r2 = dx * dx + dy * dy;
-                            const g = sAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                            const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
                             if (g < 1e-6) continue;
                             const px = slit_x + dx, py = sy + dy;
                             if (px < 0 || px >= N || py < 0 || py >= N) continue;
@@ -71,18 +72,19 @@ export function setupQuantumScenario(name, harness, ctx) {
                 }
                 case 'quantum-eraser': {
                     // Quantum Eraser: Coherent slits marked orthogonally
-                    const sigma = 2;
+                    const slitSigma = sigma(2);
+                    const slitHw = vox(4);
                     const sAmp = 0.3;
-                    const slit_sep = Math.floor(N / 6);
-                    const slit_x = Math.floor(N / 4);
+                    const slit_sep = vox(5);
+                    const slit_x = vox(8);
 
                     // Slit 1: y-polarized
                     const sy1 = mid - slit_sep;
                     for (let z = 0; z < N; z++)
-                    for (let dy = -4; dy <= 4; dy++)
-                    for (let dx = -4; dx <= 4; dx++) {
+                    for (let dy = -slitHw; dy <= slitHw; dy++)
+                    for (let dx = -slitHw; dx <= slitHw; dx++) {
                         const r2 = dx * dx + dy * dy;
-                        const g = sAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                        const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
                         if (g < 1e-6) continue;
                         const px = slit_x + dx, py = sy1 + dy;
                         if (px < 0 || px >= N || py < 0 || py >= N) continue;
@@ -93,10 +95,10 @@ export function setupQuantumScenario(name, harness, ctx) {
                     // Slit 2: z-polarized
                     const sy2 = mid + slit_sep;
                     for (let z = 0; z < N; z++)
-                    for (let dy = -4; dy <= 4; dy++)
-                    for (let dx = -4; dx <= 4; dx++) {
+                    for (let dy = -slitHw; dy <= slitHw; dy++)
+                    for (let dx = -slitHw; dx <= slitHw; dx++) {
                         const r2 = dx * dx + dy * dy;
-                        const g = sAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                        const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
                         if (g < 1e-6) continue;
                         const px = slit_x + dx, py = sy2 + dy;
                         if (px < 0 || px >= N || py < 0 || py >= N) continue;
@@ -128,16 +130,16 @@ export function setupQuantumScenario(name, harness, ctx) {
                     // (32×32×W=3 wall) and stay constant; the wave was
                     // otherwise manifesting ~28k by t=200.
                     harness.setToggle('genesis', false);
-                    const sigma = N / 12;
+                    const tunnelSigma = sigma(2.75);
                     const amp = K_B * 2;
-                    const packetX = Math.floor(N / 4);
-                    const pulseR = Math.min(Math.ceil(sigma * 3), mid - 1);
+                    const packetX = vox(8);
+                    const pulseR = Math.min(Math.ceil(tunnelSigma * 3), mid - 1);
                     // Gaussian flux packet propagating +x
                     for (let dz = -pulseR; dz <= pulseR; dz++)
                     for (let dy = -pulseR; dy <= pulseR; dy++)
                     for (let dx = -pulseR; dx <= pulseR; dx++) {
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * sigma * sigma));
+                        const val = amp * Math.exp(-r2 / (2 * tunnelSigma * tunnelSigma));
                         if (val > 0.001) {
                             const x = packetX + dx, y = mid + dy, z = mid + dz;
                             if (x >= 0 && x < N && y >= 0 && y < N && z >= 0 && z < N) {
@@ -147,7 +149,7 @@ export function setupQuantumScenario(name, harness, ctx) {
                         }
                     }
                     // Barrier: locked +1 particles across y-z plane
-                    const W = harness.bridge._quantumBarrierWidth || 3;
+                    const W = harness.bridge._quantumBarrierWidth || vox(3);
                     for (let y = 0; y < N; y++)
                     for (let z = 0; z < N; z++)
                     for (let dx = 0; dx < W; dx++) {
@@ -188,11 +190,13 @@ export function setupQuantumScenario(name, harness, ctx) {
                 case 'quantum-entangle': {
                     // Super-threshold flux burst → pair genesis + correlation tracking
                     const bigAmp = K_GENESIS * 5;
-                    for (let dz = -4; dz <= 4; dz++)
-                    for (let dy = -4; dy <= 4; dy++)
-                    for (let dx = -4; dx <= 4; dx++) {
+                    const burstHw = vox(4);
+                    const burstSig = sigma(Math.sqrt(6));
+                    for (let dz = -burstHw; dz <= burstHw; dz++)
+                    for (let dy = -burstHw; dy <= burstHw; dy++)
+                    for (let dx = -burstHw; dx <= burstHw; dx++) {
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = bigAmp * Math.exp(-r2 / (2 * 6));
+                        const val = bigAmp * Math.exp(-r2 / (2 * burstSig * burstSig));
                         if (val > 0.001) {
                             harness.injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
                         }
@@ -208,7 +212,7 @@ export function setupQuantumScenario(name, harness, ctx) {
                     // pair-produce while traversing the solenoid. Without
                     // this, ~31k particles by t=200.
                     harness.setToggle('genesis', false);
-                    const R = Math.floor(N / 8);
+                    const R = vox(4);
                     // Confined flux tube along z at center (solenoid)
                     for (let z = 0; z < N; z++)
                     for (let dy = -R; dy <= R; dy++)
@@ -217,23 +221,25 @@ export function setupQuantumScenario(name, harness, ctx) {
                         harness.injectFlux(mid + dx, mid + dy, z, 0, 0, K_B * 0.5);
                     }
                     // Packet A: above solenoid, propagating +x
-                    const pSigma = 3;
+                    const pSigma = sigma(3);
+                    const pHalf = Math.ceil(pSigma);
+                    const pGap = vox(2);
                     const pAmp = K_B * 2;
-                    const pStartX = Math.floor(N / 4);
-                    for (let dz = -pSigma; dz <= pSigma; dz++)
-                    for (let dy = -pSigma; dy <= pSigma; dy++)
-                    for (let dx = -pSigma; dx <= pSigma; dx++) {
+                    const pStartX = vox(8);
+                    for (let dz = -pHalf; dz <= pHalf; dz++)
+                    for (let dy = -pHalf; dy <= pHalf; dy++)
+                    for (let dx = -pHalf; dx <= pHalf; dx++) {
                         const r2 = dx * dx + dy * dy + dz * dz;
                         const val = pAmp * Math.exp(-r2 / (2 * pSigma * pSigma));
                         if (val > 0.001) {
-                            // Packet A: y = mid + R + 2
-                            const ayPos = mid + R + 2 + dy;
+                            // Packet A: y = mid + R + gap
+                            const ayPos = mid + R + pGap + dy;
                             if (pStartX + dx >= 0 && pStartX + dx < N && ayPos >= 0 && ayPos < N && mid + dz >= 0 && mid + dz < N) {
                                 harness.injectFlux(pStartX + dx, ayPos, mid + dz, val, 0, 0);
                                 harness.injectWaveVel(pStartX + dx, ayPos, mid + dz, val, 0, 0);
                             }
-                            // Packet B: y = mid - R - 2
-                            const byPos = mid - R - 2 + dy;
+                            // Packet B: y = mid - R - gap
+                            const byPos = mid - R - pGap + dy;
                             if (pStartX + dx >= 0 && pStartX + dx < N && byPos >= 0 && byPos < N && mid + dz >= 0 && mid + dz < N) {
                                 harness.injectFlux(pStartX + dx, byPos, mid + dz, val, 0, 0);
                                 harness.injectWaveVel(pStartX + dx, byPos, mid + dz, val, 0, 0);
@@ -244,7 +250,7 @@ export function setupQuantumScenario(name, harness, ctx) {
                 }
                 case 'quantum-casimir': {
                     // Two parallel plates + vacuum fluctuation noise → Casimir effect
-                    const d = harness.bridge._quantumCasimirSep || 6;
+                    const d = harness.bridge._quantumCasimirSep || vox(6);
                     const plateA = mid - Math.floor(d / 2);
                     const plateB = mid + Math.floor(d / 2);
                     // Locked +1 particles forming two plates across y-z
@@ -269,14 +275,14 @@ export function setupQuantumScenario(name, harness, ctx) {
                 }
                 case 'quantum-zeno': {
                     // Near-threshold flux → genesis + frequent measurement suppresses decay
-                    const sigma = N / 10;
+                    const zenoSigma = sigma(3.3);
                     const amp = K_GENESIS * 1.2;
-                    const pulseR = Math.min(Math.ceil(sigma * 3), mid - 1);
+                    const pulseR = Math.min(Math.ceil(zenoSigma * 3), mid - 1);
                     for (let dz = -pulseR; dz <= pulseR; dz++)
                     for (let dy = -pulseR; dy <= pulseR; dy++)
                     for (let dx = -pulseR; dx <= pulseR; dx++) {
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * sigma * sigma));
+                        const val = amp * Math.exp(-r2 / (2 * zenoSigma * zenoSigma));
                         if (val > 0.001) {
                             harness.injectFlux(mid + dx, mid + dy, mid + dz, val, val, val);
                         }

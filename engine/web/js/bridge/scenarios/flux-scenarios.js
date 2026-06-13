@@ -19,37 +19,39 @@ import { TRIAD_ANGLES } from './_helpers.js';
 /**
  * @param {string} name - scenario identifier
  * @param {PhysicsHarness} harness - physics harness instance
- * @param {{N:number, mid:number, midF:number}} ctx - precomputed lattice params
+ * @param {{N:number, mid:number, midF:number, vox:function, sigma:function, band:function}} ctx
  * @returns {boolean} true if handled
  */
 export function setupFluxScenario(name, harness, ctx) {
     if (!name.startsWith('flux-')) return false;
-    const { N, mid, midF } = ctx;
-            const sigma = N / 10;
+    const { N, mid, midF, vox, sigma, band } = ctx;
+            const pulseSigma = sigma(3.3);
             const amp = K_B * 2;
 
             switch (name) {
                 case 'flux-pulse': {
                     // Gaussian pulse — loop anchored at midF so visual centroid = N/2 exactly
-                    const pulseR = Math.min(Math.ceil(sigma * 3), Math.floor(midF));
+                    const pulseR = Math.min(Math.ceil(pulseSigma * 3), Math.floor(midF));
                     const pLo = Math.floor(midF) - pulseR, pHi = Math.ceil(midF) + pulseR;
                     for (let z = pLo; z <= pHi; z++) for (let y = pLo; y <= pHi; y++) for (let x = pLo; x <= pHi; x++) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * sigma * sigma));
+                        const val = amp * Math.exp(-r2 / (2 * pulseSigma * pulseSigma));
                         if (val > 0.001) harness.injectFlux(x, y, z, val, 0, 0);
                     }
                     break;
                 }
                 case 'flux-dipole': {
                     // Two opposite flux injections — poles symmetric about midF
-                    const off = Math.floor(N / 4);
+                    const off = vox(8);
                     const pLx = Math.floor(midF) - off, pRx = Math.ceil(midF) + off;
-                    const yzLo = Math.floor(midF) - 4, yzHi = Math.ceil(midF) + 4;
-                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -4; dx <= 4; dx++) {
+                    const poleHw = vox(4);
+                    const poleSig = sigma(3);
+                    const { lo: yzLo, hi: yzHi } = band(midF, 4);
+                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -poleHw; dx <= poleHw; dx++) {
                         const dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * 9));
+                        const val = amp * Math.exp(-r2 / (2 * poleSig * poleSig));
                         if (val > 0.001) {
                             harness.injectFlux(pLx + dx, y, z, val, val * 0.5, 0);
                             harness.injectFlux(pRx + dx, y, z, -val, -val * 0.5, 0);
@@ -59,13 +61,15 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
                 case 'flux-standing': {
                     // Counter-propagating pulses along X — poles symmetric about midF
-                    const off = Math.floor(N / 3);
+                    const off = vox(11);
                     const pLx = Math.floor(midF) - off, pRx = Math.ceil(midF) + off;
-                    const yzLo = Math.floor(midF) - 4, yzHi = Math.ceil(midF) + 4;
-                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -4; dx <= 4; dx++) {
+                    const poleHw = vox(4);
+                    const poleSig = sigma(3);
+                    const { lo: yzLo, hi: yzHi } = band(midF, 4);
+                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -poleHw; dx <= poleHw; dx++) {
                         const dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * 9));
+                        const val = amp * Math.exp(-r2 / (2 * poleSig * poleSig));
                         if (val > 0.001) {
                             harness.injectFlux(pLx + dx, y, z, val, 0, 0);
                             harness.injectFlux(pRx + dx, y, z, val, 0, 0);
@@ -80,11 +84,12 @@ export function setupFluxScenario(name, harness, ctx) {
                     // the high amp * 10 exceeded K_GENESIS as the wave
                     // evolved, manifesting ~28k particles by t=200.
                     harness.setToggle('genesis', false);
-                    const sLo = Math.floor(midF) - 3, sHi = Math.ceil(midF) + 3;
+                    const coreSig = sigma(2);
+                    const { lo: sLo, hi: sHi } = band(midF, 3);
                     for (let z = sLo; z <= sHi; z++) for (let y = sLo; y <= sHi; y++) for (let x = sLo; x <= sHi; x++) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * 10 * Math.exp(-r2 / (2 * 4));
+                        const val = amp * 10 * Math.exp(-r2 / (2 * coreSig * coreSig));
                         if (val > 0.001) harness.injectFlux(x, y, z, val, val, 0);
                     }
                     break;
@@ -92,18 +97,19 @@ export function setupFluxScenario(name, harness, ctx) {
                 case 'flux-cascade': {
                     // Above genesis threshold — centered at midF
                     const bigAmp = K_GENESIS * 3;
-                    const cLo = Math.floor(midF) - 3, cHi = Math.ceil(midF) + 3;
+                    const coreSig = sigma(2);
+                    const { lo: cLo, hi: cHi } = band(midF, 3);
                     for (let z = cLo; z <= cHi; z++) for (let y = cLo; y <= cHi; y++) for (let x = cLo; x <= cHi; x++) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = bigAmp * Math.exp(-r2 / (2 * 4));
+                        const val = bigAmp * Math.exp(-r2 / (2 * coreSig * coreSig));
                         if (val > 0.001) harness.injectFlux(x, y, z, val, 0, val * 0.5);
                     }
                     break;
                 }
                 case 'flux-annihilation': {
                     // Two matter-antimatter pairs on collision courses — symmetric about midF
-                    const off = Math.floor(N / 3);
+                    const off = vox(11);
                     const pL = Math.floor(midF) - off, pR = Math.ceil(midF) + off;
                     const mc = Math.round(midF); // nearest integer to true center
                     // X-axis pair
@@ -114,15 +120,16 @@ export function setupFluxScenario(name, harness, ctx) {
                     harness.injectParticle(mc, mc, pR, 1);
                     // Strong flux kicks toward center for dramatic head-on collisions
                     const pushAmp = amp * 2;
-                    const kLo = Math.floor(midF) - 3, kHi = Math.ceil(midF) + 3;
+                    const kickSig = sigma(2);
+                    const { lo: kLo, hi: kHi } = band(midF, 3);
                     for (let z = kLo; z <= kHi; z++) for (let y = kLo; y <= kHi; y++) for (let x = kLo; x <= kHi; x++) {
                         const dy = y - midF, dz = z - midF;
                         // X-axis pair kicks
                         const dxL = x - pL, dxR = x - pR;
                         const r2L = dxL*dxL + dy*dy + dz*dz;
                         const r2R = dxR*dxR + dy*dy + dz*dz;
-                        const valL = pushAmp * Math.exp(-r2L / (2 * 4));
-                        const valR = pushAmp * Math.exp(-r2R / (2 * 4));
+                        const valL = pushAmp * Math.exp(-r2L / (2 * kickSig * kickSig));
+                        const valR = pushAmp * Math.exp(-r2R / (2 * kickSig * kickSig));
                         if (valL > 0.001) harness.injectFlux(x, y, z, valL, 0, 0);
                         if (valR > 0.001) harness.injectFlux(x, y, z, -valR, 0, 0);
                         // Z-axis pair kicks
@@ -130,8 +137,8 @@ export function setupFluxScenario(name, harness, ctx) {
                         const dx0 = x - mc;
                         const r2ZL = dx0*dx0 + dy*dy + dzL*dzL;
                         const r2ZR = dx0*dx0 + dy*dy + dzR*dzR;
-                        const valZL = pushAmp * Math.exp(-r2ZL / (2 * 4));
-                        const valZR = pushAmp * Math.exp(-r2ZR / (2 * 4));
+                        const valZL = pushAmp * Math.exp(-r2ZL / (2 * kickSig * kickSig));
+                        const valZR = pushAmp * Math.exp(-r2ZR / (2 * kickSig * kickSig));
                         if (valZL > 0.001) harness.injectFlux(x, y, z, 0, 0, valZL);
                         if (valZR > 0.001) harness.injectFlux(x, y, z, 0, 0, -valZR);
                     }
@@ -140,18 +147,19 @@ export function setupFluxScenario(name, harness, ctx) {
                 case 'flux-pair-production': {
                     // Super-threshold flux burst — centered at midF
                     const bigAmp = K_GENESIS * 5;
-                    const ppLo = Math.floor(midF) - 4, ppHi = Math.ceil(midF) + 4;
+                    const burstSig = sigma(Math.sqrt(6));
+                    const { lo: ppLo, hi: ppHi } = band(midF, 4);
                     for (let z = ppLo; z <= ppHi; z++) for (let y = ppLo; y <= ppHi; y++) for (let x = ppLo; x <= ppHi; x++) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = bigAmp * Math.exp(-r2 / (2 * 6));
+                        const val = bigAmp * Math.exp(-r2 / (2 * burstSig * burstSig));
                         if (val > 0.001) harness.injectFlux(x, y, z, val, val * 0.7, val * 0.3);
                     }
                     break;
                 }
                 case 'flux-interference': {
                     // 4 coherent sources — symmetric about midF in X and Z
-                    const q = Math.floor(N / 4);
+                    const q = vox(8);
                     const qL = Math.floor(midF) - q, qR = Math.ceil(midF) + q;
                     const mc = Math.round(midF);
                     const sources = [
@@ -159,9 +167,11 @@ export function setupFluxScenario(name, harness, ctx) {
                         [qL, mc, qR], [qR, mc, qR],
                     ];
                     for (const [sx, sy, sz] of sources) {
-                        for (let dz = -4; dz <= 4; dz++) for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
+                        const srcHw = vox(4);
+                        const srcSig = sigma(Math.sqrt(6));
+                        for (let dz = -srcHw; dz <= srcHw; dz++) for (let dy = -srcHw; dy <= srcHw; dy++) for (let dx = -srcHw; dx <= srcHw; dx++) {
                             const r2 = dx * dx + dy * dy + dz * dz;
-                            const val = amp * 1.5 * Math.exp(-r2 / (2 * 6));
+                            const val = amp * 1.5 * Math.exp(-r2 / (2 * srcSig * srcSig));
                             if (val > 0.001) harness.injectFlux(sx + dx, sy + dy, sz + dz, val, 0, 0);
                         }
                     }
@@ -169,7 +179,7 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
                 case 'flux-vortex': {
                     // Circular-polarized flux ring — centered at midF
-                    const vRadius = Math.floor(N / 5);
+                    const vRadius = vox(6);
                     const nV = 24;
                     const mc = Math.round(midF);
                     for (let i = 0; i < nV; i++) {
@@ -187,13 +197,15 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
                 case 'flux-dual-substrate': {
                     // L/R chirality demo — poles symmetric about midF
-                    const off = Math.floor(N / 4);
+                    const off = vox(8);
                     const pLx = Math.floor(midF) - off, pRx = Math.ceil(midF) + off;
-                    const yzLo = Math.floor(midF) - 5, yzHi = Math.ceil(midF) + 5;
-                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -5; dx <= 5; dx++) {
+                    const poleHw = vox(5);
+                    const poleSig = sigma(Math.sqrt(8));
+                    const { lo: yzLo, hi: yzHi } = band(midF, 5);
+                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -poleHw; dx <= poleHw; dx++) {
                         const dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * 1.5 * Math.exp(-r2 / (2 * 8));
+                        const val = amp * 1.5 * Math.exp(-r2 / (2 * poleSig * poleSig));
                         if (val > 0.001) {
                             harness.injectFlux(pLx + dx, y, z, val, val * 0.5, -val * 0.3);
                             harness.injectFlux(pRx + dx, y, z, val, -val * 0.5, val * 0.3);
@@ -205,14 +217,18 @@ export function setupFluxScenario(name, harness, ctx) {
                     // Random super-threshold flux patches → stochastic particle creation
                     const nPatches = 8;
                     const threshold = K_GENESIS * 2.5;
+                    const margin = vox(4);
+                    const patchSpan = vox(8);
+                    const patchHw = vox(2);
+                    const patchSig = sigma(Math.sqrt(3));
                     for (let p = 0; p < nPatches; p++) {
-                        const cx = Math.floor(Math.random() * (N - 8)) + 4;
-                        const cy = Math.floor(Math.random() * (N - 8)) + 4;
-                        const cz = Math.floor(Math.random() * (N - 8)) + 4;
+                        const cx = Math.floor(Math.random() * (N - patchSpan)) + margin;
+                        const cy = Math.floor(Math.random() * (N - patchSpan)) + margin;
+                        const cz = Math.floor(Math.random() * (N - patchSpan)) + margin;
                         const pAmp = threshold * (0.8 + Math.random() * 0.8);
-                        for (let dz = -2; dz <= 2; dz++) for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+                        for (let dz = -patchHw; dz <= patchHw; dz++) for (let dy = -patchHw; dy <= patchHw; dy++) for (let dx = -patchHw; dx <= patchHw; dx++) {
                             const r2 = dx * dx + dy * dy + dz * dz;
-                            const val = pAmp * Math.exp(-r2 / (2 * 3));
+                            const val = pAmp * Math.exp(-r2 / (2 * patchSig * patchSig));
                             if (val > 0.001) {
                                 const sx = (Math.random() - 0.5) * val;
                                 const sy = (Math.random() - 0.5) * val;
@@ -227,8 +243,8 @@ export function setupFluxScenario(name, harness, ctx) {
                 // ── QCD Scenarios ──
                 case 'flux-meson': {
                     // Quark-antiquark bound state — poles symmetric about midF
-                    const mOff = Math.max(2, Math.floor(N / 8));
-                    const mDress = Math.max(2, Math.floor(N / 10));
+                    const mOff = vox(4);
+                    const mDress = vox(3);
                     const mL = Math.floor(midF) - mOff, mR = Math.ceil(midF) + mOff;
                     const mc = Math.round(midF);
                     harness.injectParticle(mL, mc, mc, 1);
@@ -252,8 +268,8 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
                 case 'flux-string-breaking': {
                     // Confinement string snap — poles symmetric about midF
-                    const sbOff = Math.max(2, Math.floor(N / 10));
-                    const sbDress = Math.max(2, Math.floor(N / 8));
+                    const sbOff = vox(3);
+                    const sbDress = vox(4);
                     const sbL = Math.floor(midF) - sbOff, sbR = Math.ceil(midF) + sbOff;
                     const mc = Math.round(midF);
                     harness.injectParticle(sbL, mc, mc, 1);
@@ -274,7 +290,7 @@ export function setupFluxScenario(name, harness, ctx) {
                 }
                 case 'flux-baryon': {
                     // Three-quark equilateral triangle — centered at midF
-                    const bR = Math.floor(N / 6);
+                    const bR = vox(5);
                     const mc = Math.round(midF);
                     for (let k = 0; k < 3; k++) {
                         const angle = TRIAD_ANGLES[k];
@@ -288,11 +304,12 @@ export function setupFluxScenario(name, harness, ctx) {
                     const bSea = Math.max(1, Math.floor(bR / 2));
                     harness.injectParticle(mc + bSea, mc + bSea, mc, -1);
                     // Light flux dressing centered at midF
-                    const bLo = Math.floor(midF) - 3, bHi = Math.ceil(midF) + 3;
+                    const dressSig = sigma(2);
+                    const { lo: bLo, hi: bHi } = band(midF, 3);
                     for (let z = bLo; z <= bHi; z++) for (let y = bLo; y <= bHi; y++) for (let x = bLo; x <= bHi; x++) {
                         const dx = x - midF, dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * 0.5 * Math.exp(-r2 / (2 * 4));
+                        const val = amp * 0.5 * Math.exp(-r2 / (2 * dressSig * dressSig));
                         if (val > 0.001) harness.injectFlux(x, y, z, val, 0, val * 0.3);
                     }
                     break;
@@ -300,24 +317,26 @@ export function setupFluxScenario(name, harness, ctx) {
 
                 case 'flux-nested-standing': {
                     // Two orthogonal standing wave pairs — all poles symmetric about midF
-                    const offX = Math.floor(N / 3);
-                    const offZ = Math.floor(N / 4);
+                    const offX = vox(11);
+                    const offZ = vox(8);
                     const xL = Math.floor(midF) - offX, xR = Math.ceil(midF) + offX;
                     const zL = Math.floor(midF) - offZ, zR = Math.ceil(midF) + offZ;
-                    const yzLo = Math.floor(midF) - 4, yzHi = Math.ceil(midF) + 4;
-                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -4; dx <= 4; dx++) {
+                    const poleHw = vox(4);
+                    const poleSig = sigma(3);
+                    const { lo: yzLo, hi: yzHi } = band(midF, 4);
+                    for (let z = yzLo; z <= yzHi; z++) for (let y = yzLo; y <= yzHi; y++) for (let dx = -poleHw; dx <= poleHw; dx++) {
                         const dy = y - midF, dz = z - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * 9));
+                        const val = amp * Math.exp(-r2 / (2 * poleSig * poleSig));
                         if (val > 0.001) {
                             harness.injectFlux(xL + dx, y, z, val, 0, 0);
                             harness.injectFlux(xR + dx, y, z, val, 0, 0);
                         }
                     }
-                    for (let x = yzLo; x <= yzHi; x++) for (let y = yzLo; y <= yzHi; y++) for (let dz = -4; dz <= 4; dz++) {
+                    for (let x = yzLo; x <= yzHi; x++) for (let y = yzLo; y <= yzHi; y++) for (let dz = -poleHw; dz <= poleHw; dz++) {
                         const dx = x - midF, dy = y - midF;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = amp * Math.exp(-r2 / (2 * 9));
+                        const val = amp * Math.exp(-r2 / (2 * poleSig * poleSig));
                         if (val > 0.001) {
                             harness.injectFlux(x, y, zL + dz, 0, 0, val);
                             harness.injectFlux(x, y, zR + dz, 0, 0, val);
@@ -342,9 +361,11 @@ export function setupFluxScenario(name, harness, ctx) {
                     }
                     // Charged particle with velocity in +x
                     harness.injectParticle(mid, mid, mid, 1);
-                    for (let d = -3; d <= 3; d++) for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) {
+                    const dressHw = vox(3);
+                    const dressSig = sigma(2);
+                    for (let d = -dressHw; d <= dressHw; d++) for (let dy = -dressHw; dy <= dressHw; dy++) for (let dx = -dressHw; dx <= dressHw; dx++) {
                         const r2 = dx * dx + dy * dy + d * d;
-                        const val = amp * Math.exp(-r2 / (2 * 4));
+                        const val = amp * Math.exp(-r2 / (2 * dressSig * dressSig));
                         if (val > 0.001) {
                             harness.injectFlux(mid + dx, mid + dy, mid + d, val * 0.5, 0, 0);
                         }
@@ -355,7 +376,7 @@ export function setupFluxScenario(name, harness, ctx) {
                 case 'flux-screening': {
                     // Charge screening: central +1 surrounded by 6 opposite charges
                     // (from test_gpu_experiments GP-EXP-SCREENING / Debye-Hückel)
-                    const shellR = Math.floor(N / 5);
+                    const shellR = vox(6);
                     harness.injectParticle(mid, mid, mid, 1);
                     // 6 screening charges on face-axes
                     const scOffsets = [
@@ -382,15 +403,17 @@ export function setupFluxScenario(name, harness, ctx) {
                 case 'flux-triad': {
                     // Triad formation: 3 same-sign particles in equilateral triangle
                     // (from campaign_triad_binding / campaign_baryon_formation)
-                    const tR = Math.floor(N / 6);
+                    const tR = vox(5);
                     for (const angle of TRIAD_ANGLES) {
                         const px = mid + Math.round(tR * Math.cos(angle));
                         const pz = mid + Math.round(tR * Math.sin(angle));
                         harness.injectParticle(px, mid, pz, 1);
                         // Flux kick toward center (binding)
-                        for (let dx = -3; dx <= 3; dx++) for (let dy = -3; dy <= 3; dy++) for (let dz = -3; dz <= 3; dz++) {
+                        const bindHw = vox(3);
+                        const bindSig = sigma(2);
+                        for (let dx = -bindHw; dx <= bindHw; dx++) for (let dy = -bindHw; dy <= bindHw; dy++) for (let dz = -bindHw; dz <= bindHw; dz++) {
                             const r2 = dx * dx + dy * dy + dz * dz;
-                            const val = amp * 0.5 * Math.exp(-r2 / (2 * 4));
+                            const val = amp * 0.5 * Math.exp(-r2 / (2 * bindSig * bindSig));
                             if (val > 0.001) {
                                 const toCX = (mid - (px + dx));
                                 const toCZ = (mid - (pz + dz));
@@ -408,9 +431,11 @@ export function setupFluxScenario(name, harness, ctx) {
                     // (from test_thermodynamics — entropy increase demo)
                     const corner = Math.floor(N / 4);
                     const thermAmp = amp * 3;
-                    for (let dz = -4; dz <= 4; dz++) for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
+                    const thermSig = sigma(Math.sqrt(6));
+                    const thermHw = vox(4);
+                    for (let dz = -thermHw; dz <= thermHw; dz++) for (let dy = -thermHw; dy <= thermHw; dy++) for (let dx = -thermHw; dx <= thermHw; dx++) {
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const val = thermAmp * Math.exp(-r2 / (2 * 6));
+                        const val = thermAmp * Math.exp(-r2 / (2 * thermSig * thermSig));
                         if (val > 0.001) {
                             // Random flux directions for maximum entropy growth
                             const rx = (Math.random() - 0.5) * 2;
@@ -427,7 +452,7 @@ export function setupFluxScenario(name, harness, ctx) {
 
                 case 'flux-vacuum-foam': {
                     // Near-threshold flux everywhere → spontaneous pair creation/annihilation
-                    const foamR = Math.floor(N / 3);
+                    const foamR = vox(11);
                     const foamBase = K_B * 0.9;
                     const foamVar = K_B * 0.4;
                     for (let z = 0; z < N; z++)

@@ -26,8 +26,9 @@
  *   - Returns false if the name prefix does not match (dispatcher falls through)
  *   - Returns true if it handled the scenario
  *
- * Context object `ctx = { N, mid, midF }` is precomputed once here and passed
- * to each group to avoid recomputing the lattice-center parameters.
+ * Context object `ctx = { N, mid, midF, vox, sigma, band, … }` is precomputed
+ * once here. Physics geometry uses the reference-lattice helpers so scenarios
+ * keep the same physical size when L is changed (separate from visual scaling).
  *
  * CONTRACT — `this` binding via `.call(bridgeInstance, name, ctx)` is
  * mandatory. Every `this.reset()`, `this._initFluxGrid()`,
@@ -41,6 +42,7 @@ import { setupQuantumScenario } from './quantum-scenarios.js';
 import { setupVacuumScenario }  from './vacuum-scenarios.js';
 import { setupS0SeedScenario }  from './s0-seed-scenarios.js';
 import { setupS0FieldScenario } from './s0-field-scenarios.js';
+import { createPhysicsLatticeHelpers } from './physics-lattice.js';
 
 /**
  * Dispatcher: executes a scenario by name by trying each group in order.
@@ -68,7 +70,7 @@ export function runSetupScenario(name, harness = null) {
     if (name === 'empty') return;
 
     // Try each group in order. First matching prefix wins; stops immediately.
-    const ctx = { N, mid, midF };
+    const ctx = { N, mid, midF, ...createPhysicsLatticeHelpers(N) };
     const scenarioHarness = harness ?? {
         bridge,
         setToggle: (key, value) => bridge.setToggle?.(key, value),
