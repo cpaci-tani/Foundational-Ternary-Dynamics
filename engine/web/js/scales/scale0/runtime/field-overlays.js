@@ -31,61 +31,15 @@ import {
     computeStreamlineParams,
     fillFieldParticleBuf,
 } from './streamline-integrator.js';
+import {
+    buildSampleSnapshot,
+    createFieldSampleCache,
+    createForceFieldCache,
+} from './field-sample-cache.js';
 
+/** @deprecated Prefer createFieldSampleCache + per-job ensureSample. */
 export function sampleFieldState(fieldCapability, flags, stride, acScale0) {
-    const sampled = {};
-    // Snapshot the particle frame ONCE per sweep so every job in the sweep
-    // (E-field, B-field) seeds from the same tick's particle positions. Without
-    // this, each builder called getScale0ParticleFrame() live on different rAF
-    // frames — causing B's seeds to be one frame newer than E's when both fields
-    // were enabled, producing the "B translates offset" visual bug.
-    if (acScale0 && (flags.showEField || flags.showBField)) {
-        sampled.particleData = acScale0.getScale0ParticleFrame();
-    }
-    // Tier 1 quantum overlays all derive from fluxVector + optional poynting,
-    // so pull those samples whenever any quantum toggle is active.
-    const needFlux = flags.showFluxLines || flags.showDualSubstrate || flags.showChirality ||
-        flags.showForceWeak || flags.showPsiSquared || flags.showPhase ||
-        flags.showLagrangianDensity || flags.showEntropyDensity || flags.showGravPotential;
-    if (needFlux) {
-        sampled.fluxVector = fieldCapability.getScale0FieldSamples({ kind: 'fluxVector', stride });
-    }
-    if (flags.showPoynting || flags.showLight || flags.showLagrangianDensity) {
-        sampled.poynting = fieldCapability.getScale0FieldSamples({ kind: 'poynting', stride });
-    }
-    if (flags.showEField || flags.showEmEnergy || flags.showEPressure)
-        sampled.eField = fieldCapability.getScale0FieldSamples({ kind: 'e', stride });
-    if (flags.showBField || flags.showEmEnergy || flags.showBPressure)
-        sampled.bField = fieldCapability.getScale0FieldSamples({ kind: 'b', stride });
-    if (flags.showDivField || flags.showLagrangianDensity || flags.showChargeDensity) {
-        sampled.divergence = fieldCapability.getScale0FieldSamples({ kind: 'divJ', stride });
-    }
-    if (flags.showVorticity) {
-        sampled.vorticity = fieldCapability.getScale0FieldSamples({ kind: 'vorticity', stride });
-    }
-    // Tier 1/2/3 samplers (2026-04-18)
-    if (flags.showHelicity)
-        sampled.helicity = fieldCapability.getScale0FieldSamples({ kind: 'helicity', stride });
-    if (flags.showKretschmann)
-        sampled.kretschmann = fieldCapability.getScale0FieldSamples({ kind: 'kretschmann', stride });
-    if (flags.showHorizon || flags.showLatency)
-        sampled.latency = fieldCapability.getScale0FieldSamples({ kind: 'latency', stride });
-    if (flags.showFisher)
-        sampled.fisher = fieldCapability.getScale0FieldSamples({ kind: 'fisher', stride });
-    if (flags.showCoherence)
-        sampled.coherence = fieldCapability.getScale0FieldSamples({ kind: 'coherence', stride });
-    // Weak force is parity-violating; its natural vector proxy is the curl
-    // of J (pseudovector), not J itself. Pull the curl-J sample when the
-    // weak overlay is active.
-    if (flags.showForceWeak)
-        sampled.curlJ = fieldCapability.getScale0FieldSamples({ kind: 'curlJ', stride });
-    // State field s is sparse (only manifested voxels) — sample at stride 1 so
-    // the ternary pattern isn't decimated, regardless of the sweep stride.
-    if (flags.showStateField)
-        sampled.state = fieldCapability.getScale0FieldSamples({ kind: 'state', stride: 1 });
-    if (flags.showGaussResidual)
-        sampled.gaussResidual = fieldCapability.getScale0FieldSamples({ kind: 'gaussResidual', stride: 1 });
-    return sampled;
+    return buildSampleSnapshot(fieldCapability, flags, stride, acScale0);
 }
 
 export function buildQuantumOverlayData(ctx, state, sampled) {
@@ -257,7 +211,7 @@ export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize
     return frame;
 }
 
-export function buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing, params = {}) {
+export function buildForceOverlayData(state, fieldCapability, sampled, latticeSize, stride, stepsScale, seedSpacing, params = {}, forceCache = null) {
     const anyForceOn = state.fieldFlags.showForceEM || state.fieldFlags.showForceGravity ||
         state.fieldFlags.showForceStrong || state.fieldFlags.showForceWeak;
     if (!anyForceOn) return { anyForceOn: false, style: state.forceStyle, items: [] };
@@ -273,18 +227,21 @@ export function buildForceOverlayData(state, fieldCapability, sampled, latticeSi
     // the particle-parity pattern; keep the field stride where it is so E/B
     // streamlines stay cheap.
     const forceStride = latticeSize <= 33 ? 1 : Math.max(1, Math.min(4, Math.floor(stride / 2) || 1));
+    const getForce = forceCache
+        ? (type) => forceCache.get(type, forceStride)
+        : (type) => fieldCapability.getScale0ForceField(type, forceStride);
 
     const items = [];
     if (state.fieldFlags.showForceEM) {
-        const emData = fieldCapability.getScale0ForceField('em', forceStride);
+        const emData = getForce('em');
         if (emData.count > 0) items.push({ type: 'em', data: emData });
     }
     if (state.fieldFlags.showForceGravity) {
-        const gravityData = fieldCapability.getScale0ForceField('gravity', forceStride);
+        const gravityData = getForce('gravity');
         if (gravityData.count > 0) items.push({ type: 'gravity', data: gravityData });
     }
     if (state.fieldFlags.showForceStrong) {
-        const strongData = fieldCapability.getScale0ForceField('strong', forceStride);
+        const strongData = getForce('strong');
         if (strongData.count > 0) items.push({ type: 'strong', data: strongData });
     }
     if (state.fieldFlags.showForceWeak && sampled.curlJ?.count > 0) {
@@ -639,6 +596,7 @@ function ensureOverlaySched(state) {
             jobCount: 0,       // number of live slots in the current sweep
             cursor: 0,         // index of the next job to run in this sweep
             sampled: null,     // field snapshot shared by every job in the sweep
+            sampleCache: null, // lazy per-kind sampler cache for this sweep
             running: false,    // ctx.running latched at sweep start (for sub-anims)
             sweepFrames: 0,    // frames elapsed in the current sweep
             forceAnimated: false, // force-streamline dash advanced once per sweep
@@ -732,37 +690,52 @@ function applyDerivedJob(frame, viewportAdapter) {
 // case is the exact same build+apply the corresponding closure performed, in
 // the same order, so visual output is byte-identical.
 function runJob(sched, slot) {
-    const { ctx, state, viewportAdapter, latticeSize, params, sampled } = sched;
+    const { ctx, state, viewportAdapter, latticeSize, params, sampled, sampleCache } = sched;
     const { stride } = params;
     switch (slot.kind) {
         case JOB_EFIELD: {
+            sampleCache.ensureSample('eField');
+            sampleCache.ensureParticleData();
+            if (!sampled.eField?.count) break;
             const lines = buildEFieldLines(sched.acScale0, state, sampled, latticeSize, stride, params);
             viewportAdapter.applyEFieldLines(lines);
             break;
         }
         case JOB_BFIELD: {
+            sampleCache.ensureSample('bField');
+            sampleCache.ensureParticleData();
+            if (!sampled.bField?.count) break;
             const lines = buildBFieldLines(sched.acScale0, state, sampled, latticeSize, stride, params);
             viewportAdapter.applyBFieldLines(lines);
             break;
         }
         case JOB_FLUX: {
+            sampleCache.ensureSample('fluxVector');
+            if (!sampled.fluxVector?.count) break;
             const fs = buildFluxStreamlines(sampled, latticeSize, stride, params);
             viewportAdapter.applyFluxStreamlines(fs.lines, fs.maxFlux);
             break;
         }
         case JOB_PASS: {
             const flags = state.fieldFlags;
-            if (flags.showPoynting && sampled.poynting?.count > 0) viewportAdapter.applyPoynting(sampled.poynting);
-            if (flags.showDivField && sampled.divergence?.count > 0) viewportAdapter.applyDivergence(sampled.divergence);
+            if (flags.showPoynting) {
+                sampleCache.ensureSample('poynting');
+                if (sampled.poynting?.count > 0) viewportAdapter.applyPoynting(sampled.poynting);
+            }
+            if (flags.showDivField) {
+                sampleCache.ensureSample('divergence');
+                if (sampled.divergence?.count > 0) viewportAdapter.applyDivergence(sampled.divergence);
+            }
             break;
         }
         case JOB_FORCE_FIELDS: {
             // params.deferFlow was set true once for this sweep (see
             // buildOverlayJobs), so the heavy flow integration is deferred out
             // of this fields job into the per-force JOB_FORCE_FLOW jobs.
+            if (state.fieldFlags.showForceWeak) sampleCache.ensureSample('curlJ');
             sched.forceFrame = buildForceOverlayData(
                 state, sched.fieldCapability, sampled, latticeSize, stride,
-                params.stepsScale, params.seedSpacing, params);
+                params.stepsScale, params.seedSpacing, params, sched.forceCache);
             applyForceFieldsJob(sched, viewportAdapter);
             break;
         }
@@ -786,6 +759,9 @@ function runJob(sched, slot) {
             break;
         }
         case JOB_DERIVED: {
+            const flags = state.fieldFlags;
+            if (flags.showDualSubstrate || flags.showChirality) sampleCache.ensureSample('fluxVector');
+            if (flags.showLight) sampleCache.ensureSample('poynting');
             const frame = buildDerivedSubstrateData(state, sampled, sched.mockCapability);
             applyDerivedJob(frame, viewportAdapter);
             break;
@@ -795,6 +771,7 @@ function runJob(sched, slot) {
             // wrapper) and apply forwards it directly — eliminating the per-run
             // object the old `(s) => ({ key: ... })` closures boxed every frame.
             const entry = SCALAR_JOBS[slot.scalarIndex];
+            sampleCache.ensureScalarDeps(entry[0]);
             const value = entry[1](sampled, ctx, state);
             entry[2](viewportAdapter, value);
             break;
@@ -813,7 +790,6 @@ function runJob(sched, slot) {
 function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, params) {
     const fieldCapability = (state.useFluxMock ? state.fluxMock : ctx.bridge).capabilities.scale0;
     const mockCapability = state.fluxMock?.capabilities?.scale0 || null;
-    const sampled = sched.sampled;
     const flags = state.fieldFlags;
     const acScale0 = emActiveScale0(ctx, state);
 
@@ -844,20 +820,20 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
     // to the next frame(s) of the same sweep. Each job's output is a complete,
     // atomic line set (identical geometry to the monolithic build) applied in
     // a single full-replace call — only the frame it lands on moves.
-    if (flags.showEField && sampled.eField?.count > 0) {
+    // Job planning uses visual flags only — samplers run lazily inside runJob
+    // so enabling many overlays does not multiply work at sweep start.
+    if (flags.showEField) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_EFIELD; slot.cost = COST_STREAMLINE;
     }
-    if (flags.showBField && sampled.bField?.count > 0) {
+    if (flags.showBField) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_BFIELD; slot.cost = COST_STREAMLINE;
     }
-    if (flags.showFluxLines && sampled.fluxVector?.count > 0) {
+    if (flags.showFluxLines) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_FLUX; slot.cost = COST_STREAMLINE;
     }
     // Poynting / divergence are zero-cost passthroughs (forward a sampled
     // buffer); batch them as one cheap job.
-    const passActive = (flags.showPoynting && sampled.poynting?.count > 0) ||
-        (flags.showDivField && sampled.divergence?.count > 0);
-    if (passActive) {
+    if (flags.showPoynting || flags.showDivField) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_PASS; slot.cost = COST_PASSTHROUGH;
     }
 
@@ -906,10 +882,8 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
 
     // ── Derived substrate group (dual / chirality / light / mock overlays) ─
     const derivedActive = flags.showDarkMatterHalo || flags.showDampingZones ||
-        flags.showGenesisIsosurface ||
-        (flags.showDualSubstrate && sampled.fluxVector?.count > 0) ||
-        (flags.showChirality && sampled.fluxVector?.count > 0) ||
-        (flags.showLight && sampled.poynting?.count > 0);
+        flags.showGenesisIsosurface || flags.showDualSubstrate ||
+        flags.showChirality || flags.showLight;
     if (derivedActive) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_DERIVED; slot.cost = COST_DERIVED;
     }
@@ -948,6 +922,8 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         // sweep liveness + shared snapshot are cleared.
         sched.active = false;
         sched.sampled = null;
+        sched.sampleCache = null;
+        sched.forceCache = null;
         return;
     }
 
@@ -960,6 +936,8 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
     if (state.fieldNeedsUpdate && sched.active) {
         sched.active = false;
         sched.sampled = null;
+        sched.sampleCache = null;
+        sched.forceCache = null;
     }
 
     // A sweep already in flight always continues to completion regardless of
@@ -998,16 +976,21 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         const dataChanged = state.fieldNeedsUpdate || version !== sched.lastVersion;
         if (!onBoundary || !dataChanged) return;
 
-        // Latch the trigger and open a fresh sweep: sample the field ONCE so
-        // every job in this sweep sees one coherent snapshot. buildOverlayJobs
-        // refills the persistent slot pool IN PLACE and sets sched.jobCount;
+        // Latch the trigger and open a fresh sweep: attach a lazy sample cache
+        // so each sampler kind runs at most once when a job first needs it.
+        // buildOverlayJobs refills the persistent slot pool IN PLACE and sets sched.jobCount;
         // it allocates no new job array/objects in steady state.
         state.fieldNeedsUpdate = false;
         sched.lastVersion = version;
         const params = computeStreamlineParams(latticeSize);
         const fieldCapability = (state.useFluxMock ? state.fluxMock : ctx.bridge).capabilities.scale0;
         const acScale0ForSnapshot = emActiveScale0(ctx, state);
-        sched.sampled = sampleFieldState(fieldCapability, state.fieldFlags, params.stride, acScale0ForSnapshot);
+        sched.sampleCache = createFieldSampleCache(fieldCapability, acScale0ForSnapshot, params.stride);
+        sched.forceCache = createForceFieldCache(fieldCapability);
+        sched.sampled = sched.sampleCache.sampled;
+        if (state.fieldFlags.showEField || state.fieldFlags.showBField) {
+            sched.sampleCache.ensureParticleData();
+        }
         sched.running = !!ctx.running;
         sched.cursor = 0;
         sched.sweepFrames = 0;
@@ -1017,7 +1000,13 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         sched.active = true;
         // An empty job list (all active flags gated out by zero-count samples)
         // is a completed no-op sweep.
-        if (sched.jobCount === 0) { sched.active = false; sched.sampled = null; return; }
+        if (sched.jobCount === 0) {
+            sched.active = false;
+            sched.sampled = null;
+            sched.sampleCache = null;
+            sched.forceCache = null;
+            return;
+        }
     }
 
     // ── Drain jobs under the per-frame budget ────────────────────────────
@@ -1045,5 +1034,7 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         // the slot pool persists for reuse on the next sweep.
         sched.active = false;
         sched.sampled = null;
+        sched.sampleCache = null;
+        sched.forceCache = null;
     }
 }

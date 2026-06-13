@@ -43,7 +43,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
     const harness = maybeCtx ? harnessOrCtx : makeBridgeHarness(this);
     const ctx = maybeCtx ?? harnessOrCtx;
     const bridge = harness.bridge ?? this;
-    const { N, midF } = ctx;
+    const { N, midF, vox, sigma: sig } = ctx;
             bridge._initFluxGrid();
             const mc = Math.round(midF);
 
@@ -149,7 +149,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     // re-measurement: 5/5 seeds = 2 stable clusters of
                     // 2-3 voxels each at the two collision points.
                     // Toggles set by scenario-registry.js at load.
-                    const q = Math.max(1, Math.floor(N / 4));
+                    const q = vox(8);
                     harness.injectFlux(mc - q, mc, mc, +5.0 * K_GENESIS, 0, 0);
                     harness.injectFlux(mc + q, mc, mc, -5.0 * K_GENESIS, 0, 0);
                     break;
@@ -291,7 +291,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     const tri = (cx, cy, cz, charges, colors, rad, lock = true) =>
                         injectTriad(harness, cx, cy, cz, charges, colors, rad, lock);
                     if (name === 's0-seed-hydrogen') {
-                        const oR=Math.max(4,Math.floor(N/6)), bR=Math.max(2,Math.floor(N/12));
+                        const oR = vox(5), bR = vox(2);
                         tri(mc,mc,mc,[+1,+1,-1],[1,2,3],bR); dp(mc,mc,mc+oR, -1,-1,0, 2,K_B);
                     }
                     else if (name === 's0-seed-helium') {
@@ -305,9 +305,9 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                         // dressed +1 particle posing as the nucleus —
                         // physically wrong. Now: 4 nucleons × 3 quarks +
                         // 2 electrons = 14 manifested particles.
-                        const oR = Math.max(3, Math.floor(N/8));        // electron-shell radius
-                        const nR = Math.max(2, Math.floor(N/12));       // nucleon-center offset
-                        const bR = Math.max(1, Math.floor(N/16));       // intra-triad radius
+                        const oR = vox(4);        // electron-shell radius
+                        const nR = vox(2);       // nucleon-center offset
+                        const bR = vox(2);       // intra-triad radius
                         const tet = [
                             [+nR, +nR, +nR],   // proton 1
                             [-nR, -nR, +nR],   // proton 2
@@ -327,9 +327,9 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                         dp(mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8);
                     }
                     else if (name === 's0-seed-h2-bond-formation') {
-                        const bd = Math.max(4, Math.floor(N / 6));
+                        const bd = vox(5);
                         const hf = Math.floor(bd / 2);
-                        const bR = Math.max(1, Math.floor(N / 16));
+                        const bR = vox(2);
                         // Place two hydrogen nuclei close together:
                         tri(mc - hf * 0.7, mc, mc, [+1, +1, -1], [1, 2, 3], bR);
                         tri(mc + hf * 0.7, mc, mc, [+1, +1, -1], [1, 2, 3], bR);
@@ -344,7 +344,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     // Demo only: a mineral-pore-like seed plus flux-fed
                     // threshold crossing, not a biochemical or replication
                     // claim.
-                    const ringR = Math.max(5, Math.floor(N / 8));
+                    const ringR = vox(5);
                     const ringSites = 16;
                     for (let i = 0; i < ringSites; i++) {
                         const angle = 2 * Math.PI * i / ringSites;
@@ -358,7 +358,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                         });
                     }
 
-                    const precursorR = Math.max(ringR + 4, Math.floor(N / 4));
+                    const precursorR = ringR + vox(4);
                     const precursorSpeed = 0.12 * C_SPEED;
                     for (let k = 0; k < 4; k++) {
                         const angle = 2 * Math.PI * k / 4;
@@ -383,7 +383,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                         }
                     }
 
-                    const triR = Math.max(2, Math.floor(N / 18));
+                    const triR = vox(2);
                     injectTriad(harness, mc, mc, mc, [+1, -1, +1], [1, 2, 3], triR, false);
 
                     const spark = 6.0 * K_GENESIS / Math.sqrt(6.0);
@@ -401,7 +401,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                             minVal: 0.001,
                         });
                     };
-                    const daughterR = Math.max(ringR + 2, Math.floor(N / 6));
+                    const daughterR = ringR + vox(2);
                     daughterPocket(mc - daughterR, mc, mc + 2, +1);
                     daughterPocket(mc + daughterR, mc, mc - 2, -1);
                     break;
@@ -502,10 +502,10 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     // genesis=false: same fix as photon (audit 2026-04-28) —
                     // a free gauge-boson wave should not pair-produce.
                     harness.setToggle('genesis', false);
-                    const sigma = 3;
+                    const gSigma = sig(3);
                     const gAmp = K_B * 2;
-                    const startX = Math.max(4, Math.floor(N / 4));
-                    const halfR = 8;
+                    const startX = vox(8);
+                    const halfR = vox(8);
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let dx = -halfR; dx <= halfR; dx++) {
@@ -513,7 +513,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                         if (x < 0 || x >= N) continue;
                         const dy = y - midF, dz = z - midF;
                         const r2 = dx*dx + dy*dy + dz*dz;
-                        const gg = gAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                        const gg = gAmp * Math.exp(-r2 / (2 * gSigma * gSigma));
                         if (gg < 1e-6) continue;
                         harness.injectFlux(x, y, z, 0, gg, 0);      // J_y polarised
                         harness.injectWaveVel(x, y, z, gg, 0, 0);    // propagate +x
@@ -536,7 +536,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     // scenario-mutable whitelist (CONTRACTS.md §s0-seed).
                     harness.setToggle('weak_transmutation', true);
                     harness.setToggle('dual_substrate', true);
-                    const bdR = Math.max(2, Math.floor(N/10));
+                    const bdR = vox(3);
                     // Three-vertex neutron-ish triangle.
                     for (let k = 0; k < 3; k++) {
                         const ang = TRIAD_ANGLES[k];
@@ -547,7 +547,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     }
                     // Leptonic output preseeded, offset along +z so they
                     // can be visually associated with the decay direction.
-                    const leptonR = Math.max(4, Math.floor(N/5));
+                    const leptonR = vox(6);
                     harness.injectParticle(mc, mc, mc + leptonR, -1);      // electron
                     // Neutrino-like: no manifested state, soft L/R flux
                     const nuSig = 2, nuR = 4;
@@ -578,7 +578,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     // recognise opposite-sign contact and annihilate
                     // the pair into a radial flux burst (two-photon-
                     // like final state).
-                    const aSep = Math.max(6, Math.floor(N/3));
+                    const aSep = vox(11);
                     const half = Math.floor(aSep / 2);
 
                     // Electron on left, moving right.
@@ -664,16 +664,16 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     }
 
                     // Off-axis photon pulse launched at x0 = N/4, propagating in +x:
-                    const x0 = Math.floor(N / 4);
-                    const offset = Math.max(4, Math.floor(N / 6));
+                    const x0 = vox(8);
+                    const offset = vox(5);
                     const y0 = mc + offset;
                     const z0 = mc;
 
-                    const sigma = Math.max(2, Math.floor(N / 12));
+                    const waveSigma = sig(2);
                     const amp = K_B * 3; // high amplitude so it stands out
-                    const lambdaEff = 4 * sigma;
+                    const lambdaEff = 4 * waveSigma;
                     const k = 2 * Math.PI / lambdaEff;
-                    const cutR = 3.0 * sigma;
+                    const cutR = 3.0 * waveSigma;
                     const cutR2 = cutR * cutR;
 
                     for (let z = 0; z < N; z++)
@@ -682,7 +682,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                         const dx = x - x0, dy = y - y0, dz = z - z0;
                         const r2 = dx * dx + dy * dy + dz * dz;
                         if (r2 > cutR2) continue;
-                        const g = Math.exp(-r2 / (2 * sigma * sigma));
+                        const g = Math.exp(-r2 / (2 * waveSigma * waveSigma));
                         if (g < 1e-6) continue;
                         const phase = k * dx;
                         const jz = amp * g * Math.sin(phase);
@@ -695,7 +695,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
 
                 // ── Level 6: Gauge / Topological ─────────────────────
                 case 's0-seed-wilson-loop': {
-                    const R = Math.max(3, Math.floor(N/8)), wAmp = K_B;
+                    const R = vox(4), wAmp = K_B;
                     for (let x=mc-R; x<=mc+R; x++) harness.injectFlux(x, mc-R, mc, wAmp, 0, 0);
                     for (let y=mc-R; y<=mc+R; y++) harness.injectFlux(mc+R, y, mc, 0, wAmp, 0);
                     for (let x=mc+R; x>=mc-R; x--) harness.injectFlux(x, mc+R, mc, -wAmp, 0, 0);
@@ -705,7 +705,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     break;
                 }
                 case 's0-seed-flux-tube': {
-                    const ftSep=Math.max(6,Math.floor(N/4)), ftH=Math.floor(ftSep/2);
+                    const ftSep = vox(8), ftH = Math.floor(ftSep / 2);
                     harness.injectParticle(mc-ftH,mc,mc,+1); harness.injectParticle(mc+ftH,mc,mc,-1);
                     const ftSig=1.5;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=mc-ftH;x<=mc+ftH;x++) {
@@ -757,7 +757,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     // A dense ball of LOCKED rest mass. Gravity from REAL manifested
                     // mass (rho = M_REST*|state|) via the latency-Poisson solver
                     // (latency_field on), not the |J|^2 field-energy proxy. Locked => static.
-                    const R = Math.min(2, Math.max(1, Math.floor(N/16)));
+                    const R = vox(2);
                     const R2 = R*R;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
                         const rx=x-midF, ry=y-midF, rz=z-midF;
@@ -767,7 +767,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     break;
                 }
                 case 's0-seed-gravitational-wave': {
-                    const gwWl=Math.max(4,Math.floor(N/4)), gwK=2*Math.PI/gwWl, gwAmp=0.1;
+                    const gwWl = vox(8), gwK = 2 * Math.PI / gwWl, gwAmp = 0.1;
                     for (let z=0;z<N;z++) for (let y=0;y<N;y++) for (let x=0;x<N;x++) {
                         const v=gwAmp*Math.sin(gwK*x); if(Math.abs(v)>1e-6) harness.injectFlux(x,y,z, 0,v,0);
                     }
@@ -800,7 +800,7 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
 
                 // ── Level 8: Reference frame context / Observer ────────────────
                 case 's0-seed-sloop': {
-                    const slR=Math.max(3,Math.floor(N/8)), slN=12, slA=K_B;
+                    const slR = vox(4), slN = 12, slA = K_B;
                     for (let i=0;i<slN;i++) {
                         const a=2*Math.PI*i/slN;
                         const px=Math.round(mc+slR*Math.cos(a)), py=Math.round(mc+slR*Math.sin(a));

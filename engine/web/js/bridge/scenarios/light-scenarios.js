@@ -23,7 +23,7 @@ import { C_SPEED } from '../../constants.js';
  */
 export function setupLightScenario(name, harness, ctx) {
     if (!name.startsWith('light-')) return false;
-    const { N, mid } = ctx;
+    const { N, mid, vox, sigma } = ctx;
             const pi = Math.PI;
             const amp = 0.15;
             switch (name) {
@@ -58,14 +58,14 @@ export function setupLightScenario(name, harness, ctx) {
                     // wave evolution would otherwise manifest ~29k
                     // particles by t=200.
                     harness.setToggle('genesis', false);
-                    const sigma = 3;
+                    const dSigma = sigma(3);
                     const dAmp = 0.5;
                     for (let x = 0; x < N; x++)
                     for (let y = 0; y < N; y++)
                     for (let z = 0; z < N; z++) {
                         const dx = x - mid, dy = y - mid, dz = z - mid;
                         const r2 = dx * dx + dy * dy + dz * dz;
-                        const g = dAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                        const g = dAmp * Math.exp(-r2 / (2 * dSigma * dSigma));
                         if (g < 1e-6) continue;
                         harness.injectFlux(x, y, z, 0, 0, g);
                         harness.injectWaveVel(x, y, z, 0, 0, g);
@@ -78,17 +78,18 @@ export function setupLightScenario(name, harness, ctx) {
                     // double-slit interference; should NOT manifest
                     // particles. Without this, ~31k particles by t=200.
                     harness.setToggle('genesis', false);
-                    const sigma = 2;
+                    const slitSigma = sigma(2);
+                    const slitHw = vox(4);
                     const sAmp = 0.3;
-                    const slit_sep = Math.floor(N / 6);
-                    const slit_x = Math.floor(N / 4);
+                    const slit_sep = vox(5);
+                    const slit_x = vox(8);
                     const slit_ys = [mid - slit_sep, mid + slit_sep];
                     for (const sy of slit_ys) {
                         for (let z = 0; z < N; z++)
-                        for (let dy = -4; dy <= 4; dy++)
-                        for (let dx = -4; dx <= 4; dx++) {
+                        for (let dy = -slitHw; dy <= slitHw; dy++)
+                        for (let dx = -slitHw; dx <= slitHw; dx++) {
                             const r2 = dx * dx + dy * dy;
-                            const g = sAmp * Math.exp(-r2 / (2 * sigma * sigma));
+                            const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
                             if (g < 1e-6) continue;
                             const px = slit_x + dx, py = sy + dy;
                             if (px < 0 || px >= N || py < 0 || py >= N) continue;
@@ -100,17 +101,18 @@ export function setupLightScenario(name, harness, ctx) {
                 }
                 case 'light-photon-race': {
                     // Dim vs bright Gaussian pulses — same speed (linearity)
-                    const sigma = 3;
-                    const x_start = Math.floor(N / 4);
+                    const raceSigma = sigma(3);
+                    const raceHw = vox(2);
+                    const x_start = vox(8);
                     const pAmps = [0.05, 0.5];
-                    const y_offsets = [mid - Math.floor(N / 6), mid + Math.floor(N / 6)];
+                    const y_offsets = [mid - vox(5), mid + vox(5)];
                     for (let p = 0; p < 2; p++) {
                         for (let x = 0; x < N; x++) {
                             const dx = x - x_start;
-                            const g = pAmps[p] * Math.exp(-dx * dx / (2 * sigma * sigma));
+                            const g = pAmps[p] * Math.exp(-dx * dx / (2 * raceSigma * raceSigma));
                             if (g < 1e-8) continue;
-                            for (let y = y_offsets[p] - 2; y <= y_offsets[p] + 2; y++)
-                            for (let z = mid - 2; z <= mid + 2; z++) {
+                            for (let y = y_offsets[p] - raceHw; y <= y_offsets[p] + raceHw; y++)
+                            for (let z = mid - raceHw; z <= mid + raceHw; z++) {
                                 if (y < 0 || y >= N || z < 0 || z >= N) continue;
                                 harness.injectFlux(x, y, z, 0, 0, g);
                                 harness.injectWaveVel(x, y, z, 0, 0, g); // outgoing +x
