@@ -2,11 +2,11 @@
 
 **FTD ID:** FTD-0292
 **Date:** 2026-06-13
-**Status:** [PRE-REGISTRATION -- LOCKED/PENDING RUN]
+**Status:** [PRE-REGISTRATION -- LOCKED/RUN]
 **Parent:** FTD-0291 Thomson native finite-volume continuity meter
 **Engine artifact:** `engine/tests/campaign_thomson_tick_invariant.cpp`
 **Artifact SHA256:** `5e6e2b77796d8a91f02bc7b2a85c9c862dd1f4e91b832be19ae5d5b41c455e16`
-**Lock commit:** pending pre-run lock commit
+**Lock commit:** `87f0cda2`
 **Lock tag:** `preregister-thomson-tick-invariant-v1`
 **Run analysis:** `docs/theory/10_eft_program/ANALYSIS_THOMSON_TICK_INVARIANT_v1.md`
 
