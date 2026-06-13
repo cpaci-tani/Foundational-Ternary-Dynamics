@@ -813,6 +813,10 @@ target_link_libraries(campaign_thomson_radiation_shells ftd_core)
 add_executable(campaign_thomson_native_continuity tests/campaign_thomson_native_continuity.cpp)
 target_link_libraries(campaign_thomson_native_continuity ftd_core)
 
+# FTD-0292 - source-free discrete tick energy invariant.
+add_executable(campaign_thomson_tick_invariant tests/campaign_thomson_tick_invariant.cpp)
+target_link_libraries(campaign_thomson_tick_invariant ftd_core)
+
 # Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
 # Tests whether the flux field's circulation is quantised (i.e., can
 # topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
@@ -1983,6 +1987,9 @@ set_tests_properties(thomson_radiation_shells PROPERTIES LABELS "em;campaign;obs
 # FTD-0291 - native finite-volume continuity meter
 add_test(NAME thomson_native_continuity COMMAND campaign_thomson_native_continuity)
 set_tests_properties(thomson_native_continuity PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
+# FTD-0292 - source-free discrete tick energy invariant
+add_test(NAME thomson_tick_invariant COMMAND campaign_thomson_tick_invariant)
+set_tests_properties(thomson_tick_invariant PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
