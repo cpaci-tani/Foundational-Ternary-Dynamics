@@ -1,8 +1,8 @@
 # DERIV: Discrete Tick Energy Invariant
 
 **Date:** 2026-06-13
-**Status:** [THEOREM -- LINEAR TICK ENERGY, LOCAL CURRENT, AND ADDITIVE SOURCE WORK] / [OPEN -- MOVING-SOURCE RECOIL WORK]
-**Campaigns:** FTD-0292, FTD-0293, FTD-0294, FTD-0295, FTD-0296
+**Status:** [THEOREM -- LINEAR TICK ENERGY, LOCAL CURRENT, AND ADDITIVE SOURCE WORK] / [MEASURED -- SUBVOXEL RECOIL ACCOUNTING] / [OPEN -- INTEGER TRANSPORT WORK]
+**Campaigns:** FTD-0292, FTD-0293, FTD-0294, FTD-0295, FTD-0296, FTD-0297
 **Engine anchors:** `phase_read` + `phase_write`
 
 ---
@@ -237,17 +237,51 @@ verdict = FIXED_CHARGE_SOURCE_WORK_CONTINUITY_CONFIRMED
 
 ---
 
-## 8. Open Work
+## 8. Moving Recoil Measurement
+
+FTD-0297 unlocked the charge in the fixed Thomson setup and tested the same
+finite-volume source/work identity after the full engine tick, including
+`phase_forces` and `phase_movement`.
+
+The native emergent arm recoiled deterministically:
+
+```text
+extra_disp_mag = 0.21022031950099582
+extra_vel_mag  = 0.0018928965812042473
+```
+
+but the motion remained subvoxel:
+
+```text
+transport_events = 0
+```
+
+With no integer hop, `phase_movement` did not move state or carry self-field
+flux to a target voxel. The additive source/work balance still closed:
+
+```text
+max_abs_balance = 4.64038529823795897755e-16
+max_scale_rel_balance = 2.25693826280852869163e-16
+verdict = SUBVOXEL_RECOIL_ACCOUNTED_BY_ADDITIVE_SOURCE_WORK
+```
+
+This is a measured no-transport result, not a full moving-source theorem.
+
+---
+
+## 9. Open Work
 
 Next target:
 
 ```text
-Extend the accounting through unlocked recoil:
-phase_forces + phase_movement + flux redistribution.
+Extend the accounting through integer transport:
+phase_movement state transfer + self-field flux carry.
 ```
 
-The fixed-source result covers the additive source in phase_read/phase_write.
-It does not yet cover moving charges or post-write particle transport.
+The fixed-source theorem covers the additive source in `phase_read` and
+`phase_write`. FTD-0297 shows the fixed unlocked-recoil protocol stays inside
+that accounting while the recoil is subvoxel. It does not yet cover the case
+where `phase_movement` performs an integer hop and redistributes flux.
 
 No radiation, Thomson cross-section, QED amplitude, or alpha claim follows
 from this theorem alone.
