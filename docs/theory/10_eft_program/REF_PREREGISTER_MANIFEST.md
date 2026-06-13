@@ -184,6 +184,26 @@ source-free modified tick energy while the naive continuum energy visibly
 drifts. No radiation, Thomson cross-section, QED amplitude, or alpha claim is
 promoted.
 
+## Source-free discrete tick local continuity v1 (FTD-0294; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0294** Source-free discrete tick local continuity v1 | `preregister-thomson-tick-local-continuity-v1` | `7ebc236e` | engine artifact `engine/tests/campaign_thomson_tick_local_continuity.cpp` SHA256 `6b137c83016b9aefb10d47d22df0094487ab761c06e167870a209004ada99aa3` | build target `campaign_thomson_tick_local_continuity`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_local_continuity$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`](ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md): `SOURCE_FREE_LOCAL_TICK_CONTINUITY_INVALIDATED` |
+
+This campaign tests the exact source-free local tick density/current. Absolute
+balance closes at roundoff, but the exchange-relative denominator is
+degenerate on quiet exchanges, so v1 is not promoted.
+
+## Source-free discrete tick local continuity v2 (FTD-0295; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0295** Source-free discrete tick local continuity v2 | `preregister-thomson-tick-local-continuity-v2` | `1d4a29a5` | engine artifact `engine/tests/campaign_thomson_tick_local_continuity_v2.cpp` SHA256 `9b48ca418e784ba98e35708563214b22c78cf2580f880fda9fa923cef4c7a804` | build target `campaign_thomson_tick_local_continuity_v2`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_local_continuity_v2$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v2.md`](ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v2.md): `SOURCE_FREE_LOCAL_TICK_CONTINUITY_CONFIRMED` |
+
+This campaign keeps the v1 density/current unchanged and gates the relative
+residual against finite-volume energy scale. It confirms source-free local
+tick continuity. Coupled source/work terms remain the next open target.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
