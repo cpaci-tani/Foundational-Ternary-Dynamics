@@ -64,6 +64,7 @@ struct TermToggles {
     bool field_energy_gravity = false; // [IMPOSED] latency Poisson also sources from field-energy density ½(|J|²+|wave_vel|²), not only particle rest mass, so flux-only configs (gravity waves) carry a real potential. Requires latency_field.
     bool cluster_inertia = false;   // [IMPOSED] phase_forces: rigid-body integrate LOCKED clusters at inertial mass N·M_REST (a_COM = F_cluster/(N·M_REST)). Unified-mass Phase 2. Additive (per-voxel loop already skips locked); requires forces.
     bool de_broglie_clock = false;  // [IMPOSED] phase_read: Klein-Gordon rest-mass term −ω₀²·J at manifested (state!=0) voxels, so a static cluster's flux oscillates at the de Broglie internal clock frequency ω₀∝M_REST (FTD-0271). Native flux is massless (A0), so the clock is imposed, not forced. Additive; default OFF ⇒ golden-neutral.
+    bool db_clock_coulomb = false;  // [IMPOSED diagnostic] FTD-0281: pre-solve the live Coulomb Poisson field and apply omega_eff^2 = omega0^2 + 2*omega0*V to the clocked flux field at every site, with V=-phi_coulomb in the engine force convention. CPU/RenderBridge spectroscopy hook; default OFF => golden-neutral.
 
     // D-3 / E-1 (2026-04-27): JS scale-0 scenario library has been pushing a
     // `confinement` bool through setToggle(); without a backing field the
@@ -172,6 +173,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"field_energy_gravity", &TermToggles::field_energy_gravity, false, true, "latency_field",    "",                 "", ToggleBackend::ANY, "[IMPOSED] Latency Poisson sources from field-energy density (½|J|²) so flux configs gravitate"},
     {"cluster_inertia",    &TermToggles::cluster_inertia,    false, false, "forces",           "",                 "", ToggleBackend::ANY, "[IMPOSED] Rigid-body cluster inertia: locked clusters integrate a_COM = F_cluster/(N*M_REST)"},
     {"de_broglie_clock",   &TermToggles::de_broglie_clock,   false, false, "",                 "",                 "", ToggleBackend::ANY, "[IMPOSED] de Broglie internal clock: Klein-Gordon mass term -omega0^2*J at manifested voxels (FTD-0271). Independent of wave_propagation: with the wave term the full KG dispersion omega^2=c^2 k^2 + omega0^2 acts; alone, each manifested voxel is the k=0 rest-frame clock oscillating at omega0."},
+    {"db_clock_coulomb",   &TermToggles::db_clock_coulomb,   false, false, "wave_propagation,de_broglie_clock,poisson_coulomb", "forces", "", ToggleBackend::CPU, "[IMPOSED diagnostic] FTD-0281 live Coulomb clock: pre-read phi_C solve plus all-site KG potential omega_eff^2=omega0^2+2*omega0*V, V=-phi_C. CPU/RenderBridge only in v1; forces must stay off to avoid a second same-tick Coulomb solve."},
     {"confinement",        &TermToggles::confinement,        false, false, "",                 "",                 "", ToggleBackend::ANY, "Linear confinement intent flag (no C++ branch yet)"},
     {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 "", ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
 };
@@ -266,6 +268,8 @@ inline bool TermToggles::validate(std::string* err) const {
         msg += "bcc_stencil != FULL requires wave_propagation=true (sublattice projection requires the wave path)\n";
     if (triad_binding && !dual_substrate)
         msg += "triad_binding requires dual_substrate (operates on J_L/J_R)\n";
+    if (db_clock_coulomb && dual_substrate)
+        msg += "db_clock_coulomb requires dual_substrate=false (FTD-0281 v1 is a single-substrate spectroscopy diagnostic)\n";
 
     if (err) *err = msg;
     return msg.empty();

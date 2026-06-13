@@ -119,6 +119,10 @@ Methodology committed before measurement. See `REF_PREREGISTER_MANIFEST.md` for 
 | [`PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md`](preregistrations/PREREG_ALPHA_READOUT_DETERMINANT_GRADING_v1.md) | [PRE-REGISTRATION] | FTD-0233: Determinant Grading Pre-Registration locking design and verification. |
 | [`PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md`](preregistrations/PREREG_ALPHA_READOUT_ODD_PERIOD_v1.md) | [PRE-REGISTRATION] | FTD-0234: J-twisted det_ζ ratio odd-period Pre-Registration locking design and verification. |
 | [`PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md`](preregistrations/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md) | [PRE-REGISTRATION] | FTD-0235: detdet_ζ identity Pre-Registration locking design and verification. |
+| [`PREREG_ATOMIC_SECTOR_HARDENING_v1.md`](preregistrations/PREREG_ATOMIC_SECTOR_HARDENING_v1.md) | [PRE-REGISTRATION -- LOCK PENDING] | FTD-0280: atomic-sector replay/manifest hardening for FTD-0278/0279; freezes provenance, replay verdicts, and follow-on boundaries without adding a new physics claim. |
+| [`PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md`](preregistrations/PREREG_DB_CLOCK_COULOMB_SPECTROSCOPY_v1.md) | [PRE-REGISTRATION -- LOCK PENDING] | FTD-0281: engine-native live Coulomb clock hook and spectroscopy plan; default-off `db_clock_coulomb` diagnostic, CPU/single-substrate/no-force v1 scope. |
+| [`PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md`](preregistrations/PREREG_ATOMIC_EXCHANGE_CORRELATION_WALL_v1.md) | [PRE-REGISTRATION -- LOCK PENDING] | FTD-0282: fixed-import negative boundary for exchange, ortho/para splitting, and correlation energy under I1+I2+I3. |
+| [`PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md`](preregistrations/PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md) | [PRE-REGISTRATION -- LOCK PENDING] | FTD-0283: fixed-cell no-new-knob ion ladder; dimensionless scaling only, no lab-unit or line matching. |
 | [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) | [PRE-REGISTRATION] | FTD-0143 uniqueness scan of the FQCR Model IV $(4,6;3,2)$ exponent quadruple. |
 | [`PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md`](preregistrations/PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md) | [PRE-REGISTRATION] | FTD-0215 nonlinear bridge coordinated parameters sweeps and active partitioning (F-D3). |
 | [`PREREG_NO_4TH_GENERATION_NO_GO_v1.md`](preregistrations/PREREG_NO_4TH_GENERATION_NO_GO_v1.md) | [PRE-REGISTRATION] | FTD-0220: No 4th generation fermions no-go formalization pre-registration locking design and verification parameters. |
@@ -169,4 +173,4 @@ Archived material is preserved for provenance — cite it to explain "why this r
 
 ---
 
-**Live document count:** 51 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 12 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 12 PREREG, 3 Frontier-4 graviton, 8 AUDIT.
+**Live document count:** 55 top-level docs (this INDEX excluded) — 6 SPEC, 6 THEOREM, 12 native-flow/bridge DERIV incl. the retrospective, 3 OPEN, 3 STATUS, 16 PREREG, 3 Frontier-4 graviton, 8 AUDIT.
