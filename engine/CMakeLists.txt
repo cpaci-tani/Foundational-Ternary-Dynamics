@@ -829,6 +829,10 @@ target_link_libraries(campaign_thomson_tick_local_continuity ftd_core)
 add_executable(campaign_thomson_tick_local_continuity_v2 tests/campaign_thomson_tick_local_continuity_v2.cpp)
 target_link_libraries(campaign_thomson_tick_local_continuity_v2 ftd_core)
 
+# FTD-0296 - fixed-charge coupled tick source/work continuity.
+add_executable(campaign_thomson_coupled_source_work tests/campaign_thomson_coupled_source_work.cpp)
+target_link_libraries(campaign_thomson_coupled_source_work ftd_core)
+
 # Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
 # Tests whether the flux field's circulation is quantised (i.e., can
 # topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
@@ -2021,6 +2025,9 @@ set_tests_properties(thomson_tick_local_continuity PROPERTIES WILL_FAIL TRUE)
 # FTD-0295 - source-free discrete tick local continuity, scale-relative v2
 add_test(NAME thomson_tick_local_continuity_v2 COMMAND campaign_thomson_tick_local_continuity_v2)
 set_tests_properties(thomson_tick_local_continuity_v2 PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
+# FTD-0296 - fixed-charge coupled tick source/work continuity
+add_test(NAME thomson_coupled_source_work COMMAND campaign_thomson_coupled_source_work)
+set_tests_properties(thomson_coupled_source_work PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
