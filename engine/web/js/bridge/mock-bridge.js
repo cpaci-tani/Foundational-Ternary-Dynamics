@@ -108,7 +108,7 @@ export class MockBridge {
             weak_transmutation: false,
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
-            de_broglie_clock: false,
+            de_broglie_clock: false, emergent_forces: false,
         };
 
         // Visual settings (shared with viewport for size control)
@@ -322,6 +322,9 @@ export class MockBridge {
                 p.vz += 0.5 * p.az;
             }
         }
+        if (doForces && this._toggles.emergent_forces && this._fluxJ && ps.length > 0) {
+            this._applyEmergentFieldForces(ps);
+        }
 
         // Step 2: Drift — x += v * dt
         if (!this._toggles.movement) { /* skip position integration */ }
@@ -438,6 +441,48 @@ export class MockBridge {
                 ps[alive++] = ps[i];
         }
         ps.length = alive;
+    }
+
+    _fieldDensityAt(x, y, z) {
+        if (!this._fluxJ) return 0;
+        const N = this.latticeSize;
+        const wx = ((x % N) + N) % N;
+        const wy = ((y % N) + N) % N;
+        const wz = ((z % N) + N) % N;
+        const idx = this._fluxIdx(wx, wy, wz) * 3;
+        const jx = this._fluxJ[idx] || 0;
+        const jy = this._fluxJ[idx + 1] || 0;
+        const jz = this._fluxJ[idx + 2] || 0;
+        return Math.sqrt(jx * jx + jy * jy + jz * jz);
+    }
+
+    _applyEmergentFieldForces(ps) {
+        const N = this.latticeSize;
+        while (this._forceEM.length < ps.length) this._forceEM.push({ x: 0, y: 0, z: 0 });
+        for (let k = 0; k < ps.length; k++) {
+            const p = ps[k];
+            if (p.state === 0 || p.locked) continue;
+            const x = ((Math.round(p.x) % N) + N) % N;
+            const y = ((Math.round(p.y) % N) + N) % N;
+            const z = ((Math.round(p.z) % N) + N) % N;
+            const gradX = (this._fieldDensityAt(x + 2, y, z) - this._fieldDensityAt(x - 2, y, z)) * 0.25;
+            const gradY = (this._fieldDensityAt(x, y + 2, z) - this._fieldDensityAt(x, y - 2, z)) * 0.25;
+            const gradZ = (this._fieldDensityAt(x, y, z + 2) - this._fieldDensityAt(x, y, z - 2)) * 0.25;
+            const scale = G_C * p.state;
+            const fx = gradX * scale;
+            const fy = gradY * scale;
+            const fz = gradZ * scale;
+            p.vx += fx;
+            p.vy += fy;
+            p.vz += fz;
+            p.ax = (p.ax || 0) + fx;
+            p.ay = (p.ay || 0) + fy;
+            p.az = (p.az || 0) + fz;
+            p.fieldForceMag = Math.sqrt(fx * fx + fy * fy + fz * fz);
+            this._forceEM[k].x += fx;
+            this._forceEM[k].y += fy;
+            this._forceEM[k].z += fz;
+        }
     }
 
     /**
@@ -601,7 +646,7 @@ export class MockBridge {
             color_forces: false, strong_force: false, triad_binding: false,
             pair_production: false, exchange_force: false, latency_field: false,
             // FTD-0271: de Broglie internal clock (KG mass term -omega0^2*J).
-            de_broglie_clock: false,
+            de_broglie_clock: false, emergent_forces: false,
         };
         // Rebuild boundary mask for new lattice size
         this._rebuildBoundaryMask();
@@ -779,6 +824,12 @@ export class MockBridge {
 
         const lateralY = ((mc + 10) % N + N) % N;
         const forwardX = ((mc + 10) % N + N) % N;
+        const wrapDelta = (value) => {
+            let d = value;
+            if (d > N / 2) d -= N;
+            if (d < -N / 2) d += N;
+            return d;
+        };
         return {
             active: true,
             tick: this._tick,
@@ -798,6 +849,11 @@ export class MockBridge {
                 vx: electron.vx ?? 0,
                 vy: electron.vy ?? 0,
                 vz: electron.vz ?? 0,
+                speed: Math.sqrt((electron.vx ?? 0) ** 2 + (electron.vy ?? 0) ** 2 + (electron.vz ?? 0) ** 2),
+                dx: wrapDelta((electron.x ?? mc) - mc),
+                dy: wrapDelta((electron.y ?? mc) - mc),
+                dz: wrapDelta((electron.z ?? mc) - mc),
+                fieldForceMag: electron.fieldForceMag ?? 0,
             } : null,
             energy: {
                 centerR3: energyInSphere(mc, mc, mc, 3),

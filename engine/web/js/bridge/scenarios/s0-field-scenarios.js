@@ -154,6 +154,37 @@ export function setupS0FieldScenario(name, harness, ctx) {
                     break;
                 }
 
+                case 's0-field-thomson-unlocked-recoil': {
+                    // FTD-0288 visual companion: one unlocked negative charge
+                    // plus the same plane wave, with the native emergent
+                    // flux-gradient force path enabled.
+                    harness.setToggle('wave_propagation', true);
+                    harness.setToggle('coupling', true);
+                    harness.setToggle('damping', false);
+                    harness.setToggle('genesis', false);
+                    harness.setToggle('gauss_projection', false);
+                    harness.setToggle('forces', true);
+                    harness.setToggle('movement', true);
+                    harness.setToggle('poisson_coulomb', false);
+                    harness.setToggle('lorentz_force', false);
+                    harness.setToggle('emergent_forces', true);
+
+                    harness.injectParticle(mc, mc, mc, -1, { locked: false, spin: -1, color: 0 });
+                    const modeN = 4;
+                    const amp = 0.05;
+                    const k = 2 * Math.PI * modeN / N;
+                    const omega = 2 * C_SPEED * Math.abs(Math.sin(k / 2));
+                    for (let z = 0; z < N; z++)
+                    for (let y = 0; y < N; y++)
+                    for (let x = 0; x < N; x++) {
+                        const jy = amp * Math.sin(k * x);
+                        const wy = -omega * amp * Math.cos(k * x);
+                        if (Math.abs(jy) > 1e-12) harness.injectFlux(x, y, z, 0, jy, 0);
+                        if (Math.abs(wy) > 1e-12) harness.injectWaveVel(x, y, z, 0, wy, 0);
+                    }
+                    break;
+                }
+
                 case 's0-field-spacetime-forcing-boundary': {
                     // FTD-0253 visible seed: the wave half of
                     // test_spacetime_forcing_demo.cpp. The diffusion half is a
