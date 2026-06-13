@@ -817,6 +817,10 @@ target_link_libraries(campaign_thomson_native_continuity ftd_core)
 add_executable(campaign_thomson_tick_invariant tests/campaign_thomson_tick_invariant.cpp)
 target_link_libraries(campaign_thomson_tick_invariant ftd_core)
 
+# FTD-0293 - source-free discrete tick energy invariant, precision v2.
+add_executable(campaign_thomson_tick_invariant_v2 tests/campaign_thomson_tick_invariant_v2.cpp)
+target_link_libraries(campaign_thomson_tick_invariant_v2 ftd_core)
+
 # Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
 # Tests whether the flux field's circulation is quantised (i.e., can
 # topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
@@ -1995,6 +1999,9 @@ set_tests_properties(thomson_tick_invariant PROPERTIES LABELS "em;campaign;obser
 # misses the double-precision summation floor. Keep the historical target
 # green only when that invalidation reproduces.
 set_tests_properties(thomson_tick_invariant PROPERTIES WILL_FAIL TRUE)
+# FTD-0293 - source-free discrete tick energy invariant, precision v2
+add_test(NAME thomson_tick_invariant_v2 COMMAND campaign_thomson_tick_invariant_v2)
+set_tests_properties(thomson_tick_invariant_v2 PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
