@@ -89,6 +89,13 @@ const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxThreshold: 0.001,
         fluxOpacity: 0.85,
     },
+    's0-field-thomson-scattering': {
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.4,
+        fluxThreshold: 0.001,
+        fluxOpacity: 0.85,
+    },
     's0-field-thomson-unlocked-recoil': {
         fluxVolume: true,
         fluxSlice: true,
