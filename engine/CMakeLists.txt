@@ -805,6 +805,10 @@ target_link_libraries(campaign_thomson_unlocked_recoil ftd_core)
 add_executable(campaign_thomson_flux_excess tests/campaign_thomson_flux_excess.cpp)
 target_link_libraries(campaign_thomson_flux_excess ftd_core)
 
+# FTD-0290 - residual-field radiation shell meter.
+add_executable(campaign_thomson_radiation_shells tests/campaign_thomson_radiation_shells.cpp)
+target_link_libraries(campaign_thomson_radiation_shells ftd_core)
+
 # Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
 # Tests whether the flux field's circulation is quantised (i.e., can
 # topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
@@ -1969,6 +1973,9 @@ set_tests_properties(thomson_unlocked_recoil PROPERTIES LABELS "em;campaign;obse
 # FTD-0289 - baseline-subtracted Thomson flux-excess discriminator
 add_test(NAME thomson_flux_excess COMMAND campaign_thomson_flux_excess)
 set_tests_properties(thomson_flux_excess PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
+# FTD-0290 - residual-field radiation shell meter
+add_test(NAME thomson_radiation_shells COMMAND campaign_thomson_radiation_shells)
+set_tests_properties(thomson_radiation_shells PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
