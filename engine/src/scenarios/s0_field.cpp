@@ -113,6 +113,34 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             if (std::fabs(wy) > 1e-12) IW(rb, x, y, z, 0, wy, 0);
         }
     }
+    else if (name == "s0-field-thomson-unlocked-recoil") {
+        // FTD-0288 visual companion: one unlocked negative charge plus the
+        // same plane wave, with the native emergent flux-gradient force path.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.coupling = true;
+        rb.toggles.damping = false;
+        rb.toggles.genesis = false;
+        rb.toggles.gauss_projection = false;
+        rb.toggles.forces = true;
+        rb.toggles.movement = true;
+        rb.toggles.poisson_coulomb = false;
+        rb.toggles.lorentz_force = false;
+        rb.toggles.emergent_forces = true;
+
+        IP(rb, mc, mc, mc, -1);
+        rb.voxels()[rb.lattice().index(mc, mc, mc)].locked = false;
+
+        const int mode_n = 4;
+        const double amp = 0.05;
+        const double k = 2.0 * PI * static_cast<double>(mode_n) / static_cast<double>(N);
+        const double omega = 2.0 * C_SPEED * std::fabs(std::sin(k * 0.5));
+        for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+            const double jy = amp * std::sin(k * x);
+            const double wy = -omega * amp * std::cos(k * x);
+            if (std::fabs(jy) > 1e-12) IF(rb, x, y, z, 0, jy, 0);
+            if (std::fabs(wy) > 1e-12) IW(rb, x, y, z, 0, wy, 0);
+        }
+    }
     else if (name == "s0-field-spacetime-forcing-boundary") {
         // FTD-0253 visible seed: the wave half of
         // test_spacetime_forcing_demo.cpp. The diffusion half is a
