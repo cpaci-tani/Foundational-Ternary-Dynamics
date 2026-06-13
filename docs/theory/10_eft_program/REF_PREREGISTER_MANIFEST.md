@@ -149,6 +149,18 @@ power on fixed shells `{5,7,9,11,13,15}`. Locked and legacy shell powers are
 machine-zero; the native emergent trace remains below the frozen gate. No
 radiation, Thomson cross-section, QED amplitude, or alpha claim is promoted.
 
+## Thomson native finite-volume continuity meter (FTD-0291; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0291** Thomson native finite-volume continuity meter | `preregister-thomson-native-continuity-v1` | `47ccbee4` | engine artifact `engine/tests/campaign_thomson_native_continuity.cpp` SHA256 `357a2a2b4bd7fb8d8604a4c30490f68ab9a404e8574ed6e55b034056a5b3f3e8` | build target `campaign_thomson_native_continuity`; run `ctest --test-dir engine/build -C Release -R "^thomson_native_continuity$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_NATIVE_CONTINUITY_v1.md`](ANALYSIS_THOMSON_NATIVE_CONTINUITY_v1.md): `NATIVE_GRAPH_CONTINUITY_CANDIDATE_INVALIDATED` |
+
+This campaign follows FTD-0290. It replaces the borrowed Poynting shell meter
+with an 18-neighbor graph-energy finite-volume balance candidate. Repeat and
+locked-linear residual controls pass, but the candidate current fails the
+free-wave balance gate, so no native radiation, source, Thomson cross-section,
+QED amplitude, or alpha claim is promoted.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
