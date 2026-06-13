@@ -809,6 +809,10 @@ target_link_libraries(campaign_thomson_flux_excess ftd_core)
 add_executable(campaign_thomson_radiation_shells tests/campaign_thomson_radiation_shells.cpp)
 target_link_libraries(campaign_thomson_radiation_shells ftd_core)
 
+# FTD-0291 - native finite-volume continuity meter.
+add_executable(campaign_thomson_native_continuity tests/campaign_thomson_native_continuity.cpp)
+target_link_libraries(campaign_thomson_native_continuity ftd_core)
+
 # Phase I Item 3 Mechanism A — Wilson-loop topology diagnostic.
 # Tests whether the flux field's circulation is quantised (i.e., can
 # topology force g_c?). Expected: no (J is R^3-valued, not U(1)).
@@ -1976,6 +1980,9 @@ set_tests_properties(thomson_flux_excess PROPERTIES LABELS "em;campaign;observat
 # FTD-0290 - residual-field radiation shell meter
 add_test(NAME thomson_radiation_shells COMMAND campaign_thomson_radiation_shells)
 set_tests_properties(thomson_radiation_shells PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
+# FTD-0291 - native finite-volume continuity meter
+add_test(NAME thomson_native_continuity COMMAND campaign_thomson_native_continuity)
+set_tests_properties(thomson_native_continuity PROPERTIES LABELS "em;campaign;observatory" TIMEOUT 300)
 # Sim Pipeline Phase B
 add_test(NAME sim_pipeline_cpu COMMAND test_sim_pipeline_cpu)
 set_tests_properties(sim_pipeline_cpu PROPERTIES LABELS "sim" TIMEOUT 30)
