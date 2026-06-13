@@ -100,6 +100,17 @@ the master-quadratic normalization. Its Postulate-W arm is a positive control,
 not a derivation. The v1 run invalidated the absolute Phase-G gate for this
 finite live-engine protocol; it did not produce a dynamical alpha result.
 
+## Alpha estimator validation (FTD-0286; 2026-06-13, locked/pre-run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0286** alpha estimator validation | `preregister-alpha-estimator-validation-v1` | (lock commit) | engine artifact `engine/tests/campaign_alpha_estimator_validation.cpp` SHA256 `dce6018d4ccc7565c1bab6870c9a90647f1bc4290c0fed600cac0fd3883ee570` | build target `campaign_alpha_estimator_validation`; run `ctest --test-dir engine/build -C Release -R "^alpha_estimator_validation$" --output-on-failure` | console/CTest output | pending first run; outcomes frozen in [`PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`](preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md) |
+
+This campaign is an instrument validation after FTD-0285. It compares the
+production live-tick Gauss estimator with the existing matched-stencil EFT
+projector on the same `L=32`, `r={5,7,9}` absolute Phase-G gate. It does not
+include a Postulate-W arm and cannot promote `x_+ = 1/alpha`.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
