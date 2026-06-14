@@ -31,6 +31,8 @@ namespace ftd {
 struct Diagnostics {
     int tick = 0;
     double total_flux = 0.0;
+    // Sum of |born_infeld_core| over all sites — NOT the canonical ½·|J|²
+    // budget (see EnergyAudit.total_energy for field+wave+particle_ke).
     double total_energy = 0.0;
     double avg_drag = 0.0;
     double max_bandwidth = 0.0;

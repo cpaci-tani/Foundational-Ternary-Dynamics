@@ -8,9 +8,8 @@
  * color-coded with hysteresis to prevent 4-Hz flicker. Clicking the panel
  * opens a fullscreen modal with full sparkline history.
  *
- * Uses bridge.getDiagnostics() (totalEnergy, chargeBalance, angMomX/Y/Z)
- * and bridge.getEnergyAudit() (totalPoynting → field momentum) — no
- * engine changes required.
+ * Uses PhysicsHarness.getConservationTotals() (hub-first diag/audit) —
+ * no direct bridge polling.
  */
 
 import { BaseComponent } from '../../../../core/component.js';

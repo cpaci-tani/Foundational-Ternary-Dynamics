@@ -43,6 +43,7 @@ export class OnticObservatory {
         this._particleCount = 0;
         this._boundCount = 0;
         this._totalFlux = 0;
+        this._activityLabel = 'Total Flux';
         this._chargeBalance = 0;
         this._spatialExtent = 0;
         this._latticeSize = 32;
@@ -108,6 +109,8 @@ export class OnticObservatory {
     firstPerturbation() {
         return {
             nonVoidCount: this._particleCount,
+            activityValue: this._totalFlux,
+            activityLabel: this._activityLabel,
             totalFlux: this._totalFlux,
             chargeBalance: this._chargeBalance,
             spatialExtent: this._spatialExtent,
@@ -168,18 +171,21 @@ export class OnticObservatory {
         if (scale === 0) {
             this._particleCount = diag.manifested || 0;
             this._totalFlux = diag.totalFlux || 0;
+            this._activityLabel = 'Total Flux';
             this._chargeBalance = diag.chargeBalance || 0;
             this._boundCount = diag.locked || 0;
             this._spatialExtent = diag.spatialExtent || 0;
         } else if (scale === 1) {
             this._particleCount = diag.count || 0;
             this._totalFlux = diag.totalEnergy || 0;
+            this._activityLabel = 'Total Energy (sim)';
             this._chargeBalance = 0;
             this._boundCount = 0;
             this._spatialExtent = diag.maxSep || 0;
         } else if (scale === 2) {
             this._particleCount = diag.count || 0;
             this._totalFlux = diag.totalEnergy || 0;
+            this._activityLabel = 'Total Energy (sim)';
             this._chargeBalance = 0;
             this._boundCount = diag.bondCount || 0;
             this._spatialExtent = diag.maxSep || 0;
@@ -256,8 +262,8 @@ export function renderObserverCard(obs, container) {
         <div class="oo-obs-grid">
             <span class="oo-obs-grid-label">Manifested</span>
             <span class="oo-obs-grid-val">${p0.nonVoidCount}</span>
-            <span class="oo-obs-grid-label">Total Flux</span>
-            <span class="oo-obs-grid-val">${p0.totalFlux.toFixed(2)}</span>
+            <span class="oo-obs-grid-label">${p0.activityLabel}</span>
+            <span class="oo-obs-grid-val">${p0.activityValue.toFixed(2)}</span>
             <span class="oo-obs-grid-label">Charge Balance</span>
             <span class="oo-obs-grid-val">${p0.chargeBalance}</span>
         </div>

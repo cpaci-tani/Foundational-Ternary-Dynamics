@@ -1,5 +1,24 @@
 # Foundational Ternary Dynamics Changelog
 
+## Sprint A+B — Golden determinism + alpha estimator v2 (2026-06-13)
+
+**Sprint A (determinism):** Verified OpenMP race fixes (2026-06-11) green:
+`render_bridge_golden`, `determinism`, `campaign_determinism_gate` all PASS;
+hash `0x56fa28acb5b9fe88` @ L=17 bit-identical OMP=1 vs full pool. Updated
+stale golden-hash citations (ADR-0012, `engine/SPEC_ENGINE.md`, phase comments,
+`tests/README.md`, `cuda/README.md`, `DESIGN_RNG_PORTABILITY.md`).
+
+**Sprint B (FTD-0286 v2):** Added `lattice_coulomb_gate.h` +
+`campaign_alpha_estimator_validation_v2.cpp` pairing `energy_audit().field_energy
+= ½Σ|J|²` with gate `α_r = r G_L(r)`. Verdict:
+`HALF_ENERGY_GATE_CONFIRMED_MATCHED` (matched PASS 0.26%; production FAIL ~12%
+stencil drift). Docs: PREREG/ANALYSIS v2, `DERIV_EMERGENT_COULOMB_GEOMETRIC.md`
+½-convention note, navigation indexes + LEDGER FTD-0285/0286 rows.
+
+**No physics edited beyond v2 campaign addition; FTD-0013 and MC-T4.3 unchanged.**
+
+---
+
 ## Phase 12 — RSI Leg 3 Conditional Theorem + Mobile-First Web Overhaul (2026-06-02)
 
 A theory-side closure attempt (RSI Leg 3 REDUCE verdict, FTD-0243), numeric

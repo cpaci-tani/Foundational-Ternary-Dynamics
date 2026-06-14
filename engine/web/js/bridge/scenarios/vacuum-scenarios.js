@@ -55,9 +55,8 @@ export function setupVacuumScenario(name, harness, ctx) {
         case 's0-vacuum-muon':
         case 's0-vacuum-tau': {
             // Mirror of s0-seed-{muon,tau} — same topology as electron, larger
-            // amplitude. Mass ratios μ/e=207 and τ/e=3477 are [THEOREM] from
-            // framework integers but have no spatial form; envelope amplitude
-            // is a [SELECTION] visualization cue.
+            // Mass ratios μ/e=207 and τ/e=3477 are [STRONGLY MOTIVATED CONJECTURE]
+            // (framework-integer matches; spatial envelope is [SELECTION] only).
             const boost = (name === 's0-vacuum-tau') ? 2.25 : 1.80;
             harness.injectParticle(mc, mc, mc, -1);
             const envR = vox(5);

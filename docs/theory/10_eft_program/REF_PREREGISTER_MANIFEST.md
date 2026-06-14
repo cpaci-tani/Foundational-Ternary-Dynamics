@@ -113,6 +113,17 @@ returned `ENERGY_FUNCTIONAL_MISMATCH`: matched projection converged, but the
 field-energy observable still missed the analytic normalization. It does not
 include a Postulate-W arm and cannot promote `x_+ = 1/alpha`.
 
+## Alpha estimator validation v2 (FTD-0286 v2; 2026-06-13)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0286 v2** half-energy gate pairing | *(documentation lock — no git tag yet)* | *(uncommitted)* | engine artifact `engine/tests/campaign_alpha_estimator_validation_v2.cpp` SHA256 `9b6431c1f37f835969e38bf1de0f79d75625a75c86db0de6921a68323e6bdc74`; helper `engine/include/ftd/eft/lattice_coulomb_gate.h` | build target `campaign_alpha_estimator_validation_v2`; run `ctest --test-dir engine/build -C Release -R "^alpha_estimator_validation_v2$" --output-on-failure` | console/CTest output | [`ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`](ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md): `HALF_ENERGY_GATE_CONFIRMED_MATCHED` |
+
+v2 re-pairs `energy_audit().field_energy = ½Σ|J|²` with gate `α_r = r G_L(r)`.
+Matched static projector passes (max rel err 0.26%); production live-tick still
+fails (~12% systematic stencil drift). Resolves the v1 pairing error; does not
+promote `x_+ = 1/alpha`.
+
 ## Thomson unlocked recoil (FTD-0288; 2026-06-13, locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |

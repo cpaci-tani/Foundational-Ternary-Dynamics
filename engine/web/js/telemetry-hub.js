@@ -133,7 +133,7 @@ export class TelemetryHub {
             energyDrift:         new RingBuffer(500),
         };
 
-        // Sparkline-resolution (80-sample) — used by DiagnosticsPanel sparklines
+        // Sparkline-resolution (80-sample) — legacy PE canvas sparklines + hub history
         this.sp = {
             manifested: new RingBuffer(80),
             charges:    new RingBuffer(80),

@@ -93,7 +93,7 @@ that may the no-alpha-vs-Postulate-W discriminator be asked again.
 
 - FTD-0284 remains a locked discriminator, not a measurement.
 - FTD-0285 remains `[INVALIDATED PROTOCOL]`.
-- FTD-0286 closes the immediate estimator question as
-  `[MEASUREMENT ANALYSIS -- ENERGY FUNCTIONAL MISMATCH]`.
-- FTD-0013 / MC-T4.3 remain unchanged.
-- No alpha derivation was obtained.
+- FTD-0286 v1 closes as `[MEASUREMENT ANALYSIS -- ENERGY FUNCTIONAL MISMATCH]`.
+- FTD-0286 v2 (`ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`) resolves the v1
+  pairing error: matched projector passes the half-energy gate; production
+  live-tick still fails on stencil drift. **No alpha derivation obtained.**

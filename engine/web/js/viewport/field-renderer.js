@@ -28,7 +28,7 @@
 
 import * as THREE from 'three';
 import { fluxToColor, potentialToColorInto, magnitudeToColorInto } from '../fields.js';
-import { K_GENESIS } from '../constants.js';
+import { K_GENESIS, C_SPEED } from '../constants.js';
 import { buildStreamlineMesh, buildArrowFieldMesh } from './mesh-factory.js';
 
 // Confinement-string visual: draw a color-pair proximity glyph between any
@@ -2724,7 +2724,7 @@ export class ViewportFieldRenderer {
         for (let i = 0; i < 12; i++) for (let j = i + 1; j < 12; j++) if (Math.abs(dist2(cub[i], cub[j]) - 1) < 0.05) cubEdges.push([i, j]);
         addShell(cub, cubEdges, 0x66bb6a);
         // BCC — stella octangula (8 corner neighbours = two tetrahedra).
-        const n3 = 1 / Math.sqrt(3);
+        const n3 = C_SPEED;
         const corners = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1], [-1, 1, 1], [1, -1, 1], [1, 1, -1]].map((v) => [v[0] * n3, v[1] * n3, v[2] * n3]);
         const tet = (o) => [[o, o + 1], [o, o + 2], [o, o + 3], [o + 1, o + 2], [o + 1, o + 3], [o + 2, o + 3]];
         addShell(corners, [...tet(0), ...tet(4)], 0x42a5f5);
