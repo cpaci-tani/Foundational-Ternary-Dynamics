@@ -99,4 +99,4 @@ commitments, and the algebraic spine are untouched. The deliverable is (i) a new
 and (ii) the precise reduction of the entire remaining α-forcing question to the W-CRIT-2
 real-operator residual + the infinite-descended sub-branch. This is the Number-One-Goal's
 second clause at its sharpest: a real swing that mapped the boundary more precisely than it
-was mapped before, without overclaiming a derivation. Next free LEDGER id: **FTD-0285**.
+was mapped before, without overclaiming a derivation. Next free LEDGER id: **FTD-0302**.

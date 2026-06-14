@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-alpha_det_forcing.py -- FTD-0285: the analytical spine for the detdet_zeta obligations.
+alpha_det_forcing.py -- FTD-0302: the analytical spine for the detdet_zeta obligations.
 
 Frozen by PREREG_ALPHA_DET_FORCING_v2.md. Symbolic (sympy); G* (=G) is a free positive
 transcendental symbol throughout. NO numerical near-miss scans. The even-power wall
@@ -38,7 +38,7 @@ def main():
     Tr_t, Det_t = 16*G**2, 16*G**3              # master-quadratic invariants
 
     print("=" * 74)
-    print("FTD-0285 -- detdet_zeta obligations A/B/C: the analytical spine (L-A,L-B,L-C)")
+    print("FTD-0302 -- detdet_zeta obligations A/B/C: the analytical spine (L-A,L-B,L-C)")
     print("=" * 74)
     print(f"target operator T on V_complex = Z[i]^2 : (Tr,Det) = (16G*^2, 16G*^3)")
     print(f"   master quadratic x^2 - 16G*^2 x + 16G*^3 ; disc = "
