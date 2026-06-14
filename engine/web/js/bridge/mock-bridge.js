@@ -339,7 +339,7 @@ export class MockBridge {
             p.y += p.vy;
             p.z += p.vz;
             // Boundary containment.
-            // Cube/none + reflective ON  → periodic wrap (3-torus topology).
+            // Cube/none + reflective ON  → mirror bounce at faces.
             // Cube/none + reflective OFF → particle exits the lattice and is
             //   marked dead (state=0, density=0); the per-tick filter at the
             //   end of tick() then drops it. This matches the user-facing
@@ -349,9 +349,12 @@ export class MockBridge {
             //   honors _reflectiveBoundary internally.
             if (this._boundaryShape === 'cube' || this._boundaryShape === 'none') {
                 if (this._reflectiveBoundary) {
-                    p.x = ((p.x % N) + N) % N;
-                    p.y = ((p.y % N) + N) % N;
-                    p.z = ((p.z % N) + N) % N;
+                    if (p.x < 0) { p.x = 0; if (p.vx < 0) p.vx = -p.vx; }
+                    else if (p.x >= N) { p.x = N - 1; if (p.vx > 0) p.vx = -p.vx; }
+                    if (p.y < 0) { p.y = 0; if (p.vy < 0) p.vy = -p.vy; }
+                    else if (p.y >= N) { p.y = N - 1; if (p.vy > 0) p.vy = -p.vy; }
+                    if (p.z < 0) { p.z = 0; if (p.vz < 0) p.vz = -p.vz; }
+                    else if (p.z >= N) { p.z = N - 1; if (p.vz > 0) p.vz = -p.vz; }
                 } else if (p.x < 0 || p.x >= N || p.y < 0 || p.y >= N || p.z < 0 || p.z >= N) {
                     // Drop out the abyss
                     p.state = 0;
@@ -359,6 +362,15 @@ export class MockBridge {
                 }
             } else {
                 this._reflectIntoBoundary(p, halfN, halfN, halfN, halfN);
+                if (!this._reflectiveBoundary) {
+                    const nx = (p.x - halfN) / halfN;
+                    const ny = (p.y - halfN) / halfN;
+                    const nz = (p.z - halfN) / halfN;
+                    if (!this._insideBoundary(nx, ny, nz)) {
+                        p.state = 0;
+                        p.density = 0;
+                    }
+                }
             }
             // Speed limit
             const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz);
