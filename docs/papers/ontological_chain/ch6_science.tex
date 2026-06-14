@@ -1,0 +1,396 @@
+\chapter{Science --- Falsification}\label{ch:science}
+
+% =============================================================================
+% Ch.6 Science (Task 10). Layer: SCIENCE (falsification). No inline derivations;
+% protocols + falsifiers only. Primary sources:
+%   docs/theory/01_reference/SPEC_PREDICTION_LEDGER_DEVIATIONS.md (PL-1..PL-6)
+%   docs/theory/01_reference/SPEC_FTD_FRAMEWORK_V1.md  S6 (kill-conditions, methodology)
+%   LEDGER row FTD-0301 (proton-stability correction)
+% Every load-bearing claim carries its canonical tag + FTD-NNNN id; no upgrades.
+% =============================================================================
+
+% ---- chapter mini-map: the Science band of the Master DAG --------------------
+\begin{figure}[t]
+  \centering
+  \resizebox{0.8\linewidth}{!}{%
+  \begin{tikzpicture}[node distance=0pt]
+    \node[bandlbl] at (-1.6,0.0) {\textsc{science}\\[-1pt]\tiny falsification};
+    \node[condb] (pl)   at (2.6,0.0)  {PL-1..6\\deviation spine};
+    \node[thm]   (nul)  at (7.0,0.0)  {structural\\nulls};
+    \node[wall]  (bell) at (11.4,0.0) {PL-2 Bell\\\tiny lab-open, highest risk};
+    % the deviation spine collects both the nulls and the highest-risk wall
+    \draw[con] (pl) -- (nul);
+    \draw[wk]  (nul.east) to[out=0,in=180] (bell.west);
+  \end{tikzpicture}}
+  \caption[This chapter in the chain]{This chapter in the chain. The science
+    layer is where the construction becomes \emph{accountable}: the deviation
+    spine PL-1\,--\,PL-6 collects the framework's falsifiable structural
+    departures from the QM/SR formalism, the structural nulls are
+    \etag{thm}-grade absence claims, and the lab-Bell burden (PL-2) is the
+    double-ruled wall --- the framework's single highest-risk entry.}
+  \label{fig:minimap-science}
+\end{figure}
+
+% =============================================================================
+\section*{The move this layer makes: state in advance what kills you}
+% =============================================================================
+
+A framework earns the name \emph{science} not by accumulating agreements but by
+stating, before the experiment runs, what result would end it. The previous five
+layers built a structure: a finite ternary lattice (Ontology), a deterministic
+commutative logic that declines the quantum measurement import (Logic), a forced
+bridge constant and a forced quadratic with a precisely located wall
+(Mathematics), an observer layer that reads the lattice (Philosophy), and a
+computational effective field theory that \emph{reproduces} infrared physics
+while only \emph{matching} the one number everyone wants
+(Physics). This final layer turns the whole edifice around to face the world and
+asks: \emph{where, exactly, does it break?}
+
+The answer is the \textbf{deviation spine} --- six structural deviations from the
+textbook QM/SR formalism, each carrying a discriminating protocol and an explicit
+kill condition. These are not parameter post-dictions; they are places where
+FTD's native posture (a commutative substrate, declared by FC-1; a sector-scoped
+emergent metric, declared by FC-2) predicts that experiment will disagree with
+the textbook \emph{structure}, not merely with a number. Crucially, this layer
+is also where the two framework declarations themselves are made killable: the
+constitution stakes in advance what would refute FC-1 and FC-2.
+
+Read this chapter as a registry, not a result. Every row inherits its source's
+tag; \textbf{inclusion in the spine never promotes a claim}. The deviation ledger
+adds discriminating protocols, scope caveats, and kill conditions --- it adds no
+new physics. Two rows demand special honesty and are flagged as such below: the
+lab-Bell burden (PL-2), the framework's highest-risk entry, and the
+proton-stability sub-claim of the structural nulls (PL-6), which a later audit
+(\ftdid{0301}) demoted from a forced theorem to a selection.
+
+% =============================================================================
+\section{The deviation spine PL-1\,--\,PL-6}\label{sec:deviation-spine}
+% =============================================================================
+
+The spine is the registry \ftdid{0258} (a \etag{syn} document; per-row tags live
+in the companion ledgers). Each row pairs an FTD result against the QM/SR
+expectation, names the discriminating protocol, states its scope, and gives the
+kill condition --- the measurement that would falsify the FTD side. Table
+\ref{tab:deviation-spine} reproduces the six rows at their source tags.
+
+\begingroup
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{@{}>{\raggedright}p{0.10\textwidth} >{\RaggedRight}p{0.60\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth}@{}}
+\caption{The deviation spine: six structural deviations from the QM/SR
+  formalism, each at its source tag. Inclusion never promotes; the row's
+  epistemic force is its source's, not the registry's.\label{tab:deviation-spine}}\\
+\toprule
+\textbf{Row} & \textbf{Deviation, protocol, kill condition} & \textbf{Tag / id} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Row} & \textbf{Deviation, protocol, kill condition} & \textbf{Tag / id} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+
+\textbf{PL-1}\newline Rice, not Born &
+  Threshold-manifestation event frequency follows Rice's Gaussian-upcrossing law
+  ($R^2 = 0.9923$), beating the Born form $\propto\lvert J\rvert^{n}$
+  ($R^2 = 0.7137$) by far above the pre-registered margin.
+  \emph{QM expects} the Born rule, detection probability $\propto\lvert\psi\rvert^2$ exactly.
+  \emph{Protocol:} bin near-threshold detector rates by mean local intensity and
+  fit Rice versus power-law on the same data; the signature is saturation of the
+  rate envelope where Born predicts continued growth.
+  \emph{Scope:} measured in the 6-neighbour substrate at $L=24$; the canonical
+  26-neighbour generalization is \etag{cnj} (testable in v2).
+  \emph{Kill:} a P1\,--\,P5 construction whose statistics fit Born better than
+  Rice under the same protocol. &
+  \ctag{cn}\newline{\footnotesize(Born)}\newline \ctag{nf}\newline \ftdid{0200} \\
+\addlinespace
+
+\textbf{PL-2}\newline Bell / CHSH substrate bound &
+  Any correlation experiment implementable inside the commutative substrate (no
+  measurement-map $M$) is bounded $S\le 2$; engine CHSH reads $S\approx
+  1.95\text{--}2.00$. \emph{QM expects} the Tsirelson value $S=2\sqrt2\approx
+  2.828$ at optimal settings. \emph{Protocol:} CHSH on raw substrate flux
+  correlations, no complexification step --- any substrate-native $S>2$ outside
+  the detection loophole kills FC-1. \emph{Read the honesty block below} ---
+  this is the framework's highest-risk row. &
+  \ctag{thm}\newline \ctag{meas}\newline \ftdid{0243} \\
+\addlinespace
+
+\textbf{PL-3}\newline Co-measurable quadratures &
+  All quadratures of a mode are co-measurable: the symplectic pair has
+  $\{q,p\}\neq0$ (the winding is real) yet the observable commutator $[q,p]=0$;
+  measured leakage $\sim 10^{-16}$. \emph{QM expects} conjugate incompatibility
+  $[\hat q,\hat p]=i\hbar$. \emph{Protocol:} simultaneous sharp readout of both
+  quadratures without back-action; engine-native every tick, physically
+  FC-1-conditional. \emph{Kill:} a P1\,--\,P5 derivation of quadrature
+  incompatibility, or a demonstration that FC-1 epistemics cannot reproduce
+  measured homodyne complementarity. &
+  \ctag{meas}\newline \ftdid{0251} \\
+\addlinespace
+
+\textbf{PL-4}\newline Moving-clock rate &
+  A moving wave-clock departs from exact $\gamma$ by a calculable lattice UV
+  correction vanishing as $\propto L^{-2}$ on the $\langle100\rangle$ axis at
+  $v\lesssim0.85$; at fixed $L$ the clock over-dilates, bending \emph{below}
+  $\gamma$. \emph{SR expects} exact $\gamma$ at every scale and axis.
+  \emph{Protocol:} lead with the law, not with ``$\gamma$ emerges'' --- fix the
+  transverse mode and grow $L$; the content is the $L^{-2}$ convergence and the
+  UV bend. \emph{Scope:} scoped \etag{meas} ($\langle100\rangle$, moderate $v$);
+  diagonals unconverged. \emph{Kill:} the $L^{-2}$ law breaking on
+  $\langle100\rangle$, or exact $\gamma$ where the lattice requires a correction
+  --- either kills FC-2's metric half. &
+  \ctag{meas}\newline{\footnotesize(scoped)}\newline \ftdid{0252} \\
+\addlinespace
+
+\textbf{PL-5}\newline Isotropy &
+  The substrate is anisotropic at UV and isotropizes in the IR with a measured
+  power law: rotation-breaking residual exponent $p = 4.0008\pm0.0006$
+  ($\delta\propto k^4$), strongly irrelevant under Wilsonian counting.
+  \emph{SR expects} exact rotational invariance at every scale.
+  \emph{Protocol:} the closed-form anisotropy measurement; the cubic-anisotropy
+  signature (an $O_h$ fingerprint) distinguishes a lattice from
+  rotationally-invariant Lorentz violation. \emph{Kill:} the $k^4$ decay
+  reversing or plateauing at larger $L$ (isotropization stalling --- kills FC-2's
+  emergent reading). &
+  \ctag{meas}\newline \ftdid{0258} \\
+\addlinespace
+
+\textbf{PL-6}\newline Structural nulls &
+  The ontology \emph{forbids}, all at source tag \etag{thm}: $\tau_{\text{proton}}
+  = \infty$ (charge conservation exact via the Gauss constraint);
+  $N_{\text{monopole}}=0$ ($\nabla\!\cdot\!B \equiv \nabla\!\cdot\!\nabla\!\times\!J
+  = 0$); $N_{\text{SUSY}}=0$ (no fermionic grading on the ternary state space);
+  extra dimensions $=0$ ($\lvert\Aut(E)\rvert^2 = 2^D(D-1)!$ forces $D=3$).
+  \emph{Competitors expect} proton decay (GUTs), monopoles, SUSY partners and
+  extra dimensions (strings). \emph{Protocol:} the world's existing null
+  searches \emph{are} the protocol. \emph{Kill:} a single observed positive
+  falsifies the corresponding theorem's physical reading outright.
+  \textbf{The $\tau_{\text{proton}}=\infty$ sub-claim is corrected by
+  \ftdid{0301}} --- see \S\ref{sec:proton-correction}. &
+  \ctag{thm}\newline \ftdid{0258} \\
+
+\end{longtable}
+\endgroup
+
+\noindent
+A standard caveat applies to every engine-native \etag{meas} row: the results are
+statements about the FTD substrate at the stated lattice size, stencil, and
+protocol; their \emph{physical} readings are conditional on the calibration
+register ($a_{\mathrm{phys}}\equiv\ell_P$, $M_{\mathrm{REST}}=m_e$,
+$t_{\mathrm{phys}}$), on the manifestation\,$\to$\,detection mapping at its
+\etag{cnj}-grade tag, and on FC-1/FC-2 as declared commitments. Dimensionless
+deviation \emph{structure} (which law, which exponent) is calibration-invariant;
+absolute physical scales are not. Under $a_{\mathrm{phys}}\equiv\ell_P$ the UV
+corrections of PL-4 and PL-5 are Planck-suppressed, so their laboratory reach is
+bounded by existing Lorentz-violation searches: the engine-native versions are
+testable now, the physical versions are long-horizon.
+
+% =============================================================================
+\section{The lab-Bell burden: PL-2 read honestly}\label{sec:bell-burden}
+% =============================================================================
+
+The single most important sentence in this chapter is that \textbf{loophole-free
+laboratory Bell experiments already measure $S>2$.} PL-2 is therefore \emph{not}
+a prediction that laboratory Bell tests will read $2.000$. It is two things at
+once: a scoped substrate bound that is \etag{thm}-grade, and an accepted open
+burden that is the framework's most exposed flank. Softening either half would be
+dishonest; the boundary box states both at their canonical tags.
+
+\begin{boundarybox}[PL-2 lab-Bell honesty block --- the highest-risk row]
+\textbf{The scoped bound (forced).} Any correlation experiment fully
+implementable inside the commutative substrate --- with no measurement-map $M$ ---
+satisfies realism, locality, and statistical independence, so Bell's theorem
+applies and bounds $S\le2$. This is \etag{thm}-grade via \ftdid{0243} plus Bell;
+the engine measures $S\approx1.95\text{--}2.00$ across every tested
+configuration. (The apparent $S\approx3.6$ at $\sim49\%$ detection efficiency is
+the known detection loophole, an artifact, not a violation.)
+
+\smallskip
+\textbf{The open burden (accepted, not discharged).} Real laboratories measure
+$S>2$. FTD must therefore produce the observed $S>2$ \emph{at its observer
+layer}. The existing aggregate-correlation mechanism is \etag{sel}-grade, and the
+complexification it relies on is \emph{exactly} an instance of the measurement
+import $M$ that FC-1 \emph{declines}. So FTD's account of laboratory Bell
+violations is \etag{opn}. This is the deviation spine's highest-risk entry and
+the most likely place the framework breaks.
+
+\smallskip
+\textbf{Kill condition.} Either a substrate-native (M-free) $S>2$ beyond
+numerical error --- which kills FC-1 directly --- or a proof that \emph{no}
+observer-layer mechanism consistent with FC-1 can yield the laboratory
+statistics, which turns the burden into a verdict against the framework's account
+of established experiments. ($\ftdid{0258}$ registry; FC-1 declared by
+$\ftdid{0255}$.)
+\end{boundarybox}
+
+% =============================================================================
+\section{The proton-stability correction (FTD-0301)}\label{sec:proton-correction}
+% =============================================================================
+
+The structural-nulls row PL-6 stands at its source tag \etag{thm}: the four
+absence claims are theorems of the ontology as recorded in the constitution and
+the parametric catalog. But one of its four sub-claims --- proton stability,
+$\tau_{\text{proton}}=\infty$ --- has since been audited directly, and the audit
+\textbf{demotes that sub-claim}. The precedence rule applies without exception:
+\textbf{the LEDGER wins over the constitution}, so the corrected status governs.
+
+\begin{conditionalbox}[Proton stability: $\tau_p=\infty$ is a selection, not a forced theorem]
+The forcedness audit \ftdid{0301} (\etag{meas}, UNFORCED-METASTABLE) attacked the
+claim that the discrete ontology \emph{forces} $\tau_{\text{proton}}=\infty$. Its
+target was a four-proposition argument: (a) exact charge conservation, (b) the
+proton as a locked triad of three same-sign particles, (c) locked triads exempt
+from evaporation, (d) weak transmutation preserving triad structure. Two
+engine-free legs falsify the \emph{forcing}:
+
+\begin{itemize}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
+  \item FTD has exactly one exact vector charge (the $U(1)$ sum $\sum s$) and
+  \emph{no} baryon or $B\!-\!L$ current. Baryon number is an emergent
+  three-quark colour-singlet \emph{cluster label}; conservation of $\sum s$ does
+  not forbid $p\to e^+ + \pi^0$. Propositions (b)\,--\,(d) smuggle in a baryon law
+  the framework never derives, and they contradict FTD's own baryogenesis sector.
+  \item Source fact: the triad-binding lock fires only on \emph{same-sign}
+  triples, whereas the physical proton $uud=(+1,+1,-1)$ is mixed-sign. The lock
+  therefore \emph{cannot fire on a real proton}, so the evaporation-exemption of
+  (c) is structurally inapplicable to its target object.
+\end{itemize}
+
+\noindent
+The run of record confirms the reading: a cold proton is metastable and never
+lock-protected; under heating with the weak channel on, $46/48$ trials transmute
+$uud\to uuu$ (changing the charge), while the control transmutes $0/48$ ---
+falsifying proposition (d). \textbf{Net epistemic change:} the
+$\tau_{\text{proton}}=\infty$ tag is corrected \etag{thm}\,$\to$\,\etag{sel}
+(emergent-metastable). The discrete ontology does not determine baryon stability,
+and its native dynamics \emph{license} proton decay --- a boundary in the spirit
+of mapping what discreteness does not reach. The other three structural nulls
+(monopoles, SUSY, extra dimensions) are \textbf{unaffected} and remain
+\etag{thm} at PL-6.
+\end{conditionalbox}
+
+\noindent
+This correction does not weaken the falsifiability of PL-6 --- it sharpens it. An
+observed proton decay no longer would merely contradict a theorem; under the
+corrected reading the framework's own weak channel already supplies a decay
+mechanism, so the open empirical question is the \emph{rate}, and the structural
+prediction $\tau_p=\infty$ is withdrawn as a forced statement.
+
+% =============================================================================
+\section{Kill conditions for the framework commitments}\label{sec:kill-conditions}
+% =============================================================================
+
+The deviation spine makes the \emph{predictions} killable; the constitution
+(\S6.2) goes further and makes the two \etag{ax}-class \emph{declarations}
+themselves killable, stated in advance. This is what distinguishes a framework
+commitment from an unfalsifiable stipulation: FC-1 and FC-2 are choices the
+theorem leaves open, but each comes with a published list of what would refute
+it.
+
+\paragraph{FC-1 (the commutative substrate declines the measurement import $M$)
+--- \etag{ax}-class, \ftdid{0255} --- is killed by any of:}
+\begin{enumerate}[leftmargin=1.6em,itemsep=2pt,topsep=2pt]
+  \item a substrate-native pair of observables with $[A,B]\neq0$ derived from
+  P1\,--\,P5 (this would refute the commutativity-independence premise
+  \ftdid{0243} and is the single most direct refutation of the constitution);
+  \item a P1\,--\,P5 derivation of Born statistics (this would refute the
+  binding-without-sharpness account and collapse the PL-1 deviation);
+  \item a substrate-native, $M$-free correlation experiment exceeding $S=2$
+  beyond numerical error (the PL-2 kill condition).
+\end{enumerate}
+
+\paragraph{FC-2 (native arrow; Lorentzian metric emergent-IR and sector-scoped;
+space $\perp$ time fundamental) --- \etag{ax}-class, \ftdid{0256} --- is killed by
+any of:}
+\begin{enumerate}[leftmargin=1.6em,itemsep=2pt,topsep=2pt]
+  \item exact $\gamma$ (or exact Lorentz invariance) at finite $L$ off the IR
+  limit --- a measured \emph{absence} of the predicted UV corrections where the
+  lattice requires them (PL-4/PL-5 returning null at finite scale);
+  \item a P1\,--\,P5 derivation of global reversibility (this would refute the
+  \ftdid{0253} boundary);
+  \item failure of the measured IR approach --- the $L^{-2}$ law breaking on
+  $\langle100\rangle$, or the $k^4$ anisotropy decay reversing: emergence claims
+  that stop emerging.
+\end{enumerate}
+
+\paragraph{FC-0 (the $\mathbb{Z}[i]$ reading) --- \etag{ax}-class,
+\ftdid{0254}/\ftdid{0249} --- is killed by} an inequivalent reading of the
+lattice symmetry that produces the same spine (uniqueness failure), or a spine
+theorem that fails under FC-0 (soundness failure).
+
+\noindent
+A point of physical-scale honesty travels with the FC-2 conditions: under the
+calibration register the PL-4 and PL-5 UV effects are Planck-suppressed, so their
+laboratory accessibility is bounded by current Lorentz-violation searches. The
+engine-native versions are testable now; the physical versions are conditional and
+long-horizon. The ledger states both readings, and so does this chapter.
+
+% =============================================================================
+\section{Methodology as institution}\label{sec:methodology}
+% =============================================================================
+
+A list of kill conditions is only as good as the discipline that holds the
+project to them. FTD's epistemics are operational, not aspirational
+(\etag{syn}, constitution \S6.3). Four institutional mechanisms make the
+falsification machinery binding rather than rhetorical:
+
+\begin{description}[leftmargin=0pt,itemsep=4pt,topsep=2pt,font=\normalfont\itshape]
+  \item[Pre-registration.] Every measurement campaign is hash-locked before it
+  runs: a SHA-256 of the runner and the analysis, plus a git tag, recorded
+  before any data exists (the manifest is the project's preregistration record).
+  The verdict logic is frozen first; the run is the run of record. This is what
+  prevents a near-miss from being retrofitted into a prediction --- the deviation
+  spine's $L^{-2}$ blind extension and the time-dilation blind run are the recent
+  exemplars.
+  \item[The golden-tick gate.] A bit-exact engine hash guards every
+  physics-bearing change. An edit that perturbs the deterministic engine trace is
+  caught immediately, so an instrument cannot silently drift between the claim and
+  its check. Observation-only campaign code is proven golden-neutral (bit-identical
+  hash with and without the counters) before its measurements count.
+  \item[The LEDGER.] A single source of truth with append-only tag history.
+  Promotions happen only there, with evidence; no document --- including the
+  constitution and this one --- may promote a claim. When a kill condition fires,
+  the row is retagged in the LEDGER first, then annotated downstream. The
+  precedence ordering \textsc{ledger} $>$ constitution $>$ prose makes the
+  \ftdid{0301} proton correction (\S\ref{sec:proton-correction}) binding on this
+  chapter.
+  \item[Anti-target discipline.] No near-miss scans, no substitution identities,
+  no labeling of a parametric insertion as a derivation. Honest negative results
+  are first-class deliverables: the spine's PL-1 Born closure, the PL-2 open
+  burden, and the FTD-0301 boundary are all recorded as such, not buried.
+\end{description}
+
+\noindent
+Together these turn the chapter's promises into commitments. The deviation spine
+says what disagreement would look like; the kill conditions say what would refute
+the declarations; and the institutional machinery guarantees that, when an
+experiment lands, the framework cannot quietly move the goalposts. This document
+was produced under those rules: it contains no new measurement and no promotion.
+
+% =============================================================================
+\section{What this layer does not settle}\label{sec:science-open}
+% =============================================================================
+
+The science layer maps the boundary of the framework's accountability; it does
+not pretend the boundary is everywhere closed.
+
+\begin{itemize}[leftmargin=1.4em,itemsep=3pt,topsep=2pt]
+  \item \textbf{The lab-Bell account is open} (\etag{opn}, \ftdid{0258} /
+  \ftdid{0255}). The substrate bound $S\le2$ is forced, but reproducing the
+  measured laboratory $S>2$ at the observer layer without smuggling back the
+  declined measurement-map $M$ is unsolved. This is the highest-risk entry, and
+  it is genuinely unresolved, not merely awaiting data.
+  \item \textbf{Several deviations are scoped, not yet universal.} PL-1 is
+  measured in the 6-neighbour substrate; its canonical 26-neighbour reading is
+  \etag{cnj} (testable in v2). PL-4 is scoped \etag{meas} on $\langle100\rangle$
+  at moderate velocity, with the ultra-relativistic diagonals still unconverged
+  (\etag{opn}). The structure is established where it is measured; its
+  universality across the full configuration space is not.
+  \item \textbf{The physical, as opposed to substrate-native, versions of
+  PL-4/PL-5 are long-horizon.} Under the calibration register the UV
+  corrections are Planck-suppressed; whether any laboratory can reach them is a
+  question this layer poses but does not answer.
+  \item \textbf{Kill conditions are stated, not yet exercised at the physical
+  scale.} FC-1 and FC-2 carry published refutation lists, but most of those
+  conditions can presently be checked only engine-natively. The framework has
+  said what would end it; the experiments that could deliver the verdict, at the
+  physical scale, are still to come.
+\end{itemize}

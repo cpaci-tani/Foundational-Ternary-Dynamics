@@ -1,0 +1,94 @@
+% =============================================================================
+% master_dag.tex -- Figure 0.1, the Master Chain DAG (centerpiece intuition device)
+% Six horizontal bands (Ontology..Science). Shape/rule encode epistemic status:
+%   seed (double circle) = axiom / FC-declaration   hub (diamond) = G*
+%   thm (solid box) = theorem-grade   condb (thin solid) = selection/synthesis
+%   tierb (dashed) = below-theorem / SMC   wall (double rule) = open / boundary
+%   con (solid arrow) = constructed-from   wk (dashed arrow) = weak link / accountable-to
+% Node styles are defined once in ontological_chain.tex (shared with the mini-maps).
+% =============================================================================
+\begin{figure}[p]
+  \centering
+  \resizebox{0.92\textwidth}{!}{%
+  \begin{tikzpicture}[node distance=0pt]
+    % ---- band labels (left gutter) ----------------------------------------
+    \node[bandlbl] at (-1.4, 0.0)   {\textsc{ontology}\\[-1pt]\tiny what exists};
+    \node[bandlbl] at (-1.4,-2.8)   {\textsc{logic}\\[-1pt]\tiny what follows};
+    \node[bandlbl] at (-1.4,-6.6)   {\textsc{mathematics}\\[-1pt]\tiny the spine};
+    \node[bandlbl] at (-1.4,-10.4)  {\textsc{philosophy}\\[-1pt]\tiny the observer};
+    \node[bandlbl] at (-1.4,-12.8)  {\textsc{physics}\\[-1pt]\tiny the EFT};
+    \node[bandlbl] at (-1.4,-15.6)  {\textsc{science}\\[-1pt]\tiny falsification};
+
+    % ---- Ontology band ----------------------------------------------------
+    \node[seed]  (post) at (2.0, 0.0)  {P1--P5\\postulates};
+    \node[seed]  (zi)   at (5.6, 0.0)  {$\mathbb{Z}[i]$\\\tiny FC-0};
+    \node[condb] (js)   at (9.2, 0.0)  {two fields\\$J\perp s$};
+    \node[thm]   (cc)   at (12.8,0.0)  {causal cone\\$c=1/\sqrt3$};
+
+    % ---- Logic band -------------------------------------------------------
+    \node[thm]   (alg)  at (2.0,-2.8)  {commutative\\algebra $A_5$};
+    \node[seed]  (fc1)  at (5.6,-2.8)  {FC-1\\\tiny declines $M$};
+    \node[seed]  (fc2)  at (9.2,-2.8)  {FC-2\\\tiny native arrow};
+    \node[wall]  (shrp) at (12.8,-2.8) {sharpness\\\tiny open};
+
+    % ---- Mathematics band (main row + dashed sub-row) ---------------------
+    \node[hub]   (gs)   at (2.0,-6.0)  {$G^{*}$};
+    \node[thm]   (mq)   at (5.6,-6.0)  {master\\quadratic};
+    \node[thm]   (spine)at (9.2,-6.0)  {9-result\\spine};
+    \node[wall]  (awall)at (12.8,-6.0) {$\alpha$ readout\\\tiny MC-T4.3 boundary};
+    \node[tierb] (c16)  at (5.6,-7.9)  {coeff-16\\\tiny necessity conj.};
+    \node[tierb] (pj)   at (9.2,-7.9)  {Phase-J\\\tiny $L=2$ only};
+
+    % ---- Philosophy band --------------------------------------------------
+    \node[condb] (obs)  at (4.0,-10.4) {observer\\layer};
+    \node[condb] (sup)  at (8.6,-10.4) {supersession\\matrix};
+
+    % ---- Physics band -----------------------------------------------------
+    \node[thm]   (gc)   at (2.0,-12.8) {geometric\\Coulomb};
+    \node[thm]   (cm)   at (5.6,-12.8) {cluster mass\\$k=\tfrac14$};
+    \node[thm]   (ag)   at (9.2,-12.8) {$\alpha_G$ gravity\\ratio};
+    \node[tierb] (xp)   at (12.8,-12.8){$x_+=1/\alpha$\\\tiny smc};
+
+    % ---- Science band -----------------------------------------------------
+    \node[condb] (pl)   at (2.6,-15.6) {PL-1..6\\deviation spine};
+    \node[thm]   (nul)  at (7.0,-15.6) {structural\\nulls};
+    \node[wall]  (bell) at (11.4,-15.6){PL-2 Bell\\\tiny lab-open, highest risk};
+
+    % ---- construction edges (solid) ---------------------------------------
+    \draw[con] (post) -- (js);
+    \draw[con] (js)   -- (cc);
+    \draw[con] (post) -- (alg);                                  % ontology -> logic
+    \draw[con] (zi) to[out=-110,in=110] (gs.north);             % the spine: Z[i] -> G*
+    \draw[con] (gs)   -- (mq);
+    \draw[con] (mq)   -- (spine);
+    \draw[con] (spine) to[out=-150,in=60] (gc.north);           % math -> physics (left route)
+    \draw[con] (spine) to[out=-120,in=70] (cm.north);
+    \draw[con] (cm)   -- (ag);
+    \draw[con] (ag)   -- (xp);
+
+    % ---- weak links / boundaries (dashed) ---------------------------------
+    \draw[wk] (mq.east) to[out=0,in=180] (awall.west);          % assembly NOT forced
+    \draw[wk] (mq) -- (c16);                                     % coeff-16 necessity conjectured
+    \draw[wk] (spine) -- (pj);                                   % Phase-J general-L weak
+    \draw[wk] (awall.south) to[out=-90,in=90] (xp.north);       % the boundary keeps x+ SMC
+    \draw[wk] (fc2.south) to[out=-90,in=110] (cc.south east);   % FC-2 governs metric emergence
+    \draw[wk] (xp.south) to[out=-90,in=20] (bell.north east);   % physics accountable to science
+    \draw[wk] (gc.south) to[out=-90,in=120] (pl.north);
+  \end{tikzpicture}}
+  \caption[The Master Chain DAG]{\textbf{The Master Chain DAG.}\enspace The six
+    layers of the chain, top to bottom, in the constitution's order. Shape and
+    rule encode epistemic status (never colour): a \emph{double-ringed} node is
+    an axiom or a framework declaration (FC-0/1/2), a \emph{diamond} is the
+    $G^{*}$ hub, a \emph{solid} box is theorem-grade, a \emph{thin-solid} box is
+    a selection/synthesis, a \emph{dashed} box is below theorem grade (a
+    strongly-motivated conjecture or a tiered result), and a \emph{double-ruled}
+    box is a boundary---a mapped wall or an open kernel. Solid arrows read
+    ``constructed from''; dashed arrows are weak links or ``accountable to''.
+    The construction spine runs $\mathbb{Z}[i]\to G^{*}\to$ master quadratic
+    $\to$ the nine-result spine $\to$ the IR predictions. The two double-ruled
+    walls---the $\alpha$ readout boundary (MC-T4.3) and the lab-Bell burden
+    (PL-2)---are exactly where the chain stops being forced: the dashed arrow
+    from the $\alpha$ wall down to $x_+=1/\alpha$ is why that identification
+    remains a strongly-motivated conjecture, not a theorem.}
+  \label{fig:masterdag}
+\end{figure}
