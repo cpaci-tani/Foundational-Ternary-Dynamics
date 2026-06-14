@@ -245,11 +245,19 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
         gap: 8px;
     }
 
-    /* Contextual controls are hidden until Menu expands them. */
+    /* Contextual controls are hidden until Menu expands them. They open as a
+       full-width wrap-down row anchored under the primary toolbar controls.
+       flex-basis:100% (not 0 0 auto) makes the panel claim its own toolbar row
+       and stay bounded to the viewport — without it the panel content-sizes far
+       wider than the screen (e.g. an 895px panel on a 390px phone) and the
+       overflow is clipped/unreachable because body has overflow:hidden. */
     .topbar-slot-context {
         display: none;
-        flex: 0 0 auto;
-        width: auto;
+        flex: 1 1 100%;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
         padding: 8px;
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
@@ -263,8 +271,20 @@ html[data-density="compact"] .topbar-slot-context .tb-group {
         gap: 8px;
     }
 
+    /* Intermediate control groups must wrap and never exceed the panel width,
+       so the width:100% selects/inputs inside them resolve against the viewport
+       rather than an already-overflowing ancestor. */
     .topbar-slot-context .tb-group {
         max-width: 100%;
+        min-width: 0;
+        flex-wrap: wrap;
+    }
+
+    .topbar-slot-context .tb-select,
+    .topbar-slot-context select,
+    .topbar-slot-context input {
+        max-width: 100%;
+        min-width: 0;
     }
 
     /* On narrow screens we use horizontal scrolling instead of stacking. */
