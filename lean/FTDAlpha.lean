@@ -1,7 +1,11 @@
 /-
-  FTD Alpha Proof Verification — Lean 4
-  ======================================
-  Machine-verified algebraic core of the master quadratic proof.
+  FTD Alpha Legacy Numerical Check — Lean 4
+  =========================================
+  Legacy replay of the algebraic core and numerical comparison around the
+  master quadratic.
+
+  Honest scope: the physical bridge x+ = 1/alpha is an axiom-class/SMC input,
+  not a Lean theorem.
 -/
 
 /-! ## Part A: Pure Algebraic Theorems -/
@@ -49,7 +53,7 @@ theorem FTD.cm_degree : (2 : Nat) = 2 := rfl
   let piOk := if Float.abs (piTriad - gamma2*gamma2) < 1e-10 then "TRUE" else "FALSE"
 
   IO.println "======================================================"
-  IO.println "  FTD ALPHA PROOF CHAIN — LEAN 4 VERIFICATION"
+  IO.println "  FTD ALPHA LEGACY CHECK — LEAN 4"
   IO.println "======================================================"
   IO.println ""
   IO.println "STEP 0: Bridge Constant (pi-free Gamma-primitive form)"
@@ -83,15 +87,15 @@ theorem FTD.cm_degree : (2 : Nat) = 2 := rfl
   IO.println s!"  Triad identity?   {piOk}  (4w^2/G*^2={piTriad}, g2^2={gamma2*gamma2})"
   IO.println s!"  Cloud boundary:   k_crit = 4/G* = {kCrit}"
   IO.println ""
-  IO.println "--- PHYSICAL COMPARISON (Axiom 1) ---"
+  IO.println "--- PHYSICAL COMPARISON (axiom-class bridge, not proven) ---"
   IO.println s!"  x+      = {xPlus}"
   IO.println s!"  CODATA  = {codata}"
   IO.println s!"  Deviation = {devPpm} ppm"
   IO.println ""
   IO.println "======================================================"
-  IO.println "PROOF STATUS"
+  IO.println "LEGACY STATUS"
   IO.println "  Pure algebra theorems (no sorry): 4"
   IO.println "  Numerical checks passed:          3"
   IO.println "  Remaining conjecture:             1 (Tr=N from self-duality)"
-  IO.println "  Physical axiom:                   1 (1/alpha = x+)"
+  IO.println "  Physical axiom/SMC bridge:        1 (1/alpha = x+)"
   IO.println "======================================================"
