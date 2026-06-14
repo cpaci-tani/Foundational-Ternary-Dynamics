@@ -6,6 +6,13 @@
 **Program:** Arc 3 of the 4-arc emergent-physics forward program (the multi-session centerpiece). Arcs 1 (FTD-0275) and 2 (FTD-0276) complete.
 **Owner posture (2026-06-12, on record):** *"I don't mind imposing stuff if we have the motivation and derivation of things. Our framework is cutting edge. We must be willing to do that."* — motivated `[IMPOSED]` inputs + a rigorous conditional derivation is a first-class result (the FTD-0271 `[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT]` pattern).
 
+> **2026-06-14 execution note:** v1 was hash-locked and run as
+> [`PREREG_GENESIS_COUNTING_v1.md`](../../10_eft_program/preregistrations/PREREG_GENESIS_COUNTING_v1.md).
+> The verdict is **`COUNTING_MODEL_V1_CLOSED_NEGATIVE`**; see
+> [`ANALYSIS_GENESIS_COUNTING_v1.md`](ANALYSIS_GENESIS_COUNTING_v1.md).
+> This closes the v1 slosh-pass/static-gating route only. The broader FTD-0110-NL /
+> FTD-0250 collective-coordinate reduction remains `[OPEN -- boundary mapped]`.
+
 ---
 
 ## §1 · Target statement
@@ -105,13 +112,13 @@ unless the §2 register itself is someday derived.
 ## §7 · Process discipline
 
 Model **development is iterative and declared free** (theory work; no verdicts during
-development). The **comparison protocol is pre-registered**: when the model's final form
-stabilizes, its source + the falsifier numbers above are SHA256-hash-locked and tagged
-(`preregister-genesis-counting-v1`) BEFORE the mechanical comparison run. The prior
-information (all target data already published in FTD-0261/0267/0269/0276) is disclosed;
-the integrity guard is F-4's out-of-sample structure plus the no-per-target-tuning rule:
-every model constant must trace to the §2 register or a §3 ingredient.
+development). The v1 comparison protocol was locally SHA256-hash-locked in
+`PREREG_GENESIS_COUNTING_v1.md` before the successful mechanical comparison run
+(no clean git tag was applied in the dirty workspace). The prior information (all target data
+already published in FTD-0261/0267/0269/0276) was disclosed; the integrity guard is
+F-4's out-of-sample structure plus the no-per-target-tuning rule: every model constant
+must trace to the §2 register or a §3 ingredient.
 
-**Artifacts:** `scripts/exploration/genesis_counting_model.py` (the model),
-`PREREG_GENESIS_COUNTING_v1.md` (the lock, downstream), analysis doc + LEDGER FTD-0277
-(the verdict, downstream).
+**Artifacts:** `scripts/exploration/genesis_counting_model.py` (the v1 model),
+`PREREG_GENESIS_COUNTING_v1.md` (the local hash-lock),
+`ANALYSIS_GENESIS_COUNTING_v1.md` + LEDGER FTD-0277 (the closed-negative verdict).
