@@ -139,6 +139,22 @@ drift-tuned). The damped Coulomb near-field (`selective OFF`) is the only forced
 self-field (−2.15, localized, R0 PASS). **SPARC not founded** (box-fill ⇒ no localized
 scale). Golden `0x56fa28acb5b9fe88` green; observation-only; zero promotions.
 
+## Proton-stability forcedness audit (FTD-0291; 2026-06-13, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0291** proton-stability forcedness | `preregister-proton-stability-v1` | `bb99a20d` | engine `engine/tests/campaign_proton_stability.cpp` SHA256 `56fe09548e98787e66b988161b4e57e66f42aa235c8ac4ea7930c8009058bd48`; analyzer `scripts/exploration/analyze_proton_stability.py` SHA256 `eb076a16c4033cd869ac4bdfd08e49862d3a3a01a4b13e89e41229529786a8e0` | CPU `engine/build/Release`; cold `--heat=none --radius=1,2 --genesis=on --seeds=16 --ticks=2000`; heated `--heat=inject --genesis=off` and `--heat=langevin --dual=off --heat-T=0.3,0.8` | `engine/results/proton_stability/proton_stability_ror_*.csv` | [`ANALYSIS_PROTON_STABILITY_v1.md`](ANALYSIS_PROTON_STABILITY_v1.md): `UNFORCED-METASTABLE [BOUNDARY] (frozen)` |
+
+The "micro" pier candidate after FTD-0290. `proof_complete_sm.py:460–471` tags `τ_p = ∞`
+`[THEOREM]`; this audit finds it **unforced**. The triad lock locks only same-sign triples
+(`transmutation_phases.cpp:148,153`) ⇒ cannot fire on the mixed-sign proton (`uud`); the
+proton is metastable, never lock-protected (`max locked = 0`), evaporates spontaneously
+(12.5% r1 / 43.75% r2), and FTD's own weak channel transmutes it (`uud→uuu`, **46/48**
+heated weak=on, control 0/48) while violating its only exact charge Σs (**47/64** decays).
+Frozen verdict **UNFORCED-METASTABLE [BOUNDARY]**; corrects the `proof_complete_sm.py`
+`τ_p = ∞` tag `[THEOREM]` → `[SELECTION]`. Golden `0x56fa28acb5b9fe88` green;
+observation-only; zero other promotions.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |

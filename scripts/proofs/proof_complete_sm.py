@@ -457,18 +457,26 @@ N_S = 1 - 2 * ALPHA  # n_s ~ 0.985 (rough)
 report("Omega_matter", OMEGA_MATTER, mpf('0.315'), "[SELECTION]")
 report("r (tensor/scalar)", R_TENSOR, mpf('0.036'), "[PREDICTION]")
 
-# Proton lifetime [THEOREM — absolute stability]
-# On the discrete lattice, charge conservation is EXACT (Gauss constraint).
-# A proton = locked triad of 3 same-sign particles.
-# Locked triads are exempt from evaporation.
-# Weak transmutation flips polarity but preserves triad structure.
-# There is NO mechanism for baryon number violation on a finite discrete lattice.
-# This is the sharpest falsifiable prediction FTD makes.
-TAU_PROTON = mpf('inf')  # Infinite: proton is absolutely stable
-report("tau_proton (years)", mpf('1e40'), mpf('1e34'), "[THEOREM]", "yr (>10^34 exp bound)")
-print(f"  {'[THEOREM]':14s} {'proton ABSOLUTELY STABLE':30s} = inf                           (GUTs predict 10^34-36 yr)")
-print(f"                 Mechanism: charge conservation exact on discrete lattice.")
-print(f"                 Falsification: ANY proton decay event at ANY rate.")
+# Proton lifetime [SELECTION] — emergent metastability (NOT a forced [THEOREM])
+# CORRECTED 2026-06-13 (FTD-0291; docs/.../ANALYSIS_PROTON_STABILITY_v1.md). The prior
+# "[THEOREM — absolute stability]" is FALSIFIED as a FORCED result:
+#  - Charge (Sigma s) conservation IS exact, but it does NOT forbid p -> e+ + pi0
+#    (charge-balanced); FTD has NO baryon-number / B-L current (baryon number is an
+#    emergent 3-quark-color-singlet cluster label, not a conserved quantity).
+#  - The proton is uud = (+1,+1,-1), MIXED sign, but triad_binding locks only SAME-sign
+#    triples (transmutation_phases.cpp:148,153) -> the "locked triad exempt from
+#    evaporation" protection CANNOT fire on a real proton (source fact).
+#  - Engine run of record (FTD-0291): the proton is METASTABLE, never lock-protected
+#    (spontaneous evaporation 12.5%/43.75% at radius 1/2), and weak transmutation flips
+#    a proton quark (uud -> uuu, Sigma s 1->3) -> it does NOT preserve triad structure,
+#    and Sigma s is not conserved across decay. FTD's own baryogenesis sector uses this
+#    same weak-transmutation B-violation.
+# Honest status: a large proton lifetime is [SELECTION]/emergent-metastable, NOT forced.
+TAU_PROTON = mpf('inf')  # engine: metastable; no forced infinite-lifetime theorem (FTD-0291)
+report("tau_proton (years)", mpf('1e40'), mpf('1e34'), "[SELECTION]", "yr (>10^34 exp bound)")
+print(f"  {'[SELECTION]':14s} {'proton metastable (not forced-stable)':30s} = large   (see FTD-0291; GUTs predict 10^34-36 yr)")
+print(f"                 Mechanism: NO forced baryon symmetry; triad lock inapplicable to mixed-sign uud.")
+print(f"                 FTD-0291: weak transmutation flips a proton quark; Sigma s not conserved across decay.")
 
 # ============================================================================
 # SECTION 13: STRUCTURAL PREDICTIONS (null results = FTD confirmed)
