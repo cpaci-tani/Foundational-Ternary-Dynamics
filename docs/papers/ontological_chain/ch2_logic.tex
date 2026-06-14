@@ -1,0 +1,408 @@
+\chapter{Logic --- What Follows, What Is Declined}\label{ch:logic}
+
+% =============================================================================
+% Ch.2 Logic. [SYNTHESIS]. Re-states canonical claims at canonical tags.
+% Primary sources: SPEC_FTD_FRAMEWORK_V1.md §2 (2.1-2.6);
+%                  THEOREM_COMMUTATIVITY_INDEPENDENCE.md (FTD-0243);
+%                  LEDGER rows FTD-0243/0255/0256/0227/0225/0226/0228/0253/0252.
+% Reproduced derivation: the commutativity-independence argument, making the
+%   distinction {q,p} != 0 yet [q,p] = 0 intuitive.
+% =============================================================================
+
+% ---- chapter mini-map (the Logic band of the Master DAG) -------------------
+\begin{figure}[t]
+  \centering
+  \resizebox{0.8\linewidth}{!}{%
+  \begin{tikzpicture}[node distance=0pt]
+    \node[bandlbl] at (-1.4,0.0) {\textsc{logic}\\[-1pt]\tiny what follows};
+    \node[thm]  (alg)  at (2.0,0.0)  {commutative\\algebra $A_5$};
+    \node[seed] (fc1)  at (5.6,0.0)  {FC-1\\\tiny declines $M$};
+    \node[seed] (fc2)  at (9.2,0.0)  {FC-2\\\tiny native arrow};
+    \node[wall] (shrp) at (12.8,0.0) {sharpness\\\tiny open};
+    % within-band reading order
+    \draw[con] (alg) -- (fc1);
+    \draw[wk]  (fc1) -- (fc2);
+    \draw[wk]  (fc2) -- (shrp);
+  \end{tikzpicture}}
+  \caption[This chapter in the chain]{This chapter in the chain. The Logic band:
+    the substrate exposes a strictly \emph{commutative} observable algebra $A_5$
+    (theorem-grade), on the strength of which two framework commitments are
+    \emph{declared}---FC-1 declines the quantum measurement import, FC-2 takes the
+    arrow of time as native---and one kernel stays open (the \emph{sharpness} of
+    the observer's blind spot). Shapes and rules carry epistemic status exactly
+    as in Figure~\ref{fig:masterdag}.}
+  \label{fig:minimap-logic}
+\end{figure}
+
+% ---- intuition primer ------------------------------------------------------
+\section*{The move this layer makes: a classical world that declines the quantum import}
+\addcontentsline{toc}{section}{The move this layer makes}
+
+\noindent
+Ontology said \emph{what exists}: a finite ternary lattice carrying two
+orthogonal fields, with a forced causal cone. Logic asks the next question:
+given those things, \emph{what follows}, and---just as importantly---\emph{what
+does the framework decline to assume}? This is the layer where FTD takes its
+sharpest, most consequential positions, and it takes them in the open.
+
+The move is this. The substrate, run forward under its five postulates, exposes
+a world whose observables behave \emph{classically}: every quantity you can read
+off a configuration is an ordinary real-valued function, and ordinary functions
+multiply commutatively. There is no hidden non-commutativity waiting to be
+distilled by a clever limit. Quantum mechanics' defining feature---observables
+that fail to commute, so that measuring one disturbs another---is therefore not
+something the substrate \emph{contradicts}; it is something the substrate simply
+does not contain. FTD's response is not to manufacture it and not to deny it,
+but to \emph{decline} it: to commit, as a matter of framework definition, that
+the commutative substrate is the whole of its ontology of observables.
+
+That single move has a delicate companion. The substrate's dynamics are far
+from trivial---the leapfrog time-step gives its phase space a genuine symplectic
+structure, the same structure that in classical mechanics generates Hamiltonian
+flow. So one is tempted to say ``but surely a non-trivial symplectic structure
+\emph{is} quantum-like.'' The whole of this chapter's reproduced derivation
+exists to defuse that temptation precisely. There are \emph{two} brackets at
+play, and they are different objects: the Poisson bracket lives on the
+\emph{functions} and is non-zero; the observable commutator lives on the
+\emph{algebra's product} and is zero. The substrate is symplectically rich and
+algebraically commutative at the same time, with no contradiction. The quantum
+deformation that would turn the first bracket into the second requires an
+external parameter the substrate does not supply.
+
+A second decision rides on the same logical base. P5 makes the update a
+\emph{function}, not an invertible map---determinism is not reversibility---and
+the genuinely finite part of the substrate, the ternary state field, is provably
+many-to-one. So the framework declines global time-reversal symmetry as well,
+taking the arrow of time as native rather than emergent. Two declinations, one
+classical-logical foundation. Everything below states each at exactly the
+epistemic grade the ledgers record: the algebra result is a theorem; the two
+declinations are \emph{declarations}, not derivations; and one piece of the
+observer story is honestly left open.
+
+% ---- tagged canonical content ----------------------------------------------
+\section{Determinism is not reversibility}\label{sec:det-not-rev}
+
+Postulate~P5 states that the update map is a deterministic function of the
+configuration. It does \emph{not} state that the map is invertible. A
+deterministic map may be many-to-one---heat diffusion is the canonical example
+of a process that is deterministic \emph{and} irreversible. This distinction is
+not a technicality; it carries the entire weight of FC-2 below
+(\S\ref{sec:fc2}). \etag{syn}~(\ftdid{0256}, licensing boundary \ftdid{0253}).
+
+The point to fix is that the postulate base \emph{permits} an arrow without yet
+\emph{committing} to one. Whether reversibility is a property of the world is,
+at the level of P1--P5, an open fork; \S\ref{sec:fc2} records which branch FTD
+takes and why that is a declaration rather than a theorem.
+
+\section{The substrate's observable algebra is commutative}\label{sec:commutative}
+
+Let the \emph{observable algebra} $A_5$ be the smallest collection of
+real-valued functionals of the configuration $(s, J, \mathrm{wave\_vel},
+\mathcal{L})$ that contains those generators and is closed under pointwise
+real-linear combination, pointwise product, Moore-neighbourhood sums, and
+composition with the deterministic update map $U$. The central logical fact of
+the substrate is:
+
+\begin{result}[Commutativity of $A_5$]\label{res:commutative}
+The observable algebra $A_5$ is strictly commutative.
+\end{result}
+
+\noindent
+\etag{thm}~(\ftdid{0243}; algebraic core machine-checked in
+\texttt{lean/Standalone.lean}). A commutative algebra has a distributive
+(Boolean) event lattice by the Birkhoff--von~Neumann correspondence, so a joint
+probability distribution over its observables \emph{always} exists. In a word:
+\textbf{the substrate's logic is classical logic.} Non-contextual hidden
+variables are not an extra hypothesis here---they are forced by the algebra. The
+full argument, and the crucial Poisson-versus-commutator distinction it turns
+on, is reproduced in \S\ref{sec:derivation}.
+
+\section{The four closed routes to non-commutativity}\label{sec:closed-routes}
+
+Result~\ref{res:commutative} is an \emph{absence} statement, and absence
+statements earn their keep only by surviving attempts to circumvent them. Each
+known FTD-native route to manufacturing quantum non-commutativity from P1--P5
+has been tested and closed:
+
+\begingroup
+\renewcommand{\arraystretch}{1.3}
+\begin{center}
+\begin{tabular}{@{}>{\raggedright}p{0.38\textwidth} >{\raggedright}p{0.36\textwidth} >{\raggedright\arraybackslash}p{0.15\textwidth}@{}}
+\toprule
+\textbf{Route} & \textbf{Why it closes} & \textbf{Status} \\
+\midrule
+Modular time --- a Tomita--Takesaki type~III$_1$ algebra read off the substrate
+  & The substrate algebra is commutative $\to$ type~I $\to$ trivial modular flow
+  & \ctag{cn}\newline\ftdid{0225} \\
+Manifestation as measurement --- genesis $+$ Gauss back-reaction read as
+  collapse
+  & A deterministic function of commuting flux gives a Boolean event lattice,
+    i.e.\ classical coarse-graining
+  & \ctag{cn}\newline\ftdid{0226} \\
+Budget symmetry --- the body-diagonal $C_3$ (the $N_c=3$ count) read as the
+  epistemic $\mathbb{Z}/3$
+  & $\{J_x,J_y,J_z\}$ \emph{commute}: a co-measurable triple, not three
+    complementary bases --- same count, wrong kind
+  & \ctag{cn}\newline\ftdid{0228} \\
+The Bell wall --- a substrate-native CHSH violation $>2$
+  & A local deterministic substrate obeys $S\le 2$ (Bell's theorem applies);
+    $S=2\sqrt2$ appears only \emph{after} the complexification
+    $J_x+iJ_y\mapsto\psi$, which \emph{is} an instance of $M$
+  & \ctag{cn}\newline\ftdid{0243}~\S4 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\endgroup
+
+\noindent
+The four closures share a moral: where a candidate for non-commutativity seems
+to appear, it is always either a co-measurable structure wearing the wrong name,
+or it is the externally imported measurement map $M$ smuggled in by a
+complexification step. The substrate itself stays commutative throughout.
+
+\section{FC-1 --- the framework declines the measurement map $M$}\label{sec:fc1}
+
+\ftdid{0243} establishes more than the commutativity result: it establishes that
+non-commutativity is \emph{logically independent} of P1--P5. Both
+$\{\mathrm{P1\ldots P5}\}\cup\{M\}$ and $\{\mathrm{P1\ldots P5}\}\cup\{\neg M\}$
+are consistent, where $M$ is an independent measurement / quantization postulate
+(a complexification and projection-valued measure, or a 't~Hooft template-state
+basis). The theorem proves the \emph{fork exists}. A theorem cannot choose which
+branch of a genuine fork is true; only a commitment can.
+
+\begin{conditionalbox}[FC-1 (framework commitment)]
+The commutative observable algebra $A_5$ is \emph{complete}: FTD declines the
+measurement-map import $M$. Non-commutativity, Hilbert-space state vectors, and
+operator-valued observables are not part of FTD's model of the world. Where
+quantum mechanics' non-commutative formalism makes structural predictions that
+differ from the commutative substrate's, FTD predicts the substrate.
+\end{conditionalbox}
+
+\noindent
+\etag{ax}~(\ftdid{0255}, an \etag{ax}-class declaration; licensed but not entailed
+by \ftdid{0243}). \textbf{This is a declaration, not a derivation.} The theorem
+proves the fork; FC-1 picks the $\neg M$ branch. Three consequences follow, each
+taken up later in the chain: measurement is re-located to the observer layer as a
+frame-relative epistemic restriction (Chapter~\ref{ch:philosophy}); the wave-face
+of quantum phenomenology is carried by the classical flux (Chapter~\ref{ch:physics});
+and the structural \emph{differences} between the commutative substrate and the
+quantum formalism become FTD's falsifiable spine
+(Chapter~\ref{ch:science}). FC-1 places FTD in the $\psi$-epistemic tradition (a
+classical ontic substrate with epistemic restrictions) while going beyond it:
+epistricted theories aim to \emph{reproduce} a fragment of QM, whereas FTD
+declines the reproduction target itself. What would overturn FC-1 is stated in
+\S\ref{sec:boundary}.
+
+\section{FC-2 --- the arrow of time is native}\label{sec:fc2}
+
+The same logical base supports a second declaration. \ftdid{0253} maps the gap:
+reversibility is absent from P1--P5, and the genuinely \emph{finite} sector of
+the substrate---the ternary state field---is irreversible, since manifestation
+is many-to-one and provably unrecoverable. The reversible part of the dynamics
+is the continuous flux, on which the finiteness commitment has no purchase.
+Finiteness therefore actively \emph{opposes} a global reversibility postulate
+rather than merely failing to imply one.
+
+\begin{conditionalbox}[FC-2 (framework commitment, arrow half)]
+The arrow of time is native: the manifestation/state sector is fundamentally
+irreversible, and FTD declines global reversibility as a postulate.
+Reversibility holds only as a \emph{sector} property of the weakly-coupled flux
+wave dynamics---and with it everything that rides on reversibility, including the
+Lorentzian metric.
+\end{conditionalbox}
+
+\noindent
+\etag{ax}~(\ftdid{0256}, an \etag{ax}-class declaration; licensed by \ftdid{0253}
+and the scoped IR measurement \ftdid{0252}). Again \textbf{a declaration, not a
+derivation}: \ftdid{0253} proves only that the postulates do not \emph{force}
+reversibility, and that FTD's finiteness argues against it; FC-2 commits to the
+irreversible reading as the framework's official model. Two scope notes keep this
+honest. First, the causal cone $\cwave$ remains forced (\etag{thm}, from P4); it
+is the metric structure layered on top of the cone---and the Lorentzian
+space--time mixing it carries---that is declared emergent and sector-scoped, not
+the cone itself. Second, space (P1) and time (P2) are fundamentally separate
+primitives at the base: substrate simultaneity is absolute, and Minkowski mixing
+is an infrared property of the flux wave sector only. The metric half of FC-2 is
+developed where it belongs, in Chapter~\ref{ch:physics}; here Logic records only
+the arrow half and its declaration status. What would overturn FC-2 is stated in
+\S\ref{sec:boundary}.
+
+\section{The epistemic horizon, honestly split}\label{sec:horizon}
+
+If the substrate's logic is classical, why does observing it feel
+restricted---why can an internal observer not simply read the whole
+configuration? FTD's answer splits cleanly into a part it can prove and a part
+it cannot, and the honesty of the split matters more than either half.
+
+\begin{description}[leftmargin=1.4em,itemsep=4pt]
+\item[The binding half.] A finite internal observer---a subsystem with $M$
+  pointer states attempting to model a total of $N>M$ states, \emph{itself
+  included}---necessarily loses access to part of its own state. This is
+  ordinary classical finite self-reference (a pigeonhole argument); it uses no
+  quantum input and is non-circular. Every internal frame therefore carries a
+  \textbf{self-blind-spot}. \etag[ binding half]{thm}~(\ftdid{0227}).
+\item[The sharp half.] The \emph{Spekkens knowledge-balance}---the blind-spot
+  rotating symmetrically over complementary bases, which is what would yield
+  genuinely quantum-like epistemic statistics---requires the full symplectic
+  $S_3 = \mathbb{Z}/2 \rtimes \mathbb{Z}/3$ action. The $\mathbb{Z}/2$ is
+  FTD-native (the $J^2=-I$ quarter-conjugacy); the $\mathbb{Z}/3$ is
+  \emph{missing} (the $N_c=3$ candidate was the same co-measurable triple closed
+  as route~3 above). Binding-without-sharpness is the framework's honest state.
+  \etag{opn}~(\ftdid{0227}).
+\end{description}
+
+\noindent
+A post-hoc note, flagged as such: binding-without-sharpness \emph{after the
+fact} accounts for the engine's measured detection statistics being Rice /
+Gaussian rather than Born (the PL-1 row of Chapter~\ref{ch:science})---a classical
+restriction without the symmetric balance gives classical-with-noise statistics,
+not $|\psi|^2$. This account was constructed after the measurement; it is an
+explanation candidate, not a pre-registered prediction, and it is tagged
+accordingly.
+
+% ---- the reproduced derivation ---------------------------------------------
+\section{Reproduced derivation: commutativity independence}\label{sec:derivation}
+
+This is the load-bearing argument of the layer. It is reproduced in full because
+the entire weight of FC-1 rests on it, and because its crucial step---that a
+non-trivial symplectic structure and a commutative observable algebra coexist
+without contradiction---is exactly the point an outside reader is most likely to
+doubt. The argument has two claims (absence, then independence), with the
+Poisson-versus-commutator distinction sitting between them.
+
+\subsection*{Claim A --- absence: $A_5$ is strictly commutative}
+
+Every generator in the inventory $\{s, J_a, \mathrm{wave\_vel}, \mathcal{L}\}$
+is a real-valued function on the single configuration space $\Omega$ (an
+assignment of $(s(v), J(v), \mathrm{wave\_vel}(v), \mathcal{L}(v))$ to every
+voxel $v$). The algebra's multiplication is the \emph{pointwise} product, and
+real multiplication is trivially commutative: for all $\omega\in\Omega$,
+\[
+  (A\cdot B)(\omega) \;=\; A(\omega)\,B(\omega) \;=\; B(\omega)\,A(\omega)
+  \;=\; (B\cdot A)(\omega).
+\]
+The closure operations preserve function-hood: a Moore-neighbourhood sum of
+functions is a function, and a composition $A\circ U$ with the deterministic
+update map is again a function $\Omega\to\mathbb{R}$. Hence every element of
+$A_5$ is a real-valued function on $\Omega$, and the product of any two commutes
+pointwise. Therefore $A_5$ is a commutative real algebra. (The algebraic core is
+machine-checked: \texttt{observable\_commutator\_zero} holds for all pointwise
+configurations in \texttt{lean/Standalone.lean}.) \hfill$\square$
+
+\subsection*{The crucial distinction: $\{q,p\}\neq 0$ yet $[q,p]=0$}
+
+Here is the step that defuses the natural objection. The leapfrog / symplectic
+time-update of the substrate endows its phase space with a \emph{non-zero
+Poisson bracket},
+\[
+  \{q,p\} \;=\; 1,
+\]
+where $(q,p)=(J,\mathrm{wave\_vel})$ are the substrate's quadratures. The Poisson
+bracket is an antisymmetric bilinear \emph{derivation on phase-space functions}.
+It is a real structure on the \emph{space of beables}---it is what makes the
+quadrature phase wind, and it is genuinely non-trivial. It is \emph{not} the
+algebra's multiplication.
+
+The observable commutator is a different object entirely. It is built from the
+\emph{pointwise product}, and by Claim~A that product is symmetric, so
+\[
+  [q,p] \;=\; q\cdot p - p\cdot q \;=\; 0
+\]
+identically, on every configuration. The two facts
+\begin{equation}\label{eq:crucial}
+  \boxed{\;\{q,p\}\neq 0 \quad\text{yet}\quad [q,p]=0\;}
+\end{equation}
+are therefore perfectly consistent: $\{\cdot,\cdot\}$ acts on functions,
+$[\cdot,\cdot]$ acts on the algebra's product, and a structure on the first does
+not imply a structure on the second. \etag{thm}~(\ftdid{0243}).
+
+The intuition worth carrying away: the substrate is \emph{symplectically rich}
+and \emph{algebraically commutative} simultaneously. Its quadratures wind---there
+is a genuine clock---but all quadratures \emph{co-measure}; choosing one as
+``the'' measured value, and declaring the conjugate one disturbed, is not a fact
+the substrate provides. What would convert the non-trivial Poisson structure into
+a non-commutative operator algebra is a \emph{deformation quantization}, a map
+$\{\cdot,\cdot\}\mapsto[\cdot,\cdot]/i\hbar$. That map intrinsically requires the
+external deformation parameter $\hbar$---it acts as precisely the external
+measurement map $M$---and is not derivable from $A_5$ alone. The symplectic
+structure invites quantization; it does not perform it.
+
+\subsection*{Claim B --- independence: $M$ cannot be distilled from $A_5$}
+
+By Claim~A, $A_5$ is strictly commutative, so its event lattice is distributive
+(Boolean) and a joint probability distribution always exists. Any standard QFT or
+relativistic-time target strictly requires a non-commuting pair, $[A,B]\neq 0$
+(a non-distributive event lattice / type~III$_1$ modular algebra).
+Commutativity, however, is algebraically \emph{preserved} under topological
+limits and classical coarse-graining: a limit of commuting families commutes, and
+coarse-graining a Boolean lattice yields a Boolean lattice. Therefore no limit
+and no coarse-graining applied to $A_5$ can ever organically yield
+$[A,B]\neq 0$. The non-commutative structure is logically independent of P1--P5
+and must be supplied by an external map $M$. That
+$\{\mathrm{P1\ldots P5}\}\cup\{M\}$ is consistent is witnessed by the existing
+emergent-QM constructions that explicitly introduce such an $M$; consistency
+together with non-derivability is exactly logical independence. \hfill$\square$
+
+\subsection*{Why the Bell violation does not contradict this}
+
+A consistency check, because the framework does exhibit a Bell violation. The
+$S=2\sqrt2$ value in FTD is \emph{emergent}, derived via the Gauss constraint as
+a transverse non-local bounding mechanism: the CHSH-violating correlations arise
+\emph{geometrically} from that constraint, not from native non-commuting
+measurement operators. But translating those emergent classical correlations into
+the standard QM Bell format relies on a complexification
+$J_x + iJ_y \mapsto \psi$ with coarse-graining---and that complexification
+\emph{is} an instance of the independent map $M$. The substrate itself remains
+strictly commutative and limited to $S\le 2$; the apparent $2\sqrt2$ emerges only
+once $M$ is applied. The theorem holds, sharpening the boundary without
+contradicting the emergent result. (The unresolved laboratory burden this leaves
+is PL-2 in Chapter~\ref{ch:science}, the framework's highest-risk row.)
+
+\subsection*{What the argument licenses}
+
+Claims A and B together are the licensing theorem for FC-1: they prove the fork
+is genuine (both branches consistent) and that the substrate cannot cross it on
+its own. They do \emph{not} pick a branch---that is FC-1's job, and FC-1 is a
+declaration. The same argument supplies the parallel that organizes the rest of
+the chain: the relativistic \emph{metric} needs reversibility (declined by FC-2)
+and the quantum \emph{structure} needs non-commutativity (declined by FC-1), and
+these are \emph{the same shape of gap}---each a single added principle on the
+same classical, commutative, irreversible base.
+
+% ---- boundary subsection ----------------------------------------------------
+\section{What this layer does not settle}\label{sec:boundary}
+
+Logic's two strongest moves are \emph{declarations}, and the discipline of the
+chain is to say so and to state in advance what would overturn each. None of the
+following is softened; the kill-conditions are quoted from the constitution's
+falsification register.
+
+\paragraph{FC-1 and FC-2 are declarations, not theorems.} The licensing results
+(\ftdid{0243} for FC-1, \ftdid{0253} for FC-2) prove only that the postulates
+leave the relevant fork open. Picking the branch is a model-defining choice,
+tagged \etag{ax}-class and never to be read as derived. A reader who accepts the
+postulates is \emph{not} thereby compelled to accept either commitment; that is
+the honest cost of taking them.
+
+\paragraph{What kills FC-1.} Any one of: (i) a substrate-native pair of
+observables with $[A,B]\neq 0$ derived from P1--P5 (this would refute
+\ftdid{0243}'s premise and is the single most direct refutation of the
+framework); (ii) a P1--P5 derivation of Born statistics; (iii) a substrate-native,
+$M$-free correlation experiment exceeding $S=2$ beyond numerical error.
+
+\paragraph{What kills FC-2.} Any one of: (i) exact $\gamma$ (exact Lorentz
+invariance) at finite $L$ off the infrared limit---a measured \emph{absence} of
+the predicted ultraviolet corrections where the lattice requires them; (ii) a
+P1--P5 derivation of global reversibility (this would refute \ftdid{0253}'s
+boundary); (iii) failure of the measured IR approach---the $L^{-2}$ law breaking
+on the $\langle 100\rangle$ axis at larger $L$, or the $k^4$ anisotropy decay
+reversing. The detailed kill-conditions and their protocols are the subject of
+Chapter~\ref{ch:science}.
+
+\paragraph{The sharpness of the blind spot is open.} The binding half of the
+epistemic horizon is a theorem; the \emph{sharp} half---the symmetric
+knowledge-balance that would make the observer's restriction genuinely
+quantum-like---is unresolved, blocked on the missing $\mathbb{Z}/3$ of the
+symplectic budget symmetry. \etag{opn}~(\ftdid{0227}). Binding-without-sharpness
+is where the observer story honestly stands; it is carried forward, not papered
+over, into the philosophy layer (Chapter~\ref{ch:philosophy}).
