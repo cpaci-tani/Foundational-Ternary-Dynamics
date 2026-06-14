@@ -36,8 +36,8 @@ export function getScaleControlsBlocksTemplate() {
                     <div class="card-title">Cosmology (FTD)</div>
                     <div class="scale-info-copy">
                         <div>&Omega;<sub>m</sub> = 1/3 &nbsp; &Omega;<sub>&Lambda;</sub> = 2/3</div>
-                        <div>DM frac = 17/27 &asymp; 63%</div>
-                        <div>G<sub>N</sub> = 1/(b<sub>3</sub>+N<sub>c</sub>)&sup2; = 0.01</div>
+                        <div title="Moore-shell [SELECTION]; does NOT match Planck 2018 observed Ω_DM/Ω_m ≈ 84%. See FAQ 'dark-matter'.">DM frac = 17/27 &asymp; 63% <span style="opacity:0.6">[SELECTION]</span></div>
+                        <div title="G_N = 0.01 is the lattice-natural simulation constant [IMPOSED]. The 1/(b₃+N_c)² identification with the physical Newton constant is RETIRED — FTD-0131 [CLOSED NEGATIVE].">G<sub>N</sub> = 0.01 <span style="opacity:0.6">[IMPOSED]</span></div>
                         <div>&gamma; = (D+2)/D = 5/3</div>
                         <div>c = 1/&radic;3</div>
                     </div>
@@ -485,14 +485,15 @@ export function getCosmicInfoPanelTemplate() {
             <div class="panel-resource-scroll panel-resource-content-pad">
                 <h3 class="panel-resource-title">Scale 5: Cosmic Simulation</h3>
                 <p class="panel-resource-lead">
-                    N-body + SPH cosmic simulation driven by FTD-derived constants.
-                    All physics traces to D=3 and the lemniscate constant.
+                    N-body + SPH cosmic simulation driven by FTD constants — a mix of
+                    [THEOREM] / [SELECTION] / [IMPOSED] inputs (see table). The algebraic
+                    chain from D=3 + ϖ is [THEOREM]; physical identifications are [SMC] (FTD-0013).
                 </p>
                 <table class="panel-resource-table">
                     <tr>
                         <td class="panel-resource-key">G<sub>N</sub></td>
-                        <td>= 1/(b<sub>3</sub>+N<sub>c</sub>)<sup>2</sup> = 0.01</td>
-                        <td class="panel-resource-note">Gravity</td>
+                        <td>= 0.01</td>
+                        <td class="panel-resource-note" title="G_N = 0.01 is the lattice-natural simulation constant [IMPOSED]. The 1/(b₃+N_c)² identification with the physical Newton constant is RETIRED — FTD-0131 [CLOSED NEGATIVE] (off by 10²⁰–10⁴³ under any natural calibration).">Gravity [IMPOSED] · 1/(b₃+N_c)² RETIRED (FTD-0131)</td>
                     </tr>
                     <tr>
                         <td class="panel-resource-key">&Omega;<sub>&Lambda;</sub></td>

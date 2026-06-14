@@ -119,7 +119,7 @@ export function createOnticPanel(deps) {
             ${rows}
             <div style="margin-top:4px;font-size:9px;color:var(--text-muted)">
                 ${ONTIC_TOTAL_CONSTANTS} constants across ${ONTIC_LAYERS.length} layers.
-                Inputs: D=3 + ϖ → all physics.
+                Inputs: D=3 + ϖ → algebraic chain [THEOREM]; physical identifications [SMC] (FTD-0013).
             </div>`;
     }
 
