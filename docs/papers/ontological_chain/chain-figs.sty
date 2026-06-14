@@ -1,0 +1,38 @@
+% =============================================================================
+% chain-figs.sty -- shared TikZ vocabulary for the Master DAG + per-chapter mini-maps
+% -----------------------------------------------------------------------------
+% Shape/rule encode epistemic status (never colour), mirroring the tag tiers:
+%   seed (double circle) = axiom / FC-declaration   hub (diamond) = the G* hub
+%   thm (solid box)      = theorem-grade (forced)    condb (thin solid) = selection/synthesis
+%   tierb (dashed box)   = below-theorem / SMC / conj wall (double rule) = open / boundary
+%   con (solid arrow)    = constructed-from          wk (dashed arrow) = weak link / accountable-to
+% Defined once here so the master DAG and every chapter mini-map share one look,
+% and so a single chapter can be compiled standalone for validation.
+% =============================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{chain-figs}[2026/06/14 v1.0 FTD chain figure styles]
+\RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,decorations.pathreplacing,fit,backgrounds}
+\tikzset{
+  >={Stealth[length=4pt]},
+  seed/.style ={circle, double, draw, line width=0.7pt, inner sep=2.4pt,
+                font=\scriptsize, align=center},
+  thm/.style  ={rectangle, rounded corners=2pt, draw, line width=0.7pt,
+                inner sep=3pt, font=\scriptsize, align=center, text width=2.35cm},
+  condb/.style={rectangle, rounded corners=2pt, draw, line width=0.4pt,
+                inner sep=3pt, font=\scriptsize, align=center, text width=2.35cm},
+  tierb/.style={rectangle, rounded corners=2pt, draw, line width=0.5pt,
+                dash pattern=on 2.4pt off 1.8pt, inner sep=3pt,
+                font=\scriptsize, align=center, text width=2.35cm},
+  wall/.style ={rectangle, draw, line width=0.35pt, double, double distance=2.2pt,
+                inner sep=3pt, font=\scriptsize, align=center, text width=2.35cm},
+  hub/.style  ={diamond, draw, line width=1.2pt, inner sep=2pt, aspect=1.6,
+                minimum width=1.2cm, minimum height=0.9cm,
+                font=\scriptsize\bfseries, align=center},
+  con/.style  ={->, draw, line width=0.6pt},
+  wk/.style   ={->, draw, line width=0.5pt, dash pattern=on 2.4pt off 1.8pt,
+                gray!55!black},
+  bandlbl/.style={font=\footnotesize\scshape, align=left},
+  flbl/.style ={font=\tiny\itshape, fill=white, inner sep=1.0pt},
+}
+\endinput
