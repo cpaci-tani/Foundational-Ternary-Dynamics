@@ -139,7 +139,7 @@ Every manifested particle builds a self-field envelope through the coupling sour
 | Peak flux | 0.0316 | J_peak at particle site neighbors |
 | Power-law exponent | -0.69 | log-log fit for r >= 7 |
 
-> **FTD-0290 (2026-06-13) — the -0.69 above is falsified as a forced value.** A
+> **FTD-0300 (2026-06-13) — the -0.69 above is falsified as a forced value.** A
 > pre-registered GPU L-grid {64,96,128,160} audit (`preregister-halo-forcedness-v1`)
 > found -0.69 is the L=64 transient; the windowed exponent **converges to -1.25** at
 > L >= 128, and the lossless (selective-ON) self-field **box-fills** the periodic

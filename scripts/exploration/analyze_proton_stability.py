@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FTD-0291 — proton-stability verdict analyzer (frozen logic).
+FTD-0301 — proton-stability verdict analyzer (frozen logic).
 
 Reads the run-of-record summary CSVs written by campaign_proton_stability.cpp
 and decides, by PRE-REGISTERED logic, whether the proton's stability (tau_p =
@@ -117,7 +117,7 @@ def main():
     lock_max_same = max((b(r, "locked_final") for r in same), default=0)
 
     print("=" * 70)
-    print("FTD-0291  proton-stability verdict")
+    print("FTD-0301  proton-stability verdict")
     print("=" * 70)
     print(f"rows: {len(rows)}  (proton {len(proton)}, samesign {len(same)})")
     print()

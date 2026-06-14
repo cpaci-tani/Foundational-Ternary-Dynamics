@@ -125,11 +125,11 @@ diagnostic qE hook. The native emergent arm recoils deterministically; legacy
 does not. The diagnostic qE arm responds transversely but remains imposed. No
 alpha, Thomson cross-section, or QED amplitude claim is promoted.
 
-## Halo-exponent forcedness audit (FTD-0290; 2026-06-13, locked/run)
+## Halo-exponent forcedness audit (FTD-0300; 2026-06-13, locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0290** halo-exponent forcedness | `preregister-halo-forcedness-v1` | `168148e0` | engine `engine/tests/campaign_halo_forcedness.cpp` SHA256 `84f7c407bbdc3bd8e9530235f828dec68c90a9b48f3a39896635609ae92b188e`; analyzer `scripts/exploration/analyze_halo_forcedness.py` SHA256 `44f09ac4d01b3be40359266bf56bb77526524499e85d165316d60762c8c5ad76`; wrapper `scripts/exploration/run_halo_constant_sweeps.py` SHA256 `384bd0481dd332c3e339f4eed8dcbba1be392b85e7d8076a899d8f89abeee896` | GPU `engine/build_wsl`; `--arm=det --Ls=64,96,128,160 --selective=on,off --toggles=minimal --ticks=1500` | `engine/results/halo_forcedness/halo_forcedness_v1.csv` | [`ANALYSIS_HALO_FORCEDNESS_v1.md`](ANALYSIS_HALO_FORCEDNESS_v1.md): `INDETERMINATE (frozen); SPARC boundary` |
+| **FTD-0300** halo-exponent forcedness | `preregister-halo-forcedness-v1` | `168148e0` | engine `engine/tests/campaign_halo_forcedness.cpp` SHA256 `84f7c407bbdc3bd8e9530235f828dec68c90a9b48f3a39896635609ae92b188e`; analyzer `scripts/exploration/analyze_halo_forcedness.py` SHA256 `44f09ac4d01b3be40359266bf56bb77526524499e85d165316d60762c8c5ad76`; wrapper `scripts/exploration/run_halo_constant_sweeps.py` SHA256 `384bd0481dd332c3e339f4eed8dcbba1be392b85e7d8076a899d8f89abeee896` | GPU `engine/build_wsl`; `--arm=det --Ls=64,96,128,160 --selective=on,off --toggles=minimal --ticks=1500` | `engine/results/halo_forcedness/halo_forcedness_v1.csv` | [`ANALYSIS_HALO_FORCEDNESS_v1.md`](ANALYSIS_HALO_FORCEDNESS_v1.md): `INDETERMINATE (frozen); SPARC boundary` |
 
 Gate (Step 1) of the dark-matter / SPARC rotation-curve program. The lossless dark-matter
 halo (`selective_damping = ON`, §4.2) **box-fills** the periodic lattice (`r_eff ≈ L/2`)
@@ -139,13 +139,13 @@ drift-tuned). The damped Coulomb near-field (`selective OFF`) is the only forced
 self-field (−2.15, localized, R0 PASS). **SPARC not founded** (box-fill ⇒ no localized
 scale). Golden `0x56fa28acb5b9fe88` green; observation-only; zero promotions.
 
-## Proton-stability forcedness audit (FTD-0291; 2026-06-13, locked/run)
+## Proton-stability forcedness audit (FTD-0301; 2026-06-13, locked/run)
 
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0291** proton-stability forcedness | `preregister-proton-stability-v1` | `bb99a20d` | engine `engine/tests/campaign_proton_stability.cpp` SHA256 `56fe09548e98787e66b988161b4e57e66f42aa235c8ac4ea7930c8009058bd48`; analyzer `scripts/exploration/analyze_proton_stability.py` SHA256 `eb076a16c4033cd869ac4bdfd08e49862d3a3a01a4b13e89e41229529786a8e0` | CPU `engine/build/Release`; cold `--heat=none --radius=1,2 --genesis=on --seeds=16 --ticks=2000`; heated `--heat=inject --genesis=off` and `--heat=langevin --dual=off --heat-T=0.3,0.8` | `engine/results/proton_stability/proton_stability_ror_*.csv` | [`ANALYSIS_PROTON_STABILITY_v1.md`](ANALYSIS_PROTON_STABILITY_v1.md): `UNFORCED-METASTABLE [BOUNDARY] (frozen)` |
+| **FTD-0301** proton-stability forcedness | `preregister-proton-stability-v1` | `bb99a20d` | engine `engine/tests/campaign_proton_stability.cpp` SHA256 `56fe09548e98787e66b988161b4e57e66f42aa235c8ac4ea7930c8009058bd48`; analyzer `scripts/exploration/analyze_proton_stability.py` SHA256 `eb076a16c4033cd869ac4bdfd08e49862d3a3a01a4b13e89e41229529786a8e0` | CPU `engine/build/Release`; cold `--heat=none --radius=1,2 --genesis=on --seeds=16 --ticks=2000`; heated `--heat=inject --genesis=off` and `--heat=langevin --dual=off --heat-T=0.3,0.8` | `engine/results/proton_stability/proton_stability_ror_*.csv` | [`ANALYSIS_PROTON_STABILITY_v1.md`](ANALYSIS_PROTON_STABILITY_v1.md): `UNFORCED-METASTABLE [BOUNDARY] (frozen)` |
 
-The "micro" pier candidate after FTD-0290. `proof_complete_sm.py:460–471` tags `τ_p = ∞`
+The "micro" pier candidate after FTD-0300. `proof_complete_sm.py:460–471` tags `τ_p = ∞`
 `[THEOREM]`; this audit finds it **unforced**. The triad lock locks only same-sign triples
 (`transmutation_phases.cpp:148,153`) ⇒ cannot fire on the mixed-sign proton (`uud`); the
 proton is metastable, never lock-protected (`max locked = 0`), evaporates spontaneously
