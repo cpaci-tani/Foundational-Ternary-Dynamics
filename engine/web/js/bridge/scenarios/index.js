@@ -43,6 +43,7 @@ import { setupVacuumScenario }  from './vacuum-scenarios.js';
 import { setupS0SeedScenario }  from './s0-seed-scenarios.js';
 import { setupS0FieldScenario } from './s0-field-scenarios.js';
 import { createPhysicsLatticeHelpers } from './physics-lattice.js';
+import { createScenarioHarness } from './_helpers.js';
 
 /**
  * Dispatcher: executes a scenario by name by trying each group in order.
@@ -71,21 +72,7 @@ export function runSetupScenario(name, harness = null) {
 
     // Try each group in order. First matching prefix wins; stops immediately.
     const ctx = { N, mid, midF, ...createPhysicsLatticeHelpers(N) };
-    const scenarioHarness = harness ?? {
-        bridge,
-        setToggle: (key, value) => bridge.setToggle?.(key, value),
-        injectFlux: (x, y, z, fx, fy, fz) => bridge._injectFlux?.(x, y, z, fx, fy, fz),
-        injectWaveVel: (x, y, z, vx, vy, vz) => bridge._injectWaveVel?.(x, y, z, vx, vy, vz),
-        injectParticle: (x, y, z, state, opts = {}) => {
-            bridge.injectParticle?.(x, y, z, state);
-            const last = bridge._particles?.[bridge._particles.length - 1];
-            if (!last) return null;
-            if (Number.isFinite(opts.spin)) last.spin = opts.spin;
-            if (Number.isFinite(opts.color)) last.color = opts.color;
-            if (opts.locked) last.locked = true;
-            return last;
-        },
-    };
+    const scenarioHarness = harness ?? createScenarioHarness(bridge);
     if (setupFluxScenario(name, scenarioHarness, ctx))    return;
     if (setupLightScenario(name, scenarioHarness, ctx))   return;
     if (setupQuantumScenario(name, scenarioHarness, ctx)) return;

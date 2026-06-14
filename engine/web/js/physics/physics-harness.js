@@ -327,6 +327,43 @@ export class PhysicsHarness {
         }
     }
 
+    /** Langevin bath parameters (WASM when available; no-op on mock). */
+    setLangevinParams(T, gamma) {
+        const b = this.bridge;
+        if (typeof b?.setLangevinParams === 'function') {
+            b.setLangevinParams(T, gamma);
+        }
+    }
+
+    /** Langevin bath temperature (FTD-0274 thermal-ignition). */
+    setLangevinTemp(t) {
+        const b = this.bridge;
+        if (typeof b?.setLangevinTemp === 'function') {
+            b.setLangevinTemp(t);
+        }
+    }
+
+    /** de Broglie internal-clock frequency ω₀ (FTD-0271). */
+    setOmega0(w) {
+        const b = this.bridge;
+        if (typeof b?.setOmega0 === 'function') {
+            b.setOmega0(w);
+        }
+    }
+
+    /** Uniform additive flux pump (EW hysteresis demo; WASM when available). */
+    injectUniformFluxAdd(fx, fy, fz) {
+        const b = this.bridge;
+        if (typeof b?.injectUniformFluxAdd === 'function') {
+            b.injectUniformFluxAdd(fx, fy, fz);
+        }
+    }
+
+    /** Ensure flux/wave-velocity grids are allocated (mock lazy init). */
+    initFluxGrid() {
+        this.bridge?._initFluxGrid?.();
+    }
+
     // ── Setters: injection ─────────────────────────────────────────
 
     /**
@@ -347,8 +384,13 @@ export class PhysicsHarness {
                 if (Number.isFinite(opts.color))  last.color = opts.color;
                 if (typeof opts.locked === 'boolean') last.locked = opts.locked;
                 if (Number.isFinite(opts.density)) last.density = opts.density;
+                if (Number.isFinite(opts.vx)) last.vx = opts.vx;
+                if (Number.isFinite(opts.vy)) last.vy = opts.vy;
+                if (Number.isFinite(opts.vz)) last.vz = opts.vz;
             }
+            return last;
         }
+        return null;
     }
 
     /**

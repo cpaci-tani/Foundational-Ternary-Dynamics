@@ -3,7 +3,7 @@
  * @purpose Orchestrator for the Scale 0 P1 Observables panel, composing sub-components.
  */
 
-import { getScale0State } from '../../state/store.js';
+import { getScale0State, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { CoulombComponent } from './p1-observables/coulomb.js';
 import { AnisotropyComponent } from './p1-observables/anisotropy.js';
@@ -238,12 +238,6 @@ export function initP1ObservablesPanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('panel-p1-observables');
     if (!host) return null;
-    const getBridge = () => {
-        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        if (!ctx) return null;
-        const state = (typeof getScale0State === 'function') ? getScale0State() : null;
-        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
-        return ctx.bridge;
-    };
+    const getBridge = () => resolveActiveScale0BridgeFromWindow();
     return mountP1ObservablesPanel(host, getBridge, { dockMode: true });
 }

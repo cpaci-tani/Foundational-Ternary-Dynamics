@@ -38,7 +38,7 @@ export function setupVacuumScenario(name, harness, ctx) {
     const { N, midF, vox, sigma: sig } = ctx;
     const mc = Math.round(midF);
 
-    harness.bridge?._initFluxGrid?.();
+    harness.initFluxGrid?.();
     applyVacuumEnvironment(harness, ctx);
 
     switch (name) {
@@ -95,21 +95,21 @@ export function setupVacuumScenario(name, harness, ctx) {
             // Mirror of s0-seed-w-boson — charged (s=+1) localized lump
             // with chirality bias on Jx (left-handed coupling).
             injectParticleFull(harness, mc, mc, mc, +1, { spin: +1 });
-            injectRadialEnvelope(harness, mc, mc, mc, +1, 1.8, K_B * 1.6,
-                { radius: 5, axisBias: [1.3, 1, 1] });
+            injectRadialEnvelope(harness, mc, mc, mc, +1, sig(1.8), K_B * 1.6,
+                { radius: vox(5), axisBias: [1.3, 1, 1] });
             return true;
         }
 
         case 's0-vacuum-z-boson': {
             // Mirror of s0-seed-z-boson — neutral, balanced inward envelope.
-            injectRadialEnvelope(harness, mc, mc, mc, -1, 2.0, K_B * 1.8, { radius: 6 });
+            injectRadialEnvelope(harness, mc, mc, mc, -1, sig(2.0), K_B * 1.8, { radius: vox(6) });
             return true;
         }
 
         case 's0-vacuum-higgs': {
             // Mirror of s0-seed-higgs-boson — scalar isotropic flux lump,
             // no manifested core (Higgs is a field, not a state-particle).
-            const hSig = 2.0, hR = 6, hAmp = K_B * 1.2;
+            const hSig = sig(2.0), hR = vox(6), hAmp = K_B * 1.2;
             for (let dz = -hR; dz <= hR; dz++)
             for (let dy = -hR; dy <= hR; dy++)
             for (let dx = -hR; dx <= hR; dx++) {
@@ -163,13 +163,13 @@ export function setupVacuumScenario(name, harness, ctx) {
             const boost =
                 name === 's0-vacuum-tau-neutrino'  ? 1.6 :
                 name === 's0-vacuum-muon-neutrino' ? 1.3 : 1.0;
-            const sig = 2, eR = 6;
-            for (let dz2 = -eR; dz2 <= eR; dz2++)
-            for (let dy2 = -eR; dy2 <= eR; dy2++)
-            for (let dx2 = -eR; dx2 <= eR; dx2++) {
+            const nuSig = sig(2), nuR = vox(6);
+            for (let dz2 = -nuR; dz2 <= nuR; dz2++)
+            for (let dy2 = -nuR; dy2 <= nuR; dy2++)
+            for (let dx2 = -nuR; dx2 <= nuR; dx2++) {
                 const r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
-                if (r22 > eR*eR) continue;
-                const gg = K_B * 0.3 * boost * Math.exp(-r22 / (2 * sig * sig));
+                if (r22 > nuR*nuR) continue;
+                const gg = K_B * 0.3 * boost * Math.exp(-r22 / (2 * nuSig * nuSig));
                 if (gg < 0.001) continue;
                 harness.injectFlux(mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0);
             }

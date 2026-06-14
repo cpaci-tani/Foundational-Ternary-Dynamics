@@ -1,3 +1,91 @@
+/** Toggle bundle for FTD-0107 emergent-spectrum reproduction scenarios. */
+const EMERGENT_IC_TOGGLES = Object.freeze({
+    wave_propagation: true,
+    gauss_projection: true,
+    genesis: true,
+    langevin: true,
+    dual_substrate: false,
+});
+
+const DE_BROGLIE_CLOCK_TOGGLES = Object.freeze({
+    wave_propagation: true,
+    coupling: true,
+    genesis: false,
+    damping: false,
+    selective_damping: false,
+    weak_transmutation: false,
+    dual_substrate: false,
+    forces: false,
+    movement: false,
+    lorentz_force: false,
+    gauss_projection: false,
+    de_broglie_clock: true,
+});
+
+const THERMAL_IGNITION_TOGGLES = Object.freeze({
+    wave_propagation: true,
+    gauss_projection: true,
+    genesis: true,
+    langevin: true,
+    dual_substrate: false,
+});
+
+const QGP_TOGGLES = Object.freeze({
+    wave_propagation: true,
+    gauss_projection: true,
+    langevin: true,
+});
+
+const EW_PHASE_TOGGLES = Object.freeze({
+    wave_propagation: true,
+    gauss_projection: true,
+    genesis: true,
+});
+
+function applyHarnessToggles(harness, toggles, logTag) {
+    try {
+        for (const [key, value] of Object.entries(toggles)) {
+            harness.setToggle?.(key, value);
+        }
+    } catch (e) {
+        if (logTag) console.warn(`[${logTag}] toggle setup partial:`, e);
+    }
+}
+
+/** Pre-set emergent-ic toggles + Langevin params, then dispatch scenario seed. */
+function setupEmergentSpectrumScenario(harness, scenarioId, params = {}, opts = {}) {
+    applyHarnessToggles(harness, EMERGENT_IC_TOGGLES, scenarioId);
+    const T = opts.langevinT ?? 0.005;
+    const gamma = opts.langevinGamma ?? 0.02;
+    harness.setLangevinParams?.(T, gamma);
+    harness.setupScenario?.(params.id || scenarioId);
+}
+
+function activateStateFieldOverlay(delayMs = 100) {
+    setTimeout(() => {
+        const stateBtn = document.getElementById('toggle-state-field');
+        if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
+    }, delayMs);
+}
+
+function setupDeBroglieClockScenario(harness, params = {}) {
+    harness.setupScenario(params.id || 's0-seed-de-broglie-clock');
+    applyHarnessToggles(harness, DE_BROGLIE_CLOCK_TOGGLES, 's0-seed-de-broglie-clock');
+    harness.setOmega0?.(0.30);
+}
+
+function setupThermalIgnitionScenario(harness, params = {}) {
+    harness.setupScenario(params.id || 's0-seed-thermal-ignition');
+    applyHarnessToggles(harness, THERMAL_IGNITION_TOGGLES, 's0-seed-thermal-ignition');
+    harness.setLangevinTemp?.(0.03);
+}
+
+function setupQgpScenario(harness, params = {}) {
+    applyHarnessToggles(harness, QGP_TOGGLES, 's0-seed-quark-gluon-plasma');
+    harness.setLangevinParams?.(0.02, 0.05);
+    harness.setupScenario(params.id || 's0-seed-quark-gluon-plasma');
+}
+
 function makeScenario(category, id, title, tags = [], epistemicStatus = '[OPEN]') {
     return {
         id,
@@ -36,58 +124,28 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[DERIVED]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            bridge.setupScenario('empty');
-            
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-            } catch (e) {
-                console.warn('[s0-seed-ew-phase-transition] toggle setup partial:', e);
-            }
-            
-            // Explicitly enable State Field visuals so the user can see the manifested particles
-            setTimeout(() => {
-                const stateBtn = document.getElementById('toggle-state-field');
-                if (stateBtn && !stateBtn.classList.contains('active')) {
-                    stateBtn.click();
-                }
-            }, 100);
-            
+            harness.setupScenario('empty');
+            applyHarnessToggles(harness, EW_PHASE_TOGGLES, 's0-seed-ew-phase-transition');
+            activateStateFieldOverlay();
+
             // Background flux sweep logic to display hysteresis
             let t = 0;
-            // D must exceed 3K_B to trigger genesis.
-            // K_B in engine is ~0.511.
-            // But wait, K_B in the web UI might be standard or scaled.
-            // The FTD constants: ontic.h K_B = 0.511, N_C = 3, alpha = 1/137.
-            // We'll sweep D up to slightly past 3K_B to trigger it.
-            // In C++ it's 3 * 0.511 * 3 * 0.00729 = ~0.033. Let's sweep up to 0.05.
-            const max_D = 0.05; 
-            
+            const max_D = 0.05;
+
             if (window.__ftdEwInterval) clearInterval(window.__ftdEwInterval);
             window.__ftdEwInterval = setInterval(() => {
-                // Check if this scenario is still active via DOM to prevent leaks
                 const selectEl = document.getElementById('scenario-select');
                 if (selectEl && selectEl.value !== 's0-seed-ew-phase-transition') {
                      clearInterval(window.__ftdEwInterval);
                      return;
                 }
-                
+
                 const ctx = window.__ftdCtx;
                 if (!ctx || !ctx.running) return;
-                
+
                 t += 0.01;
-                // Slowly oscillate up and down
-                const D = (Math.sin(t) + 1.0) / 2.0 * max_D; 
-                
-                if (typeof bridge.injectUniformFluxAdd === 'function') {
-                     // Since tick() runs 60Hz, we pump D every frame.
-                     bridge.injectUniformFluxAdd(D, 0, 0);
-                } else if (bridge._module && typeof bridge._module.injectUniformFluxAdd === 'function') {
-                     // Fallback if accessed via direct WasmBridge wrapper mismatch
-                     bridge.injectUniformFluxAdd(D, 0, 0);
-                }
+                const D = (Math.sin(t) + 1.0) / 2.0 * max_D;
+                harness.injectUniformFluxAdd(D, 0, 0);
             }, 16);
         },
     },
@@ -147,18 +205,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[CONJECTURE]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('langevin', true);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.02, 0.05);
-                }
-            } catch (e) {
-                console.warn('[s0-seed-quark-gluon-plasma] toggle setup partial:', e);
-            }
-            bridge.setupScenario(params.id || 's0-seed-quark-gluon-plasma');
+            setupQgpScenario(harness, params);
         },
     },
     // Audit 2026-04-28 removals: s0-seed-{neutrino, quark, antiquark}.
@@ -216,26 +263,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            // Required toggle state per `campaign_emergent_spectrum_2026-04-27.cpp`:
-            //   wave_propagation, gauss_projection, genesis, langevin (T=0.005, γ=0.02).
-            // dual_substrate must be OFF.
-            // The langevin_T / langevin_gamma controls live in the dashboard's
-            // Langevin slider section; user can adjust if desired but T=0.005
-            // is the FTD-0107 measured value.
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.005, 0.02);
-                }
-            } catch (e) {
-                console.warn('[s0-seed-emergent-ic1] toggle setup partial:', e);
-            }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic1');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1', params);
         },
     },
     {
@@ -248,20 +276,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.005, 0.02);
-                }
-            } catch (e) {
-                console.warn('[s0-seed-emergent-ic3-collision] toggle setup partial:', e);
-            }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic3-collision');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic3-collision', params);
         },
     },
     {
@@ -274,20 +289,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.005, 0.02);
-                }
-            } catch (e) {
-                console.warn('[s0-seed-emergent-ic4-subthreshold] toggle setup partial:', e);
-            }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic4-subthreshold');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic4-subthreshold', params);
         },
     },
     {
@@ -300,22 +302,11 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
             // Elevated Langevin T = 0.05 (10× ic1) — drives runaway genesis
             // from pure thermal noise, no flux injection.
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.05, 0.02);   // 10× ic1
-                }
-            } catch (e) {
-                console.warn('[s0-seed-emergent-ic2-thermal-runaway] toggle setup partial:', e);
-            }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic2-thermal-runaway');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic2-thermal-runaway', params, {
+                langevinT: 0.05,
+            });
         },
     },
     {
@@ -328,25 +319,8 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
             // Same total flux magnitude as ic1 but along body diagonal.
-            // Predicted: k = 1/3 (Z_3 about body diagonal) → 33-voxel cluster
-            // if the cluster-efficiency origin is the rotation cycle around
-            // the injection axis. If k stays at ¼ → 25-voxel cluster, the
-            // origin is N_base (global, not direction-specific).
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.005, 0.02);
-                }
-            } catch (e) {
-                console.warn('[s0-seed-emergent-ic1-diagonal] toggle setup partial:', e);
-            }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-diagonal');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-diagonal', params);
         },
     },
     {
@@ -359,22 +333,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            // Symmetrise the injection direction. Predicts: cluster has
-            // full O_h symmetry — no +x/−x asymmetry as in standard ic1.
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.005, 0.02);
-                }
-            } catch (e) {
-                console.warn('[s0-seed-emergent-ic1-isotropic] toggle setup partial:', e);
-            }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-isotropic');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-isotropic', params);
         },
     },
     {
@@ -387,18 +346,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.0, 0.02);   // T=0
-                }
-            } catch (e) { console.warn('[ic1-viz]', e); }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-viz');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-viz', params, { langevinT: 0.0 });
         },
     },
     {
@@ -411,18 +359,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.0, 0.02);
-                }
-            } catch (e) { console.warn('[ic1-diag-viz]', e); }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-diagonal-viz');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-diagonal-viz', params, { langevinT: 0.0 });
         },
     },
     {
@@ -435,18 +372,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.0, 0.02);
-                }
-            } catch (e) { console.warn('[ic1-iso-viz]', e); }
-            bridge.setupScenario(params.id || 's0-seed-emergent-ic1-isotropic-viz');
+            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-isotropic-viz', params, { langevinT: 0.0 });
         },
     },
     {
@@ -459,23 +385,8 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[MEASURED — BOUNDARY, FTD-0269]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') {
-                    bridge.setLangevinParams(0.005, 0.02);
-                }
-            } catch (e) { console.warn('[cluster-law]', e); }
-            bridge.setupScenario(params.id || 's0-seed-cluster-law');
-            // Show the manifested cluster.
-            setTimeout(() => {
-                const stateBtn = document.getElementById('toggle-state-field');
-                if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
-            }, 100);
+            setupEmergentSpectrumScenario(harness, 's0-seed-cluster-law', params);
+            activateStateFieldOverlay();
             // Mount the interactive fire panel + live N(A) plot (lazy import).
             import('./ui/overlays/genesis-burst-panel.js')
                 .then((m) => m.mountGenesisBurstPanel(harness))
@@ -492,16 +403,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') bridge.setLangevinParams(0.0, 0.02);
-            } catch (e) { console.warn('[cluster-law-subknee]', e); }
-            bridge.setupScenario(params.id || 's0-seed-cluster-law-subknee');
+            setupEmergentSpectrumScenario(harness, 's0-seed-cluster-law-subknee', params, { langevinT: 0.0 });
         },
     },
     {
@@ -514,16 +416,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') bridge.setLangevinParams(0.0, 0.02);
-            } catch (e) { console.warn('[cluster-law-knee]', e); }
-            bridge.setupScenario(params.id || 's0-seed-cluster-law-knee');
+            setupEmergentSpectrumScenario(harness, 's0-seed-cluster-law-knee', params, { langevinT: 0.0 });
         },
     },
     {
@@ -536,16 +429,7 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[VISUALISATION]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinParams === 'function') bridge.setLangevinParams(0.0, 0.02);
-            } catch (e) { console.warn('[cluster-law-superknee]', e); }
-            bridge.setupScenario(params.id || 's0-seed-cluster-law-superknee');
+            setupEmergentSpectrumScenario(harness, 's0-seed-cluster-law-superknee', params, { langevinT: 0.0 });
         },
     },
     // s0-seed-symmetry-regression removed 2026-04-28 (audit removal): engine CI
@@ -580,44 +464,8 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT, FTD-0271]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            bridge.setupScenario(params.id || 's0-seed-de-broglie-clock');
-            // Set the toggles AFTER setupScenario (the C++ branch sets its own
-            // wave/genesis/damping, and would otherwise clobber these). The block
-            // is 343 same-sign +1 charges: forces + movement OFF so it does NOT
-            // self-repel/disperse — a stable cluster whose internal clock winds.
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('coupling', true);             // G_C·∇s sources the flux flower
-                bridge.setToggle('genesis', false);
-                bridge.setToggle('damping', false);
-                bridge.setToggle('selective_damping', false);   // requires damping
-                bridge.setToggle('weak_transmutation', false);   // requires dual_substrate
-                bridge.setToggle('dual_substrate', false);
-                bridge.setToggle('forces', false);              // no Coulomb self-repulsion
-                bridge.setToggle('movement', false);            // block stays put
-                bridge.setToggle('lorentz_force', false);       // requires forces
-                // Gauss projection OFF: its non-variational SOR Poisson solver is
-                // the energy-conservation leak, and with the clock + wave + no
-                // damping it can drive the flux up until the solver fails to
-                // converge (hang). The pure Klein-Gordon wave J''=c²∇²J−ω₀²J +
-                // coupling is linear and energy-conserving — STABLE, and the flux
-                // field lines still render the flower from the raw J.
-                bridge.setToggle('gauss_projection', false);
-                // Run the de Broglie clock during normal play so the cluster's
-                // internal phase φ winds at ω₀ and the Time Observatory's Card E
-                // shows it live. Reset off for other scenarios via SCALE0_TOGGLES.
-                bridge.setToggle('de_broglie_clock', true);
-                if (typeof bridge.setOmega0 === 'function') bridge.setOmega0(0.30);
-            } catch (e) { console.warn('[de-broglie-clock]', e); }
-            // Show the manifested block.
-            setTimeout(() => {
-                const stateBtn = document.getElementById('toggle-state-field');
-                if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
-            }, 100);
-            // No floating panel: the de Broglie clock runs during normal play and
-            // the cluster's internal phase φ is surfaced in the docked Time
-            // Observatory panel (Card E). omega0 defaults to 0.30 above.
+            setupDeBroglieClockScenario(harness, params);
+            activateStateFieldOverlay();
         },
     },
     {
@@ -630,28 +478,8 @@ export const SCALE0_SCENARIOS = [
         requiredCapabilities: ['scale0'],
         epistemicStatus: '[MEASURED — BOUNDARY, FTD-0274]',
         load(harness, params = {}) {
-            const bridge = harness.bridge || harness;
-            bridge.setupScenario(params.id || 's0-seed-thermal-ignition');
-            // Reinforce the thermal toggles AFTER setupScenario. A Langevin bath
-            // warms the void; the panel's temperature slider drives langevin_T
-            // across the first-order condensation point T_up~0.05. Real WASM only
-            // (the JS MockBridge has no Langevin thermostat).
-            try {
-                bridge.setToggle('wave_propagation', true);
-                bridge.setToggle('gauss_projection', true);
-                bridge.setToggle('genesis', true);
-                bridge.setToggle('langevin', true);
-                bridge.setToggle('dual_substrate', false);
-                if (typeof bridge.setLangevinTemp === 'function') bridge.setLangevinTemp(0.03);
-            } catch (e) { console.warn('[thermal-ignition]', e); }
-            // Show the manifested voxels (the condensate "particles").
-            setTimeout(() => {
-                const stateBtn = document.getElementById('toggle-state-field');
-                if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
-            }, 100);
-            // Temperature control + telemetry live in the docked Thermo side panel
-            // (js/scales/scale0/ui/overlays/thermo-panel.js, registry id 'thermo') —
-            // no floating overlay.
+            setupThermalIgnitionScenario(harness, params);
+            activateStateFieldOverlay();
         },
     },
 ];

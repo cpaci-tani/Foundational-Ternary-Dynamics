@@ -51,6 +51,23 @@ plane-wave `k = 2πn/N`) still use N so box-filling patterns use the extra volum
 The **`flux-point-scale`** slider is render-only (glyph size); it does not
 change injected physics.
 
+## Physics + telemetry harness (DRY contract)
+
+All Scale-0 scenarios, panels, and runtime paths share three surfaces:
+
+| Surface | Module | Role |
+|---|---|---|
+| **Scenario setup** | `physics/physics-harness.js` via `getPhysicsHarness(bridge)` | Single write API: `setToggle`, `setupScenario`, `injectParticle`, `injectFlux`, … |
+| **Scenario primitives** | `bridge/scenarios/_helpers.js` | Shared geometry (`injectRadialEnvelope`, `injectCoherentSlitPair`, `createScenarioHarness`) |
+| **Active physics owner** | `scales/scale0/state/store.js` | `getActiveScale0Bridge` / `resolveActiveScale0BridgeFromWindow` — mock vs WASM |
+| **Telemetry reads** | `telemetry-hub.js` via `collectScale0*` | Panels and status bar never call bridge totals directly |
+
+Scenario bodies MUST NOT mutate `harness.bridge._particles` or `this._toggles` directly.
+Use `harness.injectParticle(..., { vx, spin, color, … })` and declarative
+`SCALE0_SCENARIO_OVERRIDES` in `config/toggles.js` for persistent toggle policy.
+
+See `engine/web/docs/audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md` for the full audit.
+
 ## Dependencies
 
 - **Imports from**: `../../constants.js`, `_helpers.js`

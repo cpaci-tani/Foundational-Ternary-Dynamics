@@ -22,7 +22,7 @@ import {
 } from './_card-helpers.js';
 import { attachFullscreen } from '../../../../ui/charts/chart-fullscreen.js';
 import { getPhysicsHarness } from '../../../../physics/index.js';
-import { getScale0State } from '../../state/store.js';
+import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 
 const PANEL_ID = 'conservation-micropanel';
 const HZ = 4;                                // sample rate
@@ -263,12 +263,7 @@ export function initConservationMicropanel() {
     // ticked by the JS MockBridge/worker, while ctx.bridge can remain an idle
     // WASM bridge; sampling that idle bridge makes the conservation energy look
     // frozen even though the pulse itself is evolving.
-    const getBridge = () => {
-        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        const state = getScale0State();
-        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
-        return ctx?.bridge || null;
-    };
+    const getBridge = () => resolveActiveScale0BridgeFromWindow();
     if (typeof window !== 'undefined' && window.__ftdConservationPanel) {
         return window.__ftdConservationPanel;
     }
