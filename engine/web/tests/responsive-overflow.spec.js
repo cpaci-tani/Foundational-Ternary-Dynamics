@@ -16,8 +16,16 @@
  *
  *   2. PLAY-BAR ↔ BOTTOM-SHEET — on a phone the floating transport capsule must
  *      not overlap the open bottom-sheet panel or the status bar (the capsule is
- *      lifted above the 30dvh sheet when open, and rests above the status bar
- *      when collapsed — play-bar.css).
+ *      lifted above the sheet (--m-sheet-h) when open, and rests above the status
+ *      bar when collapsed — play-bar.css).
+ *
+ *   3. FULL-BLEED CANVAS — on a phone the 3D canvas fills the whole viewport cell
+ *      (full width, full height below the toolbar) and runs edge-to-edge behind the
+ *      floating bottom sheet; `touch-action:none` lets OrbitControls own orbit/pan/
+ *      zoom. Collapsing the sheet must NOT change the canvas size (the sheet floats,
+ *      it is not a grid row — so there is no dead zone and no WebGL resize thrash).
+ *      This is the property the 2026-06-14 "make the mobile canvas full VH/VW" pass
+ *      established (app-shell.css grid + viewport-overlays.css zero padding).
  *
  * A touch-tablet block (hasTouch + isMobile ⇒ pointer:coarse at 768px) guards the
  * coarse-pointer tap-target floors in responsive.css, which are pointer-based and
@@ -226,6 +234,101 @@ test.describe('responsive overflow', () => {
         expect(geom.collapsed, 'bottom sheet open by default on phone').toBe(false);
         expect(geom.overlapPanel, `play-bar overlaps panel by ${geom.overlapPanel}px`).toBeLessThanOrEqual(1);
         expect(geom.overlapStatus, `play-bar overlaps status bar by ${geom.overlapStatus}px`).toBeLessThanOrEqual(1);
+    });
+
+    test('mobile canvas is full-bleed (full width + height below the toolbar) with touch enabled (390)', async ({ page }) => {
+        await page.setViewportSize({ width: 390, height: 844 });
+        await gotoAndReady(page, { timeout: 45_000 });
+        await page.waitForSelector('#viewport canvas', { timeout: 15_000 });
+        // Renderer sizing is reactive to resize; nudge + settle before measuring.
+        await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+        await page.waitForTimeout(400);
+
+        const geom = await page.evaluate(() => {
+            const r = (sel) => {
+                const el = document.querySelector(sel);
+                if (!el) return null;
+                const b = el.getBoundingClientRect();
+                return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, w: b.width, h: b.height };
+            };
+            const canvas = document.querySelector('#viewport canvas');
+            return {
+                vw: window.innerWidth,
+                vh: window.innerHeight,
+                toolbar: r('#toolbar'),
+                viewport: r('#viewport'),
+                canvas: r('#viewport canvas'),
+                viewportPadding: getComputedStyle(document.querySelector('#viewport')).padding,
+                canvasTouchAction: canvas ? getComputedStyle(canvas).touchAction : null,
+                viewportTouchAction: getComputedStyle(document.querySelector('#viewport')).touchAction,
+            };
+        });
+
+        expect(geom.viewport, '#viewport present').not.toBeNull();
+        expect(geom.canvas, '3D canvas present').not.toBeNull();
+
+        // (a) #viewport fills the full width and runs from the toolbar bottom to the
+        //     bottom of the screen — the grid gives it the whole 1fr cell.
+        expect(geom.viewport.left, 'viewport flush left').toBeLessThanOrEqual(1);
+        expect(Math.abs(geom.viewport.right - geom.vw), 'viewport flush right').toBeLessThanOrEqual(2);
+        expect(Math.abs(geom.viewport.top - (geom.toolbar ? geom.toolbar.bottom : 0)), 'viewport starts at toolbar bottom').toBeLessThanOrEqual(2);
+        expect(Math.abs(geom.viewport.bottom - geom.vh), 'viewport reaches screen bottom').toBeLessThanOrEqual(2);
+
+        // (b) zero padding so the WebGL canvas is not inset/shrunk.
+        expect(geom.viewportPadding, 'viewport has no padding on mobile').toBe('0px');
+
+        // (c) the canvas itself fills the viewport cell (full VW + full height below toolbar).
+        expect(Math.abs(geom.canvas.w - geom.viewport.w), `canvas width ${geom.canvas.w} ≈ viewport ${geom.viewport.w}`).toBeLessThanOrEqual(2);
+        expect(Math.abs(geom.canvas.h - geom.viewport.h), `canvas height ${geom.canvas.h} ≈ viewport ${geom.viewport.h}`).toBeLessThanOrEqual(2);
+
+        // (d) touch-action:none on the canvas (and its container) hands all gestures to
+        //     OrbitControls instead of the browser (no page scroll / native pinch).
+        expect(geom.canvasTouchAction, 'canvas touch-action:none').toBe('none');
+        expect(geom.viewportTouchAction, 'viewport touch-action:none').toBe('none');
+    });
+
+    test('collapsing the bottom sheet keeps the canvas full (no dead zone, no resize) (390)', async ({ page }) => {
+        await page.setViewportSize({ width: 390, height: 844 });
+        await gotoAndReady(page, { timeout: 45_000 });
+        await page.waitForSelector('#viewport canvas', { timeout: 15_000 });
+        await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+        await page.waitForTimeout(400);
+
+        const before = await page.evaluate(() => {
+            const b = document.querySelector('#viewport canvas').getBoundingClientRect();
+            return { w: Math.round(b.width), h: Math.round(b.height), top: Math.round(b.top) };
+        });
+
+        // Collapse via the real mobile control; fall back to the generic dock toggle.
+        const collapsed = await page.evaluate(() => {
+            const btn = document.querySelector('.panel-dock-hide-btn')
+                || document.querySelector('#btn-panel-toggle');
+            if (!btn) return { clicked: false };
+            btn.click();
+            return { clicked: true };
+        });
+        expect(collapsed.clicked, 'a panel-collapse control exists on mobile').toBe(true);
+        await page.waitForTimeout(500); // sheet slide transition (0.35s) + settle
+
+        const after = await page.evaluate(() => {
+            const app = document.getElementById('app');
+            const cb = document.querySelector('#viewport canvas').getBoundingClientRect();
+            const pb = document.querySelector('#panel-area').getBoundingClientRect();
+            return {
+                isCollapsed: app.classList.contains('panels-collapsed'),
+                canvas: { w: Math.round(cb.width), h: Math.round(cb.height), top: Math.round(cb.top) },
+                panelTop: Math.round(pb.top),
+                vh: window.innerHeight,
+            };
+        });
+
+        expect(after.isCollapsed, 'sheet collapsed after toggle').toBe(true);
+        // The sheet slides off the bottom edge — it must not leave a reserved gap.
+        expect(after.panelTop, `collapsed sheet slid off-screen (top ${after.panelTop} ≥ ${after.vh})`).toBeGreaterThanOrEqual(after.vh - 2);
+        // The canvas is governed by the grid, not the sheet, so its box is unchanged.
+        expect(Math.abs(after.canvas.w - before.w), `canvas width unchanged (${before.w}→${after.canvas.w})`).toBeLessThanOrEqual(1);
+        expect(Math.abs(after.canvas.h - before.h), `canvas height unchanged (${before.h}→${after.canvas.h})`).toBeLessThanOrEqual(1);
+        expect(Math.abs(after.canvas.top - before.top), `canvas top unchanged (${before.top}→${after.canvas.top})`).toBeLessThanOrEqual(1);
     });
 });
 
