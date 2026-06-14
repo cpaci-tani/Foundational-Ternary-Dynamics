@@ -11,7 +11,7 @@ namespace FTD.SelfDuality
 
 /-! ## The Proof Chain (Summary)
 
-  The derivation of alpha from the CM curve E: y²=x³-x proceeds:
+  The legacy alpha-facing construction from the CM curve E: y²=x³-x proceeds:
 
   Step 1. [THEOREM] E has End(E) = Z[i], j(E) = 1728,
           |Aut(E)| = 4, |E(Q)_tors| = 4, conductor N = 32.
@@ -53,7 +53,8 @@ namespace FTD.SelfDuality
 
   Status: [STRONG CONJECTURE]
   This is the ONE gap between "G* is a fundamental constant" and
-  "alpha is derived from G*".
+  "the master-quadratic route is mathematically forced". The physical bridge to
+  alpha remains separate.
 
   Attack vectors:
   1. Petersson inner product self-pairing decomposition
@@ -77,7 +78,7 @@ axiom conjecture_self_duality_forces_TrN :
   - It asserts that a particular mathematical structure (the CM curve)
     is realized in the physical world (as the electromagnetic coupling)
   - The evidence is the numerical match: x₊ = 137.036 vs CODATA 137.036
-  - With 4-term corrections: agreement to 15+ significant digits
+  - The legacy 4-term correction is a numerical comparison, not a derivation
 
   Falsifiability: If future measurements of alpha disagree with x₊
   at any precision level, this axiom is falsified.
