@@ -237,6 +237,14 @@ The emergent mode recoils deterministically, but the fixed 200-tick protocol
 has zero integer transport events, so the additive source/work balance still
 closes at roundoff. Integer transport work remains open.
 
+## Lattice wave sectors — dispersion atlas + condensate-compression probe (FTD-0299; 2026-06-14, locked/run)
+
+| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
+|---|---|---|---|---|---|---|
+| **FTD-0299** wave sectors | `preregister-wave-sectors-v1` | `8fff0187` | engine artifact `engine/tests/campaign_wave_sectors.cpp` SHA256 `e25396b8c6552d4bf7e03436b169d40e991de908a26330cca046eb3f5e92dd30`; analyzer `scripts/exploration/analyze_wave_sectors.py` SHA256 `b76869fee3046aa134221abd0972da5ba339b8a2f7c059d0209801696ee75936` | build target `campaign_wave_sectors`; light `--arm=light --L={24,32,48}`; sound `OMP_NUM_THREADS=1 --arm=sound --L=24 --seeds=4 --nmodes=5 --ticks=256 --equil=200 --kick=0.05 --Tcond=0.5` | `engine/results/wave_sectors/` (local) | [`ANALYSIS_WAVE_SECTORS_v1.md`](../03_derivations/foundational_mechanics/ANALYSIS_WAVE_SECTORS_v1.md): `LIGHT=LIGHT-CONFIRMED  SOUND=NULL` |
+
+Executes the FTD-0298-SOUND `[OPEN]`. Q1 LIGHT-CONFIRMED (ω matches the 18-pt stencil to machine zero across ⟨100⟩/⟨110⟩/⟨111⟩; isotropic c=1/√3). Q2 NULL (no propagating compression branch — FTD-0298 boundary engine-confirmed). Hardened pre-lock by a 24-blocker adversarial review. Golden-neutral; no promotions.
+
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
