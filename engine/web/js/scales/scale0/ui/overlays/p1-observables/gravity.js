@@ -5,8 +5,9 @@
 
 import { BaseComponent } from '../../../../../core/component.js';
 import { cardStyle, titleStyle } from '../_card-helpers.js';
+import { getScale0Scenario } from '../../../scenario-registry.js';
 
-const GRAVITY_SCENARIOS = new Set(['s0-seed-schwarzschild', 's0-seed-gravitational-wave']);
+
 const TWO_PI = 2.0 * Math.PI;
 
 const TEMPLATE = `
@@ -26,7 +27,8 @@ export class GravityComponent extends BaseComponent {
     }
 
     update(bridge, scenarioId, now) {
-        if (GRAVITY_SCENARIOS.has(scenarioId)) {
+        const scenario = getScale0Scenario(scenarioId);
+        if (scenario?.tags?.includes('gravity') && !scenario?.tags?.includes('time')) {
             const probe = this._probeTimeDilation(bridge);
             const isReduced = document.body.getAttribute('data-reduced-motion') === '1';
             const tickPhase = isReduced ? 0 : (now - this.startTime) * 0.0006;

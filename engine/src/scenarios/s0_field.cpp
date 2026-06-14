@@ -25,6 +25,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
     const int    mc   = RND(midF);
 
     if (name == "s0-field-plane-wave") {
+        // Scenario ID: s0-field-plane-wave
+        // Physical Purpose: Establishes a planar electromagnetic wave.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Plane wave propagating along the x-axis with transverse oscillations.
+        // Discrepancy: None.
         const double wl  = N / 4.0;
         const double amp = K_B * 2.0;
         const double k   = 2.0 * PI / wl;
@@ -39,6 +44,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-standing-wave") {
+        // Scenario ID: s0-field-standing-wave
+        // Physical Purpose: Establishes a planar electromagnetic standing wave.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Stationary sinusoidal node-antinode pattern in the transverse flux.
+        // Discrepancy: None.
         const double wl  = N / 4.0;
         const double amp = K_B * 2.0;
         const double k   = 2.0 * PI / wl;
@@ -48,6 +58,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-uniform-e") {
+        // Scenario ID: s0-field-uniform-e
+        // Physical Purpose: Establishes a uniform electric field.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Spatially uniform vector potential flux background pointing along x-axis.
+        // Discrepancy: None.
         // genesis=false (audit-2 2026-04-28): static uniform E shouldn't
         // fill the lattice with manifested particles. Mirrors JS.
         rb.toggles.genesis = false;
@@ -57,6 +72,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-uniform-b") {
+        // Scenario ID: s0-field-uniform-b
+        // Physical Purpose: Establishes a uniform magnetic field.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Rotational flux field pattern representing a uniform magnetic field.
+        // Discrepancy: None.
         const double bMag = 0.05;
         const double half = (N - 1) / 2.0;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -66,6 +86,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-photon-pulse") {
+        // Scenario ID: s0-field-photon-pulse
+        // Physical Purpose: Seeds a propagating photon pulse packet.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Coherent localized wave packet propagating at light speed along the x-axis.
+        // Discrepancy: None.
         const int sigma = std::max(3, N / 8);
         const double amp = K_B * 2.0;
         const double lambdaEff = 4.0 * sigma;
@@ -86,6 +111,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-thomson-scattering") {
+        // Scenario ID: s0-field-thomson-scattering
+        // Physical Purpose: Simulates classical electromagnetic Thomson scattering off a locked charge.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Plane wave scattering off a stationary central electron.
+        // Discrepancy: None.
         // Fixed electron-like scattering observatory:
         // one locked negative charge at the center plus a y-polarized plane
         // wave propagating along +x. This is a visualization/instrument setup,
@@ -114,6 +144,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-thomson-unlocked-recoil") {
+        // Scenario ID: s0-field-thomson-unlocked-recoil
+        // Physical Purpose: Simulates Thomson scattering with an unlocked recoiling charge.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Plane wave scattering off a mobile central electron which recoils under emergent forces.
+        // Discrepancy: None.
         // FTD-0288 visual companion: one unlocked negative charge plus the
         // same plane wave, with the native emergent flux-gradient force path.
         rb.toggles.wave_propagation = true;
@@ -142,12 +177,22 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-spacetime-forcing-boundary") {
+        // Scenario ID: s0-field-spacetime-forcing-boundary
+        // Physical Purpose: Models spacetime forcing boundary conditions (FTD-0253).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Forcing of localized flux at the center.
+        // Discrepancy: None.
         // FTD-0253 visible seed: the wave half of
         // test_spacetime_forcing_demo.cpp. The diffusion half is a
         // counterfactual shown in engine/web/demos/spacetime-forcing-boundary.html.
         IF(rb, mc, mc, mc, 0.0, 0.0, 1.0);
     }
     else if (name == "s0-field-electric-dipole") {
+        // Scenario ID: s0-field-electric-dipole
+        // Physical Purpose: Establishes a static electric dipole field.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Dipole field lines connecting a positive and negative charge.
+        // Discrepancy: None.
         const int sep  = std::max(2, N / 8);
         const int half = sep / 2;
         const int px = mc + half, nx = mc - half;
@@ -169,6 +214,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-magnetic-dipole") {
+        // Scenario ID: s0-field-magnetic-dipole
+        // Physical Purpose: Establishes a static magnetic dipole field.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Circulating loop flux representing a magnetic dipole.
+        // Discrepancy: None.
         const int loopR = std::max(3, N / 8);
         const double amp = K_B;
         const int nAngles = std::max(36, loopR * 8);
@@ -182,6 +232,11 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-field-vortex-line") {
+        // Scenario ID: s0-field-vortex-line
+        // Physical Purpose: Models an electromagnetic or fluid vortex line.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Tangential rotational flux line about the z-axis.
+        // Discrepancy: None.
         const double gamma = K_B * 4.0;
         const double half = (N - 1) / 2.0;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -192,6 +247,35 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             if (mag < 1e-6) continue;
             IF(rb, x, y, z, -mag * ry / r, mag * rx / r, 0);
         }
+    }
+
+    else if (name == "s0-field-rf-lattice-wave") {
+        // Scenario ID: s0-field-rf-lattice-wave
+        // Physical Purpose: Long-wavelength RF wave demonstration.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Large scale wave propagating across lattice.
+        // Discrepancy: No engine-side implementation.
+    }
+    else if (name == "s0-field-light-lattice-wave") {
+        // Scenario ID: s0-field-light-lattice-wave
+        // Physical Purpose: Optical wavelength lattice wave demonstration.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Optical frequency waves.
+        // Discrepancy: No engine-side implementation.
+    }
+    else if (name == "s0-field-sound-lattice-wave") {
+        // Scenario ID: s0-field-sound-lattice-wave
+        // Physical Purpose: Acoustic wavelength wave demonstration.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Very low frequency wave behavior.
+        // Discrepancy: No engine-side implementation.
+    }
+    else if (name == "s0-field-sound-collision") {
+        // Scenario ID: s0-field-sound-collision
+        // Physical Purpose: Collision of two sound waves.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Interference and beat frequencies of sound waves.
+        // Discrepancy: No engine-side implementation.
     }
     return true;
 }
