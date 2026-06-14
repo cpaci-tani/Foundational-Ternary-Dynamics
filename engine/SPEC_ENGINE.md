@@ -1,9 +1,23 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-06-07 (system documentation pass: end-to-end tick ladder, loop dynamics, manifestation lifecycle, and stale toggle/constant wording reconciled; no engine behavior edited)
+**Last updated:** 2026-06-13 (golden determinism doc reconciliation + FTD-0286 v2 alpha-estimator campaign; no physics behavior edited beyond v2 campaign addition)
 **Engine version:** 2.18.0 (post May 2026 — BH-F* GPU plumbing sweep, SplitMix64 RNG portability Option A, trim-the-fat rounds 2-4, `ftd_eft` library extraction, F9 Tier-1 + F11.A Tier-3 audit closures)
-**Test count:** 257 C++ test source files (211 active CMake targets after 2026-05-04 trim-the-fat round 4) + 18 Playwright specs + 25 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+**Test count:** 258 C++ test source files (212 active CMake targets) + 18 Playwright specs + 25 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+
+### 2026-06-13 — Golden determinism verification + FTD-0286 v2 alpha estimator
+
+**Sprint A:** OpenMP race fixes (2026-06-11, `poisson_solvers.cpp` +
+`phase_write.cpp`) verified green — `render_bridge_golden`, `determinism`,
+`campaign_determinism_gate` PASS; hash `0x56fa28acb5b9fe88` @ L=17
+bit-identical OMP=1 vs full pool. Stale golden-hash citations reconciled
+(ADR-0012, phase comments, `tests/README.md`, `cuda/README.md`).
+
+**Sprint B:** `campaign_alpha_estimator_validation_v2` + `lattice_coulomb_gate.h`
+pair `energy_audit().field_energy = ½Σ|J|²` with gate `α_r = r G_L(r)`.
+Verdict `HALF_ENERGY_GATE_CONFIRMED_MATCHED` (matched PASS; production stencil
+drift still ~12%). Analysis: `docs/theory/10_eft_program/ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`.
+**No alpha claim promoted.**
 
 ### 2026-06-07 — Engine System Documentation Pass
 

@@ -24,6 +24,7 @@ import {
     defectCount, fluxTubeComponents, metricStats, histogram, chiralityFromAudit,
 } from '../../analysis/lattice-topology.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import { readScale0DiagAudit } from '../../../../telemetry/scale0-read.js';
 
 const PANEL_ID = 'spectrum-panel';
 const HZ = 2;                 // exploratory data — slower cadence
@@ -278,11 +279,11 @@ export function mountSpectrumPanel(host, getBridge) {
     }
 
     function update() {
+        const b = getBridge?.();
         const caps = getCaps();
         if (!caps) return;
+        const { diag, audit } = readScale0DiagAudit(b);
         const L = caps.latticeSize || 33;
-        const audit = caps.getScale0EnergyAudit?.() || null;
-        const diag = caps.getScale0Diagnostics?.() || null;
 
         // ① hero — only when live (deep freezes the snapshot)
         let sp;

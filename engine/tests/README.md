@@ -128,6 +128,11 @@ Any extraction or refactor that could perturb tick output MUST keep
 `test_render_bridge_golden` green (hash `0x56fa28acb5b9fe88` @ L=17). Run
 `ctest -L golden` before claiming Phase-X-complete. See ADR-0012.
 
+### EFT alpha-estimator campaigns (FTD-0286)
+- `campaign_alpha_estimator_validation` — v1, legacy gate `2rG_L(r)`; verdict `ENERGY_FUNCTIONAL_MISMATCH` (pairing error).
+- `campaign_alpha_estimator_validation_v2` — v1 re-test with gate `rG_L(r)` paired to `½Σ|J|²`; verdict `HALF_ENERGY_GATE_CONFIRMED_MATCHED`. Shared helper: `include/ftd/eft/lattice_coulomb_gate.h`.
+- Run: `ctest -R "^alpha_estimator_validation_v2$"`.
+
 ## Invariants
 
 - Each test exits 0 on success, non-zero on failure (use `ftd::test::finalize()` return)

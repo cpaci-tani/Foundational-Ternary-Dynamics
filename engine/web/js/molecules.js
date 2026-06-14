@@ -19,6 +19,8 @@
  * descriptions name the order the visualization actually shows.
  */
 
+import { C_SPEED } from './constants.js';
+
 // ── Categories ───────────────────────────────────────────────────────
 
 const CATEGORIES = [
@@ -31,7 +33,7 @@ const CATEGORIES = [
 // ── Helper: tetrahedral vertices ─────────────────────────────────────
 
 function tetra(d) {
-    const t = 1 / Math.sqrt(3);
+    const t = C_SPEED;
     return [
         { x:  d * t, y:  d * t, z:  d * t },
         { x:  d * t, y: -d * t, z: -d * t },

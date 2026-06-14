@@ -10,7 +10,6 @@ import { createBridge, MockBridge } from './bridge-init.js';
 import { appRegistry } from './core/registry.js';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js';
-import { DiagnosticsPanel } from './diagnostics.js';
 import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js';
@@ -67,7 +66,6 @@ let viewport = null;
 let appShell = null;
 let inspector = null;
 let inspectorRuntime = null;
-let diagnostics = null;
 let diagnosticsPanel = null;
 let chartsPanel = null;
 let telemetryGridPanel = null;
@@ -173,7 +171,6 @@ function _makeCtx() {
         // inspectorRuntime.setBridge() instead of falling through to the
         // bare inspector handle (audit P1-1, 2026-05-27).
         get inspectorRuntime() { return inspectorRuntime; },
-        get diagnostics() { return diagnostics; },
         get diagnosticsPanel() { return diagnosticsPanel; },
         get chartsPanel() { return chartsPanel; },
         get telemetryGridPanel() { return telemetryGridPanel; },
@@ -261,7 +258,7 @@ function applyReflectiveBoundary(on) {
  *   - Scale 1 PE overlay flags + buttons + dynamics buttons
  *   - Scale 1 velocity/trail flags + buttons
  *   - Scale 2 AE field overlay button
- *   - Charts, Lagrangian, diagnostics sparklines
+ *   - Charts, Lagrangian, diagnostics panel (hub-backed)
  *   - PE telemetry, trail history, field grid cache
  *   - Viewport overlays (trails, element labels, field visualizations)
  */
@@ -557,7 +554,6 @@ async function init() {
         viewport,
         backgroundManager: bgManager,
     });
-    diagnostics = new DiagnosticsPanel();
     // Scale 0 charts + Lagrangian now own their own uPlot instances via
     // ChartsPanelComponent and LagrangianPanelComponent. Legacy
     // FluxEnergyChart / ParticleChart are retained (with null canvases)
@@ -1053,7 +1049,6 @@ function wireTabs() {
             lagrangianPanel?.update();
         } else if (target === 'diagnostics') {
             diagnosticsPanel?.update();
-            diagnostics.drawSparklines();
             if (peTelemetry) peTelemetry.drawCharts();
         } else if (target === 'physics') {
             onticPanel?.refreshPhysicsPanel();
@@ -1768,7 +1763,6 @@ function clearCharts() {
     // clearing at the hub level is sufficient; uPlot instances redraw from the
     // cleared buffers on the next update().
     telemetryHub.resetAll();
-    if (diagnostics) diagnostics.clear();
 }
 
 // ── Phase 1-3: Ontic / Physics / Hierarchy ────────

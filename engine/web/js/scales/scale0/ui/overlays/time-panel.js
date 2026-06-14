@@ -33,6 +33,7 @@ import {
 import { FTD0252_PROVENANCE, DILATION_VS_V, IR_CONVERGENCE } from '../../data/ftd0252-reference.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
+import { readScale0DiagAudit } from '../../../../telemetry/scale0-read.js';
 
 const PANEL_ID = 'time-panel';
 const HZ = 2;
@@ -419,8 +420,8 @@ export function mountTimePanel(host, getBridge) {
         // the established panel pattern (isPanelLive); idle when the tab is hidden.
         if (!isPanelLive(host)) return;
 
-        const diag = (typeof b.getDiagnostics === 'function' ? b.getDiagnostics() : null)
-            || caps.getScale0Diagnostics?.() || {};
+        const { diag: hubDiag } = readScale0DiagAudit(b);
+        const diag = hubDiag || caps.getScale0Diagnostics?.() || {};
         const physicalTime = (diag.physicalTime !== undefined && diag.physicalTime !== null)
             ? diag.physicalTime : (diag.tick || 0);
         const dt = (diag.dt !== undefined && diag.dt !== null && diag.dt > 0) ? diag.dt : 1;
