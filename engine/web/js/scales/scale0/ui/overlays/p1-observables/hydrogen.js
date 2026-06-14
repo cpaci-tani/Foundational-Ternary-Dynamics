@@ -7,8 +7,9 @@ import { BaseComponent } from '../../../../../core/component.js';
 import { renderEnergyLevels, hydrogenEnergyLevel, ionizationEnergy } from '../../../../../spectroscopy.js';
 import { RYDBERG_EV_CODATA } from '../../../../../constants.js';
 import { cardStyle, titleStyle } from '../_card-helpers.js';
+import { getScale0Scenario } from '../../../scenario-registry.js';
 
-const HYDROGEN_SCENARIOS = new Set(['s0-seed-hydrogen', 's0-seed-helium']);
+
 
 const TEMPLATE = `
     <section data-section="hydrogen" style="${cardStyle(120)}">
@@ -26,7 +27,8 @@ export class HydrogenComponent extends BaseComponent {
     }
 
     update(bridge, scenarioId) {
-        if (HYDROGEN_SCENARIOS.has(scenarioId)) {
+        const scenario = getScale0Scenario(scenarioId);
+        if (scenario?.tags?.includes('atom')) {
             if (this.renderedFor !== scenarioId) {
                 this.refs.body.innerHTML = '';
                 this.refs.body.className = '';

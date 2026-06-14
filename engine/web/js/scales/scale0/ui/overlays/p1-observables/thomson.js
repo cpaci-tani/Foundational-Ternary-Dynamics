@@ -5,6 +5,8 @@
 
 import { BaseComponent } from '../../../../../core/component.js';
 import { cardStyle, titleStyle, tagBadge, formatExp } from '../_card-helpers.js';
+import { getScale0Scenario } from '../../../scenario-registry.js';
+
 
 const SCENARIO_IDS = new Set([
     's0-field-thomson-scattering',
@@ -52,7 +54,8 @@ export class ThomsonComponent extends BaseComponent {
     }
 
     update(bridge, scenarioId) {
-        if (!SCENARIO_IDS.has(scenarioId)) {
+        const scenario = getScale0Scenario(scenarioId);
+        if (!scenario?.tags?.includes('thomson')) {
             this.refs.root.style.display = 'none';
             return;
         }
