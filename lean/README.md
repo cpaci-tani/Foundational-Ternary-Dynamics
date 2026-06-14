@@ -1,11 +1,11 @@
 # FTD Lean Formalizations
 
-This is the single Lean 4 workspace for FTD.
+This is the Lean 4 workspace for FTD's formal artifacts.
 
-- `FtdNoGo/`, `FtdNoGo.lean`, and `Standalone.lean` formalize the Commutativity Independence No-Go.
-- `FTD/`, `FTD.lean`, and `FTDAlpha.lean` contain the older FTD algebra / master-quadratic formalization from the former separate Lean proof tree.
+- `FtdNoGo/`, `FtdNoGo.lean`, and `Standalone.lean` formalize the Commutativity Independence No-Go. This is the current citable machine-checked proof artifact.
+- `FTD/`, `FTD.lean`, and `FTDAlpha.lean` contain the older FTD algebra / master-quadratic material from the former separate Lean proof tree. These files are legacy, axiom-bearing numerical/algebraic checks; they are not a formal alpha derivation.
 
-The old wrapper has been merged here; use `cd lean && lake build` for the combined workspace.
+Use `cd lean && lake build` for the default citable workspace (`FtdNoGo`). Build the legacy tree explicitly with `lake build FTD FTDAlpha` when auditing or replaying old alpha-era checks.
 
 ## FtdNoGo — Lean 4 formalization of the Commutativity Independence No-Go
 
@@ -13,15 +13,15 @@ The old wrapper has been merged here; use `cd lean && lake build` for the combin
 > - **`Standalone.lean` —  MACHINE-CHECKED.** `lean Standalone.lean` →
 >   **exit 0, stderr 0 bytes**, the `#check`s print the real signatures
 >   (`ocommutator A B = fun x => 0`, etc. — no `sorry`), and
->   **`#print axioms standalone_core` → `[propext, Classical.choice,
->   Quot.sound]`** (the three standard Lean axioms only; no `sorryAx`, no
+>   **`#print axioms standalone_core` → `[propext, Quot.sound]`** (standard
+>   Lean axioms only; no `sorryAx`, no
 >   custom axioms). This Mathlib-free, Lean-core-only, `Int`-based file is the
 >   **citable verified artifact**. Claim A/C is a *real* theorem (Int
 >   multiplication genuinely commutes — proved via `Int.mul_comm` + `omega`),
 >   not a hypothesis. *(History: the first draft erred by using Mathlib-only
 >   typeclasses; rewritten core-only and re-verified.)*
 > - **`FtdNoGo/` (Mathlib version) —  MACHINE-CHECKED.** `lake build` →
->   **`Build completed successfully (8482 jobs)`, exit 0**, all six
+>   **`Build completed successfully`, exit 0**, all six
 >   `FtdNoGo/*` modules built, no errors (after patching v4.30.0 issues:
 >   catch-all `import Mathlib`; `Poisson.lean` `ℝ`/`pderiv_X`/`norm_num`;
 >   trimmed two unused-`simp`-arg warnings in `Independence.lean`). This is the
@@ -31,6 +31,11 @@ The old wrapper has been merged here; use `cd lean && lake build` for the combin
 > **Bottom line:** BOTH the Mathlib-free core (`Standalone.lean`, axiom-clean)
 > and the canonical Mathlib development (`FtdNoGo/`, `lake build` green) are
 > machine-checked. They prove the same algebraic core two ways.
+
+> **Legacy boundary:** `FTD/`, `FTD.lean`, and `FTDAlpha.lean` are retained for
+> provenance and optional replay. They contain explicit custom axioms and `#eval`
+> numerical comparisons, including the physical `x₊ = 1/α` bridge as an axiom.
+> They must not be cited as a Lean proof that alpha is derived.
 
 This is the Lean 4 (Mathlib) formalization of the **algebraic core** of
 [`docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md`](../docs/theory/10_eft_program/preregistrations/PREREG_COMMUTATIVITY_INDEPENDENCE_v1.md)
@@ -101,9 +106,9 @@ lean Standalone.lean      # exit 0, empty stderr, #check + #print axioms ⟹ che
 Needs only the toolchain — no Mathlib, no `lake`, no network. Verified in
 authoring (2026-05-30, v4.30.0): exit 0, stderr 0 bytes, the `#check`s print
 the real signatures, and `#print axioms standalone_core` →
-`[propext, Classical.choice, Quot.sound]` only (no `sorryAx`).
+`[propext, Quot.sound]` only (no `sorryAx`).
 
-### Full path — the Mathlib rendering ( verified this session, canonical API)
+### Full path — the Mathlib rendering (verified this session, canonical API)
 
 Requires [`elan`](https://github.com/leanprover/elan) and Mathlib cache access.
 
@@ -111,15 +116,29 @@ Requires [`elan`](https://github.com/leanprover/elan) and Mathlib cache access.
 cd lean
 elan toolchain install $(cat lean-toolchain)   # if not already present
 lake exe cache get                              # download prebuilt Mathlib (large, ~minutes)
-lake build                                      # machine-check FtdNoGo/ and FTD/
+lake build                                      # machine-check FtdNoGo/
 ```
 
-A successful `lake build` with no `sorry` and no errors verifies `FtdNoGo/` and the `FTD/` modules.
+A successful default `lake build` with no `sorry` and no errors verifies `FtdNoGo/`.
 (`grep -rn "sorry" FtdNoGo Standalone.lean` returns nothing.) This was run in
 authoring (2026-05-30): cache fetched 8459 oleans and `lake build` printed
-`Build completed successfully (8482 jobs)`. If you cannot fetch the cache,
+`Build completed successfully`. If you cannot fetch the cache,
 the `Standalone.lean` fast path proves the same algebraic core with no
 dependencies.
+
+### Legacy replay path — alpha/master-quadratic material (not citable as a proof)
+
+```sh
+cd lean
+lake build FTD FTDAlpha
+```
+
+This optional target replays the older algebra, integer identities, and numerical
+checks. It is useful for provenance but carries explicit custom axioms
+(`FTD/LFunction.lean`, `FTD/SelfDuality.lean`, `FTD/Axioms.lean`,
+`FTD/Emergence.lean`) and therefore does not upgrade corpus tags. In particular,
+the physical alpha identification remains `[STRONGLY MOTIVATED CONJECTURE]` /
+axiom-class input in the current corpus.
 
 ## Notes (as built & verified, v4.30.0)
 
@@ -131,7 +150,8 @@ dependencies.
   superseded; this is what compiled).
 - `Independence.lean` evaluates the 2×2 commutator entry with
   `simp [commutator_def, E01, E10, Matrix.sub_apply]`; matrices are over `ℤ`.
-- The development depends only on stable Mathlib (`Pi.commRing`, `MvPolynomial`,
-  `Matrix`). No `axiom`s are introduced; `Standalone.lean`'s axiom footprint is
-  exactly `[propext, Quot.sound]`. The only non-theorem content is the
+- The `FtdNoGo/` development depends only on stable Mathlib (`Pi.commRing`,
+  `MvPolynomial`, `Matrix`). No custom `axiom`s are introduced there;
+  `Standalone.lean`'s axiom footprint is exactly `[propext, Quot.sound]`.
+  The only non-theorem content in the no-go proof is the
   *definitional* model of the substrate, by design (see the bridge section).

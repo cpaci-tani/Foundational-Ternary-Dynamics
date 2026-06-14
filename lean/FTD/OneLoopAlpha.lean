@@ -1,14 +1,14 @@
 /-
-  FTD.OneLoopAlpha -- One-Loop Lattice Correction to Alpha
-  ========================================================
+  FTD.OneLoopAlpha -- Legacy One-Loop Lattice Numerical Check
+  ===========================================================
   The phi^3 EFT on Z[i]^3 with lattice spacing a = 2/D = 2/3.
   Tadpole integral I_1 = 0.015274 (computed on 150^3 lattice).
-  Result: x+(one-loop) = 137.036000 (9.6 ppb from NIST).
+  Legacy result: x+(one-loop) = 137.036000 (9.6 ppb from NIST).
 
   Epistemic status:
     - Lattice spacing a = 2/D: [SELECTION PRINCIPLE]
     - Tadpole integral: [THEOREM] (standard lattice QFT)
-    - Combined result: [DERIVED] (given a = 2/D)
+    - Combined result: legacy numerical comparison / parametric insertion
 
   Reference: DERIV_ONE_LOOP_LATTICE_ALPHA.md (April 2026)
 -/
@@ -74,7 +74,7 @@ axiom tadpole_I1_value : True  -- I_1 = 0.015274 (BZ integral on 150^3 lattice)
   let loop_param := g_coupling * g_coupling * I1
 
   IO.println "═══════════════════════════════════════════════════════"
-  IO.println "  ONE-LOOP LATTICE ALPHA VERIFICATION"
+  IO.println "  LEGACY ONE-LOOP LATTICE NUMERICAL CHECK"
   IO.println "═══════════════════════════════════════════════════════"
   IO.println ""
   IO.println "--- Lattice Parameters ---"
@@ -90,7 +90,7 @@ axiom tadpole_I1_value : True  -- I_1 = 0.015274 (BZ integral on 150^3 lattice)
   IO.println s!"  delta_phi = {delta_phi} (lattice units)"
   IO.println s!"  delta_x   = {delta_x} (physical units)"
   IO.println ""
-  IO.println "--- Result ---"
+  IO.println "--- Legacy comparison ---"
   IO.println s!"  x+ (tree)     = {x_plus}"
   IO.println s!"  x+ (one-loop) = {x_plus_1loop}"
   IO.println s!"  NIST          = {nist}"
@@ -106,6 +106,7 @@ axiom tadpole_I1_value : True  -- I_1 = 0.015274 (BZ integral on 150^3 lattice)
   IO.println ""
   IO.println "  Lattice spacing a = 2/D is a [SELECTION PRINCIPLE]."
   IO.println "  The integral itself is standard lattice QFT [THEOREM]."
+  IO.println "  The physical alpha bridge is not proven by this Lean replay."
   IO.println ""
   IO.println "═══════════════════════════════════════════════════════"
   IO.println s!"  All checks: {if res_ok && clos_ok && pert_ok then "PASS" else "FAIL"}"
