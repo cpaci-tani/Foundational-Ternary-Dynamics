@@ -14,6 +14,13 @@
  */
 
 import { COULOMB_K_FORCE, K_B, C_SPEED } from '../../constants.js';
+import {
+    LIGHT_LATTICE_WAVE_SCENARIO_ID,
+    RF_LATTICE_WAVE_SCENARIO_ID,
+    SOUND_LATTICE_WAVE_SCENARIO_ID,
+    SOUND_COLLISION_SCENARIO_ID,
+    seedSpectrumComparator,
+} from './spectrum-comparator.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -121,6 +128,14 @@ export function setupS0FieldScenario(name, harness, ctx) {
                         harness.injectFlux(x, y, z, 0, 0, jz);
                         harness.injectWaveVel(x, y, z, wz, 0, 0);
                     }
+                    break;
+                }
+
+                case RF_LATTICE_WAVE_SCENARIO_ID:
+                case LIGHT_LATTICE_WAVE_SCENARIO_ID:
+                case SOUND_LATTICE_WAVE_SCENARIO_ID:
+                case SOUND_COLLISION_SCENARIO_ID: {
+                    seedSpectrumComparator(harness, ctx, name);
                     break;
                 }
 

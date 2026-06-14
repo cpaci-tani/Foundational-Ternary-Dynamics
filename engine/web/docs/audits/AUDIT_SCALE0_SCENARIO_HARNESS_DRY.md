@@ -7,16 +7,20 @@ and telemetry/active-bridge resolution across runtime + panels.
 (`store.js`), one telemetry collector (`telemetryHub`), shared scenario primitives
 (`_helpers.js`).
 
+**Companion:** `AUDIT_SCALE0_CALLSTACK.md` (tick/load/resize active-owner integrity, 2026-06-13).
+
 ---
 
 ## Load path (canonical)
 
 ```
-scenario-loader.js
-  → applyToggleDefaults (config/toggles.js)
-  → getPhysicsHarness(activeBridge)
-  → scenario.load(harness)          // registry or runSetupScenario
-  → post-load gravity/absorbing toggles
+bindings.js (scenario-select)
+  → loadScale0Scenario
+      → shouldUseFluxMock → makeFluxMock when needed
+      → setFluxMock(fluxMock, useFluxMock)   // requires store.js import
+      → getPhysicsHarness(activeBridge).load(harness)
+      → applyGravityAbsorbingToggles
+      → viewport.setLatticeSize(activeN) when N differs
 ```
 
 **Fixed:** `scenario-loader.js` no longer calls `fluxMock.setupScenario()` before
@@ -44,6 +48,13 @@ scenario-loader.js
 - Named toggle bundles: `DE_BROGLIE_CLOCK_TOGGLES`, `THERMAL_IGNITION_TOGGLES`, `QGP_TOGGLES`, `EW_PHASE_TOGGLES`
 - Shared `activateStateFieldOverlay()` for interactive scenario loads
 - Vacuum w/z/higgs/neutrino cases use `vox()` / `sig()` (fixed neutrino `const sig = 2` shadowing bug)
+
+**Resolved (2026-06-13 pass 3 — callstack / controls):**
+
+- `PhysicsHarness`: `getParam`, `setParam`, `clearField`, `seedRandomFlux`, `tickScale0`
+- `wire.js`: `dualHarness`, `getActiveScale0Bridge` for K_B; harness clear/seed (no raw `.bridge`)
+- `genesis-burst-panel.js`: harness-only fire path (`tickScale0`, not `bridge.tick()`)
+- `scenario-loader.js`: `runScale0PhysicsTicks` shared with `tick.js`; required `setFluxMock` / `setForceStyle` imports
 
 ---
 

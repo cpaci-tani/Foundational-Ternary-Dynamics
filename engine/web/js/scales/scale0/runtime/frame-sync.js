@@ -1,9 +1,9 @@
-import { getActiveScale0Bridge, getActiveScale0Capability } from '../state/store.js';
+import { getActiveScale0Bridge, getActiveScale0Capability, getActiveLatticeSize } from '../state/store.js';
 
 const _fluxSlicePlanes = [];
 
 export function syncRenderableData(ctx, state, viewportAdapter) {
-    const latticeSize = ctx.bridge.latticeSize || 32;
+    const latticeSize = getActiveLatticeSize(ctx, state);
     const volUpdateInterval = latticeSize > 96 ? 6 : (latticeSize > 64 ? 4 : (latticeSize > 48 ? 3 : 1));
     if (!state.latticeNeedsUpload || ctx.frameCount % volUpdateInterval !== 0) return latticeSize;
 

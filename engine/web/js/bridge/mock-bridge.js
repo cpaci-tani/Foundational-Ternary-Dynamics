@@ -60,6 +60,7 @@ import { createAtomEngine } from './mock-atom-engine.js';
 // Called via .call(this, name) so every this.reset(), this.injectParticle(...),
 // etc., binds back to this MockBridge instance.
 import { runSetupScenario } from './scenarios/index.js';
+import { getSpectrumComparatorMetrics } from './scenarios/spectrum-comparator.js';
 import { MockWaveEngine } from './mock-wave-engine.js';
 
 // ── Mock Bridge ────────────────────────────────────────────────────
@@ -1094,6 +1095,10 @@ export class MockBridge {
             excessResidual: excess,
             poynting: { ...poynting, mag: poyntingMag },
         };
+    }
+
+    getSpectrumComparatorMetrics(scenarioId = null) {
+        return getSpectrumComparatorMetrics(this, scenarioId || undefined);
     }
 
     /**

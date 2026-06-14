@@ -7,10 +7,10 @@
 // point on a live N(A) curve — tracing out the broken-power law and crossing the
 // knee at A≈16 (the FTD-0269 structure).
 //
-// The fire drives the real WASM engine deterministically: it pauses the main
-// tick loop (ctx.running), resets the lattice, injects, ticks ~220 steps, reads
-// N, then restores. The 3D cluster itself is best viewed via the fixed-A
-// `*-subknee/-knee/-superknee` answer-key scenarios (clean T=0 view).
+// The fire panel drives the active physics owner (flux mock for cluster-law):
+// pauses the main tick loop (ctx.running), resets the lattice, injects, ticks
+// ~220 steps, reads N, then restores. The 3D cluster itself is best viewed via
+// the fixed-A `*-subknee/-knee/-superknee` answer-key scenarios (clean T=0 view).
 
 import { BaseComponent } from '../../../../core/component.js';
 import { K_GENESIS } from '../../../../constants.js';
@@ -43,7 +43,7 @@ const TEMPLATE = `
         <div ref="status" style="margin-bottom:6px;color:var(--color-text-secondary,#aaa);min-height:15px">ready</div>
         <canvas ref="plot" width="276" height="200" style="width:100%;display:block;border-radius:8px;background:var(--color-background-secondary,rgba(255,255,255,0.04))"></canvas>
         <div style="margin-top:6px;font-size:11px;color:var(--color-text-tertiary,#888);line-height:1.4">
-            <span style="color:#378ADD">&#9679;</span> live (CPU WASM) &nbsp;
+            <span style="color:#378ADD">&#9679;</span> live (active owner) &nbsp;
             <span style="color:#BA7517">&#9675;</span> GPU campaign &nbsp;
             <span style="color:#639922">&#8211;</span> N=k&middot;A&sup2;
         </div>
@@ -76,18 +76,15 @@ export function mountGenesisBurstPanel(harness) {
     comp.refs.sweep.addEventListener('click', () => sweep());
     comp.refs.clear.addEventListener('click', () => { points.length = 0; draw(); status.textContent = 'cleared'; });
 
-    function bridge() { return harness.bridge || harness; }
-
     function resetAndInject(A) {
-        const b = bridge();
-        try { b.setupScenario('empty'); } catch (e) { /* noop */ }
+        try { harness.setupScenario('empty'); } catch (e) { /* noop */ }
         try {
             harness.setToggle('wave_propagation', true);
             harness.setToggle('gauss_projection', true);
             harness.setToggle('genesis', true);
             harness.setToggle('langevin', true);
             harness.setToggle('dual_substrate', false);
-            if (typeof b.setLangevinParams === 'function') b.setLangevinParams(0.005, 0.02);
+            harness.setLangevinParams?.(0.005, 0.02);
         } catch (e) { /* noop */ }
         const L = harness.getLatticeSize?.() ?? 32;
         const mc = Math.round((L - 1) / 2);
@@ -99,12 +96,11 @@ export function mountGenesisBurstPanel(harness) {
         busy = true;
         const c = (typeof window !== 'undefined') ? window.__ftdCtx : null;
         const wasRunning = !!(c && c.running);
-        if (c) c.running = false;          // own the tick loop deterministically
+        if (c) c.running = false;
         try {
             resetAndInject(A);
-            const b = bridge();
             for (let t = 0; t < SETTLE_TICKS; t++) {
-                if (typeof b.tick === 'function') b.tick();
+                harness.tickScale0?.();
                 if (t % 20 === 0) {
                     status.textContent = `firing A=${A}… (tick ${t}/${SETTLE_TICKS})`;
                     await new Promise((r) => setTimeout(r, 0));

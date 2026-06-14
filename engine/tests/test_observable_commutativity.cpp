@@ -28,7 +28,7 @@
 // M must be non-commutative.
 //
 // Determinism anchor: the substrate update is deterministic (golden-tick hash
-// gate, test_render_bridge_golden.cpp, hash 0xcd957b601d47868a). Determinism
+// gate, test_render_bridge_golden.cpp, hash 0x56fa28acb5b9fe88 @ L=17). Determinism
 // is the precondition for HALF 1 (a fixed state yields read-order-independent,
 // repeatable values).
 // ============================================================================

@@ -7,6 +7,7 @@ scheduler, the diagnostics/telemetry path, the shared rAF coordinator, and the f
 **Companions:** [`SPEC_SCALE0_SCENARIO_ARCHITECTURE.md`](SPEC_SCALE0_SCENARIO_ARCHITECTURE.md)
 (what seeds the lattice), [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md)
 (what the loop ticks/reads). Perf history: [`AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md),
+[`AUDIT_SCALE0_CALLSTACK.md`](audits/AUDIT_SCALE0_CALLSTACK.md) (active-owner routing, 2026-06-13),
 [`SPEC_SCALE0_LATTICE_PERF.md`](SPEC_SCALE0_LATTICE_PERF.md), [`PLAN_SCALE0_SPARSE_TICK.md`](PLAN_SCALE0_SPARSE_TICK.md).
 
 **Path convention:** JS paths relative to `engine/web/js/`; `scale0/` = `scales/scale0/`. Every claim
@@ -75,8 +76,10 @@ toggle forces a repaint — then calls `viewportAdapter.render()`.
   recording, not a second clock — and is Scale 0 only; scales 1/2/4/5 keep the global slider.)
 - **Throttle** (`:23-24`): `maxTicksPerFrame` is `1` for L>48, `2` for L>32, else `wholeTicks` — bigger
   lattices run fewer ticks per frame to hold the frame budget. `ticksToRun = min(wholeTicks, max)`.
-- **Dual-bridge tick** (`:37-40`): tick the WASM/main bridge **unless** a JS flux-mock owns the physics
-  (`state.useFluxMock`); tick the mock **only when it is the source** (`tickMock = mock && useFluxMock`).
+- **Dual-bridge tick** (`tick.js` `runScale0PhysicsTicks`): tick the WASM/main bridge **unless**
+  `state.useFluxMock`; tick the mock **only when it owns physics**. Worker-backed mocks self-tick;
+  the main thread forwards `setRunning` and bumps `fieldDataVersion` from `frameCounter`. Shared by
+  `advanceSimulation` and `stepScale0`.
   (Enabling a *derived overlay* no longer starts the mock ticking — overlays sample whatever state the
   mock is in.)
 - **Dirty signals** (`:54-57`): `latticeNeedsUpload = true` every frame past the gate; `fieldDataVersion`
@@ -93,9 +96,10 @@ toggle forces a repaint — then calls `viewportAdapter.render()`.
 - **Cadence** (`:5-6`): `volUpdateInterval` = 6 (L>96) / 4 (L>64) / 3 (L>48) / 1 — and the whole
   function early-returns unless `state.latticeNeedsUpload && ctx.frameCount % volUpdateInterval === 0`.
   So at L=32 it uploads every frame; at L=97 every 6th.
-- **Active-bridge selector** (`:15-16`): reads from `state.fluxMock` when `state.useFluxMock`, else
-  `ctx.bridge` — sampling the wrong one shows stale/frozen data (the same bug class the flux-slice panel
-  hit pre-2026-04-26).
+- **Active-bridge selector** (`frame-sync.js`, `field-overlays.js`, panels): use
+  `getActiveScale0Bridge` / `getActiveScale0Capability` / `getActiveLatticeSize` from
+  `scale0/state/store.js` — not ad-hoc `(useFluxMock ? fluxMock : bridge)` ternaries. Sampling the
+  wrong owner shows stale/frozen data (the same bug class the flux-slice panel hit pre-2026-04-26).
 - **Uploads** (`:18-41`): the particle frame always; confinement strings, the flux **volume**, and the
   flux **slice** (every enabled axis of yz/xz/xy, packed into one update) when their overlays are on.
 - **Clear** (`:43`): `latticeNeedsUpload = false` after a successful upload (one-shot).
@@ -140,6 +144,17 @@ scheduler **spreads the work across frames under a fixed budget**, allocation-fr
 
 The canonical list of all overlay flags is `state/store.js` `FIELD_TOGGLE_KEYS` (36) — streamlines (E/B/
 flux), the 4 forces, the passthroughs, the derived group, and the 19 scalars above partition it.
+
+### 5.1 Overlay line appearance (visual, not physics)
+
+Streamlines and force-flow lines use WebGL `LineBasicMaterial` (~1 CSS pixel thick; `linewidth` is
+ignored in browsers). Integrator **stride** grows with lattice N (`streamline-integrator.js`) so large
+L trades curve fidelity for CPU budget. The amortized scheduler spreads heavy streamline jobs across
+frames (`OVERLAY_FRAME_BUDGET = 100`, `COST_STREAMLINE = 50`). Paused sims freeze streamline seeds
+(skip-unchanged gate). Viewport **must** stay lattice-aligned with the active bridge
+(`scenario-loader.js` calls `viewport.setLatticeSize` on load/resize); `_onResize` refreshes
+`devicePixelRatio` to avoid HiDPI blur. See
+[`audits/AUDIT_SCALE0_CALLSTACK.md`](audits/AUDIT_SCALE0_CALLSTACK.md) §Overlay line visual quality.
 
 ---
 
@@ -217,6 +232,13 @@ The Scale-0 runtime is coordinated by one state object (`store.js:66-87`) and it
 | `fieldNeedsUpdate` | toggle / force-style / scenario load (`store.js` setters) | overlay sweep | explicit overlay dirty (preempts a half-finished sweep) |
 | `anyFieldActive` | recomputed on any field toggle | — | short-circuits the overlay stage when nothing's on |
 | `useFluxMock` / `fluxMock` | scenario load (`scenario-loader.js`) | scenario switch / exit | which bridge the loop ticks + reads |
+
+**Active-owner helpers** (export from `store.js`; use instead of manual mock ternaries):
+
+- `getActiveScale0Bridge(ctx, state)`
+- `getActiveScale0Capability(ctx, state)`
+- `getActiveLatticeSize(ctx, state)`
+- `resolveActiveScale0BridgeFromWindow()` — panels without a `ctx` closure
 
 ---
 

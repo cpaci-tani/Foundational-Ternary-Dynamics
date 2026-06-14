@@ -1064,6 +1064,7 @@ export class Viewport {
         if (w === 0 || h === 0) return;
         this.camera.aspect = w / h;
         this.camera.updateProjectionMatrix();
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         this.renderer.setSize(w, h);
         // SceneCore resizes its composer (no-op when post-processing disabled).
         this._sceneCore?.onResize(w, h);

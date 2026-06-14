@@ -15,8 +15,10 @@
 
 import { SCALE0_TOGGLES } from '../../../../config/toggles.js';
 import { K_B } from '../../../../constants.js';
+import { getPhysicsHarness } from '../../../../physics/index.js';
 import { getEl } from '../dom.js';
 import { getFluxMock } from '../../controller.js';
+import { getScale0State, getActiveLatticeSize, getActiveScale0Bridge } from '../../state/store.js';
 
 let _wired = false;
 
@@ -30,8 +32,15 @@ let _wired = false;
  * updates the DOM + WasmBridge while the fluxMock keeps running with
  * its load-time state. This helper resolves the live mock per call.
  */
-function activeMockScale0() {
-    return getFluxMock()?.capabilities?.scale0 || null;
+function latticeN(ctx) {
+    return getActiveLatticeSize(ctx, getScale0State());
+}
+
+/** Mirror a harness write across WASM + fluxMock (load-time parity contract). */
+function dualHarness(ctx, fn) {
+    fn(getPhysicsHarness(ctx.bridge));
+    const mock = getFluxMock();
+    if (mock) fn(getPhysicsHarness(mock));
 }
 
 function wirePhysicsToggles(ctx) {
@@ -40,7 +49,7 @@ function wirePhysicsToggles(ctx) {
         if (!el) continue;
         el.addEventListener('change', () => {
             ctx.bridge.setToggle(toggleKey, el.checked);
-            activeMockScale0()?.setToggle(toggleKey, el.checked);
+            getFluxMock()?.capabilities?.scale0?.setToggle(toggleKey, el.checked);
             const row = el.closest('.toggle-row');
             if (row) row.classList.remove('scenario-override');
         });
@@ -55,7 +64,7 @@ function wirePhysicsToggles(ctx) {
     const resetBtn = getEl('btn-reset-physics-toggles');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            const mock = activeMockScale0();
+            const mock = getFluxMock()?.capabilities?.scale0;
             for (const [toggleKey, defaultValue, elId] of SCALE0_TOGGLES) {
                 ctx.bridge.setToggle(toggleKey, defaultValue);
                 mock?.setToggle(toggleKey, defaultValue);
@@ -100,13 +109,13 @@ function wireInjection(ctx, api) {
     }
 
     function clampCoord(value) {
-        const L = ctx.bridge.latticeSize || 32;
+        const L = latticeN(ctx);
         if (!Number.isFinite(value)) return 0;
         return Math.max(0, Math.min(L - 1, Math.round(value)));
     }
 
     function setCoordMax() {
-        const L = ctx.bridge.latticeSize || 32;
+        const L = latticeN(ctx);
         for (const id of ['inj-x', 'inj-y', 'inj-z']) {
             const el = getEl(id);
             if (el) el.max = String(L - 1);
@@ -135,30 +144,25 @@ function wireInjection(ctx, api) {
 
     getEl('btn-center')?.addEventListener('click', () => {
         setCoordMax();
-        const half = Math.floor(ctx.bridge.latticeSize / 2);
+        const half = Math.floor(latticeN(ctx) / 2);
         const x = getEl('inj-x'); if (x) x.value = half;
         const y = getEl('inj-y'); if (y) y.value = half;
         const z = getEl('inj-z'); if (z) z.value = half;
     });
 
-    // Mirror an injection action across both bridges. When useFluxMock is
-    // true the fluxMock owns the live physics state; visualization may
-    // read from either, so the user-clicked inject must hit both copies.
     function dualInject(action) {
-        action(ctx.bridge);
-        const mock = getFluxMock();
-        if (mock) action(mock);
+        dualHarness(ctx, action);
     }
 
     getEl('btn-random')?.addEventListener('click', () => {
         setCoordMax();
-        const L = ctx.bridge.latticeSize || 32;
+        const L = latticeN(ctx);
         const rand = () => 2 + Math.floor(Math.random() * (L - 4));
         const x = getEl('inj-x'); if (x) x.value = rand();
         const y = getEl('inj-y'); if (y) y.value = rand();
         const z = getEl('inj-z'); if (z) z.value = rand();
         const { x: px, y: py, z: pz, state } = getInjPos();
-        dualInject((b) => b.injectWavepacket(px, py, pz, state));
+        dualInject((h) => h.injectWavepacket(px, py, pz, state));
         api.setLatticeNeedsUpload();
     });
 
@@ -167,27 +171,29 @@ function wireInjection(ctx, api) {
         // Wavepacket injection: bare point particles have zero flux and are
         // immediately evaporated by the neighbourhood-energy check. A Gaussian
         // flux envelope lets the self-field stabilise.
-        dualInject((b) => b.injectWavepacket(x, y, z, state));
+        dualInject((h) => h.injectWavepacket(x, y, z, state));
         api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-wave')?.addEventListener('click', () => {
         const { x, y, z, state } = getInjPos();
-        dualInject((b) => b.injectWavepacket(x, y, z, state));
+        dualInject((h) => h.injectWavepacket(x, y, z, state));
         api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-flux')?.addEventListener('click', () => {
         const { x, y, z } = getInjPos();
-        const kb = (ctx.bridge.getParam && ctx.bridge.getParam('kb')) || K_B;
-        dualInject((b) => b.injectFlux(x, y, z, kb * 0.8, 0, 0));
+        const active = getActiveScale0Bridge(ctx, getScale0State()) ?? ctx.bridge;
+        const kb = getPhysicsHarness(active).getParam?.('kb') || K_B;
+        dualInject((h) => h.injectFlux(x, y, z, kb * 0.8, 0, 0));
         api.setLatticeNeedsUpload();
     });
 
     getEl('btn-inject-pair')?.addEventListener('click', () => {
         const { x, y, z } = getInjPos();
-        const kb = (ctx.bridge.getParam && ctx.bridge.getParam('kb')) || K_B;
-        dualInject((b) => b.createEntangledPair(x, y, z, kb, 0, 0));
+        const active = getActiveScale0Bridge(ctx, getScale0State()) ?? ctx.bridge;
+        const kb = getPhysicsHarness(active).getParam?.('kb') || K_B;
+        dualInject((h) => h.createEntangledPair(x, y, z, kb, 0, 0));
         api.setLatticeNeedsUpload();
     });
 }
@@ -229,25 +235,23 @@ function wireParameterSliders(ctx) {
 
 function wireFieldActions(ctx, api) {
     getEl('btn-clear-field')?.addEventListener('click', () => {
-        if (ctx.bridge.clearField) {
-            ctx.bridge.clearField();
-        } else {
-            ctx.bridge.reset(ctx.bridge.latticeSize);
-            ctx.viewport.setLatticeSize(ctx.bridge.latticeSize);
-            ctx.clearCharts?.();
-        }
-        // Mirror to fluxMock — same reasoning as inject buttons above.
-        const mock = getFluxMock();
-        if (mock?.clearField) mock.clearField();
+        const L = latticeN(ctx);
+        dualHarness(ctx, (h) => {
+            if (typeof h.clearField === 'function') {
+                h.clearField();
+            } else {
+                h.reset();
+            }
+        });
+        ctx.viewport.setLatticeSize(L);
+        ctx.clearCharts?.();
         api.setLatticeNeedsUpload();
     });
 
     getEl('btn-random-flux')?.addEventListener('click', () => {
-        if (ctx.bridge.seedRandomFlux) {
-            ctx.bridge.seedRandomFlux();
-        }
-        const mock = getFluxMock();
-        if (mock?.seedRandomFlux) mock.seedRandomFlux();
+        dualHarness(ctx, (h) => {
+            h.seedRandomFlux?.();
+        });
         api.setLatticeNeedsUpload();
     });
 }
@@ -329,7 +333,7 @@ function wireFluxVolume(ctx, api) {
 }
 
 function wireSelection(ctx) {
-    const L = () => ctx.bridge?.latticeSize || 32;
+    const L = () => latticeN(ctx);
     const clamp = v => Math.max(0, Math.min(L() - 1, Math.round(v)));
 
     function getSelPos() {

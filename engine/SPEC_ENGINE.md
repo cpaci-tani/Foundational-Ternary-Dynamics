@@ -24,7 +24,7 @@ behavior changed.
 A 16-commit audit of the engine's lifecycle, callstack, and toggle
 surface (branch `flawless-engine-2026-06-01`, HEAD `09eaa0c1`).
 **Documentation + verification + two real-bug fixes only; golden hash
-`0xcd957b601d47868a` unchanged; zero behavioral drift.**
+`0x56fa28acb5b9fe88` @ L=17 unchanged since 2026-06-11 determinism re-pin; zero behavioral drift.**
 
 - **Verification harness.** New web specs `lifecycle-harness` (per-scale
   mount→unmount round-trip leak net), `reconcile-claims` (re-asserts four
@@ -142,7 +142,8 @@ The engine was decomposed across 8 phases following the plan in
 audit observation that 5 specific files had accumulated structural
 bloat. Bit-exact physics preservation enforced by a 100-tick
 deterministic byte-hash gate (`test_render_bridge_golden`, hash
-`0xcd957b601d47868a`) that held across every commit.
+`0x56fa28acb5b9fe88` @ L=17, re-pinned 2026-06-11 after OpenMP
+determinism fixes) that held across every commit since.
 
 **Cumulative LOC reductions:**
 
