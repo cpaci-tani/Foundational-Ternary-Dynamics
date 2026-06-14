@@ -137,105 +137,83 @@ does not. The diagnostic qE arm responds transversely but remains imposed. No
 alpha, Thomson cross-section, or QED amplitude claim is promoted.
 
 ## Thomson flux-excess discriminator (FTD-0289; 2026-06-13, locked/run)
-
 | FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
 | **FTD-0289** Thomson flux-excess discriminator | `preregister-thomson-flux-excess-v1` | `acb4005a` | engine artifact `engine/tests/campaign_thomson_flux_excess.cpp` SHA256 `1f562ac9e9e0f3fdeb72bce00fda2c00f70117271439ef27d418d05c29ec7589` | build target `campaign_thomson_flux_excess`; run `ctest --test-dir engine/build -C Release -R "^thomson_flux_excess$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_FLUX_EXCESS_v1.md`](ANALYSIS_THOMSON_FLUX_EXCESS_v1.md): `NATIVE_EMERGENT_EXCESS_FLUX_DEFLECTION_DETECTED` |
-
 This campaign follows FTD-0288. It subtracts the free propagating wave and the
 charge-only field from the charge-plus-beam run. Locked and legacy residuals
 stay at machine noise; the native emergent flux-gradient path leaves an
 above-gate residual. The frozen transverse-centroid subtype does not fire. No
 alpha, Thomson cross-section, or QED amplitude claim is promoted.
-
 ## Thomson radiation shell meter (FTD-0290; 2026-06-13, locked/run)
-
-| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
-|---|---|---|---|---|---|---|
 | **FTD-0290** Thomson radiation shell meter | `preregister-thomson-radiation-shells-v1` | `8ccfee7b` | engine artifact `engine/tests/campaign_thomson_radiation_shells.cpp` SHA256 `a47de9c1bb52f92a6dc35471f4eba516fb76acaf9b66abd3de44dd6431d67edf` | build target `campaign_thomson_radiation_shells`; run `ctest --test-dir engine/build -C Release -R "^thomson_radiation_shells$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md`](ANALYSIS_THOMSON_RADIATION_SHELLS_v1.md): `NO_BASELINE_SUBTRACTED_OUTWARD_POWER` |
-
 This campaign follows FTD-0289. It computes `S_res = (-W_res) × curl(J_res)`
 from the baseline-subtracted residual field and sums outward radial Poynting
 power on fixed shells `{5,7,9,11,13,15}`. Locked and legacy shell powers are
 machine-zero; the native emergent trace remains below the frozen gate. No
 radiation, Thomson cross-section, QED amplitude, or alpha claim is promoted.
-
 ## Thomson native finite-volume continuity meter (FTD-0291; 2026-06-13, locked/run)
-
-| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
-|---|---|---|---|---|---|---|
 | **FTD-0291** Thomson native finite-volume continuity meter | `preregister-thomson-native-continuity-v1` | `47ccbee4` | engine artifact `engine/tests/campaign_thomson_native_continuity.cpp` SHA256 `357a2a2b4bd7fb8d8604a4c30490f68ab9a404e8574ed6e55b034056a5b3f3e8` | build target `campaign_thomson_native_continuity`; run `ctest --test-dir engine/build -C Release -R "^thomson_native_continuity$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_NATIVE_CONTINUITY_v1.md`](ANALYSIS_THOMSON_NATIVE_CONTINUITY_v1.md): `NATIVE_GRAPH_CONTINUITY_CANDIDATE_INVALIDATED` |
-
 This campaign follows FTD-0290. It replaces the borrowed Poynting shell meter
 with an 18-neighbor graph-energy finite-volume balance candidate. Repeat and
 locked-linear residual controls pass, but the candidate current fails the
 free-wave balance gate, so no native radiation, source, Thomson cross-section,
 QED amplitude, or alpha claim is promoted.
-
 ## Source-free discrete tick energy invariant v1 (FTD-0292; 2026-06-13, locked/run)
-
-| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
-|---|---|---|---|---|---|---|
 | **FTD-0292** Source-free discrete tick energy invariant v1 | `preregister-thomson-tick-invariant-v1` | `87f0cda2` | engine artifact `engine/tests/campaign_thomson_tick_invariant.cpp` SHA256 `5e6e2b77796d8a91f02bc7b2a85c9c862dd1f4e91b832be19ae5d5b41c455e16` | build target `campaign_thomson_tick_invariant`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_invariant$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_INVARIANT_v1.md`](ANALYSIS_THOMSON_TICK_INVARIANT_v1.md): `DISCRETE_TICK_INVARIANT_INVALIDATED` |
-
 This campaign follows FTD-0291. It tests the modified energy of the source-free
 tick with ordinary double accumulation. The modified energy stayed much tighter
 than naive energy but missed the frozen relative gate; v1 is a numeric-gate
 invalidation, not a promoted theorem.
-
 ## Source-free discrete tick energy invariant v2 (FTD-0293; 2026-06-13, locked/run)
-
-| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
-|---|---|---|---|---|---|---|
 | **FTD-0293** Source-free discrete tick energy invariant v2 | `preregister-thomson-tick-invariant-v2` | `83863d5e` | engine artifact `engine/tests/campaign_thomson_tick_invariant_v2.cpp` SHA256 `c362d35e1a2c61216982bb7ae2c8cf4ee916e59f1e3bcc77a62cee993caa8b5f` | build target `campaign_thomson_tick_invariant_v2`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_invariant_v2$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_INVARIANT_v2.md`](ANALYSIS_THOMSON_TICK_INVARIANT_v2.md): `DISCRETE_TICK_MODIFIED_ENERGY_CONFIRMED` |
-
 This campaign keeps the v1 update, initial condition, invariant formula, and
 gates, but measures with long-double Kahan accumulation. It confirms the
 source-free modified tick energy while the naive continuum energy visibly
 drifts. No radiation, Thomson cross-section, QED amplitude, or alpha claim is
 promoted.
-
 ## Source-free discrete tick local continuity v1 (FTD-0294; 2026-06-13, locked/run)
-
-| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
-|---|---|---|---|---|---|---|
 | **FTD-0294** Source-free discrete tick local continuity v1 | `preregister-thomson-tick-local-continuity-v1` | `7ebc236e` | engine artifact `engine/tests/campaign_thomson_tick_local_continuity.cpp` SHA256 `6b137c83016b9aefb10d47d22df0094487ab761c06e167870a209004ada99aa3` | build target `campaign_thomson_tick_local_continuity`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_local_continuity$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md`](ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v1.md): `SOURCE_FREE_LOCAL_TICK_CONTINUITY_INVALIDATED` |
-
 This campaign tests the exact source-free local tick density/current. Absolute
 balance closes at roundoff, but the exchange-relative denominator is
 degenerate on quiet exchanges, so v1 is not promoted.
-
 ## Source-free discrete tick local continuity v2 (FTD-0295; 2026-06-13, locked/run)
-
-| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
-|---|---|---|---|---|---|---|
 | **FTD-0295** Source-free discrete tick local continuity v2 | `preregister-thomson-tick-local-continuity-v2` | `1d4a29a5` | engine artifact `engine/tests/campaign_thomson_tick_local_continuity_v2.cpp` SHA256 `9b48ca418e784ba98e35708563214b22c78cf2580f880fda9fa923cef4c7a804` | build target `campaign_thomson_tick_local_continuity_v2`; run `ctest --test-dir engine/build -C Release -R "^thomson_tick_local_continuity_v2$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v2.md`](ANALYSIS_THOMSON_TICK_LOCAL_CONTINUITY_v2.md): `SOURCE_FREE_LOCAL_TICK_CONTINUITY_CONFIRMED` |
-
 This campaign keeps the v1 density/current unchanged and gates the relative
 residual against finite-volume energy scale. It confirms source-free local
 tick continuity. Coupled source/work terms remain the next open target.
-
 ## Fixed-charge coupled tick source/work continuity (FTD-0296; 2026-06-13, locked/run)
-
-| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
-|---|---|---|---|---|---|---|
 | **FTD-0296** Fixed-charge coupled tick source/work continuity | `preregister-thomson-coupled-source-work-v1` | `5d88062e` | engine artifact `engine/tests/campaign_thomson_coupled_source_work.cpp` SHA256 `95747a57895973577e0054d075752b79e74173507097652e31498b125d7ec88e` | build target `campaign_thomson_coupled_source_work`; run `ctest --test-dir engine/build -C Release -R "^thomson_coupled_source_work$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md`](ANALYSIS_THOMSON_COUPLED_SOURCE_WORK_v1.md): `FIXED_CHARGE_SOURCE_WORK_CONTINUITY_CONFIRMED` |
-
 This campaign adds the engine's additive state-flux source term with one
 locked charge and movement off. The native source/work term closes the
 finite-volume balance at roundoff. Moving-source recoil accounting remains the
 next open target.
-
 ## Thomson moving-recoil source/work accounting (FTD-0297; 2026-06-13, locked/run)
-
-| FTD ID | Pre-reg tag | Commit | Script / engine artifact | Flags | Output dir | Analysis doc |
-|---|---|---|---|---|---|---|
 | **FTD-0297** Thomson moving-recoil source/work accounting | `preregister-thomson-moving-recoil-accounting-v1` | `0ba544f5` | engine artifact `engine/tests/campaign_thomson_moving_recoil_accounting.cpp` SHA256 `aae604ea897943102273f89b819735283804474d26a2a531f769835dc46f5c89` | build target `campaign_thomson_moving_recoil_accounting`; run `ctest --test-dir engine/build -C Release -R "^thomson_moving_recoil_accounting$" --output-on-failure` | console/CTest output | [`ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md`](ANALYSIS_THOMSON_MOVING_RECOIL_ACCOUNTING_v1.md): `SUBVOXEL_RECOIL_ACCOUNTED_BY_ADDITIVE_SOURCE_WORK` |
-
 This campaign unlocks the charge in native legacy and native emergent modes.
 The emergent mode recoils deterministically, but the fixed 200-tick protocol
 has zero integer transport events, so the additive source/work balance still
 closes at roundoff. Integer transport work remains open.
+## Halo-exponent forcedness audit (FTD-0300; 2026-06-13, locked/run)
+| **FTD-0300** halo-exponent forcedness | `preregister-halo-forcedness-v1` | `168148e0` | engine `engine/tests/campaign_halo_forcedness.cpp` SHA256 `84f7c407bbdc3bd8e9530235f828dec68c90a9b48f3a39896635609ae92b188e`; analyzer `scripts/exploration/analyze_halo_forcedness.py` SHA256 `44f09ac4d01b3be40359266bf56bb77526524499e85d165316d60762c8c5ad76`; wrapper `scripts/exploration/run_halo_constant_sweeps.py` SHA256 `384bd0481dd332c3e339f4eed8dcbba1be392b85e7d8076a899d8f89abeee896` | GPU `engine/build_wsl`; `--arm=det --Ls=64,96,128,160 --selective=on,off --toggles=minimal --ticks=1500` | `engine/results/halo_forcedness/halo_forcedness_v1.csv` | [`ANALYSIS_HALO_FORCEDNESS_v1.md`](ANALYSIS_HALO_FORCEDNESS_v1.md): `INDETERMINATE (frozen); SPARC boundary` |
+Gate (Step 1) of the dark-matter / SPARC rotation-curve program. The lossless dark-matter
+halo (`selective_damping = ON`, §4.2) **box-fills** the periodic lattice (`r_eff ≈ L/2`)
+yet its windowed exponent **converges to −1.25** (the doc's −0.69 is an L=64 transient,
+**falsified**) → R1 **INDETERMINATE** (box-fill ⇒ not localized-forced; convergent ⇒ not
+drift-tuned). The damped Coulomb near-field (`selective OFF`) is the only forced, localized
+self-field (−2.15, localized, R0 PASS). **SPARC not founded** (box-fill ⇒ no localized
+scale). Golden `0x56fa28acb5b9fe88` green; observation-only; zero promotions.
+## Proton-stability forcedness audit (FTD-0301; 2026-06-13, locked/run)
+| **FTD-0301** proton-stability forcedness | `preregister-proton-stability-v1` | `bb99a20d` | engine `engine/tests/campaign_proton_stability.cpp` SHA256 `56fe09548e98787e66b988161b4e57e66f42aa235c8ac4ea7930c8009058bd48`; analyzer `scripts/exploration/analyze_proton_stability.py` SHA256 `eb076a16c4033cd869ac4bdfd08e49862d3a3a01a4b13e89e41229529786a8e0` | CPU `engine/build/Release`; cold `--heat=none --radius=1,2 --genesis=on --seeds=16 --ticks=2000`; heated `--heat=inject --genesis=off` and `--heat=langevin --dual=off --heat-T=0.3,0.8` | `engine/results/proton_stability/proton_stability_ror_*.csv` | [`ANALYSIS_PROTON_STABILITY_v1.md`](ANALYSIS_PROTON_STABILITY_v1.md): `UNFORCED-METASTABLE [BOUNDARY] (frozen)` |
+The "micro" pier candidate after FTD-0300. `proof_complete_sm.py:460–471` tags `τ_p = ∞`
+`[THEOREM]`; this audit finds it **unforced**. The triad lock locks only same-sign triples
+(`transmutation_phases.cpp:148,153`) ⇒ cannot fire on the mixed-sign proton (`uud`); the
+proton is metastable, never lock-protected (`max locked = 0`), evaporates spontaneously
+(12.5% r1 / 43.75% r2), and FTD's own weak channel transmutes it (`uud→uuu`, **46/48**
+heated weak=on, control 0/48) while violating its only exact charge Σs (**47/64** decays).
+Frozen verdict **UNFORCED-METASTABLE [BOUNDARY]**; corrects the `proof_complete_sm.py`
+`τ_p = ∞` tag `[THEOREM]` → `[SELECTION]`. Golden `0x56fa28acb5b9fe88` green;
+observation-only; zero other promotions.
 
 ## FQCR (Finite Quarter-Conjugacy Recurrence) Model IV uniqueness scan (2026-05-06; scan queued)
 
