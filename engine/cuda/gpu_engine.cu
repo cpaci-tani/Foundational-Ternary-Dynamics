@@ -57,7 +57,7 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
                              bool emergent_forces,
                              bool gravity, bool lorentz_force, double dt);
-    void launch_phase_movement(GpuBuffers& bufs, double dt);
+    void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary);
     // Dual-substrate launchers
     void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling);
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
@@ -343,7 +343,7 @@ void GpuEngine::gpu_phase_forces() {
 }
 
 void GpuEngine::gpu_phase_movement() {
-    kernels::launch_phase_movement(bufs_, dt_);
+    kernels::launch_phase_movement(bufs_, dt_, toggles.reflective_boundary);
 }
 
 // ---------- Extended Physics Sub-Phases ----------

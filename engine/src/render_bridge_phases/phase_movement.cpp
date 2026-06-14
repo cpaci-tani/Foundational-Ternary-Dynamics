@@ -46,6 +46,48 @@
 
 namespace ftd {
 
+namespace {
+
+enum class BoundaryOutcome { Proceed, Handled };
+
+// When reflective_boundary is OFF, a particle that would cross a face is
+// removed (energy exhausts into the void — no toroidal wrap). When ON, it
+// mirror-bounces at the face like an elastic wall collision.
+BoundaryOutcome handle_face_crossing(RenderBridge& rb, Voxel& v, int dx, int dy, int dz, int i) {
+  auto c = rb.lattice().coord(i);
+  const int nx = c.x + dx;
+  const int ny = c.y + dy;
+  const int nz = c.z + dz;
+  const int L = rb.lattice().size();
+
+  const bool crosses = (nx < 0 || nx >= L || ny < 0 || ny >= L || nz < 0 || nz >= L);
+  if (!crosses) return BoundaryOutcome::Proceed;
+
+  if (rb.toggles.reflective_boundary) {
+    if (dx != 0) v.velocity.x *= -1.0;
+    if (dy != 0) v.velocity.y *= -1.0;
+    if (dz != 0) v.velocity.z *= -1.0;
+    v.remainder = {};
+    return BoundaryOutcome::Handled;
+  }
+
+  rb.set_state(i, 0);
+  v.velocity = {};
+  v.remainder = {};
+  v.pair_id = -1;
+  v.particle_id = -1;
+  v.spin = 0;
+  v.color = 0;
+  v.flux = {};
+  if (rb.toggles.dual_substrate) {
+    v.flux_L = {};
+    v.flux_R = {};
+  }
+  return BoundaryOutcome::Handled;
+}
+
+}  // namespace
+
 void phase_movement_main_loop(RenderBridge& rb) {
   const int N = static_cast<int>(rb.lattice_.total_sites());
   std::fill(rb.moved_.begin(), rb.moved_.end(), 0);
@@ -100,6 +142,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
       }
 
       if (dx == 0 && dy == 0 && dz == 0) continue;
+
+      if (handle_face_crossing(rb, v, dx, dy, dz, i) == BoundaryOutcome::Handled) continue;
 
       int target = rb.lattice_.index(c.x + dx, c.y + dy, c.z + dz);
       auto &t = rb.voxels_[target];
@@ -208,6 +252,8 @@ void phase_movement_main_loop(RenderBridge& rb) {
       else if (v.remainder.z <= -1.0) { dz = -1; v.remainder.z += 1.0; }
 
       if (dx == 0 && dy == 0 && dz == 0) continue;
+
+      if (handle_face_crossing(rb, v, dx, dy, dz, i) == BoundaryOutcome::Handled) continue;
 
       int target = rb.lattice_.index(c.x + dx, c.y + dy, c.z + dz);
       auto &t = rb.voxels_[target];

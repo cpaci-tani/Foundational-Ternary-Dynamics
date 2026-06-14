@@ -68,6 +68,14 @@ bool dispatch_scenario(RenderBridge& rb, const std::string& name) {
     // into the next stochastic scenario called in the same process.
     detail::reset_scenario_rng();
 
+    if (name == "empty") {
+        // Scenario ID: empty
+        // Physical Purpose: Serves as the baseline state of the lattice with no initial particles or fields.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: The lattice remains completely quiet and empty.
+        return true;
+    }
+
     // Try each group in order; first matching prefix wins.
     if (setup_flux_scenario(rb, name))     return true;
     if (setup_light_scenario(rb, name))    return true;
