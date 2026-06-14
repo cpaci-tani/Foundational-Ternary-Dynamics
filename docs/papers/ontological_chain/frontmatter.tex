@@ -1,3 +1,76 @@
-% front matter -- filled in Task 3 (scope, precedence, three-register, rule-key)
-\noindent\textit{Front matter pending.}
-\bigskip
+% =============================================================================
+% frontmatter.tex -- scope, precedence, how-to-read, three-register table, legend
+% =============================================================================
+\chapter*{How to Read This Document}
+\addcontentsline{toc}{chapter}{How to Read This Document}
+\markboth{How to Read This Document}{How to Read This Document}
+
+\noindent
+This document maps the complete six-layer ontological chain of Foundational
+Ternary Dynamics (FTD)---
+\[
+  \textsc{Ontology} \;>\; \textsc{Logic} \;>\; \textsc{Mathematics}
+  \;>\; \textsc{Philosophy} \;>\; \textsc{Physics} \;>\; \textsc{Science}
+\]
+---in the order the constitution declares it (\ftdid{0254}). It is a
+\etag{syn} document: it re-states existing canonical claims at their canonical
+tags and \emph{introduces no new mathematics}. Its purpose is to be read
+\emph{map-first}: an external reader should be able to take in the whole chain
+from the Master Chain DAG (Figure~\ref{fig:masterdag}) and then walk each layer
+to see the one move it makes and exactly how far that move is established.
+
+\paragraph{The reading discipline.} Each layer is \emph{constructed from} the
+layer before it and \emph{accountable to} the layer after it: mathematics is
+built on the ontology and logic that precede it; physics must answer to the
+science (measurement) that follows it. Every load-bearing claim below carries an
+epistemic tag and, where one exists, its provenance identifier (\ftdid{NNNN}),
+so the claim can be traced back into the project's ledgers. The tags are where
+the honesty lives; read them first.
+
+\begin{conditionalbox}[The precedence rule]
+Where this document disagrees with the \textsc{ledger}
+(\texttt{LEDGER.md}), the constitution (\texttt{SPEC\_FTD\_FRAMEWORK\_V1.md}), or
+the algebraic spine (\texttt{SPEC\_ALGEBRAIC\_SPINE.md}) on any tag or value,
+\textbf{those documents are correct and this one has a bug}---please file it.
+The ordering is \textsc{ledger} $>$ constitution $>$ this document.
+\end{conditionalbox}
+
+\paragraph{How epistemic status is shown.} Status is carried \emph{without
+colour}, by rule style alone, so it survives grayscale and monochrome print. A
+heavy rule is \textsc{forced}; a thin rule is \textsc{conditional}; a dashed
+rule is \textsc{conjectural}; a double rule is a \textsc{boundary}---a mapped
+wall or an open kernel. The same vocabulary governs the DAG: a double-ringed
+node is an axiom or a framework declaration, a solid box is theorem-grade, a
+dashed box is below theorem grade, and a double-ruled box is a boundary.
+
+\rulekeylegend
+
+\paragraph{The three registers.} FTD separates three kinds of foundational
+input. Keeping them apart is what lets the framework be honest about what is
+derived and what is chosen:
+
+\begingroup
+\renewcommand{\arraystretch}{1.35}
+\begin{center}
+\begin{tabular}{@{}>{\raggedright}p{0.27\textwidth} c >{\raggedright\arraybackslash}p{0.45\textwidth}@{}}
+\toprule
+\textbf{Register} & \textbf{Tag class} & \textbf{Function} \\
+\midrule
+Postulates P1--P5 & \etag{ax} &
+  Generative. Discrete space, discrete time, ternary states ($J$-primary),
+  Moore locality, determinism. Frozen; machine-checked. \\
+Framework commitments\newline FC-0, FC-1, FC-2 & \etag{ax}\,(class) &
+  Model-fixing declarations. Where a theorem proves a fork is open, a commitment
+  picks the branch---the theorem proves the fork, the commitment picks the side.
+  Not derivations. (\ftdid{0254}, \ftdid{0255}, \ftdid{0256}.) \\
+Calibrations\newline ($a_{\mathrm{phys}}\!\equiv\!\ell_P$, $M_{\mathrm{REST}}\!=\!m_e$, $t_{\mathrm{phys}}$) & declared &
+  Unit-fixing. Theorem-enforced as non-derivable (\ftdid{0059}, \ftdid{0096}).
+  Dimensionless predictions are calibration-invariant; dimensional ones are
+  calibration-conditional. \\
+\bottomrule
+\end{tabular}
+\end{center}
+\endgroup
+
+\noindent
+With the registers in hand and the DAG in view, the chain reads top to bottom.
