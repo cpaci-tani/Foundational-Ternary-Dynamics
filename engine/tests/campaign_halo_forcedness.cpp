@@ -1,6 +1,6 @@
 /**
  * @file campaign_halo_forcedness.cpp
- * @brief FTD-0290: is the single-particle self-field HALO EXPONENT forced by the
+ * @brief FTD-0300: is the single-particle self-field HALO EXPONENT forced by the
  *        dynamics, or tuned by engine calibration constants?
  *
  * The engine's self-field halo flux falls as |J|(r) ~ r^p (the canonical GPU
