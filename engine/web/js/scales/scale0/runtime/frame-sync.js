@@ -1,3 +1,5 @@
+import { getActiveScale0Bridge, getActiveScale0Capability } from '../state/store.js';
+
 const _fluxSlicePlanes = [];
 
 export function syncRenderableData(ctx, state, viewportAdapter) {
@@ -5,15 +7,8 @@ export function syncRenderableData(ctx, state, viewportAdapter) {
     const volUpdateInterval = latticeSize > 96 ? 6 : (latticeSize > 64 ? 4 : (latticeSize > 48 ? 3 : 1));
     if (!state.latticeNeedsUpload || ctx.frameCount % volUpdateInterval !== 0) return latticeSize;
 
-    const mainScale0 = ctx.bridge.capabilities.scale0;
-    const mockScale0 = state.fluxMock?.capabilities?.scale0 || null;
-    // Active physics owner — when state.useFluxMock is true the mock is
-    // the source being ticked (see runtime/tick.js::advanceSimulation), so
-    // every read here must prefer the mock. Sampling ctx.bridge in mock
-    // mode silently shows stale/frozen data — same bug class as the
-    // flux-slice panel had before its 2026-04-26 fix.
-    const activeBridge = (state.useFluxMock && state.fluxMock) ? state.fluxMock : ctx.bridge;
-    const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : mainScale0;
+    const activeBridge = getActiveScale0Bridge(ctx, state);
+    const activeScale0 = getActiveScale0Capability(ctx, state) ?? ctx.bridge.capabilities.scale0;
 
     let particleData = activeScale0.getScale0ParticleFrame();
     viewportAdapter.applyParticleFrame(particleData);

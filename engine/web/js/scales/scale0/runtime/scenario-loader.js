@@ -357,7 +357,6 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
         fluxMock = makeFluxMock(latticeSize, scenario.id, ctx.bridge);
         fluxMock.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenario.id));
         fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenario.id));
-        fluxMock.capabilities.scale0.setupScenario(scenario.id);
     }
 
     applyToggleDefaults(ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0 ?? null, scenario.id);
@@ -480,7 +479,6 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
         fluxMock = makeFluxMock(newSize, scenarioId, bridge);
         fluxMock.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
         fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
-        fluxMock.capabilities.scale0.setupScenario(scenarioId);
     }
 
     for (const [key, , elId] of DEFAULT_TOGGLES) {

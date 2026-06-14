@@ -8,8 +8,7 @@
  * and replaced with an early `return false` when the prefix does not
  * match, plus `return true` at the tail to signal handled.
  *
- * Call pattern: `setupS0SeedScenario.call(mockBridge, name, ctx)`
- * where ctx = { N, mid, midF } are the precomputed lattice parameters.
+ * Call pattern: `setupS0SeedScenario(name, harness, ctx)`
  * Returns true if the scenario was handled, false otherwise.
  */
 
@@ -22,29 +21,16 @@ import {
     injectTriad,
 } from './_helpers.js';
 
-function makeBridgeHarness(bridge) {
-    return {
-        bridge,
-        setToggle: (key, value) => bridge.setToggle?.(key, value),
-        injectFlux: (x, y, z, fx, fy, fz) => bridge._injectFlux?.(x, y, z, fx, fy, fz),
-        injectWaveVel: (x, y, z, vx, vy, vz) => bridge._injectWaveVel?.(x, y, z, vx, vy, vz),
-        injectParticle: (x, y, z, state) => bridge.injectParticle?.(x, y, z, state),
-    };
-}
-
 /**
  * @param {string} name - scenario identifier
- * @param {PhysicsHarness|{N:number, mid:number, midF:number}} harnessOrCtx
- * @param {{N:number, mid:number, midF:number}=} maybeCtx - precomputed lattice params
+ * @param {PhysicsHarness} harness - physics harness instance
+ * @param {object} ctx - precomputed lattice params from index.js
  * @returns {boolean} true if handled
  */
-export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
+export function setupS0SeedScenario(name, harness, ctx) {
     if (!name.startsWith('s0-seed-')) return false;
-    const harness = maybeCtx ? harnessOrCtx : makeBridgeHarness(this);
-    const ctx = maybeCtx ?? harnessOrCtx;
-    const bridge = harness.bridge ?? this;
+    harness.initFluxGrid?.();
     const { N, midF, vox, sigma: sig } = ctx;
-            bridge._initFluxGrid();
             const mc = Math.round(midF);
 
             switch (name) {
@@ -232,6 +218,13 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     harness.injectFlux(mc, mc, mc, 40.0 * K_GENESIS, 0, 0);
                     break;
                 }
+                case 's0-seed-thermal-ignition': {
+                    // WASM/C++ canonical body (s0_seed.cpp). JS mock path: hot
+                    // center voxel + Langevin toggles applied by scenario-registry
+                    // load() after setupScenario. No separate geometry here.
+                    harness.injectFlux(mc, mc, mc, 8.0 * K_GENESIS, 0, 0);
+                    break;
+                }
                 case 's0-seed-emergent-ic1-diagonal-viz': {
                     const A_dv = 20.0 * K_GENESIS / Math.sqrt(3);
                     harness.injectFlux(mc, mc, mc, A_dv, A_dv, A_dv);
@@ -371,15 +364,15 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                             const state = (j === 0) ? +1 : -1;
                             const px = Math.round(mc + precursorR * dirX + side * tanX);
                             const py = Math.round(mc + precursorR * dirY + side * tanY);
-                            injectDressedParticle(harness, px, py, mc, state,
-                                state, ((k + j) % 3) + 1, 1.6, K_B * 0.7, false);
-                            const list = harness.bridge?._particles;
-                            const p = list ? list[list.length - 1] : null;
-                            if (p) {
-                                p.vx = -dirX * precursorSpeed;
-                                p.vy = -dirY * precursorSpeed;
-                                p.vz = 0;
-                            }
+                            injectParticleFull(harness, px, py, mc, state, {
+                                spin: state,
+                                color: ((k + j) % 3) + 1,
+                                locked: false,
+                                vx: -dirX * precursorSpeed,
+                                vy: -dirY * precursorSpeed,
+                                vz: 0,
+                            });
+                            injectRadialEnvelope(harness, px, py, mc, state > 0 ? 1 : -1, 1.6, K_B * 0.7);
                         }
                     }
 
@@ -432,10 +425,10 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                         case 's0-seed-bottom-quark':  charge=-1; color=2; ampBoost=1.4;  break;
                         case 's0-seed-top-quark':     charge=+1; color=3; ampBoost=2.5;  break;
                     }
-                    harness.injectParticle(mc, mc, mc, charge);
-                    const lastQ = harness.bridge._particles[harness.bridge._particles.length - 1];
-                    lastQ.color = color;
-                    lastQ.spin = (charge > 0) ? +1 : -1;
+                    harness.injectParticle(mc, mc, mc, charge, {
+                        color,
+                        spin: (charge > 0) ? +1 : -1,
+                    });
 
                     // Narrow Gaussian envelope — smaller than a lepton's
                     // to suggest the "point-like" quark character. Amplitude
@@ -582,14 +575,10 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     const half = Math.floor(aSep / 2);
 
                     // Electron on left, moving right.
-                    harness.injectParticle(mc - half, mc, mc, -1);
-                    const eP = harness.bridge._particles[harness.bridge._particles.length - 1];
-                    eP.vx = +0.3 * C_SPEED;
+                    harness.injectParticle(mc - half, mc, mc, -1, { vx: +0.3 * C_SPEED });
 
                     // Positron on right, moving left.
-                    harness.injectParticle(mc + half, mc, mc, +1);
-                    const pP = harness.bridge._particles[harness.bridge._particles.length - 1];
-                    pP.vx = -0.3 * C_SPEED;
+                    harness.injectParticle(mc + half, mc, mc, +1, { vx: -0.3 * C_SPEED });
 
                     // Dress each with a small flux envelope so they are
                     // visible as lepton-like lumps before collision.
@@ -607,18 +596,16 @@ export function setupS0SeedScenario(name, harnessOrCtx, maybeCtx = null) {
                     for (const dz of [-qOffset, qOffset]) {
                         const charge = (quarkIndex % 2 === 0) ? +1 : -1;
                         const color = (quarkIndex % 3) + 1; // R=1, G=2, B=3
-                        harness.injectParticle(mc + dx, mc + dy, mc + dz, charge);
-                        const q = harness.bridge._particles[harness.bridge._particles.length - 1];
-                        q.color = color;
-                        q.spin = (charge > 0) ? +1 : -1;
-
-                        // High thermal random velocity, speed = 0.5 * C_SPEED
                         const theta = Math.random() * Math.PI * 2;
                         const phi = Math.acos(Math.random() * 2 - 1);
                         const speed = 0.5 * C_SPEED;
-                        q.vx = speed * Math.sin(phi) * Math.cos(theta);
-                        q.vy = speed * Math.sin(phi) * Math.sin(theta);
-                        q.vz = speed * Math.cos(phi);
+                        harness.injectParticle(mc + dx, mc + dy, mc + dz, charge, {
+                            color,
+                            spin: (charge > 0) ? +1 : -1,
+                            vx: speed * Math.sin(phi) * Math.cos(theta),
+                            vy: speed * Math.sin(phi) * Math.sin(theta),
+                            vz: speed * Math.cos(phi),
+                        });
 
                         quarkIndex++;
                     }

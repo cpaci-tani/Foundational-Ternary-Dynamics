@@ -14,7 +14,7 @@
  */
 
 import { K_B, K_GENESIS } from '../../constants.js';
-import { TRIAD_ANGLES } from './_helpers.js';
+import { TRIAD_ANGLES, injectParticleFull } from './_helpers.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -247,11 +247,8 @@ export function setupFluxScenario(name, harness, ctx) {
                     const mDress = vox(3);
                     const mL = Math.floor(midF) - mOff, mR = Math.ceil(midF) + mOff;
                     const mc = Math.round(midF);
-                    harness.injectParticle(mL, mc, mc, 1);
-                    harness.injectParticle(mR, mc, mc, -1);
-                    const mpIdx = harness.bridge._particles.length;
-                    harness.bridge._particles[mpIdx - 2].vy = 0.05;
-                    harness.bridge._particles[mpIdx - 1].vy = -0.05;
+                    injectParticleFull(harness, mL, mc, mc, 1, { vy: 0.05 });
+                    injectParticleFull(harness, mR, mc, mc, -1, { vy: -0.05 });
                     const mesonAmp = K_B * 1.5;
                     const mSigma2 = mDress * mDress;
                     const myzLo = Math.floor(midF) - mDress, myzHi = Math.ceil(midF) + mDress;
@@ -272,11 +269,8 @@ export function setupFluxScenario(name, harness, ctx) {
                     const sbDress = vox(4);
                     const sbL = Math.floor(midF) - sbOff, sbR = Math.ceil(midF) + sbOff;
                     const mc = Math.round(midF);
-                    harness.injectParticle(sbL, mc, mc, 1);
-                    harness.injectParticle(sbR, mc, mc, -1);
-                    const sbIdx = harness.bridge._particles.length;
-                    harness.bridge._particles[sbIdx - 2].vx = -0.3;
-                    harness.bridge._particles[sbIdx - 1].vx = 0.3;
+                    injectParticleFull(harness, sbL, mc, mc, 1, { vx: -0.3 });
+                    injectParticleFull(harness, sbR, mc, mc, -1, { vx: 0.3 });
                     // High flux at true center for genesis when string snaps
                     const sbAmp = K_B * 3;
                     const sbLo = Math.floor(midF) - sbDress, sbHi = Math.ceil(midF) + sbDress;
@@ -296,10 +290,10 @@ export function setupFluxScenario(name, harness, ctx) {
                         const angle = TRIAD_ANGLES[k];
                         const bx = Math.round(midF + bR * Math.cos(angle));
                         const bz = Math.round(midF + bR * Math.sin(angle));
-                        harness.injectParticle(bx, mc, bz, 1);
-                        const bidx = harness.bridge._particles.length - 1;
-                        harness.bridge._particles[bidx].vx = -0.04 * Math.sin(angle);
-                        harness.bridge._particles[bidx].vz = 0.04 * Math.cos(angle);
+                        injectParticleFull(harness, bx, mc, bz, 1, {
+                            vx: -0.04 * Math.sin(angle),
+                            vz: 0.04 * Math.cos(angle),
+                        });
                     }
                     const bSea = Math.max(1, Math.floor(bR / 2));
                     harness.injectParticle(mc + bSea, mc + bSea, mc, -1);

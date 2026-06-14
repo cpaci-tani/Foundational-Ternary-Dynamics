@@ -14,6 +14,7 @@
  */
 
 import { C_SPEED } from '../../constants.js';
+import { injectCoherentSlitPair } from './_helpers.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -78,25 +79,7 @@ export function setupLightScenario(name, harness, ctx) {
                     // double-slit interference; should NOT manifest
                     // particles. Without this, ~31k particles by t=200.
                     harness.setToggle('genesis', false);
-                    const slitSigma = sigma(2);
-                    const slitHw = vox(4);
-                    const sAmp = 0.3;
-                    const slit_sep = vox(5);
-                    const slit_x = vox(8);
-                    const slit_ys = [mid - slit_sep, mid + slit_sep];
-                    for (const sy of slit_ys) {
-                        for (let z = 0; z < N; z++)
-                        for (let dy = -slitHw; dy <= slitHw; dy++)
-                        for (let dx = -slitHw; dx <= slitHw; dx++) {
-                            const r2 = dx * dx + dy * dy;
-                            const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
-                            if (g < 1e-6) continue;
-                            const px = slit_x + dx, py = sy + dy;
-                            if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                            harness.injectFlux(px, py, z, 0, 0, g);
-                            harness.injectWaveVel(px, py, z, g, 0, 0); // propagate +x
-                        }
-                    }
+                    injectCoherentSlitPair(harness, ctx);
                     break;
                 }
                 case 'light-photon-race': {
