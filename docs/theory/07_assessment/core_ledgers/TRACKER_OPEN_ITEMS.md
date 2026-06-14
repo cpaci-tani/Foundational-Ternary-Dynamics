@@ -275,7 +275,7 @@ The former BZ² sub-ppm alpha computation item is superseded by the FTD-native e
 **File:** `DERIV_KCOMP_VOLUMETRIC_SHELL.md`.
 
 ### 2.12 Single-file 1-`[OPEN]` items in derivations
-- `ANALYSIS_LATTICE_WAVE_SECTORS_v1.md` — **[OPEN]** condensate compression mode: does the FTD-0272 manifested-condensate phase support a propagating compression (acoustic-like) mode? It is the only candidate sound-analog in FTD (the lattice *is* space ⇒ no acoustic Goldstone, FTD-0298 §5); first-order genesis argues against a gapless mode, but the bulk condensate is a real medium and this is unexplored. (Added 2026-06-14, FTD-0298.)
+- `ANALYSIS_WAVE_SECTORS_v1.md` — **[CLOSED — BOUNDARY, engine-confirmed by FTD-0299 (probe = NULL)]** condensate compression mode: does the FTD-0272 manifested-condensate phase support a propagating compression (acoustic-like) mode? It is the only candidate sound-analog in FTD (the lattice *is* space ⇒ no acoustic Goldstone, FTD-0298 §5); first-order genesis argues against a gapless mode, but the bulk condensate is a real medium and this is unexplored. (Added 2026-06-14, FTD-0298.)
 - `DERIV_DIRAC_FROM_MASTER_QUADRATIC.md` — "Remains [OPEN]" section.
 - `DERIV_QUADRATIC_NECESSITY.md`.
 - `DERIV_OBSERVER_BELL_MECHANISM.md` —  CLOSED DECLINED 2026-06-10 (continuous Bell violation target declined under FC-1).
