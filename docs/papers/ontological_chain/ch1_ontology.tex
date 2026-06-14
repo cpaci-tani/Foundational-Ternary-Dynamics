@@ -1,2 +1,380 @@
 \chapter{Ontology --- What Exists}\label{ch:ontology}
-% filled in Task 5
+
+% =============================================================================
+% Ch.1 Ontology. [SYNTHESIS]. Re-states canonical claims at canonical tags.
+% Primary source: SPEC_FTD_FRAMEWORK_V1.md (the constitution) Sec.1, esp. 1.3
+% (two fields) and 1.5 (space-perp-time); SPEC_MATH_FIRST_ONTOLOGY.md (M0-M3);
+% FOUND_AXIOM_ZERO.md Sec.2.2(d) (the CFL causal cone). No constant is hand-keyed:
+% every value comes from a macro in ftd-math-macros.sty / chain-macros.sty.
+% =============================================================================
+
+% ---- chapter mini-map: the Ontology band of the Master DAG -------------------
+\begin{figure}[t]
+  \centering
+  \resizebox{0.8\linewidth}{!}{%
+  \begin{tikzpicture}[node distance=0pt]
+    \node[bandlbl] at (-1.6,0.0) {\textsc{ontology}\\[-1pt]\tiny what exists};
+    \node[seed]  (post) at (2.0, 0.0)  {P1--P5\\postulates};
+    \node[seed]  (zi)   at (5.6, 0.0)  {$\Zi$\\\tiny FC-0};
+    \node[condb] (js)   at (9.2, 0.0)  {two fields\\$J\perp s$};
+    \node[thm]   (cc)   at (12.8,0.0)  {causal cone\\$c=1/\sqrt3$};
+    \draw[con] (post) -- (js);
+    \draw[con] (js)   -- (cc);
+    \draw[con] (post) to[out=-35,in=-145] (zi);
+    % downward pointers to the layers this one feeds (greyed, "constructed-from")
+    \draw[wk]  (zi.south)  to[out=-90,in=90]  ($(zi.south)+(0,-1.0)$)   node[flbl,below]{to Math: $G^{*}$};
+    \draw[wk]  (cc.south)  to[out=-90,in=90]  ($(cc.south)+(0,-1.0)$)   node[flbl,below]{to Physics: IR metric};
+  \end{tikzpicture}}
+  \caption[Ontology band of the chain]{This chapter in the chain. The four
+    load-bearing nodes of the Ontology layer: the five postulates and the
+    \etag{ax}-class $\Zi$ reading (FC-0) are seeds (double-ringed); the two-field
+    decomposition $J\perp s$ is a selection/synthesis (thin box); the causal cone
+    $c=1/\sqrt3$ is theorem-grade (solid box). Solid arrows read ``constructed
+    from''; the greyed arrows point at what later layers build on this one.}
+  \label{fig:minimap-ontology}
+\end{figure}
+
+\section*{The move this layer makes}
+\addcontentsline{toc}{section}{The move this layer makes}
+
+Every framework has to answer one question before it can say anything else:
+\emph{what is there?} The ontology layer is FTD's answer, and the answer is
+deliberately spare. There is a three-dimensional cubic lattice with no completed
+boundary. On that lattice live two fields, and only two: a continuous vector
+\emph{flux} that says what each site is \emph{disposed} to do, and a discrete
+ternary \emph{state} that records what each site has \emph{actually} done. Time is
+a separate primitive --- a global tick, not a fourth axis of space. Nothing else
+is fundamental: charge, mass, particles, and even the metric of spacetime are
+things the framework hopes to \emph{read out} of this substrate later, not things
+it puts in by hand.
+
+The intuition to carry forward is the split between \emph{disposition} and
+\emph{actuality}. The flux $J$ is a field of tendencies; it is smooth, it carries
+waves, and in isolation it runs forward and backward equally well. The state $s$
+is the ledger of commitments the lattice has made; it takes only three values, and
+once a commitment is made the bookkeeping that made it cannot in general be undone.
+These two fields do not blend. They touch through exactly two doors --- one that
+lets a built-up disposition \emph{become} a state (genesis), and one that lets a
+committed state \emph{source} the disposition of its neighbours (Gauss). Holding
+those two doors in mind is most of what it takes to follow the rest of the chain:
+the mathematics of Chapter~3 is the arithmetic of the lattice's symmetry, and the
+physics of Chapter~5 is the IR readout of these same two fields run forward in
+time.
+
+A reader should also note what this chapter does \emph{not} claim. It does not
+claim that the two-field split is forced; that is a modelling choice, and it is
+tagged as one. It does not claim that spacetime is built; the metric is promised
+to Chapter~5, and at this layer space and time are simply two separate primitives.
+The honesty of the chain lives in those tags, so they are stated inline as each
+claim appears.
+
+\section{The five postulates}\label{sec:postulates}
+
+The substrate of FTD is fixed by five postulates, frozen and machine-checked, each
+an \etag{ax} (the constitution, \ftdid{0254}, \S1.1):
+
+\begin{description}[leftmargin=1.6em,style=nextline,itemsep=2pt]
+  \item[P1 --- Discrete space.] A three-dimensional cubic lattice of voxels with
+    \emph{undefined boundary}: at every specified position the axis-adjacent sites
+    exist, but the lattice is not a completed-infinity $\Z^3$ totality.
+    Arbitrarily large finite computations are well posed; completed limits are not.
+    \etag{ax}
+  \item[P2 --- Discrete time.] Dynamics proceeds in global ticks. Simultaneity at
+    the substrate level is absolute --- a privileged foliation, the neo-Lorentzian
+    reading made explicit by FC-2 in Chapter~\ref{ch:logic}. \etag{ax}
+  \item[P3 --- Ternary states, $J$-primary.] Each voxel carries a continuous flux
+    vector $J\in\R^3$ (dispositional) and a ternary state $s\in\{-1,0,+1\}$
+    (actual). The flux $J$ is \emph{primary}; the state $s$ is the manifestation
+    projection of $J$ through the genesis threshold rule (\S\ref{sec:channels}).
+    Treating $s$ as primary would double-count. \etag{ax}
+  \item[P4 --- Local causality.] Updates depend only on the 26-neighbour Moore
+    neighbourhood at the previous tick; information moves at most one voxel per
+    tick. \etag{ax}
+  \item[P5 --- Determinism.] The update map is a function. \emph{Determinism is not
+    reversibility}: a deterministic map may be many-to-one (the point Chapter~2
+    turns into the arrow of time). \etag{ax}
+\end{description}
+
+These five are the only generative inputs. Everything the framework derives is
+quantified over exactly P1--P5; the machine-checked theorems of the corpus
+(\ftdid{0243}, \ftdid{0253}) take precisely this set as their hypothesis.
+
+\section{Graded monism and the \texorpdfstring{$\Zi$}{Z[i]} reading (FC-0)}\label{sec:gradedmonism}
+
+The ontology is \emph{graded monism}: one substance --- the void --- whose
+\emph{dispositions} are the flux $J$, whose \emph{manifestations} are the
+actualized states $\pm1$, and whose \emph{properties} (charge, mass) are emergent
+from manifestation patterns. The state field is not a second substance; it is the
+actualized manifestation of the flux under the genesis rule. This is the
+math-first ordering of \ftdid{0153}: \emph{ontology = finite mathematical
+invariant structure; physics = operationally stable readout of that structure.}
+
+One modelling choice is promoted to a framework commitment because the entire
+algebraic spine of Chapter~\ref{ch:mathematics} rests on it:
+
+\begin{forcedbox}[FC-0 --- the $\Zi$ reading \etag{ax}\,(class)]
+The cubic lattice's order-4 planar symmetry is read as the arithmetic of the
+Gaussian integers $\Zi$, with unit group $\Ziu$ of order $4$. \emph{This is a
+declaration, not a derivation.} The algebraic spine is forced by P1--P5
+\emph{together with} FC-0, not by the discrete ontology alone --- the honesty
+correction installed by the construction monograph's red-team (\ftdid{0249}),
+here canonized as the zeroth framework commitment (\ftdid{0254}). Declaring it
+does not derive it. \hfill\etag{ax}
+\end{forcedbox}
+
+FC-0 belongs to the second of FTD's three registers --- the
+\emph{framework commitments}, which sit between the generative postulates and the
+unit-fixing calibrations. The pattern repeats for FC-1 and FC-2 in
+Chapter~\ref{ch:logic}: where a theorem proves the postulates leave a fork open, a
+commitment picks the branch FTD asserts the world is on. The theorem proves the
+fork; the commitment picks the side.
+
+\section{Two orthogonal fields, two coupling channels}\label{sec:channels}
+
+FTD's field content is \emph{two orthogonal fields, nested} (the constitution
+\S1.3, \ftdid{0257}). The decomposition is canonical but it is a \emph{choice} of
+how to package the dynamics, not a new dynamical claim --- hence its tag is a
+synthesis-and-selection, never a theorem:
+
+\begin{claim}[The primary pair, $J\perp s$]\label{cl:primarypair}
+The primary field content is the orthogonal pair
+\[
+  \fluxstate .
+\]
+$J$ is continuous, reversible in isolation, and carries the wave dynamics; $s$ is
+discrete, finite, and irreversible (manifestation is many-to-one). They are
+\emph{orthogonal} in the precise sense that they inhabit different ontological
+grades --- disposition versus actuality --- and interact through exactly two
+channels and no others. \etag{syn}\,$+$\,\etag{sel}~(\ftdid{0257})
+\end{claim}
+
+\noindent\textit{Why ``orthogonal.''} There is no state--state dynamics and no
+flux--flux manifestation; the two fields meet only at the two doors below. The
+word is structural, not metric: it names the absence of any third coupling
+channel.
+
+\begin{description}[leftmargin=1.6em,style=nextline,itemsep=3pt]
+  \item[Channel 1 --- Genesis / evaporation (downward, $J\to s$).] At a void site,
+    $\lvert J\rvert$ crossing the manifestation threshold projects a state (the
+    $s=\operatorname{sign}$ rule); falling below the evaporation threshold reverts
+    it. The kinetics scale is $K_{\mathrm{MANIFEST}}$ and the trigger is
+    $K_{\mathrm{GENESIS}} = N_c\cdot K_{\mathrm{MANIFEST}}$. This is the engine's
+    \texttt{phase\_write} step. It is the \emph{many-to-one} door: it is where
+    irreversibility, and therefore the arrow of time of Chapter~\ref{ch:logic},
+    enters.
+  \item[Channel 2 --- Gauss sourcing (upward, $s\to J$).] Manifested states source
+    the flux through the lattice Gauss constraint
+    \[
+      \gausssource ,
+    \]
+    where $\rho_s$ is the manifested charge density. This is the engine's
+    \texttt{gauss\_project} step. It is the \emph{linear} door: it feeds committed
+    states back into the dispositions of their neighbours, and it is the origin of
+    the geometric Coulomb law of Chapter~\ref{ch:physics}.
+\end{description}
+
+Everything else in the framework is dynamics \emph{within} one field or the other.
+The two channels are the engine's actual architecture; the constitution packages
+them as the canonical ontology, and that packaging is the \etag{sel} above.
+
+\subsection{The nested pair: symplectic quadratures \texorpdfstring{$(q,p)$}{(q,p)}}\label{sec:quadratures}
+
+Inside the flux layer there is a second, nested orthogonality. The flux sector is
+a second-order field, so its true arena is phase space: per mode, the amplitude
+$q$ and its rate $p=\partial_t J$ form a symplectic pair $(q,p)$. The substrate's
+only native dynamical angle is the quadrature phase $\arg(q+ip)$, winding at the
+dispersion frequency derived in \S\ref{sec:causalcone}. This pair carries a
+distinction that becomes load-bearing in Chapter~\ref{ch:logic}:
+
+\begin{claim}[The Crucial Distinction]\label{cl:crucial}
+The quadrature pair is symplectically non-trivial yet observably commutative:
+\[
+  \crucialdist
+\]
+--- a non-zero Poisson bracket but a vanishing observable commutator
+(\ftdid{0243}). The quadrature \emph{clock} is the substrate's native time-keeper;
+identifying it with ``the measurement angle'' is interpretive \etag{sel}, and the
+incompatibility that would make choosing a quadrature a quantum measurement is
+exactly what the framework declines to import (FC-1, Chapter~\ref{ch:logic}).
+\end{claim}
+
+\noindent The two orthogonalities live at different levels and do not compete: the
+primary pair is orthogonal at the \emph{grade} level (two coupling channels only);
+the nested pair is orthogonal in the \emph{symplectic} sense (conjugate
+quadratures of one oscillation, internal to the flux member of the primary pair).
+Chapter~\ref{ch:logic} reproduces the argument behind Claim~\ref{cl:crucial} in
+full; here it is recorded as part of the field inventory.
+
+\section{Space \texorpdfstring{$\perp$}{perp} time at the base}\label{sec:spaceperptime}
+
+P1 (the lattice) and P2 (the tick) are \emph{separate primitives}. FTD's base
+ontology has a 3-space and a 1-time, not a 4-geometry. Nothing at the postulate
+level mixes them (the constitution \S1.5):
+
+\begin{claim}[Separation at the base]\label{cl:spaceperptime}
+At the postulate level, space and time are orthogonal primitives. The
+\emph{causal cone} that relates them is a theorem of locality
+(\S\ref{sec:causalcone}); the Lorentzian \emph{metric} that would weave them into
+Minkowski spacetime is \emph{not} forced by P1--P5 (\ftdid{0253}). FTD's committed
+reading --- the mixing is emergent and sector-scoped, the separation fundamental
+--- is FC-2, declared in Chapter~\ref{ch:logic} and measured in
+Chapter~\ref{ch:physics}. \etag{ax}\;(base structure) $+$ FC-2 forward-pointer
+\end{claim}
+
+This is the single most important orientation for an outsider: at the ground floor
+of FTD there is \emph{no spacetime}. There is space, there is time, and there is a
+maximum speed at which one can influence the other. That maximum speed is the one
+thing about the space--time relation that the postulates \emph{do} force, and it
+is derived next.
+
+\section{Reproduced derivation I: the causal cone \texorpdfstring{$c=1/\sqrt3$}{c=1/sqrt3} and the lattice dispersion}\label{sec:causalcone}
+
+The single number this layer forces about propagation is the causal speed. It
+follows from the CFL (Courant--Friedrichs--Lewy) stability condition for a discrete
+wave equation on the cubic lattice, with no appeal to the state space (the
+constitution \S3.2 / \S5.1 row~1; \ftdid{0253}; \texttt{FOUND\_AXIOM\_ZERO.md}
+\S2.2(d)).
+
+\begin{result}[CFL causal cone]\label{res:cfl}
+On a $D$-dimensional cubic lattice with unit voxel spacing and unit tick, the
+maximum stable propagation speed of the flux wave is
+\[
+  c \;=\; \frac{1}{\sqrt D},
+  \qquad\text{so at } D=3:\quad \cwave .
+\]
+\etag{thm}~(\ftdid{0253})
+\end{result}
+
+\paragraph{Why $1/\sqrt D$.} Take the second-order flux wave equation that governs
+the dispositional field, discretized on the lattice by the standard
+leapfrog/centred scheme. With voxel spacing $a$ and tick $\Delta t$ set to unity,
+the update for a mode of wavevector $k=(k_1,\dots,k_D)$ replaces each second
+derivative by a centred difference. The temporal difference contributes a factor
+$-4\sin^2(\omega\,\Delta t/2)$ and each of the $D$ spatial differences contributes
+$-4\sin^2(k_j/2)$. Matching the two sides of the discretized wave equation gives
+the dispersion relation
+\[
+  \sin^2\!\Bigl(\frac{\omega}{2}\Bigr)
+  \;=\; c^2 \sum_{j=1}^{D} \sin^2\!\Bigl(\frac{k_j}{2}\Bigr).
+\]
+For the scheme to be stable --- for $\omega$ to stay real for \emph{every} mode,
+including the worst case where all $\sin^2(k_j/2)=1$ simultaneously (the lattice
+corner $k_j=\pi$) --- the right-hand side must never exceed $1$. The worst case
+sums to $D$, so stability requires
+\[
+  c^2 \cdot D \;\le\; 1
+  \qquad\Longrightarrow\qquad
+  c \;\le\; \frac{1}{\sqrt D},
+\]
+and the maximum stable speed saturates the bound. At $D=3$ this is $\cwave$. This
+is a theorem about discrete wave equations on the lattice; it does not depend on
+the ternary state space at all --- it is purely the geometry of P1 plus the
+one-voxel-per-tick locality of P4.
+
+\paragraph{The lattice dispersion.} In the long-wavelength (small-$k$) regime where
+a single spatial mode dominates, the same matching condition reduces to the FTD
+flux-wave dispersion
+\[
+  \dispersion ,
+\]
+with $c=1/\sqrt3$. The frequency $\omega(k)$ is the rate at which the quadrature
+phase $\arg(q+ip)$ of \S\ref{sec:quadratures} winds; it is the substrate's native
+clock. Two features matter downstream. First, for small $k$ the relation linearizes
+to $\omega \approx c\,\lvert k\rvert$, recovering an ordinary light-cone in the IR
+--- the seed of the emergent metric promised to Chapter~\ref{ch:physics}. Second,
+at large $k$ the $\sin$ bends the dispersion away from linearity: this is a
+\emph{native} ultraviolet departure from exact Lorentz invariance, not a defect,
+and it reappears as a falsifiable prediction in Chapter~\ref{ch:science}.
+
+Note what has and has not been built. The cone --- the fact that there is a finite
+maximum influence speed --- is \etag{thm} and holds for \emph{any} local lattice
+dynamics. The Lorentzian \emph{metric} that would promote the cone to a full
+spacetime geometry is not in hand here; per Claim~\ref{cl:spaceperptime} it is
+emergent and sector-scoped, and the work of building it is Chapter~\ref{ch:physics}'s.
+
+\section{Reproduced derivation II: the genesis / Gauss coupling structure}\label{sec:couplingderiv}
+
+The two coupling channels of \S\ref{sec:channels} are the only places the two
+fields meet, and their structure is fixed by the postulates. We state each as a
+rule on the configuration $(s,J)$, making explicit why one is irreversible and one
+is linear.
+
+\paragraph{The genesis projection (downward, $J\to s$).} Genesis is a threshold
+map applied at each void site $v$ ($s(v)=0$) once per tick, after the flux update:
+\[
+  s(v) \;\longmapsto\;
+  \begin{cases}
+    \operatorname{sign}\!\bigl(J(v)\cdot \hat n\bigr), &
+      \lvert J(v)\rvert \,>\, K_{\mathrm{GENESIS}},\\[4pt]
+    0, & \lvert J(v)\rvert \,<\, K_{\mathrm{MANIFEST}}\ \text{(evaporation)},\\[4pt]
+    s(v), & \text{otherwise (hysteresis band).}
+  \end{cases}
+\]
+This is the engine's \texttt{phase\_write} step, with trigger
+$K_{\mathrm{GENESIS}} = N_c\cdot K_{\mathrm{MANIFEST}}$. Three properties are
+load-bearing. (i) It is a \emph{function} of the local flux, so it preserves P5
+(determinism). (ii) It is \emph{many-to-one}: distinct flux histories that cross
+the same threshold with the same sign land on the same state, and the hysteresis
+band makes the inverse genuinely undefined --- so the map is provably
+\emph{non-invertible}. This many-to-oneness is the finite, irreversible content of
+the substrate, and it is what Chapter~\ref{ch:logic} elevates into the native arrow
+of time (FC-2). (iii) The threshold $K_{\mathrm{MANIFEST}}$ is the manifestation
+quantum; it is fixed in the \emph{calibration} register
+($M_{\mathrm{REST}}=m_e$), not derived here.
+
+\paragraph{The Gauss sourcing (upward, $s\to J$).} The committed states source the
+flux through the lattice Gauss constraint, imposed once per tick by projection:
+\[
+  \gausssource ,
+  \qquad \rho_s(v) \;=\; \text{(manifested charge at $v$)} .
+\]
+Concretely, the projection step replaces $J$ by the nearest field whose lattice
+divergence equals the manifested density $\rho_s$ --- a linear (Poisson) solve
+against the manifestation pattern. Two properties matter. (i) It is \emph{linear}
+in the source, so superposition holds and the resulting static potential is the
+lattice Poisson Green's function --- exactly the geometric Coulomb law reproduced
+in Chapter~\ref{ch:physics}. (ii) It runs \emph{upward} only: states set boundary
+data for the flux, but the Gauss step itself never creates or destroys a state.
+The asymmetry between the two channels --- one many-to-one and irreversible, one
+linear and reversible --- is the ontological seed of every later asymmetry in the
+chain, including the $\pi/G^{*}$ split of Chapter~\ref{ch:mathematics} and the
+arrow of Chapter~\ref{ch:logic}.
+
+Together, Results~\ref{res:cfl} and the two channel rules close the ontology: a
+finite ternary lattice, two orthogonal fields, one maximum speed, and two doors
+between disposition and actuality. Nothing else is fundamental.
+
+\section{What this layer does not settle}\label{sec:ontology-open}
+
+The ontology is deliberately spare, and its honesty is in naming what it leaves
+unbuilt:
+
+\begin{itemize}[leftmargin=1.4em,itemsep=3pt]
+  \item \textbf{The metric is not built here.} The causal cone is \etag{thm}
+    (Result~\ref{res:cfl}), but the Lorentzian metric that would make space and
+    time into one geometry is \emph{not} forced by P1--P5 (\ftdid{0253}). Whether
+    the substrate carries an emergent IR metric is committed by FC-2
+    (Chapter~\ref{ch:logic}) and measured, sector-scoped, in
+    Chapter~\ref{ch:physics} --- it is not a result of this layer.
+  \item \textbf{The two-field decomposition is a choice, not a theorem.} The
+    primary pair $J\perp s$ and its two-channel coupling are packaged as canonical
+    ontology, but that packaging is \etag{sel}\,$+$\,\etag{syn} (\ftdid{0257}), not
+    a forced decomposition. A reader is entitled to ask whether a different
+    bookkeeping of the same dynamics is possible; the framework's answer is that
+    this one is canonical, not that it is unique.
+  \item \textbf{FC-0 is declared, not derived.} The reading of the lattice
+    symmetry as $\Zi$ (\S\ref{sec:gradedmonism}) is an \etag{ax}-class commitment.
+    The whole spine of Chapter~\ref{ch:mathematics} is conditional on it, and the
+    condition is stated, not proven. What would overturn FC-0 is set out in
+    Chapter~\ref{ch:science}'s kill-conditions.
+  \item \textbf{The native angle is a selection.} Identifying the quadrature clock
+    of \S\ref{sec:quadratures} with a ``measurement angle'' is interpretive
+    \etag{sel}; the framework records the clock as the native time-keeper and
+    declines, at the next layer, the import that would make reading it a quantum
+    measurement.
+\end{itemize}
+
+\noindent With the substrate fixed --- a finite ternary lattice, two orthogonal
+fields, the causal cone, and the two coupling channels --- the chain proceeds to
+ask what \emph{follows} from these commitments, and what the framework deliberately
+declines to import. That is the work of Chapter~\ref{ch:logic}.

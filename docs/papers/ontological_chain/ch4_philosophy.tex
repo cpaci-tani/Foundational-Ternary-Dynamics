@@ -1,2 +1,364 @@
 \chapter{Philosophy --- The Observer Layer}\label{ch:philosophy}
-% filled in Task 8
+
+% =============================================================================
+% Ch.4 -- Philosophy (the observer layer). [SYNTHESIS]: re-states the
+% constitution's Section 4 at its canonical tags. This layer is ARGUED, not
+% derived -- no inline derivations. Primary sources:
+%   SPEC_FTD_FRAMEWORK_V1.md Section 4 (observer layer; supersession matrix;
+%     falsifiability argument)
+%   REF_REFERENCE_FRAME_VOCABULARY.md (the structural/dynamical vocabulary)
+% Mini-map band nodes (from master_dag.tex): observer layer (condb),
+%   supersession matrix (condb).
+% =============================================================================
+
+% ---- chapter mini-map: the Philosophy band of the Master DAG ----------------
+\begin{figure}[t]
+  \centering
+  \resizebox{0.8\linewidth}{!}{%
+  \begin{tikzpicture}[node distance=0pt]
+    % ghosted upstream context (the layers this one is accountable to / from)
+    \node[seed,  gray!55]  (fc1) at (0.0, 1.9) {FC-1\\\tiny declines $M$};
+    \node[wall,  gray!55]  (shrp)at (4.6, 1.9) {sharpness\\\tiny open};
+    % the Philosophy band itself (the two load-bearing condb nodes)
+    \node[condb] (obs) at (0.0, 0.0) {observer\\layer};
+    \node[condb] (sup) at (4.6, 0.0) {supersession\\matrix};
+    % ghosted downstream context (Science is where it is accountable to)
+    \node[wall,  gray!55]  (bell)at (4.6,-1.9) {PL-2 Bell\\\tiny lab-open, highest risk};
+    \node[condb, gray!55]  (pl)  at (0.0,-1.9) {PL-1..6\\deviation spine};
+    % edges: FC-1 fixes what the observer layer carries; sharpness is its open kernel
+    \draw[con] (fc1) -- (obs);
+    \draw[wk]  (shrp.south) to[out=-90,in=90] (sup.north);
+    \draw[con] (obs) -- (sup);
+    \draw[wk]  (sup.south) to[out=-90,in=90] (bell.north);
+    \draw[wk]  (obs.south) to[out=-90,in=90] (pl.north);
+  \end{tikzpicture}}
+  \caption[This chapter in the chain (Philosophy band)]{This chapter in the
+    chain. The observer layer and the supersession matrix (solid-thin
+    \emph{selection/synthesis} boxes) sit between the logic layer that fixes
+    what they may claim (FC-1, which declines the measurement-map import) and
+    the science layer they are accountable to (the deviation spine, and the
+    lab-Bell wall that is the framework's highest-risk row). Ghosted nodes are
+    drawn from adjacent bands for orientation only.}
+  \label{fig:minimap-philosophy}
+\end{figure}
+
+\section*{The move this layer makes: who reads the lattice, and at what cost}
+\addcontentsline{toc}{section}{The move this layer makes}
+
+Every preceding layer spoke in the third person. Ontology said \emph{what
+exists}; logic said \emph{what follows}; mathematics said \emph{what is forced}.
+None of them needed an observer. The substrate evolves under the five postulates
+with absolute, god's-eye simultaneity whether or not anything inside it is
+looking. The move the philosophy layer makes is to ask the first-person
+question that quantum mechanics built its entire formalism around --- \emph{who
+reads the lattice, and what can a reader embedded in the lattice know?} --- and
+to answer it \emph{without} importing the quantum measurement apparatus to do
+so.
+
+The intuition is a deliberately deflationary one. An ``observer'' in FTD is not
+a mind, a consciousness, or an agent; it is a \emph{reference frame structure}
+--- a subsystem of the lattice that happens to contain a model of itself. The
+canonical example is mundane: the centre voxel of a $27$-block, which ``sees''
+its world only through the surrounding shell. Reading is restriction. What a
+frame can know of the configuration --- including of itself --- is whatever
+survives the projection from the full state down to the frame's own readout.
+There is no collapse here, no special role for awareness, and no deformation of
+the underlying algebra. Measurement becomes epistemics: the bookkeeping of what
+a finite thing inside a classical world is structurally barred from knowing
+about itself.
+
+That deflation buys something most interpretations cannot: \emph{exposure}.
+Because the early layers are committed --- the postulates are frozen, the
+framework commitments are declared --- the observer layer cannot quietly absorb
+whatever the laboratory reports. When a measurement arrives that the quantum
+formalism reproduces exactly, an interpretation that \emph{also} imports that
+formalism is never separated from it by data. FTD, having declined the import,
+\emph{can} be. The thesis of this chapter is that ontology-first is therefore
+\emph{more} falsifiable, not less --- and the supersession matrix is the precise
+ledger of where FTD stakes outcomes its neighbours decline to stake. This is an
+argued layer: it carries no derivations of its own, only the disciplined
+re-statement of claims proved elsewhere and the honest accounting of what is
+still open.
+
+\section{The vocabulary: reference frame structure, not consciousness}
+\label{sec:phil-vocab}
+
+FTD's account of observation is stated entirely in the canonical vocabulary of
+the reference-frame reference document
+(\texttt{REF\_REFERENCE\_FRAME\_VOCABULARY.md}), which exists precisely to strip
+the qualia and Hard-Problem baggage from terms the corpus once used loosely. The
+load-bearing distinction is between a \emph{structural} property and a
+\emph{dynamical} one:
+
+\begin{itemize}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
+  \item \textbf{Reference frame structure} (structural) --- the property of a
+    subsystem that contains a model of itself: a fixed-point / strange-loop
+    property. A \emph{local reference frame} is the lattice region that
+    instantiates it (canonically, the centre of a $27$-block). The
+    \emph{reference frame projection} is the operator mapping the full
+    (noumenal $3^3$) state to the frame's (phenomenal $2^3$) readout; in
+    algebraic terms it is an observable-algebra \emph{restriction}. The
+    \emph{frame-relative readout} is what the structure thereby knows of itself
+    --- the deflated replacement for ``experience.''
+  \item \textbf{Active frame dynamics} (dynamical) --- the capacity of a system
+    to select its own trajectory by its own internal frame-relative readout, as
+    distinct from being driven externally. This replaces the loaded terms
+    ``agency'' and ``free will'' with a physics-compatible one, and remains
+    embedded in the deterministic dynamics of P5.
+\end{itemize}
+
+Three discriminations are made explicit, because the framework needs them and
+the old language hid them. First, reference frame structure is \emph{not} the
+same as realised active frame dynamics: almost every voxel sits at the centre of
+some $27$-block, so reference frame structure is generic; what is rare is its
+\emph{realisation} in trajectory selection (the \emph{active-frame threshold}
+remains an open structural problem). Second, a frame-relative readout is
+\emph{not} guaranteed faithful --- there is no axiom that a frame reads itself
+correctly, which is exactly the absence-of-omniscience any physical observer
+must have. Third, active frame dynamics is \emph{not} libertarian free will: the
+trajectory is selected by frame-internal structure, not by a non-physical
+chooser. The Hard Problem is not solved here; it is \emph{re-described} as the
+open problem of frame-relative emergence and then set aside as out of scope.
+
+\section{The observer layer: frames, readouts, and the binding blind spot}
+\label{sec:phil-observer}
+
+The layered picture has two strata
+(\ftdid{0254}~\S4.1, \etag{syn}~$+$~\etag{opn}). The \emph{substrate frame} is
+the god's-eye view: it holds the full configuration and evolves deterministically
+under P1--P5 with absolute simultaneity. \emph{Internal frames} are subsystems
+whose access to the world --- and to themselves --- is restricted by the
+reference frame projection. What quantum mechanics treats as the measurement
+problem, FTD treats as the epistemics of internal frames embedded in a classical
+substrate: \emph{measurement is frame-relative readout under a derived
+restriction, not a dynamical collapse and not an algebra deformation} (this last
+clause is FC-1, carried over from the logic layer).
+
+The one genuinely \emph{derived} ingredient of this picture is the blind spot,
+and it is honestly split.
+
+\begin{itemize}[leftmargin=1.4em,itemsep=3pt,topsep=2pt]
+  \item \textbf{The binding half} \etag[ partial]{thm}~(\ftdid{0227}). A finite
+    internal observer --- a subsystem with $M$ pointer states modelling a total
+    of $N > M$ states, \emph{itself included} --- necessarily loses access to
+    part of its own state. This is classical finite self-reference (a
+    pigeonhole / diagonal argument); it is non-circular and takes no quantum
+    input. Every internal frame therefore carries a \textbf{self-blind-spot}.
+    The corresponding LEDGER row (\ftdid{0227}) records this binding half as
+    \textsc{derived} and the whole row as \textsc{partial}; the conservative
+    reading used throughout this document is ``\etag{thm}, partial.''
+  \item \textbf{The sharp half} \etag{opn}. The Spekkens \emph{knowledge-balance}
+    --- the blind spot rotating symmetrically over complementary bases, the
+    feature that would make the restriction genuinely quantum-like --- requires
+    the full symplectic $S_3 = \Z/2 \rtimes \Z/3$ action. The $\Z/2$ is
+    FTD-native (the $J^2 = -I$ quarter-conjugacy); the $\Z/3$ is
+    \textbf{missing} (the $N_c = 3$ candidate for it was diagnosed as apophenia,
+    \ftdid{0228}, \etag{cn}). \emph{Binding-without-sharpness} is the framework's
+    honest state on observation.
+\end{itemize}
+
+A consequence, flagged as a \emph{post-hoc} account rather than a prediction: a
+classical restriction without the symmetric balance yields
+classical-with-noise detection statistics rather than Born's $|\psi|^2$ --- which
+is consistent with the engine's measured Rice/Gaussian threshold statistics
+(\S\ref{ch:science} PL-1). This explanation was constructed \emph{after} the
+measurement; it is an explanation candidate, not a pre-registered prediction,
+and is tagged accordingly.
+
+The honest gaps kept open at this layer are three: the \emph{sharpness} of the
+restriction just described (\etag{opn}); the \emph{active-frame threshold}
+(which configurations realise active frame dynamics --- an open structural
+problem); and a dedicated formalisation of frame self-identification (the
+GUID$+$XYZ construction), which does not yet exist as a foundational document.
+
+\section{Position among the alternatives --- the supersession matrix}
+\label{sec:phil-supersession}
+
+FTD's posture toward the standing interpretive and foundational frameworks is
+\emph{structural, not rhetorical} (\ftdid{0254}~\S4.2, \etag{syn}; per-cell tags
+as marked). Each row of Table~\ref{tab:supersession} is a respectable research
+tradition. FTD differs from each in two specific ways: it \emph{declines an
+import} the tradition makes (most often the non-commutative Hilbert-space
+formalism, sometimes the continuum, sometimes reversibility), and in return it
+\emph{offers deviations} where the tradition reproduces the standard formalism
+exactly. The matrix is the ledger of those two moves.
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption[The supersession matrix]{\textbf{The supersession matrix.} FTD's
+    position relative to seven standing frameworks, read along the axes that
+    carry the supersession claim. ``Non-commutativity'' is the quantum
+    measurement formalism each tradition treats as fundamental; FTD
+    \emph{declines} it (FC-1; the independence is \etag{thm}, \ftdid{0243}). The
+    final row of the table body is mandatory and is \emph{not} a framework: it
+    states, in the framework's own voice, what FTD has \emph{not} delivered.}
+  \label{tab:supersession}
+  \setlength{\tabcolsep}{4pt}
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabular}{@{}>{\RaggedRight}p{1.85cm} >{\RaggedRight}p{6.0cm}
+      >{\RaggedRight\arraybackslash}p{2.55cm} >{\RaggedRight\arraybackslash}p{3.2cm}@{}}
+    \toprule
+    \textbf{Framework} & \textbf{Ontic substrate / determinism / locality} &
+    \textbf{Non-commutativity} & \textbf{Metric \& arrow} \\
+    \midrule
+    \textbf{Copenhagen} &
+      none specified ($\psi$ not ontic); not deterministic; no sub-$\psi$
+      dynamics & \textbf{fundamental} (primitive collapse) &
+      imported background; arrow from measurement \\
+    \textbf{Many-Worlds} &
+      universal $\psi$; deterministic (unitary); no $3$-space locality of
+      outcomes & \textbf{fundamental} (branching) &
+      imported background; decoherence arrow \\
+    \textbf{RQM (Rovelli)} &
+      relational facts only; not deterministic; relational &
+      \textbf{fundamental} & imported / relational; perspectival arrow \\
+    \textbf{Bohmian} &
+      particle config $+\ \psi$; deterministic; \textbf{explicitly nonlocal} &
+      fundamental (via $\psi$) & imported background; equilibrium arrow \\
+    \textbf{'t Hooft CA} &
+      classical cellular automaton; deterministic; local &
+      \textbf{imported deliberately} (the CA$\to$QM map) &
+      imported; aims at \emph{reversible} automata \\
+    \textbf{Spekkens} &
+      classical ontic states; deterministic (toy); local (toy) &
+      reproduced \emph{fragment} & n/a (toy); knowledge-balance postulated \\
+    \textbf{String theory} &
+      strings/branes on a target manifold; quantum; QFT-local &
+      \textbf{fundamental} &
+      dynamical but presupposes continuum $+$ extra dimensions \\
+    \midrule
+    \textbf{FTD} &
+      ternary lattice $+$ flux (P1--P5, FC-0); \textbf{deterministic} (P5);
+      \textbf{dynamically local} (P4) &
+      \textbf{declined} (FC-1; independence \etag{thm}, \ftdid{0243}) &
+      cone forced \etag{thm}; metric emergent-IR \& sector-scoped (FC-2);
+      arrow \textbf{native} (FC-2); space $\perp$ time fundamental \\
+    \midrule
+    \multicolumn{4}{@{}>{\RaggedRight\arraybackslash}p{\textwidth}@{}}{%
+      \textbf{What FTD has \emph{not} delivered (mandatory honesty row).} FTD
+      does \emph{not} currently derive: the Born rule (\ftdid{0187},
+      \etag{sel}~$/$~\etag{opn}; the tested constructions \ftdid{0199}/\ftdid{0200}
+      are \etag{cn}); \emph{laboratory} Bell violations $S > 2$ (the
+      observer-layer account is \etag{sel}-grade --- the substrate bound is
+      $S \le 2$ and labs measure $S > 2$, an \textbf{accepted open burden},
+      \S\ref{ch:science} PL-2); interference / double-slit phenomenology at the
+      observer level; QFT scattering amplitudes; $\alpha$ (\textbf{dynamical, not
+      structural} --- $x_+ = 1/\alpha$ stays \etag{smc}, \ftdid{0013}); and the
+      sharp epistemic balance (\S\ref{sec:phil-observer}, \etag{opn}). The
+      supersession posture is a \emph{program with a falsifiable spine}, not a
+      completed replacement.} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Three structural contrasts carry the supersession claim, and each is a
+re-statement, not a new argument.
+
+\begin{enumerate}[leftmargin=1.6em,itemsep=4pt,topsep=2pt]
+  \item \textbf{Against the QM family (Copenhagen / MWI / RQM / Bohm).} All four
+    import the non-commutative Hilbert-space formalism as fundamental. FTD
+    \emph{proves} its substrate cannot generate that formalism (the observable
+    algebra $A_5$ is strictly commutative, \etag{thm}, \ftdid{0243}) and then
+    \emph{declines} it (FC-1, \etag{ax}-class, \ftdid{0255}). Where the four
+    reproduce textbook QM exactly, FTD predicts \emph{structural deviations}
+    (\S\ref{ch:science}). FTD is thereby \emph{more falsifiable, not more
+    general}: it stakes outcomes the others cannot.
+  \item \textbf{Against 't Hooft's CA program --- the nearest relative.} Both
+    posit a deterministic, local, discrete classical substrate. 't Hooft's
+    program \emph{aims to reproduce QM exactly} via a template-basis map (an
+    instance of the import $M$) and hopes for reversible automata. FTD declines
+    $M$ and, decisively, declines reversibility too --- its own finite
+    (manifestation) sector is provably irreversible and argues \emph{against} a
+    global reversibility postulate (FC-2, \etag{ax}-class, \ftdid{0256}). Same
+    substrate class; opposite commitments on both forks.
+  \item \textbf{Against string theory.} FTD's structural null-predictions are
+    direct contradictions of string theory's characteristic imports: no SUSY
+    partners, no extra dimensions, no monopoles, exact proton stability
+    (the nulls are \etag{thm}-grade as a class, \S\ref{ch:science} PL-6; the
+    proton sub-claim specifically carries a \etag{sel} correction, \ftdid{0301}).
+    Continued null results at colliders and proton-decay observatories are
+    evidence \emph{for} FTD's ontology and \emph{against} those imports.
+\end{enumerate}
+
+\section{Why ontology-first is more falsifiable, not less}
+\label{sec:phil-falsifiability}
+
+The chain Ontology $>$ Logic $>$ Mathematics $>$ Philosophy $>$ Physics $>$
+Science would be vacuous if ``Science'' merely decorated the front of the chain
+(\ftdid{0254}~\S4.3, \etag{syn}). The constitution's discipline is the reverse,
+and it is the central philosophical claim of this layer: \emph{because the early
+layers are committed, the framework cannot retreat when measurements arrive.}
+
+The argument is short and turns on a single asymmetry. A framework that
+reproduces the QM/SR formalism exactly --- by importing it --- can never be
+\emph{separated} from QM/SR by experiment: any experiment QM/SR survives, the
+importing framework survives by construction. Its empirical content relative to
+QM/SR is therefore null. FTD, by \emph{declining} the imports (FC-1, FC-2),
+forfeits that safety. Each declination converts a borrowed certainty into a
+stakeable prediction:
+
+\begin{itemize}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
+  \item declining the measurement map $M$ (FC-1) turns ``the substrate must
+    reproduce Born statistics'' into the deviation PL-1 (Rice, not Born), which
+    a single clean construction can refute;
+  \item declining global reversibility and the substrate-level Lorentzian metric
+    (FC-2) turns ``$\gamma$ is exact at all scales'' into the deviation PL-4
+    (a $\gamma$-departure that must die as $L^{-2}$, and must \emph{not} vanish
+    where the lattice requires it), and ``space is exactly isotropic'' into PL-5
+    (a UV anisotropy dying as $k^4$);
+  \item committing to the discrete ontology turns string theory's
+    open-handedness about SUSY, extra dimensions, and proton decay into
+    \etag{thm}-grade nulls (PL-6) that a single positive detection would break.
+\end{itemize}
+
+Crucially, the commitments are themselves staked. The constitution states in
+advance the observations that kill each one (\S\ref{ch:science}, FC-1 / FC-2
+kill-conditions): a substrate-native pair of observables with $[A,B] \neq 0$, or
+a P1--P5 derivation of Born statistics, would kill FC-1; exact $\gamma$ at finite
+$L$, or a P1--P5 derivation of global reversibility, would kill FC-2. An
+ontology that names its own executioners is the opposite of an
+unfalsifiable one.
+
+This is not falsifiability-as-sole-criterion smuggled back in. The framework's
+broader stance rejects treating falsifiability as the \emph{only} mark of a good
+theory; ontology-first is also a commitment to saying what \emph{is} before
+saying what is \emph{measured}. But rejecting falsifiability-as-sole-criterion
+is not licence to wave measurements away. The discipline that backs the claim is
+mechanical: \emph{every} measured phenomenon must appear somewhere --- in the IR
+catalog (\S\ref{ch:physics}), in the deviation ledger (\S\ref{ch:science}), or
+in the not-yet-delivered honesty row of Table~\ref{tab:supersession}. Nothing
+measured is permitted to be silent.
+
+\section{What this layer does not settle}
+\label{sec:phil-open}
+
+The observer layer is the most interpretively ambitious layer of the chain, and
+correspondingly the one with the most that is still \etag{opn}.
+
+\begin{itemize}[leftmargin=1.4em,itemsep=3pt,topsep=2pt]
+  \item \textbf{The sharpness of the restriction} \etag{opn}. The binding
+    blind-spot is a theorem (\ftdid{0227}, partial); the \emph{symmetric}
+    knowledge-balance that would make it quantum-like is not --- the missing
+    $\Z/3$ is a genuine gap, not a notational one. Until it closes, the
+    framework's account of measurement is \emph{binding-without-sharpness}, and
+    this document claims no more.
+  \item \textbf{The observer-layer Bell account} \etag{sel}~$+$~\etag{opn}. The
+    substrate proves $S \le 2$; laboratories measure $S > 2$. FTD's account of
+    that gap lives at the observer layer and is a \emph{selection}, not a
+    derivation --- and it is the framework's \textbf{highest-risk} commitment.
+    It is carried forward, unsoftened, as PL-2 in \S\ref{ch:science}.
+  \item \textbf{The active-frame threshold} \etag{opn}. Which configurations
+    cross from mere reference frame \emph{structure} (generic) into realised
+    active frame \emph{dynamics} is an unsolved structural problem; the
+    framework has the vocabulary for it but not the criterion.
+  \item \textbf{The Hard Problem} is \emph{not} addressed. It is re-described as
+    the open problem of frame-relative emergence and explicitly placed out of
+    scope. This layer accounts for what a frame can \emph{know} of itself, not
+    for why there is something it is like to be one.
+\end{itemize}
+
+The supersession posture, then, is exactly what it says: a program with a
+falsifiable spine, holding two named walls open --- the sharpness gap and the
+lab-Bell burden --- and accountable, layer by layer, to the physics and the
+science that follow.
