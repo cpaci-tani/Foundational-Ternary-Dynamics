@@ -6,7 +6,7 @@ Central ledger of every `[OPEN]` claim in FTD — code stubs, theoretical gaps, 
 
 **Last full audit:** 2026-04-17 (post-engine-cleanup). **Last incremental update:** 2026-06-10 — closed 14 G* (Theme 1) open items, closed epistemic integrity/consciousness gaps, and formally declined continuous Hilbert space / QM recovery (Option 3) under FC-1. (Previous: 2026-06-01 — §4.2: recorded the **MC-T4.3 route-invariance boundary** (FTD-0242) — 0/4 FTD-native routes force the master-quadratic operator assembly; α classified DYNAMICAL not structural; the obstruction is now route-invariant with two surviving exits (6th-postulate-class assembly input, or the engine-native ARC-D measurement — ARC-D1 already [CLOSED NEGATIVE]). Stays [OPEN] research (boundary is not closed-positive). 2026-04-28 — §7.7 refined: "WHY 25 voxels?" item closed at linear level by FTD-0110 [DERIVED]; "structural bridge between algebraic spine and engine phenomenology" item closed at linear level (one connector found); new sub-item added for the linear→nonlinear bridge proof. 2026-04-27 evening — added §7.7 with three high-leverage post-engine-as-instrument priorities.) **Live repo count:** ~168 real `[OPEN]` items across ~64 files plus the §7.7 entries, after excluding example mentions in the tracker / epistemic-tag cheatsheet / derivation template / scenario registry. **Engine code: 6 of 9 items closed 2026-04-17** (the remaining three are `[BLOCKED]` on upstream work); the rest are theory-doc opens.
 
-**Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
+**Companion audit:** [`AUDIT_ENGINE_CALLSTACK.md`](../AUDIT_ENGINE_CALLSTACK.md) — structural audit of the `tick()` call graph (CPU + GPU). 10 findings including **F2: four toggles (pair_production, strong_force, exchange_force, triad_binding) are silently no-op on CPU** — the highest-severity item unearthed by the audit and not previously tracked here.
 
 ## How to use this file
 
@@ -427,7 +427,7 @@ Three high-leverage research items surfaced by the 2026-04-27
 engine-as-instrument campaign; one new sub-item added 2026-04-28 after
 FTD-0110 closure. All tracked in CLAUDE.md v5.33 §[OPEN] and the
 bird's-eye assessment in
-[`../../WHERE_WE_LEFT_OFF.md`](../../WHERE_WE_LEFT_OFF.md) §10.
+[`../../../WHERE_WE_LEFT_OFF.md`](../../../WHERE_WE_LEFT_OFF.md) §10.
 
 -  **WHY 25 voxels for ic1 cluster?** — **CLOSED at linear level
   2026-04-28 (commit `306837c`).** The 25-voxel value at canonical
@@ -438,7 +438,7 @@ bird's-eye assessment in
   unique O_h-fixed point and therefore A_{1g}-pure; the 18-pt Laplacian
   preserves A_{1g} as a 4×4 block; δ_center projects onto 4 A_{1g}
   eigenmodes with mean energy fraction 1/N_base = 1/4. **Source:**
-  [`../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md);
+  [`DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`](../../03_derivations/foundational_mechanics/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md);
   verification suite C1–C4 PASS in
   `scripts/exploration/verify_k_derivation_2026-04-28.py`.
 
@@ -455,6 +455,8 @@ bird's-eye assessment in
   below for the [OPEN] nonlinear extension.
 
 -  **[OPEN — boundary mapped 2026-06-11, FTD-0269] nonlinear bridge — N(A) law is engine-emergent.** Pre-registered (`preregister-ftd0110-na-law-v1`, lock `192203b5`) substrate-parameter forward model with the FFT-exact Gauss-projection boost (the lattice Poisson Green's function) + coupling source: the framework-derived dynamics reproduce the law's SHAPE (broken power, knee=14, super-knee exponent 2.07, sub-knee firing geometry shell-L1=0.18) and the Gauss boost is confirmed the decisive sub-knee ingredient (gauss-off collapses N(14) 17.9→7) — but the law is **ENGINE-EMERGENT (verdict BOUNDARY)**: the kinetic drain shifts the knee by 16, √α-coupling is super-knee load-bearing (off/on RMS 0.118), and the absent Langevin friction γ over-predicts super-knee ~1.8×. Calibration is set by non-framework engine constants; the substrate fixes only the geometric shape. The bridge stays **[OPEN]** as a clean-derivation target (would require deriving the 0.5 drain + γ from the action, or showing the calibration is convention). The earlier "[RESOLVED — Genesis Throttling]" claim and `DERIV_FTD0110_GENESIS_THROTTLE.md` are **superseded** (a 3-point count match, no Gauss, knee mislocated at 23.5). See `ANALYSIS_FTD0110_NA_LAW.md`. (Prior historical text: Canonical position: linear k = ¼ `[DERIVED]` + Bridge-I O_h-equivariance `[DERIVED]`; nonlinear coefficient origin `[OPEN]`/`[SMC]`. Mechanism α `[CLOSED NEGATIVE]`, Mechanism γ `[CLOSED NEGATIVE]`, Mechanism β `[CLOSED NEGATIVE]`. Engine telemetry FTD-0267 established the genesis-vs-survival nature.)
+
+-  **Not counted as open (2026-06-14 — FTD-0277):** the locked v1 collective-coordinate genesis-counting route is **CLOSED NEGATIVE**. It passes only the drain exponent (`-1.000`) and gamma-direction checks; it fails the primary N(A) law (pure `A^2`, knee 24.25, A=10 count 160, shell-L1 1.830). This closes the v1 slosh-pass/static-gating ansatz, not the broader FTD-0110-NL / FTD-0250 collective-coordinate reduction. See [`ANALYSIS_GENESIS_COUNTING_v1.md`](../../03_derivations/foundational_mechanics/ANALYSIS_GENESIS_COUNTING_v1.md).
 
 -  **[RESOLVED 2026-06-10 — owner decision] ic1 reproducibility break (FTD-0260).** Owner: *"we've had to fix some mistakes over time so that may be why it's different — just fix it."* The change traces to accumulated deliberate engine corrections; the **current stack is canonical**; forensics closed by decision. Fixes shipped same day: canonical test re-baselined (historical pins preserved in comments); `gpc_03_genesis()` made quantitative (3× band); STACK-PINNED banner on FOUND_LATTICE_SPACING_GAUGE_FREEDOM §12; FTD-0110 empirical leg re-tagged [STACK-PINNED — historical]. **Successor [OPEN] (below).**
 -  **[RESOLVED 2026-06-10 — FTD-0261, first half] Current-stack N(A) law characterized + thermostat discriminated.** Pre-registered CLEAN-LAW verdict (V-1 5/5, AIC margin 13.1): **broken power law, knee at A ≈ 16, `N ∝ A^3.69` below / `N ∝ A^1.86` above, asymptotic k_eff ≈ 0.05 (not the historical ¼)**. Thermostat: **Outcome A** (median N_X/N_N = 1.61) with dose-arm attribution to **pure friction** (γ-monotone, T-flat) — **FTD-0259's thermal-crossover knee reading [CLOSED NEGATIVE]**. See [`ANALYSIS_NA_LAW_CURRENT_STACK_v1.md`](../../03_derivations/foundational_mechanics/ANALYSIS_NA_LAW_CURRENT_STACK_v1.md).
