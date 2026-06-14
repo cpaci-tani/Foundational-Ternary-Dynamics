@@ -1,7 +1,7 @@
 # PRE-REGISTRATION — Executing the detdet_ζ obligations A/B/C: the deep swing at α (v2)
 
 **Status:** `[PRE-REGISTRATION]` — design lock; the adversarial workflow runs only after the
-hash-lock. **Date:** 2026-06-13. **LEDGER id (reserved):** FTD-0285.
+hash-lock. **Date:** 2026-06-13. **LEDGER id (reserved):** FTD-0302.
 **Git tag (to be applied at lock):** `preregister-alpha-det-forcing-v2`.
 **Executes:** the three obligations A/B/C scoped — but never run — in
 [`SCOPE_DET_IDENTITY_ATTACK_v1.md`](../scopes_and_specs/SCOPE_DET_IDENTITY_ATTACK_v1.md)
