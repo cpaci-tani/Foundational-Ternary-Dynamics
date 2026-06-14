@@ -80,7 +80,7 @@ Every test now carries at least one label:
 |---|---|---|
 | `unit` | Pure unit tests; no GPU; <1s each (147 tests) | ~30s total |
 | `physics` | Energy conservation, Coulomb, locked particle, absorbing BC | ~2 min |
-| `golden` | Bit-exact regression vs frozen byte-hash (`test_render_bridge_golden`, hash `0xcd957b601d47868a`) | <10s |
+| `golden` | Bit-exact regression vs frozen byte-hash (`test_render_bridge_golden`, hash `0x56fa28acb5b9fe88` @ L=17) | <10s |
 | `slow` | Multi-tick scenarios, perf-sensitive | 1-5 min each |
 | `gpu` | Requires CUDA; route via WSL2 | varies |
 
@@ -125,7 +125,7 @@ snapshot encoder (separate header to avoid circular include); used by
 
 ### Touching physics code
 Any extraction or refactor that could perturb tick output MUST keep
-`test_render_bridge_golden` green (hash `0xcd957b601d47868a`). Run
+`test_render_bridge_golden` green (hash `0x56fa28acb5b9fe88` @ L=17). Run
 `ctest -L golden` before claiming Phase-X-complete. See ADR-0012.
 
 ## Invariants

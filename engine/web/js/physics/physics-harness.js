@@ -427,6 +427,27 @@ export class PhysicsHarness {
         this.bridge?.injectWavepacket?.(x, y, z, state);
     }
 
+    getParam(name) {
+        return this.bridge?.getParam?.(name) ?? null;
+    }
+
+    setParam(name, value) {
+        this.bridge?.setParam?.(name, value);
+    }
+
+    clearField() {
+        this.bridge?.clearField?.();
+    }
+
+    seedRandomFlux() {
+        this.bridge?.seedRandomFlux?.();
+    }
+
+    /** Advance one Scale-0 physics tick on the underlying bridge. */
+    tickScale0() {
+        this.bridge?.capabilities?.scale0?.tickScale0?.();
+    }
+
     // ── Scenario orchestration ─────────────────────────────────────
 
     /** Reset the lattice (clear particles, flux, wave-velocity, tick). */

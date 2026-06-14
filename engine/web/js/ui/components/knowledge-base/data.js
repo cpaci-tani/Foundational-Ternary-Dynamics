@@ -1348,6 +1348,32 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
     's0-field-uniform-e': { summary: 'A uniform electric-like field background for testing force and drift intuition.', notation: ['uniform field', '∇·J ≈ const'] },
     's0-field-uniform-b': { summary: 'A uniform magnetic-like field background for curvature and circulation intuition.', notation: ['uniform curl structure', 'v × B'] },
     's0-field-photon-pulse': { summary: 'A clean propagating pulse used as the field-configuration counterpart of a light packet.', notation: ['transverse pulse', 'c = 1/√3'] },
+    's0-field-rf-lattice-wave': {
+        summary: 'A single long-wavelength transverse flux mode for seeing RF-like structure on the lattice.',
+        body: [
+            'This scenario isolates one broad RF lane at the center of the lattice so its low spatial mode can be watched without competing light or sound lanes.',
+            'It is an RF analogue in lattice units: the dashboard measures wavelength, frequency, group velocity, energy, and directional Jy/Wy samples directly from the seeded field buffers.',
+            'Matter, forces, genesis, damping, and Gauss projection are disabled so the wave readout stays clean and interpretable as a flux-mode instrument.',
+        ],
+        notation: ['mode n = 1', 'lambda = L', 'c = 1/sqrt(3)', 'transverse Jy/Wy'],
+    },
+    's0-field-light-lattice-wave': {
+        summary: 'A single shorter-wavelength transverse flux mode for comparing light-like propagation against RF.',
+        body: [
+            'This scenario uses the same clean transverse-flux setup as the RF instrument but raises the spatial mode number so the lattice shows more oscillations across the box.',
+            'It is not SI-calibrated color. Treat it as a light-like lattice mode whose frequency and wavelength are measured in dashboard lattice units.',
+        ],
+        notation: ['mode n = 6', 'lambda = L/6', 'c = 1/sqrt(3)', 'transverse Jy/Wy'],
+    },
+    's0-field-sound-lattice-wave': {
+        summary: 'A single longitudinal medium proxy for comparing sound-like propagation against RF and light modes.',
+        body: [
+            'This scenario seeds one centered longitudinal lane with a deliberately slower dashboard speed, so it can be compared visually to transverse RF and light modes.',
+            'It is a pressure/displacement proxy, not a material acoustics derivation. No air density, elastic modulus, molecular medium, or acoustic boundary model is being derived here.',
+            'The panel measures the longitudinal Jx/Wx component, lane energy, mode number, wavelength, and proxy v/c directly from the lattice buffers.',
+        ],
+        notation: ['mode n = 4', 'sound proxy v/c = 1/8', 'longitudinal Jx/Wx'],
+    },
     's0-field-spacetime-forcing-boundary': {
         summary: 'The FTD-0253 wave-side seed: a sub-threshold center pulse for watching the forced locality cone without adding metric claims.',
         body: [

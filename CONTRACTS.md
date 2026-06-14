@@ -156,7 +156,10 @@ Rules:
 
 1. Scale-0 diagnostics/audit/Lagrangian collection must use the active owner:
    the app bridge for WASM/native scenarios, or `state.fluxMock` for mock/worker
-   owned scenarios.
+   owned scenarios. Prefer the canonical selectors in `scale0/state/store.js`:
+   `getActiveScale0Bridge`, `getActiveScale0Capability`, `getActiveLatticeSize`,
+   `resolveActiveScale0BridgeFromWindow`. The telemetry hub's `collectScale0*`
+   helpers already encapsulate mock-vs-main when passed `(ctx.bridge, fluxMock, useFluxMock)`.
 2. WASM `diagnostics.totalEnergy` follows the dashboard physical energy channel
    (`getEnergyAudit().totalEnergy`); the native baseline is preserved separately
    as `vacuumBaselineEnergy` when available.

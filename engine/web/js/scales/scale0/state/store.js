@@ -190,3 +190,9 @@ export function resolveActiveScale0BridgeFromWindow() {
     const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
     return getActiveScale0Bridge(ctx, state);
 }
+
+/** Lattice N for the bridge that owns live Scale-0 physics (mock when active). */
+export function getActiveLatticeSize(ctx, st = state) {
+    const active = getActiveScale0Bridge(ctx, st);
+    return active?.latticeSize ?? ctx?.bridge?.latticeSize ?? 33;
+}

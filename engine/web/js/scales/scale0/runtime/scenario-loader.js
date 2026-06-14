@@ -1,3 +1,4 @@
+import { runScale0PhysicsTicks } from './tick.js';
 import { getPhysicsHarness } from '../../../physics/index.js';
 import { MockBridge } from '../../../bridge-init.js';
 import { MockBridgeProxy } from '../../../bridge/mock-bridge-proxy.js';
@@ -15,6 +16,8 @@ import {
     setFieldToggle,
     setFluxMock,
     setForceStyle,
+    getActiveScale0Bridge,
+    getActiveLatticeSize,
 } from '../state/store.js';
 import {
     FIELD_TOGGLE_BINDINGS,
@@ -74,10 +77,18 @@ const FIELD_BUTTON_TO_FLAG = Object.fromEntries(FIELD_TOGGLE_BINDINGS);
 // already containing the new branch.
 const SCALE0_MOCK_OWNED_SCENARIOS = new Set([
     's0-field-spacetime-forcing-boundary',
+    's0-field-rf-lattice-wave',
+    's0-field-light-lattice-wave',
+    's0-field-sound-lattice-wave',
+    's0-field-sound-collision',
     's0-field-thomson-scattering',
     's0-field-thomson-unlocked-recoil',
 ]);
 const SCALE0_INLINE_MOCK_SCENARIOS = new Set([
+    's0-field-rf-lattice-wave',
+    's0-field-light-lattice-wave',
+    's0-field-sound-lattice-wave',
+    's0-field-sound-collision',
     's0-field-thomson-scattering',
     's0-field-thomson-unlocked-recoil',
 ]);
@@ -87,6 +98,27 @@ const SCALE0_SCENARIO_VISUAL_PROFILES = {
         fluxSlice: true,
         fluxPointScale: 2.6,
         fluxThreshold: 0.001,
+        fluxOpacity: 0.85,
+    },
+    's0-field-rf-lattice-wave': {
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.6,
+        fluxThreshold: 0.0005,
+        fluxOpacity: 0.85,
+    },
+    's0-field-light-lattice-wave': {
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.6,
+        fluxThreshold: 0.0005,
+        fluxOpacity: 0.85,
+    },
+    's0-field-sound-lattice-wave': {
+        fluxVolume: true,
+        fluxSlice: true,
+        fluxPointScale: 2.6,
+        fluxThreshold: 0.0005,
         fluxOpacity: 0.85,
     },
     's0-field-thomson-scattering': {
@@ -144,8 +176,9 @@ function makeFluxMock(latticeSize, scenarioId, bridge) {
         : new MockBridge(latticeSize);
 }
 
-function syncComboSliders(bridge) {
+function syncComboSliders(ctx, state) {
     const defaults = { kb: K_B, gn: G_N, damping: DAMPING };
+    const activeBridge = getActiveScale0Bridge(ctx, state) ?? ctx?.bridge;
     const map = [
         { id: 'combo-kb', valId: 'combo-kb-val', param: 'kb', fmt: 3 },
         { id: 'combo-gn', valId: 'combo-gn-val', param: 'gn', fmt: 3 },
@@ -155,7 +188,7 @@ function syncComboSliders(bridge) {
         const el = document.getElementById(slider.id);
         const display = document.getElementById(slider.valId);
         if (!el || !display) continue;
-        const value = bridge?.getParam ? bridge.getParam(slider.param) : defaults[slider.param];
+        const value = activeBridge?.getParam ? activeBridge.getParam(slider.param) : defaults[slider.param];
         if (value != null) {
             el.value = value;
             display.textContent = value.toFixed(slider.fmt);
@@ -202,6 +235,18 @@ function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenarioId) {
 
     state.latticeNeedsUpload = true;
     markFieldDirty();
+}
+
+function applyGravityAbsorbingToggles(scenarioId, mainScale0, mockScale0) {
+    const isFluxGravity = SCALE0_ABSORBING_SCENARIOS.has(scenarioId);
+    const isMassGravity = SCALE0_MASS_GRAVITY_SCENARIOS.has(scenarioId);
+    for (const sc of [mainScale0, mockScale0]) {
+        if (!sc) continue;
+        sc.setToggle?.('absorbing_boundary', isFluxGravity);
+        sc.setToggle?.('latency_field', isFluxGravity || isMassGravity);
+        sc.setToggle?.('field_energy_gravity', isFluxGravity);
+        if (isMassGravity) sc.setToggle?.('genesis', false);
+    }
 }
 
 function applyAuxiliaryDefaults(ctx, viewportAdapter, scenarioId) {
@@ -388,27 +433,29 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     //     [IMPOSED] field-energy density (field_energy_gravity) for the FLUX
     //     scenarios, OR real manifested rest mass M_REST·|state| for the
     //     MASS-gravity scenarios (SCALE0_MASS_GRAVITY_SCENARIOS, e.g. massive-body).
-    const isFluxGravity = SCALE0_ABSORBING_SCENARIOS.has(scenario.id);
-    const isMassGravity = SCALE0_MASS_GRAVITY_SCENARIOS.has(scenario.id);
-    for (const sc of [ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0]) {
-        sc?.setToggle?.('absorbing_boundary', isFluxGravity);
-        sc?.setToggle?.('latency_field', isFluxGravity || isMassGravity);
-        sc?.setToggle?.('field_energy_gravity', isFluxGravity);
-        // Mass-gravity body is a STATIC pre-seeded rest mass: disable genesis so the
-        // body's self-field (Gauss flux) cannot trigger runaway manifestation.
-        if (isMassGravity) sc?.setToggle?.('genesis', false);
-    }
+    applyGravityAbsorbingToggles(
+        scenario.id,
+        ctx.bridge.capabilities.scale0,
+        fluxMock?.capabilities?.scale0 ?? null,
+    );
 
     setCurrentScenarioId(scenario.id);
     setSelectedScenarioId(scenario.id);
     markScenarioOverrideRows(DEFAULT_TOGGLES);
-    syncComboSliders(ctx.bridge);
+    syncComboSliders(ctx, state);
     state.latticeNeedsUpload = true;
 
     // Restore the captured overlay preferences. Runs last so it overrides any
     // defaults applied by applyAuxiliaryDefaults or resetScale0VisualState.
     restoreOverlayPreferences(overlayPrefs, state, viewportAdapter);
     applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario.id);
+
+    // Keep viewport world coords (wireframe, clip, streamlines) aligned with
+    // the bridge that owns physics — resize already does this; load must too.
+    const activeN = activeBridge.latticeSize || latticeSize;
+    if (ctx.viewport?.latticeSize !== activeN) {
+        ctx.viewport.setLatticeSize(activeN);
+    }
 
     state.fieldNeedsUpdate = true;
     recomputeAnyFieldActive();
@@ -446,7 +493,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
         return;
     }
 
-    if (bridge && typeof bridge.resize === 'function') {
+    if (!ownerIsMock && bridge && typeof bridge.resize === 'function') {
         try {
             await bridge.resize(newSize);
         } catch (e) {
@@ -454,25 +501,15 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
             if (typeof window.showToast === 'function') {
                 window.showToast(`Lattice resize failed: ${e.message}`, 'error');
             }
+            setInputValue('lattice-size', bridge.latticeSize || 33);
+            return;
         }
-    } else {
-        bridge.latticeSize = newSize;
     }
+    // Keep UI/metadata in sync; mock-owned scenarios do not reallocate WASM.
+    bridge.latticeSize = newSize;
+
     telemetryHub.resetScale(0);
-    getScale0Scenario(scenarioId).load(getPhysicsHarness(bridge), { id: scenarioId });
-    ctx.viewport.setLatticeSize(newSize);
-    viewportAdapter.setFluxVolumeVisible(ctx.viewport.showFlux);
 
-    if (bridge && bridge.capabilities && bridge.capabilities.scale0) {
-        if (typeof bridge.capabilities.scale0.setBoundaryShape === 'function') {
-            bridge.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
-        }
-        if (typeof bridge.capabilities.scale0.setReflectiveBoundary === 'function') {
-            bridge.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
-        }
-    }
-
-    // Same lazy-allocation rule as loadScale0Scenario (ARC-2).
     const useFluxMock = shouldUseFluxMock(bridge, scenarioId);
     let fluxMock = null;
     if (useFluxMock) {
@@ -481,24 +518,42 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
         fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
     }
 
-    for (const [key, , elId] of DEFAULT_TOGGLES) {
-        const checked = readCheckboxValue(elId);
-        bridge.capabilities.scale0.setToggle(key, checked);
-        fluxMock?.capabilities.scale0.setToggle(key, checked);
+    applyToggleDefaults(ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0 ?? null, scenarioId);
+    if (fluxMock) {
+        for (const [key, , elId] of DEFAULT_TOGGLES) {
+            fluxMock.capabilities.scale0.setToggle(key, readCheckboxValue(elId));
+        }
     }
 
     setFluxMock(fluxMock, useFluxMock);
+    ctx.useFluxMock = useFluxMock;
+    ctx.fluxMock = fluxMock;
+
+    const activeBridge = (useFluxMock && fluxMock) ? fluxMock : bridge;
+    const harness = getPhysicsHarness(activeBridge);
+    getScale0Scenario(scenarioId).load(harness, { id: scenarioId });
+
+    applyGravityAbsorbingToggles(
+        scenarioId,
+        bridge.capabilities.scale0,
+        fluxMock?.capabilities?.scale0 ?? null,
+    );
+
+    if (bridge?.capabilities?.scale0) {
+        bridge.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
+        bridge.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
+    }
+
+    ctx.viewport.setLatticeSize(newSize);
+    viewportAdapter.setFluxVolumeVisible(ctx.viewport.showFlux);
+    setInputValue('lattice-size', activeBridge.latticeSize || newSize);
     state.latticeNeedsUpload = true;
     markFieldDirty();
     state.tickAccumulator.reset();
 }
 
 export function stepScale0(ctx, state) {
-    const mainScale0 = ctx.bridge.capabilities.scale0;
-    const mockScale0 = state.fluxMock?.capabilities?.scale0 || null;
-    if (!state.useFluxMock) mainScale0.tickScale0();
-    if (mockScale0) mockScale0.tickScale0();
-    state.latticeNeedsUpload = true;
+    runScale0PhysicsTicks(ctx, state, 1);
     state.fieldNeedsUpdate = true;
 }
 

@@ -45,6 +45,7 @@ import { AppShell } from './ui/shell/app-shell.js';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
 import { floatingWindowManager } from './ui/components/floating-window/component.js';
 import { initFluxSlicePanel } from './scales/scale0/ui/overlays/flux-slice-panel.js';
+import { initWaveLabPanel } from './scales/scale0/ui/overlays/wave-lab-panel.js';
 import { initP1ObservablesPanel } from './scales/scale0/ui/overlays/p1-observables-panel.js';
 import { initConservationMicropanel } from './scales/scale0/ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './scales/scale0/ui/overlays/spectrum-panel.js';
@@ -533,6 +534,7 @@ async function init() {
     telemetryGridPanel = initTelemetryGridPanel();
     lagrangianPanel = initLagrangianPanel();
     initFluxSlicePanel();
+    initWaveLabPanel();
     initP1ObservablesPanel();
     initConservationMicropanel();
     initSpectrumPanel();
@@ -540,6 +542,7 @@ async function init() {
     initTimePanel();
     initThermoPanel();
     appRegistry.register('panel:fluxSlice', window.__ftdFluxSlicePanel);
+    appRegistry.register('panel:waveLab', window.__ftdWaveLabPanel);
     appRegistry.register('panel:p1Observables', window.__ftdP1Panel);
     appRegistry.register('panel:conservation', window.__ftdConservationPanel);
     appRegistry.register('panel:spectrum', window.__ftdSpectrumPanel);

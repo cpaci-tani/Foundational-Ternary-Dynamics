@@ -57,6 +57,8 @@ historical provenance, and where new cleanup or architecture notes should land.
 - [`audits/AUDIT_WEB_ENGINE_2026-05-27.md`](audits/AUDIT_WEB_ENGINE_2026-05-27.md)
 - [`audits/AUDIT_BRIDGE_WIRING_2026-06-03.md`](audits/AUDIT_BRIDGE_WIRING_2026-06-03.md)
 - [`audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
+- [`audits/AUDIT_SCALE0_CALLSTACK.md`](audits/AUDIT_SCALE0_CALLSTACK.md) — active-owner / harness tick-load-resize integrity (2026-06-13)
+- [`audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md`](audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md) — scenario harness + telemetry DRY (2026-06-13)
 - [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md)
 - [`audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md)
 - [`audits/AUDIT_S0_OVERLAY_GROUNDING.md`](audits/AUDIT_S0_OVERLAY_GROUNDING.md)

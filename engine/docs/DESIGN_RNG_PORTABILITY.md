@@ -66,7 +66,7 @@ Add a CONVENTION note to `engine/SPEC_ENGINE.md`: "CPU and GPU diverge at per-vo
 **Pros:**
 - Minimal code change (~50 LOC of test relaxation + documentation).
 - Retains cuRAND's high statistical quality on GPU.
-- No risk to the existing golden hash gate (which already runs with genesis on but matches because... wait, this is exactly the divergence). On audit: `render_bridge_golden` currently produces hash `0xcd957b601d47868a` at L=16, 100 ticks. If genesis stochastic operations diverge between CPU and GPU, the hash should fire. **The fact that it doesn't suggests the golden test happens to run the CPU path only.** Verify before declaring this option safe.
+- On audit: `render_bridge_golden` produces hash `0x56fa28acb5b9fe88` at L=17, 100 ticks (CPU-only, force_cpu). If genesis stochastic operations diverge between CPU and GPU, the hash should fire on a GPU run. **The golden test runs the CPU path only by design.**
 
 **Cons:**
 - "Bit-exact CPUGPU" claim becomes scope-restricted to deterministic operations — a documentation-and-marketing-grade weakening.

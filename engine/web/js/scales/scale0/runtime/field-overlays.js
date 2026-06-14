@@ -6,7 +6,7 @@ import {
     generateBImportanceSeeds,
 } from '../../../fieldlines.js';
 import { DUAL_DELTA } from '../../../constants.js';
-import { getActiveScale0Capability } from '../state/store.js';
+import { getActiveScale0Capability, getActiveLatticeSize, getActiveScale0Bridge } from '../state/store.js';
 import {
     computePsiSquaredFrame,
     computePhaseFrame,
@@ -787,7 +787,8 @@ function runJob(sched, slot) {
 // latch) are unchanged. The per-sweep context every job needs is stashed on
 // `sched` here, once, in place of the closures' captured variables.
 function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, params) {
-    const fieldCapability = (state.useFluxMock ? state.fluxMock : ctx.bridge).capabilities.scale0;
+    const fieldCapability = getActiveScale0Bridge(ctx, state)?.capabilities?.scale0
+        ?? ctx.bridge.capabilities.scale0;
     const mockCapability = state.fluxMock?.capabilities?.scale0 || null;
     const flags = state.fieldFlags;
     const acScale0 = emActiveScale0(ctx, state);
@@ -910,7 +911,7 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
 
 export function updateFieldOverlays(ctx, state, viewportAdapter) {
     state.fieldFrame += 1;
-    const latticeSize = ctx.bridge.latticeSize || 33;
+    const latticeSize = getActiveLatticeSize(ctx, state);
     const fieldThrottle = latticeSize > 96 ? 12 : (latticeSize > 48 ? 6 : 3);
     const sched = ensureOverlaySched(state);
 
@@ -982,7 +983,8 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
         state.fieldNeedsUpdate = false;
         sched.lastVersion = version;
         const params = computeStreamlineParams(latticeSize);
-        const fieldCapability = (state.useFluxMock ? state.fluxMock : ctx.bridge).capabilities.scale0;
+        const fieldCapability = getActiveScale0Bridge(ctx, state)?.capabilities?.scale0
+            ?? ctx.bridge.capabilities.scale0;
         const acScale0ForSnapshot = emActiveScale0(ctx, state);
         sched.sampleCache = createFieldSampleCache(fieldCapability, acScale0ForSnapshot, params.stride);
         sched.forceCache = createForceFieldCache(fieldCapability);
