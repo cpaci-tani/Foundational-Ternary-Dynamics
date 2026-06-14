@@ -410,7 +410,8 @@ __global__ void phase_movement_kernel(
     double* __restrict__ ledger_current_y,
     double* __restrict__ ledger_current_z,
     double dt,
-    int L
+    int L,
+    bool reflective_boundary
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -437,9 +438,33 @@ __global__ void phase_movement_kernel(
 
     if (dx == 0 && dy == 0 && dz == 0) return;  // No movement
 
-    int tx = wrap_d(x + dx, L);
-    int ty = wrap_d(y + dy, L);
-    int tz = wrap_d(z + dz, L);
+    const int nx = x + dx;
+    const int ny = y + dy;
+    const int nz = z + dz;
+    const bool crosses = (nx < 0 || nx >= L || ny < 0 || ny >= L || nz < 0 || nz >= L);
+    if (crosses) {
+        if (reflective_boundary) {
+            if (dx != 0) vel_x[i] = -vel_x[i];
+            if (dy != 0) vel_y[i] = -vel_y[i];
+            if (dz != 0) vel_z[i] = -vel_z[i];
+            rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
+            return;
+        }
+        atomicStore_byte(&state[i], 0);
+        vel_x[i] = 0; vel_y[i] = 0; vel_z[i] = 0;
+        rem_x[i] = 0; rem_y[i] = 0; rem_z[i] = 0;
+        particle_id[i] = -1;
+        spin[i] = 0;
+        color[i] = 0;
+        pair_id[i] = -1;
+        accel_mag[i] = 0.0;
+        flux_x[i] = 0; flux_y[i] = 0; flux_z[i] = 0;
+        return;
+    }
+
+    int tx = nx;
+    int ty = ny;
+    int tz = nz;
     int target = tx * L * L + ty * L + tz;  // X-major (matches CPU)
 
     // Collision resolution via byte-level atomicCAS on state
@@ -903,7 +928,7 @@ void launch_phase_forces(GpuBuffers& bufs, bool poisson_coulomb,
     CUDA_CHECK(cudaGetLastError());
 }
 
-void launch_phase_movement(GpuBuffers& bufs, double dt) {
+void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy than 512
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -918,7 +943,7 @@ void launch_phase_movement(GpuBuffers& bufs, double dt) {
         bufs.d_pair_id, bufs.d_accel_mag,
         bufs.d_ledger_reaction,
         bufs.d_ledger_current_x, bufs.d_ledger_current_y, bufs.d_ledger_current_z,
-        dt, L
+        dt, L, reflective_boundary
     );
     CUDA_CHECK(cudaGetLastError());
 }

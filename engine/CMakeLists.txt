@@ -462,6 +462,9 @@ ftd_add_test(test_gauss tests/test_gauss.cpp CTEST_NAME gauss TIMEOUT 600)
 add_executable(test_scenario_velocity_wiring tests/test_scenario_velocity_wiring.cpp)
 target_link_libraries(test_scenario_velocity_wiring ftd_core)
 
+add_executable(test_boundary_movement tests/test_boundary_movement.cpp)
+target_link_libraries(test_boundary_movement ftd_core)
+
 add_executable(test_stress_energy tests/test_stress_energy.cpp)
 target_link_libraries(test_stress_energy ftd_core)
 
@@ -1901,6 +1904,7 @@ add_test(NAME born_infeld COMMAND test_born_infeld)
 # (test_energy merged into energy_conservation)
 # (gauss registered via ftd_add_test above)
 add_test(NAME scenario_velocity_wiring COMMAND test_scenario_velocity_wiring)
+add_test(NAME boundary_movement COMMAND test_boundary_movement)
 add_test(NAME stress_energy COMMAND test_stress_energy)
 add_test(NAME thermodynamics COMMAND test_thermodynamics)
 add_test(NAME lagrangian COMMAND test_lagrangian)
