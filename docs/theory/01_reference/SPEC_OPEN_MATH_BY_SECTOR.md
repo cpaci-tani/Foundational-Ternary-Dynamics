@@ -247,6 +247,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | MC-T3.5 | FTD-0110 multi-scale boundary-correction closure | [BLOCKED] | M | MC-T3.1 |
 | L128-G2 | L=128 G2 follow-up to FTD-0107 — engine-side L-invariance test (32, 64, 128). Pre-registration template ready | [OPEN] | D–W | — |
 | FTD-0110-NL | Linear→nonlinear bridge proof: instrument engine to log per-irrep energy fractions during steady-state run, verify {3/8, 1/8, 3/8, 1/8} A_{1g} distribution holds within Langevin-noise envelope. Closing this promotes FTD-0110's main claim from [STRONGLY MOTIVATED CONJECTURE] to [DERIVED]/[THEOREM]-grade | [OPEN] | W–M | — |
+| FTD-0298-SOUND | Condensate compression (acoustic-like) mode: FTD has light but no acoustic Goldstone (the lattice *is* space — no spontaneously broken translation symmetry; FTD-0298 §5). The only candidate sound-analog is a propagating compression mode of the FTD-0272 manifested-condensate phase. First-order genesis argues against a gapless mode, but the bulk condensate is a real medium — instrument the engine for a propagating density/compression wave in the manifested phase | [OPEN] | W–M | FTD-0272 |
 
 **Closed (sector context):** MC-T3.2 m_e exponent `n = 11` [DERIVED] (2026-05-02); MC-T3.3 (SC+FCC)/2  BCC bridge — **closed-negative for identity** (no Watson-integral identity), **closed-positive for symmetry** (shared O_h symmetry forces leading-order agreement); 25-voxel cluster size at canonical amplitude A=10 [DERIVED at linear level] (FTD-0110 closure 2026-04-28).
 
