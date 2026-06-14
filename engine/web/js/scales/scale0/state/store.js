@@ -173,3 +173,20 @@ export function resetFrameState() {
 export function setCurrentScenarioId(id) {
     state.currentScenarioId = id || 'flux-pulse';
 }
+
+/** Bridge that owns live Scale-0 physics (mock when useFluxMock). */
+export function getActiveScale0Bridge(ctx, st = state) {
+    if (st?.useFluxMock && st?.fluxMock) return st.fluxMock;
+    return ctx?.bridge ?? null;
+}
+
+/** scale0 capability on the active physics owner. */
+export function getActiveScale0Capability(ctx, st = state) {
+    return getActiveScale0Bridge(ctx, st)?.capabilities?.scale0 ?? null;
+}
+
+/** Panel/runtime helper: resolve live physics owner from window.__ftdCtx + store. */
+export function resolveActiveScale0BridgeFromWindow() {
+    const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
+    return getActiveScale0Bridge(ctx, state);
+}

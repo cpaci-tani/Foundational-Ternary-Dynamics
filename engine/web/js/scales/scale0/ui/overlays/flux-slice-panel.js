@@ -35,7 +35,7 @@ import {
     rampVorticity,
     rampCharge,
 } from '../../../../viewport/color-ramps.js';
-import { getFieldStateSnapshot, getScale0State } from '../../state/store.js';
+import { getFieldStateSnapshot, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 
 const DEFAULT_CANVAS_PX = 220;
 const DENSE_CANVAS_PX = 160; // shrink when >2 active rows are visible
@@ -1064,13 +1064,7 @@ export function initFluxSlicePanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('panel-flux-slice');
     if (!host) return null;
-    const getBridge = () => {
-        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        if (!ctx) return null;
-        const state = getScale0State?.();
-        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
-        return ctx.bridge;
-    };
+    const getBridge = () => resolveActiveScale0BridgeFromWindow();
     if (typeof window !== 'undefined' && window.__ftdFluxSlicePanel) {
         const existing = window.__ftdFluxSlicePanel;
         existing.getBridge = getBridge;

@@ -15,7 +15,7 @@
 
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
-import { getScale0State } from '../../state/store.js';
+import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { paintSliceToCanvas } from './slice-render.js';
 import { rampEmEnergy } from '../../../../viewport/color-ramps.js';
 
@@ -228,11 +228,6 @@ export function initThermoPanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('panel-thermo');
     if (!host) return null;
-    const getBridge = () => {
-        const state = getScale0State?.();
-        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
-        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        return ctx?.bridge || null;
-    };
+    const getBridge = () => resolveActiveScale0BridgeFromWindow();
     return mountThermoPanel(host, getBridge);
 }

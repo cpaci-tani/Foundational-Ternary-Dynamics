@@ -31,7 +31,7 @@ import {
     properTimeStep, radialProfile, radialBins,
 } from '../../analysis/time-analysis.js';
 import { FTD0252_PROVENANCE, DILATION_VS_V, IR_CONVERGENCE } from '../../data/ftd0252-reference.js';
-import { getScale0State } from '../../state/store.js';
+import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'time-panel';
@@ -518,11 +518,6 @@ export function initTimePanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('panel-time');
     if (!host) return null;
-    const getBridge = () => {
-        const state = getScale0State?.();
-        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
-        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        return ctx?.bridge || null;
-    };
+    const getBridge = () => resolveActiveScale0BridgeFromWindow();
     return mountTimePanel(host, getBridge);
 }
