@@ -341,14 +341,15 @@ html[data-panel-mount="bottom"] .play-bar-settings-popover {
         transform: translateX(-50%);
     }
 
-    /* When the bottom sheet is OPEN (the default mobile state) it occupies the
-       30dvh grid track. Lift the capsule above the sheet so the transport never
-       overlaps panel controls. Collapsed falls back to the floor rule above
-       (capsule rests above the status bar over the canvas). The #app id keeps
-       this ahead of html[data-panel-mount="bottom"] on the cascade. */
+    /* When the bottom sheet is OPEN (the default mobile state) it floats over the
+       canvas at --m-sheet-h tall (defined on #app in app-shell.css). Lift the
+       capsule to sit just above the sheet so the transport never overlaps panel
+       controls. Collapsed falls back to the floor rule above (capsule rests above
+       the status bar over the full canvas). The #app id keeps this ahead of
+       html[data-panel-mount="bottom"] on the cascade. */
     #app:not(.panels-collapsed) .play-bar {
         top: auto;
-        bottom: calc(30dvh + var(--play-bar-floor));
+        bottom: calc(var(--m-sheet-h, 42dvh) + var(--play-bar-floor));
     }
 
     /* Finger-sized playback controls on touch devices */
