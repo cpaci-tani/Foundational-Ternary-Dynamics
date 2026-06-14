@@ -6,8 +6,9 @@
 import { BaseComponent } from '../../../../../core/component.js';
 import { TSIRELSON_BOUND } from '../../../../../constants.js';
 import { cardStyle, titleStyle } from '../_card-helpers.js';
+import { getScale0Scenario } from '../../../scenario-registry.js';
 
-const BELL_SCENARIOS = new Set(['quantum-entangle']);
+
 const PANEL_ID = 'p1-observables-panel';
 
 const TEMPLATE = `
@@ -27,7 +28,8 @@ export class BellComponent extends BaseComponent {
     }
 
     update(bridge, scenarioId) {
-        if (BELL_SCENARIOS.has(scenarioId)) {
+        const scenario = getScale0Scenario(scenarioId);
+        if (scenario?.tags?.includes('entangle')) {
             if (this.renderedFor !== scenarioId) {
                 this.refs.body.className = '';
                 this._renderBellSection();

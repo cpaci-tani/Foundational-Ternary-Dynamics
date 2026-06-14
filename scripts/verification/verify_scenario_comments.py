@@ -11,7 +11,11 @@ def main():
     cpp_files = [
         os.path.join(root_dir, "engine", "src", "scenarios.cpp"),
         os.path.join(root_dir, "engine", "src", "scenarios", "flux.cpp"),
-        os.path.join(root_dir, "engine", "src", "scenarios", "light.cpp")
+        os.path.join(root_dir, "engine", "src", "scenarios", "light.cpp"),
+        os.path.join(root_dir, "engine", "src", "scenarios", "s0_seed.cpp"),
+        os.path.join(root_dir, "engine", "src", "scenarios", "s0_field.cpp"),
+        os.path.join(root_dir, "engine", "src", "scenarios", "vacuum.cpp"),
+        os.path.join(root_dir, "engine", "src", "scenarios", "quantum.cpp")
     ]
 
     # Verify paths exist

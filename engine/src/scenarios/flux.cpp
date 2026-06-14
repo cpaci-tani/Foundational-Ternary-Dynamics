@@ -425,6 +425,11 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-zero-point") {
+        // Scenario ID: flux-zero-point
+        // Physical Purpose: Models the irreducible quantum ground-state vacuum energy.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Persistent low-amplitude random background flux that does not trigger genesis.
+        // Discrepancy: None.
         // Zero-Point Energy — the irreducible ground-state floor. Uniform
         // low-amplitude random flux across the WHOLE lattice at 0.3·K_B
         // (≈ 0.08, ~20× below K_GENESIS = N_c·K_B = 1.533), so nothing can

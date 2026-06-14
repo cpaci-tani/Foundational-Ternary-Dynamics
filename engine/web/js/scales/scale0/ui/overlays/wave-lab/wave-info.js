@@ -18,6 +18,8 @@ import { markFieldDirty, setLatticeNeedsUpload } from '../../../state/store.js';
 import { cardStyle, titleStyle, tagBadge, formatExp, formatFixed } from '../_card-helpers.js';
 import { LatticeSynth } from '../../../../../audio/lattice-synth.js';
 import { Sparkline } from '../../../../../ui/charts/sparkline.js';
+import { getScale0Scenario } from '../../../scenario-registry.js';
+
 
 class RingBuffer {
     constructor(size) {
@@ -298,7 +300,8 @@ export class WaveInfoComponent extends BaseComponent {
     }
 
     update(bridge, scenarioId) {
-        if (!SCENARIO_IDS.has(scenarioId)) {
+        const scenario = getScale0Scenario(scenarioId);
+        if (!scenario?.tags?.includes('wave-lab')) {
             this.refs.title.textContent = 'Wave Lab';
             this.refs.info.innerHTML = infoCenter(null, null);
             this.refs.controls.innerHTML = '';

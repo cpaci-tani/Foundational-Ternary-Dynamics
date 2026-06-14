@@ -8,218 +8,1502 @@
       "id": "empty",
       "name": "Empty Lattice",
       "group": null,
-      "description": "Empty lattice with no initial conditions."
+      "description": "Empty lattice with no initial conditions.",
+      "comment": {
+        "physical_purpose": "Serves as the baseline state of the lattice with no initial particles or fields.",
+        "parameters": "None.",
+        "expected_behavior": "The lattice remains completely quiet and empty.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-pulse",
       "name": "Flux Pulse",
       "group": "Wave Dynamics",
       "description": "Single flux pulse propagating through the lattice.",
-      "default": true
+      "default": true,
+      "comment": {
+        "physical_purpose": "Demonstrates single wave/flux pulse propagation through the discrete lattice.",
+        "parameters": "Gaussian envelope of flux in the center, with scale sigma = N / 10.0 and amplitude amp = K_B * 2.0.",
+        "expected_behavior": "Spherical expansion of flux pulse outward from center.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-dipole",
       "name": "Flux Dipole",
       "group": "Wave Dynamics",
-      "description": "Positive/negative flux dipole pair."
+      "description": "Positive/negative flux dipole pair.",
+      "comment": {
+        "physical_purpose": "Simulates a positive and negative flux dipole pair.",
+        "parameters": "Two Gaussian flux centers located at N/4 and 3N/4, with positive and negative amplitudes respectively.",
+        "expected_behavior": "Dipole field configuration that propagates and interacts.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-standing",
       "name": "Standing Wave",
       "group": "Wave Dynamics",
-      "description": "Standing wave pattern in the lattice."
+      "description": "Standing wave pattern in the lattice.",
+      "comment": {
+        "physical_purpose": "Establishes a standing wave pattern in the lattice.",
+        "parameters": "Two in-phase Gaussian flux sources spaced apart at N/3 and 2N/3.",
+        "expected_behavior": "Constructive and destructive interference forming stable standing wave peaks and troughs.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-nested-standing",
       "name": "Nested Standing",
       "group": "Wave Dynamics",
-      "description": "Nested standing wave pattern."
+      "description": "Nested standing wave pattern.",
+      "comment": {
+        "physical_purpose": "Establishes a nested standing wave pattern across orthogonal dimensions.",
+        "parameters": "In-phase Gaussian flux sources along both x-axis (at N/3 and 2N/3) and z-axis (at N/4 and 3N/4).",
+        "expected_behavior": "Orthogonally overlapping standing waves creating a grid-like interference pattern.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-dispersion",
       "name": "Dispersion",
       "group": "Wave Dynamics",
-      "description": "Wave dispersion demonstration."
+      "description": "Wave dispersion demonstration.",
+      "comment": {
+        "physical_purpose": "Legacy wave dispersion demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-soliton",
       "name": "Soliton",
       "group": "Wave Dynamics",
-      "description": "Soliton wave propagation."
+      "description": "Soliton wave propagation.",
+      "comment": {
+        "physical_purpose": "Simulates non-dispersive soliton wave propagation.",
+        "parameters": "Dense Gaussian flux envelope at the center; genesis toggle is explicitly set to false to prevent pair production.",
+        "expected_behavior": "Soliton maintains shape during propagation without dispersing or producing particle pairs.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-interference",
       "name": "4-Source Interference",
       "group": "Wave Dynamics",
-      "description": "Four-source interference pattern."
+      "description": "Four-source interference pattern.",
+      "comment": {
+        "physical_purpose": "Demonstrates interference patterns using four point-like flux sources.",
+        "parameters": "Four symmetrically positioned Gaussian sources at the corners of a square on the mid-plane.",
+        "expected_behavior": "Multi-source constructive and destructive wave interference patterns.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-vortex",
       "name": "Flux Vortex (Spin)",
       "group": "Wave Dynamics",
-      "description": "Flux vortex demonstrating spin."
+      "description": "Flux vortex demonstrating spin.",
+      "comment": {
+        "physical_purpose": "Models a rotating flux vortex to demonstrate spin.",
+        "parameters": "24 tangential flux pulses positioned in a ring around the center of the lattice on the mid-plane.",
+        "expected_behavior": "Coherent angular momentum/spin rotation of the flux field.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-stable-vortex",
       "name": "Stable Vortex (Rotating)",
       "group": "Wave Dynamics",
-      "description": "Stable rotating vortex configuration."
+      "description": "Stable rotating vortex configuration.",
+      "comment": {
+        "physical_purpose": "Legacy rotating stable vortex demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-annihilation",
       "name": "Pair Annihilation",
       "group": "Particle Physics",
-      "description": "Particle-antiparticle annihilation."
+      "description": "Particle-antiparticle annihilation.",
+      "comment": {
+        "physical_purpose": "Simulates particle-antiparticle pair annihilation.",
+        "parameters": "A positive particle (+1) and a negative particle (-1) initialized on the x-axis, and another negative/positive pair on the z-axis, accompanied by initial flux pulses pushing them together.",
+        "expected_behavior": "Particles move together, collide, and annihilate, releasing their mass energy as outgoing flux waves.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-pair-production",
       "name": "Pair Production",
       "group": "Particle Physics",
-      "description": "Particle-antiparticle pair production."
+      "description": "Particle-antiparticle pair production.",
+      "comment": {
+        "physical_purpose": "Demonstrates particle-antiparticle pair creation from a high-energy field.",
+        "parameters": "High-amplitude Gaussian flux envelope at the center exceeding the genesis threshold (amplitude = K_GENESIS * 5.0).",
+        "expected_behavior": "Local flux exceeds threshold and collapses into stable discrete particle-antiparticle pairs.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-hydrogen",
       "name": "Hydrogen Atom",
       "group": "Particle Physics",
-      "description": "Hydrogen atom in the lattice."
+      "description": "Hydrogen atom in the lattice.",
+      "comment": {
+        "physical_purpose": "Legacy hydrogen atom bound state demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-random-genesis",
       "name": "Random Genesis",
       "group": "Particle Physics",
-      "description": "Random particle genesis from vacuum."
+      "description": "Random particle genesis from vacuum.",
+      "comment": {
+        "physical_purpose": "Demonstrates spontaneous particle creation from random vacuum fluctuations.",
+        "parameters": "8 randomly distributed high-amplitude flux patches exceeding the genesis threshold.",
+        "expected_behavior": "Stochastic nucleation of particle-antiparticle pairs across the lattice.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-meson",
       "name": "Meson (Confinement)",
       "group": "Particle Physics",
-      "description": "Meson demonstrating color confinement."
+      "description": "Meson demonstrating color confinement.",
+      "comment": {
+        "physical_purpose": "Demonstrates color confinement in a quark-antiquark meson system.",
+        "parameters": "A positive and a negative particle acting as valence quarks, dressed with an initial flux string/tube connecting them.",
+        "expected_behavior": "The flux remains confined to a string-like region between the quarks, preventing them from separating freely.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-string-breaking",
       "name": "String Breaking",
       "group": "Particle Physics",
-      "description": "QCD string breaking between quarks."
+      "description": "QCD string breaking between quarks.",
+      "comment": {
+        "physical_purpose": "Models QCD string breaking when quarks are pulled apart with high energy.",
+        "parameters": "Quark-antiquark pair with high outward velocities, dressed with a dense central flux envelope.",
+        "expected_behavior": "As the quarks separate, the tension in the connecting string increases until it snaps, producing a new quark-antiquark pair from the vacuum.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-baryon",
       "name": "Baryon (3-Quark)",
       "group": "Particle Physics",
-      "description": "Three-quark baryon system."
+      "description": "Three-quark baryon system.",
+      "comment": {
+        "physical_purpose": "Models a 3-quark baryon bound state.",
+        "parameters": "Three positive valence quarks placed in an equilateral triangle, with a central negative sea quark and central flux.",
+        "expected_behavior": "Stable 3-quark configuration bound by the central flux structure.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "light-rainbow",
       "name": "Rainbow (3 Colors)",
       "group": "Light & Color",
-      "description": "Three-color rainbow dispersion."
+      "description": "Three-color rainbow dispersion.",
+      "comment": {
+        "physical_purpose": "Demonstrates dispersion of light waves of three different wavelengths/colors.",
+        "parameters": "Superimposed sinusoidal flux waves of three different frequencies (n=1, 3, 6) across the lattice.",
+        "expected_behavior": "Dispersion and spatial separation of the wave frequencies.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "light-prism",
       "name": "Lattice Prism",
       "group": "Light & Color",
-      "description": "Prism effect on the lattice."
+      "description": "Prism effect on the lattice.",
+      "comment": {
+        "physical_purpose": "Legacy prism refraction demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "light-dipole",
       "name": "Dipole Radiation",
       "group": "Light & Color",
-      "description": "Electromagnetic dipole radiation pattern."
+      "description": "Electromagnetic dipole radiation pattern.",
+      "comment": {
+        "physical_purpose": "Simulates classical electromagnetic dipole radiation.",
+        "parameters": "Central Gaussian dipole field with amplitude dAmp = 0.5; genesis is disabled to avoid pair production.",
+        "expected_behavior": "Spherically propagating radiation fields representing dipole emissions.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "light-two-slit",
       "name": "Two-Slit Interference",
       "group": "Light & Color",
-      "description": "Double-slit interference experiment."
+      "description": "Double-slit interference experiment.",
+      "comment": {
+        "physical_purpose": "Simulates the classic double-slit wave interference experiment.",
+        "parameters": "Two Gaussian source slit apertures on a transverse plane (spaced slit_sep apart); genesis is disabled.",
+        "expected_behavior": "Interference fringes propagating downstream of the double slits.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "light-photon-race",
       "name": "Photon Race",
       "group": "Light & Color",
-      "description": "Photon race across the lattice."
+      "description": "Photon race across the lattice.",
+      "comment": {
+        "physical_purpose": "Compares propagation characteristics of photons/wave packets of different amplitudes.",
+        "parameters": "Two parallel photon wave packets starting at x_start, one with low amplitude (0.05) and one with high amplitude (0.5).",
+        "expected_behavior": "Propagation of the two wave packets across the lattice, demonstrating non-linear or linear wave speeds.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-rutherford",
       "name": "Rutherford Scattering",
       "group": "Experiments",
-      "description": "Rutherford scattering experiment."
+      "description": "Rutherford scattering experiment.",
+      "comment": {
+        "physical_purpose": "Legacy Rutherford scattering demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-cyclotron",
       "name": "Cyclotron Motion",
       "group": "Experiments",
-      "description": "Charged particle cyclotron motion."
+      "description": "Charged particle cyclotron motion.",
+      "comment": {
+        "physical_purpose": "Simulates cyclotron motion of a charged particle in a magnetic field.",
+        "parameters": "A positive particle at the center, surrounded by a background vector potential/rotational flux field representing a uniform magnetic field.",
+        "expected_behavior": "The particle undergoes circular orbital motion due to the Lorentz-like force.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-screening",
       "name": "Charge Screening",
       "group": "Experiments",
-      "description": "Electric charge screening effect."
+      "description": "Electric charge screening effect.",
+      "comment": {
+        "physical_purpose": "Demonstrates electric charge screening in a dielectric or plasma-like medium.",
+        "parameters": "A positive central test charge surrounded by six symmetrically placed negative screening charges, with radial dressing flux.",
+        "expected_behavior": "The net electric field at large distances is reduced (screened) by the surrounding opposite charges.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-gravitational-wave",
       "name": "Gravitational Wave",
       "group": "Experiments",
-      "description": "Gravitational wave propagation."
+      "description": "Gravitational wave propagation.",
+      "comment": {
+        "physical_purpose": "Legacy gravitational wave propagation demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-triad",
       "name": "Triad Formation",
       "group": "Experiments",
-      "description": "Triad structure formation."
+      "description": "Triad structure formation.",
+      "comment": {
+        "physical_purpose": "Simulates the formation of a stable three-body triad structure.",
+        "parameters": "Three positive particles arranged in a triangle, with inward-directed dressing flux towards the center.",
+        "expected_behavior": "Particles and fields bind together into a stable triad structure.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-thermalization",
       "name": "Thermalization",
       "group": "Experiments",
-      "description": "System thermalization process."
+      "description": "System thermalization process.",
+      "comment": {
+        "physical_purpose": "Simulates a system of random waves relaxing towards thermal equilibrium.",
+        "parameters": "Concentrated high-amplitude patch in one corner with randomized vector directions.",
+        "expected_behavior": "Energy diffuses and thermalizes, distributing evenly across the lattice modes over time.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-dark-matter",
       "name": "Dark Matter Halo",
       "group": "Cosmology",
-      "description": "Dark matter halo formation."
+      "description": "Dark matter halo formation.",
+      "comment": {
+        "physical_purpose": "Legacy dark matter halo formation demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-baryogenesis",
       "name": "Baryogenesis",
       "group": "Cosmology",
-      "description": "Matter-antimatter asymmetry genesis."
+      "description": "Matter-antimatter asymmetry genesis.",
+      "comment": {
+        "physical_purpose": "Legacy matter-antimatter asymmetry genesis demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-vacuum-foam",
       "name": "Vacuum Fluctuations",
       "group": "Cosmology",
-      "description": "Quantum vacuum fluctuations."
+      "description": "Quantum vacuum fluctuations.",
+      "comment": {
+        "physical_purpose": "Models quantum vacuum fluctuations (spacetime foam) at the Planck scale.",
+        "parameters": "Envelope of randomized, low-amplitude flux fluctuations across the central region.",
+        "expected_behavior": "Continuous, stochastic boiling and fluctuation of the background flux field.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-cosmic-web",
       "name": "Cosmic Web",
       "group": "Cosmology",
-      "description": "Large-scale cosmic web structure."
+      "description": "Large-scale cosmic web structure.",
+      "comment": {
+        "physical_purpose": "Legacy cosmic web large-scale structure demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-black-hole",
       "name": "Black Hole / Wormhole",
       "group": "Cosmology",
-      "description": "Black hole and wormhole simulation."
+      "description": "Black hole and wormhole simulation.",
+      "comment": {
+        "physical_purpose": "Legacy black hole / wormhole simulation.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-cascade",
       "name": "Genesis Cascade",
       "group": "Advanced",
-      "description": "Cascading genesis events."
+      "description": "Cascading genesis events.",
+      "comment": {
+        "physical_purpose": "Models cascading genesis events where high energy triggers a chain reaction of particle creation.",
+        "parameters": "Highly concentrated flux pulse at the center (amplitude = K_GENESIS * 3.0).",
+        "expected_behavior": "Rapid series of pair-production events cascading outward.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
     },
     {
       "id": "flux-damping",
       "name": "Damping Demo",
       "group": "Advanced",
-      "description": "Flux damping demonstration."
+      "description": "Flux damping demonstration.",
+      "comment": {
+        "physical_purpose": "Legacy flux damping demonstration.",
+        "parameters": "None (No-op in modern engine).",
+        "expected_behavior": "Retains an empty lattice.",
+        "discrepancy": "Defined in scale0.json but has no implementation in C++ or JS registry (no-op fallback)."
+      }
     },
     {
       "id": "flux-dual-substrate",
       "name": "Dual Substrate",
       "group": "Advanced",
-      "description": "Dual substrate configuration."
+      "description": "Dual substrate configuration.",
+      "comment": {
+        "physical_purpose": "Explores wave propagation under a dual-substrate (two independent vacuum states) configuration.",
+        "parameters": "Symmetrical Gaussian flux dipoles on the left and right with opposite polarizations.",
+        "expected_behavior": "Distinct propagation characteristics and interference patterns on the dual substrate.",
+        "discrepancy": "None (runs as expected in C++)."
+      }
+    },
+    {
+      "id": "s0-seed-ew-phase-transition",
+      "name": "EW Phase Transition (Hysteresis)",
+      "group": "Genesis & Emergence",
+      "description": "Simulates the Electroweak phase transition showing hysteresis using a uniform flux sweep.",
+      "comment": {
+        "physical_purpose": "Simulates the Electroweak phase transition showing hysteresis using a uniform flux sweep.",
+        "parameters": "None.",
+        "expected_behavior": "Gradual shift in state field as uniform flux is sinusoidally swept.",
+        "discrepancy": "Custom JS logic sweeps the uniform flux additively on top of the 'empty' C++ scenario, rather than being handled purely inside the C++ engine."
+      }
+    },
+    {
+      "id": "flux-zero-point",
+      "name": "Zero-Point Energy",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Models the irreducible quantum ground-state vacuum energy.",
+      "comment": {
+        "physical_purpose": "Models the irreducible quantum ground-state vacuum energy.",
+        "parameters": "None.",
+        "expected_behavior": "Persistent low-amplitude random background flux that does not trigger genesis.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-born-rule",
+      "name": "Born Rule Test",
+      "group": "Quantum Lab & Foundations",
+      "description": "Tests the quantum Born rule / wave-function collapse.",
+      "comment": {
+        "physical_purpose": "Tests the quantum Born rule / wave-function collapse.",
+        "parameters": "None.",
+        "expected_behavior": "Localized wave packet collapses stochastically into particles with Born-rule probability.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-double-slit",
+      "name": "Double-Slit (Quantitative)",
+      "group": "Quantum Lab & Foundations",
+      "description": "Quantitatively simulates double-slit quantum particle interference.",
+      "comment": {
+        "physical_purpose": "Quantitatively simulates double-slit quantum particle interference.",
+        "parameters": "None.",
+        "expected_behavior": "Emergence of interference pattern from accumulated single particle impacts.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-eraser",
+      "name": "Quantum Eraser (which-way)",
+      "group": "Quantum Lab & Foundations",
+      "description": "Simulates the quantum eraser experiment with path polarization markers.",
+      "comment": {
+        "physical_purpose": "Simulates the quantum eraser experiment with path polarization markers.",
+        "parameters": "None.",
+        "expected_behavior": "Restoring interference pattern when path information is erased by polarizer grid.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-tunnel",
+      "name": "Quantum Tunneling",
+      "group": "Quantum Lab & Foundations",
+      "description": "Demonstrates quantum tunneling of a wave packet through a potential barrier.",
+      "comment": {
+        "physical_purpose": "Demonstrates quantum tunneling of a wave packet through a potential barrier.",
+        "parameters": "None.",
+        "expected_behavior": "Partial transmission of a wave packet through a thin potential barrier.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-well",
+      "name": "Particle in a Box",
+      "group": "Quantum Lab & Foundations",
+      "description": "Simulates a particle in a 1D potential well (infinite square well).",
+      "comment": {
+        "physical_purpose": "Simulates a particle in a 1D potential well (infinite square well).",
+        "parameters": "None.",
+        "expected_behavior": "Discrete standing wave harmonics bound by potential walls.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-entangle",
+      "name": "Entanglement Correlation",
+      "group": "Quantum Lab & Foundations",
+      "description": "Tests entanglement correlation between two separated particles.",
+      "comment": {
+        "physical_purpose": "Tests entanglement correlation between two separated particles.",
+        "parameters": "None.",
+        "expected_behavior": "Correlated behavior of two particles originating from a single high-energy flux burst.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-aharonov-bohm",
+      "name": "Aharonov-Bohm Effect",
+      "group": "Quantum Lab & Foundations",
+      "description": "Simulates the Aharonov-Bohm effect where a vector potential shifts phase.",
+      "comment": {
+        "physical_purpose": "Simulates the Aharonov-Bohm effect where a vector potential shifts phase.",
+        "parameters": "None.",
+        "expected_behavior": "Phase shift in the interference pattern of two paths wrapping a solenoid.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-casimir",
+      "name": "Casimir Effect",
+      "group": "Quantum Lab & Foundations",
+      "description": "Models the Casimir attraction force between parallel plates.",
+      "comment": {
+        "physical_purpose": "Models the Casimir attraction force between parallel plates.",
+        "parameters": "None.",
+        "expected_behavior": "Modification of vacuum fluctuations between plates leading to net attractive force.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "quantum-zeno",
+      "name": "Quantum Zeno Effect",
+      "group": "Quantum Lab & Foundations",
+      "description": "Simulates the Quantum Zeno effect (frequent observation slows evolution).",
+      "comment": {
+        "physical_purpose": "Simulates the Quantum Zeno effect (frequent observation slows evolution).",
+        "parameters": "None.",
+        "expected_behavior": "Continuous measurement/interaction freezes quantum state transition.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-up-quark",
+      "name": "Up quark (u, 1st gen, +2/3)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a valence up quark (+2/3 charge, 1st gen).",
+      "comment": {
+        "physical_purpose": "Seeds a valence up quark (+2/3 charge, 1st gen).",
+        "parameters": "None.",
+        "expected_behavior": "Localized +1 charge and fractional color-polarized flux envelope.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-down-quark",
+      "name": "Down quark (d, 1st gen, −1/3)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a valence down quark (-1/3 charge, 1st gen).",
+      "comment": {
+        "physical_purpose": "Seeds a valence down quark (-1/3 charge, 1st gen).",
+        "parameters": "None.",
+        "expected_behavior": "Localized -1 charge and fractional color-polarized flux envelope.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-strange-quark",
+      "name": "Strange quark (s, 2nd gen)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a strange quark (2nd gen).",
+      "comment": {
+        "physical_purpose": "Seeds a strange quark (2nd gen).",
+        "parameters": "None.",
+        "expected_behavior": "Localized -1 charge and intermediate-strength color-polarized flux envelope.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-charm-quark",
+      "name": "Charm quark (c, 2nd gen, m≈1.27 GeV)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a charm quark (2nd gen).",
+      "comment": {
+        "physical_purpose": "Seeds a charm quark (2nd gen).",
+        "parameters": "None.",
+        "expected_behavior": "Localized +1 charge and higher-strength color-polarized flux envelope.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-bottom-quark",
+      "name": "Bottom quark (b, 3rd gen, m≈4.2 GeV)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a bottom quark (3rd gen).",
+      "comment": {
+        "physical_purpose": "Seeds a bottom quark (3rd gen).",
+        "parameters": "None.",
+        "expected_behavior": "Localized -1 charge and high-strength color-polarized flux envelope.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-top-quark",
+      "name": "Top quark (t, 3rd gen, m≈v_Higgs)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a top quark (3rd gen).",
+      "comment": {
+        "physical_purpose": "Seeds a top quark (3rd gen).",
+        "parameters": "None.",
+        "expected_behavior": "Localized +1 charge and very high-strength color-polarized flux envelope.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-higgs-field",
+      "name": "Higgs field vacuum (VEV background)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a Higgs field vacuum expectation value (VEV) background.",
+      "comment": {
+        "physical_purpose": "Seeds a Higgs field vacuum expectation value (VEV) background.",
+        "parameters": "None.",
+        "expected_behavior": "Spatially uniform static background flux with minor sinusoidal noise.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-gluon",
+      "name": "Gluon (massless, colored)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a massless, colored gauge boson (gluon).",
+      "comment": {
+        "physical_purpose": "Seeds a massless, colored gauge boson (gluon).",
+        "parameters": "None.",
+        "expected_behavior": "A localized transverse color-polarized wave packet propagating across the lattice.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-beta-decay",
+      "name": "Beta decay (n → p + e⁻ + ν̅, dynamic)",
+      "group": "Particles & The Standard Model",
+      "description": "Models dynamic nuclear beta decay.",
+      "comment": {
+        "physical_purpose": "Models dynamic nuclear beta decay.",
+        "parameters": "None.",
+        "expected_behavior": "A neutron triad transmuting into a proton triad, emitting an electron and an antineutrino.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-ee-annihilation",
+      "name": "e⁺ e⁻ annihilation (collision → flux burst)",
+      "group": "Particles & The Standard Model",
+      "description": "Simulates electron-positron high-energy annihilation.",
+      "comment": {
+        "physical_purpose": "Simulates electron-positron high-energy annihilation.",
+        "parameters": "None.",
+        "expected_behavior": "Opposing charges collide and dissolve, generating a spherical high-energy flux burst.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-quark-gluon-plasma",
+      "name": "Quark-gluon plasma (QGP, thermal deconfined)",
+      "group": "Particles & The Standard Model",
+      "description": "Models a thermal deconfined Quark-Gluon Plasma (QGP).",
+      "comment": {
+        "physical_purpose": "Models a thermal deconfined Quark-Gluon Plasma (QGP).",
+        "parameters": "None.",
+        "expected_behavior": "Multi-particle high-velocity gas of quarks and gluons under high Langevin temperature.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-hydrogen",
+      "name": "Hydrogen atom",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Seeds a hydrogen atom (proton triad and electron cloud).",
+      "comment": {
+        "physical_purpose": "Seeds a hydrogen atom (proton triad and electron cloud).",
+        "parameters": "None.",
+        "expected_behavior": "A localized three-quark triad at the center with a single electron cloud bound to it.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-helium",
+      "name": "Helium atom (⁴He, 2p+2n + 1s²)",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Seeds a helium atom (four-nucleon nucleus and two electron clouds).",
+      "comment": {
+        "physical_purpose": "Seeds a helium atom (four-nucleon nucleus and two electron clouds).",
+        "parameters": "None.",
+        "expected_behavior": "Tetrahedrally arranged nucleons with two surrounding bound electron clouds.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-h2-bond-formation",
+      "name": "H₂ covalent bond formation (dynamic)",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Models covalent bond formation in H2.",
+      "comment": {
+        "physical_purpose": "Models covalent bond formation in H2.",
+        "parameters": "None.",
+        "expected_behavior": "Two adjacent proton triads sharing a pair of electron clouds.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-spark-of-life",
+      "name": "Spark of Life (abiogenesis threshold)",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Pedagogical demo of pre-biotic autocatalysis and threshold genesis.",
+      "comment": {
+        "physical_purpose": "Pedagogical demo of pre-biotic autocatalysis and threshold genesis.",
+        "parameters": "None.",
+        "expected_behavior": "High-energy deterministic flux spark interacting with a mineral-pore boundary and precursor charge pairs.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-wilson-loop",
+      "name": "Wilson loop",
+      "group": "Quantum Lab & Foundations",
+      "description": "Implements a rectangular Wilson loop to probe confinement.",
+      "comment": {
+        "physical_purpose": "Implements a rectangular Wilson loop to probe confinement.",
+        "parameters": "None.",
+        "expected_behavior": "A closed rectangular path of localized gauge flux with four corner charges.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-flux-tube",
+      "name": "Flux tube (q-qbar)",
+      "group": "Quantum Lab & Foundations",
+      "description": "Seeds a quark-antiquark flux tube string.",
+      "comment": {
+        "physical_purpose": "Seeds a quark-antiquark flux tube string.",
+        "parameters": "None.",
+        "expected_behavior": "Spherically dressed opposite charges connected by a dense flux tube.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-monopole",
+      "name": "Magnetic monopole",
+      "group": "Quantum Lab & Foundations",
+      "description": "Seeds a magnetic monopole configuration.",
+      "comment": {
+        "physical_purpose": "Seeds a magnetic monopole configuration.",
+        "parameters": "None.",
+        "expected_behavior": "Radial magnetic field structure emanating from center.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-instanton",
+      "name": "Instanton",
+      "group": "Quantum Lab & Foundations",
+      "description": "Seeds a Yang-Mills instanton configuration.",
+      "comment": {
+        "physical_purpose": "Seeds a Yang-Mills instanton configuration.",
+        "parameters": "None.",
+        "expected_behavior": "Localized topological field configuration representing tunneling between vacuum states.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-schwarzschild",
+      "name": "Schwarzschild well",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Seeds a Schwarzschild gravitational mass well.",
+      "comment": {
+        "physical_purpose": "Seeds a Schwarzschild gravitational mass well.",
+        "parameters": "None.",
+        "expected_behavior": "Central mass charge with a radial 1/r^2 flux force field.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-gravitational-lensing",
+      "name": "Gravitational lensing (dynamic bending)",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Models light bending (gravitational lensing) around a Schwarzschild mass.",
+      "comment": {
+        "physical_purpose": "Models light bending (gravitational lensing) around a Schwarzschild mass.",
+        "parameters": "None.",
+        "expected_behavior": "Off-axis photon packet propagating past a central mass, experiencing trajectory deflection.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-gravitational-wave",
+      "name": "Gravitational wave",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Seeds a gravitational wave propagation scenario.",
+      "comment": {
+        "physical_purpose": "Seeds a gravitational wave propagation scenario.",
+        "parameters": "None.",
+        "expected_behavior": "Transverse sinusoidal oscillations in the flux field propagating across the lattice.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-massive-body",
+      "name": "Massive body (real mass)",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Seeds a massive body using real manifested mass (locked).",
+      "comment": {
+        "physical_purpose": "Seeds a massive body using real manifested mass (locked).",
+        "parameters": "None.",
+        "expected_behavior": "Central dense core of locked mass that sources gravity via the Poisson equation.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-time-gravity-well",
+      "name": "Gravity well (dτ/dt across a well)",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Models clock slowdown inside a gravitational well (Time Observatory).",
+      "comment": {
+        "physical_purpose": "Models clock slowdown inside a gravitational well (Time Observatory).",
+        "parameters": "None.",
+        "expected_behavior": "Sinusoidal flux wave producing localized clock dilation dτ/dt.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-time-twin-clocks",
+      "name": "Twin clocks (Δτ deep vs far)",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Compares elapsed time (twin clocks paradox) in different gravity regions.",
+      "comment": {
+        "physical_purpose": "Compares elapsed time (twin clocks paradox) in different gravity regions.",
+        "parameters": "None.",
+        "expected_behavior": "Distinct local proper times dτ/dt accumulated at different spatial coordinates.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-time-horizon",
+      "name": "Horizon well (deep dilation)",
+      "group": "Macroscopic Physics & Measurement",
+      "description": "Models deep time dilation near a black hole horizon.",
+      "comment": {
+        "physical_purpose": "Models deep time dilation near a black hole horizon.",
+        "parameters": "None.",
+        "expected_behavior": "Strong central mass well showing near-zero dτ/dt dilation at the center.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-sloop",
+      "name": "sLoop (self-referential ring)",
+      "group": "Quantum Lab & Foundations",
+      "description": "Seeds a self-referential sLoop ring.",
+      "comment": {
+        "physical_purpose": "Seeds a self-referential sLoop ring.",
+        "parameters": "None.",
+        "expected_behavior": "Loop of positive charges carrying angular/circulating flux.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-observer-cell",
+      "name": "Observer cell (3³ lattice)",
+      "group": "Quantum Lab & Foundations",
+      "description": "Seeds an observer cell configuration on a 3^3 lattice.",
+      "comment": {
+        "physical_purpose": "Seeds an observer cell configuration on a 3^3 lattice.",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge surrounded by shells of +1, -1, and +1 charges.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-plane-wave",
+      "name": "Plane wave",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Establishes a planar electromagnetic wave.",
+      "comment": {
+        "physical_purpose": "Establishes a planar electromagnetic wave.",
+        "parameters": "None.",
+        "expected_behavior": "Plane wave propagating along the x-axis with transverse oscillations.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-standing-wave",
+      "name": "Standing wave",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Establishes a planar electromagnetic standing wave.",
+      "comment": {
+        "physical_purpose": "Establishes a planar electromagnetic standing wave.",
+        "parameters": "None.",
+        "expected_behavior": "Stationary sinusoidal node-antinode pattern in the transverse flux.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-uniform-e",
+      "name": "Uniform E field",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Establishes a uniform electric field.",
+      "comment": {
+        "physical_purpose": "Establishes a uniform electric field.",
+        "parameters": "None.",
+        "expected_behavior": "Spatially uniform vector potential flux background pointing along x-axis.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-uniform-b",
+      "name": "Uniform B field",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Establishes a uniform magnetic field.",
+      "comment": {
+        "physical_purpose": "Establishes a uniform magnetic field.",
+        "parameters": "None.",
+        "expected_behavior": "Rotational flux field pattern representing a uniform magnetic field.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-photon-pulse",
+      "name": "Photon pulse",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Seeds a propagating photon pulse packet.",
+      "comment": {
+        "physical_purpose": "Seeds a propagating photon pulse packet.",
+        "parameters": "None.",
+        "expected_behavior": "Coherent localized wave packet propagating at light speed along the x-axis.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-rf-lattice-wave",
+      "name": "RF lattice wave",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Models a radio-frequency lattice wave.",
+      "comment": {
+        "physical_purpose": "Models a radio-frequency lattice wave.",
+        "parameters": "None.",
+        "expected_behavior": "Oscillating wave in the lattice.",
+        "discrepancy": "This scenario is a no-op fallback in C++ (it has no active implementation block in `s0_field.cpp`)."
+      }
+    },
+    {
+      "id": "s0-field-light-lattice-wave",
+      "name": "Light lattice wave",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Models a light-frequency lattice wave.",
+      "comment": {
+        "physical_purpose": "Models a light-frequency lattice wave.",
+        "parameters": "None.",
+        "expected_behavior": "Oscillating wave in the lattice.",
+        "discrepancy": "This scenario is a no-op fallback in C++ (it has no active implementation block in `s0_field.cpp`)."
+      }
+    },
+    {
+      "id": "s0-field-sound-lattice-wave",
+      "name": "Sound lattice proxy",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Models an acoustic-frequency lattice wave.",
+      "comment": {
+        "physical_purpose": "Models an acoustic-frequency lattice wave.",
+        "parameters": "None.",
+        "expected_behavior": "Acoustic wave propagation proxy.",
+        "discrepancy": "This scenario is a no-op fallback in C++ (it has no active implementation block in `s0_field.cpp`)."
+      }
+    },
+    {
+      "id": "s0-field-sound-collision",
+      "name": "Sound lattice collision",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Models acoustic wave packet collisions.",
+      "comment": {
+        "physical_purpose": "Models acoustic wave packet collisions.",
+        "parameters": "None.",
+        "expected_behavior": "Colliding acoustic wave packets.",
+        "discrepancy": "This scenario is a no-op fallback in C++ (it has no active implementation block in `s0_field.cpp`)."
+      }
+    },
+    {
+      "id": "s0-field-thomson-scattering",
+      "name": "Flux recoil locked",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Simulates classical electromagnetic Thomson scattering off a locked charge.",
+      "comment": {
+        "physical_purpose": "Simulates classical electromagnetic Thomson scattering off a locked charge.",
+        "parameters": "None.",
+        "expected_behavior": "Plane wave scattering off a stationary central electron.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-thomson-unlocked-recoil",
+      "name": "Flux recoil unlocked",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Simulates Thomson scattering with an unlocked recoiling charge.",
+      "comment": {
+        "physical_purpose": "Simulates Thomson scattering with an unlocked recoiling charge.",
+        "parameters": "None.",
+        "expected_behavior": "Plane wave scattering off a mobile central electron which recoils under emergent forces.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-spacetime-forcing-boundary",
+      "name": "Spacetime forcing boundary (FTD-0253)",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Models spacetime forcing boundary conditions (FTD-0253).",
+      "comment": {
+        "physical_purpose": "Models spacetime forcing boundary conditions (FTD-0253).",
+        "parameters": "None.",
+        "expected_behavior": "Forcing of localized flux at the center.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-electric-dipole",
+      "name": "Electric dipole",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Establishes a static electric dipole field.",
+      "comment": {
+        "physical_purpose": "Establishes a static electric dipole field.",
+        "parameters": "None.",
+        "expected_behavior": "Dipole field lines connecting a positive and negative charge.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-magnetic-dipole",
+      "name": "Magnetic dipole",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Establishes a static magnetic dipole field.",
+      "comment": {
+        "physical_purpose": "Establishes a static magnetic dipole field.",
+        "parameters": "None.",
+        "expected_behavior": "Circulating loop flux representing a magnetic dipole.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-field-vortex-line",
+      "name": "Vortex line",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Models an electromagnetic or fluid vortex line.",
+      "comment": {
+        "physical_purpose": "Models an electromagnetic or fluid vortex line.",
+        "parameters": "None.",
+        "expected_behavior": "Tangential rotational flux line about the z-axis.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-octahedron",
+      "name": "Octahedron (6 face-neighbors)",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Seeds an octahedral arrangement of 6 face-neighboring charges.",
+      "comment": {
+        "physical_purpose": "Seeds an octahedral arrangement of 6 face-neighboring charges.",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge surrounded by 6 positive charges.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-cuboctahedron",
+      "name": "Cuboctahedron (12 edge-neighbors)",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Seeds a cuboctahedral arrangement of 12 edge-neighboring charges.",
+      "comment": {
+        "physical_purpose": "Seeds a cuboctahedral arrangement of 12 edge-neighboring charges.",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge surrounded by 12 positive charges.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-stella-octangula",
+      "name": "Stella octangula (8 corners)",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Seeds a stella octangula arrangement of 8 corner charges.",
+      "comment": {
+        "physical_purpose": "Seeds a stella octangula arrangement of 8 corner charges.",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge surrounded by 8 positive charges.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-moore-cell",
+      "name": "Moore cell (full 26)",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Seeds a full 26-neighbor Moore cell.",
+      "comment": {
+        "physical_purpose": "Seeds a full 26-neighbor Moore cell.",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge surrounded by 26 positive charges.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-moore-decomposition",
+      "name": "Moore decomposition (3 shells)",
+      "group": "Foundational Dynamics & Substrate",
+      "description": "Seeds a Moore cell decomposed into shell layers.",
+      "comment": {
+        "physical_purpose": "Seeds a Moore cell decomposed into shell layers.",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge surrounded by octahedron (+1), cuboctahedron (-1), and stella octangula (+1).",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic1",
+      "name": "Emergent ic1 (FTD-0107: 25-voxel L¹-ball-radius-2 cluster)",
+      "group": "Genesis & Emergence",
+      "description": "Emergent octahedral bound state point injection (FTD-0107).",
+      "comment": {
+        "physical_purpose": "Emergent octahedral bound state point injection (FTD-0107).",
+        "parameters": "None.",
+        "expected_behavior": "Localized central high-energy flux nucleation into a stable 25-voxel octahedron.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic3-collision",
+      "name": "Emergent ic3 (FTD-0107: 2-cluster collision, 2-3 voxels each)",
+      "group": "Genesis & Emergence",
+      "description": "Two-beam collision producing stable emergent clusters (FTD-0107).",
+      "comment": {
+        "physical_purpose": "Two-beam collision producing stable emergent clusters (FTD-0107).",
+        "parameters": "None.",
+        "expected_behavior": "Collision of two opposing flux beams producing stable clusters.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic4-subthreshold",
+      "name": "Emergent ic4 (FTD-0107: sub-threshold, 0 voxels — negative control)",
+      "group": "Genesis & Emergence",
+      "description": "Sub-threshold negative control point injection (FTD-0107).",
+      "comment": {
+        "physical_purpose": "Sub-threshold negative control point injection (FTD-0107).",
+        "parameters": "None.",
+        "expected_behavior": "Dispersive decay of low-amplitude flux with zero manifested voxels.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic2-thermal-runaway",
+      "name": "Emergent ic2 (FTD-0107: thermal-driven runaway — unstable phase)",
+      "group": "Genesis & Emergence",
+      "description": "Thermal-driven runaway genesis in unstable phase (FTD-0107).",
+      "comment": {
+        "physical_purpose": "Thermal-driven runaway genesis in unstable phase (FTD-0107).",
+        "parameters": "None.",
+        "expected_behavior": "High thermal Langevin noise triggers runaway genesis without initial flux injection.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic1-diagonal",
+      "name": "Emergent ic1 — body-diagonal injection (D3g: Z₄ vs Z₃ test)",
+      "group": "Genesis & Emergence",
+      "description": "Body-diagonal flux point injection (D3g symmetry test).",
+      "comment": {
+        "physical_purpose": "Body-diagonal flux point injection (D3g symmetry test).",
+        "parameters": "None.",
+        "expected_behavior": "Nucleation along body diagonal, testing cluster-size efficiency.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic1-isotropic",
+      "name": "Emergent ic1 — isotropic 6-axis injection (D3h: full O_h symmetry test)",
+      "group": "Genesis & Emergence",
+      "description": "Isotropic 6-axis flux point injection (D3h O_h symmetry test).",
+      "comment": {
+        "physical_purpose": "Isotropic 6-axis flux point injection (D3h O_h symmetry test).",
+        "parameters": "None.",
+        "expected_behavior": "Symmetric outward expansion and nucleation.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic1-viz",
+      "name": "Emergent ic1 — clean view (T=0, no thermal background)",
+      "group": "Genesis & Emergence",
+      "description": "Clean visualization of axial ic1 cluster under zero temperature.",
+      "comment": {
+        "physical_purpose": "Clean visualization of axial ic1 cluster under zero temperature.",
+        "parameters": "None.",
+        "expected_behavior": "Static, noise-free development of the octahedral bound state.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic1-diagonal-viz",
+      "name": "Emergent ic1 body-diagonal — clean view (T=0)",
+      "group": "Genesis & Emergence",
+      "description": "Clean visualization of body-diagonal ic1 cluster under zero temperature.",
+      "comment": {
+        "physical_purpose": "Clean visualization of body-diagonal ic1 cluster under zero temperature.",
+        "parameters": "None.",
+        "expected_behavior": "Static, noise-free development along the body diagonal.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-emergent-ic1-isotropic-viz",
+      "name": "Emergent ic1 isotropic — clean view (T=0)",
+      "group": "Genesis & Emergence",
+      "description": "Clean visualization of isotropic ic1 cluster under zero temperature.",
+      "comment": {
+        "physical_purpose": "Clean visualization of isotropic ic1 cluster under zero temperature.",
+        "parameters": "None.",
+        "expected_behavior": "Static, noise-free symmetric cluster growth.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-cluster-law",
+      "name": "Genesis-Burst N(A) Law — interactive (FTD-0269)",
+      "group": "Genesis & Emergence",
+      "description": "Sweeps cluster size N(A) vs injection amplitude A (FTD-0269).",
+      "comment": {
+        "physical_purpose": "Sweeps cluster size N(A) vs injection amplitude A (FTD-0269).",
+        "parameters": "None.",
+        "expected_behavior": "Interactive genesis-burst swept over broken power-law regimes.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-cluster-law-subknee",
+      "name": "N(A) law — sub-knee (A=12, geometry-limited)",
+      "group": "Genesis & Emergence",
+      "description": "Clean visualization of cluster-law sub-knee regime (A=12).",
+      "comment": {
+        "physical_purpose": "Clean visualization of cluster-law sub-knee regime (A=12).",
+        "parameters": "None.",
+        "expected_behavior": "Compact 27-block cascade of ~8 voxels under zero temperature.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-cluster-law-knee",
+      "name": "N(A) law — the knee (A=16, 27-block escape)",
+      "group": "Genesis & Emergence",
+      "description": "Clean visualization of cluster-law knee escape (A=16).",
+      "comment": {
+        "physical_purpose": "Clean visualization of cluster-law knee escape (A=16).",
+        "parameters": "None.",
+        "expected_behavior": "escape from 27-block to ~21 voxels under zero temperature.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-cluster-law-superknee",
+      "name": "N(A) law — super-knee (A=40, energy budget N=k·A²)",
+      "group": "Genesis & Emergence",
+      "description": "Clean visualization of cluster-law super-knee regime (A=40).",
+      "comment": {
+        "physical_purpose": "Clean visualization of cluster-law super-knee regime (A=40).",
+        "parameters": "None.",
+        "expected_behavior": "Large bulk-volume expansion of ~92 voxels under zero temperature.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-electron",
+      "name": "Electron in vacuum (e⁻)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical electron in vacuum (e-).",
+      "comment": {
+        "physical_purpose": "Seeds a physical electron in vacuum (e-).",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge surrounded by inward-pointing Coulomb dressing flux.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-muon",
+      "name": "Muon in vacuum (μ⁻)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical muon in vacuum (mu-).",
+      "comment": {
+        "physical_purpose": "Seeds a physical muon in vacuum (mu-).",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge with boosted Coulomb dressing flux.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-tau",
+      "name": "Tau in vacuum (τ⁻)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical tau lepton in vacuum (tau-).",
+      "comment": {
+        "physical_purpose": "Seeds a physical tau lepton in vacuum (tau-).",
+        "parameters": "None.",
+        "expected_behavior": "Central -1 charge with heavily boosted Coulomb dressing flux.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-electron-neutrino",
+      "name": "Electron neutrino in vacuum (ν_e)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds an electron neutrino in vacuum (nu_e).",
+      "comment": {
+        "physical_purpose": "Seeds an electron neutrino in vacuum (nu_e).",
+        "parameters": "None.",
+        "expected_behavior": "Small-amplitude localized propagating neutral wave packet.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-muon-neutrino",
+      "name": "Muon neutrino in vacuum (ν_μ)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a muon neutrino in vacuum (nu_mu).",
+      "comment": {
+        "physical_purpose": "Seeds a muon neutrino in vacuum (nu_mu).",
+        "parameters": "None.",
+        "expected_behavior": "Intermediate-amplitude localized propagating neutral wave packet.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-tau-neutrino",
+      "name": "Tau neutrino in vacuum (ν_τ)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a tau neutrino in vacuum (nu_tau).",
+      "comment": {
+        "physical_purpose": "Seeds a tau neutrino in vacuum (nu_tau).",
+        "parameters": "None.",
+        "expected_behavior": "Large-amplitude localized propagating neutral wave packet.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-photon",
+      "name": "Photon in vacuum (γ)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical photon in vacuum.",
+      "comment": {
+        "physical_purpose": "Seeds a physical photon in vacuum.",
+        "parameters": "None.",
+        "expected_behavior": "Propagating electromagnetic wave packet with genesis disabled to avoid pair production.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-w-boson",
+      "name": "W boson in vacuum (W±)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a charged W boson in vacuum (W+/-).",
+      "comment": {
+        "physical_purpose": "Seeds a charged W boson in vacuum (W+/-).",
+        "parameters": "None.",
+        "expected_behavior": "Localized +1 charge with a short-range heavy dressing field.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-z-boson",
+      "name": "Z boson in vacuum (Z⁰)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a neutral Z boson in vacuum (Z0).",
+      "comment": {
+        "physical_purpose": "Seeds a neutral Z boson in vacuum (Z0).",
+        "parameters": "None.",
+        "expected_behavior": "Localized neutral heavy dressing field without central charge.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-higgs",
+      "name": "Higgs boson in vacuum (H)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical Higgs boson in vacuum (H).",
+      "comment": {
+        "physical_purpose": "Seeds a physical Higgs boson in vacuum (H).",
+        "parameters": "None.",
+        "expected_behavior": "Localized isotropic scalar dressing flux.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-proton",
+      "name": "Proton in vacuum (p)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical proton in vacuum (p).",
+      "comment": {
+        "physical_purpose": "Seeds a physical proton in vacuum (p).",
+        "parameters": "None.",
+        "expected_behavior": "A three-quark triad (+1, +1, -1) forming a stable bound baryon.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-neutron",
+      "name": "Neutron in vacuum (n)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical neutron in vacuum (n).",
+      "comment": {
+        "physical_purpose": "Seeds a physical neutron in vacuum (n).",
+        "parameters": "None.",
+        "expected_behavior": "A three-quark triad (+1, -1, -1) forming a stable bound baryon.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-pion-charged",
+      "name": "Charged pion in vacuum (π±)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical charged pion in vacuum (pi+/-).",
+      "comment": {
+        "physical_purpose": "Seeds a physical charged pion in vacuum (pi+/-).",
+        "parameters": "None.",
+        "expected_behavior": "A bound quark-antiquark meson pair with charges (+1, -1).",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-pion-neutral",
+      "name": "Neutral pion in vacuum (π⁰)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical neutral pion in vacuum (pi0).",
+      "comment": {
+        "physical_purpose": "Seeds a physical neutral pion in vacuum (pi0).",
+        "parameters": "None.",
+        "expected_behavior": "A bound quark-antiquark meson pair with neutral charges.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-vacuum-kaon-charged",
+      "name": "Charged kaon in vacuum (K±)",
+      "group": "Particles & The Standard Model",
+      "description": "Seeds a physical charged kaon in vacuum (K+/-).",
+      "comment": {
+        "physical_purpose": "Seeds a physical charged kaon in vacuum (K+/-).",
+        "parameters": "None.",
+        "expected_behavior": "A bound quark-antiquark meson pair with boosted mass energy.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-de-broglie-clock",
+      "name": "De Broglie Clock (pilot wave) — interactive (FTD-0271)",
+      "group": "Quantum Lab & Foundations",
+      "description": "Simulates the De Broglie internal compton clock (FTD-0271).",
+      "comment": {
+        "physical_purpose": "Simulates the De Broglie internal compton clock (FTD-0271).",
+        "parameters": "None.",
+        "expected_behavior": "A central manifested block oscillates at the Compton frequency.",
+        "discrepancy": "None."
+      }
+    },
+    {
+      "id": "s0-seed-thermal-ignition",
+      "name": "Thermal Ignition — lattice condensation (FTD-0274)",
+      "group": "Quantum Lab & Foundations",
+      "description": "Simulates first-order lattice thermal condensation (FTD-0274).",
+      "comment": {
+        "physical_purpose": "Simulates first-order lattice thermal condensation (FTD-0274).",
+        "parameters": "None.",
+        "expected_behavior": "Abrupt transition at T_up where the entire lattice manifests as a condensate.",
+        "discrepancy": "None."
+      }
     }
   ]
 }

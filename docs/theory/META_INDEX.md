@@ -10,6 +10,8 @@
 
 ## Document Organization
 
+**Theory custodian agent:** [`AGENT_THEORY_CUSTODIAN.md`](AGENT_THEORY_CUSTODIAN.md) — Cursor skill `ftd-theory-custodian` + `scripts/theory/sync_theory_briefing.py` for session freshness.
+
 This index organizes the curated theory catalog into 10 logical categories (9 subdirectories + this file).
 Archived documents are in the `archive/` subdirectory.
 
