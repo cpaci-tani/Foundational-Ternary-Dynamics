@@ -10,6 +10,7 @@ import { createScale0ViewportAdapter } from './viewport-adapter.js';
 import {
     getFieldStateSnapshot,
     getScale0State,
+    getActiveScale0Capability,
     setFieldToggle as setFieldToggleState,
     setForceStyle as setForceStyleState,
     setLatticeNeedsUpload as markLatticeUpload,
@@ -31,7 +32,7 @@ import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js';
 import { Scale0ControlsComponent } from './ui/controls/component.js';
 import { wireScale0Controls } from './ui/controls/wire.js';
 import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
-// The four Scale-0 overlay panels are first created by app.js at boot
+// The Scale-0 overlay panels are first created by app.js at boot
 // ("Creating panels…", one-time). The controller ALSO drives their
 // lifecycle on engineMode switch: dispose() on destroy() (audit P1-4)
 // paired with idempotent init*() on mount() so a switch back to lattice
@@ -39,6 +40,7 @@ import { mountSymmetryPanel } from './ui/overlays/symmetry-panel.js';
 // when present, so the boot-time calls and the mount() calls do not
 // double-mount.
 import { initFluxSlicePanel } from './ui/overlays/flux-slice-panel.js';
+import { initWaveLabPanel } from './ui/overlays/wave-lab-panel.js';
 import { initP1ObservablesPanel } from './ui/overlays/p1-observables-panel.js';
 import { initConservationMicropanel } from './ui/overlays/conservation-micropanel.js';
 import { initSpectrumPanel } from './ui/overlays/spectrum-panel.js';
@@ -95,10 +97,10 @@ export function bindUI(ctx) {
     // Mount floating symmetry panel
     mountSymmetryPanel(document.getElementById('app'));
 
-    // Flux-slice diagnostic and P1-observables panels are mounted by
+    // Flux-slice, Wave Lab, and P1-observables panels are mounted by
     // app.js into the side-panel tab system (#panel-flux-slice and
-    // #panel-p1-observables slots) via initFluxSlicePanel() and
-    // initP1ObservablesPanel(). They read live ctx.bridge / state.fluxMock
+    // sibling slots) via their init*Panel() functions. They read live
+    // ctx.bridge / state.fluxMock
     // through window.__ftdCtx + getScale0State() per frame, so the
     // closure-mount no longer needs to live here. See:
     //   engine/web/js/scales/scale0/ui/overlays/flux-slice-panel.js
@@ -148,10 +150,8 @@ export function mountScale0PlaybackUI() {
         _playBar = new PlayBarComponent(viewportEl, {
             getNowTick: () => {
                 const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-                const state = getScale0State();
-                const mockScale0 = state.fluxMock?.capabilities?.scale0 || null;
-                const activeScale0 = (state.useFluxMock && mockScale0) ? mockScale0 : ctx?.bridge?.capabilities?.scale0;
-                return activeScale0?.getScale0Diagnostics?.()?.tick ?? 0;
+                const st = getScale0State();
+                return getActiveScale0Capability(ctx, st)?.getScale0Diagnostics?.()?.tick ?? 0;
             },
         }).mount();
     }
@@ -168,13 +168,14 @@ class Scale0LifecycleController extends BaseLifecycleController {
                 try { exitScale0(); } catch { /* defensive: never block teardown */ }
             });
         }
-        // (Re-)create the four Scale-0 overlay panels (audit P1-4). On first
+        // (Re-)create the Scale-0 overlay panels (audit P1-4). On first
         // boot these already exist (app.js created them) and init*() is a
         // no-op reuse; after a switch away from lattice their destroy()
         // disposed them, so this re-creates them on re-entry. Each init*()
         // is idempotent and guards its own DOM host, so a missing host
         // (early boot ordering) is a safe no-op.
         try { initFluxSlicePanel(); } catch (e) { /* ignore */ }
+        try { initWaveLabPanel(); } catch (e) { /* ignore */ }
         try { initP1ObservablesPanel(); } catch (e) { /* ignore */ }
         try { initConservationMicropanel(); } catch (e) { /* ignore */ }
         try { initSpectrumPanel(); } catch (e) { /* ignore */ }
@@ -186,7 +187,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
     destroy(ctx) {
         super.destroy(ctx);
         try { exitScale0(); } catch (e) { /* ignore */ }
-        // Dispose the four Scale-0 overlay panels on engineMode switch
+        // Dispose the Scale-0 overlay panels on engineMode switch
         // (audit P1-4, 2026-05-27). Each has a self-driving rAF loop that
         // calls bridge.getDiagnostics() / getConservationTotals() every
         // frame and rebuilds DOM; without disposal they keep running in
@@ -196,6 +197,7 @@ class Scale0LifecycleController extends BaseLifecycleController {
         appRegistry.unregister('scale0Ctx');
         if (typeof window !== 'undefined') {
             try { window.__ftdConservationPanel?.dispose?.(); } catch (e) { /* ignore */ }
+            try { window.__ftdWaveLabPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdP1Panel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdSpectrumPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdGravityPanel?.dispose?.(); } catch (e) { /* ignore */ }
@@ -301,4 +303,3 @@ export const resizeLattice = resize;
 export { shouldUseFluxMock };
 
 // managed via BaseLifecycleController
-

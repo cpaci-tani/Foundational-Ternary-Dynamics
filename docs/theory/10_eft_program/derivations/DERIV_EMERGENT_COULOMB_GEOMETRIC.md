@@ -65,13 +65,26 @@ For one −1 charge at n₂:
 
 Superposition: `J_pair = J₁ + J₂`, so `|J_pair|² = |J₁|² + |J₂|² + 2 J₁·J₂`.
 
-Engine energy accumulator (`diagnostics_compute.cpp:92`):
+Engine energy accumulator (`diagnostics_compute.cpp:92`, **updated 2026-04-27**):
 
 ```
-  field_energy = Σ_n |J(n)|²   ← NO ½ prefactor
+  field_energy = ½ Σ_n |J(n)|²   ← canonical since April 2026 refactor
 ```
 
-Therefore:
+**Convention pairing (FTD-0286 v2, 2026-06-13):** with the ½ prefactor,
+the interaction readout pairs with
+
+```
+  V(r)    = −G_L(r)
+  α_r(r,L) = −V · r  =  r · G_L(r)
+```
+
+The legacy form `α_r = 2 r G_L(r)` in this document's original derivation
+assumed `field_energy = Σ |J|²` without the ½. That assumption matched the
+pre-2026-04-27 accumulator but not the current engine. See
+`ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`.
+
+Original derivation (Σ|J|² convention):
 
 ```
   E_pair  = Σ_n |J_pair|²  =  E_self_+ + E_self_− + 2 · Σ_n J₁·J₂

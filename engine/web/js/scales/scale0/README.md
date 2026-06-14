@@ -61,31 +61,42 @@ for the canonical shape and the rules that govern who reads/writes what.
 1. User changes the scenario dropdown
 2. `bindings.js` calls `loadScenario(ctx, name)`
 3. `runtime/scenario-loader.js`:
-   a. Checks `shouldUseFluxMock` (`flux-*`, explicit mock-owned demos such as `s0-field-spacetime-forcing-boundary`, or bridge-without-flux-volume → MockBridge)
-   b. Allocates fluxMock if needed
-   c. Calls `bridge.setupScenario(name)` → routes to `bridge/scenarios/index.js` dispatcher
-   d. `applyToggleDefaults` resets to `SCALE0_TOGGLES` then applies `SCALE0_SCENARIO_OVERRIDES[name]` (prerequisite-first sort)
-   e. Resets viewport visual state, charts, memory budget
-4. Tick loop resumes via `runtime/tick.js`
+   a. Checks `shouldUseFluxMock` (`flux-*`, `s0-seed-*`, `s0-field-*`, `quantum-*`, or bridge-without-flux-volume → MockBridge/worker)
+   b. Allocates fluxMock if needed; `setFluxMock(fluxMock, useFluxMock)` on `state/store.js`
+   c. `getPhysicsHarness(activeBridge).load(harness)` → `scenario-registry.js` → `bridge/scenarios/*.js`
+   d. `applyToggleDefaults` + post-load gravity/absorbing toggles (mirrored to WASM + mock caps)
+   e. `viewport.setLatticeSize(activeN)` when viewport N differs from active bridge
+   f. Resets visual state, restores overlay prefs, marks `fieldNeedsUpdate` + `latticeNeedsUpload`
+4. Tick loop resumes via `runtime/tick.js` (`runScale0PhysicsTicks` — exclusive mock XOR main)
 
-## How to extend
-
-- **Add a new panel** → drop into `ui/panels/` or `ui/overlays/`; register in `bindings.js`
-- **Add a new control** → drop into `ui/controls/`; wire in `wire.js`
-- **Add a new tick phase** → extend `runtime/tick.js`; document the phase order
-- **Change scenario behavior** → edit `runtime/scenario-loader.js` (loader logic) or `bridge/scenarios/<group>-scenarios.js` (per-scenario setup)
+**Do not** call `fluxMock.setupScenario()` before `scenario.load()` — double-seeds the mock.
 
 ## Invariants
 
 - `ctx.bridge` MAY change between scenario loads; code MUST re-read it each frame
-- `ctx.bridge.capabilities.scale0` is the sole interface for physics-state reads/writes — never poke `bridge._toggles` etc. directly
+- **Active physics owner:** when `state.useFluxMock`, reads/ticks use `getActiveScale0Bridge(ctx, state)` /
+  `getActiveScale0Capability` / `getActiveLatticeSize` — not raw `ctx.bridge` alone
+- **Physics writes:** scenarios and controls go through `getPhysicsHarness(activeBridge)` — not
+  `bridge.tick()`, `bridge.setupScenario()`, or `harness.bridge.*` except documented experiment flags
+- `ctx.bridge.capabilities.scale0` is the capability surface on whichever bridge owns physics
 - Per-tick caches on the bridge (e.g. `_energyCacheTick`) are owned by the bridge; UI/panels MUST NOT reset them
+- Overlay toggles (`FIELD_TOGGLE_KEYS`) are visual-only — they never flip physics toggles or tick cadence
 
 ## Related docs
 
-- [CONTRACTS.md §3](../../../../CONTRACTS.md#3--scale-controller-ctx-contract), [§4](../../../../CONTRACTS.md#4--scenario-dispatch-contract)
+- [CONTRACTS.md §3](../../../../CONTRACTS.md#3--scale-controller-ctx-contract), [§4](../../../../CONTRACTS.md#4--scenario-dispatch-contract), [§5](../../../../CONTRACTS.md#5--telemetry-contract)
 - [docs/adr/0004-scale-controllers.md](../../../../docs/adr/0004-scale-controllers.md)
 - [docs/adr/0010-cascade-callback-pattern.md](../../../../docs/adr/0010-cascade-callback-pattern.md) — viewport sub-renderer lifecycle hooks
 - [docs/adr/0011-mesh-factory-callback.md](../../../../docs/adr/0011-mesh-factory-callback.md) — cross-sub-renderer mesh helpers
+- [engine/web/docs/SPEC_SCALE0_RUNTIME_PIPELINE.md](../../../docs/SPEC_SCALE0_RUNTIME_PIPELINE.md)
+- [engine/web/docs/audits/AUDIT_SCALE0_CALLSTACK.md](../../../docs/audits/AUDIT_SCALE0_CALLSTACK.md)
+- [engine/web/docs/audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md](../../../docs/audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md)
 - [engine/web/docs/USER_GUIDE.md](../../../docs/USER_GUIDE.md)
 - [META_PROJECT_ATLAS.md](../../../../META_PROJECT_ATLAS.md) §1, §2
+
+## How to extend
+
+- **Add a new panel** → drop into `ui/panels/` or `ui/overlays/`; register in `bindings.js`
+- **Add a new control** → drop into `ui/controls/`; wire in `wire.js` (use `dualHarness` / active-owner helpers)
+- **Add a new tick phase** → extend `runtime/tick.js`; document the phase order
+- **Change scenario behavior** → edit `runtime/scenario-loader.js` (loader logic) or `bridge/scenarios/<group>-scenarios.js` (per-scenario setup)

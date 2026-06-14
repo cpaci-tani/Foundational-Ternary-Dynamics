@@ -82,7 +82,9 @@ introduced here.
 This campaign does not promote, demote, or reclassify `x_+ = 1/alpha`. It does
 not support a dynamical-alpha claim. It says the next alpha-readout attempt must
 first derive or directly measure the correct finite-cell observable: potential
-response, source-response work, or a proven energy normalization. Only after
+response, source-response work, or a proven energy normalization. **Update
+(2026-06-13): FTD-0286 v2 shows the v1 failure was a ½-prefactor gate pairing
+error; see `ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`.** Only after
 that may the no-alpha-vs-Postulate-W discriminator be asked again.
 
 ---

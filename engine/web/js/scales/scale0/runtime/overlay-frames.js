@@ -11,6 +11,8 @@
 // exact textual copies of the original private helpers.
 // ══════════════════════════════════════════════════════════════════════
 
+import { getActiveScale0Bridge } from '../state/store.js';
+
 export function ensureTier1Buffers(state, N) {
     if (!state.t1 || state.t1.size !== N) {
         state.t1 = {
@@ -153,7 +155,7 @@ export function computeGravPotentialFrame(ctx, sampled, state) {
     // lowest-pass-filter analogue at fixed resolution — good enough to show
     // wells and peaks qualitatively.
     if (!sampled.fluxVector?.count) return null;
-    const activeBridge = (state?.useFluxMock && state?.fluxMock) ? state.fluxMock : ctx.bridge;
+    const activeBridge = getActiveScale0Bridge(ctx, state) ?? ctx.bridge;
     if (typeof activeBridge?.getGravPotentialSamples === 'function') {
         const data = activeBridge.getGravPotentialSamples();
         if (data?.count > 0) return data;
@@ -425,8 +427,7 @@ export function computeBPressureFrame(sampled, state) {
  * bump at each particle's location proportional to K.
  */
 export function computeKineticEnergyFrame(ctx, state) {
-    const activeBridge = (state?.useFluxMock && state?.fluxMock) ? state.fluxMock : ctx.bridge;
-    const particleCap = activeBridge?.capabilities?.scale0;
+    const particleCap = getActiveScale0Bridge(ctx, state)?.capabilities?.scale0 ?? ctx.bridge?.capabilities?.scale0;
     if (!particleCap || typeof particleCap.getScale0ParticleFrame !== 'function') return null;
     const frame = particleCap.getScale0ParticleFrame();
     if (!frame || !frame.count) return null;

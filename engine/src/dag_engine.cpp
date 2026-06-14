@@ -24,7 +24,7 @@
 // (release build) which exercises only phase_read/phase_write via tick().
 //
 // The GOLDEN / production Scale-0 physics runs through src/render_bridge.cpp
-// on a FLAT voxel array (golden hash 0xcd957b601d47868a). DagEngine is NOT
+// on a FLAT voxel array (golden hash 0x56fa28acb5b9fe88). DagEngine is NOT
 // in that tick path and has no WASM/JS binding. The SparseVoxelDAG here is
 // in-progress infrastructure for a future migration, not a path the browser
 // engine, tests, or benchmarks currently exercise.

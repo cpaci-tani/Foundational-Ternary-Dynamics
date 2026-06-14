@@ -66,7 +66,8 @@ Scenario bodies MUST NOT mutate `harness.bridge._particles` or `this._toggles` d
 Use `harness.injectParticle(..., { vx, spin, color, … })` and declarative
 `SCALE0_SCENARIO_OVERRIDES` in `config/toggles.js` for persistent toggle policy.
 
-See `engine/web/docs/audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md` for the full audit.
+See `engine/web/docs/audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md` and
+`engine/web/docs/audits/AUDIT_SCALE0_CALLSTACK.md` for the full audits.
 
 ## Dependencies
 

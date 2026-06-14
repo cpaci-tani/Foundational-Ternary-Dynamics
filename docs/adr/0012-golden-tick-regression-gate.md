@@ -23,15 +23,17 @@ test** that fingerprints 100 ticks of a deterministic scenario. Every
 subsequent commit must reproduce the hash exactly.
 
 `engine/tests/test_render_bridge_golden.cpp`:
-- `RenderBridge(L=16)`, force CPU, seed RNG with 42
+- `RenderBridge(L=17)`, force CPU, seed RNG with 42
 - Fixed toggle profile (Logic6-like) honoring `validate()` deps
 - Inject 3 manifested particles + 1 flux pulse at known coords
 - Run exactly 100 ticks
 - 64-bit FNV-1a hash over: every voxel's state + flux + wave_vel +
   velocity, every `EnergyAudit` field, manifested-site state
-- Assert `hash == 0xcd957b601d47868aULL`
+- Assert `hash == 0x56fa28acb5b9fe88ULL` (re-pinned 2026-06-11 after
+  OpenMP race fixes in poisson_solvers.cpp + phase_write.cpp; prior pins
+  were `0xcd957b601d47868a` @ L=16, `0xebaa6f314f66db3f` @ L=17)
 
-CTest label `golden`; ~0.20s wall.
+CTest label `golden`; ~0.22s wall at L=17.
 
 ## Consequences
 
