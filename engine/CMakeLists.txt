@@ -1397,6 +1397,12 @@ ftd_add_test(campaign_thermal_ignition tests/campaign_thermal_ignition.cpp
              CTEST_NAME campaign_thermal_ignition TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0299: wave sectors — light-sector dispersion atlas (<100>/<110>/<111>)
+# + the FTD-0298-SOUND condensate-compression probe. Read-only / golden-neutral.
+ftd_add_test(campaign_wave_sectors tests/campaign_wave_sectors.cpp
+             CTEST_NAME campaign_wave_sectors TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.

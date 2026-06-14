@@ -20,6 +20,7 @@ export const PANEL_REGISTRY = Object.freeze([
     { id: 'wave-lab',         label: 'Wave Lab',        icon: '∿',        scales: ['0'] },
     { id: 'p1-observables',   label: 'P1 Observables',  icon: '⦾',        scales: ['0'] },
     { id: 'spectrum',         label: 'Spectrum',        icon: '〰',       scales: ['0'] },
+    { id: 'dispersion',       label: 'Dispersion',      icon: '〜',       scales: ['0'] },
     { id: 'gravity',          label: 'Gravity',         icon: '◍',        scales: ['0'] },
     { id: 'time',             label: 'Time',            icon: '⏱',        scales: ['0'] },
     { id: 'thermo',           label: 'Thermo',          icon: '🌡',       scales: ['0'] },
