@@ -1,2 +1,599 @@
 \chapter{Physics --- The Computational EFT}\label{ch:physics}
-% filled in Task 9
+
+% --- chapter-local kernel shim (reported in "notes") -------------------------
+% This MiKTeX (kernel expl3 2024-01-04) predates \SuspendTagging/\ResumeTagging,
+% which the installed tabularx/xltabular calls inside \end{xltabular}. Define
+% them as no-ops only if absent (\providecommand is inert once the kernel
+% supplies the real ones). Chapter-local; touches no shared file.
+\providecommand{\SuspendTagging}[1]{}
+\providecommand{\ResumeTagging}[1]{}
+
+% =============================================================================
+% Ch.5 Physics. [SYNTHESIS] -- re-states canonical claims at canonical tags.
+% Mini-map band nodes copied from master_dag.tex (Physics band) + the upstream
+% spine node and the alpha-readout wall (Ch.3) that keeps x_+ = 1/alpha at SMC.
+% Every constant comes from a macro (ftd-math-macros.sty / chain-macros.sty);
+% no constant is hand-keyed.
+% =============================================================================
+
+% ---- chapter mini-map ------------------------------------------------------
+\begin{figure}[t]
+  \centering
+  \resizebox{0.8\linewidth}{!}{%
+  \begin{tikzpicture}
+    % upstream spine (greyed context from the Mathematics band)
+    \node[thm]   (spine) at (0.0, 2.2) {9-result\\spine};
+    \node[wall]  (awall) at (8.6, 2.2) {$\alpha$ readout\\\tiny MC-T4.3 boundary};
+    % the Physics band proper
+    \node[thm]   (gc)    at (0.0, 0.0) {geometric\\Coulomb};
+    \node[thm]   (cm)    at (2.9, 0.0) {cluster mass\\$\kquarter$};
+    \node[thm]   (ag)    at (5.8, 0.0) {$\alpha_G$ gravity\\ratio};
+    \node[tierb] (xp)    at (8.6, 0.0) {$x_+=1/\alpha$\\\tiny smc};
+    % construction edges (constructed-from)
+    \draw[con] (spine) to[out=-90,in=120] (gc.north);
+    \draw[con] (spine) to[out=-70,in=110]  (cm.north);
+    \draw[con] (gc) -- (cm);
+    \draw[con] (cm) -- (ag);
+    \draw[con] (ag) -- (xp);
+    % weak link: the alpha-readout boundary is exactly why x_+ = 1/alpha stays SMC
+    \draw[wk] (awall.south) -- (xp.north);
+  \end{tikzpicture}}
+  \caption[This chapter in the chain]{This chapter in the chain. The spine of
+    Chapter~3 discharges into IR physics along solid (\emph{constructed-from})
+    arrows: geometric Coulomb, the cluster-mass coefficient $\kquarter$, and the
+    gravity ratio $\alpha_G$ are theorem-/derivation-grade. The one number every
+    reader wants, $x_+ = 1/\alpha$, sits in a \emph{dashed} (below-theorem) box:
+    the dashed arrow down from the $\alpha$-readout wall (the MC-T4.3 boundary of
+    Chapter~3) is exactly why it remains a strongly-motivated conjecture rather
+    than a theorem.}
+  \label{fig:minimap-physics}
+\end{figure}
+
+% ---- intuition primer ------------------------------------------------------
+\section*{The move this layer makes: run the lattice, read off the IR}
+
+Up to here the chain has been a construction. The ontology fixed what exists
+(Chapter~1), the logic fixed what follows and what is declined (Chapter~2), the
+mathematics forced a single bridge constant and a single quadratic and then ran
+into a wall (Chapter~3), and the philosophy asked who reads the lattice
+(Chapter~4). This chapter asks the empirical question: \emph{when you actually
+run the substrate, what infrared physics comes out?}
+
+The answer has two registers, and keeping them apart is the whole honesty of the
+project. In the first register the lattice, simulated as an instrument,
+\emph{reproduces} a long list of infrared behaviour --- a static $1/r$ potential,
+a relativistic causal cone, a mass gap, cluster masses that track particle
+masses, a gravitational hierarchy of the right order, confinement signatures,
+Ward identities. Several of these are not fitted; they are forced by lattice
+geometry and fall out of the dynamics with zero free parameters. In the second
+register sits the one quantity every outsider asks about first: the fine
+structure constant $\alpha$. Here the framework can only \emph{match}, not
+\emph{force}. The master quadratic of Chapter~3 has a root that agrees with
+$\alpha^{-1}$ to roughly one part per million --- but Chapter~3's route-invariance
+boundary (MC-T4.3) showed that no FTD-native route compels the operator assembly
+behind that quadratic. So the identification stays a strongly-motivated
+conjecture, and this chapter says so plainly.
+
+The intuition to carry out of this chapter is therefore a discipline, not a
+triumph: the computational effective field theory \emph{measures and derives}
+infrared physics through the engine, each result wearing its own epistemic tag;
+it reproduces a great deal; and at exactly the place where it would be most
+spectacular to claim a derivation --- $\alpha$ from pure lattice geometry --- it
+declines to overclaim. The accounting at the end of the chapter
+(${\sim}23$ derived, ${\sim}129$ parametric, ${\sim}10$ imposed) is the
+quantitative form of that discipline.
+
+% ---- the IR catalog --------------------------------------------------------
+\section{The IR catalog: what the engine reproduces}
+\label{sec:ircatalog}
+
+The physics layer of FTD is a \emph{computational effective field theory}: the
+infrared behaviour of the substrate as measured and derived through the engine
+as instrument, under the pre-registration discipline of Chapter~6. The
+constitution (\ftdid{0254}) records the catalog as fifteen rows, each carrying its
+own source tag; physical readings are conditional on the calibration declared in
+the front matter. Table~\ref{tab:ircatalog} reproduces the catalog at those tags,
+verbatim in epistemic status. It is the empirical census of the framework: every
+measured phenomenon either appears here, in the deviation ledger of Chapter~6, or
+in the ``not yet delivered'' honesty row of Chapter~4 --- nothing is waved away.
+
+\begin{xltabular}{\linewidth}{@{}r >{\RaggedRight}p{2.6cm} >{\RaggedRight}p{2.0cm} >{\RaggedRight}X@{}}
+  \caption{The IR catalog v1 (constitution \S5.1, \ftdid{0254}): the fifteen
+    engine-native infrared results, each at its source tag. ``Engine-native''
+    means the statement is about the simulated substrate; the physical reading is
+    conditional on the calibration. Load-bearing rows are reproduced in full in
+    \S\ref{sec:reproduced}.}\label{tab:ircatalog}\\
+  \toprule
+  \# & IR result & Tag & Content (engine-native statement; source) \\
+  \midrule
+  \endfirsthead
+  \multicolumn{4}{@{}l}{\small\itshape Table~\ref{tab:ircatalog}, continued}\\
+  \toprule
+  \# & IR result & Tag & Content (engine-native statement; source) \\
+  \midrule
+  \endhead
+  \midrule
+  \multicolumn{4}{r@{}}{\small\itshape continued on next page}\\
+  \endfoot
+  \bottomrule
+  \endlastfoot
+
+  1 & Causal cone & \ctag{thm} &
+    $\cwave$, forced by Moore locality (P4); cone bit-identical between
+    second- and first-order dynamics (\ftdid{0253}). \\
+
+  2 & Geometric Coulomb (Phase~G) & \ctag{thm} &
+    $\geomcoulomb$ --- the emergent static potential \emph{is} the periodic
+    lattice Poisson Green's function, zero free parameters; $R^2 = 1.0000$ at
+    $L = 384$, $0.07\%$ median tail residual (\ftdid{0004}). Reproduced in
+    \S\ref{sec:geomcoulomb}. \\
+
+  3 & Lorentz / isotropy recovery & \ctag{meas} &
+    the rotation-breaking operator scales as $\delta \propto k^4$ (anisotropy
+    exponent $p = 4.0008 \pm 0.0006$) --- strongly irrelevant in the IR. \\
+
+  4 & Time dilation / $\gamma$-emergence & \ctag{meas}\newline{\footnotesize(scoped)} &
+    departure from exact $\gamma$ vanishes as $R \propto L^{-2}$ on $\langle
+    100\rangle$ at $v \lesssim 0.85$; ultra-relativistic diagonals unconverged
+    \etag{opn}; clock hypothesis stays \etag{ax} (\ftdid{0252}). \\
+
+  5 & Per-voxel mass gap & \ctag{thm} &
+    the Gauss constraint plus lattice topology force a nonzero per-voxel
+    excitation cost (\ftdid{0044}). \\
+
+  6 & Cluster mass $= N$, coefficient $\kquarter$ & \ctag{der} &
+    $\mult(A_{1g}) = 4$ in the $27$-block \etag{thm} $\Rightarrow$ mean-energy
+    coefficient $\tfrac14$ at linear level; nonlinear bridge \etag{opn};
+    cluster--mass identification \etag{smc} (\ftdid{0110}). Reproduced in
+    \S\ref{sec:clustermass}. \\
+
+  7 & Cluster transport inertia $= N\cdot M_{\mathrm{REST}}$ & \ctag{imp} &
+    the engine honours the action's equivalence principle (demonstration CI-5:
+    unequal-$N$ clusters free-fall identically while $F \propto N$); the
+    collective-coordinate reduction is \etag{opn} (\ftdid{0250}). \\
+
+  8 & EWSB / condensate & \ctag{meas} &
+    sharp first-order manifestation transition at amplitude $\in (0.6, 0.7)$;
+    condensate mass gaps agree across the flux and charge channels to $3\%$. \\
+
+  9 & Confinement signature & \ctag{meas} &
+    Wilson-loop area law with string tension $\sigma \approx 0.209$ at
+    $\beta = x_-$; the coupling insertion is a \etag{sel}, not a derivation. \\
+
+  10 & Classical electrodynamics suite & \ctag{der} &
+    retarded radiation (\ftdid{0113}), Bianchi identities (\ftdid{0114}),
+    boosted Coulomb $+$ lattice Cherenkov pole (\ftdid{0115}), extended sources,
+    Larmor (\ftdid{0120}) --- the lattice ED corpus. \\
+
+  11 & Ward identities & \ctag{meas} &
+    Gauss residual $\le 10^{-8}$ (matched-stencil conjugate-gradient Poisson). \\
+
+  12 & Gravity ratio & \ctag{der}\,(1 flagged step) &
+    $\alphaGee$ predicted vs $1.752\times10^{-45}$ measured ($0.38\%$), via Phase~G
+    $+$ cluster mass $+$ the clock hypothesis (the flagged \etag{ax} step);
+    prediction floor \etag{smc} (\ftdid{0131}). Reproduced in
+    \S\ref{sec:gravityratio}. \\
+
+  13 & Hydrogen spectrum & \ctag{meas} &
+    bound-state level structure $1/n^2$ to $< 0.001\%$ in the engine benchmark
+    --- but the benchmark places \emph{classical Kepler} orbits at $r_n = n^2 a_0$
+    and checks the scaling, which is generic to any $1/r$ force; \textbf{not} a
+    quantum eigenvalue derivation (see \S\ref{sec:hydrogen-caveat}). \\
+
+  14 & Bell bound & \ctag{thm} &
+    substrate $S \le 2$ (\ftdid{0243} $+$ Bell's theorem); engine
+    $S \approx 1.95$--$2.00$; the $S \approx 3.6$ ternary-detection artifact is a
+    known loophole, not a violation (Chapter~6, PL-2). \\
+
+  15 & Detection statistics & \ctag{cn} &
+    threshold-crossing event rates follow Rice's upcrossing law
+    ($R^2 = 0.9923$), \emph{not} Born $|J|^2$ ($R^2 = 0.7137$), in the
+    pre-registered six-neighbour construction --- \etag{cn} for Born, \etag{nf}
+    for the Rice fit (\ftdid{0200}; companion \ftdid{0199}). \\
+\end{xltabular}
+
+Three features of the catalog deserve emphasis before we reproduce its
+load-bearing rows. First, the tags are heterogeneous \emph{by design}: rows~1,
+2, 5 are theorem-grade; rows~3, 4, 8, 11, 13, 14 are measurements; row~6 carries
+three tags at once (linear \etag{der}, bridge \etag{opn}, identification
+\etag{smc}); row~9 wears its inserted coupling as a \etag{sel}; row~15 is a
+\etag{cn} for the Born rule. A single uniform tag over the catalog would be an
+overclaim. Second, several rows are zero-parameter consequences of lattice
+geometry (rows~1, 2, 5, 11), and these are the framework's strongest empirical
+content because there is nothing in them to tune. Third, the catalog deliberately
+\emph{omits} $\alpha$: the fine structure constant does not appear as an emergent
+IR measurement at all. It lives in the algebraic spine (Chapter~3) as a
+match, and \S\ref{sec:alphabridge} states exactly why that match is not promoted
+to a derivation.
+
+% ---- the alpha bridge ------------------------------------------------------
+\section{The bridge: $x_+ = 1/\alpha$, and why it stays a conjecture}
+\label{sec:alphabridge}
+
+The master quadratic of Chapter~3,
+\[
+  \masterquad \;=\; 0,
+\]
+has the larger root
+\[
+  \xplusval,
+\]
+and the CODATA~2022 value of the inverse fine structure constant is
+\[
+  \alphainveq.
+\]
+The agreement is
+\[
+  \ppmmatch ,
+\]
+roughly one part per million at tree level. This is the single most arresting
+number in the framework: a constant assembled from the lemniscatic bridge
+$\Gs$ (Chapter~3), with no electromagnetic input anywhere in its construction,
+landing on top of $\alpha^{-1}$ to sub-ppm precision.
+
+\begin{conjecturebox}[The central conjecture]
+The identification $x_+ = 1/\alpha$ is a \etag{smc} (\ftdid{0013}), a
+\emph{match}, not a derivation. The polynomial itself, its discriminant, and its
+roots are \etag{thm}; the \emph{physical reading} of the larger root as the
+inverse fine structure constant is conjectural. It is downgraded from an earlier
+\etag{thm} framing precisely because the structural-uniqueness evidence
+(\ftdid{0189}: zero non-$\Gs$ dual-matchers across $2.65$~million degree-2
+polynomials over an $18$-constant basket FTD did not design) strengthens the
+\emph{evidence} for the conjecture without supplying a \emph{derivation chain}.
+\end{conjecturebox}
+
+The reason the identification cannot be promoted is the boundary mapped in
+Chapter~3. The route-invariance result (MC-T4.3, \ftdid{0242}) found that across
+four independent FTD-native routes, \emph{none forces} the operator assembly
+\[
+  \assembly
+\]
+that the master quadratic encodes. The \emph{menu} of that assembly is forced ---
+the even trace $16\,\Gss$ and the odd source $\Gs$ are genuine clean sources from
+the spine --- but the \emph{assembly} of those ingredients into the operator $W$
+whose characteristic polynomial is the master quadratic is not compelled by any
+substrate route. In Chapter~3's language: $\alpha$ is \emph{dynamical, not
+structural}. That boundary is a \etag[, no-go]{fo}, not a theorem and not a
+derivation of $\alpha$; and it is exactly what keeps $x_+ = 1/\alpha$ at \etag{smc}.
+The dashed arrow in the chapter mini-map (Figure~\ref{fig:minimap-physics}), from
+the $\alpha$-readout wall down to the $x_+ = 1/\alpha$ box, is the visual form of
+this dependency: remove the wall and the box could be solid; the wall is there, so
+it is dashed.
+
+A second, independent reason reinforces the same verdict. The geometric-Coulomb
+result of \S\ref{sec:geomcoulomb} shows that when $\alpha$ \emph{does} enter the
+engine's emergent dynamics --- through an explicit Gauss-source coupling
+$g_c = \sqrt{2\pi\,\alpha}$ --- it does so as a \emph{parametric insertion}, and the
+engine then reproduces QED Coulomb trivially. So the engine has exactly one place
+where $\alpha$ appears as an emergent number, and there it is inserted by hand; and
+exactly one place where $\alpha$ appears as a forced number, and there the forcing
+is conjectural. Neither place is a derivation of $\alpha$ from lattice dynamics.
+FTD has not demonstrated $\alpha$ as an emergent outcome of the substrate in any
+measurement to date, and this document does not claim otherwise.
+
+% ---- reproduced derivations ------------------------------------------------
+\section{Reproduced derivations}
+\label{sec:reproduced}
+
+This section reproduces in full the three load-bearing chains of the physics
+layer: the geometric-Coulomb theorem (row~2), the cluster-mass coefficient
+$\kquarter$ at linear level (row~6), and the gravity ratio $\alpha_G(e,e)$
+(row~12). Each uses the canonical macros; no constant is hand-keyed.
+
+\subsection{Phase-G geometric Coulomb is the lattice Poisson Green's function}
+\label{sec:geomcoulomb}
+
+\begin{claim}[Geometric Coulomb, \etag{thm}, \ftdid{0004}]
+The engine's emergent static pair potential has a closed-form prediction with
+\emph{zero free parameters}: it is the periodic lattice Poisson Green's function,
+carrying no fine-structure content whatsoever.
+\end{claim}
+
+\emph{Setup.} The engine's Gauss law sources the flux field from the ternary
+state with no coupling constant in front: $\gausssource$, with $\rho_s = s \in
+\{-1,0,+1\}$. The charge \emph{is} the state value. On the $L^3$ cubic torus the
+seven-point Laplacian has the periodic Green's function
+\[
+  G_L(r) \;=\; \frac{1}{L^3}\sum_{k\neq 0}\frac{e^{\,i\,k\cdot r}}{D(k)},
+  \qquad D(k) \;=\; 2\bigl(3 - \cos k_x - \cos k_y - \cos k_z\bigr),
+\]
+with $k_i = 2\pi n_i / L$ and the zero mode removed (charge neutrality on the
+torus).
+
+\emph{Derivation.} Place a $+1$ charge at $n_1$ and a $-1$ charge at $n_2$. Each
+solves a discrete Poisson equation,
+\[
+  \nabla^2 \phi_1 = -\,\delta(n - n_1), \qquad
+  \nabla^2 \phi_2 = +\,\delta(n - n_2), \qquad
+  J_a = -\nabla\phi_a,
+\]
+and by construction $\phi_1(n) = G_L(n - n_1)$. The pair flux is
+$J_{\mathrm{pair}} = J_1 + J_2$, so the field energy contains the cross term
+$2\,J_1\!\cdot\! J_2$. Integrating by parts on the torus (no boundary),
+\[
+  \sum_n J_1\!\cdot\! J_2
+  \;=\; \sum_n \nabla\phi_1\!\cdot\!\nabla\phi_2
+  \;=\; -\sum_n \phi_1\,\nabla^2\phi_2
+  \;=\; \sum_n \phi_1\,\delta(n-n_2)\cdot s_2
+  \;=\; -\,\phi_1(n_2)
+  \;=\; -\,G_L(r),
+\]
+with $r = |n_1 - n_2|$. The interaction energy is therefore $V(r) = -2\,G_L(r)$,
+and the engine's effective coupling readout is
+\[
+  \boxed{\;\geomcoulomb\;=\; -V\cdot r\;}
+\]
+in the $\sum|J|^2$ energy convention.\footnote{The current engine accumulates
+field energy with a $\tfrac12$ prefactor (post-2026-04-27 refactor), which pairs
+$V(r) = -G_L(r)$ and $\alpha_r = r\,G_L(r)$; the form $\geomcoulomb$ used here and
+in the IR catalog is the canonical $\sum|J|^2$ convention of \ftdid{0004}, related
+by the factor of two (\ftdid{0286}~v2). The physical content --- that the
+readout is the lattice Green's function with no free parameter --- is
+convention-independent.} For $r \ll L$ at large $L$ the continuum limit of the
+lattice Green's function is $G_L(r) \approx 1/(4\pi r)$, so
+\[
+  \alpha_r(r) \;\approx\; \frac{1}{2\pi} \;\approx\; 0.1592,
+\]
+a universal lattice constant depending only on $r/L$, with no $\alpha$ anywhere
+in it. A parameter-free FFT evaluation of $G_L(r)$ against the measured
+$\alpha_r(r,L)$ over $L \in \{32,\dots,384\}$ reaches $R^2 = 1.0000$ with $0.07\%$
+median residual in the $L=384$ Coulomb tail. \hfill$\qed$
+
+\emph{Reading.} The lesson of this theorem is negative and important: the
+emergent static potential the engine produces is \emph{geometric Coulomb} ---
+pure lattice geometry, zero fine-structure content. The earlier ``plateau at
+$3.6\times\alpha_{\mathrm{ref}}$'' headline was a category error (a slice of
+$2\,r\,G_L(r)$ at fixed $r/L$, compared to an unrelated electroweak coupling).
+Where $\alpha$ enters the engine's dynamics it does so by an explicit inserted
+coupling $g_c = \sqrt{2\pi\,\alpha}$, under which the same theorem predicts
+$\alpha_r(r,L;g_c) = g_c^2\cdot 2\,r\,G_L(r)$ and the engine reproduces QED
+Coulomb to lattice-spacing precision --- a \etag{par} insertion, not an emergent
+derivation of $\alpha$. This is the engine-side companion to
+\S\ref{sec:alphabridge}'s boundary.
+
+\subsection{The cluster-mass coefficient $\kquarter$ from $O_h$ representation theory}
+\label{sec:clustermass}
+
+\begin{claim}[Cluster-mass linear coefficient, \etag{der} at linear level, \ftdid{0110}]
+The empirical cluster-size scaling $\clustermass$ has its coefficient
+$\kquarter$ \emph{derived} from the representation theory of the cubic point
+group $O_h$ on the $27$-voxel Moore block; the link to the full nonlinear engine
+is a \etag{smc}, and a rigorous nonlinear bridge is \etag{opn}.
+\end{claim}
+
+\emph{The empirical fact.} Engine campaigns measure $N(A) \approx k\,A^2$ with
+$k = 0.239 \pm 0.018$ across eleven amplitudes, five Standard-Model particles,
+and two injection geometries. The structural question is why $k \approx \tfrac14$.
+
+\emph{Step 1 --- the $27$-block decomposition (\etag{thm}).} The $3^3$ Moore block
+of $27$ voxels carries the natural permutation representation $\rho_{27}$ of $O_h$
+(order $48$), with four orbits: the centre ($1$), the six SC face neighbours, the
+twelve FCC edge neighbours, and the eight BCC corner neighbours. It decomposes as
+\[
+  \rho_{27} \;\cong\; 4\,A_{1g} \oplus 2\,E_g \oplus 2\,T_{2g}
+            \oplus A_{2u} \oplus 3\,T_{1u} \oplus T_{2u},
+\]
+which checks dimensionally ($4 + 4 + 6 + 1 + 9 + 3 = 27$). The multiplicity of
+the trivial irrep follows from the character-table formula
+\[
+  \mult(A_{1g},\rho_{27})
+  \;=\; \frac{1}{|O_h|}\sum_{\text{classes}}
+        \bigl(\text{size}\bigr)\,\chi_{\rho_{27}}(g)\,\chi_{A_{1g}}(g)^{*}
+  \;=\; \frac{192}{48} \;=\; 4 ,
+\]
+where $\chi_{\rho_{27}}(g)$ counts voxels fixed by $g$ and $\chi_{A_{1g}}\equiv 1$.
+This is a theorem of group theory, independent of any FTD-specific machinery, and
+$\mult(A_{1g}) = 4 = \Nbase$.
+
+\emph{Step 2 --- the $A_{1g}$ subspace and the projected Laplacian (\etag{thm}).}
+The four-dimensional $A_{1g}$ subspace is spanned by the orbit-averaged scalars
+\[
+  e_0 = \delta_{\text{centre}}, \quad
+  e_1 = \tfrac{1}{\sqrt6}\,\mathbf{1}_{\mathrm{SC}}, \quad
+  e_2 = \tfrac{1}{\sqrt{12}}\,\mathbf{1}_{\mathrm{FCC}}, \quad
+  e_3 = \tfrac{1}{\sqrt8}\,\mathbf{1}_{\mathrm{BCC}}.
+\]
+The eighteen-point isotropic lattice Laplacian is $O_h$-equivariant, so by Schur's
+lemma it preserves each irrep subspace; on $\mathrm{span}\{e_0,e_1,e_2,e_3\}$ it
+acts as an explicit symmetric $4\times4$ matrix $M$ whose four eigenvalues
+$\{-1.586,\,-3.862,\,-4.414,\,-4.805\}$ and eigenvectors are obtained by direct
+diagonalisation (trace $= -44/3$, confirmed against the full $27\times27$
+operator to machine precision).
+
+\emph{Step 3 --- centre injection is $A_{1g}$-pure (geometric fact).} The centre
+voxel is the unique fixed point of the $O_h$ action: every cubic symmetry maps
+$(0,0,0)$ to itself. Hence $\delta_{\text{centre}} = e_0$ is $O_h$-invariant, so
+$A_{1g}$-pure, with zero overlap on any non-trivial irrep.
+
+\emph{Step 4 --- the mean energy fraction is $\tfrac14$ (\etag{der}).} In the
+$M$-eigenbasis, $\delta_{\text{centre}}$ projects with squared coefficients
+\[
+  \Bigl(\tfrac38,\ \tfrac18,\ \tfrac38,\ \tfrac18\Bigr),
+  \qquad \sum = 1,
+  \qquad \text{mean} = \frac{1}{\Nbase} = \frac14 .
+\]
+The mean is not a coincidence: it follows from two identities. The
+\emph{sum identity} gives $\|\delta_{\text{centre}}\|^2 = 1$, and because the
+state is $A_{1g}$-pure that unit norm is carried entirely within the four
+$A_{1g}$ eigenmodes. The \emph{counting identity} gives exactly $\Nbase = 4$ such
+modes (Step~1). Therefore the mean per-mode energy fraction is $1/\Nbase = \tfrac14$,
+\emph{independently} of the non-uniform per-mode split $(\tfrac38,\tfrac18,
+\tfrac38,\tfrac18)$ --- which itself reflects the parity structure of the four
+eigenvectors and is washed out to equipartition under Langevin thermalisation.
+
+\emph{Step 5 --- from the mean to $N(A)$.} The injected energy
+$E_{\mathrm{inj}} = A^2 K_{\mathrm{genesis}}^2$ distributes over the four $A_{1g}$
+modes; the cluster's voxel count is the manifested energy divided by the per-voxel
+cost $K_{\mathrm{genesis}}^2$, harvesting the mean fraction:
+\[
+  N(A) \;=\; \frac{1}{\Nbase}\,A^2 \;=\; \frac14\,A^2,
+  \qquad\text{i.e.}\qquad \clustermass .
+\]
+The result is direction-invariant: an axial injection $J = (A,0,0)\,\delta_{\text{centre}}$
+and a body-diagonal injection $J = (A/\sqrt3)(1,1,1)\,\delta_{\text{centre}}$ give
+\emph{identical} $A_{1g}$ energy distributions $(\tfrac38,\tfrac18,\tfrac38,\tfrac18)\,A^2$
+and the same mean $A^2/4$, because each Cartesian component evolves as an
+independent scalar field under the same scalar Laplacian. \hfill$\qed$
+
+\emph{Reading.} Steps~1--4 are \etag{thm}/\etag{der}: the character-table
+multiplicity, the projected eigenstructure, the $A_{1g}$-purity of the centre, and
+the mean-energy coefficient $\tfrac14$ are all rigorous at the linear level. The
+\emph{identification} of that coefficient with the full nonlinear engine's cluster
+size --- and hence with Standard-Model particle masses via $A = 2\sqrt{m_X/m_e}$
+--- is a \etag{smc} (\ftdid{0110}), supported empirically by $5$ seeds $\times$ $11$
+amplitudes $\times$ $5$ particles within the measured $k(A)$ drift envelope. The
+\etag{opn} piece is to prove that genesis $+$ evaporation $+$ Langevin steady state
+reproduces the linear-mode equipartition; this is the cleanest remaining derivation
+gap of the physics layer.
+
+\subsection{The gravity ratio $\alpha_G(e,e)$}
+\label{sec:gravityratio}
+
+\begin{claim}[Gravitational hierarchy, \etag{der} (1 flagged step); floor \etag{smc}, \ftdid{0131}]
+The dimensionless gravitational coupling for one electron is predicted from the
+substrate as $\alphaGee$, matching the measured $1.752\times10^{-45}$ to $0.38\%$.
+The derivation chain is \etag{der} modulo one flagged \etag{ax} step (the clock
+hypothesis); the prediction's epistemic \emph{floor} is \etag{smc}, inherited
+from the electron-mass formula it consumes.
+\end{claim}
+
+\emph{Step 1 --- the form (\etag{thm}).} The discrete Poisson Green's function on
+the cubic lattice has the large-$r$ tail $G_+(r) \to 1/(4\pi r)$ --- the standard
+three-dimensional Newtonian form. This is the Phase-G result of
+\S\ref{sec:geomcoulomb} (\ftdid{0004}), independent of any physics interpretation.
+
+\emph{Step 2 --- the source (\etag{der}).} An $N$-voxel cluster identifies with
+mass $M = N\,m_e$ under the calibration $K_B = m_e$ (cluster mass, row~6). Each
+manifested voxel acts as a gravitational source of the same strength, so the
+cluster's potential at large $r$ is $\phi_g(r) = M\,K_B^{\mathrm{grav}}/(4\pi\,m_e\,r)$,
+with $K_B^{\mathrm{grav}} = K_B = m_e$ fixed by variation of the action
+(the manifestation term sources a Poisson equation $\nabla^2\mathcal{L} = 4\pi G\rho$).
+
+\emph{Step 3 --- the tick-rate response (\etag{der} modulo the clock hypothesis).}
+The local tick rate responds linearly to the gravitational potential,
+$d\tau/dT_U = 1 + 2\phi_g/c^2$ (the metric component $g_{00}$); matching the
+leading Schwarzschild form $d\tau/dT_U = 1 - 2G_N M/(rc^2)$ identifies
+$G_N = -K_B^{\mathrm{grav}}/(4\pi m_e)$. The square-root proper-time law is
+established by the action's Born--Infeld core; the single \emph{flagged}
+\etag{ax} step is the clock hypothesis used in that identification --- an
+interpretive step not yet substrate-derived.
+
+\emph{Step 4 --- the calibration-free prediction.} The dimensionless ratio
+$\alpha_G(e,e) = G_N m_e^2/(\hbar c)$ is independent of any unit choice. By the
+Planck-mass relation $m_P^2 = \hbar c/G_N$,
+\[
+  \alpha_G(e,e) \;=\; \Bigl(\frac{m_e}{m_P}\Bigr)^2 .
+\]
+Substituting the electron-mass formula $\meformula$ gives
+\[
+  \boxed{\;\alphaGee\;}
+\]
+against the measured $1.752\times10^{-45}$ --- a $0.38\%$ match. Per
+error-propagation this is exactly twice the $0.19\%$ precision of $m_e/m_P$
+itself; the squared form doubles the deviation. \hfill$\qed$
+
+\emph{Reading.} The chain steps are \etag{der} (modulo the one flagged
+\etag{ax}), but the prediction's load-bearing \emph{floor} is \etag{smc}: the
+$0.38\%$ ``match'' is the squared precision of the electron-mass formula
+$\meformula$, which is itself \etag{smc} (its prefactor $\sqrt{2\pi}\cdot\tfrac{16}{3}$
+and exponent $11$ are motivated but not dynamically derived). The match is
+therefore \emph{mechanical}, not independent new evidence; the substrate content
+is in the chain, not in the numerical agreement. Promoting $\alpha_G(e,e)$ to a
+clean \etag{der} would require a first-principles derivation of that prefactor ---
+which is \etag{opn}. Independently, this derivation \emph{falsifies} the older
+framework-integer reading $G_N = 1/(b_3+N_c)^2 = \tfrac{1}{100}$ as an
+identification with physical $G_N$: it is off by twenty to forty-three orders of
+magnitude under every natural calibration, a numerical coincidence with no
+substrate justification.
+
+% ---- the honest accounting -------------------------------------------------
+\section{The honest accounting}
+\label{sec:accounting}
+
+The physics layer's integrity rests on a census, not a slogan. The parametric
+catalog (\ftdid{0254} lineage; canonical in the assessment ledger) enumerates
+${\sim}162$ quantities FTD reports for the Standard Model and sorts each by how it
+is obtained:
+
+\begin{center}\small
+\begin{tabular}{@{}l c >{\raggedright\arraybackslash}p{0.60\textwidth}@{}}
+  \toprule
+  Category & Count & What it means \\
+  \midrule
+  \etag{der}\,/\,\etag{thm} & ${\sim}23$ &
+    formula \emph{and} value produced from FTD axioms alone --- genuine evidence \\
+  \etag{par} & ${\sim}129$ &
+    external formula (QED, ChPT, Fermi, Regge, seesaw) with FTD-supplied inputs --- cross-check only \\
+  \etag{imp}\,/\,\etag{sel} & ${\sim}10$ &
+    value fitted to experiment, or argued without a uniqueness proof --- input, not output \\
+  \midrule
+  \textbf{Total} & ${\sim}162$ & \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+The reading is deliberately deflationary. A \emph{derivation} takes the lattice
+axioms and produces both the functional form and the numerical value; a
+\emph{parametric insertion} borrows the functional form from established physics
+and inserts FTD integers or couplings into it. Insertions are not errors --- they
+are how any effective field theory cross-checks against the known Standard Model
+--- but they are not independent evidence for FTD, and labelling them
+``derivations'' would be the precise dishonesty the project's anti-target
+discipline forbids. The ${\sim}23$ in the left column are the load-bearing claims:
+the foundational constants ($\Gs$, $\Nc$, the master quadratic), the three lepton
+mass \emph{ratios}, the geometric-Coulomb and mass-gap theorems, the classical-ED
+suite, the cross-sections, and the structural null-predictions. The ${\sim}129$ in
+the middle column --- the bulk of the meson and baryon masses, the decay widths,
+the precision-QED corrections --- consume those few derivations as inputs.
+
+This is the quantitative form of the intuition primer: the lattice reproduces a
+great deal of infrared physics, a small fraction of it is genuinely forced, and
+the framework states which fraction is which. The fine structure constant, the
+prize the whole construction seems to reach for, sits on the conjectural side of
+that ledger --- matched to one part per million, never forced --- and the
+accounting keeps it there.
+
+% ---- boundary --------------------------------------------------------------
+\section{What this layer does not settle}
+\label{sec:physics-boundary}
+
+\subsection{The hydrogen ``spectrum'' is a classical Kepler check}
+\label{sec:hydrogen-caveat}
+
+Row~13 of the catalog reports the hydrogen level structure $1/n^2$ to better than
+$0.001\%$, and the figure is real --- but it is a \etag{meas} of a
+\emph{classical} benchmark, not a quantum derivation. The engine places classical
+Kepler orbits at $r_n = n^2 a_0$ and verifies the $1/n^2$ scaling, which is
+generic to \emph{any} $1/r$ central force; the Rydberg scale is calibrated through
+the inserted $\alpha$ and $K_B$. It is \textbf{not} a quantum eigenvalue
+derivation: there is no $\hbar$ in the substrate dynamics, no quantum kinetic
+operator, and no dynamical Pauli exclusion. Under FC-1 (Chapter~2) the framework
+formally \emph{declines} the quantum-measurement layer, so atomic spectra are
+not, at present, substrate-derivable. The honest status of the atomic sector is
+that FTD derives essentially none of its quantum dynamics; the $1/n^2$ benchmark
+is a consistency check on a $1/r$ force, and should never be cited as more.
+
+\subsection{$\alpha$ is matched, not forced}
+
+The framework's headline number, $x_+ = 1/\alpha$ to ${\sim}1.26$~ppm
+(\S\ref{sec:alphabridge}), remains a \etag{smc} (\ftdid{0013}). The route-invariance
+boundary (MC-T4.3, \ftdid{0242}) shows that no FTD-native route forces the operator
+assembly behind the master quadratic, so $\alpha$ is dynamical, not structural. This
+is the hinge of the whole document: the mathematics of Chapter~3 is forced up to a
+precisely located wall, and the physics of this chapter inherits that wall. Closing
+it would require a sixth-postulate-class input that forces the assembly, or a fresh
+engine-native measurement that derives $\alpha$ from dynamics --- both \etag{opn}.
+
+\subsection{Three derivation gaps and one imposition}
+
+Three of the catalog's load-bearing rows carry explicit open kernels. The
+cluster-mass \emph{nonlinear bridge} (row~6, \ftdid{0110}) --- proving that the
+nonlinear engine reproduces the linear-mode equipartition that delivers $\kquarter$
+--- is \etag{opn}. The gravity ratio (row~12, \ftdid{0131}) is \etag{der} only
+\emph{modulo} the flagged clock-hypothesis \etag{ax} step, and its prediction floor
+is \etag{smc}; a first-principles derivation of the electron-mass prefactor
+$\sqrt{2\pi}\cdot\tfrac{16}{3}$ would lift it. Cluster transport inertia (row~7,
+\ftdid{0250}) ships as an \etag{imp} engine model, with the collective-coordinate
+reduction --- the dynamical twin of row~6's bridge --- left \etag{opn}. None of
+these gaps is hidden; each is a mapped boundary of how far the discrete ontology, as
+run through the engine, currently reaches into infrared physics.

@@ -1,2 +1,198 @@
+% =============================================================================
+% appendices.tex -- App A (epistemic accounting), B (provenance registry), C (glossary)
+% =============================================================================
 \chapter{Epistemic Accounting}\label{app:accounting}
-% Appendices A/B/C filled in Task 11
+
+This appendix records the bedrock against which the whole chain is measured. It
+reproduces the canonical truth-tier table and the ten entries that matter, and
+states the framework's honest claim/insertion accounting. The authoritative
+source is \texttt{TRACKER\_ONTIC\_TRUTH.md}; where this appendix and that tracker
+disagree on a tier, the tracker is correct.
+
+\section{The five truth tiers}
+
+\begingroup
+\renewcommand{\arraystretch}{1.25}
+\begin{center}
+\begin{tabular}{@{}c c >{\raggedright\arraybackslash}p{0.62\textwidth}@{}}
+\toprule
+\textbf{Tier} & \textbf{Rating} & \textbf{Meaning} \\
+\midrule
+T1 & $\star\star\star\star\star$ & Rock-solid: pure algebra or a three-line proof. \\
+T2 & $\star\star\star\star$      & Conditional on a published classical theorem (rigour $=$ the source's). \\
+T3 & $\star\star\star$           & Numerical fact verified over a stated domain (not a structural theorem). \\
+T4 & $\star\star$                & Value-level coincidence; the structural reason is conjectured, not proved. \\
+T5 & $\star$                     & Strongly motivated conjecture; includes empirical matches without a derivation chain. \\
+\bottomrule
+\end{tabular}
+\end{center}
+\endgroup
+
+\section{The bedrock: the ten that matter}
+
+These are the entries one would defend to a skeptical mathematician. Each points
+at a verification artifact in the corpus.
+
+\begingroup
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+\begin{tabular}{@{}l >{\raggedright\arraybackslash}p{0.40\textwidth} c l@{}}
+\toprule
+\textbf{ID} & \textbf{Result} & \textbf{Rating} & \textbf{Anchor} \\
+\midrule
+OT-1.1 & Master quadratic $+$ roots                & $\star\star\star\star\star$ & \ftdid{0001} \\
+OT-1.2 & $G^{*}$ algebraic identity                & $\star\star\star\star\star$ & \ftdid{0002} \\
+OT-1.3 & Harmonic invariant tower                  & $\star\star\star\star\star$ & \ftdid{0111} \\
+OT-1.4 & Phase-G geometric Coulomb                 & $\star\star\star\star\star$ & \ftdid{0004} \\
+OT-1.5 & BCC complex-structure theorem             & $\star\star\star\star\star$ & \ftdid{0122} \\
+OT-1.6 & $\mathbb{Z}[i]^{\times}\!\to O_h^{ab}$ no-go & $\star\star\star\star\star$ & \ftdid{0122} \\
+OT-2.1 & Watson identity                           & $\star\star\star\star$  & Watson 1939 / Glasser--Zucker 1980 \\
+OT-2.2 & Tower discriminant transcendence          & $\star\star\star\star$  & Schneider--Chudnovsky \\
+OT-2.3 & $\mathbb{Q}(G^{*})$ is $\pi$-free         & $\star\star\star\star$  & Chudnovsky 1976 \\
+OT-3.4 & Cluster coefficient $k=\tfrac14$          & $\star\star\star$       & \ftdid{0110} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\endgroup
+
+\noindent
+Two further $\star\star\star\star\star$ entries record alternative constructions of
+$G^{*}$ (OT-1.7, the $\det_\zeta$ quarter-conjugacy bridge, \ftdid{0141}; OT-1.8,
+the finite-$N$ attractor, \ftdid{0142}). The single $\star$ entry is the central
+conjecture itself: OT-5.1, $x_+ = 1/\alpha$ \etag{smc} (\ftdid{0013}, \ftdid{0242}),
+which the framework explicitly does \emph{not} claim as a theorem.
+
+\section{Claim/insertion accounting}
+
+The honest headline count of the framework, by canonical tag
+(\texttt{CATALOG\_\allowbreak PARAMETRIC\_\allowbreak INSERTIONS.md}):
+
+\begin{center}
+\begin{tabular}{@{}c >{\raggedright\arraybackslash}p{0.55\textwidth}@{}}
+\toprule
+\textbf{Count} & \textbf{Category} \\
+\midrule
+$\sim 23$  & \etag{der}/\etag{thm} --- derived or theorem-grade. \\
+$\sim 129$ & \etag{par} --- standard physics formulas filled with FTD constants (mechanism borrowed). \\
+$\sim 10$  & \etag{imp}/\etag{sel} --- calibration declarations and selection arguments. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent
+The seven theorem-grade spine results plus the two $\mathbb{Z}[i]$ structural
+theorems and the cluster coefficient are the bedrock; everything else is
+downstream. The ratio is the project's most important single fact about itself.
+
+% -----------------------------------------------------------------------------
+\chapter{Provenance Registry}\label{app:provenance}
+
+Every \ftdid{NNNN} cited in this document, with a one-line description, as the
+reader's index back into the project ledger (\texttt{LEDGER.md}). Tags shown are
+the canonical tags; this registry promotes nothing.
+
+\begingroup
+\renewcommand{\arraystretch}{1.25}
+\begin{longtable}{@{}l >{\raggedright}p{0.60\textwidth} >{\raggedright\arraybackslash}p{0.17\textwidth}@{}}
+\toprule
+\textbf{Id} & \textbf{What it established} & \textbf{Tag} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{@{}l}{\small\itshape Provenance registry, continued}\\
+\toprule
+\textbf{Id} & \textbf{What it established} & \textbf{Tag} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{r@{}}{\small\itshape continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+\ftdid{0001} & Master quadratic $x^2-16G^{*2}x+16G^{*3}=0$ and its two real roots. & \ctag{thm} \\
+\ftdid{0002} & The $G^{*}=\Gamma(1/4)/\Gamma(3/4)$ algebraic identity. & \ctag{thm} \\
+\ftdid{0003} & CM-curve uniqueness among class-number-one fields. & \ctag{thm} \\
+\ftdid{0004} & Phase-G geometric Coulomb $=$ lattice Poisson Green's function. & \ctag{thm} \\
+\ftdid{0005} & Phase-J partition-function ultralocality (at $L=2$). & \ctag{thm} \\
+\ftdid{0006} & Coefficient $16=|\mathrm{Aut}(E)|^{2}$ (structural necessity conjectural). & \ctag{thm} \\
+\ftdid{0013} & $x_{+}=1/\alpha$ to $1.26$ ppm: the central identification. & \ctag{smc} \\
+\ftdid{0044} & Per-voxel mass gap from the manifestation threshold. & \ctag{thm} \\
+\ftdid{0059} & $a_{\mathrm{phys}}\equiv\ell_{P}$ calibration; non-derivability enforced. & \ctag{sel} \\
+\ftdid{0096} & Mass-unit calibration interface ($\mu$ from $\ell_{P}$). & \ctag{sel} \\
+\ftdid{0110} & Cluster mass $N(A)\approx\tfrac14(A/K)^{2}$, linear level; nonlinear bridge open. & \ctag{der} \\
+\ftdid{0111} & Harmonic invariant tower $1/y_{+}+1/y_{-}=1$. & \ctag{thm} \\
+\ftdid{0112} & Field-theoretic characterization of $\mathbb{Q}(G^{*})$ as $\pi$-free. & \ctag{thm} \\
+\ftdid{0113} & Retarded radiation on the lattice (Li\'enard--Wiechert). & \ctag{der} \\
+\ftdid{0114} & Lattice Bianchi identities and Hodge duality. & \ctag{der} \\
+\ftdid{0115} & Boosted Coulomb and the lattice Cherenkov pole. & \ctag{der} \\
+\ftdid{0117} & $G^{*}\approx 2.9587\neq\varpi$ correction (the typo-bug fix). & \ctag{nf} \\
+\ftdid{0120} & Maxwell-exploit closure (Larmor, Cherenkov rate, source-half). & \ctag{der} \\
+\ftdid{0122} & BCC complex-structure theorem; $\mathbb{Z}[i]$ unification (roles 2,4 no-go). & \ctag{der} \\
+\ftdid{0131} & Gravitational ratio $\alpha_{G}(e,e)$ derived; $G_{N}=1/100$ falsified. & \ctag{der} \\
+\ftdid{0141} & $G^{*}$ via the $\det_{\zeta}$ quarter-conjugacy bridge. & \ctag{thm} \\
+\ftdid{0142} & $G^{*}$ as a finite-$N$ attractor with $O(1/N^{2})$ rate. & \ctag{thm} \\
+\ftdid{0153} & Math-first ontology: primitives to readouts to physics. & \ctag{syn} \\
+\ftdid{0187} & Born rule not derived; observer-layer account only. & \ctag{sel} \\
+\ftdid{0189} & Look-elsewhere scan: master quadratic is the unique dual-matcher. & \ctag{nf} \\
+\ftdid{0199} & Detection-statistics construction (companion to the Rice test). & \ctag{cn} \\
+\ftdid{0200} & Rice upcrossing beats Born (PL-1); Born closed-negative. & \ctag{cn} \\
+\ftdid{0225} & A closed route to substrate non-commutativity. & \ctag{cn} \\
+\ftdid{0226} & A closed route to substrate non-commutativity. & \ctag{cn} \\
+\ftdid{0227} & Observer binding self-blind-spot (partial); sharpness open. & \ctag{thm} \\
+\ftdid{0228} & A closed route to substrate non-commutativity. & \ctag{cn} \\
+\ftdid{0242} & MC-T4.3: $\alpha$ is dynamical, not structural (route-invariant). & \ctag{fo} \\
+\ftdid{0243} & Commutativity-independence: $\{q,p\}\neq0$ yet $[q,p]=0$. & \ctag{thm} \\
+\ftdid{0244} & K-BIND square-root wall, closed theorem-negative. & \ctag{cn} \\
+\ftdid{0249} & The FTD construction monograph. & \ctag{syn} \\
+\ftdid{0250} & Cluster transport inertia $=N\cdot M_{\mathrm{REST}}$. & \ctag{imp} \\
+\ftdid{0251} & Native clock: co-measurable symplectic quadratures. & \ctag{meas} \\
+\ftdid{0252} & Time dilation: IR departure from $\gamma$ vanishes as $L^{-2}$. & \ctag{meas} \\
+\ftdid{0253} & Causal cone forced; Lorentzian metric emergent-IR, sector-scoped. & \ctag{thm} \\
+\ftdid{0254} & The framework constitution (the three-register charter). & \ctag{syn} \\
+\ftdid{0255} & FC-1: the measurement-map import $M$ is declined. & \ctag{ax} \\
+\ftdid{0256} & FC-2: native arrow; metric emergent; space $\perp$ time at base. & \ctag{ax} \\
+\ftdid{0257} & Two-orthogonal-fields ontology ($J\perp s$; nested $(q,p)$). & \ctag{syn} \\
+\ftdid{0258} & The structural deviation-prediction spine, PL-1 to PL-6. & \ctag{syn} \\
+\ftdid{0286} & Energy-convention factor-of-two in the geometric-Coulomb readout. & \ctag{der} \\
+\ftdid{0301} & Proton stability unforced-metastable; $\tau_{p}=\infty$ not a theorem. & \ctag{sel} \\
+\end{longtable}
+\endgroup
+
+% -----------------------------------------------------------------------------
+\chapter{Glossary}\label{app:glossary}
+
+\begin{description}[style=nextline,leftmargin=0pt,font=\normalfont\bfseries]
+  \item[Flux field $J\in\mathbb{R}^3$] The continuous, dispositional layer:
+    a vector field encoding potential energy density. Reversible in isolation;
+    carries the wave dynamics.
+  \item[State field $s\in\{-1,0,+1\}$] The discrete, actual layer: the ternary
+    manifestation at each lattice site. Finite and irreversible.
+  \item[The two coupling channels] The only interactions between the orthogonal
+    fields: \emph{genesis/evaporation} (downward, $J\to s$: flux crossing the
+    manifestation threshold projects a state) and \emph{Gauss sourcing}
+    (upward, $s\to J$: manifested states source flux through $\gausssource$).
+  \item[Symplectic quadratures $(q,p)$] The amplitude and rate of the flux
+    field; the substrate's only native dynamical angle. Poisson-nontrivial yet
+    observable-commutative: $\crucialdist$.
+  \item[$G^{*}$ (bridge constant)] $\Gstardef$. The lemniscatic constant that
+    bridges the dispositional and actual layers. \emph{Not} the lemniscate
+    constant $\varpi\approx\varpinum$ (\ftdid{0117}).
+  \item[Master quadratic] $\masterquad$, with roots $x_+\approx\xplusnum$ and
+    $x_-\approx\xminusapprox$.
+  \item[FC-0] The framework commitment reading the lattice's order-4 symmetry as
+    $\mathbb{Z}[i]$. An \etag{ax}-class declaration (\ftdid{0254}).
+  \item[FC-1] The commitment that the commutative observable algebra is complete;
+    FTD declines the measurement-map import $M$. An \etag{ax}-class declaration
+    (\ftdid{0255}).
+  \item[FC-2] The commitment that the arrow of time is native and the Lorentzian
+    metric is an emergent IR property; space $\perp$ time at base. An
+    \etag{ax}-class declaration (\ftdid{0256}).
+  \item[Framework integers $\{3,4,7,13\}$] $N_c=3$ (colours), $N_{\mathrm{base}}=4$,
+    $b_3=7$, $N_{\mathrm{eff}}=13$. Outputs of the structure, used in the
+    physics-layer formulas.
+  \item[Epistemic tags] The honesty layer. \etag{ax} (postulate), \etag{thm}
+    (proven), \etag{der} (chain reproduced), \etag{sel} (consistency-argued),
+    \etag{syn} (synthesis), \etag{par} (formula borrowed), \etag{smc} (strong
+    evidence, no derivation), \etag{cnj} (proposed), \etag{imp} (calibration),
+    \etag{meas} (measured in the engine), \etag{opn} (open), \etag{cn} (closed
+    negative), \etag{fo} (foundational obstruction).
+\end{description}
