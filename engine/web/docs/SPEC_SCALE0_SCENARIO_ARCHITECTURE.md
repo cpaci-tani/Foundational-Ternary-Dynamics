@@ -9,6 +9,9 @@ boundary mechanism (`34c19160`), and the all-scenario health sweep + worker fix 
 the per-scenario mount/telemetry + physics-sense audit in
 [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md);
 the remediation roadmap in [`PLAN_SCALE0_SCENARIO_MODULARIZATION.md`](PLAN_SCALE0_SCENARIO_MODULARIZATION.md).
+**2026-06-13 addendum:** active-owner + harness routing —
+[`audits/AUDIT_SCALE0_CALLSTACK.md`](audits/AUDIT_SCALE0_CALLSTACK.md),
+[`audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md`](audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md).
 Foundation companions: [`SPEC_SCALE0_BRIDGE_ARCHITECTURE.md`](SPEC_SCALE0_BRIDGE_ARCHITECTURE.md) (the
 bridges scenarios run on) and [`SPEC_SCALE0_RUNTIME_PIPELINE.md`](SPEC_SCALE0_RUNTIME_PIPELINE.md) (the
 per-frame loop that drives them).
@@ -243,33 +246,28 @@ USER picks a scenario in #scenario-select
   ├─ api.loadScenario(ctx, id)                          // → controller.loadScenario
   └─ updateScenarioMetadata(id)                         // info panel text
 
-controller.loadScenario(ctx, id, params)   scales/scale0/controller.js:215-217
+controller.loadScenario(ctx, id, params)   scales/scale0/controller.js
   └─ loadScale0Scenario(ctx, state, viewportAdapter(ctx), id, params)
-        scales/scale0/runtime/scenario-loader.js:256-301
-     1. scenario = getScale0Scenario(id)                         :257
-     2. overlayPrefs = captureOverlayPreferences(state)          :263   (save user overlays)
-     3. useFluxMock = shouldUseFluxMock(ctx.bridge, id)          :265   (§2 ownership)
-     4. if useFluxMock: fluxMock = makeFluxMock(...);            :267-272
-          setBoundaryShape(boundaryShapeFor(id))                         (§6.6 per-scenario boundary:
-          setReflectiveBoundary(reflectiveFor(id))                        SCALE0_SCENARIO_BOUNDARY ?? DOM)
-          fluxMock…setupScenario(id)
-     5. applyToggleDefaults(ctx.bridge…scale0, fluxMock…?, id)   :275   (§6.1 reset+overrides)
-     6. if fluxMock: copy each DEFAULT_TOGGLES state from DOM    :277-280
-     7. setFluxMock(fluxMock, useFluxMock)                       :282   (disposes prior mock)
-     8. ctx.resetAllVisualState() → resetScale0VisualState       :286
-        applyAuxiliaryDefaults(ctx, viewportAdapter, id)         :287   (tpf=50; boundary via §6.6 —
-                                                                          honors SCALE0_SCENARIO_BOUNDARY,
-                                                                          else resets cube + non-reflective)
-     9. harness = getPhysicsHarness(ctx.bridge)                  :289   (§5.3)
-        scenario.load(harness, params)                           :290   → harness.setupScenario(id)
-                                                                          → bridge.setupScenario(id, harness)
-                                                                          → JS runSetupScenario | C++ dispatch_scenario
-                                                                          → inject flux / particles
-    10. setCurrentScenarioId(id)                                 :292
-        markScenarioOverrideRows(DEFAULT_TOGGLES)                :294
-        syncComboSliders(ctx.bridge)                             :295
-    11. restoreOverlayPreferences(overlayPrefs, …)               :300   (re-apply saved overlays)
+        scales/scale0/runtime/scenario-loader.js
+     1. scenario = getScale0Scenario(id)
+     2. overlayPrefs = captureOverlayPreferences(state)
+     3. useFluxMock = shouldUseFluxMock(ctx.bridge, id)          (§2 ownership)
+     4. if useFluxMock: fluxMock = makeFluxMock(N, id, bridge); set boundary on mock cap
+     5. applyToggleDefaults (WASM cap + optional mock cap)
+     6. setFluxMock(fluxMock, useFluxMock); sync ctx.useFluxMock / ctx.fluxMock
+     7. ctx.resetAllVisualState(); applyAuxiliaryDefaults
+     8. activeBridge = useFluxMock ? fluxMock : ctx.bridge
+        harness = getPhysicsHarness(activeBridge)
+        scenario.load(harness, params)   → runSetupScenario / inject
+     9. applyGravityAbsorbingToggles; setCurrentScenarioId; syncComboSliders(active)
+    10. restoreOverlayPreferences; viewport.setLatticeSize(activeN) when N differs
 ```
+
+> **2026-06-13 corrections (supersedes steps in older `file:line` blocks below):**
+> - Do **not** call `fluxMock.setupScenario()` before `scenario.load()` (double-seed).
+> - Harness must target **activeBridge**, not always `ctx.bridge`.
+> - `setFluxMock` / `setForceStyle` are imported from `store.js` (init crash if missing).
+> - Re-derive line numbers before citing this file; the sequence above is authoritative.
 
 ### 5.2 Stages, named
 

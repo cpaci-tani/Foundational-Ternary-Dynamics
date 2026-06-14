@@ -14,7 +14,7 @@
  *
  * The extraction preserves the parallel-for body BYTE-IDENTICAL. The golden
  * tick test (test_render_bridge_golden) hashes 100 ticks to
- * 0xcd957b601d47868a and is the strict gate on this refactor: any drift
+ * 0x56fa28acb5b9fe88 and is the strict gate on this refactor: any drift
  * here is a physics bug.
  *
  * Why no per-branch split: the parallel-for would have to be re-walked once

@@ -121,7 +121,7 @@ verification routes through `engine/build_wsl/` per CLAUDE.md).
 - [CONTRACTS.md §7](../../CONTRACTS.md#7--constants-chain-contract) (constants chain)
 - [docs/adr/0007-cuda-helper-consolidation.md](../../docs/adr/0007-cuda-helper-consolidation.md)
 - [docs/adr/0008-r1-r5-phase-extraction.md](../../docs/adr/0008-r1-r5-phase-extraction.md) (CPU-side analogue)
-- [docs/adr/0012-golden-tick-regression-gate.md](../../docs/adr/0012-golden-tick-regression-gate.md) — bit-exact regression gate (hash `0xcd957b601d47868a`) covering physics-touching kernel changes
+- [docs/adr/0012-golden-tick-regression-gate.md](../../docs/adr/0012-golden-tick-regression-gate.md) — bit-exact regression gate (hash `0x56fa28acb5b9fe88` @ L=17) covering physics-touching kernel changes
 - [engine/SPEC_ENGINE.md](../SPEC_ENGINE.md)
 - CPU mirror: `engine/src/render_bridge.cpp` (now 545 LOC) + `engine/src/render_bridge_phases/{phase_read,phase_write,phase_forces,phase_movement}.cpp` post-Phase 4
 - Constants: `engine/include/ftd/constants_gpu.cuh`

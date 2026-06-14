@@ -78,6 +78,9 @@
  * 's0-field-uniform-e' |
  * 's0-field-uniform-b' |
  * 's0-field-photon-pulse' |
+ * 's0-field-rf-lattice-wave' |
+ * 's0-field-light-lattice-wave' |
+ * 's0-field-sound-lattice-wave' |
  * 's0-field-thomson-scattering' |
  * 's0-field-spacetime-forcing-boundary' |
  * 's0-field-electric-dipole' |
@@ -306,6 +309,42 @@ export const SCALE0_SCENARIO_OVERRIDES = {
     's0-field-uniform-e':        [['genesis', false, 't-genesis']],
     's0-field-uniform-b':        [['genesis', false, 't-genesis']],
     's0-field-photon-pulse':     [['genesis', false, 't-genesis']],
+    's0-field-rf-lattice-wave': [
+        ['wave_propagation', true, 't-wave'],
+        ['coupling', false, 't-coupling'],
+        ['damping', false, 't-damping'],
+        ['selective_damping', false, 't-selective'],
+        ['genesis', false, 't-genesis'],
+        ['gauss_projection', false, 't-gauss'],
+        ['forces', false, 't-forces'],
+        ['movement', false, 't-movement'],
+        ['poisson_coulomb', false, 't-poisson'],
+        ['lorentz_force', false, 't-lorentz'],
+    ],
+    's0-field-light-lattice-wave': [
+        ['wave_propagation', true, 't-wave'],
+        ['coupling', false, 't-coupling'],
+        ['damping', false, 't-damping'],
+        ['selective_damping', false, 't-selective'],
+        ['genesis', false, 't-genesis'],
+        ['gauss_projection', false, 't-gauss'],
+        ['forces', false, 't-forces'],
+        ['movement', false, 't-movement'],
+        ['poisson_coulomb', false, 't-poisson'],
+        ['lorentz_force', false, 't-lorentz'],
+    ],
+    's0-field-sound-lattice-wave': [
+        ['wave_propagation', true, 't-wave'],
+        ['coupling', false, 't-coupling'],
+        ['damping', false, 't-damping'],
+        ['selective_damping', false, 't-selective'],
+        ['genesis', false, 't-genesis'],
+        ['gauss_projection', false, 't-gauss'],
+        ['forces', false, 't-forces'],
+        ['movement', false, 't-movement'],
+        ['poisson_coulomb', false, 't-poisson'],
+        ['lorentz_force', false, 't-lorentz'],
+    ],
     's0-field-thomson-scattering': [
         ['coupling', true, 't-coupling'],
         ['damping', false, 't-damping'],
