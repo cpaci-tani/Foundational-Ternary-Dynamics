@@ -25,34 +25,6 @@ using detail::urand;
 // (seed_lepton helper removed audit-4 2026-04-28: only callers were
 // s0-seed-{electron, muon, tau} which are now canonical in vacuum.cpp.)
 
-// Helper: _dp from JS — particle + radial flux envelope, optional lock.
-static void dp(RenderBridge& rb, int cx, int cy, int cz,
-               int st, int sp, int co, double sig, double amp, bool lock) {
-    IPF(rb, cx, cy, cz, st, sp, (co >= 0) ? co : 0);
-    if (lock) LOCK(rb, cx, cy, cz);
-    int sn = (st > 0) ? 1 : -1;
-    int eR = CEL(3.0 * sig);
-    for (int dz2 = -eR; dz2 <= eR; dz2++) for (int dy2 = -eR; dy2 <= eR; dy2++) for (int dx2 = -eR; dx2 <= eR; dx2++) {
-        if (dx2 == 0 && dy2 == 0 && dz2 == 0) continue;
-        double r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
-        double rr = std::sqrt(r22);
-        if (rr > 3.0 * sig) continue;
-        double gg = amp * std::exp(-r22 / (2.0 * sig * sig));
-        if (gg < 0.001) continue;
-        IF(rb, cx+dx2, cy+dy2, cz+dz2, sn*gg*dx2/rr, sn*gg*dy2/rr, sn*gg*dz2/rr);
-    }
-}
-
-// Helper: _tri from JS — 3-vertex equilateral triangle in xy-plane.
-static void tri(RenderBridge& rb, int cx, int cy, int cz,
-                const int charges[3], const int colors[3], int rad, bool lock) {
-    for (int k = 0; k < 3; k++) {
-        double ang = (2.0 * PI * k) / 3.0;
-        int qx = RND(cx + rad * std::cos(ang));
-        int qy = RND(cy + rad * std::sin(ang));
-        dp(rb, qx, qy, cz, charges[k], (k % 2 == 0) ? 1 : -1, colors[k], 2, K_B * 0.5, lock);
-    }
-}
 
 bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     if (name.rfind("s0-seed-", 0) != 0) return false;
@@ -66,11 +38,21 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
 
     // ── Moore Seeds ──
     if (name == "s0-seed-octahedron") {
+        // Scenario ID: s0-seed-octahedron
+        // Physical Purpose: Seeds an octahedral arrangement of 6 face-neighboring charges.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge surrounded by 6 positive charges.
+        // Discrepancy: None.
         IP(rb, mc, mc, mc, -1);
         const int off[6][3] = {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
         for (int i = 0; i < 6; i++) IP(rb, mc+off[i][0], mc+off[i][1], mc+off[i][2], +1);
     }
     else if (name == "s0-seed-cuboctahedron") {
+        // Scenario ID: s0-seed-cuboctahedron
+        // Physical Purpose: Seeds a cuboctahedral arrangement of 12 edge-neighboring charges.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge surrounded by 12 positive charges.
+        // Discrepancy: None.
         IP(rb, mc, mc, mc, -1);
         const int off[12][3] = {
             {1,1,0},{1,-1,0},{-1,1,0},{-1,-1,0},
@@ -80,6 +62,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         for (int i = 0; i < 12; i++) IP(rb, mc+off[i][0], mc+off[i][1], mc+off[i][2], +1);
     }
     else if (name == "s0-seed-stella-octangula") {
+        // Scenario ID: s0-seed-stella-octangula
+        // Physical Purpose: Seeds a stella octangula arrangement of 8 corner charges.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge surrounded by 8 positive charges.
+        // Discrepancy: None.
         IP(rb, mc, mc, mc, -1);
         const int off[8][3] = {
             {1,1,1},{1,1,-1},{1,-1,1},{1,-1,-1},
@@ -88,6 +75,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         for (int i = 0; i < 8; i++) IP(rb, mc+off[i][0], mc+off[i][1], mc+off[i][2], +1);
     }
     else if (name == "s0-seed-moore-cell") {
+        // Scenario ID: s0-seed-moore-cell
+        // Physical Purpose: Seeds a full 26-neighbor Moore cell.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge surrounded by 26 positive charges.
+        // Discrepancy: None.
         // genesis=false (audit-2 2026-04-28): the 27-site geometric seed
         // should stay a 27-site seed. Mirrors JS s0-seed-moore-cell.
         rb.toggles.genesis = false;
@@ -98,6 +90,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-emergent-ic1") {
+        // Scenario ID: s0-seed-emergent-ic1
+        // Physical Purpose: Emergent octahedral bound state point injection (FTD-0107).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized central high-energy flux nucleation into a stable 25-voxel octahedron.
+        // Discrepancy: None.
         // FTD-0102 / FTD-0107 ic1 (point injection).
         // Inject 10·K_GENESIS flux at lattice center; under the right
         // toggles (genesis + langevin + gauss_projection + wave_propagation),
@@ -119,6 +116,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, 10.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-emergent-ic3-collision") {
+        // Scenario ID: s0-seed-emergent-ic3-collision
+        // Physical Purpose: Two-beam collision producing stable emergent clusters (FTD-0107).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Collision of two opposing flux beams producing stable clusters.
+        // Discrepancy: None.
         // FTD-0102 / FTD-0107 ic3 (two-beam collision).
         // Two opposing flux beams at ±L/4 from centre on the x-axis
         // produce 2 stable bound states of 2-3 voxels each at the
@@ -136,6 +138,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc + q, mc, mc, -5.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-emergent-ic4-subthreshold") {
+        // Scenario ID: s0-seed-emergent-ic4-subthreshold
+        // Physical Purpose: Sub-threshold negative control point injection (FTD-0107).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Dispersive decay of low-amplitude flux with zero manifested voxels.
+        // Discrepancy: None.
         // FTD-0102 / FTD-0107 ic4 (sub-threshold injection).
         // 0.5·K_GENESIS at lattice centre — below the K_GENESIS gap.
         // Pre-registered Outcome: 0 manifested voxels across 5/5 seeds
@@ -150,6 +157,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, 0.5 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-emergent-ic2-thermal-runaway") {
+        // Scenario ID: s0-seed-emergent-ic2-thermal-runaway
+        // Physical Purpose: Thermal-driven runaway genesis in unstable phase (FTD-0107).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: High thermal Langevin noise triggers runaway genesis without initial flux injection.
+        // Discrepancy: None.
         // FTD-0102 / FTD-0107 ic2 (thermal-driven runaway).
         // No flux injection — only elevated Langevin T = 0.05 (10× the
         // standard ic1/ic3 setting). Demonstrates the unstable-phase
@@ -166,6 +178,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // No IF call — thermal noise alone drives the dynamics.
     }
     else if (name == "s0-seed-emergent-ic1-diagonal") {
+        // Scenario ID: s0-seed-emergent-ic1-diagonal
+        // Physical Purpose: Body-diagonal flux point injection (D3g symmetry test).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Nucleation along body diagonal, testing cluster-size efficiency.
+        // Discrepancy: None.
         // FTD-0110 D3g: body-diagonal injection.
         // Same total amplitude as ic1 (10·K_GENESIS) but distributed along
         // (1,1,1)/√3 instead of +x. The 3-fold rotation about the body
@@ -187,6 +204,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, A, A, A);
     }
     else if (name == "s0-seed-emergent-ic1-isotropic") {
+        // Scenario ID: s0-seed-emergent-ic1-isotropic
+        // Physical Purpose: Isotropic 6-axis flux point injection (D3h O_h symmetry test).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Symmetric outward expansion and nucleation.
+        // Discrepancy: None.
         // FTD-0110 D3h: isotropic 6-axis injection at the canonical
         // ic1 amplitude. Decomposes A·K_GENESIS uniformly across the
         // 6 SC face-neighbour directions of the centre voxel; the
@@ -214,6 +236,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc - 1, 0, 0, -a);
     }
     else if (name == "s0-seed-emergent-ic1-viz") {
+        // Scenario ID: s0-seed-emergent-ic1-viz
+        // Physical Purpose: Clean visualization of axial ic1 cluster under zero temperature.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Static, noise-free development of the octahedral bound state.
+        // Discrepancy: None.
         // Clean visualisation of the axial ic1 cluster (dashboard demo).
         // Uses A=20·K_GENESIS instead of the campaign A=10 to compensate
         // for the CPU genesis-drain that suppresses cluster growth in
@@ -230,6 +257,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, 20.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-cluster-law") {
+        // Scenario ID: s0-seed-cluster-law
+        // Physical Purpose: Sweeps cluster size N(A) vs injection amplitude A (FTD-0269).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Interactive genesis-burst swept over broken power-law regimes.
+        // Discrepancy: None.
         // FTD-0269: the genesis-burst N(A) cluster-size law (interactive).
         // Canonical ic1 stack + A=10 point injection (the campaign baseline).
         // The dashboard fire panel re-injects at a user-chosen A to sweep the
@@ -246,6 +278,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, 10.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-cluster-law-subknee") {
+        // Scenario ID: s0-seed-cluster-law-subknee
+        // Physical Purpose: Clean visualization of cluster-law sub-knee regime (A=12).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Compact 27-block cascade of ~8 voxels under zero temperature.
+        // Discrepancy: None.
         // FTD-0269 answer-key: sub-knee regime (A=12). Compact 27-block
         // cascade; GPU campaign cluster ~ 8 voxels (FTD-0261). T=0 for a clean
         // deterministic view (no thermal background).
@@ -259,6 +296,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, 12.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-cluster-law-knee") {
+        // Scenario ID: s0-seed-cluster-law-knee
+        // Physical Purpose: Clean visualization of cluster-law knee escape (A=16).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: escape from 27-block to ~21 voxels under zero temperature.
+        // Discrepancy: None.
         // FTD-0269 answer-key: the knee (A=16) — the 27-block escape where the
         // geometry-limited cascade hands off to the energy budget. GPU campaign
         // cluster ~ 21 voxels (FTD-0261). T=0.
@@ -272,6 +314,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, 16.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-cluster-law-superknee") {
+        // Scenario ID: s0-seed-cluster-law-superknee
+        // Physical Purpose: Clean visualization of cluster-law super-knee regime (A=40).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Large bulk-volume expansion of ~92 voxels under zero temperature.
+        // Discrepancy: None.
         // FTD-0269 answer-key: super-knee regime (A=40) — bulk-lattice volume
         // expansion, N = k_eff*A^2. GPU campaign cluster ~ 92 voxels (FTD-0261).
         // T=0.
@@ -285,6 +332,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, 40.0 * K_GENESIS, 0, 0);
     }
     else if (name == "s0-seed-emergent-ic1-diagonal-viz") {
+        // Scenario ID: s0-seed-emergent-ic1-diagonal-viz
+        // Physical Purpose: Clean visualization of body-diagonal ic1 cluster under zero temperature.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Static, noise-free development along the body diagonal.
+        // Discrepancy: None.
         // Clean body-diagonal cluster (D3g shape comparison).
         rb.toggles.wave_propagation = true;
         rb.toggles.gauss_projection = true;
@@ -298,6 +350,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IF(rb, mc, mc, mc, A, A, A);
     }
     else if (name == "s0-seed-emergent-ic1-isotropic-viz") {
+        // Scenario ID: s0-seed-emergent-ic1-isotropic-viz
+        // Physical Purpose: Clean visualization of isotropic ic1 cluster under zero temperature.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Static, noise-free symmetric cluster growth.
+        // Discrepancy: None.
         // Clean isotropic 6-axis injection (D3h full O_h symmetry view).
         rb.toggles.wave_propagation = true;
         rb.toggles.gauss_projection = true;
@@ -320,6 +377,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     // physics scenario. Fold into a ctest under engine/tests/ if still needed.
 
     else if (name == "s0-seed-moore-decomposition") {
+        // Scenario ID: s0-seed-moore-decomposition
+        // Physical Purpose: Seeds a Moore cell decomposed into shell layers.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge surrounded by octahedron (+1), cuboctahedron (-1), and stella octangula (+1).
+        // Discrepancy: None.
         IP(rb, mc, mc, mc, -1);
         const int oct[6][3] = {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
         for (int i = 0; i < 6; i++) IP(rb, mc+oct[i][0], mc+oct[i][1], mc+oct[i][2], +1);
@@ -340,6 +402,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     // Audit-4 2026-04-28: removed positron, pion, proton-l4, neutron — all
     // now canonical in vacuum.cpp (s0-vacuum-*).
     else if (name == "s0-seed-hydrogen") {
+        // Scenario ID: s0-seed-hydrogen
+        // Physical Purpose: Seeds a hydrogen atom (proton triad and electron cloud).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A localized three-quark triad at the center with a single electron cloud bound to it.
+        // Discrepancy: None.
         const int oR = std::max(4, N / 6);
         const int bR = std::max(2, N / 12);
         const int charges[3] = {+1, +1, -1};
@@ -348,6 +415,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         dp(rb, mc, mc, mc + oR, -1, -1, 0, 2, K_B, false);
     }
     else if (name == "s0-seed-helium") {
+        // Scenario ID: s0-seed-helium
+        // Physical Purpose: Seeds a helium atom (four-nucleon nucleus and two electron clouds).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Tetrahedrally arranged nucleons with two surrounding bound electron clouds.
+        // Discrepancy: None.
         // ⁴He / α-particle (audit 2026-04-28 fix): 2 protons + 2 neutrons
         // at tetrahedral vertices + 2 electrons in 1s² shell. Each nucleon
         // is a 3-quark triad. Mirrors JS s0-seed-helium body.
@@ -372,6 +444,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         dp(rb, mc, mc, mc - oR, -1, -1, 0, 2, K_B * 0.8, false);
     }
     else if (name == "s0-seed-h2-bond-formation") {
+        // Scenario ID: s0-seed-h2-bond-formation
+        // Physical Purpose: Models covalent bond formation in H2.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Two adjacent proton triads sharing a pair of electron clouds.
+        // Discrepancy: None.
         const int bd = std::max(4, N / 6);
         const int hf = bd / 2;
         const int bR = std::max(1, N / 16);
@@ -383,6 +460,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         dp(rb, mc, mc, mc - 1, -1, +1, 0, 2, K_B * 0.8, false);
     }
     else if (name == "s0-seed-spark-of-life") {
+        // Scenario ID: s0-seed-spark-of-life
+        // Physical Purpose: Pedagogical demo of pre-biotic autocatalysis and threshold genesis.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: High-energy deterministic flux spark interacting with a mineral-pore boundary and precursor charge pairs.
+        // Discrepancy: None.
         // Honest demo: a nonliving mineral-pore-like boundary, simple
         // precursor charge pairs, and a flux spark that can cross the
         // existing K_GENESIS manifestation threshold.
@@ -469,6 +551,36 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     else if (name == "s0-seed-up-quark" || name == "s0-seed-down-quark" ||
              name == "s0-seed-strange-quark" || name == "s0-seed-charm-quark" ||
              name == "s0-seed-bottom-quark" || name == "s0-seed-top-quark") {
+        // Scenario ID: s0-seed-top-quark
+        // Physical Purpose: Seeds a top quark (3rd gen).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized +1 charge and very high-strength color-polarized flux envelope.
+        // Discrepancy: None.
+        // Scenario ID: s0-seed-bottom-quark
+        // Physical Purpose: Seeds a bottom quark (3rd gen).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized -1 charge and high-strength color-polarized flux envelope.
+        // Discrepancy: None.
+        // Scenario ID: s0-seed-charm-quark
+        // Physical Purpose: Seeds a charm quark (2nd gen).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized +1 charge and higher-strength color-polarized flux envelope.
+        // Discrepancy: None.
+        // Scenario ID: s0-seed-strange-quark
+        // Physical Purpose: Seeds a strange quark (2nd gen).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized -1 charge and intermediate-strength color-polarized flux envelope.
+        // Discrepancy: None.
+        // Scenario ID: s0-seed-down-quark
+        // Physical Purpose: Seeds a valence down quark (-1/3 charge, 1st gen).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized -1 charge and fractional color-polarized flux envelope.
+        // Discrepancy: None.
+        // Scenario ID: s0-seed-up-quark
+        // Physical Purpose: Seeds a valence up quark (+2/3 charge, 1st gen).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized +1 charge and fractional color-polarized flux envelope.
+        // Discrepancy: None.
         int charge, color;
         double ampBoost;
         if      (name == "s0-seed-up-quark")      { charge = +1; color = 1; ampBoost = 0.5; }
@@ -499,6 +611,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     // ── Electroweak bosons + Higgs + gluon ──
     // Audit-4 2026-04-28: s0-seed-higgs-boson removed (mirror of s0-vacuum-higgs).
     else if (name == "s0-seed-higgs-field") {
+        // Scenario ID: s0-seed-higgs-field
+        // Physical Purpose: Seeds a Higgs field vacuum expectation value (VEV) background.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Spatially uniform static background flux with minor sinusoidal noise.
+        // Discrepancy: None.
         const double vevAmp = K_B * 0.3;
         const double noise  = K_B * 0.05;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -511,6 +628,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     // Audit-4 2026-04-28: s0-seed-{w-boson, z-boson} removed —
     // mirrors of s0-vacuum-{w-boson, z-boson} which are now canonical.
     else if (name == "s0-seed-gluon") {
+        // Scenario ID: s0-seed-gluon
+        // Physical Purpose: Seeds a massless, colored gauge boson (gluon).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A localized transverse color-polarized wave packet propagating across the lattice.
+        // Discrepancy: None.
         // genesis=false (audit 2026-04-28): same fix as photon.
         rb.toggles.genesis = false;
         const int sigma = 3;
@@ -529,6 +651,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     }
     // ── Process demos ──
     else if (name == "s0-seed-beta-decay") {
+        // Scenario ID: s0-seed-beta-decay
+        // Physical Purpose: Models dynamic nuclear beta decay.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A neutron triad transmuting into a proton triad, emitting an electron and an antineutrino.
+        // Discrepancy: None.
         // Audit 2026-04-28: auto-enable required toggles so the decay
         // actually fires by default (mirrors JS s0-seed-beta-decay).
         rb.toggles.weak_transmutation = true;
@@ -555,6 +682,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.dual_substrate = true;
     }
     else if (name == "s0-seed-ee-annihilation") {
+        // Scenario ID: s0-seed-ee-annihilation
+        // Physical Purpose: Simulates electron-positron high-energy annihilation.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Opposing charges collide and dissolve, generating a spherical high-energy flux burst.
+        // Discrepancy: None.
         const int aSep = std::max(6, N / 3);
         const int half = aSep / 2;
         IP(rb, mc - half, mc, mc, -1);
@@ -576,6 +708,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-quark-gluon-plasma") {
+        // Scenario ID: s0-seed-quark-gluon-plasma
+        // Physical Purpose: Models a thermal deconfined Quark-Gluon Plasma (QGP).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Multi-particle high-velocity gas of quarks and gluons under high Langevin temperature.
+        // Discrepancy: None.
         const int qOffset = 2;
         const int dirs[2] = {-qOffset, qOffset};
         int quarkIndex = 0;
@@ -624,6 +761,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-gravitational-lensing") {
+        // Scenario ID: s0-seed-gravitational-lensing
+        // Physical Purpose: Models light bending (gravitational lensing) around a Schwarzschild mass.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Off-axis photon packet propagating past a central mass, experiencing trajectory deflection.
+        // Discrepancy: None.
         // Schwarzschild well at the center:
         const double sHalf = midF, rs = 3.0;
         IP(rb, mc, mc, mc, +1);
@@ -667,6 +809,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     }
     // ── Level 6: Gauge / Topological ──
     else if (name == "s0-seed-wilson-loop") {
+        // Scenario ID: s0-seed-wilson-loop
+        // Physical Purpose: Implements a rectangular Wilson loop to probe confinement.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A closed rectangular path of localized gauge flux with four corner charges.
+        // Discrepancy: None.
         const int R = std::max(3, N / 8);
         const double wAmp = K_B;
         for (int x = mc - R; x <= mc + R; x++) IF(rb, x, mc - R, mc,  wAmp, 0, 0);
@@ -677,6 +824,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         IP(rb, mc+R, mc+R, mc, +1); IP(rb, mc-R, mc+R, mc, +1);
     }
     else if (name == "s0-seed-flux-tube") {
+        // Scenario ID: s0-seed-flux-tube
+        // Physical Purpose: Seeds a quark-antiquark flux tube string.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Spherically dressed opposite charges connected by a dense flux tube.
+        // Discrepancy: None.
         const int ftSep = std::max(6, N / 4), ftH = ftSep / 2;
         IP(rb, mc - ftH, mc, mc, +1);
         IP(rb, mc + ftH, mc, mc, -1);
@@ -689,6 +841,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-monopole") {
+        // Scenario ID: s0-seed-monopole
+        // Physical Purpose: Seeds a magnetic monopole configuration.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Radial magnetic field structure emanating from center.
+        // Discrepancy: None.
         const double mHalf = (N - 1) / 2.0;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double rx = x - mHalf, ry = y - mHalf, rz = z - mHalf;
@@ -702,6 +859,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-instanton") {
+        // Scenario ID: s0-seed-instanton
+        // Physical Purpose: Seeds a Yang-Mills instanton configuration.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized topological field configuration representing tunneling between vacuum states.
+        // Discrepancy: None.
         const double iSize = 3.0, iHalf = (N - 1) / 2.0;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double rx = x - iHalf, ry = y - iHalf, rz = z - iHalf;
@@ -714,6 +876,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     }
     // ── Level 7: Gravity / Cosmology ──
     else if (name == "s0-seed-schwarzschild") {
+        // Scenario ID: s0-seed-schwarzschild
+        // Physical Purpose: Seeds a Schwarzschild gravitational mass well.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central mass charge with a radial 1/r^2 flux force field.
+        // Discrepancy: None.
         const double sHalf = (N - 1) / 2.0, rs = 3.0;
         IP(rb, mc, mc, mc, +1);
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -726,6 +893,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-massive-body") {
+        // Scenario ID: s0-seed-massive-body
+        // Physical Purpose: Seeds a massive body using real manifested mass (locked).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central dense core of locked mass that sources gravity via the Poisson equation.
+        // Discrepancy: None.
         // A dense ball of LOCKED rest mass. Gravity is sourced from REAL manifested
         // mass (rho_mass = M_REST*|state|) by the latency-Poisson solver (enable
         // latency_field), NOT the |J|^2 field-energy proxy. Locked => static body
@@ -744,6 +916,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-gravitational-wave") {
+        // Scenario ID: s0-seed-gravitational-wave
+        // Physical Purpose: Seeds a gravitational wave propagation scenario.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Transverse sinusoidal oscillations in the flux field propagating across the lattice.
+        // Discrepancy: None.
         const int gwWl = std::max(4, N / 4);
         const double gwK = 2.0 * PI / gwWl, gwAmp = 0.1;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -759,6 +936,16 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     // has zero flux → no proxy latency). Kept in sync with the JS delegating
     // cases in engine/web/js/bridge/scenarios/s0-seed-scenarios.js.
     else if (name == "s0-seed-time-gravity-well" || name == "s0-seed-time-twin-clocks") {
+        // Scenario ID: s0-seed-time-twin-clocks
+        // Physical Purpose: Compares elapsed time (twin clocks paradox) in different gravity regions.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Distinct local proper times dτ/dt accumulated at different spatial coordinates.
+        // Discrepancy: None.
+        // Scenario ID: s0-seed-time-gravity-well
+        // Physical Purpose: Models clock slowdown inside a gravitational well (Time Observatory).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Sinusoidal flux wave producing localized clock dilation dτ/dt.
+        // Discrepancy: None.
         // == s0-seed-gravitational-wave: a sinusoidal flux well that the
         // field-energy latency solver turns into a measurable dτ/dt field.
         const int gwWl = std::max(4, N / 4);
@@ -769,6 +956,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-time-horizon") {
+        // Scenario ID: s0-seed-time-horizon
+        // Physical Purpose: Models deep time dilation near a black hole horizon.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Strong central mass well showing near-zero dτ/dt dilation at the center.
+        // Discrepancy: None.
         // == s0-seed-schwarzschild: seed-bias inflow toward a central mass — a
         // stronger (near-horizon) well for the deepest time-dilation demo.
         const double sHalf = (N - 1) / 2.0, rs = 3.0;
@@ -784,6 +976,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
     }
     // ── Level 8: Reference frame context / Observer ──
     else if (name == "s0-seed-sloop") {
+        // Scenario ID: s0-seed-sloop
+        // Physical Purpose: Seeds a self-referential sLoop ring.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Loop of positive charges carrying angular/circulating flux.
+        // Discrepancy: None.
         const int slR = std::max(3, N / 8);
         const int slN = 12;
         const double slA = K_B;
@@ -796,6 +993,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "s0-seed-observer-cell") {
+        // Scenario ID: s0-seed-observer-cell
+        // Physical Purpose: Seeds an observer cell configuration on a 3^3 lattice.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge surrounded by shells of +1, -1, and +1 charges.
+        // Discrepancy: None.
         IP(rb, mc, mc, mc, +1);
         const int oct[6][3] = {{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
         for (int i = 0; i < 6; i++) IP(rb, mc+oct[i][0], mc+oct[i][1], mc+oct[i][2], -1);
@@ -812,6 +1014,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         for (int i = 0; i < 8; i++) IP(rb, mc+stel[i][0], mc+stel[i][1], mc+stel[i][2], -1);
     }
     else if (name == "s0-seed-de-broglie-clock") {
+        // Scenario ID: s0-seed-de-broglie-clock
+        // Physical Purpose: Simulates the De Broglie internal compton clock (FTD-0271).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A central manifested block oscillates at the Compton frequency.
+        // Discrepancy: None.
         // FTD-0271: de Broglie internal clock (single-particle pilot wave).
         // A central manifested block carries a uniform flux J0. When the
         // de_broglie_clock toggle is ON (the de-broglie-clock-panel enables it),
@@ -837,6 +1044,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
                 }
     }
     else if (name == "s0-seed-thermal-ignition") {
+        // Scenario ID: s0-seed-thermal-ignition
+        // Physical Purpose: Simulates first-order lattice thermal condensation (FTD-0274).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Abrupt transition at T_up where the entire lattice manifests as a condensate.
+        // Discrepancy: None.
         // FTD-0274: the lattice's thermodynamic axis made visible. A Langevin
         // heat bath warms the void; at the first-order condensation point
         // T_up ~= 0.05 the WHOLE lattice manifests at once (m: 0 -> 1) -- the
@@ -854,6 +1066,14 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.langevin_T       = 0.03;   // metastable thermal vacuum (below T_up~0.05)
         rb.toggles.langevin_gamma   = 0.02;
         rb.toggles.dual_substrate   = false;
+    }
+
+    else if (name == "s0-seed-ew-phase-transition") {
+        // Scenario ID: s0-seed-ew-phase-transition
+        // Physical Purpose: Simulates the Electroweak phase transition showing hysteresis using a uniform flux sweep.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Gradual shift in state field as uniform flux is sinusoidally swept.
+        // Discrepancy: Custom JS logic sweeps the uniform flux additively on top of the 'empty' C++ scenario, rather than being handled purely inside the C++ engine.
     }
     return true;
 }

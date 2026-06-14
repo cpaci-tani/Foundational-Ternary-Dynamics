@@ -22,39 +22,7 @@
 namespace ftd {
 
 // Local helpers — minimal versions of the JS injectDressedParticle / injectTriad.
-namespace {
 
-static void v_dp(RenderBridge& rb, int cx, int cy, int cz,
-                 int st, int sp, int co, double sig, double amp, bool lock) {
-    IPF(rb, cx, cy, cz, st, sp, (co >= 0) ? co : 0);
-    if (lock) LOCK(rb, cx, cy, cz);
-    int sn = (st > 0) ? 1 : -1;  // matches JS injectDressedParticle: state=0 → sn=-1 (inward)
-    int eR = CEL(3.0 * sig);
-    for (int dz2 = -eR; dz2 <= eR; ++dz2)
-    for (int dy2 = -eR; dy2 <= eR; ++dy2)
-    for (int dx2 = -eR; dx2 <= eR; ++dx2) {
-        if (dx2 == 0 && dy2 == 0 && dz2 == 0) continue;
-        double r22 = dx2*dx2 + dy2*dy2 + dz2*dz2;
-        double rr  = std::sqrt(r22);
-        if (rr > 3.0 * sig) continue;
-        double gg = amp * std::exp(-r22 / (2.0 * sig * sig));
-        if (gg < 0.001) continue;
-        IF(rb, cx+dx2, cy+dy2, cz+dz2, sn*gg*dx2/rr, sn*gg*dy2/rr, sn*gg*dz2/rr);
-    }
-}
-
-static void v_tri(RenderBridge& rb, int cx, int cy, int cz,
-                  const int charges[3], const int colors[3], int rad, bool lock) {
-    static const double angs[3] = {0.0, 2.0 * PI / 3.0, 4.0 * PI / 3.0};
-    for (int k = 0; k < 3; ++k) {
-        int qx = RND(cx + rad * std::cos(angs[k]));
-        int qy = RND(cy + rad * std::sin(angs[k]));
-        v_dp(rb, qx, qy, cz, charges[k], (k % 2 == 0) ? 1 : -1, colors[k],
-             2.0, K_B * 0.5, lock);
-    }
-}
-
-}  // namespace
 
 bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     if (name.compare(0, 10, "s0-vacuum-") != 0) return false;
@@ -66,6 +34,11 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     apply_vacuum_environment(rb);
 
     if (name == "s0-vacuum-electron") {
+        // Scenario ID: s0-vacuum-electron
+        // Physical Purpose: Seeds a physical electron in vacuum (e-).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge surrounded by inward-pointing Coulomb dressing flux.
+        // Discrepancy: None.
         IP(rb, mc, mc, mc, -1);
         const int envR = std::max(3, N / 6);
         const double envSigma = envR / 2.0;
@@ -87,6 +60,16 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-muon" || name == "s0-vacuum-tau") {
+        // Scenario ID: s0-vacuum-tau
+        // Physical Purpose: Seeds a physical tau lepton in vacuum (tau-).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge with heavily boosted Coulomb dressing flux.
+        // Discrepancy: None.
+        // Scenario ID: s0-vacuum-muon
+        // Physical Purpose: Seeds a physical muon in vacuum (mu-).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Central -1 charge with boosted Coulomb dressing flux.
+        // Discrepancy: None.
         const double boost = (name == "s0-vacuum-tau") ? 2.25 : 1.80;
         IP(rb, mc, mc, mc, -1);
         const int envR = std::max(3, N / 6);
@@ -109,6 +92,11 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-photon") {
+        // Scenario ID: s0-vacuum-photon
+        // Physical Purpose: Seeds a physical photon in vacuum.
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Propagating electromagnetic wave packet with genesis disabled to avoid pair production.
+        // Discrepancy: None.
         // genesis=false (audit 2026-04-28): a free EM wave should not pair-produce.
         rb.toggles.genesis = false;
         const double sigma = 3.0;
@@ -131,6 +119,11 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-w-boson") {
+        // Scenario ID: s0-vacuum-w-boson
+        // Physical Purpose: Seeds a charged W boson in vacuum (W+/-).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized +1 charge with a short-range heavy dressing field.
+        // Discrepancy: None.
         IPF(rb, mc, mc, mc, +1, +1, 0);
         const double sigma = 1.8;
         const double amp = K_B * 1.6;
@@ -150,6 +143,11 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-z-boson") {
+        // Scenario ID: s0-vacuum-z-boson
+        // Physical Purpose: Seeds a neutral Z boson in vacuum (Z0).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized neutral heavy dressing field without central charge.
+        // Discrepancy: None.
         const double sigma = 2.0;
         const double amp = K_B * 1.8;
         const int eR = 6;
@@ -168,6 +166,11 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-higgs") {
+        // Scenario ID: s0-vacuum-higgs
+        // Physical Purpose: Seeds a physical Higgs boson in vacuum (H).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Localized isotropic scalar dressing flux.
+        // Discrepancy: None.
         const double hSig = 2.0, hAmp = K_B * 1.2;
         const int hR = 6;
         const double hR2 = hR * hR;
@@ -185,32 +188,62 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-proton") {
+        // Scenario ID: s0-vacuum-proton
+        // Physical Purpose: Seeds a physical proton in vacuum (p).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A three-quark triad (+1, +1, -1) forming a stable bound baryon.
+        // Discrepancy: None.
         const int charges[3] = {+1, +1, -1};
         const int colors[3]  = {1, 2, 3};
         const int bR = std::max(2, N / 8);
-        v_tri(rb, mc, mc, mc, charges, colors, bR, true);
+        tri(rb, mc, mc, mc, charges, colors, bR, true);
         return true;
     }
 
     if (name == "s0-vacuum-neutron") {
+        // Scenario ID: s0-vacuum-neutron
+        // Physical Purpose: Seeds a physical neutron in vacuum (n).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A three-quark triad (+1, -1, -1) forming a stable bound baryon.
+        // Discrepancy: None.
         const int charges[3] = {+1, -1, -1};
         const int colors[3]  = {1, 2, 3};
         const int bR = std::max(2, N / 8);
-        v_tri(rb, mc, mc, mc, charges, colors, bR, true);
+        tri(rb, mc, mc, mc, charges, colors, bR, true);
         return true;
     }
 
     if (name == "s0-vacuum-pion-charged") {
+        // Scenario ID: s0-vacuum-pion-charged
+        // Physical Purpose: Seeds a physical charged pion in vacuum (pi+/-).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A bound quark-antiquark meson pair with charges (+1, -1).
+        // Discrepancy: None.
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
-        v_dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5, true);
-        v_dp(rb, mc - hf, mc, mc, -1, -1, 1, 2.0, K_B * 0.5, true);
+        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5, true);
+        dp(rb, mc - hf, mc, mc, -1, -1, 1, 2.0, K_B * 0.5, true);
         return true;
     }
 
     if (name == "s0-vacuum-electron-neutrino"
         || name == "s0-vacuum-muon-neutrino"
         || name == "s0-vacuum-tau-neutrino") {
+        // Scenario ID: s0-vacuum-tau-neutrino
+        // Physical Purpose: Seeds a tau neutrino in vacuum (nu_tau).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Large-amplitude localized propagating neutral wave packet.
+        // Discrepancy: None.
+        // Scenario ID: s0-vacuum-muon-neutrino
+        // Physical Purpose: Seeds a muon neutrino in vacuum (nu_mu).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Intermediate-amplitude localized propagating neutral wave packet.
+        // Discrepancy: None.
+        // Scenario ID: s0-vacuum-electron-neutrino
+        // Physical Purpose: Seeds an electron neutrino in vacuum (nu_e).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: Small-amplitude localized propagating neutral wave packet.
+        // Discrepancy: None.
         const double boost =
             name == "s0-vacuum-tau-neutrino"  ? 1.6 :
             name == "s0-vacuum-muon-neutrino" ? 1.3 : 1.0;
@@ -230,19 +263,29 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
     }
 
     if (name == "s0-vacuum-pion-neutral") {
+        // Scenario ID: s0-vacuum-pion-neutral
+        // Physical Purpose: Seeds a physical neutral pion in vacuum (pi0).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A bound quark-antiquark meson pair with neutral charges.
+        // Discrepancy: None.
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
-        v_dp(rb, mc + hf, mc, mc, 0, +1, 1, 2.0, K_B * 0.5, true);
-        v_dp(rb, mc - hf, mc, mc, 0, -1, 1, 2.0, K_B * 0.5, true);
+        dp(rb, mc + hf, mc, mc, 0, +1, 1, 2.0, K_B * 0.5, true);
+        dp(rb, mc - hf, mc, mc, 0, -1, 1, 2.0, K_B * 0.5, true);
         return true;
     }
 
     if (name == "s0-vacuum-kaon-charged") {
+        // Scenario ID: s0-vacuum-kaon-charged
+        // Physical Purpose: Seeds a physical charged kaon in vacuum (K+/-).
+        // Initial Condition Parameters: None.
+        // Expected Behaviour: A bound quark-antiquark meson pair with boosted mass energy.
+        // Discrepancy: None.
         const int sp = std::max(3, N / 8);
         const int hf = sp / 2;
         const double kBoost = 1.88;
-        v_dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5 * kBoost, true);
-        v_dp(rb, mc - hf, mc, mc, -1, -1, 1, 2.0, K_B * 0.5 * kBoost, true);
+        dp(rb, mc + hf, mc, mc, +1, +1, 1, 2.0, K_B * 0.5 * kBoost, true);
+        dp(rb, mc - hf, mc, mc, -1, -1, 1, 2.0, K_B * 0.5 * kBoost, true);
         return true;
     }
 
