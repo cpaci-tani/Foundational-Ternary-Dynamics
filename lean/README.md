@@ -9,7 +9,7 @@ Use `cd lean && lake build` for the default citable workspace (`FtdNoGo`). Build
 
 ## FtdNoGo — Lean 4 formalization of the Commutativity Independence No-Go
 
-> **VERIFICATION STATUS (2026-05-30, toolchain `leanprover/lean4:v4.30.0`):**
+> **VERIFICATION STATUS (2026-06-14, toolchain `leanprover/lean4:v4.30.0`):**
 > - **`Standalone.lean` —  MACHINE-CHECKED.** `lean Standalone.lean` →
 >   **exit 0, stderr 0 bytes**, the `#check`s print the real signatures
 >   (`ocommutator A B = fun x => 0`, etc. — no `sorry`), and
@@ -104,7 +104,7 @@ lean Standalone.lean      # exit 0, empty stderr, #check + #print axioms ⟹ che
 ```
 
 Needs only the toolchain — no Mathlib, no `lake`, no network. Verified in
-authoring (2026-05-30, v4.30.0): exit 0, stderr 0 bytes, the `#check`s print
+authoring (2026-06-14, v4.30.0): exit 0, stderr 0 bytes, the `#check`s print
 the real signatures, and `#print axioms standalone_core` →
 `[propext, Quot.sound]` only (no `sorryAx`).
 
@@ -121,7 +121,7 @@ lake build                                      # machine-check FtdNoGo/
 
 A successful default `lake build` with no `sorry` and no errors verifies `FtdNoGo/`.
 (`grep -rn "sorry" FtdNoGo Standalone.lean` returns nothing.) This was run in
-authoring (2026-05-30): cache fetched 8459 oleans and `lake build` printed
+authoring (2026-06-14): cache fetched 8459 oleans and `lake build` printed
 `Build completed successfully`. If you cannot fetch the cache,
 the `Standalone.lean` fast path proves the same algebraic core with no
 dependencies.
