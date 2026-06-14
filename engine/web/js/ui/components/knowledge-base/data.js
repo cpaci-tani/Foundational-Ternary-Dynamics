@@ -722,11 +722,12 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 shortTitle: 'sin²θ_W',
                 summary: 'The electroweak mixing quantity that shows up in standard-model-style coupling discussions.',
                 body: [
-                    'The symbol glossary includes sin²θ_W as the weak mixing quantity and gives an FTD-side formula for it. In mainstream particle-physics language, it measures how electroweak components combine.',
+                    'The symbol glossary includes sin²θ_W as the weak mixing quantity and gives an FTD-side formula for it (\\(N_c/n_\\mathrm{eff} = 3/13 \\approx 0.231\\)). This is a [PARAMETRIC] insertion, not a derivation: it lands ~3.5% from the measured value and was demoted per FTD-0018 (2026-04-19). In mainstream particle-physics language, it measures how electroweak components combine.',
                     'In the knowledge base, the main point is recognition: this is a coupling-related parameter, not a literal geometric angle you rotate with the camera.',
                 ],
                 bullets: [
                     'Electroweak parameter.',
+                    '[PARAMETRIC]: 3/13 ≈ 0.231, ~3.5% from measured (FTD-0018).',
                     'Appears in coupling formulas.',
                     'Not a viewport angle or scene transform.',
                 ],
