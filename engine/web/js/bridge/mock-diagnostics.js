@@ -280,20 +280,19 @@ export function createDiagnosticsProvider(state) {
             else if (p.color === 3) colorBlue++;
         }
 
-        // Use cached energy sums (computed once per tick, avoids redundant O(L^3) loop)
         ensureEnergyCache();
+        ensureParticleDerivedCache();
         const fieldEnergy = state._cachedFieldEnergy;
         const waveEnergy = state._cachedWaveEnergy;
+        const particleKE = state._cachedParticleKE;
         if (state._fluxJ) {
             totalFlux = Math.sqrt(fieldEnergy * 2);  // RMS flux magnitude
         }
 
-        // Angular momentum (per-tick cache; cheap to keep wired even when
-        // the dashboard's diagnostics tab is idle).
-        ensureParticleDerivedCache();
         const L = state._cachedAngMom;
+        // Match getEnergyAudit().totalEnergy (CONTRACTS.md §5.2 / WASM adapter).
+        const totalEnergy = fieldEnergy + waveEnergy + particleKE;
 
-        const totalEnergy = fieldEnergy + waveEnergy;
         return {
             tick: state._tick, physicalTime: state._physicalTime, dt: state._dt,
             manifested: manifestedCount, positive, negative,

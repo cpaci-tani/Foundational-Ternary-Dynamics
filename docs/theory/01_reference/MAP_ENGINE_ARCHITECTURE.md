@@ -144,7 +144,7 @@ Declares active CMake test targets validating the entire framework.
   * `bridge_fixtures.h` & `bridge_fixtures.cpp`: Declares standard test environments, particle configurations, and lattice allocations.
   * `test_telemetry.h` & `test_telemetry.cpp`: Handles assertion checks and telemetry validation logs.
 * **Core Unit Tests**: `test_a1g_projector.cpp`, `test_annihilation.cpp`, `test_fine_structure_scale1.cpp`, `test_gravity_dynamics.cpp`, etc.
-* **Golden Gate Test**: `test_render_bridge_golden.cpp`—performs a deterministic byte-hash verification over 100 ticks to guarantee bit-exact physics across refactor commits (golden hash: `0xcd957b601d47868a`).
+* **Golden Gate Test**: `test_render_bridge_golden.cpp`—performs a deterministic byte-hash verification over 100 ticks to guarantee bit-exact physics across refactor commits (golden hash: `0x56fa28acb5b9fe88` @ L=17; prior pins `0xcd957b601d47868a` @ L=16, `0xebaa6f314f66db3f` @ L=17).
 * **GPU Parity Tests**: `test_gpu_parity.cpp`, `test_gpu_parity_complete.cpp`—verifies the bit-exact match of all float/double buffers between CPU and GPU runs.
 
 ### 1.2 Production vs. Experimental Boundary

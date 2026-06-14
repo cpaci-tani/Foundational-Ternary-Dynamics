@@ -116,17 +116,17 @@ export class PhysicsHarness {
      * the conservation panel and any sweep-time invariant checks.
      */
     getConservationTotals() {
-        const d = this.bridge?.getDiagnostics?.() || null;
-        const a = this.bridge?.getEnergyAudit?.() || null;
+        const hubDiag = this.telemetry?.s0?.diag;
+        const hubAudit = this.telemetry?.s0?.audit;
+        const d = hubDiag ?? this.bridge?.getDiagnostics?.() ?? null;
+        const a = hubAudit ?? this.bridge?.getEnergyAudit?.() ?? null;
         if (!d) return null;
         return {
             tick:    d.tick ?? 0,
-            E:       d.totalEnergy ?? a?.totalEnergy ?? 0,
-            // Field momentum proxy (Poynting integral) — true particle
-            // momentum sum is a follow-up engine accumulator.
-            px:      a?.totalPoynting?.x ?? 0,
-            py:      a?.totalPoynting?.y ?? 0,
-            pz:      a?.totalPoynting?.z ?? 0,
+            E:       a?.totalEnergy ?? d?.totalEnergy ?? 0,
+            px:      a?.totalPoynting?.x ?? a?.poyntingX ?? 0,
+            py:      a?.totalPoynting?.y ?? a?.poyntingY ?? 0,
+            pz:      a?.totalPoynting?.z ?? a?.poyntingZ ?? 0,
             Lx:      d.angMomX ?? 0,
             Ly:      d.angMomY ?? 0,
             Lz:      d.angMomZ ?? 0,

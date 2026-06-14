@@ -9,7 +9,7 @@
  *   5. Time-Series Charts (energy, |p|, |L|, virial — multi-trace sparklines)
  */
 
-import { Sparkline } from './diagnostics.js';
+import { CanvasSparkline } from './ui/charts/canvas-sparkline.js';
 import { G_N, COULOMB_K_FORCE } from './constants.js';
 import { formatEnergy, formatVelocity, formatLength, formatTemperature } from './units.js';
 import { createCachedCanvasRect } from './dom-utils.js';
@@ -281,10 +281,10 @@ export class PETelemetryPanel {
 
         // Conservation sparklines
         this._sparks = {
-            energy: new Sparkline(document.getElementById('pet-spark-energy')),
-            momentum: new Sparkline(document.getElementById('pet-spark-momentum')),
-            angmom: new Sparkline(document.getElementById('pet-spark-angmom')),
-            drift: new Sparkline(document.getElementById('pet-spark-drift')),
+            energy: new CanvasSparkline(document.getElementById('pet-spark-energy')),
+            momentum: new CanvasSparkline(document.getElementById('pet-spark-momentum')),
+            angmom: new CanvasSparkline(document.getElementById('pet-spark-angmom')),
+            drift: new CanvasSparkline(document.getElementById('pet-spark-drift')),
         };
 
         // Time-series charts

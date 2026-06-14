@@ -18,11 +18,18 @@ import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { paintSliceToCanvas } from './slice-render.js';
 import { rampEmEnergy } from '../../../../viewport/color-ramps.js';
+import { C_SPEED } from '../../../../constants.js';
+import {
+    readScale0DiagAudit,
+    readScale0TotalEnergy,
+    readScale0WaveEnergy,
+    readScale0FieldEnergy,
+} from '../../../../telemetry/scale0-read.js';
 
 const PANEL_ID = 'thermo-panel';
 const HZ = 4;
 const T_UP = 0.05;        // measured first-order condensation point (lattice units)
-const C2 = 1.0 / 3.0;     // lattice c² (C_WAVE = 1/√3)
+const C2 = C_SPEED * C_SPEED;
 const SPARK_MAX = 80;
 
 function ensureCss() {
@@ -147,16 +154,14 @@ export function mountThermoPanel(host, getBridge) {
         if (b !== bridgeId) { bridgeId = b; mHist.length = 0; }
         if (!isPanelLive(host)) return;
 
-        const diag = (typeof b.getDiagnostics === 'function') ? b.getDiagnostics() : {};
-        const audit = (typeof b.getEnergyAudit === 'function') ? b.getEnergyAudit() : null;
+        const { diag, audit } = readScale0DiagAudit(b);
         const L = b.latticeSize || 33;
         const Nvox = L * L * L;
-        const N = diag.manifested || 0;
+        const N = diag?.manifested || 0;
         const m = Math.min(1, N / Nvox);
-        const waveE = audit ? (audit.waveEnergy ?? audit.totalWaveEnergy ?? 0)
-                            : (diag.totalWaveEnergy ?? 0);
-        const fieldE = audit ? (audit.fieldEnergy ?? 0) : 0;
-        const totalE = audit ? (audit.totalEnergy ?? 0) : (diag.totalEnergy ?? 0);
+        const waveE = readScale0WaveEnergy(diag, audit);
+        const fieldE = readScale0FieldEnergy(audit);
+        const totalE = readScale0TotalEnergy(diag, audit);
         const tKin = waveE / (1.5 * Nvox);
         // Actual bath temperature from the engine (falls back to the slider).
         const Tset = (typeof b.getLangevinTemp === 'function') ? b.getLangevinTemp()
