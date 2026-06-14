@@ -142,18 +142,30 @@
  */
 /* ── Mobile bottom sheet (Default) ── */
 @media (max-width: 767px) {
+/* The sheet floats over the full-bleed canvas (it is no longer a grid row — see
+   app-shell.css). Fixed to the bottom edge, full width, fixed height (--m-sheet-h),
+   it slides down to collapse. The canvas stays full-size behind it, so opening or
+   closing the sheet does not resize the WebGL canvas. */
 #panel-area {
-    /* Note: Removed position: fixed !important; it now flows natively in grid */
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--m-sheet-h, 42dvh);
     border-radius: 16px 16px 0 0;
     max-height: none !important;
     min-height: 0;
     overflow-y: auto;
-    padding-bottom: calc(60px + max(
+    /* Clear the status-bar footer + notch / Android gesture nav so the last row
+       of controls is never hidden behind them. */
+    padding-bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + max(
         env(safe-area-inset-bottom, 12px),
         var(--browser-nav-inset, 0px)
     ));
     transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     backdrop-filter: blur(32px) saturate(1.4);
+    z-index: var(--z-panel);
 }
 
 /* Collapsed */
