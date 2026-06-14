@@ -7,6 +7,13 @@ html:not([data-panel-mount]) #tab-bar {
     transform: translateX(-50%);
     display: flex;
     gap: 0;
+    /* Never exceed the viewport. With 21 panel tabs the strip is ~1840px wide;
+       without this cap a bottom-mounted bar content-sizes far past the screen and
+       the inner .workspace-tabs-strip (overflow-x:auto) cannot scroll because the
+       bar itself is the overflowing box. This bit the tablet-portrait zone
+       (768–1023px, bottom mount) where the ≤767 mobile treatment no longer applies
+       but side-mount has not yet kicked in. Capping the bar lets the strip scroll. */
+    max-width: calc(100vw - 24px);
     background: var(--bg-surface);
     backdrop-filter: blur(16px);
     border: 1px solid var(--border);
