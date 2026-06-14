@@ -1046,6 +1046,9 @@ export class WasmBridge {
 
     setReflectiveBoundary(on) {
         this._reflectiveBoundary = !!on;
+        if (this._bridge) {
+            this.setToggle('reflective_boundary', !!on);
+        }
         if (this._aeFallback) this._aeFallback.setReflectiveBoundary(on);
     }
 

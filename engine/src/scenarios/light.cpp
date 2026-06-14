@@ -25,6 +25,10 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
     const double amp   = 0.15;
 
     if (name == "light-rainbow") {
+        // Scenario ID: light-rainbow
+        // Physical Purpose: Demonstrates dispersion of light waves of three different wavelengths/colors.
+        // Initial Condition Parameters: Superimposed sinusoidal flux waves of three different frequencies (n=1, 3, 6) across the lattice.
+        // Expected Behaviour: Dispersion and spatial separation of the wave frequencies.
         struct W { int n; int pol; };
         const W waves[3] = { {1,1}, {3,2}, {6,0} };
         for (int w = 0; w < 3; w++) {
@@ -42,6 +46,10 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "light-dipole") {
+        // Scenario ID: light-dipole
+        // Physical Purpose: Simulates classical electromagnetic dipole radiation.
+        // Initial Condition Parameters: Central Gaussian dipole field with amplitude dAmp = 0.5; genesis is disabled to avoid pair production.
+        // Expected Behaviour: Spherically propagating radiation fields representing dipole emissions.
         // genesis=false (audit-2 2026-04-28): classical EM dipole — not a pair-producer.
         rb.toggles.genesis = false;
         const int sigma = 3;
@@ -55,6 +63,10 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "light-two-slit") {
+        // Scenario ID: light-two-slit
+        // Physical Purpose: Simulates the classic double-slit wave interference experiment.
+        // Initial Condition Parameters: Two Gaussian source slit apertures on a transverse plane (spaced slit_sep apart); genesis is disabled.
+        // Expected Behaviour: Interference fringes propagating downstream of the double slits.
         // genesis=false (audit-2 2026-04-28): classical interference — should not pair-produce.
         rb.toggles.genesis = false;
         const int sigma = 2;
@@ -75,6 +87,10 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "light-photon-race") {
+        // Scenario ID: light-photon-race
+        // Physical Purpose: Compares propagation characteristics of photons/wave packets of different amplitudes.
+        // Initial Condition Parameters: Two parallel photon wave packets starting at x_start, one with low amplitude (0.05) and one with high amplitude (0.5).
+        // Expected Behaviour: Propagation of the two wave packets across the lattice, demonstrating non-linear or linear wave speeds.
         const int sigma = 3;
         const int x_start = N / 4;
         const double pAmps[2] = { 0.05, 0.5 };
@@ -92,6 +108,13 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
                 }
             }
         }
+    }
+    else if (name == "light-prism") {
+        // Scenario ID: light-prism
+        // Physical Purpose: Legacy prism refraction demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
     }
     return true;
 }

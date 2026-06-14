@@ -33,6 +33,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     const double amp   = K_B * 2.0;
 
     if (name == "flux-pulse") {
+        // Scenario ID: flux-pulse
+        // Physical Purpose: Demonstrates single wave/flux pulse propagation through the discrete lattice.
+        // Initial Condition Parameters: Gaussian envelope of flux in the center, with scale sigma = N / 10.0 and amplitude amp = K_B * 2.0.
+        // Expected Behaviour: Spherical expansion of flux pulse outward from center.
         const int pulseR = std::min(CEL(sigma * 3), FLR(midF));
         const int pLo = FLR(midF) - pulseR, pHi = CEL(midF) + pulseR;
         for (int z = pLo; z <= pHi; z++) for (int y = pLo; y <= pHi; y++) for (int x = pLo; x <= pHi; x++) {
@@ -42,6 +46,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-dipole") {
+        // Scenario ID: flux-dipole
+        // Physical Purpose: Simulates a positive and negative flux dipole pair.
+        // Initial Condition Parameters: Two Gaussian flux centers located at N/4 and 3N/4, with positive and negative amplitudes respectively.
+        // Expected Behaviour: Dipole field configuration that propagates and interacts.
         const int off = N / 4;
         const int pLx = FLR(midF) - off, pRx = CEL(midF) + off;
         const int yzLo = FLR(midF) - 4, yzHi = CEL(midF) + 4;
@@ -55,6 +63,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-standing") {
+        // Scenario ID: flux-standing
+        // Physical Purpose: Establishes a standing wave pattern in the lattice.
+        // Initial Condition Parameters: Two in-phase Gaussian flux sources spaced apart at N/3 and 2N/3.
+        // Expected Behaviour: Constructive and destructive interference forming stable standing wave peaks and troughs.
         const int off = N / 3;
         const int pLx = FLR(midF) - off, pRx = CEL(midF) + off;
         const int yzLo = FLR(midF) - 4, yzHi = CEL(midF) + 4;
@@ -68,6 +80,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-soliton") {
+        // Scenario ID: flux-soliton
+        // Physical Purpose: Simulates non-dispersive soliton wave propagation.
+        // Initial Condition Parameters: Dense Gaussian flux envelope at the center; genesis toggle is explicitly set to false to prevent pair production.
+        // Expected Behaviour: Soliton maintains shape during propagation without dispersing or producing particle pairs.
         // genesis=false (audit-2 2026-04-28): solitons are non-dispersive,
         // not pair-producers. Mirrors JS flux-soliton fix.
         rb.toggles.genesis = false;
@@ -79,6 +95,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-cascade") {
+        // Scenario ID: flux-cascade
+        // Physical Purpose: Models cascading genesis events where high energy triggers a chain reaction of particle creation.
+        // Initial Condition Parameters: Highly concentrated flux pulse at the center (amplitude = K_GENESIS * 3.0).
+        // Expected Behaviour: Rapid series of pair-production events cascading outward.
         const double bigAmp = K_GENESIS * 3.0;
         const int cLo = FLR(midF) - 3, cHi = CEL(midF) + 3;
         for (int z = cLo; z <= cHi; z++) for (int y = cLo; y <= cHi; y++) for (int x = cLo; x <= cHi; x++) {
@@ -88,6 +108,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-annihilation") {
+        // Scenario ID: flux-annihilation
+        // Physical Purpose: Simulates particle-antiparticle pair annihilation.
+        // Initial Condition Parameters: A positive particle (+1) and a negative particle (-1) initialized on the x-axis, and another negative/positive pair on the z-axis, accompanied by initial flux pulses pushing them together.
+        // Expected Behaviour: Particles move together, collide, and annihilate, releasing their mass energy as outgoing flux waves.
         const int off = N / 3;
         const int pL = FLR(midF) - off, pR = CEL(midF) + off;
         const int mc = RND(midF);
@@ -112,6 +136,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-pair-production") {
+        // Scenario ID: flux-pair-production
+        // Physical Purpose: Demonstrates particle-antiparticle pair creation from a high-energy field.
+        // Initial Condition Parameters: High-amplitude Gaussian flux envelope at the center exceeding the genesis threshold (amplitude = K_GENESIS * 5.0).
+        // Expected Behaviour: Local flux exceeds threshold and collapses into stable discrete particle-antiparticle pairs.
         const double bigAmp = K_GENESIS * 5.0;
         const int ppLo = FLR(midF) - 4, ppHi = CEL(midF) + 4;
         for (int z = ppLo; z <= ppHi; z++) for (int y = ppLo; y <= ppHi; y++) for (int x = ppLo; x <= ppHi; x++) {
@@ -121,6 +149,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-interference") {
+        // Scenario ID: flux-interference
+        // Physical Purpose: Demonstrates interference patterns using four point-like flux sources.
+        // Initial Condition Parameters: Four symmetrically positioned Gaussian sources at the corners of a square on the mid-plane.
+        // Expected Behaviour: Multi-source constructive and destructive wave interference patterns.
         const int q = N / 4;
         const int qL = FLR(midF) - q, qR = CEL(midF) + q;
         const int mc = RND(midF);
@@ -134,6 +166,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-vortex") {
+        // Scenario ID: flux-vortex
+        // Physical Purpose: Models a rotating flux vortex to demonstrate spin.
+        // Initial Condition Parameters: 24 tangential flux pulses positioned in a ring around the center of the lattice on the mid-plane.
+        // Expected Behaviour: Coherent angular momentum/spin rotation of the flux field.
         const int vRadius = N / 5;
         const int nV = 24;
         const int mc = RND(midF);
@@ -150,6 +186,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-dual-substrate") {
+        // Scenario ID: flux-dual-substrate
+        // Physical Purpose: Explores wave propagation under a dual-substrate (two independent vacuum states) configuration.
+        // Initial Condition Parameters: Symmetrical Gaussian flux dipoles on the left and right with opposite polarizations.
+        // Expected Behaviour: Distinct propagation characteristics and interference patterns on the dual substrate.
         const int off = N / 4;
         const int pLx = FLR(midF) - off, pRx = CEL(midF) + off;
         const int yzLo = FLR(midF) - 5, yzHi = CEL(midF) + 5;
@@ -163,6 +203,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-random-genesis") {
+        // Scenario ID: flux-random-genesis
+        // Physical Purpose: Demonstrates spontaneous particle creation from random vacuum fluctuations.
+        // Initial Condition Parameters: 8 randomly distributed high-amplitude flux patches exceeding the genesis threshold.
+        // Expected Behaviour: Stochastic nucleation of particle-antiparticle pairs across the lattice.
         const int nPatches = 8;
         const double threshold = K_GENESIS * 2.5;
         for (int p = 0; p < nPatches; p++) {
@@ -183,6 +227,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     // ── QCD scenarios ──
     else if (name == "flux-meson") {
+        // Scenario ID: flux-meson
+        // Physical Purpose: Demonstrates color confinement in a quark-antiquark meson system.
+        // Initial Condition Parameters: A positive and a negative particle acting as valence quarks, dressed with an initial flux string/tube connecting them.
+        // Expected Behaviour: The flux remains confined to a string-like region between the quarks, preventing them from separating freely.
         const int mOff = std::max(2, N / 8);
         const int mDress = std::max(2, N / 10);
         const int mL = FLR(midF) - mOff, mR = CEL(midF) + mOff;
@@ -204,6 +252,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-string-breaking") {
+        // Scenario ID: flux-string-breaking
+        // Physical Purpose: Models QCD string breaking when quarks are pulled apart with high energy.
+        // Initial Condition Parameters: Quark-antiquark pair with high outward velocities, dressed with a dense central flux envelope.
+        // Expected Behaviour: As the quarks separate, the tension in the connecting string increases until it snaps, producing a new quark-antiquark pair from the vacuum.
         const int sbOff = std::max(2, N / 10);
         const int sbDress = std::max(2, N / 8);
         const int sbL = FLR(midF) - sbOff, sbR = CEL(midF) + sbOff;
@@ -221,6 +273,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-baryon") {
+        // Scenario ID: flux-baryon
+        // Physical Purpose: Models a 3-quark baryon bound state.
+        // Initial Condition Parameters: Three positive valence quarks placed in an equilateral triangle, with a central negative sea quark and central flux.
+        // Expected Behaviour: Stable 3-quark configuration bound by the central flux structure.
         const int bR = N / 6;
         const int mc = RND(midF);
         for (int k = 0; k < 3; k++) {
@@ -240,6 +296,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-nested-standing") {
+        // Scenario ID: flux-nested-standing
+        // Physical Purpose: Establishes a nested standing wave pattern across orthogonal dimensions.
+        // Initial Condition Parameters: In-phase Gaussian flux sources along both x-axis (at N/3 and 2N/3) and z-axis (at N/4 and 3N/4).
+        // Expected Behaviour: Orthogonally overlapping standing waves creating a grid-like interference pattern.
         const int offX = N / 3, offZ = N / 4;
         const int xL = FLR(midF) - offX, xR = CEL(midF) + offX;
         const int zL = FLR(midF) - offZ, zR = CEL(midF) + offZ;
@@ -263,6 +323,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     }
     // ── Experiment scenarios (from test suite) ──
     else if (name == "flux-cyclotron") {
+        // Scenario ID: flux-cyclotron
+        // Physical Purpose: Simulates cyclotron motion of a charged particle in a magnetic field.
+        // Initial Condition Parameters: A positive particle at the center, surrounded by a background vector potential/rotational flux field representing a uniform magnetic field.
+        // Expected Behaviour: The particle undergoes circular orbital motion due to the Lorentz-like force.
         const double bAmp = amp * 0.15;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double cx = x - mid, cy = y - mid;
@@ -275,6 +339,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-screening") {
+        // Scenario ID: flux-screening
+        // Physical Purpose: Demonstrates electric charge screening in a dielectric or plasma-like medium.
+        // Initial Condition Parameters: A positive central test charge surrounded by six symmetrically placed negative screening charges, with radial dressing flux.
+        // Expected Behaviour: The net electric field at large distances is reduced (screened) by the surrounding opposite charges.
         const int shellR = N / 5;
         IP(rb, mid, mid, mid, 1);
         const int scOff[6][3] = {
@@ -292,6 +360,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-triad") {
+        // Scenario ID: flux-triad
+        // Physical Purpose: Simulates the formation of a stable three-body triad structure.
+        // Initial Condition Parameters: Three positive particles arranged in a triangle, with inward-directed dressing flux towards the center.
+        // Expected Behaviour: Particles and fields bind together into a stable triad structure.
         const int tR = N / 6;
         const double triAng[3] = { 0, 2 * PI / 3, 4 * PI / 3 };
         for (int t = 0; t < 3; t++) {
@@ -312,6 +384,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-thermalization") {
+        // Scenario ID: flux-thermalization
+        // Physical Purpose: Simulates a system of random waves relaxing towards thermal equilibrium.
+        // Initial Condition Parameters: Concentrated high-amplitude patch in one corner with randomized vector directions.
+        // Expected Behaviour: Energy diffuses and thermalizes, distributing evenly across the lattice modes over time.
         const int corner = N / 4;
         const double thermAmp = amp * 3.0;
         for (int dz = -4; dz <= 4; dz++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
@@ -328,6 +404,10 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
         }
     }
     else if (name == "flux-vacuum-foam") {
+        // Scenario ID: flux-vacuum-foam
+        // Physical Purpose: Models quantum vacuum fluctuations (spacetime foam) at the Planck scale.
+        // Initial Condition Parameters: Envelope of randomized, low-amplitude flux fluctuations across the central region.
+        // Expected Behaviour: Continuous, stochastic boiling and fluctuation of the background flux field.
         const int foamR = N / 3;
         const double foamBase = K_B * 0.9, foamVar = K_B * 0.4;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -359,6 +439,76 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
                (urand() - 0.5) * zpeAmp,
                (urand() - 0.5) * zpeAmp);
         }
+    }
+    else if (name == "flux-dispersion") {
+        // Scenario ID: flux-dispersion
+        // Physical Purpose: Legacy wave dispersion demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-stable-vortex") {
+        // Scenario ID: flux-stable-vortex
+        // Physical Purpose: Legacy rotating stable vortex demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-hydrogen") {
+        // Scenario ID: flux-hydrogen
+        // Physical Purpose: Legacy hydrogen atom bound state demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-rutherford") {
+        // Scenario ID: flux-rutherford
+        // Physical Purpose: Legacy Rutherford scattering demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-gravitational-wave") {
+        // Scenario ID: flux-gravitational-wave
+        // Physical Purpose: Legacy gravitational wave propagation demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-dark-matter") {
+        // Scenario ID: flux-dark-matter
+        // Physical Purpose: Legacy dark matter halo formation demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-baryogenesis") {
+        // Scenario ID: flux-baryogenesis
+        // Physical Purpose: Legacy matter-antimatter asymmetry genesis demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-cosmic-web") {
+        // Scenario ID: flux-cosmic-web
+        // Physical Purpose: Legacy cosmic web large-scale structure demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-black-hole") {
+        // Scenario ID: flux-black-hole
+        // Physical Purpose: Legacy black hole / wormhole simulation.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
+    }
+    else if (name == "flux-damping") {
+        // Scenario ID: flux-damping
+        // Physical Purpose: Legacy flux damping demonstration.
+        // Initial Condition Parameters: None (No-op in modern engine).
+        // Expected Behaviour: Retains an empty lattice; no-op.
+        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
     }
     // If we got here and matched none of the cases above, the prefix was
     // "flux-" but the specific name is unknown — silently no-op like JS.
