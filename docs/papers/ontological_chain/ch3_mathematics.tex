@@ -1,2 +1,556 @@
 \chapter{Mathematics --- The Algebraic Spine}\label{ch:mathematics}
-% filled in Task 7
+
+% =============================================================================
+% Ch.3 Mathematics. [SYNTHESIS]; re-states canonical claims at canonical tags.
+% Primary sources: SPEC_ALGEBRAIC_SPINE.md (sec 0 + the nine results);
+% MONOGRAPH_FTD_CONSTRUCTION.md (Parts I-II); SPEC_FTD_COMPLETE_CHAIN.md sec 1.
+% Every constant/equation comes from a macro (ftd-math-macros.sty / chain-macros.sty);
+% no constant is hand-keyed. Tags via \etag{...}; provenance via \ftdid{...}.
+% =============================================================================
+
+% ---- chapter mini-map: the Mathematics band of the Master Chain DAG ---------
+\begin{figure}[t]
+  \centering
+  \resizebox{0.8\linewidth}{!}{%
+  \begin{tikzpicture}[node distance=0pt]
+    % inbound context (the seed, from the Ontology band above)
+    \node[seed]  (zi)   at (-0.6, 2.0) {$\mathbb{Z}[i]$\\\tiny FC-0};
+    % the Mathematics band proper (copied from master_dag.tex)
+    \node[hub]   (gs)   at (2.0, 0.0)  {$G^{*}$};
+    \node[thm]   (mq)   at (5.6, 0.0)  {master\\quadratic};
+    \node[thm]   (spine)at (9.2, 0.0)  {9-result\\spine};
+    \node[wall]  (awall)at (12.8,0.0)  {$\alpha$ readout\\\tiny MC-T4.3 boundary};
+    \node[tierb] (c16)  at (5.6,-1.9)  {coeff-16\\\tiny necessity conj.};
+    \node[tierb] (pj)   at (9.2,-1.9)  {Phase-J\\\tiny $L=2$ only};
+    % outbound context (down into the Physics band below)
+    \node[thm]   (gc)   at (9.2,-3.8)  {\tiny geometric Coulomb,\\[-1pt]\tiny cluster mass $\ldots$};
+    % construction edges (solid)
+    \draw[con] (zi) to[out=-90,in=120] (gs.north west);
+    \draw[con] (gs)   -- (mq);
+    \draw[con] (mq)   -- (spine);
+    \draw[con] (spine) to[out=-90,in=90] (gc.north);
+    % weak links / boundary (dashed)
+    \draw[wk] (mq.east) to[out=0,in=180] (awall.west);   % assembly NOT forced
+    \draw[wk] (mq) -- (c16);                              % coeff-16 necessity conjectured
+    \draw[wk] (spine) -- (pj);                            % Phase-J general-L weak
+  \end{tikzpicture}}
+  \caption[This chapter in the chain]{This chapter in the chain. The construction
+    trunk $\mathbb{Z}[i]\to G^{*}\to$ master quadratic $\to$ the nine-result
+    spine runs in solid (constructed-from) arrows; the dashed links mark the two
+    honestly-tiered results (coefficient-16, Phase-J) and the $\alpha$-readout
+    boundary, the double-ruled wall where the forcing stops.}
+  \label{fig:minimap-math}
+\end{figure}
+
+\section*{The move this layer makes: a forced chain, then a precisely located wall}
+\addcontentsline{toc}{section}{The move this layer makes}
+
+The ontology of Chapter~\ref{ch:ontology} hands mathematics one modelling
+choice and a fistful of postulates; this chapter shows what those force. The
+striking thing is how far the forcing reaches and how sharply it stops. From a
+single reading of the cubic lattice's quarter-turn symmetry as the arithmetic
+of the Gaussian integers $\mathbb{Z}[i]$, one integer is forced ($4=|\Ziu|$),
+then one bridge constant ($G^{*}=\Gamma(1/4)/\Gamma(3/4)$, reachable four
+independent ways), then one quadratic
+($P(x)=x^{2}-16\,\Gss\,x+16\,\Gsss$) whose larger root sits $1.26$ parts per
+million from $1/\alpha$. Each step is an ordinary, checkable piece of
+mathematics built on the last.
+
+And then the chain hits a wall --- not a failure of effort but a provable
+boundary. To read the quadratic's root \emph{as} the physical coupling, the
+substrate would have to assemble a particular $2\times 2$ operator. The
+ontology forces the \emph{menu} of that operator's ingredients but not the
+\emph{assembly} itself. That gap is the whole honesty of the project: it is why
+$x_+ = 1/\alpha$ stays a strongly-motivated conjecture and not a theorem, and
+it is the hinge between the forced mathematics of this chapter and the
+\emph{matched} physics of Chapter~\ref{ch:physics}.
+
+The reader's takeaway, fixed in advance, is the canonical accounting of the
+spine: \textbf{nine numbered results, of which seven are theorem-grade and two
+are honestly tiered below theorem grade}. This chapter states each at its
+canonical tag, reproduces three load-bearing derivations in full, and maps the
+boundary precisely. It introduces no new mathematics. Where it disagrees with
+\texttt{SPEC\_ALGEBRAIC\_SPINE.md}, the \textsc{ledger}, or the construction
+monograph, those documents are correct and this one has a bug.
+
+\section{The seed: \texorpdfstring{$\mathbb{Z}[i]$}{Z[i]} and the forced 4}
+\label{sec:math-seed}
+
+The construction begins with one structural choice and one group-theory fact,
+and the honesty of everything downstream depends on not confusing them.
+
+The cubic lattice's coordinate planes carry an order-4 rotational symmetry: a
+$90^{\circ}$ rotation of the $(x,y)$ plane cycles
+$(1,0)\mapsto(0,1)\mapsto(-1,0)\mapsto(0,-1)\mapsto(1,0)$. FTD's seed move is to
+\emph{read this planar quarter-turn as the arithmetic of the Gaussian integers}
+$\Zi=\{a+bi : a,b\in\Z\}$, with the rotation realized as multiplication by $i$.
+That the lattice's quarter-turn \emph{should be read through} $\Zi$ rather than
+some other order-4 structure is a framework commitment --- the
+discrete-ontology analogue of building $\C$ as $\R[i]$: natural, motivated, and
+a \emph{choice}. It is the framework commitment FC-0 \etag{ax}
+(\ftdid{0254}, canonized from \ftdid{0249}); no later theorem may silently
+inherit the status ``forced'' from this step, which was ``chosen.''
+
+Once $\Zi$ is the substrate's arithmetic, the rest is ordinary algebra. The
+unit group is
+\[
+  \Ziu = \{1,\,i,\,-1,\,-i\} \;\cong\; \Z/4, \qquad |\Ziu| = 4,
+\]
+since $a+bi$ is a unit iff its norm $a^{2}+b^{2}=1$, whose only integer
+solutions are $(\pm1,0)$ and $(0,\pm1)$ \etag{thm}. The single integer this seed
+deposits into the construction is $4=|\Ziu|$. It reappears, squared, as the
+coefficient $16$ of the master quadratic
+(\S\ref{sec:math-masterquad}). The discipline to hold: $4$ is a \emph{theorem}
+about $\Zi$; that the lattice is entitled to $\Zi$ in the first place is the
+\etag{ax}.
+
+\section{\texorpdfstring{$G^{*}$}{G*}: the bridge constant, four ways ---
+  and why it is not \texorpdfstring{$\varpi$}{varpi}}
+\label{sec:math-gstar}
+
+The constant at the centre of the spine is
+\[
+  \Gstardef \etag{thm}
+\]
+(Theorem~1; \ftdid{0001}; \textsc{ot}-1.2). What earns $G^{*}$ its place is not
+any one definition but a \emph{convergence}: four constructions of differing
+character --- a $\Gamma$-ratio, a lattice Green's-function period, a
+regularized determinant ratio, and a finite product --- all land on the same
+real number. The four routes, each \etag{thm} (conditional on the cited classical
+result where one is named):
+
+\begin{enumerate}[leftmargin=1.4em, itemsep=2pt]
+  \item \textbf{The $\Gamma$-ratio.} Directly from the Euler reflection formula
+    (reproduced in full in \S\ref{sec:math-deriv-gstar}); the canonical
+    statement of \textsc{ot}-1.2.
+  \item \textbf{The Watson BCC period.} The body-centred-cubic Watson integral
+    satisfies $\watsonval$ (Theorem~5; \textsc{ot}-2.1), conditional on
+    Watson's 1939 closed-form evaluation, consolidated by Glasser--Zucker
+    (1980). This is $G^{*}$ arising from a \emph{lattice} quantity, of a wholly
+    different character from the $\Gamma$-ratio.
+  \item \textbf{The $\detz$ quarter-conjugacy bridge.} With $J$ the conjugacy
+    operator ($J^{2}=-I$; the same $\Z/4$ seed), the quarter-twisted spectra
+    $D_{1/4},D_{3/4}$ and Lerch's determinant formula $\lerch$ give the ratio
+    $\detzratio$ (\textsc{ot}-1.7, \ftdid{0141}). The arithmetic content ties
+    it to the seed: $4\cdot D_{1/4}$ and $4\cdot D_{3/4}$ are the two
+    non-trivial residue classes $\bmod\,4$ --- the split and inert prime classes
+    of $\Zi$.
+  \item \textbf{The finite-$N$ attractor.} The finite product
+    $\finiteN$ is computable in $O(N)$ rational operations, and
+    $\finiteNrate$ (\textsc{ot}-1.8, \ftdid{0142}). This route discharges the
+    undefined-boundary ontology's $\varepsilon$--$L$ obligation for $G^{*}$:
+    it supplies a convergent \emph{finite} computation, no completed infinity
+    required.
+\end{enumerate}
+
+\begin{boundarybox}[The $G^{*}\neq\varpi$ warning (\ftdid{0117})]
+$G^{*}\approx\Gstarapprox$ is the lemniscatic \emph{ratio}
+$\Gamma(1/4)/\Gamma(3/4)$. It is \textbf{not} the Bernoulli/Gauss lemniscate
+constant $\varpi\approx\varpiapprox$, a distinct number related by
+$\Gstarclosed$ (equivalently $\varpidef$). The two are sometimes both called
+``the lemniscate constant'' in informal usage; they must never be conflated
+here. The distinction is load-bearing in the most literal sense: the master
+quadratic of \S\ref{sec:math-masterquad} produces $x_+=\xplusnum$ \emph{only}
+at $G^{*}=\Gstarapprox$. Substituting $\varpi=\varpiapprox$ into the same
+polynomial gives $x_+\approx 107.3$, nowhere near $1/\alpha$. A 2026-04-30
+audit (\ftdid{0117}) found and corrected exactly this conflation across five
+documents; the canonical value to cross-check against is \texttt{G\_STAR} in
+\texttt{scripts/constants.py}.
+\end{boundarybox}
+
+\section{The master quadratic}
+\label{sec:math-masterquad}
+
+With $G^{*}$ in hand, the construction's central polynomial is purely
+algebraic. Define
+\[
+  \masterquad. \etag{thm}
+\]
+Its discriminant factors cleanly,
+\[
+  \discriminant
+\]
+which is \emph{positive} because $G^{*}>1/4$ (indeed $G^{*}\approx\Gstarapprox$),
+so both roots are real:
+\[
+  \rootsexplicit
+\]
+Numerically $x_+=\xplusnum$ and $x_-=\xminusnum$. This is the quadratic formula
+applied to a polynomial whose coefficients are integer multiples of powers of
+$G^{*}$; nothing more is involved, and the whole of it is \etag{thm}
+(Theorem~2; \ftdid{0001}; \textsc{ot}-1.1). The full derivation is reproduced
+in \S\ref{sec:math-deriv-masterquad}.
+
+\paragraph{The coefficient-16 soft spot, flagged honestly.} The prefactor $16$
+has a tempting arithmetic reading. For the lemniscatic CM elliptic curve
+$E:y^{2}=x^{3}-x$, the automorphism group over $\overline{\Q}$ is
+$\Aut(E)=\{\pm1,\pm i\}\cong\Z/4$ --- the unit group of $\Zi$ again --- so
+$|\Aut(E)|=4$ and $|\Aut(E)|^{2}=16$. That $|\Aut(E)|^{2}=16$ is a \etag{thm}
+(Theorem~4 arithmetic fact; \ftdid{0006}). But the claim that the master
+quadratic's prefactor is \emph{forced} to equal $|\Aut(E)|^{2}$ --- that two
+distinct objects both equal $16$ for a structural reason --- is
+\textbf{not proven}; the structural necessity is \etag{cnj} (\textsc{ot}-4.1,
+the lone Tier-4 entry: ``two distinct objects both equal $16$; the structural
+reason for the coincidence is conjectured but not proved''). This is the
+framework's softest mathematical spot. A partial unification exists (the
+tower-level reading of \ftdid{0122} supplies a reason for $k=4$, hence
+$2^{k}=16$, via $|\Ziu|^{2}=16$), but it is a partial unification, not a
+forcing theorem.
+
+\paragraph{No physics here, and the retired smaller root.} In this chapter,
+$x_+=\xplusnum$ is a root of a polynomial --- nothing more. Its identification
+with $1/\alpha$ is a \etag{smc} (\ftdid{0013}), deferred in full to
+Chapter~\ref{ch:physics}; it is not asserted as forced anywhere in the
+construction. The smaller root $x_-\approx\xminusapprox$ is a pure algebraic
+artifact, fixed by the Vieta relation $x_- = 16\,\Gsss/x_+$ the instant $x_+$
+is fixed, and it carries no physics: the historical identification
+$x_-\!\leftrightarrow\! N_c$ is \textbf{retired} (the \textsc{ledger} row
+FTD-0014 was removed in commit \texttt{ca7eb61}). FTD's $N_c=3$ is
+\etag{thm} from topology, independently sourced --- the Moore Layer Theorem and
+the four convergent routes of \texttt{DERIV\_NC\_FROM\_TOPOLOGY.md} --- and owes
+nothing to the polynomial's smaller root.
+
+\section{The nine-result spine: seven theorem-grade, two honestly tiered}
+\label{sec:math-spine}
+
+On the foundation of $G^{*}$ and the master quadratic, a family of further
+results stands. The canonical accounting is fixed in
+\texttt{SPEC\_ALGEBRAIC\_SPINE.md} \S0 and matches the tiering of
+\texttt{TRACKER\_ONTIC\_TRUTH.md}: \textbf{nine numbered results, of which seven
+are theorem-grade and two are honestly tiered below theorem grade.}
+Table~\ref{tab:math-spine} states each at its exact tag.
+
+\begingroup
+\renewcommand{\arraystretch}{1.3}
+\begin{table}[t]
+\centering
+\caption{The nine-result algebraic spine, each at its canonical tag. Seven are
+  theorem-grade (results 1, 2, 3, 5, 6, 8, 9); two are honestly tiered below
+  (result 4, coefficient-16 necessity; result 7, Phase-J at $L=2$ only).}
+\label{tab:math-spine}
+\begin{tabular}{@{}c >{\RaggedRight\arraybackslash}p{0.52\linewidth} c l@{}}
+\toprule
+\textbf{\#} & \textbf{Result} & \textbf{Tag} & \textbf{Provenance} \\
+\midrule
+1 & $G^{*}=\Gamma(1/4)/\Gamma(3/4)$ algebraic identity (Chowla--Selberg)
+  & \ctag{thm} & \ftdid{0001} \\
+2 & Master quadratic $P(x)$ and its two real roots
+  & \ctag{thm} & \ftdid{0001} \\
+3 & CM-curve uniqueness within class-number-1 fields (trivial-multiplier
+  criterion) & \ctag{thm} & \ftdid{0003} \\
+4 & Coefficient $16=|\Aut(E)|^{2}$: value-level identity \etag{thm};
+  structural \emph{necessity} & \ctag{cnj} & \ftdid{0006} (T4) \\
+5 & Watson identity $\watsonval$ on the BCC sub-lattice
+  & \ctag{thm} & \ftdid{0001} (sub) \\
+6 & Phase-G geometric Coulomb $\geomcoulomb$ (lattice Poisson kernel)
+  & \ctag{thm} & \ftdid{0004} \\
+7 & Phase-J partition-function ultralocality, \etag[ at $L=2$]{thm};
+  disconfirmed for general $L$ & \ctag{thm} & \ftdid{0005} (T3) \\
+8 & Harmonic-invariant tower $\harmonicinv$ ($A_k\notin\Q$, $k\ge4$)
+  & \ctag{thm} & \ftdid{0111} \\
+9 & Field-theoretic $\Q(G^{*})$: maximal $\pi$-free subfield (cond.\ Chudnovsky
+  1976) & \ctag{thm} & \ftdid{0112} \\
+\bottomrule
+\end{tabular}
+\end{table}
+\endgroup
+
+Three of the theorem-grade results deserve their statements in line, because
+they show the spine is a dependency structure and not a list.
+
+\paragraph{Harmonic-invariant tower \etag{thm} (Theorem~8, \ftdid{0111}).}
+For each integer $k\ge3$, the $(1+i)$-tower master quadratic is
+$\towerquad$ (the $k=4$ instance is the master quadratic of
+\S\ref{sec:math-masterquad}). Writing the normalized roots $y_\pm:=x_\pm/G^{*}$,
+then at \emph{every} level $k\ge3$, $\harmonicinv$. The proof is a three-line
+Vieta computation. Furthermore the discriminant factors as $\towerdisc$, with
+$A_k$ rational at $k=3$ and \emph{transcendental over $\Q$} at every $k\ge4$
+(via Schneider--Chudnovsky transcendence of $G^{*}$).
+
+\paragraph{$\Q(G^{*})$ is $\pi$-free \etag{thm}, conditional on Chudnovsky 1976
+(Theorem~9, \ftdid{0112}).} The field generated by $G^{*}$ shares no algebraic
+content with $\Q(\pi)$ beyond the rationals:
+$\Q(G^{*})\cap\Q(\pi)=\Q$. The proof reduces a hypothetical polynomial relation
+between $G^{*}$ and $\pi$ --- via the identity $G^{*}\!\cdot\!\pi\sqrt2=\Gamma(1/4)^{2}$
+--- to a relation between $\pi$ and $\Gamma(1/4)$, which Chudnovsky's 1976
+algebraic-independence theorem forbids. ``Conditional'' here means ``rigour
+equals this published, foundational transcendence result,'' not ``depends on a
+conjecture.''
+
+\paragraph{The two honestly-tiered results, stated plainly.} Result~4
+(coefficient-16) is the value-level identity above, true as a \etag{thm} but
+with structural necessity only \etag{cnj} (\textsc{ot}-4.1, Tier~4).
+Result~7 (Phase-J partition-function ultralocality) is \etag[ at $L=2$]{thm}
+only: on a $2^{3}$ lattice the classical Euclidean action depends on the state
+field solely through $\sum_i s_i^{2}$ (the manifested-site count) and is
+permutation-invariant, proved by explicit construction; the general-$L$
+extension is \emph{disconfirmed} --- the $L=2$ ultralocality is a Nyquist-mode
+counting degeneracy (every non-zero momentum has $\sin(k_i)=0$), not a
+structural property, and at $L\ge3$ the action depends on spatial placement
+(\textsc{ot}-3.1, Tier~3). Both are stated here below theorem grade because that
+is where their canonical sources place them.
+
+\section{The \texorpdfstring{$\alpha$}{alpha} boundary: dynamical, not structural}
+\label{sec:math-boundary}
+
+The spine forces $G^{*}$, the coefficient $16$, and the polynomial's roots. To
+turn the polynomial \emph{toward physics} one more thing is needed, and naming
+it sharply is the entire content of this section. The argument structure is
+summarized here; the exhaustive four-route case analysis is in the construction
+monograph (Part~II), cited in full below.
+
+\paragraph{The readout move.} Read the quadratic as the characteristic
+polynomial of a $2\times2$ \emph{readout operator} $W$ whose dominant eigenvalue
+is to be the measured inverse coupling. For its characteristic polynomial to be
+$P$, the operator must have the \emph{operator assembly}
+\[
+  \assembly.
+\]
+The question that decides whether $\alpha$ is derived or merely matched is
+exactly: does $\Ftheory$ --- the five postulates, the algebraic spine, and the
+$O_h$ representation theory of the BCC corner module --- \emph{force} this
+assembly, or is it an imposed selection? This is the central foundational
+obstruction the canonical sources call \textbf{MC-T4.3}.
+
+\paragraph{What is forced: the menu.} The canonical attack (\ftdid{0242})
+ran four FTD-native routes of differing character (a $J$-twisted
+$\detz$ operator, a BCC body-diagonal response operator, the lemniscatic-CM
+arithmetic of $E:y^{2}=x^{3}-x$, and a forced-variational / period-ring route).
+Every route agrees, with nothing smuggled, on what \emph{is} forward-forced
+\etag{der}:
+\begin{itemize}[leftmargin=1.4em, itemsep=2pt]
+  \item the \textbf{even trace} $16\,\Gss$ --- where $16=|\mu_4|^{2}$ for
+    $E:y^{2}=x^{3}-x$ (\ftdid{0006}) and $G^{*2}=2\pi\!\cdot\!G_{\mathrm{BCC}}(0)$,
+    the Watson BCC self-energy (\ftdid{0001});
+  \item the \textbf{existence of a clean FTD-native odd source}: the $J$-twisted
+    determinant ratio $\detz(D_{3/4})/\detz(D_{1/4})=\Gamma(1/4)/\Gamma(3/4)=G^{*}$
+    (degree $1$; the $\sqrt{2\pi}$ cancels). This is strictly stronger than
+    trace-only: it makes $16\,\Gsss=16\,\Gss\!\cdot\!G^{*}$ \emph{assemblable}.
+\end{itemize}
+
+\paragraph{What is not forced: the assembly $W$.} What no route forces
+\etag[ no-go]{fo} is the \emph{operator assembly itself} --- that the same
+$2\times2$ readout carrying $\Tr W=16\,\Gss$ also has $\det W=16\,\Gsss$. For a
+$2\times2$ operator, trace and determinant are \textbf{independent invariants};
+fixing the trace leaves the determinant free. The odd scalar $G^{*}$ exists,
+but nothing forces the \emph{gluing} --- neither that the two invariants belong
+to one operator, nor that the odd scalar lands in the determinant slot. The
+verdict across all four routes is therefore \textbf{0 of 4 force the assembly},
+and (by the route-invariance theorem below) this is one structural fact reached
+four ways, not four independent failures. The canonical phrasing:
+\textbf{$\alpha$ is dynamical, not structural} --- the ontology forces the
+\emph{menu} but not the \emph{dish}. This is a \etag[ no-go]{fo}, \textbf{not a
+theorem and not a derivation of $\alpha$}.
+
+\paragraph{The boundary is built from theorem-grade masonry.} The deeper attack
+(\ftdid{0243}) established three genuinely theorem-grade facts that hem the
+open kernel into a single, precisely located gap:
+\begin{enumerate}[leftmargin=1.6em, itemsep=2pt]
+  \item \textbf{The flip is ruled out \etag{thm}.} The only geometric candidate
+    for an operator that forces $\det=16\,\Gsss$ --- the $C_3(\langle111\rangle)$
+    three-plane $\detz$ product --- is excluded from the rank-2 readout: the
+    complex structure $J$ ($J^{2}=-I$) required by the trace forces $O_h$ to
+    break to one $C_4$ axis, so $C_3(\langle111\rangle)\notin\mathrm{Stab}$,
+    while the three-plane product requires it; and $\langle C_4,C_3\rangle=O$
+    (machine-checked) leaves no readout.
+  \item \textbf{Leg~3b closes its own scope \etag{thm}.} No
+    $C_3(\langle111\rangle)$-equivariant rank-2 restriction of the three-plane
+    source carries $(\Tr,\Det)=(16\,\Gss,16\,\Gsss)$; the chain is
+    reality $\Rightarrow$ scalar-$i$ $\Rightarrow$ $C_4$ $\Rightarrow$ $O$ ---
+    the same wall reached from the restriction side.
+  \item \textbf{The reduction is route-invariant \etag{thm}.} All four attacks
+    reduce to the same obligation because $\Q(G^{*})$ is the Galois-fixed field
+    of the master quadratic's $\Z/2$: the splitting field over $\Q(G^{*})$ is
+    $\Q(G^{*})(\sqrtwall)$, and every forward-forced \emph{symmetric} datum
+    (the Watson trace, the $\detz$ ratio, the Chowla--Selberg periods) lives in
+    the $\sigma$-fixed subfield $\Q(G^{*})$ and is provably blind to which root
+    is $1/\alpha$.
+\end{enumerate}
+
+\paragraph{The square-root wall and the conditional theorem.} In the field
+dialect, the residual obligation is the cleanest form and gives the boundary its
+name (\textbf{K-BIND}): to fix $\alpha$, the substrate must \emph{natively
+realize} the squarefree generator $\sqrtwall$ of the quadratic extension
+$\splitfield$ --- the one antisymmetric beable that breaks the $\Z/2$
+root-swapping symmetry and selects the physical branch. Every symmetric datum
+cannot tell the two roots apart; this square root is exactly the missing
+ingredient. K-BIND is \etag{cn} (\ftdid{0244}): axiomatizing the admissible
+operator calculus over $V_{\mathrm{complex}}\cong\Ziu$-module $\Zi^{2}$ forces
+all invariants into $\Q(G^{*})$, and the degree-2 extension cannot be natively
+realized (transcendence of $G^{*}$, Chudnovsky 1976), so no native operator
+reaches $x_+$ without the external selection $W$. What \emph{is} provable
+unconditionally is the conditional theorem \etag{thm}: $\Ftheory$ does not force
+$\alpha$ --- the assembly $(\Tr,\Det)=(16\,\Gss,16\,\Gsss)$ is logically
+independent of $\Ftheory$ --- unless $\Ftheory$ is extended by a substrate-native
+binding law $W$ fixing the determinant's odd-$G^{*}$ exponent at exactly $1$.
+The independence is witnessed on both sides: $\Ftheory\cup\{W\}$ is consistent
+(the master quadratic is the witness model), and $\Ftheory\cup\{\neg W\}$ is
+consistent ($\det=16\,\Gsf$ and $\det=G^{*}$ are explicit, $\Ftheory$-consistent
+alternative assemblies). $W$ is therefore a 6th-postulate-class input
+(\ftdid{0243}).
+
+\paragraph{Net.} \textbf{MC-T4.3 remains a \etag[ no-go]{fo}}, and
+\textbf{$x_+=1/\alpha$ (\ftdid{0013}) remains a \etag{smc}} --- nothing here
+promotes either. The contrast with $N_c=3$ is exact: $N_c$ \emph{is} structural,
+forced from $O_h$ and topology by four independent routes with no
+operator-assembly choice; $\alpha$ has no such forcing. The exhaustive
+four-route case analysis, with each force-pass and adversarial refute-pass, is
+the climax (Part~II) of the construction monograph
+(\texttt{MONOGRAPH\_FTD\_CONSTRUCTION.md}); this section reproduces its argument
+structure, not its full machinery.
+
+\section{Reproduced derivation I: the \texorpdfstring{$G^{*}$}{G*} identity}
+\label{sec:math-deriv-gstar}
+
+The first load-bearing chain reproduced in full. \emph{Goal:} establish the two
+standard closed forms of $G^{*}$ from the definition and the Euler reflection
+formula alone.
+
+\emph{Step 1 --- the reflection value.} The $\Gamma$-function reflection
+formula $\Gamma(z)\Gamma(1-z)=\pi/\sin(\pi z)$ at $z=1/4$ gives
+\[
+  \reflection
+\]
+since $\sin(\pi/4)=1/\sqrt2$.
+
+\emph{Step 2 --- the first closed form.} By definition $G^{*}=\Gamma(1/4)/\Gamma(3/4)$.
+Multiply numerator and denominator by $\Gamma(1/4)$:
+\[
+  G^{*} = \frac{\Gamma(1/4)}{\Gamma(3/4)}
+        = \frac{\Gamma(1/4)^{2}}{\Gamma(1/4)\,\Gamma(3/4)}
+        = \frac{\Gamma(1/4)^{2}}{\pi\sqrt2},
+\]
+substituting the Step-1 value $\Gamma(1/4)\Gamma(3/4)=\pi\sqrt2$ in the last
+equality.
+
+\emph{Step 3 --- the lemniscate form.} The Bernoulli/Gauss lemniscate constant
+is $\varpidef$. Solving for $\Gamma(1/4)^{2}=2\sqrt{2\pi}\,\varpi$ and
+substituting into Step~2,
+\[
+  G^{*} = \frac{2\sqrt{2\pi}\,\varpi}{\pi\sqrt2}
+        = \frac{2\varpi}{\sqrt\pi}.
+\]
+Collecting Steps 2--3 gives the canonical closed-form chain
+\[
+  \Gstarclosed,
+\]
+numerically $G^{*}=\Gstarnum$ \etag{thm} (Theorem~1; \ftdid{0001}). This is a
+three-line proof. \textbf{Note} that the lemniscate form makes the $G^{*}\neq\varpi$
+distinction quantitative: $G^{*}$ and $\varpi$ differ by the factor
+$2/\sqrt\pi\approx1.128$, so $G^{*}\approx\Gstarapprox$ while
+$\varpi\approx\varpiapprox$. They are never interchangeable.
+
+\section{Reproduced derivation II: the master-quadratic assembly}
+\label{sec:math-deriv-masterquad}
+
+The second chain, reproduced from the (trace, determinant) data to the explicit
+roots. \emph{Goal:} given the assembly $\assembly$, recover $P(x)$, its
+discriminant, and $x_\pm$ in closed form.
+
+\emph{Step 1 --- the characteristic polynomial.} A $2\times2$ operator $W$ with
+trace $\Tr W$ and determinant $\det W$ has characteristic polynomial
+$x^{2}-(\Tr W)\,x+(\det W)$. Inserting the assembly $(\Tr W,\det W)=(16\,\Gss,16\,\Gsss)$
+gives exactly
+\[
+  \masterquad.
+\]
+
+\emph{Step 2 --- the discriminant.} For $x^{2}-bx+c$ the discriminant is
+$\Delta=b^{2}-4c$. With $b=16\,\Gss$ and $c=16\,\Gsss$,
+\[
+  \discriminant
+\]
+The factored form $64\,\Gsss(4G^{*}-1)$ is manifestly positive because
+$G^{*}\approx\Gstarapprox>1/4$, so both roots are real and distinct.
+
+\emph{Step 3 --- the roots.} The quadratic formula $x_\pm=\tfrac12\bigl(b\pm\sqrt\Delta\bigr)$
+with $b=16\,\Gss$ and $\sqrt\Delta=\sqrt{256\,\Gsf-64\,\Gsss}=8\sqrt{4\,\Gsf-\Gsss}$
+gives
+\[
+  \rootsexplicit
+\]
+the second line pulling $4\,G^{*}$ out of the radical. Numerically
+$x_+=\xplusnum$ and $x_-=\xminusnum$ \etag{thm} (Theorem~2; \ftdid{0001}).
+Everything here is the quadratic formula on a polynomial with $G^{*}$-power
+coefficients; no physics has entered, and none is claimed.
+
+\section{Reproduced derivation III: the boundary argument structure}
+\label{sec:math-deriv-boundary}
+
+The third reproduction is not a numerical derivation but the \emph{argument
+structure} of the $\alpha$ boundary --- self-contained enough that the reader
+can see precisely what is forced and what is not, without the full four-route
+machinery (which is cited to the construction monograph, Part~II, \ftdid{0242}).
+
+\emph{Premise (the readout move).} To read $x_+$ as the physical inverse
+coupling, posit a $2\times2$ readout operator $W$ whose characteristic
+polynomial is $P$. By \S\ref{sec:math-deriv-masterquad} Step~1 this is
+equivalent to requiring the assembly $\assembly$.
+
+\emph{The forced half (menu).} The even invariant is forward-forced: the
+trace slot $16\,\Gss$ is assembled from $16=|\mu_4|^{2}$ and the Watson
+self-energy $G^{*2}$, with $G^{*}$ kept symbolic and no banned move. A clean
+degree-1 odd source also exists: $\detz(D_{3/4})/\detz(D_{1/4})=G^{*}$. Hence
+$16\,\Gsss=16\,\Gss\!\cdot\!G^{*}$ is \emph{assemblable in principle}. This half
+is \etag{der}.
+
+\emph{The unforced half (assembly $W$).} Trace and determinant of a $2\times2$
+operator are independent invariants: knowing $\Tr W=16\,\Gss$ places no
+constraint on $\det W$. So the existence of an odd scalar $G^{*}$ does not force
+that \emph{this} operator carries it in \emph{this} slot at \emph{this}
+exponent. The free family $\det=16\,\Gss\!\cdot\!G^{*k}$ for $k=0,1,2,3$ yields
+dominant roots $139.05/137.04/130.68/105.76$ respectively --- all
+$\Ftheory$-consistent, and \textbf{nothing in $\Ftheory$ selects $k=1$}. This
+half is \etag[ no-go]{fo}.
+
+\emph{Why the verdict is route-invariant (not an argument from absence).} The
+four routes are four dialects of one obligation because $\Q(G^{*})$ is the
+Galois-fixed field of the master quadratic's $\Z/2$ (the discriminant's
+square root $\sqrtwall$ is the squarefree generator of the degree-2 extension
+$\splitfield$). Every \emph{symmetric} forward-forced datum lives in $\Q(G^{*})$
+and is therefore provably blind to which root is $1/\alpha$. The single
+ingredient that would break the symmetry --- the antisymmetric beable $\sqrtwall$
+--- is exactly the one the substrate is not shown to produce. That is K-BIND,
+\etag{cn} (\ftdid{0244}).
+
+\emph{Conclusion.} $\Ftheory$ forces the menu and not the dish; the assembly
+$W$ is logically independent of $\Ftheory$ on present evidence (conditional
+theorem, \etag{thm}, \ftdid{0243}); therefore \textbf{$\alpha$ is dynamical, not
+structural}, and $x_+=1/\alpha$ stays \etag{smc} (\ftdid{0013}). The
+construction halts at the discrete limit of a square root --- a mapped wall,
+not a failure of effort.
+
+\section{What this layer does not settle}
+\label{sec:math-open}
+
+The spine is firm; what it does \emph{not} settle is named here, at honest tags.
+
+\begin{itemize}[leftmargin=1.4em, itemsep=3pt]
+  \item \textbf{The coefficient-16 necessity.} That $|\Aut(E)|^{2}=16$ is a
+    \etag{thm}; that the master quadratic's prefactor is \emph{forced} to equal
+    it is \etag{cnj} (\textsc{ot}-4.1, Tier~4) --- the framework's softest
+    mathematical spot. A forcing theorem (beyond the partial $k=4$ unification
+    of \ftdid{0122}) is \etag{opn}.
+
+  \item \textbf{Phase-J beyond $L=2$.} Ultralocality is \etag[ at $L=2$]{thm}
+    only; the general-$L$ extension is disconfirmed (a Nyquist-mode counting
+    degeneracy, not a structural property). There is no general-$L$
+    ultralocality theorem and none is sought.
+
+  \item \textbf{The $\alpha$-readout assembly $W$.} MC-T4.3 stays a
+    \etag[ no-go]{fo}; the unconditional ``no FTD-native $W$ can ever exist'' is
+    the universal negative, with K-BIND \etag{cn} (\ftdid{0244}) on the
+    axiomatic side and ARC-D1 \etag{cn} on the empirical side (0 macroscopic
+    cluster fissions across 2000 seeds; a rigid lattice). The two live exits ---
+    a 6th-postulate-class binding law $W$ that \emph{forces} the assembly, or a
+    fresh engine-native ARC-D measurement --- are \etag{opn}, and neither is
+    presently open.
+
+  \item \textbf{The physics identification itself.} $x_+=1/\alpha$ is a
+    $1.26$-ppm \etag{smc} (\ftdid{0013}), not a derivation. Its
+    structural-uniqueness evidence and its honest limit belong to
+    Chapter~\ref{ch:physics}, where the matched physics is quarantined at its
+    tags. The hinge this chapter establishes --- forced mathematics, unforced
+    assembly --- is exactly why that identification cannot stand higher than a
+    strongly-motivated conjecture.
+\end{itemize}

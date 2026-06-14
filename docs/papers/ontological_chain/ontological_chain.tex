@@ -29,6 +29,15 @@
 \addbibresource{references.bib}
 \usepackage[hidelinks]{hyperref}
 
+% Let TeX relax tight prose paragraphs rather than spill into the margin.
+\setlength{\emergencystretch}{3em}
+
+% Kernel shim: this MiKTeX's expl3 predates \SuspendTagging/\ResumeTagging, which
+% the installed tabularx/xltabular invokes inside \end{xltabular}. Provide them as
+% no-ops only if absent (\providecommand is inert once the kernel supplies them).
+\providecommand{\SuspendTagging}[1]{}
+\providecommand{\ResumeTagging}[1]{}
+
 % theorem-like environments (used sparingly; claims carry tags, not just numbers)
 \theoremstyle{definition}
 \newtheorem{claim}{Claim}[chapter]
@@ -57,5 +66,6 @@
 \input{appendices}
 
 \cleardoublepage
-\printbibliography[heading=bibintoc,title={References}]
+\nocite{*}   % no inline \cite in this map; surface the underwriting classical literature
+\printbibliography[heading=bibintoc,title={Sources \& Further Reading}]
 \end{document}
