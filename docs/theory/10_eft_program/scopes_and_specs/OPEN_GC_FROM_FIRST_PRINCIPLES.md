@@ -22,10 +22,14 @@ the problem.
 > (`../preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`): validate
 > the production live-engine estimator against the existing matched-stencil EFT
 > projector before asking the no-alpha-vs-Postulate-W question again.
-> FTD-0286 returned `ENERGY_FUNCTIONAL_MISMATCH`: matched projection converged,
-> but the field-energy observable still missed the analytic Phase-G
-> normalization by about half. The next coupling-selection attempt must first
-> derive or directly measure the finite-cell observable.
+> FTD-0286 v1 returned `ENERGY_FUNCTIONAL_MISMATCH` because v1 paired
+> `energy_audit().field_energy = ½Σ|J|²` with the legacy gate `2rG_L(r)`.
+> **FTD-0286 v2** (`../preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v2.md`,
+> `../ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`) re-pairs with `α_r = r G_L(r)`:
+> matched static projector **passes** (max rel err 0.26%); production live-tick
+> still fails on stencil drift. The canonical finite-cell estimator is
+> matched-stencil + half-energy gate. Next coupling-selection attempt:
+> FTD-0285 no-alpha discriminator v2 on that pairing.
 
 ---
 
@@ -33,11 +37,18 @@ the problem.
 
 Phase G established that the engine's emergent Gauss law
 `∇·J = g_c · s` has `g_c = 1` by default, producing
-**geometric Coulomb** with `α_r(r, L) = 2 r G_L(r)`.
+**geometric Coulomb** with `α_r(r, L) = 2 r G_L(r)` under the
+`Σ|J|²` energy convention (legacy Phase-G derivation).
+
+**Convention note (FTD-0286 v2, 2026-06-13):** the live engine reports
+`energy_audit().field_energy = ½ Σ|J|²` since 2026-04-27, so the paired
+finite-cell gate for interaction readouts is `α_r = r G_L(r)`, not `2 r G_L(r)`.
+See `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` and
+`ANALYSIS_ALPHA_ESTIMATOR_VALIDATION_v2.md`.
 
 Phase H verified that introducing an explicit coupling constant `g_c`
 scales the measurement to
-`α_r(r, L; g_c) = g_c² · 2 r G_L(r)`,
+`α_r(r, L; g_c) = g_c² · 2 r G_L(r)` (legacy `Σ|J|²` convention),
 matching the Phase G scaling theorem to 0.0000% precision. So the
 mechanism `g_c² ↦ α` is mechanically sound.
 

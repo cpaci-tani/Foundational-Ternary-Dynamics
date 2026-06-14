@@ -7,6 +7,8 @@
 
 **Scale 0** is the flux-lattice engine. Its telemetry flows through a single
 hub (`engine/web/js/telemetry-hub.js`) that every consumer reads from.
+Demand gating and scale-0 grid channels live under `engine/web/js/telemetry/`.
+See [`audits/AUDIT_TELEMETRY_ORGANIZATION.md`](audits/AUDIT_TELEMETRY_ORGANIZATION.md).
 Future per-scale catalogs should follow this same shape.
 
 ---
@@ -56,6 +58,7 @@ Future per-scale catalogs should follow this same shape.
 | Diagnostics | `engine/web/js/ui/panels/diagnostics-panel/descriptors/scale0.js` |
 | Charts | `engine/web/js/ui/panels/charts-panel/descriptors/scale0.js` |
 | Lagrangian | `engine/web/js/ui/panels/lagrangian-panel/descriptors/scale0.js` |
+| Telemetry grid (scale 0) | `engine/web/js/telemetry/registry/scale0-grid-channels.js` |
 
 ### Unit conventions
 

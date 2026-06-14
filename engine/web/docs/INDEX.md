@@ -59,6 +59,8 @@ historical provenance, and where new cleanup or architecture notes should land.
 - [`audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md`](audits/AUDIT_CALLSTACK_LIFECYCLE_2026-06-04.md)
 - [`audits/AUDIT_SCALE0_CALLSTACK.md`](audits/AUDIT_SCALE0_CALLSTACK.md) — active-owner / harness tick-load-resize integrity (2026-06-13)
 - [`audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md`](audits/AUDIT_SCALE0_SCENARIO_HARNESS_DRY.md) — scenario harness + telemetry DRY (2026-06-13)
+- [`audits/AUDIT_TELEMETRY_ORGANIZATION.md`](audits/AUDIT_TELEMETRY_ORGANIZATION.md) — hub/demand/registry cleanup + energy semantics (2026-06-13)
+- [`audits/AUDIT_JS_ONTIC_PHYSICS.md`](audits/AUDIT_JS_ONTIC_PHYSICS.md) — full web/js ontic-physics + epistemic tag audit (2026-06-13)
 - [`audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_HEALTH_2026-06-05.md)
 - [`audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md`](audits/AUDIT_SCALE0_SCENARIO_LIFECYCLE_2026-06-05.md)
 - [`audits/AUDIT_S0_OVERLAY_GROUNDING.md`](audits/AUDIT_S0_OVERLAY_GROUNDING.md)
