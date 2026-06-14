@@ -1,0 +1,71 @@
+% =============================================================================
+% The FTD Ontological Chain -- A Canonical Map and Intuition Driver
+% [SYNTHESIS]. Re-states canonical claims at canonical tags; no new mathematics.
+% Precedence: LEDGER > constitution > this document.
+% Build:  pdflatex -> biber -> pdflatex -> pdflatex   (see README.md; no latexmk/Perl)
+% =============================================================================
+\documentclass[11pt,a4paper,twoside,openright]{scrreprt}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}     % loads amsmath
+\usepackage{newtxtext}
+\usepackage{newtxmath}
+\let\openbox\relax         % newtxmath defines \openbox; clear it so amsthm can redefine
+\usepackage{amsthm}
+\usepackage{microtype}
+\usepackage{booktabs,array}
+\usepackage{xltabular}
+\usepackage{longtable}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric,decorations.pathreplacing,fit,backgrounds}
+\usepackage{ftd-math-macros}
+\usepackage{chain-macros}
+\usepackage{chain-figs}     % shared TikZ vocabulary (DAG + mini-maps); reusable for standalone chapter builds
+\usepackage{ftd-epistemic}
+\usepackage[backend=biber,style=numeric-comp,sorting=none]{biblatex}
+\addbibresource{references.bib}
+\usepackage[hidelinks]{hyperref}
+
+% Let TeX relax tight prose paragraphs rather than spill into the margin.
+\setlength{\emergencystretch}{3em}
+
+% Kernel shim: this MiKTeX's expl3 predates \SuspendTagging/\ResumeTagging, which
+% the installed tabularx/xltabular invokes inside \end{xltabular}. Provide them as
+% no-ops only if absent (\providecommand is inert once the kernel supplies them).
+\providecommand{\SuspendTagging}[1]{}
+\providecommand{\ResumeTagging}[1]{}
+
+% theorem-like environments (used sparingly; claims carry tags, not just numbers)
+\theoremstyle{definition}
+\newtheorem{claim}{Claim}[chapter]
+\newtheorem{result}{Result}[chapter]
+
+\title{\bfseries The FTD Ontological Chain\\[3pt]\large A Canonical Map and Intuition Driver}
+\author{}                  % intentionally empty (project convention)
+\date{2026}
+
+\begin{document}
+\cleardoublepage\pagenumbering{roman}
+\maketitle
+\input{frontmatter}
+\input{master_dag}         % Figure 0.1 -- the Master Chain DAG
+\tableofcontents
+
+\cleardoublepage\pagenumbering{arabic}
+\input{ch1_ontology}
+\input{ch2_logic}
+\input{ch3_mathematics}
+\input{ch4_philosophy}
+\input{ch5_physics}
+\input{ch6_science}
+
+\appendix
+\input{appendices}
+
+\cleardoublepage
+\nocite{*}   % no inline \cite in this map; surface the underwriting classical literature
+\printbibliography[heading=bibintoc,title={Sources \& Further Reading}]
+\end{document}
