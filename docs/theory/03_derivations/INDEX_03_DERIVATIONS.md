@@ -79,6 +79,8 @@ The lattice-ED program: the Maxwell-exploit thread (FTD-0113…0120) and EM-regi
 | [DERIV_LATTICE_LW_EXTENSIONS.md](electromagnetism/DERIV_LATTICE_LW_EXTENSIONS.md) | [DERIVED] / [PARTIAL DERIVED] (Q5) | Q5–Q8 closure: Larmor, Cherenkov rate, extended sources, source-half audit. |
 | [DERIV_LATTICE_HODGE_DUALITY.md](electromagnetism/DERIV_LATTICE_HODGE_DUALITY.md) | [DERIVED] | Lattice Bianchi identities (`d² = 0`) on the vertex-centered stencil. |
 | [DERIV_EM_REGIMES_UNIFIED.md](electromagnetism/DERIV_EM_REGIMES_UNIFIED.md) | [PARTIAL — DERIVED / SELECTION] | The three engine EM-force modes: PoissonLegacy equivalent, Emergent distinct. |
+| [ANALYSIS_LATTICE_WAVE_SECTORS_v1.md](foundational_mechanics/ANALYSIS_LATTICE_WAVE_SECTORS_v1.md) | [SYNTHESIS] + [BOUNDARY] | Sound/light/radio on one dispersion `ω(k)`; light = radio (one flux-wave sector); the no-acoustic-sector boundary (FTD-0298). |
+| [ANALYSIS_WAVE_SECTORS_v1.md](foundational_mechanics/ANALYSIS_WAVE_SECTORS_v1.md) | [MEASURED] | Run of record (FTD-0299): light dispersion atlas LIGHT-CONFIRMED (ω matches the 18-pt stencil; isotropic c=1/√3) + condensate-compression probe NULL (no acoustic branch — FTD-0298 boundary engine-confirmed). |
 | [DERIV_DAMPING_RAYLEIGH.md](foundational_mechanics/DERIV_DAMPING_RAYLEIGH.md) | [IMPOSED — with motivation] | The Rayleigh dissipation coefficient DAMPING = α; three-roles diagnosis. |
 | [DERIV_HEAT_EQUATION_FROM_RATIO.md](foundational_mechanics/DERIV_HEAT_EQUATION_FROM_RATIO.md) | [THEOREM] | Heat equation + arrow of time from the Euler reflection ratio; α as the dissipation parameter. |
 
@@ -187,4 +189,4 @@ Pure header-only theory overlays on the existing lattice engine. No `RenderBridg
 
 ---
 
-70 active docs in this cluster (+ 0 archived).
+72 active docs in this cluster (+ 0 archived).

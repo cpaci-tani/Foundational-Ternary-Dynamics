@@ -51,6 +51,7 @@ import { initSpectrumPanel } from './scales/scale0/ui/overlays/spectrum-panel.js
 import { initGravityPanel } from './scales/scale0/ui/overlays/gravity-panel.js';
 import { initTimePanel } from './scales/scale0/ui/overlays/time-panel.js';
 import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js';
+import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-panel.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
 // Keyboard shortcut handler extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
@@ -538,6 +539,7 @@ async function init() {
     initGravityPanel();
     initTimePanel();
     initThermoPanel();
+    initDispersionPanel();
     appRegistry.register('panel:fluxSlice', window.__ftdFluxSlicePanel);
     appRegistry.register('panel:waveLab', window.__ftdWaveLabPanel);
     appRegistry.register('panel:p1Observables', window.__ftdP1Panel);
@@ -546,6 +548,7 @@ async function init() {
     appRegistry.register('panel:gravity', window.__ftdGravityPanel);
     appRegistry.register('panel:time', window.__ftdTimePanel);
     appRegistry.register('panel:thermo', window.__ftdThermoPanel);
+    appRegistry.register('panel:dispersion', window.__ftdDispersionPanel);
     // Scene panel — curated render controls (FOV / exposure / bloom / fog / ...).
     // Scales 0–3 only (gated by panel-registry); unmounted cleanly when
     // the user switches to a separate-renderer scale like 4/5/12.
