@@ -19,6 +19,47 @@ import { K_B } from '../../constants.js';
 export const TRIAD_ANGLES = Object.freeze([0, 2 * Math.PI / 3, 4 * Math.PI / 3]);
 
 /**
+ * Minimal harness surface for scenario setup when no PhysicsHarness is
+ * passed (legacy `.call(mockBridge, name, ctx)` path). Matches
+ * PhysicsHarness.injectParticle opts handling.
+ *
+ * @param {object} bridge - MockBridge instance
+ */
+export function createScenarioHarness(bridge) {
+    return {
+        bridge,
+        setToggle: (key, value) => bridge.setToggle?.(key, value),
+        setLangevinParams: (T, gamma) => {
+            if (typeof bridge.setLangevinParams === 'function') bridge.setLangevinParams(T, gamma);
+        },
+        setLangevinTemp: (t) => bridge.setLangevinTemp?.(t),
+        setOmega0: (w) => bridge.setOmega0?.(w),
+        injectUniformFluxAdd: (fx, fy, fz) => bridge.injectUniformFluxAdd?.(fx, fy, fz),
+        initFluxGrid: () => bridge._initFluxGrid?.(),
+        injectFlux: (x, y, z, fx, fy, fz) => bridge._injectFlux?.(x, y, z, fx, fy, fz),
+        injectWaveVel: (x, y, z, vx, vy, vz) => bridge._injectWaveVel?.(x, y, z, vx, vy, vz),
+        injectParticle: (x, y, z, state, opts = {}) => {
+            const before = bridge._particles?.length ?? 0;
+            bridge.injectParticle?.(x, y, z, state);
+            const after = bridge._particles?.length ?? 0;
+            if (after > before && opts) {
+                const last = bridge._particles[after - 1];
+                if (last) {
+                    if (Number.isFinite(opts.spin)) last.spin = opts.spin;
+                    if (Number.isFinite(opts.color)) last.color = opts.color;
+                    if (typeof opts.locked === 'boolean') last.locked = opts.locked;
+                    if (Number.isFinite(opts.density)) last.density = opts.density;
+                    if (Number.isFinite(opts.vx)) last.vx = opts.vx;
+                    if (Number.isFinite(opts.vy)) last.vy = opts.vy;
+                    if (Number.isFinite(opts.vz)) last.vz = opts.vz;
+                }
+            }
+            return after > before ? bridge._particles[after - 1] : null;
+        },
+    };
+}
+
+/**
  * Inject a Gaussian radial flux envelope centred at (cx, cy, cz).
  * Center may be integer or floating-point (for half-voxel-centred
  * envelopes — set `opts.minR2 = 0.25` to skip the singular core).
@@ -69,15 +110,62 @@ export function injectRadialEnvelope(harness, cx, cy, cz, sign, sigma, amp, opts
  * the post-mutation particle reference (or null if injection failed).
  */
 export function injectParticleFull(harness, cx, cy, cz, state, attrs = {}) {
-    harness.injectParticle(cx, cy, cz, state);
-    const list = harness.bridge._particles;
-    const last = list ? list[list.length - 1] : null;
-    if (!last) return null;
-    if (Number.isFinite(attrs.color) && attrs.color >= 0) last.color = attrs.color;
-    if (Number.isFinite(attrs.spin)) last.spin = attrs.spin;
-    if (attrs.locked) last.locked = true;
-    if (Number.isFinite(attrs.density)) last.density = attrs.density;
-    return last;
+    return harness.injectParticle?.(cx, cy, cz, state, attrs) ?? null;
+}
+
+/**
+ * Locked particle on the y-z plane at fixed x (barrier, eraser wires).
+ * @param {object} [opts]
+ * @param {'even'|null} [opts.parity] — `'even'` keeps only (y+z) % 2 === 0
+ */
+export function injectLockedYZPlane(harness, x, N, opts = {}) {
+    const state = opts.state ?? 1;
+    const attrs = opts.attrs ?? { locked: true };
+    for (let y = 0; y < N; y++) {
+        for (let z = 0; z < N; z++) {
+            if (opts.parity === 'even' && (y + z) % 2 !== 0) continue;
+            injectParticleFull(harness, x, y, z, state, attrs);
+        }
+    }
+}
+
+/** Locked barrier wall in the y-z plane spanning `width` voxels in +x. */
+export function injectLockedBarrierWall(harness, x0, N, width, state = 1) {
+    for (let y = 0; y < N; y++)
+    for (let z = 0; z < N; z++)
+    for (let dx = 0; dx < width; dx++) {
+        injectParticleFull(harness, x0 + dx, y, z, state, { locked: true });
+    }
+}
+
+/**
+ * Two coherent Gaussian line sources (double-slit geometry), propagating +x.
+ * @param {function} [opts.emit] — `(px, py, z, g) => void` per voxel
+ */
+export function injectCoherentSlitPair(harness, ctx, opts = {}) {
+    const { N, mid, vox, sigma } = ctx;
+    const slitSigma = opts.slitSigma ?? sigma(2);
+    const slitHw = opts.slitHw ?? vox(4);
+    const sAmp = opts.sAmp ?? 0.3;
+    const slitSep = opts.slitSep ?? vox(5);
+    const slitX = opts.slitX ?? vox(8);
+    const slitYs = opts.slitYs ?? [mid - slitSep, mid + slitSep];
+    const emit = opts.emit ?? ((px, py, z, g) => {
+        harness.injectFlux(px, py, z, 0, 0, g);
+        harness.injectWaveVel(px, py, z, g, 0, 0);
+    });
+    for (const sy of slitYs) {
+        for (let z = 0; z < N; z++)
+        for (let dy = -slitHw; dy <= slitHw; dy++)
+        for (let dx = -slitHw; dx <= slitHw; dx++) {
+            const r2 = dx * dx + dy * dy;
+            const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
+            if (g < 1e-6) continue;
+            const px = slitX + dx, py = sy + dy;
+            if (px < 0 || px >= N || py < 0 || py >= N) continue;
+            emit(px, py, z, g);
+        }
+    }
 }
 
 /**
@@ -97,13 +185,13 @@ export function injectDressedParticle(harness, cx, cy, cz, state, spin, color, s
  * charge + color and alternating spin (+1, -1, +1). Mirrors the C++
  * `tri(...)` helper.
  */
-export function injectTriad(harness, cx, cy, cz, charges, colors, rad, locked = true) {
+export function injectTriad(harness, cx, cy, cz, charges, colors, rad, locked = true, dressSigma = 2) {
     for (let k = 0; k < 3; k++) {
         const ang = TRIAD_ANGLES[k];
         const qx = Math.round(cx + rad * Math.cos(ang));
         const qy = Math.round(cy + rad * Math.sin(ang));
         injectDressedParticle(harness, qx, qy, cz, charges[k],
-            (k % 2 === 0) ? 1 : -1, colors[k], 2, K_B * 0.5, locked);
+            (k % 2 === 0) ? 1 : -1, colors[k], dressSigma, K_B * 0.5, locked);
     }
 }
 

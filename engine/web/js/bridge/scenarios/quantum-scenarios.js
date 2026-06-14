@@ -14,6 +14,12 @@
  */
 
 import { K_B, K_GENESIS } from '../../constants.js';
+import {
+    injectCoherentSlitPair,
+    injectLockedBarrierWall,
+    injectLockedYZPlane,
+    injectParticleFull,
+} from './_helpers.js';
 
 /**
  * @param {string} name - scenario identifier
@@ -46,78 +52,27 @@ export function setupQuantumScenario(name, harness, ctx) {
                     break;
                 }
                 case 'quantum-double-slit': {
-                    // Two coherent line sources with genesis → interference + manifestation
-                    const slitSigma = sigma(2);
-                    const slitHw = vox(4);
-                    const sAmp = 0.3;
-                    const slit_sep = vox(5);
-                    const slit_x = vox(8);
-                    const slit_ys = [mid - slit_sep, mid + slit_sep];
-                    for (const sy of slit_ys) {
-                        for (let z = 0; z < N; z++)
-                        for (let dy = -slitHw; dy <= slitHw; dy++)
-                        for (let dx = -slitHw; dx <= slitHw; dx++) {
-                            const r2 = dx * dx + dy * dy;
-                            const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
-                            if (g < 1e-6) continue;
-                            const px = slit_x + dx, py = sy + dy;
-                            if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                            harness.injectFlux(px, py, z, 0, 0, g);
-                            harness.injectWaveVel(px, py, z, g, 0, 0); // propagate +x
-                        }
-                    }
+                    injectCoherentSlitPair(harness, ctx);
                     harness.setToggle('genesis', true);
                     harness.setToggle('coupling', false);
                     break;
                 }
                 case 'quantum-eraser': {
-                    // Quantum Eraser: Coherent slits marked orthogonally
-                    const slitSigma = sigma(2);
-                    const slitHw = vox(4);
-                    const sAmp = 0.3;
-                    const slit_sep = vox(5);
-                    const slit_x = vox(8);
-
-                    // Slit 1: y-polarized
-                    const sy1 = mid - slit_sep;
-                    for (let z = 0; z < N; z++)
-                    for (let dy = -slitHw; dy <= slitHw; dy++)
-                    for (let dx = -slitHw; dx <= slitHw; dx++) {
-                        const r2 = dx * dx + dy * dy;
-                        const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
-                        if (g < 1e-6) continue;
-                        const px = slit_x + dx, py = sy1 + dy;
-                        if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                        harness.injectFlux(px, py, z, 0, g, 0); // y-polarized
-                        harness.injectWaveVel(px, py, z, g, 0, 0); // propagate +x
-                    }
-
-                    // Slit 2: z-polarized
-                    const sy2 = mid + slit_sep;
-                    for (let z = 0; z < N; z++)
-                    for (let dy = -slitHw; dy <= slitHw; dy++)
-                    for (let dx = -slitHw; dx <= slitHw; dx++) {
-                        const r2 = dx * dx + dy * dy;
-                        const g = sAmp * Math.exp(-r2 / (2 * slitSigma * slitSigma));
-                        if (g < 1e-6) continue;
-                        const px = slit_x + dx, py = sy2 + dy;
-                        if (px < 0 || px >= N || py < 0 || py >= N) continue;
-                        harness.injectFlux(px, py, z, 0, 0, g); // z-polarized
-                        harness.injectWaveVel(px, py, z, g, 0, 0); // propagate +x
-                    }
-
-                    // Diagonal eraser (y=z polarizer) at x = N/2
-                    const eraserX = Math.floor(N / 2);
-                    for (let y = 0; y < N; y++) {
-                        for (let z = 0; z < N; z++) {
-                            // Place locked particles along the y + z diagonal to form parallel conducting wires
-                            if ((y + z) % 2 === 0) {
-                                harness.injectParticle(eraserX, y, z, 1);
-                                harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
-                            }
-                        }
-                    }
-
+                    injectCoherentSlitPair(harness, ctx, {
+                        slitYs: [mid - vox(5)],
+                        emit: (px, py, z, g) => {
+                            harness.injectFlux(px, py, z, 0, g, 0);
+                            harness.injectWaveVel(px, py, z, g, 0, 0);
+                        },
+                    });
+                    injectCoherentSlitPair(harness, ctx, {
+                        slitYs: [mid + vox(5)],
+                        emit: (px, py, z, g) => {
+                            harness.injectFlux(px, py, z, 0, 0, g);
+                            harness.injectWaveVel(px, py, z, g, 0, 0);
+                        },
+                    });
+                    injectLockedYZPlane(harness, Math.floor(N / 2), N, { parity: 'even' });
                     harness.setToggle('genesis', true);
                     harness.setToggle('coupling', false);
                     break;
@@ -150,12 +105,7 @@ export function setupQuantumScenario(name, harness, ctx) {
                     }
                     // Barrier: locked +1 particles across y-z plane
                     const W = harness.bridge._quantumBarrierWidth || vox(3);
-                    for (let y = 0; y < N; y++)
-                    for (let z = 0; z < N; z++)
-                    for (let dx = 0; dx < W; dx++) {
-                        harness.injectParticle(mid + dx, y, z, 1);
-                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
-                    }
+                    injectLockedBarrierWall(harness, mid, N, W, 1);
                     break;
                 }
                 case 'quantum-well': {
@@ -163,14 +113,8 @@ export function setupQuantumScenario(name, harness, ctx) {
                     const wallA = Math.floor(N / 4);
                     const wallB = Math.floor(3 * N / 4);
                     const boxLength = wallB - wallA;
-                    // Reflective walls: locked +1 particles across y-z planes
-                    for (let y = 0; y < N; y++)
-                    for (let z = 0; z < N; z++) {
-                        harness.injectParticle(wallA, y, z, 1);
-                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
-                        harness.injectParticle(wallB, y, z, 1);
-                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
-                    }
+                    injectLockedYZPlane(harness, wallA, N);
+                    injectLockedYZPlane(harness, wallB, N);
                     // Broadband flux between walls: modes n=1..8
                     for (let n = 1; n <= 8; n++) {
                         const amp_n = K_B * 0.5 / n;
@@ -253,14 +197,8 @@ export function setupQuantumScenario(name, harness, ctx) {
                     const d = harness.bridge._quantumCasimirSep || vox(6);
                     const plateA = mid - Math.floor(d / 2);
                     const plateB = mid + Math.floor(d / 2);
-                    // Locked +1 particles forming two plates across y-z
-                    for (let y = 0; y < N; y++)
-                    for (let z = 0; z < N; z++) {
-                        harness.injectParticle(plateA, y, z, 1);
-                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
-                        harness.injectParticle(plateB, y, z, 1);
-                        harness.bridge._particles[harness.bridge._particles.length - 1].locked = true;
-                    }
+                    injectLockedYZPlane(harness, plateA, N);
+                    injectLockedYZPlane(harness, plateB, N);
                     // Fill entire lattice with low-amplitude random flux (vacuum foam)
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)

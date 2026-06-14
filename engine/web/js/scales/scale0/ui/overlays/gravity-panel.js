@@ -20,7 +20,7 @@ import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { cardStyle, titleStyle, heroStyle, tagBadge, formatExp, formatFixed } from './_card-helpers.js';
 import { transposeAndFlipNN, paintSliceToCanvas } from './slice-render.js';
 import { aggregateMetrics, forceMagnitudes, gravitySlice, maxRhoOf } from '../../analysis/gravity-analysis.js';
-import { getScale0State } from '../../state/store.js';
+import { getScale0State, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { rampViridis, rampEmEnergy, rampVorticity } from '../../../../viewport/color-ramps.js';
 
@@ -339,11 +339,6 @@ export function initGravityPanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('panel-gravity');
     if (!host) return null;
-    const getBridge = () => {
-        const state = getScale0State?.();
-        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
-        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        return ctx?.bridge || null;
-    };
+    const getBridge = () => resolveActiveScale0BridgeFromWindow();
     return mountGravityPanel(host, getBridge);
 }

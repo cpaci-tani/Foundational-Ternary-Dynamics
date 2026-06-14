@@ -6,6 +6,7 @@ import {
     generateBImportanceSeeds,
 } from '../../../fieldlines.js';
 import { DUAL_DELTA } from '../../../constants.js';
+import { getActiveScale0Capability } from '../state/store.js';
 import {
     computePsiSquaredFrame,
     computePhaseFrame,
@@ -105,9 +106,7 @@ export function buildQuantumOverlayData(ctx, state, sampled) {
 // caller. `activeScale0` is the particle-frame source (mock vs main bridge),
 // lifted once and threaded in so E and B stay coherent.
 function emActiveScale0(ctx, state) {
-    return (state.useFluxMock && state.fluxMock)
-        ? state.fluxMock.capabilities.scale0
-        : ctx.bridge.capabilities.scale0;
+    return getActiveScale0Capability(ctx, state) ?? ctx.bridge.capabilities.scale0;
 }
 
 function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) {

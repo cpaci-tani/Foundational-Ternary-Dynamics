@@ -23,7 +23,7 @@ import {
 import {
     defectCount, fluxTubeComponents, metricStats, histogram, chiralityFromAudit,
 } from '../../analysis/lattice-topology.js';
-import { getScale0State } from '../../state/store.js';
+import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 
 const PANEL_ID = 'spectrum-panel';
 const HZ = 2;                 // exploratory data — slower cadence
@@ -338,14 +338,6 @@ export function initSpectrumPanel() {
     if (typeof document === 'undefined') return null;
     const host = document.getElementById('panel-spectrum');
     if (!host) return null;
-    // Resolve the bridge that actually owns the live flux physics: for flux-*
-    // scenarios that is the fluxMock (worker/mock), NOT the idle ctx.bridge
-    // (same pattern as flux-slice / p1-observables; RF-9). Re-evaluated per call.
-    const getBridge = () => {
-        const state = getScale0State?.();
-        if (state?.useFluxMock && state?.fluxMock) return state.fluxMock;
-        const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-        return ctx?.bridge || null;
-    };
+    const getBridge = () => resolveActiveScale0BridgeFromWindow();
     return mountSpectrumPanel(host, getBridge);
 }
