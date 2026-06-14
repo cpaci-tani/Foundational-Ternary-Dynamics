@@ -1,6 +1,6 @@
-# ANALYSIS: Halo-exponent forcedness audit (FTD-0290)
+# ANALYSIS: Halo-exponent forcedness audit (FTD-0300)
 
-**FTD ID:** FTD-0290
+**FTD ID:** FTD-0300
 **Date:** 2026-06-13
 **Status:** `[MEASUREMENT ANALYSIS — INDETERMINATE (frozen); SPARC boundary]`
 **Pre-registration:** [`PREREG_HALO_FORCEDNESS_v1.md`](preregistrations/PREREG_HALO_FORCEDNESS_v1.md)
@@ -122,7 +122,7 @@ prediction. Honest open routes, each its own future pre-registration:
 
 ## 5 · Claim status (no promotions)
 
-| Claim | Status after FTD-0290 |
+| Claim | Status after FTD-0300 |
 |---|---|
 | Dark-matter halo exponent (lossless regime) | `INDETERMINATE` — box-filling (not localized) but windowed slope converges to −1.25 |
 | `DERIV_DARK_SECTOR_DYNAMICS.md` §4.1 value −0.69 | **falsified** — the converged windowed exponent is −1.25; −0.69 is an L=64 transient |

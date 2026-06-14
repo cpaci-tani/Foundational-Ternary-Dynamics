@@ -1,4 +1,4 @@
-# Proton-stability forcedness audit (FTD-0291) — run-of-record verdict
+# Proton-stability forcedness audit (FTD-0301) — run-of-record verdict
 
 **Status:** `[MEASURED — UNFORCED-METASTABLE (frozen); boundary]`
 **Date:** 2026-06-13
@@ -105,14 +105,14 @@ lock the `[THEOREM]` invokes is structurally inapplicable to the mixed-sign prot
 postulate forbids decay; the proton decays spontaneously by evaporation; FTD's own weak
 channel transmutes it; and its only exact charge `Σs` is not conserved across decay. The
 `proof_complete_sm.py` `τ_p = ∞` claim is corrected from `[THEOREM]` to **`[SELECTION]` /
-emergent-metastable** (recorded in LEDGER FTD-0291).
+emergent-metastable** (recorded in LEDGER FTD-0301).
 
 ## 5 · What this does and does not touch
 
 - It adjudicates only whether `τ_p = ∞` is **forced**. It does **not** demote the
   algebraic-spine theorems, the `N_c = 3` derivations, the SM mass identifications, or
   weak-transmutation's status as an `[IMPOSED]` electroweak analog.
-- Like the dark-matter halo (FTD-0290 = INDETERMINATE), the "micro" pier candidate
+- Like the dark-matter halo (FTD-0300 = INDETERMINATE), the "micro" pier candidate
   (proton stability) **does not open as a forced FTD prediction** — a Number-One-Goal
   clause-2 boundary: the discrete ontology does **not** determine baryon stability, and
   its native dynamics in fact license proton decay.
@@ -127,6 +127,6 @@ Pre-reg + instruments hash-locked at `bb99a20d` (tag `preregister-proton-stabili
 (arms `ror_cold_r1`, `ror_cold_r2`, `ror_inject`, `ror_lan_T0p3`, `ror_lan_T0p8`).
 Analyzer: `scripts/exploration/analyze_proton_stability.py` (frozen D1–D4). Campaign:
 `engine/tests/campaign_proton_stability.cpp` (observation-only; golden-neutral). Deps:
-FTD-0290 (the dark-matter sibling boundary), FTD-0269 (the forcing-vs-fitting precedent),
+FTD-0300 (the dark-matter sibling boundary), FTD-0269 (the forcing-vs-fitting precedent),
 FTD-0272 (first-order genesis = the evaporation/condensation background), FTD-0273
 (weak-transmutation B-violation context).

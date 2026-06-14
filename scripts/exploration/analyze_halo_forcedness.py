@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FTD-0290 - halo-exponent forcedness analyzer (frozen BOUNDARY verdict).
+FTD-0300 - halo-exponent forcedness analyzer (frozen BOUNDARY verdict).
 
 Is the dark-matter (lossless, selective-ON) halo exponent p (|J|(r) ~ norm*r^p over
 r in [7,23]) a FORCED geometric invariant, or a finite-size / regime artifact? This
@@ -87,7 +87,7 @@ def main():
     damped = regime_table(det, "off", dmp0, gc0, kb0)
 
     print("=" * 74)
-    print("FTD-0290 - halo-exponent forcedness analysis (BOUNDARY verdict)")
+    print("FTD-0300 - halo-exponent forcedness analysis (BOUNDARY verdict)")
     print("=" * 74)
     print(f"frozen: window r in [{R_LO},{R_HI}], L-conv tol {L_CONV_TOL}, "
           f"localized C<{LOCALIZED}, box-fill C>{BOXFILL}; doc p={DOC_PEXP}")
@@ -159,7 +159,7 @@ def main():
         verdict = "INDETERMINATE  (forced-control R0 failed; instrument cannot resolve)"
     else:
         verdict = f"INDETERMINATE  (R0={r0}, R1={r1})"
-    print(f"FTD-0290 VERDICT: {verdict}")
+    print(f"FTD-0300 VERDICT: {verdict}")
     print("=" * 74)
     print("(No promotions. A BOUNDARY is a map of where the dark-matter claim stops "
           "being forced.)")
