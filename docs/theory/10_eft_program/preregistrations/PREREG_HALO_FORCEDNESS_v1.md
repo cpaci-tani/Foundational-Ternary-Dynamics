@@ -1,8 +1,8 @@
-# PRE-REGISTRATION — Halo-exponent forcedness audit (FTD-0290)
+# PRE-REGISTRATION — Halo-exponent forcedness audit (FTD-0300)
 
 **Status:** `[PRE-REGISTRATION]` — design lock; run of record follows the hash-lock.
 **Date:** 2026-06-13
-**LEDGER id (reserved):** FTD-0290
+**LEDGER id (reserved):** FTD-0300
 **Git tag (to be applied at lock):** `preregister-halo-forcedness-v1`
 **Executes:** the gate (Step 1) of the dark-matter / SPARC rotation-curve program. Is
 the engine's single-particle self-field halo *exponent* a FORCED geometric invariant,

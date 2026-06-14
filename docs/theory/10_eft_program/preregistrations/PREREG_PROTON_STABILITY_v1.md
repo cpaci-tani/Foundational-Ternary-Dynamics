@@ -1,10 +1,10 @@
-# PRE-REGISTRATION — Proton-stability forcedness audit (FTD-0291)
+# PRE-REGISTRATION — Proton-stability forcedness audit (FTD-0301)
 
 **Status:** `[PRE-REGISTRATION]` — design lock; run of record follows the hash-lock.
 **Date:** 2026-06-13
-**LEDGER id (reserved):** FTD-0291
+**LEDGER id (reserved):** FTD-0301
 **Git tag (to be applied at lock):** `preregister-proton-stability-v1`
-**Executes:** the "micro" pier candidate after the dark-matter halo (FTD-0290). Is the
+**Executes:** the "micro" pier candidate after the dark-matter halo (FTD-0300). Is the
 proton's infinite lifetime (`τ_p = ∞`) a *forced* prediction of FTD's discrete ontology
 — the sharpest claimed divergence from grand-unified theories, which predict decay — or
 is the proton at best emergent-metastable while FTD's own native dynamics actively decay

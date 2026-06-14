@@ -1,6 +1,6 @@
 /**
  * @file campaign_proton_stability.cpp
- * @brief FTD-0291: is the proton (uud triad) dynamically stable, or does it
+ * @brief FTD-0301: is the proton (uud triad) dynamically stable, or does it
  *        DECAY (evaporate / transmute) under FTD's native dynamics?
  *
  * VERIFIED SOURCE FACTS (the audit premise):

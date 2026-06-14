@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-FTD-0290 - compile-time constant sweep for the halo-exponent forcedness audit.
+FTD-0300 - compile-time constant sweep for the halo-exponent forcedness audit.
 
 DAMPING, G_C, K_B are constexpr (not runtime toggles), so the only way to sweep
 them is edit-header -> rebuild -> run -> restore (the run_kinetic_drain_sweeps_native
