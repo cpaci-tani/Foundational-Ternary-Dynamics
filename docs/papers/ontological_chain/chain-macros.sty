@@ -1,0 +1,28 @@
+% =============================================================================
+% chain-macros.sty -- Chain-specific constants/equations the monograph macros lack
+% -----------------------------------------------------------------------------
+% ANTI-DRIFT: every load-bearing constant the six-layer chain needs but the
+% construction monograph's ftd-math-macros.sty does not already provide. Body
+% text must never hand-key a constant -- it comes from a macro here or there.
+% Canonical numeric source: scripts/constants.py.
+% =============================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{chain-macros}[2026/06/14 v1.0 FTD ontological-chain extra macros]
+
+% ---- substrate / ontology layer ------------------------------------------
+\newcommand{\cwave}{c=\tfrac{1}{\sqrt 3}}                       % CFL causal cone on the cubic lattice
+\newcommand{\cwavenum}{0.5773502692\ldots}                     % 1/sqrt(3) numeric (rarely needed)
+\newcommand{\dispersion}{\omega(k)=2\,c\,\lvert\sin(k/2)\rvert} % lattice flux-wave dispersion
+\newcommand{\fluxstate}{J \in \mathbb{R}^3 \;\perp\; s \in \{-1,0,+1\}} % primary orthogonal pair
+\newcommand{\gausssource}{\nabla\!\cdot\!J = \rho_s}            % upward s->J channel (Gauss sourcing)
+\newcommand{\crucialdist}{\{q,p\}\neq 0 \quad\text{yet}\quad [q,p]=0} % FTD-0243 crucial distinction
+
+% ---- physics layer --------------------------------------------------------
+\newcommand{\geomcoulomb}{\alpha_r(r,L) = 2\,r\,G_L(r)}        % Phase-G geometric Coulomb
+\newcommand{\clustermass}{N(A)\approx \tfrac14\bigl(A/K_{\mathrm{genesis}}\bigr)^2} % FTD-0110 linear-level
+\newcommand{\kquarter}{k=\tfrac{1}{N_{\mathrm{base}}}=\tfrac14} % O_h A1g multiplicity coefficient
+
+% ---- provenance helper: \ftdid{0013} -> "FTD-0013" in a consistent face ----
+\newcommand{\ftdid}[1]{\textsc{ftd-#1}}
+
+\endinput
