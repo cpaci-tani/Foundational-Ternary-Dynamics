@@ -15,7 +15,7 @@
 - [DERIV_VARIATIONAL_PROOF.md](../foundational_mechanics/DERIV_VARIATIONAL_PROOF.md) -- delta-S = 0 reproduces all 59 update rules
 - [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) -- Lattice propagator G_L(k) = 1/lambda(k), vertex g_c = sqrt(alpha), Ward identity
 - [DERIV_HIGGS_FROM_MANIFESTATION.md](../standard_model/DERIV_HIGGS_FROM_MANIFESTATION.md) -- Phase transition at K_B, Higgs as order parameter
-- [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) -- KMS states verified at beta = pi
+- [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) -- KMS states verified at beta = pi
 - [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) -- g_c = sqrt(alpha) derivation
 
 ---
@@ -589,7 +589,7 @@ The KMS connection (Section 6) is [THEOREM] for the standard results (Gibbs stat
 | [DERIV_VARIATIONAL_PROOF.md](../foundational_mechanics/DERIV_VARIATIONAL_PROOF.md) | $\delta S = 0$ reproduces all update rules | Ensures $S_E$ is the correct action for the simulation |
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Lattice propagator, vertex, Ward identity | Recovered as functional derivatives of $Z$ (Section 4) |
 | [DERIV_HIGGS_FROM_MANIFESTATION.md](../standard_model/DERIV_HIGGS_FROM_MANIFESTATION.md) | Phase transition at $K_B$, Higgs as order parameter | Phase transition in $Z(\beta)$ (Section 5.4) |
-| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | KMS verification at $\beta = \pi$, modular flow program | KMS confirmation (Section 6.2), modular Hamiltonian (Section 6.3) |
+| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | KMS verification at $\beta = \pi$, modular flow program | KMS confirmation (Section 6.2), modular Hamiltonian (Section 6.3) |
 | [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) | $g_c = \sqrt{\alpha}$ derivation | Vertex factor in Feynman rules (Section 4.2) |
 | [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | Lattice Green's functions, dispersion relation | Free propagator structure (Section 2.3) |
 

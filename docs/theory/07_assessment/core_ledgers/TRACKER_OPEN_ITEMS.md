@@ -401,7 +401,7 @@ Under FC-1, all continuous observer and reference frame context measurement targ
 ## §7 Theory — roadmaps, reference, specs
 
 ### 7.1 QFT / GR bridge roadmap —  CLOSED/RECLASSIFIED 2026-06-10
-**File:** `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md`.
+**File:** `docs/theory/01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md`.
 Under the FTD Constitution (`SPEC_FTD_FRAMEWORK_V1.md`, FTD-0254), the exploratory goals of the roadmap regarding the recovery of standard Hilbert space, quantum non-commutativity, and the Born rule have been superseded by Framework Commitments FC-1 (declining measurement-map import M, commutative algebra $A_5$ complete) and FC-2 (native arrow, space ⊥ time fundamental). Gaps are formally closed as resolved, reclassified, or declined. The file has zero live `[OPEN]` items.
 
 ### 7.2 SM replacement completeness — **3 `[OPEN]`**
@@ -515,7 +515,7 @@ Snapshot (2026-04-17):
 
 | File | Count |
 |---|---:|
-| `docs/theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md` | RESOLVED |
+| `docs/theory/01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md` | RESOLVED |
 | `docs/theory/03_derivations/gravity_and_cosmology/DERIV_LATTICE_BLACK_HOLES.md` | RESOLVED |
 | `engine/src/dag_engine.cpp` | 6 |
 | `docs/theory/03_derivations/DERIV_MOORE_GAUGE_STRUCTURE.md` | 6 |
