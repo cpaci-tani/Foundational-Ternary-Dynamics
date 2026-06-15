@@ -426,9 +426,15 @@ The engine was rewritten from ~1382 lines of phenomenological code to a logic-fi
 
 **Toggle-gated extensions** (default OFF, for pedagogy and exploration):
 - Larmor radiation: acceleration-dependent damping (v2.11)
-- Dual substrate: J_L + J_R chirality physics
-- Color forces, strong force, weak transmutation, triad binding, pair production, exchange force
+- Color forces, strong force, triad binding, pair production, exchange force
 - Latency field and proper-time accumulation when `latency_field` is enabled
+
+A few extension toggles are *promoted to default ON* and run in the default
+tick (see the toggle table below and `term_toggles.h`): `dual_substrate`
+(J_L + J_R chirality), `selective_damping`, and `weak_transmutation`
+(stress-gated polarity flip). Note: `weak_transmutation` is a third J↔s
+coupling not named by the two-channel ontology (FTD-0257); whether it should
+remain default-on is an open governance question, not a settled rule.
 
 ### Scale 5: Cosmic Engine (v2.12)
 
