@@ -88,5 +88,17 @@ inline constexpr double M_HIGGS = 124.8;   // GeV
 // Higgs self-coupling: λ_H = m_H² / (2·v²) [DERIVED]
 inline constexpr double LAMBDA_HIGGS = (124.8 * 124.8) / (2.0 * 246.09 * 246.09);
 
+// ============================================================================
+// FTD-0131 derived gravity (Scale-1 ParticleEngine only)
+// ============================================================================
+// Gravitational charge q_g = m/m_P with unit coupling; two-body α_G(e,e) =
+// (m_e/m_P)² ≈ 1.75e-45. G_PE = 1/(4π·m_P²) in the engine's 4π convention.
+// Scale 0/4/5 substrate demos retain lattice-toy G_N from gauge_couplings.h.
+inline constexpr double M_PLANCK_GEV     = 1.22089e19;
+inline constexpr double M_PLANCK_MEV     = M_PLANCK_GEV * 1.0e3;
+inline constexpr double G_DERIVED        = 1.0 / (4.0 * PI * M_PLANCK_MEV * M_PLANCK_MEV);
+inline constexpr double ALPHA_G_ELECTRON = (K_B / M_PLANCK_MEV) * (K_B / M_PLANCK_MEV);
+inline constexpr double G_PE             = G_DERIVED;
+
 }  // namespace ontic
 }  // namespace ftd
