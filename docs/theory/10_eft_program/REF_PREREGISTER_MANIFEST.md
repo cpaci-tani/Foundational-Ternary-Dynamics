@@ -405,7 +405,7 @@ When auditing: confirm `git rev-list -n1 preregister-x-minus-physical-identifica
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0211** W5 DM weighting confirmation | `preregister-w5-confirmation-v1` | `ae9996e` | [`verify_w5_cosmology.py`](../../../scripts/exploration/verify_w5_cosmology.py) | n/a | n/a (desk/numerical) | [`PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md`](preregistrations/PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md) (pre-reg) → [`FOUND_DM_BARYON_W5_CONFIRMATION.md`](derivations/FOUND_DM_BARYON_W5_CONFIRMATION.md) (Outcome B UNDERDETERMINED) |
+| **FTD-0211** W5 DM weighting confirmation | `preregister-w5-confirmation-v1` | `ae9996e` | [`verify_w5_cosmology.py`](../../../scripts/exploration/verify_w5_cosmology.py) | n/a | n/a (desk/numerical) | [`PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md`](preregistrations/PREREG_DM_BARYON_W5_INDEPENDENT_CONFIRMATION_v1.md) (pre-reg) → [`FOUND_DM_BARYON_W5_CONFIRMATION.md`](archive/resolved/FOUND_DM_BARYON_W5_CONFIRMATION.md) (Outcome B UNDERDETERMINED) |
 
 Pre-reg SHA256: `a771b279327b0e82d409b645416ca9b1a68633b129e0852e875790150dbaa2ee`.
 
@@ -417,7 +417,7 @@ When auditing: confirm `git rev-list -n1 preregister-w5-confirmation-v1` resolve
 
 | FTD ID | Pre-reg tag | Commit | Script | Flags | Output dir | Analysis doc |
 |---|---|---|---|---|---|---|
-| **FTD-0212** Lemniscatic K_2-regulator derivation | `preregister-lemniscatic-k2-regulator-v1` | `ae9996e` | [`proof_lemniscatic_k2_regulator.py`](../../../scripts/proofs/proof_lemniscatic_k2_regulator.py) | n/a | n/a (numerical proof) | [`PREREG_LEMNISCATIC_K2_REGULATOR_v1.md`](preregistrations/PREREG_LEMNISCATIC_K2_REGULATOR_v1.md) (pre-reg) → [`FOUND_LEMNISCATIC_K2_REGULATOR.md`](derivations/FOUND_LEMNISCATIC_K2_REGULATOR.md) (Outcome C CLOSED-NEGATIVE) |
+| **FTD-0212** Lemniscatic K_2-regulator derivation | `preregister-lemniscatic-k2-regulator-v1` | `ae9996e` | [`proof_lemniscatic_k2_regulator.py`](../../../scripts/proofs/proof_lemniscatic_k2_regulator.py) | n/a | n/a (numerical proof) | [`PREREG_LEMNISCATIC_K2_REGULATOR_v1.md`](preregistrations/PREREG_LEMNISCATIC_K2_REGULATOR_v1.md) (pre-reg) → [`FOUND_LEMNISCATIC_K2_REGULATOR.md`](archive/closed_negative/FOUND_LEMNISCATIC_K2_REGULATOR.md) (Outcome C CLOSED-NEGATIVE) |
 
 Pre-reg SHA256: `c514f20593bde5fb6e0638367420499e778dbfd0ff00b0e24e84fdbaffa9f797`.
 
