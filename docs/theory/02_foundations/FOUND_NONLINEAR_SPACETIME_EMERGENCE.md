@@ -2,8 +2,10 @@
 
 **Tag:** `[THEORY]`
 **Date:** 2026-05-29
-**Status:** `[THEOREM]` — derives General Relativity and the Einstein Field Equations from spatiotemporal tick-rate saturation on a flat cubic lattice.
-**Authoritative Reference:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md), [`CLAUDE.md](../../CLAUDE.md).
+**Status:** Mixed (reconciled 2026-06-15 — see banner). §3 kinematic Schwarzschild-encoding is `[THEOREM at the kinematic-combination level]` + `[SELECTION]` (curvature reading); §4 full Einstein Field Equations and the "resolves GAP-G2/GAP-G5" claims are `[GAP]` / `[CONJECTURE]`, **not derived**.
+**Authoritative Reference:** [`docs/SPEC_FTD.md`](../SPEC_FTD.md), [`CLAUDE.md`](../../CLAUDE.md).
+
+> **Epistemic reconciliation (2026-06-15).** This document's original blanket `[THEOREM]` framing ("derives General Relativity and the Einstein Field Equations … resolves GAP-G2/G5") was **upward drift** relative to canon and is reconciled downward here. Per the canonical GAP doc [`FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) the **full nonlinear Einstein equations are `[GAP-G2] — not derived`** and **background independence is `[GAP-G5] — broken by the fixed lattice`**; the constitution (`SPEC_FTD_FRAMEWORK_V1.md` §5.2, FC-2) declares the Lorentzian metric an `[AXIOM]`-class emergent-IR commitment, not a derivation. What is genuine: the §3 *kinematic* result that the combined time-dilation/length-contraction formula **encodes** the Schwarzschild line element (`[THEOREM]` at the kinematic-combination level; `[SELECTION]` for the curvature interpretation). §4's Lovelock appeal does **not** derive the EFE — it posits a divergence-free coupling to a metric-deviation field $h_{\mu\nu}$ whose emergent spin-2 origin is itself `[OPEN]` (cf. CLAUDE.md FTD-0189 Step-0). (Separately: the `G_N = 1/(b_3+N_c)^2 = 0.01` identification in §4.3 is **`[CLOSED NEGATIVE]`** per FTD-0131.) No equation is altered; only the epistemic tags and the "proves/resolves" language are corrected.
 
 ---
 
@@ -42,7 +44,7 @@ where $r_s = 2G_N M$ is the emergent Schwarzschild radius `[EMERGENT]`.
 
 ---
 
-## 3. Emergence of the Metric Tensor `[THEOREM]`
+## 3. Emergence of the Metric Tensor `[THEOREM at the kinematic-combination level]` + `[SELECTION]` (curvature reading)
 
 Observers embedded within the lattice measure spatial distances using light-travel times (radar ranging) `[SELECTION]`. The speed of wave propagation on the cubic lattice is bounded by the CFL stability limit `[AXIOM]`:
 $$c = \frac{1}{\sqrt{3}} \tag{3.1}$$
@@ -61,13 +63,13 @@ Substituting the tick-rate saturation profile $f(r) = \sqrt{1 - r_s/r}$:
 
 $$ds^2 = -\left(1 - \frac{r_s}{r}\right) c^2 dt^2 + \left(1 - \frac{r_s}{r}\right)^{-1} dr^2 + r^2 d\Omega^2 \tag{3.4}$$
 
-This is **exactly the Schwarzschild metric of General Relativity in standard coordinates!** Spacetime curvature has emerged completely from flat-lattice tick-rate saturation! $\blacksquare$
+This combined formula **encodes exactly the Schwarzschild line element in standard coordinates** — a genuine `[THEOREM]` at the kinematic-combination level. Reading it as *physical spacetime curvature* is a `[SELECTION]` (the substrate is flat; the curved metric is the relational quantity an embedded observer measures). This is **not** a derivation of the dynamical field equations — see the §4 caveat.
 
 ---
 
-## 4. Thermodynamic Convergence to Einstein Field Equations `[THEOREM]`
+## 4. Thermodynamic Convergence to Einstein Field Equations `[GAP-G2 — not derived]` / `[CONJECTURE]`
 
-We prove that any spatiotemporally varying tick-rate field driven by local energy density must satisfy the full non-linear Einstein Field Equations at large scales.
+We *conjecture* `[CONJECTURE]` that a spatiotemporally varying tick-rate field driven by local energy density satisfies the full non-linear Einstein Field Equations at large scales. The argument below is **not** a derivation: it posits a divergence-free coupling to a metric-deviation field $h_{\mu\nu}$ and invokes Lovelock's *admissibility* theorem — neither of which constructs the EFE from the substrate, and the emergent spin-2 mode $h_{\mu\nu}$ is itself `[OPEN]` (full nonlinear EFE is `[GAP-G2]`, canonical: `FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`).
 
 ### 4.1 Divergence-Free Stress-Energy
 The lattice flux field $J$ satisfies a local energy-momentum conservation law under the 6-phase tick cycle:
@@ -86,7 +88,7 @@ $$G_{\mu\nu} + \Lambda g_{\mu\nu} = 8\pi G_N T_{\mu\nu} \tag{4.2}$$
 where the gravitational constant is derived from FTD framework integers:
 $$G_N = \frac{1}{(b_3 + N_c)^2} = 0.01 \tag{4.3}$$
 
-This resolves the background-independence gap **(GAP-G5)**, proving that background independence is an emergent symmetry: **the coordinate system of the flat substrate is physically inaccessible to embedded observers, who can only measure the curved, relational metric $g_{\mu\nu}$ conformed by tick saturation.**
+This *would*, **if** the §4 coupling were substrate-derived, bear on the background-independence gap **(GAP-G5)** — but GAP-G5 stands **`[OPEN]`** (the fixed cubic lattice breaks background independence; canonical: `FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`). The relational reading is offered as `[CONJECTURE]`: **the coordinate system of the flat substrate is taken to be physically inaccessible to embedded observers, who measure only the curved, relational metric $g_{\mu\nu}$ conformed by tick saturation.**
 
 ---
 
@@ -97,7 +99,7 @@ This resolves the background-independence gap **(GAP-G5)**, proving that backgro
 | Substrate Lattice | Rigid Flat $\mathbb{Z}^3 \times \mathbb{N}$ | `[AXIOM]` | Unobservable deep structure. |
 | Proper Time ($\tau$) | Local clock tick count | `[CONJECTURE]` | Measured physical time. |
 | Tick-Rate Saturation | $f(r) = \sqrt{1 - |J|^2/J_{\text{sat}}^2}$ | `[EMERGENT]` | Equivalence Principle & Gravity. |
-| Spacetime Metric | Schwarzschild $g_{\mu\nu}$ | `[THEOREM]` | Emergent spacetime curvature. |
-| Field Equations | $G_{\mu\nu} = 8\pi G_N T_{\mu\nu}$ | `[THEOREM]` | Non-linear General Relativity. |
+| Spacetime Metric | Schwarzschild $g_{\mu\nu}$ (kinematic encoding) | `[THEOREM at kinematic level]` + `[SELECTION]` | Emergent spacetime curvature (relational reading). |
+| Field Equations | $G_{\mu\nu} = 8\pi G_N T_{\mu\nu}$ | `[GAP-G2 / CONJECTURE — not derived]` | Full non-linear GR — open, not derived from the substrate. |
 
-This successfully resolves **GAP-G2** and **GAP-G5**, establishing curved spacetime and background independence as rigorous emergent theorems of FTD.
+Per the 2026-06-15 reconciliation, this does **not** resolve GAP-G2 or GAP-G5. The §3 kinematic Schwarzschild-encoding is genuine (`[THEOREM]` at the kinematic-combination level); the full Einstein equations (§4) and background independence remain **`[GAP]` / `[OPEN]`** (canonical: [`FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md)). The `G_N = 0.01` identification (§4.3) is separately `[CLOSED NEGATIVE]` (FTD-0131).
