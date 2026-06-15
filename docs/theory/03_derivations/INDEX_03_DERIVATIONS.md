@@ -71,6 +71,10 @@ Path integral, Feynman rules, loop corrections, anomalies — the lattice field-
 | [DERIV_ALPHA_FROM_PHASE_STRUCTURE.md](foundational_mechanics/DERIV_ALPHA_FROM_PHASE_STRUCTURE.md) | [SELECTION] (historical) | Phase-structure argument that x₊ lies in the Coulomb phase; supporting evidence only. |
 | [DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md](electromagnetism/DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md) | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013) | FTD U(1) → QED continuum-limit argument; theorem framing withdrawn under reframe. |
 | [DERIV_18PT_LAPLACIAN_VARIATIONAL.md](foundational_mechanics/DERIV_18PT_LAPLACIAN_VARIATIONAL.md) | [THEOREM] + [SELECTION] | The engine's 18-point isotropic Laplacian stencil from the action principle. |
+| [DERIV_LAGRANGIAN_FROM_TICK_RULE.md](DERIV_LAGRANGIAN_FROM_TICK_RULE.md) | [DERIVATION] / [OPEN] | Bare action from time-discretization of the tick rule (Mechanism B bare-action construction, FTD-0246). |
+| [DERIV_LATTICE_PATH_INTEGRAL_JTWIST.md](DERIV_LATTICE_PATH_INTEGRAL_JTWIST.md) | [DERIVATION] / [OPEN] | Lattice path integral + J-twisted screening self-energy (Mechanism B lattice→continuum matching, FTD-0245). |
+| [DERIV_ALPHA_OPERATIONAL_READOUT.md](DERIV_ALPHA_OPERATIONAL_READOUT.md) | [DERIVATION] | Operational alpha-readout mechanism (remediation, 2026-05-30). |
+| [DERIV_VACUUM_ENERGY_CUTOFF.md](DERIV_VACUUM_ENERGY_CUTOFF.md) | [NUMERICAL FACT] (reconciled 2026-06-15) | Finite O(1) vacuum-energy integral over the discrete Brillouin zone; the 10^120-Λ bridge is [OPEN]/[CONJECTURE], not derived (LEDGER FTD-0303). |
 
 ## Electrodynamics — radiation, retardation, duality
 
@@ -165,6 +169,8 @@ QCD-sector derivations: confinement, pion mass, the electron Yukawa prefactor.
 | [DERIV_CONFINEMENT_FROM_GAP_EQUATION.md](foundational_mechanics/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) | [THEOREM] confinement at x₋ / [SELECTION] QCD ID | Area-law Wilson loops + linear confinement from the master quadratic's x₋ root. |
 | [DERIV_PION_MASS_FROM_GSTAR.md](standard_model/DERIV_PION_MASS_FROM_GSTAR.md) | 6 [THEOREM] + 3 [SELECTION] + 5 [CONJECTURE] | The 15-step G\* → m_π chain; integer-reduction theorem; 0.048% match. |
 | [DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md](standard_model/DERIV_YUKAWA_FROM_27BLOCK_CHARACTER.md) | [STRUCTURALLY MOTIVATED PARAMETRIC] | The electron Yukawa prefactor `16√2/3` from O_h character theory (FTD-0134). |
+| [DERIV_YANG_MILLS_CONFINEMENT.md](DERIV_YANG_MILLS_CONFINEMENT.md) | [MEASURED at an inserted coupling [SELECTION]] (reconciled 2026-06-15) | Engine-measured Wilson-loop area-law confinement signature at β = x₋; the full Yang-Mills proof is RETRACTED (FTD-0042) — only the per-voxel mass gap (FTD-0044) survives as [THEOREM] (LEDGER FTD-0303). |
+| [DERIV_SUBSTRATE_YUKAWA_VERTEX.md](standard_model/DERIV_SUBSTRATE_YUKAWA_VERTEX.md) | [DERIVED] | Substrate-level derivation of the Yukawa vertex amplitude. |
 
 ## Foundational chains and resolutions
 
@@ -193,4 +199,4 @@ Pure header-only theory overlays on the existing lattice engine. No `RenderBridg
 
 ---
 
-72 active docs in this cluster (+ 0 archived).
+109 active docs in this cluster (+ 13 archived). This local index curates the load-bearing subset across the foundational_mechanics / electromagnetism / standard_model / quantum_mechanics / gravity_and_cosmology subdirectories; the master catalog is [`../META_INDEX.md`](../META_INDEX.md).
