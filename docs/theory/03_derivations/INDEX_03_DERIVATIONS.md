@@ -199,4 +199,4 @@ Pure header-only theory overlays on the existing lattice engine. No `RenderBridg
 
 ---
 
-109 active docs in this cluster (+ 13 archived). This local index curates the load-bearing subset across the foundational_mechanics / electromagnetism / standard_model / quantum_mechanics / gravity_and_cosmology subdirectories; the master catalog is [`../META_INDEX.md`](../META_INDEX.md).
+113 active docs in this cluster (+ 13 archived). This local index curates the load-bearing subset across the foundational_mechanics / electromagnetism / standard_model / quantum_mechanics / gravity_and_cosmology subdirectories; the master catalog is [`../META_INDEX.md`](../META_INDEX.md).
