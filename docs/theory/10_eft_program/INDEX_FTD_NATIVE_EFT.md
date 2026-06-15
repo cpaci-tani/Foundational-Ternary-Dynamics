@@ -2,7 +2,7 @@
 
 **Tag:** [REFERENCE]
 **Date:** 2026-05-22 (rewritten after the cluster consolidation)
-**Status:** [REFERENCE] — categorised inventory of every live document in `docs/theory/10_eft_program/`, with current epistemic tags read from each doc's own header.
+**Status:** [REFERENCE] — categorised inventory of `docs/theory/10_eft_program/`, with current epistemic tags read from each doc's own header. **Last full sync 2026-05-22; partially drifted.** Run-of-record analyses added since are not all listed below — notably `ANALYSIS_THERMAL_PHASE_MAP_v1` (FTD-0275), `ANALYSIS_GENESIS_CRITICALITY_v1`, `ANALYSIS_CLUSTER_ENERGY_SPECTROSCOPY_v1`, `ANALYSIS_HALO_FORCEDNESS_v1` (FTD-0300), `ANALYSIS_PROTON_STABILITY_v1` (FTD-0301), `ANALYSIS_ALPHA_D3_FORCED_ESCAPE_v1` (FTD-0284). The authoritative complete catalog is [`../META_INDEX.md`](../META_INDEX.md); a full re-sync of this cluster index is a pending nav-hygiene task. The 2026-06-15 consolidation pass archived several settled routes — see **§ Archive**.
 **Purpose:** Navigational entry point for the FTD-native EFT program. The 2026-05-22 consolidation took the cluster from 89 top-level docs to 34: 48 completed-campaign and closed-route scaffolding docs were archived, 9 `DERIV_FTD_NATIVE_*` husks were merged into 2 docs, and a narrative `RETROSPECTIVE` was added. This INDEX reflects that current state; the archived material is summarised under **§ Archive** and indexed in full by the retrospective.
 
 > **How to use this document**:
@@ -190,7 +190,7 @@ The graviton-census trio — does the FTD substrate carry an emergent massless s
 
 ## § Archive
 
-Archived material is preserved for provenance — cite it to explain "why this route was rejected" or "which completed campaign produced this number"; don't act on it as live work. The full pointer index lives in **`RETROSPECTIVE_EFT_RECOVERY.md`**, which ties the archived scaffolding into the program narrative. Counts as of 2026-05-22:
+Archived material is preserved for provenance — cite it to explain "why this route was rejected" or "which completed campaign produced this number"; don't act on it as live work. The full pointer index lives in **`RETROSPECTIVE_EFT_RECOVERY.md`**, which ties the archived scaffolding into the program narrative. Counts as of 2026-05-22 (the 2026-06-15 consolidation pass added to these: `closed_negative/` +3 settled MC-T4.3 route docs [EMPIRICAL/BOUNDARY/K2_REGULATOR], `resolved/` +1 [W5_CONFIRMATION], and a new `superseded/` subdir +4 [THERMAL_IGNITION, GRAVITON_SUBSTRATE_MODE_v1, STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1, ALPHA_ESTIMATOR_VALIDATION_v1]):
 
 | Subdir | Count | Description |
 |---|---|---|
