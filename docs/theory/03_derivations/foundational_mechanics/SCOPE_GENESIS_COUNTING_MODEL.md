@@ -9,7 +9,7 @@
 > **2026-06-14 execution note:** v1 was hash-locked and run as
 > [`PREREG_GENESIS_COUNTING_v1.md`](../../10_eft_program/preregistrations/PREREG_GENESIS_COUNTING_v1.md).
 > The verdict is **`COUNTING_MODEL_V1_CLOSED_NEGATIVE`**; see
-> [`ANALYSIS_GENESIS_COUNTING_v1.md`](ANALYSIS_GENESIS_COUNTING_v1.md).
+> [`ANALYSIS_GENESIS_COUNTING_v1.md`](../archive/closed_negative/ANALYSIS_GENESIS_COUNTING_v1.md).
 > This closes the v1 slosh-pass/static-gating route only. The broader FTD-0110-NL /
 > FTD-0250 collective-coordinate reduction remains `[OPEN -- boundary mapped]`.
 
