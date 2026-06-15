@@ -44,10 +44,11 @@ import {
     // [PARAMETRIC PDG] reference values — used only for catalog
     // display, not for derivations.
     M_U_PHYS, M_D_PHYS, M_S_PHYS, M_C_PHYS, M_B_PHYS, M_T_PHYS,
-    // Note: neutrino *_PHYS values exist in constants.js but are NOT
-    // imported here — the catalog's nu_e/nu_mu/nu_tau literals carry a
-    // ×1e-3 unit-mismatch with the canonical *_PHYS values (see TODO
-    // Theme H comments at each neutrino entry).
+    // Neutrino masses are now single-sourced from constants.js (2026-06-15
+    // audit): nu_e/nu_mu/nu_tau use M_NU_E_PHYS / M_NU_MU_PHYS / M_NU_TAU_PHYS
+    // (all meV-scale upper bounds, stored in MeV units) instead of inline
+    // literals.
+    M_NU_E_PHYS, M_NU_MU_PHYS, M_NU_TAU_PHYS,
     M_W_PHYS, M_Z_PHYS, M_HIGGS_PHYS,
     M_LAMBDA_PHYS, M_XI_0_PHYS, M_XI_M_PHYS,
     M_ETA_PHYS, M_RHO_PHYS, M_J_PSI_PHYS, M_UPSILON_PHYS,
@@ -65,7 +66,9 @@ const PARTICLES = [
         ftd_formula: 'm_P·√(2π)·(16/3)·α¹¹',
         // FTD-0015 [STRONGLY MOTIVATED CONJECTURE] (only the n=11 exponent is
         // [DERIVED]); 'derived'→'selection' to match LEDGER. 2026-06-15 audit.
-        ftd_accuracy: 0.27, ftd_status: 'selection',
+        // ftd_accuracy 0.27→0.19: canonical m_e match is 0.192% per LEDGER
+        // FTD-0015 / CLAUDE.md. 2026-06-15 audit.
+        ftd_accuracy: 0.19, ftd_status: 'selection',
         display_color: [0.29, 0.87, 0.50], display_size: 4
     },
     {
@@ -74,7 +77,8 @@ const PARTICLES = [
         mass_mev: M_E, charge: 1, spin: 0.5,
         color_charge: 'none', antiparticle: 'electron',
         ftd_formula: 'm_e (same mass)',
-        ftd_accuracy: 0.27, ftd_status: 'selection',  // CPT partner of e⁻ → same FTD-0015 status
+        // ftd_accuracy 0.27→0.19: canonical m_e match (LEDGER FTD-0015). 2026-06-15 audit.
+        ftd_accuracy: 0.19, ftd_status: 'selection',  // CPT partner of e⁻ → same FTD-0015 status
         display_color: [0.97, 0.44, 0.44], display_size: 4
     },
     {
@@ -118,12 +122,11 @@ const PARTICLES = [
     {
         id: 'nu_e', name: 'Electron Neutrino', symbol: 'νₑ',
         category: 'leptons', generation: 1,
-        // 2026-04-27 audit: dropped a stray ×1e-3 unit-mismatch factor that
-        // made the catalog 1000× lighter than M_NU_E_PHYS = 4.1e-9 MeV in
-        // constants.js. Now matches the canonical value (sum-of-masses ~0.06 eV).
-        mass_mev: 4.1e-9, charge: 0, spin: 0.5,
+        // Single-sourced from constants.js (2026-06-15 audit): M_NU_E_PHYS =
+        // 4.1e-9 MeV (4.1 meV upper bound).
+        mass_mev: M_NU_E_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_e',
-        ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 neV',
+        ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 meV',
         // Neutrino masses are NOT derivable from the current FTD chain
         // (constants.js: [PARAMETRIC PDG] bounds); ftd_formula is a motivating
         // match only. 'derived'→'parametric'. 2026-06-15 audit.
@@ -133,8 +136,8 @@ const PARTICLES = [
     {
         id: 'antinu_e', name: 'Electron Antineutrino', symbol: 'ν̄ₑ',
         category: 'leptons', generation: 1,
-        // 2026-04-27 audit: same ×1e-3 factor drop as nu_e above.
-        mass_mev: 4.1e-9, charge: 0, spin: 0.5,
+        // Single-sourced from constants.js (2026-06-15 audit): same as nu_e.
+        mass_mev: M_NU_E_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_e',
         ftd_formula: 'm_ν₁ (same mass)',
         ftd_accuracy: null, ftd_status: 'parametric',
@@ -143,7 +146,8 @@ const PARTICLES = [
     {
         id: 'nu_mu', name: 'Muon Neutrino', symbol: 'νμ',
         category: 'leptons', generation: 2,
-        mass_mev: 8.58e-3, charge: 0, spin: 0.5,
+        // Single-sourced from constants.js (2026-06-15 audit): M_NU_MU_PHYS.
+        mass_mev: M_NU_MU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_mu',
         ftd_formula: 'm₃·√N_c/(b₃+N_c) ≈ 8.6 meV',
         ftd_accuracy: null, ftd_status: 'parametric',
@@ -152,7 +156,8 @@ const PARTICLES = [
     {
         id: 'antinu_mu', name: 'Muon Antineutrino', symbol: 'ν̄μ',
         category: 'leptons', generation: 2,
-        mass_mev: 8.58e-3, charge: 0, spin: 0.5,
+        // Single-sourced from constants.js (2026-06-15 audit): same as nu_mu.
+        mass_mev: M_NU_MU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_mu',
         ftd_formula: 'm_ν₂ (same mass)',
         ftd_accuracy: null, ftd_status: 'parametric',
@@ -161,7 +166,8 @@ const PARTICLES = [
     {
         id: 'nu_tau', name: 'Tau Neutrino', symbol: 'ντ',
         category: 'leptons', generation: 3,
-        mass_mev: 4.955e-2, charge: 0, spin: 0.5,
+        // Single-sourced from constants.js (2026-06-15 audit): M_NU_TAU_PHYS.
+        mass_mev: M_NU_TAU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_tau',
         ftd_formula: 'v·(N_base/N_c)·α⁶ ≈ 49.6 meV',
         ftd_accuracy: null, ftd_status: 'parametric',
@@ -170,7 +176,8 @@ const PARTICLES = [
     {
         id: 'antinu_tau', name: 'Tau Antineutrino', symbol: 'ν̄τ',
         category: 'leptons', generation: 3,
-        mass_mev: 4.955e-2, charge: 0, spin: 0.5,
+        // Single-sourced from constants.js (2026-06-15 audit): same as nu_tau.
+        mass_mev: M_NU_TAU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_tau',
         ftd_formula: 'm_ν₃ (same mass)',
         ftd_accuracy: null, ftd_status: 'parametric',
