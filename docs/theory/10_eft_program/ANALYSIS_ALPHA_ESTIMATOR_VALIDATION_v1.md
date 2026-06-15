@@ -3,7 +3,7 @@
 **FTD ID:** FTD-0286
 **Date:** 2026-06-13
 **Status:** [MEASUREMENT ANALYSIS -- ENERGY FUNCTIONAL MISMATCH]
-**Pre-registration:** `preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`
+**Pre-registration:** `archive/superseded/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md` (archived 2026-06-15)
 **Lock tag:** `preregister-alpha-estimator-validation-v1`
 **Lock commit:** `7cf8bd5caab26a6c66a78be3b1270c571ebbbf97`
 **Artifact:** `engine/tests/campaign_alpha_estimator_validation.cpp`
