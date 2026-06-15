@@ -1,11 +1,13 @@
 ---
 title: "Derivation of Yang-Mills Mass Gap and Quark Confinement"
 status: "[ACTIVE]"
-type: "[THEOREM]"
+type: "[MEASURED at an inserted coupling [SELECTION]]"
 author: "FTD Orchestration Team"
 ---
 
 # Derivation of Yang-Mills Mass Gap and Quark Confinement
+
+> **Epistemic reconciliation (2026-06-15).** This document's result is an **engine-measured area-law signature at an inserted coupling** (β = x₋, a `[SELECTION]`), not a continuum mathematical proof of confinement. Per the constitution (`SPEC_FTD_FRAMEWORK_V1.md` §5.1 row 9) and the LEDGER, the full Yang-Mills mass-gap "proof" was **RETRACTED (FTD-0042)**; the only surviving `[THEOREM]`-grade Yang-Mills claim is the narrow **per-voxel mass gap** (FTD-0044, `spec(H) ⊂ {0} ∪ [K_B, ∞)`). The frontmatter `type` and the "proof" language in §3 are reconciled downward accordingly; no numeric result is changed.
 
 ## 1. The Confinement Problem
 
@@ -27,4 +29,4 @@ The results demonstrated strict **Area-Law Scaling**:
 $$ \langle W(C) \rangle \propto \exp(-\sigma \cdot A) $$
 Where $A$ is the area enclosed by the loop and $\sigma$ is the string tension. 
 
-If the force decreased with distance, the amplitude would scale by the Perimeter. Because it scales by the Area, separating two quarks demands an exponentially increasing amount of energy, inevitably snapping the "flux tube" and creating new quark pairs. This constitutes a direct, discrete mathematical proof of Color Confinement.
+If the force decreased with distance, the amplitude would scale by the Perimeter. Because it scales by the Area, separating two quarks demands an exponentially increasing amount of energy, inevitably snapping the "flux tube" and creating new quark pairs. This is an **engine-measured area-law signature** of confinement at the inserted coupling β = x₋ (a `[SELECTION]`) — strong evidence, but **not** a continuum first-principles proof: the coupling insertion is a selection rather than a derivation, and continuum-limit survival is unproven (cf. constitution §5.1 row 9; the full Yang-Mills proof is RETRACTED per FTD-0042, with only the per-voxel mass gap FTD-0044 surviving as `[THEOREM]`).
