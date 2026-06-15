@@ -59,7 +59,7 @@
 | [SPEC_DIMENSIONAL_MAP.md](SPEC_DIMENSIONAL_MAP.md) | [REFERENCE] (auto-generated) | Dimensionless  dimensional map: spine theorems → predictions → calibration → one worked application. |
 | [SPEC_SM_REPLACEMENT_COMPLETE.md](SPEC_SM_REPLACEMENT_COMPLETE.md) | capstone spec (re-tagged) | L_SM → L_RB replacement; Waves 1–4 synthesis (LEDGER wins on tag conflicts). |
 | [SPEC_FTD_COMPARATIVE_PHYSICS.md](SPEC_FTD_COMPARATIVE_PHYSICS.md) | reference standard | The PF Atlas — how π/4 enters and exits Standard Model formulas, side by side with FTD. |
-| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | research roadmap | QFT-GRT bridge via quantized sentience research roadmap; closed and reconciled under FTD Constitution (all 18 gaps resolved, reclassified, or declined). |
+| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | research roadmap (archived 2026-06-15) | QFT-GRT bridge via quantized sentience research roadmap; closed and reconciled under FTD Constitution (all 18 gaps resolved, reclassified, or declined). |
 
 ## Canonical action & engine map
 
