@@ -62,4 +62,4 @@ Pure header-only theory overlays on the existing lattice engine, tagged `[CANDID
 
 ---
 
-11 active docs in this cluster (+ 2 archived).
+12 active docs in this cluster (+ 2 archived).
