@@ -10,7 +10,7 @@
 **Honest framing:** the v2 attempt repeated the F9 (collusion-bias) failure mode at a higher level: the v1 audit had already caught an under-claim ("CLOSED-NEGATIVE looked humble but was incorrect"); the v2 attempt produced the symmetric over-claim ("FOUND looked rigorous but was invalidated by process + substance"). The pre-registration discipline that mitigated v1's failure was itself **bypassed at v2** — there is no commit-then-tag step between pre-reg and result. Per v2 §1 line 16, this invalidates v2 by its own rule. The substantive content additionally fails Outcome A criteria. v3 is queued.
 **Companion docs:**
 - [`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`](AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md) — v1 audit; precedent for the UNDERDETERMINED verdict format
-- [`PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`](../../03_derivations/foundational_mechanics/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md) — v1 pre-reg; properly committed (`4c15ba1`) + tagged (`preregister-clock-hypothesis-derivation-v1`)
+- [`PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md`](../../03_derivations/archive/superseded/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v1.md) — v1 pre-reg; properly committed (`4c15ba1`) + tagged (`preregister-clock-hypothesis-derivation-v1`)
 - [`archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md`](archive/retracted/PREREG_CLOCK_HYPOTHESIS_DERIVATION_v2.md) — invalidated v2 pre-reg (archived)
 - [`archive/retracted/FOUND_CLOCK_HYPOTHESIS.md`](archive/retracted/FOUND_CLOCK_HYPOTHESIS.md) — invalidated v2 result (archived)
 - [`AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`](AUDIT_NEWTON_POSTULATES_RECONCILIATION.md) — Arc B P0 reconciliation; remains at the v1-audit floor (clock-hypothesis is "1 flagged interpretive step" pending v3 outcome)
