@@ -2,7 +2,7 @@
 
 **Tag:** `[SYNTHESIS]` (re-states canonical claims at their canonical tags) **+ four `[AXIOM]`-class framework-commitment declarations (FC-0, FC-1, FC-2, FC-3)** + `[SELECTION]` (the register and decomposition choices made here).
 **Date:** 2026-06-09
-**LEDGER:** FTD-0254 (this document); FC-1 = FTD-0255; FC-2 = FTD-0256; the two-field formalization = FTD-0257; the deviation ledger = FTD-0258; FC-3 = FTD-0303.
+**LEDGER:** FTD-0254 (this document); FC-1 = FTD-0255; FC-2 = FTD-0256; the two-field formalization = FTD-0257; the deviation ledger = FTD-0258; FC-3 = FTD-0304.
 **Status line (read first):** **Nothing is promoted by this document.** `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; FTD-0208 stays `[CLOSED NEGATIVE]`; the algebraic spine count (7 theorem-grade + 2 honestly tiered) is unchanged. The new content of this document is a set of **declarations** — choices of model, not derivations — plus the assembly of existing results into one constitution.
 **Companion:** [`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) (FTD-0258, the falsifiable deviation spine).
 
