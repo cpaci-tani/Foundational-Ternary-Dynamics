@@ -389,7 +389,10 @@ export function createParticleEngine(state) {
             }
         }
         const pe_val = pe_coulomb + pe_gravity;
-        return { tick: state._pe.tick, particleCount: ps.length, totalKE: ke, totalPE: pe_val, coulombPE: pe_coulomb, gravityPE: pe_gravity, totalEnergy: ke + pe_val, momentumX: px, momentumY: py, momentumZ: pz, angMomX: lx, angMomY: ly, angMomZ: lz };
+        // dissipative: damping intentionally removes energy/momentum, so the
+        // conservation alarms should treat drift as expected, not a violation
+        // (annihilation — a particle-count change — is detected telemetry-side). (Audit D2.)
+        return { tick: state._pe.tick, particleCount: ps.length, totalKE: ke, totalPE: pe_val, coulombPE: pe_coulomb, gravityPE: pe_gravity, totalEnergy: ke + pe_val, momentumX: px, momentumY: py, momentumZ: pz, angMomX: lx, angMomY: ly, angMomZ: lz, dissipative: !!state._pe.damping };
     }
 
     function peGetExtendedData() {
