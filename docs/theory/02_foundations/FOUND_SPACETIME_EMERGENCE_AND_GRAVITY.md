@@ -720,7 +720,7 @@ The lattice creates time ($G^{*2}$). Time creates dynamics (the tick cycle). Dyn
 - [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md) — SR derivation (Part I) and g₀₀ from flux saturation (Part II, Theorem 11.1)
 - [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md) — Newtonian gravity as weak-field limit
 - [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — Linearized GR (propagators, wave equations)
-- [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) — Gap analysis (GAP-G2, GAP-G4, GAP-G5)
+- [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) — Gap analysis (GAP-G2, GAP-G4, GAP-G5)
 
 ### 15.0 Abstract
 
@@ -1177,7 +1177,7 @@ If correct, the three temporal modes (kinematic, thermodynamic, geometric) of th
 - **Relativity derivation:** [DERIV_RELATIVITY_DERIVATION.md](../03_derivations/DERIV_RELATIVITY_DERIVATION.md)
 - **Force emergence (Newtonian weak-field limit):** [DERIV_FORCE_EMERGENCE.md](../03_derivations/DERIV_FORCE_EMERGENCE.md)
 - **QFT/GRT bridge (linearized GR):** [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md)
-- **QFT/GRT bridge roadmap (gap analysis):** [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md)
+- **QFT/GRT bridge roadmap (gap analysis):** [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md)
 - **Collapse-gravity bridge:** [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md)
 - **G* flux-time triad:** EXPLR_GSTAR_ARITHMETIC_IDENTITIES.md (09_mathematical)
 - **ReLU type transition:** EXPLR_RELU_TYPE_TRANSITION.md (09_mathematical)
