@@ -18,7 +18,7 @@
 
 import {
     M_E, MU_RATIO, TAU_RATIO,
-    M_P_PHYS, M_N_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS,
+    M_P_PHYS, M_N_PHYS, M_SIGMA_PHYS, M_SIGMA0_PHYS, M_SIGMA_MINUS_PHYS, M_OMEGA_PHYS,
     M_PI_CH_PHYS, M_PI_0_PHYS, M_K_CH_PHYS, M_K_0_PHYS,
     M_DELTA_PHYS,
     // Wave 2B additions (2026-04-26): replace inline literals with
@@ -26,10 +26,11 @@ import {
     // [PARAMETRIC PDG] reference values — used only for catalog
     // display, not for derivations.
     M_U_PHYS, M_D_PHYS, M_S_PHYS, M_C_PHYS, M_B_PHYS, M_T_PHYS,
-    // Note: neutrino *_PHYS values exist in constants.js but are NOT
-    // imported here — the catalog's nu_e/nu_mu/nu_tau literals carry a
-    // ×1e-3 unit-mismatch with the canonical *_PHYS values (see TODO
-    // Theme H comments at each neutrino entry).
+    // Neutrino *_PHYS values (2026-06-15: now imported — the historical
+    // ×1e-3 unit-mismatch was fixed in the 2026-04-27 audit, so the catalog
+    // literals already equalled these canonical [PARAMETRIC PDG] upper
+    // bounds; importing locks them against future drift).
+    M_NU_E_PHYS, M_NU_MU_PHYS, M_NU_TAU_PHYS,
     M_W_PHYS, M_Z_PHYS, M_HIGGS_PHYS,
     M_LAMBDA_PHYS, M_XI_0_PHYS, M_XI_M_PHYS,
     M_ETA_PHYS, M_RHO_PHYS, M_J_PSI_PHYS, M_UPSILON_PHYS,
@@ -106,10 +107,10 @@ const PARTICLES = [
     {
         id: 'nu_e', name: 'Electron Neutrino', symbol: 'νₑ',
         category: 'leptons', generation: 1,
-        // 2026-04-27 audit: dropped a stray ×1e-3 unit-mismatch factor that
-        // made the catalog 1000× lighter than M_NU_E_PHYS = 4.1e-9 MeV in
-        // constants.js. Now matches the canonical value (sum-of-masses ~0.06 eV).
-        mass_mev: 4.1e-9, charge: 0, spin: 0.5,
+        // 2026-06-15: import M_NU_E_PHYS instead of the inline literal. The
+        // 2026-04-27 audit fixed a ×1e-3 unit-mismatch so the literal already
+        // equalled the canonical value; importing now locks against re-drift.
+        mass_mev: M_NU_E_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_e',
         ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 neV',
         // constants.js M_NU_E_PHYS is a [PARAMETRIC PDG] cosmological/oscillation
@@ -121,8 +122,8 @@ const PARTICLES = [
     {
         id: 'antinu_e', name: 'Electron Antineutrino', symbol: 'ν̄ₑ',
         category: 'leptons', generation: 1,
-        // 2026-04-27 audit: same ×1e-3 factor drop as nu_e above.
-        mass_mev: 4.1e-9, charge: 0, spin: 0.5,
+        // Mirrors nu_e; import M_NU_E_PHYS (2026-06-15).
+        mass_mev: M_NU_E_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_e',
         ftd_formula: 'm_ν₁ (same mass)',
         // Mirrors ν_e (PDG upper bound, not derivable). 'derived'→'parametric'.
@@ -132,7 +133,7 @@ const PARTICLES = [
     {
         id: 'nu_mu', name: 'Muon Neutrino', symbol: 'νμ',
         category: 'leptons', generation: 2,
-        mass_mev: 8.58e-3, charge: 0, spin: 0.5,
+        mass_mev: M_NU_MU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_mu',
         ftd_formula: 'm₃·√N_c/(b₃+N_c) ≈ 8.6 meV',
         // PDG upper bound, not derivable from the FTD chain. 'derived'→'parametric'.
@@ -142,7 +143,7 @@ const PARTICLES = [
     {
         id: 'antinu_mu', name: 'Muon Antineutrino', symbol: 'ν̄μ',
         category: 'leptons', generation: 2,
-        mass_mev: 8.58e-3, charge: 0, spin: 0.5,
+        mass_mev: M_NU_MU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_mu',
         ftd_formula: 'm_ν₂ (same mass)',
         // Mirrors ν_μ (PDG upper bound, not derivable). 'derived'→'parametric'.
@@ -152,7 +153,7 @@ const PARTICLES = [
     {
         id: 'nu_tau', name: 'Tau Neutrino', symbol: 'ντ',
         category: 'leptons', generation: 3,
-        mass_mev: 4.955e-2, charge: 0, spin: 0.5,
+        mass_mev: M_NU_TAU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_tau',
         ftd_formula: 'v·(N_base/N_c)·α⁶ ≈ 49.6 meV',
         // PDG upper bound, not derivable from the FTD chain. 'derived'→'parametric'.
@@ -162,7 +163,7 @@ const PARTICLES = [
     {
         id: 'antinu_tau', name: 'Tau Antineutrino', symbol: 'ν̄τ',
         category: 'leptons', generation: 3,
-        mass_mev: 4.955e-2, charge: 0, spin: 0.5,
+        mass_mev: M_NU_TAU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_tau',
         ftd_formula: 'm_ν₃ (same mass)',
         // Mirrors ν_τ (PDG upper bound, not derivable). 'derived'→'parametric'.
@@ -435,9 +436,9 @@ const PARTICLES = [
     {
         id: 'sigma_zero', name: 'Sigma0', symbol: 'Σ⁰',
         category: 'baryons', generation: null,
-        // [PARAMETRIC PDG] — Σ⁰ isospin partner of Σ⁺; canonical
-        // constant not added (M_SIGMA_PHYS covers only Σ⁺).
-        mass_mev: 1192.6, charge: 0, spin: 0.5,
+        // [PARAMETRIC PDG] — Σ⁰ isospin partner of Σ⁺ (2026-06-15: now
+        // imports the canonical M_SIGMA0_PHYS added to constants.js).
+        mass_mev: M_SIGMA0_PHYS, charge: 0, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'uds',
         ftd_formula: 'quark model + FTD masses',
@@ -447,9 +448,9 @@ const PARTICLES = [
     {
         id: 'sigma_minus', name: 'Sigma-', symbol: 'Σ⁻',
         category: 'baryons', generation: null,
-        // [PARAMETRIC PDG] — Σ⁻ isospin partner of Σ⁺; canonical
-        // constant not added (M_SIGMA_PHYS covers only Σ⁺).
-        mass_mev: 1197.4, charge: -1, spin: 0.5,
+        // [PARAMETRIC PDG] — Σ⁻ isospin partner of Σ⁺ (2026-06-15: now
+        // imports the canonical M_SIGMA_MINUS_PHYS added to constants.js).
+        mass_mev: M_SIGMA_MINUS_PHYS, charge: -1, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'dds',
         ftd_formula: 'quark model + FTD masses',
