@@ -321,6 +321,7 @@ export class PETelemetryPanel {
         this._initialEnergy = null;
         this._initialMomentum = null;
         this._initialAngmom = null;
+        this._initialCount = null;   // baseline particle count (annihilation detector)
     }
 
     /**
@@ -347,7 +348,10 @@ export class PETelemetryPanel {
         this._els.angmom.textContent = fmt(lMag) + ' \u0127';
 
         // Track initial values for drift/alarm
-        if (this._initialEnergy === null && E !== 0) this._initialEnergy = E;
+        if (this._initialEnergy === null && E !== 0) {
+            this._initialEnergy = E;
+            this._initialCount = diag.particleCount;
+        }
         if (this._initialMomentum === null && pMag > 0) this._initialMomentum = pMag;
         if (this._initialAngmom === null && lMag > 0) this._initialAngmom = lMag;
 
@@ -356,13 +360,30 @@ export class PETelemetryPanel {
         if (this._initialEnergy !== null && this._initialEnergy !== 0) {
             driftPct = ((E - this._initialEnergy) / Math.abs(this._initialEnergy)) * 100;
         }
-        this._els.drift.textContent = driftPct.toFixed(4) + '%';
+
+        // Conservation is only meaningful for closed, conservative dynamics.
+        // Damping (diag.dissipative) and annihilation (particle-count change)
+        // intentionally break energy/momentum conservation, so we label the
+        // drift as expected rather than firing a red "violation" alarm. (Audit D2.)
+        const countChanged = this._initialCount !== null && diag.particleCount !== this._initialCount;
+        const dissipating = !!diag.dissipative || countChanged;
+        const reason = (diag.dissipative && countChanged) ? 'damping + annihilation'
+                     : diag.dissipative ? 'damping'
+                     : countChanged ? 'annihilation' : '';
+        this._els.drift.textContent = driftPct.toFixed(4) + '%' + (dissipating ? ` (expected: ${reason})` : '');
 
         // Alarms
         const absDrift = Math.abs(driftPct);
-        this._setAlarm(this._els.driftAlarm, absDrift < 0.1 ? 'green' : absDrift < 1.0 ? 'yellow' : 'red');
-        this._setAlarm(this._els.energyAlarm, absDrift < 0.1 ? 'green' : absDrift < 1.0 ? 'yellow' : 'red');
-        this._setAlarm(this._els.momentumAlarm, pMag < 1e-6 ? 'green' : pMag < 1e-3 ? 'yellow' : 'red');
+        if (dissipating) {
+            // Non-conservative by design — drift is expected, not a violation.
+            this._setAlarm(this._els.driftAlarm, 'green');
+            this._setAlarm(this._els.energyAlarm, 'green');
+            this._setAlarm(this._els.momentumAlarm, 'green');
+        } else {
+            this._setAlarm(this._els.driftAlarm, absDrift < 0.1 ? 'green' : absDrift < 1.0 ? 'yellow' : 'red');
+            this._setAlarm(this._els.energyAlarm, absDrift < 0.1 ? 'green' : absDrift < 1.0 ? 'yellow' : 'red');
+            this._setAlarm(this._els.momentumAlarm, pMag < 1e-6 ? 'green' : pMag < 1e-3 ? 'yellow' : 'red');
+        }
         this._setAlarm(this._els.angmomAlarm, 'green'); // Angular momentum — just show green for now
 
         // Push sparklines

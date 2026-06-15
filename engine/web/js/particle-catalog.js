@@ -618,6 +618,27 @@ const PARTICLES = [
     },
 ];
 
+// ── Baryon / lepton numbers (descriptive SM quantum numbers) ─────────
+// Derived once from category + matter/antimatter (the id convention:
+// antimatter ids start with 'anti', plus the 'positron'). Antimatter
+// carries the opposite-sign quantum number.
+// NOTE (true-to-FTD): FTD treats baryon number as an EMERGENT cluster
+// label, not a fundamental conserved charge (FTD-0301 found τ_p unforced /
+// B not exactly conserved). These are conventional SM assignments for
+// catalog reference — not an FTD claim that B is exactly conserved.
+for (const p of PARTICLES) {
+    const anti = p.id.startsWith('anti') || p.id === 'positron';
+    let baryon = 0, lepton = 0;
+    switch (p.category) {
+        case 'leptons': lepton = anti ? -1 : 1; break;
+        case 'quarks':  baryon = anti ? -1 / 3 : 1 / 3; break;
+        case 'baryons': baryon = anti ? -1 : 1; break;
+        // mesons, gauge_bosons, scalar: baryon = lepton = 0
+    }
+    p.baryon = baryon;
+    p.lepton = lepton;
+}
+
 // ── Category metadata ──────────────────────────────────────────────
 const CATEGORIES = {
     leptons:      { label: 'Leptons',      color: '#4ADE80', order: 0 },
