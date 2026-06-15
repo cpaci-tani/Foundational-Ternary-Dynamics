@@ -38,6 +38,8 @@
 | [FOUND_DIMENSIONAL_COUNTING.md](FOUND_DIMENSIONAL_COUNTING.md) | constructive argument (mixed) | Constructive 0.5D → D = 3 counting argument from the pairing ontology. |
 | [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | foundational theory (5 predictions) | Dimensions from relation, time from energy processing, SR/gravity/GR trichotomy; consolidated. |
 | [FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md](FOUND_LATTICE_SPACING_GAUGE_FREEDOM.md) | [METHODOLOGICAL CLARIFICATION] | Lattice spacing as gauge freedom; absorbs the minimum-dimension cluster-scaling framework (FTD-0137). |
+| [FOUND_NONLINEAR_SPACETIME_EMERGENCE.md](FOUND_NONLINEAR_SPACETIME_EMERGENCE.md) | mixed (reconciled 2026-06-15) | Tick-rate saturation → metric: §3 kinematic Schwarzschild-encoding is [THEOREM at kinematic level]+[SELECTION]; §4 full Einstein equations + "resolves GAP-G2/G5" are [GAP]/[CONJECTURE], not derived (canonical GAP doc = FOUND_SPACETIME_EMERGENCE_AND_GRAVITY; LEDGER FTD-0303). |
+| [FOUND_BASE_INTEGERS_UNCONSTRAINED.md](FOUND_BASE_INTEGERS_UNCONSTRAINED.md) | [THEOREM] (integers) + [NEEDS-RECONCILE] (the argument) | Derives {3,4,7,13} ab-initio. The integers' [THEOREM] status rests on the Moore/O_h route (DERIV_NC_FROM_TOPOLOGY + FTD-0008), not this doc's Fibonacci/Lucas argument, which over-credits and is pending owner adjudication (LEDGER FTD-0303). |
 
 ## The master quadratic — motivation & uniqueness
 
@@ -58,6 +60,7 @@
 | [FOUND_STRUCTURAL_DECOUPLING.md](FOUND_STRUCTURAL_DECOUPLING.md) | [SYNTHESIS] | Algebraic spine decouples from the engine action — four negative empirical results consolidated (FTD-0129). |
 | [FOUND_META_PATTERNS.md](FOUND_META_PATTERNS.md) | formal unification | Every FTD selection is boundary/critical-point selection; taxonomy of five boundary types. |
 | [FOUND_BLIND_DERIVATION_CHAIN.md](FOUND_BLIND_DERIVATION_CHAIN.md) | [DERIVED] | The 13-step blind derivation from i to α⁻¹; only two steps need selection principles. |
+| [FOUND_SPACETIME_FORCING_BOUNDARY.md](FOUND_SPACETIME_FORCING_BOUNDARY.md) | [SYNTHESIS] + [BOUNDARY] | Is FTD's spacetime forced by the postulates? The reversibility boundary; re-states tagged claims, derives nothing (FTD-0253). |
 
 ## Interpretive layer & ontic vocabulary
 
@@ -68,6 +71,7 @@
 | [FOUND_GSTAR_SCALE.md](FOUND_GSTAR_SCALE.md) | [CONJECTURE] | The G*ⁿ scale as the symmetric algebra of h¹(E_i) — the ring of physics. |
 | [FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md](FOUND_PHENOMENAL_NOUMENAL_BRIDGE.md) | [FOUNDATION] | Two-layer phenomenal/noumenal ontology; reclassifies all tags by layer (FTD-0078). |
 | [FOUND_EPISTEMIC_SYMMETRIES_AND_CHIRALITY.md](FOUND_EPISTEMIC_SYMMETRIES_AND_CHIRALITY.md) | [CONJECTURE] | Postulate Six: longitudinal trajectory parity, chiral laterals/verticals, inside/outside inversion. |
+| [EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md](EXPLR_SIXTH_POSTULATE_AND_OBSERVER_FRAME.md) | [EXPLORATION] / [OPEN] | Candidate 6th postulates + the observer frame; two adversarially-falsified formalization attempts preserved as provenance (2026-06-09). |
 | [FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md](FOUND_POTENTIAL_CORE_AND_GENERATIVE_INTERIOR.md) | foundational conjecture note | Vocabulary for context-conditioned manifestation; 3³ lattice grounding. |
 | [FOUND_BORN_RULE_NULL_CONE.md](FOUND_BORN_RULE_NULL_CONE.md) | foundational derivation | The Born rule P = \|ψ\|² as null-cone geometry from i² = −1. |
 | [FOUND_FOURCIER_ONTIC_TOOL.md](FOUND_FOURCIER_ONTIC_TOOL.md) | theoretical synthesis | The Fourcier curve as the generalized distinction-drawing instrument. |
@@ -75,4 +79,4 @@
 
 ---
 
-31 active docs in this cluster (+ 0 archived).
+35 active docs in this cluster (+ 0 archived).
