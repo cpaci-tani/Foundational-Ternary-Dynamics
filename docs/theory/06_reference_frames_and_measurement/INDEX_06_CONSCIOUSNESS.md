@@ -32,6 +32,15 @@
 | [DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md](DERIV_CONSCIOUSNESS_QFT_GR_SYNTHESIS.md) | technical synthesis (per-step epistemic tags) | Consolidates 15+ docs into the linear frame-relative-projection chain; complex-root frame-relative-eigenmode branch; modular-flow bridge. |
 | [DERIV_MEANING_WEIGHTS_K_MAPPING.md](DERIV_MEANING_WEIGHTS_K_MAPPING.md) | [THEOREM] | Exact mathematical mapping between $k$ and the meaning weights $\alpha, \beta$, resolving GAP-B2. |
 
+## Born-sector closed-negatives & hash-locked pre-registrations
+
+| File | Tag | Purpose |
+|---|---|---|
+| [EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md](EXPLR_THRESHOLD_CROSSING_BORN_NEGATIVE.md) | [CLOSED NEGATIVE for Born in the 6-neighbour substrate] | Threshold-crossing alone does NOT produce Born scaling (Rice upcrossing R²=0.9923 ≫ power-law 0.7137); FTD-0200. The live citation source for the constitution's PL-1 deviation prediction. |
+| [PREREG_THRESHOLD_CROSSING_BORN_v1.md](PREREG_THRESHOLD_CROSSING_BORN_v1.md) | [PRE-REGISTRATION] | Hash-locked pre-reg for FTD-0200 (PL-1 provenance anchor). |
+| [PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md](PREREG_BORN_EQUILIBRIUM_PRESERVATION_v1.md) | [PRE-REGISTRATION] | Hash-locked pre-reg for the DGZ-equilibrium-preservation test (FTD-0199). |
+| [archive/closed_negative/EXPLR_BORN_EQUILIBRIUM_PRESERVATION_NEGATIVE.md](archive/closed_negative/EXPLR_BORN_EQUILIBRIUM_PRESERVATION_NEGATIVE.md) | [CLOSED NEGATIVE] (archived 2026-06-15) | DGZ-equilibrium preservation fails in the 6-neighbour substrate (FTD-0199); archived provenance. |
+
 ---
 
-9 active docs in this cluster (+ 0 archived).
+13 active docs in this cluster (+ 1 archived).
