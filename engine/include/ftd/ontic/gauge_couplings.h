@@ -28,12 +28,19 @@ namespace ontic {
 // ============================================================================
 // Layer 5: Coupling Constants
 // ============================================================================
-// Fine structure constant [THEOREM]: α = 1 / X_PLUS_PRECISION.
+// Fine structure constant: α = 1 / X_PLUS_PRECISION.
 //
-// As of the 2026-04-17 precision rollout (TRACKER §1.5), the engine
-// uses the 4-term-corrected value from the master quadratic, which
-// matches CODATA 2022 (137.035999177) to < 0.001 ppt. Tree-level
-// x₊ remains available via ALPHA_TREE for reference comparisons.
+// Epistemic status (see the g_c derivation block below for the full chain
+// and LEDGER FTD-0013): the master-quadratic ROOT x₊ is [THEOREM] (pure
+// algebra over the lemniscatic ring), but the IDENTIFICATION α ≡ 1/x₊ is a
+// [STRONGLY MOTIVATED CONJECTURE] (FTD-0013), and the 4-term ε-correction that
+// lands on 137.035999177 is [CONJECTURE] — a post-hoc series beyond
+// experimental resolution (CLAUDE.md: "not a < 0.001 ppt derivation"). Do NOT
+// re-tag this line [THEOREM]; that conflates three tiers.
+//
+// As of the 2026-04-17 precision rollout (TRACKER §1.5), the engine RUNS on
+// this precision value; tree-level x₊ remains available via ALPHA_TREE for
+// reference comparisons.
 //
 //   ALPHA           = 1 / X_PLUS_PRECISION = 1/137.035999177   (engine)
 //   ALPHA_TREE      = 1 / X_PLUS           = 1/137.0361714582  (reference)
@@ -84,8 +91,11 @@ inline constexpr double ALPHA_PRECISION = ALPHA;
 // the compile-time static_assert in constants.h verifies G_C² ≈ ALPHA.
 inline constexpr double G_C = 0.0854245431028543695;
 
-// Weinberg angle: sin²θ_W = N_c / N_eff = 3/13 [THEOREM]
-//   = 0.23077 (0.2% from experimental 0.23122)
+// Weinberg angle: sin²θ_W = N_c / N_eff = 3/13 [PARAMETRIC]
+//   = 0.23077 (0.2% from the MS-bar value 0.23122, but 3.5% from the on-shell
+//   value, and competitor 2/9 fits better with no Moore-neighbourhood meaning).
+//   Downgraded 2026-04-19 per AUDIT_RATIONAL_FIT_CLAIMS.md — not structurally
+//   forced. (Was mistagged [THEOREM]; the LEDGER/CATALOG hold it [PARAMETRIC].)
 inline constexpr double SIN2_WEINBERG = static_cast<double>(N_C) / N_EFF;
 
 // Weak coupling constant: α_W = α / sin²θ_W [DERIVED]
@@ -143,9 +153,11 @@ inline constexpr double ALPHA_G_APPROX = 5.91e-39;
 // ============================================================================
 // Layer 5b: QCD Sector
 // ============================================================================
-// QCD coupling at M_Z scale [THEOREM]:
+// QCD coupling at M_Z scale [PARAMETRIC]:
 //   α_s(M_Z) = b₃ / (b₃ + 4·N_eff) = 7 / 59 = 0.11864
-//   (0.6% from experimental 0.1179)
+//   (0.6% from experimental 0.1179; downgraded 2026-04-19 per
+//   AUDIT_RATIONAL_FIT_CLAIMS.md — competitor 2/17 = 0.1176 fits better and the
+//   "59" denominator is not structural. Was mistagged [THEOREM].)
 inline constexpr double ALPHA_S_MZ = static_cast<double>(B_3) / (B_3 + 4.0 * N_EFF);
 
 // QCD beta function one-loop coefficient: b₀ = (11·N_c - 2·n_f) / 3

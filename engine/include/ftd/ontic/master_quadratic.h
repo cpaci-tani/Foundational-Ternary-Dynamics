@@ -64,9 +64,11 @@ inline constexpr double X_MINUS = 3.0239639163;      // smaller root (artifact; 
 // `constants.h` re-export block (which sits after Layer 7 materialises).
 // The numerical value is pre-computed and verified in ontic_audit().
 //
-// NOTE: the engine's Coulomb coupling currently uses ALPHA = 1/X_PLUS
-// (tree-level). The precision value differs by ~3.8 ppm — below every
-// benchmark's measurable resolution. See:
+// NOTE: the engine's runtime ALPHA = 1/X_PLUS_PRECISION (the precision value
+// defined just below), per ontic/gauge_couplings.h and verified in
+// ontic_audit.cpp; ALPHA_TREE = 1/X_PLUS (tree-level) is reference-only and
+// feeds no force / wave / damping site. The two differ by ~3.8 ppm — below
+// every benchmark's measurable resolution. See:
 //   scripts/proofs/proof_motivic_master_quadratic.py  (derivation)
 //   docs/theory/01_reference/SPEC_FTD_COMPLETE_CHAIN.md  (chain)
 inline constexpr double X_PLUS_PRECISION = 137.035999177;  // 4-term corrected
