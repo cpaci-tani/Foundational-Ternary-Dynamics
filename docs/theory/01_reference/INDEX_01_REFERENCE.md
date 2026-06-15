@@ -46,6 +46,16 @@
 |---|---|---|
 | [SPEC_PHYSICS_BRIDGE.md](SPEC_PHYSICS_BRIDGE.md) | [SYNTHESIS] | What the algebraic spine says about α and N_c; structural-uniqueness synthesis (FTD-0121). |
 | [SPEC_ALPHA_READOUT_CONTRACT.md](SPEC_ALPHA_READOUT_CONTRACT.md) | [REFERENCE] / [OPEN PROGRAM] | MC-T4.3 closure criteria — what it would mean to "earn the map" from spine to physical α (FTD-0152). |
+| [SPEC_ALPHA_READOUT_PROGRAM.md](SPEC_ALPHA_READOUT_PROGRAM.md) | [OPEN PROGRAM] | Canonical extraction sequence for W_U, defining the 5 constraints and the core exactly-one-odd-G* determinant mathematical obstruction. |
+| [DERIV_STOCHASTIC_OPERATOR_ESTIMATOR.md](DERIV_STOCHASTIC_OPERATOR_ESTIMATOR.md) | [OPEN PROGRAM] | Stochastic Transfer / Koopman Operator Estimator spec for the alpha readout over the Langevin-stabilized cloud ensemble. |
+| [SPEC_SCALE_CONTEXT_READOUT.md](SPEC_SCALE_CONTEXT_READOUT.md) | [AXIOM] / [ACTIVE SPEC] | Defines the scale-context layer $\mathcal{C}_{\rm scale}$ to mathematically separate phenomenon scale from lattice and box scales. |
+| [SPEC_EM_PUBLIC_OBSERVABLE_CLASSIFICATION.md](SPEC_EM_PUBLIC_OBSERVABLE_CLASSIFICATION.md) | [REFERENCE] | Taxonomy of the major FTD electromagnetic observable topologies. |
+| [SPEC_ALPHA_READOUT_OSCILLATORY_CLOUD.md](SPEC_ALPHA_READOUT_OSCILLATORY_CLOUD.md) | [OPEN PROGRAM] | Replaces the static topological loop formalisms. Defines the Alpha Readout target $W_U$ as the dynamic return map of a finite resonant excitation over one natural period. |
+| [SPEC_CLOSED_FLUX_LOOP_READOUT.md](SPEC_CLOSED_FLUX_LOOP_READOUT.md) | [SUPERSEDED] | Falsified by engine test. Static geometric formulation. |
+| [SPEC_LATTICE_HODGE_CONNECTION.md](SPEC_LATTICE_HODGE_CONNECTION.md) | [OPEN PROGRAM] | Decomposes the flux field ($J = d\phi + \delta B + H$). |
+| [SPEC_CONNECTION_EXTRACTION_RULE.md](SPEC_CONNECTION_EXTRACTION_RULE.md) | [OPEN PROGRAM] | Defines the native connection $A_J$ extracted from the $\mathbb{Z}[i]$-quadrature. |
+| [SPEC_QUADRATURE_CANONICALIZATION.md](SPEC_QUADRATURE_CANONICALIZATION.md) | [OPEN PROGRAM] | Formalizes the admissibility requirements for canonically deriving the intrinsic $\mathbb{Z}[i]$ field $z(v)$. |
+| [SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md](SPEC_LOOP_SECTOR_RESPONSE_OPERATOR.md) | [SUPERSEDED] | Falsified by engine test. Static spatial fluctuation response operator. |
 | [SPEC_DIMENSIONAL_MAP.md](SPEC_DIMENSIONAL_MAP.md) | [REFERENCE] (auto-generated) | Dimensionless  dimensional map: spine theorems → predictions → calibration → one worked application. |
 | [SPEC_SM_REPLACEMENT_COMPLETE.md](SPEC_SM_REPLACEMENT_COMPLETE.md) | capstone spec (re-tagged) | L_SM → L_RB replacement; Waves 1–4 synthesis (LEDGER wins on tag conflicts). |
 | [SPEC_FTD_COMPARATIVE_PHYSICS.md](SPEC_FTD_COMPARATIVE_PHYSICS.md) | reference standard | The PF Atlas — how π/4 enters and exits Standard Model formulas, side by side with FTD. |
@@ -56,6 +66,7 @@
 | File | Tag | Purpose |
 |---|---|---|
 | [SPEC_FTD_LAGRANGIAN.md](SPEC_FTD_LAGRANGIAN.md) | [THEOREM] (action/EOM/limits) + [SELECTION] (IDs) | Canonical 3-term FTD action; the formal field theory. |
+| [SPEC_FTD_PHASE_LAW_V1.md](SPEC_FTD_PHASE_LAW_V1.md) | [CANDIDATE UPDATE CYCLE] | **The Canonical Transition Operator**: Explicit closed-form update law U mapping Ω_t → Ω_{t+1}, stating the operational 10-phase physics cycle, bounding energy non-conservation at the Gauss step, and localizing the exact readouts for empirical bridging. |
 | [MAP_LAGRANGIAN_TO_ENGINE.md](MAP_LAGRANGIAN_TO_ENGINE.md) | [REFERENCE] | Line-anchored cross-reference from Lagrangian terms to engine implementation sites. |
 | [MAP_ENGINE_ARCHITECTURE.md](MAP_ENGINE_ARCHITECTURE.md) | [REFERENCE] / [SYNTHESIS] / [ANALYSIS] | Complete C++ engine inventory, inclusion tree, 11-step runtime pipeline, host-device lazy sync, CUDA/cuFFT mapping, and DagEngine stubs gap analysis. |
 | [SPEC_SIX_ALGORITHMS.md](SPEC_SIX_ALGORITHMS.md) | reference document | The six algorithms of physics — complete technical reference for the engine's rule set. |

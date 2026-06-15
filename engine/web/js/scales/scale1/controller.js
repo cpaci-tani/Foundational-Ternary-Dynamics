@@ -30,7 +30,7 @@ import {
     computeStreamlines, generateEFieldSeeds
 } from '../../fieldlines.js';
 import {
-    ALPHA, C_SPEED, G_N, K_B,
+    ALPHA, C_SPEED, G_PE, K_B,
     M_P_PHYS, M_MU_PHYS, M_N_PHYS, M_PI_CH_PHYS, M_K_CH_PHYS,
     M_TAU_PHYS, M_W_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS, M_DELTA_PHYS
 } from '../../constants.js';
@@ -53,6 +53,7 @@ let _showPEEField    = false;   // E-field streamlines
 let _showPEPotential = false;   // Coulomb potential heatmap
 let _showPEGravField = false;   // Gravity field vectors
 let _showPEForces    = false;   // Per-particle net force arrows
+let _showPESystem    = false;   // System observables: CoM + momentum + ang. mom.
 let _showVelocities  = false;   // Velocity vectors overlay
 let _showTrails      = false;   // Orbit trail lines
 
@@ -88,6 +89,7 @@ export function setPEEField(on)    { _showPEEField    = on; }
 export function setPEPotential(on) { _showPEPotential = on; }
 export function setPEGravField(on) { _showPEGravField = on; }
 export function setPEForces(on)    { _showPEForces    = on; }
+export function setPESystem(on)    { _showPESystem    = on; }
 export function setVelocities(on)  { _showVelocities  = on; }
 export function setTrails(on)      { _showTrails      = on; }
 
@@ -160,6 +162,7 @@ function applyPEOverlayPreset(viewport, preset) {
     _showPEPotential = !!o.potential;
     _showPEGravField = !!o.gravityField;
     _showPEForces = !!o.forces;
+    _showPESystem = !!o.system;
 
     setButtonActive('toggle-velocities', _showVelocities);
     setButtonActive('toggle-trails', _showTrails);
@@ -167,6 +170,7 @@ function applyPEOverlayPreset(viewport, preset) {
     setButtonActive('toggle-pe-potential', _showPEPotential);
     setButtonActive('toggle-pe-gravity-field', _showPEGravField);
     setButtonActive('toggle-pe-forces', _showPEForces);
+    setButtonActive('toggle-pe-system', _showPESystem);
 
     if (!viewport) return;
     viewport.toggleVelocityVectors(_showVelocities);
@@ -176,6 +180,7 @@ function applyPEOverlayPreset(viewport, preset) {
     viewport.toggleFieldVectors(_showPEPotential);
     viewport.toggleGravityVectors(_showPEGravField);
     viewport.toggleParticleForces(_showPEForces);
+    viewport.togglePESystem(_showPESystem);
 }
 
 
@@ -226,6 +231,7 @@ function _resetScale1Internal(ctx) {
     _showPEPotential = false;
     _showPEGravField = false;
     _showPEForces    = false;
+    _showPESystem    = false;
     _showVelocities  = false;
     _showTrails      = false;
 
@@ -252,9 +258,61 @@ function _resetScale1Internal(ctx) {
         viewport.toggleFieldVectors(false);
         viewport.toggleGravityVectors(false);
         viewport.toggleParticleForces(false);
+        viewport.togglePESystem(false);
         viewport.toggleVelocityVectors(false);
         viewport.toggleTrails(false);
     }
+}
+
+
+// =====================================================================
+// System observables helper
+// =====================================================================
+
+/**
+ * Compute system-level observables from a PE particle frame.
+ *
+ * Returns the mass-weighted center of mass, the total momentum
+ * p = Σ mᵢ vᵢ, and the angular momentum about the center of mass
+ * L = Σ mᵢ (rᵢ − r_cm) × (vᵢ − v_cm). Using velocities relative to the
+ * CoM makes L the intrinsic orbital-plane normal, independent of any
+ * bulk drift of the system. Computed from the particle frame directly so
+ * it is backend-robust (WASM diagnostics may not populate momentum
+ * components).
+ *
+ * @param {{positions:Float32Array, velocities:Float32Array, masses:Float64Array, count:number}} peData
+ * @returns {{com:number[], p:number[], l:number[]}}
+ */
+function computeSystemVectors(peData) {
+    const { positions, velocities, masses, count } = peData;
+    let M = 0, cx = 0, cy = 0, cz = 0, px = 0, py = 0, pz = 0;
+    for (let i = 0; i < count; i++) {
+        const m = masses[i];
+        M += m;
+        cx += m * positions[i * 3];
+        cy += m * positions[i * 3 + 1];
+        cz += m * positions[i * 3 + 2];
+        px += m * velocities[i * 3];
+        py += m * velocities[i * 3 + 1];
+        pz += m * velocities[i * 3 + 2];
+    }
+    if (M <= 0) return { com: [0, 0, 0], p: [0, 0, 0], l: [0, 0, 0] };
+    cx /= M; cy /= M; cz /= M;
+    const vcx = px / M, vcy = py / M, vcz = pz / M;
+    let lx = 0, ly = 0, lz = 0;
+    for (let i = 0; i < count; i++) {
+        const m = masses[i];
+        const rx = positions[i * 3]     - cx;
+        const ry = positions[i * 3 + 1] - cy;
+        const rz = positions[i * 3 + 2] - cz;
+        const wx = velocities[i * 3]     - vcx;
+        const wy = velocities[i * 3 + 1] - vcy;
+        const wz = velocities[i * 3 + 2] - vcz;
+        lx += m * (ry * wz - rz * wy);
+        ly += m * (rz * wx - rx * wz);
+        lz += m * (rx * wy - ry * wx);
+    }
+    return { com: [cx, cy, cz], p: [px, py, pz], l: [lx, ly, lz] };
 }
 
 
@@ -374,6 +432,12 @@ export function animatePE(ctx) {
         viewport.updateParticleForces(fd.positions, fd.forces, fd.count, fd.maxForce);
     }
 
+    // System observables: center of mass + total momentum p + ang.-mom. axis L
+    if (_showPESystem && peData.count > 0) {
+        const sys = computeSystemVectors(peData);
+        viewport.updatePESystem(sys.com, sys.p, sys.l);
+    }
+
     // ── 6. Render ───────────────────────────────────────────────────
     viewport.render();
 
@@ -482,7 +546,7 @@ export function loadPEScenario(ctx, name) {
         ALPHA_PE, soft2, orbitalV,
         BH_MASS: _BH_MASS, BH_TEST_MASS: _BH_TEST_MASS,
         BH_HORIZON_R: _BH_HORIZON_R,
-        G_N, C_SPEED,
+        G_PE, C_SPEED,
     };
 
     const result = setupPEScenario(name, { bridge, viewport, constants });

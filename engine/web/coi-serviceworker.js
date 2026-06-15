@@ -37,6 +37,11 @@ if (typeof window === 'undefined') {
         if (r.cache === "only-if-cached" && r.mode !== "same-origin") {
             return;
         }
+        
+        // Skip intercepting WebSocket or local native engine connections
+        if (r.url.includes("9100") || !r.url.startsWith("http")) {
+            return;
+        }
 
         const request = (coepCredentialless && r.mode === "no-cors")
             ? new Request(r, {

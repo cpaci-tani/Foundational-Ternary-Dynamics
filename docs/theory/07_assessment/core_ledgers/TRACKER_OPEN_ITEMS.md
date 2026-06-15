@@ -344,6 +344,7 @@ Still open:
 - Source-current normalization attempt: `docs/theory/10_eft_program/archive/closed_negative/DERIV_SOURCE_CURRENT_NORMALIZATION_XPLUS_ATTEMPT.md` closes the current-action R2 route negative. Ternary source transport fixes signed integer charge and current conservation, but not `e0^2 = 1/x_+`. Under the current projected action, the endpoint is arithmetic-only unless a new normalization theorem is supplied.
 - Native electrodynamics spec: `docs/theory/10_eft_program/SPEC_FTD_NATIVE_ELECTRODYNAMICS.md` replaces QED alpha as the primary target with native source/flux response observables.
 - Do not run open-ended charge, mass, regulator, or discretization scans for a near-miss. New Structure-2 work should start from a theoretical matching rule, not from the alpha target.
+-  **Deterministic Oscillatory Cloud Floquet Readout** — **CLOSED NEGATIVE 2026-06-15**. The deterministic phase-law limit cycle cannot natively produce a reflecting continuous cavity for linear perturbations under fixed-itinerary boundary conditions (topological obstruction), proving that the deterministic alpha readout route is unviable.
 
 ### 4.3 Watson-G* identity —  CLOSED/RESOLVED 2026-06-10
 **File:** `docs/theory/04_coupling/DERIV_WATSON_GSTAR_IDENTITY.md`. The open items (Item 8: physical content of the algebraic Watson-G* connection; Item 9: the 14 vs 16 torus DOF counting discrepancy) are formally closed. Under FTD-0242, the Watson-G* connection is a period equivalence on the substrate, and the 16 coefficient is structurally forced by $|{\rm Aut}(E)|^2 = 16$.

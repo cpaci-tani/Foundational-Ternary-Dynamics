@@ -1,7 +1,7 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-06-13 (golden determinism doc reconciliation + FTD-0286 v2 alpha-estimator campaign; no physics behavior edited beyond v2 campaign addition)
+**Last updated:** 2026-06-15 (scale-context gate + atomic closure-context documentation; no AtomEngine force-law retuning)
 **Engine version:** 2.18.0 (post May 2026 — BH-F* GPU plumbing sweep, SplitMix64 RNG portability Option A, trim-the-fat rounds 2-4, `ftd_eft` library extraction, F9 Tier-1 + F11.A Tier-3 audit closures)
 **Test count:** 258 C++ test source files (212 active CMake targets) + 18 Playwright specs + 25 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
 
@@ -1003,9 +1003,11 @@ Composite atoms with inter-atomic forces and covalent bonding. Three forces:
 
 Automatic bond formation (r < 1.2 sigma_avg) and breaking (r > 2 r_eq). `compute_atomic_properties(Z, N)` derives all parameters from ontic constants.
 
+**Atomic closure-context vector (diagnostic/readout only).** `compute_atomic_properties(Z, N)` also returns `closure_context`, and `AtomEngine::closure_context_for(id, cfg)` exposes the same shell-context readout for live atoms. The vector records `Z`, `n_shell`, `z_eff`, `r_cloud`, `delta_valence`, `xi_orbital`, `tau_electronic`, and ratios such as `kappa`, `zeta`, `beta`, and `theta`. Its cloud scale follows the shell-context estimate `r_cloud = R_BOHR*n_shell^2/z_eff`: across a period, stronger screened return force contracts the cloud; at a new shell, the scale resets outward. This is a physics-facing scale diagnostic, not a force retuning. `Atom.radius` and `vdw_sigma` remain the legacy simulation/LJ interaction scales used by bonding, CUDA pair-force uploads, and scale bridges.
+
 **JS <-> C++ constant divergence (deliberate, [IMPOSED] both sides).** The C++ AtomEngine derives force prefactors from the ontic chain (Coulomb `ALPHA/(4pi)` in `atom/atom_forces.cpp`; bond spring `ALPHA*K_B/r_eq^2*order` in `atom_engine.cpp`), while the web mock (`web/js/bridge/mock-atom-engine.js`) uses visualization-scale MD tunings from `web/js/constants.js` (`AE_K_COULOMB = 2.0`, `AE_K_BOND = 50.0`, plus a 3.5*r_eq break threshold vs C++'s 2*r_eq). Both parameter sets are calibrations, not derivations; force magnitudes and equilibrium time scales are NOT expected to match across backends. **The JS mock is the production Scale-2/3 backend** — `wasm-bridge.js` `_aeHasWasm` is deliberately disabled (audit P1-2, deferred feature D-11) until a Planck-unit <-> Bohr-unit conversion shim exists, so every browser Scale-2/3 readout comes from the JS engine. Cross-backend numeric comparisons of AE outputs are meaningless until that shim lands.
 
-Files: `atom_engine.h` (215L), `atom_engine.cpp` (427L), `src/atom/atom_forces.cpp`, `web/js/bridge/mock-atom-engine.js` (production web backend).
+Files: `atomic_closure_context.h`, `atom_engine.h`, `atom_engine.cpp`, `src/atom/atom_forces.cpp`, `web/js/atomic-props.js`, `web/js/bridge/mock-atom-engine.js` (production web backend).
 
 ### Scale Bridge
 
@@ -1080,7 +1082,7 @@ line-by-line target registry.
 - `campaign_cross_scale`, `campaign_born_ensemble`
 
 **Atom Engine (Phase 8):**
-- `atom_engine` (16 checks), `atom_scale_bridge`, `campaign_h2_molecule`
+- `atom_engine` (properties, closure context, forces, bonding), `atom_scale_bridge`, `campaign_h2_molecule`
 
 **Dual Substrate:**
 - `dual_substrate` -- Identity, chirality, conservation, backward compatibility
@@ -1105,6 +1107,13 @@ line-by-line target registry.
 - `campaign_integer_sweep` (7 checks) -- {3,4,7,13} is unique among 315 combinations
 - `campaign_hydrogen_spectrum` (8 checks) -- Quantitative hydrogen orbit (radius 0.0004% error)
 - `campaign_two_slit` (7 checks) -- Interference fringes from two coherent sources
+
+**Readout admissibility (scale-context gate):**
+- `scale_context` -- read-only, α-blind scale-context gate (`engine/src/scale_context.cpp`):
+  per-regime classification (Evaporating / UVLocked / BoundedAdmissible /
+  ShellDominated / Percolating), Φ-balance sign, and tracker stationarity. The
+  module is external to `tick()` so the golden hash is unchanged. See
+  `docs/theory/01_reference/SPEC_SCALE_CONTEXT_READOUT.md`.
 
 **GPU/CUDA** (conditional on `FTD_ENABLE_CUDA`):
 - `gpu_parity` -- 21 checks: SoA round-trip, vacuum wave parity, energy parity (21/21 PASS)

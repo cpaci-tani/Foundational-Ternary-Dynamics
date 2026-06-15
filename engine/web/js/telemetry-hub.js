@@ -18,6 +18,8 @@
  *   This ensures a single write path and eliminates duplicate data stores.
  */
 
+import { C_SPEED } from './constants.js';
+
 // ── Ring Buffer ──────────────────────────────────────────────────────────────
 // Exported so chart renderers can type-check and legacy code can import it.
 
@@ -176,6 +178,14 @@ export class TelemetryHub {
         this.peMeanForce = new RingBuffer(200);
         this.peSeparation = new RingBuffer(200);
         this.peRadialVelocity = new RingBuffer(200);
+        // FTD-native Scale 1 additions (2026-06-15)
+        this.peMaxBeta = new RingBuffer(200);        // max |v| / c_lattice (causal saturation, c = 1/√3)
+        this.peCapCount = new RingBuffer(200);       // # mobile particles pinned at the speed cap
+        this.peNetCharge = new RingBuffer(200);      // Σ q_i — exact conserved (ternary charge)
+        this.pePosCount = new RingBuffer(200);       // # particles with q > 0
+        this.peZeroCount = new RingBuffer(200);      // # particles with q = 0
+        this.peNegCount = new RingBuffer(200);       // # particles with q < 0
+        this.peAnnihilations = new RingBuffer(200);  // cumulative annihilation pairs
         this._peInitialEnergy = null;
 
         // ── Scale 2/3 — Atom / Molecule Engine (200-sample)
@@ -412,6 +422,7 @@ export class TelemetryHub {
             this.peAngMom.push(lMag);
             this.peVirial.push(virial);
             this.peTemperature.push(temperature);
+            this.peAnnihilations.push(diag.annihilations || 0);
         }
         return diag;
     }
@@ -427,6 +438,11 @@ export class TelemetryHub {
             let cmx = 0, cmy = 0, cmz = 0;
             let maxForce = 0;
             let sumForce = 0;
+            // FTD additions: causal saturation + ternary charge composition
+            let maxV2 = 0;
+            let capCount = 0;
+            const capThresh2 = (C_SPEED * 0.999) ** 2;
+            let netCharge = 0, nPos = 0, nZero = 0, nNeg = 0;
 
             for (let i = 0; i < n; i++) {
                 if (ext.locked?.[i]) locked++;
@@ -443,7 +459,13 @@ export class TelemetryHub {
                 const fMag = Math.sqrt(fx * fx + fy * fy + fz * fz);
                 maxForce = Math.max(maxForce, fMag);
                 sumForce += fMag;
-                v2sum += vx * vx + vy * vy + vz * vz;
+                const vi2 = vx * vx + vy * vy + vz * vz;
+                v2sum += vi2;
+                if (vi2 > maxV2) maxV2 = vi2;
+                if (vi2 >= capThresh2) capCount++;
+                const qi = ext.charges?.[i] || 0;
+                netCharge += qi;
+                if (qi > 0) nPos++; else if (qi < 0) nNeg++; else nZero++;
                 totalMass += m;
                 cmx += m * px;
                 cmy += m * py;
@@ -483,12 +505,18 @@ export class TelemetryHub {
 
                 this.peLockedCount.push(locked);
                 this.peMobileCount.push(Math.max(0, n - locked));
-                this.peRmsVelocity.push(n > 0 ? Math.sqrt(v2sum / n) : 0);
+                this.peRmsVelocity.push(n > 0 ? Math.sqrt(v2sum / n) / C_SPEED : 0);
                 this.peSystemRadius.push(systemRadius);
                 this.peMaxForce.push(maxForce);
                 this.peMeanForce.push(n > 0 ? sumForce / n : 0);
                 this.peSeparation.push(separation);
-                this.peRadialVelocity.push(radialVelocity);
+                this.peRadialVelocity.push(radialVelocity / C_SPEED);
+                this.peMaxBeta.push(maxV2 > 0 ? Math.sqrt(maxV2) / C_SPEED : 0);
+                this.peCapCount.push(capCount);
+                this.peNetCharge.push(netCharge);
+                this.pePosCount.push(nPos);
+                this.peZeroCount.push(nZero);
+                this.peNegCount.push(nNeg);
             }
         }
         return ext;
@@ -788,6 +816,9 @@ export class TelemetryHub {
                     this.peTemperature, this.peRmsVelocity, this.peSystemRadius,
                     this.peMaxForce, this.peMeanForce,
                     this.peSeparation, this.peRadialVelocity,
+                    this.peMaxBeta, this.peCapCount, this.peNetCharge,
+                    this.pePosCount, this.peZeroCount, this.peNegCount,
+                    this.peAnnihilations,
                 ]) b.clear();
                 this.s1 = { diag: null, extended: null, runtime: null };
                 this._peInitialEnergy = null;
