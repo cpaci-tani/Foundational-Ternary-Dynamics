@@ -1040,6 +1040,7 @@ line-by-line target registry.
 - `lattice_operators` -- Lattice topology, corner wrapping, neighbor symmetry, coord round-trip
 - `discrete_operators` -- Laplacian, divergence, curl, gradient accuracy and symmetry
 - `bridge_dynamics` -- RenderBridge tick cycle integration (vacuum stability, injection, propagation)
+- `scale_ratio` -- FC-3 identity criterion: `ScaleRatio` value object (χ = ξ/R, β = δ/R), `is_phenomenon()`, `observe()`; header-only, NO_CORE, α-blind (23 assertions; `engine/include/ftd/scale_ratio.h`)
 
 **Lagrangian verification:**
 - `born_infeld`, `energy`, `gauss`, `stress_energy`, `thermodynamics`, `lagrangian`
