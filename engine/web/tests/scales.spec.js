@@ -582,7 +582,7 @@ test('UI tooltip system annotates controls and telemetry with custom help', asyn
             visible: tooltip?.hidden === false,
             text: tooltip?.textContent?.trim() || '',
             playTooltip: document.getElementById('btn-play')?.dataset.uiTooltip || null,
-            energyTooltip: document.getElementById('pet-energy')?.dataset.uiTooltip || null,
+            energyTooltip: document.querySelector('#panel-diagnostics .diag-scale1-root [data-row="total"] .diag-metric')?.dataset.uiTooltip || null,
             statusTooltip: document.getElementById('status-energy')?.dataset.uiTooltip || null,
             scenarioLabelTooltip: document.querySelector('label[for="pe-scenario-select"]')?.dataset.uiTooltip || null,
         };

@@ -367,6 +367,7 @@ static val get_pe_extended_data(ftd::ParticleEngine& pe) {
     val r_eff = val::global("Float64Array").new_(count);
     val spins = val::global("Int8Array").new_(count);
     val color_ids = val::global("Int8Array").new_(count);
+    val pair_ids = val::global("Int32Array").new_(count);
 
     for (int i = 0; i < count; ++i) {
         const auto& p = particles[i];
@@ -379,6 +380,7 @@ static val get_pe_extended_data(ftd::ParticleEngine& pe) {
         r_eff.set(i, p.r_eff);
         spins.set(i, static_cast<int>(p.spin));
         color_ids.set(i, static_cast<int>(p.color));
+        pair_ids.set(i, p.pair_id);
         positions.set(i * 3,     p.position.x);
         positions.set(i * 3 + 1, p.position.y);
         positions.set(i * 3 + 2, p.position.z);
@@ -412,6 +414,7 @@ static val get_pe_extended_data(ftd::ParticleEngine& pe) {
     result.set("rEff", r_eff);
     result.set("spins", spins);
     result.set("colorIds", color_ids);
+    result.set("pairIds", pair_ids);
     return result;
 }
 

@@ -19,7 +19,7 @@
 
 import * as THREE from 'three';
 import { getById } from '../particle-catalog.js';
-import { K_B } from '../constants.js';
+import { K_B, C_SPEED } from '../constants.js';
 
 // Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
 import { MAX_PARTICLES } from './constants.js';
@@ -59,6 +59,7 @@ export class ViewportParticleRenderer {
         this.velocityVectors = null;
         this.trails = null;
         this._particleForces = null;
+        this._peSystem = null;
 
         // Build the main particle Points mesh eagerly (mirrors the
         // pre-extraction behaviour of `this._initParticles()` being called
@@ -139,17 +140,33 @@ export class ViewportParticleRenderer {
             posAttr.array[i * 6 + 4] = py + vy * scale;
             posAttr.array[i * 6 + 5] = pz + vz * scale;
 
-            // Color: yellow at tail → orange at tip, intensity by speed
+            // Color by causal saturation β = |v| / c_lattice (c = 1/√3). The
+            // ternary lattice caps signal speed at C_SPEED, so the ramp reads
+            // off how close a particle sits to the FTD causal limit:
+            //   green (slow) → yellow → orange → red → white (pinned at the cap).
             const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
-            const t = Math.min(speed * 20, 1);
-            // Start: bright yellow
-            colAttr.array[i * 6] = 1.0;
-            colAttr.array[i * 6 + 1] = 0.9 - t * 0.3;
-            colAttr.array[i * 6 + 2] = 0.2;
-            // End: orange/red
-            colAttr.array[i * 6 + 3] = 1.0;
-            colAttr.array[i * 6 + 4] = 0.4 - t * 0.3;
-            colAttr.array[i * 6 + 5] = 0.1;
+            const beta = Math.min(speed / C_SPEED, 1.0);
+            let r, g, b;
+            if (beta < 0.5) {
+                const t = beta / 0.5;            // green → yellow
+                r = 0.25 + 0.75 * t; g = 0.90; b = 0.25;
+            } else if (beta < 0.85) {
+                const t = (beta - 0.5) / 0.35;   // yellow → orange
+                r = 1.0; g = 0.90 - 0.55 * t; b = 0.20;
+            } else if (beta < 0.985) {
+                const t = (beta - 0.85) / 0.135; // orange → red
+                r = 1.0; g = 0.35 - 0.35 * t; b = 0.20 - 0.20 * t;
+            } else {
+                const t = (beta - 0.985) / 0.015; // red → white (at the cap)
+                r = 1.0; g = 0.90 * t; b = 0.90 * t;
+            }
+            // Tail dimmer, tip at full intensity → direction reads clearly.
+            colAttr.array[i * 6] = r * 0.5;
+            colAttr.array[i * 6 + 1] = g * 0.5;
+            colAttr.array[i * 6 + 2] = b * 0.5;
+            colAttr.array[i * 6 + 3] = r;
+            colAttr.array[i * 6 + 4] = g;
+            colAttr.array[i * 6 + 5] = b;
         }
 
         posAttr.needsUpdate = true;
@@ -312,6 +329,88 @@ export class ViewportParticleRenderer {
         if (!on) this._particleForces.geometry.setDrawRange(0, 0);
     }
 
+    // ── System Observables (center of mass + p + L) ───────────────────
+    // A single LineSegments mesh carrying the system-level conserved
+    // quantities: a center-of-mass cross plus two direction arrows for the
+    // total momentum p (cyan) and the angular-momentum axis L (magenta).
+    // These complement the per-particle/field overlays and the conservation
+    // telemetry (|p|, |L| read out numerically in the Diagnostics panel).
+    _buildPESystem() {
+        const MAX_SEG = 8; // 3 cross + p + L, with headroom
+        const vertices = new Float32Array(MAX_SEG * 2 * 3);
+        const colors = new Float32Array(MAX_SEG * 2 * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.9,
+        });
+        this._peSystem = new THREE.LineSegments(geo, mat);
+        this._peSystem.frustumCulled = false; // dynamic geo — see velocityVectors
+        this._peSystem.visible = false;
+        this._scene.add(this._peSystem);
+    }
+
+    // com/p/l are length-3 arrays [x,y,z]. p and L are drawn as fixed-length
+    // direction arrows (orientation, not magnitude — the numeric values live
+    // in telemetry); each collapses to a zero-length, invisible segment when
+    // its magnitude is ~0 (e.g. p≈0 for a system at rest in its own frame,
+    // or L≈0 for a single particle).
+    updatePESystem(com, p, l) {
+        if (!this._peSystem) this._buildPESystem();
+        const posAttr = this._peSystem.geometry.getAttribute('position');
+        const colAttr = this._peSystem.geometry.getAttribute('color');
+        if (!com) { this._peSystem.geometry.setDrawRange(0, 0); return; }
+
+        const cx = com[0], cy = com[1], cz = com[2];
+        const CROSS = 2.0;   // half-length of the center-of-mass cross
+        const ARROW = 10.0;  // visual length of the p / L direction arrows
+
+        const setSeg = (s, x0, y0, z0, x1, y1, z1, tr, tg, tb, hr, hg, hb) => {
+            posAttr.array[s * 6]     = x0; posAttr.array[s * 6 + 1] = y0; posAttr.array[s * 6 + 2] = z0;
+            posAttr.array[s * 6 + 3] = x1; posAttr.array[s * 6 + 4] = y1; posAttr.array[s * 6 + 5] = z1;
+            colAttr.array[s * 6]     = tr; colAttr.array[s * 6 + 1] = tg; colAttr.array[s * 6 + 2] = tb;
+            colAttr.array[s * 6 + 3] = hr; colAttr.array[s * 6 + 4] = hg; colAttr.array[s * 6 + 5] = hb;
+        };
+
+        // Center-of-mass cross (3 axis-aligned segments, light gray).
+        const gr = 0.80, gg = 0.85, gb = 0.95;
+        setSeg(0, cx - CROSS, cy, cz, cx + CROSS, cy, cz, gr, gg, gb, gr, gg, gb);
+        setSeg(1, cx, cy - CROSS, cz, cx, cy + CROSS, cz, gr, gg, gb, gr, gg, gb);
+        setSeg(2, cx, cy, cz - CROSS, cx, cy, cz + CROSS, gr, gg, gb, gr, gg, gb);
+
+        // Total momentum p (cyan), tail dim → tip bright.
+        const pm = p ? Math.sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]) : 0;
+        if (pm > 1e-9) {
+            const ux = p[0] / pm, uy = p[1] / pm, uz = p[2] / pm;
+            setSeg(3, cx, cy, cz, cx + ux * ARROW, cy + uy * ARROW, cz + uz * ARROW,
+                0.13, 0.39, 0.50, 0.27, 0.78, 1.0);
+        } else {
+            setSeg(3, cx, cy, cz, cx, cy, cz, 0, 0, 0, 0, 0, 0);
+        }
+
+        // Angular-momentum axis L (magenta) — orbital-plane normal through CoM.
+        const lm = l ? Math.sqrt(l[0] * l[0] + l[1] * l[1] + l[2] * l[2]) : 0;
+        if (lm > 1e-9) {
+            const ux = l[0] / lm, uy = l[1] / lm, uz = l[2] / lm;
+            setSeg(4, cx, cy, cz, cx + ux * ARROW, cy + uy * ARROW, cz + uz * ARROW,
+                0.42, 0.24, 0.47, 0.84, 0.48, 0.94);
+        } else {
+            setSeg(4, cx, cy, cz, cx, cy, cz, 0, 0, 0, 0, 0, 0);
+        }
+
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._peSystem.geometry.setDrawRange(0, 5 * 2);
+    }
+
+    togglePESystem(on) {
+        if (!this._peSystem) this._buildPESystem();
+        this._peSystem.visible = on;
+        if (!on) this._peSystem.geometry.setDrawRange(0, 0);
+    }
+
     // ── Main per-frame particle update ────────────────────────────────
     updateParticles(data) {
         const geo = this.particles.geometry;
@@ -465,10 +564,12 @@ export class ViewportParticleRenderer {
         disposeMesh(this.velocityVectors);
         disposeMesh(this.trails);
         disposeMesh(this._particleForces);
+        disposeMesh(this._peSystem);
 
         this.particles = null;
         this.velocityVectors = null;
         this.trails = null;
         this._particleForces = null;
+        this._peSystem = null;
     }
 }

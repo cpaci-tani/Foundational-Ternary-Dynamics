@@ -1,17 +1,17 @@
 /**
- * PE Telemetry Panel — Scientist-grade physics telemetry for Scale 1.
+ * PE Telemetry Panel — non-duplicated Scale 1 drill-down surfaces.
  *
- * Five sections:
- *   1. Conservation Laws (energy, momentum, angular momentum) with sparklines + alarms
- *   2. System Properties (virial, temperature, RMS velocity, CoM, radius)
- *   3. Per-Particle Table (ID, q, m, |r|, |v|, |a|, |F|, KE, locked)
- *   4. Orbital Mechanics (2-body only: Kepler orbit parameters + phase space)
- *   5. Time-Series Charts (energy, |p|, |L|, virial — multi-trace sparklines)
+ * Conservation Laws + System Properties were removed (2026-06-15): those
+ * quantities now live ONLY in the descriptor tables (.diag-scale1-root:
+ * Active Hamiltonian + Conservation + Forces & Geometry). This panel keeps
+ * the three surfaces the descriptor tables do NOT provide:
+ *   1. Per-Particle Table (ID, q, m, |r|, |v|, |a|, |F|, KE, locked)
+ *   2. Orbital Mechanics (2-body only: Kepler orbit parameters + phase space)
+ *   3. Time-Series Charts (energy, |p|, |L|, virial — multi-trace sparklines)
  */
 
-import { CanvasSparkline } from './ui/charts/canvas-sparkline.js';
-import { G_N, COULOMB_K_FORCE } from './constants.js';
-import { formatEnergy, formatVelocity, formatLength, formatTemperature } from './units.js';
+import { G_PE, COULOMB_K_FORCE } from './constants.js';
+import { formatEnergy, formatLength } from './units.js';
 import { createCachedCanvasRect } from './dom-utils.js';
 import { ChartHoverTooltip, formatChartValue } from './ui/charts/chart-hover-tooltip.js';
 import { resolveChartColor } from './ui/charts/theme.js';
@@ -229,12 +229,6 @@ class PhaseRingBuffer {
 }
 
 // ── Formatting helpers ───────────────────────────────────────────────
-function fmt(v, digits = 6) {
-    if (typeof v !== 'number' || !isFinite(v)) return '—';
-    if (Math.abs(v) >= 1e6 || (Math.abs(v) < 1e-4 && v !== 0)) return v.toExponential(3);
-    return v.toFixed(digits);
-}
-
 function fmtShort(v) {
     if (typeof v !== 'number' || !isFinite(v)) return '—';
     if (Math.abs(v) >= 1e4) return v.toExponential(2);
@@ -245,30 +239,10 @@ function fmtShort(v) {
 // ── Main Panel Class ─────────────────────────────────────────────────
 export class PETelemetryPanel {
     constructor() {
-        // Section 1: Conservation
+        // Orbital Mechanics (2-body) — the only drill-down with dedicated DOM
+        // that the descriptor tables don't provide. Conservation + System
+        // Properties refs were removed (now in .diag-scale1-root descriptors).
         this._els = {
-            energy: document.getElementById('pet-energy'),
-            momentum: document.getElementById('pet-momentum'),
-            angmom: document.getElementById('pet-angmom'),
-            drift: document.getElementById('pet-drift'),
-            energyAlarm: document.getElementById('pet-energy-alarm'),
-            momentumAlarm: document.getElementById('pet-momentum-alarm'),
-            angmomAlarm: document.getElementById('pet-angmom-alarm'),
-            driftAlarm: document.getElementById('pet-drift-alarm'),
-            // Section 2: System
-            count: document.getElementById('pet-count'),
-            virial: document.getElementById('pet-virial'),
-            temp: document.getElementById('pet-temp'),
-            vrms: document.getElementById('pet-vrms'),
-            radius: document.getElementById('pet-radius'),
-            tick: document.getElementById('pet-tick'),
-            ke: document.getElementById('pet-ke'),
-            pe: document.getElementById('pet-pe'),
-            com: document.getElementById('pet-com'),
-            // Decomposed PE
-            peCoulomb: document.getElementById('pet-pe-coulomb'),
-            peGravity: document.getElementById('pet-pe-gravity'),
-            // Section 4: Orbital
             orbSection: document.getElementById('pet-orbital-section'),
             orbR: document.getElementById('pet-orb-r'),
             orbMu: document.getElementById('pet-orb-mu'),
@@ -277,14 +251,6 @@ export class PETelemetryPanel {
             orbE: document.getElementById('pet-orb-e'),
             orbT: document.getElementById('pet-orb-T'),
             orbVisviva: document.getElementById('pet-orb-visviva'),
-        };
-
-        // Conservation sparklines
-        this._sparks = {
-            energy: new CanvasSparkline(document.getElementById('pet-spark-energy')),
-            momentum: new CanvasSparkline(document.getElementById('pet-spark-momentum')),
-            angmom: new CanvasSparkline(document.getElementById('pet-spark-angmom')),
-            drift: new CanvasSparkline(document.getElementById('pet-spark-drift')),
         };
 
         // Time-series charts
@@ -316,11 +282,6 @@ export class PETelemetryPanel {
 
         // Particle table body
         this._tbody = document.getElementById('pet-particle-tbody');
-
-        // Tracking for drift + alarms
-        this._initialEnergy = null;
-        this._initialMomentum = null;
-        this._initialAngmom = null;
     }
 
     /**
@@ -329,117 +290,12 @@ export class PETelemetryPanel {
      * @param {object|null} ext - from bridge.peGetExtendedData()
      */
     update(diag, ext) {
-        this._updateConservation(diag);
-        this._updateSystemProps(diag, ext);
         if (ext) this._updateParticleTable(ext);
         this._updateOrbitalMechanics(ext);
         this._updateTimeSeries(diag);
     }
 
-    // ── Section 1: Conservation Laws ─────────────────────────────────
-    _updateConservation(diag) {
-        const E = diag.totalEnergy;
-        const pMag = Math.sqrt(diag.momentumX ** 2 + diag.momentumY ** 2 + diag.momentumZ ** 2);
-        const lMag = Math.sqrt(diag.angMomX ** 2 + diag.angMomY ** 2 + diag.angMomZ ** 2);
-
-        this._els.energy.textContent = formatEnergy(E, 1).text;
-        this._els.momentum.textContent = fmt(pMag) + ' MeV/c';
-        this._els.angmom.textContent = fmt(lMag) + ' \u0127';
-
-        // Track initial values for drift/alarm
-        if (this._initialEnergy === null && E !== 0) this._initialEnergy = E;
-        if (this._initialMomentum === null && pMag > 0) this._initialMomentum = pMag;
-        if (this._initialAngmom === null && lMag > 0) this._initialAngmom = lMag;
-
-        // Energy drift
-        let driftPct = 0;
-        if (this._initialEnergy !== null && this._initialEnergy !== 0) {
-            driftPct = ((E - this._initialEnergy) / Math.abs(this._initialEnergy)) * 100;
-        }
-        this._els.drift.textContent = driftPct.toFixed(4) + '%';
-
-        // Alarms
-        const absDrift = Math.abs(driftPct);
-        this._setAlarm(this._els.driftAlarm, absDrift < 0.1 ? 'green' : absDrift < 1.0 ? 'yellow' : 'red');
-        this._setAlarm(this._els.energyAlarm, absDrift < 0.1 ? 'green' : absDrift < 1.0 ? 'yellow' : 'red');
-        this._setAlarm(this._els.momentumAlarm, pMag < 1e-6 ? 'green' : pMag < 1e-3 ? 'yellow' : 'red');
-        this._setAlarm(this._els.angmomAlarm, 'green'); // Angular momentum — just show green for now
-
-        // Push sparklines
-        this._sparks.energy.push(E);
-        this._sparks.momentum.push(pMag);
-        this._sparks.angmom.push(lMag);
-        this._sparks.drift.push(driftPct);
-    }
-
-    _setAlarm(el, level) {
-        if (!el) return;
-        el.className = 'pe-cons-alarm';
-        if (level) el.classList.add('alarm-' + level);
-    }
-
-    // ── Section 2: System Properties ─────────────────────────────────
-    _updateSystemProps(diag, ext) {
-        const N = diag.particleCount;
-        this._els.count.textContent = N;
-        this._els.tick.textContent = diag.tick;
-        this._els.ke.textContent = formatEnergy(diag.totalKE, 1).text;
-        this._els.pe.textContent = formatEnergy(diag.totalPE, 1).text;
-        if (this._els.peCoulomb) this._els.peCoulomb.textContent = formatEnergy(diag.coulombPE || 0, 1).text;
-        if (this._els.peGravity) this._els.peGravity.textContent = formatEnergy(diag.gravityPE || 0, 1).text;
-
-        // Virial ratio
-        const virial = diag.totalPE !== 0 ? (2 * diag.totalKE / Math.abs(diag.totalPE)) : NaN;
-        this._els.virial.textContent = fmtShort(virial);
-        if (this._els.virial && isFinite(virial)) {
-            this._els.virial.style.color = virial < 0.8 ? '#f87171' : virial > 1.2 ? '#fbbf24' : '#4ade80';
-        }
-
-        if (!ext || ext.count === 0) {
-            this._els.temp.textContent = '—';
-            this._els.vrms.textContent = '—';
-            this._els.com.textContent = '—';
-            this._els.radius.textContent = '—';
-            return;
-        }
-
-        // Temperature: (2/3) KE / N (equipartition, 3 translational DoF)
-        const temp = N > 0 ? (2 / 3) * diag.totalKE / N : 0;
-        this._els.temp.textContent = formatTemperature(temp, 1).text;
-
-        // RMS velocity
-        let v2sum = 0;
-        for (let i = 0; i < ext.count; i++) {
-            const vx = ext.velocities[i * 3], vy = ext.velocities[i * 3 + 1], vz = ext.velocities[i * 3 + 2];
-            v2sum += vx * vx + vy * vy + vz * vz;
-        }
-        this._els.vrms.textContent = formatVelocity(Math.sqrt(v2sum / ext.count), 1).text;
-
-        // Center of mass
-        let cmx = 0, cmy = 0, cmz = 0, totalMass = 0;
-        for (let i = 0; i < ext.count; i++) {
-            const m = ext.masses[i];
-            cmx += m * ext.positions[i * 3];
-            cmy += m * ext.positions[i * 3 + 1];
-            cmz += m * ext.positions[i * 3 + 2];
-            totalMass += m;
-        }
-        if (totalMass > 0) { cmx /= totalMass; cmy /= totalMass; cmz /= totalMass; }
-        this._els.com.textContent = `(${cmx.toFixed(1)}, ${cmy.toFixed(1)}, ${cmz.toFixed(1)}) lu`;
-
-        // System radius: max distance from CoM
-        let maxR = 0;
-        for (let i = 0; i < ext.count; i++) {
-            const dx = ext.positions[i * 3] - cmx;
-            const dy = ext.positions[i * 3 + 1] - cmy;
-            const dz = ext.positions[i * 3 + 2] - cmz;
-            const r = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (r > maxR) maxR = r;
-        }
-        this._els.radius.textContent = formatLength(maxR, 1).text;
-    }
-
-    // ── Section 3: Per-Particle Table ────────────────────────────────
+    // ── Per-Particle Table ───────────────────────────────────────────
     _updateParticleTable(ext) {
         if (!this._tbody) return;
         const N = Math.min(ext.count, 20); // Cap at 20 rows
@@ -503,10 +359,10 @@ export class PETelemetryPanel {
         // Reduced mass
         const mu = m1 * m2 / (m1 + m2);
 
-        // Effective coupling: k = COULOMB_K_FORCE·q1·q2 + G_N·m1·m2 (with signs)
+        // Effective coupling: k = COULOMB_K_FORCE·q1·q2 + G_PE·m1·m2 (with signs)
         const q1 = ext.charges[0], q2 = ext.charges[1];
         const k_em = -COULOMB_K_FORCE * q1 * q2; // attractive when opposite
-        const k_grav = G_N * m1 * m2;                   // always attractive
+        const k_grav = G_PE * m1 * m2;                   // always attractive
         const k = k_em + k_grav; // net coupling constant (positive = attractive)
 
         // Specific angular momentum: h = |r × v|
@@ -624,10 +480,6 @@ export class PETelemetryPanel {
 
     /** Render all charts (call from rAF, throttled) */
     drawCharts() {
-        this._sparks.energy.draw('#42a5f5');
-        this._sparks.momentum.draw('#4ade80');
-        this._sparks.angmom.draw('#a78bfa');
-        this._sparks.drift.draw('#fbbf24');
         this._tsEnergy.draw();
         this._tsMomentum.draw();
         this._tsAngmom.draw();
@@ -636,12 +488,8 @@ export class PETelemetryPanel {
 
     /** Reset all state (call on scenario change) */
     clear() {
-        this._initialEnergy = null;
-        this._initialMomentum = null;
-        this._initialAngmom = null;
         this._phaseBuf.clear();
         this._drawPhaseSpace();
-        for (const s of Object.values(this._sparks)) s.clear();
         this._tsEnergy.clear();
         this._tsMomentum.clear();
         this._tsAngmom.clear();

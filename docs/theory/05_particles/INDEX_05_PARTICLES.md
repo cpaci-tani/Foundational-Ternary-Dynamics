@@ -10,6 +10,7 @@
 1. [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md) — integer-encoding survey + SM completeness audit; the orientation doc for the cluster.
 2. [DERIV_COMPLETE_PARTICLE_PHYSICS.md](DERIV_COMPLETE_PARTICLE_PHYSICS.md) — full SM-observable roll-up with the ~35 [THEOREM] / ~50 [PARAMETRIC] / ~50+ [EXTERNAL] breakdown stated up front.
 3. [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) — why {3, 4, 7, 13} arise from normed division algebras; x₊, x₋ = 70 ± 67 (Heegner).
+4. [SPEC_ATOMIC_PROPERTY_LEDGER.md](SPEC_ATOMIC_PROPERTY_LEDGER.md) — FTD translation of standard atomic properties, establishing the contextual scale vector $\mathcal{A}_{\rm atom}$ and the implemented `AtomicClosureContext` API.
 
 ## Masses & Standard Model spectrum
 
@@ -20,6 +21,13 @@
 | [PRED_ELECTROWEAK_MASSES.md](PRED_ELECTROWEAK_MASSES.md) | [THEOREM] (running + tree) + [PARAMETRIC] (radiative corr.) | M_Z to 0.02% and M_W to 0.5% from α, sin²θ_W = 3/13, v — zero free parameters. |
 | [FOUND_DISCRETE_NATIVE_MASS_GENERATION.md](FOUND_DISCRETE_NATIVE_MASS_GENERATION.md) | [FOUNDATIONAL / OPERATIONAL] | Rest mass operationally defined as voxel cardinality, with linear-level scaling (FTD-0110) and point-group representation analysis. |
 | [EXPLR_FTD_MASS_CHAIN.md](EXPLR_FTD_MASS_CHAIN.md) | [arithmetic synthesis — mixed status] | G* → master quadratic → m_e/m_p/m_n arithmetic chain. THEOREM spine; PARAMETRIC / COORDINATE-COINCIDENCE mass matches (mass-unit ≡ m_e; not engine-dynamical). Paired with red-team [AUDIT_MASS_CHAIN_REDTEAM.md](../07_assessment/AUDIT_MASS_CHAIN_REDTEAM.md). |
+
+## Atomic scale context
+
+| File | Tag | Purpose |
+|---|---|---|
+| [SPEC_ATOMIC_PROPERTY_LEDGER.md](SPEC_ATOMIC_PROPERTY_LEDGER.md) | [ACTIVE SPEC] | Atomic-property and scale-context ledger. Documents the distinction between `Atom.radius` (simulation/LJ interaction radius) and `AtomicClosureContext::r_cloud` (shell-context cloud readout), with C++/JS implementation surfaces and epistemic status. |
+
 ## Coupling constants & forces (Class C)
 
 | File | Tag | Purpose |
