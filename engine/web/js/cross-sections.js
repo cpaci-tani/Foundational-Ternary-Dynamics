@@ -23,7 +23,7 @@ export function classicalElectronRadiusFm() {
  * Thomson scattering cross-section (low-energy photon off electron).
  * sigma_T = (8*pi/3) * r_e^2   [fm^2]
  *
- * Experimental: 6.6524e-29 m^2 = 6.6524e5 fm^2
+ * Experimental: 6.6524e-29 m^2 = 66.52 fm^2  (1 m^2 = 1e30 fm^2)
  */
 export function thomsonCrossSection() {
     const r_e = classicalElectronRadiusFm();
@@ -88,8 +88,12 @@ export function mottDiffCS(theta, E_kin, Z = 1) {
 
 /**
  * Pair production threshold energy.
- * Minimum photon energy to create e+e- pair: E_thresh = 2 * m_e
- * This is the genesis threshold — K_GENESIS = N_c * K_B in FTD.
+ * Minimum photon energy to create e+e- pair: E_thresh = 2 * m_e = 1.022 MeV.
+ *
+ * NOTE: this 2*m_e pair-creation rest-mass threshold is DISTINCT from FTD's
+ * genesis-kinetics scale K_GENESIS = N_c * K_MANIFEST = 1.533 MeV. They are
+ * not equal (1.022 != 1.533) and are not the same quantity — do not identify
+ * this threshold with the genesis threshold.
  */
 export function pairProductionThreshold() {
     return 2.0 * K_B;  // 1.022 MeV
