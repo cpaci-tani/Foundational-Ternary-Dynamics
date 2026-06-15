@@ -318,3 +318,8 @@ engine/web/docs/*_files/
 # Ignore run_wsl.sh script
 run_wsl.sh
 .gitignore
+traj_koopman_A14.csv
+traj_temp_64.csv
+traj_temp.csv
+traj_temp_128.csv
+.gitignore

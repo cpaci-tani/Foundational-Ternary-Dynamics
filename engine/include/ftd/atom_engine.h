@@ -18,6 +18,7 @@
 #include "voxel.h"       // Vec3
 #include "constants.h"   // ALPHA, K_B, PI, C_SPEED, DAMPING, R_BOHR, N_BASE, etc.
 #include "scale.h"       // OnticEntity, ScaleLevel
+#include "atomic_closure_context.h"
 #include "scale_engine.h"  // ScaleEngine base class
 #include "barnes_hut.h"    // FTD Generalized Barnes-Hut Tree
 #include <vector>
@@ -112,6 +113,13 @@ struct AtomicProperties {
     int max_bonds;        // maximum covalent bonds (valence)
     int valence_e;        // valence electrons (for VSEPR lone-pair counting)
     double electronegativity; // Pauling chi value
+
+    // [IMPOSED] Closure Context properties
+    double alpha_pol = 0.0;
+    double e_ion = 0.0;
+    double e_aff = 0.0;
+    double sigma_scatter = 0.0;
+    AtomicClosureContext closure_context;
 };
 
 /// Compute atomic properties from atomic number Z and neutron count N.
@@ -193,6 +201,13 @@ inline AtomicProperties compute_atomic_properties(int Z, int N = 0) {
         p.electronegativity = 0.0;
     }
 
+    p.closure_context = compute_atomic_closure_context(Z);
+    p.alpha_pol = 4.0 * PI * std::pow(p.closure_context.r_cloud, 3.0);
+    double n = std::max(1.0, static_cast<double>(p.closure_context.n_shell));
+    p.e_ion = std::pow(p.closure_context.z_eff / n, 2.0);
+    p.e_aff = p.electronegativity * 0.5;
+    p.sigma_scatter = PI * p.vdw_sigma * p.vdw_sigma;
+
     return p;
 }
 
@@ -237,6 +252,16 @@ struct Atom {
     // Phase 3 fields
     double electronegativity = 0.0;  // Pauling chi value (set from Z)
     Vec3 dipole_moment;               // Electric dipole (computed from bonds + chi)
+
+    // [IMPOSED] Closure Context for Dynamic MD Interactions
+    double alpha_pol = 0.0;
+    double e_ion = 0.0;
+    double e_aff = 0.0;
+    double sigma_scatter = 0.0;
+    double z_eff = 0.0;
+    
+    // For QEq tracking (continuous fractional charge transfer)
+    double q_frac = 0.0;
 
     // Convert to universal ternary triple
     OnticEntity as_ontic() const {

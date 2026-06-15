@@ -102,6 +102,10 @@ using ontic::ALPHA_TREE;        // = 1/X_PLUS (tree-level, reference only)
 using ontic::ALPHA_WEAK;
 using ontic::G_C;
 using ontic::G_N;
+using ontic::G_PE;
+using ontic::G_DERIVED;
+using ontic::ALPHA_G_ELECTRON;
+using ontic::M_PLANCK_MEV;
 using ontic::SIN2_WEINBERG;
 
 // ──────────────────────────────────────────────────────────────────────

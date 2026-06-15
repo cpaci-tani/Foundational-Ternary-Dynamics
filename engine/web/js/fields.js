@@ -6,7 +6,7 @@
  * (Scale 1) and AtomEngine (Scale 2).
  */
 
-import { G_N, COULOMB_K_FORCE } from './constants.js';
+import { G_PE, COULOMB_K_FORCE } from './constants.js';
 import { AE_K_COULOMB } from './atomic-props.js';
 
 // ── Grid Generation ──────────────────────────────────────────────────
@@ -134,7 +134,7 @@ export function samplePECoulombOnly(sources, gridPos, gridCount, soft = 0.5) {
 
 /**
  * Sample gravitational potential and force at grid points from PE particles.
- * Gravity is attractive: F = -G_N * m / r² · r̂ (toward source).
+ * Gravity is attractive: F = -G_PE * m / r² · r̂ (toward source).
  * @param {{ positions: Float32Array, masses: Float32Array, count: number }} sources
  */
 export function samplePEGravityField(sources, gridPos, gridCount, soft = 0.5) {
@@ -155,12 +155,12 @@ export function samplePEGravityField(sources, gridPos, gridCount, soft = 0.5) {
             const r = Math.sqrt(r2);
             const mi = sources.masses[i];
 
-            // Gravitational potential: φ = -G_N * m / r
-            phi -= G_N * mi / r;
+            // Gravitational potential: φ = -G_PE * m / r
+            phi -= G_PE * mi / r;
 
-            // Gravitational force on unit test mass: F = -G_N·m/r²·r̂ (toward source)
+            // Gravitational force on unit test mass: F = -G_PE·m/r²·r̂ (toward source)
             // dx = grid - source → points AWAY from source, so negate for attraction
-            const fMag = -G_N * mi / r2;
+            const fMag = -G_PE * mi / r2;
             fx += fMag * dx / r;
             fy += fMag * dy / r;
             fz += fMag * dz / r;
