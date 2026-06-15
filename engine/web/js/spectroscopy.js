@@ -1,7 +1,11 @@
 /**
  * Spectroscopy Module — Hydrogen energy levels and spectral series.
  *
- * Every formula uses constants from the ontic chain via constants.js.
+ * These are the textbook Bohr/Schrödinger hydrogen forms evaluated with FTD's
+ * α — [PARAMETRIC] insertions, NOT FTD derivations. Per
+ * AUDIT_ATOMIC_DYNAMICS_STATUS.md the hydrogen spectrum is a classical-Kepler /
+ * parametric result, not a substrate quantum-eigenvalue derivation. Constants
+ * come from constants.js (which traces to ontic.h).
  * All energies in MeV (natural units where K_B = m_e = 0.511 MeV).
  */
 

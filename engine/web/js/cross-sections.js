@@ -1,8 +1,10 @@
 /**
- * Cross-Sections Module — scattering cross-sections from the ontic chain.
+ * Cross-Sections Module — scattering cross-sections (standard QED forms).
  *
- * Every formula uses constants from constants.js (which traces to ontic.h).
- * All energies in MeV, lengths in fm, cross-sections in fm².
+ * These are textbook QED/scattering formulas (Thomson, Rutherford, Mott,
+ * Klein-Nishina, Bethe-Heitler) evaluated with FTD's α — i.e. [PARAMETRIC]
+ * insertions, NOT FTD derivations. Constants come from constants.js (which
+ * traces to ontic.h). All energies in MeV, lengths in fm, cross-sections in fm².
  */
 
 import { ALPHA, K_B, M_E_PHYS, PI_FTD, HBAR_C_MEV_FM } from './constants.js';
@@ -23,7 +25,7 @@ export function classicalElectronRadiusFm() {
  * Thomson scattering cross-section (low-energy photon off electron).
  * sigma_T = (8*pi/3) * r_e^2   [fm^2]
  *
- * Experimental: 6.6524e-29 m^2 = 6.6524e5 fm^2
+ * Experimental: 6.6524e-29 m^2 = 66.52 fm^2  (1 fm^2 = 1e-30 m^2)
  */
 export function thomsonCrossSection() {
     const r_e = classicalElectronRadiusFm();
@@ -88,8 +90,10 @@ export function mottDiffCS(theta, E_kin, Z = 1) {
 
 /**
  * Pair production threshold energy.
- * Minimum photon energy to create e+e- pair: E_thresh = 2 * m_e
- * This is the genesis threshold — K_GENESIS = N_c * K_B in FTD.
+ * Minimum photon energy to create e+e- pair: E_thresh = 2 * m_e = 2 * K_B = 1.022 MeV.
+ * NOTE: this is NOT the FTD genesis threshold. K_GENESIS = N_c * K_MANIFEST
+ * = 1.533 MeV (3 * m_e), which is a different, larger quantity — do not equate
+ * the 2*m_e pair threshold with K_GENESIS.
  */
 export function pairProductionThreshold() {
     return 2.0 * K_B;  // 1.022 MeV
@@ -213,7 +217,7 @@ export function renderCrossSections(container) {
     svg += '</svg>';
 
     container.innerHTML = `
-        <div class="card-title">Cross-Sections (from ontic chain)</div>
+        <div class="card-title">Cross-Sections (textbook QED · parametric)</div>
         ${svg}
         <div class="pc-grid-2">
             <div>r<sub>e</sub> = <span class="pc-text-accent">${r_e.toFixed(2)} fm</span></div>

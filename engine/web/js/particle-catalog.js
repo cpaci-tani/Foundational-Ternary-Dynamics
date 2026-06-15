@@ -45,7 +45,10 @@ const PARTICLES = [
         mass_mev: M_E, charge: -1, spin: 0.5,
         color_charge: 'none', antiparticle: 'positron',
         ftd_formula: 'm_P·√(2π)·(16/3)·α¹¹',
-        ftd_accuracy: 0.27, ftd_status: 'derived',
+        // LEDGER FTD-0015: the m_e formula is [STRONGLY MOTIVATED CONJECTURE]
+        // (only the α-exponent n=11 is [DERIVED], not the mass value). Retagged
+        // 'derived'→'selection' to match LEDGER + the proton precedent. Audit 2026-06-15.
+        ftd_accuracy: 0.27, ftd_status: 'selection',
         display_color: [0.29, 0.87, 0.50], display_size: 4
     },
     {
@@ -54,7 +57,8 @@ const PARTICLES = [
         mass_mev: M_E, charge: 1, spin: 0.5,
         color_charge: 'none', antiparticle: 'electron',
         ftd_formula: 'm_e (same mass)',
-        ftd_accuracy: 0.27, ftd_status: 'derived',
+        // CPT partner of the electron → same status as m_e (FTD-0015 [SMC]).
+        ftd_accuracy: 0.27, ftd_status: 'selection',
         display_color: [0.97, 0.44, 0.44], display_size: 4
     },
     {
@@ -63,7 +67,9 @@ const PARTICLES = [
         mass_mev: M_E * MU_RATIO, charge: -1, spin: 0.5,
         color_charge: 'none', antiparticle: 'antimuon',
         ftd_formula: 'm_e·(3·b₃·(b₃+N_c)−N_c) = 207·m_e',
-        ftd_accuracy: 0.11, ftd_status: 'derived',
+        // Lepton-mass formula on the FTD-0015 [SMC] m_e anchor; not a derivation
+        // (no axioms→m_μ chain). Retagged 'derived'→'selection'. Audit 2026-06-15.
+        ftd_accuracy: 0.11, ftd_status: 'selection',
         display_color: [0.20, 0.73, 0.40], display_size: 5
     },
     {
@@ -72,7 +78,8 @@ const PARTICLES = [
         mass_mev: M_E * MU_RATIO, charge: 1, spin: 0.5,
         color_charge: 'none', antiparticle: 'muon',
         ftd_formula: 'm_μ (same mass)',
-        ftd_accuracy: 0.11, ftd_status: 'derived',
+        // CPT partner of the muon → same status as m_μ ([SMC]).
+        ftd_accuracy: 0.11, ftd_status: 'selection',
         display_color: [0.90, 0.35, 0.35], display_size: 5
     },
     {
@@ -81,7 +88,9 @@ const PARTICLES = [
         mass_mev: M_E * TAU_RATIO, charge: -1, spin: 0.5,
         color_charge: 'none', antiparticle: 'antitau',
         ftd_formula: 'm_e·((N_eff+N_base)·207−2N_c·b₃) = 3477·m_e',
-        ftd_accuracy: 0.007, ftd_status: 'derived',
+        // Lepton-mass formula on the FTD-0015 [SMC] m_e anchor; not a derivation.
+        // Retagged 'derived'→'selection'. Audit 2026-06-15.
+        ftd_accuracy: 0.007, ftd_status: 'selection',
         display_color: [0.12, 0.60, 0.32], display_size: 6
     },
     {
@@ -90,7 +99,8 @@ const PARTICLES = [
         mass_mev: M_E * TAU_RATIO, charge: 1, spin: 0.5,
         color_charge: 'none', antiparticle: 'tau',
         ftd_formula: 'm_τ (same mass)',
-        ftd_accuracy: 0.007, ftd_status: 'derived',
+        // CPT partner of the tau → same status as m_τ ([SMC]).
+        ftd_accuracy: 0.007, ftd_status: 'selection',
         display_color: [0.82, 0.28, 0.28], display_size: 6
     },
     {
@@ -102,7 +112,10 @@ const PARTICLES = [
         mass_mev: 4.1e-9, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_e',
         ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 neV',
-        ftd_accuracy: null, ftd_status: 'derived',
+        // constants.js M_NU_E_PHYS is a [PARAMETRIC PDG] cosmological/oscillation
+        // UPPER BOUND, explicitly "not derivable from the current FTD chain"; the
+        // formula is post-hoc. Retagged 'derived'→'parametric'. Audit 2026-06-15.
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.70, 0.95, 0.80], display_size: 2
     },
     {
@@ -112,7 +125,8 @@ const PARTICLES = [
         mass_mev: 4.1e-9, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_e',
         ftd_formula: 'm_ν₁ (same mass)',
-        ftd_accuracy: null, ftd_status: 'derived',
+        // Mirrors ν_e (PDG upper bound, not derivable). 'derived'→'parametric'.
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.95, 0.80, 0.80], display_size: 2
     },
     {
@@ -121,7 +135,8 @@ const PARTICLES = [
         mass_mev: 8.58e-3, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_mu',
         ftd_formula: 'm₃·√N_c/(b₃+N_c) ≈ 8.6 meV',
-        ftd_accuracy: null, ftd_status: 'derived',
+        // PDG upper bound, not derivable from the FTD chain. 'derived'→'parametric'.
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.60, 0.90, 0.72], display_size: 2
     },
     {
@@ -130,7 +145,8 @@ const PARTICLES = [
         mass_mev: 8.58e-3, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_mu',
         ftd_formula: 'm_ν₂ (same mass)',
-        ftd_accuracy: null, ftd_status: 'derived',
+        // Mirrors ν_μ (PDG upper bound, not derivable). 'derived'→'parametric'.
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.90, 0.72, 0.72], display_size: 2
     },
     {
@@ -139,7 +155,8 @@ const PARTICLES = [
         mass_mev: 4.955e-2, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_tau',
         ftd_formula: 'v·(N_base/N_c)·α⁶ ≈ 49.6 meV',
-        ftd_accuracy: null, ftd_status: 'derived',
+        // PDG upper bound, not derivable from the FTD chain. 'derived'→'parametric'.
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.50, 0.85, 0.65], display_size: 2
     },
     {
@@ -148,7 +165,8 @@ const PARTICLES = [
         mass_mev: 4.955e-2, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_tau',
         ftd_formula: 'm_ν₃ (same mass)',
-        ftd_accuracy: null, ftd_status: 'derived',
+        // Mirrors ν_τ (PDG upper bound, not derivable). 'derived'→'parametric'.
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.85, 0.65, 0.65], display_size: 2
     },
 
