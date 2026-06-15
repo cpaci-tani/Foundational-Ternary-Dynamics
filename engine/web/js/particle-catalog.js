@@ -1,11 +1,16 @@
 /**
- * Particle Catalog: Complete Standard Model + FTD-derived particles
+ * Particle Catalog: Standard Model particles with honest FTD provenance.
  *
- * Every mass traces back through the ontic chain:
- *   e → γ → Γ(1/4) → θ₃ → ϖ → M → G* → π → α → masses
- *
- * Mass formulas use framework integers: N_c=3, N_base=4, b₃=7, N_eff=13
- * and α = 1/137.036 from the master quadratic.
+ * Mass provenance is per-entry (see each `ftd_status`); it is NOT uniform:
+ *   - Charged leptons (e/μ/τ): FTD mass formulas on the
+ *     e → γ → Γ(1/4) → θ₃ → ϖ → M → G* → π → α → m_e chain, using the
+ *     framework integers N_c=3, N_base=4, b₃=7, N_eff=13. Tagged 'selection'
+ *     ([STRONGLY MOTIVATED CONJECTURE], FTD-0015/0016) — motivated, NOT derived.
+ *   - Quarks, hadrons, gauge bosons, Higgs, neutrinos: PDG/experimental
+ *     reference masses imported from constants.js ([PARAMETRIC PDG] /
+ *     'parametric'), FTD does not derive these.
+ * So "every mass traces to the ontic chain" would be an overclaim — only the
+ * charged-lepton formulas do, and at [SMC], not [DERIVED].
  *
  * Categories:
  *   leptons      - e, μ, τ + neutrinos + antiparticles
