@@ -136,7 +136,12 @@ if(EMSCRIPTEN)
     if(FTD_WASM_THREADS)
         target_link_options(ftd_wasm PRIVATE
             -pthread
-            -sPTHREAD_POOL_SIZE=16
+            # POOL_SIZE=0 => NO pthread pre-spawn at module init. This is what
+            # lets the module load inside a Web Worker without the nested-worker
+            # spawn stall (16 pre-spawned nested workers hung). The ftd::pool
+            # (parallel.h) creates threads on demand via pthread_create; at
+            # pool=1 it creates none (pure serial, off-thread — Phase 1).
+            -sPTHREAD_POOL_SIZE=0
             -sPTHREAD_POOL_SIZE_STRICT=0
             -sENVIRONMENT=node,web,worker
             # Pre-size a large heap so the common L range never triggers growth
