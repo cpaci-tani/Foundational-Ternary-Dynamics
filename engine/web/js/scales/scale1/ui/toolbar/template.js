@@ -5,6 +5,7 @@ export function getScale1ScenarioToolbarTemplate() {
             <select class="tb-select tb-select-scenario-wide" id="pe-scenario-select">
                 <optgroup label="Leptons">
                     <option value="pe-hydrogen" selected>Hydrogen Atom (p + e&#8315;)</option>
+                    <option value="pe-hydrogen-fine">Hydrogen (spin + dipole demo)</option>
                     <option value="pe-helium">Helium Atom (He&#178;&#8314; + 2e&#8315;)</option>
                     <option value="pe-positronium">Positronium (e&#8314;e&#8315;)</option>
                     <option value="pe-muonium">Muonium (&mu;&#8314;e&#8315;)</option>

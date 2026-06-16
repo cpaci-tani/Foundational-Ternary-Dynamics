@@ -2,209 +2,313 @@
  * Scale 1 — PE Cloud Expander
  * ────────────────────────────────────────────────────────────────────
  *
- * Owns the Gaussian-cloud rendering buffers, per-type template cache,
- * per-particle trail-history circular buffers, and the expansion routine
- * that turns PE particle centers into a colored, breathing point cloud
- * for the viewport renderer.
- *
- * Extracted verbatim from scales/scale1/controller.js (ticket S1-2).
- * No behavioral changes — this is a pure lift.
- *
- * EXPORTS:
- *   ensureCloudTemplate(catalogId, mass_mev)
- *     Get (or build) the Gaussian offset/brightness template for a
- *     particle type. Lazy-allocated; cached by catalog ID.
- *
- *   expandPEToCloud(peData, typeMap, t)
- *     Expand particle centers into a cloud of N points per particle
- *     with per-frame breathing motion. Returns the module-level
- *     pre-allocated buffers (zero-copy).
- *
- *   updateTrailHistory(peData)
- *     Record current positions into per-particle circular buffers and
- *     prune trails for particles that no longer exist.
- *
- *   getCloudParticleMap()
- *     Read-only access to the cloud-index → PE particle ID mapping.
- *     Used by Inspector for click-to-inspect.
- *
- *   getTrailHistory()
- *     Read-only access to the per-particle trail Map. Used by the
- *     viewport's updateTrails() call.
- *
- *   clearCloudAndTrails()
- *     Reset the template cache and trail history. Called from
- *     resetScale1() on mode switch.
- *
- *   MAX_CLOUD_TOTAL, TRAIL_MAX_LENGTH
- *     Exported constants for tests and external consumers.
+ * Fixed-boundary point cloud per particle. Manifestation blink runs in
+ * the shader (constant fill, independent slot phases). Orbital rotation
+ * of the halo uses L = r × v; intrinsic spin biases phase handedness.
  */
 
 import { getById } from '../../particle-catalog.js';
-import { K_B } from '../../constants.js';
+import { K_B, C_SPEED } from '../../constants.js';
+import { PE_VIS_BOUNDARY_R } from '../../viewport/constants.js';
 
-
-// =====================================================================
-// Cloud rendering buffers (pre-allocated, reused every frame)
-// =====================================================================
-// Each PE particle is rendered as a Gaussian flux cloud, not a point.
-// Cloud point count ~ mass (electron 0.511 MeV -> 511 cloud points).
-// TODO(A-24): the visual heuristic below (point count and cloud radius)
-// is implicitly anchored on K_B = 0.511 MeV; if K_B is rescaled in the
-// substrate UI, electron-class clouds will keep their point count but
-// the comment-numeric example ("511 cloud points") will go stale.
-// Track via M_E_PHYS / K_B if a stable visual reference is ever needed.
 export const MAX_CLOUD_TOTAL = 100000;
-const _cloudPos  = new Float32Array(MAX_CLOUD_TOTAL * 3);
-const _cloudCol  = new Float32Array(MAX_CLOUD_TOTAL * 3);
-const _cloudSize = new Float32Array(MAX_CLOUD_TOTAL);
-const _cloudParticleMap = new Int32Array(MAX_CLOUD_TOTAL); // cloud index -> PE particle ID
-
-// -- Cloud template cache (one per particle catalog ID) ---------------
-const _cloudTemplates = new Map();
-
-// -- Trail history (circular buffers per particle) --------------------
 export const TRAIL_MAX_LENGTH = 200;
-const _trailHistory = new Map(); // particleId -> { positions: Float32Array, head, length }
-const _activeIdsSet = new Set(); // persistent GC-safe set of active particle IDs
+export const MANIFEST_FILL = 0.40;
+export { PE_VIS_BOUNDARY_R };
 
+const _cloudPos = new Float32Array(MAX_CLOUD_TOTAL * 3);
+const _cloudCol = new Float32Array(MAX_CLOUD_TOTAL * 3);
+const _cloudSize = new Float32Array(MAX_CLOUD_TOTAL);
+const _cloudPhase = new Float32Array(MAX_CLOUD_TOTAL);
+const _cloudRate = new Float32Array(MAX_CLOUD_TOTAL);
+const _cloudParticleMap = new Int32Array(MAX_CLOUD_TOTAL);
 
-// =====================================================================
-// ensureCloudTemplate
-// =====================================================================
+const _trailHistory = new Map();
+const _activeIdsSet = new Set();
 
-/**
- * Generate (or retrieve cached) a Gaussian cloud template for a given
- * particle type.  Point count scales sub-linearly with mass so heavier
- * particles get denser clouds without blowing the budget.
- *
- * Template fields: { n, radius, offsets: Float32Array, brightness: Float32Array }
- *
- * Originally app.js lines ~416-453.
- */
-export function ensureCloudTemplate(catalogId, mass_mev) {
-    if (_cloudTemplates.has(catalogId)) return _cloudTemplates.get(catalogId);
+let _unitTemplate = null;
 
-    // Point count: electron (0.511 MeV) -> 511 pts; proton (938) -> ~3000
-    const nRaw = Math.round(603 * Math.pow(mass_mev, 0.238));
-    const n = Math.min(Math.max(nRaw, 50), 5000);
-
-    // Cloud radius: lighter particles are more spread out (Compton-like)
-    const radius = 2.0 + 3.0 * Math.pow(K_B / mass_mev, 0.15);
-    const sigma = radius / 2.5; // ~95% within radius
-
-    const offsets    = new Float32Array(n * 3);
+function getUnitTemplate() {
+    if (_unitTemplate) return _unitTemplate;
+    const n = 4000;
+    const offsets = new Float32Array(n * 3);
     const brightness = new Float32Array(n);
-
     for (let i = 0; i < n; i++) {
-        // Box-Muller for 3D Gaussian
-        const u1 = Math.random() || 1e-10, u2 = Math.random();
-        const u3 = Math.random() || 1e-10, u4 = Math.random();
+        const u1 = Math.random() || 1e-10;
+        const u2 = Math.random();
+        const u3 = Math.random() || 1e-10;
+        const u4 = Math.random();
         const sq1 = Math.sqrt(-2 * Math.log(u1));
         const sq3 = Math.sqrt(-2 * Math.log(u3));
-
-        const ox = sq1 * Math.cos(2 * Math.PI * u2) * sigma;
-        const oy = sq1 * Math.sin(2 * Math.PI * u2) * sigma;
-        const oz = sq3 * Math.cos(2 * Math.PI * u4) * sigma;
-
-        offsets[i * 3]     = ox;
+        const ox = sq1 * Math.cos(2 * Math.PI * u2) * 0.42;
+        const oy = sq1 * Math.sin(2 * Math.PI * u2) * 0.42;
+        const oz = sq3 * Math.cos(2 * Math.PI * u4) * 0.42;
+        offsets[i * 3] = ox;
         offsets[i * 3 + 1] = oy;
         offsets[i * 3 + 2] = oz;
-
-        const dist = Math.sqrt(ox * ox + oy * oy + oz * oz) / radius;
-        brightness[i] = Math.exp(-dist * dist * 2.0); // Gaussian falloff
+        const dist = Math.sqrt(ox * ox + oy * oy + oz * oz);
+        brightness[i] = Math.exp(-dist * dist * 2.5);
     }
-
-    const tmpl = { n, radius, offsets, brightness };
-    _cloudTemplates.set(catalogId, tmpl);
-    return tmpl;
+    const inBall = new Uint8Array(n);
+    for (let i = 0; i < n; i++) {
+        const ox = offsets[i * 3];
+        const oy = offsets[i * 3 + 1];
+        const oz = offsets[i * 3 + 2];
+        inBall[i] = (ox * ox + oy * oy + oz * oz <= 1.0) ? 1 : 0;
+    }
+    _unitTemplate = { n, offsets, brightness, inBall };
+    return _unitTemplate;
 }
 
+function chargeFallbackColor(charge) {
+    if (charge > 0) return [0.29, 0.87, 0.50];
+    if (charge < 0) return [0.97, 0.44, 0.44];
+    return [0.60, 0.60, 0.70];
+}
 
-// =====================================================================
-// expandPEToCloud
-// =====================================================================
+function strongColorTint(colorId, base) {
+    if (colorId === 1) return [base[0] * 0.7 + 0.3, base[1] * 0.5, base[2] * 0.5];
+    if (colorId === 2) return [base[0] * 0.5, base[1] * 0.7 + 0.3, base[2] * 0.5];
+    if (colorId === 3) return [base[0] * 0.5, base[1] * 0.55, base[2] * 0.7 + 0.3];
+    return base;
+}
+
+export function visualLocalizationRadius(massMev, rEff) {
+    const m = Math.max(massMev, K_B * 0.05);
+    const comptonLike = 0.2 + 2.2 * Math.pow(K_B / m, 0.38);
+    return Math.max(rEff || 0.1, comptonLike);
+}
+
+function pointCountForParticle(massMev, radius) {
+    const nRaw = Math.round(120 * Math.pow(massMev / K_B, 0.28) * (radius / 2.0));
+    return Math.min(Math.max(nRaw, 24), 2800);
+}
+
+function betaFromVelocity(vx, vy, vz) {
+    const speed = Math.sqrt(vx * vx + vy * vy + vz * vz);
+    return Math.min(speed / C_SPEED, 1.0);
+}
+
+function stretchOffset(ox, oy, oz, vx, vy, vz, beta) {
+    const stretch = 0.4 * beta;
+    const vmag2 = vx * vx + vy * vy + vz * vz;
+    if (vmag2 < 1e-16 || stretch < 1e-6) return [ox, oy, oz];
+    const inv = 1 / Math.sqrt(vmag2);
+    const ux = vx * inv;
+    const uy = vy * inv;
+    const uz = vz * inv;
+    const dot = ox * ux + oy * uy + oz * uz;
+    const px = dot * ux;
+    const py = dot * uy;
+    const pz = dot * uz;
+    const s = 1 + stretch;
+    return [px * s + (ox - px), py * s + (oy - py), pz * s + (oz - pz)];
+}
+
+/** Rodrigues rotation of offset vector about unit axis (ux,uy,uz) by angle. */
+function rotateOffset(ox, oy, oz, ux, uy, uz, angle) {
+    if (Math.abs(angle) < 1e-8) return [ox, oy, oz];
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    const dot = ox * ux + oy * uy + oz * uz;
+    const cx = uy * oz - uz * oy;
+    const cy = uz * ox - ux * oz;
+    const cz = ux * oy - uy * ox;
+    return [
+        ox * c + cx * s + ux * dot * (1 - c),
+        oy * c + cy * s + uy * dot * (1 - c),
+        oz * c + cz * s + uz * dot * (1 - c),
+    ];
+}
+
+/** Classical orbital ω ≈ |L|/(m r²) about origin, from r × v. */
+function orbitalSweepAngle(cx, cy, cz, vx, vy, vz, mass, frameSec) {
+    const lx = cy * vz - cz * vy;
+    const ly = cz * vx - cx * vz;
+    const lz = cx * vy - cy * vx;
+    const Lmag = Math.sqrt(lx * lx + ly * ly + lz * lz);
+    const r2 = cx * cx + cy * cy + cz * cz;
+    if (Lmag < 1e-12 || r2 < 1e-12) return { angle: 0, ux: 0, uy: 0, uz: 1 };
+    const m = Math.max(mass, K_B * 0.01);
+    const omega = Lmag / (m * r2);
+    const invL = 1 / Lmag;
+    return {
+        angle: omega * frameSec * 0.35,
+        ux: lx * invL,
+        uy: ly * invL,
+        uz: lz * invL,
+    };
+}
+
+function modulateColor(base, beta, keNorm) {
+    const boost = 0.82 + 0.18 * keNorm;
+    const w = beta * 0.22;
+    return [
+        base[0] * boost * (1 - w) + w,
+        base[1] * boost * (1 - w) + w,
+        base[2] * boost * (1 - w) + w,
+    ];
+}
+
+function hashUint32(a, b, c) {
+    let h = (Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263) + (c | 0)) >>> 0;
+    h = (Math.imul(h ^ (h >>> 13), 1274126177)) >>> 0;
+    return h;
+}
+
+function writeCloudPoint(out, cx, cy, cz, cr, cg, cb, size, phase, rate, pid) {
+    _cloudPos[out * 3] = cx;
+    _cloudPos[out * 3 + 1] = cy;
+    _cloudPos[out * 3 + 2] = cz;
+    _cloudCol[out * 3] = cr;
+    _cloudCol[out * 3 + 1] = cg;
+    _cloudCol[out * 3 + 2] = cb;
+    _cloudSize[out] = size;
+    _cloudPhase[out] = phase;
+    _cloudRate[out] = rate;
+    _cloudParticleMap[out] = pid;
+}
+
+export function buildPEManifestBlinkRate(peData, forceData) {
+    const n = peData.count;
+    const out = new Float32Array(n);
+    if (!n) return out;
+
+    let maxF = forceData?.maxForce ?? 0;
+    if (maxF < 1e-30) maxF = 1;
+
+    const hasForces = !!(forceData && forceData.count === n && forceData.forces);
+    const hasVel = !!peData.velocities;
+    const hasMass = !!peData.masses;
+    const hasSpins = !!peData.spins;
+
+    for (let i = 0; i < n; i++) {
+        let drive = 0;
+
+        if (hasForces) {
+            const i3 = i * 3;
+            const fx = forceData.forces[i3];
+            const fy = forceData.forces[i3 + 1];
+            const fz = forceData.forces[i3 + 2];
+            const fmag = Math.sqrt(fx * fx + fy * fy + fz * fz);
+            const m = hasMass ? peData.masses[i] : K_B;
+            const accel = fmag / Math.max(m, K_B * 0.01);
+            drive = Math.max(drive, 0.5 * Math.min(fmag / maxF, 1) + 0.5 * Math.min(accel / (C_SPEED * 0.05), 1));
+        }
+
+        if (hasVel) {
+            const i3 = i * 3;
+            drive = Math.max(drive, betaFromVelocity(
+                peData.velocities[i3],
+                peData.velocities[i3 + 1],
+                peData.velocities[i3 + 2],
+            ));
+        }
+
+        let rate = 1.6 + Math.min(drive, 1) * 2.8;
+        if (hasSpins && peData.spins[i]) rate *= 1.08;
+        out[i] = rate;
+    }
+    return out;
+}
+
+export function buildPEForceActivity(peData, forceData) {
+    return buildPEManifestBlinkRate(peData, forceData);
+}
+
+export function ensureCloudTemplate(_catalogId, _mass_mev) {
+    return getUnitTemplate();
+}
 
 /**
- * Expand PE particle centers into flux cloud point data suitable for
- * the viewport point cloud renderer.
- *
- * Each particle is replaced by N Gaussian-distributed cloud points with
- * per-frame sinusoidal "breathing" motion for organic visual quality.
- *
- * Returns { positions, colors, sizes, count } referencing the module-level
- * pre-allocated buffers (zero-copy for the viewport).
- *
- * Originally app.js lines ~455-510.
+ * @param {{ blinkRate?: Float32Array, frameSec?: number }} [opts]
  */
-export function expandPEToCloud(peData, typeMap, t) {
+export function expandPEToCloud(peData, typeMap, opts = {}) {
+    const blinkRates = opts.blinkRate ?? opts.forceActivity;
+    const frameSec = opts.frameSec ?? 0;
+
     const srcCount = peData.count;
+    const tmpl = getUnitTemplate();
     let out = 0;
+
+    const hasVel = !!peData.velocities;
+    const hasMass = !!peData.masses;
+    const hasREff = !!peData.rEff;
+    const hasCharge = !!peData.charges;
+    const hasColorId = !!peData.colorIds;
+    const hasSpins = !!peData.spins;
 
     for (let i = 0; i < srcCount && out < MAX_CLOUD_TOTAL; i++) {
         const cx = peData.positions[i * 3];
         const cy = peData.positions[i * 3 + 1];
         const cz = peData.positions[i * 3 + 2];
 
-        const pid   = peData.ids ? peData.ids[i] : -1;
+        const pid = peData.ids ? peData.ids[i] : -1;
         const catId = typeMap ? typeMap.get(pid) : null;
-        const p     = catId ? getById(catId) : null;
+        const catalog = catId ? getById(catId) : null;
 
-        if (p) {
-            const tmpl = ensureCloudTemplate(catId, p.mass_mev);
-            const [cr, cg, cb] = p.display_color;
-            const n = Math.min(tmpl.n, MAX_CLOUD_TOTAL - out);
-            const wiggle = 0.15 * tmpl.radius; // 15% of cloud radius
+        const mass = hasMass ? peData.masses[i] : (catalog?.mass_mev ?? K_B);
+        const rEff = hasREff ? peData.rEff[i] : 0.1;
+        const charge = hasCharge ? peData.charges[i] : (catalog?.charge ?? 0);
+        const colorId = hasColorId ? peData.colorIds[i] : 0;
+        const spinSign = hasSpins ? (peData.spins[i] || 0) : 0;
 
-            for (let j = 0; j < n; j++) {
-                // Per-point sinusoidal perturbation for organic "breathing" motion.
-                // Golden angle phase spacing ensures adjacent points move independently.
-                const phase = j * 2.39996323;
-                const fx = Math.sin(t * 1.7 + phase) * wiggle;
-                const fy = Math.sin(t * 2.3 + phase * 1.3) * wiggle;
-                const fz = Math.sin(t * 1.1 + phase * 0.7) * wiggle;
+        const vx = hasVel ? peData.velocities[i * 3] : 0;
+        const vy = hasVel ? peData.velocities[i * 3 + 1] : 0;
+        const vz = hasVel ? peData.velocities[i * 3 + 2] : 0;
 
-                _cloudPos[out * 3]     = cx + tmpl.offsets[j * 3]     + fx;
-                _cloudPos[out * 3 + 1] = cy + tmpl.offsets[j * 3 + 1] + fy;
-                _cloudPos[out * 3 + 2] = cz + tmpl.offsets[j * 3 + 2] + fz;
+        const beta = betaFromVelocity(vx, vy, vz);
+        const speed2 = vx * vx + vy * vy + vz * vz;
+        const keNorm = Math.min(speed2 / (C_SPEED * C_SPEED * 0.2), 1.0);
 
-                const b = tmpl.brightness[j];
-                _cloudCol[out * 3]     = cr * b;
-                _cloudCol[out * 3 + 1] = cg * b;
-                _cloudCol[out * 3 + 2] = cb * b;
+        let base = catalog ? catalog.display_color.slice() : chargeFallbackColor(charge);
+        base = strongColorTint(colorId, base);
+        const [br, bg, bb] = modulateColor(base, beta, keNorm);
 
-                _cloudSize[out] = 1.5 + b * 1.5; // 1.5 at edge -> 3.0 at center
-                _cloudParticleMap[out] = pid;
-                out++;
-            }
-        } else {
-            // Fallback: single point for untyped particles
-            _cloudPos[out * 3]     = cx;
-            _cloudPos[out * 3 + 1] = cy;
-            _cloudPos[out * 3 + 2] = cz;
-            _cloudCol[out * 3]     = 0.5;
-            _cloudCol[out * 3 + 1] = 0.5;
-            _cloudCol[out * 3 + 2] = 0.5;
-            _cloudSize[out] = 3.0;
-            _cloudParticleMap[out] = pid;
+        const orbit = orbitalSweepAngle(cx, cy, cz, vx, vy, vz, mass, frameSec);
+        const slotRate = blinkRates ? blinkRates[i] : 2.2;
+        const radius = visualLocalizationRadius(mass, rEff);
+        const n = Math.min(pointCountForParticle(mass, radius), tmpl.n, MAX_CLOUD_TOTAL - out);
+
+        for (let j = 0; j < n && out < MAX_CLOUD_TOTAL; j++) {
+            if (!tmpl.inBall[j]) continue;
+
+            let ox = tmpl.offsets[j * 3] * radius;
+            let oy = tmpl.offsets[j * 3 + 1] * radius;
+            let oz = tmpl.offsets[j * 3 + 2] * radius;
+
+            [ox, oy, oz] = rotateOffset(ox, oy, oz, orbit.ux, orbit.uy, orbit.uz, orbit.angle);
+            [ox, oy, oz] = stretchOffset(ox, oy, oz, vx, vy, vz, beta);
+
+            const b = tmpl.brightness[j];
+            const fade = 0.40 + 0.60 * b;
+            const ptSize = (0.85 + b * 1.6) * (0.88 + beta * 0.18);
+            let phase = (hashUint32(pid, j, 1) / 4294967296) * Math.PI * 2;
+            if (spinSign) phase += spinSign * 0.72;
+
+            writeCloudPoint(
+                out,
+                cx + ox, cy + oy, cz + oz,
+                br * fade, bg * fade, bb * fade,
+                ptSize,
+                phase,
+                slotRate,
+                pid,
+            );
             out++;
         }
     }
 
-    return { positions: _cloudPos, colors: _cloudCol, sizes: _cloudSize, count: out };
+    return {
+        positions: _cloudPos,
+        colors: _cloudCol,
+        sizes: _cloudSize,
+        phases: _cloudPhase,
+        rates: _cloudRate,
+        count: out,
+    };
 }
 
-
-// =====================================================================
-// updateTrailHistory
-// =====================================================================
-
-/**
- * Record current particle positions into per-particle circular trail buffers.
- * Prunes trails for particles that no longer exist.
- *
- * Originally app.js lines ~512-535.
- */
 export function updateTrailHistory(peData) {
     _activeIdsSet.clear();
     for (let i = 0; i < peData.count; i++) {
@@ -213,37 +317,35 @@ export function updateTrailHistory(peData) {
         if (!_trailHistory.has(id)) {
             _trailHistory.set(id, {
                 positions: new Float32Array(TRAIL_MAX_LENGTH * 3),
-                head: 0, length: 0
+                head: 0,
+                length: 0,
+                speeds: new Float32Array(TRAIL_MAX_LENGTH),
             });
         }
         const trail = _trailHistory.get(id);
         const h = trail.head;
-        trail.positions[h * 3]     = peData.positions[i * 3];
+        trail.positions[h * 3] = peData.positions[i * 3];
         trail.positions[h * 3 + 1] = peData.positions[i * 3 + 1];
         trail.positions[h * 3 + 2] = peData.positions[i * 3 + 2];
-        trail.head   = (h + 1) % TRAIL_MAX_LENGTH;
+        if (peData.velocities) {
+            const vx = peData.velocities[i * 3];
+            const vy = peData.velocities[i * 3 + 1];
+            const vz = peData.velocities[i * 3 + 2];
+            trail.speeds[h] = Math.sqrt(vx * vx + vy * vy + vz * vz);
+        }
+        trail.head = (h + 1) % TRAIL_MAX_LENGTH;
         trail.length = Math.min(trail.length + 1, TRAIL_MAX_LENGTH);
     }
 
-    // Remove trails for particles that no longer exist
     for (const [id] of _trailHistory) {
         if (!_activeIdsSet.has(id)) _trailHistory.delete(id);
     }
 }
 
-
-// =====================================================================
-// External accessors / reset
-// =====================================================================
-
-/** Read-only access to the cloud-to-particle mapping array. */
 export function getCloudParticleMap() { return _cloudParticleMap; }
-
-/** Read-only access to trail history for external consumers. */
 export function getTrailHistory() { return _trailHistory; }
 
-/** Reset template cache and trail history (called on mode switch). */
 export function clearCloudAndTrails() {
-    _cloudTemplates.clear();
+    _unitTemplate = null;
     _trailHistory.clear();
 }

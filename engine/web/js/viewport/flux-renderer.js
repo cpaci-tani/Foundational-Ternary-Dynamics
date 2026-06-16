@@ -35,7 +35,7 @@ import { fluxToColorInto, fluxToColor } from '../fields.js';
 
 // Flux-volume vertex shader (sqrt depth scaling) — centralized in
 // viewport/shaders.js (D-1).
-import { FLUX_VOL_VERT, PARTICLE_FRAG } from './shaders.js';
+import { FLUX_VOL_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shaders.js';
 
 // (MAX_FIELD_GRID was declared here but never referenced — flux volume
 // buffers size from lattice³, not the field-grid cap. Removed under D-6;
@@ -143,17 +143,25 @@ export class ViewportFluxRenderer {
         const positions = new Float32Array(maxPts * 3);
         const colors = new Float32Array(maxPts * 3);
         const sizes = new Float32Array(maxPts);
+        const manifestPhases = new Float32Array(maxPts);
+        const manifestRates = new Float32Array(maxPts);
 
         const geo = new THREE.BufferGeometry();
         const posAttr = new THREE.Float32BufferAttribute(positions, 3);
         const colAttr = new THREE.Float32BufferAttribute(colors, 3);
         const sizeAttr = new THREE.Float32BufferAttribute(sizes, 1);
+        const phaseAttr = new THREE.Float32BufferAttribute(manifestPhases, 1);
+        const rateAttr = new THREE.Float32BufferAttribute(manifestRates, 1);
         posAttr.setUsage(THREE.DynamicDrawUsage);
         colAttr.setUsage(THREE.DynamicDrawUsage);
         sizeAttr.setUsage(THREE.DynamicDrawUsage);
+        phaseAttr.setUsage(THREE.DynamicDrawUsage);
+        rateAttr.setUsage(THREE.DynamicDrawUsage);
         geo.setAttribute('position', posAttr);
         geo.setAttribute('particleColor', colAttr);
         geo.setAttribute('size', sizeAttr);
+        geo.setAttribute('manifestPhase', phaseAttr);
+        geo.setAttribute('manifestRate', rateAttr);
         geo.setDrawRange(0, 0);
 
         // Glow ON = additive blend so overlapping soft dots ACCUMULATE into a continuous
@@ -164,9 +172,10 @@ export class ViewportFluxRenderer {
             vertexShader: FLUX_VOL_VERT,
             fragmentShader: PARTICLE_FRAG,
             uniforms: {
-                shapeType: { value: 0 },
+                ...PARTICLE_SHADER_UNIFORMS,
                 uOpacity: { value: glow ? FLUX_GLOW_UOPACITY : FLUX_FLAT_UOPACITY },
                 uGlow: { value: glow ? FLUX_GLOW_UGLOW : 0.0 },
+                uManifestEnabled: { value: 0 },
             },
             transparent: true,
             depthWrite: false,
