@@ -48,6 +48,7 @@
 | [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) | consolidated derivation | Division algebras and Heegner numbers behind {3, 4, 7, 13}; master-quadratic roots as 70 ± 67. |
 | [DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md](DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md) | — | (See above — listed under engine measurements.) |
 | [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md) | [REFERENCE] | Integer-encoding catalog + SM completeness matrix; consolidates the former REF_PHYSICS_ENCODINGS + COMPLETENESS_MATRIX docs. |
+| [REF_SCALE1_DYNAMICS_FTD_FORM.md](REF_SCALE1_DYNAMICS_FTD_FORM.md) | [REFERENCE] | Code-grounded cross-walk of every web-dashboard Scale-1 (Particle Engine) dynamic, each formula re-expressed in FTD constants (α→G_C², m_e→K_B, c→1/√3, mass ratios from {3,4,7,13}). Honest banner: re-expression is notation, not derivation — the laws stay imported (tags unchanged). |
 
 ---
 
@@ -61,4 +62,4 @@ Pure header-only theory overlays on the existing lattice engine, tagged `[CANDID
 
 ---
 
-10 active docs in this cluster (+ 2 archived).
+12 active docs in this cluster (+ 2 archived).
