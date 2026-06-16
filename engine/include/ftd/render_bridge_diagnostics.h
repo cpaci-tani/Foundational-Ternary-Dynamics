@@ -140,4 +140,94 @@ struct EMFieldDiag {
     double B_mag = 0.0;
 };
 
+// ============================================================================
+// Scale-context readout admissibility gate (C_scale)
+// Canonical spec: docs/theory/01_reference/SPEC_SCALE_CONTEXT_READOUT.md.
+//
+// These POD types are the *result* of a read-only diagnostics layer that
+// decides whether an engine cloud is eligible for public physical readout
+// (e.g. the Koopman α estimator). The layer is BLIND to α by contract — see
+// the invariant note in scale_context.h. Behaviour (config + measurement +
+// tracker) lives in scale_context.{h,cpp}; only the POD results live here so
+// they stay trivially copyable / Embind-bindable like the other diagnostics.
+// ============================================================================
+
+// Geometric classification of a cloud relative to the lattice scale a and box
+// scale L (per SPEC_SCALE_CONTEXT_READOUT §1–§2). Order matters only for the
+// enum value; the classifier (scale_context.cpp) applies a fixed priority.
+enum class ScaleRegime : int {
+    Indeterminate     = 0,  // default (zero-init) — gate not evaluated
+    Evaporating       = 1,  // R→0 / support collapsing to vacuum
+    UVLocked          = 2,  // κ = R_eff/a too small (cloud ~ a single voxel)
+    BoundedAdmissible = 3,  // golden window 1 ≪ R_eff/a ≪ L satisfied
+    ShellDominated    = 4,  // β = δ_shell/R_eff too large (surface beats volume)
+    Percolating       = 5,  // ζ = R_eff/L too large (cloud ~ box / phase transition)
+};
+
+// Public-readout eligibility verdict. DiagnosticOnly is the observe-only
+// default (gate not armed); the three Rejected* values record WHY a cloud is
+// inadmissible (SPEC_SCALE_CONTEXT_READOUT §2 scale, §3 self-confinement,
+// §2.2 stationarity).
+enum class ReadoutStatus : int {
+    DiagnosticOnly          = 0,  // gate not armed — annotation only
+    Admissible              = 1,  // passed scale + self-confinement + stationarity
+    RejectedScaleContext    = 2,  // failed golden-window / volume / shell tests
+    RejectedSelfConfinement = 3,  // no stable flux-balance fixed point
+    RejectedNonStationary   = 4,  // still relaxing (|dR/dt| or |dJ²/dt| too large)
+};
+
+// One snapshot of the scale-context measurement. All quantities are derived
+// purely from lattice geometry and the flux field |J|² (the "ρ" of the spec's
+// R_eff² = Σ ρ|v−v_c|² / Σ ρ) plus the observation-only genesis/evaporation
+// counters. No coupling, no α, no Koopman eigenvalue ever enters here.
+struct ScaleContextDiagnostics {
+    int    tick = 0;
+    int    L    = 0;
+    double a    = 1.0;              // unit lattice spacing (voxel scale)
+
+    // ---- support / occupancy ----
+    int    support_count   = 0;    // voxels with |J|² ≥ energy_threshold (∪ optional state≠0)
+    double active_fraction = 0.0;  // support_count / L³  (= f_active)
+    double cloud_energy    = 0.0;  // ½·Σ_support |J|²  (canonical ½ convention)
+
+    // ---- center (PBC circular mean) ----
+    double center_x = 0.0, center_y = 0.0, center_z = 0.0;
+    bool   center_well_defined  = false; // false ⇒ delocalized / box-filling
+    double center_concentration = 0.0;   // min over axes of resultant length R̄∈[0,1]
+
+    // ---- geometry / dimensionless ratios ----
+    double R_eff       = 0.0;      // PBC energy-weighted second moment about circular center
+    double kappa       = 0.0;      // R_eff / a   (lattice decoupling)
+    double zeta        = 0.0;      // R_eff / L   (finite-volume decoupling)
+    double beta        = 0.0;      // δ_shell / R_eff (surface-to-volume)
+    double delta_shell = 0.0;      // r90 − r50 (radial energy-quantile spread)
+    double peak_density = 0.0;     // max |J| over support
+    double r50 = 0.0, r90 = 0.0;   // radial energy quantiles (audit)
+
+    // ---- self-confinement (flux balance at the R_eff shell) ----
+    double phi_outward = 0.0;      // Σ max(0,  J·r̂) in the boundary shell
+    double phi_return  = 0.0;      // Σ max(0, −J·r̂) in the boundary shell
+    double phi_balance = 0.0;      // phi_outward − phi_return
+    double phi_balance_norm = 0.0; // |Φout−Φret| / (Φout+Φret+ε)
+    double dPhi_dR = 0.0;          // local slope of (Φout−Φret) across adjacent shells
+    bool   confinement_fixed_point = false; // balance small AND dPhi_dR < 0
+
+    // ---- boundary susceptibility (this tick; pure telemetry) ----
+    long long genesis_events     = 0;
+    long long evaporation_events = 0;
+    double    B_t = 0.0;           // genesis − evaporation events this tick
+
+    // ---- rolling (filled by ScaleContextTracker; 0 from a single-shot measure) ----
+    double dR_dt     = 0.0;
+    double dJ2_dt    = 0.0;        // relative rate (slope / mean)
+    double J2_total  = 0.0;        // Σ_support |J|² (NO ½ — matches the Koopman j2 column)
+    double tau_cloud = 0.0;        // estimated relaxation time (advisory, noisy)
+    double Theta     = 0.0;        // tau_cloud / tau_bath
+    bool   stationary = false;     // |dR_dt|,|dJ2_dt|,|⟨B(t)⟩| all below tolerance
+
+    // ---- verdict ----
+    ScaleRegime   regime = ScaleRegime::Indeterminate;
+    ReadoutStatus status = ReadoutStatus::DiagnosticOnly;
+};
+
 }  // namespace ftd

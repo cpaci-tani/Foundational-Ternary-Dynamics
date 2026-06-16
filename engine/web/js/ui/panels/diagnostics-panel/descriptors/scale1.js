@@ -4,6 +4,8 @@
  * descriptor-driven diagnostics surface as Scale 0.
  */
 
+import { G_PE, ALPHA_G_ELECTRON } from '../../../../constants.js';
+
 export const sections = [
     {
         id: 'pe-runtime',
@@ -21,6 +23,10 @@ export const sections = [
               source: 's1.runtime.toggles.damping' },
             { id: 'relativistic-on', label: 'Relativistic', unit: '', format: 'boolean',
               source: 's1.runtime.toggles.relativistic' },
+            { id: 'g-pe', label: 'G_PE (derived)', unit: 'MeV⁻²',
+              compute: () => G_PE },
+            { id: 'alpha-g-ee', label: 'α_G(e,e)', unit: '',
+              compute: () => ALPHA_G_ELECTRON },
         ],
     },
     {
@@ -31,6 +37,8 @@ export const sections = [
               source: 's1.diag.particleCount', trend: 'peCount' },
             { id: 'locked', label: 'Locked / Mobile', unit: 'ct', format: 'pair',
               compute: (hub) => [hub.peLockedCount.last(), hub.peMobileCount.last()] },
+            { id: 'charge-comp', label: 'Charge +/0/-', unit: '', format: 'triple',
+              compute: (hub) => [hub.pePosCount.last(), hub.peZeroCount.last(), hub.peNegCount.last()] },
             { id: 'ke', label: 'Kinetic Energy', unit: 'MeV',
               source: 's1.diag.totalKE', trend: 'peKE' },
             { id: 'pe', label: 'Potential Energy', unit: 'MeV',
@@ -59,15 +67,23 @@ export const sections = [
               compute: (hub) => hub.peAngMom.last(), trend: 'peAngMom' },
             { id: 'virial', label: 'Virial 2K/|U|', unit: '',
               compute: (hub) => hub.peVirial.last(), trend: 'peVirial' },
+            { id: 'net-charge', label: 'Net Charge Q', unit: 'e',
+              compute: (hub) => hub.peNetCharge.last(), trend: 'peNetCharge' },
+            { id: 'annihilations', label: 'Annihilations', unit: 'ct',
+              compute: (hub) => hub.peAnnihilations.last(), trend: 'peAnnihilations' },
         ],
     },
     {
         id: 'pe-field-forces',
         title: 'Forces & Geometry',
         rows: [
-            { id: 'max-force', label: 'Max Net Force', unit: 'F',
+            { id: 'max-beta', label: 'Max |v|/c', unit: 'c',
+              compute: (hub) => hub.peMaxBeta.last(), trend: 'peMaxBeta' },
+            { id: 'cap-count', label: 'At Causal Cap', unit: 'ct',
+              compute: (hub) => hub.peCapCount.last(), trend: 'peCapCount' },
+            { id: 'max-force', label: 'Max Net Force', unit: 'Pl',
               compute: (hub) => hub.peMaxForce.last(), trend: 'peMaxForce' },
-            { id: 'mean-force', label: 'Mean Net Force', unit: 'F',
+            { id: 'mean-force', label: 'Mean Net Force', unit: 'Pl',
               compute: (hub) => hub.peMeanForce.last(), trend: 'peMeanForce' },
             { id: 'vrms', label: 'RMS Velocity', unit: 'c',
               compute: (hub) => hub.peRmsVelocity.last(), trend: 'peRmsVelocity' },

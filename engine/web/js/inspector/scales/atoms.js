@@ -2,6 +2,8 @@ import { setInspectorSectionVisibility } from '../chrome.js';
 import { getElement, elementSymbol, cpkColor } from '../../elements.js';
 import { getMolecule } from '../../molecules.js';
 import { NEUTRON_PROTON_MASS_RATIO } from '../../constants.js';
+import { Sparkline } from '../../ui/charts/sparkline.js';
+import { RingBuffer } from '../../telemetry-hub.js';
 import {
     formatPosition,
     formatVec3,
@@ -23,12 +25,21 @@ export function handleAEClick(target, intersects) {
         }
 
         if (atomArrayIdx >= 0 && target._aeAtomIds && atomArrayIdx < target._aePointCount) {
-            target._selectedAEAtomId = target._aeAtomIds[atomArrayIdx];
+            const newId = target._aeAtomIds[atomArrayIdx];
+            if (newId !== target._selectedAEAtomId) {
+                target._selectedAEAtomId = newId;
+                if (target._aeTelemetry) {
+                    for (const b of Object.values(target._aeTelemetry.buffers)) b.clear();
+                }
+            }
             showAEInspector(target);
             return;
         }
     }
     target._selectedAEAtomId = -1;
+    if (target._aeTelemetry) {
+        for (const b of Object.values(target._aeTelemetry.buffers)) b.clear();
+    }
     hideAEInspector(target);
 }
 
@@ -98,6 +109,71 @@ export function updateAEFields(target) {
 
     if (target.aeFields.sigma) target.aeFields.sigma.textContent = formatLength(data.sigma, 2).text;
     if (target.aeFields.epsilon) target.aeFields.epsilon.textContent = formatEnergy(data.epsilon, 2).text;
+
+    // Telemetry and Sparklines
+    if (!target._aeTelemetry && target.aeFields.alphaPolSpark) {
+        target._aeTelemetry = {
+            buffers: {
+                alpha_pol: new RingBuffer(80),
+                e_ion: new RingBuffer(80),
+                e_aff: new RingBuffer(80),
+                sigma_scatter: new RingBuffer(80),
+                zeff: new RingBuffer(80),
+                q_frac: new RingBuffer(80)
+            },
+            sparks: {}
+        };
+        const colorAlpha = '#a855f7';
+        const colorIon = '#ef4444';
+        const colorAff = '#3b82f6';
+        const colorSigma = '#f59e0b';
+        const colorZeff = '#10b981';
+        const colorQFrac = '#8b5cf6';
+        
+        target._aeTelemetry.sparks.alpha_pol = new Sparkline(target.aeFields.alphaPolSpark, { buffer: target._aeTelemetry.buffers.alpha_pol, color: colorAlpha });
+        target._aeTelemetry.sparks.e_ion = new Sparkline(target.aeFields.eIonSpark, { buffer: target._aeTelemetry.buffers.e_ion, color: colorIon });
+        target._aeTelemetry.sparks.e_aff = new Sparkline(target.aeFields.eAffSpark, { buffer: target._aeTelemetry.buffers.e_aff, color: colorAff });
+        target._aeTelemetry.sparks.sigma_scatter = new Sparkline(target.aeFields.sigmaScatterSpark, { buffer: target._aeTelemetry.buffers.sigma_scatter, color: colorSigma });
+        target._aeTelemetry.sparks.zeff = new Sparkline(target.aeFields.zeffSpark, { buffer: target._aeTelemetry.buffers.zeff, color: colorZeff });
+        target._aeTelemetry.sparks.q_frac = new Sparkline(target.aeFields.qFracSpark, { buffer: target._aeTelemetry.buffers.q_frac, color: colorQFrac });
+    }
+
+    if (target._aeTelemetry) {
+        target._aeTelemetry.buffers.alpha_pol.push(data.alpha_pol || 0);
+        target._aeTelemetry.buffers.e_ion.push(data.e_ion || 0);
+        target._aeTelemetry.buffers.e_aff.push(data.e_aff || 0);
+        target._aeTelemetry.buffers.sigma_scatter.push(data.sigma_scatter || 0);
+        target._aeTelemetry.buffers.zeff.push(data.z_eff || 0);
+        target._aeTelemetry.buffers.q_frac.push(data.charge || 0);
+
+        for (const spark of Object.values(target._aeTelemetry.sparks)) spark.update();
+
+        if (target.aeFields.alphaPol) target.aeFields.alphaPol.textContent = (data.alpha_pol || 0).toFixed(4);
+        if (target.aeFields.eIon) target.aeFields.eIon.textContent = (data.e_ion || 0).toFixed(4) + ' Ry';
+        if (target.aeFields.eAff) target.aeFields.eAff.textContent = (data.e_aff || 0).toFixed(4) + ' \u03c7';
+        if (target.aeFields.sigmaScatter) target.aeFields.sigmaScatter.textContent = (data.sigma_scatter || 0).toFixed(4);
+        if (target.aeFields.zeff) target.aeFields.zeff.textContent = (data.z_eff || 0).toFixed(4);
+        if (target.aeFields.qFrac) target.aeFields.qFrac.textContent = (data.charge || 0).toFixed(4) + ' e';
+
+        const updateStats = (buf, minEl, avgEl, maxEl) => {
+            if (!buf || !minEl || !avgEl || !maxEl) return;
+            if (buf.count === 0) {
+                minEl.textContent = '--'; avgEl.textContent = '--'; maxEl.textContent = '--';
+            } else {
+                minEl.textContent = buf.min().toFixed(4);
+                maxEl.textContent = buf.max().toFixed(4);
+                const avg = buf.total > 0 ? Array.from(buf.data.subarray(0, buf.count)).reduce((a,b)=>a+b,0)/buf.count : 0;
+                avgEl.textContent = avg.toFixed(4);
+            }
+        };
+
+        updateStats(target._aeTelemetry.buffers.alpha_pol, target.aeFields.alphaPolMin, target.aeFields.alphaPolAvg, target.aeFields.alphaPolMax);
+        updateStats(target._aeTelemetry.buffers.e_ion, target.aeFields.eIonMin, target.aeFields.eIonAvg, target.aeFields.eIonMax);
+        updateStats(target._aeTelemetry.buffers.e_aff, target.aeFields.eAffMin, target.aeFields.eAffAvg, target.aeFields.eAffMax);
+        updateStats(target._aeTelemetry.buffers.sigma_scatter, target.aeFields.sigmaScatterMin, target.aeFields.sigmaScatterAvg, target.aeFields.sigmaScatterMax);
+        updateStats(target._aeTelemetry.buffers.zeff, target.aeFields.zeffMin, target.aeFields.zeffAvg, target.aeFields.zeffMax);
+        updateStats(target._aeTelemetry.buffers.q_frac, target.aeFields.qFracMin, target.aeFields.qFracAvg, target.aeFields.qFracMax);
+    }
 }
 
 export function buildAEBondsList(target, bonds) {

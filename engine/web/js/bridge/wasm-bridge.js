@@ -29,7 +29,7 @@
  * per-call object allocation.
  */
 
-import { ALPHA, K_B, G_N, COULOMB_K_FORCE } from '../constants.js';
+import { ALPHA, K_B, G_PE, COULOMB_K_FORCE } from '../constants.js';
 import { debugLog } from '../core/log.js';
 import { getById as catalogGetById } from '../particle-catalog.js';
 // AtomEngine (Scale 2/3) runs through the MockBridge JS implementation while
@@ -774,7 +774,7 @@ export class WasmBridge {
                 const invR = 1 / Math.sqrt(r2);
                 const invR2 = invR * invR;
                 const fc = doCoulomb ? -COULOMB_K_FORCE * data.charges[i] * data.charges[j] * invR2 : 0;
-                const fg = doGravity ? G_N * data.masses[i] * data.masses[j] * invR2 : 0;
+                const fg = doGravity ? G_PE * data.masses[i] * data.masses[j] * invR2 : 0;
                 const fr = (fc + fg) * invR;
                 const fx = fr * dx;
                 const fy = fr * dy;
@@ -818,7 +818,7 @@ export class WasmBridge {
                 const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
                 if (r < 1e-30) continue;
                 if (doCoulomb) coulombPE += ALPHA * data.charges[i] * data.charges[j] / (4 * Math.PI * r);
-                if (doGravity) gravityPE -= G_N * data.masses[i] * data.masses[j] / r;
+                if (doGravity) gravityPE -= G_PE * data.masses[i] * data.masses[j] / r;
             }
         }
         return { coulombPE, gravityPE, totalPE: coulombPE + gravityPE };
@@ -878,6 +878,7 @@ export class WasmBridge {
             rEff: data.rEff,
             spins: data.spins,
             colorIds: data.colorIds,
+            pairIds: data.pairIds,
         };
     }
 
@@ -998,6 +999,11 @@ export class WasmBridge {
         const fx = ext.forces?.[idx * 3] || 0;
         const fy = ext.forces?.[idx * 3 + 1] || 0;
         const fz = ext.forces?.[idx * 3 + 2] || 0;
+        const ax = ext.accelerations?.[idx * 3] || 0;
+        const ay = ext.accelerations?.[idx * 3 + 1] || 0;
+        const az = ext.accelerations?.[idx * 3 + 2] || 0;
+        const acceleration = Math.sqrt(ax * ax + ay * ay + az * az);
+        const momentum = mass * speed;
 
         let nearestId = -1;
         let nearestDist = Infinity;
@@ -1027,9 +1033,14 @@ export class WasmBridge {
 
         return {
             id, charge, mass,
+            rEff: ext.rEff?.[idx] || 0,
+            spin: ext.spins?.[idx] || 0,
+            colorId: ext.colorIds?.[idx] || 0,
+            pairId: ext.pairIds?.[idx] ?? -1,
             x: px, y: py, z: pz,
             vx, vy, vz,
             speed, ke: 0.5 * mass * speed * speed,
+            momentum, acceleration,
             locked: !!ext.locked?.[idx],
             nearestId, nearestDist,
             orbitalR, fCoulombNearest,

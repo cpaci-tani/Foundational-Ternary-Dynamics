@@ -25,11 +25,12 @@ const CHANNELS = {
         { key: 'peMobile',     title: 'Mobile Particles',  buffer: 'peMobileCount', color: 'var(--chart-pe-mobile, #42a5f5)',  unit: 'ct' },
         { key: 'peMomentum',   title: 'Total Momentum',    buffer: 'peMomentum',    color: 'var(--chart-pe-momentum, #a78bfa)', unit: 'MeV/c' },
         { key: 'peAngMom',     title: 'Angular Momentum',  buffer: 'peAngMom',      color: 'var(--chart-pe-angmom, #60a5fa)',  unit: 'hbar' },
-        { key: 'peVirial',     title: 'Virial Ratio',      buffer: 'peVirial',      color: 'var(--chart-pe-virial, #fbbf24)', unit: 'V' },
+        { key: 'peVirial',     title: 'Virial Ratio',      buffer: 'peVirial',      color: 'var(--chart-pe-virial, #fbbf24)', unit: 'ratio' },
         { key: 'peVrms',       title: 'RMS Velocity',      buffer: 'peRmsVelocity', color: 'var(--chart-pe-vrms, #4ade80)',   unit: 'c' },
+        { key: 'peMaxBeta',    title: 'Max |v|/c',         buffer: 'peMaxBeta',     color: 'var(--chart-pe-beta, #f472b6)',   unit: 'c' },
         { key: 'peRadius',     title: 'System Radius',     buffer: 'peSystemRadius',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
-        { key: 'peMaxForce',   title: 'Max Net Force',     buffer: 'peMaxForce',    color: 'var(--chart-pe-force, #fbbf24)',  unit: 'F' },
-        { key: 'peMeanForce',  title: 'Mean Net Force',    buffer: 'peMeanForce',   color: 'var(--chart-pe-force-mean, #fb923c)', unit: 'F' },
+        { key: 'peMaxForce',   title: 'Max Net Force',     buffer: 'peMaxForce',    color: 'var(--chart-pe-force, #fbbf24)',  unit: 'Pl' },
+        { key: 'peMeanForce',  title: 'Mean Net Force',    buffer: 'peMeanForce',   color: 'var(--chart-pe-force-mean, #fb923c)', unit: 'Pl' },
         { key: 'peSeparation', title: '2-Body Separation', buffer: 'peSeparation',  color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' },
         { key: 'peRadialVel',  title: 'Radial Velocity',   buffer: 'peRadialVelocity', color: 'var(--chart-pe-radial, #ef4444)', unit: 'c' }
     ],
@@ -57,7 +58,7 @@ const CHANNELS = {
         { key: 'plDrift',      title: 'Energy Drift',      buffer: 'plEnergyDrift', color: 'var(--chart-pe-drift, #fbbf24)',   unit: '%' },
         { key: 'plCount',      title: 'Body Count',        buffer: 'plCount',       color: 'var(--chart-pe-count, #fb8c00)',   unit: 'ct' },
         { key: 'plMomentum',   title: 'Total Momentum',    buffer: 'plMomentum',    color: 'var(--chart-pe-momentum, #a78bfa)', unit: '(sim)' },
-        { key: 'plVirial',     title: 'Virial Ratio',      buffer: 'plVirial',      color: 'var(--chart-pe-virial, #fbbf24)', unit: 'V' },
+        { key: 'plVirial',     title: 'Virial Ratio',      buffer: 'plVirial',      color: 'var(--chart-pe-virial, #fbbf24)', unit: 'ratio' },
         { key: 'plRadius',     title: 'System Radius',     buffer: 'plSystemRadius',color: 'var(--chart-pe-radius, #42a5f5)', unit: 'lu' }
     ],
     // Scale 5: Cosmic N-body
@@ -306,7 +307,7 @@ export class TelemetryGridPanelComponent {
         if (Math.abs(val) > 1e6) {
             return `${(val / 1e6).toFixed(3)}M ${unit}`;
         }
-        if (Math.abs(val) > 1e3 && unit !== '%' && unit !== 'V') {
+        if (Math.abs(val) > 1e3 && unit !== '%' && unit !== 'ratio') {
             return `${(val / 1e3).toFixed(3)}k ${unit}`;
         }
         if (Math.abs(val) < 1e-4 && val !== 0) {

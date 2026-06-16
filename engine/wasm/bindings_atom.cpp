@@ -116,6 +116,115 @@ static val get_ae_atom_data(ftd::AtomEngine& ae) {
     return result;
 }
 
+// ── AE Inspect Atom ──────────────────────────────────────────────
+static emscripten::val get_ae_inspect_atom(ftd::AtomEngine& ae, int id) {
+    const auto& atoms = ae.atoms();
+    const ftd::Atom* target = nullptr;
+    int target_idx = -1;
+    for (size_t i = 0; i < atoms.size(); ++i) {
+        if (atoms[i].id == id) { 
+            target = &atoms[i]; 
+            target_idx = i;
+            break; 
+        }
+    }
+    if (!target) return emscripten::val::null();
+
+    double speed = std::sqrt(target->velocity.x * target->velocity.x + 
+                             target->velocity.y * target->velocity.y + 
+                             target->velocity.z * target->velocity.z);
+    double ke = 0.5 * target->mass * speed * speed;
+
+    emscripten::val bondInfo = emscripten::val::array();
+    int b_idx = 0;
+    for (const auto& b : target->bonds) {
+        const ftd::Atom* p = nullptr;
+        for (const auto& other : atoms) {
+            if (other.id == b.partner_id) { p = &other; break; }
+        }
+        if (!p) continue;
+        
+        double dx = p->position.x - target->position.x;
+        double dy = p->position.y - target->position.y;
+        double dz = p->position.z - target->position.z;
+        double dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+        
+        emscripten::val bo = emscripten::val::object();
+        bo.set("partnerId", b.partner_id);
+        bo.set("partnerZ", p->Z);
+        bo.set("dist", dist);
+        bo.set("r_eq", b.r_eq);
+        bo.set("order", b.order);
+        bondInfo.set(b_idx++, bo);
+    }
+
+    int nearestId = -1;
+    double nearestDist = 1e9;
+    int nearestZ = 0;
+    
+    for (const auto& other : atoms) {
+        if (other.id == id) continue;
+        bool bonded = false;
+        for (const auto& b : target->bonds) {
+            if (b.partner_id == other.id) { bonded = true; break; }
+        }
+        if (bonded) continue;
+        
+        double dx = other.position.x - target->position.x;
+        double dy = other.position.y - target->position.y;
+        double dz = other.position.z - target->position.z;
+        double d = std::sqrt(dx*dx + dy*dy + dz*dz);
+        if (d < nearestDist) {
+            nearestDist = d;
+            nearestId = other.id;
+            nearestZ = other.Z;
+        }
+    }
+
+    double fNetMag = 0.0;
+    if (target_idx >= 0 && target_idx < (int)ae.force_diag().size()) {
+        auto total_f = ae.force_diag()[target_idx].total();
+        fNetMag = std::sqrt(total_f.x*total_f.x + total_f.y*total_f.y + total_f.z*total_f.z);
+    }
+
+    emscripten::val result = emscripten::val::object();
+    result.set("id", id);
+    result.set("Z", target->Z);
+    result.set("N", target->N);
+    result.set("charge", target->q_frac);
+    result.set("mass", target->mass);
+    result.set("radius", target->radius);
+    result.set("locked", target->locked);
+    result.set("sigma", target->vdw_sigma);
+    result.set("epsilon", target->vdw_epsilon);
+    result.set("maxBonds", target->max_bonds);
+    
+    result.set("x", target->position.x);
+    result.set("y", target->position.y);
+    result.set("z", target->position.z);
+    
+    result.set("vx", target->velocity.x);
+    result.set("vy", target->velocity.y);
+    result.set("vz", target->velocity.z);
+    
+    result.set("speed", speed);
+    result.set("ke", ke);
+    result.set("bonds", bondInfo);
+    
+    result.set("nearestId", nearestId);
+    result.set("nearestDist", nearestDist);
+    result.set("nearestZ", nearestZ);
+    result.set("fNetMag", fNetMag);
+    
+    result.set("alpha_pol", target->alpha_pol);
+    result.set("e_ion", target->e_ion);
+    result.set("e_aff", target->e_aff);
+    result.set("sigma_scatter", target->sigma_scatter);
+    result.set("z_eff", target->z_eff);
+
+    return result;
+}
+
 // ── AE Diagnostics ─────────────────────────────────────────────────
 static val get_ae_diagnostics(ftd::AtomEngine& ae) {
     auto d = ae.diagnostics();
@@ -225,6 +334,7 @@ EMSCRIPTEN_BINDINGS(ftd_module_atom) {
 
     function("getAEAtomData",      &get_ae_atom_data);
     function("getAEDiagnostics",   &get_ae_diagnostics);
+    function("aeInspectAtom",      &get_ae_inspect_atom);
     function("aeAddAtom",          &ae_add_atom);
     function("aeAddLockedAtom",    &ae_add_locked_atom);
     function("aeCreateBond",       &ae_create_bond);

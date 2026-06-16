@@ -7,17 +7,17 @@
  *
  * Force convention (matches Scale 0 Poisson solver):
  *   F_EM  = alpha * q_i * q_j * r_hat / (4*pi * (r^2 + soft^2))
- *   F_grav = G_N * m_i * m_j * r_hat / (r^2 + soft^2)
+ *   F_grav = G_PE * m_i * m_j * r_hat / (r^2 + soft^2)
  *
  * Like signs repel, opposite signs attract (Coulomb).
- * Gravity is always attractive.
+ * Gravity is always attractive. G_PE = G_DERIVED (FTD-0131 physical α_G).
  *
  * Phase 8: ParticleToggles struct + ParticleForceDiag for per-force decomposition.
  * Mirrors Scale 0 TermToggles pattern. Future forces (Phase 2) stubbed as toggles.
  */
 
 #include "voxel.h"         // Vec3
-#include "constants.h"     // ALPHA, G_N, K_B, PI, C_SPEED, DAMPING
+#include "constants.h"     // ALPHA, G_PE, K_B, PI, C_SPEED, DAMPING
 #include "scale.h"         // OnticEntity, ScaleLevel
 #include "scale_engine.h"  // ScaleEngine base class
 #include "barnes_hut.h"    // O(N log N) spatial partitioning
@@ -162,7 +162,7 @@ struct OrbitalElements {
 };
 
 // Compute orbital elements for particle orbiting a locked center.
-// alpha_eff = effective coupling (EM + gravity) = ALPHA/(4*PI) + G_N*m_center*m_orbiter
+// alpha_eff = effective coupling (EM + gravity) = ALPHA/(4*PI) + G_PE*m_center*m_orbiter
 OrbitalElements compute_orbital_elements(const Particle& orbiter,
                                           const Particle& center,
                                           double alpha_eff);
