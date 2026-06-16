@@ -25,6 +25,7 @@
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
 #include "ftd/scenarios.h"  // ftd::dispatch_scenario — ported JS scenario library
+#include "ftd/parallel.h"   // ftd::set_pool_threads (threaded build pool sizing)
 #include "bindings_internal.h"
 
 using namespace emscripten;
@@ -329,4 +330,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
 
     // Scenarios
     function("setupScenario",      &setup_scenario);
+
+    // Threaded build: A/B the parallel_for pool size (no-op on serial builds).
+    function("ftdSetPoolThreads",  &ftd::set_pool_threads);
+    function("ftdPoolThreads",     &ftd::parallel_max_threads);
 }

@@ -46,6 +46,7 @@
 #include <condition_variable>
 #include <vector>
 #include <atomic>
+#include <cstdlib>
 #endif
 
 namespace ftd {
@@ -55,6 +56,11 @@ namespace ftd {
 //  exact count). Native: OpenMP max threads. Pool: the pool size. Serial: 1.
 // ----------------------------------------------------------------------------
 int parallel_max_threads();
+
+// Override the pool thread count (call ONCE before the first parallel_for).
+// No-op on the OpenMP/serial backends. Lets a host A/B pool sizes (the GV2
+// determinism/speed harness, and the browser's hardwareConcurrency choice).
+void set_pool_threads(int n);
 
 // ----------------------------------------------------------------------------
 //  parallel_for: split [begin,end) into contiguous chunks and run body(lo,hi)
@@ -70,12 +76,24 @@ void parallel_for(int begin, int end, const std::function<void(int, int)>& body)
 template <class F>
 inline void with_critical(F&& f);
 
+// ----------------------------------------------------------------------------
+//  atomic_inc: ++x atomically (replacement for the #pragma omp atomic the
+//  compiler drops without -fopenmp). Used for the FTD-0267 genesis/evaporation
+//  telemetry counters (observation-only; not hashed) so the pool backend does
+//  not data-race a plain long long (UB) even though the value is non-physical.
+// ----------------------------------------------------------------------------
+inline void atomic_inc(long long& x);
+
 // ============================================================================
 //  Backend: FTD_WASM_THREADS (persistent std::thread pool)
 // ============================================================================
 #if defined(FTD_WASM_THREADS)
 
 namespace detail {
+
+// Optional pool-size override (0 = auto). Set via ftd::set_pool_threads()
+// before the first parallel_for constructs the pool.
+inline int& pool_override() { static int v = 0; return v; }
 
 // One process-wide pool. Function-local static => single shared instance across
 // all TUs (C++17 inline-statics ODR). Threads are spawned once and reused.
@@ -107,8 +125,15 @@ public:
 
 private:
     ThreadPool() {
-        unsigned hw = std::thread::hardware_concurrency();
-        T_ = static_cast<int>(hw == 0 ? 4u : std::min(hw, 8u));
+        int t = pool_override();   // ftd::set_pool_threads() takes precedence
+        // FTD_POOL_THREADS env fallback (note: Emscripten getenv does NOT see
+        // the host process env, so the embind setter is the portable path).
+        if (t <= 0) { if (const char* e = std::getenv("FTD_POOL_THREADS")) t = std::atoi(e); }
+        if (t <= 0) {
+            unsigned hw = std::thread::hardware_concurrency();
+            t = static_cast<int>(hw == 0 ? 4u : std::min(hw, 8u));
+        }
+        T_ = t < 1 ? 1 : t;
         for (int i = 1; i < T_; ++i) workers_.emplace_back([this, i] { worker_loop(i); });
     }
     ~ThreadPool() {
@@ -148,11 +173,17 @@ private:
     int begin_ = 0, end_ = 0, per_ = 0;
 };
 
-inline std::mutex& critical_mutex() { static std::mutex m; return m; }
+// Recursive so a critical body that transitively re-enters another
+// with_critical on the same thread cannot self-deadlock (the engine's named
+// OpenMP criticals are independent; one global lock is correct, just less
+// concurrent — and these sites are not the hot inner loop).
+inline std::recursive_mutex& critical_mutex() { static std::recursive_mutex m; return m; }
 
 } // namespace detail
 
 inline int parallel_max_threads() { return detail::ThreadPool::instance().size(); }
+
+inline void set_pool_threads(int n) { detail::pool_override() = n; }
 
 inline void parallel_for(int begin, int end, const std::function<void(int, int)>& body) {
     detail::ThreadPool::instance().run(begin, end, body);
@@ -160,8 +191,13 @@ inline void parallel_for(int begin, int end, const std::function<void(int, int)>
 
 template <class F>
 inline void with_critical(F&& f) {
-    std::lock_guard<std::mutex> g(detail::critical_mutex());
+    std::lock_guard<std::recursive_mutex> g(detail::critical_mutex());
     f();
+}
+
+inline void atomic_inc(long long& x) {
+    std::lock_guard<std::recursive_mutex> g(detail::critical_mutex());
+    ++x;
 }
 
 // ============================================================================
@@ -170,6 +206,8 @@ inline void with_critical(F&& f) {
 #elif defined(_OPENMP)
 
 inline int parallel_max_threads() { return omp_get_max_threads(); }
+
+inline void set_pool_threads(int) {}
 
 inline void parallel_for(int begin, int end, const std::function<void(int, int)>& body) {
     const int n = end - begin;
@@ -201,6 +239,11 @@ inline void with_critical(F&& f) {
     omp_unset_lock(&detail::critical_lock());
 }
 
+inline void atomic_inc(long long& x) {
+    #pragma omp atomic
+    ++x;
+}
+
 // ============================================================================
 //  Backend: serial
 // ============================================================================
@@ -208,12 +251,16 @@ inline void with_critical(F&& f) {
 
 inline int parallel_max_threads() { return 1; }
 
+inline void set_pool_threads(int) {}
+
 inline void parallel_for(int begin, int end, const std::function<void(int, int)>& body) {
     if (end > begin) body(begin, end);
 }
 
 template <class F>
 inline void with_critical(F&& f) { f(); }
+
+inline void atomic_inc(long long& x) { ++x; }
 
 #endif
 
