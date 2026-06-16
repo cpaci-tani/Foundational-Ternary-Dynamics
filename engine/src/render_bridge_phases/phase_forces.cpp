@@ -35,6 +35,7 @@
 #include "ftd/render_bridge.h"
 #include "ftd/constants.h"
 #include "ftd/field_operators.h"
+#include "ftd/parallel.h"
 #include <cmath>
 
 namespace ftd {
@@ -65,8 +66,8 @@ void phase_forces_main_loop(RenderBridge& rb) {
   const int L = rb.lattice_.size();
   const auto& active = rb.ordered_active_indices();
 
-#pragma omp parallel for schedule(dynamic, 64)
-  for (int ai = 0; ai < static_cast<int>(active.size()); ++ai) {
+  ftd::parallel_for(0, static_cast<int>(active.size()), [&](int _lo, int _hi) {
+  for (int ai = _lo; ai < _hi; ++ai) {
     const int i = active[ai];
     auto &v = rb.voxels_[i];
     if (v.state == 0) continue;
@@ -254,6 +255,7 @@ void phase_forces_main_loop(RenderBridge& rb) {
       v.velocity = p * scale;
     }
   }
+  });
 }
 
 // ── Phase 2 (unified mass): rigid-body cluster inertia ────────────────────
