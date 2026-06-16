@@ -26,6 +26,19 @@ if(EMSCRIPTEN)
         set(_FTD_WASM_MAX_MEM 2147483648)   # 2 GB
     endif()
 
+    # ── THREADED variant (Emscripten pthreads) ────────────────────────
+    # OpenMP is unavailable under Emscripten 5.0.2 (no omp.h/runtime), so the
+    # tick phases parallelize via ftd::parallel_for's std::thread-pool backend
+    # (engine/include/ftd/parallel.h), selected by -DFTD_WASM_THREADS. -pthread
+    # makes the heap a SharedArrayBuffer (zero-copy reads from the host thread).
+    # Distinct output/export so the threaded module coexists with the serial
+    # fallback. Built into a separate tree with -DFTD_WASM_THREADS=ON.
+    option(FTD_WASM_THREADS "Build the WASM target with the pthread-pool parallel-for backend" OFF)
+    if(FTD_WASM_THREADS)
+        set(_FTD_WASM_OUTPUT "${_FTD_WASM_OUTPUT}_mt")
+        set(_FTD_WASM_EXPORT "${_FTD_WASM_EXPORT}MT")
+    endif()
+
     set_target_properties(ftd_wasm PROPERTIES
         OUTPUT_NAME "${_FTD_WASM_OUTPUT}"
         SUFFIX ".js"
@@ -55,6 +68,11 @@ if(EMSCRIPTEN)
     if(FTD_MEMORY64)
         list(APPEND _FTD_WASM_OPTS -sMEMORY64=1)
     endif()
+    # Threads: -pthread changes the memory model (shared heap) so EVERY object
+    # must compile with it; -DFTD_WASM_THREADS selects parallel.h's pool backend.
+    if(FTD_WASM_THREADS)
+        list(APPEND _FTD_WASM_OPTS -pthread)
+    endif()
 
     # ftd_core: drop exceptions only. RTTI must stay on because LTO sees
     # ftd_wasm's embind references to type_info for ftd_core classes
@@ -65,6 +83,18 @@ if(EMSCRIPTEN)
     # ftd_wasm: keep exceptions AND RTTI (Embind uses both for type dispatch)
     target_compile_options(ftd_wasm PRIVATE ${_FTD_WASM_OPTS})
 
+    # FTD_WASM_THREADS selects parallel.h's pool backend. It MUST be defined for
+    # EVERY TU that includes parallel.h — both ftd_core (the tick phases) AND
+    # ftd_wasm (bindings_render_bridge.cpp calls ftd::set_pool_threads /
+    # parallel_max_threads). Defining it only on ftd_core gave the bindings the
+    # serial backend → an ODR mismatch where the embind setter/getter were
+    # no-ops. PUBLIC propagates to ftd_wasm (which links ftd_core); the explicit
+    # ftd_wasm definition is belt-and-suspenders.
+    if(FTD_WASM_THREADS)
+        target_compile_definitions(ftd_core PUBLIC  FTD_WASM_THREADS)
+        target_compile_definitions(ftd_wasm PRIVATE FTD_WASM_THREADS)
+    endif()
+
     # ftd_eft is a separate static lib that ftd_wasm also links. Under Memory64
     # every object must share the wasm64 pointer ABI, so give ftd_eft the flag
     # too (correctness only — leave its other flags untouched so the wasm32
@@ -72,6 +102,9 @@ if(EMSCRIPTEN)
     # wasm64 mode" at the final link.
     if(FTD_MEMORY64)
         target_compile_options(ftd_eft PRIVATE -sMEMORY64=1)
+    endif()
+    if(FTD_WASM_THREADS)
+        target_compile_options(ftd_eft PRIVATE -pthread)
     endif()
 
     target_link_options(ftd_wasm PRIVATE
@@ -95,5 +128,27 @@ if(EMSCRIPTEN)
     # across the JS boundary (Embind needs it for 64-bit pointers).
     if(FTD_MEMORY64)
         target_link_options(ftd_wasm PRIVATE -sMEMORY64=1 -sWASM_BIGINT=1)
+    endif()
+    # Threaded link: pthread runtime + a pre-spawned pool (the parallel.h pool
+    # uses std::thread = pthreads). 'node' in ENVIRONMENT lets the Phase-0 GV2
+    # determinism/speed harness run under Node (SharedArrayBuffer needs no COI
+    # there). The later value of -sENVIRONMENT wins over 'web' set above.
+    if(FTD_WASM_THREADS)
+        target_link_options(ftd_wasm PRIVATE
+            -pthread
+            # POOL_SIZE=0 => NO pthread pre-spawn at module init. This is what
+            # lets the module load inside a Web Worker without the nested-worker
+            # spawn stall (16 pre-spawned nested workers hung). The ftd::pool
+            # (parallel.h) creates threads on demand via pthread_create; at
+            # pool=1 it creates none (pure serial, off-thread — Phase 1).
+            -sPTHREAD_POOL_SIZE=0
+            -sPTHREAD_POOL_SIZE_STRICT=0
+            -sENVIRONMENT=node,web,worker
+            # Pre-size a large heap so the common L range never triggers growth
+            # (ALLOW_MEMORY_GROWTH + pthreads routes heap access through a slower
+            # path — emcc warns). Growth stays ON (inherited) as a safety net for
+            # very large L; INITIAL_MEMORY 1 GB covers L<=~110 without growing.
+            -sINITIAL_MEMORY=1073741824
+        )
     endif()
 endif()

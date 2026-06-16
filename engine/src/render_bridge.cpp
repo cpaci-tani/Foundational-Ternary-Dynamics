@@ -45,6 +45,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include "ftd/parallel.h"
 
 #ifdef FTD_ENABLE_CUDA
 #include "ftd/gpu_engine.h"
@@ -111,7 +112,7 @@ void RenderBridge::sync_ternary_from_voxels() const {
 
 void RenderBridge::sync_ternary_from_voxels_if_needed() const {
     if (!ternary_dirty_from_voxels_) return;
-#ifdef _OPENMP
+#if defined(_OPENMP)
     if (omp_in_parallel()) {
 #pragma omp critical(ftd_render_bridge_ternary_sync)
         {
@@ -121,6 +122,13 @@ void RenderBridge::sync_ternary_from_voxels_if_needed() const {
         }
         return;
     }
+#elif defined(FTD_WASM_THREADS)
+    ftd::with_critical([&] {
+        if (ternary_dirty_from_voxels_) {
+            sync_ternary_from_voxels();
+        }
+    });
+    return;
 #endif
     sync_ternary_from_voxels();
 }
@@ -132,7 +140,7 @@ void RenderBridge::sync_fields_from_voxels() const {
 
 void RenderBridge::sync_fields_from_voxels_if_needed() const {
     if (!fields_dirty_from_voxels_) return;
-#ifdef _OPENMP
+#if defined(_OPENMP)
     if (omp_in_parallel()) {
 #pragma omp critical(ftd_render_bridge_field_sync)
         {
@@ -142,6 +150,13 @@ void RenderBridge::sync_fields_from_voxels_if_needed() const {
         }
         return;
     }
+#elif defined(FTD_WASM_THREADS)
+    ftd::with_critical([&] {
+        if (fields_dirty_from_voxels_) {
+            sync_fields_from_voxels();
+        }
+    });
+    return;
 #endif
     sync_fields_from_voxels();
 }
@@ -163,7 +178,7 @@ int8_t RenderBridge::set_state_unlocked(int idx, int8_t state) {
 }
 
 void RenderBridge::set_state(int idx, int8_t state) {
-#ifdef _OPENMP
+#if defined(_OPENMP)
     if (omp_in_parallel()) {
 #pragma omp critical(ftd_render_bridge_set_state)
         {
@@ -171,6 +186,9 @@ void RenderBridge::set_state(int idx, int8_t state) {
         }
         return;
     }
+#elif defined(FTD_WASM_THREADS)
+    ftd::with_critical([&] { set_state_unlocked(idx, state); });
+    return;
 #endif
     set_state_unlocked(idx, state);
 }
