@@ -2,7 +2,7 @@
 
 **Tag:** [REFERENCE]
 **Date:** 2026-05-22 (rewritten after the cluster consolidation)
-**Status:** [REFERENCE] — categorised inventory of every live document in `docs/theory/10_eft_program/`, with current epistemic tags read from each doc's own header.
+**Status:** [REFERENCE] — categorised inventory of `docs/theory/10_eft_program/`, with current epistemic tags read from each doc's own header. **Last full sync 2026-05-22; partially drifted.** Run-of-record analyses added since are not all listed below — notably `ANALYSIS_THERMAL_PHASE_MAP_v1` (FTD-0275), `ANALYSIS_GENESIS_CRITICALITY_v1`, `ANALYSIS_CLUSTER_ENERGY_SPECTROSCOPY_v1`, `ANALYSIS_HALO_FORCEDNESS_v1` (FTD-0300), `ANALYSIS_PROTON_STABILITY_v1` (FTD-0301), `ANALYSIS_ALPHA_D3_FORCED_ESCAPE_v1` (FTD-0284). The authoritative complete catalog is [`../META_INDEX.md`](../META_INDEX.md); a full re-sync of this cluster index is a pending nav-hygiene task. The 2026-06-15 consolidation pass archived several settled routes — see **§ Archive**.
 **Purpose:** Navigational entry point for the FTD-native EFT program. The 2026-05-22 consolidation took the cluster from 89 top-level docs to 34: 48 completed-campaign and closed-route scaffolding docs were archived, 9 `DERIV_FTD_NATIVE_*` husks were merged into 2 docs, and a narrative `RETROSPECTIVE` was added. This INDEX reflects that current state; the archived material is summarised under **§ Archive** and indexed in full by the retrospective.
 
 > **How to use this document**:
@@ -137,7 +137,7 @@ Methodology committed before measurement. See `REF_PREREGISTER_MANIFEST.md` for 
 | [`PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md`](preregistrations/PREREG_ALPHA_READOUT_DET_IDENTITY_v1.md) | [PRE-REGISTRATION] | FTD-0235: detdet_ζ identity Pre-Registration locking design and verification. |
 | [`PREREG_ALPHA_DYNAMICAL_READOUT_v1.md`](preregistrations/PREREG_ALPHA_DYNAMICAL_READOUT_v1.md) | [PRE-REGISTRATION -- LOCKED] | FTD-0284: Alpha dynamical readout discriminator after FTD-0242/0244; freezes native-vs-Postulate-W outcomes before any no-alpha-input engine coupling measurement. |
 | [`PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`](preregistrations/PREREG_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0285: fixed live-engine no-alpha probe for FTD-0284; run invalidated the finite-protocol absolute gate. See `ANALYSIS_ALPHA_NO_ALPHA_ENGINE_PROBE_v1.md`. |
-| [`PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`](preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0286 v1: estimator-validation with legacy `2rG_L(r)` gate. Result: `ENERGY_FUNCTIONAL_MISMATCH` (pairing error; see v2). |
+| [`PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md`](archive/superseded/PREREG_ALPHA_ESTIMATOR_VALIDATION_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0286 v1: estimator-validation with legacy `2rG_L(r)` gate. Result: `ENERGY_FUNCTIONAL_MISMATCH` (pairing error; see v2). |
 | [`PREREG_ALPHA_ESTIMATOR_VALIDATION_v2.md`](preregistrations/PREREG_ALPHA_ESTIMATOR_VALIDATION_v2.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0286 v2: half-energy gate pairing (`rG_L(r)` vs `½Σ|J|²`). Result: `HALF_ENERGY_GATE_CONFIRMED_MATCHED`. |
 | [`PREREG_THOMSON_UNLOCKED_RECOIL_v1.md`](preregistrations/PREREG_THOMSON_UNLOCKED_RECOIL_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0288: unlocked-charge recoil discriminator after FTD-0287. Run verdict: `NATIVE_EMERGENT_FLUX_GRADIENT_RECOIL_DETECTED`; no alpha or cross-section claim. |
 | [`PREREG_THOMSON_FLUX_EXCESS_v1.md`](preregistrations/PREREG_THOMSON_FLUX_EXCESS_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0289: baseline-subtracted flux-excess discriminator after FTD-0288. Run verdict: `NATIVE_EMERGENT_EXCESS_FLUX_DEFLECTION_DETECTED`; no alpha or cross-section claim. |
@@ -155,9 +155,9 @@ Methodology committed before measurement. See `REF_PREREGISTER_MANIFEST.md` for 
 | [`PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md`](preregistrations/PREREG_ATOMIC_NO_NEW_KNOB_LADDER_v1.md) | [PRE-REGISTRATION -- LOCKED/RUN] | FTD-0283: fixed-cell no-new-knob ion ladder; run failed the frozen Z²-scaling gate. |
 | [`PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md`](preregistrations/PREREG_FQCR_QUOTIENT_UNIQUENESS_v1.md) | [PRE-REGISTRATION] | FTD-0143 uniqueness scan of the FQCR Model IV $(4,6;3,2)$ exponent quadruple. |
 | [`PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md`](preregistrations/PREREG_FTD_0110_NONLINEAR_BRIDGE_v1.md) | [PRE-REGISTRATION] | FTD-0215 nonlinear bridge coordinated parameters sweeps and active partitioning (F-D3). |
-| [`PREREG_GENESIS_COUNTING_v1.md`](preregistrations/PREREG_GENESIS_COUNTING_v1.md) | [PRE-REGISTRATION -- LOCAL HASH-LOCK/RUN] | FTD-0277: collective-coordinate genesis-counting model v1 for the current-stack N(A) law. Run verdict: `COUNTING_MODEL_V1_CLOSED_NEGATIVE`; see [`ANALYSIS_GENESIS_COUNTING_v1.md`](../03_derivations/foundational_mechanics/ANALYSIS_GENESIS_COUNTING_v1.md). |
+| [`PREREG_GENESIS_COUNTING_v1.md`](preregistrations/PREREG_GENESIS_COUNTING_v1.md) | [PRE-REGISTRATION -- LOCAL HASH-LOCK/RUN] | FTD-0277: collective-coordinate genesis-counting model v1 for the current-stack N(A) law. Run verdict: `COUNTING_MODEL_V1_CLOSED_NEGATIVE`; see [`ANALYSIS_GENESIS_COUNTING_v1.md`](../03_derivations/archive/closed_negative/ANALYSIS_GENESIS_COUNTING_v1.md). |
 | [`PREREG_NO_4TH_GENERATION_NO_GO_v1.md`](preregistrations/PREREG_NO_4TH_GENERATION_NO_GO_v1.md) | [PRE-REGISTRATION] | FTD-0220: No 4th generation fermions no-go formalization pre-registration locking design and verification parameters. |
-| [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md`](preregistrations/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md) | [PRE-REGISTRATION] | FTD-0186 boundary-theorem Stage 1: the structural/dynamical discriminator. |
+| [`PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md`](archive/superseded/PREREG_STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1.md) | [PRE-REGISTRATION] | FTD-0186 boundary-theorem Stage 1: the structural/dynamical discriminator. |
 
 ---
 
@@ -167,7 +167,7 @@ The graviton-census trio — does the FTD substrate carry an emergent massless s
 
 | File | Tag | Purpose |
 |---|---|---|
-| [`PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`](preregistrations/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md) | [PRE-REGISTRATION] | Frontier 4 Step 4a v1; locks the hypothesis and decision criteria. Retained as provenance. |
+| [`PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`](archive/superseded/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md) | [PRE-REGISTRATION] | Frontier 4 Step 4a v1; locks the hypothesis and decision criteria. Retained as provenance. |
 | [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](preregistrations/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) | [PRE-REGISTRATION] | Step 4a-ii v2 — supersedes v1 §5/§8; locks the decisive engine campaign. |
 | [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) | [MEASUREMENT REPORT] | Canonical measurement registered by v2; Outcome verdict applied against PREREG v2 §6/§7. **FTD-0193** (renumbered 2026-05-22 from FTD-0190 to resolve a collision with the Q10 finite-neutral-lock FTD-0190). |
 
@@ -190,7 +190,7 @@ The graviton-census trio — does the FTD substrate carry an emergent massless s
 
 ## § Archive
 
-Archived material is preserved for provenance — cite it to explain "why this route was rejected" or "which completed campaign produced this number"; don't act on it as live work. The full pointer index lives in **`RETROSPECTIVE_EFT_RECOVERY.md`**, which ties the archived scaffolding into the program narrative. Counts as of 2026-05-22:
+Archived material is preserved for provenance — cite it to explain "why this route was rejected" or "which completed campaign produced this number"; don't act on it as live work. The full pointer index lives in **`RETROSPECTIVE_EFT_RECOVERY.md`**, which ties the archived scaffolding into the program narrative. Counts as of 2026-05-22 (the 2026-06-15 consolidation pass added to these: `closed_negative/` +3 settled MC-T4.3 route docs [EMPIRICAL/BOUNDARY/K2_REGULATOR], `resolved/` +1 [W5_CONFIRMATION], and a new `superseded/` subdir +4 [THERMAL_IGNITION, GRAVITON_SUBSTRATE_MODE_v1, STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1, ALPHA_ESTIMATOR_VALIDATION_v1]):
 
 | Subdir | Count | Description |
 |---|---|---|

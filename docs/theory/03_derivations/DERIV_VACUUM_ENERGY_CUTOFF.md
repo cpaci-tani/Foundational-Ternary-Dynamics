@@ -1,11 +1,13 @@
 ---
 title: "Derivation of the Finite Vacuum Energy Cutoff"
 status: "[ACTIVE]"
-type: "[THEOREM]"
+type: "[NUMERICAL FACT]"
 author: "FTD Orchestration Team"
 ---
 
 # Derivation of the Finite Vacuum Energy Cutoff
+
+> **Epistemic reconciliation (2026-06-15).** The result here is a **`[NUMERICAL FACT]`** — a Monte-Carlo evaluation of a definite Brillouin-zone integral giving a finite, O(1) value in lattice units. It is **not** a `[THEOREM]`, and there is no canonical LEDGER row for it. That a discrete lattice renders the zero-point sum finite is sound; the stronger claim that this *eliminates* the cosmological-constant ($10^{120}$) problem requires a derived bridge from this lattice-unit number to the observed Λ, which is **not** established (no field-content / mode-counting / $\tfrac12\hbar\omega$ weighting is carried, and no connection to measured Λ is made) — that bridge is `[OPEN]` / `[CONJECTURE]`. The frontmatter `type` and §3's closing claim are reconciled downward; the integral value is unchanged.
 
 ## 1. The Cosmological Constant Paradox
 
@@ -30,4 +32,4 @@ $$ \rho_{vac} = \int_{-\pi}^{\pi} \int_{-\pi}^{\pi} \int_{-\pi}^{\pi} \sqrt{\sin
 Using Monte Carlo integration over $10^9$ samples on a 32-thread CPU configuration, the FTD engine converges to a finite, $O(1)$ density:
 **$\rho_{vac} \approx 1.1938$ Planck Units**
 
-This exact, finite value demonstrates that the cosmological constant paradox is an artifact of the false assumption of continuous space, entirely eliminated by the FTD discrete ternary lattice.
+This finite, $O(1)$ value (in lattice units) shows that **discreteness renders the zero-point sum finite** — a `[NUMERICAL FACT]`. The stronger claim that this *entirely eliminates* the cosmological-constant ($10^{120}$) paradox is **not** established here: it would require a derived bridge from this lattice-unit number to the observed cosmological constant, which remains `[OPEN]` / `[CONJECTURE]` (this calculation carries no field content, mode counting, or $\tfrac{1}{2}\hbar\omega$ weighting, and makes no connection to the measured Λ).

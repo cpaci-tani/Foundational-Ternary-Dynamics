@@ -153,7 +153,7 @@ In both cases the surrounding prose is preserved; only the load-bearing sentence
 - [`AUDIT_EPISTEMIC_AUDIT.md`](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) — site of retag.
 - [`FOUND_THE_EXISTENCE_FILTER.md`](FOUND_THE_EXISTENCE_FILTER.md) — EF-T5 [THEOREM] + EF-C3 [CONJECTURE] (the `|ψ|²` form question).
 - [`DERIV_COLLAPSE_MECHANISM.md`](DERIV_COLLAPSE_MECHANISM.md) — canonical collapse proposal (out-of-scope here).
-- [`EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md`](../09_mathematical/EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md) — sibling closed-negative document; same epistemic pattern (pre-registered test, Outcome != A, honest retag in canonical sources).
+- [`EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md`](../09_mathematical/archive/EXPLR_TERNARY_MATRIX_BCC_SNAP_NEGATIVE.md) — sibling closed-negative document; same epistemic pattern (pre-registered test, Outcome != A, honest retag in canonical sources).
 
 ---
 
