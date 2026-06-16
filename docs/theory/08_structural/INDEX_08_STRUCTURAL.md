@@ -53,6 +53,14 @@ The geometric interpretation of the engine's emergent 25-voxel cluster (FTD-0107
 
 ---
 
+## Aperiodic geometry
+
+| File | Tag | Purpose |
+|---|---|---|
+| [EXPLR_3D_APERIODIC_MONOTILE.md](EXPLR_3D_APERIODIC_MONOTILE.md) | [EMERGENT] | A 3D aperiodic monotile ("einstein") topology emergent on the lattice; structural-geometry observation (12-candidate topology). |
+
+---
+
 ## Two-layer ontology & information theory
 
 The flux/state duality and the information-theoretic lens on G*.
@@ -80,4 +88,4 @@ Hash-locked pre-registrations of structural audits in this cluster — the prose
 
 ---
 
-17 active docs in this cluster (+ 0 archived).
+18 active docs in this cluster (+ 0 archived).
