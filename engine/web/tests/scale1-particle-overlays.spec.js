@@ -60,7 +60,7 @@ test.describe('Scale 1 particle scenarios and overlays', () => {
                     velocities: document.getElementById('toggle-velocities')?.classList.contains('active') || false,
                     trails: document.getElementById('toggle-trails')?.classList.contains('active') || false,
                     potential: document.getElementById('toggle-pe-potential')?.classList.contains('active') || false,
-                    forces: document.getElementById('toggle-pe-forces')?.classList.contains('active') || false,
+                    forceNet: document.getElementById('toggle-pe-force-net')?.classList.contains('active') || false,
                     gravity: document.getElementById('toggle-pe-gravity')?.classList.contains('active') || false,
                     damping: document.getElementById('toggle-pe-damping')?.classList.contains('active') || false,
                 },
@@ -78,6 +78,13 @@ test.describe('Scale 1 particle scenarios and overlays', () => {
         expect(state.extCount).toBe(state.count);
         expect(state.forceCount).toBe(state.count);
         expect(state.maxForce).toBeGreaterThan(0);
+        const decomp = await page.evaluate(() => {
+            const d = window._ftdBridge?.peGetForceDecomposition?.();
+            return d ? { count: d.count, maxCoulomb: d.maxCoulomb, maxNet: d.maxNet } : null;
+        });
+        expect(decomp?.count).toBe(state.count);
+        expect(decomp?.maxCoulomb).toBeGreaterThan(0);
+        expect(decomp?.maxNet).toBeGreaterThan(0);
         expect(state.sourceMassMax).toBeGreaterThan(100);
         expect(Math.abs(state.coulombPE)).toBeGreaterThan(0);
         expect(Math.abs(state.gravityPE || 0)).toBe(0);
@@ -85,7 +92,7 @@ test.describe('Scale 1 particle scenarios and overlays', () => {
             velocities: true,
             trails: true,
             potential: true,
-            forces: true,
+            forceNet: true,
             gravity: false,
             damping: false,
         });
@@ -129,7 +136,8 @@ test.describe('Scale 1 particle scenarios and overlays', () => {
                     gravityDynamics: document.getElementById('toggle-pe-gravity')?.classList.contains('active') || false,
                     gravityField: document.getElementById('toggle-pe-gravity-field')?.classList.contains('active') || false,
                     potential: document.getElementById('toggle-pe-potential')?.classList.contains('active') || false,
-                    forces: document.getElementById('toggle-pe-forces')?.classList.contains('active') || false,
+                    forceGravity: document.getElementById('toggle-pe-force-gravity')?.classList.contains('active') || false,
+                    forceNet: document.getElementById('toggle-pe-force-net')?.classList.contains('active') || false,
                 },
             };
         });
@@ -152,7 +160,8 @@ test.describe('Scale 1 particle scenarios and overlays', () => {
             gravityDynamics: true,
             gravityField: true,
             potential: false,
-            forces: true,
+            forceGravity: true,
+            forceNet: true,
         });
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);

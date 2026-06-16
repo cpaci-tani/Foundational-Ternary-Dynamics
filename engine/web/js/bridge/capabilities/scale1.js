@@ -28,7 +28,7 @@ export function createScale1Capabilities(bridge) {
             extended: false,
             nativeExtended: false,
             nativeForces: false,
-            advancedForces: false,
+            advancedForces: true,
         },
     };
 }

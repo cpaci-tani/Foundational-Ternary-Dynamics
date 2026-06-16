@@ -61,7 +61,31 @@ import {
 import { MAX_FIELD_GRID } from './constants.js';
 
 // Shared particle shaders — centralized in viewport/shaders.js (D-1).
-import { PARTICLE_VERT, PARTICLE_FRAG } from './shaders.js';
+import { PARTICLE_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shaders.js';
+
+/** Points material using PARTICLE_VERT + PARTICLE_FRAG (manifest disabled). */
+function _makeParticleFragMaterial(overrides = {}, extra = {}) {
+    return new THREE.ShaderMaterial({
+        uniforms: { ...PARTICLE_SHADER_UNIFORMS, ...overrides },
+        vertexShader: PARTICLE_VERT,
+        fragmentShader: PARTICLE_FRAG,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.NormalBlending,
+        ...extra,
+    });
+}
+
+function _ensureManifestAttrs(geometry, capacity) {
+    if (!geometry.getAttribute('manifestPhase')) {
+        geometry.setAttribute('manifestPhase',
+            new THREE.Float32BufferAttribute(new Float32Array(capacity), 1));
+    }
+    if (!geometry.getAttribute('manifestRate')) {
+        geometry.setAttribute('manifestRate',
+            new THREE.Float32BufferAttribute(new Float32Array(capacity), 1));
+    }
+}
 
 
 // Lazy-built static texture for soft-disc sprite (weak-field / quantum overlays).
@@ -301,15 +325,9 @@ export class ViewportFieldRenderer {
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        _ensureManifestAttrs(geo, MAX_FIELD_GRID);
         geo.setDrawRange(0, 0);
-        const mat = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.9 } },
-            vertexShader: PARTICLE_VERT,
-            fragmentShader: PARTICLE_FRAG,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.NormalBlending,
-        });
+        const mat = _makeParticleFragMaterial({ uOpacity: { value: 0.9 } });
         this._fieldHeatmap = new THREE.Points(geo, mat);
         this._fieldHeatmap.visible = false;
         this._fieldHeatmap.frustumCulled = false;
@@ -365,17 +383,9 @@ export class ViewportFieldRenderer {
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        _ensureManifestAttrs(geo, maxPts);
         geo.setDrawRange(0, 0);
-        const mat = new THREE.ShaderMaterial({
-            // Default matches the Flux Volume card's opacity slider (0.70) so
-            // the shared control is in sync from first paint.
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
-            vertexShader: PARTICLE_VERT,
-            fragmentShader: PARTICLE_FRAG,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.NormalBlending,
-        });
+        const mat = _makeParticleFragMaterial({ uOpacity: { value: 0.7 } });
         this._fluxSliceMesh = new THREE.Points(geo, mat);
         this._fluxSliceMesh.visible = this.showHeatmap;
         this._fluxSliceMesh.frustumCulled = false;
@@ -962,15 +972,12 @@ export class ViewportFieldRenderer {
         // No, original was particleColor! Wait, let's keep exact attributes to not break shader material!
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        _ensureManifestAttrs(geo, maxPts);
         geo.setDrawRange(0, 0);
-        const mat = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.8 } },
-            vertexShader: PARTICLE_VERT,
-            fragmentShader: PARTICLE_FRAG,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending,
-        });
+        const mat = _makeParticleFragMaterial(
+            { uOpacity: { value: 0.8 } },
+            { blending: THREE.AdditiveBlending },
+        );
         this._divField = new THREE.Points(geo, mat);
         this._divField.visible = false;
         this._divField.frustumCulled = false;
@@ -1637,13 +1644,12 @@ export class ViewportFieldRenderer {
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        _ensureManifestAttrs(geo, maxPts);
         geo.setDrawRange(0, 0);
-        const mat = new THREE.ShaderMaterial({
-            vertexShader: PARTICLE_VERT, fragmentShader: PARTICLE_FRAG,
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.35 } },
-            transparent: true, blending: THREE.AdditiveBlending,
-            depthWrite: false,
-        });
+        const mat = _makeParticleFragMaterial(
+            { uOpacity: { value: 0.35 } },
+            { blending: THREE.AdditiveBlending },
+        );
         this._darkMatterHalo = new THREE.Points(geo, mat);
         this._darkMatterHalo.visible = false;
         this._darkMatterHalo.frustumCulled = false;
@@ -1810,13 +1816,12 @@ export class ViewportFieldRenderer {
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        _ensureManifestAttrs(geo, maxPts);
         geo.setDrawRange(0, 0);
-        const mat = new THREE.ShaderMaterial({
-            vertexShader: PARTICLE_VERT, fragmentShader: PARTICLE_FRAG,
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.45 } },
-            transparent: true, blending: THREE.AdditiveBlending,
-            depthWrite: false,
-        });
+        const mat = _makeParticleFragMaterial(
+            { uOpacity: { value: 0.45 } },
+            { blending: THREE.AdditiveBlending },
+        );
         this._genesisIsosurface = new THREE.Points(geo, mat);
         this._genesisIsosurface.visible = false;
         this._genesisIsosurface.frustumCulled = false;
@@ -2003,15 +2008,12 @@ export class ViewportFieldRenderer {
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        _ensureManifestAttrs(geo, maxPts);
         geo.setDrawRange(0, 0);
-        const mat = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
-            vertexShader: PARTICLE_VERT,
-            fragmentShader: PARTICLE_FRAG,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending,
-        });
+        const mat = _makeParticleFragMaterial(
+            { uOpacity: { value: 0.7 } },
+            { blending: THREE.AdditiveBlending },
+        );
         this._dualFluxVolume = new THREE.Points(geo, mat);
         this._dualFluxVolume.visible = false;
         this._dualFluxVolume.frustumCulled = false;
@@ -2093,15 +2095,12 @@ export class ViewportFieldRenderer {
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        _ensureManifestAttrs(geo, maxPts);
         geo.setDrawRange(0, 0);
-        const mat = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.7 } },
-            vertexShader: PARTICLE_VERT,
-            fragmentShader: PARTICLE_FRAG,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending,
-        });
+        const mat = _makeParticleFragMaterial(
+            { uOpacity: { value: 0.7 } },
+            { blending: THREE.AdditiveBlending },
+        );
         this._chiralityField = new THREE.Points(geo, mat);
         this._chiralityField.visible = false;
         this._chiralityField.frustumCulled = false;
@@ -2167,15 +2166,12 @@ export class ViewportFieldRenderer {
         geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
         geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
         geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+        _ensureManifestAttrs(geo, maxPts);
         geo.setDrawRange(0, 0);
-        const mat = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.8 } },
-            vertexShader: PARTICLE_VERT,
-            fragmentShader: PARTICLE_FRAG,
-            transparent: true,
-            depthWrite: false,
-            blending: THREE.AdditiveBlending,
-        });
+        const mat = _makeParticleFragMaterial(
+            { uOpacity: { value: 0.8 } },
+            { blending: THREE.AdditiveBlending },
+        );
         this._lightField = new THREE.Points(geo, mat);
         this._lightField.visible = false;
         this._lightField.frustumCulled = false;

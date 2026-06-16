@@ -22,10 +22,10 @@ import { getById } from '../particle-catalog.js';
 import { K_B, C_SPEED } from '../constants.js';
 
 // Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
-import { MAX_PARTICLES } from './constants.js';
+import { MAX_PARTICLES, PE_VIS_BOUNDARY_R } from './constants.js';
 
 // Custom particle shaders — centralized in viewport/shaders.js (D-1).
-import { PARTICLE_VERT, PARTICLE_FRAG } from './shaders.js';
+import { PARTICLE_VERT, PARTICLE_FRAG, PARTICLE_SHADER_UNIFORMS } from './shaders.js';
 
 
 export class ViewportParticleRenderer {
@@ -35,6 +35,7 @@ export class ViewportParticleRenderer {
         halfN,
         insideBoundary,
         getBoundaryShape,
+        getBoundaryMode,
         visualSettings,
         writeArrowFieldIntoMesh,
     }) {
@@ -46,6 +47,7 @@ export class ViewportParticleRenderer {
         // here without a setter call (mirrors the pre-extraction direct read
         // of `this._boundaryShape` in updateParticles' fast-path check).
         this._getBoundaryShape = getBoundaryShape || (() => 'cube');
+        this._getBoundaryMode = getBoundaryMode || (() => 'lattice');
         // visualSettings is shared with the Viewport orchestrator: both sides
         // hold a reference to the SAME object so opacity changes from
         // setOpacity propagate to readers on either side without explicit
@@ -57,6 +59,7 @@ export class ViewportParticleRenderer {
         // constructor + lazy builders).
         this.particles = null;
         this.velocityVectors = null;
+        this.spinVectors = null;
         this.trails = null;
         this._particleForces = null;
         this._peSystem = null;
@@ -72,20 +75,32 @@ export class ViewportParticleRenderer {
         const positions = new Float32Array(MAX_PARTICLES * 3);
         const colors = new Float32Array(MAX_PARTICLES * 3);
         const sizes = new Float32Array(MAX_PARTICLES);
+        const manifestPhases = new Float32Array(MAX_PARTICLES);
+        const manifestRates = new Float32Array(MAX_PARTICLES);
 
         const posAttr = new THREE.BufferAttribute(positions, 3);
         const colAttr = new THREE.BufferAttribute(colors, 3);
         const sizeAttr = new THREE.BufferAttribute(sizes, 1);
+        const phaseAttr = new THREE.BufferAttribute(manifestPhases, 1);
+        const rateAttr = new THREE.BufferAttribute(manifestRates, 1);
         posAttr.setUsage(THREE.DynamicDrawUsage);
         colAttr.setUsage(THREE.DynamicDrawUsage);
         sizeAttr.setUsage(THREE.DynamicDrawUsage);
+        phaseAttr.setUsage(THREE.DynamicDrawUsage);
+        rateAttr.setUsage(THREE.DynamicDrawUsage);
         geometry.setAttribute('position', posAttr);
         geometry.setAttribute('particleColor', colAttr);
         geometry.setAttribute('size', sizeAttr);
+        geometry.setAttribute('manifestPhase', phaseAttr);
+        geometry.setAttribute('manifestRate', rateAttr);
         geometry.setDrawRange(0, 0);
 
         const material = new THREE.ShaderMaterial({
-            uniforms: { shapeType: { value: 0 }, uOpacity: { value: 0.9 }, uGlow: { value: 0.15 } },
+            uniforms: {
+                ...PARTICLE_SHADER_UNIFORMS,
+                uOpacity: { value: 0.9 },
+                uGlow: { value: 0.15 },
+            },
             vertexShader: PARTICLE_VERT,
             fragmentShader: PARTICLE_FRAG,
             transparent: true,
@@ -125,7 +140,7 @@ export class ViewportParticleRenderer {
         const colAttr = this.velocityVectors.geometry.getAttribute('color');
         const maxLines = posAttr.array.length / 6;
         const n = Math.min(count, maxLines);
-        const scale = 50; // scale factor so velocity vectors are visible
+        const scale = 40; // world-units per unit velocity (β-colored below)
 
         for (let i = 0; i < n; i++) {
             const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
@@ -180,6 +195,89 @@ export class ViewportParticleRenderer {
         if (!on) this.velocityVectors.geometry.setDrawRange(0, 0);
     }
 
+    // ── Spin axis vectors (PE mode) ───────────────────────────────────
+    _buildSpinVectors() {
+        const MAX_VEC = 200;
+        const vertices = new Float32Array(MAX_VEC * 2 * 3);
+        const colors = new Float32Array(MAX_VEC * 2 * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.75,
+        });
+        this.spinVectors = new THREE.LineSegments(geo, mat);
+        this.spinVectors.frustumCulled = false;
+        this.spinVectors.visible = false;
+        this._scene.add(this.spinVectors);
+    }
+
+    updateSpinVectors(positions, spinAxes, spins, count) {
+        if (!this.spinVectors) this._buildSpinVectors();
+        if (!spinAxes || !spins) return;
+
+        const posAttr = this.spinVectors.geometry.getAttribute('position');
+        const colAttr = this.spinVectors.geometry.getAttribute('color');
+        const maxLines = posAttr.array.length / 6;
+        const n = Math.min(count, maxLines);
+        const scale = 2.8;
+        let drawn = 0;
+
+        for (let i = 0; i < n; i++) {
+            const s = spins[i];
+            if (!s) continue;
+            const i3 = i * 3;
+            let sx = spinAxes[i3];
+            let sy = spinAxes[i3 + 1];
+            let sz = spinAxes[i3 + 2];
+            let smag = Math.sqrt(sx * sx + sy * sy + sz * sz);
+            if (smag < 1e-8) {
+                sz = s > 0 ? 1 : -1;
+                sx = 0;
+                sy = 0;
+                smag = 1;
+            }
+            const len = scale * smag;
+            const ux = sx / smag;
+            const uy = sy / smag;
+            const uz = sz / smag;
+
+            const px = positions[i3];
+            const py = positions[i3 + 1];
+            const pz = positions[i3 + 2];
+            const li = drawn;
+
+            posAttr.array[li * 6] = px;
+            posAttr.array[li * 6 + 1] = py;
+            posAttr.array[li * 6 + 2] = pz;
+            posAttr.array[li * 6 + 3] = px + ux * len;
+            posAttr.array[li * 6 + 4] = py + uy * len;
+            posAttr.array[li * 6 + 5] = pz + uz * len;
+
+            const r = 0.72;
+            const g = 0.45;
+            const b = 0.95;
+            colAttr.array[li * 6] = r * 0.45;
+            colAttr.array[li * 6 + 1] = g * 0.45;
+            colAttr.array[li * 6 + 2] = b * 0.45;
+            colAttr.array[li * 6 + 3] = r;
+            colAttr.array[li * 6 + 4] = g;
+            colAttr.array[li * 6 + 5] = b;
+            drawn++;
+        }
+
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this.spinVectors.geometry.setDrawRange(0, drawn * 2);
+    }
+
+    toggleSpinVectors(on) {
+        if (!this.spinVectors) this._buildSpinVectors();
+        this.spinVectors.visible = on;
+        if (!on) this.spinVectors.geometry.setDrawRange(0, 0);
+    }
+
     // ── Orbit Trails (PE mode overlay) ───────────────────────────────
     _buildTrails() {
         // Pre-allocate for up to 50 particles × 200 trail segments
@@ -222,31 +320,31 @@ export class ViewportParticleRenderer {
             const cb = cat ? cat.display_color[2] : 0.5;
 
             const len = trail.length;
-            const maxLen = 200; // TRAIL_MAX_LENGTH
-            // Read from circular buffer in order (oldest → newest)
+            const maxLen = 200;
             const start = trail.length < maxLen ? 0 : trail.head;
+            const speeds = trail.speeds;
 
             for (let j = 0; j < len - 1 && seg < maxSegments; j++) {
                 const idx0 = (start + j) % maxLen;
                 const idx1 = (start + j + 1) % maxLen;
 
-                // Segment start
                 posAttr.array[seg * 6] = trail.positions[idx0 * 3];
                 posAttr.array[seg * 6 + 1] = trail.positions[idx0 * 3 + 1];
                 posAttr.array[seg * 6 + 2] = trail.positions[idx0 * 3 + 2];
-                // Segment end
                 posAttr.array[seg * 6 + 3] = trail.positions[idx1 * 3];
                 posAttr.array[seg * 6 + 4] = trail.positions[idx1 * 3 + 1];
                 posAttr.array[seg * 6 + 5] = trail.positions[idx1 * 3 + 2];
 
-                // Fade: old segments dim, new segments bright
                 const fade = (j + 1) / len;
-                colAttr.array[seg * 6] = cr * fade * 0.8;
-                colAttr.array[seg * 6 + 1] = cg * fade * 0.8;
-                colAttr.array[seg * 6 + 2] = cb * fade * 0.8;
-                colAttr.array[seg * 6 + 3] = cr * fade;
-                colAttr.array[seg * 6 + 4] = cg * fade;
-                colAttr.array[seg * 6 + 5] = cb * fade;
+                const spd = speeds ? (speeds[idx1] || 0) : 0;
+                const beta = Math.min(spd / C_SPEED, 1.0);
+                const speedBoost = 0.65 + 0.35 * beta;
+                colAttr.array[seg * 6] = cr * fade * 0.7 * speedBoost;
+                colAttr.array[seg * 6 + 1] = cg * fade * 0.7 * speedBoost;
+                colAttr.array[seg * 6 + 2] = cb * fade * 0.7 * speedBoost;
+                colAttr.array[seg * 6 + 3] = cr * fade * speedBoost;
+                colAttr.array[seg * 6 + 4] = cg * fade * speedBoost;
+                colAttr.array[seg * 6 + 5] = cb * fade * speedBoost;
 
                 seg++;
             }
@@ -269,65 +367,83 @@ export class ViewportParticleRenderer {
         }
     }
 
-    // ── Per-Particle Force Arrows ─────────────────────────────────────
-    _buildParticleForces() {
-        const MAX_PFORCES = 200;  // max particles
-        const vertices = new Float32Array(MAX_PFORCES * 2 * 3);
-        const colors = new Float32Array(MAX_PFORCES * 2 * 3);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setDrawRange(0, 0);
-        const mat = new THREE.LineBasicMaterial({
-            vertexColors: true, transparent: true, opacity: 0.85,
-        });
-        this._particleForces = new THREE.LineSegments(geo, mat);
-        this._particleForces.frustumCulled = false; // dynamic geo — see _eFieldLines
-        this._particleForces.visible = false;
-        this._scene.add(this._particleForces);
+    // ── Per-Particle Force Arrows (decomposed: Coulomb / gravity / strong / net) ──
+    _buildPEForceArrows() {
+        const MAX = 200;
+        const makeSet = (color) => {
+            const vertices = new Float32Array(MAX * 6);
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geo.setDrawRange(0, 0);
+            const mat = new THREE.LineBasicMaterial({
+                color, transparent: true, opacity: 0.85,
+            });
+            const lines = new THREE.LineSegments(geo, mat);
+            lines.frustumCulled = false;
+            lines.visible = false;
+            this._scene.add(lines);
+            return lines;
+        };
+        this._peForceCoulomb = makeSet(0xff4444);
+        this._peForceGravity = makeSet(0x94a3b8);
+        this._peForceStrong = makeSet(0xff1744);
+        this._peForceNet = makeSet(0x44cc66);
+        // Legacy alias — net force layer
+        this._particleForces = this._peForceNet;
     }
 
-    updateParticleForces(positions, forces, count, maxForce) {
-        if (!this._particleForces) this._buildParticleForces();
-        const posAttr = this._particleForces.geometry.getAttribute('position');
-        const colAttr = this._particleForces.geometry.getAttribute('color');
+    _updatePEForceArrowSet(lines, positions, forces, count, maxForce, visGain = 1.0) {
+        if (!lines) return;
+        const posAttr = lines.geometry.getAttribute('position');
         const n = Math.min(count, 200);
         const arrowScale = 12.0;
-
         for (let i = 0; i < n; i++) {
             const px = positions[i * 3], py = positions[i * 3 + 1], pz = positions[i * 3 + 2];
-            const fx = forces[i * 3], fy = forces[i * 3 + 1], fz = forces[i * 3 + 2];
+            const fx = forces[i * 3] * visGain;
+            const fy = forces[i * 3 + 1] * visGain;
+            const fz = forces[i * 3 + 2] * visGain;
             const mag = Math.sqrt(fx * fx + fy * fy + fz * fz);
-
             posAttr.array[i * 6] = px;
             posAttr.array[i * 6 + 1] = py;
             posAttr.array[i * 6 + 2] = pz;
-
-            const scale = mag > 1e-20 ? arrowScale * Math.log(1 + mag / (maxForce + 1e-20) * 10) : 0;
+            const scale = mag > 1e-20 ? arrowScale * Math.log(1 + mag / (maxForce * visGain + 1e-20) * 10) : 0;
             posAttr.array[i * 6 + 3] = px + (mag > 1e-20 ? fx / mag * scale : 0);
             posAttr.array[i * 6 + 4] = py + (mag > 1e-20 ? fy / mag * scale : 0);
             posAttr.array[i * 6 + 5] = pz + (mag > 1e-20 ? fz / mag * scale : 0);
-
-            // Green color for net force
-            const t = mag / (maxForce + 1e-20);
-            colAttr.array[i * 6] = 0.2;
-            colAttr.array[i * 6 + 1] = 0.4 + 0.3 * t;
-            colAttr.array[i * 6 + 2] = 0.2;
-            colAttr.array[i * 6 + 3] = 0.3;
-            colAttr.array[i * 6 + 4] = 0.7 + 0.3 * t;
-            colAttr.array[i * 6 + 5] = 0.3;
         }
-
         posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this._particleForces.geometry.setDrawRange(0, n * 2);
+        lines.geometry.setDrawRange(0, n * 2);
     }
 
-    toggleParticleForces(on) {
-        if (!this._particleForces) this._buildParticleForces();
-        this._particleForces.visible = on;
-        if (!on) this._particleForces.geometry.setDrawRange(0, 0);
+    updatePEForceDecomposition(decomp, gravityVisGain = 1.0) {
+        if (!this._peForceCoulomb) this._buildPEForceArrows();
+        if (!decomp || decomp.count === 0) {
+            for (const layer of [this._peForceCoulomb, this._peForceGravity, this._peForceStrong, this._peForceNet]) {
+                layer.geometry.setDrawRange(0, 0);
+            }
+            return;
+        }
+        const { positions, count } = decomp;
+        this._updatePEForceArrowSet(this._peForceCoulomb, positions, decomp.coulomb, count, decomp.maxCoulomb);
+        this._updatePEForceArrowSet(this._peForceGravity, positions, decomp.gravity, count, decomp.maxGravity, gravityVisGain);
+        this._updatePEForceArrowSet(this._peForceStrong, positions, decomp.strong, count, decomp.maxStrong);
+        this._updatePEForceArrowSet(this._peForceNet, positions, decomp.net, count, decomp.maxNet);
     }
+
+    togglePEForceCoulomb(on) { if (!this._peForceCoulomb) this._buildPEForceArrows(); this._peForceCoulomb.visible = on; if (!on) this._peForceCoulomb.geometry.setDrawRange(0, 0); }
+    togglePEForceGravity(on) { if (!this._peForceGravity) this._buildPEForceArrows(); this._peForceGravity.visible = on; if (!on) this._peForceGravity.geometry.setDrawRange(0, 0); }
+    togglePEForceStrong(on)  { if (!this._peForceStrong)  this._buildPEForceArrows(); this._peForceStrong.visible = on;  if (!on) this._peForceStrong.geometry.setDrawRange(0, 0); }
+    togglePEForceNet(on)     { if (!this._peForceNet)     this._buildPEForceArrows(); this._peForceNet.visible = on;     if (!on) this._peForceNet.geometry.setDrawRange(0, 0); }
+
+    // Legacy net-force API (delegates to F_net layer)
+    _buildParticleForces() { this._buildPEForceArrows(); }
+
+    updateParticleForces(positions, forces, count, maxForce) {
+        if (!this._peForceNet) this._buildPEForceArrows();
+        this._updatePEForceArrowSet(this._peForceNet, positions, forces, count, maxForce);
+    }
+
+    toggleParticleForces(on) { this.togglePEForceNet(on); }
 
     // ── System Observables (center of mass + p + L) ───────────────────
     // A single LineSegments mesh carrying the system-level conserved
@@ -417,6 +533,9 @@ export class ViewportParticleRenderer {
         const posAttr = geo.getAttribute('position');
         const colAttr = geo.getAttribute('particleColor');
         const sizeAttr = geo.getAttribute('size');
+        const phaseAttr = geo.getAttribute('manifestPhase');
+        const rateAttr = geo.getAttribute('manifestRate');
+        const hasManifest = !!(data.phases && data.rates);
 
         const rawCount = Math.min(data.count, MAX_PARTICLES);
 
@@ -424,16 +543,25 @@ export class ViewportParticleRenderer {
         const _bs = this._getBoundaryShape();
         const needsClip = _bs && _bs !== 'none' && _bs !== 'cube';
         let count = 0;
+        const originMode = this._getBoundaryMode() === 'origin';
         for (let i = 0; i < rawCount; i++) {
             const px = data.positions[i * 3];
             const py = data.positions[i * 3 + 1];
             const pz = data.positions[i * 3 + 2];
             if (needsClip) {
-                const center = this._latticeSize / 2;
-                const radius = this._latticeSize / 2;
-                const nx = (px - center) / radius;
-                const ny = (py - center) / radius;
-                const nz = (pz - center) / radius;
+                let nx, ny, nz;
+                if (originMode) {
+                    const R = PE_VIS_BOUNDARY_R;
+                    nx = px / R;
+                    ny = py / R;
+                    nz = pz / R;
+                } else {
+                    const center = this._latticeSize / 2;
+                    const radius = this._latticeSize / 2;
+                    nx = (px - center) / radius;
+                    ny = (py - center) / radius;
+                    nz = (pz - center) / radius;
+                }
                 if (!this._insideBoundary(nx, ny, nz)) continue;
             }
             posAttr.array[count * 3] = px;
@@ -442,23 +570,22 @@ export class ViewportParticleRenderer {
             colAttr.array[count * 3] = data.colors[i * 3];
             colAttr.array[count * 3 + 1] = data.colors[i * 3 + 1];
             colAttr.array[count * 3 + 2] = data.colors[i * 3 + 2];
-            // Per-polarity size: detect from color (green=+1, red=-1, blue=void)
-            const cr = data.colors[i * 3], cg = data.colors[i * 3 + 1];
-            let baseSize;
-            if (cg > 0.6 && cr < 0.6) {
-                baseSize = this.visualSettings.positiveSize ?? data.sizes[i];
-            } else if (cr > 0.6 && cg < 0.6) {
-                baseSize = this.visualSettings.negativeSize ?? data.sizes[i];
+            sizeAttr.array[count] = (data.sizes[i] ?? 3.0) * this.visualSettings.globalScale;
+            if (hasManifest) {
+                phaseAttr.array[count] = data.phases[i];
+                rateAttr.array[count] = data.rates[i];
             } else {
-                baseSize = data.sizes[i];
+                phaseAttr.array[count] = 0;
+                rateAttr.array[count] = 0;
             }
-            sizeAttr.array[count] = baseSize * this.visualSettings.globalScale;
             count++;
         }
 
         posAttr.needsUpdate = true;
         colAttr.needsUpdate = true;
         sizeAttr.needsUpdate = true;
+        if (phaseAttr) phaseAttr.needsUpdate = true;
+        if (rateAttr) rateAttr.needsUpdate = true;
 
         geo.setDrawRange(0, count);
     }
@@ -507,6 +634,15 @@ export class ViewportParticleRenderer {
             this.particles.material.uniforms.uGlow.value = val;
         }
         this.visualSettings.glowIntensity = val;
+    }
+
+    /** GPU-driven ternary manifestation blink (Scale 1 PE clouds). */
+    setManifestation(enabled, timeSec, fill = 0.40) {
+        const mat = this.particles?.material;
+        if (!mat?.uniforms) return;
+        mat.uniforms.uManifestEnabled.value = enabled ? 1.0 : 0.0;
+        mat.uniforms.uManifestTime.value = timeSec;
+        mat.uniforms.uManifestThresh.value = Math.sin(Math.PI * (1 - 2 * fill) / 2);
     }
 
     // Override colors from catalog type map (PE mode)
@@ -562,12 +698,14 @@ export class ViewportParticleRenderer {
 
         disposeMesh(this.particles);
         disposeMesh(this.velocityVectors);
+        disposeMesh(this.spinVectors);
         disposeMesh(this.trails);
         disposeMesh(this._particleForces);
         disposeMesh(this._peSystem);
 
         this.particles = null;
         this.velocityVectors = null;
+        this.spinVectors = null;
         this.trails = null;
         this._particleForces = null;
         this._peSystem = null;

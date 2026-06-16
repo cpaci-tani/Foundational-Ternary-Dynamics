@@ -270,6 +270,7 @@ export class Viewport {
             halfN: this._halfN,
             insideBoundary: (nx, ny, nz) => this._insideBoundary(nx, ny, nz),
             getBoundaryShape: () => this._boundaryShape,
+            getBoundaryMode: () => this._boundaryMode,
             visualSettings: this.visualSettings,
             writeArrowFieldIntoMesh: (m, f, c, k, b, t) => this._fieldRenderer.writeArrowFieldIntoMesh(m, f, c, k, b, t),
         });
@@ -468,6 +469,10 @@ export class Viewport {
         this._particleRenderer.updateVelocityVectors(positions, velocities, count);
     }
     toggleVelocityVectors(on) { this._particleRenderer.toggleVelocityVectors(on); }
+    updateSpinVectors(positions, spinAxes, spins, count) {
+        this._particleRenderer.updateSpinVectors(positions, spinAxes, spins, count);
+    }
+    toggleSpinVectors(on) { this._particleRenderer.toggleSpinVectors(on); }
     updateTrails(trailHistory, typeMap) { this._particleRenderer.updateTrails(trailHistory, typeMap); }
     toggleTrails(on) { this._particleRenderer.toggleTrails(on); }
     clearTrails() { this._particleRenderer.clearTrails(); }
@@ -523,6 +528,13 @@ export class Viewport {
         this._particleRenderer.updateParticleForces(positions, forces, count, maxForce);
     }
     toggleParticleForces(on) { this._particleRenderer.toggleParticleForces(on); }
+    updatePEForceDecomposition(decomp, gravityVisGain) {
+        this._particleRenderer.updatePEForceDecomposition(decomp, gravityVisGain);
+    }
+    togglePEForceCoulomb(on) { this._particleRenderer.togglePEForceCoulomb(on); }
+    togglePEForceGravity(on) { this._particleRenderer.togglePEForceGravity(on); }
+    togglePEForceStrong(on)  { this._particleRenderer.togglePEForceStrong(on); }
+    togglePEForceNet(on)     { this._particleRenderer.togglePEForceNet(on); }
 
     // ── System Observables (center of mass + momentum p + ang.-mom. L) ──
     updatePESystem(com, p, l) { this._particleRenderer.updatePESystem(com, p, l); }
@@ -1005,6 +1017,9 @@ export class Viewport {
     }
     setParticleGlow(val) { this._particleRenderer.setGlow(val); }
     setParticleShape(idx) { this._particleRenderer.setPointShape(idx); }
+    setPEManifestation(enabled, timeSec, fill) {
+        this._particleRenderer.setManifestation(enabled, timeSec, fill);
+    }
     setAreaHighlight(cx, cy, cz, radius, active) { this._sceneCore?.setAreaHighlight(cx, cy, cz, radius, active); }
 
     // ── Element labels + clearMolecularMeshes — delegated to viewport/molecular-renderer.js

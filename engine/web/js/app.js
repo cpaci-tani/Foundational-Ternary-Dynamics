@@ -296,7 +296,9 @@ function _resetAllVisualState() {
     Scale1Controller.resetScale1({ viewport });
     for (const id of [
         'toggle-pe-efield', 'toggle-pe-potential',
-        'toggle-pe-gravity-field', 'toggle-pe-forces', 'toggle-pe-system',
+        'toggle-pe-gravity-field',
+        'toggle-pe-force-coulomb', 'toggle-pe-force-gravity', 'toggle-pe-force-strong', 'toggle-pe-force-net',
+        'toggle-pe-system',
         'toggle-velocities', 'toggle-trails',
     ]) {
         const btn = document.getElementById(id);
@@ -307,7 +309,10 @@ function _resetAllVisualState() {
         viewport.toggleFieldHeatmap(false);
         viewport.toggleFieldVectors(false);
         viewport.toggleGravityVectors(false);
-        viewport.toggleParticleForces(false);
+        viewport.togglePEForceCoulomb(false);
+        viewport.togglePEForceGravity(false);
+        viewport.togglePEForceStrong(false);
+        viewport.togglePEForceNet(false);
         viewport.togglePESystem(false);
         viewport.toggleVelocityVectors(false);
         viewport.toggleTrails(false);
@@ -462,8 +467,10 @@ async function init() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const forceMock = urlParams.get('engine') === 'mock';
+    const forceNative = urlParams.get('engine') === 'native';
+    const isLiveServerPort = /^55\d{2}$/.test(window.location.port);
 
-    if (!forceMock) {
+    if (!forceMock && (forceNative || !isLiveServerPort)) {
         // 1. Try native GPU engine
         debugLog('[init] Trying native GPU engine on ws://127.0.0.1:9100...');
         try {
@@ -473,7 +480,10 @@ async function init() {
             bridge = null;
         }
     } else {
-        debugLog('[init] Skipping native GPU: forceMock active');
+        const skipReason = forceMock
+            ? 'forceMock active'
+            : (isLiveServerPort ? 'static dev server (use ?engine=native for ws_server)' : 'native probe skipped');
+        debugLog(`[init] Skipping native GPU: ${skipReason}`);
         bridge = null;
     }
 
@@ -1241,7 +1251,10 @@ function wireViewportToggles() {
         ['toggle-pe-efield', (on) => { Scale1Controller.setPEEField(on); viewport.togglePEStreamlines(on); }],
         ['toggle-pe-potential', (on) => { Scale1Controller.setPEPotential(on); viewport.toggleFieldHeatmap(on); viewport.toggleFieldVectors(on); }],
         ['toggle-pe-gravity-field', (on) => { Scale1Controller.setPEGravField(on); viewport.toggleGravityVectors(on); }],
-        ['toggle-pe-forces', (on) => { Scale1Controller.setPEForces(on); viewport.toggleParticleForces(on); }],
+        ['toggle-pe-force-coulomb', (on) => { Scale1Controller.setPEForceCoulomb(on); viewport.togglePEForceCoulomb(on); }],
+        ['toggle-pe-force-gravity', (on) => { Scale1Controller.setPEForceGravity(on); viewport.togglePEForceGravity(on); }],
+        ['toggle-pe-force-strong', (on) => { Scale1Controller.setPEForceStrong(on); viewport.togglePEForceStrong(on); }],
+        ['toggle-pe-force-net', (on) => { Scale1Controller.setPEForceNet(on); viewport.togglePEForceNet(on); }],
         ['toggle-pe-system', (on) => { Scale1Controller.setPESystem(on); viewport.togglePESystem(on); }],
     ];
     for (const [id, handler] of peFieldToggles) {
