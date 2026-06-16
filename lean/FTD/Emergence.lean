@@ -1,14 +1,17 @@
 /-
-  FTD.Emergence — The Five Axioms of the FTD Universe
-  ===================================================
-  Formalizes the minimum ontological inputs required to generate the
-  Foundational Ternary Dynamics framework, proving that the remaining
-  framework integers natively emerge from N_c=3.
+  FTD.Emergence — Legacy Integer/Axiom Sketch
+  ===========================================
+  Legacy sketch of how several framework integers are generated once N_c=3 and
+  the alpha-facing bridge constants are supplied.
+
+  Honest scope: this file contains explicit axioms (`G_star`, `alpha_inv`,
+  `x_plus`, `x_plus_eq_alpha_inv`) and is not a formal derivation of the five
+  postulates or of alpha.
 -/
 
 namespace FTD.Emergence
 
-/-! ## The 5 Minimum Inputs (Axioms) -/
+/-! ## Legacy inputs -/
 
 -- 1. Spatial Dimension
 def D_spatial : Nat := 3
@@ -23,7 +26,7 @@ def C : Nat := 16
 -- 4. Color Number (Topological constraint)
 def N_c : Nat := 3
 
--- 5. The Scaling Axiom
+-- 5. The legacy scaling axiom
 -- The physical fine structure constant inverse equates to the master root.
 axiom alpha_inv : Float
 axiom x_plus : Float

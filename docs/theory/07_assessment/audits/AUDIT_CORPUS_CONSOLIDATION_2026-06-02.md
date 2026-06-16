@@ -311,7 +311,7 @@ Abbreviations used in **backs-Part** column: `0`=Part 0 Seed, `I`=Part I Constru
 | `07_assessment/audits/AUDIT_HEEGNER_TOWER_RIGIDITY.md` | III | KEEP-supporting | Heegner tower rigidity scan; Part III §III.2 null result |
 | `07_assessment/audits/AUDIT_LEMNISCATE_ALPHA_RIGIDITY.md` | III | KEEP-supporting | Lemniscate-alpha rigidity scan; Part III §III.2 evidence |
 | `07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md` | none | KEEP-supporting | Newton postulates reconciliation; gravity detail |
-| `07_assessment/audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md` | II | KEEP-canonical | RSI Leg 3: conditional theorem [THEOREM] + K-BIND [OPEN] (FTD-0243); primary Part II §II.3–§II.5 citation |
+| `07_assessment/audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md` | II | KEEP-canonical | RSI Leg 3: conditional theorem [THEOREM] + K-BIND was open as of this 2026-06-02 consolidation audit; superseded by FTD-0244 K-BIND [CLOSED THEOREM-NEGATIVE] on 2026-06-10. |
 | `07_assessment/audits/AUDIT_SCALE0_SUBSTRATE_RESULTS.md` | none | KEEP-supporting | Scale-0 substrate measurement results; engine measurement provenance |
 | `07_assessment/audits/AUDIT_SPEKKENS_KNOWLEDGE_BALANCE_PARTIAL.md` | none | KEEP-supporting | Spekkens knowledge-balance [PARTIAL]; QM foundations |
 | `07_assessment/campaigns/archive_session_outputs/DEVILS_ADVOCATE_REPORT.md` | none | KEEP-supporting | April 19 devil's-advocate report (3 bugs fixed); historical provenance |

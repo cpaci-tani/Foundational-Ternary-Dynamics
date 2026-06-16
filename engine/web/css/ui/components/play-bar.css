@@ -324,15 +324,32 @@ html[data-panel-mount="bottom"] .play-bar-settings-popover {
         padding: var(--sp-xs) var(--sp-sm);
         transform: translateX(-50%);
         transform-origin: bottom center;
-        /* Move to bottom: 0 to prevent floating over the center of the canvas */
-        bottom: 8px; /* Small inset so it doesn't clip the bottom edge */
+        /* Floor = clear the status bar (+ notch / browser nav inset). The capsule
+           rests just above the status footer when the bottom sheet is collapsed. */
+        --play-bar-floor: calc(
+            var(--status-bar-offset, calc(28px * var(--ui-scale, 1)))
+            + max(env(safe-area-inset-bottom, 8px), var(--browser-nav-inset, 0px))
+            + var(--sp-sm)
+        );
+        bottom: var(--play-bar-floor);
     }
 
     html[data-panel-mount="bottom"] .play-bar {
         top: auto;
         left: 50%;
-        bottom: 8px;
+        bottom: var(--play-bar-floor);
         transform: translateX(-50%);
+    }
+
+    /* When the bottom sheet is OPEN (the default mobile state) it floats over the
+       canvas at --m-sheet-h tall (defined on #app in app-shell.css). Lift the
+       capsule to sit just above the sheet so the transport never overlaps panel
+       controls. Collapsed falls back to the floor rule above (capsule rests above
+       the status bar over the full canvas). The #app id keeps this ahead of
+       html[data-panel-mount="bottom"] on the cascade. */
+    #app:not(.panels-collapsed) .play-bar {
+        top: auto;
+        bottom: calc(var(--m-sheet-h, 42dvh) + var(--play-bar-floor));
     }
 
     /* Finger-sized playback controls on touch devices */

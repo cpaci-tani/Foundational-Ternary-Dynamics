@@ -29,6 +29,10 @@ namespace ontic {
 // Layer 5: Coupling Constants
 // ============================================================================
 // Fine structure constant: α = 1 / X_PLUS_PRECISION.
+// The algebraic master-quadratic-root identity (x₊ as a root of
+// x² − 16G*²x + 16G*³) is [THEOREM]; the PHYSICAL identification
+// x₊ ↔ 1/α is [STRONGLY MOTIVATED CONJECTURE] per FTD-0013 (see the
+// STEP-2 comment under G_C below).
 //
 // Epistemic status (see the g_c derivation block below for the full chain
 // and LEDGER FTD-0013): the master-quadratic ROOT x₊ is [THEOREM] (pure
@@ -91,14 +95,15 @@ inline constexpr double ALPHA_PRECISION = ALPHA;
 // the compile-time static_assert in constants.h verifies G_C² ≈ ALPHA.
 inline constexpr double G_C = 0.0854245431028543695;
 
-// Weinberg angle: sin²θ_W = N_c / N_eff = 3/13 [PARAMETRIC]
+// Weinberg angle: sin²θ_W = N_c / N_eff = 3/13 [PARAMETRIC] (FTD-0018)
 //   = 0.23077 (0.2% from the MS-bar value 0.23122, but 3.5% from the on-shell
 //   value, and competitor 2/9 fits better with no Moore-neighbourhood meaning).
 //   Downgraded 2026-04-19 per AUDIT_RATIONAL_FIT_CLAIMS.md — not structurally
 //   forced. (Was mistagged [THEOREM]; the LEDGER/CATALOG hold it [PARAMETRIC].)
 inline constexpr double SIN2_WEINBERG = static_cast<double>(N_C) / N_EFF;
 
-// Weak coupling constant: α_W = α / sin²θ_W [DERIVED]
+// Weak coupling constant: α_W = α / sin²θ_W [STRUCTURALLY MOTIVATED PARAMETRIC]
+//   (inherits the [PARAMETRIC] sin²θ_W = 3/13 above, FTD-0018)
 inline constexpr double ALPHA_WEAK = ALPHA / SIN2_WEINBERG;
 
 // ══════════════════════════════════════════════════════════════════════
@@ -153,7 +158,7 @@ inline constexpr double ALPHA_G_APPROX = 5.91e-39;
 // ============================================================================
 // Layer 5b: QCD Sector
 // ============================================================================
-// QCD coupling at M_Z scale [PARAMETRIC]:
+// QCD coupling at M_Z scale [PARAMETRIC] (FTD-0020):
 //   α_s(M_Z) = b₃ / (b₃ + 4·N_eff) = 7 / 59 = 0.11864
 //   (0.6% from experimental 0.1179; downgraded 2026-04-19 per
 //   AUDIT_RATIONAL_FIT_CLAIMS.md — competitor 2/17 = 0.1176 fits better and the

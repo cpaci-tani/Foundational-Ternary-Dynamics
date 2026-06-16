@@ -1,8 +1,12 @@
 /-
-  FTD.FineStructure -- The Fine Structure Constant: Complete Derivation Chain
-  ===========================================================================
-  Comprehensive verification of alpha from G* through the master quadratic
-  and the 4-term precision formula.
+  FTD.FineStructure -- Legacy Fine-Structure Numerical Check
+  ==========================================================
+  Legacy replay of the alpha-facing arithmetic from G* through the master
+  quadratic and the 4-term precision formula.
+
+  Honest scope: this file checks integer identities and numerical comparisons.
+  It does NOT prove the physical bridge x+ = 1/alpha. The current corpus keeps
+  that bridge at [STRONGLY MOTIVATED CONJECTURE] / axiom-class input.
 
   The derivation chain:
     Gamma(1/4), Gamma(1/2)                    -- two transcendental inputs
@@ -10,7 +14,7 @@
     → Master quadratic: x^2 - 16G*^2 x + 16G*^3 = 0  -- self-duality constraint
     → x+ = 137.036171...                      -- leading value (1.26 ppm)
     → 4-term correction with epsilon           -- sub-ppb precision
-    → 1/alpha = 137.035999177...              -- matches CODATA
+    → 137.035999177...                        -- numerical comparison to CODATA
 
   Reference: SPEC_FTD.md §4.5, PAPER_GSTAR_BRIDGE_CONSTANT.tex
 -/
@@ -34,7 +38,7 @@ def codata_uncertainty : Float := 0.000000021
 
 /-! ## The Complete Precision Formula
 
-  1/alpha = x+ - c1*|eps| + c2*|eps|^2 - c3*|eps|^3 - c4*|eps|^4
+  target = x+ - c1*|eps| + c2*|eps|^2 - c3*|eps|^3 - c4*|eps|^4
 
   where:
     eps = e^pi - pi - 20
@@ -171,7 +175,7 @@ theorem higgs_numerator_doubled : 2 * N_c = 6 := by native_decide
   let mH := 246.22 * Float.sqrt (2.0 * lambda_h)
 
   IO.println "╔══════════════════════════════════════════════════════════════╗"
-  IO.println "║  FTD FINE STRUCTURE CONSTANT — COMPLETE DERIVATION CHAIN   ║"
+  IO.println "║  FTD FINE STRUCTURE CONSTANT — LEGACY NUMERICAL CHECK      ║"
   IO.println "╚══════════════════════════════════════════════════════════════╝"
   IO.println ""
   IO.println "┌─── STEP 1: Gamma-Primitive Basis ─────────────────────────┐"
@@ -189,8 +193,8 @@ theorem higgs_numerator_doubled : 2 * N_c = 6 := by native_decide
   IO.println s!"│  B = 16*G*^2                        = {B}"
   IO.println s!"│  C = 16*G*^3                        = {C}"
   IO.println s!"│  Discriminant                       = {disc}"
-  IO.println s!"│  x+ (= 1/alpha leading)             = {xPlus}"
-  IO.println s!"│  x- (= N_c leading)                 = {xMinus}"
+  IO.println s!"│  x+ (compared to 1/alpha)           = {xPlus}"
+  IO.println s!"│  x- (compared to N_c)               = {xMinus}"
   IO.println s!"│  floor(x-)                          = {xMinus.toUInt32}"
   IO.println "└────────────────────────────────────────────────────────────┘"
   IO.println ""
@@ -213,9 +217,9 @@ theorem higgs_numerator_doubled : 2 * N_c = 6 := by native_decide
   IO.println s!"│  CODATA uncertainty: ±{unc}"
   IO.println "└────────────────────────────────────────────────────────────┘"
   IO.println ""
-  IO.println "┌─── ALPHA ITSELF ──────────────────────────────────────────┐"
-  IO.println s!"│  alpha (FTD)   = 1/{alpha_inv_4} = {alpha}"
-  IO.println s!"│  alpha (CODATA)= 1/{codata} = {alpha_codata}"
+  IO.println "┌─── INVERTED TARGET VALUE ─────────────────────────────────┐"
+  IO.println s!"│  constructed inverse = 1/{alpha_inv_4} = {alpha}"
+  IO.println s!"│  CODATA inverse      = 1/{codata} = {alpha_codata}"
   IO.println "└────────────────────────────────────────────────────────────┘"
   IO.println ""
   IO.println "┌─── OTHER COUPLING CONSTANTS ──────────────────────────────┐"
@@ -235,8 +239,8 @@ theorem higgs_numerator_doubled : 2 * N_c = 6 := by native_decide
   IO.println s!"│  Harmonic mean = 2 = [Q(i):Q]: PASS (algebraic identity)"
   IO.println "└────────────────────────────────────────────────────────────┘"
   IO.println ""
-  IO.println "  The fine structure constant is derived, not fitted."
-  IO.println "  Two transcendentals (Gamma(1/4), Gamma(1/2)) → one prediction."
-  IO.println "  All correction coefficients come from {3, 4, 7, 13, 47}."
+  IO.println "  Legacy status: numerical/algebraic check only."
+  IO.println "  The physical bridge x+ = 1/alpha is not proven in Lean."
+  IO.println "  Corpus status: [STRONGLY MOTIVATED CONJECTURE] / axiom-class input."
 
 end FTD.FineStructure

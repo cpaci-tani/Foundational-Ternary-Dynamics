@@ -1,10 +1,13 @@
 /-
-  FTD.Precision -- Epsilon Parameter and Precision Coefficients
-  =============================================================
-  Numerical verification of the precision formula:
-    1/α ≈ x₊ - c₁ε + c₂ε² - c₃ε³ - c₄ε⁴
+  FTD.Precision -- Legacy Epsilon Parameter and Precision Coefficients
+  ====================================================================
+  Numerical replay of the legacy precision formula target:
+    target ≈ x₊ - c₁ε + c₂ε² - c₃ε³ - c₄ε⁴
   where ε = e^π - π - 20 and all coefficients are rationals
   built from framework integers {3, 4, 7, 13, 47}.
+
+  Honest scope: compares a constructed value to CODATA. It does not prove the
+  physical identification x+ = 1/alpha.
 
   Reference: SPEC_FTD.md §4.5, MATH_MASTER_QUADRATIC.md
 -/
@@ -100,7 +103,7 @@ theorem c4_den : N_c + N_base + N_base = 11 := eleven_from_framework
 
   let codata := 137.035999177
 
-  IO.println "--- PRECISION FORMULA VERIFICATION ---"
+  IO.println "--- LEGACY PRECISION FORMULA NUMERICAL CHECK ---"
   IO.println s!"  e^pi             = {e_pi}"
   IO.println s!"  pi               = {pi_val}"
   IO.println s!"  epsilon          = {epsilon}"

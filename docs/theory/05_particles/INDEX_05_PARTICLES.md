@@ -10,6 +10,7 @@
 1. [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md) — integer-encoding survey + SM completeness audit; the orientation doc for the cluster.
 2. [DERIV_COMPLETE_PARTICLE_PHYSICS.md](DERIV_COMPLETE_PARTICLE_PHYSICS.md) — full SM-observable roll-up with the ~35 [THEOREM] / ~50 [PARAMETRIC] / ~50+ [EXTERNAL] breakdown stated up front.
 3. [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) — why {3, 4, 7, 13} arise from normed division algebras; x₊, x₋ = 70 ± 67 (Heegner).
+4. [SPEC_ATOMIC_PROPERTY_LEDGER.md](SPEC_ATOMIC_PROPERTY_LEDGER.md) — FTD translation of standard atomic properties, establishing the contextual scale vector $\mathcal{A}_{\rm atom}$ and the implemented `AtomicClosureContext` API.
 
 ## Masses & Standard Model spectrum
 
@@ -20,6 +21,13 @@
 | [PRED_ELECTROWEAK_MASSES.md](PRED_ELECTROWEAK_MASSES.md) | [THEOREM] (running + tree) + [PARAMETRIC] (radiative corr.) | M_Z to 0.02% and M_W to 0.5% from α, sin²θ_W = 3/13, v — zero free parameters. |
 | [FOUND_DISCRETE_NATIVE_MASS_GENERATION.md](FOUND_DISCRETE_NATIVE_MASS_GENERATION.md) | [FOUNDATIONAL / OPERATIONAL] | Rest mass operationally defined as voxel cardinality, with linear-level scaling (FTD-0110) and point-group representation analysis. |
 | [EXPLR_FTD_MASS_CHAIN.md](EXPLR_FTD_MASS_CHAIN.md) | [arithmetic synthesis — mixed status] | G* → master quadratic → m_e/m_p/m_n arithmetic chain. THEOREM spine; PARAMETRIC / COORDINATE-COINCIDENCE mass matches (mass-unit ≡ m_e; not engine-dynamical). Paired with red-team [AUDIT_MASS_CHAIN_REDTEAM.md](../07_assessment/AUDIT_MASS_CHAIN_REDTEAM.md). |
+
+## Atomic scale context
+
+| File | Tag | Purpose |
+|---|---|---|
+| [SPEC_ATOMIC_PROPERTY_LEDGER.md](SPEC_ATOMIC_PROPERTY_LEDGER.md) | [ACTIVE SPEC] | Atomic-property and scale-context ledger. Documents the distinction between `Atom.radius` (simulation/LJ interaction radius) and `AtomicClosureContext::r_cloud` (shell-context cloud readout), with C++/JS implementation surfaces and epistemic status. |
+
 ## Coupling constants & forces (Class C)
 
 | File | Tag | Purpose |
@@ -40,6 +48,7 @@
 | [DERIV_OCTONIONIC_STRUCTURE.md](DERIV_OCTONIONIC_STRUCTURE.md) | consolidated derivation | Division algebras and Heegner numbers behind {3, 4, 7, 13}; master-quadratic roots as 70 ± 67. |
 | [DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md](DERIV_MATERIAL_EMERGENCE_FROM_LATTICE.md) | — | (See above — listed under engine measurements.) |
 | [REF_PHYSICS_REFERENCE.md](REF_PHYSICS_REFERENCE.md) | [REFERENCE] | Integer-encoding catalog + SM completeness matrix; consolidates the former REF_PHYSICS_ENCODINGS + COMPLETENESS_MATRIX docs. |
+| [REF_SCALE1_DYNAMICS_FTD_FORM.md](REF_SCALE1_DYNAMICS_FTD_FORM.md) | [REFERENCE] | Code-grounded cross-walk of every web-dashboard Scale-1 (Particle Engine) dynamic, each formula re-expressed in FTD constants (α→G_C², m_e→K_B, c→1/√3, mass ratios from {3,4,7,13}). Honest banner: re-expression is notation, not derivation — the laws stay imported (tags unchanged). |
 
 ---
 
@@ -53,4 +62,4 @@ Pure header-only theory overlays on the existing lattice engine, tagged `[CANDID
 
 ---
 
-10 active docs in this cluster (+ 2 archived).
+12 active docs in this cluster (+ 2 archived).
