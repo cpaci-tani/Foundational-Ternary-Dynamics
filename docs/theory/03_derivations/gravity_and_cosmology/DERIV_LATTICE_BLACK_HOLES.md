@@ -1652,7 +1652,7 @@ Compare with Schwarzschild at the same radius: $f_{\text{Schw}} = 1 - 2/3 = 0.33
 | [FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md](../02_foundations/FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md) | Dimensional hierarchy, space-time ontological separation. |
 | [DERIV_QFT_GRT_BRIDGE.md](../foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) | Linearized GR from flux; graviton propagator. The Kerr metric goes beyond the linearized regime. The RN metric demonstrates electromagnetic back-reaction on gravity. |
 | [DERIV_FORCE_EMERGENCE.md](../foundational_mechanics/DERIV_FORCE_EMERGENCE.md) | All 4 forces from a single lattice Green's function. The RN metric provides the gravitational context in which the electromagnetic force operates. |
-| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | GAP-G1 definition and critical path. GAP-1 / GAP-G1 resolved in Part A. |
+| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | GAP-G1 definition and critical path. GAP-1 / GAP-G1 resolved in Part A. |
 
 ---
 

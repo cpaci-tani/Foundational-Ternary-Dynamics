@@ -555,7 +555,7 @@ The three terms correspond to direct (t-channel²), interference (t-u cross, neg
 - [DERIV_RELATIVITY_DERIVATION.md](../gravity_and_cosmology/DERIV_RELATIVITY_DERIVATION.md) — Linearized Einstein, Conjecture 14.1 (now resolved)
 - [DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md](../04_coupling/DERIV_LEMNISCATE_HIERARCHY_WHITEPAPER.md) — Coupling hierarchy via G*
 - [DERIV_DISCRETE_CONTINUOUS_BRIDGE.md](../04_coupling/DERIV_DISCRETE_CONTINUOUS_BRIDGE.md) — Master quadratic as bridge
-- [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) — Full bridge research program (GAP-G3 resolved here)
+- [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) — Full bridge research program (GAP-G3 resolved here)
 - [SPEC_SIX_ALGORITHMS.md](../01_reference/SPEC_SIX_ALGORITHMS.md) — Six algorithms of physics on lattice
 
 ---
