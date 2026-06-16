@@ -48,6 +48,15 @@
     .tb-btn { min-width: 44px; min-height: 44px; }
 }
 
+/* Width-based tap floor on phones. The rule above (coarse pointer) only fires on
+   real touch devices; the icon buttons are 36px×--ui-scale ≈ 43px under the mobile
+   scale boost, just under the WCAG floor. Add a width-based 44px floor so phones
+   get a true 44px target and it is exercised by responsive emulation/resize in
+   tests too (mirrors the width-based pattern in responsive.css). */
+@media (max-width: 767px) {
+    .tb-btn { min-width: var(--tap-min); min-height: var(--tap-min); }
+}
+
 /* ── Secondary control button (.ctrl-btn-secondary) ──── */
 .ctrl-btn-secondary {
     padding: 6px var(--sp-lg);

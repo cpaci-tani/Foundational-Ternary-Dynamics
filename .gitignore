@@ -70,6 +70,10 @@ docs/articles/
 !docs/theory/04_coupling/archive/**
 !docs/theory/07_assessment/campaigns/archive/
 !docs/theory/07_assessment/campaigns/archive/**
+!docs/theory/06_reference_frames_and_measurement/archive/
+!docs/theory/06_reference_frames_and_measurement/archive/**
+!docs/theory/01_reference/archive/
+!docs/theory/01_reference/archive/**
 !docs/theory/archive/packages/
 !docs/theory/archive/packages/**
 !docs/theory/archive/DERIV_EMERGENT_GRAVITON_CENSUS_RETRACTED.md
@@ -317,4 +321,9 @@ engine/web/docs/*_files/
 
 # Ignore run_wsl.sh script
 run_wsl.sh
+.gitignore
+traj_koopman_A14.csv
+traj_temp_64.csv
+traj_temp.csv
+traj_temp_128.csv
 .gitignore

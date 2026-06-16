@@ -154,6 +154,7 @@ add_library(ftd_core
     src/energy_ledger_compute.cpp    # R3: per-tick conservation ledger
     src/diagnostics_compute.cpp      # R4: diagnostics / energy audit / EM fields / Poynting / entropy
     src/injection.cpp                # R5: inject_flux/particle/wavepacket + aggregate profile
+    src/scale_context.cpp            # Scale-context readout admissibility gate (read-only; α-blind)
     # Phase 4a — phase_write decomposition (2026-04-27, ADR-0008)
     src/render_bridge_phases/phase_write.cpp  # leapfrog + damping + genesis + evaporation
     # Phase 4b — phase_forces decomposition (2026-04-27, ADR-0008)
@@ -295,6 +296,12 @@ ftd_add_test(test_conservation_profile tests/test_conservation_profile.cpp
 ftd_add_test(test_substrate_angle_probe tests/test_substrate_angle_probe.cpp
              CTEST_NAME substrate_angle_probe TIMEOUT 120 LABELS unit measurement)
 
+# Scale-ratio identity criterion (FC-3, SPEC_SCALE_RATIO_ONTOLOGY.md §6).
+# Header-only value object; NO engine link needed — pure ratio math.
+# [IMPOSED] bands chi_min=0.5, beta_max=0.6 are calibration placeholders.
+ftd_add_test(test_scale_ratio tests/test_scale_ratio.cpp
+             CTEST_NAME scale_ratio TIMEOUT 60 NO_CORE LABELS unit measurement)
+
 # Campaign 2 — dynamical time dilation (2026-06-07): does a moving lattice clock
 # dilate as √(1−v²) [L²/γ] or 1−v [L¹/FTD-0208]? Wave clock via the single-tick
 # dispersion eigenvalue; effective mass from transverse momentum. Reads NO
@@ -376,6 +383,11 @@ ftd_add_test(test_constructors tests/test_constructors.cpp)
 # ClusterTracker connected-component identification + persistence-tracking.
 # See docs/theory/01_reference/SPEC_CLASS_B_CLUSTER_PERSISTENCE.md.
 ftd_add_test(test_cluster_tracker tests/test_cluster_tracker.cpp)
+
+# Scale-context readout admissibility gate (C_scale, read-only, α-blind).
+# See docs/theory/01_reference/SPEC_SCALE_CONTEXT_READOUT.md.
+ftd_add_test(test_scale_context tests/test_scale_context.cpp
+             CTEST_NAME scale_context TIMEOUT 120 LABELS unit measurement)
 
 # Class B Phase B.2: quiescent persistence sanity test using engine + tracker.
 ftd_add_test(test_cluster_persistence_quiescent tests/test_cluster_persistence_quiescent.cpp)
@@ -2662,3 +2674,12 @@ foreach(_t benchmark_alpha_convergence benchmark_alpha_scaling
         set_tests_properties(${_t} PROPERTIES DISABLED TRUE)
     endif()
 endforeach()
+
+add_executable(dump_koopman_trajectory tests/dump_koopman_trajectory.cpp)
+target_link_libraries(dump_koopman_trajectory PRIVATE ftd_core)
+add_test(NAME dump_koopman_trajectory COMMAND dump_koopman_trajectory)
+
+# Exploratory scale-context confinement scan (NOT registered with ctest:
+# slow, exploratory). Build target only. See SPEC_SCALE_CONTEXT_READOUT §5.5.
+add_executable(campaign_scale_context_confine tests/campaign_scale_context_confine.cpp)
+target_link_libraries(campaign_scale_context_confine PRIVATE ftd_core)

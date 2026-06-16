@@ -750,7 +750,7 @@ The bridge conjecture rests on one critical step: the Type III$_1$ assignment fo
 | [DERIV_OBSERVER_BELL_MECHANISM.md](../../theory/03_derivations/DERIV_OBSERVER_BELL_MECHANISM.md) | Three-level Bell hierarchy |
 | [EXPLR_RELU_TYPE_TRANSITION.md](../../theory/09_mathematical/EXPLR_RELU_TYPE_TRANSITION.md) | Softplus/ReLU algebraic descent |
 | [EXPLR_COLLAPSE_GRAVITY_BRIDGE.md](../../theory/09_mathematical/EXPLR_COLLAPSE_GRAVITY_BRIDGE.md) | Collapse-gravity duality |
-| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../../theory/01_reference/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | Full gap inventory, critical path |
+| [SPEC_QFT_GRT_BRIDGE_ROADMAP.md](../../theory/01_reference/archive/resolved/SPEC_QFT_GRT_BRIDGE_ROADMAP.md) | Full gap inventory, critical path |
 
 ---
 

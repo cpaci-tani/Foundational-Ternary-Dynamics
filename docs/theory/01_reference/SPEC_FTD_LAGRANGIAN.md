@@ -228,7 +228,7 @@ $$\nabla_L^2\,\mathcal{L} = 4\pi G\,\rho_\text{mass}$$
 
 ### 4.3 Proper Time [THEOREM]
 
-The proper time per coordinate tick follows from the Born-Infeld core. The action of a free particle ($s = 0$, no constraint term) is $S = -K_B \sum_t \sqrt{(f^2-v^2)/f}$. By the Clock Hypothesis (which v3 audit [AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md](../03_derivations/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) proved is an independent, non-derivable coordinate-level **[AXIOM]** incompatible with Scale 0 substrate primitives), $d\tau \propto \sqrt{(f^2-v^2)/f}\,dt$, giving:
+The proper time per coordinate tick follows from the Born-Infeld core. The action of a free particle ($s = 0$, no constraint term) is $S = -K_B \sum_t \sqrt{(f^2-v^2)/f}$. By the Clock Hypothesis (which v3 audit [AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md](../03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) proved is an independent, non-derivable coordinate-level **[AXIOM]** incompatible with Scale 0 substrate primitives), $d\tau \propto \sqrt{(f^2-v^2)/f}\,dt$, giving:
 
 $$\frac{d\tau}{dt} = \frac{1}{\gamma_\text{FTD}} = \frac{\sqrt{f^2-v^2}}{\sqrt{f}} = \sqrt{f - \frac{v^2}{f}}$$
 
@@ -357,7 +357,7 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 
 | ID | Statement | Tag |
 |----|-----------|-----|
-| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM conditional on clock-hypothesis AXIOM]** *(2026-05-27 v3 closure: v3 audit [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`](../03_derivations/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) established that the clock hypothesis is structurally incompatible with Scale 0 discrete primitives and must be posited as an independent macroscopic **[AXIOM]**; this theorem holds exactly conditional on that axiom; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
+| L-1 | Born-Infeld core exactly reproduces Schwarzschild proper time for all $f$ | **[THEOREM conditional on clock-hypothesis AXIOM]** *(2026-05-27 v3 closure: v3 audit [`AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`](../03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md) established that the clock hypothesis is structurally incompatible with Scale 0 discrete primitives and must be posited as an independent macroscopic **[AXIOM]**; this theorem holds exactly conditional on that axiom; survives FTD-0189 audit since no h_μν correspondence is invoked)* |
 | L-2 | Reduces to Klein-Gordon on the lattice in the weak-field limit | **[THEOREM]** |
 | L-3 | $\gamma_\text{FTD}$ unifies SR and GR Lorentz factors | **[THEOREM]** |
 
@@ -378,11 +378,11 @@ All physical constants trace to Axiom 1 (cubic graph $\Lambda$ with no defined b
 
 [1] D. Lovelock, "The Einstein tensor and its generalizations," *J. Math. Phys.* **12**, 498–501 (1971).
 
-[2] [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/DERIV_QFT_GRT_BRIDGE.md) — QFT-GR duality of the flux field.
+[2] [DERIV_QFT_GRT_BRIDGE.md](../03_derivations/foundational_mechanics/DERIV_QFT_GRT_BRIDGE.md) — QFT-GR duality of the flux field.
 
-[3] [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Full Einstein equations via Lovelock.
+[3] [DERIV_EINSTEIN_FIELD_EQUATIONS.md](../03_derivations/gravity_and_cosmology/DERIV_EINSTEIN_FIELD_EQUATIONS.md) — Full Einstein equations via Lovelock.
 
-[4] [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../03_derivations/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) — Vertex factor $g_c = \sqrt{\alpha}$.
+[4] [DERIV_STATE_FLUX_COUPLING_DERIVATION.md](../03_derivations/electromagnetism/DERIV_STATE_FLUX_COUPLING_DERIVATION.md) — Vertex factor $g_c = \sqrt{\alpha}$.
 
 [5] [DERIV_COSMOLOGICAL_CONSTANT.md](../04_coupling/DERIV_COSMOLOGICAL_CONSTANT.md) — Cosmological constant from lattice vacuum energy.
 

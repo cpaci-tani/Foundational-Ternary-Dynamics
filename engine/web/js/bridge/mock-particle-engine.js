@@ -30,16 +30,21 @@
  *
  * Force law (preserved verbatim from peTick):
  *   F_coulomb = -(ALPHA / 4pi) * qi * qj * invR^2        (Newton's 3rd law)
- *   F_gravity =  G_N * mi * mj * invR^2                   (attractive)
+ *   F_gravity =  G_PE * mi * mj * invR^2                   (attractive)
  *   r^2 -> r^2 + soft^2   (softening to avoid singularities)
  *   F_vec = (F_c + F_g) * r_hat / r
+ *
+ * Gravity provenance: G_PE = G_DERIVED = 1/(4pi*m_P^2) is the FTD-0131-derived
+ * coupling (alpha_G(e,e) = (m_e/m_P)^2 ~ 1.75e-45). Particle-scale gravity is
+ * float64-invisible next to Coulomb; dynamics are negligible but telemetry/charts
+ * expose the true value. Scale 0/4/5 substrate demos still use lattice-toy G_N.
  *
  * Force buffer layout: flat Float64Array(N*3) as [fx0,fy0,fz0, fx1,fy1,fz1, ...].
  * This avoids N object allocations per tick and gives ~2x speedup via cache
  * locality on the O(N^2) pair loop.
  */
 
-import { ALPHA, K_B, DAMPING, G_N, C_SPEED, COULOMB_K_FORCE } from '../constants.js';
+import { K_B, DAMPING, G_PE, C_SPEED, COULOMB_K_FORCE } from '../constants.js';
 
 /**
  * Build the particle-engine provider bound to the given bridge-like state.
@@ -62,7 +67,7 @@ export function createParticleEngine(state) {
             particles: [], nextId: 0, tick: 0, dt: 1.0, soft: 0.1, coulomb: true, damping: false, gravity: false,
             lorentz: false, exchange: false, strong: false, magnetic_dipole: false,
             spin_orbit: false, radiation: false, relativistic: false,
-            relativistic_verlet: false
+            relativistic_verlet: false, annihilations: 0
         };
         state._peParticleTypes = new Map();
     }
@@ -74,6 +79,7 @@ export function createParticleEngine(state) {
             state._pe.tick = 0;
             state._pe.forces = null;
             state._pe.forcesN = 0;
+            state._pe.annihilations = 0;
         }
         if (state._peParticleTypes) state._peParticleTypes.clear();
     }
@@ -83,7 +89,7 @@ export function createParticleEngine(state) {
         if (mass <= 0) { console.warn('MockBridge: rejecting massless particle:', catalogId); return -1; }
         const id = state._pe.nextId++;
         state._pe.particles.push({
-            id, charge, mass, r_eff, x, y, z, vx, vy, vz, locked: false
+            id, charge, mass, r_eff, spin: 0, color: 0, pair_id: -1, x, y, z, vx, vy, vz, locked: false
         });
         state._pe.forces = null; // invalidate force cache
         state._peParticleTypes.set(id, catalogId);
@@ -95,7 +101,7 @@ export function createParticleEngine(state) {
         if (mass <= 0) { console.warn('MockBridge: rejecting massless particle:', catalogId); return -1; }
         const id = state._pe.nextId++;
         state._pe.particles.push({
-            id, charge, mass, r_eff, x, y, z, vx: 0, vy: 0, vz: 0, locked: true
+            id, charge, mass, r_eff, spin: 0, color: 0, pair_id: -1, x, y, z, vx: 0, vy: 0, vz: 0, locked: true
         });
         state._pe.forces = null; // invalidate force cache
         state._peParticleTypes.set(id, catalogId);
@@ -107,7 +113,8 @@ export function createParticleEngine(state) {
      *
      * For each unique pair (i,j), computes:
      *   F_coulomb = -alpha * q_i * q_j / (4pi * r^2)  (repulsive for same-sign)
-     *   F_gravity =  G_N * m_i * m_j / r^2             (always attractive)
+     *   F_gravity =  G_PE * m_i * m_j / r^2             (always attractive)
+     *     where G_PE = G_DERIVED = 1/(4pi*m_P^2) (FTD-0131 physical coupling).
      * Both forces are softened by soft^2 to avoid singularities at r=0.
      * Result is radial: F_vec = (F_c + F_g) * r_hat / r.
      * Newton's 3rd law: force on j is negated from force on i.
@@ -144,7 +151,8 @@ export function createParticleEngine(state) {
                 const invR = 1 / Math.sqrt(r2);
                 const invR2 = invR * invR;
                 const fc = doCoulomb ? -alpha4pi * qi * pj.charge * invR2 : 0;
-                const fg = doGravity ? G_N * mi * pj.mass * invR2 : 0;
+                // G_PE = G_DERIVED (FTD-0131 physical alpha_G coupling)
+                const fg = doGravity ? G_PE * mi * pj.mass * invR2 : 0;
                 const fr = (fc + fg) * invR;
                 const ffx = fr * dx, ffy = fr * dy, ffz = fr * dz;
                 const j3 = j * 3;
@@ -178,6 +186,16 @@ export function createParticleEngine(state) {
             p.vx += F1[i3]     * hdt;
             p.vy += F1[i3 + 1] * hdt;
             p.vz += F1[i3 + 2] * hdt;
+        }
+
+        // Speed limit (enforce before drift to prevent singularity teleportation)
+        for (const p of ps) {
+            if (p.locked) continue;
+            const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz);
+            if (speed > C_SPEED) {
+                const s = C_SPEED / speed;
+                p.vx *= s; p.vy *= s; p.vz *= s;
+            }
         }
 
         // Drift: r += v × dt
@@ -247,6 +265,8 @@ export function createParticleEngine(state) {
             }
         }
         if (toRemove.size > 0) {
+            // Each annihilation removes an opposite-charge PAIR → size/2 events.
+            state._pe.annihilations = (state._pe.annihilations || 0) + toRemove.size / 2;
             state._pe.particles = ps.filter((_, idx) => !toRemove.has(idx));
             state._pe.forces = null;
         }
@@ -361,7 +381,7 @@ export function createParticleEngine(state) {
     }
 
     function peGetDiagnostics() {
-        if (!state._pe) return { tick: 0, particleCount: 0, totalKE: 0, totalPE: 0, coulombPE: 0, gravityPE: 0, totalEnergy: 0, momentumX: 0, momentumY: 0, momentumZ: 0, angMomX: 0, angMomY: 0, angMomZ: 0 };
+        if (!state._pe) return { tick: 0, particleCount: 0, totalKE: 0, totalPE: 0, coulombPE: 0, gravityPE: 0, totalEnergy: 0, momentumX: 0, momentumY: 0, momentumZ: 0, angMomX: 0, angMomY: 0, angMomZ: 0, annihilations: 0 };
         const ps = state._pe.particles;
         let ke = 0, pe_coulomb = 0, pe_gravity = 0, px = 0, py = 0, pz = 0;
         let lx = 0, ly = 0, lz = 0;
@@ -379,14 +399,14 @@ export function createParticleEngine(state) {
             for (let j = i + 1; j < ps.length; j++) {
                 const dx = ps[j].x - ps[i].x, dy = ps[j].y - ps[i].y, dz = ps[j].z - ps[i].z;
                 const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
-                if (state._pe.coulomb) pe_coulomb += ALPHA * ps[i].charge * ps[j].charge / (4 * Math.PI * r);
+                if (state._pe.coulomb) pe_coulomb += COULOMB_K_FORCE * ps[i].charge * ps[j].charge / r;
                 if (state._pe.gravity) {
-                    pe_gravity -= G_N * ps[i].mass * ps[j].mass / r;
+                    pe_gravity -= G_PE * ps[i].mass * ps[j].mass / r;
                 }
             }
         }
         const pe_val = pe_coulomb + pe_gravity;
-        return { tick: state._pe.tick, particleCount: ps.length, totalKE: ke, totalPE: pe_val, coulombPE: pe_coulomb, gravityPE: pe_gravity, totalEnergy: ke + pe_val, momentumX: px, momentumY: py, momentumZ: pz, angMomX: lx, angMomY: ly, angMomZ: lz };
+        return { tick: state._pe.tick, particleCount: ps.length, totalKE: ke, totalPE: pe_val, coulombPE: pe_coulomb, gravityPE: pe_gravity, totalEnergy: ke + pe_val, momentumX: px, momentumY: py, momentumZ: pz, angMomX: lx, angMomY: ly, angMomZ: lz, annihilations: state._pe.annihilations || 0 };
     }
 
     function peGetExtendedData() {
@@ -419,8 +439,8 @@ export function createParticleEngine(state) {
                 const r2 = dx * dx + dy * dy + dz * dz;
                 const r2s = r2 + soft2;
                 const r = Math.sqrt(r2s);
-                const fc = state._pe.coulomb ? -ALPHA * p.charge * q.charge / (4 * Math.PI * r2s) : 0;
-                const fg = state._pe.gravity ? G_N * p.mass * q.mass / r2s : 0;
+                const fc = state._pe.coulomb ? -COULOMB_K_FORCE * p.charge * q.charge / r2s : 0;
+                const fg = state._pe.gravity ? G_PE * p.mass * q.mass / r2s : 0;
                 if (r > 1e-20) {
                     const fr = (fc + fg) / r;
                     fx += fr * dx; fy += fr * dy; fz += fr * dz;
@@ -485,8 +505,8 @@ export function createParticleEngine(state) {
             if (r < nearestDist) { nearestDist = r; nearestId = q.id; }
             // Coulomb + gravity forces (matching peTick force law)
             const r2s = r2 + soft2;
-            const fc = state._pe.coulomb ? -ALPHA * p.charge * q.charge / (4 * Math.PI * r2s) : 0;
-            const fg = state._pe.gravity ? G_N * p.mass * q.mass / r2s : 0;
+            const fc = state._pe.coulomb ? -COULOMB_K_FORCE * p.charge * q.charge / r2s : 0;
+            const fg = state._pe.gravity ? G_PE * p.mass * q.mass / r2s : 0;
             if (r > 1e-20) {
                 const fr = (fc + fg) / r;
                 fNetX += fr * dx;
@@ -501,7 +521,7 @@ export function createParticleEngine(state) {
             if (nq) {
                 const dx = nq.x - p.x, dy = nq.y - p.y, dz = nq.z - p.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
-                fCoulombNearest = Math.abs(ALPHA * p.charge * nq.charge / (4 * Math.PI * (r2 + soft2)));
+                fCoulombNearest = Math.abs(COULOMB_K_FORCE * p.charge * nq.charge / (r2 + soft2));
             }
         }
 
@@ -518,9 +538,13 @@ export function createParticleEngine(state) {
 
         return {
             id: p.id, charge: p.charge, mass: p.mass,
+            rEff: p.r_eff, spin: p.spin, colorId: p.color, pairId: p.pair_id,
             x: p.x, y: p.y, z: p.z,
             vx: p.vx, vy: p.vy, vz: p.vz,
-            speed, ke, locked: p.locked,
+            speed, ke, 
+            momentum: p.mass * speed,
+            acceleration: Math.sqrt(fNetX * fNetX + fNetY * fNetY + fNetZ * fNetZ) / p.mass,
+            locked: p.locked,
             nearestId, nearestDist,
             orbitalR,
             fCoulombNearest,

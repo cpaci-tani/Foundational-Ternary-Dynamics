@@ -1,5 +1,5 @@
 name = "ftd_lean"
-defaultTargets = ["FtdNoGo", "FTD", "FTDAlpha"]
+defaultTargets = ["FtdNoGo"]
 
 # Mathlib pinned to match lean-toolchain (v4.30.0). To move versions, bump
 # lean-toolchain and this rev together (Mathlib tags track Lean tags), then
@@ -7,6 +7,9 @@ defaultTargets = ["FtdNoGo", "FTD", "FTDAlpha"]
 # in comments (pderiv lemmas in Poisson.lean; matrix simp set in Independence.lean).
 # NOTE: Standalone.lean is intentionally NOT part of this library — it is the
 # Mathlib-free mirror, compiled directly with `lean Standalone.lean`.
+# NOTE: FTD and FTDAlpha are retained as legacy/axiom-bearing numerical and
+# algebraic checks. Build them explicitly with `lake build FTD FTDAlpha`; they
+# are not part of the default citable proof target.
 
 [[require]]
 name = "mathlib"

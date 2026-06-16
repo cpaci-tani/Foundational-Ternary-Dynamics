@@ -42,23 +42,30 @@ Failure at any layer keeps the claim at [STRONGLY MOTIVATED CONJECTURE].
 
 ---
 
-## 2. The Contract
+## 2. The Contract (v2.0 Operational Formalization)
 
-Any proposed closure of MC-T4.3 must specify a tuple:
+Any proposed closure of MC-T4.3 must specify a tuple `ARC = (P, A_obs, O_EM, R, C)`. To prevent arbitrary preparation or post-hoc assembly, this tuple must now be explicitly formalized by exactly four mathematically rigid objects:
 
-```
-ARC = (P, A_obs, O_EM, R, C)
-```
+### 2.1 $\Omega_{\min}$ (The Canonical Preparation $P$)
+"Minimal neutral excitation" must be a deterministic construction, not a hand-picked geometry.
+$$ \Omega_{\min} = \operatorname*{argmin}_{\Omega} \left\{ E_J(\Omega) : \sum s = 0,\; \Omega \neq 0,\; \Omega \text{ stable under } U \right\} \Big/ \text{symmetries} $$
+This forces the test system to be the absolute lowest-energy stable neutral configuration allowed by the engine.
 
-where:
+### 2.2 $W_L$ (The Canonical Response $R$)
+The phase-law $U$ contains threshold events (genesis/collision) which are non-differentiable. The response operator must freeze these discrete transitions and linearize only the smooth Gauss/wave sector. Furthermore, it must distinguish between one-tick scattering and relaxed constraint limits:
+*   **One-tick response:** $W_L^{(1)} = D R_{\text{EM}} \circ D(U_{\text{Gauss}} \circ U_{\text{wave}}) \big|_{\Omega_{\min}}$
+*   **Static/Relaxed response:** $W_L^{(\infty)}$ (the limit of prolonged relaxation).
+The Gauss response $W_L^{(\infty)}$ is the preferred target for static electromagnetic coupling.
 
-- `P` is a preparation class: which FTD configurations or boundary conditions count as charge-like test systems.
-- `A_obs` is the admissible observable algebra: which finite, gauge-invariant, translation/O_h-compatible functionals are allowed.
-- `O_EM` is the electromagnetic measurement functional: what quantity a charge/scattering/field-strength measurement reads.
-- `R` is the readout map: how `O_EM` returns a dimensionless inverse coupling.
-- `C` is the calibration discipline: which dimensional or unit conventions are used, and why the result is dimensionless or calibration-invariant.
+### 2.3 $\mathcal{B}_{\mathbb{Z}[i]}$ (The Canonical Calibration $C$)
+The 2D subspace upon which $W_L$ is evaluated. This must be the unique, forced two-channel quarter-conjugate basis intrinsic to the $J$-quadrature of the lattice, not a basis selected post-hoc to recover $G^*$. 
 
-The proposal passes the **admissibility gate** only if all five elements are stated before checking any physical target value.
+### 2.4 $R_{\text{EM}}$ (The Observable / Operational Bridge $A_{obs}, O_{EM}$)
+Proving that the characteristic polynomial matches $\lambda^2 - 16G^{*2}\lambda + 16G^{*3}$ only proves a *structural coupling eigenvalue*. The contract demands an operational identification:
+$$ \lambda_+(W_U) = \text{inverse electromagnetic coupling measured by the Coulomb/scattering readout} $$
+The functional $R_{\text{EM}}$ must explicitly bridge the mathematical operator output to the empirical physical phenomenon.
+
+The proposal passes the **admissibility gate** only if these four objects are completely deterministic before checking the $(137)$ target value.
 
 ---
 

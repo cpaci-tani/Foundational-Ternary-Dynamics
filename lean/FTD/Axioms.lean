@@ -73,7 +73,8 @@ axiom gamma_half_squared_is_pi :
     for the global coupling polynomial.
 
     This is the ONE remaining gap in the proof chain.
-    If proven, the master quadratic is fully derived from CM theory.
+    If proven, this would strengthen the mathematical master-quadratic route,
+    but it would still not prove the physical identification x+ = 1/alpha.
 
     Status: [STRONG CONJECTURE]
     Evidence: The root number ε(E) = +1 makes the functional equation
@@ -93,7 +94,7 @@ axiom conjecture_self_duality_forces_TrN :
     It says: 1/α = x₊ where x₊ is the larger root of the master quadratic.
 
     Evidence: x₊ = 137.036 vs CODATA α⁻¹ = 137.036 (1.26 ppm).
-    With 4-term corrections: 15+ digit agreement.
+    The legacy 4-term correction is a numerical comparison, not a derivation.
 -/
 axiom lattice_CM :
   True -- 1/α = x₊

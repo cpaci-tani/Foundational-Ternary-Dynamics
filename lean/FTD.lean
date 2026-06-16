@@ -1,8 +1,12 @@
 /-
-  FTD Proof Verification -- Main Entry Point
-  ============================================
-  Comprehensive Lean 4 verification of the Foundational Ternary Dynamics
-  mathematical framework.
+  FTD Legacy Algebra/Numerics -- Optional Entry Point
+  ==================================================
+  Legacy Lean 4 replay of FTD algebraic identities, integer arithmetic, and
+  numerical checks from the older alpha/master-quadratic proof tree.
+
+  Honest scope: this module is axiom-bearing and is not the citable proof target.
+  The default `lake build` now checks `FtdNoGo` only. Build this module explicitly
+  with `lake build FTD` when auditing legacy provenance.
 
   Module structure:
   - Constants:         Framework integers, Gamma-primitive constants
@@ -16,7 +20,7 @@
   - LFunction:         Axiomatized L-function results (Tier 3A)
   - SelfDuality:       The conjecture and physical axiom (Tier 3B/C)
 
-  Usage: lake build
+  Usage: lake build FTD
 -/
 
 import FTD.Constants
@@ -41,7 +45,7 @@ import FTD.Axioms
 
 /-! ## Verification Report
 
-  Run `lake build` to compile the entire project.
+  Run `lake build FTD` to compile this legacy tree.
   All #eval blocks produce verification output during compilation.
 
   ### Theorem Count
@@ -66,7 +70,7 @@ import FTD.Axioms
   - SelfDuality.lean:   2 axioms (1 conjecture + 1 physical)
   - Axioms.lean:        12 axioms (legacy, overlaps with above)
 
-  **Total: ~133 verified theorems + 23 axioms + 6 #eval blocks**
+  **Total: ~133 checked Lean declarations + 23 custom axioms + 6 #eval blocks**
 
   ### Sorry Count
   - Tier 1-2: 0 sorry (all proofs complete)
