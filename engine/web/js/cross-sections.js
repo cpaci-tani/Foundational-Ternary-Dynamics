@@ -55,13 +55,13 @@ export function rutherfordDiffCS(theta, E_kin, Z1 = 1, Z2 = 1) {
 
 /**
  * Integrated Rutherford cross-section between theta_min and theta_max.
- * Analytical integral: sigma = pi * a^2 * [cot^2(theta_min/2) - cot^2(theta_max/2)]
+ * Analytical integral: sigma = 4*pi * a^2 * [cot^2(theta_min/2) - cot^2(theta_max/2)]
  */
 export function rutherfordIntegrated(theta_min, theta_max, E_kin, Z1 = 1, Z2 = 1) {
     const a = Z1 * Z2 * ALPHA * HBAR_C_MEV_FM / (4.0 * E_kin);
     const cotMin = 1.0 / Math.tan(theta_min / 2.0);
     const cotMax = 1.0 / Math.tan(theta_max / 2.0);
-    return PI_FTD * a * a * (cotMin * cotMin - cotMax * cotMax);
+    return 4.0 * PI_FTD * a * a * (cotMin * cotMin - cotMax * cotMax);
 }
 
 // ── Mott Cross-Section ───────────────────────────────────────────────
