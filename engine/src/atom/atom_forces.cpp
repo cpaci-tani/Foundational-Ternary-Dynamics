@@ -64,9 +64,9 @@ Vec3 AtomEngine::compute_pairwise_force(int i, int j) const {
 
         Vec3 r_hat = r_vec * (1.0 / r);
 
-        // 1. Ionic force (only if either atom is charged)
-        if (toggles.ionic && ai.charge != 0 && aj.charge != 0) {
-            double f_ionic = -ALPHA * ai.charge * aj.charge / (4.0 * PI * r2);
+        // 1. Ionic force (now uses continuous fractional charge)
+        if (toggles.ionic && (std::abs(ai.q_frac) > 1e-6 || std::abs(aj.q_frac) > 1e-6)) {
+            double f_ionic = -ALPHA * ai.q_frac * aj.q_frac / (4.0 * PI * r2);
             Vec3 fi = r_hat * f_ionic;
             f += fi;
             if (diag) diag->f_ionic += fi;
@@ -214,8 +214,8 @@ Vec3 AtomEngine::tree_force(int i, int node_idx) const {
         AtomForceDiag* diag = nullptr;
         if (i < static_cast<int>(force_diag_.size())) diag = &force_diag_[i];
 
-        if (toggles.ionic && ai.charge != 0 && node.total_charge != 0.0) {
-            double f_ionic = -ALPHA * ai.charge * node.total_charge / (4.0 * PI * r2);
+        if (toggles.ionic && std::abs(ai.q_frac) > 1e-6 && std::abs(node.total_charge) > 1e-6) {
+            double f_ionic = -ALPHA * ai.q_frac * node.total_charge / (4.0 * PI * r2);
             Vec3 fi = r_hat * f_ionic;
             f += fi;
             if (diag) diag->f_ionic += fi;
@@ -302,7 +302,7 @@ void AtomEngine::compute_all_forces() {
     octree_.build(atoms_,
         [](const Atom& a) { return a.position; },
         [](const Atom& a) { return a.mass; },
-        [](const Atom& a) { return static_cast<double>(a.charge); }
+        [](const Atom& a) { return a.q_frac; }
     );
 
     // Tree force accumulation (Ionic Coulomb, LJ 12-6, Hbonds) — only if the

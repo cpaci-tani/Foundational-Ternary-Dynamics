@@ -27,6 +27,10 @@ The algebraic core: the polynomial `x² − 16G*²x + 16G*³ = 0`, its provenanc
 | File | Tag | Purpose |
 |---|---|---|
 | [DERIV_MASTER_QUADRATIC_GAP_EQUATION.md](foundational_mechanics/DERIV_MASTER_QUADRATIC_GAP_EQUATION.md) | [THEOREM] algebra / [STRONGLY MOTIVATED CONJECTURE] physical ID | Canonical master-quadratic reference: identity, coefficient routes, discriminant trichotomy, dual match. |
+| [DERIV_QUADRATURE_COVARIANCE.md](DERIV_QUADRATURE_COVARIANCE.md) | [THEOREM] | Formal derivation of the intrinsic $\mathbb{Z}[i]$ quadrature field via edge-covariant transverse projection. |
+| [DERIV_FLUCTUATION_KERNEL_GREEN.md](DERIV_FLUCTUATION_KERNEL_GREEN.md) | [THEOREM] | Explicit definition of $\mathcal{K}_{A_J}$ as the covariant lattice Green's operator, linking its trace to the Watson integral $W_3$. |
+| [DERIV_OSCILLATORY_CLOUD_DYNAMICS.md](foundational_mechanics/DERIV_OSCILLATORY_CLOUD_DYNAMICS.md) | [OPEN PROGRAM] | Formalizes the dynamic resonance of $\mathcal{B}_{\Omega}(t)$, its return map $M_{\rm cloud}$, and the resonant-mode crossover explaining the FTD-0110 mass bridge. |
+| [DERIV_FTD0110_NONLINEAR_CLOSURE.md](foundational_mechanics/DERIV_FTD0110_NONLINEAR_CLOSURE.md) | [OPEN PROGRAM] | Analyzes the perturbation theory of the Oscillatory Cloud, establishing the 18-point Laplacian's spectral gap $\Delta\lambda \approx 1.138$ as the boundary for the mass bridge thermal knee. |
 | [DERIV_MASTER_QUADRATIC_FROM_Z.md](foundational_mechanics/DERIV_MASTER_QUADRATIC_FROM_Z.md) | [THEOREM] polynomial / route RETRACTED (FTD-0032) | Partition-function route to the gap equation; the L→∞ derivation is retracted, polynomial preserved. |
 | [DERIV_GAP_EQUATION_FORM.md](foundational_mechanics/DERIV_GAP_EQUATION_FORM.md) | [THEOREM given self-consistency prescription] | Why the two coefficients are linked: one-loop self-consistency forces `x² = K(x − G*)`. |
 | [DERIV_QUADRATIC_NECESSITY.md](foundational_mechanics/DERIV_QUADRATIC_NECESSITY.md) | [DERIVATION] (two proofs) | Two independent arguments that degree 2 is structurally forced, not chosen. |

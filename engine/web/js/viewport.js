@@ -524,6 +524,10 @@ export class Viewport {
     }
     toggleParticleForces(on) { this._particleRenderer.toggleParticleForces(on); }
 
+    // ── System Observables (center of mass + momentum p + ang.-mom. L) ──
+    updatePESystem(com, p, l) { this._particleRenderer.updatePESystem(com, p, l); }
+    togglePESystem(on) { this._particleRenderer.togglePESystem(on); }
+
     // ── Flux Volume Rendering (Scale 0 -- substrate mode) ──────────────
     // Phase 3b extracted into ViewportFluxRenderer (./viewport/flux-renderer.js).
     // This class keeps thin delegators for backward compatibility.

@@ -160,7 +160,10 @@ export function createAtomEngine(state) {
             max_bonds: props.max_bonds, bonds: [],
             electronegativity: props.electronegativity,
             valence_electrons: _valenceElectrons(Z),
-            dipole_x: 0, dipole_y: 0, dipole_z: 0,
+            alpha_pol: props.alpha_pol, e_ion: props.e_ion, 
+            e_aff: props.e_aff, sigma_scatter: props.sigma_scatter,
+            z_eff: props.closure_context ? props.closure_context.z_eff : 0,
+            dipole_x: 0, dipole_y: 0, dipole_z: 0, q_frac: charge,
             x, y, z, vx, vy, vz, ax: 0, ay: 0, az: 0, locked: false
         });
         return id;
@@ -234,13 +237,22 @@ export function createAtomEngine(state) {
 
     function _aeComputeDipoleMoments() {
         const atoms = state._ae.atoms;
+        // Zero out and reset q_frac
         for (const a of atoms) {
             a.dipole_x = 0; a.dipole_y = 0; a.dipole_z = 0;
+            a.q_frac = a.charge;
+        }
+        
+        for (const a of atoms) {
             for (const bond of a.bonds) {
                 const jIdx = state._aeIdToIdx.get(bond.partner_id);
                 if (jIdx === undefined) continue;
                 const aj = atoms[jIdx];
                 const chi_diff = aj.electronegativity - a.electronegativity;
+                
+                // QEq transfer
+                a.q_frac += 0.5 * chi_diff;
+
                 if (Math.abs(chi_diff) < 1e-10) continue;
                 a.dipole_x += (aj.x - a.x) * chi_diff;
                 a.dipole_y += (aj.y - a.y) * chi_diff;
@@ -271,8 +283,8 @@ export function createAtomEngine(state) {
             const is13 = !isBonded && _aeIs13(i, j);
 
             // Ionic (Coulomb) — skip for bonded and 1-3 pairs
-            if (state._ae.ionic && !isBonded && !is13 && ai.charge !== 0 && aj.charge !== 0) {
-                const f_ionic = -AE_K_COULOMB * ai.charge * aj.charge / r2;
+            if (state._ae.ionic && !isBonded && !is13 && (Math.abs(ai.q_frac) > 1e-6 || Math.abs(aj.q_frac) > 1e-6)) {
+                const f_ionic = -AE_K_COULOMB * ai.q_frac * aj.q_frac / r2;
                 fx += f_ionic * rx; fy += f_ionic * ry; fz += f_ionic * rz;
             }
 
@@ -826,14 +838,14 @@ export function createAtomEngine(state) {
     }
 
     function aeGetAtomData() {
-        if (!state._ae) return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), atomicNums: new Int32Array(0), charges: new Int32Array(0), ids: new Int32Array(0), bonds: new Int32Array(0), bondOrders: new Float32Array(0), bondCount: 0, count: 0 };
+        if (!state._ae) return { positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0), atomicNums: new Int32Array(0), charges: new Float32Array(0), ids: new Int32Array(0), bonds: new Int32Array(0), bondOrders: new Float32Array(0), bondCount: 0, count: 0 };
         const atoms = state._ae.atoms;
         const count = atoms.length;
         const positions = new Float32Array(count * 3);
         const colors = new Float32Array(count * 3);
         const sizes = new Float32Array(count);
         const atomicNums = new Int32Array(count);
-        const charges = new Int32Array(count);
+        const charges = new Float32Array(count);
         const ids = new Int32Array(count);
 
         let bondCount = 0;
@@ -857,7 +869,7 @@ export function createAtomEngine(state) {
             sizes[i] = 6.0 + a.radius * 10.0;
             if (sizes[i] > 60) sizes[i] = 60;
             atomicNums[i] = a.Z;
-            charges[i] = a.charge;
+            charges[i] = a.q_frac;
             ids[i] = a.id;
         }
 
@@ -886,7 +898,7 @@ export function createAtomEngine(state) {
             positions[i * 3] = atoms[i].x;
             positions[i * 3 + 1] = atoms[i].y;
             positions[i * 3 + 2] = atoms[i].z;
-            charges[i] = atoms[i].charge;
+            charges[i] = atoms[i].q_frac;
         }
         return { positions, charges, count: n };
     }
@@ -909,8 +921,8 @@ export function createAtomEngine(state) {
                 const ai = atoms[i], aj = atoms[j];
                 const dx = aj.x - ai.x, dy = aj.y - ai.y, dz = aj.z - ai.z;
                 const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
-                if (ai.charge !== 0 && aj.charge !== 0) {
-                    pe_ionic += AE_K_COULOMB * ai.charge * aj.charge / r;
+                if (Math.abs(ai.q_frac) > 1e-6 || Math.abs(aj.q_frac) > 1e-6) {
+                    pe_ionic += AE_K_COULOMB * ai.q_frac * aj.q_frac / r;
                 }
                 const eps_mix = Math.sqrt(ai.vdw_epsilon * aj.vdw_epsilon);
                 const sig_mix = (ai.vdw_sigma + aj.vdw_sigma) / 2;
@@ -1019,8 +1031,8 @@ export function createAtomEngine(state) {
                 const isBonded = _aeIsBonded(ai.id, aj.id);
                 const is13 = !isBonded && _aeIs13(i, j);
 
-                if (wantIonic && state._ae.ionic && !isBonded && !is13 && ai.charge !== 0 && aj.charge !== 0) {
-                    const f = -AE_K_COULOMB * ai.charge * aj.charge / r2;
+                if (wantIonic && state._ae.ionic && !isBonded && !is13 && (Math.abs(ai.q_frac) > 1e-6 || Math.abs(aj.q_frac) > 1e-6)) {
+                    const f = -AE_K_COULOMB * ai.q_frac * aj.q_frac / r2;
                     fi_x += f * rx; fi_y += f * ry; fi_z += f * rz;
                 }
 
@@ -1243,13 +1255,15 @@ export function createAtomEngine(state) {
         const fNetMag = Math.sqrt(f.fx * f.fx + f.fy * f.fy + f.fz * f.fz);
 
         return {
-            id, Z: a.Z, N: a.N, charge: a.charge, mass, radius: a.radius,
+            id, Z: a.Z, N: a.N, charge: a.q_frac, mass, radius: a.radius,
             locked: a.locked, sigma: a.vdw_sigma, epsilon: a.vdw_epsilon,
             maxBonds: a.max_bonds,
             x: a.x, y: a.y, z: a.z,
             vx: a.vx, vy: a.vy, vz: a.vz,
             speed, ke, bonds: bondInfo,
             nearestId, nearestDist, nearestZ, fNetMag,
+            alpha_pol: a.alpha_pol, e_ion: a.e_ion, e_aff: a.e_aff,
+            sigma_scatter: a.sigma_scatter, z_eff: a.z_eff
         };
     }
 
