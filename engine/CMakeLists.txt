@@ -296,6 +296,12 @@ ftd_add_test(test_conservation_profile tests/test_conservation_profile.cpp
 ftd_add_test(test_substrate_angle_probe tests/test_substrate_angle_probe.cpp
              CTEST_NAME substrate_angle_probe TIMEOUT 120 LABELS unit measurement)
 
+# Scale-ratio identity criterion (FC-3, SPEC_SCALE_RATIO_ONTOLOGY.md §6).
+# Header-only value object; NO engine link needed — pure ratio math.
+# [IMPOSED] bands chi_min=0.5, beta_max=0.6 are calibration placeholders.
+ftd_add_test(test_scale_ratio tests/test_scale_ratio.cpp
+             CTEST_NAME scale_ratio TIMEOUT 60 NO_CORE LABELS unit measurement)
+
 # Campaign 2 — dynamical time dilation (2026-06-07): does a moving lattice clock
 # dilate as √(1−v²) [L²/γ] or 1−v [L¹/FTD-0208]? Wave clock via the single-tick
 # dispersion eigenvalue; effective mass from transverse momentum. Reads NO
