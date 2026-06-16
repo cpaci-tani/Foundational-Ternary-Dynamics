@@ -261,12 +261,16 @@ export const M_B_PHYS = 4180.0;     // bottom quark
 export const M_T_PHYS = 172760.0;   // top quark
 
 // ── Neutrino Mass Upper Bounds (MeV) [PARAMETRIC PDG] ───────────────
-// Cosmological + oscillation upper bounds; not derivable from current
-// FTD chain. Values reflect literals already in particle-catalog.js
-// for backward compatibility with existing UI readouts.
-export const M_NU_E_PHYS   = 4.1e-9;     // m(ν_e)   bound (MeV)
-export const M_NU_MU_PHYS  = 8.58e-3;    // m(ν_mu)  bound (MeV)
-export const M_NU_TAU_PHYS = 4.955e-2;   // m(ν_tau) bound (MeV)
+// Cosmological + oscillation upper bounds, expressed in MeV. These are
+// meV-scale masses, so the MeV magnitudes are ~1e-9 to ~1e-8. Not
+// derivable from the current FTD chain. particle-catalog.js single-sources
+// its six neutrino entries from these (2026-06-15 audit).
+//   2026-06-15 fix: M_NU_MU_PHYS (8.58e-3) and M_NU_TAU_PHYS (4.955e-2)
+//   previously held the eV values mislabeled as MeV (a ×1e6 magnitude
+//   error). Corrected to the true MeV magnitudes (8.58 meV, 49.55 meV).
+export const M_NU_E_PHYS   = 4.1e-9;     // m(ν_e)   bound = 4.1  meV (in MeV)
+export const M_NU_MU_PHYS  = 8.58e-9;    // m(ν_mu)  bound = 8.58 meV (in MeV)
+export const M_NU_TAU_PHYS = 4.955e-8;   // m(ν_tau) bound = 49.55 meV (in MeV)
 
 // ── Additional Hadron Masses (MeV) [PARAMETRIC PDG] ─────────────────
 // Reference values for particle-catalog.js entries that previously

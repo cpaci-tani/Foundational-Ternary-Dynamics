@@ -29,7 +29,7 @@
  * per-call object allocation.
  */
 
-import { ALPHA, K_B, G_PE, COULOMB_K_FORCE } from '../constants.js';
+import { K_B, G_PE, COULOMB_K_FORCE } from '../constants.js';
 import { debugLog } from '../core/log.js';
 import { getById as catalogGetById } from '../particle-catalog.js';
 // AtomEngine (Scale 2/3) runs through the MockBridge JS implementation while
@@ -817,7 +817,7 @@ export class WasmBridge {
                 const dz = positions[j * 3 + 2] - positions[i * 3 + 2];
                 const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
                 if (r < 1e-30) continue;
-                if (doCoulomb) coulombPE += ALPHA * data.charges[i] * data.charges[j] / (4 * Math.PI * r);
+                if (doCoulomb) coulombPE += COULOMB_K_FORCE * data.charges[i] * data.charges[j] / r;
                 if (doGravity) gravityPE -= G_PE * data.masses[i] * data.masses[j] / r;
             }
         }
