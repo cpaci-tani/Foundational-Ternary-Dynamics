@@ -294,6 +294,7 @@ private:
     void check_annihilation();
     void enforce_speed_limit();
     void apply_damping();
+    void evolve_spin_axes();
 
     std::vector<Particle> particles_;
     std::vector<Vec3> forces_;             // Total force buffer (parallel to particles_)

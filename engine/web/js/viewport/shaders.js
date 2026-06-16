@@ -6,6 +6,16 @@
  * enable global shader optimizations.
  */
 
+/** Shared uniforms for any material using PARTICLE_FRAG (manifest off by default). */
+export const PARTICLE_SHADER_UNIFORMS = {
+    shapeType: { value: 0 },
+    uOpacity: { value: 0.9 },
+    uGlow: { value: 0.15 },
+    uManifestTime: { value: 0 },
+    uManifestEnabled: { value: 0 },
+    uManifestThresh: { value: 0.587 },
+};
+
 // Custom particle vertex shader. Linear 1/z point-size scaling — the
 // standard size convention shared by the particle Points mesh and every
 // field-overlay Points/LineSegments material (E/B/Poynting/divergence/
@@ -16,12 +26,18 @@
 export const PARTICLE_VERT = `
     attribute float size;
     attribute vec3 particleColor;
+    attribute float manifestPhase;
+    attribute float manifestRate;
     varying vec3 vColor;
     varying float vSize;
+    varying float vManifestPhase;
+    varying float vManifestRate;
 
     void main() {
         vColor = particleColor;
         vSize = size;
+        vManifestPhase = manifestPhase;
+        vManifestRate = manifestRate;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_PointSize = size * (150.0 / -mvPosition.z);
         gl_PointSize = clamp(gl_PointSize, 1.0, 512.0);
@@ -39,12 +55,18 @@ export const PARTICLE_VERT = `
 export const FLUX_VOL_VERT = `
     attribute float size;
     attribute vec3 particleColor;
+    attribute float manifestPhase;
+    attribute float manifestRate;
     varying vec3 vColor;
     varying float vSize;
+    varying float vManifestPhase;
+    varying float vManifestRate;
 
     void main() {
         vColor = particleColor;
         vSize = size;
+        vManifestPhase = manifestPhase;
+        vManifestRate = manifestRate;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         float depth = max(-mvPosition.z, 0.1);
         gl_PointSize = size * sqrt(60.0 / depth);
@@ -57,8 +79,13 @@ export const PARTICLE_FRAG = `
     uniform int shapeType;
     uniform float uOpacity;
     uniform float uGlow;
+    uniform float uManifestTime;
+    uniform float uManifestEnabled;
+    uniform float uManifestThresh;
     varying vec3 vColor;
     varying float vSize;
+    varying float vManifestPhase;
+    varying float vManifestRate;
 
     void main() {
         vec2 c = gl_PointCoord - vec2(0.5);
@@ -108,6 +135,15 @@ export const PARTICLE_FRAG = `
 
         float alpha = 1.0 - smoothstep(0.15, 0.5, dist);
         float glow = exp(-dist * dist * 4.0) * uGlow;
-        gl_FragColor = vec4(vColor + glow, alpha * alpha * uOpacity);
+
+        float bright = 1.0;
+        if (uManifestEnabled > 0.5) {
+            float wave = sin(uManifestTime * vManifestRate + vManifestPhase);
+            float on = smoothstep(uManifestThresh - 0.10, uManifestThresh + 0.10, wave);
+            bright = mix(0.10, 1.0, on);
+        }
+
+        vec3 rgb = (vColor + glow) * bright;
+        gl_FragColor = vec4(rgb, alpha * alpha * uOpacity * bright);
     }
 `;

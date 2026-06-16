@@ -79,6 +79,10 @@
 .field-swatch-pe-efield     { background: var(--chart-pe-mobile); }
 .field-swatch-pe-potential  { background: linear-gradient(90deg, var(--chart-pe-coulomb), var(--chart-pe-mobile)); }
 .field-swatch-pe-gravity    { background: var(--chart-pe-gravity); }
+.field-swatch-pe-force-coulomb { background: #ff4444; }
+.field-swatch-pe-force-gravity { background: var(--chart-pe-gravity); }
+.field-swatch-pe-force-strong  { background: #ff1744; }
+.field-swatch-pe-force-net     { background: var(--chart-pe-force, #44cc66); }
 .field-swatch-pe-forces     { background: var(--chart-pe-force); }
 .field-swatch-pe-system     { background: linear-gradient(90deg, #46c6ff, #d77bf0); }
 

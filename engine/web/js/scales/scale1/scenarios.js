@@ -7,6 +7,11 @@
  * pe-* scenario: atoms, exotic atoms, hadrons, boson pairs, scattering,
  * and the micro-black-hole gravity demo.
  *
+ * All scenarios use fully dynamic particles. Orbit ICs come from
+ * peApplyEquilibriumOrbit (force balance at t=0), with applyEquilibriumOrbitBatch
+ * for multi-body groups (helium, binaries, BH ring). Composite nuclei
+ * approximate (Z, A) as a single massive charged particle.
+ *
  * This is a pure move — no scenario-body logic was changed. Only the
  * surrounding orchestration (bridge init, toggle defaults, UI checkbox
  * sync, resetAllVisualState call) remains in the controller.
@@ -31,12 +36,18 @@
  *
  * CTX object:
  *   { bridge, viewport, constants: { me, mp, mmu, mn, mpi, mK, mtau, mW,
- *     mSig, mOmg, mDel, RE, ALPHA_PE, soft2, orbitalV, BH_MASS,
- *     BH_TEST_MASS, BH_HORIZON_R, G_PE, C_SPEED } }
+ *     mSig, mOmg, mDel, RE, BH_MASS, BH_TEST_MASS, BH_HORIZON_R, G_PE, C_SPEED } }
  *
- *   The particle masses and orbitalV helper are built in the controller
- *   (to keep imports local to their users) and threaded through here.
+ *   Initial orbit speeds come from peApplyEquilibriumOrbit (force balance at t=0).
  */
+
+import {
+    seedHydrogenLike,
+    seedBinaryOrbit,
+    seedAtomicIon,
+    spawnCompositeNucleus,
+    applyEquilibriumOrbitBatch,
+} from './pe-dynamics.js';
 
 const BASE_PHYSICS = Object.freeze({
     coulomb: true,
@@ -78,7 +89,8 @@ const GRAVITY_OVERLAYS = Object.freeze({
     efield: false,
     potential: false,
     gravityField: true,
-    forces: true,
+    forceGravity: true,
+    forceNet: true,
 });
 
 const CUSTOM_OVERLAYS = Object.freeze({
@@ -91,6 +103,10 @@ const CUSTOM_OVERLAYS = Object.freeze({
 });
 
 const PRESET_OVERRIDES = Object.freeze({
+    'pe-hydrogen-fine': {
+        physics: { magnetic_dipole: true, spin_orbit: true },
+        overlays: { ...ATOMIC_OVERLAYS, forces: true, forceNet: true },
+    },
     'pe-scattering':          { overlays: SCATTERING_OVERLAYS },
     'pe-omega-scattering':    { overlays: SCATTERING_OVERLAYS },
     'pe-meson-scattering':    { overlays: SCATTERING_OVERLAYS },
@@ -131,51 +147,53 @@ export function setupPEScenario(name, ctx) {
     const { bridge, viewport, constants } = ctx;
     const {
         me, mp, mmu, mn, mpi, mK, mtau, mW, mSig, mOmg, mDel,
-        RE, ALPHA_PE, soft2, orbitalV,
-        BH_MASS, BH_TEST_MASS, BH_HORIZON_R, G_PE, C_SPEED
+        RE, BH_MASS, BH_TEST_MASS, BH_HORIZON_R, G_PE, C_SPEED
     } = constants;
 
     switch (name) {
 
-        // -- Hydrogen: locked proton + orbiting electron ─────────────
+        // -- Hydrogen: dynamic proton + electron (force-derived orbit) ─
         case 'pe-hydrogen': {
-            const r = 5;
-            const v = orbitalV(me, r);
-            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            seedHydrogenLike(bridge, {
+                r: 5, nucleusCatalog: 'proton', nucleusCharge: 1, nucleusMass: mp,
+                leptonCatalog: 'electron', leptonCharge: -1, leptonMass: me, RE,
+            });
             break;
         }
 
-        // -- Helium: locked He nucleus (2p+2n), 2 orbiting electrons ─
+        // -- Hydrogen + tilted spins: magnetic dipole / spin-orbit demo ─
+        case 'pe-hydrogen-fine': {
+            const { nucleusId, leptonId } = seedHydrogenLike(bridge, {
+                r: 5, nucleusCatalog: 'proton', nucleusCharge: 1, nucleusMass: mp,
+                leptonCatalog: 'electron', leptonCharge: -1, leptonMass: me, RE,
+            });
+            bridge.peSetSpinAxis?.(nucleusId, 0.707, 0.707, 0);
+            bridge.peSetSpinAxis?.(leptonId, 0, 0.866, 0.5);
+            break;
+        }
+
+        // -- Helium: composite nucleus (Z=2, A=4) + 2 electrons ───────
         case 'pe-helium': {
-            const r = 4;
-            const v = orbitalV(me, r, 2); // Q=2
-            bridge.peAddLockedParticle('proton', 1, 0.3, 0, 0, mp, RE);
-            bridge.peAddLockedParticle('proton', 1, -0.3, 0, 0, mp, RE);
-            bridge.peAddLockedParticle('neutron', 0, 0, 0.3, 0, mn, RE);
-            bridge.peAddLockedParticle('neutron', 0, 0, -0.3, 0, mn, RE);
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
-            bridge.peAddParticle('electron', -1, -r, 0, 0, 0, -v, 0, me, RE);
+            seedAtomicIon(bridge, { Z: 2, A: 4, mp, me, RE, r: 4, electrons: 2 });
             break;
         }
 
-        // -- Positronium: e+/e- orbiting common center of mass ───────
+        // -- Positronium: e+/e- mutual orbit (force-derived) ───────────
         case 'pe-positronium': {
-            const r = 5;
-            const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * me * Math.pow(sep * sep + soft2, 1.5)));
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
-            bridge.peAddParticle('positron', 1, -r, 0, 0, 0, -v, 0, me, RE);
+            seedBinaryOrbit(bridge, {
+                catalogA: 'electron', chargeA: -1, massA: me,
+                catalogB: 'positron', chargeB: 1, massB: me,
+                separation: 10, RE,
+            });
             break;
         }
 
-        // -- Muonium: locked mu+ + orbiting electron ─────────────────
+        // -- Muonium: dynamic μ⁺ + electron ──────────────────────────
         case 'pe-muonium': {
-            const r = 5;
-            const v = orbitalV(me, r);
-            // 'antimuon' (μ⁺) resolves to the catalog; 'mu_plus' did not.
-            bridge.peAddLockedParticle('antimuon', 1, 0, 0, 0, mmu, RE);
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            seedHydrogenLike(bridge, {
+                r: 5, nucleusCatalog: 'antimuon', nucleusCharge: 1, nucleusMass: mmu,
+                leptonCatalog: 'electron', leptonCharge: -1, leptonMass: me, RE,
+            });
             break;
         }
 
@@ -187,189 +205,176 @@ export function setupPEScenario(name, ctx) {
             break;
         }
 
-        // -- Three-body: 2 locked protons + 1 electron ───────────────
+        // -- Three-body: composite Z=2 nucleus + 1 electron ───────────
         case 'pe-three-body': {
             const r = 8;
-            const v = orbitalV(me, r, 2); // total Q=2
-            bridge.peAddLockedParticle('proton', 1, -3, 0, 0, mp, RE);
-            bridge.peAddLockedParticle('proton', 1, 3, 0, 0, mp, RE);
-            bridge.peAddParticle('electron', -1, 0, r, 0, v, 0, 0, me, RE);
+            spawnCompositeNucleus(bridge, 2, 2, mp, RE);
+            const eid = bridge.peAddParticle('electron', -1, 0, r, 0, 0, 0, 0, me, RE);
+            bridge.peApplyEquilibriumOrbit(eid, { tangent: [1, 0, 0] });
             break;
         }
 
-        // -- Deuteron: locked (p+n) + orbiting electron ──────────────
+        // -- Deuteron: composite (p+n) + electron ────────────────────
         case 'pe-deuteron': {
-            const r = 5;
-            const v = orbitalV(me, r);
-            bridge.peAddLockedParticle('proton', 1, 0.3, 0, 0, mp, RE);
-            bridge.peAddLockedParticle('neutron', 0, -0.3, 0, 0, mn, RE);
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            seedHydrogenLike(bridge, {
+                r: 5, nucleusCatalog: 'proton', nucleusCharge: 1, nucleusMass: mp + mn,
+                leptonCatalog: 'electron', leptonCharge: -1, leptonMass: me, RE,
+            });
             break;
         }
 
         // ── Lepton scenarios ────────────────────────────────────────
 
-        // -- True muonium: mu+/mu- bound state ───────────────────────
+        // -- True muonium: μ⁺/μ⁻ mutual orbit ────────────────────────
         case 'pe-true-muonium': {
-            const r = 3;
-            const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mmu * Math.pow(sep * sep + soft2, 1.5)));
-            bridge.peAddParticle('antimuon', 1, r, 0, 0, 0, v, 0, mmu, RE);
-            bridge.peAddParticle('muon', -1, -r, 0, 0, 0, -v, 0, mmu, RE);
+            seedBinaryOrbit(bridge, {
+                catalogA: 'antimuon', chargeA: 1, massA: mmu,
+                catalogB: 'muon', chargeB: -1, massB: mmu,
+                separation: 6, RE,
+            });
             break;
         }
 
-        // -- Tauonium: tau+/tau- bound state (tight orbit) ───────────
+        // -- Tauonium: τ⁺/τ⁻ mutual orbit ────────────────────────────
         case 'pe-tauonium': {
-            const r = 2;
-            const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mtau * Math.pow(sep * sep + soft2, 1.5)));
-            bridge.peAddParticle('antitau', 1, r, 0, 0, 0, v, 0, mtau, RE);
-            bridge.peAddParticle('tau', -1, -r, 0, 0, 0, -v, 0, mtau, RE);
+            seedBinaryOrbit(bridge, {
+                catalogA: 'antitau', chargeA: 1, massA: mtau,
+                catalogB: 'tau', chargeB: -1, massB: mtau,
+                separation: 4, RE,
+            });
             break;
         }
 
-        // -- Tauonic hydrogen: locked proton + orbiting tau- ─────────
+        // -- Tauonic hydrogen: dynamic proton + τ⁻ ───────────────────
         case 'pe-tau-atom': {
-            const r = 1.5;
-            const v = orbitalV(mtau, r);
-            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
-            bridge.peAddParticle('tau', -1, r, 0, 0, 0, v, 0, mtau, RE);
+            seedHydrogenLike(bridge, {
+                r: 1.5, nucleusCatalog: 'proton', nucleusCharge: 1, nucleusMass: mp,
+                leptonCatalog: 'tau', leptonCharge: -1, leptonMass: mtau, RE,
+            });
             break;
         }
 
         // ── Exotic atom scenarios ───────────────────────────────────
 
-        // -- Pionic hydrogen: pi- orbiting locked proton ─────────────
+        // -- Pionic hydrogen ─────────────────────────────────────────
         case 'pe-pionic-hydrogen': {
-            const r = 4;
-            const v = orbitalV(mpi, r);
-            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
-            bridge.peAddParticle('pion_minus', -1, r, 0, 0, 0, v, 0, mpi, RE);
+            seedHydrogenLike(bridge, {
+                r: 4, nucleusCatalog: 'proton', nucleusCharge: 1, nucleusMass: mp,
+                leptonCatalog: 'pion_minus', leptonCharge: -1, leptonMass: mpi, RE,
+            });
             break;
         }
 
-        // -- Kaonic hydrogen: K- orbiting locked proton ──────────────
+        // -- Kaonic hydrogen ─────────────────────────────────────────
         case 'pe-kaonic-hydrogen': {
-            const r = 4;
-            const v = orbitalV(mK, r);
-            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
-            bridge.peAddParticle('kaon_minus', -1, r, 0, 0, 0, v, 0, mK, RE);
+            seedHydrogenLike(bridge, {
+                r: 4, nucleusCatalog: 'proton', nucleusCharge: 1, nucleusMass: mp,
+                leptonCatalog: 'kaon_minus', leptonCharge: -1, leptonMass: mK, RE,
+            });
             break;
         }
 
-        // -- Sigma+ atom: electron orbiting locked Sigma+ ────────────
+        // -- Sigma+ atom ───────────────────────────────────────────────
         case 'pe-sigma-plus-atom': {
-            const r = 5;
-            const v = orbitalV(me, r);
-            bridge.peAddLockedParticle('sigma_plus', 1, 0, 0, 0, mSig, RE);
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            seedHydrogenLike(bridge, {
+                r: 5, nucleusCatalog: 'sigma_plus', nucleusCharge: 1, nucleusMass: mSig,
+                leptonCatalog: 'electron', leptonCharge: -1, leptonMass: me, RE,
+            });
             break;
         }
 
-        // -- Protonium: p/p-bar orbiting common center of mass ───────
+        // -- Protonium: p/p̄ mutual orbit ─────────────────────────────
         case 'pe-antiprotonic-hydrogen': {
-            const r = 3;
-            const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mp * Math.pow(sep * sep + soft2, 1.5)));
-            bridge.peAddParticle('proton', 1, r, 0, 0, 0, v, 0, mp, RE);
-            bridge.peAddParticle('antiproton', -1, -r, 0, 0, 0, -v, 0, mp, RE);
+            seedBinaryOrbit(bridge, {
+                catalogA: 'proton', chargeA: 1, massA: mp,
+                catalogB: 'antiproton', chargeB: -1, massB: mp,
+                separation: 6, RE,
+            });
             break;
         }
 
         // ── Hadron scenarios ────────────────────────────────────────
 
-        // -- Pionium: pi+/pi- Coulomb bound state ────────────────────
+        // -- Pionium: π⁺/π⁻ mutual orbit ─────────────────────────────
         case 'pe-pion-orbit': {
-            const r = 4;
-            const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mpi * Math.pow(sep * sep + soft2, 1.5)));
-            bridge.peAddParticle('pion_plus', 1, r, 0, 0, 0, v, 0, mpi, RE);
-            bridge.peAddParticle('pion_minus', -1, -r, 0, 0, 0, -v, 0, mpi, RE);
+            seedBinaryOrbit(bridge, {
+                catalogA: 'pion_plus', chargeA: 1, massA: mpi,
+                catalogB: 'pion_minus', chargeB: -1, massB: mpi,
+                separation: 8, RE,
+            });
             break;
         }
 
-        // -- Kaonium: K+/K- Coulomb bound state ──────────────────────
+        // -- Kaonium: K⁺/K⁻ mutual orbit ─────────────────────────────
         case 'pe-kaon-pair': {
-            const r = 4;
-            const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mK * Math.pow(sep * sep + soft2, 1.5)));
-            bridge.peAddParticle('kaon_plus', 1, r, 0, 0, 0, v, 0, mK, RE);
-            bridge.peAddParticle('kaon_minus', -1, -r, 0, 0, 0, -v, 0, mK, RE);
+            seedBinaryOrbit(bridge, {
+                catalogA: 'kaon_plus', chargeA: 1, massA: mK,
+                catalogB: 'kaon_minus', chargeB: -1, massB: mK,
+                separation: 8, RE,
+            });
             break;
         }
 
-        // -- Delta++ system: locked Δ⁺⁺ (charge +2) + 2 electrons ────
+        // -- Delta++ system: dynamic Δ⁺⁺ + 2 electrons ───────────────
         case 'pe-delta-system': {
-            const r = 4;
-            const v = orbitalV(me, r, 2);
-            // Single Δ⁺⁺ nucleus (charge +2) resolving to catalog 'delta_pp'
-            // — replaces two fake half-delta IDs; same Q=2 Coulomb field.
-            bridge.peAddLockedParticle('delta_pp', 2, 0, 0, 0, mDel, RE);
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
-            bridge.peAddParticle('electron', -1, -r, 0, 0, 0, -v, 0, me, RE);
+            seedAtomicIon(bridge, {
+                Z: 2, A: 4, mp, me, RE, r: 4, electrons: 2,
+                nucleusCatalog: 'delta_pp', nucleusMass: mDel,
+            });
             break;
         }
 
-        // -- Omega- scattering: locked Omega- + approaching positron ─
+        // -- Omega- scattering: dynamic Ω⁻ + approaching positron ───
         case 'pe-omega-scattering': {
             const v_app = 0.004;
-            bridge.peAddLockedParticle('omega_minus', -1, 0, 0, 0, mOmg, RE);
+            bridge.peAddParticle('omega_minus', -1, 0, 0, 0, 0, 0, 0, mOmg, RE);
             bridge.peAddParticle('positron', 1, -15, 2, 0, v_app, 0, 0, me, RE);
             break;
         }
 
         // ── Nuclear scenarios ───────────────────────────────────────
 
-        // -- Tritium: locked (p+n+n) nucleus + orbiting electron ─────
+        // -- Tritium: composite (p+2n) + electron ─────────────────────
         case 'pe-tritium': {
-            const r = 5;
-            const v = orbitalV(me, r);
-            bridge.peAddLockedParticle('proton', 1, 0, 0.3, 0, mp, RE);
-            bridge.peAddLockedParticle('neutron', 0, 0.3, -0.2, 0, mn, RE);
-            bridge.peAddLockedParticle('neutron', 0, -0.3, -0.2, 0, mn, RE);
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
+            seedHydrogenLike(bridge, {
+                r: 5, nucleusCatalog: 'proton', nucleusCharge: 1, nucleusMass: mp + 2 * mn,
+                leptonCatalog: 'electron', leptonCharge: -1, leptonMass: me, RE,
+            });
             break;
         }
 
-        // -- Helion / He-3: locked (2p+n) + 2 orbiting electrons ─────
+        // -- Helion / He-3: composite (2p+n) + 2 electrons ─────────
         case 'pe-helion': {
-            const r = 4;
-            const v = orbitalV(me, r, 2);
-            bridge.peAddLockedParticle('proton', 1, 0.3, 0, 0, mp, RE);
-            bridge.peAddLockedParticle('proton', 1, -0.3, 0, 0, mp, RE);
-            bridge.peAddLockedParticle('neutron', 0, 0, 0.3, 0, mn, RE);
-            bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
-            bridge.peAddParticle('electron', -1, -r, 0, 0, 0, -v, 0, me, RE);
+            seedAtomicIon(bridge, { Z: 2, A: 3, mp, me, RE, r: 4, electrons: 2 });
             break;
         }
 
         // ── Boson scenarios ─────────────────────────────────────────
 
-        // -- W+/W- pair in mutual Coulomb orbit ──────────────────────
+        // -- W+/W- pair: force-derived mutual orbit ──────────────────
         case 'pe-w-pair': {
-            const r = 2;
-            const sep = 2 * r;
-            const v = Math.sqrt(ALPHA_PE * r * sep / (4 * Math.PI * mW * Math.pow(sep * sep + soft2, 1.5)));
-            bridge.peAddParticle('w_plus', 1, r, 0, 0, 0, v, 0, mW, RE);
-            bridge.peAddParticle('w_minus', -1, -r, 0, 0, 0, -v, 0, mW, RE);
+            seedBinaryOrbit(bridge, {
+                catalogA: 'w_plus', chargeA: 1, massA: mW,
+                catalogB: 'w_minus', chargeB: -1, massB: mW,
+                separation: 4, RE,
+            });
             break;
         }
 
         // ── Scattering scenarios ────────────────────────────────────
 
-        // -- Meson scattering: pi+ approaching locked proton (repulsive)
+        // -- Meson scattering: dynamic proton + approaching π⁺ ───────
         case 'pe-meson-scattering': {
             const v_app = 0.006;
-            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
+            bridge.peAddParticle('proton', 1, 0, 0, 0, 0, 0, 0, mp, RE);
             bridge.peAddParticle('pion_plus', 1, -15, 2, 0, v_app, 0, 0, mpi, RE);
             break;
         }
 
-        // -- Muon scattering: mu- approaching locked proton (attractive)
+        // -- Muon scattering: dynamic proton + approaching μ⁻ ────────
         case 'pe-muon-scattering': {
             const v_app = 0.008;
-            bridge.peAddLockedParticle('proton', 1, 0, 0, 0, mp, RE);
+            bridge.peAddParticle('proton', 1, 0, 0, 0, 0, 0, 0, mp, RE);
             bridge.peAddParticle('muon', -1, -15, 2, 0, v_app, 0, 0, mmu, RE);
             break;
         }
@@ -381,15 +386,9 @@ export function setupPEScenario(name, ctx) {
         // tick budget — dynamics are negligible. Scenario kept so gravity PE
         // and coupling telemetry expose the true ~1.75e-45 hierarchy.
         case 'pe-micro-bh': {
-            // BH locked at origin -- neutral, enormous mass
-            bridge.peAddLockedParticle('neutron', 0, 0, 0, 0, BH_MASS, 0.5);
+            // Super-massive dynamic anchor (moves negligibly under G_PE)
+            bridge.peAddParticle('neutron', 0, 0, 0, 0, 0, 0, 0, BH_MASS, 0.5);
 
-            // Gravity-only orbital velocity with Plummer softening (physical G_PE)
-            const soft2_bh = 1.0;
-            const gravOrbitalV = (r) =>
-                Math.sqrt(G_PE * BH_MASS * r * r / Math.pow(r * r + soft2_bh, 1.5));
-
-            // ZONE 1: Inspiral donors at r=8 (v_circ > C_SPEED -- will spiral in)
             const r_fall = 8, v_fall = 0.45;
             const angles_fall = [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2];
             for (const a of angles_fall) {
@@ -399,25 +398,30 @@ export function setupPEScenario(name, ctx) {
                     BH_TEST_MASS, 0.1);
             }
 
-            // ZONE 2: Accretion ring at r=16 (v_circ < C_SPEED -- stable orbits)
             const r_ring = 16;
-            const v_ring = Math.min(gravOrbitalV(r_ring) * 0.92, C_SPEED * 0.92);
             const nRing = 8;
+            const orbitSpecs = [];
             for (let i = 0; i < nRing; i++) {
                 const a = (i / nRing) * 2 * Math.PI;
-                bridge.peAddParticle('neutron', 0,
+                const pid = bridge.peAddParticle('neutron', 0,
                     r_ring * Math.cos(a), 0, r_ring * Math.sin(a),
-                    -v_ring * Math.sin(a), 0, v_ring * Math.cos(a),
-                    BH_TEST_MASS, 0.1);
+                    0, 0, 0, BH_TEST_MASS, 0.1);
+                orbitSpecs.push({
+                    particleId: pid,
+                    center: [0, 0, 0],
+                    tangent: [-Math.sin(a), 0, Math.cos(a)],
+                });
             }
 
-            // ZONE 3: Far escapers at r=26 (slightly super-circular)
             const r_far = 26;
-            const v_far = gravOrbitalV(r_far) * 1.05;
-            bridge.peAddParticle('neutron', 0,
-                r_far, 0, 0, 0, 0, v_far, BH_TEST_MASS, 0.1);
-            bridge.peAddParticle('neutron', 0,
-                -r_far, 0, 0, 0, 0, -v_far, BH_TEST_MASS, 0.1);
+            const farId = bridge.peAddParticle('neutron', 0, r_far, 0, 0, 0, 0, 0, BH_TEST_MASS, 0.1);
+            orbitSpecs.push({ particleId: farId, tangent: [0, 0, 1] });
+            const farId2 = bridge.peAddParticle('neutron', 0, -r_far, 0, 0, 0, 0, 0, BH_TEST_MASS, 0.1);
+            orbitSpecs.push({ particleId: farId2, tangent: [0, 0, -1] });
+
+            applyEquilibriumOrbitBatch(bridge, orbitSpecs);
+            bridge.peScaleVelocity(farId, 1.05);
+            bridge.peScaleVelocity(farId2, 1.05);
 
             // Tell the controller to activate Hawking emission + event horizon visual
             if (viewport && viewport.setEventHorizon) {

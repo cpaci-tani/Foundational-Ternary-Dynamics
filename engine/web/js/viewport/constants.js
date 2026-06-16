@@ -25,3 +25,6 @@ export const MAX_PARTICLES = 100000;
 
 // Field-grid buffer: up to 128×128 grid points (must cover lattice²).
 export const MAX_FIELD_GRID = 16384;
+
+/** Scale-1 PE spherical containment (matches mock-particle-engine peTick). */
+export const PE_VIS_BOUNDARY_R = 35;

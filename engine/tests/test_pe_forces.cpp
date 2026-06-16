@@ -997,6 +997,53 @@ static void section_cpu_gpu_parity() {
                      adv_has_forces);
 }
 
+// --- Section: spin_precession ---
+
+static void section_spin_precession() {
+    // ---- SP1: Partner dipole B-field precesses spin axis ----
+    {
+        ftd::ParticleEngine pe;
+        pe.set_damping_enabled(false);
+        pe.set_dt(0.5);
+        pe.add_particle(+1, {0, 0, 0}, {}, ftd::K_B, 2.48, +1, 0);
+        pe.particles()[0].spin_axis = {1, 0, 0};
+        pe.add_particle(-1, {5, 0, 0}, {}, ftd::K_B, 2.48, +1, 0);
+        pe.particles()[1].spin_axis = {0, 0, 1};
+
+        pe.toggles.coulomb = false;
+        pe.toggles.gravity = false;
+        pe.toggles.magnetic_dipole = true;
+
+        ftd::Vec3 s0 = pe.particles()[0].spin_axis;
+        for (int t = 0; t < 200; ++t) pe.tick();
+        ftd::Vec3 s1 = pe.particles()[0].spin_axis;
+        double dot = s0.dot(s1) / (s0.mag() * s1.mag());
+        ftd::test::check("SP1: spin axis precessed (dot < 0.99)", dot < 0.99);
+    }
+
+    // ---- SP2: Toggle OFF -> spin axis frozen ----
+    {
+        ftd::ParticleEngine pe;
+        pe.set_damping_enabled(false);
+        pe.set_dt(0.5);
+        pe.add_particle(+1, {0, 0, 0}, {}, ftd::K_B, 2.48, +1, 0);
+        pe.particles()[0].spin_axis = {1, 0, 0};
+        pe.add_particle(-1, {5, 0, 0}, {}, ftd::K_B, 2.48, +1, 0);
+        pe.particles()[1].spin_axis = {0, 0, 1};
+
+        pe.toggles.coulomb = false;
+        pe.toggles.gravity = false;
+        pe.toggles.magnetic_dipole = false;
+        pe.toggles.lorentz = false;
+
+        ftd::Vec3 s0 = pe.particles()[0].spin_axis;
+        for (int t = 0; t < 200; ++t) pe.tick();
+        ftd::Vec3 s1 = pe.particles()[0].spin_axis;
+        double dot = s0.dot(s1) / (s0.mag() * s1.mag());
+        ftd::test::check("SP2: spin frozen when toggles off", dot > 0.999);
+    }
+}
+
 // --- main ---
 
 int main() {
@@ -1019,6 +1066,9 @@ int main() {
 
     ftd::test::section("spin_orbit");
     section_spin_orbit();
+
+    ftd::test::section("spin_precession");
+    section_spin_precession();
 
     ftd::test::section("strong");
     section_strong();

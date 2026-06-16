@@ -49,7 +49,7 @@ static ftd::ParticleForceDiag compute_pe_force_diag_snapshot(
         }
 
         if (toggles.gravity) {
-            double f_grav = ftd::G_N * pi.mass * pj.mass / r2;
+            double f_grav = ftd::G_PE * pi.mass * pj.mass / r2;
             diag.f_gravity += r_hat * f_grav;
         }
 
