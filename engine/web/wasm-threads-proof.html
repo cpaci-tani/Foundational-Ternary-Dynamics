@@ -1,0 +1,31 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Off-thread WASM proof</title>
+<style>body{font:14px/1.6 monospace;background:#0a0e16;color:#cde;padding:20px}
+#status{color:#7fd}.label{color:#89a}#spin{color:#fd6}</style></head>
+<body>
+<h2>Serial WASM engine in a Web Worker (off the main thread)</h2>
+<div><span class="label">worker:</span> <span id="status">loading…</span></div>
+<div><span class="label">main-thread liveness:</span> <span id="spin">|</span> <span id="maincount">0</span>
+     (must keep spinning while the engine ticks)</div>
+<div><span class="label">field (zero-copy from worker heap):</span> <span id="flux">—</span></div>
+<script>
+  const $ = (id) => document.getElementById(id);
+  let view = null;
+  const w = new Worker('./wasm-threads-proof.worker.js', { name: '65' });
+  w.onmessage = (e) => {
+    const m = e.data;
+    if (m.type === 'ready') {
+      view = new Float64Array(m.heap, m.fluxPtr, m.fluxLen);
+      $('status').textContent = `READY  heap=${m.heap.constructor.name}  isSAB=${m.isSAB}  pool=${m.pool}  N=${m.N}`;
+    } else if (m.type === 'frame') {
+      // Downsample the read (stride 64) — the real dashboard samples a capped
+      // grid + throttles; scanning all 275k every frame was the proof's own cost.
+      let mx = 0; if (view) for (let i = 0; i < view.length; i += 64) if (view[i] > mx) mx = view[i];
+      $('flux').textContent = `tick ${m.tick}  workerTickMs ${m.tickMs.toFixed(1)}  maxFlux~ ${mx.toExponential(3)}`;
+    } else if (m.type === 'error') { $('status').textContent = 'WORKER ERROR: ' + m.msg; }
+  };
+  w.onerror = (e) => { $('status').textContent = 'Worker failed: ' + (e.message || e); };
+  let c = 0; const f = ['|','/','-','\\'];
+  setInterval(() => { $('spin').textContent = f[c % 4]; $('maincount').textContent = (++c); }, 80);
+</script>
+</body></html>
