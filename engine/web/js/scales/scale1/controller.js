@@ -30,15 +30,15 @@ import {
     computeStreamlines, generateEFieldSeeds
 } from '../../fieldlines.js';
 import {
-    ALPHA, C_SPEED, G_PE, K_B,
+    C_SPEED, G_PE, K_B, GRAVITY_VIS_GAIN,
     M_P_PHYS, M_MU_PHYS, M_N_PHYS, M_PI_CH_PHYS, M_K_CH_PHYS,
     M_TAU_PHYS, M_W_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS, M_DELTA_PHYS
 } from '../../constants.js';
 import { createTickAccumulator, formatSI } from '../scale-utils.js';
 import { Scale1ControlsComponent } from './ui/controls/component.js';
 import {
-    expandPEToCloud, updateTrailHistory,
-    getCloudParticleMap, getTrailHistory, clearCloudAndTrails
+    expandPEToCloud, buildPEManifestBlinkRate, updateTrailHistory,
+    getCloudParticleMap, getTrailHistory, clearCloudAndTrails, MANIFEST_FILL
 } from './pe-cloud-expander.js';
 import { setupPEScenario, getPEScenarioPreset } from './scenarios.js';
 import { telemetryHub } from '../../telemetry-hub.js';
@@ -51,8 +51,11 @@ import { telemetryHub } from '../../telemetry-hub.js';
 // -- Field overlay toggle flags ---------------------------------------
 let _showPEEField    = false;   // E-field streamlines
 let _showPEPotential = false;   // Coulomb potential heatmap
-let _showPEGravField = false;   // Gravity field vectors
-let _showPEForces    = false;   // Per-particle net force arrows
+let _showPEGravField = false;   // Gravity field vectors (grid)
+let _showPEForceCoulomb = false;
+let _showPEForceGravity = false;
+let _showPEForceStrong  = false;
+let _showPEForceNet     = false;   // Net per-particle force arrows
 let _showPESystem    = false;   // System observables: CoM + momentum + ang. mom.
 let _showVelocities  = false;   // Velocity vectors overlay
 let _showTrails      = false;   // Orbit trail lines
@@ -78,8 +81,6 @@ const _tickAcc = createTickAccumulator();
 // -- Paused-state dedup (avoid redundant work when simulation idle) ----
 let _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
 
-let _lastCloudData = null;         // cached cloud output when paused
-
 
 // =====================================================================
 // Exported: Field Toggle Setters + cloud/trail accessors
@@ -87,8 +88,13 @@ let _lastCloudData = null;         // cached cloud output when paused
 
 export function setPEEField(on)    { _showPEEField    = on; }
 export function setPEPotential(on) { _showPEPotential = on; }
-export function setPEGravField(on) { _showPEGravField = on; }
-export function setPEForces(on)    { _showPEForces    = on; }
+export function setPEGravField(on)    { _showPEGravField = on; }
+export function setPEForceCoulomb(on)  { _showPEForceCoulomb = on; }
+export function setPEForceGravity(on)  { _showPEForceGravity = on; }
+export function setPEForceStrong(on)   { _showPEForceStrong = on; }
+export function setPEForceNet(on)      { _showPEForceNet = on; }
+/** @deprecated Use setPEForceNet — kept for callers that still say "forces". */
+export function setPEForces(on)        { setPEForceNet(on); }
 export function setPESystem(on)    { _showPESystem    = on; }
 export function setVelocities(on)  { _showVelocities  = on; }
 export function setTrails(on)      { _showTrails      = on; }
@@ -161,7 +167,10 @@ function applyPEOverlayPreset(viewport, preset) {
     _showPEEField = !!o.efield;
     _showPEPotential = !!o.potential;
     _showPEGravField = !!o.gravityField;
-    _showPEForces = !!o.forces;
+    _showPEForceCoulomb = !!(o.forceCoulomb ?? o.forces);
+    _showPEForceGravity = !!o.forceGravity;
+    _showPEForceStrong  = !!o.forceStrong;
+    _showPEForceNet     = !!(o.forceNet ?? o.forces);
     _showPESystem = !!o.system;
 
     setButtonActive('toggle-velocities', _showVelocities);
@@ -169,7 +178,10 @@ function applyPEOverlayPreset(viewport, preset) {
     setButtonActive('toggle-pe-efield', _showPEEField);
     setButtonActive('toggle-pe-potential', _showPEPotential);
     setButtonActive('toggle-pe-gravity-field', _showPEGravField);
-    setButtonActive('toggle-pe-forces', _showPEForces);
+    setButtonActive('toggle-pe-force-coulomb', _showPEForceCoulomb);
+    setButtonActive('toggle-pe-force-gravity', _showPEForceGravity);
+    setButtonActive('toggle-pe-force-strong', _showPEForceStrong);
+    setButtonActive('toggle-pe-force-net', _showPEForceNet);
     setButtonActive('toggle-pe-system', _showPESystem);
 
     if (!viewport) return;
@@ -179,7 +191,10 @@ function applyPEOverlayPreset(viewport, preset) {
     viewport.toggleFieldHeatmap(_showPEPotential);
     viewport.toggleFieldVectors(_showPEPotential);
     viewport.toggleGravityVectors(_showPEGravField);
-    viewport.toggleParticleForces(_showPEForces);
+    viewport.togglePEForceCoulomb(_showPEForceCoulomb);
+    viewport.togglePEForceGravity(_showPEForceGravity);
+    viewport.togglePEForceStrong(_showPEForceStrong);
+    viewport.togglePEForceNet(_showPEForceNet);
     viewport.togglePESystem(_showPESystem);
 }
 
@@ -230,7 +245,10 @@ function _resetScale1Internal(ctx) {
     _showPEEField    = false;
     _showPEPotential = false;
     _showPEGravField = false;
-    _showPEForces    = false;
+    _showPEForceCoulomb = false;
+    _showPEForceGravity = false;
+    _showPEForceStrong  = false;
+    _showPEForceNet     = false;
     _showPESystem    = false;
     _showVelocities  = false;
     _showTrails      = false;
@@ -249,8 +267,6 @@ function _resetScale1Internal(ctx) {
     // Clear paused-state caches
     _statusCache = { tick: '', ptime: '', particles: '', energy: '', state: '' };
 
-    _lastCloudData = null;
-
     // Clear viewport overlays if available
     if (viewport) {
         viewport.togglePEStreamlines(false);
@@ -261,6 +277,8 @@ function _resetScale1Internal(ctx) {
         viewport.togglePESystem(false);
         viewport.toggleVelocityVectors(false);
         viewport.toggleTrails(false);
+        viewport.toggleSpinVectors?.(false);
+        if (viewport.setPEManifestation) viewport.setPEManifestation(false, 0);
     }
 }
 
@@ -356,18 +374,26 @@ export function animatePE(ctx) {
         }
     }
 
-    // ── 3. Cloud expansion: particle centers -> flux cloud points ───
+    // ── 3. Cloud expansion: fixed boundary + balanced manifestation blink ─
     const peData  = bridge.peGetParticleData();
     const typeMap = bridge.peGetParticleTypes();
-    const t       = now * 0.001; // seconds for smooth animation
-    let cloud;
-    if (!running && _lastCloudData && _lastCloudData.count > 0) {
-        cloud = _lastCloudData;  // reuse cached cloud — positions haven't changed
-    } else {
-        cloud = expandPEToCloud(peData, typeMap, t);
-        _lastCloudData = cloud;
-    }
+    const forceData = bridge.peGetForces?.() ?? null;
+    const blinkRate = buildPEManifestBlinkRate(peData, forceData);
+    const frameSec = typeof now === 'number' ? now * 0.001 : performance.now() * 0.001;
+    const cloud = expandPEToCloud(peData, typeMap, { blinkRate, frameSec });
     viewport.updateParticles(cloud);
+
+    if (viewport.setPEManifestation) {
+        viewport.setPEManifestation(true, frameSec, MANIFEST_FILL);
+    }
+
+    if (peData.spinAxes && peData.spins && peData.count > 0) {
+        viewport.updateSpinVectors?.(
+            peData.positions, peData.spinAxes, peData.spins, peData.count);
+        viewport.toggleSpinVectors?.(true);
+    } else {
+        viewport.toggleSpinVectors?.(false);
+    }
 
     // Update inspector with cloud-to-particle mapping
     if (inspector) {
@@ -426,10 +452,13 @@ export function animatePE(ctx) {
             _fieldGrid.positions, field.forces, _fieldGrid.count, field.maxForce);
     }
 
-    // Per-particle net force arrows
-    if (_showPEForces && peData.count > 0) {
-        const fd = bridge.peGetForces();
-        viewport.updateParticleForces(fd.positions, fd.forces, fd.count, fd.maxForce);
+    // Per-particle decomposed force arrows (F_C / F_g / F_S / F_net)
+    const anyPEForce = _showPEForceCoulomb || _showPEForceGravity || _showPEForceStrong || _showPEForceNet;
+    if (anyPEForce && peData.count > 0) {
+        const decomp = bridge.peGetForceDecomposition?.() ?? null;
+        if (decomp) {
+            viewport.updatePEForceDecomposition(decomp, GRAVITY_VIS_GAIN);
+        }
     }
 
     // System observables: center of mass + total momentum p + ang.-mom. axis L
@@ -525,16 +554,6 @@ export function loadPEScenario(ctx, name) {
 
     applyPEPhysicsPreset(bridge, preset);
 
-    // ── Orbital velocity helper ─────────────────────────────────────
-    // Plummer force: F = alpha * |Q| * r / (4pi * (r^2 + soft^2)^(3/2))
-    // Equilibrium:   m * v^2 / r = F
-    //            ->  v = sqrt(alpha * |Q| * r^2 / (4pi * m * (r^2 + soft^2)^(3/2)))
-    const ALPHA_PE = ALPHA;
-    const soft = preset.physics.softening ?? 0.1;
-    const soft2 = soft * soft;
-    const orbitalV = (m, r, Q = 1) =>
-        Math.sqrt(ALPHA_PE * Q * r * r / (4 * Math.PI * m * Math.pow(r * r + soft2, 1.5)));
-
     // ── Particle masses (MeV) ───────────────────────────────────────
     const constants = {
         me:   K_B,           mp:   M_P_PHYS,
@@ -543,7 +562,6 @@ export function loadPEScenario(ctx, name) {
         mtau: M_TAU_PHYS,    mW:   M_W_PHYS,
         mSig: M_SIGMA_PHYS,  mOmg: M_OMEGA_PHYS,
         mDel: M_DELTA_PHYS,  RE:   0.1,
-        ALPHA_PE, soft2, orbitalV,
         BH_MASS: _BH_MASS, BH_TEST_MASS: _BH_TEST_MASS,
         BH_HORIZON_R: _BH_HORIZON_R,
         G_PE, C_SPEED,
@@ -552,7 +570,10 @@ export function loadPEScenario(ctx, name) {
     const result = setupPEScenario(name, { bridge, viewport, constants });
     applyPEOverlayPreset(viewport, preset);
 
-    _lastCloudData = null;
+    // Soft circles + shader manifestation (void slots stay as faint ghosts)
+    if (viewport?.setParticleShape) viewport.setParticleShape(0);
+    if (viewport?.setParticleGlow) viewport.setParticleGlow(0.28);
+    if (viewport?.setPEManifestation) viewport.setPEManifestation(true, 0, MANIFEST_FILL);
 
     // Apply BH state hint from scenario (only pe-micro-bh sets bhActive=true)
     if (result && result.bhActive) {

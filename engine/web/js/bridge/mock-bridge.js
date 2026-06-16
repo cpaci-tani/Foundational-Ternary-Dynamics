@@ -1330,11 +1330,15 @@ export class MockBridge {
     resetPE()                                                        { return this._peEngine.resetPE(); }
     peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff) { return this._peEngine.peAddParticle(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff); }
     peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff = 0.1) { return this._peEngine.peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff); }
+    peApplyEquilibriumOrbit(particleId, options = {}) { return this._peEngine.peApplyEquilibriumOrbit(particleId, options); }
+    peApplyEquilibriumOrbitBatch(entries) { return this._peEngine.peApplyEquilibriumOrbitBatch?.(entries); }
+    peScaleVelocity(particleId, scale) { return this._peEngine.peScaleVelocity(particleId, scale); }
     _peComputeForces()                                               { return this._peEngine._peComputeForces(); }
     peTick()                                                         { return this._peEngine.peTick(); }
     peGetParticleData()                                              { return this._peEngine.peGetParticleData(); }
     peGetFieldSources()                                              { return this._peEngine.peGetFieldSources(); }
     peGetForces()                                                    { return this._peEngine.peGetForces(); }
+    peGetForceDecomposition()                                        { return this._peEngine.peGetForceDecomposition(); }
     peGetDiagnostics()                                               { return this._peEngine.peGetDiagnostics(); }
     peGetExtendedData()                                              { return this._peEngine.peGetExtendedData(); }
     peSetDt(dt)                                                      { return this._peEngine.peSetDt(dt); }
@@ -1348,6 +1352,7 @@ export class MockBridge {
     peSetStrong(e)                                                   { return this._peEngine.peSetStrong(e); }
     peSetMagneticDipole(e)                                           { return this._peEngine.peSetMagneticDipole(e); }
     peSetSpinOrbit(e)                                                { return this._peEngine.peSetSpinOrbit(e); }
+    peSetSpinAxis(id, ax, ay, az)                                    { return this._peEngine.peSetSpinAxis(id, ax, ay, az); }
     peSetRadiation(e)                                                { return this._peEngine.peSetRadiation(e); }
     peSetRelativistic(e)                                             { return this._peEngine.peSetRelativistic(e); }
     peSetRelativisticVerlet(e)                                       { return this._peEngine.peSetRelativisticVerlet(e); }

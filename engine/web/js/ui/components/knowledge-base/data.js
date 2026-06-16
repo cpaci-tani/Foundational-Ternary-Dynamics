@@ -1391,7 +1391,8 @@ const SCALE0_SPECIFIC_GUIDES = Object.freeze({
 
 const PARTICLE_SCENARIO_GUIDES = Object.freeze({
     'pe-hydrogen': 'Hydrogen is the baseline particle-engine atom: one attractive Coulomb channel, one reduced mass, and the cleanest route to comparing orbital size and binding scale.',
-    'pe-helium': 'Helium is a Coulomb many-body demonstration: two locked positive charges plus two mobile electrons. It shows screening and electron-electron repulsion, not a full quantum helium solver.',
+    'pe-hydrogen-fine': 'Hydrogen with magnetic dipole and spin-orbit forces enabled and tilted initial spin axes — spin arrows precess in the partner B-field (classical Larmor-style, not QM spinors).',
+    'pe-helium': 'Helium is a Coulomb many-body demo: one composite Z=2 nucleus plus two mobile electrons at ±r. Orbit speeds are recomputed after both electrons are placed so e–e repulsion is included in the IC.',
     'pe-positronium': 'Positronium is valuable because the two constituents have equal mass. That changes the reduced mass and makes the center-of-mass problem unusually symmetric.',
     'pe-muonium': 'Muonium keeps the hydrogenic charge pattern but changes the mass hierarchy, which means orbit size, timescale, and spectral scale all shift through μ.',
     'pe-true-muonium': 'True muonium is a heavy equal-mass lepton pair, so the main lesson is how binding tightens as the constituent mass scale rises.',
@@ -1530,6 +1531,7 @@ function makeParticleScenario(id, title, summary, notation = [], focus = '') {
 
 const PARTICLE_SCENARIO_ENTRIES = Object.freeze([
     makeParticleScenario('pe-hydrogen', 'Hydrogen Atom (p + e−)', 'a Coulomb-bound two-body atom.', ['V(r) = -α/r', 'μ', '\\(E_n = -\\mu\\alpha^2/(2n^2)\\)', 'a₀ = 1/(μ α)']),
+    makeParticleScenario('pe-hydrogen-fine', 'Hydrogen (spin + dipole demo)', 'hydrogen with μ = (q/m)S dipoles, spin-orbit, and evolving spin axes.', ['dS/dt = (q/m) S×B', 'F_dd ∝ 1/r⁴', 'L·S coupling']),
     makeParticleScenario('pe-helium', 'Helium Atom (He²⁺ + 2e−)', 'a three-body Coulomb problem with electron-electron repulsion.', ['ΣV_ij', 'screening', 'many-body bound state']),
     makeParticleScenario('pe-positronium', 'Positronium (e⁺e−)', 'an equal-mass bound state of matter and antimatter.', ['μ = \\(m_e\\)/2', '\\(E_n \\propto -\\mu\\alpha^2\\)']),
     makeParticleScenario('pe-muonium', 'Muonium (μ⁺e−)', 'a hydrogen-like exotic atom with a different reduced mass.', ['μ', 'Rydberg scaling']),

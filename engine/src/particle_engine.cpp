@@ -534,6 +534,44 @@ void ParticleEngine::apply_damping() {
     }
 }
 
+void ParticleEngine::evolve_spin_axes() {
+    if (!toggles.magnetic_dipole && !toggles.lorentz) return;
+
+    const int n = static_cast<int>(particles_.size());
+    for (int i = 0; i < n; ++i) {
+        auto& pi = particles_[i];
+        if (pi.locked || pi.spin_axis.mag2() < 1e-30) continue;
+        if (std::abs(pi.charge) < 1e-30 || pi.mass < 1e-30) continue;
+
+        Vec3 B = {};
+        for (int j = 0; j < n; ++j) {
+            if (i == j) continue;
+            const auto& pj = particles_[j];
+            if (pj.spin_axis.mag2() < 1e-30) continue;
+            if (std::abs(pj.charge) < 1e-30 || pj.mass < 1e-30) continue;
+
+            Vec3 mu_j = pj.spin_axis * (static_cast<double>(pj.charge) / pj.mass);
+            Vec3 r_vec = pi.position - pj.position;
+            double r2 = r_vec.mag2() + soft_ * soft_;
+            double r = std::sqrt(r2);
+            if (r < 1e-30) continue;
+            double r3 = r * r2;
+            Vec3 r_hat = r_vec * (1.0 / r);
+            double mu_dot_r = mu_j.dot(r_hat);
+            B += (r_hat * (3.0 * mu_dot_r) - mu_j) * (1.0 / (4.0 * PI * r3));
+        }
+
+        if (B.mag2() < 1e-60) continue;
+
+        const double S_mag = pi.spin_axis.mag();
+        const double gamma = static_cast<double>(pi.charge) / pi.mass;
+        Vec3 dS = Vec3::cross(pi.spin_axis, B) * (gamma * dt_);
+        pi.spin_axis += dS;
+        const double new_mag = pi.spin_axis.mag();
+        if (new_mag > 1e-30) pi.spin_axis *= (S_mag / new_mag);
+    }
+}
+
 void ParticleEngine::tick() {
     // Velocity Verlet:
     // 1. Compute forces at current positions
@@ -569,6 +607,9 @@ void ParticleEngine::tick() {
     // is no longer energy-conserving by design — damping models dissipation into the
     // underlying flux substrate. Energy drift is expected and monitored via diagnostics.
     apply_damping();
+
+    // 10. Spin precession from partner dipole B-fields
+    evolve_spin_axes();
 
     ++tick_;
 }

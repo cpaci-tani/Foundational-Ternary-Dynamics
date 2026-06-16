@@ -28,11 +28,10 @@
  * Cache invalidation semantics — PE owns its own _pe.forces; there are no
  * Scale-0 cache invalidations touched by this module.
  *
- * Force law (preserved verbatim from peTick):
- *   F_coulomb = -(ALPHA / 4pi) * qi * qj * invR^2        (Newton's 3rd law)
- *   F_gravity =  G_PE * mi * mj * invR^2                   (attractive)
- *   r^2 -> r^2 + soft^2   (softening to avoid singularities)
- *   F_vec = (F_c + F_g) * r_hat / r
+ * Force law: full C++ parity via `pe-force-kernel.js` — Coulomb, gravity,
+ * exchange, strong, magnetic dipole, spin-orbit, Lorentz, radiation reaction,
+ * and relativistic correction (toggle-gated). Initial orbit speeds in scenarios
+ * are derived from this kernel at t=0 (`pe-dynamics.js`), not closed-form ICs.
  *
  * Gravity provenance: G_PE = G_DERIVED = 1/(4pi*m_P^2) is the FTD-0131-derived
  * coupling (alpha_G(e,e) = (m_e/m_P)^2 ~ 1.75e-45). Particle-scale gravity is
@@ -44,7 +43,57 @@
  * locality on the O(N^2) pair loop.
  */
 
-import { K_B, DAMPING, G_PE, C_SPEED, COULOMB_K_FORCE } from '../constants.js';
+import { ALPHA, K_B, DAMPING, G_PE, C_SPEED, COULOMB_K_FORCE, STRONG_ALPHA_S } from '../constants.js';
+import { getById } from '../particle-catalog.js';
+import {
+    alphaSLattice,
+    computeAllForces,
+    computeForceOnParticle,
+    computePairwiseForceOnI,
+    pairwiseMagneticDipoleForce,
+    pairwiseSpinOrbitForce,
+    peTogglesFromState,
+} from './pe-force-kernel.js';
+import { applyEquilibriumOrbit } from '../scales/scale1/pe-dynamics.js';
+import { evolveParticleSpins } from './pe-spin-dynamics.js';
+
+function catalogColorId(colorCharge) {
+    if (colorCharge === 'r') return 1;
+    if (colorCharge === 'g') return 2;
+    if (colorCharge === 'b') return 3;
+    return 0;
+}
+
+function catalogSpin(entry) {
+    if (!entry || !entry.spin) return 0;
+    return entry.spin > 0 ? 1 : -1;
+}
+
+/** |S| from catalog spin quantum number (ℏ=1: fermion ½ → |S|=1). */
+function catalogSpinMagnitude(entry) {
+    if (!entry || !entry.spin) return 0;
+    return Math.abs(entry.spin) * 2.0;
+}
+
+function initSpinAxis(entry, spinSign) {
+    if (!spinSign) return { spin_ax: 0, spin_ay: 0, spin_az: 0 };
+    const mag = catalogSpinMagnitude(entry) || 1.0;
+    return { spin_ax: 0, spin_ay: 0, spin_az: spinSign > 0 ? mag : -mag };
+}
+
+function makeParticleFields(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, locked) {
+    const entry = catalogId ? getById(catalogId) : null;
+    const spin = catalogSpin(entry);
+    const color = entry ? catalogColorId(entry.color_charge) : 0;
+    const spinVec = initSpinAxis(entry, spin);
+    return {
+        charge, mass, r_eff, spin, color, pair_id: -1,
+        x, y, z, vx, vy, vz, locked,
+        ...spinVec,
+        prev_ax: 0, prev_ay: 0, prev_az: 0,
+        momx: mass * vx, momy: mass * vy, momz: mass * vz,
+    };
+}
 
 /**
  * Build the particle-engine provider bound to the given bridge-like state.
@@ -89,23 +138,52 @@ export function createParticleEngine(state) {
         if (mass <= 0) { console.warn('MockBridge: rejecting massless particle:', catalogId); return -1; }
         const id = state._pe.nextId++;
         state._pe.particles.push({
-            id, charge, mass, r_eff, spin: 0, color: 0, pair_id: -1, x, y, z, vx, vy, vz, locked: false
+            id,
+            ...makeParticleFields(catalogId, charge, x, y, z, vx, vy, vz, mass, r_eff, false),
         });
-        state._pe.forces = null; // invalidate force cache
+        state._pe.forces = null;
         state._peParticleTypes.set(id, catalogId);
         return id;
     }
 
+    /** Pedagogical anchor only — prefer dynamic massive particles for genuine dynamics. */
     function peAddLockedParticle(catalogId, charge, x, y, z, mass, r_eff = 0.1) {
         if (!state._pe) initPE();
         if (mass <= 0) { console.warn('MockBridge: rejecting massless particle:', catalogId); return -1; }
         const id = state._pe.nextId++;
         state._pe.particles.push({
-            id, charge, mass, r_eff, spin: 0, color: 0, pair_id: -1, x, y, z, vx: 0, vy: 0, vz: 0, locked: true
+            id,
+            ...makeParticleFields(catalogId, charge, x, y, z, 0, 0, 0, mass, r_eff, true),
         });
-        state._pe.forces = null; // invalidate force cache
+        state._pe.forces = null;
         state._peParticleTypes.set(id, catalogId);
         return id;
+    }
+
+    function peScaleVelocity(particleId, scale) {
+        if (!state._pe || scale === 1) return false;
+        const p = state._pe.particles.find(q => q.id === particleId);
+        if (!p) return false;
+        p.vx *= scale; p.vy *= scale; p.vz *= scale;
+        p.momx = p.mass * p.vx;
+        p.momy = p.mass * p.vy;
+        p.momz = p.mass * p.vz;
+        return true;
+    }
+
+    function peApplyEquilibriumOrbit(particleId, options) {
+        return applyEquilibriumOrbit(state, particleId, options);
+    }
+
+    function peApplyEquilibriumOrbitBatch(entries) {
+        if (!entries?.length) return;
+        for (const { particleId, center, tangent, sign } of entries) {
+            const opts = {};
+            if (center) opts.center = center;
+            if (tangent) opts.tangent = tangent;
+            if (sign !== undefined) opts.sign = sign;
+            applyEquilibriumOrbit(state, particleId, opts);
+        }
     }
 
     /**
@@ -126,77 +204,197 @@ export function createParticleEngine(state) {
     function _peComputeForces() {
         const ps = state._pe.particles;
         const n = ps.length;
-        // Grow-only typed buffer (avoids reallocation when particle count is stable)
         if (!state._pe.forcesBuf || state._pe.forcesBuf.length < n * 3) {
             state._pe.forcesBuf = new Float64Array(n * 3);
         }
-        const F = state._pe.forcesBuf;
-        // Zero the active region
-        for (let k = 0; k < n * 3; k++) F[k] = 0;
-
-        const soft2 = state._pe.soft * state._pe.soft;
-        const doCoulomb = state._pe.coulomb;
-        const doGravity = state._pe.gravity;
-        const alpha4pi = COULOMB_K_FORCE;
-        for (let i = 0; i < n; i++) {
-            const pi = ps[i];
-            const i3 = i * 3;
-            const qi = pi.charge, mi = pi.mass;
-            const pix = pi.x, piy = pi.y, piz = pi.z;
-            for (let j = i + 1; j < n; j++) {
-                const pj = ps[j];
-                const dx = pj.x - pix, dy = pj.y - piy, dz = pj.z - piz;
-                const r2 = dx * dx + dy * dy + dz * dz + soft2;
-                if (r2 < 1e-40) continue;
-                const invR = 1 / Math.sqrt(r2);
-                const invR2 = invR * invR;
-                const fc = doCoulomb ? -alpha4pi * qi * pj.charge * invR2 : 0;
-                // G_PE = G_DERIVED (FTD-0131 physical alpha_G coupling)
-                const fg = doGravity ? G_PE * mi * pj.mass * invR2 : 0;
-                const fr = (fc + fg) * invR;
-                const ffx = fr * dx, ffy = fr * dy, ffz = fr * dz;
-                const j3 = j * 3;
-                F[i3]     += ffx; F[i3 + 1] += ffy; F[i3 + 2] += ffz;
-                F[j3]     -= ffx; F[j3 + 1] -= ffy; F[j3 + 2] -= ffz;
-            }
-        }
-        // Store reference for consumers
-        state._pe.forces = F;
+        const toggles = peTogglesFromState(state._pe);
+        computeAllForces(ps, toggles, state._pe.soft, state._pe.forcesBuf);
+        state._pe.forces = state._pe.forcesBuf;
         state._pe.forcesN = n;
     }
 
-    // Velocity Verlet integrator: half-kick → drift → recompute forces → half-kick
-    function peTick() {
-        if (!state._pe) return;
+    /**
+     * Per-particle force decomposition for overlay arrows (Coulomb / gravity /
+     * strong / net). Respects PE toggles; strong requires color ≠ 0 on both
+     * ends of a pair. Mirrors C++ compute_pe_force_diag_snapshot semantics.
+     */
+    function peGetForceDecomposition() {
+        if (!state._pe) {
+            const empty = new Float32Array(0);
+            return {
+                positions: empty, count: 0,
+                coulomb: empty, gravity: empty, strong: empty,
+                magnetic_dipole: empty, spin_orbit: empty, net: empty,
+                maxCoulomb: 0, maxGravity: 0, maxStrong: 0,
+                maxMagneticDipole: 0, maxSpinOrbit: 0, maxNet: 0,
+            };
+        }
         const ps = state._pe.particles;
-        const dt = state._pe.dt;
+        const n = ps.length;
+        const positions = new Float32Array(n * 3);
+        const coulomb = new Float32Array(n * 3);
+        const gravity = new Float32Array(n * 3);
+        const strong = new Float32Array(n * 3);
+        const magnetic_dipole = new Float32Array(n * 3);
+        const spin_orbit = new Float32Array(n * 3);
+        const net = new Float32Array(n * 3);
+        const soft2 = state._pe.soft * state._pe.soft;
+        const toggles = peTogglesFromState(state._pe);
+        let maxCoulomb = 0, maxGravity = 0, maxStrong = 0;
+        let maxMagneticDipole = 0, maxSpinOrbit = 0, maxNet = 0;
 
-        // Ensure forces are initialized
-        if (!state._pe.forces || state._pe.forcesN !== ps.length) {
-            _peComputeForces();
+        for (let i = 0; i < n; i++) {
+            const pi = ps[i];
+            positions[i * 3] = pi.x;
+            positions[i * 3 + 1] = pi.y;
+            positions[i * 3 + 2] = pi.z;
         }
 
-        // Half-kick: v += (F/m) × dt/2   (forces in flat Float64Array)
-        const F1 = state._pe.forces;
-        for (let i = 0; i < ps.length; i++) {
-            const p = ps[i];
-            if (p.locked) continue;
-            const hdt = dt * 0.5 / p.mass;
+        for (let i = 0; i < n; i++) {
+            const pi = ps[i];
             const i3 = i * 3;
-            p.vx += F1[i3]     * hdt;
-            p.vy += F1[i3 + 1] * hdt;
-            p.vz += F1[i3 + 2] * hdt;
+            let fcx = 0, fcy = 0, fcz = 0;
+            let fgx = 0, fgy = 0, fgz = 0;
+            let fsx = 0, fsy = 0, fsz = 0;
+            let fmx = 0, fmy = 0, fmz = 0;
+            let fsox = 0, fsoy = 0, fsoz = 0;
+            for (let j = 0; j < n; j++) {
+                if (i === j) continue;
+                const pj = ps[j];
+                const dx = pj.x - pi.x, dy = pj.y - pi.y, dz = pj.z - pi.z;
+                const rawR2 = dx * dx + dy * dy + dz * dz;
+                const r2 = rawR2 + soft2;
+                const r = Math.sqrt(r2);
+                if (r < 1e-30) continue;
+                const invR = 1 / r;
+                const rx = dx * invR, ry = dy * invR, rz = dz * invR;
+
+                if (toggles.coulomb) {
+                    const fc = -COULOMB_K_FORCE * pi.charge * pj.charge / r2;
+                    const fr = fc * invR;
+                    fcx += fr * dx; fcy += fr * dy; fcz += fr * dz;
+                }
+                if (toggles.gravity) {
+                    const fg = G_PE * pi.mass * pj.mass / r2;
+                    const fr = fg * invR;
+                    fgx += fr * dx; fgy += fr * dy; fgz += fr * dz;
+                }
+                if (toggles.strong && pi.color && pj.color) {
+                    const cf = (pi.color === pj.color) ? 0.5 : -1.0;
+                    let rawR = Math.sqrt(rawR2);
+                    if (rawR < 1.0) rawR = 1.0;
+                    let rawForce;
+                    if (rawR < 3.0) {
+                        const as = alphaSLattice(rawR);
+                        rawForce = as * cf / (rawR * rawR);
+                    } else if (rawR < 8.0) {
+                        const as = alphaSLattice(rawR);
+                        rawForce = as * cf / (3.0 * rawR);
+                    } else {
+                        rawForce = (STRONG_ALPHA_S * K_B * K_B) * cf;
+                    }
+                    const fr = -rawForce * invR;
+                    fsx += fr * dx; fsy += fr * dy; fsz += fr * dz;
+                }
+                if (toggles.magnetic_dipole) {
+                    const fmd = pairwiseMagneticDipoleForce(pi, pj, dx, dy, dz, r, r2);
+                    fmx += fmd.fx; fmy += fmd.fy; fmz += fmd.fz;
+                }
+                if (toggles.spin_orbit) {
+                    const fso = pairwiseSpinOrbitForce(pi, dx, dy, dz, rawR2, rx, ry, rz);
+                    fsox += fso.fx; fsoy += fso.fy; fsoz += fso.fz;
+                }
+            }
+            coulomb[i3] = fcx; coulomb[i3 + 1] = fcy; coulomb[i3 + 2] = fcz;
+            gravity[i3] = fgx; gravity[i3 + 1] = fgy; gravity[i3 + 2] = fgz;
+            strong[i3] = fsx; strong[i3 + 1] = fsy; strong[i3 + 2] = fsz;
+            magnetic_dipole[i3] = fmx; magnetic_dipole[i3 + 1] = fmy; magnetic_dipole[i3 + 2] = fmz;
+            spin_orbit[i3] = fsox; spin_orbit[i3 + 1] = fsoy; spin_orbit[i3 + 2] = fsoz;
+            net[i3] = fcx + fgx + fsx + fmx + fsox;
+            net[i3 + 1] = fcy + fgy + fsy + fmy + fsoy;
+            net[i3 + 2] = fcz + fgz + fsz + fmz + fsoz;
+
+            const mc = Math.sqrt(fcx * fcx + fcy * fcy + fcz * fcz);
+            const mg = Math.sqrt(fgx * fgx + fgy * fgy + fgz * fgz);
+            const ms = Math.sqrt(fsx * fsx + fsy * fsy + fsz * fsz);
+            const mm = Math.sqrt(fmx * fmx + fmy * fmy + fmz * fmz);
+            const mso = Math.sqrt(fsox * fsox + fsoy * fsoy + fsoz * fsoz);
+            const mn = Math.sqrt(net[i3] * net[i3] + net[i3 + 1] * net[i3 + 1] + net[i3 + 2] * net[i3 + 2]);
+            if (mc > maxCoulomb) maxCoulomb = mc;
+            if (mg > maxGravity) maxGravity = mg;
+            if (ms > maxStrong) maxStrong = ms;
+            if (mm > maxMagneticDipole) maxMagneticDipole = mm;
+            if (mso > maxSpinOrbit) maxSpinOrbit = mso;
+            if (mn > maxNet) maxNet = mn;
         }
 
-        // Speed limit (enforce before drift to prevent singularity teleportation)
-        for (const p of ps) {
+        return {
+            positions, count: n,
+            coulomb, gravity, strong, magnetic_dipole, spin_orbit, net,
+            maxCoulomb, maxGravity, maxStrong, maxMagneticDipole, maxSpinOrbit, maxNet,
+        };
+    }
+
+    // Velocity Verlet integrator: half-kick → drift → recompute forces → half-kick
+    function halfKick(scale) {
+        const particles = state._pe.particles;
+        const F = state._pe.forces;
+        const dt = state._pe.dt;
+        const halfDt = dt * 0.5 * scale;
+        const relVerlet = state._pe.relativistic_verlet;
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            if (p.locked) continue;
+            const i3 = i * 3;
+            if (relVerlet) {
+                p.momx += F[i3] * halfDt;
+                p.momy += F[i3 + 1] * halfDt;
+                p.momz += F[i3 + 2] * halfDt;
+                const p2 = p.momx * p.momx + p.momy * p.momy + p.momz * p.momz;
+                const denom = Math.sqrt(p.mass * p.mass + p2 / (C_SPEED * C_SPEED));
+                p.vx = p.momx / denom;
+                p.vy = p.momy / denom;
+                p.vz = p.momz / denom;
+            } else {
+                const hdt = halfDt / p.mass;
+                p.vx += F[i3] * hdt;
+                p.vy += F[i3 + 1] * hdt;
+                p.vz += F[i3 + 2] * hdt;
+                p.momx = p.mass * p.vx;
+                p.momy = p.mass * p.vy;
+                p.momz = p.mass * p.vz;
+            }
+        }
+    }
+
+    function clampSpeedLimit() {
+        const particles = state._pe.particles;
+        for (const p of particles) {
             if (p.locked) continue;
             const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz);
             if (speed > C_SPEED) {
                 const s = C_SPEED / speed;
                 p.vx *= s; p.vy *= s; p.vz *= s;
+                if (state._pe.relativistic_verlet) {
+                    p.momx = p.mass * p.vx;
+                    p.momy = p.mass * p.vy;
+                    p.momz = p.mass * p.vz;
+                }
             }
         }
+    }
+
+    function peTick() {
+        if (!state._pe) return;
+        const ps = state._pe.particles;
+        const dt = state._pe.dt;
+
+        if (!state._pe.forces || state._pe.forcesN !== ps.length) {
+            _peComputeForces();
+        }
+
+        halfKick(1);
+        clampSpeedLimit();
 
         // Drift: r += v × dt
         for (const p of ps) {
@@ -214,19 +412,19 @@ export function createParticleEngine(state) {
             }
         }
 
-        // Recompute forces at new positions
         _peComputeForces();
+        halfKick(1);
 
-        // Half-kick again: v += (F/m) × dt/2
+        // Store previous acceleration (radiation reaction, mirrors C++ tick)
         const F2 = state._pe.forces;
         for (let i = 0; i < ps.length; i++) {
             const p = ps[i];
             if (p.locked) continue;
-            const hdt = dt * 0.5 / p.mass;
             const i3 = i * 3;
-            p.vx += F2[i3]     * hdt;
-            p.vy += F2[i3 + 1] * hdt;
-            p.vz += F2[i3 + 2] * hdt;
+            const invM = 1 / p.mass;
+            p.prev_ax = F2[i3] * invM;
+            p.prev_ay = F2[i3 + 1] * invM;
+            p.prev_az = F2[i3 + 2] * invM;
         }
 
         // Damping (intentional energy dissipation, applied after Verlet)
@@ -235,18 +433,16 @@ export function createParticleEngine(state) {
             for (const p of ps) {
                 if (p.locked) continue;
                 p.vx *= d; p.vy *= d; p.vz *= d;
+                p.momx = p.mass * p.vx;
+                p.momy = p.mass * p.vy;
+                p.momz = p.mass * p.vz;
             }
         }
 
-        // Speed limit
-        for (const p of ps) {
-            if (p.locked) continue;
-            const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy + p.vz * p.vz);
-            if (speed > C_SPEED) {
-                const s = C_SPEED / speed;
-                p.vx *= s; p.vy *= s; p.vz *= s;
-            }
-        }
+        clampSpeedLimit();
+
+        // Spin precession: dS/dt = (q/m) S × B from partner dipoles
+        evolveParticleSpins(ps, peTogglesFromState(state._pe), state._pe.soft, dt);
 
         // Annihilation: opposite-charge particles closer than contact distance
         const toRemove = new Set();
@@ -279,7 +475,7 @@ export function createParticleEngine(state) {
             positions: new Float32Array(0), colors: new Float32Array(0), sizes: new Float32Array(0),
             charges: new Int8Array(0), ids: new Int32Array(0), velocities: new Float32Array(0),
             masses: new Float64Array(0), rEff: new Float32Array(0), locked: new Uint8Array(0),
-            spins: new Int8Array(0), colorIds: new Int8Array(0), count: 0
+            spins: new Int8Array(0), colorIds: new Int8Array(0), spinAxes: new Float32Array(0), count: 0
         };
         const ps = state._pe.particles;
         const count = ps.length;
@@ -297,10 +493,11 @@ export function createParticleEngine(state) {
                 locked: new Uint8Array(count),
                 spins: new Int8Array(count),
                 colorIds: new Int8Array(count),
+                spinAxes: new Float32Array(count * 3),
                 cap: count
             };
         }
-        const { positions, colors, sizes, charges, ids, velocities, masses, rEff, locked, spins, colorIds } = state._peBufs;
+        const { positions, colors, sizes, charges, ids, velocities, masses, rEff, locked, spins, colorIds, spinAxes } = state._peBufs;
         for (let i = 0; i < count; i++) {
             const p = ps[i];
             positions[i * 3] = p.x;
@@ -321,8 +518,11 @@ export function createParticleEngine(state) {
             locked[i] = p.locked ? 1 : 0;
             spins[i] = p.spin || 0;
             colorIds[i] = p.color || 0;
+            spinAxes[i * 3] = p.spin_ax ?? 0;
+            spinAxes[i * 3 + 1] = p.spin_ay ?? 0;
+            spinAxes[i * 3 + 2] = p.spin_az ?? 0;
         }
-        return { positions, colors, sizes, charges, ids, velocities, masses, rEff, locked, spins, colorIds, count };
+        return { positions, colors, sizes, charges, ids, velocities, masses, rEff, locked, spins, colorIds, spinAxes, count };
     }
 
     function peGetFieldSources() {
@@ -464,6 +664,24 @@ export function createParticleEngine(state) {
     function peSetStrong(e)          { if (state._pe) state._pe.strong = e; }
     function peSetMagneticDipole(e)  { if (state._pe) state._pe.magnetic_dipole = e; }
     function peSetSpinOrbit(e)       { if (state._pe) state._pe.spin_orbit = e; }
+
+    function peSetSpinAxis(id, ax, ay, az) {
+        if (!state._pe) return false;
+        const p = state._pe.particles.find(q => q.id === id);
+        if (!p) return false;
+        const oldMag = Math.sqrt(
+            (p.spin_ax ?? 0) ** 2 + (p.spin_ay ?? 0) ** 2 + (p.spin_az ?? 0) ** 2);
+        const targetMag = oldMag > 1e-30 ? oldMag : 1.0;
+        const newMag = Math.sqrt(ax * ax + ay * ay + az * az);
+        if (newMag < 1e-30) return false;
+        const s = targetMag / newMag;
+        p.spin_ax = ax * s;
+        p.spin_ay = ay * s;
+        p.spin_az = az * s;
+        state._pe.forces = null;
+        return true;
+    }
+
     function peSetRadiation(e)       { if (state._pe) state._pe.radiation = e; }
     function peSetRelativistic(e)    { if (state._pe) state._pe.relativistic = e; }
     function peSetRelativisticVerlet(e) { if (state._pe) state._pe.relativistic_verlet = e; }
@@ -477,7 +695,7 @@ export function createParticleEngine(state) {
             extended: true,
             nativeExtended: false,
             nativeForces: false,
-            advancedForces: false,
+            advancedForces: true,
         };
     }
     function peParticleCount()       { return state._pe ? state._pe.particles.length : 0; }
@@ -554,14 +772,15 @@ export function createParticleEngine(state) {
 
     return {
         initPE, resetPE,
-        peAddParticle, peAddLockedParticle,
+        peAddParticle, peAddLockedParticle, peApplyEquilibriumOrbit, peApplyEquilibriumOrbitBatch, peScaleVelocity,
         _peComputeForces, peTick,
         peGetParticleData, peGetFieldSources, peGetForces,
+        peGetForceDecomposition,
         peGetDiagnostics, peGetExtendedData,
         peSetDt, peGetDt, peSetSoftening,
         peSetCoulomb, peSetDamping, peSetGravity, peSetLorentz,
         peSetExchange, peSetStrong, peSetMagneticDipole,
-        peSetSpinOrbit, peSetRadiation, peSetRelativistic,
+        peSetSpinOrbit, peSetSpinAxis, peSetRadiation, peSetRelativistic,
         peSetRelativisticVerlet, peGetToggle, peGetBackendCapabilities,
         peParticleCount, peClear, peGetParticleTypes,
         peInspectParticle,
