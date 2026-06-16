@@ -13,18 +13,21 @@
 importScripts('../../wasm/ftd_core_mt.js');
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
-const POOL = 1;             // Phase 1 = serial off-thread. Phase 2 raises this.
 const TARGET_DT = 1000 / 60;
 
 let mod = null, bridge = null;
 let N = 33, scenarioId = 'flux-pulse', toggles = {};
+let poolThreads = 1;       // Phase 1 = 1 (serial off-thread). Phase 2 raises this
+                           // for the 1.8-2.2x in-worker threading (on-demand
+                           // nested pthread_create; POOL_SIZE=0 => no pre-spawn).
 let ctrlSab = null, ctrl = null;
 let timer = 0, tickAcc = 0;
 
 function initModule(cb) {
   createFTDModuleMT({ locateFile: (p) => '../../wasm/' + p }).then((m) => {
     mod = m;
-    if (typeof mod.ftdSetPoolThreads === 'function') mod.ftdSetPoolThreads(POOL);
+    // Must set the pool BEFORE the first parallel_for (first tick) constructs it.
+    if (typeof mod.ftdSetPoolThreads === 'function') mod.ftdSetPoolThreads(poolThreads);
     cb();
   }).catch((e) => self.postMessage({ type: 'error', where: 'init', msg: String(e && e.message || e) }));
 }
@@ -91,6 +94,7 @@ self.onmessage = (e) => {
     switch (msg.type) {
       case 'create':
         toggles = msg.toggles || {};
+        if (typeof msg.pool === 'number' && msg.pool >= 1) poolThreads = msg.pool | 0;
         if (!mod) initModule(() => { buildBridge(msg.N, msg.scenarioId || scenarioId); if (!timer) loop(); });
         else { buildBridge(msg.N, msg.scenarioId || scenarioId); if (!timer) loop(); }
         break;

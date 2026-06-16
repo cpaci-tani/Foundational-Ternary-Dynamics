@@ -21,6 +21,17 @@ const EMPTY_PARTS = () => ({ positions: new Float32Array(0), colors: new Float32
 const EMPTY_VEC = () => ({ positions: new Float32Array(0), vectors: new Float32Array(0), count: 0 });
 const EMPTY_VAL = () => ({ positions: new Float32Array(0), values: new Float32Array(0), count: 0 });
 
+// Worker thread-pool size. Default 1 (Phase 1: serial off-thread — guaranteed
+// safe). Set window.__ftdWasmWorkerPool = N to enable the in-worker threading
+// (Phase 2; the worker spawns N-1 nested pthread workers on demand).
+const DEFAULT_WORKER_POOL = 1;
+function workerPoolSize() {
+    if (typeof window !== 'undefined' && typeof window.__ftdWasmWorkerPool === 'number') {
+        return Math.max(1, window.__ftdWasmWorkerPool | 0);
+    }
+    return DEFAULT_WORKER_POOL;
+}
+
 // Live-instance accounting (lifecycle test parity with the mock proxy).
 let _live = 0, _created = 0, _terminated = 0;
 if (typeof window !== 'undefined') {
@@ -128,7 +139,10 @@ export class WasmBridgeProxy {
     setupScenario(name) {
         this._scenarioId = name || this._scenarioId;
         this._ready = false;
-        this._worker.postMessage({ type: 'create', N: this.latticeSize, scenarioId: this._scenarioId, toggles: this._toggles });
+        this._worker.postMessage({
+            type: 'create', N: this.latticeSize, scenarioId: this._scenarioId,
+            toggles: this._toggles, pool: workerPoolSize(),
+        });
     }
     setRunning(v) {
         v = !!v;
