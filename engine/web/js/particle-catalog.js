@@ -1,11 +1,25 @@
 /**
- * Particle Catalog: Complete Standard Model + FTD-derived particles
+ * Particle Catalog: Standard Model particles with FTD context.
  *
- * Every mass traces back through the ontic chain:
- *   e → γ → Γ(1/4) → θ₃ → ϖ → M → G* → π → α → masses
+ * `mass_mev` is the PHYSICAL (measured / PDG) mass — the value the Scale 1
+ * engine simulates and the inspector/Zoo display. The electron uses the FTD
+ * mass anchor K_B (≡ m_e ≡ 0.511 MeV); every other species uses the measured
+ * PDG reference value from constants.js. This is the single source of truth
+ * for particle mass across Scale 1 (scenarios, Zoo injection, inspector).
  *
- * Mass formulas use framework integers: N_c=3, N_base=4, b₃=7, N_eff=13
- * and α = 1/137.036 from the master quadratic.
+ * `ftd_formula` + `ftd_accuracy` carry FTD's *prediction* for the mass and its
+ * deviation from the measured value — they are NOT a substitute for mass_mev,
+ * and they are NOT first-principles derivations. Read the FTD-formula column as
+ * motivating expressions at their LEDGER status (see `ftd_status`). Several are
+ * built on the [PARAMETRIC] sin²θ_W = 3/13 (demoted, FTD-0018), and the lepton
+ * mass-ratios are integer-combination conjectures (FTD-0015/0016 family). Not
+ * every mass "traces back through the ontic chain."
+ *
+ * ftd_status → LEDGER epistemic tag (this map copies status, never promotes it):
+ *   'axiom'      = [AXIOM]
+ *   'selection'  = [SELECTION] / [STRONGLY MOTIVATED CONJECTURE]
+ *   'parametric' = [PARAMETRIC]
+ *   'derived'    = [DERIVED] / [THEOREM]   (reserved; no SM mass currently qualifies)
  *
  * Categories:
  *   leptons      - e, μ, τ + neutrinos + antiparticles
@@ -17,7 +31,11 @@
  */
 
 import {
-    M_E, MU_RATIO, TAU_RATIO,
+    // M_E = electron mass = FTD anchor K_B (≡ m_e ≡ 0.511 MeV). M_MU_PHYS /
+    // M_TAU_PHYS are the measured (PDG) μ / τ masses — the physical values the
+    // engine simulates (F3 single-source-of-truth, 2026-06-15 audit). FTD's
+    // predicted ratios (207·m_e, 3477·m_e) live in ftd_formula/ftd_accuracy.
+    M_E, M_MU_PHYS, M_TAU_PHYS,
     M_P_PHYS, M_N_PHYS, M_SIGMA_PHYS, M_OMEGA_PHYS,
     M_PI_CH_PHYS, M_PI_0_PHYS, M_K_CH_PHYS, M_K_0_PHYS,
     M_DELTA_PHYS,
@@ -26,10 +44,12 @@ import {
     // [PARAMETRIC PDG] reference values — used only for catalog
     // display, not for derivations.
     M_U_PHYS, M_D_PHYS, M_S_PHYS, M_C_PHYS, M_B_PHYS, M_T_PHYS,
-    // Note: neutrino *_PHYS values exist in constants.js but are NOT
-    // imported here — the catalog's nu_e/nu_mu/nu_tau literals carry a
-    // ×1e-3 unit-mismatch with the canonical *_PHYS values (see TODO
-    // Theme H comments at each neutrino entry).
+    // Neutrino masses single-sourced from constants.js (2026-06-15): meV-scale
+    // [PARAMETRIC PDG] upper bounds (M_NU_MU/TAU were corrected from a ×1e6
+    // magnitude error — they had held keV-scale values mislabeled as MeV).
+    M_NU_E_PHYS, M_NU_MU_PHYS, M_NU_TAU_PHYS,
+    // Σ⁰/Σ⁻ isospin partners (Σ⁺ = M_SIGMA_PHYS above).
+    M_SIGMA0_PHYS, M_SIGMA_MINUS_PHYS,
     M_W_PHYS, M_Z_PHYS, M_HIGGS_PHYS,
     M_LAMBDA_PHYS, M_XI_0_PHYS, M_XI_M_PHYS,
     M_ETA_PHYS, M_RHO_PHYS, M_J_PSI_PHYS, M_UPSILON_PHYS,
@@ -42,10 +62,13 @@ const PARTICLES = [
     {
         id: 'electron', name: 'Electron', symbol: 'e⁻',
         category: 'leptons', generation: 1,
-        mass_mev: M_E, charge: -1, spin: 0.5,
+        mass_mev: M_E, charge: -1, spin: 0.5,   // K_B anchor (≡ measured m_e)
         color_charge: 'none', antiparticle: 'positron',
         ftd_formula: 'm_P·√(2π)·(16/3)·α¹¹',
-        ftd_accuracy: 0.27, ftd_status: 'derived',
+        // FTD-0015 [STRONGLY MOTIVATED CONJECTURE] (only the n=11 exponent is
+        // [DERIVED]); 'derived'→'selection' to match LEDGER. 2026-06-15 audit.
+        // ftd_accuracy 0.19% = canonical m_e match (LEDGER FTD-0015 / CLAUDE.md).
+        ftd_accuracy: 0.19, ftd_status: 'selection',
         display_color: [0.29, 0.87, 0.50], display_size: 4
     },
     {
@@ -54,101 +77,105 @@ const PARTICLES = [
         mass_mev: M_E, charge: 1, spin: 0.5,
         color_charge: 'none', antiparticle: 'electron',
         ftd_formula: 'm_e (same mass)',
-        ftd_accuracy: 0.27, ftd_status: 'derived',
+        ftd_accuracy: 0.19, ftd_status: 'selection',  // CPT partner of e⁻ → same FTD-0015 status (0.19% canonical)
         display_color: [0.97, 0.44, 0.44], display_size: 4
     },
     {
         id: 'muon', name: 'Muon', symbol: 'μ⁻',
         category: 'leptons', generation: 2,
-        mass_mev: M_E * MU_RATIO, charge: -1, spin: 0.5,
+        mass_mev: M_MU_PHYS, charge: -1, spin: 0.5,   // physical (PDG); FTD 207·m_e ≈ 105.78 in ftd_formula
         color_charge: 'none', antiparticle: 'antimuon',
         ftd_formula: 'm_e·(3·b₃·(b₃+N_c)−N_c) = 207·m_e',
-        ftd_accuracy: 0.11, ftd_status: 'derived',
+        // Integer-ratio conjecture (FTD-0015/0016 family); no axioms→mass
+        // chain → [STRONGLY MOTIVATED CONJECTURE]. 'derived'→'selection'. 2026-06-15 audit.
+        ftd_accuracy: 0.11, ftd_status: 'selection',
         display_color: [0.20, 0.73, 0.40], display_size: 5
     },
     {
         id: 'antimuon', name: 'Antimuon', symbol: 'μ⁺',
         category: 'leptons', generation: 2,
-        mass_mev: M_E * MU_RATIO, charge: 1, spin: 0.5,
+        mass_mev: M_MU_PHYS, charge: 1, spin: 0.5,
         color_charge: 'none', antiparticle: 'muon',
         ftd_formula: 'm_μ (same mass)',
-        ftd_accuracy: 0.11, ftd_status: 'derived',
+        ftd_accuracy: 0.11, ftd_status: 'selection',
         display_color: [0.90, 0.35, 0.35], display_size: 5
     },
     {
         id: 'tau', name: 'Tau', symbol: 'τ⁻',
         category: 'leptons', generation: 3,
-        mass_mev: M_E * TAU_RATIO, charge: -1, spin: 0.5,
+        mass_mev: M_TAU_PHYS, charge: -1, spin: 0.5,   // physical (PDG); FTD 3477·m_e ≈ 1776.7 in ftd_formula
         color_charge: 'none', antiparticle: 'antitau',
         ftd_formula: 'm_e·((N_eff+N_base)·207−2N_c·b₃) = 3477·m_e',
-        ftd_accuracy: 0.007, ftd_status: 'derived',
+        ftd_accuracy: 0.007, ftd_status: 'selection',
         display_color: [0.12, 0.60, 0.32], display_size: 6
     },
     {
         id: 'antitau', name: 'Antitau', symbol: 'τ⁺',
         category: 'leptons', generation: 3,
-        mass_mev: M_E * TAU_RATIO, charge: 1, spin: 0.5,
+        mass_mev: M_TAU_PHYS, charge: 1, spin: 0.5,
         color_charge: 'none', antiparticle: 'tau',
         ftd_formula: 'm_τ (same mass)',
-        ftd_accuracy: 0.007, ftd_status: 'derived',
+        ftd_accuracy: 0.007, ftd_status: 'selection',
         display_color: [0.82, 0.28, 0.28], display_size: 6
     },
     {
         id: 'nu_e', name: 'Electron Neutrino', symbol: 'νₑ',
         category: 'leptons', generation: 1,
-        // 2026-04-27 audit: dropped a stray ×1e-3 unit-mismatch factor that
-        // made the catalog 1000× lighter than M_NU_E_PHYS = 4.1e-9 MeV in
-        // constants.js. Now matches the canonical value (sum-of-masses ~0.06 eV).
-        mass_mev: 4.1e-9, charge: 0, spin: 0.5,
+        // Single-sourced from constants.js (2026-06-15): M_NU_E_PHYS = 4.1e-9 MeV
+        // (4.1 meV upper bound, [PARAMETRIC PDG]).
+        mass_mev: M_NU_E_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_e',
-        ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 neV',
-        ftd_accuracy: null, ftd_status: 'derived',
+        ftd_formula: 'm₃·(m_e/m_τ)² ≈ 4.1 meV',
+        // Neutrino masses are NOT derivable from the current FTD chain
+        // (constants.js: [PARAMETRIC PDG] bounds); ftd_formula is a motivating
+        // match only. 'derived'→'parametric'. 2026-06-15 audit.
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.70, 0.95, 0.80], display_size: 2
     },
     {
         id: 'antinu_e', name: 'Electron Antineutrino', symbol: 'ν̄ₑ',
         category: 'leptons', generation: 1,
-        // 2026-04-27 audit: same ×1e-3 factor drop as nu_e above.
-        mass_mev: 4.1e-9, charge: 0, spin: 0.5,
+        // Single-sourced from constants.js (2026-06-15): same as nu_e.
+        mass_mev: M_NU_E_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_e',
         ftd_formula: 'm_ν₁ (same mass)',
-        ftd_accuracy: null, ftd_status: 'derived',
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.95, 0.80, 0.80], display_size: 2
     },
     {
         id: 'nu_mu', name: 'Muon Neutrino', symbol: 'νμ',
         category: 'leptons', generation: 2,
-        mass_mev: 8.58e-3, charge: 0, spin: 0.5,
+        mass_mev: M_NU_MU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_mu',
         ftd_formula: 'm₃·√N_c/(b₃+N_c) ≈ 8.6 meV',
-        ftd_accuracy: null, ftd_status: 'derived',
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.60, 0.90, 0.72], display_size: 2
     },
     {
         id: 'antinu_mu', name: 'Muon Antineutrino', symbol: 'ν̄μ',
         category: 'leptons', generation: 2,
-        mass_mev: 8.58e-3, charge: 0, spin: 0.5,
+        mass_mev: M_NU_MU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_mu',
         ftd_formula: 'm_ν₂ (same mass)',
-        ftd_accuracy: null, ftd_status: 'derived',
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.90, 0.72, 0.72], display_size: 2
     },
     {
         id: 'nu_tau', name: 'Tau Neutrino', symbol: 'ντ',
         category: 'leptons', generation: 3,
-        mass_mev: 4.955e-2, charge: 0, spin: 0.5,
+        mass_mev: M_NU_TAU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'antinu_tau',
         ftd_formula: 'v·(N_base/N_c)·α⁶ ≈ 49.6 meV',
-        ftd_accuracy: null, ftd_status: 'derived',
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.50, 0.85, 0.65], display_size: 2
     },
     {
         id: 'antinu_tau', name: 'Tau Antineutrino', symbol: 'ν̄τ',
         category: 'leptons', generation: 3,
-        mass_mev: 4.955e-2, charge: 0, spin: 0.5,
+        mass_mev: M_NU_TAU_PHYS, charge: 0, spin: 0.5,
         color_charge: 'none', antiparticle: 'nu_tau',
         ftd_formula: 'm_ν₃ (same mass)',
-        ftd_accuracy: null, ftd_status: 'derived',
+        ftd_accuracy: null, ftd_status: 'parametric',
         display_color: [0.85, 0.65, 0.65], display_size: 2
     },
 
@@ -417,9 +444,9 @@ const PARTICLES = [
     {
         id: 'sigma_zero', name: 'Sigma0', symbol: 'Σ⁰',
         category: 'baryons', generation: null,
-        // [PARAMETRIC PDG] — Σ⁰ isospin partner of Σ⁺; canonical
-        // constant not added (M_SIGMA_PHYS covers only Σ⁺).
-        mass_mev: 1192.6, charge: 0, spin: 0.5,
+        // [PARAMETRIC PDG] — Σ⁰ isospin partner of Σ⁺ (2026-06-15: now imports
+        // the canonical M_SIGMA0_PHYS added to constants.js).
+        mass_mev: M_SIGMA0_PHYS, charge: 0, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'uds',
         ftd_formula: 'quark model + FTD masses',
@@ -429,9 +456,9 @@ const PARTICLES = [
     {
         id: 'sigma_minus', name: 'Sigma-', symbol: 'Σ⁻',
         category: 'baryons', generation: null,
-        // [PARAMETRIC PDG] — Σ⁻ isospin partner of Σ⁺; canonical
-        // constant not added (M_SIGMA_PHYS covers only Σ⁺).
-        mass_mev: 1197.4, charge: -1, spin: 0.5,
+        // [PARAMETRIC PDG] — Σ⁻ isospin partner of Σ⁺ (2026-06-15: now imports
+        // the canonical M_SIGMA_MINUS_PHYS added to constants.js).
+        mass_mev: M_SIGMA_MINUS_PHYS, charge: -1, spin: 0.5,
         color_charge: 'singlet', antiparticle: null,
         composition: 'dds',
         ftd_formula: 'quark model + FTD masses',
@@ -593,6 +620,25 @@ const PARTICLES = [
         display_color: [0.85, 0.55, 0.95], display_size: 7
     },
 ];
+
+// ── Baryon / lepton numbers (descriptive SM quantum numbers) ─────────
+// Derived once from category + matter/antimatter (id convention: antimatter
+// ids start with 'anti', plus 'positron'); antimatter carries opposite sign.
+// NOTE (true-to-FTD): FTD treats baryon number as an EMERGENT cluster label,
+// not a fundamental conserved charge (FTD-0301). Conventional SM assignments,
+// for catalog reference only.
+for (const p of PARTICLES) {
+    const anti = p.id.startsWith('anti') || p.id === 'positron';
+    let baryon = 0, lepton = 0;
+    switch (p.category) {
+        case 'leptons': lepton = anti ? -1 : 1; break;
+        case 'quarks':  baryon = anti ? -1 / 3 : 1 / 3; break;
+        case 'baryons': baryon = anti ? -1 : 1; break;
+        // mesons, gauge_bosons, scalar: baryon = lepton = 0
+    }
+    p.baryon = baryon;
+    p.lepton = lepton;
+}
 
 // ── Category metadata ──────────────────────────────────────────────
 const CATEGORIES = {

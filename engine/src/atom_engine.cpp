@@ -105,6 +105,13 @@ int AtomEngine::add_atom(int Z, Vec3 position, Vec3 velocity,
     a.valence_electrons = props.valence_e;  // From periodic table (VSEPR geometry)
     a.electronegativity = props.electronegativity;
 
+    a.alpha_pol = props.alpha_pol;
+    a.e_ion = props.e_ion;
+    a.e_aff = props.e_aff;
+    a.sigma_scatter = props.sigma_scatter;
+    a.z_eff = props.closure_context.z_eff;
+    a.q_frac = static_cast<double>(charge);
+
     atoms_.push_back(a);
     forces_.push_back({});
     return a.id;

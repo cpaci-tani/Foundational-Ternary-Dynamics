@@ -173,6 +173,59 @@ Reference tests:
 - `engine/web/tests/scale0-scenario-telemetry-contract.spec.js`
 - `engine/web/tests/scale0-telemetry-gating.spec.js`
 
+### 5.1 Scale-Context Readout Gate Contract
+
+`engine/src/scale_context.cpp` (+ `scale_context.h`, results in
+`render_bridge_diagnostics.h`) implements the read-only readout admissibility
+gate $\mathcal{C}_{\rm scale}$ (`docs/theory/01_reference/SPEC_SCALE_CONTEXT_READOUT.md`).
+
+Rules:
+
+1. **Read-only:** `measure_scale_context` / `ScaleContextTracker` take
+   `const RenderBridge&` and use only its const accessors; never called from
+   `tick()`. The golden hash (`test_render_bridge_golden`, L=17,
+   `0x56fa28acb5b9fe88`) is preserved by construction.
+2. **$\alpha$-blind by contract:** the module must NEVER reference `ALPHA`,
+   `ALPHA_EFT`, the Koopman eigenvalue, or `137.036`. Its inputs are lattice
+   geometry, $|J|^2$, and the observation-only genesis/evaporation counters only.
+3. **Observe-only default:** `ScaleContextConfig::gate_active` defaults to
+   `false` (status forced to `DiagnosticOnly`); arming the gate is opt-in so no
+   existing campaign is silently blocked. The hard refusal lives downstream in
+   `scripts/proofs/proof_alpha_stochastic_koopman.py`.
+4. **Thresholds are `[IMPOSED engineering defaults]`**, never theorem values, and
+   must stay self-consistent (see `SPEC_SCALE_CONTEXT_READOUT §5.2`).
+
+Reference test: `engine/tests/test_scale_context.cpp` (ctest `scale_context`).
+
+### 5.2 Scale-2 Atomic Closure-Context Contract
+
+Scale-2 now carries two distinct atomic scale channels:
+
+- `Atom.radius` / `vdw_sigma`: simulation interaction scales used by
+  Lennard-Jones, bonding, CUDA pair-force buffers, and scale bridges.
+- `AtomicClosureContext::r_cloud`: physics-facing shell-context readout used
+  for scale interpretation and diagnostics.
+
+Rules:
+
+1. Do not substitute `r_cloud` into `Atom.radius`, `vdw_sigma`, bond capture
+   ranges, or CUDA atom buffers without a separate MD retuning and audit.
+2. `AtomicClosureContext` is computed from shell bookkeeping and Slater
+   shielding; Slater constants are `[IMPOSED]`, and the hydrogenic
+   `R_BOHR*n_shell^2/Z_eff` scale is a parametric reference estimate, not an
+   FTD derivation of empirical atomic radii.
+3. C++ and JS mirrors must stay vocabulary-compatible:
+   `compute_atomic_closure_context(...)` / `AtomicProperties::closure_context`
+   / `AtomEngine::closure_context_for(...)` correspond to
+   `computeAtomicClosureContext(...)` / `computeAtomicProps(...).closure_context`.
+4. The expected periodic pattern is structural: within a shell,
+   increasing screened return force contracts `r_cloud`; opening a new shell
+   resets `r_cloud` outward. Tests pin this behavior without comparing to
+   experimental radius tables.
+
+Reference doc: `docs/theory/05_particles/SPEC_ATOMIC_PROPERTY_LEDGER.md`.
+Reference test: `engine/tests/test_atom_engine.cpp`.
+
 ---
 
 ## 6. Documentation Cleanup Contract

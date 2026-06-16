@@ -12,12 +12,19 @@
     z-index: var(--z-viewport);
     overflow: hidden;
     background: var(--viewport-bg);
+    /* OrbitControls owns all pointer/touch gestures (one-finger orbit, two-finger
+       dolly+pan). Without this, mobile browsers treat drags/pinches on the canvas
+       as page scroll / pinch-zoom and steal them from the controls. three.js sets
+       this on the canvas at connect() time too; we set it on the container as
+       belt-and-suspenders (and so it holds before/between control re-inits). */
+    touch-action: none;
 }
 
 #viewport canvas {
     display: block;
     width: 100%;
     height: 100%;
+    touch-action: none;
 }
 
 #viewport[data-viewport-frame="true"] {

@@ -1,8 +1,8 @@
 # SPEC · Open Math by Physics Sector
 
 **Tag:** [REFERENCE] / canonical research-questions queue (replaces tier-aligned CHECKLIST)
-**Date:** 2026-06-10
-**Version:** 1.1
+**Date:** 2026-06-14
+**Version:** 1.2
 **Replaces:** `CHECKLIST_MATH_COMPLETE.md` (now archived; tier-aligned organisation preserved there for provenance)
 **LEDGER:** FTD-0146 [SYNTHESIS] — sector-organised consolidation; introduces no new theorems
 **Companion docs:**
@@ -14,6 +14,8 @@
 - [`../07_assessment/core_ledgers/LEDGER.md`](../07_assessment/core_ledgers/LEDGER.md) — atomic per-claim provenance
 - [`../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md`](../07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md) — T1–T5 tiers
 - [`../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md`](../07_assessment/core_ledgers/TRACKER_OPEN_ITEMS.md) — atomic file-level `[OPEN]` markers (non-math TODOs)
+- [`../10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md`](../10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md) — FTD-0244 K-BIND closure
+- [`../../../evaluation/AUDIT_WEAKNESSES_MASTER.md`](../../../evaluation/AUDIT_WEAKNESSES_MASTER.md) — historical W-CRIT / W-COSMO weakness audit source
 
 ---
 
@@ -82,11 +84,11 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** `x_+  1/α` identification (FTD's central physics claim); QED bridge from FTD substrate.
 
-**Status snapshot:** `x_+ = 137.0362` matches `1/α` to 1.26 ppm as **[STRONGLY MOTIVATED CONJECTURE]** (OT-5.1, FTD-0013). Coefficient 16 = `\|Aut(E)\|²` is structural identification at OT-4.1 [T4]. Doctrine §7 bivector/Dirac/QED bridge sector all [OPEN] per FTD-0073 mode-erasure closure.
+**Status snapshot:** `x_+ = 137.0362` matches `1/α` to 1.26 ppm as **[STRONGLY MOTIVATED CONJECTURE]** (OT-5.1, FTD-0013). Coefficient 16 = `\|Aut(E)\|²` is structural identification at OT-4.1 [T4]. FTD-0244 closes K-BIND theorem-negative for the current substrate-native operator calculus; the physical α readout therefore remains MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`, with positive closure requiring a new W-class commitment or fresh ARC-D measurement. Doctrine §7 bivector/Dirac/QED bridge sector remains open per FTD-0073 mode-erasure closure.
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| **MC-T4.3** | **Operational alpha-readout mechanism (CENTRAL).** A closure proof would have to derive the physical identification `x_+ = 1/alpha` from FTD structure rather than insert it. All natural action-level routes [CLOSED NEGATIVE]. `SPEC_ALPHA_READOUT_CONTRACT.md` now formalizes the closure contract and four candidate classes (boundary-condition / observable-selection / quantization-readout / discrete-native measurement); ARC-B1 observable-selection is the first proof obligation | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
+| **MC-T4.3** | **Operational alpha-readout mechanism (CENTRAL).** A closure proof would have to derive the physical identification `x_+ = 1/alpha` from FTD structure rather than insert it. All natural action-level/operator routes are closed negative through FTD-0244: ARC-A/B1 closed negative, ARC-B2/C1 sharpened to route-invariant/operator-calculus no-go, and K-BIND closed theorem-negative. The surviving positive exits are a new W-like framework commitment or a fresh ARC-D engine-native measurement. | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
 | **TEST4-GEN** | **Alpha arithmetic generativity test.** Pre-registers the Balmer-to-Bohr gate: the same lemniscatic CM/FQCR rigidity that produces the alpha candidate must generate one additional independent physical dimensionless observable or relation with no new tuned freedom. *(Historical exclusion: the `x_- ≈ N_c` match was previously called out as not counting as the prize; that identification is now **RETIRED** entirely per v1.4 §5 — see `DERIV_NC_FROM_TOPOLOGY.md` for the independent `N_c = 3` sources.)* Target declaration must precede numerical comparison. | [PRE-REGISTRATION] | D-W | MC-T4.3; `PREREG_ALPHA_ARITHMETIC_GENERATIVITY_v1.md` |
 | §7-bivector | Lorentzian signature from bivector duality on FTD lattice. Requires non-site-local Clifford construction compatible with FTD-0073 (site-local Clifford [CLOSED NEGATIVE] under pointwise-threshold dynamics) | [OPEN] | RP | — |
 | §7-dirac | Tree-level `g = 2` from FTD-substrate Dirac (currently [OPEN — IMPORTED scaffold]) | [OPEN] | M | §7-bivector |
@@ -172,22 +174,22 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** Newtonian limit, Schwarzschild, full GR, lattice black holes.
 
-**Status snapshot:** **Partial closure 2026-05-03 (reconciled 2026-05-24 per `AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`)** (FTD-0131): `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵` matches measured to 0.38% as **[STRONGLY MOTIVATED CONJECTURE]** for the prediction (epistemic floor inherited from FTD-0015 [SMC] via `α_G = (m_e/m_P)²` tautology — the 0.38% precision is squared FTD-0015 precision, mechanical not new evidence) plus **[DERIVED]** for the chain steps that recover Schwarzschild leading-order from substrate (Phase G + cluster mass + linearized tick + **1 flagged interpretive step: the clock hypothesis** used in SPEC_FTD_LAGRANGIAN.md §4.3; the original two postulates are subsumed by SPEC §4.2 + §4.3 [THEOREM]s, Reading A confirmed). Arc B P2 v1 closure attempt UNDERDETERMINED (`AUDIT_CLOCK_HYPOTHESIS_v1_UNDERDETERMINED.md`); v2 attempt INVALIDATED on process + substance axes (`AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`, 2026-05-25); v3 pre-reg queued (target: substrate-derivation of quadratic L²-norm bandwidth-budget-conservation primitive). **Arc C2 spin-2 boundary theorem free-theory derivation landed 2026-05-24** (`DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` + `DERIV_J_BILINEAR_NO_SPIN2_POLE.md`); Arc C2 P3 pre-reg (`preregister-spin2-boundary-theorem-v1`, FTD-0209) hash-locked. Framework-integer `G_N = 1/(b_3 + N_c)² = 1/100` reading [CLOSED NEGATIVE per FTD-0131] — off by `~10²⁰` to `~10⁴³` under any natural calibration.
+**Status snapshot:** **Partial closure 2026-05-03 (reconciled 2026-05-24 per `../07_assessment/audits/AUDIT_NEWTON_POSTULATES_RECONCILIATION.md`)** (FTD-0131): `α_G(e,e) = (m_e/m_P)² ≈ 1.745 × 10⁻⁴⁵` matches measured to 0.38% as **[STRONGLY MOTIVATED CONJECTURE]** for the prediction (epistemic floor inherited from FTD-0015 [SMC] via `α_G = (m_e/m_P)²` tautology — the 0.38% precision is squared FTD-0015 precision, mechanical not new evidence) plus **[DERIVED]** for the chain steps that recover Schwarzschild leading-order from substrate, conditional on the clock-hypothesis **[AXIOM]** used in SPEC_FTD_LAGRANGIAN.md §4.3. Arc B P2 v1 was UNDERDETERMINED, v2 was INVALIDATED, and v3 closed **[CLOSED NEGATIVE, AXIOM-LEVEL]** on 2026-05-27: the quadratic L² budget is structurally incompatible with Scale-0 primitives and must be posited at coordinate level. **Arc C2 spin-2 boundary theorem free-theory derivation landed 2026-05-24** (`../10_eft_program/derivations/DERIV_SPIN2_BOUNDARY_THEOREM_FREE_THEORY.md` + `../10_eft_program/derivations/DERIV_J_BILINEAR_NO_SPIN2_POLE.md`); Arc C2 P3 pre-reg (`preregister-spin2-boundary-theorem-v1`, FTD-0209) hash-locked. Framework-integer `G_N = 1/(b_3 + N_c)² = 1/100` reading [CLOSED NEGATIVE per FTD-0131] — off by `~10²⁰` to `~10⁴³` under any natural calibration.
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| §12-clock-hypothesis | Substrate-derive the **single** flagged interpretive step of FTD-0131 post-2026-05-24 reconciliation: the clock hypothesis used in SPEC_FTD_LAGRANGIAN.md §4.3 (the identification "Born-Infeld action measure IS proper time"). Original 2 postulates (P1 ρ_g coupling form, P2 `2/c²` linearized tick-rate) are subsumed by SPEC §4.2 + §4.3 [THEOREM]s (Reading A per AUDIT). Closes the chain side; the prediction floor [SMC] still inherits from FTD-0015 via `α_G = (m_e/m_P)²` tautology (independent route would require deriving FTD-0015's `√(2π)·(16/3)` prefactor — see §5 me-prefactor). Pre-reg v1 hash-locked: `preregister-clock-hypothesis-derivation-v1` (FTD-0208) → v1 UNDERDETERMINED; v2 attempt INVALIDATED 2026-05-25 (no tag, process violation + budget-conservation primitive not substrate-derived) — see `AUDIT_CLOCK_HYPOTHESIS_v2_UNDERDETERMINED.md`; v3 pre-reg queued targeting the budget-conservation primitive itself | [OPEN; v1 UNDERDETERMINED, v2 INVALIDATED, v3 pre-reg queued] | W–M | — |
-| §12-beyond-N | Beyond-leading-order GR: Mercury perihelion, light bending, gravitational waves (full nonlinear Einstein equations beyond Deser bootstrap [SELECTION, FTD-0026]) | [OPEN] | RP | §12-postulates |
+| §12-clock-hypothesis | Substrate-derive the **single** flagged interpretive step of FTD-0131 post-2026-05-24 reconciliation: the clock hypothesis used in SPEC_FTD_LAGRANGIAN.md §4.3. Closed by v3: the Scale-0 substrate supports an L¹ linear ceiling, not the required L²/Pythagorean budget; the clock hypothesis is therefore an independent coordinate-level **[AXIOM]**. | [CLOSED NEGATIVE, AXIOM-LEVEL] | closed | — |
+| §12-beyond-N | Beyond-leading-order GR: Mercury perihelion, light bending, gravitational waves (full nonlinear Einstein equations beyond Deser bootstrap [SELECTION, FTD-0026]) | [OPEN] | RP | clock-hypothesis AXIOM |
 | §12-EP | Equivalence-principle analogue from substrate. No canonical anchor | [OPEN] | RP | — |
 | §12-mgcurv | Mass-gap to curvature source. No canonical anchor | [OPEN] | RP | — |
 | BH | `DERIV_LATTICE_BLACK_HOLES.md` 11 [OPEN] — **highest-density derivation cluster in repo**. Horizon thermodynamics, Hawking radiation lattice derivation, information paradox at discrete scale, Kerr-Newman generalisation | [OPEN] | RP | — |
 | MC-T4.4 | General-motion lattice Liénard-Wiechert: closed-form for general accelerating motion. Closed at uniform velocity [DERIVED]; sinusoidal Larmor case has Bessel infinite-series form (FTD-0120 Q5); general motion only formal Q5★ frequency-domain expression | [OPEN] | W–M | — |
 
-**Closed (sector context):** FTD-0004 Phase G geometric Coulomb [THEOREM]; FTD-0110 cluster mass [DERIVED at linear level]; FTD-0131 leading-order Newton ([SMC] prediction floor inherited from FTD-0015; [DERIVED] chain steps); FTD-0113 retarded Green identity [DERIVED]; FTD-0115 lattice Cherenkov closed at uniform velocity.
+**Closed (sector context):** FTD-0004 Phase G geometric Coulomb [THEOREM]; FTD-0110 cluster mass [DERIVED at linear level]; FTD-0131 leading-order Newton ([SMC] prediction floor inherited from FTD-0015; [DERIVED] chain steps conditional on clock-hypothesis AXIOM); FTD-0208 clock-hypothesis v3 [CLOSED NEGATIVE, AXIOM-LEVEL]; FTD-0113 retarded Green identity [DERIVED]; FTD-0115 lattice Cherenkov closed at uniform velocity.
 
-**Closed-negative — do not re-attempt:** FTD-0035 Mechanism γ gravitational `a_phys` derivation (closed 2026-04-19; calibration `a_phys ≡ ℓ_P` recommended); "1/100" framework-integer reading (FTD-0131).
+**Closed-negative — do not re-attempt:** FTD-0035 Mechanism γ gravitational `a_phys` derivation (closed 2026-04-19; calibration `a_phys ≡ ℓ_P` recommended); "1/100" framework-integer reading (FTD-0131); substrate derivation of the clock-hypothesis L² budget from Scale-0 primitives (FTD-0208 v3).
 
-**Sources:** SPEC_DOCTRINE_LEDGER.md §12; `DERIV_NEWTON_FROM_SUBSTRATE.md`; LEDGER FTD-0004, FTD-0026, FTD-0110, FTD-0113, FTD-0115, FTD-0131; TRACKER_OPEN_ITEMS.md §§2.1, 3.2.
+**Sources:** SPEC_DOCTRINE_LEDGER.md §12; `../03_derivations/gravity_and_cosmology/DERIV_NEWTON_FROM_SUBSTRATE.md`; `../03_derivations/archive/AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md`; LEDGER FTD-0004, FTD-0026, FTD-0110, FTD-0113, FTD-0115, FTD-0131, FTD-0208; TRACKER_OPEN_ITEMS.md §§2.1, 3.2.
 
 ---
 
@@ -208,7 +210,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | Born | `FOUND_BORN_RULE_NULL_CONE.md` (Born rule null-cone geometry declined under FC-1) | [CLOSED DECLINED] | — | — |
 | Existence | `FOUND_THE_EXISTENCE_FILTER.md` (Existence filter open items declined under FC-1) | [CLOSED DECLINED] | — | — |
 
-**Sources:** SPEC_DOCTRINE_LEDGER.md §1, §7; LEDGER FTD-0023; AUDIT_WEAKNESSES_MASTER.md W-CRIT-3, W-CRIT-4; TRACKER_OPEN_ITEMS.md §§2.10, 5.1–5.6.
+**Sources:** SPEC_DOCTRINE_LEDGER.md §1, §7; LEDGER FTD-0023; `../../../evaluation/AUDIT_WEAKNESSES_MASTER.md` W-CRIT-3, W-CRIT-4; TRACKER_OPEN_ITEMS.md §§2.10, 5.1–5.6.
 
 ---
 
@@ -216,9 +218,9 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** ΛCDM-relevant predictions; inflation; dark matter; cosmic structure.
 
-**Status snapshot:** Most cosmology predictions sit at [SELECTION] or [PARAMETRIC]. Per the 18-evaluation review (`AUDIT_WEAKNESSES_MASTER.md` W-COSMO 1–7): inflaton ad hoc; dark matter mechanism inconsistent; first-order EW transition assumed; `Λ = α^57` numerology without mechanism; no power spectrum/BAO predictions; NFW halo not derived.
+**Status snapshot:** Most cosmology predictions sit at [SELECTION] or [PARAMETRIC]. Per the 18-evaluation review (`../../../evaluation/AUDIT_WEAKNESSES_MASTER.md` W-COSMO 1–7): inflaton ad hoc; dark matter mechanism inconsistent; first-order EW transition assumed; `Λ = α^57` numerology without mechanism; no power spectrum/BAO predictions; NFW halo not derived.
 
-> **Imported-content audit note (2026-05-08, W2.7).** §8 is the **most W-CRIT-1-vulnerable sector in the framework**: every cosmology entry is standard ΛCDM apparatus filled with FTD numerology, with the least substrate-derivation backing of any sector. Specifically: `Λ = α^57` is paradigm circularity (an FTD constant raised to a power chosen to match observation, with no substrate constraint on the exponent); inflaton-as-mean-flux is identification without dynamics; dark matter "mechanism inconsistent" indicates the W-COSMO-2 finding has not been resolved; NFW halo not derived (NFW is a phenomenological fit, and FTD currently neither derives nor contests it); power spectrum + BAO predictions are absent. Compared to §1 (algebraic-spine; theorems-grade), §2 (EM/α; conjecture with structural-uniqueness backing), §6 (gravity; partial closure FTD-0131), §8 stands out as **the sector where the most external structure has been imported without substrate justification** — and per the §13 doctrine non-circularity audit, this concentrates W-CRIT-1 risk. Closing W-COSMO-1 through W-COSMO-6 would require a substantive cosmological substrate-derivation program of multi-month-RP scale; in the meantime, manuscript chapters citing cosmological predictions should explicitly distinguish "imported ΛCDM apparatus + FTD numerology" from "substrate-derived". Cross-link: AUDIT_WEAKNESSES_MASTER.md W-COSMO-1 through W-COSMO-7.
+> **Imported-content audit note (2026-05-08, W2.7).** §8 is the **most W-CRIT-1-vulnerable sector in the framework**: every cosmology entry is standard ΛCDM apparatus filled with FTD numerology, with the least substrate-derivation backing of any sector. Specifically: `Λ = α^57` is paradigm circularity (an FTD constant raised to a power chosen to match observation, with no substrate constraint on the exponent); inflaton-as-mean-flux is identification without dynamics; dark matter "mechanism inconsistent" indicates the W-COSMO-2 finding has not been resolved; NFW halo not derived (NFW is a phenomenological fit, and FTD currently neither derives nor contests it); power spectrum + BAO predictions are absent. Compared to §1 (algebraic-spine; theorems-grade), §2 (EM/α; conjecture with structural-uniqueness backing), §6 (gravity; partial closure FTD-0131), §8 stands out as **the sector where the most external structure has been imported without substrate justification** — and per the §13 doctrine non-circularity audit, this concentrates W-CRIT-1 risk. Closing W-COSMO-1 through W-COSMO-6 would require a substantive cosmological substrate-derivation program of multi-month-RP scale; in the meantime, manuscript chapters citing cosmological predictions should explicitly distinguish "imported ΛCDM apparatus + FTD numerology" from "substrate-derived". Cross-link: `../../../evaluation/AUDIT_WEAKNESSES_MASTER.md` W-COSMO-1 through W-COSMO-7.
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
@@ -230,7 +232,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | W-COSMO-6 | NFW halo profile: not derived | [OPEN] | RP | — |
 | stellar | `DERIV_STELLAR_LIFECYCLE_LATTICE.md` 3 [OPEN] | [OPEN] | M–RP | §6 |
 
-**Sources:** AUDIT_WEAKNESSES_MASTER.md W-COSMO; TRACKER_OPEN_ITEMS.md §2.7.
+**Sources:** `../../../evaluation/AUDIT_WEAKNESSES_MASTER.md` W-COSMO; TRACKER_OPEN_ITEMS.md §2.7.
 
 ---
 
@@ -238,20 +240,20 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Scope:** Connecting algebraic spine theorems to engine empirical observations. The bridge that makes engine-as-instrument scientifically forceful rather than confirmation-bias-prone.
 
-**Status snapshot:** Bridge exists at linear level (FTD-0110 `k = 1/N_base = 1/4` [DERIVED via O_h A_{1g} multiplicity], 2026-04-28). 1/5 closed; 3/5 NOT CLOSED; 1/5 BLOCKED.
+**Status snapshot:** Bridge exists at linear level (FTD-0110 `k = 1/N_base = 1/4` [DERIVED via O_h A_{1g} multiplicity], 2026-04-28). Later current-stack campaigns resolved L128-G2 and closed the exact `1/4` nonlinear scaling question negative; the live bridge gap is now the FTD-0269 boundary: the engine reproduces the N(A) law's shape, but its calibration depends on non-framework engine constants (0.5 kinetic drain + Langevin friction γ).
 
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| **MC-T3.1** | FTD-0110 nonlinear bridge perturbation theorem. Mechanism γ crossover scale `A* = 12.8` matches empirical drift midpoint; **predicted slope `−1/A* ≈ −0.077` does NOT match empirical `−0.030` (~2.5× off)**. Discriminator experiments D3a–D3d on WSL2 RTX 5090 (~2 weeks GPU). Risk: HIGH — Mechanisms α + β already FALSIFIED | [OPEN] | M | — |
+| **MC-T3.1** | FTD-0110 nonlinear bridge / N(A) law. FTD-0269 boundary map: framework-derived dynamics reproduce the law's shape (broken power, knee, Gauss boost), but calibration is set by non-framework engine constants; closure would require deriving the 0.5 kinetic drain + Langevin γ from the action, or showing they are convention. | [OPEN — boundary mapped] | M | — |
 | **MC-T3.4** | Bridge Functional arithmetic-mean rule (FTD-0095): four candidate functionals (arithmetic / geometric / harmonic / quadratic mean) on master quadratic spectrum indistinguishable at available precision (~10–20% relative differences). Three closure routes (variational on σ_BCC, 't Hooft beable, Beilinson regulator) all research-program-scale | [OPEN] | M | — |
-| MC-T3.5 | FTD-0110 multi-scale boundary-correction closure | [BLOCKED] | M | MC-T3.1 |
-| L128-G2 | L=128 G2 follow-up to FTD-0107 — engine-side L-invariance test (32, 64, 128). Pre-registration template ready | [OPEN] | D–W | — |
-| FTD-0110-NL | Linear→nonlinear bridge proof: instrument engine to log per-irrep energy fractions during steady-state run, verify {3/8, 1/8, 3/8, 1/8} A_{1g} distribution holds within Langevin-noise envelope. Closing this promotes FTD-0110's main claim from [STRONGLY MOTIVATED CONJECTURE] to [DERIVED]/[THEOREM]-grade | [OPEN] | W–M | — |
+| MC-T3.5 | FTD-0110 multi-scale boundary-correction closure. Historical exact-`1/4` nonlinear scaling target is superseded by the FTD-0261/0263/0269 current-stack law; exact current-stack `k = 0.25` is closed negative. | [CLOSED NEGATIVE / SUPERSEDED] | closed | MC-T3.1 |
+| L128-G2 | L=128 G2 follow-up to FTD-0107 — engine-side L-invariance test (32, 64, 128). GPU-native campaign confirmed Outcome B and locked L-invariance. | [RESOLVED 2026-05-26] | closed | — |
+| FTD-0110-NL | Current-stack collective-coordinate proof: derive the engine-emergent N(A) calibration, including the 0.5 kinetic drain and Langevin γ, or prove these are conventions rather than physics. FTD-0277 v1 closes the simple slosh-pass/static-gating counting route negative (pure A², 20–40× high, wrong geometry); successor attempts must be freshly pre-registered. | [OPEN — boundary mapped; v1 counting CLOSED NEGATIVE] | W–M | MC-T3.1 |
 | FTD-0298-SOUND | Condensate compression (acoustic-like) mode: FTD has light but no acoustic Goldstone (the lattice *is* space — no spontaneously broken translation symmetry; FTD-0298 §5). The only candidate sound-analog is a propagating compression mode of the FTD-0272 manifested-condensate phase. First-order genesis argues against a gapless mode, but the bulk condensate is a real medium — instrument the engine for a propagating density/compression wave in the manifested phase | [CLOSED — BOUNDARY (FTD-0299: probe = NULL, no acoustic branch)] | W–M | FTD-0272 |
 
-**Closed (sector context):** MC-T3.2 m_e exponent `n = 11` [DERIVED] (2026-05-02); MC-T3.3 (SC+FCC)/2  BCC bridge — **closed-negative for identity** (no Watson-integral identity), **closed-positive for symmetry** (shared O_h symmetry forces leading-order agreement); 25-voxel cluster size at canonical amplitude A=10 [DERIVED at linear level] (FTD-0110 closure 2026-04-28).
+**Closed (sector context):** MC-T3.2 m_e exponent `n = 11` [DERIVED] (2026-05-02); MC-T3.3 (SC+FCC)/2  BCC bridge — **closed-negative for identity** (no Watson-integral identity), **closed-positive for symmetry** (shared O_h symmetry forces leading-order agreement); 25-voxel cluster size at canonical amplitude A=10 [DERIVED at linear level] (FTD-0110 closure 2026-04-28); L128-G2 resolved 2026-05-26; exact nonlinear `1/4` current-stack scaling closed negative 2026-06-10.
 
-**Sources:** SPEC_DOCTRINE_LEDGER.md §13.5; `DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`; LEDGER FTD-0107, FTD-0110, FTD-0095; TRACKER_OPEN_ITEMS.md §7.7.
+**Sources:** SPEC_DOCTRINE_LEDGER.md §13.5; `../03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md`; `../03_derivations/foundational_mechanics/ANALYSIS_NA_LAW_CURRENT_STACK_v1.md`; `../03_derivations/foundational_mechanics/ANALYSIS_FTD0110_NA_LAW.md`; LEDGER FTD-0107, FTD-0110, FTD-0095; TRACKER_OPEN_ITEMS.md §7.7.
 
 ---
 
@@ -265,14 +267,16 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 
 **Update 2026-06-01 (FTD-0242):** the operator-forcing question (W-CRIT-2) was sharpened to a **route-invariant boundary**. Four independent FTD-native routes — J-twisted ζ-determinant, BCC body-diagonal transfer operator, lemniscatic CM arithmetic of `E: y²=x³−x`, and a forced variational/period-ring/K-theory channel — were each force-attempted then adversarially refuted: **0 of 4 forced** (`cleanForcedRoutes = []`). Forward-forced `[DERIVED]`: the trace `16G*²` and the existence of a clean FTD-native odd source (`det_ζ(D_{3/4})/det_ζ(D_{1/4}) = G*`, which genuinely lifts the bare parity no-go so `16G*³ = 16G*²·G*` is *assemblable*). **Not** forced: the operator assembly itself — for a 2×2, trace and determinant are independent invariants, so the det_ζ ratio supplies the odd scalar but forces neither the gluing nor that it lands in the determinant slot (the imposed master-quadratic Vieta target). Conclusion: **α is dynamical, not structural**; the boundary is `[STRONGLY MOTIVATED CONJECTURE no-go]`, **not** `[THEOREM]` (RSI Leg 3 stays open). MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`; `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; no spine tag moved. See `../07_assessment/audits/AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md` (FTD-0242).
 
+**Update 2026-06-10 (FTD-0244):** K-BIND is now closed theorem-negative for the axiomatized substrate-native operator calculus `𝔠`. Trace and determinant data of every operator in `𝔠` remain in Q(G\*), while the master quadratic's root-splitting field is a degree-2 extension. Therefore no current substrate-native operator can force `(Tr,Det)=(16G*²,16G*³)` or select the physical root without an external W-like selection. This **closes W-CRIT-2's operator-forcing version**; it does not derive α and does not move FTD-0013 above `[STRONGLY MOTIVATED CONJECTURE]`.
+
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
-| **MC-T4.3** | **Algebraic-spine  physical electromagnetic readout mechanism. Central FTD claim.** `SPEC_ALPHA_READOUT_CONTRACT.md` formalizes the closure contract: specify `(P, A_obs, O_EM, R, C)` before target-checking; avoid alpha input; survive structural-decoupling diagnostics; explain why the output is an operational EM coupling rather than a distinguished number. Candidate mechanisms: boundary-condition / observable-selection / quantization-readout / discrete-native measurement. Prior on near-term closure: low | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
+| **MC-T4.3** | **Algebraic-spine  physical electromagnetic readout mechanism. Central FTD claim.** `SPEC_ALPHA_READOUT_CONTRACT.md` formalizes the closure contract: specify `(P, A_obs, O_EM, R, C)` before target-checking; avoid alpha input; survive structural-decoupling diagnostics; explain why the output is an operational EM coupling rather than a distinguished number. All current action/operator/readout routes are exhausted or boundary-mapped; surviving positive exits are a new W-like commitment or fresh ARC-D measurement. | **[FOUNDATIONAL OBSTRUCTION]** | **FO** | MC-T4.1, MC-T4.2 |
 | MC-T4.1 | Two-layer ontology axiomatization. **Reframed 2026-05-02 to documentation alignment** — substantive ontology already J-primary via SPEC_FTD.md §1.1 graded-monism table + Genesis rule. Postulate 3 textual update remaining | [OPEN — documentation] | D | — |
 | MC-T4.2 | Phase-2 EFT non-Gaussian flow at `b ≥ 4`. Gates 6/7 of bridge contract. Phase-2 b=4, b=8 measurements show Gaussian fixed point holding within 1σ; non-Gaussian mixing matrix uncomputed | [OPEN] | M–RP | — |
-| FTD-0096-mass | µ-from-ℓ_P missing arrow (mass-unit version): mass-unit derivation from `ℓ_P` without passing through `m_e`. The LENGTH analogue is [CLOSED THEOREM-NEGATIVE]; the MASS-UNIT version is still [OPEN] | [OPEN] | M | — |
+| FTD-0096-mass | µ-from-ℓ_P missing arrow: mass-unit derivation from `ℓ_P` without passing through `m_e`. The type-theoretic no-go closes both the length analogue and mass-unit version; μ remains an external calibration. | [CLOSED THEOREM-NEGATIVE] | closed | — |
 | W-CRIT-1 | **Circularity in framework integer identification.** Integers `{N_c=3, N_base=4, b_3=7, N_eff=13}` selected knowing target physics values. Constraint 11 of gtca: LEDGER tagging is not resolution. A reviewer who insists "you must derive these from axioms or the framework is empty" cannot be answered by current structural-uniqueness scans alone | [OPEN methodological] | (closes if MC-T4.3 closes) | MC-T4.3 |
-| W-CRIT-2 | **Master quadratic imposed not derived.** Same root cause as W-CRIT-1; OT-3.3 polynomial-shape uniqueness is structural-uniqueness evidence, not derivation | [OPEN methodological] | (closes if MC-T4.3 closes) | MC-T4.3 |
+| W-CRIT-2 | **Master quadratic operator assembly imposed not derived.** Closed theorem-negative for current substrate-native operator forcing by FTD-0244; the accepted boundary is that α remains dynamical, not structural, unless a new W-like commitment or ARC-D path is added. | [CLOSED THEOREM-NEGATIVE / ACCEPTED BOUNDARY] | closed | MC-T4.3 |
 
 ## §10.1 · MC-T4.3 Candidate Mechanism Decomposition (2026-05-18)
 
@@ -286,10 +290,10 @@ rules before it can affect the `x_+ <-> 1/alpha` tag.
 
 | Candidate | Formal target | Immediate falsifier | Tag |
 |---|---|---|---|
-| **A. Boundary-condition readout** | Specify a finite/undefined-boundary condition on the FTD lattice whose self-consistency spectrum has the master-quadratic root as the unique admissible electromagnetic readout. The rule must be stated without `α` or CODATA constants. | The boundary rule either has a free tunable parameter equivalent to `α`, or admits multiple comparable roots/readouts. | [OPEN] |
+| **A. Boundary-condition readout** | Specify a finite/undefined-boundary condition on the FTD lattice whose self-consistency spectrum has the master-quadratic root as the unique admissible electromagnetic readout. The rule must be stated without `α` or CODATA constants. | The boundary rule either has a free tunable parameter equivalent to `α`, or admits multiple comparable roots/readouts. | [CLOSED NEGATIVE 2026-05-26 for ARC-A1] |
 | **B. Observable-selection readout** | Define an FTD-native observable algebra or reference frame projection whose distinguished eigenmode is `x_+`, and show why that observable is what scattering/charge measurements access. | The selected observable is merely post-hoc, or cannot be tied to an operational measurement protocol. | [CLOSED-NEGATIVE 2026-05-23 for primary catalog items per AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md (FTD-0205)] |
-| **C. Quantization/readout rule** | Derive a discrete measurement rule that maps the FQCR/master-quadratic dominant eigenvalue to `g_c²` or `α` without passing through a continuous-QFT action. | The rule reduces to `g_c` insertion, imported QED normalization, or an already-closed topological/action route. | [OPEN] |
-| **D. Discrete-native measurement path** | Bypass continuous-QFT reconstruction and compare engine-native cluster interaction/lifetime/spectrum observables directly to measured quantities. | The engine observable is not L-stable, calibration-independent, or operationally tied to an experiment. | [OPEN] |
+| **C. Quantization/readout rule** | Derive a discrete measurement rule that maps the FQCR/master-quadratic dominant eigenvalue to `g_c²` or `α` without passing through a continuous-QFT action. | The rule reduces to `g_c` insertion, imported QED normalization, or an already-closed topological/action route. | [BOUNDARY / K-BIND operator route CLOSED THEOREM-NEGATIVE 2026-06-10] |
+| **D. Discrete-native measurement path** | Bypass continuous-QFT reconstruction and compare engine-native cluster interaction/lifetime/spectrum observables directly to measured quantities. | The engine observable is not L-stable, calibration-independent, or operationally tied to an experiment. | [OPEN; ARC-D1 CLOSED NEGATIVE] |
 
 **Closure criterion for all four:** a successful mechanism must (1) be
 stated before checking the target value, (2) avoid α as an input, (3)
@@ -306,9 +310,9 @@ not merely a distinguished algebraic number.
 | FTD-0125 (Phase I) | Dynamical V(r) | Engine V(r) does not carry `G_C²`; gauss-projection erases longitudinal `G_C` every tick |
 | FTD-0126 (Phase II) | Matter-sector vertex | Wilson-Dirac + fixed B-field: `a_e` rel_err 683.95 vs Schwinger; outcome C |
 
-**Sources:** SPEC_DOCTRINE_LEDGER.md §13.5; `FOUND_STRUCTURAL_DECOUPLING.md` (FTD-0129 [SYNTHESIS]); LEDGER FTD-0004, FTD-0005, FTD-0096, FTD-0125, FTD-0126, FTD-0129; AUDIT_WEAKNESSES_MASTER.md W-CRIT-1, W-CRIT-2.
+**Sources:** SPEC_DOCTRINE_LEDGER.md §13.5; `../02_foundations/FOUND_STRUCTURAL_DECOUPLING.md` (FTD-0129 [SYNTHESIS]); `../10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md` (FTD-0244); LEDGER FTD-0004, FTD-0005, FTD-0096, FTD-0125, FTD-0126, FTD-0129; `../../../evaluation/AUDIT_WEAKNESSES_MASTER.md` W-CRIT-1, W-CRIT-2.
 
-**Candidate B pre-registration (2026-05-23):** the design of the first closure attempt against Candidate B is locked in [`../10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../10_eft_program/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md), git tag `preregister-alpha-readout-observable-selection-v1`, LEDGER row FTD-0198 [PRE-REGISTRATION]. The pre-reg locks the question, the FTD-native non-site-local observable catalog (state field, flux field + dual substrate, bilinear link observables, plaquette bivectors, Wilson-loop traces, boundary-to-boundary transfer observables, reference frame projections), the MC-T4.3 contract benchmark, three pre-blessed outcomes (FOUND / UNDERDETERMINED / CLOSED-NEGATIVE), the falsifier F-a..F-j, the banned moves, and the 11-step method. **Closure attempts executed (2026-05-23):** The closure attempts for the three primary catalog items (plaquette bivectors, boundary-to-boundary transfer, and reference frame projections) were executed per the pre-reg's 11-step method. All three attempts resulted in a **CLOSED-NEGATIVE** verdict by categorical structural mismatch (FTD-0205, see companion audit synthesis `AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md`). The FTD-native discrete lattice spectrum is mathematically of a different category than the lemniscatic-curve periods. No spine tag moves; FTD-0013 status unchanged.
+**Candidate B pre-registration (2026-05-23):** the design of the first closure attempt against Candidate B is locked in [`../10_eft_program/preregistrations/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md`](../10_eft_program/preregistrations/PREREG_ALPHA_READOUT_OBSERVABLE_SELECTION_v1.md), git tag `preregister-alpha-readout-observable-selection-v1`, LEDGER row FTD-0198 [PRE-REGISTRATION]. The pre-reg locks the question, the FTD-native non-site-local observable catalog (state field, flux field + dual substrate, bilinear link observables, plaquette bivectors, Wilson-loop traces, boundary-to-boundary transfer observables, reference frame projections), the MC-T4.3 contract benchmark, three pre-blessed outcomes (FOUND / UNDERDETERMINED / CLOSED-NEGATIVE), the falsifier F-a..F-j, the banned moves, and the 11-step method. **Closure attempts executed (2026-05-23):** The closure attempts for the three primary catalog items (plaquette bivectors, boundary-to-boundary transfer, and reference frame projections) were executed per the pre-reg's 11-step method. All three attempts resulted in a **CLOSED-NEGATIVE** verdict by categorical structural mismatch (FTD-0205, see companion audit synthesis [`../10_eft_program/archive/closed_negative/AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md`](../10_eft_program/archive/closed_negative/AUDIT_ALPHA_READOUT_OBSERVABLE_SELECTION_CLOSED_NEGATIVE_SYNTHESIS.md)). The FTD-native discrete lattice spectrum is mathematically of a different category than the lemniscatic-curve periods. No spine tag moves; FTD-0013 status unchanged.
 
 ---
 
@@ -326,8 +330,6 @@ Effort: D (scan execution; analysis already templated).
 
 ```
 §1 spine completion
-   MC-T1.1-ext  ── (no deps)
-   MC-T2.3-4    ── (no deps)
    δ_c          ── (no deps)
 
 §2 EM / α
@@ -336,8 +338,6 @@ Effort: D (scan execution; analysis already templated).
    §7-dirac     ── needs §7-bivector
    §7-loop      ── needs MC-T4.3
    §7-qed       ── needs §7-dirac
-   α-from-CM    ── (no deps)
-   α-lattice    ── needs α-from-CM
 
 §3 EW / Higgs
    §8-running   ── (no deps)
@@ -354,8 +354,7 @@ Effort: D (scan execution; analysis already templated).
    quark-mass   ── needs §10-depths
 
 §6 gravity
-   §12-postulates ── (no deps)
-   §12-beyond-N   ── needs §12-postulates
+   §12-beyond-N   ── conditional on clock-hypothesis AXIOM
    §12-EP, §12-mgcurv, BH, MC-T4.4 ── (no deps)
 
 §7 QM foundations: all (no deps) except Bell-mech needs W-CRIT-4
@@ -365,24 +364,23 @@ Effort: D (scan execution; analysis already templated).
    stellar      ── needs §6
 
 §9 engine  algebra
-   MC-T3.1      ── (no deps; supports MC-T3.5)
+   MC-T3.1      ── (no deps; boundary mapped by FTD-0269)
    MC-T3.4      ── (no deps)
-   MC-T3.5      ── BLOCKED on MC-T3.1   [FTD-0110 multi-scale boundary correction; §9 engine-bridge]
    MC-T3.6      ── (no deps)             [β-coefficient substrate-derivation; §3 EW; new ID 2026-05-08 per W2.5]
-   L128-G2      ── (no deps)
-   FTD-0110-NL  ── (no deps)
+   FTD-0110-NL  ── needs MC-T3.1 current-stack calibration derivation
 
 §10 foundational
    MC-T4.3      ── critical path; ontology-extension question
    MC-T4.1      ── doc-alignment, no deps
    MC-T4.2      ── (no deps; provides input to MC-T4.3)
-   W-CRIT-1, 2  ── close if MC-T4.3 closes
+   W-CRIT-1     ── broad methodological challenge; not closed by W-CRIT-2
+   W-CRIT-2     ── closed theorem-negative for current operator forcing (FTD-0244)
 ```
 
 **Critical paths:**
 
-- **Spine-complete:** §1 items are (no deps); all parallelisable. Estimate: ~3–6 weeks total small-team focused.
-- **Engine-bridge-complete:** MC-T3.1 → MC-T3.5 → MC-T3.4 (with MC-T3.4 in parallel). Estimate: ~2 months focused engine + theory.
+- **Spine-complete:** δ_c is the remaining small pure-math gap.
+- **Engine-bridge-complete:** MC-T3.1 / FTD-0110-NL current-stack calibration derivation plus MC-T3.4 (parallel). Estimate: ~2 months focused engine + theory.
 - **Bridge-complete (full):** MC-T4.1 → MC-T4.2 → MC-T4.3, with MC-T4.3 carrying foundational-obstruction risk that could halt closure indefinitely. **Unbounded.**
 
 **Paper A is publishable from the current "complete" set** — none of §10's foundational items are required. §1 spine completion + §2 §7 § structural-uniqueness scans are sufficient.
@@ -399,7 +397,7 @@ These are explicit no-go results. Re-attempting them without new structural insi
 | FTD-0050 | §1, §2 | Master quadratic as RG-step characteristic polynomial; engine stencil orthogonal to BCC |
 | FTD-0073 | §2, §7 | Site-local Clifford on finite blocks; mode-erasure theorem constrains §7 doctrine bridge sector |
 | FTD-0094 | §2 | L2 candidate identity `2·m_e/α = 16G*²` [PARAMETRIC] terminal |
-| FTD-0096 (length) | §10 | µ-from-ℓ_P LENGTH analogue [CLOSED THEOREM-NEGATIVE]; mass-unit version still OPEN |
+| FTD-0096 | §10 | µ-from-ℓ_P missing-arrow length and mass-unit versions [CLOSED THEOREM-NEGATIVE]; μ remains an external calibration |
 | FTD-0116 | §2 | Z-factor reading falsified via Q4a numerical test |
 | FTD-0131 (1/100) | §6 | Framework-integer `G_N = 1/(b_3 + N_c)² = 1/100` reading off by 2.5 to 43 orders of magnitude |
 | FTD-0035 | §6 | Mechanism γ gravitational `a_phys` derivation closed; calibration `a_phys ≡ ℓ_P` recommended |
@@ -407,6 +405,8 @@ These are explicit no-go results. Re-attempting them without new structural insi
 | FTD-0018, FTD-0019, FTD-0020, FTD-0021, FTD-0022 | §3, §4 | sin²θ_W = 3/13, sin²θ_13 = 1/52, α_s = 7/59, PMNS angles, 7-term α series — all retagged [PARAMETRIC] or [STRUCTURALLY MOTIVATED PARAMETRIC] in 2026-04-19 demotion wave |
 | FTD-0042, FTD-0043 | §4, §7 | Yang-Mills mass gap and Navier-Stokes regularity papers RETRACTED 2026-04-19; FTD-0044 per-voxel mass gap survives as the load-bearing residual theorem |
 | FTD-0079 | §1, §9 | (SC+FCC)/2  BCC Watson-integral identity (no exact identity exists; finite-L stencil mismatch ~3% bounds engine accuracy) |
+| FTD-0208 | §6 | Clock-hypothesis L² budget substrate derivation closed negative; clock hypothesis retained as coordinate-level AXIOM |
+| FTD-0244 | §2, §10 | K-BIND / operator-calculus route closed theorem-negative; no substrate-native operator forces the master-quadratic assembly |
 
 For complete closed-negative provenance see `LEDGER.md` per-row entries.
 
@@ -444,4 +444,4 @@ When refreshing, increment the version line in the header (v1.0 → v1.1). When 
 
 # §16 · Single-line summary
 
-**Open math, sector-organised: §1 spine has 2 small gaps (`d=−4` structural theorem, `δ_c` closed form) post-2026-05-23 closure of `L≥3` ultralocality as DISCONFIRMED; §2 EM/α centers on MC-T4.3 (foundational obstruction, central FTD claim) plus the §7 bivector/Dirac bridge sector all OPEN per FTD-0073; §3 EW has GUT→IR running and `χ_H`; §4 QCD has confinement substrate with structural obstruction recognised; §5 flavor has depth matrices [PARAMETRIC scaffold] and `m_e` prefactor; §6 gravity has **1 flagged interpretive step of FTD-0131 (clock hypothesis; v1 attempt UNDERDETERMINED, v2 attempt INVALIDATED on process + substance, v3 pre-reg queued)** + Arc C2 spin-2 boundary theorem free-theory derivation landed + pre-reg locked (FTD-0209) + 11 lattice-BH items + general-motion LW; §7 QM-foundations has Bell mechanism and Lorentz recovery as the load-bearing items; §8 cosmology is mostly [SELECTION]/[PARAMETRIC] with 6 W-COSMO weaknesses; §9 engine-bridge has MC-T3.1 nonlinear slope mismatch (~2.5×) and MC-T3.4 four-mean indistinguishability; §10 cross-cutting carries MC-T4.3 (the central foundational obstruction) + MC-T4.1 doc + MC-T4.2 + W-CRIT-1/2 methodological challenges; 2 pre-registered closure attempts (FTD-0143 scan + FTD-0209 spin-2 boundary theorem) hash-locked, FTD-0208 v3 pre-reg queued; ~10 closed-negative items preserved for provenance.**
+**Open math, sector-organised: §1 spine has one small pure-math gap (`δ_c` closed form); §2 EM/α centers on MC-T4.3 after K-BIND closed theorem-negative (positive exits now require W-like commitment or fresh ARC-D) plus the §7 bivector/Dirac bridge sector all OPEN per FTD-0073; §3 EW has GUT→IR running and `χ_H`; §4 QCD has confinement substrate with structural obstruction recognised; §5 flavor has depth matrices [PARAMETRIC scaffold] and `m_e` prefactor; §6 gravity keeps beyond-leading-order GR, EP, curvature-source, lattice-BH, and general-motion LW open while the clock hypothesis is now [CLOSED NEGATIVE, AXIOM-LEVEL]; §7 QM-foundations has Lorentz recovery as the live load-bearing item after FC-1 declines Hilbert/Bell recovery targets; §8 cosmology is mostly [SELECTION]/[PARAMETRIC] with 6 W-COSMO weaknesses; §9 engine-bridge has the FTD-0269 current-stack nonlinear N(A) calibration boundary, FTD-0277 v1 counting closed negative, and MC-T3.4 four-mean indistinguishability; §10 cross-cutting carries MC-T4.3 + MC-T4.1 doc + MC-T4.2 + W-CRIT-1, while W-CRIT-2 is closed theorem-negative for current operator forcing; 1 pre-registered scan (FTD-0143) remains awaiting execution; closed-negative provenance now includes FTD-0208, FTD-0244, and FTD-0277 v1.**

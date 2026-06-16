@@ -42,10 +42,11 @@ function renderZoo() {
     const categories = getCategories();
     const catOrder = Object.entries(categories).sort((a, b) => a[1].order - b[1].order);
 
-    let html = `<table class="zoo-table"><thead><tr>
-        <th></th><th>Symbol</th><th>Name</th><th>Mass</th>
-        <th>Charge</th><th>Spin</th><th>FTD Formula</th><th>Acc.</th><th></th>
-    </tr></thead><tbody>`;
+    // Two-line cards (was a 9-column table). Each particle is an identity line
+    // (dot · symbol · name · accuracy · inject) over a data line (mass · charge ·
+    // spin · FTD formula). Flexible fields ellipsis so nothing overflows the
+    // panel width at any mount size.
+    let html = '<div class="zoo-cards">';
 
     for (const [catId, catMeta] of catOrder) {
         if (_filterCat !== 'all' && _filterCat !== catId) continue;
@@ -58,8 +59,8 @@ function renderZoo() {
         });
         if (particles.length === 0) continue;
 
-        // Category header
-        html += `<tr class="zoo-cat-header"><td colspan="9" style="border-color:${catMeta.color};color:${catMeta.color}">${catMeta.label} (${particles.length})</td></tr>`;
+        // Category divider
+        html += `<div class="zoo-cat-header" style="border-color:${catMeta.color};color:${catMeta.color}">${catMeta.label} (${particles.length})</div>`;
 
         for (const p of particles) {
             const [r, g, b] = p.display_color;
@@ -70,21 +71,31 @@ function renderZoo() {
                              'color:var(--text-muted)';
             const canInject = _engineMode === 'particles' && p.charge !== 0 && p.mass_mev > 0;
 
-            html += `<tr>
-                <td><span class="zoo-dot" style="background:${dotColor}"></span></td>
-                <td class="zoo-symbol">${p.symbol}</td>
-                <td>${p.name}</td>
-                <td class="zoo-mass">${formatMass(p.mass_mev)}</td>
-                <td>${chargeLabel(p.charge)}</td>
-                <td>${p.spin}</td>
-                <td class="zoo-formula" title="${p.ftd_formula}">${truncate(p.ftd_formula, 30)}</td>
-                <td class="zoo-accuracy" style="${accClass}">${accStr}</td>
-                <td><button class="zoo-inject-btn" data-particle="${p.id}" title="Inject ${p.name}" ${canInject ? '' : 'disabled'}>+</button></td>
-            </tr>`;
+            html += `<div class="zoo-card">
+                <div class="zoo-card-line1">
+                    <span class="zoo-dot" style="background:${dotColor}"></span>
+                    <span class="zoo-symbol">${p.symbol}</span>
+                    <span class="zoo-name">${p.name}</span>
+                    <span class="zoo-accuracy" style="${accClass}" title="FTD-predicted mass deviation vs measured (yellow = strongly-motivated conjecture, grey = parametric)">${accStr}</span>
+                    <button class="zoo-inject-btn" data-particle="${p.id}" title="Inject ${p.name}" ${canInject ? '' : 'disabled'}>+</button>
+                </div>
+                <div class="zoo-card-line2">
+                    <span class="zoo-mass" title="Measured (PDG) rest mass; electron uses the FTD anchor m_e = 0.511 MeV">${formatMass(p.mass_mev)}</span>
+                    <span class="zoo-meta">q ${chargeLabel(p.charge)}</span>
+                    <span class="zoo-meta">spin ${p.spin}</span>
+                    <span class="zoo-formula" title="FTD-predicted mass formula (motivating match, not a derivation): ${p.ftd_formula}">${p.ftd_formula || '--'}</span>
+                </div>
+            </div>`;
         }
     }
 
-    html += '</tbody></table>';
+    html += '</div>';
+    html += `<p class="zoo-note" style="font-size:11px;color:var(--text-muted);margin:6px 4px 0;line-height:1.4;">
+        <strong>Mass</strong> is the measured (PDG) value (electron = FTD anchor m_e).
+        <strong>FTD Formula</strong> + <strong>Acc.</strong> are FTD's <em>prediction</em> and its deviation —
+        motivating matches, not derivations. Colour: <span style="color:var(--warning)">yellow</span> = [SELECTION]/strongly-motivated conjecture,
+        grey = [PARAMETRIC]. No Standard-Model mass is currently [DERIVED].
+    </p>`;
     container.innerHTML = html;
 
     // Bind inject buttons
@@ -115,9 +126,4 @@ function injectFromZoo(particleId) {
     const charge = p.charge > 0 ? 1 : p.charge < 0 ? -1 : 0;
 
     _bridge.peAddParticle(p.id, charge, x, y, z, vx, vy, vz, p.mass_mev, 0.1);
-}
-
-function truncate(s, len) {
-    if (!s) return '--';
-    return s.length > len ? s.substring(0, len - 1) + '\u2026' : s;
 }

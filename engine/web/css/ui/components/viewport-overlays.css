@@ -495,9 +495,15 @@
         width: 32px;
         height: 32px;
     }
-    /* The viewport remains a stacking context, children are absolutely positioned */
+    /* Full-bleed canvas: no padding so the WebGL canvas fills the entire viewport
+       cell (full width, and full height below the toolbar) and runs edge-to-edge
+       behind the floating bottom sheet. The old `12px 12px 140px` inset existed to
+       keep the canvas above the docked bottom panel/play-bar; the sheet now floats
+       over the canvas, so the inset only shrank it. Overlays/legends inside are
+       absolutely positioned, so they are anchored to the viewport edges regardless
+       of padding and are unaffected by this change. */
     #viewport {
-        padding: 12px 12px 140px 12px;
+        padding: 0;
         overflow: hidden !important; /* Prevent canvas from scrolling */
         pointer-events: none; /* Let touches hit the 3D canvas */
     }

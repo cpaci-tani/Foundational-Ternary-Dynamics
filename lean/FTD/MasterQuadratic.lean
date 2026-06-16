@@ -17,8 +17,6 @@ open FTD
 -- Compute all master quadratic values and verify every claim
 #eval do
   let g := Gstar_f
-  let s := 16 * g  -- S = |Aut(E)|² × G* in normalized form
-
   -- Master quadratic coefficients (unnormalized)
   let B := 16 * g * g          -- coefficient of x
   let C := 16 * g * g * g      -- constant term
@@ -49,7 +47,7 @@ open FTD
   -- Cloud boundary
   let kCrit := 4.0 / g
 
-  -- CODATA comparison
+  -- Legacy CODATA comparison (not a proof of the physical bridge)
   let codata := 137.035999177
   let devPpm := Float.abs (xPlus - codata) / codata * 1e6
 
@@ -120,7 +118,7 @@ open FTD
   IO.println s!"  4-term value = {prec4}"
   IO.println s!"  4-term deviation = {precDev}"
   IO.println ""
-  IO.println "─── PHYSICAL COMPARISON ───"
+  IO.println "─── LEGACY PHYSICAL COMPARISON (not a proof) ───"
   IO.println s!"  x+     = {xPlus}"
   IO.println s!"  CODATA = {codata}"
   IO.println s!"  Leading deviation = {devPpm} ppm"

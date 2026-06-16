@@ -32,7 +32,7 @@
  * CTX object:
  *   { bridge, viewport, constants: { me, mp, mmu, mn, mpi, mK, mtau, mW,
  *     mSig, mOmg, mDel, RE, ALPHA_PE, soft2, orbitalV, BH_MASS,
- *     BH_TEST_MASS, BH_HORIZON_R, G_N, C_SPEED } }
+ *     BH_TEST_MASS, BH_HORIZON_R, G_PE, C_SPEED } }
  *
  *   The particle masses and orbitalV helper are built in the controller
  *   (to keep imports local to their users) and threaded through here.
@@ -132,7 +132,7 @@ export function setupPEScenario(name, ctx) {
     const {
         me, mp, mmu, mn, mpi, mK, mtau, mW, mSig, mOmg, mDel,
         RE, ALPHA_PE, soft2, orbitalV,
-        BH_MASS, BH_TEST_MASS, BH_HORIZON_R, G_N, C_SPEED
+        BH_MASS, BH_TEST_MASS, BH_HORIZON_R, G_PE, C_SPEED
     } = constants;
 
     switch (name) {
@@ -173,7 +173,8 @@ export function setupPEScenario(name, ctx) {
         case 'pe-muonium': {
             const r = 5;
             const v = orbitalV(me, r);
-            bridge.peAddLockedParticle('mu_plus', 1, 0, 0, 0, mmu, RE);
+            // 'antimuon' (μ⁺) resolves to the catalog; 'mu_plus' did not.
+            bridge.peAddLockedParticle('antimuon', 1, 0, 0, 0, mmu, RE);
             bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
             break;
         }
@@ -298,12 +299,13 @@ export function setupPEScenario(name, ctx) {
             break;
         }
 
-        // -- Delta++ system: 2 locked +1 charges + 2 electrons ───────
+        // -- Delta++ system: locked Δ⁺⁺ (charge +2) + 2 electrons ────
         case 'pe-delta-system': {
             const r = 4;
             const v = orbitalV(me, r, 2);
-            bridge.peAddLockedParticle('delta_pp_a', 1, 0.3, 0, 0, mDel / 2, RE);
-            bridge.peAddLockedParticle('delta_pp_b', 1, -0.3, 0, 0, mDel / 2, RE);
+            // Single Δ⁺⁺ nucleus (charge +2) resolving to catalog 'delta_pp'
+            // — replaces two fake half-delta IDs; same Q=2 Coulomb field.
+            bridge.peAddLockedParticle('delta_pp', 2, 0, 0, 0, mDel, RE);
             bridge.peAddParticle('electron', -1, r, 0, 0, 0, v, 0, me, RE);
             bridge.peAddParticle('electron', -1, -r, 0, 0, 0, -v, 0, me, RE);
             break;
@@ -374,17 +376,18 @@ export function setupPEScenario(name, ctx) {
 
         // ── Gravity scenarios ───────────────────────────────────────
 
-        // -- Micro Black Hole: FTD lattice accretion demo ────────────
-        // [SELECTION] M_BH=5000 MeV, radii, Hawking rate are pedagogical choices
-        // [EMERGENT] C_SPEED cap creates inspiral zone at r < ~10
+        // -- Micro Black Hole: physical α_G gravity (FTD-0131) ─────
+        // With G_PE = G_DERIVED, inspiral/accretion is unobservable on any
+        // tick budget — dynamics are negligible. Scenario kept so gravity PE
+        // and coupling telemetry expose the true ~1.75e-45 hierarchy.
         case 'pe-micro-bh': {
             // BH locked at origin -- neutral, enormous mass
             bridge.peAddLockedParticle('neutron', 0, 0, 0, 0, BH_MASS, 0.5);
 
-            // Gravity-only orbital velocity with Plummer softening
+            // Gravity-only orbital velocity with Plummer softening (physical G_PE)
             const soft2_bh = 1.0;
             const gravOrbitalV = (r) =>
-                Math.sqrt(G_N * BH_MASS * r * r / Math.pow(r * r + soft2_bh, 1.5));
+                Math.sqrt(G_PE * BH_MASS * r * r / Math.pow(r * r + soft2_bh, 1.5));
 
             // ZONE 1: Inspiral donors at r=8 (v_circ > C_SPEED -- will spiral in)
             const r_fall = 8, v_fall = 0.45;
