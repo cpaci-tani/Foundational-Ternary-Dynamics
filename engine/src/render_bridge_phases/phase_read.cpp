@@ -31,6 +31,7 @@
 #include "ftd/constants.h"
 #include "ftd/sublattice.h"
 #include "ftd/field_operators.h"
+#include "ftd/parallel.h"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -75,8 +76,8 @@ void phase_read_main_loop(RenderBridge& rb) {
 
   if (dual) {
     // Dual-substrate: compute delta for J_L and J_R in a single neighbor sweep
-#pragma omp parallel for schedule(static)
-    for (int ix = 0; ix < L; ++ix) {
+    ftd::parallel_for(0, L, [&](int _lo, int _hi) {
+    for (int ix = _lo; ix < _hi; ++ix) {
       for (int iy = 0; iy < L; ++iy) {
         for (int iz = 0; iz < L; ++iz) {
           const int i = ix * LL + iy * L + iz;
@@ -140,6 +141,7 @@ void phase_read_main_loop(RenderBridge& rb) {
         }
       }
     }
+    });
   } else {
     // Single-substrate: inline Laplacian with the same interior/boundary split.
     // Cluster A (FTD-0093): when toggles.bcc_stencil != FULL, dispatch to the
@@ -149,8 +151,8 @@ void phase_read_main_loop(RenderBridge& rb) {
     // an obviously-correct sub-stencil projection. Toggle validation guarantees
     // dual_substrate==false in this branch when bcc_stencil != FULL.
     const BccStencilMode stencil_mode = rb.toggles.bcc_stencil;
-#pragma omp parallel for schedule(static)
-    for (int ix = 0; ix < L; ++ix) {
+    ftd::parallel_for(0, L, [&](int _lo, int _hi) {
+    for (int ix = _lo; ix < _hi; ++ix) {
       for (int iy = 0; iy < L; ++iy) {
         for (int iz = 0; iz < L; ++iz) {
           const int i = ix * LL + iy * L + iz;
@@ -199,6 +201,7 @@ void phase_read_main_loop(RenderBridge& rb) {
         }
       }
     }
+    });
   }
 }
 

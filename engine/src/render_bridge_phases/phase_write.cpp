@@ -31,6 +31,7 @@
 #include "ftd/field_operators.h"
 #include "ftd/bridge_rng.h"
 #include "ftd/voxel_rng.h"
+#include "ftd/parallel.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -170,8 +171,8 @@ void phase_write_main_loop(RenderBridge& rb) {
                                     static_cast<std::size_t>(num_threads));
 
   // ---- Loop 1: Leapfrog integration, Langevin OU, and Damping ----
-#pragma omp parallel for
-  for (int i = 0; i < N; ++i) {
+  ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+  for (int i = _lo; i < _hi; ++i) {
     auto &v = rb.voxels_[i];
 
     int tid = 0;
@@ -255,15 +256,17 @@ void phase_write_main_loop(RenderBridge& rb) {
       }
     }
   }
+  });
 
   // ---- Snapshot the updated flux field (post-write) to rb.flux_pre_write_ ----
   // (which is now acting as post-write snapshot) to avoid cross-thread races.
   if (do_genesis) {
     rb.flux_pre_write_.resize(N);
-#pragma omp parallel for
-    for (int i = 0; i < N; ++i) {
+    ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+    for (int i = _lo; i < _hi; ++i) {
       rb.flux_pre_write_[i] = rb.voxels_[i].flux;
     }
+    });
   }
 
   // FTD-0267 observation-only telemetry: reset per-tick genesis/evaporation
