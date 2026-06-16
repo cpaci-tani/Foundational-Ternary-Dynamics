@@ -44,7 +44,7 @@
  * locality on the O(N^2) pair loop.
  */
 
-import { ALPHA, K_B, DAMPING, G_PE, C_SPEED, COULOMB_K_FORCE } from '../constants.js';
+import { K_B, DAMPING, G_PE, C_SPEED, COULOMB_K_FORCE } from '../constants.js';
 
 /**
  * Build the particle-engine provider bound to the given bridge-like state.
@@ -399,7 +399,7 @@ export function createParticleEngine(state) {
             for (let j = i + 1; j < ps.length; j++) {
                 const dx = ps[j].x - ps[i].x, dy = ps[j].y - ps[i].y, dz = ps[j].z - ps[i].z;
                 const r = Math.sqrt(dx * dx + dy * dy + dz * dz + soft2);
-                if (state._pe.coulomb) pe_coulomb += ALPHA * ps[i].charge * ps[j].charge / (4 * Math.PI * r);
+                if (state._pe.coulomb) pe_coulomb += COULOMB_K_FORCE * ps[i].charge * ps[j].charge / r;
                 if (state._pe.gravity) {
                     pe_gravity -= G_PE * ps[i].mass * ps[j].mass / r;
                 }
@@ -439,7 +439,7 @@ export function createParticleEngine(state) {
                 const r2 = dx * dx + dy * dy + dz * dz;
                 const r2s = r2 + soft2;
                 const r = Math.sqrt(r2s);
-                const fc = state._pe.coulomb ? -ALPHA * p.charge * q.charge / (4 * Math.PI * r2s) : 0;
+                const fc = state._pe.coulomb ? -COULOMB_K_FORCE * p.charge * q.charge / r2s : 0;
                 const fg = state._pe.gravity ? G_PE * p.mass * q.mass / r2s : 0;
                 if (r > 1e-20) {
                     const fr = (fc + fg) / r;
@@ -505,7 +505,7 @@ export function createParticleEngine(state) {
             if (r < nearestDist) { nearestDist = r; nearestId = q.id; }
             // Coulomb + gravity forces (matching peTick force law)
             const r2s = r2 + soft2;
-            const fc = state._pe.coulomb ? -ALPHA * p.charge * q.charge / (4 * Math.PI * r2s) : 0;
+            const fc = state._pe.coulomb ? -COULOMB_K_FORCE * p.charge * q.charge / r2s : 0;
             const fg = state._pe.gravity ? G_PE * p.mass * q.mass / r2s : 0;
             if (r > 1e-20) {
                 const fr = (fc + fg) / r;
@@ -521,7 +521,7 @@ export function createParticleEngine(state) {
             if (nq) {
                 const dx = nq.x - p.x, dy = nq.y - p.y, dz = nq.z - p.z;
                 const r2 = dx * dx + dy * dy + dz * dz;
-                fCoulombNearest = Math.abs(ALPHA * p.charge * nq.charge / (4 * Math.PI * (r2 + soft2)));
+                fCoulombNearest = Math.abs(COULOMB_K_FORCE * p.charge * nq.charge / (r2 + soft2));
             }
         }
 

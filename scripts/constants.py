@@ -457,10 +457,11 @@ class Experimental:
     m_Z_phys_mev      = 91187.6    # MeV
     m_Higgs_phys_mev  = 125200.0   # MeV (PDG 2024 combined)
 
-    # Neutrino mass upper bounds (MeV)
-    m_nu_e   = 4.1e-9         # beta-decay bound
-    m_nu_mu  = 8.58e-3        # cosmological bound
-    m_nu_tau = 4.955e-2       # cosmological bound
+    # Neutrino mass upper bounds (MeV). meV-scale masses, so the MeV
+    # magnitudes are ~1e-9 to ~1e-8.
+    m_nu_e   = 4.1e-9         # beta-decay bound   = 4.1  meV (in MeV)
+    m_nu_mu  = 8.58e-9        # cosmological bound  = 8.58 meV (in MeV); 2026-06-15 fix: was 8.58e-3 (eV magnitude mislabeled as MeV — matched the JS bug; both corrected)
+    m_nu_tau = 4.955e-8       # cosmological bound  = 49.55 meV (in MeV); 2026-06-15 fix: was 4.955e-2 (eV magnitude mislabeled as MeV)
 
     # Weak / CKM constants (PDG / lattice)
     V_ud = 0.974              # CKM matrix element |V_ud|
