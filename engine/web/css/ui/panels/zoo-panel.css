@@ -1,78 +1,122 @@
 /* Zoo Panel — styles owned by zoo-panel/component.js */
 
-/* Zoo Table */
-.zoo-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: var(--fs-sm);
+/* Expanded scroll container: taller than the generic .panel-resource-table-wrap
+   so the two-line particle cards have more room. Width can never overflow
+   because cards lay out vertically with ellipsis on their flexible fields. */
+#zoo-table-container {
+    max-height: min(640px, calc(100vh - 170px));
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.zoo-table th {
-    position: sticky;
-    top: 0;
-    z-index: 1; /* local stacking context; not a global layer */
-    text-align: left;
-    font-weight: 500;
-    color: var(--text-muted);
-    padding: 6px 8px;
+/* Card list — two lines per particle (replaces the former 9-column table). */
+.zoo-cards {
+    display: flex;
+    flex-direction: column;
+}
+
+.zoo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 7px 6px;
     border-bottom: 1px solid var(--border);
-    font-size: var(--fs-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background: var(--bg-surface);
+    overflow: hidden;
 }
 
-.zoo-table td {
-    padding: 5px 8px;
-    border-bottom: 1px solid var(--border);
-}
-
-.zoo-table tr:hover td {
+.zoo-card:hover {
     background: var(--state-hover-bg);
 }
 
-.zoo-cat-header td {
+/* Line 1 — colour dot · symbol · name (grows, ellipsis) · accuracy · inject */
+.zoo-card-line1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+/* Line 2 — mass · charge · spin · FTD formula (grows, ellipsis) */
+.zoo-card-line2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 18px;   /* align under the symbol, clearing the colour dot */
+    min-width: 0;
+}
+
+/* Category divider (now a div, was a sticky table header row) */
+.zoo-cat-header {
+    position: sticky;
+    top: 0;
+    z-index: 1; /* local stacking context; not a global layer */
+    background: var(--bg-surface);
     font-weight: 600;
     font-size: var(--fs-xs);
     text-transform: uppercase;
     letter-spacing: 0.6px;
-    padding: 8px 8px 4px;
+    padding: 9px 6px 4px;
     border-bottom: 2px solid;
 }
 
 .zoo-dot {
-    display: inline-block;
+    flex: none;
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    vertical-align: middle;
-    margin-right: 6px;
 }
 
 .zoo-symbol {
+    flex: none;
     font-weight: 600;
+    font-size: var(--fs-md);
+}
+
+.zoo-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-secondary);
     font-size: var(--fs-sm);
 }
 
 .zoo-mass {
+    flex: none;
     font-family: var(--font-mono);
     color: var(--accent);
     font-size: var(--fs-xs);
+    white-space: nowrap;
+}
+
+.zoo-meta {
+    flex: none;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
 }
 
 .zoo-formula {
+    flex: 1 1 80px;
+    min-width: 0;
+    font-family: var(--font-mono);
     font-size: var(--fs-xs);
     color: var(--text-muted);
-    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .zoo-accuracy {
+    flex: none;
     font-family: var(--font-mono);
     font-size: var(--fs-xs);
 }
 
 /* ── Zoo inject button (moved from primitives/button.css in Phase D) ─── */
 .zoo-inject-btn {
+    flex: none;
     width: 28px;
     height: 28px;
     border-radius: 50%;

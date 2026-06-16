@@ -1,7 +1,7 @@
 /**
  * Test: AtomEngine (Scale 2) unit tests
  *
- * 16 checks covering injection, properties, forces, bonding,
+ * Checks covering injection, properties, forces, bonding,
  * conservation laws, and integration.
  */
 
@@ -66,6 +66,44 @@ int main() {
         check("C max_bonds == 4", c.max_bonds == 4);
         check("C mass > H mass", c.mass > h.mass);
         check("C radius < H radius", c.radius < h.radius);  // heavier atom is smaller
+
+        AtomicProperties li = compute_atomic_properties(3, 4);
+        AtomicProperties ne = compute_atomic_properties(10, 10);
+        AtomicProperties na = compute_atomic_properties(11, 12);
+        AtomicClosureContext fe_ctx = compute_atomic_closure_context(26);
+        AtomicClosureContext ce_ctx = compute_atomic_closure_context(58);
+        AtomicClosureContext u_ctx  = compute_atomic_closure_context(92);
+
+        check("H closure Z stored", h.closure_context.Z == 1);
+        check("H closure n_shell == 1", h.closure_context.n_shell == 1);
+        check_close("H closure r_cloud == R_BOHR",
+                    h.closure_context.r_cloud, R_BOHR, R_BOHR * 1e-12);
+        check("Li simulation radius < H simulation radius", li.radius < h.radius);
+        check("Li closure cloud > H closure cloud (new shell)",
+              li.closure_context.r_cloud > h.closure_context.r_cloud);
+        check("Period 2 closure cloud contracts Li > C > Ne",
+              li.closure_context.r_cloud > c.closure_context.r_cloud &&
+              c.closure_context.r_cloud > ne.closure_context.r_cloud);
+        check("Na closure cloud > Ne closure cloud (period reset)",
+              na.closure_context.r_cloud > ne.closure_context.r_cloud);
+        check("Ne closure regime == ShellClosed",
+              ne.closure_context.regime == AtomicClosureRegime::ShellClosed);
+        check("Fe closure regime == TransitionBlock",
+              fe_ctx.regime == AtomicClosureRegime::TransitionBlock);
+        check("Ce closure regime == Lanthanide",
+              ce_ctx.regime == AtomicClosureRegime::Lanthanide);
+        check("U closure regime == Actinide",
+              u_ctx.regime == AtomicClosureRegime::Actinide);
+
+        AtomicClosureConfig scaled_cfg;
+        scaled_cfg.lattice_spacing = 2.0;
+        scaled_cfg.box_extent = 1024.0;
+        scaled_cfg.tau_reference = 10.0;
+        AtomicClosureContext h_scaled = compute_atomic_closure_context(1, scaled_cfg);
+        check_close("closure kappa = r_cloud/a",
+                    h_scaled.kappa, h_scaled.r_cloud / 2.0, h_scaled.r_cloud * 1e-12);
+        check_close("closure zeta = r_cloud/L",
+                    h_scaled.zeta, h_scaled.r_cloud / 1024.0, h_scaled.r_cloud * 1e-12);
     }
 
     // ── AE3: Free atom (no forces) ─────────────────────────────────
@@ -289,6 +327,18 @@ int main() {
         Vec3 pos1 = ae.atoms()[0].position;
         double drift = (pos1 - pos0).mag();
         check("locked atom didn't move", drift < 1e-15);
+    }
+
+    // ── AE18: Atomic state vector A_atom extensions ─────────────────────────────
+    {
+        std::cout << "\n--- AE18: Atomic state vector A_atom extensions ---\n";
+        AtomicProperties pC = compute_atomic_properties(6, 6); // Carbon
+        check("Carbon alpha_pol is reasonable (> 0)", pC.alpha_pol > 0.0);
+        check("Carbon e_ion is reasonable (> 0)", pC.e_ion > 0.0);
+        check("Carbon sigma_scatter is reasonable (> 0)", pC.sigma_scatter > 0.0);
+
+        AtomicProperties pH = compute_atomic_properties(1, 0); // Hydrogen
+        check("Hydrogen e_ion is distinct from Carbon e_ion", pH.e_ion != pC.e_ion);
     }
 
     // ── Summary ─────────────────────────────────────────────────────
