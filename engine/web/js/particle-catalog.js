@@ -356,7 +356,7 @@ const PARTICLES = [
         mass_mev: M_HIGGS_PHYS, charge: 0, spin: 0,
         color_charge: 'none', antiparticle: 'higgs',
         ftd_formula: 'm_e·N_eff/α² ≈ 124.8 GeV',
-        ftd_accuracy: 0.24, ftd_status: 'selection',
+        ftd_accuracy: 0.36, ftd_status: 'selection',
         display_color: [1.00, 0.84, 0.00], display_size: 8
     },
 
