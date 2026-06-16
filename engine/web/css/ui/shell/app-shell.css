@@ -81,40 +81,28 @@
     width: 100%;
 }
 
-/* ── Mobile (≤767px): Native Grid Placement ───────────────────────────────── */
+/* ── Mobile (≤767px): full-bleed canvas + floating chrome ──────────────────
+ *
+ * Mobile uses the SAME 2-row shell grid as desktop (toolbar + 1fr viewport),
+ * so the canvas fills the full width and the entire height below the toolbar.
+ * The panel sheet, tab bar, and status bar do NOT take grid rows — they float
+ * over the canvas as overlays (panel sheet → responsive.css; status bar →
+ * status-bar.css `position:absolute;bottom:0`; the workspace tab strip is
+ * hidden at ≤767px → workspace-tabs.css).
+ *
+ * WHY (vs the old 5-row grid `auto 1fr 30dvh auto auto`): that grid reserved a
+ * permanent 30dvh track for the panel, squeezing the canvas to roughly half the
+ * screen — AND the track stayed empty (a dead zone) whenever the sheet was
+ * collapsed. Floating the sheet reclaims that space: the canvas is full-size and
+ * the sheet slides over it. Bonus — the canvas no longer resizes when the sheet
+ * opens/closes (the 1fr cell is stable), so there is no per-toggle WebGL resize.
+ *
+ * --m-sheet-h is the mobile bottom-sheet height, shared by the sheet itself
+ * (responsive.css) and the play-bar's lift-above-sheet rule (play-bar.css);
+ * both #panel-area and the play-bar are descendants of #app so they inherit it. */
 @media (max-width: 767px) {
     #app {
-        /* 5-row grid: toolbar | canvas | panel | tabs | status */
-        grid-template-rows: auto 1fr 30dvh auto auto;
-        grid-template-areas:
-            "toolbar"
-            "viewport"
-            "panel"
-            "tabs"
-            "status";
-    }
-
-    #panel-area {
-        grid-area: panel;
-        position: relative !important;
-        top: unset !important; left: unset !important; right: unset !important; bottom: unset !important;
-        transform: none !important;
-        width: 100%;
-    }
-
-    #tab-bar {
-        grid-area: tabs;
-        position: relative !important;
-        top: unset !important; left: unset !important;
-        bottom: unset !important; right: unset !important;
-        width: 100%;
-    }
-
-    #status-bar {
-        grid-area: status;
-        position: relative !important;
-        bottom: unset !important; left: unset !important;
-        width: 100%;
+        --m-sheet-h: 42dvh;
     }
 }
 

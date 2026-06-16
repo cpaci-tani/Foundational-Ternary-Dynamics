@@ -2,7 +2,7 @@
  * GPU ParticleEngine backend (Wave 5.4 Phase 1).
  *
  * Pair-force acceleration for ftd::ParticleEngine. Implements Coulomb
- * (using ALPHA_EFT = G_C²) and Newtonian gravity (using G_N) as an
+ * (using ALPHA_EFT = G_C²) and Newtonian gravity (using G_PE = G_DERIVED) as an
  * O(N²) per-particle kernel. Matches the CPU reference in
  * engine/src/particle_engine.cpp compute_pairwise_force() for the
  * subset of toggles handled here.
@@ -307,7 +307,7 @@ void ParticleEngineGpu::compute_pair_forces(
         soft,
         ALPHA_EFT,
         PI,
-        G_N,
+        G_PE,
         toggles.coulomb ? 1 : 0,
         toggles.gravity ? 1 : 0
     );

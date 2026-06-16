@@ -142,18 +142,30 @@
  */
 /* ── Mobile bottom sheet (Default) ── */
 @media (max-width: 767px) {
+/* The sheet floats over the full-bleed canvas (it is no longer a grid row — see
+   app-shell.css). Fixed to the bottom edge, full width, fixed height (--m-sheet-h),
+   it slides down to collapse. The canvas stays full-size behind it, so opening or
+   closing the sheet does not resize the WebGL canvas. */
 #panel-area {
-    /* Note: Removed position: fixed !important; it now flows natively in grid */
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--m-sheet-h, 42dvh);
     border-radius: 16px 16px 0 0;
     max-height: none !important;
     min-height: 0;
     overflow-y: auto;
-    padding-bottom: calc(60px + max(
+    /* Clear the status-bar footer + notch / Android gesture nav so the last row
+       of controls is never hidden behind them. */
+    padding-bottom: calc(var(--status-bar-offset, calc(28px * var(--ui-scale))) + max(
         env(safe-area-inset-bottom, 12px),
         var(--browser-nav-inset, 0px)
     ));
     transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
     backdrop-filter: blur(32px) saturate(1.4);
+    z-index: var(--z-panel);
 }
 
 /* Collapsed */
@@ -271,6 +283,28 @@ body.body-panel-open {
     #app .ctrl-slider-row input[type="range"]::-webkit-slider-thumb { width: 16px; height: 16px; }
     #app .coord-step { min-height: 20px; min-width: 20px; }
     #app #panel-scene input[type="checkbox"] { width: 1.2rem; height: 1.2rem; }
+}
+
+/* ── Tablet & touch-laptop tap targets (coarse pointer ≥ 768px) ───────────────
+ * The width-based boosts above revert to desktop sizes at ≥768px, but tablets
+ * (iPad portrait 768px / landscape 1024px) and touch laptops are coarse-pointer
+ * devices that still need finger-sized controls. Re-apply the touch floors when
+ * the PRIMARY pointer is coarse, scoped to ≥768px so phones (already covered by
+ * the width rules above) are untouched. Mouse desktops report pointer:fine and
+ * are unaffected, so existing desktop layout/tests do not change. Placed AFTER
+ * the min-width:768 revert block so it wins on cascade order for coarse pointers. */
+@media (min-width: 768px) and (pointer: coarse) {
+    #app .toggle-row input[type="checkbox"] { width: 22px; height: 22px; }
+    #app .ctrl-input { min-height: 44px; }
+    #app .tb-select { min-height: 44px; }
+    #app .tb-slider::-webkit-slider-thumb,
+    #app .pe-slider::-webkit-slider-thumb,
+    #app .ctrl-slider-row input[type="range"]::-webkit-slider-thumb { width: 24px; height: 24px; }
+    #app .tb-slider::-moz-range-thumb,
+    #app .pe-slider::-moz-range-thumb,
+    #app .ctrl-slider-row input[type="range"]::-moz-range-thumb { width: 24px; height: 24px; }
+    #app .coord-step { min-height: 32px; min-width: 32px; }
+    #app #panel-scene input[type="checkbox"] { width: 1.4rem; height: 1.4rem; }
 }
 
 /* ── Landscape phones / short viewports (height <= 500px) ─────────────────────

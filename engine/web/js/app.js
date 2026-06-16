@@ -296,7 +296,7 @@ function _resetAllVisualState() {
     Scale1Controller.resetScale1({ viewport });
     for (const id of [
         'toggle-pe-efield', 'toggle-pe-potential',
-        'toggle-pe-gravity-field', 'toggle-pe-forces',
+        'toggle-pe-gravity-field', 'toggle-pe-forces', 'toggle-pe-system',
         'toggle-velocities', 'toggle-trails',
     ]) {
         const btn = document.getElementById(id);
@@ -308,6 +308,7 @@ function _resetAllVisualState() {
         viewport.toggleFieldVectors(false);
         viewport.toggleGravityVectors(false);
         viewport.toggleParticleForces(false);
+        viewport.togglePESystem(false);
         viewport.toggleVelocityVectors(false);
         viewport.toggleTrails(false);
     }
@@ -1241,6 +1242,7 @@ function wireViewportToggles() {
         ['toggle-pe-potential', (on) => { Scale1Controller.setPEPotential(on); viewport.toggleFieldHeatmap(on); viewport.toggleFieldVectors(on); }],
         ['toggle-pe-gravity-field', (on) => { Scale1Controller.setPEGravField(on); viewport.toggleGravityVectors(on); }],
         ['toggle-pe-forces', (on) => { Scale1Controller.setPEForces(on); viewport.toggleParticleForces(on); }],
+        ['toggle-pe-system', (on) => { Scale1Controller.setPESystem(on); viewport.togglePESystem(on); }],
     ];
     for (const [id, handler] of peFieldToggles) {
         const btn = document.getElementById(id);

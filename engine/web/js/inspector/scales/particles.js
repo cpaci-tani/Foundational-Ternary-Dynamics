@@ -65,10 +65,16 @@ export function updatePEFields(target) {
 
     target.peFields.id.textContent = data.id;
     target.peFields.locked.textContent = data.locked ? 'Yes (fixed)' : 'No';
+    target.peFields.rEff.textContent = formatLength(data.rEff, 2).text || '--';
+    target.peFields.spin.textContent = data.spin !== undefined ? data.spin.toString() : '--';
+    target.peFields.color.textContent = data.colorId !== undefined ? data.colorId.toString() : '--';
+    target.peFields.pair.textContent = data.pairId >= 0 ? data.pairId.toString() : '--';
     target.peFields.pos.textContent = formatPosition(data.x, data.y, data.z, 1);
     target.peFields.vel.textContent = formatVec3(data.vx, data.vy, data.vz, 'velocity', 1);
     target.peFields.speed.textContent = formatVelocity(data.speed, 1).text;
     target.peFields.ke.textContent = formatEnergy(data.ke, 1).text;
+    target.peFields.momentum.textContent = isNaN(data.momentum) ? '--' : data.momentum.toExponential(2);
+    target.peFields.accel.textContent = isNaN(data.acceleration) ? '--' : data.acceleration.toExponential(2);
     target.peFields.orbital.textContent = data.orbitalR >= 0 ? formatLength(data.orbitalR, 1).text : '--';
 
     if (data.nearestId >= 0) {

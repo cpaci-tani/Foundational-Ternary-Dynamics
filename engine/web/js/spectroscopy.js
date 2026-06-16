@@ -1,22 +1,26 @@
 /**
  * Spectroscopy Module — Hydrogen energy levels and spectral series.
  *
- * Every formula uses constants from the ontic chain via constants.js.
+ * These are the textbook Bohr/Schrödinger hydrogen forms evaluated with FTD's
+ * α — [PARAMETRIC] insertions, NOT FTD derivations. Per
+ * AUDIT_ATOMIC_DYNAMICS_STATUS.md the hydrogen spectrum is a classical-Kepler /
+ * parametric result, not a substrate quantum-eigenvalue derivation. Constants
+ * come from constants.js (which traces to ontic.h).
  * All energies in MeV (natural units where K_B = m_e = 0.511 MeV).
  */
 
-import { ALPHA, M_E_PHYS, PI_FTD, HBAR_C_MEV_FM } from './constants.js';
+import { ALPHA, K_B, PI_FTD, HBAR_C_MEV_FM } from './constants.js';
 
 // ── Energy Levels ───────────────────────────────────────────────────
 //
-// Note: K_B is the FTD electron-mass anchor (0.511 MeV exact); M_E_PHYS
-// is the PDG-measured electron mass (0.51099895 MeV). Spectroscopy
-// formulas below use M_E_PHYS so wavelengths/energies compare directly
-// against CODATA Rydberg values without an O(0.2%) FTD-anchor offset.
+// Note: these formulas use K_B, FTD's own electron-mass anchor (0.511 MeV),
+// so the spectra are FTD values end-to-end (true-to-FTD). K_B differs from
+// the PDG electron mass (0.51099895 MeV) by only ~2 ppm, so wavelengths and
+// energies still match CODATA Rydberg values to display precision.
 
 /** Hydrogen-like energy level E_n = -m_e * Z^2 * alpha^2 / (2*n^2) */
 export function hydrogenEnergyLevel(n, Z = 1) {
-    return -M_E_PHYS * Z * Z * ALPHA * ALPHA / (2.0 * n * n);
+    return -K_B * Z * Z * ALPHA * ALPHA / (2.0 * n * n);
 }
 
 /**
@@ -31,12 +35,12 @@ export function fineStructureCorrection(n, j, Z = 1) {
 
 /** Bohr radius in femtometers: a_0 = hbar*c / (m_e * c^2 * alpha) */
 export function bohrRadiusFm(Z = 1) {
-    return HBAR_C_MEV_FM / (M_E_PHYS * ALPHA * Z);
+    return HBAR_C_MEV_FM / (K_B * ALPHA * Z);
 }
 
 /** Compton wavelength in fm: lambda_C = 2*pi * hbar*c / (m_e * c^2) */
 export function comptonWavelengthFm() {
-    return 2.0 * PI_FTD * HBAR_C_MEV_FM / M_E_PHYS;
+    return 2.0 * PI_FTD * HBAR_C_MEV_FM / K_B;
 }
 
 // ── Spectral Series ─────────────────────────────────────────────────
@@ -83,7 +87,7 @@ export function ionizationEnergy(Z = 1) {
 
 /** Rydberg constant from ontic chain: R_inf = m_e * alpha^2 / (2 * hbar * c) */
 export function rydbergEnergy() {
-    return M_E_PHYS * ALPHA * ALPHA / 2.0; // in MeV
+    return K_B * ALPHA * ALPHA / 2.0; // in MeV
 }
 
 // ── DOM rendering ───────────────────────────────────────────────────

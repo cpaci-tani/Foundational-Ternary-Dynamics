@@ -134,6 +134,61 @@ const SCALE0_SECTION_TOOLTIPS = {
     'Energy':  'Sparkline history for total energy evolution \u2014 the #1 place to catch conservation violations.',
 };
 
+// Scale 1 particle-engine descriptor rows (.diag-scale1-root). Keys match the
+// descriptor `label` after normalizeLabel. annotateScale0Diagnostics matches
+// EVERY #panel-diagnostics .diag-metric (it cannot tell scale roots apart), so
+// a few Scale 1 rows (Total Energy, Coulomb PE, Angular Mom) would otherwise
+// inherit the wrong Scale-0 lattice text. annotateScale1Diagnostics runs after
+// it with force:true so these particle-engine-correct strings win.
+const SCALE1_DIAGNOSTIC_TOOLTIPS = {
+    // ─── Scenario Dynamics ─────────────────────────────────────────────
+    'Scenario':        'The active particle-engine scenario (from the toolbar selector).',
+    'Time Step':       'Integration step dt (ticks) for the Velocity-Verlet update. Larger dt runs faster but raises energy drift.',
+    'Softening':       'Plummer softening length added in quadrature to each pair separation (r^2 -> r^2 + eps^2). Prevents singular forces at small r.',
+    'Coulomb':         'Whether the pairwise Coulomb force is enabled for this scenario.',
+    'Gravity':         'Whether the always-attractive gravity term is enabled. Uses the FTD-0131-derived coupling G_PE = 1/(4pi*m_P^2): gravitational charge q_g = m/m_P, so alpha_G(e,e) = (m_e/m_P)^2 ~ 1.75e-45. Particle-scale gravity is ~43 orders below EM and invisible in net-force dynamics; Gravity PE and the Gravity PE chart expose the true value in scientific notation.',
+    'Damping':         'Whether velocity damping (v *= 1 - DAMPING*dt) is enabled.',
+    'Relativistic':    'Whether the relativistic correction is enabled. NOTE: active only on the WASM/native backend; the JavaScript engine stores the flag but does not apply it.',
+
+    // ─── Active Hamiltonian ────────────────────────────────────────────
+    'Particles':        'Total particles in the simulation (mobile + locked).',
+    'Locked / Mobile':  'Count of locked (fixed, non-integrated) particles vs mobile particles.',
+    'Charge +/0/-':     'Ternary charge composition: count of positive / neutral / negative particles. FTD charges live in {-1, 0, +1}; their sum is the conserved net charge Q.',
+    'Kinetic Energy':   'Total kinetic energy = sum of 1/2 m|v|^2 (sim units; mass in MeV, velocity in lattice units).',
+    'Potential Energy': 'Total potential energy across all enabled force terms (Coulomb + gravity).',
+    'Coulomb PE':       'Electrostatic pair energy: sum of alpha q_i q_j / (4 pi r_ij). Negative for unlike-sign bound systems, positive for like-sign.',
+    'Gravity PE':       'Gravitational pair energy: -sum G_PE m_i m_j / r_ij. Always negative. G_PE is the physical FTD-0131 coupling (alpha_G(e,e) = (m_e/m_P)^2 ~ 1.75e-45); magnitudes are ~10^40 below Coulomb PE and display in scientific notation.',
+    'Total Energy':     'Total particle-engine energy KE + PE (Coulomb + gravity). Constant in a well-behaved closed scenario - watch it alongside Energy Drift.',
+    'Energy Drift':     'Relative energy drift (E - E0)/|E0| since the scenario baseline. Under 0.01 % = excellent, 0.1 % = acceptable, >> 1 % = step too large.',
+
+    // ─── Conservation ──────────────────────────────────────────────────
+    'Momentum':         'Total linear momentum vector (sum of m_i v_i) shown per component.',
+    '|p|':              'Magnitude of the total linear momentum. Conserved under translation invariance; drift flags a broken Newton-third-law force pairing.',
+    'Angular Mom':      'Total angular momentum vector (sum of r_i x m_i v_i) shown per component.',
+    '|L|':              'Magnitude of the total angular momentum. Conserved under rotational invariance; useful for verifying orbit integrators.',
+    'Virial 2K/|U|':    'Virial-theorem ratio 2<K> / |<U>|. Equals 1 for a steady bound system, > 1 if unbound, < 1 before the KE has equilibrated.',
+    'Net Charge Q':     'Total charge Q = sum of q_i (units of e). Exactly conserved by Coulomb dynamics and by pairwise annihilation - it should stay flat; any change flags a bookkeeping error.',
+    'Annihilations':    'Cumulative annihilation events: opposite-charge pairs deleted when they close within contact distance r_eff. Each event removes one +1 and one -1, so net charge Q is preserved while particle count and energy drop.',
+
+    // ─── Forces & Geometry ─────────────────────────────────────────────
+    'Max |v|/c':        'Largest particle speed as a fraction of the lattice light speed c = 1/sqrt(3). Approaches 1.0 as a particle hits the causal cap; at the cap the Velocity-Verlet step stops conserving energy and momentum.',
+    'At Causal Cap':    'Number of mobile particles pinned at the lattice causal speed limit c = 1/sqrt(3). Non-zero means the speed cap is firing and is injecting energy drift.',
+    'Max Net Force':    'Largest net-force magnitude over all particles, in lattice-native Planck-like units (Pl).',
+    'Mean Net Force':   'Mean net-force magnitude across all particles, in lattice-native Planck-like units (Pl).',
+    'RMS Velocity':     'Root-mean-square particle speed as a fraction of the lattice light-speed c = 1/sqrt(3).',
+    'Temperature':      'Equipartition proxy T = (2/3)<K>/N in MeV (sim units, k_B = 1). Meaningful only for ensemble-sized N; for N = 2 it is just 2/3 of the mean KE.',
+    'System Radius':    'Characteristic radius - the average particle distance from the centre of mass, in lattice units.',
+    '2-Body Separation':'Instantaneous two-body separation |r1 - r2| in lattice units (only meaningful for 2-particle scenarios).',
+    'Radial Velocity':  'Radial component of the relative velocity (dr . dv)/|dr| for the two-body case, as a fraction of c.',
+};
+
+const SCALE1_SECTION_TOOLTIPS = {
+    'Scenario Dynamics':  'The active particle-engine scenario plus integration settings (time step, softening) and which force/dynamics toggles are enabled.',
+    'Active Hamiltonian': 'System makeup and energy decomposition - counts, ternary charge composition, kinetic / potential (Coulomb + gravity) energy, total, and drift since the baseline tick.',
+    'Conservation':       'The invariants a correct integrator preserves - momentum and angular-momentum magnitudes, virial ratio, net charge Q, plus the annihilation-event tally.',
+    'Forces & Geometry':  'Causal saturation (|v|/c against the 1/sqrt(3) cap), net-force magnitudes, RMS velocity, system size, temperature proxy, and two-body geometry.',
+};
+
 // Scale 1 Particle Engine — conservation-summary rows. Each corresponds to
 // a class .pe-conservation-row block at the top of PE telemetry.
 const PE_ROW_TOOLTIPS = {
@@ -156,7 +211,7 @@ const PE_CARD_TOOLTIPS = {
     'PE MeV':             'Total potential energy across all enabled force terms (Coulomb + gravity at minimum), in MeV.',
     'CoM':                'Centre-of-mass position vector \u03a3 m\u1d62 r\u1d62 / \u03a3 m\u1d62, in lattice units.',
     'PE Coulomb MeV':     'Electrostatic \\(\\sum \\alpha q_i q_j / (4\\pi r_{ij})\\) summed over all pairs. Negative for unlike-sign bound systems, positive for like-sign.',
-    'PE Gravity MeV':     'Gravitational \\(-\\sum G_N m_i m_j / r_{ij}\\) summed over pairs. Always negative; grows more negative as bodies fall together.',
+    'PE Gravity MeV':     'Gravitational \\(-\\sum G_{PE} m_i m_j / r_{ij}\\) summed over pairs. Always negative. \\(G_{PE}=1/(4\\pi m_P^2)\\) is the FTD-0131 coupling; \\(\\alpha_G(e,e)=(m_e/m_P)^2\\approx 1.75\\times10^{-45}\\). Values are float64-tiny next to Coulomb — read the dedicated Gravity PE chart.',
     // Two-body specific cards ("Orbital Analytics" section).
     'Separation r lu':    'Instantaneous two-body separation |r\u2081 \u2212 r\u2082| in lattice units. Oscillates between perihelion and aphelion for bound orbits.',
     'Reduced Mass μ MeV': 'Reduced mass \u03bc = m\u2081 m\u2082 / (m\u2081 + m\u2082). The effective mass in the equivalent one-body Kepler problem.',
@@ -173,7 +228,7 @@ const PE_CARD_TOOLTIPS = {
 const PE_TABLE_HEADER_TOOLTIPS = {
     'ID':     'Stable particle identifier, preserved across ticks. Use this to track a specific particle over time in the time-series panel.',
     'q':      'Particle charge in lattice units. Signed; +1, \u22121, 0 are the common values.',
-    'm MeV':  'Particle rest mass in MeV. Derived from the FTD mass formulae for the relevant species.',
+    'm MeV':  'Particle rest mass in MeV — the measured (PDG) value; the electron uses the FTD anchor m_e = 0.511 MeV. FTD-predicted mass formulae and their accuracy are shown in the Particle Zoo, not here.',
     '|r| lu': 'Particle distance from the world origin in lattice units.',
     '|v| c':  'Particle speed as a fraction of the lattice light-speed c = 1/\u221a3.',
     '|a|':    'Acceleration magnitude (change in velocity per tick).',
@@ -246,6 +301,31 @@ function annotateScale0Diagnostics(root) {
         const label = normalizeLabel(labelEl.textContent);
         const text = SCALE0_SECTION_TOOLTIPS[label];
         if (text) setTooltip(labelEl, text);
+    });
+}
+
+function annotateScale1Diagnostics(root) {
+    // The Scale 1 descriptor tables (.diag-scale1-root) render the same
+    // <tr data-row><td class="diag-metric"> structure as Scale 0. Because
+    // annotateScale0Diagnostics targets every #panel-diagnostics .diag-metric,
+    // it bleeds Scale-0 lattice text onto matching Scale 1 labels. Run after it
+    // with force:true so particle-engine-correct strings win on the Scale 1 rows.
+    root.querySelectorAll('#panel-diagnostics .diag-scale1-root .diag-metric').forEach((metricEl) => {
+        const label = normalizeLabel(metricEl.textContent);
+        const text = SCALE1_DIAGNOSTIC_TOOLTIPS[label];
+        if (!text) return;
+        setTooltip(metricEl, text, { force: true });
+        const row = metricEl.closest('tr');
+        if (row) {
+            setTooltip(row, text, { force: true });
+            row.querySelectorAll('td').forEach((td) => setTooltip(td, text, { force: true }));
+        }
+    });
+
+    root.querySelectorAll('#panel-diagnostics .diag-scale1-root .diag-section-title').forEach((labelEl) => {
+        const label = normalizeLabel(labelEl.textContent);
+        const text = SCALE1_SECTION_TOOLTIPS[label];
+        if (text) setTooltip(labelEl, text, { force: true });
     });
 }
 
@@ -323,6 +403,7 @@ export function applyUiTooltipDefinitions(root = document) {
     SELECTOR_TOOLTIPS.forEach(([selector, text]) => setTooltipForSelector(root, selector, text, { force: true }));
     annotateStatusItems(root);
     annotateScale0Diagnostics(root);
+    annotateScale1Diagnostics(root);
     annotatePETelemetry(root);
     annotateAEDiagnostics(root);
 }

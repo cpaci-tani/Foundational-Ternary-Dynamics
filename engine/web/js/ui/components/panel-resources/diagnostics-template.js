@@ -4,93 +4,16 @@ export function getDiagnosticsPanelTemplate() {
             <!-- Scale 0 tables: DiagnosticsPanelComponent (descriptors/scale0.js) -->
             <!-- Scale 1 PE Telemetry Panel -->
             <div id="pe-telemetry" class="scale1-only">
-                <!-- Section 1: Conservation Laws (always visible) -->
-                <div class="pe-telem-section">
-                    <div class="pe-telem-title">Conservation Laws</div>
-                    <div class="pe-conservation-row">
-                        <span class="pe-cons-label">Energy</span>
-                        <span class="pe-cons-value" id="pet-energy">0.000000</span>
-                        <span class="pe-cons-alarm" id="pet-energy-alarm"></span>
-                        <canvas class="pe-cons-spark" id="pet-spark-energy"></canvas>
-                    </div>
-                    <div class="pe-conservation-row">
-                        <span class="pe-cons-label">|p|</span>
-                        <span class="pe-cons-value" id="pet-momentum">0.000000</span>
-                        <span class="pe-cons-alarm" id="pet-momentum-alarm"></span>
-                        <canvas class="pe-cons-spark" id="pet-spark-momentum"></canvas>
-                    </div>
-                    <div class="pe-conservation-row">
-                        <span class="pe-cons-label">|L|</span>
-                        <span class="pe-cons-value" id="pet-angmom">0.000000</span>
-                        <span class="pe-cons-alarm" id="pet-angmom-alarm"></span>
-                        <canvas class="pe-cons-spark" id="pet-spark-angmom"></canvas>
-                    </div>
-                    <div class="pe-conservation-row">
-                        <span class="pe-cons-label">Drift</span>
-                        <span class="pe-cons-value" id="pet-drift">0.0000%</span>
-                        <span class="pe-cons-alarm" id="pet-drift-alarm"></span>
-                        <canvas class="pe-cons-spark" id="pet-spark-drift"></canvas>
-                    </div>
-                </div>
+                <!--
+                  Conservation Laws + System Properties were removed (2026-06-15):
+                  energy / KE / PE / Coulomb PE / Gravity PE / total / drift /
+                  |p| / |L| / virial / temperature / RMS v / radius now live ONLY
+                  in the descriptor tables above (.diag-scale1-root: Active
+                  Hamiltonian + Conservation + Forces & Geometry). This legacy
+                  block keeps just the non-duplicated drill-down surfaces below.
+                -->
 
-                <!-- Section 2: System Properties -->
-                <details class="pe-telem-details" open>
-                    <summary class="pe-telem-summary">System Properties</summary>
-                    <div class="panel-grid panel-grid-3 pe-telemetry-row-gap">
-                        <div class="card">
-                            <div class="card-title">Particles</div>
-                            <div class="stat-value" id="pet-count">0</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title">Virial 2K/|U|</div>
-                            <div class="stat-value" id="pet-virial">&mdash;</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title">Temperature <span class="unit-hint">(MeV)</span></div>
-                            <div class="stat-value" id="pet-temp">&mdash;</div>
-                        </div>
-                    </div>
-                    <div class="panel-grid panel-grid-3 pe-telemetry-row-gap">
-                        <div class="card">
-                            <div class="card-title">RMS Velocity <span class="unit-hint">(c)</span></div>
-                            <div class="stat-value" id="pet-vrms">&mdash;</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title">System Radius <span class="unit-hint">(lu)</span></div>
-                            <div class="stat-value" id="pet-radius">&mdash;</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title">Tick</div>
-                            <div class="stat-value" id="pet-tick">0</div>
-                        </div>
-                    </div>
-                    <div class="panel-grid panel-grid-3 pe-telemetry-row-gap">
-                        <div class="card">
-                            <div class="card-title">KE <span class="unit-hint">(MeV)</span></div>
-                            <div class="stat-value" id="pet-ke">0.000000</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title">PE <span class="unit-hint">(MeV)</span></div>
-                            <div class="stat-value" id="pet-pe">0.000000</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title">CoM</div>
-                            <div class="stat-value pet-com-value" id="pet-com">&mdash;</div>
-                        </div>
-                    </div>
-                    <div class="panel-grid panel-grid-2 pe-telemetry-row-gap-tight">
-                        <div class="card">
-                            <div class="card-title">PE (Coulomb) <span class="unit-hint">(MeV)</span></div>
-                            <div class="stat-value" id="pet-pe-coulomb">0.000000</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-title">PE (Gravity) <span class="unit-hint">(MeV)</span></div>
-                            <div class="stat-value" id="pet-pe-gravity">0.000000</div>
-                        </div>
-                    </div>
-                </details>
-
-                <!-- Section 3: Per-Particle Table -->
+                <!-- Per-Particle Table -->
                 <details class="pe-telem-details">
                     <summary class="pe-telem-summary">Per-Particle Data</summary>
                     <div class="pe-table-wrap pe-telemetry-row-gap">
