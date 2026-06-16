@@ -80,6 +80,7 @@
 .field-swatch-pe-potential  { background: linear-gradient(90deg, var(--chart-pe-coulomb), var(--chart-pe-mobile)); }
 .field-swatch-pe-gravity    { background: var(--chart-pe-gravity); }
 .field-swatch-pe-forces     { background: var(--chart-pe-force); }
+.field-swatch-pe-system     { background: linear-gradient(90deg, #46c6ff, #d77bf0); }
 
 /* ── Responsive: compact phones ─────────────────────────────────────────── */
 /* The conservation row reserves 150px across three fixed columns (label /

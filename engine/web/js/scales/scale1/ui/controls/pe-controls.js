@@ -20,7 +20,7 @@ export function createPeControlsCard() {
     <div class="toggle-row">
       <input type="checkbox" id="pe-gravity">
       <label for="pe-gravity"
-        title="Gravity: F = +G_N * m_i * m_j / r^2 (always attractive)">Gravity</label>
+        title="Gravity: F = +G_PE * m_i * m_j / r^2 (always attractive). G_PE = 1/(4pi*m_P^2) is the FTD-0131 physical coupling (alpha_G(e,e) = (m_e/m_P)^2 ~ 1.75e-45). Net dynamics are negligible next to Coulomb; read Gravity PE in diagnostics/charts.">Gravity</label>
     </div>
 
     <div class="combo-section-label">Dynamics</div>
@@ -78,7 +78,7 @@ export function createPeControlsCard() {
       <div class="toggle-row">
         <input type="checkbox" id="pe-relativistic">
         <label for="pe-relativistic"
-          title="Relativistic mass correction: F/gamma">Relativistic</label>
+          title="Relativistic correction (WASM/native only): crude isotropic F·(1/γ−1) rescale, NOT covariant — use Relativistic-Verlet for momentum-correct dynamics">Relativistic</label>
       </div>
     </details>
     -->

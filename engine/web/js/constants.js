@@ -77,14 +77,16 @@ export const ALPHA_EFT = G_C * G_C;                   // EFT-derived fine struct
 export const ALPHA     = ALPHA_EFT;
 export const ALPHA_TREE      = 1.0 / X_PLUS;          // tree-level (reference only)
 export const ALPHA_PRECISION = ALPHA;                  // alias; matches CODATA
-// G_N is the LATTICE-NATURAL gravity coupling used by the engines, in
-// engine units. [IMPOSED] — the 1/(b₃+N_c)² reading is a numerical
-// coincidence with NO substrate justification, and its identification
-// with physical Newton G is FALSIFIED (FTD-0131; the substrate route
-// instead yields α_G(e,e) = (m_e/m_P)² ≈ 1.745e-45 to 0.38%). Treat
-// G_N = 0.01 as a calibration input, not an FTD output. Heliocentric
+// G_N is the LATTICE-TOY gravity coupling for Scale 0 substrate gravity,
+// Scale 4 planetary, and Scale 5 cosmic demos — in engine units.
+// [IMPOSED] — the 1/(b₃+N_c)² coincidence has NO substrate justification;
+// identification with physical Newton G is FALSIFIED (FTD-0131). Heliocentric
 // demos use G_HELIOCENTRIC below, not this.
-export const G_N   = 1.0 / ((B_3 + N_C) * (B_3 + N_C));  // = 0.01
+//
+// Scale-1 ParticleEngine uses G_PE (= G_DERIVED, FTD-0131) instead — see the
+// derived-gravity block after M_PLANCK_GEV. Do NOT use G_N for pairwise
+// particle gravity; it is ~10⁴³× too strong for the physical α_G coupling.
+export const G_N   = 1.0 / ((B_3 + N_C) * (B_3 + N_C));  // = 0.01 lattice-toy (Scale 0/4/5 only)
 // [PARAMETRIC, demoted 2026-04-19 / FTD-0018] — integer-combination
 // matches to measured couplings (3.5% and ~few-% level), NOT derivations.
 export const SIN2_WEINBERG = N_C / N_EFF;             // sin^2(theta_W) = 3/13 (IR match)
@@ -176,6 +178,22 @@ export const ALPHA_INV_CORRECTED = X_PLUS
 export const HBAR_C_MEV_FM = 197.3269804;              // hbar*c in MeV*fm
 export const M_PLANCK_GEV = 1.22089e19;                // Planck mass in GeV
 
+// ── Derived gravity provenance (FTD-0131) — Scale-1 ParticleEngine ───
+// The FTD substrate route hands us a DIMENSIONLESS coupling, not a force
+// constant. Gravitational charge q_g = m/m_P with unit coupling, so the
+// two-body gravitational fine-structure ratio for one electron pair is
+//     α_G(e,e) = (m_e/m_P)² ≈ 1.75e-45   [THEOREM + 1 flagged step, FTD-0131].
+// In the engine's 4π-Coulomb convention: F = G_PE·mᵢmⱼ/r² with
+// G_PE = G_DERIVED = 1/(4π·m_P²). Dynamics are negligible next to EM
+// (float64-invisible in net force); telemetry/charts expose the true value.
+export const M_PLANCK_MEV     = M_PLANCK_GEV * 1.0e3;              // Planck mass (MeV)
+export const G_DERIVED        = 1.0 / (4.0 * Math.PI * M_PLANCK_MEV * M_PLANCK_MEV); // ≈5.3e-46 MeV⁻²
+export const ALPHA_G_ELECTRON = (K_B / M_PLANCK_MEV) * (K_B / M_PLANCK_MEV);          // ≈1.75e-45
+// Scale-1 pairwise gravity coupling — physical FTD-0131 value (NOT G_N).
+export const G_PE             = G_DERIVED;
+// Legacy reference: how much the old lattice-toy G_N overstated particle gravity.
+export const GRAVITY_VIS_GAIN = G_N / G_DERIVED;                  // ≈1.9e43 (historical toy / G_PE)
+
 // ── Dual-substrate chirality amplitude [DERIVED from G*] ────────────
 // delta² = (4·G* - 1) / (4·G*), mirrors ontic.h DELTA_SQUARED / DELTA_APPROX.
 // Scalar factor used by visualization overlays to split J into L/R
@@ -248,9 +266,12 @@ export const M_T_PHYS = 172760.0;   // top quark
 // Cosmological + oscillation upper bounds; not derivable from current
 // FTD chain. Values reflect literals already in particle-catalog.js
 // for backward compatibility with existing UI readouts.
-export const M_NU_E_PHYS   = 4.1e-9;     // m(ν_e)   bound (MeV)
-export const M_NU_MU_PHYS  = 8.58e-3;    // m(ν_mu)  bound (MeV)
-export const M_NU_TAU_PHYS = 4.955e-2;   // m(ν_tau) bound (MeV)
+// 2026-06-15 fix: M_NU_MU_PHYS / M_NU_TAU_PHYS previously held eV magnitudes
+// mislabeled as MeV (a ×1e6 error → keV-scale, not meV). Corrected to true MeV
+// magnitudes (neutrino masses are meV-scale upper bounds).
+export const M_NU_E_PHYS   = 4.1e-9;     // m(ν_e)   bound = 4.1  meV (in MeV)
+export const M_NU_MU_PHYS  = 8.58e-9;    // m(ν_mu)  bound = 8.58 meV (in MeV)
+export const M_NU_TAU_PHYS = 4.955e-8;   // m(ν_tau) bound = 49.55 meV (in MeV)
 
 // ── Additional Hadron Masses (MeV) [PARAMETRIC PDG] ─────────────────
 // Reference values for particle-catalog.js entries that previously

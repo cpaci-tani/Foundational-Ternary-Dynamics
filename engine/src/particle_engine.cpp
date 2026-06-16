@@ -6,7 +6,7 @@
  *
  * Force convention (matches Scale 0 Poisson solver ∇²φ = -s):
  *   F_EM   = alpha * q_i * q_j * r_hat / (4*pi * (r² + soft²))
- *   F_grav = G_N * m_i * m_j * r_hat / (r² + soft²)
+ *   F_grav = G_PE * m_i * m_j * r_hat / (r² + soft²)
  *
  * Gravity is always attractive (negative sign).
  * EM: like signs repel (positive), opposite attract (negative).
@@ -152,9 +152,9 @@ Vec3 ParticleEngine::compute_pairwise_force(int i, int j) const {
             if (diag) diag->f_coulomb += fc;
         }
 
-        // 2. Gravity: F = +G_N * mi * mj / r² * r_hat  (always toward j → attractive)
+        // 2. Gravity: F = +G_PE * mi * mj / r² * r_hat  (FTD-0131 physical coupling)
         if (toggles.gravity) {
-            double f_grav = G_N * pi.mass * pj.mass / r2;
+            double f_grav = G_PE * pi.mass * pj.mass / r2;
             Vec3 fg = r_hat * f_grav;
             f += fg;
             if (diag) diag->f_gravity += fg;
@@ -288,7 +288,7 @@ Vec3 ParticleEngine::tree_force(int i, int node_idx) const {
             if (diag) diag->f_coulomb += fc;
         }
         if (toggles.gravity) {
-            double f_grav = G_N * pi.mass * node.total_mass / r2;
+            double f_grav = G_PE * pi.mass * node.total_mass / r2;
             Vec3 fg = r_hat * f_grav;
             f += fg;
             if (diag) diag->f_gravity += fg;
@@ -341,6 +341,15 @@ Vec3 ParticleEngine::compute_force(int i) const {
     }
 
     // 9. Relativistic correction (MUST BE LAST on total force)
+    //
+    // CAVEAT (2026-06-15 audit): this is a crude, NON-COVARIANT approximation.
+    // It rescales the *entire* force isotropically by (1/gamma - 1), which only
+    // matches the transverse case (F_perp = m a / gamma) and is wrong for the
+    // longitudinal direction (which should scale as 1/gamma^3). It neither
+    // transforms forces between frames nor conserves relativistic momentum.
+    // For physically faithful dynamics use the dedicated relativistic-Verlet
+    // integrator (momentum push p += F*dt with v = p / sqrt(m^2 + p^2/c^2)),
+    // not this toggle. Kept only as a cheap "mass grows near c" visual cue.
     if (toggles.relativistic) {
         double v2 = pi.velocity.mag2();
         double c2 = C_SPEED * C_SPEED;
@@ -531,6 +540,8 @@ void ParticleEngine::tick() {
     compute_all_forces();
     // 2. Half-kick: v += (dt/2) * F/m
     half_kick();
+    // Enforce speed limit before drift to prevent teleportation at singularity
+    enforce_speed_limit();
     // 3. Drift: r += dt * v
     drift();
     // 4. Recompute forces at new positions
@@ -602,9 +613,9 @@ ParticleDiagnostics ParticleEngine::diagnostics() const {
                               / (4.0 * PI * r);
             }
 
-            // Gravitational PE: -G_N * mi * mj / r
+            // Gravitational PE: -G_PE * mi * mj / r
             if (toggles.gravity) {
-                d.gravity_pe -= G_N * particles_[i].mass * particles_[j].mass / r;
+                d.gravity_pe -= G_PE * particles_[i].mass * particles_[j].mass / r;
             }
         }
     }
