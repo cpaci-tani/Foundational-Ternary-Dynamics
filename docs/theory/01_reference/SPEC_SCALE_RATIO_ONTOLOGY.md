@@ -1,7 +1,7 @@
 # SPEC_SCALE_RATIO_ONTOLOGY.md
 
 **Title:** Scale-Ratio Ontology — Framework Commitment **FC-3**
-**Status:** `[AXIOM]`-class Framework Commitment (a declaration, **not** a derivation) — **proposed FTD-0303** (pending LEDGER + constitution registration)
+**Status:** `[AXIOM]`-class Framework Commitment (a declaration, **not** a derivation) — **FTD-0304** (registered 2026-06-15)
 **Depends on:** `SPEC_FTD_FRAMEWORK_V1.md` (the constitution, FTD-0254), `SPEC_SCALE_CONTEXT_READOUT.md`
 **Precedence:** `LEDGER > constitution > this SPEC` (per the 5.46 conflict-precedence rule)
 
@@ -47,7 +47,7 @@ Commitments / Calibrations, per `SPEC_FTD_FRAMEWORK_V1.md`). It stands alongside
 | FC-0 | the ℤ[i] reading | FTD-0249 |
 | FC-1 | the commutative observable algebra is complete (declines the measurement map M) | FTD-0255 |
 | FC-2 | the arrow is native; the Lorentzian metric is emergent-IR; space ⊥ time | FTD-0256 |
-| **FC-3** | **scale-ratio-covariance: only internal ratios are physical; `a`, `L` are observation scales** | **proposed FTD-0303** |
+| **FC-3** | **scale-ratio-covariance: only internal ratios are physical; `a`, `L` are observation scales** | **FTD-0304** |
 
 The theorem proves the *fork*; the commitment *picks the branch*. Motivation (the
 consistency case, not a proof): dimensionless ratios are the renormalization-group / effective-
@@ -177,7 +177,7 @@ trajectory — same discipline as `SPEC_SCALE_CONTEXT_READOUT §5.4`).
 
 - The ratio definitions `χ = ξ/R`, `β = δ/R` are `[DEFINITION]`.
 - The identity bands `χ_min`, `β_max` are `[IMPOSED engineering defaults]`, calibration deferred.
-- FC-3 itself is an `[AXIOM]`-class Framework Commitment (a declared choice), **proposed FTD-0303**.
+- FC-3 itself is an `[AXIOM]`-class Framework Commitment (a declared choice), **FTD-0304**.
 - **No tag moves.** `x₊ = 1/α` (FTD-0013) stays `[STRONGLY MOTIVATED CONJECTURE]`; MC-T4.3 stays
   `[FOUNDATIONAL OBSTRUCTION]`. FC-3 **reframes** the readout obstruction (an *identity* failure,
   not merely a box artifact) and unblocks **nothing by fiat** — no α is derived here.
@@ -196,8 +196,9 @@ trajectory — same discipline as `SPEC_SCALE_CONTEXT_READOUT §5.4`).
 
 ---
 
-## 8. Owner actions pending (not done in this pass)
+## 8. Owner actions (status)
 
-- Register FC-3 in `SPEC_FTD_FRAMEWORK_V1.md` (the constitution) and add the **FTD-0303** LEDGER row.
+- ~~Register FC-3 in `SPEC_FTD_FRAMEWORK_V1.md` (the constitution) and add the **FTD-0304** LEDGER row.~~ **DONE — 2026-06-15.**
+- ~~Minimal reference implementation (`engine/include/ftd/scale_ratio.h` + `engine/tests/test_scale_ratio.cpp`, 23 assertions, NO_CORE CMake target).~~ **DONE — commit `29d234e0`, 2026-06-15.**
 - Retrofit the three instances of §5 to the shared `ScaleContext` (separate implementation arc).
 - Calibrate the `[IMPOSED]` identity bands against a known-good instance.
