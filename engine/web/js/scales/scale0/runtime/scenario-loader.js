@@ -2,6 +2,7 @@ import { runScale0PhysicsTicks } from './tick.js';
 import { getPhysicsHarness } from '../../../physics/index.js';
 import { MockBridge } from '../../../bridge-init.js';
 import { MockBridgeProxy } from '../../../bridge/mock-bridge-proxy.js';
+import { WasmBridgeProxy } from '../../../bridge/wasm-bridge-proxy.js';
 import { telemetryHub } from '../../../telemetry-hub.js';
 import { K_B, G_N, DAMPING, K_GENESIS } from '../../../constants.js';
 import { SCALE0_TOGGLES, SCALE0_SCENARIO_OVERRIDES, LIGHT_SCENARIO_OVERRIDES, SCALE0_SCENARIO_BOUNDARY, SCALE0_ABSORBING_SCENARIOS, SCALE0_MASS_GRAVITY_SCENARIOS } from '../../../config/toggles.js';
@@ -174,6 +175,28 @@ function makeFluxMock(latticeSize, scenarioId, bridge) {
     return workerEligible(scenarioId, bridge)
         ? new MockBridgeProxy(latticeSize)
         : new MockBridge(latticeSize);
+}
+
+// WASM-engine worker hosting (Phase 1): for WASM-OWNED scenarios (NOT flux-*/
+// mock-owned — i.e. the ones that would otherwise run on the main-thread WASM
+// bridge, e.g. s0-seed-hydrogen) host the real C++ engine in a Web Worker
+// (WasmBridgeProxy) so the heavy tick never stalls the render thread. Requires
+// COI + SAB + a primary WASM bridge. window.__ftdWasmWorker = false forces the
+// in-thread WASM path (tests/fallback).
+const FTD_WASM_WORKER = (typeof window !== 'undefined' && window.__ftdWasmWorker !== undefined)
+    ? !!window.__ftdWasmWorker
+    : true;
+function wasmWorkerEligible(scenarioId, bridge) {
+    // "WASM-owned scenario" = NOT JS-mock-owned: deterministic from the scenario
+    // name (NOT the getFluxVolume probe shouldUseFluxMock uses, which is
+    // state-dependent and gave different load-vs-resize answers).
+    return FTD_WASM_WORKER
+        && typeof SharedArrayBuffer !== 'undefined'
+        && globalThis.crossOriginIsolated === true
+        && !!(bridge && bridge.isWasm)
+        && !SCALE0_INLINE_MOCK_SCENARIOS.has(scenarioId)
+        && !SCALE0_MOCK_OWNED_SCENARIOS.has(scenarioId)
+        && !scenarioId.startsWith('flux-');
 }
 
 function syncComboSliders(ctx, state) {
@@ -395,13 +418,21 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // chosen overlays every time they pick a new scenario.
     const overlayPrefs = captureOverlayPreferences(state);
 
-    const useFluxMock = shouldUseFluxMock(ctx.bridge, scenario.id);
     const latticeSize = ctx.bridge.latticeSize || 33;
+    let useFluxMock = false;
     let fluxMock = null;
-    if (useFluxMock) {
-        fluxMock = makeFluxMock(latticeSize, scenario.id, ctx.bridge);
-        fluxMock.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenario.id));
-        fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenario.id));
+    if (wasmWorkerEligible(scenario.id, ctx.bridge)) {
+        // Off-thread WASM engine (Phase 1): host the real C++ physics in a Web
+        // Worker. boundary setters are no-ops on the WASM engine (not bound).
+        fluxMock = new WasmBridgeProxy(latticeSize);
+        useFluxMock = true;
+    } else {
+        useFluxMock = shouldUseFluxMock(ctx.bridge, scenario.id);
+        if (useFluxMock) {
+            fluxMock = makeFluxMock(latticeSize, scenario.id, ctx.bridge);
+            fluxMock.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenario.id));
+            fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenario.id));
+        }
     }
 
     applyToggleDefaults(ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0 ?? null, scenario.id);
@@ -478,6 +509,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     //     (Voxel + SU(2)/SU(3) link structures), bounded by the WASM heap:
     //     8 GB on the Memory64 (wasm64) build, 2 GB on the wasm32 fallback.
     const ownerIsMock = shouldUseFluxMock(bridge, scenarioId);
+    const useWasmWorker = wasmWorkerEligible(scenarioId, bridge);
     const bytesPerVoxel = ownerIsMock ? 150 : 1300;
     const capGB = ownerIsMock ? 2 : (bridge?.isWasm64 ? 8 : 2);
     const projectedBytes = Math.ceil(newSize ** 3 * bytesPerVoxel);
@@ -493,7 +525,9 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
         return;
     }
 
-    if (!ownerIsMock && bridge && typeof bridge.resize === 'function') {
+    // Skip the in-thread WASM realloc when the off-thread worker owns physics
+    // (the WasmBridgeProxy rebuilds the engine at newSize inside the worker).
+    if (!ownerIsMock && !useWasmWorker && bridge && typeof bridge.resize === 'function') {
         try {
             await bridge.resize(newSize);
         } catch (e) {
@@ -510,12 +544,18 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
 
     telemetryHub.resetScale(0);
 
-    const useFluxMock = shouldUseFluxMock(bridge, scenarioId);
+    let useFluxMock = false;
     let fluxMock = null;
-    if (useFluxMock) {
-        fluxMock = makeFluxMock(newSize, scenarioId, bridge);
-        fluxMock.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
-        fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
+    if (useWasmWorker) {
+        fluxMock = new WasmBridgeProxy(newSize);   // off-thread WASM at the new size
+        useFluxMock = true;
+    } else {
+        useFluxMock = shouldUseFluxMock(bridge, scenarioId);
+        if (useFluxMock) {
+            fluxMock = makeFluxMock(newSize, scenarioId, bridge);
+            fluxMock.capabilities.scale0.setBoundaryShape(boundaryShapeFor(scenarioId));
+            fluxMock.capabilities.scale0.setReflectiveBoundary(reflectiveFor(scenarioId));
+        }
     }
 
     applyToggleDefaults(ctx.bridge.capabilities.scale0, fluxMock?.capabilities?.scale0 ?? null, scenarioId);

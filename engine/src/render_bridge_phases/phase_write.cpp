@@ -31,6 +31,7 @@
 #include "ftd/field_operators.h"
 #include "ftd/bridge_rng.h"
 #include "ftd/voxel_rng.h"
+#include "ftd/parallel.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -170,8 +171,8 @@ void phase_write_main_loop(RenderBridge& rb) {
                                     static_cast<std::size_t>(num_threads));
 
   // ---- Loop 1: Leapfrog integration, Langevin OU, and Damping ----
-#pragma omp parallel for
-  for (int i = 0; i < N; ++i) {
+  ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+  for (int i = _lo; i < _hi; ++i) {
     auto &v = rb.voxels_[i];
 
     int tid = 0;
@@ -255,15 +256,17 @@ void phase_write_main_loop(RenderBridge& rb) {
       }
     }
   }
+  });
 
   // ---- Snapshot the updated flux field (post-write) to rb.flux_pre_write_ ----
   // (which is now acting as post-write snapshot) to avoid cross-thread races.
   if (do_genesis) {
     rb.flux_pre_write_.resize(N);
-#pragma omp parallel for
-    for (int i = 0; i < N; ++i) {
+    ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+    for (int i = _lo; i < _hi; ++i) {
       rb.flux_pre_write_[i] = rb.voxels_[i].flux;
     }
+    });
   }
 
   // FTD-0267 observation-only telemetry: reset per-tick genesis/evaporation
@@ -299,8 +302,7 @@ void phase_write_main_loop(RenderBridge& rb) {
         double p = 1.0 - std::exp(-excess / K_MANIFEST);
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
-#pragma omp atomic
-          ++rb.genesis_events_this_tick_;  // FTD-0267 telemetry (observation only)
+          ftd::atomic_inc(rb.genesis_events_this_tick_);  // FTD-0267 telemetry (observation only)
           double chi = v.chirality_density();
           manifest_at(rb, v, chi, rb.flux_pre_write_, rb.lattice_, i, gseed, rb.tick_, /*dual=*/true);
         }
@@ -313,8 +315,7 @@ void phase_write_main_loop(RenderBridge& rb) {
         double p = 1.0 - std::exp(-excess / K_MANIFEST);
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
-#pragma omp atomic
-          ++rb.genesis_events_this_tick_;  // FTD-0267 telemetry (observation only)
+          ftd::atomic_inc(rb.genesis_events_this_tick_);  // FTD-0267 telemetry (observation only)
           // Latent Heat of Manifestation: consume wave energy. FTD-0276: the
           // drain fraction is a runtime toggle (default 0.5 = legacy constant).
           v.wave_vel *= (1.0 - rb.toggles.kinetic_drain);
@@ -340,8 +341,7 @@ void phase_write_main_loop(RenderBridge& rb) {
       double evap_prob = std::exp(-local_energy / (K_MANIFEST * K_MANIFEST));
       if (voxel_uniform(gseed, i, rb.tick_,
                         static_cast<std::uint64_t>(VoxelRng::Evaporation)) < evap_prob * K_EVAP_RATE) {
-#pragma omp atomic
-        ++rb.evaporation_events_this_tick_;  // FTD-0267 telemetry (observation only)
+        ftd::atomic_inc(rb.evaporation_events_this_tick_);  // FTD-0267 telemetry (observation only)
         rb.set_state(i, 0);
         v.particle_id = -1;
         v.spin = 0;
