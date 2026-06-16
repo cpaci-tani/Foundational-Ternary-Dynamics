@@ -1,6 +1,12 @@
 /**
  * Spectroscopy Module — Hydrogen energy levels and spectral series.
  *
+ * [PARAMETRIC] — the Bohr / Dirac level formulas below are imported textbook
+ * QM; only the constants they consume (alpha = G_C^2, m_e) are FTD. Hydrogen
+ * bound states are a classical Kepler / textbook-eigenvalue result, NOT a
+ * substrate eigenvalue derivation. See
+ * docs/theory/07_assessment/AUDIT_ATOMIC_DYNAMICS_STATUS.md.
+ *
  * Every formula uses constants from the ontic chain via constants.js.
  * All energies in MeV (natural units where K_B = m_e = 0.511 MeV).
  */
