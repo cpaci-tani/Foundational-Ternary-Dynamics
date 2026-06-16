@@ -5,6 +5,7 @@
 
 #include "ftd/poisson_solvers.h"
 #include "ftd/constants.h"
+#include "ftd/parallel.h"
 #include <algorithm>
 #include <cmath>
 
@@ -68,8 +69,9 @@ void sor_sweep_18pt(std::vector<double>& phi,
     int start_z = (color >> 2) & 1;
 
     // --- Interior cells: PARALLEL (fast path; never wraps → race-free) ---
-#pragma omp parallel for schedule(static)
-    for (int ix = start_x; ix < L; ix += 2) {
+    ftd::parallel_for(start_x, L, [&](int _lo, int _hi) {
+    for (int ix = _lo; ix < _hi; ++ix) {
+      if (((ix - start_x) & 1) != 0) continue;  // preserve 8-color stride-2 in ix
       if (ix == 0 || ix == Nm1) continue;  // x-face → boundary pass
       for (int iy = start_y; iy < L; iy += 2) {
         if (iy == 0 || iy == Nm1) continue;  // y-face → boundary pass
@@ -92,6 +94,7 @@ void sor_sweep_18pt(std::vector<double>& phi,
         }
       }
     }
+    });
 
     // --- Boundary cells: SEQUENTIAL lexicographic (slow path; wraps at seam) ---
     for (int ix = start_x; ix < L; ix += 2) {
@@ -145,8 +148,8 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
   const double charge_sum = static_cast<double>(state.charge_sum());
   const double mean_charge = charge_sum / N;
 
-#pragma omp parallel for schedule(static)
-  for (int ix = 0; ix < L; ++ix) {
+  ftd::parallel_for(0, L, [&](int _lo, int _hi) {
+  for (int ix = _lo; ix < _hi; ++ix) {
     for (int iy = 0; iy < L; ++iy) {
       for (int iz = 0; iz < L; ++iz) {
         const int i = ix * LL + iy * L + iz;
@@ -162,6 +165,7 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
       }
     }
   }
+  });
 
   for (int iter = 0; iter < sor_iters; ++iter) {
     sor_sweep_18pt(phi, sor_source, lattice, OMEGA);
@@ -180,13 +184,14 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
     phi_sum += phi[i];
   }
   const double phi_mean = phi_sum / N;
-#pragma omp parallel for schedule(static)
-  for (int i = 0; i < N; ++i) {
+  ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+  for (int i = _lo; i < _hi; ++i) {
     phi[i] -= phi_mean;
   }
+  });
 
-#pragma omp parallel for schedule(static)
-  for (int ix = 0; ix < L; ++ix) {
+  ftd::parallel_for(0, L, [&](int _lo, int _hi) {
+  for (int ix = _lo; ix < _hi; ++ix) {
     for (int iy = 0; iy < L; ++iy) {
       for (int iz = 0; iz < L; ++iz) {
         const int i = ix * LL + iy * L + iz;
@@ -212,6 +217,7 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
       }
     }
   }
+  });
 }
 
 void solve_coulomb_poisson_cpu(const TernaryField& state,
@@ -225,10 +231,11 @@ void solve_coulomb_poisson_cpu(const TernaryField& state,
   double charge_sum = static_cast<double>(state.charge_sum());
   const double mean_charge = charge_sum / N;
 
-#pragma omp parallel for
-  for (int i = 0; i < N; ++i) {
+  ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+  for (int i = _lo; i < _hi; ++i) {
     sor_source[i] = -(static_cast<double>(state.state_at(i)) - mean_charge);
   }
+  });
 
   for (int iter = 0; iter < sor_iters; ++iter) {
     sor_sweep_18pt(phi_coulomb, sor_source, lattice, OMEGA);
@@ -241,9 +248,10 @@ void solve_coulomb_poisson_cpu(const TernaryField& state,
   for (int i = 0; i < N; ++i)
     phi_sum += phi_coulomb[i];
   const double phi_mean = phi_sum / N;
-#pragma omp parallel for
-  for (int i = 0; i < N; ++i)
+  ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+  for (int i = _lo; i < _hi; ++i)
     phi_coulomb[i] -= phi_mean;
+  });
 }
 
 void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
@@ -276,13 +284,14 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
   }
   const double mean_rho = rho_sum / N;
 
-#pragma omp parallel for
-  for (int i = 0; i < N; ++i) {
+  ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+  for (int i = _lo; i < _hi; ++i) {
     double rho = M_REST * std::abs(state.state_at(i));
     if (include_field_energy)
       rho += 0.5 * (voxels[i].flux.mag2() + voxels[i].wave_vel.mag2());
     sor_source[i] = FOUR_PI_G * (rho - mean_rho);
   }
+  });
 
   for (int iter = 0; iter < sor_iters; ++iter) {
     sor_sweep_18pt(phi_latency, sor_source, lattice, OMEGA);
@@ -294,9 +303,10 @@ void solve_latency_poisson_cpu(std::vector<Voxel>& voxels,
   for (int i = 0; i < N; ++i)
     phi_sum += phi_latency[i];
   const double phi_mean = phi_sum / N;
-#pragma omp parallel for
-  for (int i = 0; i < N; ++i)
+  ftd::parallel_for(0, N, [&](int _lo, int _hi) {
+  for (int i = _lo; i < _hi; ++i)
     phi_latency[i] -= phi_mean;
+  });
 
   for (int i = 0; i < N; ++i) {
     double phi_val = phi_latency[i];
