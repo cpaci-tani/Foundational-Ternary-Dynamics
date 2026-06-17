@@ -190,7 +190,8 @@ export class MockBridge {
         this._rebuildBoundaryMask();
     }
 
-    setReflectiveBoundary(on) { this._reflectiveBoundary = !!on; }
+    setFluxBoundaryMode(mode) { this._fluxBoundaryMode = mode; this._reflectiveBoundary = (mode === 1); }
+    setReflectiveBoundary(on) { this.setFluxBoundaryMode(on ? 1 : 2); }
 
     _rebuildBoundaryMask() {
         const N = this.latticeSize;

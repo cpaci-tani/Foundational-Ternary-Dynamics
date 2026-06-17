@@ -650,11 +650,16 @@ export class WasmBridge {
         if (this._aeFallback) this._aeFallback.setBoundaryShape(shape);
     }
 
+    // 0 = Periodic, 1 = Reflective, 2 = Dispersal
+    setFluxBoundaryMode(mode) {
+        this._fluxBoundaryMode = mode;
+        if (this._bridge?.setFluxBoundary) this._bridge.setFluxBoundary(mode);
+        if (this._aeFallback?.setFluxBoundaryMode) this._aeFallback.setFluxBoundaryMode(mode);
+    }
+
     setReflectiveBoundary(on) {
-        this._reflectiveBoundary = !!on;
-        if (this._bridge) {
-            this.setToggle('reflective_boundary', !!on);
-        }
+        // Legacy path: map bool → flux boundary mode
+        this.setFluxBoundaryMode(on ? 1 : 2);
         if (this._aeFallback) this._aeFallback.setReflectiveBoundary(on);
     }
 

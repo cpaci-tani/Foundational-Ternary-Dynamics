@@ -180,6 +180,16 @@ static void set_langevin_temp(ftd::RenderBridge& rb, double t) { rb.toggles.lang
 static double get_langevin_temp(ftd::RenderBridge& rb) { return rb.toggles.langevin_T; }
 static double get_physical_time(ftd::RenderBridge& rb) { return rb.physical_time(); }
 
+// Flux boundary mode: 0=Periodic (toroidal wrap), 1=Reflective (Neumann
+// mirror, ∂_n J=0), 2=Dispersal (first-order radiating sink, outer layer
+// scales by 1-C_SPEED per tick). Defaults to Periodic (golden-neutral).
+static void set_flux_boundary(ftd::RenderBridge& rb, int mode) {
+    rb.toggles.flux_boundary = static_cast<ftd::FluxBoundaryMode>(mode);
+}
+static int get_flux_boundary(ftd::RenderBridge& rb) {
+    return static_cast<int>(rb.toggles.flux_boundary);
+}
+
 // ── Scenario setup ───────────────────────────────────────────────────
 // NOTE: Primary scenario dispatch path is ftd::dispatch_scenario(rb, name)
 // (src/scenarios.cpp + include/ftd/scenarios.h) which owns every flux-*,
@@ -324,6 +334,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getDt",              &get_dt);
     function("setLangevinTemp",    &set_langevin_temp);
     function("getLangevinTemp",    &get_langevin_temp);
+    function("setFluxBoundary",   &set_flux_boundary);
+    function("getFluxBoundary",   &get_flux_boundary);
     function("setOmega0",          &set_omega0);
     function("getOmega0",          &get_omega0);
     function("getPhysicalTime",    &get_physical_time);
