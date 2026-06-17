@@ -45,14 +45,6 @@ test.describe('Math formatting coverage', () => {
         expect(body, 'KB contains raw \\\\[ — display LaTeX was not rendered').not.toMatch(/\\\[/);
     });
 
-    test('Verify panel leaks no raw delimiters', async ({ page }) => {
-        await page.evaluate(() => document.querySelector('#tab-bar .tab[data-panel="verification-lab"]')?.click());
-        await page.waitForSelector('.verify-header', { timeout: 10000 });
-        const body = await page.locator('#panel-verification-lab').innerText();
-        expect(body).not.toMatch(/\\\(/);
-        expect(body).not.toMatch(/\\\[/);
-    });
-
     test('tooltip system leaks no raw delimiters', async ({ page }) => {
         await page.hover('#btn-knowledge-base');
         await page.waitForTimeout(400);

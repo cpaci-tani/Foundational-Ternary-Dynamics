@@ -149,6 +149,10 @@ const SCALE1_DIAGNOSTIC_TOOLTIPS = {
     'Gravity':         'Whether the always-attractive gravity term is enabled. Uses the FTD-0131-derived coupling G_PE = 1/(4pi*m_P^2): gravitational charge q_g = m/m_P, so alpha_G(e,e) = (m_e/m_P)^2 ~ 1.75e-45. Particle-scale gravity is ~43 orders below EM and invisible in net-force dynamics; Gravity PE and the Gravity PE chart expose the true value in scientific notation.',
     'Damping':         'Whether velocity damping (v *= 1 - DAMPING*dt) is enabled.',
     'Relativistic':    'Whether the relativistic correction is enabled. NOTE: active only on the WASM/native backend; the JavaScript engine stores the flag but does not apply it.',
+    'G_PE derived':    'The derived gravitational coupling constant \\(G_{\\text{PE}} = 1/(4\\pi m_P^2)\\) in FTD, where \\(m_P\\) is the Planck mass.',
+    'G_PE (derived)':  'The derived gravitational coupling constant \\(G_{\\text{PE}} = 1/(4\\pi m_P^2)\\) in FTD, where \\(m_P\\) is the Planck mass.',
+    'α_Ge,e':          'The electron-electron gravitational fine structure constant: \\(\\alpha_G(e,e) = G_{\\text{PE}} m_e^2 \\approx 1.75 \\times 10^{-45}\\).',
+    'α_G(e,e)':        'The electron-electron gravitational fine structure constant: \\(\\alpha_G(e,e) = G_{\\text{PE}} m_e^2 \\approx 1.75 \\times 10^{-45}\\).',
 
     // ─── Active Hamiltonian ────────────────────────────────────────────
     'Particles':        'Total particles in the simulation (mobile + locked).',
@@ -395,6 +399,103 @@ function annotateStatusItems(root) {
     });
 }
 
+const SCALE1_CHART_TOOLTIPS = {
+    'Particle Energy': 'Real-time time-series of Kinetic Energy (KE), Potential Energy (PE), and Total Energy (KE + PE) in MeV.',
+    'Momentum & Angular Momentum': 'Real-time time-series of linear momentum magnitude |p| (MeV/c) and angular momentum magnitude |L| (hbar).',
+    'Momentum Angular Momentum': 'Real-time time-series of linear momentum magnitude |p| (MeV/c) and angular momentum magnitude |L| (hbar).',
+    'Net Forces': 'Real-time time-series of the maximum and mean net force magnitudes (Pl) acting on particles.',
+    'Particle Counts': 'Real-time time-series of total, locked (fixed), and mobile particle counts.',
+    'Two-Body Orbit': 'Real-time time-series of separation distance r (lu) and radial velocity v (c) for two-body scenarios.',
+    'Virial & RMS Velocity': 'Real-time time-series of the virial ratio 2K/|U| and the root-mean-square velocity v_RMS (c).',
+    'Virial RMS Velocity': 'Real-time time-series of the virial ratio 2K/|U| and the root-mean-square velocity v_RMS (c).',
+};
+
+function annotateScale1Charts(root) {
+    const selector = '#panel-charts[data-active-scale="1"] .chart-card';
+    const cards = [];
+    if (root instanceof HTMLElement && root.matches(selector)) {
+        cards.push(root);
+    }
+    if (root.querySelectorAll) {
+        root.querySelectorAll(selector).forEach((el) => cards.push(el));
+    }
+
+    cards.forEach((card) => {
+        const titleEl = card.querySelector('.chart-card-title');
+        if (!titleEl) return;
+        const key = normalizeLabel(titleEl.textContent);
+        const text = SCALE1_CHART_TOOLTIPS[key];
+        if (text) {
+            setTooltip(titleEl, text);
+            setTooltip(card, text);
+        }
+    });
+}
+
+function annotateScale1ChartChips(root) {
+    const selector = '#panel-charts[data-active-scale="1"] .charts-chip';
+    const chips = [];
+    if (root instanceof HTMLElement && root.matches(selector)) {
+        chips.push(root);
+    }
+    if (root.querySelectorAll) {
+        root.querySelectorAll(selector).forEach((el) => chips.push(el));
+    }
+
+    chips.forEach((chip) => {
+        const key = normalizeLabel(chip.textContent);
+        const text = SCALE1_CHART_TOOLTIPS[key];
+        if (text) {
+            setTooltip(chip, `Toggle displaying the ${chip.textContent} chart: ${text}`);
+        }
+    });
+}
+
+const SCALE1_TELEMETRY_GRID_TOOLTIPS = {
+    'Total Energy': 'Total particle-engine energy KE + PE (Coulomb + gravity). Constant in closed systems.',
+    'Kinetic Energy': 'Total kinetic energy = sum of 1/2 m|v|^2 across all particles.',
+    'Coulomb PE': 'Electrostatic pair energy: sum of alpha q_i q_j / (4 pi r_ij).',
+    'Gravity PE': 'Gravitational pair energy: -sum G_PE m_i m_j / r_ij. Uses the physical FTD-0131 coupling.',
+    'Energy Drift': 'Relative energy drift (E - E0)/|E0| since the scenario baseline tick.',
+    'Particle Count': 'Total number of active and locked particles in the simulation.',
+    'Locked Particles': 'Count of locked (fixed, non-integrated) particles.',
+    'Mobile Particles': 'Count of mobile (dynamically integrated) particles.',
+    'Total Momentum': 'Magnitude of the total linear momentum. Conserved under translation invariance.',
+    'Angular Momentum': 'Magnitude of the total angular momentum. Conserved under rotational invariance.',
+    'Virial Ratio': 'Virial-theorem ratio 2K / |U|. Equals 1 for a steady bound system.',
+    'RMS Velocity': 'Root-mean-square particle speed as a fraction of the lattice speed limit c.',
+    'Max |v|/c': 'Largest particle speed as a fraction of the lattice speed limit c = 1/sqrt(3).',
+    'System Radius': 'Characteristic radius - average particle distance from the center of mass.',
+    'Max Net Force': 'Largest net-force magnitude over all particles, in lattice-native Planck-like units (Pl).',
+    'Mean Net Force': 'Mean net-force magnitude across all particles, in lattice-native Planck-like units (Pl).',
+    '2-Body Separation': 'Instantaneous two-body separation |r1 - r2| in lattice units.',
+    'Radial Velocity': 'Radial component of the relative velocity (dr . dv)/|dr| for the two-body case.',
+};
+
+function annotateScale1TelemetryGrid(root) {
+    const selector = '#panel-telemetry-grid[data-active-scale="1"] .telemetry-card';
+    const cards = [];
+    if (root instanceof HTMLElement && root.matches(selector)) {
+        cards.push(root);
+    }
+    if (root.querySelectorAll) {
+        root.querySelectorAll(selector).forEach((el) => cards.push(el));
+    }
+
+    cards.forEach((card) => {
+        const titleEl = card.querySelector('.telemetry-card-title');
+        if (!titleEl) return;
+        const key = normalizeLabel(titleEl.textContent);
+        const text = SCALE1_TELEMETRY_GRID_TOOLTIPS[key];
+        if (text) {
+            setTooltip(titleEl, text);
+            setTooltip(card, text);
+            const valEl = card.querySelector('.telemetry-card-value');
+            if (valEl) setTooltip(valEl, text);
+        }
+    });
+}
+
 export function applyUiTooltipDefinitions(root = document) {
     if (!(root instanceof Document) && !(root instanceof HTMLElement) && !(root instanceof DocumentFragment)) {
         return;
@@ -404,6 +505,9 @@ export function applyUiTooltipDefinitions(root = document) {
     annotateStatusItems(root);
     annotateScale0Diagnostics(root);
     annotateScale1Diagnostics(root);
+    annotateScale1Charts(root);
+    annotateScale1ChartChips(root);
+    annotateScale1TelemetryGrid(root);
     annotatePETelemetry(root);
     annotateAEDiagnostics(root);
 }

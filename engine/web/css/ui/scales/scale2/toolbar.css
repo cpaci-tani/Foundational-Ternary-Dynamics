@@ -1,0 +1,24 @@
+/* Scale 2 toolbar — scenario metadata strip */
+
+.ae-scenario-desc-text {
+    white-space: pre-wrap;
+    font-family: inherit;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin: 4px 0 0 0;
+}
+
+.scale2-scenario-meta {
+    max-width: min(420px, 100%);
+}
+
+@media (max-width: 767px) {
+    .tb-select-scenario-wide {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+    }
+    .scale2-scenario-meta {
+        max-width: 100%;
+    }
+}

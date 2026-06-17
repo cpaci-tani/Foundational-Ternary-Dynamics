@@ -244,7 +244,7 @@ export class ViewportSceneCore {
     toggleAxes(on) {
         this._showAxes = on;
         const mode = this._engineMode || 'lattice';
-        if (mode === 'cosmic' || mode === 'meta') return;
+        if (mode === 'cosmic') return;
         if (mode === 'lattice') {
             if (this.axes) this.axes.visible = on;
         } else {
@@ -346,7 +346,7 @@ export class ViewportSceneCore {
     toggleGrid(on) {
         this._showGrid = on;
         const mode = this._engineMode || 'lattice';
-        if (mode === 'cosmic' || mode === 'meta') return;
+        if (mode === 'cosmic') return;
         if (mode === 'lattice') {
             // Scale 0: the wireframe cube serves as the grid reference
             if (this.wireframe) this.wireframe.visible = on;

@@ -148,13 +148,7 @@ export function mountScale0PlaybackUI() {
     const viewportEl = document.getElementById('viewport');
     if (!viewportEl) return;
     if (!_playBar) {
-        _playBar = new PlayBarComponent(viewportEl, {
-            getNowTick: () => {
-                const ctx = (typeof window !== 'undefined') ? window.__ftdCtx : null;
-                const st = getScale0State();
-                return getActiveScale0Capability(ctx, st)?.getScale0Diagnostics?.()?.tick ?? 0;
-            },
-        }).mount();
+        _playBar = new PlayBarComponent(viewportEl).mount();
     }
 }
 

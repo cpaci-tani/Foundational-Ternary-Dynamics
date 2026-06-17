@@ -60,7 +60,7 @@ import {
 
 // Same ordered mode list scales.spec.js drives. Index 0 ('lattice') is the
 // baseline we always return to.
-const MODES = ['lattice', 'particles', 'atoms', 'molecules', 'planetary', 'cosmic', 'meta'];
+const MODES = ['lattice', 'particles', 'atoms', 'molecules', 'planetary', 'cosmic'];
 
 // Settle budget after each switchMode. WASM/Three controllers mount + tear
 // down asynchronously; this gives the rAF loop + scene build a few frames.

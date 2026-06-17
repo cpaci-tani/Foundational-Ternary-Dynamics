@@ -1,15 +1,11 @@
 /**
  * PlayBarComponent — the floating transport + speed bar at the bottom of the
  * viewport. Hosts the primary playback controls (play / step / reset — wired by
- * app.js), the speed control (nudge / presets / fine slider), the step-by-N
- * shortcuts, and a forward-only "T N" tick readout.
- *
- * The simulation is forward-only: the engine tick is the single time source,
- * and the render loop is the observer's external (always-flowing) clock. There
- * is no reverse / rewind timeline.
+ * app.js), the speed control (nudge / presets / fine slider), and the step-by-N
+ * shortcuts.
  *
  * Usage:
- *   const bar = new PlayBarComponent(viewportEl, { getNowTick: () => bridge…tick });
+ *   const bar = new PlayBarComponent(viewportEl);
  *   bar.mount();
  *   // Call bar.refresh() from the animate loop; it throttles internally.
  */
@@ -30,7 +26,6 @@ export class PlayBarComponent {
         const mountEl = document.getElementById('app') || this.viewportEl;
         mountEl.appendChild(this.el);
 
-        this.timeEl      = this.el.querySelector('.play-bar-time');
         this.settingsBtn = this.el.querySelector('.play-bar-settings');
         this.popoverEl   = this.el.querySelector('.play-bar-settings-popover');
         this.speedNudgeBtns = this.el.querySelectorAll('[data-speed-nudge]');
@@ -208,17 +203,9 @@ export class PlayBarComponent {
         }
     }
 
-    _formatTickLabel(tick) {
-        return Number.isFinite(tick) ? `T ${Math.max(0, Math.round(tick))}` : 'T --';
-    }
-
-    /** Update the forward-only "T N" tick readout. Call from the animate loop; throttles internally. */
+    /** Sync zoom preset chips from camera state. Call from the animate loop; throttles internally. */
     refresh() {
         if ((this._refreshSkips++ % 6) !== 0) return;
-        const now = this.opts.getNowTick?.();
-        if (this.timeEl && now != null) {
-            this.timeEl.textContent = this._formatTickLabel(now);
-        }
         this._syncZoomPresetFromCamera();
     }
 

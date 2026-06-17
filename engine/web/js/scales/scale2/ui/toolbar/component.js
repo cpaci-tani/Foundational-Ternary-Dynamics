@@ -1,4 +1,5 @@
 import { getScale2ScenarioToolbarTemplate } from './template.js';
+import { populateAEScenarioSelect, AE_DEFAULT_SCENARIO } from '../../scenario-registry.js';
 
 function htmlToElement(markup) {
     const template = document.createElement('template');
@@ -7,5 +8,7 @@ function htmlToElement(markup) {
 }
 
 export function createScale2ScenarioToolbarGroup() {
-    return htmlToElement(getScale2ScenarioToolbarTemplate());
+    const element = htmlToElement(getScale2ScenarioToolbarTemplate());
+    populateAEScenarioSelect(element.querySelector('#ae-scenario-select'), AE_DEFAULT_SCENARIO);
+    return element;
 }

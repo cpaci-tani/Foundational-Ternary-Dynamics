@@ -50,7 +50,10 @@
     <link rel="stylesheet" href="css/ui/scales/toolbar-groups.css">
     <link rel="stylesheet" href="css/ui/scales/scale0/toolbar.css">
     <link rel="stylesheet" href="css/ui/scales/scale1/telemetry.css">
+    <link rel="stylesheet" href="css/ui/components/scale-overlay-panel.css">
     <link rel="stylesheet" href="css/ui/scales/scale2/legend.css">
+    <link rel="stylesheet" href="css/ui/scales/scale2/toolbar.css">
+    <link rel="stylesheet" href="css/ui/scales/scale2/overlay.css">
     <link rel="stylesheet" href="css/ui/scales/scale23/toolbar.css">
     <link rel="stylesheet" href="css/ui/scales/scale4/overlays.css">
     <!-- Primitive CSS (Phase 1) -->
@@ -72,7 +75,6 @@
     <link rel="stylesheet" href="css/ui/panels/telemetry-grid.css">
     <link rel="stylesheet" href="css/ui/panels/inspector-panel.css?v=2">
     <link rel="stylesheet" href="css/ui/panels/lagrangian-panel.css?v=4">
-    <link rel="stylesheet" href="css/ui/panels/verify-panel.css?v=1">
     <link rel="stylesheet" href="css/ui/panels/zoo-panel.css">
     <link rel="stylesheet" href="css/ui/panels/scene-panel.css?v=1">
     <link rel="stylesheet" href="css/ui/panels/aggregation-bridge.css">
@@ -146,7 +148,6 @@
                     <option value="molecules">Scale 3 (Molecules)</option>
                     <option value="planetary">Scale 4 (Planetary)</option>
                     <option value="cosmic">Scale 5 (Cosmic)</option>
-                    <option value="meta">Meta (Existential Unit)</option>
                 </select>
             </div>
             <button class="tb-btn tb-btn-settings" id="btn-settings" title="Settings (Ctrl+,)"
@@ -178,7 +179,6 @@
                     <span class="scale3-only">Scale 3 &middot; Molecular Engine</span>
                     <span class="scale4-only">Scale 4 &middot; Planetary Sandbox</span>
                     <span class="scale5-only">Scale 5 &middot; Cosmic Engine</span>
-                    <span class="scale12-only">Meta &middot; Existential Unit</span>
                 </div>
                 <!-- Scale control cards are rendered by each scale's ControlsComponent (via controller.bindUI) -->
                 <div class="panel-grid panel-grid-3" id="panel-controls-grid"></div>
@@ -227,7 +227,6 @@
             <div class="panel scale0-only" id="panel-dispersion"></div>
 
             <!-- Cosmic and Meta info panels are rendered by js/ui/components/panel-resources -->
-            <!-- Verify panel is rendered by js/verify-panel/component.js -->
         </div>
 
         <!-- ── Toast Notifications ─────────────────── -->

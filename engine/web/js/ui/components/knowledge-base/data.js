@@ -898,23 +898,7 @@ const KNOWLEDGE_BASE_SECTIONS = Object.freeze([
                 notation: ['Scale 5'],
                 tags: ['scales', 'cosmic'],
             },
-            {
-                id: 'meta-unit',
-                title: 'Meta / Existential Unit',
-                shortTitle: 'Meta',
-                summary: 'The meta-scale learning surface for existential-unit framing and inspection.',
-                body: [
-                    'The meta mode is a separate conceptual presentation layer that exposes existential-unit controls and information panels.',
-                    'In practical UI terms, it acts as a high-level interpretive layer rather than a direct substrate or particle simulation view.',
-                ],
-                bullets: [
-                    'Meta-scale educational framing.',
-                    'Own control surface and information panel.',
-                    'Interpretive layer above the ordinary scale ladder.',
-                ],
-                notation: ['Meta'],
-                tags: ['scales', 'meta'],
-            },
+
         ],
     },
     {
