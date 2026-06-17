@@ -208,16 +208,9 @@ function wireParameterSliders(ctx) {
         const slider = getEl(s.id);
         const display = getEl(s.valId);
         if (!slider || !display) continue;
-        // Sliders are interactive whenever there's at least one writable
-        // bridge — pure-WASM mode disables them, but flux-* / s0-seed-* /
-        // s0-field-* / quantum-* scenarios always allocate a fluxMock and
-        // its setParam is the live physics knob the user actually wants.
         slider.addEventListener('input', () => {
             const val = parseFloat(slider.value);
             display.textContent = val.toFixed(s.fmt);
-            if (!ctx.bridge.isWasm && ctx.bridge.setParam) {
-                ctx.bridge.setParam(s.param, val);
-            }
             getFluxMock()?.setParam?.(s.param, val);
         });
         // Only mark read-only if we have NO writable target (pure-WASM

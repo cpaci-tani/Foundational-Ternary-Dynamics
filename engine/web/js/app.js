@@ -6,7 +6,7 @@
  * and wires up UI controls to the simulation bridge.
  */
 
-import { createBridge, MockBridge } from './bridge-init.js';
+import { createBridge } from './bridge-init.js';
 import { appRegistry } from './core/registry.js';
 import { tryNativeBridge } from './ws-bridge.js';
 import { Viewport } from './viewport.js';
@@ -469,11 +469,10 @@ async function init() {
     const computeEl = document.getElementById('status-compute');
 
     const urlParams = new URLSearchParams(window.location.search);
-    const forceMock = urlParams.get('engine') === 'mock';
     const forceNative = urlParams.get('engine') === 'native';
     const isLiveServerPort = /^55\d{2}$/.test(window.location.port);
 
-    if (!forceMock && (forceNative || !isLiveServerPort)) {
+    if (forceNative || !isLiveServerPort) {
         // 1. Try native GPU engine
         debugLog('[init] Trying native GPU engine on ws://127.0.0.1:9100...');
         try {
@@ -483,10 +482,7 @@ async function init() {
             bridge = null;
         }
     } else {
-        const skipReason = forceMock
-            ? 'forceMock active'
-            : (isLiveServerPort ? 'static dev server (use ?engine=native for ws_server)' : 'native probe skipped');
-        debugLog(`[init] Skipping native GPU: ${skipReason}`);
+        debugLog('[init] Skipping native GPU: static dev server (use ?engine=native for ws_server)');
         bridge = null;
     }
 
@@ -502,33 +498,14 @@ async function init() {
             : 'Connected to native CPU engine';
         showToast('Native GPU engine connected — full CUDA acceleration active.', 'success');
     } else {
-        if (forceMock) {
-            _loadProgress(30, 'Mock engine (forced)');
-            bridge = new MockBridge(latticeSize);
-            engineEl.textContent = 'Mock Engine';
-            engineEl.style.color = '#fbbf24';
-            computeEl.textContent = 'CPU';
-            computeEl.style.color = '#667';
-            showToast('Running in forced Mock mode.', 'warning');
-        } else {
-            _loadProgress(20, 'Compiling WASM engine...');
-            bridge = await createBridge(latticeSize);
-            if (bridge.isWasm && bridge.ready) {
-                _loadProgress(30, 'WASM engine ready');
-                engineEl.textContent = 'WASM Engine';
-                engineEl.style.color = '#4ade80';
-                computeEl.textContent = 'CPU';
-                computeEl.style.color = '#60a5fa';
-                computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
-            } else {
-                _loadProgress(30, 'Mock engine (fallback)');
-                engineEl.textContent = 'Mock Engine';
-                engineEl.style.color = '#fbbf24';
-                computeEl.textContent = 'CPU';
-                computeEl.style.color = '#667';
-                showToast('No engine available — running in Mock mode. Start ws_server.exe for GPU.', 'warning');
-            }
-        }
+        _loadProgress(20, 'Compiling WASM engine...');
+        bridge = await createBridge(latticeSize);
+        _loadProgress(30, 'WASM engine ready');
+        engineEl.textContent = 'WASM Engine';
+        engineEl.style.color = '#4ade80';
+        computeEl.textContent = 'CPU';
+        computeEl.style.color = '#60a5fa';
+        computeEl.title = 'Browser WASM runs on CPU. Start ws_server.exe for GPU.';
     }
     appRegistry.register('activeBridge', bridge);
 
