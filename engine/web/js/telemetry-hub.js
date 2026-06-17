@@ -227,7 +227,7 @@ export class TelemetryHub {
 
         // ── Scale 0 — Lattice / Flux ────────────────────
         // Core diagnostics (500-sample history)
-                this._s0_core = new MultiRingBuffer(500, ['flux', 'energy', 'manifested', 'entropy', 'charges', 'positive', 'negative', 'ebDiff', 'gauss']);
+                this._s0_core = new MultiRingBuffer(500, ['flux', 'energy', 'manifested', 'entropy', 'charges', 'positive', 'negative']);
         this.flux = this._s0_core.views['flux'];
         this.energy = this._s0_core.views['energy'];
         this.manifested = this._s0_core.views['manifested'];
@@ -235,8 +235,10 @@ export class TelemetryHub {
         this.charges = this._s0_core.views['charges'];
         this.positive = this._s0_core.views['positive'];
         this.negative = this._s0_core.views['negative'];
-        this.ebDiff = this._s0_core.views['ebDiff'];
-        this.gauss = this._s0_core.views['gauss'];
+        // ebDiff and gauss are pushed from the audit path (separate cadence),
+        // so they must be standalone RingBuffers, not views into _s0_core.
+        this.ebDiff = new RingBuffer(500);
+        this.gauss = new RingBuffer(500);
 
         // Per-audit-field trend buffers (500-sample) — drive panel-row sparklines.
                 this._s0_aud = new MultiRingBuffer(500, ['fieldEnergy', 'waveEnergy', 'particleKE', 'coulombPE', 'eFieldEnergy', 'bFieldEnergy', 'poyntingMag', 'maxGaussError', 'selfFieldInjection', 'eLeftEnergy', 'eRightEnergy', 'chirality', 'waveLeft', 'waveRight', 'energyDrift']);
@@ -312,8 +314,6 @@ export class TelemetryHub {
                 positive: diag.positive || 0,
                 negative: diag.negative || 0,
                 charges: (diag.positive || 0) - (diag.negative || 0),
-                ebDiff: this.ebDiff.last(), // Preserved until audit runs
-                gauss: this.gauss.last()
             });
 
             // 80-sample sparkline buffers
