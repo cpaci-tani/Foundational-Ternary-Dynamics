@@ -713,6 +713,11 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // Initial Condition Parameters: None.
         // Expected Behaviour: Multi-particle high-velocity gas of quarks and gluons under high Langevin temperature.
         // Discrepancy: None.
+        rb.toggles.wave_propagation = true;
+        rb.toggles.gauss_projection = true;
+        rb.toggles.langevin         = true;
+        rb.toggles.langevin_T       = 0.02;
+        rb.toggles.langevin_gamma   = 0.05;
         const int qOffset = 2;
         const int dirs[2] = {-qOffset, qOffset};
         int quarkIndex = 0;
@@ -1030,10 +1035,19 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // is the k=0 rest mode (uniform => Laplacian 0), so the centre voxel
         // oscillates at a clean omega0. genesis/damping OFF so the block
         // persists; the panel drives the clock and reads centre |J|(t).
-        rb.toggles.wave_propagation = true;
-        rb.toggles.genesis          = false;
-        rb.toggles.damping          = false;
-        rb.toggles.dual_substrate   = false;
+        rb.toggles.wave_propagation     = true;
+        rb.toggles.coupling             = true;
+        rb.toggles.genesis              = false;
+        rb.toggles.damping              = false;
+        rb.toggles.selective_damping    = false;
+        rb.toggles.weak_transmutation   = false;
+        rb.toggles.dual_substrate       = false;
+        rb.toggles.forces               = false;
+        rb.toggles.movement             = false;
+        rb.toggles.lorentz_force        = false;
+        rb.toggles.gauss_projection     = false;
+        rb.toggles.de_broglie_clock     = true;
+        rb.toggles.omega0               = 0.30;
         const int half = 3;            // 7x7x7 central manifested block
         const double J0 = 0.08;
         for (int dx = -half; dx <= half; ++dx)
@@ -1073,7 +1087,14 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // Physical Purpose: Simulates the Electroweak phase transition showing hysteresis using a uniform flux sweep.
         // Initial Condition Parameters: None.
         // Expected Behaviour: Gradual shift in state field as uniform flux is sinusoidally swept.
-        // Discrepancy: Custom JS logic sweeps the uniform flux additively on top of the 'empty' C++ scenario, rather than being handled purely inside the C++ engine.
+        // Discrepancy: None.
+        // The ew_background_sweep toggle activates a sinusoidal +x flux drive
+        // D(tick)=(sin(tick*0.01)+1)/2*0.05 inside RenderBridge::tick(), replacing
+        // the old JS setInterval sweep.
+        rb.toggles.wave_propagation    = true;
+        rb.toggles.gauss_projection    = true;
+        rb.toggles.genesis             = true;
+        rb.toggles.ew_background_sweep = true;
     }
     return true;
 }

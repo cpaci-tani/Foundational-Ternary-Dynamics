@@ -1,90 +1,3 @@
-/** Toggle bundle for FTD-0107 emergent-spectrum reproduction scenarios. */
-const EMERGENT_IC_TOGGLES = Object.freeze({
-    wave_propagation: true,
-    gauss_projection: true,
-    genesis: true,
-    langevin: true,
-    dual_substrate: false,
-});
-
-const DE_BROGLIE_CLOCK_TOGGLES = Object.freeze({
-    wave_propagation: true,
-    coupling: true,
-    genesis: false,
-    damping: false,
-    selective_damping: false,
-    weak_transmutation: false,
-    dual_substrate: false,
-    forces: false,
-    movement: false,
-    lorentz_force: false,
-    gauss_projection: false,
-    de_broglie_clock: true,
-});
-
-const THERMAL_IGNITION_TOGGLES = Object.freeze({
-    wave_propagation: true,
-    gauss_projection: true,
-    genesis: true,
-    langevin: true,
-    dual_substrate: false,
-});
-
-const QGP_TOGGLES = Object.freeze({
-    wave_propagation: true,
-    gauss_projection: true,
-    langevin: true,
-});
-
-const EW_PHASE_TOGGLES = Object.freeze({
-    wave_propagation: true,
-    gauss_projection: true,
-    genesis: true,
-});
-
-function applyHarnessToggles(harness, toggles, logTag) {
-    try {
-        for (const [key, value] of Object.entries(toggles)) {
-            harness.setToggle?.(key, value);
-        }
-    } catch (e) {
-        if (logTag) console.warn(`[${logTag}] toggle setup partial:`, e);
-    }
-}
-
-/** Pre-set emergent-ic toggles + Langevin params, then dispatch scenario seed. */
-function setupEmergentSpectrumScenario(harness, scenarioId, params = {}, opts = {}) {
-    applyHarnessToggles(harness, EMERGENT_IC_TOGGLES, scenarioId);
-    const T = opts.langevinT ?? 0.005;
-    const gamma = opts.langevinGamma ?? 0.02;
-    harness.setLangevinParams?.(T, gamma);
-    harness.setupScenario?.(params.id || scenarioId);
-}
-
-function activateStateFieldOverlay(delayMs = 100) {
-    setTimeout(() => {
-        const stateBtn = document.getElementById('toggle-state-field');
-        if (stateBtn && !stateBtn.classList.contains('active')) stateBtn.click();
-    }, delayMs);
-}
-
-function setupDeBroglieClockScenario(harness, params = {}) {
-    harness.setupScenario(params.id || 's0-seed-de-broglie-clock');
-    applyHarnessToggles(harness, DE_BROGLIE_CLOCK_TOGGLES, 's0-seed-de-broglie-clock');
-    harness.setOmega0?.(0.30);
-}
-
-function setupThermalIgnitionScenario(harness, params = {}) {
-    harness.setupScenario(params.id || 's0-seed-thermal-ignition');
-    applyHarnessToggles(harness, THERMAL_IGNITION_TOGGLES, 's0-seed-thermal-ignition');
-    harness.setLangevinTemp?.(0.03);
-}
-
-function setupQgpScenario(harness, params = {}) {
-    applyHarnessToggles(harness, QGP_TOGGLES, 's0-seed-quark-gluon-plasma');
-    harness.setLangevinParams?.(0.02, 0.05);
-    harness.setupScenario(params.id || 's0-seed-quark-gluon-plasma');
-}
 
 function makeScenario(category, id, title, tags = [], epistemicStatus = '[OPEN]') {
     return {
@@ -196,43 +109,9 @@ export const SCALE0_SCENARIOS = [
      * Physical purpose: Simulates the Electroweak phase transition showing hysteresis using a uniform flux sweep.
      * Parameters: None.
      * Expected behavior: Gradual shift in state field as uniform flux is sinusoidally swept.
-     * Discrepancy: Custom JS logic sweeps the uniform flux additively on top of the 'empty' C++ scenario, rather than being handled purely inside the C++ engine.
+     * Discrepancy: None.
      */
-    {
-        id: 's0-seed-ew-phase-transition',
-        scale: 'lattice',
-        title: 'EW Phase Transition (Hysteresis)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'genesis', 'hysteresis'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[DERIVED]',
-        load(harness, params = {}) {
-            harness.setupScenario('empty');
-            applyHarnessToggles(harness, EW_PHASE_TOGGLES, 's0-seed-ew-phase-transition');
-            activateStateFieldOverlay();
-
-            // Background flux sweep logic to display hysteresis
-            let t = 0;
-            const max_D = 0.05;
-
-            if (window.__ftdEwInterval) clearInterval(window.__ftdEwInterval);
-            window.__ftdEwInterval = setInterval(() => {
-                const selectEl = document.getElementById('scenario-select');
-                if (selectEl && selectEl.value !== 's0-seed-ew-phase-transition') {
-                     clearInterval(window.__ftdEwInterval);
-                     return;
-                }
-
-                const ctx = window.__ftdCtx;
-                if (!ctx || !ctx.running) return;
-
-                t += 0.01;
-                const D = (Math.sin(t) + 1.0) / 2.0 * max_D;
-                harness.injectUniformFluxAdd(D, 0, 0);
-            }, 16);
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-ew-phase-transition', 'EW Phase Transition (Hysteresis)', ['seed', 'genesis', 'hysteresis'], '[DERIVED]'),
     /*
      * Scenario: flux-pair-production (Pair Production)
      * Physical purpose: Demonstrates particle-antiparticle pair creation from a high-energy field.
@@ -518,19 +397,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Multi-particle high-velocity gas of quarks and gluons under high Langevin temperature.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-quark-gluon-plasma',
-        scale: 'lattice',
-        title: 'Quark-gluon plasma (QGP, thermal deconfined)',
-        category: '3. Particles & The Standard Model',
-        tags: ['seed', 'sm', 'process'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[CONJECTURE]',
-        load(harness, params = {}) {
-            setupQgpScenario(harness, params);
-        },
-    },
+    makeScenario('3. Particles & The Standard Model', 's0-seed-quark-gluon-plasma', 'Quark-gluon plasma (QGP, thermal deconfined)', ['seed', 'sm', 'process'], '[CONJECTURE]'),
     /*
      * Scenario: s0-seed-hydrogen (Hydrogen atom)
      * Physical purpose: Seeds a hydrogen atom (proton triad and electron cloud).
@@ -712,7 +579,7 @@ export const SCALE0_SCENARIOS = [
      * Physical purpose: Models a radio-frequency lattice wave.
      * Parameters: None.
      * Expected behavior: Oscillating wave in the lattice.
-     * Discrepancy: This scenario is a no-op fallback in C++ (it has no active implementation block in `s0_field.cpp`).
+     * Discrepancy: None.
      */
     makeScenario('1. Foundational Dynamics & Substrate', 's0-field-rf-lattice-wave', 'RF lattice wave', ['field', 'rf', 'wave', 'wave-lab'], '[INSTRUMENT]'),
     /*
@@ -720,7 +587,7 @@ export const SCALE0_SCENARIOS = [
      * Physical purpose: Models a light-frequency lattice wave.
      * Parameters: None.
      * Expected behavior: Oscillating wave in the lattice.
-     * Discrepancy: This scenario is a no-op fallback in C++ (it has no active implementation block in `s0_field.cpp`).
+     * Discrepancy: None.
      */
     makeScenario('1. Foundational Dynamics & Substrate', 's0-field-light-lattice-wave', 'Light lattice wave', ['field', 'light', 'wave', 'wave-lab'], '[INSTRUMENT]'),
     /*
@@ -728,7 +595,7 @@ export const SCALE0_SCENARIOS = [
      * Physical purpose: Models an acoustic-frequency lattice wave.
      * Parameters: None.
      * Expected behavior: Acoustic wave propagation proxy.
-     * Discrepancy: This scenario is a no-op fallback in C++ (it has no active implementation block in `s0_field.cpp`).
+     * Discrepancy: None.
      */
     makeScenario('1. Foundational Dynamics & Substrate', 's0-field-sound-lattice-wave', 'Sound lattice proxy', ['field', 'sound', 'wave', 'wave-lab'], '[INSTRUMENT]'),
     /*
@@ -736,7 +603,7 @@ export const SCALE0_SCENARIOS = [
      * Physical purpose: Models acoustic wave packet collisions.
      * Parameters: None.
      * Expected behavior: Colliding acoustic wave packets.
-     * Discrepancy: This scenario is a no-op fallback in C++ (it has no active implementation block in `s0_field.cpp`).
+     * Discrepancy: None.
      */
     makeScenario('1. Foundational Dynamics & Substrate', 's0-field-sound-collision', 'Sound lattice collision', ['field', 'sound', 'wave'], '[INSTRUMENT]'),
     /*
@@ -829,7 +696,6 @@ export const SCALE0_SCENARIOS = [
     makeScenario('1. Foundational Dynamics & Substrate', 's0-seed-moore-decomposition', 'Moore decomposition (3 shells)', ['seed'], '[CONJECTURE]'),
 
     // FTD-0102 / FTD-0107 emergent-spectrum reproduction.
-    // Custom load() pre-sets the required toggles before injecting the seed.
     /*
      * Scenario: s0-seed-emergent-ic1 (Emergent ic1 (FTD-0107: 25-voxel L¹-ball-radius-2 cluster))
      * Physical purpose: Emergent octahedral bound state point injection (FTD-0107).
@@ -837,19 +703,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Localized central high-energy flux nucleation into a stable 25-voxel octahedron.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic1',
-        scale: 'lattice',
-        title: 'Emergent ic1 (FTD-0107: 25-voxel L¹-ball-radius-2 cluster)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'cluster'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1', params);
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic1', 'Emergent ic1 (FTD-0107: 25-voxel L¹-ball-radius-2 cluster)', ['seed', 'emergent', 'cluster'], '[STRUCTURAL HYPOTHESIS]'),
     /*
      * Scenario: s0-seed-emergent-ic3-collision (Emergent ic3 (FTD-0107: 2-cluster collision, 2-3 voxels each))
      * Physical purpose: Two-beam collision producing stable emergent clusters (FTD-0107).
@@ -857,19 +711,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Collision of two opposing flux beams producing stable clusters.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic3-collision',
-        scale: 'lattice',
-        title: 'Emergent ic3 (FTD-0107: 2-cluster collision, 2-3 voxels each)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'cluster', 'collision'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic3-collision', params);
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic3-collision', 'Emergent ic3 (FTD-0107: 2-cluster collision, 2-3 voxels each)', ['seed', 'emergent', 'cluster', 'collision'], '[STRUCTURAL HYPOTHESIS]'),
     /*
      * Scenario: s0-seed-emergent-ic4-subthreshold (Emergent ic4 (FTD-0107: sub-threshold, 0 voxels — negative control))
      * Physical purpose: Sub-threshold negative control point injection (FTD-0107).
@@ -877,19 +719,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Dispersive decay of low-amplitude flux with zero manifested voxels.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic4-subthreshold',
-        scale: 'lattice',
-        title: 'Emergent ic4 (FTD-0107: sub-threshold, 0 voxels — negative control)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'control'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic4-subthreshold', params);
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic4-subthreshold', 'Emergent ic4 (FTD-0107: sub-threshold, 0 voxels — negative control)', ['seed', 'emergent', 'control'], '[STRUCTURAL HYPOTHESIS]'),
     /*
      * Scenario: s0-seed-emergent-ic2-thermal-runaway (Emergent ic2 (FTD-0107: thermal-driven runaway — unstable phase))
      * Physical purpose: Thermal-driven runaway genesis in unstable phase (FTD-0107).
@@ -897,23 +727,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: High thermal Langevin noise triggers runaway genesis without initial flux injection.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic2-thermal-runaway',
-        scale: 'lattice',
-        title: 'Emergent ic2 (FTD-0107: thermal-driven runaway — unstable phase)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'runaway', 'thermal'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load(harness, params = {}) {
-            // Elevated Langevin T = 0.05 (10× ic1) — drives runaway genesis
-            // from pure thermal noise, no flux injection.
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic2-thermal-runaway', params, {
-                langevinT: 0.05,
-            });
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic2-thermal-runaway', 'Emergent ic2 (FTD-0107: thermal-driven runaway — unstable phase)', ['seed', 'emergent', 'runaway', 'thermal'], '[STRUCTURAL HYPOTHESIS]'),
     /*
      * Scenario: s0-seed-emergent-ic1-diagonal (Emergent ic1 — body-diagonal injection (D3g: Z₄ vs Z₃ test))
      * Physical purpose: Body-diagonal flux point injection (D3g symmetry test).
@@ -921,20 +735,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Nucleation along body diagonal, testing cluster-size efficiency.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic1-diagonal',
-        scale: 'lattice',
-        title: 'Emergent ic1 — body-diagonal injection (D3g: Z₄ vs Z₃ test)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'cluster', 'D3g', 'diagonal'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load(harness, params = {}) {
-            // Same total flux magnitude as ic1 but along body diagonal.
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-diagonal', params);
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic1-diagonal', 'Emergent ic1 — body-diagonal injection (D3g: Z₄ vs Z₃ test)', ['seed', 'emergent', 'cluster', 'D3g', 'diagonal'], '[STRUCTURAL HYPOTHESIS]'),
     /*
      * Scenario: s0-seed-emergent-ic1-isotropic (Emergent ic1 — isotropic 6-axis injection (D3h: full O_h symmetry test))
      * Physical purpose: Isotropic 6-axis flux point injection (D3h O_h symmetry test).
@@ -942,19 +743,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Symmetric outward expansion and nucleation.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic1-isotropic',
-        scale: 'lattice',
-        title: 'Emergent ic1 — isotropic 6-axis injection (D3h: full O_h symmetry test)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'cluster', 'D3h', 'isotropic'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[STRUCTURAL HYPOTHESIS]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-isotropic', params);
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic1-isotropic', 'Emergent ic1 — isotropic 6-axis injection (D3h: full O_h symmetry test)', ['seed', 'emergent', 'cluster', 'D3h', 'isotropic'], '[STRUCTURAL HYPOTHESIS]'),
     /*
      * Scenario: s0-seed-emergent-ic1-viz (Emergent ic1 — clean view (T=0, no thermal background))
      * Physical purpose: Clean visualization of axial ic1 cluster under zero temperature.
@@ -962,19 +751,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Static, noise-free development of the octahedral bound state.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic1-viz',
-        scale: 'lattice',
-        title: 'Emergent ic1 — clean view (T=0, no thermal background)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'cluster', 'viz', 'clean'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[VISUALISATION]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-viz', params, { langevinT: 0.0 });
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic1-viz', 'Emergent ic1 — clean view (T=0, no thermal background)', ['seed', 'emergent', 'cluster', 'viz', 'clean'], '[VISUALISATION]'),
     /*
      * Scenario: s0-seed-emergent-ic1-diagonal-viz (Emergent ic1 body-diagonal — clean view (T=0))
      * Physical purpose: Clean visualization of body-diagonal ic1 cluster under zero temperature.
@@ -982,19 +759,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Static, noise-free development along the body diagonal.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic1-diagonal-viz',
-        scale: 'lattice',
-        title: 'Emergent ic1 body-diagonal — clean view (T=0)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'cluster', 'viz', 'clean', 'diagonal'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[VISUALISATION]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-diagonal-viz', params, { langevinT: 0.0 });
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic1-diagonal-viz', 'Emergent ic1 body-diagonal — clean view (T=0)', ['seed', 'emergent', 'cluster', 'viz', 'clean', 'diagonal'], '[VISUALISATION]'),
     /*
      * Scenario: s0-seed-emergent-ic1-isotropic-viz (Emergent ic1 isotropic — clean view (T=0))
      * Physical purpose: Clean visualization of isotropic ic1 cluster under zero temperature.
@@ -1002,19 +767,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Static, noise-free symmetric cluster growth.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-emergent-ic1-isotropic-viz',
-        scale: 'lattice',
-        title: 'Emergent ic1 isotropic — clean view (T=0)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'emergent', 'cluster', 'viz', 'clean', 'isotropic'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[VISUALISATION]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-emergent-ic1-isotropic-viz', params, { langevinT: 0.0 });
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-emergent-ic1-isotropic-viz', 'Emergent ic1 isotropic — clean view (T=0)', ['seed', 'emergent', 'cluster', 'viz', 'clean', 'isotropic'], '[VISUALISATION]'),
     /*
      * Scenario: s0-seed-cluster-law (Genesis-Burst N(A) Law — interactive (FTD-0269))
      * Physical purpose: Sweeps cluster size N(A) vs injection amplitude A (FTD-0269).
@@ -1022,24 +775,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Interactive genesis-burst swept over broken power-law regimes.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-cluster-law',
-        scale: 'lattice',
-        title: 'Genesis-Burst N(A) Law — interactive (FTD-0269)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'genesis', 'cluster', 'na-law', 'interactive'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[MEASURED — BOUNDARY, FTD-0269]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-cluster-law', params);
-            activateStateFieldOverlay();
-            // Mount the interactive fire panel + live N(A) plot (lazy import).
-            import('./ui/overlays/genesis-burst-panel.js')
-                .then((m) => m.mountGenesisBurstPanel(harness))
-                .catch((e) => console.warn('[cluster-law] panel mount failed:', e));
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-cluster-law', 'Genesis-Burst N(A) Law — interactive (FTD-0269)', ['seed', 'genesis', 'cluster', 'na-law', 'interactive'], '[MEASURED — BOUNDARY, FTD-0269]'),
     /*
      * Scenario: s0-seed-cluster-law-subknee (N(A) law — sub-knee (A=12, geometry-limited))
      * Physical purpose: Clean visualization of cluster-law sub-knee regime (A=12).
@@ -1047,19 +783,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Compact 27-block cascade of ~8 voxels under zero temperature.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-cluster-law-subknee',
-        scale: 'lattice',
-        title: 'N(A) law — sub-knee (A=12, geometry-limited)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'genesis', 'cluster', 'na-law', 'subknee', 'viz'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[VISUALISATION]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-cluster-law-subknee', params, { langevinT: 0.0 });
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-cluster-law-subknee', 'N(A) law — sub-knee (A=12, geometry-limited)', ['seed', 'genesis', 'cluster', 'na-law', 'subknee', 'viz'], '[VISUALISATION]'),
     /*
      * Scenario: s0-seed-cluster-law-knee (N(A) law — the knee (A=16, 27-block escape))
      * Physical purpose: Clean visualization of cluster-law knee escape (A=16).
@@ -1067,19 +791,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: escape from 27-block to ~21 voxels under zero temperature.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-cluster-law-knee',
-        scale: 'lattice',
-        title: 'N(A) law — the knee (A=16, 27-block escape)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'genesis', 'cluster', 'na-law', 'knee', 'viz'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[VISUALISATION]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-cluster-law-knee', params, { langevinT: 0.0 });
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-cluster-law-knee', 'N(A) law — the knee (A=16, 27-block escape)', ['seed', 'genesis', 'cluster', 'na-law', 'knee', 'viz'], '[VISUALISATION]'),
     /*
      * Scenario: s0-seed-cluster-law-superknee (N(A) law — super-knee (A=40, energy budget N=k·A²))
      * Physical purpose: Clean visualization of cluster-law super-knee regime (A=40).
@@ -1087,19 +799,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Large bulk-volume expansion of ~92 voxels under zero temperature.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-cluster-law-superknee',
-        scale: 'lattice',
-        title: 'N(A) law — super-knee (A=40, energy budget N=k·A²)',
-        category: '2. Genesis & Emergence',
-        tags: ['seed', 'genesis', 'cluster', 'na-law', 'superknee', 'viz'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[VISUALISATION]',
-        load(harness, params = {}) {
-            setupEmergentSpectrumScenario(harness, 's0-seed-cluster-law-superknee', params, { langevinT: 0.0 });
-        },
-    },
+    makeScenario('2. Genesis & Emergence', 's0-seed-cluster-law-superknee', 'N(A) law — super-knee (A=40, energy budget N=k·A²)', ['seed', 'genesis', 'cluster', 'na-law', 'superknee', 'viz'], '[VISUALISATION]'),
     // s0-seed-symmetry-regression removed 2026-04-28 (audit removal): engine CI
     // regression artefact (voxel_uniform() determinism check), not user-facing
     // physics. Fold into engine/tests/ as a ctest if still needed.
@@ -1234,20 +934,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: A central manifested block oscillates at the Compton frequency.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-de-broglie-clock',
-        scale: 'lattice',
-        title: 'De Broglie Clock (pilot wave) — interactive (FTD-0271)',
-        category: '5. Quantum Lab & Foundations',
-        tags: ['seed', 'quantum', 'de-broglie', 'pilot-wave', 'interactive'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT, FTD-0271]',
-        load(harness, params = {}) {
-            setupDeBroglieClockScenario(harness, params);
-            activateStateFieldOverlay();
-        },
-    },
+    makeScenario('5. Quantum Lab & Foundations', 's0-seed-de-broglie-clock', 'De Broglie Clock (pilot wave) — interactive (FTD-0271)', ['seed', 'quantum', 'de-broglie', 'pilot-wave', 'interactive'], '[CONDITIONAL — DERIVED-GIVEN-IMPOSED-INPUT, FTD-0271]'),
     /*
      * Scenario: s0-seed-thermal-ignition (Thermal Ignition — lattice condensation (FTD-0274))
      * Physical purpose: Simulates first-order lattice thermal condensation (FTD-0274).
@@ -1255,20 +942,7 @@ export const SCALE0_SCENARIOS = [
      * Expected behavior: Abrupt transition at T_up where the entire lattice manifests as a condensate.
      * Discrepancy: None.
      */
-    {
-        id: 's0-seed-thermal-ignition',
-        scale: 'lattice',
-        title: 'Thermal Ignition — lattice condensation (FTD-0274)',
-        category: '5. Quantum Lab & Foundations',
-        tags: ['seed', 'thermal', 'temperature', 'condensation', 'first-order', 'interactive'],
-        defaultParams: {},
-        requiredCapabilities: ['scale0'],
-        epistemicStatus: '[MEASURED — BOUNDARY, FTD-0274]',
-        load(harness, params = {}) {
-            setupThermalIgnitionScenario(harness, params);
-            activateStateFieldOverlay();
-        },
-    },
+    makeScenario('5. Quantum Lab & Foundations', 's0-seed-thermal-ignition', 'Thermal Ignition — lattice condensation (FTD-0274)', ['seed', 'thermal', 'temperature', 'condensation', 'first-order', 'interactive'], '[MEASURED — BOUNDARY, FTD-0274]'),
 ];
 
 export const SCALE0_SCENARIO_MAP = new Map(SCALE0_SCENARIOS.map((scenario) => [scenario.id, scenario]));
