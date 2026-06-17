@@ -13,6 +13,7 @@
 #include "ftd/backend.h"
 #include "ftd/constants.h"
 #include <cmath>
+#include <random>
 
 #ifdef FTD_ENABLE_CUDA
 #include "ftd/gpu_engine.h"
@@ -279,6 +280,35 @@ AggregateProfile compute_aggregate_profile(const RenderBridge& rb, int center_id
   }
 
   return prof;
+}
+
+void RenderBridge::clearField() {
+    auto& voxels = this->voxels();
+    bool dual = toggles.dual_substrate;
+    for (auto& v : voxels) {
+        v.flux     = Vec3();
+        v.wave_vel = Vec3();
+        if (dual) {
+            v.flux_L = v.flux_R = Vec3();
+            v.wave_vel_L = v.wave_vel_R = Vec3();
+        }
+    }
+}
+
+void RenderBridge::seedRandomFlux() {
+    auto& voxels = this->voxels();
+    const double amp = K_B * 0.3;
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<double> dist(-amp, amp);
+    bool dual = toggles.dual_substrate;
+    for (auto& v : voxels) {
+        Vec3 dj(dist(rng), dist(rng), dist(rng));
+        v.flux = v.flux + dj;
+        if (dual) {
+            v.flux_L = v.flux_L + dj * 0.5;
+            v.flux_R = v.flux_R + dj * 0.5;
+        }
+    }
 }
 
 }  // namespace ftd
