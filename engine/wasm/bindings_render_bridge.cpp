@@ -276,9 +276,12 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     // Data extraction
     function("getParticleData",    &get_particle_data);
     function("getDiagnostics",     &get_diagnostics);
+    function("getDiagnosticsView", &get_diagnostics_view);
     function("getEnergyAudit",     &get_energy_audit);
-    function("getEnergyLedger",    &get_energy_ledger);
+    function("getEnergyAuditView", &get_energy_audit_view);
     function("getLagrangian",      &get_lagrangian);
+    function("getLagrangianView",  &get_lagrangian_view);
+    function("getEnergyLedger",    &get_energy_ledger);
     function("getConstants",       &get_constants);
     function("getLatticeSize",     &get_lattice_size);
 
