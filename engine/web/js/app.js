@@ -1662,7 +1662,8 @@ function buildScale3MoleculeDropdown() {
         for (const mol of mols) {
             const opt = document.createElement('option');
             opt.value = `mol-${mol.id}`;
-            opt.textContent = `${mol.formula} ${mol.name}`;
+            const cleanFormula = mol.formula.replace(/<[^>]+>/g, '');
+            opt.textContent = `${cleanFormula} ${mol.name}`;
             group.appendChild(opt);
         }
         select.appendChild(group);
