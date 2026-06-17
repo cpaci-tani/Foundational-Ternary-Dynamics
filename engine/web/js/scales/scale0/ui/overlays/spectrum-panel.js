@@ -23,8 +23,9 @@ import {
 import {
     defectCount, fluxTubeComponents, metricStats, histogram, chiralityFromAudit,
 } from '../../analysis/lattice-topology.js';
-import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { readScale0DiagAudit } from '../../../../telemetry/scale0-read.js';
+import { getScale0State, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'spectrum-panel';
 const HZ = 2;                 // exploratory data — slower cadence
@@ -279,6 +280,7 @@ export function mountSpectrumPanel(host, getBridge) {
     }
 
     function update() {
+        if (!isPanelLive(host)) return;
         const b = getBridge?.();
         const caps = getCaps();
         if (!caps) return;

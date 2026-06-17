@@ -48,7 +48,7 @@ export class WasmBridgeProxy {
         this._scenarioId = 'flux-pulse';
         this._toggles = {};
         this._ready = false;
-        this._running = true;
+        this._running = null;
         this._ctrl = null;
         this._fluxView = null;
         this._lastDiag = null;
@@ -77,6 +77,10 @@ export class WasmBridgeProxy {
         } else if (m.type === 'frame') {
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
+            
+            if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
+                window.__ftdCtx.onBridgePostFrame();
+            }
         } else if (m.type === 'error') {
             console.error('[WasmWorker]', m.where, m.msg);
         }

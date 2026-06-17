@@ -43,8 +43,9 @@ function buildBridge(n, scen) {
   const vol = mod.getFluxVolume(bridge);
   if (!ctrlSab) { ctrlSab = new SharedArrayBuffer(CTRL.LEN * 4); ctrl = new Int32Array(ctrlSab); }
   Atomics.store(ctrl, CTRL.N, N);
-  Atomics.store(ctrl, CTRL.RUNNING, 1);
+  Atomics.store(ctrl, CTRL.RUNNING, 0);
   self.postMessage({ type: 'ready', N, ctrl: ctrlSab, heap: vol.buffer, fluxPtr: vol.byteOffset, fluxLen: vol.length });
+  postFrame();
 }
 
 function postFrame() {

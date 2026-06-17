@@ -29,7 +29,9 @@ import {
  */
 export function setupQuantumScenario(name, harness, ctx) {
     if (!name.startsWith('quantum-')) return false;
-    const { N, mid, vox, sigma } = ctx;
+    const { N, mid, midF, vox, sigma, band } = ctx;
+    const sig = sigma;
+    const mc = mid;
 
             switch (name) {
                 case 'quantum-born-rule': {
