@@ -194,6 +194,7 @@ function _makeCtx() {
         applyTicksPerFrameFromSlider,
         applyBoundaryShape,
         applyReflectiveBoundary,
+        applyFluxBoundaryMode,
         clearCharts,
     };
     return _ctxSingleton;
@@ -238,14 +239,20 @@ function applyBoundaryShape(shape) {
     Scale0Controller.setLatticeNeedsUpload();
 }
 
-function applyReflectiveBoundary(on) {
-    const reflectiveBtn = document.getElementById('toggle-reflective');
-    if (reflectiveBtn) reflectiveBtn.classList.toggle('active', !!on);
-    if (bridge?.setReflectiveBoundary) bridge.setReflectiveBoundary(on);
+// 0 = Periodic (toroidal wrap), 1 = Reflective (perfect cavity mirror), 2 = Dispersal (energy exits)
+function applyFluxBoundaryMode(mode) {
+    const sel = document.getElementById('flux-boundary-mode');
+    if (sel) sel.value = String(mode);
+    if (bridge?.setFluxBoundaryMode) bridge.setFluxBoundaryMode(mode);
     const fm = Scale0Controller.getFluxMock();
-    if (fm?.setReflectiveBoundary) fm.setReflectiveBoundary(on);
-    if (viewport?.setReflectiveBoundary) viewport.setReflectiveBoundary(on);
+    if (fm?.setFluxBoundaryMode) fm.setFluxBoundaryMode(mode);
     Scale0Controller.setLatticeNeedsUpload();
+}
+
+function applyReflectiveBoundary(on) {
+    // Legacy path: map bool → flux boundary mode (on=Reflective/1, off=Dispersal/2)
+    applyFluxBoundaryMode(on ? 1 : 2);
+    if (viewport?.setReflectiveBoundary) viewport.setReflectiveBoundary(on);
 }
 
 /**

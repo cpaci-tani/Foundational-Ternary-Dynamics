@@ -75,6 +75,8 @@ class RenderBridge {
     friend void phase_write_main_loop(RenderBridge&);
     friend void phase_write_assign_pending_ids(RenderBridge&);
     friend void apply_absorbing_boundary(RenderBridge&);
+    friend void apply_reflective_flux_boundary(RenderBridge&);
+    friend void apply_dispersal_flux_boundary(RenderBridge&);
     // Phase 4b (2026-04-27): phase_forces decomposition. See
     // engine/src/render_bridge_phases/phase_forces.cpp.
     friend void phase_forces_solve_potentials(RenderBridge&);

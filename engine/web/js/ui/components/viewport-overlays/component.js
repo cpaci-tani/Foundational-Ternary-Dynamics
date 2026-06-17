@@ -107,7 +107,6 @@ export class ViewportOverlaysComponent {
         <div class="status-menu-panel status-menu-grid" role="group" aria-label="Scene view toggles">
           <button class="view-toggle active scale4-hide" id="toggle-axes" type="button" title="XYZ axis indicator">Axes</button>
           <button class="view-toggle active scale4-hide" id="toggle-grid" type="button" title="Reference grid (XZ plane)">Grid</button>
-          <button class="view-toggle" id="toggle-reflective" type="button" title="Reflective boundary conditions">Reflect</button>
         </div>
       </details>
 

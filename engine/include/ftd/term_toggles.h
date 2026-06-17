@@ -19,6 +19,16 @@
 
 namespace ftd {
 
+// Flux-field boundary law (non-bool config; like bcc_stencil it lives outside
+// TOGGLE_SPECS[]). Default Periodic preserves the toroidal wrap that every
+// existing test + the golden-tick hash were written against — so adding this
+// field is golden-neutral. The web dashboard defaults its selector to Dispersal.
+//   Periodic   — toroidal wrap (current behaviour; energy conserved + trapped)
+//   Reflective — Neumann mirror at each face (perfect cavity; energy conserved)
+//   Dispersal  — first-order radiating (Mur) outflow; outgoing flux leaves the
+//                box and is removed (no graduated sponge layer)
+enum class FluxBoundaryMode : int { Periodic = 0, Reflective = 1, Dispersal = 2 };
+
 // Backend bitmask used by ToggleSpec::backends. CPU = 0b001, GPU = 0b010,
 // JS  = 0b100, ANY = 0b111. Currently informational — not enforced at the
 // binding layer — but the WASM map below filters by `(backends & 0b100)`
@@ -85,6 +95,10 @@ struct TermToggles {
     // ── Non-bool config fields (NOT in TOGGLE_SPECS[]) ────────────────
     // These are typed parameters / enum modes, not boolean toggles, so
     // they live outside the table. Direct field access only.
+
+    // Flux-field boundary law (see FluxBoundaryMode above). Default Periodic
+    // (toroidal wrap) ⇒ golden-neutral. Non-bool config, like bcc_stencil.
+    FluxBoundaryMode flux_boundary = FluxBoundaryMode::Periodic;
 
     // Cluster A (FTD-0093 / Mechanism C): sublattice stencil mode for phase_read.
     BccStencilMode bcc_stencil = BccStencilMode::FULL;
