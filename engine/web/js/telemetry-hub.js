@@ -61,10 +61,133 @@ export class RingBuffer {
         return m === Infinity ? 0 : m;
     }
 
+
+    flattenInto(targetArray, maxSamples) {
+        const n = Math.min(this.count, maxSamples || this.count, targetArray.length);
+        if (n === 0) return 0;
+        
+        const start = (this.head - this.count + this.size) % this.size;
+        const actualStart = (start + this.count - n) % this.size;
+
+        if (actualStart + n <= this.size) {
+            targetArray.set(this.data.subarray(actualStart, actualStart + n), 0);
+        } else {
+            const tailLen = this.size - actualStart;
+            targetArray.set(this.data.subarray(actualStart, this.size), 0);
+            targetArray.set(this.data.subarray(0, n - tailLen), tailLen);
+        }
+        return n;
+    }
+
     clear() { this.head = 0; this.count = 0; this.total = 0; }
 }
 
 // ── Telemetry Hub ────────────────────────────────────────────────────────────
+
+
+export class MultiRingBuffer {
+    constructor(size, channelNames) {
+        this.size = size;
+        this.channels = channelNames;
+        this.numChannels = channelNames.length;
+        this.data = new Float32Array(size * this.numChannels);
+        this.head = 0;
+        this.count = 0;
+        this.total = 0;
+        
+        this.views = {};
+        channelNames.forEach((name, i) => {
+            this.views[name] = new RingBufferView(this, i * size);
+        });
+    }
+
+    push(frame) {
+        for (let i = 0; i < this.numChannels; i++) {
+            const val = frame[this.channels[i]];
+            this.data[(i * this.size) + this.head] = isFinite(val) ? val : 0;
+        }
+        this.head = (this.head + 1) % this.size;
+        if (this.count < this.size) this.count++;
+        this.total++;
+    }
+
+    pushArray(frameArray) {
+        // Zero-copy array push
+        for (let i = 0; i < this.numChannels; i++) {
+            this.data[(i * this.size) + this.head] = frameArray[i];
+        }
+        this.head = (this.head + 1) % this.size;
+        if (this.count < this.size) this.count++;
+        this.total++;
+    }
+    
+    clear() {
+        this.head = 0;
+        this.count = 0;
+        this.total = 0;
+    }
+}
+
+export class RingBufferView {
+    constructor(parent, offset) {
+        this.parent = parent;
+        this.offset = offset;
+    }
+    
+    get count() { return this.parent.count; }
+    get total() { return this.parent.total; }
+    get size() { return this.parent.size; }
+
+    get(i) {
+        if (i >= this.parent.count) return 0;
+        const pSize = this.parent.size;
+        const idx = (this.parent.head - this.parent.count + i + pSize) % pSize;
+        return this.parent.data[this.offset + idx];
+    }
+    
+    last() {
+        if (this.parent.count === 0) return 0;
+        const pSize = this.parent.size;
+        const idx = (this.parent.head - 1 + pSize) % pSize;
+        return this.parent.data[this.offset + idx];
+    }
+    
+    max() {
+        let m = -Infinity;
+        for (let i = 0; i < this.parent.count; i++) { const v = this.get(i); if (v > m) m = v; }
+        return m === -Infinity ? 1 : m;
+    }
+
+    min() {
+        let m = Infinity;
+        for (let i = 0; i < this.parent.count; i++) { const v = this.get(i); if (v < m) m = v; }
+        return m === Infinity ? 0 : m;
+    }
+
+    flattenInto(targetArray, maxSamples) {
+        const pCount = this.parent.count;
+        const pSize = this.parent.size;
+        const n = Math.min(pCount, maxSamples || pCount, targetArray.length);
+        if (n === 0) return 0;
+        
+        const start = (this.parent.head - pCount + pSize) % pSize;
+        const actualStart = (start + pCount - n) % pSize;
+        
+        const data = this.parent.data;
+        const offset = this.offset;
+
+        if (actualStart + n <= pSize) {
+            targetArray.set(data.subarray(offset + actualStart, offset + actualStart + n), 0);
+        } else {
+            const tailLen = pSize - actualStart;
+            targetArray.set(data.subarray(offset + actualStart, offset + pSize), 0);
+            targetArray.set(data.subarray(offset, offset + n - tailLen), tailLen);
+        }
+        return n;
+    }
+    
+    clear() { } // Handled by parent
+}
 
 export class TelemetryHub {
     constructor() {
@@ -104,88 +227,33 @@ export class TelemetryHub {
 
         // ── Scale 0 — Lattice / Flux ────────────────────
         // Core diagnostics (500-sample history)
-        this.flux      = new RingBuffer(500);  // totalFlux
-        this.energy    = new RingBuffer(500);  // totalEnergy
-        this.manifested = new RingBuffer(500); // particle count
-        this.entropy   = new RingBuffer(500);
-        this.charges   = new RingBuffer(500);  // positive − negative
-        this.positive  = new RingBuffer(500);
-        this.negative  = new RingBuffer(500);
-
-        // Energy audit extras
-        this.ebDiff    = new RingBuffer(500);  // E-field energy − B-field energy
-        this.gauss     = new RingBuffer(500);  // gaussViolation
+                this._s0_core = new MultiRingBuffer(500, ['flux', 'energy', 'manifested', 'entropy', 'charges', 'positive', 'negative', 'ebDiff', 'gauss']);
+        this.flux = this._s0_core.views['flux'];
+        this.energy = this._s0_core.views['energy'];
+        this.manifested = this._s0_core.views['manifested'];
+        this.entropy = this._s0_core.views['entropy'];
+        this.charges = this._s0_core.views['charges'];
+        this.positive = this._s0_core.views['positive'];
+        this.negative = this._s0_core.views['negative'];
+        this.ebDiff = this._s0_core.views['ebDiff'];
+        this.gauss = this._s0_core.views['gauss'];
 
         // Per-audit-field trend buffers (500-sample) — drive panel-row sparklines.
-        this.aud = {
-            fieldEnergy:         new RingBuffer(500),
-            waveEnergy:          new RingBuffer(500),
-            particleKE:          new RingBuffer(500),
-            coulombPE:           new RingBuffer(500),
-            eFieldEnergy:        new RingBuffer(500),
-            bFieldEnergy:        new RingBuffer(500),
-            poyntingMag:         new RingBuffer(500),
-            maxGaussError:       new RingBuffer(500),
-            selfFieldInjection:  new RingBuffer(500),
-            eLeftEnergy:         new RingBuffer(500),
-            eRightEnergy:        new RingBuffer(500),
-            chirality:           new RingBuffer(500),
-            waveLeft:            new RingBuffer(500),
-            waveRight:           new RingBuffer(500),
-            energyDrift:         new RingBuffer(500),
-        };
+                this._s0_aud = new MultiRingBuffer(500, ['fieldEnergy', 'waveEnergy', 'particleKE', 'coulombPE', 'eFieldEnergy', 'bFieldEnergy', 'poyntingMag', 'maxGaussError', 'selfFieldInjection', 'eLeftEnergy', 'eRightEnergy', 'chirality', 'waveLeft', 'waveRight', 'energyDrift']);
+        this.aud = this._s0_aud.views;
 
         // Sparkline-resolution (80-sample) — legacy PE canvas sparklines + hub history
-        this.sp = {
-            manifested: new RingBuffer(80),
-            charges:    new RingBuffer(80),
-            flux:       new RingBuffer(80),
-            energy:     new RingBuffer(80),
-            entropy:    new RingBuffer(80),
-        };
+                this._s0_sp = new MultiRingBuffer(80, ['manifested', 'charges', 'flux', 'energy', 'entropy']);
+        this.sp = this._s0_sp.views;
 
         // ── Lagrangian (400-sample, 10 terms) ──────────
-        this.lag = {
-            fieldKinetic:  new RingBuffer(400),
-            fieldGradient: new RingBuffer(400),
-            bornInfeld:    new RingBuffer(400),
-            coupling:      new RingBuffer(400),
-            velocity:      new RingBuffer(400),
-            gauss:         new RingBuffer(400),
-            dissipation:   new RingBuffer(400),
-            total:         new RingBuffer(400),
-            hamiltonian:   new RingBuffer(400),
-            action:        new RingBuffer(400),
-        };
+                this._s0_lag = new MultiRingBuffer(400, ['fieldKinetic', 'fieldGradient', 'bornInfeld', 'coupling', 'velocity', 'gauss', 'dissipation', 'total', 'hamiltonian', 'action']);
+        this.lag = this._s0_lag.views;
 
         // ── Scale 1 — Particle Engine (200-sample) ─────
-        this.peKE       = new RingBuffer(200);
-        this.pePE       = new RingBuffer(200);
-        this.peCoulombPE = new RingBuffer(200);
-        this.peGravityPE = new RingBuffer(200);
-        this.peTotal    = new RingBuffer(200);  // KE + PE
-        this.peEnergyDrift = new RingBuffer(200);
-        this.peCount    = new RingBuffer(200);
-        this.peLockedCount = new RingBuffer(200);
-        this.peMobileCount = new RingBuffer(200);
-        this.peMomentum = new RingBuffer(200);
-        this.peAngMom   = new RingBuffer(200);
-        this.peVirial   = new RingBuffer(200);
-        this.peTemperature = new RingBuffer(200);
-        this.peRmsVelocity = new RingBuffer(200);
-        this.peSystemRadius = new RingBuffer(200);
-        this.peMaxForce = new RingBuffer(200);
-        this.peMeanForce = new RingBuffer(200);
-        this.peSeparation = new RingBuffer(200);
-        this.peRadialVelocity = new RingBuffer(200);
-        // FTD-native Scale 1 additions (2026-06-15)
-        this.peMaxBeta = new RingBuffer(200);        // max |v| / c_lattice (causal saturation, c = 1/√3)
-        this.peCapCount = new RingBuffer(200);       // # mobile particles pinned at the speed cap
-        this.peNetCharge = new RingBuffer(200);      // Σ q_i — exact conserved (ternary charge)
-        this.pePosCount = new RingBuffer(200);       // # particles with q > 0
-        this.peZeroCount = new RingBuffer(200);      // # particles with q = 0
-        this.peNegCount = new RingBuffer(200);       // # particles with q < 0
-        this.peAnnihilations = new RingBuffer(200);  // cumulative annihilation pairs
+                this._s1_pe = new MultiRingBuffer(200, ['peKE', 'pePE', 'peCoulombPE', 'peGravityPE', 'peTotal', 'peEnergyDrift', 'peCount', 'peLockedCount', 'peMobileCount', 'peMomentum', 'peAngMom', 'peVirial', 'peTemperature', 'peRmsVelocity', 'peSystemRadius', 'peMaxForce', 'peMeanForce', 'peSeparation', 'peRadialVelocity', 'peMaxBeta', 'peCapCount', 'peNetCharge', 'pePosCount', 'peZeroCount', 'peNegCount', 'peAnnihilations']);
+        const peViews = this._s1_pe.views;
+        this.peKE = peViews.peKE; this.pePE = peViews.pePE; this.peCoulombPE = peViews.peCoulombPE; this.peGravityPE = peViews.peGravityPE; this.peTotal = peViews.peTotal; this.peEnergyDrift = peViews.peEnergyDrift; this.peCount = peViews.peCount; this.peLockedCount = peViews.peLockedCount; this.peMobileCount = peViews.peMobileCount; this.peMomentum = peViews.peMomentum; this.peAngMom = peViews.peAngMom; this.peVirial = peViews.peVirial; this.peTemperature = peViews.peTemperature; this.peRmsVelocity = peViews.peRmsVelocity; this.peSystemRadius = peViews.peSystemRadius; this.peMaxForce = peViews.peMaxForce; this.peMeanForce = peViews.peMeanForce; this.peSeparation = peViews.peSeparation; this.peRadialVelocity = peViews.peRadialVelocity; this.peMaxBeta = peViews.peMaxBeta; this.peCapCount = peViews.peCapCount; this.peNetCharge = peViews.peNetCharge; this.pePosCount = peViews.pePosCount; this.peZeroCount = peViews.peZeroCount; this.peNegCount = peViews.peNegCount; this.peAnnihilations = peViews.peAnnihilations;
         this._peInitialEnergy = null;
 
         // ── Scale 2/3 — Atom / Molecule Engine (200-sample)
@@ -194,33 +262,21 @@ export class TelemetryHub {
         // purpose: aeGetForceDecomposition is O(N²) and visibility-gated, so
         // an always-collected force channel would either pay that cost every
         // tick or sit dead when arrows are hidden (the B1 dead-buffer class).
-        this.aeKE        = new RingBuffer(200);
-        this.aeTemp      = new RingBuffer(200);
-        this.aeEnergy    = new RingBuffer(200);
-        this.aeBonds     = new RingBuffer(200);
-        this.aePEIonic   = new RingBuffer(200);
-        this.aePEVdw     = new RingBuffer(200);
-        this.aePEBond    = new RingBuffer(200);
-        this.aeMomentum  = new RingBuffer(200);
-        this.aeAtomCount = new RingBuffer(200);
-        this.aeDrift     = new RingBuffer(200);
+                this._s2_ae = new MultiRingBuffer(200, ['aeKE', 'aeTemp', 'aeEnergy', 'aeBonds', 'aePEIonic', 'aePEVdw', 'aePEBond', 'aeMomentum', 'aeAtomCount', 'aeDrift']);
+        const aeVs = this._s2_ae.views;
+        this.aeKE = aeVs.aeKE; this.aeTemp = aeVs.aeTemp; this.aeEnergy = aeVs.aeEnergy; this.aeBonds = aeVs.aeBonds; this.aePEIonic = aeVs.aePEIonic; this.aePEVdw = aeVs.aePEVdw; this.aePEBond = aeVs.aePEBond; this.aeMomentum = aeVs.aeMomentum; this.aeAtomCount = aeVs.aeAtomCount; this.aeDrift = aeVs.aeDrift;
         this._aeInitialEnergy = null;
 
         // ── Scale 4 — Planetary (200-sample) ───────────
-        this.plKE            = new RingBuffer(200);
-        this.plPE            = new RingBuffer(200);
-        this.plTotal         = new RingBuffer(200);
-        this.plEnergyDrift   = new RingBuffer(200);
-        this.plCount         = new RingBuffer(200);
-        this.plMomentum      = new RingBuffer(200);
-        this.plVirial        = new RingBuffer(200);
-        this.plSystemRadius  = new RingBuffer(200);
+                this._s4_pl = new MultiRingBuffer(200, ['plKE', 'plPE', 'plTotal', 'plEnergyDrift', 'plCount', 'plMomentum', 'plVirial', 'plSystemRadius']);
+        const plVs = this._s4_pl.views;
+        this.plKE = plVs.plKE; this.plPE = plVs.plPE; this.plTotal = plVs.plTotal; this.plEnergyDrift = plVs.plEnergyDrift; this.plCount = plVs.plCount; this.plMomentum = plVs.plMomentum; this.plVirial = plVs.plVirial; this.plSystemRadius = plVs.plSystemRadius;
         this._plInitialEnergy = null;
 
         // ── Scale 5 — Cosmic (200-sample) ──────────────
-        this.csBodies = new RingBuffer(200);
-        this.csHubble = new RingBuffer(200);
-        this.csDM     = new RingBuffer(200);
+                this._s5_cs = new MultiRingBuffer(200, ['csBodies', 'csHubble', 'csDM']);
+        const csVs = this._s5_cs.views;
+        this.csBodies = csVs.csBodies; this.csHubble = csVs.csHubble; this.csDM = csVs.csDM;
     }
 
     // ── Scale 0 collection ──────────────────────────────────────────────────
@@ -248,20 +304,26 @@ export class TelemetryHub {
             this._lastTick0 = currentTick;
 
             // 500-sample buffers for charts
-            this.flux.push(diag.totalFlux     || 0);
-            this.energy.push(diag.totalEnergy || 0);
-            this.manifested.push(diag.manifested || 0);
-            this.entropy.push(diag.entropy    || 0);
-            this.positive.push(diag.positive  || 0);
-            this.negative.push(diag.negative  || 0);
-            this.charges.push((diag.positive || 0) - (diag.negative || 0));
+            this._s0_core.push({
+                flux: diag.totalFlux || 0,
+                energy: diag.totalEnergy || 0,
+                manifested: diag.manifested || 0,
+                entropy: diag.entropy || 0,
+                positive: diag.positive || 0,
+                negative: diag.negative || 0,
+                charges: (diag.positive || 0) - (diag.negative || 0),
+                ebDiff: this.ebDiff.last(), // Preserved until audit runs
+                gauss: this.gauss.last()
+            });
 
             // 80-sample sparkline buffers
-            this.sp.manifested.push(diag.manifested || 0);
-            this.sp.charges.push((diag.positive || 0) - (diag.negative || 0));
-            this.sp.flux.push(diag.totalFlux  || 0);
-            this.sp.energy.push(diag.totalEnergy || 0);
-            this.sp.entropy.push(diag.entropy || 0);
+            this._s0_sp.push({
+                manifested: diag.manifested || 0,
+                charges: (diag.positive || 0) - (diag.negative || 0),
+                flux: diag.totalFlux || 0,
+                energy: diag.totalEnergy || 0,
+                entropy: diag.entropy || 0
+            });
         }
 
         return diag;
@@ -307,21 +369,23 @@ export class TelemetryHub {
                 this.gauss.push(audit.gaussViolation || 0);
 
                 // Per-field trend buffers (drive diagnostics table sparklines)
-                this.aud.fieldEnergy.push(       audit.fieldEnergy        || 0);
-                this.aud.waveEnergy.push(        audit.waveEnergy         || 0);
-                this.aud.particleKE.push(        audit.particleKE         || 0);
-                this.aud.coulombPE.push(         audit.coulombPE          || 0);
-                this.aud.eFieldEnergy.push(      eF);
-                this.aud.bFieldEnergy.push(      bF);
-                this.aud.poyntingMag.push(       pMag);
-                this.aud.maxGaussError.push(     audit.maxGaussError      || 0);
-                this.aud.selfFieldInjection.push(audit.selfFieldInjection || 0);
-                this.aud.eLeftEnergy.push(       audit.ELTotal || audit.eLTotal || 0);
-                this.aud.eRightEnergy.push(      audit.ERTotal || audit.eRTotal || 0);
-                this.aud.chirality.push(         audit.chiralityTotal     || 0);
-                this.aud.waveLeft.push(          audit.wvLTotal           || 0);
-                this.aud.waveRight.push(         audit.wvRTotal           || 0);
-                this.aud.energyDrift.push(       drift);
+                this._s0_aud.push({
+                    fieldEnergy: audit.fieldEnergy || 0,
+                    waveEnergy: audit.waveEnergy || 0,
+                    particleKE: audit.particleKE || 0,
+                    coulombPE: audit.coulombPE || 0,
+                    eFieldEnergy: eF,
+                    bFieldEnergy: bF,
+                    poyntingMag: pMag,
+                    maxGaussError: audit.maxGaussError || 0,
+                    selfFieldInjection: audit.selfFieldInjection || 0,
+                    eLeftEnergy: audit.ELTotal || audit.eLTotal || 0,
+                    eRightEnergy: audit.ERTotal || audit.eRTotal || 0,
+                    chirality: audit.chiralityTotal || 0,
+                    waveLeft: audit.wvLTotal || 0,
+                    waveRight: audit.wvRTotal || 0,
+                    energyDrift: drift
+                });
             }
         }
         return audit;
@@ -345,16 +409,18 @@ export class TelemetryHub {
             if (currentTick !== this._lastLagTick) {
                 this._lastLagTick = currentTick;
 
-                this.lag.fieldKinetic.push( Math.abs(lag.fieldKinetic  || 0));
-                this.lag.fieldGradient.push(Math.abs(lag.fieldGradient || 0));
-                this.lag.bornInfeld.push(   Math.abs(lag.bornInfeld    || 0));
-                this.lag.coupling.push(     Math.abs(lag.coupling      || 0));
-                this.lag.velocity.push(     Math.abs(lag.velocity      || 0));
-                this.lag.gauss.push(        Math.abs(lag.gauss         || 0));
-                this.lag.dissipation.push(  Math.abs(lag.dissipation   || 0));
-                this.lag.total.push(         lag.total                  || 0);
-                this.lag.hamiltonian.push(   lag.hamiltonian            || 0);
-                this.lag.action.push(        lag.totalAction            || 0);
+                this._s0_lag.push({
+                    fieldKinetic: Math.abs(lag.fieldKinetic || 0),
+                    fieldGradient: Math.abs(lag.fieldGradient || 0),
+                    bornInfeld: Math.abs(lag.bornInfeld || 0),
+                    coupling: Math.abs(lag.coupling || 0),
+                    velocity: Math.abs(lag.velocity || 0),
+                    gauss: Math.abs(lag.gauss || 0),
+                    dissipation: Math.abs(lag.dissipation || 0),
+                    total: lag.total || 0,
+                    hamiltonian: lag.hamiltonian || 0,
+                    action: lag.totalAction || 0
+                });
             }
         }
         return lag;
@@ -411,18 +477,34 @@ export class TelemetryHub {
         if (currentTick !== this._lastTick1) {
             this._lastTick1 = currentTick;
 
-            this.peKE.push(ke);
-            this.pePE.push(pe);
-            this.peCoulombPE.push(coulombPE);
-            this.peGravityPE.push(gravityPE);
-            this.peTotal.push(totalEnergy);
-            this.peEnergyDrift.push(energyDrift);
-            this.peCount.push(cnt);
-            this.peMomentum.push(pMag);
-            this.peAngMom.push(lMag);
-            this.peVirial.push(virial);
-            this.peTemperature.push(temperature);
-            this.peAnnihilations.push(diag.annihilations || 0);
+            this._s1_pe.push({
+                peKE: ke,
+                pePE: pe,
+                peCoulombPE: coulombPE,
+                peGravityPE: gravityPE,
+                peTotal: totalEnergy,
+                peEnergyDrift: energyDrift,
+                peCount: cnt,
+                peMomentum: pMag,
+                peAngMom: lMag,
+                peVirial: virial,
+                peTemperature: temperature,
+                peAnnihilations: diag.annihilations || 0,
+                peLockedCount: this.peLockedCount.last(),
+                peMobileCount: this.peMobileCount.last(),
+                peRmsVelocity: this.peRmsVelocity.last(),
+                peSystemRadius: this.peSystemRadius.last(),
+                peMaxForce: this.peMaxForce.last(),
+                peMeanForce: this.peMeanForce.last(),
+                peSeparation: this.peSeparation.last(),
+                peRadialVelocity: this.peRadialVelocity.last(),
+                peMaxBeta: this.peMaxBeta.last(),
+                peCapCount: this.peCapCount.last(),
+                peNetCharge: this.peNetCharge.last(),
+                pePosCount: this.pePosCount.last(),
+                peZeroCount: this.peZeroCount.last(),
+                peNegCount: this.peNegCount.last()
+            });
         }
         return diag;
     }
@@ -568,16 +650,18 @@ export class TelemetryHub {
         if (currentTick !== this._lastTick2) {
             this._lastTick2 = currentTick;
 
-            this.aeKE.push(ke);
-            this.aeTemp.push(diag.temperature || 0);
-            this.aeEnergy.push(totalEnergy);
-            this.aeBonds.push(diag.bondCount || 0);
-            this.aePEIonic.push(diag.totalPEIonic || 0);
-            this.aePEVdw.push(diag.totalPEVdw || 0);
-            this.aePEBond.push(diag.totalPEBond || 0);
-            this.aeMomentum.push(pMag);
-            this.aeAtomCount.push(diag.atomCount || 0);
-            this.aeDrift.push(energyDrift);
+            this._s2_ae.push({
+                aeKE: ke,
+                aeTemp: diag.temperature || 0,
+                aeEnergy: totalEnergy,
+                aeBonds: diag.bondCount || 0,
+                aePEIonic: diag.totalPEIonic || 0,
+                aePEVdw: diag.totalPEVdw || 0,
+                aePEBond: diag.totalPEBond || 0,
+                aeMomentum: pMag,
+                aeAtomCount: diag.atomCount || 0,
+                aeDrift: energyDrift
+            });
         }
         return diag;
     }
@@ -789,15 +873,11 @@ export class TelemetryHub {
             this._resetVersions[resetKey]++;
         }
         switch (scale) {
-            case 0:
-                for (const b of [
-                    this.flux, this.energy, this.manifested, this.entropy,
-                    this.positive, this.negative, this.charges,
-                    this.ebDiff, this.gauss,
-                    ...Object.values(this.sp),
-                    ...Object.values(this.aud),
-                    ...Object.values(this.lag),
-                ]) b.clear();
+                        case 0:
+                this._s0_core.clear();
+                this._s0_sp.clear();
+                this._s0_aud.clear();
+                this._s0_lag.clear();
                 this.s0 = { diag: null, audit: null, lagrangian: null };
                 this._initialEnergy = null;
                 this._lastAuditVersion = -1;
@@ -807,46 +887,28 @@ export class TelemetryHub {
                 this._lastAuditTick = -1;
                 this._lastLagTick = -1;
                 break;
-            case 1:
-                for (const b of [
-                    this.peKE, this.pePE, this.peCoulombPE, this.peGravityPE,
-                    this.peTotal, this.peEnergyDrift, this.peCount,
-                    this.peLockedCount, this.peMobileCount,
-                    this.peMomentum, this.peAngMom, this.peVirial,
-                    this.peTemperature, this.peRmsVelocity, this.peSystemRadius,
-                    this.peMaxForce, this.peMeanForce,
-                    this.peSeparation, this.peRadialVelocity,
-                    this.peMaxBeta, this.peCapCount, this.peNetCharge,
-                    this.pePosCount, this.peZeroCount, this.peNegCount,
-                    this.peAnnihilations,
-                ]) b.clear();
+                        case 1:
+                this._s1_pe.clear();
                 this.s1 = { diag: null, extended: null, runtime: null };
                 this._peInitialEnergy = null;
                 this._lastTick1 = -1;
                 this._lastTick1Ext = -1;
                 break;
-            case 2:
+                        case 2:
             case 3:
-                for (const b of [
-                    this.aeKE, this.aeTemp, this.aeEnergy, this.aeBonds,
-                    this.aePEIonic, this.aePEVdw, this.aePEBond,
-                    this.aeMomentum, this.aeAtomCount, this.aeDrift,
-                ]) b.clear();
+                this._s2_ae.clear();
                 this.s2 = { diag: null, runtime: null };
                 this._aeInitialEnergy = null;
                 this._lastTick2 = -1;
                 break;
-            case 4:
-                for (const b of [
-                    this.plKE, this.plPE, this.plTotal, this.plEnergyDrift,
-                    this.plCount, this.plMomentum, this.plVirial, this.plSystemRadius
-                ]) b.clear();
+                        case 4:
+                this._s4_pl.clear();
                 this.s4 = { diag: null };
                 this._plInitialEnergy = null;
                 this._lastTick4 = -1;
                 break;
-            case 5:
-                for (const b of [this.csBodies, this.csHubble, this.csDM]) b.clear();
+                        case 5:
+                this._s5_cs.clear();
                 this.s5 = { diag: null, cosmic: null };
                 this._lastTick5 = -1;
                 break;

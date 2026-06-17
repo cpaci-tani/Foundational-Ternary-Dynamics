@@ -1401,14 +1401,14 @@ Scrubbing is a pure "load, don't re-simulate" operation: `hydrateToTick(tick)` p
 The three Scale 0 dashboard tabs were rebuilt on a shared chart/table primitive set:
 
 - **Charts primitives** (`js/ui/charts/`): vendored uPlot 1.6.30, a theme reader that maps CSS custom properties into uPlot config, and three primitive classes:
-  - `UPlotChart` — line/area with preallocated Float64Array buffers, DPR + ResizeObserver handling, localStorage-persisted series-hidden state.
+  - `UPlotChart` — line/area using bulk `flattenInto()` extraction from SoA MultiRingBuffers for O(1) contiguous typed-array render passes. DPR + ResizeObserver handling, localStorage-persisted series-hidden state.
   - `Sparkline` — axis-free micro chart for table Trend cells.
   - `StackedAreaChart` — custom `paths` renderer that cumulatively sums same-x points across series.
 - **Diagnostics panel** (`js/ui/panels/diagnostics-panel/`): descriptor-driven `<table>` sections with `Metric | Value | Unit | Trend` columns, tabular-nums typography, zebra striping, digit-change pulse animation, and inline sparklines per row. The single Scale 0 descriptor declares 5 sections × 27 rows with physics-accurate units (`ct`, `E*`, `|J|`, `nat`, `|S|`, `ℏ`, `E*²`, `|w|²`).
 - **Charts panel** (`js/ui/panels/charts-panel/`): horizontally-scrollable chip picker + auto-fit card grid. Chip toggles fully destroy / recreate chart cards — no leaked uPlot instances. Active-chart set persists in localStorage (`ftd.charts.active`).
 - **Lagrangian panel** (`js/ui/panels/lagrangian-panel/`): StackedAreaChart with 7 bands · term-row checkboxes that two-way sync with the uPlot legend · `Action & Constraints` + `Ontic Constants` sidecar tables reusing `DiagnosticsTable`.
 
-All three panels read live data from `TelemetryHub` (`js/telemetry-hub.js`), which now also exposes per-audit-field ring buffers under `hub.aud.*` (E-field, B-field, Poynting magnitude, particle KE, Coulomb PE, E_L, E_R, chirality, wave L/R, max-Gauss, self-field).
+All three panels read live data from `TelemetryHub` (`js/telemetry-hub.js`), which utilizes `MultiRingBuffer` (Structure-of-Arrays) allocations across all 5 scales. Core buffers (`hub._s0_core`, `hub._s0_aud`, `hub._s1_pe`, etc.) are populated via unified `.push()` objects. The `WasmBridge` bypasses Embind object allocations by extracting native `Float64Array` zero-copy views (`getDiagnosticsView`, `getEnergyAuditView`, `getLagrangianView`) directly from the WASM engine.
 
 ### Scenarios (23+)
 

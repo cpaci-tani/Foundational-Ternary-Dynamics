@@ -114,6 +114,33 @@ val get_diagnostics(ftd::RenderBridge& rb) {
     return result;
 }
 
+static std::vector<double> s_diag_cache(21);
+val get_diagnostics_view(ftd::RenderBridge& rb) {
+    auto d = rb.diagnostics();
+    s_diag_cache[0] = d.tick;
+    s_diag_cache[1] = rb.physical_time();
+    s_diag_cache[2] = rb.dt();
+    s_diag_cache[3] = d.manifested_count;
+    s_diag_cache[4] = d.positive_count;
+    s_diag_cache[5] = d.negative_count;
+    s_diag_cache[6] = d.total_flux;
+    s_diag_cache[7] = d.total_energy;
+    s_diag_cache[8] = d.max_bandwidth;
+    s_diag_cache[9] = d.avg_drag;
+    s_diag_cache[10] = d.total_entropy;
+    s_diag_cache[11] = d.positive_count - d.negative_count;
+    s_diag_cache[12] = d.spin_up_count;
+    s_diag_cache[13] = d.spin_down_count;
+    s_diag_cache[14] = d.color_count[0];
+    s_diag_cache[15] = d.color_count[1];
+    s_diag_cache[16] = d.color_count[2];
+    s_diag_cache[17] = d.color_count[3];
+    s_diag_cache[18] = d.total_angular_momentum.x;
+    s_diag_cache[19] = d.total_angular_momentum.y;
+    s_diag_cache[20] = d.total_angular_momentum.z;
+    return val(typed_memory_view(21, s_diag_cache.data()));
+}
+
 // ── Energy Audit ────────────────────────────────────────────────────
 val get_energy_audit(ftd::RenderBridge& rb) {
     auto ea = rb.energy_audit();
@@ -157,6 +184,31 @@ val get_energy_audit(ftd::RenderBridge& rb) {
     return result;
 }
 
+static std::vector<double> s_audit_cache(19);
+val get_energy_audit_view(ftd::RenderBridge& rb) {
+    auto ea = rb.energy_audit();
+    s_audit_cache[0] = ea.field_energy;
+    s_audit_cache[1] = ea.wave_energy;
+    s_audit_cache[2] = ea.particle_ke;
+    s_audit_cache[3] = ea.total_energy;
+    s_audit_cache[4] = ea.E_field_energy;
+    s_audit_cache[5] = ea.B_field_energy;
+    s_audit_cache[6] = ea.total_poynting.x;
+    s_audit_cache[7] = ea.total_poynting.y;
+    s_audit_cache[8] = ea.total_poynting.z;
+    s_audit_cache[9] = ea.gauss_violation;
+    s_audit_cache[10] = ea.max_gauss_error;
+    s_audit_cache[11] = ea.self_field_injection;
+    s_audit_cache[12] = ea.coulomb_pe;
+    s_audit_cache[13] = ea.E_L_total;
+    s_audit_cache[14] = ea.E_R_total;
+    s_audit_cache[15] = ea.chirality_total;
+    s_audit_cache[16] = ea.wv_L_total;
+    s_audit_cache[17] = ea.wv_R_total;
+    s_audit_cache[18] = ea.charge_total;
+    return val(typed_memory_view(19, s_audit_cache.data()));
+}
+
 // ── Lagrangian Extraction (full with constraints) ───────────────────
 val get_lagrangian(ftd::RenderBridge& rb) {
     auto lag = ftd::compute_lagrangian_diagnostics(rb);
@@ -184,6 +236,28 @@ val get_lagrangian(ftd::RenderBridge& rb) {
     result.set("manifested",      lag.manifested_count);
     result.set("locked",          lag.locked_count);
     return result;
+}
+
+static std::vector<double> s_lag_cache(16);
+val get_lagrangian_view(ftd::RenderBridge& rb) {
+    auto lag = ftd::compute_lagrangian_diagnostics(rb);
+    s_lag_cache[0] = lag.field_kinetic_sum;
+    s_lag_cache[1] = lag.field_gradient_sum;
+    s_lag_cache[2] = lag.born_infeld_sum;
+    s_lag_cache[3] = lag.coupling_sum;
+    s_lag_cache[4] = lag.velocity_coupling_sum;
+    s_lag_cache[5] = lag.gauss_sum;
+    s_lag_cache[6] = lag.dissipation_sum;
+    s_lag_cache[7] = lag.total_lagrangian;
+    s_lag_cache[8] = lag.total_hamiltonian;
+    s_lag_cache[9] = lag.total_action;
+    s_lag_cache[10] = lag.gauss_violation;
+    s_lag_cache[11] = lag.max_gauss_error;
+    s_lag_cache[12] = lag.total_flux_mag;
+    s_lag_cache[13] = lag.total_wave_energy;
+    s_lag_cache[14] = lag.manifested_count;
+    s_lag_cache[15] = lag.locked_count;
+    return val(typed_memory_view(16, s_lag_cache.data()));
 }
 
 // ── Voxel Inspection ────────────────────────────────────────────────
