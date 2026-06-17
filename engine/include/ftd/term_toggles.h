@@ -92,6 +92,11 @@ struct TermToggles {
     // first validate() failure instead of printing to stderr and continuing.
     bool strict_validation = false;
 
+    // EW phase-transition background sweep: sinusoidal uniform +x flux drive
+    // D(t)=(sin(tick*0.01)+1)/2*0.05, runs each tick before phase_read so the
+    // driven field sees the wave propagation update in the same cycle.
+    bool ew_background_sweep = false;
+
     // ── Non-bool config fields (NOT in TOGGLE_SPECS[]) ────────────────
     // These are typed parameters / enum modes, not boolean toggles, so
     // they live outside the table. Direct field access only.
@@ -192,6 +197,7 @@ inline constexpr ToggleSpec TOGGLE_SPECS[] = {
     {"db_clock_coulomb",   &TermToggles::db_clock_coulomb,   false, false, "wave_propagation,de_broglie_clock,poisson_coulomb", "forces", "", ToggleBackend::CPU, "[IMPOSED diagnostic] FTD-0281 live Coulomb clock: pre-read phi_C solve plus all-site KG potential omega_eff^2=omega0^2+2*omega0*V, V=-phi_C. CPU/RenderBridge only in v1; forces must stay off to avoid a second same-tick Coulomb solve."},
     {"confinement",        &TermToggles::confinement,        false, false, "",                 "",                 "", ToggleBackend::ANY, "Linear confinement intent flag (no C++ branch yet)"},
     {"strict_validation",  &TermToggles::strict_validation,  false, false, "",                 "",                 "", ToggleBackend::ANY, "Throw on validate() failure (vs. stderr warn)"},
+    {"ew_background_sweep",&TermToggles::ew_background_sweep,false, false, "",                 "",                 "", ToggleBackend::ANY, "Sinusoidal uniform +x flux drive for EW phase-transition hysteresis (D=(sin(tick*0.01)+1)/2*0.05 per tick before phase_read)"},
 };
 
 // ─────────────────────────────────────────────────────────────────────
