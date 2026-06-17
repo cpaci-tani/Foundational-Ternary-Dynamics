@@ -4,13 +4,13 @@ import { getActiveLatticeSize } from '../state/store.js';
 export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
     if (tickCount <= 0) return;
 
-    // Scale-0 off-thread path: WasmBridgeProxy is stored as state.fluxMock (NOT
-    // ctx.bridge, which is always the main-thread WasmBridge). The proxy's
-    // tickScale0 capability is a no-op because the worker self-ticks when RUNNING.
-    // For discrete steps use tickOnce(), which sends a single-tick command to the
-    // worker, which runs the tick and calls postFrame() so diagnostics update.
-    if (state.useFluxMock && state.fluxMock && typeof state.fluxMock.tickOnce === 'function') {
-        for (let i = 0; i < tickCount; i++) state.fluxMock.tickOnce();
+    // Worker path (WasmBridgeProxy): tickScale0 capability is a no-op because the
+    // worker self-ticks. For discrete steps (step button / stepScale0) call
+    // tickOnce(), which sends a single-tick command to the worker, which runs the
+    // tick and fires postFrame() so diagnostics update on the main thread.
+    const fm = state.fluxMock;
+    if (fm && fm.isWorker && state.useFluxMock) {
+        for (let i = 0; i < tickCount; i++) fm.tickOnce();
         state.fieldDataVersion = (state.fieldDataVersion || 0) + tickCount;
         return;
     }
@@ -26,6 +26,23 @@ export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
 
 export function advanceSimulation(ctx, state) {
     const latticeSize = getActiveLatticeSize(ctx, state);
+
+    // Worker-backed physics (WasmBridgeProxy): the worker self-ticks on its own
+    // ~60Hz loop when CTRL.RUNNING=1. Forward the desired run state (deduped in
+    // the proxy) and drive overlay/render refresh from the worker's frame counter,
+    // then return — the in-thread tick path below is for non-worker scenarios only.
+    const fm = state.fluxMock;
+    if (fm && fm.isWorker && state.useFluxMock) {
+        if (typeof fm.setRunning === 'function') fm.setRunning(ctx.running);
+        if (typeof fm.setTicksPerFrame === 'function') fm.setTicksPerFrame(ctx.ticksPerFrame);
+        const fc = fm.frameCounter || 0;
+        if (fc !== state._lastWorkerFrame) {
+            state._lastWorkerFrame = fc;
+            state.latticeNeedsUpload = true;
+            state.fieldDataVersion = (state.fieldDataVersion || 0) + 1;
+        }
+        return latticeSize;
+    }
 
     // Global pause kills everything — no tick advance, no upload.
     if (!ctx.running) return latticeSize;
