@@ -4,13 +4,13 @@ import { getActiveLatticeSize } from '../state/store.js';
 export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
     if (tickCount <= 0) return;
 
-    // Worker-backed WasmBridgeProxy: tickScale0 on the capability is a no-op
-    // because the worker self-ticks when RUNNING. For discrete steps (including
-    // the single-tick button) use tickOnce(), which sends a command to the
-    // worker, runs one tick there, then calls postFrame() so the frame counter
-    // increments and the main-thread render picks up the new state.
-    if (typeof ctx.bridge.tickOnce === 'function') {
-        for (let i = 0; i < tickCount; i++) ctx.bridge.tickOnce();
+    // Scale-0 off-thread path: WasmBridgeProxy is stored as state.fluxMock (NOT
+    // ctx.bridge, which is always the main-thread WasmBridge). The proxy's
+    // tickScale0 capability is a no-op because the worker self-ticks when RUNNING.
+    // For discrete steps use tickOnce(), which sends a single-tick command to the
+    // worker, which runs the tick and calls postFrame() so diagnostics update.
+    if (state.useFluxMock && state.fluxMock && typeof state.fluxMock.tickOnce === 'function') {
+        for (let i = 0; i < tickCount; i++) state.fluxMock.tickOnce();
         state.fieldDataVersion = (state.fieldDataVersion || 0) + tickCount;
         return;
     }
