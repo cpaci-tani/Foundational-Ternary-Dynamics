@@ -329,6 +329,16 @@ export class WasmBridge {
         }
     }
 
+    clearField() {
+        if (this._module && this._bridge && typeof this._module.clearField === 'function')
+            this._module.clearField(this._bridge);
+    }
+
+    seedRandomFlux() {
+        if (this._module && this._bridge && typeof this._module.seedRandomFlux === 'function')
+            this._module.seedRandomFlux(this._bridge);
+    }
+
     setToggle(name, value) {
         if (this._module && this._bridge)
             this._module.setToggle(this._bridge, name, value);
