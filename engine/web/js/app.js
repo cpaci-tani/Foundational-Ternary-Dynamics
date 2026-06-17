@@ -14,7 +14,6 @@ import { FluxEnergyChart, ParticleChart } from './charts.js';
 import { telemetryHub } from './telemetry-hub.js';
 import { createInspectorAppRuntime } from './inspector/app-runtime.js';
 import { initZoo, setEngineMode as setZooMode } from './zoo.js';
-import { getElement } from './elements.js';
 import { getCategories, getMoleculesByCategory } from './molecules.js';
 import { debugLog } from './core/log.js';
 
@@ -26,7 +25,7 @@ import * as Scale3Controller from './scales/scale3/controller.js';
 // ── Phase 1-3: Ontic Observatory, Physics Fidelity, Aggregation Bridge
 import * as Scale4Controller from './scales/scale4/controller.js';
 import * as Scale5Controller from './scales/scale5/controller.js';
-import * as Scale6Controller from './scales/scale6/controller.js';
+import { applyScaleGridAxesDefaults } from './scales/scale-utils.js';
 import { OnticObservatory } from './ontic-observatory.js';
 import { K_B } from './constants.js';
 // renderEnergyLevels, renderCrossSections, renderDecayRates, renderFcCard,
@@ -39,7 +38,6 @@ import { AggregateDetector, EmergenceMonitor } from './aggregation-bridge.js';
 import { createOnticPanel } from './ui/app-ontic.js';
 import { BackgroundManager } from './backgrounds.js';
 import { PETelemetryPanel } from './pe-telemetry.js';
-import { initVerifyPanel } from './verify-panel/component.js';
 import { AppShell } from './ui/shell/app-shell.js';
 import { initDiagnosticsPanel, initChartsPanel, initLagrangianPanel, initScenePanel, initTelemetryGridPanel } from './ui/panels/index.js';
 import { floatingWindowManager } from './ui/components/floating-window/component.js';
@@ -94,7 +92,6 @@ let fpsDisplay = 0;
 //   'molecules'     (Scale 3) — same AE engine, molecule scenarios + bonding
 //   'planetary'     (Scale 4) — N-body solar system (separate controller)
 //   'cosmic'        (Scale 5) — galaxy/cluster simulation (CosmicRenderer)
-//   'meta'          (Scale 12) — 3^3 existential unit (MetaUnit)
 // Transitions: switchEngineMode() is the SOLE entry point for mode changes.
 let engineMode = 'lattice';
 let _showBonds = true;
@@ -128,8 +125,7 @@ const _aeLegendZArr = [];        // reusable sorted array for AE legend key
 // app-level `_fluxMock` global was retired with the harness migration
 // cleanup and intercept removal.
 
-// Verification Lab (replaces the legacy Quantum Lab panel)
-let _verifLabComponent = null;
+
 
 // Black hole scenario state (Scale 1 only)
 // [SELECTION] All BH constants are pedagogical choices for visualization,
@@ -331,13 +327,13 @@ function _resetAllVisualState() {
     const aeFieldBtn2 = document.getElementById('toggle-ae-field');
     if (aeFieldBtn2) aeFieldBtn2.classList.remove('active');
     for (const id of [
-        'ae-show-shells', 'ae-show-shell-bounds', 'ae-show-lobes',
+        'ae-show-clouds', 'ae-show-shells', 'ae-show-shell-bounds', 'ae-show-lobes',
         'ae-force-ionic', 'ae-force-vdw', 'ae-force-bond', 'ae-force-net',
         'toggle-ae-velocities', 'toggle-ae-dipoles', 'toggle-ae-hbonds',
     ]) {
         const el = document.getElementById(id);
         if (el) {
-            if (el.type === 'checkbox') el.checked = (id === 'ae-show-shells');
+            if (el.type === 'checkbox') el.checked = (id === 'ae-show-shells' || id === 'ae-show-clouds');
             else el.classList.remove('active');
         }
     }
@@ -603,8 +599,7 @@ async function init() {
     // Populate constants table from WASM if available
     onticPanel.populateConstants();
 
-    // Build element scenario dropdown (molecules are Scale 3 only)
-    buildElementScenarios();
+    // Scale 2 scenario select is populated in createScale2ScenarioToolbarGroup().
     buildScale3MoleculeDropdown();
 
     _loadProgress(60, 'Initializing observatory...');
@@ -629,7 +624,6 @@ async function init() {
     Scale3Controller.bindScale3ControlsUI();
     wireControls();
     wireViewportToggles();
-    wireVerificationLab();
     wireKeyboard();
 
     // ── Wire Immersive Mode (UI Toggle) ──
@@ -720,9 +714,7 @@ async function init() {
 function animate(now) {
     requestAnimationFrame(animate);
 
-    if (engineMode === 'meta') {
-        Scale6Controller.updateMeta(_makeCtx(), 1 / 60);
-    } else if (engineMode === 'cosmic') {
+    if (engineMode === 'cosmic') {
         Scale5Controller.animateCosmic(_makeCtx());
     } else if (engineMode === 'atoms' || engineMode === 'molecules') {
         animateAE(now);
@@ -878,8 +870,6 @@ function wireToolbar() {
         } else if (engineMode === 'planetary') {
             // Step the planetary bridge one tick via Scale4Controller
             Scale4Controller.step();
-        } else if (engineMode === 'meta') {
-            Scale6Controller.step(_makeCtx());
         } else {
             Scale0Controller.step(_makeCtx());
         }
@@ -891,8 +881,6 @@ function wireToolbar() {
         updatePlayButton();
         if (engineMode === 'cosmic') {
             Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
-        } else if (engineMode === 'meta') {
-            Scale6Controller.loadMetaScenario(_makeCtx());
         } else if (engineMode === 'molecules') {
             loadMoleculeScenario(document.getElementById('mol-scenario-select').value);
         } else if (engineMode === 'atoms') {
@@ -1337,24 +1325,7 @@ function wireViewportToggles() {
 
 }
 
-// ── Verification Lab Wiring (replaces legacy Quantum Lab) ─────────
 
-/** Programmatically switch to the Verify tab. */
-function _switchToVerifyTab() {
-    if (appShell) appShell.activatePanel('verification-lab');
-    else {
-        const tab = document.querySelector('#tab-bar .tab[data-panel="verification-lab"]');
-        if (tab) tab.click();
-    }
-}
-
-/** Initialise the Verify evidence-scoreboard panel (see js/verify-panel/). */
-function wireVerificationLab() {
-    const panelArea = document.getElementById('panel-area');
-    if (!panelArea) return;
-    if (_verifLabComponent) return;
-    _verifLabComponent = initVerifyPanel({ panelArea });
-}
 
 
 // ── Keyboard Shortcuts ───────────────────────────────────────────────
@@ -1572,8 +1543,7 @@ const CONTROLLERS = {
     atoms: Scale2Controller,
     molecules: Scale3Controller,
     planetary: Scale4Controller,
-    cosmic: Scale5Controller,
-    meta: Scale6Controller
+    cosmic: Scale5Controller
 };
 
 function switchEngineMode(mode) {
@@ -1598,22 +1568,24 @@ function switchEngineMode(mode) {
     app.classList.toggle('mode-molecules', mode === 'molecules');
     app.classList.toggle('mode-planetary', mode === 'planetary');
     app.classList.toggle('mode-cosmic', mode === 'cosmic');
-    app.classList.toggle('mode-meta', mode === 'meta');
 
     // If the active tab is hidden for this scale, fall back to Controls
-    const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', planetary: '4', cosmic: '5', meta: '12' }[mode];
+    const scaleIndex = { lattice: '0', particles: '1', atoms: '2', molecules: '3', planetary: '4', cosmic: '5' }[mode];
     if (appShell) appShell.setActiveScale(scaleIndex);
     else app.setAttribute('data-active-scale', scaleIndex);
 
     // Keep mode-dependent inspector, viewport, and zoo state in sync.
     inspectorRuntime?.syncMode(mode);
 
+    // Scales 1–5: grid/axes off by default; Scale 0 restores both (+ wireframe).
+    applyScaleGridAxesDefaults(viewport, mode);
+
     // Re-point the inspector at the active scale's bridge (audit P1-1).
     // Scales 0-3 (lattice/particles/atoms/molecules) all share the
     // app-level `bridge`; restore it here so that returning from a
     // self-bridged scale (Scale 4 planetary / Scale 5 cosmic, which swap
     // in their own bridge during loadScenario) does not leave the
-    // inspector querying a stale planetary/cosmic backend. Scales 4/5/6
+    // inspector querying a stale planetary/cosmic backend. Scales 4/5
     // overwrite this with their own bridge later in their loaders, so the
     // guard avoids clobbering them.
     if (mode === 'lattice' || mode === 'particles'
@@ -1623,16 +1595,6 @@ function switchEngineMode(mode) {
 
     const tpfSlider = document.getElementById('ticks-per-frame');
     if (tpfSlider) applyTicksPerFrameFromSlider(tpfSlider.value);
-
-    // Disable universal grid / axes for planetary physics which has local overlays
-    if (mode === 'planetary') {
-        viewport.toggleGrid(false);
-        viewport.toggleAxes(false);
-        const gridBtn = document.getElementById('toggle-grid');
-        if (gridBtn) gridBtn.classList.remove('active');
-        const axesBtn = document.getElementById('toggle-axes');
-        if (axesBtn) axesBtn.classList.remove('active');
-    }
 
     // 2. Uniform Lifecycle: Mount the next controller
     const nextController = CONTROLLERS[mode];
@@ -1646,15 +1608,13 @@ function switchEngineMode(mode) {
     } else if (mode === 'particles') {
         loadPEScenario(document.getElementById('pe-scenario-select')?.value || 'pe-hydrogen');
     } else if (mode === 'atoms') {
-        loadAEScenario(document.getElementById('ae-scenario-select')?.value || 'ae-crystal');
+        loadAEScenario(document.getElementById('ae-scenario-select')?.value || 'ae-hydrogen-atom');
     } else if (mode === 'molecules') {
         loadMoleculeScenario(document.getElementById('mol-scenario-select')?.value || 'mol-water');
     } else if (mode === 'planetary') {
         Scale4Controller.loadScenario(_makeCtx(), document.getElementById('planetary-scenario-select')?.value || 'planetary-solar');
     } else if (mode === 'cosmic') {
         Scale5Controller.loadCosmicScenario(_makeCtx(), document.getElementById('cosmic-scenario-select')?.value || 'cosmic-galaxy');
-    } else if (mode === 'meta') {
-        Scale6Controller.loadMetaScenario(_makeCtx());
     }
 
     Scale0Controller.setLatticeNeedsUpload();
@@ -1672,44 +1632,6 @@ function loadAEScenario(name) {
     Scale2Controller.loadAEScenario({ bridge, viewport, inspector, resetAllVisualState: _resetAllVisualState }, name);
 }
 
-
-// ── Build Element Scenarios in Dropdown ──────────────────────────────
-function buildElementScenarios() {
-    const select = document.getElementById('ae-scenario-select');
-    if (!select) return;
-
-    const periods = [
-        { label: 'Period 1', start: 1, end: 2 },
-        { label: 'Period 2', start: 3, end: 10 },
-        { label: 'Period 3', start: 11, end: 18 },
-        { label: 'Period 4', start: 19, end: 36 },
-        { label: 'Period 5', start: 37, end: 54 },
-        { label: 'Period 6', start: 55, end: 86 },
-        { label: 'Period 7', start: 87, end: 118 },
-    ];
-
-    // Insert element optgroups before the Special optgroup
-    const specialGroup = select.querySelector('optgroup[label="Special"]');
-
-    for (const p of periods) {
-        const group = document.createElement('optgroup');
-        group.label = p.label;
-
-        for (let Z = p.start; Z <= p.end; Z++) {
-            const el = getElement(Z);
-            if (!el) continue;
-            const opt = document.createElement('option');
-            opt.value = `ae-el-${Z}`;
-            opt.textContent = `${Z} ${el.symbol} \u2014 ${el.name}`;
-            group.appendChild(opt);
-        }
-
-        select.insertBefore(group, specialGroup);
-    }
-
-    // Default to Hydrogen
-    select.value = 'ae-el-1';
-}
 
 // AE toggle helpers (_syncAEParamsFromUI, _resetAETogglesToDefaults, _aeSetPhase3) moved to Scale2Controller
 function _syncAEParamsFromUI() {

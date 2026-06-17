@@ -424,8 +424,6 @@ export class Viewport {
                 return 11.18;
             case 'cosmic':
                 return 570.09;
-            case 'meta':
-                return 7.89;
             default:
                 return (this.latticeSize || 32) * 1.6666;
         }
@@ -923,24 +921,7 @@ export class Viewport {
             return;
         }
 
-        // ── Meta mode: hide all physics visuals, keep scene clean ──
-        if (mode === 'meta') {
-            this._boundaryMode = 'origin';
-            hideAllOverlays();
-            // Camera: close-up at origin, allow very close zoom
-            this.controls.minDistance = 0.1;
-            this.controls.target.set(0, 0, 0);
-            this.camera.position.set(5, 3.5, 5);
-            this.camera.near = 0.005;
-            this.camera.updateProjectionMatrix();
-            this.controls.update();
-            return;
-        }
 
-        // ── Leaving meta mode — restore camera limits ──
-        this.controls.minDistance = 0.01;
-        this.camera.near = 0.001;
-        this.camera.updateProjectionMatrix();
 
         // Defensive post-processing cleanup (no current scale uses it).
         if (this._usePostProcessing) {

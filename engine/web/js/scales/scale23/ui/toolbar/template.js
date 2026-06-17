@@ -1,6 +1,6 @@
 export function getScale23VisualToolbarTemplate() {
     return `
-        <div class="tb-group tb-group-scale23 scale23-only" id="ae-visual-controls">
+        <div class="tb-group tb-group-scale23 scale3-only" id="ae-visual-controls">
             <label class="tb-check" title="Show strong force glow shells around nuclei">
                 <input type="checkbox" id="ae-show-shells" checked>
                 Shells
@@ -25,7 +25,7 @@ export function getScale23VisualToolbarTemplate() {
 
 export function getScale23ForceToolbarTemplate() {
     return `
-        <div class="tb-group tb-group-scale23 tb-group-force scale23-only" id="ae-force-controls">
+        <div class="tb-group tb-group-scale23 tb-group-force scale3-only" id="ae-force-controls">
             <span class="tb-label">Forces</span>
             <button class="view-toggle" id="ae-force-ionic" title="Coulomb (ionic) forces">F<sub>C</sub></button>
             <button class="view-toggle" id="ae-force-vdw" title="Van der Waals forces">F<sub>vdW</sub></button>

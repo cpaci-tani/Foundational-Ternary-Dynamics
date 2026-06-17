@@ -194,25 +194,6 @@ html[data-panel-mount="bottom"] .play-bar {
     font-size: var(--fs-xs);
 }
 
-.play-bar-now {
-    min-width: calc(46px * var(--ui-scale, 1));
-}
-
-.play-bar-time {
-    height: calc(34px * var(--ui-scale, 1));
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-    border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
-    border-radius: 999px;
-    background: color-mix(in oklch, var(--bg-card) 54%, transparent);
-    color: var(--text-muted);
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-    font-variant-numeric: tabular-nums;
-}
-
 /* Active-state styling for the gear while its popover is open. */
 .play-bar-settings.is-open {
     color: var(--accent);

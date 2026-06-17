@@ -23,7 +23,6 @@ import { registerScale3ToolbarUI } from '../../scales/scale3/ui/register-scale3-
 import { registerScale4ToolbarUI } from '../../scales/scale4/ui/register-scale4-ui.js';
 import { registerScale5ToolbarUI } from '../../scales/scale5/ui/register-scale5-ui.js';
 import { registerScale23ToolbarUI } from '../../scales/scale23/ui/register-scale23-ui.js';
-import { registerScale12ToolbarUI } from '../../scales/scale12/ui/register-scale12-ui.js';
 
 /**
  * Shell facade around the current dashboard DOM.
@@ -63,7 +62,6 @@ export class AppShell {
         registerScale23ToolbarUI(this.scaleUiRegistry.toolbar);
         registerScale4ToolbarUI(this.scaleUiRegistry.toolbar);
         registerScale5ToolbarUI(this.scaleUiRegistry.toolbar);
-        registerScale12ToolbarUI(this.scaleUiRegistry.toolbar);
         registerLegacyToolbarUi(this.scaleUiRegistry.toolbar);
         ensurePanelResources(this.getRegion('panels'));
         annotatePanelElements(this.getRegion('panels'), this.scaleUiRegistry.panels);

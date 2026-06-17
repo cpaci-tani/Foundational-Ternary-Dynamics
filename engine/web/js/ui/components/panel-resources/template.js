@@ -180,12 +180,12 @@ export function getInspectorPanelTemplate() {
                         </div>
                     </div>
                 </div>
-                <div class="inspector-empty scale1-only" id="pe-inspector-empty">
+                <div class="inspector-empty scale1-only" id="pe-inspector-empty" title="Viewport selection helper.">
                     Select a particle in the viewport to inspect its trajectory and interactions.
                 </div>
                 <div id="pe-inspector-content" class="scale1-only panel-resource-hidden">
                     <div class="panel-resource-grid panel-resource-grid-3">
-                        <div class="card panel-resource-card">
+                        <div class="card panel-resource-card" title="Identifiers, category, mass, charge, spin, and color indices.">
                             <div class="card-title">Identity</div>
                             <div class="pe-insp-header">
                                 <span class="pe-insp-catalog-dot" id="pe-insp-dot"></span>
@@ -193,55 +193,55 @@ export function getInspectorPanelTemplate() {
                                 <span class="pe-insp-symbol" id="pe-insp-symbol">--</span>
                             </div>
                             <dl class="inspector-grid">
-                                <dt>Engine ID</dt>
+                                <dt title="The unique identifier assigned to this particle by the simulation engine.">Engine ID</dt>
                                 <dd id="pe-insp-id">--</dd>
-                                <dt>Catalog</dt>
+                                <dt title="The standard model or FTD particle category (e.g., lepton, meson, hadron).">Catalog</dt>
                                 <dd id="pe-insp-catalog">--</dd>
-                                <dt>Mass</dt>
+                                <dt title="The rest mass of the particle in MeV.">Mass</dt>
                                 <dd id="pe-insp-mass">--</dd>
-                                <dt>Charge</dt>
+                                <dt title="The electric charge of the particle in units of elementary charge e (e.g. +1, -1, 0).">Charge</dt>
                                 <dd id="pe-insp-charge">--</dd>
-                                <dt>Locked</dt>
+                                <dt title="Indicates if the particle is locked in space (fixed position) or mobile (moves dynamically under force integration).">Locked</dt>
                                 <dd id="pe-insp-locked">--</dd>
-                                <dt title="Effective interaction radius">Radius</dt>
+                                <dt title="Effective interaction radius (in lattice units, lu).">Radius</dt>
                                 <dd id="pe-insp-reff">--</dd>
-                                <dt title="Spin quantum number projection">Spin</dt>
+                                <dt title="Spin quantum number projection.">Spin</dt>
                                 <dd id="pe-insp-spin">--</dd>
-                                <dt title="Color charge state index">Color</dt>
+                                <dt title="Color charge state index.">Color</dt>
                                 <dd id="pe-insp-color">--</dd>
-                                <dt title="Entanglement pair ID (-1 if unbound)">Pair ID</dt>
+                                <dt title="Entanglement pair ID (-1 if unbound).">Pair ID</dt>
                                 <dd id="pe-insp-pair">--</dd>
                             </dl>
                         </div>
-                        <div class="card panel-resource-card">
+                        <div class="card panel-resource-card" title="Dynamic motion states (position, velocity, speed, acceleration, and kinetic energy).">
                             <div class="card-title">Dynamics</div>
                             <dl class="inspector-grid">
-                                <dt>Position</dt>
+                                <dt title="The coordinate vector (x, y, z) of the particle on the 3D lattice (in lattice units, lu).">Position</dt>
                                 <dd id="pe-insp-pos">--</dd>
-                                <dt>Velocity</dt>
+                                <dt title="The velocity vector (vx, vy, vz) of the particle (in fractions of speed of light c).">Velocity</dt>
                                 <dd id="pe-insp-vel">--</dd>
-                                <dt>Speed</dt>
+                                <dt title="The speed of the particle |v| as a fraction of c (where c = 1/sqrt(3) on the cubic lattice).">Speed</dt>
                                 <dd id="pe-insp-speed">--</dd>
-                                <dt>KE</dt>
+                                <dt title="The kinetic energy of the particle: 1/2 * m * v^2 (in MeV).">KE</dt>
                                 <dd id="pe-insp-ke">--</dd>
-                                <dt title="Magnitude of momentum |p|">Momentum</dt>
+                                <dt title="Magnitude of momentum |p| (in MeV/c).">Momentum</dt>
                                 <dd id="pe-insp-momentum">--</dd>
-                                <dt title="Magnitude of acceleration |a|">Accel</dt>
+                                <dt title="Magnitude of acceleration |a| (change in velocity per tick).">Accel</dt>
                                 <dd id="pe-insp-accel">--</dd>
-                                <dt>Orbital r</dt>
+                                <dt title="The orbital radius or distance to the center of mass in 2-body orbits (in lattice units, lu).">Orbital r</dt>
                                 <dd id="pe-insp-orbital">--</dd>
                             </dl>
                         </div>
-                        <div class="card panel-resource-card">
+                        <div class="card panel-resource-card" title="Distance and force magnitudes relative to neighboring particles.">
                             <div class="card-title">Interactions</div>
                             <dl class="inspector-grid">
-                                <dt>Nearest</dt>
+                                <dt title="The Engine ID of the nearest neighboring particle.">Nearest</dt>
                                 <dd id="pe-insp-nearest">--</dd>
-                                <dt>Distance</dt>
+                                <dt title="The Euclidean distance to the nearest particle (in lattice units, lu).">Distance</dt>
                                 <dd id="pe-insp-dist">--</dd>
-                                <dt>Coulomb |F|</dt>
+                                <dt title="The magnitude of the electrostatic Coulomb force acting on this particle.">Coulomb |F|</dt>
                                 <dd id="pe-insp-fc">--</dd>
-                                <dt>Net |F|</dt>
+                                <dt title="The magnitude of the net combined force vector acting on this particle.">Net |F|</dt>
                                 <dd id="pe-insp-fnet">--</dd>
                             </dl>
                         </div>
@@ -536,21 +536,6 @@ export function getPlanetaryPanelTemplate() {
                     <ul id="planetary-layer-list" class="zoo-list panel-resource-list">
                     </ul>
                 </div>
-                <div class="card panel-resource-card-spaced">
-                    <div class="card-title">Visualization Overlays</div>
-                    <div class="engine-toggles grid-cols-1 panel-resource-toggle-grid">
-                        <label class="toggle-control">
-                            <input type="checkbox" id="planetary-opt-orbits" checked>
-                            <span class="control"></span>
-                            <span class="label">Show Orbital Traces</span>
-                        </label>
-                        <label class="toggle-control">
-                            <input type="checkbox" id="planetary-opt-axes">
-                            <span class="control"></span>
-                            <span class="label">Show Rotational Axes</span>
-                        </label>
-                    </div>
-                </div>
             </div>
         </div>
     `;
@@ -612,13 +597,3 @@ export function getCosmicInfoPanelTemplate() {
     `;
 }
 
-export function getMetaInfoPanelTemplate() {
-    return `
-        <div class="panel" id="panel-meta-info">
-            <div id="meta-info-panel" class="panel-resource-scroll"></div>
-            <div id="meta-inspect-panel" class="panel-resource-inspect">
-                <div class="panel-resource-inspect-empty">Click a site to inspect</div>
-            </div>
-        </div>
-    `;
-}
