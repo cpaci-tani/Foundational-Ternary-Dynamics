@@ -97,6 +97,8 @@ export const SCALE0_DIRECT_READS = [
     { name: 'getEMForceField',         empty: emptySampleResult },
     { name: 'getGravityForceField',    empty: emptySampleResult },
     { name: 'getStrongForceField',     empty: emptySampleResult },
+    { name: 'getForceFieldSampled',    empty: emptySampleResult },
+    { name: 'getGravityFieldSampled',  empty: emptySampleResult },
     // Audit / Lagrangian: field terms are live off the shadow; particle terms
     // read zero under the worker (shadow._particles is empty) — acceptable, the
     // confirmed breakage was the field charts. Returns null before ready.
