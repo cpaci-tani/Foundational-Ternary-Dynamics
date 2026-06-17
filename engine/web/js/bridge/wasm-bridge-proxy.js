@@ -56,6 +56,10 @@ export class WasmBridgeProxy {
         this._lastAudit = null;
         this._lastLag = null;
         this._pendingTPF = undefined;
+        // Overlay sampler cache: keyed by "kind@stride". _samplerWant tracks which
+        // kinds have been registered with the worker (idempotent per key).
+        this._samplerCache = {};
+        this._samplerWant = new Map();
 
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
         this._worker = new Worker(new URL('./wasm-bridge.worker.js', import.meta.url));
@@ -79,7 +83,8 @@ export class WasmBridgeProxy {
             if (m.parts) this._lastParts = m.parts;
             if (m.audit) this._lastAudit = m.audit;
             if (m.lag)   this._lastLag   = m.lag;
-            
+            if (m.samplers && Object.keys(m.samplers).length) Object.assign(this._samplerCache, m.samplers);
+
             if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
                 window.__ftdCtx.onBridgePostFrame();
             }
@@ -117,29 +122,45 @@ export class WasmBridgeProxy {
     getDiagnostics() { return this._lastDiag ?? null; }
     getEnergyAudit() { return this._lastAudit ?? null; }
     getLagrangian() { return this._lastLag ?? null; }
-    // Overlay samplers (off by default for hydrogen) — empty until Phase 2 adds
-    // worker-side recompute. Names match capabilities/scale0.js dispatch.
-    getEFieldSampled() { return EMPTY_VEC(); }
-    getBFieldSampled() { return EMPTY_VEC(); }
-    getPoyntingSampled() { return EMPTY_VEC(); }
-    getDivJSampled() { return EMPTY_VAL(); }
-    getFluxVectorSampled() { return EMPTY_VEC(); }
-    getVorticitySampled() { return EMPTY_VAL(); }
-    getHelicitySampled() { return EMPTY_VAL(); }
-    getKretschmannSampled() { return EMPTY_VAL(); }
-    getLatencySampled() { return EMPTY_VAL(); }
-    getFisherSampled() { return EMPTY_VAL(); }
-    getCoherenceSampled() { return EMPTY_VAL(); }
-    getCurlJSampled() { return EMPTY_VEC(); }
-    getStateFieldSampled() { return EMPTY_VAL(); }
-    getGaussResidualSampled() { return EMPTY_VAL(); }
-    getEMForceField() { return EMPTY_VEC(); }
-    getGravityForceField() { return EMPTY_VEC(); }
-    getStrongForceField() { return EMPTY_VEC(); }
-    getGravityMetricAgg() {
-        return { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 };
+    // Overlay samplers — lazy pull from the worker.
+    // On first call for a given kind+stride the want is registered with the worker
+    // and the cached result (initially empty) is returned. The worker computes the
+    // sampler on its next postFrame() and sends the result back; subsequent calls
+    // return the live cached data. One-frame latency on initial display only.
+    _wantSampler(kind, stride, emptyFn) {
+        const key = `${kind}@${stride}`;
+        if (!this._samplerWant.has(key)) {
+            this._samplerWant.set(key, true);
+            this._worker.postMessage({ type: 'wantSampler', kind, stride });
+        }
+        return this._samplerCache[key] ?? emptyFn();
     }
-    getLatencyVolume() { return new Float64Array(0); }
+    getEFieldSampled(stride = 2)        { return this._wantSampler('e',            stride, EMPTY_VEC); }
+    getBFieldSampled(stride = 2)        { return this._wantSampler('b',            stride, EMPTY_VEC); }
+    getPoyntingSampled(stride = 2)      { return this._wantSampler('poynting',     stride, EMPTY_VEC); }
+    getDivJSampled(stride = 2)          { return this._wantSampler('divJ',         stride, EMPTY_VAL); }
+    getFluxVectorSampled(stride = 2)    { return this._wantSampler('fluxVector',   stride, EMPTY_VEC); }
+    getVorticitySampled(stride = 2)     { return this._wantSampler('vorticity',    stride, EMPTY_VAL); }
+    getHelicitySampled(stride = 2)      { return this._wantSampler('helicity',     stride, EMPTY_VAL); }
+    getKretschmannSampled(stride = 2)   { return this._wantSampler('kretschmann',  stride, EMPTY_VAL); }
+    getLatencySampled(stride = 2)       { return this._wantSampler('latency',      stride, EMPTY_VAL); }
+    getFisherSampled(stride = 2)        { return this._wantSampler('fisher',       stride, EMPTY_VAL); }
+    getCoherenceSampled(stride = 2)     { return this._wantSampler('coherence',    stride, EMPTY_VAL); }
+    getCurlJSampled(stride = 2)         { return this._wantSampler('curlJ',        stride, EMPTY_VEC); }
+    getStateFieldSampled(stride = 1)    { return this._wantSampler('state',        stride, EMPTY_VAL); }
+    getGaussResidualSampled(stride = 1) { return this._wantSampler('gaussResidual',stride, EMPTY_VAL); }
+    getEMForceField(stride = 2)         { return this._wantSampler('em',           stride, EMPTY_VEC); }
+    getGravityForceField(stride = 2)    { return this._wantSampler('gravity',      stride, EMPTY_VEC); }
+    getStrongForceField(stride = 2)     { return this._wantSampler('strong',       stride, EMPTY_VEC); }
+    getGravityMetricAgg() {
+        const key = 'gravityMetricAgg@0';
+        if (!this._samplerWant.has(key)) {
+            this._samplerWant.set(key, true);
+            this._worker.postMessage({ type: 'wantSampler', kind: 'gravityMetricAgg', stride: 0 });
+        }
+        return this._samplerCache[key] ?? { active: false, latencyMax: 0, latencyMean: 0, fMin: 1, gammaMax: 1, dilationMaxPct: 0, voxelCount: 0 };
+    }
+    getLatencyVolume() { return new Float64Array(0); }  // full volume not supported on worker path
     setBoundaryShape() {}
     setReflectiveBoundary() {}
     setFluxBoundaryMode(mode) { this._cmd('setFluxBoundary', mode); }
@@ -148,6 +169,7 @@ export class WasmBridgeProxy {
     setupScenario(name) {
         this._scenarioId = name || this._scenarioId;
         this._ready = false;
+        this._samplerCache = {};   // stale; worker will repopulate on first frame of new scenario
         this._worker.postMessage({
             type: 'create', N: this.latticeSize, scenarioId: this._scenarioId,
             toggles: this._toggles, pool: workerPoolSize(),
