@@ -378,7 +378,7 @@ export class PhysicsHarness {
         const after = (this.bridge?._particles?.length ?? 0);
         // Apply spin/color/locked to the just-injected particle, if any.
         if (after > before && opts) {
-            const last = this.bridge._particles[after - 1];
+            const last = this.bridge._particles?.[after - 1];
             if (last) {
                 if (Number.isFinite(opts.spin))   last.spin = opts.spin;
                 if (Number.isFinite(opts.color))  last.color = opts.color;
