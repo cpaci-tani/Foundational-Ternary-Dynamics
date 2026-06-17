@@ -35,11 +35,10 @@ export function bindScale0UI(ctx, api) {
         });
     }
 
-    const reflectiveBtn = getEl('toggle-reflective');
-    if (reflectiveBtn) {
-        reflectiveBtn.addEventListener('click', () => {
-            reflectiveBtn.classList.toggle('active');
-            ctx.applyReflectiveBoundary(reflectiveBtn.classList.contains('active'));
+    const fluxBoundaryMode = getEl('flux-boundary-mode');
+    if (fluxBoundaryMode) {
+        fluxBoundaryMode.addEventListener('change', () => {
+            ctx.applyFluxBoundaryMode(parseInt(fluxBoundaryMode.value, 10));
         });
     }
 

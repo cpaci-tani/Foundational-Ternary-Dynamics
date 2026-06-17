@@ -27,6 +27,12 @@ export function getScale0LatticeSizeToolbarTemplate() {
                 <option value="145">145</option>
                 <option value="181">181</option>
             </select>
+            <label class="tb-label" for="flux-boundary-mode" style="margin-left:6px">Boundary</label>
+            <select class="tb-select" id="flux-boundary-mode" title="Flux field boundary: Dispersal = energy exits the box and is removed; Reflective = perfect cavity mirror (∂J/∂n=0); Periodic = toroidal wrap (default physics)">
+                <option value="2" selected>Dispersal</option>
+                <option value="1">Reflective</option>
+                <option value="0">Periodic</option>
+            </select>
         </div>
     `;
 }

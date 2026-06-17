@@ -67,6 +67,20 @@ void phase_write_assign_pending_ids(RenderBridge& rb);
 /// conservation tests unchanged).
 void apply_absorbing_boundary(RenderBridge& rb);
 
+/// Reflective flux boundary (FluxBoundaryMode::Reflective): Neumann mirror —
+/// copies the first interior layer into the boundary shell each tick so
+/// ∂_n J = 0 (a perfect free reflector / closed cavity). Energy is conserved
+/// inside the box; it does NOT drain an injection-driven runaway (by design).
+/// Invoked from tick() only when toggles.flux_boundary == Reflective.
+void apply_reflective_flux_boundary(RenderBridge& rb);
+
+/// Dispersal flux boundary (FluxBoundaryMode::Dispersal): single-cell radiating
+/// sink — the outer layer's field propagates into the void at ~wave speed c and
+/// is removed (NOT a graduated sponge). The open boundary that drains an
+/// injection-driven runaway toward a bounded steady state. Invoked from tick()
+/// only when toggles.flux_boundary == Dispersal.
+void apply_dispersal_flux_boundary(RenderBridge& rb);
+
 // =============================================================================
 // Phase 4b — phase_forces decomposition (2026-04-27)
 //
