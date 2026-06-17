@@ -254,28 +254,191 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // Physical Purpose: Long-wavelength RF wave demonstration.
         // Initial Condition Parameters: None.
         // Expected Behaviour: Large scale wave propagating across lattice.
-        // Discrepancy: No engine-side implementation.
+        // Discrepancy: None.
+        // Ported from JS seedSpectrumComparator (RF lane): modeN=1, sigmaFrac=0.12,
+        // amp=0.034, phase=0, y-component, waveSpeed=C_SPEED.
+        rb.toggles.wave_propagation  = true;
+        rb.toggles.coupling          = false;
+        rb.toggles.damping           = false;
+        rb.toggles.selective_damping = false;
+        rb.toggles.genesis           = false;
+        rb.toggles.gauss_projection  = false;
+        rb.toggles.forces            = false;
+        rb.toggles.movement          = false;
+        rb.toggles.poisson_coulomb   = false;
+        rb.toggles.lorentz_force     = false;
+        {
+            const double sigmaFrac = 0.12, amp_w = 0.034, ph0 = 0.0;
+            const double sigma  = std::max(1.15, N * sigmaFrac);
+            const int    modeN  = std::max(1, std::min(N / 2 - 1, 1));
+            const double k      = 2.0 * PI * modeN / N;
+            const double omega  = 2.0 * C_SPEED * std::abs(std::sin(k / 2.0));
+            const double cut    = sigma * 2.4, cut2 = cut * cut;
+            const int zlo = std::max(0,   (int)std::floor(mc - cut));
+            const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
+            const int ylo = std::max(0,   (int)std::floor(mc - cut));
+            const int yhi = std::min(N-1, (int)std::ceil (mc + cut));
+            for (int z = zlo; z <= zhi; z++)
+            for (int y = ylo; y <= yhi; y++)
+            for (int x = 0;   x < N;    x++) {
+                const double dy = y - mc, dz = z - mc;
+                const double r2 = dy*dy + dz*dz;
+                if (r2 > cut2) continue;
+                const double g  = std::exp(-r2 / (2.0 * sigma * sigma));
+                if (g < 1e-4) continue;
+                const double ph = k * x + ph0;
+                const double j  = amp_w * g * std::sin(ph);
+                const double w  = -omega * amp_w * g * std::cos(ph);
+                if (std::fabs(j) > 1e-12) IF(rb, x, y, z, 0, j, 0);
+                if (std::fabs(w) > 1e-12) IW(rb, x, y, z, 0, w, 0);
+            }
+        }
     }
     else if (name == "s0-field-light-lattice-wave") {
         // Scenario ID: s0-field-light-lattice-wave
         // Physical Purpose: Optical wavelength lattice wave demonstration.
         // Initial Condition Parameters: None.
         // Expected Behaviour: Optical frequency waves.
-        // Discrepancy: No engine-side implementation.
+        // Discrepancy: None.
+        // Ported from JS seedSpectrumComparator (light lane): modeN=6, sigmaFrac=0.10,
+        // amp=0.032, phase=PI*0.15, y-component, waveSpeed=C_SPEED.
+        rb.toggles.wave_propagation  = true;
+        rb.toggles.coupling          = false;
+        rb.toggles.damping           = false;
+        rb.toggles.selective_damping = false;
+        rb.toggles.genesis           = false;
+        rb.toggles.gauss_projection  = false;
+        rb.toggles.forces            = false;
+        rb.toggles.movement          = false;
+        rb.toggles.poisson_coulomb   = false;
+        rb.toggles.lorentz_force     = false;
+        {
+            const double sigmaFrac = 0.10, amp_w = 0.032, ph0 = PI * 0.15;
+            const double sigma  = std::max(1.15, N * sigmaFrac);
+            const int    modeN  = std::max(1, std::min(N / 2 - 1, 6));
+            const double k      = 2.0 * PI * modeN / N;
+            const double omega  = 2.0 * C_SPEED * std::abs(std::sin(k / 2.0));
+            const double cut    = sigma * 2.4, cut2 = cut * cut;
+            const int zlo = std::max(0,   (int)std::floor(mc - cut));
+            const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
+            const int ylo = std::max(0,   (int)std::floor(mc - cut));
+            const int yhi = std::min(N-1, (int)std::ceil (mc + cut));
+            for (int z = zlo; z <= zhi; z++)
+            for (int y = ylo; y <= yhi; y++)
+            for (int x = 0;   x < N;    x++) {
+                const double dy = y - mc, dz = z - mc;
+                const double r2 = dy*dy + dz*dz;
+                if (r2 > cut2) continue;
+                const double g  = std::exp(-r2 / (2.0 * sigma * sigma));
+                if (g < 1e-4) continue;
+                const double ph = k * x + ph0;
+                const double j  = amp_w * g * std::sin(ph);
+                const double w  = -omega * amp_w * g * std::cos(ph);
+                if (std::fabs(j) > 1e-12) IF(rb, x, y, z, 0, j, 0);
+                if (std::fabs(w) > 1e-12) IW(rb, x, y, z, 0, w, 0);
+            }
+        }
     }
     else if (name == "s0-field-sound-lattice-wave") {
         // Scenario ID: s0-field-sound-lattice-wave
         // Physical Purpose: Acoustic wavelength wave demonstration.
         // Initial Condition Parameters: None.
         // Expected Behaviour: Very low frequency wave behavior.
-        // Discrepancy: No engine-side implementation.
+        // Discrepancy: None.
+        // Ported from JS seedSpectrumComparator (sound lane): modeN=4, sigmaFrac=0.11,
+        // amp=0.030, phase=PI*0.10, x-component (longitudinal), waveSpeed=C_SPEED/8.
+        rb.toggles.wave_propagation  = true;
+        rb.toggles.coupling          = false;
+        rb.toggles.damping           = false;
+        rb.toggles.selective_damping = false;
+        rb.toggles.genesis           = false;
+        rb.toggles.gauss_projection  = false;
+        rb.toggles.forces            = false;
+        rb.toggles.movement          = false;
+        rb.toggles.poisson_coulomb   = false;
+        rb.toggles.lorentz_force     = false;
+        {
+            const double SOUND_SPEED = C_SPEED / 8.0;
+            const double sigmaFrac = 0.11, amp_w = 0.030, ph0 = PI * 0.10;
+            const double sigma  = std::max(1.15, N * sigmaFrac);
+            const int    modeN  = std::max(1, std::min(N / 2 - 1, 4));
+            const double k      = 2.0 * PI * modeN / N;
+            const double omega  = 2.0 * SOUND_SPEED * std::abs(std::sin(k / 2.0));
+            const double cut    = sigma * 2.4, cut2 = cut * cut;
+            const int zlo = std::max(0,   (int)std::floor(mc - cut));
+            const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
+            const int ylo = std::max(0,   (int)std::floor(mc - cut));
+            const int yhi = std::min(N-1, (int)std::ceil (mc + cut));
+            for (int z = zlo; z <= zhi; z++)
+            for (int y = ylo; y <= yhi; y++)
+            for (int x = 0;   x < N;    x++) {
+                const double dy = y - mc, dz = z - mc;
+                const double r2 = dy*dy + dz*dz;
+                if (r2 > cut2) continue;
+                const double g  = std::exp(-r2 / (2.0 * sigma * sigma));
+                if (g < 1e-4) continue;
+                const double ph = k * x + ph0;
+                const double j  = amp_w * g * std::sin(ph);
+                const double w  = -omega * amp_w * g * std::cos(ph);
+                if (std::fabs(j) > 1e-12) IF(rb, x, y, z, j, 0, 0);
+                if (std::fabs(w) > 1e-12) IW(rb, x, y, z, w, 0, 0);
+            }
+        }
     }
     else if (name == "s0-field-sound-collision") {
         // Scenario ID: s0-field-sound-collision
-        // Physical Purpose: Collision of two sound waves.
+        // Physical Purpose: Collision of two sound wave pulses.
         // Initial Condition Parameters: None.
         // Expected Behaviour: Interference and beat frequencies of sound waves.
-        // Discrepancy: No engine-side implementation.
+        // Discrepancy: None.
+        // Ported from JS seedSpectrumComparator (sound-collision: 2 lanes).
+        // Left pulse: pulseCenterOffsetFrac=-0.25, right-going (speedMult=+1).
+        // Right pulse: pulseCenterOffsetFrac=+0.25, left-going (speedMult=-1).
+        rb.toggles.wave_propagation  = true;
+        rb.toggles.coupling          = false;
+        rb.toggles.damping           = false;
+        rb.toggles.selective_damping = false;
+        rb.toggles.genesis           = false;
+        rb.toggles.gauss_projection  = false;
+        rb.toggles.forces            = false;
+        rb.toggles.movement          = false;
+        rb.toggles.poisson_coulomb   = false;
+        rb.toggles.lorentz_force     = false;
+        {
+            const double SOUND_SPEED = C_SPEED / 8.0;
+            const double pulseFrac = 0.15, sigmaFrac = 0.11, amp_w = 0.030;
+            const double sigma      = std::max(1.15, N * sigmaFrac);
+            const double pulseSigma = std::max(1.5, N * pulseFrac * 0.5);
+            const int    modeN  = std::max(1, std::min(N / 2 - 1, 4));
+            const double k      = 2.0 * PI * modeN / N;
+            const double omega  = 2.0 * SOUND_SPEED * std::abs(std::sin(k / 2.0));
+            const double cut    = sigma * 2.4, cut2 = cut * cut;
+            struct Lane { double offsetFrac; double speedMult; };
+            const Lane lanes[2] = {{-0.25, +1.0}, {+0.25, -1.0}};
+            for (const auto& lane : lanes) {
+                const double centerX = midF + lane.offsetFrac * N;
+                const int zlo = std::max(0,   (int)std::floor(mc - cut));
+                const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
+                const int ylo = std::max(0,   (int)std::floor(mc - cut));
+                const int yhi = std::min(N-1, (int)std::ceil (mc + cut));
+                for (int z = zlo; z <= zhi; z++)
+                for (int y = ylo; y <= yhi; y++)
+                for (int x = 0;   x < N;    x++) {
+                    const double dy = y - mc, dz = z - mc;
+                    const double r2 = dy*dy + dz*dz;
+                    if (r2 > cut2) continue;
+                    const double dx  = x - centerX;
+                    const double gx  = std::exp(-(dx * dx) / (2.0 * pulseSigma * pulseSigma));
+                    const double g   = gx * std::exp(-r2 / (2.0 * sigma * sigma));
+                    if (g < 1e-4) continue;
+                    const double ph = k * x;
+                    const double j  = amp_w * g * std::sin(ph);
+                    const double w  = lane.speedMult * (-omega * amp_w * g * std::cos(ph));
+                    if (std::fabs(j) > 1e-12) IF(rb, x, y, z, j, 0, 0);
+                    if (std::fabs(w) > 1e-12) IW(rb, x, y, z, w, 0, 0);
+                }
+            }
+        }
     }
     return true;
 }
