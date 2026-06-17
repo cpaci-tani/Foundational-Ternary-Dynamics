@@ -70,7 +70,10 @@ if (typeof window === 'undefined') {
                         headers: newHeaders,
                     });
                 })
-                .catch((e) => console.error(e))
+                .catch((e) => {
+                    console.warn('[coi-sw] fetch failed:', e.message || e);
+                    return Response.error();
+                })
         );
     });
 
