@@ -92,6 +92,8 @@ export class WasmBridgeProxy {
     /** Monotonic frame counter from the worker (shared) — drives render refresh in tick.js. */
     get frameCounter() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.FRAME) : 0; }
     get ready() { return this._ready; }
+    currentTick() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.TICK) : 0; }
+    getToggle(name) { return this._toggles[name] ?? true; }          // local cache mirrors worker state
 
     _buildCaps() {
         // The capability factory just delegates to bridge methods, so wrap `this`.
@@ -171,6 +173,7 @@ export class WasmBridgeProxy {
     injectParticle(...a) { this._cmd('injectParticle', ...a); }
     injectFlux(...a) { this._cmd('injectFlux', ...a); }
     injectWavepacket(...a) { this._cmd('injectWavepacket', ...a); }
+    injectWaveVel(...a) { this._cmd('injectWaveVel', ...a); }
     createEntangledPair(...a) { this._cmd('createEntangledPair', ...a); }
 
     // ── Lifecycle ───────────────────────────────────────────────────────────

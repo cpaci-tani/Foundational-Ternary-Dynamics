@@ -174,6 +174,7 @@ export class MockBridgeProxy {
     injectFlux(...a) { this._cmd('injectFlux', ...a); }
     injectParticle(...a) { this._cmd('injectParticle', ...a); }
     injectWavepacket(...a) { this._cmd('injectWavepacket', ...a); }
+    injectWaveVel(...a) { this._cmd('injectWaveVel', ...a); }
     createEntangledPair(...a) { this._cmd('createEntangledPair', ...a); }
     clearField() { this._cmd('clearField'); }
     seedRandomFlux() { this._cmd('seedRandomFlux'); }

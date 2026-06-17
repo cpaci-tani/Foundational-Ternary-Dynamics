@@ -142,8 +142,7 @@ export function shouldUseFluxMock(bridge, scenarioName) {
     if (bridge && (bridge.isNativeGPU || bridge.constructor.name === 'WebSocketBridge')) {
         return false;
     }
-    if (SCALE0_MOCK_OWNED_SCENARIOS.has(scenarioName)) return true;
-    if (scenarioName.startsWith('flux-')) return true;
+
     try {
         const probe = bridge.getFluxVolume && bridge.getFluxVolume();
         return !(probe && probe.length > 0);
@@ -193,10 +192,7 @@ function wasmWorkerEligible(scenarioId, bridge) {
     return FTD_WASM_WORKER
         && typeof SharedArrayBuffer !== 'undefined'
         && globalThis.crossOriginIsolated === true
-        && !!(bridge && bridge.isWasm)
-        && !SCALE0_INLINE_MOCK_SCENARIOS.has(scenarioId)
-        && !SCALE0_MOCK_OWNED_SCENARIOS.has(scenarioId)
-        && !scenarioId.startsWith('flux-');
+        && !!(bridge && bridge.isWasm);
 }
 
 function syncComboSliders(ctx, state) {
