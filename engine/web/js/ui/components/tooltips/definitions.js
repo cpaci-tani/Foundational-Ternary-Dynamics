@@ -54,7 +54,7 @@ const SELECTOR_TOOLTIPS = [
     ['#boundary-select', 'Select the active simulation boundary geometry used for confinement and reflection.'],
     ['#toggle-axes', 'Show or hide the global axis indicator in the viewport.'],
     ['#toggle-grid', 'Show or hide the global reference grid beneath the simulation.'],
-    ['#toggle-reflective', 'Toggle reflective boundaries so particles bounce off faces instead of exiting, or exhaust into the void when off.'],
+    ['#flux-boundary-mode', 'Flux field boundary: Dispersal = energy exits the box into the void (open boundary); Reflective = perfect cavity mirror (no energy loss); Periodic = toroidal wrap (default physics, energy conserved).'],
     ['.status-scene-label, .status-select-label', 'Status-bar Scene controls for shared view, camera, environment, and boundary settings.'],
     ['#status-state', 'Current run-state indicator for the simulation loop.'],
     ['#status-ptime', 'Current physical or presentation time reported by the active scale.'],

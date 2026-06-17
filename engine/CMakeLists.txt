@@ -1767,6 +1767,8 @@ ftd_add_test(ftd_quantum_correlations tests/campaign_quantum_correlations.cpp
 # Phase 4: Emergent Mass Spectrum
 add_executable(ftd_hydrogen_binding tests/campaign_hydrogen_binding.cpp)
 target_link_libraries(ftd_hydrogen_binding ftd_core)
+add_executable(ftd_hydrogen_lscan tests/campaign_hydrogen_lscan.cpp)
+target_link_libraries(ftd_hydrogen_lscan ftd_core)
 add_executable(ftd_triad_energy tests/campaign_triad_energy.cpp)
 target_link_libraries(ftd_triad_energy ftd_core)
 add_executable(ftd_inertial_mass tests/campaign_inertial_mass.cpp)
