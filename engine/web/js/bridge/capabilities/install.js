@@ -1,7 +1,7 @@
 /**
  * @file engine/web/js/bridge/capabilities/install.js
- * @purpose Installs the lazy `bridge.capabilities` getter on MockBridge
- *          and WasmBridge prototypes so consumers see one symmetric
+ * @purpose Installs the lazy `bridge.capabilities` getter on WasmBridge
+ *          and WebSocketBridge prototypes so consumers see one symmetric
  *          surface (CONTRACTS.md §2). Called once at module load by
  *          bridge-init.js.
  * @consumers bridge-init.js (the re-export shim).
