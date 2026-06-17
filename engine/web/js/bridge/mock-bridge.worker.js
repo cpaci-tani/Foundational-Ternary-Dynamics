@@ -39,7 +39,7 @@ function publishShared(N) {
     pframe = 0;                                       // ship the particle list on the next frame
     const sab = bridge.getSharedField();
     ctrl = new Int32Array(sab.ctrl);
-    Atomics.store(ctrl, CTRL.RUNNING, 1);
+    Atomics.store(ctrl, CTRL.RUNNING, 0);
     Atomics.store(ctrl, CTRL.N, N);
     self.postMessage({ type: 'ready', sab, N });
 }
@@ -148,6 +148,7 @@ self.onmessage = (e) => {
                 bridge._useSAB = true;
                 applyInit(bridge.capabilities.scale0, m);
                 publishShared(bridge.latticeSize);
+                postFrame();
                 if (!timer) loop();
                 break;
             }
@@ -158,6 +159,7 @@ self.onmessage = (e) => {
                 bridge.reset(m.N);
                 applyInit(bridge.capabilities.scale0, m);
                 publishShared(bridge.latticeSize);
+                postFrame();
                 break;
             }
             case 'command': {

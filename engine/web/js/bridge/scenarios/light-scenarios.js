@@ -24,7 +24,9 @@ import { injectCoherentSlitPair } from './_helpers.js';
  */
 export function setupLightScenario(name, harness, ctx) {
     if (!name.startsWith('light-')) return false;
-    const { N, mid, vox, sigma } = ctx;
+    const { N, mid, midF, vox, sigma, band } = ctx;
+    const sig = sigma;
+    const mc = mid;
             const pi = Math.PI;
             const amp = 0.15;
             switch (name) {

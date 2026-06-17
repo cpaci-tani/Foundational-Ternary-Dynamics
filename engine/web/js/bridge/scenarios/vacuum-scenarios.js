@@ -35,10 +35,9 @@ import {
  */
 export function setupVacuumScenario(name, harness, ctx) {
     if (!name.startsWith('s0-vacuum-')) return false;
-    const { N, midF, vox, sigma: sig } = ctx;
-    const mc = Math.round(midF);
-
-    harness.initFluxGrid?.();
+    const { N, mid, midF, vox, sigma, band } = ctx;
+    const sig = sigma;
+    const mc = mid;
     applyVacuumEnvironment(harness, ctx);
 
     switch (name) {

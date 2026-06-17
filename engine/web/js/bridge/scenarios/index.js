@@ -73,6 +73,7 @@ export function runSetupScenario(name, harness = null) {
     // Try each group in order. First matching prefix wins; stops immediately.
     const ctx = { N, mid, midF, ...createPhysicsLatticeHelpers(N) };
     const scenarioHarness = harness ?? createScenarioHarness(bridge);
+    scenarioHarness.initFluxGrid?.();
     if (setupFluxScenario(name, scenarioHarness, ctx))    return;
     if (setupLightScenario(name, scenarioHarness, ctx))   return;
     if (setupQuantumScenario(name, scenarioHarness, ctx)) return;

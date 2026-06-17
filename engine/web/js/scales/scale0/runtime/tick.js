@@ -38,6 +38,7 @@ export function advanceSimulation(ctx, state) {
     const fm = state.fluxMock;
     if (fm && fm.isWorker && state.useFluxMock) {
         if (typeof fm.setRunning === 'function') fm.setRunning(ctx.running);
+        if (typeof fm.setTicksPerFrame === 'function') fm.setTicksPerFrame(ctx.ticksPerFrame);
         const fc = fm.frameCounter || 0;
         if (fc !== state._lastWorkerFrame) {
             state._lastWorkerFrame = fc;

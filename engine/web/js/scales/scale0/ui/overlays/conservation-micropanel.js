@@ -22,6 +22,7 @@ import {
 import { attachFullscreen } from '../../../../ui/charts/chart-fullscreen.js';
 import { getPhysicsHarness } from '../../../../physics/index.js';
 import { resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'conservation-micropanel';
 const HZ = 4;                                // sample rate
@@ -162,6 +163,7 @@ export function mountConservationMicropanel(host, getBridge) {
     }
 
     function update() {
+        if (!isPanelLive(host)) return;
         const bridge = getBridge?.();
         if (!bridge) return;
         const totals = sampleTotals(bridge);

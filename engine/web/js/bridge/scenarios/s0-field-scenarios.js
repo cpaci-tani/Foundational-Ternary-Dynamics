@@ -30,8 +30,9 @@ import {
  */
 export function setupS0FieldScenario(name, harness, ctx) {
     if (!name.startsWith('s0-field-')) return false;
-    const { N, midF, vox, sigma: sig } = ctx;
-            const mc  = Math.round(midF);
+    const { N, mid, midF, vox, sigma, band } = ctx;
+    const sig = sigma;
+    const mc = mid;
 
             switch (name) {
                 case 's0-field-plane-wave': {

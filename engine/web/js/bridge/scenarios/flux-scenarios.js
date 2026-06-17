@@ -25,6 +25,8 @@ import { TRIAD_ANGLES, injectParticleFull } from './_helpers.js';
 export function setupFluxScenario(name, harness, ctx) {
     if (!name.startsWith('flux-')) return false;
     const { N, mid, midF, vox, sigma, band } = ctx;
+    const sig = sigma;
+    const mc = mid;
             const pulseSigma = sigma(3.3);
             const amp = K_B * 2;
 

@@ -29,9 +29,9 @@ import {
  */
 export function setupS0SeedScenario(name, harness, ctx) {
     if (!name.startsWith('s0-seed-')) return false;
-    harness.initFluxGrid?.();
-    const { N, midF, vox, sigma: sig } = ctx;
-            const mc = Math.round(midF);
+    const { N, mid, midF, vox, sigma, band } = ctx;
+    const sig = sigma;
+    const mc = mid;
 
             switch (name) {
                 // Audit-4 2026-04-28: s0-seed-{electron, muon, tau, photon} removed.
