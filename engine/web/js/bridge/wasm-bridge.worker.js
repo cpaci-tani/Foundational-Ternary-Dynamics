@@ -177,9 +177,27 @@ self.onmessage = (e) => {
         postFrame();          // reflect the effect immediately (even while paused)
         break;
       }
+      case 'batchCommand': {
+        // Replay of commands that were sent before the bridge was ready (e.g.
+        // seedSpectrumComparator voxel injections during scenario load).
+        // Processes all commands in one synchronous pass, then calls postFrame()
+        // once at the end — avoids spamming the main thread with a frame per voxel.
+        if (!mod || !bridge) break;
+        for (const { method, args = [] } of (msg.commands || [])) {
+          if (method === 'tickScale0') { bridge.tick(); continue; }
+          if (typeof mod[method] === 'function') { try { mod[method](bridge, ...args); } catch (e) { /* ignore */ } }
+          else if (typeof bridge[method] === 'function') { try { bridge[method](...args); } catch (e) { /* ignore */ } }
+        }
+        postFrame();
+        break;
+      }
       case 'wantSampler':
         // Proxy registers a sampler kind+stride it wants computed each frame.
         wantedSamplers.set(`${msg.kind}@${msg.stride}`, { kind: msg.kind, stride: msg.stride });
+        // When paused the tick loop never calls postFrame(), so the proxy cache
+        // stays empty and the overlay never appears. Push a frame immediately so
+        // the newly registered sampler is delivered to the proxy right away.
+        if (bridge && ctrl && !Atomics.load(ctrl, CTRL.RUNNING)) postFrame();
         break;
       case 'setRunning':
         if (ctrl) Atomics.store(ctrl, CTRL.RUNNING, msg.value ? 1 : 0);

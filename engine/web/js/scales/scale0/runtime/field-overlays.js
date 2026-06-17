@@ -5,7 +5,7 @@ import {
     generateImportanceSeeds,
     generateBImportanceSeeds,
 } from '../../../fieldlines.js';
-import { DUAL_DELTA } from '../../../constants.js';
+import { DUAL_DELTA, K_GENESIS } from '../../../constants.js';
 import { getActiveScale0Capability, getActiveLatticeSize, getActiveScale0Bridge } from '../state/store.js';
 import {
     computePsiSquaredFrame,
@@ -323,16 +323,38 @@ function computeForceItemFlow(item, latticeSize, stride, params = {}) {
     });
 }
 
-export function buildDerivedSubstrateData(state, sampled, mockCapability) {
+// Compute per-voxel |J| magnitude from the flat 3-component flux volume.
+// fluxVol is a Float64Array of length N³×3 (Jx,Jy,Jz interleaved).
+function buildFluxMagnitude(fluxVol, N) {
+    const N3 = N * N * N;
+    const mag = new Float32Array(N3);
+    for (let i = 0; i < N3; i++) {
+        const jx = fluxVol[i * 3], jy = fluxVol[i * 3 + 1], jz = fluxVol[i * 3 + 2];
+        mag[i] = Math.sqrt(jx * jx + jy * jy + jz * jz);
+    }
+    return mag;
+}
+
+export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
     const frame = {};
-    if (state.fieldFlags.showDarkMatterHalo) {
-        frame.darkMatterHalo = mockCapability?.getScale0DerivedOverlayData('darkMatterHalo') || null;
+    const flags = state.fieldFlags;
+
+    if (flags.showDarkMatterHalo || flags.showGenesisIsosurface) {
+        const fluxVol = fieldCapability?.getScale0FluxVolume?.();
+        if (fluxVol && fluxVol.length >= N * N * N * 3) {
+            const magnitude = buildFluxMagnitude(fluxVol, N);
+            if (flags.showDarkMatterHalo) {
+                const parts = fieldCapability?.getScale0ParticleFrame?.();
+                frame.darkMatterHalo = { particles: parts?.positions ?? null, magnitude, latticeSize: N };
+            }
+            if (flags.showGenesisIsosurface) {
+                frame.genesisIsosurface = { magnitude, latticeSize: N, threshold: K_GENESIS };
+            }
+        }
     }
-    if (state.fieldFlags.showDampingZones) {
-        frame.dampingZones = mockCapability?.getScale0DerivedOverlayData('dampingZones') || null;
-    }
-    if (state.fieldFlags.showGenesisIsosurface) {
-        frame.genesisIsosurface = mockCapability?.getScale0DerivedOverlayData('genesisIsosurface') || null;
+    if (flags.showDampingZones) {
+        const parts = fieldCapability?.getScale0ParticleFrame?.();
+        if (parts) frame.dampingZones = { particles: parts.positions, latticeSize: N };
     }
 
     if (state.fieldFlags.showDualSubstrate && sampled.fluxVector?.count > 0) {
@@ -611,7 +633,6 @@ function ensureOverlaySched(state) {
             latticeSize: 0,
             params: null,
             fieldCapability: null,
-            mockCapability: null,
             acScale0: null,
         };
     }
@@ -761,7 +782,7 @@ function runJob(sched, slot) {
             const flags = state.fieldFlags;
             if (flags.showDualSubstrate || flags.showChirality) sampleCache.ensureSample('fluxVector');
             if (flags.showLight) sampleCache.ensureSample('poynting');
-            const frame = buildDerivedSubstrateData(state, sampled, sched.mockCapability);
+            const frame = buildDerivedSubstrateData(state, sampled, sched.fieldCapability, sched.latticeSize);
             applyDerivedJob(frame, viewportAdapter);
             break;
         }
@@ -789,7 +810,6 @@ function runJob(sched, slot) {
 function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, params) {
     const fieldCapability = getActiveScale0Bridge(ctx, state)?.capabilities?.scale0
         ?? ctx.bridge.capabilities.scale0;
-    const mockCapability = state.fluxMock?.capabilities?.scale0 || null;
     const flags = state.fieldFlags;
     const acScale0 = emActiveScale0(ctx, state);
 
@@ -801,7 +821,6 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
     sched.latticeSize = latticeSize;
     sched.params = params;
     sched.fieldCapability = fieldCapability;
-    sched.mockCapability = mockCapability;
     sched.acScale0 = acScale0;
     // The force-fields job builds with flow deferred. Set the flag once on the
     // sweep params object instead of spreading `{ ...params, deferFlow: true }`

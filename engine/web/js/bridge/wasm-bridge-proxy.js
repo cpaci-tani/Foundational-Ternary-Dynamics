@@ -56,6 +56,12 @@ export class WasmBridgeProxy {
         this._lastAudit = null;
         this._lastLag = null;
         this._pendingTPF = undefined;
+        // Commands sent before 'ready' (i.e. while the worker is initialising the
+        // WASM module) are buffered here and replayed as a single batchCommand once
+        // the worker signals ready.  This is the mechanism that lets JS-side seeders
+        // like seedSpectrumComparator work on the worker path even though WASM is not
+        // synchronously available.
+        this._pendingCommands = [];
         // Overlay sampler cache: keyed by "kind@stride". _samplerWant tracks which
         // kinds have been registered with the worker (idempotent per key).
         this._samplerCache = {};
@@ -78,6 +84,13 @@ export class WasmBridgeProxy {
             if (this._pendingTPF !== undefined) {
                 Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(this._pendingTPF * 1000));
             }
+            // Replay commands that arrived while the worker was initialising.
+            // Sent as a single batchCommand so the worker calls postFrame() only once
+            // at the end rather than once per individual seed voxel.
+            if (this._pendingCommands.length > 0) {
+                this._worker.postMessage({ type: 'batchCommand', commands: this._pendingCommands });
+                this._pendingCommands = [];
+            }
         } else if (m.type === 'frame') {
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
@@ -93,7 +106,14 @@ export class WasmBridgeProxy {
         }
     }
 
-    _cmd(method, ...args) { this._worker.postMessage({ type: 'command', method, args }); }
+    _cmd(method, ...args) {
+        if (!this._ready) {
+            // Buffer the command; will be replayed as batchCommand after 'ready'.
+            this._pendingCommands.push({ method, args });
+            return;
+        }
+        this._worker.postMessage({ type: 'command', method, args });
+    }
 
     /** Monotonic frame counter from the worker (shared) — drives render refresh in tick.js. */
     get frameCounter() { return this._ctrl ? Atomics.load(this._ctrl, CTRL.FRAME) : 0; }
@@ -170,6 +190,7 @@ export class WasmBridgeProxy {
         this._scenarioId = name || this._scenarioId;
         this._ready = false;
         this._samplerCache = {};   // stale; worker will repopulate on first frame of new scenario
+        this._pendingCommands = []; // discard any commands queued for the previous scenario
         this._worker.postMessage({
             type: 'create', N: this.latticeSize, scenarioId: this._scenarioId,
             toggles: this._toggles, pool: workerPoolSize(),
