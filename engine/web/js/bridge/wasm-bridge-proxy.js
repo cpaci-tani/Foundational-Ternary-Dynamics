@@ -78,6 +78,7 @@ export class WasmBridgeProxy {
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
             if (m.audit) this._lastAudit = m.audit;
+            if (m.lag)   this._lastLag   = m.lag;
             
             if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
                 window.__ftdCtx.onBridgePostFrame();
