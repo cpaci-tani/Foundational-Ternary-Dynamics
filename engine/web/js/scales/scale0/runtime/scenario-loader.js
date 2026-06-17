@@ -225,15 +225,15 @@ function setDisplayText(id, text) {
     if (el) el.textContent = text;
 }
 
-function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenarioId) {
+function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenarioId, prefs) {
     const profile = SCALE0_SCENARIO_VISUAL_PROFILES[scenarioId];
     if (!profile || !ctx?.viewport) return;
 
-    if (profile.fluxVolume === true) {
+    if (profile.fluxVolume === true && prefs?.fluxVolume !== false) {
         viewportAdapter.setFluxVolumeVisible(true);
         setButtonActive('toggle-flux-volume', true);
     }
-    if (profile.fluxSlice === true) {
+    if (profile.fluxSlice === true && prefs?.fluxSlice !== false) {
         viewportAdapter.setFluxSliceVisible(true);
         setButtonActive('toggle-flux-slice', true);
     }
@@ -479,7 +479,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // Restore the captured overlay preferences. Runs last so it overrides any
     // defaults applied by applyAuxiliaryDefaults or resetScale0VisualState.
     restoreOverlayPreferences(overlayPrefs, state, viewportAdapter);
-    applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario.id);
+    applyScenarioVisualProfile(ctx, state, viewportAdapter, scenario.id, overlayPrefs);
 
     // Keep viewport world coords (wireframe, clip, streamlines) aligned with
     // the bridge that owns physics — resize already does this; load must too.

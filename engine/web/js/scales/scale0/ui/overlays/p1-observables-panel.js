@@ -13,6 +13,7 @@ import { GravityComponent } from './p1-observables/gravity.js';
 import { G2Component } from './p1-observables/g2.js';
 import { ThomsonComponent } from './p1-observables/thomson.js';
 import { FineStructureComponent } from './p1-observables/fine-structure.js';
+import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'p1-observables-panel';
 const UPDATE_INTERVAL_MS = 250;            // 4 Hz; observables are slow signals
@@ -187,6 +188,7 @@ export function mountP1ObservablesPanel(host, getBridge, { dockMode = false } = 
     fineStructureComp.mount(bodyEl);
 
     function update() {
+        if (!isPanelLive(host)) return;
         const now = performance.now();
         const bridge = getBridge?.();
         if (!bridge) return;
