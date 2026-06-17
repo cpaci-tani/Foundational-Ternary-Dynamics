@@ -20,8 +20,8 @@
  * `realErrors()` / `KNOWN_NOISE` filters.
  *
  * Source hooks each test pins (file:line at authoring time, 2026-06-01):
- *   1. capabilities getter — engine/web/js/bridge-init.js:42-44 installs it on
- *      MockBridge / WasmBridge / WebSocketBridge prototypes; getter shape
+ *   1. capabilities getter — engine/web/js/bridge-init.js installs it on
+ *      WasmBridge / WebSocketBridge prototypes; getter shape
  *      {scale0,scale1,scale2} in engine/web/js/bridge/capabilities/install.js:22-36.
  *   2. inspector setBridge — engine/web/js/app.js:186 exposes ctx.inspectorRuntime;
  *      engine/web/js/inspector/app-runtime.js:41-50 defines setBridge;
@@ -52,13 +52,13 @@ test.beforeEach(async ({ page }) => {
 test.describe('reconcile prior fixes', () => {
 
     // ────────────────────────────────────────────────────────────────────
-    // 1. Capabilities getter is installed on ALL THREE bridge facades.
+    // 1. Capabilities getter is installed on both bridge facades.
     //
-    // bridge-init.js applies installCapabilityGetter to MockBridge,
-    // WasmBridge AND WebSocketBridge prototypes (audit P0-4: WS previously
-    // lacked it, so `bridge.capabilities.scale0` threw on the native-GPU
-    // path). We reconcile this two ways:
-    //   (a) STRUCTURAL — import the three classes and assert the
+    // bridge-init.js applies installCapabilityGetter to WasmBridge AND
+    // WebSocketBridge prototypes (audit P0-4: WS previously lacked it, so
+    // `bridge.capabilities.scale0` threw on the native-GPU path). We
+    // reconcile this two ways:
+    //   (a) STRUCTURAL — import the two classes and assert the
     //       `capabilities` accessor is reachable on each prototype chain
     //       (full coverage incl. WebSocketBridge, which is not the active
     //       bridge in a browser-only test).
@@ -66,12 +66,12 @@ test.describe('reconcile prior fixes', () => {
     //       non-null object exposing scale0/scale1/scale2 (the shape from
     //       install.js).
     // ────────────────────────────────────────────────────────────────────
-    test('capabilities getter present on Mock/Wasm/WebSocket bridge prototypes + live bridge shape', async ({ page }) => {
+    test('capabilities getter present on Wasm/WebSocket bridge prototypes + live bridge shape', async ({ page }) => {
         const errors = attachConsoleWatcher(page);
         await gotoAndReady(page);
 
         const result = await page.evaluate(async () => {
-            // (a) Structural: the barrel installs the getter on all three
+            // (a) Structural: the barrel installs the getter on both
             // prototypes at module load. Walk the prototype chain so a
             // subclass that inherits the accessor still counts.
             const mod = await import('./js/bridge-init.js');
@@ -86,12 +86,11 @@ test.describe('reconcile prior fixes', () => {
                 return false;
             };
             const structural = {
-                mock: hasCapabilitiesAccessor(mod.MockBridge),
                 wasm: hasCapabilitiesAccessor(mod.WasmBridge),
                 ws: hasCapabilitiesAccessor(mod.WebSocketBridge),
             };
 
-            // (b) Live: the active bridge (Wasm or Mock in a browser run)
+            // (b) Live: the active bridge (WasmBridge in a browser run)
             // must expose the symmetric scale0/1/2 surface.
             const b = window._ftdBridge;
             const caps = b ? b.capabilities : null;
@@ -105,8 +104,7 @@ test.describe('reconcile prior fixes', () => {
             return { structural, live };
         });
 
-        // Structural: all three facades carry the accessor.
-        expect(result.structural.mock, 'MockBridge.prototype.capabilities getter').toBe(true);
+        // Structural: both facades carry the accessor.
         expect(result.structural.wasm, 'WasmBridge.prototype.capabilities getter').toBe(true);
         expect(result.structural.ws, 'WebSocketBridge.prototype.capabilities getter (audit P0-4)').toBe(true);
 

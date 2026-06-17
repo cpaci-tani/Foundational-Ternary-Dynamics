@@ -82,7 +82,7 @@ test.describe('WASM Scale-0 scenario coverage', () => {
     test.beforeEach(async ({ page }) => {
         page.on('pageerror', (e) => console.error('PAGEERROR:', e.message));
         await gotoAndReady(page);
-        // Confirm we're on the WASM bridge, not MockBridge fallback.
+        // Confirm we're on the WASM bridge.
         const isWasm = await page.evaluate(() => !!window._ftdBridge?.isWasm);
         if (!isWasm) {
             test.skip(true, 'WASM bridge not active — coverage test requires real WASM backend.');

@@ -8,7 +8,7 @@
  * worker's state but never shipped a frame, so while PAUSED (the default load
  * state) the injection was invisible to the main thread until the next tick or
  * single-step — the "Wave / Flux / Pair don't work" report. Fix: the worker
- * posts a frame after every command. (engine/web/js/bridge/mock-bridge.worker.js)
+ * posts a frame after every command. (engine/web/js/bridge/wasm-bridge.worker.js)
  *
  * This regression covers all four inject buttons via the shared root cause; the
  * entangled pair is the cleanest signal (deterministic +2 particles, and the
