@@ -287,6 +287,10 @@ export class WasmBridge {
         }
     }
 
+    injectWaveVel(x, y, z, vx, vy, vz) {
+        if (this._module && this._bridge && typeof this._module.injectWaveVel === 'function')
+            this._module.injectWaveVel(this._bridge, x, y, z, vx, vy, vz);
+    }
     injectWavepacket(x, y, z, state) {
         if (this._module && this._bridge) {
             this._module.injectWavepacket(this._bridge, x, y, z, state);

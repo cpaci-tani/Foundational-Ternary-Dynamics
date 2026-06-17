@@ -523,7 +523,7 @@ export class MockWaveEngine {
             }
         }
 
-        if (!this._reflectiveBoundary && runBoundaryWV) {
+        if (this.bridge._toggles.absorbing_boundary && !this._reflectiveBoundary && runBoundaryWV) {
             const Nm1 = N - 1;
             const D = Math.min(6, Math.max(2, Math.floor(N / 4)));
             if (!this._spongeTable || this._spongeTable.length !== D + 1) {

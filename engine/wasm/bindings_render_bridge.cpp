@@ -112,6 +112,12 @@ static void create_entangled_pair(ftd::RenderBridge& rb, int x, int y, int z,
     rb.create_entangled_pair(x, y, z, ftd::Vec3(fx, fy, fz));
 }
 
+static void ftd_inject_wave_vel(ftd::RenderBridge& rb,
+                                int x, int y, int z,
+                                float vx, float vy, float vz) {
+    rb.inject_wave_vel_add(x, y, z, ftd::Vec3(vx, vy, vz));
+}
+
 // ── Energy Ledger (D-1, M2: per-tick conservation bookkeeping) ──────
 // Mirrors the EnergyLedger struct in include/ftd/render_bridge.h. Tests
 // and dashboards can poll this every tick to see drift_frac / residual /
@@ -327,6 +333,7 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("injectWavepacket",   &inject_wavepacket_simple);
     function("injectFlux",         &inject_flux);
     function("injectUniformFluxAdd", &inject_uniform_flux_add);
+    function("injectWaveVel",      &ftd_inject_wave_vel);
     function("createEntangledPair", &create_entangled_pair);
 
     // Time step control
