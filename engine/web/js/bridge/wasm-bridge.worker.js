@@ -23,6 +23,34 @@ let poolThreads = 1;       // Phase 1 = 1 (serial off-thread). Phase 2 raises th
 let ctrlSab = null, ctrl = null;
 let timer = 0, tickAcc = 0;
 
+// Overlay sampler registry. Maps proxy kind-key → [C++ method name, 'vec'|'val'|'obj'].
+// 'vec' returns {positions, vectors, count}; 'val' returns {positions, values, count};
+// 'obj' returns a plain object (no stride argument, e.g. gravityMetricAgg).
+const SAMPLER_METHODS = {
+  'e':             ['getEFieldSampled',       'vec'],
+  'b':             ['getBFieldSampled',        'vec'],
+  'poynting':      ['getPoyntingSampled',      'vec'],
+  'divJ':          ['getDivJSampled',          'val'],
+  'fluxVector':    ['getFluxVectorSampled',    'vec'],
+  'vorticity':     ['getVorticitySampled',     'val'],
+  'helicity':      ['getHelicitySampled',      'val'],
+  'kretschmann':   ['getKretschmannSampled',   'val'],
+  'latency':       ['getLatencySampled',       'val'],
+  'fisher':        ['getFisherSampled',        'val'],
+  'coherence':     ['getCoherenceSampled',     'val'],
+  'curlJ':         ['getCurlJSampled',         'vec'],
+  'state':         ['getStateFieldSampled',    'val'],
+  'gaussResidual': ['getGaussResidualSampled', 'val'],
+  'em':            ['getEMForceField',         'vec'],
+  'gravity':       ['getGravityForceField',    'vec'],
+  'strong':        ['getStrongForceField',     'vec'],
+  'gravityMetricAgg': ['getGravityMetricAgg', 'obj'],
+};
+
+// Samplers currently wanted by the proxy, keyed by "kind@stride".
+// Persists across scenario changes (overlay visibility is UI state, not scenario state).
+const wantedSamplers = new Map();
+
 function initModule(cb) {
   createFTDModuleMT({ locateFile: (p) => '../../wasm/' + p }).then((m) => {
     mod = m;
@@ -75,12 +103,38 @@ function postFrame() {
       count: p.count | 0,
     };
   } catch (e) { /* ignore */ }
+  // Overlay samplers — compute only the kinds the proxy has registered.
+  const samplers = {};
+  if (wantedSamplers.size > 0) {
+    for (const [key, { kind, stride }] of wantedSamplers) {
+      const spec = SAMPLER_METHODS[kind];
+      if (!spec) continue;
+      const [method, type] = spec;
+      if (typeof mod[method] !== 'function') continue;
+      try {
+        if (type === 'obj') {
+          const raw = mod[method](bridge);
+          if (raw) samplers[key] = raw;
+        } else {
+          const raw = mod[method](bridge, stride);
+          if (!raw || !raw.count) continue;
+          // raw.positions / raw.vectors / raw.values are WASM heap views — copy before posting.
+          if (type === 'vec') {
+            samplers[key] = { positions: new Float32Array(raw.positions), vectors: new Float32Array(raw.vectors), count: raw.count };
+          } else {
+            samplers[key] = { positions: new Float32Array(raw.positions), values: new Float32Array(raw.values), count: raw.count };
+          }
+        }
+      } catch { /* ignore — method may not be bound in this WASM build */ }
+    }
+  }
+
   if (ctrl) {
     Atomics.store(ctrl, CTRL.TICK, tick | 0);
     Atomics.store(ctrl, CTRL.PCOUNT, parts ? parts.count : 0);
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
-  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag });
+  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag, samplers });
 }
 
 function loop() {
@@ -123,6 +177,10 @@ self.onmessage = (e) => {
         postFrame();          // reflect the effect immediately (even while paused)
         break;
       }
+      case 'wantSampler':
+        // Proxy registers a sampler kind+stride it wants computed each frame.
+        wantedSamplers.set(`${msg.kind}@${msg.stride}`, { kind: msg.kind, stride: msg.stride });
+        break;
       case 'setRunning':
         if (ctrl) Atomics.store(ctrl, CTRL.RUNNING, msg.value ? 1 : 0);
         break;
