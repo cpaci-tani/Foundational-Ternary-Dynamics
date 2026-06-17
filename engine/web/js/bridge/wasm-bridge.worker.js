@@ -52,9 +52,10 @@ function postFrame() {
   if (!bridge) return;
   mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
   const tick = bridge.currentTick ? bridge.currentTick() : 0;
-  let diag = null, parts = null, audit = null;
+  let diag = null, parts = null, audit = null, lag = null;
   try { diag = mod.getDiagnostics(bridge); } catch (e) { /* ignore */ }
   try { audit = mod.getEnergyAudit(bridge); } catch (e) { /* ignore */ }
+  try { lag = mod.getLagrangian(bridge); } catch (e) { /* ignore */ }
 
   if (diag && audit && Number.isFinite(audit.totalEnergy)) {
     // Native Diagnostics::total_energy is the Born-Infeld vacuum
@@ -79,7 +80,7 @@ function postFrame() {
     Atomics.store(ctrl, CTRL.PCOUNT, parts ? parts.count : 0);
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
-  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit });
+  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag });
 }
 
 function loop() {
