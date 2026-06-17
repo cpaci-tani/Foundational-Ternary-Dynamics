@@ -2,13 +2,12 @@
  * @file engine/web/js/bridge/wasm-bridge.js
  * @purpose Thin wrapper around the compiled C++/WASM physics engine
  *          (engine/wasm/ftd_wasm.cpp). Implements the same ScaleBridge
- *          contract as MockBridge so consumers can switch backends
+ *          contract as the primary bridge backend
  *          without touching call sites.
  * @consumers bridge-init.js (re-exports), engine/web/js/scales/scaleN/controller.js
  *            for N in 0..11 via the createScale0/1/2Capabilities factories.
  * @contract CONTRACTS.md §2 (Capability Factory Contract) — symmetric
- *            surface with MockBridge.
- * @related engine/web/js/bridge/mock-bridge.js (JS-only counterpart)
+ *            surface with the WebSocketBridge (native-GPU path).
  *          engine/wasm/ftd_wasm.cpp (the embind module this wraps)
  *          engine/wasm/bindings_render_bridge.cpp (toggle map + per-method bindings)
  *
@@ -158,7 +157,7 @@ export class WasmBridge {
             debugLog('FTD WASM engine loaded successfully');
             return true;
         } catch (e) {
-            console.warn('WASM module not available, falling back to MockBridge:', e.message);
+            console.warn('WASM module not available:', e.message);
             return false;
         }
     }
@@ -393,7 +392,35 @@ export class WasmBridge {
                 spinUp: 0, spinDown: 0, colorless: 0, colorRed: 0, colorGreen: 0, colorBlue: 0,
                 angMomX: 0, angMomY: 0, angMomZ: 0
             };
-        const d = this._module.getDiagnostics(this._bridge);
+        let d;
+        if (typeof this._module.getDiagnosticsView === 'function') {
+            const arr = this._module.getDiagnosticsView(this._bridge);
+            d = {
+                tick: arr[0],
+                physicalTime: arr[1],
+                dt: arr[2],
+                manifested: arr[3],
+                positive: arr[4],
+                negative: arr[5],
+                totalFlux: arr[6],
+                totalEnergy: arr[7],
+                maxBandwidth: arr[8],
+                avgDrag: arr[9],
+                entropy: arr[10],
+                chargeBalance: arr[11],
+                spinUp: arr[12],
+                spinDown: arr[13],
+                colorless: arr[14],
+                colorRed: arr[15],
+                colorGreen: arr[16],
+                colorBlue: arr[17],
+                angMomX: arr[18],
+                angMomY: arr[19],
+                angMomZ: arr[20]
+            };
+        } else {
+            d = this._module.getDiagnostics(this._bridge);
+        }
         const audit = this._getScale0AuditForTick(d?.tick ?? this.currentTick());
         if (audit && Number.isFinite(audit.totalEnergy)) {
             // Native Diagnostics::total_energy is the Born-Infeld vacuum
@@ -427,7 +454,31 @@ export class WasmBridge {
         if (this._lastScale0Audit && this._lastScale0AuditTick === t) {
             return this._lastScale0Audit;
         }
-        const audit = this._module.getEnergyAudit(this._bridge);
+        let audit;
+        if (typeof this._module.getEnergyAuditView === 'function') {
+            const arr = this._module.getEnergyAuditView(this._bridge);
+            audit = {
+                fieldEnergy: arr[0],
+                waveEnergy: arr[1],
+                particleKE: arr[2],
+                totalEnergy: arr[3],
+                EFieldEnergy: arr[4],
+                BFieldEnergy: arr[5],
+                totalPoynting: { x: arr[6], y: arr[7], z: arr[8] },
+                gaussViolation: arr[9],
+                maxGaussError: arr[10],
+                selfFieldInjection: arr[11],
+                coulombPE: arr[12],
+                ELTotal: arr[13],
+                ERTotal: arr[14],
+                chiralityTotal: arr[15],
+                wvLTotal: arr[16],
+                wvRTotal: arr[17],
+                chargeTotal: arr[18],
+            };
+        } else {
+            audit = this._module.getEnergyAudit(this._bridge);
+        }
         this._lastScale0Audit = audit;
         this._lastScale0AuditTick = t;
         return audit;
@@ -446,6 +497,27 @@ export class WasmBridge {
                 total: 0, hamiltonian: 0, totalAction: 0, gaussViolation: 0, maxGaussError: 0,
                 totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0
             };
+        if (typeof this._module.getLagrangianView === 'function') {
+            const arr = this._module.getLagrangianView(this._bridge);
+            return {
+                fieldKinetic: arr[0],
+                fieldGradient: arr[1],
+                bornInfeld: arr[2],
+                coupling: arr[3],
+                velocity: arr[4],
+                gauss: arr[5],
+                dissipation: arr[6],
+                total: arr[7],
+                hamiltonian: arr[8],
+                totalAction: arr[9],
+                gaussViolation: arr[10],
+                maxGaussError: arr[11],
+                totalFluxMag: arr[12],
+                totalWaveEnergy: arr[13],
+                manifested: arr[14],
+                locked: arr[15]
+            };
+        }
         return this._module.getLagrangian(this._bridge);
     }
 
