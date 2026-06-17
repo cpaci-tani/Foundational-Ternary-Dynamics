@@ -109,13 +109,6 @@ bool setup_light_scenario(RenderBridge& rb, const std::string& name) {
             }
         }
     }
-    else if (name == "light-prism") {
-        // Scenario ID: light-prism
-        // Physical Purpose: Legacy prism refraction demonstration.
-        // Initial Condition Parameters: None (No-op in modern engine).
-        // Expected Behaviour: Retains an empty lattice; no-op.
-        // Discrepancy: Defined in scale0.json but has no implementation in C++ or JS registry.
-    }
     return true;
 }
 
