@@ -629,6 +629,16 @@ void RenderBridge::tick() {
   if (toggles.absorbing_boundary)
     apply_absorbing_boundary(*this);
 
+  // Rule 5c: flux-field boundary law. Periodic (toroidal wrap) is the default
+  // and is handled by the lattice neighbour tables — no pass needed. The
+  // Reflective / Dispersal passes re-impose their boundary on the shell AFTER
+  // the last flux writers (same placement rationale as the sponge above).
+  // Default Periodic → neither pass runs → golden-tick hash unchanged.
+  if (toggles.flux_boundary == FluxBoundaryMode::Reflective)
+    apply_reflective_flux_boundary(*this);
+  else if (toggles.flux_boundary == FluxBoundaryMode::Dispersal)
+    apply_dispersal_flux_boundary(*this);
+
 
   // Self-field floor moved to Rule 3b (after Gauss, before forces) in Phase 3.
   // No second floor here — eliminates the double-injection energy leak.

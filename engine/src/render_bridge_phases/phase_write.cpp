@@ -398,4 +398,54 @@ void apply_absorbing_boundary(RenderBridge& rb) {
   }
 }
 
+// Reflective flux boundary (FluxBoundaryMode::Reflective) — Neumann mirror.
+// Copy the first interior layer into the boundary shell each tick so ∂_n J = 0
+// at every face: a perfect free reflector (a closed cavity). Energy is conserved
+// inside the box. NOTE: a closed cavity does NOT drain an injection-driven
+// runaway — that is by design (the "secondary" mode). One-layer overwrite,
+// applied AFTER the last flux writers like the sponge. Gated → golden-neutral.
+void apply_reflective_flux_boundary(RenderBridge& rb) {
+  const Lattice& lat = rb.lattice_;
+  const int N = lat.size();
+  const int Nm1 = N - 1;
+  if (N < 3) return;
+  for (int z = 0; z < N; ++z)
+  for (int y = 0; y < N; ++y)
+  for (int x = 0; x < N; ++x) {
+    if (x > 0 && x < Nm1 && y > 0 && y < Nm1 && z > 0 && z < Nm1) continue;  // interior
+    const int ix = (x == 0) ? 1 : (x == Nm1 ? Nm1 - 1 : x);
+    const int iy = (y == 0) ? 1 : (y == Nm1 ? Nm1 - 1 : y);
+    const int iz = (z == 0) ? 1 : (z == Nm1 ? Nm1 - 1 : z);
+    Voxel& b = rb.voxels_[lat.index(x, y, z)];
+    const Voxel& in = rb.voxels_[lat.index(ix, iy, iz)];
+    b.flux = in.flux;             b.wave_vel = in.wave_vel;
+    b.flux_L = in.flux_L;         b.flux_R = in.flux_R;
+    b.wave_vel_L = in.wave_vel_L; b.wave_vel_R = in.wave_vel_R;
+  }
+}
+
+// Dispersal flux boundary (FluxBoundaryMode::Dispersal) — single-cell radiating
+// sink. The outermost layer is the interface to the void: the field that reaches
+// it propagates out at ~wave speed c and is removed from the box ("disappears
+// into the void and is removed from memory"). This is ONE sharp cell, NOT the
+// graduated quadratic sponge. It is the open boundary that drains an injection-
+// driven runaway toward a bounded steady state. Applied AFTER the last flux
+// writers. Gated → golden-neutral.
+void apply_dispersal_flux_boundary(RenderBridge& rb) {
+  const Lattice& lat = rb.lattice_;
+  const int N = lat.size();
+  const int Nm1 = N - 1;
+  // Fraction of the outer layer that propagates into the void this tick (c·dt).
+  const double keep = 1.0 - C_SPEED;
+  for (int z = 0; z < N; ++z)
+  for (int y = 0; y < N; ++y)
+  for (int x = 0; x < N; ++x) {
+    if (x > 0 && x < Nm1 && y > 0 && y < Nm1 && z > 0 && z < Nm1) continue;  // interior
+    Voxel& b = rb.voxels_[lat.index(x, y, z)];
+    b.flux *= keep;       b.wave_vel *= keep;
+    b.flux_L *= keep;     b.flux_R *= keep;
+    b.wave_vel_L *= keep; b.wave_vel_R *= keep;
+  }
+}
+
 }  // namespace ftd
