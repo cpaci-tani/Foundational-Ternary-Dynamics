@@ -878,6 +878,8 @@ export class TelemetryHub {
                 this._s0_sp.clear();
                 this._s0_aud.clear();
                 this._s0_lag.clear();
+                this.ebDiff.clear();
+                this.gauss.clear();
                 this.s0 = { diag: null, audit: null, lagrangian: null };
                 this._initialEnergy = null;
                 this._lastAuditVersion = -1;
