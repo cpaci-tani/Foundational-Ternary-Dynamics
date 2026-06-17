@@ -149,8 +149,12 @@ export class UPlotChart {
         const yColumns = this.series.map((s, idx) => {
             const buf = this.hub[s.buffer];
             const col = this.ys[idx].subarray(0, n);
-            const start = Math.max(0, (buf?.count || 0) - n);
-            for (let i = 0; i < n; i++) col[i] = buf?.get(start + i) ?? 0;
+            if (buf && buf.flattenInto) {
+                buf.flattenInto(col, n);
+            } else if (buf) {
+                const start = Math.max(0, (buf.count || 0) - n);
+                for (let i = 0; i < n; i++) col[i] = buf.get(start + i) ?? 0;
+            }
             return col;
         });
 

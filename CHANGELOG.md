@@ -1,5 +1,22 @@
 # Foundational Ternary Dynamics Changelog
 
+## Web Telemetry & Charting Pipeline Refactor (2026-06-17)
+
+Refactored the web dashboard's telemetry pipeline to use a centralized Structure-of-Arrays (SoA) layout via `MultiRingBuffer`, vastly improving memory locality and chart rendering performance.
+
+### Telemetry Hub & MultiRingBuffer
+- Consolidated 50+ individual `RingBuffer` allocations across all scales (Core, Sparklines, Energy Audit, Lagrangian, PE, etc.) into grouped `MultiRingBuffer` instances.
+- Added `flattenInto(target)` support for `RingBuffer` and `RingBufferView` allowing O(1) bulk typed-array writes.
+- Refactored `uplot-chart.js` to ingest data via `flattenInto`, eliminating O(N) loop overhead on every render frame.
+- Updated all internal pushers (Scale 0 to 5) to use the unified object `.push()` interface.
+
+### WASM Zero-Copy Views
+- Extracted `getDiagnosticsView`, `getEnergyAuditView`, and `getLagrangianView` native typed-memory views directly from the WASM layer (`engine/wasm/ftd_wasm.cpp`).
+- Updated `WasmBridge` (`engine/web/js/bridge/wasm-bridge.js`) to parse `Float64Array` views, eliminating expensive Embind JS object instantiations across the boundary.
+- Successfully re-compiled `ftd_wasm` (WASM32 and WASM64) preserving golden hash integrity and maintaining backwards compatibility with GPUBridge.
+
+---
+
 ## Sprint A+B — Golden determinism + alpha estimator v2 (2026-06-13)
 
 **Sprint A (determinism):** Verified OpenMP race fixes (2026-06-11) green:

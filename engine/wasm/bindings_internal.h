@@ -29,8 +29,11 @@ namespace ftd_wasm_internal {
 // RenderBridge data extraction (defined in ftd_wasm.cpp)
 emscripten::val get_particle_data(ftd::RenderBridge& rb);
 emscripten::val get_diagnostics(ftd::RenderBridge& rb);
+emscripten::val get_diagnostics_view(ftd::RenderBridge& rb);
 emscripten::val get_energy_audit(ftd::RenderBridge& rb);
+emscripten::val get_energy_audit_view(ftd::RenderBridge& rb);
 emscripten::val get_lagrangian(ftd::RenderBridge& rb);
+emscripten::val get_lagrangian_view(ftd::RenderBridge& rb);
 emscripten::val inspect_voxel(ftd::RenderBridge& rb, int x, int y, int z);
 emscripten::val get_force_at(ftd::RenderBridge& rb, int x, int y, int z);
 emscripten::val get_constants();
