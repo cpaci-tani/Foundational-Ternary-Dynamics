@@ -175,6 +175,8 @@ export class WasmBridgeProxy {
     injectWavepacket(...a) { this._cmd('injectWavepacket', ...a); }
     injectWaveVel(...a) { this._cmd('injectWaveVel', ...a); }
     createEntangledPair(...a) { this._cmd('createEntangledPair', ...a); }
+    clearField() { this._cmd('clearField'); }
+    seedRandomFlux() { this._cmd('seedRandomFlux'); }
 
     // ── Lifecycle ───────────────────────────────────────────────────────────
     reset(n) {
