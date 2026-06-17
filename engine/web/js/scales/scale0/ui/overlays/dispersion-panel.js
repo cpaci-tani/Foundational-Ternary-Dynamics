@@ -12,7 +12,8 @@
 //   · the NO-ACOUSTIC-BRANCH contrast — FTD has light but no sound: the lattice IS
 //     space, so there is no broken-translation Goldstone (FTD-0298 §5; FTD-0299
 //     condensate-compression probe = NULL).
-// "Measure live" re-samples ω(k) from an inline MockBridge wave engine when available.
+// "Measure live" button is present for UI parity; live re-measurement is not available
+// on the WASM engine (WasmBridgeProxy self-ticks; synchronous tick-loop is incompatible).
 
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
@@ -156,47 +157,8 @@ export function mountDispersionPanel(host, getBridge) {
             rowHTML('atlas', 'LIGHT-CONFIRMED', 'Engine ω_eig matches the 18-pt stencil to machine zero; c_eff isotropic at 1/√3.');
     }
 
-    // Best-effort live re-measure on an inline MockBridge wave engine.
     function measureLive() {
-        const status = el('status');
-        const b = getBridge?.();
-        const J = b && b._fluxJ;                       // MockBridge inline only
-        const L = b && b.latticeSize;
-        const idxOf = b && (b._fluxIdx ? (x, y, z) => b._fluxIdx(x, y, z) : null);
-        if (!J || !L || !idxOf || typeof b.tick !== 'function') {
-            status.textContent = 'live needs an inline wave scenario (engine=mock)';
-            return;
-        }
-        try {
-            const TICKS = 192, AMP = 0.1, probe = idxOf(1, (L / 2) | 0, (L / 2) | 0) * 3 + 2; // J_z at (1,mid,mid)
-            const prevT = { ...b._toggles };
-            b._toggles.wave_propagation = true;
-            b._toggles.coupling = false; b._toggles.genesis = false; b._toggles.damping = false;
-            const out = [];
-            for (let n = 1; n <= Math.min(8, (L / 4) | 0); n++) {
-                const k = 2 * Math.PI * n / L;
-                for (let x = 0; x < L; x++) {
-                    const jz = AMP * Math.sin(k * x);
-                    for (let y = 0; y < L; y++) for (let z = 0; z < L; z++) {
-                        const base = idxOf(x, y, z) * 3;
-                        J[base] = 0; J[base + 1] = 0; J[base + 2] = jz;
-                        if (b._fluxWV) { b._fluxWV[base] = 0; b._fluxWV[base + 1] = 0; b._fluxWV[base + 2] = 0; }
-                    }
-                }
-                // track J_z at probe, recover ω by zero-crossing count
-                let prev = J[probe], crossings = 0;
-                for (let t = 0; t < TICKS; t++) { b.tick(); const cur = b._fluxJ[probe]; if ((prev <= 0 && cur > 0) || (prev >= 0 && cur < 0)) crossings++; prev = cur; }
-                const omega = Math.PI * crossings / TICKS;   // ω = 2π·(crossings/2)/T
-                if (omega > 0) out.push([k, omega]);
-            }
-            Object.assign(b._toggles, prevT);
-            livePts = out;
-            el('livelegend').hidden = out.length === 0;
-            status.textContent = `live: ${out.length} modes sampled (inline MockBridge)`;
-            paint();
-        } catch (e) {
-            status.textContent = 'live measure unavailable on this bridge';
-        }
+        el('status').textContent = 'Live measurement not available on WASM engine — see atlas above.';
     }
 
     el('measure').addEventListener('click', measureLive);
