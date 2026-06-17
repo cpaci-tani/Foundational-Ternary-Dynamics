@@ -77,6 +77,7 @@ export class WasmBridgeProxy {
         } else if (m.type === 'frame') {
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
+            if (m.audit) this._lastAudit = m.audit;
             
             if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
                 window.__ftdCtx.onBridgePostFrame();
@@ -138,6 +139,7 @@ export class WasmBridgeProxy {
     getLatencyVolume() { return new Float64Array(0); }
     setBoundaryShape() {}
     setReflectiveBoundary() {}
+    setFluxBoundaryMode(mode) { this._cmd('setFluxBoundary', mode); }
 
     // ── Scenario / run control ──────────────────────────────────────────────
     setupScenario(name) {

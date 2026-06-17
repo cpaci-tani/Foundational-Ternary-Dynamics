@@ -52,8 +52,19 @@ function postFrame() {
   if (!bridge) return;
   mod.getFluxVolume(bridge);            // refresh the flux cache in the shared heap
   const tick = bridge.currentTick ? bridge.currentTick() : 0;
-  let diag = null, parts = null;
+  let diag = null, parts = null, audit = null;
   try { diag = mod.getDiagnostics(bridge); } catch (e) { /* ignore */ }
+  try { audit = mod.getEnergyAudit(bridge); } catch (e) { /* ignore */ }
+
+  if (diag && audit && Number.isFinite(audit.totalEnergy)) {
+    // Native Diagnostics::total_energy is the Born-Infeld vacuum
+    // baseline summed over every voxel. Replace it with the scenario
+    // budget (field + wave + particle KE) from EnergyAudit so the UI
+    // matches the MockBridge convention.
+    diag.vacuumBaselineEnergy = diag.totalEnergy;
+    diag.totalEnergy = audit.totalEnergy;
+  }
+
   try {
     const p = mod.getParticleData(bridge);    // heap VIEWS — copy before posting
     if (p) parts = {
@@ -68,7 +79,7 @@ function postFrame() {
     Atomics.store(ctrl, CTRL.PCOUNT, parts ? parts.count : 0);
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
-  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts });
+  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit });
 }
 
 function loop() {

@@ -53,6 +53,7 @@ export function createScale0Capabilities(bridge) {
         },
         setBoundaryShape: (shape) => bridge.setBoundaryShape?.(shape),
         setReflectiveBoundary: (on) => bridge.setReflectiveBoundary?.(on),
+        setFluxBoundaryMode: (mode) => bridge.setFluxBoundaryMode?.(mode),
         setupScenario: (name) => bridge.setupScenario(name),
         setToggle: (key, value) => bridge.setToggle?.(key, value),
         // Phase 2 gravity panel: REAL C++ latency field (voxel.latency Poisson),
