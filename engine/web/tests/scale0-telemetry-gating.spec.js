@@ -1,8 +1,9 @@
 // @ts-check
 /**
  * Phase 1 verification — FTD_TELEMETRY_ONDEMAND demand-gated telemetry
- * (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5). On the worker path, the audit /
- * Lagrangian O(N³) passes are computed only when a visible consumer needs them:
+ * (SPEC_SCALE0_PERF_TELEMETRY_PANELS §5). On the WasmBridgeProxy worker path,
+ * the audit / Lagrangian O(N³) passes are computed only when a visible consumer
+ * needs them:
  *
  *   • no consumer visible  → the worker stops computing the audit, so the
  *     proxy's served value FREEZES — *while the sim keeps ticking* (the choppy-
@@ -13,7 +14,7 @@
  *
  * This is a worker-path feature (the freeze is observable because the proxy
  * serves the worker's last-posted scalar). If the page is not cross-origin
- * isolated (no SAB → in-thread MockBridge), the test skips: the main-thread
+ * isolated (no SAB → main-thread WasmBridge), the test skips: the main-thread
  * gate still applies, but `getScale0EnergyAudit()` recomputes on each direct
  * read there, so "freeze" is not the right observable.
  */
@@ -64,7 +65,7 @@ test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
         });
 
         const pre = await readProbe(page);
-        test.skip(!pre.worker, 'worker path inactive (no cross-origin isolation) — gating freeze is a worker observable');
+        test.skip(!pre.worker, 'WASM worker path inactive (no cross-origin isolation) — gating freeze is a worker observable');
 
         // ── Phase A: no consumer → audit FREEZES while the sim keeps ticking ──
         // 1500ms (not 900): under heavy load the diagnostics loop sends the
@@ -96,39 +97,4 @@ test.describe('Scale-0 demand-gated telemetry (FTD_TELEMETRY_ONDEMAND)', () => {
         expect(Math.abs(Number(b1.fieldE) || 0) > 0, 'audit must be non-zero (wired)').toBe(true);
     });
 
-    test('quantify the per-tick audit O(N³) cost the gate reclaims (L=97)', async ({ page }) => {
-        test.setTimeout(60_000);
-        await gotoAndReady(page);
-
-        // Build a throwaway in-thread MockBridge at L=97 and time the audit's
-        // derived-field pass (ensureFieldDerivedCache: curl/Poynting/divJ) — the
-        // exact O(N³) work the worker now SKIPS every tick when no panel is open.
-        // Measured after getDiagnostics() so the shared energy cache is warm and
-        // the number is purely the audit-only cost the gate removes.
-        const cost = await page.evaluate(async () => {
-            const { MockBridge } = await import('/js/bridge/mock-bridge.js');
-            const b = new MockBridge(97);
-            b.setupScenario('flux-pulse');
-            const s0 = b.capabilities.scale0;
-            for (let i = 0; i < 20; i++) s0.tickScale0();        // evolve past the seed
-            b.getDiagnostics(); b.getEnergyAudit();               // warm caches once
-            const N = 15;
-            let tDiag = 0, tAudit = 0;
-            for (let i = 0; i < N; i++) {
-                s0.tickScale0();                                  // invalidate per-tick caches
-                let t = performance.now(); b.getDiagnostics();    let dDiag = performance.now() - t;
-                t = performance.now(); b.getEnergyAudit();        let dAudit = performance.now() - t;
-                tDiag += dDiag; tAudit += dAudit;
-            }
-            return { L: b.latticeSize, diagMs: tDiag / N, auditMs: tAudit / N };
-        });
-
-        console.log(`\n[Phase 1 gain] L=${cost.L}: audit-only ensureFieldDerivedCache ≈ ${cost.auditMs.toFixed(2)} ms/tick ` +
-            `(diagnostics ≈ ${cost.diagMs.toFixed(2)} ms/tick). The worker pays this EVERY tick in the legacy ` +
-            `path; demand-gating skips it whenever no audit/Lagrangian consumer is visible.\n`);
-
-        // Sanity: the audit pass is a real, non-trivial per-tick cost at L=97
-        // (this is *why* gating restores worker throughput — not a microscopic win).
-        expect(cost.auditMs, 'audit derived-field pass should be a measurable per-tick cost at L=97').toBeGreaterThan(0.5);
-    });
 });

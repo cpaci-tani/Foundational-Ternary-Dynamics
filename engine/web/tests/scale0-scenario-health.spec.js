@@ -11,11 +11,11 @@
  *
  * This is the mechanical half of the 2026-06-05 all-scenario audit (the
  * physics-sense half lives in docs/audits/AUDIT_SCALE0_SCENARIO_HEALTH.md).
- * It runs each scenario on its NATURAL owner — flux- and s0- on the JS flux
- * mock, empty/light/quantum on the WASM engine — so it reflects what a
- * user actually gets. The full table is logged for the audit; the test fails
- * only if a scenario is genuinely broken (no mount AND not known-empty, or
- * NaN/absent telemetry, or a real console error).
+ * It runs each scenario on its NATURAL owner — flux- and s0- on the WASM worker
+ * (WasmBridgeProxy), empty/light/quantum on the main-thread WASM engine — so it
+ * reflects what a user actually gets. The full table is logged for the audit;
+ * the test fails only if a scenario is genuinely broken (no mount AND not
+ * known-empty, or NaN/absent telemetry, or a real console error).
  */
 import { test, expect } from '@playwright/test';
 import { gotoAndReady, attachConsoleWatcher, realErrors } from './_helpers.js';
@@ -98,7 +98,7 @@ test.describe('Scale-0 all-scenario health sweep', () => {
                     }
                 } catch { /* ignore */ }
                 return {
-                    owner: st.useFluxMock ? 'mock' : 'wasm',
+                    owner: st.useFluxMock ? 'wasm-worker' : 'wasm',
                     tick: d.tick ?? null, totalEnergy: d.totalEnergy ?? null,
                     manifested: d.manifested ?? null, particles, maxFlux, fieldSamples,
                 };
@@ -160,41 +160,4 @@ test.describe('Scale-0 all-scenario health sweep', () => {
         expect(snap.manifested + snap.particles, 'flux-annihilation should mount its 4 particles').toBeGreaterThan(0);
     });
 
-    // s0-vacuum-* runs on the WASM engine by default, so the all-scenario sweep
-    // (above) exercises the C++ path. This guards the **MockBridge fallback**
-    // path (Safari / no-COOP-COEP), where setupVacuumScenario used to throw a
-    // `harness`/`this` ReferenceError (health audit §A.4). Force ?engine=mock so
-    // vacuum scenarios run on the JS MockBridge.
-    test('s0-vacuum-* mounts on the MockBridge fallback path (no harness ReferenceError)', async ({ page }) => {
-        const consoleErrors = attachConsoleWatcher(page);
-        await gotoAndReady(page, { path: '/?engine=mock' });
-        await waitForCtx(page);
-
-        const sample = ['s0-vacuum-electron', 's0-vacuum-proton', 's0-vacuum-photon', 's0-vacuum-higgs'];
-        /** @type {Record<string, number>} */
-        const mounted = {};
-        for (const id of sample) {
-            await page.evaluate((scenarioId) => {
-                const sel = document.getElementById('scenario-select');
-                if (![...sel.options].some((o) => o.value === scenarioId)) sel.add(new Option(scenarioId, scenarioId));
-                sel.value = scenarioId;
-                sel.dispatchEvent(new Event('change', { bubbles: true }));
-            }, id);
-            await page.waitForTimeout(550);
-            mounted[id] = await page.evaluate(async () => {
-                const { getScale0State } = await import('/js/scales/scale0/state/store.js');
-                const st = getScale0State();
-                const bridge = (st.useFluxMock && st.fluxMock) ? st.fluxMock : window.__ftdCtx.bridge;
-                const caps = bridge.capabilities.scale0;
-                const p = (caps.getScale0ParticleFrame?.() || {}).count ?? 0;
-                let maxFlux = 0;
-                try { const fv = bridge.getFluxVolume?.(); if (fv) for (let i = 0; i < fv.length; i++) { const a = Math.abs(fv[i]); if (a > maxFlux) maxFlux = a; } } catch { /* ignore */ }
-                return p + (maxFlux > 1e-6 ? 1 : 0);
-            });
-        }
-        const errs = realErrors(consoleErrors);
-        console.log(`[vacuum mock-path] mounted=${JSON.stringify(mounted)} errors=${JSON.stringify(errs)}`);
-        expect(errs, 's0-vacuum-* must not throw on the MockBridge path').toEqual([]);
-        for (const id of sample) expect(mounted[id], `${id} should mount on the mock path`).toBeGreaterThan(0);
-    });
 });

@@ -3,10 +3,9 @@
  * JS ↔ C++ scenario-parity guard.
  *
  * After the April-2026 WASM-scenario port (engine/src/scenarios.cpp), all 83
- * UI-exposed Scale-0 scenarios exist in BOTH the JS MockBridge
- * (engine/web/js/bridge/scenarios/*.js) and the C++ engine. Without a guard,
- * adding a new scenario to one side and forgetting the other silently
- * regresses the WASM backend.
+ * UI-exposed Scale-0 scenarios have C++ implementations. The JS scenario group
+ * files (engine/web/js/bridge/scenarios/*.js) are kept as dead-code until Phase 7
+ * cleanup; in the meantime this lint ensures C++ coverage hasn't drifted.
  *
  * This is refactoring-analyst ticket RF-5 (Option B): a cheap lint that runs
  * as part of the Playwright suite and fails CI if the two sides drift.

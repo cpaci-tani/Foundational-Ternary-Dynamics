@@ -2,10 +2,10 @@
 /**
  * Conservation panel ownership regression.
  *
- * flux-* scenarios are owned by the JS MockBridge/worker in the dashboard,
- * not by the main WASM bridge. The always-on conservation panel must sample
- * the active owner or it sits at t=0 and its energy deltas look frozen while
- * the visible flux pulse evolves.
+ * flux-* scenarios run on the WasmBridgeProxy worker, not the main-thread WASM
+ * bridge. The always-on conservation panel must sample the active owner or it
+ * sits at t=0 and its energy deltas look frozen while the visible flux pulse
+ * evolves.
  */
 import { test, expect } from '@playwright/test';
 import { gotoAndReady } from './_helpers.js';

@@ -250,7 +250,7 @@ test.describe('perf baseline', () => {
                 if (!b) return -1;
                 if (typeof b.currentTick === 'function') return b.currentTick();
                 if (typeof b._tick === 'number') return b._tick;
-                // Worker-default path: the MockBridgeProxy self-ticks off-thread and
+                // Worker-default path: the WasmBridgeProxy self-ticks off-thread and
                 // exposes the tick only via diagnostics (no currentTick()/_tick here).
                 const t = b.capabilities?.scale0?.getScale0Diagnostics?.()?.tick
                     ?? b.getDiagnostics?.()?.tick;
