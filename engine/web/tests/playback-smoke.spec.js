@@ -32,7 +32,7 @@ test.describe('Playback timeline smoke', () => {
             speedNudges:  document.querySelectorAll('[data-speed-nudge]').length,
             speedInput:   !!document.getElementById('ticks-per-frame'),
             speedDisplay: !!document.getElementById('tpf-display'),
-            timeBadge:    document.querySelector('.play-bar-time')?.textContent ?? '',
+            timeBadge:    !!document.querySelector('.play-bar-time'),
             labelCount:   document.querySelectorAll('.play-bar .tb-btn-label').length,
         }));
         expect(state.globalExists).toBe(true);
@@ -41,7 +41,7 @@ test.describe('Playback timeline smoke', () => {
         expect(state.speedNudges).toBe(2);
         expect(state.speedInput).toBe(true);
         expect(state.speedDisplay).toBe(true);
-        expect(state.timeBadge).toMatch(/^T /);
+        expect(state.timeBadge).toBe(false);
         expect(state.labelCount).toBe(0);
     });
 
@@ -131,7 +131,5 @@ test.describe('Playback timeline smoke', () => {
         await page.locator('.play-bar-settings').click();
         await page.locator('[data-step-by="10"]').click();
         await expect.poll(() => activeScale0Tick(page), { timeout: 5_000 }).toBeGreaterThanOrEqual(afterMainStep + 10);
-
-        await expect(page.locator('.play-bar-time')).toContainText(/^T /);
     });
 });

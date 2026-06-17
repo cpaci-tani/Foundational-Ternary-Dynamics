@@ -1,0 +1,190 @@
+/* Shared viewport overlay panel — scales 1–5 (Scale 0 uses .s0-overlay-panel) */
+
+.scale-overlay-panel {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    max-width: min(280px, calc(100vw - 24px));
+    padding: 0;
+    background: var(--bg-surface);
+    backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--tabs-shadow, 0 4px 24px rgba(0, 0, 0, 0.25));
+    overflow: hidden;
+}
+
+.scale-overlay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px 6px 10px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.scale-overlay-title {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    line-height: 1.2;
+}
+
+.scale-overlay-collapse-slot {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.scale-overlay-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 10px;
+    max-height: min(62vh, calc(100vh - 140px));
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.scale-overlay-footnote {
+    margin: 0 0 4px;
+    padding: 0 0 6px;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    line-height: 1.35;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.scale-overlay-section {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.scale-overlay-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.scale-overlay-section-label {
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+}
+
+.scale-overlay-section-hint {
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.25;
+    margin-top: -2px;
+}
+
+.scale-overlay-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+}
+
+.scale-overlay-row-bonds {
+    margin-top: 2px;
+}
+
+.scale-overlay-inline-label {
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    margin-right: 2px;
+}
+
+.scale-overlay-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.scale-overlay-check input {
+    margin: 0;
+    accent-color: var(--accent, #46c6ff);
+}
+
+.scale-overlay-select {
+    font-size: var(--fs-xs);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm, 4px);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated, rgba(0, 0, 0, 0.25));
+    color: var(--text-primary);
+    max-width: 100%;
+}
+
+.scale-overlay-panel .view-toggle.field-toggle,
+.scale-overlay-panel .view-toggle.dynamics-toggle {
+    font-size: var(--fs-xs);
+    padding: 4px 8px;
+    min-height: 28px;
+}
+
+.scale-overlay-row-force .ae-force-btn,
+.scale-overlay-row-force .pe-force-btn {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 72px;
+    justify-content: flex-start;
+}
+
+.scale-overlay-legend {
+    border-top: 1px solid var(--border);
+    padding: 8px 10px;
+    max-height: min(220px, 32vh);
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0;
+}
+
+.scale-overlay-legend:empty {
+    display: none;
+    padding: 0;
+    border-top: none;
+}
+
+.scale-overlay-panel.is-collapsed .scale-overlay-body,
+.scale-overlay-panel.is-collapsed .scale-overlay-legend {
+    display: none !important;
+}
+
+.scale-overlay-panel.is-collapsed .scale-overlay-collapse-icon {
+    transform: rotate(180deg);
+}
+
+.scale4-overlay-status {
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+@media (max-width: 767px) {
+    .scale-overlay-panel {
+        max-width: min(260px, calc(100vw - 16px));
+    }
+
+    .scale-overlay-panel .view-toggle,
+    .scale-overlay-check {
+        min-height: var(--tap-min, 44px);
+    }
+}

@@ -14,7 +14,7 @@ export const PANEL_REGISTRY = Object.freeze([
     { id: 'inspector',        label: 'Inspector',       icon: '\u25CE',        scales: ['0', '1', '2', '3', '4', '5'] },
     { id: 'planetary',        label: 'System Explorer', icon: '\u2641',        scales: ['4'] },
     { id: 'zoo',              label: 'Particle Zoo',    icon: '\u229B',        scales: ['1'] },
-    { id: 'physics',          label: 'Physics',         icon: '\u03A8',        scales: ['1', '2', '3'] },
+    { id: 'physics',          label: 'Physics',         icon: '\u03A8',        scales: ['2', '3'] },
     { id: 'scene',            label: 'Scene',           icon: '\u{1F3AC}',     scales: ['0', '1', '2', '3'] },
     { id: 'flux-slice',       label: 'Flux Slice',      icon: '▦',        scales: ['0'] },
     { id: 'wave-lab',         label: 'Wave Lab',        icon: '∿',        scales: ['0'] },
@@ -25,8 +25,6 @@ export const PANEL_REGISTRY = Object.freeze([
     { id: 'time',             label: 'Time',            icon: '⏱',        scales: ['0'] },
     { id: 'thermo',           label: 'Thermo',          icon: '🌡',       scales: ['0'] },
     { id: 'cosmic-info',      label: 'Cosmic',          icon: '\u2740',        scales: ['5'] },
-    { id: 'meta-info',        label: 'Meta',            icon: '\u29BF',        scales: ['12'] },
-    { id: 'verification-lab', label: 'Verify',          icon: '\u2713',        scales: ['0', '1', '2', '3'] },
 ]);
 
 export function getPanelRegistry() {

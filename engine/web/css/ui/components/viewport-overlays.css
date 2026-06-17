@@ -98,7 +98,24 @@
     transition: transform var(--dur-base, 180ms) var(--ease-out, ease);
 }
 
-/* Collapsed state for non-s0 overlays — hide everything except the button */
+/* Collapsed state for scale 1–5 overlay panels */
+.scale-overlay-panel.is-collapsed .scale-overlay-body,
+.scale-overlay-panel.is-collapsed .scale-overlay-legend {
+    display: none !important;
+}
+.scale-overlay-panel.is-collapsed .viewport-overlay-collapse-icon {
+    transform: rotate(180deg);
+}
+
+/* Legacy: non-s0 overlays without the scale-overlay-panel shell */
+.viewport-overlay-panel:not(.scale-overlay-panel):not(.s0-overlay-panel).is-collapsed > :not(.viewport-overlay-collapse) {
+    display: none !important;
+}
+.viewport-overlay-panel:not(.scale-overlay-panel):not(.s0-overlay-panel).is-collapsed .viewport-overlay-collapse-icon {
+    transform: rotate(180deg);
+}
+
+/* Collapsed state for legacy #viewport-overlay id (Scale 0 uses .s0-overlay-panel rules) */
 #viewport-overlay:not(.s0-overlay-panel).is-collapsed > :not(.viewport-overlay-collapse) {
     display: none !important;
 }

@@ -9,8 +9,7 @@
 
 import { getScale0OverlayTemplate } from '../../../scales/scale0/ui/overlays/template.js';
 import { getScale1OverlayTemplate } from '../../../scales/scale1/ui/overlays/template.js';
-import { getScale2OverlayTemplate, getScale2LegendTemplate } from '../../../scales/scale2/ui/overlays/template.js';
-import { getScale3OverlayTemplate, getScale3LegendTemplate } from '../../../scales/scale3/ui/overlays/template.js';
+import { getScale2OverlayTemplate } from '../../../scales/scale2/ui/overlays/template.js';
 import { getScale4OverlayTemplate } from '../../../scales/scale4/ui/overlays/template.js';
 import { getScale5OverlayTemplate } from '../../../scales/scale5/ui/overlays/template.js';
 
@@ -34,16 +33,7 @@ export class ViewportOverlaysComponent {
     const scale2 = getScale2OverlayTemplate();
     append(scale2);
     this.overlays.set('scale2', scale2);
-    const legend2 = getScale2LegendTemplate();
-    this._legends.push(legend2);
-    this.viewport.appendChild(legend2);
-
-    const scale3 = getScale3OverlayTemplate();
-    append(scale3);
-    this.overlays.set('scale3', scale3);
-    const legend3 = getScale3LegendTemplate();
-    this._legends.push(legend3);
-    this.viewport.appendChild(legend3);
+    this.overlays.set('scale3', scale2);
 
     this.overlays.set('scale4', append(getScale4OverlayTemplate()));
     this.overlays.set('scale5', append(getScale5OverlayTemplate()));
@@ -61,8 +51,10 @@ export class ViewportOverlaysComponent {
    * in localStorage (key: ftd.overlay.<scaleKey>.collapsed).
    */
   _wireCollapsibles() {
+    const wired = new Set();
     for (const [scaleKey, el] of this.overlays) {
-      if (!el) continue;
+      if (!el || el.hidden || wired.has(el)) continue;
+      wired.add(el);
       const lsKey = `ftd.overlay.${scaleKey}.collapsed`;
       const isS0 = el.classList.contains('s0-overlay-panel');
       let btn;
@@ -70,7 +62,6 @@ export class ViewportOverlaysComponent {
       if (isS0) {
         btn = el.querySelector('.s0-overlay-collapse');
       } else {
-        // Inject a generic collapse button as the first child of the overlay.
         btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'viewport-overlay-collapse';
@@ -78,7 +69,9 @@ export class ViewportOverlaysComponent {
         btn.setAttribute('aria-expanded', 'true');
         btn.title = 'Collapse overlay';
         btn.innerHTML = '<span class="viewport-overlay-collapse-icon" aria-hidden="true">&#9652;</span>';
-        el.prepend(btn);
+        const slot = el.querySelector('.scale-overlay-collapse-slot');
+        if (slot) slot.appendChild(btn);
+        else el.prepend(btn);
       }
       if (!btn) continue;
 

@@ -1,26 +1,30 @@
-/* Element Legend (Scale 2 — Atoms) — migrated from layout.css */
+/* Element legend inside scale overlay panels (scales 2–3) */
 
-.ae-legend {
-    position: absolute;
-    top: calc(48px * var(--ui-scale) + 12px);
-    left: 12px;
-    z-index: var(--z-status);
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    backdrop-filter: blur(8px);
-    padding: 8px 10px;
-    min-width: 90px;
+.scale-overlay-panel .ae-legend,
+.scale-overlay-legend.ae-legend {
+    position: static;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
     font-size: var(--fs-sm);
     color: var(--text-secondary);
     pointer-events: none;
-    /* The legend grows with the active element set; cap it to the viewport
-       so a long list scrolls inside the panel instead of running off-screen
-       or past the bottom edge. */
-    max-width: min(260px, calc(100vw - 24px));
-    max-height: calc(100vh - 96px);
-    overflow-y: auto;
-    overflow-x: hidden;
+}
+
+.scale-overlay-panel .ae-legend:empty,
+.scale-overlay-legend.ae-legend:empty {
+    display: none;
+}
+
+.scale-overlay-panel.is-collapsed .scale-overlay-legend {
+    display: none !important;
 }
 
 .ae-legend-item {
@@ -64,7 +68,6 @@
     padding: 2px 0 1px;
 }
 
-/* Proton/neutron/orbital swatches for the nuclear legend mode */
 .ae-legend-swatch-proton   { background: #ff4d33; }
 .ae-legend-swatch-neutron  { background: #4d80e6; }
 .ae-legend-swatch-orb-s    { background: #66bfff; }
@@ -72,13 +75,18 @@
 .ae-legend-swatch-orb-d    { background: #ffb333; }
 .ae-legend-swatch-orb-f    { background: #d94db3; }
 
-/* ── Responsive: compact phones ─────────────────────────────────────────── */
-/* On phones the toolbar eats more vertical space, so tighten the legend cap
-   and keep it clear of the right edge. Internal scroll keeps long lists
-   reachable. Desktop is untouched. */
-@media (max-width: 767px) {
-    .ae-legend {
-        max-width: min(200px, calc(100vw - 24px));
-        max-height: calc(100vh - 140px);
-    }
+.ae-legend-swatch-force-ionic { background: #ff4444; }
+.ae-legend-swatch-force-vdw   { background: #44ff44; }
+.ae-legend-swatch-force-bond  { background: #ff8844; }
+.ae-legend-swatch-force-net   { background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.35); }
+.ae-legend-swatch-velocity-ramp { background: linear-gradient(90deg, #39e639, #ffff66, #ff6633, #ffffff); }
+.ae-legend-swatch-dipole      { background: #66ccff; }
+.ae-legend-swatch-hbond       { background: repeating-linear-gradient(90deg, #aaaaff 0 2px, transparent 2px 4px); }
+
+.ae-legend-note {
+    margin: 2px 0 0;
+    padding: 0;
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.3;
 }

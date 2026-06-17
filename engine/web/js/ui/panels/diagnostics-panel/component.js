@@ -39,10 +39,8 @@ export class DiagnosticsPanelComponent {
             }
             this.el.insertBefore(scale1Root, scale0Root.nextSibling);
 
-            // Scales 2 + 3 share the AtomEngine, so ONE descriptor root serves
-            // both — `.scale-ae` is shown when data-active-scale is 2 or 3
-            // (css/scale-visibility.css). The legacy AE stat-card block stays
-            // below for per-element nuclear/electron-binding drill-down.
+            // Scales 2 + 3 share the AtomEngine descriptor table. Supplemental
+            // nuclear/binding cards live in a collapsible details block below.
             const aeRoot = document.createElement('div');
             aeRoot.className = 'scale-ae diag-ae-root';
             for (const section of scale2Sections) {

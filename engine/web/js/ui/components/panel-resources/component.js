@@ -1,15 +1,11 @@
 import {
     getCosmicInfoPanelTemplate,
     getInspectorPanelTemplate,
-    getMetaInfoPanelTemplate,
     getPhysicsPanelTemplate,
     getPlanetaryPanelTemplate,
     getScaleControlsBlocksTemplate,
     getZooPanelTemplate,
 } from './template.js';
-// Quantum Lab replaced by the Verify evidence-scoreboard panel.
-// See docs/SPEC_VERIFICATION_LAB.md.
-import { getVerifyPanelTemplate as getVerificationLabPanelTemplate } from '../../../verify-panel/template.js';
 import { getDiagnosticsPanelTemplate } from './diagnostics-template.js';
 
 function htmlToElement(markup) {
@@ -51,11 +47,8 @@ export function ensurePanelResources(panelArea) {
     ensurePanel(panelArea, 'inspector', getInspectorPanelTemplate(), 'physics');
     ensurePanel(panelArea, 'planetary', getPlanetaryPanelTemplate(), 'reference frame context');
     ensurePanel(panelArea, 'physics', getPhysicsPanelTemplate(), 'planetary');
-    ensurePanel(panelArea, 'cosmic-info', getCosmicInfoPanelTemplate(), 'meta-info');
-    // Old 'panel-quantum-lab' replaced by 'panel-verification-lab'.
-    // Remove the old panel if it exists (e.g. cached markup), then mount
-    // the new one at the end of the panel area.
+    ensurePanel(panelArea, 'cosmic-info', getCosmicInfoPanelTemplate());
     removePanel(panelArea, 'quantum-lab');
-    ensurePanel(panelArea, 'meta-info', getMetaInfoPanelTemplate(), 'verification-lab');
-    ensurePanel(panelArea, 'verification-lab', getVerificationLabPanelTemplate());
+    removePanel(panelArea, 'verification-lab');
+    removePanel(panelArea, 'meta-info');
 }

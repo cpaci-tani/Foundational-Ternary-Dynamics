@@ -1,20 +1,31 @@
 /**
- * Scale 4 Viewport Overlay — Planetary sandbox
+ * Scale 4 Viewport Overlay — planetary visualization controls
  */
 
+import { createScaleOverlayPanel, overlayRow, overlaySection } from '../../../../ui/components/viewport-overlays/panel-shell.js';
+
 export function getScale4OverlayTemplate() {
-  const container = document.createElement('div');
-  container.id = 'cs-viewport-overlay';
-  container.className = 'scale4-only viewport-overlay-panel';
-  container.style.alignItems = 'center';
-  // Status text is set dynamically by the Scale-4 controller to reflect the
-  // active gravity mode (decorative vs physical). The default copy below is
-  // mode-neutral and deliberately avoids asserting AU/yr timing fidelity,
-  // which only holds in 'physical' mode (P0-1).
-  container.innerHTML = `
-    <span class="scale4-overlay-status" id="planetary-overlay-status">
-      Orbital mechanics demo
-    </span>
-  `;
-  return container;
+  const bodyHtml = overlaySection(
+    'Orbital view',
+    'Decorative vs physical gravity is set in the toolbar',
+    `
+    <p class="scale4-overlay-status" id="planetary-overlay-status">Orbital mechanics demo</p>
+    ${overlayRow('', `
+      <label class="scale-overlay-check" title="Draw orbital path traces for each body">
+        <input type="checkbox" id="planetary-opt-orbits" checked> Orbital traces
+      </label>
+      <label class="scale-overlay-check" title="Per-body rotation axis helpers">
+        <input type="checkbox" id="planetary-opt-axes"> Rotation axes
+      </label>
+    `)}
+    `,
+  );
+
+  return createScaleOverlayPanel({
+    id: 'cs-viewport-overlay',
+    scaleClass: 'scale4-only',
+    title: 'Planetary overlays',
+    footnote: 'N-body demo — timing fidelity depends on gravity mode',
+    bodyHtml,
+  });
 }
