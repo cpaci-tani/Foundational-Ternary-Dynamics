@@ -39,6 +39,7 @@ export class MockBridgeProxy {
         this._toggles = {};
         this._boundaryShape = 'cube';
         this._reflective = false;
+        this._fluxBoundaryMode = 2;   // 0=Periodic 1=Reflective 2=Dispersal
         this._lastDiag = null;
         this._lastParts = null;
         this._lastParticleList = null;   // worker-sourced particle LIST (≠ render frame)
@@ -125,6 +126,7 @@ export class MockBridgeProxy {
         caps.setToggle = (k, v) => { this._toggles[k] = v; this._cmd('setToggle', k, v); };
         caps.setBoundaryShape = (s) => { this._boundaryShape = s; this._cmd('setBoundaryShape', s); };
         caps.setReflectiveBoundary = (on) => { this._reflective = on; this._cmd('setReflectiveBoundary', on); };
+        caps.setFluxBoundaryMode = (mode) => { this._fluxBoundaryMode = mode; this._cmd('setFluxBoundaryMode', mode); };
         caps.getScale0Diagnostics = () => this._lastDiag ?? (this._shadow.getDiagnostics ? this._shadow.getDiagnostics() : null);
         caps.getScale0ParticleFrame = () => this._lastParts ?? EMPTY_PARTS();
         // Energy audit + Lagrangian come from the worker (the shadow never ticks,
@@ -142,6 +144,7 @@ export class MockBridgeProxy {
         this._worker.postMessage({
             type: 'create', N: this.latticeSize, scenarioId: this._scenarioId,
             toggles: this._toggles, boundaryShape: this._boundaryShape, reflective: this._reflective,
+            fluxBoundaryMode: this._fluxBoundaryMode,
         });
     }
     setRunning(v) {
@@ -178,6 +181,7 @@ export class MockBridgeProxy {
     setDt(...a) { this._cmd('setDt', ...a); }
     setBoundaryShape(s) { this._boundaryShape = s; this._cmd('setBoundaryShape', s); }
     setReflectiveBoundary(on) { this._reflective = on; this._cmd('setReflectiveBoundary', on); }
+    setFluxBoundaryMode(mode) { this._fluxBoundaryMode = mode; this._cmd('setFluxBoundaryMode', mode); }
 
     // ── Reads delegated to the shadow (some code calls these on the bridge) ───
     getFluxVolume() { return this._ready ? this._shadow.getFluxVolume() : new Float64Array(0); }
