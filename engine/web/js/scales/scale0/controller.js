@@ -25,7 +25,6 @@ import {
     resetScale0Scenario,
     resetScale0VisualState,
     resizeScale0Lattice,
-    shouldUseFluxMock,
     stepScale0,
 } from './runtime/scenario-loader.js';
 import { bindScale0UI, handleScale0ShortcutKey } from './ui/bindings.js';
@@ -308,6 +307,5 @@ export function handleShortcutKey(key) {
 
 export const animateLattice = animate;
 export const resizeLattice = resize;
-export { shouldUseFluxMock };
 
 // managed via BaseLifecycleController
