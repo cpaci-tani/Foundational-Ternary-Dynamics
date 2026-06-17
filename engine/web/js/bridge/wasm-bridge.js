@@ -653,7 +653,8 @@ export class WasmBridge {
     // 0 = Periodic, 1 = Reflective, 2 = Dispersal
     setFluxBoundaryMode(mode) {
         this._fluxBoundaryMode = mode;
-        if (this._bridge?.setFluxBoundary) this._bridge.setFluxBoundary(mode);
+        if (this._module && this._bridge && typeof this._module.setFluxBoundary === 'function')
+            this._module.setFluxBoundary(this._bridge, mode);
         if (this._aeFallback?.setFluxBoundaryMode) this._aeFallback.setFluxBoundaryMode(mode);
     }
 
