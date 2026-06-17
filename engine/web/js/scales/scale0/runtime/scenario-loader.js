@@ -354,8 +354,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     let useFluxMock = false;
     let fluxMock = null;
     if (wasmWorkerEligible(scenario.id, ctx.bridge)) {
-        // Off-thread WASM engine (Phase 1): host the real C++ physics in a Web
-        // Worker. boundary setters are no-ops on the WASM engine (not bound).
+        // Off-thread WASM engine (Phase 1): host the real C++ physics in a Web Worker.
         fluxMock = new WasmBridgeProxy(latticeSize);
         useFluxMock = true;
     }
@@ -372,11 +371,18 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     ctx.fluxMock = fluxMock;
 
     ctx.resetAllVisualState();
-    applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id);
 
     const activeBridge = (useFluxMock && fluxMock) ? fluxMock : ctx.bridge;
     const harness = getPhysicsHarness(activeBridge);
     scenario.load(harness, params);
+
+    // applyAuxiliaryDefaults runs AFTER scenario.load so that the flux boundary
+    // mode command isn't discarded. On the worker path, scenario.load calls
+    // setupScenario which sends { type:'create' } to the worker AND clears
+    // _pendingCommands. Any command queued before that call is wiped before the
+    // worker's 'ready' reply can replay it. By running here, the setFluxBoundary
+    // command lands in _pendingCommands after the clear and is replayed correctly.
+    applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id);
 
     // Gravity/wave family (SCALE0_ABSORBING_SCENARIOS): set LAST, after
     // scenario.load (which resets the engine toggles under the dual-bridge
