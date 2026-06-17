@@ -584,6 +584,18 @@ void RenderBridge::tick() {
   // phase_read so the diagonal KG term can read V(r) on the same tick. Forces
   // are validation-conflicted with this toggle, so this pre-read solve is the
   // only Coulomb solve in the v1 diagnostic phase order.
+  // EW phase-transition background sweep: sinusoidal uniform +x flux drive.
+  // D(tick) = (sin(tick_ * 0.01) + 1) / 2 * 0.05, advancing 0.01 rad/tick.
+  // Runs before phase_read so the injected flux is processed by the wave
+  // equation in the same cycle (matches the JS setInterval(16ms) rate at 60fps).
+  if (toggles.ew_background_sweep) {
+      const double D = (std::sin(tick_ * 0.01) + 1.0) / 2.0 * 0.05;
+      auto& vox = voxels();
+      const int L = lattice().size();
+      for (int z = 0; z < L; ++z) for (int y = 0; y < L; ++y) for (int x = 0; x < L; ++x)
+          vox[lattice().index(x, y, z)].flux.x += D;
+  }
+
   if (toggles.db_clock_coulomb)
     solve_coulomb_poisson();
 
