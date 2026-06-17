@@ -13,7 +13,7 @@
  */
 
 import { debugLog } from './core/log.js';
-import { MockBridge } from './bridge/mock-bridge.js';
+import { WasmBridge } from './bridge/wasm-bridge.js';
 import { K_B } from './constants.js';
 
 const EMPTY_FIELD_SAMPLE = Object.freeze({
@@ -415,25 +415,17 @@ export class WebSocketBridge {
         this._ensureFallback().createEntangledPair(x, y, z, fx, fy, fz);
     }
 
-    // MockBridge private method/array delegation for full scenario-loading support
-    get _particles() { return this._ensureFallback()._particles; }
-    set _particles(v) { this._ensureFallback()._particles = v; }
-
-    _initFluxGrid() { this._ensureFallback()._initFluxGrid(); }
-
     _injectFlux(x, y, z, fx, fy, fz) {
         this._sendAndForget({ cmd: 'inject_flux_add', x, y, z, fx, fy, fz });
-        this._ensureFallback()._injectFlux(x, y, z, fx, fy, fz);
     }
 
     _injectWaveVel(x, y, z, wx, wy, wz) {
         this._sendAndForget({ cmd: 'inject_wave_vel_add', x, y, z, wx, wy, wz });
-        this._ensureFallback()._injectWaveVel(x, y, z, wx, wy, wz);
     }
 
     _ensureFallback() {
         if (!this._fallback) {
-            this._fallback = new MockBridge(this.latticeSize);
+            this._fallback = new WasmBridge();
         }
         return this._fallback;
     }
