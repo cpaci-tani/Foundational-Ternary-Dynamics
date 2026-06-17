@@ -124,7 +124,8 @@ function loop() {
 
 function applyInit(s0, m) {
     if (m.boundaryShape && s0.setBoundaryShape) s0.setBoundaryShape(m.boundaryShape);
-    if (typeof m.reflective === 'boolean' && s0.setReflectiveBoundary) s0.setReflectiveBoundary(m.reflective);
+    if (typeof m.fluxBoundaryMode === 'number' && s0.setFluxBoundaryMode) s0.setFluxBoundaryMode(m.fluxBoundaryMode);
+    else if (typeof m.reflective === 'boolean' && s0.setReflectiveBoundary) s0.setReflectiveBoundary(m.reflective);
     s0.setupScenario(scenarioId);                     // usually allocates the SAB field
     // A scenario that injects NO flux (only particles — e.g. flux-annihilation,
     // whose flux kicks all fall below the injection threshold) never triggers
