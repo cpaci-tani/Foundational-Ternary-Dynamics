@@ -6,6 +6,7 @@
 import { getScale0State, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { WaveInfoComponent } from './wave-lab/wave-info.js';
+import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 
 const PANEL_ID = 'wave-lab-panel';
 const UPDATE_INTERVAL_MS = 250;
@@ -46,6 +47,7 @@ export function mountWaveLabPanel(host, getBridge) {
     waveInfoComp.mount(bodyEl);
 
     function update() {
+        if (!isPanelLive(host)) return;
         const bridge = getBridge?.();
         if (!bridge) return;
         const state = getScale0State?.() || {};

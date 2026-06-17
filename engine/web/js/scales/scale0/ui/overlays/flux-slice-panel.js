@@ -36,6 +36,8 @@ import {
     rampCharge,
 } from '../../../../viewport/color-ramps.js';
 import { getFieldStateSnapshot, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
+import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 
 const DEFAULT_CANVAS_PX = 220;
 const DENSE_CANVAS_PX = 160; // shrink when >2 active rows are visible
@@ -517,28 +519,24 @@ export class FluxSlicePanel {
     }
 
     _startSelfDrive() {
-        if (this._rafId !== null) return;
-        if (typeof requestAnimationFrame !== 'function') return;
-        const loop = (now) => {
-            // Stop loop if the panel was hidden out from under us.
-            if (!this.visible) { this._rafId = null; return; }
-            // Run our update — internal updateEvery throttle still applies,
-            // and a no-op fast-out fires when the panel is hidden anyway.
-            try { this.update(); }
-            catch (e) {
-                console.warn('[flux-slice-panel] self-drive update failed:', e);
+        if (this._sub) return;
+        this._sub = rafCoordinator.subscribe('flux-slice-panel', {
+            hz: 60,
+            cb: () => {
+                if (!this.visible) { this._stopSelfDrive(); return; }
+                try { this.update(); }
+                catch (e) {
+                    console.warn('[flux-slice-panel] self-drive update failed:', e);
+                }
             }
-            this._lastSelfTickMs = now || performance.now();
-            this._rafId = requestAnimationFrame(loop);
-        };
-        this._rafId = requestAnimationFrame(loop);
+        });
     }
 
     _stopSelfDrive() {
-        if (this._rafId !== null && typeof cancelAnimationFrame === 'function') {
-            cancelAnimationFrame(this._rafId);
+        if (this._sub) {
+            this._sub.unsubscribe();
+            this._sub = null;
         }
-        this._rafId = null;
     }
 
     toggle() { this.setVisible(!this.visible); }
@@ -628,6 +626,7 @@ export class FluxSlicePanel {
     // ── Per-frame update ──────────────────────────────────────────────
 
     update() {
+        if (!isPanelLive(this._panel)) return;
         if (!this.visible || !this._panel) return;
         // Defensive: if the self-drive loop isn't running but we're visible,
         // start it. Covers cases where the panel was set visible by a path

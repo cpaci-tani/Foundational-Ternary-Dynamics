@@ -44,7 +44,7 @@ export class MockBridgeProxy {
         this._lastParticleList = null;   // worker-sourced particle LIST (≠ render frame)
         this._ctrl = null;
         this._ready = false;
-        this._running = true;   // worker starts running on create; deduped in setRunning
+        this._running = null;   // worker starts paused on create; deduped in setRunning
 
         // Shadow: a MockBridge used ONLY for reads. Its buffers are swapped for
         // SAB views on 'ready'; it never ticks (so _fluxDirty stays false and
@@ -101,6 +101,10 @@ export class MockBridgeProxy {
             if (m.particleList) this._lastParticleList = m.particleList;
             if (m.audit) this._lastAudit = m.audit;
             if (m.lag) this._lastLagrangian = m.lag;
+            
+            if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
+                window.__ftdCtx.onBridgePostFrame();
+            }
         } else if (m.type === 'error') {
             console.error('[Scale0 worker]', m.where, m.msg);
         }

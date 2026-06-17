@@ -128,6 +128,17 @@ export function bindUI(ctx) {
     if (typeof window !== 'undefined') window.__ftdCtx = ctx;
     appRegistry.register('scale0Ctx', ctx);
 
+    // Provide a callback for the bridge worker's asynchronous 'frame' signal.
+    // When the user switches scenarios or toggles an overlay while the simulation
+    // is PAUSED, the worker calculates the new state in the background. Without this,
+    // the UI draws a blank frame and stays blank until unpaused. This forces a
+    // repaint *only* when paused, so it doesn't preempt rendering during playback.
+    ctx.onBridgePostFrame = () => {
+        if (!ctx.running) {
+            setLatticeNeedsUpload();
+        }
+    };
+
     // Ensure the play bar is mounted (idempotent; may have been
     // pre-mounted by mountScale0PlaybackUI() before wireToolbar).
     mountScale0PlaybackUI();
