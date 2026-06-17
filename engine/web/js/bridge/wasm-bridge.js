@@ -32,12 +32,8 @@
 import { K_B } from '../constants.js';
 import { debugLog } from '../core/log.js';
 import { createParticleEngine } from './mock-particle-engine.js';
-// AtomEngine (Scale 2/3) runs through the MockBridge JS implementation while
-// the WASM AtomEngine's Planck-unit conversion layer is unbuilt (see _aeHasWasm).
-// _ensureAEFallback() instantiates one — the import was lost in the Phase-2b
-// bridge split, making every AE call in WASM mode throw "MockBridge is not
-// defined" (audit P1-2 crash-portion; Scale 2/3 were broken in the default mode).
-import { MockBridge } from './mock-bridge.js';
+import { createAtomEngine } from './mock-atom-engine.js';
+import { reflectIntoBoundary } from './boundary.js';
 
 // ── WASM Bridge ────────────────────────────────────────────────────
 let _wasmLoadPromise = null; // singleton to prevent duplicate script injection
@@ -219,16 +215,12 @@ export class WasmBridge {
             // bound to the OLD RenderBridge; once we destroy the old
             // bridge they're invalid. Drop them so the next access
             // path re-acquires fresh handles via the new RenderBridge.
-            // Same logic for the JS-side _aeFallback (a MockBridge)
-            // and the lazy-attached physics harness.
+            // Same logic for the JS-side AE engine stub and the lazy-attached physics harness.
             if (this._pe) { this._pe = null; }
             if (this._ae) { try { this._ae.delete?.(); } catch {} this._ae = null; }
             this._lastScale0Audit = null;
             this._lastScale0AuditTick = -1;
-            if (this._aeFallback?.dispose) {
-                try { this._aeFallback.dispose(); } catch {}
-                this._aeFallback = null;
-            }
+            this._aeEngine = null; this._aeStub = null;
             delete this.__ftdPhysicsHarness__;
 
             // Delete the old bridge BEFORE allocating the new one so peak
@@ -268,10 +260,7 @@ export class WasmBridge {
         if (this._ae) { try { this._ae.delete?.(); } catch {} this._ae = null; }
         this._lastScale0Audit = null;
         this._lastScale0AuditTick = -1;
-        if (this._aeFallback?.dispose) {
-            try { this._aeFallback.dispose(); } catch {}
-            this._aeFallback = null;
-        }
+        this._aeEngine = null; this._aeStub = null;
         if (this._bridge) {
             try { this._bridge.delete(); } catch {}
             this._bridge = null;
@@ -660,8 +649,7 @@ export class WasmBridge {
     // ── Boundary containment ─────────────────────────────────────────
     setBoundaryShape(shape) {
         this._boundaryShape = shape;
-        // Propagate to AE fallback MockBridge if it exists
-        if (this._aeFallback) this._aeFallback.setBoundaryShape(shape);
+        if (this._aeStub) this._aeStub._boundaryShape = shape;
     }
 
     // 0 = Periodic, 1 = Reflective, 2 = Dispersal
@@ -669,25 +657,34 @@ export class WasmBridge {
         this._fluxBoundaryMode = mode;
         if (this._module && this._bridge && typeof this._module.setFluxBoundary === 'function')
             this._module.setFluxBoundary(this._bridge, mode);
-        if (this._aeFallback?.setFluxBoundaryMode) this._aeFallback.setFluxBoundaryMode(mode);
     }
 
     setReflectiveBoundary(on) {
         // Legacy path: map bool → flux boundary mode
         this.setFluxBoundaryMode(on ? 1 : 2);
-        if (this._aeFallback) this._aeFallback.setReflectiveBoundary(on);
+        if (this._aeStub) this._aeStub._reflectiveBoundary = on;
     }
 
     // ── AtomEngine (Scale 2) WASM ─────────────────────────────────────
-    // Falls back to MockBridge JS implementation when WASM module lacks
-    // AtomEngine (i.e., not yet rebuilt with Emscripten after adding bindings).
+    // Hosts the JS AtomEngine without MockBridge by creating a minimal stub
+    // that satisfies the createAtomEngine(state) contract. Returns the
+    // engine object directly so all ae* call sites work unchanged.
     _ensureAEFallback() {
-        if (!this._aeFallback) {
-            this._aeFallback = new MockBridge(this.latticeSize);
-            // Sync boundary shape
-            if (this._boundaryShape) this._aeFallback.setBoundaryShape(this._boundaryShape);
-        }
-        return this._aeFallback;
+        if (this._aeEngine) return this._aeEngine;
+        const bs = this._boundaryShape || 'cube';
+        const stub = {
+            _boundaryShape: bs,
+            _reflectiveBoundary: false,
+            setBoundaryShape(s) { this._boundaryShape = s; },
+            setFluxBoundaryMode() {},
+            setReflectiveBoundary(on) { this._reflectiveBoundary = on; },
+            _reflectIntoBoundary(p, cx, cy, cz, R) {
+                reflectIntoBoundary(this._boundaryShape, p, cx, cy, cz, R, this._reflectiveBoundary);
+            },
+        };
+        this._aeStub = stub;
+        this._aeEngine = createAtomEngine(stub);
+        return this._aeEngine;
     }
 
     get _aeHasWasm() {
