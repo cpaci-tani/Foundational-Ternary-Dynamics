@@ -4,8 +4,8 @@
  *
  * Loads every registry scenario, ticks the active owner directly, and verifies
  * diagnostics, energy audit, and Lagrangian telemetry stay finite and live.
- * This catches stale-owner regressions where a panel reads the idle WASM bridge
- * while the scenario is actually owned by the JS MockBridge, and stale-baseline
+ * Uses `__ftdPhysicsWorker = false` so all scenarios run on the main-thread
+ * WasmBridge (synchronous tick path, no proxy lag). Catches stale-baseline
  * regressions where WASM diagnostics report the Born-Infeld vacuum baseline
  * instead of the moving physical energy channel.
  */
@@ -90,7 +90,7 @@ test.describe('Scale-0 scenario telemetry contract', () => {
 
                 rows.push({
                     id: scenario.id,
-                    owner: active.st.useFluxMock ? 'mock' : 'wasm',
+                    owner: active.st.useFluxMock ? 'wasm-worker' : 'wasm',
                     live,
                     before,
                     after,
@@ -159,7 +159,7 @@ test.describe('Scale-0 scenario telemetry contract', () => {
                 const a1 = caps.getScale0EnergyAudit();
                 rows.push({
                     id,
-                    owner: st.useFluxMock ? 'mock' : 'wasm',
+                    owner: st.useFluxMock ? 'wasm-worker' : 'wasm',
                     before: { diagE: d0.totalEnergy, auditE: a0.totalEnergy, tick: d0.tick },
                     after: {
                         diagE: d1.totalEnergy,

@@ -56,7 +56,7 @@ async function snapshotPositions(page) {
         const out = [];
         const n = pd?.count ?? 0;
         const px = pd?.positions || pd?.x;
-        // getParticleData on MockBridge returns interleaved Float32Array
+        // getParticleData returns interleaved Float32Array
         // {count, positions: [x0,y0,z0, x1,y1,z1, ...]} or per-axis arrays.
         if (px && px.length >= n * 3 && !pd?.y) {
             for (let i = 0; i < n; i++) {
@@ -68,8 +68,10 @@ async function snapshotPositions(page) {
             }
         }
 
-        // Reconstruct locked array from b.getScale0ParticleList() or b._particles since MockBridge or WasmBridge might not return it in getParticleData()
-        const ps = (typeof b.getScale0ParticleList === 'function' ? b.getScale0ParticleList() : b._particles) || [];
+        // Get particle list via capabilities (direct method or capability path).
+        const ps = (typeof b.getScale0ParticleList === 'function'
+            ? b.getScale0ParticleList()
+            : b.capabilities?.scale0?.getScale0ParticleList?.()) || [];
         console.log('PARTICLE LIST LENGTH:', ps.length);
         const locked = [];
         for (let i = 0; i < ps.length; i++) {
@@ -112,13 +114,12 @@ test.describe('Audit regression — scenario invariants', () => {
 
     // These invariants drive the bridge with a SYNCHRONOUS manual-tick pattern
     // (`b.tick()` then immediately read `b.getEnergyAudit()`), which the async
-    // worker proxy (the default for flux-*) cannot serve — the proxy has no bare
-    // tick() and its audit lags a frame. Force the in-thread MockBridge (the
-    // pattern's original, valid bridge) and pin telemetry to always-collect.
-    // Gating itself is covered by scale0-telemetry-gating.spec.js.
+    // WasmBridgeProxy worker cannot serve — the proxy has no bare tick() and its
+    // audit lags a frame. Force the main-thread WasmBridge and pin telemetry to
+    // always-collect. Gating itself is covered by scale0-telemetry-gating.spec.js.
     test.beforeEach(async ({ page }) => {
         await page.addInitScript(() => {
-            window.__ftdPhysicsWorker = false;       // synchronous in-thread bridge
+            window.__ftdPhysicsWorker = false;       // main-thread WasmBridge (no proxy)
             window.__ftdTelemetryOnDemand = false;   // legacy always-collect (defensive)
         });
     });
@@ -132,13 +133,17 @@ test.describe('Audit regression — scenario invariants', () => {
         const before = await snapshotPositions(page);
         expect(before.count).toBeGreaterThan(0);
 
-        // Log toggles and particles
+        // Log diagnostics for debugging
         await page.evaluate(async () => {
             const { getScale0State } = await import('/js/scales/scale0/state/store.js');
             const state = getScale0State();
             const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
-            console.log('TOGGLES:', JSON.stringify(b._toggles));
-            console.log('PARTICLES BEFORE TICK:', JSON.stringify(b._particles));
+            const diag = b.capabilities?.scale0?.getScale0Diagnostics?.() || {};
+            console.log('DIAGNOSTICS:', JSON.stringify(diag));
+            const ps = (typeof b.getScale0ParticleList === 'function'
+                ? b.getScale0ParticleList()
+                : b.capabilities?.scale0?.getScale0ParticleList?.()) || [];
+            console.log('PARTICLES BEFORE TICK:', JSON.stringify(ps));
         });
 
         await tickN(page, 300);
@@ -146,7 +151,10 @@ test.describe('Audit regression — scenario invariants', () => {
             const { getScale0State } = await import('/js/scales/scale0/state/store.js');
             const state = getScale0State();
             const b = (state.useFluxMock && state.fluxMock) ? state.fluxMock : window._ftdBridge;
-            console.log('PARTICLES AFTER TICK:', JSON.stringify(b._particles));
+            const ps = (typeof b.getScale0ParticleList === 'function'
+                ? b.getScale0ParticleList()
+                : b.capabilities?.scale0?.getScale0ParticleList?.()) || [];
+            console.log('PARTICLES AFTER TICK:', JSON.stringify(ps));
         });
         const after = await snapshotPositions(page);
         expect(after.count).toBe(before.count);
