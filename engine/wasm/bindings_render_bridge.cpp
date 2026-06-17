@@ -335,6 +335,8 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("injectUniformFluxAdd", &inject_uniform_flux_add);
     function("injectWaveVel",      &ftd_inject_wave_vel);
     function("createEntangledPair", &create_entangled_pair);
+    function("clearField",         optional_override([](ftd::RenderBridge& rb){ rb.clearField(); }));
+    function("seedRandomFlux",     optional_override([](ftd::RenderBridge& rb){ rb.seedRandomFlux(); }));
 
     // Time step control
     function("setDt",              &set_dt);

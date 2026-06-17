@@ -336,6 +336,13 @@ public:
     void inject_wavepacket(int cx, int cy, int cz, int8_t state,
                            double sigma = 3.0, double amplitude = K_B);
 
+    // Zero all flux and wave-velocity fields. Mirrors MockBridge.clearField().
+    void clearField();
+
+    // Fill the flux field with spatially uniform random perturbations
+    // of amplitude ~K_B*0.3, matching MockBridge.seedRandomFlux().
+    void seedRandomFlux();
+
     // Discrete operators (public for Lagrangian diagnostics).
     // R6 (2026-04-18): inlined in the header — hot path, called per-voxel per-tick.
     // Bodies live in field_operators.h as free helpers.
