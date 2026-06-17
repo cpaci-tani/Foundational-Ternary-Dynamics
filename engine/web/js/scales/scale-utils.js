@@ -12,6 +12,8 @@
  *   createTickAccumulator()  - Fractional-tick accumulator for sub-1 speed
  *   createStatusBarCache()   - Deduplicating DOM writer for status elements
  *   hideScale0Overlays(vp)   - Hide lattice overlays for non-lattice scales
+ *   syncUniversalGridAxes    - Sync status-bar grid/axes toggles with viewport
+ *   applyScaleGridAxesDefaults - Per-scale default grid/axes visibility
  */
 
 import { SCALE2_TOGGLES } from '../config/toggles.js';
@@ -106,7 +108,46 @@ export function createStatusBarCache() {
     };
 }
 
-// ── hideScale0Overlays ──────────────────────────────────────────────
+// ── Viewport grid / axes ────────────────────────────────────────────
+
+/**
+ * Sync the status-bar View menu grid/axes toggles with viewport state.
+ * Scale 0 couples the grid button to the boundary wireframe; other scales
+ * use the PE-style XZ grid + RGB axis lines.
+ *
+ * @param {object|null|undefined} viewport
+ * @param {boolean} on
+ * @param {{ syncWireframe?: boolean }} [opts]
+ */
+export function syncUniversalGridAxes(viewport, on, opts = {}) {
+    if (!viewport) return;
+    viewport.toggleGrid(on);
+    viewport.toggleAxes(on);
+    if (opts.syncWireframe) viewport.toggleWireframe(on);
+    const gridBtn = document.getElementById('toggle-grid');
+    if (gridBtn) gridBtn.classList.toggle('active', on);
+    const axesBtn = document.getElementById('toggle-axes');
+    if (axesBtn) axesBtn.classList.toggle('active', on);
+}
+
+/**
+ * Apply default grid/axes visibility when entering a scale.
+ * Scale 0 (lattice): on. Scales 1–5: off. Other modes are unchanged here.
+ *
+ * @param {object|null|undefined} viewport
+ * @param {string} mode - engineMode value (lattice, particles, atoms, …)
+ */
+export function applyScaleGridAxesDefaults(viewport, mode) {
+    if (mode === 'lattice') {
+        syncUniversalGridAxes(viewport, true, { syncWireframe: true });
+    } else if (
+        mode === 'particles' || mode === 'atoms' || mode === 'molecules'
+        || mode === 'planetary' || mode === 'cosmic'
+    ) {
+        syncUniversalGridAxes(viewport, false);
+    }
+}
+
 /**
  * Hide the Scale-0 lattice visualization overlays before switching to a
  * non-lattice scale.
@@ -119,16 +160,13 @@ export function createStatusBarCache() {
  * different overlay set (it skips the axes overlay and additionally hides the
  * E/B field lines), so collapsing it here would change its behavior.
  *
- * No-op when `viewport` is falsy, so callers need not null-check first.
- *
  * @param {object|null|undefined} viewport - The active viewport instance.
  */
 export function hideScale0Overlays(viewport) {
     if (!viewport) return;
     viewport.toggleFluxVolume(false);
     viewport.toggleFluxSlice(false);
-    viewport.toggleGrid(false);
-    viewport.toggleAxes(false);
+    syncUniversalGridAxes(viewport, false);
     if (viewport.particles) viewport.particles.visible = false;
 }
 

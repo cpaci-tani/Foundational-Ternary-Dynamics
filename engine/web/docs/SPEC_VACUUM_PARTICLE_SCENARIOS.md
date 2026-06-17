@@ -119,11 +119,11 @@ two families separable in the scenario dropdown and in CI parity.
   A future spec can add an `absorbing_boundary` term_toggle that drains
   flux + wave_vel in an N-voxel-thick boundary shell; vacuum scenarios
   would opt in once available.
-- **Verify button / scoreboard hooks.** The existing Verify panel
-  (`SPEC_VERIFICATION_LAB.md`) already provides the static evidence
-  scoreboard. Atlas scenarios are *live* simulations; they don't post
-  to the scoreboard. If a future verify integration is wanted, that's a
-  separate spec.
+- **Verify button / scoreboard hooks.** The historical Verify panel
+  (`historical/SPEC_VERIFICATION_LAB.md` — removed on all scales) provided
+  the static evidence scoreboard. Atlas scenarios are *live* simulations;
+  they don't post to the scoreboard. If a future verify integration is wanted,
+  that's a separate spec.
 - **Per-particle overlay defaults.** User controls overlays.
 - **Side-by-side comparison view.** Single viewport only.
 - **Quark/gluon scenarios.** These can't exist alone in vacuum

@@ -1,9 +1,13 @@
 /**
  * Scale 2 Controls Component
- * Mounts the Scale 2 (Atom Engine) control card into the controls panel.
+ * Mounts Atom Engine control cards into the controls panel.
  */
 
-import { createAeControlsCard } from './ae-controls.js';
+import {
+  createAeForcesCard,
+  createAeAdvancedCard,
+  createAeIntegratorCard,
+} from './ae-controls.js';
 
 export class Scale2ControlsComponent {
   constructor(panelControlsDiv) {
@@ -13,7 +17,6 @@ export class Scale2ControlsComponent {
   init() {
     if (!this.panel) return this;
 
-    // Find or create the panel grid that holds Scale 2 cards
     let gridContainer = this.panel.querySelector('.panel-grid.panel-grid-3');
     if (!gridContainer) {
       gridContainer = document.createElement('div');
@@ -21,8 +24,9 @@ export class Scale2ControlsComponent {
       this.panel.appendChild(gridContainer);
     }
 
-    // Mount the Atom Engine controls card
-    gridContainer.appendChild(createAeControlsCard());
+    gridContainer.appendChild(createAeForcesCard());
+    gridContainer.appendChild(createAeAdvancedCard());
+    gridContainer.appendChild(createAeIntegratorCard());
 
     return this;
   }

@@ -1,17 +1,14 @@
 /**
- * Scale 2 — Atom Engine Controls Card
- *
- * Factory function that returns the "Atom Engine Controls" card DOM element.
- * Markup extracted from index.html lines 512–608.
+ * Scale 2 — Atom Engine control cards (split by concern).
  */
 
-export function createAeControlsCard() {
+export function createAeForcesCard() {
   const card = document.createElement('div');
   card.className = 'card scale-ae';
   card.innerHTML = `
-    <div class="card-title">Atom Engine Controls</div>
+    <div class="card-title">Interaction Forces</div>
 
-    <div class="combo-section-label">Forces</div>
+    <div class="combo-section-label">Pair potentials</div>
     <div class="toggle-row">
       <input type="checkbox" id="ae-ionic" checked>
       <label for="ae-ionic"
@@ -30,7 +27,7 @@ export function createAeControlsCard() {
         title="Harmonic spring between bonded atoms: F = -k·(r - r_eq)">Bond Springs</label>
     </div>
 
-    <div class="combo-section-label">Dynamics</div>
+    <div class="combo-section-label">Bonding &amp; stability</div>
     <div class="toggle-row">
       <input type="checkbox" id="ae-bonding" checked>
       <label for="ae-bonding"
@@ -47,37 +44,52 @@ export function createAeControlsCard() {
         title="Cap atomic velocities at maximum speed (prevents numerical explosion)">Speed
         Limit</label>
     </div>
+  `;
+  return card;
+}
 
-    <details class="toggle-details">
-      <summary class="ctrl-details-summary">Advanced Forces</summary>
-      <div class="toggle-row">
-        <input type="checkbox" id="ae-hbonds">
-        <label for="ae-hbonds"
-          title="Hydrogen bonds: directional LJ 10-12 between electronegative atoms">H-Bonds</label>
-      </div>
-      <div class="toggle-row">
-        <input type="checkbox" id="ae-dipole">
-        <label for="ae-dipole"
-          title="Dipole-dipole interactions from partial charges">Dipole-Dipole</label>
-      </div>
-      <div class="toggle-row">
-        <input type="checkbox" id="ae-angle">
-        <label for="ae-angle" title="Bond angle strain: VSEPR preferred angles">Angle
-          Strain</label>
-      </div>
-      <div class="toggle-row">
-        <input type="checkbox" id="ae-thermostat">
-        <label for="ae-thermostat"
-          title="Berendsen thermostat for constant temperature MD">Thermostat</label>
-      </div>
-      <div class="toggle-row">
-        <input type="checkbox" id="ae-electronegativity">
-        <label for="ae-electronegativity"
-          title="Electronegativity-driven bond polarity and formation threshold">Electronegativity</label>
-      </div>
-    </details>
+export function createAeAdvancedCard() {
+  const card = document.createElement('div');
+  card.className = 'card scale-ae';
+  card.innerHTML = `
+    <div class="card-title">Phase 3 Forces</div>
+    <p class="panel-resource-muted-copy" style="margin: 0 0 8px 0; font-size: var(--fs-xs);">
+      Directional and ensemble terms — enable per scenario or for custom runs.
+    </p>
+    <div class="toggle-row">
+      <input type="checkbox" id="ae-hbonds">
+      <label for="ae-hbonds"
+        title="Hydrogen bonds: directional LJ 10-12 between electronegative atoms">H-Bonds</label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="ae-dipole">
+      <label for="ae-dipole"
+        title="Dipole-dipole interactions from partial charges">Dipole-Dipole</label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="ae-angle">
+      <label for="ae-angle" title="Bond angle strain: VSEPR preferred angles">Angle
+        Strain</label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="ae-thermostat">
+      <label for="ae-thermostat"
+        title="Berendsen thermostat for constant temperature MD">Thermostat</label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="ae-electronegativity">
+      <label for="ae-electronegativity"
+        title="Electronegativity-driven bond polarity and formation threshold">Electronegativity</label>
+    </div>
+  `;
+  return card;
+}
 
-    <div class="combo-section-label">Parameters</div>
+export function createAeIntegratorCard() {
+  const card = document.createElement('div');
+  card.className = 'card scale-ae';
+  card.innerHTML = `
+    <div class="card-title">Integrator</div>
     <div class="pe-ctrl-row">
       <span class="pe-ctrl-label"
         title="Velocity Verlet integration time step (smaller = more accurate, slower)">Time
@@ -93,7 +105,6 @@ export function createAeControlsCard() {
         value="0.3">
       <span class="pe-ctrl-value" id="ae-soft-value">0.30</span>
     </div>
-
     <div class="ctrl-action-row">
       <button class="ctrl-btn-secondary" id="btn-ae-clear">Clear &amp; Reload</button>
     </div>

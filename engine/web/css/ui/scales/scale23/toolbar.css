@@ -1,6 +1,14 @@
 /* ============================================================
- *  scale23/toolbar.css — Scale 2/3 (Atoms/Molecules) toolbar
+ *  scale23/toolbar.css — Scale 3 mobile fallback toolbar (desktop hidden)
  * ============================================================ */
+
+/* Scale 3 toolbar controls — mobile fallback when viewport overlay is hidden */
+@media (min-width: 768px) {
+    #ae-visual-controls,
+    #ae-force-controls {
+        display: none !important;
+    }
+}
 
 /* Force-type toggle buttons: color-coded by interaction */
 #ae-force-ionic { color: #ff4444; }

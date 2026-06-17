@@ -9,9 +9,9 @@ export function createPeControlsCard() {
   const card = document.createElement('div');
   card.className = 'card scale1-only';
   card.innerHTML = `
-    <div class="card-title">Particle Engine Controls</div>
+    <div class="card-title" title="Controls for the Particle Engine simulation, including pairwise forces, dynamics settings, and integration parameters.">Particle Engine Controls</div>
 
-    <div class="combo-section-label">Forces</div>
+    <div class="combo-section-label" title="Configure pairwise force terms for the particle interactions.">Forces</div>
     <div class="toggle-row">
       <input type="checkbox" id="pe-coulomb" checked>
       <label for="pe-coulomb"
@@ -23,7 +23,7 @@ export function createPeControlsCard() {
         title="Gravity: F = +G_PE * m_i * m_j / r^2 (always attractive). G_PE = 1/(4pi*m_P^2) is the FTD-0131 physical coupling (alpha_G(e,e) = (m_e/m_P)^2 ~ 1.75e-45). Net dynamics are negligible next to Coulomb; read Gravity PE in diagnostics/charts.">Gravity</label>
     </div>
 
-    <div class="combo-section-label">Dynamics</div>
+    <div class="combo-section-label" title="Configure motion-governing rules like velocity damping.">Dynamics</div>
     <div class="toggle-row">
       <input type="checkbox" id="pe-damping">
       <label for="pe-damping"
@@ -83,21 +83,21 @@ export function createPeControlsCard() {
     </details>
     -->
 
-    <div class="combo-section-label">Parameters</div>
+    <div class="combo-section-label" title="Adjust solver precision and numerical properties.">Parameters</div>
     <div class="pe-ctrl-row">
-      <span class="pe-ctrl-label">Time Step</span>
+      <span class="pe-ctrl-label" title="Integration step dt (ticks) for the Velocity-Verlet update. Larger values run faster but can introduce energy drift.">Time Step</span>
       <input type="range" class="pe-slider" id="pe-dt-slider" min="0.1" max="2.0" step="0.1"
-        value="1.0">
+        value="1.0" title="Integration step dt (ticks) for the Velocity-Verlet update. Larger values run faster but can introduce energy drift.">
       <span class="pe-ctrl-value" id="pe-dt-value">1.0</span>
     </div>
     <div class="pe-ctrl-row">
-      <span class="pe-ctrl-label">Softening</span>
+      <span class="pe-ctrl-label" title="Plummer softening length (lu) added in quadrature to pair separations. Prevents infinite singular forces when particles are extremely close.">Softening</span>
       <input type="range" class="pe-slider" id="pe-soft-slider" min="0.01" max="1.0" step="0.01"
-        value="0.10">
+        value="0.10" title="Plummer softening length (lu) added in quadrature to pair separations. Prevents infinite singular forces when particles are extremely close.">
       <span class="pe-ctrl-value" id="pe-soft-value">0.10</span>
     </div>
     <div class="ctrl-action-row">
-      <button class="ctrl-btn-secondary" id="btn-pe-clear">Clear &amp; Reload</button>
+      <button class="ctrl-btn-secondary" id="btn-pe-clear" title="Clear all active particles, reset simulation time, and reload the selected scenario.">Clear &amp; Reload</button>
     </div>
   `;
   return card;

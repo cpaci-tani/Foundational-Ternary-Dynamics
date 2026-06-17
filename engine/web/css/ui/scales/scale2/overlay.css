@@ -1,0 +1,27 @@
+/* Scale 2 atom overlay — AE-specific swatches and force button colors */
+
+.field-swatch-ae-field          { background: linear-gradient(135deg, #4488ff, #ff6644); }
+.field-swatch-ae-force-ionic    { background: #ff4444; }
+.field-swatch-ae-force-vdw      { background: #44ff44; }
+.field-swatch-ae-force-bond     { background: #ff8844; }
+.field-swatch-ae-force-net      { background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.35); }
+.field-swatch-ae-dipole         { background: #66ccff; }
+.field-swatch-ae-hbond          { background: repeating-linear-gradient(90deg, #aaaaff 0 2px, transparent 2px 4px); }
+.field-swatch-ae-velocities     { background: linear-gradient(90deg, #39e639, #ffff66, #ff6633, #ffffff); }
+
+#ae-viewport-overlay #ae-force-ionic { color: #ff6666; }
+#ae-viewport-overlay #ae-force-vdw   { color: #66ff66; }
+#ae-viewport-overlay #ae-force-bond  { color: #ffaa66; }
+#ae-viewport-overlay #ae-force-net   { color: #ffffff; }
+
+/* Nuclear binding row — supplemental to descriptor diagnostics table */
+.ae-nuclear-diag {
+    margin-top: 8px;
+}
+
+.ae-nuclear-diag-summary {
+    cursor: pointer;
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    user-select: none;
+}

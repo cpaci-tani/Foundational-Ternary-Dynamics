@@ -31,7 +31,6 @@ historical provenance, and where new cleanup or architecture notes should land.
 - [`TOGGLE_REGISTRY.md`](TOGGLE_REGISTRY.md) — toggle inventory.
 - [`TELEMETRY_CATALOG_SCALE0.md`](TELEMETRY_CATALOG_SCALE0.md) — Scale-0 telemetry rows/channels.
 - [`REF_DEBUG_GLOBALS.md`](REF_DEBUG_GLOBALS.md) — intentionally exposed debug globals.
-- [`SPEC_VERIFICATION_LAB.md`](SPEC_VERIFICATION_LAB.md) — verification lab surface.
 
 ## UI And Theme References
 
@@ -75,6 +74,7 @@ necessarily active implementation guidance.
 - [`historical/SPEC_AUDIT_COMPLETION.md`](historical/SPEC_AUDIT_COMPLETION.md) — historical audit completion plan.
 - [`historical/SPEC_CSS_REVAMP.md`](historical/SPEC_CSS_REVAMP.md) — completed CSS revamp plan/provenance.
 - [`historical/SPEC_OVERLAY_SEMANTICS.md`](historical/SPEC_OVERLAY_SEMANTICS.md) — older partial overlay semantics doc, superseded by active overlay specs/audits.
+- [`historical/SPEC_VERIFICATION_LAB.md`](historical/SPEC_VERIFICATION_LAB.md) — verification lab surface, superseded by the removal of the Verify panel on all scales.
 
 ## Generated Artifacts Policy
 

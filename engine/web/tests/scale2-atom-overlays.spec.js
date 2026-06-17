@@ -195,4 +195,40 @@ test.describe('Scale 2 atom scenarios and overlays', () => {
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
+
+    test('viewport overlay groups controls by physical term on Scale 2', async ({ page }) => {
+        const errors = attachConsoleWatcher(page);
+        await gotoAndReady(page);
+        await switchMode(page, 'atoms');
+
+        const overlay = await page.evaluate(() => {
+            const panel = document.getElementById('ae-viewport-overlay');
+            const toolbarForces = document.getElementById('ae-force-controls');
+            return {
+                panelPresent: !!panel,
+                sectionCount: panel?.querySelectorAll('.scale-overlay-section').length ?? 0,
+                hasForceDecomp: !!panel?.querySelector('#ae-force-ionic'),
+                hasCloudsInPanel: !!panel?.querySelector('#ae-show-clouds'),
+                cloudsInToolbar: !!document.querySelector('#ae-controls #ae-show-clouds'),
+                toolbarForcesVisible: toolbarForces
+                    ? getComputedStyle(toolbarForces).display !== 'none'
+                    : null,
+                footnote: panel?.querySelector('.scale-overlay-footnote')?.textContent?.trim() ?? '',
+                hasHeader: !!panel?.querySelector('.scale-overlay-header'),
+                title: panel?.querySelector('.scale-overlay-title')?.textContent?.trim() ?? '',
+            };
+        });
+
+        expect(overlay.panelPresent).toBe(true);
+        expect(overlay.sectionCount).toBeGreaterThanOrEqual(5);
+        expect(overlay.hasForceDecomp).toBe(true);
+        expect(overlay.hasCloudsInPanel).toBe(true);
+        expect(overlay.hasHeader).toBe(true);
+        expect(overlay.cloudsInToolbar).toBe(false);
+        expect(overlay.toolbarForcesVisible).toBe(false);
+        expect(overlay.footnote).toContain('sim units');
+        expect(overlay.title).toContain('Atom');
+
+        expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
+    });
 });

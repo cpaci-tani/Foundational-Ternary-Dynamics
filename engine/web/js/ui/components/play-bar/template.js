@@ -3,7 +3,7 @@
  * viewport that hosts the primary playback controls.
  *
  * Layout (left to right):
- *   [play] [step] [reset] | [-] [speed] [+] | [now] | [settings]
+ *   [play] [step] [reset] | [-] [speed] [+] | [settings]
  *
  * The ids below match the original toolbar wiring (`btn-play`,
  * `btn-step`, `btn-reset`, `ticks-per-frame`, `tpf-display`) so app.js
@@ -37,12 +37,6 @@ export function getPlayBarTemplate() {
             </span>
             <button class="play-bar-icon-btn play-bar-speed-nudge" type="button"
                 data-speed-nudge="5" title="Faster" aria-label="Faster">+</button>
-        </div>
-
-        <div class="play-bar-divider" aria-hidden="true"></div>
-
-        <div class="play-bar-section play-bar-now" aria-label="Current tick">
-            <span class="play-bar-time">T 0</span>
         </div>
 
         <div class="play-bar-divider" aria-hidden="true"></div>

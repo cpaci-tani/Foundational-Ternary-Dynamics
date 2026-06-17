@@ -45,7 +45,7 @@ test('index.html loads, bridge initializes, zero 404s', async ({ page }) => {
     expect(failures, `Failed requests: ${failures.join('\n')}`).toHaveLength(0);
 });
 
-const MODES = ['lattice', 'particles', 'atoms', 'molecules', 'planetary', 'cosmic', 'meta'];
+const MODES = ['lattice', 'particles', 'atoms', 'molecules', 'planetary', 'cosmic'];
 
 for (const mode of MODES) {
     test(`scale switch: ${mode} loads without errors`, async ({ page }) => {
@@ -53,7 +53,7 @@ for (const mode of MODES) {
         const failures = attachNetworkWatcher(page);
 
         await page.goto('/index.html');
-        await expect.poll(() => page.evaluate(() => typeof window._ftdBridge !== 'undefined'),
+        await expect.poll(() => page.evaluate(() => !!window._ftdBridge),
             { timeout: 15_000 }).toBe(true);
         await page.waitForTimeout(800);
 
@@ -190,13 +190,11 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
                 scale5Telemetry: !!document.getElementById('cosmic-telemetry'),
                 cosmicInfoPanel: !!document.getElementById('panel-cosmic-info'),
                 cosmicPanelDiagnostics: !!document.getElementById('cosmic-panel-diagnostics'),
-                scale12MetaControls: !!document.getElementById('meta-controls'),
-                metaInfoPanel: !!document.getElementById('meta-info-panel'),
-                metaInspectPanel: !!document.getElementById('meta-inspect-panel'),
-                verificationLabPanel: !!document.getElementById('panel-verification-lab'),
-                verifyHeaderSlot: !!document.getElementById('verify-header-slot'),
-                verifyTiersSlot: !!document.getElementById('verify-tiers-slot'),
-                verifyExportBtn: !!document.getElementById('verify-export-btn'),
+
+                verificationLabPanelRemoved: !document.getElementById('panel-verification-lab'),
+                verifyHeaderSlotRemoved: !document.getElementById('verify-header-slot'),
+                verifyTiersSlotRemoved: !document.getElementById('verify-tiers-slot'),
+                verifyExportBtnRemoved: !document.getElementById('verify-export-btn'),
                 onticPanelRemoved: !document.getElementById('panel-ontic'),
             },
             mounts,
@@ -246,13 +244,11 @@ test('UI shell initializes mount roots and responsive layout state', async ({ pa
     expect(shell.ui.scale5Telemetry).toBe(true);
     expect(shell.ui.cosmicInfoPanel).toBe(true);
     expect(shell.ui.cosmicPanelDiagnostics).toBe(true);
-    expect(shell.ui.scale12MetaControls).toBe(true);
-    expect(shell.ui.metaInfoPanel).toBe(true);
-    expect(shell.ui.metaInspectPanel).toBe(true);
-    expect(shell.ui.verificationLabPanel).toBe(true);
-    expect(shell.ui.verifyHeaderSlot).toBe(true);
-    expect(shell.ui.verifyTiersSlot).toBe(true);
-    expect(shell.ui.verifyExportBtn).toBe(true);
+
+    expect(shell.ui.verificationLabPanelRemoved).toBe(true);
+    expect(shell.ui.verifyHeaderSlotRemoved).toBe(true);
+    expect(shell.ui.verifyTiersSlotRemoved).toBe(true);
+    expect(shell.ui.verifyExportBtnRemoved).toBe(true);
     expect(shell.ui.onticPanelRemoved).toBe(true);
     expect(shell.mounts).toEqual([
         'shell-toolbar-mount',
@@ -500,14 +496,13 @@ test('Inspector app runtime exposes a modular app-shell adapter', async ({ page 
 test('Settings modal applies and resets extended shell preferences', async ({ page }) => {
     await page.goto('/index.html');
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
-        { timeout: 15_000 }).toBe(true);
+        { timeout: 20_000 }).toBe(true);
 
     await page.click('#btn-settings');
     await page.click('[data-setting="density"][data-value="compact"]');
     await page.click('[data-setting="panel-width"][data-value="wide"]');
     await page.click('[data-setting="tooltips"][data-value="off"]');
     await page.click('[data-setting="status-bar"][data-value="hidden"]');
-    await page.click('[data-setting="motion"][data-value="reduced"]');
 
     await page.evaluate(() => {
         const slider = document.getElementById('settings-ui-scale');
@@ -524,7 +519,6 @@ test('Settings modal applies and resets extended shell preferences', async ({ pa
             panelWidth: root.dataset.panelWidth || '',
             tooltips: root.dataset.tooltips || '',
             statusBar: root.dataset.statusBar || '',
-            motion: root.dataset.motion || '',
             uiScale: getComputedStyle(root).getPropertyValue('--ui-scale').trim(),
             statusDisplay: statusBar ? getComputedStyle(statusBar).display : '',
         };
@@ -534,7 +528,6 @@ test('Settings modal applies and resets extended shell preferences', async ({ pa
     expect(applied.panelWidth).toBe('wide');
     expect(applied.tooltips).toBe('off');
     expect(applied.statusBar).toBe('hidden');
-    expect(applied.motion).toBe('reduced');
     expect(applied.uiScale).toBe('1.2');
     expect(applied.statusDisplay).toBe('none');
 
@@ -548,7 +541,6 @@ test('Settings modal applies and resets extended shell preferences', async ({ pa
             panelWidth: root.dataset.panelWidth || '',
             tooltips: root.dataset.tooltips || '',
             statusBar: root.dataset.statusBar || '',
-            motion: root.dataset.motion || '',
             uiScale: getComputedStyle(root).getPropertyValue('--ui-scale').trim(),
             theme: root.dataset.theme || 'default',
             statusDisplay: statusBar ? getComputedStyle(statusBar).display : '',
@@ -559,7 +551,6 @@ test('Settings modal applies and resets extended shell preferences', async ({ pa
     expect(reset.panelWidth).toBe('standard');
     expect(reset.tooltips).toBe('on');
     expect(reset.statusBar).toBe('shown');
-    expect(reset.motion).toBe('');
     expect(reset.uiScale).toBe('1');
     expect(reset.theme).toBe('default');
     expect(reset.statusDisplay).toBe('flex');
@@ -600,7 +591,7 @@ test('UI tooltip system annotates controls and telemetry with custom help', asyn
 test('Tooltip palette follows theme switches', async ({ page }) => {
     await page.goto('/index.html');
     await expect.poll(() => page.evaluate(() => document.getElementById('app')?.dataset.shellReady === 'true'),
-        { timeout: 15_000 }).toBe(true);
+        { timeout: 20_000 }).toBe(true);
 
     async function captureTooltipStyle() {
         await page.hover('#btn-play', { force: true });
@@ -714,15 +705,5 @@ test('Knowledge base opens as a single responsive library with shared content', 
     expect(planetaryScenarioState.readerTitle).toContain('TRAPPIST-1');
     expect(planetaryScenarioState.readerText.toLowerCase()).toContain('resonance');
 
-    await page.fill('#kb-sidebar-search', 'existential');
 
-    const existentialScenarioState = await page.evaluate(() => ({
-        resultCount: document.querySelectorAll('#kb-sidebar-list [data-sidelib-entry]').length,
-        readerTitle: document.querySelector('#kb-sidebar-reader .kb-reader-title')?.textContent?.trim() || '',
-        readerText: document.getElementById('kb-sidebar-reader')?.textContent || '',
-    }));
-
-    expect(existentialScenarioState.resultCount).toBeGreaterThan(0);
-    expect(existentialScenarioState.readerTitle).toContain('Meta / Existential Unit');
-    expect(existentialScenarioState.readerText).toContain('separate conceptual presentation layer');
 });

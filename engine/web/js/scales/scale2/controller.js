@@ -47,6 +47,7 @@ import {
     bindScale2ControlsUI
 } from './ui-bindings.js';
 import { setupAEScenario, getAEScenarioPreset } from './scenarios.js';
+import { renderAEScenarioDescription } from './ui/dom.js';
 import { telemetryHub } from '../../telemetry-hub.js';
 
 // Re-export for app.js startup wiring
@@ -244,6 +245,13 @@ export function setAEVisualToggle(key, value) {
         case 'showAEHBondLines':  _showAEHBondLines  = value; break;
         default:
             console.warn(`[Scale2] Unknown visual toggle: ${key}`);
+            return;
+    }
+    if ([
+        'showOrbitalClouds', 'showAEForceIonic', 'showAEForceVdw', 'showAEForceBond',
+        'showAEForceNet', 'showAEVelocities', 'showAEDipoles', 'showAEHBondLines',
+    ].includes(key)) {
+        _prevLegendKey = '';
     }
 }
 
@@ -517,36 +525,70 @@ export function animateAE(ctx) {
     }
 
     // Update element legend (only rebuild when set of elements changes)
-    if (dom.aeLegend && atomData.count > 0 && atomData.atomicNums && frameCount % 10 === 0) {
-        _aeLegendZSet.clear();
-        for (let i = 0; i < atomData.count; i++) _aeLegendZSet.add(atomData.atomicNums[i]);
-        _aeLegendZArr.length = 0;
-        for (const z of _aeLegendZSet) _aeLegendZArr.push(z);
-        _aeLegendZArr.sort((a, b) => a - b);
-        const key = _aeLegendZArr.join(',') + (_showOrbitalClouds ? '+c' : '');
-        if (key !== _prevLegendKey) {
-            _prevLegendKey = key;
-            let html = '<div class="ae-legend-header">Elements</div>';
-            for (let k = 0; k < _aeLegendZArr.length; k++) {
-                const Z = _aeLegendZArr[k];
-                const el = getElement(Z);
-                const [r, g, b] = el.color;
-                const hex = `#${(r * 255 | 0).toString(16).padStart(2, '0')}${(g * 255 | 0).toString(16).padStart(2, '0')}${(b * 255 | 0).toString(16).padStart(2, '0')}`;
-                html += `<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:${hex}"></span><span class="ae-legend-sym">${el.symbol}</span><span class="ae-legend-name">${el.name}</span></div>`;
+    if (dom.aeLegend && atomData.count > 0 && atomData.atomicNums) {
+        if (frameCount % 10 === 0) {
+            _aeLegendZSet.clear();
+            for (let i = 0; i < atomData.count; i++) _aeLegendZSet.add(atomData.atomicNums[i]);
+            _aeLegendZArr.length = 0;
+            for (const z of _aeLegendZSet) _aeLegendZArr.push(z);
+            _aeLegendZArr.sort((a, b) => a - b);
+            const key = _aeLegendZArr.join(',')
+                + (_showOrbitalClouds ? '+c' : '')
+                + (_showAEForceIonic ? '+Fi' : '')
+                + (_showAEForceVdw ? '+Fv' : '')
+                + (_showAEForceBond ? '+Fb' : '')
+                + (_showAEForceNet ? '+Fn' : '')
+                + (_showAEVelocities ? '+v' : '')
+                + (_showAEDipoles ? '+mu' : '')
+                + (_showAEHBondLines ? '+hb' : '');
+            if (key !== _prevLegendKey) {
+                _prevLegendKey = key;
+                let html = '<div class="ae-legend-header">Elements</div>';
+                for (let k = 0; k < _aeLegendZArr.length; k++) {
+                    const Z = _aeLegendZArr[k];
+                    const el = getElement(Z);
+                    const [r, g, b] = el.color;
+                    const hex = `#${(r * 255 | 0).toString(16).padStart(2, '0')}${(g * 255 | 0).toString(16).padStart(2, '0')}${(b * 255 | 0).toString(16).padStart(2, '0')}`;
+                    html += `<div class="ae-legend-item"><span class="ae-legend-swatch" style="background:${hex}"></span><span class="ae-legend-sym">${el.symbol}</span><span class="ae-legend-name">${el.name}</span></div>`;
+                }
+                if (_showOrbitalClouds) {
+                    html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">Substructure (decorative)</div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-proton"></span><span class="ae-legend-name">Protons</span></div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-neutron"></span><span class="ae-legend-name">Neutrons</span></div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-s"></span><span class="ae-legend-name">s orbitals</span></div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-p"></span><span class="ae-legend-name">p orbitals</span></div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-d"></span><span class="ae-legend-name">d orbitals</span></div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-f"></span><span class="ae-legend-name">f orbitals</span></div>';
+                }
+                const anyForce = _showAEForceIonic || _showAEForceVdw || _showAEForceBond || _showAEForceNet;
+                if (anyForce) {
+                    html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">Force arrows</div>';
+                    if (_showAEForceIonic) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-ionic"></span><span class="ae-legend-name">F<sub>C</sub> Coulomb</span></div>';
+                    if (_showAEForceVdw) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-vdw"></span><span class="ae-legend-name">F<sub>vdW</sub> LJ 12-6</span></div>';
+                    if (_showAEForceBond) html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-bond"></span><span class="ae-legend-name">F<sub>B</sub> bond spring</span></div>';
+                    if (_showAEForceNet) {
+                        html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-force-net"></span><span class="ae-legend-name">F<sub>net</sub> sum above</span></div>';
+                        html += '<p class="ae-legend-note">F<sub>net</sub> omits angle, H-bond, and μ–μ dynamics.</p>';
+                    }
+                }
+                if (_showAEVelocities) {
+                    html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">Kinetics</div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-velocity-ramp"></span><span class="ae-legend-name">|v|/c — green → white</span></div>';
+                }
+                if (_showAEDipoles) {
+                    html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">Dipoles</div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-dipole"></span><span class="ae-legend-name">Bond μ from χ differences</span></div>';
+                }
+                if (_showAEHBondLines) {
+                    html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">H-bonds</div>';
+                    html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-hbond"></span><span class="ae-legend-name">Dashed H&#183;&#183;&#183;A pairs</span></div>';
+                }
+                dom.aeLegend.innerHTML = html;
             }
-            if (_showOrbitalClouds) {
-                html += '<div class="ae-legend-sep"></div><div class="ae-legend-header">Substructure</div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-proton"></span><span class="ae-legend-name">Protons</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-neutron"></span><span class="ae-legend-name">Neutrons</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-s"></span><span class="ae-legend-name">s orbitals</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-p"></span><span class="ae-legend-name">p orbitals</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-d"></span><span class="ae-legend-name">d orbitals</span></div>';
-                html += '<div class="ae-legend-item"><span class="ae-legend-swatch ae-legend-swatch-orb-f"></span><span class="ae-legend-name">f orbitals</span></div>';
-            }
-            dom.aeLegend.innerHTML = html;
         }
-    } else if (dom.aeLegend) {
-        if (_prevLegendKey !== '') { dom.aeLegend.innerHTML = ''; _prevLegendKey = ''; }
+    } else if (dom.aeLegend && _prevLegendKey !== '') {
+        dom.aeLegend.innerHTML = '';
+        _prevLegendKey = '';
     }
 
     // ── 9. Update force field overlay (heatmap + vectors) ──────────
@@ -591,22 +633,22 @@ export function animateAE(ctx) {
                 else dom.statusDot.classList.add('idle');
             }
 
-            dom.aeDiagCount.textContent = diag.atomCount;
-            dom.aeDiagBonds.textContent = diag.bondCount;
-            dom.aeDiagKe.textContent = formatEnergy(diag.totalKE, 2).text;
-            dom.aeDiagEtotal.textContent = formatEnergy(diag.totalEnergy, 2).text;
-            dom.aeDiagPeIonic.textContent = formatEnergy(diag.totalPEIonic, 2).text;
-            dom.aeDiagPeVdw.textContent = formatEnergy(diag.totalPEVdw, 2).text;
-            dom.aeDiagPeBond.textContent = formatEnergy(diag.totalPEBond, 2).text;
-            dom.aeDiagTemp.textContent = formatTemperature(diag.temperature, 2).text;
+            if (dom.aeDiagCount) dom.aeDiagCount.textContent = diag.atomCount;
+            if (dom.aeDiagBonds) dom.aeDiagBonds.textContent = diag.bondCount;
+            if (dom.aeDiagKe) dom.aeDiagKe.textContent = formatEnergy(diag.totalKE, 2).text;
+            if (dom.aeDiagEtotal) dom.aeDiagEtotal.textContent = formatEnergy(diag.totalEnergy, 2).text;
+            if (dom.aeDiagPeIonic) dom.aeDiagPeIonic.textContent = formatEnergy(diag.totalPEIonic, 2).text;
+            if (dom.aeDiagPeVdw) dom.aeDiagPeVdw.textContent = formatEnergy(diag.totalPEVdw, 2).text;
+            if (dom.aeDiagPeBond) dom.aeDiagPeBond.textContent = formatEnergy(diag.totalPEBond, 2).text;
+            if (dom.aeDiagTemp) dom.aeDiagTemp.textContent = formatTemperature(diag.temperature, 2).text;
             const pMag = Math.sqrt(diag.momentumX ** 2 + diag.momentumY ** 2 + diag.momentumZ ** 2);
-            dom.aeDiagMomentum.textContent = pMag.toFixed(6) + ' AMU\u00b7\u00c5/step';
-            dom.aeDiagTick.textContent = sTick;
+            if (dom.aeDiagMomentum) dom.aeDiagMomentum.textContent = pMag.toFixed(6) + ' AMU\u00b7\u00c5/step';
+            if (dom.aeDiagTick) dom.aeDiagTick.textContent = sTick;
 
             if (_aeInitialEnergy === null && diag.totalEnergy !== 0) {
                 _aeInitialEnergy = diag.totalEnergy;
             }
-            if (_aeInitialEnergy !== null) {
+            if (_aeInitialEnergy !== null && dom.aeDiagDrift) {
                 const drift = ((diag.totalEnergy - _aeInitialEnergy) / Math.abs(_aeInitialEnergy)) * 100;
                 dom.aeDiagDrift.textContent = drift.toFixed(4) + '%';
             }
@@ -680,6 +722,8 @@ export function loadAEScenario(ctx, name) {
     // Capture initial energy reference for drift tracking (before first tick)
     const initDiag = bridge.aeGetDiagnostics();
     if (initDiag.totalEnergy !== 0) _aeInitialEnergy = initDiag.totalEnergy;
+
+    renderAEScenarioDescription(name);
 }
 
 // =====================================================================

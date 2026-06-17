@@ -133,18 +133,13 @@ test.describe('Scale 2 side panels', () => {
                 bonds: value('bonds'),
                 total: value('total'),
                 temperature: value('temperature'),
-                // Legacy AE stat-card block must still render below the
-                // descriptors — including the Bond Count card, which was
-                // wrongly scale3-only before this pass (B5).
-                legacyVisible: (() => {
-                    const el = document.getElementById('ae-diag-count');
-                    return !!el && getComputedStyle(el).display !== 'none';
-                })(),
-                legacyBondCardVisible: (() => {
-                    const el = document.getElementById('ae-diag-bonds');
+                nuclearDiagPresent: !!document.getElementById('ae-nuclear-diag'),
+                nuclearMassVisible: (() => {
+                    const el = document.getElementById('ae-diag-mass');
                     const card = el?.closest('.card');
                     return !!card && getComputedStyle(card).display !== 'none';
                 })(),
+                legacyRuntimeCards: !!document.getElementById('ae-diag-count'),
             };
         });
 
@@ -166,8 +161,9 @@ test.describe('Scale 2 side panels', () => {
         expect(diag.bonds).toBe('4');
         expect(diag.total).not.toBe('0');
         expect(diag.temperature).toBeDefined();
-        expect(diag.legacyVisible).toBe(true);
-        expect(diag.legacyBondCardVisible).toBe(true);
+        expect(diag.nuclearDiagPresent).toBe(true);
+        expect(diag.nuclearMassVisible).toBe(true);
+        expect(diag.legacyRuntimeCards).toBe(false);
 
         expect(realErrors(errors), `console errors:\n${realErrors(errors).join('\n')}`).toHaveLength(0);
     });
