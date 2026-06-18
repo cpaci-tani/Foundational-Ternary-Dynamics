@@ -1,47 +1,64 @@
-# Copilot instructions (pbr_pedagogy)
+# Copilot Instructions
 
-## Big picture
-- This repo mixes **an interactive simulation app** (monorepo under `packages/`) with **a publication pipeline** (`manuscript/` Quarto book) and **research/verification scripts** (`simulations/`).
-- The authoritative long-form model/spec is in `CLAUDE.md`; the publication-ready narrative lives in `manuscript/`.
-- `symmetry-of-zero/` is a **separate side project** (Next.js) and is not part of the main `packages/*` app.
+## Repository Shape
 
-## Key subsystems & where to edit
-- **Frontend (Vite + React + R3F/Three)**: `packages/frontend/`
-  - Chapter visuals live in `packages/frontend/src/scenes/` and reusable 3D bits in `packages/frontend/src/components/scene/`.
-  - Chapter → specialized scene routing is data-driven via `packages/frontend/src/data/sceneRegistry.ts` and used by `packages/frontend/src/scenes/ChapterScene.tsx`.
-  - Real-time sim data arrives over WebSocket; client parsing is in `packages/frontend/src/hooks/useWebSocket.ts`.
-- **Backend (FastAPI + WebSocket stream)**: `packages/backend/`
-  - App entrypoint is `packages/backend/main.py` (WS at `/ws`, content loaded from top-level `content/`).
-  - The current physics engine is a Python bridge in `packages/backend/simulation/physics_engine.py`.
-- **Physics core (Rust → WASM)**: `packages/physics-core/`
-  - WASM entrypoints are in `packages/physics-core/src/lib.rs` (exports `create_universe`).
-- **Content layer (JSON + schemas)**: `content/` and `schemas/`
-  - Content is structured JSON (chapters/concepts/experiments/narration) and is loaded by `packages/backend/simulation/content_loader.py`.
-  - Prefer updating schemas + audit scripts when changing content shape.
-- **Manuscript (Quarto book)**: `manuscript/` (see `manuscript/_quarto.yml`).
+This is the Foundational Ternary Dynamics (FTD) research repository. It contains:
 
-## Critical workflows (known-good commands)
-- Install everything: `npm run install:all`
-- Run app (frontend + backend): `npm run dev` (frontend http://localhost:3000, backend http://localhost:8000)
-- Build WASM + frontend: `npm run build` (or `npm run build:physics`)
-- Build the manuscript (Quarto): `cd manuscript && quarto render`
-- Preview the manuscript locally: `cd manuscript && quarto preview`
-- Frontend tests: `cd packages/frontend && npm test` (Vitest) and `npm run test:e2e` (Playwright)
-- Backend tests: `cd packages/backend && pytest`
-- Physics-core tests: `cd packages/physics-core && cargo test`
+- `docs/` - framework specs, theory corpus, audit ledgers, reference material.
+- `engine/` - C++17 simulation engine, CUDA backend, WASM bindings, browser dashboard.
+- `scripts/` - Python proofs, verification tools, tests, experiments, and visualization scripts.
+- `evaluation/` - project health and weakness audits.
+- `dissemination/` - papers, whitepaper, manuscripts, notebooks, and interactive demos.
 
-## Side project: symmetry-of-zero
-- Run the Next.js app: `cd symmetry-of-zero && npm install && npm run dev`
+The first navigation files are `README.md`, `META_PROJECT_ATLAS.md`, `META_DOCUMENTATION_MAP.md`, and `docs/WHERE_WE_LEFT_OFF.md`.
 
-## Repo-specific conventions to follow
-- **Chapter IDs** are string-like decimals (`"1.2"`, `"8.1"`) and are used across routing + content.
-- **Scene routing**: add/update mappings in `packages/frontend/src/data/sceneRegistry.ts` rather than reintroducing large switches.
-- **Playback/time**: chapter time comes from the Director system (`packages/frontend/src/director/*`) and is consumed by `ChapterScene` via `sceneTime`.
-- **WebSocket binary protocol is coupled**:
-  - Frontend expects the binary layout documented in `packages/frontend/src/hooks/useWebSocket.ts`.
-  - If you change backend particle serialization, update the frontend parser in lockstep.
-  - WS URL is configurable via `VITE_WS_URL` (defaults to `ws://localhost:8000/ws`).
+## Scientific Ground Rules
 
-## Content tooling
-- Validate cross-references and required fields with `python scripts/audit_json.py`.
-- Generate missing stubs (books/experiments/concepts) with `python scripts/generate_missing_content.py`.
+FTD uses canonical epistemic ledgers. Do not infer claim status from local prose when a canonical source exists.
+
+- Claim tags: `docs/theory/07_assessment/core_ledgers/LEDGER.md`
+- Truth tiers: `docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md`
+- Theorem statements: `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md`
+- Parametric insertions: `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md`
+
+Mandatory discipline:
+
+- Do not run numerical near-miss or coincidence searches.
+- Do not call standard-physics substitutions derivations.
+- Do not promote epistemic tags during cleanup.
+- Preserve closed-negative and retracted routes as provenance.
+- If a README or downstream doc conflicts with the ledgers, the ledgers win.
+
+## Where To Edit
+
+- Engine physics: `engine/src/render_bridge.cpp`, `engine/include/ftd/`, `engine/cuda/`, and registered tests in `engine/tests/`.
+- WASM bindings: `engine/wasm/`.
+- Web dashboard: `engine/web/js/`, with Scale 0 runtime in `engine/web/js/scales/scale0/`.
+- Physics constants: keep `scripts/constants.py`, `engine/include/ftd/ontic.h`, and `engine/web/js/constants.js` synchronized.
+- Theory docs: use the cluster indexes under `docs/theory/*/INDEX_*.md` plus `docs/theory/META_INDEX.md`.
+- Cleanup provenance: `docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md` and `docs/audits/PLAN_PROJECT_CLEANUP_2026-06-17.md`.
+
+## Common Commands
+
+Python:
+
+```bash
+python -m pytest scripts/tests/
+python scripts/proofs/proof_master_verification.py
+```
+
+C++ engine:
+
+```bash
+cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
+cmake --build engine/build --config Release --parallel 24
+ctest --test-dir engine/build -j 24 --output-on-failure -C Release
+```
+
+Web dashboard:
+
+```bash
+python engine/web/serve.py 8080
+```
+
+GPU measurement campaigns should run through WSL2 Ubuntu-22.04, not Windows-native CUDA.

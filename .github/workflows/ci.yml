@@ -79,30 +79,32 @@ jobs:
 
       - name: Validate core constants
         run: |
-          python -c "
+          python - <<'PY'
           import math
 
           # G* = Gamma(1/4) / Gamma(3/4)
           G_star = math.gamma(0.25) / math.gamma(0.75)
 
-          # Master quadratic: x^2 - 16*G*^2 * x + 16*G*^3 = 0
-          a = 1
+          # Master quadratic: x^2 - 16*G*^2*x + 16*G*^3 = 0
           b = -16 * G_star**2
           c = 16 * G_star**3
-          disc = b**2 - 4*a*c
-          x_plus = (-b + math.sqrt(disc)) / (2*a)
-          x_minus = (-b - math.sqrt(disc)) / (2*a)
+          disc = b**2 - 4 * c
+          x_plus = (-b + math.sqrt(disc)) / 2
+          x_minus = (-b - math.sqrt(disc)) / 2
 
           alpha_inv_exp = 137.035999177
-          error_ppm = abs(x_plus - alpha_inv_exp) / alpha_inv_exp * 1e6
+          match_ppm = abs(x_plus - alpha_inv_exp) / alpha_inv_exp * 1e6
+          residual_plus = x_plus**2 - 16 * G_star**2 * x_plus + 16 * G_star**3
+          residual_minus = x_minus**2 - 16 * G_star**2 * x_minus + 16 * G_star**3
 
-          print(f'G* = {G_star:.10f}')
-          print(f'x+ (1/alpha) = {x_plus:.10f}')
-          print(f'x- (N_c)     = {x_minus:.10f}')
-          print(f'Error = {error_ppm:.2f} ppm')
+          print(f"G* = {G_star:.10f}")
+          print(f"x+ structural match = {x_plus:.10f}")
+          print(f"x- quadratic root   = {x_minus:.10f}")
+          print(f"x+ vs CODATA alpha^-1 match = {match_ppm:.2f} ppm")
 
-          assert error_ppm < 10, f'Alpha derivation error {error_ppm} ppm exceeds 10 ppm threshold'
-          assert abs(x_minus - 3.0) < 0.1, f'x- = {x_minus}, expected ~3.0'
-          assert abs(G_star - 2.9587) < 0.001, f'G* = {G_star}, expected ~2.9587'
-          print('Physics validation PASSED')
-          "
+          assert abs(G_star - 2.9587) < 0.001, f"G* = {G_star}, expected ~2.9587"
+          assert abs(residual_plus) < 1e-10, f"x+ residual {residual_plus} too large"
+          assert abs(residual_minus) < 1e-10, f"x- residual {residual_minus} too large"
+          assert match_ppm < 10, f"x+ structural match drifted to {match_ppm} ppm"
+          print("Core constant validation PASSED")
+          PY

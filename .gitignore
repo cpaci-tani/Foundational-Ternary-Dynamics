@@ -184,6 +184,8 @@ scripts/benchmarks/results/
 # itself is documented in engine/results/README.md (whitelisted below).
 engine/results/*
 !engine/results/README.md
+# Mis-run campaign outputs from cwd=engine with output path engine/results/...
+engine/engine/
 
 # Temporary batch files and agent runner scripts
 _tmp_*.bat

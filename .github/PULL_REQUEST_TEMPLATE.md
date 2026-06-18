@@ -1,49 +1,49 @@
 ## Summary
 
-<!-- Briefly describe your changes -->
+<!-- Briefly describe what changed and why. -->
 
-## Type of Change
+## Change Type
 
-- [ ] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Physics derivation or correction
-- [ ] Manuscript content update
+- [ ] Engine / C++ / CUDA
+- [ ] Web dashboard / WASM / JavaScript
+- [ ] Python proofs, tests, or verification scripts
+- [ ] Theory documentation
+- [ ] Documentation cleanup / navigation
+- [ ] Manuscript, paper, or dissemination asset
+- [ ] GitHub / CI / repository metadata
+
+## Epistemic Impact
+
+- [ ] No scientific claim status changed
+- [ ] Claim text was aligned to canonical status without promotion
+- [ ] New or changed claim status is explicitly backed by `LEDGER.md`
+- [ ] Not applicable
+
+If a claim status changed, cite the canonical row and source document:
+
+<!-- Example: FTD-0242, LEDGER authority, AUDIT_ALPHA_OPERATOR_FORCING_ROUTE_INVARIANCE.md -->
+
+## Verification
+
+Commands run:
+
+```text
+<!-- paste commands and high-level results -->
+```
+
+Deferred checks and reason:
+
+<!-- Example: WSL2 GPU parity not run; CUDA backend unchanged. -->
 
 ## Checklist
 
-### General
-- [ ] My code follows the project's style guidelines
-- [ ] I have performed a self-review of my changes
-- [ ] I have commented my code where necessary
-- [ ] My changes generate no new warnings
-
-### For Physics/Theory Changes
-- [ ] Epistemic tags are correct ([AXIOM], [THEOREM], [SELECTION], [CONJECTURE], [NUMEROLOGY])
-- [ ] Derivations are documented in CLAUDE.md or appropriate docs
-- [ ] Unit tests verify numerical accuracy
-- [ ] Cross-references to related sections are updated
-
-### For Manuscript Changes
-- [ ] Figures have alt text for accessibility
-- [ ] Mathematical notation is consistent with [docs/reference/REF_SYMBOL_GLOSSARY.md](docs/reference/REF_SYMBOL_GLOSSARY.md)
-- [ ] Cross-references and citations are valid
-- [ ] Quarto build succeeds locally
-
-### For Code Changes
-- [ ] Tests pass locally (`pytest`)
-- [ ] Linting passes (`ruff check .`)
-- [ ] Dependencies are properly pinned in requirements.txt
-
-## Testing
-
-<!-- Describe how you tested your changes -->
+- [ ] I checked the relevant entry points in `README.md`, `META_PROJECT_ATLAS.md`, or `docs/theory/META_INDEX.md`.
+- [ ] I did not run near-miss or coincidence searches.
+- [ ] I did not label a parametric insertion as a derivation.
+- [ ] I preserved provenance for closed-negative, retracted, or superseded material.
+- [ ] I updated navigation/index files for moved or renamed documents.
+- [ ] I kept generated outputs and local campaign data out of git unless intentionally force-added.
 
 ## Related Issues
 
-<!-- Link to related issues: Fixes #123, Related to #456 -->
-
-## Additional Notes
-
-<!-- Any additional context or screenshots -->
+<!-- Fixes #123, Related to #456 -->

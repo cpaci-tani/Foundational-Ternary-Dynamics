@@ -25,9 +25,9 @@ for a in range(-R, R + 1):
     for b in range(-R, R + 1):
         if a == 0 and b == 0:
             continue
-            
+
         norm = a*a + b*b
-        
+
         if a == 0:
             if sieve[abs(b)] and abs(b) % 4 == 3:
                 primes_x.append(a)
@@ -53,7 +53,7 @@ plt.style.use('dark_background')
 
 # 1 pixel at 500 DPI is 72/500 = 0.144 points
 # Linewidth in points:
-lw = 0.15 
+lw = 0.15
 # Scatter size (s) in points^2:
 # Area of 1 pixel circle ~ 0.016 points^2
 s_size = 0.02
@@ -74,19 +74,19 @@ colors = {
 }
 
 for s in scales:
-    cs = c * s * 10 
+    cs = c * s * 10
     # Use the 1px line width for all scales
     current_lw = lw
     alpha = 0.8
-    
+
     # Quadrant
     plt.plot(x_pos, cs / x_pos, color=colors['quad'], linewidth=current_lw, alpha=alpha, zorder=2)
     plt.plot(x_neg, cs / x_neg, color=colors['quad'], linewidth=current_lw, alpha=alpha, zorder=2)
-    
+
     # Orthogonal Quadrant
     plt.plot(x_pos, -cs / x_pos, color=colors['quad_ortho'], linewidth=current_lw, alpha=alpha, zorder=2)
     plt.plot(x_neg, -cs / x_neg, color=colors['quad_ortho'], linewidth=current_lw, alpha=alpha, zorder=2)
-    
+
     # Einstein
     x_ein = np.linspace(np.sqrt(cs), R, 15000)
     plt.plot(x_ein, np.sqrt(x_ein**2 - cs), color=colors['einstein'], linewidth=current_lw, alpha=alpha, zorder=2)
@@ -94,7 +94,7 @@ for s in scales:
     x_ein_neg = np.linspace(-R, -np.sqrt(cs), 15000)
     plt.plot(x_ein_neg, np.sqrt(x_ein_neg**2 - cs), color=colors['einstein'], linewidth=current_lw, alpha=alpha, zorder=2)
     plt.plot(x_ein_neg, -np.sqrt(x_ein_neg**2 - cs), color=colors['einstein'], linewidth=current_lw, alpha=alpha, zorder=2)
-    
+
     # Orthogonal Einstein
     y_ein = np.linspace(np.sqrt(cs), R, 15000)
     plt.plot(np.sqrt(y_ein**2 - cs), y_ein, color=colors['einstein_ortho'], linewidth=current_lw, alpha=alpha, zorder=2)
