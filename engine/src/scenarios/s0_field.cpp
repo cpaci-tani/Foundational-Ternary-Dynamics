@@ -186,6 +186,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         // test_spacetime_forcing_demo.cpp. The diffusion half is a
         // counterfactual shown in engine/web/demos/spacetime-forcing-boundary.html.
         IF(rb, mc, mc, mc, 0.0, 0.0, 1.0);
+        IW(rb, mc, mc, mc, 0.0, 0.0, 1.0);
     }
     else if (name == "s0-field-electric-dipole") {
         // Scenario ID: s0-field-electric-dipole
