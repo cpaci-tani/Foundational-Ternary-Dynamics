@@ -677,6 +677,7 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
             double g = K_B * 0.3 * std::exp(-r22 / (2.0 * nuSig * nuSig));
             if (g < 1e-3) continue;
             IF(rb, mc+dx2, mc-leptonR+dy2, mc+dz2, g*0.55, g*0.45, 0);
+            IW(rb, mc+dx2, mc-leptonR+dy2, mc+dz2, g*0.55, g*0.45, 0);
         }
         rb.toggles.weak_transmutation = true;
         rb.toggles.dual_substrate = true;
@@ -928,9 +929,12 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // Discrepancy: None.
         const int gwWl = std::max(4, N / 4);
         const double gwK = 2.0 * PI / gwWl, gwAmp = 0.1;
+        const double gwOmega = 2.0 * C_SPEED * std::sin(gwK * 0.5);
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double v = gwAmp * std::sin(gwK * x);
+            double wv = -gwOmega * gwAmp * std::cos(gwK * x);
             if (std::fabs(v) > 1e-6) IF(rb, x, y, z, 0, v, 0);
+            if (std::fabs(wv) > 1e-6) IW(rb, x, y, z, 0, wv, 0);
         }
     }
     // ── Time-dilation scenarios (2026-06-07) ──
@@ -955,9 +959,12 @@ bool setup_s0_seed_scenario(RenderBridge& rb, const std::string& name) {
         // field-energy latency solver turns into a measurable dτ/dt field.
         const int gwWl = std::max(4, N / 4);
         const double gwK = 2.0 * PI / gwWl, gwAmp = 0.1;
+        const double gwOmega = 2.0 * C_SPEED * std::sin(gwK * 0.5);
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double v = gwAmp * std::sin(gwK * x);
+            double wv = -gwOmega * gwAmp * std::cos(gwK * x);
             if (std::fabs(v) > 1e-6) IF(rb, x, y, z, 0, v, 0);
+            if (std::fabs(wv) > 1e-6) IW(rb, x, y, z, 0, wv, 0);
         }
     }
     else if (name == "s0-seed-time-horizon") {
