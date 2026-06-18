@@ -384,6 +384,9 @@ ftd_add_test(test_constructors tests/test_constructors.cpp)
 # See docs/theory/01_reference/SPEC_CLASS_B_CLUSTER_PERSISTENCE.md.
 ftd_add_test(test_cluster_tracker tests/test_cluster_tracker.cpp)
 
+# Knot telemetry assembly (observation-only). See cluster_tracker / cluster_genealogy.
+ftd_add_test(test_knot_telemetry tests/test_knot_telemetry.cpp CTEST_NAME knot_telemetry LABELS unit)
+
 # Scale-context readout admissibility gate (C_scale, read-only, α-blind).
 # See docs/theory/01_reference/SPEC_SCALE_CONTEXT_READOUT.md.
 ftd_add_test(test_scale_context tests/test_scale_context.cpp
