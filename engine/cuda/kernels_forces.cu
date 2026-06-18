@@ -628,7 +628,7 @@ double alpha_s_lattice_d(double r_voxels) {
 // Thread per particle i, iterates over all other particles j.
 // Same-color pairs: REPULSIVE (cf=+0.5); diff-color: ATTRACTIVE (cf=-1.0).
 // Matches CPU convention in render_bridge.cpp phase_forces().
-// Three regimes: r<3 (Coulomb), 3<=r<8 (transition), r>=8 (linear confinement).
+// Three regimes: r<3 (Coulomb), 3<=r<8 (transition), r>=8 (Harmonic confinement: F∝r, V∝r²).
 
 __global__ void color_force_kernel(
     const int* __restrict__ plist_idx,
@@ -652,15 +652,25 @@ __global__ void color_force_kernel(
     if (pi >= num_particles) return;
 
     int i = plist_idx[pi];
+    int8_t ci = color_arr[i];
+    // CPU parity (phase_forces.cpp:144): the color force acts ONLY on colored
+    // probes (`v.color != 0`). Colorless particles feel no color force on CPU,
+    // so skip them entirely here rather than admitting every state!=0 voxel.
+    if (ci == 0) return;
+
     int ix, iy, iz;
     decode_xyz_d(i, L, ix, iy, iz);
-    int8_t ci = color_arr[i];
 
     double fx = 0.0, fy = 0.0, fz = 0.0;
 
     for (int pj = 0; pj < num_particles; ++pj) {
         if (pj == pi) continue;
         int j = plist_idx[pj];
+        // CPU parity (phase_forces.cpp:56): the colored-sites cache only holds
+        // sources with `color != 0`. Skip colorless sources so they exert no
+        // color force, matching CPU exactly.
+        int8_t cj = color_arr[j];
+        if (cj == 0) continue;
         int jx, jy, jz;
         decode_xyz_d(j, L, jx, jy, jz);
 
@@ -671,11 +681,10 @@ __global__ void color_force_kernel(
         if (r < 1.0) r = 1.0;
 
         // Color factor: same color → repulsive (+0.5), diff color → attractive (-1.0)
-        // Matches CPU sign convention in phase_forces.cpp:160.
-        // 2026-05-04: removed extra `&& ci > 0` guard. Pre-fix two
-        // colorless particles (color==0) got cf=-1.0 (attractive) on GPU
-        // but cf=+0.5 (repulsive) on CPU — exact sign disagreement.
-        int8_t cj = color_arr[j];
+        // Matches CPU sign convention in phase_forces.cpp:162.
+        // Both ci and cj are guaranteed nonzero here (colorless probes return
+        // early; colorless sources are skipped above), matching the CPU
+        // colored-sites cache which only contains color != 0 entries.
         double cf = (ci == cj) ? 0.5 : -1.0;
 
         double as = alpha_s_lattice_d(r);
@@ -688,7 +697,7 @@ __global__ void color_force_kernel(
         } else if (r < COLOR_TRANSITION_RADIUS) {
             f_mag = as * cf / (COLOR_TRANSITION_DENOM * r); // Transition
         } else {
-            f_mag = as * cf * r / COLOR_LINEAR_DENOM;       // Linear confinement
+            f_mag = as * cf * r / COLOR_LINEAR_DENOM;       // Harmonic confinement (F∝r, V∝r²)
         }
 
         // Direction: cf>0 pushes AWAY (repulsive), cf<0 pulls TOWARD (attractive)
