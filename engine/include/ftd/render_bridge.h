@@ -55,7 +55,8 @@ namespace ftd {
 // too) — pulling its full definition into this header before `class
 // RenderBridge` is closed would be a circular dependency. The accessor /
 // recorder bodies live in render_bridge.cpp where KnotTracker is complete,
-// mirroring the existing BridgeRng PIMPL. Reading-only ⇒ golden-neutral.
+// mirroring the existing forward-declared gpu::GpuEngine PIMPL. Read-only
+// ⇒ golden-neutral.
 class KnotTracker;
 
 class RenderBridge {
