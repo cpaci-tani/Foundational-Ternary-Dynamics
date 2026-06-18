@@ -52,6 +52,13 @@ void accumulate_proper_time(RenderBridge& rb) {
     double f = 1.0 - L * L;
     if (f <= 0.0) continue;
     double v2 = v.speed() * v.speed();
+    // Proper-time sector uses a c=1 flux-velocity normalization: arg = f² − |v|²
+    // freezes the clock (dτ→0) at |v|=1. NOTE the transport/force sector caps
+    // particle |v| at C_SPEED = 1/√3 separately (see phase_forces.cpp), so this
+    // clock can never actually reach its c=1 freeze under transport alone. The
+    // two conventions are intentionally distinct; do NOT couple them here. If a
+    // future change wants the clock to freeze at the causal transport speed,
+    // normalize this arg by C_SPEED² (i.e. arg = f² − v2/C_SPEED²).
     double arg = f * f - v2;
     if (arg > 0.0) {
       const double delta_tau = std::sqrt(arg) / std::sqrt(f);

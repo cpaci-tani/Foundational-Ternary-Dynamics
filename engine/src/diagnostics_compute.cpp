@@ -86,6 +86,17 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
   const auto& phi_coulomb = rb.phi_coulomb();
   const int N = static_cast<int>(lattice.total_sites());
 
+  // gauss_violation must mirror the constraint the projection actually
+  // enforces (poisson_solvers.cpp gauss_project_cpu): the SOR correction
+  // skips manifested sites and targets div(J) = charge_coupling·(s − mean_charge).
+  // So the residual is meaningful ONLY at vacuum (state==0) sites, where the
+  // target is charge_coupling·(0 − mean_charge). Summing over manifested sites
+  // (which the projection never corrects) inflated the metric. Match the source
+  // sign convention div(J) = +charge_coupling·(s − mean_charge).
+  const double charge_coupling = rb.toggles.coulomb_charge_coupling;
+  const double mean_charge =
+      static_cast<double>(ternary.charge_sum()) / static_cast<double>(N);
+
   for (int i = 0; i < N; ++i) {
     const auto &v = voxels[i];
     // Field energies follow the canonical ½·|·|² convention used by
@@ -125,10 +136,15 @@ EnergyAudit compute_energy_audit(const RenderBridge& rb) {
       a.manifested_count++;
     }
 
-    double err = rb.divergence_flux(i) - static_cast<double>(s);
-    a.gauss_violation += err * err;
-    double abs_err = std::abs(err);
-    if (abs_err > a.max_gauss_error) a.max_gauss_error = abs_err;
+    // Constrained-site Gauss residual: only vacuum (state==0) sites are
+    // projected, with target source charge_coupling·(s − mean_charge).
+    if (s == 0) {
+      double err = rb.divergence_flux(i)
+                 - charge_coupling * (static_cast<double>(s) - mean_charge);
+      a.gauss_violation += err * err;
+      double abs_err = std::abs(err);
+      if (abs_err > a.max_gauss_error) a.max_gauss_error = abs_err;
+    }
   }
 
   a.total_energy = a.field_energy + a.wave_energy + a.particle_ke;

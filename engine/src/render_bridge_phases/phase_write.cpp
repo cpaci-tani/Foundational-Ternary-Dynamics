@@ -232,7 +232,9 @@ void phase_write_main_loop(RenderBridge& rb) {
       if (langevin_active) {
         const double gamma = rb.toggles.langevin_gamma;
         const double T = rb.toggles.langevin_T;
-        const double sigma = std::sqrt(2.0 * gamma * T);
+        // FDT-consistent discrete OU: Var_stationary = sigma^2/(1-(1-gamma)^2) = T exactly
+        // (was sqrt(2*gamma*T), the Euler-Maruyama form, biased to T/(1-gamma/2)).
+        const double sigma = std::sqrt(gamma * (2.0 - gamma) * T);
         const double one_minus_gamma = 1.0 - gamma;
         const std::uint64_t gseed = static_cast<std::uint64_t>(rb.toggles.langevin_seed);
         const double nx = ::ftd::voxel_normal(gseed, i, rb.tick_,
