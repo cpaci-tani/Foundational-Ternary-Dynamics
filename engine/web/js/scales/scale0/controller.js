@@ -14,6 +14,7 @@ import {
     setFieldToggle as setFieldToggleState,
     setForceStyle as setForceStyleState,
     setLatticeNeedsUpload as markLatticeUpload,
+    markFieldDirty,
 } from './state/store.js';
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
@@ -135,6 +136,7 @@ export function bindUI(ctx) {
     ctx.onBridgePostFrame = () => {
         if (!ctx.running) {
             setLatticeNeedsUpload();
+            markFieldDirty();
         }
     };
 
