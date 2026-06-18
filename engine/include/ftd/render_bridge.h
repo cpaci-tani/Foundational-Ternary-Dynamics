@@ -49,6 +49,15 @@ namespace ftd { namespace gpu { class GpuEngine; } }
 
 namespace ftd {
 
+// Observation-only per-knot telemetry recorder (defined in knot_telemetry.h).
+// Forward-declared + held by unique_ptr (PIMPL) here because knot_telemetry.h
+// itself includes render_bridge.h (cluster_tracker/observables/genealogy do
+// too) — pulling its full definition into this header before `class
+// RenderBridge` is closed would be a circular dependency. The accessor /
+// recorder bodies live in render_bridge.cpp where KnotTracker is complete,
+// mirroring the existing BridgeRng PIMPL. Reading-only ⇒ golden-neutral.
+class KnotTracker;
+
 class RenderBridge {
     // ARCH-2: Backend implementations need access to GPU sync state and
     // private buffers during the migration. Friendship is the simplest path
@@ -163,6 +172,13 @@ public:
     // hash is preserved by construction (gated by test_render_bridge_golden).
     long long genesis_events_this_tick() const { return genesis_events_this_tick_; }
     long long evaporation_events_this_tick() const { return evaporation_events_this_tick_; }
+    // Observation-only per-knot telemetry (gated by toggles.knot_tracking).
+    // Recorded at tick-end from settled state; reads voxels()/lattice()/
+    // current_tick() only ⇒ golden-hash neutral (gated by
+    // test_knot_tracking_golden). Bodies are out-of-line in render_bridge.cpp
+    // because KnotTracker is forward-declared here (PIMPL, see above).
+    const KnotTracker& knot_tracker() const;
+    void reset_knot_tracker();
     double physical_time() const { return physical_time_; }
     double dt() const { return dt_; }
     void set_dt(double dt);
@@ -480,6 +496,11 @@ private:
     // FTD-0267 observation-only telemetry (see accessor docstring above).
     long long genesis_events_this_tick_ = 0;
     long long evaporation_events_this_tick_ = 0;
+    // Observation-only per-knot telemetry (gated by toggles.knot_tracking).
+    // PIMPL: KnotTracker is forward-declared in this header (circular include
+    // with knot_telemetry.h); constructed in the ctor, dtor emitted in
+    // render_bridge.cpp where the type is complete. Recorded at tick-end.
+    std::unique_ptr<KnotTracker> knot_tracker_;
     int sor_iterations_ = SOR_ITERATIONS;  // Configurable SOR iterations (default 6)
     double dt_ = 1.0;             // Time step multiplier (≥1.0). Scales damping, forces, movement.
     double physical_time_ = 0.0;  // Accumulated physical time (sum of dt_ per tick)
