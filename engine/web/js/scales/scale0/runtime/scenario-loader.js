@@ -71,6 +71,10 @@ const DEFAULT_TOGGLES = SCALE0_TOGGLES;
 const FIELD_BUTTON_IDS = FIELD_TOGGLE_BINDINGS.map(([id]) => id);
 const FIELD_BUTTON_TO_FLAG = Object.fromEntries(FIELD_TOGGLE_BINDINGS);
 const SCALE0_SCENARIO_VISUAL_PROFILES = {
+    'flux-vortex': {
+        // E Field streamlines make the vortex ring's curl structure immediately visible.
+        fieldOverlays: ['toggle-e-field'],
+    },
     's0-field-spacetime-forcing-boundary': {
         fluxVolume: true,
         fluxSlice: true,
@@ -186,6 +190,17 @@ function applyScenarioVisualProfile(ctx, state, viewportAdapter, scenarioId, pre
         ctx.viewport.setFluxSliceOpacity?.(profile.fluxOpacity);
         setInputValue('flux-opacity', profile.fluxOpacity);
         setDisplayText('flux-opacity-val', profile.fluxOpacity.toFixed(2));
+    }
+
+    if (Array.isArray(profile.fieldOverlays)) {
+        for (const btnId of profile.fieldOverlays) {
+            const flagKey = FIELD_BUTTON_TO_FLAG[btnId];
+            setButtonActive(btnId, true);
+            if (flagKey) {
+                setFieldToggle(flagKey, true);
+                viewportAdapter.setOverlayVisible(flagKey, true);
+            }
+        }
     }
 
     state.latticeNeedsUpload = true;
