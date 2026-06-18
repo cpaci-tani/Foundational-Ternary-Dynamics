@@ -37,7 +37,7 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         const int pulseR = std::min(CEL(sigma * 3), mid - 1);
         for (int dz = -pulseR; dz <= pulseR; dz++) for (int dy = -pulseR; dy <= pulseR; dy++) for (int dx = -pulseR; dx <= pulseR; dx++) {
             double val = amp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2 * sigma * sigma));
-            if (val > 0.001) IF(rb, mid + dx, mid + dy, mid + dz, val * std::cos(theta), val * std::sin(theta), 0);
+            if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + dz, val * std::cos(theta), val * std::sin(theta), 0); IW(rb, mid + dx, mid + dy, mid + dz, val * std::cos(theta), val * std::sin(theta), 0); }
         }
         rb.toggles.genesis = true;
     }
@@ -175,7 +175,7 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         const double bigAmp = K_GENESIS * 5.0;
         for (int dz = -4; dz <= 4; dz++) for (int dy = -4; dy <= 4; dy++) for (int dx = -4; dx <= 4; dx++) {
             double val = bigAmp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2.0 * 6.0));
-            if (val > 0.001) IF(rb, mid + dx, mid + dy, mid + dz, val, val, val);
+            if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + dz, val, val, val); IW(rb, mid + dx, mid + dy, mid + dz, val, val, val); }
         }
         rb.toggles.genesis = true;
     }
@@ -223,10 +223,11 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
             IP(rb, plateB, y, z, 1); LOCK(rb, plateB, y, z);
         }
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
-            IF(rb, x, y, z,
-               (urand() - 0.5) * K_B * 0.3,
-               (urand() - 0.5) * K_B * 0.3,
-               (urand() - 0.5) * K_B * 0.3);
+            double jx = (urand() - 0.5) * K_B * 0.3;
+            double jy = (urand() - 0.5) * K_B * 0.3;
+            double jz = (urand() - 0.5) * K_B * 0.3;
+            IF(rb, x, y, z, jx, jy, jz);
+            IW(rb, x, y, z, jx, jy, jz);
         }
         rb.toggles.genesis = false;
     }
@@ -241,7 +242,7 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         const int pulseR = std::min(CEL(sigma * 3), mid - 1);
         for (int dz = -pulseR; dz <= pulseR; dz++) for (int dy = -pulseR; dy <= pulseR; dy++) for (int dx = -pulseR; dx <= pulseR; dx++) {
             double val = amp * std::exp(-(dx*dx + dy*dy + dz*dz) / (2 * sigma * sigma));
-            if (val > 0.001) IF(rb, mid + dx, mid + dy, mid + dz, val, val, val);
+            if (val > 0.001) { IF(rb, mid + dx, mid + dy, mid + dz, val, val, val); IW(rb, mid + dx, mid + dy, mid + dz, val, val, val); }
         }
         rb.toggles.genesis = true;
     }
