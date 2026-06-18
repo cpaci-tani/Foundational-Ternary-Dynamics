@@ -285,6 +285,11 @@ EMSCRIPTEN_BINDINGS(ftd_module_render_bridge) {
     function("getConstants",       &get_constants);
     function("getLatticeSize",     &get_lattice_size);
 
+    // Knot telemetry (observation-only KnotTracker)
+    function("getKnotTelemetry", &get_knot_telemetry);
+    function("getKnotEvents",    &get_knot_events);
+    function("getKnotAggregate", &get_knot_aggregate);
+
     // Voxel inspection
     function("inspectVoxel",       &inspect_voxel);
     function("getForceAt",         &get_force_at);

@@ -84,4 +84,9 @@ emscripten::val sample_v_at_ray(
 // Lattice info
 int get_lattice_size(ftd::RenderBridge& rb);
 
+// Knot telemetry (defined in ftd_wasm.cpp)
+emscripten::val get_knot_telemetry(ftd::RenderBridge& rb);
+emscripten::val get_knot_events(ftd::RenderBridge& rb);
+emscripten::val get_knot_aggregate(ftd::RenderBridge& rb);
+
 } // namespace ftd_wasm_internal
