@@ -328,7 +328,10 @@ __global__ void phase_write_kernel(
     if (langevin_active) {
         // Ornstein-Uhlenbeck on wave_vel; replaces deterministic damping.
         const double one_minus_gamma = 1.0 - langevin_gamma;
-        const double sigma = sqrt(2.0 * langevin_gamma * langevin_T);
+        // FDT-consistent discrete OU: Var_stationary = sigma^2/(1-(1-gamma)^2) = T
+        // exactly (was sqrt(2*gamma*T), the Euler-Maruyama form biased hot to
+        // T/(1-gamma/2)). Mirrors the CPU fix in phase_write.cpp:237.
+        const double sigma = sqrt(langevin_gamma * (2.0 - langevin_gamma) * langevin_T);
         // BH-F9: Box-Muller-derived N(0,1) per axis via SplitMix64.
         const double nx = ::ftd::voxel_normal(rng_seed, i, tick,
                 static_cast<unsigned long long>(::ftd::VoxelRng::LangevinNoiseX));
