@@ -38,8 +38,9 @@ against a CPU reference within 1e-14 relative error.
 
 New invariants declared once, uploaded once, broadcast-cached at kernel
 runtime. Constant memory is 64 KiB per context; current usage < 100 bytes.
-Pattern is dormant: `test_render_bridge_golden` hash `0x56fa28acb5b9fe88`
-@ L=17 unchanged; `test_gpu_parity_complete` 70/0 across 20 physics domains.
+Pattern is dormant: `test_render_bridge_golden` hash `0xb604d81a3d79366e`
+@ L=17 (re-baselined 2026-06-17, audit m1 — was `0x56fa28acb5b9fe88`);
+`test_gpu_parity_complete` 70/0 across 20 physics domains.
 Footgun for future work — consumer TUs without `CUDA_SEPARABLE_COMPILATION`
 silently get a zero copy of the symbol.
 
