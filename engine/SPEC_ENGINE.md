@@ -1,9 +1,36 @@
 # FTD Simulation Engine Reference
 
 **Living document for AI agents and developers.**
-**Last updated:** 2026-06-15 (scale-context gate + atomic closure-context documentation; no AtomEngine force-law retuning)
+**Last updated:** 2026-06-17 (comprehensive physics audit + remediation; golden RE-BASELINED to `0xb604d81a3d79366e`)
 **Engine version:** 2.18.0 (post May 2026 — BH-F* GPU plumbing sweep, SplitMix64 RNG portability Option A, trim-the-fat rounds 2-4, `ftd_eft` library extraction, F9 Tier-1 + F11.A Tier-3 audit closures)
 **Test count:** 258 C++ test source files (212 active CMake targets) + 18 Playwright specs + 25 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+
+### 2026-06-17 — Comprehensive physics audit + remediation; golden RE-BASELINED
+
+52-agent audit of the whole engine + "everything actionable" remediation
+(3 commits on `main`: `5b0d6b8f` C++/WASM, `21a7a3c2` JS, `6e72ffd4` CUDA-UNVERIFIED).
+The canonical CPU run-of-record path is physics-sound; defects clustered in the
+CUDA backend, JS/WASM mirrors, and Scale-0 visualization.
+
+**⚠ GOLDEN HASH RE-BASELINED `0x56fa28acb5b9fe88` → `0xb604d81a3d79366e`** —
+intentional diagnostic-scope fix (audit m1: `gauss_violation`/`max_gauss_error`
+now summed only over vacuum (state==0) sites with the mean-subtracted,
+coupling-scaled target the SOR projection actually enforces). Per-voxel
+state/flux/wave_vel/velocity is BYTE-IDENTICAL; only the two gauss audit scalars
+moved; deterministic (OMP=1 == full pool). Rationale in
+`test_render_bridge_golden.cpp`. **The older dated entries below cite the
+pre-baseline hash and remain accurate as of their dates.**
+
+Key fixes: M2 (C++ `PROTON_RATIO` → canonical FTD-0016 1836.47 = physical
+m_p/m_e, matching JS/Python; M_PROTON now ~938 MeV); GAP1 (Langevin σ=√(2γT)
+→ FDT-consistent √(γ(2−γ)T) — shifts thermal-campaign equilibrium temps);
+M3 (plane-wave/photon-pulse wave_vel onto the polarization axis, ω=2c·sin(k/2));
+M5 (JS α_s running); M6 (dead DM-halo/genesis overlays); M7/M8 (worker-proxy
+parity + inspector routing); M1/M4 GPU parity (charge_coupling + color guard —
+UNVERIFIED, need WSL2 GPU). GAP2–GAP7 investigated, no new fixes warranted
+(GAP2 a misdiagnosis; GAP4/5/6/7 clean). `test_helium_scale1` failure is
+PRE-EXISTING (FTD-0270 boundary). Full record: `engine/CHECKLIST_ENGINE.md`
+ROUND 6. **Nothing promoted** (engineering-health, not physics-claims).
 
 ### 2026-06-13 — Golden determinism verification + FTD-0286 v2 alpha estimator
 
