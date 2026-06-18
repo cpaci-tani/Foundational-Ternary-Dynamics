@@ -127,7 +127,7 @@ def update(frame):
     title, subtitle = get_text(frame)
     title_overlay.set_text(title)
     text_overlay.set_text(subtitle)
-    
+
     # Camera Logic
     if frame < 400:
         ax.view_init(elev=0, azim=-90)

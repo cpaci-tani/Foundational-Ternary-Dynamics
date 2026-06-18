@@ -26,8 +26,7 @@ cmake --build engine/build --config Release --parallel 24
 
 ### Test CPU
 ```bash
-cd engine/build
-ctest -j 24 --output-on-failure -C Release
+ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 ```
 
 ### Build CUDA GPU
@@ -48,7 +47,7 @@ cp engine/build_wasm/wasm/ftd_core.{js,wasm} engine/web/wasm/
 ### Run
 ```bash
 ./engine/build/Release/ftd_sim.exe [scenario] [lattice_size] [num_ticks]
-python -m http.server 8080 -d engine/web
+python engine/web/serve.py 8080
 ```
 Open `http://localhost:8080` for the dashboard.
 
@@ -141,6 +140,14 @@ For epistemic tags and derivation/parameter distinctions, see the project assess
 
 ---
 
+## Generated Outputs
+
+Build trees, CTest scratch data, Playwright artifacts, and campaign outputs are not part of the source surface. Campaign outputs should land under `engine/results/` from the repository root; avoid running commands from `engine/` with an `engine/results/...` output path, which creates accidental nested paths like `engine/engine/results/...`.
+
+The result tracking policy is documented in [results/README.md](results/README.md). Do not delete tracked campaign provenance during cleanup unless the project owner explicitly approves it.
+
+---
+
 ## Known Limits
 
 - The lattice defines a preferred discrete frame; continuum symmetries are approximate and scale-dependent in the engine.
@@ -162,5 +169,5 @@ engine/
   wasm/                         Emscripten bindings via Embind
   web/                          Browser dashboard (HTML/JS/CSS)
   config/                       Data-driven configurations (toggles.json, scenario manifests)
-  tests/                        C++ test suites (258 files, 212 active targets)
+  tests/                        C++ test suites, benchmarks, and campaigns
 ```

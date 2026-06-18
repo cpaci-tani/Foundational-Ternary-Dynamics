@@ -16,14 +16,14 @@ def is_prime(n):
 def get_gaussian_primes(limit):
     primes_x = []
     primes_y = []
-    
+
     for a in range(-limit, limit + 1):
         for b in range(-limit, limit + 1):
             if a == 0 and b == 0:
                 continue
-                
+
             norm = a**2 + b**2
-            
+
             # Case 1: a=0, |b| is a prime p = 3 (mod 4)
             if a == 0:
                 if is_prime(abs(b)) and abs(b) % 4 == 3:
@@ -39,7 +39,7 @@ def get_gaussian_primes(limit):
                 if is_prime(norm):
                     primes_x.append(a)
                     primes_y.append(b)
-                    
+
     return primes_x, primes_y
 
 limit = 100
@@ -60,7 +60,7 @@ plt.axvline(0, color='gray', linestyle=':', alpha=0.5)
 plt.plot([-limit, limit], [-limit, limit], color='gray', linestyle=':', alpha=0.5)
 plt.plot([-limit, limit], [limit, -limit], color='gray', linestyle=':', alpha=0.5)
 
-plt.title(f'Gaussian Primes $\mathbb{{Z}}[i]$ up to Re, Im $\leq {limit}$', fontsize=16)
+plt.title(f'Gaussian Primes $\\mathbb{{Z}}[i]$ up to Re, Im $\\leq {limit}$', fontsize=16)
 plt.xlim(-limit, limit)
 plt.ylim(-limit, limit)
 plt.gca().set_aspect('equal')

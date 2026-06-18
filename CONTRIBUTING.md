@@ -1,112 +1,91 @@
 # Contributing to Foundational Ternary Dynamics
 
-Thank you for your interest in contributing to FTD! This document provides guidelines for contributions.
+Thanks for helping improve FTD. This repository mixes theory documents, verification scripts, a C++/CUDA engine, and web dashboard code, so contributions need to be explicit about both engineering impact and epistemic status.
 
-## Types of Contributions
+## Good Contribution Types
 
-### Bug Reports
-- Use GitHub Issues to report bugs
-- Include Python version, OS, and full error traceback
-- Provide minimal reproducible example if possible
-
-### Feature Requests
-- Open an issue describing the proposed feature
-- Explain how it fits within the FTD framework
-- Consider epistemic implications
-
-### Code Contributions
-- Fork the repository
-- Create a feature branch
-- Follow the code style guidelines below
-- Submit a pull request
-
-### Documentation
-- Corrections to derivations
-- Improved explanations
-- Additional examples
-
-## Code Style
-
-### Python
-- Follow PEP 8
-- Use type hints where practical
-- Run `ruff check .` and `black .` before committing
-
-### Epistemic Labels
-All claims must be properly labeled:
-
-```python
-# [THEOREM] - Proven from axioms
-alpha_inv = 137.0361714582  # From master quadratic
-
-# [SELECTION] - Argued from consistency
-sin2_theta_w = N_c / n_eff  # = 3/13 = 0.2308
-
-# [NUMEROLOGY] - Pattern without rigorous derivation
-lambda_cabibbo = sqrt(2 * sin2_theta_w * alpha_s)  # 3.7% error
-
-# [OPEN] - Unresolved question
-# TODO: Derive e-folding number from first principles
-```
-
-### Documentation
-- Use Markdown for documentation
-- Include mathematical notation in LaTeX format
-- Reference related sections with cross-links
+- Bug reports with OS, Python/CMake/compiler versions, commands run, and full error output.
+- Focused engine, web, or verification fixes with tests.
+- Documentation corrections that align downstream prose to the canonical ledgers.
+- Theory or derivation edits that preserve provenance and avoid claim promotion unless the proof chain is actually present.
+- Cleanup PRs that archive or relabel superseded material without deleting scientific history.
 
 ## Development Setup
 
 ```bash
-# Clone your fork
 git clone https://github.com/YOUR_USERNAME/Foundational-Ternary-Dynamics.git
 cd Foundational-Ternary-Dynamics
 
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Install dependencies
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
 
-## Testing
+## Common Verification
+
+Run the narrowest relevant checks first, then broaden when touching shared code.
 
 ```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=. --cov-report=term-missing
-
-# Run specific test file
-pytest tests/test_master_quadratic.py -v
+python -m pytest scripts/tests/
+python scripts/proofs/proof_master_verification.py
 ```
 
-## Pull Request Process
+For C++ engine work:
 
-1. Update documentation for any changed functionality
-2. Ensure all tests pass
-3. Update CHANGELOG.md if appropriate
-4. Ensure epistemic labels are correct
-5. Request review from maintainers
+```bash
+cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
+cmake --build engine/build --config Release --parallel 24
+ctest --test-dir engine/build -j 24 --output-on-failure -C Release
+```
+
+For the web dashboard:
+
+```bash
+python engine/web/serve.py 8080
+```
 
 ## Epistemic Standards
 
-FTD maintains high epistemic standards. When contributing:
+Claim status is not decided by local prose. Use the canonical sources:
 
-1. **Don't overclaim**: If something is pattern-matching, label it [NUMEROLOGY]
-2. **Acknowledge limitations**: Document what is NOT proven
-3. **Provide derivations**: Show your work, don't just assert results
-4. **Consider falsification**: What would disprove your contribution?
+- `docs/theory/07_assessment/core_ledgers/LEDGER.md` for claim tags.
+- `docs/theory/07_assessment/core_ledgers/TRACKER_ONTIC_TRUTH.md` for bedrock truth tiers.
+- `docs/theory/01_reference/SPEC_ALGEBRAIC_SPINE.md` for theorem statements.
+- `docs/theory/07_assessment/CATALOG_PARAMETRIC_INSERTIONS.md` for imported standard-physics formulas.
+
+Use current tags such as `[AXIOM]`, `[THEOREM]`, `[DERIVED]`, `[NUMERICAL FACT]`, `[SELECTION]`, `[STRONGLY MOTIVATED CONJECTURE]`, `[PARAMETRIC]`, `[IMPOSED]`, `[CLOSED NEGATIVE]`, `[OPEN]`, and `[SYNTHESIS]`. Do not introduce obsolete labels for new work.
+
+Mandatory rules:
+
+1. Do not run numerical searches for near-misses or coincidences.
+2. Do not call standard-physics substitutions derivations.
+3. Do not promote a claim during cleanup.
+4. Preserve closed-negative and retracted routes as provenance.
+5. Update navigation layers when moving or status-changing documents.
+
+## Documentation Cleanup
+
+Cleanup work should follow `docs/theory/META_STRUCTURE.md`, `docs/audits/AUDIT_DOCUMENT_CLEANUP_LEDGER.md`, and `docs/audits/PLAN_PROJECT_CLEANUP_2026-06-17.md`.
+
+Prefer these moves:
+
+- Fix stale links and stale metadata in place.
+- Move superseded theory docs to the appropriate archive using `git mv`.
+- Update `docs/theory/META_INDEX.md` and local `INDEX_*.md` files with any moved document.
+- Keep generated outputs and regenerable campaign data out of git unless a specific campaign is intentionally force-added.
+
+## Pull Request Checklist
+
+Before opening a PR:
+
+1. Explain whether the change is code, documentation, theory, cleanup, or verification.
+2. Cite the canonical source for any changed claim status.
+3. List tests or documentation checks run.
+4. Note any intentionally deferred checks.
+5. Keep commits small enough to audit.
 
 ## Code of Conduct
 
-- Be respectful and constructive
-- Focus on the science, not personalities
-- Extraordinary claims require extraordinary evidence
-- It's okay to be wrong - that's how science progresses
-
-## Questions?
-
-Open an issue with the "question" label or contact the maintainers.
+Be precise, respectful, and falsification-minded. Strong claims need strong evidence, and negative results are part of the project record.
