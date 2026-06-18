@@ -95,7 +95,7 @@ the instrument is correct); a drift flags a bug or a support/scaling mismatch. T
 
 ## 4. ② Topology  (invariants from the field)
 
-- **Gauss-law violation** `[M]`: `gaussViolation` (= Σ(∇·E−ρ)²) and `maxGaussError` from the audit; show
+- **Gauss-law violation** `[M]`: `gaussViolation` (= Σ over vacuum sites of (div J − charge_coupling·(s−mean_charge))², the residual of the constraint the SOR projection actually enforces — NOT the E field; E = −wave_vel is a different field) and `maxGaussError` from the audit; show
   Σ, max, and a pass badge (`gv < 1e-4`). This is the constraint-satisfaction / topological-charge
   consistency measure.
 - **Defect / monopole count** `[D]`: from the `divJ` sampler — voxels with `|∇·J| > τ·max|∇·J|`

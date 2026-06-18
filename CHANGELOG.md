@@ -1,5 +1,32 @@
 # Foundational Ternary Dynamics Changelog
 
+## Comprehensive engine physics audit + remediation (2026-06-17)
+
+Multi-agent audit of the whole engine + "everything actionable" remediation.
+3 commits on `main`: `5b0d6b8f` (C++/WASM + golden re-baseline), `21a7a3c2`
+(JS), `6e72ffd4` (CUDA — UNVERIFIED, needs WSL2 GPU). The canonical CPU
+run-of-record path is physics-sound; defects clustered in the CUDA backend,
+JS/WASM mirrors, and Scale-0 visualization.
+
+**⚠ Golden hash re-baselined `0x56fa28acb5b9fe88` → `0xb604d81a3d79366e`** —
+intentional diagnostic-scope fix (audit m1: `gauss_violation`/`max_gauss_error`
+now summed only over vacuum sites with the mean-subtracted, coupling-scaled
+target the SOR projection actually enforces). Per-voxel state/flux/wave_vel/
+velocity is byte-identical; only the two gauss audit scalars moved;
+deterministic (OMP=1 == full pool). Rationale in `test_render_bridge_golden.cpp`.
+
+Key fixes: M2 (C++ `PROTON_RATIO` → canonical FTD-0016 1836.47), GAP1 (Langevin
+σ=√(2γT) → FDT-consistent √(γ(2−γ)T); shifts thermal-campaign equilib temps),
+M3 (plane-wave/photon-pulse wave_vel axis + ω=2c·sin(k/2)), M5 (JS α_s running),
+M6 (dead DM-halo/genesis overlays), M7/M8 (worker-proxy parity + inspector),
+M1/M4 (GPU Gauss charge_coupling + color guard — unverified). GAP2–GAP7
+investigated, no new fixes warranted (GAP2 a misdiagnosis; GAP4/5/6/7 clean).
+`test_helium_scale1` failure is pre-existing (FTD-0270 boundary). Full record:
+`engine/CHECKLIST_ENGINE.md` ROUND 6. Nothing promoted (engineering-health, not
+physics-claims).
+
+---
+
 ## Web Telemetry & Charting Pipeline Refactor (2026-06-17)
 
 Refactored the web dashboard's telemetry pipeline to use a centralized Structure-of-Arrays (SoA) layout via `MultiRingBuffer`, vastly improving memory locality and chart rendering performance.

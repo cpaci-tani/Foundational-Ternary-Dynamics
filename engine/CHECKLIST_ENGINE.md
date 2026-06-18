@@ -115,7 +115,7 @@ GPU is the default backend whenever CUDA is available (see `RenderBridge` constr
 
 | ID | Status | Title | Notes |
 |---|---|---|---|
-| GPU-PORT-1 | ☐ | Phase H coupling (`coulomb_charge_coupling`) on GPU | [test_phase_h_coupling.cpp:34](tests/test_phase_h_coupling.cpp:34) — "only wired on the CPU path" |
+| GPU-PORT-1 | ◐ | Phase H coupling (`coulomb_charge_coupling`) on GPU | **FIXED in source 2026-06-17 (audit M1, commit `6e72ffd4`)** — GPU Gauss rhs now threads `charge_coupling` + host-computed `mean_charge` (`kernels_poisson.cu`, `gpu_engine.cu`), mirroring `poisson_solvers.cpp:164`. ⚠ UNVERIFIED — needs a WSL2 GPU build + `test_phase_h_coupling` parity run to close. Orig: [test_phase_h_coupling.cpp:34](tests/test_phase_h_coupling.cpp:34) "only wired on the CPU path" |
 | GPU-PORT-2 | ☐ | Mechanism B (vacuum polarization with Langevin BG) on GPU | [test_mechanism_b.cpp:38,158](tests/test_mechanism_b.cpp:158) — "we only modified the CPU implementation" |
 | GPU-PORT-3 | ☐ | Wilson topology measurement on GPU | [test_wilson_topology.cpp:66](tests/test_wilson_topology.cpp:66) |
 | GPU-PORT-4 | ☐ | EFT dual-cell adapter on GPU | [test_dual_cell_adapter.cpp:31,45](tests/test_dual_cell_adapter.cpp:31) |
@@ -370,6 +370,61 @@ Weakest domains:
 observable registry, stochastic GPU correctness, production Gauss choice,
 nonlinear mixing, native action/measure, continuum scaling protocol.
 ```
+
+---
+
+## ROUND 6 — Comprehensive physics/consistency audit (2026-06-17)
+
+Multi-agent audit (52-agent workflow) of the whole engine — field PDE, Gauss/conservation,
+cross-language constants, scenario ICs, genesis/mass, forces, determinism/GPU-parity, WASM
+bridge, relativity/time — plus a completeness critic and a GAP2–GAP7 follow-up sweep. Verdict:
+**the canonical CPU run-of-record path is physics-sound**; defects clustered in the CUDA backend,
+JS/WASM mirrors, and Scale-0 viz. Commits: `5b0d6b8f` (C++/WASM + golden re-baseline),
+`21a7a3c2` (JS), `6e72ffd4` (CUDA — UNVERIFIED).
+
+**⚠ GOLDEN HASH RE-BASELINED `0x56fa28acb5b9fe88` → `0xb604d81a3d79366e`** (AUDIT-m1; intentional
+diagnostic-scope fix, per-voxel field byte-identical, deterministic OMP1==pool; rationale in
+`tests/test_render_bridge_golden.cpp`).
+
+### Fixed (CPU-verified: golden GREEN, 8/9 targeted CTests pass)
+| ID | Status | Title | Where |
+|---|---|---|---|
+| AUDIT-M2 |  | C++ `PROTON_RATIO` held superseded 3519.97 form → canonical FTD-0016 `N_eff/α+N_base·N_eff+N_c`=1836.47 (matches JS/Python) | [include/ftd/ontic/particle_masses.h:62](include/ftd/ontic/particle_masses.h:62) |
+| AUDIT-m1 |  | `gauss_violation` summed over ALL voxels → restricted to vacuum sites w/ mean-subtracted coupling-scaled target (golden re-baseline) | [src/diagnostics_compute.cpp:141](src/diagnostics_compute.cpp:141) |
+| AUDIT-GAP1 |  | Langevin σ=√(2γT) (Euler-Maruyama, equilibrates to T/(1−γ/2)) → √(γ(2−γ)T) FDT-consistent. ⚠ shifts thermal-campaign equilib temps (FTD-0272/0274) | [src/render_bridge_phases/phase_write.cpp:235](src/render_bridge_phases/phase_write.cpp:235) |
+| AUDIT-M3 |  | `s0-field-plane-wave`/`photon-pulse` wave_vel on propagation axis w/ mag c·A → polarization axis, −ω·A·cos(kx), ω=2c·sin(k/2) | [src/scenarios/s0_field.cpp:39](src/scenarios/s0_field.cpp:39) |
+| AUDIT-m3/m4/i1/i3/m6/m7 |  | WASM color radii→COLOR_* consts; harmonic-F∝r relabel (was "linear confinement"); de_broglie_clock ANY→CPU; SOUND_PROXY rename; clock c=1-convention doc; voxel.h τ comment | s0_field.cpp, ftd_wasm.cpp, term_toggles.h, transmutation_phases.cpp, voxel.h |
+
+### Fixed (JS — syntax-checked; M6 confirmed live, M3/overlays browser-verify pending)
+| ID | Status | Title | Where |
+|---|---|---|---|
+| AUDIT-M5 |  | JS α_s(r) used nf=3 single-log →0 at large r (anti-confinement) → ported C++ `alpha_s_running` (B0_NF5=23/3, Λ=0.215, sat→1.0) | [web/js/bridge/pe-force-kernel.js](web/js/bridge/pe-force-kernel.js) |
+| AUDIT-M6 |  | DM-halo/genesis-isosurface overlays read N³ flux as N³×3 (guard never passed → dead). Now consume N³ scalar (confirmed live: fluxLen=N³) | [web/js/scales/scale0/runtime/field-overlays.js:342](web/js/scales/scale0/runtime/field-overlays.js:342) |
+| AUDIT-M7 |  | `WasmBridgeProxy` missing inspectVoxel/getForceAt/sampleVAtRay/getConstants (+unguarded call cascaded p1-panel offline) → safe nulls + guard | wasm-bridge-proxy.js, anisotropy.js |
+| AUDIT-M8 |  | Inspector read non-ticking main bridge on worker scenarios → route to active proxy | [web/js/app.js:1575](web/js/app.js:1575) |
+
+### CUDA — fixed in source, ⚠ UNVERIFIED (needs WSL2 GPU build + parity run; commit `6e72ffd4`, easily revertable)
+| ID | Status | Title | Where |
+|---|---|---|---|
+| AUDIT-M1 / GPU-PORT-1 | ◐ | GPU Gauss rhs dropped `charge_coupling`+mean_charge → mirrored CPU (host-side atomicAdd mean_charge) | [cuda/kernels_poisson.cu](cuda/kernels_poisson.cu), gpu_engine.cu |
+| AUDIT-M4 | ◐ | GPU color force acted on colorless particles (no `color!=0` guard) → added | [cuda/kernels_forces.cu](cuda/kernels_forces.cu) |
+| AUDIT-GAP1-gpu | ◐ | GPU Langevin σ FDT fix (mirror CPU) | [cuda/kernels_stencil_single.cu](cuda/kernels_stencil_single.cu) |
+
+### GAP2–GAP7 follow-up — investigated, NO new engine-code fixes warranted
+| ID | Status | Verdict |
+|---|---|---|
+| AUDIT-GAP2 | ⊗ | **MISDIAGNOSIS** — `get_flux_volume`'s "transpose" is a memory-layout conversion (C++ x-slowest → JS x-fastest) that PRESERVES coordinates; flux-volume overlays and `*_sampled` overlays both render in the particle frame. No visible X↔Z swap. Comment clarified; no code change. |
+| AUDIT-GAP3 | ⊗ | CLEAN — GPU/CPU neighbor wrap is correct double-mod `((x%N)+N)%N` (`cuda_index.cuh`), 18-pt stencil + index match CPU. Recorded verified. |
+| AUDIT-GAP4 | ⊗ | CLEAN — GPU FFT/spectral Poisson already threads charge_coupling+mean_charge (it WAS the M1 fix); deterministic (integer atomicAdd, DC mode zeroed). 2 optional CUDA latent items: `exact_dual_gauss` not plumbed to GPU + dual-substrate L/R split missing in GPU correction (low priority, no current test sets exact_dual_gauss=true on GPU). |
+| AUDIT-GAP5 | ⊗ | CLEAN by design — weak transmutation intentionally violates Σ-state (Sakharov-1 baryogenesis); pair-production is Σ-neutral. Covered by `test_native_reaction_ledger` NRL-3/4. Gap: no *combined* weak+pair-prod test (optional `test_transmutation_charge_ledger.cpp` recommended). |
+| AUDIT-GAP6 | ⊗ | CLEAN — all SoA scratch buffers (`delta_j_`, `flux_pre_write_`, …) sized N, index-local writes, barrier-separated reads; Langevin-on path race-free via stateless `voxel_normal` RNG. |
+| AUDIT-GAP7 | ⊗ | CLEAN — `atom_thermostat.cpp` is a deterministic Berendsen velocity-rescaler (no √(2γT) noise term) → no FDT bias. Different (MeV) units, no cross-scale handoff with Scale-0 `langevin_T`. |
+
+### Notes / known-state
+- **AUDIT-i2:** the tick-0 `wv=J` seeding (commit `3c7122ae`) advances flux on tick 1 via the leapfrog drift, shifting *when/where* genesis fires for near-threshold pulses (flux-cascade/pair-production/zeno/entangle). Pedagogical-only; documented, not a defect.
+- **AUDIT-m5:** Scale-0 voxel color force is HARMONIC large-r (F∝r/64, V∝r²); the Scale-1 particle engine uses genuine LINEAR `SIGMA_STRING` tension (V∝r). Different physics under one "strong/color" name — comments aligned (CPU `phase_forces.cpp` was already right; WASM/JS/CUDA relabeled).
+- **`test_helium_scale1` FAILS — PRE-EXISTING, not an audit regression** (byte-identical with M2 reverted; consistent with the FTD-0270 atomic-dynamics-not-substrate-derived boundary).
+- m6 (clock c=1 vs C_SPEED) is consistent with BUG-005's prior false-positive adjudication — documented only.
 
 ---
 

@@ -329,10 +329,13 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
 
     if (flags.showDarkMatterHalo || flags.showGenesisIsosurface) {
         // getScale0FluxVolume() → bridge.getFluxVolume() returns N³ per-voxel
-        // |J| magnitudes (NOT a 3-component interleaved vector field), already
-        // in JS z-fastest order — see ftd_wasm.cpp get_flux_volume (density_at
-        // + the X⇄Z layout transpose). Consume it directly; the flux-renderer
-        // and gravity-panel treat the same buffer as N³ scalars.
+        // |J| magnitudes (NOT a 3-component interleaved vector field), in JS
+        // x-fastest order (idx = z*N²+y*N+x) — get_flux_volume converts the C++
+        // x-slowest memory layout to x-fastest while PRESERVING coordinates
+        // (logical (x,y,z) → density(x,y,z), the same particle frame as every
+        // *_sampled overlay; it is a layout conversion, not a coordinate swap).
+        // Consume it directly; the flux-renderer and gravity-panel treat the
+        // same buffer as N³ scalars.
         const fluxVol = fieldCapability?.getScale0FluxVolume?.();
         if (fluxVol && fluxVol.length >= N * N * N) {
             const magnitude = fluxVol;

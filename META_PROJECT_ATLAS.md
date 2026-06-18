@@ -146,7 +146,7 @@ ftd/
 │   │   ├── test_*.cpp                 # Unit tests (use test_telemetry.h)
 │   │   ├── benchmark_*.cpp            # Engine-theory bridge tests
 │   │   ├── campaign_*.cpp             # Long-running measurement campaigns
-│   │   ├── test_render_bridge_golden.cpp # Phase 4 golden-tick gate (hash 0x56fa28acb5b9fe88 @ L=17)
+│   │   ├── test_render_bridge_golden.cpp # Phase 4 golden-tick gate (hash 0xb604d81a3d79366e @ L=17, re-baselined 2026-06-17 audit m1)
 │   │   ├── test_audit_regression.cpp  # 14-15/15 audit fix coverage
 │   │   └── support/                   # Phase 7 ftd_test_support library
 │   │       ├── test_telemetry.cpp     # 312 LOC impl (was header-only, parsed 155+ times)
@@ -369,7 +369,7 @@ now been verified end-to-end on WSL2 + RTX 5090:
 
 | Test | L | Result |
 |---|---:|---|
-| `test_render_bridge_golden` | 17 | hash `0x56fa28acb5b9fe88` bit-exact (CPU; OMP determinism verified 2026-06-11) |
+| `test_render_bridge_golden` | 17 | hash `0xb604d81a3d79366e` bit-exact (CPU; OMP determinism verified; re-baselined 2026-06-17 for audit m1 gauss_violation scope fix — was `0x56fa28acb5b9fe88`) |
 | `test_gpu_parity_complete` | 32 | 70/0 PASS across 20 physics domains |
 | `test_force_diag_parity` | — | 7/7 PASS (`|a−b| = 0.000e+00` on strong force) |
 | `test_sim_parity` | 16 | TotalFieldEnergy parity ≤ 1e-2 at 100 + 500 ticks |

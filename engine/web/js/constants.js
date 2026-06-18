@@ -378,12 +378,16 @@ export const COULOMB_K_HEP   = ALPHA;
 // ── Strong-force tuning constants [IMPOSED] ─────────────────────────
 // Hardcoded across MockBridge and mock-lattice-samplers pre-2026-04-27;
 // promoted here so any tuning change propagates to every callsite at
-// once. The 3-regime model (Coulomb / transition / linear confinement)
+// once. The 3-regime model (Coulomb / transition / harmonic confinement)
 // matches the C++ engine in render_bridge.cpp::phase_forces.
+// NOTE: the large-r regime is HARMONIC (F∝r ⇒ V∝r²), NOT QCD linear
+// confinement (F=const ⇒ V∝r). This is the Scale-0 voxel color force; the
+// Scale-1 particle engine uses a genuine linear SIGMA_STRING tension. See
+// CHECKLIST_ENGINE.md audit m4/m5 (2026-06-17).
 export const STRONG_ALPHA_S         = 1.0;       // base color coupling (≠ ALPHA_S_MZ; this is the lattice-unit scale)
 export const STRONG_RUN_COEFF       = 0.1;       // running-coupling log coefficient
 export const STRONG_R_COULOMB       = 3.0;       // r < this → Coulomb regime (1/r²)
-export const STRONG_R_LINEAR        = 8.0;       // r ≥ this → linear confinement (r/64)
+export const STRONG_R_LINEAR        = 8.0;       // r ≥ this → harmonic confinement (F=α_s·r/64, V∝r²)
 export const STRONG_TRANSITION_DENOM = 3.0;      // transition regime: F = α_s/(3·r)
 export const STRONG_LINEAR_DENOM    = 64.0;      // linear regime: F = α_s·r/64
 export const STRONG_COLOR_REPEL     = 0.5;       // same-color factor (repulsive)
