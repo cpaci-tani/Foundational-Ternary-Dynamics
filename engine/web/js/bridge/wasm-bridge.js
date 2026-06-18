@@ -76,6 +76,9 @@ const EMPTY_PARTICLE_DATA = Object.freeze({
     sizes: new Float32Array(0),
     count: 0,
 });
+const EMPTY_KNOT_TELEMETRY = Object.freeze({ ids: new Int32Array(0), signs: new Int32Array(0), birth: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0), peak: new Int32Array(0), fields: new Float32Array(0), stride: 11, count: 0 });
+const EMPTY_KNOT_EVENTS = Object.freeze({ tick: new Int32Array(0), type: new Int32Array(0), nparents: new Int32Array(0), nchildren: new Int32Array(0), sign: new Int32Array(0), count: 0 });
+const EMPTY_KNOT_AGG = Object.freeze({ alive: 0, netCharge: 0, births: 0, deaths: 0, fissions: 0, fusions: 0 });
 
 // Generic delegate: run `fn` if the WASM module exposes both the bridge AND
 // the specified method, else return `fallback`. Collapses the two-line guard
@@ -348,6 +351,22 @@ export class WasmBridge {
             sizes: raw.sizes,
             count: raw.count
         };
+    }
+
+    getKnotTelemetry() {
+        if (!this._module || !this._bridge) return EMPTY_KNOT_TELEMETRY;
+        const r = this._module.getKnotTelemetry(this._bridge);
+        return r || EMPTY_KNOT_TELEMETRY;
+    }
+    getKnotEvents() {
+        if (!this._module || !this._bridge) return EMPTY_KNOT_EVENTS;
+        const r = this._module.getKnotEvents(this._bridge);
+        return r || EMPTY_KNOT_EVENTS;
+    }
+    getKnotAggregate() {
+        if (!this._module || !this._bridge) return EMPTY_KNOT_AGG;
+        const r = this._module.getKnotAggregate(this._bridge);
+        return r || EMPTY_KNOT_AGG;
     }
 
     getScale0ParticleList() {

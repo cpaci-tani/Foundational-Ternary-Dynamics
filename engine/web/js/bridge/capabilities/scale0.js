@@ -47,6 +47,9 @@ export function createScale0Capabilities(bridge) {
         getScale0Diagnostics: () => bridge.getDiagnostics(),
         getScale0EnergyAudit: () => bridge.getEnergyAudit(),
         getScale0Lagrangian: () => bridge.getLagrangian(),
+        getScale0KnotTelemetry: () => bridge.getKnotTelemetry?.() ?? null,
+        getScale0KnotEvents: () => bridge.getKnotEvents?.() ?? null,
+        getScale0KnotAggregate: () => bridge.getKnotAggregate?.() ?? null,
         getScale0DerivedOverlayData: (kind) => {
             if (typeof bridge.getScale0DerivedOverlayData === 'function') return bridge.getScale0DerivedOverlayData(kind);
             return null;
