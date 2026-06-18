@@ -51,6 +51,21 @@ const SAMPLER_METHODS = {
 // Persists across scenario changes (overlay visibility is UI state, not scenario state).
 const wantedSamplers = new Map();
 
+// Knot telemetry/event payloads are WASM heap VIEWS (zero-copy). They are
+// invalidated by the next WASM call, so copy every typed array out before the
+// payload crosses the postMessage boundary back to the main thread.
+function copyKnotTelemetry(r) {
+  if (!r || !r.count) return null;
+  return { ids: new Int32Array(r.ids), signs: new Int32Array(r.signs), birth: new Int32Array(r.birth),
+           age: new Int32Array(r.age), size: new Int32Array(r.size), peak: new Int32Array(r.peak),
+           fields: new Float32Array(r.fields), stride: r.stride, count: r.count };
+}
+function copyKnotEvents(r) {
+  if (!r) return null;
+  return { tick: new Int32Array(r.tick), type: new Int32Array(r.type), nparents: new Int32Array(r.nparents),
+           nchildren: new Int32Array(r.nchildren), sign: new Int32Array(r.sign), count: r.count };
+}
+
 function initModule(cb) {
   createFTDModuleMT({ locateFile: (p) => '../../wasm/' + p }).then((m) => {
     mod = m;
@@ -103,6 +118,17 @@ function postFrame() {
       count: p.count | 0,
     };
   } catch (e) { /* ignore */ }
+  // Knot telemetry — only when the tracking build/toggle is present, so the cost
+  // is zero otherwise. Copy the heap views out immediately (before the sampler
+  // loop's WASM calls below invalidate them).
+  let knot = null, knotEvents = null, knotAgg = null;
+  try {
+    if (mod.getKnotAggregate) {
+      knotAgg = mod.getKnotAggregate(bridge);
+      knot = copyKnotTelemetry(mod.getKnotTelemetry(bridge));
+      knotEvents = copyKnotEvents(mod.getKnotEvents(bridge));
+    }
+  } catch (e) { /* tracking off or not built */ }
   // Overlay samplers — compute only the kinds the proxy has registered.
   const samplers = {};
   if (wantedSamplers.size > 0) {
@@ -134,7 +160,7 @@ function postFrame() {
     Atomics.store(ctrl, CTRL.PCOUNT, parts ? parts.count : 0);
     Atomics.add(ctrl, CTRL.FRAME, 1);
   }
-  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag, samplers });
+  self.postMessage({ type: 'frame', tick: tick | 0, diag, parts, audit, lag, samplers, knot, knotEvents, knotAgg });
 }
 
 function loop() {
