@@ -28,6 +28,7 @@
 #include "ftd/field_operators.h"
 #include "ftd/lagrangian.h"
 #include "ftd/constants.h"
+#include "ftd/knot_telemetry.h"  // full KnotTracker definition (PIMPL fwd-decl in render_bridge.h)
 #include "bindings_internal.h"
 
 using namespace emscripten;
@@ -1389,6 +1390,85 @@ val get_gauss_residual_sampled(ftd::RenderBridge& rb, int stride) {
 // ── Lattice info ────────────────────────────────────────────────────
 int get_lattice_size(ftd::RenderBridge& rb) {
     return rb.lattice().size();
+}
+
+// ── Knot Telemetry Extraction (observation-only KnotTracker) ─────────
+// getKnotTelemetry: { ids:Int32, signs:Int32, birth:Int32, age:Int32,
+//   size:Int32, peak:Int32, fields:Float32[11*count]
+//   (cx,cy,cz,vx,vy,vz,fluxMag,fdx,fdy,fdz,org per knot=11), count }
+val get_knot_telemetry(ftd::RenderBridge& rb) {
+    static std::vector<int>   id_cache, sgn_cache, birth_cache, age_cache, size_cache, peak_cache;
+    static std::vector<float> f_cache;  // 11 floats per knot
+    const auto rows = rb.knot_tracker().alive_knots();
+    const int count = static_cast<int>(rows.size());
+    if (static_cast<int>(id_cache.size()) < count) {
+        id_cache.resize(count); sgn_cache.resize(count); birth_cache.resize(count);
+        age_cache.resize(count); size_cache.resize(count); peak_cache.resize(count);
+        f_cache.resize(count * 11);
+    }
+    for (int k = 0; k < count; ++k) {
+        const auto& r = rows[k];
+        id_cache[k]=r.id; sgn_cache[k]=r.sign; birth_cache[k]=r.birth_tick;
+        age_cache[k]=r.age; size_cache[k]=r.size; peak_cache[k]=r.max_size;
+        float* f = &f_cache[k*11];
+        f[0]=(float)r.cx; f[1]=(float)r.cy; f[2]=(float)r.cz;
+        f[3]=(float)r.vx; f[4]=(float)r.vy; f[5]=(float)r.vz;
+        f[6]=(float)r.flux_mag; f[7]=(float)r.fdir_x; f[8]=(float)r.fdir_y; f[9]=(float)r.fdir_z;
+        f[10]=(float)r.org;
+    }
+    val result = val::object();
+    result.set("ids",    val(typed_memory_view(count, id_cache.data())));
+    result.set("signs",  val(typed_memory_view(count, sgn_cache.data())));
+    result.set("birth",  val(typed_memory_view(count, birth_cache.data())));
+    result.set("age",    val(typed_memory_view(count, age_cache.data())));
+    result.set("size",   val(typed_memory_view(count, size_cache.data())));
+    result.set("peak",   val(typed_memory_view(count, peak_cache.data())));
+    result.set("fields", val(typed_memory_view(count * 11, f_cache.data())));
+    result.set("stride", 11);
+    result.set("count", count);
+    return result;
+}
+
+// getKnotEvents: recent fission/fusion/birth/death. type: 0=Birth 1=Death
+//   2=Persist 3=Fission 4=Fusion 5=Ambiguous (matches EventType order).
+val get_knot_events(ftd::RenderBridge& rb) {
+    static std::vector<int> tick_cache, type_cache, np_cache, nc_cache, sgn_cache;
+    const auto& evs = rb.knot_tracker().events();
+    const int total = static_cast<int>(evs.size());
+    const int MAX = 64;                    // most recent MAX events
+    const int start = total > MAX ? total - MAX : 0;
+    const int count = total - start;
+    if (static_cast<int>(tick_cache.size()) < count) {
+        tick_cache.resize(count); type_cache.resize(count); np_cache.resize(count);
+        nc_cache.resize(count); sgn_cache.resize(count);
+    }
+    for (int i = 0; i < count; ++i) {
+        const auto& e = evs[start + i];
+        tick_cache[i]=e.tick; type_cache[i]=static_cast<int>(e.type);
+        np_cache[i]=static_cast<int>(e.parent_ids.size());
+        nc_cache[i]=static_cast<int>(e.child_ids.size());
+        sgn_cache[i]=e.state_sign;
+    }
+    val result = val::object();
+    result.set("tick",   val(typed_memory_view(count, tick_cache.data())));
+    result.set("type",   val(typed_memory_view(count, type_cache.data())));
+    result.set("nparents", val(typed_memory_view(count, np_cache.data())));
+    result.set("nchildren", val(typed_memory_view(count, nc_cache.data())));
+    result.set("sign",   val(typed_memory_view(count, sgn_cache.data())));
+    result.set("count",  count);
+    return result;
+}
+
+val get_knot_aggregate(ftd::RenderBridge& rb) {
+    const auto a = rb.knot_tracker().aggregate();
+    val result = val::object();
+    result.set("alive", a.alive);
+    result.set("netCharge", a.net_charge);
+    result.set("births", a.births);
+    result.set("deaths", a.deaths);
+    result.set("fissions", a.fissions);
+    result.set("fusions", a.fusions);
+    return result;
 }
 
 } // namespace ftd_wasm_internal
