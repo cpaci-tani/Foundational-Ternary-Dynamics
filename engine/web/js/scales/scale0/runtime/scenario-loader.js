@@ -389,7 +389,12 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     const activeBridge = (useFluxMock && fluxMock) ? fluxMock : ctx.bridge;
     const harness = getPhysicsHarness(activeBridge);
-    scenario.load(harness, params);
+    
+    if (ctx.running) {
+        scenario.load(harness, params);
+    } else {
+        state._pendingScenarioLoad = () => scenario.load(harness, params);
+    }
 
     // applyAuxiliaryDefaults runs AFTER scenario.load so that the flux boundary
     // mode command isn't discarded. On the worker path, scenario.load calls
@@ -397,6 +402,7 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // _pendingCommands. Any command queued before that call is wiped before the
     // worker's 'ready' reply can replay it. By running here, the setFluxBoundary
     // command lands in _pendingCommands after the clear and is replayed correctly.
+    // If scenario load is deferred, we still apply defaults now to ready the UI.
     applyAuxiliaryDefaults(ctx, viewportAdapter, scenario.id);
 
     // Gravity/wave family (SCALE0_ABSORBING_SCENARIOS): set LAST, after

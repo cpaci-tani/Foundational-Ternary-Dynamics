@@ -733,7 +733,7 @@ export class WasmBridge {
 
     setReflectiveBoundary(on) {
         // Legacy path: map bool → flux boundary mode
-        this.setFluxBoundaryMode(on ? 1 : 2);
+        this.setFluxBoundaryMode(on ? 1 : 0);
         if (this._aeStub) this._aeStub._reflectiveBoundary = on;
     }
 
