@@ -323,26 +323,19 @@ function computeForceItemFlow(item, latticeSize, stride, params = {}) {
     });
 }
 
-// Compute per-voxel |J| magnitude from the flat 3-component flux volume.
-// fluxVol is a Float64Array of length N³×3 (Jx,Jy,Jz interleaved).
-function buildFluxMagnitude(fluxVol, N) {
-    const N3 = N * N * N;
-    const mag = new Float32Array(N3);
-    for (let i = 0; i < N3; i++) {
-        const jx = fluxVol[i * 3], jy = fluxVol[i * 3 + 1], jz = fluxVol[i * 3 + 2];
-        mag[i] = Math.sqrt(jx * jx + jy * jy + jz * jz);
-    }
-    return mag;
-}
-
 export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
     const frame = {};
     const flags = state.fieldFlags;
 
     if (flags.showDarkMatterHalo || flags.showGenesisIsosurface) {
+        // getScale0FluxVolume() → bridge.getFluxVolume() returns N³ per-voxel
+        // |J| magnitudes (NOT a 3-component interleaved vector field), already
+        // in JS z-fastest order — see ftd_wasm.cpp get_flux_volume (density_at
+        // + the X⇄Z layout transpose). Consume it directly; the flux-renderer
+        // and gravity-panel treat the same buffer as N³ scalars.
         const fluxVol = fieldCapability?.getScale0FluxVolume?.();
-        if (fluxVol && fluxVol.length >= N * N * N * 3) {
-            const magnitude = buildFluxMagnitude(fluxVol, N);
+        if (fluxVol && fluxVol.length >= N * N * N) {
+            const magnitude = fluxVol;
             if (flags.showDarkMatterHalo) {
                 const parts = fieldCapability?.getScale0ParticleFrame?.();
                 frame.darkMatterHalo = { particles: parts?.positions ?? null, magnitude, latticeSize: N };

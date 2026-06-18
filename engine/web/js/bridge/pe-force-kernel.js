@@ -5,20 +5,45 @@
  * Used by mock-particle-engine.js for browser PE dynamics parity.
  */
 
-import { ALPHA, K_B, G_PE, C_SPEED, COULOMB_K_FORCE, STRONG_ALPHA_S } from '../constants.js';
+import { ALPHA, K_B, G_PE, C_SPEED, COULOMB_K_FORCE, STRONG_ALPHA_S, N_C } from '../constants.js';
 
 const Q_LATTICE = 2.0;
 const EXCHANGE_RANGE_SQ = 9.0;
 const ALPHA_EXCHANGE = ALPHA * ALPHA;
 const SIGMA_STRING = STRONG_ALPHA_S * K_B * K_B;
 
-/** Running α_s(r) — matches C++ alpha_s_lattice. */
+// One-loop QCD running, ported verbatim from C++
+// (engine/src/eft/qcd_one_loop_perturbative.cpp + include/ftd/constants.h).
+//   b₀ = (11·N_c − 2·n_f)/3 with n_f = 5 active flavors  ⇒ 23/3.
+//   Λ_QCD from 2-loop matching at M_Z (gauge_couplings.h).
+// STRONG_ALPHA_S is the C++ ALPHA_S (= 1.0), the lattice-scale clamp ceiling.
+const B0_NF5 = (11.0 * N_C - 2.0 * 5) / 3.0;  // = 23/3 ≈ 7.667
+const LAMBDA_QCD = 0.215;                      // GeV
+
+/**
+ * One-loop running α_s(Q) — verbatim port of C++ ftd::ontic::alpha_s_running.
+ *   α_s(Q) = 4π / (b₀ · ln(Q²/Λ²))   [5 active flavors]
+ * Returns 1.0 in the non-perturbative regime (Q ≤ Λ_QCD) as a finite
+ * placeholder — NOT a physical value there.
+ */
+function alphaSRunning(Q) {
+    if (Q <= LAMBDA_QCD) return 1.0;  // non-perturbative
+    const logRatio = Math.log((Q * Q) / (LAMBDA_QCD * LAMBDA_QCD));
+    if (logRatio <= 0.0) return 1.0;
+    return (4.0 * Math.PI) / (B0_NF5 * logRatio);
+}
+
+/**
+ * Running α_s(r) — verbatim port of C++ alpha_s_lattice (constants.h).
+ * Maps r (voxels) → Q (GeV) via Q = Q_LATTICE / r, then evaluates the running
+ * coupling and clamps to ≤ ALPHA_S (STRONG_ALPHA_S) to avoid the Landau pole.
+ * Confining limit: as r → ∞, Q → 0 ≤ Λ_QCD ⇒ α_s saturates at ALPHA_S.
+ */
 export function alphaSLattice(r) {
     if (r <= 0) return STRONG_ALPHA_S;
     const Q = Q_LATTICE / r;
-    const beta0 = 11.0 - (2.0 / 3.0) * 3.0;
-    const as = STRONG_ALPHA_S / (1.0 + (beta0 / (4.0 * Math.PI)) * STRONG_ALPHA_S * Math.log(Math.max(Q, 0.01) / Q_LATTICE));
-    return Math.min(Math.max(as, 0), STRONG_ALPHA_S);
+    const as = alphaSRunning(Q);
+    return Math.min(as, STRONG_ALPHA_S);
 }
 
 /**
