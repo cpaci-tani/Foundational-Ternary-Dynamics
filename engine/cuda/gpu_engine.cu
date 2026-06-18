@@ -46,6 +46,7 @@ namespace ftd { namespace gpu { namespace kernels {
                             double kinetic_drain,
                             unsigned long long rng_seed, int tick);
     void launch_gauss_project(GpuBuffers& bufs,
+                              double charge_coupling,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_solve_coulomb(GpuBuffers& bufs,
@@ -293,6 +294,7 @@ void GpuEngine::gpu_phase_write() {
 
 void GpuEngine::gpu_gauss_project() {
     kernels::launch_gauss_project(bufs_,
+                                  toggles.coulomb_charge_coupling,
                                   fft_plan_forward_,
                                   fft_plan_inverse_,
                                   fft_plan_forward_f_,
