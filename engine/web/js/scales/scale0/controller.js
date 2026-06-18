@@ -129,15 +129,22 @@ export function bindUI(ctx) {
     appRegistry.register('scale0Ctx', ctx);
 
     // Provide a callback for the bridge worker's asynchronous 'frame' signal.
-    // When the user switches scenarios or toggles an overlay while the simulation
-    // is PAUSED, the worker calculates the new state in the background. Without this,
-    // the UI draws a blank frame and stays blank until unpaused. This forces a
-    // repaint *only* when paused, so it doesn't preempt rendering during playback.
-    ctx.onBridgePostFrame = () => {
+    // When paused: trigger lattice + overlay refresh so the UI doesn't stay blank.
+    // When running: overlays normally refresh via fieldDataVersion (CTRL.FRAME
+    // atomic). The one gap is the very first sampler delivery after a scenario
+    // load — the rAF that consumed fieldNeedsUpdate=true fired with an empty
+    // _samplerCache, and no further fieldDataVersion change fires until the next
+    // tick. ctx._samplersPending=true (set by loadScale0Scenario) marks this
+    // window; one markFieldDirty() forces the overlay to repaint as soon as real
+    // sampler data arrives, without bypassing the per-frame throttle afterwards.
+    ctx.onBridgePostFrame = (hadNewSamplers) => {
         if (!ctx.running) {
             setLatticeNeedsUpload();
             markFieldDirty();
+        } else if (hadNewSamplers && ctx._samplersPending) {
+            markFieldDirty();
         }
+        if (hadNewSamplers) ctx._samplersPending = false;
     };
 
     // Ensure the play bar is mounted (idempotent; may have been
