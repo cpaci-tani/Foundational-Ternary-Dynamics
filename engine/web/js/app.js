@@ -1574,7 +1574,17 @@ function switchEngineMode(mode) {
     // guard avoids clobbering them.
     if (mode === 'lattice' || mode === 'particles'
         || mode === 'atoms' || mode === 'molecules') {
-        inspectorRuntime?.setBridge(bridge);
+        // Worker-hosted Scale-0 scenarios run a SEPARATE RenderBridge inside the
+        // worker that is never ticked on the main thread. Pointing the inspector
+        // at the app-level direct `bridge` in that case shows frozen tick-0
+        // numbers. Route through the active physics owner instead: when a worker
+        // proxy (fluxMock with isWorker) is live, use it. With M7's
+        // null-returning proxy reads, the inspector now honestly shows "no data"
+        // on the worker path rather than frozen-wrong values (intended
+        // degradation; true worker-backed inspect is a Phase-2 follow-up).
+        const fluxMock = Scale0Controller.getFluxMock();
+        const activeBridge = (fluxMock && fluxMock.isWorker) ? fluxMock : bridge;
+        inspectorRuntime?.setBridge(activeBridge);
     }
 
     const tpfSlider = document.getElementById('ticks-per-frame');

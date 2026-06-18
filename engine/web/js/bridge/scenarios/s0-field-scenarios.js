@@ -36,19 +36,23 @@ export function setupS0FieldScenario(name, harness, ctx) {
 
             switch (name) {
                 case 's0-field-plane-wave': {
-                    // Z-polarized plane wave propagating +x, wavelength N/4
+                    // Z-polarized plane wave propagating +x, wavelength N/4.
+                    // wave_vel = dJ/dt is along the POLARIZATION axis (z, same as
+                    // flux), magnitude omega*amp with omega = 2c*sin(k/2) (lattice
+                    // dispersion), sign wave_vel_z = -omega*amp*cos(kx).
                     const wl  = N / 4;
                     const amp = K_B * 2;
                     const k   = 2 * Math.PI / wl;
+                    const omega = 2 * C_SPEED * Math.sin(k / 2);
                     for (let z = 0; z < N; z++)
                     for (let y = 0; y < N; y++)
                     for (let x = 0; x < N; x++) {
                         const phase = k * x;
                         const jz    = amp * Math.sin(phase);
-                        const wz    = amp * Math.cos(phase) * C_SPEED;
+                        const wz    = -omega * amp * Math.cos(phase);
                         if (Math.abs(jz) > 1e-12 || Math.abs(wz) > 1e-12) {
                             harness.injectFlux(x, y, z, 0, 0, jz);
-                            harness.injectWaveVel(x, y, z, wz, 0, 0);
+                            harness.injectWaveVel(x, y, z, 0, 0, wz);
                         }
                     }
                     break;
@@ -108,11 +112,14 @@ export function setupS0FieldScenario(name, harness, ctx) {
                 }
 
                 case 's0-field-photon-pulse': {
-                    // Gaussian-enveloped plane wave, z-polarized, propagating +x
+                    // Gaussian-enveloped plane wave, z-polarized, propagating +x.
+                    // wave_vel along the POLARIZATION axis (z, same as flux),
+                    // omega = 2c*sin(k/2), wave_vel_z = -omega*amp*g*cos(phase).
                     const pulseSigma = sig(4);
                     const amp    = K_B * 2;
                     const lambdaEff = 4 * pulseSigma;
                     const k      = 2 * Math.PI / lambdaEff;
+                    const omega  = 2 * C_SPEED * Math.sin(k / 2);
                     const cutR   = 3.0 * pulseSigma;
                     const cutR2  = cutR * cutR;
                     for (let z = 0; z < N; z++)
@@ -125,9 +132,9 @@ export function setupS0FieldScenario(name, harness, ctx) {
                         if (g < 1e-6) continue;
                         const phase = k * dx;
                         const jz    = amp * g * Math.sin(phase);
-                        const wz    = amp * g * Math.cos(phase) * C_SPEED;
+                        const wz    = -omega * amp * g * Math.cos(phase);
                         harness.injectFlux(x, y, z, 0, 0, jz);
-                        harness.injectWaveVel(x, y, z, wz, 0, 0);
+                        harness.injectWaveVel(x, y, z, 0, 0, wz);
                     }
                     break;
                 }
