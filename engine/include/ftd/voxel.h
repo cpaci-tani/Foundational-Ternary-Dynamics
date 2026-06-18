@@ -119,7 +119,9 @@ struct Voxel {
   // L ∈ [0, 0.999) — clamped below 1 to prevent horizon singularity.
   double latency = 0.0;
 
-  // Proper time accumulator: dτ/dt = √(f² - v²)/f where f = 1 - L².
+  // Proper time accumulator: dτ/dt = √(f² - v²)/√f where f = 1 - L².
+  // (The /√f form gives the correct √f static-observer limit at v=0; every
+  // implementation uses /√f — see transmutation_phases.cpp accumulate_proper_time.)
   // Accumulated each tick for manifested particles when latency_field is ON.
   double tau = 0.0;
 

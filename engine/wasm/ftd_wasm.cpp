@@ -894,13 +894,13 @@ val get_em_force_field(ftd::RenderBridge& rb, int stride) {
 }
 
 // Strong-force field sampler: 3-regime color force (Coulomb → transition →
-// linear confinement) along flux tubes between all particle pairs, plus a
+// harmonic confinement) along flux tubes between all particle pairs, plus a
 // short-range nuclear attraction at each particle. Mirrors the mockBridge
 // implementation to keep WASM and JS visuals identical.
 //
 //   r < 3       → F = α_s(r) / r²     (Coulomb at short range)
 //   3 ≤ r < 8   → F = α_s(r) / (3r)   (transition)
-//   r ≥ 8       → F = α_s(r) · r / 64 (linear confinement)
+//   r ≥ 8       → F = α_s(r) · r / 64 (Harmonic confinement: F∝r, V∝r²)
 //
 // where α_s(r) = 1 / (1 + 0.1·ln(1 + r)) encodes running asymptotic freedom.
 // The tube envelope (Gaussian perpendicular to the pair axis) localizes the
@@ -997,12 +997,12 @@ val get_strong_force_field(ftd::RenderBridge& rb, int stride) {
                     if (r < 0.5) r = 0.5;
                     const double alpha_s_r = ALPHA_S / (1.0 + 0.1 * std::log(1.0 + r));
                     double fMag;
-                    if (r < 3.0) {
-                        fMag = alpha_s_r / (r * r);       // Coulomb
-                    } else if (r < 8.0) {
-                        fMag = alpha_s_r / (3.0 * r);     // Transition
+                    if (r < ftd::COLOR_COULOMB_RADIUS) {
+                        fMag = alpha_s_r / (r * r);                          // Coulomb
+                    } else if (r < ftd::COLOR_TRANSITION_RADIUS) {
+                        fMag = alpha_s_r / (ftd::COLOR_TRANSITION_DENOM * r); // Transition
                     } else {
-                        fMag = alpha_s_r * r / 64.0;      // Linear confinement
+                        fMag = alpha_s_r * r / ftd::COLOR_LINEAR_DENOM;      // Harmonic confinement (F∝r, V∝r²)
                     }
                     fMag *= tubeEnv;
 

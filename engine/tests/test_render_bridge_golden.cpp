@@ -223,12 +223,28 @@ static std::uint64_t compute_state_hash(const RenderBridge& rb) {
 //     pool. The per-voxel state/flux field is unchanged where it was already
 //     deterministic; the race-affected boundary φ and audit scalars now take
 //     their well-defined sequential values.
+//   - 2026-06-17: RE-PINNED to 0xb604d81a3d79366e — intentional DIAGNOSTIC
+//     correctness fix (audit finding m1), NOT an engine-dynamics change. The
+//     audited `EnergyAudit.gauss_violation` / `max_gauss_error` scalars (which
+//     this hash mixes) previously summed the residual (div(J) − s)² over EVERY
+//     voxel, but the Gauss/SOR projection (poisson_solvers.cpp gauss_project_cpu)
+//     only constrains VACUUM sites (state==0) and targets the mean-subtracted,
+//     coupling-scaled source div(J)=charge_coupling·(s − mean_charge). The metric
+//     now mirrors that exact constraint (sum over state==0, target −coupling·
+//     mean_charge), so it reports the residual the solver actually drives to zero
+//     rather than conflating the intentionally-unconstrained manifested-site term
+//     and the periodic-BC neutralizing offset. The per-voxel state/flux/wave_vel/
+//     velocity field is BYTE-IDENTICAL (verified); only the two gauss audit
+//     scalars changed. New value is deterministic: reproduced identically by 2×
+//     default-pool runs and OMP_NUM_THREADS=1 (the accumulation loop is the
+//     existing sequential lexicographic pass in compute_energy_audit, no parallel
+//     reduction). See diagnostics_compute.cpp gauss_violation block.
 //
 // If this changes WITHOUT a stated config/physics rationale, ENGINE PHYSICS
 // CHANGED unexpectedly. To change it intentionally: (1) state the rationale in
 // the commit, (2) update the constant below to the new captured value.
 // ---------------------------------------------------------------------------
-static constexpr std::uint64_t GOLDEN_HASH = 0x56fa28acb5b9fe88ULL;  // L=17, deterministic (races fixed 2026-06-11)
+static constexpr std::uint64_t GOLDEN_HASH = 0xb604d81a3d79366eULL;  // L=17, deterministic (gauss_violation scope fix m1, 2026-06-17)
 
 // ---------------------------------------------------------------------------
 // Test driver
