@@ -55,6 +55,9 @@ export class WasmBridgeProxy {
         this._lastParts = null;
         this._lastAudit = null;
         this._lastLag = null;
+        this._lastKnot = null;
+        this._lastKnotEvents = null;
+        this._lastKnotAgg = null;
         this._pendingTPF = undefined;
         // Commands sent before 'ready' (i.e. while the worker is initialising the
         // WASM module) are buffered here and replayed as a single batchCommand once
@@ -96,6 +99,9 @@ export class WasmBridgeProxy {
             if (m.parts) this._lastParts = m.parts;
             if (m.audit) this._lastAudit = m.audit;
             if (m.lag)   this._lastLag   = m.lag;
+            if (m.knot) this._lastKnot = m.knot;
+            if (m.knotEvents) this._lastKnotEvents = m.knotEvents;
+            if (m.knotAgg) this._lastKnotAgg = m.knotAgg;
             const hadSamplers = Boolean(m.samplers && Object.keys(m.samplers).length);
             if (hadSamplers) Object.assign(this._samplerCache, m.samplers);
 
@@ -132,6 +138,9 @@ export class WasmBridgeProxy {
         caps.getScale0ParticleFrame = () => this._lastParts ?? EMPTY_PARTS();
         caps.getScale0EnergyAudit = () => this._lastAudit ?? null;
         caps.getScale0Lagrangian = () => this._lastLag ?? null;
+        caps.getScale0KnotTelemetry = () => this._lastKnot ?? null;
+        caps.getScale0KnotEvents = () => this._lastKnotEvents ?? null;
+        caps.getScale0KnotAggregate = () => this._lastKnotAgg ?? null;
         return caps;
     }
 
@@ -143,6 +152,9 @@ export class WasmBridgeProxy {
     getDiagnostics() { return this._lastDiag ?? null; }
     getEnergyAudit() { return this._lastAudit ?? null; }
     getLagrangian() { return this._lastLag ?? null; }
+    getKnotTelemetry() { return this._lastKnot ?? null; }
+    getKnotEvents() { return this._lastKnotEvents ?? null; }
+    getKnotAggregate() { return this._lastKnotAgg ?? null; }
     // Overlay samplers — lazy pull from the worker.
     // On first call for a given kind+stride the want is registered with the worker
     // and the cached result (initially empty) is returned. The worker computes the
