@@ -353,7 +353,7 @@ export class TelemetryHub {
             // Energy drift calculation
             const currentH = audit.totalEnergy || 0;
             if (this._initialEnergy === undefined || this._initialEnergy === null) {
-                if (currentH > 0.001) this._initialEnergy = currentH;
+                if (currentH > 1e-12) this._initialEnergy = currentH;
             }
             let drift = 0;
             if (this._initialEnergy) {
