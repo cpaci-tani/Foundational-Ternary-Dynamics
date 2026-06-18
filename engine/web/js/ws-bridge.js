@@ -26,6 +26,9 @@ const EMPTY_SCALAR_SAMPLE = Object.freeze({
     values: new Float32Array(0),
     count: 0,
 });
+const EMPTY_KNOT_TELEMETRY = Object.freeze({ ids: new Int32Array(0), signs: new Int32Array(0), birth: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0), peak: new Int32Array(0), fields: new Float32Array(0), stride: 11, count: 0 });
+const EMPTY_KNOT_EVENTS = Object.freeze({ tick: new Int32Array(0), type: new Int32Array(0), nparents: new Int32Array(0), nchildren: new Int32Array(0), sign: new Int32Array(0), count: 0 });
+const EMPTY_KNOT_AGG = Object.freeze({ alive: 0, netCharge: 0, births: 0, deaths: 0, fissions: 0, fusions: 0 });
 
 
 export class WebSocketBridge {
@@ -460,6 +463,23 @@ export class WebSocketBridge {
             total: 0, hamiltonian: 0, totalAction: 0, gaussViolation: 0, maxGaussError: 0,
             totalFluxMag: 0, totalWaveEnergy: 0, manifested: 0, locked: 0
         };
+    }
+
+    // Knot telemetry — the WS server (ws_server) has no get_knot_* command, so
+    // these return the frozen EMPTY shapes unconditionally and never throw. They
+    // keep the Scale-0 bridge surface symmetric so panels degrade cleanly on the
+    // WS path. TODO(server): add get_knot_telemetry / get_knot_events /
+    // get_knot_aggregate cmd handlers + request/cache plumbing here.
+    getKnotTelemetry() {
+        return EMPTY_KNOT_TELEMETRY;
+    }
+
+    getKnotEvents() {
+        return EMPTY_KNOT_EVENTS;
+    }
+
+    getKnotAggregate() {
+        return EMPTY_KNOT_AGG;
     }
 
     getConstants() {
