@@ -3,7 +3,7 @@
 **Living document for AI agents and developers.**
 **Last updated:** 2026-06-17 (comprehensive physics audit + remediation; golden RE-BASELINED to `0xb604d81a3d79366e`)
 **Engine version:** 2.18.0 (post May 2026 — BH-F* GPU plumbing sweep, SplitMix64 RNG portability Option A, trim-the-fat rounds 2-4, `ftd_eft` library extraction, F9 Tier-1 + F11.A Tier-3 audit closures)
-**Test count:** 258 C++ test source files (212 active CMake targets) + 18 Playwright specs + 25 Python test files. CTest LABELS scheme (`unit`/`physics`/`golden`/`slow`/`gpu`). GPU conditional on `FTD_ENABLE_CUDA`.
+**Test surface:** C++ tests, Playwright specs, and Python-adjacent verification helpers are registered through CMake and the web test harness. CTest uses the `unit`/`physics`/`golden`/`slow`/`gpu` label scheme; CUDA targets are conditional on `FTD_ENABLE_CUDA`. Treat numeric test-count statements below as dated audit snapshots unless they explicitly say "current."
 
 ### 2026-06-17 — Comprehensive physics audit + remediation; golden RE-BASELINED
 
@@ -336,9 +336,9 @@ Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered seq
 - **Weak force visualization**: shader swap → `PointsMaterial` + radial-gradient `CanvasTexture` sprite with additive blending; flow-style streamlines bumped to 320 seeds / full-length lines.
 - **Overlay panel collapsible**: Scale 0 visualization panel gets a header chevron; per-scale collapse state in localStorage.
 
-### April 13, 2026: Engine-Theory Bridge, EFT, GR Unlocked, 3 Theorem Papers
+### April 13, 2026: Engine-Theory Bridge, EFT, GR Unlocked, 3 Theory Papers
 - **20-benchmark suite** (`benchmark_engine_theory.cpp`): first quantitative engine-to-theory comparison
-- **EFT reconstruction**: `ALPHA_EFT = G_C * G_C` — alpha derived as coupling squared, not independent input
+- **EFT reconstruction**: `ALPHA_EFT = G_C * G_C` — engine coupling squared is the runtime force coupling; this is not a derivation of the physical fine-structure constant
 - **Emergent forces toggle**: computes force from flux field gradient without Poisson solver
 - **6 emergence experiments** (`benchmark_emergent_alpha.cpp`): self-energy, interaction potential, emergent force, bound state, null baseline, EFT force
 - **Budget equation** (`benchmark_budget_equation.cpp`): x/K + G*/x = 1 verified to 0.2% on lattice
@@ -347,8 +347,8 @@ Six TRACKER_OPEN_ITEMS §1 items resolved in one pass, in dependency-ordered seq
 - **Einstein equations** (`test_einstein_equations.cpp`): gravitational superposition to 0.08%, **time dilation 0.004% match (after latency fix)**
 - **BH thermodynamics** (`benchmark_black_hole_thermo.cpp`): **L_peak=0.62, proper time dilation** (after latency fix), Smarr S*T=M/2 exact
 - **LATENCY FIX** (one line): `sqrt(max(phi,0))` -> `sqrt(|phi|)` in render_bridge.cpp line 735. Unlocks entire GR sector.
-- **Three theorem papers** (conditional [THEOREM] upgrades):
-  - `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — x+ = 1/alpha
+- **Three theory papers** (historical April status; current claim tags defer to the LEDGER):
+  - `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — continuum-limit/QED equivalence scope; `x_+ = 1/alpha` remains ledger-scoped
   - `DERIV_SINGLET_FROM_VOID_EVENT.md` — Bell loop via void event
   - `DERIV_NC_FROM_TOPOLOGY.md` — N_c = 3 from 4 independent routes
 - **WASM rebuilt and deployed**: ftd_core.js + ftd_core.wasm now in engine/web/wasm/
@@ -648,8 +648,8 @@ archive/qt_gui/           # Qt6 native GUI (28 files, replaced by web UI)
 
 ```bash
 cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
-cmake --build engine/build --config Release
-cd engine/build && ctest --output-on-failure -C Release
+cmake --build engine/build --config Release --parallel 24
+ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 ```
 
 ### WASM build (browser dashboard)
@@ -662,7 +662,7 @@ emmake cmake --build engine/build_wasm --target ftd_wasm
 # Copy to: engine/web/wasm/
 cp engine/build_wasm/wasm/ftd_core.{js,wasm} engine/web/wasm/
 # Serve:
-python -m http.server 8080 -d engine/web
+python engine/web/serve.py 8080
 # Open: http://localhost:8080
 ```
 

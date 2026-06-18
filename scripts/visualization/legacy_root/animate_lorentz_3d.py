@@ -101,9 +101,9 @@ def update(frame):
         start_x = base_x
         phi_freeze = (129 - 50) * 0.15
         start_z = 3.0 * np.sin(base_x * np.pi / 5 - phi_freeze)
-        
+
         target_x_2d = target_r * np.cos(target_theta_2d)
-        
+
         x = start_x * (1 - t_smooth) + target_x_2d * t_smooth
         y = np.zeros(N)
         z = start_z * (1 - t_smooth) + target_z * t_smooth
@@ -113,7 +113,7 @@ def update(frame):
         # Longer, smoother 3D burst (130 frames = 5+ seconds)
         t = (frame - 230) / 130.0
         t_smooth = ease_in_out_cubic(t)
-        
+
         current_theta = target_theta_2d * (1 - t_smooth) + target_theta_3d * t_smooth
         x = target_r * np.cos(current_theta)
         y = target_r * np.sin(current_theta)

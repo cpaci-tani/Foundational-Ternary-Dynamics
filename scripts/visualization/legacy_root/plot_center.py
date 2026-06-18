@@ -60,15 +60,15 @@ for s in scales:
     cs = g_star * s
     lw = 1.0  # Thin lines
     alpha = 0.8
-    
+
     # Quadrant
     plt.plot(x_pos, cs / x_pos, color=colors['quad'], linewidth=lw, alpha=alpha, zorder=2)
     plt.plot(x_neg, cs / x_neg, color=colors['quad'], linewidth=lw, alpha=alpha, zorder=2)
-    
+
     # Orthogonal Quadrant
     plt.plot(x_pos, -cs / x_pos, color=colors['quad_ortho'], linewidth=lw, alpha=alpha, zorder=2)
     plt.plot(x_neg, -cs / x_neg, color=colors['quad_ortho'], linewidth=lw, alpha=alpha, zorder=2)
-    
+
     # Einstein
     x_ein = np.linspace(np.sqrt(cs), R, 2000)
     plt.plot(x_ein, np.sqrt(x_ein**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha, zorder=2)
@@ -76,7 +76,7 @@ for s in scales:
     x_ein_neg = np.linspace(-R, -np.sqrt(cs), 2000)
     plt.plot(x_ein_neg, np.sqrt(x_ein_neg**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha, zorder=2)
     plt.plot(x_ein_neg, -np.sqrt(x_ein_neg**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha, zorder=2)
-    
+
     # Orthogonal Einstein
     y_ein = np.linspace(np.sqrt(cs), R, 2000)
     plt.plot(np.sqrt(y_ein**2 - cs), y_ein, color=colors['einstein_ortho'], linewidth=lw, alpha=alpha, zorder=2)

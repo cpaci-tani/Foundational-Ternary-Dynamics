@@ -21,11 +21,11 @@
 - **Binding**: Opposite charges attract and bind at predicted separation
 
 ### Framework Constants (Grade: B)
-- **Fine structure constant**: x+ = 137.036 from master quadratic (1.26 ppm from CODATA)
-- **Precision formula**: 4-term correction gives <1 ppt match to CODATA 2022
+- **Fine structure structural match**: x+ = 137.036 from master quadratic (1.26 ppm from CODATA); physical identification remains `[STRONGLY MOTIVATED CONJECTURE]`
+- **Precision formula**: historical correction formula match; not a substrate derivation
 - **Weinberg angle**: sin^2(theta_W) = 3/13 = 0.2308 (0.19% from experiment)
 - **Strong coupling**: alpha_s = 7/59 = 0.1186 (0.6% from experiment)
-- **Generation count**: floor(x-) = 3 exactly
+- **Generation/color integers**: current status comes from independent framework/topology arguments, not the retired `x_-` identification
 
 ### Integer Uniqueness (Grade: A)
 - **Exhaustive sweep**: Only {3, 4, 7, 13} passes all 5 experimental criteria simultaneously
@@ -143,9 +143,9 @@ The master quadratic self-consistency equation x/K + G*/x = 1 has been **verifie
 - **BH latency profiles**: L_peak = 0.327/0.494/0.616 for cluster_r=2/3/4 (approaching horizon at L=1)
 - **BH proper time**: clocks at r=5 run 2.9% slower than r=9 (first lattice GR demonstration)
 
-### Theorem Upgrades (April 13, 2026)
-Three major [SELECTION] -> conditional [THEOREM] upgrades:
-1. `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — x+ = 1/alpha via Wilson + UV rigidity lemma
+### Theory-paper updates (April 13, 2026)
+Historical April status; current claim tags defer to the project LEDGER.
+1. `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — continuum-limit/QED equivalence scope; `x_+ = 1/alpha` remains ledger-scoped
 2. `DERIV_SINGLET_FROM_VOID_EVENT.md` — Void event -> singlet state in 5 lemmas (Bell loop closed)
 3. `DERIV_NC_FROM_TOPOLOGY.md` — N_c = 3 from 4 independent routes (over-determination)
 

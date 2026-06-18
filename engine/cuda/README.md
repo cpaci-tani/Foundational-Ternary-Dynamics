@@ -74,8 +74,9 @@ device-side equivalent kernel. Parity is enforced by:
 - `test_gpu_parity_complete.cpp` (and similar) running identical scenarios
   on both backends and asserting agreement
 
-Known divergences are tracked in `AUDIT_LEDGER.md` Track B (GPU/CPU
-parity) and tagged for WSL2 verification before merge.
+Known divergences are tracked in `engine/CHECKLIST_ENGINE.md` or the
+relevant archived audit under `docs/audits/`, and tagged for WSL2
+verification before merge.
 
 **Phase 5 GPU runtime parity status:** the Phase 5 stencil split is
 compile-verified and CPU-deterministic-verified only. Full L=64 GPU
