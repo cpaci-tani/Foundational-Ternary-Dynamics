@@ -96,10 +96,11 @@ export class WasmBridgeProxy {
             if (m.parts) this._lastParts = m.parts;
             if (m.audit) this._lastAudit = m.audit;
             if (m.lag)   this._lastLag   = m.lag;
-            if (m.samplers && Object.keys(m.samplers).length) Object.assign(this._samplerCache, m.samplers);
+            const hadSamplers = Boolean(m.samplers && Object.keys(m.samplers).length);
+            if (hadSamplers) Object.assign(this._samplerCache, m.samplers);
 
             if (typeof window !== 'undefined' && window.__ftdCtx && typeof window.__ftdCtx.onBridgePostFrame === 'function') {
-                window.__ftdCtx.onBridgePostFrame();
+                window.__ftdCtx.onBridgePostFrame(hadSamplers);
             }
         } else if (m.type === 'error') {
             console.error('[WasmWorker]', m.where, m.msg);

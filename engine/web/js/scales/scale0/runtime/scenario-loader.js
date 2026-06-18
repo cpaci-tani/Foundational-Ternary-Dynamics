@@ -436,6 +436,12 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     state.fieldNeedsUpdate = true;
     recomputeAnyFieldActive();
+    // Signal that the first worker frame with real sampler data should trigger
+    // a forced overlay repaint even when ctx.running=true (see controller.js
+    // onBridgePostFrame). Without this the rAF that consumes fieldNeedsUpdate
+    // fires with an empty _samplerCache and overlays stay blank until the next
+    // tick increments fieldDataVersion again.
+    if (ctx) ctx._samplersPending = true;
 }
 
 export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {
@@ -516,6 +522,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     state.latticeNeedsUpload = true;
     markFieldDirty();
     state.tickAccumulator.reset();
+    if (ctx) ctx._samplersPending = true;
 }
 
 export function stepScale0(ctx, state) {
