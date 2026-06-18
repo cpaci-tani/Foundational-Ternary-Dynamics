@@ -33,13 +33,17 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         const double wl  = N / 4.0;
         const double amp = K_B * 2.0;
         const double k   = 2.0 * PI / wl;
+        // Traveling wave: wave_vel = dJ/dt is along the POLARIZATION axis (z, same
+        // as flux), magnitude omega*amp with omega = 2c*sin(k/2) (lattice dispersion),
+        // sign wave_vel_z = -omega*amp*cos(kx). Matches s0-field-light-lattice-wave.
+        const double omega = 2.0 * C_SPEED * std::sin(k / 2.0);
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
             double phase = k * x;
             double jz = amp * std::sin(phase);
-            double wz = amp * std::cos(phase) * C_SPEED;
+            double wz = -omega * amp * std::cos(phase);
             if (std::fabs(jz) > 1e-12 || std::fabs(wz) > 1e-12) {
                 IF(rb, x, y, z, 0, 0, jz);
-                IW(rb, x, y, z, wz, 0, 0);
+                IW(rb, x, y, z, 0, 0, wz);
             }
         }
     }
@@ -95,6 +99,9 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         const double amp = K_B * 2.0;
         const double lambdaEff = 4.0 * sigma;
         const double k = 2.0 * PI / lambdaEff;
+        // Traveling packet: wave_vel along the POLARIZATION axis (z, same as flux),
+        // omega = 2c*sin(k/2), wave_vel_z = -omega*amp*g*cos(phase). Same fix as plane-wave.
+        const double omega = 2.0 * C_SPEED * std::sin(k / 2.0);
         const double cutR = 3.0 * sigma;
         const double cutR2 = cutR * cutR;
         for (int z = 0; z < N; z++) for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
@@ -105,9 +112,9 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
             if (g < 1e-6) continue;
             double phase = k * dx;
             double jz = amp * g * std::sin(phase);
-            double wz = amp * g * std::cos(phase) * C_SPEED;
+            double wz = -omega * amp * g * std::cos(phase);
             IF(rb, x, y, z, 0, 0, jz);
-            IW(rb, x, y, z, wz, 0, 0);
+            IW(rb, x, y, z, 0, 0, wz);
         }
     }
     else if (name == "s0-field-thomson-scattering") {
@@ -359,12 +366,16 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.poisson_coulomb   = false;
         rb.toggles.lorentz_force     = false;
         {
-            const double SOUND_SPEED = C_SPEED / 8.0;
+            // SOUND_PROXY_SPEED: c/8 is a pedagogical PROXY, not a real acoustic
+            // eigenmode. FTD has no sound — the single flux sector re-propagates
+            // this wave at c = 1/sqrt(3) (declared [BOUNDARY], FTD-0298/0299); the
+            // slow appearance is an initial-condition/visual artifact only.
+            const double SOUND_PROXY_SPEED = C_SPEED / 8.0;
             const double sigmaFrac = 0.11, amp_w = 0.030, ph0 = PI * 0.10;
             const double sigma  = std::max(1.15, N * sigmaFrac);
             const int    modeN  = std::max(1, std::min(N / 2 - 1, 4));
             const double k      = 2.0 * PI * modeN / N;
-            const double omega  = 2.0 * SOUND_SPEED * std::abs(std::sin(k / 2.0));
+            const double omega  = 2.0 * SOUND_PROXY_SPEED * std::abs(std::sin(k / 2.0));
             const double cut    = sigma * 2.4, cut2 = cut * cut;
             const int zlo = std::max(0,   (int)std::floor(mc - cut));
             const int zhi = std::min(N-1, (int)std::ceil (mc + cut));
@@ -406,13 +417,17 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.poisson_coulomb   = false;
         rb.toggles.lorentz_force     = false;
         {
-            const double SOUND_SPEED = C_SPEED / 8.0;
+            // SOUND_PROXY_SPEED: c/8 is a pedagogical PROXY, not a real acoustic
+            // eigenmode. FTD has no sound — the single flux sector re-propagates
+            // this wave at c = 1/sqrt(3) (declared [BOUNDARY], FTD-0298/0299); the
+            // slow appearance is an initial-condition/visual artifact only.
+            const double SOUND_PROXY_SPEED = C_SPEED / 8.0;
             const double pulseFrac = 0.15, sigmaFrac = 0.11, amp_w = 0.030;
             const double sigma      = std::max(1.15, N * sigmaFrac);
             const double pulseSigma = std::max(1.5, N * pulseFrac * 0.5);
             const int    modeN  = std::max(1, std::min(N / 2 - 1, 4));
             const double k      = 2.0 * PI * modeN / N;
-            const double omega  = 2.0 * SOUND_SPEED * std::abs(std::sin(k / 2.0));
+            const double omega  = 2.0 * SOUND_PROXY_SPEED * std::abs(std::sin(k / 2.0));
             const double cut    = sigma * 2.4, cut2 = cut * cut;
             struct Lane { double offsetFrac; double speedMult; };
             const Lane lanes[2] = {{-0.25, +1.0}, {+0.25, -1.0}};
