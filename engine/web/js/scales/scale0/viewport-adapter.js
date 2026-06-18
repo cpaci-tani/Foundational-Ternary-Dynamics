@@ -12,6 +12,7 @@ const NON_FORCE_OVERLAYS = {
     showLight: 'toggleLightField',
     showDarkMatterHalo: 'toggleDarkMatterHalo',
     showDampingZones: 'toggleDampingZones',
+    showKnotZones: 'toggleKnotZones',
     showGenesisIsosurface: 'toggleGenesisIsosurface',
     showConfinement: 'toggleConfinement',
     // Tier 1 quantum overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md
@@ -218,6 +219,9 @@ export function createScale0ViewportAdapter(viewport) {
         },
         applyDampingZones(frame) {
             viewport?.updateDampingZones?.(frame.particles, frame.latticeSize);
+        },
+        applyKnotZones(frame) {
+            viewport?.updateKnotZones?.(frame.particles, frame.latticeSize);
         },
         applyGenesisIsosurface(frame) {
             viewport?.updateGenesisIsosurface?.(frame.magnitude, frame.latticeSize, frame.threshold);

@@ -18,6 +18,7 @@ export const FIELD_TOGGLE_KEYS = [
     'showLight',
     'showDarkMatterHalo',
     'showDampingZones',
+    'showKnotZones',
     'showGenesisIsosurface',
     'showConfinement',
     // Tier 1 quantum overlays — see docs/SPEC_S0_QUANTUM_OVERLAYS.md
