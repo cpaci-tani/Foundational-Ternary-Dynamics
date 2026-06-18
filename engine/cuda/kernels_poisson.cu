@@ -163,7 +163,30 @@ static void fft_poisson_solve_f(
 // RHS COMPUTATION AND CORRECTION KERNELS (shared by both precision paths)
 // ============================================================================
 
-// ---------- Compute Gauss RHS: rho = div(J) - state ----------
+// ---------- Sum ternary state into an integer (exact, deterministic) ----------
+//
+// Mirrors CPU TernaryField::charge_sum() (poisson_solvers.cpp:148). Integer
+// atomicAdd is associative/exact, so the reduction is order-independent and
+// bit-deterministic — unlike a float reduction. The host divides by N to form
+// mean_charge for the Gauss RHS, matching gauss_project_cpu exactly.
+
+__global__ void sum_state_kernel(
+    const int8_t* __restrict__ state,
+    long long* __restrict__ out_sum,
+    int N
+) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= N) return;
+    int s = static_cast<int>(state[i]);
+    if (s != 0) atomicAdd(out_sum, static_cast<long long>(s));
+}
+
+// ---------- Compute Gauss RHS: rho = div(J) - charge_coupling*(state - mean_charge) ----------
+//
+// Mirrors CPU gauss_project_cpu (poisson_solvers.cpp:164):
+//   sor_source[i] = div - charge_coupling * (state[i] - mean_charge)
+// Previously the GPU hardcoded charge_coupling=1 and mean_charge=0, silently
+// dropping the coulomb_charge_coupling knob and the mean-charge subtraction.
 
 __global__ void compute_gauss_rhs(
     const double* __restrict__ flux_x,
@@ -171,6 +194,8 @@ __global__ void compute_gauss_rhs(
     const double* __restrict__ flux_z,
     const int8_t* __restrict__ state,
     double* __restrict__ rhs,
+    double charge_coupling,
+    double mean_charge,
     int L
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -189,7 +214,7 @@ __global__ void compute_gauss_rhs(
                        + (flux_y[yp] - flux_y[ym])
                        + (flux_z[zp] - flux_z[zm]));
 
-    rhs[i] = div - static_cast<double>(state[i]);
+    rhs[i] = div - charge_coupling * (static_cast<double>(state[i]) - mean_charge);
 }
 
 // ---------- Compute Coulomb RHS: rho = -state (+ mean charge subtracted) ----------
@@ -366,12 +391,32 @@ static void fft_poisson_solve(
 // Float precision (7 digits) is more than sufficient for the correction gradient ∇φ.
 
 void launch_gauss_project(GpuBuffers& bufs,
+                          double charge_coupling,
                           cufftHandle plan_fwd, cufftHandle plan_inv,
                           cufftHandle plan_fwd_f, cufftHandle plan_inv_f) {
     int L = bufs.L;
     int N = bufs.N;
 
-    // Step 1: Compute RHS = div(J) - state
+    // Step 0: mean_charge = charge_sum / N (mirrors gauss_project_cpu:148-149).
+    // Exact integer reduction → bit-deterministic; copy to host to form the
+    // scalar mean_charge passed into the RHS kernel.
+    double mean_charge = 0.0;
+    {
+        long long* d_charge_sum = nullptr;
+        CUDA_CHECK(cudaMalloc(&d_charge_sum, sizeof(long long)));
+        CUDA_CHECK(cudaMemset(d_charge_sum, 0, sizeof(long long)));
+        int threads = 256;
+        int blocks = (N + threads - 1) / threads;
+        sum_state_kernel<<<blocks, threads>>>(bufs.d_state, d_charge_sum, N);
+        CUDA_CHECK(cudaGetLastError());
+        long long charge_sum = 0;
+        CUDA_CHECK(cudaMemcpy(&charge_sum, d_charge_sum, sizeof(long long),
+                              cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaFree(d_charge_sum));
+        mean_charge = static_cast<double>(charge_sum) / static_cast<double>(N);
+    }
+
+    // Step 1: Compute RHS = div(J) - charge_coupling*(state - mean_charge)
     {
         dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
         dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -379,6 +424,8 @@ void launch_gauss_project(GpuBuffers& bufs,
             bufs.d_flux_x, bufs.d_flux_y, bufs.d_flux_z,
             bufs.d_state,
             bufs.d_phi,
+            charge_coupling,
+            mean_charge,
             L
         );
         CUDA_CHECK(cudaGetLastError());
