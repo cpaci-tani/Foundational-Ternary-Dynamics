@@ -258,6 +258,7 @@ bool setup_vacuum_scenario(RenderBridge& rb, const std::string& name) {
             double gg = K_B * 0.3 * boost * std::exp(-r22 / (2.0 * sig * sig));
             if (gg < 0.001) continue;
             IF(rb, mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0.0);
+            IW(rb, mc+dx2, mc+dy2, mc+dz2, gg*0.55, gg*0.45, 0.0);
         }
         return true;
     }
