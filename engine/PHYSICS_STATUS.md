@@ -214,15 +214,17 @@ Future Phase 4 additions: torsional (dihedral) angles, improper torsions (planar
 
 ---
 
-## Constants (from ontic.h)
+## Runtime Constants (from ontic.h)
 
-All physics constants derived from D=3 and the lemniscatic constant G* = sqrt(2) * Gamma(1/4)^2 / (2*pi).
+Engine constants mix framework integers, structural matches, simulation
+parameters, and calibrated/imported reference values. Claim status is
+defined by the project ledgers, not by this runtime table.
 
 | Constant | Symbol | Value | Origin |
 |----------|--------|-------|--------|
-| Fine structure | ALPHA | 0.00729735... | 1/x+ from master quadratic |
-| Boltzmann/mass | K_B | 0.511 | m_e = m_P * sqrt(2pi) * (16/3) * alpha^11 |
-| Gravity | G_N | 0.01 | 1/(b3+Nc)^2 |
+| Fine structure | ALPHA | 0.00729735... | Engine input using the `x_+` master-quadratic structural match; physical identification remains `[STRONGLY MOTIVATED CONJECTURE]` |
+| Boltzmann/mass | K_B | 0.511 | Electron-mass anchor / manifestation scale calibration |
+| Gravity | G_N | 0.01 | Lattice-scaled simulation gravity parameter |
 | Speed of light | C_SPEED | 1/sqrt(3) | CFL stability on cubic lattice |
 | Bohr radius | R_BOHR | 1/(K_B * ALPHA) | Standard definition |
 | Damping | DAMPING | ALPHA | Dissipation = fine structure constant |

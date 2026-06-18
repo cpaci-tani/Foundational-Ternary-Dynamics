@@ -203,13 +203,13 @@ The historical `x_- → N_c = 3` identification is **RETIRED** per v1.4 §5; LED
 | Particle | Formula | Ratio | Predicted | Experiment | Error |
 |----------|---------|-------|-----------|------------|-------|
 | Electron | m_P√(2π)(16/3)α¹¹ | 1 | 0.5096 MeV | 0.511 MeV | **0.19%** |
-| Muon | 3×b_3×(b_3+N_c) - N_c | 207 | 105.78 MeV | 105.66 MeV | **0.11%** |
-| Tau | (n_eff+N_base)×207 - 2×N_c×b_3 | 3477 | 1.7767 GeV | 1.7769 GeV | **0.007%** |
+| Muon | B₃(Faces+Edges) - N_c | 207 | 105.78 MeV | 105.66 MeV | **0.11%** |
+| Tau | B₁₂ + L₃(Cartesian Cross) | 3477 | 1.7767 GeV | 1.7769 GeV | **0.007%** |
 
-**Verified Integer Arithmetic:**
+**Verified Integer Arithmetic (Geometric Topology):**
 ```
-Muon: 3 × 7 × (7+3) - 3 = 3 × 7 × 10 - 3 = 210 - 3 = 207 ✓
-Tau:  (13+4) × 207 - 2 × 3 × 7 = 17 × 207 - 42 = 3519 - 42 = 3477 ✓
+Muon (L3 Boundary Phase Space - Dirac Core): 210 - 3 = 207 ✓
+Tau (L12 Boundary + L3 Phase-Lock Cross): 3458 + 19 = 3477 ✓
 ```
 
 ### 7.3 Quark Masses [RETRACTED]

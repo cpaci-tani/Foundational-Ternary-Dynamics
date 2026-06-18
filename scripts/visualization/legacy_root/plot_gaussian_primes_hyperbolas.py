@@ -17,14 +17,14 @@ def is_prime(n):
 def get_gaussian_primes(limit):
     primes_x = []
     primes_y = []
-    
+
     for a in range(-limit, limit + 1):
         for b in range(-limit, limit + 1):
             if a == 0 and b == 0:
                 continue
-                
+
             norm = a**2 + b**2
-            
+
             if a == 0:
                 if is_prime(abs(b)) and abs(b) % 4 == 3:
                     primes_x.append(a)
@@ -37,7 +37,7 @@ def get_gaussian_primes(limit):
                 if is_prime(norm):
                     primes_x.append(a)
                     primes_y.append(b)
-                    
+
     return primes_x, primes_y
 
 # Set limits and compute G*
@@ -90,7 +90,7 @@ plt.plot([-limit, limit], [-limit, limit], color='gray', linestyle=':', alpha=0.
 plt.plot([-limit, limit], [limit, -limit], color='gray', linestyle=':', alpha=0.5, zorder=1)
 
 # Formatting
-plt.title(f'Gaussian Primes $\mathbb{{Z}}[i]$ overlaid with $G^*$ Hyperbolas', fontsize=16)
+plt.title(f'Gaussian Primes $\\mathbb{{Z}}[i]$ overlaid with $G^*$ Hyperbolas', fontsize=16)
 plt.xlim(-limit, limit)
 plt.ylim(-limit, limit)
 plt.legend(loc='upper right', framealpha=0.9)

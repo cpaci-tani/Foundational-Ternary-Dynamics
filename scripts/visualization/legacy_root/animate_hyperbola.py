@@ -84,7 +84,7 @@ def update(frame):
         start_x = base_x
         phi_freeze = (139 - 50) * 0.15
         start_y = 3.0 * np.sin(base_x * np.pi / 5 - phi_freeze)
-        
+
         x = start_x * (1 - t_smooth) + hx * t_smooth
         y = start_y * (1 - t_smooth) + hy * t_smooth
     else:

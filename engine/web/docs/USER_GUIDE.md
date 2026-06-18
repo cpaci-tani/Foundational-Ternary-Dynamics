@@ -568,13 +568,12 @@ cd engine/web/tests && npx playwright test perf-baseline.spec.js
 cd engine/web/tests && npx playwright test scenario-parity.spec.js
 
 # C++ engine tests (slow):
-cd engine/build && ctest -C Release --timeout 60 -j4
+ctest --test-dir engine/build -C Release --timeout 60 -j24 --output-on-failure
 ```
 
 ### Reference documents
 
 - `engine/SPEC_ENGINE.md` — engine architecture
-- `engine/web/ARCHITECTURE.md` — web dashboard architecture
 - `engine/web/ARCHITECTURE.md` — current web dashboard architecture
 - `engine/web/docs/INDEX.md` — documentation map and active/historical split
 - `engine/include/ftd/scenarios.h` — scenario library public API
@@ -591,16 +590,16 @@ Used throughout the dashboard and engine:
 |---|---|---|
 | **G*** | 2.9586751192 | Lemniscatic constant (universal render bridge) |
 | **ϖ** | 2.6220575543 | Lemniscate constant (first integral) |
-| **α** | 1/137.036 | Fine structure constant (from master quadratic x₊) |
-| **N_c** | 3 | Number of colors (from master quadratic x₋) |
+| **α** | 1/137.036 | Engine fine-structure input using the tree-level master-quadratic `x_+` value; physical identification remains `[STRONGLY MOTIVATED CONJECTURE]` |
+| **N_c** | 3 | Number of colors; sourced from independent topology/framework arguments, not from the retired `x_-` identification |
 | **K_B** | 0.511 MeV | Manifestation threshold (electron mass) |
 | **K_GENESIS** | 1.533 | Genesis threshold = N_c · K_B |
 | **C_SPEED** | 1/√3 | CFL limit on cubic lattice |
-| **G_N** | 1/100 | Gravitational coupling = 1/(b₃ + N_c)² |
+| **G_N** | 1/100 | Lattice-scaled simulation gravity parameter, not the physical gravitational coupling |
 | **N_base** | 4 | D=3 + 1 time dimension |
 | **N_eff** | 13 | Effective degrees of freedom |
 
-All are live in `engine/include/ftd/constants.h` (C++) and `engine/web/js/constants.js` (JS). They agree to floating-point precision and are derived from D=3 + ϖ alone.
+The dashboard and engine mirror these values through `engine/include/ftd/constants.h`, `engine/include/ftd/ontic.h`, and `engine/web/js/constants.js`, but not every runtime constant is a derivation. Treat claim status as defined by the project ledgers, not by this quick-reference table.
 
 ---
 

@@ -7,8 +7,8 @@ import time
 print("Starting calculation...")
 start_time = time.time()
 
-# We want ~100,000 Gaussian primes. 
-# Total primes up to N is ~ N / ln(N). 
+# We want ~100,000 Gaussian primes.
+# Total primes up to N is ~ N / ln(N).
 # Since we search all 4 quadrants, we need N such that 4 * N / ln(N) ~ 100,000
 # Wait, the number of Gaussian primes with norm <= N is approximately N / log(N) (total).
 # If N = 1,200,000, N / log(N) ~ 85,000.
@@ -36,9 +36,9 @@ for a in range(-R, R + 1):
     for b in range(-R, R + 1):
         if a == 0 and b == 0:
             continue
-            
+
         norm = a*a + b*b
-        
+
         if a == 0:
             if sieve[abs(b)] and abs(b) % 4 == 3:
                 primes_x.append(a)
@@ -52,7 +52,7 @@ for a in range(-R, R + 1):
                 primes_x.append(a)
                 primes_y.append(b)
 
-# If we have more than 100k, we can just sort by norm and slice, 
+# If we have more than 100k, we can just sort by norm and slice,
 # or just plot them all (plotting 100k vs 120k is visually similar).
 print(f"Found {len(primes_x)} Gaussian primes in {time.time() - start_time:.2f} seconds.")
 
@@ -71,13 +71,13 @@ plt.scatter(primes_x, primes_y, s=0.05, color='white', alpha=0.6)
 # We need to scale them massively so they don't just sit at the origin pixel.
 # Wait, the user asked to "Map these onto the gaussian primes... with these parabolas"
 # If we plot xy = G* on a grid of R=1200, the hyperbola will be indistinguishable from the axes.
-# A characteristic of the Gaussian primes is that the prime density follows hyperbolic moats 
-# that scale outward. The fundamental shape is xy = c. 
-# We'll plot the exact G* hyperbolas (which will be tiny), but let's also plot 
-# SCALED versions of them (e.g. multiplied by R/2, R/4) to show the macro-structure lines 
+# A characteristic of the Gaussian primes is that the prime density follows hyperbolic moats
+# that scale outward. The fundamental shape is xy = c.
+# We'll plot the exact G* hyperbolas (which will be tiny), but let's also plot
+# SCALED versions of them (e.g. multiplied by R/2, R/4) to show the macro-structure lines
 # that the user is seeing in the Gaussian prime density!
 # Wait, if we just plot the hyperbolas without scaling, they won't be visible.
-# Let's plot the "scale-invariant" characteristic lines of the hyperbolas (the asymptotes) 
+# Let's plot the "scale-invariant" characteristic lines of the hyperbolas (the asymptotes)
 # and a few scaled contour lines of the G* hyperbolas.
 
 x_pos = np.linspace(0.01, R, 5000)
@@ -97,15 +97,15 @@ for s in scales:
     cs = c * s * 10  # Scale factor for visibility
     lw = 1.0 if s == 1 else 0.4
     alpha = 1.0 if s == 1 else 0.4
-    
+
     # Quadrant
     plt.plot(x_pos, cs / x_pos, color=colors['quad'], linewidth=lw, alpha=alpha)
     plt.plot(x_neg, cs / x_neg, color=colors['quad'], linewidth=lw, alpha=alpha)
-    
+
     # Orthogonal Quadrant
     plt.plot(x_pos, -cs / x_pos, color=colors['quad_ortho'], linewidth=lw, alpha=alpha)
     plt.plot(x_neg, -cs / x_neg, color=colors['quad_ortho'], linewidth=lw, alpha=alpha)
-    
+
     # Einstein
     x_ein = np.linspace(np.sqrt(cs), R, 5000)
     plt.plot(x_ein, np.sqrt(x_ein**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha)
@@ -113,7 +113,7 @@ for s in scales:
     x_ein_neg = np.linspace(-R, -np.sqrt(cs), 5000)
     plt.plot(x_ein_neg, np.sqrt(x_ein_neg**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha)
     plt.plot(x_ein_neg, -np.sqrt(x_ein_neg**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha)
-    
+
     # Orthogonal Einstein
     y_ein = np.linspace(np.sqrt(cs), R, 5000)
     plt.plot(np.sqrt(y_ein**2 - cs), y_ein, color=colors['einstein_ortho'], linewidth=lw, alpha=alpha)

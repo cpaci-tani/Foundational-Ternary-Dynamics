@@ -5,7 +5,7 @@
 **Tests**: 184 CTest files, 139/179 passing, 20-benchmark engine-theory suite
 **Purpose**: Track every physics feature needed for the complete Lagrangian and all of physics
 
-> **Canonical engine reference (since 2026-05):** [`SPEC_ENGINE.md`](SPEC_ENGINE.md). The version, engine state, and test counts above are an April-2026 snapshot; for current numbers (engine v2.18.0, 257 C++ test source files, 211 active CMake targets post 2026-05-04 trim-the-fat round 4) consult SPEC_ENGINE.md. This checklist remains useful as a feature-coverage matrix; the snapshot fields will be re-baselined in a follow-up content pass.
+> **Canonical engine reference (since 2026-05):** [`SPEC_ENGINE.md`](SPEC_ENGINE.md). The version, engine state, and test counts above are an April-2026 snapshot; for current counts and golden-hash status consult SPEC_ENGINE.md. This checklist remains useful as a feature-coverage matrix; the snapshot fields will be re-baselined in a follow-up content pass.
 
 ### Engine-Theory Bridge Status (April 13, 2026)
 20 quantitative benchmarks + 4 new physics domains:
@@ -14,7 +14,7 @@
 - **B+**: Coulomb convergence, Weak parity, Spin-orbit, Relativistic, Goldstone speed, Linear E(r) gluon scaling
 - **B-/C**: Energy conservation (5.6%), Wave speed (60% dispersion), Entropy area-law hint
 - **D**: Latency/GR (phi negative -> latency=0, design fix needed)
-- EFT: `ALPHA_EFT = G_C * G_C` (alpha derived, not input); `emergent_forces` toggle working
+- EFT: `ALPHA_EFT = G_C * G_C` is the runtime force-coupling convention; it is not a derivation of the physical fine-structure constant. `emergent_forces` toggle working
 - Budget equation: x/K + G*/x = 1 verified to 0.2% on lattice
 
 ### New Physics Domains (April 13, 2026)
@@ -36,11 +36,11 @@ Previous code clipped to zero; the fix uses the magnitude.
 - BH proper time dilation: clocks at r=5 run 2.9% slower than r=9
 - First lattice demonstration of GR time dilation in FTD
 
-### Theorem Upgrades (April 13, 2026)
-Three major [SELECTION] -> conditional [THEOREM] upgrades:
-1. **x+ = 1/alpha**: `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — compact U(1) -> QED continuum limit + UV scale rigidity lemma
+### Theory-paper updates (April 13, 2026)
+Historical April status; current claim tags defer to the project LEDGER.
+1. **Continuum/QED equivalence scope**: `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` — compact U(1) -> QED continuum-limit route; `x_+ = 1/alpha` remains ledger-scoped
 2. **Singlet from void**: `DERIV_SINGLET_FROM_VOID_EVENT.md` — 5 lemmas close the Bell loop
-3. **N_c = 3**: `DERIV_NC_FROM_TOPOLOGY.md` — four independent routes (spatial, cuboctahedral, Wilson loops, master quadratic)
+3. **N_c = 3**: `DERIV_NC_FROM_TOPOLOGY.md` — independent topology/framework routes
 
 ### Scientific Status
 C+ (March) -> B (morning) -> **B+** (session end)
@@ -608,13 +608,18 @@ Observer coupling triggers localization: manifested observer (s ≠ 0) concentra
 
 *Quantitative agreement with experiment. Constants, spectra, and falsifiability.*
 
-### 60.  Fine Structure Constant α [THEOREM + SELECTION]
+### 60.  Fine Structure Constant α [STRONGLY MOTIVATED CONJECTURE]
 
-1/α = x₊ = 137.0362 from master quadratic. 1.26 ppm from CODATA. Precision formula (Layer 7) matches to < 0.001 ppt.
+The master-quadratic root `x₊ = 137.0362` structurally matches `1/α`
+to 1.26 ppm against CODATA. The physical identification `x₊ = 1/α`
+is not derived by the engine or substrate postulates; current status is
+`[STRONGLY MOTIVATED CONJECTURE]` under the project LEDGER.
 
 - **Files**: `ontic.h` (X_PLUS, ALPHA, C1-C4 corrections)
 - **Tests**: `test_ontic_chain`, `test_falsifiability`
-- **Done means**: α derived from G* with no free parameters.
+- **Done means**: runtime constants and regression tests preserve the
+  structural match while claim status remains delegated to the canonical
+  theory ledgers.
 
 ### 61.  Electron Mass (0.19%) [THEOREM]
 

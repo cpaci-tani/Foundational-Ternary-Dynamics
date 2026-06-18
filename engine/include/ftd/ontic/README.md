@@ -1,10 +1,10 @@
-# engine/include/ftd/ontic — Canonical 9-layer derivation chain
+# engine/include/ftd/ontic — Ontic constant chain
 
-**Purpose.** The "everything from nothing" C++ derivation chain. Every
-physics constant in the FTD framework derives from D=3 (spatial dimensions)
-and varpi (lemniscate constant) through 9 layers. This directory holds the
-canonical `constexpr` definitions; `engine/include/ftd/constants.h`
-re-exports them into the `ftd::` namespace with `static_assert` guards.
+**Purpose.** C++ `constexpr` definitions for the engine's ontic constant
+chain. This layer includes theorem-grade constants, framework integers,
+structural matches, and calibrated runtime inputs; it is not an independent
+grant of derivation status. `engine/include/ftd/constants.h` re-exports the
+values into the `ftd::` namespace with `static_assert` guards.
 
 ## Public API
 
@@ -21,9 +21,9 @@ Consumers that want a flat `ftd::ALPHA` (etc.) include
 | 0b | `ontic.h` | NOME_LEMNISCATIC, THETA_LEMNISCATIC (modular selection) |
 | 1 | `lemniscate.h` | VARPI, GAUSS_CONSTANT_M, G_STAR, PI_FTD, packing fraction PF |
 | 2b | `ontic.h` | K_CRIT (where i emerges), X_BORN (Born rule degenerate root) |
-| 3 | `master_quadratic.h` | x_+, x_-, COEFFICIENT 16, alpha-derivation chain |
+| 3 | `master_quadratic.h` | x_+, x_-, COEFFICIENT 16, structural alpha-readout value |
 | 4 | `ontic.h` | Framework integers: D=3, N_c=3, N_gen=3, N_f=6, N_base=4, b_3=7, N_eff=13 |
-| 5 | `gauge_couplings.h` | G_C (state-flux coupling), ALPHA, ALPHA_S_MZ, SIN2_WEINBERG, ALPHA_WEAK |
+| 5 | `gauge_couplings.h` | G_C (state-flux coupling), ALPHA runtime coupling, ALPHA_S_MZ, SIN2_WEINBERG, ALPHA_WEAK |
 | 5b | `gauge_couplings.h` | QCD running, B0_NF5, B0_NF6, LAMBDA_QCD, M_Z |
 | 6 | `particle_masses.h` | K_B (electron mass anchor 0.511 MeV), K_GENESIS, mass ratios, R_BOHR |
 | 6b | `particle_masses.h` | LAMBDA_HIGGS, M_HIGGS, V_HIGGS, M_W |
@@ -52,7 +52,7 @@ adding new derived constants is required (see ADR-0009 / CONTRACTS.md §7).
 
 ## How to extend
 
-- **Add a new derived constant** → place at the right layer; update
+- **Add a new constant** → place at the right layer; update
   `constants.h` re-export; mirror to `engine/web/js/constants.js`
   (canonical JS) and `engine/include/ftd/constants_gpu.cuh` (device);
   optionally `scripts/constants.py` (canonical Python).

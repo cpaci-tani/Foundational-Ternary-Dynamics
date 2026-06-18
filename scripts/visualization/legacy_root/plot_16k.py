@@ -25,9 +25,9 @@ for a in range(-R, R + 1):
     for b in range(-R, R + 1):
         if a == 0 and b == 0:
             continue
-            
+
         norm = a*a + b*b
-        
+
         if a == 0:
             if sieve[abs(b)] and abs(b) % 4 == 3:
                 primes_x.append(a)
@@ -67,23 +67,23 @@ colors = {
 }
 
 for s in scales:
-    cs = c * s * 10 
+    cs = c * s * 10
     lw = 2.0 if s == 1 else 0.8
     alpha = 1.0 if s == 1 else 0.4
-    
+
     plt.plot(x_pos, cs / x_pos, color=colors['quad'], linewidth=lw, alpha=alpha)
     plt.plot(x_neg, cs / x_neg, color=colors['quad'], linewidth=lw, alpha=alpha)
-    
+
     plt.plot(x_pos, -cs / x_pos, color=colors['quad_ortho'], linewidth=lw, alpha=alpha)
     plt.plot(x_neg, -cs / x_neg, color=colors['quad_ortho'], linewidth=lw, alpha=alpha)
-    
+
     x_ein = np.linspace(np.sqrt(cs), R, 10000)
     plt.plot(x_ein, np.sqrt(x_ein**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha)
     plt.plot(x_ein, -np.sqrt(x_ein**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha)
     x_ein_neg = np.linspace(-R, -np.sqrt(cs), 10000)
     plt.plot(x_ein_neg, np.sqrt(x_ein_neg**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha)
     plt.plot(x_ein_neg, -np.sqrt(x_ein_neg**2 - cs), color=colors['einstein'], linewidth=lw, alpha=alpha)
-    
+
     y_ein = np.linspace(np.sqrt(cs), R, 10000)
     plt.plot(np.sqrt(y_ein**2 - cs), y_ein, color=colors['einstein_ortho'], linewidth=lw, alpha=alpha)
     plt.plot(-np.sqrt(y_ein**2 - cs), y_ein, color=colors['einstein_ortho'], linewidth=lw, alpha=alpha)

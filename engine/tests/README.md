@@ -1,9 +1,15 @@
 # engine/tests — C++ test suite
 
-**Purpose.** ~250 C++ unit tests, benchmarks, and measurement campaigns
-for the FTD engine. Built via CMake; run via CTest.
+**Purpose.** C++ unit tests, benchmarks, and measurement campaigns for
+the FTD engine. Built via CMake; run via CTest. The current count lives
+in [engine/SPEC_ENGINE.md](../SPEC_ENGINE.md), not in this README.
 
-**Registration audit (2026-05-27 cleanup).** All 267 `.cpp`/`.cu` files in this directory are registered in `engine/CMakeLists.txt` via either `ftd_add_test(...)` or `add_executable(...)`. Zero orphan files (tests that compile-fail-silently because no build rule references them). This invariant is intended to hold across future PRs: a new test file should arrive with its CMake registration in the same commit. If the audit ever drifts, see Commit 5 of the 2026-05-27 engine cleanup batch for the verification methodology (strict grep for `(?:ftd_add_test|add_executable|target_sources)\b[^)]*tests/<file>` plus a permissive `tests/<file>` fallback).
+**Registration invariant.** Test sources in this directory should be
+registered in `engine/CMakeLists.txt` via `ftd_add_test(...)`,
+`add_executable(...)`, or explicit `target_sources(...)`. A new test file
+should arrive with its CMake registration and labels in the same commit.
+The last full registration audit was the 2026-05-27 cleanup batch; rerun
+that methodology before making fresh hard-count claims.
 
 ## Public API
 
@@ -53,23 +59,24 @@ The engine-flawless lifecycle/callstack audit added three focused tests
 
 ```bash
 # Build
-cmake -S engine -B engine/build && cmake --build engine/build --config Release
+cmake -S engine -B engine/build -DCMAKE_BUILD_TYPE=Release
+cmake --build engine/build --config Release --parallel 24
 
 # Full pass
-cd engine/build && ctest --output-on-failure -C Release
+ctest --test-dir engine/build -j 24 --output-on-failure -C Release
 
 # Single test
 engine/build/Release/test_audit_regression.exe
 
 # Subset by name pattern
-ctest -R "lorentz" --output-on-failure
+ctest --test-dir engine/build -R "lorentz" --output-on-failure -C Release
 
 # Subset by label (Phase 7 — live)
-ctest -L unit       # 147 fast tests
-ctest -L physics    # energy/Coulomb/locked-particle/absorbing-BC suite
-ctest -L golden     # bit-exact regression gate (test_render_bridge_golden)
-ctest -L slow       # multi-tick scenarios / perf
-ctest -L gpu        # CUDA — route via WSL2
+ctest --test-dir engine/build -L unit    -j 24 --output-on-failure -C Release
+ctest --test-dir engine/build -L physics -j 24 --output-on-failure -C Release
+ctest --test-dir engine/build -L golden  -j 24 --output-on-failure -C Release
+ctest --test-dir engine/build -L slow    -j 24 --output-on-failure -C Release
+ctest --test-dir engine/build -L gpu     -j 24 --output-on-failure -C Release  # CUDA: route via WSL2
 ```
 
 ## CTest labels (Phase 7, live)
@@ -78,7 +85,7 @@ Every test now carries at least one label:
 
 | Label | Coverage | Wall time |
 |---|---|---|
-| `unit` | Pure unit tests; no GPU; <1s each (147 tests) | ~30s total |
+| `unit` | Pure unit tests; no GPU; generally <1s each | ~30s total |
 | `physics` | Energy conservation, Coulomb, locked particle, absorbing BC | ~2 min |
 | `golden` | Bit-exact regression vs frozen byte-hash (`test_render_bridge_golden`, hash `0xb604d81a3d79366e` @ L=17, re-baselined 2026-06-17) | <10s |
 | `slow` | Multi-tick scenarios, perf-sensitive | 1-5 min each |

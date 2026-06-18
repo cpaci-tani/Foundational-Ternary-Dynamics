@@ -11,7 +11,8 @@ runs land here without polluting the repo. The rule lives in the
 project's `.gitignore`:
 
 ```
-engine/results/
+engine/results/*
+!engine/results/README.md
 ```
 
 This means `git status` won't list new subdirs after a measurement run
@@ -71,6 +72,12 @@ Examples:
 
 ## Cleanup
 
-A `git clean -fdX engine/results/` will remove every gitignored
-subdir, leaving only what's force-tracked. Use that to reclaim disk
-space without touching anything in git history.
+From the repository root, `git clean -fdX engine/results/` removes
+gitignored result subdirectories while leaving force-tracked provenance
+intact. Review `git status --short -- engine/results` first if the shell
+is available.
+
+If a run accidentally creates `engine/engine/results/...`, it was likely
+launched from `engine/` while still passing an `engine/results/...` output
+path. Treat those nested outputs as local debris unless a tracked analysis
+doc explicitly cites them.

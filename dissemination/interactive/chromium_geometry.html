@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTD: The Chromium Anomaly</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #050505;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        #ui-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 400px;
+            background: rgba(20, 20, 25, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            z-index: 10;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #fff, #a5a5a5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .step-indicator {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .step-dot {
+            height: 4px;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            transition: background 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: #00e5ff;
+            box-shadow: 0 0 8px #00e5ff;
+        }
+
+        #pedagogy-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #d0d0d0;
+            min-height: 120px;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #00e5ff;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .legend {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        #definitions-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(20, 20, 25, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            z-index: 10;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .def-item {
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .def-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .def-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #eee;
+        }
+
+        .def-desc {
+            font-size: 13px;
+            color: #a0a0a0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div id="ui-panel">
+        <h1>The Chromium Anomaly</h1>
+        
+        <div class="step-indicator">
+            <div class="step-dot active" id="dot-0"></div>
+            <div class="step-dot" id="dot-1"></div>
+            <div class="step-dot" id="dot-2"></div>
+            <div class="step-dot" id="dot-3"></div>
+            <div class="step-dot" id="dot-4"></div>
+        </div>
+
+        <div id="pedagogy-title" style="font-weight: 600; font-size: 18px; color: #fff;">Z=18: The Argon Core</div>
+        <div id="pedagogy-text">
+            Up to Z=18 (Argon), the electrons perfectly fill the primary and secondary Core nodes (s-orbitals) and the 6 Cartesian face-centers (p-orbitals). These form the highly stable geometric foundation of the atom.
+        </div>
+
+        <div class="btn-container">
+            <button id="btn-prev" disabled>Previous</button>
+            <button id="btn-next">Next</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffffff; box-shadow: 0 0 8px #ffffff;"></div>
+                <span>Core Nodes (s-block)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #00e5ff; box-shadow: 0 0 8px #00e5ff;"></div>
+                <span>Face Centers (p-block)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff00ff; box-shadow: 0 0 8px #ff00ff;"></div>
+                <span>Transverse Edges (d-block)</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="definitions-panel">
+        <h1 style="font-size: 20px;">Lattice Ontology</h1>
+        
+        <div class="def-item">
+            <div class="def-title"><div class="legend-color" style="background: #ffffff; box-shadow: 0 0 8px #ffffff;"></div> Core Node (s-shell)</div>
+            <div class="def-desc"><strong style="color:#ddd">Capacity: 2.</strong> The origin. Represents pure temporal oscillation with zero spatial displacement. Provides the foundational radial stability of the atom.</div>
+        </div>
+        
+        <div class="def-item">
+            <div class="def-title"><div class="legend-color" style="background: #00e5ff; box-shadow: 0 0 8px #00e5ff;"></div> Face Centers (p-shell)</div>
+            <div class="def-desc"><strong style="color:#ddd">Capacity: 6.</strong> The 6 orthogonal Cartesian vectors. Mediates direct electrostatic interactions and forms rigid, directional chemical bonds.</div>
+        </div>
+        
+        <div class="def-item">
+            <div class="def-title"><div class="legend-color" style="background: #ff00ff; box-shadow: 0 0 8px #ff00ff;"></div> Transverse Edges (d-shell)</div>
+            <div class="def-desc"><strong style="color:#ddd">Capacity: 10.</strong> The face-diagonals. Allows flux to bypass the Cartesian singularity, facilitating complex electron screening, metallic bonding, and magnetic equilibrium.</div>
+        </div>
+        
+        <div class="def-item">
+            <div class="def-title"><div class="legend-color" style="background: #444; border: 1px solid #666;"></div> Corner Nodes (f-shell)</div>
+            <div class="def-desc"><strong style="color:#ddd">Capacity: 14.</strong> The body-diagonals. Represents maximal 3D spatial displacement, supporting the deepest transverse phase loops for heavy elements.</div>
+        </div>
+    </div>
+
+    <div id="tooltip" style="position: absolute; background: rgba(0,0,0,0.8); border: 1px solid #00e5ff; color: white; padding: 10px; border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity 0.1s; font-size: 13px; z-index: 100; backdrop-filter: blur(4px);"></div>
+
+    <!-- Load Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // --- 1. Three.js Setup ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050505, 0.05);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(8, 6, 10);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+
+        // --- 2. Materials ---
+        const matInactive = new THREE.MeshPhysicalMaterial({
+            color: 0x333333,
+            transparent: true,
+            opacity: 0.15,
+            roughness: 0.8,
+            metalness: 0.2
+        });
+
+        const matCoreFull = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const matCoreHalf = new THREE.MeshBasicMaterial({ color: 0x888888 }); // Dimmer for 4s1
+        const matFace = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+        const matEdge = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+
+        // Glow effects (simple point lights attached to active nodes)
+        const glowCore = new THREE.PointLight(0xffffff, 2, 8);
+        const glowFace = 0x00e5ff;
+        const glowEdge = 0xff00ff;
+
+        // --- 3. Construct Lattice ---
+        const nodes = [];
+        const scale = 2.5; // Distance between nodes
+        const radius = 0.25;
+        const sphereGeo = new THREE.SphereGeometry(radius, 32, 32);
+
+        // Classify nodes
+        const nodeDict = {
+            core: null,
+            faces: [],
+            edges: [],
+            corners: []
+        };
+
+        for (let x = -2; x <= 2; x++) {
+            for (let y = -2; y <= 2; y++) {
+                for (let z = -2; z <= 2; z++) {
+                    const maxAbs = Math.max(Math.abs(x), Math.abs(y), Math.abs(z));
+                    
+                    const mesh = new THREE.Mesh(sphereGeo, matInactive.clone());
+                    mesh.position.set(x * scale, y * scale, z * scale);
+                    if (maxAbs > 1) {
+                        mesh.visible = false; // Hide L2 initially
+                    }
+                    scene.add(mesh);
+                    
+                    const nodeObj = { mesh, x, y, z, type: '', layer: maxAbs };
+
+                    if (maxAbs === 0) {
+                        nodeObj.type = 'core';
+                        nodeDict.core = nodeObj;
+                    } else if (maxAbs === 1) {
+                        const absSum = Math.abs(x) + Math.abs(y) + Math.abs(z);
+                        if (absSum === 1) {
+                            nodeObj.type = 'face';
+                            nodeDict.faces.push(nodeObj);
+                        } else if (absSum === 2) {
+                            nodeObj.type = 'edge';
+                            nodeDict.edges.push(nodeObj);
+                        } else if (absSum === 3) {
+                            nodeObj.type = 'corner';
+                            nodeDict.corners.push(nodeObj);
+                        }
+                    } else if (maxAbs === 2) {
+                        // L2 nodes
+                        let numTwos = 0;
+                        if (Math.abs(x) === 2) numTwos++;
+                        if (Math.abs(y) === 2) numTwos++;
+                        if (Math.abs(z) === 2) numTwos++;
+
+                        if (numTwos === 1) nodeObj.type = 'face';
+                        else if (numTwos === 2) nodeObj.type = 'edge';
+                        else if (numTwos === 3) nodeObj.type = 'corner';
+                    }
+
+                    nodes.push(nodeObj);
+                }
+            }
+        }
+
+        // Add subtle connection lines
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.05 });
+        nodes.forEach(n1 => {
+            nodes.forEach(n2 => {
+                if (n1 !== n2 && n1.layer <= 1 && n2.layer <= 1) {
+                    const dist = n1.mesh.position.distanceTo(n2.mesh.position);
+                    if (dist > 0 && dist < scale * 1.5) { // Only connect immediate neighbors
+                        const geom = new THREE.BufferGeometry().setFromPoints([n1.mesh.position, n2.mesh.position]);
+                        const line = new THREE.Line(geom, lineMat);
+                        scene.add(line);
+                    }
+                }
+            });
+        });
+
+        // Add ambient and directional lights
+        scene.add(new THREE.AmbientLight(0x222222));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        dirLight.position.set(10, 20, 10);
+        scene.add(dirLight);
+
+        // --- 4. State Logic ---
+        let currentState = 0;
+
+        const states = [
+            {
+                title: "Z=18: The Argon Core",
+                text: "Up to Z=18 (Argon), the electrons perfectly fill the primary and secondary Core nodes (s-orbitals) and the 6 Cartesian face-centers (p-orbitals). These form the highly stable geometric foundation of the atom.",
+                apply: () => {
+                    resetNodes();
+                    nodeDict.core.mesh.material = matCoreFull;
+                    nodeDict.core.mesh.add(glowCore);
+                    nodeDict.faces.forEach(n => {
+                        n.mesh.material = matFace;
+                        n.light = new THREE.PointLight(glowFace, 1, 5);
+                        n.mesh.add(n.light);
+                    });
+                }
+            },
+            {
+                title: "Z=20: The Calcium Core",
+                text: "For Potassium (19) and Calcium (20), the next hierarchical boundary layer is reached. The 4s shell fills the central Core node with two electrons (Spin Up / Spin Down).",
+                apply: () => {
+                    states[0].apply(); // Apply previous
+                    // Emphasize core with larger pulse (simulated by scaling up slightly)
+                    nodeDict.core.mesh.scale.set(1.4, 1.4, 1.4);
+                    glowCore.intensity = 4;
+                }
+            },
+            {
+                title: "Z=23: Vanadium",
+                text: "Scandium, Titanium, and Vanadium begin filling the 12 Edge-Centers (the transverse diagonals). Because an axis of quantization restricts 2 longitudinal poles, exactly 10 transverse edge-centers are available for the d-orbital.",
+                apply: () => {
+                    states[1].apply();
+                    // Activate 3 edges
+                    const activeEdges = [
+                        nodeDict.edges.find(n => n.x===1 && n.y===1 && n.z===0),
+                        nodeDict.edges.find(n => n.x===-1 && n.y===1 && n.z===0),
+                        nodeDict.edges.find(n => n.x===0 && n.y===1 && n.z===1)
+                    ];
+                    activeEdges.forEach(n => {
+                        if(n) {
+                            n.mesh.material = matEdge;
+                            n.light = new THREE.PointLight(glowEdge, 1, 5);
+                            n.mesh.add(n.light);
+                            n.mesh.scale.set(1.2, 1.2, 1.2);
+                        }
+                    });
+                }
+            },
+            {
+                title: "Z=24: The Chromium Anomaly",
+                text: "Standard QM calls Chromium's [Ar] 4s¹ 3d⁵ configuration an 'anomalous exception'. FTD reveals the truth: The 10 available edge-centers demand geometric equilibrium. Having 4 edges filled and a full core creates topological stress. To achieve exact half-symmetry (5 nodes), an electron migrates from the Core to the 5th edge, achieving perfect lattice balance.",
+                apply: () => {
+                    states[0].apply(); // Reset to Argon base, then build up
+                    
+                    // Core is half full (4s1)
+                    nodeDict.core.mesh.material = matCoreHalf;
+                    nodeDict.core.mesh.scale.set(1.0, 1.0, 1.0);
+                    glowCore.intensity = 1;
+
+                    // Activate 5 perfectly symmetric edges (Equatorial ring + 1 pole)
+                    const activeEdges = [
+                        nodeDict.edges.find(n => n.x===1 && n.y===0 && n.z===1),
+                        nodeDict.edges.find(n => n.x===-1 && n.y===0 && n.z===1),
+                        nodeDict.edges.find(n => n.x===1 && n.y===0 && n.z===-1),
+                        nodeDict.edges.find(n => n.x===-1 && n.y===0 && n.z===-1),
+                        nodeDict.edges.find(n => n.x===0 && n.y===1 && n.z===1) // The 5th
+                    ];
+                    activeEdges.forEach(n => {
+                        if(n) {
+                            n.mesh.material = matEdge;
+                            n.light = new THREE.PointLight(glowEdge, 2, 6);
+                            n.mesh.add(n.light);
+                            n.mesh.scale.set(1.3, 1.3, 1.3);
+                        }
+                    });
+                }
+            },
+            {
+                title: "Z=92: Radial Expansion (L₂)",
+                text: "When the 26 nodes of the first Moore neighborhood are exhausted, the lattice expands radially to the L₂ boundary (a 5x5x5 shell containing 98 outer nodes). Notice that the exact same geometric symmetries exist here—Faces, Edges, and Corners—just with higher multiplicities, naturally generating the massive 14-electron f-block and 32-electron shell capacities.",
+                apply: () => {
+                    states[0].apply(); // Reset to Argon base
+                    
+                    // Zoom camera out slightly to view L2
+                    camera.position.set(16, 12, 18);
+
+                    nodes.forEach(n => {
+                        if (n.layer === 2) {
+                            n.mesh.visible = true;
+                            if (n.type === 'face') n.mesh.material = matFace.clone();
+                            else if (n.type === 'edge') n.mesh.material = matEdge.clone();
+                            else if (n.type === 'corner') n.mesh.material = new THREE.MeshBasicMaterial({color: 0x444444});
+                            
+                            // Make them slightly dimmer to emphasize structure
+                            n.mesh.material.transparent = true;
+                            n.mesh.material.opacity = 0.4;
+                        }
+                        if (n.layer === 1 || n.layer === 0) {
+                            n.mesh.material = matInactive.clone(); // Dim the core to see outer clearly
+                            while(n.mesh.children.length > 0) n.mesh.remove(n.mesh.children[0]);
+                        }
+                    });
+                }
+            }
+        ];
+
+        function resetNodes() {
+            camera.position.set(8, 6, 10); // Reset camera zoom
+            nodes.forEach(n => {
+                if (n.layer > 1) {
+                    n.mesh.visible = false;
+                } else {
+                    n.mesh.visible = true;
+                    n.mesh.material = matInactive.clone();
+                    n.mesh.scale.set(1, 1, 1);
+                }
+                // Remove lights
+                while(n.mesh.children.length > 0){ 
+                    n.mesh.remove(n.mesh.children[0]); 
+                }
+            });
+        }
+
+        function updateUI() {
+            document.getElementById('pedagogy-title').innerText = states[currentState].title;
+            
+            const textEl = document.getElementById('pedagogy-text');
+            textEl.style.opacity = 0;
+            setTimeout(() => {
+                textEl.innerText = states[currentState].text;
+                textEl.style.opacity = 1;
+            }, 300);
+
+            // Update dots
+            for(let i=0; i<5; i++) {
+                const dot = document.getElementById('dot-' + i);
+                if(i <= currentState) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            }
+
+            document.getElementById('btn-prev').disabled = currentState === 0;
+            document.getElementById('btn-next').disabled = currentState === states.length - 1;
+
+            // Apply 3D state
+            states[currentState].apply();
+        }
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            if (currentState > 0) {
+                currentState--;
+                updateUI();
+            }
+        });
+
+        document.getElementById('btn-next').addEventListener('click', () => {
+            if (currentState < states.length - 1) {
+                currentState++;
+                updateUI();
+            }
+        });
+
+        // Initialize first state
+        updateUI();
+
+        // --- Raycaster Tooltip Logic ---
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const tooltip = document.getElementById('tooltip');
+
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            
+            const interactableMeshes = nodes.map(n => n.mesh);
+            const intersects = raycaster.intersectObjects(interactableMeshes);
+
+            if (intersects.length > 0) {
+                const mesh = intersects[0].object;
+                const nodeObj = nodes.find(n => n.mesh === mesh);
+                
+                if (nodeObj) {
+                    tooltip.style.opacity = 1;
+                    tooltip.style.left = event.clientX + 15 + 'px';
+                    tooltip.style.top = event.clientY + 15 + 'px';
+                    
+                    let label = "Inactive Node";
+                    if (nodeObj.type === 'core') label = "Core Node (s-orbital)";
+                    if (nodeObj.type === 'face') label = "Face Center (p-orbital)";
+                    if (nodeObj.type === 'edge') label = "Transverse Edge (d-orbital)";
+                    if (nodeObj.type === 'corner') label = "Corner Node (outer shell)";
+
+                    let status = "Inactive";
+                    if (mesh.material === matCoreFull) status = "<span style='color: #fff'>Active (2e⁻)</span>";
+                    if (mesh.material === matCoreHalf) status = "<span style='color: #aaa'>Active (1e⁻)</span>";
+                    if (mesh.material === matFace) status = "<span style='color: #00e5ff'>Active (p-shell)</span>";
+                    if (mesh.material === matEdge) status = "<span style='color: #ff00ff'>Active (d-shell)</span>";
+
+                    tooltip.innerHTML = `<strong>${label}</strong><br/>
+                                         <span style="color: #888">Coordinate: [${nodeObj.x}, ${nodeObj.y}, ${nodeObj.z}]</span><br/>
+                                         Status: ${status}`;
+                    document.body.style.cursor = 'crosshair';
+                }
+            } else {
+                tooltip.style.opacity = 0;
+                document.body.style.cursor = 'default';
+            }
+        });
+
+        // --- 5. Render Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

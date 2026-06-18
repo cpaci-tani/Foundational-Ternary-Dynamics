@@ -124,8 +124,8 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 | Particle | FTD Formula | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
 | Electron | K_B threshold | 0.5110 MeV | 0.5110 MeV | 0.04% |  |
-| Muon | 3b₇(b₇+N_c)-N_c = 207 m_e | 105.66 MeV | 105.66 MeV | 0.11% |  |
-| Tau | (N_eff+N_base)×207-42 = 3477 m_e | 1776.74 MeV | 1776.86 MeV | **0.007%** |  |
+| Muon | L₃(Faces+Edges) - N_c = 207 m_e | 105.66 MeV | 105.66 MeV | 0.11% |  |
+| Tau | L₁₂ boundary + L₃ cross = 3477 m_e | 1776.74 MeV | 1776.86 MeV | **0.007%** |  |
 
 #### Quark Masses (6/6)
 

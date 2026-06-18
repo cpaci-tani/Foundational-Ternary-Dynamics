@@ -78,16 +78,16 @@ def update(frame):
         # Origin dot splits into 4 vertices
         t = (frame - 20) / 30.0
         t_smooth = ease_in_out_cubic(t)
-        
+
         r_cyan = np.sqrt(c) * t_smooth
         z_cyan = np.zeros(500)
-        
+
         r_mag_start = np.zeros(500)
         z_mag_start = np.sign(target_z[500:1000]) * np.sqrt(c) * t_smooth
-        
+
         curr_r = np.concatenate([np.full(500, r_cyan), r_mag_start])
         curr_z = np.concatenate([z_cyan, z_mag_start])
-        
+
         x = curr_r * np.cos(target_theta_2d)
         y = np.zeros(N)
         z = curr_z
@@ -95,16 +95,16 @@ def update(frame):
         # Vertices grow outward drawing the 2D hyperbolas
         t = (frame - 50) / 100.0
         t_smooth = ease_in_out_cubic(t)
-        
+
         z_cyan = target_z[0:500] * t_smooth
         r_cyan = np.sqrt(z_cyan**2 + c)
-        
+
         r_mag_grow = target_r[500:1000] * t_smooth
         z_mag_grow = np.sign(target_z[500:1000]) * np.sqrt(r_mag_grow**2 + c)
-        
+
         curr_r = np.concatenate([r_cyan, r_mag_grow])
         curr_z = np.concatenate([z_cyan, z_mag_grow])
-        
+
         x = curr_r * np.cos(target_theta_2d)
         y = np.zeros(N)
         z = curr_z
@@ -117,7 +117,7 @@ def update(frame):
         # Burst into 3D continuous ultrahypersymmetry
         t = (frame - 180) / 130.0
         t_smooth = ease_in_out_cubic(t)
-        
+
         current_theta = target_theta_2d * (1 - t_smooth) + target_theta_3d * t_smooth
         x = target_r * np.cos(current_theta)
         y = target_r * np.sin(current_theta)

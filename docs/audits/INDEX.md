@@ -20,6 +20,7 @@ they are renamed `AUDIT_<YYYY-MM>_<slug>.md` and moved here.
 
 | Date range | Slug | Findings | Resolved | Deferred | Not-a-bug |
 |---|---|---:|---:|---:|---:|
+| 2026-06-17 | [project cleanup plan](PLAN_PROJECT_CLEANUP_2026-06-17.md) | public GitHub/README cleanup plan | phase 1 complete | yes | n/a |
 | 2026-04-11 | [documentation cleanup ledger](AUDIT_DOCUMENT_CLEANUP_LEDGER.md) | repo-wide documentation drift ledger | mixed | yes | n/a |
 | 2026-04-27 | [pre-refactor sweep](AUDIT_2026-04_pre-refactor.md) | 122 | 78 | 40 | 4 |
 | 2026-04-27 | [refactor sweep (8-phase)](AUDIT_2026-04_refactor-sweep.md) | 8 phases · 17 commits | 17 | 1 (WSL2 GPU parity) | 0 |
