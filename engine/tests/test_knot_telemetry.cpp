@@ -65,6 +65,30 @@ int main() {
         check_eq("aggregate births 2", agg.births, 2);
     }
 
+    // A knot that vanishes is marked dead (death is detected on absence;
+    // no engine tick needed — matches ClusterTracker).
+    {
+        ftd::RenderBridge rb(16);
+        ftd::KnotTracker kt;
+        stamp(rb, 6,6,6, 2,2,2, +1);   // 8-voxel knot
+        kt.record(rb);                 // birth
+        stamp(rb, 6,6,6, 2,2,2, 0);    // wipe it
+        kt.record(rb);                 // no successor -> death
+        check_eq("0 alive after wipe", static_cast<long>(kt.alive_knots().size()), 0);
+        check_eq("deaths == 1", kt.aggregate().deaths, 1);
+        check_eq("births == 1", kt.aggregate().births, 1);
+    }
+
+    // Sub-min-size components are filtered (default min_cluster_size = 4).
+    {
+        ftd::RenderBridge rb(16);
+        ftd::KnotTracker kt;
+        stamp(rb, 8,8,8, 1,1,1, +1);   // single voxel < 4
+        kt.record(rb);
+        check_eq("single voxel filtered (0 alive)", static_cast<long>(kt.alive_knots().size()), 0);
+        check_eq("no births for sub-min knot", kt.aggregate().births, 0);
+    }
+
     std::cout << (failures==0 ? "ALL PASS\n" : "FAILURES\n");
     return failures==0 ? 0 : 1;
 }
