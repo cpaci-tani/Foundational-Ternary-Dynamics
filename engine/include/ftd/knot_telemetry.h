@@ -42,13 +42,18 @@ struct KnotRow {
     double org = 0.0;                 // [FTD-native proxy]
 };
 
+// NOTE: births/deaths come from THIS tracker's one-to-one overlap pass;
+// fissions/fusions come from the embedded ClusterGenealogyTracker's DSU pass.
+// They are INDEPENDENT counts over independent id-spaces — a single physical
+// merge increments both `deaths` and `fusions` — so don't expect
+// births−deaths to balance against fissions/fusions.
 struct KnotAggregate {
     int alive = 0;
     int net_charge = 0;    // Σ sign over alive knots (count, not voxel charge)
-    int births = 0;
-    int deaths = 0;
-    int fissions = 0;
-    int fusions = 0;
+    int births = 0;        // [tracker pass] ids first seen this run
+    int deaths = 0;        // [tracker pass] ids with no successor
+    int fissions = 0;      // [genealogy pass] 1→many splits
+    int fusions = 0;       // [genealogy pass] many→1 merges
 };
 
 class KnotTracker {
@@ -75,7 +80,7 @@ public:
             while (!q.empty()) {
                 int idx = q.back(); q.pop_back();
                 comps[cid].push_back(idx);
-                auto push = [&](int n){ if (n>=0 && label[n]==-1 && vox[n].state==sign){ label[n]=cid; q.push_back(n);} };
+                auto push = [&](int n){ if (label[n]==-1 && vox[n].state==sign){ label[n]=cid; q.push_back(n);} };
                 if (params_.use_moore_neighbors) for (int n : lat.neighbors_26(idx)) push(n);
                 else                             for (int n : lat.neighbors_6(idx))  push(n);
             }
@@ -129,10 +134,11 @@ public:
             seen_now.insert(id);
         }
 
-        // 4) deaths: previously-alive ids with no successor this tick.
+        // 4) deaths: previously-alive ids with no successor (matches
+        //    ClusterTracker — death is detected on absence).
         for (auto& [id,h] : hist_) {
             if (h.death_tick >= 0) continue;
-            if (!seen_now.count(id) && h.last_tick < tick) { h.death_tick = tick; deaths_++; }
+            if (!seen_now.count(id)) { h.death_tick = tick; deaths_++; }
         }
 
         prev_voxel_to_id_ = std::move(cur_voxel_to_id);
@@ -183,7 +189,7 @@ private:
     std::unordered_map<int32_t,Hist> hist_;
     std::unordered_map<int,int32_t> prev_voxel_to_id_;
     std::unordered_map<int32_t,int> prev_size_;
-    ClusterGenealogyTracker genealogy_{ GenealogyParams{ params_.min_cluster_size, params_.use_moore_neighbors, 2 } };
+    ClusterGenealogyTracker genealogy_{ GenealogyParams{ params_.min_cluster_size, params_.use_moore_neighbors, /*min_overlap_voxels=*/2 } };
     int32_t next_id_=0;
     int births_=0, deaths_=0, last_tick_=-1;
 };
