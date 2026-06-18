@@ -184,7 +184,7 @@ Rules:
 1. **Read-only:** `measure_scale_context` / `ScaleContextTracker` take
    `const RenderBridge&` and use only its const accessors; never called from
    `tick()`. The golden hash (`test_render_bridge_golden`, L=17,
-   `0x56fa28acb5b9fe88`) is preserved by construction.
+   `0xb604d81a3d79366e`) is preserved by construction.
 2. **$\alpha$-blind by contract:** the module must NEVER reference `ALPHA`,
    `ALPHA_EFT`, the Koopman eigenvalue, or `137.036`. Its inputs are lattice
    geometry, $|J|^2$, and the observation-only genesis/evaporation counters only.

@@ -29,7 +29,8 @@
  *   TB4: Binding energy has correct sign (negative = bound)
  *   TB5: Lepton mass ratios: m_μ/m_e = 207 (0.11%), m_τ/m_e = 3477 (0.004%)
  *        These are verified as pure number theory from {3,4,7,13}
- *        (Proton ratio ~3520 vs exp 1836 — needs QCD binding corrections)
+ *        (Proton ratio: PROTON_RATIO = N_eff/α + N_base·N_eff + N_c = 1836.47,
+ *         174 ppm to exp 1836.15 — canonical FTD-0016 form, fixed 2026-06-17)
  */
 
 #define _USE_MATH_DEFINES
@@ -197,10 +198,10 @@ int main() {
     // TB5: Mass ratio hierarchy from framework integers is accurate
     // MU_RATIO = 3·b₃·(b₃+N_c) - N_c = 207 (exp 206.768, 0.11%)
     // TAU_RATIO = (N_eff + N_base)·MU - 2·N_c·b₃ = 3477 (exp 3477.15, 0.004%)
-    // PROTON_RATIO formula gives ~3520 — this is the RAW constituent ratio,
-    // not the physical m_p/m_e = 1836. The discrepancy indicates the proton
-    // mass requires QCD binding energy corrections not yet in the formula.
-    // Test: lepton ratios (muon, tau) which ARE pure number theory.
+    // PROTON_RATIO = N_eff/α + N_base·N_eff + N_c = 1836.47 (canonical FTD-0016
+    // form; 174 ppm to physical m_p/m_e = 1836.15). The superseded "RAW
+    // constituent ratio ~3520" form was corrected in C++ on 2026-06-17 (audit M2)
+    // to match JS/Python. Test: lepton ratios (muon, tau) which ARE pure number theory.
     check("TB5: Lepton mass ratios within 1% of experiment (μ, τ)",
           mu_err < 0.01 && tau_err < 0.01);
 
