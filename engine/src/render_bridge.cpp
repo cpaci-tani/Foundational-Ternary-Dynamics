@@ -33,6 +33,7 @@
 #include "ftd/transmutation_phases.h"      // moved from mid-file to avoid nested-namespace include
 #include "ftd/energy_ledger_compute.h"     // moved from mid-file to avoid nested-namespace include
 #include "ftd/render_bridge_phases.h"      // Phase 4a: phase_write decomposition (2026-04-27)
+#include "ftd/knot_telemetry.h"            // Observation-only per-knot telemetry (PIMPL; complete type here)
 #include <algorithm>
 #include <atomic>
 #include <cassert>
@@ -90,6 +91,10 @@ RenderBridge::RenderBridge(int lattice_size)
     thread_seeds_.resize(num_threads, 0u);
     rng_state_ = std::make_unique<BridgeRng>(42u);
     rng_state_->resize_thread_pool(static_cast<std::size_t>(num_threads));
+    // Observation-only per-knot telemetry recorder (PIMPL; complete type via
+    // the knot_telemetry.h include above). Default-constructed; only used when
+    // toggles.knot_tracking is enabled. Golden-neutral (reads settled state).
+    knot_tracker_ = std::make_unique<KnotTracker>();
     colored_sites_cache_.reserve(256);
 #ifdef FTD_ENABLE_CUDA
     gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
@@ -104,6 +109,13 @@ RenderBridge::RenderBridge(int lattice_size)
 
 // Destructor must be in .cpp where GpuEngine is fully defined (unique_ptr needs it)
 RenderBridge::~RenderBridge() = default;
+
+// Observation-only per-knot telemetry accessors. Out-of-line because
+// KnotTracker is forward-declared in render_bridge.h (PIMPL; the type is only
+// complete in this TU via the knot_telemetry.h include). Reading-only ⇒ these
+// (and the gated record() call in tick()) are golden-hash neutral.
+const KnotTracker& RenderBridge::knot_tracker() const { return *knot_tracker_; }
+void RenderBridge::reset_knot_tracker() { knot_tracker_->clear(); }
 
 void RenderBridge::sync_ternary_from_voxels() const {
     engine_state_.ternary.rebuild_from_voxels(voxels_);
@@ -556,6 +568,10 @@ void RenderBridge::tick() {
   // engine->tick → sync_to_host sequence.
   if (backend_ && backend_->kind() == Backend::Kind::Gpu) {
     backend_->tick();
+    // Observation-only knot telemetry on the GPU path: record() reads
+    // voxels()/current_tick(), and the voxels() accessor syncs device→host
+    // first, so it sees settled state. Golden-neutral (read-only).
+    if (toggles.knot_tracking) knot_tracker_->record(*this);
     if (toggles.latency_field || toggles.de_broglie_clock)
       accumulate_proper_time();
     update_energy_ledger();
@@ -675,6 +691,9 @@ void RenderBridge::tick() {
 
   physical_time_ += dt_;
   ++tick_;
+
+  // Observation-only knot telemetry (golden-neutral; reads settled state only).
+  if (toggles.knot_tracking) knot_tracker_->record(*this);
 
   sync_ternary_from_voxels_if_needed();
   mark_fields_dirty_from_voxels();
