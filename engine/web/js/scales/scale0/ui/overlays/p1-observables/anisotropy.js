@@ -44,7 +44,13 @@ export class AnisotropyComponent extends BaseComponent {
                 const wy = (sy % L + L) % L;
                 const wz = (sz % L + L) % L;
 
-                const voxel = bridge.inspectVoxel(wx, wy, wz);
+                // Null-safe: the worker-path bridge (WasmBridgeProxy) returns
+                // null from inspectVoxel (no synchronous worker read), and older
+                // bridges may not implement it at all. Optional-chaining keeps a
+                // single missing method from throwing and tripping the
+                // raf-coordinator ERROR_BUDGET (which would auto-unsubscribe the
+                // whole p1-observables panel).
+                const voxel = bridge.inspectVoxel?.(wx, wy, wz);
                 if (voxel) {
                     const val = (voxel.Emag !== undefined && voxel.Emag !== null) ? voxel.Emag :
                                 (typeof voxel.density === 'number' ? voxel.density :

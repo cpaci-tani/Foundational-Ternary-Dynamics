@@ -186,6 +186,21 @@ export class WasmBridgeProxy {
     setReflectiveBoundary() {}
     setFluxBoundaryMode(mode) { this._cmd('setFluxBoundary', mode); }
 
+    // ── Single-point inspect reads (parity with direct WasmBridge) ──────────
+    // A synchronous worker round-trip is impossible, and the worker hosts a
+    // SEPARATE RenderBridge from any main-thread bridge, so these cannot be
+    // answered from this proxy. They return SAFE empty/null values so that
+    // optional-chaining callers (e.g. anisotropy.js) degrade to their analytic
+    // fallback instead of throwing and tripping the raf-coordinator error budget.
+    // TODO (Phase 2): true worker-backed inspect via a request/response channel
+    // into the worker's RenderBridge.
+    inspectVoxel() { return null; }
+    getForceAt() { return null; }
+    sampleVAtRay() { return { positions: new Float32Array(0), V: new Float32Array(0), count: 0 }; }
+    // The worker does not currently post a constants payload, so there is no
+    // cached value to forward — return null (callers should use constants.js).
+    getConstants() { return null; }
+
     // ── Scenario / run control ──────────────────────────────────────────────
     setupScenario(name) {
         this._scenarioId = name || this._scenarioId;
