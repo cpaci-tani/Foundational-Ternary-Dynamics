@@ -403,7 +403,7 @@ Phase 6 (Engineering) ───────────────────�
 |----|-------|----------|-------------|----------|--------|
 | I-09 | 6 | **Medium** | SPEC_ENGINE.md severely stale: test count off by +24, line counts off by hundreds, toggle count wrong by 1 | Full refresh of SPEC_ENGINE.md to match current engine |  Fixed — ~20 stale counts updated |
 | I-10 | 6 | Low | MEMORY.md claims 114 CTests (actual 138), 19 toggles (actual 20) | Update counts |  Fixed — counts updated |
-| I-11 | 0 | Low | M_PROTON inline comment says "938.3 MeV" but PROTON_RATIO=3520 × m_e ≈ 1799 MeV | Clarify comment: ratio not MeV |  Fixed — comment clarified as "framework mass scale" |
+| I-11 | 0 | Low | M_PROTON inline comment says "938.3 MeV" but PROTON_RATIO=3520 × m_e ≈ 1799 MeV | Clarify comment: ratio not MeV |  SUPERSEDED 2026-06-17 (audit M2): C++ PROTON_RATIO changed to canonical FTD-0016 form `N_eff/α + N_base·N_eff + N_c` = 1836.47 ⇒ M_PROTON now the physical ~938 MeV, matching JS/Python. The 3520/1799 form is retired. |
 | I-12 | 6 | Low | DAMPING labeled [DERIVED] at ontic.h line 636 but [IMPOSED] at line 1117. CLAUDE.md says [IMPOSED] | Change line 636 to [IMPOSED] per ASSUMP.6 |  Fixed — labeled [IMPOSED] per ASSUMP.6 |
 
 ### Code Quality
