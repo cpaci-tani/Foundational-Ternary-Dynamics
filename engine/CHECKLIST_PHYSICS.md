@@ -632,7 +632,7 @@ ParticleEngine produces bound orbits. EM-only test isolates pure Coulomb hydroge
 
 ### 63.  Mass Ratios [THEOREM]
 
-MU_RATIO = 207, TAU_RATIO = 3477, PROTON_RATIO = 3520. All from framework integers {3, 4, 7, 13}.
+MU_RATIO = 207, TAU_RATIO = 3477 from framework integers {3, 4, 7, 13}. PROTON_RATIO = N_eff/α + N_base·N_eff + N_c = 1836.47 (canonical FTD-0016; 174 ppm to physical m_p/m_e = 1836.15). The superseded "raw constituent ratio ~3520" form was corrected in C++ on 2026-06-17 (audit M2) to match JS/Python.
 
 - **Files**: `ontic.h` Layer 6c
 - **Tests**: `test_constants`
