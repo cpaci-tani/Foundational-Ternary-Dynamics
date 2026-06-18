@@ -387,6 +387,12 @@ ftd_add_test(test_cluster_tracker tests/test_cluster_tracker.cpp)
 # Knot telemetry assembly (observation-only). See cluster_tracker / cluster_genealogy.
 ftd_add_test(test_knot_telemetry tests/test_knot_telemetry.cpp CTEST_NAME knot_telemetry LABELS unit)
 
+# Knot-tracking golden equivalence: proves toggles.knot_tracking is
+# observation-only (bit-identical engine state on==off). With the toggle
+# default-off, test_render_bridge_golden remains the canonical absolute gate.
+ftd_add_test(test_knot_tracking_golden tests/test_knot_tracking_golden.cpp
+             CTEST_NAME knot_tracking_golden LABELS golden regression)
+
 # Scale-context readout admissibility gate (C_scale, read-only, α-blind).
 # See docs/theory/01_reference/SPEC_SCALE_CONTEXT_READOUT.md.
 ftd_add_test(test_scale_context tests/test_scale_context.cpp
