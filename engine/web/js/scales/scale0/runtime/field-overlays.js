@@ -352,6 +352,10 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
         const parts = fieldCapability?.getScale0ParticleFrame?.();
         if (parts) frame.dampingZones = { particles: parts.positions, latticeSize: N };
     }
+    if (flags.showKnotZones) {
+        const parts = fieldCapability?.getScale0ParticleFrame?.();
+        if (parts) frame.knotZones = { particles: parts.positions, latticeSize: N };
+    }
 
     if (state.fieldFlags.showDualSubstrate && sampled.fluxVector?.count > 0) {
         // [TIER-1 VISUAL] Scalar (1+/-delta)/2 decomposition is an amplitude
@@ -442,6 +446,7 @@ export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame, opt
 
     if (overlayFrame.darkMatterHalo) viewportAdapter.applyDarkMatterHalo(overlayFrame.darkMatterHalo);
     if (overlayFrame.dampingZones) viewportAdapter.applyDampingZones(overlayFrame.dampingZones);
+    if (overlayFrame.knotZones) viewportAdapter.applyKnotZones(overlayFrame.knotZones);
     if (overlayFrame.genesisIsosurface) viewportAdapter.applyGenesisIsosurface(overlayFrame.genesisIsosurface);
     if (overlayFrame.dualFlux) viewportAdapter.applyDualFlux(overlayFrame.dualFlux.left, overlayFrame.dualFlux.right);
     if (overlayFrame.chirality) viewportAdapter.applyChirality(overlayFrame.chirality);
@@ -692,6 +697,7 @@ function findForceItem(items, type) {
 function applyDerivedJob(frame, viewportAdapter) {
     if (frame.darkMatterHalo) viewportAdapter.applyDarkMatterHalo(frame.darkMatterHalo);
     if (frame.dampingZones) viewportAdapter.applyDampingZones(frame.dampingZones);
+    if (frame.knotZones) viewportAdapter.applyKnotZones(frame.knotZones);
     if (frame.genesisIsosurface) viewportAdapter.applyGenesisIsosurface(frame.genesisIsosurface);
     if (frame.dualFlux) viewportAdapter.applyDualFlux(frame.dualFlux.left, frame.dualFlux.right);
     if (frame.chirality) viewportAdapter.applyChirality(frame.chirality);
@@ -896,7 +902,7 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
     }
 
     // ── Derived substrate group (dual / chirality / light / mock overlays) ─
-    const derivedActive = flags.showDarkMatterHalo || flags.showDampingZones ||
+    const derivedActive = flags.showDarkMatterHalo || flags.showDampingZones || flags.showKnotZones ||
         flags.showGenesisIsosurface || flags.showDualSubstrate ||
         flags.showChirality || flags.showLight;
     if (derivedActive) {

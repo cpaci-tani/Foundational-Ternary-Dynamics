@@ -718,6 +718,8 @@ export class Viewport {
     _buildDampingZones() { this._fieldRenderer._buildDampingZones(); }
     updateDampingZones(particles, latticeSize) { this._fieldRenderer.updateDampingZones(particles, latticeSize); }
     toggleDampingZones(on) { this._fieldRenderer.toggleDampingZones(on); }
+    updateKnotZones(particles, latticeSize) { this._fieldRenderer.updateKnotZones(particles, latticeSize); }
+    toggleKnotZones(on) { this._fieldRenderer.toggleKnotZones(on); }
 
     // -- Genesis Threshold Isosurface --
     _buildGenesisIsosurface() { this._fieldRenderer._buildGenesisIsosurface(); }

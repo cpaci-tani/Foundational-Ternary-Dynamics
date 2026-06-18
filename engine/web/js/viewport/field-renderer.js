@@ -162,6 +162,7 @@ export class ViewportFieldRenderer {
         this._eventHorizonSphere = null;
         this._eventHorizonRing = null;
         this._dampingZones = null;
+        this._knotZones = null;
         this._genesisIsosurface = null;
         this._confinementStrings = null;
         this._dualFluxVolume = null;
@@ -1779,9 +1780,15 @@ export class ViewportFieldRenderer {
             [0, 0, 0, 0, 0, 1], [1, 0, 0, 1, 0, 1], [0, 1, 0, 0, 1, 1], [1, 1, 0, 1, 1, 1],
         ];
 
-        for (const p of particles) {
-            if (si >= 1200) break;
-            const cx = p.x + 0.5, cy = p.y + 0.5, cz = p.z + 0.5;
+        // `particles` is the flat Float32Array from getParticleData() (x,y,z,x,y,z…).
+        // Iterate by index, not as {x,y,z} objects (which would yield NaN).
+        const maxSegments = 1200;
+        const nParticles = particles ? (particles.length / 3) | 0 : 0;
+        for (let pi = 0; pi < nParticles; pi++) {
+            if (si + 12 > maxSegments) break;
+            const cx = particles[pi * 3] + 0.5;
+            const cy = particles[pi * 3 + 1] + 0.5;
+            const cz = particles[pi * 3 + 2] + 0.5;
             for (const e of edges) {
                 const i = si * 6;
                 posAttr.array[i] = cx - 1.5 + e[0] * 3;
@@ -1804,6 +1811,72 @@ export class ViewportFieldRenderer {
         if (!this._dampingZones) this._buildDampingZones();
         this._dampingZones.visible = on;
         if (!on) this._dampingZones.geometry.setDrawRange(0, 0);
+    }
+
+    // ── Topological Knots (wireframe cubes around manifested states) ──
+    _buildKnotZones() {
+        const maxSegments = 1200;
+        const positions = new Float32Array(maxSegments * 2 * 3);
+        const colors = new Float32Array(maxSegments * 2 * 3);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.setDrawRange(0, 0);
+        const mat = new THREE.LineBasicMaterial({
+            vertexColors: true, transparent: true, opacity: 0.6,
+        });
+        this._knotZones = new THREE.LineSegments(geo, mat);
+        this._knotZones.visible = false;
+        this._knotZones.frustumCulled = false;
+        this._knotZones.renderOrder = 2;
+        this._scene.add(this._knotZones);
+    }
+
+    updateKnotZones(particles, latticeSize) {
+        this._syncCenterAndRadius();
+        if (!this._knotZones) this._buildKnotZones();
+        const posAttr = this._knotZones.geometry.getAttribute('position');
+        const colAttr = this._knotZones.geometry.getAttribute('color');
+        let si = 0;
+
+        const edges = [
+            [0, 0, 0, 1, 0, 0], [0, 1, 0, 1, 1, 0], [0, 0, 1, 1, 0, 1], [0, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 1, 0], [1, 0, 0, 1, 1, 0], [0, 0, 1, 0, 1, 1], [1, 0, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1], [1, 0, 0, 1, 0, 1], [0, 1, 0, 0, 1, 1], [1, 1, 0, 1, 1, 1],
+        ];
+
+        // `particles` is the flat Float32Array from getParticleData() (x,y,z,x,y,z…)
+        // — the manifested s≠0 voxel cloud. Iterate by index, not as {x,y,z} objects.
+        const maxSegments = 1200;
+        const nParticles = particles ? (particles.length / 3) | 0 : 0;
+        for (let pi = 0; pi < nParticles; pi++) {
+            if (si + 12 > maxSegments) break;
+            const cx = particles[pi * 3] + 0.5;
+            const cy = particles[pi * 3 + 1] + 0.5;
+            const cz = particles[pi * 3 + 2] + 0.5;
+            for (const e of edges) {
+                const i = si * 6;
+                posAttr.array[i] = cx - 1.5 + e[0] * 3;
+                posAttr.array[i + 1] = cy - 1.5 + e[1] * 3;
+                posAttr.array[i + 2] = cz - 1.5 + e[2] * 3;
+                posAttr.array[i + 3] = cx - 1.5 + e[3] * 3;
+                posAttr.array[i + 4] = cy - 1.5 + e[4] * 3;
+                posAttr.array[i + 5] = cz - 1.5 + e[5] * 3;
+                // Cyan color for knots
+                colAttr.array[i] = 0.0; colAttr.array[i + 1] = 0.8; colAttr.array[i + 2] = 0.8;
+                colAttr.array[i + 3] = 0.0; colAttr.array[i + 4] = 0.8; colAttr.array[i + 5] = 0.8;
+                si++;
+            }
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._knotZones.geometry.setDrawRange(0, si * 2);
+    }
+
+    toggleKnotZones(on) {
+        if (!this._knotZones) this._buildKnotZones();
+        this._knotZones.visible = on;
+        if (!on) this._knotZones.geometry.setDrawRange(0, 0);
     }
 
     // ── Genesis Threshold Isosurface (birth boundary) ────────────────
@@ -2766,7 +2839,7 @@ export class ViewportFieldRenderer {
             '_eFieldLines', '_bFieldLines', '_poyntingVectors', '_divField',
             '_forceVolume', '_gravityField', '_strongForce', '_weakField',
             '_forceHeatmap',
-            '_darkMatterHalo', '_dampingZones', '_genesisIsosurface',
+            '_darkMatterHalo', '_dampingZones', '_knotZones', '_genesisIsosurface',
             '_confinementStrings',
             '_dualFluxVolume', '_chiralityField', '_lightField',
             '_quantumField', '_phaseNeedles',
