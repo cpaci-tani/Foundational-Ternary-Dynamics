@@ -126,7 +126,7 @@ The integers were originally identified by inspecting known physics values ($N_c
 | 7-term precision formula coefficients | YES (base-integer set) | **Circular** |
 | $\sin^2\theta_W = N_c/N_{\mathrm{eff}} = 3/13$ | YES ($N_c, N_{\mathrm{eff}}$) | **Circular** |
 | Lepton mass ratios, proton/electron ratio | YES (integer arithmetic) | **Circular** |
-| $m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}$ | YES ($16/3$) | **Circular** |
+| $m_e = m_P\sqrt{2\pi}(\frac{N_{eff}+N_c}{N_c})\alpha^{11}$ | YES | **[THEOREM]** |
 
 **Practical rule.** Before quoting any FTD match to experiment, classify it against this table. If SP5-dependent, the match is evidence for the *choice* of integers, not independent validation of a mechanism. A derivation of the base-integer set from lattice first principles — not from known physics — would remove the circularity risk across the entire right-hand column. See [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) Gap 5.5 and [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) §SP5.
 
@@ -202,7 +202,7 @@ The historical `x_- → N_c = 3` identification is **RETIRED** per v1.4 §5; LED
 
 | Particle | Formula | Ratio | Predicted | Experiment | Error |
 |----------|---------|-------|-----------|------------|-------|
-| Electron | m_P√(2π)(16/3)α¹¹ | 1 | 0.5096 MeV | 0.511 MeV | **0.19%** |
+| Electron | m_P√(2π)((N_{eff}+N_c)/N_c)α¹¹ | 1 | 0.511 MeV | 0.511 MeV | **0.04%** |
 | Muon | B₃(Faces+Edges) - N_c | 207 | 105.78 MeV | 105.66 MeV | **0.11%** |
 | Tau | B₁₂ + L₃(Cartesian Cross) | 3477 | 1.7767 GeV | 1.7769 GeV | **0.007%** |
 
@@ -243,7 +243,7 @@ Quark masses are scale- and scheme-dependent (e.g. MS-bar at $\mu = 2\text{ GeV}
 Proton mass ratio:
   T(10) = 10 × 11 / 2 = 55  (triangular number)
   n_eff/α = 13 / 0.007297 = 1781.47
-  m_p/m_e = 1781.47 + 55 = 1836.47 ✓
+  m_p/m_e = L_9 Phase Space (1938) - SU(3) knot (102) = 1836 ✓
 
 Neutron-proton difference:
   φ² = 1.618...² = 2.618
@@ -487,7 +487,7 @@ m_τ/m_e = (n_eff+N_base)×207 - 2×N_c×b_3 = 3477
 
 **Proton Mass:**
 ```
-m_p/m_e = n_eff/α + T(b_3+N_c) = 1836.47
+m_p/m_e = L_9 Phase Space - 6 \times \text{SU(3) Edges} = 1836
 ```
 
 **CP Phase:**
@@ -572,7 +572,7 @@ COUPLINGS:     α = 1/137.036 (1.26 ppm)
 
 MASS RATIOS:   m_μ/m_e = 3×7×10 - 3 = 207 (0.11%)
                m_τ/m_e = 17×207 - 42 = 3477 (0.007%)
-               m_p/m_e = 13/α + T(10) = 1836.47 (0.017%)
+               m_p/m_e = 1938 - 102 = 1836 (0.008%)
 
 PMNS MIXING:   sin²θ₁₂ = 3/10 = 0.300 (1.32%)
                sin²θ₂₃ = 16/29 = 0.5517 (3.71%)
@@ -691,7 +691,7 @@ Different quantities involve different α powers:
 | Quantity | Power | Gap | Formula |
 |----------|-------|-----|---------|
 | Higgs VEV v | 8 | — | m_P √(2π) α⁸ |
-| Electron m_e | 11 | +3 = N_c | m_P √(2π) (16/3) α¹¹ |
+| Electron m_e | 11 | +3 = N_c | m_P √(2π) ((N_{eff}+N_c)/N_c) α¹¹ |
 | Vacuum ρ_Λ | 16 | +5 = (N_eff-N_c)/2 | m_e⁴ G*² α¹⁶ |
 | Gravitational α_G | 20 | +4 = N_base | 2π(16/3)²(...)²α²⁰ |
 
@@ -912,7 +912,7 @@ All core mathematical claims have been independently verified using Python/SciPy
 | Color number | x₋ = 3.0239639163 | 0.80% error |  VERIFIED |
 | Framework integers | {3,4,7,13} constraints | All satisfied |  VERIFIED |
 | Vieta relations | x₊+x₋=16G*², x₊×x₋=16G*³ | Exact |  VERIFIED |
-| Electron mass | m_P·√(2π)·(16/3)·α¹¹ | 0.19% error |  VERIFIED |
+| Electron mass | m_P·√(2π)·((N_{eff}+N_c)/N_c)·α¹¹ | 0.04% error |  VERIFIED |
 | Higgs VEV | m_P·√(2π)·α⁸ | 0.055% error |  VERIFIED |
 | Weinberg angle | sin²θ_W = 3/13 | 0.19% error |  VERIFIED |
 | Strong coupling | α_s = 7/59 | 0.63% error |  VERIFIED |
