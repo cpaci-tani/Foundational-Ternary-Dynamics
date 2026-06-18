@@ -105,6 +105,12 @@ export const SCALE0_DIRECT_READS = [
     { name: 'getEnergyAudit',          empty: () => null },
     { name: 'getLagrangian',           empty: () => null },
     { name: 'getForceAt',              empty: () => null },
+    // Knot telemetry: ride the worker 'frame' payload (copied heap views), cached
+    // on the proxy. Null before any tracked frame arrives — panels treat null as
+    // "tracking off / no data yet", never throw.
+    { name: 'getKnotTelemetry',        empty: () => null },
+    { name: 'getKnotEvents',           empty: () => null },
+    { name: 'getKnotAggregate',        empty: () => null },
     // Tier 2 — particle-dependent: the proxy OVERRIDES this with worker-sourced
     // data (shadow._particles is empty). Listed for contract-test coverage; the
     // proxy's own getScale0ParticleList wins over the generic forwarder.
