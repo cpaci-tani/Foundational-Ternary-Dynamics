@@ -38,12 +38,28 @@ if (typeof window !== 'undefined') {
     window.__ftdWasmWorkers = () => ({ live: _live, created: _created, terminated: _terminated });
 }
 
+// How long to wait for the worker's 'ready' reply before declaring the
+// off-thread WASM engine dead and falling back to the in-thread bridge. The
+// engine module compiles + a RenderBridge is constructed inside this window; a
+// few hundred ms is generous on a warm cache, so 8 s is a comfortable ceiling
+// that still fails fast if importScripts silently NetworkErrors (the failure
+// this guards — see scenario-loader's onInitFailure wiring).
+const WORKER_READY_TIMEOUT_MS = 8000;
+
 export class WasmBridgeProxy {
-    constructor(latticeSize) {
+    // `opts.onInitFailure(reason)` (optional) is invoked AT MOST ONCE if the
+    // worker fails to initialise — either the worker fires onerror before it
+    // ever reports 'ready', or 'ready' never arrives within
+    // WORKER_READY_TIMEOUT_MS. It lets the caller fall back to the in-thread
+    // WasmBridge so the engine never silently dies when the off-thread worker
+    // can't load (e.g. importScripts NetworkError on the -pthread MT glue).
+    constructor(latticeSize, opts = {}) {
         _live++; _created++;
         this.isWasm = true;
         this.isWorker = true;
         this._terminated = false;
+        this._onInitFailure = (opts && typeof opts.onInitFailure === 'function') ? opts.onInitFailure : null;
+        this._initFailed = false;       // latched — fallback fires once
         this.latticeSize = (latticeSize % 2 === 0) ? latticeSize + 1 : latticeSize;
         this._scenarioId = 'flux-pulse';
         this._toggles = {};
@@ -73,9 +89,38 @@ export class WasmBridgeProxy {
         // CLASSIC worker (Emscripten module via importScripts). No { type: 'module' }.
         this._worker = new Worker(new URL('./wasm-bridge.worker.js', import.meta.url));
         this._worker.onmessage = (e) => this._onMessage(e.data);
-        this._worker.onerror = (e) => console.error('[WasmWorker]', e.message || e);
+        // A worker-level error (e.g. importScripts NetworkError loading the
+        // -pthread MT glue) surfaces here. If it happens before the worker has
+        // ever signalled 'ready', the off-thread engine is dead — trigger the
+        // fallback so the app can switch to the in-thread bridge.
+        this._worker.onerror = (e) => {
+            console.error('[WasmWorker]', e.message || e);
+            if (!this._ready) this._failInit('worker onerror: ' + (e.message || 'load failed'));
+        };
+        // Guard against a silent never-ready worker (importScripts can fail in
+        // ways that don't always reach onerror in every browser). If 'ready'
+        // hasn't arrived in time, fall back.
+        this._readyTimer = (typeof setTimeout === 'function')
+            ? setTimeout(() => { if (!this._ready) this._failInit('ready timeout'); }, WORKER_READY_TIMEOUT_MS)
+            : null;
 
         this.capabilities = { scale0: this._buildCaps() };
+    }
+
+    /**
+     * Latched, fire-once worker-init failure path. Cancels the ready-timer,
+     * tears down the dead worker, and notifies the caller (onInitFailure) so it
+     * can fall back to the in-thread WasmBridge. Never throws.
+     */
+    _failInit(reason) {
+        if (this._initFailed || this._ready) return;
+        this._initFailed = true;
+        if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
+        console.error('[WasmWorker] off-thread engine failed to initialise (' + reason + '); falling back to in-thread WASM engine.');
+        try { this.terminate(); } catch { /* ignore */ }
+        const cb = this._onInitFailure;
+        this._onInitFailure = null;
+        if (cb) { try { cb(reason); } catch (e) { console.error('[WasmWorker] onInitFailure handler threw:', e); } }
     }
 
     _onMessage(m) {
@@ -84,6 +129,8 @@ export class WasmBridgeProxy {
             this._ctrl = new Int32Array(m.ctrl);
             this._fluxView = new Float64Array(m.heap, m.fluxPtr, m.fluxLen);
             this._ready = true;
+            // The off-thread engine came up; cancel the dead-worker watchdog.
+            if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
             if (this._pendingTPF !== undefined) {
                 Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(this._pendingTPF * 1000));
             }
@@ -110,6 +157,10 @@ export class WasmBridgeProxy {
             }
         } else if (m.type === 'error') {
             console.error('[WasmWorker]', m.where, m.msg);
+            // A module-init failure inside the worker (createFTDModuleMT().catch
+            // posts where:'init') means the engine never built — fall back if we
+            // haven't yet become ready.
+            if (m.where === 'init' && !this._ready) this._failInit('worker init error: ' + (m.msg || ''));
         }
     }
 

@@ -355,6 +355,34 @@ export function resetScale0VisualState(ctx, state, viewportAdapter) {
     setForceStyleButtons('arrows');
 }
 
+/**
+ * Worker-init failure recovery: switch Scale-0 from the (dead) off-thread
+ * WasmBridgeProxy to the in-thread WasmBridge and re-run the scenario load.
+ *
+ * Wired to WasmBridgeProxy's onInitFailure. The proxy has already terminated
+ * itself by the time we get here. We:
+ *   1. latch ctx._wasmWorkerDisabled so subsequent loads/resizes skip the worker
+ *      path entirely (no point retrying a broken environment),
+ *   2. clear the flux-mock so getActiveScale0Bridge() resolves to ctx.bridge
+ *      (the in-thread WasmBridge, which loads ftd_core.wasm and ticks fine), and
+ *   3. re-run loadScale0Scenario — now it takes the in-thread branch and seeds
+ *      the engine on ctx.bridge so the panel (and everything) works.
+ *
+ * Idempotent: the latch means a second failure callback (if any) is a no-op.
+ */
+function fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params) {
+    if (ctx._wasmWorkerDisabled) return;     // already fell back once
+    ctx._wasmWorkerDisabled = true;
+    setFluxMock(null, false);                // disposes the dead proxy; useFluxMock=false
+    ctx.useFluxMock = false;
+    ctx.fluxMock = null;
+    try {
+        loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params);
+    } catch (e) {
+        console.error('[Scale0] in-thread fallback load failed:', e);
+    }
+}
+
 export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, params = {}) {
     const scenario = getScale0Scenario(scenarioId);
     telemetryHub.resetScale(0);
@@ -368,9 +396,16 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     const latticeSize = ctx.bridge.latticeSize || 33;
     let useFluxMock = false;
     let fluxMock = null;
-    if (wasmWorkerEligible(scenario.id, ctx.bridge)) {
+    if (wasmWorkerEligible(scenario.id, ctx.bridge) && !ctx._wasmWorkerDisabled) {
         // Off-thread WASM engine (Phase 1): host the real C++ physics in a Web Worker.
-        fluxMock = new WasmBridgeProxy(latticeSize);
+        // If the worker fails to initialise (e.g. importScripts NetworkError on the
+        // -pthread MT glue), onInitFailure fires once: we disable the worker path for
+        // this ctx and re-run the load on the in-thread WasmBridge so the engine never
+        // silently dies (the proxy is the ACTIVE bridge while useFluxMock=true, so a
+        // dead worker means NOTHING ticks).
+        fluxMock = new WasmBridgeProxy(latticeSize, {
+            onInitFailure: () => fallbackToInThreadEngine(ctx, state, viewportAdapter, scenarioId, params),
+        });
         useFluxMock = true;
     }
 
@@ -459,7 +494,7 @@ export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) 
     // The resize guard estimates the WASM heap cost: ≈1300 bytes/voxel
     // (Voxel + SU(2)/SU(3) link structures). Bounded by 8 GB on the wasm64
     // build or 2 GB on the wasm32 fallback.
-    const useWasmWorker = wasmWorkerEligible(scenarioId, bridge);
+    const useWasmWorker = wasmWorkerEligible(scenarioId, bridge) && !ctx._wasmWorkerDisabled;
     const bytesPerVoxel = 1300;
     const capGB = bridge?.isWasm64 ? 8 : 2;
     const projectedBytes = Math.ceil(newSize ** 3 * bytesPerVoxel);
