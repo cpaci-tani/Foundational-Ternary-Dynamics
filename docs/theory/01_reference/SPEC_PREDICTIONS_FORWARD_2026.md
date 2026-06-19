@@ -2,7 +2,7 @@
 
 **Tag:** `[SYNTHESIS]` — a registry. **No row is promoted by inclusion here**; every claim carries its source tag, and the LEDGER wins on any disagreement.
 **Date:** 2026-06-11. **LEDGER:** FTD-0268 (the EP-1 blind measurement) + this registry row.
-**Companions:** [`SPEC_NOVEL_PREDICTIONS.md`](SPEC_NOVEL_PREDICTIONS.md) (value catalog, pre/post-diction flagged), [`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) (FTD-0258, structural deviations PL-1..PL-6), [`SPEC_FTD_FRAMEWORK_V1.md`](SPEC_FTD_FRAMEWORK_V1.md) (constitution; FC kill conditions §6.2).
+**Companions:** [`SPEC_NOVEL_PREDICTIONS.md`](SPEC_NOVEL_PREDICTIONS.md) (value catalog, pre/post-diction flagged), [`SPEC_PREDICTION_LEDGER_DEVIATIONS.md`](SPEC_PREDICTION_LEDGER_DEVIATIONS.md) (FTD-0258, structural deviations PL-1..PL-6), [`SPEC_FTD_FRAMEWORK_V1.md`](SPEC_FTD_FRAMEWORK_V1.md) (constitution; FC kill conditions §6.2), [`SPEC_ENERGY_SCALES_AND_DETECTABILITY.md`](SPEC_ENERGY_SCALES_AND_DETECTABILITY.md) (energy-scale lens; FTD-0306).
 **Computed numbers:** every number below is computed by `scripts/exploration/forward_predictions_2026.py` (SHA256 `bb3b61d3ab98b78c4ca936625ec4e143a7868ecc19d836ff2c6c51d2e29ecd6d`, lock commit `ee8976b6`) — none is recalled or hand-copied from prose.
 
 ---
