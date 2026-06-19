@@ -260,11 +260,11 @@ These follow from QED once α is known and from lattice Feynman rules directly.
 
 ## 16 · Structural Null-Predictions — [THEOREM]
 
-Absence claims are testable and count as evidence. FTD's ternary + lattice structure *forbids* each of the following:
+Absence claims are testable and count as evidence. FTD's ternary + lattice structure *forbids* the monopole, SUSY, and extra-dimension positives below (`[THEOREM]`). **Proton decay is the exception** — FTD does *not* forbid it (FTD-0301), so `τ_proton = ∞` is `[SELECTION]/[BOUNDARY]`, not a structural-null theorem:
 
 | Prediction | Mechanism | Tag | Source |
 |---|---|---|---|
-| τ_proton = ∞ | Charge conservation is exact on lattice (Gauss constraint) | [THEOREM] | `proof_complete_sm.py:467` |
+| τ_proton = ∞ | Σs (U(1)) charge conservation is exact, but FTD has **no baryon/B−L current** — does not forbid charge-balanced `p→e⁺+π⁰`; the mixed-sign uud proton is unprotected by the same-sign triad lock, metastable, and decayed by FTD's own weak channel | [SELECTION] / [BOUNDARY] (FTD-0301) | `proof_complete_sm.py:460–476` |
 | N_monopole = 0 | div(B) ≡ div(curl J) = 0 identity | [THEOREM] | `proof_complete_sm.py:495` |
 | N_SUSY = 0 | Ternary {−1,0,+1} carries no fermionic grading | [THEOREM] | `proof_complete_sm.py:500` |
 | Extra dimensions = 0 | \|Aut(E)\|² = 2^D·(D−1)! forces D = 3 | [THEOREM] | `proof_complete_sm.py:503` |
