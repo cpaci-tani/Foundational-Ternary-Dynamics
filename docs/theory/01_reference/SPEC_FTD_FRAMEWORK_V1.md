@@ -209,7 +209,7 @@ Three structural contrasts carry the supersession claim:
 
 1. **Against the QM family (Copenhagen/MWI/RQM/Bohm):** all four import the non-commutative Hilbert-space formalism as fundamental. FTD proves its substrate cannot generate that formalism (FTD-0243 `[THEOREM]`) and **declines** it (FC-1) — so where they reproduce textbook QM exactly, FTD predicts *structural deviations* (§6.1). FTD is thereby **more falsifiable, not more general**: it stakes outcomes they cannot stake.
 2. **Against 't Hooft's CA program — the nearest relative:** both posit a deterministic, local, discrete classical substrate. 't Hooft's program *aims to reproduce QM exactly* via a template-basis map (an instance of M) and hopes for reversible automata; FTD declines M and — decisively — declines reversibility too, since its own finite sector argues against it (FTD-0253 §6). Same substrate class, opposite commitments on both forks.
-3. **Against string theory:** FTD's structural null-predictions are direct contradictions of string theory's characteristic imports — **no SUSY partners, no extra dimensions, no monopoles, exact proton stability** (`[THEOREM]`-grade nulls, §6.1 PL-6). Continued null results at colliders and proton-decay observatories are evidence *for* FTD's ontology and *against* the imports.
+3. **Against string theory:** FTD's structural null-predictions are direct contradictions of string theory's characteristic imports — **no SUSY partners, no extra dimensions, no monopoles** (`[THEOREM]`-grade nulls, §6.1 PL-6). Continued null results at colliders are evidence *for* FTD's ontology and *against* the imports. (Proton stability is **not** among these `[THEOREM]` nulls: FTD-0301 re-tags `τ_proton = ∞` as `[SELECTION]/[BOUNDARY]` — the substrate carries no baryon/B−L current and its own weak channel decays the proton, so a continued proton-decay null is consistent with FTD but not a forced FTD prediction.)
 
 **What FTD has not yet delivered (mandatory honesty row).** FTD currently does **not** derive: the Born rule (FTD-0187 `[OPEN]`; FTD-0199/0200 `[CLOSED NEGATIVE]` for the tested constructions); laboratory Bell violations S > 2 (the observer-layer account, CLAIM.8, is `[SELECTION]`-grade — the substrate bound is S ≤ 2 and lab experiments measure S > 2, an **accepted open burden**, §6.1 PL-2); interference/double-slit phenomenology at observer level; QFT scattering amplitudes; α (**dynamical, not structural** — §3.2; `x₊ = 1/α` stays `[SMC]`); and the sharp epistemic balance (§2.5 `[OPEN]`). The supersession posture is a *program with a falsifiable spine*, not a completed replacement.
 
@@ -287,7 +287,7 @@ The framework's falsifiable core: six structural deviations from the QM/SR forma
 | PL-3 | Quadrature compatibility | all quadratures co-measurable (`[q,p] = 0`; leakage ~10⁻¹⁶) | conjugate incompatibility (ℏ) |
 | PL-4 | Moving-clock rate | γ only IR-emergent: departure `∝ L⁻²` (⟨100⟩, v ≲ 0.85); UV bend *below* γ | exact γ at all scales |
 | PL-5 | Isotropy | native UV anisotropy, dying as `δ ∝ k⁴` (p = 4.0008 ± 0.0006) | exact rotational invariance |
-| PL-6 | Structural nulls | τ_proton = ∞; no monopoles; no SUSY; no extra dimensions (`[THEOREM]`) | (model-dependent in competitors) |
+| PL-6 | Structural nulls | no monopoles; no SUSY; no extra dimensions (`[THEOREM]`); τ_proton = ∞ `[SELECTION]/[BOUNDARY]` (FTD-0301 — not a forced null) | (model-dependent in competitors) |
 
 ### 6.2 Falsification criteria for the commitments themselves
 
