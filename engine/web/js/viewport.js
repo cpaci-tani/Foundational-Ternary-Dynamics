@@ -634,7 +634,7 @@ export class Viewport {
 
     // -- B-Field Lines (Green) --
     _buildBFieldLines() { this._fieldRenderer._buildBFieldLines(); }
-    updateBFieldLines(streamlines) { this._fieldRenderer.updateBFieldLines(streamlines); }
+    updateBFieldLines(streamlines, knotColoring) { this._fieldRenderer.updateBFieldLines(streamlines, knotColoring); }
     toggleBFieldLines(on) { this._fieldRenderer.toggleBFieldLines(on); }
 
     // -- Poynting Vectors (Yellow-Orange arrows) --

@@ -183,8 +183,8 @@ export function createScale0ViewportAdapter(viewport) {
         applyEFieldLines(lines, knotColoring) {
             viewport?.updateEFieldLines?.(lines, knotColoring);
         },
-        applyBFieldLines(lines) {
-            viewport?.updateBFieldLines?.(lines);
+        applyBFieldLines(lines, knotColoring) {
+            viewport?.updateBFieldLines?.(lines, knotColoring);
         },
         applyPoynting(data) {
             viewport?.updatePoyntingVectors?.(data);

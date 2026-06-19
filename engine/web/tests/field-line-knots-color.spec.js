@@ -1,7 +1,7 @@
 // engine/web/tests/field-line-knots-color.spec.js
 // Per-knot color (knotHue) + selection API on the field-line knot tracker.
 import { test, expect } from '@playwright/test';
-import { FieldLineKnotTracker, knotHue } from '../js/scales/scale0/runtime/field-line-knots.js';
+import { FieldLineKnotTracker, knotHue, getFieldLineKnotTracker, forEachKnotTracker } from '../js/scales/scale0/runtime/field-line-knots.js';
 
 function makeStreamlines(lines) {
     let total = 0;
@@ -89,6 +89,35 @@ test('assignLinesToKnots maps each line to a detected knot id (nearest centroid)
     tr.reset();
     const none = tr.assignLinesToKnots(sl);
     expect(Array.from(none).every((v) => v === -1)).toBe(true);
+});
+
+test('per-field tracker registry returns distinct, independent instances', () => {
+    const E = getFieldLineKnotTracker('e'), Bf = getFieldLineKnotTracker('b');
+    expect(E).not.toBe(Bf);
+    expect(getFieldLineKnotTracker('e')).toBe(E);   // stable singleton per field
+    expect(getFieldLineKnotTracker()).toBe(E);      // default is 'e'
+    E.setSensitivity(0.2); Bf.setSensitivity(0.8);
+    expect(E.getSensitivity()).toBeCloseTo(0.2, 6);
+    expect(Bf.getSensitivity()).toBeCloseTo(0.8, 6);  // independent
+});
+
+test('knotHue is field-aware: B is a half-turn from E, both in [0,1)', () => {
+    for (const id of [0, 1, 5, 42, 1000]) {
+        const e = knotHue(id, 'e'), b = knotHue(id, 'b');
+        expect(e).toBeGreaterThanOrEqual(0); expect(e).toBeLessThan(1);
+        expect(b).toBeGreaterThanOrEqual(0); expect(b).toBeLessThan(1);
+        expect(b).not.toBe(e);
+        expect(b).toBeCloseTo((e + 0.5) % 1, 6);
+    }
+    expect(knotHue(7)).toBe(knotHue(7, 'e'));        // default field 'e'
+});
+
+test('forEachKnotTracker applies a shared op to both fields', () => {
+    forEachKnotTracker((t) => t.setPerKnotColor(false));
+    expect(getFieldLineKnotTracker('e').getPerKnotColor()).toBe(false);
+    expect(getFieldLineKnotTracker('b').getPerKnotColor()).toBe(false);
+    forEachKnotTracker((t) => t.setPerKnotColor(true));   // restore default
+    expect(getFieldLineKnotTracker('b').getPerKnotColor()).toBe(true);
 });
 
 test('reset() clears the selection', () => {

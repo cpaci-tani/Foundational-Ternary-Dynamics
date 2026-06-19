@@ -629,14 +629,27 @@ function segsCross(segEnds, s, t, cd2, parallelCos) {
 // row + the viewport box.
 function clamp01(v) { v = +v; return v < 0 ? 0 : v > 1 ? 1 : (Number.isFinite(v) ? v : 0.5); }
 
-export function knotHue(id) {
+// Field-aware: B-field knots are shifted a half-turn from E so the two orthogonal
+// families are visually distinct (E-knot #k ≠ B-knot #k in color).
+export function knotHue(id, field = 'e') {
     let h = (Math.imul(id | 0, 374761393) + 668265263) >>> 0;
     h = (Math.imul(h ^ (h >>> 13), 1274126177)) >>> 0;
-    return (h >>> 8) / 0x1000000; // top 24 bits → [0,1)
+    let hue = (h >>> 8) / 0x1000000; // top 24 bits → [0,1)
+    if (field === 'b') hue = (hue + 0.5) % 1;
+    return hue;
 }
 
-// ── module singleton ────────────────────────────────────────────────────
-let _tracker = null;
-export function getFieldLineKnotTracker() {
-    return (_tracker ??= new FieldLineKnotTracker());
+// ── per-field tracker registry ──────────────────────────────────────────
+// One independent tracker per field-line field ('e', 'b'). Default 'e' keeps every
+// existing call working. E and B are the orthogonal EM pair, each tracked from its
+// own streamlines.
+const _trackers = {};
+export function getFieldLineKnotTracker(field = 'e') {
+    let t = _trackers[field];
+    if (!t) { t = _trackers[field] = new FieldLineKnotTracker(); t._field = field; }
+    return t;
+}
+// Apply a shared op (sensitivity / per-knot-color / contrib-enable / reset) to both.
+export function forEachKnotTracker(fn) {
+    for (const f of ['e', 'b']) fn(getFieldLineKnotTracker(f), f);
 }

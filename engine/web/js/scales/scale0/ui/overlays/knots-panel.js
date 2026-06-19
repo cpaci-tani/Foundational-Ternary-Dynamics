@@ -1,7 +1,7 @@
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { getScale0State, setFieldToggle, setKnotTracking, markFieldDirty, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
-import { getFieldLineKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
+import { getFieldLineKnotTracker, forEachKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
 import { RingBuffer } from '../../../../telemetry-hub.js';
 import { ChartHoverTooltip, formatChartValue } from '../../../../ui/charts/chart-hover-tooltip.js';
 
@@ -90,6 +90,8 @@ function drawKnotBars(canvas, contrib) {
     ctx.clearRect(0, 0, w, h);
     const K = contrib?.count || 0;
     if (!K) { canvas._tip = () => null; return; }
+    const fld = (k) => (contrib.fields && contrib.fields[k]) || 'e';   // 'e'/'b' per bar
+    const tag = (k) => fld(k).toUpperCase();
     const order = [...Array(K).keys()].sort((a, b) => contrib.energy[b] - contrib.energy[a]).slice(0, 8);
     const maxE = contrib.energy[order[0]] || 1;
     const barH = Math.max(4, (h - 2) / order.length - 2);
@@ -97,9 +99,9 @@ function drawKnotBars(canvas, contrib) {
         const row = Math.floor(ly / (barH + 2));
         if (row < 0 || row >= order.length) return null;
         const k = order[row];
-        return { title: `knot #${contrib.ids[k]}`, xLabel: 'EM share', xValue: (contrib.energyFrac[k] || 0),
+        return { title: `${tag(k)}-knot #${contrib.ids[k]}`, xLabel: 'EM share', xValue: (contrib.energyFrac[k] || 0),
             rows: [
-                { color: `hsl(${Math.round(knotHue(contrib.ids[k]) * 360)},85%,55%)`, label: 'EM energy', value: formatChartValue(contrib.energy[k]) },
+                { color: `hsl(${Math.round(knotHue(contrib.ids[k], fld(k)) * 360)},85%,55%)`, label: 'EM energy', value: formatChartValue(contrib.energy[k]) },
                 { color: '#9ca3af', label: 'share', value: `${Math.round((contrib.energyFrac[k] || 0) * 100)}%` },
             ] };
     };
@@ -107,13 +109,24 @@ function drawKnotBars(canvas, contrib) {
     ctx.font = '9px monospace'; ctx.textBaseline = 'middle';
     for (const k of order) {
         const frac = maxE > 0 ? contrib.energy[k] / maxE : 0;
-        const bw = Math.max(1, frac * (w - 46));
-        ctx.fillStyle = `hsl(${Math.round(knotHue(contrib.ids[k]) * 360)},85%,55%)`;
+        const bw = Math.max(1, frac * (w - 56));
+        ctx.fillStyle = `hsl(${Math.round(knotHue(contrib.ids[k], fld(k)) * 360)},85%,55%)`;
         ctx.fillRect(0, y, bw, barH);
         ctx.fillStyle = 'rgba(255,255,255,0.75)';
-        ctx.fillText(`#${contrib.ids[k]} ${Math.round((contrib.energyFrac[k] || 0) * 100)}%`, bw + 3, y + barH / 2);
+        ctx.fillText(`${tag(k)}#${contrib.ids[k]} ${Math.round((contrib.energyFrac[k] || 0) * 100)}%`, bw + 3, y + barH / 2);
         y += barH + 2;
     }
+}
+
+// Merge E + B contributions into one {count, ids, energy, energyFrac, fields} for the bars.
+function mergeContrib(eC, bC) {
+    const ne = eC?.count || 0, nb = bC?.count || 0, n = ne + nb;
+    const ids = new Int32Array(n), energy = new Float64Array(n), energyFrac = new Float64Array(n);
+    const fields = new Array(n);
+    let j = 0;
+    for (let i = 0; i < ne; i++) { ids[j] = eC.ids[i]; energy[j] = eC.energy[i]; energyFrac[j] = eC.energyFrac[i]; fields[j] = 'e'; j++; }
+    for (let i = 0; i < nb; i++) { ids[j] = bC.ids[i]; energy[j] = bC.energy[i]; energyFrac[j] = bC.energyFrac[i]; fields[j] = 'b'; j++; }
+    return { count: n, ids, energy, energyFrac, fields };
 }
 
 // Wire a canvas's stored `_tip` resolver to the shared ChartHoverTooltip (value at cursor).
@@ -179,6 +192,7 @@ function ensureCss() {
     #${PANEL_ID} .kp-em-chart{display:block;width:100%;height:58px}
     #${PANEL_ID} .kp-em-bars{display:block;width:100%;height:80px;margin-top:2px}
     #${PANEL_ID} canvas{cursor:crosshair}
+    #${PANEL_ID} .kp-field-h{margin:5px 0 1px;font-size:11px;font-weight:600;letter-spacing:0.05em}
     `;
     document.head.appendChild(s);
 }
@@ -220,12 +234,13 @@ function buildPanel() {
       <div class="kp-feed-h" title="Knot lifecycle events newest-first: ✦ birth · • death · ⑂ fission (split) · ⑃ fusion (merge)">EVENT FEED</div>
       <div class="kp-feed" id="kp-feed"></div>
       <div class="kp-note">
+        <b>E</b> and <b>B</b> knots are the two <b>orthogonal</b> field-line families (E ⊥ B) of the same EM field —
+        enable both the <b>E Field</b> + <b>B Field</b> overlays to see them together.
         <b style="color:var(--accent-amber,#f6c453)">Contribution (E / Φ / ρ)</b> = each knot's share of the
-        scenario's actual field, integrated over its region — <b>genuine measurements</b>
-        (flux exact from the dense |J| volume; energy ½(E²+B²) &amp; charge ∇·J over the
-        sub-sampled field). · <b>segments / crossings / legs / length</b> are geometric counts
-        of the <i>drawn</i> field lines (seeding-dependent) — <b>NOT</b> physical amplitudes; a
-        Feynman-diagram <b>analogy</b>. Ages are integer ticks.
+        scenario's actual field over its region — <b>genuine measurements</b>
+        (flux exact from the dense |J| volume; energy ½(E²+B²) &amp; charge ∇·J sub-sampled). ·
+        <b>segments / crossings / legs / length</b> are geometric counts of the <i>drawn</i> field lines
+        (seeding-dependent) — <b>NOT</b> physical amplitudes; a Feynman-diagram <b>analogy</b>. Ages are integer ticks.
       </div>`;
     return root;
 }
@@ -238,9 +253,10 @@ export function mountKnotsPanel(host) {
     host.appendChild(panel);
     const el = (id) => panel.querySelector(`#${id}`);
 
-    // The (heavier) scientific contribution measurement runs in the E-field job only
-    // while this panel is mounted. Mark the field dirty so a sweep measures promptly.
-    getFieldLineKnotTracker().setContribEnabled(true);
+    // The (heavier) scientific contribution measurement runs in the field jobs only
+    // while this panel is mounted. Enable for BOTH the E and B trackers; mark the
+    // field dirty so a sweep measures promptly.
+    forEachKnotTracker((t) => t.setContribEnabled(true));
     markFieldDirty();
 
     // Scenario EM-energy history (sampled at the panel's 4 Hz from the engine's
@@ -260,9 +276,9 @@ export function mountKnotsPanel(host) {
     // Per-knot colors: when on, each knot gets its own deterministic color in
     // both the viewport boxes and the panel rows; the selected knot is white
     // regardless. When off, knots are uniform cyan.
-    colorCb.checked = getFieldLineKnotTracker().getPerKnotColor();
+    colorCb.checked = getFieldLineKnotTracker('e').getPerKnotColor();
     colorCb.addEventListener('change', (e) => {
-        getFieldLineKnotTracker().setPerKnotColor(e.target.checked);
+        forEachKnotTracker((t) => t.setPerKnotColor(e.target.checked));
         markFieldDirty();   // recolor the flowlines + boxes on the next sweep
         update();
     });
@@ -272,12 +288,12 @@ export function mountKnotsPanel(host) {
     // the field dirty to force one.
     const sensSlider = el('kp-sensitivity');
     const sensVal = el('kp-sens-val');
-    sensSlider.value = Math.round(getFieldLineKnotTracker().getSensitivity() * 100);
+    sensSlider.value = Math.round(getFieldLineKnotTracker('e').getSensitivity() * 100);
     sensVal.textContent = sensSlider.value + '%';
     sensSlider.addEventListener('input', (e) => {
         const pct = +e.target.value;
         sensVal.textContent = pct + '%';
-        getFieldLineKnotTracker().setSensitivity(pct / 100);
+        forEachKnotTracker((t) => t.setSensitivity(pct / 100));
         markFieldDirty();
     });
 
@@ -299,16 +315,16 @@ export function mountKnotsPanel(host) {
     trackCb.checked = !!getScale0State().knotTracking;
     trackCb.addEventListener('change', (e) => {
         setKnotTracking(e.target.checked);
-        if (!e.target.checked) getFieldLineKnotTracker().reset();
+        if (!e.target.checked) forEachKnotTracker((t) => t.reset());
     });
 
-    let expandedId = null;
+    let expandedKey = null;   // "<field>:<id>" of the expanded/selected knot row
 
     function renderEmptyList(list, trackingOn) {
         if (!trackingOn) {
             list.innerHTML = '<div class="kp-empty">tracking off — enable "Track field-line knots" to detect knots</div>';
         } else {
-            list.innerHTML = '<div class="kp-empty">0 knots — enable the <b>E Field</b> overlay and run; '
+            list.innerHTML = '<div class="kp-empty">0 knots — enable the <b>E Field</b> + <b>B Field</b> overlays and run; '
                 + 'knots form where field-lines bunch &amp; cross (no particles needed)</div>';
         }
     }
@@ -330,23 +346,17 @@ export function mountKnotsPanel(host) {
         }
         el('kp-em').style.display = '';
 
-        const fl = getFieldLineKnotTracker();
-        const agg = fl.getAggregate();
-        const tel = fl.getTelemetry();
-        const evs = fl.getEvents();
-        const selectedId = fl.getSelected();
-        const perColor = fl.getPerKnotColor();
-        const contrib = fl.getContributions();
-        const cIdx = new Map();                       // knot id → contribution index
-        for (let i = 0; i < (contrib.count || 0); i++) cIdx.set(contrib.ids[i], i);
+        const E = getFieldLineKnotTracker('e'), B = getFieldLineKnotTracker('b');
+        const FIELDS = [{ key: 'e', tag: 'E', tr: E }, { key: 'b', tag: 'B', tr: B }];
+        const eAgg = E.getAggregate(), bAgg = B.getAggregate();
+        const eC = E.getContributions(), bC = B.getContributions();
         const pct = (v) => `${Math.round((v || 0) * 100)}%`;
 
-        // Scenario-totals summary: how much of the scenario field all knots capture.
-        const hasContrib = contrib.count && (contrib.totals.energy > 0 || contrib.totals.flux > 0 || contrib.totals.charge > 0);
-        el('kp-contrib-sum').innerHTML = hasContrib
-            ? `knots capture <b>${pct(contrib.captured.energyFrac)}</b> energy · `
-              + `<b>${pct(contrib.captured.fluxFrac)}</b> flux · <b>${pct(contrib.captured.chargeFrac)}</b> charge`
-            : '<span style="opacity:.7">contribution: enable the <b>E Field</b> overlay + run to measure</span>';
+        // Scenario-totals summary, per field (E and B knots are distinct families).
+        const anyC = (eC.count && eC.totals.energy > 0) || (bC.count && bC.totals.energy > 0);
+        el('kp-contrib-sum').innerHTML = anyC
+            ? `E-knots capture <b>${pct(eC.captured.energyFrac)}</b> energy · B-knots <b>${pct(bC.captured.energyFrac)}</b> energy`
+            : '<span style="opacity:.7">contribution: enable the <b>E Field</b> + <b>B Field</b> overlays + run</span>';
 
         // ── Scenario EM energy: overall + component breakdown (time-series) ──
         // From the engine's energy audit; EM field energy U = ½(E²+B²).
@@ -365,43 +375,48 @@ export function mountKnotsPanel(host) {
                 { rb: emHub.wave, color: '#9be08b', label: 'wave' },
             ]);
         }
-        // per-knot quantization bars (current EM-energy share per knot)
-        drawKnotBars(el('kp-em-bars'), contrib);
+        // per-knot quantization bars — both E and B families merged
+        drawKnotBars(el('kp-em-bars'), mergeContrib(eC, bC));
 
-        el('kp-alive').textContent = agg.alive ?? 0;
-        el('kp-segs').textContent = agg.sumSegs ?? 0;
+        const eTel0 = E.getTelemetry(), bTel0 = B.getTelemetry();
+        el('kp-alive').textContent = `${eTel0.count}E · ${bTel0.count}B`;
+        el('kp-segs').textContent = (eAgg.sumSegs || 0) + (bAgg.sumSegs || 0);
         el('kp-tally').textContent =
-            `births ${agg.births ?? 0} · deaths ${agg.deaths ?? 0}`
-            + ` · ⑂${agg.fissions ?? 0} fissions · ⑃${agg.fusions ?? 0} fusions · Σsegs ${agg.sumSegs ?? 0}`;
+            `births ${(eAgg.births || 0) + (bAgg.births || 0)} · deaths ${(eAgg.deaths || 0) + (bAgg.deaths || 0)}`
+            + ` · ⑂${(eAgg.fissions || 0) + (bAgg.fissions || 0)} · ⑃${(eAgg.fusions || 0) + (bAgg.fusions || 0)} · Σsegs ${(eAgg.sumSegs || 0) + (bAgg.sumSegs || 0)}`;
 
-        // Per-knot list (flat fields decode, stride 8):
-        //   [0..2] cx,cy,cz · [3] segments · [4] crossings · [5] legs · [6] length · [7] |Φ|
+        // Per-knot list — E knots then B knots, each row tagged + field-hued.
+        // Decode stride 8: [0..2] cx,cy,cz · [3] segs · [4] crossings · [5] legs · [6] length · [7] |Φ|
         const list = el('kp-list');
-        const count = tel?.count ?? 0;
-        if (!count) {
-            renderEmptyList(list, true);
-        } else {
+        let html = '', anyKnots = false;
+        for (const fld of FIELDS) {
+            const tel = fld.tr.getTelemetry();
+            if (!tel.count) continue;
+            anyKnots = true;
+            const contrib = fld.tr.getContributions();
+            const cIdx = new Map();
+            for (let i = 0; i < (contrib.count || 0); i++) cIdx.set(contrib.ids[i], i);
+            const selectedId = fld.tr.getSelected();
+            const perColor = fld.tr.getPerKnotColor();
             const f = tel.fields, S = tel.stride || 8;
-            const MAX_ROWS = 60;
-            const shown = Math.min(count, MAX_ROWS);
-            let html = '';
+            const MAX_ROWS = 40;
+            const shown = Math.min(tel.count, MAX_ROWS);
+            html += `<div class="kp-field-h" style="color:hsl(${Math.round(knotHue(0, fld.key) * 360)},70%,62%)">${fld.tag} field · ${tel.count} knots</div>`;
             for (let k = 0; k < shown; k++) {
-                const id = tel.ids[k];
+                const id = tel.ids[k]; const key = `${fld.key}:${id}`;
                 const segs = f[k * S + 3] | 0, xings = f[k * S + 4] | 0, legs = f[k * S + 5] | 0;
-                // Each knot's dot matches its viewport box color; selected → white.
                 const dotCol = (id === selectedId) ? '#ffffff'
-                    : (perColor ? `hsl(${Math.round(knotHue(id) * 360)},85%,62%)` : '#3fd0e0');
+                    : (perColor ? `hsl(${Math.round(knotHue(id, fld.key) * 360)},85%,62%)` : (fld.key === 'b' ? '#6fcf86' : '#3fd0e0'));
                 const ci = cIdx.get(id);
-                // Lead with the SCIENTIFIC contribution (field share); geometric counts trail.
                 const cn = (ci != null)
                     ? `<span class="kp-cn">E${pct(contrib.energyFrac[ci])} Φ${pct(contrib.fluxFrac[ci])} ρ${pct(contrib.chargeFrac[ci])}</span> · `
                     : '';
-                const rowTitle = `Knot #${id} — E/Φ/ρ = share of scenario energy/flux/charge (measured). `
-                    + `N = knot size (cells), age in ticks. segs/×crossings/legs = drawn field-line geometry (seeding-dependent analogy). Click to expand + highlight.`;
-                html += `<div class="kp-row" data-id="${id}" title="${rowTitle}">`
-                     +  `<span style="color:${dotCol}">●</span> #${id} · ${cn}`
+                const rowTitle = `${fld.tag}-knot #${id} — E/Φ/ρ = share of scenario energy/flux/charge (measured). `
+                    + `N = knot size (cells), age in ticks. segs/×crossings/legs = drawn field-line geometry (analogy). Click to expand + highlight.`;
+                html += `<div class="kp-row" data-field="${fld.key}" data-id="${id}" title="${rowTitle}">`
+                     +  `<span style="color:${dotCol}">●</span> ${fld.tag}#${id} · ${cn}`
                      +  `N${tel.size[k]} age${tel.age[k]}t · segs${segs} ×${xings} legs${legs}`;
-                if (id === expandedId) {
+                if (key === expandedKey) {
                     const cx = f[k * S].toFixed(0), cy = f[k * S + 1].toFixed(0), cz = f[k * S + 2].toFixed(0);
                     const ex = tel.extents[k * 3].toFixed(1), ey = tel.extents[k * 3 + 1].toFixed(1), ez = tel.extents[k * 3 + 2].toFixed(1);
                     const len = f[k * S + 6].toFixed(1), fm = f[k * S + 7].toFixed(2);
@@ -410,7 +425,7 @@ export function mountKnotsPanel(host) {
                         ? `<b>contribution</b> ⚡ E ${pct(contrib.energyFrac[ci])} · Φ ${pct(contrib.fluxFrac[ci])} · ρ ${pct(contrib.chargeFrac[ci])} <i>[measured]</i><br>`
                           + `abs U=${contrib.energy[ci].toExponential(2)} · |Φ|=${contrib.flux[ci].toExponential(2)} · Q=${contrib.charge[ci].toExponential(2)}<br>`
                           + `<span class="kp-legend"><span style="color:#f6c453">▬E</span> <span style="color:#5ad2e0">▬Φ</span> <span style="color:#c98bf0">▬ρ</span> · share over time</span>`
-                          + `<canvas class="kp-chart" data-cid="${id}"></canvas>`
+                          + `<canvas class="kp-chart" data-cid="${key}"></canvas>`
                         : '';
                     html += `<div class="kp-det">`
                          +  `born t${tel.birth[k]} · peak N${tel.peak[k]}<br>`
@@ -422,50 +437,51 @@ export function mountKnotsPanel(host) {
                 }
                 html += `</div>`;
             }
-            if (count > MAX_ROWS) {
-                html += `<div class="kp-empty">… ${count - MAX_ROWS} more (showing ${MAX_ROWS})</div>`;
-            }
+            if (tel.count > MAX_ROWS) html += `<div class="kp-empty">… ${tel.count - MAX_ROWS} more ${fld.tag} (showing ${MAX_ROWS})</div>`;
+        }
+        if (!anyKnots) {
+            renderEmptyList(list, true);
+        } else {
             list.innerHTML = html;
-            // Draw the selected knot's contribution-history chart (canvas rebuilt each paint).
             list.querySelectorAll('canvas.kp-chart').forEach((cv) => {
-                drawContribChart(cv, fl.getKnotHistory(+cv.dataset.cid));
+                const [fk, idStr] = cv.dataset.cid.split(':');
+                drawContribChart(cv, getFieldLineKnotTracker(fk).getKnotHistory(+idStr));
                 bindCanvasTip(cv, chartTip, panel);
             });
             list.querySelectorAll('.kp-row').forEach((r) => {
                 r.onclick = () => {
-                    const id = +r.dataset.id;
-                    expandedId = (expandedId === id ? null : id);
-                    // Drive the viewport highlight: select the knot AND mark the
-                    // field dirty so the overlay sweep re-renders the boxes this
-                    // frame (even when paused). The seed cache keeps the field-lines
-                    // unchanged — only the selected knot's box turns white.
-                    getFieldLineKnotTracker().setSelected(expandedId === null ? -1 : expandedId);
+                    const fk = r.dataset.field, id = +r.dataset.id, key = `${fk}:${id}`;
+                    expandedKey = (expandedKey === key ? null : key);
+                    // Single selection across both fields: select on this field, clear others.
+                    forEachKnotTracker((t, f) => t.setSelected((expandedKey && f === fk) ? id : -1));
                     markFieldDirty();
                     update();
                 };
             });
         }
 
-        // Event feed (most recent ~12, newest first).
+        // Event feed — E + B merged, newest first, tagged.
         const feed = el('kp-feed');
-        const ecount = evs?.count ?? 0;
-        if (!ecount) {
+        const merged = [];
+        for (const fld of FIELDS) {
+            const ev = fld.tr.getEvents();
+            for (let i = 0; i < (ev.count || 0); i++) merged.push({ tick: ev.tick[i], type: ev.type[i], np: ev.nparents[i], nc: ev.nchildren[i], tag: fld.tag });
+        }
+        merged.sort((a, b) => b.tick - a.tick);
+        if (!merged.length) {
             feed.innerHTML = '<div class="kp-empty">no events yet</div>';
         } else {
             let h = '';
-            for (let i = ecount - 1; i >= 0 && i > ecount - 13; i--) {
-                const t = evs.type[i];
-                const name = EVENT_NAMES[t] ?? '?';
-                const glyph = EVENT_GLYPH[t] ?? '?';
-                h += `<div><span class="kp-t">t${evs.tick[i]}</span> ${glyph} ${name} `
-                  +  `(${evs.nparents[i]}→${evs.nchildren[i]})</div>`;
+            for (let i = 0; i < Math.min(12, merged.length); i++) {
+                const e = merged[i];
+                h += `<div><span class="kp-t">t${e.tick}</span> ${e.tag} ${EVENT_GLYPH[e.type] ?? '?'} ${EVENT_NAMES[e.type] ?? '?'} (${e.np}→${e.nc})</div>`;
             }
             feed.innerHTML = h;
         }
     }
 
     const { unsubscribe } = rafCoordinator.subscribe(PANEL_ID, { hz: 4, cb: update });
-    const dispose = () => { unsubscribe(); getFieldLineKnotTracker().setContribEnabled(false); panel.remove(); };
+    const dispose = () => { unsubscribe(); forEachKnotTracker((t) => t.setContribEnabled(false)); panel.remove(); };
     window.__ftdKnotsPanel = { dispose };
     return { dispose };
 }
