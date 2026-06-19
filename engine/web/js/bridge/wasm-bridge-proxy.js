@@ -46,6 +46,16 @@ if (typeof window !== 'undefined') {
 // this guards — see scenario-loader's onInitFailure wiring).
 const WORKER_READY_TIMEOUT_MS = 8000;
 
+// How long a *ready* worker may go without posting a single 'frame' while the
+// simulation is supposed to be running before we declare it "ready but dead"
+// and fall back to the in-thread bridge. This guards the case where the worker
+// reports 'ready' (so the ready-timeout above is cleared) but its self-tick
+// loop never produces a frame — e.g. the in-worker threaded tick can't run
+// because SharedArrayBuffer / cross-origin-isolation isn't available to the
+// worker. 4 s is generous so a slow-but-alive worker isn't false-tripped; the
+// _initFailed latch makes the fallback fire at most once (no flapping).
+const FRAME_WATCHDOG_MS = 4000;
+
 export class WasmBridgeProxy {
     // `opts.onInitFailure(reason)` (optional) is invoked AT MOST ONCE if the
     // worker fails to initialise — either the worker fires onerror before it
@@ -65,6 +75,9 @@ export class WasmBridgeProxy {
         this._toggles = {};
         this._ready = false;
         this._running = null;
+        this._readyAt = 0;              // performance.now() when 'ready' arrived
+        this._lastFrameAt = 0;          // performance.now() of the last 'frame'
+        this._frameWatchdog = null;     // setTimeout handle for the dead-worker watchdog
         this._ctrl = null;
         this._fluxView = null;
         this._lastDiag = null;
@@ -95,32 +108,69 @@ export class WasmBridgeProxy {
         // fallback so the app can switch to the in-thread bridge.
         this._worker.onerror = (e) => {
             console.error('[WasmWorker]', e.message || e);
-            if (!this._ready) this._failInit('worker onerror: ' + (e.message || 'load failed'));
+            if (!this._ready) this._triggerFallback('worker onerror: ' + (e.message || 'load failed'));
         };
         // Guard against a silent never-ready worker (importScripts can fail in
         // ways that don't always reach onerror in every browser). If 'ready'
         // hasn't arrived in time, fall back.
         this._readyTimer = (typeof setTimeout === 'function')
-            ? setTimeout(() => { if (!this._ready) this._failInit('ready timeout'); }, WORKER_READY_TIMEOUT_MS)
+            ? setTimeout(() => { if (!this._ready) this._triggerFallback('ready timeout'); }, WORKER_READY_TIMEOUT_MS)
             : null;
 
         this.capabilities = { scale0: this._buildCaps() };
     }
 
     /**
-     * Latched, fire-once worker-init failure path. Cancels the ready-timer,
-     * tears down the dead worker, and notifies the caller (onInitFailure) so it
-     * can fall back to the in-thread WasmBridge. Never throws.
+     * Latched, fire-once worker-fallback path. Cancels all timers, tears down
+     * the (dead or stalled) worker, and notifies the caller (onInitFailure) so
+     * it can fall back to the in-thread WasmBridge. Never throws.
+     *
+     * The ONLY latch is `_initFailed` — deliberately NOT gated on `_ready`, so
+     * the frame-watchdog can fire fallback even for a worker that reported
+     * 'ready' but then never produced a frame ("ready but dead"). The pre-ready
+     * call sites (onerror, ready-timeout, worker init-error) gate on `!_ready`
+     * themselves, so their behaviour is unchanged.
      */
-    _failInit(reason) {
-        if (this._initFailed || this._ready) return;
+    _triggerFallback(reason) {
+        if (this._initFailed) return;
         this._initFailed = true;
         if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
-        console.error('[WasmWorker] off-thread engine failed to initialise (' + reason + '); falling back to in-thread WASM engine.');
+        this._clearFrameWatchdog();
+        console.error('[WasmWorker] off-thread engine failed (' + reason + '); falling back to in-thread WASM engine.');
         try { this.terminate(); } catch { /* ignore */ }
         const cb = this._onInitFailure;
         this._onInitFailure = null;
         if (cb) { try { cb(reason); } catch (e) { console.error('[WasmWorker] onInitFailure handler threw:', e); } }
+    }
+
+    /** Now-clock helper (performance.now where available, Date.now otherwise). */
+    _now() { return (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now(); }
+
+    /**
+     * Arm/re-arm the dead-worker frame watchdog. Only meaningful once ready and
+     * running; a no-op otherwise. Each call replaces any pending timer, so it
+     * doubles as the per-frame reset. If FRAME_WATCHDOG_MS elapses while the
+     * worker is still ready+running and no newer frame has arrived, fall back.
+     */
+    _armFrameWatchdog() {
+        if (typeof setTimeout !== 'function') return;
+        if (!this._ready || this._running !== true || this._initFailed) return;
+        this._clearFrameWatchdog();
+        this._frameWatchdog = setTimeout(() => {
+            this._frameWatchdog = null;
+            if (this._initFailed || !this._ready || this._running !== true) return;
+            const last = this._lastFrameAt || this._readyAt || 0;
+            if (this._now() - last > FRAME_WATCHDOG_MS) {
+                this._triggerFallback('ready worker produced no frames');
+            } else {
+                // A frame landed close to the deadline; re-arm for the remainder.
+                this._armFrameWatchdog();
+            }
+        }, FRAME_WATCHDOG_MS);
+    }
+
+    _clearFrameWatchdog() {
+        if (this._frameWatchdog) { try { clearTimeout(this._frameWatchdog); } catch { /* ignore */ } this._frameWatchdog = null; }
     }
 
     _onMessage(m) {
@@ -129,8 +179,13 @@ export class WasmBridgeProxy {
             this._ctrl = new Int32Array(m.ctrl);
             this._fluxView = new Float64Array(m.heap, m.fluxPtr, m.fluxLen);
             this._ready = true;
-            // The off-thread engine came up; cancel the dead-worker watchdog.
+            this._readyAt = this._now();
+            // The off-thread engine reported ready; cancel the never-ready watchdog.
             if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
+            // ...but a ready worker can still be dead (never posts a frame). If the
+            // sim is already running, arm the frame-watchdog now; otherwise it arms
+            // when setRunning(true) is next forwarded from the tick loop.
+            this._armFrameWatchdog();
             if (this._pendingTPF !== undefined) {
                 Atomics.store(this._ctrl, CTRL.TICKS_PER_FRAME, Math.round(this._pendingTPF * 1000));
             }
@@ -142,6 +197,9 @@ export class WasmBridgeProxy {
                 this._pendingCommands = [];
             }
         } else if (m.type === 'frame') {
+            // A live frame: stamp arrival and reset the dead-worker watchdog.
+            this._lastFrameAt = this._now();
+            this._armFrameWatchdog();
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
             if (m.audit) this._lastAudit = m.audit;
@@ -160,7 +218,7 @@ export class WasmBridgeProxy {
             // A module-init failure inside the worker (createFTDModuleMT().catch
             // posts where:'init') means the engine never built — fall back if we
             // haven't yet become ready.
-            if (m.where === 'init' && !this._ready) this._failInit('worker init error: ' + (m.msg || ''));
+            if (m.where === 'init' && !this._ready) this._triggerFallback('worker init error: ' + (m.msg || ''));
         }
     }
 
@@ -268,6 +326,7 @@ export class WasmBridgeProxy {
     setupScenario(name) {
         this._scenarioId = name || this._scenarioId;
         this._ready = false;
+        this._clearFrameWatchdog();   // old-scenario watchdog is stale; re-arms on next 'ready'/setRunning
         this._samplerCache = {};   // stale; worker will repopulate on first frame of new scenario
         this._pendingCommands = []; // discard any commands queued for the previous scenario
         this._worker.postMessage({
@@ -280,6 +339,11 @@ export class WasmBridgeProxy {
         if (v === this._running) return;                              // dedupe — tick.js calls every frame
         this._running = v;
         this._worker.postMessage({ type: 'setRunning', value: v });
+        // Frame-watchdog follows the run state: arm when we start running (a
+        // ready-but-dead worker will never post a frame), clear when paused so a
+        // legitimately idle worker isn't falsely tripped.
+        if (v) this._armFrameWatchdog();
+        else this._clearFrameWatchdog();
     }
     setTicksPerFrame(v) {
         this._pendingTPF = v;
@@ -309,6 +373,8 @@ export class WasmBridgeProxy {
     resize(n) { this.reset(n); }
     terminate() {
         if (!this._terminated) { this._terminated = true; _live--; _terminated++; }
+        if (this._readyTimer) { try { clearTimeout(this._readyTimer); } catch { /* ignore */ } this._readyTimer = null; }
+        this._clearFrameWatchdog();
         try { this._worker.postMessage({ type: 'dispose' }); } catch (e) { /* ignore */ }
         try { this._worker.terminate(); } catch (e) { /* ignore */ }
     }
