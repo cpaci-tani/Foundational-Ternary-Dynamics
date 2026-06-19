@@ -27,11 +27,6 @@ export function runScale0PhysicsTicks(ctx, state, tickCount = 1) {
 export function advanceSimulation(ctx, state) {
     const latticeSize = getActiveLatticeSize(ctx, state);
 
-    if (ctx.running && state._pendingScenarioLoad) {
-        state._pendingScenarioLoad();
-        state._pendingScenarioLoad = null;
-    }
-
     // Worker-backed physics (WasmBridgeProxy): the worker self-ticks on its own
     // ~60Hz loop when CTRL.RUNNING=1. Forward the desired run state (deduped in
     // the proxy) and drive overlay/render refresh from the worker's frame counter,
