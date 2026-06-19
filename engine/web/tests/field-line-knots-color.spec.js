@@ -54,6 +54,43 @@ test('setSelected reflects in getKnotZones().selectedId; clearing resets to -1',
     expect(tr.getKnotZones().selectedId).toBe(-1);
 });
 
+test('per-knot color flag defaults on, is carried by getKnotZones, and survives reset', () => {
+    const tr = new FieldLineKnotTracker(opt);
+    expect(tr.getPerKnotColor()).toBe(true);
+    tr.record(makeStreamlines(clump([5, 5, 5])), null, 0, 33);
+    expect(tr.getKnotZones().perKnotColor).toBe(true);
+    tr.setPerKnotColor(false);
+    expect(tr.getKnotZones().perKnotColor).toBe(false);
+    tr.reset();                       // a scenario change must NOT reset a UI preference
+    expect(tr.getPerKnotColor()).toBe(false);
+});
+
+test('setSensitivity clamps to [0,1] and round-trips', () => {
+    const tr = new FieldLineKnotTracker(opt);
+    expect(tr.getSensitivity()).toBeCloseTo(0.5, 6);   // default
+    tr.setSensitivity(2);  expect(tr.getSensitivity()).toBe(1);
+    tr.setSensitivity(-1); expect(tr.getSensitivity()).toBe(0);
+    tr.setSensitivity(0.3); expect(tr.getSensitivity()).toBeCloseTo(0.3, 6);
+});
+
+test('assignLinesToKnots maps each line to a detected knot id (nearest centroid)', () => {
+    const tr = new FieldLineKnotTracker(opt);
+    const sl = makeStreamlines([...clump([5, 5, 5]), ...clump([25, 25, 25])]);
+    tr.record(sl, null, 0, 33);
+    const z = tr.getKnotZones();
+    expect(z.count).toBe(2);
+    const lineIds = tr.assignLinesToKnots(sl);
+    expect(lineIds.length).toBe(sl.count);             // one id per line
+    const valid = new Set(Array.from(z.ids));
+    for (const id of lineIds) expect(valid.has(id)).toBe(true);
+    // lines 0-2 are clump A (≈5,5,5), lines 3-5 are clump B (≈25,25,25) → different knots
+    expect(lineIds[0]).not.toBe(lineIds[3]);
+    // with no knots, every line is unassigned (-1)
+    tr.reset();
+    const none = tr.assignLinesToKnots(sl);
+    expect(Array.from(none).every((v) => v === -1)).toBe(true);
+});
+
 test('reset() clears the selection', () => {
     const tr = new FieldLineKnotTracker(opt);
     tr.record(makeStreamlines(clump([5, 5, 5])), null, 0, 33);

@@ -629,7 +629,7 @@ export class Viewport {
 
     // -- E-Field Lines (Cyan) --
     _buildEFieldLines() { this._fieldRenderer._buildEFieldLines(); }
-    updateEFieldLines(streamlines) { this._fieldRenderer.updateEFieldLines(streamlines); }
+    updateEFieldLines(streamlines, knotColoring) { this._fieldRenderer.updateEFieldLines(streamlines, knotColoring); }
     toggleEFieldLines(on) { this._fieldRenderer.toggleEFieldLines(on); }
 
     // -- B-Field Lines (Green) --

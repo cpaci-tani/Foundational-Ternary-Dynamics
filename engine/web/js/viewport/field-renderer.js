@@ -810,7 +810,7 @@ export class ViewportFieldRenderer {
                 const py = sy + VOXEL_CENTER_OFFSET;
                 const pz = sz + VOXEL_CENTER_OFFSET;
                 if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
-                colorFn(i, nPts, rgb);
+                colorFn(i, nPts, rgb, li);
                 // +VOXEL_CENTER_OFFSET so the line aligns with particles + flux volume.
                 posAttr.array[vi * 3]     = px;
                 posAttr.array[vi * 3 + 1] = py;
@@ -853,10 +853,23 @@ export class ViewportFieldRenderer {
         this._eFieldLines = this._buildStreamlineMesh(300 * 160 * 2, 0.7);
     }
 
-    updateEFieldLines(streamlines) {
+    updateEFieldLines(streamlines, knotColoring) {
         if (!this._eFieldLines) this._buildEFieldLines();
-        this._writeStreamlinesIntoMesh(this._eFieldLines, streamlines, (i, nPts, rgb) => {
+        // knotColoring = { lineIds:Int32Array, selectedId:int, perKnotColor:bool } |
+        // null. When present, each flowline is tinted with the color of the knot it
+        // belongs to (white for the selected knot), matching the panel rows + boxes.
+        // The alpha fade along the line is preserved. Lines with no knot (id<0) and
+        // the default (no coloring / perKnotColor off) keep the cyan fade.
+        const kc = knotColoring;
+        this._writeStreamlinesIntoMesh(this._eFieldLines, streamlines, (i, nPts, rgb, li) => {
             const alpha = 1.0 - (i / (nPts - 1)) * 0.7;
+            if (kc && kc.perKnotColor && kc.lineIds && kc.lineIds[li] >= 0) {
+                const id = kc.lineIds[li];
+                if (id === kc.selectedId) { rgb[0] = alpha; rgb[1] = alpha; rgb[2] = alpha; return; } // white
+                rampCyclicHSL(knotHue(id) * (Math.PI / 2), rgb, 0);
+                rgb[0] *= alpha; rgb[1] *= alpha; rgb[2] *= alpha;
+                return;
+            }
             rgb[0] = 0.3 * alpha; rgb[1] = 0.82 * alpha; rgb[2] = 0.88 * alpha;
         });
     }
@@ -1853,11 +1866,12 @@ export class ViewportFieldRenderer {
         //    detected knot, sized to its bounding extent (the clump's footprint);
         //  • bare Float32Array of particle positions (legacy) — fixed 3-voxel box.
         const maxSegments = 1200;
-        let centroids, extents, count, ids = null, selectedId = -1;
+        let centroids, extents, count, ids = null, selectedId = -1, perKnotColor = true;
         if (frame && frame.centroids) {
             centroids = frame.centroids; extents = frame.extents; count = frame.count | 0;
             ids = frame.ids || null;
             selectedId = (frame.selectedId === undefined) ? -1 : frame.selectedId;
+            perKnotColor = frame.perKnotColor !== false;
         } else {
             // legacy: `frame` is the flat particle Float32Array (x,y,z,…)
             centroids = frame; extents = null; count = frame ? (frame.length / 3) | 0 : 0;
@@ -1877,8 +1891,9 @@ export class ViewportFieldRenderer {
             let r = 0.0, g = 0.8, b = 0.8;
             if (ids) {
                 const id = ids[pi];
-                if (id === selectedId) { r = 1.0; g = 1.0; b = 1.0; }
-                else { rampCyclicHSL(knotHue(id) * (Math.PI / 2), rgb, 0); r = rgb[0]; g = rgb[1]; b = rgb[2]; }
+                if (id === selectedId) { r = 1.0; g = 1.0; b = 1.0; }       // selected → white (always)
+                else if (perKnotColor) { rampCyclicHSL(knotHue(id) * (Math.PI / 2), rgb, 0); r = rgb[0]; g = rgb[1]; b = rgb[2]; }
+                // else: per-knot colors off → uniform cyan (the default r,g,b)
             }
             for (const e of edges) {
                 const i = si * 6;
