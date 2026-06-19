@@ -15,6 +15,8 @@ import {
     setForceStyle as setForceStyleState,
     setLatticeNeedsUpload as markLatticeUpload,
     markFieldDirty,
+    getPrimeTickOnLoad,
+    setPrimeTickOnLoad,
 } from './state/store.js';
 import { advanceSimulation } from './runtime/tick.js';
 import { syncRenderableData } from './runtime/frame-sync.js';
@@ -145,12 +147,19 @@ export function bindUI(ctx) {
         } else if (hadNewSamplers && ctx._samplersPending) {
             markFieldDirty();
         }
-        if (hadNewSamplers) ctx._samplersPending = false;
+        // _samplersPending is NOT cleared here. The overlay sweep clears it once
+        // it produces jobs from real sampler data (field-overlays.js). The worker
+        // proxy returns EMPTY on the first _wantSampler(kind) call, so the first
+        // postFrame can carry hadNewSamplers=true while the specific overlay's
+        // data is still empty; clearing now would disarm the forced repaint and
+        // leave the overlay blank until the next tick.
     };
 
     // Ensure the play bar is mounted (idempotent; may have been
     // pre-mounted by mountScale0PlaybackUI() before wireToolbar).
     mountScale0PlaybackUI();
+    // Wire + show the prime-tick toggle now that the play bar exists.
+    ensurePrimeTickButton(true);
 }
 
 /**
@@ -170,6 +179,26 @@ export function mountScale0PlaybackUI() {
     if (!_playBar) {
         _playBar = new PlayBarComponent(viewportEl).mount();
     }
+}
+
+// Wire + reveal the "prime tick on load" toggle in the play bar (Scale-0 only).
+// Idempotent: the click handler is attached once (guarded by _ftdWired);
+// subsequent calls only update visibility. The button ships hidden in the
+// play-bar template and is revealed here so it never appears on non-lattice
+// scales (the play bar persists across scale switches).
+function ensurePrimeTickButton(visible) {
+    const btn = document.getElementById('btn-prime-tick');
+    if (!btn) return;
+    if (!btn._ftdWired) {
+        btn._ftdWired = true;
+        const paint = (on) => {
+            btn.classList.toggle('is-on', on);
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        };
+        paint(getPrimeTickOnLoad());
+        btn.addEventListener('click', () => paint(setPrimeTickOnLoad(!getPrimeTickOnLoad())));
+    }
+    btn.hidden = !visible;
 }
 
 class Scale0LifecycleController extends BaseLifecycleController {
@@ -199,11 +228,15 @@ class Scale0LifecycleController extends BaseLifecycleController {
         try { initThermoPanel(); } catch (e) { /* ignore */ }
         try { initDispersionPanel(); } catch (e) { /* ignore */ }
         try { initKnotsPanel(); } catch (e) { /* ignore */ }
+        // Reveal the prime-tick toggle whenever Scale 0 becomes active.
+        try { ensurePrimeTickButton(true); } catch (e) { /* ignore */ }
     }
 
     destroy(ctx) {
         super.destroy(ctx);
         try { exitScale0(); } catch (e) { /* ignore */ }
+        // Hide the prime-tick toggle when leaving Scale 0 (the play bar persists).
+        try { ensurePrimeTickButton(false); } catch (e) { /* ignore */ }
         // Dispose the Scale-0 overlay panels on engineMode switch
         // (audit P1-4, 2026-05-27). Each has a self-driving rAF loop that
         // calls bridge.getDiagnostics() / getConservationTotals() every

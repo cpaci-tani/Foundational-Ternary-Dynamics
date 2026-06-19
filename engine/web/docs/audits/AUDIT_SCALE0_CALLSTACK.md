@@ -146,7 +146,7 @@ Delegated on `physics-harness.js` (scenario + controls should use these, not `.b
 | `viewport.js` | `_onResize` refreshes `devicePixelRatio` before `setSize` |
 | `runtime/frame-sync.js` | `getActiveScale0Capability`, `getActiveLatticeSize` |
 | `runtime/field-overlays.js` | `getActiveScale0Bridge` for sampling |
-| `runtime/overlay-frames.js` | grav potential + kinetic energy frames |
+| `runtime/overlay-frames.js` | grav potential + scalar topology frames |
 | `ui/controls/wire.js` | `latticeN`, `dualHarness`, active K_B, harness clear/seed |
 | `ui/overlays/genesis-burst-panel.js` | harness-only fire path |
 | `controller.js` | playbar `getNowTick` via active capability |

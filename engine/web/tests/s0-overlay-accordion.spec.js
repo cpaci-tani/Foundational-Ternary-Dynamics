@@ -84,17 +84,17 @@ test.describe('Scale-0 Visualization accordion', () => {
         await page.waitForTimeout(1500);
         await expand(page);
 
-        await page.evaluate(() => { const s = document.getElementById('s0-overlay-search'); s.value = 'helic'; s.dispatchEvent(new Event('input', { bubbles: true })); });
+        await page.evaluate(() => { const s = document.getElementById('s0-overlay-search'); s.value = 'vortic'; s.dispatchEvent(new Event('input', { bubbles: true })); });
         await page.waitForTimeout(150);
         let r = await page.evaluate(() => ({
             topoShown: !document.querySelector('#viewport-overlay [data-col="topology"]').classList.contains('is-filtered-out'),
             topoOpen: !document.querySelector('#viewport-overlay [data-col="topology"]').classList.contains('is-collapsed'),
             volHidden: document.querySelector('#viewport-overlay [data-col="volume"]').classList.contains('is-filtered-out'),
-            helicVisible: !document.getElementById('toggle-helicity').classList.contains('is-filtered-out'),
+            vorticVisible: !document.getElementById('toggle-vorticity').classList.contains('is-filtered-out'),
         }));
         expect(r.topoShown && r.topoOpen, 'Topology shown + auto-expanded').toBe(true);
         expect(r.volHidden, 'Volume hidden (no match)').toBe(true);
-        expect(r.helicVisible, 'Helicity visible').toBe(true);
+        expect(r.vorticVisible, 'Vorticity visible').toBe(true);
 
         // Clearing restores: filter classes gone, default-collapsed back.
         await page.evaluate(() => { const s = document.getElementById('s0-overlay-search'); s.value = ''; s.dispatchEvent(new Event('input', { bubbles: true })); });

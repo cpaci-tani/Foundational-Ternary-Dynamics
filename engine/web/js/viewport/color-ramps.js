@@ -160,34 +160,7 @@ export function rampVorticity(t, out, i) {
     }
 }
 
-// ── Tier 1/2/3 ramps (added 2026-04-18) ───────────────────────────────
-
-/**
- * Helicity `J·(∇×J)`: diverging cyan ↔ magenta on `t ∈ [-1, 1]`.
- * Captures left/right-handed field-line linking.
- */
-export function rampHelicity(t, out, i) {
-    t = Math.max(-1, Math.min(1, t));
-    if (t >= 0) {
-        const u = t;
-        out[i]     = 0.85 * (1 - u) + 0.95 * u;
-        out[i + 1] = 0.90 * (1 - u) + 0.15 * u;
-        out[i + 2] = 0.95 * (1 - u) + 0.85 * u;
-    } else {
-        const u = -t;
-        out[i]     = 0.85 * (1 - u) + 0.10 * u;
-        out[i + 1] = 0.90 * (1 - u) + 0.85 * u;
-        out[i + 2] = 0.95 * (1 - u) + 0.90 * u;
-    }
-}
-
-/** Kretschmann curvature: deep-space blue → molten white on `t ∈ [0, 1]`. */
-export function rampKretschmann(t, out, i) {
-    t = Math.max(0, Math.min(1, t));
-    out[i]     = 0.05 * (1 - t) + 1.00 * t;
-    out[i + 1] = 0.10 * (1 - t) + 0.95 * t;
-    out[i + 2] = 0.35 * (1 - t) + 0.80 * t;
-}
+// ── Tier 1/2 ramps (added 2026-04-18) ─────────────────────────────────
 
 /** Electric pressure `P_E = ½|E|²`: pale yellow → saturated red on `t ∈ [0, 1]`. */
 export function rampEPressure(t, out, i) {
@@ -203,41 +176,6 @@ export function rampBPressure(t, out, i) {
     out[i]     = 0.75 * (1 - t) + 0.00 * t;
     out[i + 1] = 0.95 * (1 - t) + 0.55 * t;
     out[i + 2] = 0.95 * (1 - t) + 0.70 * t;
-}
-
-/** Kinetic energy density: olive → hot yellow on `t ∈ [0, 1]`. */
-export function rampKineticEnergy(t, out, i) {
-    t = Math.max(0, Math.min(1, t));
-    out[i]     = 0.30 * (1 - t) + 1.00 * t;
-    out[i + 1] = 0.45 * (1 - t) + 0.95 * t;
-    out[i + 2] = 0.10 * (1 - t) + 0.20 * t;
-}
-
-/** Fisher information `|∇ρ|²/ρ`: indigo → bright lime on `t ∈ [0, 1]`. */
-export function rampFisher(t, out, i) {
-    t = Math.max(0, Math.min(1, t));
-    out[i]     = 0.25 * (1 - t) + 0.75 * t;
-    out[i + 1] = 0.15 * (1 - t) + 1.00 * t;
-    out[i + 2] = 0.55 * (1 - t) + 0.30 * t;
-}
-
-/**
- * Dual-substrate coherence `J·(∇×J)/(|J|·|∇×J|) ∈ [-1, 1]`:
- * diverging orange ↔ violet for right/left-handed Beltrami flow.
- */
-export function rampCoherence(t, out, i) {
-    t = Math.max(-1, Math.min(1, t));
-    if (t >= 0) {
-        const u = t;
-        out[i]     = 0.90 * (1 - u) + 1.00 * u;
-        out[i + 1] = 0.90 * (1 - u) + 0.55 * u;
-        out[i + 2] = 0.90 * (1 - u) + 0.10 * u;
-    } else {
-        const u = -t;
-        out[i]     = 0.90 * (1 - u) + 0.45 * u;
-        out[i + 1] = 0.90 * (1 - u) + 0.15 * u;
-        out[i + 2] = 0.90 * (1 - u) + 0.85 * u;
-    }
 }
 
 // ── Force palettes + palette interpolator ─────────────────────────────
@@ -294,11 +232,6 @@ export const RAMP_BY_NAME = {
     rampEmEnergy,
     rampCharge,
     rampVorticity,
-    rampHelicity,
-    rampKretschmann,
     rampEPressure,
     rampBPressure,
-    rampKineticEnergy,
-    rampFisher,
-    rampCoherence,
 };

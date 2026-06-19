@@ -486,6 +486,31 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
     // fires with an empty _samplerCache and overlays stay blank until the next
     // tick increments fieldDataVersion again.
     if (ctx) ctx._samplersPending = true;
+
+    // Prime tick on load: when enabled (play-bar toggle, persisted via
+    // state.primeTickOnLoad), advance exactly one physics tick right after the
+    // scenario is seeded so motion-derived overlays (E/B/Poynting/vorticity) and
+    // particle/manifestation overlays (state/forces/…) have data to render at the
+    // initial paused view instead of staying blank until the user presses Play.
+    // One tick on a freshly-seeded field is visually ~identical to tick 0. Uses
+    // the existing single-tick path (worker: tickOnce, replayed when the worker is
+    // ready; in-thread: tickScale0), which bumps fieldDataVersion so the overlay
+    // sweep renders the primed state. The C++ golden sequence is a separate fixed
+    // loop and is unaffected by this UI-driven tick.
+    // window.__ftdPrimeTickOnLoad (boolean) is a live override for tests / the
+    // overlay-audit harness, letting them force true tick-0 (false) or primed
+    // (true) regardless of the persisted user toggle. Falls back to the toggle.
+    const primeOnLoad = (typeof window !== 'undefined' && typeof window.__ftdPrimeTickOnLoad === 'boolean')
+        ? window.__ftdPrimeTickOnLoad
+        : state.primeTickOnLoad;
+    if (primeOnLoad) {
+        try {
+            runScale0PhysicsTicks(ctx, state, 1);
+        } catch (e) {
+            console.warn('[Scale0] prime tick on load failed:', e);
+        }
+        markFieldDirty();
+    }
 }
 
 export async function resizeScale0Lattice(ctx, state, viewportAdapter, newSize) {

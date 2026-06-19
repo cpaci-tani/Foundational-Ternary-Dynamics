@@ -274,7 +274,7 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
             resetFieldFlags();
             // Heavy streamline + scalar load (each streamline = COST_STREAMLINE).
             for (const k of ['showEField', 'showBField', 'showFluxLines',
-                'showPsiSquared', 'showPhase', 'showEmEnergy', 'showVorticity', 'showHelicity']) {
+                'showPsiSquared', 'showPhase', 'showEmEnergy', 'showVorticity']) {
                 setFieldToggle(k, true);
             }
             const st = getScale0State();
@@ -419,7 +419,7 @@ test.describe('Scale-0 overlay scheduler invariants', () => {
             for (const k of ['showEField', 'showBField', 'showFluxLines',
                 'showPsiSquared', 'showPhase', 'showLagrangianDensity',
                 'showEmEnergy', 'showChargeDensity', 'showVorticity',
-                'showHelicity', 'showKretschmann']) {
+                'showEPressure', 'showBPressure']) {
                 setFieldToggle(k, true);
             }
             window.__ftdCtx.running = true;

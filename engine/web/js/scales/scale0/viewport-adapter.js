@@ -9,7 +9,6 @@ const NON_FORCE_OVERLAYS = {
     showStateField: 'toggleStateField',
     showDualSubstrate: 'toggleDualFluxVolume',
     showChirality: 'toggleChiralityField',
-    showLight: 'toggleLightField',
     showDarkMatterHalo: 'toggleDarkMatterHalo',
     showDampingZones: 'toggleDampingZones',
     showKnotZones: 'toggleKnotZones',
@@ -25,20 +24,13 @@ const NON_FORCE_OVERLAYS = {
     showEmEnergy:          'toggleEmEnergyField',
     showChargeDensity:     'toggleChargeDensityField',
     showVorticity:         'toggleVorticityField',
-    // Tier 1/2/3 (2026-04-18) — helicity, curvature, horizon, stress-
-    // energy split, Fisher information, dual-substrate coherence.
-    showHelicity:          'toggleHelicityField',
-    showKretschmann:       'toggleKretschmannField',
+    // Tier 1/2 (2026-04-18) — horizon, stress-energy split.
     showHorizon:           'toggleHorizonField',
     showEPressure:         'toggleEPressureField',
     showBPressure:         'toggleBPressureField',
-    showKineticEnergy:     'toggleKineticEnergyField',
-    showFisher:            'toggleFisherField',
-    showCoherence:         'toggleCoherenceField',
     // New substrate overlays (2026-06-03)
     showLatency:           'toggleLatencyField',
     showGaussResidual:     'toggleGaussResidualField',
-    showMooreDecomp:       'toggleMooreDecomp',
 };
 
 const FORCE_ARROW_OVERLAYS = {
@@ -130,7 +122,6 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.showForceGlyphs?.(false);
             viewport.toggleDualFluxVolume?.(false);
             viewport.toggleChiralityField?.(false);
-            viewport.toggleLightField?.(false);
             viewport.toggleDarkMatterHalo?.(false);
             viewport.toggleDampingZones?.(false);
             viewport.toggleGenesisIsosurface?.(false);
@@ -145,19 +136,13 @@ export function createScale0ViewportAdapter(viewport) {
             viewport.toggleEmEnergyField?.(false);
             viewport.toggleChargeDensityField?.(false);
             viewport.toggleVorticityField?.(false);
-            // Tier 1/2/3 (2026-04-18).
-            viewport.toggleHelicityField?.(false);
-            viewport.toggleKretschmannField?.(false);
+            // Tier 1/2 (2026-04-18).
             viewport.toggleHorizonField?.(false);
             viewport.toggleEPressureField?.(false);
             viewport.toggleBPressureField?.(false);
-            viewport.toggleKineticEnergyField?.(false);
-            viewport.toggleFisherField?.(false);
-            viewport.toggleCoherenceField?.(false);
             viewport.toggleStateField?.(false);
             viewport.toggleLatencyField?.(false);
             viewport.toggleGaussResidualField?.(false);
-            viewport.toggleMooreDecomp?.(false);
         },
         applyParticleFrame(frame) {
             viewport?.updateParticles?.(frame);
@@ -235,9 +220,6 @@ export function createScale0ViewportAdapter(viewport) {
         applyChirality(frame) {
             viewport?.updateChiralityField?.(frame);
         },
-        applyLight(frame) {
-            viewport?.updateLightField?.(frame);
-        },
         // ── Tier 1 quantum overlay data handoffs ─────────
         applyPsiSquared(data) {
             viewport?.updatePsiSquaredField?.(data);
@@ -263,15 +245,10 @@ export function createScale0ViewportAdapter(viewport) {
         applyVorticity(data) {
             viewport?.updateVorticityField?.(data);
         },
-        // ── Tier 1/2/3 (2026-04-18) ──────────────────────
-        applyHelicity(data)      { viewport?.updateHelicityField?.(data); },
-        applyKretschmann(data)   { viewport?.updateKretschmannField?.(data); },
+        // ── Tier 1/2 (2026-04-18) ──────────────────────
         applyHorizon(data)       { viewport?.updateHorizonField?.(data); },
         applyEPressure(data)     { viewport?.updateEPressureField?.(data); },
         applyBPressure(data)     { viewport?.updateBPressureField?.(data); },
-        applyKineticEnergy(data) { viewport?.updateKineticEnergyField?.(data); },
-        applyFisher(data)        { viewport?.updateFisherField?.(data); },
-        applyCoherence(data)     { viewport?.updateCoherenceField?.(data); },
         applyStateField(data)    { viewport?.updateStateField?.(data); },
         applyLatency(data)       { viewport?.updateLatencyField?.(data); },
         applyGaussResidual(data) { viewport?.updateGaussResidualField?.(data); },
