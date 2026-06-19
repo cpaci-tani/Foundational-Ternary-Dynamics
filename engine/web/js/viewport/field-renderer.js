@@ -885,10 +885,21 @@ export class ViewportFieldRenderer {
         this._bFieldLines = this._buildStreamlineMesh(300 * 240 * 2, 0.7);
     }
 
-    updateBFieldLines(streamlines) {
+    updateBFieldLines(streamlines, knotColoring) {
         if (!this._bFieldLines) this._buildBFieldLines();
-        this._writeStreamlinesIntoMesh(this._bFieldLines, streamlines, (i, nPts, rgb) => {
+        // Like updateEFieldLines but for the orthogonal B field: when per-knot
+        // colors is on, tint each loop with its B-knot hue (field 'b' → half-turn
+        // from E); selected B-knot → white; else the default green fade.
+        const kc = knotColoring;
+        this._writeStreamlinesIntoMesh(this._bFieldLines, streamlines, (i, nPts, rgb, li) => {
             const alpha = 1.0 - (i / (nPts - 1)) * 0.5;
+            if (kc && kc.perKnotColor && kc.lineIds && kc.lineIds[li] >= 0) {
+                const id = kc.lineIds[li];
+                if (id === kc.selectedId) { rgb[0] = alpha; rgb[1] = alpha; rgb[2] = alpha; return; }
+                rampCyclicHSL(knotHue(id, 'b') * (Math.PI / 2), rgb, 0);
+                rgb[0] *= alpha; rgb[1] *= alpha; rgb[2] *= alpha;
+                return;
+            }
             rgb[0] = 0.4 * alpha; rgb[1] = 0.73 * alpha; rgb[2] = 0.42 * alpha;
         });
     }
@@ -1831,7 +1842,7 @@ export class ViewportFieldRenderer {
 
     // ── Topological Knots (wireframe cubes around manifested states) ──
     _buildKnotZones() {
-        const maxSegments = 1200;
+        const maxSegments = 1600;   // E + B knot boxes (up to 64+64 knots × 12 edges)
         const positions = new Float32Array(maxSegments * 2 * 3);
         const colors = new Float32Array(maxSegments * 2 * 3);
         const geo = new THREE.BufferGeometry();
@@ -1848,33 +1859,44 @@ export class ViewportFieldRenderer {
         this._scene.add(this._knotZones);
     }
 
+    // Accepts: a dual field-line-knot frame { e:{...}, b:{...} } (draws both the
+    // E and B knot families, hued per field); a single { centroids, extents, count,
+    // ids, selectedId, perKnotColor } frame; or a bare Float32Array of particle
+    // positions (legacy, fixed 3-voxel box).
     updateKnotZones(frame, latticeSize) {
         this._syncCenterAndRadius();
         if (!this._knotZones) this._buildKnotZones();
         const posAttr = this._knotZones.geometry.getAttribute('position');
         const colAttr = this._knotZones.geometry.getAttribute('color');
+        const maxSegments = 1600;
         let si = 0;
+        if (frame && (frame.e || frame.b)) {
+            si = this._writeKnotBoxSet(posAttr, colAttr, si, maxSegments, frame.e, 'e');
+            si = this._writeKnotBoxSet(posAttr, colAttr, si, maxSegments, frame.b, 'b');
+        } else {
+            si = this._writeKnotBoxSet(posAttr, colAttr, si, maxSegments, frame, 'e');
+        }
+        posAttr.needsUpdate = true;
+        colAttr.needsUpdate = true;
+        this._knotZones.geometry.setDrawRange(0, si * 2);
+    }
 
+    _writeKnotBoxSet(posAttr, colAttr, si, maxSegments, frame, field) {
         const edges = [
             [0, 0, 0, 1, 0, 0], [0, 1, 0, 1, 1, 0], [0, 0, 1, 1, 0, 1], [0, 1, 1, 1, 1, 1],
             [0, 0, 0, 0, 1, 0], [1, 0, 0, 1, 1, 0], [0, 0, 1, 0, 1, 1], [1, 0, 1, 1, 1, 1],
             [0, 0, 0, 0, 0, 1], [1, 0, 0, 1, 0, 1], [0, 1, 0, 0, 1, 1], [1, 1, 0, 1, 1, 1],
         ];
-
-        // Two accepted inputs:
-        //  • field-line-knot frame { centroids, extents, count } — one box per
-        //    detected knot, sized to its bounding extent (the clump's footprint);
-        //  • bare Float32Array of particle positions (legacy) — fixed 3-voxel box.
-        const maxSegments = 1200;
         let centroids, extents, count, ids = null, selectedId = -1, perKnotColor = true;
         if (frame && frame.centroids) {
             centroids = frame.centroids; extents = frame.extents; count = frame.count | 0;
             ids = frame.ids || null;
             selectedId = (frame.selectedId === undefined) ? -1 : frame.selectedId;
             perKnotColor = frame.perKnotColor !== false;
+        } else if (frame && ArrayBuffer.isView(frame)) {
+            centroids = frame; extents = null; count = (frame.length / 3) | 0;   // legacy particles
         } else {
-            // legacy: `frame` is the flat particle Float32Array (x,y,z,…)
-            centroids = frame; extents = null; count = frame ? (frame.length / 3) | 0 : 0;
+            return si;
         }
         const rgb = [0, 0, 0];
         for (let pi = 0; pi < count; pi++) {
@@ -1885,15 +1907,13 @@ export class ViewportFieldRenderer {
             const hx = extents ? Math.max(1.0, extents[pi * 3]) : 1.5;
             const hy = extents ? Math.max(1.0, extents[pi * 3 + 1]) : 1.5;
             const hz = extents ? Math.max(1.0, extents[pi * 3 + 2]) : 1.5;
-            // Per-knot color: each tracked knot gets its own deterministic hue;
-            // the panel-selected knot is drawn bright white. Legacy particle path
-            // (no ids) stays cyan.
+            // Per-knot color (field-aware: E vs B hues differ); selected → white;
+            // legacy/colors-off → cyan.
             let r = 0.0, g = 0.8, b = 0.8;
             if (ids) {
                 const id = ids[pi];
-                if (id === selectedId) { r = 1.0; g = 1.0; b = 1.0; }       // selected → white (always)
-                else if (perKnotColor) { rampCyclicHSL(knotHue(id) * (Math.PI / 2), rgb, 0); r = rgb[0]; g = rgb[1]; b = rgb[2]; }
-                // else: per-knot colors off → uniform cyan (the default r,g,b)
+                if (id === selectedId) { r = 1.0; g = 1.0; b = 1.0; }
+                else if (perKnotColor) { rampCyclicHSL(knotHue(id, field) * (Math.PI / 2), rgb, 0); r = rgb[0]; g = rgb[1]; b = rgb[2]; }
             }
             for (const e of edges) {
                 const i = si * 6;
@@ -1908,9 +1928,7 @@ export class ViewportFieldRenderer {
                 si++;
             }
         }
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        this._knotZones.geometry.setDrawRange(0, si * 2);
+        return si;
     }
 
     toggleKnotZones(on) {
