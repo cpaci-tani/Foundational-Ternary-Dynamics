@@ -25,7 +25,7 @@ const EV_BIRTH = 0, EV_DEATH = 1, EV_PERSIST = 2, EV_FISSION = 3, EV_FUSION = 4,
 
 export class FieldLineKnotTracker {
     constructor(opts = {}) {
-        this.cellSize = opts.cellSize ?? 3;
+        this.cellSize = opts.cellSize ?? 2;   // finer grid separates adjacent bundles
         this.densityThreshold = opts.densityThreshold ?? null; // null → adaptive
         this.crossingThreshold = opts.crossingThreshold ?? 1;
         this.minCellsPerKnot = opts.minCellsPerKnot ?? 2;
@@ -37,7 +37,16 @@ export class FieldLineKnotTracker {
         this.maxKnots = opts.maxKnots ?? 64;
         this.minOverlapCells = opts.minOverlapCells ?? 1;
         this.maxEvents = opts.maxEvents ?? 200;
+        // Detection mode: when requireCrossings is OFF (default), a knot is any
+        // dense field-line clump — including a parallel BUNDLE that bunches but
+        // doesn't tangle. When ON, only genuine tangles (crossings) qualify.
+        // Crossings are always COUNTED for the per-knot diagram either way.
+        this.requireCrossings = opts.requireCrossings ?? false;
         this.reset();
+        // User preferences (survive reset / scenario change).
+        this._perKnotColor = opts.perKnotColor ?? true;
+        // Sensitivity ∈ [0,1]: higher → lower density threshold → more knots.
+        this._sensitivity = clamp01(opts.sensitivity ?? 0.5);
     }
 
     reset() {
@@ -118,13 +127,17 @@ export class FieldLineKnotTracker {
             }
         }
 
-        // ── Adaptive density threshold ───────────────────────────────────
+        // ── Adaptive density threshold (sensitivity-scaled) ──────────────
+        // Higher sensitivity → smaller multiplier → lower threshold → more cells
+        // pass → more knots. The mean-nonzero density adapts to how busy the
+        // field is so one slider works across scenarios.
         let dThr = this.densityThreshold;
         if (dThr == null) {
             let sum = 0, nz = 0;
             for (let c = 0; c < totalCells; c++) { if (density[c] > 0) { sum += density[c]; nz++; } }
             const mean = nz ? sum / nz : 0;
-            dThr = Math.max(3, Math.ceil(1.5 * mean));
+            const mult = 3.0 - 2.6 * this._sensitivity;   // sens 0→3.0, 0.5→1.7, 1→0.4
+            dThr = Math.max(3, Math.ceil(mult * mean));
         }
 
         // ── Pass 2: crossings, only for density-passing cells ────────────
@@ -150,9 +163,10 @@ export class FieldLineKnotTracker {
             }
         }
 
-        // ── Hot gate: dense AND crossing ─────────────────────────────────
+        // ── Hot gate: dense (and crossing, only if requireCrossings) ─────
+        const needX = this.requireCrossings;
         for (let c = 0; c < totalCells; c++) {
-            if (density[c] >= dThr && cross[c] >= this.crossingThreshold) hot[c] = 1;
+            if (density[c] >= dThr && (!needX || cross[c] >= this.crossingThreshold)) hot[c] = 1;
         }
 
         // ── Connected components (26-neighbour) over hot cells ───────────
@@ -246,9 +260,40 @@ export class FieldLineKnotTracker {
 
     getTelemetry() { return this._tel; }
     getAggregate() { return { ...this._agg }; }
-    getKnotZones() { return { ...this._zones, selectedId: this._selectedId }; }
+    getKnotZones() { return { ...this._zones, selectedId: this._selectedId, perKnotColor: this._perKnotColor }; }
     setSelected(id) { this._selectedId = (id === null || id === undefined) ? -1 : (id | 0); }
     getSelected() { return this._selectedId; }
+    setPerKnotColor(on) { this._perKnotColor = !!on; }
+    getPerKnotColor() { return this._perKnotColor; }
+    setSensitivity(v) { this._sensitivity = clamp01(v); }
+    getSensitivity() { return this._sensitivity; }
+    setRequireCrossings(on) { this.requireCrossings = !!on; }
+
+    // Assign each streamline to a knot (the nearest knot centroid to the line's
+    // midpoint), returning that knot's persistent id per line, or -1 if there are
+    // no knots. Lets the E-field renderer color each flowline to match the panel
+    // row + box of the knot it belongs to. Reads only the last-recorded zones.
+    assignLinesToKnots(streamlines) {
+        const n = (streamlines && streamlines.count) ? streamlines.count : 0;
+        const out = new Int32Array(n).fill(-1);
+        const K = this._zones.count;
+        if (!n || !K) return out;
+        const ids = this._zones.ids, cen = this._zones.centroids;
+        const { buffer, offsets, lengths } = streamlines;
+        for (let li = 0; li < n; li++) {
+            const start = offsets[li], len = lengths[li];
+            const mv = start + (((len / 3) >> 1) * 3);   // midpoint vertex
+            const x = buffer[mv], y = buffer[mv + 1], z = buffer[mv + 2];
+            let best = -1, bestD = Infinity;
+            for (let k = 0; k < K; k++) {
+                const dx = x - cen[k * 3], dy = y - cen[k * 3 + 1], dz = z - cen[k * 3 + 2];
+                const d = dx * dx + dy * dy + dz * dz;
+                if (d < bestD) { bestD = d; best = k; }
+            }
+            out[li] = best >= 0 ? ids[best] : -1;
+        }
+        return out;
+    }
     getEvents() {
         const n = this._events.length;
         const tickA = new Int32Array(n), typeA = new Int32Array(n);
@@ -465,6 +510,8 @@ function segsCross(segEnds, s, t, cd2, parallelCos) {
 // Deterministic id → hue in [0,1). Same integer-mix as scale1/pe-cloud-expander's
 // hashUint32, so a knot's color is stable across ticks and shared by the panel
 // row + the viewport box.
+function clamp01(v) { v = +v; return v < 0 ? 0 : v > 1 ? 1 : (Number.isFinite(v) ? v : 0.5); }
+
 export function knotHue(id) {
     let h = (Math.imul(id | 0, 374761393) + 668265263) >>> 0;
     h = (Math.imul(h ^ (h >>> 13), 1274126177)) >>> 0;
