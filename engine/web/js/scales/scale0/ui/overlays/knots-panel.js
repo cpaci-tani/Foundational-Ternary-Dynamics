@@ -73,7 +73,7 @@ function buildPanel() {
       <div class="kp-feed-h">EVENT FEED</div>
       <div class="kp-feed" id="kp-feed"></div>
       <div class="kp-note">
-        Knot = connected same-sign manifested cluster (<i>s ≠ 0</i>, ≥ 4 voxels).
+        Knot = a manifested state / connected same-sign cluster (<i>s ≠ 0</i>).
         The Feynman-diagram framing is an <b>analogy</b>; <b>org</b> and any coupling are
         <b>[FTD-native proxies]</b>, not amplitudes. Ages are integer ticks.
       </div>`;
@@ -114,8 +114,8 @@ export function mountKnotsPanel(host, getBridge) {
         if (!trackingOn) {
             list.innerHTML = '<div class="kp-empty">tracking off — enable "Track knots" to record per-knot telemetry</div>';
         } else {
-            list.innerHTML = '<div class="kp-empty">0 knots — manifested clusters ≥ 4 voxels are tracked; '
-                + 'isolated single-voxel charges are not</div>';
+            list.innerHTML = '<div class="kp-empty">0 knots — no manifested states '
+                + '(enable a scenario that manifests charges)</div>';
         }
     }
 
