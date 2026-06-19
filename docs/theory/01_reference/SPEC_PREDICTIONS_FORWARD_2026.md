@@ -45,9 +45,11 @@ Each row: what FTD predicts, what the SM/QM expectation is, the experiment that 
 - **Prediction:** **continued null results** in all dimension-5 and dimension-6 photon-sector Lorentz-violation searches (GRB time-of-flight dispersion, vacuum birefringence) — under `a_phys ≡ ℓ_P` the first FTD-native anisotropy is (k·ℓ_P)⁴-suppressed, ~10⁻⁴ × (E/E_P)⁴, unobservably far below any foreseeable bound.
 - **Kill condition (two-sided):** (a) a **confirmed detection** of linear- or quadratic-Planck-suppressed LV contradicts the FTD wave sector (which forbids anything stronger than quartic); (b) engine-side, the k⁴ decay reversing or plateauing at larger L kills PL-5 directly (see EP-3).
 
-### FP-4 — Structural nulls, sharpened (cross-ref PL-6 `[THEOREM]` — not duplicated here)
+### FP-4 — Structural nulls, sharpened (cross-ref PL-6: three `[THEOREM]` + the proton `[SELECTION]/[BOUNDARY]` — not duplicated here)
 
-Hyper-Kamiokande observes **no proton decay** (charge conservation is exact on the substrate); **no magnetic monopole** is ever detected (∇·B = 0 is an identity); **no SUSY partner** at any future collider (no fermionic grading exists to mirror); **no fourth fermion generation** (Moore-layer decomposition yields exactly 3); **no extra spatial dimensions** (D = 3 forced by |Aut(E)|² = 2^D·(D−1)!). Each is killed immediately by a single contrary observation.
+The clean `[THEOREM]` nulls: **no magnetic monopole** is ever detected (∇·B = 0 is an identity); **no SUSY partner** at any future collider (no fermionic grading exists to mirror); **no fourth fermion generation** (Moore-layer decomposition yields exactly 3); **no extra spatial dimensions** (D = 3 forced by |Aut(E)|² = 2^D·(D−1)!). Each is killed immediately by a single contrary observation.
+
+**Proton stability is NOT a clean theorem null** (LEDGER FTD-0301, [`ANALYSIS_PROTON_STABILITY_v1.md`](../10_eft_program/ANALYSIS_PROTON_STABILITY_v1.md)): the substrate's exact charge is the U(1) Σs only — there is **no baryon/B−L current**, so Σs conservation does *not* entail `τ_proton = ∞` (it does not forbid the charge-balanced `p → e⁺ + π⁰`), and FTD's own weak channel transmutes the mixed-sign uud proton. A large proton lifetime is a `[SELECTION]` (emergent metastability), not a forced prediction; an observed proton decay would be consistent with FTD's UNFORCED-METASTABLE boundary, **not** a falsifier. Hyper-Kamiokande's continued decay-null is consistent with FTD but — unlike the three structural nulls — not specifically evidence *for* it.
 
 ## §3 · Engine-native blind predictions (EP rows — the lockable spine)
 
