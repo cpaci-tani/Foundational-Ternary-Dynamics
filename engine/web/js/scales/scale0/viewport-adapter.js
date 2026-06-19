@@ -221,7 +221,10 @@ export function createScale0ViewportAdapter(viewport) {
             viewport?.updateDampingZones?.(frame.particles, frame.latticeSize);
         },
         applyKnotZones(frame) {
-            viewport?.updateKnotZones?.(frame.particles, frame.latticeSize);
+            // Field-line-knot frame: { centroids, extents, count, latticeSize }.
+            // updateKnotZones reads centroids+extents directly (back-compat: a
+            // bare Float32Array of particle positions still works).
+            viewport?.updateKnotZones?.(frame, frame.latticeSize);
         },
         applyGenesisIsosurface(frame) {
             viewport?.updateGenesisIsosurface?.(frame.magnitude, frame.latticeSize, frame.threshold);
