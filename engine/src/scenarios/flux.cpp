@@ -35,14 +35,24 @@ bool setup_flux_scenario(RenderBridge& rb, const std::string& name) {
     if (name == "flux-pulse") {
         // Scenario ID: flux-pulse
         // Physical Purpose: Demonstrates single wave/flux pulse propagation through the discrete lattice.
-        // Initial Condition Parameters: Gaussian envelope of flux in the center, with scale sigma = N / 10.0 and amplitude amp = K_B * 2.0.
-        // Expected Behaviour: Spherical expansion of flux pulse outward from center.
+        // Initial Condition Parameters: Gaussian envelope of flux at the center,
+        //   RELEASED FROM REST (wave_vel = 0, i.e. ∂J/∂t = 0), with scale
+        //   sigma = N / 10.0 and amplitude amp = K_B * 2.0.
+        // Expected Behaviour: Symmetric spherical expansion outward from center —
+        //   the energy centroid stays at N/2 at every lattice size L.
+        // PHYSICS NOTE: inject FLUX ONLY. Do NOT also inject a uniform wave_vel
+        //   (∂J/∂t) here — a non-zero, co-aligned wave_vel is a +x momentum kick
+        //   that advects the packet directionally (d'Alembert split f(x−ct)+g(x+ct)
+        //   biased to one branch), which on a large lattice piles the field against
+        //   one face instead of expanding spherically. Zero initial velocity gives
+        //   the symmetric f=g split this scenario documents, and matches the JS
+        //   MockBridge twin (engine/web/js/bridge/scenarios/flux-scenarios.js).
         const int pulseR = std::min(CEL(sigma * 3), FLR(midF));
         const int pLo = FLR(midF) - pulseR, pHi = CEL(midF) + pulseR;
         for (int z = pLo; z <= pHi; z++) for (int y = pLo; y <= pHi; y++) for (int x = pLo; x <= pHi; x++) {
             double dx = x - midF, dy = y - midF, dz = z - midF;
             double val = amp * std::exp(-(dx*dx+dy*dy+dz*dz) / (2 * sigma * sigma));
-            if (val > 0.001) { IF(rb, x, y, z, val, 0, 0); IW(rb, x, y, z, val, 0, 0); }
+            if (val > 0.001) IF(rb, x, y, z, val, 0, 0);
         }
     }
     else if (name == "flux-dipole") {
