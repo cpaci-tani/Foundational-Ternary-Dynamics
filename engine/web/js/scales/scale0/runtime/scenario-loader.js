@@ -389,12 +389,15 @@ export function loadScale0Scenario(ctx, state, viewportAdapter, scenarioId, para
 
     const activeBridge = (useFluxMock && fluxMock) ? fluxMock : ctx.bridge;
     const harness = getPhysicsHarness(activeBridge);
-    
-    if (ctx.running) {
-        scenario.load(harness, params);
-    } else {
-        state._pendingScenarioLoad = () => scenario.load(harness, params);
-    }
+
+    // Load the scenario IMMEDIATELY on selection, whether or not the run loop is
+    // ticking. Previously a paused selection was deferred into
+    // state._pendingScenarioLoad and only fired on the first tick after Play, so
+    // picking a scenario while paused appeared to do nothing until Play. Loading
+    // here means the lattice is seeded + displayed right away; applyAuxiliaryDefaults
+    // below still runs AFTER scenario.load (the worker-path _pendingCommands replay
+    // ordering documented there is preserved).
+    scenario.load(harness, params);
 
     // applyAuxiliaryDefaults runs AFTER scenario.load so that the flux boundary
     // mode command isn't discarded. On the worker path, scenario.load calls
