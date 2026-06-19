@@ -197,9 +197,18 @@ export class WasmBridgeProxy {
                 this._pendingCommands = [];
             }
         } else if (m.type === 'frame') {
-            // A live frame: stamp arrival and reset the dead-worker watchdog.
-            this._lastFrameAt = this._now();
-            this._armFrameWatchdog();
+            // Reset the dead-worker watchdog only on TICK PROGRESS. A worker can
+            // post frames (e.g. the initial scenario frame) while its tick stays
+            // stuck at 0 — the in-worker threaded engine reports ready but never
+            // advances. Resetting on every frame would mask that; resetting only
+            // when diag.tick changes lets the watchdog catch a ready-but-not-
+            // ticking worker and fall back to the in-thread engine.
+            const _tk = (m.diag && typeof m.diag.tick === 'number') ? m.diag.tick : null;
+            if (_tk !== null && _tk !== this._lastTick) {
+                this._lastTick = _tk;
+                this._lastFrameAt = this._now();
+                this._armFrameWatchdog();
+            }
             this._lastDiag = m.diag;
             if (m.parts) this._lastParts = m.parts;
             if (m.audit) this._lastAudit = m.audit;
