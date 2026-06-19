@@ -92,9 +92,14 @@ RenderBridge::RenderBridge(int lattice_size)
     rng_state_ = std::make_unique<BridgeRng>(42u);
     rng_state_->resize_thread_pool(static_cast<std::size_t>(num_threads));
     // Observation-only per-knot telemetry recorder (PIMPL; complete type via
-    // the knot_telemetry.h include above). Default-constructed; only used when
-    // toggles.knot_tracking is enabled. Golden-neutral (reads settled state).
-    knot_tracker_ = std::make_unique<KnotTracker>();
+    // the knot_telemetry.h include above). Only used when toggles.knot_tracking
+    // is enabled. Golden-neutral (reads settled state).
+    // min_cluster_size = 1 so EVERY manifested s≠0 voxel/cluster (including
+    // isolated single-voxel charges) is tracked as a knot. NOTE: the
+    // ClusterTrackerParams default stays 4 (the unit test relies on it).
+    ClusterTrackerParams kt_params;
+    kt_params.min_cluster_size = 1;
+    knot_tracker_ = std::make_unique<KnotTracker>(kt_params);
     colored_sites_cache_.reserve(256);
 #ifdef FTD_ENABLE_CUDA
     gpu_ = std::make_unique<gpu::GpuEngine>(lattice_size);
