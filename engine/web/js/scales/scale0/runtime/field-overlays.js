@@ -742,14 +742,21 @@ function runJob(sched, slot) {
             sampleCache.ensureParticleData();
             if (!sampled.eField?.count) break;
             const lines = buildEFieldLines(sched.acScale0, state, sampled, latticeSize, stride, params);
-            viewportAdapter.applyEFieldLines(lines);
             // Field-line knot tracking: record from the SAME rebuilt streamlines,
             // synchronously, before the pooled ring recycles `lines`. Observation-
             // only; gated on the dedicated knotTracking flag (NOT a visual overlay).
+            // Recording BEFORE the apply lets us color each flowline by the knot it
+            // belongs to (matching the panel rows + boxes) when per-knot colors is on.
+            let knotColoring = null;
             if (state.knotTracking) {
                 const tick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
-                getFieldLineKnotTracker().record(lines, sampled.eField, tick, latticeSize);
+                const tr = getFieldLineKnotTracker();
+                tr.record(lines, sampled.eField, tick, latticeSize);
+                if (tr.getPerKnotColor()) {
+                    knotColoring = { lineIds: tr.assignLinesToKnots(lines), selectedId: tr.getSelected(), perKnotColor: true };
+                }
             }
+            viewportAdapter.applyEFieldLines(lines, knotColoring);
             break;
         }
         case JOB_BFIELD: {
