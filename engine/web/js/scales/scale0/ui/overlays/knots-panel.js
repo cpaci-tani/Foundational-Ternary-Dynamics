@@ -100,13 +100,13 @@ export function mountKnotsPanel(host, getBridge) {
     // engine toggle path (NOT setFieldToggle — that is the visual overlay). Wire
     // to the SAME active bridge we read telemetry from (proxy when the worker is
     // active, else the main-thread WasmBridge).
-    trackCb.addEventListener('change', (e) => {
-        const on = e.target.checked;
-        const b = resolveKnotBridge();
+    let trackedBridge = null;
+    const applyTracking = (b, on) => {
         if (!b) return;
-        if (b.capabilities?.scale0?.setToggle) b.capabilities.scale0.setToggle('knot_tracking', on);
-        else if (b.setToggle) b.setToggle('knot_tracking', on);
-    });
+        (b.capabilities?.scale0?.setToggle ?? b.setToggle)?.call(b.capabilities?.scale0 ?? b, 'knot_tracking', on);
+        trackedBridge = on ? b : null;
+    };
+    trackCb.addEventListener('change', (e) => applyTracking(resolveKnotBridge(), e.target.checked));
 
     let expandedId = null;
 
@@ -123,6 +123,12 @@ export function mountKnotsPanel(host, getBridge) {
         if (!isPanelLive(host)) return;
         const bridge = resolveKnotBridge();
         const trackingOn = !!trackCb.checked;
+
+        // Re-apply tracking if the active bridge changed under us (e.g. a
+        // worker→in-thread fallback swapped engines): the toggle was set on the
+        // old bridge, so the new one wouldn't be recording without this.
+        if (trackingOn && bridge && bridge !== trackedBridge) applyTracking(bridge, true);
+        else if (!trackingOn) trackedBridge = null;
 
         // Track dot reflects the toggle intent regardless of bridge availability.
         el('kp-track-dot').textContent = trackingOn ? '●' : '○';
