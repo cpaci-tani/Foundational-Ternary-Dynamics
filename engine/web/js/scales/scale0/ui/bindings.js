@@ -209,7 +209,6 @@ export function handleScale0ShortcutKey(key) {
         '6': 'toggle-force-em',
         '7': 'toggle-dual-substrate',
         '8': 'toggle-chirality',
-        '9': 'toggle-light',
     };
     const buttonId = shortcutMap[key];
     if (!buttonId) return false;

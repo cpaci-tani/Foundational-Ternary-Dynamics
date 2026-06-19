@@ -15,7 +15,6 @@ export const FIELD_TOGGLE_KEYS = [
     'showForceWeak',
     'showDualSubstrate',
     'showChirality',
-    'showLight',
     'showDarkMatterHalo',
     'showDampingZones',
     'showKnotZones',
@@ -33,21 +32,14 @@ export const FIELD_TOGGLE_KEYS = [
     'showChargeDensity',  // ρ(x) = ∇·J              — FTD-native charge (signed)
     'showVorticity',      // |ω|(x) = |∇×J|          — flux-field swirl magnitude
     // Tier 1 additions (2026-04-18) — geometric + gravitational invariants
-    'showHelicity',       // h(x) = J·(∇×J)          — signed, field-line linking
-    'showKretschmann',    // K(x) = (∇²L)²           — gravitational curvature
     'showHorizon',        // L(x) ≥ 0.95             — event horizon isosurface
     // Tier 2 additions (2026-04-18) — stress-energy split
     'showEPressure',      // P_E = ½|E|²             — electric pressure
     'showBPressure',      // P_B = ½|B|²             — magnetic pressure
-    'showKineticEnergy',  // K_k = ½|v|² particles   — kinetic energy density
-    // Tier 3 additions (2026-04-18) — quantum / info
-    'showFisher',         // F(x) = |∇ρ|²/ρ, ρ=|J|²  — Fisher information
-    'showCoherence',      // C(x) = J_L·J_R/(|L||R|) — dual-substrate coherence
     // New substrate overlays (2026-06-03)
     'showStateField',     // s(x) ∈ {-1,0,+1}        — ternary manifestation field [AXIOM]
     'showLatency',        // L(x) = √(|J|²/|J|²max)  — time-dilation / Born-Infeld latency
     'showGaussResidual',  // ∇·J − s_charge          — Gauss-projection conservation leak
-    'showMooreDecomp',    // SC+FCC+BCC shells        — Moore Layer Theorem structural glyph
 ];
 
 export const FORCE_FIELD_KEYS = new Set([
@@ -67,6 +59,22 @@ function createFieldFlags() {
     return Object.fromEntries(FIELD_TOGGLE_KEYS.map((k) => [k, false]));
 }
 
+// "Prime tick on load" preference — when on, loadScale0Scenario runs exactly one
+// physics tick right after seeding so that motion-derived field overlays (E, B,
+// Poynting, vorticity, …) and particle/manifestation overlays (state, forces, …)
+// have data to render at the initial paused view, instead of staying blank until
+// the user presses Play. Persisted across sessions; toggled from the play bar.
+const PRIME_TICK_PREF_KEY = 'ftd.scale0.primeTickOnLoad';
+function readPrimeTickOnLoadPref() {
+    try {
+        if (typeof localStorage !== 'undefined') {
+            const v = localStorage.getItem(PRIME_TICK_PREF_KEY);
+            if (v !== null) return v === '1';
+        }
+    } catch { /* localStorage may be blocked (privacy mode) — fall through to default */ }
+    return true; // default ON
+}
+
 const state = {
     currentScenarioId: 'flux-pulse',
     fieldFlags: createFieldFlags(),
@@ -77,10 +85,18 @@ const state = {
     knotTracking: false,
     fieldFrame: 0,
     fieldNeedsUpdate: false,
+    // Monotonic field-data version. Bumped once per real physics tick (tick.js);
+    // the overlay sweep gate (field-overlays.js) compares it against the value
+    // latched at the last sweep to decide whether the field actually changed.
+    // Initialized to 0 (was previously `undefined` until the first tick, which
+    // left the `version !== sched.lastVersion` gate in an ambiguous -1/0/undefined
+    // state at scenario load).
+    fieldDataVersion: 0,
     anyFieldActive: false,
     forceStyle: 'arrows',
     fluxMock: null,
     useFluxMock: false,
+    primeTickOnLoad: readPrimeTickOnLoadPref(),
     latticeNeedsUpload: true,
     tickAccumulator: createTickAccumulator(),
     fieldParticleBuf: [],
@@ -147,6 +163,22 @@ export function setForceStyle(style) {
     state.fieldNeedsUpdate = true;
 }
 
+export function getPrimeTickOnLoad() {
+    return state.primeTickOnLoad;
+}
+
+// Toggle the "prime tick on load" preference and persist it. Read by
+// loadScale0Scenario; the play-bar button reflects the returned value.
+export function setPrimeTickOnLoad(on) {
+    state.primeTickOnLoad = !!on;
+    try {
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(PRIME_TICK_PREF_KEY, state.primeTickOnLoad ? '1' : '0');
+        }
+    } catch { /* ignore persistence failure — preference stays in-memory only */ }
+    return state.primeTickOnLoad;
+}
+
 export function setFluxMock(mock, useMock = false) {
     // Dispose the prior mock before overwriting. Prior to this, scenario
     // churn leaked every previous MockBridge for the page lifetime —
@@ -180,6 +212,7 @@ export function markFieldDirty() {
 export function resetFrameState() {
     state.fieldFrame = 0;
     state.fieldNeedsUpdate = false;
+    state.fieldDataVersion = 0;
     state.latticeNeedsUpload = true;
     state.tickAccumulator.reset();
     // Drop cached streamline seeds so a new scenario/field never reuses stale

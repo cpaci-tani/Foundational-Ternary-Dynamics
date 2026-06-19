@@ -12,13 +12,8 @@
  *   Φ gravitational potential (`gravPotential`) — special case rendered at
  *      y = halfN, depth 0.25·N, signed (wells dip, peaks rise)
  *   emEnergy         — EM energy density
- *   helicity         — signed helicity J·(∇×J)
- *   kretschmann      — latency-derived curvature scalar
  *   ePressure        — |E|² / 2 (electric pressure)
  *   bPressure        — |B|² / 2 (magnetic pressure)
- *   kineticEnergy    — |wave_vel|² / 2
- *   fisher           — |∇p|² / p (Fisher information)
- *   coherence        — signed |∇·J|² normalization
  *   chargeDensity    — signed voxel state
  *   vorticity        — |∇×J|² (thin band)
  *
@@ -52,8 +47,7 @@ import * as THREE from 'three';
 import {
     rampGravWell,
     rampEmEnergy, rampCharge, rampVorticity,
-    rampHelicity, rampKretschmann, rampEPressure, rampBPressure,
-    rampKineticEnergy, rampFisher, rampCoherence,
+    rampEPressure, rampBPressure,
 } from './color-ramps.js';
 
 /**
@@ -65,13 +59,8 @@ import {
  */
 const TOPOLOGY_CONFIGS = Object.freeze({
     emEnergy:      { yFrac: 0.05, depthFrac: 0.08, signed: false, ramp: rampEmEnergy },
-    helicity:      { yFrac: 0.15, depthFrac: 0.08, signed: true,  ramp: rampHelicity },
-    kretschmann:   { yFrac: 0.25, depthFrac: 0.08, signed: false, ramp: rampKretschmann },
     ePressure:     { yFrac: 0.35, depthFrac: 0.08, signed: false, ramp: rampEPressure },
     bPressure:     { yFrac: 0.45, depthFrac: 0.08, signed: false, ramp: rampBPressure },
-    kineticEnergy: { yFrac: 0.55, depthFrac: 0.08, signed: false, ramp: rampKineticEnergy },
-    fisher:        { yFrac: 0.65, depthFrac: 0.08, signed: false, ramp: rampFisher },
-    coherence:     { yFrac: 0.75, depthFrac: 0.08, signed: true,  ramp: rampCoherence },
     chargeDensity: { yFrac: 0.87, depthFrac: 0.08, signed: true,  ramp: rampCharge },
     vorticity:     { yFrac: 0.97, depthFrac: 0.03, signed: false, ramp: rampVorticity },
 });

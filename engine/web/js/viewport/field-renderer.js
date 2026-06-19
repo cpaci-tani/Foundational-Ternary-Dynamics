@@ -28,7 +28,7 @@
 
 import * as THREE from 'three';
 import { fluxToColor, potentialToColorInto, magnitudeToColorInto } from '../fields.js';
-import { K_GENESIS, C_SPEED } from '../constants.js';
+import { K_GENESIS } from '../constants.js';
 import { buildStreamlineMesh, buildArrowFieldMesh } from './mesh-factory.js';
 
 // Confinement-string visual: draw a color-pair proximity glyph between any
@@ -170,7 +170,6 @@ export class ViewportFieldRenderer {
         this._confinementStrings = null;
         this._dualFluxVolume = null;
         this._chiralityField = null;
-        this._lightField = null;
         this._quantumField = null;
         this._quantumFieldKind = null;
         this._softDiscTex = null;
@@ -299,7 +298,7 @@ export class ViewportFieldRenderer {
             this._strongForce, this._weakField, this._forceHeatmap,
             this._darkMatterHalo, this._dampingZones, this._genesisIsosurface,
             this._confinementStrings, this._dualFluxVolume,
-            this._chiralityField, this._lightField, this._phaseNeedles,
+            this._chiralityField, this._phaseNeedles,
             this._quantumField,
         ];
         for (const m of dynamicMeshes) {
@@ -2287,78 +2286,6 @@ export class ViewportFieldRenderer {
         if (!on) this._chiralityField.geometry.setDrawRange(0, 0);
     }
 
-    // ── Light Field (warm yellow glow from |Poynting|) ─────────────
-    _buildLightField() {
-        const maxPts = 5000;
-        const positions = new Float32Array(maxPts * 3);
-        const colors = new Float32Array(maxPts * 3);
-        const sizes = new Float32Array(maxPts);
-        const geo = new THREE.BufferGeometry();
-        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-        geo.setAttribute('particleColor', new THREE.Float32BufferAttribute(colors, 3));
-        geo.setAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
-        _ensureManifestAttrs(geo, maxPts);
-        geo.setDrawRange(0, 0);
-        const mat = _makeParticleFragMaterial(
-            { uOpacity: { value: 0.8 } },
-            { blending: THREE.AdditiveBlending },
-        );
-        this._lightField = new THREE.Points(geo, mat);
-        this._lightField.visible = false;
-        this._lightField.frustumCulled = false;
-        this._scene.add(this._lightField);
-    }
-
-    updateLightField(poyntingData) {
-        this._syncCenterAndRadius();
-        if (!this._lightField) this._buildLightField();
-        const posAttr = this._lightField.geometry.getAttribute('position');
-        const colAttr = this._lightField.geometry.getAttribute('particleColor');
-        const sizeAttr = this._lightField.geometry.getAttribute('size');
-        const { positions, vectors, count } = poyntingData;
-        const maxPts = posAttr.array.length / 3;
-
-        let maxMag = 0;
-        for (let i = 0; i < count; i++) {
-            const sx = vectors[i * 3], sy = vectors[i * 3 + 1], sz = vectors[i * 3 + 2];
-            const m = Math.sqrt(sx * sx + sy * sy + sz * sz);
-            if (m > maxMag) maxMag = m;
-        }
-        const threshold = maxMag * 0.03;
-        const _needsClip = this._clipActive();
-        let vi = 0;
-
-        for (let i = 0; i < count && vi < maxPts; i++) {
-            const sx = vectors[i * 3], sy = vectors[i * 3 + 1], sz = vectors[i * 3 + 2];
-            const mag = Math.sqrt(sx * sx + sy * sy + sz * sz);
-            if (mag < threshold) continue;
-
-            const px = positions[i * 3] + VOXEL_CENTER_OFFSET, py = positions[i * 3 + 1] + VOXEL_CENTER_OFFSET, pz = positions[i * 3 + 2] + VOXEL_CENTER_OFFSET;
-            if (_needsClip && !this._insideBoundary((px - this._center) / this._radius, (py - this._center) / this._radius, (pz - this._center) / this._radius)) continue;
-
-            posAttr.array[vi * 3] = px;
-            posAttr.array[vi * 3 + 1] = py;
-            posAttr.array[vi * 3 + 2] = pz;
-
-            const t = mag / maxMag;
-            colAttr.array[vi * 3] = 1.0 * t;
-            colAttr.array[vi * 3 + 1] = 0.92 * t;
-            colAttr.array[vi * 3 + 2] = 0.23 * t;
-            sizeAttr.array[vi] = 1.5 + 4.5 * t;
-            vi++;
-        }
-        posAttr.needsUpdate = true;
-        colAttr.needsUpdate = true;
-        sizeAttr.needsUpdate = true;
-        this._lightField.geometry.setDrawRange(0, vi);
-    }
-
-    toggleLightField(on) {
-        if (!this._lightField) this._buildLightField();
-        this._lightField.visible = on;
-        if (!on) this._lightField.geometry.setDrawRange(0, 0);
-    }
-
     // ══════════════════════════════════════════════════════════════════
     // ── Tier 1 Quantum Overlays ───────────────────────────────────────
 
@@ -2807,67 +2734,6 @@ export class ViewportFieldRenderer {
     }
 
     // ══════════════════════════════════════════════════════════════════
-    // ── Moore-neighbourhood decomposition (structural wireframe) ──────
-    // The 26-neighbour Moore cell decomposes into three polyhedral shells
-    // (Moore Layer Theorem): SC octahedron (6 face neighbours, red) + FCC
-    // cuboctahedron (12 edge neighbours, green) + BCC stella octangula
-    // (8 corner neighbours = two interpenetrating tetrahedra, blue). A
-    // static teaching glyph centred on the lattice — not a sampled field.
-    _disposeMooreDecomp() {
-        if (!this._mooreDecomp) return;
-        this._mooreDecomp.traverse((o) => { o.geometry?.dispose?.(); o.material?.dispose?.(); });
-        this._scene.remove(this._mooreDecomp);
-        this._mooreDecomp = null;
-    }
-
-    _buildMooreDecomp() {
-        this._syncCenterAndRadius();
-        const c = this._center;
-        const R = this._radius * 0.45;
-        const group = new THREE.Group();
-        const addShell = (verts, edges, color) => {
-            const pos = [];
-            for (const [a, b] of edges) {
-                pos.push(verts[a][0] * R + c, verts[a][1] * R + c, verts[a][2] * R + c);
-                pos.push(verts[b][0] * R + c, verts[b][1] * R + c, verts[b][2] * R + c);
-            }
-            const g = new THREE.BufferGeometry();
-            g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-            const m = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.85, depthWrite: false });
-            group.add(new THREE.LineSegments(g, m));
-        };
-        const dist2 = (a, b) => { const dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2]; return dx * dx + dy * dy + dz * dz; };
-        // SC — octahedron (6 face neighbours); edges join perpendicular axes.
-        const oct = [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]];
-        const octEdges = [];
-        for (let i = 0; i < 6; i++) for (let j = i + 1; j < 6; j++) {
-            if (oct[i][0] * oct[j][0] + oct[i][1] * oct[j][1] + oct[i][2] * oct[j][2] === 0) octEdges.push([i, j]);
-        }
-        addShell(oct, octEdges, 0xff5252);
-        // FCC — cuboctahedron (12 edge neighbours), normalized to unit shell.
-        const n2 = Math.SQRT1_2;
-        const cub = [[1, 1, 0], [1, -1, 0], [-1, 1, 0], [-1, -1, 0], [1, 0, 1], [1, 0, -1], [-1, 0, 1], [-1, 0, -1], [0, 1, 1], [0, 1, -1], [0, -1, 1], [0, -1, -1]].map((v) => [v[0] * n2, v[1] * n2, v[2] * n2]);
-        const cubEdges = [];
-        for (let i = 0; i < 12; i++) for (let j = i + 1; j < 12; j++) if (Math.abs(dist2(cub[i], cub[j]) - 1) < 0.05) cubEdges.push([i, j]);
-        addShell(cub, cubEdges, 0x66bb6a);
-        // BCC — stella octangula (8 corner neighbours = two tetrahedra).
-        const n3 = C_SPEED;
-        const corners = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1], [-1, -1, -1], [-1, 1, 1], [1, -1, 1], [1, 1, -1]].map((v) => [v[0] * n3, v[1] * n3, v[2] * n3]);
-        const tet = (o) => [[o, o + 1], [o, o + 2], [o, o + 3], [o + 1, o + 2], [o + 1, o + 3], [o + 2, o + 3]];
-        addShell(corners, [...tet(0), ...tet(4)], 0x42a5f5);
-        group.visible = false;
-        group.renderOrder = 3;
-        group.frustumCulled = false;
-        this._scene.add(group);
-        this._mooreDecomp = group;
-    }
-
-    toggleMooreDecomp(on) {
-        if (on) { this._disposeMooreDecomp(); this._buildMooreDecomp(); this._mooreDecomp.visible = true; }
-        else if (this._mooreDecomp) this._mooreDecomp.visible = false;
-    }
-
-    // ══════════════════════════════════════════════════════════════════
     // ── |ψ|² breathing animation ──────────────────────────────────────
     _animateQuantumField() {
         if (!this._quantumField || !this._psi2Visible) return;
@@ -2899,7 +2765,7 @@ export class ViewportFieldRenderer {
             '_forceHeatmap',
             '_darkMatterHalo', '_dampingZones', '_knotZones', '_genesisIsosurface',
             '_confinementStrings',
-            '_dualFluxVolume', '_chiralityField', '_lightField',
+            '_dualFluxVolume', '_chiralityField',
             '_quantumField', '_phaseNeedles',
             '_eventHorizonSphere', '_eventHorizonRing',
         ];
