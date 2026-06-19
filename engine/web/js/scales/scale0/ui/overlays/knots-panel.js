@@ -1,7 +1,8 @@
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
-import { getScale0State, setFieldToggle, setKnotTracking, markFieldDirty } from '../../state/store.js';
+import { getScale0State, setFieldToggle, setKnotTracking, markFieldDirty, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
 import { getFieldLineKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
+import { RingBuffer } from '../../../../telemetry-hub.js';
 
 // Small fixed-range [0,1] multi-trace line chart for a knot's contribution history.
 // (CanvasSparkline is single-trace + streaming + auto-ranged, so a direct draw of the
@@ -33,6 +34,59 @@ function drawContribChart(canvas, hist) {
             if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.strokeStyle = t.color; ctx.lineWidth = 1.3; ctx.stroke();
+    }
+}
+
+// Multi-trace energy line chart (auto-ranged from 0). `traces` = [{rb:RingBuffer,color,width}].
+function drawEnergyLines(canvas, traces) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    ctx.clearRect(0, 0, w, h);
+    let n = 0, maxV = 0;
+    for (const t of traces) { const c = t.rb.count; if (c > n) n = c; for (let i = 0; i < c; i++) { const v = t.rb.get(i); if (v > maxV) maxV = v; } }
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(0, h - 1); ctx.lineTo(w, h - 1); ctx.stroke();
+    if (n < 2 || maxV <= 0) return;
+    for (const t of traces) {
+        const c = t.rb.count;
+        if (c < 2) continue;
+        ctx.beginPath();
+        for (let i = 0; i < c; i++) {
+            const x = (i / (c - 1)) * w;
+            const y = h - (t.rb.get(i) / maxV) * (h - 2) - 1;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = t.color; ctx.lineWidth = t.width || 1.2; ctx.stroke();
+    }
+}
+
+// Per-knot EM-energy bars (the "quantization" — discrete knot quanta), colored by hue.
+function drawKnotBars(canvas, contrib) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    ctx.clearRect(0, 0, w, h);
+    const K = contrib?.count || 0;
+    if (!K) return;
+    const order = [...Array(K).keys()].sort((a, b) => contrib.energy[b] - contrib.energy[a]).slice(0, 8);
+    const maxE = contrib.energy[order[0]] || 1;
+    const barH = Math.max(4, (h - 2) / order.length - 2);
+    let y = 1;
+    ctx.font = '9px monospace'; ctx.textBaseline = 'middle';
+    for (const k of order) {
+        const frac = maxE > 0 ? contrib.energy[k] / maxE : 0;
+        const bw = Math.max(1, frac * (w - 46));
+        ctx.fillStyle = `hsl(${Math.round(knotHue(contrib.ids[k]) * 360)},85%,55%)`;
+        ctx.fillRect(0, y, bw, barH);
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.fillText(`#${contrib.ids[k]} ${Math.round((contrib.energyFrac[k] || 0) * 100)}%`, bw + 3, y + barH / 2);
+        y += barH + 2;
     }
 }
 
@@ -76,6 +130,13 @@ function ensureCss() {
     #${PANEL_ID} .kp-geo{color:var(--text-muted,#888)}
     #${PANEL_ID} .kp-legend{display:block;margin-top:2px;font-size:10px;color:var(--text-muted,#999)}
     #${PANEL_ID} .kp-chart{display:block;width:100%;height:46px;margin:2px 0 4px}
+    #${PANEL_ID} .kp-em{margin:6px 0 2px;padding:5px 6px;border:0.5px solid var(--border-light,rgba(255,255,255,0.08));border-radius:4px;background:var(--surface-raised,rgba(255,255,255,0.02))}
+    #${PANEL_ID} .kp-em-h{font-size:10px;letter-spacing:0.06em;color:var(--text-muted,#888);font-weight:600}
+    #${PANEL_ID} .kp-em-tot{font-weight:400;letter-spacing:0;color:var(--accent-amber,#f6c453);margin-left:4px}
+    #${PANEL_ID} .kp-em-h2{font-size:9.5px;letter-spacing:0.04em;color:var(--text-muted,#888);margin-top:4px}
+    #${PANEL_ID} .kp-em-legend{font-size:9.5px;color:var(--text-muted,#999);margin:1px 0}
+    #${PANEL_ID} .kp-em-chart{display:block;width:100%;height:54px}
+    #${PANEL_ID} .kp-em-bars{display:block;width:100%;height:74px;margin-top:2px}
     `;
     document.head.appendChild(s);
 }
@@ -105,6 +166,13 @@ function buildPanel() {
         <input type="range" id="kp-sensitivity" min="0" max="100" value="50" style="flex:1;margin-left:6px">
         <span id="kp-sens-val" style="min-width:30px;text-align:right;color:var(--text-muted,#888)">50%</span>
       </label>
+      <div class="kp-em" id="kp-em">
+        <div class="kp-em-h">EM ENERGY <span class="kp-em-tot" id="kp-em-totals"></span></div>
+        <div class="kp-em-legend"><span style="color:#f6c453">▬</span>U(E+B) <span style="color:#5ad2e0">▬</span>E <span style="color:#f08bb0">▬</span>B <span style="color:#9be08b">▬</span>wave</div>
+        <canvas class="kp-em-chart" id="kp-em-chart"></canvas>
+        <div class="kp-em-h2">per-knot quanta — EM energy share</div>
+        <canvas class="kp-em-bars" id="kp-em-bars"></canvas>
+      </div>
       <div class="kp-list" id="kp-list"></div>
       <div class="kp-feed-h">EVENT FEED</div>
       <div class="kp-feed" id="kp-feed"></div>
@@ -131,6 +199,10 @@ export function mountKnotsPanel(host) {
     // while this panel is mounted. Mark the field dirty so a sweep measures promptly.
     getFieldLineKnotTracker().setContribEnabled(true);
     markFieldDirty();
+
+    // Scenario EM-energy history (sampled at the panel's 4 Hz from the engine's
+    // energy audit). emTotal = ½(E²+B²); E/B/wave are the components.
+    const emHub = { emTotal: new RingBuffer(240), eField: new RingBuffer(240), bField: new RingBuffer(240), wave: new RingBuffer(240) };
 
     const trackCb = el('kp-toggle-tracking');
     const overlayCb = el('kp-toggle-overlay');
@@ -202,10 +274,12 @@ export function mountKnotsPanel(host) {
             el('kp-segs').textContent = '0';
             el('kp-tally').textContent = 'births 0 · deaths 0 · ⑂0 fissions · ⑃0 fusions · Σsegs —';
             el('kp-contrib-sum').textContent = '';
+            el('kp-em').style.display = 'none';
             renderEmptyList(el('kp-list'), false);
             el('kp-feed').innerHTML = '';
             return;
         }
+        el('kp-em').style.display = '';
 
         const fl = getFieldLineKnotTracker();
         const agg = fl.getAggregate();
@@ -224,6 +298,26 @@ export function mountKnotsPanel(host) {
             ? `knots capture <b>${pct(contrib.captured.energyFrac)}</b> energy · `
               + `<b>${pct(contrib.captured.fluxFrac)}</b> flux · <b>${pct(contrib.captured.chargeFrac)}</b> charge`
             : '<span style="opacity:.7">contribution: enable the <b>E Field</b> overlay + run to measure</span>';
+
+        // ── Scenario EM energy: overall + component breakdown (time-series) ──
+        // From the engine's energy audit; EM field energy U = ½(E²+B²).
+        const audit = resolveActiveScale0BridgeFromWindow()?.capabilities?.scale0?.getScale0EnergyAudit?.();
+        if (audit) {
+            const E = audit.EFieldEnergy || 0, B = audit.BFieldEnergy || 0, wv = audit.waveEnergy || 0;
+            const U = E + B;
+            emHub.emTotal.push(U); emHub.eField.push(E); emHub.bField.push(B); emHub.wave.push(wv);
+            const exp = (v) => v.toExponential(2);
+            el('kp-em-totals').textContent = `U=${exp(U)} · E ${pct(U > 0 ? E / U : 0)} · B ${pct(U > 0 ? B / U : 0)}`
+                + ` · Coulomb ${exp(audit.coulombPE || 0)} · KE ${exp(audit.particleKE || 0)}`;
+            drawEnergyLines(el('kp-em-chart'), [
+                { rb: emHub.emTotal, color: '#f6c453', width: 1.7 },
+                { rb: emHub.eField, color: '#5ad2e0' },
+                { rb: emHub.bField, color: '#f08bb0' },
+                { rb: emHub.wave, color: '#9be08b' },
+            ]);
+        }
+        // per-knot quantization bars (current EM-energy share per knot)
+        drawKnotBars(el('kp-em-bars'), contrib);
 
         el('kp-alive').textContent = agg.alive ?? 0;
         el('kp-segs').textContent = agg.sumSegs ?? 0;
