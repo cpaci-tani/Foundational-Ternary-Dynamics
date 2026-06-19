@@ -545,7 +545,7 @@ Almost all of these are **post-dictions**. The values were known before FTD was 
 | NP-13 | $N_c = 3$ exactly | [STRONGLY MOTIVATED CONJECTURE] | Now (consistent) | Post |
 | NP-14 | Gauge group = $\text{U}(1) \times \text{SU}(2) \times \text{SU}(3)$ | [THEOREM] + [SELECTION] | Now (consistent) | Post |
 | NP-15 | No magnetic monopoles | [THEOREM] | Now (null searches consistent) | Weak pre |
-| NP-16 | No proton decay ($\tau_p = \infty$) | [THEOREM] | Now/near-term (null consistent) | Weak pre |
+| NP-16 | No proton decay ($\tau_p = \infty$) | [SELECTION] / [BOUNDARY] (FTD-0301) | Now/near-term (null consistent) | Weak pre |
 | NP-17 | No SUSY particles | [THEOREM] | Now (null LHC consistent) | Weak pre |
 | NP-18 | No extra spatial dimensions | [THEOREM] | Now (null searches consistent) | Weak pre |
 | NP-19 | No WIMPs (dark matter non-particulate) | [CONJECTURE] | Now (null detection consistent) | Weak pre |
@@ -563,7 +563,7 @@ Almost all of these are **post-dictions**. The values were known before FTD was 
 | NP-31 | $\Omega_b^*(6350)$ baryon mass | [SELECTION] | Near-term (LHCb) | **Pre** |
 | NP-32 | $B_c(2S) = 6871 \pm 5$ MeV | [SELECTION] | Near-term (LHCb) | **Pre** |
 | NP-33 | No forces between EM and gravity coupling scales | [SELECTION] | Now (no fifth force detected) | Weak pre |
-| NP-34 | Proton stability beyond $10^{36}$ years | [THEOREM] | Medium-term (Hyper-K) | **Pre** |
+| NP-34 | Proton stability beyond $10^{36}$ years | [SELECTION] / [BOUNDARY] (FTD-0301) | Medium-term (Hyper-K) | **Pre** |
 
 ---
 
