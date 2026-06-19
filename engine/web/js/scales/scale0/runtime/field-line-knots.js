@@ -19,9 +19,13 @@
 // record() reads it synchronously and retains NOTHING.
 
 import { attributeSegmentsToKnots } from './knot-line-attribution.js';
+import { RingBuffer } from '../../../telemetry-hub.js';
 
 // Event-type integers — must match the panel's EVENT_NAMES / the C++ enum.
 const EV_BIRTH = 0, EV_DEATH = 1, EV_PERSIST = 2, EV_FISSION = 3, EV_FUSION = 4, EV_AMBIG = 5;
+
+const HIST_LEN = 240;                 // per-knot contribution history depth (ticks)
+const FLUX_DENSE_MAX_N = 128;         // above this, skip the O(N³) dense flux integral
 
 export class FieldLineKnotTracker {
     constructor(opts = {}) {
@@ -47,6 +51,8 @@ export class FieldLineKnotTracker {
         this._perKnotColor = opts.perKnotColor ?? true;
         // Sensitivity ∈ [0,1]: higher → lower density threshold → more knots.
         this._sensitivity = clamp01(opts.sensitivity ?? 0.5);
+        // Scientific contribution measurement runs only while the panel is live.
+        this._contribEnabled = false;
     }
 
     reset() {
@@ -59,6 +65,8 @@ export class FieldLineKnotTracker {
         this._tel = emptyTelemetry();
         this._zones = { count: 0, centroids: new Float32Array(0), extents: new Float32Array(0), ids: new Int32Array(0), latticeSize: 0 };
         this._selectedId = -1;           // panel-selected knot id (-1 = none)
+        this._contrib = emptyContrib();          // last per-knot field contributions
+        this._contribHistory = new Map();        // id → { energyFrac,fluxFrac,chargeFrac: RingBuffer }
         // grown-on-demand scratch (per-cell + per-segment)
         this._density = null; this._cross = null; this._hot = null;
         this._fx = null; this._fy = null; this._fz = null;
@@ -294,6 +302,107 @@ export class FieldLineKnotTracker {
         }
         return out;
     }
+
+    // ── Scientific contributions: each knot's share of the scenario field totals ──
+    // GENUINE engine-field integrals over each knot's centroid±extent box (not the
+    // seeding-dependent geometric counts). Energy ½|E|²+½|B|² and charge |∇·J| come
+    // from the stride-subsampled samples; flux |J| from the dense N³ volume (exact).
+    // Each sample/voxel is assigned to ONE knot (nearest containing box) so the
+    // fractions never double-count and Σ frac == captured.
+    measureContributions({ eField, bField, fluxVolume, divJ, latticeSize }) {
+        const K = this._zones.count;
+        const cen = this._zones.centroids, ext = this._zones.extents, zids = this._zones.ids;
+        const N = latticeSize | 0;
+        const energy = new Float64Array(K), flux = new Float64Array(K), charge = new Float64Array(K);
+        let totE = 0, totF = 0, totQ = 0;
+
+        const knotAt = (x, y, z) => {                       // nearest knot whose box contains (x,y,z), or -1
+            let best = -1, bestD = Infinity;
+            for (let k = 0; k < K; k++) {
+                const dx = Math.abs(x - cen[k * 3]), dy = Math.abs(y - cen[k * 3 + 1]), dz = Math.abs(z - cen[k * 3 + 2]);
+                if (dx <= ext[k * 3] && dy <= ext[k * 3 + 1] && dz <= ext[k * 3 + 2]) {
+                    const d = dx * dx + dy * dy + dz * dz;
+                    if (d < bestD) { bestD = d; best = k; }
+                }
+            }
+            return best;
+        };
+
+        const addVecEnergy = (samp) => {                   // ½|v|² per E/B vector sample
+            if (!samp || !samp.count || !samp.vectors) return;
+            const pos = samp.positions, vec = samp.vectors, m = samp.count;
+            for (let i = 0; i < m; i++) {
+                const vx = vec[i * 3], vy = vec[i * 3 + 1], vz = vec[i * 3 + 2];
+                const e = 0.5 * (vx * vx + vy * vy + vz * vz);
+                totE += e;
+                if (K) { const k = knotAt(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]); if (k >= 0) energy[k] += e; }
+            }
+        };
+        addVecEnergy(eField); addVecEnergy(bField);
+
+        if (divJ && divJ.count && divJ.values) {           // charge |∇·J|
+            const pos = divJ.positions, val = divJ.values, m = divJ.count;
+            for (let i = 0; i < m; i++) {
+                const q = Math.abs(val[i]); totQ += q;
+                if (K) { const k = knotAt(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]); if (k >= 0) charge[k] += q; }
+            }
+        }
+
+        if (fluxVolume && N > 0 && fluxVolume.length >= N * N * N && N <= FLUX_DENSE_MAX_N) {  // flux |J| exact
+            for (let z = 0; z < N; z++) for (let y = 0; y < N; y++) {
+                const base = (z * N + y) * N;
+                for (let x = 0; x < N; x++) {
+                    const f = fluxVolume[base + x]; totF += f;
+                    if (K) { const k = knotAt(x, y, z); if (k >= 0) flux[k] += f; }
+                }
+            }
+        }
+
+        const energyFrac = new Float64Array(K), fluxFrac = new Float64Array(K), chargeFrac = new Float64Array(K);
+        let capE = 0, capF = 0, capQ = 0;
+        for (let k = 0; k < K; k++) {
+            energyFrac[k] = totE > 0 ? energy[k] / totE : 0;
+            fluxFrac[k] = totF > 0 ? flux[k] / totF : 0;
+            chargeFrac[k] = totQ > 0 ? charge[k] / totQ : 0;
+            capE += energy[k]; capF += flux[k]; capQ += charge[k];
+        }
+        const ids = Int32Array.from(zids);
+        this._contrib = {
+            count: K, ids, energy, flux, charge, energyFrac, fluxFrac, chargeFrac,
+            totals: { energy: totE, flux: totF, charge: totQ },
+            captured: {
+                energyFrac: totE > 0 ? capE / totE : 0,
+                fluxFrac: totF > 0 ? capF / totF : 0,
+                chargeFrac: totQ > 0 ? capQ / totQ : 0,
+            },
+        };
+
+        // accumulate per-knot history; prune knots that died
+        const alive = new Set();
+        for (let k = 0; k < K; k++) {
+            const id = ids[k]; alive.add(id);
+            let h = this._contribHistory.get(id);
+            if (!h) { h = { energyFrac: new RingBuffer(HIST_LEN), fluxFrac: new RingBuffer(HIST_LEN), chargeFrac: new RingBuffer(HIST_LEN) }; this._contribHistory.set(id, h); }
+            h.energyFrac.push(energyFrac[k]); h.fluxFrac.push(fluxFrac[k]); h.chargeFrac.push(chargeFrac[k]);
+        }
+        for (const id of this._contribHistory.keys()) if (!alive.has(id)) this._contribHistory.delete(id);
+        return this._contrib;
+    }
+
+    getContributions() { return this._contrib; }
+
+    getKnotHistory(id) {
+        const h = this._contribHistory.get(id);
+        if (!h) return { n: 0, energyFrac: new Float32Array(0), fluxFrac: new Float32Array(0), chargeFrac: new Float32Array(0) };
+        const n = h.energyFrac.count;
+        const ef = new Float32Array(n), ff = new Float32Array(n), cf = new Float32Array(n);
+        h.energyFrac.flattenInto(ef, n); h.fluxFrac.flattenInto(ff, n); h.chargeFrac.flattenInto(cf, n);
+        return { n, energyFrac: ef, fluxFrac: ff, chargeFrac: cf };
+    }
+
+    setContribEnabled(on) { this._contribEnabled = !!on; }
+    isContribEnabled() { return this._contribEnabled; }
+
     getEvents() {
         const n = this._events.length;
         const tickA = new Int32Array(n), typeA = new Int32Array(n);
@@ -469,6 +578,14 @@ function emptyTelemetry() {
     return { count: 0, ids: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0),
              peak: new Int32Array(0), birth: new Int32Array(0), stride: 8,
              fields: new Float32Array(0), dirs: new Float32Array(0), extents: new Float32Array(0) };
+}
+
+function emptyContrib() {
+    return { count: 0, ids: new Int32Array(0),
+             energy: new Float64Array(0), flux: new Float64Array(0), charge: new Float64Array(0),
+             energyFrac: new Float64Array(0), fluxFrac: new Float64Array(0), chargeFrac: new Float64Array(0),
+             totals: { energy: 0, flux: 0, charge: 0 },
+             captured: { energyFrac: 0, fluxFrac: 0, chargeFrac: 0 } };
 }
 
 // Squared minimum distance between segments (a=segEnds[s], b=segEnds[t]); returns
