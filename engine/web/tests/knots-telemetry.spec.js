@@ -71,10 +71,11 @@ test.describe('Knot telemetry (Scale-0 KnotTracker)', () => {
             if (!b) return { ok: false, reason: 'no bridge' };
             window.__ftdCtx.running = false;
 
-            // The scenario's flux injection is DEFERRED to state._pendingScenarioLoad
-            // while the loop is paused (it only flushes inside the running tick
-            // loop, tick.js:30). Flush it explicitly here so the seed is injected
-            // before we drive ticks deterministically.
+            // Scenario selection now loads + injects the seed IMMEDIATELY (no longer
+            // deferred to state._pendingScenarioLoad / the running tick loop), so the
+            // seed is already present from the 'change' event above. The guard below is
+            // a harmless no-op kept for backward compatibility in case any path still
+            // sets _pendingScenarioLoad.
             const { getScale0State } = await import('/js/scales/scale0/state/store.js');
             const st = getScale0State();
             if (typeof st._pendingScenarioLoad === 'function') {
