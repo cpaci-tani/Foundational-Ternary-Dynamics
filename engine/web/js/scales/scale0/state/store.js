@@ -70,6 +70,11 @@ function createFieldFlags() {
 const state = {
     currentScenarioId: 'flux-pulse',
     fieldFlags: createFieldFlags(),
+    // Field-line knot tracking is NOT a visual overlay flag (it does not map to a
+    // renderer toggle and must not count toward anyFieldActive), so it lives
+    // outside fieldFlags. It gates the JS FieldLineKnotTracker.record() call in
+    // the E-field overlay job. Survives resetFieldFlags() (scenario change).
+    knotTracking: false,
     fieldFrame: 0,
     fieldNeedsUpdate: false,
     anyFieldActive: false,
@@ -129,6 +134,14 @@ export function getFieldStateSnapshot() {
     };
 }
 
+// Enable/disable the JS field-line knot tracker. Read by the E-field overlay job
+// in field-overlays.js. Dirties the overlay so the next sweep records even if no
+// other field state changed.
+export function setKnotTracking(on) {
+    state.knotTracking = !!on;
+    state.fieldNeedsUpdate = true;
+}
+
 export function setForceStyle(style) {
     state.forceStyle = style;
     state.fieldNeedsUpdate = true;
@@ -169,6 +182,10 @@ export function resetFrameState() {
     state.fieldNeedsUpdate = false;
     state.latticeNeedsUpload = true;
     state.tickAccumulator.reset();
+    // Drop cached streamline seeds so a new scenario/field never reuses stale
+    // (wrong-field) seeds — they're keyed on fieldDataVersion, which a new
+    // scenario may reset to 0 and collide with the previous field's cache.
+    state.streamlineSeedCache = null;
 }
 
 export function setCurrentScenarioId(id) {

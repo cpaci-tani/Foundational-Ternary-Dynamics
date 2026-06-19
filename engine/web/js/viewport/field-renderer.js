@@ -57,6 +57,9 @@ import {
     lerpPalette,
 } from './color-ramps.js';
 
+// Per-knot color: deterministic id → hue, shared with the Knots panel.
+import { knotHue } from '../scales/scale0/runtime/field-line-knots.js';
+
 // Pre-allocated buffer size — centralized in viewport/constants.js (D-6).
 import { MAX_FIELD_GRID } from './constants.js';
 
@@ -1832,7 +1835,7 @@ export class ViewportFieldRenderer {
         this._scene.add(this._knotZones);
     }
 
-    updateKnotZones(particles, latticeSize) {
+    updateKnotZones(frame, latticeSize) {
         this._syncCenterAndRadius();
         if (!this._knotZones) this._buildKnotZones();
         const posAttr = this._knotZones.geometry.getAttribute('position');
@@ -1845,26 +1848,48 @@ export class ViewportFieldRenderer {
             [0, 0, 0, 0, 0, 1], [1, 0, 0, 1, 0, 1], [0, 1, 0, 0, 1, 1], [1, 1, 0, 1, 1, 1],
         ];
 
-        // `particles` is the flat Float32Array from getParticleData() (x,y,z,x,y,z…)
-        // — the manifested s≠0 voxel cloud. Iterate by index, not as {x,y,z} objects.
+        // Two accepted inputs:
+        //  • field-line-knot frame { centroids, extents, count } — one box per
+        //    detected knot, sized to its bounding extent (the clump's footprint);
+        //  • bare Float32Array of particle positions (legacy) — fixed 3-voxel box.
         const maxSegments = 1200;
-        const nParticles = particles ? (particles.length / 3) | 0 : 0;
-        for (let pi = 0; pi < nParticles; pi++) {
+        let centroids, extents, count, ids = null, selectedId = -1;
+        if (frame && frame.centroids) {
+            centroids = frame.centroids; extents = frame.extents; count = frame.count | 0;
+            ids = frame.ids || null;
+            selectedId = (frame.selectedId === undefined) ? -1 : frame.selectedId;
+        } else {
+            // legacy: `frame` is the flat particle Float32Array (x,y,z,…)
+            centroids = frame; extents = null; count = frame ? (frame.length / 3) | 0 : 0;
+        }
+        const rgb = [0, 0, 0];
+        for (let pi = 0; pi < count; pi++) {
             if (si + 12 > maxSegments) break;
-            const cx = particles[pi * 3] + 0.5;
-            const cy = particles[pi * 3 + 1] + 0.5;
-            const cz = particles[pi * 3 + 2] + 0.5;
+            const cx = centroids[pi * 3] + (extents ? 0 : 0.5);
+            const cy = centroids[pi * 3 + 1] + (extents ? 0 : 0.5);
+            const cz = centroids[pi * 3 + 2] + (extents ? 0 : 0.5);
+            const hx = extents ? Math.max(1.0, extents[pi * 3]) : 1.5;
+            const hy = extents ? Math.max(1.0, extents[pi * 3 + 1]) : 1.5;
+            const hz = extents ? Math.max(1.0, extents[pi * 3 + 2]) : 1.5;
+            // Per-knot color: each tracked knot gets its own deterministic hue;
+            // the panel-selected knot is drawn bright white. Legacy particle path
+            // (no ids) stays cyan.
+            let r = 0.0, g = 0.8, b = 0.8;
+            if (ids) {
+                const id = ids[pi];
+                if (id === selectedId) { r = 1.0; g = 1.0; b = 1.0; }
+                else { rampCyclicHSL(knotHue(id) * (Math.PI / 2), rgb, 0); r = rgb[0]; g = rgb[1]; b = rgb[2]; }
+            }
             for (const e of edges) {
                 const i = si * 6;
-                posAttr.array[i] = cx - 1.5 + e[0] * 3;
-                posAttr.array[i + 1] = cy - 1.5 + e[1] * 3;
-                posAttr.array[i + 2] = cz - 1.5 + e[2] * 3;
-                posAttr.array[i + 3] = cx - 1.5 + e[3] * 3;
-                posAttr.array[i + 4] = cy - 1.5 + e[4] * 3;
-                posAttr.array[i + 5] = cz - 1.5 + e[5] * 3;
-                // Cyan color for knots
-                colAttr.array[i] = 0.0; colAttr.array[i + 1] = 0.8; colAttr.array[i + 2] = 0.8;
-                colAttr.array[i + 3] = 0.0; colAttr.array[i + 4] = 0.8; colAttr.array[i + 5] = 0.8;
+                posAttr.array[i] = cx - hx + e[0] * 2 * hx;
+                posAttr.array[i + 1] = cy - hy + e[1] * 2 * hy;
+                posAttr.array[i + 2] = cz - hz + e[2] * 2 * hz;
+                posAttr.array[i + 3] = cx - hx + e[3] * 2 * hx;
+                posAttr.array[i + 4] = cy - hy + e[4] * 2 * hy;
+                posAttr.array[i + 5] = cz - hz + e[5] * 2 * hz;
+                colAttr.array[i] = r; colAttr.array[i + 1] = g; colAttr.array[i + 2] = b;
+                colAttr.array[i + 3] = r; colAttr.array[i + 4] = g; colAttr.array[i + 5] = b;
                 si++;
             }
         }

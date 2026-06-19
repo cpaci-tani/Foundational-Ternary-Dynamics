@@ -1,0 +1,478 @@
+// engine/web/js/scales/scale0/runtime/field-line-knots.js
+//
+// Field-line KNOT detection + quantification + identity tracking — JS-native.
+//
+// A "knot" is a coarse-grid region where the RENDERED E field-lines both BUNCH
+// densely AND CROSS (the density+crossings gate). Knots are detected from the
+// pooled StreamlineResult geometry alone — independent of manifested particles,
+// so they are found even when Particles:0 (e.g. "Tau neutrino in vacuum").
+//
+// Each knot is quantified with the Feynman-diagram ANALOGY: segment count,
+// crossings (vertices), legs (connections to other knots), total length, plus
+// spatial extent, net flux and dominant direction. Knots are matched across
+// stream-line rebuilds to assign persistent IDs and a birth/death/fission/
+// fusion lifecycle — a JS port of the C++ cluster_tracker.h + cluster_genealogy.h
+// overlap-matching. Observation-only: reads the streamline buffer + field
+// samples, never the engine state; no golden-hash coupling.
+//
+// IMPORTANT: the pooled StreamlineResult is recycled by the field-overlay ring;
+// record() reads it synchronously and retains NOTHING.
+
+import { attributeSegmentsToKnots } from './knot-line-attribution.js';
+
+// Event-type integers — must match the panel's EVENT_NAMES / the C++ enum.
+const EV_BIRTH = 0, EV_DEATH = 1, EV_PERSIST = 2, EV_FISSION = 3, EV_FUSION = 4, EV_AMBIG = 5;
+
+export class FieldLineKnotTracker {
+    constructor(opts = {}) {
+        this.cellSize = opts.cellSize ?? 3;
+        this.densityThreshold = opts.densityThreshold ?? null; // null → adaptive
+        this.crossingThreshold = opts.crossingThreshold ?? 1;
+        this.minCellsPerKnot = opts.minCellsPerKnot ?? 2;
+        this.crossingDist = opts.crossingDist ?? 1.0;
+        // Two segments count as a CROSSING only if they pass within crossingDist
+        // AND are not near-parallel (|cosθ| < parallelCos). The parallel cut is
+        // what rejects a dense PARALLEL bundle (bunching, not a tangle).
+        this.parallelCos = opts.parallelCos ?? 0.9;
+        this.maxKnots = opts.maxKnots ?? 64;
+        this.minOverlapCells = opts.minOverlapCells ?? 1;
+        this.maxEvents = opts.maxEvents ?? 200;
+        this.reset();
+    }
+
+    reset() {
+        this._prevCellToId = new Map();  // cellIndex → knotId (previous record)
+        this._prevIdSize = new Map();    // knotId → cellCount (previous record)
+        this._histories = new Map();     // id → { birth, peak, lastTick }
+        this._nextId = 0;
+        this._agg = { alive: 0, births: 0, deaths: 0, fissions: 0, fusions: 0, sumSegs: 0 };
+        this._events = [];
+        this._tel = emptyTelemetry();
+        this._zones = { count: 0, centroids: new Float32Array(0), extents: new Float32Array(0), ids: new Int32Array(0), latticeSize: 0 };
+        this._selectedId = -1;           // panel-selected knot id (-1 = none)
+        // grown-on-demand scratch (per-cell + per-segment)
+        this._density = null; this._cross = null; this._hot = null;
+        this._fx = null; this._fy = null; this._fz = null;
+        this._comp = null; this._stack = null;
+        this._segEnds = null; this._segCell = null;
+        this._cellHasSeg = null; this._cellSegHead = null; this._cellSegNext = null;
+        this._capCells = 0; this._capSegs = 0;
+    }
+
+    // streamlines : pooled { count, buffer, offsets, lengths } (NOT retained)
+    // fieldSamples: { positions, vectors, count } in lattice coords, or null
+    // tick        : integer engine tick
+    // latticeSize : N
+    record(streamlines, fieldSamples, tick, latticeSize) {
+        const N = latticeSize | 0;
+        const cs = this.cellSize;
+        const G = Math.max(1, Math.ceil(N / cs));
+        const totalCells = G * G * G;
+        this._ensureCells(totalCells);
+
+        const density = this._density, cross = this._cross, hot = this._hot;
+        const fx = this._fx, fy = this._fy, fz = this._fz;
+        density.fill(0, 0, totalCells); cross.fill(0, 0, totalCells); hot.fill(0, 0, totalCells);
+        fx.fill(0, 0, totalCells); fy.fill(0, 0, totalCells); fz.fill(0, 0, totalCells);
+
+        const cellOf = (x, y, z) => {
+            let cx = (x / cs) | 0, cy = (y / cs) | 0, cz = (z / cs) | 0;
+            if (cx < 0) cx = 0; else if (cx >= G) cx = G - 1;
+            if (cy < 0) cy = 0; else if (cy >= G) cy = G - 1;
+            if (cz < 0) cz = 0; else if (cz >= G) cz = G - 1;
+            return (cz * G + cy) * G + cx;
+        };
+
+        // ── Pass 1: segments → density + flat segment store ──────────────
+        let S = 0;
+        if (streamlines && streamlines.count) {
+            const { count, buffer, offsets, lengths } = streamlines;
+            // count segments first to size scratch
+            let segTotal = 0;
+            for (let i = 0; i < count; i++) segTotal += Math.max(0, (lengths[i] / 3 | 0) - 1);
+            this._ensureSegs(segTotal);
+            const segEnds = this._segEnds, segCell = this._segCell;
+            for (let i = 0; i < count; i++) {
+                const start = offsets[i], len = lengths[i];
+                for (let p = start; p + 5 < start + len; p += 3) {
+                    const ax = buffer[p], ay = buffer[p + 1], az = buffer[p + 2];
+                    const bx = buffer[p + 3], by = buffer[p + 4], bz = buffer[p + 5];
+                    const mc = cellOf((ax + bx) * 0.5, (ay + by) * 0.5, (az + bz) * 0.5);
+                    density[mc] += 1;
+                    const o = S * 6;
+                    segEnds[o] = ax; segEnds[o + 1] = ay; segEnds[o + 2] = az;
+                    segEnds[o + 3] = bx; segEnds[o + 4] = by; segEnds[o + 5] = bz;
+                    segCell[S] = mc;
+                    S++;
+                }
+            }
+        }
+
+        // ── Net flux per cell (from field samples) ───────────────────────
+        if (fieldSamples && fieldSamples.count) {
+            const pos = fieldSamples.positions, vec = fieldSamples.vectors;
+            const n = fieldSamples.count;
+            for (let s = 0; s < n; s++) {
+                const ci = cellOf(pos[s * 3], pos[s * 3 + 1], pos[s * 3 + 2]);
+                fx[ci] += vec[s * 3]; fy[ci] += vec[s * 3 + 1]; fz[ci] += vec[s * 3 + 2];
+            }
+        }
+
+        // ── Adaptive density threshold ───────────────────────────────────
+        let dThr = this.densityThreshold;
+        if (dThr == null) {
+            let sum = 0, nz = 0;
+            for (let c = 0; c < totalCells; c++) { if (density[c] > 0) { sum += density[c]; nz++; } }
+            const mean = nz ? sum / nz : 0;
+            dThr = Math.max(3, Math.ceil(1.5 * mean));
+        }
+
+        // ── Pass 2: crossings, only for density-passing cells ────────────
+        // Bucket segments into per-cell singly-linked lists, then count
+        // non-parallel near-intersections within each candidate cell.
+        if (S > 0) {
+            const cellHead = this._cellSegHead, segNext = this._cellSegNext;
+            cellHead.fill(-1, 0, totalCells);
+            const segCell = this._segCell;
+            for (let s = 0; s < S; s++) { segNext[s] = cellHead[segCell[s]]; cellHead[segCell[s]] = s; }
+            const segEnds = this._segEnds;
+            const cd2 = this.crossingDist * this.crossingDist;
+            for (let c = 0; c < totalCells; c++) {
+                if (density[c] < dThr) continue;
+                // collect this cell's segments
+                let xings = 0;
+                for (let s = cellHead[c]; s !== -1; s = segNext[s]) {
+                    for (let t = segNext[s]; t !== -1; t = segNext[t]) {
+                        if (segsCross(segEnds, s, t, cd2, this.parallelCos)) xings++;
+                    }
+                }
+                cross[c] = xings;
+            }
+        }
+
+        // ── Hot gate: dense AND crossing ─────────────────────────────────
+        for (let c = 0; c < totalCells; c++) {
+            if (density[c] >= dThr && cross[c] >= this.crossingThreshold) hot[c] = 1;
+        }
+
+        // ── Connected components (26-neighbour) over hot cells ───────────
+        const comps = this._floodFill(hot, G, totalCells); // array of {cells:[ci...]}
+        // drop tiny, keep largest maxKnots
+        let knots = comps.filter((cc) => cc.cells.length >= this.minCellsPerKnot);
+        if (knots.length > this.maxKnots) {
+            knots.sort((a, b) => b.cells.length - a.cells.length);
+            knots = knots.slice(0, this.maxKnots);
+        }
+        const K = knots.length;
+
+        // ── Per-knot geometry ────────────────────────────────────────────
+        const centroids = new Float32Array(K * 3);
+        const extents = new Float32Array(K * 3);
+        const dirs = new Float32Array(K * 3);
+        const fluxMag = new Float32Array(K);
+        const xPerKnot = new Int32Array(K);
+        const sizes = new Int32Array(K);
+        const half = cs * 0.5;
+        for (let k = 0; k < K; k++) {
+            const cells = knots[k].cells;
+            sizes[k] = cells.length;
+            let wsum = 0, cxA = 0, cyA = 0, czA = 0;
+            let minx = Infinity, miny = Infinity, minz = Infinity;
+            let maxx = -Infinity, maxy = -Infinity, maxz = -Infinity;
+            let fX = 0, fY = 0, fZ = 0, xs = 0;
+            for (let j = 0; j < cells.length; j++) {
+                const ci = cells[j];
+                const gx = ci % G, gy = ((ci / G) | 0) % G, gz = (ci / (G * G)) | 0;
+                const wcx = (gx + 0.5) * cs, wcy = (gy + 0.5) * cs, wcz = (gz + 0.5) * cs;
+                const w = density[ci];
+                wsum += w; cxA += wcx * w; cyA += wcy * w; czA += wcz * w;
+                if (wcx < minx) minx = wcx; if (wcx > maxx) maxx = wcx;
+                if (wcy < miny) miny = wcy; if (wcy > maxy) maxy = wcy;
+                if (wcz < minz) minz = wcz; if (wcz > maxz) maxz = wcz;
+                fX += fx[ci]; fY += fy[ci]; fZ += fz[ci];
+                xs += cross[ci];
+            }
+            centroids[k * 3] = wsum ? cxA / wsum : 0;
+            centroids[k * 3 + 1] = wsum ? cyA / wsum : 0;
+            centroids[k * 3 + 2] = wsum ? czA / wsum : 0;
+            extents[k * 3] = (maxx - minx) * 0.5 + half;
+            extents[k * 3 + 1] = (maxy - miny) * 0.5 + half;
+            extents[k * 3 + 2] = (maxz - minz) * 0.5 + half;
+            const fm = Math.sqrt(fX * fX + fY * fY + fZ * fZ);
+            fluxMag[k] = fm;
+            if (fm > 1e-9) { dirs[k * 3] = fX / fm; dirs[k * 3 + 1] = fY / fm; dirs[k * 3 + 2] = fZ / fm; }
+            xPerKnot[k] = xs;
+        }
+
+        // ── Segments / length / legs via the shared attribution helper ───
+        const attr = attributeSegmentsToKnots(streamlines, centroids, K);
+        const segCount = new Int32Array(K), legCount = new Int32Array(K);
+        const segLen = new Float32Array(K);
+        let sumSegs = 0;
+        for (let k = 0; k < K; k++) {
+            const rec = attr.get(k);
+            segCount[k] = rec ? rec.segments : 0;
+            segLen[k] = rec ? rec.length : 0;
+            legCount[k] = rec ? rec.legSet.size : 0;
+            sumSegs += segCount[k];
+        }
+
+        // ── Identity matching (births/deaths/fission/fusion) ─────────────
+        const cellSets = knots.map((cc) => cc.cells);
+        const ids = this._matchAndUpdate(cellSets, sizes, tick);
+
+        // ── Assemble telemetry ───────────────────────────────────────────
+        const STRIDE = 8;
+        const fields = new Float32Array(K * STRIDE);
+        const age = new Int32Array(K), peak = new Int32Array(K), birth = new Int32Array(K);
+        for (let k = 0; k < K; k++) {
+            const h = this._histories.get(ids[k]);
+            age[k] = h ? (tick - h.birth) : 0;
+            peak[k] = h ? h.peak : sizes[k];
+            birth[k] = h ? h.birth : tick;
+            const o = k * STRIDE;
+            fields[o] = centroids[k * 3]; fields[o + 1] = centroids[k * 3 + 1]; fields[o + 2] = centroids[k * 3 + 2];
+            fields[o + 3] = segCount[k]; fields[o + 4] = xPerKnot[k]; fields[o + 5] = legCount[k];
+            fields[o + 6] = segLen[k]; fields[o + 7] = fluxMag[k];
+        }
+        const idsCopy = Int32Array.from(ids);
+        this._tel = { count: K, ids: idsCopy, age, size: sizes, peak, birth,
+                      stride: STRIDE, fields, dirs, extents };
+        this._zones = { count: K, centroids, extents, ids: idsCopy, latticeSize: N };
+        this._agg.alive = K;
+        this._agg.sumSegs = sumSegs;
+        return this._tel;
+    }
+
+    getTelemetry() { return this._tel; }
+    getAggregate() { return { ...this._agg }; }
+    getKnotZones() { return { ...this._zones, selectedId: this._selectedId }; }
+    setSelected(id) { this._selectedId = (id === null || id === undefined) ? -1 : (id | 0); }
+    getSelected() { return this._selectedId; }
+    getEvents() {
+        const n = this._events.length;
+        const tickA = new Int32Array(n), typeA = new Int32Array(n);
+        const npA = new Int32Array(n), ncA = new Int32Array(n);
+        for (let i = 0; i < n; i++) {
+            tickA[i] = this._events[i].tick; typeA[i] = this._events[i].type;
+            npA[i] = this._events[i].np; ncA[i] = this._events[i].nc;
+        }
+        return { count: n, tick: tickA, type: typeA, nparents: npA, nchildren: ncA };
+    }
+
+    // ── identity: DSU bipartite overlap of prev ids ↔ current knots ──────
+    _matchAndUpdate(cellSets, sizes, tick) {
+        const K = cellSets.length;
+        // overlap[k] : Map<prevId, sharedCells>
+        const overlap = new Array(K);
+        const parentIdSet = new Set();
+        for (let k = 0; k < K; k++) {
+            const m = new Map();
+            const cells = cellSets[k];
+            for (let j = 0; j < cells.length; j++) {
+                const pid = this._prevCellToId.get(cells[j]);
+                if (pid === undefined) continue;
+                m.set(pid, (m.get(pid) || 0) + 1);
+            }
+            overlap[k] = m;
+            for (const [pid, c] of m) if (c >= this.minOverlapCells) parentIdSet.add(pid);
+        }
+        const parentIds = [...parentIdSet];
+        const P = parentIds.length;
+        const pidIndex = new Map(); // prevId → node index
+        for (let i = 0; i < P; i++) pidIndex.set(parentIds[i], K + i);
+
+        // DSU over nodes [0..K) children, [K..K+P) parents
+        const parent = new Int32Array(K + P);
+        for (let i = 0; i < K + P; i++) parent[i] = i;
+        const find = (x) => { while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+        const union = (a, b) => { const ra = find(a), rb = find(b); if (ra !== rb) parent[ra] = rb; };
+        for (let k = 0; k < K; k++) {
+            for (const [pid, c] of overlap[k]) {
+                if (c >= this.minOverlapCells && pidIndex.has(pid)) union(k, pidIndex.get(pid));
+            }
+        }
+
+        // group nodes by root
+        const groups = new Map(); // root → { kids:[k...], pids:[id...] }
+        for (let k = 0; k < K; k++) {
+            const r = find(k);
+            let g = groups.get(r); if (!g) { g = { kids: [], pids: [] }; groups.set(r, g); }
+            g.kids.push(k);
+        }
+        for (let i = 0; i < P; i++) {
+            const r = find(K + i);
+            let g = groups.get(r); if (!g) { g = { kids: [], pids: [] }; groups.set(r, g); }
+            g.pids.push(parentIds[i]);
+        }
+
+        const ids = new Int32Array(K);
+        const usedParents = new Set();
+        for (const g of groups.values()) {
+            const np = g.pids.length, nc = g.kids.length;
+            if (nc === 0) continue; // pure-parent group → all its parents die (handled below)
+            g.pids.forEach((p) => usedParents.add(p));
+            // largest child inherits the biggest prev id
+            const kids = g.kids.slice().sort((a, b) => sizes[b] - sizes[a]);
+            let inherit = -1, bestSz = -1;
+            for (const p of g.pids) { const sz = this._prevIdSize.get(p) || 0; if (sz > bestSz) { bestSz = sz; inherit = p; } }
+            for (let j = 0; j < kids.length; j++) {
+                const k = kids[j];
+                if (j === 0 && inherit >= 0) ids[k] = inherit;
+                else { ids[k] = this._nextId++; this._agg.births++; }
+            }
+            // classify the group event
+            let type = EV_PERSIST;
+            if (np === 0) type = EV_BIRTH;
+            else if (np === 1 && nc === 1) type = EV_PERSIST;
+            else if (np === 1 && nc >= 2) { type = EV_FISSION; this._agg.fissions++; }
+            else if (np >= 2 && nc === 1) { type = EV_FUSION; this._agg.fusions++; }
+            else type = EV_AMBIG;
+            if (type !== EV_PERSIST) this._pushEvent(tick, type, np, nc);
+        }
+
+        // deaths: prev ids that were never claimed by a surviving group
+        for (const pid of this._prevIdSize.keys()) {
+            if (!usedParents.has(pid)) {
+                this._agg.deaths++;
+                this._pushEvent(tick, EV_DEATH, 1, 0);
+                this._histories.delete(pid);
+            }
+        }
+
+        // update histories + rebuild prev maps
+        const nextCellToId = new Map();
+        const nextIdSize = new Map();
+        for (let k = 0; k < K; k++) {
+            const id = ids[k];
+            let h = this._histories.get(id);
+            if (!h) { h = { birth: tick, peak: sizes[k], lastTick: tick }; this._histories.set(id, h); }
+            else { if (sizes[k] > h.peak) h.peak = sizes[k]; h.lastTick = tick; }
+            const cells = cellSets[k];
+            for (let j = 0; j < cells.length; j++) nextCellToId.set(cells[j], id);
+            nextIdSize.set(id, sizes[k]);
+        }
+        this._prevCellToId = nextCellToId;
+        this._prevIdSize = nextIdSize;
+        return ids;
+    }
+
+    _pushEvent(tick, type, np, nc) {
+        this._events.push({ tick, type, np, nc });
+        if (this._events.length > this.maxEvents) this._events.shift();
+    }
+
+    // 26-neighbour flood fill over the binary `hot` grid.
+    _floodFill(hot, G, totalCells) {
+        const comp = this._comp, stack = this._stack;
+        comp.fill(0, 0, totalCells); // 0 = unvisited; we use comp as a visited flag
+        const out = [];
+        for (let c = 0; c < totalCells; c++) {
+            if (!hot[c] || comp[c]) continue;
+            const cells = [];
+            let sp = 0; stack[sp++] = c; comp[c] = 1;
+            while (sp > 0) {
+                const cur = stack[--sp];
+                cells.push(cur);
+                const gx = cur % G, gy = ((cur / G) | 0) % G, gz = (cur / (G * G)) | 0;
+                for (let dz = -1; dz <= 1; dz++) {
+                    const nz = gz + dz; if (nz < 0 || nz >= G) continue;
+                    for (let dy = -1; dy <= 1; dy++) {
+                        const ny = gy + dy; if (ny < 0 || ny >= G) continue;
+                        for (let dx = -1; dx <= 1; dx++) {
+                            if (dx === 0 && dy === 0 && dz === 0) continue;
+                            const nx = gx + dx; if (nx < 0 || nx >= G) continue;
+                            const ni = (nz * G + ny) * G + nx;
+                            if (hot[ni] && !comp[ni]) {
+                                comp[ni] = 1;
+                                if (sp >= stack.length) break; // safety (shouldn't happen, stack sized totalCells)
+                                stack[sp++] = ni;
+                            }
+                        }
+                    }
+                }
+            }
+            out.push({ cells });
+        }
+        return out;
+    }
+
+    _ensureCells(totalCells) {
+        if (this._capCells >= totalCells && this._density) return;
+        this._capCells = totalCells;
+        this._density = new Float32Array(totalCells);
+        this._cross = new Float32Array(totalCells);
+        this._hot = new Uint8Array(totalCells);
+        this._fx = new Float32Array(totalCells);
+        this._fy = new Float32Array(totalCells);
+        this._fz = new Float32Array(totalCells);
+        this._comp = new Uint8Array(totalCells);
+        this._stack = new Int32Array(totalCells);
+        this._cellSegHead = new Int32Array(totalCells);
+    }
+
+    _ensureSegs(segTotal) {
+        if (this._capSegs >= segTotal && this._segEnds) return;
+        this._capSegs = segTotal;
+        this._segEnds = new Float32Array(segTotal * 6);
+        this._segCell = new Int32Array(segTotal);
+        this._cellSegNext = new Int32Array(segTotal);
+    }
+}
+
+function emptyTelemetry() {
+    return { count: 0, ids: new Int32Array(0), age: new Int32Array(0), size: new Int32Array(0),
+             peak: new Int32Array(0), birth: new Int32Array(0), stride: 8,
+             fields: new Float32Array(0), dirs: new Float32Array(0), extents: new Float32Array(0) };
+}
+
+// Squared minimum distance between segments (a=segEnds[s], b=segEnds[t]); returns
+// true when they pass within sqrt(cd2) AND are not near-parallel (a crossing,
+// not a parallel bunch).
+function segsCross(segEnds, s, t, cd2, parallelCos) {
+    const so = s * 6, to = t * 6;
+    const ax = segEnds[so], ay = segEnds[so + 1], az = segEnds[so + 2];
+    const bx = segEnds[so + 3], by = segEnds[so + 4], bz = segEnds[so + 5];
+    const cx = segEnds[to], cy = segEnds[to + 1], cz = segEnds[to + 2];
+    const dx = segEnds[to + 3], dy = segEnds[to + 4], dz = segEnds[to + 5];
+    const ux = bx - ax, uy = by - ay, uz = bz - az;
+    const vx = dx - cx, vy = dy - cy, vz = dz - cz;
+    const wx = ax - cx, wy = ay - cy, wz = az - cz;
+    const a = ux * ux + uy * uy + uz * uz;
+    const b = ux * vx + uy * vy + uz * vz;
+    const cc = vx * vx + vy * vy + vz * vz;
+    const d = ux * wx + uy * wy + uz * wz;
+    const e = vx * wx + vy * wy + vz * wz;
+    const den = a * cc - b * b;
+    let sc, tc;
+    if (den < 1e-9) { sc = 0; tc = (b > cc ? d / b : e / cc) || 0; }
+    else { sc = (b * e - cc * d) / den; tc = (a * e - b * d) / den; }
+    sc = sc < 0 ? 0 : sc > 1 ? 1 : sc;
+    tc = tc < 0 ? 0 : tc > 1 ? 1 : tc;
+    const px = wx + sc * ux - tc * vx;
+    const py = wy + sc * uy - tc * vy;
+    const pz = wz + sc * uz - tc * vz;
+    const dist2 = px * px + py * py + pz * pz;
+    if (dist2 > cd2) return false;
+    // parallel rejection: near-parallel segments are bunching, not a crossing
+    const la = Math.sqrt(a), lv = Math.sqrt(cc);
+    if (la < 1e-9 || lv < 1e-9) return false;
+    const cos = Math.abs(b / (la * lv));
+    if (cos > parallelCos) return false;
+    return true;
+}
+
+// Deterministic id → hue in [0,1). Same integer-mix as scale1/pe-cloud-expander's
+// hashUint32, so a knot's color is stable across ticks and shared by the panel
+// row + the viewport box.
+export function knotHue(id) {
+    let h = (Math.imul(id | 0, 374761393) + 668265263) >>> 0;
+    h = (Math.imul(h ^ (h >>> 13), 1274126177)) >>> 0;
+    return (h >>> 8) / 0x1000000; // top 24 bits → [0,1)
+}
+
+// ── module singleton ────────────────────────────────────────────────────
+let _tracker = null;
+export function getFieldLineKnotTracker() {
+    return (_tracker ??= new FieldLineKnotTracker());
+}

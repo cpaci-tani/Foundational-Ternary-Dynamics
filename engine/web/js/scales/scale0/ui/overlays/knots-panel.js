@@ -1,30 +1,18 @@
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
-import { getScale0State, setFieldToggle, resolveActiveScale0BridgeFromWindow } from '../../state/store.js';
+import { getScale0State, setFieldToggle, setKnotTracking } from '../../state/store.js';
+import { getFieldLineKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
 
 const PANEL_ID = 'knots-panel';
 
-// Event type integer order — matches the C++ EventType enum / WASM export:
+// Event type integer order — matches the tracker's event enum:
 // 0=Birth 1=Death 2=Persist 3=Fission 4=Fusion 5=Ambiguous.
 const EVENT_NAMES = ['Birth', 'Death', 'Persist', 'Fission', 'Fusion', 'Ambig'];
 const EVENT_GLYPH = ['✦', '•', '·', '⑂', '⑃', '?'];
 
-// Knot telemetry is computed by the C++ KnotTracker inside the WASM RenderBridge.
-// We must read from the bridge that ACTUALLY TICKS:
-//   - non-worker path: window.__ftdCtx.bridge (the main-thread WasmBridge);
-//   - off-thread path: state.fluxMock (a WasmBridgeProxy — NOT a JS stub; it
-//     hosts the real C++ physics in a Web Worker and caches knot telemetry from
-//     the worker's 'frame' payload).
-// resolveActiveScale0BridgeFromWindow() returns exactly that active owner
-// (proxy when useFluxMock, else ctx.bridge). Both surfaces expose
-// getKnotAggregate/Telemetry/Events + setToggle('knot_tracking', …), so reading
-// the active bridge is correct in BOTH paths. (Reading window.__ftdCtx.bridge
-// unconditionally would hit the IDLE main-thread bridge whenever the worker is
-// active → empty telemetry + tracking toggled on the wrong engine.)
-function resolveKnotBridge() {
-    return resolveActiveScale0BridgeFromWindow();
-}
-
+// Field-line knots are detected + tracked entirely in JS by FieldLineKnotTracker
+// (a module singleton shared with the E-field overlay job, which feeds it the
+// rebuilt streamlines). The panel only READS the tracker — no engine/bridge call.
 function ensureCss() {
     if (typeof document === 'undefined' || document.getElementById('knots-panel-css')) return;
     const s = document.createElement('style');
@@ -57,30 +45,31 @@ function buildPanel() {
     const root = document.createElement('div');
     root.id = PANEL_ID;
     root.innerHTML = `
-      <div class="kp-title">Knots <small>· Manifested Diagrams</small></div>
+      <div class="kp-title">Knots <small>· Field-Line Diagrams</small></div>
       <div class="kp-head">
-        <span id="kp-alive">0</span> alive · net charge <span id="kp-charge">0</span>
+        <span id="kp-alive">0</span> alive · <span id="kp-segs">0</span> segs
         · <span id="kp-track-dot">○</span> tracking
         <div class="kp-tally" id="kp-tally">births 0 · deaths 0 · ⑂0 fissions · ⑃0 fusions · Σsegs —</div>
       </div>
-      <label class="kp-ctl" title="Enable the C++ per-tick KnotTracker recorder (observation-only, golden-neutral)">
-        <input type="checkbox" id="kp-toggle-tracking"> <b>Track knots</b> (per-tick)
+      <label class="kp-ctl" title="Detect + track the clumps where E field-lines bunch and cross (observation-only)">
+        <input type="checkbox" id="kp-toggle-tracking"> <b>Track field-line knots</b> (per rebuild)
       </label>
-      <label class="kp-ctl" title="Show the cyan wireframe knot overlays in the viewport">
+      <label class="kp-ctl" title="Show the cyan wireframe boxes around detected field-line knots">
         <input type="checkbox" id="kp-toggle-overlay"> <b>Show knot overlays</b>
       </label>
       <div class="kp-list" id="kp-list"></div>
       <div class="kp-feed-h">EVENT FEED</div>
       <div class="kp-feed" id="kp-feed"></div>
       <div class="kp-note">
-        Knot = a manifested state / connected same-sign cluster (<i>s ≠ 0</i>).
-        The Feynman-diagram framing is an <b>analogy</b>; <b>org</b> and any coupling are
-        <b>[FTD-native proxies]</b>, not amplitudes. Ages are integer ticks.
+        Knot = a clump where the rendered <b>E field-lines</b> bunch <i>and</i> cross.
+        <b>segments / crossings / legs / length</b> are geometric counts of the
+        <i>drawn</i> field lines (which depend on seeding) — <b>NOT</b> physical
+        amplitudes. The Feynman-diagram framing is an <b>analogy</b>. Ages are integer ticks.
       </div>`;
     return root;
 }
 
-export function mountKnotsPanel(host, getBridge) {
+export function mountKnotsPanel(host) {
     if (!host) return null;
     ensureCss();
     document.getElementById(PANEL_ID)?.remove();
@@ -91,102 +80,94 @@ export function mountKnotsPanel(host, getBridge) {
     const trackCb = el('kp-toggle-tracking');
     const overlayCb = el('kp-toggle-overlay');
 
-    // The overlay checkbox drives the VISUAL flag (cyan cubes) — store is the
-    // single source of truth. Unchanged from the prior panel.
+    // The overlay checkbox drives the VISUAL flag (colored boxes around the
+    // detected knots). The boxes are meaningless without tracking data, so
+    // enabling the overlay auto-enables tracking (and syncs its checkbox).
     overlayCb.checked = !!getScale0State().fieldFlags.showKnotZones;
-    overlayCb.addEventListener('change', (e) => setFieldToggle('showKnotZones', e.target.checked));
+    overlayCb.addEventListener('change', (e) => {
+        const on = e.target.checked;
+        setFieldToggle('showKnotZones', on);
+        if (on && !getScale0State().knotTracking) {
+            setKnotTracking(true);
+            trackCb.checked = true;
+        }
+    });
 
-    // The tracking checkbox enables the C++ recorder on the WASM bridge via the
-    // engine toggle path (NOT setFieldToggle — that is the visual overlay). Wire
-    // to the SAME active bridge we read telemetry from (proxy when the worker is
-    // active, else the main-thread WasmBridge).
-    let trackedBridge = null;
-    const applyTracking = (b, on) => {
-        if (!b) return;
-        (b.capabilities?.scale0?.setToggle ?? b.setToggle)?.call(b.capabilities?.scale0 ?? b, 'knot_tracking', on);
-        trackedBridge = on ? b : null;
-    };
-    trackCb.addEventListener('change', (e) => applyTracking(resolveKnotBridge(), e.target.checked));
+    // The tracking checkbox enables the JS FieldLineKnotTracker recorder (fed from
+    // the E-field overlay job). Reset on un-check so stale knots/zones clear.
+    trackCb.checked = !!getScale0State().knotTracking;
+    trackCb.addEventListener('change', (e) => {
+        setKnotTracking(e.target.checked);
+        if (!e.target.checked) getFieldLineKnotTracker().reset();
+    });
 
     let expandedId = null;
 
     function renderEmptyList(list, trackingOn) {
         if (!trackingOn) {
-            list.innerHTML = '<div class="kp-empty">tracking off — enable "Track knots" to record per-knot telemetry</div>';
+            list.innerHTML = '<div class="kp-empty">tracking off — enable "Track field-line knots" to detect knots</div>';
         } else {
-            list.innerHTML = '<div class="kp-empty">0 knots — no manifested states '
-                + '(enable a scenario that manifests charges)</div>';
+            list.innerHTML = '<div class="kp-empty">0 knots — enable the <b>E Field</b> overlay and run; '
+                + 'knots form where field-lines bunch &amp; cross (no particles needed)</div>';
         }
     }
 
     function update() {
         if (!isPanelLive(host)) return;
-        const bridge = resolveKnotBridge();
-        const trackingOn = !!trackCb.checked;
-
-        // Re-apply tracking if the active bridge changed under us (e.g. a
-        // worker→in-thread fallback swapped engines): the toggle was set on the
-        // old bridge, so the new one wouldn't be recording without this.
-        if (trackingOn && bridge && bridge !== trackedBridge) applyTracking(bridge, true);
-        else if (!trackingOn) trackedBridge = null;
-
-        // Track dot reflects the toggle intent regardless of bridge availability.
+        const trackingOn = !!getScale0State().knotTracking;
         el('kp-track-dot').textContent = trackingOn ? '●' : '○';
 
-        // Tracking OFF: zero the display and bail. Do NOT render stale data — the
-        // off-thread proxy may retain a last-frame snapshot after the toggle flips.
-        if (!bridge || !trackingOn) {
+        if (!trackingOn) {
             el('kp-alive').textContent = '0';
-            el('kp-charge').textContent = '0';
+            el('kp-segs').textContent = '0';
             el('kp-tally').textContent = 'births 0 · deaths 0 · ⑂0 fissions · ⑃0 fusions · Σsegs —';
-            renderEmptyList(el('kp-list'), trackingOn);
+            renderEmptyList(el('kp-list'), false);
             el('kp-feed').innerHTML = '';
             return;
         }
 
-        const cap = bridge.capabilities?.scale0;
-        const agg = cap?.getScale0KnotAggregate?.() ?? bridge.getKnotAggregate?.();
-        const tel = cap?.getScale0KnotTelemetry?.() ?? bridge.getKnotTelemetry?.();
-        const evs = cap?.getScale0KnotEvents?.() ?? bridge.getKnotEvents?.();
+        const fl = getFieldLineKnotTracker();
+        const agg = fl.getAggregate();
+        const tel = fl.getTelemetry();
+        const evs = fl.getEvents();
+        const selectedId = fl.getSelected();
 
-        // Header aggregate.
-        const alive = agg?.alive ?? 0;
-        const netCharge = agg?.netCharge ?? 0;
-        el('kp-alive').textContent = alive;
-        el('kp-charge').textContent = (netCharge > 0 ? '+' : '') + netCharge;
+        el('kp-alive').textContent = agg.alive ?? 0;
+        el('kp-segs').textContent = agg.sumSegs ?? 0;
         el('kp-tally').textContent =
-            `births ${agg?.births ?? 0} · deaths ${agg?.deaths ?? 0}`
-            + ` · ⑂${agg?.fissions ?? 0} fissions · ⑃${agg?.fusions ?? 0} fusions · Σsegs —`;
+            `births ${agg.births ?? 0} · deaths ${agg.deaths ?? 0}`
+            + ` · ⑂${agg.fissions ?? 0} fissions · ⑃${agg.fusions ?? 0} fusions · Σsegs ${agg.sumSegs ?? 0}`;
 
-        // Knot list (flat fields decode, stride 11):
-        //   [0..2] cx,cy,cz · [3..5] vx,vy,vz · [6] |J| · [7..9] flux dir · [10] org
+        // Per-knot list (flat fields decode, stride 8):
+        //   [0..2] cx,cy,cz · [3] segments · [4] crossings · [5] legs · [6] length · [7] |Φ|
         const list = el('kp-list');
         const count = tel?.count ?? 0;
         if (!count) {
-            renderEmptyList(list, trackingOn);
+            renderEmptyList(list, true);
         } else {
-            const f = tel.fields, S = tel.stride || 11;
+            const f = tel.fields, S = tel.stride || 8;
             const MAX_ROWS = 60;
             const shown = Math.min(count, MAX_ROWS);
             let html = '';
             for (let k = 0; k < shown; k++) {
                 const id = tel.ids[k];
-                const pos = tel.signs[k] > 0;
-                const sgn = pos ? '+' : '−';
-                const col = pos ? '#4ddd80' : '#f87070';
-                const fm = f[k * S + 6].toFixed(1);
+                const segs = f[k * S + 3] | 0, xings = f[k * S + 4] | 0, legs = f[k * S + 5] | 0;
+                // Each knot's dot matches its viewport box color; selected → white.
+                const dotCol = (id === selectedId) ? '#ffffff'
+                    : `hsl(${Math.round(knotHue(id) * 360)},85%,62%)`;
                 html += `<div class="kp-row" data-id="${id}">`
-                     +  `<span style="color:${col}">●</span> #${id} ${sgn} `
-                     +  `N${tel.size[k]} age${tel.age[k]}t |J|${fm} segs—`;
+                     +  `<span style="color:${dotCol}">●</span> #${id} `
+                     +  `N${tel.size[k]} age${tel.age[k]}t · segs${segs} ×${xings} legs${legs}`;
                 if (id === expandedId) {
                     const cx = f[k * S].toFixed(0), cy = f[k * S + 1].toFixed(0), cz = f[k * S + 2].toFixed(0);
-                    const v = Math.hypot(f[k * S + 3], f[k * S + 4], f[k * S + 5]).toFixed(2);
-                    const fx = f[k * S + 7].toFixed(2), fy = f[k * S + 8].toFixed(2), fz = f[k * S + 9].toFixed(2);
+                    const ex = tel.extents[k * 3].toFixed(1), ey = tel.extents[k * 3 + 1].toFixed(1), ez = tel.extents[k * 3 + 2].toFixed(1);
+                    const len = f[k * S + 6].toFixed(1), fm = f[k * S + 7].toFixed(2);
+                    const dx = tel.dirs[k * 3].toFixed(2), dy = tel.dirs[k * 3 + 1].toFixed(2), dz = tel.dirs[k * 3 + 2].toFixed(2);
                     html += `<div class="kp-det">`
                          +  `born t${tel.birth[k]} · peak N${tel.peak[k]}<br>`
-                         +  `pos(${cx},${cy},${cz}) · vel ${v}/t · org ${f[k * S + 10].toFixed(2)} <i>[proxy]</i><br>`
-                         +  `flux→(${fx},${fy},${fz})<br>`
-                         +  `diagram: legs— · segs— · length— <i>(enable E/B field lines)</i>`
+                         +  `pos(${cx},${cy},${cz}) · extent(${ex},${ey},${ez})<br>`
+                         +  `diagram: segs ${segs} · crossings ${xings} · legs ${legs} · length ${len}<br>`
+                         +  `net flux |Φ|${fm} → (${dx},${dy},${dz}) <i>[proxy]</i>`
                          +  `</div>`;
                 }
                 html += `</div>`;
@@ -199,6 +180,8 @@ export function mountKnotsPanel(host, getBridge) {
                 r.onclick = () => {
                     const id = +r.dataset.id;
                     expandedId = (expandedId === id ? null : id);
+                    // Drive the viewport highlight: selected knot's box turns white.
+                    getFieldLineKnotTracker().setSelected(expandedId === null ? -1 : expandedId);
                     update();
                 };
             });
@@ -233,5 +216,5 @@ export function initKnotsPanel() {
     const host = document.getElementById('panel-knots');
     if (!host) return;
     window.__ftdKnotsPanel?.dispose?.();
-    mountKnotsPanel(host, resolveKnotBridge);
+    mountKnotsPanel(host);
 }
