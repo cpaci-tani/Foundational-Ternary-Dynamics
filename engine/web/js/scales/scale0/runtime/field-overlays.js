@@ -755,6 +755,16 @@ function runJob(sched, slot) {
                 if (tr.getPerKnotColor()) {
                     knotColoring = { lineIds: tr.assignLinesToKnots(lines), selectedId: tr.getSelected(), perKnotColor: true };
                 }
+                // Scientific tool: measure each knot's share of the scenario field
+                // (energy ½|E|²+½|B|², flux |J|, charge |∇·J|). Gated on the panel
+                // being live (extra field fetches), observation-only.
+                if (tr.isContribEnabled()) {
+                    const cap = sched.acScale0;
+                    const bField = cap?.getScale0FieldSamples?.({ kind: 'b', stride });
+                    const divJ = cap?.getScale0FieldSamples?.({ kind: 'divJ', stride });
+                    const fluxVolume = cap?.getScale0FluxVolume?.();
+                    tr.measureContributions({ eField: sampled.eField, bField, fluxVolume, divJ, latticeSize });
+                }
             }
             viewportAdapter.applyEFieldLines(lines, knotColoring);
             break;

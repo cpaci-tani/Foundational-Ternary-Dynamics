@@ -3,6 +3,39 @@ import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
 import { getScale0State, setFieldToggle, setKnotTracking, markFieldDirty } from '../../state/store.js';
 import { getFieldLineKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
 
+// Small fixed-range [0,1] multi-trace line chart for a knot's contribution history.
+// (CanvasSparkline is single-trace + streaming + auto-ranged, so a direct draw of the
+// three fraction arrays is simpler + keeps the 0–100% axis honest.)
+const CONTRIB_TRACES = [
+    { key: 'energyFrac', color: '#f6c453', label: 'E' },
+    { key: 'fluxFrac', color: '#5ad2e0', label: 'Φ' },
+    { key: 'chargeFrac', color: '#c98bf0', label: 'ρ' },
+];
+function drawContribChart(canvas, hist) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    ctx.clearRect(0, 0, w, h);
+    const n = hist?.n || 0;
+    // gridlines at 0/50/100%
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+    for (const f of [0, 0.5, 1]) { const y = h - f * (h - 2) - 1; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+    if (n < 2) return;
+    for (const t of CONTRIB_TRACES) {
+        const arr = hist[t.key];
+        ctx.beginPath();
+        for (let i = 0; i < n; i++) {
+            const x = (i / (n - 1)) * w;
+            const y = h - Math.max(0, Math.min(1, arr[i])) * (h - 2) - 1;   // fixed 0..1 range
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = t.color; ctx.lineWidth = 1.3; ctx.stroke();
+    }
+}
+
 const PANEL_ID = 'knots-panel';
 
 // Event type integer order — matches the tracker's event enum:
@@ -37,6 +70,12 @@ function ensureCss() {
     #${PANEL_ID} .kp-feed .kp-t{color:var(--text-muted,#888)}
     #${PANEL_ID} .kp-note{margin-top:8px;padding-top:6px;border-top:0.5px solid var(--border-light,rgba(255,255,255,0.1));font-size:9.5px;color:var(--text-muted,#777);line-height:1.45}
     #${PANEL_ID} .kp-note b{color:var(--text-secondary,#999)}
+    #${PANEL_ID} .kp-contrib-sum{margin-top:3px;font-size:11px;color:var(--accent-amber,#f6c453)}
+    #${PANEL_ID} .kp-contrib-sum b{color:var(--text-primary,#eee);font-weight:600}
+    #${PANEL_ID} .kp-cn{color:var(--accent-amber,#f6c453);font-weight:600}
+    #${PANEL_ID} .kp-geo{color:var(--text-muted,#888)}
+    #${PANEL_ID} .kp-legend{display:block;margin-top:2px;font-size:10px;color:var(--text-muted,#999)}
+    #${PANEL_ID} .kp-chart{display:block;width:100%;height:46px;margin:2px 0 4px}
     `;
     document.head.appendChild(s);
 }
@@ -50,6 +89,7 @@ function buildPanel() {
         <span id="kp-alive">0</span> alive · <span id="kp-segs">0</span> segs
         · <span id="kp-track-dot">○</span> tracking
         <div class="kp-tally" id="kp-tally">births 0 · deaths 0 · ⑂0 fissions · ⑃0 fusions · Σsegs —</div>
+        <div class="kp-contrib-sum" id="kp-contrib-sum"></div>
       </div>
       <label class="kp-ctl" title="Detect + track the clumps where E field-lines bunch and cross (observation-only)">
         <input type="checkbox" id="kp-toggle-tracking"> <b>Track field-line knots</b> (per rebuild)
@@ -69,10 +109,12 @@ function buildPanel() {
       <div class="kp-feed-h">EVENT FEED</div>
       <div class="kp-feed" id="kp-feed"></div>
       <div class="kp-note">
-        Knot = a clump where the rendered <b>E field-lines</b> bunch <i>and</i> cross.
-        <b>segments / crossings / legs / length</b> are geometric counts of the
-        <i>drawn</i> field lines (which depend on seeding) — <b>NOT</b> physical
-        amplitudes. The Feynman-diagram framing is an <b>analogy</b>. Ages are integer ticks.
+        <b style="color:var(--accent-amber,#f6c453)">Contribution (E / Φ / ρ)</b> = each knot's share of the
+        scenario's actual field, integrated over its region — <b>genuine measurements</b>
+        (flux exact from the dense |J| volume; energy ½(E²+B²) &amp; charge ∇·J over the
+        sub-sampled field). · <b>segments / crossings / legs / length</b> are geometric counts
+        of the <i>drawn</i> field lines (seeding-dependent) — <b>NOT</b> physical amplitudes; a
+        Feynman-diagram <b>analogy</b>. Ages are integer ticks.
       </div>`;
     return root;
 }
@@ -84,6 +126,11 @@ export function mountKnotsPanel(host) {
     const panel = buildPanel();
     host.appendChild(panel);
     const el = (id) => panel.querySelector(`#${id}`);
+
+    // The (heavier) scientific contribution measurement runs in the E-field job only
+    // while this panel is mounted. Mark the field dirty so a sweep measures promptly.
+    getFieldLineKnotTracker().setContribEnabled(true);
+    markFieldDirty();
 
     const trackCb = el('kp-toggle-tracking');
     const overlayCb = el('kp-toggle-overlay');
@@ -154,6 +201,7 @@ export function mountKnotsPanel(host) {
             el('kp-alive').textContent = '0';
             el('kp-segs').textContent = '0';
             el('kp-tally').textContent = 'births 0 · deaths 0 · ⑂0 fissions · ⑃0 fusions · Σsegs —';
+            el('kp-contrib-sum').textContent = '';
             renderEmptyList(el('kp-list'), false);
             el('kp-feed').innerHTML = '';
             return;
@@ -165,6 +213,17 @@ export function mountKnotsPanel(host) {
         const evs = fl.getEvents();
         const selectedId = fl.getSelected();
         const perColor = fl.getPerKnotColor();
+        const contrib = fl.getContributions();
+        const cIdx = new Map();                       // knot id → contribution index
+        for (let i = 0; i < (contrib.count || 0); i++) cIdx.set(contrib.ids[i], i);
+        const pct = (v) => `${Math.round((v || 0) * 100)}%`;
+
+        // Scenario-totals summary: how much of the scenario field all knots capture.
+        const hasContrib = contrib.count && (contrib.totals.energy > 0 || contrib.totals.flux > 0 || contrib.totals.charge > 0);
+        el('kp-contrib-sum').innerHTML = hasContrib
+            ? `knots capture <b>${pct(contrib.captured.energyFrac)}</b> energy · `
+              + `<b>${pct(contrib.captured.fluxFrac)}</b> flux · <b>${pct(contrib.captured.chargeFrac)}</b> charge`
+            : '<span style="opacity:.7">contribution: enable the <b>E Field</b> overlay + run to measure</span>';
 
         el('kp-alive').textContent = agg.alive ?? 0;
         el('kp-segs').textContent = agg.sumSegs ?? 0;
@@ -189,18 +248,30 @@ export function mountKnotsPanel(host) {
                 // Each knot's dot matches its viewport box color; selected → white.
                 const dotCol = (id === selectedId) ? '#ffffff'
                     : (perColor ? `hsl(${Math.round(knotHue(id) * 360)},85%,62%)` : '#3fd0e0');
+                const ci = cIdx.get(id);
+                // Lead with the SCIENTIFIC contribution (field share); geometric counts trail.
+                const cn = (ci != null)
+                    ? `<span class="kp-cn">E${pct(contrib.energyFrac[ci])} Φ${pct(contrib.fluxFrac[ci])} ρ${pct(contrib.chargeFrac[ci])}</span> · `
+                    : '';
                 html += `<div class="kp-row" data-id="${id}">`
-                     +  `<span style="color:${dotCol}">●</span> #${id} `
+                     +  `<span style="color:${dotCol}">●</span> #${id} · ${cn}`
                      +  `N${tel.size[k]} age${tel.age[k]}t · segs${segs} ×${xings} legs${legs}`;
                 if (id === expandedId) {
                     const cx = f[k * S].toFixed(0), cy = f[k * S + 1].toFixed(0), cz = f[k * S + 2].toFixed(0);
                     const ex = tel.extents[k * 3].toFixed(1), ey = tel.extents[k * 3 + 1].toFixed(1), ez = tel.extents[k * 3 + 2].toFixed(1);
                     const len = f[k * S + 6].toFixed(1), fm = f[k * S + 7].toFixed(2);
                     const dx = tel.dirs[k * 3].toFixed(2), dy = tel.dirs[k * 3 + 1].toFixed(2), dz = tel.dirs[k * 3 + 2].toFixed(2);
+                    const cstr = (ci != null)
+                        ? `<b>contribution</b> ⚡ E ${pct(contrib.energyFrac[ci])} · Φ ${pct(contrib.fluxFrac[ci])} · ρ ${pct(contrib.chargeFrac[ci])} <i>[measured]</i><br>`
+                          + `abs U=${contrib.energy[ci].toExponential(2)} · |Φ|=${contrib.flux[ci].toExponential(2)} · Q=${contrib.charge[ci].toExponential(2)}<br>`
+                          + `<span class="kp-legend"><span style="color:#f6c453">▬E</span> <span style="color:#5ad2e0">▬Φ</span> <span style="color:#c98bf0">▬ρ</span> · share over time</span>`
+                          + `<canvas class="kp-chart" data-cid="${id}"></canvas>`
+                        : '';
                     html += `<div class="kp-det">`
                          +  `born t${tel.birth[k]} · peak N${tel.peak[k]}<br>`
+                         +  cstr
                          +  `pos(${cx},${cy},${cz}) · extent(${ex},${ey},${ez})<br>`
-                         +  `diagram: segs ${segs} · crossings ${xings} · legs ${legs} · length ${len}<br>`
+                         +  `<span class="kp-geo">geometric [analogy]: segs ${segs} · crossings ${xings} · legs ${legs} · length ${len}</span><br>`
                          +  `net flux |Φ|${fm} → (${dx},${dy},${dz}) <i>[proxy]</i>`
                          +  `</div>`;
                 }
@@ -210,6 +281,10 @@ export function mountKnotsPanel(host) {
                 html += `<div class="kp-empty">… ${count - MAX_ROWS} more (showing ${MAX_ROWS})</div>`;
             }
             list.innerHTML = html;
+            // Draw the selected knot's contribution-history chart (canvas rebuilt each paint).
+            list.querySelectorAll('canvas.kp-chart').forEach((cv) => {
+                drawContribChart(cv, fl.getKnotHistory(+cv.dataset.cid));
+            });
             list.querySelectorAll('.kp-row').forEach((r) => {
                 r.onclick = () => {
                     const id = +r.dataset.id;
@@ -244,7 +319,7 @@ export function mountKnotsPanel(host) {
     }
 
     const { unsubscribe } = rafCoordinator.subscribe(PANEL_ID, { hz: 4, cb: update });
-    const dispose = () => { unsubscribe(); panel.remove(); };
+    const dispose = () => { unsubscribe(); getFieldLineKnotTracker().setContribEnabled(false); panel.remove(); };
     window.__ftdKnotsPanel = { dispose };
     return { dispose };
 }
