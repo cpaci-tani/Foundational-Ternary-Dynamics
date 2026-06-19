@@ -26,6 +26,7 @@ export const PANEL_REGISTRY = Object.freeze([
     { id: 'time',             label: 'Time',            icon: '⏱',        scales: ['0'] },
     { id: 'thermo',           label: 'Thermo',          icon: '🌡',       scales: ['0'] },
     { id: 'scale-context',    label: 'Scale Context',   icon: '\u{1F4CF}',     scales: ['0'] },
+    { id: 'two-sectors',      label: 'Two Sectors',     icon: '\u21c4',        scales: ['0'] },
     { id: 'cosmic-info',      label: 'Cosmic',          icon: '\u2740',        scales: ['5'] },
 ]);
 
