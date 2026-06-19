@@ -53,7 +53,6 @@ import { initThermoPanel } from './ui/overlays/thermo-panel.js';
 import { initDispersionPanel } from './ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './ui/overlays/knots-panel.js';
 import { initScaleContextPanel } from './ui/overlays/scale-context-panel.js';
-import { initTwoSectorsPanel } from './ui/overlays/two-sectors-panel.js';
 import { PlayBarComponent } from '../../ui/components/play-bar/component.js';
 
 const state = getScale0State();
@@ -231,7 +230,6 @@ class Scale0LifecycleController extends BaseLifecycleController {
         try { initDispersionPanel(); } catch (e) { /* ignore */ }
         try { initKnotsPanel(); } catch (e) { /* ignore */ }
         try { initScaleContextPanel(); } catch (e) { /* ignore */ }
-        try { initTwoSectorsPanel(); } catch (e) { /* ignore */ }
         // Reveal the prime-tick toggle whenever Scale 0 becomes active.
         try { ensurePrimeTickButton(true); } catch (e) { /* ignore */ }
     }
@@ -260,7 +258,6 @@ class Scale0LifecycleController extends BaseLifecycleController {
             try { window.__ftdDispersionPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdKnotsPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdScaleContextPanel?.dispose?.(); } catch (e) { /* ignore */ }
-            try { window.__ftdTwoSectorsPanel?.dispose?.(); } catch (e) { /* ignore */ }
             try { window.__ftdFluxSlicePanel?.dispose?.(); } catch (e) { /* ignore */ }
         }
     }
