@@ -4,18 +4,18 @@
  * ============================================================ */
 
 html[data-theme="nord"] {
-    /* Background ladder */
+    /* Background ladder - Frosty Arctic Glass */
     --bg-deep:     #2e3440;
-    --bg-surface:  #3b4252;
-    --bg-card:     #434c5e;
-    --bg-input:    #4c566a;
-    --bg-elevated: #566175;
-    --bg-raised:   #637286;
+    --bg-surface:  rgba(59, 66, 82, 0.65);
+    --bg-card:     rgba(67, 76, 94, 0.70);
+    --bg-input:    rgba(76, 86, 106, 0.75);
+    --bg-elevated: rgba(86, 97, 117, 0.85);
+    --bg-raised:   rgba(99, 114, 134, 0.90);
 
     /* Borders */
-    --border:       #4c566a;
-    --border-light: #616e88;
-    --border-glow:  rgba(136, 192, 208, 0.40);
+    --border:       rgba(255, 255, 255, 0.12);
+    --border-light: rgba(255, 255, 255, 0.20);
+    --border-glow:  rgba(136, 192, 208, 0.50);
 
     /* Text hierarchy */
     --text-primary:   #eceff4;
@@ -24,10 +24,10 @@ html[data-theme="nord"] {
     --text-accent:    #e5e9f0;
     --text-dim:       #95a2b8;   /* disabled / inert (≥3:1 per WCAG 1.4.11) */
 
-    /* Interaction accent (nord frost) */
+    /* Interaction accent (bright aurora cyan) */
     --accent:      #88c0d0;
-    --accent-dim:  #5e81ac;
-    --accent-glow: #88c0d088;
+    --accent-dim:  #8fbcbb;
+    --accent-glow: rgba(136, 192, 208, 0.60);
 
     /* Status — Nord aurora */
     --positive: #a3be8c;
@@ -36,24 +36,25 @@ html[data-theme="nord"] {
     --caution:  #d08770;
 
     /* State tints (frost-matched) */
-    --state-hover-bg:   rgba(136, 192, 208, 0.10);
-    --state-active-bg:  rgba(136, 192, 208, 0.22);
-    --state-focus-ring: 0 0 0 2px rgba(136, 192, 208, 0.45);
+    --state-hover-bg:   rgba(136, 192, 208, 0.15);
+    --state-active-bg:  rgba(136, 192, 208, 0.25);
+    --state-focus-ring: 0 0 0 2px rgba(136, 192, 208, 0.50);
 
     /* Viewport + card surfaces */
-    --viewport-bg:    linear-gradient(180deg, #242933 0%, #2e3440 100%);
-    --card-shadow:    none;
-    --card-hover-bg:  #4c566a;
-    --chrome-shadow:  0 4px 24px rgba(0, 0, 0, 0.45);
-    --dock-shadow:    0 20px 60px rgba(0, 0, 0, 0.55);
-    --tabs-shadow:    0 6px 24px rgba(0, 0, 0, 0.45);
-    --modal-backdrop: rgba(0, 0, 0, 0.55);
+    --viewport-bg:    radial-gradient(circle at 50% 50%, #242933 0%, #2e3440 100%);
+    --card-shadow:    0 4px 16px rgba(0, 0, 0, 0.35);
+    --card-hover-bg:  rgba(76, 86, 106, 0.80);
+    --chrome-shadow:  0 8px 32px rgba(0, 0, 0, 0.50);
+    --dock-shadow:    0 24px 80px rgba(0, 0, 0, 0.60);
+    --tabs-shadow:    0 8px 32px rgba(0, 0, 0, 0.50);
+    --modal-backdrop: rgba(0, 0, 0, 0.60);
     --tooltip-bg:     rgba(59, 66, 82, 0.96);
-    --tooltip-border: rgba(136, 192, 208, 0.28);
+    --tooltip-border: rgba(136, 192, 208, 0.35);
     --tooltip-text:   #edf2f7;
-    --tooltip-shadow: 0 16px 40px rgba(0, 0, 0, 0.42);
+    --tooltip-shadow: 0 16px 40px rgba(0, 0, 0, 0.50);
     --tooltip-kicker: #88c0d0;
     --tooltip-muted:  #c1cad8;
+
 
     /* Chart series — Nord Aurora + Frost palette */
     --chart-flux:     #d08770;

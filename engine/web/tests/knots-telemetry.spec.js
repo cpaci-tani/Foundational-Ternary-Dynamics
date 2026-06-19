@@ -8,10 +8,9 @@ import { gotoAndReady } from './_helpers.js';
  * Verifies the C++ KnotTracker telemetry surfaces through the WASM RenderBridge
  * (window.__ftdCtx.bridge) under the new `knot_tracking` toggle. The telemetry
  * lives on the WASM bridge, NOT the flux mock — so we use a scenario that
- * MANIFESTS a real cluster (≥ 4 voxels) on the real WASM engine:
- * `s0-seed-emergent-ic1` (the 25-voxel ic1 cluster). `flux-screening` only makes
- * isolated single-voxel charges and yields 0 knots, so it cannot exercise the
- * list path.
+ * MANIFESTS a real cluster on the real WASM engine: `s0-seed-emergent-ic1` (the
+ * ic1 cluster). The C++ KnotTracker floor is min_cluster_size = 1, so a manifested
+ * cluster reliably exercises the list path.
  *
  * Ticks are driven deterministically via bridge.tick() with the loop paused
  * (no wall-clock playback), mirroring genesis-burst.spec.js. Invariants asserted:
@@ -154,12 +153,14 @@ test.describe('Knot telemetry (Scale-0 KnotTracker)', () => {
         expect(data.births, 'tracker must record at least one knot birth').toBeGreaterThan(0);
 
         // At the peak-alive snapshot, the per-knot row carries valid numeric fields
-        // and the cluster meets the ≥ 4-voxel tracking threshold.
+        // and the cluster meets the tracking threshold. The C++ KnotTracker floor is
+        // min_cluster_size = 1 (render_bridge.cpp ~L101), so a tracked knot is ≥ 1
+        // voxel — the peak-count tick may land on a single-voxel knot.
         if (data.snap.count > 0) {
             expect(data.snap.count).toBe(data.snap.alive);
             expect(data.snap.fieldsLen).toBe(data.snap.count * data.snap.stride);
             expect(data.snap.stride).toBe(11);
-            expect(data.snap.size0).toBeGreaterThanOrEqual(4);
+            expect(data.snap.size0).toBeGreaterThanOrEqual(1);
             expect(Number.isFinite(data.snap.age0)).toBe(true);
             expect(Number.isFinite(data.snap.flux0)).toBe(true);
         }

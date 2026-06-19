@@ -4,18 +4,18 @@
  * ============================================================ */
 
 html[data-theme="parchment"] {
-    /* Background ladder */
-    --bg-deep:     #f5f0e8;
-    --bg-surface:  #ece5d8;
-    --bg-card:     #e2dace;
-    --bg-input:    #d5cdc0;
-    --bg-elevated: #ede5d4;
-    --bg-raised:   #f2ebdd;
+    /* Background ladder - Warm Amber Glass */
+    --bg-deep:     #f5eedc;
+    --bg-surface:  rgba(236, 229, 216, 0.65);
+    --bg-card:     rgba(226, 218, 206, 0.70);
+    --bg-input:    rgba(213, 205, 192, 0.75);
+    --bg-elevated: rgba(237, 229, 212, 0.85);
+    --bg-raised:   rgba(242, 235, 221, 0.90);
 
     /* Borders */
-    --border:       #c4baa8;
-    --border-light: #b0a590;
-    --border-glow:  rgba(139, 105, 20, 0.40);
+    --border:       rgba(139, 105, 20, 0.12);
+    --border-light: rgba(139, 105, 20, 0.20);
+    --border-glow:  rgba(217, 119, 6, 0.40);
 
     /* Text hierarchy — warm browns with AA contrast */
     --text-primary:   #2c2416;
@@ -24,40 +24,40 @@ html[data-theme="parchment"] {
     --text-accent:    #3a301f;
     --text-dim:       #746a58;   /* disabled / inert (≥3:1 per WCAG 1.4.11) */
 
-    /* Interaction accent (sepia gold) */
-    --accent:      #8b6914;
-    --accent-dim:  #a07818;
-    --accent-glow: #8b691444;
+    /* Interaction accent (rich glowing amber) */
+    --accent:      #d97706;
+    --accent-dim:  #b45309;
+    --accent-glow: rgba(217, 119, 6, 0.45);
 
     /* Status — muted to blend with parchment */
-    --positive: #3d7a24;
-    --negative: #a63020;
+    --positive: #15803d;
+    --negative: #b91c1c;
     --warning:  #b8860b;
-    --caution:  #cc5e1f;
+    --caution:  #c2410c;
 
-    /* State tints — gold, against warm bg */
-    --state-hover-bg:   rgba(139, 105, 20, 0.10);
-    --state-active-bg:  rgba(139, 105, 20, 0.20);
-    --state-focus-ring: 0 0 0 2px rgba(139, 105, 20, 0.40);
+    /* State tints — amber, against warm bg */
+    --state-hover-bg:   rgba(217, 119, 6, 0.08);
+    --state-active-bg:  rgba(217, 119, 6, 0.18);
+    --state-focus-ring: 0 0 0 2px rgba(217, 119, 6, 0.40);
 
     /* Viewport + card surfaces */
-    --viewport-bg:    linear-gradient(180deg, #e0d8c2 0%, #cfc4a8 100%);
-    --card-shadow:    0 1px 3px rgba(50, 40, 20, 0.10);
-    --card-hover-bg:  #e8dfc8;
-    --chrome-shadow:  0 4px 24px rgba(50, 40, 20, 0.15);
-    --dock-shadow:    0 12px 40px rgba(50, 40, 20, 0.22);
-    --tabs-shadow:    0 4px 16px rgba(50, 40, 20, 0.15);
-    --modal-backdrop: rgba(50, 40, 20, 0.50);
+    --viewport-bg:    radial-gradient(circle at top center, #e0d8c2 0%, #cfc4a8 100%);
+    --card-shadow:    0 4px 16px rgba(50, 40, 20, 0.08);
+    --card-hover-bg:  rgba(232, 223, 200, 0.85);
+    --chrome-shadow:  0 8px 32px rgba(50, 40, 20, 0.12);
+    --dock-shadow:    0 24px 64px rgba(50, 40, 20, 0.18);
+    --tabs-shadow:    0 8px 24px rgba(50, 40, 20, 0.10);
+    --modal-backdrop: rgba(50, 40, 20, 0.40);
     --tooltip-bg:     rgba(247, 241, 229, 0.98);
-    --tooltip-border: rgba(139, 105, 20, 0.24);
+    --tooltip-border: rgba(217, 119, 6, 0.25);
     --tooltip-text:   #332918;
-    --tooltip-shadow: 0 14px 34px rgba(58, 44, 18, 0.20);
-    --tooltip-kicker: #8b6914;
+    --tooltip-shadow: 0 16px 40px rgba(50, 40, 20, 0.15);
+    --tooltip-kicker: #d97706;
     --tooltip-muted:  #6b5c46;
 }
 
 html[data-theme="parchment"] .card {
-    border-color: rgba(50, 40, 20, 0.12);
+    border-color: rgba(50, 40, 20, 0.08);
 }
 
 html[data-theme="parchment"] {
