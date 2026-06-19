@@ -10,7 +10,6 @@ export const FIELD_TOGGLE_BINDINGS = [
     ['toggle-force-weak', 'showForceWeak'],
     ['toggle-dual-substrate', 'showDualSubstrate'],
     ['toggle-chirality', 'showChirality'],
-    ['toggle-light', 'showLight'],
     ['toggle-dark-halo', 'showDarkMatterHalo'],
     ['toggle-damping-zones', 'showDampingZones'],
     ['toggle-genesis-iso', 'showGenesisIsosurface'],
@@ -25,21 +24,14 @@ export const FIELD_TOGGLE_BINDINGS = [
     ['toggle-em-energy',           'showEmEnergy'],
     ['toggle-charge-density',      'showChargeDensity'],
     ['toggle-vorticity',           'showVorticity'],
-    // Tier 1/2/3 (2026-04-18) — helicity, curvature, horizon,
-    // stress-energy split, Fisher information, coherence.
-    ['toggle-helicity',            'showHelicity'],
-    ['toggle-kretschmann',         'showKretschmann'],
+    // Tier 1/2 (2026-04-18) — horizon, stress-energy split.
     ['toggle-horizon',             'showHorizon'],
     ['toggle-e-pressure',          'showEPressure'],
     ['toggle-b-pressure',          'showBPressure'],
-    ['toggle-kinetic-energy',      'showKineticEnergy'],
-    ['toggle-fisher',              'showFisher'],
-    ['toggle-coherence',           'showCoherence'],
     // New substrate overlays (2026-06-03)
     ['toggle-state-field',         'showStateField'],
     ['toggle-latency',             'showLatency'],
     ['toggle-gauss-residual',      'showGaussResidual'],
-    ['toggle-moore-decomp',        'showMooreDecomp'],
 ];
 
 export const FORCE_STYLE_VALUES = ['arrows', 'heatmap', 'flow', 'glyphs'];

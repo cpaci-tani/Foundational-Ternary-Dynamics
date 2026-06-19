@@ -741,11 +741,6 @@ export class Viewport {
     updateChiralityField(fieldData) { this._fieldRenderer.updateChiralityField(fieldData); }
     toggleChiralityField(on) { this._fieldRenderer.toggleChiralityField(on); }
 
-    // -- Light Field --
-    _buildLightField() { this._fieldRenderer._buildLightField(); }
-    updateLightField(poyntingData) { this._fieldRenderer.updateLightField(poyntingData); }
-    toggleLightField(on) { this._fieldRenderer.toggleLightField(on); }
-
     // -- Quantum scaffolding --
     _buildSoftDiscTexture() { return this._fieldRenderer._buildSoftDiscTexture(); }
     _buildQuantumField() { this._fieldRenderer._buildQuantumField(); }
@@ -778,28 +773,15 @@ export class Viewport {
     toggleGaussResidualField(on) { this._fieldRenderer.toggleGaussResidualField(on); }
     updateGaussResidualField(data) { this._fieldRenderer.updateGaussResidualField(data); }
 
-    // -- Moore-neighbourhood decomposition (static structural wireframe) --
-    toggleMooreDecomp(on) { this._fieldRenderer.toggleMooreDecomp(on); }
-
     // -- Topological Sheet (deformable rubber-sheet) overlays --
     toggleGravPotentialField(on) { this._topoRenderer?.toggleGravPotential(on); }
     updateGravPotentialField(data) { this._topoRenderer?.updateGravPotential(data); }
     toggleEmEnergyField(on) { this._topoRenderer?.toggle('emEnergy', on); }
     updateEmEnergyField(data) { this._topoRenderer?.update('emEnergy', data); }
-    toggleHelicityField(on) { this._topoRenderer?.toggle('helicity', on); }
-    updateHelicityField(data) { this._topoRenderer?.update('helicity', data); }
-    toggleKretschmannField(on) { this._topoRenderer?.toggle('kretschmann', on); }
-    updateKretschmannField(data) { this._topoRenderer?.update('kretschmann', data); }
     toggleEPressureField(on) { this._topoRenderer?.toggle('ePressure', on); }
     updateEPressureField(data) { this._topoRenderer?.update('ePressure', data); }
     toggleBPressureField(on) { this._topoRenderer?.toggle('bPressure', on); }
     updateBPressureField(data) { this._topoRenderer?.update('bPressure', data); }
-    toggleKineticEnergyField(on) { this._topoRenderer?.toggle('kineticEnergy', on); }
-    updateKineticEnergyField(data) { this._topoRenderer?.update('kineticEnergy', data); }
-    toggleFisherField(on) { this._topoRenderer?.toggle('fisher', on); }
-    updateFisherField(data) { this._topoRenderer?.update('fisher', data); }
-    toggleCoherenceField(on) { this._topoRenderer?.toggle('coherence', on); }
-    updateCoherenceField(data) { this._topoRenderer?.update('coherence', data); }
     toggleChargeDensityField(on) { this._topoRenderer?.toggle('chargeDensity', on); }
     updateChargeDensityField(data) { this._topoRenderer?.update('chargeDensity', data); }
     toggleVorticityField(on) { this._topoRenderer?.toggle('vorticity', on); }
@@ -908,7 +890,6 @@ export class Viewport {
             }
             if (this._dualFluxVolume) this._dualFluxVolume.visible = false;
             if (this._chiralityField) this._chiralityField.visible = false;
-            if (this._lightField) this._lightField.visible = false;
             if (this._darkMatterHalo) this._darkMatterHalo.visible = false;
             if (this._dampingZones) this._dampingZones.visible = false;
             if (this._genesisIsosurface) this._genesisIsosurface.visible = false;
@@ -1115,7 +1096,7 @@ export class Viewport {
         // _strongForce, _weakField, _forceHeatmap, _forceStreamlinePool,
         // _forceGlyphMeshes, _darkMatterHalo, _eventHorizonSphere/Ring,
         // _dampingZones, _genesisIsosurface, _confinementStrings,
-        // _dualFluxVolume, _chiralityField, _lightField, _quantumField,
+        // _dualFluxVolume, _chiralityField, _quantumField,
         // _phaseNeedles, _horizonField, plus instance-owned soft-disc texture.
         this._fieldRenderer?.dispose();
 
@@ -1225,8 +1206,6 @@ export class Viewport {
     set _dualFluxVolume(v) { if (this._fieldRenderer) this._fieldRenderer._dualFluxVolume = v; }
     get _chiralityField() { return this._fieldRenderer?._chiralityField ?? null; }
     set _chiralityField(v) { if (this._fieldRenderer) this._fieldRenderer._chiralityField = v; }
-    get _lightField() { return this._fieldRenderer?._lightField ?? null; }
-    set _lightField(v) { if (this._fieldRenderer) this._fieldRenderer._lightField = v; }
     get _quantumField() { return this._fieldRenderer?._quantumField ?? null; }
     set _quantumField(v) { if (this._fieldRenderer) this._fieldRenderer._quantumField = v; }
     get _phaseNeedles() { return this._fieldRenderer?._phaseNeedles ?? null; }

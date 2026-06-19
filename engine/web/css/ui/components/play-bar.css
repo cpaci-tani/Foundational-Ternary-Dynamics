@@ -118,6 +118,21 @@ html[data-panel-mount="bottom"] .play-bar {
     transform: translateY(-1px);
 }
 
+/* ── Prime-tick toggle (Scale 0 only) ───────────────────────────────
+   Hidden until the Scale-0 controller reveals it. The author display rule on
+   .play-bar-small-btn (inline-flex) overrides the UA [hidden]{display:none},
+   so an explicit rule is required to honor the attribute. Lit (accent) when on,
+   muted (inherits .play-bar-small-btn) when off. */
+.play-bar .play-bar-prime-btn[hidden] {
+    display: none;
+}
+.play-bar .play-bar-prime-btn.is-on {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: color-mix(in oklch, var(--accent) 16%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 40%, transparent);
+}
+
 /* ── Speed group ────────────────────────────────────────────────── */
 .play-bar-speed {
     gap: 5px;

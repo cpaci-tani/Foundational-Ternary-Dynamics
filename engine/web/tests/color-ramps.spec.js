@@ -31,7 +31,7 @@ test.describe('color-ramps module', () => {
         }).toBeTruthy();
     });
 
-    test('module exports all 15 named ramp functions + FORCE_PALETTES + lerpPalette + RAMP_BY_NAME', async ({ page }) => {
+    test('module exports all 10 named ramp functions + FORCE_PALETTES + lerpPalette + RAMP_BY_NAME', async ({ page }) => {
         const exports = await page.evaluate(async () => {
             const mod = await import('/js/viewport/color-ramps.js');
             return {
@@ -44,13 +44,8 @@ test.describe('color-ramps module', () => {
                     typeof mod.rampEmEnergy,
                     typeof mod.rampCharge,
                     typeof mod.rampVorticity,
-                    typeof mod.rampHelicity,
-                    typeof mod.rampKretschmann,
                     typeof mod.rampEPressure,
                     typeof mod.rampBPressure,
-                    typeof mod.rampKineticEnergy,
-                    typeof mod.rampFisher,
-                    typeof mod.rampCoherence,
                 ],
                 lerpPalette: typeof mod.lerpPalette,
                 forcePalettes: typeof mod.FORCE_PALETTES,
@@ -58,11 +53,11 @@ test.describe('color-ramps module', () => {
                 rampByNameKeys: Object.keys(mod.RAMP_BY_NAME || {}).length,
             };
         });
-        expect(exports.ramps).toEqual(new Array(15).fill('function'));
+        expect(exports.ramps).toEqual(new Array(10).fill('function'));
         expect(exports.lerpPalette).toBe('function');
         expect(exports.forcePalettes).toBe('object');
         expect(exports.rampByName).toBe('object');
-        expect(exports.rampByNameKeys).toBe(15);
+        expect(exports.rampByNameKeys).toBe(10);
     });
 
     test('rampViridis endpoints match known purple/yellow values', async ({ page }) => {
@@ -121,24 +116,6 @@ test.describe('color-ramps module', () => {
         expect(nearly(r[8], 0.169)).toBeTruthy();
     });
 
-    test('rampCoherence: diverging orange ↔ violet', async ({ page }) => {
-        const r = await page.evaluate(async () => {
-            const { rampCoherence } = await import('/js/viewport/color-ramps.js');
-            const out = new Float32Array(6);
-            rampCoherence(-1, out, 0);   // violet (negative)
-            rampCoherence(1, out, 3);    // orange (positive)
-            return [...out];
-        });
-        // Violet endpoint: (0.45, 0.15, 0.85)
-        expect(nearly(r[0], 0.45)).toBeTruthy();
-        expect(nearly(r[1], 0.15)).toBeTruthy();
-        expect(nearly(r[2], 0.85)).toBeTruthy();
-        // Orange endpoint: (1.00, 0.55, 0.10)
-        expect(nearly(r[3], 1.00)).toBeTruthy();
-        expect(nearly(r[4], 0.55)).toBeTruthy();
-        expect(nearly(r[5], 0.10)).toBeTruthy();
-    });
-
     test('FORCE_PALETTES has em/gravity/strong/weak with low/mid/high tuples', async ({ page }) => {
         const pals = await page.evaluate(async () => {
             const { FORCE_PALETTES } = await import('/js/viewport/color-ramps.js');
@@ -181,10 +158,9 @@ test.describe('color-ramps module', () => {
             return Object.keys(mod.RAMP_BY_NAME).sort();
         });
         expect(keys).toEqual([
-            'rampBPressure', 'rampCharge', 'rampCoherence', 'rampCyclicHSL',
-            'rampDivergingRdBu', 'rampEPressure', 'rampEmEnergy', 'rampFisher',
-            'rampGravWell', 'rampGrayscale', 'rampHelicity', 'rampKineticEnergy',
-            'rampKretschmann', 'rampViridis', 'rampVorticity',
+            'rampBPressure', 'rampCharge', 'rampCyclicHSL',
+            'rampDivergingRdBu', 'rampEPressure', 'rampEmEnergy',
+            'rampGravWell', 'rampGrayscale', 'rampViridis', 'rampVorticity',
         ]);
     });
 });

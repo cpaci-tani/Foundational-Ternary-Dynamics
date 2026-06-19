@@ -17,14 +17,9 @@ import {
     computeEmEnergyFrame,
     computeChargeDensityFrame,
     computeVorticityFrame,
-    computeHelicityFrame,
-    computeKretschmannFrame,
     computeHorizonFrame,
     computeEPressureFrame,
     computeBPressureFrame,
-    computeKineticEnergyFrame,
-    computeFisherFrame,
-    computeCoherenceFrame,
     computeStateFieldFrame,
     computeLatencyFrame,
     computeGaussResidualFrame,
@@ -70,13 +65,7 @@ export function buildQuantumOverlayData(ctx, state, sampled) {
     if (state.fieldFlags.showVorticity) {
         frame.vorticity = computeVorticityFrame(sampled, state);
     }
-    // Tier 1/2/3 (2026-04-18)
-    if (state.fieldFlags.showHelicity) {
-        frame.helicity = computeHelicityFrame(sampled, state);
-    }
-    if (state.fieldFlags.showKretschmann) {
-        frame.kretschmann = computeKretschmannFrame(sampled, state);
-    }
+    // Tier 1/2 (2026-04-18)
     if (state.fieldFlags.showHorizon) {
         frame.horizon = computeHorizonFrame(sampled, state);
     }
@@ -85,15 +74,6 @@ export function buildQuantumOverlayData(ctx, state, sampled) {
     }
     if (state.fieldFlags.showBPressure) {
         frame.bPressure = computeBPressureFrame(sampled, state);
-    }
-    if (state.fieldFlags.showKineticEnergy) {
-        frame.kineticEnergy = computeKineticEnergyFrame(ctx, state);
-    }
-    if (state.fieldFlags.showFisher) {
-        frame.fisher = computeFisherFrame(sampled, state);
-    }
-    if (state.fieldFlags.showCoherence) {
-        frame.coherence = computeCoherenceFrame(sampled, state);
     }
     return frame;
 }
@@ -422,10 +402,6 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
         };
     }
 
-    if (state.fieldFlags.showLight && sampled.poynting?.count > 0) {
-        frame.light = sampled.poynting;
-    }
-
     return frame;
 }
 
@@ -474,7 +450,6 @@ export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame, opt
     if (overlayFrame.genesisIsosurface) viewportAdapter.applyGenesisIsosurface(overlayFrame.genesisIsosurface);
     if (overlayFrame.dualFlux) viewportAdapter.applyDualFlux(overlayFrame.dualFlux.left, overlayFrame.dualFlux.right);
     if (overlayFrame.chirality) viewportAdapter.applyChirality(overlayFrame.chirality);
-    if (overlayFrame.light) viewportAdapter.applyLight(overlayFrame.light);
 
     // Tier 1 quantum overlays
     if (overlayFrame.psiSquared) viewportAdapter.applyPsiSquared(overlayFrame.psiSquared);
@@ -488,15 +463,10 @@ export function applyOverlayFrame(viewportAdapter, overlayFrame, forceFrame, opt
     if (overlayFrame.chargeDensity) viewportAdapter.applyChargeDensity(overlayFrame.chargeDensity);
     if (overlayFrame.vorticity) viewportAdapter.applyVorticity(overlayFrame.vorticity);
 
-    // Tier 1/2/3 additions (2026-04-18)
-    if (overlayFrame.helicity)      viewportAdapter.applyHelicity(overlayFrame.helicity);
-    if (overlayFrame.kretschmann)   viewportAdapter.applyKretschmann(overlayFrame.kretschmann);
+    // Tier 1/2 additions (2026-04-18)
     if (overlayFrame.horizon)       viewportAdapter.applyHorizon(overlayFrame.horizon);
     if (overlayFrame.ePressure)     viewportAdapter.applyEPressure(overlayFrame.ePressure);
     if (overlayFrame.bPressure)     viewportAdapter.applyBPressure(overlayFrame.bPressure);
-    if (overlayFrame.kineticEnergy) viewportAdapter.applyKineticEnergy(overlayFrame.kineticEnergy);
-    if (overlayFrame.fisher)        viewportAdapter.applyFisher(overlayFrame.fisher);
-    if (overlayFrame.coherence)     viewportAdapter.applyCoherence(overlayFrame.coherence);
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -611,14 +581,9 @@ const SCALAR_JOBS = [
     ['showEmEnergy',          (s, ctx, state) => computeEmEnergyFrame(s, state),                                      (va, v) => va.applyEmEnergy(v)],
     ['showChargeDensity',     (s, ctx, state) => computeChargeDensityFrame(s, state),                                 (va, v) => va.applyChargeDensity(v)],
     ['showVorticity',         (s, ctx, state) => computeVorticityFrame(s, state),                                     (va, v) => va.applyVorticity(v)],
-    ['showHelicity',          (s, ctx, state) => computeHelicityFrame(s, state),                                      (va, v) => va.applyHelicity(v)],
-    ['showKretschmann',       (s, ctx, state) => computeKretschmannFrame(s, state),                                   (va, v) => va.applyKretschmann(v)],
     ['showHorizon',           (s, ctx, state) => computeHorizonFrame(s, state),                                       (va, v) => va.applyHorizon(v)],
     ['showEPressure',         (s, ctx, state) => computeEPressureFrame(s, state),                                     (va, v) => va.applyEPressure(v)],
     ['showBPressure',         (s, ctx, state) => computeBPressureFrame(s, state),                                     (va, v) => va.applyBPressure(v)],
-    ['showKineticEnergy',     (s, ctx, state) => computeKineticEnergyFrame(ctx, state),                               (va, v) => va.applyKineticEnergy(v)],
-    ['showFisher',            (s, ctx, state) => computeFisherFrame(s, state),                                        (va, v) => va.applyFisher(v)],
-    ['showCoherence',         (s, ctx, state) => computeCoherenceFrame(s, state),                                     (va, v) => va.applyCoherence(v)],
     ['showStateField',        (s, ctx, state) => computeStateFieldFrame(s, state),                                    (va, v) => va.applyStateField(v)],
     ['showLatency',           (s, ctx, state) => computeLatencyFrame(s, state),                                       (va, v) => va.applyLatency(v)],
     ['showGaussResidual',     (s, ctx, state) => computeGaussResidualFrame(s, state),                                 (va, v) => va.applyGaussResidual(v)],
@@ -725,7 +690,6 @@ function applyDerivedJob(frame, viewportAdapter) {
     if (frame.genesisIsosurface) viewportAdapter.applyGenesisIsosurface(frame.genesisIsosurface);
     if (frame.dualFlux) viewportAdapter.applyDualFlux(frame.dualFlux.left, frame.dualFlux.right);
     if (frame.chirality) viewportAdapter.applyChirality(frame.chirality);
-    if (frame.light) viewportAdapter.applyLight(frame.light);
 }
 
 // ── Closure-free job dispatcher ─────────────────────────────────────────
@@ -849,7 +813,6 @@ function runJob(sched, slot) {
         case JOB_DERIVED: {
             const flags = state.fieldFlags;
             if (flags.showDualSubstrate || flags.showChirality) sampleCache.ensureSample('fluxVector');
-            if (flags.showLight) sampleCache.ensureSample('poynting');
             const frame = buildDerivedSubstrateData(state, sampled, sched.fieldCapability, sched.latticeSize);
             applyDerivedJob(frame, viewportAdapter);
             break;
@@ -967,10 +930,10 @@ function buildOverlayJobs(ctx, state, sched, viewportAdapter, latticeSize, param
         }
     }
 
-    // ── Derived substrate group (dual / chirality / light / mock overlays) ─
+    // ── Derived substrate group (dual / chirality / mock overlays) ─
     const derivedActive = flags.showDarkMatterHalo || flags.showDampingZones || flags.showKnotZones ||
         flags.showGenesisIsosurface || flags.showDualSubstrate ||
-        flags.showChirality || flags.showLight;
+        flags.showChirality;
     if (derivedActive) {
         const slot = jobSlot(sched, n++); slot.kind = JOB_DERIVED; slot.cost = COST_DERIVED;
     }
@@ -1095,6 +1058,17 @@ export function updateFieldOverlays(ctx, state, viewportAdapter) {
             sched.forceCache = null;
             return;
         }
+
+        // The post-load forced-repaint window (ctx._samplersPending, set by
+        // loadScale0Scenario) is satisfied once a sweep actually produces jobs
+        // from real sampler data. Disarm it HERE — not on the first worker
+        // postFrame — because the worker proxy returns EMPTY on the first
+        // _wantSampler(kind) call (the want is only just registered; the data is
+        // a frame away). Clearing on that first empty frame would close the
+        // window before any overlay rendered, leaving tick-0 overlays blank
+        // until the next tick. Clearing on jobCount>0 guarantees the first
+        // sweep that genuinely had data is the one that disarms the window.
+        if (ctx && ctx._samplersPending) ctx._samplersPending = false;
     }
 
     // ── Drain jobs under the per-frame budget ────────────────────────────
