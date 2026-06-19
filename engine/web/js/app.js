@@ -52,6 +52,7 @@ import { initThermoPanel } from './scales/scale0/ui/overlays/thermo-panel.js';
 import { initDispersionPanel } from './scales/scale0/ui/overlays/dispersion-panel.js';
 import { initKnotsPanel } from './scales/scale0/ui/overlays/knots-panel.js';
 import { initScaleContextPanel } from './scales/scale0/ui/overlays/scale-context-panel.js';
+import { initTwoSectorsPanel } from './scales/scale0/ui/overlays/two-sectors-panel.js';
 import { initSettingsModal } from './ui/components/settings-modal/component.js';
 // Keyboard shortcut handler extracted per refactoring-analyst RF-9 (partial).
 import { wireKeyboard as wireKeyboardExternal } from './app-wire/keyboard.js';
@@ -535,6 +536,7 @@ async function init() {
     initDispersionPanel();
     initKnotsPanel();
     initScaleContextPanel();
+    initTwoSectorsPanel();
     appRegistry.register('panel:fluxSlice', window.__ftdFluxSlicePanel);
     appRegistry.register('panel:waveLab', window.__ftdWaveLabPanel);
     appRegistry.register('panel:p1Observables', window.__ftdP1Panel);
