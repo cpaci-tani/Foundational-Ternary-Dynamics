@@ -372,11 +372,13 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
         if (parts) frame.dampingZones = { particles: parts.positions, latticeSize: N };
     }
     if (flags.showKnotZones) {
-        // Boxes now follow the detected FIELD-LINE knots (clumps of crossing E
-        // streamlines), not manifested particles. The tracker holds the last
-        // recorded knots; empty when tracking is off or no E lines exist.
-        const z = getFieldLineKnotTracker().getKnotZones();
-        if (z && z.count) frame.knotZones = z;
+        // Boxes follow the detected FIELD-LINE knots (clumps of crossing E/B
+        // streamlines), not manifested particles. Dual frame: both the E and B
+        // knot families (the orthogonal EM pair); each empty when its field's
+        // overlay/tracking is off.
+        const e = getFieldLineKnotTracker('e').getKnotZones();
+        const b = getFieldLineKnotTracker('b').getKnotZones();
+        if ((e && e.count) || (b && b.count)) frame.knotZones = { e, b };
     }
 
     if (state.fieldFlags.showDualSubstrate && sampled.fluxVector?.count > 0) {
@@ -750,7 +752,7 @@ function runJob(sched, slot) {
             let knotColoring = null;
             if (state.knotTracking) {
                 const tick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
-                const tr = getFieldLineKnotTracker();
+                const tr = getFieldLineKnotTracker('e');
                 tr.record(lines, sampled.eField, tick, latticeSize);
                 if (tr.getPerKnotColor()) {
                     knotColoring = { lineIds: tr.assignLinesToKnots(lines), selectedId: tr.getSelected(), perKnotColor: true };
@@ -774,7 +776,25 @@ function runJob(sched, slot) {
             sampleCache.ensureParticleData();
             if (!sampled.bField?.count) break;
             const lines = buildBFieldLines(sched.acScale0, state, sampled, latticeSize, stride, params);
-            viewportAdapter.applyBFieldLines(lines);
+            // B-field-line knots — the orthogonal magnetic partner to E. Same pipeline,
+            // its own tracker; detected from the B streamlines, colored per B-knot.
+            let knotColoring = null;
+            if (state.knotTracking) {
+                const tick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                const tr = getFieldLineKnotTracker('b');
+                tr.record(lines, sampled.bField, tick, latticeSize);
+                if (tr.getPerKnotColor()) {
+                    knotColoring = { lineIds: tr.assignLinesToKnots(lines), selectedId: tr.getSelected(), perKnotColor: true };
+                }
+                if (tr.isContribEnabled()) {
+                    const cap = sched.acScale0;
+                    const eField = cap?.getScale0FieldSamples?.({ kind: 'e', stride });
+                    const divJ = cap?.getScale0FieldSamples?.({ kind: 'divJ', stride });
+                    const fluxVolume = cap?.getScale0FluxVolume?.();
+                    tr.measureContributions({ eField, bField: sampled.bField, fluxVolume, divJ, latticeSize });
+                }
+            }
+            viewportAdapter.applyBFieldLines(lines, knotColoring);
             break;
         }
         case JOB_FLUX: {
