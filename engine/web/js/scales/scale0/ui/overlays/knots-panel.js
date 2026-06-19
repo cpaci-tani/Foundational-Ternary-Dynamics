@@ -34,7 +34,11 @@ function drawContribChart(canvas, hist) {
     // gridlines at 0/50/100%
     ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
     for (const f of [0, 0.5, 1]) { const y = h - f * (h - 2) - 1; ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
-    if (n < 2) return;
+    if (n < 2) {   // brand-new knot — chart works, just waiting for a 2nd sample
+        ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '10px sans-serif'; ctx.textBaseline = 'middle';
+        ctx.fillText('collecting history…', 4, h / 2);
+        return;
+    }
     for (const t of CONTRIB_TRACES) {
         const arr = hist[t.key];
         ctx.beginPath();
