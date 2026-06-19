@@ -351,6 +351,8 @@ export const PLANCK_MASS_KG   = 2.176434e-8;     // m_P (kg)
 export const PLANCK_FORCE_N   = 1.21027e44;      // F_P (N)
 export const J_PER_EV         = 1.602176634e-19; // joules per electron-volt
 export const C_MS             = 2.99792458e8;    // speed of light (m/s)
+export const HBAR_C_MEV_M     = HBAR_C_MEV_FM * 1e-15; // hbar*c (MeV*m) = 197.327 MeV*fm, CODATA 2022
+export const GYR_S            = 3.15576e16;      // 1 Gyr in seconds (Julian) — for GRB time-of-flight
 
 // ── Coulomb prefactor canonical exports ─────────────────────────────
 // FTD has THREE distinct Coulomb conventions in production paths;
