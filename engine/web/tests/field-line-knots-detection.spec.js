@@ -45,8 +45,7 @@ test('two crossing clumps at x≈5 and x≈25, Particles=0 → two knots', () =>
     expect(tel.fields[12]).toBeGreaterThanOrEqual(1);
 });
 
-test('dense PARALLEL bundle (no crossings) → zero knots (AND gate)', () => {
-    const tr = new FieldLineKnotTracker({ cellSize: 2, densityThreshold: 2, minCellsPerKnot: 1, crossingDist: 2.0 });
+test('dense PARALLEL bundle: tracked by default (density-driven), rejected when requireCrossings', () => {
     // five parallel x-direction lines packed into one cell — dense, never crossing
     const lines = [
         [[3, 5.0, 5.0], [7, 5.0, 5.0]],
@@ -55,8 +54,12 @@ test('dense PARALLEL bundle (no crossings) → zero knots (AND gate)', () => {
         [[3, 5.0, 5.2], [7, 5.0, 5.2]],
         [[3, 5.0, 4.8], [7, 5.0, 4.8]],
     ];
-    const tel = tr.record(makeStreamlines(lines), null, 0, 33);
-    expect(tel.count).toBe(0);
+    // default detection is density-driven → the bundle IS a knot
+    const trDefault = new FieldLineKnotTracker({ cellSize: 2, densityThreshold: 2, minCellsPerKnot: 1, crossingDist: 2.0 });
+    expect(trDefault.record(makeStreamlines(lines), null, 0, 33).count).toBe(1);
+    // with requireCrossings, the parallel bundle is rejected (no tangle)
+    const trX = new FieldLineKnotTracker({ cellSize: 2, densityThreshold: 2, minCellsPerKnot: 1, crossingDist: 2.0, requireCrossings: true });
+    expect(trX.record(makeStreamlines(lines), null, 0, 33).count).toBe(0);
 });
 
 test('sparse crossing below density threshold → zero knots (density half of AND gate)', () => {

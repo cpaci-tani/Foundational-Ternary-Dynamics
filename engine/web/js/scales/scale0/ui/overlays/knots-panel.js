@@ -1,6 +1,6 @@
 import { rafCoordinator } from '../../../../lib/raf-coordinator.js';
 import { isPanelLive } from '../../../../ui/panels/panel-visibility.js';
-import { getScale0State, setFieldToggle, setKnotTracking } from '../../state/store.js';
+import { getScale0State, setFieldToggle, setKnotTracking, markFieldDirty } from '../../state/store.js';
 import { getFieldLineKnotTracker, knotHue } from '../../runtime/field-line-knots.js';
 
 const PANEL_ID = 'knots-panel';
@@ -54,8 +54,16 @@ function buildPanel() {
       <label class="kp-ctl" title="Detect + track the clumps where E field-lines bunch and cross (observation-only)">
         <input type="checkbox" id="kp-toggle-tracking"> <b>Track field-line knots</b> (per rebuild)
       </label>
-      <label class="kp-ctl" title="Show the cyan wireframe boxes around detected field-line knots">
+      <label class="kp-ctl" title="Show the wireframe boxes around detected field-line knots">
         <input type="checkbox" id="kp-toggle-overlay"> <b>Show knot overlays</b>
+      </label>
+      <label class="kp-ctl" title="Give each tracked knot its own color (boxes + rows). The selected knot is always white. Off = uniform cyan.">
+        <input type="checkbox" id="kp-toggle-color"> <b>Per-knot colors</b>
+      </label>
+      <label class="kp-ctl" title="How readily a field-line clump counts as a knot. Higher = more (fainter) clumps detected; lower = only the densest.">
+        <b style="min-width:62px;display:inline-block">Sensitivity</b>
+        <input type="range" id="kp-sensitivity" min="0" max="100" value="50" style="flex:1;margin-left:6px">
+        <span id="kp-sens-val" style="min-width:30px;text-align:right;color:var(--text-muted,#888)">50%</span>
       </label>
       <div class="kp-list" id="kp-list"></div>
       <div class="kp-feed-h">EVENT FEED</div>
@@ -79,6 +87,31 @@ export function mountKnotsPanel(host) {
 
     const trackCb = el('kp-toggle-tracking');
     const overlayCb = el('kp-toggle-overlay');
+    const colorCb = el('kp-toggle-color');
+
+    // Per-knot colors: when on, each knot gets its own deterministic color in
+    // both the viewport boxes and the panel rows; the selected knot is white
+    // regardless. When off, knots are uniform cyan.
+    colorCb.checked = getFieldLineKnotTracker().getPerKnotColor();
+    colorCb.addEventListener('change', (e) => {
+        getFieldLineKnotTracker().setPerKnotColor(e.target.checked);
+        markFieldDirty();   // recolor the flowlines + boxes on the next sweep
+        update();
+    });
+
+    // Detection sensitivity: higher → lower density threshold → more clumps
+    // qualify as knots. Re-detection happens in the next overlay sweep, so mark
+    // the field dirty to force one.
+    const sensSlider = el('kp-sensitivity');
+    const sensVal = el('kp-sens-val');
+    sensSlider.value = Math.round(getFieldLineKnotTracker().getSensitivity() * 100);
+    sensVal.textContent = sensSlider.value + '%';
+    sensSlider.addEventListener('input', (e) => {
+        const pct = +e.target.value;
+        sensVal.textContent = pct + '%';
+        getFieldLineKnotTracker().setSensitivity(pct / 100);
+        markFieldDirty();
+    });
 
     // The overlay checkbox drives the VISUAL flag (colored boxes around the
     // detected knots). The boxes are meaningless without tracking data, so
@@ -131,6 +164,7 @@ export function mountKnotsPanel(host) {
         const tel = fl.getTelemetry();
         const evs = fl.getEvents();
         const selectedId = fl.getSelected();
+        const perColor = fl.getPerKnotColor();
 
         el('kp-alive').textContent = agg.alive ?? 0;
         el('kp-segs').textContent = agg.sumSegs ?? 0;
@@ -154,7 +188,7 @@ export function mountKnotsPanel(host) {
                 const segs = f[k * S + 3] | 0, xings = f[k * S + 4] | 0, legs = f[k * S + 5] | 0;
                 // Each knot's dot matches its viewport box color; selected → white.
                 const dotCol = (id === selectedId) ? '#ffffff'
-                    : `hsl(${Math.round(knotHue(id) * 360)},85%,62%)`;
+                    : (perColor ? `hsl(${Math.round(knotHue(id) * 360)},85%,62%)` : '#3fd0e0');
                 html += `<div class="kp-row" data-id="${id}">`
                      +  `<span style="color:${dotCol}">●</span> #${id} `
                      +  `N${tel.size[k]} age${tel.age[k]}t · segs${segs} ×${xings} legs${legs}`;
@@ -180,8 +214,12 @@ export function mountKnotsPanel(host) {
                 r.onclick = () => {
                     const id = +r.dataset.id;
                     expandedId = (expandedId === id ? null : id);
-                    // Drive the viewport highlight: selected knot's box turns white.
+                    // Drive the viewport highlight: select the knot AND mark the
+                    // field dirty so the overlay sweep re-renders the boxes this
+                    // frame (even when paused). The seed cache keeps the field-lines
+                    // unchanged — only the selected knot's box turns white.
                     getFieldLineKnotTracker().setSelected(expandedId === null ? -1 : expandedId);
+                    markFieldDirty();
                     update();
                 };
             });

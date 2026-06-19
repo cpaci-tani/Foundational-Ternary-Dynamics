@@ -180,8 +180,8 @@ export function createScale0ViewportAdapter(viewport) {
         applyConfinementStrings(bridge) {
             viewport?.updateConfinementStrings?.(bridge);
         },
-        applyEFieldLines(lines) {
-            viewport?.updateEFieldLines?.(lines);
+        applyEFieldLines(lines, knotColoring) {
+            viewport?.updateEFieldLines?.(lines, knotColoring);
         },
         applyBFieldLines(lines) {
             viewport?.updateBFieldLines?.(lines);
