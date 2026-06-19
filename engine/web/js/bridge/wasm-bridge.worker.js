@@ -10,7 +10,18 @@
 // via importScripts) — so this file CANNOT be an ES module; CTRL is inlined
 // (must match shared-field.js CTRL).
 
-importScripts('../../wasm/ftd_core_mt.js');
+// Load the Emscripten MT glue. If this fails (e.g. a NetworkError because the
+// worker context isn't crossOriginIsolated / the -pthread glue's subresource
+// fetch is blocked by COEP), post a clean init-error back to the proxy so it can
+// fall back to the in-thread WASM engine instead of leaving the engine dead.
+// (Without this, importScripts throws uncaught — which surfaces only via the
+// worker's onerror, and not reliably in every browser.)
+try {
+    importScripts('../../wasm/ftd_core_mt.js');
+} catch (e) {
+    try { self.postMessage({ type: 'error', where: 'init', msg: 'importScripts failed: ' + String((e && e.message) || e) }); } catch (_) { /* ignore */ }
+    throw e;   // still abort the worker; the proxy fallback is already signalled
+}
 
 const CTRL = { FRAME: 0, N: 1, TICK: 2, RUNNING: 3, PCOUNT: 4, TICKS_PER_FRAME: 5, LEN: 8 };
 const TARGET_DT = 1000 / 60;
