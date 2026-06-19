@@ -66,27 +66,21 @@ DOM id  state key  column, all sourced from `dom.js::FIELD_TOGGLE_BINDINGS` (idk
 | 9 | `#toggle-force-weak` | `showForceWeak` | forces | ✓ |
 | 10 | `#toggle-dual-substrate` | `showDualSubstrate` | phenomena | ✓ |
 | 11 | `#toggle-chirality` | `showChirality` | phenomena | ✓ |
-| 12 | `#toggle-light` | `showLight` | fields | ✓ |
-| 13 | `#toggle-dark-halo` | `showDarkMatterHalo` | phenomena | ✓ |
-| 14 | `#toggle-damping-zones` | `showDampingZones` | phenomena | ✓ |
-| 15 | `#toggle-genesis-iso` | `showGenesisIsosurface` | phenomena | ✓ |
-| 16 | `#toggle-confinement` | `showConfinement` | phenomena | ✓ |
-| 17 | `#toggle-psi-squared` | `showPsiSquared` | quantum | ✓ |
-| 18 | `#toggle-phase` | `showPhase` | quantum | ✓ |
-| 19 | `#toggle-lagrangian-density` | `showLagrangianDensity` | quantum | ✓ |
-| 20 | `#toggle-entropy-density` | `showEntropyDensity` | quantum | ✓ |
-| 21 | `#toggle-grav-potential` | `showGravPotential` | topology | ✓ |
-| 22 | `#toggle-em-energy` | `showEmEnergy` | topology | ✓ |
-| 23 | `#toggle-charge-density` | `showChargeDensity` | topology | ✓ |
-| 24 | `#toggle-vorticity` | `showVorticity` | topology | ✓ |
-| 25 | `#toggle-helicity` | `showHelicity` | topology | ✓ |
-| 26 | `#toggle-kretschmann` | `showKretschmann` | topology | ✓ |
-| 27 | `#toggle-horizon` | `showHorizon` | phenomena | ✓ |
-| 28 | `#toggle-e-pressure` | `showEPressure` | stress-energy | ✓ |
-| 29 | `#toggle-b-pressure` | `showBPressure` | stress-energy | ✓ |
-| 30 | `#toggle-kinetic-energy` | `showKineticEnergy` | stress-energy | ✓ |
-| 31 | `#toggle-fisher` | `showFisher` | stress-energy | ✓ |
-| 32 | `#toggle-coherence` | `showCoherence` | stress-energy | ✓ |
+| 12 | `#toggle-dark-halo` | `showDarkMatterHalo` | phenomena | ✓ |
+| 13 | `#toggle-damping-zones` | `showDampingZones` | phenomena | ✓ |
+| 14 | `#toggle-genesis-iso` | `showGenesisIsosurface` | phenomena | ✓ |
+| 15 | `#toggle-confinement` | `showConfinement` | phenomena | ✓ |
+| 16 | `#toggle-psi-squared` | `showPsiSquared` | quantum | ✓ |
+| 17 | `#toggle-phase` | `showPhase` | quantum | ✓ |
+| 18 | `#toggle-lagrangian-density` | `showLagrangianDensity` | quantum | ✓ |
+| 19 | `#toggle-entropy-density` | `showEntropyDensity` | quantum | ✓ |
+| 20 | `#toggle-grav-potential` | `showGravPotential` | topology | ✓ |
+| 21 | `#toggle-em-energy` | `showEmEnergy` | topology | ✓ |
+| 22 | `#toggle-charge-density` | `showChargeDensity` | topology | ✓ |
+| 23 | `#toggle-vorticity` | `showVorticity` | topology | ✓ |
+| 24 | `#toggle-horizon` | `showHorizon` | phenomena | ✓ |
+| 25 | `#toggle-e-pressure` | `showEPressure` | stress-energy | ✓ |
+| 26 | `#toggle-b-pressure` | `showBPressure` | stress-energy | ✓ |
 
 **id  key derivation rule:** the key is the kebab-cased id with the `toggle-` prefix stripped and `show` prepended in camelCase — *almost*. It is **not** algorithmically derivable in every case (`toggle-genesis-iso → showGenesisIsosurface`, `toggle-dark-halo → showDarkMatterHalo`, `toggle-div-field → showDivField`). The authoritative mapping is therefore the **explicit `FIELD_TOGGLE_BINDINGS` table in `dom.js`** — the companion test reads that table directly rather than reconstructing ids, so it never drifts from the code.
 

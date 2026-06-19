@@ -44,14 +44,9 @@ export const SCALAR_SAMPLE_DEPS = {
     showEmEnergy: ['eField', 'bField'],
     showChargeDensity: ['divergence'],
     showVorticity: ['vorticity'],
-    showHelicity: ['helicity'],
-    showKretschmann: ['kretschmann'],
     showHorizon: ['latency'],
     showEPressure: ['eField'],
     showBPressure: ['bField'],
-    showKineticEnergy: [],
-    showFisher: ['fisher'],
-    showCoherence: ['coherence'],
     showStateField: ['state'],
     showLatency: ['latency'],
     showGaussResidual: ['gaussResidual'],
@@ -140,18 +135,14 @@ export function buildSampleSnapshot(fieldCapability, flags, stride, acScale0) {
         flags.showForceWeak || flags.showPsiSquared || flags.showPhase ||
         flags.showLagrangianDensity || flags.showEntropyDensity || flags.showGravPotential;
     if (needFlux) cache.ensureSample('fluxVector');
-    if (flags.showPoynting || flags.showLight || flags.showLagrangianDensity) cache.ensureSample('poynting');
+    if (flags.showPoynting || flags.showLagrangianDensity) cache.ensureSample('poynting');
     if (flags.showEField || flags.showEmEnergy || flags.showEPressure) cache.ensureSample('eField');
     if (flags.showBField || flags.showEmEnergy || flags.showBPressure) cache.ensureSample('bField');
     if (flags.showDivField || flags.showLagrangianDensity || flags.showChargeDensity) {
         cache.ensureSample('divergence');
     }
     if (flags.showVorticity) cache.ensureSample('vorticity');
-    if (flags.showHelicity) cache.ensureSample('helicity');
-    if (flags.showKretschmann) cache.ensureSample('kretschmann');
     if (flags.showHorizon || flags.showLatency) cache.ensureSample('latency');
-    if (flags.showFisher) cache.ensureSample('fisher');
-    if (flags.showCoherence) cache.ensureSample('coherence');
     if (flags.showForceWeak) cache.ensureSample('curlJ');
     if (flags.showStateField) cache.ensureSample('state');
     if (flags.showGaussResidual) cache.ensureSample('gaussResidual');

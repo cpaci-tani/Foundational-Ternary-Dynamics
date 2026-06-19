@@ -24,6 +24,9 @@ export function getPlayBarTemplate() {
                 title="Step (S)" aria-label="Step">&#9205;</button>
             <button class="tb-btn play-bar-small-btn" id="btn-reset"
                 title="Reset (R)" aria-label="Reset">&#8634;</button>
+            <button class="tb-btn play-bar-small-btn play-bar-prime-btn is-on" id="btn-prime-tick"
+                title="Prime one tick on load — populate field overlays at tick 0"
+                aria-label="Prime tick on load" aria-pressed="true" hidden>&#9889;</button>
         </div>
 
         <div class="play-bar-divider" aria-hidden="true"></div>

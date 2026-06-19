@@ -76,10 +76,6 @@ export function getScale0OverlayTemplate() {
           title="[AXIOM] Ternary state field s ∈ {−1,0,+1} — the literal FTD manifestation layer (Postulate 3). Manifested voxels render as points (s=−1 blue, s=+1 red); the void (s=0) is the invisible background. The substrate's actual matter content, normally only seen indirectly via particles.">
         <span class="field-swatch field-swatch-state"></span>State s
       </button>
-      <button class="view-toggle field-toggle" id="toggle-moore-decomp"
-          title="[THEOREM] Moore-neighbourhood decomposition (Moore Layer Theorem). The 26 neighbours split into three polyhedral shells: SC octahedron (6 faces, red) + FCC cuboctahedron (12 edges, green) + BCC stella octangula (8 corners = two tetrahedra, blue). A static structural glyph centred on the lattice — the geometric heart of FTD, not a sampled field.">
-        <span class="field-swatch field-swatch-moore"></span>Moore cell
-      </button>
     </div>
 
     <div class="s0-overlay-col" data-col="fields">
@@ -100,10 +96,6 @@ export function getScale0OverlayTemplate() {
       <button class="view-toggle field-toggle" id="toggle-poynting"
           title="Poynting vector S = E × B (energy flux direction)">
         <span class="field-swatch field-swatch-energy"></span>Poynting S
-      </button>
-      <button class="view-toggle field-toggle" id="toggle-light"
-          title="Photon glow — Poynting magnitude |S| rendered as additive bloom. Render-variant of Poynting S (same E×B energy flux), not independent physics.">
-        <span class="field-swatch field-swatch-light"></span>Light
       </button>
     </div>
 
@@ -187,14 +179,6 @@ export function getScale0OverlayTemplate() {
           title="Vorticity |ω|(x) = |∇×J|. Flux-field swirl magnitude; lights up around vortex rings and rotational solitons, flat for curl-free flow.">
         <span class="field-swatch field-swatch-vorticity"></span>Vorticity &omega;
       </button>
-      <button class="view-toggle field-toggle" id="toggle-helicity"
-          title="Helicity density h(x) = J·(∇×J). Signed scalar — field-line linking number density. Positive = right-handed, negative = left-handed.">
-        <span class="field-swatch field-swatch-helicity"></span>Helicity h
-      </button>
-      <button class="view-toggle field-toggle" id="toggle-kretschmann"
-          title="[PROXY] Kretschmann-like curvature K(x) = (∇²L)² with L = √(|J|²/|J|²_max) as mass-density proxy (MockBridge doesn't run the Poisson solver). Log-compressed so the horizon spike doesn't flatten the background. Spikes at event horizons.">
-        <span class="field-swatch field-swatch-kretschmann"></span>Curvature K
-      </button>
       <button class="view-toggle field-toggle" id="toggle-latency"
           title="[DERIVED] Latency / time-dilation field L(x) = √(|J|²/|J|²max) ∈ [0, 0.998]. The Born-Infeld proper-time field — f = 1 − L² is the local speed limit, so high-L regions are gravity wells where time slows; L spikes toward 1 at event horizons. Volumetric point cloud, blue (L≈0) → red (L→1).">
         <span class="field-swatch field-swatch-latency"></span>Latency L
@@ -219,14 +203,6 @@ export function getScale0OverlayTemplate() {
       <button class="view-toggle field-toggle" id="toggle-b-pressure"
           title="Magnetic pressure P_B(x) = ½|B|². Sister field to P_E; rises on current loops.">
         <span class="field-swatch field-swatch-b-pressure"></span>P&#8331; (magnetic)
-      </button>
-      <button class="view-toggle field-toggle" id="toggle-kinetic-energy"
-          title="Kinetic energy density K(x) = ½|v|² at particle sites. Highlights moving particles.">
-        <span class="field-swatch field-swatch-kinetic"></span>Kinetic K
-      </button>
-      <button class="view-toggle field-toggle" id="toggle-fisher"
-          title="Fisher information F(x) = |∇ρ|²/ρ with ρ = |J|². Log-compressed so localized-mode edges remain readable. Brightens the sharp edges of soliton shells and wave-packet envelopes.">
-        <span class="field-swatch field-swatch-fisher"></span>Fisher F
       </button>
     </div>
 
@@ -264,10 +240,6 @@ export function getScale0OverlayTemplate() {
       <button class="view-toggle field-toggle" id="toggle-horizon"
           title="[PROXY] Event-horizon isosurface — voxels where the latency proxy L ≥ 0.95. Rendered as a voxel-centred point cloud (marching-cubes isosurface not yet implemented). The point of no escape for gravitationally trapped flux.">
         <span class="field-swatch field-swatch-horizon"></span>Horizon
-      </button>
-      <button class="view-toggle field-toggle" id="toggle-coherence"
-          title="[PROXY] Dual-substrate coherence C(x) = (J·∇×J)/(|J|·|∇×J|) in [-1,1]. Cosine of the angle between flow and curl — chirality sign density (a scale-free stand-in for a true Helmholtz L/R decomposition).">
-        <span class="field-swatch field-swatch-coherence"></span>Coherence C
       </button>
     </div>
     </div>

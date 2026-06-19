@@ -135,10 +135,10 @@ scheduler **spreads the work across frames under a fixed budget**, allocation-fr
 - **Coherence snapshot** (`sched.sampled`): the field is sampled **once** at sweep start so every job in
   the sweep sees the same tick's data (and the same particle positions) — preventing inter-overlay drift.
 - **The scalar dispatch table** (`SCALAR_JOBS`, `:602-622`): the static, allocated-once `[flag, computeFn,
-  applyFn]` table for the **19 Tier-1/2/3 scalar topology overlays** (`showPsiSquared`, `showPhase`,
+  applyFn]` table for the **14 Tier-1/2/3 scalar topology overlays** (`showPsiSquared`, `showPhase`,
   `showLagrangianDensity`, `showEntropyDensity`, `showGravPotential`, `showEmEnergy`, `showChargeDensity`,
-  `showVorticity`, `showHelicity`, `showKretschmann`, `showHorizon`, `showEPressure`, `showBPressure`,
-  `showKineticEnergy`, `showFisher`, `showCoherence`, `showStateField`, `showLatency`, `showGaussResidual`).
+  `showVorticity`, `showHorizon`, `showEPressure`, `showBPressure`,
+  `showStateField`, `showLatency`, `showGaussResidual`).
   Splitting compute/apply lets a scalar job run with zero per-run allocation. The 4 force-flow types live
   in `FLOW_TYPES` (`:626-629`).
 
