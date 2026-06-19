@@ -7,6 +7,7 @@ import {
 } from '../../../fieldlines.js';
 import { DUAL_DELTA, K_GENESIS } from '../../../constants.js';
 import { getActiveScale0Capability, getActiveLatticeSize, getActiveScale0Bridge } from '../state/store.js';
+import { getFieldLineKnotTracker } from './field-line-knots.js';
 import {
     computePsiSquaredFrame,
     computePhaseFrame,
@@ -109,6 +110,24 @@ function emActiveScale0(ctx, state) {
     return getActiveScale0Capability(ctx, state) ?? ctx.bridge.capabilities.scale0;
 }
 
+// Streamline seeds are generated with Math.random() (importance sampling jitter),
+// so a re-sweep against an UNCHANGED field would re-randomize the lines — making
+// them visibly jump whenever ANY overlay is toggled (the toggle sets
+// fieldNeedsUpdate, which forces a sweep even though fieldDataVersion is frozen).
+// Cache the generated seeds per (fieldDataVersion, latticeSize): computeStreamlines
+// is deterministic given seeds+field, so reuse → byte-identical lines until a real
+// tick bumps the version. Particle-anchored seeds are already deterministic;
+// caching them is harmless and keeps the path uniform.
+function cachedSeeds(state, type, latticeSize, generate) {
+    const version = state.fieldDataVersion || 0;
+    let cache = state.streamlineSeedCache;
+    if (!cache || cache.version !== version || cache.latticeSize !== latticeSize) {
+        cache = state.streamlineSeedCache = { version, latticeSize, e: null, b: null, flux: null };
+    }
+    if (!cache[type]) cache[type] = generate();
+    return cache[type];
+}
+
 function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) {
     // E-field: lines start on positive charges and terminate on negative ones.
     // When particles exist we anchor seeds to them (real sources); otherwise
@@ -121,9 +140,9 @@ function buildEFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
     // both seed from the same tick's particle positions (fixes the offset bug).
     const particleData = sampled.particleData ?? activeScale0.getScale0ParticleFrame();
     fillFieldParticleBuf(state, particleData);
-    const seeds = particleData.count > 0
+    const seeds = cachedSeeds(state, 'e', latticeSize, () => particleData.count > 0
         ? generateEFieldSeeds(state.fieldParticleBuf, p.eOffset, p.maxSeeds)
-        : generateImportanceSeeds(sampled.eField, p.maxSeeds);
+        : generateImportanceSeeds(sampled.eField, p.maxSeeds));
     return computeStreamlines(sampled.eField, seeds, {
         N: latticeSize, stride, maxSteps: p.maxSteps, stepSize: p.stepSize,
         maxLines: p.maxLines, bidirectional: true,
@@ -141,9 +160,9 @@ function buildBFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
     // positions as E (same tick, same snapshot — fixes the offset bug).
     const particleData = sampled.particleData ?? activeScale0.getScale0ParticleFrame();
     fillFieldParticleBuf(state, particleData);
-    const seeds = particleData.count > 0
+    const seeds = cachedSeeds(state, 'b', latticeSize, () => particleData.count > 0
         ? generateBFieldSeeds(state.fieldParticleBuf, p.bRadius, p.maxSeeds)
-        : generateBImportanceSeeds(sampled.bField, p.maxSeeds, p.bRadius);
+        : generateBImportanceSeeds(sampled.bField, p.maxSeeds, p.bRadius));
     return computeStreamlines(sampled.bField, seeds, {
         N: latticeSize, stride,
         // Loops need ~ 2·π·radius worth of steps to close — give B 1.5× the
@@ -153,10 +172,10 @@ function buildBFieldLines(activeScale0, state, sampled, latticeSize, stride, p) 
     });
 }
 
-function buildFluxStreamlines(sampled, latticeSize, stride, p) {
+function buildFluxStreamlines(state, sampled, latticeSize, stride, p) {
     // Flux ∇·J carries divergence (sources/sinks), same topology as E.
     // Importance-sample by |J| so streamlines cluster on flux concentrations.
-    const seeds = generateImportanceSeeds(sampled.fluxVector, p.maxSeeds);
+    const seeds = cachedSeeds(state, 'flux', latticeSize, () => generateImportanceSeeds(sampled.fluxVector, p.maxSeeds));
     const lines = computeStreamlines(sampled.fluxVector, seeds, {
         N: latticeSize, stride, maxSteps: p.maxSteps, stepSize: p.stepSize,
         maxLines: p.maxLines, bidirectional: true,
@@ -204,7 +223,7 @@ export function buildElectromagneticOverlayData(ctx, state, sampled, latticeSize
     }
 
     if (state.fieldFlags.showFluxLines && sampled.fluxVector?.count > 0) {
-        frame.fluxStreamlines = buildFluxStreamlines(sampled, latticeSize, stride, p);
+        frame.fluxStreamlines = buildFluxStreamlines(state, sampled, latticeSize, stride, p);
     }
 
     return frame;
@@ -353,8 +372,11 @@ export function buildDerivedSubstrateData(state, sampled, fieldCapability, N) {
         if (parts) frame.dampingZones = { particles: parts.positions, latticeSize: N };
     }
     if (flags.showKnotZones) {
-        const parts = fieldCapability?.getScale0ParticleFrame?.();
-        if (parts) frame.knotZones = { particles: parts.positions, latticeSize: N };
+        // Boxes now follow the detected FIELD-LINE knots (clumps of crossing E
+        // streamlines), not manifested particles. The tracker holds the last
+        // recorded knots; empty when tracking is off or no E lines exist.
+        const z = getFieldLineKnotTracker().getKnotZones();
+        if (z && z.count) frame.knotZones = z;
     }
 
     if (state.fieldFlags.showDualSubstrate && sampled.fluxVector?.count > 0) {
@@ -721,6 +743,13 @@ function runJob(sched, slot) {
             if (!sampled.eField?.count) break;
             const lines = buildEFieldLines(sched.acScale0, state, sampled, latticeSize, stride, params);
             viewportAdapter.applyEFieldLines(lines);
+            // Field-line knot tracking: record from the SAME rebuilt streamlines,
+            // synchronously, before the pooled ring recycles `lines`. Observation-
+            // only; gated on the dedicated knotTracking flag (NOT a visual overlay).
+            if (state.knotTracking) {
+                const tick = (sched.acScale0?.getScale0Diagnostics?.()?.tick | 0) || 0;
+                getFieldLineKnotTracker().record(lines, sampled.eField, tick, latticeSize);
+            }
             break;
         }
         case JOB_BFIELD: {
@@ -734,7 +763,7 @@ function runJob(sched, slot) {
         case JOB_FLUX: {
             sampleCache.ensureSample('fluxVector');
             if (!sampled.fluxVector?.count) break;
-            const fs = buildFluxStreamlines(sampled, latticeSize, stride, params);
+            const fs = buildFluxStreamlines(state, sampled, latticeSize, stride, params);
             viewportAdapter.applyFluxStreamlines(fs.lines, fs.maxFlux);
             break;
         }

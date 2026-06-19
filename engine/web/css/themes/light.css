@@ -4,60 +4,60 @@
  * ============================================================ */
 
 html[data-theme="light"] {
-    /* Background ladder */
-    --bg-deep:     #f8f9fb;
-    --bg-surface:  #ffffff;
-    --bg-card:     #f0f2f5;
-    --bg-input:    #e5e7eb;
-    --bg-elevated: #ffffff;
-    --bg-raised:   #f8fafc;
+    /* Background ladder - Pristine Daylight Glass */
+    --bg-deep:     #f8fafc;
+    --bg-surface:  rgba(255, 255, 255, 0.60);
+    --bg-card:     rgba(255, 255, 255, 0.75);
+    --bg-input:    rgba(226, 232, 240, 0.80);
+    --bg-elevated: rgba(255, 255, 255, 0.90);
+    --bg-raised:   rgba(255, 255, 255, 0.98);
 
     /* Borders */
-    --border:       #d1d5db;
-    --border-light: #c0c4cc;
-    --border-glow:  rgba(37, 99, 235, 0.40);
+    --border:       rgba(15, 23, 42, 0.08);
+    --border-light: rgba(15, 23, 42, 0.15);
+    --border-glow:  rgba(59, 130, 246, 0.40);
 
     /* Text hierarchy — dark glyphs on light (AA contrast) */
-    --text-primary:   #111827;
-    --text-secondary: #374151;
-    --text-muted:     #4b5563;
-    --text-accent:    #1f2937;
-    --text-dim:       #7b8392;   /* disabled / inert (≥3:1 per WCAG 1.4.11) */
+    --text-primary:   #0f172a;
+    --text-secondary: #334155;
+    --text-muted:     #475569;
+    --text-accent:    #1e293b;
+    --text-dim:       #94a3b8;   /* disabled / inert (≥3:1 per WCAG 1.4.11) */
 
-    /* Interaction accent (blue) */
-    --accent:      #2563eb;
-    --accent-dim:  #1d4ed8;
-    --accent-glow: #2563eb44;
+    /* Interaction accent (vibrant blue) */
+    --accent:      #3b82f6;
+    --accent-dim:  #2563eb;
+    --accent-glow: rgba(59, 130, 246, 0.45);
 
     /* Status */
-    --positive: #16a34a;
-    --negative: #dc2626;
-    --warning:  #d97706;
-    --caution:  #ea580c;
+    --positive: #10b981;
+    --negative: #ef4444;
+    --warning:  #f59e0b;
+    --caution:  #f97316;
 
     /* State tints — blue, darker against light bg */
-    --state-hover-bg:   rgba(37, 99, 235, 0.08);
-    --state-active-bg:  rgba(37, 99, 235, 0.18);
-    --state-focus-ring: 0 0 0 2px rgba(37, 99, 235, 0.40);
+    --state-hover-bg:   rgba(59, 130, 246, 0.08);
+    --state-active-bg:  rgba(59, 130, 246, 0.18);
+    --state-focus-ring: 0 0 0 2px rgba(59, 130, 246, 0.45);
 
     /* Viewport + card surfaces */
-    --viewport-bg:    linear-gradient(180deg, #e0e4ea 0%, #c8cdd6 100%);
-    --card-shadow:    0 1px 3px rgba(0, 0, 0, 0.08);
-    --card-hover-bg:  #e8eaf0;
-    --chrome-shadow:  0 4px 24px rgba(15, 23, 42, 0.12);
-    --dock-shadow:    0 12px 40px rgba(15, 23, 42, 0.18);
-    --tabs-shadow:    0 4px 16px rgba(15, 23, 42, 0.12);
-    --modal-backdrop: rgba(15, 23, 42, 0.40);
+    --viewport-bg:    radial-gradient(circle at top right, #e2e8f0 0%, #cbd5e1 100%);
+    --card-shadow:    0 4px 16px rgba(15, 23, 42, 0.06);
+    --card-hover-bg:  rgba(255, 255, 255, 0.85);
+    --chrome-shadow:  0 8px 32px rgba(15, 23, 42, 0.10);
+    --dock-shadow:    0 24px 64px rgba(15, 23, 42, 0.15);
+    --tabs-shadow:    0 8px 24px rgba(15, 23, 42, 0.08);
+    --modal-backdrop: rgba(15, 23, 42, 0.30);
     --tooltip-bg:     rgba(255, 255, 255, 0.98);
-    --tooltip-border: rgba(37, 99, 235, 0.22);
-    --tooltip-text:   #172033;
-    --tooltip-shadow: 0 12px 32px rgba(15, 23, 42, 0.16);
-    --tooltip-kicker: #2563eb;
-    --tooltip-muted:  #5b6474;
+    --tooltip-border: rgba(59, 130, 246, 0.25);
+    --tooltip-text:   #0f172a;
+    --tooltip-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+    --tooltip-kicker: #3b82f6;
+    --tooltip-muted:  #64748b;
 }
 
 html[data-theme="light"] .card {
-    border-color: rgba(0, 0, 0, 0.08);
+    border-color: rgba(15, 23, 42, 0.06);
 }
 
 html[data-theme="light"] {
