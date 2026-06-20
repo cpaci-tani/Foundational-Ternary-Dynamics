@@ -130,6 +130,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.wave_propagation = true;
         rb.toggles.coupling = true;
         rb.toggles.damping = false;
+        rb.toggles.selective_damping = false;
         rb.toggles.genesis = false;
         rb.toggles.gauss_projection = false;
         rb.toggles.forces = false;
@@ -161,6 +162,7 @@ bool setup_s0_field_scenario(RenderBridge& rb, const std::string& name) {
         rb.toggles.wave_propagation = true;
         rb.toggles.coupling = true;
         rb.toggles.damping = false;
+        rb.toggles.selective_damping = false;
         rb.toggles.genesis = false;
         rb.toggles.gauss_projection = false;
         rb.toggles.forces = true;
