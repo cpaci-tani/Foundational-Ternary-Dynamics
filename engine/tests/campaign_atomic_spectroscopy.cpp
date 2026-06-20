@@ -177,22 +177,34 @@ void configure_profile(ftd::RenderBridge& rb, const Args& a) {
   rb.set_dt(a.dt);
 }
 
-// Drop a spherical Gaussian FLUX wavepacket centered at (c,c,c). We deliberately
-// use inject_flux_add (NOT inject_wavepacket, which would set a second state±1
-// seed). The flux is polarized along +x with a Gaussian envelope; the operator
-// A acts per-component (delta_j -= flux*omega_eff²; the wave Laplacian is also
+// Drop a spherical Gaussian FLUX wavepacket whose CENTER is displaced from the
+// lattice center (c,c,c) by `offset` voxels along +x. We deliberately use
+// inject_flux_add (NOT inject_wavepacket, which would set a second state±1 seed).
+// The flux is polarized along +x with a Gaussian envelope; the operator A acts
+// per-component (delta_j -= flux*omega_eff²; the wave Laplacian is also
 // per-component), so a single-component drop excites the same scalar spectrum.
+//
+// offset=0 ⇒ packet centered on the nucleus (spherically symmetric, excites the
+// s-wave 1s/2s only; the 2p triplet has a node at center and is never populated).
+// offset>0 ⇒ packet center moves to (c+offset, c, c) while the LOCKED nucleus
+// stays at (c,c,c). The off-center packet has p-wave overlap with the Coulomb
+// well ⇒ it populates the 2p-like bound states. The Gaussian envelope is measured
+// from the SHIFTED center (px,py,pz); the loop box is built around that shifted
+// center so the full envelope is laid down even when it straddles the nucleus.
+// offset=0 must reproduce the original behavior bit-for-bit (px=c, identical box,
+// identical r2, identical injection order).
 void seed_gaussian_flux_packet(ftd::RenderBridge& rb, int L, int c,
-                               double sigma, double amp) {
+                               double sigma, double amp, int offset) {
   const double inv2s2 = 1.0 / (2.0 * sigma * sigma);
-  // 4σ box around center covers the envelope to ~3e-4 of the peak.
+  const int px = c + offset, py = c, pz = c;  // shifted packet center
+  // 4σ box around the (shifted) packet center covers the envelope to ~3e-4 of peak.
   const int half = static_cast<int>(std::ceil(4.0 * sigma));
   for (int dx = -half; dx <= half; ++dx)
     for (int dy = -half; dy <= half; ++dy)
       for (int dz = -half; dz <= half; ++dz) {
-        const int x = c + dx, y = c + dy, z = c + dz;
+        const int x = px + dx, y = py + dy, z = pz + dz;
         if (x < 0 || x >= L || y < 0 || y >= L || z < 0 || z >= L) continue;
-        const double r2 = double(dx * dx + dy * dy + dz * dz);
+        const double r2 = double(dx * dx + dy * dy + dz * dz);  // dist² from packet center
         const double w = amp * std::exp(-r2 * inv2s2);
         rb.inject_flux_add(x, y, z, ftd::Vec3{w, 0.0, 0.0});
       }
@@ -246,8 +258,8 @@ int main(int argc, char** argv) {
   std::printf("================================================================\n");
   std::printf("FTD-0281 — atomic spectroscopy (ENGINE)  Z=%.3g (%s)\n",
               a.Z, (a.Z == 1.0) ? "hydrogen-1s" : "He+/ion well");
-  std::printf("L=%d  ticks=%d  omega0=%.4f  sor=%d  sigma=%.3f  probeR=%.3f  dt=%.3f  backend=%s  Z=%.3g\n",
-              L, a.ticks, a.omega0, a.sor, a.sigma, R, a.dt, a.backend.c_str(), a.Z);
+  std::printf("L=%d  ticks=%d  omega0=%.4f  sor=%d  sigma=%.3f  probeR=%.3f  dt=%.3f  backend=%s  Z=%.3g  offset=%d\n",
+              L, a.ticks, a.omega0, a.sor, a.sigma, R, a.dt, a.backend.c_str(), a.Z, a.offset);
   std::printf("================================================================\n");
 
   ftd::RenderBridge rb(L);
@@ -268,8 +280,11 @@ int main(int argc, char** argv) {
   // state=+1; with forces=false the charge stays fixed ⇒ phi_C is static.
   rb.inject_particle(c, c, c, +1, ftd::Vec3{0.0, 0.0, 0.0});
 
-  // Spherical Gaussian FLUX wavepacket (the probe field that will ring).
-  seed_gaussian_flux_packet(rb, L, c, a.sigma, a.amp);
+  // Spherical Gaussian FLUX wavepacket (the probe field that will ring). With
+  // a.offset>0 the packet center is displaced +offset along x to break the
+  // spherical symmetry and excite the 2p (FTD-0281 rung-b); offset=0 is the
+  // centered, bit-identical anchor.
+  seed_gaussian_flux_packet(rb, L, c, a.sigma, a.amp, a.offset);
 
   // One warm-up solve so phi_coulomb_ is populated from the fixed source before
   // we snapshot the reference field and J(0). (tick() pre-solves phi_C when
