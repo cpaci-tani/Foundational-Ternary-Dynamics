@@ -97,7 +97,15 @@ void GpuBackend::tick() {
 }
 
 void GpuBackend::set_dt(double dt) {
-    if (engine_) engine_->set_dt(dt);
+    if (engine_) {
+        // Sync toggles BEFORE set_dt so GpuEngine::set_dt sees the live
+        // symplectic_leapfrog flag (it decides whether dt<1 is honored).
+        // tick() re-syncs every tick, so this is only load-bearing when set_dt
+        // is called during setup, before the first tick (the common case for
+        // campaigns: rb.toggles.symplectic_leapfrog=true; rb.set_dt(0.5)).
+        engine_->toggles = bridge_.toggles;
+        engine_->set_dt(dt);
+    }
 }
 
 void GpuBackend::sync_to_host() {

@@ -37,7 +37,8 @@
 // Forward declarations of GPU kernel launchers (implemented in kernel files)
 namespace ftd { namespace gpu { namespace kernels {
     void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
-                            uint8_t bcc_stencil_mode);
+                            uint8_t bcc_stencil_mode,
+                            bool do_db_clock, bool do_db_clock_coulomb, double omega0);
     void launch_phase_write(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                             bool larmor_radiation, double damping_factor,
                             bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
@@ -60,7 +61,8 @@ namespace ftd { namespace gpu { namespace kernels {
                              bool gravity, bool lorentz_force, double dt);
     void launch_phase_movement(GpuBuffers& bufs, double dt, bool reflective_boundary);
     // Dual-substrate launchers
-    void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling);
+    void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
+                                bool do_db_clock, bool do_db_clock_coulomb, double omega0);
     void launch_phase_write_dual(GpuBuffers& bufs, bool do_damping, bool selective_damping,
                                   bool larmor_radiation, double damping_factor,
                                   bool do_genesis, bool do_evaporation, double dt, bool symplectic_leapfrog,
@@ -139,7 +141,15 @@ GpuEngine::~GpuEngine() {
 }
 
 void GpuEngine::set_dt(double dt) {
-    dt_ = (dt >= 1.0) ? dt : 1.0;
+    // Mirror RenderBridge::set_dt: dt<1 is honored ONLY with symplectic_leapfrog,
+    // which permits a CFL-stable sub-step (the plain leapfrog hardcodes dt=1 and
+    // is unstable for dt>1·CFL). Pre-2026-06-20 this unconditionally clamped to
+    // 1.0, so the GPU silently ran dt=1 even when the symplectic integrator and a
+    // dt<1 were requested (e.g. campaign_atomic_spectroscopy at ω₀=1.5, dt=0.5) —
+    // exciting the unstable high-k mode and diverging. Now the GPU honors the same
+    // dt<1 the CPU does. toggles are synced before each tick (GpuBackend::tick),
+    // and GpuBackend::set_dt syncs them before forwarding, so this read is fresh.
+    dt_ = (toggles.symplectic_leapfrog || dt >= 1.0) ? dt : 1.0;
 }
 
 void GpuEngine::set_rng_seed(unsigned int seed) {
@@ -224,15 +234,31 @@ void GpuEngine::run(int num_ticks) {
 // ---------- GPU Tick Sub-Phases ----------
 
 void GpuEngine::gpu_phase_read() {
+    // FTD-0281 (GPU port, 2026-06-20): when db_clock_coulomb is on, pre-solve the
+    // live Coulomb Poisson field so the diagonal KG term in phase_read can read
+    // V(r) = −phi_C on the SAME tick. Mirrors the CPU pre-read solve in
+    // render_bridge.cpp:620-621 (toggles.db_clock_coulomb → solve_coulomb_poisson()).
+    // Forces are validation-conflicted with db_clock_coulomb (see TOGGLE_SPECS),
+    // so this is the only Coulomb solve on this tick — no double-solve.
+    if (toggles.db_clock_coulomb) {
+        gpu_solve_coulomb();
+    }
+
     if (toggles.dual_substrate) {
         kernels::launch_phase_read_dual(bufs_,
                                         toggles.wave_propagation,
-                                        toggles.coupling);
+                                        toggles.coupling,
+                                        toggles.de_broglie_clock,
+                                        toggles.db_clock_coulomb,
+                                        toggles.omega0);
     } else {
         kernels::launch_phase_read(bufs_,
                                    toggles.wave_propagation,
                                    toggles.coupling,
-                                   static_cast<uint8_t>(toggles.bcc_stencil));
+                                   static_cast<uint8_t>(toggles.bcc_stencil),
+                                   toggles.de_broglie_clock,
+                                   toggles.db_clock_coulomb,
+                                   toggles.omega0);
     }
 }
 
