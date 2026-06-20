@@ -11,6 +11,8 @@ Canonical companions:
 - `engine/SPEC_ENGINE.md` - detailed living engine reference.
 - `engine/CALLSTACKS.md` - feature-by-feature call graph from entrypoint to phase/kernel.
 - `engine/SCENARIO_ARCHITECTURE.md` - scenario lifecycle, bridge ownership, toggle profiles, and cross-scale seed architecture.
+- `engine/docs/ENGINE_CODE_MAP.md` - file/subsystem navigation map (this doc's file-level companion: largest files, split status, doc gaps, dead code).
+- `engine/docs/ENGINE_FILE_MANIFEST.{md,json}` - per-file catalog of every tracked code file (auto-generated).
 - `engine/include/ftd/render_bridge.h` - Scale 0 public API.
 - `engine/src/render_bridge.cpp` - CPU tick orchestration and backend handoff.
 - `engine/src/render_bridge_phases/` - decomposed CPU phase implementations.
