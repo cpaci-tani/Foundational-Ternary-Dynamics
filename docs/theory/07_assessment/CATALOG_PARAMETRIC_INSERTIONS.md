@@ -63,7 +63,7 @@ These are the load-bearing claims. Every catalog entry below that is [PARAMETRIC
 | N_c (colors) | 3 | Independently sourced via 4 topological routes converging on N_c = 3 (Moore Layer Theorem; `DERIV_NC_FROM_TOPOLOGY.md`). *(The historical `x_-  N_c` master-quadratic-root reading — `x_- = 3.024`, 0.80% of 3 — is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`.)* | [THEOREM] for topology routes | `DERIV_NC_FROM_TOPOLOGY.md` |
 | {N_base, N_eff, b_3} | {4, 13, 7} | Moore-neighborhood integer invariants | [THEOREM] | `AUDIT_SELF_CONSISTENCY.md` |
 | G_C (state-flux coupling) | √α | Lattice-QED bare coupling; g_c = √α at Thomson scale | [THEOREM] | `DERIV_CONTINUUM_LIMIT_QED_EQUIVALENCE.md` |
-| sin²θ_W | 3/13 | N_c / N_eff from SU(2)×U(1) Moore-layer decomposition | **[THEOREM]** (upgraded 2026-06-18 per FTD-0200 structural derivation) | 3.53% error vs M_Z experimental 0.2229. The 3/13 ratio is now proven to be the exact 13-axis spatial projection of the Moore neighborhood. `proof_complete_sm.py` §electroweak |
+| sin²θ_W | 3/13 | N_c / N_eff from SU(2)×U(1) Moore-layer decomposition | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (CORRECTION 2026-06-19: [THEOREM] of `24b31016` RETRACTED — substitution identity, fails FTD-0097/0189 bar; the Moore-layer 3/13 = N_c/N_eff story is real but the 3.5% error caps it) | 3.53% error vs M_Z experimental 0.2229; experimental precision is 20 ppm (1700× tighter than the FTD claim). Competitor 2/9 = 0.2222 fits better (0.31% vs 3.5%) with no Moore-neighborhood meaning. `proof_complete_sm.py` §electroweak |
 | C_SPEED | 1/√D = 1/√3 | CFL stability on cubic lattice | [THEOREM] | `SPEC_FTD.md` §dynamics |
 
 ---
@@ -72,29 +72,31 @@ These are the load-bearing claims. Every catalog entry below that is [PARAMETRIC
 
 | Quantity | Value | Formula | FTD inputs | Tag | Source |
 |---|---|---|---|---|---|
-| m_e | 0.511 MeV | $m_e = m_P \cdot \sqrt{2\pi} \cdot \left(\frac{N_{eff}+N_c}{N_c}\right) \cdot \alpha^{11}$ | $\alpha, m_P$ | **[THEOREM]** (Upgraded 2026-06-18) | Exactly tracks the 16/3 topological baseline. `DERIV_ELECTRON_MASS_ANCHOR.md` |
+| m_e | 0.511 MeV | m_e = m_P · √(2π) · (16/3) · α¹¹ | α, m_P | **[STRONGLY MOTIVATED CONJECTURE]** (CORRECTION 2026-06-19: [THEOREM] of `fdc483d0` RETRACTED — substitution identity, fails FTD-0097/0189 bar; restored to its 2026-04-19 honest tier) | Exponent n=11 is [DERIVED]; prefactor 16/3 is the tightest simple rational at that exponent (1 of 2 within 1% across 6489 combos). The (N_eff+N_c)/N_c re-spelling is algebra, not a derivation. `DERIV_ELECTRON_MASS_ANCHOR.md`, `proof_electron_mass.py` |
 | m_μ / m_e | 206.77 | N_c² · N_eff · b_3 + offsets | {N_c, N_eff, b_3} | [DERIVED] | `proof_mass_ratios.py` |
 | m_τ / m_e | 3477 | Triangular number formula | {N_c, N_eff} | [DERIVED] | `proof_mass_ratios.py` |
-| m_p | 1836 | $L_9$ Phase Space (1938) - $SU(3)$ Edge knot (102) | Bounding knot topology | **[THEOREM]** (Upgraded 2026-06-18) | Exact geometric capacity abolishes the old $\alpha$ mixing formula. `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_p / m_e | 1836.47 | N_eff/α + N_base·N_eff + N_c | {N_c, N_base, N_eff, α} | **[STRONGLY MOTIVATED CONJECTURE]** (CORRECTION 2026-06-19: [THEOREM] of `fdc483d0` RETRACTED — the 1938−102 knot form is a substitution identity, strictly less informative than this formula; restored to its 2026-04-19 honest tier) | 173 ppm error; 5.8× experimental precision (30 ppm). Uses three Moore integers + α so harder to dismiss as a rational fit, but "derivation" is overstated. The `1938 − 102` knot re-spelling is integer-only [PARAMETRIC]. `proof_proton_electron_ratio.py`, `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
 
 These are genuine: each produces both the formula *and* the numerical value from lattice structure.
 
 ---
 
-## 5 · Quark Masses — fully [THEOREM]
+## 5 · Quark Masses — fully [PARAMETRIC]
 
-**Update 2026-06-18:** The 6 quark masses have been fully derived from the discrete phase spaces of the Moore lattice. The historical multi-integer fits have been permanently **RETRACTED**. Fractional charge maps strictly to topological fracturing. See `DERIV_BARYON_AND_QUARK_GEOMETRY.md`.
+> **CORRECTION 2026-06-19 (adjudicated):** the 2026-06-18 `[THEOREM]` promotion (commit `fdc483d0`) is **RETRACTED** — the "$L_n$ phase-space" recipes are substitution identities, not a forcing chain; they fail the FTD-0097/0189 look-elsewhere bar and the standing zero-promotion discipline. **Honest tag: `[PARAMETRIC]` (all six).** No genuine motivation exists above this tier. `[THEOREM]` is re-earnable only behind a pre-registered look-elsewhere control.
 
-| Quantity | Formula | FTD inputs | Source |
+All six quark masses are integer-combination *fits* using the framework integers {N_c, N_base, N_eff, b_3, α}. The formulas are *chosen to match experiment*, not derived. They belong in this catalog because the reverse-engineering of integer combinations from experimental values is exactly the fishing pattern the project's epistemic-discipline rules prohibit. Until each formula has an independent *structural* justification (e.g., from a Moore-layer decomposition the way lepton masses do), they stay [PARAMETRIC].
+
+| Quantity | Formula (as constructed 2026-06-18) | FTD inputs | Source |
 |---|---|---|---|
-| m_u | Unilateral Triad (4) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_d | $L_1$ Face (9) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_s | $L_7$ Face + $L_2$ + Core (183) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_c | $L_{10}$ Phase Space + $L_2$ (2484) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_b | $L_{18}$ + $L_4$ + $L_1$ + Triad (8170) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
-| m_t | $L_{118}$ Phase Space (334170) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_u/m_e | Unilateral Triad (4) — ~5% off exp | {N_base} | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_d/m_e | $L_1$ Face (9) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_s/m_e | $L_7$ Face + $L_2$ + Core (183) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_c/m_e | $L_{10}$ + $L_2$ (2484) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_b/m_e | $L_{18}$ + $L_4$ + $L_1$ + Triad (8170) | Phase Space | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
+| m_t/m_e | $L_{118}$ (334170) — **imports Z=118/Oganesson from chemistry** | external Z | `DERIV_BARYON_AND_QUARK_GEOMETRY.md` |
 
-**Reviewer flag.** These formulas have achieved formal theorem status as direct structural capacities. The previous parametric catalog is superseded.
+**Reviewer flag.** These formulas have no independent structural derivation on the lattice. They are valuable as consistency checks (they *do* hit experimental values to within a few percent), but reporting them as "FTD predicts the quark masses" overstates the evidence — six tunable integer recipes will hit six targets by construction, and m_t imports an external chemistry input (Z=118). Correct reporting: "given the framework integers, integer-combination fits reproduce the six quark masses."
 
 ---
 
@@ -133,7 +135,7 @@ The CKM matrix is parametrized via standard Wolfenstein (λ, A, ρ, η) form. FT
 
 | Quantity | Formula | FTD inputs | Tag | Note |
 |---|---|---|---|---|
-| α_s(M_Z) | 7/59 | {b_3 = 7} | **[THEOREM]** (upgraded 2026-06-18 per FTD-0200 geometric derivation) | 0.63% error. The "59" denominator is structurally resolved as $b_3 + 4N_{eff}$ (7 gluonic + 52 Dirac/Moore pathways). `proof_complete_sm.py:262` |
+| α_s(M_Z) | 7/59 | {b_3 = 7} | **[STRUCTURALLY MOTIVATED PARAMETRIC]** (CORRECTION 2026-06-19: [THEOREM] of `24b31016` RETRACTED — substitution identity, fails FTD-0097/0189 bar; numerator 7 = b_3 is structural but the 59 denominator was chosen to hit α_s) | 0.63% error, but competitor 2/17 = 0.1176 fits BETTER (0.29% vs 0.63%) with no Moore interpretation. The "59" denominator is not structurally forced. `proof_complete_sm.py:262` |
 | α_s(Q²) running | QCD one-loop form α_s(M_Z)/[1 + (b₀α_s/2π)·ln(Q²/M_Z²)] | b₀ = b_3 = 7 | **[PARAMETRIC]** | `src/ontic_running_coupling.cpp` |
 | α(Q²) running | Imported QED form | α | **[PARAMETRIC]** | Not currently measured as pure continuum form |
 | α_EM running under blocking (2026-04-19) | Measured on L ∈ {32, 64, 128}, three extraction methods | asymptotic α_r on lattice | **[MEASURED]** | `DERIV_BETA_FUNCTION_MEASURED.md`; β_measured / β_QED ≈ −160 (first measurement); refined to ≈ −80 after T3 L=128 slope method |

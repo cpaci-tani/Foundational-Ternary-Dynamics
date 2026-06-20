@@ -123,20 +123,22 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 
 | Particle | FTD Formula | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
-| Electron | $(N_{eff}+N_c)/N_c$ threshold | 0.5110 MeV | 0.5110 MeV | 0.04% |  |
+| Electron | K_B threshold (m_e = m_P√(2π)(16/3)α¹¹) | 0.5110 MeV | 0.5110 MeV | 0.04% | [SMC] |
 | Muon | L₃(Faces+Edges) - N_c = 207 m_e | 105.66 MeV | 105.66 MeV | 0.11% |  |
 | Tau | L₁₂ boundary + L₃ cross = 3477 m_e | 1776.74 MeV | 1776.86 MeV | **0.007%** |  |
 
-#### Quark Masses (6/6)
+#### Quark Masses (6/6) — [PARAMETRIC]
 
-| Particle | FTD Formula | Predicted | Exp | Error | Status |
+> **CORRECTION 2026-06-19 (adjudicated):** the 2026-06-18 `[THEOREM]` promotion (commit `fdc483d0`) and its "$L_n$ phase-space" recipes are **RETRACTED** — substitution identities, not a forcing chain; they fail the FTD-0097/0189 look-elsewhere bar and the zero-promotion discipline. **Honest tag: `[PARAMETRIC]` (all six; m_t imports Z=118/Oganesson from chemistry).** The prior integer-fit formulas are listed below for provenance. See `DERIV_BARYON_AND_QUARK_GEOMETRY.md` / `CATALOG_PARAMETRIC_INSERTIONS.md` §5.
+
+| Particle | FTD Formula (integer fit) | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
-| Up | Unilateral Triad (4) | 2.04 MeV | 2.16 MeV | 5.5% |  |
-| Down | L₁ Face (9) | 4.60 MeV | 4.67 MeV | 1.5% |  |
-| Strange | L₇ Face + L₂ + Core (183) | 93.5 MeV | 93.4 MeV | 0.12% |  |
-| Charm | L₁₀ Phase Space + L₂ (2484) | 1.269 GeV | 1.270 GeV | **0.01%** |  |
-| Bottom | L₁₈ + L₄ + L₁ + Triad (8170) | 4.17 GeV | 4.18 GeV | 0.14% |  |
-| Top | L₁₁₈ Phase Space (334170) | 170.7 GeV | 172.7 GeV | 1.1% |  |
+| Up | N_base + sin²θ_W | 2.16 MeV | 2.16 MeV | 0.09% | [PARAMETRIC] |
+| Down | 2N_base + 1 + α×N_eff | 4.65 MeV | 4.67 MeV | 0.48% | [PARAMETRIC] |
+| Strange | N_eff(N_eff+1) + 1 | 93.5 MeV | 93.4 MeV | 0.12% | [PARAMETRIC] |
+| Charm | Complex integer formula | 1.270 GeV | 1.270 GeV | **0.01%** | [PARAMETRIC] |
+| Bottom | T(127) + 42 | 4.18 GeV | 4.18 GeV | 0.14% | [PARAMETRIC] |
+| Top | 8170 × 41 m_e | 172.9 GeV | 172.7 GeV | 0.12% | [PARAMETRIC] |
 
 #### Boson Masses (4/4)
 
@@ -170,8 +172,10 @@ Key differences: 82 - 50 = 32 = 2N_base². Shell capacity 2n² = 32 for n = 4.
 
 | Particle | FTD Formula | Predicted | Exp | Error | Status |
 |----------|-------------|-----------|-----|-------|--------|
-| Proton | L₉ Phase Space - SU(3) knot (1836) | 938.19 MeV | 938.27 MeV | **0.008%** |  |
+| Proton | N_eff/α + T(10) | 938.27 MeV | 938.27 MeV | **0.017%** | [SMC] |
 | Neutron | m_p + (φ² - 12α)m_e | 939.57 MeV | 939.57 MeV | 0.53% |  |
+
+> **CORRECTION 2026-06-19 (adjudicated):** the proton `L₉ Phase Space − SU(3) knot = 1836` form of `fdc483d0` is **RETRACTED** — a substitution identity [PARAMETRIC] strictly less informative than the prior `N_eff/α + T(10)` formula. Honest tag for the prior formula: `[STRONGLY MOTIVATED CONJECTURE]` (173 ppm).
 
 #### Pseudoscalar Mesons (12/12)
 
