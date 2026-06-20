@@ -104,6 +104,16 @@ struct Args {
   // the off-center (2p-like) bound states, testing whether the engine FFT can
   // resolve a SECOND bound line when one is actually excited (FTD-0281 rung-b).
   int offset = 0;
+  // Nuclear charge Z (FTD-0281 helium extension, 2026-06-20). Z=1 = hydrogen
+  // (the rung-(a)/(b) anchor); Z=2 = He+ (a 2× DEEPER Coulomb well, so the 1s
+  // is more bound and the levels are MORE separated). Z scales the Gauss-law
+  // source charge coupling: source = div(J) − Z·(state − mean_charge), so the
+  // engine's own Coulomb potential φ_C scales linearly φ_C → Z·φ_C (well depth
+  // ×Z). The mean-charge subtraction keeps the periodic Poisson problem
+  // solvable (net source still sums to zero). Z=1 reproduces the default
+  // physics EXACTLY (the regression gate). Wired via
+  // toggles.coulomb_charge_coupling = Z (the Phase-H knob, poisson_solvers.cpp:164).
+  double Z = 1.0;
 };
 
 double argd(const char* v) { return std::strtod(v, nullptr); }
@@ -125,6 +135,7 @@ Args parse_args(int argc, char** argv) {
     else if (eq("--backend") && i + 1 < argc) a.backend = argv[++i];
     else if (eq("--device-probe") && i + 1 < argc) a.device_probe = argi(argv[++i]);
     else if (eq("--offset") && i + 1 < argc)  a.offset = argi(argv[++i]);
+    else if (eq("--Z") && i + 1 < argc)       a.Z = argd(argv[++i]);
     else std::fprintf(stderr, "unknown/ignored arg: %s\n", argv[i]);
   }
   return a;
@@ -152,6 +163,14 @@ void configure_profile(ftd::RenderBridge& rb, const Args& a) {
   rb.toggles.dual_substrate   = false;
   rb.toggles.forces           = false;
   rb.toggles.omega0           = a.omega0;
+  // Nuclear charge Z (helium extension). Scales the COULOMB Poisson source
+  // (coulomb_source_scale, consumed by solve_coulomb_poisson) so phi_C → Z·phi_C
+  // ⇒ the db_clock_coulomb well depth is ×Z (Z=2 = He+). NOTE: this is the
+  // Coulomb-solve scale, NOT coulomb_charge_coupling (which only scales the
+  // Gauss flux-projection source phi_, a different buffer that never reaches the
+  // KG term). Non-bulk double config field, survives disable_all(); Z=1
+  // reproduces the hydrogen anchor exactly. Honored on CPU and GPU.
+  rb.toggles.coulomb_source_scale = a.Z;
   // Symplectic leapfrog with dt<1 for CFL stability at ω₀=1.5 (see Args::dt).
   // set_dt() only honors dt<1 when symplectic_leapfrog is on (render_bridge.cpp).
   rb.toggles.symplectic_leapfrog = true;
@@ -225,9 +244,10 @@ int main(int argc, char** argv) {
       fs::path(a.out) / ("atomic_spectroscopy_phiC_L" + std::to_string(L) + ".csv");
 
   std::printf("================================================================\n");
-  std::printf("FTD-0281 rung 1 — atomic spectroscopy (hydrogen-1s, ENGINE)\n");
-  std::printf("L=%d  ticks=%d  omega0=%.4f  sor=%d  sigma=%.3f  probeR=%.3f  dt=%.3f  backend=%s\n",
-              L, a.ticks, a.omega0, a.sor, a.sigma, R, a.dt, a.backend.c_str());
+  std::printf("FTD-0281 — atomic spectroscopy (ENGINE)  Z=%.3g (%s)\n",
+              a.Z, (a.Z == 1.0) ? "hydrogen-1s" : "He+/ion well");
+  std::printf("L=%d  ticks=%d  omega0=%.4f  sor=%d  sigma=%.3f  probeR=%.3f  dt=%.3f  backend=%s  Z=%.3g\n",
+              L, a.ticks, a.omega0, a.sor, a.sigma, R, a.dt, a.backend.c_str(), a.Z);
   std::printf("================================================================\n");
 
   ftd::RenderBridge rb(L);
@@ -265,6 +285,10 @@ int main(int argc, char** argv) {
   const int center_idx = rb.lattice().index(c, c, c);
   std::printf("[probe] ball radius=%.3f -> %zu probe voxels; phi_C(center)=%+.6e\n",
               R, probes.size(), phi_ref[center_idx]);
+  // Z-scaling verification: φ_C should scale linearly with Z (well depth ×Z).
+  // Report φ_C(center)/Z so the Z=1 vs Z=2 runs can be compared directly.
+  std::printf("[Z-well] Z=%.3g  phi_C(center)=%+.6e  phi_C(center)/Z=%+.6e\n",
+              a.Z, phi_ref[center_idx], phi_ref[center_idx] / a.Z);
 
   std::vector<ftd::Vec3> J0(probes.size());
   for (size_t p = 0; p < probes.size(); ++p) J0[p] = rb.flux_at(probes[p]);

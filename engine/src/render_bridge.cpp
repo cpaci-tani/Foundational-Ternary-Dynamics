@@ -463,7 +463,8 @@ void RenderBridge::gauss_project() {
 }
 
 void RenderBridge::solve_coulomb_poisson() {
-  solve_coulomb_poisson_cpu(ternary_field(), phi_coulomb_, sor_source_, lattice_, sor_iterations_);
+  solve_coulomb_poisson_cpu(ternary_field(), phi_coulomb_, sor_source_, lattice_, sor_iterations_,
+                            toggles.coulomb_source_scale);
 }
 
 void RenderBridge::solve_latency_poisson() {

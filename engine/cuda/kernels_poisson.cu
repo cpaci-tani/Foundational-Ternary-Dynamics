@@ -231,11 +231,14 @@ __global__ void compute_coulomb_rhs(
     const int8_t* __restrict__ state,
     double* __restrict__ rhs,
     double mean_charge,
+    double charge_scale,   // FTD-0281 helium extension: nuclear-charge Z
     int N
 ) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
-    rhs[i] = -(static_cast<double>(state[i]) - mean_charge);
+    // rho = -charge_scale·(s − mean_charge). charge_scale=1.0 reproduces the
+    // legacy rho = -(s − mean_charge); charge_scale=2 doubles the He+ well.
+    rhs[i] = -charge_scale * (static_cast<double>(state[i]) - mean_charge);
 }
 
 // ---------- Compute Latency RHS: 4*pi*G * K_B * |state| ----------
@@ -459,16 +462,37 @@ void launch_gauss_project(GpuBuffers& bufs,
 // ---------- Launcher: Coulomb Potential ----------
 
 void launch_solve_coulomb(GpuBuffers& bufs,
+                          double charge_scale,
                           cufftHandle plan_fwd, cufftHandle plan_inv,
                           cufftHandle plan_fwd_f, cufftHandle plan_inv_f) {
     int N = bufs.N;
 
-    // Step 1: Compute RHS = -state (mean-subtracted)
+    // Step 0: mean_charge = charge_sum / N (mirrors solve_coulomb_poisson_cpu:232).
+    // Exact integer reduction → bit-deterministic. Previously this launcher
+    // hardcoded mean_charge=0; computing it now matches the CPU's mean-subtracted
+    // periodic-BC source (negligible 1/N shift for a single nucleus, but faithful).
+    double mean_charge = 0.0;
+    {
+        long long* d_charge_sum = nullptr;
+        CUDA_CHECK(cudaMalloc(&d_charge_sum, sizeof(long long)));
+        CUDA_CHECK(cudaMemset(d_charge_sum, 0, sizeof(long long)));
+        int threads = 256;
+        int blocks = (N + threads - 1) / threads;
+        sum_state_kernel<<<blocks, threads>>>(bufs.d_state, d_charge_sum, N);
+        CUDA_CHECK(cudaGetLastError());
+        long long charge_sum = 0;
+        CUDA_CHECK(cudaMemcpy(&charge_sum, d_charge_sum, sizeof(long long),
+                              cudaMemcpyDeviceToHost));
+        CUDA_CHECK(cudaFree(d_charge_sum));
+        mean_charge = static_cast<double>(charge_sum) / static_cast<double>(N);
+    }
+
+    // Step 1: Compute RHS = -charge_scale·(state − mean_charge)
     {
         int threads = 256;
         int blocks = (N + threads - 1) / threads;
         compute_coulomb_rhs<<<blocks, threads>>>(
-            bufs.d_state, bufs.d_phi_coulomb, 0.0, N
+            bufs.d_state, bufs.d_phi_coulomb, mean_charge, charge_scale, N
         );
         CUDA_CHECK(cudaGetLastError());
     }
