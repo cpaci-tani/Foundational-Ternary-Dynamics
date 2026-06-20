@@ -83,6 +83,17 @@ public:
     // Physics toggles (same as CPU engine)
     TermToggles toggles;
 
+    // --- Spectroscopy probe facility (FTD-0281 rung-b, 2026-06-20) ---
+    // Device-side shell-autocorrelation so large-L spectroscopy does NOT pay the
+    // per-tick full-lattice download. spectro_set_probes() uploads the scattered
+    // probe-index set + captures J(0); spectro_autocorr() gathers J(t) at those
+    // probes on device, downloads only the compact array, and sums J(0)·J(t) in
+    // fixed probe order (deterministic). All flux lives on device the whole run.
+    // Single-substrate observable flux only (dual_substrate not used for FTD-0281).
+    void spectro_set_probes(const std::vector<int>& probe_indices);
+    double spectro_autocorr();   // returns C(t) = Σ_probe J(0)·J(t) for current device state
+    void spectro_free();
+
 private:
     // GPU tick sub-phases
     void gpu_phase_read();
@@ -126,6 +137,17 @@ private:
     std::vector<double> host_phi_latency_;  // Wave 5: GPU latency Poisson shadow
     ForceDiagHost host_force_diag_;          // Per-site force component mirror
     bool host_dirty_ = true;  // true = device has newer data than host
+
+    // Spectroscopy probe device buffers (FTD-0281 rung-b). Separately allocated
+    // from GpuBuffers so the probe facility is self-contained and never touches
+    // the golden/parity buffer lifecycle.
+    int*    d_probe_idx_ = nullptr;   // n_probe scattered lattice indices
+    double* d_probe_jx_  = nullptr;   // n_probe gathered flux.x (scratch)
+    double* d_probe_jy_  = nullptr;
+    double* d_probe_jz_  = nullptr;
+    int     n_probe_ = 0;
+    std::vector<double> probe_j0x_, probe_j0y_, probe_j0z_;  // host J(0) reference
+    std::vector<double> probe_jx_, probe_jy_, probe_jz_;     // host gather scratch
 
     int next_particle_id_ = 0;
     int next_pair_id_ = 0;
