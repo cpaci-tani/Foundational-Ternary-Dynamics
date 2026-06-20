@@ -51,6 +51,7 @@ namespace ftd { namespace gpu { namespace kernels {
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_solve_coulomb(GpuBuffers& bufs,
+                              double charge_scale,
                               cufftHandle plan_fwd, cufftHandle plan_inv,
                               cufftHandle plan_fwd_f, cufftHandle plan_inv_f);
     void launch_solve_latency(GpuBuffers& bufs,
@@ -391,6 +392,7 @@ void GpuEngine::gpu_gauss_project() {
 
 void GpuEngine::gpu_solve_coulomb() {
     kernels::launch_solve_coulomb(bufs_,
+                                  toggles.coulomb_source_scale,  // FTD-0281 Z (He+ well)
                                   fft_plan_forward_,
                                   fft_plan_inverse_,
                                   fft_plan_forward_f_,
