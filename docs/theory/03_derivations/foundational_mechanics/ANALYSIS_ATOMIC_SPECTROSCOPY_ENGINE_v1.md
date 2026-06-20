@@ -23,19 +23,30 @@ The honest result is a **split**:
   This is **exactly the excited spectrum the LOBPCG/Python eigensolver could not resolve**
   (clustered near the continuum edge): the boundary mapped earlier is **box-size, not
   structural**, and the engine's field reaches it.
-- **But the engine's native FFT readout does NOT extract that ladder at large L:** at
-  L=64..256 the time-domain autocorrelation→FFT yields **one** bound peak (binding
-  ≈0.0108), which matches **neither** the operator 1s (0.0193) **nor** the 2s — it sits
-  at an intermediate frequency between them. This is **wavepacket-blending** (a broad
-  Gaussian excites a superposition; the autocorrelation peak lands at a weighted average),
-  **not** a dt artifact — finer dt (0.5→0.25) did not move it. So the accurate large-L
-  spectrum comes from the **operator-on-φ_C path**, not the engine FFT.
+- **But the engine's native FFT readout does NOT extract that ladder — the cause is a
+  numerical INSTABILITY, not blending (corrected 2026-06-20):** at L=64..256 the
+  autocorrelation→FFT yields **one** bound peak at every L. A three-step diagnosis
+  (He+ `--Z 2` + off-center `--offset` + finer dt) overturned two earlier reads: (i) the
+  **deep He+ well resolves a sharp, clean 1s** (binding 0.21, FWHM ~23× narrower than the
+  1s–2s gap) ⇒ **not** resolution/blending; (ii) an off-center packet excites the 2s/2p
+  **~2500× more** than the 1s, and the symmetric probe does not cancel them, yet still one
+  peak ⇒ **not** excitation. The real cause: **the symplectic leapfrog of the
+  inhomogeneous KG well is exponentially unstable** — C(t) grows ~13 orders of magnitude
+  (ρ≈1.0022/tick, identical for centered and off-center), and one growing unphysical mode
+  (ω≈1.28, near but not at the true 1s) swamps the spectrum. Finer dt (0.5→0.1) reduced
+  the dispersion offset (+1.84%→+0.88%) but did **not** remove the growth ⇒ a
+  parametric/discrete-map instability, not CFL. So the engine-native FFT is
+  **dynamics-limited**; the accurate spectrum comes from the **operator-on-φ_C path**
+  (validated, ladder-confirmed). The earlier "wavepacket-blending" reading is **retracted**.
 
 **Net:** the engine spectroscopy is validated as an engine↔operator consistency check in
 the sparse regime; the hydrogen excited ladder is finite-size-resolvable (operator side);
-the engine-native time-domain FFT readout is a `[BOUNDARY]` at large L (blends the dense
-ladder) and would need a different excitation/extraction (impulse + filter-diagonalization)
-to resolve it. **Never "FTD derives hydrogen":** ω₀ and the scalar-potential coupling are
+the engine-native time-domain FFT readout is a `[BOUNDARY]` at large L (a parametric
+leapfrog instability of the inhomogeneous well swamps the ladder — excitation and
+resolution are both fine; dt does not cure it) and would need a **stable integrator**
+(implicit / energy-conserving scheme, or a strong absorbing layer) to resolve it; the
+operator-on-φ_C path is the accurate route meanwhile. He+ (`--Z`) and off-center
+(`--offset`) knobs were added (golden-neutral, Z=1/offset=0 reproduce the anchors). **Never "FTD derives hydrogen":** ω₀ and the scalar-potential coupling are
 `[IMPOSED]`; the FTD-0270/FC-1 quantum-dynamics ceiling and the linear-dispersion caveat
 stand. The substrate-`[THEOREM]` content used is only the 18-pt Poisson Green's function
 (OT-1.4).
