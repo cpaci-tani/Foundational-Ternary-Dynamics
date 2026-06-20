@@ -4,12 +4,15 @@ This document maps the primary simulation features from public entrypoints down
 to the implementation functions that mutate state. It is documentation of the
 runtime call graph, not a physics proof ledger.
 
+> Last verified against source at commit `e7f17d35` (2026-06-19).
+
 Companion references:
 
 - `engine/VISUAL_GUIDE.md` - conceptual visual guide for readers new to the simulation.
 - `engine/SPEC_ENGINE.md` - detailed phase semantics and constants.
 - `engine/ARCHITECTURE.md` - architecture, memory ownership, and loop dynamics.
 - `engine/SCENARIO_ARCHITECTURE.md` - scenario lifecycle, bridge ownership, and seed setup.
+- `engine/docs/ENGINE_CODE_MAP.md` - file/subsystem navigation map + per-file manifest.
 - `engine/include/ftd/term_toggles.h` - runtime toggle registry.
 - `docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md` - claim status.
 
@@ -18,13 +21,15 @@ Companion references:
 ### 1.1 Browser Scale 0 Frame
 
 ```text
-engine/web/js/app.js::animate()
-  -> engine/web/js/scales/scale0/controller.js::animate(ctx)
-     -> runtime/tick.js::advanceSimulation(ctx, state)
-        -> ctx.bridge.capabilities.scale0.tickScale0()
-           -> engine/web/js/bridge/capabilities/scale0.js
-              -> WasmBridge.tick()
-                 -> Emscripten RenderBridge::tick()
+engine/web/js/app.js::animate(now)                       [lattice engineMode]
+  -> engine/web/js/scales/scale0/controller.js::animateLattice(ctx)  (alias of animate)
+     -> animate(ctx)
+        -> runtime/tick.js::advanceSimulation(ctx, state)
+           -> runtime/tick.js::runScale0PhysicsTicks(ctx, state, ticksToRun)
+              -> ctx.bridge.capabilities.scale0.tickScale0()
+                 -> engine/web/js/bridge/capabilities/scale0.js   (tickScale0: () => bridge.tick())
+                    -> WasmBridge.tick()
+                       -> Emscripten RenderBridge::tick()
 ```
 
 After ticks advance, render data flows back through:
@@ -32,19 +37,36 @@ After ticks advance, render data flows back through:
 ```text
 controller.js::animate(ctx)
   -> runtime/frame-sync.js::syncRenderableData(ctx, state, viewport)
-     -> getScale0ParticleFrame()
+     -> activeScale0.getScale0ParticleFrame()
         -> WasmBridge.getParticleData()
-           -> bindings_render_bridge.cpp::get_particle_data(RenderBridge&)
-     -> optional field samplers
-        -> getFluxVolume / getFluxSlice / getEFieldSampled / ...
-           -> bindings_render_bridge.cpp sampler helpers
+           -> get_particle_data(RenderBridge&)   (defined in ftd_wasm.cpp,
+              registered via bindings_render_bridge.cpp)
+     -> optional field samplers (gated by visible overlays)
+        -> activeScale0.getScale0FluxVolume / getScale0FluxSlice / getScale0FieldSamples
+           -> WasmBridge.getFluxVolume / getFluxSlice / getEFieldSampled / ...
+              -> sampler helpers (get_flux_slice / get_flux_volume defined in
+                 ftd_wasm.cpp, registered in bindings_render_bridge.cpp)
   -> field-overlays.js update paths
   -> viewport adapter upload/render paths
 ```
 
-When `state.useFluxMock` is true, the Scale 0 JS mock or worker owns the tick
-instead. That path is a dashboard fallback/overlay source and is not the
-canonical C++ physics path.
+When the active Scale-0 backend is the off-thread worker proxy
+(`state.fluxMock.isWorker && state.useFluxMock`), the worker owns the tick:
+`advanceSimulation` forwards run state (`setRunning` / `setTicksPerFrame`) to the
+`WasmBridgeProxy`, and the worker self-ticks on its own loop, posting frames back
+via `postFrame()`; the in-thread `tickScale0` path above runs only for the
+non-worker case.
+
+```text
+runtime/tick.js::advanceSimulation(ctx, state)            [worker path]
+  -> state.fluxMock.setRunning(ctx.running) / setTicksPerFrame(...)
+     -> WasmBridgeProxy posts to wasm-bridge.worker.js
+        -> worker hosts ftd_core_mt RenderBridge, self-ticks bridge.tick()
+           -> postFrame() -> main-thread overlay/render refresh on frameCounter
+```
+
+The legacy JS MockBridge (`useFluxMock` without a worker) is a dashboard
+fallback/overlay source and is not the canonical C++ physics path.
 
 ### 1.2 WASM Binding Surface
 
@@ -54,7 +76,7 @@ WasmBridge.tick()
      -> RenderBridge::tick()
 
 WasmBridge.setToggle(name, value)
-  -> bindings_render_bridge.cpp::set_toggle(RenderBridge*, name, value)
+  -> bindings_render_bridge.cpp::set_toggle(RenderBridge&, name, value)
      -> RenderBridge::toggles field write
 
 WasmBridge.injectParticle(...)
@@ -66,7 +88,8 @@ WasmBridge.setupScenario(name)
      -> ftd::dispatch_scenario(RenderBridge&, name)
 ```
 
-The `RenderBridge` class binding itself lives in `engine/wasm/ftd_wasm.cpp`.
+The `RenderBridge` class binding itself lives in `engine/wasm/ftd_wasm.cpp`
+(`EMSCRIPTEN_BINDINGS(ftd_module_core)`, `class_<ftd::RenderBridge>`).
 The helper functions for data extraction, toggles, injection, and scenarios
 register in `engine/wasm/bindings_render_bridge.cpp`.
 
@@ -74,19 +97,33 @@ register in `engine/wasm/bindings_render_bridge.cpp`.
 
 ```text
 engine/src/ws_server.cpp
-  -> command parse
-     -> "tick" / run loop -> RenderBridge::tick()
+  -> command parse (cmd)
+     -> "tick" -> RenderBridge::tick()
+     -> "run" (n) -> RenderBridge::run(n)
      -> "inject_particle" -> RenderBridge::inject_particle()
      -> "inject_wavepacket" -> RenderBridge::inject_wavepacket()
-     -> "create_entangled_pair" -> RenderBridge::create_entangled_pair()
+     -> "inject_flux" / "inject_flux_add" -> RenderBridge::inject_flux[_add]()
+     -> "inject_wave_vel_add" -> RenderBridge::inject_wave_vel_add()
+     -> "create_pair" -> RenderBridge::create_entangled_pair()
      -> "setup_scenario" -> ftd::dispatch_scenario()
-     -> "set_toggle" -> TermToggles field write
+     -> "set_toggle" -> find_toggle(rb->toggles, name) field write
+     -> "set_param" -> RenderBridge::set_dt() (name == "dt")
+     -> "resize" / "reset" -> rebuild RenderBridge
+     -> "get_particles" / "get_diagnostics" / "get_energy_audit"
+        / "get_flux_slice" / "get_flux_volume" / "info" -> read-back responses
 ```
 
 ### 1.4 CLI And Tests
 
 ```text
-engine/src/main.cpp or CTest/benchmark code
+engine/src/main.cpp
+  -> ftd::cli_demos::scenario_X(lattice_size, num_ticks, ...)   (engine/src/cli_demos/)
+     -> RenderBridge engine(L)
+     -> scenario setup / direct injection / toggle setup
+     -> for N ticks: engine.tick()  (or engine.run(N))
+     -> diagnostics / energy_audit / energy_ledger / exported samples
+
+CTest/benchmark code
   -> RenderBridge rb(L)
   -> scenario setup / direct injection / toggle setup
   -> for N ticks: rb.tick()
@@ -103,13 +140,14 @@ Scale 1/2/5 tests and demos call `ParticleEngine::tick()`,
 ```text
 WASM setupScenario / C++ ftd::dispatch_scenario(rb, name)
   -> detail::reset_scenario_rng()
+  -> if name == "empty": return true (baseline empty lattice, handled inline)
   -> setup_flux_scenario(rb, name)
   -> setup_light_scenario(rb, name)
   -> setup_quantum_scenario(rb, name)
   -> setup_vacuum_scenario(rb, name)
   -> setup_s0_seed_scenario(rb, name)
   -> setup_s0_field_scenario(rb, name)
-  -> return first matching prefix result
+  -> return first matching prefix result (first true wins)
 ```
 
 Scenario bodies call the same public mutation surface as tests and the CLI:
@@ -139,7 +177,8 @@ RenderBridge::inject_particle(x, y, z, state, flux, spin, color)
         -> rb.voxels()[idx]
         -> rb.set_state(idx, state)
         -> Voxel::flux / spin / color / particle_id writes
-        -> optional dual-substrate split into flux_L / flux_R
+        -> optional dual-substrate split: asymmetric DELTA_APPROX
+           major/minor weighting into flux_L / flux_R, keyed on sign(state)
 ```
 
 ### 2.3 Wavepacket Injection
@@ -156,7 +195,7 @@ RenderBridge::inject_wavepacket(cx, cy, cz, state, sigma, amplitude)
         -> scan cutoff radius
         -> normalize Gaussian shell
         -> add radial flux increments to neighboring voxels
-        -> optional dual-substrate split
+        -> optional dual-substrate split (DELTA_APPROX major/minor by sign(state))
 ```
 
 ### 2.4 Raw Flux And Entangled Pair Setup
@@ -165,15 +204,17 @@ RenderBridge::inject_wavepacket(cx, cy, cz, state, sigma, amplitude)
 RenderBridge::inject_flux(...)
   -> inject_flux_cpu(...)
      -> GPU: flush -> GpuEngine::inject_flux -> mark dirty
-     -> CPU: write Voxel::flux and optional flux_L/R
+     -> CPU: write Voxel::flux and optional flux_L/R (plain 0.5/0.5 split)
 
 RenderBridge::inject_flux_add(...)
   -> inject_flux_add_cpu(...)
-     -> host read-modify-write through rb.voxels()
+     -> no GPU path: host read-modify-write through rb.voxels()
+        (optional 0.5/0.5 additive flux_L/R split)
 
 RenderBridge::inject_wave_vel_add(...)
   -> inject_wave_vel_add_cpu(...)
-     -> host read-modify-write through rb.voxels()
+     -> no GPU path: host read-modify-write through rb.voxels()
+        (optional 0.5/0.5 additive wave_vel_L/R split)
 
 RenderBridge::create_entangled_pair(...)
   -> create_entangled_pair_cpu(...)
@@ -194,19 +235,26 @@ RenderBridge::tick()
      -> otherwise warn once per unique error
   -> sync_ternary_from_voxels_if_needed()
   -> if GPU backend active: GpuBackend::tick() path, then return
-  -> cpu_runtime_warnings() once for CPU no-op/GPU-only toggles
-  -> phase_read()                  [wave_propagation || coupling]
+       (incl. knot_tracking record + proper-time + ledger; see 3.2)
+  -> cpu_runtime_warnings() once per instance for CPU no-op/GPU-only toggles
+  -> ew_background_sweep flux drive       [ew_background_sweep]
+  -> solve_coulomb_poisson()              [db_clock_coulomb]   (pre-read V(r))
+  -> phase_read()                  [wave_propagation || coupling || de_broglie_clock]
   -> phase_write()                 [always]
   -> pair_production_cpu()         [pair_production]
   -> gauss_project()               [gauss_projection]
   -> solve_latency_poisson()       [latency_field]
   -> phase_forces()                [forces]
+       -> phase_forces_integrate_clusters()   [cluster_inertia] (inside phase_forces)
   -> phase_movement()              [movement]
   -> apply_absorbing_boundary()    [absorbing_boundary]
+  -> apply_reflective_flux_boundary() / apply_dispersal_flux_boundary()
+                                   [flux_boundary == Reflective / Dispersal]
   -> weak_transmutation_cpu()      [weak_transmutation]
   -> triad_binding_cpu()           [triad_binding]
-  -> accumulate_proper_time()      [latency_field]
+  -> accumulate_proper_time()      [latency_field || de_broglie_clock]
   -> physical_time_ += dt_; ++tick_
+  -> knot_tracker_->record(*this)  [knot_tracking]  (observation-only)
   -> sync_ternary_from_voxels_if_needed()
   -> mark_fields_dirty_from_voxels()
   -> update_energy_ledger()
@@ -234,8 +282,9 @@ RenderBridge::tick()
            -> optional weak transmutation
            -> ++tick_; host_dirty_ = true
         -> sync_to_host() when host post-processing needs it
-        -> optional host cluster-inertia pass after sync
-  -> RenderBridge::accumulate_proper_time()     [latency_field]
+        -> optional host cluster-inertia pass after sync   [cluster_inertia]
+  -> RenderBridge::knot_tracker_->record(*this) [knot_tracking] (observation-only)
+  -> RenderBridge::accumulate_proper_time()     [latency_field || de_broglie_clock]
   -> RenderBridge::update_energy_ledger()
 ```
 
@@ -250,12 +299,13 @@ device dirty afterward.
 ```text
 RenderBridge::tick()
   -> TermToggles::validate(&err)
-     -> iterate TOGGLE_SPECS[]
-        -> enabled toggle requires_ checks
-        -> enabled toggle conflicts checks
-     -> hand-coded cross-cutting checks for non-boolean config fields
+     -> Pass 1: iterate TOGGLE_SPECS[]
+        -> enabled toggle requires_ checks (comma-separated deps)
+        -> enabled toggle conflicts checks (mutex pair, OFF-by-default side declares)
+     -> Pass 2: hand-coded cross-cutting checks for non-boolean config fields
+        (e.g. bcc_stencil != FULL vs dual_substrate)
   -> TermToggles::cpu_runtime_warnings()
-     -> warnings for CPU no-op / GPU-only implementation gaps
+     -> scan TOGGLE_SPECS[] gpu_only_warning for CPU no-op / GPU-only gaps
 ```
 
 Primary data:
@@ -263,35 +313,77 @@ Primary data:
 - `engine/include/ftd/term_toggles.h::TOGGLE_SPECS[]`
 - `RenderBridge::toggles`
 
+`TOGGLE_SPECS[]` currently holds 38 boolean-toggle rows (each `{name, field,
+default, bulk_managed, requires, conflicts, gpu_only_warning, backends,
+description}`). Beyond the core physics toggles (`wave_propagation`,
+`coupling`, `damping`, `genesis`, `gauss_projection`, `forces`, `gravity`,
+`poisson_coulomb`, `movement`, `lorentz_force`, `selective_damping`,
+`dual_substrate`, `color_forces`, `weak_transmutation`, `triad_binding`,
+`pair_production`, `latency_field`), the table includes:
+
+- `evaporation` - phase_write evaporation alone (OR'd with genesis; test isolation)
+- `larmor_radiation` - requires `damping`, conflicts `langevin`
+- `strong_force` / `exchange_force` - CPU no-op (`gpu_only_warning` set)
+- `exact_dual_gauss` - exact dual-cell face-flux Gauss projection (non-bulk)
+- `emergent_forces` - EFT force-from-gradient; conflicts `poisson_coulomb`
+- `langevin` - stochastic OU thermostat (CPU only at runtime, non-bulk)
+- `symplectic_leapfrog`, `su2_gauge`, `su3_gauge`, `symmetric_movement_order`
+- `absorbing_boundary`, `reflective_boundary`
+- `field_energy_gravity` - `[IMPOSED]` latency Poisson sources from 1/2|J|^2
+- `cluster_inertia` - `[IMPOSED]` rigid-body cluster a_COM = F_cluster/(N*M_REST); requires `forces` (non-bulk)
+- `de_broglie_clock` - `[IMPOSED]` KG mass term -omega0^2*J at manifested voxels (CPU-only backend; FTD-0271)
+- `db_clock_coulomb` - `[IMPOSED diagnostic]` live Coulomb clock; requires `wave_propagation,de_broglie_clock,poisson_coulomb`, conflicts `forces` (CPU-only; FTD-0281)
+- `confinement` - intent flag (no C++ branch yet)
+- `knot_tracking` - `[OBSERVATION-ONLY]` per-knot telemetry at end of tick (golden-neutral)
+- `strict_validation` - throw on `validate()` failure vs. stderr warn
+- `ew_background_sweep` - sinusoidal +x flux drive before phase_read (EW hysteresis)
+
+Non-bool config fields (`bcc_stencil`, `flux_boundary`, `langevin_site_filter`,
+`langevin_seed`, etc.) live OUTSIDE `TOGGLE_SPECS[]` and are validated by the
+hand-rolled Pass-2 checks in `validate()`.
+
 ### 4.2 Wave Propagation And State-Flux Coupling
 
 ```text
 RenderBridge::tick()
   -> RenderBridge::phase_read()
+     -> sync_ternary_from_voxels_if_needed()
      -> phase_read.cpp::phase_read_main_loop(rb)
         -> if dual_substrate:
            -> parallel lattice loop
-           -> 18-point laplacian on Voxel::flux_L / flux_R
-           -> add 0.5 * G_C * gradient_state(i)
-           -> add 0.5 * G_C * curl_state_velocity(i)
+           -> [wave_propagation] 18-point laplacian on Voxel::flux_L / flux_R
+              (single neighbor sweep; interior fast path, boundary wrapped path)
+           -> [coupling] add 0.5 * G_C * gradient_state_op(state, lat, ix,iy,iz)
+           -> [coupling] add 0.5 * G_C * curl_state_velocity_op(state, voxels, lat, ix,iy,iz)
+           -> [db_clock_coulomb] subtract flux_L/R * (omega0^2 - 2*omega0*phi_coulomb_[i])  (all sites)
+              else [de_broglie_clock] && state != 0: subtract flux_L/R * omega0^2
            -> write delta_j_L_[i], delta_j_R_[i]
         -> else single substrate:
            -> parallel lattice loop
-           -> if bcc_stencil == FULL:
-              -> interior fast 18-point laplacian, boundary wrapped path
-           -> else:
-              -> laplacian_sublattice<&Voxel::flux>(...)
-           -> add G_C * gradient_state(i)
-           -> add G_C * curl_state_velocity(i)
+           -> [wave_propagation]:
+              -> if bcc_stencil == FULL:
+                 -> interior fast 18-point laplacian, boundary wrapped path (laplacian_flux)
+              -> else:
+                 -> laplacian_sublattice<&Voxel::flux>(stencil_mode, ...)
+           -> [coupling] add G_C * gradient_state_op(state, lat, ix,iy,iz)
+           -> [coupling] add G_C * curl_state_velocity_op(state, voxels, lat, ix,iy,iz)
+           -> [db_clock_coulomb] subtract flux * (omega0^2 - 2*omega0*phi_coulomb_[i])  (all sites)
+              else [de_broglie_clock] && state != 0: subtract flux * omega0^2
            -> write delta_j_[i]
 ```
 
+The de Broglie clock branch (FTD-0271 / FTD-0281) is a Klein-Gordon rest-mass
+term `-omega0^2*J` added at manifested (state != 0) voxels; `delta_j` is acceleration,
+so the leapfrog integrator gives the KG dispersion `omega^2 = c^2k^2 + omega0^2`. It is
+[IMPOSED] (native flux is massless) and strictly additive - with the toggle OFF
+it is a dead branch and the golden hash is unaffected.
+
 Important helpers:
 
-- `RenderBridge::gradient_state(i)`
-- `RenderBridge::curl_state_velocity(i)`
+- `field_operators.h::gradient_state_op(state, lattice, ix, iy, iz)`
+- `field_operators.h::curl_state_velocity_op(state, voxels, lattice, ix, iy, iz)`
 - `field_operators.h::laplacian_field`
-- `field_operators.h::laplacian_sublattice`
+- `sublattice.h::laplacian_sublattice`
 
 GPU mirror:
 
@@ -306,21 +398,23 @@ GpuEngine::gpu_phase_read()
 ```text
 RenderBridge::tick()
   -> RenderBridge::phase_write()
-     -> snapshot_flux_pre_write(rb)
-     -> compute_near_particle_mask(rb)
+     -> [genesis] snapshot_flux_pre_write(rb)
+     -> [selective_damping] compute_near_particle_mask(rb)
      -> phase_write_main_loop(rb)
         -> parallel lattice loop
         -> dual path:
            -> wave_vel_L/R += delta_j_L/R [* dt if symplectic_leapfrog]
            -> flux_L/R += wave_vel_L/R   [* dt if symplectic_leapfrog]
-           -> damping / Larmor damping
-           -> observable flux = flux_L + flux_R
+           -> [damping] damping / [larmor_radiation] Larmor-modulated damping
+           -> observable flux = flux_L + flux_R, wave_vel = wave_vel_L + wave_vel_R
         -> single path:
            -> wave_vel += delta_j [* dt if symplectic_leapfrog]
            -> flux += wave_vel   [* dt if symplectic_leapfrog]
-           -> Langevin OU update when enabled and site filter matches
-           -> otherwise damping / Larmor damping
-        -> shared evaporation block
+           -> [langevin] OU update on wave_vel when site_matches_filter(langevin_site_filter):
+              -> sigma = sqrt(gamma * (2 - gamma) * T)   (FDT-consistent)
+              -> wave_vel = (1 - gamma) * wave_vel + sigma * voxel_normal(...)
+           -> otherwise [damping] damping / [larmor_radiation] Larmor-modulated damping
+        -> shared genesis/evaporation block (Loop 2, sequential)
      -> phase_write_assign_pending_ids(rb)
 ```
 
@@ -341,22 +435,25 @@ GpuEngine::gpu_phase_write()
 
 ### 4.4 Manifestation And Evaporation
 
-Manifestation is inside `phase_write_main_loop`; it is not a separate public
-phase.
+Manifestation is inside `phase_write_main_loop` (Loop 2, a sequential pass for
+determinism); it is not a separate public phase.
 
 ```text
 RenderBridge::tick()
   -> phase_write()
-     -> snapshot_flux_pre_write()
+     -> [genesis] snapshot_flux_pre_write()
      -> phase_write_main_loop()
-        -> if do_genesis && state == 0 && density() > K_GENESIS:
+        -> reset genesis_events_this_tick_ / evaporation_events_this_tick_  (FTD-0267 telemetry)
+        -> if do_genesis && state == 0 && |flux|^2 > K_GENESIS^2:
            -> p = 1 - exp(-(density - K_GENESIS) / K_MANIFEST)
-           -> voxel_uniform(... GenesisManifest)
+           -> voxel_uniform(... GenesisManifest) < p
+           -> atomic_inc(genesis_events_this_tick_)   (observation only)
            -> dual:
               -> polarity_signal = Voxel::chirality_density()
               -> manifest_at(... dual=true)
            -> single:
-              -> drain wave_vel and flux latent heat
+              -> drain latent heat: wave_vel *= (1 - kinetic_drain)  [kinetic_drain toggle, default 0.5]
+              -> flux *= max(0, 1 - K_GENESIS / |flux|)
               -> polarity_signal = divergence_from_flux_array(flux_pre_write)
               -> manifest_at(... dual=false)
         -> manifest_at(...)
@@ -366,8 +463,10 @@ RenderBridge::tick()
            -> fallback spin from voxel RNG if curl degenerate
            -> color from dominant live flux axis
         -> if (genesis || evaporation) && state != 0 && !locked:
-           -> compute 7-site local field energy
-           -> stochastic evaporation check
+           -> compute 7-site local field energy (self + neighbors_6)
+           -> evap_prob = exp(-local_energy / K_MANIFEST^2)
+           -> voxel_uniform(... Evaporation) < evap_prob * K_EVAP_RATE
+           -> atomic_inc(evaporation_events_this_tick_)   (observation only)
            -> rb.set_state(i, 0); clear id/spin/color
      -> phase_write_assign_pending_ids()
         -> scan voxel index order
@@ -382,7 +481,8 @@ RenderBridge::tick()
      -> transmutation_phases.cpp::pair_production_cpu(rb)
         -> scan all voxels
         -> require state == 0 and |flux| > K_GENESIS
-        -> stochastic voxel_uniform(... PairProduction)
+        -> genesis probability p = 1 - exp(-(|flux| - K_GENESIS) / K_MANIFEST)
+        -> stochastic voxel_uniform(... PairProduction) < p
         -> choose major flux axis and adjacent partner site
         -> require partner state == 0
         -> consume wave/flux energy
@@ -412,11 +512,16 @@ RenderBridge::tick()
           dual_substrate, exact_dual_gauss, coulomb_charge_coupling,
           sor_iterations_)
         -> parallel source build:
-           source[i] = div(J)[i] - charge_coupling * state[i]
+           source[i] = div(J)[i] - charge_coupling * (state[i] - mean_charge)
         -> for iter in sor_iterations:
            -> sor_sweep_18pt(phi, source, lattice, SOR_OMEGA)
-              -> sequential red/black 18-point sweep
-              -> interior fast path + boundary wrapped path
+              -> 8-color (2x2x2) parity sweep (NOT 2-color red/black;
+                 2-color races on the 18-point stencil's 12 edge diagonals)
+              -> interior cells: PARALLEL (race-free, never wraps)
+              -> boundary cells: SEQUENTIAL lexicographic per colour
+                 (periodic wrap can pair two same-colour boundary cells;
+                  bit-exact to a fully-sequential sweep for the golden gate)
+        -> sequential phi-mean subtract (golden-gate determinism)
         -> parallel correction:
            -> skip manifested sites unless exact_dual_gauss
            -> grad_phi from phi
@@ -460,7 +565,7 @@ RenderBridge::tick()
           voxels_, ternary_field(), phi_latency_, sor_source_, lattice_,
           sor_iterations_, field_energy_gravity)
         -> build source from M_REST * |state|
-        -> optionally add 0.5 * (|flux|^2 + |wave_vel|^2)
+        -> optionally add 0.5 * (|flux|^2 + |wave_vel|^2)  [field_energy_gravity]
         -> subtract mean source
         -> sor_sweep_18pt(...) repeated
         -> subtract mean phi
@@ -469,9 +574,11 @@ RenderBridge::tick()
      -> gamma_FTD momentum update reads voxel.latency
   -> accumulate_proper_time()                       [after movement/triad]
      -> transmutation_phases.cpp::accumulate_proper_time(rb)
-        -> active manifested sites
+        -> active manifested sites (ordered_active_indices)
         -> f = 1 - latency^2
-        -> tau += sqrt(f^2 - speed^2) / sqrt(f)
+        -> delta_tau = sqrt(f^2 - speed^2) / sqrt(f)
+        -> tau += delta_tau
+        -> if de_broglie_clock: phase += omega0 * delta_tau  [de_broglie_clock]
 ```
 
 GPU mirror:
@@ -499,11 +606,11 @@ RenderBridge::tick()
            -> emergent_forces: tier-2 grad |J|
            -> else poisson_coulomb: -ALPHA * state * grad(phi_coulomb_)
            -> else legacy gradient_divergence(i)
-        -> gravity:
+        -> gravity [gravity]:
            -> G_N * tier-2 gradient_density
-        -> Lorentz:
+        -> Lorentz [lorentz_force, speed > EPSILON_MAG]:
            -> ALPHA * state * cross(velocity, curl_flux(i))
-        -> color:
+        -> color [color_forces]:
            -> loop colored_sites_cache_
            -> alpha_s_lattice(r)
            -> Coulomb / transition / linear profile
@@ -538,10 +645,17 @@ RenderBridge::tick()
         -> clear moved_ buffer
         -> choose traversal:
            -> natural voxel order
-           -> or shuffled voxel + axis order [symmetric_movement_order]
+           -> or shuffled voxel + per-voxel axis order [symmetric_movement_order]
         -> for each manifested, unlocked, unmoved voxel:
            -> remainder += velocity * dt
            -> convert each axis crossing into dx/dy/dz integer step
+           -> if no integer step: continue
+           -> handle_face_crossing(rb, v, dx, dy, dz, i):
+              -> if step would leave the lattice:
+                 -> [reflective_boundary] ON: mirror-bounce velocity on crossed axes, clear remainder
+                 -> else: remove particle (set_state(i,0), clear velocity/remainder/
+                          pair_id/particle_id/spin/color/flux; dual flux_L/R when enabled)
+                 -> return Handled (skip rest of this voxel)
            -> target = lattice.index(coord + step)
            -> if target state == 0:
               -> rb.set_state(target, moving_state)
@@ -569,25 +683,32 @@ GpuEngine::gpu_phase_movement()
   -> kernels_forces.cu / movement kernel path
 ```
 
-### 4.11 Absorbing Boundary
+### 4.11 Absorbing / Flux Boundary
 
 ```text
 RenderBridge::tick()
-  -> apply_absorbing_boundary(*this)
+  -> apply_absorbing_boundary(*this) [absorbing_boundary]
      -> phase_write.cpp::apply_absorbing_boundary(rb)
         -> scan lattice faces
         -> compute quadratic sponge factor by distance to nearest face
         -> damp flux, wave_vel, flux_L/R, wave_vel_L/R
+  -> flux_boundary law (default Periodic = toroidal wrap, no pass):
+     -> FluxBoundaryMode::Reflective:
+        -> phase_write.cpp::apply_reflective_flux_boundary(rb)
+           -> copy first interior layer into the boundary shell (Neumann mirror cavity)
+     -> FluxBoundaryMode::Dispersal:
+        -> phase_write.cpp::apply_dispersal_flux_boundary(rb)
+           -> scale outer shell by (1 - C_SPEED) (single-cell radiating sink)
 ```
 
-This runs after Gauss/forces/movement so projection does not refill the edge
-shell in the same tick.
+The sponge and the Reflective/Dispersal passes all run after Gauss/forces/movement
+(the last flux writers) so projection does not refill the edge shell in the same tick.
 
 ### 4.12 Weak Transmutation
 
 ```text
 RenderBridge::tick()
-  -> weak_transmutation_cpu() wrapper
+  -> [weak_transmutation] weak_transmutation_cpu() wrapper
      -> transmutation_phases.cpp::weak_transmutation_cpu(rb)
         -> ordered_active_indices()
         -> compute stress:
@@ -595,16 +716,16 @@ RenderBridge::tick()
            -> single: compute_stress(i)
         -> if stress > WEAK_THRESHOLD:
            -> probability p = 1 - exp(-(stress - threshold) / K_MANIFEST)
-           -> voxel_uniform(... WeakTransmutation)
-           -> rb.set_state(i, -state)
-           -> if dual_substrate: swap flux_L/R and wave_vel_L/R
+           -> if voxel_uniform(... WeakTransmutation) < p:
+              -> rb.set_state(i, -state)
+              -> if dual_substrate: swap flux_L/R and wave_vel_L/R
 ```
 
 ### 4.13 Triad Binding
 
 ```text
 RenderBridge::tick()
-  -> triad_binding_cpu() wrapper
+  -> [triad_binding] triad_binding_cpu() wrapper
      -> transmutation_phases.cpp::triad_binding_cpu(rb)
         -> copy ordered_active_indices()
         -> triple nested scan over active particles
@@ -622,16 +743,20 @@ RenderBridge::tick()
         -> compute per-tick conservation drift snapshot
 
 RenderBridge::diagnostics()
-  -> diagnostics_compute.cpp helpers
+  -> diagnostics_compute.cpp::compute_diagnostics(rb)
   -> counts, charge, flux, energy-style summaries
 
 RenderBridge::energy_audit()
-  -> diagnostics/energy audit helpers
+  -> diagnostics_compute.cpp::compute_energy_audit(rb)
   -> field, wave, kinetic, potential, Gauss residual, EM diagnostics
 
 WASM / Web panels
   -> bindings_render_bridge.cpp functions
      -> getDiagnostics / getEnergyAudit / getEnergyLedger / getLagrangian
+     -> getDiagnosticsView / getEnergyAuditView / getLagrangianView (struct-of-arrays variants)
+     -> getKnotTelemetry / getKnotEvents / getKnotAggregate (observation-only KnotTracker)
+     -> setLangevinTemp / getLangevinTemp (FTD-0274 thermal bath temperature)
+     -> setOmega0 / getOmega0 (FTD-0271 de Broglie clock frequency)
      -> sampled field extractors for overlays
 ```
 
@@ -641,17 +766,36 @@ WASM / Web panels
 GpuBackend::tick()
   -> GpuEngine::tick()
      -> gpu_phase_read()
-        -> kernels_stencil_single.cu or kernels_stencil_dual.cu
+        -> [dual_substrate] kernels_stencil_dual.cu (launch_phase_read_dual)
+        -> [else]           kernels_stencil_single.cu (launch_phase_read)
      -> gpu_phase_write()
-        -> kernels_stencil_single.cu or kernels_stencil_dual.cu
-     -> gpu_gauss_project()
-        -> kernels_poisson.cu
-     -> gpu_solve_latency_poisson()
-        -> kernels_poisson.cu
-     -> gpu_phase_forces()
-        -> kernels_forces.cu
-     -> gpu_phase_movement()
-        -> kernels_forces.cu movement path
+        -> [dual_substrate] kernels_stencil_dual.cu (launch_phase_write_dual)
+        -> [else]           kernels_stencil_single.cu (launch_phase_write)
+        -> [color_forces || strong_force] kernels_stencil_dual.cu (launch_strong_field_stencil)
+        -> [weak_field_active]            kernels_stencil_dual.cu (launch_weak_field_stencil)
+     -> [pair_production] gpu_pair_production()
+        -> kernels_aux.cu (launch_pair_production)
+     -> [gauss_projection] gpu_gauss_project()
+        -> kernels_poisson.cu (launch_gauss_project, FFT Poisson via fft_poisson_solve_f)
+        -> [dual_substrate] kernels_stencil_dual.cu (launch_gauss_sync_dual)
+     -> [latency_field] gpu_solve_latency_poisson()
+        -> kernels_poisson.cu (launch_solve_latency, FFT Poisson)
+     -> [forces] gpu_phase_forces()
+        -> [poisson_coulomb && !emergent_forces] gpu_solve_coulomb()
+           -> kernels_poisson.cu (launch_solve_coulomb, FFT Poisson)
+        -> kernels_forces.cu (launch_phase_forces)
+     -> [color_forces || strong_force || exchange_force || triad_binding]
+        -> gpu_build_particle_list() -> kernels_forces.cu (launch_build_particle_list)
+        -> gpu_particle_forces()
+           -> [color_forces]    kernels_forces.cu (launch_color_force)
+           -> [strong_force]    kernels_forces.cu (launch_yukawa_force)
+           -> [exchange_force]  kernels_forces.cu (launch_exchange_force)
+     -> [triad_binding] gpu_triad_detection()
+        -> kernels_forces.cu (launch_triad_detection)
+     -> [movement] gpu_phase_movement()
+        -> kernels_forces.cu movement path (launch_phase_movement)
+     -> [weak_transmutation] gpu_weak_transmutation()
+        -> kernels_aux.cu (launch_weak_transmutation)
 ```
 
 Device memory:
@@ -673,16 +817,18 @@ RenderBridge host AoS vectors
 ParticleEngine::run(n)
   -> repeat ParticleEngine::tick()
 
-ParticleEngine::tick()
+ParticleEngine::tick()   (velocity Verlet)
   -> compute_all_forces()
+  -> half_kick()                 [relativistic_verlet: momentum push; else v += (dt/2)F/m]
+  -> enforce_speed_limit()       (before drift, to avoid teleportation at singularities)
+  -> drift()                     (r += dt * v)
+  -> compute_all_forces()        (forces at new positions)
   -> half_kick()
-  -> drift()
-  -> compute_all_forces()
-  -> half_kick()
-  -> store prev_acceleration and acceleration
+  -> store prev_acceleration and acceleration  (per non-locked particle)
   -> check_annihilation()
-  -> enforce_speed_limit()
-  -> apply_damping()
+  -> enforce_speed_limit()       (hard clamp to C_SPEED; breaks symplecticity by design)
+  -> apply_damping()             [damping]
+  -> evolve_spin_axes()          [magnetic_dipole or lorentz] (spin precession from partner B-fields)
   -> ++tick_
 ```
 
@@ -691,26 +837,30 @@ ParticleEngine::tick()
 ```text
 ParticleEngine::compute_all_forces()
   -> resize forces_ and force_diag_
-  -> if CUDA enabled, use_gpu_, no advanced toggles, N >= 8:
-     -> gpu::ParticleEngineGpu::compute_pair_forces(...)
-     -> forces_ and force_diag_ filled by GPU O(N^2) pair kernel
-  -> else:
+  -> if CUDA enabled, use_gpu_, no advanced toggles
+     (none of strong/exchange/lorentz/magnetic_dipole/spin_orbit/radiation/relativistic),
+     and N >= 8:
+     -> gpu_backend_->engine.compute_pair_forces(...)
+        (GpuBackend wraps a gpu::ParticleEngineGpu)
+     -> forces_ and force_diag_ filled by GPU O(N^2) Coulomb + gravity pair kernel
+        (gpu_pair_handled = true)
+  -> else (CPU Barnes-Hut fallback):
      -> octree_.build(particles_, position/mass/charge lambdas)
      -> for each particle:
         -> tree_force(i, octree_.root)
-           -> Barnes-Hut opening-angle traversal
-           -> compute_pairwise_force(i, j) for leaf/exact cases
-              -> Coulomb
-              -> gravity
-              -> exchange
-              -> strong/confinement profile
-              -> magnetic dipole
-              -> spin-orbit
-              -> Lorentz
-              -> optional relativistic correction
-  -> per-particle post-pair additions:
-     -> radiation reaction
-     -> relativistic correction
+           -> Barnes-Hut opening-angle traversal (THETA_BH = 0.5)
+           -> far node (monopole approx): Coulomb [coulomb] + gravity [gravity] only
+           -> leaf / near node: compute_pairwise_force(i, j) for each body
+              -> Coulomb               [coulomb]
+              -> gravity               [gravity]
+              -> exchange (Pauli)      [exchange]   (same-spin, same-charge)
+              -> strong/confinement    [strong]     (colored particles; 3-regime profile)
+              -> magnetic dipole       [magnetic_dipole]
+              -> spin-orbit            [spin_orbit]
+              -> Lorentz               [lorentz]
+  -> per-particle post-pair additions (NOT pairwise):
+     -> radiation reaction    [radiation]    (self-interaction)
+     -> relativistic correction [relativistic] (MUST be last; isotropic 1/gamma rescale)
   -> write forces_[i]
 ```
 
@@ -720,9 +870,10 @@ ParticleEngine::compute_all_forces()
 ParticleEngine::tick()
   -> check_annihilation()
      -> O(N^2) pair scan
-     -> opposite charges within r_eff contact distance
+     -> opposite charges (charge_i * charge_j < 0)
+        within contact distance (r_eff_i + r_eff_j)
      -> mark both for removal
-     -> erase particles and force slots in reverse order
+     -> erase particles_ and forces_ slots in reverse order
 ```
 
 ## 7. Scale 2/3 AtomEngine Features
@@ -757,19 +908,25 @@ AtomEngine::compute_all_forces()
   -> if CUDA enabled, use_gpu_, !h_bonds, N >= 8:
      -> gpu::AtomEngineGpu::compute_pair_forces(...)
      -> ionic + vdW pair forces on GPU
+     -> sets gpu_pair_handled = true
   -> octree_.build(atoms_, position/mass/charge lambdas)
-  -> if GPU did not handle pair loop:
+     (always built - needed for the H-bond fallback + diagnostics)
+  -> if !gpu_pair_handled (GPU did not handle pair loop):
      -> for each atom: tree_force(i, octree_.root)
-        -> pairwise ionic / vdW / H-bond fallback
-  -> covalent bond pass:
+        -> leaf: compute_pairwise_force [ionic] / [van_der_waals] / [h_bonds]
+        -> internal node: Barnes-Hut opening test (THETA_BH = 0.5);
+           far -> ionic monopole approximation; near -> recurse children
+  -> covalent bond pass [covalent_bonds]:
      -> for each atom and reciprocal bond
      -> harmonic bond force
-  -> angle_strain pass:
-     -> central atom bond-pair scan
-     -> terminal atom reaction forces
-  -> dipole_dipole pass
-  -> torsional / improper torsional passes
-  -> write AtomForceDiag fields
+  -> angle_strain pass [angle_strain]:
+     -> central atom bond-pair scan (VSEPR theta_eq from steric number)
+     -> terminal atom forces + Newton's-3rd-law center reaction
+  -> dipole_dipole pass [dipole_dipole]
+  -> torsional pass [torsional] (4-body 1-2-3-4 dihedral)
+  -> improper torsional pass [improper_torsional] (sp2 planarity)
+  -> write AtomForceDiag fields (f_ionic, f_vdw, f_hbond, f_bond,
+     f_angle, f_dipole, f_torsion, f_improper)
 ```
 
 Bond lifecycle:
@@ -778,24 +935,32 @@ Bond lifecycle:
 AtomEngine::tick()
   -> check_bonding()
      -> atom_bonding.cpp::AtomEngine::check_bonding()
-        -> pair scan
-        -> if already bonded and r > 2 * r_eq: remove_bond()
-        -> if unbonded, valence available, r < formation radius:
-           -> create_bond(id_a, id_b, order)
+        -> [auto_bonding] gate (returns early if off)
+        -> O(N^2) pair scan
+        -> if already bonded and r > 2 * r_eq: remove_bond(ai.id, aj.id)
+        -> if unbonded, both have a free bond slot (bonds.size() < max_bonds),
+           and r < formation radius (1.2 * sigma_avg, widened by the
+           electronegativity difference under [electronegativity]):
+           -> create_bond(ai.id, aj.id, 1)
 ```
 
 Thermal/dipole support:
 
 ```text
-compute_dipole_moments()
-  -> atom_thermostat.cpp
-  -> bond topology + electronegativity
+compute_dipole_moments()  [atom_thermostat.cpp]
+  -> [electronegativity] QEq charge relaxation:
+     -> transfer q_frac between bonded atoms toward higher Mulliken chi
+  -> dipole moment from bond topology + electronegativity
+     + induced polarization (alpha_pol * f_ionic proxy)
 
-apply_thermostat()
-  -> Berendsen velocity rescaling when enabled
+apply_thermostat()  [thermostat, target_temperature_ > 0]
+  -> Berendsen velocity rescaling (lambda^2 clamped >= 0)
 
-apply_damping()
-  -> velocity damping when enabled
+enforce_speed_limit()
+  -> clamp free-atom velocity to C_SPEED
+
+apply_damping()  [damping]
+  -> velocity *= (1 - DAMPING * dt_)
 ```
 
 ## 8. Scale 5 CosmicEngine Features
@@ -903,37 +1068,51 @@ check_stellar_evolution()
   -> star age/fuel/mass thresholds
   -> transition to white dwarf / neutron star / black hole paths
 
-detect_gw_events()
-propagate_gw()
+detect_gw_events()  [gravitational_waves]
+propagate_gw()      [gravitational_waves]
   -> cosmic_gravitational_waves.cpp
 ```
 
 ## 9. Cross-Scale Conversion
 
+These are free functions in namespace `ftd` (declared in `engine/include/ftd/scale.h`,
+defined in `engine/src/scale_bridge.cpp`). Each coarsen/refine function RETURNS a
+vector of the target-scale type (or, for `refine_to_voxels`, mutates the
+`RenderBridge` in place); the caller is responsible for feeding the returned
+objects into the destination engine. They do not call the engines' `add_*`
+methods themselves.
+
 ```text
-scale_bridge.cpp::coarsen_to_particles(RenderBridge&)
-  -> scan manifested voxels
-  -> extract charge, mass proxy, position, velocity, spin, color, pair_id
-  -> ParticleEngine::add_particle(...)
+scale_bridge.cpp::coarsen_to_particles(const RenderBridge& rb) -> std::vector<Particle>
+  -> scan voxels with state != 0
+  -> extract charge (= state), mass (= max(density(), K_B)), r_eff (= R_EFF_DEFAULT),
+     position (coord + remainder), velocity, spin, color, pair_id, locked, particle_id
+  -> push_back Particle into result vector (returned; caller adds to ParticleEngine)
 
-scale_bridge.cpp::refine_to_voxels(ParticleEngine&, RenderBridge&)
-  -> for each particle
-  -> RenderBridge::inject_wavepacket(...)
-  -> restore remainder/velocity/spin/color as needed
+scale_bridge.cpp::refine_to_voxels(const Particle& p, RenderBridge& rb) -> void
+  -> floor + wrap p.position to integer lattice site (ix, iy, iz)
+  -> rb.inject_wavepacket(ix, iy, iz, p.charge, 3.0, K_B)
+  -> restore remainder/velocity/spin/color/pair_id/locked/particle_id on the voxel
 
-coarsen_to_atoms(ParticleEngine&)
-  -> cluster locked protons + nearby electrons
-  -> AtomEngine::add_atom(...)
+coarsen_to_atoms(const ParticleEngine& pe) -> std::vector<Atom>
+  -> cluster locked charge=+1 particles within CLUSTER_RADIUS (5.0) into nuclei (Z = count)
+  -> count nearby charge=-1 particles as electrons (within 3*CLUSTER_RADIUS)
+  -> compute_atomic_properties(Z, Z) -> mass/radius/vdW/max_bonds/valence
+  -> push_back Atom into result vector (returned; caller adds to AtomEngine)
 
-refine_to_particles(AtomEngine&)
-  -> locked protons + electron shells
-  -> ParticleEngine::add_particle(...)
+refine_to_particles(const Atom& a) -> std::vector<Particle>
+  -> Z locked protons at a.position (mass = M_PROTON)
+  -> (Z - charge) electrons ringed at a.radius (mass = K_B)
+  -> push_back Particles into result vector (returned; caller adds to ParticleEngine)
 
-coarsen_to_cosmic(AtomEngine&)
-  -> aggregate atom clusters into SPH/cosmic bodies
+coarsen_to_cosmic(const AtomEngine& ae) -> std::vector<CosmicBody>
+  -> mass-weight atom centroid + sum masses into a single GAS body
+  -> push_back CosmicBody into result vector (returned; caller adds to CosmicEngine)
 
-refine_to_atoms(CosmicEngine&)
-  -> decompose gas bodies into atom populations
+refine_to_atoms(const CosmicBody& cb) -> std::vector<Atom>
+  -> decompose cb.mass into hydrogen atoms (m_H = M_PROTON + K_B), capped at 1000
+  -> distribute in a sphere of radius cb.radius
+  -> push_back Atoms into result vector (returned; caller adds to AtomEngine)
 ```
 
 ## 10. Debugging Reading Order
