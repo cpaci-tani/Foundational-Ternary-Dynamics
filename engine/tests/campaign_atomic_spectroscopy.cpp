@@ -84,6 +84,11 @@ struct Args {
   // related to the physical ω_eff by Ω = 2·arcsin(ω_eff·dt/2); we invert this.
   double dt = 0.5;
   std::string out = "atomic_spectroscopy";
+  // Backend selection (GPU port, 2026-06-20). "cpu" forces the CPU RenderBridge
+  // (the rung-(a) anchor); "gpu" uses the default CUDA backend so the 5090 runs
+  // the de-Broglie-clock spectroscopy. On a non-CUDA build "gpu" silently falls
+  // back to CPU (RenderBridge has no GPU backend to switch to).
+  std::string backend = "cpu";
 };
 
 double argd(const char* v) { return std::strtod(v, nullptr); }
@@ -102,6 +107,7 @@ Args parse_args(int argc, char** argv) {
     else if (eq("--amp") && i + 1 < argc)     a.amp = argd(argv[++i]);
     else if (eq("--dt") && i + 1 < argc)      a.dt = argd(argv[++i]);
     else if (eq("--out") && i + 1 < argc)     a.out = argv[++i];
+    else if (eq("--backend") && i + 1 < argc) a.backend = argv[++i];
     else std::fprintf(stderr, "unknown/ignored arg: %s\n", argv[i]);
   }
   return a;
@@ -111,7 +117,12 @@ Args parse_args(int argc, char** argv) {
 // profile. Mirrors test_db_clock_coulomb.cpp::configure_valid_profile + the
 // FTD-0278 Leg-1 omega0=1.5 record.
 void configure_profile(ftd::RenderBridge& rb, const Args& a) {
-  rb.force_cpu();
+  // Backend: "cpu" forces the CPU RenderBridge (rung-(a) anchor); "gpu" leaves
+  // the default backend (CUDA on a CUDA build) so the de-Broglie-clock KG term
+  // runs on the GPU phase_read kernel (GPU port, 2026-06-20). The KG term and
+  // the pre-read FFT Coulomb solve are now in both backends, so the same toggle
+  // stack produces the same C(t) up to FFT-vs-SOR float precision.
+  if (a.backend == "cpu") rb.force_cpu();
   rb.seed_rng(0x0281u);
   rb.set_sor_iterations(a.sor);
 
@@ -198,12 +209,15 @@ int main(int argc, char** argv) {
 
   std::printf("================================================================\n");
   std::printf("FTD-0281 rung 1 — atomic spectroscopy (hydrogen-1s, ENGINE)\n");
-  std::printf("L=%d  ticks=%d  omega0=%.4f  sor=%d  sigma=%.3f  probeR=%.3f  dt=%.3f\n",
-              L, a.ticks, a.omega0, a.sor, a.sigma, R, a.dt);
+  std::printf("L=%d  ticks=%d  omega0=%.4f  sor=%d  sigma=%.3f  probeR=%.3f  dt=%.3f  backend=%s\n",
+              L, a.ticks, a.omega0, a.sor, a.sigma, R, a.dt, a.backend.c_str());
   std::printf("================================================================\n");
 
   ftd::RenderBridge rb(L);
   configure_profile(rb, a);
+
+  std::printf("[backend] requested=%s  active=%s\n", a.backend.c_str(),
+              rb.backend_kind() == ftd::Backend::Kind::Gpu ? "GPU" : "CPU");
 
   // Validate the toggle stack explicitly (the contract gate).
   {

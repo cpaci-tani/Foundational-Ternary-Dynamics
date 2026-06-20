@@ -58,7 +58,13 @@ __global__ void phase_read_kernel(
     int L,
     bool do_wave,
     bool do_coupling,
-    uint8_t bcc_stencil_mode    // Cluster A FTD-0093: 0=FULL, 1=SC, 2=FCC, 3=BCC
+    uint8_t bcc_stencil_mode,   // Cluster A FTD-0093: 0=FULL, 1=SC, 2=FCC, 3=BCC
+    // FTD-0271/0281 de Broglie clock (GPU port, 2026-06-20). Mirrors the CPU
+    // branch in engine/src/render_bridge_phases/phase_read.cpp:193-200.
+    bool do_db_clock,
+    bool do_db_clock_coulomb,
+    double omega0,
+    const double* __restrict__ phi_coulomb   // pre-solved Coulomb potential (db_clock_coulomb)
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -191,6 +197,25 @@ __global__ void phase_read_kernel(
         dx += G_C * curl_x;
         dy += G_C * curl_y;
         dz += G_C * curl_z;
+    }
+
+    // FTD-0271/0281: de Broglie internal clock — Klein-Gordon rest-mass term
+    // −ω_eff²·J. Bit-for-bit mirror of the CPU branch (phase_read.cpp:193-200):
+    //   db_clock_coulomb ⇒ all-site ω_eff² = ω₀² − 2·ω₀·phi_C  (V = −phi_C)
+    //   de_broglie_clock alone ⇒ ω_eff² = ω₀² at manifested (state≠0) voxels.
+    // Both toggles default OFF, so this is a dead branch with the spectroscopy
+    // toggles off ⇒ the GPU phase_read is byte-identical to its pre-port form.
+    if (do_db_clock_coulomb) {
+        const double omega0_sq = omega0 * omega0;
+        const double omega_eff_sq = omega0_sq - 2.0 * omega0 * phi_coulomb[i];
+        dx -= flux_x[i] * omega_eff_sq;
+        dy -= flux_y[i] * omega_eff_sq;
+        dz -= flux_z[i] * omega_eff_sq;
+    } else if (do_db_clock && state[i] != 0) {
+        const double omega0_sq = omega0 * omega0;
+        dx -= flux_x[i] * omega0_sq;
+        dy -= flux_y[i] * omega0_sq;
+        dz -= flux_z[i] * omega0_sq;
     }
 
     djx[i] = dx;
@@ -527,7 +552,8 @@ __global__ void evaporation_kernel(
 // ---------- Launcher Functions ----------
 
 void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
-                        uint8_t bcc_stencil_mode) {
+                        uint8_t bcc_stencil_mode,
+                        bool do_db_clock, bool do_db_clock_coulomb, double omega0) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L + 3) / 4, (L + 7) / 8, (L + 7) / 8);
@@ -537,7 +563,8 @@ void launch_phase_read(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
         bufs.d_state,
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_delta_j_x, bufs.d_delta_j_y, bufs.d_delta_j_z,
-        L, do_wave, do_coupling, bcc_stencil_mode
+        L, do_wave, do_coupling, bcc_stencil_mode,
+        do_db_clock, do_db_clock_coulomb, omega0, bufs.d_phi_coulomb
     );
     CUDA_CHECK(cudaGetLastError());
 }

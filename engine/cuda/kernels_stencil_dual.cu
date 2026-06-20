@@ -84,7 +84,11 @@ __global__ void phase_read_dual_kernel(
     const double* __restrict__ vel_x, const double* __restrict__ vel_y, const double* __restrict__ vel_z,
     double* __restrict__ djL_x, double* __restrict__ djL_y, double* __restrict__ djL_z,
     double* __restrict__ djR_x, double* __restrict__ djR_y, double* __restrict__ djR_z,
-    int L, bool do_wave, bool do_coupling
+    int L, bool do_wave, bool do_coupling,
+    // FTD-0271/0281 de Broglie clock (GPU port, 2026-06-20). Mirrors the CPU
+    // dual branch in engine/src/render_bridge_phases/phase_read.cpp:133-140.
+    bool do_db_clock, bool do_db_clock_coulomb, double omega0,
+    const double* __restrict__ phi_coulomb
 ) {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -155,6 +159,20 @@ __global__ void phase_read_dual_kernel(
 
         dLx += half_gc * cx;  dLy += half_gc * cy;  dLz += half_gc * cz;
         dRx += half_gc * cx;  dRy += half_gc * cy;  dRz += half_gc * cz;
+    }
+
+    // FTD-0271/0281: de Broglie clock — Klein-Gordon −ω_eff²·J on each substrate.
+    // Bit-for-bit mirror of the CPU dual branch (phase_read.cpp:133-140); both
+    // toggles default OFF ⇒ dead branch ⇒ byte-identical to the pre-port kernel.
+    if (do_db_clock_coulomb) {
+        const double omega0_sq = omega0 * omega0;
+        const double omega_eff_sq = omega0_sq - 2.0 * omega0 * phi_coulomb[i];
+        dLx -= fL_x[i] * omega_eff_sq;  dLy -= fL_y[i] * omega_eff_sq;  dLz -= fL_z[i] * omega_eff_sq;
+        dRx -= fR_x[i] * omega_eff_sq;  dRy -= fR_y[i] * omega_eff_sq;  dRz -= fR_z[i] * omega_eff_sq;
+    } else if (do_db_clock && state[i] != 0) {
+        const double omega0_sq = omega0 * omega0;
+        dLx -= fL_x[i] * omega0_sq;  dLy -= fL_y[i] * omega0_sq;  dLz -= fL_z[i] * omega0_sq;
+        dRx -= fR_x[i] * omega0_sq;  dRy -= fR_y[i] * omega0_sq;  dRz -= fR_z[i] * omega0_sq;
     }
 
     djL_x[i] = dLx;  djL_y[i] = dLy;  djL_z[i] = dLz;
@@ -436,7 +454,8 @@ __global__ void genesis_dual_kernel(
 
 // ---------- Dual-Substrate Launchers ----------
 
-void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling) {
+void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupling,
+                            bool do_db_clock, bool do_db_clock_coulomb, double omega0) {
     int L = bufs.L;
     dim3 block(4, 8, 8);  // 256 threads — better SM occupancy
     dim3 grid((L+3)/4, (L+7)/8, (L+7)/8);
@@ -448,7 +467,8 @@ void launch_phase_read_dual(const GpuBuffers& bufs, bool do_wave, bool do_coupli
         bufs.d_velocity_x, bufs.d_velocity_y, bufs.d_velocity_z,
         bufs.d_delta_j_L_x, bufs.d_delta_j_L_y, bufs.d_delta_j_L_z,
         bufs.d_delta_j_R_x, bufs.d_delta_j_R_y, bufs.d_delta_j_R_z,
-        L, do_wave, do_coupling
+        L, do_wave, do_coupling,
+        do_db_clock, do_db_clock_coulomb, omega0, bufs.d_phi_coulomb
     );
     CUDA_CHECK(cudaGetLastError());
 }
