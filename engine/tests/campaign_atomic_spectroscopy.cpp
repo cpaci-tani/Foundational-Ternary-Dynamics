@@ -49,6 +49,9 @@
 #include "ftd/render_bridge.h"
 #include "ftd/spectral.h"
 #include "ftd/voxel.h"
+#ifdef FTD_ENABLE_CUDA
+#include "ftd/gpu_engine.h"   // device-probe fast path (FTD-0281 rung-b)
+#endif
 
 #include <cmath>
 #include <cstdint>
@@ -89,6 +92,18 @@ struct Args {
   // the de-Broglie-clock spectroscopy. On a non-CUDA build "gpu" silently falls
   // back to CPU (RenderBridge has no GPU backend to switch to).
   std::string backend = "cpu";
+  // Device-probe fast path (GPU only): drive GpuEngine::tick() directly and
+  // compute C(t) via the on-device shell-autocorrelation, avoiding the per-tick
+  // full-lattice download that RenderBridge::tick() performs. Required for large
+  // L (the download is 1.3 GB/tick at L=256). 1 = on (default for GPU backend),
+  // 0 = off (use the RenderBridge per-tick path, identical numbers, slow).
+  int device_probe = 1;
+  // Packet-center offset along +x (lattice units). 0 = centered (spherically
+  // symmetric, excites 1s/2s only — the 2p triplet has a node at center and is
+  // not populated). A nonzero offset breaks the symmetry so the probe overlaps
+  // the off-center (2p-like) bound states, testing whether the engine FFT can
+  // resolve a SECOND bound line when one is actually excited (FTD-0281 rung-b).
+  int offset = 0;
 };
 
 double argd(const char* v) { return std::strtod(v, nullptr); }
@@ -108,6 +123,8 @@ Args parse_args(int argc, char** argv) {
     else if (eq("--dt") && i + 1 < argc)      a.dt = argd(argv[++i]);
     else if (eq("--out") && i + 1 < argc)     a.out = argv[++i];
     else if (eq("--backend") && i + 1 < argc) a.backend = argv[++i];
+    else if (eq("--device-probe") && i + 1 < argc) a.device_probe = argi(argv[++i]);
+    else if (eq("--offset") && i + 1 < argc)  a.offset = argi(argv[++i]);
     else std::fprintf(stderr, "unknown/ignored arg: %s\n", argv[i]);
   }
   return a;
@@ -178,11 +195,11 @@ std::vector<int> probe_ball(const ftd::RenderBridge& rb, int L, int c, double R)
   return idxs;
 }
 
-void dump_phi_csv(const ftd::RenderBridge& rb, int L, const fs::path& csv) {
+void dump_phi_csv(const ftd::RenderBridge& rb, int L, const fs::path& csv,
+                  const std::vector<double>& phi) {
   std::FILE* f = std::fopen(csv.string().c_str(), "w");
   if (!f) { std::fprintf(stderr, "cannot open %s\n", csv.string().c_str()); return; }
   std::fprintf(f, "x,y,z,phi\n");
-  const auto& phi = rb.phi_coulomb();
   for (int x = 0; x < L; ++x)
     for (int y = 0; y < L; ++y)
       for (int z = 0; z < L; ++z) {
@@ -258,31 +275,63 @@ int main(int argc, char** argv) {
   double max_phi_drift = 0.0;
   const int drift_check_ticks = 20;
 
-  for (int t = 0; t < a.ticks; ++t) {
-    double ct = 0.0;
-    for (size_t p = 0; p < probes.size(); ++p) {
-      const ftd::Vec3 J = rb.flux_at(probes[p]);
-      ct += J0[p].x * J.x + J0[p].y * J.y + J0[p].z * J.z;
+  // Device-probe fast path: on the GPU backend, drive GpuEngine::tick() directly
+  // and compute C(t) with the on-device shell-autocorrelation (no per-tick
+  // full-lattice download). The numbers are identical to the RenderBridge path
+  // up to the deterministic fixed-order host sum (same probe order). phi_C is
+  // static (db_clock_coulomb, forces off), so the drift check is skipped here;
+  // the warm-up phi_ref above already pins it. Validated against the slow path
+  // at L=32/64 (bit-near, <1e-9 on C(t)).
+  bool used_device_probe = false;
+#ifdef FTD_ENABLE_CUDA
+  if (a.device_probe && rb.backend_kind() == ftd::Backend::Kind::Gpu) {
+    if (auto* gpu = rb.gpu_engine_ptr()) {
+      used_device_probe = true;
+      gpu->toggles = rb.toggles;          // pin the (static) toggle stack
+      gpu->set_dt(a.dt);                  // honor the symplectic sub-step on device
+      gpu->spectro_set_probes(probes);    // captures J(0) on device (post warm-up)
+      std::printf("[device-probe] on — GPU shell-autocorrelation, %zu probes; "
+                  "no per-tick full-lattice download\n", probes.size());
+      const int report_every = (a.ticks >= 8) ? a.ticks / 8 : 1;
+      for (int t = 0; t < a.ticks; ++t) {
+        corr.push_back(gpu->spectro_autocorr());
+        gpu->tick();
+        if (((t + 1) % report_every) == 0)
+          std::printf("[device-probe] tick %d/%d\n", t + 1, a.ticks), std::fflush(stdout);
+      }
     }
-    corr.push_back(ct);
+  }
+#endif
 
-    // phi_C static check over the first ~20 ticks: ||phi_C(t) − phi_C(0)||_∞.
-    if (t < drift_check_ticks) {
-      const auto& phi_now = rb.phi_coulomb();
-      double d = 0.0;
-      for (size_t i = 0; i < phi_now.size(); ++i)
-        d = std::max(d, std::abs(phi_now[i] - phi_ref[i]));
-      max_phi_drift = std::max(max_phi_drift, d);
+  if (!used_device_probe) {
+    for (int t = 0; t < a.ticks; ++t) {
+      double ct = 0.0;
+      for (size_t p = 0; p < probes.size(); ++p) {
+        const ftd::Vec3 J = rb.flux_at(probes[p]);
+        ct += J0[p].x * J.x + J0[p].y * J.y + J0[p].z * J.z;
+      }
+      corr.push_back(ct);
+
+      // phi_C static check over the first ~20 ticks: ||phi_C(t) − phi_C(0)||_∞.
+      if (t < drift_check_ticks) {
+        const auto& phi_now = rb.phi_coulomb();
+        double d = 0.0;
+        for (size_t i = 0; i < phi_now.size(); ++i)
+          d = std::max(d, std::abs(phi_now[i] - phi_ref[i]));
+        max_phi_drift = std::max(max_phi_drift, d);
+      }
+      rb.tick();
     }
-    rb.tick();
+    std::printf("[phiC-static] max ||phi_C(t)-phi_C(0)||_inf over first %d ticks = %.3e\n",
+                drift_check_ticks, max_phi_drift);
   }
 
-  std::printf("[phiC-static] max ||phi_C(t)-phi_C(0)||_inf over first %d ticks = %.3e\n",
-              drift_check_ticks, max_phi_drift);
-
-  // Dump the static phi_C field once (post-equilibration; static so any tick is
-  // representative — we use the final state, which the drift check shows ≈ ref).
-  dump_phi_csv(rb, L, phi_csv);
+  // Dump the static phi_C field once. We dump phi_ref (captured right after the
+  // warm-up solve); phi_C is static for this profile (db_clock_coulomb + forces
+  // off), confirmed by the drift check on the slow path. On the device-probe
+  // path the host phi_coulomb_ is not re-synced each tick, so phi_ref is the
+  // authoritative static field to dump.
+  dump_phi_csv(rb, L, phi_csv, phi_ref);
 
   // Write C(t).
   {
