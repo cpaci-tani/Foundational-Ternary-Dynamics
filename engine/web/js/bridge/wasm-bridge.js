@@ -557,8 +557,40 @@ export class WasmBridge {
 
     setupScenario(name, _harness) {
         this.reset();
-        if (this._module && this._bridge)
+        if (this._module && this._bridge) {
             this._module.setupScenario(this._bridge, name);
+            this._enforceToggleInvariants();
+        }
+    }
+
+    // After a C++ setupScenario, clamp any TermToggles `requires` dependent that
+    // is ON while its prerequisite is OFF. reset() rebuilds the RenderBridge at
+    // C++ defaults (selective_damping=true, damping=true) and some scenario
+    // setups then turn a prerequisite off (e.g. quantum-well / thomson set
+    // damping=false) WITHOUT clearing the dependent, leaving an invalid combo
+    // that bursts "[TermToggles] Invalid combination: <dep> requires <prereq>"
+    // on every tick. This reads the bridge's ACTUAL post-setup toggle state via
+    // getToggle and corrects it. Physics-neutral: a dependent whose prerequisite
+    // is off is already a no-op in the engine (that is why the C++ guard rejects
+    // the combo). Mirrors the same enforcement in wasm-bridge.worker.js.
+    _enforceToggleInvariants() {
+        const m = this._module, b = this._bridge;
+        if (!m || !b || typeof m.getToggle !== 'function' || typeof m.setToggle !== 'function') return;
+        // [dependent, prerequisite] edges from TermToggles::validate() reachable
+        // from the Scale-0 toggle surface.
+        const REQUIRES = [
+            ['selective_damping', 'damping'],
+            ['larmor_radiation', 'damping'],
+            ['lorentz_force', 'forces'],
+            ['weak_transmutation', 'dual_substrate'],
+            ['triad_binding', 'dual_substrate'],
+            ['latency_field', 'gravity'],
+        ];
+        for (const [dep, prereq] of REQUIRES) {
+            try {
+                if (m.getToggle(b, dep) && !m.getToggle(b, prereq)) m.setToggle(b, dep, false);
+            } catch { /* unknown toggle name in this build — skip */ }
+        }
     }
 
     // ── Flux Data Extraction (Scale 0 substrate) ──────────────────────
