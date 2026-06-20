@@ -178,7 +178,15 @@ __global__ void sum_state_kernel(
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= N) return;
     int s = static_cast<int>(state[i]);
-    if (s != 0) atomicAdd(out_sum, static_cast<long long>(s));
+    // CUDA provides atomicAdd only for unsigned long long, not signed. Two's-
+    // complement addition is bit-identical for signed/unsigned, so accumulate
+    // through an unsigned reinterpret; the host reads the same bits back as a
+    // signed long long. Exactness/determinism (associativity) is preserved and
+    // |sum| <= N can never overflow int64.
+    if (s != 0) {
+        atomicAdd(reinterpret_cast<unsigned long long*>(out_sum),
+                  static_cast<unsigned long long>(static_cast<long long>(s)));
+    }
 }
 
 // ---------- Compute Gauss RHS: rho = div(J) - charge_coupling*(state - mean_charge) ----------
