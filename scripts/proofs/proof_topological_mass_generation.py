@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 """
 proof_topological_mass_generation.py
-FTD Topological Phase Space Mass Proof Script
+FTD particle-mass fit-check (NOT a proof).
 
-This script rigorously verifies the topological derivations of the foundational
-particle masses, proving that the parametric equations have been successfully
-replaced by geometric integer node counts on the Moore lattice.
+CORRECTION 2026-06-19 (adjudicated): this is a compute-and-compare FIT-CHECK, not a
+proof. The comparison targets are hardcoded and the integer node counts are
+hand-selected to land near them; the script establishes only NUMERIC AGREEMENT
+between chosen integer recipes and experiment — it does NOT establish a forcing chain
+or a theorem. The 2026-06-18 [THEOREM] framing (commit fdc483d0) is RETRACTED:
+these are substitution identities that fail the FTD-0097/0189 look-elsewhere bar and
+the standing zero-promotion discipline. Honest tags: m_e / m_p = [STRONGLY MOTIVATED
+CONJECTURE]; the six quark masses = [PARAMETRIC] (m_t imports Z=118/Oganesson from
+chemistry; m_u is ~5% off). Do not cite this script as a proof.
 """
 
 import sys
@@ -61,9 +67,9 @@ def check(name, predicted_me, exp_me):
 # ---------------------------------------------------------
 def main():
     print("="*65)
-    print(" FTD TOPOLOGICAL MASS VERIFICATION SUITE")
+    print(" FTD PARTICLE-MASS FIT-CHECK (compute-and-compare; NOT a proof)")
     print("="*65)
-    print("Verifying the strict structural phase-space mappings...")
+    print("Targets hardcoded, integers hand-selected -> numeric agreement only.")
 
     # 1. Electron Anchor
     print_header("1. The Electron Mass Anchor")
@@ -75,7 +81,8 @@ def main():
     print(f"Total Bounded Phase Space   : {N_eff + N_c}")
     print(f"Energy Equipartition (3D)   : {anchor:.3f}")
     print(f"Historical Empirical Fit    : 16/3 (5.333)")
-    print(f"Conclusion                  : [THEOREM] Exactly Matches.")
+    print(f"Conclusion                  : [SMC] 16/3 = (N_eff+N_c)/N_c is an algebraic")
+    print(f"                              re-spelling, not a derivation (n=11 is [DERIVED]).")
 
     # 2. Proton Mass
     print_header("2. The Proton Mass Ratio (uud)")
@@ -105,8 +112,9 @@ def main():
     check("Bottom Quark", m_bottom, EXP_QUARK_MEV["Bottom"] / M_E_MEV)
     check("Top Quark", m_top, EXP_QUARK_MEV["Top"] / M_E_MEV)
 
-    print("\nAll parametric insertions have been mathematically replaced.")
-    print("STATUS: [VERIFIED]")
+    print("\nNumeric agreement only: these are integer-recipe fits, NOT derivations.")
+    print("Tags: m_e/m_p = [SMC]; six quark masses = [PARAMETRIC] (m_t imports Z=118).")
+    print("STATUS: [FIT-CHECK PASS] (not a proof; fails FTD-0097/0189 look-elsewhere bar)")
 
 if __name__ == "__main__":
     main()

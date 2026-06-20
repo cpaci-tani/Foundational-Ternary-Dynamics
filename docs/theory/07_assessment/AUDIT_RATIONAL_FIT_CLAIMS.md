@@ -74,12 +74,23 @@ that FTD would need to explain, not a derivation.
 0.0220 experimental value is closer to 1/45 (0.0222, 1.0%) or 1/46
 (0.0217, 1.2%), neither of which has Moore-neighborhood meaning.
 
-### 3.3 · α_s(M_Z) = 7/59 — [THEOREM] tag restored
-- FTD prediction 0.11864 vs experimental 0.1179 → **0.63% error**
-- Experimental precision is ~8500 ppm (0.85%); FTD sits at 0.63%, just inside experimental precision
-- **The "59" denominator is now proven structural**: It represents $b_3 + 4N_{eff}$ (7 gluonic pathways + 52 Dirac/Moore vacuum screening pathways), natively deriving the geometric fixed point of vacuum screening at the Z-pole.
+### 3.3 · α_s(M_Z) = 7/59 — [STRUCTURALLY MOTIVATED PARAMETRIC]
 
-**Recommended status:** [THEOREM]. The 7 in the numerator IS $b_3$, and the 59 in the denominator is geometrically exact. (Upgraded 2026-06-18; prior critique regarding 2/17 and arbitrary 59 is formally resolved).
+> **CORRECTION 2026-06-19 (adjudicated):** the 2026-06-18 "[THEOREM] tag restored" edit (commit `24b31016`) is RETRACTED — the "$59 = b_3 + 4N_{eff}$, 52 = 4 Dirac × 13 axes" reading is a substitution identity, not a forcing chain; it fails the FTD-0097/0189 look-elsewhere bar (see §2: competitor 2/17 fits better) and contradicts §2 of this very document. The honest status below stands.
+
+- FTD prediction 0.11864 vs experimental 0.1179 → **0.63% error**
+- Experimental precision is ~8500 ppm (0.85%); FTD sits at 0.63%, just
+  inside experimental precision
+- **Competitor 2/17 = 0.1176 fits better** (0.29% error); 2/17 has no
+  natural Moore-neighborhood interpretation
+- The formula "α_s = b_3 / 59" is built with a specific denominator (59)
+  that is NOT a structural Moore number — the denominator was chosen to
+  make the ratio hit 0.1186
+
+**Recommended status:** [STRUCTURALLY MOTIVATED PARAMETRIC]. The 7 in the numerator
+IS b_3 (Moore-neighborhood integer), which gives the claim genuine structural content;
+but the 59 denominator is not structurally forced (it was chosen to match α_s), so the
+claim cannot rise above [STRUCTURALLY MOTIVATED PARAMETRIC].
 
 ### 3.4 · PMNS sin² angles — [DERIVED] tags overstate precision
 
@@ -146,11 +157,11 @@ dynamically.
 | N_c | [THEOREM] + [CONJECTURE] (already mixed) | unchanged | Already accurate |
 | {N_base, N_eff, b_3} | [THEOREM] | [THEOREM] | Moore integers, structurally proven |
 | G_C = √α | [THEOREM] | [DEFINITION] | Conditional on α; not an independent theorem |
-| **sin²θ_W = 3/13** | **[THEOREM]** | **[THEOREM]** | **13-axis spatial projection (Upgraded 2026-06-18)** |
+| **sin²θ_W = 3/13** | **[THEOREM]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **3.5% error, 1700× exp precision; 2/9 fits better (2026-06-18 [THEOREM] RETRACTED 2026-06-19)** |
 | m_e formula | [DERIVED] | [STRONGLY MOTIVATED CONJECTURE] | 0.19% error, structurally tight among peers |
 | m_μ/m_e | [DERIVED] | (not audited; likely [PARAMETRIC]) | Similar epistemic tier probable |
 | m_p/m_e | [DERIVED] | [STRONGLY MOTIVATED CONJECTURE] | 173 ppm, 5.8× exp precision |
-| **α_s(M_Z) = 7/59** | **[THEOREM]** | **[THEOREM]** | **Structural 59 denominator derived (Upgraded 2026-06-18)** |
+| **α_s(M_Z) = 7/59** | **[THEOREM]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **59 not structurally forced; 2/17 fits better (2026-06-18 [THEOREM] RETRACTED 2026-06-19)** |
 | **sin²θ_12 = 3/10** | **[DERIVED]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **2.3% error, 4 competitors** |
 | **sin²θ_23 = 16/29** | **[DERIVED]** | **[STRUCTURALLY MOTIVATED PARAMETRIC]** | **1.0% error, 3 competitors** |
 | **sin²θ_13 = 1/52** | **[DERIVED]** | **[PARAMETRIC]** or retract | **12.6% error, 37× exp precision** |
