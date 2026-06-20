@@ -120,6 +120,18 @@ struct TermToggles {
     // Phase H (Apr 2026): explicit coupling constant in the Gauss law source.
     double coulomb_charge_coupling = 1.0;
 
+    // FTD-0281 helium extension (2026-06-20): nuclear-charge scale Z applied to
+    // the *Coulomb* Poisson source (solve_coulomb_poisson), which produces
+    // phi_coulomb_ — the field that drives the db_clock_coulomb KG term at
+    // phase_read (omega_eff² = ω₀² − 2ω₀·phi_C). The Coulomb RHS becomes
+    // rho = −Z·(state − mean_charge), so phi_C → Z·phi_C and the well depth is
+    // ×Z (Z=2 = He+). This is DISTINCT from coulomb_charge_coupling, which only
+    // scales the Gauss *flux-projection* source (gauss_project, the phi_ buffer)
+    // and does NOT touch phi_coulomb_. Default 1.0 = hydrogen, leaving the
+    // Coulomb RHS bit-identical (golden-neutral; the db_clock_coulomb / Coulomb
+    // solve path is dormant in the golden profile). Honored on CPU and GPU.
+    double coulomb_source_scale = 1.0;
+
     // FTD-0271 (2026-06-11): de Broglie internal-clock frequency ω₀ [rad/tick],
     // used only when de_broglie_clock == true. The KG mass term is −ω₀²·J.
     // ω₀∝M_REST is [IMPOSED] (native flux is massless); M_REST→ω₀ scale is
