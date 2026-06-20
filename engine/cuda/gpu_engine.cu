@@ -80,6 +80,10 @@ namespace ftd { namespace gpu { namespace kernels {
     void launch_triad_detection(GpuBuffers& bufs, int num_particles);
     void launch_strong_field_stencil(GpuBuffers& bufs, double damp);
     void launch_weak_field_stencil(GpuBuffers& bufs, double damp);
+    void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
+                                  const double* d_flux_z, const int* d_probe_idx,
+                                  double* d_out_x, double* d_out_y, double* d_out_z,
+                                  int n_probe);
 }}}
 
 namespace ftd {
@@ -137,6 +141,7 @@ GpuEngine::~GpuEngine() {
     if (fft_plan_inverse_) cufftDestroy(fft_plan_inverse_);
     if (fft_plan_forward_f_) cufftDestroy(fft_plan_forward_f_);
     if (fft_plan_inverse_f_) cufftDestroy(fft_plan_inverse_f_);
+    spectro_free();
     bufs_.free();
 }
 
@@ -156,6 +161,63 @@ void GpuEngine::set_rng_seed(unsigned int seed) {
     if (rng_seed_initialized_ && rng_seed_ == seed) return;
     rng_seed_ = seed;
     rng_seed_initialized_ = true;
+}
+
+// ---------- Spectroscopy Probe Facility (FTD-0281 rung-b) ----------
+
+void GpuEngine::spectro_free() {
+    if (d_probe_idx_) { cudaFree(d_probe_idx_); d_probe_idx_ = nullptr; }
+    if (d_probe_jx_)  { cudaFree(d_probe_jx_);  d_probe_jx_  = nullptr; }
+    if (d_probe_jy_)  { cudaFree(d_probe_jy_);  d_probe_jy_  = nullptr; }
+    if (d_probe_jz_)  { cudaFree(d_probe_jz_);  d_probe_jz_  = nullptr; }
+    n_probe_ = 0;
+}
+
+void GpuEngine::spectro_set_probes(const std::vector<int>& probe_indices) {
+    spectro_free();
+    n_probe_ = static_cast<int>(probe_indices.size());
+    if (n_probe_ <= 0) return;
+    // Ensure the device flux is current (the campaign injects via the host shadow,
+    // then ticks once before snapshotting J(0); upload_from_host already ran on the
+    // first tick — but if J(0) is captured before any tick, push host state here).
+    CUDA_CHECK(cudaMalloc(&d_probe_idx_, n_probe_ * sizeof(int)));
+    CUDA_CHECK(cudaMalloc(&d_probe_jx_,  n_probe_ * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_probe_jy_,  n_probe_ * sizeof(double)));
+    CUDA_CHECK(cudaMalloc(&d_probe_jz_,  n_probe_ * sizeof(double)));
+    CUDA_CHECK(cudaMemcpy(d_probe_idx_, probe_indices.data(),
+                          n_probe_ * sizeof(int), cudaMemcpyHostToDevice));
+    probe_jx_.assign(n_probe_, 0.0);
+    probe_jy_.assign(n_probe_, 0.0);
+    probe_jz_.assign(n_probe_, 0.0);
+    // Capture J(0): gather current device flux into the host J0 reference.
+    kernels::launch_gather_probe_flux(bufs_.d_flux_x, bufs_.d_flux_y, bufs_.d_flux_z,
+                                      d_probe_idx_, d_probe_jx_, d_probe_jy_, d_probe_jz_,
+                                      n_probe_);
+    probe_j0x_.assign(n_probe_, 0.0);
+    probe_j0y_.assign(n_probe_, 0.0);
+    probe_j0z_.assign(n_probe_, 0.0);
+    CUDA_CHECK(cudaMemcpy(probe_j0x_.data(), d_probe_jx_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(probe_j0y_.data(), d_probe_jy_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(probe_j0z_.data(), d_probe_jz_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
+}
+
+double GpuEngine::spectro_autocorr() {
+    if (n_probe_ <= 0) return 0.0;
+    kernels::launch_gather_probe_flux(bufs_.d_flux_x, bufs_.d_flux_y, bufs_.d_flux_z,
+                                      d_probe_idx_, d_probe_jx_, d_probe_jy_, d_probe_jz_,
+                                      n_probe_);
+    CUDA_CHECK(cudaMemcpy(probe_jx_.data(), d_probe_jx_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(probe_jy_.data(), d_probe_jy_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
+    CUDA_CHECK(cudaMemcpy(probe_jz_.data(), d_probe_jz_, n_probe_ * sizeof(double), cudaMemcpyDeviceToHost));
+    // Fixed-order host sum (deterministic; matches the CPU campaign's probe loop
+    // order exactly since probe_indices were built in the same x,y,z scan order).
+    double ct = 0.0;
+    for (int p = 0; p < n_probe_; ++p) {
+        ct += probe_j0x_[p] * probe_jx_[p]
+            + probe_j0y_[p] * probe_jy_[p]
+            + probe_j0z_[p] * probe_jz_[p];
+    }
+    return ct;
 }
 
 // ---------- Core Simulation ----------

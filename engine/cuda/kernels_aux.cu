@@ -41,6 +41,47 @@ namespace gpu {
 namespace kernels {
 
 // ============================================================================
+// SPECTROSCOPY PROBE GATHER (FTD-0281 rung-b, 2026-06-20)
+// ============================================================================
+// Gathers the (single-substrate observable) flux at a scattered probe-index set
+// into a compact contiguous device array. The host then downloads only the
+// compact array (n_probe doubles × 3) and sums J(0)·J(t) in fixed probe order —
+// DETERMINISTIC (no float-order atomicAdd). This avoids the per-tick full-lattice
+// device→host download that RenderBridge::tick() performs (1.3 GB/tick at L=256),
+// the bottleneck that made large-L spectroscopy infeasible. Read-only: it only
+// reads d_flux_* and writes the scratch gather arrays.
+__global__ void gather_probe_flux_kernel(
+    const double* __restrict__ flux_x,
+    const double* __restrict__ flux_y,
+    const double* __restrict__ flux_z,
+    const int* __restrict__ probe_idx,
+    double* __restrict__ out_x,
+    double* __restrict__ out_y,
+    double* __restrict__ out_z,
+    int n_probe
+) {
+    int p = blockIdx.x * blockDim.x + threadIdx.x;
+    if (p >= n_probe) return;
+    const int i = probe_idx[p];
+    out_x[p] = flux_x[i];
+    out_y[p] = flux_y[i];
+    out_z[p] = flux_z[i];
+}
+
+void launch_gather_probe_flux(const double* d_flux_x, const double* d_flux_y,
+                              const double* d_flux_z, const int* d_probe_idx,
+                              double* d_out_x, double* d_out_y, double* d_out_z,
+                              int n_probe) {
+    if (n_probe <= 0) return;
+    int threads = 256;
+    int blocks = (n_probe + threads - 1) / threads;
+    gather_probe_flux_kernel<<<blocks, threads>>>(
+        d_flux_x, d_flux_y, d_flux_z, d_probe_idx,
+        d_out_x, d_out_y, d_out_z, n_probe);
+    CUDA_CHECK(cudaGetLastError());
+}
+
+// ============================================================================
 // WEAK TRANSMUTATION KERNEL [CLAUDE.md §6.5]
 // ============================================================================
 // When field stress |div(J)| + |curl(J)| + |grad(rho)| exceeds WEAK_THRESHOLD,
