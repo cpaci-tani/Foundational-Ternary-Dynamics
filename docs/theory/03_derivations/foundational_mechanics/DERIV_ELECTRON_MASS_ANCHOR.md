@@ -1,29 +1,53 @@
-# [THEOREM] The Electron Mass Anchor ($16/3$)
+# [STRONGLY MOTIVATED CONJECTURE] The Electron Mass Anchor ($16/3$)
 
-**Epistemic Status:** `[THEOREM]`
-**Version:** 1.0
-**Date:** 2026-06-18
+**Epistemic Status:** `[STRONGLY MOTIVATED CONJECTURE]`
+**Version:** 1.1
+**Date:** 2026-06-18 (corrected 2026-06-19)
 
-## 1. The Historical Flaw
+> **CORRECTION 2026-06-19 (adjudicated):** the `[THEOREM]` promotion (commit `fdc483d0`)
+> is **RETRACTED** — the "Dimensional Equipartition" step is a substitution identity, not a
+> forcing chain; it fails the FTD-0097/0189 look-elsewhere bar and the standing
+> zero-promotion discipline. **Honest tag: `[STRONGLY MOTIVATED CONJECTURE]`.**
+> **Genuine motivation:** the exponent $n=11$ is `[DERIVED]`, and $16/3$ is the simplest
+> rational within 0.2% of the empirically-required prefactor at that exponent (1-of-2 within
+> 1% across 6489 combinations) — real structural tightness, but no dynamical derivation of the
+> prefactor. `[THEOREM]` is re-earnable only behind a pre-registered look-elsewhere control.
+
+## 1. The Calibration Anchor
 In the FTD dimensional mapping, the absolute rest mass of the electron serves as the calibration anchor bridging the dimensionless discrete lattice to the physical dimensioned continuum:
 $$ m_e = m_P \cdot \sqrt{2\pi} \cdot \left(\frac{16}{3}\right) \cdot \alpha^{11} $$
 
-Historically, while the $\alpha^{11}$ scaling exponent was heavily motivated by dimensional emergence, the structural prefactor $(16/3)$ was marked as "motivated but not dynamically derived," relying on an empirical fit to the physical measurement ($0.511 \text{ MeV}$). 
+The formula reproduces $m_e$ to **0.19%**. Two pieces carry genuine structural weight, and one does not:
 
-## 2. Topological Proof of the Threshold Energy
-This document rigorously proves that $\frac{16}{3}$ is not a numerical fit, but the exact fractional topological threshold necessary to establish a baseline phase-locked quantization core in 3D discrete space.
+## 2. What is genuinely motivated
 
-### The Quantization Phase-Space
-The electron is the minimal stable resonant topological knot. To exist as a stable entity rather than dispersing back into the vacuum, it requires a minimum structural phase-space capacity.
+### 2.1 The exponent $n = 11$ — `[DERIVED]`
+The $\alpha^{11}$ scaling is established from the multiset/dimensional-emergence argument
+(MC-T3.2 closure; multiset theorem FTD-0084 plus two SM-hierarchy `[SELECTION]`s). This leg
+is the strong part of the formula and stands at `[DERIVED]`. See `proof_m_e_exponent_n11.py`.
 
-1. **The Core Base:** The knot must bind over the minimal spatial extension required to define a continuum gradient—the $L_2$ Cartesian Cross. This structure contains exactly $N_{eff} = \mathbf{13}$ nodes.
-2. **The Symmetry Breaking:** To establish a localized, directed spin-1/2 axis, the knot must topologically consume exactly 3 additional nodes corresponding to the 3 spatial orthogonal axes ($N_c = \mathbf{3}$), breaking the local discrete spherical symmetry.
-3. **Total Discrete Energy Capacity:** The total active phase-space nodes required for baseline manifestation is $N_{eff} + N_c = 13 + 3 = \mathbf{16}$.
+### 2.2 The prefactor $16/3$ — simplest-rational tightness, not a derivation
+Among 6489 rational-prefactor + integer-exponent combinations ($p, q \le 50$, $n \in [8, 14]$),
+only **2** fit within 1%, and FTD's $(16/3, n=11)$ is the tighter of the two; at the exponent
+$n=11$ the prefactor $16/3$ is the unique small rational that fits within 0.2% (the competitor
+$43/8$ sits at 0.6%). This is real structural tightness — but tightness among peers is evidence
+for a `[STRONGLY MOTIVATED CONJECTURE]`, **not** a dynamical derivation of the prefactor.
 
-### Dimensional Equipartition
-Energy is an extensive property partitioned uniformly across the available spatial dimensions. Because the lattice is fundamentally 3-dimensional ($N_c = 3$), the discrete energetic threshold to manifest the knot *per dimension* is exactly the ratio of the total bounded phase-space to the dimensional freedom:
+## 3. Why the "topological" re-spelling is not a derivation
 
-$$ \text{Structural Anchor} = \frac{\text{Total Core Phase Space}}{\text{Spatial Dimensions}} = \frac{N_{eff} + N_c}{N_c} = \frac{16}{3} $$
+The prefactor can be **re-written** as $16/3 = (N_{eff} + N_c)/N_c = (13 + 3)/3$. This is an
+algebraic re-spelling of the same rational, not a derivation: it does not predict $16/3$ from
+the lattice dynamics, and the "Dimensional Equipartition" reading (partition the bounded
+phase-space uniformly across $N_c$ spatial dimensions, then divide by $N_c$) is **asserted**,
+not forced. The choice to count a 16-node "$L_2$ cross + symmetry break" core and then divide
+by $N_c = 3$ is one of many integer recipes that would land on $16/3$; nothing in the substrate
+selects it over alternatives, and it was not checked against a look-elsewhere control. Under the
+project's own epistemic discipline (no substitution identities; FTD-0097/0189 bar), this is a
+motivated re-statement, not a theorem.
 
-## 3. Conclusion
-The coefficient $\frac{16}{3}$ is the strict geometric consequence of embedding a 16-node topological defect ($L_2$ cross + symmetry break) into a 3-dimensional space. The parametric insertion is hereby abolished; the electron mass is formally closed as a structurally derived axiom.
+## 4. Conclusion
+The electron-mass formula stays a `[STRONGLY MOTIVATED CONJECTURE]`: the exponent $n=11$ is
+`[DERIVED]`, the prefactor $16/3$ is the tightest simple rational at that exponent, and the
+$(N_{eff}+N_c)/N_c$ re-spelling is algebra. No "parametric insertion abolished" claim and no
+"structurally derived axiom" status is warranted. Promotion to `[THEOREM]` requires a
+pre-registered derivation that forces the prefactor without a look-elsewhere escape.

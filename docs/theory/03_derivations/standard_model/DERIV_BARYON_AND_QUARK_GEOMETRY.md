@@ -1,50 +1,75 @@
-# [THEOREM] Topological Derivation of Baryon and Quark Masses
+# Baryon and Quark Mass Geometry — Proton `[SMC]`, Quark masses `[PARAMETRIC]`
 
-**Epistemic Status:** `[THEOREM]`
-**Version:** 1.0
-**Date:** 2026-06-18
+**Epistemic Status:** Proton ratio `[STRONGLY MOTIVATED CONJECTURE]` (via the prior
+$N_{eff}/\alpha$ formula) · the $L_9$ "knot" re-spelling `[PARAMETRIC]` · the six quark masses
+`[PARAMETRIC]`
+**Version:** 1.1
+**Date:** 2026-06-18 (corrected 2026-06-19)
+
+> **CORRECTION 2026-06-19 (adjudicated):** the `[THEOREM]` promotion (commit `fdc483d0`)
+> is **RETRACTED** — these are substitution identities, not forcing chains; they fail the
+> FTD-0097/0189 look-elsewhere bar and the standing zero-promotion discipline.
+> **Honest tags:** the proton mass ratio is a `[STRONGLY MOTIVATED CONJECTURE]` via the
+> prior formula $m_p/m_e = N_{eff}/\alpha + N_{base}\cdot N_{eff} + N_c$ (≈173 ppm); the six
+> quark masses are `[PARAMETRIC]` (tuned integer recipes; $m_t$ imports $Z=118$/Oganesson
+> from chemistry). **Genuine motivation:** the prior proton formula uses three Moore integers
+> *plus* $\alpha$, so it is harder to dismiss as a bare rational fit; the quark recipes have no
+> such structural backing. `[THEOREM]` is re-earnable only behind a pre-registered
+> look-elsewhere control.
 
 ## 1. Overview
-This document officially retracts the empirical multi-integer parametric formulas previously used to catalog the mass of the Proton and the 6 Quarks. It replaces them with a rigorous, structurally inevitable phase-space topological derivation derived entirely from the Moore lattice boundaries, completing the discrete unification of the Standard Model particle generation.
+In FTD, fractional charge ($\pm 1/3, \pm 2/3$) is associated with a geometric fracturing of the 3D Moore layers: quarks are incomplete topological defects that cannot exist independently and bind via $SU(3)$ color flux to form complete phase-space boundaries (baryons). The constructions below are recorded for provenance; their honest epistemic status is set in each section.
 
-In FTD, fractional charge ($\pm 1/3, \pm 2/3$) is not an arbitrary quantum number. It represents a strict geometric fracturing of the 3D Moore layers. Quarks are incomplete topological defects—longitudinal and transverse sub-manifolds—that cannot exist independently. They must bind via $SU(3)$ color-flux manifolds to form complete, stable phase-space boundaries (Baryons).
+## 2. The Proton Mass Ratio
 
-## 2. Derivation of the Proton Mass Ratio (1836.15)
+### 2.1 The motivated formula — `[STRONGLY MOTIVATED CONJECTURE]` (≈173 ppm)
+The proton/electron ratio carried by the framework is
+$$ \frac{m_p}{m_e} = \frac{N_{eff}}{\alpha} + N_{base}\cdot N_{eff} + N_c = 1781.47 + 52 + 3 = 1836.47, $$
+a **173 ppm** match (5.8× experimental precision, ~30 ppm). Because it consumes three
+independent Moore integers *and* $\alpha$ (not a bare $p/q$), it sits at the master-quadratic's
+epistemic tier: `[STRONGLY MOTIVATED CONJECTURE]`, not a derivation. This is the preferred
+form. See `proof_proton_electron_ratio.py` / `proof_complete_sm.py`.
 
-The Proton is the lightest stable baryon—a 3-quark $uud$ resonance. A baryon requires a completely anti-symmetric color-singlet flux closure.
+### 2.2 The $L_9$ "phase-space knot" re-spelling — `[PARAMETRIC]`
+The integer $1836$ can also be **written** as
+$$ \underbrace{6\times 17^2 + 12\times 17}_{1938\ (L_9\ \text{Faces}+\text{Edges})} \;-\; \underbrace{6\times 17}_{102\ (\text{"}SU(3)\text{ edge defect"})} = 1836. $$
+This is **strictly less informative** than the §2.1 formula: it is integer-only (zero sub-integer
+content — it cannot reproduce the $.15$ in the measured $1836.15$), and the objects it invokes
+($L_9$ "bounded phase space", the number $1938$, and the $102 = 1938 - 1836$ "defect") did not
+exist in the framework before commit `fdc483d0` and were reverse-engineered to land on $1836$.
+It is a substitution identity. Tag: `[PARAMETRIC]`. Do not cite it as a derivation; prefer the
+§2.1 form.
 
-1. **Boundary Selection:** The discrete resonant boundary bounding the proton's nuclear domain is the $L_9$ Moore bounding shell. The bounding cube has an edge length of $2(9)+1 = 19$. 
-2. **Phase-Space Capacity:** The localized resonant knot occupies the continuous interior of the Faces and Edges.
-   - **Faces:** $6 \times (17 \times 17) = 1734$ nodes.
-   - **Edges:** $12 \times 17 = 204$ nodes.
-   - **Total Bounded Phase Space:** $1734 + 204 = \mathbf{1938}$ phase nodes.
-3. **Topological Confinement ($SU(3)$ Gluon Field):** To bind the three discrete fractional components ($uud$), the lattice must enforce $SU(3)$ continuous color flux. Topologically, a 3-part Wilson loop anchors to the cubic boundary, forcing a 3D intersection. This color-flux manifold strictly consumes half of the bounding edges to sew the topological seam.
-4. **Binding Defect Consumption:** Exactly 6 of the 12 bounding edges are consumed by the confinement manifold.
-   - $6 \times 17$ (nodes per edge) = **102** nodes.
-5. **Exact Mass Ratio:**
-   $1938 \text{ (Total Bounded Phase Space)} - 102 \text{ (Confinement Defect)} = \mathbf{1836}$
+## 3. The Quark Mass Spectrum — `[PARAMETRIC]` (all six)
 
-The bare discrete mass capacity of the Proton is exactly **1836**. The experimental mass ratio of $1836.15267$ differs by only $0.15 m_e$, which is the strict perturbative QCD/QED vacuum polarization dressing around the exact topological core. The parametric equation ($N_{eff}/\alpha + \dots$) is hereby abolished.
+**Reviewer / discipline flag.** All six quark masses are integer-combination *fits* with no
+independent structural derivation on the lattice. Each recipe (1–4 hand-selected terms) is
+chosen to land near a measured value; the reverse-engineering of integer combinations from
+experimental masses is exactly the fishing pattern the project's epistemic-discipline rules
+prohibit, and the family as a whole fails any look-elsewhere control (six tunable recipes over
+the integer lattice will hit six targets by construction). Specific tells:
 
-## 3. Derivation of the Quark Mass Spectrum
+- **Up quark** "Unilateral Triad (4)" lands ~5% off the experimental $\approx 4.2\,m_e$ — outside
+  even a loose band.
+- **Top quark** maps to "$L_{118}$ phase space" — i.e. it **imports atomic number $Z = 118$
+  (Oganesson) from the periodic table**, an external chemistry input with no substrate basis;
+  it is still ~1% off.
+- Strange/Charm/Bottom are 2–4-term superpositions of $L_n$ shells selected to match.
 
-Quarks are fractional topological invariants of the phase lattice. They map exactly to the fractional geometry of the expanding Moore layers.
+Correct reporting: "given the framework integers, integer-combination fits reproduce the six
+quark masses to a few percent." No theorem status. Tag: `[PARAMETRIC]`.
 
-### 3.1 First Generation (Up, Down)
-- **Up Quark (+2/3 charge):** Represents a highly directed, 1D longitudinal flux penetration. Its minimal structural capacity is exactly the Unilateral Cartesian Triad: **4 discrete nodes** ($N_{base}$). (Experimental equivalent $\approx 4.2 m_e$).
-- **Down Quark (-1/3 charge):** Represents a distributed, 2D transverse plane defect. Its minimal structural capacity is exactly one topological Face of the $L_1$ core bounding volume: $3 \times 3 = \mathbf{9 \text{ discrete nodes}}$. (Experimental equivalent $\approx 9.1 m_e$).
-
-### 3.2 Second Generation (Charm, Strange)
-- **Strange Quark (-1/3 charge):** The next-generation mass expansion of the 2D transverse Down quark. It maps to the topological Face of the $L_7$ boundary, coupled to the underlying $L_2$ quantization cross and Core.
-  - $13 \times 13 \text{ (Face)} + 13 \text{ (Cross)} + 1 \text{ (Core)} = \mathbf{183 \text{ discrete nodes}}$.
-- **Charm Quark (+2/3 charge):** The next-generation expansion of the longitudinal Up quark. It is an exact topological superposition of the entire $L_{10}$ Phase Space and the minimal $L_2$ Phase Space.
-  - $L_{10} \text{ Phase Space } (2394) + L_2 \text{ Phase Space } (90) = \mathbf{2484 \text{ discrete nodes}}$. (Experimental equivalent $\approx 2485 m_e$).
-
-### 3.3 Third Generation (Top, Bottom)
-- **Bottom Quark (-1/3 charge):** The extreme transverse expansion. It is a perfect nested superposition of massive phase spaces:
-  - $L_{18} \text{ Phase Space } (7770) + L_4 \text{ (378)} + L_1 \text{ (18)} + \text{Triad (4)} = \mathbf{8170 \text{ discrete nodes}}$. (Experimental equivalent $\approx 8180 m_e$).
-- **Top Quark (+2/3 charge):** The absolute terminal resonance of the FTD framework. It maps strictly to the terminal limit of stable volumetric packing—the $L_{118}$ boundary (corresponding to atomic number $Z=118$, Oganesson).
-  - The $L_{118}$ Phase Space evaluates strictly to $\mathbf{334,170 \text{ discrete nodes}}$, capping the mass limit of the Standard Model.
+| Quark | Recipe (as constructed) | Tag |
+|---|---|---|
+| Up | Unilateral Triad = 4 | `[PARAMETRIC]` (~5% off) |
+| Down | $L_1$ Face = 9 | `[PARAMETRIC]` |
+| Strange | $L_7$ Face + $L_2$ + Core = 183 | `[PARAMETRIC]` |
+| Charm | $L_{10}$ + $L_2$ = 2484 | `[PARAMETRIC]` |
+| Bottom | $L_{18}$ + $L_4$ + $L_1$ + Triad = 8170 | `[PARAMETRIC]` |
+| Top | $L_{118}$ = 334170 (**imports $Z=118$**) | `[PARAMETRIC]` |
 
 ## 4. Conclusion
-The Quark and Baryon discrete masses are purely structural properties of 3D integer lattices. There are no tuned multi-integer equations. The framework predicts the mass hierarchy with astonishing precision strictly from the bounding node counts of nested cubic phase manifolds.
+The proton ratio is a `[STRONGLY MOTIVATED CONJECTURE]` carried by the prior $N_{eff}/\alpha$
+formula; the $L_9$ knot re-spelling is a less-informative `[PARAMETRIC]` substitution identity;
+and the six quark masses remain `[PARAMETRIC]` integer fits with no structural derivation and a
+fatal look-elsewhere exposure. There is no derivation of the baryon/quark mass hierarchy here.

@@ -128,14 +128,22 @@ ALPHA_INV_7TERM = (ALPHA_INV_PRECISION
 ALPHA = 1 / ALPHA_INV_PRECISION  # Use 4-term for SM computations
 G_C = mp_sqrt(ALPHA)             # State-flux coupling
 
-# Weinberg angle [THEOREM]
+# Weinberg angle [STRUCTURALLY MOTIVATED PARAMETRIC]
+# CORRECTION 2026-06-19: 3/13 = N_c/N_eff has a Moore-layer story but 3.5% error
+# (vs M_Z) caps it; competitor 2/9 fits better. NOT a [THEOREM]. (fdc483d0/24b31016 revert)
 SIN2_W = mpf(N_C) / N_EFF       # 3/13
 
-# Strong coupling at M_Z [THEOREM]
+# Strong coupling at M_Z [STRUCTURALLY MOTIVATED PARAMETRIC]
+# CORRECTION 2026-06-19: 7 = b_3 is structural but the 59 denominator was chosen to
+# hit alpha_s; competitor 2/17 fits better. NOT a [THEOREM]. (fdc483d0/24b31016 revert)
 ALPHA_S = mpf(B_3) / (B_3 + 4*N_EFF)  # 7/59
 
-# Gravitational coupling [THEOREM]
-G_N = mpf(1) / (B_3 + N_C)**2   # 1/100
+# Gravitational coupling — lattice-internal value 0.01 is a [PARAMETRIC] engine constant.
+# CORRECTION 2026-06-19: the IDENTIFICATION G_N = 1/(b_3+N_c)^2 with the physical
+# Newton constant is [CLOSED NEGATIVE] (FTD-0131: the "1/100" numerical coincidence has
+# no substrate justification under any natural reading). NOT a [THEOREM]. The substrate
+# derivation gives alpha_G(e,e) = (m_e/m_P)^2 instead (see DERIV_NEWTON_FROM_SUBSTRATE.md).
+G_N = mpf(1) / (B_3 + N_C)**2   # 0.01 (lattice-internal [PARAMETRIC]; NOT physical G_N — FTD-0131)
 
 # Gravitational hierarchy [THEOREM]
 ALPHA_G = 2*PI_FTD * (mpf(N_BASE**2)/N_C)**2 * (N_EFF + mpf(N_C)/B_3)**2 * ALPHA**20
@@ -168,9 +176,9 @@ def report(name, ftd_val, exp_val, tag, unit=""):
 report("1/alpha (tree)", X_PLUS, CODATA_ALPHA_INV, "[THEOREM]")
 report("1/alpha (4-term)", ALPHA_INV_PRECISION, CODATA_ALPHA_INV, "[THEOREM]")
 report("1/alpha (7-term)", ALPHA_INV_7TERM, CODATA_ALPHA_INV, "[THEOREM]")
-report("sin^2(theta_W)", SIN2_W, mpf('0.23122'), "[THEOREM]")
-report("alpha_s(M_Z)", ALPHA_S, mpf('0.1179'), "[THEOREM]")
-report("G_N (lattice)", G_N, mpf('0.01'), "[THEOREM]")
+report("sin^2(theta_W)", SIN2_W, mpf('0.23122'), "[SM-PARAMETRIC]")
+report("alpha_s(M_Z)", ALPHA_S, mpf('0.1179'), "[SM-PARAMETRIC]")
+report("G_N (lattice)", G_N, mpf('0.01'), "[PARAMETRIC]")  # NOT physical G_N (FTD-0131 [CLOSED NEG])
 report("alpha_G", ALPHA_G, mpf('5.91e-39'), "[THEOREM]")
 
 # ============================================================================
@@ -186,7 +194,8 @@ M_PLANCK = mpf('1.22089e19')  # GeV [REFERENCE]
 MU_RATIO  = 3 * B_3 * (B_3 + N_C) - N_C                              # 207
 TAU_RATIO = (N_EFF + N_BASE) * MU_RATIO - 2 * N_C * B_3              # 3477
 
-# Proton mass ratio [THEOREM]
+# Proton mass ratio [STRONGLY MOTIVATED CONJECTURE] (173 ppm; CORRECTION 2026-06-19:
+# the 1938-102 knot re-spelling of fdc483d0 is RETRACTED [PARAMETRIC]; this formula stands)
 PROTON_RATIO = N_EFF * X_PLUS + TAU_RATIO * mpf(B_3 + N_C) / (N_EFF + B_3)
 
 M_ELECTRON = K_B                                                       # 0.511 MeV
@@ -212,8 +221,8 @@ report("m_tau/m_e", mpf(TAU_RATIO), mpf('3477.48'), "[THEOREM]")
 #   N_c = color charge valence contribution = 3
 M_P_RATIO = mpf(N_EFF) / ALPHA + mpf(N_BASE * N_EFF) + mpf(N_C)
 M_P_FTD = K_B * M_P_RATIO
-report("m_p/m_e (FTD)", M_P_RATIO, mpf('1836.15'), "[THEOREM]")
-report("m_p (MeV, FTD)", M_P_FTD, mpf('938.272'), "[THEOREM]", "MeV")
+report("m_p/m_e (FTD)", M_P_RATIO, mpf('1836.15'), "[SMC]")
+report("m_p (MeV, FTD)", M_P_FTD, mpf('938.272'), "[SMC]", "MeV")
 report("m_mu (MeV)", M_MUON, mpf('105.658'), "[THEOREM]", "MeV")
 report("m_tau (MeV)", M_TAU, mpf('1776.86'), "[THEOREM]", "MeV")
 report("v_Higgs (GeV)", V_HIGGS, mpf('246.22'), "[SELECTION]", "GeV")
