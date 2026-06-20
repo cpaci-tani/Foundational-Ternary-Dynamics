@@ -11,6 +11,8 @@ Detailed references:
 - [CALLSTACKS.md](CALLSTACKS.md) - feature-by-feature runtime callstacks from entrypoint to phase/kernel.
 - [SCENARIO_ARCHITECTURE.md](SCENARIO_ARCHITECTURE.md) - scenario lifecycle, bridge ownership, and cross-scale seed architecture.
 - [VISUAL_GUIDE.md](VISUAL_GUIDE.md) - visual learner's guide to how the simulation works and why the discrete perspective matters.
+- [docs/ENGINE_CODE_MAP.md](docs/ENGINE_CODE_MAP.md) - file/subsystem navigation map: what code lives where, largest files, split status, doc gaps.
+- [docs/ENGINE_FILE_MANIFEST.md](docs/ENGINE_FILE_MANIFEST.md) - per-file catalog (every code file, one-line purpose); machine-readable mirror `ENGINE_FILE_MANIFEST.json`.
 - [../docs/SPEC_FTD.md](../docs/SPEC_FTD.md) - project-level theory specification.
 - [../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md](../docs/theory/07_assessment/AUDIT_EPISTEMIC_AUDIT.md) - claim-status and epistemic accounting.
 
