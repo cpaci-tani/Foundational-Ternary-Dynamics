@@ -86,12 +86,37 @@ function initModule(cb) {
   }).catch((e) => self.postMessage({ type: 'error', where: 'init', msg: String(e && e.message || e) }));
 }
 
+// After a C++ setupScenario, clamp any TermToggles `requires` dependent that is
+// ON while its prerequisite is OFF (e.g. selective_damping with damping off).
+// The fresh RenderBridge starts at C++ defaults (selective_damping=true) and
+// some scenario setups turn a prerequisite off without clearing the dependent,
+// which bursts "[TermToggles] Invalid combination" on every tick. Reads the
+// bridge's actual toggle state and corrects it; physics-neutral (the dependent
+// is already a no-op when its prerequisite is off). Mirrors WasmBridge.
+const TOGGLE_REQUIRES = [
+  ['selective_damping', 'damping'],
+  ['larmor_radiation', 'damping'],
+  ['lorentz_force', 'forces'],
+  ['weak_transmutation', 'dual_substrate'],
+  ['triad_binding', 'dual_substrate'],
+  ['latency_field', 'gravity'],
+];
+function enforceToggleInvariants() {
+  if (!mod || !bridge || typeof mod.getToggle !== 'function' || typeof mod.setToggle !== 'function') return;
+  for (const [dep, prereq] of TOGGLE_REQUIRES) {
+    try {
+      if (mod.getToggle(bridge, dep) && !mod.getToggle(bridge, prereq)) mod.setToggle(bridge, dep, false);
+    } catch (e) { /* unknown toggle name in this build — skip */ }
+  }
+}
+
 function buildBridge(n, scen) {
   if (bridge) { try { bridge.delete(); } catch (e) { /* ignore */ } bridge = null; }
   N = n | 0;
   bridge = new mod.RenderBridge(N);
   for (const k in toggles) { try { mod.setToggle(bridge, k, toggles[k]); } catch (e) { /* ignore */ } }
   try { mod.setupScenario(bridge, scen); } catch (e) { /* ignore */ }
+  enforceToggleInvariants();
   scenarioId = scen;
   // Flux-volume cache pointer is stable for a fixed N; publish the heap + offset.
   const vol = mod.getFluxVolume(bridge);
