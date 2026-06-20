@@ -165,6 +165,7 @@ bool setup_quantum_scenario(RenderBridge& rb, const std::string& name) {
         }
         rb.toggles.genesis = false;
         rb.toggles.damping = false;
+        rb.toggles.selective_damping = false;
     }
     else if (name == "quantum-entangle") {
         // Scenario ID: quantum-entangle
