@@ -126,7 +126,7 @@ The integers were originally identified by inspecting known physics values ($N_c
 | 7-term precision formula coefficients | YES (base-integer set) | **Circular** |
 | $\sin^2\theta_W = N_c/N_{\mathrm{eff}} = 3/13$ | YES ($N_c, N_{\mathrm{eff}}$) | **Circular** |
 | Lepton mass ratios, proton/electron ratio | YES (integer arithmetic) | **Circular** |
-| $m_e = m_P\sqrt{2\pi}(\frac{N_{eff}+N_c}{N_c})\alpha^{11}$ | YES | **[THEOREM]** |
+| $m_e = m_P\sqrt{2\pi}(16/3)\alpha^{11}$, with $16/3 = (N_{eff}+N_c)/N_c$ | YES ($16/3$) | **Circular** |
 
 **Practical rule.** Before quoting any FTD match to experiment, classify it against this table. If SP5-dependent, the match is evidence for the *choice* of integers, not independent validation of a mechanism. A derivation of the base-integer set from lattice first principles — not from known physics — would remove the circularity risk across the entire right-hand column. See [AUDIT_EPISTEMIC_AUDIT.md](../07_assessment/AUDIT_EPISTEMIC_AUDIT.md) Gap 5.5 and [AUDIT_HIDDEN_SELECTIONS.md](../07_assessment/AUDIT_HIDDEN_SELECTIONS.md) §SP5.
 
@@ -240,10 +240,13 @@ Quark masses are scale- and scheme-dependent (e.g. MS-bar at $\mu = 2\text{ GeV}
 
 **Verified Arithmetic:**
 ```
-Proton mass ratio:
+Proton mass ratio [STRONGLY MOTIVATED CONJECTURE, 173 ppm]:
   T(10) = 10 × 11 / 2 = 55  (triangular number)
   n_eff/α = 13 / 0.007297 = 1781.47
-  m_p/m_e = L_9 Phase Space (1938) - SU(3) knot (102) = 1836 ✓
+  m_p/m_e = n_eff/α + T(10) = 1781.47 + 55 = 1836.47 ✓
+  (CORRECTION 2026-06-19: the "L_9 Phase Space (1938) - SU(3) knot (102) = 1836"
+   knot re-spelling of fdc483d0 is RETRACTED — substitution identity, [PARAMETRIC];
+   prefer this prior formula.)
 
 Neutron-proton difference:
   φ² = 1.618...² = 2.618
@@ -485,10 +488,12 @@ m_μ/m_e = 3×b_3×(b_3+N_c) - N_c = 207
 m_τ/m_e = (n_eff+N_base)×207 - 2×N_c×b_3 = 3477
 ```
 
-**Proton Mass:**
+**Proton Mass:** [STRONGLY MOTIVATED CONJECTURE, 173 ppm]
 ```
-m_p/m_e = L_9 Phase Space - 6 \times \text{SU(3) Edges} = 1836
+m_p/m_e = n_eff/α + N_base·n_eff + N_c = 1836.47
 ```
+(CORRECTION 2026-06-19: the `L_9 Phase Space − 6×SU(3) Edges = 1836` knot form of
+fdc483d0 is RETRACTED — substitution identity [PARAMETRIC]; prefer this prior formula.)
 
 **CP Phase:**
 ```
@@ -572,7 +577,7 @@ COUPLINGS:     α = 1/137.036 (1.26 ppm)
 
 MASS RATIOS:   m_μ/m_e = 3×7×10 - 3 = 207 (0.11%)
                m_τ/m_e = 17×207 - 42 = 3477 (0.007%)
-               m_p/m_e = 1938 - 102 = 1836 (0.008%)
+               m_p/m_e = 13/α + T(10) = 1836.47 (173 ppm) [SMC]
 
 PMNS MIXING:   sin²θ₁₂ = 3/10 = 0.300 (1.32%)
                sin²θ₂₃ = 16/29 = 0.5517 (3.71%)
