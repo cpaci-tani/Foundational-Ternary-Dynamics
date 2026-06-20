@@ -47,12 +47,17 @@ void gauss_project_cpu(std::vector<Voxel>& voxels,
                        double charge_coupling = 1.0,
                        int sor_iters = SOR_ITERATIONS);
 
-// Coulomb Poisson: ∇²φ_C = -s. Warm-started, mean-subtracted for periodic BC.
+// Coulomb Poisson: ∇²φ_C = -charge_scale·s. Warm-started, mean-subtracted for
+// periodic BC. `charge_scale` is the nuclear-charge scale Z (FTD-0281 helium
+// extension): rho = -charge_scale·(s − mean_charge), so phi_C scales linearly
+// with Z (well depth ×Z, Z=2 = He+). Default 1.0 is bit-identical to the
+// legacy rho = -(s − mean_charge) (golden-neutral).
 void solve_coulomb_poisson_cpu(const TernaryField& state,
                                std::vector<double>& phi_coulomb,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
-                               int sor_iters = SOR_ITERATIONS);
+                               int sor_iters = SOR_ITERATIONS,
+                               double charge_scale = 1.0);
 
 // Latency Poisson: ∇²φ_L = 4πGρ_mass with ρ_mass = K_B|state|. Writes
 // voxel.latency = sqrt(clamp(|phi_latency|, 0, LATENCY_HORIZON_CLAMP)).

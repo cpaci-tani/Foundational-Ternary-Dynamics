@@ -224,16 +224,21 @@ void solve_coulomb_poisson_cpu(const TernaryField& state,
                                std::vector<double>& phi_coulomb,
                                std::vector<double>& sor_source,
                                const Lattice& lattice,
-                               int sor_iters) {
+                               int sor_iters,
+                               double charge_scale) {
   const int N = static_cast<int>(lattice.total_sites());
   constexpr double OMEGA = SOR_OMEGA;
 
   double charge_sum = static_cast<double>(state.charge_sum());
   const double mean_charge = charge_sum / N;
 
+  // FTD-0281 helium extension: rho = -charge_scale·(s − mean_charge). Z=1.0 is
+  // bit-identical to the legacy -(s − mean_charge); Z=2 doubles the Coulomb
+  // well that drives the db_clock_coulomb KG term. The mean-charge subtraction
+  // keeps the net source zero (periodic Poisson solvability) at any scale.
   ftd::parallel_for(0, N, [&](int _lo, int _hi) {
   for (int i = _lo; i < _hi; ++i) {
-    sor_source[i] = -(static_cast<double>(state.state_at(i)) - mean_charge);
+    sor_source[i] = -charge_scale * (static_cast<double>(state.state_at(i)) - mean_charge);
   }
   });
 
