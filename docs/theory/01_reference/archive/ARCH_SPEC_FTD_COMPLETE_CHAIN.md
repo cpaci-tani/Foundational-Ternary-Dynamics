@@ -1,10 +1,12 @@
 # FTD: The Complete Chain
 
+> **⚠ SUPERSEDED 2026-06-22 — archived for provenance.** This April-2026 "i→α proof chain" is superseded by [`SPEC_FTD_COMPLETE_FRAMEWORK.md`](../SPEC_FTD_COMPLETE_FRAMEWORK.md) (FTD-0311), the unified honest map that keeps the "every link tagged" spirit and adds the framework commitments (FC-0/1/2), the boundary map, the rigidity-coverage map (FTD-0310), the prediction spine, and the external-validation status. **Read the capstone, not this.** Retained unedited for historical provenance; some tags here predate later corrections (e.g. the 2026-06-18 overclaim retraction and the FTD-0310 demotions) — the capstone + LEDGER are authoritative.
+
 ## From the Imaginary Unit to the Fine Structure Constant
 
 **Version:** 1.0
 **Date:** April 10, 2026
-**Status:** Proof chain with explicit epistemic tags on every link
+**Status:** [SUPERSEDED] — see `SPEC_FTD_COMPLETE_FRAMEWORK.md`. Proof chain with explicit epistemic tags on every link.
 
 > This document lays out the entire FTD argument in one place. Every claim is tagged [THEOREM], [SELECTION], or [CONJECTURE]. Every [THEOREM] has a corresponding proof script. A reader can check every step and either find a flaw or be forced to engage.
 
