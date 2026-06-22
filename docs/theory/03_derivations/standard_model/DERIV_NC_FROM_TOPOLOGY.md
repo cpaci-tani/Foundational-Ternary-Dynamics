@@ -251,7 +251,7 @@ There are thus *two* [SELECTION] steps, not the single one previously claimed: (
 - [DERIV_D3_FROM_AUTOMORPHISM.md](../02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md) — D = 3 from Watson integral self-consistency and |Aut(E_i)|² = 16
 - [DERIV_MOORE_GAUGE_STRUCTURE.md](DERIV_MOORE_GAUGE_STRUCTURE.md) — Gauge group from sublattice
 - [DERIV_CONFINEMENT_FROM_GAP_EQUATION.md](../foundational_mechanics/DERIV_CONFINEMENT_FROM_GAP_EQUATION.md) — Confined phase Wilson loops
-- [SPEC_FTD_COMPLETE_CHAIN.md](../01_reference/SPEC_FTD_COMPLETE_CHAIN.md) — §2.2 (the [SELECTION] statement of N_c = 3; this document corroborates it, and per the 2026-05-30 reframe does **not** upgrade it to [THEOREM])
+- [ARCH_SPEC_FTD_COMPLETE_CHAIN.md](../../01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md) — §2.2 (the [SELECTION] statement of N_c = 3; archived — superseded by `SPEC_FTD_COMPLETE_FRAMEWORK.md`; this document corroborates it, and per the 2026-05-30 reframe does **not** upgrade it to [THEOREM])
 - [DERIV_LATTICE_SU3_GAUGE.md](DERIV_LATTICE_SU3_GAUGE.md) — §1.4 + Theorem 1.1 + SU3-2: the canonical [SELECTION] statement N_c = 3 from D = 3, and the canonical retirement of the x_-  N_c identification (FTD-0014)
 
 ## Computation
