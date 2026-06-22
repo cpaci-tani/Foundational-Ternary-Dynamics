@@ -126,7 +126,7 @@ It does **not** upgrade to [THEOREM]. A [THEOREM] tag would require either (i) $
 This audit's result justifies the following tag/wording updates:
 
 1. [DERIV_ONE_LOOP_LATTICE_ALPHA.md](DERIV_ONE_LOOP_LATTICE_ALPHA.md) Claim 1LA-2 and §6: strengthen the [SELECTION] justification to include "uniquely best rational in the base-integer set at height ≤ 15 (see EXPLR_A_OVER_D_AUDIT.md §2.2)."
-2. [SPEC_FTD_COMPLETE_CHAIN.md](../01_reference/SPEC_FTD_COMPLETE_CHAIN.md) §2.1 (a=2/D caveat): note that the selection is the uniquely best base-integer rational, not just a geometric motivation.
+2. [ARCH_SPEC_FTD_COMPLETE_CHAIN.md](../01_reference/archive/ARCH_SPEC_FTD_COMPLETE_CHAIN.md) §2.1 (a=2/D caveat; archived — superseded by `SPEC_FTD_COMPLETE_FRAMEWORK.md`): note that the selection is the uniquely best base-integer rational, not just a geometric motivation.
 3. No change to the top-level status of `a = 2/D` — it remains [SELECTION]. But the *grounds* for that [SELECTION] tag are now stronger.
 
 ---
