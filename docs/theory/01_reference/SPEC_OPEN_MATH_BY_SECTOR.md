@@ -146,6 +146,8 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 - All three first-principles routes for `g_c` (Mechanisms A, B, C; FTD-0031, FTD-0093). `g_c` remains [PARAMETRIC].
 - Three substrate-derivation routes for confinement attempted 2026-05-03 night: (1) BCC eigenvalue triple-cosine product at `x_-`; (2) discriminant trichotomy phase argument; (3) Phase J ultralocality as confinement signature — all CLOSED NEGATIVE.
 
+**Posture (2026-06-22, map-and-consolidate):** `§11-confine` is an **accepted structural obstruction — declined-and-mapped, not actively chased.** Area-law confinement is a partition-function (non-classical-integral) object with no deterministic-substrate analog: no Phase-G-type chain exists (the three classical routes closed-negative above), and the full Yang–Mills derivation is RETRACTED (FTD-0042; `DERIV_YANG_MILLS_CONFINEMENT.md` reconciled to `[MEASURED at an inserted coupling [SELECTION]]` per FTD-0303) — only the per-voxel mass gap (FTD-0044) survives as the load-bearing residual `[THEOREM]`. This sits in the same accepted-boundary class as the clock-hypothesis (FTD-0208, gravity) and α (MC-T4.3, [`SPEC_ALPHA_DYNAMICAL_BOUNDARY.md`](SPEC_ALPHA_DYNAMICAL_BOUNDARY.md)): a recognized limit of what the discrete substrate determines, reopenable only by a new effective-sector construction (compact-U(1) flowing to `x_-`), not by the current program.
+
 **Sources:** SPEC_DOCTRINE_LEDGER.md §11; `DERIV_NC_FROM_TOPOLOGY.md` (independent `N_c = 3` routes); LEDGER FTD-0020, FTD-0025 (2026-05-03 night annotation), FTD-0029, FTD-0031, FTD-0093; (FTD-0014 retired per v1.4 §5, row removed in commit `ca7eb61`); TRACKER_OPEN_ITEMS.md §§1.3, 2.4, 2.8.
 
 ---
