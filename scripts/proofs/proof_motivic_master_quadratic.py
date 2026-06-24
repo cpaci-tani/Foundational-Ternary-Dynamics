@@ -2,10 +2,17 @@
 """
 PROOF: The Master Quadratic as a Graded Period Relation of h^1(E_i)
 
-THEOREM: The master quadratic x^2 - 16G*^2 x + 16G*^3 = 0 is the unique
-degree-2 relation in the graded period ring of the symmetric algebra
-Sym*(h^1(E_i)), where E_i: y^2 = x^3 - x is the CM elliptic curve with
-j-invariant 1728.
+CLAIM: The master quadratic x^2 - 16G*^2 x + 16G*^3 = 0 is a graded
+period relation in the symmetric algebra Sym*(h^1(E_i)), where E_i:
+y^2 = x^3 - x is the CM elliptic curve with j-invariant 1728.
+
+EPISTEMIC SPLIT (corrected 2026-06-24 spine audit): the NUMERIC period
+identities (STEPS 1-4: G*, the coefficients 16G*^2 / 16G*^3, the roots,
+Watson W_3 = G*^2/(2*pi)) are [THEOREM]. The claim that this degree-2
+operator assembly is FORCED/UNIQUE (STEPS 5-6) is a [SELECTION] argument,
+not a proof -- it admits a weight non-homogeneity (w_b-w_a=1) and resolves
+it interpretively, and the choice k=16 is canonical-but-not-forced. This
+is consistent with MC-T4.3 [FOUNDATIONAL OBSTRUCTION]; FTD-0013 stays [SMC].
 
 The proof proceeds in five steps:
   1. E_i has CM by Z[i], with real half-period Omega = Gamma(1/4)^2 / (2*sqrt(2*pi))
@@ -166,7 +173,11 @@ print(f"  The lattice knows about E_i through its own Green's function.")
 # ============================================================================
 
 print("\n--- STEP 5: The Master Quadratic in the Graded Period Ring ---")
-print("  [THEOREM: Uniqueness from weight structure]")
+print("  [SELECTION: forcing/uniqueness of the operator assembly is argued, not proven]")
+# (corrected 2026-06-24 spine audit: the weight non-homogeneity w_b-w_a=1 is ADMITTED
+#  and resolved by an interpretive 'self-referential structure' argument, not a proof;
+#  the numeric identities below stay [THEOREM], but selecting THIS degree-2 assembly is
+#  a SELECTION argument -- consistent with MC-T4.3 [FOUNDATIONAL OBSTRUCTION].)
 
 # The graded period ring of Sym*(h^1(E_i)) is:
 #   Per* = direct_sum_{n>=0} Per(Sym^n(h^1(E_i)))
@@ -235,7 +246,10 @@ print(f"    x- = {X_MINUS}")
 # ============================================================================
 
 print("\n--- STEP 6: Uniqueness of the Graded Relation ---")
-print("  [THEOREM: Dimensional analysis in the period ring]")
+print("  [SELECTION: k=16 is the canonical/forced choice argued, not a uniqueness proof]")
+# (corrected 2026-06-24 spine audit: real-rootedness only bounds k>=2; selecting
+#  k=|Aut(E_i)|^2=16 is a canonical-choice SELECTION argument across several coincident
+#  counts, not a forcing theorem. FTD-0013 stays [SMC].)
 
 # A degree-2 relation in Per* with integer arithmetic coefficient k has:
 #   x^2 - k*G*^2*x + k*G*^3 = 0
@@ -258,7 +272,7 @@ print(f"  For the graded relation x^2 - k*G*^2*x + k*G*^3 = 0:")
 print(f"  Real roots require: k*G* >= 4, i.e., k >= 4/G* = {float(4/G_STAR):.6f}")
 print(f"  k must be a positive integer >= 2")
 print(f"")
-print(f"  k = |Aut(E_i)|^2 = {AUT_SQ} is forced by the curve E_i itself:")
+print(f"  k = |Aut(E_i)|^2 = {AUT_SQ} is the CANONICAL choice [SELECTION], coinciding with:")
 print(f"    - |Aut(E_i)|^2 = {AUT_ORDER}^2 = {AUT_SQ}  [automorphism group]")
 print(f"    - |E(Q)_tors|^2 = {AUT_ORDER}^2 = {AUT_SQ}  [rational torsion]")
 print(f"    - |Stab_Oh(axis)| = 48/3 = {AUT_SQ}          [orbit-stabilizer]")
@@ -323,7 +337,9 @@ residual = X_PLUS**2 - SUM_ROOTS * X_PLUS + PROD_ROOTS
 print(f"\n  Residual: x+^2 - 16G*^2 x+ + 16G*^3 = {float(residual):.2e}")
 assert fabs(residual) < mpf('1e-40'), "Master quadratic residual too large"
 
-print(f"\n  VERIFIED: All identities hold to 40+ digits.")
+print(f"\n  VERIFIED: All numeric identities hold to 40+ digits.")
 print(f"  The master quadratic is a graded period relation of h^1(E_i).")
-print(f"  Epistemic status: [THEOREM]")
+# (corrected 2026-06-24 spine audit: split the blanket banner -- the numeric identities
+#  are [THEOREM]; the forcing/uniqueness of the operator assembly (STEP 5-6) is [SELECTION].)
+print(f"  Epistemic status: numeric identities [THEOREM]; operator-assembly forcing/uniqueness [SELECTION]")
 print("=" * 78)

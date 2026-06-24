@@ -88,7 +88,7 @@ The sum of cubed central binomial coefficients is a known identity:
 sum_{m=0}^{inf} [C(2m, m) / 4^m]^3 = Gamma(1/4)^4 / (4 pi^3)
 ```
 
-This is Watson's integral `I_1` (Watson, 1939). The connection to `Gamma(1/4)` arises because the central binomial coefficients are ratios of factorials, and `Gamma(1/4)` is the analytic continuation of the factorial to quarter-integers.
+This sum equals the BCC lattice-Green's-function at the origin, `G_BCC(0)` — the return-probability (self-energy) integral of the BCC sublattice — with numerical value `1.39320392968568...`. <!-- corrected 2026-06-24 spine audit: this 1.3932 is G_BCC(0) (BCC return Green's function), NOT the standard simple-cubic Watson self-energy integral, whose value is ~0.5054 (recomputed via Bessel rep: W_SC = int_0^inf e^{-3t} I0(t)^3 dt = 0.505462...). Prior text mislabeled it "Watson's integral I_1"; the numerical EQUALITY with Gamma(1/4)^4/(4 pi^3) = G*^2/(2 pi) is a true [THEOREM] and is unaffected — only the name was wrong. --> The connection to `Gamma(1/4)` arises because the central binomial coefficients are ratios of factorials, and `Gamma(1/4)` is the analytic continuation of the factorial to quarter-integers.
 
 ### 1.4 The Watson-G* identity [THEOREM]
 

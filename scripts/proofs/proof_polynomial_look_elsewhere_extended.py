@@ -394,6 +394,13 @@ def main() -> int:
         print(f"    Genuine alternatives found: 0 (= 1 master quadratic only)")
         print()
         print("  Implications:")
+        # [AUDIT 2026-06-24] the ~4e5:1 Bayes figure cited downstream is NOT
+        # computed here; this script yields a ~19x scan-size factor
+        # (total_scanned // 147456 == 19; docstring says ~20,000:1). The
+        # dual/rigidity 'unique matcher' result is also tolerance-conditioned
+        # (asymmetric x+ ppm gate vs x- 1% gate); under a symmetric 1% gate
+        # ~32 dual-matchers appear across 11 constants. Treat the single-x+
+        # ppm-fit as [NUMERICAL FACT], not as a 4e5:1 structural Bayes result.
         print("    • FTD-0121 [SYNTHESIS] Bayes factor strengthened by")
         print(f"      ~{total_scanned // 147456}× to roughly 4×10^5 against null.")
         print("    • Master quadratic structural-uniqueness demonstrated")
