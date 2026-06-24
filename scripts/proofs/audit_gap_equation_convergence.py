@@ -32,6 +32,15 @@ Produces a clean honest record of the convergence behaviour.
 """
 from __future__ import annotations
 import math
+import sys
+
+# UTF-8 stdout portability (corrected 2026-06-24 spine audit):
+# this script prints non-ASCII (π, ², etc.); reconfigure so it runs
+# cp1252-clean on Windows consoles without requiring PYTHONUTF8=1.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 
 try:
     import numpy as np

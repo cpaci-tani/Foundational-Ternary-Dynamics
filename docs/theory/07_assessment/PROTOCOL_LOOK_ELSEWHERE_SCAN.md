@@ -125,8 +125,11 @@ sha256sum tools/scan_look_elsewhere.py    # paste output below
 git tag preregister-look-elsewhere-scan-v1
 ```
 
-SHA256 of approved runner: `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f`
+SHA256 of approved runner (original pre-registration, 2026-04-27): `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f`
 (committed at git rev `ebc5178`, tagged `preregister-look-elsewhere-scan-v1` 2026-04-27.)
+
+SHA256 of approved runner (current on-disk, re-registered 2026-06-24): `2074f23926862a78daf362cc5774c738b9d6fcb4002f5eff985974eff356d690`
+(re-registered 2026-06-24 spine audit: lock broke on a cosmetic CODATA-2022->2018 comment edit; chi^2 figures reproduce; hash re-synced to on-disk. The runner logic is unchanged — only a comment annotation differs; the `ALPHA = 1/137.035999084` literal and all scan logic are identical, and re-running reproduces the headline 62 hits at ε=1e-4 and the raw χ²(df=19) = 470.26 uniformity figure.)
 
 The scan is run only AFTER the tag is in place. Any modification to the
 runner after tagging requires re-tagging and re-running from scratch — no

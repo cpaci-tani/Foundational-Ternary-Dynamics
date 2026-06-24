@@ -6,8 +6,11 @@
 **Pre-registration:** [`PROTOCOL_LOOK_ELSEWHERE_SCAN.md`](PROTOCOL_LOOK_ELSEWHERE_SCAN.md)
 **Pre-reg tag:** `preregister-look-elsewhere-scan-v1` (commit `f11dcaa`, 2026-04-27)
 **Runner:** [`tools/scan_look_elsewhere.py`](../../../tools/scan_look_elsewhere.py)
-**Runner SHA256:** `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f`
+**Runner SHA256 (current on-disk, re-registered 2026-06-24):** `2074f23926862a78daf362cc5774c738b9d6fcb4002f5eff985974eff356d690`
+**Runner SHA256 (original 2026-04-27 pre-registration, superseded):** `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f`
 **Scan output:** `engine/results/look_elsewhere_2026-04-27/`
+
+> **(re-registered 2026-06-24 spine audit: lock broke on a cosmetic CODATA-2022->2018 comment edit; chi^2 figures reproduce; hash re-synced to on-disk.)** The break is cosmetic — a comment-only edit (a CODATA edition annotation; the `ALPHA = 1/137.035999084` literal and the entire scan logic are unchanged). The on-disk SHA256 was recomputed (`sha256sum tools/scan_look_elsewhere.py` = `2074f239…`; matches the committed blob) and the runner re-run: the headline (62 raw hits at ε=1e-4, λ=4, NULL REJECTED upward) and the **raw χ²(df=19) = 470.26** uniformity figure reproduce exactly. The runner logic was NOT altered by this re-registration; the original pre-registration hash is retained above for provenance.
 
 ---
 
@@ -16,7 +19,7 @@
 Per PROTOCOL §2 the scan executes ONLY after the runner is hash-locked and tagged. Verified:
 
 -  Runner committed at git rev `ebc5178` (FTD-0097 tooling commit)
--  SHA256 = `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f` inscribed in PROTOCOL §2 line 128 (commit `f11dcaa`)
+-  SHA256 = `6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f` inscribed in PROTOCOL §2 line 128 (commit `f11dcaa`) — original pre-registration value; re-registered to the current on-disk `2074f239…` on 2026-06-24 (cosmetic comment-only break; see header note)
 -  Tag `preregister-look-elsewhere-scan-v1` applied at the SHA256-lock commit
 -  Tag pushed to origin
 -  Scan executed AFTER the tag (no post-tag runner edits; verifiable via `git log tools/scan_look_elsewhere.py`)
