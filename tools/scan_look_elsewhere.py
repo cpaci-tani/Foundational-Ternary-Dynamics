@@ -51,6 +51,15 @@ import numpy as np
 # ============================================================
 # Order matters for determinism. Tuples not sets.
 
+# [AUDIT 2026-06-24] hash-lock BROKEN: the on-disk SHA256 no longer matches the
+# value registered in AUDIT_LOOK_ELSEWHERE_RESULTS.md / PROTOCOL §2
+# (registered 6d9f0f5aebe924023b09003cd13448eb87fc7d036e7bac48cb8e442bb82d628f;
+# on-disk computes differently). The break traces to a single comment-only edit
+# in commit 17481dd5 ('CODATA 2022' -> 'CODATA 2018'); the ALPHA literal
+# 137.035999084 is UNCHANGED, so this audit reran the on-disk script and the
+# chi^2 figures DO reproduce (raw chi^2(df=19)=470.26; dedup=38.09 vs the
+# documented 38.07 rounding). The lock is nonetheless formally broken: re-register
+# the on-disk SHA256 (or re-checkout rev ebc51780) before citing the lock as intact.
 # Constants at protocol-required precision
 G_STAR = 2.95867511918863889  # Γ(1/4)/Γ(3/4), 30 digits per protocol §1.1
 ALPHA = 1.0 / 137.035999084  # CODATA 2018 (FTD-0097 registration-time value) per protocol §1.1

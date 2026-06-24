@@ -174,28 +174,32 @@ which is exactly the master quadratic with roots $x_+ = 137.036$ (identified wit
 
 ### 5.4 The Coefficient 16: BCC + Ternary ReLU DOF Counting
 
-The gap equation coefficient $n_{\text{DOF}} = 16$ was previously [OPEN]. It is now derived from the BCC lattice structure combined with the ternary ReLU threshold:
+The gap equation coefficient $n_{\text{DOF}} = 16$ was previously [OPEN]. The $z_{\text{BCC}} \times 2$ reading motivates it from the BCC lattice structure combined with the ternary ReLU threshold:
 
-**Derivation:**
+**Motivated reading (SELECTION):**
 - The BCC sublattice has coordination number $z_{\text{BCC}} = 2^D = 2^3 = 8$
-- The ternary state space $\{-1, 0, +1\}$ has 3 states, but the void state ($s = 0$) does not participate in interactions
-- Only the 2 non-void states ($+1$ and $-1$) contribute degrees of freedom
+- The ternary state space $\{-1, 0, +1\}$ has 3 states; the reading assumes the void state ($s = 0$) does not participate in interactions
+- Under that assumption only the 2 non-void states ($+1$ and $-1$) contribute degrees of freedom
 - Therefore: $n_{\text{DOF}} = z_{\text{BCC}} \times (\text{non-void states}) = 8 \times 2 = 16$
 
-**Four equivalent expressions:**
+<!-- corrected 2026-06-24 spine audit: the "non-void states = 2" step is a [SELECTION] (no proof that void cannot contribute a DOF), and 8×2 is a re-spelling of 2^4 on a highly composite target — not an independent derivation. -->
+The arithmetic $8 \times 2 = 16$ is trivially true; what is **not** established is that this counting is forced. The "non-void states = 2" step is a [SELECTION] — there is no proof that the void state contributes zero degrees of freedom rather than being included. This route is therefore demoted from [THEOREM] to [SELECTION].
+
+**Several equivalent decompositions of $2^4$ (not independent confirmations):**
 
 | Expression | Value | Origin |
 |-----------|-------|--------|
-| $z_{\text{BCC}} \times 2$ | $8 \times 2 = 16$ | BCC coordination $\times$ non-void ternary states |
+| $z_{\text{BCC}} \times 2$ | $8 \times 2 = 16$ | BCC coordination $\times$ non-void ternary states ([SELECTION]) |
 | $N_{\text{base}}^2$ | $4^2 = 16$ | Framework integer squared |
 | $2^{D+1}$ | $2^4 = 16$ | Binary DOF in $D+1$ causal dimensions |
-| $|\text{Aut}(E)|^2$ | $4^2 = 16$ | Lemniscatic curve automorphism group |
+| $|\text{Aut}(E)|^2$ | $4^2 = 16$ | Lemniscatic curve automorphism group ([THEOREM] — group order) |
 
-These all equal 16 because $D = 3$ forces $z_{\text{BCC}} = 2^3 = 8$ and $N_{\text{base}} = 2^{(D+1)/2} = 4$.
+<!-- corrected 2026-06-24 spine audit: these are re-spellings of 2^4 on a highly composite target, NOT four independent routes converging on 16. They coincide because each is 2^4 written differently: 8×2, 4², 2⁴, |Aut|²=4². Coincidence-on-a-composite is not multi-route confirmation. -->
+These all equal 16 because each is the same power $2^4$ written four ways: $D = 3$ forces $z_{\text{BCC}} = 2^3 = 8$ and $N_{\text{base}} = 2^{(D+1)/2} = 4$, and $|\text{Aut}(E)| = 4$ for the lemniscatic curve. Because 16 is highly composite, agreement among these expressions is **not** evidence of independent confirmation — they are equivalent decompositions of the same integer, not four separate derivations. The only one of the four that is itself a [THEOREM] is the group-order fact $|\text{Aut}(E_i)|^2 = 4^2 = 16$ (the automorphism group of the lemniscatic curve $E: y^2 = x^3 - x$ has order 4).
 
 **Self-referential ReLU closure:** The ternary threshold $K_B \sim \alpha^{11}$ is astronomically small compared to the flux scale $\sigma = \sqrt{I_1} \approx 1.18$. Therefore the manifested fraction $p \approx 1$ and $n_{\text{DOF}} = 16p^2 \approx 16$ to machine precision. The circle closes: $\alpha \to K_B \to p \approx 1 \to n_{\text{DOF}} = 16 \to \text{master quadratic} \to \alpha$.
 
-**Epistemic status:** [THEOREM] — $16 = 8 \times 2$ from BCC coordination and non-void ternary states.
+**Epistemic status:** [SELECTION] — the $z_{\text{BCC}} \times 2 = 8 \times 2 = 16$ route is a motivated reading whose "non-void states = 2" step is unproven (corrected 2026-06-24 spine audit; demoted from [THEOREM]). The arithmetic is trivially true; the structural-independence claim is what is demoted. The companion group-order fact $|\text{Aut}(E)|^2 = 16$ remains [THEOREM].
 
 ---
 
@@ -213,7 +217,7 @@ $$\boxed{x^2 = 16\,G^{*2}\,(x - G^*)}$$
 
 This **pure G\* form** contains only:
 - $G^*$ — the lemniscatic constant (ontic, from $\Gamma(1/4)$)
-- $16 = z_{\text{BCC}} \times 2$ — BCC coordination × non-void ternary states
+- $16$ — the gap-equation coefficient (the $z_{\text{BCC}} \times 2$ reading is [SELECTION], see §5.4; the group-order $|\text{Aut}(E)|^2 = 16$ is [THEOREM])
 - The quadratic structure itself
 
 ### 7.2 Equivalent Pi-Free Forms
@@ -420,7 +424,7 @@ This eliminates the "one-loop ansatz" previously listed as an assumption. The re
 | DC-3 | Orthogonal depth adds 1D → 2D | [THEOREM] | High (standard geometry) |
 | DC-4 | Time adds 1D → D = 3 | [CONJECTURE] | Low (weakest link) |
 | DC-5 | D = 3 → Moore → BCC → G* | [THEOREM] | High (algebraic identity) |
-| DC-6 | Coefficient 16 = z_BCC × (non-void ternary) | [THEOREM] | High (combinatorial) |
+| DC-6 | Coefficient 16 = z_BCC × (non-void ternary) | [SELECTION] | "non-void = 2" unproven; 8×2 is a re-spelling of 2⁴ (corrected 2026-06-24 spine audit). Group-order \|Aut(E)\|²=16 stays [THEOREM] |
 
 ### 6.2 DC-4: The Weakest Link
 
@@ -454,7 +458,7 @@ The argument that time contributes to effective dimensionality faces two objecti
 | **DC-3** | Orthogonal depth adds 1D → 2D | **[THEOREM]** |
 | **DC-4** | Time completes causal dimensionality → D = 3 | **[CONJECTURE]** |
 | **DC-5** | D = 3 → Moore(26) → BCC(8) → G* via Watson | **[THEOREM]** |
-| **DC-6** | Coefficient 16 = z_BCC × (non-void ternary states) = 8 × 2 | **[THEOREM]** |
+| **DC-6** | Coefficient 16 = z_BCC × (non-void ternary states) = 8 × 2 | **[SELECTION]** <!-- corrected 2026-06-24 spine audit: demoted from [THEOREM]; "non-void=2" unproven, 8×2 is a re-spelling of 2⁴ not an independent route. Group-order \|Aut(E)\|²=16 stays [THEOREM]. --> |
 | **DC-7** | Self-referential ReLU closure: α → K_B → p ≈ 1 → n_DOF = 16 → α | **[THEOREM]** |
 | **DC-8** | Ontic gap equation: x² = 16G*²(x − G*) is pi-free | **[THEOREM]** |
 | **DC-9** | Dimensionless Vieta: y₊ + y₋ = y₊·y₋ = 16G* | **[THEOREM]** |

@@ -787,7 +787,7 @@ The ternary state space is the **real projection of `Z[i]^× ∪ {0}`** (the uni
 
 **Why s = i² rather than s = i**: state field carries discrete polarity content (s = i² is the phase-collapsed real projection of the imaginary axis); continuous phase information lives in J ∈ ℝ³. The imaginary half {i, −i} of Z[i]^× is not discarded — it lives in J's continuous phase content.
 
-**Axiomatic-footprint consequence**: three previously-arbitrary numerical settings (−1, 0, +1) become derivable from an existing axiom. Same kind of move as `THEOREM_D_EQUALS_3.md` (D=3 was previously postulated, now derived from |Aut(E)|² = 2^D · (D−1)!).
+**Axiomatic-footprint consequence**: three previously-arbitrary numerical settings (−1, 0, +1) become derivable from an existing axiom. Same kind of move as `DERIV_D3_FROM_AUTOMORPHISM.md` (D=3 was previously postulated, now re-grounded via |Aut(E)|² = 2^D · (D−1)! — arithmetic uniqueness [THEOREM], dimension-forcing [SELECTION] per the 2026-06-24 audit; path corrected from the dangling `THEOREM_D_EQUALS_3.md`).
 
 **The "4" connection**: adds one entry to the existing multiple-4 catalogue. `|Z[i]^×| = 4` is the same 4 as N_base (FTD-0110), level k = 4 in (1+i)-tower (FTD-0111), conductor of χ_{−4} (FTD-0127), and V_complex ≅ Z[i]² in BCC decomposition (FTD-0122 Roles 1+3). Whether all these 4s share a common structural origin remains a [STRONGLY MOTIVATED CONJECTURE]; this document doesn't strengthen it, just adds one more co-occurrence at the same standing.
 

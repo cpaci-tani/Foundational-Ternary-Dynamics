@@ -160,7 +160,7 @@ Plus Axiom 0: "i exists."
 
 The total axiomatic footprint **does not change** (Axiom 0 was already there). What changes is that **three previously-arbitrary numerical settings (−1, 0, +1) become derivable from existing commitments**. This is a small but real reduction in the framework's free-parameter count at the postulate level.
 
-This is the same kind of move as `THEOREM_D_EQUALS_3.md` — D=3 was previously postulated, now derived from `|Aut(E)|² = 2^D · (D−1)!`. Postulate 3's numerical values are similarly re-grounded.
+This is the same kind of move as `DERIV_D3_FROM_AUTOMORPHISM.md` — D=3 was previously postulated, now re-grounded via `|Aut(E)|² = 2^D · (D−1)!` (the arithmetic uniqueness is [THEOREM]; the dimension-*forcing* itself is [SELECTION] per the 2026-06-24 spine audit). Postulate 3's numerical values are similarly re-grounded.
 
 ---
 

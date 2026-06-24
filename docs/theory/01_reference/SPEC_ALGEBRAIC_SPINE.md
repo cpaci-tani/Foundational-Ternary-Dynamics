@@ -1,7 +1,7 @@
 # SPEC — FTD Algebraic Spine (Theorems Only)
 
 **Tag:** [REFERENCE] / canonical
-**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. **Update 2026-04-30:** Theorem 9 (field-theoretic characterization of `Q(G*)` as a maximal `π`-free subfield of `Q(π, Γ(1/4))`) added in §9, conditional on Chudnovsky 1976; LEDGER FTD-0112. The spine now has **nine theorems**; full derivations in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md` (Theorem 8) and `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 (Theorem 9). Section numbering bumped (`§§10–15`). **Supplemental 2026-05-20 (physics-panel review) and 2026-05-25 (MC-T2.3-4 closure):** the "nine theorems" count is reconciled — **seven are theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9), **two are honestly tiered below theorem grade** (Theorem 4 a value-level identity with conjectural structural necessity, and Theorem 7 [THEOREM at L=2] only). The nine numbered sections remain; the theorem-grade count is **seven**. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
+**Date:** 2026-04-27 (initial theorem-list review). **Supplemental note 2026-04-28:** FTD-0110's cluster-efficiency coefficient `k = 1/N_base = 1/4` was promoted to **[DERIVED at linear level]** in `docs/theory/03_derivations/DERIV_K_FROM_OH_A1G_MULTIPLICITY.md` (commit `306837c`). The underwriting subsidiary `mult(A_{1g}) = 4` in the natural 27-dim permutation rep of O_h on the 3³ Moore block is a **[THEOREM]** (character-table formula `192/48 = 4`), independent of any physics interpretation. It does NOT add an 8th theorem to this spine — FTD-0110's coefficient is tagged [DERIVED], not [THEOREM]. **Update 2026-04-29 (late evening):** Theorem 8 (harmonic invariant of the master-quadratic tower) added in §8 — `1/y_+ + 1/y_− = 1` for the (1+i)-tower of master quadratics, where `y_± := x_±/G*`; LEDGER FTD-0111. **Update 2026-04-30:** Theorem 9 (field-theoretic characterization of `Q(G*)` as a `π`-free subfield of `Q(π, Γ(1/4))`) added in §9, conditional on Chudnovsky 1976; LEDGER FTD-0112. **[corrected 2026-06-24 spine audit: "maximal" struck — only π-freeness is proven; maximality is [OPEN], and is false as literally stated since Q(Γ(1/4)) is a larger π-free subfield.]** The spine now has **nine theorems**; full derivations in `docs/theory/03_derivations/THEOREM_HARMONIC_INVARIANT_TOWER.md` (Theorem 8) and `docs/theory/07_assessment/archive_session_outputs/SESSION_SYNTHESIS_2026-04-30.md` §1 (Theorem 9). Section numbering bumped (`§§10–15`). **Supplemental 2026-05-20 (physics-panel review) and 2026-05-25 (MC-T2.3-4 closure):** the "nine theorems" count is reconciled — **seven are theorem-grade** (Theorems 1, 2, 3, 5, 6, 8, 9), **two are honestly tiered below theorem grade** (Theorem 4 a value-level identity with conjectural structural necessity, and Theorem 7 [THEOREM at L=2] only). The nine numbered sections remain; the theorem-grade count is **seven**. This matches `TRACKER_ONTIC_TRUTH.md`'s tiering (T1/T2 for the seven; T4/T3 for the two).
 **Purpose:** state the load-bearing algebraic content of FTD in
 **[THEOREM]-only form, with no physics interpretation. This is the
 citation target for paper drafts, manuscript chapters, and any future
@@ -132,7 +132,7 @@ identification x−  N_c is retired per v1.4 §5.
 
 ## 3 · Theorem 3 — CM curve uniqueness (under the trivial-multiplier criterion)
 
-**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence). The underlying numerical scans over Heegner and class numbers 1–4 are rigorous verification steps for the numerical values of the CM-elliptic-curve roots, but the structural privilege of $d = -4$ is mathematically proven.
+**Status.** **[THEOREM]** at the arithmetic level (the uniqueness of the lemniscatic $| \mu_K | = | \text{disc}(K) |$ coincidence among the class-number-1 fields). The underlying numerical scans over Heegner and class numbers 1–4 are rigorous verification steps for the numerical values of the CM-elliptic-curve roots. **[NUMERICAL FACT — not a proof] (corrected 2026-06-24 spine audit):** the structural privilege of $d = -4$ *for the physical dual-match* is an exhaustive but finite, criterion-dependent scan ($|d| \le 907$ via the Γ-product analogue) — it is **not** mathematically proven. It holds under the trivial-multiplier criterion (below) and FAILS under the rational-multiplier criterion, where e.g. $(d=-3,\ q=3)$ rescaled by framework integers lands at **+0.9077 ppm** vs $m_\mu/m_e$ — *tighter* than the canonical $d=-4$ fit. A genuine theorem would not flip under a definitional choice; the proven content is the arithmetic $|\mu_K|=|\text{disc}(K)|$ fact, not the physics landing.
 
 **Criterion declaration (load-bearing, FTD-0124).** This theorem holds under the **trivial-multiplier criterion**: a "match" requires the natural root x_± of P_d(x) to equal the target dimensionless constant directly (q = 1 in the rational-multiplier search). The analogous statement under the **rational-multiplier criterion** (allow rescaling by any q ≤ 200 with framework-integer factorability) FAILS — 20 additional non-canonical matches exist in the 5814-grid. **Cite this criterion explicitly when invoking Theorem 3.**
 
@@ -294,19 +294,22 @@ verification at L=8 to machine precision).
 
 ## 7 · Theorem 7 — Phase J partition-function ultralocality
 
-**Status.** [THEOREM at L = 2 — mode-degeneracy origin] + [DISCONFIRMED for
-general L]. The L = 2 case is proven by explicit construction. The
-general-L extension was conjectured in earlier drafts and is
-**DISCONFIRMED** by `scripts/proofs/proof_phase_j_general_L.py`: the
-L=2 ultralocality is a mode-counting degeneracy at the Nyquist mode,
-not a structural property; at L ≥ 3 the centered first-derivative is
-non-degenerate and the kinetic term picks up explicit
-spatial-distribution dependence. Audit 2026-05-01 flagged the
-unconditional [THEOREM] framing as inflated (added the
-[CONJECTURE for general L] bracket); audit 2026-05-23 closes the
-general-L conjecture as DISCONFIRMED via route (b) of MC-T1.1 —
-explicit acceptance of the L=2-specific limitation. Spine count
-post-retag is unchanged at 6 theorem-grade + 3 honestly-tiered.
+**Status.** [THEOREM at L = 2 — mode-degeneracy origin] + [NUMERICAL EVIDENCE
+at L = 3] + [AMBIGUOUS / OPEN for L ≥ 4]. The L = 2 case is proven by explicit
+construction. **Corrected 2026-06-24 (spine audit):** the earlier
+"DISCONFIRMED for general L" framing was itself an overclaim *in the negative
+direction*. Re-running `scripts/proofs/proof_phase_j_general_L.py` this audit
+shows L = 3 charge-neutral configurations are **also ultralocal to machine
+precision** (action spread 8.9e-16), because the matched-stencil Laplacian
+λ(k) is non-degenerate on every nonzero k at L = 3. At L ≥ 4 the Laplacian
+acquires zero modes (e.g. k = (0,0,π) at L = 4) that lie in the Gauss-excluded
+kernel; the naive scan then shows placement-dependent S_E (≈3–28% spread), but
+this is plausibly a setup/masking artifact, not a structural failure — so
+L ≥ 4 is **ambiguous**, neither confirmed nor cleanly disconfirmed. Honest
+reading: ultralocality is PROVEN at L = 2, holds numerically at L = 3, and is
+OPEN at L ≥ 4. (Audit 2026-05-01 added the [CONJECTURE for general L] bracket;
+audit 2026-05-23 over-closed it to DISCONFIRMED; this 2026-06-24 audit
+corrects that.) Spine count is unchanged at 6 theorem-grade + 3 honestly-tiered.
 
 **Statement (L = 2, [THEOREM]).** The classical FTD partition function
 on a 2³ lattice has Euclidean action S_E that depends on the state
@@ -314,24 +317,27 @@ field s ∈ {−1, 0, +1}^{8} only through Σ_i s_i² (the count of
 manifested sites). The action is invariant under arbitrary spatial
 permutations of charge placement at fixed charge count.
 
-**Statement (general L, [DISCONFIRMED]).** The same dependence on
-Σ_i s_i² alone, and the same permutation invariance, do **not** hold
-on every finite L³ lattice. Specifically, at L ≥ 3 with the matched
-centered first-derivative stencil, charge-neutral configurations at
-fixed Σ_i s_i² yield different S_E values depending on spatial
-placement — directly contradicting the conjectured ultralocality. See
-`scripts/proofs/proof_phase_j_general_L.py` for the numerical
-disconfirmation at L ∈ {3, 4, 6, 8}.
+**Statement (general L, [NUMERICAL EVIDENCE / OPEN]).** With the matched
+centered first-derivative stencil, charge-neutral configurations at fixed
+Σ_i s_i² remain **ultralocal at L = 3** (action spread ~9e-16, machine
+precision). At L ≥ 4 the scan shows placement-dependent S_E (≈3–28% spread),
+but those configurations have support on Gauss-excluded zero modes of λ(k),
+so the result is **ambiguous** — it may reflect a setup issue rather than a
+structural failure of ultralocality. See
+`scripts/proofs/proof_phase_j_general_L.py` (Test 2 + the `main()` note) for
+the L ∈ {3, 4, 6, 8} scan. The earlier "DISCONFIRMED at L ≥ 3" claim is
+**retracted** (L = 3 is ultralocal; corrected 2026-06-24 spine audit).
 
 **Origin of the L=2 phenomenon.** On a 2³ lattice with centered
 first-derivative ∂_i (eigenvalue i·sin(k_i)), the only available
 momenta are k_i ∈ {0, π}, giving sin(k_i) = 0 for all non-zero modes.
 The kinetic term Σ |∇J|² is therefore identically zero for every
 configuration — trivially ultralocal. The continuum Parseval identity
-Σ |∇J|² = Σ s² (which underlay the earlier general-L conjecture)
-fails on the finite discrete lattice for L ≥ 3 because the discrete
-spectrum is non-degenerate. The L=2 result is a counting accident,
-not a structural fact.
+Σ |∇J|² = Σ s² holds cleanly at L = 2 (all nonzero modes have sin(k_i) = 0)
+**and also at L = 3** (λ(k) non-degenerate on every nonzero k). It becomes
+ambiguous only at L ≥ 4, where Gauss-excluded zero modes of λ(k) require
+special treatment (corrected 2026-06-24 spine audit; the earlier
+"fails for L ≥ 3" reading was wrong — L = 3 is ultralocal).
 
 **Proof (L = 2 only).** Explicit construction of the L=2 partition
 function in `docs/theory/10_eft_program/DERIV_PARTITION_FUNCTION_L2.md`.
@@ -360,8 +366,8 @@ boundary of the projection). g_c remains [PARAMETRIC] as of
 
 **What it does NOT claim.** That the L=2 ultralocality has any
 particular physical content beyond its information structure at L=2.
-The L=2-only scope is now the spine's honest claim; general-L
-extensions are DISCONFIRMED and out of scope.
+The proven scope is L = 2; L = 3 holds numerically; L ≥ 4 is OPEN/ambiguous
+(not "DISCONFIRMED" — corrected 2026-06-24 spine audit).
 
 ---
 
@@ -440,8 +446,15 @@ the [STRONGLY MOTIVATED CONJECTURE] tag of the x₊  1/α identification
 
 ## 9 · Theorem 9 — Field-theoretic characterization of `Q(G*)`
 
-**Statement.** `Q(G*)` is a maximal `π`-free subfield of
-`Q(π, Γ(1/4))`. Specifically:
+**Statement.** `Q(G*)` is a `π`-free subfield of
+`Q(π, Γ(1/4))` (conditional on Chudnovsky 1976). Specifically:
+
+<!-- CORRECTED 2026-06-24 (spine audit): "maximal" struck. The proof below establishes only
+     containment + π-freeness (Q(G*) ∩ Q(π) = Q); no maximality argument exists, and as stated
+     "maximal" is false — Q(Γ(1/4)) is a strictly larger π-free subfield by the identical
+     Chudnovsky argument. The "What it does NOT claim" block (below) already conceded this.
+     Maximality is [OPEN/CONJECTURE], not part of the theorem. -->
+
 
 $$\mathbb{Q}(G^*) \;\subseteq\; \mathbb{Q}(\pi,\,\Gamma(1/4)),
 \qquad
@@ -490,9 +503,10 @@ algebraic spine a precise field-theoretic statement rather than a
 slogan. Combined with Theorem 8 (which proves `G*` is the unique
 named-constant generator with which the entire master-quadratic tower
 admits clean rational-coefficient × integer-power form), Theorem 9
-characterizes `Q(G*)` as the **canonical π-free subfield** of
+characterizes `Q(G*)` as **a distinguished π-free subfield** of
 `Q(π, Γ(1/4))` — the algebraic content of the spine that is invisible
-to `Q(π)` alone.
+to `Q(π)` alone. (It is **not** claimed maximal or canonical; see "What
+it does NOT claim" below — corrected 2026-06-24 spine audit.)
 
 **LEDGER:** FTD-0112 (filed 2026-04-30 alongside this theorem).
 
@@ -565,8 +579,14 @@ high precision). LEDGER row: FTD-0127.
 These are smaller [THEOREM]-level claims that depend on the seven
 above:
 
-- **D = 3 from |Aut(E)|² = 2^D · (D−1)!** — combinatorial identity
-  forcing dimensionality. See `THEOREM_D_EQUALS_3.md`.
+- **D = 3 from |Aut(E)|² = 2^D · (D−1)!** — the *arithmetic* uniqueness
+  (f(D) = 2^D·(D−1)! equals 16 only at D = 3; f(1..5) = {2, 4, 16, 96, 768})
+  is a **[THEOREM]**. The *dimension-forcing* itself is **[SELECTION]**, not
+  forced (corrected 2026-06-24 spine audit): the LHS |Aut(E_i)|² = 16 is a
+  D-independent constant, and the RHS target value is justified via
+  |O_h|/3 = 48/3, which already presupposes D = 3 (circular). See
+  `docs/theory/02_foundations/DERIV_D3_FROM_AUTOMORPHISM.md` (the previously
+  cited `THEOREM_D_EQUALS_3.md` does not exist in the checkout).
 - **Moore integers uniqueness {N_base = 4, N_eff = 13, b_3 = 7}** —
   combinatorial enumeration on the 26-Moore neighborhood with
   ternary states. See
@@ -766,11 +786,11 @@ What this document explicitly does NOT allow you to claim:
 | 4 Coefficient 16 | `EXPLR_COEFFICIENT_16.md` | included in motivic proof | FTD-0006 / FTD-0007 |
 | 5 Watson identity | `DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md` | (analytic) | FTD-0001 (sub) |
 | 6 Phase G Coulomb | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` | `fit_geometric_coulomb.py` | (Phase G) |
-| 7 Phase J ultralocal (L=2 only; general L DISCONFIRMED 2026-05-23) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` + `proof_phase_j_general_L.py` | FTD-0005 area |
+| 7 Phase J ultralocal (THEOREM at L=2; NUMERICAL EVIDENCE at L=3; OPEN/ambiguous L≥4 — corrected 2026-06-24) | `DERIV_PARTITION_FUNCTION_L2.md` | `partition_function_L2.py` + `proof_phase_j_general_L.py` | FTD-0005 area |
 
 | Subsidiary | Primary doc | LEDGER |
 |---|---|---|
-| D = 3 | `THEOREM_D_EQUALS_3.md` | FTD-0036 area |
+| D = 3 (arithmetic uniqueness THEOREM; dimension-forcing [SELECTION], corrected 2026-06-24) | `DERIV_D3_FROM_AUTOMORPHISM.md` | FTD-0010 / FTD-0036 area |
 | Moore integers | `THEOREM_MOORE_LAYER_DECOMPOSITION.md` | FTD-0008 area |
 | a_phys ≡ ℓ_P no-go | `THEOREM_A_PHYS_NO_GO.md` | FTD-0059 |
 | Phase H scaling | `DERIV_EMERGENT_COULOMB_GEOMETRIC.md` §H | (Phase H) |
@@ -793,8 +813,9 @@ y² = x³ − x, the Watson identity W₃ = G*²/(2π), the Phase G geometric
 Coulomb α_r = 2r·G_L(r), Phase J classical-action ultralocality, the
 (1+i)-tower harmonic invariant 1/y₊ + 1/y₋ = 1 with anomaly transcendence
 A_k ∉ Q for k ≥ 4, and the field-theoretic characterization of Q(G*)
-as a maximal π-free subfield of Q(π, Γ(1/4)) (conditional on Chudnovsky
-1976). All nine are independent of physics interpretation. The dual
+as a π-free subfield of Q(π, Γ(1/4)) (conditional on Chudnovsky
+1976; "maximal" struck 2026-06-24 — only π-freeness is proven). All nine
+are independent of physics interpretation. The dual
 numerical match x+ ≈ 1/α (1.26 ppm) + x− ≈ N_c (0.80%) is recorded as
 [STRONGLY MOTIVATED CONJECTURE], not theorem; promotion requires
 either a derivation (all three first-principles routes for g_c are
