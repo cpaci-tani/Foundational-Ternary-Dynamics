@@ -47,6 +47,17 @@ $$G^* = \frac{2\varpi}{\sqrt{\pi}} = \frac{2 \cdot 4\,L(E,1)}{\sqrt{\pi}} = \fra
 
 $$\frac{8}{\sqrt{\pi}} \times L(E,1) = 4.51352 \times 0.65551 = 2.95868 = G^* \quad \checkmark$$
 
+> **In-repo verification (2026-06-24, F1).** `scripts/proofs/proof_lvalue_deligne_verification.py`
+> now **reproduces** $L(E,1)=\varpi/4$ from first principles — point-counting the Hecke
+> eigenvalues $a_p$ of $E$ (CM fingerprint $a_p=0$ for $p\equiv 3\bmod 4$ confirmed across 280
+> primes; $a_{13}=6=2N_c$) and summing the rank-0 analytic series
+> $L(E,1)=2\sum_n (a_n/n)e^{-2\pi n/\sqrt{32}}$ — agreeing with $\varpi/4$ to rel. diff $5\times10^{-41}$.
+> So the **product identity** $16G^{*3}=2^{13}L(E,1)^3/\pi^{3/2}$ is now
+> **[DERIVED-given-import, with the $L(E,1)$ import REPRODUCED]** (and $k=13$, not $2^{10}$, is
+> re-confirmed). The **Sym² identity** $16G^{*2}=512\,L(\mathrm{Sym}^2 E,1)$ is verified *given*
+> the cited Damerell–Shimura value $L(\mathrm{Sym}^2 E,1)=\varpi^2/(8\pi)$; reproducing that
+> value from its own Dirichlet series is deferred.
+
 ### 1.3 The Coefficient 16 from BSD [THEOREM]
 
 The coefficient 16 in the master quadratic $x^2 - 16G^{*2}x + 16G^{*3} = 0$ equals:
