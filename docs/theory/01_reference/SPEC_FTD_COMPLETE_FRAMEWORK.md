@@ -64,10 +64,10 @@ A LEDGER tag *labels* a claim; it does not answer *is the numerical match statis
 
 | Bucket | Claim family | Evidence |
 |---|---|---|
-| **(i) Scan-rigid** | **x₊ = 1/α** | FTD-0189: 0 non-G\* dual-matchers / 2.65M polynomials — the framework's *one* rigid identification. |
+| **(i) Scan-rigid** | **x₊ = 1/α** | FTD-0319 (the scan's dedicated row, formerly mis-cited "FTD-0189"): 0 non-G\* dual-matchers / 2.65M polynomials — the framework's *one* rigid identification (a `[NUMERICAL FACT]` under the registered gate; the "~4×10⁵:1 Bayes" is unsupported — runner yields ~19× scan-size; uniqueness is tolerance-conditioned). |
 | **(ii) Scan-tested → NULL** | FTD integer/monomial catalog (general); cluster-mass SM identification | FTD-0097: catalog over-rich >5× background; FTD-0262: SM ratios p=2.05 (chance-level). |
-| **(iii) Scan-tested → NOT rigid** | **sin²θ_W=3/13, α_s=7/59, m_e prefactor 16/3** | **FTD-0310 (2026-06-22): none rigid.** α_s MDL-dominated by 2/17; sin²θ_W borderline (p≈0.05); prefactor chance-level (p≈0.08). All three **demoted** to `[PARAMETRIC]`. |
-| **(iv) Tagged, NOT scanned** | ~125 remaining `[PARAMETRIC]` (quark masses, hadron spectroscopy, decay rates, precision-QED imports, lepton-ratio offsets, Koide) | **No rigidity scan run.** The tag records intent; epistemic grip is untested. *This is the deepest open methodological question.* |
+| **(iii) Scan-tested → NOT rigid** | **sin²θ_W=3/13, α_s=7/59, m_e prefactor 16/3** (FTD-0310); **sin²θ₁₂=3/10, sin²θ₂₃=16/29, Δm²₃₁/Δm²₂₁=100/3** (FTD-0320) | **FTD-0310 (2026-06-22) + FTD-0320 (2026-06-24): none rigid.** α_s MDL-dominated by 2/17; sin²θ_W p≈0.05; prefactor p≈0.08; sin²θ₂₃ MDL-dominated by 6/11 (~10× better); Δm²-ratio by 33/1; sin²θ₁₂ chance-level (p=0.48). All six **demoted** to `[PARAMETRIC]`. |
+| **(iv) Tagged, NOT scanned** | ~122 remaining `[PARAMETRIC]` — now essentially the integer-**combination** families (quark masses, ~90 hadron spectroscopy, decay rates, precision-QED imports, CKM Wolfenstein, Koide) | **No rigidity scan run** for the combination families (the simple-rational subset is now scanned, bucket iii). Their test is the FTD-0097-style combinatorial look-elsewhere scan (deferred v2; FTD-0097 already NULL at the monomial level). *Still the deepest open methodological question.* |
 
 **The honest one-liner:** exactly **one** numerical identification (x₊=1/α) has survived an adversarial uniqueness scan; everything tested since has come back NULL or non-rigid; the large remainder is tagged-but-unscanned. The framework's physics matches should be read as *suggestive*, with the rigid algebraic spine (§2) carrying the weight.
 
@@ -91,7 +91,7 @@ A LEDGER tag *labels* a claim; it does not answer *is the numerical match statis
 
 - **~23 `[DERIVED]`/`[THEOREM]`** · **~129 `[PARAMETRIC]`** · **~10 `[IMPOSED]`/`[SELECTION]`** (~162 total claims). No drift across CATALOG / TRACKER_ONTIC_TRUTH / spine.
 - **Truth tiers:** T1 rock-solid `[THEOREM]` (OT-1.x) · T2 conditional-on-classical-theorems · T3 numerical-fact · T4 the coefficient-16 `[CONJECTURE]` · T5 the central conjecture x₊=1/α `[SMC]`.
-- **Rigidity overlay (the §4 news, quantified):** of the ~129 `[PARAMETRIC]`, **1** is scan-rigid (x₊, also the T5 conjecture), **~3** are scan-tested-and-not-rigid (FTD-0310, now `[PARAMETRIC]`), the bulk catalog is scan-NULL-at-the-monomial-level (FTD-0097), and **~125 are unscanned**.
+- **Rigidity overlay (the §4 news, quantified):** of the ~129 `[PARAMETRIC]`, **1** is scan-rigid (x₊, also the T5 conjecture; FTD-0319), **~6** are scan-tested-and-not-rigid (FTD-0310 + FTD-0320, all now `[PARAMETRIC]`), the bulk catalog is scan-NULL-at-the-monomial-level (FTD-0097), and **~122 are unscanned** — now essentially the integer-combination families (the simple-rational subset is scanned).
 
 ---
 
