@@ -695,12 +695,20 @@ spine. It is recorded in the LEDGER as
 
 It is NOT promoted to theorem. The motivation is the algebraic rigidity
 of `P(x)` (Theorem 2 + uniqueness from Theorem 3) plus the **adversarial
-look-elsewhere scan** (FTD-0189; pre-reg tag
+look-elsewhere scan** (FTD-0319; formerly cited as "FTD-0189" — repointed
+2026-06-24, that id is the graviton audit; pre-reg tag
 `preregister-adversarial-look-elsewhere-v1`): across **2.65 M degree-2
 polynomials** over an 18-constant basket FTD did not design, the master
 quadratic is the **unique dual-matcher** — zero non-G* dual-matchers,
 rank 1 by ~130×. That is structural evidence of polynomial-template
-uniqueness; it is not a derivation of α from FTD axioms.
+uniqueness; it is not a derivation of α from FTD axioms. **Honest caveats
+(2026-06-24 spine audit):** the ~130× rank gap is *within the G\*-family*
+(the rank-2 is itself a G\* polynomial); uniqueness is asymmetric-
+tolerance-conditioned (x₊ at 2 ppm vs x₋ at 1% — under a symmetric 1% gate
+~32 dual-matchers appear across 11 constants); and the "~4×10⁵:1 Bayes"
+figure cited elsewhere is **not** computed by the runner (which yields only
+a ~19× scan-size factor). Read this as a `[NUMERICAL FACT]` (unique
+dual-matcher under the registered gate), not a structural Bayes result.
 
 The polynomial's smaller root, `x_- = 3.0240…`, is a mathematical
 artifact of the quadratic. **The identification `x_-  N_c` is
@@ -709,7 +717,7 @@ row FTD-0014 was removed in commit `ca7eb61`. FTD's `N_c = 3` is
 independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes)
 and the Moore Layer Theorem (`DERIV_BCC_MULTIPLICATIVE_STRUCTURE.md`,
 where `W_3 = G*²/(2π)` and `SU(3)` both arise from the BCC eigenvalue's
-triple cosine product). The FTD-0189 scan's "dual-matcher" criterion
+triple cosine product). The FTD-0319 scan's "dual-matcher" criterion
 historically used `(1/α, N_c)` as the target pair; the polynomial-
 uniqueness fact it establishes is independent of which physical
 constant one tries to identify with `x_-`, and is unchanged by the
@@ -723,7 +731,7 @@ from "P(x) root x₊" to "physical α" runs through `g_c` at
 [PARAMETRIC] status.
 
 The honest reading: `P(x)` is a specific polynomial (Theorem 2) whose
-larger root numerically matches 1/α. The FTD-0189 scan shows no other
+larger root numerically matches 1/α. The FTD-0319 scan shows no other
 polynomial in a large, fairly-chosen neighborhood produces a comparable
 match. That is structural evidence the polynomial is special; it is
 not a derivation of α from FTD axioms.
