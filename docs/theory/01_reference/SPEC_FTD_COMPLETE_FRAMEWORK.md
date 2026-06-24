@@ -1,7 +1,7 @@
 # SPEC — FTD Complete Framework: the unified honest map (FTD-0311)
 
 **Tag:** `[SYNTHESIS]` — integrates the constitution, algebraic spine, boundary docs, prediction spine, and accounting; introduces **no new mathematics** and **promotes nothing**. Every claim carries its canonical tag.
-**Date:** 2026-06-22
+**Date:** 2026-06-22 (FC-W rows synced 2026-06-23 — FTD-0314/0315)
 **Supersedes:** `SPEC_FTD_COMPLETE_CHAIN.md` (v1.0, April 2026 — the "i→α proof chain"; archived). This doc keeps that "every link tagged" spirit and adds the framework commitments, the boundary map, the rigidity-coverage map, the prediction spine, and the external-validation status.
 **Precedence:** **LEDGER > constitution (`SPEC_FTD_FRAMEWORK_V1`) > this doc > other prose.** If a number or tag here disagrees with the LEDGER, the LEDGER wins.
 
@@ -16,7 +16,7 @@
 | Register | Content | Status |
 |---|---|---|
 | **Postulates P1–P5** | discrete 3D lattice (undefined boundary) · discrete time · ternary states {−1,0,+1} · 26-neighbour local causality · determinism | `[AXIOM]` (frozen) |
-| **Framework Commitments** | **FC-0** ℤ[i] reading of the order-4 symmetry · **FC-1** declines the measurement-map M (the commutative observable algebra is complete) · **FC-2** native arrow + emergent IR-only Lorentzian metric | `[AXIOM]`-class **declarations, not derivations** — each sits on a fork a theorem proved *open* (§3) |
+| **Framework Commitments** | **FC-0** ℤ[i] reading of the order-4 symmetry · **FC-1** declines the measurement-map M (the commutative observable algebra is complete) · **FC-2** native arrow + emergent IR-only Lorentzian metric · **FC-3** scale-ratio-covariance (only internal ratios physical) · **FC-4 (FC-W)** adopts the external α-binding axiom W, pinned by FTD-0314 | `[AXIOM]`-class **declarations, not derivations** — each sits on a fork a theorem proved *open* (§3); FC-W is the framework's first *adopted* (vs declined) import |
 | **Calibrations** | `a_phys ≡ ℓ_P` · `M_REST = m_e` · `t_phys = √3·ℓ_P/c` | `[IMPOSED]` (dimensionless predictions are calibration-independent; dimensional ones ride these) |
 
 ---
@@ -47,7 +47,7 @@ Each row is a *result* (Number-One-Goal clause 2): a rigorously-mapped limit, no
 
 | Boundary | Verdict | Canonical doc |
 |---|---|---|
-| **α (the EM coupling)** | **DYNAMICAL, not structural** — route-invariant (FTD-0242); K-BIND closed *theorem-negative* (FTD-0244); the operator assembly needs an external W-postulate. `x₊=1/α` stays `[SMC]`. | `SPEC_ALPHA_DYNAMICAL_BOUNDARY` |
+| **α (the EM coupling)** | **DYNAMICAL, not structural** — route-invariant (FTD-0242); K-BIND closed *theorem-negative* (FTD-0244); **FTD-0314 extends this to *all* finite-symmetry carriers** (the distinguishing surd `√(G*(4G*−1))` is transcendental over ℚ) ⇒ W is provably *external*. The constitution adopts it as **FC-W (FTD-0315)**, under which `x₊=1/α` is a `[CONDITIONAL THEOREM given W]` — still **not** `[DERIVED]`, unconditionally `[SMC]`. | `SPEC_ALPHA_DYNAMICAL_BOUNDARY` |
 | **Cluster-mass law N(A)** | **`[BOUNDARY HARDENED]`** on 3 axes (exit-i FTD-0276, exit-ii convention FTD-0307, reduction FTD-0309): shape derived, calibration engine-emergent, no scalar reduction. | `SPEC_FTD0110_BRIDGE_BOUNDARY` |
 | **Confinement (area-law)** | **`[OPEN STRUCTURAL OBSTRUCTION]`** — no deterministic-substrate analog; YM proof retracted (FTD-0042), per-voxel mass gap (FTD-0044) survives. | `SPEC_OPEN_MATH_BY_SECTOR` §4 |
 | **Cosmology** | ΛCDM apparatus + FTD numerology; no cosmological observable derived. | `SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY` |
@@ -125,4 +125,4 @@ The remaining program is **mapping and validation, not α attacks**: mature the 
 
 ---
 
-*Nothing in this document promotes any claim. FTD-0013 `[SMC]`, MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`, FC-0/1/2 `[AXIOM]`-class, the algebraic spine — all at their canonical tags. Golden gate untouched. LEDGER FTD-0311 `[SYNTHESIS]`.*
+*Nothing in this document promotes any claim. FTD-0013 `[SMC]`, MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`, FC-0/1/2/3/4 `[AXIOM]`-class, the algebraic spine — all at their canonical tags. Golden gate untouched. LEDGER FTD-0311 `[SYNTHESIS]`; FC-W rows FTD-0314/0315.*
