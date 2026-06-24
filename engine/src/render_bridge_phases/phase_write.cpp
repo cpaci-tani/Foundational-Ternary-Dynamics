@@ -277,6 +277,19 @@ void phase_write_main_loop(RenderBridge& rb) {
   rb.genesis_events_this_tick_ = 0;
   rb.evaporation_events_this_tick_ = 0;
 
+  // Effective genesis constants. Defaults (override <=0, use_temperature=false)
+  // reproduce the compile-time K_GENESIS / K_MANIFEST byte-for-byte ⇒ golden-safe.
+  // kg = genesis threshold; km = manifestation probability-ramp scale. The
+  // research overrides let a campaign test K_GENESIS = K_B (drop the N_c) and a
+  // ramp tied to temperature (km = langevin_T) instead of the electron mass.
+  // Single-substrate genesis only.
+  const double kg = (rb.genesis_threshold_override > 0.0)
+                      ? rb.genesis_threshold_override : K_GENESIS;
+  const double km = rb.manifest_use_temperature
+                      ? std::max(rb.toggles.langevin_T, 1e-12)
+                      : ((rb.manifest_scale_override > 0.0)
+                           ? rb.manifest_scale_override : K_MANIFEST);
+
   // ---- Loop 2: Genesis and Evaporation ----
   // SEQUENTIAL — DETERMINISM REQUIREMENT (golden gate). This loop carries a
   // genuine cross-thread read-write hazard: evaporation reads neighbour
@@ -311,10 +324,10 @@ void phase_write_main_loop(RenderBridge& rb) {
       }
     } else {
       // Genesis (single): divergence for polarity.
-      if (do_genesis && v.state == 0 && v.flux.mag2() > K_GENESIS * K_GENESIS) {
+      if (do_genesis && v.state == 0 && v.flux.mag2() > kg * kg) {
         double dens = std::sqrt(v.flux.mag2());
-        double excess = dens - K_GENESIS;
-        double p = 1.0 - std::exp(-excess / K_MANIFEST);
+        double excess = dens - kg;
+        double p = 1.0 - std::exp(-excess / km);
         if (voxel_uniform(gseed, i, rb.tick_,
                           static_cast<std::uint64_t>(VoxelRng::GenesisManifest)) < p) {
           ftd::atomic_inc(rb.genesis_events_this_tick_);  // FTD-0267 telemetry (observation only)
@@ -323,7 +336,7 @@ void phase_write_main_loop(RenderBridge& rb) {
           v.wave_vel *= (1.0 - rb.toggles.kinetic_drain);
           double jmag = dens;
           if (jmag > K_GENESIS_FLUX_EPSILON)
-            v.flux *= std::max(0.0, 1.0 - K_GENESIS / jmag);
+            v.flux *= std::max(0.0, 1.0 - kg / jmag);
 
           // divergence from the post-write snapshot (race-free).
           double div = ::ftd::divergence_from_flux_array(rb.flux_pre_write_, rb.lattice_, i);
