@@ -98,6 +98,6 @@ queued as a possible follow-up, not attempted.
 **Nothing is promoted.** FTD-0270's unconditional boundary stands; FC-1 stands (and is
 *illustrated* by §4); FTD-0013 `[SMC]`, MC-T4.3 unchanged; FTD-0278's register and
 honesty rails carry over with I3 added. The conditional atomic sector now contains:
-hydrogen (Rydberg ladder + O_h multiplets, FTD-0278) and mean-field helium (screening
+hydrogen (the **1s ground state** — `HYDROGEN-1s-CONFIRMED`; the n≥2 ladder / O_h multiplets were **retracted** as torus-momentum artifacts, FTD-0278 correction) and mean-field helium (screening
 + ionization structure, this row) — each priced against its explicit import register.
 Next free LEDGER id: **FTD-0280**.
