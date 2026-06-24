@@ -265,6 +265,17 @@ public:
     // Physics term toggles (pedagogy system)
     TermToggles toggles;
 
+    // ── Research overrides for the genesis constants (single-substrate path) ──
+    // Lets a campaign vary the genesis threshold and the manifestation ramp
+    // scale at runtime, to test whether K_GENESIS = N_c·K_B and the
+    // K_MANIFEST = K_B ramp are the right choices (vs K_GENESIS = K_B, or a ramp
+    // tied to the actual temperature). Default sentinels (<=0 / false) reproduce
+    // the compile-time constants EXACTLY ⇒ all existing runs are byte-identical
+    // and golden-safe. Only phase_write's single-substrate genesis reads these.
+    double genesis_threshold_override = -1.0;  // <=0 ⇒ use compile-time K_GENESIS
+    double manifest_scale_override    = -1.0;  // <=0 ⇒ use compile-time K_MANIFEST
+    bool   manifest_use_temperature   = false; // true ⇒ ramp scale = toggles.langevin_T
+
     // EL residual verification: exposes delta_j_ computed by phase_read()
     const std::vector<Vec3>& delta_j() const { return delta_j_; }
     const std::vector<Vec3>& dJ() const { return dJ_; }
