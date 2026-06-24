@@ -5,6 +5,7 @@
 **Date:** March 16, 2026
 **Status:** Theorem (algebraic identity) + number-theoretic context
 **Dependencies:** MATH_MASTER_QUADRATIC.md, DERIV_WATSON_GSTAR_IDENTITY.md, EXPLR_MODULAR_QUADRATIC.md
+**Revised:** June 24, 2026 (spine audit) — §3.1's March-2026 algebra was numerically wrong and is corrected to match `DERIV_MASTER_QUADRATIC_CM_LVALUES.md`: the bad intermediate substitution $G^*=4\sqrt{2/\pi}\,L$ is replaced by the §1.2 identity $G^*=8L/\sqrt{\pi}$, so the coefficients become $512/\pi\to1024/\pi$ and $2048\sqrt2/\pi^{3/2}\to8192/\pi^{3/2}$ (re-verified at dps=80, both gaps $<10^{-78}$). Epistemic tags unchanged.
 
 ---
 
@@ -105,15 +106,24 @@ Whether these constructions are significant or post-hoc remains [OPEN]. However,
 
 ### 3.1 Rewriting the Quadratic [THEOREM]
 
-Substituting $G^* = 4\sqrt{2/\pi}\,L(E,1)$ and $\varpi = 4\,L(E,1)$:
+Substituting $G^* = 8\,L(E,1)/\sqrt{\pi}$ (the identity established in §1.2) and $\varpi = 4\,L(E,1)$:
 
-$$16G^{*2} = 16 \cdot \frac{32}{\pi} L(E,1)^2 = \frac{512}{\pi} L(E,1)^2$$
+$$16G^{*2} = 16 \cdot \frac{64}{\pi} L(E,1)^2 = \frac{1024}{\pi} L(E,1)^2$$
 
-$$16G^{*3} = 16 \cdot \frac{128\sqrt{2}}{\pi\sqrt{\pi}} L(E,1)^3 = \frac{2048\sqrt{2}}{\pi^{3/2}} L(E,1)^3$$
+$$16G^{*3} = 16 \cdot \frac{512}{\pi^{3/2}} L(E,1)^3 = \frac{8192}{\pi^{3/2}} L(E,1)^3$$
 
 The master quadratic becomes:
 
-$$x^2 - \frac{512}{\pi} L(E,1)^2 \, x + \frac{2048\sqrt{2}}{\pi^{3/2}} L(E,1)^3 = 0$$
+$$x^2 - \frac{1024}{\pi} L(E,1)^2 \, x + \frac{8192}{\pi^{3/2}} L(E,1)^3 = 0$$
+
+<!-- CORRECTION 2026-06-24 (spine audit): §3.1 previously substituted the WRONG intermediate
+     form G* = 4√(2/π)·L(E,1) (= 2.0921, internally inconsistent with §1.2's correct
+     G* = 8·L(E,1)/√π = 2.95868), yielding wrong coefficients 512/π and 2048√2/π^(3/2).
+     Recomputed at dps=60: 16G*² = (1024/π)·L² = 140.0601353744945… and
+     16G*³ = (8192/π^(3/2))·L³ = 414.3924377227094… (both machine-exact). The √2 was an
+     artifact of the wrong substitution and is absent from the correct form. Consistent with
+     DERIV_MASTER_QUADRATIC_CM_LVALUES.md. -->
+
 
 This is algebraically correct but not illuminating. The natural form uses G* directly.
 
@@ -181,7 +191,7 @@ This remains the deepest open question in FTD.
 
 ### Established [THEOREM]
 
-1. $G^* = 4\sqrt{2/\pi}\,L(E,1)$ — exact algebraic identity
+1. $G^* = 8\,L(E,1)/\sqrt{\pi}$ — exact algebraic identity (NOT $4\sqrt{2/\pi}\,L(E,1)$; see §1.2 and the §3.1 correction note)
 2. $L(E,1) = \varpi/4$ — from BSD (proven for this curve)
 3. $16 = |E(\mathbb{Q})_{\text{tors}}|^2$ — the BSD denominator IS the master quadratic coefficient
 4. Framework integers $\{3, 7, 47\}$ are supersingular for $E$; $13$ is ordinary with $a_{13} = 2N_c$

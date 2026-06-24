@@ -3,7 +3,8 @@
 ## A New Proof of Spatial Dimensionality from CM Theory
 
 **Date:** April 3, 2026
-**Status:** [THEOREM]
+**Status:** [THEOREM] (arithmetic uniqueness only) + [SELECTION] (dimension-forcing)
+<!-- corrected 2026-06-24 spine audit: the ARITHMETIC fact "f(D)=2^D(D-1)! equals 16 only at D=3" is a genuine (if trivial) [THEOREM] and stands. But the DIMENSION-FORCING (that this equation *selects* the physical D=3) is [SELECTION], not [THEOREM], and is circular: the LHS |Aut(E_i)|^2 = 16 is a D-INDEPENDENT constant (it does not contain D), and the only justification of the RHS target value 16 is |O_h|/D = 48/3 (§3.3 / §5.5), which already PRESUPPOSES D=3 (O_h is the point group of the D=3 cubic lattice). See the §2 claim, §5.5 [SELECTION], the [OPEN] item, and the Honesty Note. No upward promotion. -->
 **Consolidates:** also absorbs `DERIV_D3_UNIQUENESS.md` (2026-05-21)
 **Proof script:** `scripts/verification/verify_blind_derivation.py` (step 8); Watson-integral route — `scripts/proofs/proof_d3_uniqueness.py`
 
@@ -33,9 +34,11 @@ No other $j$-invariant gives $|\text{Aut}| = 4$. (The only other enhanced case i
 
 ## $\S 2$. The Uniqueness Theorem
 
-**Claim D3A-2.** The equation $|\text{Aut}(E_i)|^2 = 2^D \cdot (D-1)!$ has the unique positive integer solution $D = 3$. **[THEOREM]**
+**Claim D3A-2.** The equation $|\text{Aut}(E_i)|^2 = 2^D \cdot (D-1)!$ has the unique positive integer solution $D = 3$. **[THEOREM]** (arithmetic uniqueness only)
 
-*Proof.* The left-hand side is $|\text{Aut}(E_i)|^2 = 4^2 = 16$.
+<!-- corrected 2026-06-24 spine audit: the arithmetic uniqueness below is a genuine [THEOREM]. The further step "therefore the physical spatial dimension is forced to be D=3" is [SELECTION], NOT [THEOREM]: it is circular. The LHS |Aut(E_i)|^2 = 16 is a D-INDEPENDENT constant, and the RHS target 16 is only justified via |O_h|/D = 48/3 (§3.3), which already presupposes D=3. -->
+
+*Proof.* The left-hand side is $|\text{Aut}(E_i)|^2 = 4^2 = 16$ — a **$D$-independent constant** (it carries no dependence on $D$).
 
 Define $f(D) = 2^D \cdot (D-1)!$ for positive integers $D$. We compute:
 
@@ -157,9 +160,13 @@ The Watson integral $W_D$ decreases with $D$ for $D \geq 3$ (higher-dimensional 
 
 **[THEOREM] (automorphism approach, $\S\S 1$–$4$):**
 1. $|\text{Aut}(E_i)| = 4$ (standard result in the theory of elliptic curves)
-2. $D = 3$ is the unique positive integer with $2^D \cdot (D-1)! = 16$ (exhaustive check + monotonicity)
+2. $D = 3$ is the unique positive integer with $2^D \cdot (D-1)! = 16$ (exhaustive check + monotonicity) — this is the **arithmetic** uniqueness only
 3. The three group-theoretic interpretations are equivalent (standard finite group theory)
 4. Independence from the Watson integral approach (no shared premises)
+
+**[SELECTION] (automorphism approach — the dimension-forcing):**
+<!-- corrected 2026-06-24 spine audit: surfaced into the status block so downstream readers see the circularity. -->
+- That the arithmetic uniqueness *forces the physical spatial dimension* to be $D = 3$ is **[SELECTION], not [THEOREM]**, and is **circular**: the LHS $|\text{Aut}(E_i)|^2 = 16$ is a $D$-independent constant, and the only justification of the RHS target value $16$ is $|O_h|/D = 48/3$ (§3.3 / §5.5), which already presupposes $D = 3$ ($O_h$ is the point group of the $D=3$ cubic lattice). See the [OPEN] item below and the Honesty Note.
 
 **[THEOREM] (Watson-integral approach, $\S 5$):**
 5. Watson integrals $W_D$ computed for $D = 1\ldots6$ ($D=3$ exact, $D=4\ldots6$ Monte Carlo with 5M samples)
