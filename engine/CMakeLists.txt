@@ -1431,6 +1431,15 @@ ftd_add_test(campaign_flux_equation_of_state tests/campaign_flux_equation_of_sta
              CTEST_NAME campaign_flux_equation_of_state TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# Genesis amplitude ceiling: is there a MAX amplitude for coherent light? A
+# transverse flux plane wave is swept in amplitude A through K_GENESIS=1.533;
+# genesis-event count vs A tests for a hard, wavelength-invariant cliff (the
+# coherent-light amplitude ceiling) + a trajectory shows the wave "breaking"
+# into matter above threshold. Read-only / golden-neutral.
+ftd_add_test(campaign_genesis_amplitude_ceiling tests/campaign_genesis_amplitude_ceiling.cpp
+             CTEST_NAME campaign_genesis_amplitude_ceiling TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0281 rung 1: atomic spectroscopy — hydrogen-1s on the engine. LOCKED +1
 # nucleus sources phi_C; de Broglie clock + db_clock_coulomb make the flux ring
 # at ω_n=√(ω₀²+a_n); shell-autocorrelation C(t) FFT → bound 1s level, validated
