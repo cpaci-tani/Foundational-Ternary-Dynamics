@@ -330,6 +330,11 @@ ONE_LOOP_RESIDUAL_PPB = abs(X_PLUS_ONE_LOOP - ALPHA_INV_NIST) / ALPHA_INV_NIST *
 # =============================================================================
 
 # Fine structure constant
+# [CONJECTURE / post-hoc fit] (corrected 2026-06-24 spine audit: the multi-term
+# precision series fits 1/alpha BEYOND CODATA precision (~11 digits), so the
+# extra digits are a fit, not a measurement). The tree-level master-quadratic
+# root x+ = 137.036171458 matches 1/alpha to +1.2572 ppm, and the identification
+# x+ = 1/alpha is [STRONGLY MOTIVATED CONJECTURE] (FTD-0013), NOT derived.
 ALPHA_INV = X_PLUS_PRECISION  # High-precision value ~ 137.035999
 ALPHA = 1.0 / ALPHA_INV
 

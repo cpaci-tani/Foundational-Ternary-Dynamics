@@ -14,29 +14,43 @@ analytical argument referenced was a Parseval identity:
     Σ_x |∇J|² = Σ_x |Hessian(φ)|² = Σ s²  (continuum)
 where J = −∇φ, ∇²φ = −s.
 
-KEY FINDING of this script:
-    The L=2 ultralocality is **a mode-counting degeneracy**, not a
-    structural property. At L=2 the centered first-derivative satisfies
-    sin(k_i) = sin(π·j/1) ∈ {0} for j ∈ {0, 1} on all axes, making the
-    discrete-derivative operator degenerate at the Nyquist mode. The
-    kinetic term Σ|∇J|² is identically zero for all configs — trivially
-    ultralocal.
+KEY FINDING of this script (corrected 2026-06-24 spine audit: the
+script's own output is ultralocal at L=2 AND L=3; the L>=4 "failure" is
+a Gauss-excluded zero-mode masking artifact the conclusion itself
+concedes — not a clean disconfirmation):
+    The L=2 ultralocality is **a mode-counting degeneracy**: at L=2 the
+    centered first-derivative satisfies sin(k_i) = sin(π·j/1) ∈ {0} for
+    j ∈ {0, 1} on all axes, making the discrete-derivative operator
+    degenerate at the Nyquist mode. The kinetic term Σ|∇J|² is
+    identically zero for all configs — trivially ultralocal.
 
-    At L ≥ 3 the centered first-derivative is no longer degenerate, and
-    the kinetic term picks up explicit spatial-distribution dependence.
-    Phase J ultralocality FAILS at L ≥ 3 on the discrete lattice for
-    every stencil choice tested.
+    At L=3 the Laplacian λ(k) is non-degenerate on all nonzero k, yet
+    the matched-stencil action spread across charge-neutral placements
+    is still ~8.88e-16 (this run) — ultralocal at machine precision.
+    So ultralocality is NOT confined to the L=2 Nyquist degeneracy.
+
+    At L ≥ 4 the masked-Parseval action does pick up large spatial-
+    placement dependence, BUT λ(k) there acquires genuine zero modes
+    (e.g. k=(0,0,π) at L=4) that this script does NOT project out of the
+    test configs. The L≥4 "failure" therefore plausibly reflects support
+    on Gauss-excluded modes (a setup masking artifact), not a structural
+    breakdown — see the [TECHNICAL COMPLICATIONS] note in main(). It is
+    neither cleanly confirmed nor disconfirmed at L≥4.
 
 CONCLUSION (T1.1 closure via route b):
-    Theorem 7 stays at `[THEOREM at L=2 only — mode-degeneracy origin]`.
-    The general-L conjecture is DISCONFIRMED. The continuum-limit
-    Parseval argument applies only when the lattice is large enough to
-    treat as approximately continuous; on small finite L the identity
-    Σ |∇J|² = Σ s² fails for any non-degenerate stencil.
+    Theorem 7 stays at `[THEOREM at L=2]` per the spine (NOT promoted).
+    Honest reading of this script's numerics: [NUMERICAL EVIDENCE]
+    ultralocality CONFIRMED at L=2 (Nyquist degeneracy) and L=3; L≥4
+    AMBIGUOUS (Gauss-excluded zero-modes mask the test) — neither
+    cleanly confirmed nor disconfirmed. The earlier "DISCONFIRMED at
+    L≥3" wording was an overclaim contradicted by the script's own L=3
+    output and is retracted.
 
     This is route (b) of MC-T1.1 — explicit acceptance of the
-    L=2-specific limitation. The spine claim is sharpened, not
-    promoted.
+    L=2-specific spine status. A proper L≥4 test requires restricting to
+    physically-realizable configs (Σ s = 0 AND zero amplitude on all
+    λ(k)=0 modes), which this script does not do. The spine claim is
+    sharpened, not promoted.
 
 Usage:
     python scripts/proofs/proof_phase_j_general_L.py
@@ -142,15 +156,21 @@ def test_l2_ultralocal_via_mode_degeneracy() -> bool:
 
 
 def test_general_L_fails_ultralocal() -> bool:
-    """Test 2: At L ≥ 3 with non-degenerate stencil, ultralocality fails.
+    """Test 2: Action-spread scan across L ∈ {3, 4, 6, 8} (matched stencil).
 
-    Different placements of the same charge count give DIFFERENT action
-    values — disconfirming the general-L conjecture.
+    (corrected 2026-06-24 spine audit: this scan does NOT cleanly
+    disconfirm general-L ultralocality. Its own L=3 spread is ~8.88e-16
+    — ultralocal at machine precision. Only L≥4 shows large spreads, and
+    those configs have unprojected support on Gauss-excluded λ(k)=0 zero
+    modes, so the L≥4 result is AMBIGUOUS, not a structural failure. The
+    function name / boolean is kept for backward compatibility; read the
+    per-L spreads, not the label.)
     """
     print()
-    print("Test 2: General-L ultralocality FAILS at L ∈ {3, 4, 6, 8}")
-    print("  Predicted (conjecture): all configs same action.")
-    print("  Predicted (this script): different placements → different action.")
+    print("Test 2: Action-spread scan at L ∈ {3, 4, 6, 8} (matched stencil)")
+    print("  L=3: expect ~0 spread (ultralocal, non-degenerate λ).")
+    print("  L≥4: large spread, BUT masked by Gauss-excluded zero modes")
+    print("       → AMBIGUOUS, not a clean disconfirmation.")
     print()
     rng = np.random.default_rng(42)
     overall_distinct = True
@@ -171,8 +191,13 @@ def test_general_L_fails_ultralocal() -> bool:
         print(f"  {marker} L={L}, n_charges={n_charges}: action spread "
               f"{spread:.3e} ({rel_spread*100:.1f}% relative)")
         overall_distinct &= distinct
-    print(f"  {'PASS' if overall_distinct else 'FAIL'}: general-L "
-          f"ultralocality DISCONFIRMED — action depends on placement.")
+    # (corrected 2026-06-24 spine audit: "DISCONFIRMED" retracted —
+    # L=3 is ultralocal here; L≥4 spread is Gauss-zero-mode-masked,
+    # hence AMBIGUOUS. Label kept neutral.)
+    print("  RESULT: L=3 ultralocal (~machine precision); L≥4 spread is "
+          "AMBIGUOUS")
+    print("          (unprojected Gauss-excluded zero modes — see "
+          "main() note). NOT a clean disconfirmation.")
     return overall_distinct
 
 
@@ -206,7 +231,7 @@ def main() -> int:
     results = [
         ("L=2 ultralocal via Nyquist-mode degeneracy",
          test_l2_ultralocal_via_mode_degeneracy()),
-        ("General-L ultralocality DISCONFIRMED (matched stencil)",
+        ("L=3 ultralocal; L≥4 AMBIGUOUS / Gauss-zero-mode-masked (matched stencil)",
          test_general_L_fails_ultralocal()),
         ("Engine stencil non-ultralocal (FTD-0090 confirmation)",
          test_engine_stencil_also_fails()),
