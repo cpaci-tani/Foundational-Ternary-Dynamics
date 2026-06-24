@@ -33,6 +33,14 @@ from __future__ import annotations
 
 import sys
 
+# UTF-8 stdout portability (corrected 2026-06-24 spine audit):
+# this script prints non-ASCII (π, Γ, etc.); reconfigure so it runs
+# cp1252-clean on Windows consoles without requiring PYTHONUTF8=1.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 import sympy as sp
 
 

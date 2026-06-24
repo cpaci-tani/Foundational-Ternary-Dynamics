@@ -44,6 +44,16 @@ Usage:
     python scripts/proofs/proof_tower_multiplier_uniqueness.py
 """
 
+import sys
+
+# UTF-8 stdout portability (corrected 2026-06-24 spine audit):
+# this script prints non-ASCII (≈, ², ₊, etc.); reconfigure so it runs
+# cp1252-clean on Windows consoles without requiring PYTHONUTF8=1.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 import math
 from itertools import product
 
