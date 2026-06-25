@@ -30,7 +30,7 @@ So FTD is **not** chosen once. It is chosen *once generatively* (`i`), plus a sm
 | 5 | P5 — determinism (map is a function) | **generative-structural** | `[AXIOM]` | "The update map is a function." The arrow is *not* here (it is FC-2). |
 | 6 | FC-0 — the `ℤ[i]` reading | **the i-act** | `[AXIOM]`-class declaration | Choosing `i`. **Same act as row 3** (see §2.1). |
 | 7 | FC-1 — declines measurement map `M` | **refusal** | `[AXIOM]`-class declaration | Declines an import; adds nothing (FTD-0255; independence FTD-0243). |
-| 8 | FC-2 (arrow half) — native arrow | **orientation** | `[AXIOM]`-class declaration | A sign `ℤ/2` (`+ω` forward vs `−ω`); field-trivial (FTD-0256). |
+| 8 | FC-2 (arrow half) — native arrow | **declaration** (sector-selection; direction *forced*) | `[AXIOM]`-class declaration | Commits the irreversible manifestation sector as fundamental; its *direction* is then **forced-given-FC-2** (FTD-0316: many-to-one map, no inverse) — **not** a free orientation (correcting the earlier reading). The free `±ω` is the reversible, arrow-less wave sector (FTD-0256). |
 | 9 | FC-2 (metric half) — Lorentzian emergent-IR | **generative-structural** (no new act) | `[AXIOM]`-class declaration | Emergent consequence of row 8 + the scoped `(Δ_tJ)²` posit; no independent `ℤ/2`. |
 | 10 | FC-3 — scale-ratio-covariance | **covariance** | `[AXIOM]`-class declaration | "Only internal ratios physical." Not i-act/orientation/refusal (FTD-0304). |
 | 11 | `a_phys ≡ ℓ_P` | **calibration** | `[DECLARED]` | Theorem-non-derivable (FTD-0059); unit anchor. |
@@ -67,7 +67,7 @@ Not once. FTD's irreducible-choice content, by category:
 |---|---|---|
 | generative-structural (the skeleton) | P1, P2, P4, P5, FC-2-metric | — (no acts) |
 | **the i-act** (generative act of intent) | P3-content ≡ FC-0 | **1** |
-| orientation (field-trivial sign `ℤ/2`) | FC-2 arrow (+ matter/antimatter labelling latent in P3's `±`) | **1 (–2)** |
+| orientation (field-trivial sign `ℤ/2`) | matter/antimatter labelling latent in P3's `±` (untested). FC-2 arrow's *direction* is **forced-given-FC-2** per FTD-0316, not a free orientation. | **0–1** |
 | refusal | FC-1 (declines `M`) | **1** |
 | covariance | FC-3 | **1** |
 | independent algebraic selection | α (`W`/`δ`/`k=1`, FTD-0244) | **1** |
