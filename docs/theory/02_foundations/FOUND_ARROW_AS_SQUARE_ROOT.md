@@ -67,6 +67,23 @@ So the arrow's *existence* is downstream of FTD's single generative act (`√(�
 
 ---
 
-## 5 · Status line
+## 5 · The reversible sector as the square of the arrow operator
+
+The relation `∂_t = (∂_t^{1/2})²` connects the two sectors of §1 at the operator level. On a Fourier mode `e^{iωt}` (`ω > 0`):
+
+- the integer operator gives `∂_t e^{iωt} = iω·e^{iωt}` — a phase advance of `π/2`;
+- the half operator gives `∂_t^{1/2} e^{iωt} = (iω)^{1/2}·e^{iωt}` — a phase advance of `π/4`, since `(i)^{1/2} = e^{iπ/4} = (1+i)/√2`.
+
+The half-order operator therefore advances the phase by half the amount the integer operator does, and two successive applications compose to the full `π/2` rotation. On the substrate's symplectic pair `(q,p)`, `∂_t` is the generator of the native quadrature winding `arg(q+ip)` (FTD-0251); `∂_t^{1/2}` advances that phase by half as much. The half-step factor `(1+i)/√2` is the primitive eighth root of unity — the `(1+i)` direction of `ℤ[i]` that already appears in the spine's `(1+i)`-tower (Theorem 8, FTD-0111).
+
+This gives the §1 product/ratio relation a precise dynamical form: **the reversible (integer-order, wave/π) operator is the square of the irreversible (half-order, arrow/G\*) operator.** The two sectors are not independent; one is the second power of the other.
+
+Squaring also accounts for the even/odd parity difference of §1 at the operator level. A square root carries a sign ambiguity (a choice of branch); `∂_t = (∂_t^{1/2})²` is invariant under that choice, because the sign cancels under squaring. The branch-dependent, irreversible content is therefore confined to the half-order operator, while its square is branch-independent and time-reversible. This is the operator-level statement of why the arrow resides in the ratio rather than the product: the irreversibility is a property of the square-root (half-order) layer, and squaring it recovers a reversible integer-order operation.
+
+The identities used here (`∂_t = (∂_t^{1/2})²`, the `π/4` phase, `(i)^{1/2} = (1+i)/√2`) are elementary; the reading is `[SYNTHESIS]`, consistent with §1's reuse of `DERIV_HEAT_EQUATION_FROM_RATIO.md` `[THEOREM]`. No tag is promoted.
+
+---
+
+## 6 · Status line
 
 **Nothing is promoted.** Tag `[SYNTHESIS]`. FC-2 stays `[AXIOM]`-class; `DERIV_HEAT_EQUATION_FROM_RATIO.md` stays `[THEOREM]` (operator content); the §3.4 framing stays `[SYNTHESIS]`; FTD-0013 stays `[SMC]`; no α derived; P1–P5 and the FC register untouched. This document is exposition unifying existing claims at their existing tags.
