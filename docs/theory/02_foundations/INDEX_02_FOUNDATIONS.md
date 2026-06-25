@@ -29,6 +29,7 @@
 | [FOUND_SELF_REFERENTIAL_CLOSURE.md](FOUND_SELF_REFERENTIAL_CLOSURE.md) | foundational principle | Argues the "circular" arguments ARE the derivation: self-referential closure as central theorem. |
 | [FOUND_ACT_REDUCTION_COUNT.md](FOUND_ACT_REDUCTION_COUNT.md) | [SYNTHESIS] | Tests "does FTD reduce to one i-act?" Verdict **PARTIAL**: `i=√(−1)` is the unique generative act, but α (independent algebraic selection, FTD-0244) and FC-3 (covariance) don't reduce to it (FTD-0314). |
 | [PREREG_ACT_REDUCTION_TEST_v1.md](PREREG_ACT_REDUCTION_TEST_v1.md) | [PRE-REGISTRATION] | Locks the 7-category act-taxonomy + inventory + admissible verdicts + banned moves for the reduction test above (tag `preregister-act-reduction-test-v1`). |
+| [FOUND_ARROW_AS_SQUARE_ROOT.md](FOUND_ARROW_AS_SQUARE_ROOT.md) | [SYNTHESIS] | The arrow of time = the Euler-reflection **ratio** = the half-derivative `∂_t^{1/2}` = a **square root of `∂_t`**; unifies the ratio/product reading with the `√`=act lens. Existence downstream of the i-act (operator content `[THEOREM]`); identification-with-time stays FC-2 declaration (**not** promoted, per §3.4); direction = orientation (FTD-0315). |
 
 ## Genesis, dimensionality & emergence
 
