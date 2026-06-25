@@ -89,7 +89,7 @@ The total charge of the universe is (-1) + (+1) = 0. Conservation of total charg
 
 **0.5.4 Time asymmetry is absent from the tautology [THEOREM]**
 
-The identity 0 = (-1) + (+1) is symmetric under the exchange of reading direction. There is no preferred arrow. Time asymmetry, if it exists, must arise from boundary conditions or dynamics, not from the founding identity. This is consistent with FTD's treatment of time's arrow (from low-entropy initial conditions, not from substrate physics).
+The identity 0 = (-1) + (+1) is symmetric under the exchange of reading direction. There is no preferred arrow. Time asymmetry, if it exists, must arise from boundary conditions or dynamics, not from the founding identity. In FTD it arises from **dynamics**: the substrate/causal arrow's *direction* is forced-given-FC-2 by the many-to-one manifestation map (no inverse → backward undefined; FTD-0316), while a low-entropy initial condition governs the *thermodynamic* arrow's gradient. (Earlier wording attributing the arrow's direction solely to low-entropy initial conditions is rescoped per FTD-0316; the [THEOREM] above — that the founding tautology is itself time-symmetric — is unchanged.)
 
 **0.5.5 Observer and observed are co-emergent [SELECTION]**
 

@@ -51,9 +51,9 @@ The reduction test (FTD-0314) classified FC-2's arrow as an **orientation**, not
 |---|---|---|
 | **existence** of the arrow | the time-odd ratio sector / `D^{−1/2}` exists once `G*` does | follows from the i-act: `i → ℤ[i] → G* → ratio → D^{−1/2}` (operator content `[THEOREM]`; the chain to `G*` is the spine). **Not an independent act.** |
 | **identification** with *physical* time | "the irreversible G\*-face is fundamental; it is time's arrow" | **FC-2 `[AXIOM]`-class declaration** — per §3.4, "the mathematical face of the declaration, **not** a derivation." Unchanged. |
-| **direction** (which way is forward) | `G*` vs `1/G*`; `+ω` vs `−ω` | an **orientation act** (a sign `ℤ/2`) — the residual choice the algebra does not fix. |
+| **direction** (which way is forward) | the update-map direction | **forced-given-FC-2** (FTD-0316): the manifestation map is many-to-one → no inverse → "backward" is not a defined dynamics, so there is no `ℤ/2` to choose. The free `±ω` orientation belongs to the *reversible wave* sector and carries **no** arrow. |
 
-So the arrow's *existence* is downstream of FTD's single generative act (`√(−1)` — note: itself a square root), confirming the FTD-0314 finding that the arrow is **not** a new generative act. What remains genuinely *chosen* is only its **direction**; what remains *declared* (not derived) is only the **identification with physical time**. This is consistent with FTD-0253 (P1–P5 *alone* are arrow-silent): the arrow needs `FC-0 → G*`, i.e. the i-act, not the bare postulates.
+So the arrow's *existence* is downstream of FTD's single generative act (`√(−1)` — note: itself a square root), confirming the FTD-0314 finding that the arrow is **not** a new generative act. Its **direction** is **forced-given-FC-2** (FTD-0316): the many-to-one manifestation map has no inverse, so the substrate has only one defined time-direction — *not* a free choice. (An earlier draft of this row mislabelled the direction a free `±ω` orientation; that `±ω` is the reversible, arrow-less wave sector.) What remains genuinely *declared* (not derived) is only the **identification with physical time**. This is consistent with FTD-0253 (P1–P5 *alone* are arrow-silent): the arrow — existence and direction alike — needs FC-2, not the bare postulates.
 
 ---
 
