@@ -122,6 +122,11 @@ session). `[CLOSED NEGATIVE]` applies only to the bare-parity route (FTD-0233, s
 ## 7. The two surviving exits (per the Number-One Goal: this maps the boundary)
 
 1. A **6th-postulate-class** input supplying the operator-assembly W (logically independent of P1–P5).
+   **Sharpened 2026-06-25 (FTD-0318, `FOUND_MCT43_NATIVE_Z2_PERMANENCE.md`):** this input cannot be a
+   native substrate symmetry. No FTD-native ℤ/2 (i-conjugation, ±ω wave orientation, matter/antimatter,
+   lattice parity, time-reversal) can supply the `δ`-selection — all act by `ℚ`-entry operators that fix
+   `ℚ(G*)`, while `δ`'s ℤ/2 is the Galois orbit `Gal(ℚ(G*)(δ)/ℚ(G*))`, realized by no substrate operator.
+   Exit-(i) is therefore necessarily a **declaration** (proposed FC-4, drafted un-minted), not a derivation.
 2. The **engine-native ARC-D** measurement — but ARC-D1 already returned `[CLOSED NEGATIVE]` (2026-05-30,
    `DERIV_ALPHA_READOUT_EMPIRICAL.md`: 0 macroscopic cluster fissions across 2000 seeds; the lattice is
    topologically rigid, and a count of 0 is precision-independent).
