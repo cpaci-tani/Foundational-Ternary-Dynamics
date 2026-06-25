@@ -427,8 +427,8 @@ The framework has **zero freely adjustable parameters**. It has **two inputs**: 
 
 | Parameter | SM Status | FTD Formula | FTD Value | PDG | Error | Tag |
 |-----------|-----------|-------------|-----------|-----|-------|-----|
-| $m_p/m_e$ | Free | $N_{\text{eff}}/\alpha + T(10) = 1836$ | 1836 | 1836.15 | 0.18% | [THEOREM] |
-| $m_p$ | Derived | $1836 \times m_e$ | 938.3 MeV | 938.27 MeV | 0.017% | [THEOREM] |
+| $m_p/m_e$ | Free | $N_{\text{eff}}/\alpha + T(10) = 1836$ | 1836 | 1836.15 | 0.18% | [STRONGLY MOTIVATED CONJECTURE] |
+| $m_p$ | Derived | $1836 \times m_e$ | 938.3 MeV | 938.27 MeV | 0.017% | [STRONGLY MOTIVATED CONJECTURE] |
 | $m_n - m_p$ | Measured | $(m_d - m_u)(1 - 3\alpha/4\pi)$ | 1.29 MeV | 1.293 MeV | ~0.2% | [PARAMETRIC] |
 
 ## 5.5 Mixing Angles
