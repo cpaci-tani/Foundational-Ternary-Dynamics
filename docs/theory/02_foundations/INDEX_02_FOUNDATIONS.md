@@ -27,6 +27,8 @@
 | [FOUND_TERNARY_STATE_FROM_I.md](FOUND_TERNARY_STATE_FROM_I.md) | [SYNTHESIS] | Ternary state field as real projection of Z[i]^× ∪ {0}, grounded in Axiom 0 (FTD-0128). |
 | [FOUND_EULER_IDENTITY_TERNARY.md](FOUND_EULER_IDENTITY_TERNARY.md) | foundational (engine-formalized) | Euler's identity as the ternary annihilation rule (−1)+(+1)=0. |
 | [FOUND_SELF_REFERENTIAL_CLOSURE.md](FOUND_SELF_REFERENTIAL_CLOSURE.md) | foundational principle | Argues the "circular" arguments ARE the derivation: self-referential closure as central theorem. |
+| [FOUND_ACT_REDUCTION_COUNT.md](FOUND_ACT_REDUCTION_COUNT.md) | [SYNTHESIS] | Tests "does FTD reduce to one i-act?" Verdict **PARTIAL**: `i=√(−1)` is the unique generative act, but α (independent algebraic selection, FTD-0244) and FC-3 (covariance) don't reduce to it (FTD-0314). |
+| [PREREG_ACT_REDUCTION_TEST_v1.md](PREREG_ACT_REDUCTION_TEST_v1.md) | [PRE-REGISTRATION] | Locks the 7-category act-taxonomy + inventory + admissible verdicts + banned moves for the reduction test above (tag `preregister-act-reduction-test-v1`). |
 
 ## Genesis, dimensionality & emergence
 
