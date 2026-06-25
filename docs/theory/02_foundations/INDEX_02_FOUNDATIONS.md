@@ -32,6 +32,8 @@
 | [FOUND_ARROW_AS_SQUARE_ROOT.md](FOUND_ARROW_AS_SQUARE_ROOT.md) | [SYNTHESIS] | The arrow of time = the Euler-reflection **ratio** = the half-derivative `∂_t^{1/2}` = a **square root of `∂_t`**; unifies the ratio/product reading with the `√`=act lens. Existence downstream of the i-act (operator content `[THEOREM]`); identification-with-time stays FC-2 declaration (**not** promoted, per §3.4); direction **forced-given-FC-2** (FTD-0316, superseding the earlier "orientation" reading). |
 | [FOUND_ARROW_DIRECTION.md](FOUND_ARROW_DIRECTION.md) | [SYNTHESIS] | The arrow's **direction** is **forced-given-FC-2** (many-to-one manifestation map → no inverse → no `ℤ/2`), not a free orientation — correcting FTD-0314/0315. Reconciles the 3-way canon contradiction (causal / thermodynamic / reversible-wave). Zero promotions (FTD-0316). |
 | [PREREG_ARROW_DIRECTION_TEST_v1.md](PREREG_ARROW_DIRECTION_TEST_v1.md) | [PRE-REGISTRATION] | Locks the direction-taxonomy + objects + mechanism inventory + admissible verdicts + banned moves for the test above (tag `preregister-arrow-direction-test-v1`). |
+| [FOUND_SM_ACT_COUNT.md](FOUND_SM_ACT_COUNT.md) | [SYNTHESIS] | Completes the act-count over the SM. Verdict **CLOSED**: every exactly-expressible dimensionless quantity reduces to field-acts `{i, δ}` — lepton mass ratios (207, 3477) + angles (3/13, 7/59, …) are pure rationals; no third act. The universe is chosen *twice* at the field level (FTD-0317). |
+| [PREREG_SM_ACT_COUNT_TEST_v1.md](PREREG_SM_ACT_COUNT_TEST_v1.md) | [PRE-REGISTRATION] | Locks the field-act taxonomy + catalog-anchored inventory + CLOSED/OPEN verdicts + banned moves for the test above (tag `preregister-sm-act-count-test-v1`). |
 
 ## Genesis, dimensionality & emergence
 
