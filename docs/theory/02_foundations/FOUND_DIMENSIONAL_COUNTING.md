@@ -111,9 +111,9 @@ The argument is not that time IS a spatial dimension, but that the **number of s
 
 1. **The BCC connection:** The 8 BCC neighbors at $(\pm 1, \pm 1, \pm 1)$ involve all three axes simultaneously — they are the "triple product" neighbors. This is precisely the structure that corresponds to fully coupled causal evolution (all dimensions interacting at once).
 
-2. **Watson's integral:** $I_1 = \Gamma(1/4)^4/(4\pi^3) = G^{*2}/(2\pi)$ uses the BCC dispersion $\lambda = 1 - \cos k_1 \cos k_2 \cos k_3$, which is the **product** of all three cosines. This multiplicative structure requires exactly 3 factors.
+2. **The BCC return Green's function:** $G_{\text{BCC}}(0) = \Gamma(1/4)^4/(4\pi^3) = G^{*2}/(2\pi)$ uses the BCC dispersion $\lambda = 1 - \cos k_1 \cos k_2 \cos k_3$, which is the **product** of all three cosines. This multiplicative structure requires exactly 3 factors. (This is the BCC return Green's function at the origin, not the standard simple-cubic Watson self-energy integral ≈ 0.5054.)
 
-3. **The gap equation:** The master quadratic emerges from the gap equation $x^2 = 16 \cdot 2\pi \cdot G^{\text{BCC}}_L(0) \cdot (x - G^*)$ for arbitrarily large L, with $G^{\text{BCC}}_L(0)$ approaching $I_1 = G^{*2}/(2\pi)$ at rate $O(1/L)$. The coefficient $16 \cdot 2\pi \cdot I_1 = 16 G^{*2}$ is the Vieta sum for the master quadratic. This only works with a 3D BCC lattice.
+3. **The gap equation:** The master quadratic emerges from the gap equation $x^2 = 16 \cdot 2\pi \cdot G^{\text{BCC}}_L(0) \cdot (x - G^*)$ for arbitrarily large L, with $G^{\text{BCC}}_L(0)$ approaching $G_{\text{BCC}}(0) = G^{*2}/(2\pi)$ at rate $O(1/L)$. The coefficient $16 \cdot 2\pi \cdot G_{\text{BCC}}(0) = 16 G^{*2}$ is the Vieta sum for the master quadratic. This only works with a 3D BCC lattice.
 
 ### 4.5 Honest Assessment
 
@@ -143,11 +143,11 @@ This decomposes into three cubic sublattices (see DERIV_WATSON_GSTAR_IDENTITY.md
 
 The Watson–G* identity (DERIV_WATSON_GSTAR_IDENTITY.md) establishes:
 
-$$G^{*2}/(2\pi) = I_1 = \frac{\Gamma(1/4)^4}{4\pi^3} = 1.39320...$$
+$$G^{*2}/(2\pi) = G_{\text{BCC}}(0) = \frac{\Gamma(1/4)^4}{4\pi^3} = 1.39320...$$
 
-where $I_1$ is Watson's BCC lattice Green's function at the origin. This is verified numerically by finite-size scaling on periodic tori:
+where $G_{\text{BCC}}(0)$ is the BCC return Green's function at the origin (not the standard simple-cubic Watson self-energy integral, which is ≈ 0.5054). This is verified numerically by finite-size scaling on periodic tori:
 
-| L | $G^{\text{BCC}}_L(0)$ | Error vs $I_1$ |
+| L | $G^{\text{BCC}}_L(0)$ | Error vs $G_{\text{BCC}}(0)$ |
 |---|----------------------|-----------------|
 | 2 | 0.2500 (= 1/4 exact) | 82.1% |
 | 8 | 1.1624 | 16.6% |
@@ -156,7 +156,7 @@ where $I_1$ is Watson's BCC lattice Green's function at the origin. This is veri
 | 128 | 1.3791 | 1.0% |
 | 256 | 1.3861 | 0.5% |
 
-Convergence is O(1/L) due to integrable singularities at the Brillouin zone corners. Richardson extrapolation from L=128,256 gives $I_1 = 1.3932$ to 0.0001% accuracy. Computations on arbitrarily large finite tori give the algebraic value to any desired precision; no completed-infinity totality is invoked.
+Convergence is O(1/L) due to integrable singularities at the Brillouin zone corners. Richardson extrapolation from L=128,256 gives $G_{\text{BCC}}(0) = 1.3932$ to 0.0001% accuracy. Computations on arbitrarily large finite tori give the algebraic value to any desired precision; no completed-infinity totality is invoked.
 
 ### 5.3 The Gap Equation Reproduces the Master Quadratic
 
@@ -164,7 +164,7 @@ The gap equation with finite-lattice BCC self-energy:
 
 $$x^2 = 16 \cdot 2\pi \cdot G^{\text{BCC}}_L(0) \cdot (x - G^*)$$
 
-For arbitrarily large L, $G^{\text{BCC}}_L(0)$ approaches $I_1 = G^{*2}/(2\pi)$ with error $O(1/L)$, giving (as a closed-form algebraic identity):
+For arbitrarily large L, $G^{\text{BCC}}_L(0)$ approaches $G_{\text{BCC}}(0) = G^{*2}/(2\pi)$ with error $O(1/L)$, giving (as a closed-form algebraic identity):
 
 $$x^2 = 16 G^{*2} \cdot x - 16 G^{*3}$$
 
@@ -197,7 +197,7 @@ The arithmetic $8 \times 2 = 16$ is trivially true; what is **not** established 
 <!-- corrected 2026-06-24 spine audit: these are re-spellings of 2^4 on a highly composite target, NOT four independent routes converging on 16. They coincide because each is 2^4 written differently: 8×2, 4², 2⁴, |Aut|²=4². Coincidence-on-a-composite is not multi-route confirmation. -->
 These all equal 16 because each is the same power $2^4$ written four ways: $D = 3$ forces $z_{\text{BCC}} = 2^3 = 8$ and $N_{\text{base}} = 2^{(D+1)/2} = 4$, and $|\text{Aut}(E)| = 4$ for the lemniscatic curve. Because 16 is highly composite, agreement among these expressions is **not** evidence of independent confirmation — they are equivalent decompositions of the same integer, not four separate derivations. The only one of the four that is itself a [THEOREM] is the group-order fact $|\text{Aut}(E_i)|^2 = 4^2 = 16$ (the automorphism group of the lemniscatic curve $E: y^2 = x^3 - x$ has order 4).
 
-**Self-referential ReLU closure:** The ternary threshold $K_B \sim \alpha^{11}$ is astronomically small compared to the flux scale $\sigma = \sqrt{I_1} \approx 1.18$. Therefore the manifested fraction $p \approx 1$ and $n_{\text{DOF}} = 16p^2 \approx 16$ to machine precision. The circle closes: $\alpha \to K_B \to p \approx 1 \to n_{\text{DOF}} = 16 \to \text{master quadratic} \to \alpha$.
+**Self-referential ReLU closure:** The ternary threshold $K_B \sim \alpha^{11}$ is astronomically small compared to the flux scale $\sigma = \sqrt{G_{\text{BCC}}(0)} \approx 1.18$. Therefore the manifested fraction $p \approx 1$ and $n_{\text{DOF}} = 16p^2 \approx 16$ to machine precision. The circle closes: $\alpha \to K_B \to p \approx 1 \to n_{\text{DOF}} = 16 \to \text{master quadratic} \to \alpha$.
 
 **Epistemic status:** [SELECTION] — the $z_{\text{BCC}} \times 2 = 8 \times 2 = 16$ route is a motivated reading whose "non-void states = 2" step is unproven (corrected 2026-06-24 spine audit; demoted from [THEOREM]). The arithmetic is trivially true; the structural-independence claim is what is demoted. The companion group-order fact $|\text{Aut}(E)|^2 = 16$ remains [THEOREM].
 
@@ -209,9 +209,9 @@ These all equal 16 because each is the same power $2^4$ written four ways: $D = 
 
 The standard Watson form of the gap equation contains $\pi$:
 
-$$x^2 = 16 \cdot 2\pi \cdot I_1 \cdot (x - G^*)$$
+$$x^2 = 16 \cdot 2\pi \cdot G_{\text{BCC}}(0) \cdot (x - G^*)$$
 
-But $\pi$ enters only through Watson's conventional $(2\pi)^{-3}$ Brillouin zone normalization. The Watson–G* identity $I_1 = G^{*2}/(2\pi)$ shows that the natural lattice quantity is $G^{*2}$, not $I_1$. Substituting eliminates $\pi$ entirely:
+But $\pi$ enters only through Watson's conventional $(2\pi)^{-3}$ Brillouin zone normalization. The Watson–G* identity $G_{\text{BCC}}(0) = G^{*2}/(2\pi)$ shows that the natural lattice quantity is $G^{*2}$, not $G_{\text{BCC}}(0)$. Substituting eliminates $\pi$ entirely:
 
 $$\boxed{x^2 = 16\,G^{*2}\,(x - G^*)}$$
 
@@ -308,8 +308,8 @@ D = 3  ────────────────────────�
   ├─> z_BCC = 2³ = 8                                       │
   ├─> Moore = 3³ − 1 = 26                                  │
   └─> BCC dispersion: λ = 1 − cos k₁ cos k₂ cos k₃        │
-        └─> Watson integral I₁ = Γ(1/4)⁴/(4π³)             │
-              └─> G* = √(2π I₁)                            │
+        └─> BCC return Green's fn G_BCC(0) = Γ(1/4)⁴/(4π³) │
+              └─> G* = √(2π G_BCC(0))                      │
                     │                                       │
 {−1,0,+1} ternary ─┤                                       │
   └─> 2 non-void   │                                       │
@@ -364,7 +364,7 @@ where the elementary symmetric polynomials are:
 | $e_2$ | $\cos k_1 \cos k_2 + \cos k_1 \cos k_3 + \cos k_2 \cos k_3$ | **FCC** (edges) | 12 |
 | $e_3$ | $\cos k_1 \cos k_2 \cos k_3$ | **BCC** (corners) | 8 |
 
-The BCC sublattice corresponds to $e_3$, the **top** elementary symmetric polynomial of degree $D = 3$. The Watson integral $I_1$ is constructed from $e_3$. The master quadratic's small root $N_c \approx 3.024 \approx D$ because $N_c$ reflects the **degree of the characteristic polynomial** of the $D$-dimensional lattice.
+The BCC sublattice corresponds to $e_3$, the **top** elementary symmetric polynomial of degree $D = 3$. The BCC return Green's function $G_{\text{BCC}}(0)$ is constructed from $e_3$. The master quadratic's small root $N_c \approx 3.024 \approx D$ because $N_c$ reflects the **degree of the characteristic polynomial** of the $D$-dimensional lattice.
 
 ### 8.3 Complex Multiplication and the Coefficient 16
 
@@ -388,7 +388,7 @@ i² + 1 = 0
   │
   └─> D = 3 lattice: char poly of diag(cos k₁, cos k₂, cos k₃)
         ├─> e₁ (SC), e₂ (FCC), e₃ (BCC) = degree D = 3
-        └─> Watson integral I₁ from e₃ → G*
+        └─> BCC return Green's fn G_BCC(0) from e₃ → G*
 ```
 
 ### 8.4 Binary-Ternary Resonance and N_c = 3

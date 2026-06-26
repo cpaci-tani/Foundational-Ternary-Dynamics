@@ -395,8 +395,8 @@ graph LR
     style FTD_0163 fill:#00897b,color:white,stroke:#222,stroke-width:1px
     FTD_0164["FTD-0164: Three structural candidates for closing the χ_{..."]
     style FTD_0164 fill:#c62828,color:white,stroke:#222,stroke-width:1px
-    FTD_0175["FTD-0175: Sym²⊕Sym³ uniqueness theorem (Paper A §16.5): (..."]
-    style FTD_0175 fill:#2e7d32,color:white,stroke:#222,stroke-width:1px
+    FTD_0175["FTD-0175: Sym²⊕Sym³ (2,3) — numeric identities [THEOREM]; the uniqueness/forcing step is [SELECTION] (Paper A §16.5)"]
+    style FTD_0175 fill:#fbc02d,color:white,stroke:#222,stroke-width:1px
     FTD_0176["FTD-0176: chi_{-4} structure in engine: GPU campaign (WSL..."]
     style FTD_0176 fill:#43a047,color:white,stroke:#222,stroke-width:1px
     FTD_0182["FTD-0182: Phase 1 L5: Conjecture 16.5.2 closed — the Sym^..."]
