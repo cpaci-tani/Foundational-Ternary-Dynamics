@@ -929,7 +929,7 @@ All core mathematical claims have been independently verified using Python/SciPy
 | Neutrino mass ratio | (7+3)²/3 = 100/3 | 1.47% error |  VERIFIED |
 | Neutrino Δm²₂₁ | seesaw: m_D=v×α, M_R=(3/4)v/α⁴ | 0.8% error |  VERIFIED |
 | Neutrino Σm_ν | 58.1 meV < 120 meV | Satisfies Planck+BAO |  VERIFIED |
-| G*-L(E,1) identity | G* = 4√(2/π)·L(E,1) | 15-digit match |  VERIFIED |
+| G*-L(E,1) identity | G* = 8·L(E,1)/√π | 15-digit match |  VERIFIED |
 | Inflation n_s | 1 - 2/(169/3) | 0.10σ from Planck |  VERIFIED |
 | Inflation r | 4α(3/4) = 0.0219 | Below bound |  VERIFIED |
 | Baryon asymmetry η | ~6.7×10⁻¹⁰ | Correct magnitude |  VERIFIED |

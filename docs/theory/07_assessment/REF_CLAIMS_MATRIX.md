@@ -91,7 +91,7 @@
 | ~~**NEUTRINO-1**~~ | ~~m₃ = m_P√(2π)(4/3)α¹⁴ = 49.6 meV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
 | ~~**NEUTRINO-2**~~ | ~~Σm_ν = 58.1 meV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
 | ~~**NEUTRINO-3**~~ | ~~m₁ ≈ 4.1 neV~~ | **RETRACTED** | n/a | n/a | n/a | n/a |
-| **MODULAR-1** | G* = 4√(2/π) · L(E,1) for E: y²=x³−x | **THEOREM (v5.27)** | G* definition + BSD L-function | EXPLR_MODULAR_QUANTUM_BRIDGE.md | Mathematical counterexample | `scripts/modular_investigation.py` |
+| **MODULAR-1** | G* = 8·L(E,1)/√π for E: y²=x³−x | **THEOREM (v5.27)** | G* definition + BSD L-function | EXPLR_MODULAR_QUANTUM_BRIDGE.md | Mathematical counterexample | `scripts/modular_investigation.py` |
 
 ---
 

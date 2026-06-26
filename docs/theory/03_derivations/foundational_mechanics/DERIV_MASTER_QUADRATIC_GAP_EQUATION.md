@@ -16,9 +16,9 @@ $$x^2 - 16\,G^{*2}\,x + 16\,G^{*3} \;=\; 0 \qquad \text{with}\qquad G^* \;=\; \f
 
 is a **pure algebraic object**: every coefficient is computable from G\* to arbitrary finite precision. Its larger root x₊ = 137.036 matches 1/α to 1.26 ppm. The smaller root x₋ = 3.024 is a mathematical artifact of the polynomial; the historical identification `x₋  N_c` (which previously read this root as the QCD colour count) is **RETIRED** per FTD/FQCR Cleanup Taxonomy v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`). `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md` (four routes) and the Moore Layer Theorem.
 
-This document records (i) the algebraic identity itself; (ii) the multiple finite-combinatorial routes to each of its coefficients (G\* via Watson–Chowla–Selberg, the leading 16 via two independent counts, the constant term via Vieta); (iii) the discriminant trichotomy that partitions one quadratic into bosonic, fermionic, and measurement regimes; and (iv) the empirical match plus polynomial-template structural-uniqueness evidence (FTD-0189 adversarial scan: 0 non-G\* dual-matchers across 2.65M degree-2 polynomials over an 18-constant FTD-undesigned basket) that motivates the single live physics identification x₊  1/α (FTD-0013).
+This document records (i) the algebraic identity itself; (ii) the multiple finite-combinatorial routes to each of its coefficients (G\* via Watson–Chowla–Selberg, the leading 16 via two independent counts, the constant term via Vieta); (iii) the discriminant trichotomy that partitions one quadratic into bosonic, fermionic, and measurement regimes; and (iv) the empirical match plus polynomial-template structural-uniqueness evidence (FTD-0319 adversarial scan, formerly cited as FTD-0189: 0 non-G\* dual-matchers across 2.65M degree-2 polynomials over an 18-constant FTD-undesigned basket) that motivates the single live physics identification x₊  1/α (FTD-0013).
 
-What this document does **not** do: derive the master quadratic as the L → ∞ limit of any finite-L self-consistency equation. The framework is undefined-boundary (no completed-totality lattice), and the explicit finite-L gap-equation scan and the L = 2 partition-function calculation jointly close the limit-route. The polynomial is what it is — an algebraic identity — and the physical identification x₊  1/α rests on the empirical match (1.26 ppm) + polynomial-template uniqueness (FTD-0189), not on a dynamical derivation.
+What this document does **not** do: derive the master quadratic as the L → ∞ limit of any finite-L self-consistency equation. The framework is undefined-boundary (no completed-totality lattice), and the explicit finite-L gap-equation scan and the L = 2 partition-function calculation jointly close the limit-route. The polynomial is what it is — an algebraic identity — and the physical identification x₊  1/α rests on the empirical match (1.26 ppm) + polynomial-template uniqueness (FTD-0319, formerly cited as FTD-0189), not on a dynamical derivation.
 
 ---
 
@@ -71,19 +71,19 @@ Both expressions are closed-form in the Γ function; both are computable to arbi
 
 This algebraic identity does not require a "completed lattice"; it is a relation between mathematical objects that exist algebraically.
 
-### 2.2 The coefficient 16 — two independent finite-combinatorial routes [THEOREM]
+### 2.2 The coefficient 16 — automorphism count [THEOREM] + a z_BCC re-spelling [SELECTION]
 
 The leading coefficient is `16`, by two independent counts:
 
-**Route A — automorphism count of the CM curve.** The elliptic curve $E\colon y^2 = x^3 - x$ has $j$-invariant $j = 1728$, complex multiplication by $\mathbb{Z}[i]$, and automorphism group $\mathrm{Aut}(E) = \mathbb{Z}/4\mathbb{Z}$. Hence $|\mathrm{Aut}(E)|^2 = 4^2 = 16$. (See DERIV_DUAL_DERIVATION_OF_16.md.)
+**Route A — automorphism count of the CM curve [THEOREM].** The elliptic curve $E\colon y^2 = x^3 - x$ has $j$-invariant $j = 1728$, complex multiplication by $\mathbb{Z}[i]$, and automorphism group $\mathrm{Aut}(E) = \mathbb{Z}/4\mathbb{Z}$. Hence $|\mathrm{Aut}(E)|^2 = 4^2 = 16$. This is the load-bearing route and is [THEOREM]. (See DERIV_DUAL_DERIVATION_OF_16.md.)
 
-**Route B — BCC coordination times non-void ternary states.** The BCC sublattice of the 26-Moore neighbourhood has coordination number $z_\mathrm{BCC} = 8$. The non-void ternary states are $\{-1, +1\}$, count $2$. Their product is $z_\mathrm{BCC} \cdot 2 = 16$. (See FOUND_DIMENSIONAL_COUNTING.md §5.4.)
+**Route B — BCC coordination times non-void ternary states [SELECTION].** The BCC sublattice of the 26-Moore neighbourhood has coordination number $z_\mathrm{BCC} = 8$. The non-void ternary states are $\{-1, +1\}$, count $2$. Their product is $z_\mathrm{BCC} \cdot 2 = 16$. (See FOUND_DIMENSIONAL_COUNTING.md §5.4.) This route is **[SELECTION]**: it is one of several re-spellings of $2^4$ and is not forced — it does not, by itself, establish $16$ as the leading coefficient.
 
-Both routes are **finite-combinatorial**: a property of the CM curve's automorphism group on one hand, and of the local Moore neighbourhood plus the ternary state set on the other. Neither invokes a limit. Their numerical agreement is the multi-route evidence for `16` as the natural leading coefficient.
+Route A is **finite-combinatorial** and theorem-grade; Route B is a [SELECTION]-level re-spelling. Their numerical agreement is suggestive but only Route A ($|\mathrm{Aut}(E)|^2 = 16$) carries the [THEOREM] weight.
 
 (A third historical route, the temporal-gauge DOF count $24 - 7 - 1 = 16$ on the $2^3$ torus, has been retracted as incorrect: proper Coulomb-gauge fixing on $T^3$ yields $14$, not $16$. See AUDIT_MASTER_QUADRATIC.md.)
 
-### 2.3 The factor 2π and Watson I_1 [THEOREM]
+### 2.3 The factor 2π and G_BCC(0) [THEOREM]
 
 The linear coefficient can be rewritten as $16\,G^{*2} = 32\pi \cdot W_3$, exposing the algebraic factorisation $32\pi = 16 \cdot 2\pi$ and $W_3 = G^{*2}/(2\pi)$. The $2\pi$ is the Chowla–Selberg normalisation of the period; the $16$ is the count above. Both pieces are independently algebraic.
 
@@ -128,16 +128,16 @@ The larger root $x_+ = 137.036$ is identified with $1/\alpha$ at 1.26 ppm (FTD-0
 
 ### 4.2 CM-curve uniqueness across class-number-1 fields
 
-Among the nine imaginary quadratic fields with class number $1$, the discriminant $d = -4$ — corresponding to $E\colon y^2 = x^3 - x$ — is the **unique** curve whose associated polynomial reproduces the historical pair-match $(\,1/\alpha,\;N_c)$ at the original tolerances. (Historical framing reflects the pre-v1.4 target choice; the CM-uniqueness fact itself is independent of the physics interpretation of the second target.) Other class-number-1 CM curves give roots that miss both targets. (See `scripts/exploration/scan_cm_class_number_1.py` and the Option 3 results in CONJ_ALPHA_FROM_CM.md.)
+Among the nine imaginary quadratic fields with class number $1$, the discriminant $d = -4$ — corresponding to $E\colon y^2 = x^3 - x$ — is the curve whose associated polynomial reproduces the historical pair-match $(\,1/\alpha,\;N_c)$ at the original tolerances; this single-curve selection is a **[NUMERICAL FACT]** of the class-number-1 scan, not a proven structural necessity. (Historical framing reflects the pre-v1.4 target choice; the scan fact itself is independent of the physics interpretation of the second target.) Other class-number-1 CM curves give roots that miss both targets. (See `scripts/exploration/scan_cm_class_number_1.py` and the Option 3 results in CONJ_ALPHA_FROM_CM.md.)
 
-This structural uniqueness — together with FTD-0189's polynomial-template uniqueness across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — is what distinguishes the master quadratic from "any polynomial in $\Gamma(1/4)$ that hits 137." The space of comparable algebraic objects has been enumerated; only one survives.
+This [NUMERICAL FACT] — together with FTD-0319's polynomial-template uniqueness (formerly cited as FTD-0189) across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — is what distinguishes the master quadratic from "any polynomial in $\Gamma(1/4)$ that hits 137." The space of comparable algebraic objects has been enumerated; only one survives.
 
 ### 4.3 What is *not* claimed
 
 This document does not claim:
 
 - That the master quadratic is the L → ∞ limit of a finite-L gap equation. (It is not. The finite-L scan does not converge to (137.036, 3.024); the L = 2 partition function carries no master-quadratic signature; the undefined-boundary ontology rules out load-bearing L → ∞ steps.)
-- That the physical identification is a [THEOREM]. The single live identification `x_+  1/α` is [STRONGLY MOTIVATED CONJECTURE], anchored on the empirical match and polynomial-template uniqueness (FTD-0189) plus CM-curve uniqueness. The historical paired `x_-  N_c` identification is retired per v1.4 §5.
+- That the physical identification is a [THEOREM]. The single live identification `x_+  1/α` is [STRONGLY MOTIVATED CONJECTURE], anchored on the empirical match and polynomial-template uniqueness (FTD-0319, formerly cited as FTD-0189) plus CM-curve uniqueness. The historical paired `x_-  N_c` identification is retired per v1.4 §5.
 - That a dynamical mechanism for $x_+ = 1/\alpha$ has been derived from FTD's local update rules. No such mechanism is currently in hand; the open problem of deriving the Coulomb coupling $g_c$ from first principles is documented in `../10_eft_program/OPEN_GC_FROM_FIRST_PRINCIPLES.md`, and the conversion-factor question is closed by `../10_eft_program/THEOREM_A_PHYS_NO_GO.md` with provenance in `../10_eft_program/archive/resolved/OPEN_A_PHYS_DERIVATION.md`.
 
 ---
@@ -152,11 +152,11 @@ This document does not claim:
 | 3 | Lemniscatic modulus $k = 1/\sqrt{2}$ forced by $\mathbb{Z}_4$ | [THEOREM] |
 | 4 | CM curve $E\colon y^2 = x^3 - x$; $j = 1728$; $\mathrm{Aut}(E) = \mathbb{Z}/4\mathbb{Z}$ | [THEOREM] |
 | 5 | Algebraic identity $G^{*2}/(2\pi) = W_3$ (Chowla–Selberg) | [THEOREM] |
-| 6 | Coefficient $16$ from two independent routes ($\|\mathrm{Aut}(E)\|^2$ and $z_\mathrm{BCC}\cdot 2$) | [THEOREM] |
+| 6 | Coefficient $16$ from $\|\mathrm{Aut}(E)\|^2$ [THEOREM]; the $z_\mathrm{BCC}\cdot 2$ re-spelling is [SELECTION] | [THEOREM] ($\|\mathrm{Aut}(E)\|^2$) / [SELECTION] ($z_\mathrm{BCC}\cdot 2$) |
 | 7 | Master quadratic $x^2 - 16 G^{*2} x + 16 G^{*3} = 0$ assembled algebraically | [THEOREM] |
 | 8 | Roots $x_+ = 137.036$, $x_- = 3.024$ (quadratic formula) | [THEOREM] |
 | 9 | Discriminant trichotomy: bosons (real), critical (degenerate), fermions (complex) | [THEOREM for the algebra; SELECTION for physical readings] |
-| 10 | Physical identification $x_+ \leftrightarrow 1/\alpha$ | [STRONGLY MOTIVATED CONJECTURE] (numerical match + polynomial-template uniqueness FTD-0189 + CM uniqueness). The historical paired $x_- \leftrightarrow N_c$ identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. |
+| 10 | Physical identification $x_+ \leftrightarrow 1/\alpha$ | [STRONGLY MOTIVATED CONJECTURE] (numerical match + polynomial-template uniqueness FTD-0319, formerly cited as FTD-0189, + CM uniqueness). The historical paired $x_- \leftrightarrow N_c$ identification is **RETIRED** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`; `N_c = 3` independently sourced via `DERIV_NC_FROM_TOPOLOGY.md`. |
 
 Steps 0–8 are algebra and finite combinatorics, all [THEOREM]. Step 9 is algebraic for the trichotomy itself; identifying each regime with bosons / measurement / fermions is [SELECTION]. Step 10 is conjectural but evidentially constrained.
 
@@ -166,7 +166,7 @@ Steps 0–8 are algebra and finite combinatorics, all [THEOREM]. Step 9 is algeb
 
 1. **[THEOREM]** The master quadratic is an algebraic identity built from $G^*$ and the integer $16$, both finite-combinatorial / closed-form.
 2. **[THEOREM]** The Watson–G\* identity $W_3 = G^{*2}/(2\pi)$ is exact via Chowla–Selberg.
-3. **[THEOREM]** The coefficient $16$ has two independent finite-combinatorial routes.
+3. **[THEOREM]** The coefficient $16 = |\mathrm{Aut}(E)|^2$ (Route A). The $z_\mathrm{BCC}\cdot 2 = 16$ count (Route B) is a **[SELECTION]**-level re-spelling of $2^4$, not an independent forcing.
 4. **[THEOREM]** The discriminant trichotomy partitions one polynomial into bosonic, critical, and fermionic regimes.
 5. **[STRONGLY MOTIVATED CONJECTURE]** The roots $x_+$ and $x_-$ identify with $1/\alpha$ and $N_c$, supported by the dual numerical match (1.26 ppm and 0.80 %) and CM-curve uniqueness across class-number-1 fields.
 
