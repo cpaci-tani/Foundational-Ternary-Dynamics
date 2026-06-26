@@ -13,7 +13,7 @@ The master quadratic `x² − 16G*²x + 16G*³ = 0` has two roots, `x_+ ≈ 137.
 
 A natural follow-up question: **does the master-quadratic value `α = 1/x_+` play the *dynamical* role of QED's fine-structure constant in FTD's engine?** Concretely: if we measure observables in the engine that, in QED, would scale with α (the static Coulomb potential, the Schwinger anomaly, scattering amplitudes), do those observables carry the master-quadratic value?
 
-If yes, the identification would gain a dynamical-mechanism warrant beyond the structural-uniqueness Bayes factor.
+If yes, the identification would gain a dynamical-mechanism warrant beyond the structural-uniqueness scan evidence.
 If no, the identification stays formally a polynomial-root coincidence with structural-uniqueness backing — defensible empirical match, but not a derivation.
 
 This document records the answer that four independent engine tests have now produced.
@@ -98,7 +98,7 @@ The algebraic spine is unaffected. None of the following claims have changed tie
 - **FTD-0013** (x_+ = 1/α at 1.26 ppm [STRONGLY MOTIVATED CONJECTURE]) — unchanged
 - ~~**FTD-0014** (x_− = N_c at 0.80%)~~ — **RETIRED** per v1.4 §5 (2026-05-22); LEDGER row removed in commit `ca7eb61`. `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`).
 - All nine numbered spine results (six theorem-grade + three honestly-tiered; see `SPEC_ALGEBRAIC_SPINE.md` §0) — unchanged
-- The structural-uniqueness Bayes factor (~4×10⁵) from FTD-0121 / Paper A — unchanged
+- The structural-uniqueness scan from FTD-0121 / Paper A (0 dual-matchers across 2,871,576 polynomials, rank 1 by ~130×) — unchanged. *(The "~4×10⁵:1 Bayes factor" figure is retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size; 2026-06-24 spine audit.)*
 - The BCC complex-structure theorem (FTD-0122) — unchanged
 
 What was tested and ruled out is a **specific dynamical interpretation** of the `x_+  1/α` identification: that `α = 1/x_+` plays the role of QED's coupling at the matter-sector vertex via classical gauge fields. The polynomial algebra and the empirical match remain at the same tags they held before today.
@@ -107,7 +107,7 @@ What was tested and ruled out is a **specific dynamical interpretation** of the 
 
 A naive reading would treat four outcome-C verdicts as "the framework is in trouble." The correct reading is the opposite: **knowing what does not work and why is structural progress**. The framework's external position is now:
 
-> The master quadratic is a [THEOREM]. The dual-prediction at 1.26 ppm + 0.80% is empirically real and structurally unique within the natural FTD polynomial family (Bayes ~4×10⁵). The interpretation of `α = 1/x_+` as a classical-gauge-field coupling has been pre-registered against and empirically falsified at four independent layers of the engine. Therefore: any future framework derivation of α from FTD must operate through a **non-action** mechanism (boundary conditions, observable selection, quantization choice). This is the explicit foundational obstruction; it is the central open research question the framework acknowledges.
+> The master quadratic is a [THEOREM]. The dual-prediction at 1.26 ppm + 0.80% is empirically real and structurally unique within the natural FTD polynomial family (0 dual-matchers across 2,871,576 polynomials, rank 1 by ~130×; the "~4×10⁵:1 Bayes" figure is retracted to [NUMERICAL FACT] — not runner-computed, ~19× scan-size; 2026-06-24 spine audit). The interpretation of `α = 1/x_+` as a classical-gauge-field coupling has been pre-registered against and empirically falsified at four independent layers of the engine. Therefore: any future framework derivation of α from FTD must operate through a **non-action** mechanism (boundary conditions, observable selection, quantization choice). This is the explicit foundational obstruction; it is the central open research question the framework acknowledges.
 
 This is a more defensible position than "we conjecture the master-quadratic coupling is the QED coupling" — because it tells a hostile reviewer exactly where the framework is conjectural, exactly what has been ruled out, and exactly what closure would require.
 
@@ -166,7 +166,7 @@ This document does **not** claim:
 
 - That the algebraic spine and the engine action are *necessarily* decoupled. The four tests are empirical; a non-action mechanism remains possible.
 - That α cannot be derived from FTD axioms. It claims that the four tested classical-gauge-field channels do not constitute a derivation; other channels remain open.
-- That the `x_+  1/α` identification is downgraded. FTD-0013 stays at [STRONGLY MOTIVATED CONJECTURE] with the same Bayes weight as before; this synthesis affects only the *interpretation* (no dynamical-mechanism warrant from these four channels), not the *strength* (the structural-uniqueness scans remain valid). *(FTD-0014 is **retired** per v1.4 §5 — a separate, independent change unrelated to this synthesis.)*
+- That the `x_+  1/α` identification is downgraded. FTD-0013 stays at [STRONGLY MOTIVATED CONJECTURE] with the same structural-uniqueness weight as before; this synthesis affects only the *interpretation* (no dynamical-mechanism warrant from these four channels), not the *strength* (the structural-uniqueness scans remain valid). *(FTD-0014 is **retired** per v1.4 §5 — a separate, independent change unrelated to this synthesis.)*
 - That the framework's epistemic ceiling has been determined. MC-T4.3 closure remains an open research program. What this synthesis does is **bound the scope of acceptable closure mechanisms** to non-action channels.
 
 ---

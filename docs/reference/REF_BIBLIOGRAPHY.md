@@ -83,8 +83,8 @@
 - **Citation contexts:** Theorem 9 reference.
 
 **Schneider, T. (1957).** *Einführung in die transzendenten Zahlen.* Springer.
-- **Used in FTD for:** the Schneider–Chudnovsky transcendence machinery underlying claims about the transcendence of `G*` over `Q` (via algebraic independence of Γ-values and π).
-- **Citation contexts:** Theorem 8 (FTD-0111) anomaly factor `A_k` transcendence at `k ≥ 4` cites Schneider.
+- **Used in FTD for:** the Schneider–Chudnovsky transcendence machinery underlying claims about the transcendence of `G*` over `Q` (via algebraic independence of Γ-values and π). *(This CM-period transcendence-machinery role is unchanged.)*
+- **Citation contexts:** Theorem 8 (FTD-0111) anomaly factor `A_k` transcendence at `k ≥ 4` now cites **Chudnovsky 1976 (Waldschmidt 2000 §1.4)**, not Schneider; the `A_k` (k ≥ 4) transcendence is a [CONDITIONAL THEOREM given Chudnovsky 1976] (corrected 2026-06-24 spine audit — the earlier "Schneider 1941" attribution for the tower-discriminant transcendence was wrong; the Schneider–Chowla–Selberg CM-period role above is unaffected).
 
 ---
 
