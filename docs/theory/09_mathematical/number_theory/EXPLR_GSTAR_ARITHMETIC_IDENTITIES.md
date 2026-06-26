@@ -482,7 +482,7 @@ The identity is immediate from the definitions; no non-trivial calculation is re
 
 ### C.1.3 Why this matters (refined reading of Theorem 9)
 
-Theorem 9 (FTD-0112) is precise but operationally opaque: "Q(G\*) is the maximal π-free subfield of Q(π, Γ(1/4))." This tells you *where G\* sits in a field*, not *what G\* computes*.
+Theorem 9 (FTD-0112) is precise but operationally opaque: "Q(G\*) is a π-free subfield of Q(π, Γ(1/4)) (conditional on Chudnovsky 1976)." This tells you *where G\* sits in a field*, not *what G\* computes*.
 
 Result D translates Theorem 9 into operational L-function language:
 

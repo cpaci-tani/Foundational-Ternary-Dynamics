@@ -119,15 +119,17 @@ The point group at any site (symmetries fixing that site and permuting its axis-
 
 The coordinate planes of Z^3 have square symmetry Z_4 (90-degree rotational symmetry). This is the key geometric fact. Watson's 1939 evaluation of the lattice Green's function proceeds by reducing the 3D integral to a 2D integral over one coordinate plane, and the Z_4 symmetry of that plane forces the elliptic integral modulus to the lemniscatic value k = 1/sqrt(2).
 
-Specifically: the self-energy of the BCC sublattice (the 8 vertices at (+-1, +-1, +-1)) is Watson's integral I_1:
+Specifically: the BCC return Green's function at the origin (the 8 vertices at (+-1, +-1, +-1)) is G_BCC(0):
 
-$$I_1 = \frac{\Gamma(1/4)^4}{4\pi^3} \approx 1.3932$$
+$$G_{\text{BCC}}(0) = \frac{\Gamma(1/4)^4}{4\pi^3} \approx 1.3932$$
+
+(Note: this is the BCC return Green's function at the origin, **not** the standard simple-cubic Watson self-energy integral, which is a different number ≈ 0.5054.)
 
 The Z_4 symmetry of the square cross-sections of the BCC cell selects the CM elliptic curve E: y^2 = x^3 - x, which has j-invariant j = 1728 and automorphism group Aut(E) = Z_4, with CM by the Gaussian integers Z[i]. (See DERIV_WATSON_GSTAR_IDENTITY.md, Part VII.)
 
-**Epistemic status:** That Z_4 symmetry forces the lemniscatic modulus is [THEOREM]. That Watson's I_1 equals Gamma(1/4)^4/(4pi^3) is [THEOREM] (Watson 1939). The identification of I_1 with the BCC component of the Moore neighborhood is [THEOREM].
+**Epistemic status:** That Z_4 symmetry forces the lemniscatic modulus is [THEOREM]. That G_BCC(0) equals Gamma(1/4)^4/(4pi^3) is [THEOREM]. The identification of G_BCC(0) with the BCC component of the Moore neighborhood is [THEOREM].
 
-**Important correction:** The quantity Gamma(1/4)^4/(4pi^3) is Watson's BCC integral I_1, not the simple cubic Watson integral I_3 = 0.5055. Earlier versions of the FTD literature conflated these. The algebraic identity G\*^2/(2pi) = I_1 is exact, but its physical interpretation requires care: it connects G\* to the BCC sublattice of the 26-neighbor Moore neighborhood, not to the full simple cubic lattice. (See watson_normalization_error in agent memory.)
+**Important correction:** The quantity Gamma(1/4)^4/(4pi^3) is the BCC return Green's function at the origin, G_BCC(0), not the simple cubic Watson self-energy integral I_3 = 0.5055. Earlier versions of the FTD literature conflated these (and earlier mislabeled this quantity "Watson's integral I_1"). The algebraic identity G\*^2/(2pi) = G_BCC(0) is exact, but its physical interpretation requires care: it connects G\* to the BCC sublattice of the 26-neighbor Moore neighborhood, not to the full simple cubic lattice. (See watson_normalization_error in agent memory.)
 
 **(c) The cuboctahedron and the integers {3, 4, 7, 13}** [THEOREM for geometry, SELECTION for physical identification]
 
@@ -155,15 +157,15 @@ $$G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi} \approx 2.9587$$
 
 Then:
 
-$$\frac{G^{*2}}{2\pi} = \frac{\Gamma(1/4)^4}{4\pi^3} = I_1 \quad \text{(Watson's BCC integral)}$$
+$$\frac{G^{*2}}{2\pi} = \frac{\Gamma(1/4)^4}{4\pi^3} = G_{\text{BCC}}(0) \quad \text{(the BCC return Green's function at the origin)}$$
 
-This identity is exact. Both sides reduce to the same expression in Gamma(1/4). The mathematical content is: G\* is the geometric mean of 2pi and I_1, i.e., G\* = sqrt(2pi * I_1).
+This identity is exact. Both sides reduce to the same expression in Gamma(1/4). The mathematical content is: G\* is the geometric mean of 2pi and G_BCC(0), i.e., G\* = sqrt(2pi * G_BCC(0)).
 
-The deeper fact: both I_1 and G\* descend from the quartic integral:
+The deeper fact: both G_BCC(0) and G\* descend from the quartic integral:
 
 $$I_4 = \int_0^1 \frac{dx}{\sqrt{1 - x^4}} = \frac{\Gamma(1/4)^2}{4\sqrt{2\pi}} = \frac{\varpi}{2}$$
 
-where varpi = 2.6221 is the lemniscate constant. The lattice integral I_1 and the lemniscate constant share a common mathematical ancestor in I_4. This is not a coincidence -- Watson's AGM reduction of the BCC lattice sum produces the same quartic integral that defines the lemniscate, because the Z_4 symmetry of the lattice planes selects the lemniscatic elliptic modulus. [THEOREM]
+where varpi = 2.6221 is the lemniscate constant. The lattice quantity G_BCC(0) and the lemniscate constant share a common mathematical ancestor in I_4. This is not a coincidence -- the AGM reduction of the BCC lattice sum produces the same quartic integral that defines the lemniscate, because the Z_4 symmetry of the lattice planes selects the lemniscatic elliptic modulus. [THEOREM]
 
 ### 2.3 From State + Position Together: The Coupling
 
@@ -179,9 +181,9 @@ This set has |N(x)| = 3^3 - 1 = 26 elements. It decomposes as:
 
 | Sublattice | Neighbor type | Count | Distance | Watson integral |
 |------------|--------------|-------|----------|----------------|
-| SC (simple cubic) | Face neighbors | 6 | 1 | I_3 involves Gamma(n/24) |
-| FCC (face-centered) | Edge neighbors | 12 | sqrt(2) | I_2 involves Gamma(1/3) |
-| BCC (body-centered) | Corner neighbors | 8 | sqrt(3) | I_1 involves Gamma(1/4) |
+| SC (simple cubic) | Face neighbors | 6 | 1 | involves Gamma(n/24) |
+| FCC (face-centered) | Edge neighbors | 12 | sqrt(2) | involves Gamma(1/3) |
+| BCC (body-centered) | Corner neighbors | 8 | sqrt(3) | G_BCC(0) involves Gamma(1/4) |
 
 The Moore neighborhood is the unique neighborhood that is: (i) symmetric under O_h, (ii) connected (every pair of neighbors shares at least a vertex), and (iii) minimal subject to (i) and (ii) on Z^3 at range 1. [THEOREM]
 
@@ -243,9 +245,9 @@ The master quadratic is a **pure algebraic object**. Its coefficients are comput
 
 $$x^2 = 16G^{*2}(x - G^*) \quad \Leftrightarrow \quad x^2 - 16G^{*2}x + 16G^{*3} = 0$$
 
-Using I_1 = G\*^2/(2pi):
+Using G_BCC(0) = G\*^2/(2pi):
 
-$$x^2 = 32\pi\,I_1\,(x - G^*)$$
+$$x^2 = 32\pi\,G_{\text{BCC}}(0)\,(x - G^*)$$
 
 The roots are:
 
@@ -262,12 +264,12 @@ The roots are:
 |------|---------|--------|
 | 0 | Cubic lattice with no defined boundary (Axiom Zero, position property) | [AXIOM] |
 | 1 | O_h point group, Z_4 planar symmetry | [THEOREM] |
-| 2 | Watson's BCC integral I_1 = Gamma(1/4)^4/(4pi^3) | [THEOREM] |
+| 2 | BCC return Green's function at origin G_BCC(0) = Gamma(1/4)^4/(4pi^3) | [THEOREM] |
 | 3 | Lemniscatic modulus k = 1/sqrt(2) forced by Z_4 | [THEOREM] |
 | 4 | CM curve E: y^2 = x^3 - x, j = 1728 | [THEOREM] |
-| 5 | Identity: G\*^2/(2pi) = I_1 | [THEOREM] |
+| 5 | Identity: G\*^2/(2pi) = G_BCC(0) | [THEOREM] |
 | 6 | Degree 2 from self-referential closure | [THEOREM for the argument, SELECTION for the principle] |
-| 7 | Coefficient 16 | [THEOREM] -- derived as z_BCC x 2 = 8 x 2 = 16 in FOUND_DIMENSIONAL_COUNTING.md Section 5.4; also |Aut(E)|^2 = 16 |
+| 7 | Coefficient 16 | the z_BCC x 2 = 8 x 2 = 16 route is [SELECTION] (a re-spelling of 2^4; FOUND_DIMENSIONAL_COUNTING.md Section 5.4); the load-bearing theorem is the group-order fact |Aut(E)|^2 = 16, which stays [THEOREM] |
 | 8 | Master quadratic follows algebraically | [THEOREM given 6 and 7] |
 | 9 | Roots x_+ = 137.036, x_- = 3.024 | [THEOREM given 8] |
 | 10 | Physical identification x_+ = 1/alpha | [STRONGLY MOTIVATED CONJECTURE] (FTD-0013); the historical x_- -> N_c identification is **RETIRED** per v1.4 §5 (LEDGER FTD-0014 removed in commit `ca7eb61`); `N_c = 3` independently sourced (`DERIV_NC_FROM_TOPOLOGY.md`, Moore Layer Theorem) |
@@ -345,7 +347,7 @@ The honest status:
 
 **The master quadratic is an algebraic identity, not a dynamical limit.**
 
-The polynomial `x² − 16 G*² x + 16 G*³ = 0` is built from a single quantity, G\* = √2·Γ(1/4)²/(2π), computable to arbitrary precision. The coefficient 16 has two algebraic origins — `|Aut(E)|² = 4² = 16` for the CM curve E: y² = x³ − x, and `z_BCC × 2 = 8 × 2 = 16` (BCC coordination times non-void ternary states; FOUND_DIMENSIONAL_COUNTING.md §5.4) — both finite-combinatorial. The roots x₊ = 137.036 and x₋ = 3.024 follow by the quadratic formula.
+The polynomial `x² − 16 G*² x + 16 G*³ = 0` is built from a single quantity, G\* = √2·Γ(1/4)²/(2π), computable to arbitrary precision. The load-bearing origin of the coefficient 16 is the group-order fact `|Aut(E)|² = 4² = 16` for the CM curve E: y² = x³ − x ([THEOREM]). A second re-spelling, `z_BCC × 2 = 8 × 2 = 16` (BCC coordination times non-void ternary states; FOUND_DIMENSIONAL_COUNTING.md §5.4), is [SELECTION] — its "non-void states = 2" step is unproven and 8 × 2 is a re-spelling of 2⁴ on a highly composite target, not an independent derivation (corrected 2026-06-24 spine audit). The roots x₊ = 137.036 and x₋ = 3.024 follow by the quadratic formula.
 
 The polynomial is **not** the L → ∞ limit of any finite-L self-consistency equation:
 - An explicit finite-L gap-equation scan (`AUDIT_MASTER_QUADRATIC.md`, Item 1) does not converge to (137.036, 3.024).
@@ -354,11 +356,11 @@ The polynomial is **not** the L → ∞ limit of any finite-L self-consistency e
 
 What the polynomial is: an algebraic object that the lattice produces from local invariants. What it predicts: x₊ matches 1/α to 1.26 ppm and x₋ matches N_c to 0.8%. The physical identification x₊  1/α, x₋  N_c rests on (i) the dual match across two unrelated physical constants from one polynomial, and (ii) the structural uniqueness of E among class-number-1 CM curves in giving this match (Option 3 scan). Both are evidential. Neither is a dynamical derivation. The identification is [STRONGLY MOTIVATED CONJECTURE].
 
-**Update (April 2026):** The coefficient 16 is now [THEOREM] via FOUND_DIMENSIONAL_COUNTING.md Section 5.4: n_DOF = z_BCC x 2 = 8 x 2 = 16 (BCC coordination number times non-void ternary states). This derivation is complementary to the |Aut(E)|^2 = 16 route from the CM curve's automorphism group. The finite-torus DOF discrepancy (14 vs 16 in Coulomb gauge) remains a separate technical issue documented in DERIV_WATSON_GSTAR_IDENTITY.md Section 4.2.
+**Update (April 2026; corrected 2026-06-24 spine audit):** The z_BCC × 2 = 8 × 2 = 16 reading (FOUND_DIMENSIONAL_COUNTING.md Section 5.4: n_DOF = BCC coordination number times non-void ternary states) is [SELECTION], not [THEOREM] — its "non-void states = 2" step is unproven and 8 × 2 is a re-spelling of 2⁴ on a highly composite target, so it is not an independent derivation. The load-bearing theorem for the coefficient 16 is the group-order fact |Aut(E)|^2 = 16 from the CM curve's automorphism group, which stays [THEOREM]. The finite-torus DOF discrepancy (14 vs 16 in Coulomb gauge) remains a separate technical issue documented in DERIV_WATSON_GSTAR_IDENTITY.md Section 4.2.
 
 ### 4.3 "The stencil doesn't use BCC corners for dynamics"
 
-**The objection:** The FTD engine uses a 6-point stencil for the divergence (SC neighbors only) and an 18-point stencil for the wave equation (SC + FCC). The 8 BCC corner neighbors do not appear in any dynamical equation. Yet G\* is derived from the BCC Watson integral I_1. How can BCC geometry determine the physics when the dynamics only use SC and FCC neighbors?
+**The objection:** The FTD engine uses a 6-point stencil for the divergence (SC neighbors only) and an 18-point stencil for the wave equation (SC + FCC). The 8 BCC corner neighbors do not appear in any dynamical equation. Yet G\* is derived from the BCC return Green's function G_BCC(0). How can BCC geometry determine the physics when the dynamics only use SC and FCC neighbors?
 
 **The response:**
 
@@ -366,16 +368,16 @@ This is a sharp and important objection. The current answer is incomplete.
 
 What can be said:
 1. The 26-neighbor Moore neighborhood includes all three sublattices. The BCC corners are geometrically present even if the current dynamical stencils do not use them directly.
-2. The Watson integral I_1 characterizes the BCC sublattice's self-energy, which enters through the Green's function, not through the dynamical stencil. The propagator (inverse of the lattice Laplacian) "sees" all lattice sites, not just those in the stencil.
+2. The BCC return Green's function G_BCC(0) characterizes the BCC sublattice's on-site Green's function value, which enters through the Green's function, not through the dynamical stencil. The propagator (inverse of the lattice Laplacian) "sees" all lattice sites, not just those in the stencil.
 3. The Z_4 symmetry that selects the lemniscatic modulus is a property of the lattice planes, not of any particular stencil.
 
 The deeper resolution: G\* is an **algebraic identity** of the cubic graph,
 
-$$G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi}, \qquad \frac{G^{*2}}{2\pi} = I_1 = \frac{\Gamma(1/4)^4}{4\pi^3},$$
+$$G^* = \frac{\sqrt{2}\,\Gamma(1/4)^2}{2\pi}, \qquad \frac{G^{*2}}{2\pi} = G_{\text{BCC}}(0) = \frac{\Gamma(1/4)^4}{4\pi^3},$$
 
 with both sides expressible in closed form via Γ(1/4) (Chowla–Selberg). The Z_4 planar symmetry, the lemniscatic modulus, and the CM curve E: y² = x³ − x are all finite-combinatorial / algebraic facts about the local cubic geometry; none requires the lattice to be a completed totality.
 
-G\* characterizes the lattice's **algebraic-geometric structure**. The 18-point dynamical stencil determines HOW information propagates; the Z_4 symmetry and Watson I_1 are properties of the cubic graph that hold regardless of which stencil is used for dynamics and at every finite extent at which the dynamics are run.
+G\* characterizes the lattice's **algebraic-geometric structure**. The 18-point dynamical stencil determines HOW information propagates; the Z_4 symmetry and G_BCC(0) are properties of the cubic graph that hold regardless of which stencil is used for dynamics and at every finite extent at which the dynamics are run.
 
 The BCC corners do not need to participate in the wave equation for G\* to govern the physics, just as π does not need to appear in the equation of motion for it to set the geometry. G\* is the lattice's structural constant; the stencil is its dynamical implementation. [SELECTION — the structural/dynamical distinction is argued, not proven]
 
@@ -413,12 +415,12 @@ This is the most serious objection and deserves a careful answer.
 
 The claim is NOT: "we found a formula involving Gamma(1/4) that gives 137." There are infinitely many such formulas, and most are meaningless.
 
-The claim IS: "the Z^3 lattice has a natural self-energy (Watson's BCC integral I_1), a natural symmetry group (O_h with Z_4 planar symmetry), and a natural elliptic curve (E: y^2 = x^3 - x with CM by Z[i]). These are not chosen -- they are forced by the lattice geometry. The self-consistency equation built from these ingredients produces 137.036."
+The claim IS: "the Z^3 lattice has a natural return Green's function (the BCC value at the origin, G_BCC(0) = Gamma(1/4)^4/(4pi^3)), a natural symmetry group (O_h with Z_4 planar symmetry), and a natural elliptic curve (E: y^2 = x^3 - x with CM by Z[i]). These are not chosen -- they are forced by the lattice geometry. The self-consistency equation built from these ingredients produces 137.036."
 
 The question is whether the construction is natural (each step forced by geometry) or contrived (steps chosen to hit the target). The honest answer:
 
-- Steps 0-5 (lattice -> symmetry -> Watson integral -> lemniscatic modulus -> CM curve -> G\*) are **forced**. No choices are made. Any mathematician studying Z^3 would encounter these objects. [THEOREM]
-- Steps 6-7 (degree 2, coefficient 16): Degree 2 is argued via self-referential closure [SELECTION]. Coefficient 16 is now [THEOREM] via z_BCC x 2 = 16 (FOUND_DIMENSIONAL_COUNTING.md Section 5.4).
+- Steps 0-5 (lattice -> symmetry -> BCC return Green's function G_BCC(0) -> lemniscatic modulus -> CM curve -> G\*) are **forced**. No choices are made. Any mathematician studying Z^3 would encounter these objects. [THEOREM]
+- Steps 6-7 (degree 2, coefficient 16): Degree 2 is argued via self-referential closure [SELECTION]. The z_BCC x 2 = 16 reading is [SELECTION] (FOUND_DIMENSIONAL_COUNTING.md Section 5.4; corrected 2026-06-24 spine audit), while the group-order fact |Aut(E)|^2 = 16 is [THEOREM].
 - Step 10 (identification x_+ = 1/alpha) is **observed**, not derived. The numerical agreement is striking (1.26 ppm) but no dynamical mechanism produces alpha from the gap equation. [STRONGLY MOTIVATED CONJECTURE]
 
 **Bottom line:** FTD has discovered a genuine mathematical connection between Z^3 lattice geometry and the number 137.036. Whether this connection has physical content -- whether it explains WHY alpha has this value -- depends on closing the physical-identification gap at Step 10. Until then, the connection is a provocation, not a proof.

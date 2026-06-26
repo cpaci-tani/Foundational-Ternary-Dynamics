@@ -47,7 +47,7 @@ This document provides a **brutally honest assessment** of what FTD actually der
 
 **What changed in v2.1:**
 - Absolute neutrino mass scale derived via Type-I seesaw with FTD integer factors: m₃ = 49.6 meV, m₂ = 8.6 meV, m₁ = 4.1 neV [SELECTION]
-- New mathematical identity proven: G* = 4√(2/π) · L(E, 1) connecting α to the BSD L-function of E: y² = x³ − x [THEOREM]
+- New mathematical identity proven: G* = 8·L(E, 1)/√π connecting α to the BSD L-function of E: y² = x³ − x [THEOREM]
 - New genuine derivations added (items 29-30)
 - Total genuine derivations: ~28 → ~30
 
@@ -209,7 +209,7 @@ The following are **exact mathematical results** added by the trit information t
 
 29. **Absolute neutrino mass scale from seesaw** — Using Type-I seesaw with m_D = v_Higgs × α (Dirac mass) and M_R = (N_c/N_base) × v_Higgs / α⁴ (Majorana mass), the heaviest neutrino mass is m₃ = m_P × √(2π) × (N_base/N_c) × α¹⁴ ≈ 49.6 meV. The complete spectrum (m₃ = 49.6 meV, m₂ = 8.6 meV, m₁ = 4.1 neV) satisfies all experimental bounds: Σm_ν = 58.1 meV < 0.12 eV (Planck+BAO), m_β = 8.3 meV < 0.45 eV (KATRIN). The exponent 14 = 2b₃ and integer factor N_base/N_c = 4/3 follow the FTD mass formula pattern. [SELECTION — seesaw mechanism is imported from standard physics; the specific decomposition of m_D and M_R into FTD integer factors is a selection; see DERIV_NEUTRINO_MASS_ABSOLUTE.md]
 
-30. **G* = 4√(2/π) · L(E, 1) identity** — The FTD master coefficient G* is exactly 4√(2/π) times the L-function special value L(E, 1) of the CM curve E: y² = x³ − x at s = 1. Verified to 15 decimal places. This connects α directly to the Birch–Swinnerton-Dyer L-function, grounding the master quadratic in arithmetic geometry. Framework primes {3, 7, 47} are all supersingular for E (a_p = 0 when p ≡ 3 mod 4), while 13 is ordinary (a₁₃ = 6). The master quadratic is NOT a classical modular equation but inherits modular structure through E's modularity. [THEOREM — verified numerically in modular_investigation.py; see EXPLR_MODULAR_QUADRATIC.md]
+30. **G* = 8·L(E, 1)/√π identity** — The FTD master coefficient G* is exactly 8/√π times the L-function special value L(E, 1) of the CM curve E: y² = x³ − x at s = 1. Verified to 15 decimal places. This connects α directly to the Birch–Swinnerton-Dyer L-function, grounding the master quadratic in arithmetic geometry. Framework primes {3, 7, 47} are all supersingular for E (a_p = 0 when p ≡ 3 mod 4), while 13 is ordinary (a₁₃ = 6). The master quadratic is NOT a classical modular equation but inherits modular structure through E's modularity. [THEOREM — verified numerically in modular_investigation.py; see EXPLR_MODULAR_QUADRATIC.md]
 
 **Total: ~30 genuine derivations/theorems**
 
@@ -555,7 +555,7 @@ Bell violations, in this view, arise because measurements are **contextual**: th
 10. **Reference frame context in the equation** — Same G* produces physics (real roots) and reference frame context (complex roots) [PROPOSED]
 11. **Measurement resolution** — Collapse = projection ℂ → ℝ via manifestation threshold [SELECTION]
 12. **Absolute neutrino masses** — Seesaw with m_D = v×α, M_R = (3/4)v/α⁴ gives m₃ = 49.6 meV, Σm_ν = 58.1 meV [SELECTION]
-13. **G*-L(E,1) identity** — G* = 4√(2/π)·L(E,1) connects α to BSD L-function; framework primes are supersingular [THEOREM]
+13. **G*-L(E,1) identity** — G* = 8·L(E,1)/√π connects α to BSD L-function; framework primes are supersingular [THEOREM]
 
 ### What FTD Does Not Achieve
 
@@ -686,7 +686,7 @@ These are genuine mathematical results. They don't depend on whether FTD is phys
 | i-phase anti-correlation | (iψ)² = -ψ² preserves, (-ψ)² = +ψ² destroys anti-correlation | bell_lemniscate_loop.py |
 | Born rule epistemic distinction | \|ψ\|² ≠ ψ² for complex ψ; Re(ψ²) has sign changes | born_rule_convergence.py |
 | Precision formula coefficients | All 7 coefficients are rationals in the base-integer set $\{N_c, N_\mathrm{base}, b_3, N_\mathrm{eff}, D, \mathrm{BCC}\}$; 24-digit match to CODATA recommended value is a confirmed algebraic identity; rigidity audit 2026-04-17 shows 6/7 uniquely forced at cascade precision, observationally underdetermined at CODATA experimental precision | DERIV_ALPHA_PRECISION_FORMULA.md; CONJ_SEVEN_TERM_PRECISION_SERIES.md §3.3 |
-| G*-L(E,1) identity | G* = 4√(2/π) · L(E,1) for E: y²=x³−x (verified 15 digits) | EXPLR_MODULAR_QUADRATIC.md |
+| G*-L(E,1) identity | G* = 8·L(E,1)/√π for E: y²=x³−x (verified 15 digits) | EXPLR_MODULAR_QUADRATIC.md |
 
 **Note:** "Theorem" here means the mathematics is correct. It does NOT mean the physical interpretation is validated.
 

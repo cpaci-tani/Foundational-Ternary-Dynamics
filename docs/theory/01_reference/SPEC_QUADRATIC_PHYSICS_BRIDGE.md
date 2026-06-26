@@ -459,7 +459,7 @@ The result's genuine strength lies in its **structural convergence**:
 1. **Two independent truncations** (tree level and 4-term) both land within experimental error
 2. **The coefficient 16 is intrinsic** to the curve, not a free parameter (conditional on SP1)
 3. **The precision formula predicts specific unmeasured digits** — a genuinely falsifiable claim
-4. **Polynomial-template uniqueness** (FTD-0189, 2026-05-21): the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — rank 1 by ~130×.
+4. **Polynomial-template uniqueness** (FTD-0319, formerly cited as FTD-0189, 2026-05-21): the master quadratic is the unique dual-matcher across 2.65 M degree-2 polynomials over an 18-constant FTD-undesigned basket — rank 1 by ~130×.
 
 (The historical "smaller root $x_-$ matches $N_c$" point is **retired** per v1.4 §5; LEDGER FTD-0014 removed in commit `ca7eb61`. The polynomial-template-uniqueness fact replaces it as the canonical structural-uniqueness evidence; `N_c = 3` in FTD is independently sourced — see `DERIV_NC_FROM_TOPOLOGY.md`.)
 
