@@ -49,15 +49,15 @@ This chapter categorizes every major claim in FTD by its epistemic status. Befor
 
 | # | Axiom | Status | Notes |
 |---|-------|--------|-------|
-| 1 | Space is a discrete 3D lattice | [T] **THEOREM** | Derived from stable relational embedding (see @sec-formal-logic) |
+| 1 | Space is a discrete 3D lattice (undefined-boundary, not $\mathbb{Z}^3$ totality) | [A] AXIOM (D=3 [SELECTION] per `FOUND_DIMENSIONAL_SELECTION.md` and `proof_master_verification.py`; uniqueness argument constrains but does not exclude all alternatives) | |
 | 2 | Time advances in discrete ticks | [A] AXIOM | Instantiates epistemic time |
-| 3 | Each cell has state ∈ {−1, 0, +1} | [T] **THEOREM** | Derived from EPL-ST necessity |
+| 3 | Each voxel carries a flux $\mathbf{J} \in \mathbb{R}^3$ (dispositional) and a state $s \in \{-1,0,+1\}$ that is the manifestation projection of $\mathbf{J}$ via the Genesis threshold rule (J-primary; per MC-T4.1 reframe 2026-05-02 + SPEC_FTD §1.1 graded-monism table) | [A] AXIOM | $s$ is not an independent field — it is the discrete observable layer recording where $\|\mathbf{J}\|$ crosses $K_B$ |
 | 4 | Updates are local (26-neighbor) | [A] AXIOM | Moore neighborhood |
 | 5 | Max speed = 1 cell/tick | [A] AXIOM | Causality preservation |
 
 ::: {.callout-note}
-## Ternary States: Theorem, Not Axiom
-The ternary state space {−1, 0, +1} was historically listed as an axiom, but is now understood as a **theorem** of Epistemic-Physical Logic (EPL-ST). The proof in @sec-formal-logic establishes that ternary valuation is the *necessary and sufficient* structure for any system admitting distinguishability. See the Ternary Valuation Theorem.
+## Ternary States: J-primary, $s$ as manifestation projection (post-2026-05-02 MC-T4.1 reframe)
+The ternary state space $\{-1, 0, +1\}$ has been clarified — it is not an independent axiom. Per `SPEC_FTD.md` §1.1 graded-monism table and Postulate 3 (rewritten 2026-05-02): the flux field $\mathbf{J}$ is the dispositional layer; the state $s$ is the *manifestation projection* of $\mathbf{J}$ via the Genesis threshold rule (when $\|\mathbf{J}\| > K_B$, manifestation occurs with sign of divergence). This makes "five postulates" a substantive parsimony claim: $s$ is definitionally derived from $\mathbf{J}$, not added.
 :::
 
 ### Core Definitions
