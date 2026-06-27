@@ -21,7 +21,7 @@ This is a Number-One-Goal **boundary**: the discrete substrate, as currently dev
 | **W-COSMO-1** | Inflaton ≡ mean flux | `[SELECTION]` / ad hoc | no inflaton dynamics derived |
 | **W-COSMO-2** | Dark-matter mechanism | `[OPEN]` (internally inconsistent) | see §2 — the dark-state *count* is structural; the *dynamics* are not |
 | **W-COSMO-3** | First-order electroweak transition | `[CONJECTURE]` (assumed, not derived) | the one forward prediction (FP-1) rides on it; see §3 |
-| **W-COSMO-4** | `Λ = α⁵⁷` | `[PARAMETRIC]` numerology | the `α⁵⁷`/`α¹⁶` value-match stays `[PARAMETRIC]`; **but a scale-covariant *mechanism* now exists** — FC-1 dissolves the catastrophe (classical, no `½ℏω`), FC-3 forces Λ to a scale-ratio, holographic saturation gives `Λ~(ℓ_P/L_H)²` (smallness = largeness), value a `[BOUNDARY]` (FTD-0059). See FTD-0331 / `DERIV_LAMBDA_SCALE_COVARIANT.md` |
+| **W-COSMO-4** | `Λ = α⁵⁷` | `[PARAMETRIC]` numerology | the `α⁵⁷`/`α¹⁶` value-match stays `[PARAMETRIC]`. **FC-1 dissolves the *old* catastrophe** (classical, no `½ℏω` → `Λ = 0`); FC-3 fixes the *form* (scale-ratio) and the holographic bound the *ceiling* (`Λ ≲ (ℓ_P/L_H)²`). **But the nonzero *source* is `[OPEN]` — FTD predicts `Λ = 0`** (the per-mode energy the ceiling needs is the declined zero-point; the condensate leaks `L⁻⁵`), and the value a `[BOUNDARY]` (FTD-0059). See FTD-0331 / `DERIV_LAMBDA_SCALE_COVARIANT.md` |
 | **W-COSMO-5** | Power spectrum + BAO | `[OPEN]` (missing) | no FTD prediction exists |
 | **W-COSMO-6** | NFW halo profile | `[OPEN]` (not derived) | reinforced by FTD-0290 (§2) |
 

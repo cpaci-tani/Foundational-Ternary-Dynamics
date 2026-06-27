@@ -229,7 +229,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | W-COSMO-1 | Inflaton identification with mean flux is ad hoc | [OPEN] | M–RP | — |
 | W-COSMO-2 | Dark matter mechanism: internally inconsistent | [OPEN] | M | — |
 | W-COSMO-3 | First-order electroweak transition: assumed not derived | [OPEN] | M–RP | §3 §9 |
-| W-COSMO-4 | `Λ = α^57`: numerology without mechanism — **scale-covariant mechanism now supplied** (FC-1 dissolves the catastrophe; FC-3 forces Λ to a ratio; holographic `Λ~(ℓ_P/L_H)²`); value stays a `[BOUNDARY]` (FTD-0059, no native length) | [PARTIAL] (mechanism `[SELECTION]`; value `[BOUNDARY]`) | RP | FTD-0331; `DERIV_LAMBDA_SCALE_COVARIANT.md` |
+| W-COSMO-4 | `Λ = α^57`: numerology — **FC-1 dissolves the *old* catastrophe (`Λ=0`)**; FC-3 + holographic fix the *form* + *ceiling* (`Λ≲(ℓ_P/L_H)²`); **nonzero *source* `[OPEN]`** (FTD predicts `Λ=0`; condensate leaks `L⁻⁵`); value `[BOUNDARY]` (FTD-0059) | [PARTIAL] (dissolution `[DERIVED]`; source `[OPEN]`; value `[BOUNDARY]`) | RP | FTD-0331; `DERIV_LAMBDA_SCALE_COVARIANT.md` |
 | W-COSMO-5 | Power spectrum + BAO predictions: missing | [OPEN] | RP | — |
 | W-COSMO-6 | NFW halo profile: not derived | [OPEN] | RP | — |
 | stellar | `DERIV_STELLAR_LIFECYCLE_LATTICE.md` 3 [OPEN] | [OPEN] | M–RP | §6 |
