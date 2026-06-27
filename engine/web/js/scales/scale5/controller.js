@@ -4,8 +4,10 @@
  * Manages the cosmic scale: N-body gravitational simulation with
  * Hubble expansion, dark matter, and cosmological diagnostics.
  *
- * The CosmicMockBridge provides a JS-only N-body engine with FTD-derived
- * constants (G_N, dark energy fraction). The CosmicRenderer visualizes
+ * The CosmicMockBridge provides a JS-only N-body engine with FTD-internal
+ * constants (G_N [IMPOSED]; Ω_Λ = 2/3 is an engine [CONJECTURE], NOT a
+ * derived dark-energy density — it does not match the observed Ω_Λ ≈ 0.685).
+ * The CosmicRenderer visualizes
  * bodies as point clouds with type-coded colors (stars, gas, dark matter,
  * black holes).
  *

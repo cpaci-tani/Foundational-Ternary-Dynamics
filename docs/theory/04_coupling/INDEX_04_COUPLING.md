@@ -28,7 +28,7 @@
 |---|---|---|
 | [DERIV_LAMBDA_QCD_DERIVATION.md](DERIV_LAMBDA_QCD_DERIVATION.md) | [SELECTION] (loop closed, up from [PARAMETRIC]) | Non-circular derivation of Λ_QCD via dimensional transmutation; breaks the α → v → Λ_QCD circularity. |
 | [DERIV_PLANCK_MASS_AND_LAMBDA_QCD.md](DERIV_PLANCK_MASS_AND_LAMBDA_QCD.md) | [THEOREM] (Λ_QCD) + [SELECTION] (M_P self-consistency) | Closes the external-input loop: M_P is axiomatic scale-setting; a single measured mass fixes it; Λ_QCD consolidated at 218 MeV. |
-| [DERIV_COSMOLOGICAL_CONSTANT.md](DERIV_COSMOLOGICAL_CONSTANT.md) | [SELECTION] (up from [CONJECTURE]) | Λ from the lattice vacuum energy: compact BZ → finite ⟨T₀₀⟩, m_e cutoff, α¹⁶ mode-coupling suppression. |
+| [DERIV_COSMOLOGICAL_CONSTANT.md](DERIV_COSMOLOGICAL_CONSTANT.md) | [PARAMETRIC] numerology (source [OPEN], value [BOUNDARY]) | The ρ_Λ = m_e⁴·α¹⁶·G*² (α⁵⁷) form is a value-match, not a source: FTD's classical vacuum is zero-energy (FC-1) ⇒ Λ=0; honest small-Λ mechanism is the scale-covariant holographic ratio in DERIV_LAMBDA_SCALE_COVARIANT.md (FTD-0331). |
 
 ## G\*-decomposition bridges
 
