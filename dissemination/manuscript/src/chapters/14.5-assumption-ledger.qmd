@@ -538,22 +538,22 @@ The j-invariant is not selected but **derived** from the requirement that it fac
 
 **Reference:** OCTONIONIC_ORIGIN.md, v5.7
 
-### Vacuum Energy: OPEN → DERIVED (v5.5)
+### Vacuum Energy: OPEN → PARTIAL (post-2026-06-27 FTD-0331 reconciliation)
 
 **Previous status:** [O] OPEN: cosmological constant problem unaddressed
 
-**New status:** [T] **THEOREM**: formula with 1.0% accuracy
+**Updated status:** [SELECTION] **PARTIAL**: FTD dissolves the $M_\text{Planck}^4$ catastrophe (classical vacuum = zero-energy); observed nonzero value is an open boundary. Prior "[T] THEOREM" tag retracted — the formula is a motivated [SELECTION], not a forced derivation.
 
-**Formula:**
+**Numerical coincidence:**
 $$\rho_\Lambda = m_e^4 \times \alpha^{16} \times G^{*2}$$
 
-| Quantity | Predicted | Observed | Error |
-|----------|-----------|----------|-------|
-| ρ_Λ | 3.86 × 10⁻⁴⁷ GeV⁴ | 3.90 × 10⁻⁴⁷ GeV⁴ | **1.0%** |
+| Quantity | Coincidence value | Observed | Agreement |
+|----------|-------------------|----------|-----------|
+| ρ_Λ | 3.86 × 10⁻⁴⁷ GeV⁴ | 3.90 × 10⁻⁴⁷ GeV⁴ | 1.0% |
 
-This resolves the 10¹²³ cosmological constant problem.
+The classical half of the cosmological constant problem (where does the $M_\text{Planck}^4$ vacuum energy go?) is dissolved: FTD's lattice vacuum is exactly zero-energy, so no catastrophic term arises. The other half (why is the observed $\rho_\Lambda$ small but nonzero?) remains an open boundary — FTD has no native cosmic length scale (FTD-0331/0332).
 
-**Reference:** VACUUM_ENERGY_FORMULA.md, v5.5
+**Reference:** VACUUM_ENERGY_FORMULA.md, v5.5 (formula as coincidence); FTD-0331 (boundary declaration)
 
 ### Alpha Precision: 1.26 ppm tree-level (0.21 ppt claim retracted)
 
