@@ -3,6 +3,8 @@
 > *"Theory guides, observation decides."*
 > *- attributed to I.M. Kolthoff*
 
+(See Ch. 24 for the consolidated prediction table.)
+
 ## The First Test: Cloud-9 {#sec-cloud9}
 
 In January 2025, astronomers announced the discovery of Cloud-9, a "ghost galaxy" in the M94 field. This discovery represents the **first observation consistent with predictions** derived from the FTD framework.
@@ -217,7 +219,7 @@ FTD FRAMEWORK:
 | QSI Observation | FTD Correspondence |
 |-----------------|-------------------|
 | Discrete lattice substrate | Discrete voxel lattice **L** ⊂ **Z**³ |
-| Emergent U(1) gauge symmetry | U(1) from Gauss constraint (§14.3) |
+| Emergent U(1) gauge symmetry | U(1) from Gauss constraint (Ch. 5 in v2; formerly §14.3) |
 | Photon-like collective excitations | Flux waves J propagating as gauge bosons |
 | Fractionalized excitations | Manifestation transitions (s: 0 → ±1) |
 
@@ -228,7 +230,7 @@ The quantum spin ice confirmation validates FTD's central claim: photon-like gau
 
 ### DESI: Evolving Dark Energy {#sec-desi-dark-energy}
 
-**Status:** [STRONGLY CONSISTENT]
+**Status:** [INDETERMINATE — w is open in FTD]
 
 The Dark Energy Spectroscopic Instrument (DESI) Data Release 2, announced in March 2025, provides **4.2σ evidence** that dark energy's equation of state evolves over cosmic time [@desi2025].
 
@@ -239,24 +241,24 @@ The Dark Energy Spectroscopic Instrument (DESI) Data Release 2, announced in Mar
 | Significance | - | **$4.2\sigma$ deviation** from $\Lambda$CDM |
 | Energy density | Constant | Peaked at z ≈ 0.45, now decreasing |
 
-**FTD Interpretation:**
+**FTD status:**
 
-In FTD, dark energy is not a cosmological constant but a property of the **void flux substrate**:
+The equation of state $w$ is **open** in FTD (FTD-0331/0332). The framework dissolves the classical cosmological constant catastrophe (classical vacuum is identically zero-energy) but does not derive the observed nonzero dark-energy density, and makes no prediction for $w$ or its time-variation. A holographic dark-energy reading that would give $w = -1$ fails (Hsu 2004). DESI's finding that $w \neq -1$ therefore **neither confirms nor falsifies** FTD.
 
 $$\rho_{\text{DE}} = \frac{1}{2} \langle J^2 \rangle_{\text{vacuum}}$$
 
-The vacuum expectation value of the flux field is inherently **dynamic**, not constant. DESI's observation that w evolves from approximately −0.7 to −1.7 is precisely what FTD predicts:
+The flux field is inherently dynamic, but whether that dynamism produces the specific DESI $w_0 / w_a$ values is not a prediction the framework currently makes — that connection is [OPEN].
 
-| DESI Finding | FTD Interpretation |
-|--------------|-------------------|
-| $w \neq -1$ (not cosmological constant) | Void flux is dynamic, not static |
-| $w$ evolves with redshift | Flux vacuum undergoes cosmic evolution |
-| Energy peaked at $z \approx 0.45$ | Phase transition in void structure |
-| Currently decreasing | Void relaxation toward equilibrium |
+| DESI Finding | FTD status |
+|--------------|-----------|
+| $w \neq -1$ (not cosmological constant) | Consistent with w being open; not a prediction |
+| $w$ evolves with redshift | Consistent with dynamic flux; not a derived prediction |
+| Energy peaked at $z \approx 0.45$ | No FTD prediction exists; [OPEN] |
+| Currently decreasing | No FTD prediction exists; [OPEN] |
 
 ::: {.callout-note}
 ## Epistemic Status
-DESI's $4.2\sigma$ evidence for evolving dark energy is **strongly consistent** with FTD's prediction that dark energy arises from dynamic void flux. A static cosmological constant would be **surprising** in FTD, as the flux field has no mechanism to remain perfectly constant across cosmic time.
+DESI's $4.2\sigma$ evidence for evolving dark energy is **indeterminate** with respect to FTD, because $w$ is an open question in the framework (FTD-0331). The measurement neither confirms nor falsifies FTD. It does falsify the specific holographic reading that would give $w = -1$, sharpening the open boundary.
 :::
 
 ### Bell Violation Without Entanglement {#sec-bell-without-entanglement}
@@ -278,7 +280,7 @@ Instead of entangling photons, researchers sent four photons through a crystal a
 
 **Why This Validates the sLoop Mechanism:**
 
-FTD's sLoop interpretation (§12.4) predicts that Bell violations arise from **shared substrate access**, not magical entanglement between particles:
+FTD's sLoop interpretation (Ch. 19 in v2; formerly §12.4) predicts that Bell violations arise from **shared substrate access**, not magical entanglement between particles. (Bell violation is now understood as emergent from QM via Tsirelson's bound; see Ch. 17.)
 
 ```
 STANDARD QM INTERPRETATION:
@@ -406,7 +408,7 @@ The eEDM measurement **constrains** potential extensions to FTD. Any future FTD-
 | Starless halos exist | Dark matter | ✅ **CONFIRMED** (Cloud-9) |
 | Migdal effect mechanism | Detection physics | ✅ **CONFIRMED** (Nature 2025) |
 | Emergent gauge bosons from lattice | Gauge structure | ✅ **CONFIRMED** (Quantum Spin Ice 2025) |
-| Dynamic dark energy (w ≠ −1) | Cosmology | ✅ **STRONGLY CONSISTENT** (DESI 2025) |
+| Dark energy equation of state | Cosmology | ⚠ **INDETERMINATE** (w is open in FTD; DESI DR2 neither confirms nor falsifies) |
 | sLoop mechanism (substrate correlations) | Quantum foundations | ✅ **STRONGLY CONSISTENT** (Bell w/o entanglement 2025) |
 | CP violation in triads | Particle physics | ✅ **CONSISTENT** (LHCb baryons 2025) |
 | d_e ≈ 0 (no electron CP violation) | Precision tests | ✅ **CONSISTENT** (JILA eEDM 2025) |
@@ -427,7 +429,7 @@ The year 2025 marks a qualitative transformation in FTD's empirical standing. Wh
 **After 2025:**
 - **Structural prediction confirmed** (Cloud-9: spherical dark halos)
 - **Core mechanism validated** (Quantum Spin Ice: emergent gauge bosons from lattice)
-- **Cosmological prediction confirmed** (DESI: dynamic dark energy)
+- **DESI DR2:** w is open in FTD; finding of $w \neq -1$ is indeterminate (neither confirms nor falsifies)
 - **Quantum interpretation supported** (Bell without entanglement: sLoop mechanism)
 - **Baryogenesis mechanism confirmed** (LHCb: CP violation in triads)
 - **Detection physics validated** (Migdal effect: flux perturbation propagation)
@@ -468,7 +470,7 @@ Proposed explanations include:
 
 **FTD Interpretation (Speculative):**
 
-FTD predicts $\tau_n \approx 880$ s (Chapter 2.7), falling between the two measured values. The discrepancy may arise from **measurement-context-dependent sLoop coupling**:
+FTD predicts $\tau_n \approx 880$ s (Ch. 12 in v2; formerly Chapter 2.7), falling between the two measured values. The discrepancy may arise from **measurement-context-dependent sLoop coupling**:
 
 ```
 BOTTLE METHOD:
