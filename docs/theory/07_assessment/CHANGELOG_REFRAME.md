@@ -842,6 +842,30 @@ Every change must add a row in the relevant Phase section, with: file affected, 
 | dissemination/manuscript_v2/vol1/src/chapters/14.5-assumption-ledger.qmd | vol1 snapshot | cp from v2-src (identical) | PROPAGATE | — |
 | dissemination/manuscript/src/chapters/14.5-assumption-ledger.qmd | v1 topic-match | Same corrections as v2 | DEMOTE / RETAG | FTD-0331/0338 |
 
-**Chapters with no retired claim (excluded from edits):** 10.1-large-scale-structure.qmd (DESI mention is data count only), 10.2-dark-matter.qmd (no retired claims), 11.2-gravitational-waves.qmd (EOS mention is neutron-star context), 12.4-the-anthropic-window.qmd (122 orders = problem statement not FTD claim), 13.2-alternative-endings.qmd (w=-1 as general physics model, not FTD prediction), 14.6-self-consistency.qmd, 14.9-experimental-predictions.qmd (DESI mention is future test, not claim), 24-predictions-status.qmd (no hits).
+**Chapters with no retired claim (excluded from edits):** 10.1-large-scale-structure.qmd (DESI mention is data count only), 10.2-dark-matter.qmd (no retired claims), 11.2-gravitational-waves.qmd (EOS mention is neutron-star context), 12.4-the-anthropic-window.qmd (122 orders = problem statement not FTD claim), 13.2-alternative-endings.qmd (w=-1 as general physics model, not FTD prediction), 14.6-self-consistency.qmd, 24-predictions-status.qmd (no hits).
 
-**Net effect:** Zero promotions; zero new theorems. DESI inverse error corrected. Seven chapters + all vol/v1 propagations aligned to FTD-0331 canon. LEDGER FTD-0338 row added.
+**Net effect (first pass):** Zero promotions; zero new theorems. DESI inverse error corrected. Seven chapters + all vol/v1 propagations aligned to FTD-0331 canon. LEDGER FTD-0338 row added.
+
+### Review-pass follow-up (same FTD-0338 arc) — 3 issues fixed
+
+**FIX 1 — vol1 reference-file regression (CRITICAL).** The first-pass wholesale `cp src→vol1` for the four reference chapters had overwritten pre-existing FTD-0131 / FTD-0018 demotions that vol1 carried but v2-src lacked, regressing them to PROMOTED forms. Restored the canonical demoted forms into **both v2-src and vol1** (demotion-only), re-applying the cosmological-constant FTD-0331 corrections on top:
+
+| File | Location | Change | Type |
+|------|----------|--------|------|
+| `14.1-constants-reference.qmd` | v2-src + vol1 | Gravity `1/100 [T+] DERIVED/Exact` → `[CLOSED NEGATIVE per FTD-0131]`; α_G(e,e) `[DERIVED, postulate-conditional]` 0.38%; Weinberg `3/13 [T+] DERIVED 0.19%` → `[PARAMETRIC]` (FTD-0018) 3.5% off; CC FTD-0331 corrections retained | DEMOTE / RETAG |
+| `14.2-equations-reference.qmd` | v2-src + vol1 | Gravity `G_bias=1/100` → `[CLOSED NEGATIVE per FTD-0131]`; α_G `[DERIVED, postulate-conditional]`; CC FTD-0331 corrections retained | DEMOTE / RETAG |
+| `14.3-glossary.qmd` | v2-src + vol1 | b₃-gravity glossary `1/(b₃+N_c)²` → `[CLOSED NEGATIVE per FTD-0131]`; Weinberg entry → `[PARAMETRIC]` (FTD-0018) 3.5%; dark-energy/DESI FTD-0331 corrections retained | DEMOTE / RETAG |
+| `14.5-assumption-ledger.qmd` | v2-src + vol1 | GRAVITY_BIAS → `[CLOSED NEGATIVE per FTD-0131]`/α_G `[DERIVED, postulate-conditional]`; Weinberg `[PARAMETRIC]` (FTD-0018) 3.5%; α_s `[PARAMETRIC]` (FTD-0020); vacuum-energy `OPEN→DERIVED [T] THEOREM` → `OPEN→PARTIAL [SELECTION]` | DEMOTE / RETAG |
+
+v1 `manuscript/` reference files unchanged in FIX 1 (their gravity/Weinberg state is pre-existing and out of the regression scope; their CC corrections stand from the first-pass commits).
+
+**FIX 2 — missed α⁴ overclaim in 14.9-experimental-predictions.qmd (HIGH).** Section "14. Dark Energy from Flux Vacuum 🎯✅" carried a live retired claim ("**FTD Prediction**: Λ ~ α⁴ ρ_Planck", status "Order-of-magnitude consistent", summary-table cell "(confirmed)").
+
+| File | Location | Change | Type |
+|------|----------|--------|------|
+| `dissemination/manuscript_v2/src/chapters/14.9-experimental-predictions.qmd` | v2-src | Section → "Dark Energy — Open Boundary" (badges removed); "FTD Prediction: Λ~α⁴ρ_Planck" → classical vacuum=0 / catastrophe dissolves / observed value open boundary / α⁴ is a numerical coincidence / w open; table row 14 "(confirmed)" → "[OPEN boundary]" | DEMOTE / RETAG |
+| `dissemination/manuscript/src/chapters/14.9-experimental-predictions.qmd` | v1 topic-match | Same correction (carried the same α⁴ claim) | DEMOTE / RETAG |
+
+(14.9 absent from vol1/vol2 — no snapshot propagation.)
+
+**Net effect (review pass):** Zero promotions. CRITICAL vol1 regression undone (FTD-0131/0018 demotions restored to canonical state); 14.9 Λ~α⁴ "prediction" → open boundary. All edits demotion-only.
