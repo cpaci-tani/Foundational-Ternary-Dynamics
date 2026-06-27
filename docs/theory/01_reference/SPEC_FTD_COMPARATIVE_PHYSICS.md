@@ -297,9 +297,9 @@ In Planck units, using $m_e = M_P \sqrt{2\pi} (16/3) \alpha^{11}$:
 
 $$\frac{\rho_\Lambda}{M_P^4} = (2\pi)^2 \cdot \left(\frac{16}{3}\right)^4 \cdot G^{*2} \cdot \alpha^{60}$$
 
-The exponent 60 = 4 × 11 + 16 = 44 + 16. Since $\alpha \approx 10^{-2.14}$, we get $\alpha^{60} \approx 10^{-128}$, and the prefactors ($\sim 10^5$) bring this to $\sim 10^{-123}$, matching the observed vacuum energy density in Planck units.
+The exponent 60 = 4 × 11 + 16 = 44 + 16. Since $\alpha \approx 10^{-2.14}$, we get $\alpha^{60} \approx 10^{-128}$, and the prefactors ($\sim 10^5$) bring this to $\sim 10^{-123}$, numerically near the observed vacuum energy density in Planck units.
 
-**The 120 orders of magnitude are not a "mystery" — they are $\alpha^{60}$, the fine structure constant raised to the power determined by the lattice DOF count (16) plus the mass hierarchy (44).**
+**This is a value-match, not a resolution of the cosmological-constant problem.** The $\alpha^{60}$ rewriting is a re-spelling of the $m_e^4\,\alpha^{16}\,G^{*2}$ number (W-COSMO-4 numerology, `[PARAMETRIC]` per `SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md`); it carries no cosmological length, so it cannot express "Λ is small because the universe is large," and it does not derive Λ. The canonical account (`DERIV_LAMBDA_SCALE_COVARIANT.md`, FTD-0331) is that FTD's classical vacuum is zero-energy (FC-1 declines $\tfrac12\hbar\omega$) ⇒ FTD predicts $\Lambda = 0$ `[DERIVED]`, dissolving the old $M_P^4$ catastrophe by construction; the *form* of any nonzero Λ is a scale-ratio $\Lambda\,\ell_P^2 = f(\ell_P/L)$ `[DERIVED-from-FC-3]` with a holographic *ceiling* $\Lambda \lesssim (\ell_P/L_H)^2$ `[SELECTION]` (a bound, not a source); the *source* is `[OPEN]` and the *value* is a `[BOUNDARY]` (needs $L_H$; FTD-0059, no native length). The "120 orders of magnitude" are the largeness of the universe in Planck units, $(\ell_P/L_H)^2$, not an FTD-derived $\alpha^{60}$.
 
 ### 9.3 PF Status [SELECTION]
 
