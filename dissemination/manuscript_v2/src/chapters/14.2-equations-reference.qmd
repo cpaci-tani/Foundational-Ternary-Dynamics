@@ -393,10 +393,11 @@ $$
 N_{gen} = \lfloor N_c \rfloor = \lfloor 3.024 \rfloor = 3
 $$
 
-### Cosmological Constant
+### Cosmological Constant (numerical coincidence, [SELECTION])
 $$
-\frac{\Lambda}{\Lambda_{Planck}} = \alpha^{57} = \alpha^{b_3(b_3+N_c) - N_{eff}} = 10^{-121.8}
+\frac{\Lambda}{\Lambda_{Planck}} \approx \alpha^{57} = \alpha^{b_3(b_3+N_c) - N_{eff}} \approx 10^{-121.8}
 $$
+FTD's classical vacuum is zero-energy; the observed nonzero $\rho_\Lambda$ is an open boundary. The $\alpha^{57}$ identity is a numerical coincidence relating framework integers to the observed scale — not a derivation of the dark-energy source (FTD-0331).
 
 ### Neutrino Mass Ratio
 $$
