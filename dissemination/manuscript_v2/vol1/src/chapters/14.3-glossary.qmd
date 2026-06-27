@@ -92,7 +92,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 ## B
 
 **b₃ (QCD Beta Coefficient)**
-: Framework integer = 7. The first coefficient in the QCD beta function for SU(3). Appears in electron mass (70 = $b_3(b_3+N_c)$) and gravitational coupling ($1/(b_3+N_c)^2$).
+: Framework integer = 7. The first coefficient in the QCD beta function for SU(3). Appears in electron mass (70 = $b_3(b_3+N_c)$). The "$1/(b_3+N_c)^2$" gravitational-coupling reading is **[CLOSED NEGATIVE per FTD-0131]**; substrate-derived gravity uses $\alpha_G(e,e) = (m_e/m_P)^2$ via the $\alpha^{11}$ hierarchy.
 
 **Born Rule (as Translation Protocol)**
 : The interpretation of the Born rule P = |ψ|² not as a mysterious postulate but as the translation protocol between Domain A (configurations) and Domain B (probabilities). The squared amplitude is what remains invariant under domain crossing.
@@ -659,7 +659,7 @@ The following integers appear throughout FTD derivations. All are derived from t
 : A topological invariant counting how many times a curve wraps around a point. The Lemniscate-Alpha curve in the consciousness regime (k = 0.5) has winding number = -2 around the origin, indicating irreducible topological structure that cannot be continuously deformed away.
 
 **Weinberg Angle (θ_W)**
-: Electroweak mixing angle. **DERIVED** as sin²θ_W = N_c/N_eff = 3/13 = 0.2308 (0.19% accuracy).
+: Electroweak mixing angle. **[PARAMETRIC]** (FTD-0018, demoted 2026-04-19) as sin²θ_W = N_c/N_eff = 3/13 = 0.2308; 3.5% off CODATA 0.22290(30). Standard SU(5) GUT-lock value sin²θ_W^lock = 3/8 is a separate scale (unification, requires RG running for M_Z comparison); see `SPEC_DOCTRINE_LEDGER.md` §8 for two-scale framing.
 
 ## Y
 
