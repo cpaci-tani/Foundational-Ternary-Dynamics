@@ -134,7 +134,7 @@ The Fermi constant involves $\alpha^{16}$ because $G_F \propto 1/v^2 \propto \al
 | Vacuum energy power | $\rho_\Lambda \propto \alpha^{16}$ | 16 |
 | **Fermi constant power** | **$G_F \propto \alpha^{-16}$** | **16** |
 
-The vacuum energy $\rho_\Lambda = m_e^4 \alpha^{16} G^{*2}$ and the Fermi constant $G_F = 1/(2\sqrt{\pi}M_P^2 \alpha^{16})$ share the same $\alpha^{16}$ factor. This is not a coincidence — both are controlled by the electroweak scale $v$, and $v^2 \propto \alpha^{16}$.
+The cosmological value-match $\rho_\Lambda = m_e^4 \alpha^{16} G^{*2}$ ([PARAMETRIC] numerology, not a derived dark-energy density — FTD predicts $\Lambda=0$; see FTD-0331) and the Fermi constant $G_F = 1/(2\sqrt{\pi}M_P^2 \alpha^{16})$ share the same $\alpha^{16}$ factor. The shared exponent reflects the electroweak scale $v$ in both ($v^2 \propto \alpha^{16}$); it carries no implication that $\rho_\Lambda$ is a resolved cosmological constant.
 
 ## 3.2 The Hierarchy Connection [THEOREM]
 

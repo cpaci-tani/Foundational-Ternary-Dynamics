@@ -1,11 +1,27 @@
 """
-Verification: Cosmological Constant from FTD
-=============================================
+Cosmological Constant numerology in FTD  [PARAMETRIC]
+=====================================================
 
-Derives rho_Lambda = m_e^4 * alpha^16 * G*^2 and verifies against
-Planck 2018 observations.
+NOT a derivation of the cosmological constant. The expression
+rho_Lambda = m_e^4 * alpha^16 * G*^2 is a [PARAMETRIC] value-match
+(α-power numerology), NOT a resolution of the CC problem.
 
-Reference: docs/theory/DERIV_COSMOLOGICAL_CONSTANT.md
+Per the governing canonical position:
+  - FTD supplies NO native dark-energy source. Its classical vacuum is
+    zero-energy (FC-1 declines hbar), so FTD natively predicts Lambda = 0;
+    the M_Planck^4 catastrophe is dissolved by construction, not solved.
+  - The form of any nonzero Lambda is a scale-ratio Lambda*l_P^2 = f(l_P/L)
+    [DERIVED-from-FC-3]; a holographic ceiling Lambda <~ (l_P/L_H)^2 is a
+    [SELECTION] bound (not a source); the SOURCE is [OPEN] and the VALUE is a
+    [BOUNDARY] (needs L_H; FTD has no native length). See FTD-0331 /
+    proof_lambda_scale_covariant.py for the canonical scale-covariant reading.
+  - Omega_Lambda has NO derived value: 2/3 (engine), 0.683 (alpha^16
+    value-match), 17/27 (Moore dark-STATE count) are three uncoordinated
+    numbers near 0.685; none is a dark-energy density prediction.
+  - The equation of state w is [OPEN]; a measured w != -1 does NOT falsify
+    FTD. The legacy "w = -1 exactly / DESI sees w = -1" is RETIRED.
+
+This script is retained for provenance of the alpha^16 value-match only.
 """
 
 import numpy as np
@@ -125,6 +141,9 @@ print(f"  Within 1-sigma: {abs(rho_FTD - rho_obs) < rho_obs_err}")
 print("\n" + "-" * 70)
 print("  STEP 6: Dark energy fraction Omega_Lambda")
 print("-" * 70)
+print("  NOTE: Omega_Lambda here follows from the alpha^16 value-match and is")
+print("  NOT a derived dark-energy density -- it is uncoordinated numerology")
+print("  near 0.685 (cf. the engine 2/3 and the Moore 17/27 dark-STATE count).")
 
 H0_GeV = 67.4 / (3.086e22 * 1e-3) * 6.582e-25  # H0 in GeV
 # More directly: H0 = 67.4 km/s/Mpc = 2.184e-18 s^-1 = 1.44e-42 GeV
@@ -224,19 +243,22 @@ print(f"""
     Omega_Lambda (Planck) = {Omega_obs}
     Accuracy              = {abs(Omega_Lambda-Omega_obs)/Omega_obs*100:.1f}%
 
-  THE HIERARCHY RESOLUTION:
+  THE HIERARCHY (numerology, NOT a resolution):
     Standard QFT: M_P^4 ~ 10^76 GeV^4 (10^123 too large)
-    FTD: m_e^4 * alpha^16 * G*^2:
-      m_e^4 instead of M_P^4:  accounts for 88 orders
-      alpha^16 mode coupling:  accounts for 34 orders
-      1/G*^2 fine-tuning:      accounts for 1 order
-      TOTAL:                   all 123 orders resolved
+    The alpha^16 value-match reproduces the magnitude but does NOT
+    RESOLVE the CC problem -- it is a [PARAMETRIC] product of FTD numbers,
+    not a derivation. FTD's native vacuum is zero-energy (FC-1 declines
+    hbar): the catastrophe is dissolved by construction, not solved.
+      m_e^4 instead of M_P^4:  ~88 orders (value-match)
+      alpha^16 mode coupling:  ~34 orders (value-match)
+      1/G*^2 factor:           ~1 order  (value-match)
 
-  PREDICTIONS:
-    w = -1 exactly (cosmological constant, not quintessence)
-    No time variation of rho_Lambda
-    Testable by DESI, Euclid, Roman
+  EQUATION OF STATE:
+    w is [OPEN]. The legacy "w = -1 exactly / DESI sees w = -1" is RETIRED;
+    a measured w != -1 does NOT falsify FTD.
 
-  STATUS: [SELECTION] (physical argument, not path integral proof)
+  STATUS: [PARAMETRIC] (alpha-power value-match; not a derivation, not a
+  CC-problem resolution). The SOURCE of any nonzero Lambda is [OPEN] and
+  its VALUE is a [BOUNDARY] needing an external horizon length L_H.
 """)
 print("=" * 70)

@@ -161,13 +161,21 @@ def test_immirzi_and_lqg():
 
 
 def test_vacuum_energy():
-    """CP-10/11: Vacuum energy formula and alpha^60 exponent"""
+    """CP-10/11: alpha^16 / alpha^60 vacuum-energy value-match  [PARAMETRIC]
+
+    NOT a derivation of the cosmological constant and NOT a resolution of the
+    CC problem. rho_Lambda = m_e^4 * alpha^16 * G*^2 is an alpha-power value-
+    match (numerology). FTD's native vacuum is zero-energy (FC-1 declines
+    hbar) => FTD predicts Lambda = 0; any nonzero value is a [BOUNDARY] needing
+    an external horizon length L_H (the SOURCE is [OPEN]). The numeric match
+    below is provenance only; see FTD-0331 / proof_lambda_scale_covariant.py.
+    """
     print("=" * 60)
-    print("CP-T6: Vacuum Energy — rho_Lambda = m_e^4 * alpha^16 * G*^2")
+    print("CP-T6: Vacuum-energy alpha^16 value-match [PARAMETRIC] — NOT a CC derivation")
     print("=" * 60)
 
     m_e_GeV = 0.511e-3  # GeV
-    rho_predicted = m_e_GeV**4 * ALPHA**16 * G_STAR**2
+    rho_predicted = m_e_GeV**4 * ALPHA**16 * G_STAR**2  # [PARAMETRIC] value-match, not a prediction
     rho_observed = 3.9e-47  # GeV^4
 
     err = percent_error(rho_predicted, rho_observed)
@@ -191,7 +199,7 @@ def test_vacuum_energy():
     err_exp = abs(log_rho - expected_log) / abs(log_rho)
     assert err_exp < 0.01, f"Alpha^60 exponent check failed"
     print(f"  Relative error = {err_exp:.4f}")
-    print("  PASS — cosmological constant ~ alpha^60 in Planck units\n")
+    print("  PASS — alpha^60 value-match in Planck units [PARAMETRIC] (not a CC derivation)\n")
 
 
 def test_stefan_boltzmann_casimir():

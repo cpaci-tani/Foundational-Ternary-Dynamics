@@ -238,11 +238,7 @@ $$\Rightarrow \quad G_{\mu\nu} = \frac{8\pi G}{c^4} T_{\mu\nu}$$
 
 Lovelock's theorem allows a cosmological constant. In the linearized regime ($h \ll 1$), the $\Lambda g_{\mu\nu}$ term contributes $\Lambda \eta_{\mu\nu}$ — a constant background that does not affect the linearized dynamics (it can be absorbed into the background). Therefore, $\Lambda$ is not determined by the linearized Einstein equations alone.
 
-FTD predicts $\Lambda$ from the lattice vacuum energy. The residual computational budget after all manifestations is (from SPEC_NOVEL_PREDICTIONS.md):
-
-$$\Lambda_\text{FTD} = \frac{3H_0^2 \Omega_\Lambda}{c^2}$$
-
-with $\Omega_\Lambda \approx 0.69$ — consistent with observation. This is a [CONJECTURE] (not derived from first principles; cosmological constant problem remains open).
+FTD does **not** supply $\Lambda$ from a lattice vacuum energy. Its classical substrate declines $\hbar$ (FC-1), so the empty void is identically zero-energy and FTD's own dynamics predicts $\Lambda = 0$ [DERIVED]; the old $M_\text{Planck}^4$ catastrophe is dissolved by construction, not solved. For any *nonzero* $\Lambda$, FC-3 forces the form $\Lambda\,\ell_P^2 = f(\ell_P/L)$ [DERIVED-from-FC-3] and the holographic principle fixes the ceiling $\Lambda \lesssim (\ell_P/L_H)^2$ [SELECTION] — a bound, not a source. The source is [OPEN] and the numerical value is a [BOUNDARY] (it needs the horizon $L_H$, which FTD cannot supply natively, FTD-0059). The standard relation $\Lambda = 3H_0^2\Omega_\Lambda/c^2$ with $\Omega_\Lambda \approx 0.69$ is the imported $\Lambda$CDM apparatus, **not** an FTD prediction. See [`DERIV_LAMBDA_SCALE_COVARIANT.md`](DERIV_LAMBDA_SCALE_COVARIANT.md) (FTD-0331).
 
 ## 5.3 The Complete Result
 
@@ -256,7 +252,7 @@ where:
 | $R_{\mu\nu}$ | Ricci curvature (from $g_{\mu\nu}$ and its derivatives) | [THEOREM] (mathematics) |
 | $T_{\mu\nu}$ | Noether current of flux Lagrangian | [THEOREM] |
 | $G$ | From $\alpha_G = 2\pi(16/3)^2(N_\text{eff}+3/b_3)^2\alpha^{20}$ | [THEOREM] |
-| $\Lambda$ | Lattice vacuum energy (not derived from first principles) | [CONJECTURE] |
+| $\Lambda$ | No native source; FTD predicts $\Lambda = 0$, form fixed by FC-3, value a [BOUNDARY] (FTD-0331) | [OPEN] (source) |
 
 ---
 
@@ -342,12 +338,12 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 | EFE-7 | $G$ from $\alpha_G$ hierarchy ($\alpha^{20}$) | **[THEOREM]** | DERIV_LEMNISCATE_HIERARCHY |
 | EFE-8 | Nonlinear completion via Lovelock | **[SELECTION — conditional on EFE-6]** *(retagged 2026-05-24; inherits from EFE-6)* | Lovelock (1971) + Premises 1-5 |
 | EFE-9 | Full Einstein equations recovered | **[SELECTION — conditional on Conjecture 10.1]** *(retagged 2026-05-24; inherits from EFE-6 + EFE-8)* | EFE-1 through EFE-8 |
-| EFE-10 | $\Lambda$ from lattice vacuum energy | **[CONJECTURE]** | Cosmological constant problem |
+| EFE-10 | $\Lambda$: no native source (FTD predicts $\Lambda=0$); form [DERIVED-from-FC-3], value a [BOUNDARY] | **[OPEN]** (source) | FTD-0331 (CC dissolved, not solved) |
 | EFE-11 | Schwarzschild as vacuum solution | **[VERIFIED]** | Birkhoff + DERIV_LATTICE_SCHWARZSCHILD |
 | EFE-12 | Poisson equation in weak-field limit | **[VERIFIED]** | Standard GR + SPEC_FTD_LAGRANGIAN |
 | EFE-13 | GW propagation (2 polarizations, speed $c$) | **[VERIFIED]** | DERIV_RELATIVITY §15 |
 
-**Epistemic breakdown** *(updated 2026-05-24 per FTD-0189 ripple)*: 6 [THEOREM] (EFE-1, EFE-2, EFE-3, EFE-4, EFE-5, EFE-7) + 3 [SELECTION — conditional on Conjecture 10.1] (EFE-6, EFE-8, EFE-9) + 1 [CONJECTURE] (EFE-10) + 3 [VERIFIED] (EFE-11, EFE-12, EFE-13). Pre-correction breakdown was 9 [THEOREM] + 1 [SELECTION] + 1 [CONJECTURE] + 3 [VERIFIED]; three [THEOREM] tags were downgraded to [SELECTION] when FTD-0189 (2026-05-21) retagged the load-bearing Theorem 14.1 input.
+**Epistemic breakdown** *(updated 2026-05-24 per FTD-0189 ripple; EFE-10 reconciled 2026-06-26 per FTD-0331)*: 6 [THEOREM] (EFE-1, EFE-2, EFE-3, EFE-4, EFE-5, EFE-7) + 3 [SELECTION — conditional on Conjecture 10.1] (EFE-6, EFE-8, EFE-9) + 1 [OPEN] (EFE-10, the $\Lambda$ source) + 3 [VERIFIED] (EFE-11, EFE-12, EFE-13). Pre-correction breakdown was 9 [THEOREM] + 1 [SELECTION] + 1 [CONJECTURE] + 3 [VERIFIED]; three [THEOREM] tags were downgraded to [SELECTION] when FTD-0189 (2026-05-21) retagged the load-bearing Theorem 14.1 input.
 
 ---
 
@@ -365,7 +361,7 @@ The rotating black hole solution to $R_{\mu\nu} = 0$ is the Kerr metric, which i
 
 2. **Derivation of Lovelock's theorem.** This is a mathematical result (proven by Lovelock in 1971), not a physics claim. Using it is analogous to using calculus — it's mathematical technology, not a physical assumption.
 
-3. **Resolution of the cosmological constant problem.** The vacuum energy / cosmological constant $\Lambda$ is not derived from FTD first principles. This remains [CONJECTURE].
+3. **Resolution of the cosmological constant problem.** FTD does not solve the cosmological-constant problem; it *dissolves* the old $M_\text{Planck}^4$ catastrophe by construction (FC-1 declines $\hbar$ ⇒ classical vacuum is zero-energy ⇒ $\Lambda = 0$ [DERIVED]). The form of any nonzero $\Lambda$ is [DERIVED-from-FC-3] and its ceiling is a holographic [SELECTION], but the *source* of the small observed dark energy is [OPEN] and its *value* is a [BOUNDARY] (FTD-0331). The earlier $\rho_\Lambda = m_e^4\,\alpha^{16}\,G^{*2}$ / $\alpha^{57}$ value-match is [PARAMETRIC] numerology, not a resolution.
 
 4. **Full quantum gravity.** This derivation yields the *classical* Einstein equations. Quantum gravitational effects (Planck-scale physics, black hole information problem) require the full lattice dynamics, not the effective metric description.
 
