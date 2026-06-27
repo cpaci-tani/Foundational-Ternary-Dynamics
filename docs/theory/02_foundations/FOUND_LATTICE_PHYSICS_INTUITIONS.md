@@ -119,11 +119,11 @@ Physics phenomena to recover from empirical observation, paired with their latti
 | Phenomenon | Empirical observation | Lattice definition | Status |
 |---|---|---|---|
 | Dark matter | 27% of universe, gravitationally active, EM invisible | Lossless far-field flux halos (~15-23 voxels); free scaffolding | Selection |
-| Dark energy | Accelerating expansion | Net energy leak from coupling injection exceeding near-field damping | Selection |
+| Dark energy | Accelerating expansion | No native source: FTD's classical vacuum is zero-energy (FC-1) ⇒ Λ=0; form of any nonzero Λ is a scale-ratio (FC-3), ceiling holographic; source unresolved (FTD-0331) | Open (source) / Boundary (value) |
 | Cosmic inflation | n_s = 0.965, r < 0.06 | Sub-threshold flux dynamics; n_s = 0.966, r = 0.022 | Recovered |
 | Baryogenesis | Matter-antimatter asymmetry eta ~ 10^-10 | CP violation + Sakharov conditions from lattice dynamics | Recovered |
 | Large-scale structure | Filaments, voids, clusters | Dark halos create potential wells; baryons fall in; voids are "balloons" rising | Selection |
-| Cosmological constant | Lambda ~ 10^-122 in Planck units | rho_Lambda = m_e^4 * alpha^16 * G*^2 | Selection |
+| Cosmological constant | Lambda ~ 10^-122 in Planck units | rho_Lambda = m_e^4 * alpha^16 * G*^2 is a value-match, not a source; FTD predicts Λ=0 and the value needs L_H it cannot supply (FTD-0059, FTD-0331) | Parametric (numerology) |
 | Holographic principle | Entropy bounded by area, not volume | Interior determined by boundary data on lattice (deterministic + local + finite c) | Recovered |
 
 ## Thermodynamics

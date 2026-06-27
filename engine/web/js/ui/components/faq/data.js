@@ -158,12 +158,14 @@ export const FAQ_SECTIONS = Object.freeze([
                     'Quintessence, modified-gravity, and anthropic-landscape approaches each introduce additional parameters to accommodate the observed \\(\\Lambda\\) without explaining its size. The discrepancy between QFT vacuum energy and observation is essentially unresolved.',
                 ],
                 ftdAngle: [
-                    { tag: 'PARAMETRIC', text: 'In FTD cosmology \\(\\Omega_\\Lambda = 2/3\\) and \\(\\Omega_m = 1/3\\) at the ontological level — consistent with observations to within a few percent.' },
+                    { tag: 'SELECTION', text: 'FTD supplies no native dark-energy source. Its classical vacuum is zero-energy (FC-1 declines \\(\\hbar\\)), so the framework natively predicts \\(\\Lambda = 0\\) — the \\(10^{120}\\) catastrophe is dissolved by construction, not solved. The form of any nonzero \\(\\Lambda\\) is a scale-ratio \\(\\Lambda\\,\\ell_P^2 = f(\\ell_P/L)\\); a holographic ceiling \\(\\Lambda \\lesssim (\\ell_P/L_H)^2\\) is a [SELECTION] bound, not a source. Its value is a [BOUNDARY]: it needs \\(L_H\\) and FTD has no native length.' },
+                    { tag: 'CONJECTURE', text: 'The engine\'s \\(\\Omega_\\Lambda = 2/3\\) is an internal [CONJECTURE], not a derived dark-energy density: it does not match the observed \\(\\Omega_\\Lambda \\approx 0.685\\) and is one of three uncoordinated FTD numbers near that value (0.683 \\(\\alpha^{16}\\) value-match, 2/3 engine, 17/27 dark-STATE count) — none is a dark-energy prediction.' },
                     { tag: 'CONJECTURE', text: 'Dark energy is proposed to be the net effect of flux-field relaxation between manifestation events: a background dispositional stress, not a vacuum-energy density in the QFT sense.' },
                 ],
                 stillOpen: [
-                    'No prediction of the \\(\\Lambda\\) scale in natural units; the \\(2/3\\) ratio is ontological, not a prediction of magnitude.',
-                    'No quantitative account of why the observed value is so small compared to any natural cutoff.',
+                    'No prediction of the \\(\\Lambda\\) scale in natural units; the \\(2/3\\) ratio is an internal selection, not a prediction of magnitude.',
+                    'No quantitative account of the observed value: the source is [OPEN] and the value is a [BOUNDARY] that requires an external horizon length \\(L_H\\).',
+                    'The equation of state \\(w\\) is [OPEN]; a measured \\(w \\neq -1\\) does not falsify FTD.',
                 ],
                 theoryRefs: [
                     'docs/theory/03_derivations/gravity_and_cosmology/DERIV_STELLAR_LIFECYCLE_LATTICE.md',
