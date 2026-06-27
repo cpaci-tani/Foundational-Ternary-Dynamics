@@ -697,7 +697,7 @@ $$\Omega_\Lambda = \frac{\rho_\Lambda}{\rho_{\mathrm{crit}}} = \frac{8\pi G_N}{3
 
 With $H_0$ and $G_N$ both expressed in terms of framework quantities:
 
-**Predicted:** $\Omega_\Lambda \approx 0.69$ | **Observed:** $0.685(7)$
+**[PARAMETRIC] value-match** (downstream of the $\rho_\Lambda = m_e^4 \alpha^{16} G^{*2}$ numerology): $\Omega_\Lambda \approx 0.69$ | **Observed:** $0.685(7)$. This is **not an FTD prediction** — the value is a **[BOUNDARY]** per FTD-0331 / W-COSMO-4 (it imports $H_0$ via $\rho_{\mathrm{crit}}$ and needs $L_H/\ell_P$, which FTD-0059 proves is not native). FTD's own dynamics predicts $\Lambda = 0$ (zero-energy classical vacuum); the dark-energy source is [OPEN]. See `SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md` / `DERIV_LAMBDA_SCALE_COVARIANT.md`.
 
 ### 15.3 Inflationary Observables
 

@@ -233,7 +233,9 @@ This means every manifested particle is surrounded by a self-field halo extendin
 - **IS NOT electromagnetically active** -- it doesn't change ternary states (no s -> +/-1 transitions)
 - **Cannot be seen** by EM observations -- it's invisible to photon-mediated detection
 
-**Dark matter = the far-field flux halo of ordinary matter.** [SELECTION]
+**Dark matter = the far-field flux halo of ordinary matter.** [SELECTION] — scoped by the FTD-0300 boundary (below): the qualitative identification stands, but the halo's dynamics are [OPEN]/mapped-negative.
+
+> **FTD-0300 / FTD-0331 reconciliation (dark-matter halo dynamics).** The lossless self-field halo described here box-fills the periodic lattice (r_eff ≈ L/2, not localized) rather than producing a localized galactic halo. The r^−0.69 halo exponent is **FALSIFIED** — it is an L=64 transient that converges to −1.25 at L≥128, and the SPARC rotation-curve match is **not founded**. Verdict: **[MEASURED — INDETERMINATE; SPARC boundary]**. The 17/27 dark-**STATE** count is structurally defensible (Moore Layer Theorem, [THEOREM]) as a Hilbert-space state count, but the dark-matter **halo/dynamics** identification is **[OPEN]/mapped-negative**, NOT a derivation. See DERIV_DARK_SECTOR_DYNAMICS.md §4.1.
 
 ## The Energy Budget
 

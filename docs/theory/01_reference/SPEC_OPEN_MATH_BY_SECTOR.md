@@ -227,7 +227,7 @@ Each sector has: **scope · status snapshot · open math table · closed-negativ
 | ID | Gap | Tag | Effort | Deps |
 |---|---|---|---|---|
 | W-COSMO-1 | Inflaton identification with mean flux is ad hoc | [OPEN] | M–RP | — |
-| W-COSMO-2 | Dark matter mechanism: internally inconsistent | [OPEN] | M | — |
+| W-COSMO-2 | Dark matter mechanism: internally inconsistent (dynamics [OPEN]/mapped-negative per **FTD-0300** — lossless self-field box-fills the periodic lattice, r_eff≈L/2; the −0.69 halo exponent is FALSIFIED → −1.25 at L≥128; SPARC not founded; verdict INDETERMINATE) | [OPEN] | M | FTD-0300 |
 | W-COSMO-3 | First-order electroweak transition: assumed not derived | [OPEN] | M–RP | §3 §9 |
 | W-COSMO-4 | `Λ = α^57`: numerology — **FC-1 dissolves the *old* catastrophe (`Λ=0`)**; FC-3 + holographic fix the *form* + *ceiling* (`Λ≲(ℓ_P/L_H)²`); **nonzero *source* `[OPEN]`** (FTD predicts `Λ=0`; condensate leaks `L⁻⁵`); value `[BOUNDARY]` (FTD-0059) | [PARTIAL] (dissolution `[DERIVED]`; source `[OPEN]`; value `[BOUNDARY]`) | RP | FTD-0331; `DERIV_LAMBDA_SCALE_COVARIANT.md` |
 | W-COSMO-5 | Power spectrum + BAO predictions: missing | [OPEN] | RP | — |
