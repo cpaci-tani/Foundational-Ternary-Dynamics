@@ -1,0 +1,90 @@
+# FOUND — The modulus/argument frontier: what a discrete deterministic substrate can and cannot ground
+
+**Tag:** `[SYNTHESIS]` (consolidation of established FTD results — promotes nothing) **+ `[CONJECTURE]`/`[SPECULATION]`** (the substrate-independent meta-claim of §3, a precise statement to attempt, **not** a theorem).
+**Date:** 2026-06-27 · **Provenance:** this session's reframe (`EXPLR_GENESIS_COKERNEL_GRADED_SQRT.md`), a 9-agent mathematical grounding, and a 5-vantage strategy panel that independently converged on stating this as FTD's central, most-defensible deliverable.
+**Purpose:** the canonical internal statement of FTD's boundary — *and* the skeleton of a clean external structural-negative paper (Number-One-Goal clause 2 at maximum generality). It replaces the slogan "FTD is missing a second `i`" (a category error, §4) with a precise, falsifiable frontier.
+
+---
+
+## 0 · Thesis in one line
+
+> A finite, discrete, deterministic, forward-only substrate **owns exactly the MODULUS** (even / self-adjoint / tracial / forced-magnitude) half of mathematical physics, and **provably cannot self-supply the ARGUMENT** (odd / asymmetric / non-tracial / branch-selecting) half — *the chosen adjoint of its own lossy forward map.* FTD's open boundaries are **five instances of this one fact.**
+
+This is **not** the claim that FTD lacks a second imaginary unit. The substrate *has* `i` (it is a native generator, FTD-0244) and still cannot reach the surd that distinguishes the master-quadratic roots. The missing structure is one rung deeper and entirely standard: the **chosen adjoint** (equivalently: a section, a disintegrating measure, a non-tracial state) of a many-to-one map — multivalued exactly to the degree the forward map destroyed information.
+
+---
+
+## 1 · The substrate class `S` (definitions)
+
+Let `S` be the class of ontologies with: **(i)** a discrete state space; **(ii)** a deterministic, local update rule; **(iii)** finiteness / undefined boundary (no completed infinity, no primitive continuum); **(iv)** a **forward, possibly many-to-one (information-destroying) dynamics with no native backward pairing.** FTD's five postulates instantiate `S`; the cellular-automaton-class ontologies are its natural members.
+
+The load-bearing feature is **(iv)**: such a substrate has a *forward map* and a *magnitude* (its own metric/modulus), but no native operation that inverts the forward map *across its own kernel*.
+
+---
+
+## 2 · The modulus / argument split (in standard mathematics, not metaphor)
+
+| | **MODULUS half** (owned) | **ARGUMENT half** (not self-supplyable) |
+|---|---|---|
+| algebraic face | even; `Γ(z)Γ(1−z)=π` (the reflection **product**) | odd; `Γ(z)/Γ(1−z)=G*` (the reflection **ratio**) |
+| operator face | self-adjoint Laplacian `Δ = (operator)∘(adjoint)` | the **chosen adjoint** `Q*` that turns a nilpotent `Q` into `H={Q,Q*}` (SUSY-QM) |
+| graded-√ face | Dirac–Kähler `K=d−δ`, `K²=−Δ_Hodge`; `∂_t^{1/2}` with a **cyclotomic** branch sign | a graded √ whose square is the **one-to-many inverse** of a lossy collapse (does not exist over the modulus field) |
+| probabilistic face | the trace `τ(ab)=τ(ba)`; the pushforward / marginalization | the **non-tracial state** / modular flow (Tomita–Takesaki, nonzero *iff* `ω(ab)≠ω(ba)`); the disintegrating **section** (Rokhlin), multivalued off-support |
+| complex-analytic face | `\|z\|` (modulus) | `arg(z)` (argument / phase) |
+
+The split is the even/odd decomposition under `z ↔ 1−z`; equivalently **forced** (positivity-/magnitude-determined, unique) vs **chosen** (branch-selecting, multivalued). Five mature, independent bodies of mathematics — **Tomita–Takesaki modular theory, Rokhlin disintegration, MERA inverse-RG, free probability, Petz recovery** — each describe the argument half as the *chosen adjoint/section/state of a lossy map*, and each certify that the choice is **imported, never a functor of the forward map** (the inverse is multivalued by construction; that non-uniqueness *is* the choice).
+
+---
+
+## 3 · The meta-conjecture `[CONJECTURE]`
+
+> **Conjecture (modulus/argument frontier).** For every `S` in the substrate class, the natively-reachable structure is exactly the **modulus half** — the closure of the substrate's forced operations (its forward map plus its own magnitude). The **argument half is not self-supplyable**: it is the chosen adjoint / section / non-tracial state of the substrate's own many-to-one forward map, which is multivalued precisely to the degree that map destroyed information. The structure that collapses the multivalued inverse to single-valued (an adjoint, a metric, a prior, a non-tracial state) is **imported**, never derived from the forward dynamics.
+
+This is a **precise statement to attempt**, tagged `[CONJECTURE]`/`[SPECULATION]` — **not** a theorem and **not** a derivation. Its honest status and the work needed to firm it are in §6–§7. FTD is its **worked proof-by-example for one substrate** (§4).
+
+---
+
+## 4 · FTD as the worked instance — five boundaries, one frontier
+
+Every open boundary FTD has mapped is the *same* missing argument-structure, at its canonical (unpromoted) tag:
+
+| Boundary | The missing **argument**-structure | Canonical FTD status |
+|---|---|---|
+| **α via δ** | the degree-4 Galois branch `√(G*(4G*−1))` **outside ℚ(G\*)** — not a second `i` (the substrate has `i`); it is a chosen branch of a degree-2 extension | `x₊=1/α` `[SMC]` (FTD-0013); routes closed FTD-0244/0314/0326/0327; **MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`** |
+| **QM non-commutativity** | the measurement map `M` — a non-commutative / non-tracial observable pairing | **FC-1** declines `M` `[AXIOM]`; licensed by FTD-0243 (commutativity independence) `[THEOREM]` |
+| **Reversibility / Lorentzian metric** | the backward pairing across the many-to-one manifestation map (its inverse is one-to-many = a choice) | **FC-2** native arrow `[AXIOM]`; gap mapped by FTD-0253 |
+| **L²-not-L¹ budget** | the transverse phase / orthogonal pairing of the Pythagorean norm (a continuous SO(3) choice the discrete O_h cannot make) | FTD-0208 `[stands]` |
+| **Cavity-not-Schrödinger dispersion** | the rest-mass gap / quadratic dispersion a native restoring (non-tracial) term would supply | **FTD-0270** `[MEASURED — BOUNDARY]` |
+
+And the **modulus half FTD provably owns**: the algebraic spine (`G* = Γ(1/4)/Γ(3/4)`, master quadratic), classical electromagnetism (Phase-G geometric Coulomb = lattice Green's function), the Dirac–Kähler graded square root (FTD-0089), and the native arrow `∂_t^{1/2}` whose branch sign `(1+i)/√2` is a **root of unity inside ℚ(G\*)** (FTD-0323). *That cyclotomic sign is the structural reason the native √ cannot carry δ:* the substrate's square-root-of-time lands in the cyclotomic field; δ is a transcendental surd in a different arithmetic place.
+
+---
+
+## 5 · The evidence (why the frontier is the honest reading)
+
+1. **Five-fold independent convergence.** A grounding of the "new math" the boundary points to found that Tomita–Takesaki, disintegration, MERA inverse-RG, free probability, and Petz recovery *each* return the same verdict — the missing piece is the chosen adjoint of a lossy map. Five unrelated areas agreeing on one structural answer is an answer, not an opening.
+2. **The corpus no-gos exhaust the modulus side.** Closed: the operator class (FTD-0244 K-BIND — native operators ⊂ ℚ(G\*)); the entire finite-symmetry class and all five native ℤ/2's (FTD-0326, Galois-blind to δ); the substrate's whole √-machine / AGM (FTD-0327, δ-blind); the carrier-narrowing (FTD-0314, ~85% closed); route-invariance (FTD-0242/0243). ~52 routes closed-negative; the surd is transcendental over ℚ(G\*) with no graded-period home.
+3. **The split is exact, not analogical.** `Γ(z)Γ(1−z)=π` (even, modulus, reversible) vs `Γ(z)/Γ(1−z)=G*` (odd, argument, the arrow) is the literal even/odd decomposition FTD already holds (FTD-0323); the half-derivative `∂_t^{1/2}∘∂_t^{1/2}=∂_t` with `G*` its eigenvalue is the operator-level form.
+
+---
+
+## 6 · The honest ceiling (mandatory)
+
+- **The meta-claim of §3 is `[CONJECTURE]`/`[SPECULATION]` — a slogan made precise, not a proof.** FTD is proof-by-example for *one* substrate. Whether the frontier firms to `[THEOREM]` for any substrate sub-class is the **open research question** (§7), requiring a category-theoretic formalization of "self-supply" and "no backward pairing across the kernel."
+- **Promotes nothing.** `x₊=1/α` stays `[STRONGLY MOTIVATED CONJECTURE]`; **MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`**; no α is derived. The frontier **does not depend on `x₊=1/α` being true** — it explains the boundary whether or not the central conjecture holds, which is exactly why it is the project's most defensible asset.
+- **No new-mathematics overclaim.** The "new math" the boundary points to (graded supersquare / inverse-integral / statistics-of-events) is **assembly-of-existing + one genuinely-new ingredient** (the Galois-position test over ℚ(G\*)), per the novelty audit — not new mathematics.
+- This is **clause 2 of the Number-One Goal at maximum generality**: the rigorous map of what determinism + discreteness can and cannot ground.
+
+---
+
+## 7 · What this poses (the research questions it frames)
+
+- **The four-walls-are-one forcing theorem** (T2): are FC-1, FC-2, FC-W, and the L²-not-L¹ budget the *same* import — does adopting any one force the others? A win collapses 3+ axioms to one structural deficiency and firms the frontier for FTD. (High ceiling, currently no proof sketch.)
+- **The category-theoretic formalization** of "an `S`-substrate cannot self-supply the section/non-tracial pairing of its own kernel," for a defined substrate sub-class.
+- **The genesis-cokernel test** (frozen pre-registration `PREREG_GENESIS_COKERNEL_GRADING_v1`, tag `preregister-genesis-cokernel-grading-v1`) as the empirical probe of whether the lossy step carries δ — the one structurally-distinct carrier still unexamined.
+
+---
+
+## 8 · Status line
+
+Tag `[SYNTHESIS]` + `[CONJECTURE]`. **Nothing promoted**; standing invariants held (FTD-0013 `[SMC]`; MC-T4.3 `[FOUNDATIONAL OBSTRUCTION]`; no α derived). This document is the canonical internal boundary statement and the skeleton of an external structural-negative paper; it consolidates `EXPLR_GENESIS_COKERNEL_GRADED_SQRT.md`, `AUDIT_BOUNDARY_MAP.md` (FTD-0335), FTD-0244/0314/0323/0326/0327, and FC-1/FC-2/FC-W into one frontier, and replaces the "second `i`" framing corpus-wide with **the chosen adjoint of the lossy map**.
