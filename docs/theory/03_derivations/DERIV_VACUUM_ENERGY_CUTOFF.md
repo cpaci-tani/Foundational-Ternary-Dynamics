@@ -8,6 +8,8 @@ author: "FTD Orchestration Team"
 # Derivation of the Finite Vacuum Energy Cutoff
 
 > **Epistemic reconciliation (2026-06-15).** The result here is a **`[NUMERICAL FACT]`** — a Monte-Carlo evaluation of a definite Brillouin-zone integral giving a finite, O(1) value in lattice units. It is **not** a `[THEOREM]`, and there is no canonical LEDGER row for it. That a discrete lattice renders the zero-point sum finite is sound; the stronger claim that this *eliminates* the cosmological-constant ($10^{120}$) problem requires a derived bridge from this lattice-unit number to the observed Λ, which is **not** established (no field-content / mode-counting / $\tfrac12\hbar\omega$ weighting is carried, and no connection to measured Λ is made) — that bridge is `[OPEN]` / `[CONJECTURE]`. The frontmatter `type` and §3's closing claim are reconciled downward; the integral value is unchanged.
+>
+> **Update (2026-06-26, FTD-0331).** The `½ℏω` zero-point weighting below has no FC-1 warrant — FTD's classical substrate declines `ℏ`, so the empty void is identically zero-energy and there is **no zero-point catastrophe to resolve** (it is dissolved by construction, not solved by a finite cutoff). The compact-BZ finiteness shown here is a genuine native fact but is not a vacuum energy. The honest small-Λ *mechanism* (scale-covariant holographic ratio `Λ~(ℓ_P/L_H)²`, value a `[BOUNDARY]`) is in [`DERIV_LAMBDA_SCALE_COVARIANT.md`](gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md).
 
 ## 1. The Cosmological Constant Paradox
 
