@@ -13,6 +13,7 @@ ontology provably does **not** determine. Closed-negatives and no-gos are delive
 not failures: they map how far discreteness reaches.
 
 **Companion canonical sources:**
+- `02_foundations/FOUND_MODULUS_ARGUMENT_FRONTIER.md` (FTD-0336) — **the one-statement positioning result this map instantiates:** a discrete/deterministic/forward-only substrate owns the *modulus* half and cannot self-supply the *argument* (the chosen adjoint of its own lossy map); FTD's boundaries below are its five instances. Replaces the "second i" framing.
 - `core_ledgers/LEDGER.md` — per-claim provenance (source of truth for tags)
 - `core_ledgers/TRACKER_OPEN_ITEMS.md` — every live `[OPEN]`
 - `01_reference/SPEC_OPEN_MATH_BY_SECTOR.md` — sector research queue + foundational-obstruction framing
