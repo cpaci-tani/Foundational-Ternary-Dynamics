@@ -168,10 +168,10 @@ The following integers appear throughout FTD derivations. All are derived from t
 : The primitive epistemic act of marking one thing as different from another. In EPL-ST, distinction is the absolute foundation from which all else follows, prior to logic, truth, or existence. The ability to distinguish "this" from "that" is the most basic operation of any epistemic agent. From distinction alone, the ternary valuation {+1, −1, 0} follows as a theorem. See @sec-formal-logic.
 
 **Dark Energy**
-: The component driving accelerating expansion. In FTD, emergent from dynamic void flux: ρ_DE = ½⟨J²⟩_vacuum. DESI 2025 data (4.2σ) shows w evolves over cosmic time, consistent with FTD prediction that void flux is dynamic, not constant.
+: The component driving accelerating expansion. In FTD, the classical vacuum carries zero energy density (FTD dissolves the $M_\text{Planck}^4$ catastrophe), and the observed nonzero dark-energy density is an open boundary. The flux field is dynamic (ρ_DE ≈ ½⟨J²⟩_vacuum is a [SELECTION] argument), but the equation of state $w$ is open in the framework — FTD makes no prediction for $w$ or its time-variation (FTD-0331).
 
 **Dark Energy Spectroscopic Instrument (DESI)**
-: Spectroscopic survey instrument at Kitt Peak National Observatory. DR2 (2025) provided 4.2σ evidence for evolving dark energy (w₀ ≈ −0.7, wₐ ≈ −1), challenging the cosmological constant and supporting FTD's dynamic void interpretation.
+: Spectroscopic survey instrument at Kitt Peak National Observatory. DR2 (2025) provided 4.2σ evidence for evolving dark energy (w₀ ≈ −0.7, wₐ ≈ −1), challenging the cosmological constant. This finding is **indeterminate** with respect to FTD, because $w$ is open in the framework — it neither confirms nor falsifies FTD.
 
 **Dispositional Ontology**
 : The philosophical position that reality is fundamentally composed of dispositions (tendencies, potentials) rather than categorical properties. In FTD, the flux field J represents dispositional properties of the void substrate.
