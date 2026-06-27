@@ -6,7 +6,7 @@ Every row points at a canonical source; where a source and this map disagree on 
 the canonical source (LEDGER / TRACKER_ONTIC_TRUTH / SPEC_ALGEBRAIC_SPINE) wins.
 
 **Created:** 2026-06-09
-**Last refreshed:** 2026-06-14 — reconciles the FTD-0244 K-BIND closure into this synthesis.
+**Last refreshed:** 2026-06-27 (FTD-0335) — folds in (a) the **FC-W carrier-narrowing hardening** of the α boundary (FTD-0314/0326/0327 + the `√(4G*−1)` no-graded-home result), (b) the **cosmology-sector boundary** — Λ predicts zero (FTD-0331), the whole sector is imported (FTD-0332/0334) — new §3.5, (c) the **no-native-quantum-dynamics** dispersion ceiling (FTD-0270) + the pre-registered P2 mass-gap measurement (FTD-0333) — new §2d, and (d) the **no-sound** boundary (FTD-0298/0299). Prior 2026-06-14 reconciliation (FTD-0244 K-BIND) preserved. *Zero promotions.*
 **Scope:** the *second clause* of the Number-One Goal — "...and rigorously establish what
 we **cannot** [derive]." This document is the single-page map of what the discrete ternary
 ontology provably does **not** determine. Closed-negatives and no-gos are deliverables here,
@@ -21,6 +21,10 @@ not failures: they map how far discreteness reaches.
 - `audits/AUDIT_RSI_LEG3_CONDITIONAL_THEOREM.md` (FTD-0243)
 - `../10_eft_program/derivations/FOUND_OPERATOR_CALCULUS_AXIOMATIZATION.md` (FTD-0244)
 - `02_foundations/FOUND_SPACETIME_FORCING_BOUNDARY.md` (FTD-0253)
+- `../09_mathematical/number_theory/FOUND_AGM_PLACE_BRIDGE_AND_DELTA.md` (FTD-0327 — the FC-W carrier hardening)
+- `../01_reference/SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md` (the cosmology-sector boundary; FTD-0332/0334)
+- `../03_derivations/gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md` (FTD-0331 — Λ predicts zero)
+- `../03_derivations/foundational_mechanics/ANALYSIS_QUANTIZATION_LATTICE_MODES_v1.md` (FTD-0270 — the dispersion ceiling) + `ANALYSIS_QDYN_MASS_GAP_v1.md` (FTD-0333 — the P2 mass-gap measurement)
 
 ---
 
@@ -95,6 +99,22 @@ first become distinguishable. FTD-0244 axiomatizes a substrate-native operator c
 master quadratic's root-splitting field has degree 2 over Q(G\*), no operator in this calculus
 can force the assembly `(Tr,Det)=(16G*²,16G*³)` or distinguish the physical root without an
 external selection `W`.
+
+**FC-W carrier-narrowing — K-BIND extended from operators to the whole finite-symmetry class
+(FTD-0314/0326/0327)** `[THEOREM, conditional on Chudnovsky]` + `[SYNTHESIS]`: the surd
+`√(G*(4G*−1))` is **transcendental over ℚ** (`Q(G*)∩Q^ab=Q`), so *no* finite-symmetry carrier
+(chirality, ±1 sign, the binary-octahedral 2O cover, permutation parity) and *no* native operator
+realizes it — extending K-BIND from operators to the **entire finite-symmetry class**. FTD-0326:
+all 5 native ℤ/2's are Galois-blind to δ. FTD-0327: the AGM (the substrate's *entire* √-machine)
+is δ-blind by construction — its forced-magnitude geometric means land on G\*, never δ. The
+structural root: `√(4G*−1)`, the second independent factor of δ, has **no graded period home**
+(`4G*−1` is motivically weight-inhomogeneous; the square root of a weight-inhomogeneous element is
+the period of no pure graded motive), and its natural Eisenstein/prime-3 home is unavailable
+(Theorem GE-1, `3⁶≠6²`). **Verdict: W cannot be earned natively (~90% CLOSED)** — only an
+un-exhibited forward-derived weight-mixing period (a `det_ζ` of a new operator) survives `[OPEN]`,
+pressured toward closed. The framework therefore **adopts** W as **FC-W (FTD-0315)** — its *first
+adopted import* — under which `x₊ = 1/α` is a `[CONDITIONAL THEOREM given W]`, explicitly **not**
+`[DERIVED]`.
 
 **Sub-boundary — x₋ has no physical correspondent** (FTD-0210, `[CLOSED NEGATIVE]`): the smaller
 root x₋ ≈ 3.024 was tested against 25 pre-specified SM observables — all falsified (closest
@@ -176,6 +196,29 @@ the departure from γ vanishes as **`R ∝ L⁻²` (∝k²)** — γ emerges in 
 ultra-relativistic diagonals don't converge at L≤193 `[OPEN]`. FTD-0208 *clarified, not refuted*
 (different observable).
 
+### 2d · No native quantum dynamics — the dispersion ceiling (FTD-0270, FTD-0333)
+A fourth instance of the same family: the target — atomic quantum dynamics, the Schrödinger sector —
+needs a structure P1–P5 lack.
+- **The dispersion ceiling (FTD-0270)** `[MEASURED — BOUNDARY]`: the substrate quantizes (discrete
+  Dirichlet-box modes) but with the **wrong dispersion** — `ω ∝ |k|` (s≈0.944, cavity/EM-like, the
+  2nd-order-in-time `√(−M)` readout), **not** the Schrödinger quadratic `ω ∝ k²` (s≈2) the hydrogen
+  Rydberg `1/n²` needs. *"The √ is the entire story."* There is **no native ℏ, no native Pauli**.
+  The quadratic dispersion is *latent* in the spatial operator but needs a rest-mass clock
+  `ω₀ ∝ M_REST` to factor against — and **native flux is massless** (the clock winds at ω(k), zero at
+  k=0). So atomic spectra (FTD-0278 hydrogen, FTD-0279 helium) are confirmed only
+  `[DERIVED-GIVEN-IMPOSED]` (imposed clock + scalar coupling); de Broglie guidance is `[ABSENT]`
+  (FTD-0271, no ∇S→force term). FTD never derives atomic quantum dynamics from the discrete ontology
+  unconditionally.
+- **The P2 mass-gap swing (FTD-0333, pre-registered `preregister-qdyn-mass-gap-v1`)**
+  `[MEASURED — INVALID per pre-reg]`: the full-closure attempt — does the *nonlinear* genesis↔Gauss
+  back-reaction loop generate a **native** rest-mass gap `ω₀>0` (clock OFF) that the *linear* analysis
+  cannot see? — ran the hash-locked sweep and came back **INVALID**: the instability gate failed on all
+  10 runs (partly the FTD-0308 leapfrog drift, partly *physical* genesis energy-injection; L=32 floods).
+  The strong, uniform **no-gap hint** (native ω₀ pinned at the FFT floor — manifestation *freezes* the
+  flux, the opposite of a gap) is recorded but **not banked** (un-claimable from gate-failing runs).
+  FTD-0270 unchanged; a clean v2 needs a stable integrator + a `k=0`-isolating control + stable-island
+  amplitudes.
+
 ---
 
 ## 3 · Gravity
@@ -199,6 +242,36 @@ ultra-relativistic diagonals don't converge at L≤193 `[OPEN]`. FTD-0208 *clari
   the spin-2 boundary theorem (free-theory) is pre-registered. Whether the substrate carries an
   emergent spin-2 mode is `[OPEN]`. *(Ledger-ID note: this cluster is entangled with the
   FTD-0189/0193 collision — see `AUDIT_LEDGER_ID_COLLISIONS.md`.)*
+
+---
+
+## 3.5 · Cosmology — Λ predicts zero; the sector is imported (FTD-0331/0332/0334)
+
+The whole cosmology sector is a boundary: **FTD's most-imported, least-substrate-derived sector** —
+"ΛCDM apparatus + FTD numerology," never derived (`SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md`).
+
+- **Λ: FTD predicts zero (FTD-0331).** The `M_Planck⁴` catastrophe is built from quantum zero-point
+  `½ℏω`; FC-1 declines ℏ, so the classical empty void `(J=0,s=0)` is identically zero-energy ⇒
+  **FTD predicts Λ = 0** `[DERIVED]` (the *old* catastrophe **dissolved-by-construction**, not solved).
+  For any *nonzero* Λ: FC-3 forces the **form** (a scale-ratio, `[DERIVED-from-FC-3]`); the holographic
+  CKN bound fixes the **ceiling** `Λ ≲ (ℓ_P/L_H)²` `[SELECTION]` — **a ceiling, not a source**
+  (saturating it reintroduces the declined zero-point). The **source is `[OPEN]`** (no native source:
+  zero-point forbidden by FC-1; the condensate leaks `~L⁻⁵`, FTD-0273; matter-injection has no
+  L-dependence). The **value is a `[BOUNDARY]`** (needs `L_H/ℓ_P`, which FTD-0059 proves is not native).
+  The equation of state **w is `[OPEN]`** — the legacy "w=−1 exactly" is *retired*; a measured `w≠−1`
+  does **not** falsify FTD.
+- **Ω_Λ: no derived value.** Three uncoordinated numbers near 0.685 — `0.683` (α¹⁶, `[PARAMETRIC]`),
+  `2/3` (`[CONJECTURE]`), `17/27` (the Moore dark-**state** count, `[THEOREM]`-as-count-only); the
+  proximity is coincidental.
+- **Dark matter (FTD-0300)** `INDETERMINATE` — the lossless self-field halo **box-fills the periodic
+  lattice** (`r_eff≈L/2`, not localized); the `r⁻⁰·⁶⁹` halo exponent is **FALSIFIED** (→ −1.25 at
+  L≥128); SPARC not founded. The 17/27 *count* is structural; the *dynamics* are `[OPEN]`/mapped-negative.
+- **The rest of the sector** — inflation (`[SELECTION]`/ad hoc), the EW transition (`[CONJECTURE]`),
+  power spectrum/BAO (`[OPEN]`), the Friedmann/expansion history (adopted ΛCDM) — all imported, none
+  substrate-derived. FTD-0332/0334 reconciled the theory corpus **and** the dissemination layer to this.
+- **The one internally-decidable datum** (registered `[OPEN]`): a pre-registered L-scan asking whether
+  the substrate vacuum-energy density obeys the area law `∝1/L²` (a native source) or leaks `~L⁻⁵`
+  (no source) — prior-favoured: leak / negative.
 
 ---
 
@@ -247,6 +320,9 @@ Preserved for provenance — to prevent zombie re-emergence of exhausted routes.
 | **Strong / confinement** | 0025 (3 substrate routes) | confinement lives in `Z=∫dU e^{−S}`; deterministic substrate has no Phase-G analog — possibly outside current ontology |
 | **Engine phenomenology** | 0060, 0061, 0062, 0063, 0071/0072/0074, 0135, 0277-v1 | reduce to tautology / null GPU measurement / blocked on MC-T4.3 / v1 counting route fails N(A) shape, magnitude, and geometry |
 | **Mass / flavor** | 0219 (µ-unit loophole) | retracted for post-hoc fitting |
+| **Quantum dynamics** | 0270 (wrong dispersion), 0333 (P2 mass-gap INVALID / no-gap hint) | substrate quantizes with s≈1 (cavity) not s≈2 (Schrödinger); no native ℏ/Pauli; the nonlinear loop *freezes* the flux rather than gapping it |
+| **Cosmology / Λ** | 0131 (G_N=1/100), 0300 (DM halo INDETERMINATE), 0331 (Λ source/value), 0332/0334 (sector imported) | FTD predicts Λ=0; the holographic `~1/L²` is a *ceiling not a source*; the value needs L_H (FTD-0059); the sector is ΛCDM apparatus + numerology |
+| **Wave sectors** | 0298/0299 (no sound) | the lattice **is** space ⇒ no acoustic Goldstone; FTD has light/radio (one flux-wave sector) but no sound |
 
 **Root-cause grouping:** structural obstruction (0025, 0050, 0073, 0225, 0226, 0228, 0243) ·
 numerical disproof (0116, 0164, 0197–0200, 0212) · route-invariant boundary (0242/0243, MC-T4.3) ·
@@ -285,6 +361,14 @@ budget** (γ) — are each provably absent from P1–P5 and must be injected as 
 mutually-analogous 6th-postulate-class inputs. And the one quantity that would *derive* α,
 **√(G\*(4G\*−1))** — "the discrete limit of a square root" — is not produced by the
 axiomatized substrate-native operator calculus.
+
+This pattern recurs everywhere the substrate is asked to reach beyond its skeleton. **Quantum
+dynamics** needs a Schrödinger-quadratic dispersion the 2nd-order wave sector structurally lacks
+(FTD-0270). **Cosmology** is wholesale-imported, and FTD's own classical vacuum *predicts Λ = 0*
+(FTD-0331) — it *dissolves* the old cosmological-constant catastrophe but supplies no dark-energy
+source. And the carrier-narrowing of the α boundary (FTD-0314/0326/0327) hardened so far that the
+framework now **adopts** the binding law as **FC-W**, its first declared import — α is *selected*,
+not earned. The discrete ontology reaches further into **number theory** than into **physics**.
 
 That is the map drawn honestly in **both** directions, exactly as the Number-One Goal's second
 clause demands: the spine *derives*, and these boundaries *mark precisely how far discreteness
