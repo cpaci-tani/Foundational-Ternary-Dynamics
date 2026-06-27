@@ -290,16 +290,16 @@ The number of fermion generations equals the integer part of the derived N_c val
 ### Cosmological Constant
 
 $$
-\frac{\Lambda}{\Lambda_{Planck}} = \alpha^{57} = 10^{-121.8}
+\frac{\Lambda}{\Lambda_{Planck}} \approx \alpha^{57} \approx 10^{-121.8}
 $$
 
-| Property | Value |
-|----------|-------|
-| Predicted | 10^-121.8 |
-| Measured | 10^-122.0 |
-| Accuracy | **0.16%** |
+| Property | Value | Status |
+|----------|-------|--------|
+| Numerical coincidence | $\approx 10^{-121.8}$ | [SELECTION] — not a derivation of the observed value |
+| Observed | $\approx 10^{-122.0}$ | — |
+| Agreement | 0.16% | Coincidence; FTD classical vacuum = 0; value open |
 
-Where 57 = b₃(b₃+N_c) - N_eff = 70 - 13.
+Where 57 = b₃(b₃+N_c) − N_eff = 70 − 13 is a framework-integer arithmetic identity. FTD dissolves the $M_\text{Planck}^4$ catastrophe (classical vacuum is identically zero-energy) but does not derive the observed nonzero dark-energy density. The $\alpha^{57}$ expression is a numerical coincidence, not a prediction (FTD-0331).
 
 ---
 
