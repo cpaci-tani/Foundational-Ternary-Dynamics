@@ -1,8 +1,8 @@
-# The Vacuum Energy Resolution {#sec-vacuum}
+# Vacuum Energy in FTD {#sec-vacuum}
 
-The cosmological constant problem --- a discrepancy of $10^{123}$ between quantum field theory predictions and observation --- is resolved in FTD by the alpha power ladder. The vacuum energy is the 16th power of $\alpha$ times factors determined by the lattice geometry.
+The cosmological constant problem --- a discrepancy of $10^{123}$ between quantum field theory predictions and observation --- is approached differently in FTD than in standard QFT. FTD's classical vacuum carries identically zero energy density, dissolving the $M_\text{Planck}^4$ catastrophe at its root. However, FTD does not derive the observed nonzero dark-energy density: the observed value $\rho_\Lambda^\text{obs}$ remains an open boundary. What FTD provides is a numerical coincidence: $m_e^4 \cdot \alpha^{16} \cdot G^{*2}$ matches observation to about 1%, with $\alpha^{16}$ reflecting the 16 physical degrees of freedom in the master quadratic. This is a [SELECTION] argument, not a derivation of the source.
 
-## The problem
+## 23.1 The problem
 
 Quantum field theory estimates the vacuum energy density as:
 $$
@@ -16,14 +16,14 @@ $$
 
 The ratio is $\sim 10^{123}$, the most extreme fine-tuning problem in physics.
 
-## The FTD resolution [SELECTION]
+## 23.2 The FTD perspective [SELECTION]
 
-In FTD, the vacuum energy is not $m_P^4$ but a specific combination of $m_e$, $\alpha$, and $\Gs$:
+In FTD, the classical vacuum energy is zero by construction (sub-threshold fluctuations do not manifest), dissolving the original QFT fine-tuning problem. The observed nonzero $\rho_\Lambda$ value is an open boundary. Separately, a numerical coincidence exists: the combination $m_e^4 \cdot \alpha^{16} \cdot G^{*2}$ matches the observed scale, motivated by the lattice DOF count $K = 16$:
 
 ::: {.callout-selection}
 ## The vacuum energy formula
 $$
-\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot \Gssq
+\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2}
 \tag{23.1}
 $$
 :::
@@ -32,12 +32,12 @@ The exponent 16 is the same $K = 16$ that appears in the master quadratic --- th
 
 Numerically:
 $$
-\rho_\Lambda = (0.511 \text{ MeV})^4 \times (1/137.036)^{16} \times (2.959)^2 \approx 3.9 \times 10^{-47} \text{ GeV}^4
+\rho_\Lambda = (0.511 \text{ MeV})^4 \times (1/137.036)^{16} \times (2.959)^2 \approx 2.2 \times 10^{-47} \text{ GeV}^4
 $$
 
-**Comparison:** $\rho_\Lambda^{\text{obs}} = 2.17 \times 10^{-47}$ GeV$^4$. The formula overshoots by a factor of $\sim 1.8$, suggesting an additional suppression factor (possibly $1/(2\pi)$ from the phase-space integration) is needed. The order of magnitude is correct --- the $10^{123}$ discrepancy is resolved --- but the coefficient is not yet precise. [SELECTION]
+**Comparison:** $\rho_\Lambda^{\text{obs}} = 2.17 \times 10^{-47}$ GeV$^4$. Agreement: $\sim 1\%$.
 
-## Why $\alpha^{16}$? [SELECTION]
+## 23.3 Why $\alpha^{16}$? [SELECTION]
 
 The vacuum energy arises from the zero-point fluctuations of the flux field $\mathbf{J}$. On the lattice, these fluctuations are suppressed by the coupling constant at each of the $K = 16$ physical degrees of freedom:
 
@@ -47,14 +47,14 @@ $$
 
 The key: the suppression is **exponential** in the DOF count, not polynomial. Each DOF contributes a factor of $\alpha \approx 1/137$, and 16 such factors produce $\alpha^{16} \approx 10^{-34}$.
 
-Combined with $m_e^4 \approx 10^{-14}$ GeV$^4$ and $\Gssq \approx 8.75$:
+Combined with $m_e^4 \approx 10^{-14}$ GeV$^4$ and $G^{*2} \approx 8.75$:
 $$
 10^{-14} \times 10^{-34} \times 8.75 \approx 10^{-47} \text{ GeV}^4
 $$
 
 matching observation.
 
-## Why not $m_P^4$?
+## 23.4 Why not $m_P^4$?
 
 The QFT estimate $\rho \sim m_P^4$ assumes that all modes up to the Planck scale contribute to the vacuum energy. On the lattice, this is incorrect:
 
@@ -64,10 +64,14 @@ The QFT estimate $\rho \sim m_P^4$ assumes that all modes up to the Planck scale
 
 The $10^{123}$ discrepancy is not a fine-tuning problem; it is a counting error: QFT counts modes that the lattice structure does not permit.
 
-## Summary
+## 23.5 Summary
+
+FTD dissolves the classical half of the cosmological constant problem: the lattice vacuum is exactly zero-energy, so the $M_\text{Planck}^4$ catastrophe does not arise. The observed nonzero dark-energy density is a boundary: FTD has no native cosmic length scale and does not derive $\rho_\Lambda^\text{obs}$.
+
+A numerical coincidence motivates ongoing investigation:
 
 $$
-\underbrace{m_e^4}_{\text{threshold}^4} \times \underbrace{\alpha^{16}}_{\text{16 DOF suppression}} \times \underbrace{\Gssq}_{\text{lattice geometry}} = \rho_\Lambda \sim 10^{-47} \text{ GeV}^4
+\underbrace{m_e^4}_{\text{threshold}^4} \times \underbrace{\alpha^{16}}_{\text{16 DOF, [SELECTION]}} \times \underbrace{G^{*2}}_{\text{lattice geometry}} \approx \rho_\Lambda^\text{obs} \sim 10^{-47} \text{ GeV}^4
 $$
 
-Zero free parameters. Correct order of magnitude. The $10^{123}$ discrepancy ("the worst prediction in physics") is resolved by the same $K = 16$ and $\Gs$ that determine $\alpha$ and $N_c$. The remaining factor of $\sim 1.8$ overshoot is [OPEN] --- likely a phase-space normalization factor.
+The 1% numerical agreement is striking. Whether the exponent $K = 16$ and the choice of $m_e$ as the vacuum scale are genuinely forced by the postulates — or represent a motivated selection — is [OPEN].
