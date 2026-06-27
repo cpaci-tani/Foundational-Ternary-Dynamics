@@ -110,47 +110,42 @@ The worst prediction in physics.
 
 Why is Λ so small, but not zero?
 
-## The FTD Solution: $\alpha^{16}$ Mode-Coupling Suppression
+## The FTD Perspective: $\alpha^{16}$ Mode-Coupling and the Cosmological Constant
 
-FTD provides a **physical derivation** of the cosmological constant that resolves the 122 orders of magnitude discrepancy.
+FTD approaches the cosmological constant problem differently from standard QFT. Its classical vacuum carries identically zero energy density (the flux-field ground state sits exactly at zero because sub-threshold fluctuations do not manifest), so the $M_\text{Planck}^4$ catastrophe never arises in the first place. However, FTD does **not** derive the observed nonzero value $\rho_\Lambda^\text{obs}$: the framework has no native cosmic length scale, and the observed dark-energy density remains an open boundary.
 
-::: {.callout-important}
-## Precise Formula vs. Logarithmic Approximation
-The canonical FTD derivation (DERIV_COSMOLOGICAL_CONSTANT.md) gives the vacuum energy density:
+What FTD does provide is a numerical coincidence worth noting. The combination
 
 $$\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2} \approx 3.86 \times 10^{-47} \text{ GeV}^4$$
 
-This achieves **1.0% accuracy** against observation ($3.90 \times 10^{-47}$ GeV$^4$).
+happens to agree with the observed value ($3.90 \times 10^{-47}$ GeV$^4$) to about 1%. The exponent 16 matches $K = 16$, the physical degree-of-freedom count in the master quadratic. In Planck units the numerical coincidence can be written as $\Lambda / \Lambda_\text{Planck} \approx \alpha^{57}$ (where 57 is shorthand absorbing the $m_e / M_P$ ratio via $m_e = M_P \sqrt{2\pi}(16/3)\alpha^{11}$). These are numerical coincidences within a [SELECTION] argument, not a derivation of the observed value.
 
-In Planck units, this can be approximated as $\Lambda / \Lambda_{\text{Planck}} \approx \alpha^{57}$ because when $m_e$ is expressed via $m_e = M_P \sqrt{2\pi} (16/3) \alpha^{11}$, the total $\alpha$ exponent becomes 60, and the prefactors absorb ~2.5 units in base $1/\alpha$, giving $\approx 57.5 \approx 57$. The $\alpha^{57}$ formula is a useful mnemonic; the $\alpha^{16}$ formula is the derivation.
+::: {.callout-important}
+## Epistemic status
+The formula $\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2}$ is a [SELECTION]: the choice of $m_e$ as the vacuum energy scale and $K = 16$ as the suppression exponent is motivated by FTD's structure but is not uniquely forced by the postulates. The observed nonzero $\rho_\Lambda$ is a boundary: FTD dissolves the old $M_\text{Planck}^4$ fine-tuning problem (zero classical vacuum), but does not predict the value of the residual dark-energy density. The $\alpha^{57}$ mnemonic is a numerical coincidence, not a derivation.
 :::
 
-### The Derivation
+### Why the classical vacuum is zero in FTD
 
-Three pillars resolve the $10^{123}$ discrepancy:
+Three structural features explain why FTD avoids the $M_\text{Planck}^4$ catastrophe:
 
-1. **Finite vacuum energy:** The compact Brillouin zone makes the lattice integral automatically finite --- no regularization needed
-2. **Manifestation threshold:** The vacuum is defined by sub-threshold fluctuations ($|J| < K_B = m_e$), making $m_e$ the natural energy cutoff instead of $M_P$. This accounts for 88 of the 123 orders of magnitude.
-3. **Mode-coupling suppression:** Each of 16 physical DOF couples to gravity with strength $\alpha$, giving $\alpha^{16}$ total suppression. This accounts for the remaining 34 orders.
+1. **Finite vacuum energy:** The compact Brillouin zone makes the lattice integral automatically finite — no regularization needed
+2. **Manifestation threshold:** The vacuum is defined by sub-threshold fluctuations ($|J| < K_B = m_e$), so sub-threshold modes do not manifest and do not gravitate in the FTD sense
+3. **Mode-coupling structure:** Each of 16 physical DOF couples with strength $\alpha$, giving $\alpha^{16}$ suppression relative to the Planck scale
 
 $$\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2}$$
 
-Calculating:
+Numerically:
 $$= (0.511 \times 10^{-3})^4 \cdot (1/137.036)^{16} \cdot (2.622)^2 = 3.86 \times 10^{-47} \text{ GeV}^4$$
 
 Observed:
 $$\rho_{\Lambda,\text{obs}} = 3.90 \times 10^{-47} \text{ GeV}^4$$
 
-**Agreement to 1.0%!**
+The 1% numerical agreement is striking but remains a coincidence until a derivation chain from the postulates to the observed value is established.
 
-::: {.callout-important}
-## The 122 Orders of Magnitude Explained
-The cosmological constant is not unnaturally small: it is a 57th-order effect in the electromagnetic coupling. The Lemniscate-Alpha framework predicts this exponent exactly.
-:::
+### The $\alpha^{57}$ numerical coincidence
 
-### Why 57?
-
-The number 57 emerges from the Lemniscate-Alpha geometry:
+In Planck units, the coincidence can be written:
 
 $$57 = 3 \times 19 = 3 \times (b_3 + N_c + N_{\text{eff}} - 1)$$
 
@@ -160,39 +155,21 @@ Where:
 - $N_c = 3$ (color charges)
 - $N_{eff} = 13$ (effective dimension)
 
-The cosmological constant involves physics at all scales from Planck to cosmic: hence it accumulates all the geometric factors.
+This arithmetic identity relates framework integers to the exponent in the numerical coincidence. Whether this reflects genuine structure or post-hoc pattern-matching is an open question.
 
-### Physical Interpretation
+### The coincidence problem
 
-In FTD, the cosmological constant represents the **residual vacuum energy** after cancellation:
+Why is dark energy comparable to matter density NOW? FTD does not resolve this: w (the equation of state) is open in the framework, and without a derivation of $\rho_\Lambda$ itself no statement about its time evolution relative to matter is available from the postulates.
 
-$$\Lambda = \rho_{\text{Planck}} \times \text{(suppression from 57 nested correlations)}$$
+### Comparison with standard approaches
 
-Each power of α represents one layer of correlation in the flux field hierarchy:
-- $\alpha^1$: electromagnetic effects
-- $\alpha^2$: radiative corrections
-- ...
-- $\alpha^{57}$: cosmic-scale vacuum energy
-
-### The Coincidence Problem
-
-Why is dark energy comparable to matter density NOW?
-
-In FTD: Both scale with $\alpha$ through different paths that **intersect at the current epoch**:
-
-$$\rho_{\text{matter}} \sim \alpha^{-3} \times \rho_0 \quad \text{(structure formation)}$$
-$$\rho_\Lambda \sim \alpha^{57} \times \rho_{\text{Planck}}$$
-
-The intersection happens when the universe is ~13.8 billion years old: not coincidence but necessity.
-
-### Comparison with Standard Approach
-
-| Approach | Λ/Λ_Planck | Issue |
-|----------|------------|-------|
+| Approach | Λ/Λ_Planck | Status |
+|----------|------------|--------|
 | Naive QFT | $10^0$ | Wrong by $10^{122}$ |
 | Supersymmetry | $10^{-60}$ | Still wrong |
 | Anthropic | ~$10^{-122}$ | Not predictive |
-| **FTD ($\alpha^{57}$)** | **$10^{-121.8}$** | **Matches to 0.16%** |
+| FTD classical vacuum | $0$ (exactly) | Dissolves the catastrophe; observed value open |
+| FTD numerical coincidence ($\alpha^{57}$) | $\approx 10^{-121.8}$ | Matches to 0.16%; status [SELECTION], not [DERIVED] |
 
 ## Fate of the Universe
 
@@ -258,7 +235,7 @@ Extrapolate current acceleration into far future.
 - **equation-of-state**: Ratio of pressure to energy density
 - **accelerating-expansion**: Universe speeding up
 - **dark-energy-density**: 68% of universe
-- **alpha-57**: FTD derivation: $\Lambda/\Lambda_{\text{Planck}} = \alpha^{57} \approx 10^{-122}$
+- **alpha-57**: FTD numerical coincidence: $\Lambda/\Lambda_{\text{Planck}} \approx \alpha^{57} \approx 10^{-122}$ (a [SELECTION] argument, not a derivation of the observed value)
 - **coincidence-problem**: Why Ω_Λ ~ Ω_m now? (addressed in FTD)
 
 ## Transition
