@@ -5,7 +5,7 @@
 **Supersedes the rationale of:** `DERIV_COSMOLOGICAL_CONSTANT.md` (the `m_e⁴·α¹⁶·G*²` / `α⁵⁷` numerology) and reconciles its zero-point basis against FC-1.
 **Depends on:** FC-1 (FTD-0255), FC-3 (FTD-0304), the undefined-boundary ontology (`AUDIT_INFINITY_REFRAME.md`), the no-native-length no-go (FTD-0059), the area-law / holographic-principle results (`DERIV_BLACK_HOLE_PHYSICS.md`).
 
-> **Thesis.** FTD does not inherit the quantum-field-theory cosmological-constant *catastrophe*: that `M_Planck⁴` disaster is built from quantum zero-point energy, and FTD's classical substrate declines the apparatus that produces it. The small nonzero Λ that dark energy still requires is forced by FC-3 to be a **scale-ratio**, not a fundamental constant; a holographic saturation fixes the ratio to `Λ ~ (ℓ_P/L)²`. The smallness of Λ is then the largeness of the universe — a mechanism, with no tuned exponent. The numerical *value* remains a boundary: it requires the horizon length `L_H`, which FTD cannot supply natively (FTD-0059). This replaces the `α⁵⁷` constant-match (W-COSMO-4) with an honest, L-dependent account, and lands at `[SELECTION]` + `[BOUNDARY]` — nothing is promoted.
+> **Thesis.** FTD does not inherit the quantum-field-theory cosmological-constant *catastrophe*: that `M_Planck⁴` disaster is built from quantum zero-point energy, and FTD's classical substrate declines the apparatus that produces it — so FTD dissolves the *old* problem, and its classical vacuum is exactly zero-energy. For any *nonzero* Λ, FC-3 forces the **form** (a scale-ratio, not a fundamental constant) and the holographic bound fixes the **ceiling** (`Λ ≲ (ℓ_P/L)²` — smallness = largeness, no tuned exponent). But FTD supplies no **source** to fill that ceiling: its own dynamics predicts `Λ = 0`, and the candidate sources fail (zero-point declined by FC-1; the manifested condensate leaks `~L⁻⁵`). So the small nonzero dark energy is an `[OPEN]` source gap, and its numerical *value* is a `[BOUNDARY]` requiring the horizon `L_H`, which FTD cannot supply natively (FTD-0059). This replaces the `α⁵⁷` constant-match (W-COSMO-4) with an honest account — dissolution `[DERIVED]`, form `[DERIVED-from-FC-3]`, source `[OPEN]`, value `[BOUNDARY]` — and promotes nothing.
 
 ---
 
@@ -54,9 +54,14 @@ The exponent 2 is the holographic *degree-of-freedom bound* (entropy/information
 - the **holographic principle from determinism** (`DERIV_BLACK_HOLE_PHYSICS.md` BH-5, `[THEOREM]`): interior configurations are fixed by boundary data, so the independent degrees of freedom in a region scale with its boundary area;
 - an **area law** `S = A/(4ℓ_P²)` (BH-4, `[SELECTION]`; the area-scaling is `[THEOREM]` from determinism, the coefficient `1/4` is a `[SELECTION]` argument and is alphabet-invariant).
 
-If the independent degrees of freedom in a region scale as the area, the vacuum energy saturates at the CKN value `M_P²/L²` rather than the naive `M_P⁴` — i.e. FTD's own determinism-holography *motivates* the exponent 2. Because the area-law coefficient is itself `[SELECTION]`, this native motivation is `[SELECTION]`-grade, not a theorem; it is a genuine reduction of the import, not its elimination.
+If the area-many degrees of freedom each carry the infrared energy `~1/L`, the vacuum energy reaches `M_P²/L²` rather than the naive `M_P⁴` — so FTD's determinism-holography *motivates* the exponent 2. But this fixes only the **ceiling**. The CKN relation is the *maximum* vacuum energy a region of size `L` can hold without collapsing to a black hole (`E_vac ≤ M_BH(L) ~ M_P²·L`); it is a bound, not a source — it states what Λ could be *at most*, not that it is nonzero.
 
-**Falsifier (a real, in-corpus tension).** The exponent is load-bearing, and FTD's measured energetics are not yet known to respect it. `DERIV_LATTICE_BLACK_HOLES.md` / FTD-0273 found that the manifested-condensate energy does **not** settle to a clean intensive density — it leaks as `~L⁻⁵` on larger boxes. If the substrate's vacuum energetics followed a volume-law or a leak-dominated scaling rather than the area law, the exponent would not be 2 (e.g. `(ℓ_P/L)⁴` or steeper), and the holographic reading would be disfavored. Reconciling the area-law motivation against the FTD-0273 leak scaling is the decisive open check; a measured volume-law would close this route negative.
+**The decisive gap (gap #1, examined): FTD has no source to fill the ceiling, and saturating it reintroduces what §1 declined.** The per-mode infrared energy `~1/L` the ceiling requires *is* a zero-point (`½ℏω_min`) contribution — exactly what §1 sets to zero. So FTD's classical vacuum does not saturate the holographic ceiling; it sits at the floor, `ρ_vac = 0`. **FTD's own dynamics therefore predicts `Λ = 0`:** it dissolves the *old* cosmological-constant problem (why is Λ not huge) but does not produce the *new* one (a small nonzero dark energy). Filling the vacuum up to the ceiling — the saturation that holographic-dark-energy models simply *assume* — needs a nonzero source, and none of FTD's candidates survives:
+- a zero-point mode energy is forbidden by §1 (FC-1);
+- the manifested condensate (FTD-0272) does not settle to a clean intensive density — its energy leaks as `~L⁻⁵` (FTD-0273);
+- the matter-driven flux injection of `DERIV_DARK_SECTOR_DYNAMICS.md` carries no `L`-dependence (it reproduces the `α¹⁶` number, not a holographic ratio).
+
+**Verdict on §3.** FC-3 fixes the *form* (a scale-ratio) and the area law fixes the *ceiling* (the exponent 2), but the **source — and hence the actual nonzero value — is `[OPEN]`**: FTD predicts `Λ = 0`, and the observed `Λ > 0` saturating the ceiling is, at present, a coincidence-match rather than an FTD output. The clean closing move would be a substrate vacuum-energy density that is intensive and obeys the area law instead of leaking; the FTD-0273 `L⁻⁵` result currently disfavours it.
 
 ---
 
@@ -68,7 +73,7 @@ with `L_H` the undefined-boundary IR scale identified with the cosmological hori
 
 But this is a mechanism, not a prediction of the number. Obtaining the value requires `L_H/ℓ_P`, and FTD-0059 (`[THEOREM]`) proves that **no native length is expressible from Axiom-Zero invariants** (all four mechanism candidates α/β/γ/δ closed negative). So FTD cannot predict `L_H/ℓ_P`; the horizon is an external IR input, exactly parallel to `a_phys≡ℓ_P` being a declared UV gauge. Two further imports are explicit: the identification of the undefined-boundary box `L` with the physical horizon `L_H` (an ontological promotion of an apparatus scale), and the holographic saturation of §3.
 
-**Net:** mechanism — yes (Λ is a scale-ratio, `Λ~1/L²`, no tuned exponent); value — no (`L_H` imported; FTD-0059 boundary). The equation of state `w=−1` (a pure cosmological constant, no time variation) is the modest bonus the scale-ratio reading gives.
+**Net:** the *form* is fixed (Λ is a scale-ratio, `Λ~1/L²`), but FTD supplies neither the *source* (§3 — it predicts `Λ = 0`) nor the *value* (`L_H` imported; FTD-0059 boundary). The equation of state is **not** a free bonus (an earlier draft over-stated this): read as a static magnitude the result is only the coincidence "Λ today ≈ 1/horizon² today"; read as a *dynamical* law with `L_H` growing it is holographic dark energy, whose Hubble-horizon version is known to give **no** acceleration (`w ≈ 0`, the Hsu 2004 problem) and yields `w ≈ −1` only under a different (future-event-horizon) cutoff. So the dynamics / equation of state is itself `[OPEN]`, not a prediction.
 
 ---
 
@@ -79,12 +84,14 @@ But this is a mechanism, not a prediction of the number. Obtaining the value req
 | Classical void is zero-energy; FTD has no `M_Planck⁴` catastrophe | `[DERIVED]` (FC-1 + Lagrangian) |
 | The catastrophe is dissolved-by-construction; existing `½ℏω` route is FC-1-inconsistent | `[SELECTION]` / reconciliation |
 | Λ must be a scale-ratio `Λ·ℓ_P² = f(ℓ_P/L)`, not a fundamental constant | `[DERIVED-from-FC-3]` |
-| The exponent is 2 (`Λ~(ℓ_P/L)²`), holographic saturation | `[SELECTION]` (motivated by determinism-holography; imported as CKN) |
+| The holographic *exponent / ceiling* `ρ_vac ≲ M_P²/L²` (`Λ ≲ (ℓ_P/L)²`) | `[SELECTION]` (area-law motivated; imported as CKN) — a *ceiling*, not a source |
+| The nonzero *source* that would saturate the ceiling | `[OPEN]` — FTD's classical vacuum predicts `Λ = 0`; no native source (zero-point forbidden by §1; condensate leaks `L⁻⁵`, FTD-0273) |
+| The dynamics / equation of state `w` | `[OPEN]` (static reading = coincidence; dynamical reading = holographic dark energy, Hubble-cutoff fails, Hsu 2004) |
 | The numerical value `Ω_Λ≈0.68`, `~10⁻¹²²` | `[BOUNDARY]` (needs `L_H`; FTD-0059) |
 
-**What would upgrade to `[DERIVED]`:** a rigorous derivation of the holographic degree-of-freedom saturation from FTD's determinism-holography (rather than importing the CKN bound), together with a resolution of the FTD-0273 leak-scaling tension in favour of the area law. Neither is in hand.
+**The decisive open check (gap #1):** whether the substrate has a vacuum-energy density that is *intensive* and obeys the area law rather than leaking (`L⁻⁵`, FTD-0273). If it does, FTD gains a native nonzero `Λ ~ (ℓ_P/L)²` and the source gap closes; if the leak / a volume-law wins, the route closes negative — FTD has no dark-energy source and the dissolution `Λ = 0` is the final word. Either way the *value* stays a `[BOUNDARY]` (FTD-0059), and the current evidence (the `L⁻⁵` leak) **disfavours** the area-law source.
 
-**Zero promotions.** `x₊=1/α` stays `[SMC]` (FTD-0013); MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; no α is derived; the value of Λ is **not** derived. The deliverable is a mechanism for the *smallness* plus a clearly-marked value boundary — a Number-One-Goal second-clause result, replacing the rationale of the `α⁵⁷`/`α¹⁶` numerology.
+**Zero promotions.** `x₊=1/α` stays `[SMC]` (FTD-0013); MC-T4.3 stays a `[FOUNDATIONAL OBSTRUCTION]`; no α is derived; the value of Λ is **not** derived. The deliverable is honest and mixed: a clean **dissolution** of the old catastrophe (`Λ = 0`, `[DERIVED]` given FC-1), a **form** constraint (FC-3) and a **ceiling** (holographic) for any nonzero Λ, an `[OPEN]` **source** gap (FTD currently predicts zero), and a `[BOUNDARY]` on the value — a Number-One-Goal second-clause result that replaces the rationale of the `α⁵⁷`/`α¹⁶` numerology without claiming the value.
 
 ---
 
