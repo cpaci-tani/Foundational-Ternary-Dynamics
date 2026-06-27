@@ -1448,6 +1448,19 @@ ftd_add_test(campaign_atomic_spectroscopy tests/campaign_atomic_spectroscopy.cpp
              CTEST_NAME campaign_atomic_spectroscopy TIMEOUT 1800
              LABELS native eft observable engine_as_instrument)
 
+# FTD-0270 closure swing P2 (2026-06-26): the nonlinear-loop native mass gap.
+# Frozen instrument for PREREG_QDYN_MASS_GAP_v1 (FTD-0333 on verdict). Clock OFF
+# (de_broglie_clock OFF — NOT the imposed −ω₀²J): does the full nonlinear
+# genesis↔Gauss back-reaction loop dynamically generate a k=0 rest-frame flux
+# oscillation ω₀>0 of a manifested resting cluster that the linear operator
+# analysis cannot see? Forming/quiescent window FFT of C(t)=ΣJ(0)·J(t) over a
+# radius-5 probe ball + a genesis+gauss-OFF linear control (G1) + the FTD-0308
+# ρ instability gate (G2). Read-only / golden-neutral. Default CTest invocation
+# is the trivial --smoke sanity run; the canonical sweep is run by hand post-lock.
+ftd_add_test(campaign_mass_gap tests/campaign_mass_gap.cpp
+             CTEST_NAME campaign_mass_gap TIMEOUT 1800
+             LABELS native eft observable engine_as_instrument)
+
 # FTD-0104 (2026-04-27): Topological observable mapping (Campaign D of the
 # engine-as-instrument portfolio). Four sub-experiments — Wilson loop,
 # flux tube, monopole, vacuum instanton — with shared per-snapshot CSV.
