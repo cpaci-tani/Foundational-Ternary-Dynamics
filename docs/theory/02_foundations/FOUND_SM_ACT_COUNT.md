@@ -30,7 +30,9 @@ Indeed the result is sharper than required: the **lepton mass ratios and mixing 
 | `Δm²₃₁/Δm²₂₁` | `(b₃+N_c)²/N_c = 100/3` | **rational** | none |
 | loop coeffs `c1/c2/c3` | `9/47`, `5/64`, `4/141` | **rational** | none |
 | framework integers `N_c,b₃,N_base,N_eff` | `3,7,4,13` | **rational** (integers) | none |
-| cosmology `Ω_Λ,Ω_m,n_s,r,σ` | `2/3`, `1/3`, `1−2α`, `N_c·α`, `−ln(x₋/(x₋+1))` | **rational** / `δ`-carrying | none / uses `δ` |
+| cosmology `Ω_Λ,Ω_m,n_s,r,σ` | `2/3`[^omegalambda], `1/3`, `1−2α`, `N_c·α`, `−ln(x₋/(x₋+1))` | **rational** / `δ`-carrying | none / uses `δ` |
+
+[^omegalambda]: `Ω_Λ=2/3` is the dual-substrate `[SELECTION]`/`[PARAMETRIC]` reading (P0-15); `0.683` and `17/27` are competing readings; per FTD-0331 the `Ω_Λ` value is a `[BOUNDARY]` (needs `L_H`), a calibration target, not a forced exactly-expressible rational.
 | `1/α` | `x₊ = 8G*² + 4G*δ` | **uses `δ`** | the **δ-act** (already counted) |
 | `m_p/m_e` | `N_eff·x₊ + …` | **uses `δ`** (via `x₊`) | δ-act |
 | `α_G` | `2π·(…)·α²⁰` | **uses `δ`** (via α) + `π` magnitude | δ-act |

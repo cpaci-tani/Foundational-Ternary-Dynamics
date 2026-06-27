@@ -239,12 +239,14 @@ The mass *ratios* (§7.1) are [DERIVED]; the *absolute scale* is set by the sees
 
 | Quantity | Value | Argument | Tag | Source |
 |---|---|---|---|---|
-| Ω_Λ | 2/3 | Ternary ground-state symmetry | [SELECTION] | `proof_complete_sm.py:448` |
+| Ω_Λ | 2/3 | Ternary ground-state symmetry | [SELECTION] (see Ω_Λ note below) | `proof_complete_sm.py:448` |
 | Ω_matter | 1/3 | Ternary complement | [SELECTION] | `proof_complete_sm.py:449` |
 | r (tensor-to-scalar) | N_c · α | Power-law inflation ansatz | [SELECTION] | `proof_complete_sm.py:452` |
 | n_s (spectral index) | 1 − 2α | Slow-roll ansatz | [SELECTION] | `proof_complete_sm.py:455` |
 
 The inflation framework is imported; FTD supplies the couplings.
+
+> **Ω_Λ note (per FTD-0331):** the Ω_Λ = 2/3 entry above is one of three uncoordinated Ω_Λ readings (2/3 here, 0.683 in `DERIV_COSMOLOGICAL_CONSTANT`, 17/27 ≈ 0.63 the Moore dark-STATE count); none is derived. Per FTD-0331 the Ω_Λ value is a **[BOUNDARY]** (needs L_H, which FTD-0059 proves is not native). The 17/27 reading is a Hilbert-space dark-STATE count (Moore Layer Theorem, [THEOREM]), category-distinct from an energy-density Ω_Λ, and must NOT be cited as a dark-energy fraction. Cross-ref FTD-0331 + `SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md`.
 
 ---
 

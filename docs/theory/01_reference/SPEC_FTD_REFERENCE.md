@@ -337,24 +337,26 @@ Experimental: 222° ± 38° (0.29σ). Motivation: {N_c, N_base} = {3, 4} are leg
 
 ### 9.1 Inflation (NEW - Previously not addressed)
 
-**Mechanism:** Sub-threshold flux (|J| < KB) acts as inflaton
+> **FTD-0331 / W-COSMO-1:** the inflaton ≡ mean-flux identification is **[SELECTION]/ad hoc**, and the slow-roll observables below are **[PARAMETRIC]** (standard slow-roll filled with FTD integers); no inflaton dynamics is derived. See [SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md](SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md).
 
-**E-folding Number (Verified):**
+**Mechanism:** Sub-threshold flux (|J| < KB) acts as inflaton **[SELECTION]** (ad hoc; W-COSMO-1)
+
+**E-folding Number** **[PARAMETRIC]**:
 ```
-N_e = n_eff² / N_c = 13² / 3 = 169/3 = 56.33 ✓
+N_e = n_eff² / N_c = 13² / 3 = 169/3 = 56.33
 ```
 Required for horizon problem: ~60 e-folds. Compatible.
 
-**Spectral Index (Verified):**
+**Spectral Index** **[PARAMETRIC]**:
 ```
-n_s = 1 - 2/N_e = 1 - 2/56.33 = 1 - 0.0355 = 0.9645 ✓
+n_s = 1 - 2/N_e = 1 - 2/56.33 = 1 - 0.0355 = 0.9645
 ```
 
 **Predictions:**
 | Observable | FTD | Planck 2018 | Status |
 |------------|-----|-------------|--------|
-| n_s (spectral index) | 0.9645 | 0.9649 ± 0.0042 | **0.10σ** ✓ |
-| r (tensor-to-scalar) | 0.0219 | < 0.036 | **Compatible** ✓ |
+| n_s (spectral index) | 0.9645 | 0.9649 ± 0.0042 | **0.10σ** [PARAMETRIC] |
+| r (tensor-to-scalar) | 0.0219 | < 0.036 | **Compatible** [PARAMETRIC] |
 
 **Tensor-to-Scalar Ratio:**
 ```
@@ -365,12 +367,12 @@ r = 4 × α × (N_c / N_base) = 4 × 0.00729 × (3/4) = 0.0219
 
 **Mechanism:** Ternary dynamics + CP violation satisfy Sakharov conditions
 
-**Sakharov Conditions:**
-1. Baryon number violation ✓ (ternary transitions: 0 → ±1)
-2. C and CP violation ✓ (lattice helicity + δ_CP)
-3. Departure from equilibrium ✓ (cosmological expansion)
+**Sakharov Conditions** (qualitative; the η below is [PARAMETRIC]):
+1. Baryon number violation (ternary transitions: 0 → ±1)
+2. C and CP violation (lattice helicity + δ_CP)
+3. Departure from equilibrium (cosmological expansion)
 
-**Prediction (Verified):**
+**Prediction** **[PARAMETRIC]** (Sakharov insertion filled with FTD integers; W-COSMO-1):
 ```
 Jarlskog J = N_c × α³ / 4 = 2.91×10⁻⁷
 Sphaleron factor = N_c / n_eff = 3/13 = 0.231
@@ -378,7 +380,7 @@ Washout factor = 100
 
 η = J × sphaleron / washout
   = 2.91×10⁻⁷ × 0.231 / 100
-  = 6.73×10⁻¹⁰ ✓
+  = 6.73×10⁻¹⁰
 ```
 Experimental: η = 6.1 × 10⁻¹⁰. Ratio: **1.10** (correct order of magnitude)
 
@@ -386,10 +388,12 @@ Experimental: η = 6.1 × 10⁻¹⁰. Ratio: **1.10** (correct order of magnitud
 
 **Definition:** Sub-threshold flux configurations (0 < |J| < KB)
 
-**Properties (derived):**
+**Properties** **[SELECTION]**:
 - Collisionless (s = 0 → no interaction)
 - No EM coupling (no charge when s = 0)
 - Gravitational only (couples via ρ = |J|)
+
+**Dynamics: [OPEN] (FTD-0300).** The dark-matter object/dynamics is mapped-negative: the lossless self-field box-fills the periodic lattice (r_eff ≈ L/2, not localized), the r^−0.69 halo exponent is **FALSIFIED** (L=64 transient → −1.25 at L≥128), SPARC not founded, verdict INDETERMINATE. The qualitative identification stands as [SELECTION]; the halo/rotation-curve account is not derived. See [SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md](SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md).
 
 **Prediction:** WIMP direct detection will remain **null**
 
@@ -655,7 +659,7 @@ A correction term was proposed:
 
 ## 22. Vacuum Energy Formula (v5.5)
 
-The cosmological constant problem (10¹²³ discrepancy) is resolved:
+> **FTD-0331 reconciliation (governing; LEDGER > doc > prose).** The formula below is a **[PARAMETRIC]** value-match (W-COSMO-4): it reproduces the Ω_Λ number but carries no length dependence and rests on a ½ℏω zero-point sum FC-1 declines. FTD's classical vacuum (J=0, s=0) is identically zero-energy, so **FTD predicts Λ=0** [DERIVED, given FC-1]; the old 10¹²³ catastrophe is **DISSOLVED-by-construction**, not "resolved." Honest decomposition: the **form** Λ·ℓ_P² = f(ℓ_P/L) is **[DERIVED-from-FC-3]**; the no-collapse **ceiling** Λ ≲ (ℓ_P/L_H)² is **[SELECTION]** (CKN); the nonzero **source** is **[OPEN]** (no native source survives); the **value** Ω_Λ≈0.68 / ~10⁻¹²² is a **[BOUNDARY]** (needs L_H/ℓ_P, which FTD-0059 [THEOREM] proves is not native). A measured w≠−1 does NOT falsify FTD. See [DERIV_LAMBDA_SCALE_COVARIANT.md](../04_coupling/DERIV_LAMBDA_SCALE_COVARIANT.md) and [SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md](SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md).
 
 ### The Formula
 ```

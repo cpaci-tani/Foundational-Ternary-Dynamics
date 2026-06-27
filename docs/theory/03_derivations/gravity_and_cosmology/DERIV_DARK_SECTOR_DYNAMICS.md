@@ -7,6 +7,11 @@
 **Status:** [SELECTION] (subsections vary; see Claims Table S8)
 **Framework:** Foundational Ternary Dynamics v5.28
 
+> **Per FTD-0331 (governing)** the matter-driven flux injection carries **NO
+> L-dependence** and is **NOT a viable Λ source** — the source is **[OPEN]** and
+> FTD predicts **Λ=0**; the α¹⁶/α⁵⁷ value-match is **[PARAMETRIC]**. See
+> [DERIV_LAMBDA_SCALE_COVARIANT.md](DERIV_LAMBDA_SCALE_COVARIANT.md).
+
 **Depends on:**
 
 - [SPEC_FTD_LAGRANGIAN.md](../01_reference/SPEC_FTD_LAGRANGIAN.md) -- Lagrangian, coupling term, Rayleigh dissipation
@@ -95,9 +100,14 @@ At steady state around a locked manifested particle:
 
 The near-field self-field equilibrates when injection ~ dissipation locally. But energy that has **propagated beyond the 1-hop damping radius** escapes into the lossless vacuum. This is a net energy leak from every manifested particle into the vacuum.
 
-## 3.2 The Cosmological Constant Mechanism [SELECTION]
+## 3.2 The Cosmological Constant Mechanism [SELECTION — superseded by FTD-0331]
 
 The net energy leak per particle per tick represents **vacuum energy injection** -- the dynamical origin of the cosmological constant. Summed over all manifested particles in the universe, this continuous energy injection drives the accelerating expansion.
+
+> **Per FTD-0331 (governing):** matter-injection has **no L-dependence** ⇒ it is
+> **not a native Λ source**; the source is **[OPEN]** and FTD predicts **Λ=0**. The
+> "dynamical origin of the cosmological constant / drives the accelerating expansion"
+> reading above is superseded.
 
 The rate is suppressed by:
 
@@ -106,7 +116,7 @@ The rate is suppressed by:
 
 This connects to DERIV_COSMOLOGICAL_CONSTANT.md: the alpha^16 factor counts 16 physical degrees of freedom, each coupling to gravity with strength alpha. The dynamical interpretation is that each DOF contributes one channel through which coupling-injected energy leaks into the gravitational vacuum.
 
-## 3.3 Reconciling alpha^16 and alpha^57 [THEOREM]
+## 3.3 Reconciling alpha^16 and alpha^57 [PARAMETRIC]
 
 Two formulas appear in FTD documents:
 
@@ -127,7 +137,7 @@ The alpha^57 formula is thus a **rounded logarithmic approximation** of the prec
 
 # S4 -- Dark Matter = Self-Field Halo Tail
 
-## 4.1 The Self-Field Envelope [THEOREM]
+## 4.1 The Self-Field Envelope [MEASURED — INDETERMINATE; SPARC boundary] (FTD-0300)
 
 Every manifested particle builds a self-field envelope through the coupling source. The GPU GP-KCOMP-SHELL test at 128^3 measured:
 
@@ -208,21 +218,36 @@ The particle IS the seed plus its envelope. What particle physics calls "an elec
 
 ---
 
-# S6 -- Reconciling Omega_Lambda: 2/3 vs 0.683
+# S6 -- The Omega_Lambda Collision [PARAMETRIC] / [BOUNDARY]
 
-## 6.1 The Two Values [CONJECTURE / SELECTION]
+## 6.1 The Three Uncoordinated Values
+
+**FTD has NO derived Ω_Λ.** Three uncoordinated numbers sit near the observed
+0.685; their proximity is **coincidental**, and **none** may be cited as a
+dark-energy density prediction:
 
 | Source | Value | Origin | Status |
 |--------|-------|--------|--------|
-| Engine constant OMEGA_LAMBDA_CONJ | 2/3 = 0.667 | Dual-substrate decomposition conjecture | [CONJECTURE] |
-| DERIV_COSMOLOGICAL_CONSTANT.md S4.3 | 0.683 | rho_Lambda / rho_crit with full alpha^16 formula | [SELECTION] |
+| DERIV_COSMOLOGICAL_CONSTANT.md S4.3 | 0.683 | rho_Lambda / rho_crit with the alpha^16 value-match | **[PARAMETRIC]** (FTD-0331; no L-dependence) |
+| Engine constant OMEGA_LAMBDA_CONJ | 2/3 = 0.667 | Dual-substrate decomposition | **[CONJECTURE]** (engine round-number) |
+| Moore dark-STATE count (Moore Layer Theorem) | 17/27 ≈ 0.63 | Hilbert-space dark-state count | **[THEOREM]** (a STATE count only) |
 | Planck 2018 + BAO | 0.685 +/- 0.007 | Observation | -- |
 
-## 6.2 Resolution
+## 6.2 The Canonical Position (per FTD-0331)
 
-The 2/3 value was an early conjecture from the dual-substrate vacuum decomposition (Omega_Lambda = 2/3 if exactly one substrate contributes to dark energy). The full alpha^16 derivation supersedes it, giving 0.683 -- within 0.3% of observation.
+The 0.683 reading is a **[PARAMETRIC]** value-match downstream of the
+rho_Lambda = m_e^4 * alpha^16 * G*^2 numerology (and an imported rho_crit via
+H_0); it carries **no L-dependence**. The 2/3 engine constant is a
+**[CONJECTURE]** round-number from the dual-substrate decomposition. The
+17/27 ≈ 0.63 Moore reading is a **[THEOREM]** as a *dark-STATE count* only —
+a Hilbert-space state count, **category-distinct** from an energy-density Ω_Λ,
+and it **must NOT** be cited as a dark-energy fraction.
 
-The engine constant OMEGA_LAMBDA_CONJ = 2/3 should be understood as a **round-number approximation**; the precise FTD prediction is 0.683. The two agree to 2.4%, which is within the observational error bars.
+These three numbers are **uncoordinated** and mutually inconsistent; their
+proximity to the observed 0.685 is coincidental, not a coordinated FTD output.
+Per **FTD-0331** the Ω_Λ **VALUE is a [BOUNDARY]** (it needs L_H/ℓ_P, which
+FTD-0059 proves is not native — no Axiom-Zero length). No "0.683 supersedes 2/3"
+resolution is asserted.
 
 ---
 
@@ -235,7 +260,7 @@ The engine constant OMEGA_LAMBDA_CONJ = 2/3 should be understood as a **round-nu
 | DS-P3 | Far-field self-field tail generates nonzero gravitational force on distant test particle | DS-4 | [SELECTION] |
 | DS-P4 | Self-field halo: rho(r) > 0, monotonically decreasing, all sites void for r > 0 | DS-5 | [THEOREM] |
 | DS-P5 | Multi-particle halo produces flatter-than-Keplerian radial acceleration | DS-7 | [CONJECTURE] |
-| DS-P6 | alpha^16 and alpha^57 formulas are algebraically consistent | DS-8 | [THEOREM] |
+| DS-P6 | alpha^16 and alpha^57 formulas are algebraically consistent | DS-8 | [PARAMETRIC] |
 
 ---
 
@@ -246,15 +271,15 @@ The engine constant OMEGA_LAMBDA_CONJ = 2/3 should be understood as a **round-nu
 | DSD-1 | Coupling term injects energy into particle neighborhood each tick | **[THEOREM]** | delta_J = g_c * grad(s) from Lagrangian EL equations |
 | DSD-2 | Injection rate is O(alpha) per particle per tick | **[THEOREM]** | dE/dt = g_c^2 * |grad s|^2 = alpha * O(1) |
 | DSD-3 | Selective damping: far-field flux propagates losslessly | **[THEOREM]** | should_damp = !selective or near_particle_[i] |
-| DSD-4 | Net energy leak into vacuum = dark energy mechanism | **[SELECTION]** | Injection - dissipation at 1-hop boundary |
+| DSD-4 | Net energy leak into vacuum = dark energy mechanism | **[SELECTION — superseded by FTD-0331]** | Injection - dissipation at 1-hop boundary; no L-dependence ⇒ not a native Λ source; source [OPEN] |
 | DSD-5 | alpha^16 describes 16 DOF mode-coupling suppression | **[SELECTION]** | DERIV_COSMOLOGICAL_CONSTANT.md S3.3 |
-| DSD-6 | alpha^57 ~ alpha^60 / prefactors (logarithmic approximation) | **[THEOREM]** | Algebraic identity with m_e = M_P * f(alpha) |
+| DSD-6 | alpha^57 ~ alpha^60 / prefactors (logarithmic approximation) | **[PARAMETRIC]** | Re-spells a [PARAMETRIC] value-match; a substitution identity is not theorem-grade (FTD-0331) |
 | DSD-7 | Self-field halo tail is dark matter | **[SELECTION]** | s = 0, rho > 0, gravitates, no EM |
 | DSD-8 | Dark matter is stable (selective damping) | **[SELECTION]** | DS-1 test: energy ratio > 0.95 after 500 ticks |
 | DSD-9 | Multi-particle halo flattens rotation curve | **[CONJECTURE]** | DS-7 test |
-| DSD-10 | Omega_Lambda = 0.683 supersedes 2/3 conjecture | **[SELECTION]** | DERIV_COSMOLOGICAL_CONSTANT.md S4.3 |
+| DSD-10 | Omega_Lambda: 0.683 / 2/3 / 17÷27 are uncoordinated readings; FTD has NO derived Ω_Λ | **[PARAMETRIC] / [BOUNDARY]** | FTD-0331: 0.683 [PARAMETRIC], 2/3 [CONJECTURE], 17/27 [THEOREM] state-count only; value [BOUNDARY] (needs L_H) |
 
-**Epistemic breakdown:** 5 [THEOREM], 4 [SELECTION], 1 [CONJECTURE]
+**Epistemic breakdown (post FTD-0331 reconciliation):** 3 [THEOREM], 3 [SELECTION] + 1 [SELECTION — superseded], 2 [PARAMETRIC]/[BOUNDARY] (DSD-6, DSD-10), 1 [CONJECTURE]
 
 ---
 

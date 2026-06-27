@@ -62,7 +62,7 @@
 | **PLANCK-1** | 1 voxel = Planck length identification | IMPOSED | (scale calibration) | CLAUDE.md §7.1 | n/a (calibration choice) | n/a |
 | **GAMMA-1** | γ = α in simulations | IMPOSED | (parameter identification) | CLAUDE.md §4.3, §7.3 | n/a (calibration choice) | `scripts/constants.py` |
 | **MASS-1** | m_e = m_P √(2π)(16/3)α¹¹ (0.19% error) | CONJECTURE | ALPHA-1, GAUSS-1 | (removed in 2026-05-21 consolidation; git history retains it) | >1% discrepancy unexplained by known corrections | `scripts/verification/verify_masses.py` |
-| **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² = 3.86×10⁻⁴⁷ GeV⁴ (1.0% error) | CONJECTURE | ALPHA-1, MASS-1, GAUSS-1 | DERIV_VACUUM_ENERGY_FORMULA.md §I | >5% discrepancy unexplained | `scripts/verification/verify_vacuum_energy.py` |
+| **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² = 3.86×10⁻⁴⁷ GeV⁴ (1.0% value-match; no L-dependence) | **[PARAMETRIC]** value-match / **[BOUNDARY]** (per FTD-0331 — FTD predicts Λ=0; value needs L_H, not native per FTD-0059) | ALPHA-1, MASS-1, GAUSS-1 | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) | Not a falsifier — w and the Λ value are [OPEN]/[BOUNDARY] per FTD-0331 | `scripts/verification/verify_vacuum_energy.py` |
 | **COLLAPSE-1** | Measurement = manifestation (s: 0 → ±1) | SELECTION | A4, HILBERT-1 | FOUND_SLOOP_FORMALIZATION.md | Alternative collapse mechanism shown viable within axioms | n/a |
 | **OBSERVER-1** | Observer = manifested structure (s≠0), not reference frame context | SELECTION | COLLAPSE-1 | FOUND_SLOOP_FORMALIZATION.md §3.5 | Reference frame context-specific effects observed | n/a |
 | **CONTINUUM-1** | FTD → Maxwell + Schrödinger as a→0 | THEOREM (correspondence) | A1-A4 | SPEC_FTD_REFERENCE.md §3 | Mathematical counterexample | verification code in Appendix A |
@@ -695,7 +695,7 @@ See [REF_PHYSICS_REFERENCE.md](../05_particles/REF_PHYSICS_REFERENCE.md) for com
 
 ## Vacuum Energy Formula (v5.5 New)
 
-Resolution of the cosmological constant problem with 1.0% accuracy using zero new parameters.
+A `[PARAMETRIC]` value-match for ρ_Λ at 1.0% accuracy — **not** a resolution of the cosmological-constant problem. Per FTD-0331, FTD predicts Λ=0; the value is a `[BOUNDARY]` (needs L_H, FTD-0059); the legacy w=−1 is retired (w `[OPEN]`).
 
 ### The Formula
 
@@ -735,13 +735,13 @@ The exponent 16 appears from three independent derivations:
 
 | Claim ID | Statement | Value | Status | Location |
 |----------|-----------|-------|--------|----------|
-| **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² | 3.86 × 10⁻⁴⁷ GeV⁴ | **[CONJECTURE]** | DERIV_VACUUM_ENERGY_FORMULA.md §I |
-| **LAMBDA-2** | Formula accuracy | 1.0% | **[THEOREM]** | DERIV_VACUUM_ENERGY_FORMULA.md §I |
-| **LAMBDA-3** | Exponent 16 = DOF count | 16 | **[THEOREM]** | DERIV_VACUUM_ENERGY_FORMULA.md §II |
-| **LAMBDA-4** | Exponent 16 = master quadratic coeff | 16 | **[THEOREM]** | DERIV_VACUUM_ENERGY_FORMULA.md §II |
-| **LAMBDA-5** | Mode-by-mode α coupling (α¹⁶) | Proposed | **[CONJECTURE]** | DERIV_VACUUM_ENERGY_FORMULA.md §II |
-| **LAMBDA-6** | Equation of state w = −1 exactly | Testable | **[CONJECTURE]** | DERIV_VACUUM_ENERGY_FORMULA.md §VII |
-| **LAMBDA-7** | Base scale m_e⁴ from manifestation | Derived | **[SELECTION]** | DERIV_VACUUM_ENERGY_FORMULA.md §IV |
+| **LAMBDA-1** | ρ_Λ = m_e⁴ × α¹⁶ × G*² (value-match; no L-dependence) | 3.86 × 10⁻⁴⁷ GeV⁴ | **[PARAMETRIC]** value-match / **[BOUNDARY]** (per FTD-0331 — FTD predicts Λ=0; the value needs L_H, which FTD-0059 proves is not native) | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) |
+| **LAMBDA-2** | Formula accuracy | 1.0% | **[THEOREM]** | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) |
+| **LAMBDA-3** | Exponent 16 = DOF count (numerology bookkeeping) | 16 | **[THEOREM]** | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) |
+| **LAMBDA-4** | Exponent 16 = master quadratic coeff (numerology bookkeeping) | 16 | **[THEOREM]** | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) |
+| **LAMBDA-5** | Mode-by-mode α coupling (α¹⁶) | Proposed | **[CONJECTURE]** | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) |
+| **LAMBDA-6** | Equation of state w (legacy "w = −1 exactly" RETIRED) | [OPEN] | **[OPEN]** (per FTD-0331 — equation of state is not an FTD claim; a measured w≠−1 does NOT falsify FTD) | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) |
+| **LAMBDA-7** | Base scale m_e⁴ from manifestation | Derived | **[SELECTION]** | DERIV_LAMBDA_SCALE_COVARIANT.md (governing); DERIV_COSMOLOGICAL_CONSTANT.md (provenance) |
 
 ### Physical Interpretation
 
