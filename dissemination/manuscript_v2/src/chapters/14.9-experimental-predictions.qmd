@@ -363,14 +363,15 @@ $$v(E) = c\left[1 - \frac{E^2}{24 E_{Planck}^2}\right]$$
 
 ---
 
-### 14. Dark Energy from Flux Vacuum 🎯✅
+### 14. Dark Energy — Open Boundary
 
-**FTD Prediction**:
+**FTD status**: FTD's classical vacuum is identically zero-energy, so the $M_\text{Planck}^4$ cosmological-constant catastrophe **dissolves** — in this sense FTD predicts $\Lambda = 0$ at the classical level. The framework does **not** derive the observed nonzero dark-energy density: that value is an **open boundary**, because FTD has no native cosmic length scale.
+
+The order-of-magnitude expression
 $$\Lambda \sim \alpha^4 \times \rho_{Planck} \sim 10^{-120} \rho_{Planck}$$
+is a **numerical coincidence**, not a derived prediction. The equation of state $w$ is likewise open in FTD (FTD-0331).
 
-**Status**: Order-of-magnitude consistent with observed Λ
-
-**Test**: Precision dark energy equation of state w(z)
+**Test**: Precision dark energy equation of state w(z) sharpens the open boundary; it neither confirms nor falsifies FTD.
 
 ---
 
@@ -391,7 +392,7 @@ $$\Lambda \sim \alpha^4 \times \rho_{Planck} \sim 10^{-120} \rho_{Planck}$$
 | 11 | $\gamma$ dispersion | ~$10^{-18}$ | GRB timing | 2050? | (unknown) |
 | 12 | Lorentz violation | ~$10^{-80}$ | N/A | Never? | (unknown) |
 | 13 | BH echoes | Yes | ET/CE | 2040 | ❓ |
-| 14 | $\Lambda$ | $\alpha^4\rho_{\text{Planck}}$ | DE surveys | 2030 | (confirmed) |
+| 14 | $\Lambda$ | classical vacuum $= 0$; observed value open | DE surveys | 2030 | [OPEN boundary] |
 
 ---
 
