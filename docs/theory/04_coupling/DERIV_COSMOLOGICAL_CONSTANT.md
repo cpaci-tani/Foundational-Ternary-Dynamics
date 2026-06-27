@@ -30,7 +30,7 @@ The result:
 
 $$\boxed{\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2} \approx 3.86 \times 10^{-47}\;\text{GeV}^4}$$
 
-vs observed: $3.90 \times 10^{-47}$ GeV⁴ — **1.0% accuracy**, resolving the 123-order-of-magnitude cosmological constant problem.
+vs observed: $3.90 \times 10^{-47}$ GeV⁴ — **1.0% accuracy**. (Per the FTD-0331 reconciliation above, this is a `[PARAMETRIC]` value-match, **not** a resolution of the cosmological-constant problem — FTD predicts Λ=0; the value is a `[BOUNDARY]`.)
 
 ---
 
@@ -224,7 +224,9 @@ $$\alpha^{60} \approx 10^{-128}$$
 
 And the prefactors contribute $\sim 10^{5}$, bringing the total to $\sim 10^{-123}$ in Planck units — matching observation.
 
-## 4.3 The Dark Energy Fraction [THEOREM]
+## 4.3 The Dark Energy Fraction [PARAMETRIC]
+
+> Downstream of the [PARAMETRIC] $\rho_\Lambda$ numerology and imported $\rho_\text{crit}$ ($H_0$); not derived; one of three uncoordinated Ω_Λ readings (0.683 / 17÷27 / 2÷3) — value is a [BOUNDARY] per FTD-0331.
 
 $$\Omega_\Lambda = \frac{\rho_\Lambda}{\rho_\text{crit}} = \frac{8\pi G \rho_\Lambda}{3 H_0^2}$$
 
@@ -264,27 +266,21 @@ Each factor has a clear physical origin within FTD.
 
 # Part VI: Predictions
 
-## 6.1 Equation of State [SELECTION]
+## 6.1 Equation of State [OPEN] (per FTD-0331)
 
-Since $\rho_\Lambda$ is a constant (determined by $m_e$, $\alpha$, $G^*$ — all time-independent):
+$w = -1$ is NOT an FTD output. Per FTD-0331 (governing) the equation of state is [OPEN]: FTD's classical vacuum predicts Λ=0 (no native source), so there is no FTD-derived constant $\rho_\Lambda$ to make $w$ static; read dynamically as holographic dark energy the Hubble-cutoff version fails ($w\approx 0$, Hsu 2004), and $w\approx -1$ holds only under an imported future-event-horizon cutoff. The "true cosmological constant, not dynamical" commitment is retracted.
 
-$$w = \frac{p}{\rho} = -1 \;\text{exactly}$$
+## 6.2 No Time Variation [OPEN] (per FTD-0331)
 
-Dark energy is a true cosmological constant, not dynamical dark energy.
-
-## 6.2 No Time Variation [SELECTION]
-
-$$\frac{d\rho_\Lambda}{dt} = 0$$
-
-The dark energy density does not evolve with cosmic time. DESI/Euclid should see $w = -1$ at all redshifts.
+Retracted. FTD-0331 makes the equation of state and its time-dependence [OPEN]; a holographic scale-ratio $\Lambda\sim 1/L_H^2$ with growing $L_H$ is explicitly dynamical, so FTD does NOT predict a static $w=-1$ and owes no DESI/Euclid prediction.
 
 ## 6.3 Falsification Criteria
 
-| Observation | Would falsify if |
+| Observation | Note |
 |-------------|-----------------|
-| $w \neq -1$ at $> 3\sigma$ | Measured $w < -1.05$ or $w > -0.95$ |
-| Time variation | $dw/da \neq 0$ at $> 3\sigma$ |
-| Refined $\rho_\Lambda$ | Differs from $3.86 \times 10^{-47}$ by $> 5\%$ |
+| Refined $\rho_\Lambda$ | [PARAMETRIC] value-match: differs from $3.86 \times 10^{-47}$ by $> 5\%$ (not a falsifier — a numerology check) |
+
+Per FTD-0331 there is no FTD-predicted value of $w$ to falsify; $w$ and $dw/da$ are [OPEN]. A measured $w\neq -1$ does NOT falsify FTD.
 
 ---
 
@@ -314,12 +310,7 @@ These are genuine research problems. The current derivation is a *physical argum
 
 ## 7.3 What This Derivation Achieves
 
-Even as [SELECTION], this derivation:
-
-1. **Resolves** the 123-order-of-magnitude problem with zero new parameters
-2. **Explains** why $\rho_\Lambda \ll M_P^4$ (wrong base scale, wrong mode counting, wrong coupling assumption)
-3. **Makes** falsifiable predictions ($w = -1$, no time variation, specific $\rho_\Lambda$ value)
-4. **Connects** $\Lambda$ to the same structure ($\alpha$, $G^*$, $m_e$) that determines all other observables
+This derivation is a [PARAMETRIC] value-match (W-COSMO-4): it reproduces the Ω_Λ number but carries no length dependence (cannot express "Λ small because universe large"), rests on a $\tfrac{1}{2}\hbar\omega$ zero-point sum FC-1 declines, and predicts no $w$. The honest mechanism is the scale-ratio $\Lambda\sim(\ell_P/L_H)^2$ with the value a [BOUNDARY] — see [DERIV_LAMBDA_SCALE_COVARIANT.md](../03_derivations/gravity_and_cosmology/DERIV_LAMBDA_SCALE_COVARIANT.md) (FTD-0331). This aligns the abstract / §3.5 / CC-5 framing with the banner at the top of this document.
 
 ---
 
@@ -333,12 +324,12 @@ Even as [SELECTION], this derivation:
 | CC-4 | Each mode couples with $\alpha$ gravitationally | **[SELECTION]** | $g_c^2 = \alpha$ |
 | CC-5 | $\rho_\Lambda = m_e^4 \alpha^{16} G^{*2}$ | **[SELECTION]** | 1.0% accuracy |
 | CC-6 | $G^{*2} = \varpi^2/\text{PF}$ geometric factor | **[THEOREM]** | Mathematical identity |
-| CC-7 | $\Omega_\Lambda = 0.683$ | **[SELECTION]** | 0.3% accuracy |
-| CC-8 | $w = -1$ exactly | **[SELECTION]** | Constant $\rho_\Lambda$ |
-| CC-9 | No time variation of $\rho_\Lambda$ | **[SELECTION]** | Falsifiable by DESI/Euclid |
+| CC-7 | $\Omega_\Lambda = 0.683$ | **[PARAMETRIC]** | downstream of [PARAMETRIC] $\rho_\Lambda$ + imported $\rho_\text{crit}$ ($H_0$); one of three uncoordinated readings (0.683 / 17÷27 / 2÷3); value is a [BOUNDARY] per FTD-0331 |
+| CC-8 | $w = -1$ exactly | **[OPEN]** | $w$ is [OPEN] per FTD-0331; static reading is a coincidence-match |
+| CC-9 | No time variation of $\rho_\Lambda$ | **[OPEN]** | time-dependence [OPEN] per FTD-0331; no DESI/Euclid prediction owed |
 | CC-10 | Hierarchy decomposition: $10^{88} \times 10^{34} \times 0.11 = 10^{122}$ | **[THEOREM]** | Algebraic identity |
 
-**Epistemic breakdown:** 4 [THEOREM], 6 [SELECTION], 0 [CONJECTURE]
+**Epistemic breakdown:** 4 [THEOREM], 4 [SELECTION], 2 [OPEN] (CC-8/CC-9 demoted per FTD-0331)
 
 (Upgraded from 2 [THEOREM], 3 [CONJECTURE] in v1.0)
 
@@ -356,7 +347,7 @@ The $\alpha^{16}$ suppression can be understood dynamically through the engine's
 
 The net energy leak per particle per tick is the microscopic origin of $\rho_\Lambda$. The macroscopic formula $\rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2}$ counts the cumulative effect of all 16 mode-coupling channels.
 
-## 8.2 The $\alpha^{57}$ Approximation [THEOREM]
+## 8.2 The $\alpha^{57}$ Approximation [PARAMETRIC]
 
 The formula $\Lambda / \Lambda_{\text{Planck}} \approx \alpha^{57}$ appearing in dissemination materials is a **logarithmic approximation** of this derivation. When $m_e$ is expressed in Planck units ($m_e = M_P \sqrt{2\pi} \cdot (16/3) \cdot \alpha^{11}$), the total $\alpha$ exponent becomes 60, and the prefactor $C_{\text{pf}} = (2\pi)^2 \cdot (16/3)^4 \cdot G^{*2} \approx 2.2 \times 10^5$ absorbs 2.5 units of the exponent in base $1/\alpha$, giving the rounded value 57.5 $\approx$ 57.
 
