@@ -93,7 +93,8 @@
 - **W1**: Inflaton identification with mean flux is ad hoc
 - **W2**: Dark matter mechanism internally inconsistent
 - **W3**: First-order electroweak transition assumed
-- **W4**: Λ = α^57 is numerology without mechanism
+- **W4**: Λ = α^57 is numerology without mechanism — **[PARTIAL] per FTD-0331**: old M_Planck⁴ catastrophe DISSOLVED-by-construction (FTD's zero-energy classical vacuum ⇒ FTD predicts Λ=0 [DERIVED, given FC-1]); the form Λ·ℓ_P²=f(ℓ_P/L) is [DERIVED-from-FC-3] and the no-collapse ceiling Λ≲(ℓ_P/L_H)² is [SELECTION]; a nonzero dark-energy *source* is [OPEN] (no native source survives); the Ω_Λ *value* (~10⁻¹²²) is a [BOUNDARY] (FTD-0059: no native L_H/ℓ_P); the α^57 value-match stays [PARAMETRIC] numerology (W-COSMO-4). A measured w≠−1 does NOT falsify FTD. See SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md.
+- *Note (FTD-0300):* W2 and W6 (dark-matter mechanism / NFW halo) are reinforced-negative — the lossless self-field box-fills the periodic lattice (r_eff≈L/2, not localized), the r^−0.69 halo exponent is FALSIFIED (→−1.25 at L≥128), SPARC not founded; dark-matter dynamics are [OPEN]/INDETERMINATE. W3 (first-order EWPT, [CONJECTURE]) carries the one honest forward datum FP-1 (LISA-band relic GW: existence [CONJECTURE], spectrum [PARAMETRIC]).
 - **W5**: No power spectrum or BAO predictions
 - **W6**: NFW halo profile not derived
 - **W7**: "Return to Void" is philosophy, not physics

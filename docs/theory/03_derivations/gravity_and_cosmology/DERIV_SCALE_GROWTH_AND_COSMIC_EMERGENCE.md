@@ -10,16 +10,20 @@
 
 ---
 
+> **RECONCILIATION BANNER (FTD-0331 / FTD-0300; governing, LEDGER > doc > prose).** Per **FTD-0331** the dark-energy leak has no $L$-dependence and is **NOT** a native $\Lambda$ source — FTD predicts $\Lambda=0$; source **[OPEN]**, value **[BOUNDARY]** (needs $L_H$; FTD-0059 proves no native length). Per **FTD-0300** the $r^{-0.69}$ halo exponent is **FALSIFIED** ($\to -1.25$ at $L\ge128$, the lossless self-field box-fills the periodic lattice $r_{\text{eff}}\approx L/2$, SPARC not founded). The Friedmann "derivation" below is a **posited metric-stretch ansatz [CONJECTURE]** (own ledger CE-5/CE-6), **not** a substrate derivation. The §0/§2.2/§3 prose is reconciled DOWN to these tags; cosmology is FTD's most-imported, least-substrate-derived sector.
+
+---
+
 ## 0. Executive Summary
 
-This document resolves the central cosmological weaknesses identified in **Section 8 (Cosmology)** of the FTD specification. Historically, cosmological parameters were mapped by importing standard $\Lambda$CDM apparatus and applying post-hoc FTD numerology (such as $\Lambda = \alpha^{57}$). We replace these circular calibrations with a **rigorous, substrate-derived dynamical cascade** showing how micro-scale lattice updates at Scale 0 emerge as the comoving macro-cosmos at Scale 5.
+This document examines the central cosmological weaknesses identified in **Section 8 (Cosmology)** of the FTD specification. Historically, cosmological parameters were mapped by importing standard $\Lambda$CDM apparatus and applying post-hoc FTD numerology (such as $\Lambda = \alpha^{57}$). The substrate supplies the *micro-scale* facts (genesis, the self-field envelope, the lossless leak); it does **not** supply a derived macro-cosmology. Per the reconciliation banner above (FTD-0331 governing), the comoving cascade below is a *posited* metric-stretch ansatz `[CONJECTURE]`, not a substrate derivation.
 
-We prove that:
-1. **The Scale Growth Cascade:** Spontaneous symmetry breaking (SSB) at the genesis threshold $|J| > K_{\text{GENESIS}} = 3 m_e$ collapses the ternary void state ($s=0$) to a manifested seed ($s=\pm 1$). The coupling term immediately sources the self-field envelope, establishing the *dressed particle* at Scale 1 with a characteristic radius $r_{\text{eff}} \approx 15$ voxels.
-2. **Substrate-Derived Cosmic Expansion:** Every manifested particle injects energy into the lattice neighbors at a rate of $dE/dt \sim \alpha$ per tick. Under selective damping, far-field energy escapes into the lossless vacuum (the "leak"). To conserve comoving energy density under this continuous injection, the spatial metric of the lattice must dynamically stretch, deriving the comoving scale factor $a(\tau)$ and the **Friedmann cosmological equations** directly from microscopic updates.
-3. **Dark Sector Unification:** 
-   - **Dark Energy:** The leak through the 16 independent mode-coupling channels suppresses the vacuum energy density by exactly $\alpha^{16}$, yielding the cosmological constant $\rho_\Lambda = m_e^4 \alpha^{16} G^{*2} \approx 3.86 \times 10^{-47}$ GeV$^4$ and dark energy fraction $\Omega_\Lambda = 0.683$ with **zero imported parameters**.
-   - **Dark Matter:** The overlapping self-field envelopes of a multi-particle cluster ($J \propto r^{-0.69}$) create a stable, non-luminous, but gravitationally active flux envelope that flattens galactic rotation curves naturally, resolving the NFW halo critique without post-hoc WIMP particles.
+We establish (micro-scale) and posit (macro-scale):
+1. **The Scale Growth Cascade [THEOREM]:** Spontaneous symmetry breaking (SSB) at the genesis threshold $|J| > K_{\text{GENESIS}} = 3 m_e$ collapses the ternary void state ($s=0$) to a manifested seed ($s=\pm 1$). The coupling term immediately sources the self-field envelope, establishing the *dressed particle* at Scale 1 with a characteristic radius $r_{\text{eff}} \approx 15$ voxels.
+2. **Cosmic Expansion (POSITED) `[CONJECTURE]`:** Every manifested particle injects energy at $dE/dt \sim \alpha$ per tick, and under selective damping far-field energy escapes into the lossless vacuum (the "leak"). To conserve comoving energy density we **posit** a metric-stretch ansatz $d(a^3)/d\tau \propto a^3 \rho_\Lambda$ (CE-5/CE-6). The Friedmann equations are **not** derived from microscopic updates — they are the ansatz's output filled with an imported metric, per FTD-0331.
+3. **Dark Sector:**
+   - **Dark Energy `[PARAMETRIC]`:** The $\alpha^{16}$ leak yields $\rho_\Lambda = m_e^4 \alpha^{16} G^{*2}$ and $\Omega_\Lambda = 0.683$ — a value-match with **no length dependence** ($\Omega_\Lambda$ imports $H_0$ via $\rho_{\text{crit}}$), **superseded-in-rationale by FTD-0331**. FTD's own dynamics predicts $\Lambda = 0$; the value is a `[BOUNDARY]` (needs $L_H$). There are **no** "zero imported parameters."
+   - **Dark Matter `[OPEN]` / mapped-negative:** The $r^{-0.69}$ halo exponent is **FALSIFIED** (FTD-0300: an $L=64$ transient converging to $-1.25$ at $L\ge128$; the lossless self-field box-fills the periodic lattice, $r_{\text{eff}}\approx L/2$; SPARC not founded). Only the $17/27$ dark-**state** count is structural; the halo/dynamics identification is not a derivation.
 
 ---
 
@@ -88,18 +92,20 @@ With 16 independent physical degrees of freedom on the minimal lattice cell, eac
 $$ \rho_\Lambda = m_e^4 \cdot \alpha^{16} \cdot G^{*2} $$
 Substituting the FTD derived constants ($m_e \approx 0.511$ MeV, $\alpha^{-1} \approx 137.036$, $G^{*2} \approx 8.754$) yields:
 $$ \rho_\Lambda \approx 3.86 \times 10^{-47}\;\text{GeV}^4 $$
-which matches the observed cosmic microwave background (CMB) value $3.90 \times 10^{-47}$ GeV$^4$ to **1.0% accuracy**, resolving the 123-order-of-magnitude cosmological constant problem with zero post-hoc exponents or circular tuning.
+which matches the observed value $3.90 \times 10^{-47}$ GeV$^4$ to **1.0% accuracy** — but per FTD-0331 this is a `[PARAMETRIC]` value-match with no length dependence (it imports $H_0$ via $\rho_{\text{crit}}$), **not** a resolution of the cosmological-constant problem: FTD predicts $\Lambda=0$ and the value is a `[BOUNDARY]`.
 
 The emergent dark energy density fraction is:
 $$ \Omega_\Lambda = \frac{\rho_\Lambda}{\rho_{\text{crit}}} = 0.683 $$
 matching the Planck 2018 observed value $\Omega_\Lambda = 0.685 \pm 0.007$ to within **0.3%**.
 
-### 3.2 Dark Matter: Self-Field Halo Overlap [SELECTION]
-The red-team and speculative cosmology papers frequently import hypothetical Cold Dark Matter (CDM) WIMP particles to match galactic rotation curves. FTD resolves this without new particles:
+### 3.2 Dark Matter: Self-Field Halo Overlap `[OPEN]` / mapped-negative (FTD-0300)
+> **FALSIFIED scaling (FTD-0300).** The `$r^{-0.69}$` tail below is an `L=64` transient; it **converges to `−1.25` at `L≥128`** and the lossless self-field **box-fills the periodic lattice** (`$r_{\text{eff}}\approx L/2$`, not a localized galactic halo), so SPARC is **not founded** (verdict `INDETERMINATE`). The text below is retained for provenance; the qualitative "dark matter = far-field flux halo" identification is `[SELECTION]`, but the halo *dynamics/profile* are `[OPEN]`/mapped-negative — **not** a derivation. Only the `17/27` dark-**state** count is structural.
+
+The red-team and speculative cosmology papers frequently import hypothetical Cold Dark Matter (CDM) WIMP particles to match galactic rotation curves. FTD's qualitative reading (scoped by the boundary above):
 * **The Self-Field Tail:** All lattice sites at $r > 0$ from a manifested particle are void ($s = 0$), meaning they carry no electric or color charge. However, their flux density $\rho = |J|$ is non-zero and gravitationally active.
-* **Superposition & Halo Emergence:** In a galactic cluster of $N$ manifested particles, the overlapping self-field envelopes ($J(r) \propto r^{-0.69}$ at large distances) form a stable, non-luminous, but gravitationally active composite density halo:
+* **Superposition & Halo Emergence (`$J(r) \propto r^{-0.69}$` FALSIFIED, FTD-0300):** In a galactic cluster of $N$ manifested particles, the overlapping self-field envelopes were posited to form a composite density halo:
   $$ \rho_{\text{halo}}(r) = \sum_{i=1}^N |J_i(\mathbf{r} - \mathbf{r}_i)| $$
-* **Flat Rotation Curves:** Because this self-field density profile falls off slower than the individual particle profile due to multi-particle superposition, it naturally reproduces the flatter-than-Keplerian radial acceleration profile observed in galaxies, acting as the physical mechanism of galactic dark matter halos without importing unobserved matter sectors.
+* **Flat Rotation Curves (not founded):** the claim that this profile "naturally reproduces" flat rotation curves is `[OPEN]`/mapped-negative — the measured exponent does not converge and the halo box-fills the lattice (FTD-0300).
 
 ---
 
@@ -124,4 +130,4 @@ We maintain strict epistemic standards, categorizing all aspects of cosmic emerg
 
 ## 5. Conclusion
 
-By formalizing the **Scale Growth and Cosmic Emergence** framework, we successfully bulletproof FTD's cosmology from the red-team's "numerological scaffold" critique. We show that comoving expansion, dark energy, and dark matter halos are not imported phenomenological parameters, but are **emergent dynamical consequences** of the micro-lattice coupling and damping equations. FTD cosmology is now fully integrated, non-circular, and scientifically rigorous.
+This document supplies ΛCDM apparatus plus FTD numerology, with one genuine micro-scale `[THEOREM]` (the genesis/leak cascade, §1) and a macro-cosmology that is **not** substrate-derived. Per FTD-0331 + `SPEC_COSMOLOGY_FRAMEWORK_BOUNDARY.md`, the load-bearing claims are honestly tiered: Friedmann emergence (CE-5/CE-6) is a posited metric-stretch ansatz `[CONJECTURE]`; the dark-energy `ρ_Λ`/`Ω_Λ` (CE-7/CE-8) is a `[PARAMETRIC]` value-match (FTD predicts `Λ=0`; value a `[BOUNDARY]`); the `r^{-0.69}` halo (CE-9/CE-10) is **FALSIFIED** (FTD-0300). Cosmology remains FTD's most-imported, least-substrate-derived sector — not "fully integrated, non-circular, rigorous."
