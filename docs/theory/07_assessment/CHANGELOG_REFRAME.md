@@ -868,4 +868,6 @@ v1 `manuscript/` reference files unchanged in FIX 1 (their gravity/Weinberg stat
 
 (14.9 absent from vol1/vol2 — no snapshot propagation.)
 
-**Net effect (review pass):** Zero promotions. CRITICAL vol1 regression undone (FTD-0131/0018 demotions restored to canonical state); 14.9 Λ~α⁴ "prediction" → open boundary. All edits demotion-only.
+**FIX 4 — FIX1 over-reach corrected (14.5 Postulate 1/3).** FIX1 inadvertently reverted 14.5 Postulate-1/3 tags to `[T] THEOREM` (and the callout to "Ternary States: Theorem, Not Axiom") when it restored pristine-vol1 content to recover the gravity/Weinberg demotions; corrected back to `[A] AXIOM`/`[SELECTION]`/J-primary (and "Ternary States: J-primary, $s$ as manifestation projection") in a follow-up, from the `b26fa6ca` canonical forms. Gravity/Weinberg/α_s/CC demotions kept intact. Files: `14.5-assumption-ledger.qmd` (v2-src + vol1).
+
+**Net effect (review pass):** Zero net promotions. CRITICAL vol1 regression undone (FTD-0131/0018 demotions restored to canonical state); 14.9 Λ~α⁴ "prediction" → open boundary; FIX1's transient P1/P3 over-reach reverted (FIX 4). Final state: demotion-only relative to the pre-arc baseline.
