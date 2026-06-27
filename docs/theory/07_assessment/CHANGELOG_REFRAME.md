@@ -805,3 +805,43 @@ Eight commits between session start (`fc85425`) and head (`df4a407`). Three subs
 Append-only. Next session header: `## YYYY-MM-DD — <session description>`.
 
 Every change must add a row in the relevant Phase section, with: file affected, change type (RESTATE / RE-DERIVE / RETRACT / NEW / DEMOTE / PROMOTE / RETAG), LEDGER row impacted, and one-line rationale.
+
+---
+
+## 2026-06-27 — Manuscript cosmology propagation (FTD-0338 — completes FTD-0334 deferral)
+
+**Session:** branch ngine/qdyn-mass-gap-2026-06-26. Correction-only; zero promotions; golden untouched.
+
+**Context:** FTD-0331/0332 established the canonical cosmology position (FTD predicts Λ=0 classical vacuum; observed value open boundary; α¹⁶/α⁵⁷/Ω_Λ value-matches are coincidences not predictions; w open). FTD-0334 propagated this to papers/web but explicitly deferred the manuscript. This session completes that deferral.
+
+**Files edited (all four PROPAGATION_RULE locations):**
+
+### Phase: DEMOTE / RETAG
+
+| File | Location | Change | Type | LEDGER impact |
+|------|----------|--------|------|---------------|
+| dissemination/manuscript_v2/src/chapters/10.3-dark-energy.qmd | v2-src | "physical derivation resolves 122 orders" removed; α¹⁶ as coincidence [SELECTION]; α⁵⁷ as mnemonic not derivation; coincidence problem: w open | DEMOTE / RETAG | FTD-0331/0332/0338 |
+| dissemination/manuscript_v2/vol2/src/chapters/10.3-dark-energy.qmd | vol2 snapshot | cp from v2-src (identical) | PROPAGATE | — |
+| dissemination/manuscript/src/chapters/10.3-dark-energy.qmd | v1 topic-match | Same corrections as v2 (was identical content) | DEMOTE / RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/src/chapters/23-vacuum-energy.qmd | v2-src | Title "Resolution" → "Vacuum Energy in FTD"; "resolved in FTD" → dissolves catastrophe, value open; summary rewritten | DEMOTE / RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/vol1/src/chapters/23-vacuum-energy.qmd | vol1 snapshot | cp from v2-src (identical) | PROPAGATE | — |
+| dissemination/manuscript/src/chapters/1.15-vacuum-energy.qmd | v1 topic-match | Callout reframed; "FTD Solution" → "FTD Perspective"; w=-1 prediction removed; DESI "No variation with z" prediction removed; comparison table corrected; transition sentence corrected | DEMOTE / RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/src/chapters/15.1-observational-confirmations.qmd | v2-src | **Inverse error fix**: DESI section status [STRONGLY CONSISTENT] → [INDETERMINATE]; "precisely what FTD predicts" removed; summary table row corrected; "Cosmological prediction confirmed" bullet removed | DEMOTE / RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/vol1/src/chapters/15.1-observational-confirmations.qmd | vol1 snapshot | cp from v2-src (identical) | PROPAGATE | — |
+| dissemination/manuscript/src/chapters/15.1-observational-confirmations.qmd | v1 topic-match | Same inverse-error fix as v2 | DEMOTE / RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/src/chapters/14.1-constants-reference.qmd | v2-src | α⁵⁷ cosmological constant: "Predicted" table → [SELECTION] coincidence table; FTD-0331 cited | RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/vol1/src/chapters/14.1-constants-reference.qmd | vol1 snapshot | cp from v2-src (identical) | PROPAGATE | — |
+| dissemination/manuscript/src/chapters/14.1-constants-reference.qmd | v1 topic-match | Same correction as v2 | RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/src/chapters/14.2-equations-reference.qmd | v2-src | α⁵⁷ equation: = → ≈; [SELECTION] noted; FTD-0331 cited | RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/vol1/src/chapters/14.2-equations-reference.qmd | vol1 snapshot | cp from v2-src (identical) | PROPAGATE | — |
+| dissemination/manuscript/src/chapters/14.2-equations-reference.qmd | v1 topic-match | Same correction as v2 | RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/src/chapters/14.3-glossary.qmd | v2-src | Dark Energy entry: "consistent with FTD prediction" → w open, value open, [SELECTION]; DESI entry: "supporting FTD's dynamic void interpretation" → "indeterminate; neither confirms nor falsifies" | DEMOTE / RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/vol1/src/chapters/14.3-glossary.qmd | vol1 snapshot | cp from v2-src (identical) | PROPAGATE | — |
+| dissemination/manuscript/src/chapters/14.3-glossary.qmd | v1 topic-match | Same corrections as v2 | DEMOTE / RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/src/chapters/14.5-assumption-ledger.qmd | v2-src | Vacuum Energy: "OPEN → DERIVED [T] THEOREM" retracted → "OPEN → PARTIAL [SELECTION]"; "resolves 10¹²³ problem" → honest split (catastrophe dissolved; value open) | DEMOTE / RETAG | FTD-0331/0338 |
+| dissemination/manuscript_v2/vol1/src/chapters/14.5-assumption-ledger.qmd | vol1 snapshot | cp from v2-src (identical) | PROPAGATE | — |
+| dissemination/manuscript/src/chapters/14.5-assumption-ledger.qmd | v1 topic-match | Same corrections as v2 | DEMOTE / RETAG | FTD-0331/0338 |
+
+**Chapters with no retired claim (excluded from edits):** 10.1-large-scale-structure.qmd (DESI mention is data count only), 10.2-dark-matter.qmd (no retired claims), 11.2-gravitational-waves.qmd (EOS mention is neutron-star context), 12.4-the-anthropic-window.qmd (122 orders = problem statement not FTD claim), 13.2-alternative-endings.qmd (w=-1 as general physics model, not FTD prediction), 14.6-self-consistency.qmd, 14.9-experimental-predictions.qmd (DESI mention is future test, not claim), 24-predictions-status.qmd (no hits).
+
+**Net effect:** Zero promotions; zero new theorems. DESI inverse error corrected. Seven chapters + all vol/v1 propagations aligned to FTD-0331 canon. LEDGER FTD-0338 row added.
