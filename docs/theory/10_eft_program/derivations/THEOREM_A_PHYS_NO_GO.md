@@ -1,7 +1,6 @@
 # No-Go Theorem — No Length is Derivable from Axiom Zero
 
 **Tag:** [THEOREM]
-**Date:** 2026-04-23
 **LEDGER row:** FTD-0059
 **Dependencies:** Axiom Zero (Postulates 1–5), LEDGER FTD-0030 (a_phys resolved-by-calibration), FTD-0041 (a_phys ≡ ℓ_P declaration).
 **Supersedes status of:** `archive/resolved/OPEN_A_PHYS_DERIVATION.md` (now [CLOSED — RESOLVED BY THEOREM]).

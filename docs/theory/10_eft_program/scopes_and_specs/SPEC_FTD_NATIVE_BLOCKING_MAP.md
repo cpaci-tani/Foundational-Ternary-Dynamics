@@ -1,6 +1,5 @@
 # Specification: FTD-Native Blocking Map
 
-**Date:** 2026-04-23
 **Status:** [SELECTION] native Wilsonian blocking contract; engine adapter partially implemented
 **Purpose:** Define the fixed coarse-graining map required to measure native RG flow of `(C_L^FTD, K_T^FTD, Z_j^FTD, g_sJ^FTD)` without using QED or Standard Model targets.
 
@@ -409,7 +408,7 @@ engine/tests/test_native_blocking_map.cpp
 ctest --test-dir engine/build_audit_cpu -C Release -R "^native_blocking_map$" --output-on-failure
 ```
 
-Result on 2026-04-23:
+Result:
 
 ```text
 native_blocking_map passed
@@ -434,7 +433,7 @@ The existing RenderBridge adapter remains covered by:
 ctest --test-dir engine/build_audit_cpu -C Release -R "^eft_blocking$" --output-on-failure
 ```
 
-which also passed on 2026-04-23.
+which also passes.
 
 The bare-flow interpretation is recorded in:
 

@@ -1,9 +1,8 @@
 # INDEX · FTD-Native EFT Program
 
 **Tag:** [REFERENCE]
-**Date:** 2026-05-22 (rewritten after the cluster consolidation)
-**Status:** [REFERENCE] — categorised inventory of `docs/theory/10_eft_program/`, with current epistemic tags read from each doc's own header. **Last full sync 2026-05-22; partially drifted.** Run-of-record analyses added since are not all listed below — notably `ANALYSIS_THERMAL_PHASE_MAP_v1` (FTD-0275), `ANALYSIS_GENESIS_CRITICALITY_v1`, `ANALYSIS_CLUSTER_ENERGY_SPECTROSCOPY_v1`, `ANALYSIS_HALO_FORCEDNESS_v1` (FTD-0300), `ANALYSIS_PROTON_STABILITY_v1` (FTD-0301), `ANALYSIS_ALPHA_D3_FORCED_ESCAPE_v1` (FTD-0284). The authoritative complete catalog is [`../META_INDEX.md`](../META_INDEX.md); a full re-sync of this cluster index is a pending nav-hygiene task. The 2026-06-15 consolidation pass archived several settled routes — see **§ Archive**.
-**Purpose:** Navigational entry point for the FTD-native EFT program. The 2026-05-22 consolidation took the cluster from 89 top-level docs to 34: 48 completed-campaign and closed-route scaffolding docs were archived, 9 `DERIV_FTD_NATIVE_*` husks were merged into 2 docs, and a narrative `RETROSPECTIVE` was added. This INDEX reflects that current state; the archived material is summarised under **§ Archive** and indexed in full by the retrospective.
+**Status:** [REFERENCE] — categorised inventory of `docs/theory/10_eft_program/`, with epistemic tags read from each doc's own header. Not all run-of-record analyses are listed below — notably `ANALYSIS_THERMAL_PHASE_MAP_v1` (FTD-0275), `ANALYSIS_GENESIS_CRITICALITY_v1`, `ANALYSIS_CLUSTER_ENERGY_SPECTROSCOPY_v1`, `ANALYSIS_HALO_FORCEDNESS_v1` (FTD-0300), `ANALYSIS_PROTON_STABILITY_v1` (FTD-0301), `ANALYSIS_ALPHA_D3_FORCED_ESCAPE_v1` (FTD-0284). The authoritative complete catalog is [`../META_INDEX.md`](../META_INDEX.md). Settled routes are archived — see **§ Archive**.
+**Purpose:** Navigational entry point for the FTD-native EFT program. Completed-campaign and closed-route scaffolding docs are archived, and several `DERIV_FTD_NATIVE_*` husks are merged into consolidated docs; the archived material is summarised under **§ Archive** and indexed in full by the `RETROSPECTIVE`.
 
 > **How to use this document**:
 > 1. To orient from scratch → read the **Read first** list, then `RETROSPECTIVE_EFT_RECOVERY.md` for the whole-program narrative.
@@ -21,9 +20,9 @@
 The methodological spine of the program, in reading order:
 
 1. **`SPEC_EFT_RECOVERY_PROGRAM.md`** — the original Phase 0–F pre-registration. Outcome: NULL on the QED-α target.
-2. **`OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`** — the 2026-04-22 methodological pivot from QED-α projection to FTD-native blocking EFT. The program's keystone honesty document.
+2. **`OPEN_FTD_TO_EFT_BRIDGE_STATUS.md`** — the methodological pivot from QED-α projection to FTD-native blocking EFT. The program's keystone honesty document.
 3. **`SPEC_FTD_EFT_BRIDGE_CONTRACT.md`** — the 7-gate epistemic guardrail for any FTD→EFT route.
-4. **`RETROSPECTIVE_EFT_RECOVERY.md`** — `[SYNTHESIS]` narrative roll-up of the whole April–May 2026 program; ties the archived scaffolding back to the live survivors.
+4. **`RETROSPECTIVE_EFT_RECOVERY.md`** — `[SYNTHESIS]` narrative roll-up of the whole program; ties the archived scaffolding back to the live survivors.
 5. **`STATUS_EFT_CHECKLIST.md`** — living tracker of what is required for FTD to count as a native EFT.
 
 ---
@@ -61,16 +60,16 @@ These define the formal structure. They get read; they don't get measured.
 
 ## §3 — Native flow & bridge (DERIV)
 
-The post-pivot FTD-native blocking-EFT program. The first two docs are the 2026-05-22 consolidation of 9 former `DERIV_FTD_NATIVE_*` husks.
+The post-pivot FTD-native blocking-EFT program. The first two docs are the consolidation of 9 former `DERIV_FTD_NATIVE_*` husks.
 
 | File | Tag | Purpose |
 |---|---|---|
 | [`DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md`](derivations/DERIV_FTD_NATIVE_RESPONSE_AND_BLOCKING.md) | [PARTIAL]/[THEOREM] | **Consolidated** (6 husks: response-tuple, linear-generator, bare/response/current/scale flow). Bare linear source/flux response tuple + its invariance under native b=2 blocking; bare Gaussian fixed point scale-invariant. |
 | [`DERIV_FTD_NATIVE_NONLINEAR_FLOW.md`](derivations/DERIV_FTD_NATIVE_NONLINEAR_FLOW.md) | [THEOREM]/[MEASURED]/[PARTIAL] | **Consolidated** (3 husks: multiscale-flow, Langevin-ensemble, engine-transport-flow). Native RG flow into the nonlinear regime: Langevin stationary ensemble, Gaussian fixed point at $b\le 8$, engine-transport plumbing. |
 | [`DERIV_BCC_ALGEBRAIC_READOUT.md`](derivations/DERIV_BCC_ALGEBRAIC_READOUT.md) | [DERIVED]/[PARTIAL] | ARC-B2: BCC algebraic readout and complex $V_{\text{complex}}$ observable; operationalizes the $\mathbb{Z}[i]$-module structure of $V_{\text{complex}}$. |
-| [`FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](derivations/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) | [THEOREM]/[SELECTION]/[UNDERDETERMINED] | FTD-0230: BCC complex readout. Finite-block closed-negative **stands**; the infinite-aperture "FOUND-at-ARC-2" was **corrected → UNDERDETERMINED** (2026-05-28 banner; FTD-0232/0234/0235) — the `(Tr,Det)` operator assembly is unforced (W-CRIT-2), now route-invariant per FTD-0242. |
+| [`FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md`](derivations/FOUND_BCC_ALGEBRAIC_READOUT_RESOLUTION.md) | [THEOREM]/[SELECTION]/[UNDERDETERMINED] | FTD-0230: BCC complex readout. Finite-block closed-negative **stands**; the infinite-aperture "FOUND-at-ARC-2" was **corrected → UNDERDETERMINED** (FTD-0232/0234/0235) — the `(Tr,Det)` operator assembly is unforced (W-CRIT-2), route-invariant per FTD-0242. |
 | [`PREREG_ALPHA_READOUT_QUANTIZATION_v1.md`](preregistrations/PREREG_ALPHA_READOUT_QUANTIZATION_v1.md) | [PRE-REGISTRATION] | FTD-0231: Candidate C Quantization/Readout Rule pre-registration. |
-| [`FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md`](derivations/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md) | [THEOREM]/[SELECTION]/[UNDERDETERMINED] | FTD-0231: Candidate C Quantization/Readout Rule. The ARC-2 "FOUND" was **corrected → UNDERDETERMINED** (2026-05-28 banner; FTD-0232/0234/0235): genuine `[THEOREM]` charge-quantization stands, but the master-quadratic `(Tr,Det)` assembly is unforced (W-CRIT-2), route-invariant per FTD-0242. MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`. |
+| [`FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md`](derivations/FOUND_ALPHA_READOUT_QUANTIZATION_RESOLUTION.md) | [THEOREM]/[SELECTION]/[UNDERDETERMINED] | FTD-0231: Candidate C Quantization/Readout Rule. The ARC-2 "FOUND" was **corrected → UNDERDETERMINED** (FTD-0232/0234/0235): genuine `[THEOREM]` charge-quantization stands, but the master-quadratic `(Tr,Det)` assembly is unforced (W-CRIT-2), route-invariant per FTD-0242. MC-T4.3 stays `[FOUNDATIONAL OBSTRUCTION]`. |
 | [`PREREG_COLOR_CONFINEMENT_v1.md`](preregistrations/PREREG_COLOR_CONFINEMENT_v1.md) | [PRE-REGISTRATION] | FTD-0217: Color Confinement Substrate Derivation pre-registration. |
 | [`FOUND_COLOR_CONFINEMENT_RESOLUTION.md`](derivations/FOUND_COLOR_CONFINEMENT_RESOLUTION.md) | [THEOREM]/[SELECTION] | FTD-0217: Color Confinement Substrate Derivation resolution, establishing a FOUND verdict. |
 | [`PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md`](preregistrations/PREREG_STOCHASTIC_EFFECTIVE_ACTION_v1.md) | [PRE-REGISTRATION] | FTD-0218: Stochastic Effective Action pre-registration. |
@@ -170,7 +169,7 @@ The graviton-census trio — does the FTD substrate carry an emergent massless s
 |---|---|---|
 | [`PREREG_GRAVITON_SUBSTRATE_MODE_v1.md`](archive/superseded/PREREG_GRAVITON_SUBSTRATE_MODE_v1.md) | [PRE-REGISTRATION] | Frontier 4 Step 4a v1; locks the hypothesis and decision criteria. Retained as provenance. |
 | [`PREREG_GRAVITON_SUBSTRATE_MODE_v2.md`](preregistrations/PREREG_GRAVITON_SUBSTRATE_MODE_v2.md) | [PRE-REGISTRATION] | Step 4a-ii v2 — supersedes v1 §5/§8; locks the decisive engine campaign. |
-| [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) | [MEASUREMENT REPORT] | Canonical measurement registered by v2; Outcome verdict applied against PREREG v2 §6/§7. **FTD-0193** (renumbered 2026-05-22 from FTD-0190 to resolve a collision with the Q10 finite-neutral-lock FTD-0190). |
+| [`REPORT_GRAVITON_SUBSTRATE_MODE.md`](reports_and_audits/REPORT_GRAVITON_SUBSTRATE_MODE.md) | [MEASUREMENT REPORT] | Canonical measurement registered by v2; Outcome verdict applied against PREREG v2 §6/§7. **FTD-0193** (renumbered from FTD-0190 to resolve a collision with the Q10 finite-neutral-lock FTD-0190). |
 
 ---
 
@@ -191,7 +190,7 @@ The graviton-census trio — does the FTD substrate carry an emergent massless s
 
 ## § Archive
 
-Archived material is preserved for provenance — cite it to explain "why this route was rejected" or "which completed campaign produced this number"; don't act on it as live work. The full pointer index lives in **`RETROSPECTIVE_EFT_RECOVERY.md`**, which ties the archived scaffolding into the program narrative. Counts as of 2026-05-22 (the 2026-06-15 consolidation pass added to these: `closed_negative/` +3 settled MC-T4.3 route docs [EMPIRICAL/BOUNDARY/K2_REGULATOR], `resolved/` +1 [W5_CONFIRMATION], and a new `superseded/` subdir +4 [THERMAL_IGNITION, GRAVITON_SUBSTRATE_MODE_v1, STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1, ALPHA_ESTIMATOR_VALIDATION_v1]):
+Archived material is preserved for provenance — cite it to explain "why this route was rejected" or "which completed campaign produced this number"; don't act on it as live work. The full pointer index lives in **`RETROSPECTIVE_EFT_RECOVERY.md`**, which ties the archived scaffolding into the program narrative. The archive also holds settled MC-T4.3 route docs ([EMPIRICAL/BOUNDARY/K2_REGULATOR]) under `closed_negative/`, a [W5_CONFIRMATION] under `resolved/`, and a `superseded/` subdir ([THERMAL_IGNITION, GRAVITON_SUBSTRATE_MODE_v1, STRUCTURAL_DYNAMICAL_DISCRIMINATOR_v1, ALPHA_ESTIMATOR_VALIDATION_v1]):
 
 | Subdir | Count | Description |
 |---|---|---|

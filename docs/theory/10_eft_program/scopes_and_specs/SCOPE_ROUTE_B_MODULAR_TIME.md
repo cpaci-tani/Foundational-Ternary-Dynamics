@@ -1,7 +1,6 @@
 # SCOPE — Route B: Time as the Modular Flow of the FTD Substrate Algebra
 
-**Tag:** `[SCOPING MEMO]` — not a derivation, not a new theorem, no tag promotion/demotion. Scopes a research program chosen in session discussion (2026-05-29). Frames the precondition, the viable route, the FTD footholds, the sub-questions, and the anti-laundering guards.
-**Date:** 2026-05-29
+**Tag:** `[SCOPING MEMO]` — not a derivation, not a new theorem, no tag promotion/demotion. Scopes a research program. Frames the precondition, the viable route, the FTD footholds, the sub-questions, and the anti-laundering guards.
 **Companion (to be hash-locked):** `PREREG_MODULAR_TIME_ALGEBRA_TYPE_v1.md` (B1).
 **Cross-refs:** `FOUND_SPACETIME_EMERGENCE_AND_GRAVITY.md`, `AUDIT_CLOCK_HYPOTHESIS_v3_CLOSED_NEGATIVE.md` (FTD-0208, the L²-law obstruction Route B targets), `DERIV_CONNES_LAMBDA_FROM_MODULAR_FLOW.md` (FTD-0214 foothold), the Phase-G geometric-Coulomb theorem (massless flux), the Langevin thermostat (FTD-0051).
 
